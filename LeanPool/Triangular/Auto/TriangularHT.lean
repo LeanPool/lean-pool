@@ -16,6 +16,18 @@ public import Mathlib.RingTheory.Finiteness.Prod
 # Principal values and the symmetric triangular Hilbert bound
 
 Derived from the corresponding part of the upstream triangular Hilbert form proof.
+
+The Gaussian kernel bound adapts `TwoCommuting/Auto/Sec6EuclideanCounting.lean`.
+Joris Roos’s `lean-twocommuting` revision `33b69ccacc013c703a151421658187ea4d2029fb`
+credits these Apache-2.0 Lean proofs to Claude.
+
+The dense-extension proofs adapt `TrilinearHT/Auto/SecCompletion.lean` from Joris Roos’s
+Apache-2.0 `lean-trilinearht` revision `12d795893f2fca76632579c0ad3a6a9b0a9e7c17`.
+That module credits its Lean proofs to Claude.
+
+Proposition 7.4 of *The maximal triangular Hilbert transform at the symmetric point*
+(OpenAI, September 24, 2026) gives the scalar comparison. This development uses a single
+symmetric lower cutoff on Schwartz inputs and constructs the unique bounded extension to L³.
 -/
 
 @[expose] public section
@@ -64,7 +76,7 @@ lemma abs_Kern_le (m : ℕ) {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
     hs0.le
   exact div_le_div_of_nonneg_left hC (by positivity) this
 
-/-- The explicit third derivative used in source Section 3, equation `dist`. -/
+/-- The explicit third derivative of the Gaussian kernel. -/
 theorem triangular_gaussian_third {σ : ℝ} (hσ : 0 < σ) (t : ℝ) :
     gaussianD 3 σ t = (3 * t / σ ^ 2 - t ^ 3 / σ ^ 3) * gaussian σ t := by
   rw [gaussianD_eq_profile 3 hσ, gaussian_eq_profile hσ]
@@ -414,7 +426,7 @@ theorem triangularOddQuotient_integrable_of_bounds {H F G : ℝ × ℝ → ℂ} 
         neg_one_mul, ← sub_eq_add_neg]
       nlinarith
 
-/-- Source Section 3: Schwartz inputs have an integrable odd difference quotient. -/
+/-- Schwartz inputs have an integrable odd difference quotient. -/
 theorem triangularOddQuotient_integrable (H F G : SchwartzMap (ℝ × ℝ) ℂ) :
     Integrable (triangularOddQuotient H F G) := by
   obtain ⟨MF, hF, bF, dF⟩ := triangular_schwartz_bounds F
@@ -515,7 +527,7 @@ theorem triangularTruncation_eq (H F G : SchwartzMap (ℝ × ℝ) ℂ) {ε : ℝ
   simp only [abs_neg, Complex.ofReal_neg]
   split_ifs <;> simp [triangularOddQuotient]; ring
 
-/-- Source equation `dist`: symmetric hard truncations converge for Schwartz inputs. -/
+/-- Symmetric hard truncations converge for Schwartz inputs. -/
 theorem triangularTruncation_tendsto (H F G : SchwartzMap (ℝ × ℝ) ℂ) :
     Tendsto (triangularTruncation H F G) (𝓝[>] (0 : ℝ)) (𝓝 (triangularPV H F G)) := by
   have hi := triangularOddQuotient_integrable H F G
@@ -574,7 +586,7 @@ theorem triangular_scale_eq (H F G : SchwartzMap (ℝ × ℝ) ℂ) {a b : ℝ} (
   have hz : (q.2 : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hq
   field_simp; ring
 
-/-- Source equation `dist`: the Gaussian scale limit is the symmetric principal value. -/
+/-- The Gaussian scale limit is the symmetric principal value. -/
 theorem triangular_scale_tendsto (H F G : SchwartzMap (ℝ × ℝ) ℂ) :
     Tendsto (fun n : ℕ => ∫ q : (ℝ × ℝ) × ℝ, H q.1 * triangularShiftProduct F G q.1 q.2 * (Kern
       3 ((n : ℝ) + 1)⁻¹ ((n : ℝ) + 1) q.2 : ℂ)) atTop (𝓝 ((triangularKernelCoefficient : ℂ) *
@@ -623,11 +635,9 @@ theorem triangularSpaceEquiv_preserving : MeasurePreserving triangularSpaceEquiv
     (Measure.measurePreserving_neg volume)).map_eq using 1
   simp only [Function.comp_def, sub_eq_add_neg]
 
-/-- Source Theorem 1: symmetric truncation of the displayed triangular integral. -/
+/-- The whole-space indicator form of the symmetric lower truncation on Schwartz inputs. -/
 def triangularHilbertTruncation (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) (ε : ℝ) : ℂ :=
-  ∫ q : (ℝ × ℝ) × ℝ, if ε < |q.1.1 + q.1.2 + q.2| then
-    F₀ q.1 * F₁ (q.1.2, q.2) * F₂ (q.2, q.1.1) / ((q.1.1 + q.1.2 + q.2 : ℝ) : ℂ)
-    else 0
+  ∫ q, Triangular.truncatedIntegrand F₀ F₁ F₂ ε q
 
 /-- The source principal value, whose defining truncation limit is proved below. -/
 def triangularHilbert (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) : ℂ :=
@@ -636,13 +646,12 @@ def triangularHilbert (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) : ℂ :=
 /-- The coordinate substitution identifies the two truncated integrands pointwise. -/
 theorem triangularHilbert_integrand_comp (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) (ε : ℝ)
     (q : (ℝ × ℝ) × ℝ) :
-    (let r := triangularSpaceEquiv q
-     if ε < |r.1.1 + r.1.2 + r.2| then
-       F₀ r.1 * F₁ (r.1.2, r.2) * F₂ (r.2, r.1.1) / ((r.1.1 + r.1.2 + r.2 : ℝ) : ℂ) else 0) =
+    Triangular.truncatedIntegrand F₀ F₁ F₂ ε (triangularSpaceEquiv q) =
     -(if ε < |q.2| then F₀ q.1 *
       triangularShiftProduct (triangularPullback₁ F₁) (triangularPullback₂ F₂) q.1 q.2 /
         (q.2 : ℂ) else 0) := by
   have he : q.1.1 + q.1.2 + (-q.1.1 - q.1.2 - q.2) = -q.2 := by ring
+  rw [Triangular.truncatedIntegrand_apply]
   change (if ε < |q.1.1 + q.1.2 + (-q.1.1 - q.1.2 - q.2)| then _ else _) = _
   rw [he, abs_neg]
   split_ifs
@@ -669,15 +678,14 @@ theorem triangularHilbertTruncation_eq (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ
 /-- The source's positive hard truncations are absolutely convergent. -/
 theorem triangularHilbertTruncation_integrable (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) {ε : ℝ}
     (hε : 0 < ε) :
-    Integrable (fun q : (ℝ × ℝ) × ℝ => if ε < |q.1.1 + q.1.2 + q.2| then F₀ q.1 * F₁ (q.1.2,
-      q.2) * F₂ (q.2, q.1.1) / ((q.1.1 + q.1.2 + q.2 : ℝ) : ℂ) else 0) := by
+    Integrable (Triangular.truncatedIntegrand F₀ F₁ F₂ ε) := by
   apply (triangularSpaceEquiv_preserving.integrable_comp_emb
     triangularSpaceEquiv.toHomeomorph.isClosedEmbedding.measurableEmbedding).mp
   convert (triangular_truncation_integrable F₀ (triangularPullback₁ F₁)
     (triangularPullback₂ F₂) hε).neg using 1
   exact funext (triangularHilbert_integrand_comp F₀ F₁ F₂ ε)
 
-/-- Source Theorem 1: the displayed principal value exists for every Schwartz triple. -/
+/-- The single-cutoff principal value exists for every Schwartz triple. -/
 theorem triangularHilbert_principal_value (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) :
     Tendsto (triangularHilbertTruncation F₀ F₁ F₂) (𝓝[>] (0 : ℝ)) (𝓝 (triangularHilbert F₀ F₁
       F₂)) := by
@@ -857,7 +865,7 @@ def triangularPVLinear :
     (fun H F F' => by ext G; exact triangularPV_add_2 H F G F')
     (fun c H F => by ext G; exact triangularPV_smul_2 c H F G)
 
-/-- Source Theorem 1: the triangular Hilbert principal value as a trilinear map. -/
+/-- The triangular Hilbert principal value as a trilinear map. -/
 def triangularHilbertLinear :
     SchwartzMap (ℝ × ℝ) ℂ →ₗ[ℂ] SchwartzMap (ℝ × ℝ) ℂ →ₗ[ℂ] SchwartzMap (ℝ × ℝ) ℂ →ₗ[ℂ] ℂ :=
   -((triangularPVLinear.compl₂ triangularPullback₁.toLinearMap).compr₂
@@ -894,7 +902,7 @@ theorem triangular_bilinear_dense_extension (e : E →ₗ[𝕜] V) (hd : DenseRa
   refine ⟨B₁.extendOfNorm e, fun a b => ?_, LinearMap.norm_extendOfNorm_apply_le hd C hb₁⟩
   rw [LinearMap.extendOfNorm_eq hd ⟨_, hb₁⟩ a, hB₁]
 
-/-- Source Theorem 1: a norm-controlled trilinear map extends uniquely along a dense linear map. -/
+/-- A norm-controlled trilinear map extends uniquely along a dense linear map. -/
 theorem triangular_trilinear_dense_extension (e : E →ₗ[𝕜] V) (hd : DenseRange e)
     (T : E →ₗ[𝕜] E →ₗ[𝕜] E →ₗ[𝕜] W) {C : ℝ} (hC : 0 ≤ C)
     (hT : ∀ a b c, ‖T a b c‖ ≤ C * ‖e a‖ * ‖e b‖ * ‖e c‖) :
@@ -942,7 +950,7 @@ instance triangular_fact_one_le_three : Fact ((1 : ℝ≥0∞) ≤ 3) := ⟨by n
 /-- The complex Lebesgue space `L³` on the plane. -/
 abbrev TriangularL3 := Lp ℂ 3 (volume : Measure (ℝ × ℝ))
 
-/-- Source Theorem 1: unique bounded complex trilinear extension to L3(R2), with the same bound. -/
+/-- The principal value has a unique bounded complex trilinear extension to L³. -/
 theorem triangularHilbert_unique_extension :
     ∃ T : TriangularL3 →L[ℂ] TriangularL3 →L[ℂ] TriangularL3 →L[ℂ] ℂ,
       (∀ F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ,
@@ -960,7 +968,7 @@ theorem triangularHilbert_unique_extension :
     SchwartzMap.toLpCLM_apply, SchwartzMap.toLp, Lp.norm_toLp] using
     triangularHilbert_bound F₀ F₁ F₂
 
-/-- Source Theorem 1: existence and the uniform L3 bound for the symmetric principal value. -/
+/-- The scalar L³ estimate for the symmetric single-cutoff principal value. -/
 theorem triangularHilbert_main :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ, ∃ L : ℂ,
       Tendsto (fun ε : ℝ => ∫ xyz : (ℝ × ℝ) × ℝ,
@@ -978,12 +986,8 @@ section Statements
 /-! The main theorem restated in terms of the definitions in `Triangular.Defs`. -/
 
 theorem truncatedForm_eq (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) (ε : ℝ) :
-    Triangular.truncatedForm F₀ F₁ F₂ ε = triangularHilbertTruncation F₀ F₁ F₂ ε := by
-  change ∫ q in {q : (ℝ × ℝ) × ℝ | ε < |q.1.1 + q.1.2 + q.2|},
-    F₀ q.1 * F₁ (q.1.2, q.2) * F₂ (q.2, q.1.1) / ((q.1.1 + q.1.2 + q.2 : ℝ) : ℂ) = _
-  rw [← integral_indicator (measurableSet_lt measurable_const (by fun_prop))]
-  unfold triangularHilbertTruncation
-  congr 1
+    Triangular.truncatedForm F₀ F₁ F₂ ε = triangularHilbertTruncation F₀ F₁ F₂ ε :=
+  Triangular.truncatedForm_eq_integral F₀ F₁ F₂ ε
 
 theorem T_eq (F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ) :
     Triangular.T F₀ F₁ F₂ = triangularHilbert F₀ F₁ F₂ :=

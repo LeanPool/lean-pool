@@ -11,6 +11,10 @@ public import LeanPool.Triangular.Auto.HeatFlow
 # Integrated heat dissipation and averaged trace estimates
 
 Derived from the corresponding part of the upstream triangular Hilbert form proof.
+
+The regularized energy limit adapts `TwoCommuting/Auto/Sec5OutputDependentIntervals.lean`.
+Joris Roos’s `lean-twocommuting` revision `33b69ccacc013c703a151421658187ea4d2029fb`
+credits these Apache-2.0 Lean proofs to Claude.
 -/
 
 @[expose] public section
@@ -73,40 +77,6 @@ end MatrixNorm
 section RegularizationLimit
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
-
-lemma sqrt_add_smul_eq {P : Matrix n n ℂ} (hP : P.PosSemidef) {η : ℝ} (hη : 0 ≤ η) :
-    CFC.sqrt (P + (η : ℂ) • 1) = (hP.1.eigenvectorUnitary : Matrix n n ℂ) * diagonal (fun i =>
-      ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ)) * star (hP.1.eigenvectorUnitary : Matrix n n ℂ) := by
-  set U : Matrix n n ℂ := (hP.1.eigenvectorUnitary : Matrix n n ℂ)
-  have hUU : star U * U = 1 := Unitary.coe_star_mul_self _
-  have hUU' : U * star U = 1 := Unitary.coe_mul_star_self _
-  have hspec : P = U * diagonal (fun i => ((hP.1.eigenvalues i : ℝ) : ℂ)) * star U := by
-    have := hP.1.spectral_theorem
-    rw [Unitary.conjStarAlgAut_apply] at this
-    exact this
-  refine CFC.sqrt_unique ?_ ?_
-  · have hd : diagonal (fun i => ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ)) *
-        diagonal (fun i => ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ)) =
-        diagonal (fun i => ((hP.1.eigenvalues i : ℝ) : ℂ)) + (η : ℂ) • 1 := by
-      rw [Matrix.diagonal_mul_diagonal, ← Matrix.diagonal_one, ← Matrix.diagonal_smul,
-        Matrix.diagonal_add]
-      congr 1; funext i
-      rw [← Complex.ofReal_mul, Real.mul_self_sqrt (by
-        linarith [hP.eigenvalues_nonneg i])]
-      simp
-    calc U * diagonal (fun i => ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ)) * star U *
-          (U * diagonal (fun i => ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ)) * star U)
-        = U * (diagonal (fun i => ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ)) *
-            diagonal (fun i => ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ))) * star U := by
-          simp only [Matrix.mul_assoc]
-          rw [← Matrix.mul_assoc (star U) U, hUU, Matrix.one_mul]
-      _ = P + (η : ℂ) • 1 := by
-          rw [hd, Matrix.mul_add, Matrix.add_mul, ← hspec, Matrix.mul_smul, Matrix.mul_one,
-            Matrix.smul_mul, hUU']
-  · refine (Matrix.PosSemidef.mul_mul_conjTranspose_same ?_ U).nonneg
-    rw [Matrix.posSemidef_diagonal_iff]
-    intro i
-    exact_mod_cast Real.sqrt_nonneg _
 
 lemma tendsto_sqrt_add_smul {P : Matrix n n ℂ} (hP : P.PosSemidef) {η : ℕ → ℝ}
     (hη0 : ∀ m, 0 ≤ η m) (hη : Tendsto η atTop (𝓝 0)) :
@@ -659,13 +629,13 @@ lemma dw_update2 (p σ : Fin 3 → ℝ) (v : Fin 3) (q τ : ℝ) :
       (Hd.u i - q)) := by
   rw [dw_def]; simp
 
-lemma R_insert_eq (hh : 0 ≤ Hd.h) (p σ : Fin 3 → ℝ) (v : Fin 3) (D : ι → ℝ) (hσ : 0 < σ v) :
+lemma R_insert_eq (hh : 0 ≤ Hd.h) (p σ : Fin 3 → ℝ) (v : Fin 3) (D : ι → ℝ) :
     (Hd.R p σ v)ᴴ * rdiag D * Hd.R p σ v = wGram (Hd.Brow p σ v) (fun i => Hd.w p σ v i * D i) := by
   rw [R_eq, wGram, Brow]
   have hw : (fun i => Hd.w p σ v i * D i) = Hd.sqw p σ v * D * Hd.sqw p σ v := by
     funext i
     simp only [Pi.mul_apply]
-    rw [← Hd.sq_mul_sq p σ hh hσ]; simp only [Pi.mul_apply]; ring
+    rw [← Hd.sq_mul_sq p σ hh]; simp only [Pi.mul_apply]; ring
   rw [hw, ← rdiag_mul_rdiag, ← rdiag_mul_rdiag]
   simp only [Matrix.conjTranspose_mul, rdiag_conjTranspose, Matrix.mul_assoc]
 
@@ -678,17 +648,14 @@ theorem vertex_avg (hh : 0 < Hd.h) (v : Fin 3) {j : ℕ} (hj : 1 ≤ j) {Ca : �
       (Function.update (fun _ => 11 / 10 * s) v s) v) := by
   have : Fact (0 < s) := ⟨hs⟩
   set σB : Fin 3 → ℝ := fun _ => 11 / 10 * s
-  have hσB : ∀ k, 0 < σB k := fun k => by simp only [σB]; positivity
   set σV := Function.update σB v s
-  have hσV : ∀ k, 0 < σV k := fun k => by
-    simp only [σV, Function.update_apply]; split_ifs; exacts [hs, hσB k]
   set Bw := Hd.Brow p σB v
   set ν := avgMeasure s
   have hβ : (0 : ℝ) < 1 / 10 * s := by positivity
   set fT : ℝ → ι → ℝ := fun d i => gweight Hd.u Hd.h s (p v + d) i
   set fK : ℝ → ι → ℝ := fun d i => acoef j s d * -(Hd.h * gaussianD 1 s (Hd.u i - (p v + d)))
   have hT : ∀ d, Hd.T (Function.update p v (p v + d)) σV v = wGram Bw (fT d) := fun d => by
-    rw [T_eq_wGram Hd _ _ hh.le (hσV v), Brow_update2, w_update2]
+    rw [T_eq_wGram Hd _ _ hh.le, Brow_update2, w_update2]
   have hK : ∀ d, ((acoef j s d : ℝ) : ℂ) • Hd.Ui (Function.update p v (p v + d)) σV v =
       wGram Bw (fK d) := fun d => by
     rw [Ui, Brow_update2, dw_update2, ← wGram_smul]
@@ -700,7 +667,7 @@ theorem vertex_avg (hh : 0 < Hd.h) (v : Fin 3) {j : ℕ} (hj : 1 ≤ j) {Ca : �
       ((continuous_const.mul ((continuous_gaussian' s).comp
         (continuous_const.sub (continuous_const.add continuous_id)))).aestronglyMeasurable)
       (Eventually.of_forall fun d => by
-        rw [Real.norm_eq_abs, abs_of_nonneg (gweight_nonneg' _ hh.le _ _ _)]
+        rw [Real.norm_eq_abs, abs_of_nonneg (gweight_nonneg _ hh.le _ _ _)]
         exact mul_le_mul_of_nonneg_left (gaussian_le_sup _ _) hh.le)
   have hgK : ∀ d, gaussian (1 / 10 * s) d * acoef j s d =
       -(√s ^ j * gaussianD (j - 1) (1 / 20 * s) d) := fun d => by
@@ -757,12 +724,12 @@ theorem vertex_avg (hh : 0 < Hd.h) (v : Fin 3) {j : ℕ} (hj : 1 ≤ j) {Ca : �
   obtain ⟨iT, mT⟩ := matIntegral_wGram (ν := ν) Bw fT hfT
   obtain ⟨iK, mK⟩ := matIntegral_wGram (ν := ν) Bw fK hfK
   have hTavg : matIntegral ν (fun d => wGram Bw (fT d)) = Hd.T p σB v := by
-    rw [mT, T_eq_wGram Hd p σB hh.le (hσB v)]
+    rw [mT, T_eq_wGram Hd p σB hh.le]
     simp_rw [hIT]
     rfl
   have hKavg : matIntegral ν (fun d => wGram Bw (fK d)) =
       (Hd.R p σB v)ᴴ * rdiag (fun i => Dfun j s (Hd.u i - p v)) * Hd.R p σB v := by
-    rw [mK, R_insert_eq Hd hh.le p σB v _ (hσB v)]
+    rw [mK, R_insert_eq Hd hh.le p σB v _]
     simp_rw [hIK]
     rfl
   have hTm : Measurable fun d => wGram Bw (fT d) := by
@@ -771,7 +738,7 @@ theorem vertex_avg (hh : 0 < Hd.h) (v : Fin 3) {j : ℕ} (hj : 1 ≤ j) {Ca : �
         (continuous_const.sub (continuous_const.add continuous_id)))
     exact this.measurable
   have hTpsd : ∀ d, (wGram Bw (fT d)).PosSemidef := fun d =>
-    wGram_posSemidef _ fun i => gweight_nonneg' _ hh.le _ _ _
+    wGram_posSemidef _ fun i => gweight_nonneg _ hh.le _ _ _
   have h03 := matCost_average_le hTm hTpsd iT iK
   rw [hTavg, hKavg] at h03
   refine h03.trans ?_
@@ -887,7 +854,7 @@ lemma Dfun_mul_w (hh : 0 ≤ Hd.h) (d : ℕ) {s : ℝ} (hs : 0 < s) (p : Fin 3 �
     Dfun d s (Hd.u i - p v) * Hd.sqw p (fun _ => 11 / 10 * s) v i ^ 2 = Hd.h * (√s ^ d *
       gaussianD d (21 / 20 * s) (Hd.u i - p v)) := by
   rw [show Hd.sqw p (fun _ => 11 / 10 * s) v i ^ 2 = Hd.w p (fun _ => 11 / 10 * s) v i from
-    Real.sq_sqrt (gweight_nonneg' _ hh _ _ _)]
+    Real.sq_sqrt (gweight_nonneg _ hh _ _ _)]
   have hg := (gaussian_pos (by positivity : (0 : ℝ) < 11 / 10 * s) (Hd.u i - p v)).ne'
   simp only [w, gweight, Dfun]
   rw [div_mul_eq_mul_div, div_eq_iff hg]; ring
@@ -1146,7 +1113,7 @@ open scoped ENNReal NNReal MatrixOrder Matrix.Norms.L2Operator ComplexOrder
 
 noncomputable section
 
-/-- The regularized spectral cost converges to the supported cost in source Section 1. -/
+/-- The regularized spectral cost converges to the supported cost. -/
 lemma matCost_tendsto_regularization {n : Type*} [Fintype n] [DecidableEq n]
     {P : Matrix n n ℂ} (hP : P.PosSemidef) (K : Matrix n n ℂ)
     {η : ℕ → ℝ} (hη0 : ∀ m, 0 ≤ η m) (hη : Tendsto η atTop (𝓝 0)) :
@@ -1158,13 +1125,25 @@ lemma matCost_tendsto_regularization {n : Type*} [Fintype n] [DecidableEq n]
     Matrix.PosSemidef.one.smul (by exact_mod_cast hη0 m)
   exact matCost_anti (hP.add hi) (le_add_of_nonneg_right hi.nonneg) K
 
-/-- The nonnegative dissipation density from source Section 2. -/
+/-- The nonnegative Gaussian-weighted dissipation density. -/
 def heatCost {ι : Type*} [Fintype ι] [DecidableEq ι]
     (Hd : HeatData ι) (α : Fin 3 → ℝ) (z : ℝ × (Fin 3 → ℝ)) : ℝ≥0∞ :=
   ENNReal.ofReal (Gm (1 / 10) 0 z.1 z.2) *
     ∑ v, matCost (Hd.T z.2 (HeatData.sig α z.1) v) (Hd.Ui z.2 (HeatData.sig α z.1) v)
 
-/-- Source `energy`: integrating dissipation on one interval uses only the initial energy. -/
+lemma heatCost_tendsto {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (Hd : HeatData ι) (α : Fin 3 → ℝ) (z : ℝ × (Fin 3 → ℝ))
+    {η : ℕ → ℝ} (hη0 : ∀ m, 0 < η m) (hη : Tendsto η atTop (𝓝 0)) :
+    Tendsto (fun m => ENNReal.ofReal (Hd.costDensity α (η m) z)) atTop
+      (𝓝 (heatCost Hd α z)) := by
+  simp only [Hd.ofReal_costDensity (hη0 _), heatCost]
+  apply ENNReal.Tendsto.const_mul _ (Or.inr ENNReal.ofReal_ne_top)
+  apply tendsto_finsetSum
+  intro v _
+  exact matCost_tendsto_regularization (Matrix.posSemidef_conjTranspose_mul_self _)
+    _ (fun m => (hη0 m).le) hη
+
+/-- The dissipation on one Gaussian scale interval is bounded by its initial energy. -/
 theorem heatCost_interval_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
     (Hd : HeatData ι) {kk : ι → ℤ} (hk : Function.Injective kk)
     (hu : ∀ i, Hd.u i = Hd.h * kk i) (hh : 0 < Hd.h)
@@ -1192,14 +1171,8 @@ theorem heatCost_interval_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
   have hf : ∀ m, AEMeasurable (f m) μ := fun m =>
     (Hd.costDensity_integrable hh (hη0 m) hα1 hα2 ha0
       hab).aestronglyMeasurable.aemeasurable.ennreal_ofReal
-  have hpt : ∀ z, Tendsto (fun m => f m z) atTop (𝓝 (heatCost Hd α z)) := by
-    intro z
-    simp only [f, Hd.ofReal_costDensity (hη0 _), heatCost]
-    apply ENNReal.Tendsto.const_mul _ (Or.inr ENNReal.ofReal_ne_top)
-    apply tendsto_finsetSum
-    intro v _
-    exact matCost_tendsto_regularization (Matrix.posSemidef_conjTranspose_mul_self _)
-      _ (fun m => (hη0 m).le) hη
+  have hpt : ∀ z, Tendsto (fun m => f m z) atTop (𝓝 (heatCost Hd α z)) :=
+    fun z => heatCost_tendsto Hd α z hη0 hη
   have hbound : ∀ m, ∫⁻ z, f m z ∂μ ≤ ENNReal.ofReal (28 * Hd.Jbar α (η m) a) := by
     intro m
     have hd := Hd.smeared_plane_dissipation α (η m) hh (hη0 m) hα hsum ha0 hab

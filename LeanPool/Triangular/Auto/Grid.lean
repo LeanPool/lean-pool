@@ -11,6 +11,10 @@ public import LeanPool.Triangular.Auto.Dissipation
 # The Gaussian estimate on finite grids and its Euclidean limit
 
 Derived from the corresponding part of the upstream triangular Hilbert form proof.
+
+The lattice-norm convergence adapts `TwoCommuting/Auto/Sec6EuclideanCounting.lean`.
+Joris Roos’s `lean-twocommuting` revision `33b69ccacc013c703a151421658187ea4d2029fb`
+credits these Apache-2.0 Lean proofs to Claude.
 -/
 
 @[expose] public section
@@ -29,18 +33,6 @@ lemma sum_shift (v : Fin 3) (q : Fin 2 → ℝ) (d : ℝ) :
       Function.update (planePt q) v (planePt q v + d) 1 +
       Function.update (planePt q) v (planePt q v + d) 2 = d := by
   fin_cases v <;> simp [planePt] <;> ring
-
-lemma heatCost_tendsto {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (Hd : HeatData ι) (α : Fin 3 → ℝ) (z : ℝ × (Fin 3 → ℝ))
-    {η : ℕ → ℝ} (hη0 : ∀ m, 0 < η m) (hη : Tendsto η atTop (𝓝 0)) :
-    Tendsto (fun m => ENNReal.ofReal (Hd.costDensity α (η m) z)) atTop
-      (𝓝 (heatCost Hd α z)) := by
-  simp only [Hd.ofReal_costDensity (hη0 _), heatCost]
-  apply ENNReal.Tendsto.const_mul _ (Or.inr ENNReal.ofReal_ne_top)
-  apply tendsto_finsetSum
-  intro v _
-  exact matCost_tendsto_regularization (Matrix.posSemidef_conjTranspose_mul_self _)
-    _ (fun m => (hη0 m).le) hη
 
 lemma heatCost_aemeasurable {ι : Type*} [Fintype ι] [DecidableEq ι]
     (Hd : HeatData ι) (hh : 0 < Hd.h) {α : Fin 3 → ℝ}
@@ -232,7 +224,7 @@ lemma heatBoundConstant_nonneg : 0 ≤ heatBoundConstant := by
   unfold heatBoundConstant
   positivity
 
-/-- Source Sections 2-3: the fixed Gaussian interval is bounded by the initial cubic energy. -/
+/-- The fixed Gaussian scale interval is bounded by the initial cubic energy. -/
 theorem gridGaussianForm_cubic_bound {ι : Type*} [Fintype ι]
     (Hd : HeatData ι) {kk : ι → ℤ} (hk : Function.Injective kk)
     (hu : ∀ i, Hd.u i = Hd.h * kk i) (hh : 0 < Hd.h)
@@ -315,7 +307,7 @@ lemma nCube_scale {ι : Type*} [Fintype ι]
   refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 
-/-- Trilinearity converts the cubic energy estimate to the source's product of three L3 norms. -/
+/-- Trilinearity converts the cubic energy estimate to a product of three L³ norms. -/
 theorem gridGaussianForm_bound {ι : Type*} [Fintype ι]
     (Hd : HeatData ι) {kk : ι → ℤ} (hk : Function.Injective kk)
     (hu : ∀ i, Hd.u i = Hd.h * kk i) (hh : 0 < Hd.h)
@@ -414,7 +406,7 @@ def sourceGaussianIntegrand (F : Fin 3 → ℝ × ℝ → ℂ) (a b : ℝ)
     (Kern 3 a b (x 0 + x 1 + x 2) : ℂ)
 
 theorem sourceGaussian_lattice_bound (F : Fin 3 → ℝ × ℝ → ℂ) {ρ : ℝ}
-    (_hρ : 0 ≤ ρ) (hF : ∀ v p, ρ < ‖p‖ → F v p = 0)
+    (hF : ∀ v p, ρ < ‖p‖ → F v p = 0)
     {N : ℕ} (hN : 0 < N) {a b : ℝ}
     (ha : ((N : ℝ)⁻¹) ^ 2 ≤ a) (hab : a ≤ b) :
     ‖((N : ℝ)⁻¹) ^ 3 • ∑' z : Fin 3 → ℤ,
@@ -593,7 +585,7 @@ theorem sourceGaussian_compact_bound (F : Fin 3 → ℝ × ℝ → ℂ)
     simpa using h.pow 2
   filter_upwards [eventually_gt_atTop 0, hzero.eventually (ge_mem_nhds ha)]
     with N hN hNa
-  exact sourceGaussian_lattice_bound F hR hsupp hN hNa hab
+  exact sourceGaussian_lattice_bound F hsupp hN hNa hab
 
 /-- A radial cutoff equal to one on the ball of radius `n` and zero past radius `n + 1`. -/
 def compactCutoff (n : ℕ) (p : ℝ × ℝ) : ℝ := max 0 (min 1 (n + 1 - ‖p‖))

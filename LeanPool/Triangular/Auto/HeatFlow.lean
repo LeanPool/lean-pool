@@ -13,6 +13,10 @@ public import Mathlib.MeasureTheory.Integral.Pi
 # Discrete Gaussian heat flow and the initial energy bound
 
 Derived from the corresponding part of the upstream triangular Hilbert form proof.
+
+The initial Gaussian energy estimate adapts `TwoCommuting/Auto/Sec4GaussianEnergies.lean`.
+Joris Roos’s `lean-twocommuting` revision `33b69ccacc013c703a151421658187ea4d2029fb`
+credits these Apache-2.0 Lean proofs to Claude.
 -/
 
 @[expose] public section
@@ -81,10 +85,9 @@ lemma wGram_smul (B : Matrix ι κ ℂ) (c : ℝ) (f : ι → ℝ) :
 def gweight (u : ι → ℝ) (h σ p : ℝ) : ι → ℝ := fun i => h * gaussian σ (u i - p)
 
 omit [Fintype ι] [DecidableEq ι] in
-lemma gweight_nonneg (u : ι → ℝ) {h σ : ℝ} (hh : 0 ≤ h) (hσ : 0 < σ) (p : ℝ) (i : ι) :
+lemma gweight_nonneg (u : ι → ℝ) {h : ℝ} (hh : 0 ≤ h) (σ p : ℝ) (i : ι) :
     0 ≤ gweight u h σ p i := by
   unfold gweight gaussian
-  have : 0 < √(2 * π * σ) := Real.sqrt_pos.2 (by positivity)
   positivity
 
 omit [Fintype ι] [DecidableEq ι] in
@@ -124,8 +127,8 @@ theorem gram_heat_identity (C : Matrix κ κ ℂ) (hC : C.PosSemidef) (B : Matri
       (fun i => h * gaussianD 2 σ (u i - p))).trace).re) p ∧ HasDerivAt (fun τ => energyReg η (C +
       wGram B (gweight u h τ p))) ((3 / 2) * ((CFC.sqrt (C + wGram B (gweight u h σ p) + (η : ℂ) •
       1) * wGram B (fun i => h * gaussianD 2 σ (u i - p) / 2)).trace).re) σ := by
-  have hPSD : ∀ q τ, 0 < τ → (C + wGram B (gweight u h τ q)).PosSemidef := fun q τ hτ =>
-    hC.add (wGram_posSemidef B fun i => gweight_nonneg u hh hτ q i)
+  have hPSD : ∀ q τ, (C + wGram B (gweight u h τ q)).PosSemidef := fun q τ =>
+    hC.add (wGram_posSemidef B fun i => gweight_nonneg u hh τ q i)
   have hdp : ∀ i j, HasDerivAt (fun q => (C + wGram B (gweight u h σ q)) i j) (wGram B (fun i => -(h
       * gaussianD 1 σ (u i - p))) i j) p := by
     intro i j
@@ -137,9 +140,9 @@ theorem gram_heat_identity (C : Matrix κ κ ℂ) (hC : C.PosSemidef) (B : Matri
     hasDerivAt_wGram B (f := fun q i => -(h * gaussianD 1 σ (u i - q))) (fun k =>
         hasDerivAt_gweightD1_p u h σ p k)
   refine ⟨?_, ?_, ?_⟩
-  · exact hasDerivAt_energyReg hη (fun q => hPSD q σ hσ) hdp
-  · have hH := hasDerivAt_energy_hessian hη (fun q => hPSD q σ hσ) hdp hdU (wGram_isHermitian B _)
-    rwa [matCostBil_self (posDef_add_smul_one (hPSD p σ hσ) hη)] at hH
+  · exact hasDerivAt_energyReg hη (fun q => hPSD q σ) hdp
+  · have hH := hasDerivAt_energy_hessian hη (fun q => hPSD q σ) hdp hdU (wGram_isHermitian B _)
+    rwa [matCostBil_self (posDef_add_smul_one (hPSD p σ) hη)] at hH
   · have hdσ : ∀ i j, HasDerivAt (fun τ => (C + wGram B (gweight u h (max τ (σ / 2)) p)) i j) (wGram
         B (fun i => h * gaussianD 2 σ (u i - p) / 2) i j) σ := by
       intro i j
@@ -156,7 +159,7 @@ theorem gram_heat_identity (C : Matrix κ κ ℂ) (hC : C.PosSemidef) (B : Matri
       have := (hasDerivAt_wGram B (f := fun τ => gweight u h (max τ (σ / 2)) p) hw i j).const_add (C
           i j)
       simpa using this
-    have hE := hasDerivAt_energyReg hη (fun τ => hPSD p (max τ (σ / 2)) (by positivity)) hdσ
+    have hE := hasDerivAt_energyReg hη (fun τ => hPSD p (max τ (σ / 2))) hdσ
     simp only [max_eq_left (by linarith : σ / 2 ≤ σ)] at hE
     refine hE.congr_of_eventuallyEq ?_
     filter_upwards [lt_mem_nhds (by linarith : σ / 2 < σ)] with τ hτ
@@ -223,11 +226,11 @@ omit [Fintype ι] in
 lemma rdiag_conjTranspose (f : ι → ℝ) : (rdiag f)ᴴ = rdiag f := (rdiag_isHermitian f).eq
 
 omit [Fintype ι] [DecidableEq ι] in
-lemma sq_mul_sq (hh : 0 ≤ Hd.h) {v : Fin 3} (hσ : 0 < σ v) :
+lemma sq_mul_sq (hh : 0 ≤ Hd.h) {v : Fin 3} :
     Hd.sqw p σ v * Hd.sqw p σ v = Hd.w p σ v := by
   funext i
   simp only [sqw, Pi.mul_apply]
-  exact Real.mul_self_sqrt (gweight_nonneg _ hh hσ _ i)
+  exact Real.mul_self_sqrt (gweight_nonneg _ hh _ _ i)
 
 lemma R_eq (v : Fin 3) :
     Hd.R p σ v = rdiag (Hd.sqw p σ v) * rowMat (Hd.A v) (Hd.A (v - 1)) * Hd.Dc p σ v := by
@@ -236,12 +239,12 @@ lemma R_eq (v : Fin 3) :
   rw [Matrix.mul_fromCols, Matrix.fromCols_mul_fromBlocks]
   simp [Matrix.mul_assoc]
 
-lemma T_eq_wGram (hh : 0 ≤ Hd.h) {v : Fin 3} (hσ : 0 < σ v) :
+lemma T_eq_wGram (hh : 0 ≤ Hd.h) {v : Fin 3} :
     Hd.T p σ v = wGram (Hd.Brow p σ v) (Hd.w p σ v) := by
-  rw [T, R_eq, wGram, Brow, ← sq_mul_sq Hd p σ hh hσ, ← rdiag_mul_rdiag]
+  rw [T, R_eq, wGram, Brow, ← sq_mul_sq Hd p σ hh, ← rdiag_mul_rdiag]
   simp only [Matrix.conjTranspose_mul, rdiag_conjTranspose, Matrix.mul_assoc]
 
-lemma S_eq_wGram (hh : 0 ≤ Hd.h) {v : Fin 3} (hσ1 : 0 < σ (v + 1)) (hσ2 : 0 < σ (v - 1)) :
+lemma S_eq_wGram (hh : 0 ≤ Hd.h) {v : Fin 3} :
     Hd.S p σ v = wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) + wGram (Hd.Bprev p σ v) (Hd.w p σ (v
       - 1)) := by
   set D := rdiag (Hd.sqw p σ v)
@@ -249,8 +252,7 @@ lemma S_eq_wGram (hh : 0 ≤ Hd.h) {v : Fin 3} (hσ1 : 0 < σ (v + 1)) (hσ2 : 0
   have hDc : Hd.Dc p σ v * (Hd.Dc p σ v)ᴴ =
       Matrix.fromBlocks (rdiag (Hd.w p σ (v + 1))) 0 0 (rdiag (Hd.w p σ (v - 1))) := by
     rw [Dc, Matrix.fromBlocks_conjTranspose, Matrix.fromBlocks_multiply]
-    simp [rdiag_conjTranspose, rdiag_mul_rdiag, sq_mul_sq Hd p σ hh hσ1,
-      sq_mul_sq Hd p σ hh hσ2]
+    simp [rdiag_conjTranspose, rdiag_mul_rdiag, sq_mul_sq Hd p σ hh]
   have hA : ∀ X Y : Matrix ι ι ℂ, A' * Matrix.fromBlocks X 0 0 Y * A'ᴴ =
       Hd.A v * X * (Hd.A v)ᴴ + (Hd.A (v - 1))ᴴ * Y * Hd.A (v - 1) := by
     intro X Y
@@ -370,42 +372,40 @@ lemma Bprev_update_σ {v k : Fin 3} (hk : k ≠ v) (τ : ℝ) :
     Hd.Bprev p (Function.update σ k τ) v = Hd.Bprev p σ v := by
   simp [Bprev, sq_update_ne_σ Hd p σ hk.symm]
 
-lemma T_update (hh : 0 ≤ Hd.h) (hσ : ∀ k, 0 < σ k) (v : Fin 3) (q : ℝ) :
+lemma T_update (hh : 0 ≤ Hd.h) (v : Fin 3) (q : ℝ) :
     Hd.T (Function.update p v q) σ v = 0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h (σ v) q) := by
-  rw [T_eq_wGram Hd _ σ hh (hσ v), Brow_update, w_update_self, zero_add]
+  rw [T_eq_wGram Hd _ σ hh, Brow_update, w_update_self, zero_add]
 
-lemma T_update_σ (hh : 0 ≤ Hd.h) {v : Fin 3} {τ : ℝ} (hτ : 0 < τ) :
+lemma T_update_σ (hh : 0 ≤ Hd.h) {v : Fin 3} {τ : ℝ} :
     Hd.T p (Function.update σ v τ) v = 0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h τ (p v)) := by
-  rw [T_eq_wGram Hd p _ hh (by simpa using hτ), Brow_update_σ, w_update_self_σ, zero_add]
+  rw [T_eq_wGram Hd p _ hh, Brow_update_σ, w_update_self_σ, zero_add]
 
-lemma S_update_next (hh : 0 ≤ Hd.h) (hσ : ∀ k, 0 < σ k) (v : Fin 3) (q : ℝ) :
+lemma S_update_next (hh : 0 ≤ Hd.h) (v : Fin 3) (q : ℝ) :
     Hd.S (Function.update p (v + 1) q) σ v = wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) + wGram
       (Hd.Bnext p σ v) (gweight Hd.u Hd.h (σ (v + 1)) q) := by
-  rw [S_eq_wGram Hd _ σ hh (hσ _) (hσ _), Bnext_update Hd p σ (fin3_ne_succ v).symm,
+  rw [S_eq_wGram Hd _ σ hh, Bnext_update Hd p σ (fin3_ne_succ v).symm,
     Bprev_update Hd p σ (fin3_ne_succ v).symm, w_update_self,
     w_update_ne Hd p σ (fin3_succ_ne_pred v).symm, add_comm]
 
-lemma S_update_next_σ (hh : 0 ≤ Hd.h) (hσ : ∀ k, 0 < σ k) (v : Fin 3) {τ : ℝ} (hτ : 0 < τ) :
+lemma S_update_next_σ (hh : 0 ≤ Hd.h) (v : Fin 3) {τ : ℝ} :
     Hd.S p (Function.update σ (v + 1) τ) v = wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) + wGram
       (Hd.Bnext p σ v) (gweight Hd.u Hd.h τ (p (v + 1))) := by
-  rw [S_eq_wGram Hd p _ hh (by simpa using hτ) (by
-      rw [Function.update_of_ne (fin3_succ_ne_pred v).symm]; exact hσ _),
+  rw [S_eq_wGram Hd p _ hh,
     Bnext_update_σ Hd p σ (fin3_ne_succ v).symm,
     Bprev_update_σ Hd p σ (fin3_ne_succ v).symm, w_update_self_σ,
     w_update_ne_σ Hd p σ (fin3_succ_ne_pred v).symm, add_comm]
 
-lemma S_update_prev (hh : 0 ≤ Hd.h) (hσ : ∀ k, 0 < σ k) (v : Fin 3) (q : ℝ) :
+lemma S_update_prev (hh : 0 ≤ Hd.h) (v : Fin 3) (q : ℝ) :
     Hd.S (Function.update p (v - 1) q) σ v = wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) + wGram
       (Hd.Bprev p σ v) (gweight Hd.u Hd.h (σ (v - 1)) q) := by
-  rw [S_eq_wGram Hd _ σ hh (hσ _) (hσ _), Bnext_update Hd p σ (fin3_ne_pred v).symm,
+  rw [S_eq_wGram Hd _ σ hh, Bnext_update Hd p σ (fin3_ne_pred v).symm,
     Bprev_update Hd p σ (fin3_ne_pred v).symm, w_update_self,
     w_update_ne Hd p σ (fin3_succ_ne_pred v)]
 
-lemma S_update_prev_σ (hh : 0 ≤ Hd.h) (hσ : ∀ k, 0 < σ k) (v : Fin 3) {τ : ℝ} (hτ : 0 < τ) :
+lemma S_update_prev_σ (hh : 0 ≤ Hd.h) (v : Fin 3) {τ : ℝ} :
     Hd.S p (Function.update σ (v - 1) τ) v = wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) + wGram
       (Hd.Bprev p σ v) (gweight Hd.u Hd.h τ (p (v - 1))) := by
-  rw [S_eq_wGram Hd p _ hh (by
-      rw [Function.update_of_ne (fin3_succ_ne_pred v)]; exact hσ _) (by simpa using hτ),
+  rw [S_eq_wGram Hd p _ hh,
     Bnext_update_σ Hd p σ (fin3_ne_pred v).symm,
     Bprev_update_σ Hd p σ (fin3_ne_pred v).symm, w_update_self_σ,
     w_update_ne_σ Hd p σ (fin3_succ_ne_pred v)]
@@ -423,7 +423,7 @@ theorem e_heat_row (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 <
   obtain ⟨h1, h2, h3⟩ := gram_heat_identity 0 Matrix.PosSemidef.zero (Hd.Brow p σ v) Hd.u hh hη (hσ
       v) (p v)
   have hT0 : Hd.T p σ v = 0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h (σ v) (p v)) := by
-    have := T_update Hd p σ hh hσ v (p v)
+    have := T_update Hd p σ hh v (p v)
     rwa [Function.update_eq_self] at this
   have hUi : ∀ q, Hd.Ui (Function.update p v q) σ v =
       wGram (Hd.Brow p σ v) (fun i => -(Hd.h * gaussianD 1 (σ v) (Hd.u i - q))) := by
@@ -431,28 +431,29 @@ theorem e_heat_row (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 <
   refine ⟨?_, ?_, ?_⟩
   · have e1 : (fun q => Hd.e (Function.update p v q) σ η v) =
         fun q => energyReg η (0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h (σ v) q)) := by
-      funext q; rw [e, T_update Hd p σ hh hσ]
+      funext q; rw [e, T_update Hd p σ hh]
     rw [e1, tr32, hT0, Ui, dw_def]
     exact h1
   · have e1 : (fun q => tr32 η (Hd.T (Function.update p v q) σ v) (Hd.Ui (Function.update p v q) σ
       v)) = fun q => (3 / 2) * ((CFC.sqrt (0 +
           wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h (σ v) q) + (η : ℂ) • 1) *
           wGram (Hd.Brow p σ v) (fun i => -(Hd.h * gaussianD 1 (σ v) (Hd.u i - q)))).trace).re := by
-      funext q; rw [tr32, T_update Hd p σ hh hσ, hUi]
+      funext q; rw [tr32, T_update Hd p σ hh, hUi]
     rw [e1, V, tr32, hT0, Ui, dw_def, ddw_def]
     exact h2
   · have e1 : (fun τ => Hd.e p (Function.update σ v τ) η v) =ᶠ[𝓝 (σ v)]
         fun τ => energyReg η (0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h τ (p v))) := by
-      filter_upwards [lt_mem_nhds (hσ v)] with τ hτ
-      rw [e, T_update_σ Hd p σ hh hτ]
+      apply Eventually.of_forall
+      intro τ
+      simp only [e, T_update_σ Hd p σ hh]
     rw [tr32, hT0, ddw_def]
     exact h3.congr_of_eventuallyEq e1
 
-lemma S_psd (hh : 0 ≤ Hd.h) (hσ : ∀ k, 0 < σ k) (v : Fin 3) (k : Fin 3) :
+lemma S_psd (hh : 0 ≤ Hd.h) (v : Fin 3) (k : Fin 3) :
     (wGram (Hd.Bprev p σ v) (Hd.w p σ k)).PosSemidef ∧ (wGram (Hd.Bnext p σ v) (Hd.w p σ
       k)).PosSemidef :=
-  ⟨wGram_posSemidef _ fun i => gweight_nonneg _ hh (hσ k) _ i,
-    wGram_posSemidef _ fun i => gweight_nonneg _ hh (hσ k) _ i⟩
+  ⟨wGram_posSemidef _ fun i => gweight_nonneg _ hh _ _ i,
+    wGram_posSemidef _ fun i => gweight_nonneg _ hh _ _ i⟩
 
 theorem e_heat_next (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 < σ k) (v : Fin 3) :
     HasDerivAt (fun q => Hd.e (Function.update p (v + 1) q) σ η v) (tr32 η (Hd.S p σ v)
@@ -461,11 +462,11 @@ theorem e_heat_next (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
       v) (wGram (Hd.Bnext p σ v) (Hd.ddw p σ (v + 1)))) (p (v + 1)) ∧ HasDerivAt (fun τ => Hd.e p
       (Function.update σ (v + 1) τ) η v) (tr32 η (Hd.S p σ v) (wGram (Hd.Bnext p σ v) (fun i =>
       Hd.ddw p σ (v + 1) i / 2))) (σ (v + 1)) := by
-  obtain ⟨h1, h2, h3⟩ := gram_heat_identity _ (S_psd Hd p σ hh hσ v (v - 1)).1 (Hd.Bnext p σ v)
+  obtain ⟨h1, h2, h3⟩ := gram_heat_identity _ (S_psd Hd p σ hh v (v - 1)).1 (Hd.Bnext p σ v)
     Hd.u hh hη (hσ (v + 1)) (p (v + 1))
   have hS0 : Hd.S p σ v = wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) +
       wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h (σ (v + 1)) (p (v + 1))) := by
-    have := S_update_next Hd p σ hh hσ v (p (v + 1))
+    have := S_update_next Hd p σ hh v (p (v + 1))
     rwa [Function.update_eq_self] at this
   have hP : ∀ q, Hd.Pnext (Function.update p (v + 1) q) σ v =
       wGram (Hd.Bnext p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v + 1)) (Hd.u i - q))) := by
@@ -474,7 +475,7 @@ theorem e_heat_next (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
   · have e1 : (fun q => Hd.e (Function.update p (v + 1) q) σ η v) = fun q => energyReg η (wGram
       (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) +
           wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h (σ (v + 1)) q)) := by
-      funext q; rw [e_eq_S, S_update_next Hd p σ hh hσ]
+      funext q; rw [e_eq_S, S_update_next Hd p σ hh]
     rw [e1, tr32, hS0, Pnext, dw_def]
     exact h1
   · have e1 : (fun q => tr32 η (Hd.S (Function.update p (v + 1) q) σ v) (Hd.Pnext (Function.update p
@@ -482,14 +483,15 @@ theorem e_heat_next (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
             wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h (σ (v + 1)) q) + (η : ℂ) • 1) *
           wGram (Hd.Bnext p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v + 1)) (Hd.u i -
               q)))).trace).re := by
-      funext q; rw [tr32, S_update_next Hd p σ hh hσ, hP]
+      funext q; rw [tr32, S_update_next Hd p σ hh, hP]
     rw [e1, Ynext, tr32, hS0, Pnext, dw_def, ddw_def]
     exact h2
   · have e1 : (fun τ => Hd.e p (Function.update σ (v + 1) τ) η v) =ᶠ[𝓝 (σ (v + 1))]
         fun τ => energyReg η (wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) +
           wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h τ (p (v + 1)))) := by
-      filter_upwards [lt_mem_nhds (hσ (v + 1))] with τ hτ
-      rw [e_eq_S, S_update_next_σ Hd p σ hh hσ v hτ]
+      apply Eventually.of_forall
+      intro τ
+      simp only [e_eq_S, S_update_next_σ Hd p σ hh v]
     rw [tr32, hS0, ddw_def]
     exact h3.congr_of_eventuallyEq e1
 
@@ -500,11 +502,11 @@ theorem e_heat_prev (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
       v) (wGram (Hd.Bprev p σ v) (Hd.ddw p σ (v - 1)))) (p (v - 1)) ∧ HasDerivAt (fun τ => Hd.e p
       (Function.update σ (v - 1) τ) η v) (tr32 η (Hd.S p σ v) (wGram (Hd.Bprev p σ v) (fun i =>
       Hd.ddw p σ (v - 1) i / 2))) (σ (v - 1)) := by
-  obtain ⟨h1, h2, h3⟩ := gram_heat_identity _ (S_psd Hd p σ hh hσ v (v + 1)).2 (Hd.Bprev p σ v)
+  obtain ⟨h1, h2, h3⟩ := gram_heat_identity _ (S_psd Hd p σ hh v (v + 1)).2 (Hd.Bprev p σ v)
     Hd.u hh hη (hσ (v - 1)) (p (v - 1))
   have hS0 : Hd.S p σ v = wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) +
       wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h (σ (v - 1)) (p (v - 1))) := by
-    have := S_update_prev Hd p σ hh hσ v (p (v - 1))
+    have := S_update_prev Hd p σ hh v (p (v - 1))
     rwa [Function.update_eq_self] at this
   have hP : ∀ q, Hd.Pprev (Function.update p (v - 1) q) σ v =
       wGram (Hd.Bprev p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v - 1)) (Hd.u i - q))) := by
@@ -513,7 +515,7 @@ theorem e_heat_prev (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
   · have e1 : (fun q => Hd.e (Function.update p (v - 1) q) σ η v) = fun q => energyReg η (wGram
       (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) +
           wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h (σ (v - 1)) q)) := by
-      funext q; rw [e_eq_S, S_update_prev Hd p σ hh hσ]
+      funext q; rw [e_eq_S, S_update_prev Hd p σ hh]
     rw [e1, tr32, hS0, Pprev, dw_def]
     exact h1
   · have e1 : (fun q => tr32 η (Hd.S (Function.update p (v - 1) q) σ v) (Hd.Pprev (Function.update p
@@ -521,23 +523,24 @@ theorem e_heat_prev (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
             wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h (σ (v - 1)) q) + (η : ℂ) • 1) *
           wGram (Hd.Bprev p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v - 1)) (Hd.u i -
               q)))).trace).re := by
-      funext q; rw [tr32, S_update_prev Hd p σ hh hσ, hP]
+      funext q; rw [tr32, S_update_prev Hd p σ hh, hP]
     rw [e1, Yprev, tr32, hS0, Pprev, dw_def, ddw_def]
     exact h2
   · have e1 : (fun τ => Hd.e p (Function.update σ (v - 1) τ) η v) =ᶠ[𝓝 (σ (v - 1))]
         fun τ => energyReg η (wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) +
           wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h τ (p (v - 1)))) := by
-      filter_upwards [lt_mem_nhds (hσ (v - 1))] with τ hτ
-      rw [e_eq_S, S_update_prev_σ Hd p σ hh hσ v hτ]
+      apply Eventually.of_forall
+      intro τ
+      simp only [e_eq_S, S_update_prev_σ Hd p σ hh v]
     rw [tr32, hS0, ddw_def]
     exact h3.congr_of_eventuallyEq e1
 
-theorem e_mixed (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 < σ k) (v : Fin 3) :
+theorem e_mixed (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (v : Fin 3) :
     HasDerivAt (fun q => tr32 η (Hd.S (Function.update p (v + 1) q) σ v) (Hd.Pprev
       (Function.update p (v + 1) q) σ v)) (Hd.Z p σ η v) (p (v + 1)) := by
   set C := wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1))
   set B := Hd.Bnext p σ v
-  have hC := (S_psd Hd p σ hh hσ v (v - 1)).1
+  have hC := (S_psd Hd p σ hh v (v - 1)).1
   have hPd : ∀ i j, HasDerivAt (fun q => (C + wGram B (gweight Hd.u Hd.h (σ (v + 1)) q)) i j) (wGram
       B (Hd.dw p σ (v + 1)) i j) (p (v + 1)) := by
     intro i j
@@ -545,7 +548,7 @@ theorem e_mixed (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 < σ
         hasDerivAt_gweight_p Hd.u Hd.h (σ (v + 1)) (p (v + 1)) k) i j).const_add (C i j)
     simpa [dw_def] using this
   have hPpsd : ∀ q, (C + wGram B (gweight Hd.u Hd.h (σ (v + 1)) q)).PosSemidef := fun q =>
-    hC.add (wGram_posSemidef B fun i => gweight_nonneg _ hh (hσ _) q i)
+    hC.add (wGram_posSemidef B fun i => gweight_nonneg _ hh _ q i)
   have hPprev : ∀ q, Hd.Pprev (Function.update p (v + 1) q) σ v = Hd.Pprev p σ v := by
     intro q
     rw [Pprev, Pprev, Bprev_update Hd p σ (fin3_ne_succ v).symm, dw_def, dw_def,
@@ -553,13 +556,13 @@ theorem e_mixed (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 < σ
   have hH := hasDerivAt_energy_hessian (G := fun _ => Hd.Pprev p σ v) (G' := 0) hη hPpsd hPd (fun i
       j => hasDerivAt_const _ _) (wGram_isHermitian _ _)
   have hS0 : Hd.S p σ v = C + wGram B (gweight Hd.u Hd.h (σ (v + 1)) (p (v + 1))) := by
-    have := S_update_next Hd p σ hh hσ v (p (v + 1))
+    have := S_update_next Hd p σ hh v (p (v + 1))
     rwa [Function.update_eq_self] at this
   have e1 : (fun q => tr32 η (Hd.S (Function.update p (v + 1) q) σ v) (Hd.Pprev (Function.update p
       (v + 1) q) σ v)) = fun q => (3 / 2) * ((CFC.sqrt (C + wGram B (gweight Hd.u Hd.h (σ (v + 1))
       q) + (η : ℂ) • 1) *
           Hd.Pprev p σ v).trace).re := by
-    funext q; rw [tr32, S_update_next Hd p σ hh hσ, hPprev]
+    funext q; rw [tr32, S_update_next Hd p σ hh, hPprev]
   rw [e1]
   refine hH.congr_deriv ?_
   simp [Z, hS0, Pnext, B]
@@ -793,12 +796,6 @@ section VarianceDerivatives
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-omit [Fintype ι] [DecidableEq ι] in
-lemma gweight_nonneg' (u : ι → ℝ) {h : ℝ} (hh : 0 ≤ h) (σ p : ℝ) (i : ι) :
-    0 ≤ gweight u h σ p i := by
-  unfold gweight gaussian
-  positivity
-
 namespace HeatData
 
 lemma tr32_add (η : ℝ) {κ : Type*} [Fintype κ] [DecidableEq κ] (Γ K L : Matrix κ κ ℂ) :
@@ -827,7 +824,7 @@ lemma T_eq_DXD (hh : 0 ≤ Hd.h) (v : Fin 3) :
   have hw : Hd.sqw p σ v * Hd.sqw p σ v = Hd.w p σ v := by
     funext i
     simp only [sqw, Pi.mul_apply]
-    exact Real.mul_self_sqrt (gweight_nonneg' _ hh _ _ i)
+    exact Real.mul_self_sqrt (gweight_nonneg _ hh _ _ i)
   rw [T, R_eq, X, wGram, ← Dc_eq, ← hw, ← rdiag_mul_rdiag]
   have hD : (Hd.Dc p σ v)ᴴ = Hd.Dc p σ v := by
     rw [Dc_eq, rdiag_conjTranspose]
@@ -1336,7 +1333,7 @@ lemma weight_bounds [Finite ι] (hh : 0 ≤ Hd.h) {σa σb : ℝ} (ha : 0 < σa)
     calc Hd.h * |gaussianD 2 (σ k) (Hd.u i - p k)| ≤ Hd.h * (C2 * edec σb (p k) ^ 2) := by
           gcongr
       _ ≤ _ := by have := hE (p k); nlinarith [mul_nonneg hh this]
-  · have hw0 : 0 ≤ Hd.w p σ k i := gweight_nonneg' _ hh _ _ i
+  · have hw0 : 0 ≤ Hd.w p σ k i := gweight_nonneg _ hh _ _ i
     rw [sqw, ← Real.sqrt_sq (edec_pos σb (p k)).le, ← Real.sqrt_mul hC]
     exact Real.sqrt_le_sqrt ((le_abs_self _).trans hw)
 
@@ -1368,7 +1365,6 @@ lemma entry_bounds (hh : 0 ≤ Hd.h) {σa σb : ℝ} (ha : 0 < σa) (hab : σa �
   set K := (Fintype.card ι : ℝ) * (Hd.MA * sC) ^ 2 * Cw
   have hK : 0 ≤ K := by have := Hd.MA_nonneg; positivity
   refine ⟨2 * K, by positivity, fun p σ hσ v => ?_⟩
-  have hσpos : ∀ k, 0 < σ k := fun k => ha.trans_le (hσ k).1
   set E0 := edec σb (p v)
   set E1 := edec σb (p (v + 1))
   set E2 := edec σb (p (v - 1))
@@ -1428,11 +1424,11 @@ lemma entry_bounds (hh : 0 ≤ Hd.h) {σa σb : ℝ} (ha : 0 < σa) (hab : σa �
   have h1 : E1 ≤ E1 + E2 := by linarith
   have h2 : E2 ≤ E1 + E2 := by linarith
   refine ⟨fun a b => ⟨?_, ?_, ?_⟩, fun i j => ⟨?_, ?_, ?_, ?_, ?_⟩⟩
-  · rw [T_eq_wGram Hd p σ hh (hσpos v)]
+  · rw [T_eq_wGram Hd p σ hh]
     exact hrow _ (fun i => (hw p σ hσ v i).1) a b
   · exact hrow _ (fun i => (hw p σ hσ v i).2.1) a b
   · exact hrow _ (fun i => (hw p σ hσ v i).2.2.1) a b
-  · rw [S_eq_wGram Hd p σ hh (hσpos _) (hσpos _), Matrix.add_apply]
+  · rw [S_eq_wGram Hd p σ hh, Matrix.add_apply]
     refine (norm_add_le _ _).trans ?_
     have := hcol _ E1 hE1 h1 hBn _ (fun i => (hw p σ hσ (v + 1) i).1) i j
     have := hcol _ E2 hE2 h2 hBp _ (fun i => (hw p σ hσ (v - 1) i).1) i j
@@ -2257,7 +2253,7 @@ theorem vertex_identities (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α
   have hrow := fun p => Hd.e_heat_row p (sig α s) hh.le hη hσ v
   have hnext := fun p => Hd.e_heat_next p (sig α s) hh.le hη hσ v
   have hprev := fun p => Hd.e_heat_prev p (sig α s) hh.le hη hσ v
-  have hmix := fun p => Hd.e_mixed p (sig α s) hh.le hη hσ v
+  have hmix := fun p => Hd.e_mixed p (sig α s) hh.le hη v
   have hG := fun m i p => hasDerivAt_Gm_coord β m s i p
   have hb : ∀ (i : Fin 3) (D : (Fin 3 → ℝ) → ℝ), (∀ p, HasDerivAt (fun x => Hd.qE α η v s
       (Function.update p i x)) (D p) (p i)) →
@@ -2309,51 +2305,45 @@ lemma Z_le (p σ : Fin 3 → ℝ) {η : ℝ} (hη : 0 < η) (v : Fin 3) :
 
 lemma sqrt_two_le : √2 ≤ 10 / 7 := by rw [Real.sqrt_le_left (by norm_num)]; norm_num
 
+private lemma sum_neighbor_dissipation (V nextCost prevCost mixed α : Fin 3 → ℝ)
+    (hα : ∀ k, 1 ≤ α k) (hV : ∀ v, 0 ≤ V v) (hnext : ∀ v, 0 ≤ nextCost v)
+    (hprev : ∀ v, 0 ≤ prevCost v)
+    (hmixed : ∀ v, mixed v ≤ (nextCost v + prevCost v) / 2)
+    (hneighbor : ∀ v, prevCost (v + 1) + nextCost (v - 1) ≤ 10 / 7 * V v) :
+    ∑ v, (33 / 20 * mixed v - (α v * V v + α (v + 1) * nextCost v +
+        α (v - 1) * prevCost v) / 2) ≤ -(1 / 28) * ∑ v, V v := by
+  have sumPrev : ∑ v, prevCost (v + 1) = ∑ v, prevCost v :=
+    Equiv.sum_comp (Equiv.addRight 1) prevCost
+  have sumNext : ∑ v, nextCost (v - 1) = ∑ v, nextCost v :=
+    Equiv.sum_comp (Equiv.addRight 1).symm nextCost
+  have sumNeighbors : ∑ v, (nextCost v + prevCost v) ≤ 10 / 7 * ∑ v, V v := by
+    have comparison := Finset.sum_le_sum fun v (_ : v ∈ Finset.univ) => hneighbor v
+    rw [Finset.sum_add_distrib, sumPrev, sumNext, ← Finset.mul_sum] at comparison
+    rwa [Finset.sum_add_distrib, add_comm]
+  have termwise (v : Fin 3) :
+      33 / 20 * mixed v - (α v * V v + α (v + 1) * nextCost v + α (v - 1) * prevCost v) / 2 ≤
+        13 / 40 * (nextCost v + prevCost v) - 1 / 2 * V v := by
+    have ownBound := mul_le_mul_of_nonneg_right (hα v) (hV v)
+    have nextBound := mul_le_mul_of_nonneg_right (hα (v + 1)) (hnext v)
+    have prevBound := mul_le_mul_of_nonneg_right (hα (v - 1)) (hprev v)
+    linarith only [hmixed v, ownBound, nextBound, prevBound]
+  calc
+    _ ≤ ∑ v, (13 / 40 * (nextCost v + prevCost v) - 1 / 2 * V v) :=
+      Finset.sum_le_sum fun v _ => termwise v
+    _ ≤ _ := by
+      rw [Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
+      linarith only [sumNeighbors]
+
 theorem pointwise_dissipation (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) (p σ : Fin 3 → ℝ)
-    (hσ : ∀ k, 0 < σ k) {α : Fin 3 → ℝ} (hα : ∀ k, α k = 1 ∨ α k = 11 / 10)
-    (hsum : α 0 + α 1 + α 2 = 16 / 5) :
+    (hσ : ∀ k, 0 < σ k) {α : Fin 3 → ℝ} (hα : ∀ k, 1 ≤ α k) :
     ∑ v, (33 / 20 * Hd.Z p σ η v - (α v * Hd.V p σ η v + α (v + 1) * Hd.Ynext p σ η v + α (v -
       1) * Hd.Yprev p σ η v) / 2) ≤ -(1 / 28) * ∑ v, Hd.V p σ η v := by
-  have hN : ∀ w, Hd.Yprev p σ η (w + 1) + Hd.Ynext p σ η (w - 1) ≤ √2 * Hd.V p σ η w :=
-    fun w => Hd.neighbor_cost_comparison p σ hh (hσ w) hη
-  have hZ : ∀ v, Hd.Z p σ η v ≤ (Hd.Ynext p σ η v + Hd.Yprev p σ η v) / 2 :=
-    fun v => Hd.Z_le p σ hη v
-  have hV : ∀ v, 0 ≤ Hd.V p σ η v := fun v => ENNReal.toReal_nonneg
-  have hYn : ∀ v, 0 ≤ Hd.Ynext p σ η v := fun v => ENNReal.toReal_nonneg
-  have hYp : ∀ v, 0 ≤ Hd.Yprev p σ η v := fun v => ENNReal.toReal_nonneg
-  have hs2 : ∀ v, √2 * Hd.V p σ η v ≤ 10 / 7 * Hd.V p σ η v := fun v =>
-    mul_le_mul_of_nonneg_right sqrt_two_le (hV v)
-  have e01 : (0 : Fin 3) + 1 = 1 := rfl
-  have e02 : (0 : Fin 3) - 1 = 2 := rfl
-  have e11 : (1 : Fin 3) + 1 = 2 := rfl
-  have e12 : (1 : Fin 3) - 1 = 0 := rfl
-  have e21 : (2 : Fin 3) + 1 = 0 := rfl
-  have e22 : (2 : Fin 3) - 1 = 1 := rfl
-  have hN0 := hN 0
-  have hN1 := hN 1
-  have hN2 := hN 2
-  rw [e01, e02] at hN0
-  rw [e11, e12] at hN1
-  rw [e21, e22] at hN2
-  rw [Fin.sum_univ_three, Fin.sum_univ_three, e01, e02, e11, e12, e21, e22]
-  have hZ0 := hZ 0
-  have hZ1 := hZ 1
-  have hZ2 := hZ 2
-  have := hs2 0
-  have := hs2 1
-  have := hs2 2
-  have := hYn 0
-  have := hYn 1
-  have := hYn 2
-  have := hYp 0
-  have := hYp 1
-  have := hYp 2
-  have := hV 0
-  have := hV 1
-  have := hV 2
-  rcases hα 0 with h0 | h0 <;> rcases hα 1 with h1 | h1 <;> rcases hα 2 with h2 | h2 <;>
-    rw [h0, h1, h2] at hsum ⊢
-  all_goals first | (norm_num at hsum; done) | linarith
+  refine sum_neighbor_dissipation (Hd.V p σ η) (Hd.Ynext p σ η) (Hd.Yprev p σ η) (Hd.Z p σ η) α
+    hα (fun _ => ENNReal.toReal_nonneg) (fun _ => ENNReal.toReal_nonneg)
+    (fun _ => ENNReal.toReal_nonneg) (fun v => Hd.Z_le p σ hη v) ?_
+  intro v
+  exact (Hd.neighbor_cost_comparison p σ hh (hσ v) hη).trans
+    (mul_le_mul_of_nonneg_right sqrt_two_le ENNReal.toReal_nonneg)
 
 end HeatData
 
@@ -2489,7 +2479,7 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
       simp only [Gm, gaussianD_zero, gaussian]; positivity
     have hpt : ∀ p, Gm β 0 s p * H p ≤ -(1 / 28) * ∑ v, Gm β 0 s p * Hd.qV α η v s p := by
       intro p
-      have := Hd.pointwise_dissipation hh hη p (sig α s) hσ hα hsum
+      have := Hd.pointwise_dissipation hh hη p (sig α s) hσ hα1
       rw [← Finset.mul_sum]
       have h' := mul_le_mul_of_nonneg_left this (hG0nn p)
       simp only [hH]
@@ -2821,10 +2811,10 @@ theorem W_cube_le (hh : 0 ≤ Hd.h) (p σ : Fin 3 → ℝ) (v : Fin 3) {M : ℝ}
       (v + 1) j := by
   set w := Hd.w p σ v
   set w' := Hd.w p σ (v + 1)
-  have hw : ∀ i, 0 ≤ w i := fun i => gweight_nonneg' _ hh _ _ i
-  have hw' : ∀ j, 0 ≤ w' j := fun j => gweight_nonneg' _ hh _ _ j
+  have hw : ∀ i, 0 ≤ w i := fun i => gweight_nonneg _ hh _ _ i
+  have hw' : ∀ j, 0 ≤ w' j := fun j => gweight_nonneg _ hh _ _ j
   have hsq : ∀ k i, Hd.sqw p σ k i ^ 2 = Hd.w p σ k i := fun k i =>
-    Real.sq_sqrt (gweight_nonneg' _ hh _ _ i)
+    Real.sq_sqrt (gweight_nonneg _ hh _ _ i)
   have hW : hsSq (Hd.W p σ v) = ∑ z : ι × ι, (w z.1 * w' z.2) * ‖Hd.A v z.1 z.2‖ ^ 2 := by
     rw [hsSq, Fintype.sum_prod_type]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_

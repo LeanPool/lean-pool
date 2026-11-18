@@ -19,6 +19,10 @@ public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 # Matrix energy, Sylvester equations and cyclic trace estimates
 
 Derived from the corresponding part of the upstream triangular Hilbert form proof.
+
+The cyclic trace argument adapts `TwoCommuting/Auto/Sec3MatrixInequalities.lean`.
+Joris Roos’s `lean-twocommuting` revision `33b69ccacc013c703a151421658187ea4d2029fb`
+credits these Apache-2.0 Lean proofs to Claude.
 -/
 
 @[expose] public section
@@ -344,6 +348,32 @@ lemma ofReal_costTerm_le (k x : ℂ) {c : ℝ} (hc : 0 ≤ c) :
     rw [le_div_iff₀ hc]
     nlinarith [sq_nonneg (‖k‖ - c * ‖x‖), norm_nonneg k, norm_nonneg x]
 
+omit [Fintype m] [DecidableEq m] in
+/-- The positive square root of a unitary conjugate of a nonnegative diagonal matrix. -/
+lemma sqrt_eq_unitary_diagonal {P : Matrix n n ℂ} (U : Matrix.unitaryGroup n ℂ) (p : n → ℝ)
+    (hp : ∀ i, 0 ≤ p i)
+    (hPU : P = (U : Matrix n n ℂ) * diagonal (fun i => (p i : ℂ)) * star (U : Matrix n n ℂ)) :
+    CFC.sqrt P = (U : Matrix n n ℂ) * diagonal (fun i => (√(p i) : ℂ)) *
+      star (U : Matrix n n ℂ) := by
+  have hD : (diagonal (fun i => ((√(p i) : ℝ) : ℂ))).PosSemidef := by
+    rw [Matrix.posSemidef_diagonal_iff]; intro i; exact_mod_cast Real.sqrt_nonneg _
+  have hnn : 0 ≤ (U : Matrix n n ℂ) * diagonal (fun i => ((√(p i) : ℝ) : ℂ)) *
+      star (U : Matrix n n ℂ) := by
+    have := hD.mul_mul_conjTranspose_same (U : Matrix n n ℂ)
+    rw [← Matrix.star_eq_conjTranspose] at this
+    exact this.nonneg
+  refine CFC.sqrt_unique ?_ hnn
+  have hUU : star (U : Matrix n n ℂ) * U = 1 := Unitary.coe_star_mul_self U
+  calc (U : Matrix n n ℂ) * diagonal (fun i => ((√(p i) : ℝ) : ℂ)) * star (U : Matrix n n ℂ) * ((U
+      : Matrix n n ℂ) * diagonal (fun i => ((√(p i) : ℝ) : ℂ)) * star (U : Matrix n n ℂ))
+      = (U : Matrix n n ℂ) * (diagonal (fun i => ((√(p i) : ℝ) : ℂ)) * (star (U : Matrix n n ℂ) *
+          U) * diagonal (fun i => ((√(p i) : ℝ) : ℂ))) *
+            star (U : Matrix n n ℂ) := by simp only [Matrix.mul_assoc]
+    _ = P := by
+      rw [hUU, Matrix.mul_one, Matrix.diagonal_mul_diagonal, hPU]
+      congr 3; funext i
+      rw [← Complex.ofReal_mul, Real.mul_self_sqrt (hp i)]
+
 theorem matCost_eq_sum_of_conj {P : Matrix n n ℂ} (U : Matrix.unitaryGroup n ℂ) (p : n → ℝ)
     (hp : ∀ i, 0 ≤ p i)
     (hPU : P = (U : Matrix n n ℂ) * diagonal (fun i => ((p i : ℝ) : ℂ)) * star (U : Matrix n n
@@ -351,26 +381,7 @@ theorem matCost_eq_sum_of_conj {P : Matrix n n ℂ} (U : Matrix.unitaryGroup n �
     matCost P K = ∑ i, ∑ j, ENNReal.ofReal ((3 / 2) * ‖(star (U : Matrix n n ℂ) * K * (U :
       Matrix n n ℂ)) i j‖ ^ 2) / ENNReal.ofReal (√(p i) + √(p j)) := by
   classical
-  have hA : CFC.sqrt P = (U : Matrix n n ℂ) * diagonal (fun i => ((√(p i) : ℝ) : ℂ)) *
-      star (U : Matrix n n ℂ) := by
-    have hD : (diagonal (fun i => ((√(p i) : ℝ) : ℂ))).PosSemidef := by
-      rw [Matrix.posSemidef_diagonal_iff]; intro i; exact_mod_cast Real.sqrt_nonneg _
-    have hnn : 0 ≤ (U : Matrix n n ℂ) * diagonal (fun i => ((√(p i) : ℝ) : ℂ)) *
-        star (U : Matrix n n ℂ) := by
-      have := hD.mul_mul_conjTranspose_same (U : Matrix n n ℂ)
-      rw [← Matrix.star_eq_conjTranspose] at this
-      exact this.nonneg
-    refine CFC.sqrt_unique ?_ hnn
-    have hUU : star (U : Matrix n n ℂ) * U = 1 := Unitary.coe_star_mul_self U
-    calc (U : Matrix n n ℂ) * diagonal (fun i => ((√(p i) : ℝ) : ℂ)) * star (U : Matrix n n ℂ) * ((U
-        : Matrix n n ℂ) * diagonal (fun i => ((√(p i) : ℝ) : ℂ)) * star (U : Matrix n n ℂ))
-        = (U : Matrix n n ℂ) * (diagonal (fun i => ((√(p i) : ℝ) : ℂ)) * (star (U : Matrix n n ℂ) *
-            U) * diagonal (fun i => ((√(p i) : ℝ) : ℂ))) *
-              star (U : Matrix n n ℂ) := by simp only [Matrix.mul_assoc]
-      _ = P := by
-        rw [hUU, Matrix.mul_one, Matrix.diagonal_mul_diagonal, hPU]
-        congr 3; funext i
-        rw [← Complex.ofReal_mul, Real.mul_self_sqrt (hp i)]
+  have hA := sqrt_eq_unitary_diagonal U p hp hPU
   set c : n → n → ℝ := fun i j => √(p i) + √(p j)
   have hc : ∀ i j, 0 ≤ c i j := fun i j => by positivity
   set Kt := star (U : Matrix n n ℂ) * K * U
@@ -812,6 +823,12 @@ lemma add_smul_one_eq_conj {P : Matrix n n ℂ} (hP : P.IsHermitian) (c : ℝ) :
       ext i j; by_cases h : i = j <;> simp [h]]
   rw [Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one, hUU]
 
+lemma sqrt_add_smul_eq {P : Matrix n n ℂ} (hP : P.PosSemidef) {η : ℝ} (hη : 0 ≤ η) :
+    CFC.sqrt (P + (η : ℂ) • 1) = (hP.1.eigenvectorUnitary : Matrix n n ℂ) * diagonal (fun i =>
+      ((√(hP.1.eigenvalues i + η) : ℝ) : ℂ)) * star (hP.1.eigenvectorUnitary : Matrix n n ℂ) :=
+  sqrt_eq_unitary_diagonal _ _ (fun i => add_nonneg (hP.eigenvalues_nonneg i) hη)
+    (add_smul_one_eq_conj hP.1 η)
+
 lemma energyReg_eq_trace {P : Matrix n n ℂ} (hP : P.PosSemidef) {η : ℝ} (hη : 0 ≤ η) :
     energyReg η P = (((P + (η : ℂ) • 1) * CFC.sqrt (P + (η : ℂ) • 1)).trace).re - η ^ (3 / 2 :
       ℝ) * Fintype.card n := by
@@ -823,28 +840,7 @@ lemma energyReg_eq_trace {P : Matrix n n ℂ} (hP : P.PosSemidef) {η : ℝ} (h�
   have hPY : P + (η : ℂ) • 1 = (U : Matrix n n ℂ) *
       diagonal (fun i => ((p i + η : ℝ) : ℂ)) * star (U : Matrix n n ℂ) :=
     add_smul_one_eq_conj hP.1 η
-  have hB : (diagonal (fun i => ((√(p i + η) : ℝ) : ℂ))).PosSemidef := by
-    rw [Matrix.posSemidef_diagonal_iff]
-    intro i; exact_mod_cast Real.sqrt_nonneg _
-  have hsq : CFC.sqrt (P + (η : ℂ) • 1) = (U : Matrix n n ℂ) *
-      diagonal (fun i => ((√(p i + η) : ℝ) : ℂ)) * star (U : Matrix n n ℂ) := by
-    have hnn : 0 ≤ (U : Matrix n n ℂ) * diagonal (fun i => ((√(p i + η) : ℝ) : ℂ)) *
-        star (U : Matrix n n ℂ) := by
-      have := hB.mul_mul_conjTranspose_same (U : Matrix n n ℂ)
-      rw [← Matrix.star_eq_conjTranspose] at this
-      exact this.nonneg
-    refine CFC.sqrt_unique ?_ hnn
-    rw [hPY]
-    calc (U : Matrix n n ℂ) * diagonal (fun i => ((√(p i + η) : ℝ) : ℂ)) *
-          star (U : Matrix n n ℂ) * ((U : Matrix n n ℂ) *
-            diagonal (fun i => ((√(p i + η) : ℝ) : ℂ)) * star (U : Matrix n n ℂ))
-        = (U : Matrix n n ℂ) * (diagonal (fun i => ((√(p i + η) : ℝ) : ℂ)) * (star (U : Matrix n n
-            ℂ) * U) * diagonal (fun i => ((√(p i + η) : ℝ) : ℂ))) *
-              star (U : Matrix n n ℂ) := by simp only [Matrix.mul_assoc]
-      _ = _ := by
-        rw [hU'U, Matrix.mul_one, Matrix.diagonal_mul_diagonal]
-        congr 3; funext i
-        rw [← Complex.ofReal_mul, Real.mul_self_sqrt (by linarith [hp i])]
+  have hsq := sqrt_add_smul_eq hP hη
   rw [energyReg, trF_eq_sum _ hP.1, hsq, hPY]
   have : (U : Matrix n n ℂ) * diagonal (fun i => ((p i + η : ℝ) : ℂ)) * star (U : Matrix n n ℂ) *
       ((U : Matrix n n ℂ) * diagonal (fun i => ((√(p i + η) : ℝ) : ℂ)) *

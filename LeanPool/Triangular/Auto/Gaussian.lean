@@ -13,6 +13,10 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 # Gaussian derivatives and lattice sampling
 
 Derived from the corresponding part of the upstream triangular Hilbert form proof.
+
+The lattice-sampling argument adapts `TwoCommuting/Auto/Sec2ElementaryPreparation.lean`.
+Joris Roos’s `lean-twocommuting` revision `33b69ccacc013c703a151421658187ea4d2029fb`
+credits these Apache-2.0 Lean proofs to Claude.
 -/
 
 @[expose] public section

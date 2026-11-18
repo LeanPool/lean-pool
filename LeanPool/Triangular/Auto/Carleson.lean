@@ -282,13 +282,15 @@ def carlesonH (a ν : ℝ → ℝ) (g : ℝ → ℂ) (σ ε : ℝ) (p : ℝ × �
     (a p.1 : ℂ) ^ 2 * g (p.1 - p.2) * exp ((σ * ν p.1 * p.2 : ℝ) * I) / (p.2 : ℂ)
   else 0
 
+/-- The triangular truncation integrand evaluated on the specialized inputs. -/
+def carlesonTrunc (a ν : ℝ → ℝ) (g : ℝ → ℂ) (σ ε : ℝ) : (ℝ × ℝ) × ℝ → ℂ :=
+  Triangular.truncatedIntegrand (carlesonF₀ a ν σ) (carlesonF₁ g) (carlesonF₂ a ν σ) ε
+
 lemma carleson_integrand_coord (a ν : ℝ → ℝ) (g : ℝ → ℂ) (σ ε : ℝ) (q : (ℝ × ℝ) × ℝ) :
-    (let r := carlesonCoord q
-     if ε < |r.1.1 + r.1.2 + r.2| then
-       carlesonF₀ a ν σ r.1 * carlesonF₁ g (r.1.2, r.2) * carlesonF₂ a ν σ (r.2, r.1.1) /
-         ((r.1.1 + r.1.2 + r.2 : ℝ) : ℂ) else 0) =
+    carlesonTrunc a ν g σ ε (carlesonCoord q) =
       carlesonH a ν g σ ε q.1 * (carlesonW q.1.2 q.2 : ℂ) := by
   obtain ⟨⟨x, t⟩, u⟩ := q
+  rw [carlesonTrunc, Triangular.truncatedIntegrand_apply]
   change (if ε < |x + (u - x / 2) + (t - u - x / 2)| then
       carlesonF₀ a ν σ (x, u - x / 2) * carlesonF₁ g (u - x / 2, t - u - x / 2) *
         carlesonF₂ a ν σ (t - u - x / 2, x) / ((x + (u - x / 2) + (t - u - x / 2) : ℝ) : ℂ)
@@ -310,12 +312,6 @@ lemma carleson_integrand_coord (a ν : ℝ → ℝ) (g : ℝ → ℂ) (σ ε : �
     push_cast
     ring
   · simp
-
-/-- The triangular truncation integrand evaluated on the specialized inputs. -/
-def carlesonTrunc (a ν : ℝ → ℝ) (g : ℝ → ℂ) (σ ε : ℝ) (q : (ℝ × ℝ) × ℝ) : ℂ :=
-  if ε < |q.1.1 + q.1.2 + q.2| then
-    carlesonF₀ a ν σ q.1 * carlesonF₁ g (q.1.2, q.2) * carlesonF₂ a ν σ (q.2, q.1.1) /
-      ((q.1.1 + q.1.2 + q.2 : ℝ) : ℂ) else 0
 
 /-- Integrating out `u` turns the truncation into a modulated kernel in `(x, t)`. -/
 lemma carleson_trunc_eq (a ν : ℝ → ℝ) (g : ℝ → ℂ) (σ ε : ℝ)
@@ -802,9 +798,19 @@ open Real
 def fourierCoeffOne (f : ℝ → ℂ) (n : ℤ) : ℂ :=
   ∫ t in (0 : ℝ)..1, f t * Complex.exp (-(2 * π * Complex.I * n * t))
 
-/-- The symmetric partial Fourier sum `∑_{|n| ≤ N} f̂(n) e^{2πinx}`. -/
-def fourierPartialSum (f : ℝ → ℂ) (N : ℕ) (x : ℝ) : ℂ :=
-  ∑ n ∈ Finset.Icc (-(N : ℤ)) N, fourierCoeffOne f n * Complex.exp (2 * π * Complex.I * n * x)
+lemma fourierPartialSum_eq_exponential (f : ℝ → ℂ) (N : ℕ) (x : ℝ) :
+    fourierPartialSum f N x =
+      ∑ n ∈ Finset.Icc (-(N : ℤ)) N,
+        fourierCoeffOne f n * Complex.exp (2 * π * Complex.I * n * x) := by
+  unfold fourierPartialSum fourierCoeffOne
+  refine Finset.sum_congr rfl fun n _ => ?_
+  rw [fourierCoeffOn_eq_integral, fourier_coe_apply]
+  simp only [fourier_coe_apply, sub_zero, Complex.ofReal_one, div_one, one_smul, smul_eq_mul,
+    Int.cast_neg]
+  congr 1
+  refine intervalIntegral.integral_congr fun t _ => ?_
+  rw [mul_comm]
+  ring_nf
 
 /-- The Dirichlet kernel. -/
 def dirichletKernel (N : ℕ) (s : ℝ) : ℂ :=
@@ -826,7 +832,7 @@ lemma fourierPartialSum_eq_integral {f : ℝ → ℂ} (hf : Continuous f) (hp : 
     (N : ℕ) (x : ℝ) :
     fourierPartialSum f N x = ∫ s in (-(1 / 2) : ℝ)..(1 / 2), f (x - s) * dirichletKernel N s := by
   have h₁ : fourierPartialSum f N x = ∫ t in (0 : ℝ)..1, f t * dirichletKernel N (x - t) := by
-    unfold fourierPartialSum fourierCoeffOne dirichletKernel
+    simp only [fourierPartialSum_eq_exponential, fourierCoeffOne, dirichletKernel]
     simp_rw [← intervalIntegral.integral_mul_const, Finset.mul_sum]
     rw [intervalIntegral.integral_finsetSum fun n _ => by
       apply Continuous.intervalIntegrable
@@ -930,14 +936,14 @@ lemma fourierCoeffOne_exp (k n : ℤ) :
 lemma fourierPartialSum_exp {k : ℤ} {N : ℕ} (hk : k.natAbs ≤ N) (x : ℝ) :
     fourierPartialSum (fun x => Complex.exp (2 * π * Complex.I * k * x)) N x =
       Complex.exp (2 * π * Complex.I * k * x) := by
-  unfold fourierPartialSum
+  rw [fourierPartialSum_eq_exponential]
   simp_rw [fourierCoeffOne_exp, ite_mul, one_mul, zero_mul]
   rw [Finset.sum_ite_eq', ite_eq_left (by simp only [Finset.mem_Icc]; omega)]
 
 lemma fourierPartialSum_add {f g : ℝ → ℂ} (hf : Continuous f) (hg : Continuous g) (N : ℕ)
     (x : ℝ) : fourierPartialSum (fun t => f t + g t) N x =
       fourierPartialSum f N x + fourierPartialSum g N x := by
-  unfold fourierPartialSum fourierCoeffOne
+  simp only [fourierPartialSum_eq_exponential, fourierCoeffOne]
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [← add_mul, ← intervalIntegral.integral_add (by apply Continuous.intervalIntegrable; fun_prop)
@@ -946,19 +952,17 @@ lemma fourierPartialSum_add {f g : ℝ → ℂ} (hf : Continuous f) (hg : Contin
 
 lemma fourierPartialSum_smul (c : ℂ) (f : ℝ → ℂ) (N : ℕ) (x : ℝ) :
     fourierPartialSum (fun t => c * f t) N x = c * fourierPartialSum f N x := by
-  unfold fourierPartialSum fourierCoeffOne
+  simp only [fourierPartialSum_eq_exponential, fourierCoeffOne]
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun n _ => ?_
   simp_rw [mul_assoc, intervalIntegral.integral_const_mul]
   ring
 
-instance carleson_fact_one_pos : Fact ((0 : ℝ) < 1) := ⟨one_pos⟩
-
 /-- Continuous functions on the circle whose Fourier partial sums eventually reproduce them. -/
 def trigSubmodule : Submodule ℂ C(AddCircle (1 : ℝ), ℂ) where
   carrier := {F | ∃ K : ℕ, ∀ N ≥ K, ∀ x : ℝ,
     fourierPartialSum (fun t => F (t : AddCircle (1 : ℝ))) N x = F x}
-  zero_mem' := ⟨0, fun N _ x => by simp [fourierPartialSum, fourierCoeffOne]⟩
+  zero_mem' := ⟨0, fun N _ x => by simp [fourierPartialSum_eq_exponential, fourierCoeffOne]⟩
   add_mem' := by
     rintro F G ⟨K₁, h₁⟩ ⟨K₂, h₂⟩
     refine ⟨max K₁ K₂, fun N hN x => ?_⟩
@@ -1473,21 +1477,9 @@ section Statements
 
 /-! Carleson's theorem restated in terms of the definitions in `Triangular.Defs`. -/
 
-theorem fourierPartialSum_eq (f : ℝ → ℂ) (N : ℕ) (x : ℝ) :
-    Triangular.fourierPartialSum f N x = fourierPartialSum f N x := by
-  unfold Triangular.fourierPartialSum fourierPartialSum fourierCoeffOne
-  refine Finset.sum_congr rfl fun n _ => ?_
-  rw [fourierCoeffOn_eq_integral, fourier_coe_apply]
-  simp only [fourier_coe_apply, sub_zero, Complex.ofReal_one, div_one, one_smul, smul_eq_mul,
-    Int.cast_neg]
-  congr 1
-  refine intervalIntegral.integral_congr fun t _ => ?_
-  rw [mul_comm]
-  ring_nf
-
 theorem classical_carleson (f : ℝ → ℂ) (hf : Continuous f) (hper : Function.Periodic f 1) :
-    ∀ᵐ x, Tendsto (fun N ↦ Triangular.fourierPartialSum f N x) atTop (𝓝 (f x)) := by
-  simpa only [fourierPartialSum_eq] using carleson hf hper
+    ∀ᵐ x, Tendsto (fun N ↦ Triangular.fourierPartialSum f N x) atTop (𝓝 (f x)) :=
+  carleson hf hper
 
 end Statements
 
