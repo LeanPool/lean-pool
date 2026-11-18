@@ -3005,7 +3005,7 @@ private theorem deriv_upperGraphHeight_segment_of_lt (K : ConvexBody Point) (o :
     have hdiv := HasDerivAt.div_const hsub (e (b - o) 0 - e (a - o) 0)
     have hmul := HasDerivAt.mul_const hdiv (e (b - o) 1 - e (a - o) 1)
     convert hmul.const_add (e (a - o) 1) using 1
-    all_goals ring
+    ring
   have heq : upperGraphHeight K o e =ᶠ[nhds x] g := by
     filter_upwards [isOpen_Ioo.mem_nhds hx] with y hy
     exact upperGraphHeight_segment_of_lt K o e hK hab ⟨hy.1.le, hy.2.le⟩
@@ -9443,7 +9443,7 @@ theorem quadratic_directional_derivative {α : Type u} (c : I → α → α → 
     convert (((hsub.pow 2).mul_const (h x x)).add
       ((hid.mul hsub).mul_const (h x y + h y x))).add
       ((hid.pow 2).mul_const (h y y)) using 1
-    all_goals ring
+    ring
   have hfirst : ∀ x y, HasDerivWithinAt (segmentFunctional c f x y)
       (h x y + h y x - 2 * h x x) (Set.Icc 0 1) 0 := by
     intro x y
