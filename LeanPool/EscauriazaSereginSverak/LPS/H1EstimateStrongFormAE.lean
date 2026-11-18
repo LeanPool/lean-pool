@@ -221,7 +221,7 @@ theorem lps_abs_pairing_le {F g : Vec3 → Vec3} (hF : MemLp F 2 volume) (hg : M
     have h4 : (∫⁻ x : Vec3, ‖F x i * g x i‖ₑ) ≤ eLpNorm F 2 volume * eLpNorm g 2 volume := by
       refine le_trans (le_of_eq ?_) (h3.trans (mul_le_mul' h1 h2))
       refine lintegral_congr fun x => ?_
-      rw [enorm_mul]
+      rw [eNorm_mul]
     have h5 := ENNReal.toReal_mono hfin h4
     rw [ENNReal.toReal_mul] at h5
     have hI : ∫ x : Vec3, ‖F x i * g x i‖ = (∫⁻ x : Vec3, ‖F x i * g x i‖ₑ).toReal := by
@@ -229,7 +229,7 @@ theorem lps_abs_pairing_le {F g : Vec3 → Vec3} (hF : MemLp F 2 volume) (hg : M
         (hint i).aestronglyMeasurable.norm]
       congr 1
       refine lintegral_congr fun x => ?_
-      rw [Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs]
       simp
     have hI' : ∫ x : Vec3, |F x i * g x i| = ∫ x : Vec3, ‖F x i * g x i‖ := by
       simp [Real.norm_eq_abs]

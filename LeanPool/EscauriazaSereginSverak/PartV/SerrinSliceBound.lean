@@ -190,10 +190,10 @@ theorem serrin_slice_relative_bound : ∃ K : ℝ, 0 ≤ K ∧
           (∫⁻ x : Vec3, ENNReal.ofReal (‖u x‖ * ‖w x‖ * ‖Dw x‖)).toReal :=
         integral_eq_lintegral_of_nonneg_ae (Eventually.of_forall fun x => by positivity) hm
       _ = (eLpNorm (fun x => ‖u x‖ * ‖w x‖ * ‖Dw x‖) 1 volume).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm hm]
+        rw [eLpNorm_one_eq_lintegral_eNorm hm]
         congr 1
         refine lintegral_congr fun x => ?_
-        rw [Real.enorm_eq_ofReal (by positivity)]
+        rw [Real.eNorm_eq_ofReal (by positivity)]
       _ ≤ (eLpNorm u (ENNReal.ofReal 5) volume * eLpNorm w (ENNReal.ofReal (10 / 3)) volume *
           eLpNorm Dw 2 volume).toReal := ENNReal.toReal_mono hfin hchain
       _ = U * N * D := by simp only [U, N, D, ENNReal.toReal_mul]

@@ -77,13 +77,13 @@ private lemma lps_pairing_limit_of_L1_product_errors
       refine tendsto_lintegral_of_dominated_convergence'
         (bound := fun z : ParabolicPoint => 2 * ‖f z * g z‖ₑ)
         (hF_meas := fun n => (((hCutMeas n).sub aestronglyMeasurable_const).mul
-          hFGMeas).enorm)
+          hFGMeas).eNorm)
         ?_ ?_ ?_
       · intro n
         filter_upwards [] with z
-        rw [enorm_mul]
+        rw [eNorm_mul]
         gcongr
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         calc
           ENNReal.ofReal |serrinCutoff n (parabolicHomeomorph z).1 - 1| ≤ ENNReal.ofReal 2 := by
             apply ENNReal.ofReal_le_ofReal
@@ -102,7 +102,7 @@ private lemma lps_pairing_limit_of_L1_product_errors
         have hsub : Tendsto (fun n : ℕ => serrinCutoff n (parabolicHomeomorph z).1 - 1) atTop (𝓝
           0) := by
           simpa using hz.sub_const 1
-        have hmul := (hsub.mul_const (f z * g z)).enorm
+        have hmul := (hsub.mul_const (f z * g z)).eNorm
         simpa using hmul
     simpa [μ] using hDCT
   have hErrBound : ∀ᶠ n in atTop,
@@ -127,29 +127,29 @@ private lemma lps_pairing_limit_of_L1_product_errors
               (a n z * g z + f z * b n z + a n z * b n z) +
                 (serrinCutoff n (parabolicHomeomorph z).1 - 1) * (f z * g z) := by ring
       have hcut : ‖serrinCutoff n (parabolicHomeomorph z).1‖ₑ ≤ 1 := by
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         exact ENNReal.ofReal_le_one.mpr (serrinCutoff_abs_le_one n (parabolicHomeomorph z).1)
       rw [hid]
       calc
         _ ≤ ‖serrinCutoff n (parabolicHomeomorph z).1 *
               (a n z * g z + f z * b n z + a n z * b n z)‖ₑ +
-              ‖(serrinCutoff n (parabolicHomeomorph z).1 - 1) * (f z * g z)‖ₑ := enorm_add_le _ _
+              ‖(serrinCutoff n (parabolicHomeomorph z).1 - 1) * (f z * g z)‖ₑ := eNorm_add_le _ _
         _ ≤ ‖a n z * g z + f z * b n z + a n z * b n z‖ₑ +
               ‖(serrinCutoff n (parabolicHomeomorph z).1 - 1) * (f z * g z)‖ₑ := by
-          rw [enorm_mul]
+          rw [eNorm_mul]
           exact add_le_add (mul_le_of_le_one_left bot_le hcut) le_rfl
         _ ≤ _ := add_le_add
-          ((enorm_add_le _ _).trans (add_le_add (enorm_add_le _ _) le_rfl)) le_rfl
+          ((eNorm_add_le _ _).trans (add_le_add (eNorm_add_le _ _) le_rfl)) le_rfl
     have htermsMeas :
         AEMeasurable (fun z : ParabolicPoint => ‖a n z * g z‖ₑ) μ ∧
         AEMeasurable (fun z : ParabolicPoint => ‖f z * b n z‖ₑ) μ ∧
         AEMeasurable (fun z : ParabolicPoint => ‖a n z * b n z‖ₑ) μ ∧
         AEMeasurable (fun z : ParabolicPoint =>
           ‖(serrinCutoff n (parabolicHomeomorph z).1 - 1) * (f z * g z)‖ₑ) μ := by
-      exact ⟨((ha n).mul hg).enorm,
-        (hf.mul (hb n)).enorm,
-        ((ha n).mul (hb n)).enorm,
-        ((((hCutMeas n).sub aestronglyMeasurable_const).mul (hf.mul hg)).enorm)⟩
+      exact ⟨((ha n).mul hg).eNorm,
+        (hf.mul (hb n)).eNorm,
+        ((ha n).mul (hb n)).eNorm,
+        ((((hCutMeas n).sub aestronglyMeasurable_const).mul (hf.mul hg)).eNorm)⟩
     have hsumInt :
         (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T),
           ‖a n z * g z‖ₑ + ‖f z * b n z‖ₑ +

@@ -154,7 +154,7 @@ theorem essLocal_regularSlab_vorticityZero
       (measurable_const.add (measurable_snd.const_mul _))
   have hTqmp : QuasiMeasurePreserving T (volume : Measure ParabolicPoint)
       (volume : Measure ParabolicPoint) :=
-    ⟨hTmeas, by
+    ⟨hTmeas.aemeasurable, by
       change Measure.map (CKN.scalingParabolic r z₀) volume ≪ volume
       rw [CKN.map_scalingParabolic r hr]
       exact Measure.smul_absolutelyContinuous⟩
@@ -171,7 +171,7 @@ theorem essLocal_regularSlab_vorticityZero
       (measurable_const.add (measurable_snd.const_mul _))
   have hTinvqmp : QuasiMeasurePreserving Tinv (volume : Measure ParabolicPoint)
       (volume : Measure ParabolicPoint) :=
-    ⟨hTinvmeas, by
+    ⟨hTinvmeas.aemeasurable, by
       change Measure.map (CKN.scalingParabolic r⁻¹ z₁) volume ≪ volume
       rw [CKN.map_scalingParabolic r⁻¹ (inv_pos.mpr hr)]
       exact Measure.smul_absolutelyContinuous⟩

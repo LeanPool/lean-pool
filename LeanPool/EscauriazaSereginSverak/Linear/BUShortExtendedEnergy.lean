@@ -63,13 +63,13 @@ theorem bu_short_extended_energy_integrable_on
   have hVloc := hweak.1.mono_set hS
   have hDvloc := hweak.2.1.mono_set hS
   have hVmem : MemLp v 2 (volume.restrict S) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (μ := volume.restrict S)
       (by norm_num) (by norm_num)
       hVloc.aestronglyMeasurable).2
     simpa using hVfin
   have hDvmem : MemLp Dv 2 (volume.restrict S) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (μ := volume.restrict S)
       (by norm_num) (by norm_num)
       hDvloc.aestronglyMeasurable).2

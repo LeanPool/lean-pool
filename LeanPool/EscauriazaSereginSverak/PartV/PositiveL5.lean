@@ -141,7 +141,7 @@ theorem pvPositiveL5
         refine lt_of_le_of_lt hEfin (ENNReal.mul_lt_top ?_ hL3)
         rw [Real.volume_Ioo]
         exact ENNReal.ofReal_lt_top
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num)
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num)
     ENNReal.ofReal_ne_top hU,
     ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 5)]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hfin.ne

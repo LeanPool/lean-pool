@@ -75,7 +75,7 @@ theorem bu_short_closed_strip_scaled_tendsto_zero
       (∫ q in B ×ˢ Ioc (1 / 2 + ε) (1 / 2 + 2 * ε), f q
         ∂(volume : Measure (Vec3 × ℝ))) := by
     apply setIntegral_congr_set
-    exact (Measure.set_prod_ae_eq (ae_eq_refl B)
+    exact (Measure.set_prod_ae_eq Filter.EventuallyEqSet.rfl
       (Ioc_ae_eq_Icc (a := 1 / 2 + ε) (b := 1 / 2 + 2 * ε))).symm
   have hlim : Tendsto (fun ε : ℝ => C *
       ((∫ q in B ×ˢ Ioc (1 / 2 + ε) (1 / 2 + 2 * ε), f q

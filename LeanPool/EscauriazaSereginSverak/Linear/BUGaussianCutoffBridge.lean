@@ -77,7 +77,7 @@ private theorem buGaussian_memLp_restrict_of_local_l2
     (hfin : (∫⁻ z in K, ‖f z‖ₑ ^ (2 : ℝ)) < ⊤) :
     MemLp f 2 (volume.restrict K) := by
   have hloc := hf.mono_set hK
-  apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
     hloc.aestronglyMeasurable).2
   simpa using hfin

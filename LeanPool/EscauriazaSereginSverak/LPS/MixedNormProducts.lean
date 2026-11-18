@@ -34,7 +34,7 @@ theorem lps_mixed_eLpNorm_formula
     (hf : AEStronglyMeasurable f volume) :
     eLpNorm f (ENNReal.ofReal q) volume =
       (∫⁻ x, ‖f x‖ₑ ^ q ∂volume) ^ (1 / q) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ENNReal.ofReal_pos.mpr hq).ne' ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal hq.le]
 
@@ -58,7 +58,7 @@ theorem lps_mixed_slice_memLp_ae
     rw [← serrin_slab_measure_eq T]
     exact hf
   have hFpower : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ q) ν :=
-    hfProd.enorm.pow_const _
+    hfProd.eNorm.pow_const _
   have hFsliceIntegral : AEMeasurable
       (fun t : ℝ => ∫⁻ x : Vec3, ‖f (x,t)‖ₑ ^ q ∂volume) μt :=
     hFpower.lintegral_prod_left'
@@ -130,9 +130,9 @@ theorem lps_mixed_product_integrable
     rw [← serrin_slab_measure_eq T]
     exact hg
   have hFpower : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ px) ν :=
-    hfProd.enorm.pow_const _
+    hfProd.eNorm.pow_const _
   have hGpower : AEMeasurable (fun z : Vec3 × ℝ => ‖g z‖ₑ ^ qx) ν :=
-    hgProd.enorm.pow_const _
+    hgProd.eNorm.pow_const _
   have hFsliceIntegral : AEMeasurable
       (fun t : ℝ => ∫⁻ x : Vec3, ‖f (x,t)‖ₑ ^ px ∂volume) μt :=
     hFpower.lintegral_prod_left'
@@ -161,12 +161,12 @@ theorem lps_mixed_product_integrable
       _ = ∫⁻ x : Vec3, ‖f (x,t)‖ₑ * ‖g (x,t)‖ₑ ∂volume := by
         apply lintegral_congr
         intro x
-        rw [enorm_mul]
+        rw [eNorm_mul]
       _ ≤ (∫⁻ x : Vec3, ‖f (x,t)‖ₑ ^ px ∂volume) ^ (1 / px) *
           (∫⁻ x : Vec3, ‖g (x,t)‖ₑ ^ qx ∂volume) ^ (1 / qx) :=
         ENNReal.lintegral_mul_le_Lp_mul_Lq volume hSpace
-          (hft.aestronglyMeasurable.enorm)
-          (hgt.aestronglyMeasurable.enorm)
+          (hft.aestronglyMeasurable.eNorm)
+          (hgt.aestronglyMeasurable.eNorm)
       _ = NF t * NG t := by rw [← hfFormula, ← hgFormula]
   have hSpaceAE : ∀ᵐ t ∂μt,
       (∫⁻ x : Vec3, ‖f (x,t) * g (x,t)‖ₑ ∂volume) ≤ NF t * NG t := by
@@ -195,7 +195,7 @@ theorem lps_mixed_product_integrable
     rw [← serrin_slab_measure_eq T]
     exact hProdMeas
   have hProdEnorm : AEMeasurable (fun z : Vec3 × ℝ => ‖f z * g z‖ₑ) ν :=
-    hProdMeasProd.enorm
+    hProdMeasProd.eNorm
   have hTonelli :
       (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T),
         ‖f z * g z‖ₑ) =
@@ -224,7 +224,7 @@ theorem lps_mixed_product_integrable
     exact lt_of_le_of_lt hProductEstimate hProductBoundFinite
   have hMem : MemLp (fun z : ParabolicPoint => f z * g z) 1
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) := by
-    rw [memLp_iff, eLpNorm_one_eq_lintegral_enorm hProdMeas]
+    rw [memLp_iff, eLpNorm_one_eq_lintegral_eNorm hProdMeas]
     exact hProdFinite
   refine ⟨memLp_one_iff_integrable.mp hMem, ?_⟩
   simpa [NF, NG, μt] using hProductEstimate

@@ -71,7 +71,7 @@ theorem pv_pressure_memLp_threeHalves_slab {T : ℝ} {p : ParabolicPoint → ℝ
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) := by
   have hF : AEMeasurable (fun z => ‖p z‖ₑ ^ (3 / 2 : ℝ))
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.eNorm
   have hbound := pv_setLIntegral_slab_le hF
     (ae_le_essSup (μ := volume.restrict (Ioo 0 T))
       (f := fun t : ℝ => ∫⁻ x : Vec3, ‖p (x, t)‖ₑ ^ (3 / 2 : ℝ)))
@@ -80,7 +80,7 @@ theorem pv_pressure_memLp_threeHalves_slab {T : ℝ} {p : ParabolicPoint → ℝ
     refine lt_of_le_of_lt hbound (ENNReal.mul_lt_top ?_ hPMixed)
     rw [Real.volume_Ioo]
     exact ENNReal.ofReal_lt_top
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (by norm_num) (by norm_num) hp]
   rw [ENNReal.toReal_ofReal (by norm_num : 0 ≤ (3 / 2 : ℝ))]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hfin.ne

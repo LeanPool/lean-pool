@@ -722,7 +722,7 @@ private theorem vorticityHeatSmooth_innerGradientTransfer
       ∫ s in Ioo a b, ∫ x : Vec3, ∑ j : Fin 3, spatialPartial Z j (x, s) ^ 2 := by
     apply setIntegral_mono_set (hDcont.integrableOn_Icc.mono_set Ioo_subset_Icc_self)
     · exact Eventually.of_forall fun s => integral_nonneg fun x => by positivity
-    · exact (Ioo_subset_Ioo_left (by linarith only [hκ])).eventuallyLE
+    · exact (Ioo_subset_Ioo_left (by linarith only [hκ])).eventuallySubset
   rw [hLbox.1]
   exact hstep1.trans (hstep2.trans hTotal)
 

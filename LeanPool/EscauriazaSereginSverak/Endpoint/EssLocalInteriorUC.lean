@@ -137,7 +137,7 @@ theorem essLocal_uniqueContinuation_past
       funext z
       change ‖ω (e z)‖ₑ ^ (2 : ℝ) + ‖Dω (e z)‖ₑ ^ (2 : ℝ) +
           ‖D2ω (e z)‖ₑ ^ (2 : ℝ) + ‖-Dtω (e z)‖ₑ ^ (2 : ℝ) = F (e z)
-      rw [enorm_neg]
+      rw [eNorm_neg]
     rw [hEq, hmp.setLIntegral_comp_emb hemb F]
     refine lt_of_le_of_lt (lintegral_mono_set ?_) hL2
     rintro y ⟨z, hz, rfl⟩

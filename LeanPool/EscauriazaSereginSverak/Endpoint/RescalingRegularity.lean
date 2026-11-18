@@ -151,7 +151,7 @@ private theorem quasiMeasurePreserving_rescaleHomeomorph
     QuasiMeasurePreserving (rescaleHomeomorph x₀ t₀ r hr)
       (volume.restrict ((rescaleHomeomorph x₀ t₀ r hr) ⁻¹' N))
       (volume.restrict N) := by
-  refine ⟨(rescaleHomeomorph x₀ t₀ r hr).measurable, ?_⟩
+  refine ⟨(rescaleHomeomorph x₀ t₀ r hr).measurable.aemeasurable, ?_⟩
   have hmap := Measure.restrict_map
     (μ := (volume : Measure ParabolicPoint))
     (rescaleHomeomorph x₀ t₀ r hr).measurable hN
@@ -165,7 +165,7 @@ private theorem quasiMeasurePreserving_rescaleHomeomorph_symm
     QuasiMeasurePreserving (rescaleHomeomorph x₀ t₀ r hr).symm
       (volume.restrict ((rescaleHomeomorph x₀ t₀ r hr).symm ⁻¹' N))
       (volume.restrict N) := by
-  refine ⟨(rescaleHomeomorph x₀ t₀ r hr).symm.measurable, ?_⟩
+  refine ⟨(rescaleHomeomorph x₀ t₀ r hr).symm.measurable.aemeasurable, ?_⟩
   have hmap := Measure.restrict_map
     (μ := (volume : Measure ParabolicPoint))
     (rescaleHomeomorph x₀ t₀ r hr).symm.measurable hN

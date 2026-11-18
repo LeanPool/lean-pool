@@ -59,7 +59,7 @@ theorem bu_memLp_quadratic_energy_integrable
     rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _)]
     exact hbound z
   have hDwlin : (∫⁻ z in S, ‖Dw z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-    have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hDw.aestronglyMeasurable).1 hDw
     simpa using h

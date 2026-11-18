@@ -125,7 +125,7 @@ theorem lps_endpoint_norm_slice_facts {a b : ℝ} {u : ParabolicPoint → Vec3}
     rw [eLpNorm_exponent_top hmeas]
     refine essSup_congr_ae (Eventually.of_forall fun x => ?_)
     change ‖vec3EuclideanNorm (u (x,τ))‖ₑ = _
-    rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
+    rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
   have hNmeas : AEMeasurable N μt := by
     refine (lps_essSup_norm_slice_aemeasurable hu).congr ?_
     filter_upwards [hNeq] with τ hτ using hτ.symm
@@ -159,7 +159,7 @@ theorem lps_endpoint_norm_slice_facts {a b : ℝ} {u : ParabolicPoint → Vec3}
     change (∫⁻ τ, ‖(N τ).toReal ^ 2‖ₑ ∂μt) < ⊤
     refine lt_of_le_of_lt (lintegral_mono_ae ?_) hNsq
     filter_upwards [hNfin] with τ hτ
-    rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (by positivity)]
+    rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (by positivity)]
     rw [ENNReal.ofReal_pow ENNReal.toReal_nonneg, ENNReal.ofReal_toReal hτ]
     simp
 

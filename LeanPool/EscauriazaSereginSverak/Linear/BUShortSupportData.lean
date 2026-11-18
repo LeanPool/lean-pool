@@ -109,15 +109,15 @@ theorem bu_short_support_memLp_data
   have hDtmeas : AEStronglyMeasurable Dtv (volume.restrict K) :=
     (hweakv.2.2.2.1.mono_set hKsub).aestronglyMeasurable
   have hDLp : MemLp Dv 2 (volume.restrict K) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hDmeas).2
     simpa using hDlin
   have hD2Lp : MemLp D2v 2 (volume.restrict K) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hD2meas).2
     simpa using hD2lin
   have hDtLp : MemLp Dtv 2 (volume.restrict K) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hDtmeas).2
     simpa using hDtlin
   exact ⟨hvLp, hDLp, hD2Lp, hDtLp⟩

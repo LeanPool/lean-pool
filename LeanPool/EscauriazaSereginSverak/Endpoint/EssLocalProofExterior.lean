@@ -246,7 +246,7 @@ theorem essLocal_globalVelocity_memLp_three
         (3 : ℝ≥0∞) volume)
   have hpow : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ (3 : ℝ))
       (volume.prod μt) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfae.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfae.eNorm
   have hsliceEq : ∀ᵐ t ∂μt,
       eLpNorm (fun x : Vec3 => f (x, t)) (3 : ℝ≥0∞) volume ^ (3 : ℝ) =
         ∫⁻ x : Vec3, ‖f (x, t)‖ₑ ^ (3 : ℝ) ∂volume := by
@@ -270,7 +270,7 @@ theorem essLocal_globalVelocity_memLp_three
             simp [μt]
       _ < ⊤ := ENNReal.mul_lt_top
             (ENNReal.rpow_lt_top_of_nonneg (by norm_num) hAtop.ne) hJ
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (by norm_num) (by norm_num) hfae.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hmass.ne
@@ -451,7 +451,7 @@ theorem essLocal_globalCriticalEnergy_memLp
           ∂(volume.prod (volume.restrict J)) := by
       apply lintegral_congr
       intro z
-      rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+      rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
     rw [hmassEq]
     exact hpow
   have hqprod := essLocal_pressure_memLp_product q J hJmeas hq
@@ -467,7 +467,7 @@ theorem essLocal_globalCriticalEnergy_memLp
     exact hqprod
   have hpne : (3 / 2 : ℝ≥0∞) ≠ ⊤ := by
     exact ENNReal.div_ne_top (by norm_num) (by norm_num)
-  have hqmass := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have hqmass := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (p := (3 / 2 : ℝ≥0∞)) (by norm_num) hpne hqprod'.eLpNorm_lt_top
   have hqtop : (∫⁻ z : Vec3 × ℝ,
       ENNReal.ofReal |q (z.1, z.2)| ^ (3 / 2 : ℝ)
@@ -484,7 +484,7 @@ theorem essLocal_globalCriticalEnergy_memLp
       intro z
       rw [show q (parabolicHomeomorph.symm z) = q ((z.1, z.2) : ParabolicPoint) by
         cases z
-        rfl, Real.enorm_eq_ofReal_abs]
+        rfl, Real.eNorm_eq_ofReal_abs]
     rw [hmassEq] at hqmass
     exact hqmass
   have hUmeas : AEMeasurable
@@ -559,12 +559,12 @@ theorem essLocal_exteriorCriticalTail
       (volume.prod (volume.restrict J)) := by
     have hnorm : AEMeasurable
         (fun z : Vec3 × ℝ => ‖q ((z.1, z.2) : ParabolicPoint)‖ₑ)
-        (volume.prod (volume.restrict J)) := hqpair.enorm
+        (volume.prod (volume.restrict J)) := hqpair.eNorm
     convert ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hnorm
       using 1
     · funext z
       exact congrArg (fun y : ℝ≥0∞ => y ^ (3 / 2 : ℝ))
-        (Real.enorm_eq_ofReal_abs _).symm
+        (Real.eNorm_eq_ofReal_abs _).symm
   have hFmeas : AEMeasurable
       (fun z : Vec3 × ℝ =>
         ENNReal.ofReal (vec3EuclideanNorm (U (z.1, z.2))) ^ (3 : ℝ) +

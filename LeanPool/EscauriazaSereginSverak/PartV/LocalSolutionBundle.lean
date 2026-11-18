@@ -54,7 +54,7 @@ private theorem pvLocal_split_slice_bound
       have h1 := ENNReal.rpow_add_le_mul_rpow_add_rpow ‖heatOrbit a (x, s)‖ₑ ‖Z (x, s)‖ₑ
         (p := 2) (by norm_num)
       rw [show (2 : ℝ) - 1 = 1 by norm_num, ENNReal.rpow_one] at h1
-      exact (ENNReal.rpow_le_rpow (enorm_add_le _ _) (by norm_num)).trans h1
+      exact (ENNReal.rpow_le_rpow (eNorm_add_le _ _) (by norm_num)).trans h1
     calc
       ∫⁻ x : Vec3, ‖U (x, s)‖ₑ ^ (2 : ℝ) ≤
           ∫⁻ x : Vec3, 2 * (‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ) + ‖Z (x, s)‖ₑ ^ (2 : ℝ)) :=
@@ -62,7 +62,7 @@ private theorem pvLocal_split_slice_bound
       _ = 2 * ((∫⁻ x : Vec3, ‖heatOrbit a (x, s)‖ₑ ^ (2 : ℝ)) +
           ∫⁻ x : Vec3, ‖Z (x, s)‖ₑ ^ (2 : ℝ)) := by
         rw [lintegral_const_mul' _ _ (by norm_num),
-          lintegral_add_left' (hhc.aestronglyMeasurable.enorm.pow_const _)]
+          lintegral_add_left' (hhc.aestronglyMeasurable.eNorm.pow_const _)]
       _ ≤ 2 * (Kh + K) :=
         by
           gcongr
@@ -125,7 +125,7 @@ theorem pvLocal_canonical_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
       initial := ?_ }⟩
   · exact pvLocal_split_slice_bound ha.1 hK (hZslice.mono fun _ h => h.2) hUeq
   · -- finite energy
-    rw [lintegral_add_left' (hU2.aestronglyMeasurable.enorm.pow_const _)]
+    rw [lintegral_add_left' (hU2.aestronglyMeasurable.eNorm.pow_const _)]
     exact ENNReal.add_lt_top.2 ⟨(memLp_two_iff_lintegral_enorm_sq hU2.aestronglyMeasurable).1 hU2,
       (memLp_two_iff_lintegral_enorm_sq hDU2.aestronglyMeasurable).1 hDU2⟩
   · -- slicewise weak gradients
@@ -264,7 +264,7 @@ theorem pvLocal_canonical_bundle {a : Vec3 → Vec3} (ha : IsInJ a)
     intro t ht
     rcases eq_or_lt_of_le ht.1 with h0 | hpos
     · subst h0
-      rw [← Ioc_insert_left hσ.le, continuousWithinAt_insert_self, ContinuousWithinAt, hf0]
+      rw [← insert_left_Ioc hσ.le, continuousWithinAt_insert_self, ContinuousWithinAt, hf0]
       have hH : Tendsto (fun t => ∫ x : Vec3, ∑ i : Fin 3, heatOrbit a (x, t) i * ψ x i)
           (𝓝[Ioc 0 σ] 0) (𝓝 (∫ x : Vec3, ∑ i : Fin 3, a x i * ψ x i)) :=
         hHlim.mono_left (nhdsWithin_mono _ Ioc_subset_Ioi_self)

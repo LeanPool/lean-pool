@@ -41,8 +41,8 @@ private theorem pressureCylinder_lintegral_le_timeBound
   have hmeas : AEMeasurable
       (fun z : ParabolicPoint => ENNReal.ofReal |p z| ^ (3 / 2 : ℝ))
       (volume.restrict (parabolicCylinder x₀ t₀ ρ)) := by
-    simpa only [Real.enorm_eq_ofReal_abs, Function.comp_def] using
-      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.enorm)
+    simpa only [Real.eNorm_eq_ofReal_abs, Function.comp_def] using
+      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.eNorm)
   rw [CKN.Foundation.Parabolic.Integration.lintegral_parabolicCylinder hmeas]
   have hspatial : ∀ᵐ t ∂(volume.restrict J),
       (∫⁻ x in Ω, ENNReal.ofReal |p (x, t)| ^ (3 / 2 : ℝ)) ≤

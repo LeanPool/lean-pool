@@ -141,7 +141,7 @@ theorem pressureSplitVelocityExtension_slice_memLp_bound
       _ ≤ A := hmass
   have hformula : eLpNorm v 3 volume ^ (3 : ℝ) =
       ∫⁻ x : Vec3, ‖v x‖ₑ ^ (3 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) hvMeas,
       ← ENNReal.rpow_mul]
     norm_num

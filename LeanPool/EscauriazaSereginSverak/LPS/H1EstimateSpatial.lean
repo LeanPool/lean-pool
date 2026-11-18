@@ -689,7 +689,7 @@ theorem lps_h1_finite_time_moment_integrable
     continuous_vec3EuclideanNorm.comp_aestronglyMeasurable huProd
   let F : Vec3 × ℝ → ℝ≥0∞ := fun z =>
     ‖vec3EuclideanNorm (u z)‖ₑ ^ s
-  have hF : AEMeasurable F μ := hscalar.enorm.pow_const _
+  have hF : AEMeasurable F μ := hscalar.eNorm.pow_const _
   have hG : AEMeasurable (fun t : ℝ => ∫⁻ x : Vec3, F (x, t) ∂volume)
       (volume.restrict (Ioo t₀ t₁)) := hF.lintegral_prod_left'
   have hexp : 0 < (2 * s / (s - 3)) / s := by
@@ -702,7 +702,7 @@ theorem lps_h1_finite_time_moment_integrable
       (volume.restrict (Ioo t₀ t₁)) := hG.pow_const _
   have hFraw (z : Vec3 × ℝ) :
       ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ s = F z := by
-    rw [← Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+    rw [← Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
   have hEq :
       (∫⁻ t in Ioo t₀ t₁,
         (∫⁻ x : Vec3, F (x, t) ∂volume) ^ ((2 * s / (s - 3)) / s)) =
@@ -734,7 +734,7 @@ theorem lps_h1_finite_time_moment_integrable
   have hsreal : (ENNReal.ofReal s).toReal = s :=
     ENNReal.toReal_ofReal (le_of_lt (lt_trans (by norm_num) hs))
   symm
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hs0 hstop ht, hsreal]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hs0 hstop ht, hsreal]
   have hroot : 0 ≤ (∫⁻ x : Vec3,
       ‖vec3EuclideanNorm (u (x, t))‖ₑ ^ s ∂volume).toReal := ENNReal.toReal_nonneg
   calc

@@ -51,7 +51,7 @@ theorem lps_exists_slice_curve {a b : ℝ} (F : Vec3 × ℝ → ℝ) :
   have hFms : StronglyMeasurable Fm := hFm.stronglyMeasurable_mk
   let S : Set ℝ := {t | ∫⁻ x, ‖Fm (x, t)‖ₑ ^ (2 : ℝ) < ⊤}
   have hS : MeasurableSet S :=
-    measurableSet_lt (Measurable.lintegral_prod_left' (hFms.measurable.enorm.pow_const _))
+    measurableSet_lt (Measurable.lintegral_prod_left' (hFms.measurable.eNorm.pow_const _))
       measurable_const
   let Γ : Vec3 × ℝ → ℝ := (Prod.snd ⁻¹' S).indicator Fm
   have hΓ : StronglyMeasurable Γ := hFms.indicator (measurable_snd hS)
@@ -70,7 +70,7 @@ theorem lps_exists_slice_curve {a b : ℝ} (F : Vec3 × ℝ → ℝ) :
       have hm : AEStronglyMeasurable (fun x => Fm (x, t)) volume :=
         (hFms.comp_measurable measurable_prodMk_right).aestronglyMeasurable
       have ht2 : ∫⁻ x, ‖Fm (x, t)‖ₑ ^ (2 : ℝ) < ⊤ := ht
-      exact (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num)
+      exact (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num)
         hm).2 (by simpa using ht2)
     · rw [hΓout t ht]
       exact MemLp.zero
@@ -89,7 +89,7 @@ theorem lps_exists_slice_curve {a b : ℝ} (F : Vec3 × ℝ → ℝ) :
   have hmem : t ∈ S := by
     have hFmt : MemLp (fun x => Fm (x, t)) 2 volume := hFt.ae_eq ht'
     have h := hFmt.eLpNorm_lt_top
-    rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num)
+    rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num)
       hFmt.aestronglyMeasurable] at h
     change ∫⁻ x, ‖Fm (x, t)‖ₑ ^ (2 : ℝ) < ⊤
     simpa using h
@@ -116,7 +116,7 @@ private theorem lps_ae_eq_slab_of_slices {a b : ℝ} {F G : Vec3 × ℝ → ℝ}
     F =ᵐ[volume.restrict ((Set.univ : Set Vec3) ×ˢ Ioo a b)] G := by
   rw [lps_measure_slab_eq_prod] at hF hG ⊢
   have hm : AEMeasurable (fun z => ‖F z - G z‖ₑ)
-      ((volume : Measure Vec3).prod (volume.restrict (Ioo a b))) := (hF.sub hG).enorm
+      ((volume : Measure Vec3).prod (volume.restrict (Ioo a b))) := (hF.sub hG).eNorm
   have hint : ∫⁻ z, ‖F z - G z‖ₑ ∂((volume : Measure Vec3).prod (volume.restrict (Ioo a b)))
       = 0 := by
     rw [lintegral_prod_symm _ hm]

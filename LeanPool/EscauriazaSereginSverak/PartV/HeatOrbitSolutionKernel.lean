@@ -161,10 +161,10 @@ theorem lintegral_enorm_mul_sub_le {k f : Vec3 → ℝ} (hk : AEStronglyMeasurab
     rw [Real.holderConjugate_iff]
     norm_num
   have h := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume : Measure Vec3) hpq
-    (f := fun y => ‖k y‖ₑ) (g := fun y => ‖f (x - y)‖ₑ) hk.enorm hfx.enorm
+    (f := fun y => ‖k y‖ₑ) (g := fun y => ‖f (x - y)‖ₑ) hk.eNorm hfx.eNorm
   rw [← hfxNorm, eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hk,
     eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hfx,
-    eLpNorm'_eq_lintegral_enorm, eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm, eLpNorm'_eq_lintegral_eNorm]
   simpa using h
 
 /-- A convolution integral of two `L²` functions converges absolutely at every
@@ -178,11 +178,11 @@ theorem integrable_mul_sub_enorm_le {k f : Vec3 → ℝ} (hk : MemLp k 2 volume)
     hf.aestronglyMeasurable.comp_measurePreserving hmp
   have hl := lintegral_enorm_mul_sub_le hk.aestronglyMeasurable hf.aestronglyMeasurable x
   have hl' : ∫⁻ y : Vec3, ‖k y * f (x - y)‖ₑ ≤ eLpNorm k 2 volume * eLpNorm f 2 volume := by
-    simpa only [enorm_mul] using hl
+    simpa only [eNorm_mul] using hl
   have hfin : eLpNorm k 2 volume * eLpNorm f 2 volume < ∞ :=
     ENNReal.mul_lt_top hk.eLpNorm_lt_top hf.eLpNorm_lt_top
-  exact ⟨⟨hk.aestronglyMeasurable.mul hfx, hasFiniteIntegral_iff_enorm.2 (hl'.trans_lt hfin)⟩,
-    (enorm_integral_le_lintegral_enorm _).trans hl'⟩
+  exact ⟨⟨hk.aestronglyMeasurable.mul hfx, hasFiniteIntegral_iff_eNorm.2 (hl'.trans_lt hfin)⟩,
+    (eNorm_integral_le_lintegral_eNorm _).trans hl'⟩
 
 /-- The convolution integral is Lipschitz in the datum for the `L²` norm. -/
 theorem integral_mul_sub_sub_enorm_le {k f g : Vec3 → ℝ} (hk : MemLp k 2 volume)
@@ -237,7 +237,7 @@ theorem heatConv_heatConvGrad_bound {δ : ℝ} (hδ : 0 < δ) {f : Vec3 → ℝ}
   obtain ⟨hKB, hDB⟩ := hbound t ht
   have hconv (k : Vec3 → ℝ) (hk : MemLp k 2 volume) (hkB : eLpNorm k 2 volume ≤ B) :
       |∫ y : Vec3, k y * f (x - y)| ≤ (B * eLpNorm f 2 volume).toReal := by
-    rw [← Real.norm_eq_abs, ← toReal_enorm]
+    rw [← Real.norm_eq_abs, ← toReal_eNorm]
     apply ENNReal.toReal_mono hfin
     exact (integrable_mul_sub_enorm_le hk hf x).2.trans (by gcongr)
   refine ⟨?_, fun j => hconv _ (hD j) (hDB j)⟩

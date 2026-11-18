@@ -101,7 +101,7 @@ theorem lpsLeray_eLpNorm_conv_le {θ f : Vec3 → ℝ} (hθ : Continuous θ)
       _ = ‖c‖ₑ * eLpNorm (ρ ⋆[ContinuousLinearMap.lsmul ℝ ℝ] (fun y => ‖f y‖)) 2 volume :=
           eLpNorm_const_smul _ _ _ _
       _ ≤ ‖c‖ₑ * eLpNorm f 2 volume := by gcongr
-      _ = ENNReal.ofReal c * eLpNorm f 2 volume := by rw [Real.enorm_eq_ofReal hc0]
+      _ = ENNReal.ofReal c * eLpNorm f 2 volume := by rw [Real.eNorm_eq_ofReal hc0]
 
 /-- Convolution with a continuous compactly supported kernel preserves
 `L²(ℝ³)` (`prop:lps-smoothing`). -/

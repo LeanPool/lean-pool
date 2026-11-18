@@ -84,22 +84,22 @@ theorem ucGaussianCutoff_admissible
     exact ucGaussianCutoff_tsupport_subset_cylinder hρ hε (hsub hz)
   have hmem := ucGaussianCutoff_l2_data hρ hε hweak hL2
   have hAfin : (∫⁻ z in ucCylinder ρ, ‖Z z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-    have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweakZ.1.aestronglyMeasurable).1 hmem.1
     simpa [Z, ucCylinder] using h
   have hBfin : (∫⁻ z in ucCylinder ρ, ‖DZ z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-    have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweakZ.2.1.aestronglyMeasurable).1 hmem.2.1
     simpa [DZ, ucCylinder] using h
   have hCfin : (∫⁻ z in ucCylinder ρ, ‖D2Z z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-    have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweakZ.2.2.1.aestronglyMeasurable).1 hmem.2.2.1
     simpa [D2Z, ucCylinder] using h
   have hDfin : (∫⁻ z in ucCylinder ρ, ‖DtZ z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-    have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweakZ.2.2.2.1.aestronglyMeasurable).1 hmem.2.2.2
     simpa [DtZ, ucCylinder] using h
@@ -111,13 +111,13 @@ theorem ucGaussianCutoff_admissible
   let D : ParabolicPoint → ℝ≥0∞ := fun z => ‖DtZ z‖ₑ ^ (2 : ℝ)
   have hAm : AEMeasurable A μ :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hweakZ.1.aestronglyMeasurable.enorm
+      hweakZ.1.aestronglyMeasurable.eNorm
   have hBm : AEMeasurable B μ :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hweakZ.2.1.aestronglyMeasurable.enorm
+      hweakZ.2.1.aestronglyMeasurable.eNorm
   have hCm : AEMeasurable C μ :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hweakZ.2.2.1.aestronglyMeasurable.enorm
+      hweakZ.2.2.1.aestronglyMeasurable.eNorm
   change (∫⁻ z, (A + B + C) z + D z ∂μ) < ⊤
   rw [lintegral_add_left' ((hAm.add hBm).add hCm)]
   change (∫⁻ z, (A + B) z + C z ∂μ) + (∫⁻ z, D z ∂μ) < ⊤

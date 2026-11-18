@@ -86,7 +86,7 @@ private theorem serrin_memLp_two_of_lintegral_lt_top
     (hlt : (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) < ⊤) :
     MemLp f 2 μ := by
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hlt.ne
 
@@ -447,14 +447,14 @@ theorem serrin_difference_initial_trace_l2_ae
       exact norm_le_vec3EuclideanNorm (u (x, t) - a x)
     have hENorm : eLpNorm g 2 volume =
         (∫⁻ x : Vec3, ‖g x‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (by norm_num) (by norm_num) hg]
       norm_num
     have hIntegrand : (fun x : Vec3 => ‖g x‖ₑ ^ (2 : ℝ)) =ᵐ[volume]
         (fun x => ENNReal.ofReal (vec3EuclideanNorm (u (x, t) - a x)) ^ (2 : ℝ)) := by
       filter_upwards [] with x
       change ‖vec3EuclideanNorm (u (x, t) - a x)‖ₑ ^ (2 : ℝ) = _
-      rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+      rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
     calc
       _ ≤ eLpNorm g 2 volume := hNorm
       _ = (∫⁻ x : Vec3, ‖g x‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := hENorm

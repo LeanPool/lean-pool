@@ -232,10 +232,10 @@ theorem vorticityExterior_boxData {U : ParabolicPoint → Vec3}
         ring_nf
   have hG : ∀ i j, MemLp (fun z : Vec3 × ℝ => DU z i j) 2 (volume.restrict W0) := by
     intro i j
-    refine (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top two_ne_zero
+    refine (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top two_ne_zero
       ENNReal.ofNat_ne_top (hGm i j)).2 ?_
     have hle : ∀ z : Vec3 × ℝ, ‖DU z i j‖ₑ ≤ ‖DU z‖ₑ := fun z => by
-      rw [enorm_le_iff_norm_le]
+      rw [eNorm_le_iff_norm_le]
       exact (norm_le_pi_norm (DU z i) j).trans (norm_le_pi_norm _ i)
     refine lt_of_le_of_lt ?_ (lt_of_le_of_lt hlin ENNReal.ofReal_lt_top)
     simp only [ENNReal.toReal_ofNat]

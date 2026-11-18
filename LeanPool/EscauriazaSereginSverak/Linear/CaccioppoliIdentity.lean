@@ -60,17 +60,17 @@ private theorem tendsto_integral_mul_spaceTimeMollify
   have hweighted := tendsto_toLp_mul_left_of_nnnorm_bound hb hC hfn hf hconv
   let hm (n : ℕ) : MemLp (fun q => b q * fn n q) 2
       (volume : Measure (Vec3 × ℝ)) := by
-    apply (hfn n).of_nnnorm_le_mul (hb.mul (hfn n).aestronglyMeasurable)
+    apply (hfn n).of_nnNorm_le_mul (hb.mul (hfn n).aestronglyMeasurable)
     · filter_upwards [] with q
       calc
-        ‖b q * fn n q‖₊ = ‖b q‖₊ * ‖fn n q‖₊ := nnnorm_mul _ _
+        ‖b q * fn n q‖₊ = ‖b q‖₊ * ‖fn n q‖₊ := nnNorm_mul _ _
         _ ≤ C * ‖fn n q‖₊ :=
           mul_le_mul_of_nonneg_right (hC q) (by positivity)
   let hmLimit : MemLp (fun q => b q * f q) 2 (volume : Measure (Vec3 × ℝ)) := by
-    apply hf.of_nnnorm_le_mul (hb.mul hf.aestronglyMeasurable)
+    apply hf.of_nnNorm_le_mul (hb.mul hf.aestronglyMeasurable)
     · filter_upwards [] with q
       calc
-        ‖b q * f q‖₊ = ‖b q‖₊ * ‖f q‖₊ := nnnorm_mul _ _
+        ‖b q * f q‖₊ = ‖b q‖₊ * ‖f q‖₊ := nnNorm_mul _ _
         _ ≤ C * ‖f q‖₊ := mul_le_mul_of_nonneg_right (hC q) (by positivity)
   have hpair : Tendsto
       (fun n => inner ℝ ((hm n).toLp (fun q => b q * fn n q)) (hg.toLp g)) atTop
