@@ -22,7 +22,9 @@ MSC: 42B20, 42A20
 
 /-! ## Application to Fourier convergence
 
-As an application, `Triangular.classical_carleson` gives an alternative proof of
-almost-everywhere Fourier convergence for continuous one-periodic functions.
-`CarlesonLT.Auto.carleson_fourierSeries` in Lean Pool proves a stronger result.
+In `LeanPool.Triangular.Auto.Carleson`, `Triangular.Auto.carleson_of_triangular_bound`
+deduces almost-everywhere Fourier convergence for continuous one-periodic functions.
+The proof of `Triangular.Auto.triangularHilbert_main` supplies the estimate used in this
+application. `CarlesonLT.Auto.carleson_fourierSeries` proves convergence for periodic
+functions that are square-integrable on a period.
 -/

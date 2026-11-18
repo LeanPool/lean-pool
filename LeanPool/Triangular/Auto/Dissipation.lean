@@ -59,7 +59,7 @@ lemma Jbar_integrable (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin 3 → 
   rw [e]
   refine integrable_finsetSum _ fun v _ => ?_
   exact (Hd.weighted_integrable α η v hh hη hα1 hα2 (by norm_num : (0 : ℝ) < 1 / 10) hs le_rfl
-    (Hd.qE α η v) (by simp [dissipationFamily]) 0).1 s ⟨le_rfl, le_rfl⟩
+    (.base .energy) 0).1 s ⟨le_rfl, le_rfl⟩
 
 end HeatData
 
@@ -81,17 +81,15 @@ variable {n : Type*} [Fintype n] [DecidableEq n]
 lemma tendsto_sqrt_add_smul {P : Matrix n n ℂ} (hP : P.PosSemidef) {η : ℕ → ℝ}
     (hη0 : ∀ m, 0 ≤ η m) (hη : Tendsto η atTop (𝓝 0)) :
     Tendsto (fun m => CFC.sqrt (P + (η m : ℂ) • 1)) atTop (𝓝 (CFC.sqrt P)) := by
-  rw [sqrt_eq_conj_diagonal hP]
-  simp_rw [sqrt_add_smul_eq hP (hη0 _)]
-  refine ((tendsto_const_nhds.mul ?_).mul tendsto_const_nhds)
-  refine tendsto_pi_nhds.2 fun i => tendsto_pi_nhds.2 fun j => ?_
-  simp only [Matrix.diagonal_apply]
-  split_ifs with hij
-  · subst hij
-    refine Complex.continuous_ofReal.continuousAt.tendsto.comp ?_
-    have := ((tendsto_const_nhds (x := hP.1.eigenvalues i)).add hη).sqrt
-    simpa using this
-  · exact tendsto_const_nhds
+  have converges : Tendsto (fun m => P + (η m : ℂ) • 1) atTop (𝓝 P) := by
+    simpa only [Function.comp_apply, Complex.ofReal_zero, zero_smul, add_zero] using
+      (tendsto_const_nhds (x := P)).add
+        (((Complex.continuous_ofReal.tendsto 0).comp hη).smul_const (1 : Matrix n n ℂ))
+  have positive : ∀ m, 0 ≤ P + (η m : ℂ) • (1 : Matrix n n ℂ) := fun m =>
+    (hP.add (Matrix.PosSemidef.one.smul (by exact_mod_cast hη0 m))).nonneg
+  have within : Tendsto (fun m => P + (η m : ℂ) • 1) atTop (𝓝[Set.Ici 0] P) :=
+    tendsto_nhdsWithin_iff.mpr ⟨converges, Eventually.of_forall positive⟩
+  exact (CFC.continuousOn_sqrt P hP.nonneg).tendsto.comp within
 
 lemma matCost_le_liminf {P : Matrix n n ℂ} (hP : P.PosSemidef) (K : Matrix n n ℂ) {η : ℕ → ℝ}
     (hη0 : ∀ m, 0 ≤ η m) (hη : Tendsto η atTop (𝓝 0)) :
@@ -258,7 +256,7 @@ lemma costDensity_integrable (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin
   rw [e]
   refine integrable_finsetSum _ fun v _ => ?_
   exact (Hd.weighted_integrable α η v hh hη hα1 hα2 (by norm_num : (0 : ℝ) < 1 / 10) hta hab
-    (Hd.qV α η v) (by simp [dissipationFamily]) 0).2
+    (.base .centerCost) 0).2
 
 lemma costDensity_nonneg (α : Fin 3 → ℝ) (η : ℝ) (z : ℝ × (Fin 3 → ℝ)) :
     0 ≤ Hd.costDensity α η z := by
@@ -269,7 +267,7 @@ lemma ofReal_costDensity {η : ℝ} (hη : 0 < η) (α : Fin 3 → ℝ) (z : ℝ
     ENNReal.ofReal (Hd.costDensity α η z) = ENNReal.ofReal (Gm (1 / 10) 0 z.1 z.2) * ∑ v,
       matCost (Hd.T z.2 (sig α z.1) v + (η : ℂ) • 1) (Hd.Ui z.2 (sig α z.1) v) := by
   have hG : 0 ≤ Gm (1 / 10) 0 z.1 z.2 := by rw [Gm_eq]; exact gaussian_nonneg' _ _
-  simp only [costDensity, qV, V]
+  simp only [costDensity, qV, vertexValue, V]
   rw [ENNReal.ofReal_mul hG, ENNReal.ofReal_sum_of_nonneg
     (fun v _ => ENNReal.toReal_nonneg)]
   congr 1
@@ -290,7 +288,7 @@ lemma integral_Vbar_eq (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin 3 →
   · congr 1; funext p; rw [Finset.mul_sum]
   · intro v _
     exact (Hd.weighted_integrable α η v hh hη hα1 hα2 (by norm_num : (0 : ℝ) < 1 / 10) hta hab
-      (Hd.qV α η v) (by simp [dissipationFamily]) 0).1 s ⟨hs.1.le, hs.2⟩
+      (.base .centerCost) 0).1 s ⟨hs.1.le, hs.2⟩
 
 lemma ofReal_integral_Vbar (hh : 0 < Hd.h) {η : ℝ} (hη : 0 < η) {α : Fin 3 → ℝ}
     (hα1 : ∀ k, 1 ≤ α k) (hα2 : ∀ k, α k ≤ 2) {ta tb : ℝ} (hta : 0 < ta) (hab : ta ≤ tb) :
@@ -969,7 +967,7 @@ lemma measurable_rowCost (σ : Fin 3 → ℝ) (hσ : ∀ k, 0 < σ k) (v : Fin 3
   rw [e]
   refine Measurable.iSup fun m => ENNReal.measurable_ofReal.comp ?_
   exact ((Hd.continuous_scalars continuous_id continuous_const (fun _ => hσ)
-    (by positivity : (0 : ℝ) < 1 / ((m : ℝ) + 1)) v).2.2.2.2.2.2.2.1).measurable
+    (by positivity : (0 : ℝ) < 1 / ((m : ℝ) + 1)) v .centerCost)).measurable
 
 end HeatData
 

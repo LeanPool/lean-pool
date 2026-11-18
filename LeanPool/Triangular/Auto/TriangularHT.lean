@@ -968,15 +968,13 @@ theorem triangularHilbert_unique_extension :
     SchwartzMap.toLpCLM_apply, SchwartzMap.toLp, Lp.norm_toLp] using
     triangularHilbert_bound F₀ F₁ F₂
 
-/-- The scalar L³ estimate for the symmetric single-cutoff principal value. -/
-theorem triangularHilbert_main :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ, ∃ L : ℂ,
-      Tendsto (fun ε : ℝ => ∫ xyz : (ℝ × ℝ) × ℝ,
-        let ((x, y), z) := xyz
-        if ε < |x + y + z| then
-          F₀ (x, y) * F₁ (y, z) * F₂ (z, x) / ↑(x + y + z) else 0)
-        (𝓝[>] (0 : ℝ)) (𝓝 L) ∧
-      ‖L‖ ≤ C * (eLpNorm F₀ 3).toReal * (eLpNorm F₁ 3).toReal * (eLpNorm F₂ 3).toReal :=
+/-- The scalar estimate for the symmetric single-cutoff principal value on Schwartz triples. -/
+def HasTriangularHilbertBound : Prop :=
+  ∃ C : ℝ, 0 ≤ C ∧ ∀ F₀ F₁ F₂ : SchwartzMap (ℝ × ℝ) ℂ, ∃ L : ℂ,
+    Tendsto (triangularHilbertTruncation F₀ F₁ F₂) (𝓝[>] (0 : ℝ)) (𝓝 L) ∧
+      ‖L‖ ≤ C * (eLpNorm F₀ 3).toReal * (eLpNorm F₁ 3).toReal * (eLpNorm F₂ 3).toReal
+
+theorem triangularHilbert_main : HasTriangularHilbertBound :=
   ⟨triangularBoundConstant, triangularBoundConstant_nonneg, fun F₀ F₁ F₂ =>
     ⟨triangularHilbert F₀ F₁ F₂, triangularHilbert_principal_value F₀ F₁ F₂,
       triangularHilbert_bound F₀ F₁ F₂⟩⟩

@@ -5,9 +5,10 @@ summary: >-
   triangular Hilbert form on complex Schwartz inputs, and its unique bounded
   trilinear extension to L³. The proof develops matrix trace estimates, Gaussian
   scale kernels, heat-flow identities and the passage from finite lattice sums
-  to the Euclidean estimate. It also gives an alternative derivation of continuous
-  periodic Fourier convergence from the triangular estimate. Lean Pool's
-  CarlesonLT project proves a stronger convergence theorem.
+  to the Euclidean estimate. As an application it reduces continuous periodic
+  Fourier convergence to the triangular estimate through localized modulated
+  kernel estimates. Lean Pool's CarlesonLT project proves the convergence theorem
+  for periodic functions that are square-integrable on a period.
 branch: harmonic analysis
 entry_module: LeanPool.Triangular
 authors:
@@ -21,6 +22,7 @@ source:
   manuscript_url: https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/The-maximal-triangular-Hilbert-transform-at-the-symmetric-point-September-24-2026/paper.pdf
   manuscript_locator: Proposition 7.4 (scalar equivalence)
   matrix_and_heat_flow_source: https://github.com/roos-j/lean-twocommuting/tree/33b69ccacc013c703a151421658187ea4d2029fb/TwoCommuting/Auto
+  related_carleson_result: https://github.com/LeanPool/lean-pool/pull/666
   dense_extension_source: https://github.com/roos-j/lean-trilinearht/blob/12d795893f2fca76632579c0ad3a6a9b0a9e7c17/TrilinearHT/Auto/SecCompletion.lean
 license: Apache-2.0
 status: verified

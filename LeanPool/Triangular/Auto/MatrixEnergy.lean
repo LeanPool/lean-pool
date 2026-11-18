@@ -1519,6 +1519,14 @@ end CostProps
 
 section CyclicTraceCore
 
+private lemma filter_insert_min {κ : Type*} [LinearOrder κ] {a : κ} {t : Finset κ}
+    (ha : ∀ x ∈ t, a < x) : (insert a t).filter (a < ·) = t ∧
+      ∀ μ ∈ t, (insert a t).filter (μ < ·) = t.filter (μ < ·) := by
+  constructor
+  · rw [Finset.filter_insert, ite_eq_right (lt_irrefl a), Finset.filter_eq_self.mpr ha]
+  · intro μ hμ
+    rw [Finset.filter_insert, ite_eq_right (not_lt_of_gt (ha μ hμ))]
+
 lemma sum_triple_by_min {κ : Type*} [LinearOrder κ] {M : Type*} [AddCommMonoid M]
     (f : κ → κ → κ → M) (hf : ∀ i j k, f i j k = f j k i) (s : Finset κ) :
     ∑ i ∈ s, ∑ j ∈ s, ∑ k ∈ s, f i j k = ∑ μ ∈ s, (3 • ∑ j ∈ s.filter (μ < ·), ∑ k ∈ s.filter (μ
@@ -1528,21 +1536,7 @@ lemma sum_triple_by_min {κ : Type*} [LinearOrder κ] {M : Type*} [AddCommMonoid
   | empty => simp
   | insert a t ha ih =>
     have hat : a ∉ t := fun h => lt_irrefl a (ha a h)
-    have hfa : (insert a t).filter (a < ·) = t := by
-      ext x; simp only [Finset.mem_filter, Finset.mem_insert]
-      constructor
-      · rintro ⟨rfl | hx, h⟩
-        · exact absurd h (lt_irrefl _)
-        · exact hx
-      · intro hx; exact ⟨Or.inr hx, ha x hx⟩
-    have hfμ : ∀ μ ∈ t, (insert a t).filter (μ < ·) = t.filter (μ < ·) := by
-      intro μ hμ
-      ext x; simp only [Finset.mem_filter, Finset.mem_insert]
-      constructor
-      · rintro ⟨rfl | hx, h⟩
-        · exact absurd (ha μ hμ) (not_lt.2 h.le)
-        · exact ⟨hx, h⟩
-      · rintro ⟨hx, h⟩; exact ⟨Or.inr hx, h⟩
+    obtain ⟨hfa, hfμ⟩ := filter_insert_min ha
     have hR : ∑ μ ∈ insert a t, (3 • ∑ j ∈ (insert a t).filter (μ < ·),
         ∑ k ∈ (insert a t).filter (μ < ·), f μ j k +
         3 • ∑ k ∈ (insert a t).filter (μ < ·), f μ μ k + f μ μ μ) =
@@ -1577,21 +1571,7 @@ lemma sum_pair_by_min {κ : Type*} [LinearOrder κ] {M : Type*} [AddCommMonoid M
   | empty => simp
   | insert a t ha ih =>
     have hat : a ∉ t := fun h => lt_irrefl a (ha a h)
-    have hfa : (insert a t).filter (a < ·) = t := by
-      ext x; simp only [Finset.mem_filter, Finset.mem_insert]
-      constructor
-      · rintro ⟨rfl | hx, h⟩
-        · exact absurd h (lt_irrefl _)
-        · exact hx
-      · intro hx; exact ⟨Or.inr hx, ha x hx⟩
-    have hfμ : ∀ μ ∈ t, (insert a t).filter (μ < ·) = t.filter (μ < ·) := by
-      intro μ hμ
-      ext x; simp only [Finset.mem_filter, Finset.mem_insert]
-      constructor
-      · rintro ⟨rfl | hx, h⟩
-        · exact absurd (ha μ hμ) (not_lt.2 h.le)
-        · exact ⟨hx, h⟩
-      · rintro ⟨hx, h⟩; exact ⟨Or.inr hx, h⟩
+    obtain ⟨hfa, hfμ⟩ := filter_insert_min ha
     have hR : ∑ μ ∈ insert a t, (g μ μ + ∑ j ∈ (insert a t).filter (μ < ·), (g μ j + g j μ)) = (g a
         a + ∑ j ∈ t, (g a j + g j a)) +
         ∑ μ ∈ t, (g μ μ + ∑ j ∈ t.filter (μ < ·), (g μ j + g j μ)) := by

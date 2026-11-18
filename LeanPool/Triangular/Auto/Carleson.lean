@@ -392,12 +392,13 @@ lemma ae_snd_ne_zero : ∀ᵐ p : ℝ × ℝ, p.2 ≠ 0 := by
     (compl_mem_ae_iff.mpr (measure_singleton 0))
 
 /-- The triangular theorem bounds the smooth modulated sine form. -/
-theorem carleson_smooth_bound : ∃ C : ℝ, 0 ≤ C ∧ ∀ (a ν : ℝ → ℝ) (g : ℝ → ℂ) (A L : ℝ),
+theorem carleson_smooth_bound (bound : HasTriangularHilbertBound) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (a ν : ℝ → ℝ) (g : ℝ → ℂ) (A L : ℝ),
     ContDiff ℝ ∞ a → ContDiff ℝ ∞ ν → ContDiff ℝ ∞ g →
     (∀ x, A < |x| → a x = 0) → (∀ x, L < |x| → g x = 0) →
     ‖carlesonForm a ν g‖ ≤ C * (eLpNorm (carlesonF₀ a ν 1) 3 volume).toReal *
       (eLpNorm (carlesonF₁ g) 3 volume).toReal * (eLpNorm (carlesonF₂ a ν 1) 3 volume).toReal := by
-  obtain ⟨C, hC, hmain⟩ := triangularHilbert_main
+  obtain ⟨C, hC, hmain⟩ := bound
   refine ⟨C, hC, fun a ν g A L ha hν hg haA hgL => ?_⟩
   set e := C * (eLpNorm (carlesonF₀ a ν 1) 3 volume).toReal *
     (eLpNorm (carlesonF₁ g) 3 volume).toReal * (eLpNorm (carlesonF₂ a ν 1) 3 volume).toReal
@@ -627,11 +628,12 @@ lemma ae_sub_of_ae {P : ℝ → Prop} (h : ∀ᵐ x, P x) : ∀ᵐ p : ℝ × �
   exact QuasiMeasurePreserving.ae (quasiMeasurePreserving_sub_of_right_invariant volume volume) h
 
 /-- The triangular theorem bounds the modulated sine form for an indicator and rough data. -/
-theorem carleson_rough_bound (L : ℝ) : ∃ K : ℝ, 0 ≤ K ∧ ∀ (F : Set ℝ) (ν : ℝ → ℝ) (g : ℝ → ℂ)
+theorem carleson_rough_bound (bound : HasTriangularHilbertBound) (L : ℝ) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ (F : Set ℝ) (ν : ℝ → ℝ) (g : ℝ → ℂ)
     (R V B : ℝ), MeasurableSet F → F ⊆ Icc (-R) R → Measurable ν → (∀ x, |ν x| ≤ V) →
     Measurable g → (∀ x, ‖g x‖ ≤ B) → (∀ x, L < |x| → g x = 0) →
     ‖carlesonForm (F.indicator 1) ν g‖ ≤ K * B * (volume F).toReal ^ (2 / 3 : ℝ) := by
-  obtain ⟨C, hC, hsm⟩ := carleson_smooth_bound
+  obtain ⟨C, hC, hsm⟩ := carleson_smooth_bound bound
   set Vb := (volume (carlesonBox (L + 1))).toReal
   refine ⟨C * 4 ^ (1 / 3 : ℝ) * Vb ^ (1 / 3 : ℝ) * 18 ^ (1 / 3 : ℝ), by positivity, ?_⟩
   intro F ν g R V B hF hFR hν hνV hg hgB hgL
@@ -794,23 +796,22 @@ section Fourier
 
 open Real
 
-/-- The `n`-th Fourier coefficient of a 1-periodic function. -/
-def fourierCoeffOne (f : ℝ → ℂ) (n : ℤ) : ℂ :=
-  ∫ t in (0 : ℝ)..1, f t * Complex.exp (-(2 * π * Complex.I * n * t))
+lemma fourierCoeffOn_one_eq_integral (f : ℝ → ℂ) (n : ℤ) :
+    fourierCoeffOn zero_lt_one f n =
+      ∫ t in (0 : ℝ)..1, f t * Complex.exp (-(2 * π * Complex.I * n * t)) := by
+  rw [fourierCoeffOn_eq_integral]
+  simp only [fourier_coe_apply, sub_zero, Complex.ofReal_one, div_one, one_smul, smul_eq_mul,
+    Int.cast_neg]
+  refine intervalIntegral.integral_congr fun t _ => ?_
+  rw [mul_comm]
+  ring_nf
 
 lemma fourierPartialSum_eq_exponential (f : ℝ → ℂ) (N : ℕ) (x : ℝ) :
     fourierPartialSum f N x =
       ∑ n ∈ Finset.Icc (-(N : ℤ)) N,
-        fourierCoeffOne f n * Complex.exp (2 * π * Complex.I * n * x) := by
-  unfold fourierPartialSum fourierCoeffOne
-  refine Finset.sum_congr rfl fun n _ => ?_
-  rw [fourierCoeffOn_eq_integral, fourier_coe_apply]
-  simp only [fourier_coe_apply, sub_zero, Complex.ofReal_one, div_one, one_smul, smul_eq_mul,
-    Int.cast_neg]
-  congr 1
-  refine intervalIntegral.integral_congr fun t _ => ?_
-  rw [mul_comm]
-  ring_nf
+        fourierCoeffOn zero_lt_one f n * Complex.exp (2 * π * Complex.I * n * x) := by
+  unfold fourierPartialSum
+  simp only [fourier_coe_apply, Complex.ofReal_one, div_one]
 
 /-- The Dirichlet kernel. -/
 def dirichletKernel (N : ℕ) (s : ℝ) : ℂ :=
@@ -832,7 +833,7 @@ lemma fourierPartialSum_eq_integral {f : ℝ → ℂ} (hf : Continuous f) (hp : 
     (N : ℕ) (x : ℝ) :
     fourierPartialSum f N x = ∫ s in (-(1 / 2) : ℝ)..(1 / 2), f (x - s) * dirichletKernel N s := by
   have h₁ : fourierPartialSum f N x = ∫ t in (0 : ℝ)..1, f t * dirichletKernel N (x - t) := by
-    simp only [fourierPartialSum_eq_exponential, fourierCoeffOne, dirichletKernel]
+    simp only [fourierPartialSum_eq_exponential, fourierCoeffOn_one_eq_integral, dirichletKernel]
     simp_rw [← intervalIntegral.integral_mul_const, Finset.mul_sum]
     rw [intervalIntegral.integral_finsetSum fun n _ => by
       apply Continuous.intervalIntegrable
@@ -910,40 +911,33 @@ lemma dirichletKernel_mul_sin (N : ℕ) (s : ℝ) :
   rw [show ((2 * N + 1) * π * s : ℝ) = ((2 * N + 1 : ℕ) : ℝ) * (π * s) by push_cast; ring]
   linear_combination h₃
 
-lemma fourierCoeffOne_exp (k n : ℤ) :
-    fourierCoeffOne (fun x => Complex.exp (2 * π * Complex.I * k * x)) n =
+lemma fourierCoeffOn_one_exp (k n : ℤ) :
+    fourierCoeffOn zero_lt_one (fun x : ℝ => Complex.exp (2 * π * Complex.I * k * x)) n =
       if n = k then 1 else 0 := by
-  unfold fourierCoeffOne
-  have he : ∀ t : ℝ, Complex.exp (2 * π * Complex.I * k * t) *
-      Complex.exp (-(2 * π * Complex.I * n * t)) =
-      Complex.exp ((2 * π * Complex.I * (k - n)) * t) := fun t => by
-    rw [← Complex.exp_add]
-    congr 1
+  have agreement :
+      fourierCoeffOn zero_lt_one (fun x : ℝ => Complex.exp (2 * π * Complex.I * k * x)) n =
+        fourierCoeff (T := 1) (fourier k) n := by
+    rw [fourierCoeffOn_one_eq_integral, fourierCoeff_eq_intervalIntegral _ _ 0]
+    simp only [zero_add, div_one, one_smul, fourier_coe_apply, Complex.ofReal_one, smul_eq_mul,
+      Int.cast_neg]
+    refine intervalIntegral.integral_congr fun t _ => ?_
+    rw [mul_comm]
+    congr 2
     ring
-  simp_rw [he]
-  split_ifs with h
-  · subst h
-    simp
-  · have hkn : (k : ℂ) - n ≠ 0 := by exact_mod_cast sub_ne_zero.mpr (Ne.symm h)
-    rw [integral_exp_mul_complex (by simp [Real.pi_ne_zero, Complex.I_ne_zero, hkn])]
-    have h1 : Complex.exp (2 * π * Complex.I * (k - n) * ((1 : ℝ) : ℂ)) = 1 := by
-      rw [show 2 * π * Complex.I * ((k : ℂ) - n) * ((1 : ℝ) : ℂ) =
-        ((k - n : ℤ) : ℂ) * (2 * π * Complex.I) by push_cast; ring]
-      exact Complex.exp_int_mul_two_pi_mul_I _
-    rw [h1]
-    simp
+  rw [agreement, fourierCoeff_fourier]
+  simp [Pi.single_apply]
 
 lemma fourierPartialSum_exp {k : ℤ} {N : ℕ} (hk : k.natAbs ≤ N) (x : ℝ) :
     fourierPartialSum (fun x => Complex.exp (2 * π * Complex.I * k * x)) N x =
       Complex.exp (2 * π * Complex.I * k * x) := by
   rw [fourierPartialSum_eq_exponential]
-  simp_rw [fourierCoeffOne_exp, ite_mul, one_mul, zero_mul]
+  simp_rw [fourierCoeffOn_one_exp, ite_mul, one_mul, zero_mul]
   rw [Finset.sum_ite_eq', ite_eq_left (by simp only [Finset.mem_Icc]; omega)]
 
 lemma fourierPartialSum_add {f g : ℝ → ℂ} (hf : Continuous f) (hg : Continuous g) (N : ℕ)
     (x : ℝ) : fourierPartialSum (fun t => f t + g t) N x =
       fourierPartialSum f N x + fourierPartialSum g N x := by
-  simp only [fourierPartialSum_eq_exponential, fourierCoeffOne]
+  simp only [fourierPartialSum_eq_exponential, fourierCoeffOn_one_eq_integral]
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun n _ => ?_
   rw [← add_mul, ← intervalIntegral.integral_add (by apply Continuous.intervalIntegrable; fun_prop)
@@ -952,7 +946,7 @@ lemma fourierPartialSum_add {f g : ℝ → ℂ} (hf : Continuous f) (hg : Contin
 
 lemma fourierPartialSum_smul (c : ℂ) (f : ℝ → ℂ) (N : ℕ) (x : ℝ) :
     fourierPartialSum (fun t => c * f t) N x = c * fourierPartialSum f N x := by
-  simp only [fourierPartialSum_eq_exponential, fourierCoeffOne]
+  simp only [fourierPartialSum_eq_exponential, fourierCoeffOn_one_eq_integral]
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun n _ => ?_
   simp_rw [mul_assoc, intervalIntegral.integral_const_mul]
@@ -962,7 +956,8 @@ lemma fourierPartialSum_smul (c : ℂ) (f : ℝ → ℂ) (N : ℕ) (x : ℝ) :
 def trigSubmodule : Submodule ℂ C(AddCircle (1 : ℝ), ℂ) where
   carrier := {F | ∃ K : ℕ, ∀ N ≥ K, ∀ x : ℝ,
     fourierPartialSum (fun t => F (t : AddCircle (1 : ℝ))) N x = F x}
-  zero_mem' := ⟨0, fun N _ x => by simp [fourierPartialSum_eq_exponential, fourierCoeffOne]⟩
+  zero_mem' := ⟨0, fun N _ x => by
+    simp [fourierPartialSum_eq_exponential, fourierCoeffOn_one_eq_integral]⟩
   add_mem' := by
     rintro F G ⟨K₁, h₁⟩ ⟨K₂, h₂⟩
     refine ⟨max K₁ K₂, fun N hN x => ?_⟩
@@ -1303,11 +1298,12 @@ lemma lt_norm_carlesonLin {h : ℝ → ℂ} {M : ℕ → ℝ} {lam : ℝ} (n : �
       simpa [carlesonOp, he] using this
 
 /-- Linearized maximal estimate for the modulated kernels at the Dirichlet frequencies. -/
-theorem carleson_maximal (R : ℝ) : ∃ K : ℝ, 0 ≤ K ∧ ∀ (h : ℝ → ℂ) (B lam : ℝ), Measurable h →
+theorem carleson_maximal (bound : HasTriangularHilbertBound) (R : ℝ) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ (h : ℝ → ℂ) (B lam : ℝ), Measurable h →
     (∀ x, ‖h x‖ ≤ B) → (∀ x, R + 11 < |x| → h x = 0) → 0 < lam →
     volume {x | x ∈ Icc (-R) R ∧ ∃ N : ℕ, lam < ‖carlesonOp h (fun _ => (2 * N + 1) * π) x‖} ≤
       ENNReal.ofReal (4 * (2 * K * B / lam) ^ 3) := by
-  obtain ⟨K, hK0, hK⟩ := carleson_rough_bound (R + 11)
+  obtain ⟨K, hK0, hK⟩ := carleson_rough_bound bound (R + 11)
   refine ⟨K, hK0, fun h B lam hh hB hhz hlam => ?_⟩
   have hB0 : 0 ≤ B := (norm_nonneg _).trans (hB 0)
   set M : ℕ → ℝ := fun N => (2 * N + 1) * π
@@ -1388,9 +1384,10 @@ section Main
 
 open Real
 
-/-- **Carleson's theorem**: the Fourier series of a continuous 1-periodic function converges to it
-almost everywhere. -/
-theorem carleson {f : ℝ → ℂ} (hf : Continuous f) (hp : Function.Periodic f 1) :
+/-- The scalar triangular estimate implies almost-everywhere Fourier convergence
+for continuous functions of period one. -/
+theorem carleson_of_triangular_bound (bound : HasTriangularHilbertBound) {f : ℝ → ℂ}
+    (hf : Continuous f) (hp : Function.Periodic f 1) :
     ∀ᵐ x, Tendsto (fun N => fourierPartialSum f N x) atTop (𝓝 (f x)) := by
   have hm := carlesonMass_pos
   have hπ := Real.pi_pos
@@ -1401,7 +1398,7 @@ theorem carleson {f : ℝ → ℂ} (hf : Continuous f) (hp : Function.Periodic f
     have hlam : 0 < lam := by positivity
     set lam₀ := π * carlesonMass * (lam / 2)
     have hlam₀ : 0 < lam₀ := by positivity
-    obtain ⟨K, -, hK⟩ := carleson_maximal R
+    obtain ⟨K, -, hK⟩ := carleson_maximal bound R
     set S := {x | x ∈ Icc (-(R : ℝ)) R ∧
       ∃ᶠ N in atTop, lam < ‖fourierPartialSum f N x - f x‖}
     have hbound : ∀ δ ∈ Ioo (0 : ℝ) (lam / 46),
@@ -1473,15 +1470,10 @@ theorem carleson {f : ℝ → ℂ} (hf : Continuous f) (hp : Function.Periodic f
 
 end Main
 
-section Statements
-
-/-! Carleson's theorem restated in terms of the definitions in `Triangular.Defs`. -/
-
-theorem classical_carleson (f : ℝ → ℂ) (hf : Continuous f) (hper : Function.Periodic f 1) :
-    ∀ᵐ x, Tendsto (fun N ↦ Triangular.fourierPartialSum f N x) atTop (𝓝 (f x)) :=
-  carleson hf hper
-
-end Statements
+/-- The completed application of the triangular estimate to periodic Fourier convergence. -/
+private theorem carleson {f : ℝ → ℂ} (hf : Continuous f) (hp : Function.Periodic f 1) :
+    ∀ᵐ x, Tendsto (fun N => fourierPartialSum f N x) atTop (𝓝 (f x)) :=
+  carleson_of_triangular_bound triangularHilbert_main hf hp
 
 end
 

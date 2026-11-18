@@ -414,40 +414,40 @@ lemma S_update_prev_σ (hh : 0 ≤ Hd.h) (v : Fin 3) {τ : ℝ} :
 def tr32 (η : ℝ) {κ : Type*} [Fintype κ] [DecidableEq κ] (Γ K : Matrix κ κ ℂ) :
     ℝ := (3 / 2) * ((CFC.sqrt (Γ + (η : ℂ) • 1) * K).trace).re
 
+private theorem gram_heat_of_updates {κ : Type*} [Fintype κ] [DecidableEq κ]
+    (C : Matrix κ κ ℂ) (hC : C.PosSemidef) (B : Matrix ι κ ℂ) (u : ι → ℝ)
+    {h η σ p : ℝ} (hh : 0 ≤ h) (hη : 0 < η) (hσ : 0 < σ)
+    (center centerDerivative variance : ℝ → Matrix κ κ ℂ)
+    (hcenter : ∀ q, center q = C + wGram B (gweight u h σ q))
+    (hderivative : ∀ q, centerDerivative q =
+      wGram B (fun i => -(h * gaussianD 1 σ (u i - q))))
+    (hvariance : ∀ τ, variance τ = C + wGram B (gweight u h τ p)) :
+    HasDerivAt (fun q => energyReg η (center q)) (tr32 η (center p) (centerDerivative p)) p ∧
+      HasDerivAt (fun q => tr32 η (center q) (centerDerivative q))
+        ((matCost (center p + (η : ℂ) • 1) (centerDerivative p)).toReal +
+          tr32 η (center p) (wGram B (fun i => h * gaussianD 2 σ (u i - p)))) p ∧
+      HasDerivAt (fun τ => energyReg η (variance τ))
+        (tr32 η (center p) (wGram B (fun i => h * gaussianD 2 σ (u i - p) / 2))) σ := by
+  simpa only [hcenter, hderivative, hvariance, tr32] using
+    gram_heat_identity C hC B u hh hη hσ p
+
 theorem e_heat_row (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 < σ k) (v : Fin 3) :
     HasDerivAt (fun q => Hd.e (Function.update p v q) σ η v) (tr32 η (Hd.T p σ v) (Hd.Ui p σ v))
       (p v) ∧ HasDerivAt (fun q => tr32 η (Hd.T (Function.update p v q) σ v) (Hd.Ui
       (Function.update p v q) σ v)) (Hd.V p σ η v + tr32 η (Hd.T p σ v) (wGram (Hd.Brow p σ v)
       (Hd.ddw p σ v))) (p v) ∧ HasDerivAt (fun τ => Hd.e p (Function.update σ v τ) η v) (tr32 η
       (Hd.T p σ v) (wGram (Hd.Brow p σ v) (fun i => Hd.ddw p σ v i / 2))) (σ v) := by
-  obtain ⟨h1, h2, h3⟩ := gram_heat_identity 0 Matrix.PosSemidef.zero (Hd.Brow p σ v) Hd.u hh hη (hσ
-      v) (p v)
-  have hT0 : Hd.T p σ v = 0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h (σ v) (p v)) := by
-    have := T_update Hd p σ hh v (p v)
-    rwa [Function.update_eq_self] at this
-  have hUi : ∀ q, Hd.Ui (Function.update p v q) σ v =
+  have hP (q : ℝ) : Hd.Ui (Function.update p v q) σ v =
       wGram (Hd.Brow p σ v) (fun i => -(Hd.h * gaussianD 1 (σ v) (Hd.u i - q))) := by
-    intro q; rw [Ui, Brow_update, dw_def]; simp
-  refine ⟨?_, ?_, ?_⟩
-  · have e1 : (fun q => Hd.e (Function.update p v q) σ η v) =
-        fun q => energyReg η (0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h (σ v) q)) := by
-      funext q; rw [e, T_update Hd p σ hh]
-    rw [e1, tr32, hT0, Ui, dw_def]
-    exact h1
-  · have e1 : (fun q => tr32 η (Hd.T (Function.update p v q) σ v) (Hd.Ui (Function.update p v q) σ
-      v)) = fun q => (3 / 2) * ((CFC.sqrt (0 +
-          wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h (σ v) q) + (η : ℂ) • 1) *
-          wGram (Hd.Brow p σ v) (fun i => -(Hd.h * gaussianD 1 (σ v) (Hd.u i - q)))).trace).re := by
-      funext q; rw [tr32, T_update Hd p σ hh, hUi]
-    rw [e1, V, tr32, hT0, Ui, dw_def, ddw_def]
-    exact h2
-  · have e1 : (fun τ => Hd.e p (Function.update σ v τ) η v) =ᶠ[𝓝 (σ v)]
-        fun τ => energyReg η (0 + wGram (Hd.Brow p σ v) (gweight Hd.u Hd.h τ (p v))) := by
-      apply Eventually.of_forall
-      intro τ
-      simp only [e, T_update_σ Hd p σ hh]
-    rw [tr32, hT0, ddw_def]
-    exact h3.congr_of_eventuallyEq e1
+    rw [Ui, Brow_update, dw_def]
+    simp
+  have derivatives := gram_heat_of_updates 0 Matrix.PosSemidef.zero (Hd.Brow p σ v) Hd.u
+    hh hη (hσ v)
+    (fun q => Hd.T (Function.update p v q) σ v)
+    (fun q => Hd.Ui (Function.update p v q) σ v)
+    (fun τ => Hd.T p (Function.update σ v τ) v)
+    (T_update Hd p σ hh v) hP (fun _ => T_update_σ Hd p σ hh)
+  simpa only [Function.update_eq_self, e, V, ddw_def] using derivatives
 
 lemma S_psd (hh : 0 ≤ Hd.h) (v : Fin 3) (k : Fin 3) :
     (wGram (Hd.Bprev p σ v) (Hd.w p σ k)).PosSemidef ∧ (wGram (Hd.Bnext p σ v) (Hd.w p σ
@@ -462,38 +462,17 @@ theorem e_heat_next (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
       v) (wGram (Hd.Bnext p σ v) (Hd.ddw p σ (v + 1)))) (p (v + 1)) ∧ HasDerivAt (fun τ => Hd.e p
       (Function.update σ (v + 1) τ) η v) (tr32 η (Hd.S p σ v) (wGram (Hd.Bnext p σ v) (fun i =>
       Hd.ddw p σ (v + 1) i / 2))) (σ (v + 1)) := by
-  obtain ⟨h1, h2, h3⟩ := gram_heat_identity _ (S_psd Hd p σ hh v (v - 1)).1 (Hd.Bnext p σ v)
-    Hd.u hh hη (hσ (v + 1)) (p (v + 1))
-  have hS0 : Hd.S p σ v = wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) +
-      wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h (σ (v + 1)) (p (v + 1))) := by
-    have := S_update_next Hd p σ hh v (p (v + 1))
-    rwa [Function.update_eq_self] at this
-  have hP : ∀ q, Hd.Pnext (Function.update p (v + 1) q) σ v =
+  have hP (q : ℝ) : Hd.Pnext (Function.update p (v + 1) q) σ v =
       wGram (Hd.Bnext p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v + 1)) (Hd.u i - q))) := by
-    intro q; rw [Pnext, Bnext_update Hd p σ (fin3_ne_succ v).symm, dw_def]; simp
-  refine ⟨?_, ?_, ?_⟩
-  · have e1 : (fun q => Hd.e (Function.update p (v + 1) q) σ η v) = fun q => energyReg η (wGram
-      (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) +
-          wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h (σ (v + 1)) q)) := by
-      funext q; rw [e_eq_S, S_update_next Hd p σ hh]
-    rw [e1, tr32, hS0, Pnext, dw_def]
-    exact h1
-  · have e1 : (fun q => tr32 η (Hd.S (Function.update p (v + 1) q) σ v) (Hd.Pnext (Function.update p
-      (v + 1) q) σ v)) = fun q => (3 / 2) * ((CFC.sqrt (wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) +
-            wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h (σ (v + 1)) q) + (η : ℂ) • 1) *
-          wGram (Hd.Bnext p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v + 1)) (Hd.u i -
-              q)))).trace).re := by
-      funext q; rw [tr32, S_update_next Hd p σ hh, hP]
-    rw [e1, Ynext, tr32, hS0, Pnext, dw_def, ddw_def]
-    exact h2
-  · have e1 : (fun τ => Hd.e p (Function.update σ (v + 1) τ) η v) =ᶠ[𝓝 (σ (v + 1))]
-        fun τ => energyReg η (wGram (Hd.Bprev p σ v) (Hd.w p σ (v - 1)) +
-          wGram (Hd.Bnext p σ v) (gweight Hd.u Hd.h τ (p (v + 1)))) := by
-      apply Eventually.of_forall
-      intro τ
-      simp only [e_eq_S, S_update_next_σ Hd p σ hh v]
-    rw [tr32, hS0, ddw_def]
-    exact h3.congr_of_eventuallyEq e1
+    rw [Pnext, Bnext_update Hd p σ (fin3_ne_succ v).symm, dw_def]
+    simp
+  have derivatives := gram_heat_of_updates _ (S_psd Hd p σ hh v (v - 1)).1 (Hd.Bnext p σ v) Hd.u
+    hh hη (hσ (v + 1))
+    (fun q => Hd.S (Function.update p (v + 1) q) σ v)
+    (fun q => Hd.Pnext (Function.update p (v + 1) q) σ v)
+    (fun τ => Hd.S p (Function.update σ (v + 1) τ) v)
+    (S_update_next Hd p σ hh v) hP (fun _ => S_update_next_σ Hd p σ hh v)
+  simpa only [Function.update_eq_self, e_eq_S, Ynext, ddw_def] using derivatives
 
 theorem e_heat_prev (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 < σ k) (v : Fin 3) :
     HasDerivAt (fun q => Hd.e (Function.update p (v - 1) q) σ η v) (tr32 η (Hd.S p σ v)
@@ -502,38 +481,17 @@ theorem e_heat_prev (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (hσ : ∀ k, 0 
       v) (wGram (Hd.Bprev p σ v) (Hd.ddw p σ (v - 1)))) (p (v - 1)) ∧ HasDerivAt (fun τ => Hd.e p
       (Function.update σ (v - 1) τ) η v) (tr32 η (Hd.S p σ v) (wGram (Hd.Bprev p σ v) (fun i =>
       Hd.ddw p σ (v - 1) i / 2))) (σ (v - 1)) := by
-  obtain ⟨h1, h2, h3⟩ := gram_heat_identity _ (S_psd Hd p σ hh v (v + 1)).2 (Hd.Bprev p σ v)
-    Hd.u hh hη (hσ (v - 1)) (p (v - 1))
-  have hS0 : Hd.S p σ v = wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) +
-      wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h (σ (v - 1)) (p (v - 1))) := by
-    have := S_update_prev Hd p σ hh v (p (v - 1))
-    rwa [Function.update_eq_self] at this
-  have hP : ∀ q, Hd.Pprev (Function.update p (v - 1) q) σ v =
+  have hP (q : ℝ) : Hd.Pprev (Function.update p (v - 1) q) σ v =
       wGram (Hd.Bprev p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v - 1)) (Hd.u i - q))) := by
-    intro q; rw [Pprev, Bprev_update Hd p σ (fin3_ne_pred v).symm, dw_def]; simp
-  refine ⟨?_, ?_, ?_⟩
-  · have e1 : (fun q => Hd.e (Function.update p (v - 1) q) σ η v) = fun q => energyReg η (wGram
-      (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) +
-          wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h (σ (v - 1)) q)) := by
-      funext q; rw [e_eq_S, S_update_prev Hd p σ hh]
-    rw [e1, tr32, hS0, Pprev, dw_def]
-    exact h1
-  · have e1 : (fun q => tr32 η (Hd.S (Function.update p (v - 1) q) σ v) (Hd.Pprev (Function.update p
-      (v - 1) q) σ v)) = fun q => (3 / 2) * ((CFC.sqrt (wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) +
-            wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h (σ (v - 1)) q) + (η : ℂ) • 1) *
-          wGram (Hd.Bprev p σ v) (fun i => -(Hd.h * gaussianD 1 (σ (v - 1)) (Hd.u i -
-              q)))).trace).re := by
-      funext q; rw [tr32, S_update_prev Hd p σ hh, hP]
-    rw [e1, Yprev, tr32, hS0, Pprev, dw_def, ddw_def]
-    exact h2
-  · have e1 : (fun τ => Hd.e p (Function.update σ (v - 1) τ) η v) =ᶠ[𝓝 (σ (v - 1))]
-        fun τ => energyReg η (wGram (Hd.Bnext p σ v) (Hd.w p σ (v + 1)) +
-          wGram (Hd.Bprev p σ v) (gweight Hd.u Hd.h τ (p (v - 1)))) := by
-      apply Eventually.of_forall
-      intro τ
-      simp only [e_eq_S, S_update_prev_σ Hd p σ hh v]
-    rw [tr32, hS0, ddw_def]
-    exact h3.congr_of_eventuallyEq e1
+    rw [Pprev, Bprev_update Hd p σ (fin3_ne_pred v).symm, dw_def]
+    simp
+  have derivatives := gram_heat_of_updates _ (S_psd Hd p σ hh v (v + 1)).2 (Hd.Bprev p σ v) Hd.u
+    hh hη (hσ (v - 1))
+    (fun q => Hd.S (Function.update p (v - 1) q) σ v)
+    (fun q => Hd.Pprev (Function.update p (v - 1) q) σ v)
+    (fun τ => Hd.S p (Function.update σ (v - 1) τ) v)
+    (S_update_prev Hd p σ hh v) hP (fun _ => S_update_prev_σ Hd p σ hh v)
+  simpa only [Function.update_eq_self, e_eq_S, Yprev, ddw_def] using derivatives
 
 theorem e_mixed (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) (v : Fin 3) :
     HasDerivAt (fun q => tr32 η (Hd.S (Function.update p (v + 1) q) σ v) (Hd.Pprev
@@ -1075,19 +1033,6 @@ lemma tendsto_sqrt_hsSq_sub {α : Type*} {l : Filter α} {f : α → Matrix n n 
     tendsto_pi_nhds.1 (tendsto_pi_nhds.1 h i) j
   simpa using this.sqrt
 
-lemma ContinuousOn.matSqrt {Z : Type*} [TopologicalSpace Z] {f : Z → Matrix n n ℂ} {s : Set Z}
-    (hf : ContinuousOn f s) {η : ℝ} (hη : 0 < η)
-    (hpos : ∀ z ∈ s, (f z - (η : ℂ) • (1 : Matrix n n ℂ)).PosSemidef) :
-    ContinuousOn (fun z => CFC.sqrt (f z)) s := by
-  intro z hz
-  refine tendsto_entry_of_hsSq ?_
-  have h0 := tendsto_sqrt_hsSq_sub (hf z hz)
-  have h1 : Tendsto (fun a => √(hsSq (f a - f z)) / (√η + √η)) (𝓝[s] z) (𝓝 0) := by
-    simpa using h0.div_const (√η + √η)
-  refine squeeze_zero' (Eventually.of_forall fun _ => Real.sqrt_nonneg _) ?_ h1
-  filter_upwards [self_mem_nhdsWithin] with a ha
-  exact sqrt_hsSq_sqrt_sub_le hη (hpos a ha) (hpos z hz)
-
 lemma ContinuousOn.sylvSol {Z : Type*} [TopologicalSpace Z] {A Y : Z → Matrix n n ℂ} {s : Set Z}
     (hA : ContinuousOn A s) (hY : ContinuousOn Y s) {c : ℝ} (hc : 0 < c)
     (hpos : ∀ z ∈ s, (A z - (c : ℂ) • (1 : Matrix n n ℂ)).PosSemidef) :
@@ -1624,16 +1569,29 @@ lemma gram_scalar_bounds {κ : Type*} [Fintype κ] [DecidableEq κ] {N C₀ φ �
           gcongr
       _ = _ := by ring
 
+/-- The energies, trace derivatives and costs associated with one vertex. -/
+inductive VertexQuantity
+  | energy | centerTrace | centerSecondTrace | nextTrace | previousTrace
+  | nextSecondTrace | previousSecondTrace | centerCost | nextCost | previousCost | mixedCost
+
+/-- Evaluate a vertex quantity at fixed centers, variances and regularization. -/
+def vertexValue (p σ : Fin 3 → ℝ) (η : ℝ) (v : Fin 3) : VertexQuantity → ℝ
+  | .energy => Hd.e p σ η v
+  | .centerTrace => tr32 η (Hd.T p σ v) (Hd.Ui p σ v)
+  | .centerSecondTrace => tr32 η (Hd.T p σ v) (wGram (Hd.Brow p σ v) (Hd.ddw p σ v))
+  | .nextTrace => tr32 η (Hd.S p σ v) (Hd.Pnext p σ v)
+  | .previousTrace => tr32 η (Hd.S p σ v) (Hd.Pprev p σ v)
+  | .nextSecondTrace => tr32 η (Hd.S p σ v) (wGram (Hd.Bnext p σ v) (Hd.ddw p σ (v + 1)))
+  | .previousSecondTrace => tr32 η (Hd.S p σ v) (wGram (Hd.Bprev p σ v) (Hd.ddw p σ (v - 1)))
+  | .centerCost => Hd.V p σ η v
+  | .nextCost => Hd.Ynext p σ η v
+  | .previousCost => Hd.Yprev p σ η v
+  | .mixedCost => Hd.Z p σ η v
+
 theorem scalar_bounds (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) {σa σb : ℝ} (ha : 0 < σa)
     (hab : σa ≤ σb) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ p σ : Fin 3 → ℝ, (∀ k, σ k ∈ Set.Icc σa σb) → ∀ v, |Hd.e p σ η v| ≤ C *
-      phi σb v p ^ 2 ∧ |tr32 η (Hd.T p σ v) (Hd.Ui p σ v)| ≤ C * phi σb v p ^ 2 ∧ |tr32 η (Hd.T p
-      σ v) (wGram (Hd.Brow p σ v) (Hd.ddw p σ v))| ≤ C * phi σb v p ^ 2 ∧ |tr32 η (Hd.S p σ v)
-      (Hd.Pnext p σ v)| ≤ C * phi σb v p ^ 2 ∧ |tr32 η (Hd.S p σ v) (Hd.Pprev p σ v)| ≤ C * phi σb
-      v p ^ 2 ∧ |tr32 η (Hd.S p σ v) (wGram (Hd.Bnext p σ v) (Hd.ddw p σ (v + 1)))| ≤ C * phi σb v
-      p ^ 2 ∧ |tr32 η (Hd.S p σ v) (wGram (Hd.Bprev p σ v) (Hd.ddw p σ (v - 1)))| ≤ C * phi σb v p
-      ^ 2 ∧ |Hd.V p σ η v| ≤ C * phi σb v p ^ 2 ∧ |Hd.Ynext p σ η v| ≤ C * phi σb v p ^ 2 ∧
-      |Hd.Yprev p σ η v| ≤ C * phi σb v p ^ 2 ∧ |Hd.Z p σ η v| ≤ C * phi σb v p ^ 2 := by
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ p σ : Fin 3 → ℝ, (∀ k, σ k ∈ Set.Icc σa σb) →
+      ∀ v term, |Hd.vertexValue p σ η v term| ≤ C * phi σb v p ^ 2 := by
   obtain ⟨C₀, hC₀, hent⟩ := Hd.entry_bounds hh ha hab
   have hb : 0 < σb := ha.trans_le hab
   set N : ℝ := Fintype.card (ι ⊕ ι) + Fintype.card ι
@@ -1648,7 +1606,7 @@ theorem scalar_bounds (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) {σa σb : ℝ
   have hA1 : 0 ≤ A1 := by positivity
   have hA2 : 0 ≤ A2 := by positivity
   have hA3 : 0 ≤ A3 := by positivity
-  refine ⟨A1 + A2 + A3, by positivity, fun p σ hσ v => ?_⟩
+  refine ⟨A1 + A2 + A3, by positivity, fun p σ hσ v term => ?_⟩
   obtain ⟨hT, hS⟩ := hent p σ hσ v
   set φ := phi σb v p
   have hφ : 0 ≤ φ := phi_nonneg _ _ _
@@ -1663,26 +1621,33 @@ theorem scalar_bounds (hh : 0 ≤ Hd.h) {η : ℝ} (hη : 0 < η) {σa σb : ℝ
   have w3 : ∀ x, x ≤ A3 * φ ^ 2 → x ≤ (A1 + A2 + A3) * φ ^ 2 := fun x hx => by nlinarith
   have hY1 := (gS _ fun a b => (hS a b).2.1).2
   have hY2 := (gS _ fun a b => (hS a b).2.2.1).2
-  refine ⟨w3 _ eT, w1 _ (gT _ fun a b => (hT a b).2.1).1,
-    w1 _ (gT _ fun a b => (hT a b).2.2).1, w1 _ (gS _ fun a b => (hS a b).2.1).1,
-    w1 _ (gS _ fun a b => (hS a b).2.2.1).1, w1 _ (gS _ fun a b => (hS a b).2.2.2.1).1,
-    w1 _ (gS _ fun a b => (hS a b).2.2.2.2).1, w2 _ (gT _ fun a b => (hT a b).2.1).2,
-    w2 _ hY1, w2 _ hY2, ?_⟩
-  have hPD := posDef_add_smul_one hSpsd hη
-  have hZ := abs_matCostBil_le hPD (Hd.Pnext p σ v) (Hd.Pprev p σ v)
-  refine w2 _ (hZ.trans ?_)
-  have e1 : 0 ≤ (matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pnext p σ v)).toReal :=
-    ENNReal.toReal_nonneg
-  have e2 : 0 ≤ (matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pprev p σ v)).toReal :=
-    ENNReal.toReal_nonneg
-  rw [abs_of_nonneg e1] at hY1
-  rw [abs_of_nonneg e2] at hY2
-  calc √(matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pnext p σ v)).toReal *
-        √(matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pprev p σ v)).toReal
-      ≤ √(A2 * φ ^ 2) * √(A2 * φ ^ 2) :=
-        mul_le_mul (Real.sqrt_le_sqrt hY1) (Real.sqrt_le_sqrt hY2) (Real.sqrt_nonneg _)
-            (Real.sqrt_nonneg _)
-    _ = A2 * φ ^ 2 := Real.mul_self_sqrt (by positivity)
+  cases term with
+  | energy => exact w3 _ eT
+  | centerTrace => exact w1 _ (gT _ fun a b => (hT a b).2.1).1
+  | centerSecondTrace => exact w1 _ (gT _ fun a b => (hT a b).2.2).1
+  | nextTrace => exact w1 _ (gS _ fun a b => (hS a b).2.1).1
+  | previousTrace => exact w1 _ (gS _ fun a b => (hS a b).2.2.1).1
+  | nextSecondTrace => exact w1 _ (gS _ fun a b => (hS a b).2.2.2.1).1
+  | previousSecondTrace => exact w1 _ (gS _ fun a b => (hS a b).2.2.2.2).1
+  | centerCost => exact w2 _ (gT _ fun a b => (hT a b).2.1).2
+  | nextCost => exact w2 _ hY1
+  | previousCost => exact w2 _ hY2
+  | mixedCost =>
+    have hPD := posDef_add_smul_one hSpsd hη
+    have hZ := abs_matCostBil_le hPD (Hd.Pnext p σ v) (Hd.Pprev p σ v)
+    refine w2 _ (hZ.trans ?_)
+    have e1 : 0 ≤ (matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pnext p σ v)).toReal :=
+      ENNReal.toReal_nonneg
+    have e2 : 0 ≤ (matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pprev p σ v)).toReal :=
+      ENNReal.toReal_nonneg
+    rw [abs_of_nonneg e1] at hY1
+    rw [abs_of_nonneg e2] at hY2
+    calc √(matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pnext p σ v)).toReal *
+          √(matCost (Hd.S p σ v + (η : ℂ) • 1) (Hd.Pprev p σ v)).toReal
+        ≤ √(A2 * φ ^ 2) * √(A2 * φ ^ 2) :=
+          mul_le_mul (Real.sqrt_le_sqrt hY1) (Real.sqrt_le_sqrt hY2) (Real.sqrt_nonneg _)
+              (Real.sqrt_nonneg _)
+      _ = A2 * φ ^ 2 := Real.mul_self_sqrt (by positivity)
 
 end HeatData
 
@@ -1795,16 +1760,15 @@ end HeatData
 variable {κ : Type*} [Fintype κ] [DecidableEq κ]
 
 lemma continuous_sqrt_add {Γ : X → Matrix κ κ ℂ} (hΓ : Continuous Γ)
-    (hpsd : ∀ x, (Γ x).PosSemidef) {η : ℝ} (hη : 0 < η) :
+    (hpsd : ∀ x, (Γ x).PosSemidef) {η : ℝ} (hη : 0 ≤ η) :
     Continuous fun x => CFC.sqrt (Γ x + (η : ℂ) • 1) := by
-  rw [← continuousOn_univ]
-  exact ContinuousOn.matSqrt (hΓ.add continuous_const).continuousOn hη fun x _ =>
-    add_smul_one_sub_posSemidef (hpsd x) η
+  exact CFC.continuousOn_sqrt.comp_continuous (hΓ.add continuous_const) fun x =>
+    ((hpsd x).add (Matrix.PosSemidef.one.smul (by exact_mod_cast hη))).nonneg
 
 lemma continuous_tr32 {Γ K : X → Matrix κ κ ℂ} (hΓ : Continuous Γ) (hK : Continuous K)
     (hpsd : ∀ x, (Γ x).PosSemidef) {η : ℝ} (hη : 0 < η) :
     Continuous fun x => HeatData.tr32 η (Γ x) (K x) :=
-  continuous_const.mul (continuous_re_trace ((continuous_sqrt_add hΓ hpsd hη).matrix_mul hK))
+  continuous_const.mul (continuous_re_trace ((continuous_sqrt_add hΓ hpsd hη.le).matrix_mul hK))
 
 lemma continuous_energyReg {Γ : X → Matrix κ κ ℂ} (hΓ : Continuous Γ)
     (hpsd : ∀ x, (Γ x).PosSemidef) {η : ℝ} (hη : 0 < η) :
@@ -1815,7 +1779,7 @@ lemma continuous_energyReg {Γ : X → Matrix κ κ ℂ} (hΓ : Continuous Γ)
     funext x; exact energyReg_eq_trace (hpsd x) hη.le
   rw [this]
   exact (continuous_re_trace ((hΓ.add continuous_const).matrix_mul (continuous_sqrt_add hΓ hpsd
-      hη))).sub continuous_const
+      hη.le))).sub continuous_const
 
 lemma continuous_matCost {Γ K : X → Matrix κ κ ℂ} (hΓ : Continuous Γ) (hK : Continuous K)
     (hpsd : ∀ x, (Γ x).PosSemidef) {η : ℝ} (hη : 0 < η) :
@@ -1828,7 +1792,7 @@ lemma continuous_matCost {Γ K : X → Matrix κ κ ℂ} (hΓ : Continuous Γ) (
     funext x
     rw [matCost_eq_sylv hη (hP x), ENNReal.toReal_ofReal']
   rw [this]
-  have hS := continuous_sqrt_add hΓ hpsd hη
+  have hS := continuous_sqrt_add hΓ hpsd hη.le
   have hX : Continuous fun x => sylvSol (CFC.sqrt (Γ x + (η : ℂ) • 1)) (K x) := by
     rw [← continuousOn_univ]
     exact ContinuousOn.sylvSol hS.continuousOn hK.continuousOn hsη fun x _ =>
@@ -1841,28 +1805,27 @@ namespace HeatData
 variable (Hd : HeatData ι) {p σ : X → Fin 3 → ℝ}
 
 theorem continuous_scalars (hp : Continuous p) (hσ : Continuous σ) (hpos : ∀ x k, 0 < σ x k)
-    {η : ℝ} (hη : 0 < η) (v : Fin 3) :
-    Continuous (fun x => Hd.e (p x) (σ x) η v) ∧ Continuous (fun x => tr32 η (Hd.T (p x) (σ x)
-      v) (Hd.Ui (p x) (σ x) v)) ∧ Continuous (fun x => tr32 η (Hd.T (p x) (σ x) v) (wGram (Hd.Brow
-      (p x) (σ x) v) (Hd.ddw (p x) (σ x) v))) ∧ Continuous (fun x => tr32 η (Hd.S (p x) (σ x) v)
-      (Hd.Pnext (p x) (σ x) v)) ∧ Continuous (fun x => tr32 η (Hd.S (p x) (σ x) v) (Hd.Pprev (p x)
-      (σ x) v)) ∧ Continuous (fun x => tr32 η (Hd.S (p x) (σ x) v) (wGram (Hd.Bnext (p x) (σ x) v)
-      (Hd.ddw (p x) (σ x) (v + 1)))) ∧ Continuous (fun x => tr32 η (Hd.S (p x) (σ x) v) (wGram
-      (Hd.Bprev (p x) (σ x) v) (Hd.ddw (p x) (σ x) (v - 1)))) ∧ Continuous (fun x => Hd.V (p x) (σ
-      x) η v) ∧ Continuous (fun x => Hd.Ynext (p x) (σ x) η v) ∧ Continuous (fun x => Hd.Yprev (p
-      x) (σ x) η v) ∧ Continuous (fun x => Hd.Z (p x) (σ x) η v) := by
+    {η : ℝ} (hη : 0 < η) (v : Fin 3) (term : VertexQuantity) :
+    Continuous (fun x => Hd.vertexValue (p x) (σ x) η v term) := by
   obtain ⟨hT, hS, hU, hPn, hPp, hM1, hM2, hM3⟩ := Hd.continuous_mats hp hσ hpos v
   have hTp : ∀ x, (Hd.T (p x) (σ x) v).PosSemidef := fun x =>
     Matrix.posSemidef_conjTranspose_mul_self _
   have hSp : ∀ x, (Hd.S (p x) (σ x) v).PosSemidef := fun x =>
     Matrix.posSemidef_self_mul_conjTranspose _
-  refine ⟨continuous_energyReg hT hTp hη, continuous_tr32 hT hU hTp hη,
-    continuous_tr32 hT hM1 hTp hη, continuous_tr32 hS hPn hSp hη, continuous_tr32 hS hPp hSp hη,
-    continuous_tr32 hS hM2 hSp hη, continuous_tr32 hS hM3 hSp hη,
-    continuous_matCost hT hU hTp hη, continuous_matCost hS hPn hSp hη,
-    continuous_matCost hS hPp hSp hη, ?_⟩
-  exact ((continuous_matCost hS (hPn.add hPp) hSp hη).sub (continuous_matCost hS (hPn.sub hPp) hSp
-      hη)).div_const 4
+  cases term with
+  | energy => exact continuous_energyReg hT hTp hη
+  | centerTrace => exact continuous_tr32 hT hU hTp hη
+  | centerSecondTrace => exact continuous_tr32 hT hM1 hTp hη
+  | nextTrace => exact continuous_tr32 hS hPn hSp hη
+  | previousTrace => exact continuous_tr32 hS hPp hSp hη
+  | nextSecondTrace => exact continuous_tr32 hS hM2 hSp hη
+  | previousSecondTrace => exact continuous_tr32 hS hM3 hSp hη
+  | centerCost => exact continuous_matCost hT hU hTp hη
+  | nextCost => exact continuous_matCost hS hPn hSp hη
+  | previousCost => exact continuous_matCost hS hPp hSp hη
+  | mixedCost =>
+    exact ((continuous_matCost hS (hPn.add hPp) hSp hη).sub
+      (continuous_matCost hS (hPn.sub hPp) hSp hη)).div_const 4
 
 end HeatData
 
@@ -2080,25 +2043,10 @@ variable (Hd : HeatData ι) (α : Fin 3 → ℝ)
 /-- The vector of heat variances at scale `s) for rates `α`. -/
 def sig (s : ℝ) : Fin 3 → ℝ := fun k => α k * s
 
-theorem continuousOn_family (hα : ∀ k, 0 < α k) {η : ℝ} (hη : 0 < η) (v : Fin 3) :
+theorem continuousOn_family (hα : ∀ k, 0 < α k) {η : ℝ} (hη : 0 < η) (v : Fin 3)
+    (term : VertexQuantity) :
     let S : Set (ℝ × (Fin 3 → ℝ)) := Set.Ioi 0 ×ˢ Set.univ
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Hd.e z.2 (sig α z.1) η v) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) =>
-      tr32 η (Hd.T z.2 (sig α z.1) v) (Hd.Ui z.2 (sig α z.1) v)) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => tr32 η (Hd.T z.2 (sig α z.1) v) (wGram (Hd.Brow z.2
-        (sig α z.1) v) (Hd.ddw z.2 (sig α z.1) v))) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) =>
-      tr32 η (Hd.S z.2 (sig α z.1) v) (Hd.Pnext z.2 (sig α z.1) v)) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) =>
-      tr32 η (Hd.S z.2 (sig α z.1) v) (Hd.Pprev z.2 (sig α z.1) v)) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => tr32 η (Hd.S z.2 (sig α z.1) v) (wGram (Hd.Bnext z.2
-        (sig α z.1) v) (Hd.ddw z.2 (sig α z.1) (v + 1)))) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => tr32 η (Hd.S z.2 (sig α z.1) v) (wGram (Hd.Bprev z.2
-        (sig α z.1) v) (Hd.ddw z.2 (sig α z.1) (v - 1)))) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Hd.V z.2 (sig α z.1) η v) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Hd.Ynext z.2 (sig α z.1) η v) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Hd.Yprev z.2 (sig α z.1) η v) S ∧
-    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Hd.Z z.2 (sig α z.1) η v) S := by
+    ContinuousOn (fun z => Hd.vertexValue z.2 (sig α z.1) η v term) S := by
   intro S
   have hp : Continuous fun x : S => (x : ℝ × (Fin 3 → ℝ)).2 := continuous_snd.comp
       continuous_subtype_val
@@ -2106,10 +2054,8 @@ theorem continuousOn_family (hα : ∀ k, 0 < α k) {η : ℝ} (hη : 0 < η) (v
     continuous_pi fun k => continuous_const.mul (continuous_fst.comp continuous_subtype_val)
   have hpos : ∀ (x : S) k, 0 < sig α (x : ℝ × (Fin 3 → ℝ)).1 k := fun x k =>
     mul_pos (hα k) x.2.1
-  obtain ⟨c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11⟩ :=
-    Hd.continuous_scalars hp hσ hpos hη v
   simp only [continuousOn_iff_continuous_domRestrict]
-  exact ⟨c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11⟩
+  exact Hd.continuous_scalars hp hσ hpos hη v term
 
 end HeatData
 
@@ -2124,99 +2070,90 @@ namespace HeatData
 variable (Hd : HeatData ι) (α : Fin 3 → ℝ) (η : ℝ) (v : Fin 3)
 
 /-- The regularized energy at heat scale `s` and center vector `p`. -/
-def qE (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.e p (sig α s) η v
+def qE (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .energy
 
 /-- The first trace variation from the shared center along the chosen heat variances. -/
-def qDr (s : ℝ) (p : Fin 3 → ℝ) : ℝ := tr32 η (Hd.T p (sig α s) v) (Hd.Ui p (sig α s) v)
+def qDr (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .centerTrace
 
 /-- The first trace variation from the next center along the chosen heat variances. -/
-def qDn (s : ℝ) (p : Fin 3 → ℝ) : ℝ := tr32 η (Hd.S p (sig α s) v) (Hd.Pnext p (sig α s) v)
+def qDn (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .nextTrace
 
 /-- The first trace variation from the previous center along the chosen heat variances. -/
-def qDp (s : ℝ) (p : Fin 3 → ℝ) : ℝ := tr32 η (Hd.S p (sig α s) v) (Hd.Pprev p (sig α s) v)
+def qDp (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .previousTrace
 
 /-- The trace variation with a second derivative of the shared center weight. -/
-def qA (s : ℝ) (p : Fin 3 → ℝ) : ℝ :=
-  tr32 η (Hd.T p (sig α s) v) (wGram (Hd.Brow p (sig α s) v) (Hd.ddw p (sig α s) v))
+def qA (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .centerSecondTrace
 
 /-- The trace variation with a second derivative of the next center weight. -/
-def qB (s : ℝ) (p : Fin 3 → ℝ) : ℝ :=
-  tr32 η (Hd.S p (sig α s) v) (wGram (Hd.Bnext p (sig α s) v) (Hd.ddw p (sig α s) (v + 1)))
+def qB (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .nextSecondTrace
 
 /-- The trace variation with a second derivative of the previous center weight. -/
-def qC (s : ℝ) (p : Fin 3 → ℝ) : ℝ :=
-  tr32 η (Hd.S p (sig α s) v) (wGram (Hd.Bprev p (sig α s) v) (Hd.ddw p (sig α s) (v - 1)))
+def qC (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .previousSecondTrace
 
 /-- The shared vertex cost along the chosen heat variances. -/
-def qV (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.V p (sig α s) η v
+def qV (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .centerCost
 
 /-- The next-center cost along the chosen heat variances. -/
-def qYn (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.Ynext p (sig α s) η v
+def qYn (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .nextCost
 
 /-- The previous-center cost along the chosen heat variances. -/
-def qYp (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.Yprev p (sig α s) η v
+def qYp (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .previousCost
 
 /-- The mixed neighbor cost along the chosen heat variances. -/
-def qZ (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.Z p (sig α s) η v
+def qZ (s : ℝ) (p : Fin 3 → ℝ) : ℝ := Hd.vertexValue p (sig α s) η v .mixedCost
 
-/-- The vertex energies, trace variations and combined costs used in the dissipation estimates. -/
-def dissipationFamily : Set (ℝ → (Fin 3 → ℝ) → ℝ) :=
-  {Hd.qE α η v, Hd.qDr α η v, Hd.qDn α η v, Hd.qDp α η v, Hd.qV α η v + Hd.qA α η v,
-    Hd.qYn α η v + Hd.qB α η v, Hd.qYp α η v + Hd.qC α η v, Hd.qZ α η v, Hd.qV α η v,
-    Hd.qYn α η v, Hd.qYp α η v, Hd.qA α η v, Hd.qB α η v, Hd.qC α η v}
+/-- The terms used in dissipation include three sums of vertex quantities. -/
+inductive DissipationTerm
+  | base (term : VertexQuantity)
+  | center | next | previous
+
+/-- Evaluate a dissipation term along the chosen heat variances. -/
+def dissipationValue : DissipationTerm → ℝ → (Fin 3 → ℝ) → ℝ
+  | .base term => fun s p => Hd.vertexValue p (sig α s) η v term
+  | .center => Hd.qV α η v + Hd.qA α η v
+  | .next => Hd.qYn α η v + Hd.qB α η v
+  | .previous => Hd.qYp α η v + Hd.qC α η v
 
 lemma family_good (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α k)
-    (hα2 : ∀ k, α k ≤ 2) {sa sb : ℝ} (hsa : 0 < sa) (hab : sa ≤ sb) :
-    ∀ Q ∈ Hd.dissipationFamily α η v,
-      ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Q z.1 z.2) (Set.Ioi 0 ×ˢ Set.univ) ∧
-      ∃ C, ∀ s ∈ Set.Icc sa sb, ∀ p, |Q s p| ≤ C * phi (2 * sb) v p ^ 2 := by
+    (hα2 : ∀ k, α k ≤ 2) {sa sb : ℝ} (hsa : 0 < sa) (hab : sa ≤ sb) (term : DissipationTerm) :
+    ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Hd.dissipationValue α η v term z.1 z.2)
+        (Set.Ioi 0 ×ˢ Set.univ) ∧
+      ∃ C, ∀ s ∈ Set.Icc sa sb, ∀ p,
+        |Hd.dissipationValue α η v term s p| ≤ C * phi (2 * sb) v p ^ 2 := by
   have hα0 : ∀ k, 0 < α k := fun k => zero_lt_one.trans_le (hα1 k)
-  obtain ⟨c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11⟩ := Hd.continuousOn_family α hα0 hη v
-  obtain ⟨C, hC0, hC⟩ := Hd.scalar_bounds hh.le hη (σa := sa) (σb := 2 * sb) hsa (by linarith)
+  have continuity := Hd.continuousOn_family α hα0 hη v
+  obtain ⟨C, _, bounds⟩ := Hd.scalar_bounds hh.le hη (σa := sa) (σb := 2 * sb) hsa (by linarith)
   have hrange : ∀ s ∈ Set.Icc sa sb, ∀ k, sig α s k ∈ Set.Icc sa (2 * sb) := by
     intro s hs k
     have hs0 : 0 < s := hsa.trans_le hs.1
     constructor
     · simp only [sig]; nlinarith [hα1 k, hs.1]
     · simp only [sig]; nlinarith [hα2 k, hs.2]
-  have B := fun s (hs : s ∈ Set.Icc sa sb) p => hC p (sig α s) (hrange s hs) v
-  intro Q hQ
-  simp only [dissipationFamily, Set.mem_insert_iff, Set.mem_singleton_iff] at hQ
-  rcases hQ with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
-  · exact ⟨c1, C, fun s hs p => (B s hs p).1⟩
-  · exact ⟨c2, C, fun s hs p => (B s hs p).2.1⟩
-  · exact ⟨c4, C, fun s hs p => (B s hs p).2.2.2.1⟩
-  · exact ⟨c5, C, fun s hs p => (B s hs p).2.2.2.2.1⟩
-  · refine ⟨c8.add c3, 2 * C, fun s hs p => ?_⟩
-    have h1 := (B s hs p).2.2.2.2.2.2.2.1
-    have h2 := (B s hs p).2.2.1
-    simp only [Pi.add_apply]
-    exact (abs_add_le _ _).trans (by unfold qV qA; linarith)
-  · refine ⟨c9.add c6, 2 * C, fun s hs p => ?_⟩
-    have h1 := (B s hs p).2.2.2.2.2.2.2.2.1
-    have h2 := (B s hs p).2.2.2.2.2.1
-    simp only [Pi.add_apply]
-    exact (abs_add_le _ _).trans (by unfold qYn qB; linarith)
-  · refine ⟨c10.add c7, 2 * C, fun s hs p => ?_⟩
-    have h1 := (B s hs p).2.2.2.2.2.2.2.2.2.1
-    have h2 := (B s hs p).2.2.2.2.2.2.1
-    simp only [Pi.add_apply]
-    exact (abs_add_le _ _).trans (by unfold qYp qC; linarith)
-  · exact ⟨c11, C, fun s hs p => (B s hs p).2.2.2.2.2.2.2.2.2.2⟩
-  · exact ⟨c8, C, fun s hs p => (B s hs p).2.2.2.2.2.2.2.1⟩
-  · exact ⟨c9, C, fun s hs p => (B s hs p).2.2.2.2.2.2.2.2.1⟩
-  · exact ⟨c10, C, fun s hs p => (B s hs p).2.2.2.2.2.2.2.2.2.1⟩
-  · exact ⟨c3, C, fun s hs p => (B s hs p).2.2.1⟩
-  · exact ⟨c6, C, fun s hs p => (B s hs p).2.2.2.2.2.1⟩
-  · exact ⟨c7, C, fun s hs p => (B s hs p).2.2.2.2.2.2.1⟩
+  have bound (q : VertexQuantity) (s : ℝ) (hs : s ∈ Set.Icc sa sb) (p : Fin 3 → ℝ) :=
+    bounds p (sig α s) (hrange s hs) v q
+  have sumGood (left right : VertexQuantity) :
+      ContinuousOn (fun z : ℝ × (Fin 3 → ℝ) => Hd.vertexValue z.2 (sig α z.1) η v left +
+        Hd.vertexValue z.2 (sig α z.1) η v right) (Set.Ioi 0 ×ˢ Set.univ) ∧
+      ∃ D, ∀ s ∈ Set.Icc sa sb, ∀ p,
+        |Hd.vertexValue p (sig α s) η v left + Hd.vertexValue p (sig α s) η v right| ≤
+          D * phi (2 * sb) v p ^ 2 := by
+    refine ⟨(continuity left).add (continuity right), 2 * C,
+      fun s hs p => (abs_add_le _ _).trans ?_⟩
+    linarith only [bound left s hs p, bound right s hs p]
+  cases term with
+  | base q => exact ⟨continuity q, C, bound q⟩
+  | center => exact sumGood .centerCost .centerSecondTrace
+  | next => exact sumGood .nextCost .nextSecondTrace
+  | previous => exact sumGood .previousCost .previousSecondTrace
 
 lemma weighted_integrable (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α k)
     (hα2 : ∀ k, α k ≤ 2) {β sa sb : ℝ} (hβ : 0 < β) (hsa : 0 < sa) (hab : sa ≤ sb)
-    (Q : ℝ → (Fin 3 → ℝ) → ℝ) (hQ : Q ∈ Hd.dissipationFamily α η v) (m : ℕ) :
-    (∀ s ∈ Set.Icc sa sb, Integrable (fun p => Gm β m s p * Q s p)) ∧
-      Integrable (fun z : ℝ × (Fin 3 → ℝ) => Gm β m z.1 z.2 * Q z.1 z.2)
+    (term : DissipationTerm) (m : ℕ) :
+    (∀ s ∈ Set.Icc sa sb, Integrable (fun p => Gm β m s p * Hd.dissipationValue α η v term s p)) ∧
+      Integrable (fun z : ℝ × (Fin 3 → ℝ) =>
+        Gm β m z.1 z.2 * Hd.dissipationValue α η v term z.1 z.2)
         ((volume.restrict (Set.Ioc sa sb)).prod volume) := by
-  obtain ⟨continuity, bound⟩ := Hd.family_good α η v hh hη hα1 hα2 hsa hab Q hQ
+  obtain ⟨continuity, bound⟩ := Hd.family_good α η v hh hη hα1 hα2 hsa hab term
   exact good_integrable hsa (by linarith : 0 < 2 * sb) hβ v continuity bound m
 
 end HeatData
@@ -2237,17 +2174,16 @@ theorem vertex_identities (hh : 0 < Hd.h) (hη : 0 < η) (hα1 : ∀ k, 1 ≤ α
       Gm β 0 s p * (Hd.qYn α η v + Hd.qB α η v) s p = ∫ p, Gm β 2 s p * Hd.qE α η v s p ∧ ∫ p, Gm
       β 0 s p * (Hd.qYp α η v + Hd.qC α η v) s p = ∫ p, Gm β 2 s p * Hd.qE α η v s p ∧ ∫ p, Gm β 0
       s p * Hd.qZ α η v s p = ∫ p, Gm β 2 s p * Hd.qE α η v s p := by
-  have integ (Q : ℝ → (Fin 3 → ℝ) → ℝ) (hQ : Q ∈ Hd.dissipationFamily α η v) (m : ℕ) :
-      Integrable (fun p => Gm β m s p * Q s p) :=
-    (Hd.weighted_integrable α η v hh hη hα1 hα2 hβ hsa hab Q hQ m).1 s hs
-  have iE := integ (Hd.qE α η v) (by simp [dissipationFamily])
-  have iDr := integ (Hd.qDr α η v) (by simp [dissipationFamily])
-  have iDn := integ (Hd.qDn α η v) (by simp [dissipationFamily])
-  have iDp := integ (Hd.qDp α η v) (by simp [dissipationFamily])
-  have iVA := integ (Hd.qV α η v + Hd.qA α η v) (by simp [dissipationFamily])
-  have iYB := integ (Hd.qYn α η v + Hd.qB α η v) (by simp [dissipationFamily])
-  have iYC := integ (Hd.qYp α η v + Hd.qC α η v) (by simp [dissipationFamily])
-  have iZ := integ (Hd.qZ α η v) (by simp [dissipationFamily])
+  have integ (term : DissipationTerm) (m : ℕ) :=
+    (Hd.weighted_integrable α η v hh hη hα1 hα2 hβ hsa hab term m).1 s hs
+  have iE := integ (.base .energy)
+  have iDr := integ (.base .centerTrace)
+  have iDn := integ (.base .nextTrace)
+  have iDp := integ (.base .previousTrace)
+  have iVA := integ .center
+  have iYB := integ .next
+  have iYC := integ .previous
+  have iZ := integ (.base .mixedCost)
   have hσ : ∀ k, 0 < sig α s k := fun k =>
     mul_pos (zero_lt_one.trans_le (hα1 k)) (hsa.trans_le hs.1)
   have hrow := fun p => Hd.e_heat_row p (sig α s) hh.le hη hσ v
@@ -2396,12 +2332,12 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
     ring
   have hΦint : ∀ v, Integrable (Φ v) ((volume.restrict (Set.Ioc sa sb)).prod volume) := by
     intro v
-    have iE := (weighted v (Hd.qE α η v) (by simp [dissipationFamily]) 2).2.const_mul (β / 2)
-    have iA := (weighted v (Hd.qA α η v) (by simp [dissipationFamily]) 0).2.const_mul (α v / 2)
+    have iE := (weighted v (.base .energy) 2).2.const_mul (β / 2)
+    have iA := (weighted v (.base .centerSecondTrace) 0).2.const_mul (α v / 2)
     have iB :=
-      (weighted v (Hd.qB α η v) (by simp [dissipationFamily]) 0).2.const_mul (α (v + 1) / 2)
+      (weighted v (.base .nextSecondTrace) 0).2.const_mul (α (v + 1) / 2)
     have iC :=
-      (weighted v (Hd.qC α η v) (by simp [dissipationFamily]) 0).2.const_mul (α (v - 1) / 2)
+      (weighted v (.base .previousSecondTrace) 0).2.const_mul (α (v - 1) / 2)
     exact ((iE.add iA).add iB).add iC
   have hFsint : Integrable (fun z : ℝ × (Fin 3 → ℝ) => Fs z.1 z.2) ((volume.restrict (Set.Ioc sa
       sb)).prod volume) :=
@@ -2412,27 +2348,27 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
       funext p; simp only [hF, Finset.mul_sum]
     rw [this]
     exact integrable_finsetSum _ fun v _ =>
-      (weighted v (Hd.qE α η v) (by simp [dissipationFamily]) 0).1 s hs
-  have hVint (v : Fin 3) := (weighted v (Hd.qV α η v) (by simp [dissipationFamily]) 0).2
+      (weighted v (.base .energy) 0).1 s hs
+  have hVint (v : Fin 3) := (weighted v (.base .centerCost) 0).2
   have hstep : ∀ s ∈ Set.Icc sa sb, ∫ p, Fs s p ≤ -(1 / 28) * ∑ v, Hd.Vbar α η v s := by
     intro s hs
     have hs0 : 0 < s := hsa.trans_le hs.1
     have hσ : ∀ k, 0 < sig α s k := fun k => mul_pos (hα0 k) hs0
-    have slice (v : Fin 3) (Q : ℝ → (Fin 3 → ℝ) → ℝ)
-        (hQ : Q ∈ Hd.dissipationFamily α η v) (m : ℕ) := (weighted v Q hQ m).1 s hs
-    have iE (v : Fin 3) := (slice v (Hd.qE α η v) (by simp [dissipationFamily]) 2).const_mul (β / 2)
+    have slice (v : Fin 3) (term : DissipationTerm) (m : ℕ) := (weighted v term m).1 s hs
+    have iE (v : Fin 3) := (slice v (.base .energy) 2).const_mul (β / 2)
     have iVA (v : Fin 3) :=
-      (slice v (Hd.qV α η v + Hd.qA α η v) (by simp [dissipationFamily]) 0).const_mul (α v / 2)
+      (slice v .center 0).const_mul (α v / 2)
     have iYB (v : Fin 3) :=
-      (slice v (Hd.qYn α η v + Hd.qB α η v) (by simp [dissipationFamily]) 0).const_mul
+      (slice v .next 0).const_mul
         (α (v + 1) / 2)
     have iYC (v : Fin 3) :=
-      (slice v (Hd.qYp α η v + Hd.qC α η v) (by simp [dissipationFamily]) 0).const_mul
+      (slice v .previous 0).const_mul
         (α (v - 1) / 2)
-    have iZ (v : Fin 3) := slice v (Hd.qZ α η v) (by simp [dissipationFamily]) 0
-    have iV (v : Fin 3) := slice v (Hd.qV α η v) (by simp [dissipationFamily]) 0
-    have iYn (v : Fin 3) := slice v (Hd.qYn α η v) (by simp [dissipationFamily]) 0
-    have iYp (v : Fin 3) := slice v (Hd.qYp α η v) (by simp [dissipationFamily]) 0
+    have iZ (v : Fin 3) := slice v (.base .mixedCost) 0
+    have iV (v : Fin 3) : Integrable (fun p => Gm β 0 s p * Hd.qV α η v s p) :=
+      slice v (.base .centerCost) 0
+    have iYn (v : Fin 3) := slice v (.base .nextCost) 0
+    have iYp (v : Fin 3) := slice v (.base .previousCost) 0
     set K : Fin 3 → (Fin 3 → ℝ) → ℝ := fun v p =>
       β / 2 * (Gm β 2 s p * Hd.qE α η v s p) +
         α v / 2 * (Gm β 0 s p * (Hd.qV α η v + Hd.qA α η v) s p) +
@@ -2451,13 +2387,14 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
       have splitC := integral_add integralEAB (iYC v)
       have splitB := integral_add integralEA (iYB v)
       have splitA := integral_add (iE v) (iVA v)
-      simp only [Pi.add_apply] at splitZ splitC splitB splitA e1 e2 e3
-      simp only [hK, Pi.add_apply]
+      simp only [dissipationValue, qE, qV, qA, qYn, qB, qYp, qC, qZ, Pi.add_apply]
+        at splitZ splitC splitB splitA e1 e2 e3 e4
+      simp only [hK, qE, qV, qA, qYn, qB, qYp, qC, qZ, Pi.add_apply]
       rw [splitZ, splitC, splitB, splitA, integral_const_mul, integral_const_mul,
         integral_const_mul, integral_const_mul, integral_const_mul, e1, e2, e3, e4]
       have hs3 : α v + α (v + 1) + α (v - 1) = 16 / 5 := by linarith
-      linear_combination ((∫ p, Gm β 2 s p * Hd.qE α η v s p) / 2) * hs3 + ((∫ p, Gm β 2 s p *
-          Hd.qE α η v s p) / 2) * hβdef
+      set J := ∫ p, Gm β 2 s p * Hd.vertexValue p (sig α s) η v .energy
+      linear_combination (J / 2) * hs3 + (J / 2) * hβdef
     set H : (Fin 3 → ℝ) → ℝ := fun p => ∑ v, (33 / 20 * Hd.qZ α η v s p - (α v * Hd.qV α η v s p + α
         (v + 1) * Hd.qYn α η v s p +
         α (v - 1) * Hd.qYp α η v s p) / 2) with hH
@@ -2483,7 +2420,7 @@ theorem smeared_plane_dissipation (hh : 0 < Hd.h) (hη : 0 < η)
       rw [← Finset.mul_sum]
       have h' := mul_le_mul_of_nonneg_left this (hG0nn p)
       simp only [hH]
-      unfold qZ qV qYn qYp
+      simp only [qZ, qV, qYn, qYp, vertexValue]
       linarith
     calc ∫ p, Fs s p = ∫ p, (Gm β 0 s p * H p + ∑ v, K v p) := by
           congr 1; funext p; exact hsplit p
