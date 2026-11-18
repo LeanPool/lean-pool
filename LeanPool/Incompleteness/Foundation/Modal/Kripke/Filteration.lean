@@ -66,17 +66,10 @@ lemma _root_.LO.Modal.Kripke.FilterEqvQuotient.finite (T_finite : T.Finite) :
     intro Qx Qy h;
     obtain ⟨x, rfl⟩ := Quotient.exists_rep Qx;
     obtain ⟨y, rfl⟩ := Quotient.exists_rep Qy;
-    simp [f] at h;
     apply Quotient.eq''.mpr;
     intro φ hp;
-    constructor;
-    · intro hpx;
-      have : ∀ a ∈ T, x ⊧ a → a ∈ T ∧ y ⊧ a := by simpa using h.subset;
-      exact this φ hp hpx |>.2;
-    · intro hpy;
-      have := h.symm.subset;
-      simp only [Set.ofPred_subset_ofPred, and_imp] at this;
-      exact this φ hp hpy |>.2;
+    have hφ := congrArg (fun z : 𝒫 T => φ ∈ z.val) h
+    exact ⟨fun hpx => (hφ.mp ⟨hp, hpx⟩).2, fun hpy => (hφ.mpr ⟨hp, hpy⟩).2⟩
   exact Finite.of_injective f hf
 
 instance : Nonempty (FilterEqvQuotient M T) := ⟨⟦M.toFrame.world_nonempty.some⟧⟩

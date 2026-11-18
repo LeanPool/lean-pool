@@ -62,7 +62,7 @@ abbrev _root_.LO.FirstOrder.Theory.Eq.relExt {k} (r : L.Rel k) : SyntacticFormul
     &(k + i)”) ==> Semiformula.rel r (fun i ↦ &i) ==> Semiformula.rel r (fun i ↦ &(k + i))
 
 /-- Imported declaration from the Incompleteness formalization. -/
-inductive eqAxiom : Theory L
+inductive eqAxiom : SyntacticFormula L → Prop
   | refl : eqAxiom (Eq.refl L)
   | symm : eqAxiom (Eq.symm L)
   | trans : eqAxiom (Eq.trans L)
@@ -70,7 +70,7 @@ inductive eqAxiom : Theory L
   | relExt {k} (r : L.Rel k) : eqAxiom (Eq.relExt r)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-notation "𝐄𝐐" => eqAxiom
+notation "𝐄𝐐" => Set.ofPred eqAxiom
 
 lemma _root_.LO.FirstOrder.Theory.Eq.defeq :
     𝐄𝐐 = {Eq.refl L, Eq.symm L, Eq.trans L}
@@ -112,7 +112,7 @@ namespace Eq
     Theory L) :=
   ⟨by
   intro σ h
-  cases h <;> try { simp [models_def, Semiterm.val_func, Semiformula.eval_rel, *]; try simp_all }⟩
+  cases h <;> simp [models_def, Semiterm.val_func, Semiformula.eval_rel, *] <;> simp_all⟩
 
 variable (L)
 

@@ -527,8 +527,8 @@ lemma getI_map_range [Inhabited α] (f : ℕ → α) (h : i < n) :
   simpa [h] using List.getI_eq_getElem ((List.range n).map f) (n := i) (by simpa using h)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-def subsetSet (l : List α) (s : Set α) [DecidablePred s] : Bool :=
-  l.foldr (fun a ih => s a && ih) true
+def subsetSet (l : List α) (s : Set α) [DecidablePred (· ∈ s)] : Bool :=
+  l.foldr (fun a ih => a ∈ s && ih) true
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def upper : List ℕ → ℕ

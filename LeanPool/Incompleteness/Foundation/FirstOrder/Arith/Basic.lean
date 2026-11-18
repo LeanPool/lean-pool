@@ -240,9 +240,9 @@ section «lp_section_2»
 
 variable {L : Language} [Structure L ℕ] (T : Theory L) (F : Set (Sentence L))
 
-lemma consistent_of_sound [SoundOn T F] (hF : ⊥ ∈ F) : Entailment.Consistent T :=
+lemma consistent_of_sound [SoundOn T (· ∈ F)] (hF : ⊥ ∈ F) : Entailment.Consistent T :=
   Entailment.consistent_iff_unprovable_bot.mpr fun b ↦ by
-    simpa [Models₀] using SoundOn.sound (F := F) hF b
+    simpa [Models₀] using SoundOn.sound (F := (· ∈ F)) hF b
 
 end «lp_section_2»
 
@@ -291,12 +291,12 @@ namespace Theory
 variable {L : Language} [L.Eq]
 
 /-- Imported declaration from the Incompleteness formalization. -/
-inductive EQ' : Theory L
+inductive EQ' : SyntacticFormula L → Prop
   | refl : EQ' “x | x = x”
   | replace (φ : SyntacticSemiformula L 1) : EQ' “∀ x y, x = y → !φ x → !φ y”
 
 /-- Imported declaration from the Incompleteness formalization. -/
-notation "𝐄𝐐'" => EQ'
+notation "𝐄𝐐'" => Set.ofPred EQ'
 
 variable (T : Theory L)
 
@@ -304,7 +304,7 @@ noncomputable instance _root_.LO.FirstOrder.Theory.EQ'.subTheoryOfEQ : (𝐄𝐐
     Theory L) wkn 𝐄𝐐 :=
   Entailment.WeakerThan.ofAxm! <| by
   rintro φ h
-  rcases (show 𝐄𝐐' φ from h)
+  rcases (show φ ∈ 𝐄𝐐' from h)
   case refl =>
     apply Entailment.by_axm _ eqAxiom.refl
   case replace φ =>

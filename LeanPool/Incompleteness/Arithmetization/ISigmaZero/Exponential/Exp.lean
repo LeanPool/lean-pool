@@ -725,7 +725,7 @@ protected lemma uniq {x y₁ y₂ : V} : Exponential x y₁ → Exponential x y�
   suffices ∀ x < y₂, ∀ y₁ ≤ y₂, Exponential x y₁ → Exponential x y₂ → y₁ = y₂ by
     intro x y₁ h₁ h₂ hy; exact this x h₂.lt y₁ hy h₁ h₂
   induction y₂ using order_induction_sigma0
-  · definability
+  · aesop (rule_sets := [Definability]) (add safe apply HierarchySymbol.Boldface.equal')
   case ind y₂ IH =>
     intro x _ y₁ h h₁ h₂
     rcases zero_or_succ x with (rfl | ⟨x, rfl⟩)
