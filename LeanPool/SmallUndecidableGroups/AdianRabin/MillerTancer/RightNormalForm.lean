@@ -217,7 +217,7 @@ theorem boundary_ne_one (i j : Fin 5) (hij : i ≠ j)
     lastValue i x * headValue j y ≠ 1 := by
   fin_cases i <;> fin_cases j
   all_goals try exact (hij rfl).elim
-  all_goals try norm_num [side] at hside
+  all_goals norm_num [side] at hside
   all_goals
     intro h
     have hh := congrArg Multiplicative.toAdd h

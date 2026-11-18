@@ -58,8 +58,8 @@ abbrev scaleFour : Multiplicative ℤ →* Multiplicative ℤ := intFour
       MonoidHom.coe_comp, comp_apply, FreeGroup.lift_apply_of, Matrix.cons_val_zero, intFour,
       Int.ofAdd_mul, MonoidHom.coe_mk, OneHom.coe_mk, toAdd_one, zpow_ofNat, pow_zero,
       Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one, map_pow, toAdd_ofAdd, pow_one]
-    all_goals apply Multiplicative.toAdd.injective
-    all_goals norm_num
+    apply Multiplicative.toAdd.injective
+    norm_num
   exact congrArg Multiplicative.toAdd (DFunLike.congr_fun hhom x)
 
 @[simp] theorem dExponent_beta (x : Base) :
@@ -74,8 +74,8 @@ abbrev scaleFour : Multiplicative ℤ →* Multiplicative ℤ := intFour
       MonoidHom.coe_comp, comp_apply, FreeGroup.lift_apply_of, Matrix.cons_val_zero, map_pow,
       intFour, Int.ofAdd_mul, MonoidHom.coe_mk, OneHom.coe_mk, toAdd_ofAdd, zpow_ofNat,
       pow_one, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one, toAdd_one, pow_zero]
-    all_goals apply Multiplicative.toAdd.injective
-    all_goals norm_num
+    apply Multiplicative.toAdd.injective
+    norm_num
   exact congrArg Multiplicative.toAdd (DFunLike.congr_fun hhom x)
 
 theorem e_pow_mem_A0_dvd (n : ℤ) (h : e ^ n ∈ A0) : (4 : ℤ) ∣ n := by

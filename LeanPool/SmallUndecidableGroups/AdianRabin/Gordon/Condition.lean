@@ -36,7 +36,7 @@ structure Condition21 (P : FP n m) where
   q_pos : ∀ i, 0 < q i
   gcd_q : Finset.univ.gcd q = 1
   exactOrder : ∀ i,
-    orderOf (Abelianization.of
+    orderOf (Group.Abelianization.of
       (PresentedGroup.of (selected i) : P.Group)) = q i
 
 namespace Condition21
@@ -99,7 +99,7 @@ theorem normalizedQ_pos (condition : Condition21 P)
 
 theorem normalized_exactOrder (condition : Condition21 P)
     (i : Fin condition.orderValues.card) :
-    orderOf (Abelianization.of
+    orderOf (Group.Abelianization.of
       (PresentedGroup.of (condition.normalizedSelected i) : P.Group)) =
         condition.normalizedQ i := by
   rw [show condition.normalizedSelected i =
