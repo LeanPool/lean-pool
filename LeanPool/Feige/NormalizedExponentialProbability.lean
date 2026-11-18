@@ -216,7 +216,7 @@ noncomputable instance
     IsProbabilityMeasure
       (normalizedExponentialSimplexMeasure (n := n)) where
   measure_univ := by
-    rw [normalizedExponentialSimplexMeasure, Measure.smul_apply]
+    rw [normalizedExponentialSimplexMeasure, smul_apply]
     simp only [MeasurableSet.univ, Measure.restrict_apply, univ_inter]
     exact factorial_mul_volume_fullSimplex (n := n)
 
