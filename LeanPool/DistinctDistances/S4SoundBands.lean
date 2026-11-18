@@ -43,16 +43,29 @@ private theorem lhs_append (A B : List (Nat × ℚ)) (rhs : ℚ) (v : Nat → �
     QRow.lhs ⟨A ++ B, rhs⟩ v = QRow.lhs ⟨A, rhs⟩ v + QRow.lhs ⟨B, rhs⟩ v := by
   simp [QRow.lhs, List.map_append, List.sum_append]
 
+private theorem bandEnt_cons (sel : Nat → Nat) (q : ℚ) (b0 m : Nat) :
+    Params.bandEnt sel q b0 (m + 1) =
+      (sel b0, q) :: Params.bandEnt sel q (b0 + 1) m := by
+  simp only [Params.bandEnt, Params.cells, List.cons_append, List.nil_append]
+
+private theorem bandEnt_succ (sel : Nat → Nat) (q : ℚ) (b0 m : Nat) :
+    Params.bandEnt sel q b0 (m + 1) = Params.bandEnt sel q b0 m ++ [(sel (b0 + m), q)] := by
+  induction m generalizing b0 with
+  | zero => simp [Params.bandEnt, Params.cells]
+  | succ m ih =>
+    rw [bandEnt_cons sel q b0 (m + 1), bandEnt_cons sel q b0 m,
+      ih (b0 + 1), List.cons_append, show b0 + 1 + m = b0 + (m + 1) by omega]
+
 /-- The left-hand side of the band entries `(sel (b₀ + j), q)`, `j < m`, at `v` is
 `∑_{j < m} q v(sel (b₀ + j))`. -/
 theorem QRow.lhs_bandEnt (sel : Nat → Nat) (q : ℚ) (b0 m : Nat) (rhs : ℚ) (v : Nat → ℝ) :
     QRow.lhs ⟨Params.bandEnt sel q b0 m, rhs⟩ v =
       ∑ j ∈ range m, (q : ℝ) * v (sel (b0 + j)) := by
   induction m with
-  | zero => simp [QRow.lhs, Params.bandEnt]
+  | zero => simp [QRow.lhs, Params.bandEnt, Params.cells]
   | succ m ih =>
     unfold QRow.lhs at ih ⊢
-    simp only [Params.bandEnt, List.map_append, List.sum_append, List.map_cons, List.map_nil,
+    simp only [bandEnt_succ, List.map_append, List.sum_append, List.map_cons, List.map_nil,
       List.sum_cons, List.sum_nil, add_zero] at ih ⊢
     rw [ih, Finset.sum_range_succ]
 

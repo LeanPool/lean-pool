@@ -200,9 +200,8 @@ def rowJ (il ig2 igs un ud : Nat) : Option QRow :=
   else none
 
 /-- The entries `(sel (b₀ + j), q)` for `j < m`. -/
-def bandEnt (sel : Nat → Nat) (q : ℚ) (b0 : Nat) : Nat → List (Nat × ℚ)
-  | 0 => []
-  | m + 1 => bandEnt sel q b0 m ++ [(sel (b0 + m), q)]
+def bandEnt (sel : Nat → Nat) (q : ℚ) (b0 m : Nat) : List (Nat × ℚ) :=
+  cells (fun band ↦ [(sel band, q)]) m b0
 
 /-- The row AB1: `-2𝒜(λ) - 6 D/n - 4/n - ∑ⱼ W_j ≤ -4`. -/
 def rowAB1 (b0 m : Nat) : Option QRow :=
