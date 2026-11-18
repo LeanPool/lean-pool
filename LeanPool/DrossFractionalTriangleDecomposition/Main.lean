@@ -28,7 +28,7 @@ public theorem dross_fractional_flow_exact (G : SimpleGraph V) [DecidableRel G.A
     FractionalTriangleDecomp G := by
   classical
   induction m : G.edgeFinset.card using Nat.strong_induction_on generalizing G with
-  | h m ih =>
+  | ind m ih =>
     by_cases hNoHDT : ∀ u v w : V, G.Adj u v → G.Adj u w → G.Adj v w →
         G.minDegree + 2 ≤ G.degree u → G.minDegree + 2 ≤ G.degree v →
         G.minDegree + 2 ≤ G.degree w → False
