@@ -44,7 +44,8 @@ theorem eq_top_of_sup_map_eq_top {R S : Type*} [CommRing R] [CommRing S] [Algebr
     obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.mp hx
     refine Submodule.add_mem_sup ha ?_
     rwa [Ideal.smul_top_eq_map]
-  have := Submodule.le_of_le_smul_of_le_jacobson_bot Module.Finite.fg_top hI hle
+  have := Submodule.le_of_le_smul_of_le_jacobson Module.Finite.fg_top
+    (by simpa only [Ideal.jacobson_bot] using hI) hle
   exact eq_top_iff.mpr fun x _ ↦ this Submodule.mem_top
 
 end Ideal

@@ -61,7 +61,7 @@ theorem exists_generic_center {f : O[X]} (h2 : IsUnit (2 : O)) {ab bb : ResidueF
         ← eval_map_apply, ha, ← hb, sub_self]
     exact (residue_eq_zero_iff _).mp hval
   have hderiv : IsUnit ((Polynomial.X ^ 2 - Polynomial.C (f.eval a)).derivative.eval b₀) := by
-    rw [derivative_sub, Polynomial.derivative_C, sub_zero, derivative_X_pow]
+    rw [derivative_sub, Polynomial.derivative_C, sub_zero, Polynomial.derivative_X_pow]
     simpa using h2.mul hb₀u
   obtain ⟨b, hbeval, hbsub⟩ := exists_smooth_root h0 hderiv
   rw [eval_sub, eval_pow, eval_X, eval_C, sub_eq_zero] at hbeval

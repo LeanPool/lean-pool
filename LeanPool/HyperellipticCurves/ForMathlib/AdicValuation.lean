@@ -7,7 +7,8 @@ module
 
 -- Import paths adapted for Lean Pool; local option overrides removed.
 
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 
 /-!
 # Additions to `Mathlib.RingTheory.DedekindDomain.AdicValuation`

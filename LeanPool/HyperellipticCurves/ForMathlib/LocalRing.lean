@@ -58,12 +58,14 @@ theorem exists_units_natCast_eq (hp : p.Prime) (hpmem : (p : O) ∈ maximalIdeal
     (hn : n ≠ 0) :
     ∃ u : Oˣ, (n : O) = (p : O) ^ padicValNat p n * u := by
   set v := padicValNat p n
-  obtain ⟨c, hc⟩ : p ^ v ∣ n := pow_padicValNat_dvd
+  obtain ⟨c, hc⟩ : p ^ v ∣ n := by
+    simpa only [v, Nat.padicValNat_def] using pow_multiplicity_dvd p n
   have hnd : ¬ p ∣ c := fun hd ↦ by
     have hdvd : p ^ (v + 1) ∣ n := by
       rw [hc, pow_succ]
       exact mul_dvd_mul_left _ hd
-    lia [(Nat.pow_dvd_iff_le_padicValNat hp.ne_one hn).mp hdvd]
+    have hv : v = multiplicity p n := Nat.padicValNat_def
+    lia [(Nat.pow_dvd_iff_le_multiplicity hp.ne_one hn).mp hdvd]
   obtain ⟨u, hu⟩ := isUnit_natCast_of_not_dvd hp hpmem hnd
   exact ⟨u, by rw [hu, hc]; push_cast; ring⟩
 
@@ -74,7 +76,7 @@ theorem natCast_dvd_pow_self (hp : p.Prime) (hpmem : (p : O) ∈ maximalIdeal O)
     (n : O) ∣ (p : O) ^ n := by
   obtain ⟨u, hu⟩ := exists_units_natCast_eq hp hpmem hn
   rw [hu, u.isUnit.mul_right_dvd]
-  exact pow_dvd_pow _ (Nat.padicValNat_le_self n)
+  exact pow_dvd_pow _ (by simpa only [Nat.padicValNat_def] using Nat.multiplicity_le_self n)
 
 /-! ### Uniformizers -/
 

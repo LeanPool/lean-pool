@@ -329,7 +329,7 @@ theorem polynomial_eq_of_forall_eval_eq {σ : Type*} [Finite σ] {K : Type*} [Co
       P.map ((algebraMap O K).comp (evalRingHom (hasEval_of_mem hx)))
         = P'.map ((algebraMap O K).comp (evalRingHom (hasEval_of_mem hx)))) :
     P = P' := by
-  refine Polynomial.ext fun k ↦ ?_
+  refine AddMonoidAlgebra.ext <| DFunLike.ext _ _ fun k ↦ ?_
   refine sub_eq_zero.mp (eq_zero_of_forall_eval_zero hπ hπ0 fun x hx ↦ ?_)
   rw [← evalRingHom_apply (hasEval_of_mem hx), map_sub, sub_eq_zero]
   have h' := congrArg (fun q ↦ q.coeff k) (h x hx)

@@ -634,6 +634,7 @@ theorem exists_prime_squarefree_reduction {f : K[X]} (hf : f.Monic) (hd : 0 < f.
   have hs0 : s ≠ 0 := nonZeroDivisors.ne_zero hs
   have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
   -- a prime beyond `B` and the norm of `a·s·b`, and a maximal ideal above it
+  have : Ring.HasFiniteQuotients A := .of_module_finite ℤ A
   set N := Ideal.absNorm (Ideal.span {a * s * b}) with hN
   have hN0 : N ≠ 0 := by
     rw [hN, ne_eq, Ideal.absNorm_eq_zero_iff, Ideal.span_singleton_eq_bot]
