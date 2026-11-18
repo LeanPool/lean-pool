@@ -21,6 +21,9 @@ open scoped BigOperators
 
 namespace GapCVP
 
+-- Avoid expanding symbolic finite enumerations during elaboration.
+attribute [local irreducible] List.finRange
+
 open GapCVP.TraceGolf (oneStep rebound)
 
 namespace SourceMixedRadixUnaryQuotientRemainderTM
@@ -2931,6 +2934,7 @@ private theorem fiveFamilyAcceptanceVariableCode_valid
             position, fiveFamilyVerifierAcceptingSymbol machine) :
             Variable (rowWidth bound machine original)
               (completePhaseSymbolCount machine.tm))) true := by
+  rw [GapCVP.CL.encode_variable]
   unfold fiveFamilyAcceptanceVariableCode
     fiveAcceptanceVariablePairInput
   rw [fiveFamilyAcceptanceFinalTimeUnary_valid
