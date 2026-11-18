@@ -30,7 +30,7 @@ variable {X : dTopCat} {X₀ : Set X}
 lemma subtypeHom_eq_coe (x : X₀) : (dTopCat.DirectedSubtypeHom X₀) x = (x : X) := rfl
 
 lemma range_dipath_map_inclusion {x y : X₀} (γ : Dipath x y)
-    : range (γ.map (DirectedSubtypeInclusion X₀)) ⊆ X₀ := by
+    : range (γ.map (DirectedSubtypeInclusion (· ∈ X₀))) ⊆ X₀ := by
   rintro z ⟨t, ht⟩
   rw [←ht]
   change (dTopCat.DirectedSubtypeHom X₀) (γ t) ∈ X₀
@@ -38,7 +38,7 @@ lemma range_dipath_map_inclusion {x y : X₀} (γ : Dipath x y)
   exact Subtype.mem (γ t)
 
 lemma subtype_path_class_eq_map {x y : X₀} (γ : Dipath x y) :
-    (dπₘ (dTopCat.DirectedSubtypeHom X₀)).map ⟦γ⟧ = ⟦(γ.map (DirectedSubtypeInclusion X₀))⟧ :=
+    (dπₘ (dTopCat.DirectedSubtypeHom X₀)).map ⟦γ⟧ = ⟦(γ.map (DirectedSubtypeInclusion (· ∈ X₀)))⟧ :=
   rfl
 
 
@@ -68,7 +68,7 @@ lemma map_subtypeDipath_eq {x y : X} (γ : Dipath x y) (hγ : range γ ⊆ X₀)
   congr 1
 
 lemma subtypeDipath_of_included_dipath_eq {x y : X₀} (γ : Dipath x y) :
-    SubtypeDipath (γ.map (DirectedSubtypeInclusion X₀)) (range_dipath_map_inclusion γ) =
+    SubtypeDipath (γ.map (DirectedSubtypeInclusion (· ∈ X₀))) (range_dipath_map_inclusion γ) =
     γ.cast (by ext; rw [←subtypeHom_eq_coe x]; rfl) (by ext; rw [←subtypeHom_eq_coe y]; rfl) := by
   ext t
   rfl
