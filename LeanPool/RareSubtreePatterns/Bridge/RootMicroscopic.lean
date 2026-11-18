@@ -63,7 +63,7 @@ theorem lintegral_bienayme_eq_tsum (μ : PMF ℕ) (f : PlaneTree → ℝ≥0∞)
 theorem tsum_weight_mul_eq_sigma (μ : PMF ℕ) (F : PlaneTree → ℝ≥0∞) :
     ∑' T, weight μ T * F T =
       ∑' d, ∑' f : Fin d → PlaneTree, μ d * (∏ i, weight μ (f i)) * F (node (List.ofFn f)) := by
-  rw [← equivSigma.symm.tsum_eq, ENNReal.tsum_sigma']
+  rw [← equivSigma.symm.tsum_eq, tsum_sigma']
   refine tsum_congr fun d => tsum_congr fun f => ?_
   rw [equivSigma_symm_apply, weight_node_ofFn]
 
@@ -73,7 +73,7 @@ theorem tsum_pi_succAbove (d : ℕ) (i : Fin (d + 1))
     (F : PlaneTree → (Fin d → PlaneTree) → ℝ≥0∞) :
     ∑' f : Fin (d + 1) → PlaneTree, F (f i) (fun j => f (i.succAbove j)) =
       ∑' t, ∑' g, F t g := by
-  rw [← (Fin.insertNthEquiv (fun _ => PlaneTree) i).tsum_eq, ← ENNReal.tsum_prod]
+  rw [← (Fin.insertNthEquiv (fun _ => PlaneTree) i).tsum_eq, ← tsum_prod]
   refine tsum_congr fun p => ?_
   simp [Fin.insertNthEquiv]
 
@@ -114,7 +114,7 @@ theorem lintegral_declumped_le (μ : PMF ℕ) (B : Set ℕ) (G : PlaneTree → P
         (fun t => ∑' q, forestSizeWeight μ (d - 1) q * Φ (1 + t.vertexCount + q)) t
           ∂bienayme μ) d := by
   rw [lintegral_bienayme_eq_tsum, tsum_weight_mul_eq_sigma]
-  refine ENNReal.tsum_le_tsum fun d => ?_
+  refine tsum_le_tsum fun d => ?_
   have hv : ∀ f : Fin d → PlaneTree,
       (node (List.ofFn f)).vertexCount = 1 + ∑ j, (f j).vertexCount := by
     intro f
@@ -123,7 +123,7 @@ theorem lintegral_declumped_le (μ : PMF ℕ) (B : Set ℕ) (G : PlaneTree → P
   by_cases hd : d ∈ B
   · rw [Set.indicator_of_mem hd]
     rcases d with _ | d
-    · refine (le_of_eq (ENNReal.tsum_eq_zero.2 fun f => ?_)).trans zero_le
+    · refine (le_of_eq (tsum_eq_zero_iff.2 fun f => ?_)).trans zero_le
       rw [Set.indicator_of_notMem, mul_zero]
       rintro ⟨-, U, hU, -⟩
       simp at hU
@@ -151,11 +151,11 @@ theorem lintegral_declumped_le (μ : PMF ℕ) (B : Set ℕ) (G : PlaneTree → P
           ≤ ∑' f : Fin (d + 1) → PlaneTree, ∑ i : Fin (d + 1), μ (d + 1) *
               ((∏ j, weight μ (f j)) *
                 ({t | G t}.indicator 1 (f i) * Φ (1 + ∑ j, (f j).vertexCount))) :=
-            ENNReal.tsum_le_tsum hpt
+            tsum_le_tsum hpt
         _ = ∑ i : Fin (d + 1), μ (d + 1) * ∑' f : Fin (d + 1) → PlaneTree,
               (∏ j, weight μ (f j)) *
                 ({t | G t}.indicator 1 (f i) * Φ (1 + ∑ j, (f j).vertexCount)) := by
-            rw [Summable.tsum_finsetSum (fun i _ => ENNReal.summable)]
+            rw [Summable.tsum_finsetSum (fun i _ => CompleteLattice.summable)]
             exact Finset.sum_congr rfl fun i _ => ENNReal.tsum_mul_left
         _ = _ := by
             simp_rw [tsum_child_mark]
@@ -163,7 +163,7 @@ theorem lintegral_declumped_le (μ : PMF ℕ) (B : Set ℕ) (G : PlaneTree → P
               Nat.add_sub_cancel]
             ring
   · rw [Set.indicator_of_notMem hd]
-    refine le_of_eq (ENNReal.tsum_eq_zero.2 fun f => ?_)
+    refine le_of_eq (tsum_eq_zero_iff.2 fun f => ?_)
     rw [Set.indicator_of_notMem, mul_zero]
     rintro ⟨hB, -⟩
     simp only [rootDegree_node, List.length_ofFn] at hB
@@ -230,8 +230,8 @@ theorem lintegral_declumped_le_of_bound (μ : PMF ℕ) (B : Set ℕ) (G : PlaneT
         _ = _ := by ring
     · rw [Set.indicator_of_notMem hd, Set.indicator_of_notMem hd, Set.indicator_of_notMem hd]
       simp
-  refine (ENNReal.tsum_le_tsum hterm).trans (le_of_eq ?_)
-  rw [ENNReal.tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left, ENNReal.tsum_mul_right,
+  refine (tsum_le_tsum hterm).trans (le_of_eq ?_)
+  rw [tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left, ENNReal.tsum_mul_right,
     mul_add]
   rfl
 
@@ -245,7 +245,7 @@ theorem tsum_forestSizeWeight_mul_walkProb (μ : PMF ℕ) (ℓ : ℕ) (N : ℤ) 
       ENNReal.ofReal (walkProb μ N (-ℓ)) := by
   rcases lt_or_ge N 0 with hN | hN
   · rw [walkProb_of_neg μ hN, ENNReal.ofReal_zero]
-    refine ENNReal.tsum_eq_zero.2 fun q => ?_
+    refine tsum_eq_zero_iff.2 fun q => ?_
     rw [walkProb_of_neg μ (by omega), ENNReal.ofReal_zero, mul_zero]
   · obtain ⟨Nn, rfl⟩ := Int.eq_ofNat_of_zero_le hN
     rw [tsum_eq_sum (s := Finset.range (Nn + 1)) fun q hq => by
@@ -319,7 +319,7 @@ theorem forest_bound_unweighted (hT : StableToolkit μ α a) :
   have ham : 0 < a (M / 2) := hT.pos _ hm
   have hle1 : ∑' q, forestSizeWeight μ (d - 1) q *
       {s : ℕ | M < s}.indicator (1 : ℕ → ℝ≥0∞) (1 + t.vertexCount + q) ≤ 1 := by
-    refine le_trans (ENNReal.tsum_le_tsum fun q => ?_) (tsum_forestSizeWeight_le_one μ (d - 1))
+    refine le_trans (tsum_le_tsum fun q => ?_) (tsum_forestSizeWeight_le_one μ (d - 1))
     refine mul_le_of_le_one_right zero_le ?_
     by_cases h : 1 + t.vertexCount + q ∈ {s : ℕ | M < s}
     · rw [Set.indicator_of_mem h, Pi.one_apply]
@@ -335,7 +335,7 @@ theorem forest_bound_unweighted (hT : StableToolkit μ α a) :
     have hle2 : ∑' q, forestSizeWeight μ (d - 1) q *
         {s : ℕ | M < s}.indicator (1 : ℕ → ℝ≥0∞) (1 + t.vertexCount + q) ≤
         ENNReal.ofReal (Ct * ((d - 1 : ℕ) : ℝ) / a (M / 2)) := by
-      refine le_trans (ENNReal.tsum_le_tsum fun q => ?_) (htail (d - 1) (M / 2) hm)
+      refine le_trans (tsum_le_tsum fun q => ?_) (htail (d - 1) (M / 2) hm)
       by_cases h : 1 + t.vertexCount + q ∈ {s : ℕ | M < s}
       · have hq : q ∈ Set.Ioi (M / 2) := by
           simp only [Set.mem_ofPred_eq] at h
@@ -377,7 +377,7 @@ theorem forest_bound_weighted (hT : StableToolkit μ α a) :
       (fun s => walkProb μ ((n : ℤ) - s) 0) (1 + t.vertexCount + q)) ≤
       ENNReal.ofReal (supWalk μ N) := by
     calc _ ≤ ∑' q, forestSizeWeight μ (d - 1) q * ENNReal.ofReal (walkProb μ (N - q) 0) := by
-          refine ENNReal.tsum_le_tsum fun q => mul_le_mul_right ?_ _
+          refine tsum_le_tsum fun q => mul_le_mul_right ?_ _
           refine ENNReal.ofReal_le_ofReal ?_
           rw [← hcastq q]
           exact Set.indicator_le_self' (fun _ _ => walkProb_nonneg μ _ _) _
@@ -411,7 +411,7 @@ theorem forest_bound_weighted (hT : StableToolkit μ α a) :
     have hB : ∑' q, forestSizeWeight μ (d - 1) q * ENNReal.ofReal ({s : ℕ | M < s}.indicator
         (fun s => walkProb μ ((n : ℤ) - s) 0) (1 + t.vertexCount + q)) ≤
         ENNReal.ofReal (Cw * ((d - 1 : ℕ) : ℝ) / (a (M / 2) * a Nn)) := by
-      refine le_trans (ENNReal.tsum_le_tsum fun q => ?_) (hw (d - 1) (M / 2) Nn hm (by omega))
+      refine le_trans (tsum_le_tsum fun q => ?_) (hw (d - 1) (M / 2) Nn hm (by omega))
       by_cases h : 1 + t.vertexCount + q ∈ {s : ℕ | M < s}
       · have hq : q ∈ Set.Ioi (M / 2) := by
           simp only [Set.mem_ofPred_eq] at h

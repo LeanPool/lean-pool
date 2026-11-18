@@ -129,7 +129,7 @@ lemma toMeasure_eq : μ.toMeasure = ENNReal.ofReal (1 / 4) • Measure.dirac 0 +
   rw [Measure.ext_iff_singleton]
   intro j
   rw [PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton j), μ_apply]
-  simp only [Measure.coe_add, Measure.coe_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [FunLike.coe_add, FunLike.coe_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   by_cases h0 : j = 0
   · subst h0; simp [w]
   · by_cases h1 : j = 1
