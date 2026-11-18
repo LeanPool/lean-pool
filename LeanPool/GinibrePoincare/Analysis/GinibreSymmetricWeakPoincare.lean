@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairClosure
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstantPairs
 public import LeanPool.GinibrePoincare.Endgame.ConcreteTheoremOneNine
 public import LeanPool.GinibrePoincare.Analysis.EquilibriumProbability
 public import LeanPool.GinibrePoincare.Analysis.CenterOfMassEigenfunctions
@@ -53,78 +54,24 @@ open scoped Topology ContDiff
 namespace GinibrePoincare
 noncomputable section
 
-/-- The constant function `c`, represented in actual Ginibre `L²`. -/
-def ginibreRealConstantL2 (n : ℕ) (hn : 0 < n) (c : ℝ) :
-    Lp ℝ 2 (ginibreMeasure n) := by
-  letI := ginibreMeasure_isProbabilityMeasure hn
-  exact (memLp_const c : MemLp (fun _ : Configuration n => c)
-    2 (ginibreMeasure n)).toLp (fun _ => c)
-
-theorem ginibreRealConstantL2_ae (n : ℕ) (hn : 0 < n) (c : ℝ) :
-    (ginibreRealConstantL2 n hn c : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-      fun _ => c := by
-  let := ginibreMeasure_isProbabilityMeasure hn
-  exact (memLp_const c : MemLp (fun _ : Configuration n => c)
-    2 (ginibreMeasure n)).coeFn_toLp
-
-/-- Mean of an actual Ginibre `L²` class. -/
-def ginibreL2Mean (n : ℕ) (u : Lp ℝ 2 (ginibreMeasure n)) : ℝ :=
-  ∫ z, u z ∂ginibreMeasure n
-
 /-- Variance of an actual Ginibre `L²` class, defined by its centered Hilbert norm. -/
 def ginibreL2Variance (n : ℕ) (hn : 0 < n)
     (u : Lp ℝ 2 (ginibreMeasure n)) : ℝ :=
   ‖u - ginibreRealConstantL2 n hn (ginibreL2Mean n u)‖ ^ 2
 
-/-- Dirichlet energy of a distributional weak pair in the paper's normalization. -/
-def ginibreWeakEnergy (n : ℕ)
-    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n)) : ℝ :=
-  (1 / (n : ℝ)) * ‖g‖ ^ 2
-
-theorem ginibreL2Mean_continuous (n : ℕ) (hn : 0 < n) :
-    Continuous (ginibreL2Mean n) := by
-  let := ginibreMeasure_isProbabilityMeasure hn
-  have h1 : MemLp (fun _ : Configuration n => (1 : ℝ)) 2 (ginibreMeasure n) :=
-    memLp_const 1
-  have h := continuous_L2_integral_mul (ginibreMeasure n)
-    (fun _ : Configuration n => (1 : ℝ)) h1
-  have heq : ginibreL2Mean n = fun u => ∫ z, u z * 1 ∂ginibreMeasure n := by
-    funext u
-    unfold ginibreL2Mean
-    congr 1
-    funext z
-    ring
-  rw [heq]
-  exact h
-
 theorem ginibreL2Variance_continuous (n : ℕ) (hn : 0 < n) :
     Continuous (ginibreL2Variance n hn) := by
-  let := ginibreMeasure_isProbabilityMeasure hn
-  let one : Lp ℝ 2 (ginibreMeasure n) :=
-    (memLp_const (1 : ℝ) : MemLp (fun _ : Configuration n => (1 : ℝ))
-      2 (ginibreMeasure n)).toLp (fun _ => (1 : ℝ))
+  let one := ginibreRealConstantL2 n hn 1
   have hc : Continuous (fun u : Lp ℝ 2 (ginibreMeasure n) =>
       ginibreL2Mean n u • one) :=
     (ginibreL2Mean_continuous n hn).smul continuous_const
-  have hconst (c : ℝ) : ginibreRealConstantL2 n hn c = c • one := by
-    apply Lp.ext
-    filter_upwards [
-      ginibreRealConstantL2_ae n hn c,
-      Lp.coeFn_smul c one,
-      (memLp_const (1 : ℝ) : MemLp (fun _ : Configuration n => (1 : ℝ))
-        2 (ginibreMeasure n)).coeFn_toLp] with z hc hs hone
-    rw [hc, hs]
-    simp [one]
   have hrepr : ginibreL2Variance n hn = fun u =>
       ‖u - ginibreL2Mean n u • one‖ ^ 2 := by
     funext u
-    simp only [ginibreL2Variance, hconst]
+    unfold ginibreL2Variance
+    rw [ginibreRealConstantL2_eq_smul_one n hn (ginibreL2Mean n u)]
   rw [hrepr]
   exact (continuous_norm.comp (continuous_id.sub hc)).pow 2
-
-theorem ginibreWeakEnergy_continuous (n : ℕ) :
-    Continuous (ginibreWeakEnergy n) := by
-  exact continuous_const.mul (continuous_norm.pow 2)
 
 /-- A weak gradient representative has the corresponding smooth Dirichlet energy. -/
 theorem ginibreWeakEnergy_eq_smoothGinibreEnergy {n : ℕ}
@@ -418,11 +365,7 @@ private theorem coordinateSumLinear_attains_symmetric_weak_poincare
         rw [coordinateSum_ginibre_gaussian n hn]
         exact hmoments.1
   have hvar : ginibreL2Variance n hn u = 1 / 2 := by
-    have hc0 : ginibreRealConstantL2 n hn 0 = 0 := by
-      apply Lp.ext
-      filter_upwards [ginibreRealConstantL2_ae n hn 0] with z hz
-      simp [hz]
-    rw [ginibreL2Variance, hmean, hc0, sub_zero]
+    rw [ginibreL2Variance, hmean, ginibreRealConstantL2_zero, sub_zero]
     rw [← integral_square_eq_L2_norm_sq]
     have hsecond : (∫ z, f z ^ 2 ∂ginibreMeasure n) = 1 / 2 := by
       have hmap : (∫ s : ℂ, L s ^ 2 ∂((ginibreMeasure n).map coordinateSum)) =

@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalClosure
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstantPairs
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
 
 /-!
@@ -179,6 +180,31 @@ theorem ginibreFullWeakSpace_isClosed (n : ℕ) (hn : 0 < n) :
 instance ginibreFullWeakSpace_complete (n : ℕ) (hn : 0 < n) :
     CompleteSpace (ginibreFullWeakSpace n hn) :=
   (ginibreFullWeakSpace_isClosed n hn).completeSpace_coe
+
+/-- Centering on actual Ginibre L², bundled as a continuous real-linear map. -/
+def ginibreFullCenter (n : ℕ) (hn : 0 < n) : GinibreFullValueL2 n →L[ℝ] GinibreFullValueL2 n :=
+  ContinuousLinearMap.id ℝ _ -
+    (innerSL ℝ (ginibreRealConstantL2 n hn 1)).smulRight (ginibreRealConstantL2 n hn 1)
+
+theorem ginibreFullCenter_apply (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
+    ginibreFullCenter n hn u = u - ginibreRealConstantL2 n hn (ginibreL2Mean n u) := by
+  simp [ginibreFullCenter, ginibreRealConstantL2_one_inner, ← ginibreRealConstantL2_eq_smul_one]
+
+/-- Centering preserves the actual symmetric ordinary weak gradient. -/
+theorem ginibreFullCenter_weak_pair {n : ℕ} (hn : 0 < n)
+    (u : GinibreFullValueL2 n) (g : GinibreFullGradientL2 n)
+    (hu : IsGinibreDistributionalGradient n u g) (hs : IsGinibreSymmetricWeakPair (u, g)) :
+    IsGinibreDistributionalGradient n (ginibreFullCenter n hn u) g ∧
+      IsGinibreSymmetricWeakPair (ginibreFullCenter n hn u, g) := by
+  let p : ginibreFullWeakSpace n hn := ⟨(u, g), hu, hs⟩
+  let c : ginibreFullWeakSpace n hn :=
+    ⟨(ginibreRealConstantL2 n hn (ginibreL2Mean n u), 0),
+      ginibreRealConstantL2_weak n hn _, ginibreRealConstantL2_symmetric_pair n hn _⟩
+  have hp := (p-c).property
+  change IsGinibreDistributionalGradient n
+    (u - ginibreRealConstantL2 n hn (ginibreL2Mean n u)) (g-0) ∧
+    IsGinibreSymmetricWeakPair (u - ginibreRealConstantL2 n hn (ginibreL2Mean n u), g-0) at hp
+  simpa only [ginibreFullCenter_apply, sub_zero] using hp
 
 end
 end GinibrePoincare

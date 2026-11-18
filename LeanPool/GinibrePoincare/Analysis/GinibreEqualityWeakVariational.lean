@@ -50,30 +50,6 @@ noncomputable section
 open MeasureTheory
 open scoped Topology
 
-/-- Centering on actual Ginibre L², bundled as a continuous real-linear map. -/
-def ginibreFullCenter (n : ℕ) (hn : 0 < n) : GinibreFullValueL2 n →L[ℝ] GinibreFullValueL2 n :=
-  ContinuousLinearMap.id ℝ _ -
-    (innerSL ℝ (ginibreRealConstantL2 n hn 1)).smulRight (ginibreRealConstantL2 n hn 1)
-
-theorem ginibreFullCenter_apply (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
-    ginibreFullCenter n hn u = u - ginibreRealConstantL2 n hn (ginibreL2Mean n u) := by
-  have hmean : inner ℝ (ginibreRealConstantL2 n hn 1) u = ginibreL2Mean n u := by
-    rw [L2.inner_def]
-    unfold ginibreL2Mean
-    apply integral_congr_ae
-    filter_upwards [ginibreRealConstantL2_ae n hn 1] with z hz
-    simp [hz]
-  have hc : ginibreL2Mean n u • ginibreRealConstantL2 n hn 1 =
-      ginibreRealConstantL2 n hn (ginibreL2Mean n u) := by
-    apply Lp.ext
-    filter_upwards [Lp.coeFn_smul (ginibreL2Mean n u) (ginibreRealConstantL2 n hn 1),
-      ginibreRealConstantL2_ae n hn 1,
-      ginibreRealConstantL2_ae n hn (ginibreL2Mean n u)] with z hs hone hconst
-    rw [hs]
-    change ginibreL2Mean n u * (ginibreRealConstantL2 n hn 1) z = _
-    rw [hone, hconst, mul_one]
-  simp [ginibreFullCenter, hmean, hc]
-
 theorem ginibreFullCenter_variance (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
     ‖ginibreFullCenter n hn u‖ ^ 2 = ginibreL2Variance n hn u := by
   rw [ginibreFullCenter_apply]

@@ -4,8 +4,9 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   domain, using ordinary distributional gradients on the collision-free open set, of the complex
   Ginibre log-gas, with exhaustive affine equality cases. Includes concrete Gaussian and Ginibre
   measures, Hermite and Slater analysis, smooth approximation, distributional gradients, and
-  closed weak-gradient spaces. This import covers Theorem 1.1 and its equality
-  cases, rather than the upstream full-paper analytic and stochastic endgame.
+  closed weak-gradient spaces. Also proves the two Hermite sum-of-squares deficit identities
+  on the real symmetric generator graph, with summability and a distributional gradient
+  supplied by graph membership.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -27,6 +28,7 @@ provenance_evidence: 'Upstream formalization.yaml and proposal #644 identify age
 main_declarations:
 - GinibrePoincare.ginibre_symmetric_weak_poincare
 - GinibrePoincare.ginibreEquality_full_weak_affine_iff
+- GinibrePoincare.fullTheoremOneNine_named
 main_results:
 - declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
   informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
@@ -39,6 +41,12 @@ main_results:
   source_ref: Additional exhaustive affine classification accompanying Theorem 1.1, proved in
     upstream Analysis/GinibreEqualityWeakAffine.lean. The paper explicitly exhibits center-of-mass
     equality examples.
+- declaration: GinibrePoincare.fullTheoremOneNine_named
+  informal: For every real symmetric observable in the closed Ginibre generator graph, the
+    energy-minus-variance and generator-minus-energy deficits equal explicit sums of squared
+    norms and weighted Hermite masses. The weak gradient and moment summability are conclusions.
+  source_ref: Generator-graph form of Theorem 1.9 of arXiv:2608.19358v2, formalized upstream
+    in Endgame/FullTheoremOneNine.lean.
 tags:
 - ginibre-ensemble
 - poincare-inequality

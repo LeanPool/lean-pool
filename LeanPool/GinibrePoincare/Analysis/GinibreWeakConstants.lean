@@ -37,38 +37,4 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
 
-/-! # Constant Ginibre values have zero weak gradients -/
-
-@[expose] public section
-
-noncomputable section
-namespace GinibrePoincare
-open MeasureTheory
-open scoped BigOperators ContDiff
-
-/-- Every actual real constant has the ordinary zero weak gradient. -/
-theorem ginibreRealConstantL2_weak (n : ℕ) (hn : 0 < n) (c : ℝ) :
-    IsGinibreDistributionalGradient n (ginibreRealConstantL2 n hn c) 0 := by
-  apply ginibre_smooth_distributional_gradient n hn _ _ (fun _ => c) contDiff_const
-    (ginibreRealConstantL2_ae n hn c)
-  filter_upwards [Lp.coeFn_zero (E := EuclideanSpace ℝ (Fin n × Fin 2))
-    (p := (2 : ENNReal)) (μ := ginibreMeasure n)] with z hz
-  rw [hz]
-  ext k
-  simp [ginibreEuclideanGradient]
-
-/-- The constant weak pair is genuinely permutation invariant. -/
-theorem ginibreRealConstantL2_symmetric_pair (n : ℕ) (hn : 0 < n) (c : ℝ) :
-    IsGinibreSymmetricWeakPair (ginibreRealConstantL2 n hn c, 0) := by
-  intro σ
-  constructor
-  · apply Lp.ext
-    have hcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp
-      (ginibreRealConstantL2_ae n hn c)
-    filter_upwards [ginibreRealPermutationL2_ae σ (ginibreRealConstantL2 n hn c),
-      hcomp, ginibreRealConstantL2_ae n hn c] with z hp hc hu
-    simp only [Function.comp_apply] at hc
-    rw [hp, hc, hu]
-  · exact map_zero _
-
-end GinibrePoincare
+/-! # Symmetric Ginibre Poincaré theory and its constant weak pairs -/

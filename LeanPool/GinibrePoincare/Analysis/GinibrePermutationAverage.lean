@@ -87,6 +87,31 @@ theorem ginibrePermutationAverage_smooth {n : ℕ} (f : Configuration n → ℝ)
     exact hc
   exact hf.comp hp
 
+/-- The Reynolds average of any smooth compact scalar observable is again
+smooth, compactly supported, and symmetric. -/
+theorem ginibrePermutationAverage_smoothCompact {n : ℕ}
+    (f : Configuration n → ℝ) (hf : ContDiff ℝ ∞ f) (hfc : HasCompactSupport f) :
+    IsSmoothCompactSymmetric (ginibrePermutationAverage f) := by
+  refine ⟨ginibrePermutationAverage_smooth f hf, ?_, ginibrePermutationAverage_symmetric f⟩
+  classical
+  let e (σ : ParticlePermutation n) : Configuration n ≃L[ℝ] Configuration n :=
+    ContinuousLinearEquiv.piCongrLeft ℝ (fun _ : Fin n => ℂ) σ.symm
+  have he (σ : ParticlePermutation n) (z : Configuration n) : e σ z = permute σ z := by
+    ext i
+    simp [e, ContinuousLinearEquiv.piCongrLeft, Equiv.piCongrLeft_apply, permute]
+  have hcomp (σ : ParticlePermutation n) :
+      HasCompactSupport (fun z => f (permute σ z)) := by
+    have hc := hfc.comp_homeomorph (e σ).toHomeomorph
+    convert hc using 1
+    funext z
+    change f (permute σ z) = f (e σ z)
+    rw [← he]
+  convert (HasCompactSupport.finset_sum (s := Finset.univ)
+      (f := fun σ z => f (permute σ z)) (fun σ _ => hcomp σ)).mul_left
+        (f := fun _ => (Fintype.card (ParticlePermutation n) : ℝ)⁻¹) using 1
+  funext z
+  simp only [ginibrePermutationAverage, Pi.mul_apply, Finset.sum_apply]
+
 /-- Differentiation commutes with the finite permutation average. -/
 theorem fderiv_ginibrePermutationAverage {n : ℕ}
     (f : Configuration n → ℝ) (hf : ContDiff ℝ ∞ f) (z v : Configuration n) :
