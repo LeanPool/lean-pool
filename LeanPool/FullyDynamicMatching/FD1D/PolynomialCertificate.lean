@@ -663,7 +663,7 @@ local elab "recordAffineBellmanTerms" : tactic => Lean.Elab.Tactic.withMainConte
   let predicate := args[1]!
   let .lam _ _ body _ := predicate | throwError "expected an equality of affine Bellman terms"
   let some (_, original, _) := body.eq? | throwError "expected an equality of affine Bellman terms"
-  let fields ← Lean.Meta.zetaReduce (← Lean.Meta.unfoldDefinition original)
+  let fields ← Lean.Meta.zetaReduce (← Lean.Meta.whnfD original)
   unless fields.isAppOf ``AffineBellmanTerms.mk do
     throwError "expected the named affine Bellman terms"
   let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
@@ -691,9 +691,8 @@ private noncomputable def chartOneTerms :
   recordAffineBellmanTerms
 
 private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
-  change allNonnegative3 (AffineBellmanTerms.combine _) = true
-  rw [chartOneTerms.property]
-  rfl
+  exact (congrArg (fun terms : AffineBellmanTerms => allNonnegative3 terms.combine)
+    chartOneTerms.property).trans rfl
 
 theorem chartOne_check : allNonnegative3 chartOne = true := by
   as_aux_lemma => exact chartOne_normalized_check
@@ -704,9 +703,8 @@ private noncomputable def chartTwoTerms :
   recordAffineBellmanTerms
 
 private theorem chartTwo_normalized_check : allNonnegative3 chartTwo = true := by
-  change allNonnegative3 (AffineBellmanTerms.combine _) = true
-  rw [chartTwoTerms.property]
-  rfl
+  exact (congrArg (fun terms : AffineBellmanTerms => allNonnegative3 terms.combine)
+    chartTwoTerms.property).trans rfl
 
 theorem chartTwo_check : allNonnegative3 chartTwo = true := by
   as_aux_lemma => exact chartTwo_normalized_check
@@ -716,9 +714,8 @@ private noncomputable def chartThreeTerms :
   recordAffineBellmanTerms
 
 private theorem chartThree_normalized_check : allNonnegative3 chartThree = true := by
-  change allNonnegative3 (AffineBellmanTerms.combine _) = true
-  rw [chartThreeTerms.property]
-  rfl
+  exact (congrArg (fun terms : AffineBellmanTerms => allNonnegative3 terms.combine)
+    chartThreeTerms.property).trans rfl
 
 theorem chartThree_check : allNonnegative3 chartThree = true := by
   as_aux_lemma => exact chartThree_normalized_check
