@@ -43,10 +43,6 @@ lemma I_ne_one : Complex.I ≠ 1 := fun h => by
   have := congrArg Complex.re h
   simp at this
 
-lemma two_le_pow (k : ℕ) : 2 ≤ 2 ^ (k + 1) := by
-  calc 2 = 2 ^ 1 := by norm_num
-    _ ≤ 2 ^ (k + 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
-
 /-- `Fam k s` only depends on the first `2^(k+1) - 2` signs. -/
 lemma Fam_congr : ∀ (k : ℕ) {s t : ℕ → ℤ}, (∀ i < 2 ^ (k + 1) - 2, s i = t i) →
     (Fam k s ↔ Fam k t)

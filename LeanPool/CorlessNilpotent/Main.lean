@@ -159,37 +159,15 @@ lemma indep (N : ℕ) (w : ℕ → ZMod 2)
 
 /-! ### Modulo 4 forces the folded shape -/
 
-/-- The reference sequence: all `1` except `-1` at position `n + 1`. -/
-def star (n : ℕ) : ℕ → ℤ := fun i => if i = n + 1 then -1 else 1
-
-lemma isSign_star (n : ℕ) : IsSign (star n) := fun i => by
-  by_cases h : i = n + 1 <;> simp [star, h]
-
-lemma Dv_star (n : ℕ) : Dv (star n) (2 * n + 3) = f (n + 1) ^ 2 := by
-  rw [Dv_fold]
-  · congr 1
-    apply Dv_congr
-    intro i hi
-    have : i ≠ n + 1 := by omega
-    simp [star, this]
-  · simp [star]
-  · intro i hi
-    have h1 : 2 * n + 1 - i ≠ n + 1 := by omega
-    have h2 : i ≠ n + 1 := by omega
-    simp [star, h1, h2]
-
 /-- Lemma 4. On a path with `2^(k+2) - 1` vertices, `D ≡ 1 (mod 4)` forces the two middle signs to
 be opposite and the two halves to be mirror images. -/
 theorem fold_of_mod4 (k : ℕ) {s : ℕ → ℤ} (hs : IsSign s)
     (h : ∃ R : ℤ[X], Dv s (2 ^ (k + 2) - 1) = 1 + 4 * R) :
     s (2 ^ (k + 1) - 1) = -s (2 ^ (k + 1) - 2) ∧
       ∀ i < 2 ^ (k + 1) - 2, s (2 * (2 ^ (k + 1) - 1) - 1 - i) = s i := by
-  set n := 2 ^ (k + 1) - 2 with hn
-  have hpow : 2 ≤ 2 ^ (k + 1) := by
-    calc 2 = 2 ^ 1 := by norm_num
-      _ ≤ 2 ^ (k + 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
-  have hN : 2 ^ (k + 1) - 1 = n + 1 := by omega
-  have hM : 2 ^ (k + 2) - 1 = 2 * n + 3 := by rw [pow_succ]; omega
+  set n := 2 ^ (k + 1) - 2
+  obtain ⟨hN, hM⟩ : 2 ^ (k + 1) - 1 = n + 1 ∧ 2 ^ (k + 2) - 1 = 2 * n + 3 :=
+    folded_sizes k
   rw [hN, show 2 * (n + 1) - 1 = 2 * n + 1 by omega]
   rw [hM] at h
   obtain ⟨R, hR⟩ := h
@@ -223,8 +201,6 @@ theorem fold_of_mod4 (k : ℕ) {s : ℕ → ℤ} (hs : IsSign s)
     two_eq_zero_Z2X, zero_mul, Polynomial.map_sum] at hbar
   simp only [Polynomial.map_mul, Polynomial.map_C, Polynomial.map_X] at hbar
   set w : ℕ → ZMod 2 := fun j => Int.castRingHom (ZMod 2) (δ j) with hw
-  have hg : ∀ j, (C (w j) * X * fbar j * fbar (2 * n + 3 - 2 - j))
-      = C (w j) * X * (fbar j * fbar (2 * n + 3 - 2 - j)) := fun j => by ring
   change ∑ j ∈ range (2 * (n + 1)), C (w j) * X * fbar j * fbar (2 * n + 3 - 2 - j) = 0 at hbar
   -- pair j with 2N - 1 - j
   rw [two_mul, Finset.sum_range_add] at hbar
@@ -287,12 +263,9 @@ def Fam : ℕ → (ℕ → ℤ) → Prop
 lemma fold_eq {k : ℕ} {s : ℕ → ℤ} (hmid : s (2 ^ (k + 1) - 1) = -s (2 ^ (k + 1) - 2))
     (hmir : ∀ i < 2 ^ (k + 1) - 2, s (2 * (2 ^ (k + 1) - 1) - 1 - i) = s i) :
     Dv s (2 ^ (k + 2) - 1) = Dv s (2 ^ (k + 1) - 1) ^ 2 := by
-  set n := 2 ^ (k + 1) - 2 with hn
-  have hpow : 2 ≤ 2 ^ (k + 1) := by
-    calc 2 = 2 ^ 1 := by norm_num
-      _ ≤ 2 ^ (k + 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
-  have hN : 2 ^ (k + 1) - 1 = n + 1 := by omega
-  have hM : 2 ^ (k + 2) - 1 = 2 * n + 3 := by rw [pow_succ]; omega
+  set n := 2 ^ (k + 1) - 2
+  obtain ⟨hN, hM⟩ : 2 ^ (k + 1) - 1 = n + 1 ∧ 2 ^ (k + 2) - 1 = 2 * n + 3 :=
+    folded_sizes k
   rw [hM, hN]
   rw [hN] at hmid hmir
   exact Dv_fold s n hmid fun i hi => by

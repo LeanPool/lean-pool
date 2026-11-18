@@ -75,39 +75,54 @@ lemma Dv_parity {s : ℕ → ℤ} (hs : IsSign s) : ∀ j, ∃ R : ℤ[X], Dv s 
       · exact ⟨R1 + X * R0, by rw [Dv_succ_succ, f_succ_succ, h1, h0, h]; simp; ring⟩
       · exact ⟨R1 - X * f j - X * R0, by rw [Dv_succ_succ, f_succ_succ, h1, h0, h]; simp; ring⟩
 
+lemma two_le_pow (k : ℕ) : 2 ≤ 2 ^ (k + 1) := by
+  calc 2 = 2 ^ 1 := by norm_num
+    _ ≤ 2 ^ (k + 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
+
+/-- The half and full path sizes expressed using the length of the half's edge sequence. -/
+lemma folded_sizes (k : ℕ) :
+    2 ^ (k + 1) - 1 = 2 ^ (k + 1) - 2 + 1 ∧
+      2 ^ (k + 2) - 1 = 2 * (2 ^ (k + 1) - 2) + 3 := by
+  have h := two_le_pow k
+  constructor
+  · omega
+  · rw [pow_succ]
+    omega
+
+/-- The reference sequence: all `1` except `-1` at position `n + 1`. -/
+def star (n : ℕ) : ℕ → ℤ := fun i => if i = n + 1 then -1 else 1
+
+lemma isSign_star (n : ℕ) : IsSign (star n) := fun i => by
+  by_cases h : i = n + 1 <;> simp [star, h]
+
+lemma Dv_star (n : ℕ) : Dv (star n) (2 * n + 3) = f (n + 1) ^ 2 := by
+  rw [Dv_fold]
+  · congr 1
+    apply Dv_congr
+    intro i hi
+    have : i ≠ n + 1 := by omega
+    simp [star, this]
+  · simp [star]
+  · intro i hi
+    have h1 : 2 * n + 1 - i ≠ n + 1 := by omega
+    have h2 : i ≠ n + 1 := by omega
+    simp [star, h1, h2]
+
 /-- `f (2^(k+1) - 1) ≡ 1 (mod 2)`, proved through the folding identity. -/
 lemma f_pow_two (k : ℕ) : ∃ A : ℤ[X], f (2 ^ (k + 1) - 1) = 1 + 2 * A := by
   induction k with
   | zero => exact ⟨0, by simp [f]⟩
   | succ k ih =>
       obtain ⟨A, hA⟩ := ih
-      -- half size N = n + 1 = 2^(k+1) - 1
-      set n := 2 ^ (k + 1) - 2 with hn
-      have hpow : 2 ≤ 2 ^ (k + 1) := by
-        calc 2 = 2 ^ 1 := by norm_num
-          _ ≤ 2 ^ (k + 1) := Nat.pow_le_pow_right (by norm_num) (by omega)
-      have hN : 2 ^ (k + 1) - 1 = n + 1 := by omega
-      have hM : 2 ^ (k + 1 + 1) - 1 = 2 * n + 3 := by rw [pow_succ]; omega
-      let t : ℕ → ℤ := fun i => if i = n + 1 then -1 else 1
-      have ht : IsSign t := fun i => by by_cases h : i = n + 1 <;> simp [t, h]
-      have hfold : Dv t (2 * n + 3) = Dv t (n + 1) ^ 2 := by
-        apply Dv_fold
-        · simp [t]
-        · intro i hi
-          have h1 : 2 * n + 1 - i ≠ n + 1 := by omega
-          have h2 : i ≠ n + 1 := by omega
-          simp [t, h1, h2]
-      have hhalf : Dv t (n + 1) = f (n + 1) := by
-        apply Dv_congr
-        intro i hi
-        have : i ≠ n + 1 := by omega
-        simp [t, this]
-      obtain ⟨R, hR⟩ := Dv_parity ht (2 * n + 3)
+      let n := 2 ^ (k + 1) - 2
+      obtain ⟨hN, hM⟩ : 2 ^ (k + 1) - 1 = n + 1 ∧ 2 ^ (k + 2) - 1 = 2 * n + 3 :=
+        folded_sizes k
+      obtain ⟨R, hR⟩ := Dv_parity (isSign_star n) (2 * n + 3)
       rw [hN] at hA
       refine ⟨2 * A + 2 * A ^ 2 - R, ?_⟩
       rw [hM]
       have : f (2 * n + 3) = (1 + 2 * A) ^ 2 - 2 * R := by
-        rw [← hA, ← hhalf, ← hfold, hR]; ring
+        rw [← hA, ← Dv_star, hR]; ring
       rw [this]
       ring
 

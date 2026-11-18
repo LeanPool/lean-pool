@@ -40,12 +40,9 @@ lemma charmatrix_T (m : ℕ) (u : ℕ → ℂ) : charmatrix (T m u) = CM m u := 
   by_cases h : i = j
   · subst h
     simp [CM, T]
-  · have hv : (i : ℕ) ≠ j := fun e => h (Fin.ext e)
-    rw [charmatrix_apply_ne _ _ _ h]
+  · rw [charmatrix_apply_ne _ _ _ h]
     simp only [CM, T, h, ite_false]
     split_ifs <;> simp
-
-lemma det_CM_zero (u : ℕ → ℂ) : (CM 0 u).det = 1 := Matrix.det_isEmpty
 
 lemma det_CM_one (u : ℕ → ℂ) : (CM 1 u).det = X := by
   rw [Matrix.det_unique]
@@ -186,21 +183,11 @@ lemma isNilpotent_iff_charpoly_matrix {m : ℕ} (A : Matrix (Fin m) (Fin m) ℂ)
 
 /-- `reflect m (E s m) = X ^ m` iff `Dv s m = 1`. -/
 lemma reflect_E_eq_iff (s : ℕ → ℤ) (m : ℕ) : reflect m (E s m) = X ^ m ↔ Dv s m = 1 := by
+  rw [← reflect_one (R := ℂ) m]
   constructor
   · intro h
     have hE : E s m = 1 := by
-      ext k
-      by_cases hk : k ≤ m
-      · have := congrArg (fun p : ℂ[X] => p.coeff (m - k)) h
-        simp only [coeff_reflect, coeff_X_pow] at this
-        rw [revAt_le (by omega), show m - (m - k) = k by omega] at this
-        rw [this, coeff_one]
-        by_cases hk0 : k = 0
-        · subst hk0; simp
-        · have : m - k ≠ m := by omega
-          simp [this, hk0]
-      · have := natDegree_E_le s m
-        rw [coeff_eq_zero_of_natDegree_lt (by omega), coeff_one]; split_ifs <;> first | rfl | omega
+      simpa only [reflect_reflect] using congrArg (reflect m) h
     unfold E at hE
     have h1 : Polynomial.map (Int.castRingHom ℂ) (Dv s m) = 1 := by
       apply expand_injective (R := ℂ) (n := 2) (by norm_num)

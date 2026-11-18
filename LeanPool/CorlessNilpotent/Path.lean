@@ -55,7 +55,7 @@ lemma Dv_split (s : ℕ → ℤ) (k : ℕ) : ∀ m : ℕ,
   | 0 => by simp [Dv_succ_succ]
   | 1 => by
       have e : s (0 + k + 1) = s (k + 1) := by congr 1; omega
-      rw [show k + 1 + 2 = (k + 1) + 2 by omega, Dv_succ_succ, Dv_succ_succ s k,
+      rw [Dv_succ_succ, Dv_succ_succ s k,
         show (1 : ℕ) + 1 = 0 + 2 by rfl, Dv_succ_succ (fun i => s (i + k + 1)) 0, e]
       simp only [Dv_zero, zero_add, Dv_one]
       ring
