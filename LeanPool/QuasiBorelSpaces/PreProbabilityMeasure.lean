@@ -650,8 +650,7 @@ noncomputable def str {φ : ℝ → A} (hφ : IsHom φ) (ψ : Var B) : Var (A ×
     apply Measurable.subtype_mk
     apply Measure.measurable_map'
     · fun_prop
-    · apply Measurable.subtype_val
-      fun_prop
+    · exact ψ.measurable_base.subtype_val
 
 lemma apply_str
     {φ : ℝ → A} (hφ : IsHom φ) (ψ : Var B) (r : ℝ)
@@ -698,7 +697,7 @@ noncomputable def coin (p : I) : PreProbabilityMeasure Bool where
       rcases p with ⟨p, hp⟩
       simp only [Set.mem_Icc] at hp
       simp only [unitInterval.coe_symm_eq, hp, ENNReal.ofReal_sub, ENNReal.ofReal_one,
-        Measure.coe_add, Measure.coe_smul, Pi.add_apply, Pi.smul_apply, measure_univ, smul_eq_mul,
+        FunLike.coe_add, FunLike.coe_smul, Pi.add_apply, Pi.smul_apply, measure_univ, smul_eq_mul,
         mul_one, ENNReal.ofReal_le_one, add_tsub_cancel_of_le]
   }
 
