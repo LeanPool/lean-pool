@@ -94,7 +94,7 @@ lemma birkhoffSup_measurable
   (fun _ ↦ Measurable.coe_real_ereal (birkhoffSum_measurable hf hφ))
 
 /-- The set of points `x` for which `birkhoffSup f φ x = ⊤`. -/
-def divergentSet (f : α → α) (φ : α → ℝ) : Set α := (birkhoffSup f φ)⁻¹' {⊤}
+noncomputable def divergentSet (f : α → α) (φ : α → ℝ) : Set α := (birkhoffSup f φ)⁻¹' {⊤}
 
 lemma divergentSet_invariant : f x ∈ divergentSet f φ ↔ x ∈ divergentSet f φ := by
   constructor
@@ -146,8 +146,7 @@ lemma divergentSet_mem_invalg
     {f : α → α} (hf : Measurable f)
     {φ : α → ℝ} (hφ : Measurable φ) :
     MeasurableSet[invariants f] (divergentSet f φ) :=
-  /- should be `Set.ext divergentSet_invariant` but it is VERY slow -/
-  ⟨divergentSet_measurable hf hφ, funext (fun _ ↦ propext divergentSet_invariant)⟩
+  ⟨divergentSet_measurable hf hφ, Set.ext (fun _ ↦ divergentSet_invariant)⟩
 
 lemma birkhoffMax_tendsto_top_mem_divergentSet (hx : x ∈ divergentSet f φ) :
     Tendsto (birkhoffMax f φ · x) atTop atTop := by
@@ -278,7 +277,7 @@ lemma int_in_divergentSet_nonneg (hf : MeasurePreserving f μ μ)
 /- these seem to be missing? -/
 lemma nullMeasurableSpace_le {μ : Measure α} :
     msα ≤ NullMeasurableSpace.instMeasurableSpace (α := α) (μ := μ) :=
-  fun s hs ↦ ⟨s, hs, ae_eq_refl s⟩
+  fun s hs ↦ ⟨s, hs, EventuallyEqSet.rfl⟩
 
 variable [hμ : IsProbabilityMeasure μ]
 
