@@ -70,6 +70,19 @@ theorem BaireMeasurableFun.exists_continuousOn {F : Oracle → Oracle}
 
 /-! ### Uniformization on a dense `Gδ` set -/
 
+/-- An equation between functions continuous on `E` defines a relatively closed subset. -/
+theorem eq_of_mem_closure {B : Type*} [TopologicalSpace B] {E : Set B} {f g : B → Oracle}
+    (hf : ContinuousOn f E) (hg : ContinuousOn g E) (Q : B → Prop) {y : B} (hy : y ∈ E)
+    (hcl : y ∈ closure {x | x ∈ E ∧ Q x ∧ f x = g x}) : f y = g y := by
+  by_contra hne
+  have hc : ContinuousWithinAt (fun z => (f z, g z)) E y := (hf y hy).prodMk (hg y hy)
+  have hopen : IsOpen {p : Oracle × Oracle | p.1 ≠ p.2} := isClosed_diagonal.isOpen_compl
+  have hev : ∀ᶠ z in 𝓝[E] y, f z ≠ g z :=
+    hc.eventually (hopen.mem_nhds (show (f y, g y).1 ≠ (f y, g y).2 from hne))
+  rw [eventually_nhdsWithin_iff] at hev
+  obtain ⟨z, hz1, hz2⟩ := (mem_closure_iff_frequently.mp hcl).and_eventually hev |>.exists
+  exact hz2 hz1.1 hz1.2.2
+
 /-- **Lemma 2.3, relative version.** Let `E` be a dense `Gδ` subset of a Baire space and let
 `φ, ψ` be continuous on `E` with `φ x ≤tt ψ x` for `x ∈ E ∩ U`.  Then a single tt-functional
 witnesses this on `E ∩ V` for some nonempty open `V ⊆ U`. -/
@@ -95,15 +108,9 @@ theorem uniformization_on {B : Type*} [TopologicalSpace B] [BaireSpace B] {E U :
   refine ⟨U ∩ interior (f Φ), Set.inter_subset_left, hU.inter isOpen_interior, ⟨x, hxU, hxΦ⟩,
     Φ.1, Φ.2, fun y hyE hy => ?_⟩
   rcases interior_subset hy.2 with hy' | hy'
-  · by_contra hne'
-    have hc : ContinuousWithinAt (fun z => (φ z, Φ.1 (ψ z))) E y :=
-      (hφ y hyE).prodMk ((Φ.2.continuous.continuousAt).comp_continuousWithinAt (hψ y hyE))
-    have hopen : IsOpen {p : Oracle × Oracle | p.1 ≠ p.2} := isClosed_diagonal.isOpen_compl
-    have hev : ∀ᶠ z in 𝓝[E] y, φ z ≠ Φ.1 (ψ z) :=
-      hc.eventually (hopen.mem_nhds (show (φ y, Φ.1 (ψ y)).1 ≠ (φ y, Φ.1 (ψ y)).2 from hne'))
-    rw [eventually_nhdsWithin_iff] at hev
-    obtain ⟨z, hz1, hz2⟩ := (mem_closure_iff_frequently.mp hy').and_eventually hev |>.exists
-    exact hz2 hz1.1 hz1.2.2
+  · have hc : ContinuousOn (fun z => Φ.1 (ψ z)) E :=
+      Φ.2.continuous.comp_continuousOn hψ
+    exact eq_of_mem_closure hφ hc (· ∈ U) hyE hy'
   · exact absurd hy.1 hy'
 
 /-! ### Removing the parameters (Lemma 4.4) -/

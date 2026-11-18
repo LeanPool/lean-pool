@@ -77,19 +77,6 @@ theorem exists_open_of_cover {B ι : Type*} [TopologicalSpace B] [BaireSpace B] 
   exact ⟨i, interior (f i), isOpen_interior, ⟨x, hxi⟩, fun y hyE hy =>
     hP i y hyE (interior_subset hy)⟩
 
-/-- An equation between functions continuous on `E` defines a relatively closed subset. -/
-theorem eq_of_mem_closure {B : Type*} [TopologicalSpace B] {E : Set B} {f g : B → Oracle}
-    (hf : ContinuousOn f E) (hg : ContinuousOn g E) (Q : B → Prop) {y : B} (hy : y ∈ E)
-    (hcl : y ∈ closure {x | x ∈ E ∧ Q x ∧ f x = g x}) : f y = g y := by
-  by_contra hne
-  have hc : ContinuousWithinAt (fun z => (f z, g z)) E y := (hf y hy).prodMk (hg y hy)
-  have hopen : IsOpen {p : Oracle × Oracle | p.1 ≠ p.2} := isClosed_diagonal.isOpen_compl
-  have hev : ∀ᶠ z in 𝓝[E] y, f z ≠ g z :=
-    hc.eventually (hopen.mem_nhds (show (f y, g y).1 ≠ (f y, g y).2 from hne))
-  rw [eventually_nhdsWithin_iff] at hev
-  obtain ⟨z, hz1, hz2⟩ := (mem_closure_iff_frequently.mp hcl).and_eventually hev |>.exists
-  exact hz2 hz1.1 hz1.2.2
-
 /-! ### Removing one parameter -/
 
 /-- **Lemma 4.4, one parameter.** If `A ≤tt X ⊕ G` for comeager many `G ∈ N_γ`, then
