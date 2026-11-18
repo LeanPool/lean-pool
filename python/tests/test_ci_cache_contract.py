@@ -10,6 +10,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from lean_pool.validation_cache import GLOBAL_INPUTS
+
 WORKFLOWS = Path(__file__).resolve().parents[2] / ".github/workflows"
 
 
@@ -104,6 +106,25 @@ def test_single_and_sharded_builds_use_validation_cache() -> None:
         assert "validation_cache lint" in steps[names.index("Lint")]["run"]
         assert "lint-style LeanPool" in steps[names.index("Text style lint")]["run"]
     assert contracts[0] == contracts[1]
+
+
+def test_main_rebuilds_passes_whenever_a_checker_input_changes() -> None:
+    """A merge that changes only a checker input must still run CI on main.
+
+    Otherwise main's saved passes go stale and the next small PR validates the
+    whole pool in one job.
+    """
+    workflow = yaml.safe_load((WORKFLOWS / "lean_action_ci.yml").read_text())
+    patterns = workflow.get("on", workflow.get(True))["push"]["paths"]
+
+    def covered(name: str) -> bool:
+        return any(
+            name == pattern
+            or (pattern.endswith("/**") and name.startswith(pattern[:-2]))
+            for pattern in patterns
+        )
+
+    assert [name for name in GLOBAL_INPUTS if not covered(name)] == []
 
 
 def test_shards_validate_their_projects_and_assembly_decides() -> None:

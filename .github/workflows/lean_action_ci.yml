@@ -32,6 +32,7 @@ on:
     paths:
       - '**/*.lean'
       - 'lakefile.toml'
+      - 'lakefile.lean'
       - 'lean-toolchain'
       - 'lake-manifest.json'
       - 'LeanPool/projects/**'
@@ -42,6 +43,7 @@ on:
       - 'python/lean_pool/indexes.py'
       - 'python/lean_pool/queue_build.py'
       - 'python/lean_pool/validation_cache.py'
+      - 'python/lean_pool/shard_validation.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
       - 'python/lean_pool/ci_pr_build.py'
@@ -50,6 +52,7 @@ on:
       - 'python/pyproject.toml'
       - 'python/uv.lock'
       - 'scripts/nolints-style.txt'
+      - 'scripts/nolints.json'
       - 'scripts/ci/**'
       - '.github/CODE_QUALITY.md'
       - '.github/workflows/lean_action_ci.yml'
