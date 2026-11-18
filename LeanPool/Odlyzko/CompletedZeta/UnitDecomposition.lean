@@ -27,8 +27,8 @@ open scoped Classical in
 def unitExponentReindex :
     (Fin (rank K) → ℤ) ≃
       ({w : InfinitePlace K // w ≠ w₀} → ℤ) where
-  toFun f i := f (equivFinRank.symm i)
-  invFun z i := z (equivFinRank i)
+  toFun f i := f ((Units.equivFinRank K).symm i)
+  invFun z i := z (Units.equivFinRank K i)
   left_inv f := by
     simp
   right_inv z := by
@@ -40,9 +40,9 @@ theorem fundamentalUnitForShift_unitExponentReindex
       ∏ i, fundSystem K i ^ f i := by
   classical
   exact (Fintype.prod_equiv
-    (mixedEmbedding.fundamentalCone.equivFinRank (K := K))
+    (Units.equivFinRank K)
     (fun i ↦ fundSystem K i ^ f i)
-    (fun w ↦ fundSystem K (equivFinRank.symm w) ^
+    (fun w ↦ fundSystem K ((Units.equivFinRank K).symm w) ^
       unitExponentReindex K f w)
     (fun _ ↦ by simp [unitExponentReindex])).symm
 
