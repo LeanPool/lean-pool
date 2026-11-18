@@ -2614,7 +2614,7 @@ private theorem universalElementaryPowerSum_totalDegree_le
     (universalElementaryPowerSum R h j).totalDegree ≤ j := by
   classical
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
     by_cases hzero : j = 0
     · subst j
       rw [universalElementaryPowerSum_zero]

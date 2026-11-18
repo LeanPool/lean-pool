@@ -299,7 +299,7 @@ private theorem sourceFormulaShiftedCommonRoot_integral
   have roots_inj := sourceFormulaCommonRoots_injective
     encodingLength F z hz hshort type
   have shifted_inj : Function.Injective shifted := fun i j equal =>
-    roots_inj (sub_left_injective ((div_left_inj' place_ne).mp equal))
+    roots_inj (sub_left_injective ((div_left_inj₀ place_ne).mp equal))
   have denominator := (maximalGenericHankelRank_spec
     moments (sourceSizeParameter encodingLength F ^ 4)).2
   have support := sourceFormulaCommonRoots_rootSupport
