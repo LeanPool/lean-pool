@@ -186,7 +186,8 @@ theorem alpha_variant_has_a_fresh_witness :
       (Pattern.imp (.ex 1 (.var 1))
         (Pattern.captureAvoidingSubst 1 y (.var 1))) ∈ witnessCollapseTheory := by
   refine ⟨0, by simp [Pattern.allVars], ?_⟩
-  change true ∈ witnessCollapseModel.denote witnessCollapseRho _
+  change true ∈ witnessCollapseModel.denote witnessCollapseRho
+    (.imp (.ex 1 (.var 1)) (Pattern.captureAvoidingSubst 1 0 (.var 1)))
   apply Set.mem_union_right
   rw [witnessCollapseModel.denote_captureAvoidingSubst]
   simp [witnessCollapseRho]
