@@ -67,9 +67,11 @@ public import LeanPool.SmallUndecidableGroups.Host.Presentation
 public import LeanPool.SmallUndecidableGroups.Host.ThetaCT
 public import LeanPool.SmallUndecidableGroups.Host.Tower
 public import LeanPool.SmallUndecidableGroups.Host.YStage
+public import LeanPool.SmallUndecidableGroups.Host.YStage.Definitions
 public import LeanPool.SmallUndecidableGroups.Host.ZBaseIntersections
 public import LeanPool.SmallUndecidableGroups.Host.ZIntersections
 public import LeanPool.SmallUndecidableGroups.Host.ZStage
+public import LeanPool.SmallUndecidableGroups.Host.ZStage.Definitions
 public import LeanPool.SmallUndecidableGroups.Machine.FixedTuringMachine
 public import LeanPool.SmallUndecidableGroups.Machine.PostMachineThue
 public import LeanPool.SmallUndecidableGroups.Machine.SupportedTM1Thue

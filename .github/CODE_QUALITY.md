@@ -99,6 +99,7 @@ Current checks:
 - project entry modules and listed main declarations resolve in Lean
 - generated entry-point project cards match `LeanPool/projects/*.yaml`
 - public declarations depend only on the allowed axiom set: `Classical.choice`, `propext`, and `Quot.sound`
+- no pool module prints a message when it is compiled. Lake keeps each module's compiler output beside its compiled files, and the checker rejects every entry there: a `Try this` suggestion nobody followed (from `simp?`, `exact?`, a `ring` that fell back to `ring_nf`, a linter hint), `@[simps?]` or `to_additive?` output, or anything a custom elaborator logs. Write the suggested tactic and remove the output. A module without a readable log fails
 - a Lean environment audit (run via `lake env lean --run` with extensions disabled, so project notation cannot interfere) walks **every** declaration compiled into a pool module — including elaborator auxiliaries and generated declarations the textual scans cannot see — and rejects any that references option-manipulating constants, embeds a gated option-name literal (however the `Name` was assembled), directly references an axiom-injecting constant (`sorryAx`, `ofReduceBool`, ...), or is itself an axiom declared inside a pool module (which is how `native_decide` and `addDecl`-of-an-axiom backdoors surface)
 
 The checker also has `--write-project-cards` to regenerate entry-point module docstrings from `LeanPool/projects/*.yaml`.

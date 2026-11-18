@@ -6,10 +6,7 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.HarmonicAnalysis
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.NormNum.RealSqrt
+import Mathlib.Tactic.NormNum.RealSqrt -- shake: keep
 
 /-!
 # Spherical-code hierarchy
@@ -1041,7 +1038,7 @@ theorem sliceCost_nonneg {s t : ℝ}
   unfold sliceCost
   apply mul_nonneg (by norm_num)
   apply Real.logb_nonneg (by norm_num : (1 : ℝ) < 2)
-  exact (le_div_iff₀ (by linarith)).2 (by linarith)
+  exact (le_div_iff₀ (by linarith)).2 (by linarith only [hts])
 
 @[simp] theorem sliceCost_self {s : ℝ} (hs : s < 1) :
     sliceCost s s = 0 := by
@@ -1904,7 +1901,7 @@ def ScaledOpeningDerivative (η : ℝ) (f g : ℝ → ℝ) : Prop :=
 
 theorem ScaledOpeningDerivative.const (η k : ℝ) :
     ScaledOpeningDerivative η (fun _ : ℝ => k) (fun _ : ℝ => k) := by
-  refine ⟨rfl, 0, ?_, ?_⟩ <;> simpa using hasDerivAt_const (0 : ℝ) k
+  refine ⟨rfl, 0, ?_, ?_⟩ <;> simpa only [mul_zero] using hasDerivAt_const (0 : ℝ) k
 
 theorem ScaledOpeningDerivative.add {η : ℝ}
     {f g F G : ℝ → ℝ}
@@ -2354,7 +2351,7 @@ theorem eventually_Phi_opening_lt {r : ℕ}
   let i : Fin r := ⟨0, hr⟩
   have ha : 0 < a 0 := by
     have hi := (h.stabilizer_pos i).trans (h.2 i).1
-    simpa [i] using hi
+    simpa only [gt_iff_lt, Fin.castSucc_mk, Fin.zero_eta, i] using hi
   have hlog : 0 < Real.logb 2 ((1 + a 0) / a 0) := by
     apply Real.logb_pos (by norm_num : (1 : ℝ) < 2)
     exact (lt_div_iff₀ ha).mpr (by linarith only [])
@@ -2685,7 +2682,7 @@ theorem sliceCost_continuousOn {s : ℝ} (hs : s < 1) :
       (Set.Icc (0 : ℝ) s) := by
   intro t ht
   have harg : (1 - t) / (1 - s) ≠ 0 := by
-    exact (div_pos (by linarith [ht.2]) (by linarith)).ne'
+    exact (div_pos (by linarith [ht.2]) (by linarith only [hs])).ne'
   unfold MetricCodes.Spherical.SidelnikovLocalization.sliceCost Real.logb
   exact continuousWithinAt_const.mul
     ((((continuousWithinAt_const.sub continuousWithinAt_id).div_const (1 - s)).log harg).div_const
@@ -3135,7 +3132,7 @@ theorem compactifiedHierarchyCoordinate_mem_Ioc {u : ℝ} (hu : 0 ≤ u) :
     compactifiedHierarchyCoordinate u ∈ Set.Ioc (0 : ℝ) 1 := by
   constructor
   · exact inv_pos.mpr (by linarith only [hu])
-  · exact (inv_le_one₀ (by linarith)).2 (by linarith)
+  · exact (inv_le_one₀ (by linarith only [hu])).2 (by linarith only [hu])
 
 theorem compactifiedHierarchyCoordinate_mem_Icc {u : ℝ} (hu : 0 ≤ u) :
     compactifiedHierarchyCoordinate u ∈ Set.Icc (0 : ℝ) 1 :=
@@ -4352,7 +4349,7 @@ private theorem exists_strict_residual_aux_metriccodes2_79e88af7 :
           obtain ⟨j, A, B, hj, hinter, htop, hphi, hratio⟩ :=
             ih a' b' hweak
           refine ⟨j, A, B, hj.trans (Nat.le_succ r), hinter, ?_, ?_, ?_⟩
-          · simpa [a'] using htop
+          · simpa only [Fin.cons_zero, a'] using htop
           · calc
               Phi A B = Phi a' b' := hphi
               _ = Phi a b :=
@@ -4815,9 +4812,9 @@ theorem exists_compactified_residual_of_closure_sequence
   have hbound : ∀ n, Phi (a n) (b n) ≤ R + 1 := by
     intro n
     refine (hPhi n).trans ?_
-    have hden : 0 < (n : ℝ) + 1 := by linarith
+    have hden : 0 < (n : ℝ) + 1 := by linarith only []
     have hfrac : 1 / ((n : ℝ) + 1) ≤ (1 : ℝ) :=
-      (div_le_one hden).2 (by linarith)
+      (div_le_one hden).2 (by linarith only [])
     linarith
   obtain ⟨L, A, B, ψ, hψ, hL, hA, hB, hAψ, hBψ,
       hweak, hlast, hLψ⟩ :=
@@ -4872,7 +4869,7 @@ theorem exists_compactified_residual_of_closure_sequence
       (fun n => b (φ n) i / a (φ n) i.castSucc)
       atTop (nhds (d i)) := by
     intro i
-    simpa [φ, aψ, bψ, Function.comp_apply] using hdχ i
+    simpa only [Function.comp_apply, φ, aψ, bψ] using hdχ i
   have hescape : ∀ i : Fin r, A i.castSucc = 0 →
       0 < d i ∧
         Tendsto (fun n => ((b (φ n) i) * (1 + (b (φ n) i))) /
@@ -4886,7 +4883,7 @@ theorem exists_compactified_residual_of_closure_sequence
         (hi ▸ hAφ i.castSucc)
     have hatop' : Tendsto (fun n => aψ (χ n) i.castSucc)
         atTop atTop := by
-      simpa [aψ, φ, Function.comp_apply] using hatop
+      simpa only [Function.comp_apply, aψ, φ] using hatop
     exact ⟨hdpos i hatop', by
       simpa only [Function.comp_apply, φ, bψ, aψ] using hdquadratic i hatop'⟩
   let c : ℝ := ∏ i ∈ Finset.univ.filter
@@ -6106,7 +6103,7 @@ theorem log_inv_lt_half_inv_sub_self {t : ℝ}
   have hx : 0 < x := by dsimp [x]; positivity
   have hx' : x < 1 := by
     dsimp [x]
-    exact (div_lt_one (by linarith)).mpr (by linarith)
+    exact (div_lt_one (by linarith only [ht])).mpr (by linarith)
   have hden : 0 < 1 - x ^ 2 := by nlinarith only [hx', hx]
   have hratio : (1 + x) / (1 - x) = 1 / t := by
     dsimp [x]
@@ -6144,7 +6141,7 @@ theorem lt_log_one_add_add_half_log_one_add_sq {t : ℝ}
   have hx : 0 ≤ x := by dsimp [x]; positivity
   have hx' : x < 1 := by
     dsimp [x]
-    exact (div_lt_one (by linarith)).mpr (by linarith)
+    exact (div_lt_one (by linarith only [ht])).mpr (by linarith only [])
   have hy : 0 ≤ y := by dsimp [y]; positivity
   have hy' : y < 1 := by
     dsimp [y]
@@ -6358,7 +6355,7 @@ theorem levelRate_zero_eq_classical_of_pos
   · let a : ℕ → ℝ := fun n =>
       MetricCodes.classicalThreshold s + 1 / ((n : ℝ) + 1)
     have ha : Tendsto a atTop (nhds (MetricCodes.classicalThreshold s)) := by
-      simpa [a] using
+      simpa only [one_div, add_zero, a] using
         (tendsto_const_nhds.add
           (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)))
     have hentropy : Tendsto
@@ -7294,7 +7291,7 @@ theorem sphericalCodeRate_le_of_eventually_exponential
   have hpoint : ∀ᶠ n : ℕ in atTop, w n ≤ R := by
     filter_upwards [hbound, eventually_gt_atTop (0 : ℕ)] with n hn hnpos
     by_cases hzero : (SpherePacking.sphericalCodeNumber n s).toNat = 0
-    · simpa [w, hzero] using hR
+    · simpa only [hzero, CharP.cast_eq_zero, Real.logb_zero, zero_div, w] using hR
     · have hcard :
           0 < ((SpherePacking.sphericalCodeNumber n s).toNat : ℝ) := by
         exact_mod_cast Nat.pos_of_ne_zero hzero

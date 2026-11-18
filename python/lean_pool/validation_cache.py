@@ -94,7 +94,7 @@ def checker_inputs(kind: str | None) -> tuple[str, ...]:
     """Track each check's implementation; unknown checks retain every input."""
     if kind == "lint":
         return SHARED_INPUTS + LINT_INPUTS
-    if kind in {"axioms", "backdoors", "declarations"}:
+    if kind in {"axioms", "backdoors", "declarations", "messages"}:
         return SHARED_INPUTS + QUALITY_INPUTS
     return GLOBAL_INPUTS
 

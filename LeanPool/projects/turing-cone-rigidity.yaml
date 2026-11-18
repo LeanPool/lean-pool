@@ -1,0 +1,50 @@
+slug: turing-cone-rigidity
+title: Pairwise rigidity of principal upper cones of the Turing degrees
+summary: Proves that principal upper cones of ordinary Turing degrees are order-isomorphic exactly
+  when their base degrees agree, and that every such isomorphism fixes every underlying degree.
+  Includes the required computability, degree coding, countable-model, forcing, persistence,
+  and Baire-category infrastructure inherited from OpenAI's degree-rigidity development, together
+  with the cone-specific extensions. No determinacy or regularity premise is imposed. The separate
+  historical truth-table-degree project is outside this import.
+branch: computability theory
+entry_module: LeanPool.TuringConeRigidity
+authors:
+- Bjørn Kjos-Hanssen
+- OpenAI
+source:
+  title: Pairwise rigidity of principal Turing cones
+  authors:
+  - Bjørn Kjos-Hanssen
+  url: https://github.com/bjoernkjoshanssen/tt-auto/tree/99621af8867a5d272b16eb1454a15f59fb43e9ea
+  github_repo: bjoernkjoshanssen/tt-auto
+  commit: 99621af8867a5d272b16eb1454a15f59fb43e9ea
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: Upstream formalization.yaml and NOTICE credit ChatGPT 6 Pro with the cone
+  proof under Bjørn Kjos-Hanssen's mathematical direction, and OpenAI with inherited DegreeRigidity
+  proofs. The Lean Pool port and proof optimization are by Codex. Kyle Miller's attribution
+  is retained for the adapted EncodableTree helper.
+main_declarations:
+- OAI.TuringRigidity.TwoConeMain.cones_orderIso_iff
+- OAI.TuringRigidity.TwoConeMain.cone_iso_apply_val
+main_results:
+- declaration: OAI.TuringRigidity.TwoConeMain.cones_orderIso_iff
+  informal: For ordinary Turing degrees a and b, an order isomorphism between their principal
+    upper cones exists if and only if a = b.
+  source_ref: Upstream RequestProject/TuringTwoConeMain.lean, theorem cones_orderIso_iff,
+    at commit 99621af8867a5d272b16eb1454a15f59fb43e9ea; Palomar PALOMAR-2026-11-09-000019 v2.
+- declaration: OAI.TuringRigidity.TwoConeMain.cone_iso_apply_val
+  informal: Every order isomorphism between principal upper cones sends each degree to itself,
+    without continuity, measurability, determinacy, or model-existence assumptions.
+  source_ref: Upstream RequestProject/TuringTwoConeMain.lean, theorem cone_iso_apply_val,
+    at commit 99621af8867a5d272b16eb1454a15f59fb43e9ea; Palomar PALOMAR-2026-11-09-000019 v2.
+tags:
+- turing-degrees
+- computability
+- rigidity
+- forcing
+- baire-category
+msc:
+- 03D28
+- 03B35
