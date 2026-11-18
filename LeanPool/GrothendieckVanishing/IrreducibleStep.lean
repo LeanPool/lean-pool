@@ -214,7 +214,7 @@ theorem exists_section_generating_stalks
   have cyclic_generator_of_coeff {x : X} {hx : x ∈ V} {d : ℤ} {a}
       (hd : d ≠ 0) (ha : i_x x a = d • gen_at x hx) :
       ∃ e : ℕ, 0 < e ∧ (e : ℤ) ∈ H_at x hx ∧ ∀ h ∈ H_at x hx, (e : ℤ) ∣ h := by
-    obtain ⟨e, he⟩ := (H_at x hx).isAddCyclic_iff_exists_zmultiples_eq_top.mp inferInstance
+    obtain ⟨e, he⟩ := (H_at x hx).isAddCyclic_iff_exists_zmultiples_eq.mp inferInstance
     have he : H_at x hx = AddSubgroup.closure {e} := by
       rw [← he, AddSubgroup.zmultiples_eq_closure]
     have hd_mem : d ∈ H_at x hx := ⟨a, ha⟩

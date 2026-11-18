@@ -119,7 +119,8 @@ noncomputable def finsetGenCoconeIsColimit :
           factorThruImage (TopCat.Presheaf.finsetGeneratorMap hK {σ}) ≫
           colimit.ι (finsetGenFunctor hK) {σ}
     have hfac : g ≫ d = TopCat.Presheaf.allSectionMap hK := by
-      ext σ
+      apply Sigma.hom_ext
+      intro σ
       dsimp only [g, d]
       rw [← Category.assoc, Sigma.ι_comp_desc]
       calc
@@ -222,7 +223,8 @@ theorem finsetGeneratedSheaf_vanishing
       refine epi_of_epi_fac
         (f := Sigma.desc fun σ ↦ if h : σ.1 = σ₀ then eqToHom (by rw [h]) else 0)
         (h := qIns ≫ cokernel.π f) ?_
-      ext ⟨σ, hσ⟩
+      apply Sigma.hom_ext
+      rintro ⟨σ, hσ⟩
       by_cases h : σ = σ₀
       · subst h
         rw [← Category.assoc, Sigma.ι_comp_desc]
