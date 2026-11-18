@@ -14,8 +14,8 @@ public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFourCubicAtlas
 
 This checked payload is a deep-embedded proof tree.
 
-The module is passive: it carries the proof tree of the `.rpf` as data, one
-`decide` that the public deep-embedded checker under
+The module is passive: it carries the proof tree of the `.rpf` as data, kernel
+checks that the public deep-embedded checker under
 `Utilities/Subdivision/ClosedRowProof/` accepts it, and the row obligation its theorems
 then give.  Nothing here asserts acceptance on its own authority.
 
@@ -2741,13 +2741,24 @@ def proof : PProof where
               (.use 26 [⟨1, [(10, 1)], [], 1⟩, ⟨1, [(9, 1)], [], 1⟩, ⟨1, [(12, 1)], [], 1⟩, ⟨1,
                 [(11, 1)], [], 1⟩, ⟨1, [(14, 1)], [], 1⟩, ⟨1, [(13, 1)], [], 1⟩]))))))
 
+/-- Check named subtrees separately so one kernel reduction does not retain every replay. -/
+private theorem checksBySubtree :
+    PProof.checks 9 core 3 (rootContextClosed 9) proof = true  := by
+  rw [PProof.checks, Bool.and_eq_true]
+  constructor
+  · simp only [proof, subsCheck, Bool.and_eq_true]
+    repeat' apply And.intro
+    all_goals decide +kernel
+  · decide +kernel
+
 /-- The deep-embedded checker accepts, by kernel reduction.
 
 `decide +kernel` uses ordinary kernel reduction and avoids duplicate evaluation by the elaborator.
 -/
 theorem checks :
     PProof.checks 9 core 3 (rootContextClosed 9) proof = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact checksBySubtree
 
 /-- **`BNExists … 1 3` for catalog row `g4row099`, from its `.rpf` and nothing
 else.**  Quantified over every length vector whose vanishing set is a non-loopy
