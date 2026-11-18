@@ -813,7 +813,7 @@ lemma intersectionTilingSufficient_of_le {r : ℕ} {F : ℝ → ℕ} (hF : IsDHJ
   refine intersectionTilingSufficient_mono ?_ hn
   clear hn
   induction r using Nat.strong_induction_on generalizing m with
-  | h r ih =>
+  | ind r ih =>
     obtain _ | _ | r := r
     · omega
     · exact intersectionTilingSufficient_one (tilingSufficient_of_le hF hm hβ₀ le_rfl)
