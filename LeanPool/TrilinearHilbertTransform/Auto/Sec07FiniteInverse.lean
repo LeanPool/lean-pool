@@ -9,6 +9,8 @@ module
 7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
+meta import LeanPool.TrilinearHilbertTransform.Auto.ProofTools -- shake: keep
+
 public import Mathlib.Algebra.FiniteSupport.Basic
 
 public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.GevreyCutoffs
@@ -99,13 +101,13 @@ theorem finite_weighted_trilinear_extract {q : ℕ} [NeZero q]
     simp only [finiteAverage, Fintype.expect_eq_sum_div_card, div_eq_mul_inv, mul_comm]
   have heR (f : ZMod q → ℝ) : uniformMean f = 𝔼 u, f u := by
     simp only [uniformMean, Fintype.expect_eq_sum_div_card, smul_eq_mul, div_eq_mul_inv, mul_comm]
-  have hB : uniformMean (fun t => ‖B t‖ ^ 2) ≤ 1 / β := by
+  have! hB : uniformMean (fun t => ‖B t‖ ^ 2) ≤ 1 / β := by
     rw [heR]
     calc
       _ ≤ 𝔼 t, w t / β ^ 2 := by
         apply Finset.expect_le_expect
         intro t _
-        have hnorm : ‖B t‖ ≤ w t / β := by
+        have! hnorm : ‖B t‖ ≤ w t / β := by
           dsimp [B]
           rw [norm_mul, Complex.norm_real, Real.norm_of_nonneg (div_nonneg (hw0 t) hβ.le)]
           simpa only [mul_one] using mul_le_mul_of_nonneg_left (hc t) (div_nonneg (hw0 t) hβ.le)
@@ -116,41 +118,41 @@ theorem finite_weighted_trilinear_extract {q : ℕ} [NeZero q]
             (by nlinarith only [hw0 t, hw1 t] : (w t) ^ 2 ≤ w t) (sq_nonneg β)
       _ = β / β ^ 2 := by rw [← Finset.expect_div, hmass]
       _ = 1 / β := by field_simp
-  have hAA : uniformMean (fun u => ‖A u‖ ^ 2) ≤ 1 := by
+  have! hAA : uniformMean (fun u => ‖A u‖ ^ 2) ≤ 1 := by
     rw [heR]
     apply Finset.expect_le Finset.univ_nonempty
     intro u _
     exact pow_le_one₀ (norm_nonneg _) (hA u)
   obtain ⟨ξ, hξ⟩ := finiteFourier_trilinear_select F B A
-  have hη : η ≤ ‖finiteFourier F ξ‖ * (Real.sqrt β)⁻¹ := by
+  have! hη : η ≤ ‖finiteFourier F ξ‖ * (Real.sqrt β)⁻¹ := by
     apply hcorr.trans
-    have he : (𝔼 u, 𝔼 t,
+    have! he : (𝔼 u, 𝔼 t,
         ((w u / β : ℝ) : ℂ) * b u * (((w t / β : ℝ) : ℂ) * c t) * A (u + t)) =
         finiteAverage (fun u => finiteAverage (fun t => F u * B t * A (u + t))) := by
       simp only [heC, F, B]
     rw [he]
     apply hξ.trans
-    have hsB : Real.sqrt (uniformMean (fun t => ‖B t‖ ^ 2)) ≤ (Real.sqrt β)⁻¹ := by
+    have! hsB : Real.sqrt (uniformMean (fun t => ‖B t‖ ^ 2)) ≤ (Real.sqrt β)⁻¹ := by
       simpa only [one_div, Real.sqrt_inv] using Real.sqrt_le_sqrt hB
-    have hsA : Real.sqrt (uniformMean (fun u => ‖A u‖ ^ 2)) ≤ 1 := by
+    have! hsA : Real.sqrt (uniformMean (fun u => ‖A u‖ ^ 2)) ≤ 1 := by
       simpa only [Real.sqrt_one] using Real.sqrt_le_sqrt hAA
     calc
       _ ≤ ‖finiteFourier F ξ‖ * (Real.sqrt β)⁻¹ * 1 :=
         mul_le_mul (mul_le_mul_of_nonneg_left hsB (norm_nonneg _)) hsA
           (Real.sqrt_nonneg _) (by positivity)
       _ = _ := mul_one _
-  have hspos : 0 < Real.sqrt β := Real.sqrt_pos.mpr hβ
+  have! hspos : 0 < Real.sqrt β := Real.sqrt_pos.mpr hβ
   have hη' : η * Real.sqrt β ≤ ‖finiteFourier F ξ‖ := by
-    have h := mul_le_mul_of_nonneg_right hη hspos.le
+    have! h := mul_le_mul_of_nonneg_right hη hspos.le
     simpa only [mul_assoc, inv_mul_cancel₀ hspos.ne', mul_one] using h
-  have hval : (β : ℂ) * finiteFourier F ξ =
+  have! hval : (β : ℂ) * finiteFourier F ξ =
       𝔼 u, (w u : ℂ) * b u * ZMod.stdAddChar (-(ξ * u)) := by
     rw [finiteFourier_eq_average, heC, Finset.mul_expect]
     apply Finset.expect_congr rfl
     intro u _
     dsimp [F]
     push_cast
-    have hn : (β : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hβ.ne'
+    have! hn : (β : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hβ.ne'
     field_simp
   refine ⟨ξ, ?_⟩
   rw [← hval, norm_mul, Complex.norm_real, Real.norm_of_nonneg hβ.le]
@@ -626,15 +628,15 @@ theorem finite_weighted_correlation_select {I : Type*} [Fintype I]
     ∃ i, w i ≠ 0 ∧ η ≤ ‖F i‖ := by
   classical
   let T := Finset.univ.filter (fun i => w i ≠ 0)
-  have hT : T.Nonempty := by
+  have! hT : T.Nonempty := by
     by_contra hn
-    have he : T = ∅ := Finset.not_nonempty_iff_eq_empty.mp hn
+    have! he : T = ∅ := Finset.not_nonempty_iff_eq_empty.mp hn
     have hz (i : I) : w i = 0 := by
       by_contra hi
-      have hm : i ∈ T := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
+      have! hm : i ∈ T := Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩
       rw [he] at hm
       exact Finset.notMem_empty i hm
-    have hzero : (𝔼 i, (w i : ℂ) * F i) = 0 := by simp [hz]
+    have! hzero : (𝔼 i, (w i : ℂ) * F i) = 0 := by simp [hz]
     rw [hzero, norm_zero] at hcorr
     linarith
   obtain ⟨i, hi, hmax⟩ := Finset.exists_max_image T (fun i => ‖F i‖) hT
@@ -695,7 +697,7 @@ theorem graph_symmetry_weight_error {q : ℕ} [NeZero q]
     ‖graphSymmetryExpression w μ M a b - graphSymmetryWeightedCorrelation w μ M a b‖ ≤ ε := by
   let F : ZMod q → ZMod q → ZMod q → ℂ := fun z u v =>
     ((w (z - u - v) - w z : ℝ) : ℂ) * graphSymmetryKernel M a b z u v
-  have he : graphSymmetryExpression w μ M a b - graphSymmetryWeightedCorrelation w μ M a b =
+  have! he : graphSymmetryExpression w μ M a b - graphSymmetryWeightedCorrelation w μ M a b =
       𝔼 z, 𝔼 u, 𝔼 v, (μ u : ℂ) * (μ v : ℂ) * F z u v := by
     unfold graphSymmetryExpression graphSymmetryWeightedCorrelation graphSymmetryFixedCorrelation
     simp only [Finset.mul_expect, ← Finset.expect_sub_distrib]
@@ -716,9 +718,9 @@ theorem graph_symmetry_weight_error {q : ℕ} [NeZero q]
   intro u v hu hv
   dsimp [F]
   rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
-  have h := mul_le_mul_of_nonneg_left (graphSymmetryKernel_norm_le M a b ha hb z u v)
+  have! h := mul_le_mul_of_nonneg_left (graphSymmetryKernel_norm_le M a b ha hb z u v)
     (abs_nonneg (w (z - u - v) - w z))
-  have hle : |w (z - u - v) - w z| * ‖graphSymmetryKernel M a b z u v‖ ≤
+  have! hle : |w (z - u - v) - w z| * ‖graphSymmetryKernel M a b z u v‖ ≤
       |w (z - u - v) - w z| := by simpa only [mul_one] using h
   exact hle.trans (htrans z u v hu hv)
 
@@ -833,7 +835,7 @@ theorem finite_weighted_kernel_cauchy_schwarz {I : Type*} [Fintype I]
     (hcorr : κ ≤ ‖𝔼 u, 𝔼 v, (μ u : ℂ) * (μ v : ℂ) * A u * conj (A v) * K u v‖) :
     κ ^ 2 ≤ 𝔼 v, 𝔼 v', μ v * μ v' * ‖𝔼 u, (μ u : ℂ) * K u v * conj (K u v')‖ := by
   let F : I → ℂ := fun u => 𝔼 v, (μ v : ℂ) * conj (A v) * K u v
-  have he : (𝔼 u, 𝔼 v, (μ u : ℂ) * (μ v : ℂ) * A u * conj (A v) * K u v) =
+  have! he : (𝔼 u, 𝔼 v, (μ u : ℂ) * (μ v : ℂ) * A u * conj (A v) * K u v) =
       𝔼 u, (μ u : ℂ) * A u * F u := by
     apply Finset.expect_congr rfl
     intro u _
@@ -843,12 +845,12 @@ theorem finite_weighted_kernel_cauchy_schwarz {I : Type*} [Fintype I]
     intro v _
     ring
   rw [he] at hcorr
-  have hcs := finite_weighted_complex_cauchy_schwarz μ hμ hmass.le A F hA
-  have hlow : κ ^ 2 ≤ 𝔼 u, μ u * ‖F u‖ ^ 2 :=
+  have! hcs := finite_weighted_complex_cauchy_schwarz μ hμ hmass.le A F hA
+  have! hlow : κ ^ 2 ≤ 𝔼 u, μ u * ‖F u‖ ^ 2 :=
     (pow_le_pow_left₀ hκ hcorr 2).trans hcs
-  have hnonneg : 0 ≤ 𝔼 u, μ u * ‖F u‖ ^ 2 :=
+  have! hnonneg : 0 ≤ 𝔼 u, μ u * ‖F u‖ ^ 2 :=
     Finset.expect_nonneg (fun u _ => mul_nonneg (hμ u) (sq_nonneg _))
-  have hn : κ ^ 2 ≤ ‖((𝔼 u, μ u * ‖F u‖ ^ 2 : ℝ) : ℂ)‖ := by
+  have! hn : κ ^ 2 ≤ ‖((𝔼 u, μ u * ‖F u‖ ^ 2 : ℝ) : ℂ)‖ := by
     simpa only [Complex.norm_real, Real.norm_of_nonneg hnonneg] using hlow
   rw [show ((𝔼 u, μ u * ‖F u‖ ^ 2 : ℝ) : ℂ) =
       𝔼 v, 𝔼 v', (μ v : ℂ) * (μ v' : ℂ) * conj (A v) * A v' *
@@ -861,7 +863,7 @@ theorem finite_weighted_kernel_cauchy_schwarz {I : Type*} [Fintype I]
   apply Finset.expect_le_expect
   intro v' _
   let B := 𝔼 u, (μ u : ℂ) * K u v * conj (K u v')
-  have hAA : ‖A v‖ * ‖A v'‖ ≤ 1 :=
+  have! hAA : ‖A v‖ * ‖A v'‖ ≤ 1 :=
     (mul_le_mul (hA v) (hA v') (norm_nonneg _) zero_le_one).trans_eq (one_mul 1)
   calc
     _ = μ v * μ v' * (‖A v‖ * ‖A v'‖) * ‖B‖ := by
@@ -916,12 +918,12 @@ theorem graph_symmetry_second_cauchy_schwarz {q : ℕ} [NeZero q]
     ζ ^ 4 / 4 ≤ 𝔼 v, 𝔼 v', μ v * μ v' * ‖graphAlternatingFourier μ M (v - v')‖ := by
   let A : ZMod q → ℂ := graphLocalAmplitude M a b z
   let K : ZMod q → ZMod q → ℂ := fun u v => ZMod.stdAddChar (-(2 * graphAlternating M u v))
-  have hc : ζ ^ 2 / 2 ≤ ‖𝔼 u, 𝔼 v,
+  have! hc : ζ ^ 2 / 2 ≤ ‖𝔼 u, 𝔼 v,
       (μ u : ℂ) * (μ v : ℂ) * A u * conj (A v) * K u v‖ := by
     simpa only [graphSymmetryFixedCorrelation, graphSymmetryKernel, mul_assoc] using hcorr
-  have h := finite_weighted_kernel_cauchy_schwarz μ hμ hμmass A
+  have! h := finite_weighted_kernel_cauchy_schwarz μ hμ hμmass A
     (graphLocalAmplitude_norm_le M a b ha hb z) K (by positivity : 0 ≤ ζ ^ 2 / 2) hc
-  have he : (𝔼 v, 𝔼 v', μ v * μ v' * ‖𝔼 u, (μ u : ℂ) * K u v * conj (K u v')‖) =
+  have! he : (𝔼 v, 𝔼 v', μ v * μ v' * ‖𝔼 u, (μ u : ℂ) * K u v * conj (K u v')‖) =
       𝔼 v, 𝔼 v', μ v * μ v' * ‖graphAlternatingFourier μ M (v - v')‖ := by
     apply Finset.expect_congr rfl
     intro v _
@@ -931,8 +933,8 @@ theorem graph_symmetry_second_cauchy_schwarz {q : ℕ} [NeZero q]
     · simp [hv]
     by_cases hv' : μ v' = 0
     · simp [hv']
-    have hM := graph_local_additive_sub S M hs hρ hadd (hμsupp v hv) (hμsupp v' hv')
-    have hinner : (𝔼 u, (μ u : ℂ) * K u v * conj (K u v')) =
+    have! hM := graph_local_additive_sub S M hs hρ hadd (hμsupp v hv) (hμsupp v' hv')
+    have! hinner : (𝔼 u, (μ u : ℂ) * K u v * conj (K u v')) =
         graphAlternatingFourier μ M (v - v') := by
       apply Finset.expect_congr rfl
       intro u _
@@ -1026,7 +1028,7 @@ theorem graph_local_spectrum_set {q : ℕ} [NeZero q]
   classical
   let F : ZMod q → ℝ := fun v' => 𝔼 v, μ v * ‖graphAlternatingFourier μ M (v - v')‖
   have hF (v') : 0 ≤ F v' := Finset.expect_nonneg (fun v _ => mul_nonneg (hμ v) (norm_nonneg _))
-  have he : (𝔼 v, 𝔼 v', μ v * μ v' * ‖graphAlternatingFourier μ M (v - v')‖) =
+  have! he : (𝔼 v, 𝔼 v', μ v * μ v' * ‖graphAlternatingFourier μ M (v - v')‖) =
       𝔼 v', μ v' * F v' := by
     rw [Finset.expect_comm]
     apply Finset.expect_congr rfl
@@ -1037,8 +1039,8 @@ theorem graph_local_spectrum_set {q : ℕ} [NeZero q]
     intro v _
     ring
   rw [he] at hcorr
-  have hc : ζ ^ 4 / 4 ≤ ‖𝔼 v', (μ v' : ℂ) * (F v' : ℂ)‖ := by
-    have hec : (𝔼 v', (μ v' : ℂ) * (F v' : ℂ)) = ((𝔼 v', μ v' * F v' : ℝ) : ℂ) := by
+  have! hc : ζ ^ 4 / 4 ≤ ‖𝔼 v', (μ v' : ℂ) * (F v' : ℂ)‖ := by
+    have! hec : (𝔼 v', (μ v' : ℂ) * (F v' : ℂ)) = ((𝔼 v', μ v' * F v' : ℝ) : ℂ) := by
       rw [finite_expect_ofReal]
       simp only [Complex.ofReal_mul]
     rw [hec, Complex.norm_real, Real.norm_of_nonneg
@@ -1049,17 +1051,17 @@ theorem graph_local_spectrum_set {q : ℕ} [NeZero q]
   rw [Complex.norm_real, Real.norm_of_nonneg (hF v')] at hv
   let θ : ZMod q → ℝ := fun v => ‖graphAlternatingFourier μ M (v - v')‖
   let A := weightedUpperLevel μ θ (ζ ^ 4 / 8)
-  have hAmass : ζ ^ 4 / 8 ≤ 𝔼 v, if v ∈ A then μ v else 0 :=
+  have! hAmass : ζ ^ 4 / 8 ≤ 𝔼 v, if v ∈ A then μ v else 0 :=
     finite_weighted_upper_level_mass μ θ hμ hmass
       (fun v => graphAlternatingFourier_norm_le μ hμ hmass M (v - v'))
       (by positivity) (by dsimp [F] at hv; dsimp [θ]; linarith)
-  have hAdensity : β * (ζ ^ 4 / 8) ≤ (A.card : ℝ) / q := by
+  have! hAdensity : β * (ζ ^ 4 / 8) ≤ (A.card : ℝ) / q := by
     simpa only [ZMod.card] using finite_weighted_set_density μ A hβ hcap hAmass
-  have hA : A.Nonempty := by
+  have! hA : A.Nonempty := by
     by_contra hn
     rw [Finset.not_nonempty_iff_eq_empty.mp hn, Finset.card_empty, Nat.cast_zero,
       zero_div] at hAdensity
-    have : 0 < β * (ζ ^ 4 / 8) := by positivity
+    have! this : 0 < β * (ζ ^ 4 / 8) := by positivity
     linarith
   refine ⟨v', A, hv', hA, hAmass, hAdensity, ?_⟩
   intro v hv
@@ -1152,19 +1154,19 @@ theorem graph_alternating_fourfold_bound {q : ℕ} [NeZero q]
   obtain ⟨ab, hab, cd, hcd, rfl⟩ := Finset.mem_sub.mp hz
   obtain ⟨a, ha, b, hb, rfl⟩ := Finset.mem_add.mp hab
   obtain ⟨c, hc, d, hd, rfl⟩ := Finset.mem_add.mp hcd
-  have hm1 := graphBohrSet_mono (Finset.Subset.refl S) (show r ≤ ρ by linarith)
-  have hm2 := graphBohrSet_mono (Finset.Subset.refl S) (show r + r ≤ ρ by linarith)
-  have hab := graphBohrSet_add S (hA ha) (hA hb)
-  have hcd := graphBohrSet_add S (hA hc) (hA hd)
-  have hMab := hadd a (hm1 (hA ha)) b (hm1 (hA hb)) (hm2 hab)
-  have hMcd := hadd c (hm1 (hA hc)) d (hm1 (hA hd)) (hm2 hcd)
-  have hMsub := graph_local_additive_sub S M (add_nonneg hr hr)
+  have! hm1 := graphBohrSet_mono (Finset.Subset.refl S) (show r ≤ ρ by linarith)
+  have! hm2 := graphBohrSet_mono (Finset.Subset.refl S) (show r + r ≤ ρ by linarith)
+  have! hab := graphBohrSet_add S (hA ha) (hA hb)
+  have! hcd := graphBohrSet_add S (hA hc) (hA hd)
+  have! hMab := hadd a (hm1 (hA ha)) b (hm1 (hA hb)) (hm2 hab)
+  have! hMcd := hadd c (hm1 (hA hc)) d (hm1 (hA hd)) (hm2 hcd)
+  have! hMsub := graph_local_additive_sub S M (add_nonneg hr hr)
     (show 2 * (r + r) ≤ ρ by linarith) hadd hab hcd
   have hp (v : ZMod q) (hv : v ∈ A) : graphAlternatingPhase M x (v - v') =
       graphAlternatingPhase M x v - graphAlternatingPhase M x v' :=
     graphAlternatingPhase_sub_right M x v v'
       (graph_local_additive_sub S M hr (by linarith) hadd (hA hv) hv')
-  have he : graphAlternatingPhase M x ((a + b) - (c + d)) =
+  have! he : graphAlternatingPhase M x ((a + b) - (c + d)) =
       (graphAlternatingPhase M x (a - v') + graphAlternatingPhase M x (b - v')) -
       (graphAlternatingPhase M x (c - v') + graphAlternatingPhase M x (d - v')) := by
     rw [graphAlternatingPhase_sub_right M x _ _ hMsub,
@@ -1172,12 +1174,12 @@ theorem graph_alternating_fourfold_bound {q : ℕ} [NeZero q]
       graphAlternatingPhase_add_right M x c d hMcd, hp a ha, hp b hb, hp c hc, hp d hd]
     abel
   rw [he, smul_sub, smul_add, smul_add]
-  have hn := norm_sub_le
+  have! hn := norm_sub_le
     ((2 : ℕ) • graphAlternatingPhase M x (a - v') + 2 • graphAlternatingPhase M x (b - v'))
     ((2 : ℕ) • graphAlternatingPhase M x (c - v') + 2 • graphAlternatingPhase M x (d - v'))
-  have habn := norm_add_le ((2 : ℕ) • graphAlternatingPhase M x (a - v'))
+  have! habn := norm_add_le ((2 : ℕ) • graphAlternatingPhase M x (a - v'))
     (2 • graphAlternatingPhase M x (b - v'))
-  have hcdn := norm_add_le ((2 : ℕ) • graphAlternatingPhase M x (c - v'))
+  have! hcdn := norm_add_le ((2 : ℕ) • graphAlternatingPhase M x (c - v'))
     (2 • graphAlternatingPhase M x (d - v'))
   linarith [hbound a ha, hbound b hb, hbound c hc, hbound d hd]
 
@@ -1444,10 +1446,10 @@ theorem graph_local_symmetry_at_radius {q : ℕ} [NeZero q] (hq : Odd q)
   let μ := graphBohrMeasure cutoff S s
   let β := graphBohrMass cutoff S s
   let D := graphSymmetryDecayConstant (max (L : ℝ) 1) S.card s β ζ
-  have hssmall : s < 1 / 8 := hsr.trans_lt hrsmall
-  have hβ : 0 < β := graphBohrMass_pos cutoff hb0 hb1 hbone S hs hssmall
-  have hμ : ∀ u, 0 ≤ μ u := graphBohrMeasure_nonneg cutoff hb0 S s hβ
-  have hμmass : (𝔼 u, μ u) = 1 := graphBohrMeasure_mean_one cutoff S s hβ
+  have! hssmall : s < 1 / 8 := hsr.trans_lt hrsmall
+  have! hβ : 0 < β := graphBohrMass_pos cutoff hb0 hb1 hbone S hs hssmall
+  have! hμ : ∀ u, 0 ≤ μ u := graphBohrMeasure_nonneg cutoff hb0 S s hβ
+  have! hμmass : (𝔼 u, μ u) = 1 := graphBohrMeasure_mean_one cutoff S s hβ
   have hμsupp (u : ZMod q) (hu : μ u ≠ 0) : u ∈ graphBohrSet S s := by
     by_contra hn
     exact hu (graphBohrMeasure_eq_zero_of_notMem cutoff hsupp S hs u hn)
@@ -1455,21 +1457,21 @@ theorem graph_local_symmetry_at_radius {q : ℕ} [NeZero q] (hq : Odd q)
   have hw1 (u : ZMod q) : |w u| ≤ 1 := by
     rw [abs_of_nonneg (hw u)]
     exact (graphBohrWeight_bounds cutoff hb0 hb1 S r u).2
-  have hζ1 : ζ ≤ 1 := hcorr.trans (graphLocalCorrelation_norm_le w hw1 M a b c ha hb hc)
+  have! hζ1 : ζ ≤ 1 := hcorr.trans (graphLocalCorrelation_norm_le w hw1 M a b c ha hb hc)
   obtain ⟨a', b', c', ha', hb', hc', hloc⟩ :=
     graph_correlation_localization w μ hμmass M a b c ha hb hc hcorr
-  have hsq := graph_localized_cauchy_schwarz w μ hw
+  have! hsq := graph_localized_cauchy_schwarz w μ hw
     (graphBohrMass_bounds cutoff hb0 hb1 hbone S hr hrsmall).2 M a' b' c' hc' hζ.le hloc
   obtain ⟨z, _, _, hz⟩ := graph_bohr_symmetry_select cutoff hLip hb0 hb1 hbone hsupp S
     hr hrsmall hs hssmall hρ hζ htol M a' b' ha' hb' hadd hsq
-  have hsecond := graph_symmetry_second_cauchy_schwarz S μ hμ hμmass M hs.le
+  have! hsecond := graph_symmetry_second_cauchy_schwarz S μ hμ hμmass M hs.le
     (by linarith : 2 * s ≤ ρ) hμsupp hadd a' b' ha' hb' z hz
   have hcap (u : ZMod q) : μ u ≤ 1 / β :=
     div_le_div_of_nonneg_right (graphBohrWeight_bounds cutoff hb0 hb1 S s u).2 hβ.le
   obtain ⟨v', A, hv', hA, _, hAdensity, hAcorr⟩ :=
     graph_local_spectrum_set μ hμ hμmass hβ hcap hζ M hsecond
-  have hAB : A ⊆ graphBohrSet S s := fun u hu => hμsupp u (hAcorr u hu).1
-  have hD : 0 ≤ D := by dsimp [D, graphSymmetryDecayConstant]; positivity
+  have! hAB : A ⊆ graphBohrSet S s := fun u hu => hμsupp u (hAcorr u hu).1
+  have! hD : 0 ≤ D := by dsimp [D, graphSymmetryDecayConstant]; positivity
   have hphase (u : ZMod q) (hu : u ∈ graphBohrSet S s)
       (v : ZMod q) (hv : v ∈ (2 : ℕ) • A - (2 : ℕ) • A) :
       ‖(2 : ℕ) • graphAlternatingPhase M u v‖ ≤ 4 * D * graphBohrNorm S u :=
@@ -1478,17 +1480,17 @@ theorem graph_local_symmetry_at_radius {q : ℕ} [NeZero q] (hq : Odd q)
   obtain ⟨S', t, hSS', ht, hts, hsym, hcost⟩ := graph_symmetry_from_spectrum hq S A hA
     hs (by linarith) (by linarith) hζ hζ1 hD M hadd hphase
   refine ⟨S', t, hSS', ht, hts, hsym, hcost.trans ?_⟩
-  have hq : (0 : ℝ) < q := Nat.cast_pos.mpr (NeZero.pos q)
-  have hα : 0 < (A.card : ℝ) / q := div_pos (Nat.cast_pos.mpr hA.card_pos) hq
-  have hα1 : (A.card : ℝ) / q ≤ 1 := by
+  have! hq : (0 : ℝ) < q := Nat.cast_pos.mpr (NeZero.pos q)
+  have! hα : 0 < (A.card : ℝ) / q := div_pos (Nat.cast_pos.mpr hA.card_pos) hq
+  have! hα1 : (A.card : ℝ) / q ≤ 1 := by
     apply (div_le_one hq).mpr
     exact_mod_cast (show A.card ≤ q by simpa only [ZMod.card] using Finset.card_le_univ A)
-  have hlog : Real.log (1 / ((A.card : ℝ) / q)) ≤ Real.log (1 / (β * (ζ ^ 4 / 8))) :=
+  have! hlog : Real.log (1 / ((A.card : ℝ) / q)) ≤ Real.log (1 / (β * (ζ ^ 4 / 8))) :=
     Real.log_le_log (by positivity) (one_div_le_one_div_of_le (by positivity) hAdensity)
-  have hn : 0 ≤ 1 + Real.log (1 / ((A.card : ℝ) / q)) := by
-    have := Real.log_nonneg ((one_le_div hα).mpr hα1)
+  have! hn : 0 ≤ 1 + Real.log (1 / ((A.card : ℝ) / q)) := by
+    have! this := Real.log_nonneg ((one_le_div hα).mpr hα1)
     linarith
-  have hp := pow_le_pow_left₀ hn
+  have! hp := pow_le_pow_left₀ hn
     (show 1 + Real.log (1 / ((A.card : ℝ) / q)) ≤
       1 + Real.log (1 / (β * (ζ ^ 4 / 8))) by linarith) 4
   change 2 * (S.card : ℝ) + 10 ^ 20 * _ + _ + _ + _ + Real.log (D + 1) ≤ _
@@ -1570,30 +1572,30 @@ lemma graphSymmetryDecayConstant_log (d : ℕ) {C s β ζ : ℝ}
     Real.log (graphSymmetryDecayConstant C d s β ζ + 1) ≤
       Real.log (C + 1) + Real.log ((d : ℝ) + 1) + Real.log (1 / s) +
         Real.log (1 / β) + 4 * Real.log (1 / ζ) + Real.log 8 := by
-  have hτ : 0 < ζ ^ 4 / 8 := by positivity
-  have hτ1 : ζ ^ 4 / 8 ≤ 1 := by
-    have : ζ ^ 4 ≤ 1 := pow_le_one₀ hζ.le hζ1
+  have! hτ : 0 < ζ ^ 4 / 8 := by positivity
+  have! hτ1 : ζ ^ 4 / 8 ≤ 1 := by
+    have! this : ζ ^ 4 ≤ 1 := pow_le_one₀ hζ.le hζ1
     linarith
-  have hsβ : s * β ≤ 1 := (mul_le_of_le_one_left hβ.le hs1).trans hβ1
-  have hden : 0 < s * β * (ζ ^ 4 / 8) := by positivity
-  have hden1 : s * β * (ζ ^ 4 / 8) ≤ 1 :=
+  have! hsβ : s * β ≤ 1 := (mul_le_of_le_one_left hβ.le hs1).trans hβ1
+  have! hden : 0 < s * β * (ζ ^ 4 / 8) := by positivity
+  have! hden1 : s * β * (ζ ^ 4 / 8) ≤ 1 :=
     (mul_le_of_le_one_left hτ.le hsβ).trans hτ1
-  have hC1 : 0 < C + 1 := by positivity
-  have hd1 : 0 < (d : ℝ) + 1 := by positivity
-  have hD : 0 ≤ graphSymmetryDecayConstant C d s β ζ := by
+  have! hC1 : 0 < C + 1 := by positivity
+  have! hd1 : 0 < (d : ℝ) + 1 := by positivity
+  have! hD : 0 ≤ graphSymmetryDecayConstant C d s β ζ := by
     unfold graphSymmetryDecayConstant
     positivity
-  have hle : graphSymmetryDecayConstant C d s β ζ + 1 ≤
+  have! hle : graphSymmetryDecayConstant C d s β ζ + 1 ≤
       ((C + 1) * ((d : ℝ) + 1)) / (s * β * (ζ ^ 4 / 8)) := by
     unfold graphSymmetryDecayConstant
     rw [div_add_one hden.ne']
     apply div_le_div_of_nonneg_right _ hden.le
     nlinarith only [Nat.cast_nonneg d (α := ℝ), hC, hτ, hτ1, hsβ]
-  have hlog := Real.log_le_log (show 0 < graphSymmetryDecayConstant C d s β ζ + 1 by linarith) hle
+  have! hlog := Real.log_le_log (show 0 < graphSymmetryDecayConstant C d s β ζ + 1 by linarith) hle
   rw [Real.log_div (mul_ne_zero hC1.ne' hd1.ne') hden.ne',
     Real.log_mul hC1.ne' hd1.ne',
     Real.log_mul (mul_ne_zero hs.ne' hβ.ne') hτ.ne', Real.log_mul hs.ne' hβ.ne'] at hlog
-  have hτlog := graph_symmetry_threshold_log hζ
+  have! hτlog := graph_symmetry_threshold_log hζ
   simp only [one_div, Real.log_inv] at hτlog ⊢
   linarith
 
@@ -1619,53 +1621,53 @@ theorem graph_symmetry_parameter_bounds (d : ℕ) {C r ζ β : ℝ}
   change 1 ≤ P at hP
   change (d : ℝ) ≤ P at hd
   change Real.log (1 / ζ) ≤ P at hZ
-  have hK : 10000 ≤ K := by dsimp [K]; linarith
-  have hP0 : 0 ≤ P := by linarith
-  have hK0 : 0 ≤ K := by linarith
-  have hPP2 : P ≤ P ^ 2 := le_self_pow₀ hP (by decide)
-  have hP2 : 1 ≤ P ^ 2 := one_le_pow₀ hP
-  have hKP : K ≤ K * P := le_mul_of_one_le_right hK0 hP
-  have hKP2 : K ≤ K * P ^ 2 := le_mul_of_one_le_right hK0 hP2
+  have! hK : 10000 ≤ K := by dsimp [K]; linarith
+  have! hP0 : 0 ≤ P := by linarith
+  have! hK0 : 0 ≤ K := by linarith
+  have! hPP2 : P ≤ P ^ 2 := le_self_pow₀ hP (by decide)
+  have! hP2 : 1 ≤ P ^ 2 := one_le_pow₀ hP
+  have! hKP : K ≤ K * P := le_mul_of_one_le_right hK0 hP
+  have! hKP2 : K ≤ K * P ^ 2 := le_mul_of_one_le_right hK0 hP2
   obtain ⟨hs, hsr, _⟩ := localSymmetryInnerRadius_bounds hC hr hζ d
   change 0 < s at hs
   change s ≤ r / 100 at hsr
-  have hs1 : s ≤ 1 := by linarith
-  have hR2 : Real.log (1 / s) ≤ K * P := by
+  have! hs1 : s ≤ 1 := by linarith
+  have! hR2 : Real.log (1 / s) ≤ K * P := by
     apply (localSymmetryInnerRadius_log_bound d hC hr hr1 hζ hζ1).trans
     exact mul_le_mul_of_nonneg_right (by dsimp [K]; linarith) hP0
-  have h6 : 6 ≤ K * P := by linarith
-  have hlog6 : Real.log (6 / s) ≤ 6 + K * P := by
+  have! h6 : 6 ≤ K * P := by linarith
+  have! hlog6 : Real.log (6 / s) ≤ 6 + K * P := by
     rw [Real.log_div (by norm_num : (6 : ℝ) ≠ 0) hs.ne']
-    have h := hR2
+    have! h := hR2
     rw [one_div, Real.log_inv] at h
     linarith [Real.log_le_self (by norm_num : (0 : ℝ) ≤ 6)]
-  have hB : Real.log (1 / β) ≤ 2 * K * P ^ 2 := by
+  have! hB : Real.log (1 / β) ≤ 2 * K * P ^ 2 := by
     calc
       _ ≤ (d : ℝ) * Real.log (6 / s) := graph_mass_log_bound d hs hβlower
       _ ≤ (d : ℝ) * (6 + K * P) := mul_le_mul_of_nonneg_left hlog6 (Nat.cast_nonneg d)
       _ ≤ P * (6 + K * P) := mul_le_mul_of_nonneg_right hd (by positivity)
       _ ≤ 2 * K * P ^ 2 := by nlinarith only [mul_le_mul_of_nonneg_left h6 hP0]
-  have hT : Real.log (1 / (ζ ^ 4 / 8)) ≤ 12 * P := by
+  have! hT : Real.log (1 / (ζ ^ 4 / 8)) ≤ 12 * P := by
     rw [graph_symmetry_threshold_log hζ]
     linarith [Real.log_le_self (by norm_num : (0 : ℝ) ≤ 8)]
-  have hBT : Real.log (1 / (β * (ζ ^ 4 / 8))) =
+  have! hBT : Real.log (1 / (β * (ζ ^ 4 / 8))) =
       Real.log (1 / β) + Real.log (1 / (ζ ^ 4 / 8)) := by
     simp only [one_div, Real.log_inv, Real.log_mul hβ.ne' (by positivity : ζ ^ 4 / 8 ≠ 0)]
     ring
-  have hKP2P : 10000 * P ≤ K * P ^ 2 := by
+  have! hKP2P : 10000 * P ≤ K * P ^ 2 := by
     calc
       _ ≤ K * P := mul_le_mul_of_nonneg_right hK hP0
       _ ≤ K * P ^ 2 := mul_le_mul_of_nonneg_left hPP2 hK0
-  have hDensity : 1 + Real.log (1 / (β * (ζ ^ 4 / 8))) ≤ 4 * K * P ^ 2 := by
+  have! hDensity : 1 + Real.log (1 / (β * (ζ ^ 4 / 8))) ≤ 4 * K * P ^ 2 := by
     rw [hBT]
     nlinarith only [hC, hP, hB, hT]
   refine ⟨hR2, hB, hDensity, ?_⟩
-  have hD := graphSymmetryDecayConstant_log d hC hs hs1 hβ hβ1 hζ hζ1
-  have hClog := Real.log_le_self (show 0 ≤ C + 1 by linarith)
-  have hdlog := Real.log_le_self (show (0 : ℝ) ≤ (d : ℝ) + 1 by positivity)
-  have h8 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 8)
-  have hKP_P2 := mul_le_mul_of_nonneg_left hPP2 hK0
-  have hCbound : C + 1 ≤ K := by dsimp [K]; linarith
+  have! hD := graphSymmetryDecayConstant_log d hC hs hs1 hβ hβ1 hζ hζ1
+  have! hClog := Real.log_le_self (show 0 ≤ C + 1 by linarith)
+  have! hdlog := Real.log_le_self (show (0 : ℝ) ≤ (d : ℝ) + 1 by positivity)
+  have! h8 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 8)
+  have! hKP_P2 := mul_le_mul_of_nonneg_left hPP2 hK0
+  have! hCbound : C + 1 ≤ K := by dsimp [K]; linarith
   nlinarith only [hC, hP, hd, hZ, hPP2, hR2, hB, hD, hClog, hdlog, h8]
 
 /-- The explicit local-symmetry construction has degree-eight polynomial complexity. -/
@@ -1690,33 +1692,33 @@ theorem graph_symmetry_complexity_bound (d : ℕ) {C r ζ β : ℝ}
   change 1 + Real.log (1 / (β * (ζ ^ 4 / 8))) ≤ 4 * K * P ^ 2 at hDensity
   change Real.log (graphSymmetryDecayConstant C d (localSymmetryInnerRadius C d r ζ) β ζ + 1) ≤
     6 * K * P ^ 2 at hD
-  have hK : 1 ≤ K := by dsimp [K]; linarith
-  have hK0 : 0 ≤ K := by linarith
-  have hP0 : 0 ≤ P := by linarith
-  have hKP2 : K * P ^ 2 ≤ B :=
+  have! hK : 1 ≤ K := by dsimp [K]; linarith
+  have! hK0 : 0 ≤ K := by linarith
+  have! hP0 : 0 ≤ P := by linarith
+  have! hKP2 : K * P ^ 2 ≤ B :=
     mul_le_mul (le_self_pow₀ hK (by decide : 4 ≠ 0))
       (pow_le_pow_right₀ hP (by decide : 2 ≤ 8)) (sq_nonneg P) (pow_nonneg hK0 4)
-  have hPB : P ≤ B := by
+  have! hPB : P ≤ B := by
     apply (le_self_pow₀ hP (by decide : 2 ≠ 0)).trans
     exact (le_mul_of_one_le_left (sq_nonneg P) hK).trans hKP2
-  have hKPB : K * P ≤ B :=
+  have! hKPB : K * P ≤ B :=
     (mul_le_mul_of_nonneg_left (le_self_pow₀ hP (by decide : 2 ≠ 0)) hK0).trans hKP2
-  have hB : 1 ≤ B := hP.trans hPB
-  have hτ1 : ζ ^ 4 / 8 ≤ 1 := by
-    have : ζ ^ 4 ≤ 1 := pow_le_one₀ hζ.le hζ1
+  have! hB : 1 ≤ B := hP.trans hPB
+  have! hτ1 : ζ ^ 4 / 8 ≤ 1 := by
+    have! this : ζ ^ 4 ≤ 1 := pow_le_one₀ hζ.le hζ1
     linarith
-  have hβτ : β * (ζ ^ 4 / 8) ≤ 1 :=
+  have! hβτ : β * (ζ ^ 4 / 8) ≤ 1 :=
     (mul_le_of_le_one_left (by positivity) hβ1).trans hτ1
-  have hL : 0 ≤ 1 + Real.log (1 / (β * (ζ ^ 4 / 8))) := by
-    have := Real.log_nonneg ((one_le_div (by positivity : 0 < β * (ζ ^ 4 / 8))).mpr hβτ)
+  have! hL : 0 ≤ 1 + Real.log (1 / (β * (ζ ^ 4 / 8))) := by
+    have! this := Real.log_nonneg ((one_le_div (by positivity : 0 < β * (ζ ^ 4 / 8))).mpr hβτ)
     linarith
-  have hp := pow_le_pow_left₀ hL hDensity 4
-  have hm : 10 ^ 20 * (1 + Real.log (1 / (β * (ζ ^ 4 / 8)))) ^ 4 ≤
+  have! hp := pow_le_pow_left₀ hL hDensity 4
+  have! hm : 10 ^ 20 * (1 + Real.log (1 / (β * (ζ ^ 4 / 8)))) ^ 4 ≤
       (256 * 10 ^ 20) * B := by
-    have h := mul_le_mul_of_nonneg_left hp (by positivity : (0 : ℝ) ≤ 10 ^ 20)
+    have! h := mul_le_mul_of_nonneg_left hp (by positivity : (0 : ℝ) ≤ 10 ^ 20)
     convert h using 1; dsimp [B]; ring
-  have hMillion : Real.log 1000000 ≤ 1000000 * B := by
-    have := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 1000000)
+  have! hMillion : Real.log 1000000 ≤ 1000000 * B := by
+    have! this := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 1000000)
     linarith
   change _ ≤ 10 ^ 30 * K ^ 4 * P ^ 8
   rw [mul_assoc]
@@ -1835,16 +1837,16 @@ theorem locally_additive_integer_box {ι G H : Type*} [Fintype ι]
     (z : ι → ℤ) (hz : ∀ i, |z i| ≤ A i) :
     M (∑ i, z i • v i) = ∑ i, z i • M (v i) := by
   classical
-  have h0 : (0 : G) ∈ U := by
-    have h := hbox 0 (fun i => by simpa using (show (0 : ℤ) ≤ A i by linarith [hA i]))
+  have! h0 : (0 : G) ∈ U := by
+    have! h := hbox 0 (fun i => by simpa using (show (0 : ℤ) ≤ A i by linarith [hA i]))
     simpa using h
-  have hM0 : M 0 = 0 := by
-    have h := hadd 0 h0 0 h0 (by simpa using h0)
+  have! hM0 : M 0 = 0 := by
+    have! h := hadd 0 h0 0 h0 (by simpa using h0)
     simp only [zero_add] at h
-    have he : M 0 + M 0 = M 0 + 0 := by simpa using h.symm
+    have! he : M 0 + M 0 = M 0 + 0 := by simpa using h.symm
     exact add_left_cancel he
   have hsingle (i : ι) (k : ℤ) (hk : |k| ≤ A i) : k • v i ∈ U := by
-    have h := hbox (Pi.single i k) (fun j => ?_)
+    have! h := hbox (Pi.single i k) (fun j => ?_)
     · simpa [Pi.single_apply, ite_smul] using h
     · by_cases hj : j = i
       · subst j
@@ -1852,7 +1854,7 @@ theorem locally_additive_integer_box {ι G H : Type*} [Fintype ι]
       · simp [hj]
         linarith [hA j]
   have hpart (J : Finset ι) : (∑ i ∈ J, z i • v i) ∈ U := by
-    have h := hbox (fun i => if i ∈ J then z i else 0) (fun i => ?_)
+    have! h := hbox (fun i => if i ∈ J then z i else 0) (fun i => ?_)
     · simpa only [ite_smul, zero_smul, Finset.sum_ite_mem, Finset.univ_inter] using h
     · split_ifs
       · exact hz i
@@ -1861,14 +1863,14 @@ theorem locally_additive_integer_box {ι G H : Type*} [Fintype ι]
     induction J using Finset.induction_on with
     | empty => simpa using hM0
     | @insert i J hi ih =>
-      have htotal : z i • v i + ∑ j ∈ J, z j • v j ∈ U := by
+      have! htotal : z i • v i + ∑ j ∈ J, z j • v j ∈ U := by
         simpa only [Finset.sum_insert hi] using hpart (insert i J)
-      have hscalar : M (z i • v i) = z i • M (v i) := by
+      have! hscalar : M (z i • v i) = z i • M (v i) := by
         by_cases hzi : z i = 0
         · simp [hzi, hM0]
-        · have hAi : 1 ≤ A i := by
-            have hp : 0 < |z i| := abs_pos.mpr hzi
-            have := hz i
+        · have! hAi : 1 ≤ A i := by
+            have! hp : 0 < |z i| := abs_pos.mpr hzi
+            have! this := hz i
             omega
           exact locally_additive_zsmul U M hM0 hadd (v i) hAi (hsingle i) (z i) (hz i)
       rw [Finset.sum_insert hi, Finset.sum_insert hi,
@@ -2175,7 +2177,7 @@ theorem graph_local_shift_select {q : ℕ} [NeZero q]
         (fun x => b x * ZMod.stdAddChar (-(2 * M h * x))) (fun t => c (h + t))‖ := by
   let F := fun h => c h * (𝔼 x, a (x + h) * b x * ZMod.stdAddChar (-(2 * M h * x)))
   have hF (h) : ‖F h‖ ≤ 1 := by
-    have hi : ‖𝔼 x, a (x + h) * b x * ZMod.stdAddChar (-(2 * M h * x))‖ ≤ 1 := by
+    have! hi : ‖𝔼 x, a (x + h) * b x * ZMod.stdAddChar (-(2 * M h * x))‖ ≤ 1 := by
       apply (RCLike.norm_expect_le (K := ℂ)).trans
       apply Finset.expect_le Finset.univ_nonempty
       intro x _
@@ -2200,7 +2202,7 @@ theorem graph_local_shift_select {q : ℕ} [NeZero q]
   intro x _
   by_cases ht : μ t = 0
   · simp [ht]
-  · have hch : ZMod.stdAddChar (-(2 * M (h + t) * x)) =
+  · have! hch : ZMod.stdAddChar (-(2 * M (h + t) * x)) =
         ZMod.stdAddChar (-(2 * M h * x)) * ZMod.stdAddChar (-(2 * M t * x)) := by
       rw [hadd h hwh t ht,
         show -(2 * (M h + M t) * x) = -(2 * M h * x) + -(2 * M t * x) by ring,
@@ -2227,7 +2229,7 @@ theorem graph_bohr_shift_select {q : ℕ} [NeZero q]
     ∃ h ∈ graphBohrSet S r, ζ / 2 ≤
       ‖graphLocalCorrelation (graphBohrMeasure cutoff T s) M (fun x => a (x + h))
         (fun x => b x * ZMod.stdAddChar (-(2 * M h * x))) (fun t => c (h + t))‖ := by
-  have hmass := graphBohrMass_pos cutoff hb0 hb1 hbone T hs (hsr.trans_lt hrsmall)
+  have! hmass := graphBohrMass_pos cutoff hb0 hb1 hbone T hs (hsr.trans_lt hrsmall)
   have hμsupp (t) (ht : graphBohrMeasure cutoff T s t ≠ 0) : t ∈ graphBohrSet S s := by
     apply graphBohrSet_mono hST le_rfl
     by_contra hn
@@ -2237,7 +2239,7 @@ theorem graph_bohr_shift_select {q : ℕ} [NeZero q]
     exact hh (graphBohrWeight_eq_zero_of_notMem cutoff hsupp S hr h hn)
   have htrans (h t) (ht : graphBohrMeasure cutoff T s t ≠ 0) :
       |graphBohrWeight cutoff S r (h + t) - graphBohrWeight cutoff S r h| ≤ ζ / 100 := by
-    have hv := cyclicBohrWeight_translation cutoff hLip hb0 hb1 hsupp S hr hrsmall h t
+    have! hv := cyclicBohrWeight_translation cutoff hLip hb0 hb1 hsupp S hr hrsmall h t
     change |graphBohrWeight cutoff S r (h + t) - graphBohrWeight cutoff S r h| ≤
       max (L : ℝ) 1 * S.card * graphBohrNorm S t / r at hv
     apply hv.trans
@@ -2333,7 +2335,7 @@ theorem graph_localized_polarization_error {q : ℕ} [NeZero q]
   classical
   let F := fun u t => c t * a (u + t) * b u *
     (ZMod.stdAddChar (-(2 * M t * u)) - ZMod.stdAddChar (-(M u * t + M t * u)))
-  have he : graphLocalizedCorrelation μ μ M a b c -
+  have! he : graphLocalizedCorrelation μ μ M a b c -
       (𝔼 u, 𝔼 t,
         ((μ u : ℂ) * b u * ZMod.stdAddChar (M u * u)) *
         ((μ t : ℂ) * c t * ZMod.stdAddChar (M t * t)) *
@@ -2359,9 +2361,9 @@ theorem graph_localized_polarization_error {q : ℕ} [NeZero q]
   rw [he]
   apply finite_weighted_pair_norm_le μ hμ hμmass F
   intro u t hu ht
-  have habc : ‖c t * a (u + t) * b u‖ ≤ 1 := by
+  have! habc : ‖c t * a (u + t) * b u‖ ≤ 1 := by
     rw [norm_mul, norm_mul]
-    have hca := (mul_le_mul (hc t) (ha (u + t)) (norm_nonneg _) zero_le_one).trans_eq (mul_one 1)
+    have! hca := (mul_le_mul (hc t) (ha (u + t)) (norm_nonneg _) zero_le_one).trans_eq (mul_one 1)
     exact (mul_le_mul hca (hb u) (norm_nonneg _) zero_le_one).trans_eq (mul_one 1)
   dsimp only [F]
   rw [norm_mul]
@@ -2392,7 +2394,7 @@ theorem graph_bohr_polarized_correlation {q : ℕ} [NeZero q]
         (fun v => a v * ZMod.stdAddChar (-(M v * v))) (u + t)‖ := by
   dsimp only
   let μ := graphBohrMeasure cutoff S s
-  have hmass := graphBohrMass_pos cutoff hb0 hb1 hbone S hs hs1
+  have! hmass := graphBohrMass_pos cutoff hb0 hb1 hbone S hs hs1
   have hsupport (u) (hu : μ u ≠ 0) : u ∈ graphBohrSet S s := by
     by_contra hn
     exact hu (graphBohrMeasure_eq_zero_of_notMem cutoff hsupp S hs u hn)
@@ -2403,17 +2405,17 @@ theorem graph_bohr_polarized_correlation {q : ℕ} [NeZero q]
         (graphBohrSet_add S (hsupport u hu) (hsupport t ht)))
   have hsum (u t) (hu : μ u ≠ 0) (ht : μ t ≠ 0) : u + t ∈ graphBohrSet S (2 * s) := by
     simpa only [two_mul] using graphBohrSet_add S (hsupport u hu) (hsupport t ht)
-  have herr := graph_localized_polarization_error μ
+  have! herr := graph_localized_polarization_error μ
     (graphBohrMeasure_nonneg cutoff hb0 S s hmass)
     (graphBohrMeasure_mean_one cutoff S s hmass) M (graphBohrSet S (2 * s)) a b c ha hb hc
     (fun u t hu ht => hskew u (hsupport u hu) t (hsupport t ht)) hlocal hsum
-  have hn := norm_le_norm_sub_add (graphLocalizedCorrelation μ μ M a b c)
+  have! hn := norm_le_norm_sub_add (graphLocalizedCorrelation μ μ M a b c)
     (𝔼 u, 𝔼 t,
       ((μ u : ℂ) * b u * ZMod.stdAddChar (M u * u)) *
       ((μ t : ℂ) * c t * ZMod.stdAddChar (M t * t)) *
       (graphBohrSet S (2 * s) : Set (ZMod q)).indicator
         (fun v => a v * ZMod.stdAddChar (-(M v * v))) (u + t))
-  have hp := mul_le_mul_of_nonneg_right Real.pi_lt_four.le hζ.le
+  have! hp := mul_le_mul_of_nonneg_right Real.pi_lt_four.le hζ.le
   change ζ / 4 ≤ ‖𝔼 u, 𝔼 t,
       ((μ u : ℂ) * b u * ZMod.stdAddChar (M u * u)) *
       ((μ t : ℂ) * c t * ZMod.stdAddChar (M t * t)) *
@@ -2448,7 +2450,7 @@ theorem graph_bohr_weighted_quadratic_correlation {q : ℕ} [NeZero q]
   let C := fun t => c t * ZMod.stdAddChar (M t * t)
   let A := (graphBohrSet S (2 * s) : Set (ZMod q)).indicator
     (fun v => a v * ZMod.stdAddChar (-(M v * v)))
-  have hβ : 0 < β := graphBohrMass_pos cutoff hb0 hb1 hbone S hs hs1
+  have! hβ : 0 < β := graphBohrMass_pos cutoff hb0 hb1 hbone S hs hs1
   have hC (t) : ‖C t‖ ≤ 1 := by
     simpa only [C, norm_mul, ZMod.stdAddChar_apply, Circle.norm_coe, mul_one] using hc t
   have hA (v) : ‖A v‖ ≤ 1 := by
@@ -2456,7 +2458,7 @@ theorem graph_bohr_weighted_quadratic_correlation {q : ℕ} [NeZero q]
     · simpa only [A, Set.indicator_of_mem hv, norm_mul, ZMod.stdAddChar_apply,
         Circle.norm_coe, mul_one] using ha v
     · simp [A, Set.indicator_of_notMem hv]
-  have hpol := graph_bohr_polarized_correlation cutoff hb0 hb1 hbone hsupp S
+  have! hpol := graph_bohr_polarized_correlation cutoff hb0 hb1 hbone hsupp S
     hs hs1 hsρ hζ M hadd hskew a b c ha hb hc hcorr
   have hcorr' : ζ / 4 ≤ ‖𝔼 u, 𝔼 t,
       ((w u / β : ℝ) : ℂ) * B u * (((w t / β : ℝ) : ℂ) * C t) * A (u + t)‖ := by
@@ -2472,7 +2474,7 @@ theorem graph_bohr_weighted_quadratic_correlation {q : ℕ} [NeZero q]
     (fun u => (graphBohrWeight_bounds cutoff hb0 hb1 S s u).1)
     (fun u => (graphBohrWeight_bounds cutoff hb0 hb1 S s u).2) hβ rfl B C A hC hA hcorr'
   refine ⟨ξ, ?_⟩
-  have he : (𝔼 u, (w u : ℂ) * B u * ZMod.stdAddChar (-(ξ * u))) =
+  have! he : (𝔼 u, (w u : ℂ) * B u * ZMod.stdAddChar (-(ξ * u))) =
       𝔼 u, (graphBohrWeight cutoff S s u : ℂ) * b u *
         ZMod.stdAddChar (M u * u - ξ * u) := by
     apply Finset.expect_congr rfl
@@ -2546,12 +2548,12 @@ theorem graph_bohr_local_quadratic_correlation {q : ℕ} [NeZero q]
     ring
   simp_rw [hlinear] at hshift
   let μ := graphBohrMeasure cutoff T s
-  have hmass := graphBohrMass_pos cutoff hb0 hb1 hbone T hs (hsr.trans_lt hrsmall)
+  have! hmass := graphBohrMass_pos cutoff hb0 hb1 hbone T hs (hsr.trans_lt hrsmall)
   obtain ⟨y, hy⟩ := graph_correlation_localization_explicit μ μ
     (graphBohrMeasure_mean_one cutoff T s hmass) M
     (fun x => a (x + h)) (fun x => conj (f x) * ZMod.stdAddChar (-(α * x)))
     (fun t => c (h + t)) hshift
-  have hlocal : ∀ x ∈ graphBohrSet T ρ, ∀ y ∈ graphBohrSet T ρ,
+  have! hlocal : ∀ x ∈ graphBohrSet T ρ, ∀ y ∈ graphBohrSet T ρ,
       x + y ∈ graphBohrSet T ρ → M (x + y) = M x + M y := by
     intro x hx y hy hxy
     exact hadd x (graphBohrSet_mono hST le_rfl hx) y (graphBohrSet_mono hST le_rfl hy)
@@ -2577,8 +2579,8 @@ theorem local_inverse_polynomial_budget (d D : ℕ)
     (hV : V ≤ T + Z + 2 * R + P + 20000 * ((D : ℝ) + 1) ^ 2)
     (hB : B ≤ D * (6 + V)) (hG : G ≤ Z + (3 / 2) * B + 4) :
     (D : ℝ) + V + 1 ≤ P ^ 22 ∧ G ≤ P ^ 34 := by
-  have hP0 : 0 ≤ P := by linarith
-  have hP1 : 1 ≤ P := by linarith
+  have! hP0 : 0 ≤ P := by linarith
+  have! hP1 : 1 ≤ P := by linarith
   have hpow {m n : ℕ} (h : m ≤ n) : P ^ m ≤ P ^ n := pow_le_pow_right₀ hP1 h
   have hDT' : (D : ℝ) + T ≤ P ^ 10 := by
     apply hDT.trans
@@ -2586,24 +2588,24 @@ theorem local_inverse_polynomial_budget (d D : ℕ)
       P * (3 * P) ^ 8 = 6561 * P ^ 9 := by ring
       _ ≤ P * P ^ 9 := mul_le_mul_of_nonneg_right (by linarith) (by positivity)
       _ = P ^ 10 := by ring
-  have hD : (D : ℝ) ≤ P ^ 10 := by linarith
-  have hT : T ≤ P ^ 10 := by linarith [Nat.cast_nonneg D (α := ℝ)]
-  have hR : R ≤ P := by linarith [Nat.cast_nonneg d (α := ℝ)]
-  have h10 : 1 ≤ P ^ 10 := one_le_pow₀ hP1
-  have hD2 : ((D : ℝ) + 1) ^ 2 ≤ 4 * P ^ 20 := by
+  have! hD : (D : ℝ) ≤ P ^ 10 := by linarith
+  have! hT : T ≤ P ^ 10 := by linarith [Nat.cast_nonneg D (α := ℝ)]
+  have! hR : R ≤ P := by linarith [Nat.cast_nonneg d (α := ℝ)]
+  have! h10 : 1 ≤ P ^ 10 := one_le_pow₀ hP1
+  have! hD2 : ((D : ℝ) + 1) ^ 2 ≤ 4 * P ^ 20 := by
     calc
       _ ≤ (2 * P ^ 10) ^ 2 := pow_le_pow_left₀ (by positivity) (by linarith) 2
       _ = _ := by ring
-  have hP20 : P ≤ P ^ 20 := by simpa only [pow_one] using hpow (by norm_num : 1 ≤ 20)
-  have h1020 : P ^ 10 ≤ P ^ 20 := hpow (by norm_num)
+  have! hP20 : P ≤ P ^ 20 := by simpa only [pow_one] using hpow (by norm_num : 1 ≤ 20)
+  have! h1020 : P ^ 10 ≤ P ^ 20 := hpow (by norm_num)
   have hV' : V ≤ P ^ 21 := by
     calc
       V ≤ 80005 * P ^ 20 := by nlinarith only [hd, hZ, hV, hDT', hD, h10, hP20]
       _ ≤ P * P ^ 20 := mul_le_mul_of_nonneg_right (by linarith) (by positivity)
       _ = P ^ 21 := by ring
-  have hP21 : P ≤ P ^ 21 := by simpa only [pow_one] using hpow (by norm_num : 1 ≤ 21)
-  have h1021 : P ^ 10 ≤ P ^ 21 := hpow (by norm_num)
-  have hDVR : (D : ℝ) + V + 1 ≤ P ^ 22 := by
+  have! hP21 : P ≤ P ^ 21 := by simpa only [pow_one] using hpow (by norm_num : 1 ≤ 21)
+  have! h1021 : P ^ 10 ≤ P ^ 21 := hpow (by norm_num)
+  have! hDVR : (D : ℝ) + V + 1 ≤ P ^ 22 := by
     calc
       _ ≤ 3 * P ^ 21 := by linarith [one_le_pow₀ hP1 (n := 21)]
       _ ≤ P * P ^ 21 := mul_le_mul_of_nonneg_right (by linarith) (by positivity)
@@ -2616,7 +2618,7 @@ theorem local_inverse_polynomial_budget (d D : ℕ)
       _ = 2 * P ^ 31 := by ring
       _ ≤ P * P ^ 31 := mul_le_mul_of_nonneg_right (by linarith) (by positivity)
       _ = P ^ 32 := by ring
-  have hP32 : P ≤ P ^ 32 := by simpa only [pow_one] using hpow (by norm_num : 1 ≤ 32)
+  have! hP32 : P ≤ P ^ 32 := by simpa only [pow_one] using hpow (by norm_num : 1 ≤ 32)
   refine ⟨hDVR, ?_⟩
   calc
     G ≤ 4 * P ^ 32 := by nlinarith only [one_le_pow₀ hP1 (n := 32), hP, hZ, hG, hD, h1020, hP21,
@@ -2637,42 +2639,42 @@ theorem graph_local_inverse_log_budget (d D : ℕ) {P ρ t r ζ β C K : ℝ}
     (hβ : (r / 6) ^ D ≤ β) :
     (D : ℝ) + Real.log (1 / r) + 1 ≤ P ^ 22 ∧
       Real.log (1 / (ζ * β * Real.sqrt β / 4)) ≤ P ^ 34 := by
-  have hP0 : 0 ≤ P := by linarith
-  have hρlog : 0 ≤ Real.log (1 / ρ) := Real.log_nonneg ((one_le_div hρ).mpr hρ1)
-  have hζlog : 0 ≤ Real.log (1 / ζ) := Real.log_nonneg ((one_le_div hζ).mpr hζ1)
-  have hlogscale : Real.log (1 / (ρ / 100)) =
+  have! hP0 : 0 ≤ P := by linarith
+  have! hρlog : 0 ≤ Real.log (1 / ρ) := Real.log_nonneg ((one_le_div hρ).mpr hρ1)
+  have! hζlog : 0 ≤ Real.log (1 / ζ) := Real.log_nonneg ((one_le_div hζ).mpr hζ1)
+  have! hlogscale : Real.log (1 / (ρ / 100)) =
       Real.log 100 + Real.log (1 / ρ) := by
     rw [show 1 / (ρ / 100) = 100 / ρ by field_simp,
       Real.log_div (by norm_num : (100 : ℝ) ≠ 0) hρ.ne', one_div, Real.log_inv]
     ring
-  have hbudget0 : 0 ≤ graphSymmetryBudget d (ρ / 100) ζ := by
+  have! hbudget0 : 0 ≤ graphSymmetryBudget d (ρ / 100) ζ := by
     dsimp [graphSymmetryBudget]
     rw [hlogscale]
-    have hh : 0 ≤ Real.log (100 : ℝ) := Real.log_nonneg (by norm_num)
+    have! hh : 0 ≤ Real.log (100 : ℝ) := Real.log_nonneg (by norm_num)
     positivity
-  have hbudget : graphSymmetryBudget d (ρ / 100) ζ ≤ 3 * P := by
+  have! hbudget : graphSymmetryBudget d (ρ / 100) ζ ≤ 3 * P := by
     dsimp [graphSymmetryBudget]
     rw [hlogscale]
-    have hh := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 100)
+    have! hh := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 100)
     linarith
   have hDT' : (D : ℝ) + Real.log (1 / t) ≤ P * (3 * P) ^ 8 :=
     hDT.trans (mul_le_mul hKP (pow_le_pow_left₀ hbudget0 hbudget 8)
       (pow_nonneg hbudget0 8) hP0)
-  have hβpos : 0 < β := (pow_pos (div_pos hr (by norm_num)) D).trans_le hβ
-  have hBlog : Real.log (1 / β) ≤ D * (6 + Real.log (1 / r)) := by
+  have! hβpos : 0 < β := (pow_pos (div_pos hr (by norm_num)) D).trans_le hβ
+  have! hBlog : Real.log (1 / β) ≤ D * (6 + Real.log (1 / r)) := by
     apply (graph_mass_log_bound D hr hβ).trans
     rw [Real.log_div (by norm_num : (6 : ℝ) ≠ 0) hr.ne', one_div, Real.log_inv]
-    have hh := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 6)
+    have! hh := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 6)
     gcongr
     linarith
-  have hGlog : Real.log (1 / (ζ * β * Real.sqrt β / 4)) ≤
+  have! hGlog : Real.log (1 / (ζ * β * Real.sqrt β / 4)) ≤
       Real.log (1 / ζ) + (3 / 2) * Real.log (1 / β) + 4 := by
     rw [one_div, Real.log_inv,
       Real.log_div (by positivity : ζ * β * Real.sqrt β ≠ 0) (by norm_num : (4 : ℝ) ≠ 0),
       Real.log_mul (mul_ne_zero hζ.ne' hβpos.ne') (by positivity : Real.sqrt β ≠ 0),
       Real.log_mul hζ.ne' hβpos.ne', Real.log_sqrt hβpos.le]
     simp only [one_div, Real.log_inv]
-    have hh := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 4)
+    have! hh := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 4)
     linarith
   exact local_inverse_polynomial_budget d D hP
     (Real.log_nonneg ((one_le_div ht).mpr ht1))
@@ -2885,7 +2887,7 @@ theorem integer_lattice_dual_coordinates {ι : Type*} [Fintype ι] {n : ℕ}
     rw [← hb, euclideanDualLattice_span]
     exact Submodule.subset_span (Set.mem_range_self i)
   have hcoord (i : Fin n) (j : ι) : ∃ z : ℤ, euclideanDualBasis b i j = (z : ℝ) := by
-    have hj : EuclideanSpace.single j (1 : ℝ) ∈ L := by
+    have! hj : EuclideanSpace.single j (1 : ℝ) ∈ L := by
       convert hZ (Pi.single j 1) using 1
       ext k
       simp [Pi.single_apply]
@@ -2903,7 +2905,7 @@ theorem integer_lattice_dual_coordinates {ι : Type*} [Fintype ι] {n : ℕ}
     simp [dotProduct, hU, mul_comm]
   refine ⟨U, t, hU, ht, hrepr, ?_⟩
   intro m k i
-  have hsumθ : (∑ j, (U i j : ℝ) * θ j) = (t i : ℝ) := by
+  have! hsumθ : (∑ j, (U i j : ℝ) * θ j) = (t i : ℝ) := by
     rw [← hrepr, ← euclideanDualBasis_inner]
     exact ht i
   rw [hrepr, ← Int.cast_smul_eq_zsmul ℝ]
@@ -3383,7 +3385,7 @@ theorem bounded_quadratic_derivative_norm {d : ℕ} (C : Fin d → Fin d → ℝ
     (contDiff_const.mul (contDiff_apply ℝ _ i)).mul (contDiff_apply ℝ _ j)
   have hmono (i j : Fin d) :
       ‖iteratedFDeriv ℝ m (fun y : Fin d → ℝ => C i j * y i * y j) z‖ ≤ (2 : ℝ) ^ m := by
-    have he : (fun y : Fin d → ℝ => C i j * y i * y j) =
+    have! he : (fun y : Fin d → ℝ => C i j * y i * y j) =
         (fun y : Fin d → ℝ => C i j • (y i * y j)) := by
       funext y
       simp only [smul_eq_mul, mul_assoc]
@@ -3415,13 +3417,13 @@ theorem bounded_quadratic_phase_derivative_norm {d : ℕ} (C : Fin d → Fin d �
       (fun y : Fin d → ℝ => (Real.fourierChar (∑ i, ∑ j, C i j * y i * y j) : ℂ)) z‖ ≤
       (m.factorial : ℝ) * (4 * Real.pi * (d + 1 : ℝ) ^ 2) ^ m := by
   let Q : (Fin d → ℝ) → ℝ := fun y => ∑ i, ∑ j, C i j * y i * y j
-  have hQ : ContDiff ℝ (⊤ : ℕ∞) Q := by
+  have! hQ : ContDiff ℝ (⊤ : ℕ∞) Q := by
     apply ContDiff.sum
     intro i _
     apply ContDiff.sum
     intro j _
     exact (contDiff_const.mul (contDiff_apply ℝ _ i)).mul (contDiff_apply ℝ _ j)
-  have hpi : 1 ≤ 2 * Real.pi := by linarith [Real.pi_gt_three]
+  have! hpi : 1 ≤ 2 * Real.pi := by linarith [Real.pi_gt_three]
   have houter (i : ℕ) (hi : i ≤ m) :
       ‖iteratedFDeriv ℝ i (fun t : ℝ => (Real.fourierChar t : ℂ)) (Q z)‖ ≤
         (2 * Real.pi) ^ m := by
@@ -3431,15 +3433,15 @@ theorem bounded_quadratic_phase_derivative_norm {d : ℕ} (C : Fin d → Fin d �
       ‖iteratedFDeriv ℝ i Q z‖ ≤ (2 * (d + 1 : ℝ) ^ 2) ^ i := by
     apply (bounded_quadratic_derivative_norm C hC z hz i).trans
     rw [mul_pow]
-    have hd : 1 ≤ (d + 1 : ℝ) ^ 2 := by
-      have := Nat.cast_nonneg (α := ℝ) d
+    have! hd : 1 ≤ (d + 1 : ℝ) ^ 2 := by
+      have! this := Nat.cast_nonneg (α := ℝ) d
       nlinarith
-    have hp : (d : ℝ) ^ 2 ≤ ((d + 1 : ℝ) ^ 2) ^ i := by
+    have! hp : (d : ℝ) ^ 2 ≤ ((d + 1 : ℝ) ^ 2) ^ i := by
       calc
         _ ≤ (d + 1 : ℝ) ^ 2 := by have := Nat.cast_nonneg (α := ℝ) d; nlinarith
         _ ≤ _ := le_self_pow₀ hd (by omega)
     nlinarith [pow_nonneg (by norm_num : (0 : ℝ) ≤ 2) i]
-  have h := norm_iteratedFDeriv_comp_le (n := m) chart_fourierChar_smooth hQ
+  have! h := norm_iteratedFDeriv_comp_le (n := m) chart_fourierChar_smooth hQ
     (by simp) z houter hinner
   change ‖iteratedFDeriv ℝ m
     (fun y : Fin d → ℝ => (Real.fourierChar (∑ i, ∑ j, C i j * y i * y j) : ℂ)) z‖ ≤ _ at h
@@ -3563,11 +3565,11 @@ theorem localizedQuadraticChart_amplitude_derivative_geometric {d : ℕ}
   by_cases hz : ‖z‖ ≤ 1
   · have hzL (i : Fin d) : |z (Fin.castAdd d i)| ≤ 1 :=
       (norm_le_pi_norm z (Fin.castAdd d i)).trans hz
-    have hleft : ContDiff ℝ (⊤ : ℕ∞)
+    have! hleft : ContDiff ℝ (⊤ : ℕ∞)
         (fun y : Fin (d + d) → ℝ => chartQuadraticAmplitude f C (fun i => y (Fin.castAdd d i))) :=
       (chartQuadraticAmplitude_smooth hf C).comp
         (chartCoordinateRestriction (Fin.castAdd d)).contDiff
-    have hright : ContDiff ℝ (⊤ : ℕ∞)
+    have! hright : ContDiff ℝ (⊤ : ℕ∞)
         (fun y : Fin (d + d) → ℝ => chartCoordinateProduct g (fun i => y (Fin.natAdd d i))) :=
       (chartCoordinateProduct_smooth hg).comp (chartCoordinateRestriction (Fin.natAdd d)).contDiff
     apply derivative_product_geometric hleft hright z (by positivity)
@@ -3580,10 +3582,10 @@ theorem localizedQuadraticChart_amplitude_derivative_geometric {d : ℕ}
       apply (chart_restriction_derivative_norm (chartCoordinateProduct_smooth hg)
         (Fin.natAdd d) z i).trans
       exact chartCoordinateProduct_derivative_geometric hg _ hT (fun j hj => hgi j (hj.trans hi))
-  · have hzero : iteratedFDeriv ℝ m A.amplitude z = 0 := by
+  · have! hzero : iteratedFDeriv ℝ m A.amplitude z = 0 := by
       by_contra h
-      have hs := support_iteratedFDeriv_subset (𝕜 := ℝ) (f := A.amplitude) m h
-      have hb := localizedQuadraticChart_amplitude_support θ v ell C f g hf hg hfc hgc hfs hgs hs
+      have! hs := support_iteratedFDeriv_subset (𝕜 := ℝ) (f := A.amplitude) m h
+      have! hb := localizedQuadraticChart_amplitude_support θ v ell C f g hf hg hfc hgc hfs hgs hs
       exact hz (by simpa only [Metric.mem_closedBall, dist_zero_right] using hb)
     change ‖iteratedFDeriv ℝ m A.amplitude z‖ ≤ _
     rw [hzero, norm_zero]
@@ -3640,46 +3642,46 @@ theorem local_chart_derivative_budget (d K m : ℕ) (hK : 1 ≤ K)
       (m + 1 : ℝ) ^ ((2 * K + 2) * (m + 1)) := by
   let A : ℝ := 100 * (K + 1 : ℝ) * (d + 1 : ℝ) / r
   let T : ℝ := A * (m + 1 : ℝ)
-  have hKr : (1 : ℝ) ≤ K := by exact_mod_cast hK
-  have hd : (0 : ℝ) ≤ d := Nat.cast_nonneg _
-  have hm : (1 : ℝ) ≤ m + 1 := by have := Nat.cast_nonneg (α := ℝ) m; linarith
-  have hnum : 100 * (K + 1 : ℝ) * (d + 1 : ℝ) ≤ A := by
+  have! hKr : (1 : ℝ) ≤ K := by exact_mod_cast hK
+  have! hd : (0 : ℝ) ≤ d := Nat.cast_nonneg _
+  have! hm : (1 : ℝ) ≤ m + 1 := by have := Nat.cast_nonneg (α := ℝ) m; linarith
+  have! hnum : 100 * (K + 1 : ℝ) * (d + 1 : ℝ) ≤ A := by
     dsimp [A]
     apply (le_div_iff₀ hr).mpr
     exact mul_le_of_le_one_right (by positivity) hr1
-  have hA3 : 3 ≤ A := by nlinarith
-  have hAK : (K : ℝ) ≤ A := by nlinarith
-  have hAd : (d + 1 : ℝ) ≤ A := by nlinarith
-  have hApi : 4 * Real.pi ≤ A := by nlinarith [Real.pi_lt_four]
-  have hAr : (d : ℝ) / r ≤ A := by
+  have! hA3 : 3 ≤ A := by nlinarith
+  have! hAK : (K : ℝ) ≤ A := by nlinarith
+  have! hAd : (d + 1 : ℝ) ≤ A := by nlinarith
+  have! hApi : 4 * Real.pi ≤ A := by nlinarith [Real.pi_lt_four]
+  have! hAr : (d : ℝ) / r ≤ A := by
     dsimp [A]
     apply (div_le_div_iff_of_pos_right hr).mpr
     nlinarith
-  have hT : A ≤ T := le_mul_of_one_le_right (by linarith) hm
-  have hT1 : 1 ≤ T := by linarith
-  have hB : ((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) ≤ T ^ (2 * K) :=
+  have! hT : A ≤ T := le_mul_of_one_le_right (by linarith) hm
+  have! hT1 : 1 ≤ T := by linarith
+  have! hB : ((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) ≤ T ^ (2 * K) :=
     pow_le_pow_left₀ (by positivity) (mul_le_mul_of_nonneg_right hAK (by linarith)) _
-  have hfirst : (d : ℝ) * (((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) / r) ≤
+  have! hfirst : (d : ℝ) * (((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) / r) ≤
       T ^ (2 * K + 1) := by
     calc
       _ = ((d : ℝ) / r) * ((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) := by ring
       _ ≤ T * T ^ (2 * K) := mul_le_mul (hAr.trans hT) hB (by positivity) (by linarith)
       _ = _ := by rw [pow_succ]; ring
-  have hthird : (d : ℝ) * ((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) ≤
+  have! hthird : (d : ℝ) * ((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) ≤
       T ^ (2 * K + 1) := by
     calc
       _ ≤ T * T ^ (2 * K) :=
         mul_le_mul (by linarith) hB (by positivity) (by linarith)
       _ = _ := by rw [pow_succ]; ring
-  have hsecond : 4 * Real.pi * (d + 1 : ℝ) ^ 2 * (m + 1 : ℝ) ≤ T ^ (2 * K + 1) := by
+  have! hsecond : 4 * Real.pi * (d + 1 : ℝ) ^ 2 * (m + 1 : ℝ) ≤ T ^ (2 * K + 1) := by
     calc
       _ ≤ A * A ^ 2 * (m + 1 : ℝ) := by gcongr
       _ ≤ T ^ 3 := by
         dsimp [T]
-        have hm3 : (m + 1 : ℝ) ≤ (m + 1 : ℝ) ^ 3 := le_self_pow₀ hm (by norm_num)
+        have! hm3 : (m + 1 : ℝ) ≤ (m + 1 : ℝ) ^ 3 := le_self_pow₀ hm (by norm_num)
         nlinarith only [mul_le_mul_of_nonneg_left hm3 (show 0 ≤ A ^ 3 by positivity)]
       _ ≤ _ := pow_le_pow_right₀ hT1 (by omega)
-  have hsum : (d : ℝ) * (((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) / r) +
+  have! hsum : (d : ℝ) * (((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) / r) +
       4 * Real.pi * (d + 1 : ℝ) ^ 2 * (m + 1 : ℝ) +
       (d : ℝ) * ((K : ℝ) * (m + 1 : ℝ)) ^ (2 * K) ≤ T ^ (2 * K + 2) := by
     calc
@@ -3904,30 +3906,30 @@ theorem scaledSmallBallCoefficientBox {E : Type*} [NormedAddCommGroup E]
   have hei (x : E) : e.symm x = ρ⁻¹ • x := rfl
   obtain ⟨c, I, a, hc, ha, hinner, houter, hpartial⟩ :=
     smallBallCoefficientBox hn (b.map e.symm)
-  have hbback : (b.map e.symm).map e = b := by
+  have! hbback : (b.map e.symm).map e = b := by
     ext i
     simp only [Module.Basis.map_apply, LinearEquiv.apply_symm_apply]
-  have hspan : Submodule.span ℤ (Set.range (c.map e)) = Submodule.span ℤ (Set.range b) := by
+  have! hspan : Submodule.span ℤ (Set.range (c.map e)) = Submodule.span ℤ (Set.range b) := by
     rw [← ZSpan.map c e, hc, ZSpan.map, hbback]
   have hpart (z : Fin n → ℤ) (hz : ∀ i ∉ I, z i = 0) (hza : ∀ i ∈ I, |z i| ≤ a i)
       (J : Finset (Fin n)) : ‖∑ i ∈ J, z i • (c.map e) i‖ ≤ ρ / 4 := by
-    have hsum : (∑ i ∈ J, z i • (c.map e) i) = e (∑ i ∈ J, z i • c i) := by
+    have! hsum : (∑ i ∈ J, z i • (c.map e) i) = e (∑ i ∈ J, z i • c i) := by
       simp only [map_sum, map_zsmul, Module.Basis.map_apply]
     rw [hsum, he, norm_smul, Real.norm_of_nonneg hρ.le]
-    have h := mul_le_mul_of_nonneg_left (hpartial z hz hza J) hρ.le
+    have! h := mul_le_mul_of_nonneg_left (hpartial z hz hza J) hρ.le
     linarith
   refine ⟨c.map e, I, a, hspan, ha, ?_, ?_, hpart⟩
   · intro x hx
-    have hxnorm : ‖x‖ ≤ latticeBoxRadius n * ρ := by
+    have! hxnorm : ‖x‖ ≤ latticeBoxRadius n * ρ := by
       simpa only [Metric.mem_closedBall, dist_zero_right] using hx.1
-    have hynorm : ‖e.symm x‖ ≤ latticeBoxRadius n := by
+    have! hynorm : ‖e.symm x‖ ≤ latticeBoxRadius n := by
       rw [hei, norm_smul, Real.norm_of_nonneg (inv_nonneg.mpr hρ.le), inv_mul_eq_div]
       exact (div_le_iff₀ hρ).mpr hxnorm
-    have hyL : e.symm x ∈ Submodule.span ℤ (Set.range (b.map e.symm)) := by
+    have! hyL : e.symm x ∈ Submodule.span ℤ (Set.range (b.map e.symm)) := by
       rw [← ZSpan.map]
       exact Submodule.mem_map.mpr ⟨x, hx.2, rfl⟩
-    have hy := hinner ⟨by simpa only [Metric.mem_closedBall, dist_zero_right] using hynorm, hyL⟩
-    have h := (integerCoefficientBox_map e c I a (e.symm x)).mpr hy
+    have! hy := hinner ⟨by simpa only [Metric.mem_closedBall, dist_zero_right] using hynorm, hyL⟩
+    have! h := (integerCoefficientBox_map e c I a (e.symm x)).mpr hy
     simpa only [LinearEquiv.apply_symm_apply] using h
   · rintro x ⟨z, hz, hza, rfl⟩
     simpa only [Metric.mem_closedBall, dist_zero_right] using hpart z hz hza Finset.univ
@@ -4018,18 +4020,18 @@ theorem bohr_box_local_additive {q n : ℕ} [NeZero q]
   have hbox (w : Fin n → ℤ) (hw : ∀ i, |w i| ≤ A i) :
       (∑ i, w i • bohrBasisFrequency S hS b hb i) ∈ graphBohrSet S ρ := by
     have hw0 (i : Fin n) (hi : i ∉ I) : w i = 0 := by
-      have h := hw i
+      have! h := hw i
       simp only [A, ite_eq_right hi] at h
       exact abs_nonpos_iff.mp h
     have hwa (i : Fin n) (hi : i ∈ I) : |w i| ≤ a i := by
       simpa only [A, ite_eq_left hi] using hw i
     let x : bohrLiftLattice S hS := ∑ i, w i • bohrBasisVector S hS b hb i
-    have hx : (x : EuclideanSpace ℝ S) = ∑ i, w i • b i := by
+    have! hx : (x : EuclideanSpace ℝ S) = ∑ i, w i • b i := by
       simp only [x, Submodule.coe_sum, Submodule.coe_smul_of_tower, bohrBasisVector]
-    have hxnorm : ‖(x : EuclideanSpace ℝ S)‖ < ρ := by
+    have! hxnorm : ‖(x : EuclideanSpace ℝ S)‖ < ρ := by
       rw [hx]
       exact (hbound w hw0 hwa).trans_lt (by linarith)
-    have hp : bohrLiftProjection S hS x = ∑ i, w i • bohrBasisFrequency S hS b hb i := by
+    have! hp : bohrLiftProjection S hS x = ∑ i, w i • bohrBasisFrequency S hS b hb i := by
       simp only [x, map_sum, map_zsmul, bohrBasisFrequency]
     rw [← hp]
     exact bohrLiftProjection_mem S hS x hxnorm
@@ -4296,12 +4298,12 @@ theorem quadratic_horizontal_substitution {ι : Type*} [Fintype ι]
   let v : ι → ℝ := fun i => -b i - ∑ j, (C i j + C j i) * θ j
   refine ⟨ell', v, fun _ => rfl, ?_⟩
   intro n w
-  have hlin : (∑ i, b i * (θ i * n - w i)) =
+  have! hlin : (∑ i, b i * (θ i * n - w i)) =
       n * (∑ i, b i * θ i) - ∑ i, b i * w i := by
     simp_rw [show ∀ i, b i * (θ i * n - w i) =
       n * (b i * θ i) - b i * w i by intro i; ring]
     rw [Finset.sum_sub_distrib, ← Finset.mul_sum]
-  have hquad : (∑ i, ∑ j, C i j * (θ i * n - w i) * (θ j * n - w j)) =
+  have! hquad : (∑ i, ∑ j, C i j * (θ i * n - w i) * (θ j * n - w j)) =
       n ^ 2 * (∑ i, ∑ j, C i j * θ i * θ j) -
       n * (∑ i, ∑ j, C i j * θ i * w j) -
       n * (∑ i, ∑ j, C i j * w i * θ j) +
@@ -4310,15 +4312,15 @@ theorem quadratic_horizontal_substitution {ι : Type*} [Fintype ι]
       n ^ 2 * (C i j * θ i * θ j) - n * (C i j * θ i * w j) -
         n * (C i j * w i * θ j) + C i j * w i * w j by intro i j; ring]
     simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum]
-  have hv : (∑ i, v i * w i) =
+  have! hv : (∑ i, v i * w i) =
       -(∑ i, b i * w i) - (∑ i, ∑ j, C i j * θ i * w j) -
         ∑ i, ∑ j, C i j * w i * θ j := by
-    have hswap : (∑ i, ∑ j, C i j * θ i * w j) =
+    have! hswap : (∑ i, ∑ j, C i j * θ i * w j) =
         ∑ i, ∑ j, C j i * θ j * w i := Finset.sum_comm
     rw [hswap]
     simp only [v, sub_mul, neg_mul, Finset.sum_sub_distrib, Finset.sum_neg_distrib,
       Finset.sum_mul, add_mul, Finset.sum_add_distrib]
-    have hcomm : (∑ i, ∑ j, C i j * θ j * w i) =
+    have! hcomm : (∑ i, ∑ j, C i j * θ j * w i) =
         ∑ i, ∑ j, C i j * w i * θ j := by
       apply Finset.sum_congr rfl
       intro i _
@@ -4543,14 +4545,14 @@ theorem bohrLocalQuadraticChart_integer_formula {q : ℕ} [NeZero q]
     ring
   have hcenter (i : Fin S.card) : |θ i * (n : ℝ) - (K i : ℝ)| ≤ 1 / 2 := by
     rw [hc]
-    have h := unitCircleCentered_mem
+    have! h := unitCircleCentered_mem
       (ZMod.toAddCircle ((bohrFrequencyEquiv S i).val * (n : ZMod q)))
     exact abs_le.mpr ⟨h.1, h.2.le⟩
   have hscaled (x : ℝ) (hx : r ≤ |x|) : cutoff (x / r) = 0 := by
     apply hsupp
     rw [abs_div, abs_of_pos hr]
     exact (le_div_iff₀ hr).mpr (by simpa using hx)
-  have hval := localizedQuadraticChart_at_center θ
+  have! hval := localizedQuadraticChart_at_center θ
     (fun i => v (bohrFrequencyEquiv S i)) ell
     (fun i j => C (bohrFrequencyEquiv S i) (bohrFrequencyEquiv S j))
     (fun x => cutoff (x / r)) gevreyPartition
@@ -4561,10 +4563,10 @@ theorem bohrLocalQuadraticChart_integer_formula {q : ℕ} [NeZero q]
     (n : ℝ) = _ at hval
   simp only [hc, chartCoordinateProduct] at hval
   rw [bohrCenteredLift_weight] at hval
-  have hlinear : (∑ i, v (bohrFrequencyEquiv S i) *
+  have! hlinear : (∑ i, v (bohrFrequencyEquiv S i) *
       bohrCenteredLift S n (bohrFrequencyEquiv S i)) = ∑ s, v s * bohrCenteredLift S n s :=
     (bohrFrequencyEquiv S).sum_comp (fun s : S => v s * bohrCenteredLift S n s)
-  have hquad : (∑ i, ∑ j, C (bohrFrequencyEquiv S i) (bohrFrequencyEquiv S j) *
+  have! hquad : (∑ i, ∑ j, C (bohrFrequencyEquiv S i) (bohrFrequencyEquiv S j) *
       bohrCenteredLift S n (bohrFrequencyEquiv S i) *
       bohrCenteredLift S n (bohrFrequencyEquiv S j)) =
       ∑ s, ∑ t, C s t * bohrCenteredLift S n s * bohrCenteredLift S n t := by
@@ -4681,19 +4683,19 @@ theorem local_chart_complexity_parameter (L d C : ℕ) (hL : 1 ≤ L)
       100 * (L + 1 : ℝ) * (d + 1 : ℝ) / r ≤ H := by
   let B : ℝ := (d : ℝ) + Real.log (1 / r) + 1
   let a : ℝ := 100 * (L + 1 : ℝ)
-  have hLr : (1 : ℝ) ≤ L := by exact_mod_cast hL
-  have hd : (0 : ℝ) ≤ d := Nat.cast_nonneg _
-  have hlog : 0 ≤ Real.log (1 / r) := Real.log_nonneg ((le_div_iff₀ hr).mpr (by simpa using hr1))
-  have hB : 1 ≤ B := by dsimp [B]; linarith
-  have hD : (d : ℝ) + 1 ≤ B := by dsimp [B]; linarith
-  have hC : 1000 * (L + 1 : ℝ) ≤ (C : ℝ) := by exact_mod_cast hCbound
-  have ha : 0 ≤ a := by dsimp [a]; positivity
-  have hC3 : a ≤ (C : ℝ) - 3 := by dsimp [a]; linarith
-  have hCB : a + 3 * B ≤ (C : ℝ) * B := by
-    have h := mul_le_mul_of_nonneg_left hB (show 0 ≤ (C : ℝ) - 3 by linarith)
+  have! hLr : (1 : ℝ) ≤ L := by exact_mod_cast hL
+  have! hd : (0 : ℝ) ≤ d := Nat.cast_nonneg _
+  have! hlog : 0 ≤ Real.log (1 / r) := Real.log_nonneg ((le_div_iff₀ hr).mpr (by simpa using hr1))
+  have! hB : 1 ≤ B := by dsimp [B]; linarith
+  have! hD : (d : ℝ) + 1 ≤ B := by dsimp [B]; linarith
+  have! hC : 1000 * (L + 1 : ℝ) ≤ (C : ℝ) := by exact_mod_cast hCbound
+  have! ha : 0 ≤ a := by dsimp [a]; positivity
+  have! hC3 : a ≤ (C : ℝ) - 3 := by dsimp [a]; linarith
+  have! hCB : a + 3 * B ≤ (C : ℝ) * B := by
+    have! h := mul_le_mul_of_nonneg_left hB (show 0 ≤ (C : ℝ) - 3 by linarith)
     nlinarith
-  have hpow : B ≤ B ^ C := le_self_pow₀ hB (by omega)
-  have hE : a + 3 * B ≤ (C : ℝ) * B ^ C :=
+  have! hpow : B ≤ B ^ C := le_self_pow₀ hB (by omega)
+  have! hE : a + 3 * B ≤ (C : ℝ) * B ^ C :=
     hCB.trans (mul_le_mul_of_nonneg_left hpow (Nat.cast_nonneg _))
   change Real.exp 2 ≤ Real.exp ((C : ℝ) * B ^ C) ∧
     ((d + d : ℕ) : ℝ) ≤ Real.log (Real.exp ((C : ℝ) * B ^ C)) ∧
@@ -4702,8 +4704,8 @@ theorem local_chart_complexity_parameter (L d C : ℕ) (hL : 1 ≤ L)
   · rw [Real.log_exp]
     push_cast
     linarith
-  · have haexp : a ≤ Real.exp a := by linarith [Real.add_one_le_exp a]
-    have hdexp : (d + 1 : ℝ) ≤ Real.exp (d + 1 : ℝ) := by
+  · have! haexp : a ≤ Real.exp a := by linarith [Real.add_one_le_exp a]
+    have! hdexp : (d + 1 : ℝ) ≤ Real.exp (d + 1 : ℝ) := by
       linarith [Real.add_one_le_exp (d + 1 : ℝ)]
     calc
       _ = a * (d + 1 : ℝ) * (1 / r) := by ring
@@ -4764,16 +4766,16 @@ theorem locally_quadratic_chart
   obtain ⟨C, hC⟩ : ∃ C : ℕ, 1000 * (L + 1) ≤ C := ⟨1000 * (L + 1), le_rfl⟩
   refine ⟨2 * L + 2, C, by omega, by omega, ?_⟩
   intro q hq S hS r ρ hr hρ hρsmall hsmall M hadd
-  have hρ1 : ρ < 1 := by linarith
-  have hr1 : r ≤ 1 := (local_chart_radius_lt_half S hS hr hρ hρ1 hsmall).le.trans (by norm_num)
+  have! hρ1 : ρ < 1 := by linarith
+  have! hr1 : r ≤ 1 := (local_chart_radius_lt_half S hS hr hρ hρ1 hsmall).le.trans (by norm_num)
   obtain ⟨ell, v, Q, hQ, hbounded, hvalues⟩ := bohr_local_chart_bounded_values
     S hS hr hρ hρ1 hsmall M hadd cutoff hf hsupp hunit
   let A := bohrLocalQuadraticChart S hS ell v Q cutoff hf hsupp hr
   let H := Real.exp ((C : ℝ) * ((S.card : ℝ) + Real.log (1 / r) + 1) ^ C)
-  have hbudget := local_chart_complexity_parameter L S.card C hL hC hr hr1
+  have! hbudget := local_chart_complexity_parameter L S.card C hL hC hr hr1
   change Real.exp 2 ≤ H ∧ ((S.card + S.card : ℕ) : ℝ) ≤ Real.log H ∧
     100 * (L + 1 : ℝ) * (S.card + 1 : ℝ) / r ≤ H at hbudget
-  have hH1 : 1 ≤ H := by linarith [Real.add_one_le_exp (2 : ℝ), hbudget.1]
+  have! hH1 : 1 ≤ H := by linarith [Real.add_one_le_exp (2 : ℝ), hbudget.1]
   refine ⟨A, bohrLocalQuadraticChart_matrix_height S hS ell v Q cutoff hf hsupp hr, ?_,
     hbounded, hvalues⟩
   refine {
@@ -4789,9 +4791,9 @@ theorem locally_quadratic_chart
     rw [bohrLocalQuadraticChart_matrix_height, Nat.cast_one]
     exact hH1
   · intro z hz i
-    have hs := bohrLocalQuadraticChart_amplitude_support
+    have! hs := bohrLocalQuadraticChart_amplitude_support
       S hS ell v Q cutoff hf hsupp hr hr1 (subset_tsupport A.amplitude hz)
-    have hn : ‖z‖ ≤ 1 := by simpa only [Metric.mem_closedBall, dist_zero_right] using hs
+    have! hn : ‖z‖ ≤ 1 := by simpa only [Metric.mem_closedBall, dist_zero_right] using hs
     exact (norm_le_pi_norm z i).trans (hn.trans hH1)
   · intro m word z
     apply (hU q S hS ell v Q hQ r hr hr1 m word z).trans
@@ -4819,12 +4821,12 @@ theorem bohr_initial_derivative_correlation {q : ℕ} [NeZero q]
         (fun x => f (x + x₀))
         (fun x => conj (f x) * ZMod.stdAddChar (-(ξ₀ * x))) c‖ := by
   dsimp only
-  have hr : 0 < ρ / 100 := by positivity
-  have hmass := (graphBohrMass_bounds cutoff hb0 hb1 hbone S hr
+  have! hr : 0 < ρ / 100 := by positivity
+  have! hmass := (graphBohrMass_bounds cutoff hb0 hb1 hbone S hr
     (by linarith : ρ / 100 < 1 / 8)).1
-  have hmasspos : 0 < graphBohrMass cutoff S (ρ / 100) :=
+  have! hmasspos : 0 < graphBohrMass cutoff S (ρ / 100) :=
     (pow_pos (div_pos hr (by norm_num)) S.card).trans_le hmass
-  have hdens : (H.dens : ℝ) = (H.card : ℝ) / q := by
+  have! hdens : (H.dens : ℝ) = (H.card : ℝ) / q := by
     simp [Finset.dens, ZMod.card]
   constructor
   · positivity
@@ -4881,35 +4883,35 @@ theorem finite_inverse_radius (D d : ℕ) (hd : 0 < d) (hdD : d ≤ D)
       r ≤ ζ * (ρ / 100) / (100 * C * d) ∧
       Real.log (1 / r) ≤ Real.log (1 / t) + Real.log (1 / ζ) +
         2 * Real.log (1 / ρ) + Real.log C + 20000 * ((D : ℝ) + 1) ^ 2 := by
-  have hD : 0 < D := hd.trans_le hdD
-  have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hd
-  have hD1 : (1 : ℝ) ≤ D := by exact_mod_cast hD
+  have! hD : 0 < D := hd.trans_le hdD
+  have! hd1 : (1 : ℝ) ≤ d := by exact_mod_cast hd
+  have! hD1 : (1 : ℝ) ≤ D := by exact_mod_cast hD
   have hdD' : (d : ℝ) ≤ D := by exact_mod_cast hdD
-  have hCpos : 0 < C := by linarith
-  have hspos : 0 < Real.sqrt (D : ℝ) := Real.sqrt_pos.mpr (by positivity)
-  have hs1 : 1 ≤ Real.sqrt (D : ℝ) := by
+  have! hCpos : 0 < C := by linarith
+  have! hspos : 0 < Real.sqrt (D : ℝ) := Real.sqrt_pos.mpr (by positivity)
+  have! hs1 : 1 ≤ Real.sqrt (D : ℝ) := by
     exact (Real.le_sqrt (by norm_num) (by positivity)).mpr (by nlinarith)
-  have hsD : Real.sqrt (D : ℝ) ≤ (D : ℝ) + 1 :=
+  have! hsD : Real.sqrt (D : ℝ) ≤ (D : ℝ) + 1 :=
     (Real.sqrt_le_iff).mpr ⟨by positivity, by nlinarith⟩
-  have hepos := latticeBoxRadius_pos hD
-  have he1 : latticeBoxRadius D ≤ 1 := by
+  have! hepos := latticeBoxRadius_pos hD
+  have! he1 : latticeBoxRadius D ≤ 1 := by
     unfold latticeBoxRadius
     exact inv_le_one_of_one_le₀ (one_le_pow₀ (by linarith : (1 : ℝ) ≤ 100 * D))
   let a := t / 100
   let b := latticeBoxRadius D * (ρ / 10) / (2 * Real.sqrt D)
   let c := ζ * (ρ / 100) / (100 * C * d)
-  have ha : 0 < a := by dsimp [a]; positivity
-  have hb : 0 < b := by dsimp [b]; positivity
-  have hc : 0 < c := by dsimp [c]; positivity
-  have ha1 : a ≤ 1 := by dsimp [a]; linarith
-  have hb1 : b ≤ 1 := by
+  have! ha : 0 < a := by dsimp [a]; positivity
+  have! hb : 0 < b := by dsimp [b]; positivity
+  have! hc : 0 < c := by dsimp [c]; positivity
+  have! ha1 : a ≤ 1 := by dsimp [a]; linarith
+  have! hb1 : b ≤ 1 := by
     apply (div_le_one (by positivity : 0 < 2 * Real.sqrt D)).mpr
-    have heρ := mul_le_mul he1 (show ρ / 10 ≤ 1 by linarith) (by positivity) zero_le_one
+    have! heρ := mul_le_mul he1 (show ρ / 10 ≤ 1 by linarith) (by positivity) zero_le_one
     linarith
-  have hc1 : c ≤ 1 := by
+  have! hc1 : c ≤ 1 := by
     apply (div_le_one (by positivity : 0 < 100 * C * d)).mpr
-    have hζρ := mul_le_mul hζ1 (show ρ / 100 ≤ 1 by linarith) (by positivity) zero_le_one
-    have hCd := mul_le_mul hC hd1 (by norm_num : (0 : ℝ) ≤ 1) (by positivity : 0 ≤ C)
+    have! hζρ := mul_le_mul hζ1 (show ρ / 100 ≤ 1 by linarith) (by positivity) zero_le_one
+    have! hCd := mul_le_mul hC hd1 (by norm_num : (0 : ℝ) ≤ 1) (by positivity : 0 ≤ C)
     nlinarith only [hρ, hρ1, hζ1, hC, hd1]
   refine ⟨a * b * c, by positivity, ?_, ?_, ?_, ?_⟩
   · exact (mul_le_mul_of_nonneg_left hc1 (mul_nonneg ha.le hb.le)).trans
@@ -4921,18 +4923,18 @@ theorem finite_inverse_radius (D d : ℕ) (hd : 0 < d) (hdD : d ≤ D)
   · exact (mul_le_mul_of_nonneg_right
       (show a * b ≤ 1 by simpa using mul_le_mul ha1 hb1 hb.le zero_le_one) hc.le).trans_eq
         (one_mul c)
-  · have heLog : Real.log (1 / latticeBoxRadius D) ≤ 1000 * (D : ℝ) ^ 2 := by
+  · have! heLog : Real.log (1 / latticeBoxRadius D) ≤ 1000 * (D : ℝ) ^ 2 := by
       simp only [latticeBoxRadius, one_div, inv_inv, Real.log_pow]
-      have hl := Real.log_le_self (by positivity : (0 : ℝ) ≤ 100 * D)
-      have hm := mul_le_mul_of_nonneg_left hl (by positivity : (0 : ℝ) ≤ 10 * D)
+      have! hl := Real.log_le_self (by positivity : (0 : ℝ) ≤ 100 * D)
+      have! hm := mul_le_mul_of_nonneg_left hl (by positivity : (0 : ℝ) ≤ 10 * D)
       norm_num only [Nat.cast_mul, Nat.cast_ofNat] at *
       nlinarith only [hl]
-    have hlogs : Real.log (Real.sqrt (D : ℝ)) ≤ (D : ℝ) + 1 :=
+    have! hlogs : Real.log (Real.sqrt (D : ℝ)) ≤ (D : ℝ) + 1 :=
       (Real.log_le_self hspos.le).trans hsD
-    have hlogd : Real.log (d : ℝ) ≤ D := (Real.log_le_self (by positivity)).trans hdD'
-    have h100 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 100)
-    have h10 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 10)
-    have h2 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 2)
+    have! hlogd : Real.log (d : ℝ) ≤ D := (Real.log_le_self (by positivity)).trans hdD'
+    have! h100 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 100)
+    have! h10 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 10)
+    have! h2 := Real.log_le_self (by norm_num : (0 : ℝ) ≤ 2)
     dsimp [a, b, c]
     simp only [one_div, Real.log_inv] at heLog ⊢
     rw [Real.log_mul (mul_ne_zero ha.ne' hb.ne') hc.ne',
@@ -5033,15 +5035,15 @@ theorem quadratic_chart_of_weighted_phase {q : ℕ} [NeZero q] {d c₀ : ℕ} {H
     simp only [sub_eq_add_neg, AddChar.map_add_eq_mul, neg_mul]
     ring
   refine ⟨B, hB, hBb (modulateQuadraticChart_bounded hbounded b), ?_⟩
-  have hmean : (𝔼 n : ZMod q, f n * conj (quadraticChartAtom B (n.val : ℝ))) =
+  have! hmean : (𝔼 n : ZMod q, f n * conj (quadraticChartAtom B (n.val : ℝ))) =
       𝔼 u, (w u : ℂ) * f (u + y) * ZMod.stdAddChar (-(M u * u) + ℓ * u) := by
-    have hshift : (𝔼 u, f (u + y) * conj (quadraticChartAtom B ((u + y).val : ℝ))) =
+    have! hshift : (𝔼 u, f (u + y) * conj (quadraticChartAtom B ((u + y).val : ℝ))) =
         𝔼 n : ZMod q, f n * conj (quadraticChartAtom B (n.val : ℝ)) :=
       Fintype.expect_equiv (Equiv.addRight y) _ _ (fun _ => rfl)
     rw [← hshift]
     apply Finset.expect_congr rfl
     intro u _
-    have hv : quadraticChartAtom B ((u + y).val : ℝ) =
+    have! hv : quadraticChartAtom B ((u + y).val : ℝ) =
         (w u : ℂ) * ZMod.stdAddChar (M u * u - ℓ * u) := by
       simpa only [Int.cast_natCast, ZMod.natCast_zmod_val, add_sub_cancel_right]
         using hval ((u + y).val : ℤ)
@@ -5070,62 +5072,62 @@ theorem finite_inverse_with_cutoff
         (Real.exp ((C : ℝ) * (1 + Real.log (1 / δ)) ^ C))⁻¹ ≤
           ‖𝔼 x : ZMod q, f x * conj (quadraticChartAtom A (x.val : ℝ))‖ := by
   have hunit (x) : |cutoff x| ≤ 1 := by rw [abs_of_nonneg (hb0 x)]; exact hb1 x
-  have hcut1 : ContDiff ℝ 1 cutoff := hcut.of_le (by simp)
+  have! hcut1 : ContDiff ℝ 1 cutoff := hcut.of_le (by simp)
   obtain ⟨L, hLip⟩ := ContDiff.lipschitzWith_of_hasCompactSupport
     (unit_cutoff_hasCompactSupport cutoff hsupp) hcut1 (by norm_num)
   obtain ⟨c₀, n, hc₀, hn, hchart⟩ := locally_quadratic_chart cutoff hcut hsupp hunit k hk hderiv
   obtain ⟨K, hK, hrefine⟩ := bohr_symmetry_refinement cutoff hcut1 hb0 hb1 hbone hsupp
   let T₀ := max (L : ℝ) 1
-  have hT₀ : 1 ≤ T₀ := le_max_right _ _
-  have hcost : 0 < localFrequencyDensityCost := by unfold localFrequencyDensityCost; positivity
+  have! hT₀ : 1 ≤ T₀ := le_max_right _ _
+  have! hcost : 0 < localFrequencyDensityCost := by unfold localFrequencyDensityCost; positivity
   let R := 100000 + localFrequencyDensityCost + 10 ^ 102 + K + T₀ + (n : ℝ)
-  have hR : 100000 ≤ R := by dsimp [R]; linarith [Nat.cast_nonneg n (α := ℝ)]
-  have hnR : (n : ℝ) ≤ R := by dsimp [R]; linarith
-  have hKR : K ≤ R := by dsimp [R]; linarith [Nat.cast_nonneg n (α := ℝ)]
-  have hTR : T₀ ≤ R := by dsimp [R]; linarith [Nat.cast_nonneg n (α := ℝ)]
-  have hZR : localFrequencyDensityCost + 10 ^ 102 ≤ R := by
+  have! hR : 100000 ≤ R := by dsimp [R]; linarith [Nat.cast_nonneg n (α := ℝ)]
+  have! hnR : (n : ℝ) ≤ R := by dsimp [R]; linarith
+  have! hKR : K ≤ R := by dsimp [R]; linarith [Nat.cast_nonneg n (α := ℝ)]
+  have! hTR : T₀ ≤ R := by dsimp [R]; linarith [Nat.cast_nonneg n (α := ℝ)]
+  have! hZR : localFrequencyDensityCost + 10 ^ 102 ≤ R := by
     dsimp [R]; linarith [Nat.cast_nonneg n (α := ℝ)]
-  have hAR : (10 : ℝ) ^ 50 ≤ R := by
-    have hh : (10 : ℝ) ^ 50 ≤ 10 ^ 102 := by norm_num
+  have! hAR : (10 : ℝ) ^ 50 ≤ R := by
+    have! hh : (10 : ℝ) ^ 50 ≤ 10 ^ 102 := by norm_num
     linarith
   obtain ⟨C, hC, hbudget⟩ := uniform_translated_chart_budget n R hR hnR
   refine ⟨c₀, C, hc₀, hC, ?_⟩
   intro q hq hodd δ hδ hδsmall f hf hU
-  have hδ1 : δ ≤ 1 := by linarith only [hδsmall]
+  have! hδ1 : δ ≤ 1 := by linarith only [hδsmall]
   let B := 1 + Real.log (1 / δ)
-  have hB : 1 ≤ B := by
-    have hh := Real.log_nonneg ((one_le_div hδ).mpr hδ1)
+  have! hB : 1 ≤ B := by
+    have! hh := Real.log_nonneg ((one_le_div hδ).mpr hδ1)
     dsimp [B]; linarith only [hh]
   let P := R * B ^ 8
-  have hRP : R ≤ P := by
+  have! hRP : R ≤ P := by
     dsimp [P]
     simpa only [mul_one] using mul_le_mul_of_nonneg_left (one_le_pow₀ hB (n := 8))
       (by linarith : 0 ≤ R)
-  have hP : 100000 ≤ P := hR.trans hRP
+  have! hP : 100000 ≤ P := hR.trans hRP
   obtain ⟨H, ξ, S, ρ, M, hH, hder, hS, hρ, hρsmall, hrank, _, _, hadd, hdiff⟩ :=
     locally_additive_derivative_frequency hodd f hf hδ hU
-  have hHpos : 0 < (H.card : ℝ) / q :=
+  have! hHpos : 0 < (H.card : ℝ) / q :=
     (div_pos (pow_pos hδ 87112) hcost).trans_le hH
-  have hH1 : (H.card : ℝ) / q ≤ 1 := by
+  have! hH1 : (H.card : ℝ) / q ≤ 1 := by
     apply (div_le_one (Nat.cast_pos.mpr (NeZero.pos q) : (0 : ℝ) < q)).mpr
-    have hh := H.card_le_univ
+    have! hh := H.card_le_univ
     rw [ZMod.card] at hh
     exact_mod_cast hh
-  have hr₁ : 0 < ρ / 100 := by positivity
-  have hβ₁ := graphBohrMass_bounds cutoff hb0 hb1 hbone S hr₁
+  have! hr₁ : 0 < ρ / 100 := by positivity
+  have! hβ₁ := graphBohrMass_bounds cutoff hb0 hb1 hbone S hr₁
     (by linarith only [hρsmall] : ρ / 100 < 1 / 8)
-  have hβ₁pos := graphBohrMass_pos cutoff hb0 hb1 hbone S hr₁
+  have! hβ₁pos := graphBohrMass_pos cutoff hb0 hb1 hbone S hr₁
     (by linarith : ρ / 100 < 1 / 8)
   let ζ := δ ^ 4 * ((H.card : ℝ) / q) *
     graphBohrMass cutoff S (ρ / 100) / Real.sqrt 2
   obtain ⟨hζ, x₀, ξ₀, c, hc, hcorr⟩ := bohr_initial_derivative_correlation cutoff
     hb0 hb1 hbone hsupp H S ξ M f hρ hρsmall hδ hHpos hadd hdiff hder
   change 0 < ζ at hζ
-  have hζ1 : ζ ≤ 1 := by
-    have hδ4 := pow_le_one₀ hδ.le hδ1 (n := 4)
-    have hp := mul_le_mul hδ4 hH1 hHpos.le zero_le_one
+  have! hζ1 : ζ ≤ 1 := by
+    have! hδ4 := pow_le_one₀ hδ.le hδ1 (n := 4)
+    have! hp := mul_le_mul hδ4 hH1 hHpos.le zero_le_one
     have hp' := mul_le_mul hp hβ₁.2 hβ₁pos.le (by norm_num : (0 : ℝ) ≤ 1 * 1)
-    have hs : 1 ≤ Real.sqrt (2 : ℝ) :=
+    have! hs : 1 ≤ Real.sqrt (2 : ℝ) :=
       (Real.le_sqrt (by norm_num) (by norm_num)).mpr (by norm_num)
     apply (div_le_one (by positivity : 0 < Real.sqrt (2 : ℝ))).mpr
     norm_num only [mul_one] at hp'
@@ -5137,12 +5139,12 @@ theorem finite_inverse_with_cutoff
     hrefine q hodd S hS ρ ζ T₀ hρ hρsmall hζ hζ1 hT₀ M hadd
       (fun x => f (x + x₀)) (fun x => conj (f x) * ZMod.stdAddChar (-(ξ₀ * x)))
       c (fun x => hf _) hb hc hcorr
-  have hrr : r ≤ ρ / 100 := by linarith only [hrt, htρ, ht]
-  have hrsmall : r < 1 / 8 := by linarith only [hrr, hρsmall]
-  have herror : max (L : ℝ) 1 * S.card * r / (ρ / 100) ≤ ζ / 100 := by
-    have hd : (0 : ℝ) < S.card := by exact_mod_cast (Finset.card_pos.mpr ⟨1, hS⟩)
-    have hden : 0 < 100 * T₀ * S.card := by positivity
-    have hm := (le_div_iff₀ hden).mp hrerr
+  have! hrr : r ≤ ρ / 100 := by linarith only [hrt, htρ, ht]
+  have! hrsmall : r < 1 / 8 := by linarith only [hrr, hρsmall]
+  have! herror : max (L : ℝ) 1 * S.card * r / (ρ / 100) ≤ ζ / 100 := by
+    have! hd : (0 : ℝ) < S.card := by exact_mod_cast (Finset.card_pos.mpr ⟨1, hS⟩)
+    have! hden : 0 < 100 * T₀ * S.card := by positivity
+    have! hm := (le_div_iff₀ hden).mp hrerr
     apply (div_le_iff₀ hr₁).mpr
     change T₀ * S.card * r ≤ ζ / 100 * (ρ / 100)
     nlinarith only [hm]
@@ -5156,31 +5158,31 @@ theorem finite_inverse_with_cutoff
     (graphBohrWeight cutoff T r) M f y ℓ A hA hAb hAv hweighted
   let β := graphBohrMass cutoff T r
   let γ := ζ * β * Real.sqrt β / 4
-  have hβpos : 0 < β := graphBohrMass_pos cutoff hb0 hb1 hbone T hr hrsmall
-  have hγpos : 0 < γ := by dsimp [γ]; positivity
-  have hdP : (S.card : ℝ) + Real.log (1 / ρ) ≤ P := by
+  have! hβpos : 0 < β := graphBohrMass_pos cutoff hb0 hb1 hbone T hr hrsmall
+  have! hγpos : 0 < γ := by dsimp [γ]; positivity
+  have! hdP : (S.card : ℝ) + Real.log (1 / ρ) ≤ P := by
     apply hrank.trans
     change (10 : ℝ) ^ 50 * B ^ 4 ≤ R * B ^ 8
     exact mul_le_mul hAR (pow_le_pow_right₀ hB (by norm_num : 4 ≤ 8))
       (by positivity) (by linarith)
-  have hζP : Real.log (1 / ζ) ≤ P := by
+  have! hζP : Real.log (1 / ζ) ≤ P := by
     apply (bohr_initial_correlation_log cutoff hb0 hb1 hbone H S hρ hρsmall hδ hδ1 hH hrank).trans
     change (localFrequencyDensityCost + 10 ^ 102) * B ^ 8 ≤ R * B ^ 8
     exact mul_le_mul_of_nonneg_right hZR (by positivity)
-  have hTP : Real.log T₀ ≤ P :=
+  have! hTP : Real.log T₀ ≤ P :=
     (Real.log_le_self (by linarith : 0 ≤ T₀)).trans (hTR.trans hRP)
-  have hnum := graph_local_inverse_log_budget S.card T.card hP hρ (by linarith only [hρsmall])
+  have! hnum := graph_local_inverse_log_budget S.card T.card hP hρ (by linarith only [hρsmall])
     ht (by linarith only [htρ, hρsmall]) hr (by linarith only [hrsmall]) hζ hζ1
     (hKR.trans hRP) hdP hζP hTP hDT hrlog
     (graphBohrMass_bounds cutoff hb0 hb1 hbone T hr hrsmall).1
-  have hX0 : 0 ≤ (T.card : ℝ) + Real.log (1 / r) + 1 := by
-    have hh := Real.log_nonneg ((one_le_div hr).mpr (by linarith only [hrsmall] : r ≤ 1))
+  have! hX0 : 0 ≤ (T.card : ℝ) + Real.log (1 / r) + 1 := by
+    have! hh := Real.log_nonneg ((one_le_div hr).mpr (by linarith only [hrsmall] : r ≤ 1))
     positivity
   obtain ⟨hcomplex, hγbudget⟩ := hbudget B hB
     ((T.card : ℝ) + Real.log (1 / r) + 1) hX0 hnum.1
-  have hγlog : Real.log (1 / γ) ≤ (C : ℝ) * B ^ C := hnum.2.trans hγbudget
-  have hγbound : (Real.exp ((C : ℝ) * B ^ C))⁻¹ ≤ γ := by
-    have hh := (Real.log_le_iff_le_exp (by positivity : 0 < 1 / γ)).mp hγlog
+  have! hγlog : Real.log (1 / γ) ≤ (C : ℝ) * B ^ C := hnum.2.trans hγbudget
+  have! hγbound : (Real.exp ((C : ℝ) * B ^ C))⁻¹ ≤ γ := by
+    have! hh := (Real.log_le_iff_le_exp (by positivity : 0 < 1 / γ)).mp hγlog
     apply (inv_le_iff_one_le_mul₀' (Real.exp_pos _)).mpr
     exact (div_le_iff₀ hγpos).mp hh
   refine ⟨T.card + T.card, A', quadraticChartComplexity_mono hA' hcomplex, hA'b, ?_⟩

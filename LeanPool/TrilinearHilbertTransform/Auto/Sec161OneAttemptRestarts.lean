@@ -9,6 +9,8 @@ module
 7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
+meta import LeanPool.TrilinearHilbertTransform.Auto.ProofTools -- shake: keep
+
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec154VerificationCountingHypotheses
 
 /-!
@@ -259,23 +261,23 @@ theorem restart_recursion (Pr : ActiveSetup κ c₀ → Prop)
   | _ n ih =>
   intro B hBn hB
   obtain ⟨X, hXsub, hXdis, hXlen, hXret⟩ := hret B hB
-  have hRpos := dyadicGridLength_pos B.G B.R.1
+  have! hRpos := dyadicGridLength_pos B.G B.R.1
   -- the exceptional roots are proper
-  have hXne : ∀ c ∈ X, c ≠ B.R := by
+  have! hXne : ∀ c ∈ X, c ≠ B.R := by
     intro c hc hcR
-    have h1 : dyadicGridLength B.G c.1 ≤ ∑ c ∈ X, dyadicGridLength B.G c.1 :=
+    have! h1 : dyadicGridLength B.G c.1 ≤ ∑ c ∈ X, dyadicGridLength B.G c.1 :=
       Finset.single_le_sum (fun c _ => (dyadicGridLength_pos B.G c.1).le) hc
     rw [hcR] at h1
     linarith
   -- each cell lies below at most one exceptional root
-  have huniq : ∀ I ∈ B.cells, ∀ c ∈ X, ∀ c' ∈ X,
+  have! huniq : ∀ I ∈ B.cells, ∀ c ∈ X, ∀ c' ∈ X,
       dyadicGridCell B.G I.1 I.2 ⊆ dyadicGridCell B.G c.1 c.2 →
       dyadicGridCell B.G I.1 I.2 ⊆ dyadicGridCell B.G c'.1 c'.2 → c = c' := by
     intro I _ c hc c' hc' h h'
     by_contra hne
-    have hx := dyadicGridCell_left_mem B.G I.1 I.2
+    have! hx := dyadicGridCell_left_mem B.G I.1 I.2
     exact Set.disjoint_left.mp (hXdis c hc c' hc' hne) (h hx) (h' hx)
-  have hsplit : ∑ I ∈ B.cells, f B I = ∑ I ∈ B.cells.filter (fun I => ¬ ∃ c ∈ X,
+  have! hsplit : ∑ I ∈ B.cells, f B I = ∑ I ∈ B.cells.filter (fun I => ¬ ∃ c ∈ X,
         dyadicGridCell B.G I.1 I.2 ⊆ dyadicGridCell B.G c.1 c.2), f B I +
       ∑ c ∈ X, ∑ I ∈ (B.below c).cells, f (B.below c) I := by
     rw [← Finset.sum_filter_add_sum_filter_not B.cells (fun I => ¬ ∃ c ∈ X,
@@ -295,7 +297,7 @@ theorem restart_recursion (Pr : ActiveSetup κ c₀ → Prop)
       intro I hI hI'
       exact hne (huniq I (Finset.mem_filter.mp hI).1 c hc c' hc' (Finset.mem_filter.mp hI).2
         (Finset.mem_filter.mp hI').2)
-  have hchild : ∀ c ∈ X, ∑ I ∈ (B.below c).cells, f (B.below c) I ≤
+  have! hchild : ∀ c ∈ X, ∑ I ∈ (B.below c).cells, f (B.below c) I ≤
       4 / 3 * A * dyadicGridLength B.G c.1 := by
     intro c hc
     by_cases hne : (B.below c).cells.Nonempty
@@ -357,23 +359,23 @@ theorem failure_cut (Hed : ℝ) (b1 b2 : ℕ)
       ¬ ColorSetup.FailAt bf.admT (bf.tagDist Hed) (colorDegree A.famVtxBound) b1 b2 ωp ωh
         (bf.admAt I) := by
   intro X
-  have hXF : X ⊆ bf.failedCells Hed b1 b2 ωp ωh := maximalDyadicCells_subset _ _
-  have hmemF : ∀ c ∈ bf.failedCells Hed b1 b2 ωp ωh,
+  have! hXF : X ⊆ bf.failedCells Hed b1 b2 ωp ωh := maximalDyadicCells_subset _ _
+  have! hmemF : ∀ c ∈ bf.failedCells Hed b1 b2 ωp ωh,
       ∃ c' : AdmCell A.G A.R A.treeDepth, c'.1 = c ∧
         ColorSetup.FailAt bf.admT (bf.tagDist Hed) (colorDegree A.famVtxBound) b1 b2 ωp ωh
           (some c' : bf.admT.Cell) := by
     intro c hc
     obtain ⟨c', hc', rfl⟩ := Finset.mem_image.mp hc
     exact ⟨c', rfl, (Finset.mem_filter.mp hc').2⟩
-  have hdis := maximalDyadicCells_pairwiseDisjoint A.G (bf.failedCells Hed b1 b2 ωp ωh)
+  have! hdis := maximalDyadicCells_pairwiseDisjoint A.G (bf.failedCells Hed b1 b2 ωp ωh)
   refine ⟨fun c hc => ?_, fun c hc c' hc' hne => hdis hc hc' hne, ?_, fun I hI hno hfail => ?_⟩
   · obtain ⟨c', rfl, -⟩ := hmemF c (hXF hc)
     exact admCell_sub c'
-  · have hlen := dyadicRootLength_eq_volume A.G X hdis
+  · have! hlen := dyadicRootLength_eq_volume A.G X hdis
     unfold dyadicRootLength at hlen
     rw [hlen, maximalDyadicCells_union]
-    have hR := (dyadicGridCell_volume A.G A.R.1 A.R.2)
-    have h1 := hcol.1
+    have! hR := (dyadicGridCell_volume A.G A.R.1 A.R.2)
+    have! h1 := hcol.1
     rw [hR, ENNReal.toReal_ofReal (dyadicGridLength_pos A.G A.R.1).le] at h1
     refine le_trans (le_of_eq ?_) h1
     congr 2
@@ -390,7 +392,7 @@ theorem failure_cut (Hed : ℝ) (b1 b2 : ℕ)
         exact ⟨c.1, Finset.mem_image.mpr ⟨c, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hf⟩, rfl⟩,
           hx⟩
   · rw [bf.admAt_of_mem hI] at hfail
-    have hIF : I ∈ bf.failedCells Hed b1 b2 ωp ωh :=
+    have! hIF : I ∈ bf.failedCells Hed b1 b2 ωp ωh :=
       Finset.mem_image.mpr ⟨⟨I, A.cells_mem_tree hI⟩,
         Finset.mem_filter.mpr ⟨Finset.mem_univ _, hfail⟩, rfl⟩
     obtain ⟨d, hd, hId⟩ := maximalDyadicCells_covers A.G _ hIF
@@ -680,7 +682,7 @@ theorem exists_attempt (c Dst : ℕ) :
   refine ⟨C, k₀, hk₀, ?_⟩
   intro κ c₀ A bf k hk hst p Tc hTc d P hP τ₃ Mp Bh _ Hlow Mx hL hDv hH hm hlog hτ hτ1 hτ' hMp1
     hMp hcb hBh hmult
-  have hk0 : 0 ≤ k := by linarith
+  have! hk0 : 0 ≤ k := by linarith
   -- the closure counts on provisional parameters (they do not involve `H_ed`, the delays or `M_c`)
   obtain ⟨Kt, n, Tmax, hKtn, hKth, hlogKt, hn0, hgrow, hnT, hcapH, hlogn, hlogT⟩ :=
     hpoly hk (bf.attemptFam P hP 0 (fun _ _ => 0) (fun _ _ => 0) 0) (HS := A.Hsrc) (τ₃ := τ₃)
@@ -692,7 +694,7 @@ theorem exists_attempt (c Dst : ℕ) :
   set! Hed := max (Hlow Kt n Tmax) (max 2 Hloc) with hHed
   obtain ⟨ωp, ωh, hcol⟩ := bf.coloring Hed (A.fcb1 (A.famHmax P)) (cb2 (A.famHmax P))
   set! fp := bf.attemptFam P hP Hed ωp ωh (Tc.card * Tmax + Mx Kt n Tmax) with hfp
-  have hfuel : fp.Lc - 1 < 2 ^ A.famFuel :=
+  have! hfuel : fp.Lc - 1 < 2 ^ A.famFuel :=
     (Nat.sub_le _ _).trans_lt ((Nat.le_pow_clog one_lt_two A.famLc).trans_lt
       (Nat.pow_lt_pow_right one_lt_two (Nat.lt_succ_self _)))
   obtain ⟨cat, hcat, hloc⟩ := fp.attempt_localization Tc hTc hst
@@ -709,9 +711,9 @@ theorem exists_attempt (c Dst : ℕ) :
     fun l => ⟨(hcat l).1, (hcat l).2.1, (hcat l).2.2.1,
       fun I r hr => (hcat l).2.2.2.1 I (hmult I) r hr, (hcat l).2.2.2.2⟩, ?_⟩
   intro cs hcs hno η hη
-  have hsucc := (fp.failure_cut hcol).2.2.2
-  have hSz : (0 : ℝ) < max 2 A.S := lt_of_lt_of_le two_pos (le_max_left _ _)
-  have h := hloc cs hcs (fun I _ => hmult I)
+  have! hsucc := (fp.failure_cut hcol).2.2.2
+  have! hSz : (0 : ℝ) < max 2 A.S := lt_of_lt_of_le two_pos (le_max_left _ _)
+  have! h := hloc cs hcs (fun I _ => hmult I)
     (fun I hI => hsucc I (hTc (hcs hI)) (hno I hI))
     (fun I _ w hw => ((hcol.2.2.1 (bf.admAt I) w hw).2.trans hcol.2.1).trans (Nat.le_succ _))
     (fun I hI => by
@@ -792,27 +794,27 @@ theorem dmax_Q0bd_le_modeStarG (D dB : ℕ) {H δc N : ℝ} (k : ℝ) {δ : ℝ}
       (fp.Q0bd dB : ℝ) ≤ fp.modeStarG D dB H δc N k δ := by
   obtain ⟨-, hst, -, -, -⟩ := fp.le_modeStarG D dB k hδ hHed hH hδc hN0
   set Bm := Real.exp (D * fp.Xmax dB H ^ D)
-  have hX : 1 ≤ fp.Xmax dB H :=
+  have! hX : 1 ≤ fp.Xmax dB H :=
     (fp.one_le_X hHed dB hH _).trans (fp.X_le_Xmax hHed dB H (le_refl (0 : ℤ)) (Nat.zero_le 4))
-  have hBm : 1 ≤ Bm := Real.one_le_exp (by positivity)
-  have hmax : 1 ≤ max 1 (4 * Bm / δc) := le_max_left _ _
-  have hcb := two_le_colBudget (A := A)
-  have hd : (0 : ℝ) ≤ dB := Nat.cast_nonneg _
-  have hT2 : (8 * dB + 5 : ℝ) ≤ Bm * (1 + 4 * (2 * dB + 1) * max 1 (4 * Bm / δc)) := by
-    have h5 : (8 * dB + 5 : ℝ) ≤ 1 + 4 * (2 * dB + 1) * max 1 (4 * Bm / δc) := by nlinarith
-    have h6 : 0 ≤ 1 + 4 * (2 * (dB : ℝ) + 1) * max 1 (4 * Bm / δc) := by positivity
+  have! hBm : 1 ≤ Bm := Real.one_le_exp (by positivity)
+  have! hmax : 1 ≤ max 1 (4 * Bm / δc) := le_max_left _ _
+  have! hcb := two_le_colBudget (A := A)
+  have! hd : (0 : ℝ) ≤ dB := Nat.cast_nonneg _
+  have! hT2 : (8 * dB + 5 : ℝ) ≤ Bm * (1 + 4 * (2 * dB + 1) * max 1 (4 * Bm / δc)) := by
+    have! h5 : (8 * dB + 5 : ℝ) ≤ 1 + 4 * (2 * dB + 1) * max 1 (4 * Bm / δc) := by nlinarith
+    have! h6 : 0 ≤ 1 + 4 * (2 * (dB : ℝ) + 1) * max 1 (4 * Bm / δc) := by positivity
     nlinarith
-  have hrest : 0 ≤ A.famVtxBound * (fp.K.potMax A.famVtxBound + 1) * (N + 1) *
+  have! hrest : 0 ≤ A.famVtxBound * (fp.K.potMax A.famVtxBound + 1) * (N + 1) *
       (Bm * (4 * max 1 (4 * Bm / δc) + 1) ^ (4 * dB)) := by positivity
-  have hcol : 4 ≤ A.colBudget ^ 2 * (Bm ^ 2 + 1) := by nlinarith only [hcb]
-  have hsq : 0 ≤ (Real.sqrt N + 1) * A.colBudget * Bm := by positivity
-  have hHp : 0 ≤ fp.Hed ^ (dB * dB) := pow_nonneg (by linarith) _
-  have he := Real.exp_pos k
-  have hms : fp.Hed ^ (dB * dB) + 1 ≤ fp.modeStar D dB H δc N k ∧
+  have! hcol : 4 ≤ A.colBudget ^ 2 * (Bm ^ 2 + 1) := by nlinarith only [hcb]
+  have! hsq : 0 ≤ (Real.sqrt N + 1) * A.colBudget * Bm := by positivity
+  have! hHp : 0 ≤ fp.Hed ^ (dB * dB) := pow_nonneg (by linarith) _
+  have! he := Real.exp_pos k
+  have! hms : fp.Hed ^ (dB * dB) + 1 ≤ fp.modeStar D dB H δc N k ∧
       (8 * dB + 5 : ℝ) ≤ fp.modeStar D dB H δc N k := by
     unfold modeStar
     constructor <;> linarith
-  have hQ : (fp.Q0bd dB : ℝ) ≤ fp.Hed ^ (dB * dB) + 1 := by
+  have! hQ : (fp.Q0bd dB : ℝ) ≤ fp.Hed ^ (dB * dB) + 1 := by
     unfold Q0bd
     exact (Nat.ceil_lt_add_one hHp).le
   refine ⟨?_, hQ.trans (hms.1.trans hst)⟩
@@ -851,24 +853,24 @@ theorem exists_leaf_schedule (Cj CA CT CK : ℕ) {δs : ℝ} (hδs : 0 < δs) (h
   refine ⟨M, hM, ?_⟩
   intro κ c₀ A bf fp D dB H δc N k δ Dm hδ hHed hH hδc hN0 hDm hdim hC Λ
   obtain ⟨hdD, hQD⟩ := fp.dmax_Q0bd_le_modeStarG D dB k hδ hHed hH hδc hN0
-  have hd2 : 2 ≤ 2 * dB + 2 := by omega
-  have hD2 : (2 : ℝ) ≤ fp.modeStarG D dB H δc N k δ := by
+  have! hd2 : 2 ≤ 2 * dB + 2 := by omega
+  have! hD2 : (2 : ℝ) ≤ fp.modeStarG D dB H δc N k δ := by
     refine le_trans ?_ hdD
     push_cast
-    have : (0 : ℝ) ≤ dB := Nat.cast_nonneg _
+    have! this : (0 : ℝ) ≤ dB := Nat.cast_nonneg _
     linarith
-  have hQ1 := fp.one_le_Q0bd dB hHed
-  have hB2 : (2 : ℝ) ≤ fp.Bst D dB H δc N k δ := by
+  have! hQ1 := fp.one_le_Q0bd dB hHed
+  have! hB2 : (2 : ℝ) ≤ fp.Bst D dB H δc N k δ := by
     unfold Bst
-    have h1 : (1 : ℝ) ≤ fp.Q0bd dB := by exact_mod_cast hQ1
-    have h2 : (2 : ℝ) ≤ 2 ^ (fp.Kstar D dB H δc N k δ + 1) := by
+    have! h1 : (1 : ℝ) ≤ fp.Q0bd dB := by exact_mod_cast hQ1
+    have! h2 : (2 : ℝ) ≤ 2 ^ (fp.Kstar D dB H δc N k δ + 1) := by
       calc (2 : ℝ) = 2 ^ 1 := (pow_one 2).symm
         _ ≤ _ := pow_le_pow_right₀ (by norm_num) (by omega)
     nlinarith only [h1, h2]
-  have hS := hsch (2 * dB + 2) (fp.modeStarG D dB H δc N k δ) (fp.Bst D dB H δc N k δ) Dm
+  have! hS := hsch (2 * dB + 2) (fp.modeStarG D dB H δc N k δ) (fp.Bst D dB H δc N k δ) Dm
     (fp.Q0bd dB) hd2 hD2 hB2 hDm hQ1
   obtain ⟨S, h1, h2, h3, h4, h5, hV, hHb, hTb, hKb⟩ := hS
-  have hHpos : 0 < S.H := lt_of_le_of_lt (by positivity) hV.H_gt
+  have! hHpos : 0 < S.H := lt_of_le_of_lt (by positivity) hV.H_gt
   have hV' : S.Valid Cj CA CT CK δs (packetW S.dmax S.H) := by rw [h1]; exact hV
   refine ⟨S, h1, h2, h3, h4, h5, hV', packetW_ge S.dmax hHpos, h1 ▸ hd2, ?_, h2 ▸ hD2, h3 ▸ hB2,
     h5 ▸ hQ1, ?_, fun z => h5 ▸ fp.clearInt_le_Q0bd hdim hHed hC z, ?_, hHb, hTb, hKb⟩
@@ -1053,7 +1055,7 @@ theorem exists_leaf_modes (κ : LocalKernelClass) (c₀ : ℕ) :
     hpath' hδ hδ'
     (dmax := dB) (fun i => hdim _) hdδ hN0 hCF (fun i I hI => hN i.1 I hI) hnorm
   -- the mode systems at the selected offsets
-  have hone : ∀ (l : Fin 4) (G : bf.Grp) (hG : G ∈ gset),
+  have! hone : ∀ (l : Fin 4) (G : bf.Grp) (hG : G ∈ gset),
       ∃ p : Σ Ms : ModeSystem A.G n, LiftData (bf.Lab ⊕ Fin fp.Mc) Ms.Md,
         fp.ModeExports l (cat l) G (jj l) d D dB H δ δc N p.1 p.2 ∧
         (∀ m, p.2.εP m = mainWeight fp.Mc (bf.origCols l) m) ∧ p.2.δ = δc ∧
@@ -1061,13 +1063,13 @@ theorem exists_leaf_modes (κ : LocalKernelClass) (c₀ : ℕ) :
     intro l G hG
     obtain ⟨I, hI⟩ := hgset G hG
     obtain ⟨ρ₀, z, g, hGz, hg⟩ := fp.center_of_actualUse hI
-    have hz : bf.grpCenter d G = z := by simp [ActiveSetup.BasicFamilies.grpCenter, hGz]
+    have! hz : bf.grpCenter d G = z := by simp [ActiveSetup.BasicFamilies.grpCenter, hGz]
     subst hz
     have hdz' : ((bf.vtag (bf.grpCenter d G)).dim : ℝ) ≤ Real.log H :=
       le_trans (by exact_mod_cast hdim _) hdz
     have hHδ' : ((bf.vtag (bf.grpCenter d G)).dim : ℝ) * (bumpConst * 8 ^ 32 * (2 / δ)) ≤ H := by
       refine le_trans ?_ hHδ
-      have := one_le_bumpConst
+      have! this := one_le_bumpConst
       gcongr
       exact_mod_cast hdim _
     obtain ⟨Ms, L, hexp, hεM, hown, hLδ, hs, hq, hzc', hδc', hcl, hρM, hΛ, hBσ, hdv, hεinv, hpt,
@@ -1083,7 +1085,7 @@ theorem exists_leaf_modes (κ : LocalKernelClass) (c₀ : ℕ) :
   let MsL : Fin 4 → bf.Grp → Σ Ms : ModeSystem A.G n, LiftData (bf.Lab ⊕ Fin fp.Mc) Ms.Md :=
     fun l G => if hG : G ∈ gset then P l G hG else
       ⟨ModeSystem.empty A.G n, LiftData.empty (bf.Lab ⊕ Fin fp.Mc)⟩
-  have hMsL : ∀ l G (hG : G ∈ gset), MsL l G = P l G hG := fun l G hG => dite_eq_left hG
+  have! hMsL : ∀ l G (hG : G ∈ gset), MsL l G = P l G hG := fun l G hG => dite_eq_left hG
   refine ⟨fun l G => (MsL l G).1, fun l G => (MsL l G).2, fun l G hG => ?_, fun l G hG => ?_, ?_⟩
   · change fp.ModeExports l (cat l) G (jj l) d D dB H δ δc N (MsL l G).1 (MsL l G).2
     rw [hMsL l G hG]
@@ -1098,7 +1100,7 @@ theorem exists_leaf_modes (κ : LocalKernelClass) (c₀ : ℕ) :
       exact ⟨fun p => p.elim, rfl,
         fun V => Finset.eq_empty_of_forall_notMem fun m _ => Empty.elim m⟩
     exact key _ e
-  · have h := herr (fun i => (MsL i.1 i.2.1).1) (fun i => (MsL i.1 i.2.1).2)
+  · have! h := herr (fun i => (MsL i.1 i.2.1).1) (fun i => (MsL i.1 i.2.1).2)
       (fun i m => by
         rw [hMsL i.1 i.2.1 i.2.2]
         exact (hP i.1 i.2.1 i.2.2).2.1 m)
@@ -1202,10 +1204,10 @@ theorem ModeExports.sched {l : Fin 4} {s : List (CatCol bf.Vtx)} {G : bf.Grp} {j
     hE
   obtain ⟨-, hB, -, -, -, hcol, -, hNB, -⟩ := fp.le_modeStar D dB k hHed hH hδc hN0 hg hj
   obtain ⟨-, hst, -, hgs, -⟩ := fp.le_modeStarG D dB k hδ hHed hH hδc hN0
-  have hzd : Ms.zc.dim ≤ dB := by rw [hzc]; exact hdim z
-  have hBe : fp.modeBd D dB H g j = Real.exp (D * (1 + Real.log (chartTranslationBudget (H ^ 6)) +
+  have! hzd : Ms.zc.dim ≤ dB := by rw [hzc]; exact hdim z
+  have! hBe : fp.modeBd D dB H g j = Real.exp (D * (1 + Real.log (chartTranslationBudget (H ^ 6)) +
       Real.log (3 * fp.ballEdgeH dB (fp.ballRadius g (fp.bbase j + fp.P)))) ^ D) := rfl
-  have hDs : 0 < fp.modeStarG D dB H δc N k δ :=
+  have! hDs : 0 < fp.modeStarG D dB H δc N k δ :=
     lt_of_lt_of_le (Real.exp_pos k) (fp.le_modeStarG D dB k hδ hHed hH hδc hN0).1
   refine ⟨fun p => by have := hdv p; omega, ?_, ?_, ?_, fun m => ?_, fun U => ?_,
     fp.alive_keys_le hexp hown hN0 hN⟩
@@ -1213,21 +1215,21 @@ theorem ModeExports.sched {l : Fin 4} {s : List (CatCol bf.Vtx)} {G : bf.Grp} {j
   · rw [hδc']
     exact (gaugeSqNorm_mono hδ hδ1 hzd).trans hgs
   · rw [hδc']
-    have hT0 := gaugeTail_nonneg Ms.zc.dim hδ
-    have hT : gaugeTail Ms.zc.dim δ ≤ fp.tailStar dB δ := by
+    have! hT0 := gaugeTail_nonneg Ms.zc.dim hδ
+    have! hT : gaugeTail Ms.zc.dim δ ≤ fp.tailStar dB δ := by
       unfold tailStar
-      have := gaugeMultTail_nonneg dB (Q0 := fp.Hed ^ (dB * dB)) (Cm := fp.Hed) (half_pos hδ)
+      have! this := gaugeMultTail_nonneg dB (Q0 := fp.Hed ^ (dB * dB)) (Cm := fp.Hed) (half_pos hδ)
         (pow_nonneg (by linarith) _) (by linarith)
       linarith [gaugeTail_mono hδ hδ1 hzd]
-    have h := fp.tail_le_Kstar D dB k hδ hHed hH hδc hN0 hT0 hT
-    have hp : 0 < fp.modeStarG D dB H δc N k δ ^ 300 := pow_pos hDs 300
+    have! h := fp.tail_le_Kstar D dB k hδ hHed hH hδc hN0 hT0 hT
+    have! hp : 0 < fp.modeStarG D dB H δc N k δ ^ 300 := pow_pos hDs 300
     calc 2 * gaugeTail Ms.zc.dim δ / 2 ^ fp.Kstar D dB H δc N k δ *
           fp.modeStarG D dB H δc N k δ ^ 300
         ≤ (fp.modeStarG D dB H δc N k δ ^ 300)⁻¹ * fp.modeStarG D dB H δc N k δ ^ 300 :=
           mul_le_mul_of_nonneg_right h hp.le
       _ = 1 := inv_mul_cancel₀ hp.ne'
-  · have hε := Ms.εM_pos m
-    have h1 : (Ms.L.εM m)⁻¹ ≤ fp.modeStarG D dB H δc N k δ := by
+  · have! hε := Ms.εM_pos m
+    have! h1 : (Ms.L.εM m)⁻¹ ≤ fp.modeStarG D dB H δc N k δ := by
       refine (hεinv m).trans ?_
       rw [hBe]; exact hcol.trans hst
     rw [inv_le_comm₀ hDs hε]
@@ -1309,45 +1311,45 @@ theorem modes_path_le (hanc : A.AncClosed) {l : Fin 4} {s : List (CatCol bf.Vtx)
   set! Gy := ((((A.cells.filter fun I => y ∈ dyadicGridCell A.G I.1 I.2).image bf.admAt) ×ˢ
       (Finset.univ : Finset bf.Vtx)).filter (fun p => p.2 ∈ bf.admT.X p.1)).image
         (fun p => fp.K.grp bf.admT A.famVtxBound p.1 p.2) with hGy
-  have hcard := fp.card_groups_path_le y
+  have! hcard := fp.card_groups_path_le y
   set! Bm := Real.exp (D * fp.Xmax dB H ^ D) with hBm
   set! Mb := N * (Bm * (4 * max 1 (4 * Bm / δc) + 1) ^ (4 * dB)) with hMb
-  have hper : ∀ G ∈ gset, (((Ms G).ptSet y).card : ℝ) ≤ Mb := by
+  have! hper : ∀ G ∈ gset, (((Ms G).ptSet y).card : ℝ) ≤ Mb := by
     intro G hG
     obtain ⟨ρ₀, z, g, -, hg, -, -, -, -, -, -, -, -, -, -, -, -, -, -, hpt, -⟩ := hE G hG
     refine (hpt y).trans ?_
-    have hX1 := fp.one_le_X hHed dB hH (fp.ballRadius g (fp.bbase j + fp.P))
-    have hXm := fp.X_le_Xmax hHed dB H hg hj
-    have hBB : fp.modeBd D dB H g j ≤ Bm := by
+    have! hX1 := fp.one_le_X hHed dB hH (fp.ballRadius g (fp.bbase j + fp.P))
+    have! hXm := fp.X_le_Xmax hHed dB H hg hj
+    have! hBB : fp.modeBd D dB H g j ≤ Bm := by
       unfold modeBd
       exact Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left
         (pow_le_pow_left₀ (by linarith) hXm D) (Nat.cast_nonneg _))
-    have hB0 : 0 ≤ fp.modeBd D dB H g j := (Real.exp_pos _).le
+    have! hB0 : 0 ≤ fp.modeBd D dB H g j := (Real.exp_pos _).le
     rw [hMb]
     gcongr
-  have hsupp : ∀ G ∈ gset, (((Ms G).ptSet y).card : ℝ) ≠ 0 → G ∈ Gy := by
+  have! hsupp : ∀ G ∈ gset, (((Ms G).ptSet y).card : ℝ) ≠ 0 → G ∈ Gy := by
     intro G hG h0
     obtain ⟨m, hm⟩ := Finset.card_ne_zero.mp (by exact_mod_cast h0)
     obtain ⟨ρ₀, z, g, -, -, hexp, -⟩ := hE G hG
     exact fp.grp_mem_path_of_mode hanc hexp hm
-  have hMb0 : 0 ≤ Mb := by positivity
-  have hstar : (A.famVtxBound : ℝ) * (fp.K.potMax A.famVtxBound + 1) * Mb ≤
+  have! hMb0 : 0 ≤ Mb := by positivity
+  have! hstar : (A.famVtxBound : ℝ) * (fp.K.potMax A.famVtxBound + 1) * Mb ≤
       fp.modeStar D dB H δc N k := by
-    have hmax : 0 ≤ max 1 (4 * Bm / δc) := le_trans zero_le_one (le_max_left _ _)
-    have h1 : (A.famVtxBound : ℝ) * (fp.K.potMax A.famVtxBound + 1) * Mb ≤
+    have! hmax : 0 ≤ max 1 (4 * Bm / δc) := le_trans zero_le_one (le_max_left _ _)
+    have! h1 : (A.famVtxBound : ℝ) * (fp.K.potMax A.famVtxBound + 1) * Mb ≤
         A.famVtxBound * (fp.K.potMax A.famVtxBound + 1) * (N + 1) *
           (Bm * (4 * max 1 (4 * Bm / δc) + 1) ^ (4 * dB)) := by
       rw [hMb]
-      have : (0 : ℝ) ≤ A.famVtxBound * (fp.K.potMax A.famVtxBound + 1) := by positivity
-      have : (0 : ℝ) ≤ Bm * (4 * max 1 (4 * Bm / δc) + 1) ^ (4 * dB) := by positivity
+      have! this : (0 : ℝ) ≤ A.famVtxBound * (fp.K.potMax A.famVtxBound + 1) := by positivity
+      have! this : (0 : ℝ) ≤ Bm * (4 * max 1 (4 * Bm / δc) + 1) ^ (4 * dB) := by positivity
       nlinarith
-    have hcb := two_le_colBudget (A := A)
+    have! hcb := two_le_colBudget (A := A)
     unfold modeStar
-    have : (0 : ℝ) ≤ Bm * (1 + 4 * (2 * dB + 1) * max 1 (4 * Bm / δc)) := by positivity
-    have : (0 : ℝ) ≤ A.colBudget ^ 2 * (Bm ^ 2 + 1) := by positivity
-    have : (0 : ℝ) ≤ (Real.sqrt N + 1) * A.colBudget * Bm := by positivity
-    have : (0 : ℝ) ≤ fp.Hed ^ (dB * dB) := pow_nonneg (by linarith) _
-    have := Real.exp_pos k
+    have! this : (0 : ℝ) ≤ Bm * (1 + 4 * (2 * dB + 1) * max 1 (4 * Bm / δc)) := by positivity
+    have! this : (0 : ℝ) ≤ A.colBudget ^ 2 * (Bm ^ 2 + 1) := by positivity
+    have! this : (0 : ℝ) ≤ (Real.sqrt N + 1) * A.colBudget * Bm := by positivity
+    have! this : (0 : ℝ) ≤ fp.Hed ^ (dB * dB) := pow_nonneg (by linarith) _
+    have! this := Real.exp_pos k
     linarith
   obtain ⟨-, hst, -, -, -⟩ := fp.le_modeStarG D dB k hδ hHed hH hδc hN0
   calc (∑ G ∈ gset, ((Ms G).ptSet y).card : ℝ)
@@ -1610,17 +1612,17 @@ theorem repAt_appendCat (hanc : A.AncClosed) (ht : ∀ l, ∀ d ∈ t l, fp.hran
         ((L l G).op (fp.frozenZ l (D.cat l) (D.mbs l) G (D.Lf.role l) (D.Lf.layers l)
           (A.blkStart D.S.K I.1 - 4 * D.S.K))) := by
     intro J hJ
-    have hJc := fp.mem_cells_of_retainedV hanc hJ
-    have hJd : J.1 = A.blkStart D.S.K I.1 - 2 * D.S.K := ((fp.mem_retainedV).mp hJ).2.1
-    have hu : A.blkStart D.S.K I.1 - 4 * (D.S.K : ℤ) ≤ J.1 := by
-      have : (0 : ℤ) ≤ D.S.K := Nat.cast_nonneg _
+    have! hJc := fp.mem_cells_of_retainedV hanc hJ
+    have! hJd : J.1 = A.blkStart D.S.K I.1 - 2 * D.S.K := ((fp.mem_retainedV).mp hJ).2.1
+    have! hu : A.blkStart D.S.K I.1 - 4 * (D.S.K : ℤ) ≤ J.1 := by
+      have! this : (0 : ℤ) ≤ D.S.K := Nat.cast_nonneg _
       omega
     rw [← LiftData.op_restrict, ← LiftData.op_restrict,
       fp.frozenZ_restrict_append hanc l (D.cat l) (t l) (D.mbs l) (mb' l) G (hrole l)
         (D.Lf.layers l) (ht l) hJc hu]
   constructor
   · intro h J hJ
-    have h1 := h J hJ
+    have! h1 := h J hJ
     change (D.Ms l G).frozenEval (D.S.withQ0 q) (A.blkStart D.S.K I.1) J
       (D.c l G (A.blkStart D.S.K I.1) J) = columnL2Restriction _ _ ((L l G).op
         (fp.frozenZ l (D.cat l ++ t l) (mb' l) G (D.Lf.role l) (D.Lf.layers l)
@@ -1632,7 +1634,7 @@ theorem repAt_appendCat (hanc : A.AncClosed) (ht : ∀ l, ∀ d ∈ t l, fp.hran
     rw [← key J hJ]
     exact h1
   · intro h J hJ
-    have h1 := h J hJ
+    have! h1 := h J hJ
     change (D.Ms l G).frozenEval (D.S.withQ0 q) (A.blkStart D.S.K I.1) J
       (D.c l G (A.blkStart D.S.K I.1) J) = columnL2Restriction _ _ ((L l G).op
         (fp.frozenZ l (D.cat l) (D.mbs l) G (D.Lf.role l) (D.Lf.layers l)
@@ -1655,25 +1657,25 @@ theorem errAt_appendCat (hanc : A.AncClosed) (ht : ∀ l, ∀ d ∈ t l, fp.hran
   change (if D.u = some l then 0 else _) = (if D.u = some l then 0 else _)
   split_ifs with hu
   · rfl
-  have hb := blkStart_bounds D.hK I.1 (A := A)
+  have! hb := blkStart_bounds D.hK I.1 (A := A)
   have hb' : A.blkStart D.S.K I.1 - 4 * (D.S.K : ℤ) ≤ I.1 := by
-    have : (0 : ℤ) ≤ D.S.K := Nat.cast_nonneg _
+    have! this : (0 : ℤ) ≤ D.S.K := Nat.cast_nonneg _
     omega
-  have hZ := fp.frozenZ_restrict_append hanc l (D.cat l) (t l) (D.mbs l) (mb' l) G (hrole l)
+  have! hZ := fp.frozenZ_restrict_append hanc l (D.cat l) (t l) (D.mbs l) (mb' l) G (hrole l)
     (D.Lf.layers l) (ht l) hI hb'
-  have hXm : MeasurableSet (⋃ J ∈ fp.retainedV G (A.blkStart D.S.K I.1) D.S.K,
+  have! hXm : MeasurableSet (⋃ J ∈ fp.retainedV G (A.blkStart D.S.K I.1) D.S.K,
       dyadicGridCell A.G J.1 J.2) :=
     Finset.measurableSet_biUnion _ fun J _ => dyadicGridCell_measurable A.G J.1 J.2
-  have hcomm : ∀ x : ColumnL2 (D.Ms l G).Md,
+  have! hcomm : ∀ x : ColumnL2 (D.Ms l G).Md,
       columnL2Restriction (dyadicGridCell A.G I.1 I.2) (dyadicGridCell_measurable A.G I.1 I.2)
         (columnL2Restriction _ hXm x) =
       columnL2Restriction _ hXm
         (columnL2Restriction (dyadicGridCell A.G I.1 I.2) (dyadicGridCell_measurable A.G I.1 I.2)
           x) := fun x => by
-    have := DFunLike.congr_fun (columnL2Restriction_comm (V := (D.Ms l G).Md)
+    have! this := DFunLike.congr_fun (columnL2Restriction_comm (V := (D.Ms l G).Md)
       (dyadicGridCell_measurable A.G I.1 I.2) hXm) x
     simpa only [ContinuousLinearMap.comp_apply] using this
-  have hform : ∀ (s : List (CatCol bf.Vtx)) (mb : bf.MainBudget s),
+  have! hform : ∀ (s : List (CatCol bf.Vtx)) (mb : bf.MainBudget s),
       columnL2Restriction (dyadicGridCell A.G I.1 I.2) (dyadicGridCell_measurable A.G I.1 I.2)
         (fp.physError (D.Ms l G) (L l G) l s mb G (D.Lf.role l) (D.Lf.layers l) D.S.K
           (A.blkStart D.S.K I.1)) =
@@ -1917,24 +1919,24 @@ theorem bandJumpM_le (s : List (CatCol bf.Vtx)) (mb : bf.MainBudget s) (n c : �
   set E := Real.exp (1024 * (c + 1) * (1024 * (c + 1) + c + 7) * (1 + Real.log (2 * k)) ^ 2)
     with hE
   have hD' : Real.log (2 * (bf.mainTree fp.Mc s mb).budget) ≤ k ^ c := hD
-  have hm : ∀ m ∈ Finset.range (n + 1), compressionC (bf.mainTree fp.Mc s mb) m ^ 2 ≤ E ^ 2 := by
+  have! hm : ∀ m ∈ Finset.range (n + 1), compressionC (bf.mainTree fp.Mc s mb) m ^ 2 ≤ E ^ 2 := by
     intro m hm
-    have hmn : m ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)
+    have! hmn : m ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hm)
     exact pow_le_pow_left₀ (compressionC_nonneg _ _)
       ((compressionC_mono _ hmn).trans (compressionC_le_overhead _ n c hk hD' hn)) 2
-  have hsum : ∑ m ∈ Finset.range (n + 1), compressionC (bf.mainTree fp.Mc s mb) m ^ 2 ≤
+  have! hsum : ∑ m ∈ Finset.range (n + 1), compressionC (bf.mainTree fp.Mc s mb) m ^ 2 ≤
       ((n : ℝ) + 1) * E ^ 2 := by
     refine (Finset.sum_le_sum hm).trans (le_of_eq ?_)
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
     push_cast
     ring
-  have hE2 : E ^ 2 = Real.exp (2 * (1024 * (c + 1) * (1024 * (c + 1) + c + 7) *
+  have! hE2 : E ^ 2 = Real.exp (2 * (1024 * (c + 1) * (1024 * (c + 1) + c + 7) *
       (1 + Real.log (2 * k)) ^ 2)) := by
     rw [hE, ← Real.exp_nat_mul]
     push_cast
     ring_nf
   unfold bandJumpM
-  have hn0 : (0 : ℝ) ≤ (n : ℝ) + 1 := by positivity
+  have! hn0 : (0 : ℝ) ≤ (n : ℝ) + 1 := by positivity
   calc ((n : ℝ) + 1) * ∑ m ∈ Finset.range (n + 1), compressionC (bf.mainTree fp.Mc s mb) m ^ 2
       ≤ ((n : ℝ) + 1) * (((n : ℝ) + 1) * E ^ 2) := mul_le_mul_of_nonneg_left hsum hn0
     _ = ((n : ℝ) + 1) ^ 2 * E ^ 2 := by ring
@@ -2112,24 +2114,24 @@ theorem center_principal_bounds (D dB : ℕ) {H δc N : ℝ} (k : ℝ) {δ : ℝ
       (∀ a b, |((bf.vtag z).C a b : ℝ)| ≤ fp.Hed) ∧
       ∀ a b, ∃ m : ℤ, (clearInt (bf.vtag z).C : ℝ) * ((bf.vtag z).C a b : ℝ) = m := by
   obtain ⟨-, -, hGM, hGS, -⟩ := fp.le_modeStarG D dB k hδ hHed hH hδc hN0
-  have hδ2 : 0 < δ / 2 := half_pos hδ
-  have hδ21 : δ / 2 ≤ 1 := by linarith
-  have hHed0 : (0 : ℝ) ≤ fp.Hed := by linarith
-  have hQ1 : (1 : ℝ) ≤ fp.Hed ^ (dB * dB) := one_le_pow₀ (by linarith)
-  have hq0 : (0 : ℝ) ≤ (clearInt (bf.vtag z).C : ℝ) := Nat.cast_nonneg _
-  have hq : (clearInt (bf.vtag z).C : ℝ) ≤ fp.Hed ^ (dB * dB) :=
+  have! hδ2 : 0 < δ / 2 := half_pos hδ
+  have! hδ21 : δ / 2 ≤ 1 := by linarith
+  have! hHed0 : (0 : ℝ) ≤ fp.Hed := by linarith
+  have! hQ1 : (1 : ℝ) ≤ fp.Hed ^ (dB * dB) := one_le_pow₀ (by linarith)
+  have! hq0 : (0 : ℝ) ≤ (clearInt (bf.vtag z).C : ℝ) := Nat.cast_nonneg _
+  have! hq : (clearInt (bf.vtag z).C : ℝ) ≤ fp.Hed ^ (dB * dB) :=
     (clearInt_le (bf.vtag z).C (hC z)).trans
       (pow_le_pow_right₀ (by linarith) (Nat.mul_le_mul (hdim z) (hdim z)))
-  have hMT : gaugeMultTail (bf.vtag z).dim (clearInt (bf.vtag z).C) fp.Hed (δ / 2) ≤
+  have! hMT : gaugeMultTail (bf.vtag z).dim (clearInt (bf.vtag z).C) fp.Hed (δ / 2) ≤
       gaugeMultTail dB (fp.Hed ^ (dB * dB)) fp.Hed (δ / 2) :=
     gaugeMultTail_mono hδ2 hδ21 hdB (hdim z) hq0 hq hQ1 hHed0 le_rfl
-  have hMN : gaugeMultNorm (bf.vtag z).dim (clearInt (bf.vtag z).C) fp.Hed (δ / 2) ≤
+  have! hMN : gaugeMultNorm (bf.vtag z).dim (clearInt (bf.vtag z).C) fp.Hed (δ / 2) ≤
       gaugeMultNorm dB (fp.Hed ^ (dB * dB)) fp.Hed (δ / 2) :=
     gaugeMultNorm_mono hδ2 hδ21 hdB (hdim z) hq0 hq hQ1 hHed0 le_rfl
-  have hMT0 : 0 ≤ gaugeMultTail dB (fp.Hed ^ (dB * dB)) fp.Hed (δ / 2) :=
+  have! hMT0 : 0 ≤ gaugeMultTail dB (fp.Hed ^ (dB * dB)) fp.Hed (δ / 2) :=
     gaugeMultTail_nonneg dB hδ2 (by linarith) hHed0
-  have hGT0 := gaugeTail_nonneg dB hδ
-  have hKs := fun (T : ℝ) (hT0 : 0 ≤ T) (hT : T ≤ fp.tailStar dB δ) =>
+  have! hGT0 := gaugeTail_nonneg dB hδ
+  have! hKs := fun (T : ℝ) (hT0 : 0 ≤ T) (hT : T ≤ fp.tailStar dB δ) =>
     fp.tail_le_Kstar D dB k hδ hHed hH hδc hN0 hT0 hT
   refine ⟨?_, ?_, ?_, ?_, fun a b => (abs_rat_le_rationalHeight _).trans (hC z a b),
     fun a b => clearInt_clears _ a b⟩
@@ -2155,35 +2157,35 @@ theorem classNode_mem_succNodes {G : bf.Grp} {I : ℤ × ℤ} {j : Fin 4} {h : �
     (hP : (A.blkStart D.S.K I.1, D.preAt I) ∈ P) :
     D.classNode G I j h hF ∈ (D.Ms j G).succNodes D.S D.hA D.SP P h := by
   set C := (D.Ms j G).blockComps D.S D.hA (A.blkStart D.S.K I.1) (D.preAt I) with hC
-  have hgr := D.hasGoodRep_of_mem_goodCls hF
+  have! hgr := D.hasGoodRep_of_mem_goodCls hF
   set m := (D.Ms j G).goodRep D.S D.hA D.SP hgr with hm
   obtain ⟨hg, hmF⟩ := (D.Ms j G).goodRep_spec D.S D.hA D.SP hgr
   obtain ⟨K, hK, hKF⟩ := Finset.mem_image.mp hF
   obtain ⟨hKc, x, hKx, hgx⟩ := Finset.mem_filter.mp hK
-  have hFx : (C.F h x).map ⟨Subtype.val, Subtype.val_injective⟩ = F := by
+  have! hFx : (C.F h x).map ⟨Subtype.val, Subtype.val_injective⟩ = F := by
     rw [← hKF, hKx]
     exact ((D.Ms j G).compClass_eq D.S D.hA _ _ h x).symm
-  have hcore : C.Core D.SP.Δ ((D.Ms j G).goodP D.S D.SP (A.blkStart D.S.K I.1)) D.SP.Jst
+  have! hcore : C.Core D.SP.Δ ((D.Ms j G).goodP D.S D.SP (A.blkStart D.S.K I.1)) D.SP.Jst
       D.SP.δs x := by
     unfold compsAt at hKc
     split_ifs at hKc with hc
-    · have hns := (Finset.mem_sdiff.mp hKc).2
+    · have! hns := (Finset.mem_sdiff.mp hKc).2
       by_contra hnc
       apply hns
       exact Finset.mem_image.mpr ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hnc⟩, hKx.symm⟩
     · exact absurd hKc (Finset.notMem_empty _)
-  have hxm : x ∈ C.F h m := by
-    have h1 : x.1 ∈ F := by
+  have! hxm : x ∈ C.F h m := by
+    have! h1 : x.1 ∈ F := by
       rw [← hFx]
       exact Finset.mem_map_of_mem _ (C.E_le_F h x (C.E_self h x))
     rw [← hmF] at h1
     obtain ⟨x', hx', hxe⟩ := Finset.mem_map.mp h1
-    have : x' = x := Subtype.ext hxe
+    have! this : x' = x := Subtype.ext hxe
     rwa [this] at hx'
   rw [ModeSystem.mem_succNodes]
   refine ⟨_, hP, m, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hg, ⟨x, hxm, hcore, hgx⟩,
     fun y hy hgy => ?_⟩, rfl⟩
-  have hyF : (C.F h y).map ⟨Subtype.val, Subtype.val_injective⟩ = F := by
+  have! hyF : (C.F h y).map ⟨Subtype.val, Subtype.val_injective⟩ = F := by
     rw [C.F_comp h m y hy, hmF]
   exact (D.Ms j G).goodRep_min D.S D.hA D.SP hgr y hgy hyF
 
@@ -2250,22 +2252,22 @@ theorem helper_sides_closure (Dst : ℕ) (fp : bf.FamParams) (Tc : Finset (ℤ �
         (∃ M : fp.MaskName d.birth, fp.maskOf d.birth M d.tag) ∧
         ∃ R ∈ residueBox (bf.vtag d.tag).dim 9, ∃ γ : ℝ,
           d = templateCol (bf.vtag d.tag) l R γ d.birth d.rank d.tag) := by
-  have hcol := A.two_le_colBudget
-  have hR0 : 0 ≤ closureRatio A.famVtxBound Kt fp.mH Tmax
+  have! hcol := A.two_le_colBudget
+  have! hR0 : 0 ≤ closureRatio A.famVtxBound Kt fp.mH Tmax
       (Real.exp (Dst * (1 + Real.log HS) ^ Dst)) τ₃ := closureRatio_nonneg _ _ _ _ _ _
-  have hfac : (1 : ℝ) ≤ 1 + (fp.Lc + 6) * Mp * closureRatio A.famVtxBound Kt fp.mH Tmax
+  have! hfac : (1 : ℝ) ≤ 1 + (fp.Lc + 6) * Mp * closureRatio A.famVtxBound Kt fp.mH Tmax
       (Real.exp (Dst * (1 + Real.log HS) ^ Dst)) τ₃ := by
-    have : (0 : ℝ) ≤ (fp.Lc + 6) * Mp * closureRatio A.famVtxBound Kt fp.mH Tmax
+    have! this : (0 : ℝ) ≤ (fp.Lc + 6) * Mp * closureRatio A.famVtxBound Kt fp.mH Tmax
         (Real.exp (Dst * (1 + Real.log HS) ^ Dst)) τ₃ := by positivity
     linarith
-  have hpos : ∀ r, 0 < n r := by
+  have! hpos : ∀ r, 0 < n r := by
     intro r
     induction r with
     | zero => linarith
     | succ r ih =>
-      have h1 := le_mul_of_one_le_left ih.le hfac
+      have! h1 := le_mul_of_one_le_left ih.le hfac
       exact lt_of_lt_of_le (lt_of_lt_of_le ih h1) (hgrow r)
-  have hbase : ∀ l, ∀ I ∈ Tc, ∀ w : fp.HelperName I ι,
+  have! hbase : ∀ l, ∀ I ∈ Tc, ∀ w : fp.HelperName I ι,
       MainFresh fp.Mc (cat l).length (fp.helperOf l I (fun G => columnL2Restriction
         (dyadicGridCell A.G I.1 I.2) (dyadicGridCell_measurable A.G I.1 I.2) (st l G I)) w).base ∧
       ∀ᵐ y ∂volume, y ∉ dyadicGridCell A.G I.1 I.2 →
@@ -2289,11 +2291,11 @@ theorem helper_sides_closure (Dst : ℕ) (fp : bf.FamParams) (Tc : Finset (ℤ �
   swap
   · obtain ⟨h1, h2, ⟨w, hw⟩, h4⟩ := hh6 l d hd
     exact ⟨h1, h2, ⟨w.1, hw⟩, h4⟩
-  have hg := hgrow (fp.Lc + 4)
-  have hn4 := (hpos (fp.Lc + 4)).le
-  have hLM : (1 : ℝ) ≤ (fp.Lc + 6) * Mp := by
-    have h1 : (1 : ℝ) ≤ fp.Lc + 6 := by linarith [(Nat.cast_nonneg fp.Lc : (0 : ℝ) ≤ fp.Lc)]
-    have h2 : (1 : ℝ) ≤ Mp := by exact_mod_cast hMp1
+  have! hg := hgrow (fp.Lc + 4)
+  have! hn4 := (hpos (fp.Lc + 4)).le
+  have! hLM : (1 : ℝ) ≤ (fp.Lc + 6) * Mp := by
+    have! h1 : (1 : ℝ) ≤ fp.Lc + 6 := by linarith [(Nat.cast_nonneg fp.Lc : (0 : ℝ) ≤ fp.Lc)]
+    have! h2 : (1 : ℝ) ≤ Mp := by exact_mod_cast hMp1
     nlinarith
   have : closureRatio A.famVtxBound Kt fp.mH Tmax (Real.exp (Dst * (1 + Real.log HS) ^ Dst)) τ₃ *
       n (fp.Lc + 4) ≤ (1 + (fp.Lc + 6) * Mp * closureRatio A.famVtxBound Kt fp.mH Tmax
@@ -2401,77 +2403,77 @@ theorem attempt_param_bounds {Y : ℝ} (hY : 1 ≤ Y) (hH : A.H ≤ Real.exp Y)
     (A.famLc : ℝ) ≤ 6000 ^ 30 * Y ^ 30 + 1 ∧ (2 : ℝ) ^ A.famFuel ≤ 4 * A.famLc ∧
     Real.log (max A.H padW) ≤ Real.log padW + Y ∧
     Real.log A.Hsrc ≤ Real.log ((tagKρ : ℝ) ^ (2 * tagKρ) + 20) + 2 * (Real.log padW + Y) := by
-  have hcb2 := two_le_colBudget (A := A)
+  have! hcb2 := two_le_colBudget (A := A)
   -- the vertex bound
-  have hV : (A.famVtxBound : ℝ) ≤ Real.exp (Y + 3) := by
-    have h1 : (A.famVtxBound : ℝ) ≤ 8 * A.colBudget + 1 := by
+  have! hV : (A.famVtxBound : ℝ) ≤ Real.exp (Y + 3) := by
+    have! h1 : (A.famVtxBound : ℝ) ≤ 8 * A.colBudget + 1 := by
       unfold famVtxBound
       push_cast
-      have := Nat.floor_le (by linarith : (0 : ℝ) ≤ 8 * A.colBudget)
+      have! this := Nat.floor_le (by linarith : (0 : ℝ) ≤ 8 * A.colBudget)
       linarith
-    have he3 : (9 : ℝ) ≤ Real.exp 3 := by
-      have h2 : Real.exp 3 = Real.exp 1 * Real.exp 1 * Real.exp 1 := by
+    have! he3 : (9 : ℝ) ≤ Real.exp 3 := by
+      have! h2 : Real.exp 3 = Real.exp 1 * Real.exp 1 * Real.exp 1 := by
         rw [← Real.exp_add, ← Real.exp_add]; norm_num
-      have h3 : (2.7 : ℝ) ≤ Real.exp 1 := by linarith [Real.exp_one_gt_d9]
+      have! h3 : (2.7 : ℝ) ≤ Real.exp 1 := by linarith [Real.exp_one_gt_d9]
       rw [h2]
-      have h5 : (2.7 : ℝ) * 2.7 ≤ Real.exp 1 * Real.exp 1 := mul_le_mul h3 h3 (by norm_num)
+      have! h5 : (2.7 : ℝ) * 2.7 ≤ Real.exp 1 * Real.exp 1 := mul_le_mul h3 h3 (by norm_num)
         (by linarith)
       nlinarith
     rw [Real.exp_add]
-    have hY0 : 1 ≤ Real.exp Y := Real.one_le_exp (by linarith)
+    have! hY0 : 1 ≤ Real.exp Y := Real.one_le_exp (by linarith)
     nlinarith
-  have hV1 : (1 : ℝ) ≤ A.famVtxBound := by exact_mod_cast A.one_le_famVtxBound
+  have! hV1 : (1 : ℝ) ≤ A.famVtxBound := by exact_mod_cast A.one_le_famVtxBound
   -- the colour degree
-  have hd0 : (A.fcd0 : ℝ) ≤ 6000 * Y := by
+  have! hd0 : (A.fcd0 : ℝ) ≤ 6000 * Y := by
     unfold fcd0 colorDegree
-    have hpos : 0 ≤ 1000 * Real.log (2 * A.famVtxBound) :=
+    have! hpos : 0 ≤ 1000 * Real.log (2 * A.famVtxBound) :=
       mul_nonneg (by norm_num) (Real.log_nonneg (by linarith))
-    have h1 := Nat.ceil_lt_add_one hpos
-    have h2 : Real.log (2 * A.famVtxBound) ≤ Real.log 2 + (Y + 3) := by
+    have! h1 := Nat.ceil_lt_add_one hpos
+    have! h2 : Real.log (2 * A.famVtxBound) ≤ Real.log 2 + (Y + 3) := by
       rw [Real.log_mul (by norm_num) (by linarith)]
-      have := Real.log_le_log (by linarith) hV
+      have! this := Real.log_le_log (by linarith) hV
       rw [Real.log_exp] at this
       linarith
-    have hl2 : Real.log 2 ≤ 1 := by linarith [Real.log_two_lt_d9]
+    have! hl2 : Real.log 2 ≤ 1 := by linarith [Real.log_two_lt_d9]
     nlinarith
-  have hd00 : (0 : ℝ) ≤ A.fcd0 := Nat.cast_nonneg _
+  have! hd00 : (0 : ℝ) ≤ A.fcd0 := Nat.cast_nonneg _
   -- the colour count and the fuel
-  have hLc : (A.famLc : ℝ) ≤ 6000 ^ 30 * Y ^ 30 + 1 := by
+  have! hLc : (A.famLc : ℝ) ≤ 6000 ^ 30 * Y ^ 30 + 1 := by
     unfold famLc
     push_cast
-    have := pow_le_pow_left₀ hd00 hd0 30
+    have! this := pow_le_pow_left₀ hd00 hd0 30
     rw [mul_pow] at this
     linarith
-  have hfuel : (2 : ℝ) ^ A.famFuel ≤ 4 * A.famLc := by
+  have! hfuel : (2 : ℝ) ^ A.famFuel ≤ 4 * A.famLc := by
     unfold famFuel
-    have hL1 : 1 ≤ A.famLc := by unfold famLc; omega
-    have h1 : 2 ^ Nat.clog 2 A.famLc < 2 * A.famLc := by
+    have! hL1 : 1 ≤ A.famLc := by unfold famLc; omega
+    have! h1 : 2 ^ Nat.clog 2 A.famLc < 2 * A.famLc := by
       rcases Nat.lt_or_ge 1 A.famLc with h | h
-      · have h0 := Nat.pow_pred_clog_lt_self one_lt_two h
+      · have! h0 := Nat.pow_pred_clog_lt_self one_lt_two h
         rw [Nat.pred_eq_sub_one] at h0
-        have hc : 1 ≤ Nat.clog 2 A.famLc := Nat.clog_pos one_lt_two h
+        have! hc : 1 ≤ Nat.clog 2 A.famLc := Nat.clog_pos one_lt_two h
         have e : 2 ^ Nat.clog 2 A.famLc = 2 * 2 ^ (Nat.clog 2 A.famLc - 1) := by
           rw [← pow_succ']; congr 1; omega
         omega
-      · have hL : A.famLc = 1 := le_antisymm h hL1
+      · have! hL : A.famLc = 1 := le_antisymm h hL1
         rw [hL]; simp
-    have h2 : 2 ^ (Nat.clog 2 A.famLc + 1) ≤ 4 * A.famLc := by rw [pow_succ]; omega
+    have! h2 : 2 ^ (Nat.clog 2 A.famLc + 1) ≤ 4 * A.famLc := by rw [pow_succ]; omega
     exact_mod_cast h2
   -- the heights
-  have hW1 : 1 ≤ padW := le_trans (by linarith [Real.add_one_le_exp (2 : ℝ)]) (le_max_left _ _)
-  have hmax : Real.log (max A.H padW) ≤ Real.log padW + Y := by
+  have! hW1 : 1 ≤ padW := le_trans (by linarith [Real.add_one_le_exp (2 : ℝ)]) (le_max_left _ _)
+  have! hmax : Real.log (max A.H padW) ≤ Real.log padW + Y := by
     rcases le_total A.H padW with h | h
     · rw [max_eq_right h]; linarith
     · rw [max_eq_left h]
-      have := Real.log_le_log (by linarith) hH
+      have! this := Real.log_le_log (by linarith) hH
       rw [Real.log_exp] at this
-      have := Real.log_nonneg hW1
+      have! this := Real.log_nonneg hW1
       linarith
-  have hHs : Real.log A.Hsrc ≤ Real.log ((tagKρ : ℝ) ^ (2 * tagKρ) + 20) +
+  have! hHs : Real.log A.Hsrc ≤ Real.log ((tagKρ : ℝ) ^ (2 * tagKρ) + 20) +
       2 * (Real.log padW + Y) := by
     unfold Hsrc Hm
-    have h0 : (0 : ℝ) < (tagKρ : ℝ) ^ (2 * tagKρ) + 20 := by positivity
-    have hm0 : (0 : ℝ) < max A.H padW := lt_of_lt_of_le one_pos (hW1.trans (le_max_right _ _))
+    have! h0 : (0 : ℝ) < (tagKρ : ℝ) ^ (2 * tagKρ) + 20 := by positivity
+    have! hm0 : (0 : ℝ) < max A.H padW := lt_of_lt_of_le one_pos (hW1.trans (le_max_right _ _))
     rw [Real.log_mul h0.ne' (by positivity), Real.log_pow]
     push_cast
     linarith

@@ -2109,11 +2109,10 @@ theorem normalized_sq_mul_le {a₀ r : ℝ} (hr : 0 < r) {g T : ℝ → ℂ} (hg
 theorem prod_four_distinct {i j a b : Fin 4} (hij : i ≠ j)
     (hia : i ≠ a) (hib : i ≠ b) (hja : j ≠ a) (hjb : j ≠ b) (hab : a ≠ b) (f : Fin 4 → ℂ) :
     ∏ l, f l = f i * f j * f a * f b := by
-  fin_cases i <;> fin_cases j <;> fin_cases a <;> fin_cases b <;>
-    first | exact absurd rfl hij | exact absurd rfl hia | exact absurd rfl hib |
-      exact absurd rfl hja | exact absurd rfl hjb | exact absurd rfl hab |
-      simp only [Fin.prod_univ_four, Fin.reduceFinMk, Fin.isValue, mul_comm, mul_assoc,
-        mul_left_comm]
+  have huniv : ({i, j, a, b} : Finset (Fin 4)) = Finset.univ :=
+    Finset.eq_univ_of_card _ (by simp [hij, hia, hib, hja, hjb, hab])
+  rw [← huniv]
+  simp [hij, hia, hib, hja, hjb, hab, mul_assoc]
 
 theorem prod_four_tag (i : Fin 4) (f : Fin 4 → ℂ) :
     ∏ l, f l = f i * f (tagPartner i) * f (tagThird i) * f (tagFourth i) := by
