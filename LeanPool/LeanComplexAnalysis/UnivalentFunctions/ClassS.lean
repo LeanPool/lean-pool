@@ -170,7 +170,7 @@ lemma hasDerivAt_integral_of_analytic_mul (f : ℂ → ℂ) (hf : AnalyticOn ℂ
               HasDerivAt.add (hasDerivAt_const _ _) <|
                 HasDerivAt.mul (hasDerivAt_id _ |> HasDerivAt.ofReal_comp) <|
                   hasDerivAt_const _ _) using 1 <;>
-            first | rfl | (norm_num; try ring)
+            first | rfl | norm_num
           norm_num at *
           refine lt_of_le_of_lt (norm_add_le _ _) ?_
           norm_num [abs_of_nonneg hx.1.le, abs_of_nonneg ht.1]
@@ -264,7 +264,7 @@ lemma hasDerivAt_primitiveOnBall (f : ℂ → ℂ)
         IsOpen.mem_nhds isOpen_ball <| ?_) |> DifferentiableAt.hasDerivAt) <|
           HasDerivAt.mul (hasDerivAt_id t |> HasDerivAt.ofReal_comp) <|
             hasDerivAt_const _ _) using 1 <;>
-      first | rfl | (norm_num; try ring)
+      first | rfl | (norm_num [mul_comm, mul_left_comm, mul_assoc, add_comm])
     exact lt_of_le_of_lt (mul_le_of_le_one_left (norm_nonneg _) (
       abs_le.mpr ⟨by linarith [ht.1], by linarith [ht.2]⟩)) (by simpa using hz)
   have h_ftc_integral : ∫ t in (0 : ℝ)..1, (f (t * z) + t * z * deriv f (t * z)) =

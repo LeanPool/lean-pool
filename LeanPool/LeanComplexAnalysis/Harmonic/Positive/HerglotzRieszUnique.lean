@@ -375,13 +375,11 @@ lemma integral_kernel_expansion
     exact MeasureTheory.integral_const_mul (z ^ (i + 1))
       (fun a : sphere (0 : ℂ) 1 => star ((a : ℂ) ^ (i + 1)))
   · fun_prop (disch := norm_num)
-  · refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum
+  · refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum
       (g := fun n => ENNReal.ofReal (‖z‖ ^ (n + 1))) fun n => ?_) ?_)
     · refine le_trans (lintegral_mono_ae (g := fun _ => ENNReal.ofReal (‖z‖ ^ (n + 1))) ?_) ?_
-      · simp only [enorm, nnnorm_mul, nnnorm_pow, ENNReal.coe_mul,
-        ENNReal.coe_pow, norm_nonneg, ENNReal.ofReal_pow, ofReal_norm]
-        filter_upwards with a
-        simp [show ‖(a : ℂ)‖₊ = 1 from by ext; simp]
+      · filter_upwards with a
+        simp [← ofReal_norm]
       · norm_num
     · rw [← ENNReal.ofReal_tsum_of_nonneg] <;> norm_num
       exact Summable.comp_injective (summable_geometric_of_lt_one (norm_nonneg _) hz)
