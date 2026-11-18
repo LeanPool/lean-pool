@@ -84,7 +84,7 @@ The design's §6.3/§7.1 deliverable — a weak solution of `(P, Q)` for an **ar
   between two charts is holomorphic (`IsManifold`'s groupoid compatibility, transported through
   `ContMDiffAt 𝓘(ℂ) 𝓘(ℂ) ω` and mathlib's generic `contMDiffAt_iff_contDiffAt`), its "divided
   difference" `H := dslope S (e' a)` is analytic too
-  (`HasFPowerSeriesAt.has_fpower_series_dslope_fslope`) and NONZERO at the transition point
+  (`HasFPowerSeriesAt.dslope_fslope`) and NONZERO at the transition point
   (`S` has a two-sided holomorphic inverse — the reverse transition — so the chain rule on
   `T ∘ S = id` forces `deriv S (e' a) ≠ 0`), and the unconditional identity `sub_smul_dslope`
   gives the exact factorisation `e x - e a = (e' x - e' a) * H (e' x)` needed to rewrite the local

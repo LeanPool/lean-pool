@@ -72,8 +72,8 @@ omit [T2Space X] [IsManifold 𝓘(ℂ, ℂ) ω X] in
 /-- **The rechart lemma**: `IsWeakSolutionAt f a k`'s local model, witnessed by SOME chart `e`, is
 also witnessed by ANY OTHER `maximalAtlas` chart `e'` at `a`. Proof: the transition map
 `S := e ∘ e'.symm` is holomorphic (chart compatibility) hence `AnalyticAt`; its "divided
-difference" `H := dslope S (e' a)` is `AnalyticAt` too (`HasFPowerSeriesAt.
-has_fpower_series_dslope_fslope`), agrees with `S`'s derivative at `e' a` (`dslope_same`), and
+difference" `H := dslope S (e' a)` is `AnalyticAt` too (`HasFPowerSeriesAt.dslope_fslope`),
+agrees with `S`'s derivative at `e' a` (`dslope_same`), and
 that derivative is NONZERO because `S` has a two-sided holomorphic inverse (the reverse
 transition `T`), so `T ∘ S = id` near `e' a` forces `(deriv T (S (e' a))) * (deriv S (e' a)) = 1`
 by the chain rule. The unconditional identity `sub_smul_dslope` (`(b - a) • dslope f a b
@@ -128,7 +128,7 @@ theorem exists_localModel_of_isWeakSolutionAt {f : X → ℂ} {a : X} {k : ℤ}
     intro h0; rw [h0, mul_zero] at hderivprod; exact one_ne_zero hderivprod.symm
   obtain ⟨p, hp⟩ := id hSanalytic
   have hdslope_fps : HasFPowerSeriesAt (dslope S w0) p.fslope w0 :=
-    hp.has_fpower_series_dslope_fslope
+    hp.dslope_fslope
   set H : ℂ → ℂ := dslope S w0 with hH_def
   have hHanalytic : AnalyticAt ℂ H w0 := ⟨p.fslope, hdslope_fps⟩
   have hHw0 : H w0 = deriv S w0 := dslope_same S w0

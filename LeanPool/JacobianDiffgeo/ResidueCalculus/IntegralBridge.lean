@@ -100,8 +100,8 @@ theorem circleIntegral_eq_two_pi_I_mul_resAt {R : ℝ} (hR : 0 < R) (hf : Meromo
     have hzsphere : z₀ ∉ sphere z₀ |r| := by
       rw [mem_sphere, dist_self, abs_of_pos hrpos]
       exact hrpos.ne
-    exact CircleIntegrable.const_fun_smul
-      (circleIntegrable_sub_zpow_iff.mpr (Or.inr (Or.inr hzsphere)))
+    simpa only [smul_eq_mul] using CircleIntegrable.const_fun_smul (a := laurentCoeffAt f z₀ k)
+      ((circleIntegrable_sub_zpow_iff (n := k)).mpr (Or.inr (Or.inr hzsphere)))
   have hhintegrable : CircleIntegrable h z₀ r := by
     apply ContinuousOn.circleIntegrable hrpos.le
     exact (hr₁.continuousOn.mono (closedBall_subset_ball hrr1)).mono sphere_subset_closedBall
@@ -121,8 +121,8 @@ theorem circleIntegral_eq_two_pi_I_mul_resAt {R : ℝ} (hR : 0 < R) (hf : Meromo
     have hzsphere : z₀ ∉ sphere z₀ |r| := by
       rw [mem_sphere, dist_self, abs_of_pos hrpos]
       exact hrpos.ne
-    exact CircleIntegrable.const_fun_smul
-      (circleIntegrable_sub_zpow_iff.mpr (Or.inr (Or.inr hzsphere)))
+    simpa only [smul_eq_mul] using CircleIntegrable.const_fun_smul (a := laurentCoeffAt f z₀ k)
+      ((circleIntegrable_sub_zpow_iff (n := k)).mpr (Or.inr (Or.inr hzsphere)))
   rw [circleIntegral.integral_fun_sum hterm]
   have hval : ∀ k ∈ Finset.Icc a (-1),
       (∮ z in C(z₀, r), laurentCoeffAt f z₀ k * (z - z₀) ^ k)
