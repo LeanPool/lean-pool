@@ -10,9 +10,13 @@ on:
       - 'python/**'
       - 'NOTICE'
       - 'NOTICE.extra.yml'
-      - '.github/workflows/python_ci.yml'
-      - '.github/workflows/lean_action_ci.yml'
-      - '.github/workflows/docs.yml'
+      # The tests also read every workflow and the agent instructions' sources.
+      - '.github/workflows/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'Makefile'
   pull_request:
     branches:
       - main
@@ -49,7 +53,7 @@ jobs:
             else
               files=$(git diff --name-only "$BASE"..HEAD)
             fi
-            if printf '%s\n' "$files" | grep -Eq '^(python/|NOTICE$|NOTICE.extra.yml$|.github/workflows/(python_ci|lean_action_ci|docs).yml$)'; then
+            if printf '%s\n' "$files" | grep -Eq '^(python/|NOTICE$|NOTICE\.extra\.yml$|\.github/workflows/|(README|CONTRIBUTING|AGENTS|CLAUDE)\.md$|Makefile$)'; then
               applicable=true
             fi
           fi
