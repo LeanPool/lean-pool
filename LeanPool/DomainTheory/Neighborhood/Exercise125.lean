@@ -94,7 +94,7 @@ variable {Δ : Type*} [LinearOrder Δ] [Nonempty Δ]
 
 /-- Each `Set.Ici a` is a (non-empty, upper) neighbourhood. -/
 theorem Ici_mem (a : Δ) : (finalSegmentSystem Δ).mem (Set.Ici a) :=
-  ⟨⟨a, le_refl a⟩, isUpperSet_Ici a⟩
+  ⟨⟨a, le_refl a⟩, IsUpperSet.Ici a⟩
 
 /-- The principal finite elements `↑(Ici a)`; the correspondence `a ↦ ↑(Ici a)` is
 order-*reversing* (`Ici a ⊆ Ici b ↔ b ≤ a`), one of Scott's "finite elements". -/
