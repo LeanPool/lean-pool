@@ -168,17 +168,17 @@ private theorem potential_inner_cov {φ : EuclideanSpace ℝ (Fin d) → ℝ}
     exact (h1.comp h2).comp h3
   have hhmeas : Measurable h := by
     simpa only [Function.comp_def] using
-      ((hφ.continuous_fderiv (by simp)).enorm).measurable.fun_mul
+      ((hφ.continuous_fderiv (by simp)).eNorm).measurable.fun_mul
         ((show Continuous (fun z : EuclideanSpace ℝ (Fin d) => z - x) by
-          fun_prop).enorm).measurable
+          fun_prop).eNorm).measurable
   have hGmeas : Measurable
       (fun y : EuclideanSpace ℝ (Fin d) => ‖fderiv ℝ φ (x + t • (y - x))‖ₑ * ‖y - x‖ₑ) := by
     simpa only [Function.comp_def] using
       (((hφ.continuous_fderiv (by simp)).comp
         (show Continuous (fun y : EuclideanSpace ℝ (Fin d) => x + t • (y - x)) by
-          fun_prop)).enorm).measurable.fun_mul
+          fun_prop)).eNorm).measurable.fun_mul
         ((show Continuous (fun y : EuclideanSpace ℝ (Fin d) => y - x) by
-          fun_prop).enorm).measurable
+          fun_prop).eNorm).measurable
   have huimg : MeasurableSet (e '' s) := hemb.measurableSet_image.mpr hs
   have hmap : Measure.map e volume = ENNReal.ofReal ((t ^ d)⁻¹) • volume := by
     rw [he]; exact map_affine_dilation x ht
@@ -202,7 +202,7 @@ private theorem potential_inner_cov {φ : EuclideanSpace ℝ (Fin d) → ℝ}
     intro y
     simp only [he, hh_def]
     have hsub : x + t • (y - x) - x = t • (y - x) := by abel
-    rw [hsub, enorm_smul, Real.enorm_eq_ofReal ht.le]
+    rw [hsub, eNorm_smul, Real.eNorm_eq_ofReal ht.le]
     ring
   have hstep : ∫⁻ y in s, h (e y) ∂volume
       = ENNReal.ofReal t
@@ -279,7 +279,7 @@ theorem kernel_bound_convex {φ : EuclideanSpace ℝ (Fin d) → ℝ}
     hφ.continuous_fderiv (by simp)
   set h : EuclideanSpace ℝ (Fin d) → ℝ≥0∞ := fun z => ‖fderiv ℝ φ z‖ₑ * ‖z - x‖ₑ with hh_def
   have hhmeas : Measurable h :=
-    (hfd.enorm.measurable).mul ((continuous_id.sub continuous_const).enorm.measurable)
+    (hfd.eNorm.measurable).mul ((continuous_id.sub continuous_const).eNorm.measurable)
   -- The transformed region is contained in `W` intersected with a Euclidean ball at `x`.
   have hregion : ∀ t ∈ Ioc (0 : ℝ) 1,
       (fun y => x + t • (y - x)) '' W ⊆ W ∩ ball x (D * t) := by
@@ -303,9 +303,9 @@ theorem kernel_bound_convex {φ : EuclideanSpace ℝ (Fin d) → ℝ}
       ‖fderiv ℝ φ (x + p.2 • (p.1 - x))‖ₑ * ‖p.1 - x‖ₑ)
     simpa only [Function.comp_def] using
       ((hfd.comp (show Continuous (fun p : EuclideanSpace ℝ (Fin d) × ℝ =>
-        x + p.2 • (p.1 - x)) by fun_prop)).enorm).measurable.fun_mul
+        x + p.2 • (p.1 - x)) by fun_prop)).eNorm).measurable.fun_mul
         ((show Continuous (fun p : EuclideanSpace ℝ (Fin d) × ℝ => p.1 - x) by
-          fun_prop).enorm).measurable]
+          fun_prop).eNorm).measurable]
   -- Step 2: change of variables for each `t`, then bound the region.
   have hbound : ∀ t ∈ Ioc (0 : ℝ) 1,
       ∫⁻ y in W, ‖fderiv ℝ φ (x + t • (y - x))‖ₑ * ‖y - x‖ₑ ∂volume
@@ -432,8 +432,8 @@ theorem kernel_bound_convex {φ : EuclideanSpace ℝ (Fin d) → ℝ}
           * ∫⁻ z in W, ‖fderiv ℝ φ z‖ₑ / ‖z - x‖ₑ ^ (d - 1) ∂volume := by
         have hg : Measurable (fun z : EuclideanSpace ℝ (Fin d) =>
             ‖fderiv ℝ φ z‖ₑ / ‖z - x‖ₑ ^ (d - 1)) :=
-          (hfd.enorm.measurable).div
-            (((continuous_id.sub continuous_const).enorm).measurable.pow_const _)
+          (hfd.eNorm.measurable).div
+            (((continuous_id.sub continuous_const).eNorm).measurable.pow_const _)
         rw [lintegral_const_mul _ hg]
 
 /-- **Integrability of the Riesz potential.** For smooth `φ` and `x` in the ball, the singular
@@ -547,18 +547,18 @@ theorem exists_potential_bound (hd : 0 < d) :
     filter_upwards [ae_restrict_of_ae hnex] with z hz
     have hzx : 0 < ‖z - x‖ := by rw [norm_pos_iff]; exact sub_ne_zero.mpr hz
     have hdist : dist x z = ‖z - x‖ := by rw [dist_eq_norm, ← neg_sub z x, norm_neg]
-    rw [Real.enorm_eq_ofReal (hg_nn z)]
+    rw [Real.eNorm_eq_ofReal (hg_nn z)]
     simp only [hg_def, hdist]
     rw [← ofReal_norm (fderiv ℝ φ z), ← ofReal_norm (z - x),
       ← ENNReal.ofReal_pow (norm_nonneg _), ← ENNReal.ofReal_div_of_pos (by positivity)]
   have hgint : IntegrableOn g (ball c r) volume := riesz_potential_integrableOn hφ hd c x hr hx
   have hRl_lt : Rl < ⊤ := by
-    rw [hRl_enorm]; exact hasFiniteIntegral_iff_enorm.mp hgint.2
+    rw [hRl_enorm]; exact hasFiniteIntegral_iff_eNorm.mp hgint.2
   have hReq : Rl.toReal = ∫ y in ball c r, g y ∂volume := by
     rw [hRl_enorm, integral_eq_lintegral_of_nonneg_ae (ae_of_all _ hg_nn) hgint.1]
     congr 1
     refine lintegral_congr fun z => ?_
-    rw [Real.enorm_eq_ofReal (hg_nn z)]
+    rw [Real.eNorm_eq_ofReal (hg_nn z)]
   -- Continuity of the ray integral in `y`.
   have hIcont : Continuous I := by
     rw [hI_def]
@@ -667,17 +667,17 @@ theorem oscillation_le_potential_convex [Nontrivial (EuclideanSpace ℝ (Fin d))
     filter_upwards [ae_restrict_of_ae hnex] with z hz
     have hzx : 0 < ‖z - a‖ := by rw [norm_pos_iff]; exact sub_ne_zero.mpr hz
     have hdist : dist a z = ‖z - a‖ := by rw [dist_eq_norm, ← neg_sub z a, norm_neg]
-    rw [Real.enorm_eq_ofReal (hg_nn z)]
+    rw [Real.eNorm_eq_ofReal (hg_nn z)]
     simp only [hg_def, hdist]
     rw [← ofReal_norm (fderiv ℝ φ z), ← ofReal_norm (z - a),
       ← ENNReal.ofReal_pow (norm_nonneg _), ← ENNReal.ofReal_div_of_pos (by positivity)]
   have hRl_lt : Rl < ⊤ := by
-    rw [hRl_enorm]; exact hasFiniteIntegral_iff_enorm.mp hint.2
+    rw [hRl_enorm]; exact hasFiniteIntegral_iff_eNorm.mp hint.2
   have hReq : Rl.toReal = ∫ y in W, g y ∂volume := by
     rw [hRl_enorm, integral_eq_lintegral_of_nonneg_ae (ae_of_all _ hg_nn) hint.1]
     congr 1
     refine lintegral_congr fun z => ?_
-    rw [Real.enorm_eq_ofReal (hg_nn z)]
+    rw [Real.eNorm_eq_ofReal (hg_nn z)]
   have hIcont : Continuous I := by
     rw [hI_def]
     apply intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'

@@ -93,7 +93,7 @@ theorem eLpNorm_partialD_dilate {φ : EuclideanSpace ℝ (Fin d) → ℝ} (hφ :
       = lam⁻¹ • (fun y => partialD i φ (lam⁻¹ • y)) from rfl,
     eLpNorm_const_smul, eLpNorm_comp_smul hmeas (by positivity) hp0 hpt]
   congr 2
-  · simp [Real.enorm_eq_ofReal_abs, abs_of_pos (inv_pos.mpr hlam0)]
+  · simp [Real.eNorm_eq_ofReal_abs, abs_of_pos (inv_pos.mpr hlam0)]
   · rw [inv_pow, inv_inv, abs_of_nonneg (by positivity)]
 
 
@@ -177,7 +177,7 @@ lemma eLpNorm_sharpFamily {lam : ℝ} (h0 : 0 < lam) {p : ℝ≥0∞} (hp0 : p �
     eLpNorm_dilate (sharpBump d).continuous.measurable h0 hp0 hpt,
     ← mul_assoc]
   congr 1
-  rw [Real.enorm_eq_ofReal_abs, abs_of_pos (Real.rpow_pos_of_pos h0 _),
+  rw [Real.eNorm_eq_ofReal_abs, abs_of_pos (Real.rpow_pos_of_pos h0 _),
     ENNReal.ofReal_rpow_of_nonneg (by positivity) (one_div_nonneg.mpr ENNReal.toReal_nonneg),
     rpow_pow_mul h0, ← ENNReal.ofReal_mul (le_of_lt (Real.rpow_pos_of_pos h0 _)),
     ← Real.rpow_add h0]
@@ -197,7 +197,7 @@ lemma eLpNorm_partialD_sharpFamily {lam : ℝ} (h0 : 0 < lam) {p : ℝ≥0∞} (
     eLpNorm_partialD_dilate ((sharpBump d).contDiff (n := 1)) i hmeas h0 hp0 hpt,
     ← mul_assoc, ← mul_assoc]
   congr 1
-  rw [Real.enorm_eq_ofReal_abs, abs_of_pos (Real.rpow_pos_of_pos h0 _),
+  rw [Real.eNorm_eq_ofReal_abs, abs_of_pos (Real.rpow_pos_of_pos h0 _),
     ENNReal.ofReal_rpow_of_nonneg (by positivity) (one_div_nonneg.mpr ENNReal.toReal_nonneg),
     rpow_pow_mul h0, ← Real.rpow_neg_one lam,
     ← ENNReal.ofReal_mul (le_of_lt (Real.rpow_pos_of_pos h0 _)),
@@ -395,7 +395,7 @@ theorem not_isCompactOperator_critEmb (hd : 2 < d) (hdpos : 0 < d) {p' : ℝ≥0
     intro n
     rw [hWdef, map_smul, eLpNorm_congr_ae (Lp.coeFn_smul _ _), eLpNorm_const_smul,
       eLpNorm_critEmb, hUdef, eLpNorm_sharpElt_zero, eLpNorm_sharpFamily_two (hl0 n),
-      Real.enorm_eq_ofReal_abs, abs_of_pos (inv_pos.mpr hB0),
+      Real.eNorm_eq_ofReal_abs, abs_of_pos (inv_pos.mpr hB0),
       show eLpNorm (⇑(sharpBump d)) 2 volume = ENNReal.ofReal a from
         (ENNReal.ofReal_toReal (hfin 2)).symm,
       ← ENNReal.ofReal_mul (hl0 n).le, ← ENNReal.ofReal_mul (inv_pos.mpr hB0).le]
@@ -438,7 +438,7 @@ theorem not_isCompactOperator_critEmb (hd : 2 < d) (hdpos : 0 < d) {p' : ℝ≥0
       refine le_trans (eLpNorm_le_eLpNorm_mul_rpow_measure_univ h2p'
         ((Lp.aestronglyMeasurable v).sub (Lp.aestronglyMeasurable _))) ?_
       refine mul_le_mul' (le_of_eq ?_) le_rfl
-      rw [Lp.enorm_def]
+      rw [Lp.eNorm_def]
       exact eLpNorm_congr_ae (Lp.coeFn_sub _ _).symm
     have hsplit : eLpNorm (⇑v) 2 (volume.restrict (ball (0 : EuclideanSpace ℝ (Fin d)) 1))
         ≤ eLpNorm (⇑v - ⇑(critEmb d hdpos hp' (W (ψ k)))) 2

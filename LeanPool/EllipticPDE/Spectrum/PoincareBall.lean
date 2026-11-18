@@ -274,7 +274,7 @@ theorem poincare_ball (hd : 0 < d) :
       funext y; simp [Pi.smul_apply, smul_eq_mul]
     rw [this, eLpNorm_const_smul, eLpNorm_comp_affineBall x hr (hg k).aestronglyMeasurable,
         ENNReal.toReal_mul,
-      ENNReal.toReal_mul, Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg _),
+      ENNReal.toReal_mul, Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg _),
       abs_of_pos hr]
     ring
   rw [hL] at hineq

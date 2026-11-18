@@ -96,7 +96,7 @@ theorem eLpNorm_le_rpow_mul_rpow {r s q : ℝ≥0∞} (hr : r ≠ 0) (hr' : r �
     (f := fun x => ‖f x‖ ^ (q.toReal * θ)) (g := fun x => ‖f x‖ ^ (q.toReal * (1 - θ)))
     (fun u v => u * v) 1 (continuous_fst.mul continuous_snd) hg hh
     (Filter.Eventually.of_forall (fun x => by
-      simp only [nnnorm_mul, one_mul]
+      simp only [nnNorm_mul, one_mul]
       exact le_rfl))
   -- Read each seminorm back as one of `f`.
   have hLHS : eLpNorm (fun x => ‖f x‖ ^ (q.toReal * θ) * ‖f x‖ ^ (q.toReal * (1 - θ))) 1 μ

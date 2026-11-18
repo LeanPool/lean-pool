@@ -314,8 +314,8 @@ private lemma tendsto_chain_gradient_integral {d : ℕ} {f : ℝ → ℝ} {M : �
             · exact hMr _
             · exact hCφ x
         _ = (M : ℝ) * Cφ * ‖w (ns i) x - G x‖ := by ring
-    · rw [integral_const_mul, integral_norm_eq_lintegral_enorm
-        ((hwc _).aestronglyMeasurable.sub hGint.1), eLpNorm_one_eq_lintegral_enorm
+    · rw [integral_const_mul, integral_norm_eq_lintegral_eNorm
+        ((hwc _).aestronglyMeasurable.sub hGint.1), eLpNorm_one_eq_lintegral_eNorm
           ((hwc _).aestronglyMeasurable.sub hGint.1)]
   have hpiece2 : Tendsto (fun i => ∫ x, deriv f (v (ns i) x) * G x * φ x) atTop
       (𝓝 (∫ x, deriv f (U x) * G x * φ x)) := by
@@ -346,11 +346,11 @@ theorem hasWeakGradOn_comp (hΩ : IsOpen Ω) {u : EuclideanSpace ℝ (Fin d) →
   intro φ hφc hφcs hφΩ k
   set L := ContinuousLinearMap.lsmul ℝ ℝ (E := ℝ) with hL
   have hfd : Differentiable ℝ f := hf.differentiable one_ne_zero
-  have hfl : LipschitzWith M f := lipschitzWith_of_nnnorm_deriv_le hfd hM
+  have hfl : LipschitzWith M f := lipschitzWith_of_nnNorm_deriv_le hfd hM
   have hf'c : Continuous (deriv f) := hf.continuous_deriv_one
   have hMr : ∀ t, ‖deriv f t‖ ≤ (M : ℝ) := fun t => by
     have := hM t
-    rwa [← NNReal.coe_le_coe, coe_nnnorm] at this
+    rwa [← NNReal.coe_le_coe, coe_nnNorm] at this
   -- the test function and its partial
   have hφcont : Continuous φ := hφc.continuous
   have hpc : Continuous (partialD k φ) :=
@@ -478,8 +478,8 @@ theorem hasWeakGradOn_comp (hΩ : IsOpen Ω) {u : EuclideanSpace ℝ (Fin d) →
       calc ‖f (v n x) - f (U x)‖ * ‖partialD k φ x‖
           ≤ ((M : ℝ) * ‖v n x - U x‖) * Cp := by gcongr; exact hCp x
         _ = (M : ℝ) * Cp * ‖v n x - U x‖ := by ring
-    · rw [integral_const_mul, integral_norm_eq_lintegral_enorm ((hvc n).aestronglyMeasurable.sub
-        hUint.1), eLpNorm_one_eq_lintegral_enorm
+    · rw [integral_const_mul, integral_norm_eq_lintegral_eNorm ((hvc n).aestronglyMeasurable.sub
+        hUint.1), eLpNorm_one_eq_lintegral_eNorm
           ((hvc n).aestronglyMeasurable.sub hUint.1)]
   -- limit of the gradient side along the subsequence
   have hintG : Integrable (fun x => deriv f (U x) * G x * φ x) volume :=
@@ -591,7 +591,7 @@ theorem deriv_posPartApprox_mem {ε : ℝ} (hε : ε ≠ 0) (t : ℝ) :
 theorem nnnorm_deriv_posPartApprox_le {ε : ℝ} (hε : ε ≠ 0) (t : ℝ) :
     ‖deriv (posPartApprox ε) t‖₊ ≤ 1 := by
   obtain ⟨h0, h1⟩ := deriv_posPartApprox_mem hε t
-  rw [← NNReal.coe_le_coe, coe_nnnorm, Real.norm_eq_abs, abs_of_nonneg h0, NNReal.coe_one]
+  rw [← NNReal.coe_le_coe, coe_nnNorm, Real.norm_eq_abs, abs_of_nonneg h0, NNReal.coe_one]
   exact h1
 
 /-- The approximation lies between `0` and the positive part. -/

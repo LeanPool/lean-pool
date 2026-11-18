@@ -322,20 +322,20 @@ theorem exists_mem_H01_posPart_sub_const (hΩ : IsOpen Ω) {V : H1amb Ω} (hV : 
       have hB : Tendsto (fun i => eLpNorm (B i) 2 (volume.restrict Ω)) atTop (𝓝 0) := by
         have hrepr : ∀ i, eLpNorm (B i) 2 (volume.restrict Ω)
             = (∫⁻ x, ‖B i x‖ₑ ^ (2 : ℝ) ∂(volume.restrict Ω)) ^ (1 / (2 : ℝ)) := fun i => by
-          rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top (hBm i),
+          rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top (hBm i),
             ENNReal.toReal_ofNat]
         simp only [hrepr]
         have hlim : Tendsto (fun i => ∫⁻ x, ‖B i x‖ₑ ^ (2 : ℝ) ∂(volume.restrict Ω)) atTop
             (𝓝 (∫⁻ _, (0 : ℝ≥0∞) ∂(volume.restrict Ω))) := by
           refine tendsto_lintegral_of_dominated_convergence' (fun x => ‖g j x‖ₑ ^ (2 : ℝ))
-            (fun i => (hBm i).enorm.pow_const _)
+            (fun i => (hBm i).eNorm.pow_const _)
             (fun i => Eventually.of_forall fun x => ?_) ?_ ?_
           · refine ENNReal.rpow_le_rpow ?_ (by norm_num)
-            rw [enorm_eq_nnnorm, enorm_eq_nnnorm, ENNReal.coe_le_coe, ← NNReal.coe_le_coe,
-              coe_nnnorm, coe_nnnorm, Real.norm_eq_abs, Real.norm_eq_abs]
+            rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, ENNReal.coe_le_coe, ← NNReal.coe_le_coe,
+              coe_nnNorm, coe_nnNorm, Real.norm_eq_abs, Real.norm_eq_abs]
             simp only [hBdef]
             split_ifs <;> simp
-          · exact (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top two_ne_zero ENNReal.ofNat_ne_top
+          · exact (lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top two_ne_zero ENNReal.ofNat_ne_top
               (hgm j).eLpNorm_lt_top).ne
           · filter_upwards [hae, hlevel j] with x hx hxl
             have hBzero : ∀ᶠ i in atTop, B i x = 0 := by
@@ -353,7 +353,7 @@ theorem exists_mem_H01_posPart_sub_const (hΩ : IsOpen Ω) {V : H1amb Ω} (hV : 
                 rw [ite_eq_left hi', ite_eq_left hgt, sub_self]
             refine tendsto_const_nhds.congr' ?_
             filter_upwards [hBzero] with i hi
-            rw [hi, enorm_zero, ENNReal.zero_rpow_of_pos (by norm_num)]
+            rw [hi, eNorm_zero, ENNReal.zero_rpow_of_pos (by norm_num)]
         rw [lintegral_zero] at hlim
         have := (ENNReal.continuous_rpow_const (y := 1 / (2 : ℝ))).tendsto 0 |>.comp hlim
         rw [ENNReal.zero_rpow_of_pos (by norm_num)] at this
