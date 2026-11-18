@@ -62,13 +62,25 @@ noncomputable def negPart (L : Nat) (E : List (Nat × ℚ)) : List (Nat × Nat) 
     (fun (e : Nat × ℚ) _ ih ↦
       bif decide (e.2 < 0) then (e.1, (-((e.2 : ℚ) * (L : ℚ))).num.toNat) :: ih else ih) E
 
-/-- The integer row `L * r` for the common denominator `L` of `r`, or `none` if the scaling
-fails (it does not fail, but the checker does not need that). -/
-noncomputable def QRow.toRow (r : QRow) : Option Row :=
-  bif Nat.blt 0 r.den && allInt r.den r.ent && Nat.beq (r.rhs * r.den).den 1 then
-    some ⟨posPart r.den r.ent, negPart r.den r.ent, (r.rhs * r.den).num⟩
-  else none
+/-- The exact integer coefficient when the given denominator clears the rational. -/
+def QRow.scaleNumerator (denominator : Nat) (value : ℚ) : Int :=
+  value.num * ((denominator / value.den : Nat) : Int)
 
+/-- Collect selected integer coefficients in the original row order. -/
+noncomputable def QRow.signedEntries (keep : ℚ → Bool) (numerator : ℚ → Int)
+    (entries : List (Nat × ℚ)) : List (Nat × Nat) :=
+  List.rec (motive := fun _ ↦ List (Nat × Nat)) []
+    (fun (entry : Nat × ℚ) _ rest ↦
+      bif keep entry.2 then (entry.1, (numerator entry.2).toNat) :: rest else rest) entries
+
+/-- Scale the row by its common denominator to obtain integer coefficients. -/
+noncomputable def QRow.toRow (r : QRow) : Option Row :=
+  let denominator := r.den
+  let positive := QRow.signedEntries (fun value ↦ decide (0 < value))
+    (QRow.scaleNumerator denominator) r.ent
+  let negative := QRow.signedEntries (fun value ↦ decide (value < 0))
+    (fun value ↦ -QRow.scaleNumerator denominator value) r.ent
+  some ⟨positive, negative, QRow.scaleNumerator denominator r.rhs⟩
 
 private theorem allInt_cons (L : Nat) (e : Nat × ℚ) (E : List (Nat × ℚ)) :
     allInt L (e :: E) = (Nat.beq (e.2 * L).den 1 && allInt L E) := rfl
@@ -125,24 +137,96 @@ private theorem entrySum_pos_sub_neg (L : Nat) (v : Nat → ℝ) :
       rw [hc]
       linear_combination ih
 
+private theorem commonDenominatorSpec (entries : List (Nat × ℚ)) (rhs : ℚ) :
+    0 < (QRow.mk entries rhs).den ∧ rhs.den ∣ (QRow.mk entries rhs).den ∧
+      ∀ e ∈ entries, e.2.den ∣ (QRow.mk entries rhs).den := by
+  induction entries with
+  | nil => exact ⟨rhs.den_pos, dvd_refl _, by simp⟩
+  | cons entry entries ih =>
+    let tailDen := (QRow.mk entries rhs).den
+    change 0 < Nat.lcm entry.2.den tailDen ∧ rhs.den ∣ Nat.lcm entry.2.den tailDen ∧
+      ∀ e ∈ entry :: entries, e.2.den ∣ Nat.lcm entry.2.den tailDen
+    refine ⟨Nat.lcm_pos entry.2.den_pos ih.1, ih.2.1.trans (Nat.dvd_lcm_right _ _), ?_⟩
+    intro e he
+    rcases List.mem_cons.1 he with rfl | he
+    · exact Nat.dvd_lcm_left _ _
+    · exact (ih.2.2 e he).trans (Nat.dvd_lcm_right _ _)
+
+private theorem scaleNumerator_cast {value : ℚ} {denominator : Nat}
+    (divides : value.den ∣ denominator) :
+    value * (denominator : ℚ) = (QRow.scaleNumerator denominator value : ℚ) := by
+  have scale : value * (value.den : ℚ) = (value.num : ℚ) := calc
+    value * (value.den : ℚ) = ((value.num : ℚ) / value.den) * value.den :=
+      congrArg (fun x : ℚ ↦ x * (value.den : ℚ)) value.num_div_den.symm
+    _ = (value.num : ℚ) := div_mul_cancel₀ _ (by exact_mod_cast value.den_ne_zero)
+  have factor : (denominator : ℚ) =
+      (value.den : ℚ) * ((denominator / value.den : Nat) : ℚ) := by
+    exact_mod_cast (Nat.mul_div_cancel' divides).symm
+  rw [factor, ← mul_assoc, scale, QRow.scaleNumerator, Int.cast_mul, Int.cast_natCast]
+
+private theorem scaleNumerator_eq {value : ℚ} {denominator : Nat}
+    (divides : value.den ∣ denominator) :
+    QRow.scaleNumerator denominator value = (value * denominator).num := by
+  simpa only [Rat.num_intCast] using (congrArg Rat.num (scaleNumerator_cast divides)).symm
+
+private theorem signedEntries_congr (keep : ℚ → Bool) (a b : ℚ → Int)
+    (entries : List (Nat × ℚ)) (h : ∀ e ∈ entries, a e.2 = b e.2) :
+    QRow.signedEntries keep a entries = QRow.signedEntries keep b entries := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+    change (bif keep entry.2 then (entry.1, (a entry.2).toNat) :: QRow.signedEntries keep a entries
+      else QRow.signedEntries keep a entries) =
+      (bif keep entry.2 then (entry.1, (b entry.2).toNat) :: QRow.signedEntries keep b entries
+        else QRow.signedEntries keep b entries)
+    rw [h entry (by simp), ih (fun e he ↦ h e (List.mem_cons_of_mem _ he))]
+
+private theorem positiveEntries_eq (denominator : Nat) (entries : List (Nat × ℚ))
+    (h : ∀ e ∈ entries, e.2.den ∣ denominator) :
+    QRow.signedEntries (fun value ↦ decide (0 < value)) (QRow.scaleNumerator denominator) entries =
+      posPart denominator entries := by
+  exact signedEntries_congr _ _ (fun value ↦ (value * denominator).num) _
+    (fun e he ↦ scaleNumerator_eq (h e he))
+
+private theorem negativeEntries_eq (denominator : Nat) (entries : List (Nat × ℚ))
+    (h : ∀ e ∈ entries, e.2.den ∣ denominator) :
+    QRow.signedEntries (fun value ↦ decide (value < 0))
+      (fun value ↦ -QRow.scaleNumerator denominator value) entries =
+      negPart denominator entries := by
+  refine signedEntries_congr _ _ (fun value ↦ (-(value * denominator)).num) _ ?_
+  intro e he
+  rw [Rat.neg_num, scaleNumerator_eq (h e he)]
+
+private theorem mul_nat_den_eq_one {q : ℚ} {L : Nat} (h : q.den ∣ L) : (q * L).den = 1 := by
+  simpa only [Rat.den_intCast] using congrArg Rat.den (scaleNumerator_cast h)
+
+private theorem allInt_of_commonDenominator (L : Nat) (entries : List (Nat × ℚ))
+    (h : ∀ e ∈ entries, e.2.den ∣ L) : allInt L entries = true := by
+  induction entries with
+  | nil => rfl
+  | cons entry entries ih =>
+    rw [allInt_cons, mul_nat_den_eq_one (h entry (by simp))]
+    exact ih fun e he ↦ h e (List.mem_cons_of_mem _ he)
+
 /-- Soundness of the scaling: the integer row holds wherever the rational row holds. -/
 theorem QRow.toRow_sound {r : QRow} {R : Row} {v : Nat → ℝ} (h : r.toRow = some R)
     (hr : r.Holds v) : R.Holds v := by
-  unfold QRow.toRow at h
-  cases hc : (Nat.blt 0 r.den && allInt r.den r.ent && Nat.beq (r.rhs * r.den).den 1) with
-  | false => rw [hc, Bool.cond_false] at h; exact absurd h (by simp)
-  | true =>
-    rw [hc, Bool.cond_true] at h
-    simp only [Bool.and_eq_true] at hc
-    obtain ⟨⟨hL, hint⟩, hrhs⟩ := hc
-    injection h with h
-    subst h
-    have hL' : (0 : ℝ) < r.den := by exact_mod_cast (by simpa [Nat.blt_eq] using hL : 0 < r.den)
-    unfold Row.Holds Row.lhs
-    rw [entrySum_pos_sub_neg _ _ _ hint, intCast_num_of_den_eq_one (Nat.eq_of_beq_eq_true hrhs)]
-    push_cast
-    unfold QRow.Holds QRow.lhs at hr
-    have := mul_le_mul_of_nonneg_left hr hL'.le
-    linarith
+  obtain ⟨positive, rhsDvd, entriesDvd⟩ := commonDenominatorSpec r.ent r.rhs
+  have entriesIntegral := allInt_of_commonDenominator r.den r.ent entriesDvd
+  have rhsIntegral := mul_nat_den_eq_one rhsDvd
+  have scaling : r.toRow = some
+      ⟨posPart r.den r.ent, negPart r.den r.ent, (r.rhs * r.den).num⟩ := by
+    simp only [QRow.toRow, positiveEntries_eq _ _ entriesDvd, negativeEntries_eq _ _ entriesDvd,
+      scaleNumerator_eq rhsDvd]
+  rw [scaling] at h
+  injection h with h
+  subst h
+  have denominatorPositive : (0 : ℝ) < r.den := by exact_mod_cast positive
+  unfold Row.Holds Row.lhs
+  rw [entrySum_pos_sub_neg _ _ _ entriesIntegral, intCast_num_of_den_eq_one rhsIntegral]
+  push_cast
+  unfold QRow.Holds QRow.lhs at hr
+  have := mul_le_mul_of_nonneg_left hr denominatorPositive.le
+  linarith
 
 end Esgk.S4
