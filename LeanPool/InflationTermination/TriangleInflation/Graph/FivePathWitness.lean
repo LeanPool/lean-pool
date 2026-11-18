@@ -646,9 +646,9 @@ private theorem lawSum_00000 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_00001 (γ : ℝ) :
@@ -658,9 +658,9 @@ private theorem lawSum_00001 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_00010 (γ : ℝ) :
@@ -670,9 +670,9 @@ private theorem lawSum_00010 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_00011 (γ : ℝ) :
@@ -682,9 +682,9 @@ private theorem lawSum_00011 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_00100 (γ : ℝ) :
@@ -694,9 +694,9 @@ private theorem lawSum_00100 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_00101 (γ : ℝ) :
@@ -706,9 +706,9 @@ private theorem lawSum_00101 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_00110 (γ : ℝ) :
@@ -718,9 +718,9 @@ private theorem lawSum_00110 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_00111 (γ : ℝ) :
@@ -730,9 +730,9 @@ private theorem lawSum_00111 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_01000 (γ : ℝ) :
@@ -742,9 +742,9 @@ private theorem lawSum_01000 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_01001 (γ : ℝ) :
@@ -754,9 +754,9 @@ private theorem lawSum_01001 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_01010 (γ : ℝ) :
@@ -766,9 +766,9 @@ private theorem lawSum_01010 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_01011 (γ : ℝ) :
@@ -778,9 +778,9 @@ private theorem lawSum_01011 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_01100 (γ : ℝ) :
@@ -790,9 +790,9 @@ private theorem lawSum_01100 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_01101 (γ : ℝ) :
@@ -802,9 +802,9 @@ private theorem lawSum_01101 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_01110 (γ : ℝ) :
@@ -814,9 +814,9 @@ private theorem lawSum_01110 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_01111 (γ : ℝ) :
@@ -826,9 +826,9 @@ private theorem lawSum_01111 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_10000 (γ : ℝ) :
@@ -838,9 +838,9 @@ private theorem lawSum_10000 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_10001 (γ : ℝ) :
@@ -850,9 +850,9 @@ private theorem lawSum_10001 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_10010 (γ : ℝ) :
@@ -862,9 +862,9 @@ private theorem lawSum_10010 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_10011 (γ : ℝ) :
@@ -874,9 +874,9 @@ private theorem lawSum_10011 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_10100 (γ : ℝ) :
@@ -886,9 +886,9 @@ private theorem lawSum_10100 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_10101 (γ : ℝ) :
@@ -898,9 +898,9 @@ private theorem lawSum_10101 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_10110 (γ : ℝ) :
@@ -910,9 +910,9 @@ private theorem lawSum_10110 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_10111 (γ : ℝ) :
@@ -922,9 +922,9 @@ private theorem lawSum_10111 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_11000 (γ : ℝ) :
@@ -934,9 +934,9 @@ private theorem lawSum_11000 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_11001 (γ : ℝ) :
@@ -946,9 +946,9 @@ private theorem lawSum_11001 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_11010 (γ : ℝ) :
@@ -958,9 +958,9 @@ private theorem lawSum_11010 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_11011 (γ : ℝ) :
@@ -970,9 +970,9 @@ private theorem lawSum_11011 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_11100 (γ : ℝ) :
@@ -982,9 +982,9 @@ private theorem lawSum_11100 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_11101 (γ : ℝ) :
@@ -994,9 +994,9 @@ private theorem lawSum_11101 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 private theorem lawSum_11110 (γ : ℝ) :
@@ -1006,9 +1006,9 @@ private theorem lawSum_11110 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp
   all_goals ring
 
 private theorem lawSum_11111 (γ : ℝ) :
@@ -1018,9 +1018,9 @@ private theorem lawSum_11111 (γ : ℝ) :
   simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
     pmu_E34, sgn, fivePathTarget]
   norm_num
-  all_goals try rw [Complex.ext_iff]
-  all_goals try constructor
-  all_goals try simp [← Complex.ofReal_pow]
+  rw [Complex.ext_iff]
+  constructor
+  all_goals simp [← Complex.ofReal_pow]
   all_goals ring
 
 theorem lawSum (γ : ℝ) (w : Fin 5 → Bool) :
