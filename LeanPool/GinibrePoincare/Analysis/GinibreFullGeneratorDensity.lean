@@ -130,21 +130,6 @@ theorem ginibreFullSymmetricValues_inner_average (n : ℕ)
     Nat.cast_ne_zero.mpr Fintype.card_ne_zero
   simp [hc]
 
-/-- Finite sums of L² classes have the expected representatives almost everywhere. -/
-theorem ginibreFull_L2_sum_ae {n : ℕ} {ι : Type*} (s : Finset ι)
-    (f : ι → GinibreFullValueL2 n) :
-    ((∑ i ∈ s, f i : GinibreFullValueL2 n) : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-      fun z => ∑ i ∈ s, f i z :=
-  Lp.coeFn_fun_finsetSum s f
-
-/-- The scalar L² Reynolds operator has its literal finite-average representative. -/
-theorem ginibreFull_permutationAverage_ae {n : ℕ}
-    (u : GinibreFullValueL2 n) (f : Configuration n → ℝ)
-    (hu : (u : Configuration n → ℝ) =ᵐ[ginibreMeasure n] f) :
-    (ginibreRealPermutationAverageL2 u : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-      ginibrePermutationAverage f :=
-  ginibreRealPermutationAverageL2_ae u f hu
-
 /-- Full symmetric weak-H¹ values detect every actual symmetric L² value.
 This is a concrete density statement, proved using all smooth compact tests. -/
 theorem ginibreFullSymmetricValues_orthogonal_weak_eq_zero (n : ℕ) (hn : 0 < n)
@@ -157,7 +142,7 @@ theorem ginibreFullSymmetricValues_orthogonal_weak_eq_zero (n : ℕ) (hn : 0 < n
     let u := hm.toLp ψ
     obtain ⟨p, hp⟩ := ginibreFull_smoothCompact_symmetric_pair n hn (ginibrePermutationAverage ψ)
       (ginibrePermutationAverage_smoothCompact ψ hψ hc)
-    have havg := ginibreFull_permutationAverage_ae u ψ hm.coeFn_toLp
+    have havg := ginibreRealPermutationAverageL2_ae u ψ hm.coeFn_toLp
     have hpval : p.val.1 = ginibreRealPermutationAverageL2 u := Lp.ext (hp.trans havg.symm)
     have hinner : inner ℝ a.val u = 0 := by
       rw [← ginibreFullSymmetricValues_inner_average n a u, ← hpval]

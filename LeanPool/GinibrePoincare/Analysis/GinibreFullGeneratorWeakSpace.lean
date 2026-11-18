@@ -36,7 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreDistributionalClosure
-public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstants
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstantPairs
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
 
 /-!
@@ -188,22 +188,7 @@ def ginibreFullCenter (n : ℕ) (hn : 0 < n) : GinibreFullValueL2 n →L[ℝ] Gi
 
 theorem ginibreFullCenter_apply (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
     ginibreFullCenter n hn u = u - ginibreRealConstantL2 n hn (ginibreL2Mean n u) := by
-  have hmean : inner ℝ (ginibreRealConstantL2 n hn 1) u = ginibreL2Mean n u := by
-    rw [L2.inner_def]
-    unfold ginibreL2Mean
-    apply integral_congr_ae
-    filter_upwards [ginibreRealConstantL2_ae n hn 1] with z hz
-    simp [hz]
-  have hc : ginibreL2Mean n u • ginibreRealConstantL2 n hn 1 =
-      ginibreRealConstantL2 n hn (ginibreL2Mean n u) := by
-    apply Lp.ext
-    filter_upwards [Lp.coeFn_smul (ginibreL2Mean n u) (ginibreRealConstantL2 n hn 1),
-      ginibreRealConstantL2_ae n hn 1,
-      ginibreRealConstantL2_ae n hn (ginibreL2Mean n u)] with z hs hone hconst
-    rw [hs]
-    change ginibreL2Mean n u * (ginibreRealConstantL2 n hn 1) z = _
-    rw [hone, hconst, mul_one]
-  simp [ginibreFullCenter, hmean, hc]
+  simp [ginibreFullCenter, ginibreRealConstantL2_one_inner, ← ginibreRealConstantL2_eq_smul_one]
 
 /-- Centering preserves the actual symmetric ordinary weak gradient. -/
 theorem ginibreFullCenter_weak_pair {n : ℕ} (hn : 0 < n)

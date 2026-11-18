@@ -36,7 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairClosure
-public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstants
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstantPairs
 public import LeanPool.GinibrePoincare.Endgame.ConcreteTheoremOneNine
 public import LeanPool.GinibrePoincare.Analysis.EquilibriumProbability
 public import LeanPool.GinibrePoincare.Analysis.CenterOfMassEigenfunctions
@@ -61,26 +61,15 @@ def ginibreL2Variance (n : ℕ) (hn : 0 < n)
 
 theorem ginibreL2Variance_continuous (n : ℕ) (hn : 0 < n) :
     Continuous (ginibreL2Variance n hn) := by
-  let := ginibreMeasure_isProbabilityMeasure hn
-  let one : Lp ℝ 2 (ginibreMeasure n) :=
-    (memLp_const (1 : ℝ) : MemLp (fun _ : Configuration n => (1 : ℝ))
-      2 (ginibreMeasure n)).toLp (fun _ => (1 : ℝ))
+  let one := ginibreRealConstantL2 n hn 1
   have hc : Continuous (fun u : Lp ℝ 2 (ginibreMeasure n) =>
       ginibreL2Mean n u • one) :=
     (ginibreL2Mean_continuous n hn).smul continuous_const
-  have hconst (c : ℝ) : ginibreRealConstantL2 n hn c = c • one := by
-    apply Lp.ext
-    filter_upwards [
-      ginibreRealConstantL2_ae n hn c,
-      Lp.coeFn_smul c one,
-      (memLp_const (1 : ℝ) : MemLp (fun _ : Configuration n => (1 : ℝ))
-        2 (ginibreMeasure n)).coeFn_toLp] with z hc hs hone
-    rw [hc, hs]
-    simp [one]
   have hrepr : ginibreL2Variance n hn = fun u =>
       ‖u - ginibreL2Mean n u • one‖ ^ 2 := by
     funext u
-    simp only [ginibreL2Variance, hconst]
+    unfold ginibreL2Variance
+    rw [ginibreRealConstantL2_eq_smul_one n hn (ginibreL2Mean n u)]
   rw [hrepr]
   exact (continuous_norm.comp (continuous_id.sub hc)).pow 2
 

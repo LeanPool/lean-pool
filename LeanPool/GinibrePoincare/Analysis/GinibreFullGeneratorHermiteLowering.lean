@@ -32,7 +32,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstants
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstantPairs
 public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakModes
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorDbarTransform
 

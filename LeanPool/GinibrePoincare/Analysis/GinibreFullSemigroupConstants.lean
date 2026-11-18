@@ -33,8 +33,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorResolvent
-public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstants
-public import LeanPool.GinibrePoincare.Analysis.GinibreEqualityWeakVariational
+public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
 
 /-! # Constants and conservation for the full weak resolvent -/
 
@@ -55,15 +54,6 @@ theorem ginibreFullValueResolvent_constant (n : ℕ) (hn : 0 < n) (c : ℝ) :
     (by intro v h hv hs; simp)
   exact he.1.symm
 
-/-- Integration is the Hilbert pairing with the actual constant one. -/
-theorem ginibreRealConstantL2_one_inner (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
-    inner ℝ (ginibreRealConstantL2 n hn 1) u = ginibreL2Mean n u := by
-  rw [L2.inner_def]
-  unfold ginibreL2Mean
-  apply integral_congr_ae
-  filter_upwards [ginibreRealConstantL2_ae n hn 1] with z hz
-  simp [hz]
-
 /-- The full real weak resolvent preserves the equilibrium integral. -/
 theorem ginibreFullValueResolvent_mean (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
     ginibreL2Mean n (ginibreFullValueResolvent n hn u) = ginibreL2Mean n u := by
@@ -73,10 +63,7 @@ theorem ginibreFullValueResolvent_mean (n : ℕ) (hn : 0 < n) (u : GinibreFullVa
 /-- The actual zero constant is the Hilbert-space zero. -/
 @[simp] theorem ginibreRealConstantL2_zero (n : ℕ) (hn : 0 < n) :
     ginibreRealConstantL2 n hn 0 = 0 := by
-  apply Lp.ext
-  filter_upwards [ginibreRealConstantL2_ae n hn 0, Lp.coeFn_zero
-    (E := ℝ) (p := (2 : ENNReal)) (μ := ginibreMeasure n)] with z hz hzero
-  exact hz.trans hzero.symm
+  rw [ginibreRealConstantL2_eq_smul_one, zero_smul]
 
 /-- The sharp gap gives the concrete full real resolvent contraction `1/3`
  on every zero-mean datum. -/

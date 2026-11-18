@@ -101,6 +101,7 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreSymmetricWeakPoincare
 public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationChainLimits
 public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationL2
 public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationWeakChain
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstantPairs
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakConstants
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakGradient
 public import LeanPool.GinibrePoincare.Analysis.GinibreWeakGradientSupport
