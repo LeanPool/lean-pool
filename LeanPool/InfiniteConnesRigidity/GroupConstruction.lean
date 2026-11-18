@@ -1318,7 +1318,7 @@ private theorem continuous_generatorMaxDisplacement
                bot_eq_zero'] using (continuous_const : Continuous fun _ : H => (0 : NNReal))
   | @insert a S ha ih =>
       simpa only [Finset.sup_insert, Pi.sub_apply, id_eq] using
-        (((α a).continuous.sub continuous_id).nnnorm.sup ih)
+        (((α a).continuous.sub continuous_id).nnNorm.sup ih)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem generator_displacement_le_max
@@ -4793,10 +4793,8 @@ private theorem polynomialCharacter_monomial
             Fin 2 → IntegralPolynomial) := by
     ext j : 2
     by_cases hji : j = i <;> simp only [hji, zsmul_eq_mul, Pi.single_eq_same,
-                               Polynomial.coeff_intCast_mul, Int.cast_eq, Polynomial.coeff_X_pow,
-                               mul_ite, mul_one, mul_zero, Pi.smul_apply, ne_eq,
-                               not_false_eq_true, Pi.single_eq_of_ne, Polynomial.coeff_zero,
-                               smul_zero]
+                               Pi.smul_apply, ne_eq, not_false_eq_true,
+                               Pi.single_eq_of_ne, smul_zero]
   rw [hsingle]
   change χ ((Multiplicative.ofAdd
     (Pi.single i ((Polynomial.X : IntegralPolynomial) ^ n) :
@@ -4821,9 +4819,8 @@ private theorem polynomialCharacter_ext
             (Pi.single i (p + q) : Fin 2 → IntegralPolynomial) =
               Pi.single i p + Pi.single i q := by
           ext j : 2
-          by_cases hji : j = i <;> simp only [hji, Pi.single_eq_same, Polynomial.coeff_add,
-                                     Pi.add_apply, ne_eq, not_false_eq_true, Pi.single_eq_of_ne,
-                                     Polynomial.coeff_zero, add_zero]
+          by_cases hji : j = i <;> simp only [hji, Pi.single_eq_same, Pi.add_apply,
+                                     ne_eq, not_false_eq_true, Pi.single_eq_of_ne, add_zero]
         rw [hsingle]
         have hsplit :
             Multiplicative.ofAdd
@@ -5797,7 +5794,7 @@ private theorem shalomConstantVector_single
   ext j : 2
   by_cases h : i = j <;> simp only [shalomConstantVector, h, eq_intCast, AddMonoidHom.coe_mk,
                            ZeroHom.coe_mk, Pi.single_eq_same, ne_eq, not_false_eq_true,
-                           Pi.single_eq_of_ne', Int.cast_zero, Polynomial.coeff_zero]
+                           Pi.single_eq_of_ne', Int.cast_zero]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private def shalomConstantSpecialLinear :
