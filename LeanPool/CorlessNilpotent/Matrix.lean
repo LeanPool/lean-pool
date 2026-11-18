@@ -30,23 +30,24 @@ namespace Corless
 def T (m : ℕ) (u : ℕ → ℂ) : Matrix (Fin m) (Fin m) ℂ :=
   fun i j => if (j : ℕ) = i + 1 then u i else if (i : ℕ) = j + 1 then -u j else 0
 
-/-- The characteristic matrix of `T m u`, written out. -/
-noncomputable def CM (m : ℕ) (u : ℕ → ℂ) : Matrix (Fin m) (Fin m) ℂ[X] :=
-  fun i j => if i = j then X else if (j : ℕ) = i + 1 then -C (u i)
-    else if (i : ℕ) = j + 1 then C (u j) else 0
+/-- The characteristic matrix of `T m u`. -/
+noncomputable def CM (m : ℕ) (u : ℕ → ℂ) : Matrix (Fin m) (Fin m) ℂ[X] := charmatrix (T m u)
 
-lemma charmatrix_T (m : ℕ) (u : ℕ → ℂ) : charmatrix (T m u) = CM m u := by
-  ext i j
+lemma charmatrix_T (m : ℕ) (u : ℕ → ℂ) : charmatrix (T m u) = CM m u := rfl
+
+lemma CM_apply (m : ℕ) (u : ℕ → ℂ) (i j : Fin m) :
+    CM m u i j = if i = j then X else if (j : ℕ) = i + 1 then -C (u i)
+      else if (i : ℕ) = j + 1 then C (u j) else 0 := by
   by_cases h : i = j
   · subst h
     simp [CM, T]
-  · rw [charmatrix_apply_ne _ _ _ h]
-    simp only [CM, T, h, ite_false]
+  · rw [CM, charmatrix_apply_ne _ _ _ h]
+    simp only [T, h, ite_false]
     split_ifs <;> simp
 
 lemma det_CM_one (u : ℕ → ℂ) : (CM 1 u).det = X := by
   rw [Matrix.det_unique]
-  simp [CM]
+  simp [CM_apply]
 
 /-- Expansion along the first column, then along the first row of the second minor. -/
 lemma det_CM_succ_succ (m : ℕ) (u : ℕ → ℂ) :
@@ -60,14 +61,14 @@ lemma det_CM_succ_succ (m : ℕ) (u : ℕ → ℂ) :
     apply Finset.sum_eq_zero
     intro i _
     have h1 : CM (m + 2) u i.succ.succ 0 = 0 := by
-      simp [CM, Fin.ext_iff, Fin.val_succ]
+      simp [CM_apply, Fin.ext_iff, Fin.val_succ]
     rw [h1, mul_zero, zero_mul]
   rw [hrest, add_zero]
   -- first minor: rows and columns 1, …, m+1
   have hA : (CM (m + 2) u).submatrix (Fin.succAbove (0 : Fin (m + 2))) Fin.succ
       = CM (m + 1) (fun i => u (i + 1)) := by
     ext i j
-    simp [CM, Fin.ext_iff, Fin.val_succ]
+    simp [CM_apply, Fin.ext_iff, Fin.val_succ]
   -- second minor: rows 0, 2, …, m+1 and columns 1, …, m+1; its first row is (-u 0, 0, …, 0)
   have hB : ((CM (m + 2) u).submatrix (Fin.succAbove (Fin.succ (0 : Fin (m + 1)))) Fin.succ).det
       = -C (u 0) * (CM m (fun i => u (i + 2))).det := by
@@ -80,7 +81,7 @@ lemma det_CM_succ_succ (m : ℕ) (u : ℕ → ℂ) :
       intro j _
       have h1 :
           (CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ 0 j.succ = 0 := by
-        simp only [submatrix_apply, CM]
+        simp only [submatrix_apply, CM_apply]
         have e0 : (Fin.succAbove (1 : Fin (m + 2))) 0 = 0 := rfl
         rw [e0]
         simp [Fin.ext_iff, Fin.val_succ]
@@ -89,7 +90,7 @@ lemma det_CM_succ_succ (m : ℕ) (u : ℕ → ℂ) :
     have hC : ((CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ).submatrix
         Fin.succ (Fin.succAbove (0 : Fin (m + 1))) = CM m (fun i => u (i + 2)) := by
       ext i j
-      simp only [Fin.zero_succAbove, submatrix_apply, CM]
+      simp only [Fin.zero_succAbove, submatrix_apply, CM_apply]
       have e1 : (Fin.succAbove (1 : Fin (m + 2))) i.succ = i.succ.succ := by
         rw [Fin.succAbove_of_le_castSucc]
         simp [Fin.le_iff_val_le_val]
@@ -97,14 +98,14 @@ lemma det_CM_succ_succ (m : ℕ) (u : ℕ → ℂ) :
       simp [Fin.ext_iff, Fin.val_succ]
     have h00 :
         (CM (m + 2) u).submatrix (Fin.succAbove (1 : Fin (m + 2))) Fin.succ 0 0 = -C (u 0) := by
-      simp only [submatrix_apply, CM]
+      simp only [submatrix_apply, CM_apply]
       have e0 : (Fin.succAbove (1 : Fin (m + 2))) 0 = 0 := rfl
       rw [e0]
       simp
     rw [hC, h00]
     simp
-  have h00 : CM (m + 2) u 0 0 = X := by simp [CM]
-  have h10 : CM (m + 2) u (Fin.succ 0) 0 = C (u 0) := by simp [CM]
+  have h00 : CM (m + 2) u 0 0 = X := by simp [CM_apply]
+  have h10 : CM (m + 2) u (Fin.succ 0) 0 = C (u 0) := by simp [CM_apply]
   rw [hA, hB, h00, h10]
   simp only [Fin.val_zero, pow_zero, one_mul, Fin.val_succ, zero_add, pow_one, C_pow]
   ring
@@ -198,24 +199,30 @@ lemma reflect_E_eq_iff (s : ℕ → ℤ) (m : ℕ) : reflect m (E s m) = X ^ m �
   · intro h
     simp [E, h]
 
+lemma I_ne_one : Complex.I ≠ 1 := fun h => by
+  have := congrArg Complex.re h
+  simp at this
+
+/-- The edge sign associated with the square of an entry in `{1, i}`. -/
+noncomputable def entrySign (z : ℂ) : ℤ := if z = 1 then 1 else -1
+
+@[simp] lemma entrySign_one : entrySign 1 = 1 := by simp [entrySign]
+
+@[simp] lemma entrySign_I : entrySign Complex.I = -1 := by simp [entrySign, I_ne_one]
+
 /-- **Corless's conjecture, matrix form.** For `u` with entries in `{1, i}`, the matrix `T m u`
 is nilpotent iff the signs `u²` satisfy `Dv = 1`, i.e. (by `corless`) iff `m = 2^(k+1) - 1` and
 the signs form one of Corless's sequences. -/
 theorem T_nilpotent_iff {u : ℕ → ℂ} (hu : ∀ i, u i = 1 ∨ u i = Complex.I) {m : ℕ} (hm : 1 ≤ m) :
     IsNilpotent (T m u) ↔
-      ∃ k, m = 2 ^ (k + 1) - 1 ∧ Fam k (fun i => if u i = 1 then 1 else -1) := by
-  set s : ℕ → ℤ := fun i => if u i = 1 then 1 else -1 with hs
+      ∃ k, m = 2 ^ (k + 1) - 1 ∧ Fam k (fun i => entrySign (u i)) := by
+  set s : ℕ → ℤ := fun i => entrySign (u i) with hs
   have hsu : ∀ i, (s i : ℂ) = u i ^ 2 := by
     intro i
-    rcases hu i with h | h
-    · simp [hs, h]
-    · have hI : Complex.I ≠ 1 := fun h' => by
-        have := congrArg Complex.re h'
-        simp at this
-      simp [hs, h, hI]
+    rcases hu i with h | h <;> simp [hs, h]
   have hsign : IsSign s := by
     intro i
-    by_cases h : u i = 1 <;> simp [hs, h]
+    by_cases h : u i = 1 <;> simp [hs, entrySign, h]
   rw [isNilpotent_iff_charpoly_matrix, Matrix.charpoly, charmatrix_T, det_CM_eq m s u hsu,
     reflect_E_eq_iff, corless hsign hm]
 

@@ -52,11 +52,7 @@ inductive CorlessVec : ℕ → List ℂ → Prop
       CorlessVec k u → CorlessVec (k + 1) (foldVector u Complex.I 1)
 
 /-- The signs `u i ^ 2` of a vector with entries in `{1, i}`, as in `T_nilpotent_iff`. -/
-noncomputable def sgns (u : List ℂ) : ℕ → ℤ := fun i => if u.getD i 1 = 1 then 1 else -1
-
-lemma I_ne_one : Complex.I ≠ 1 := fun h => by
-  have := congrArg Complex.re h
-  simp at this
+noncomputable def sgns (u : List ℂ) : ℕ → ℤ := fun i => entrySign (u.getD i 1)
 
 /-- `Fam k s` only depends on the first `2^(k+1) - 2` signs. -/
 lemma Fam_congr : ∀ (k : ℕ) {s t : ℕ → ℤ}, (∀ i < 2 ^ (k + 1) - 2, s i = t i) →
@@ -133,7 +129,7 @@ lemma fam_step {k : ℕ} {u : List ℂ} {a b : ℂ} (hlen : u.length = 2 ^ (k + 
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · unfold sgns
     rw [getD_step_a, getD_step_b]
-    rcases hab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [I_ne_one]
+    rcases hab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp
   · intro i hi
     unfold sgns
     rw [getD_step_right _ _ _ hi, getD_step_left _ _ _ hi]
@@ -160,11 +156,11 @@ lemma getD_mem {u : List ℂ} (hu : ∀ x ∈ u, x = 1 ∨ x = Complex.I) (i : �
 
 /-- An entry in `{1, i}` is determined by its sign. -/
 lemma eq_of_sgn {x y : ℂ} (hx : x = 1 ∨ x = Complex.I) (hy : y = 1 ∨ y = Complex.I)
-    (h : (if x = 1 then 1 else -1 : ℤ) = if y = 1 then 1 else -1) : x = y := by
+    (h : entrySign x = entrySign y) : x = y := by
   rcases hx with rfl | rfl <;> rcases hy with rfl | rfl
   · rfl
-  · simp [I_ne_one] at h
-  · simp [I_ne_one] at h
+  · simp at h
+  · simp at h
   · rfl
 
 lemma ext_getD {l l' : List ℂ} (hl : l.length = l'.length)
@@ -220,7 +216,7 @@ lemma CorlessVec.of_fam : ∀ (k : ℕ) {u : List ℂ}, u.length = 2 ^ (k + 1) -
       rw [hu_eq]
       unfold sgns at hmid
       rcases getD_mem hu n with ha | ha <;> rcases getD_mem hu (n + 1) with hb | hb <;>
-        rw [ha, hb] at hmid ⊢ <;> simp [I_ne_one] at hmid
+        rw [ha, hb] at hmid ⊢ <;> simp at hmid
       · exact .step₁ ih
       · exact .step₂ ih
 
