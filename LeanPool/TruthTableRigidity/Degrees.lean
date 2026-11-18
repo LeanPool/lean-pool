@@ -126,17 +126,19 @@ theorem InducedBy.inducesProperties {π : TTDegree ≃o TTDegree} {F : Oracle �
 /-- A countable family of closed sets covering `E ∩ U` contains a member that covers a
 nonempty open subset of `U` when `E` is dense `Gδ`. -/
 theorem exists_open_subset_of_closed_cover {B ι : Type*} [TopologicalSpace B] [BaireSpace B]
-    [Countable ι] [Nonempty ι] {E U : Set B} (hEG : IsGδ E) (hEd : Dense E)
+    [Countable ι] {E U : Set B} (hEG : IsGδ E) (hEd : Dense E)
     (hU : IsOpen U) (hne : U.Nonempty) {K : ι → Set B} (hclosed : ∀ i, IsClosed (K i))
     (hcover : ∀ x ∈ E, x ∈ U → ∃ i, x ∈ K i) :
     ∃ i, ∃ V ⊆ U, IsOpen V ∧ V.Nonempty ∧ V ⊆ K i := by
+  obtain ⟨x₀, hx₀U, hx₀E⟩ := hEd.inter_open_nonempty U hU hne
+  obtain ⟨i₀, -⟩ := hcover x₀ hx₀E hx₀U
   let f : ι → Set B := fun i => K i ∪ Uᶜ
   have hcov : E ⊆ ⋃ i, f i := by
     intro x hxE
     by_cases hx : x ∈ U
     · obtain ⟨i, hi⟩ := hcover x hxE hx
       exact Set.mem_iUnion.mpr ⟨i, Or.inl hi⟩
-    · exact Set.mem_iUnion.mpr ⟨Classical.arbitrary ι, Or.inr hx⟩
+    · exact Set.mem_iUnion.mpr ⟨i₀, Or.inr hx⟩
   have hdense := hEG.dense_iUnion_interior_of_closed hEd
     (fun i => (hclosed i).union hU.isClosed_compl) hcov
   obtain ⟨x, hxU, hx⟩ := hdense.inter_open_nonempty U hU hne
@@ -169,7 +171,6 @@ theorem uniformization_on {B : Type*} [TopologicalSpace B] [BaireSpace B] {E U :
       ∃ Φ, IsTTFunctional Φ ∧ ∀ x ∈ E, x ∈ V → φ x = Φ (ψ x) := by
   let S : {Φ : Oracle → Oracle // IsTTFunctional Φ} → Set B :=
     fun Φ => {x | x ∈ E ∧ x ∈ U ∧ φ x = Φ.1 (ψ x)}
-  have : Nonempty {Φ : Oracle → Oracle // IsTTFunctional Φ} := ⟨⟨id, isTTFunctional_id⟩⟩
   have hcover : ∀ x ∈ E, x ∈ U → ∃ Φ, x ∈ closure (S Φ) := by
     intro x hxE hx
     obtain ⟨Φ, hΦ, hx'⟩ := h x hxE hx
@@ -189,19 +190,31 @@ theorem uniformization {B : Type*} [TopologicalSpace B] [BaireSpace B] {U : Set 
     hφ.continuousOn hψ.continuousOn (fun x _ hx => h x hx)
   exact ⟨V, hVU, hV, hVne, Φ, hΦ, fun x hx => hEq x (Set.mem_univ _) hx⟩
 
+/-- The three tt-functionals in a witness for an inverse image of a truth-table degree. -/
+abbrev InverseWitness :=
+  let Functional := {Φ : Oracle → Oracle // IsTTFunctional Φ}
+  Functional × Functional × Functional
+
+/-- Both truth-table reductions identifying the image of the chosen preimage. -/
+def InverseWitness.valid (w : InverseWitness) (F : Oracle → Oracle) (Z : Oracle) : Prop :=
+  w.2.1.1 (F (w.1.1 Z)) = Z ∧ w.2.2.1 Z = F (w.1.1 Z)
+
+theorem InverseWitness.degree_eq {w : InverseWitness} {F : Oracle → Oracle}
+    {Z : Oracle} (h : w.valid F Z) : ttDegree (F (w.1.1 Z)) = ttDegree Z :=
+  ttDegree_eq_iff.mpr ⟨⟨w.2.2.1, w.2.2.2, h.2⟩, ⟨w.2.1.1, w.2.1.2, h.1⟩⟩
+
 /-- Given `X ≤tt F(X)`, every `Z` has a preimage up to truth-table equivalence of the
 form `Φ Z`, together with functional witnesses for both reductions. -/
 theorem InducedBy.exists_inverse_witness {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle}
     (hπ : InducedBy π F) (hle : ∀ X, TTReducible X (F X)) (Z : Oracle) :
-    ∃ Φ Λ Λ' : {Φ : Oracle → Oracle // IsTTFunctional Φ},
-      Λ.1 (F (Φ.1 Z)) = Z ∧ Λ'.1 Z = F (Φ.1 Z) := by
+    ∃ w : InverseWitness, w.valid F Z := by
   obtain ⟨X, hX⟩ := ttDegree_surjective (π.symm (ttDegree Z))
   have hFX : ttDegree (F X) = ttDegree Z := by rw [hπ, hX, OrderIso.apply_symm_apply]
   obtain ⟨h1, h2⟩ := ttDegree_eq_iff.mp hFX
   obtain ⟨Φ, hΦ, hΦZ⟩ := (hle X).trans h1
   obtain ⟨Λ, hΛ, hΛZ⟩ := h2
   obtain ⟨Λ', hΛ', hΛ'Z⟩ := h1
-  refine ⟨⟨Φ, hΦ⟩, ⟨Λ, hΛ⟩, ⟨Λ', hΛ'⟩, ?_, ?_⟩
+  refine ⟨(⟨Φ, hΦ⟩, ⟨Λ, hΛ⟩, ⟨Λ', hΛ'⟩), ?_, ?_⟩
   · change Λ (F (Φ Z)) = Z
     rw [hΦZ, hΛZ]
   · change Λ' Z = F (Φ Z)

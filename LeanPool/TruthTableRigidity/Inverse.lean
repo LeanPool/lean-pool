@@ -66,16 +66,13 @@ theorem exists_open_of_cover {B ι : Type*} [TopologicalSpace B] [BaireSpace B] 
     (hcov : ∀ x ∈ E, ∃ i, P i x) :
     ∃ i, ∃ V : Set B, IsOpen V ∧ V.Nonempty ∧ ∀ x ∈ E, x ∈ V → P i x := by
   let f : ι → Set B := fun i => closure {x | x ∈ E ∧ P i x}
-  have hclosed : ∀ i, IsClosed (f i) := fun i => isClosed_closure
-  have hcover : E ⊆ ⋃ i, f i := by
-    intro x hx
+  have hcover : ∀ x ∈ E, x ∈ Set.univ → ∃ i, x ∈ f i := by
+    intro x hx _
     obtain ⟨i, hi⟩ := hcov x hx
-    exact Set.mem_iUnion.mpr ⟨i, subset_closure ⟨hx, hi⟩⟩
-  have hdense := hEG.dense_iUnion_interior_of_closed hEd hclosed hcover
-  obtain ⟨x, hx⟩ := hdense.nonempty
-  obtain ⟨i, hxi⟩ := Set.mem_iUnion.mp hx
-  exact ⟨i, interior (f i), isOpen_interior, ⟨x, hxi⟩, fun y hyE hy =>
-    hP i y hyE (interior_subset hy)⟩
+    exact ⟨i, subset_closure ⟨hx, hi⟩⟩
+  obtain ⟨i, V, -, hV, hVne, hVf⟩ := exists_open_subset_of_closed_cover hEG hEd
+    isOpen_univ Set.univ_nonempty (fun _ => isClosed_closure) hcover
+  exact ⟨i, V, hV, hVne, fun y hyE hy => hP i y hyE (hVf hy)⟩
 
 /-! ### Removing one parameter -/
 

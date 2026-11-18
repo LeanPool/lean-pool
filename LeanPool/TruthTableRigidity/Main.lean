@@ -34,9 +34,7 @@ theorem prop_3_3 {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle} (hF : Con
   have hP := hπ.inducesProperties
   have hle : ∀ X, TTReducible X (F X) := le_tt_of_prop_3_1 hF hP
   -- every `Z` is tt-equivalent to `F (Φ Z)` for suitable tt-functionals
-  let ι := {Φ : Oracle → Oracle // IsTTFunctional Φ}
-  let C : ι × ι × ι → Set Oracle := fun t =>
-    {Z | t.2.1.1 (F (t.1.1 Z)) = Z ∧ t.2.2.1 Z = F (t.1.1 Z)}
+  let C (w : InverseWitness) : Set Oracle := {Z | w.valid F Z}
   have hclosed : ∀ t, IsClosed (C t) := by
     intro t
     have c1 : Continuous fun Z => F (t.1.1 Z) := hF.comp t.1.2.continuous
@@ -45,20 +43,16 @@ theorem prop_3_3 {π : TTDegree ≃o TTDegree} {F : Oracle → Oracle} (hF : Con
   have hcover : ⋃ t, C t = Set.univ := by
     apply Set.eq_univ_of_forall
     intro Z
-    obtain ⟨Φ, Λ, Λ', hΛ, hΛ'⟩ := hπ.exists_inverse_witness hle Z
-    exact Set.mem_iUnion.mpr ⟨(Φ, Λ, Λ'), hΛ, hΛ'⟩
+    obtain ⟨w, hw⟩ := hπ.exists_inverse_witness hle Z
+    exact Set.mem_iUnion.mpr ⟨w, hw⟩
   obtain ⟨t, Z₀, hZ₀⟩ := nonempty_interior_of_iUnion_of_closed hclosed hcover
   obtain ⟨k, hk⟩ := exists_cyl_subset isOpen_interior hZ₀
   set σ := pre Z₀ k
   have hσ : ∀ W, prep σ W ∈ C t := fun W =>
     interior_subset (hk (by rw [← Ncyl_pre]; exact prep_mem σ W))
   refine ⟨fun Z => t.1.1 (prep σ Z), t.1.2.comp (isTTFunctional_prep σ), fun Z => ?_⟩
-  obtain ⟨h1, h2⟩ := hσ Z
-  have e1 : ttDegree (F (t.1.1 (prep σ Z))) = ttDegree Z := by
-    rw [ttDegree_eq_iff]
-    have r1 : TTReducible (F (t.1.1 (prep σ Z))) (prep σ Z) := ⟨t.2.2.1, t.2.2.2, h2⟩
-    have r2 : TTReducible (prep σ Z) (F (t.1.1 (prep σ Z))) := ⟨t.2.1.1, t.2.1.2, h1⟩
-    exact ⟨r1.trans (prep_ttEquiv σ Z).1, (prep_ttEquiv σ Z).2.trans r2⟩
+  have e1 : ttDegree (F (t.1.1 (prep σ Z))) = ttDegree Z :=
+    (InverseWitness.degree_eq (hσ Z)).trans (ttDegree_eq_iff.mpr (prep_ttEquiv σ Z))
   rw [hπ] at e1
   rw [← e1, OrderIso.symm_apply_apply]
 

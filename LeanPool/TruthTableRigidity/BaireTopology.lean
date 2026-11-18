@@ -12,7 +12,7 @@ infrastructure is reused from the Apache-2.0 OpenAI degree-rigidity port.
 
 module
 
-public import LeanPool.TruthTableRigidity.Prop31
+public import LeanPool.TruthTableRigidity.UniformRelations
 public import Mathlib.Topology.Baire.BaireMeasurable
 
 /-!
@@ -93,7 +93,6 @@ theorem remove_parameters {U : Set (Oracle × Oracle)} (hU : IsOpen U) (hne : U.
     intro p hpE hpU
     obtain ⟨Φ, hΦ, hp⟩ := hEh hpE hpU
     exact ⟨⟨Φ, hΦ⟩, hp.symm⟩
-  have : Nonempty {Φ : Oracle → Oracle // IsTTFunctional Φ} := ⟨⟨id, isTTFunctional_id⟩⟩
   obtain ⟨Φ, V, -, hV, hVne, hVK⟩ :=
     exists_open_subset_of_closed_cover hEG hEd hU hne hclosed hcover
   obtain ⟨γ, δ, hγδ⟩ := exists_box_subset hV hVne

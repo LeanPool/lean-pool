@@ -45,16 +45,15 @@ theorem InducedByBorel.symm {π : TTDegree ≃o TTDegree} (h : InducedByBorel π
   classical
   obtain ⟨F, hF, hπ⟩ := h
   have hle := ttReducible_self_of_baireMeasurable (.of_measurable hF) hπ
-  let ι := {Φ : Oracle → Oracle // IsTTFunctional Φ}
-  have : Nonempty ι := ⟨⟨id, isTTFunctional_id⟩⟩
-  obtain ⟨e, he⟩ := exists_surjective_nat (ι × ι × ι)
-  let p : ℕ → Oracle → Prop := fun n Z =>
-    (e n).2.1.1 (F ((e n).1.1 Z)) = Z ∧ (e n).2.2.1 Z = F ((e n).1.1 Z)
+  have : Nonempty InverseWitness :=
+    ⟨⟨⟨id, isTTFunctional_id⟩, ⟨id, isTTFunctional_id⟩, ⟨id, isTTFunctional_id⟩⟩⟩
+  obtain ⟨e, he⟩ := exists_surjective_nat InverseWitness
+  let p : ℕ → Oracle → Prop := fun n Z => (e n).valid F Z
   have hcover : ∀ Z, ∃ n, p n Z := by
     intro Z
-    obtain ⟨Φ, Λ, Λ', hΛ, hΛ'⟩ := hπ.exists_inverse_witness hle Z
-    obtain ⟨n, hn⟩ := he (Φ, Λ, Λ')
-    exact ⟨n, by simpa only [p, hn] using And.intro hΛ hΛ'⟩
+    obtain ⟨w, hw⟩ := hπ.exists_inverse_witness hle Z
+    obtain ⟨n, hn⟩ := he w
+    exact ⟨n, by simpa only [p, hn] using hw⟩
   have hmeas : ∀ n, MeasurableSet {Z | p n Z} := by
     intro n
     have c1 : Measurable fun Z => F ((e n).1.1 Z) := hF.comp (e n).1.2.continuous.measurable
@@ -65,7 +64,7 @@ theorem InducedByBorel.symm {π : TTDegree ≃o TTDegree} (h : InducedByBorel π
   have h := Nat.find_spec (hcover Z)
   set n := Nat.find (hcover Z)
   have e1 : ttDegree (F ((e n).1.1 Z)) = ttDegree Z :=
-    ttDegree_eq_iff.mpr ⟨⟨(e n).2.2.1, (e n).2.2.2, h.2⟩, ⟨(e n).2.1.1, (e n).2.1.2, h.1⟩⟩
+    InverseWitness.degree_eq h
   rw [hπ] at e1
   change ttDegree ((e n).1.1 Z) = π.symm (ttDegree Z)
   rw [← e1, OrderIso.symm_apply_apply]

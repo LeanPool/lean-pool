@@ -13,6 +13,7 @@ infrastructure is reused from the Apache-2.0 OpenAI degree-rigidity port.
 module
 
 public import LeanPool.TruthTableRigidity.Defs
+public import LeanPool.TuringConeRigidity.Effective.UniformOracle
 
 /-!
 # Uniform oracle programs
@@ -48,26 +49,9 @@ def UTot (F : Oracle → ℕ → ℕ) : Prop := URec fun X n => Part.some (F X n
 
 theorem nat_partrec_oracleCode {f : ℕ →. ℕ} (hf : Nat.Partrec f) :
     ∃ c : OracleCode, ∀ g, OracleCode.eval g c = f := by
-  induction hf with
-  | zero => exact ⟨.zero, fun _ => rfl⟩
-  | succ => exact ⟨.succ, fun _ => rfl⟩
-  | left => exact ⟨.left, fun _ => rfl⟩
-  | right => exact ⟨.right, fun _ => rfl⟩
-  | pair _ _ ihf ihg =>
-    obtain ⟨c, hc⟩ := ihf
-    obtain ⟨d, hd⟩ := ihg
-    exact ⟨.pair c d, fun g => by simp only [OracleCode.eval, hc, hd]; rfl⟩
-  | comp _ _ ihf ihg =>
-    obtain ⟨c, hc⟩ := ihf
-    obtain ⟨d, hd⟩ := ihg
-    exact ⟨.comp c d, fun g => by simp only [OracleCode.eval, hc, hd]; rfl⟩
-  | prec _ _ ihf ihg =>
-    obtain ⟨c, hc⟩ := ihf
-    obtain ⟨d, hd⟩ := ihg
-    exact ⟨.prec c d, fun g => by simp only [OracleCode.eval, hc, hd]; rfl⟩
-  | rfind _ ih =>
-    obtain ⟨c, hc⟩ := ih
-    exact ⟨.find c, fun g => by simp only [OracleCode.eval, hc]; rfl⟩
+  obtain ⟨c, hc⟩ := OracleCode.exists_code
+    (g := fun _ => Part.some 0) hf.recursiveIn
+  exact ⟨substCode c .zero, fun g => by rw [eval_substCode]; exact hc⟩
 
 namespace UTot
 
@@ -111,39 +95,49 @@ theorem map₂ {F G : Oracle → ℕ → ℕ} {h : ℕ → ℕ → ℕ} (hh : Co
 
 theorem id : UTot fun _ n => n := const Computable.id
 
-/-- Append a bit (given as `0`/`1`) to an encoded list of bits. -/
-def appendBit (e k : ℕ) : ℕ := encode ((decode (α := List Bool) e).getD [] ++ [k == 1])
-
-theorem appendBit_primrec : Primrec₂ appendBit :=
-  Primrec.encode.comp (Primrec.list_append.comp
-    (Primrec.option_getD_default.comp (Primrec.decode.comp Primrec.fst))
-    (Primrec.list_cons.comp (Primrec.beq.comp Primrec.snd (Primrec.const 1))
-      (Primrec.const [])))
-
-/-- The prefixes of the oracle are uniformly computable. -/
-theorem prefixes : UTot fun X m => encode (pre X m) := by
+/-- A single program computes the numerical prefix of every Boolean oracle. -/
+theorem numericalPrefixes : UTot fun X m =>
+    encode (UniformOracle.oraclePrefix (fun k => bv (X k)) m) := by
   have hstep : UTot fun X w =>
-      appendBit (Nat.unpair (Nat.unpair w).2).2 (bv (X (Nat.unpair (Nat.unpair w).2).1)) :=
-    map₂ appendBit_primrec.to_comp
+      UniformOracle.appendEncoded (Nat.unpair (Nat.unpair w).2).2
+        (bv (X (Nat.unpair (Nat.unpair w).2).1)) :=
+    map₂ UniformOracle.appendEncoded_primrec.to_comp
       (const (Computable.snd.comp (Computable.unpair.comp
         (Computable.snd.comp Computable.unpair))))
       (comp query (const (Computable.fst.comp (Computable.unpair.comp
         (Computable.snd.comp Computable.unpair)))))
   obtain ⟨d, hd⟩ := hstep
-  obtain ⟨c, hc⟩ := const (Computable.const (encode ([] : List Bool)))
+  obtain ⟨c, hc⟩ := const (Computable.const (encode ([] : List ℕ)))
   obtain ⟨e, he⟩ := const (Primrec₂.natPair.comp (Primrec.const 0) Primrec.id).to_comp
   refine ⟨.comp (.prec c d) e, fun X => ?_⟩
   funext n
   simp only [OracleCode.eval, he, Part.bind_eq_bind, Part.bind_some, Nat.unpair_pair, _root_.id]
   induction n with
-  | zero => simp [hc, pre]
+  | zero => simp [hc, UniformOracle.oraclePrefix, PrefixComputability.oraclePrefix]
   | succ n ih =>
     simp only [hd] at ih ⊢
     rw [ih]
     simp only [Part.bind_some, Nat.unpair_pair]
     congr 1
-    simp [appendBit, pre, List.range_succ, bv]
-    cases X n <;> rfl
+    simp [UniformOracle.appendEncoded, PrefixComputability.appendEncoded,
+      UniformOracle.oraclePrefix, PrefixComputability.oraclePrefix, List.range_succ]
+
+/-- The bit prefixes are uniformly computable by decoding the numerical prefixes. -/
+theorem prefixes : UTot fun X m => encode (pre X m) := by
+  let bits : ℕ → ℕ := fun e =>
+    encode (((decode (α := List ℕ) e).getD []).map fun k => k == 1)
+  have hbits : Primrec bits :=
+    Primrec.encode.comp (Primrec.list_map (Primrec.option_getD_default.comp Primrec.decode)
+      (Primrec.beq.comp Primrec.snd (Primrec.const 1)))
+  have he (X : Oracle) (m : ℕ) :
+      bits (encode (UniformOracle.oraclePrefix (fun k => bv (X k)) m)) = encode (pre X m) := by
+    simp only [bits, encodek, Option.getD_some, UniformOracle.oraclePrefix,
+      PrefixComputability.oraclePrefix, pre, List.map_map]
+    congr 1
+    apply congrArg (fun f : ℕ → Bool => (List.range m).map f)
+    funext k
+    cases hx : X k <;> simp [Function.comp_apply, bv, hx]
+  simpa only [he] using map hbits.to_comp numericalPrefixes
 
 theorem rfind_some {p : ℕ → Bool} (h : ∃ k, p k = true) :
     Nat.rfind (fun k => Part.some (p k)) = Part.some (Nat.find h) := by

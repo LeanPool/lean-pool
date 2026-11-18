@@ -114,39 +114,50 @@ theorem decode_of_good {F Φp Φm Φh : Oracle → Oracle} (hp : IsTTFunctional 
     simp only [add_zero] at hminus
     exact (Relations.halve hThTh (by simpa only [sub_eq_add_neg] using hhalf) hminus).symm
   -- the tt-functionals, acting on `A ⊕ P`
+  let shiftParameter : Oracle → Oracle := fun B => evens (evens (odds B))
+  let subtractParameter : Oracle → Oracle := fun B => odds (evens (odds B))
+  let negativeParameter : Oracle → Oracle := fun B => evens (odds (odds B))
+  let doubleParameter : Oracle → Oracle := fun B => odds (odds (odds B))
+  have hshift : IsTTFunctional shiftParameter :=
+    isTTFunctional_evens.comp (isTTFunctional_evens.comp isTTFunctional_odds)
+  have hsubtract : IsTTFunctional subtractParameter :=
+    isTTFunctional_odds.comp (isTTFunctional_evens.comp isTTFunctional_odds)
+  have hnegative : IsTTFunctional negativeParameter :=
+    isTTFunctional_evens.comp (isTTFunctional_odds.comp isTTFunctional_odds)
+  have hdouble : IsTTFunctional doubleParameter :=
+    isTTFunctional_odds.comp (isTTFunctional_odds.comp isTTFunctional_odds)
+  have shiftParameter_packed (A : Oracle) : shiftParameter (ojoin A P) = P1 := by
+    simp only [shiftParameter, P, evens_ojoin, odds_ojoin]
+  have subtractParameter_packed (A : Oracle) : subtractParameter (ojoin A P) = P1' := by
+    simp only [subtractParameter, P, evens_ojoin, odds_ojoin]
+  have negativeParameter_packed (A : Oracle) : negativeParameter (ojoin A P) = P2 := by
+    simp only [negativeParameter, P, evens_ojoin, odds_ojoin]
+  have doubleParameter_packed (A : Oracle) : doubleParameter (ojoin A P) = P3 := by
+    simp only [doubleParameter, P, odds_ojoin]
   let Ξh : Oracle → Oracle := fun B =>
-    ojoin (Φm (ojoin (Φp (ojoin (evens B) (evens (evens (odds B))))) (evens (odds (odds B)))))
-      (odds B)
+    ojoin (Φm (ojoin (Φp (ojoin (evens B) (shiftParameter B))) (negativeParameter B))) (odds B)
   have hΞh : IsTTFunctional Ξh :=
-    (hm.comp ((hp.comp (isTTFunctional_evens.join (isTTFunctional_evens.comp
-      (isTTFunctional_evens.comp isTTFunctional_odds)))).join
-      (isTTFunctional_evens.comp (isTTFunctional_odds.comp isTTFunctional_odds)))).join
-      isTTFunctional_odds
+    (hm.comp ((hp.comp (isTTFunctional_evens.join hshift)).join hnegative)).join isTTFunctional_odds
   let Ih : Oracle → Oracle := fun B m => (Ξh^[m] B) (2 * j)
   have hIh : IsTTFunctional Ih := hΞh.iterate (2 * j)
   let εh : Oracle → Oracle := fun B _ => decide (∃ c < N, Ih B c ≠ b)
   have hεh : IsTTFunctional εh := (isTTFunctional_someNe N b).comp hIh
   let Ξ'core : Oracle → Oracle := fun B =>
-    Φm (ojoin (Φp (ojoin (evens B) (odds (evens (odds B))))) (evens (odds (odds B))))
+    Φm (ojoin (Φp (ojoin (evens B) (subtractParameter B))) (negativeParameter B))
   have hΞ'core : IsTTFunctional Ξ'core :=
-    hm.comp ((hp.comp (isTTFunctional_evens.join (isTTFunctional_odds.comp
-      (isTTFunctional_evens.comp isTTFunctional_odds)))).join
-      (isTTFunctional_evens.comp (isTTFunctional_odds.comp isTTFunctional_odds)))
+    hm.comp ((hp.comp (isTTFunctional_evens.join hsubtract)).join hnegative)
   let A'h : Oracle → Oracle := fun B n => if εh B 0 = true then Ξ'core B n else evens B n
   have hA'h : IsTTFunctional A'h := hεh.ite hΞ'core isTTFunctional_evens 0
   let Θh : Oracle → Oracle := fun B =>
-    ojoin (Φm (ojoin (Φh (ojoin (A'h B) (odds (odds (odds B))))) (evens (odds (odds B)))))
-      (odds B)
+    ojoin (Φm (ojoin (Φh (ojoin (A'h B) (doubleParameter B))) (negativeParameter B))) (odds B)
   have hΘh : IsTTFunctional Θh :=
-    (hm.comp ((hh.comp (hA'h.join (isTTFunctional_odds.comp
-      (isTTFunctional_odds.comp isTTFunctional_odds)))).join
-      (isTTFunctional_evens.comp (isTTFunctional_odds.comp isTTFunctional_odds)))).join
-      isTTFunctional_odds
+    (hm.comp ((hh.comp (hA'h.join hdouble)).join hnegative)).join isTTFunctional_odds
   let Γ : Oracle → Oracle := fun B m => εh (Θh^[m] B) 0
   have hΓ : IsTTFunctional Γ := hΘh.iterate_read hεh 0
   -- semantics of the functionals on `A ⊕ P`
   have sΞh : ∀ A, Ξh (ojoin A P) = ojoin (Ξ A) P := by
-    intro A; simp only [Ξh, Ξ, P, evens_ojoin, odds_ojoin]
+    intro A
+    simp only [Ξh, Ξ, shiftParameter_packed, negativeParameter_packed, evens_ojoin, odds_ojoin]
   have sΞh' : ∀ c A, Ξh^[c] (ojoin A P) = ojoin (Ξ^[c] A) P := by
     intro c
     induction c with
@@ -193,12 +204,12 @@ theorem decode_of_good {F Φp Φm Φh : Oracle → Oracle} (hp : IsTTFunctional 
         have := tr _ (hXm m) _ (C.neg_mem hY)
         rw [← e', ← sub_eq_add_neg] at this
         rw [this]
-        simp only [Ξ'core, evens_ojoin, odds_ojoin, P]
+        simp only [Ξ'core, evens_ojoin, subtractParameter_packed, negativeParameter_packed]
         rfl
     obtain ⟨hA'1, hT'C⟩ := hA'
     have := hv T' hT'C hT'low (hshT' ▸ hXm (m + 1))
     rw [hshT'] at this
-    simp only [Θh, hA'1, odds_ojoin, P, evens_ojoin]
+    simp only [Θh, hA'1, odds_ojoin, doubleParameter_packed, negativeParameter_packed]
     rw [← this]
   have hit : ∀ m, Θh^[m] (ojoin (a (zseq l X 0)) P) = ojoin (a (zseq l X m)) P := by
     intro m

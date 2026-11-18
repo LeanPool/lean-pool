@@ -24,3 +24,4 @@ public import LeanPool.TruthTableRigidity.Prop31
 public import LeanPool.TruthTableRigidity.ShiftStep
 public import LeanPool.TruthTableRigidity.TwoAdic
 public import LeanPool.TruthTableRigidity.Uniform
+public import LeanPool.TruthTableRigidity.UniformRelations
