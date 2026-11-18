@@ -157,7 +157,7 @@ theorem ite_eq_right_of_ne_left [Decidable c] (h : ite c t e ≠ t) : ite c t e 
   (ite_eq_or_eq ..).elim (False.elim ∘ h) id
 
 /-- The elements of `α` attained by a function into `WithTop α`. -/
-def WithTop.domain (f : ι → WithTop α) : Set α := fun a => ∃ i, f i = a
+def WithTop.domain (f : ι → WithTop α) : Set α := {a | ∃ i, f i = a}
 
 theorem domain_nonempty_of_iInf_ne_top {f : ι → ℕ∞} (h : iInf f ≠ ⊤) :
     (WithTop.domain f).Nonempty :=
@@ -166,8 +166,16 @@ theorem domain_nonempty_of_iInf_ne_top {f : ι → ℕ∞} (h : iInf f ≠ ⊤) 
 
 open Classical in
 theorem ENat.iInf_eq_find_of_ne_top {f : ι → ℕ∞} (h : iInf f ≠ ⊤)
-    : iInf f = Nat.find (domain_nonempty_of_iInf_ne_top h) :=
-  (ite_eq_right_of_ne_left h).trans <| congr_arg _ <| dite_eq_left _
+    : iInf f = Nat.find (domain_nonempty_of_iInf_ne_top h) := by
+  apply ENat.iInf_eq_natCast_iff.mpr
+  refine ⟨Nat.find_spec (domain_nonempty_of_iInf_ne_top h), fun i => ?_⟩
+  by_cases hi : f i = ⊤
+  · exact hi ▸ le_top
+  · calc
+      (Nat.find (domain_nonempty_of_iInf_ne_top h) : ℕ∞) ≤ ((f i).untop hi : ℕ∞) :=
+        WithTop.coe_le_coe.mpr
+          (Nat.find_min' (domain_nonempty_of_iInf_ne_top h) ⟨i, ((f i).coe_untop hi).symm⟩)
+      _ = f i := (f i).coe_untop hi
 
 open Classical in
 theorem iInf_exists_eq_of_ne_top {f : ι → ℕ∞} (h : iInf f ≠ ⊤) : ∃ i, iInf f = f i :=

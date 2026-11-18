@@ -360,7 +360,7 @@ instance Tableau.instDecidableEq {Hist X} {tab1 tab2 : Tableau Hist X} :
       · apply isTrue; aesop
     · apply isFalse; aesop
   all_goals
-    try simp_all only [reduceCtorEq, pdl.injEq, lrep.injEq]
+    simp_all only [reduceCtorEq, pdl.injEq, lrep.injEq]
     try exact instDecidableFalse
     try infer_instance
   case pdl.pdl =>

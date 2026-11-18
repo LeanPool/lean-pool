@@ -36,8 +36,8 @@ lemma applyLocalRule_not_isLeft {Lcond Rcond Ocond ress}
   rcases lr with ⟨orule, rfl⟩|⟨orule, rfl⟩|_|_|⟨χ, lrule, rfl⟩|⟨χ, lrule, rfl⟩
   all_goals
     intro c hc
-    try simp only [applyLocalRule, Finset.mem_image, exists_exists_and_eq_and] at hc
-    try obtain ⟨z, hz, rfl⟩ := hc
+    simp only [applyLocalRule, Finset.mem_image, exists_exists_and_eq_and] at hc
+    obtain ⟨z, hz, rfl⟩ := hc
     try obtain ⟨z, zo, hz, rfl⟩ := hc
     rcases O with _|(o|o)
     <;> (try rcases z with ⟨zl, _|zo⟩)
@@ -54,8 +54,8 @@ lemma applyLocalRule_L_empty {Lcond Rcond Ocond ress} (lr : LocalRule (Lcond, Rc
   · exact absurd hsub orule.precond_ne_nil
   all_goals
     intro c hc
-    try simp only [applyLocalRule, Finset.mem_image, exists_exists_and_eq_and] at hc
-    try obtain ⟨z, hz, rfl⟩ := hc
+    simp only [applyLocalRule, Finset.mem_image, exists_exists_and_eq_and] at hc
+    obtain ⟨z, hz, rfl⟩ := hc
     try obtain ⟨z, zo, hz, rfl⟩ := hc
     try (rw [Option.some_subseteq] at hO; subst hO)
     simp_all

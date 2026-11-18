@@ -150,7 +150,7 @@ theorem repl_in_list_non_occ_eq (F : List Formula) :
     · apply repl_in_F_non_occ_eq
       simp only [Vocab.fromList, Finset.mem_sup, List.mem_toFinset, List.mem_map, id_eq,
         exists_exists_and_eq_and, not_exists, not_and, List.map_cons, List.toFinset_cons,
-        Finset.sup_insert, Finset.sup_eq_union', Finset.mem_union, not_or] at *
+        Finset.sup_insert, Finset.mem_union, not_or] at *
       exact nonOcc.left
     · apply IH
       clear IH
