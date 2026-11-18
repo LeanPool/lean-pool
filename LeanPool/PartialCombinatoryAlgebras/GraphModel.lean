@@ -36,11 +36,11 @@ end Listing
 
 /-- [x] qua subset of elements listed by `x`. -/
 @[reducible]
-def toSet {α : Type} [Listing α] (x : α) : Set α := (Listing.toList x).Mem
+def toSet {α : Type} [Listing α] (x : α) : Set α := {y | y ∈ Listing.toList x}
 
 @[simp]
 theorem eq_toSet_fromList {α : Type} [Listing α] {ys : List α} :
-  toSet (Listing.fromList ys) = ys.Mem := by
+  toSet (Listing.fromList ys) = {y | y ∈ ys} := by
   ext; unfold toSet; rw [Listing.eq_list]
 
 namespace Listing
@@ -151,7 +151,7 @@ theorem continuous_id : continuous (@id (Set α)) := by
     constructor
     · intro y
       rw [eq_toSet_fromList]
-      simp only [Membership.mem, Set.Mem]
+      simp only [Membership.mem]
       rintro (H | ⟨A, ⟨⟩⟩); assumption
     · rw [eq_toSet_fromList]
       apply List.Mem.head
@@ -233,14 +233,15 @@ theorem continuous₂_compose (f g : Set α → Set α) (h : Set α → Set α �
         intro w wzs
         rw [eq_toSet_fromList]
         exact List.mem_append.mpr (.inr wzs)
-      · exact continuous₂_monotone₂ Ch _ _ _ _ yfu zgv xhyz
+      · exact continuous₂_monotone₂ Ch _ _ _ _ (fun _ hy => yfu _ hy)
+          (fun _ hz => zgv _ hz) xhyz
   · rintro ⟨y, yU, xhfygy⟩
     exact continuous₂_monotone₂ Ch _ _ _ _ (continuous_monotone Cf _ _ yU)
       (continuous_monotone Cg _ _ yU) xhfygy
 
 /-- The graph of a function -/
 def graph (f : Set α → Set α) : Set α :=
-  fun x => fst x ∈ f (toSet (snd x))
+  {x | fst x ∈ f (toSet (snd x))}
 
 /-- Currying combined with graph is continuous -/
 theorem continuous_graph (f : Set α → Set α → Set α) :
@@ -254,7 +255,7 @@ theorem continuous_graph (f : Set α → Set α → Set α) :
 
 /-- Combinatory application on the graph model -/
 def apply (S : Set α) : Set α → Set α :=
-  fun T x => ∃ y, toSet y ⊆ T ∧ pair x y ∈ S
+  fun T => {x | ∃ y, toSet y ⊆ T ∧ pair x y ∈ S}
 
 namespace Listing
 
@@ -322,7 +323,7 @@ theorem eq_apply_graph (f : Set α → Set α) : continuous f → apply (graph f
   intro Cf
   ext S x
   constructor
-  · simp only [apply, graph, Membership.mem, Set.Mem]
+  · simp only [apply, graph, Membership.mem]
     rintro ⟨y, yS, H⟩
     rw [eq_fst_pair, eq_snd_pair] at H
     exact (Cf S x).mpr ⟨y, yS, H⟩
@@ -331,7 +332,7 @@ theorem eq_apply_graph (f : Set α → Set α) : continuous f → apply (graph f
     use y
     constructor
     · assumption
-    · simp only [graph, Membership.mem, Set.Mem]
+    · simp only [graph, Membership.mem]
       rw [eq_fst_pair, eq_snd_pair]
       assumption
 
