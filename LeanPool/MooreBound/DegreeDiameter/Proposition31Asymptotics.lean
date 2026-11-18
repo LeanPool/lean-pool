@@ -259,9 +259,7 @@ theorem proposition31_qFactorial_div_denominator_tendsto_one
         (proposition31_denominatorPolynomial_monic hk).ne_zero,
       proposition31_qFactorialPolynomial_natDegree_odd,
       proposition31_denominatorPolynomial_natDegree hk]
-  have h := Polynomial.div_tendsto_atTop_leadingCoeff_div_of_degree_eq
-    (proposition31QFactorialPolynomial (2 * k + 1))
-    (proposition31DenominatorPolynomial k) hdegree
+  have h := Polynomial.div_tendsto_atTop_leadingCoeff_div_of_degree_eq hdegree
   simpa only [
       (proposition31_qFactorialPolynomial_monic (2 * k + 1)).leadingCoeff,
       (proposition31_denominatorPolynomial_monic hk).leadingCoeff,
