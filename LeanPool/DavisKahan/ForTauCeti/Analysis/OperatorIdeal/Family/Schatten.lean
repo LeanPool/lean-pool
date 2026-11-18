@@ -137,7 +137,7 @@ theorem ofReal_lpGauge_le_schattenENorm {p : ℝ} (hp0 : 0 < p) (T : E →L[𝕜
         (TauCeti.FiniteVector.lpGauge p (fun i : Fin k => T.approximationNumber i)) ≤
       T.schattenENorm p := by
   rw [ofReal_lpGauge_approximationNumber hp0 T k, schattenENorm]
-  exact ENNReal.rpow_le_rpow (ENNReal.sum_le_tsum _) (by positivity)
+  exact ENNReal.rpow_le_rpow (sum_le_tsum _) (by positivity)
 
 section Triangle
 
@@ -200,7 +200,7 @@ omit [CompleteSpace E] [CompleteSpace F] in
 theorem enorm_le_schattenENorm {p : ℝ} (hp0 : 0 < p) (T : E →L[𝕜] F) :
     ‖T‖ₑ ≤ T.schattenENorm p := by
   have hz : ‖T‖ₑ ^ p ≤ ∑' n : ℕ, ENNReal.ofReal (T.approximationNumber n) ^ p := by
-    refine le_trans (le_of_eq ?_) (ENNReal.le_tsum 0)
+    refine le_trans (le_of_eq ?_) (le_tsum _ 0)
     rw [← ofReal_norm, ← T.approximationNumber_index_zero]
   have := ENNReal.rpow_le_rpow hz (by positivity : (0 : ℝ) ≤ p⁻¹)
   rwa [← ENNReal.rpow_mul, mul_inv_cancel₀ hp0.ne', ENNReal.rpow_one] at this
@@ -233,7 +233,7 @@ theorem schattenENorm_comp_le {p : ℝ} (hp0 : 0 < p) {G H : Type*}
       ≤ ((‖L‖ₑ * ‖R‖ₑ) ^ p * ∑' n : ℕ, ENNReal.ofReal (T.approximationNumber n) ^ p) ^ p⁻¹ := by
         refine ENNReal.rpow_le_rpow ?_ (by positivity)
         rw [← ENNReal.tsum_mul_left]
-        exact ENNReal.tsum_le_tsum hterm
+        exact tsum_le_tsum hterm
     _ = ‖L‖ₑ * T.schattenENorm p * ‖R‖ₑ := by
         rw [ENNReal.mul_rpow_of_nonneg _ _ (by positivity : (0 : ℝ) ≤ p⁻¹),
           ← ENNReal.rpow_mul, mul_inv_cancel₀ hp0.ne', ENNReal.rpow_one, schattenENorm]

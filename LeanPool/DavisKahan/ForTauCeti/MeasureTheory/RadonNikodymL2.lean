@@ -146,10 +146,10 @@ squared norm into the `μ`-integral of the same squared norm.  Only `μ ≪ ν` 
 theorem lintegral_enorm_rnDerivSqrt_mul_sq [SigmaFinite μ] [SigmaFinite ν] (hμν : μ ≪ ν)
     {f : α → ℂ} (hf : AEMeasurable f ν) :
     ∫⁻ x, ‖((rnDerivSqrt μ ν x : ℝ) : ℂ) * f x‖ₑ ^ 2 ∂ν = ∫⁻ x, ‖f x‖ₑ ^ 2 ∂μ := by
-  rw [← lintegral_rnDeriv_mul hμν (f := fun x => ‖f x‖ₑ ^ 2) (hf.enorm.pow_const 2)]
+  rw [← lintegral_rnDeriv_mul hμν (f := fun x => ‖f x‖ₑ ^ 2) (hf.eNorm.pow_const 2)]
   refine lintegral_congr_ae ?_
   filter_upwards [Measure.rnDeriv_lt_top μ ν] with x hx
-  rw [enorm_mul, mul_pow, enorm_rnDerivSqrt_sq hx.ne]
+  rw [eNorm_mul, mul_pow, enorm_rnDerivSqrt_sq hx.ne]
 
 /-- **The change of variables, as an equality of `L²` seminorms.**  Multiplying by the multiplier
 carries the `L²(μ)` seminorm of `f` to the `L²(ν)` seminorm of the product. -/
@@ -160,8 +160,8 @@ theorem eLpNorm_rnDerivSqrt_mul [SigmaFinite μ] [SigmaFinite ν] (hμν : μ �
   have hprod : AEStronglyMeasurable (fun x => ((rnDerivSqrt μ ν x : ℝ) : ℂ) * f x) ν :=
     (Complex.continuous_ofReal.measurable.comp
       (measurable_rnDerivSqrt μ ν)).aestronglyMeasurable.mul hf.aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hprod,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hprod,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       (hf.aestronglyMeasurable.mono_ac hμν), h2]
   simp only [ENNReal.rpow_two]
   rw [lintegral_enorm_rnDerivSqrt_mul_sq hμν hf]

@@ -115,7 +115,7 @@ could charge `S` entirely outside `level 0`, where the model measure never looks
 theorem MultiplicityDatum.base_eq_zero_iff_measure_fst_preimage_eq_zero (D : MultiplicityDatum 𝕜)
     {S : Set ℂ} (hS : MeasurableSet S) :
     D.base S = 0 ↔ D.measure (Prod.fst ⁻¹' S) = 0 := by
-  rw [D.measure_fst_preimage hS, ENNReal.tsum_eq_zero]
+  rw [D.measure_fst_preimage hS, tsum_eq_zero_iff]
   constructor
   · exact fun h k => measure_mono_null Set.inter_subset_left h
   · intro h

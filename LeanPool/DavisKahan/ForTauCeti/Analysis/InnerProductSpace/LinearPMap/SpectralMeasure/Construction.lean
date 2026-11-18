@@ -338,7 +338,7 @@ theorem one_add_smul_resolvent_eq_cfcHom :
     rw [_root_.sub_apply, one_apply_eq_self] at h
     linear_combination (norm := module) -h
   simp only [one_apply_eq_self, _root_.smul_apply, _root_.add_apply, hU]
-  match_scalars <;> (field_simp; try ring)
+  match_scalars <;> (field_simp; ring)
 
 include hz in
 /-- **The resolvent is the continuous functional calculus of `g_z`.**  Proved

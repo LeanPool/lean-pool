@@ -20,12 +20,12 @@ Section 6 counterexample by an ordinary finite column calculation.
 
 The paper square energy is defined only for complete spaces, so every statement
 below must have `CompleteSpace` available merely to typecheck.  Completeness is
-a consequence of finite-dimensionality, but `FiniteDimensional.complete` is
+a consequence of finite-dimensionality, but `FiniteDimensional.completeSpace` is
 deliberately not an instance in Mathlib, since the scalar field would be an
 unknown metavariable during instance resolution.  The binders are therefore
 written out.  They cost the caller nothing: `CompleteSpace` is a `Prop` class,
 so proof irrelevance identifies whatever instance a call site already carries
-with one produced by `letI : CompleteSpace E := FiniteDimensional.complete 𝕜 E`.
+with one produced by `letI : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E`.
 -/
 
 @[expose] public section

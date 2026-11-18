@@ -341,7 +341,7 @@ theorem extend_le_tsum (a : ℕ → ℝ≥0∞) : Φ.extend a ≤ ∑' n, a n :=
         exact_mod_cast apply_le_sum Φ b.1
     _ = ∑ i ∈ b.1.support, ((b.1 i : ℝ≥0) : ℝ≥0∞) := by push_cast; ring
     _ ≤ ∑ i ∈ b.1.support, a i := Finset.sum_le_sum fun i _ => b.2 i
-    _ ≤ ∑' n, a n := ENNReal.sum_le_tsum _
+    _ ≤ ∑' n, a n := sum_le_tsum _
 
 /-- **Both ends of the scale**, and the reason the normalization is not a
 restriction: the extension sits between the supremum and the sum. -/

@@ -213,8 +213,8 @@ theorem exists_continuous_integral_norm_sub_le (ν : Measure (spectrum ℂ a))
   -- names the application so the norm bound applies to it directly.
   change (∫ x, ‖f x - g x‖ ∂ν) ≤ ε
   have hint : ∫ x, ‖f x - g x‖ ∂ν = (eLpNorm (f - ⇑g) 1 ν).toReal := by
-    rw [eLpNorm_one_eq_lintegral_enorm (hf.sub hgint).aestronglyMeasurable,
-      integral_norm_eq_lintegral_enorm (μ := ν) (f := fun x => f x - g x)
+    rw [eLpNorm_one_eq_lintegral_eNorm (hf.sub hgint).aestronglyMeasurable,
+      integral_norm_eq_lintegral_eNorm (μ := ν) (f := fun x => f x - g x)
         (hf.sub hgint).aestronglyMeasurable]
     rfl
   rw [hint]
@@ -233,7 +233,7 @@ variable (ha : IsStarNormal a)
 theorem isFiniteMeasure_sum_diagMeasure {ι : Type*} [Fintype ι] (v : ι → H) :
     IsFiniteMeasure (∑ j, diagMeasure ha (v j)) := by
   refine ⟨?_⟩
-  rw [Measure.coe_finsetSum, Finset.sum_apply]
+  rw [FunLike.coe_sum, Finset.sum_apply]
   exact ENNReal.sum_lt_top.mpr fun j _ => measure_lt_top _ _
 
 /-- Each summand of a finite sum of diagonal measures is dominated by the sum. -/

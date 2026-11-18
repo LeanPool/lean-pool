@@ -110,7 +110,7 @@ theorem integral_comp_val_diagMeasure_mulLp {h : ℂ → ℂ} (hm : Measurable h
     integral_withDensity_eq_integral_toReal_smul₀ (aemeasurable_enorm_sq ρ F)
       (Filter.Eventually.of_forall fun _ => by finiteness)]
   refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
-  simp only [Complex.real_smul, ENNReal.toReal_pow, toReal_enorm]
+  simp only [Complex.real_smul, ENNReal.toReal_pow, toReal_eNorm]
   push_cast
   ring
 

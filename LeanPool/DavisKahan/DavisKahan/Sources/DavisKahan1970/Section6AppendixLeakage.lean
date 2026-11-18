@@ -212,7 +212,7 @@ theorem hilbertSchmidtEnergy_domain_projection_add_complex
   rw [hswap L, hswap (L ∘L P.starProjection),
     hswap (L ∘L (1 - P.starProjection)), hPadj, hPcadj]
   unfold hilbertSchmidtBasisEnergy
-  rw [← ENNReal.tsum_add]
+  rw [← tsum_add]
   apply tsum_congr
   intro i
   simp only [ContinuousLinearMap.comp_apply]

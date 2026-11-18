@@ -160,7 +160,7 @@ theorem theorem6_3_perturbation_equalRank
     N.Mem (theorem63DirectedTangent Z V) ∧
       delta * N.gauge (theorem63DirectedTangent Z V) ≤
         N.gauge (E ∘L Z.subtypeL) := by
-  have : CompleteSpace Z := FiniteDimensional.complete ℂ Z
+  have : CompleteSpace Z := FiniteDimensional.completeSpace ℂ Z
   refine mem_and_scaled_gauge_le_of_all_scaled_kyFan_le N.toFanDominantIdealFamily hdelta
     hEmem ?_
   intro k

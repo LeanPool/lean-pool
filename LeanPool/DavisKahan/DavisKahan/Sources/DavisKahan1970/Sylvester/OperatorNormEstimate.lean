@@ -285,15 +285,12 @@ theorem sharp52_A_sq : sharpA52 ∘ₗ sharpA52 = LinearMap.id := by
   fin_cases i <;>
     simp [sharpA52, Matrix.toLpLin_apply, Matrix.vecHead, Matrix.vecTail]
 
--- `simp` closes one of the two `fin_cases` branches outright, so the trailing
--- `ring` must tolerate zero remaining goals; the seq-focus linter cannot see
--- that and misfires here.
 /-- `B² = 2B`, so every eigenvalue of `B` is `0` or `2`. -/
 theorem sharp52_B_sq : sharpB52 ∘ₗ sharpB52 = (2 : ℝ) • sharpB52 := by
   ext x i
   fin_cases i <;>
     simp [sharpB52, Matrix.toLpLin_apply, Matrix.vecHead, Matrix.vecTail]
-  all_goals ring
+  ring
 
 /-- The eigenvalues of the source's `A` are `1` and `-1`. -/
 theorem sharp52_eigenvalue_A {lam : ℝ}
