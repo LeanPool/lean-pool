@@ -576,6 +576,10 @@ private meta def checkBellmanReduction (operands value : Lean.Expr) :
   let reflexivity ← Lean.Meta.mkEqRefl value
   let certificate ← Lean.Meta.mkAuxLemma [] equality reflexivity
     (kind? := some `polynomialReduction)
+  -- Await the checked declaration before letting the staged proof succeed.
+  let kernelEnv := (← Lean.getEnv).toKernelEnv
+  let some (.thmInfo _) := kernelEnv.find? certificate
+    | throwError "kernel rejected staged Bellman reduction"
   return Lean.mkConst certificate
 
 private meta def bellmanBinaryOperation (expression : Lean.Expr) :
