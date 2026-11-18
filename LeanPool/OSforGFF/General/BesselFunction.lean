@@ -46,6 +46,7 @@ For the massive scalar field in 4D Euclidean space, the exact formula is:
 @[expose] public section
 
 open MeasureTheory Set Filter Asymptotics Real
+open scoped Pointwise
 
 /-- The modified Bessel function K₁(z) via cosh integral representation.
     K₁(z) = ∫₀^∞ exp(-z cosh(t)) cosh(t) dt
@@ -370,8 +371,8 @@ lemma besselK1_mul_self_le (z : ℝ) (hz : 0 < z) (hz_le : z ≤ 1) :
       apply setIntegral_mono_on hf_int_Icc h_const_int measurableSet_Icc
       exact h_pointwise
     simp_all only [neg_mul, mem_Icc, and_imp, volume_Icc, sub_zero, ENNReal.ofReal_one,
-      ENNReal.one_lt_top, ne_eq, ENNReal.one_ne_top, not_false_eq_true, enorm_ne_top,
-      integrableOn_const_iff, enorm_eq_zero, or_true, integral_const, MeasurableSet.univ,
+      ENNReal.one_lt_top, ne_eq, ENNReal.one_ne_top, not_false_eq_true, eNorm_ne_top,
+      integrableOn_const_iff, eNorm_eq_zero, or_true, integral_const, MeasurableSet.univ,
       measureReal_restrict_apply, univ_inter, volume_real_Icc, zero_le_one, sup_of_le_left,
       smul_eq_mul, one_mul]
   -- Part 2: Bound z * ∫₁^∞ f(t) dt ≤ 2 via the shared tail-integral helper
