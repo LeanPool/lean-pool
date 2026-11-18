@@ -110,7 +110,7 @@ private theorem exists_injective_fderiv_aux (n : ℕ) :
       ∀ {f : E → F}, DifferentiableOn ℂ f U → InjOn f U →
         ∃ a ∈ U, Injective (fderiv ℂ f a) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro E _ _ _ hn U hU hne f hf hi
     by_cases hzero : Module.finrank ℂ E = 0
     · have : Subsingleton E := Module.finrank_zero_iff.mp hzero

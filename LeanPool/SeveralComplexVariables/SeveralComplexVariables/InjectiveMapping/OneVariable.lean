@@ -84,7 +84,8 @@ theorem deriv_ne_zero_of_injOn {U : Set ℂ} (hU : IsOpen U) {f : ℂ → ℂ}
     filter_upwards [nhdsWithin_le_nhds hW, self_mem_nhdsWithin] with w hw hwne
     obtain ⟨z, ⟨hz, hdz⟩, rfl⟩ := hw
     have hzane : z ≠ a := fun h => hwne (by simp [h])
-    have hstrict := (hf.analyticOnNhd hU z hz).contDiffAt.hasStrictDerivAt (n := 1) one_ne_zero
+    have hstrict :=
+      (hf.analyticOnNhd hU z hz).contDiffAt.hasStrictDerivAt_deriv (n := 1) one_ne_zero
     exact (hstrict.to_local_left_inverse (hdz hzane)
       (Filter.mem_of_superset (hU.mem_nhds hz)
         (fun _ ht => hi.leftInvOn_invFunOn ht))).hasDerivAt.differentiableAt

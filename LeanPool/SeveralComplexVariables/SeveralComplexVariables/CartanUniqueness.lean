@@ -55,7 +55,7 @@ theorem eqOn_id_of_mapsTo_of_fderiv_eq_id
     {a : E} (ha : a ∈ U) (hfix : f a = a)
     (hderiv : fderiv ℂ f a = ContinuousLinearMap.id ℂ E) : EqOn f id U := by
   classical
-  let : CompleteSpace E := FiniteDimensional.complete ℂ E
+  let : CompleteSpace E := FiniteDimensional.completeSpace ℂ E
   obtain ⟨M, hM0, hM⟩ := hb.exists_pos_norm_le
   let A (n : ℕ) (z : E) : E := ((n + 1 : ℕ) : ℂ)⁻¹ •
     ∑ k ∈ Finset.range (n + 1), f^[k] z
