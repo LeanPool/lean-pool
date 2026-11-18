@@ -8835,7 +8835,7 @@ lemma sum_colV_sq (hW : ∀ i c, 0 < W i c) (y : ι → σ) (i : ι) :
   cases hy : S.col y i <;>
     simp only [Bool.false_or, Bool.true_or, ite_true] <;> norm_num <;>
     rw [Real.mul_self_sqrt (hW _ _).le];
-    try rw [Real.mul_self_sqrt (hW _ _).le]
+    rw [Real.mul_self_sqrt (hW _ _).le]
 
 /-! ## The dual solution -/
 
