@@ -617,6 +617,25 @@ private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := d
   let some power ← Lean.Meta.getNatValue? reduced | throwError "expected a closed natural power"
   return power
 
+-- A transparent name can hide a larger tree than its original syntax.
+private meta def bellmanReductionDepth (expression : Lean.Expr) : Lean.MetaM Nat := do
+  let mut pending := #[(expression, 1)]
+  let mut depth := 1
+  while let some (term, level) := pending.back? do
+    Lean.Core.checkSystem "Bellman depth"
+    pending := pending.pop
+    depth := max depth level
+    let exposed ← exposeBellmanHead term
+    let args := exposed.getAppArgs
+    let next := level + 1
+    if (bellmanBinaryOperation exposed).isSome then
+      pending := pending.push (args[4]!, next) |>.push (args[5]!, next)
+    else if exposed.isAppOfArity ``HPow.hPow 6 then
+      pending := pending.push (args[4]!, next)
+    else if exposed.isAppOfArity ``Neg.neg 3 then
+      pending := pending.push (args[2]!, next)
+  return depth
+
 -- The cache is local to one closed chart and includes the kernel proof of each value.
 private meta def normalizeBellmanPolynomial
     (cache : IO.Ref (Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr)))
@@ -665,7 +684,7 @@ termination_by structural fuel
 local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
   let expression ← Lean.Elab.Tactic.Conv.getLhs
   let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
-  let (_, value, proof) ← normalizeBellmanPolynomial cache (expression.sizeWithoutSharing + 1)
+  let (_, value, proof) ← normalizeBellmanPolynomial cache (← bellmanReductionDepth expression)
     expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
@@ -675,6 +694,15 @@ local macro "checkBellmanChart" chart:ident formula:ident : tactic =>
     conv_lhs => { arg 1; zeta; reduceBellmanPolynomial };
     rfl
   })
+
+-- Read the substitutions from the public chart instead of repeating them.
+local elab "affineTermsOf% " chart:ident : term => do
+  let original ← Lean.Elab.Term.elabTerm chart none
+  let some application ← Lean.Meta.whnfUntil original ``bellmanAt
+    | throwError "expected an affine Bellman chart"
+  unless application.isAppOfArity ``bellmanAt 3 do
+    throwError "expected all three affine coordinates"
+  return Lean.mkAppN (Lean.mkConst ``affineBellmanTerms) application.getAppArgs
 
 -- The proof-only record keeps the normalized terms and their kernel equality together.
 local elab "recordAffineBellmanTerms" : tactic => Lean.Elab.Tactic.withMainContext do
@@ -692,7 +720,7 @@ local elab "recordAffineBellmanTerms" : tactic => Lean.Elab.Tactic.withMainConte
   let mut proof ← Lean.Meta.mkEqRefl value
   for field in fields.getAppArgs do
     let (_, normalized, equality) ← normalizeBellmanPolynomial cache
-      (field.sizeWithoutSharing + 1) field
+      (← bellmanReductionDepth field) field
     value := Lean.mkApp value normalized
     proof ← Lean.Meta.mkCongr proof equality
   let checked ← Lean.Meta.mkAppOptM ``Subtype.mk #[some args[0]!, some predicate, some value,
@@ -707,8 +735,7 @@ theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
 private noncomputable def chartOneTerms :
-    {terms : AffineBellmanTerms // affineBellmanTerms (2 * U + 2 * V + Z) (-U) (U + V) =
-      terms} := by
+    {terms : AffineBellmanTerms // affineTermsOf% chartOne = terms} := by
   recordAffineBellmanTerms
 
 private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
@@ -719,8 +746,7 @@ theorem chartOne_check : allNonnegative3 chartOne = true := by
   as_aux_lemma => exact chartOne_normalized_check
 
 private noncomputable def chartTwoTerms :
-    {terms : AffineBellmanTerms // affineBellmanTerms (2 * U + 2 * V + Z) (-2 * U - V) (U + V) =
-      terms} := by
+    {terms : AffineBellmanTerms // affineTermsOf% chartTwo = terms} := by
   recordAffineBellmanTerms
 
 private theorem chartTwo_normalized_check : allNonnegative3 chartTwo = true := by
@@ -731,7 +757,7 @@ theorem chartTwo_check : allNonnegative3 chartTwo = true := by
   as_aux_lemma => exact chartTwo_normalized_check
 
 private noncomputable def chartThreeTerms :
-    {terms : AffineBellmanTerms // affineBellmanTerms (U + 2 * V + Z) (-U - 2 * V) V = terms} := by
+    {terms : AffineBellmanTerms // affineTermsOf% chartThree = terms} := by
   recordAffineBellmanTerms
 
 private theorem chartThree_normalized_check : allNonnegative3 chartThree = true := by
