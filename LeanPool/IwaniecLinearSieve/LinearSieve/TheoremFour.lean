@@ -100,7 +100,7 @@ theorem intervalIntegral_le_integral_Ioi {f : ℝ → ℝ} {a b : ℝ} (hab : a 
     ∫ t in a..b, f t ≤ ∫ t in Ioi a, f t := by
   rw [intervalIntegral.integral_of_le hab]
   exact setIntegral_mono_set hf (ae_restrict_of_forall_mem measurableSet_Ioi hf0)
-    Ioc_subset_Ioi_self.eventuallyLE
+    (ae_of_all _ Ioc_subset_Ioi_self)
 
 /-- Corollary 1 for the large primes: the main terms of the inner levels add up to `M(s)/L`
 (minus the source part `(3 - s)⁺/L` of the upper sieve), up to `O(s² G(s) pntE(w)/L)`. -/
