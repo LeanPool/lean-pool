@@ -114,7 +114,7 @@ theorem act_add (f g : Laurent) (c : Configuration ℚ) :
 /-- Section 1.1 (Notation): multiplying filters composes their operators. -/
 theorem act_mul (f g : Laurent) (c : Configuration ℚ) :
     act (f * g) c = act f (act g c) := by
-  simp [act, Module.End.mul_apply]
+  simp [act]
 
 /-- Section 1.1 (Notation): subtracting filters subtracts their outputs. -/
 theorem act_sub (f g : Laurent) (c : Configuration ℚ) :

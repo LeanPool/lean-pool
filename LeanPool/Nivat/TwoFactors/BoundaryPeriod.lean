@@ -59,7 +59,7 @@ theorem agreement_extends_right {A : Type*} (a b : ℤ → A) (k e : ℕ) (hke :
     ∀ n : ℕ, a (i + n) = b (i + n) := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hne : n < e
     · exact hinit ⟨n, hne⟩
     · have hkn : k ≤ n := by omega
