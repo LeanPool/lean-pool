@@ -2178,7 +2178,7 @@ private theorem sourceJointTrueRadialBumpMass_pos (n k : ℕ) :
     0 < sourceJointTrueRadialBumpMass n k := by
   unfold sourceJointTrueRadialBumpMass
   apply (contDiff_sourceJointTrueRadialBump n
-    k).continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero
+    k).continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero
     (hasCompactSupport_sourceJointTrueRadialBump n k)
     (fun q => sourceJointTrueRadialBump_nonneg n k q)
     (x := (0 : SourceJointComplexCover n))
