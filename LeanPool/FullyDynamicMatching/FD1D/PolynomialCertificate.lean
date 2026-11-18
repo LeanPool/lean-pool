@@ -627,9 +627,8 @@ private meta def bellmanOperands (expression : Lean.Expr) : Array Lean.Expr :=
   else #[]
 
 -- Visit operands before their parents and reuse depths across shared expressions.
-private meta def bellmanReductionDepth (cache : IO.Ref (Lean.ExprStructMap Nat))
-    (expression : Lean.Expr) : Lean.MetaM Nat := do
-  let mut depths ← cache.get
+private meta def bellmanReductionDepth (expression : Lean.Expr) : Lean.MetaM Nat := do
+  let mut depths : Lean.ExprStructMap Nat := {}
   let mut pending : Array (Lean.Expr × Option (Array Lean.Expr)) := #[(expression, none)]
   while let some (term, operands) := pending.back? do
     Lean.Core.checkSystem "Bellman depth"
@@ -651,7 +650,6 @@ private meta def bellmanReductionDepth (cache : IO.Ref (Lean.ExprStructMap Nat))
           let childKey : Lean.ExprStructEq := ⟨child⟩
           if (depths[childKey]?).isNone then
             pending := pending.push (child, none)
-  cache.set depths
   let rootKey : Lean.ExprStructEq := ⟨expression⟩
   let some depth := depths[rootKey]?
     | throwError "Bellman polynomial depth is missing"
@@ -705,9 +703,8 @@ termination_by structural fuel
 local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
   let expression ← Lean.Elab.Tactic.Conv.getLhs
   let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
-  let depths ← IO.mkRef ({} : Lean.ExprStructMap Nat)
   let (_, value, proof) ← normalizeBellmanPolynomial cache
-    (← bellmanReductionDepth depths expression) expression
+    (← bellmanReductionDepth expression) expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
 local macro "checkBellmanChart" : tactic =>
