@@ -214,7 +214,8 @@ theorem squareEdges_finite : (squareEdges pieces points c r).Finite :=
   (overlayPieces pieces points).finite_toSet.subset fun _ hQ => hQ.1
 
 theorem squareGraph_le : squareGraph pieces points c r ≤ overlayGraph pieces points :=
-  segGraph_mono fun _ hQ => hQ.1
+  segGraph_mono (S := squareEdges pieces points c r)
+    (T := {P | P ∈ overlayPieces pieces points}) fun _ hQ => hQ.1
 
 instance squareGraph_finite : Graph.Finite (squareGraph pieces points c r) :=
   segGraph_finite squareEdges_finite
