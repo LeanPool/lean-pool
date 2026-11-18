@@ -197,6 +197,7 @@ private def quoteInteger : Int → Expr
 
 end
 
+/-- Propose a packed summary of the weighted-row subtree for a certificate case. -/
 elab "s4_summary% " caseIndex:num ", " rows:term : term => do
   let rowsType := mkApp (Lean.mkConst ``WTree) (Lean.mkConst ``Tag)
   let expression ← elabTermEnsuringType rows rowsType
@@ -216,7 +217,7 @@ elab "s4_summary% " caseIndex:num ", " rows:term : term => do
     ((quoteTrie summary.positive trieDepth 0).getD zero)
     ((quoteTrie summary.negative trieDepth 0).getD zero)
 
--- Balanced certificate trees already have the required subtree boundaries.
+/-- Select a subtree at the given depth, numbering the subtrees from left to right. -/
 elab "s4_subtree% " rows:ident levels:num index:num : term => do
   let mut tree ← elabTerm rows none
   let levels := levels.getNat
