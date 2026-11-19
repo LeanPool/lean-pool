@@ -82,7 +82,8 @@ theorem correspondenceWeightedElliptic_form_test_H1
     convert hh using 1
     apply Finset.sum_congr rfl
     intro i hi
-    dsimp only [H, V, correspondenceWeightedLebesgueSmoothCompactMollification]
+    dsimp only [H, V, correspondenceWeightedLebesgueSmoothCompactMollification,
+      l2SmoothCompactMollification]
     rw [correspondenceWeightedElliptic_pair_toLp, correspondenceWeightedElliptic_pair_toLp]
   have hl : Tendsto (fun m=>∑i, (inner ℝ (A i) (H m i)+inner ℝ (B i) (V m))) atTop
       (𝓝 (∑i, (inner ℝ (A i) ((hg i).toLp (g i))+inner ℝ (B i) (hf.toLp f)))) := by

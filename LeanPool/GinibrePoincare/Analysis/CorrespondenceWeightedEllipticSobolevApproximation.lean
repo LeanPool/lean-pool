@@ -86,7 +86,7 @@ theorem correspondenceWeightedElliptic_mollified_derivative_toLp
     (correspondenceWeightedElliptic_mollified_derivative_memLp f g hf hg hc v hw φ).toLp
       (fun x=>fderiv ℝ (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) x v)=
       correspondenceWeightedLebesgueSmoothCompactMollification φ g hg hc := by
-  unfold correspondenceWeightedLebesgueSmoothCompactMollification
+  unfold correspondenceWeightedLebesgueSmoothCompactMollification l2SmoothCompactMollification
   apply Lp.ext
   filter_upwards [(correspondenceWeightedElliptic_mollified_derivative_memLp f g hf hg hc v hw
       φ).coeFn_toLp,

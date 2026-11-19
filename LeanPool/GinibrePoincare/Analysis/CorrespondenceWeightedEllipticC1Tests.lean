@@ -107,7 +107,8 @@ theorem correspondenceWeightedElliptic_weak_test_C1
       (φ m).hasCompactSupport_normed hweak
     dsimp only [θm] at he
     simp_rw [hder] at he
-    dsimp only [A, B, correspondenceWeightedLebesgueSmoothCompactMollification]
+    dsimp only [A, B, correspondenceWeightedLebesgueSmoothCompactMollification,
+      l2SmoothCompactMollification]
     rw [correspondenceWeightedElliptic_pair_toLp, correspondenceWeightedElliptic_pair_toLp]
     linarith
   have hl : Tendsto (fun m=>inner ℝ g (A m)+inner ℝ u (B m)) atTop
