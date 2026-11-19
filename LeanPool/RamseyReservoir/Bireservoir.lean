@@ -67,8 +67,9 @@ namespace SimpleGraph
 
 variable {V : Type*} (G : SimpleGraph V)
 
-/-- A *two-colour reservoir*: a clique `red` of `G`, a clique `blue` of `Gᶜ`, and a pool disjoint
-from both, joined to `red` in `G` and to `blue` in `Gᶜ`.
+/-- A *two-colour reservoir*: a clique `red` of `G`, a clique `blue` of `Gᶜ`, and a pool joined to
+`red` in `G` and to `blue` in `Gᶜ`. Since neither graph has loops, the pool is disjoint from both
+spines (`SimpleGraph.Bireservoir.disjoint_red`, `SimpleGraph.Bireservoir.disjoint_blue`).
 
 The red and blue spines are not required to be disjoint. States reached by pivots from `ofPool`
 always have disjoint spines (a pivot moves a pool vertex, which lies on neither spine), but no
@@ -83,8 +84,6 @@ structure Bireservoir where
   pool : Finset V
   isClique_red : G.IsClique (red : Set V)
   isClique_blue : Gᶜ.IsClique (blue : Set V)
-  disjoint_red : Disjoint red pool
-  disjoint_blue : Disjoint blue pool
   adj_red : ∀ x ∈ red, ∀ y ∈ pool, G.Adj x y
   adj_blue : ∀ x ∈ blue, ∀ y ∈ pool, Gᶜ.Adj x y
 
@@ -99,8 +98,6 @@ def ofPool (X : Finset V) : G.Bireservoir where
   pool := X
   isClique_red := by simp
   isClique_blue := by simp
-  disjoint_red := disjoint_empty_left _
-  disjoint_blue := disjoint_empty_left _
   adj_red := by simp
   adj_blue := by simp
 
@@ -116,10 +113,16 @@ def ofPool (X : Finset V) : G.Bireservoir where
 variable (S : G.Bireservoir)
 
 /-- The red half of a two-colour reservoir. -/
-def toRed : G.Reservoir := ⟨S.red, S.pool, S.isClique_red, S.disjoint_red, S.adj_red⟩
+def toRed : G.Reservoir := ⟨S.red, S.pool, S.isClique_red, S.adj_red⟩
 
 /-- The blue half of a two-colour reservoir, a reservoir of the complement. -/
-def toBlue : Gᶜ.Reservoir := ⟨S.blue, S.pool, S.isClique_blue, S.disjoint_blue, S.adj_blue⟩
+def toBlue : Gᶜ.Reservoir := ⟨S.blue, S.pool, S.isClique_blue, S.adj_blue⟩
+
+/-- The pool is disjoint from the red spine. -/
+theorem disjoint_red : Disjoint S.red S.pool := S.toRed.disjoint
+
+/-- The pool is disjoint from the blue spine. -/
+theorem disjoint_blue : Disjoint S.blue S.pool := S.toBlue.disjoint
 
 /-- The red reservoir's spine is the red clique. -/
 @[simp] theorem toRed_spine : S.toRed.spine = S.red := rfl
@@ -139,26 +142,22 @@ variable [DecidableEq V] [DecidableRel G.Adj] {v : V} (hv : v ∈ S.pool)
 
 /-- Move `v` onto the red spine, keeping the pool vertices joined to `v` in red. -/
 def redPivot : G.Bireservoir where
-  red := insert v S.red
+  red := (S.toRed.pivot v hv).spine
   blue := S.blue
-  pool := {w ∈ S.pool | G.Adj v w}
+  pool := (S.toRed.pivot v hv).pool
   isClique_red := (S.toRed.pivot v hv).isClique_spine
   isClique_blue := S.isClique_blue
-  disjoint_red := (S.toRed.pivot v hv).disjoint
-  disjoint_blue := S.disjoint_blue.mono_right (filter_subset _ _)
   adj_red := (S.toRed.pivot v hv).adj
-  adj_blue x hx y hy := S.adj_blue x hx y (mem_filter.mp hy).1
+  adj_blue x hx y hy := S.adj_blue x hx y (S.toRed.pivot_pool_subset hv hy)
 
 /-- Move `v` onto the blue spine, keeping the pool vertices joined to `v` in blue. -/
 def bluePivot : G.Bireservoir where
   red := S.red
-  blue := insert v S.blue
-  pool := {w ∈ S.pool | Gᶜ.Adj v w}
+  blue := (S.toBlue.pivot v hv).spine
+  pool := (S.toBlue.pivot v hv).pool
   isClique_red := S.isClique_red
   isClique_blue := (S.toBlue.pivot v hv).isClique_spine
-  disjoint_red := S.disjoint_red.mono_right (filter_subset _ _)
-  disjoint_blue := (S.toBlue.pivot v hv).disjoint
-  adj_red x hx y hy := S.adj_red x hx y (mem_filter.mp hy).1
+  adj_red x hx y hy := S.adj_red x hx y (S.toBlue.pivot_pool_subset hv hy)
   adj_blue := (S.toBlue.pivot v hv).adj
 
 /-- A red pivot adds the pivot vertex to the red clique. -/

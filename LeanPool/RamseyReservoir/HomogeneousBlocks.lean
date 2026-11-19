@@ -112,24 +112,25 @@ theorem quotient_adj_iff_adj_rep {i j : ι} : F.quotient.Adj i j ↔ G.Adj (F.re
   · exact F.quotient_adj.mpr ⟨hij, hall⟩
   · exact absurd h (hnone _ (F.rep_mem i) _ (F.rep_mem j))
 
+/-- The representatives embed the quotient into `G` as an induced subgraph. -/
+noncomputable def repGraphEmbedding : F.quotient ↪g G :=
+  ⟨F.repEmbedding, F.quotient_adj_iff_adj_rep.symm⟩
+
+/-- A graph embedding carries `m`-cliques to `m`-cliques. -/
+private theorem isNClique_map_of_embedding {W : Type*} {H : SimpleGraph W} {K : SimpleGraph V}
+    (e : H ↪g K) {m : ℕ} {I : Finset W} (hI : H.IsNClique m I) :
+    K.IsNClique m (I.map e.toEmbedding) :=
+  hI.map.mono (map_le_iff_le_comap.mpr fun _ _ h => e.map_adj_iff.mpr h)
+
 /-- Cliques of the quotient lift to cliques of `G`. -/
 theorem isNClique_map_rep {m : ℕ} {I : Finset ι} (hI : F.quotient.IsNClique m I) :
-    G.IsNClique m (I.map F.repEmbedding) := by
-  refine ⟨?_, by rw [card_map, hI.card_eq]⟩
-  rintro _ hx _ hy hxy
-  obtain ⟨i, hi, rfl⟩ := mem_map.mp hx
-  obtain ⟨j, hj, rfl⟩ := mem_map.mp hy
-  exact F.quotient_adj_iff_adj_rep.mp (hI.isClique hi hj fun h => hxy (by rw [h]))
+    G.IsNClique m (I.map F.repEmbedding) :=
+  isNClique_map_of_embedding F.repGraphEmbedding hI
 
 /-- Independent sets of the quotient lift to independent sets of `G`. -/
 theorem isNClique_compl_map_rep {m : ℕ} {I : Finset ι} (hI : F.quotientᶜ.IsNClique m I) :
-    Gᶜ.IsNClique m (I.map F.repEmbedding) := by
-  refine ⟨?_, by rw [card_map, hI.card_eq]⟩
-  rintro _ hx _ hy hxy
-  obtain ⟨i, hi, rfl⟩ := mem_map.mp hx
-  obtain ⟨j, hj, rfl⟩ := mem_map.mp hy
-  exact F.compl_adj_of_quotient_compl_adj (hI.isClique hi hj fun h => hxy (by rw [h]))
-    (F.rep_mem i) (F.rep_mem j)
+    Gᶜ.IsNClique m (I.map F.repEmbedding) :=
+  isNClique_map_of_embedding (SimpleGraph.Embedding.complEquiv F.repGraphEmbedding) hI
 
 /-- **Anchored gluing.** If `I` is an `m`-clique of the quotient containing `i₀`, and `t` is an
 `n`-clique of `G` inside the block `i₀`, then `t` together with the representatives of the other
