@@ -405,6 +405,33 @@ def test_relief_waits_until_a_stopped_compiler_is_gone(monkeypatch, capsys) -> N
     }
 
 
+def test_relief_is_not_held_back_by_a_reused_descriptor(monkeypatch) -> None:
+    """A killed compiler's closed handle number can belong to the next compiler."""
+    first = limits.Process(41, 1, 1, 5, "/toolchain/bin/lean LeanPool/First.lean")
+    later = limits.Process(43, 1, 1, 5, "/toolchain/bin/lean LeanPool/Later.lean")
+    signals: list[int] = []
+    monkeypatch.setattr(limits, "process_memory", lambda pid: 6 * 1024**3)
+    monkeypatch.setattr(limits, "free_memory", lambda: 200 * MEBIBYTE)
+    # Every handle reports a live process, as a reused descriptor would.
+    monkeypatch.setattr(limits, "_running", lambda identity: True)
+    monkeypatch.setattr(
+        limits.signal,
+        "pidfd_send_signal",
+        lambda descriptor, number: signals.append(descriptor),
+    )
+    watch = limits.MemoryWatch(limits.MemoryLimits())
+    watch.check([first], {41: limits.OwnedProcess(41, 1000, 7)})
+    assert signals == [7]
+    # The first compiler is gone and pruned; a new one received descriptor 7.
+    watch.check([later], {43: limits.OwnedProcess(43, 2000, 7)})
+    assert signals == [7, 7]
+    assert watch.stopped == {(41, 1000), (43, 2000)}
+    # A recycled process number with another birth is not the stopped process.
+    recycled = limits.Process(41, 1, 1, 5, "/toolchain/bin/lean LeanPool/Recycled.lean")
+    watch.check([recycled], {41: limits.OwnedProcess(41, 3000, 9)})
+    assert signals == [7, 7, 9]
+
+
 def test_watch_takes_the_added_files_from_the_base(tmp_path: Path, capfd) -> None:
     """``watch --base`` budgets the files the diff adds, not those it modifies."""
     root, base = _repository(tmp_path)

@@ -453,11 +453,13 @@ class MemoryWatch:
     def __init__(self, limits: MemoryLimits) -> None:
         """Start with nothing stopped and nothing measured."""
         self.limits = limits
-        self.stopped: dict[tuple[int, int], OwnedProcess] = {}
+        # Identities, not handles: the watchdog closes a handle once its
+        # process is gone, and the system then reuses the descriptor number.
+        self.stopped: set[tuple[int, int]] = set()
         self.peaks: dict[str, int] = {}
 
     def _kill(self, identity: OwnedProcess) -> None:
-        self.stopped[(identity.pid, identity.birth)] = identity
+        self.stopped.add((identity.pid, identity.birth))
         try:
             # Lake reports the file as failed and goes on with the others.
             signal.pidfd_send_signal(identity.descriptor, signal.SIGKILL)
@@ -488,12 +490,24 @@ class MemoryWatch:
                 self._kill(identity)
             else:
                 holding.append((used, source, identity))
-        self._relieve(holding)
+        self._relieve(holding, owned)
 
-    def _relieve(self, holding: list[tuple[int, str, OwnedProcess]]) -> None:
+    def _dying(self, owned: dict[int, OwnedProcess]) -> bool:
+        """Whether a process stopped earlier is still owned and still running."""
+        return any(
+            identity.birth == birth and _running(identity)
+            for pid, birth in self.stopped
+            if (identity := owned.get(pid)) is not None
+        )
+
+    def _relieve(
+        self,
+        holding: list[tuple[int, str, OwnedProcess]],
+        owned: dict[int, OwnedProcess],
+    ) -> None:
         """Stop the largest Lean process when the machine is nearly out of memory."""
         # A process killed a moment ago still holds its memory until it is gone.
-        if any(_running(identity) for identity in self.stopped.values()):
+        if self._dying(owned):
             return
         free = free_memory()
         if not holding or free is None or free >= self.limits.floor:
