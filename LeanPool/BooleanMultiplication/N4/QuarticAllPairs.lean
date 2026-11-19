@@ -99,16 +99,30 @@ def quarticPairSeparatorLinear (pair : Fin 3) (a b c d : F₂)
   ∑ k : Fin 28, quarticPairSeparatorBit pair a b c d i k •
     twoFormCoordinate (upperPair k).1 (upperPair k).2
 
+private theorem quarticPairSeparatorLinear_apply_packed
+    (pair : Fin 3) (a b c d : F₂) (i : Fin 9) (q : TwoForm) :
+    quarticPairSeparatorLinear pair a b c d i q =
+      evalPackedQuarticCovector
+        (quarticPairSeparatorRow pair (quarticSeparatorIndex a b c d i)) q :=
+  sum_twoFormCoordinate_apply _ _
+
+private theorem quarticPairSeparator_target_check_packed :
+    ∀ (pair : Fin 3) (a b c d : F₂) (i : Fin 9),
+      evalPackedQuarticCovector
+        (quarticPairSeparatorRow pair (quarticSeparatorIndex a b c d i))
+        (targetTwo (outsideRankTwoWord i)) = 1 := by
+  decide +kernel
+
 theorem quarticPairSeparator_target_check :
     ∀ (pair : Fin 3) (a b c d : F₂) (i : Fin 9),
       quarticPairSeparatorLinear pair a b c d i
         (targetTwo (outsideRankTwoWord i)) = 1 := by
-  decide +kernel
+  as_aux_lemma =>
+    simp only [quarticPairSeparatorLinear_apply_packed]
+    exact quarticPairSeparator_target_check_packed
 
-/- Each finite check is kernel-reduced one rational-place pair at a time.
-The original all-three-pairs reduction exceeded a 4-GiB Lean heap on 4.33.1.
-Separate declarations bound the reduction cache without changing statements,
-using native evaluation, or introducing axioms. -/
+/- Pair zero reuses the low–low proof. The other wedge checks evaluate the
+packed covectors one rational-place pair at a time to bound the kernel cache. -/
 private theorem quarticPairSeparator_first_basis_check_0 :
     ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
       quarticPairSeparatorLinear 0 a b c d i
@@ -118,11 +132,31 @@ private theorem quarticPairSeparator_first_basis_check_0 :
   intro a b c d i j
   exact quarticSeparator_pone_basis_check a b c d i j
 
+private theorem quarticPairSeparator_first_basis_check_1_packed :
+    ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
+      evalPackedQuarticCovector
+        (quarticPairSeparatorRow 1 (quarticSeparatorIndex a b c d i))
+        (vectorWedge
+          (quarticSupportVector (quarticSupportPair 1).1 a b)
+          (coordinateLinear j)) = 0 := by
+  decide +kernel
+
 private theorem quarticPairSeparator_first_basis_check_1 :
     ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
       quarticPairSeparatorLinear 1 a b c d i
         (vectorWedge
           (quarticSupportVector (quarticSupportPair 1).1 a b)
+          (coordinateLinear j)) = 0 := by
+  as_aux_lemma =>
+    simp only [quarticPairSeparatorLinear_apply_packed]
+    exact quarticPairSeparator_first_basis_check_1_packed
+
+private theorem quarticPairSeparator_first_basis_check_2_packed :
+    ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
+      evalPackedQuarticCovector
+        (quarticPairSeparatorRow 2 (quarticSeparatorIndex a b c d i))
+        (vectorWedge
+          (quarticSupportVector (quarticSupportPair 2).1 a b)
           (coordinateLinear j)) = 0 := by
   decide +kernel
 
@@ -132,7 +166,9 @@ private theorem quarticPairSeparator_first_basis_check_2 :
         (vectorWedge
           (quarticSupportVector (quarticSupportPair 2).1 a b)
           (coordinateLinear j)) = 0 := by
-  decide +kernel
+  as_aux_lemma =>
+    simp only [quarticPairSeparatorLinear_apply_packed]
+    exact quarticPairSeparator_first_basis_check_2_packed
 
 theorem quarticPairSeparator_first_basis_check :
     ∀ (pair : Fin 3) (a b c d : F₂) (i : Fin 9) (j : Fin 8),
@@ -155,11 +191,31 @@ private theorem quarticPairSeparator_second_basis_check_0 :
   intro a b c d i j
   exact quarticSeparator_pzero_basis_check a b c d i j
 
+private theorem quarticPairSeparator_second_basis_check_1_packed :
+    ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
+      evalPackedQuarticCovector
+        (quarticPairSeparatorRow 1 (quarticSeparatorIndex a b c d i))
+        (vectorWedge
+          (quarticSupportVector (quarticSupportPair 1).2 c d)
+          (coordinateLinear j)) = 0 := by
+  decide +kernel
+
 private theorem quarticPairSeparator_second_basis_check_1 :
     ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
       quarticPairSeparatorLinear 1 a b c d i
         (vectorWedge
           (quarticSupportVector (quarticSupportPair 1).2 c d)
+          (coordinateLinear j)) = 0 := by
+  as_aux_lemma =>
+    simp only [quarticPairSeparatorLinear_apply_packed]
+    exact quarticPairSeparator_second_basis_check_1_packed
+
+private theorem quarticPairSeparator_second_basis_check_2_packed :
+    ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
+      evalPackedQuarticCovector
+        (quarticPairSeparatorRow 2 (quarticSeparatorIndex a b c d i))
+        (vectorWedge
+          (quarticSupportVector (quarticSupportPair 2).2 c d)
           (coordinateLinear j)) = 0 := by
   decide +kernel
 
@@ -169,7 +225,9 @@ private theorem quarticPairSeparator_second_basis_check_2 :
         (vectorWedge
           (quarticSupportVector (quarticSupportPair 2).2 c d)
           (coordinateLinear j)) = 0 := by
-  decide +kernel
+  as_aux_lemma =>
+    simp only [quarticPairSeparatorLinear_apply_packed]
+    exact quarticPairSeparator_second_basis_check_2_packed
 
 theorem quarticPairSeparator_second_basis_check :
     ∀ (pair : Fin 3) (a b c d : F₂) (i : Fin 9) (j : Fin 8),

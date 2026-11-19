@@ -9,11 +9,7 @@ public import LeanPool.GrothendieckVanishing.ClosedImmersion
 public import LeanPool.GrothendieckVanishing.ZeroOutside
 public import LeanPool.GrothendieckVanishing.GrothendieckVanishing
 
-import Mathlib.CategoryTheory.Category.Init
-import Mathlib.Data.Finset.Attr
 import Mathlib.Data.Rat.Floor
-import Mathlib.Tactic.Continuity.Init
-import Mathlib.Topology.Sheaves.Init
 
 /-!
 # Grothendieck's vanishing theorem
