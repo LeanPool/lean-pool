@@ -554,15 +554,14 @@ private meta def readBellmanNat (expression : Lean.Expr) : Lean.MetaM (Option Na
   if expression.isConstOf ``Nat.zero then return some 0
   Lean.Meta.getNatValue? expression
 
--- Expose transparent wrappers without evaluating dense operations.
+-- Stop at heads the staged reader handles so other helpers unfold in any namespace.
 private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
   let isTerminalHead (term : Lean.Expr) : Bool :=
     match term.getAppFn.constName? with
     | some head =>
-      head.getPrefix == ``DPoly ||
-        #[``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
-          ``HSMul.hSMul, ``SMul.smul, ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc,
-          ``U, ``V, ``Z].contains head
+      #[``DPoly.mk, ``DPoly.const, ``DPoly.X, ``DPoly.add, ``DPoly.mul, ``DPoly.pow, ``DPoly.neg,
+        ``DPoly.scale, ``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
+        ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc, ``U, ``V, ``Z].contains head
     | none => false
   let expression := expression.consumeMData
   if isTerminalHead expression then
@@ -804,6 +803,10 @@ example :
         DPoly.const (DPoly.const (DPoly.const (Int.ofNat (wrapBellmanValue 2)))) +
         U ^ wrapBellmanValue (1 : Nat) +
         wrapBellmanValue (DPoly.scale 2 (1 + U)) : Poly3) = true := by
+  checkBellmanChart
+
+-- A coefficient helper in DPoly can unfold to the same staged operators.
+example : allNonnegative3 (DPoly.eval (id : Poly3 → Poly3) 0 (DPoly.const U)) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
