@@ -11,6 +11,7 @@ public import LeanPool.GrothendieckVanishing.ClosedImmersion
 public import LeanPool.GrothendieckVanishing.ClosedImmersionCohomology
 public import LeanPool.GrothendieckVanishing.CohomologyAPI
 public import LeanPool.GrothendieckVanishing.ConstantSheafFlasque
+public import LeanPool.GrothendieckVanishing.FinitelyGeneratedDiagrams
 public import LeanPool.GrothendieckVanishing.FinitelyGeneratedVanishing
 public import LeanPool.GrothendieckVanishing.FlasqueVanishing
 public import LeanPool.GrothendieckVanishing.GeneratedSubsheaf
@@ -18,7 +19,9 @@ public import LeanPool.GrothendieckVanishing.GrothendieckVanishing
 public import LeanPool.GrothendieckVanishing.GrothendieckVanishingOverview
 public import LeanPool.GrothendieckVanishing.IrreducibleStep
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimit
+public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitBase
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitCore
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitGeneral
+public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitZero
 public import LeanPool.GrothendieckVanishing.TopologicalKrullDim
 public import LeanPool.GrothendieckVanishing.ZeroOutside
