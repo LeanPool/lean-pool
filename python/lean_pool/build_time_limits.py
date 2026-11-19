@@ -1,11 +1,27 @@
-"""Enforce Lean Pool's per-file build-time limits in CI.
+"""Enforce Lean Pool's per-file build-time and memory limits in CI.
 
-Two limits apply, following Tau Ceti's CI performance gate:
+The time limits follow Tau Ceti's CI performance gate:
 
 * ``watch`` runs a build command and kills any Lean process it spawns that runs
   longer than the hard limit (60 minutes), so no single file can stall CI.
 * ``check`` reads a Lake build log and fails when an added or modified pool file
   took longer than the per-file limit (600 seconds) to build.
+
+Lake compiles four files at once on a 16 GB runner. Files that are each too
+large exhaust it, and the runner then dies without naming a file. ``watch``
+therefore also watches memory:
+
+* a Lean process compiling a file the pull request adds is killed when it
+  holds more than 3 GiB, so that four new files fit the runner together;
+* when the machine is about to run out of memory, the Lean process holding the
+  most is killed and the log names every file that was compiling.
+
+Lake reports a killed file as failed and goes on, so one run names every file
+over its limit. A file seen over its own limit fails the build. A stop asked
+for under a shortage fails it only if the build then fails: a compiler that
+finished just before the signal was not stopped. Memory is looked at once a
+second: that bounds what a compiler can gain unseen, but it is a sample, not a
+guarantee.
 
 Existing files are only checked once a PR changes them. Times are the wall-clock
 times Lake reports for each module on the CI runner.
@@ -38,9 +54,23 @@ LOGGER = logging.getLogger(__name__)
 
 PROCESS_LIMIT_SECONDS = 3600
 FILE_LIMIT_SECONDS = 600
-POLL_SECONDS = 15
+# Anonymous memory a Lean process may hold while it compiles a file that the
+# pull request adds. Four such processes, the mapped imports they share and
+# the system must fit a 16 GB runner without swapping.
+ADDED_FILE_MEMORY_LIMIT_BYTES = 3 * 1024**3
+# Free memory and swap below which the machine is about to fail.
+MEMORY_FLOOR_BYTES = 1536 * 1024**2
+# Peaks from this size on are listed after the build, so heavy files show.
+MEMORY_REPORT_BYTES = 2 * 1024**3
+# A compiling file can gain a hundred mebibytes a second, so memory needs a
+# much shorter interval than the time limit would.
+POLL_SECONDS = 1
+# Exit status of ``watch`` when it stopped a process for memory.
+MEMORY_STATUS = 123
+# ``ps`` reports whole seconds, and the build starts just after the clock is read.
+ELAPSED_ROUNDING_SECONDS = 2
 TERMINATE_GRACE_SECONDS = 30
-RECEIPT_VERSION = 1
+RECEIPT_VERSION = 2
 RECEIPT_SUFFIX = ".timing.json"
 # Every compiled output Lean loads for a module; a rebuild rewrites them all.
 TIMED_OUTPUT_SUFFIXES = (".olean", ".olean.private", ".olean.server")
@@ -188,6 +218,103 @@ def _stop(process: Process, limit: int) -> None:
         f"{limit // 60} minutes; split the file or make its proofs cheaper.",
         flush=True,
     )
+
+
+def process_memory(pid: int) -> int | None:
+    """Anonymous memory a process holds, resident or swapped out, in bytes.
+
+    Pages mapped from files are not counted: the compiled modules a Lean
+    process imports are shared by every Lean process and can be reclaimed.
+    ``None`` for a process that is gone or reports no memory, such as a zombie.
+    """
+    try:
+        status = Path(f"/proc/{pid}/status").read_text()
+    except (FileNotFoundError, ProcessLookupError):
+        return None
+    kibibytes = [
+        int(value.split()[0])
+        for key, _, value in (line.partition(":") for line in status.splitlines())
+        if key in ("RssAnon", "VmSwap")
+    ]
+    return sum(kibibytes) * 1024 if kibibytes else None
+
+
+def command_line(pid: int) -> list[str] | None:
+    """A process's current arguments, or ``None`` once it is gone."""
+    try:
+        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except (FileNotFoundError, ProcessLookupError):
+        return None
+    arguments = [part.decode(errors="replace") for part in raw.split(b"\0") if part]
+    return arguments or None
+
+
+def lean_source(arguments: list[str]) -> str | None:
+    """The file a Lean compiler is compiling, or ``None`` for any other command."""
+    if Path(arguments[0]).name != "lean":
+        return None
+    return next((a for a in arguments[1:] if a.endswith(".lean")), " ".join(arguments))
+
+
+def machine_memory(path: Path = Path("/proc/meminfo")) -> dict[str, int]:
+    """The machine's memory figures in bytes, keyed as in ``/proc/meminfo``."""
+    sizes = {}
+    for line in path.read_text().splitlines():
+        key, _, value = line.partition(":")
+        if key in ("MemTotal", "MemAvailable", "SwapTotal", "SwapFree"):
+            sizes[key] = int(value.split()[0]) * 1024
+    return sizes
+
+
+def free_memory() -> int | None:
+    """Memory and swap the machine can still hand out, or ``None`` if unknown."""
+    try:
+        sizes = machine_memory()
+        return sizes["MemAvailable"] + sizes["SwapFree"]
+    except (OSError, KeyError, ValueError):
+        return None
+
+
+def _gibibytes(size: int) -> str:
+    return f"{size / 2**30:.1f} GiB"
+
+
+def added_files(base: str, root: Path) -> frozenset[str]:
+    """Paths of the pool files added since ``base``."""
+    output = subprocess.check_output(
+        [
+            "git",
+            "-c",
+            "core.quotePath=false",
+            "diff",
+            "--name-only",
+            "--no-renames",
+            "--diff-filter=A",
+            f"{base}...HEAD",
+            "--",
+            "LeanPool",
+        ],
+        cwd=root,
+        text=True,
+    )
+    return frozenset(path for path in output.splitlines() if module_of(path))
+
+
+@dataclass(frozen=True)
+class MemoryLimits:
+    """What Lean processes may hold while the build runs."""
+
+    added_file: int = ADDED_FILE_MEMORY_LIMIT_BYTES
+    # Paths of the files the change adds, relative to ``root``.
+    added: frozenset[str] = frozenset()
+    root: Path = Path()
+    floor: int = MEMORY_FLOOR_BYTES
+
+    def relative(self, source: str) -> str:
+        """A source path as the diff names it: relative to the repository."""
+        root = os.path.abspath(self.root)
+        relative = os.path.relpath(os.path.join(root, source), root)
+        return source if relative.startswith("..") else relative
 
 
 @dataclass(frozen=True)
@@ -340,18 +467,180 @@ def _process_state(pid: int) -> str | None:
     return stat.rsplit(")", 1)[1].split()[0]
 
 
+class MemoryWatch:
+    """Stops Lean processes for memory and remembers what each one held.
+
+    It looks at the build once per interval. That bounds what one compiler can
+    gain unseen, but it is a sample, not a guarantee.
+    """
+
+    def __init__(self, limits: MemoryLimits) -> None:
+        """Start with nothing stopped and nothing measured."""
+        self.limits = limits
+        # Identities, not handles: the watchdog closes a handle once its
+        # process is gone, and the system then reuses the descriptor number.
+        self.stopped: set[tuple[int, int]] = set()
+        self.peaks: dict[str, int] = {}
+        # A file seen over its own budget fails the build whatever follows.
+        self.over_budget = False
+        # A stop asked for under a shortage is only a request: the compiler may
+        # have finished first, and then the build's own result stands.
+        self.relief: list[tuple[str, str]] = []
+
+    def _kill(self, identity: OwnedProcess) -> bool:
+        """Ask the kernel to kill one process; ``False`` if it had already gone.
+
+        ``True`` does not prove the process was stopped: a compiler that has
+        just finished accepts the signal until it is reaped.
+        """
+        if not _running(identity):
+            return False
+        try:
+            # Lake reports the file as failed and goes on with the others.
+            signal.pidfd_send_signal(identity.descriptor, signal.SIGKILL)
+        except ProcessLookupError:
+            return False
+        self.stopped.add((identity.pid, identity.birth))
+        return True
+
+    def _sample(self, identity: OwnedProcess) -> tuple[int, str] | None:
+        """What a Lean process holds and for which file, read from the process itself.
+
+        The process table is a moment old, and a number in it may by now belong
+        to another process of the build. The arguments and the memory are read
+        here, and count only if the process is still the one whose handle is
+        held.
+        """
+        arguments = command_line(identity.pid)
+        used = process_memory(identity.pid)
+        if arguments is None or used is None or _birth(identity.pid) != identity.birth:
+            return None
+        source = lean_source(arguments)
+        return None if source is None else (used, self.limits.relative(source))
+
+    def check(self, owned: dict[int, OwnedProcess]) -> None:
+        """Look once at every Lean process of the build and stop what must stop."""
+        holding: list[tuple[int, str, OwnedProcess]] = []
+        for identity in list(owned.values()):
+            if (identity.pid, identity.birth) in self.stopped:
+                continue
+            sample = self._sample(identity)
+            if sample is None:
+                continue
+            used, source = sample
+            self.peaks[source] = max(self.peaks.get(source, 0), used)
+            if source in self.limits.added and used > self.limits.added_file:
+                # Seen over its budget: a violation even if it ends by itself.
+                self.over_budget = True
+                print(
+                    f"::error file={source}::{source} held {_gibibytes(used)} of "
+                    f"memory while compiling. Lean Pool's limit for a file a pull "
+                    f"request adds is {_gibibytes(self.limits.added_file)}; split "
+                    f"the file or make its proofs cheaper.",
+                    flush=True,
+                )
+                if not self._kill(identity):
+                    self.stopped.add((identity.pid, identity.birth))
+            else:
+                holding.append((used, source, identity))
+        self._relieve(holding, owned)
+
+    def _dying(self, owned: dict[int, OwnedProcess]) -> bool:
+        """Whether a process stopped earlier is still owned and still running."""
+        return any(
+            identity.birth == birth and _running(identity)
+            for pid, birth in self.stopped
+            if (identity := owned.get(pid)) is not None
+        )
+
+    def _relieve(
+        self,
+        holding: list[tuple[int, str, OwnedProcess]],
+        owned: dict[int, OwnedProcess],
+    ) -> None:
+        """Stop the largest Lean process when the machine is nearly out of memory."""
+        # A process killed a moment ago still holds its memory until it is gone.
+        if self._dying(owned):
+            return
+        free = free_memory()
+        if not holding or free is None or free >= self.limits.floor:
+            return
+        holding.sort(key=lambda entry: entry[0], reverse=True)
+        used, source, identity = holding[0]
+        # A compiler that ended meanwhile freed its memory itself: look again
+        # next time.
+        if not self._kill(identity):
+            return
+        compiling = ", ".join(f"{name} {_gibibytes(size)}" for size, name, _ in holding)
+        shortage = (
+            f"The machine had {_gibibytes(free)} of memory left while these files "
+            f"were compiling: {compiling}."
+        )
+        self.relief.append((source, shortage))
+        print(f"{shortage} Asked to stop {source}, which held the most.", flush=True)
+
+    def outcome(self, returncode: int) -> int | None:
+        """The watchdog's verdict on memory once the build has ended.
+
+        ``None`` leaves the build's own result in place.
+        """
+        if returncode != 0:
+            for source, shortage in self.relief:
+                print(
+                    f"::error file={source}::{shortage} {source} held the most and "
+                    f"was stopped; split it or make its proofs cheaper.",
+                    flush=True,
+                )
+        if self.over_budget or (self.relief and returncode != 0):
+            return MEMORY_STATUS
+        return None
+
+    def report(self, threshold: int = MEMORY_REPORT_BYTES) -> None:
+        """List the files whose compiler held the most memory, largest first."""
+        heavy = sorted(
+            (
+                (used, source)
+                for source, used in self.peaks.items()
+                if used >= threshold
+            ),
+            reverse=True,
+        )
+        for used, source in heavy:
+            print(f"Peak memory {_gibibytes(used)}: {source}", flush=True)
+
+
+def _announce(limit: int, memory: MemoryLimits) -> None:
+    """Record the limits and the machine's memory at the top of the build log."""
+    try:
+        machine = machine_memory()
+        available = (
+            f" This machine has {_gibibytes(machine['MemTotal'])} of memory "
+            f"and {_gibibytes(machine['SwapTotal'])} of swap."
+        )
+    except (OSError, KeyError, ValueError):
+        available = ""
+    print(
+        f"Limits for one Lean process: {limit // 60} minutes, and "
+        f"{_gibibytes(memory.added_file)} of memory for each of the "
+        f"{len(memory.added)} files this change adds.{available}",
+        flush=True,
+    )
+
+
 def watch(
     command: list[str],
     limit: int,
     poll: float = POLL_SECONDS,
     grace: float = TERMINATE_GRACE_SECONDS,
+    memory: MemoryLimits | None = None,
 ) -> int:
     """Run a build with identity-bound descendant monitoring and complete cleanup.
 
     Returns:
-        124 if a Lean process exceeded its limit, 125 if observation failed,
-        otherwise the command's exit status. SIGINT and SIGTERM are forwarded
-        to the owned build processes while the watchdog retains cleanup duties.
+        124 if a Lean process exceeded its time limit, 123 if one was stopped
+        for memory, 125 if observation failed, otherwise the command's exit
+        status. SIGINT and SIGTERM are forwarded to the owned build processes
+        while the watchdog retains cleanup duties.
     """
     if (
         not hasattr(os, "pidfd_open")
@@ -360,6 +649,9 @@ def watch(
     ):
         print("::error::Lean build monitoring requires Linux process identity handles")
         return 125
+    memory_watch = MemoryWatch(memory or MemoryLimits())
+    _announce(limit, memory_watch.limits)
+    started = time.monotonic()
     child = subprocess.Popen(command, start_new_session=True)
     owned: dict[int, OwnedProcess] = {}
 
@@ -379,16 +671,22 @@ def watch(
                 raise ProcessTableError(
                     "build process is missing from the process table"
                 )
+            observed = _observe_owned(processes, child.pid, owned)
+            # No process of the build is older than the build. ``ps`` can
+            # report a newborn process as millions of days old; such a row
+            # must not count as a file that ran over its limit.
+            oldest = time.monotonic() - started + ELAPSED_ROUNDING_SECONDS
             overdue = [
                 process
-                for process in _observe_owned(processes, child.pid, owned)
-                if is_lean_process(process) and process.elapsed > limit
+                for process in observed
+                if is_lean_process(process) and limit < process.elapsed <= oldest
             ]
             if overdue:
                 for process in overdue:
                     _stop(process, limit)
                 status = 124
                 break
+            memory_watch.check(owned)
             if _process_state(child.pid) in {"Z", "X"}:
                 break
             identity = owned.get(child.pid)
@@ -425,6 +723,9 @@ def watch(
             finally:
                 for process in owned.values():
                     os.close(process.descriptor)
+    memory_watch.report()
+    if status is None:
+        status = memory_watch.outcome(returncode)
     return returncode if status is None else status
 
 
@@ -531,11 +832,23 @@ def output_digest(root: Path, path: str) -> str | None:
     return digest.hexdigest()
 
 
-def recorded_seconds(root: Path, path: str) -> float | None:
+def _capped(receipt: dict) -> bool:
+    """Whether a receipt says its output was compiled under today's memory cap."""
+    cap = receipt.get("memory_limit")
+    return (
+        isinstance(cap, int)
+        and not isinstance(cap, bool)
+        and 0 < cap <= ADDED_FILE_MEMORY_LIMIT_BYTES
+    )
+
+
+def recorded_seconds(root: Path, path: str, added: bool = False) -> float | None:
     """The build time recorded for the module's current outputs, if any.
 
     A module without compiled output has no recorded time, whatever its
-    receipt says.
+    receipt says. For a file the change adds, the receipt must also say that
+    the output was compiled under the added-file memory limit: an output
+    restored from an earlier run is never seen by this run's watchdog.
     """
     digest = output_digest(root, path)
     if digest is None:
@@ -550,19 +863,26 @@ def recorded_seconds(root: Path, path: str) -> float | None:
             and not isinstance(seconds, bool)
             and seconds >= 0
             and receipt["outputs"] == digest
+            and (not added or _capped(receipt))
         )
     except (OSError, ValueError, KeyError, TypeError):
         return None
     return float(seconds) if valid else None
 
 
-def record_seconds(root: Path, path: str, seconds: float) -> None:
-    """Bind a freshly measured build time to the outputs that build produced."""
+def record_seconds(root: Path, path: str, seconds: float, added: bool = False) -> None:
+    """Bind a freshly measured build time to the outputs that build produced.
+
+    ``added`` records that this job's watchdog held the compiler to the
+    added-file memory limit; only ``check`` after ``watch`` may say so.
+    """
     digest = output_digest(root, path)
     if digest is None:
         return
     stem = _output_stem(root, path)
     receipt = {"version": RECEIPT_VERSION, "seconds": seconds, "outputs": digest}
+    if added:
+        receipt["memory_limit"] = ADDED_FILE_MEMORY_LIMIT_BYTES
     temporary = stem.with_name(stem.name + RECEIPT_SUFFIX + ".tmp")
     temporary.write_text(json.dumps(receipt, sort_keys=True) + "\n")
     temporary.replace(stem.with_name(stem.name + RECEIPT_SUFFIX))
@@ -588,8 +908,11 @@ def _invalidate(root: Path, path: str) -> int:
 def prepare(base: str, root: Path, modules: list[str] | None = None) -> int:
     """Invalidate changed modules whose compiled outputs have no recorded time."""
     changed = _selected_changed_modules(base, root, modules)
+    added = added_files(base, root)
     untimed = [
-        path for path in changed.values() if recorded_seconds(root, path) is None
+        path
+        for path in changed.values()
+        if recorded_seconds(root, path, path in added) is None
     ]
     removed = sum(_invalidate(root, path) for path in untimed)
     print(
@@ -601,7 +924,10 @@ def prepare(base: str, root: Path, modules: list[str] | None = None) -> int:
 
 
 def changed_times(
-    times: dict[str, float], changed: dict[str, str], root: Path
+    times: dict[str, float],
+    changed: dict[str, str],
+    root: Path,
+    added: frozenset[str] = frozenset(),
 ) -> tuple[dict[str, float], int]:
     """Each changed module's time: measured in this job, else recorded earlier.
 
@@ -611,11 +937,11 @@ def changed_times(
     fresh = 0
     for module, path in changed.items():
         if module in times:
-            record_seconds(root, path, times[module])
+            record_seconds(root, path, times[module], path in added)
             result[module] = times[module]
             fresh += 1
             continue
-        seconds = recorded_seconds(root, path)
+        seconds = recorded_seconds(root, path, path in added)
         if seconds is not None:
             result[module] = seconds
     return result, fresh
@@ -632,7 +958,7 @@ def check(
     """Report changed files over the per-file limit; return the exit status."""
     built = module_times(log_path.read_text(errors="replace"))
     changed = _selected_changed_modules(base, root, modules)
-    times, fresh = changed_times(built, changed, root)
+    times, fresh = changed_times(built, changed, root, added_files(base, root))
     print(
         f"Per-file build-time limit {limit} s: {len(changed)} added or modified "
         f"pool files, {fresh} compiled in this job, {len(times) - fresh} with a "
@@ -664,6 +990,10 @@ def main(arguments: list[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     watch_parser = commands.add_parser("watch", help="run a build under the hard limit")
     watch_parser.add_argument("--limit", type=int, default=PROCESS_LIMIT_SECONDS)
+    watch_parser.add_argument(
+        "--base", help="files added since this commit get the added-file memory limit"
+    )
+    watch_parser.add_argument("--root", type=Path, default=Path.cwd())
     watch_parser.add_argument("build", nargs=argparse.REMAINDER)
     prepare_parser = commands.add_parser(
         "prepare", help="force untimed changed files to rebuild"
@@ -682,7 +1012,10 @@ def main(arguments: list[str] | None = None) -> int:
         build = options.build[1:] if options.build[:1] == ["--"] else options.build
         if not build:
             parser.error("watch needs a command after --")
-        return watch(build, options.limit)
+        added = added_files(options.base, options.root) if options.base else frozenset()
+        return watch(
+            build, options.limit, memory=MemoryLimits(added=added, root=options.root)
+        )
     if options.command == "prepare":
         return prepare(options.base, options.root, options.modules)
     return check(

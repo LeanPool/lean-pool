@@ -12,6 +12,7 @@ Lean Pool uses deterministic CI for mechanical quality checks and LLM review for
 - `lake build LeanPool`, with a 60-minute hard limit on every Lean process
 - a warning scan over the build log
 - a per-file build-time limit: every added or modified `LeanPool` file must build in under 600 s
+- a per-file memory limit: the compiler of an added `LeanPool` file is stopped above 3 GiB, and the largest compiler is stopped if the runner runs out of memory
 - the `LeanPoolLinters` compiler plugin, loaded by Lake for every LeanPool module
 - `lake exe runLinter` on `LeanPool`
 - `lake exe lint-style` on `LeanPool`
@@ -31,6 +32,32 @@ cannot be read, the build is stopped rather than left unwatched.
 After the build, it reads Lake's per-module times from the log and fails when a file
 the PR adds or modifies took more than 600 s. Times are Lake's wall-clock times on
 GitHub's 4-vCPU runners. Existing files are checked only once a PR changes them.
+
+The same watchdog looks at the memory of every Lean process once a second. It
+counts anonymous memory, resident or swapped (`RssAnon` and `VmSwap`); the
+compiled imports a process maps are shared and are not counted. This is a
+sampled protection: it bounds what a compiler can gain between two looks, and
+cannot guarantee that every workload fits between them.
+
+- The compiler of a file the PR adds is stopped once it holds more than 3 GiB.
+  Four compilers at that size, their shared imports and the system fit the
+  runner's 16 GB. A compiled output restored from an earlier run is not seen
+  by the watchdog, so for an added file it is kept only if its timing receipt
+  records that it was compiled under this limit; otherwise it is rebuilt.
+- When free memory and swap together fall below 1.5 GiB, the Lean process
+  holding the most is stopped, and the error names every file that was compiling
+  and what it held. Without this the runner dies and the log names nothing.
+
+Lake reports a stopped file as failed and builds the rest, so one run names every
+file over its limit. A file seen over its own limit fails the build. A stop asked
+for under a shortage fails it only if the build then fails: a compiler that had
+just finished is not counted as stopped. Existing files have no fixed limit:
+when the budget was set (`main`, 2026-11-19, Lean v4.35.0) two files exceeded
+it, `MovingSofa/Development/Geometry/Applications/Development001.lean` (8.6 GiB)
+and `MovingSofa/Development/Geometry/Foundations/Development004.lean` (7.8 GiB),
+and every other file held at most 2.7 GiB. The build log starts with the limits
+and the runner's memory, and ends with every file whose compiler held 2 GiB or
+more.
 
 `check` records each changed module's time in a receipt next to its compiled
 output (`<Module>.timing.json`), bound to a hash of that output's `.olean` files.
