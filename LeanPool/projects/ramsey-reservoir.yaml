@@ -1,12 +1,11 @@
 slug: ramsey-reservoir
 title: Reservoir and book calculus for greedy Ramsey arguments
-summary: Reservoirs (a clique with a pool of common neighbours) and two-colour reservoirs, the state
-  machines behind greedy clique-building Ramsey arguments. Proves that every threshold satisfying
-  Pascal's inequality is a two-colour Ramsey bound, with the Erdős–Szekeres binomial bound and
-  R(3, 3) = 6 as consequences. Also proves greedy and minimum-degree clique bounds, the
-  codegree–triangle identity, books from triangle and edge density, book forcing and anchored
-  gluing for homogeneous block quotients. The Ramsey predicate is proved equivalent to the
-  FiniteRamsey project's two-colour Ramsey property and number.
+summary: Reservoirs track a clique and its pool of common neighbours. The winning-pivot theorem
+  preserves a Pascal threshold for partially built two-colour clique spines. The development also
+  proves greedy and minimum-degree clique bounds, the codegree–triangle identity, book forcing,
+  and anchored gluing for homogeneous block quotients. Starting from empty spines recovers Pascal
+  upper bounds, including the Erdős–Szekeres binomial bound. A five-cycle gives the matching lower
+  bound for R(3, 3) = 6. The Ramsey interface uses the two-colour Ramsey property in FiniteRamsey.
 branch: combinatorics
 entry_module: LeanPool.RamseyReservoir
 authors:
@@ -22,15 +21,21 @@ license: Apache-2.0
 status: verified
 provenance: AI
 provenance_evidence: 'Proposal #721 and the upstream README identify human-directed AI-generated
-  proofs; the source headers and upstream commit metadata credit Brian Sanders. Port and
+  proofs; the source headers credit Brian Sanders. Port and
   FiniteRamsey bridge by Claude Code.'
 main_declarations:
-- SimpleGraph.ramseyBound_of_pascal
+- SimpleGraph.Bireservoir.IsWinning.exists_pivot
 - SimpleGraph.ramseyNumber_three_three
 - SimpleGraph.sum_card_commonNeighbors_eq
 - SimpleGraph.ContainsBook.not_cliqueFree_or
 - SimpleGraph.HomogeneousBlocks.isNClique_anchor
 main_results:
+- declaration: SimpleGraph.Bireservoir.IsWinning.exists_pivot
+  informal: Let R satisfy Pascal's inequality and be positive at positive arguments. If both
+    clique spines are short of their targets and the pool has at least R of the two deficits
+    vertices, a pool vertex can be added to one spine while retaining at least R of the updated
+    deficits common neighbours in that colour.
+  source_ref: 'Upstream RamseyReservoir/Bireservoir.lean at 7024820542e42feb8177cbf2c624d64106813332.'
 - declaration: SimpleGraph.ramseyBound_of_pascal
   informal: If R a (b + 1) + R (a + 1) b ≤ R (a + 1) (b + 1) and R (a + 1) (b + 1) > 0 for all
     a and b, then for all r and s every graph on R r s vertices has an r-clique or an independent

@@ -18,9 +18,9 @@ public import LeanPool.RamseyReservoir.Reservoir
 Source: url:https://github.com/Egly443/lean-ramsey-reservoir
 Authors: Brian Sanders
 Status: verified
-Main declarations: `SimpleGraph.ramseyBound_of_pascal`, `SimpleGraph.ramseyNumber_three_three`,
-  `SimpleGraph.sum_card_commonNeighbors_eq`, `SimpleGraph.ContainsBook.not_cliqueFree_or`,
-  `SimpleGraph.HomogeneousBlocks.isNClique_anchor`
+Main declarations: `SimpleGraph.Bireservoir.IsWinning.exists_pivot`,
+  `SimpleGraph.ramseyNumber_three_three`, `SimpleGraph.sum_card_commonNeighbors_eq`,
+  `SimpleGraph.ContainsBook.not_cliqueFree_or`, `SimpleGraph.HomogeneousBlocks.isNClique_anchor`
 Tags: ramsey-theory, book-graphs, greedy-algorithms, extremal-graph-theory
 MSC: 05C55, 05C35, 05D10
 -/
