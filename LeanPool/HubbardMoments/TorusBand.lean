@@ -9,7 +9,7 @@ module
 
 public import LeanPool.HubbardMoments.TorusBandDefinition
 public import LeanPool.HubbardMoments.FinitePopulation
-public import LeanPool.HubbardMoments.ProjectedHopping
+public import LeanPool.HubbardMoments.TorusMoments
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.FieldSimp

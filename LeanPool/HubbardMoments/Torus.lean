@@ -7,15 +7,15 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.HubbardMoments.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
 
 /-!
 # The square-lattice torus
 
-`HubbardMoments.torus L` (defined in `HubbardMoments.Defs`) is the `L × L` square lattice
+`HubbardMoments.torus L` is the `L × L` square lattice
 with periodic boundary conditions: the box product of two cycle graphs on `L` vertices,
 built from Mathlib's `SimpleGraph.cycleGraph` and `SimpleGraph.boxProd`.
 
@@ -36,6 +36,13 @@ For `L = 2` the two neighbours along each axis coincide and the degree is 2, and
 namespace HubbardMoments
 
 open SimpleGraph
+
+/-- The `L × L` square-lattice torus (periodic boundary conditions): the box product of
+two `L`-cycles. Each site is adjacent to its nearest neighbours along both axes. -/
+abbrev torus (L : ℕ) : SimpleGraph (Fin L × Fin L) := cycleGraph L □ cycleGraph L
+
+instance (L : ℕ) : DecidableRel (torus L).Adj := fun _ _ =>
+  decidable_of_iff' _ boxProd_adj
 
 private theorem torus_isRegularOfDegree_default (L : ℕ) (hL : 3 ≤ L) :
     (torus L).IsRegularOfDegree 4 := by

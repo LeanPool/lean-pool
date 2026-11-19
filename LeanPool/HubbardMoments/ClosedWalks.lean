@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.Defs
+public import LeanPool.HubbardMoments.Torus
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Ring

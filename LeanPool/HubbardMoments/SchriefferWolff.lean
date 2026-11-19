@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.Defs
 public import LeanPool.HubbardMoments.Torus
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 import Mathlib.Tactic.NormNum
@@ -63,6 +64,16 @@ theorem IsHop.siteOcc_eq {a b : FockState V σ} (h : IsHop G a b) :
   rw [sum_insert (fun h => hj (mem_of_mem_erase h)), ← sum_erase_add a _ hi]
   ring
 
+omit [DecidableEq σ] in
+/-- A new doubly occupied site must be the destination of the hop. -/
+private theorem eq_destination_of_siteOcc_two_le {a b : FockState V σ} {i j w : V}
+    (h : ∀ v, siteOcc b v + (if i = v then 1 else 0) = siteOcc a v + (if j = v then 1 else 0))
+    (ha : siteOcc a w ≤ 1) (hb : 2 ≤ siteOcc b w) : j = w := by
+  by_contra hne
+  have hw := h w
+  simp only [hne, ↓reduceIte, add_zero] at hw
+  split_ifs at hw <;> omega
+
 /-- A hop changes the state. -/
 theorem IsHop.ne {a b : FockState V σ} (h : IsHop G a b) : a ≠ b := by
   obtain ⟨i, j, s, -, -, hj, rfl⟩ := h
@@ -92,20 +103,9 @@ theorem not_hop_triangle (hG : G.CliqueFree 3) {a b m : FockState V σ}
   obtain ⟨w, hw⟩ := hm
   have hne : i ≠ j := G.ne_of_adj hij
   -- The doubly occupied site of `m` is where both hops into `m` arrive.
-  have hw₁ : w₁ = w := by
-    by_contra hne₁
-    have h3 := e₃ w
-    have h4 := ha w
-    simp only [hne₁, ↓reduceIte] at h3
-    split_ifs at h3 <;> omega
-  subst hw₁
-  have hw₂ : w₂ = w₁ := by
-    by_contra hne₂
-    have h2 := e₂ w₁
-    have h4 := hb w₁
-    simp only [hne₂, ↓reduceIte] at h2
-    split_ifs at h2 <;> omega
-  subst hw₂
+  have hw₁ := eq_destination_of_siteOcc_two_le e₃ (ha w) hw
+  have hw₂ := eq_destination_of_siteOcc_two_le e₂ (hb w) hw
+  subst w₁ w₂
   -- The hop `a → m` starts at `j`, the hop `b → m` at `i`.
   have hi₁ : i₁ = j := by
     by_contra hne₁
@@ -123,7 +123,7 @@ theorem not_hop_triangle (hG : G.CliqueFree 3) {a b m : FockState V σ}
     simp only [hne₂, hne.symm, ↓reduceIte] at h1 h2 h3
     split_ifs at h1 h2 h3 <;> omega
   subst hi₂
-  exact hG {i₂, i₁, w₂} (is3Clique_triple_iff.2 ⟨hij, h₂, h₁⟩)
+  exact hG {i₂, i₁, w} (is3Clique_triple_iff.2 ⟨hij, h₂, h₁⟩)
 
 /-- **The cross term vanishes on a triangle-free graph.** Let `B` be a set of states without
 doubly occupied sites (`P₀`, or one particle-number sector of it) and `Q` a set of states

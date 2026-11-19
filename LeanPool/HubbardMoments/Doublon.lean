@@ -115,6 +115,15 @@ shift of a doublon on site `R` is `2 z t²/U`, `z` the degree of `R`, whatever `
 the `2z` virtual hops returns along the same bond and its phases cancel. -/
 theorem doublonSecondOrder_self (U : ℝ) (R : V) (hA : ∀ x, G.Adj R x → A x R = -A R x) :
     doublonSecondOrder (pairHopping G t A) U R R = 2 * G.degree R * (t : ℂ) ^ 2 / U := by
+  have roundTrip (x : V) :
+      (if G.Adj x R then peierlsAmplitude t (A R x) else 0) *
+          (if G.Adj R x then peierlsAmplitude t (A x R) else 0) =
+        if G.Adj R x then (t : ℂ) ^ 2 else 0 := by
+    by_cases hadj : G.Adj R x
+    · simp only [hadj, hadj.symm, ite_true]
+      exact hop_mul_reverse t A (hA x hadj)
+    · have hreverse : ¬ G.Adj x R := fun h => hadj h.symm
+      simp [hadj, hreverse]
   have key : ∀ m : V × V, pairHopping G t A (R, R) m * pairHopping G t A m (R, R) =
       (if m.2 = R ∧ G.Adj R m.1 then (t : ℂ) ^ 2 else 0) +
         (if m.1 = R ∧ G.Adj R m.2 then (t : ℂ) ^ 2 else 0) := by
@@ -124,23 +133,11 @@ theorem doublonSecondOrder_self (U : ℝ) (R : V) (hA : ∀ x, G.Adj R x → A x
     · subst y x
       simp only [pairHopping, hRR, and_false, ↓reduceIte, add_zero, mul_zero]
     · subst y
-      have hx' : R ≠ x := Ne.symm hx
-      by_cases hadj : G.Adj R x
-      · simp only [pairHopping, hadj, hadj.symm, hx, hx', and_true, false_and, ↓reduceIte,
-          add_zero]
-        exact hop_mul_reverse t A (hA x hadj)
-      · have hadj' : ¬ G.Adj x R := fun h => hadj h.symm
-        simp only [pairHopping, hadj, hadj', hx, hx', and_false, false_and, ↓reduceIte,
-          add_zero, mul_zero]
+      simpa only [pairHopping, hx, Ne.symm hx, and_false, true_and, false_and, ite_false,
+        add_zero] using roundTrip x
     · subst x
-      have hy' : R ≠ y := Ne.symm hy
-      by_cases hadj : G.Adj R y
-      · simp only [pairHopping, hadj, hadj.symm, hy, hy', and_true, false_and, ↓reduceIte,
-          zero_add]
-        exact hop_mul_reverse t A (hA y hadj)
-      · have hadj' : ¬ G.Adj y R := fun h => hadj h.symm
-        simp only [pairHopping, hadj, hadj', hy, hy', and_false, false_and, ↓reduceIte,
-          add_zero, mul_zero]
+      simpa only [pairHopping, hy, Ne.symm hy, and_false, true_and, false_and, ite_false,
+        zero_add] using roundTrip y
     · have hx' : R ≠ x := Ne.symm hx
       have hy' : R ≠ y := Ne.symm hy
       simp only [pairHopping, hx, hy, hx', hy', false_and, ↓reduceIte, add_zero, mul_zero]

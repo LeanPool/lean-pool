@@ -9,8 +9,8 @@ module
 
 public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.FermionHopping
-public import LeanPool.HubbardMoments.ProjectedHopping
 public import LeanPool.HubbardMoments.SchriefferWolff
+public import LeanPool.HubbardMoments.TorusMoments
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Complex.Trigonometric
 

@@ -8,7 +8,6 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.Fermions
-import Mathlib.Analysis.Complex.Basic
 
 /-! # Fermionic hopping matrices on finite graphs -/
 
@@ -166,7 +165,9 @@ theorem norm_projectedFermionHopping_move {c : Config V σ} {i j : V}
   -- only the hop `i → j` of spin `s₀` contributes
   rw [sum_eq_single (i, j), sum_eq_single s₀]
   · have hnot' : (j, s₀) ∉ (configState c).erase (i, s₀) := fun h => hnot (mem_of_mem_erase h)
-    simp [hmem, hnot']
+    have hone : ‖(1 : ℂ)‖ = 1 := by
+      simpa only [Complex.ofReal_one, Real.norm_eq_abs, abs_one] using Complex.norm_real 1
+    simp [hmem, hnot', Complex.norm_pow, hone]
   · intro s _ hs
     rw [ite_eq_right_iff.2, mul_zero]
     rintro ⟨h₁, h₂, h₃⟩

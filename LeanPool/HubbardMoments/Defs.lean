@@ -8,7 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import Mathlib.Analysis.Complex.Norm
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 
 /-!
@@ -19,7 +19,6 @@ This file defines the graph, configurations, and matrices used in
 
 * `sector V a b k`: basis states of `a` up and `b` down electrons on the sites `V` with
   exactly `k` doubly occupied sites.
-* `torus L`: the `L × L` square-lattice torus.
 * `arcs G`: the directed edges of a graph `G`.
 * `hops G S`: the hops out of a configuration `S`, from an occupied site to an empty
   neighbouring site.
@@ -52,13 +51,6 @@ def sector (a b k : ℕ) : Finset (Finset V × Finset V) :=
   (powersetCard a univ ×ˢ powersetCard b univ).filter (fun p => (p.1 ∩ p.2).card = k)
 
 end Sector
-
-/-- The `L × L` square-lattice torus (periodic boundary conditions): the box product of
-two `L`-cycles. Each site is adjacent to its nearest neighbours along both axes. -/
-abbrev torus (L : ℕ) : SimpleGraph (Fin L × Fin L) := cycleGraph L □ cycleGraph L
-
-instance (L : ℕ) : DecidableRel (torus L).Adj := fun _ _ =>
-  decidable_of_iff' _ boxProd_adj
 
 section Hops
 

@@ -9,8 +9,7 @@ module
 
 public import LeanPool.HubbardMoments.Spec
 public import LeanPool.HubbardMoments.Sectors
-public import LeanPool.HubbardMoments.SecondMoment
-public import LeanPool.HubbardMoments.ProjectedHopping
+public import LeanPool.HubbardMoments.TorusMoments
 public import LeanPool.HubbardMoments.Doublon
 public import LeanPool.HubbardMoments.SchriefferWolff
 public import LeanPool.HubbardMoments.FinitePopulation

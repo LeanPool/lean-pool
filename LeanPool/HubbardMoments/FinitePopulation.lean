@@ -7,8 +7,8 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.HubbardMoments.Combinatorics.Subsets
 public import LeanPool.HubbardMoments.Defs
+import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Nat.Factorial.Cast
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -60,9 +60,7 @@ theorem card_supersets_mul (T : Finset V) (k : ℕ) :
         (Fintype.card V).descFactorial T.card =
       (Fintype.card V).choose k * k.descFactorial T.card := by
   by_cases hTk : T.card ≤ k
-  · have h := card_trace_eq T T subset_rfl k hTk
-    simp only [inter_eq_left] at h
-    rw [h]
+  · rw [card_filter_powersetCard_subset T univ k (subset_univ _) hTk, card_univ]
     rw [Nat.descFactorial_eq_factorial_mul_choose, Nat.descFactorial_eq_factorial_mul_choose,
       show (Fintype.card V).choose k * ((T.card).factorial * k.choose T.card) =
         (T.card).factorial * ((Fintype.card V).choose k * k.choose T.card) by ring,

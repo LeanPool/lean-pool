@@ -8,7 +8,8 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.Combinatorics.Subsets
-public import LeanPool.HubbardMoments.Torus
+public import LeanPool.HubbardMoments.Defs
+public import Mathlib.Combinatorics.SimpleGraph.Finite
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
@@ -36,10 +37,6 @@ configurations. This file proves the average.
   `C(N, n)` configurations is `2|E| · n(N - n) / (N(N - 1))`.
 * `average_card_hops_regular`: on a `z`-regular graph the average is
   `n z (N - n) / (N - 1)`.
-* `average_card_hops_torus`: on the `L × L` torus with `L ≥ 3`, it is
-  `4n(L² - n)/(L² - 1)`. For example it is `64/5 = 12.8` for `L = 4, n = 4`, and `14`
-  for `L = 5, n = 4`, the values `μ₂(U → ∞)` printed by the sparse-trace code at
-  `λ = 1`.
 
 The key fact (`card_occupied_empty`) is that a fixed ordered pair of distinct sites
 `(i, j)` is a hop for exactly `C(N - 2, n - 1)` of the `n`-subsets, whether or not
@@ -62,11 +59,8 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 omit [DecidableEq V] in
 /-- There are `2|E|` directed edges. -/
-theorem card_arcs : (arcs G).card = 2 * G.edgeFinset.card := by
-  rw [← G.sum_degrees_eq_twice_card_edges, arcs, ← univ_product_univ, card_filter,
-    sum_product]
-  refine sum_congr rfl fun v _ => ?_
-  rw [← G.card_neighborFinset_eq_degree, G.neighborFinset_eq_filter, card_filter]
+theorem card_arcs : (arcs G).card = 2 * G.edgeFinset.card :=
+  G.two_mul_card_edgeFinset.symm
 
 omit [DecidableEq V] in
 /-- The sum of the degrees of a regular graph counts each edge twice. -/
@@ -196,33 +190,5 @@ theorem average_card_hops_regular {z : ℕ} (hz : G.IsRegularOfDegree z) (n : �
   have hN1 : (Fintype.card V : ℚ) - 1 ≠ 0 := by apply ne_of_gt; linarith
   rw [hE']
   field_simp
-
-/-- On the `L × L` torus (`L ≥ 3`, `N = L²`, `z = 4`) the average hop count of `n`
-particles is `4n(L² - n)/(L² - 1)`. -/
-theorem average_card_hops_torus (L : ℕ) (hL : 3 ≤ L) (n : ℕ) (hn : n ≤ L * L) :
-    ((∑ S ∈ powersetCard n (univ : Finset (Fin L × Fin L)), (hops (torus L) S).card : ℕ) : ℚ) /
-        (L * L).choose n =
-      4 * n * (L * L - n) / (L * L - 1) := by
-  have hcard : Fintype.card (Fin L × Fin L) = L * L := by simp
-  have h := average_card_hops_regular (torus L) (torus_isRegularOfDegree_of_fintype L hL) n
-    (by rw [hcard]; exact hn) (by rw [hcard]; nlinarith)
-  rw [hcard] at h
-  push_cast at h ⊢
-  rw [h]
-  ring
-
-/-- `L = 4`, `n = 4`: the average hop count is `64/5 = 12.8`. -/
-theorem average_card_hops_torus_L4_n4 :
-    ((∑ S ∈ powersetCard 4 (univ : Finset (Fin 4 × Fin 4)), (hops (torus 4) S).card : ℕ) : ℚ) /
-        (4 * 4).choose 4 = 64 / 5 := by
-  rw [average_card_hops_torus 4 (by norm_num) 4 (by norm_num)]
-  norm_num
-
-/-- `L = 5`, `n = 4`: the average hop count is `14`. -/
-theorem average_card_hops_torus_L5_n4 :
-    ((∑ S ∈ powersetCard 4 (univ : Finset (Fin 5 × Fin 5)), (hops (torus 5) S).card : ℕ) : ℚ) /
-        (5 * 5).choose 4 = 14 := by
-  rw [average_card_hops_torus 5 (by norm_num) 4 (by norm_num)]
-  norm_num
 
 end HubbardMoments

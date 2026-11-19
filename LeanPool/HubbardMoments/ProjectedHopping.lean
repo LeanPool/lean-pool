@@ -8,7 +8,6 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.SecondMoment
-import Mathlib.Analysis.Complex.Basic
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.LinearCombination
@@ -245,7 +244,8 @@ theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c
   have hsq : ∀ b, H c b * H b c = ((‖H b c‖ : ℝ) : ℂ) ^ 2 := by
     intro b
     rw [← hH.isHermitian.apply c b]
-    exact Complex.conj_mul' (H b c)
+    change starRingEnd ℂ (H b c) * H b c = _
+    rw [mul_comm, Complex.mul_conj, Complex.normSq_eq_norm_sq, Complex.ofReal_pow]
   have hmem : ∀ p ∈ hops G (occ c), G.Adj p.1 p.2 ∧ c p.1 ≠ none ∧ c p.2 = none := by
     intro p hp
     simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not] at hp
@@ -408,21 +408,5 @@ theorem isProjectedHopping_hopMatrix {t : ℝ} (ht : 0 ≤ t) :
     simp only [hopMatrix, h, ↓reduceIte]
 
 end Witness
-
-/-- **On the `L × L` torus** (`L ≥ 3`, `N = L²`, `z = 4`),
-`μ₂ = t² · 4n(L² - n)/(L² - 1)`. -/
-theorem second_moment_torus {σ : Type*} [Fintype σ] [DecidableEq σ] {L : ℕ} (hL : 3 ≤ L)
-    {t : ℝ} {H : Matrix (Config (Fin L × Fin L) σ) (Config (Fin L × Fin L) σ) ℂ}
-    (hH : IsProjectedHopping (torus L) t H) (n : σ → ℕ)
-    (hB : (basis (Fin L × Fin L) n).Nonempty) :
-    secondMoment (basis (Fin L × Fin L) n) H =
-      (t : ℂ) ^ 2 * 4 * (∑ s, n s : ℕ) * ((L : ℂ) * L - (∑ s, n s : ℕ)) /
-        ((L : ℂ) * L - 1) := by
-  have h := second_moment_regular hH (torus_isRegularOfDegree_of_fintype L hL) n hB
-    (by simp only [Fintype.card_prod, Fintype.card_fin]; nlinarith)
-  simp only [Fintype.card_prod, Fintype.card_fin] at h
-  push_cast at h ⊢
-  rw [h]
-  ring
 
 end HubbardMoments

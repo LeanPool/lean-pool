@@ -26,4 +26,5 @@ public import LeanPool.HubbardMoments.Spec
 public import LeanPool.HubbardMoments.Torus
 public import LeanPool.HubbardMoments.TorusBand
 public import LeanPool.HubbardMoments.TorusBandDefinition
+public import LeanPool.HubbardMoments.TorusMoments
 public import LeanPool.HubbardMoments.Weighted

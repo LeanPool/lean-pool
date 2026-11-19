@@ -9,6 +9,7 @@ module
 
 public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.TorusBandDefinition
+public import LeanPool.HubbardMoments.Torus
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 
