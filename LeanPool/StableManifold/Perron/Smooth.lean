@@ -43,10 +43,8 @@ from the smoothness of the superposition operator on bounded sequences.
   `perronHomeomorph_apply` holds by definition.
 * `orbitSeq_eq_perronHomeomorph_symm`: `perronHomeomorph (orbitSeq ξ) = stableOrbit ξ` is the
   fixed point equation `perronMap_orbitSeq`; then `Homeomorph.symm_apply_eq`.
-* `norm_perronOp_comp_applyCLM_le`: `‖Dφ y‖ ≤ L` (`norm_fderiv_le_of_lipschitz`), so
-  `‖superpose (fderiv ℝ φ) x‖ ≤ L` (`superpose_apply_of_bound`,
-  `BoundedContinuousFunction.norm_le`), and `‖perronOp ∘L applyCLM (…)‖ ≤ S.bound L ≤ 1/2`
-  (`ContinuousLinearMap.opNorm_comp_le`, `BoundedContinuousFunction.norm_applyCLM_apply_le`).
+* `norm_perronOp_comp_applyCLM_le`: apply the Lipschitz bound for the nonlinear term
+  to its derivative using `HasFDerivAt.le_of_lipschitz`.
 * `hasFDerivAt_perronSub`: `hasFDerivAt_id`, `hasFDerivAt_superpose` and the chain rule for the
   continuous linear map `perronOp`. `contDiff_perronSub`: `contDiff_id`, `contDiff_superpose`
   and `ContinuousLinearMap.contDiff`.
@@ -125,24 +123,15 @@ theorem orbitSeq_eq_perronHomeomorph_symm (ξ : E) :
   rw [perronHomeomorph_apply, perronSub, eq_sub_iff_add_eq]
   exact F.perronMap_orbitSeq ξ
 
-/-- `‖perronOp ∘L applyCLM (superpose (fderiv ℝ φ) x)‖ ≤ 1/2`: the derivative of `perronSub` is
-`1 - T` with `‖T‖ ≤ 1/2`. -/
-theorem norm_perronOp_comp_applyCLM_le (x : ℕ →ᵇ E) :
-    ‖S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)‖ ≤ 1 / 2 := by
-  have hD : ∀ y, ‖fderiv ℝ F.φ y‖ ≤ F.lip := fun y ↦ norm_fderiv_le_of_lipschitz ℝ F.lipschitzWith
-  have ha : ‖superpose (fderiv ℝ F.φ) x‖ ≤ F.lip := by
-    refine (norm_le F.lip.coe_nonneg).2 fun n ↦ ?_
-    rw [superpose_apply_of_bound ⟨F.lip, fun m ↦ hD (x m)⟩]
-    exact hD (x n)
-  calc ‖S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)‖
-      ≤ ‖S.perronOp‖ * ‖applyCLM (superpose (fderiv ℝ F.φ) x)‖ := opNorm_comp_le _ _
-    _ ≤ S.bound * F.lip := mul_le_mul S.norm_perronOp_le ((norm_applyCLM_apply_le _).trans ha)
-        (norm_nonneg _) S.bound_pos.le
-    _ ≤ 1 / 2 := by linarith [F.lip_mul_bound_le]
-
 end Complete
 
 variable [FiniteDimensional ℝ E]
+
+/-- The nonlinear operator in `perronSub` has derivative norm at most `1/2`. -/
+private theorem norm_perronOp_comp_applyCLM_le (hφ : ContDiff ℝ 1 F.φ) (x : ℕ →ᵇ E) :
+    ‖S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)‖ ≤ 1 / 2 :=
+  ((S.perronOp.hasFDerivAt.comp x (hasFDerivAt_superpose hφ x)).le_of_lipschitz
+    F.lipschitzWith_perronNonlinear)
 
 /-- The derivative of `perronSub`. -/
 theorem hasFDerivAt_perronSub (hφ : ContDiff ℝ 1 F.φ) (x : ℕ →ᵇ E) :
@@ -164,7 +153,7 @@ theorem contDiff_orbitSeq {n : ℕ∞} (hφ : ContDiff ℝ n F.φ) : ContDiff �
   · exact contDiff_zero.2 (F.perronHomeomorph.symm.continuous.comp S.stableOrbit.continuous)
   have h1 : ContDiff ℝ 1 F.φ := hφ.of_le (by exact_mod_cast Order.one_le_iff_ne_zero.2 hn)
   have hT : ∀ x, ‖S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)‖ < 1 := fun x ↦
-    (F.norm_perronOp_comp_applyCLM_le x).trans_lt (by norm_num)
+    (F.norm_perronOp_comp_applyCLM_le h1 x).trans_lt (by norm_num)
   refine (F.perronHomeomorph.contDiff_symm
     (f₀' := fun x ↦ ContinuousLinearEquiv.unitsEquiv ℝ _ (Units.oneSub _ (hT x)))
     (fun x ↦ ?_) (F.contDiff_perronSub hφ)).comp S.stableOrbit.contDiff

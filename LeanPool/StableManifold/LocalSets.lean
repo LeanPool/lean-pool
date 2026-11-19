@@ -7,7 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.StableManifold.Defs
+public import LeanPool.StableManifold.LocalSetDefinitions
 public import Mathlib.Topology.OpenPartialHomeomorph.Defs
 
 /-!

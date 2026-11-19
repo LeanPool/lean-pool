@@ -11,9 +11,11 @@ public import LeanPool.StableManifold.Defs
 public import LeanPool.StableManifold.Linear.HyperbolicSplitting
 public import LeanPool.StableManifold.Linear.Spectral
 public import LeanPool.StableManifold.Linear.Splitting
+public import LeanPool.StableManifold.Linear.SplittingConstruction
 public import LeanPool.StableManifold.Linear.Subspaces
 public import LeanPool.StableManifold.Local.Cutoff
 public import LeanPool.StableManifold.Local.StableSet
+public import LeanPool.StableManifold.LocalSetDefinitions
 public import LeanPool.StableManifold.LocalSets
 public import LeanPool.StableManifold.Perron.Graph
 public import LeanPool.StableManifold.Perron.Operator

@@ -9,6 +9,8 @@ module
 
 public import LeanPool.StableManifold.Linear.HyperbolicSplitting
 public import Mathlib.Topology.ContinuousMap.Bounded.Normed
+import Mathlib.Analysis.Normed.Group.InfiniteSum
+import Mathlib.Topology.Algebra.InfiniteSum.Module
 
 /-!
 # The linear Lyapunov–Perron operator
@@ -120,7 +122,7 @@ theorem stableOrbit_proj (ξ : E) : S.stableOrbit (S.proj ξ) = S.stableOrbit ξ
 
 /-- The `n`-th term of the linear Lyapunov–Perron operator:
 `∑_{k < n} A^(n-1-k) P (y k) - ∑_{j ≥ 0} B^(j+1) (y (n + j))`. -/
-noncomputable def perronTerm (y : ℕ → E) (n : ℕ) : E :=
+private noncomputable def perronTerm (y : ℕ →ᵇ E) (n : ℕ) : E :=
   ∑ k ∈ Finset.range n, (A ^ (n - 1 - k)) (S.proj (y k)) -
     ∑' j : ℕ, (S.unstableInv ^ (j + 1)) (y (n + j))
 
@@ -202,7 +204,7 @@ theorem summable_unstableInv_pow_apply (y : ℕ →ᵇ E) (n : ℕ) :
 
 omit [CompleteSpace E] in
 /-- `‖perronTerm y n‖ ≤ 2 C / (1 - λ) ‖y‖ ≤ S.bound ‖y‖`. -/
-theorem norm_perronTerm_le (y : ℕ →ᵇ E) (n : ℕ) : ‖S.perronTerm y n‖ ≤ S.bound * ‖y‖ := by
+private theorem norm_perronTerm_le (y : ℕ →ᵇ E) (n : ℕ) : ‖perronTerm S y n‖ ≤ S.bound * ‖y‖ := by
   have h1 : 0 < 1 - S.rate := sub_pos.2 S.rate_lt_one
   have hs : ‖∑ k ∈ Finset.range n, (A ^ (n - 1 - k)) (S.proj (y k))‖ ≤
       S.const * (1 - S.rate)⁻¹ * ‖y‖ := by
@@ -225,35 +227,39 @@ theorem norm_perronTerm_le (y : ℕ →ᵇ E) (n : ℕ) : ‖S.perronTerm y n‖
   rw [hb]
   exact (norm_sub_le _ _).trans (by linarith)
 
-theorem perronTerm_add (y z : ℕ →ᵇ E) (n : ℕ) :
-    S.perronTerm ⇑(y + z) n = S.perronTerm y n + S.perronTerm z n := by
+private theorem perronTerm_add (y z : ℕ →ᵇ E) (n : ℕ) :
+    perronTerm S (y + z) n = perronTerm S y n + perronTerm S z n := by
   simp only [perronTerm, BoundedContinuousFunction.add_apply, map_add, Finset.sum_add_distrib]
   rw [(S.summable_unstableInv_pow_apply y n).tsum_add (S.summable_unstableInv_pow_apply z n)]
   abel
 
-theorem perronTerm_smul (c : ℝ) (y : ℕ →ᵇ E) (n : ℕ) :
-    S.perronTerm ⇑(c • y) n = c • S.perronTerm y n := by
+private theorem perronTerm_smul (c : ℝ) (y : ℕ →ᵇ E) (n : ℕ) :
+    perronTerm S (c • y) n = c • perronTerm S y n := by
   simp only [perronTerm, BoundedContinuousFunction.smul_apply, map_smul, ← Finset.smul_sum]
   rw [(S.summable_unstableInv_pow_apply y n).tsum_const_smul c, smul_sub]
 
 /-- The **linear Lyapunov–Perron operator** on bounded sequences:
 `perronOp y n = ∑_{k < n} A^(n-1-k) P (y k) - ∑_{j ≥ 0} B^(j+1) (y (n + j))`. -/
+@[no_expose]
 noncomputable def perronOp : (ℕ →ᵇ E) →L[ℝ] (ℕ →ᵇ E) :=
   LinearMap.mkContinuous
-    { toFun := fun y ↦ ofNormedAddCommGroupDiscrete (S.perronTerm y) (S.bound * ‖y‖)
-        (S.norm_perronTerm_le y)
-      map_add' := fun y z ↦ by ext n; exact S.perronTerm_add y z n
-      map_smul' := fun c y ↦ by ext n; exact S.perronTerm_smul c y n }
+    { toFun := fun y ↦ ofNormedAddCommGroupDiscrete (perronTerm S y) (S.bound * ‖y‖)
+        (norm_perronTerm_le S y)
+      map_add' := fun y z ↦ by ext n; exact perronTerm_add S y z n
+      map_smul' := fun c y ↦ by ext n; exact perronTerm_smul S c y n }
     S.bound fun y ↦ norm_ofNormedAddCommGroup_le _ (by positivity [S.bound_pos])
-      (S.norm_perronTerm_le y)
+      (norm_perronTerm_le S y)
 
-theorem perronOp_apply (y : ℕ →ᵇ E) (n : ℕ) : S.perronOp y n = S.perronTerm y n :=
+theorem perronOp_apply (y : ℕ →ᵇ E) (n : ℕ) :
+    S.perronOp y n = ∑ k ∈ Finset.range n, (A ^ (n - 1 - k)) (S.proj (y k)) -
+      ∑' j : ℕ, (S.unstableInv ^ (j + 1)) (y (n + j)) := by
+  unfold perronOp
   rfl
 
 /-- At time `0` only the unstable series remains. -/
 theorem perronOp_apply_zero (y : ℕ →ᵇ E) :
     S.perronOp y 0 = -∑' j : ℕ, (S.unstableInv ^ (j + 1)) (y j) := by
-  simp [perronOp_apply, perronTerm]
+  simp [perronOp_apply]
 
 /-- The operator norm of the linear Lyapunov–Perron operator is at most `S.bound`. -/
 theorem norm_perronOp_le : ‖S.perronOp‖ ≤ S.bound :=
@@ -327,7 +333,7 @@ Proof: split into the stable component (finite sums) and the unstable one (the s
 theorem stableOrbit_add_perronOp_succ (ξ : E) (y : ℕ →ᵇ E) (n : ℕ) :
     (S.stableOrbit ξ + S.perronOp y) (n + 1) =
       A ((S.stableOrbit ξ + S.perronOp y) n) + y n := by
-  simp only [BoundedContinuousFunction.add_apply, stableOrbit_apply, perronOp_apply, perronTerm,
+  simp only [BoundedContinuousFunction.add_apply, stableOrbit_apply, perronOp_apply,
     map_add, map_sub, apply_tsum_unstableInv_pow_apply, map_sum]
   rw [Finset.sum_range_succ, Nat.add_sub_cancel, Nat.sub_self, pow_zero, one_apply_eq_self,
     ← mul_apply_eq_comp A (A ^ n), ← pow_succ']

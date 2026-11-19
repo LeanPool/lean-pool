@@ -7,48 +7,10 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.StableManifold.Defs
-public import LeanPool.StableManifold.Linear.Spectral
+public import Mathlib.Analysis.Normed.Operator.Mul
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Restrict
 
-/-!
-# Stable and unstable subspaces of a linear map
-
-For a continuous linear map `A` of a real normed space:
-
-* `ContinuousLinearMap.stableSubspace A`: the vectors `v` with `Aⁿ v → 0`;
-* `ContinuousLinearMap.unstableSubspace A`: the vectors having a backward orbit tending to `0`
-  (`w 0 = v`, `A (w (n + 1)) = w n`, `w n → 0`);
-* `ContinuousLinearMap.IsHyperbolic A` (finite dimension): no complex eigenvalue of `A` has
-  modulus `1`.
-
-The three are defined in `StableManifold.Defs`, with the other definitions in the statement of the
-stable manifold theorem.
-
-Both subspaces are `A`-invariant, and `A` maps the unstable subspace onto itself
-(`map_mem_stableSubspace`, `map_mem_unstableSubspace`, `exists_mem_unstableSubspace_apply_eq`).
-For a continuous linear equivalence `e`, the stable subspace of `e⁻¹` is the unstable subspace of
-`e` and conversely (`stableSubspace_symm`, `unstableSubspace_symm`). In finite dimension the two
-subspaces are always disjoint (`disjoint_stableSubspace_unstableSubspace`, no hyperbolicity
-needed), so `A` is injective on the unstable subspace (`injOn_unstableSubspace`). That they span
-the space when `A` is hyperbolic is `ContinuousLinearMap.isCompl_stableSubspace_unstableSubspace`
-(`StableManifold.Linear.Splitting`).
-
-## Proofs
-
-* Invariance: `Aⁿ (A v) = Aⁿ⁺¹ v → 0` (`pow_succ`, `tendsto_add_atTop_iff_nat`); for the
-  unstable subspace, the backward orbit of `A v` is `0 ↦ A v`, `n + 1 ↦ w n`, and the backward
-  orbit of `w 1` (a preimage of `v`) is `n ↦ w (n + 1)`.
-* `stableSubspace_symm`, `unstableSubspace_symm`: a backward orbit of `e` is unique,
-  `w n = (e.symm ^ n) v` (induction, `pow_succ'`); conversely `n ↦ (e.symm ^ n) v` is a backward
-  orbit. Symmetrically, a backward orbit of `e.symm` is the forward orbit of `e`.
-* `disjoint_stableSubspace_unstableSubspace`: the restriction `T` of `A` to `Eₛ`
-  (`ContinuousLinearMap.restrict`, by invariance) has `Tⁿ x → 0` for every `x`, so
-  `‖Tⁿ‖ ≤ C rⁿ ≤ C` (`exists_norm_pow_le_mul_pow_of_tendsto`, finite dimension). If
-  `v ∈ Eₛ ⊓ Eᵤ` with backward orbit `w`, then `Aⁿ (w n) = v`, so `Aᵐ (w n) = Aᵐ⁻ⁿ v → 0` and
-  `w n ∈ Eₛ`; hence `‖v‖ = ‖Tⁿ (w n)‖ ≤ C ‖w n‖ → 0`, and `v = 0`.
-* `injOn_unstableSubspace`: if `v, v' ∈ Eᵤ` and `A v = A v'`, then `v - v' ∈ Eᵤ` and
-  `Aⁿ⁺¹ (v - v') = 0`, so `v - v' ∈ Eₛ ⊓ Eᵤ = 0`.
--/
+/-! # Stable and unstable subspaces of a continuous linear map -/
 
 @[expose] public section
 
@@ -56,9 +18,41 @@ open Filter Topology
 
 namespace ContinuousLinearMap
 
-section General
-
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+
+/-- The **stable subspace** of `A`: the vectors `v` with `Aⁿ v → 0`. For a hyperbolic `A` it is
+`ker pₛ(A)`, for the factor `pₛ` of the characteristic polynomial with its roots of modulus `< 1`
+(`ContinuousLinearMap.exists_stableSubspace_unstableSubspace_eq_ker_aeval` in the library), that
+is, the sum of the generalized eigenspaces of the eigenvalues of modulus `< 1`. -/
+def stableSubspace (A : E →L[ℝ] E) : Submodule ℝ E where
+  carrier := {v | Tendsto (fun n : ℕ ↦ (A ^ n) v) atTop (𝓝 0)}
+  add_mem' {v w} hv hw := by
+    simp only [Set.mem_ofPred_eq, map_add] at hv hw ⊢
+    simpa using hv.add hw
+  zero_mem' := by simp
+  smul_mem' c v hv := by
+    simp only [Set.mem_ofPred_eq, map_smul] at hv ⊢
+    simpa using hv.const_smul c
+
+/-- The **unstable subspace** of `A`: the vectors `v` having a backward orbit tending to `0`
+(`w 0 = v`, `A (w (n + 1)) = w n`, `w n → 0`). For an invertible `A` it is the stable subspace of
+`A⁻¹`; for a hyperbolic `A` it is `ker pᵤ(A)`, for the factor `pᵤ` of the characteristic
+polynomial with its roots of modulus `> 1`
+(`ContinuousLinearMap.exists_stableSubspace_unstableSubspace_eq_ker_aeval` in the library), that
+is, the sum of the generalized eigenspaces of the eigenvalues of modulus `> 1`. -/
+def unstableSubspace (A : E →L[ℝ] E) : Submodule ℝ E where
+  carrier := {v | ∃ w : ℕ → E, w 0 = v ∧ (∀ n, A (w (n + 1)) = w n) ∧
+    Tendsto w atTop (𝓝 0)}
+  add_mem' {v₁ v₂} h₁ h₂ := by
+    obtain ⟨w₁, h01, hA1, ht1⟩ := h₁
+    obtain ⟨w₂, h02, hA2, ht2⟩ := h₂
+    refine ⟨fun n ↦ w₁ n + w₂ n, by simp [h01, h02], fun n ↦ by simp [hA1, hA2], ?_⟩
+    simpa using ht1.add ht2
+  zero_mem' := ⟨fun _ ↦ 0, rfl, fun _ ↦ by simp, tendsto_const_nhds⟩
+  smul_mem' c v h := by
+    obtain ⟨w, h0, hA, ht⟩ := h
+    refine ⟨fun n ↦ c • w n, by simp [h0], fun n ↦ by simp [hA], ?_⟩
+    simpa using ht.const_smul c
 
 theorem mem_stableSubspace {A : E →L[ℝ] E} {v : E} :
     v ∈ A.stableSubspace ↔ Tendsto (fun n : ℕ ↦ (A ^ n) v) atTop (𝓝 0) :=
@@ -138,65 +132,5 @@ theorem coe_restrict_pow_apply (A : E →L[ℝ] E) {p : Submodule ℝ E} (h : �
   change (↑((↑((A.restrict h) ^ n) : p →ₗ[ℝ] p) x) : E) = (↑(A ^ n) : E →ₗ[ℝ] E) x
   rw [toLinearMap_pow, toLinearMap_restrict, Module.End.pow_restrict, LinearMap.restrict_apply,
     toLinearMap_pow]
-
-end General
-
-section FiniteDimensional
-
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
-
-/-- In finite dimension the stable and unstable subspaces are **disjoint**, for every `A`.
-
-Proof: the powers of the restriction `T` of `A` to `Eₛ` are bounded, `‖Tⁿ‖ ≤ C`
-(`exists_norm_pow_le_mul_pow_of_tendsto`). A backward orbit `w` of `v ∈ Eₛ ⊓ Eᵤ` lies in `Eₛ`
-and `Aⁿ (w n) = v`, so `‖v‖ ≤ C ‖w n‖ → 0`. -/
-theorem disjoint_stableSubspace_unstableSubspace (A : E →L[ℝ] E) :
-    Disjoint A.stableSubspace A.unstableSubspace := by
-  rw [Submodule.disjoint_def]
-  intro v hs hu
-  -- the restriction `T` of `A` to the stable subspace has bounded powers
-  let T : A.stableSubspace →L[ℝ] A.stableSubspace :=
-    A.restrict fun _ hx ↦ map_mem_stableSubspace hx
-  have hTn (n : ℕ) (x : A.stableSubspace) : ((T ^ n) x : E) = (A ^ n) x :=
-    A.coe_restrict_pow_apply (fun _ hx ↦ map_mem_stableSubspace hx) n x
-  obtain ⟨C, r, hC1, hr0, hr1, hC⟩ := T.exists_norm_pow_le_mul_pow_of_tendsto fun x ↦ by
-    rw [tendsto_subtype_rng]
-    simp only [hTn, Submodule.coe_zero]
-    exact x.2
-  -- the backward orbit `w` of `v` lies in the stable subspace, and `Aⁿ (w n) = v`
-  obtain ⟨w, h0, hA, ht⟩ := hu
-  have hwA := pow_apply_of_backwardOrbit h0 hA
-  have hws : ∀ n, w n ∈ A.stableSubspace := by
-    intro n
-    rw [mem_stableSubspace, ← tendsto_add_atTop_iff_nat n]
-    refine hs.congr fun m ↦ ?_
-    rw [pow_add, mul_apply_eq_comp, hwA]
-  -- so `‖v‖ ≤ C ‖w n‖ → 0`
-  have hle : ∀ n, ‖v‖ ≤ C * ‖w n‖ := by
-    intro n
-    have hrn : r ^ n ≤ 1 := pow_le_one₀ hr0.le hr1.le
-    calc ‖v‖ = ‖(T ^ n) ⟨w n, hws n⟩‖ := by rw [← Submodule.norm_coe, hTn, hwA]
-      _ ≤ ‖T ^ n‖ * ‖w n‖ := (T ^ n).le_opNorm _
-      _ ≤ C * ‖w n‖ := by
-        gcongr
-        exact (hC n).trans (mul_le_of_le_one_right (by linarith) hrn)
-  have := ge_of_tendsto' (ht.norm.const_mul C) hle
-  simpa using this
-
-/-- `A` is injective on its unstable subspace.
-
-Proof: if `A v = A v'` then `v - v' ∈ Eᵤ` and `Aⁿ (v - v') = 0` for `n ≥ 1`, so
-`v - v' ∈ Eₛ ⊓ Eᵤ = 0` (`disjoint_stableSubspace_unstableSubspace`). -/
-theorem injOn_unstableSubspace (A : E →L[ℝ] E) :
-    Set.InjOn A (A.unstableSubspace : Set E) := by
-  intro v hv v' hv' h
-  have hs : v - v' ∈ A.stableSubspace := by
-    rw [mem_stableSubspace, ← tendsto_add_atTop_iff_nat 1]
-    refine tendsto_const_nhds.congr fun n ↦ ?_
-    rw [pow_succ, mul_apply_eq_comp, map_sub, h, sub_self, map_zero]
-  exact sub_eq_zero.1 (Submodule.disjoint_def.1 (disjoint_stableSubspace_unstableSubspace A) _ hs
-    (sub_mem hv hv'))
-
-end FiniteDimensional
 
 end ContinuousLinearMap

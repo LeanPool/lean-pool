@@ -104,8 +104,8 @@ private lemma mem_spectrum_complexified_iff {ι : Type*} [Fintype ι] [Decidable
     Polynomial.eval_map_algebraMap]
 
 /-- If every complex eigenvalue of a linear operator `A` of a finite-dimensional real normed space
-(every root in `ℂ` of its characteristic polynomial) has modulus `< 1`, then some power `A ^ N`,
-`N ≥ 1`, has operator norm `< 1`.
+(every root in `ℂ` of its characteristic polynomial) has modulus `< 1`, then the powers of
+`A` tend to zero in operator norm.
 
 Proof: complexify. Choose a basis (`Module.finBasis`), so that `A` is a real matrix `M`, and view
 `M` as a complex matrix, normed by the `L∞`-operator norm (a complex Banach algebra). The spectrum
@@ -114,10 +114,10 @@ of the complex matrix is the set of roots of its characteristic polynomial
 polynomial of `A` (`Matrix.charpoly_map`, `LinearMap.charpoly_toMatrix`), so its spectral radius
 is `< 1`. By Gelfand's formula, `‖Mⁿ‖ ≤ rⁿ` eventually for some `0 < r < 1`, so the entries
 of `Mⁿ` tend to `0`. The linear map from matrices to `E →L[ℝ] E` is continuous, so
-`Aⁿ → 0`, and `‖Aⁿ‖ < 1` for large `n`. -/
-theorem exists_norm_pow_lt_one (A : E →L[ℝ] E)
+`Aⁿ → 0`. -/
+theorem tendsto_pow_of_charpoly_roots (A : E →L[ℝ] E)
     (hA : ∀ μ : ℂ, Polynomial.aeval μ (LinearMap.charpoly (A : E →ₗ[ℝ] E)) = 0 → ‖μ‖ < 1) :
-    ∃ N : ℕ, 0 < N ∧ ‖A ^ N‖ < 1 := by
+    Tendsto (fun n : ℕ ↦ A ^ n) atTop (𝓝 0) := by
   classical
   let b := Module.finBasis ℝ E
   let M := LinearMap.toMatrix b b (A : E →ₗ[ℝ] E)
@@ -141,11 +141,21 @@ theorem exists_norm_pow_lt_one (A : E →L[ℝ] E)
     intro n
     ext x
     simp [Ψ, M, LinearMap.toMatrix_pow, ← ContinuousLinearMap.toLinearMap_pow]
-  have hT : Tendsto (fun n : ℕ ↦ A ^ n) atTop (𝓝 0) := by
-    have h := (Ψ.continuous_of_finiteDimensional.tendsto 0).comp hM
-    simpa [Function.comp_def, hΨ] using h
-  obtain ⟨N, hN⟩ := eventually_atTop.1 (hT.norm.eventually (gt_mem_nhds (a := (1 : ℝ)) (by simp)))
-  exact ⟨N + 1, N.succ_pos, hN (N + 1) (by omega)⟩
+  have h := (Ψ.continuous_of_finiteDimensional.tendsto 0).comp hM
+  simpa [Function.comp_def, hΨ] using h
+
+omit [FiniteDimensional ℝ E] in
+private theorem exists_norm_pow_lt_one_of_norm_tendsto (A : E →L[ℝ] E)
+    (h : Tendsto (fun n : ℕ ↦ ‖A ^ n‖) atTop (𝓝 0)) : ∃ N : ℕ, 0 < N ∧ ‖A ^ N‖ < 1 := by
+  obtain ⟨N, hN⟩ := eventually_atTop.1 (h.eventually (gt_mem_nhds (a := (1 : ℝ)) (by simp)))
+  exact ⟨N + 1, N.succ_pos, hN (N + 1) (Nat.le_succ _)⟩
+
+/-- Eigenvalues of modulus less than one give a power of operator norm less than one. -/
+theorem exists_norm_pow_lt_one (A : E →L[ℝ] E)
+    (hA : ∀ μ : ℂ, Polynomial.aeval μ (LinearMap.charpoly (A : E →ₗ[ℝ] E)) = 0 → ‖μ‖ < 1) :
+    ∃ N : ℕ, 0 < N ∧ ‖A ^ N‖ < 1 :=
+  A.exists_norm_pow_lt_one_of_norm_tendsto
+    (by simpa using (A.tendsto_pow_of_charpoly_roots hA).norm)
 
 /-- The complex eigenvalues of `A` (the complex roots of its characteristic polynomial) are roots
 of every real polynomial annihilating `A`.
@@ -177,16 +187,26 @@ private lemma aeval_eq_zero_of_aeval_charpoly_eq_zero (A : E →L[ℝ] E) {q : P
   · simp [spectrum.of_subsingleton] at h
   · rwa [spectrum.zero_eq, Set.mem_singleton_iff] at h
 
+/-- If every complex root of an annihilating polynomial has modulus less than one, the
+powers of the operator tend to zero in norm. -/
+theorem tendsto_pow_of_aeval_eq_zero (A : E →L[ℝ] E) {q : Polynomial ℝ}
+    (hq : Polynomial.aeval (A : E →ₗ[ℝ] E) q = 0)
+    (hroots : ∀ μ : ℂ, Polynomial.aeval μ q = 0 → ‖μ‖ < 1) :
+    Tendsto (fun n : ℕ ↦ A ^ n) atTop (𝓝 0) :=
+  A.tendsto_pow_of_charpoly_roots fun _ hμ ↦
+    hroots _ (aeval_eq_zero_of_aeval_charpoly_eq_zero A hq hμ)
+
 /-- If a linear operator `A` of a finite-dimensional real normed space is annihilated by a real
 polynomial `q` whose complex roots all have modulus `< 1`, then some power `A ^ N`, `N ≥ 1`, has
 operator norm `< 1`. (The hypothesis on the roots forces `q ≠ 0`.)
 
-Proof: the complex eigenvalues of `A` are roots of `q`, so `exists_norm_pow_lt_one` applies. -/
+Proof: `tendsto_pow_of_aeval_eq_zero`. -/
 theorem exists_norm_pow_lt_one_of_aeval_eq_zero (A : E →L[ℝ] E) {q : Polynomial ℝ}
     (hq : Polynomial.aeval (A : E →ₗ[ℝ] E) q = 0)
     (hroots : ∀ μ : ℂ, Polynomial.aeval μ q = 0 → ‖μ‖ < 1) :
     ∃ N : ℕ, 0 < N ∧ ‖A ^ N‖ < 1 :=
-  A.exists_norm_pow_lt_one fun _ hμ ↦ hroots _ (aeval_eq_zero_of_aeval_charpoly_eq_zero A hq hμ)
+  A.exists_norm_pow_lt_one_of_norm_tendsto
+    (by simpa using (A.tendsto_pow_of_aeval_eq_zero hq hroots).norm)
 
 /-- In finite dimension, if every orbit `Aⁿ v` tends to `0`, then some power `A ^ N`, `N ≥ 1`, has
 operator norm `< 1`.
@@ -265,16 +285,12 @@ theorem exists_norm_pow_le_mul_pow_of_tendsto (A : E →L[ℝ] E)
 /-- If `A` is annihilated by a real polynomial whose complex roots all have modulus `< 1`, then
 every orbit `Aⁿ v` tends to `0`.
 
-Proof: `exists_norm_pow_lt_one_of_aeval_eq_zero` and `exists_norm_pow_le_mul_pow` give
-`‖Aⁿ v‖ ≤ C rⁿ ‖v‖` with `r < 1`. -/
+Proof: use operator-norm convergence and `‖Aⁿ v‖ ≤ ‖Aⁿ‖ ‖v‖`. -/
 theorem tendsto_pow_apply_of_aeval_eq_zero (A : E →L[ℝ] E) {q : Polynomial ℝ}
     (hq : Polynomial.aeval (A : E →ₗ[ℝ] E) q = 0)
     (hroots : ∀ μ : ℂ, Polynomial.aeval μ q = 0 → ‖μ‖ < 1) (v : E) :
     Tendsto (fun n : ℕ ↦ (A ^ n) v) atTop (𝓝 0) := by
-  obtain ⟨N, hN, hAN⟩ := A.exists_norm_pow_lt_one_of_aeval_eq_zero hq hroots
-  obtain ⟨C, r, -, hr0, hr1, hC⟩ := A.exists_norm_pow_le_mul_pow hN hAN
-  refine squeeze_zero_norm (fun n ↦ ((A ^ n).le_opNorm v).trans
-    (mul_le_mul_of_nonneg_right (hC n) (norm_nonneg v))) ?_
-  simpa using ((tendsto_pow_atTop_nhds_zero_of_lt_one hr0.le hr1).const_mul C).mul_const ‖v‖
+  refine squeeze_zero_norm (fun n ↦ (A ^ n).le_opNorm v) ?_
+  simpa using (A.tendsto_pow_of_aeval_eq_zero hq hroots).norm.mul_const ‖v‖
 
 end ContinuousLinearMap

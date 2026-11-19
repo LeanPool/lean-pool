@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.StableManifold.LocalSets
+public import LeanPool.StableManifold.Linear.SplittingConstruction
 public import LeanPool.StableManifold.Perron.Smooth
 public import LeanPool.StableManifold.Local.Cutoff
 

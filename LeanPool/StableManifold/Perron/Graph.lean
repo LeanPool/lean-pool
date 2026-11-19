@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.StableManifold.Perron.Operator
+public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Topology.MetricSpace.Contracting
 public import LeanPool.StableManifold.Sequence.Superpose
 
