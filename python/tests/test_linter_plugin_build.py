@@ -37,13 +37,17 @@ def module_list_builds() -> list[tuple[str, str]]:
 
 
 def test_module_list_builds_link_the_plugin_first() -> None:
-    """A shard build links the plugin alone before it asks for its modules."""
+    """A shard build links the plugin alone, under the watchdog, before its modules."""
     builds = module_list_builds()
     assert [job for job, _ in builds] == ["shard"]
     for job, script in builds:
         build = MODULE_LIST_BUILD.search(script)
         assert build is not None
-        assert PLUGIN in script[: build.start()], job
+        before = script[: build.start()].splitlines()
+        earlier = [line for line in before if PLUGIN in line]
+        assert len(earlier) == 1, job
+        # The plugin's compiler keeps the time and memory limits of every other.
+        assert "lean_pool.build_time_limits watch" in earlier[0], job
 
 
 def test_plugin_target_is_the_one_the_pool_loads() -> None:
