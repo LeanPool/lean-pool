@@ -235,6 +235,7 @@ public import LeanPool.DistinctDistances.S4CertificateCase57
 public import LeanPool.DistinctDistances.S4CertificateCase58
 public import LeanPool.DistinctDistances.S4CertificateCase59
 public import LeanPool.DistinctDistances.S4CertificateCases
+public import LeanPool.DistinctDistances.S4CertificateKernelReplay
 public import LeanPool.DistinctDistances.S4CertificateParams
 public import LeanPool.DistinctDistances.S4CertificateSummaryElab
 public import LeanPool.DistinctDistances.S4ChordCover
