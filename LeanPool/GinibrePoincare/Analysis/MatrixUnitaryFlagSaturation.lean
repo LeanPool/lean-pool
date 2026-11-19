@@ -35,7 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.MatrixUnitaryCenteredPhaseFactorization
+public import LeanPool.GinibrePoincare.Analysis.MatrixUnitaryDiagonalPhase
 public import LeanPool.GinibrePoincare.Analysis.MatrixSchurProductIntegration
 
 /-!
