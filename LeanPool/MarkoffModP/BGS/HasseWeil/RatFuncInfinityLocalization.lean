@@ -425,10 +425,14 @@ local instance reciprocalIntegralClosureInfinityAlgebra :
       (RatFuncInfinityIntegralClosure K N) :=
   ratFuncInfinityReciprocalIntegralClosureAlgebra K N
 
+/-- The reciprocal affine normalization acts by multiplication through its
+inclusion into the infinity normalization. -/
 local instance reciprocalIntegralClosureInfinitySMul :
     SMul (integralClosure K[X] N) (RatFuncInfinityIntegralClosure K N) :=
   Algebra.toSMul
 
+/-- Reciprocal polynomials act by multiplication through the infinity valuation
+ring. -/
 local instance reciprocalPolynomialInfinitySMul :
     SMul K[X] (RatFuncInfinityIntegralClosure K N) :=
   Algebra.toSMul

@@ -233,10 +233,14 @@ local instance infinityPlaceTowerIntegralClosureAlgebra :
       (RatFuncInfinityIntegralClosure K L) :=
   (infinityIntegralClosureMap K M L).toAlgebra
 
+/-- The intermediate infinity integral closure acts by multiplication via
+`infinityIntegralClosureMap`. -/
 local instance infinityPlaceTowerIntegralClosureSMul :
     SMul (RatFuncInfinityIntegralClosure K M) (RatFuncInfinityIntegralClosure K L) :=
   Algebra.toSMul
 
+/-- The module structure on the top infinity integral closure induced by
+`infinityIntegralClosureMap`. -/
 local instance infinityPlaceTowerIntegralClosureModule :
     Module (RatFuncInfinityIntegralClosure K M) (RatFuncInfinityIntegralClosure K L) :=
   Algebra.toModule
@@ -865,6 +869,7 @@ noncomputable def infinityIntegralClosureGalAction :
     (RatFuncInfinityIntegralClosure K M) M L
     (RatFuncInfinityIntegralClosure K L)
 
+/-- The scalar action of `Gal(L/M)` on the infinity integral closure of `L`. -/
 local instance infinityIntegralClosureGalSMul :
     SMul Gal(L/M) (RatFuncInfinityIntegralClosure K L) :=
   (infinityIntegralClosureGalAction K M L).toMulAction.toSMul
