@@ -1,0 +1,79 @@
+authors:
+- Brian Sanders
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: 'Proposal #721, the upstream README ("AI-generated with human guidance") and its
+  agent instructions identify human-directed AI-written proofs; the source headers credit Brian
+  Sanders. Port and optimization by Claude.'
+branch: combinatorics
+msc:
+- 05D40
+- 05C80
+- 60C05
+slug: probabilistic-method
+title: The finite probabilistic method for graphs
+summary: Finite, counting-based tools of the probabilistic method. Proves a quantitative asymmetric
+  Lovász Local Lemma under lopsided dependence for arbitrary nonnegative weights of total one on a
+  finite sample set, its p-biased-cube and symmetric corollaries for events determined by coordinate
+  sets, dependent random choice in degree-moment and Fox–Sudakov average-degree forms, and
+  first-moment and deletion bounds for cliques and independent sets of G(n, p). For a finite
+  coordinate set in a countable type, and for a finite vertex type, it identifies the counting
+  probability with Mathlib's setBer(U, p) and binomial random graph G(V, p).
+entry_module: LeanPool.ProbabilisticMethod
+source:
+  title: The finite probabilistic method for graphs
+  authors:
+  - Brian Sanders
+  url: https://github.com/Egly443/lean-probabilistic-method
+  github_repo: Egly443/lean-probabilistic-method
+  commit: 841e3042ef057564ae3cbd2322e0f369bbf64d34
+main_declarations:
+- Finset.prod_one_sub_le_weightProb_forall_not
+- Finset.exists_forall_not_of_symmetric_lll
+- SimpleGraph.exists_dependentRandomChoice
+- SimpleGraph.exists_dependentRandomChoice_of_card_edgeFinset
+- SimpleGraph.exists_large_cliqueFree_of_deletion
+main_results:
+- declaration: Finset.prod_one_sub_le_weightProb_forall_not
+  informal: Let w be nonnegative weights of total one on a finite set Ω, and let events E i, i ∈ I,
+    satisfy the lopsided hypothesis that P(E i and no E j, j ∈ S) ≤ P(E i) P(no E j, j ∈ S) for
+    every S ⊆ I avoiding i and Γ i. If 0 ≤ x ≤ 1 and P(E i) ≤ x i ∏ j ∈ Γ i, (1 - x j) for
+    i ∈ I, then the probability that no E i occurs is at least ∏ i ∈ I, (1 - x i).
+  source_ref: 'Upstream LocalLemma.lean at 841e3042ef057564ae3cbd2322e0f369bbf64d34. A finite-weight,
+    lopsided variant of the quantitative asymmetric Local Lemma (Alon–Spencer, The probabilistic
+    method, Lemma 5.1.1, which states the product lower bound); the lopsided dependence condition is
+    that of Erdős–Spencer (1991), who state a symmetric positive-probability form.'
+- declaration: Finset.exists_forall_not_of_symmetric_lll
+  informal: On the p-biased cube of a finite subset U of a type α, with 0 ≤ p ≤ 1, let each event
+    E i be determined by coordinates T i ⊆ U, meaning E i A ↔ E i B whenever A ∩ T i = B ∩ T i
+    for all finite subsets A, B of α (not only subsets of U). If each P(E i) ≤ q, each T i meets T j
+    for at most d other indices j ∈ I, and e q (d + 1) ≤ 1, some subset of U avoids every E i.
+  source_ref: 'Upstream LocalLemma.lean at 841e3042ef057564ae3cbd2322e0f369bbf64d34; symmetric Local
+    Lemma with the e p (d + 1) ≤ 1 criterion as in Alon–Spencer, The probabilistic method,
+    Corollary 5.1.2, for events on independent biased coordinates.'
+- declaration: SimpleGraph.exists_dependentRandomChoice
+  informal: For a graph on a finite nonempty vertex set of size n and r ≥ 1, if
+    a n ^ t + C(n, r) m ^ t ≤ ∑ v, deg v ^ t, there is a vertex set W with at least a elements in
+    which every r-element subset has at least m common neighbours.
+  source_ref: 'Upstream DependentRandomChoice.lean at 841e3042ef057564ae3cbd2322e0f369bbf64d34.
+    A degree-moment refinement: the hypothesis keeps the moment ∑ v, deg v ^ t computed in the
+    proof of Fox–Sudakov, Dependent random choice (2011), Lemma 2.1, before Jensen''s inequality.'
+- declaration: SimpleGraph.exists_dependentRandomChoice_of_card_edgeFinset
+  informal: For a graph on a finite nonempty vertex set of size n with e edges, average degree
+    d = 2e / n and r ≥ 1, if a + C(n, r) (m / n) ^ t ≤ n (d / n) ^ t, there is a vertex set W with
+    at least a elements in which every r-element subset has at least m common neighbours.
+  source_ref: 'Upstream DependentRandomChoice.lean at 841e3042ef057564ae3cbd2322e0f369bbf64d34;
+    Fox–Sudakov, Dependent random choice (2011), Lemma 2.1, whose condition
+    n ^ (1 - t) d ^ t - C(n, r) (m / n) ^ t ≥ a is the same inequality.'
+- declaration: SimpleGraph.exists_large_cliqueFree_of_deletion
+  informal: For 0 ≤ p ≤ 1 and k, l ≥ 1, some graph G on n vertices has a vertex set t of size at
+    least n - C(n, k) p ^ C(k, 2) - C(n, l) (1 - p) ^ C(l, 2) such that no k-clique of G and no
+    l-clique of its complement lies inside t.
+  source_ref: 'Upstream RandomGraph.lean at 841e3042ef057564ae3cbd2322e0f369bbf64d34; deletion method
+    for off-diagonal Ramsey numbers as in Alon–Spencer, The probabilistic method, Section 3.1.'
+tags:
+- probabilistic-method
+- lovasz-local-lemma
+- dependent-random-choice
+- random-graphs
