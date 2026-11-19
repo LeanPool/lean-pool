@@ -235,14 +235,18 @@ omit [DecidableEq V] [Fintype σ] [DecidableEq σ] in
 theorem mem_occ {c : Config V σ} {v : V} : v ∈ occ c ↔ c v ≠ none := by
   simp [occ]
 
-/-- **The diagonal of `H²`.** At a configuration `c` of the basis, the diagonal element of
-`H²` (computed in the basis) is `t² M(c)`, where `M(c)` is the number of hops out of `c`. -/
-theorem sum_mul_apply_self (hH : IsProjectedHopping G t H) {n : σ → ℕ} {c : Config V σ}
-    (hc : c ∈ basis V n) :
-    ∑ b ∈ basis V n, H c b * H b c = (t : ℂ) ^ 2 * (hops G (occ c)).card := by
+/-- For a Hermitian hopping matrix supported on graph moves out of a configuration, the diagonal
+of its square on the spin basis is the sum of squared moduli of those moves. -/
+theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c : Config V σ}
+    (hc : c ∈ basis V n) (hHermitian : H.IsHermitian)
+    (hmove : ∀ i j, G.Adj i j → c i ≠ none → c j = none → ‖H (move c i j) c‖ = w i j)
+    (hzero : ∀ b, (∀ i j, G.Adj i j → c i ≠ none → c j = none → b ≠ move c i j) →
+      H b c = 0) :
+    ∑ b ∈ basis V n, H c b * H b c =
+      ∑ p ∈ hops G (occ c), (w p.1 p.2 : ℂ) ^ 2 := by
   have hsq : ∀ b, H c b * H b c = ((‖H b c‖ : ℝ) : ℂ) ^ 2 := by
     intro b
-    rw [← hH.isHermitian.apply c b]
+    rw [← hHermitian.apply c b]
     exact Complex.conj_mul' (H b c)
   have hmem : ∀ p ∈ hops G (occ c), G.Adj p.1 p.2 ∧ c p.1 ≠ none ∧ c p.2 = none := by
     intro p hp
@@ -255,22 +259,30 @@ theorem sum_mul_apply_self (hH : IsProjectedHopping G t H) {n : σ → ℕ} {c :
   simp_rw [hsq]
   rw [← sum_subset himage]
   · rw [sum_image]
-    · rw [sum_congr rfl fun p hp => by
-        rw [hH.norm_apply_move c p.1 p.2 (hmem p hp).1 (hmem p hp).2.1 (hmem p hp).2.2]]
-      rw [sum_const, nsmul_eq_mul]
-      ring
+    · refine sum_congr rfl fun p hp => ?_
+      obtain ⟨hadj, hoccupied, hempty⟩ := hmem p hp
+      rw [hmove p.1 p.2 hadj hoccupied hempty]
     · intro p hp q hq hpq
       have hp' := hmem p (mem_coe.mp hp)
       have hq' := hmem q (mem_coe.mp hq)
       obtain ⟨h1, h2⟩ := move_inj c hp'.2.1 hp'.2.2 hq'.2.1 hq'.2.2 hpq
       exact Prod.ext h1 h2
   · intro b _ hb
-    have hzero : H b c = 0 := by
-      refine hH.apply_eq_zero c b fun i j hij hi hj hbm => hb ?_
+    have hentry : H b c = 0 := by
+      refine hzero b fun i j hij hi hj hbm => hb ?_
       refine mem_image.mpr ⟨(i, j), ?_, hbm.symm⟩
       simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not]
       exact ⟨hij, hi, hj⟩
-    simp [hzero]
+    simp [hentry]
+
+/-- **The diagonal of `H²`.** At a configuration `c` of the basis, the diagonal element of
+`H²` (computed in the basis) is `t² M(c)`, where `M(c)` is the number of hops out of `c`. -/
+theorem sum_mul_apply_self (hH : IsProjectedHopping G t H) {n : σ → ℕ} {c : Config V σ}
+    (hc : c ∈ basis V n) :
+    ∑ b ∈ basis V n, H c b * H b c = (t : ℂ) ^ 2 * (hops G (occ c)).card := by
+  rw [sum_mul_apply_self_eq_sum_hops (w := fun _ _ => t) hc hH.isHermitian
+    (hH.norm_apply_move c) (hH.apply_eq_zero c), sum_const, nsmul_eq_mul]
+  ring
 
 /-- **The exact second-moment theorem.** On the no-double-occupancy basis `B` with `n_s`
 particles of spin `s` (assumed nonempty) of a graph with `N ≥ 2` vertices, the second

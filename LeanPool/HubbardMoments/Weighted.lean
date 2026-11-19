@@ -95,38 +95,8 @@ theorem sum_mul_apply_self_weighted (hH : IsWeightedProjectedHopping w H) {n : �
     {c : Config V σ} (hc : c ∈ basis V n) :
     ∑ b ∈ basis V n, H c b * H b c =
       ∑ p ∈ hops (⊤ : SimpleGraph V) (occ c), ((w p.1 p.2 : ℝ) : ℂ) ^ 2 := by
-  have hsq : ∀ b, H c b * H b c = ((‖H b c‖ : ℝ) : ℂ) ^ 2 := by
-    intro b
-    rw [← hH.isHermitian.apply c b]
-    exact Complex.conj_mul' (H b c)
-  have hmem : ∀ p ∈ hops (⊤ : SimpleGraph V) (occ c), p.1 ≠ p.2 ∧ c p.1 ≠ none ∧ c p.2 = none := by
-    intro p hp
-    simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not,
-      SimpleGraph.top_adj] at hp
-    exact ⟨hp.1, hp.2.1, hp.2.2⟩
-  have himage : (hops (⊤ : SimpleGraph V) (occ c)).image (fun p => move c p.1 p.2) ⊆
-      basis V n := by
-    intro b hb
-    obtain ⟨p, hp, rfl⟩ := mem_image.mp hb
-    exact move_mem_basis hc (hmem p hp).2.1 (hmem p hp).2.2
-  simp_rw [hsq]
-  rw [← sum_subset himage]
-  · rw [sum_image]
-    · exact sum_congr rfl fun p hp => by
-        rw [hH.norm_apply_move c p.1 p.2 (hmem p hp).1 (hmem p hp).2.1 (hmem p hp).2.2]
-    · intro p hp q hq hpq
-      have hp' := hmem p (mem_coe.mp hp)
-      have hq' := hmem q (mem_coe.mp hq)
-      obtain ⟨h1, h2⟩ := move_inj c hp'.2.1 hp'.2.2 hq'.2.1 hq'.2.2 hpq
-      exact Prod.ext h1 h2
-  · intro b _ hb
-    have hzero : H b c = 0 := by
-      refine hH.apply_eq_zero c b fun i j hij hi hj hbm => hb ?_
-      refine mem_image.mpr ⟨(i, j), ?_, hbm.symm⟩
-      simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not,
-        SimpleGraph.top_adj]
-      exact ⟨hij, hi, hj⟩
-    simp [hzero]
+  exact sum_mul_apply_self_eq_sum_hops (G := ⊤) hc hH.isHermitian
+    (hH.norm_apply_move c) (hH.apply_eq_zero c)
 
 /-- **The exact second-moment theorem for arbitrary amplitudes.** On the nonempty
 no-double-occupancy basis with `n = ∑ n_s` particles, `N ≥ 2` sites,
