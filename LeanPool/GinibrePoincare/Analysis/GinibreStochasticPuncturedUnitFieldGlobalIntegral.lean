@@ -86,5 +86,27 @@ theorem ginibrePuncturedUnitField_global_continuous_integral_exists
   exact brownianUnitField_integral_limit_gaussian B P (fun i => (hB i).toIsPreBrownianReal)
     hind u hu hunit i₀ t (J t) (hJS t)
 
+/-- The continuous-field case of the punctured global integral. -/
+theorem ginibreUnitField_global_continuous_integral_exists
+    {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
+    (B : ι → ℝ≥0 → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] [P.IsComplete]
+    (hB : ∀ i, IsBrownianReal (B i) P)
+    (hind : iIndepFun (fun i ω t => B i t ω) P)
+    (u : ℝ≥0 → Ω → EuclideanSpace ℝ ι)
+    (hu : ∀ t, @Measurable Ω (EuclideanSpace ℝ ι)
+      (ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal) t) _ (u t))
+    (hunit : ∀ t ω, ‖u t ω‖ = 1)
+    (hc : ∀ᵐ ω ∂P, Continuous (fun t => u t ω)) (i₀ : ι) :
+    ∃ J : ℝ≥0 → Ω → ℝ,
+      Martingale J (ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal)) P
+          ∧
+      (∀ᵐ ω ∂P, Continuous (fun t => J t ω)) ∧ (∀ t, MemLp (J t) 2 P) ∧
+      J 0 =ᵐ[P] (fun _ => 0) ∧
+      (∀ t, TendstoInMeasure P (fun k ω =>
+        ∑ i, brownianUniformLeftSum (B i) (fun s ω => u s ω i) t (k+1) ω) atTop (J t)) ∧
+      (∀ t, HasLaw (J t) (gaussianReal 0 t) P) := by
+  exact ginibrePuncturedUnitField_global_continuous_integral_exists B P hB hind u hu hunit
+    (hc.mono fun ω hω => hω.continuousOn) i₀
+
 end
 end GinibrePoincare

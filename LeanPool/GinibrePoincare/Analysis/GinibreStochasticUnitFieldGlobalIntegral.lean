@@ -102,37 +102,5 @@ theorem ginibreContinuousMartingale_global_of_horizon_limits
   refine ⟨J, hJM, hJC, fun t => hML (idx t) t,?_, fun t => hlim (idx t) t (hidx t).le⟩
   exact (heq 0 0 (by norm_num)).trans (hM0 0)
 
-theorem ginibreUnitField_global_continuous_integral_exists
-    {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
-    (B : ι → ℝ≥0 → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] [P.IsComplete]
-    (hB : ∀ i, IsBrownianReal (B i) P)
-    (hind : iIndepFun (fun i ω t => B i t ω) P)
-    (u : ℝ≥0 → Ω → EuclideanSpace ℝ ι)
-    (hu : ∀ t, @Measurable Ω (EuclideanSpace ℝ ι)
-      (ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal) t) _ (u t))
-    (hunit : ∀ t ω, ‖u t ω‖ = 1)
-    (hc : ∀ᵐ ω ∂P, Continuous (fun t => u t ω)) (i₀ : ι) :
-    ∃ J : ℝ≥0 → Ω → ℝ,
-      Martingale J (ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal)) P
-          ∧
-      (∀ᵐ ω ∂P, Continuous (fun t => J t ω)) ∧ (∀ t, MemLp (J t) 2 P) ∧
-      J 0 =ᵐ[P] (fun _ => 0) ∧
-      (∀ t, TendstoInMeasure P (fun k ω =>
-        ∑ i, brownianUniformLeftSum (B i) (fun s ω => u s ω i) t (k+1) ω) atTop (J t)) ∧
-      (∀ t, HasLaw (J t) (gaussianReal 0 t) P) := by
-  classical
-  classical
-  have hex (n : ℕ) := ginibreUnitField_continuous_integral_exists B P hB hind u hu hunit
-    (n+1 : ℝ≥0) (hc.mono (fun ω hω => hω.continuousOn)) i₀
-  choose M hM hMC hML hM0 hMS hMlaw using hex
-  obtain ⟨J, hJM, hJC, hJL, hJ0, hJS⟩ := ginibreContinuousMartingale_global_of_horizon_limits P
-    (ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal))
-    (fun t k ω => ∑ i, brownianUniformLeftSum (B i) (fun s ω => u s ω i) t (k+1) ω)
-    M hM hMC hML hM0 hMS
-  refine ⟨J, hJM, hJC, hJL, hJ0, hJS,?_⟩
-  intro t
-  exact brownianUnitField_integral_limit_gaussian B P (fun i => (hB i).toIsPreBrownianReal)
-    hind u hu hunit i₀ t (J t) (hJS t)
-
 end
 end GinibrePoincare

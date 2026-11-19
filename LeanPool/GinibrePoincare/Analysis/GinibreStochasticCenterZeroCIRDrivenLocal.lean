@@ -43,6 +43,7 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticContinuousField
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticIntegralUntilIdentity
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticWeightedSumMemLp
 public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralSubstitutionNatural
+public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticCIRDrivenLocal
 
 /-! Actual localized CIR stochastic integration against the constructed radial
 Brownian driver. The substitution is derived from genuine Brownian sums. -/
@@ -82,7 +83,6 @@ theorem ginibreBrownianMaximalProcess_zero_center_CIR_Brownian_integral
           ∫ s in (0 : ℝ)..t, (4*(α : ℝ)/(n : ℝ))*
             ((1 : ℝ)-(ginibreCenterSquared n) (X s.toNNReal ω))) := by
   classical
-  let F := ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal)
   let X := ginibreBrownianHamiltonianStoppedProcess n α z B R T
   let a := fun t ω => Real.sqrt ((8*(α : ℝ)/(n : ℝ))*(ginibreCenterSquared n) (X t ω))
   let u := fun t ω => ginibreCenterRadialDirection n e (ginibreBrownianMaximalProcess n α z B t ω)
@@ -91,71 +91,49 @@ theorem ginibreBrownianMaximalProcess_zero_center_CIR_Brownian_integral
   obtain ⟨ha, hac, C, hC, hbound⟩ :=
       ginibreBrownianHamiltonianStoppedProcess_center_CIR_amplitude_properties
     (by omega) α z hz B P hB R hR T
-  have hui (i : Fin n × Fin 2) (t : ℝ≥0) : @Measurable Ω ℝ (F t) _ (fun ω => u t ω i) :=
-    (PiLp.continuous_apply 2 (fun _ : Fin n × Fin 2 => ℝ) i).measurable.comp (hu t)
-  have hub (i : Fin n × Fin 2) (t : ℝ≥0) (ω : Ω) : ‖u t ω i‖ ≤ 1 := by
-    exact (PiLp.norm_apply_le (u t ω) i).trans_eq (hunit t ω)
-  let A := fun i t ω => a t ω*u t ω i
-  have hA (i : Fin n × Fin 2) (t : ℝ≥0) : @Measurable Ω ℝ (F t) _ (A i t) :=
-    (ha t).measurable.mul (hui i t)
-  have hAb (i : Fin n × Fin 2) (t : ℝ≥0) (ω : Ω) : ‖A i t ω‖ ≤ C := by
-    rw [show A i t ω=a t ω*u t ω i from rfl, norm_mul]
-    exact (mul_le_mul_of_nonneg_right (hbound t ω) (norm_nonneg _)).trans
-      (by simpa only [mul_one] using mul_le_mul_of_nonneg_left (hub i t ω) hC.le)
+  have hub (i : Fin n × Fin 2) (t : ℝ≥0) (ω : Ω) : ‖u t ω i‖ ≤ 1 :=
+    (PiLp.norm_apply_le (u t ω) i).trans_eq (hunit t ω)
   have ha0 (ω : Ω) : a 0 ω=0 := by
     dsimp only [a, X]
     rw [ginibreBrownianHamiltonianStoppedProcess_initial n α z hz B R T ω, hcenter, mul_zero,
         Real.sqrt_zero]
-  have hAc (i : Fin n × Fin 2) : ∀ᵐ ω ∂P, ContinuousOn (fun t => A i t ω) (Icc 0 T) := by
-    filter_upwards [huc] with ω hω
-    exact (continuous_mul_punctured_of_initial_zero (fun t => a t ω) (fun t => u t ω i)
-      (hac ω) ((PiLp.continuous_apply 2 (fun _ : Fin n × Fin 2 => ℝ) i).comp_continuousOn hω)
-      1 (by norm_num) (fun t => hub i t ω) (ha0 ω)).continuousOn
-  obtain ⟨J, hJM, hJC, hJL, hJ0, hJS⟩ := ginibreBoundedField_continuous_integral_exists
-    B P hB hind A hA T hAc C hC.le hAb
   obtain ⟨N, hNM, hNC, hNL, hN0, hNS, hNIto⟩ :=
       ginibreBrownianMaximalProcess_local_center_CIR_integral_exists
     hn α z hz B P hB hind R hR T e
-  have hEq : ∀ᵐ ω ∂P, ∀ t ≤ ginibreBrownianHamiltonianBoundedStop n α z B R T ω,
-      J t ω=N t ω := by
-    apply ginibreContinuous_probability_limits_eq_until P
-      (fun t k ω => ∑ i, brownianUniformLeftSum (B i) (A i) t (k+1) ω)
-      (fun t k ω => ∑ i, brownianUniformLeftSum (B i)
-        (fun s ω => a s ω*ginibreCenterRadialDirection n e (X s ω) i) t (k+1) ω)
-      J N (Eventually.of_forall hJC) (Eventually.of_forall hNC) T
-      (ginibreBrownianHamiltonianBoundedStop n α z B R T)
-      (fun ω => ginibreDrivenHamiltonianBoundedStop_le n α _ z R T) hJS hNS
-    intro t ht k ω hts
-    have hCF (s : ℝ≥0) (ω : Ω) : CollisionFree (X s ω) :=
-      (ginibreBrownianHamiltonianStoppedProcess_range (by omega) α z hz B R hR T s ω).1
-    rw [← ginibreConfigurationBrownianGradientSum_centerSquared hn B α α.coe_nonneg X hCF e t k ω]
-    exact (ginibreConfigurationBrownianGradientSum_centerSquared_full_direction hn α α.coe_nonneg z
-        hz B R hR T e t k ω hts).symm
-  have hMS (t : ℝ≥0) (ht : t ≤ T) : Tendsto (fun k => ∫ ω,
-      (brownianUniformLeftSum β a t (k+1) ω-J t ω)^2 ∂P) atTop (𝓝 0) := by
-    by_cases ht0 : t=0
-    · subst t
-      have he (k : ℕ) : (∫ ω, (brownianUniformLeftSum β a 0 (k+1) ω-J 0 ω)^2 ∂P)=0 := by
-        have hh : (fun ω => (brownianUniformLeftSum β a 0 (k+1) ω-J 0 ω)^2) =ᵐ[P]
-            (fun _ => (0 : ℝ)) := by
-          filter_upwards [hJ0] with ω hω
-          simp [brownianUniformLeftSum, itoUniformNNTime, itoUniformTime, hω]
-        rw [integral_congr_ae hh, integral_zero]
-      simpa only [he] using (tendsto_const_nhds : Tendsto (fun _ : ℕ => (0 : ℝ)) atTop (𝓝 0))
-    · exact brownianPuncturedUnitIntegral_bounded_substitution_of_horizon_limits B P hB hind u hu
-        hunit huc a (fun r => (ha r).measurable) C hC.le hbound t
-        (lt_of_le_of_ne bot_le (Ne.symm ht0)) (ae_of_all P hac) β hβM hβL hβLim (J t) (hJS t ht)
-  have hAL (t : ℝ≥0) : AEStronglyMeasurable (a t) P :=
-    ((ha t).mono (F.le t)).aestronglyMeasurable
-  refine ⟨J, hJM, hJC, hJL, hJ0, hMS,?_,?_⟩
-  · intro t ht
-    apply ginibre_tendstoInMeasure_of_meanSquare P _ _ _ (hMS t ht)
-    intro k
-    exact ((ginibreWeightedUniformLeftSum_memLp P β a hβL hAL C hbound t (k+1)).sub (hJL
-        t)).integrable_sq
-  · filter_upwards [hEq, hNIto] with ω hω hIto
-    intro t ht
-    rw [hω t ht]
-    exact hIto t ht
+  have hCF (s : ℝ≥0) (ω : Ω) : CollisionFree (X s ω) :=
+    (ginibreBrownianHamiltonianStoppedProcess_range (by omega) α z hz B R hR T s ω).1
+  -- The amplitude vanishes at time zero, so the field is continuous despite the punctured
+  -- direction, and the punctured substitution theorem handles positive times.
+  exact ginibreBoundedField_substitution_integral_until B P hB hind a u ha hu hunit C hC.le
+    hbound T (fun i => by
+      filter_upwards [huc] with ω hω
+      exact (continuous_mul_punctured_of_initial_zero (fun t => a t ω) (fun t => u t ω i)
+        (hac ω) ((PiLp.continuous_apply 2 (fun _ : Fin n × Fin 2 => ℝ) i).comp_continuousOn hω)
+        1 (by norm_num) (fun t => hub i t ω) (ha0 ω)).continuousOn)
+    β hβL (fun J hJ0 t _ hJS => by
+      by_cases ht0 : t=0
+      · subst t
+        have he (k : ℕ) : (∫ ω, (brownianUniformLeftSum β a 0 (k+1) ω-J 0 ω)^2 ∂P)=0 := by
+          have hh : (fun ω => (brownianUniformLeftSum β a 0 (k+1) ω-J 0 ω)^2) =ᵐ[P]
+              (fun _ => (0 : ℝ)) := by
+            filter_upwards [hJ0] with ω hω
+            simp [brownianUniformLeftSum, itoUniformNNTime, itoUniformTime, hω]
+          rw [integral_congr_ae hh, integral_zero]
+        simpa only [he] using (tendsto_const_nhds : Tendsto (fun _ : ℕ => (0 : ℝ)) atTop (𝓝 0))
+      · exact brownianPuncturedUnitIntegral_bounded_substitution_of_horizon_limits B P hB hind u
+          hu hunit huc a (fun r => (ha r).measurable) C hC.le hbound t
+          (lt_of_le_of_ne bot_le (Ne.symm ht0)) (ae_of_all P hac) β hβM hβL hβLim (J t) hJS)
+    (ginibreBrownianHamiltonianBoundedStop n α z B R T)
+    (fun ω => ginibreDrivenHamiltonianBoundedStop_le n α _ z R T)
+    (fun t k ω => ∑ i, brownianUniformLeftSum (B i)
+      (fun s ω => a s ω * ginibreCenterRadialDirection n e (X s ω) i) t (k + 1) ω)
+    N hNC hNS (fun t _ k ω hts => by
+      rw [← ginibreConfigurationBrownianGradientSum_centerSquared hn B α α.coe_nonneg X hCF e t k
+        ω]
+      exact (ginibreConfigurationBrownianGradientSum_centerSquared_full_direction hn α
+        α.coe_nonneg z hz B R hR T e t k ω hts).symm)
+    (fun t ω r => (ginibreCenterSquared n) (X t ω) - (ginibreCenterSquared n) z = r +
+      ∫ s in (0 : ℝ)..t, (4*(α : ℝ)/(n : ℝ))*
+        ((1 : ℝ) - (ginibreCenterSquared n) (X s.toNNReal ω))) hNIto
 end
 end GinibrePoincare

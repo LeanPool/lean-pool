@@ -48,66 +48,6 @@ open scoped NNReal
 namespace GinibrePoincare
 noncomputable section
 
-/-- Positivity follows from the actual weak equation at every positive step size. -/
-theorem ginibreFullWeak_backward_nonneg (n : ℕ) (hn : 0 < n)
-    (c : ℝ) (hc : 0 < c) (f u : GinibreFullValueL2 n) (g : GinibreFullGradientL2 n)
-    (hf : ∀ᵐ z ∂ginibreMeasure n, 0 ≤ f z)
-    (hu : IsGinibreDistributionalGradient n u g)
-    (hs : IsGinibreSymmetricWeakPair (u, g))
-    (he : ∀ w : GinibreFullValueL2 n, ∀ h : GinibreFullGradientL2 n,
-      IsGinibreDistributionalGradient n w h → IsGinibreSymmetricWeakPair (w, h) →
-      inner ℝ u w + (c / (n : ℝ)) * inner ℝ g h = inner ℝ f w) :
-    ∀ᵐ z ∂ginibreMeasure n, 0 ≤ u z := by
-  obtain ⟨K, hK⟩ := ginibreNegativeTest_lipschitz
-  let q := hK.compLp ginibreNegativeTest_zero u
-  let r := ginibreFullChainGradient n ginibreNegativeTest ginibreNegativeTest_smooth K hK u g
-  have hq := ginibreFullWeakSpace_smoothChain n hn ginibreNegativeTest ginibreNegativeTest_smooth
-    ginibreNegativeTest_zero K hK u g hu hs
-  have heq := he q r hq.1 hq.2
-  have hqa : (q : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
-      fun z => ginibreNegativeTest (u z) := hK.coeFn_compLp ginibreNegativeTest_zero u
-  have hra := ginibreFullChainGradient_ae n ginibreNegativeTest ginibreNegativeTest_smooth K hK u g
-  have hvalue : ∀ᵐ z ∂ginibreMeasure n, inner ℝ (u z) (q z) ≤ 0 := by
-    filter_upwards [hqa] with z hz
-    rw [Real.inner_apply]
-    rw [hz]
-    exact ginibreNegativeTest_mul_nonpos _
-  have huv : inner ℝ u q ≤ 0 := by
-    rw [L2.inner_def]
-    exact integral_nonpos_of_ae hvalue
-  have hgrad : inner ℝ g r ≤ 0 := by
-    rw [L2.inner_def]
-    apply integral_nonpos_of_ae
-    filter_upwards [hra] with z hz
-    change inner ℝ (g z) (r z) ≤ 0
-    rw [hz, real_inner_smul_right, real_inner_self_eq_norm_sq]
-    exact mul_nonpos_of_nonpos_of_nonneg (ginibreNegativeTest_deriv_nonpos _) (sq_nonneg _)
-  have hsource : 0 ≤ inner ℝ f q := by
-    rw [L2.inner_def]
-    apply integral_nonneg_of_ae
-    filter_upwards [hf, hqa] with z hz hqz
-    simp only [Pi.zero_apply, Real.inner_apply]
-    rw [hqz]
-    exact mul_nonneg hz (ginibreNegativeTest_nonneg _)
-  have henergy : (c / (n : ℝ)) * inner ℝ g r ≤ 0 :=
-    mul_nonpos_of_nonneg_of_nonpos (by positivity) hgrad
-  have hzero : inner ℝ u q = 0 := by linarith
-  have hneg : ∀ᵐ z ∂ginibreMeasure n, 0 ≤ -inner ℝ (u z) (q z) := by
-    filter_upwards [hvalue] with z hz
-    linarith
-  have hint := (L2.integrable_inner (𝕜 := ℝ) u q).neg
-  have hiz : (∫ z, -inner ℝ (u z) (q z) ∂ginibreMeasure n) = 0 := by
-    rw [integral_neg, ← L2.inner_def, hzero, neg_zero]
-  have hae := (integral_eq_zero_iff_of_nonneg_ae hneg hint).mp hiz
-  change ∀ᵐ z ∂ginibreMeasure n, 0 ≤ u z
-  filter_upwards [hae, hqa] with z hz hqz
-  by_contra hu
-  have hupos : u z < 0 := lt_of_not_ge hu
-  simp only [Pi.zero_apply, Real.inner_apply] at hz
-  rw [hqz] at hz
-  have hprod := neg_eq_zero.mp hz
-  exact (mul_ne_zero hupos.ne (ginibreNegativeTest_pos hupos).ne') hprod
-
 /-- Every positive-step inverse of the actual full real generator preserves positivity. -/
 theorem ginibreFullGenerator_backward_nonneg (n : ℕ) (hn : 0 < n)
     (u v : ginibreFullSymmetricValues n) (c : ℝ) (hc : 0 < c)

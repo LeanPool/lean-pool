@@ -35,23 +35,18 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticUnitFieldGlobalIntegral
-public import LeanPool.GinibrePoincare.Analysis.BrownianIntegralGaussianShiftedLimit
-public import LeanPool.GinibrePoincare.Analysis.BrownianIntegralGaussianBrownian
+public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticPuncturedUnitFieldBrownian
 
 /-! # Brownian integral of a continuous adapted unit field
 
 Integrate the coordinates of the Euclidean unit field `u` against the
-independent Brownian family. The global integral construction gives a
-continuous martingale `β`, its square integrability, initial value and
-uniform left-sum limits. Unit norm bounds every coordinate by `1`, supplying
-the bounds and integrability used to pass to shifted intervals.
-
-The shifted sum limits identify the increments of `β`. The Gaussian limit
-theorems prove their Brownian laws and independence from every measurable
-variable in the completed original past. The conclusion retains these
-shifted limits so that downstream driver-independence arguments can work
-with the original Brownian sums. -/
+independent Brownian family. A continuous field is continuous at every positive
+time, so this is the special case of `ginibrePuncturedUnitField_Brownian_exists`:
+the integral `β` is a Brownian motion and a continuous martingale, square
+integrable and started at zero, and its increments are independent of every
+measurable variable in the completed original past. The conclusion retains
+the uniform-sum limits on ordinary and shifted intervals so that downstream
+driver-independence arguments can work with the original Brownian sums. -/
 
 @[expose] public section
 open Set MeasureTheory ProbabilityTheory Filter
@@ -82,24 +77,7 @@ theorem ginibreUnitField_Brownian_exists
         @Measurable Ω ℝ (ginibreBrownianAugmentedFiltration B P (fun i => (hB
             i).toIsPreBrownianReal) s) _ Y →
         IndepFun Y (fun ω => β (s+t) ω-β s ω) P) := by
-  classical
-  classical
-  let F := ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal)
-  obtain ⟨β, hβ, hβC, hβL, hβ0, hβS, hβLaw⟩ :=
-    ginibreUnitField_global_continuous_integral_exists B P hB hind u hu hunit hc i₀
-  have hbnd (t : ℝ≥0) (ω : Ω) (i : ι) : ‖u t ω i‖ ≤ 1 := by
-    simpa only [hunit t ω] using PiLp.norm_apply_le (u t ω) i
-  have hui (t : ℝ≥0) (i : ι) : MemLp (fun ω => u t ω i) 2 P := MemLp.of_bound
-    (((PiLp.continuous_apply 2 (fun _ : ι => ℝ) i).measurable.comp (hu t)).mono
-      (F.le t) le_rfl).aestronglyMeasurable 1 (Eventually.of_forall (fun ω => hbnd t ω i))
-  have hshift (s t : ℝ≥0) := brownianUnitShiftedUniformSum_tendstoInMeasure_of_horizon_limits
-    B P (fun i => (hB i).toIsPreBrownianReal) hind u hu hui hc 1 (by norm_num) hbnd
-    s t (β (s+t)) (β s) (hβS (s+t)) (hβS s)
-  have hBrown := brownianUnitField_actual_integral_isBrownian B P
-    (fun i => (hB i).toIsPreBrownianReal) hind u hu hunit i₀ β hβ.1 hβ0 hβC hshift
-  refine ⟨β, hBrown, hβ, hβL, hβ0, hβS, hshift,?_⟩
-  intro s t Y hY
-  exact (brownianUnitShiftedUniformSum_limit_gaussian_independent B P
-    (fun i => (hB i).toIsPreBrownianReal) hind u hu hunit i₀ s t _ (hshift s t) Y hY).2
+  exact ginibrePuncturedUnitField_Brownian_exists B P hB hind u hu hunit
+    (hc.mono fun ω hω => hω.continuousOn) i₀
 end
 end GinibrePoincare
