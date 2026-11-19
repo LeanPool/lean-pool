@@ -1,0 +1,69 @@
+authors:
+- Brian Sanders
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: 'Proposal #721, the upstream README ("AI-generated with human guidance") and
+  the upstream agent instructions identify human-directed AI-written proofs; the source headers credit
+  Brian Sanders. Port by Claude Code.'
+branch: combinatorics
+msc:
+- 05C55
+- 05C35
+- 05D10
+slug: goodman-supersaturation
+title: Goodman's formula and clique supersaturation for two-colourings
+summary: Counts monochromatic structures in a red/blue colouring of a complete graph, given as a
+  `SimpleGraph` and its complement. Proves Goodman's formula for monochromatic triangles, inside any
+  finite vertex set and globally, with its degree-imbalance form, the bound n(n-1)(n-5)/24, equality
+  for graphs regular of degree k on 2k+1 vertices, and the stronger bound n(n-2)(n-4)/24 for even n.
+  Also proves monochromatic books, an edge-balance inequality, supersaturation of monochromatic
+  cliques by averaging (made unconditional at the diagonal Ramsey number of the pool's FiniteRamsey
+  project), and a counted Erdős–Szekeres recursion giving explicit lower bounds on the number of red
+  k-cliques or blue l-cliques.
+entry_module: LeanPool.GoodmanSupersaturation
+source:
+  title: Goodman's formula and supersaturation for two-colourings
+  authors:
+  - Brian Sanders
+  url: https://github.com/Egly443/lean-goodman-supersaturation
+  github_repo: Egly443/lean-goodman-supersaturation
+  commit: 6c32aa44315c4627ceff231bd15c8d48fa4bf2e7
+main_declarations:
+- SimpleGraph.goodman_within
+- SimpleGraph.goodman_bound
+- SimpleGraph.IsRegularOfDegree.goodman_eq
+- SimpleGraph.supersaturation
+- SimpleGraph.choose_le_card_cliqueFinset_add_mul_choose_ramseyNumber
+main_results:
+- declaration: SimpleGraph.goodman_within
+  informal: Goodman's formula inside any finite vertex set S. Twice the number of triangles of G and
+    of its complement inside S, plus the number of mixed wedges (the sum over v in S of the red degree
+    times the blue degree of v within S), equals 2 C(|S|, 3).
+  paper: A. W. Goodman, On sets of acquaintances and strangers at any party, Amer. Math. Monthly 66
+    (1959), 778-783, doi:10.2307/2310464.
+- declaration: SimpleGraph.goodman_bound
+  informal: Goodman's bound. For a finite vertex type of size n, n(n-1)(n-5) is at most 24 times the
+    number of triangles of G plus the number of triangles of its complement (natural-number
+    subtraction, so the statement is trivial for n < 5).
+  paper: A. W. Goodman, On sets of acquaintances and strangers at any party, Amer. Math. Monthly 66
+    (1959), 778-783, doi:10.2307/2310464.
+- declaration: SimpleGraph.IsRegularOfDegree.goodman_eq
+  informal: Sharpness. If G is regular of degree k on 2k+1 vertices, then 24 times the number of
+    monochromatic triangles equals n(n-1)(n-5) exactly (over the integers).
+- declaration: SimpleGraph.supersaturation
+  informal: Counted Erdős–Szekeres recursion. For k, l at least 1 with k + l at least 3 and a finite
+    vertex set S with x = |S| + 1 - 2^(k+l-3) > 0, either G has at least supersaturationBound k l x
+    k-cliques inside S or its complement has at least supersaturationBound l k x l-cliques inside S,
+    where supersaturationBound k l x = x^k 2^(2k+1) / (k! 2^(kl + C(k+1, 2))).
+  paper: P. Erdős and G. Szekeres, A combinatorial problem in geometry, Compositio Math. 2 (1935),
+    463-470 (the uncounted recursion).
+- declaration: SimpleGraph.choose_le_card_cliqueFinset_add_mul_choose_ramseyNumber
+  informal: Supersaturation by averaging at the diagonal Ramsey number. If R(t, t) is at most n, then
+    C(n, t) is at most C(R(t, t), t) times the number of t-cliques of G plus those of its complement.
+    R(t, t) is the pool's FiniteRamsey ramseyNumber ![t, t]; this bridge was added in the port.
+tags:
+- ramsey-theory
+- extremal-graph-theory
+- supersaturation
+- combinatorics
