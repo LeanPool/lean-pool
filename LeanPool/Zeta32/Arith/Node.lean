@@ -48,9 +48,7 @@ theorem ratPrimeSupport_prime {s : ℚ} {p : ℕ}
 theorem padicValRat_eq_factorizations (p : ℕ) (hp : p.Prime) (s : ℚ) :
     padicValRat p s =
       (s.num.natAbs.factorization p : ℤ) - (s.den.factorization p : ℤ) := by
-  rw [padicValRat_def]
-  change (padicValNat p s.num.natAbs : ℤ) - (padicValNat p s.den : ℤ) = _
-  rw [← Nat.factorization_def s.num.natAbs hp,
+  rw [padicValRat_def, padicValInt, ← Nat.factorization_def s.num.natAbs hp,
     ← Nat.factorization_def s.den hp]
 
 theorem padicValRat_eq_zero_of_not_mem_ratPrimeSupport {s : ℚ} {p : ℕ}

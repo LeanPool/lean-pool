@@ -107,7 +107,7 @@ lemma VG_H_small [hp : Fact p.Prime] {m : ℕ} (hm : m < p) (e : ℕ) : VG p (Ze
   rw [Finset.mem_Icc] at ha
   have hv : padicValRat p ((a : ℚ) ^ e) = 0 := by
     rw [padicValRat.pow, padicValRat.of_nat,
-      padicValNat.eq_zero_of_not_dvd (Nat.not_dvd_of_pos_of_lt (by omega) (by omega))]
+      multiplicity_eq_zero_of_not_dvd (Nat.not_dvd_of_pos_of_lt (by omega) (by omega))]
     simp
   have := VG.inv (p := p) (q := (a : ℚ) ^ e)
     (r := 0) (by rw [hv]; simp)

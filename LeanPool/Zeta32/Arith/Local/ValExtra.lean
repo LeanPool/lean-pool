@@ -24,8 +24,7 @@ lemma ratDen (r : ℚ) : VG p r (-(padicValNat p r.den : ℚ)) := by
   by_cases hr : r = 0
   · exact Or.inl hr
   right
-  have h : padicValRat p r = (padicValInt p r.num : ℤ) - (padicValNat p r.den : ℤ) := rfl
-  rw [h, Int.cast_sub, Int.cast_natCast, Int.cast_natCast]
+  rw [Nat.padicValNat_def, padicValRat_def, Int.cast_sub, Int.cast_natCast, Int.cast_natCast]
   have : (0 : ℚ) ≤ (padicValInt p r.num : ℚ) := Nat.cast_nonneg _
   linarith
 

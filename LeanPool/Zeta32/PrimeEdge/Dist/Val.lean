@@ -163,7 +163,7 @@ lemma VG_inv_pow_of_not_dvd {a : ℕ} (ha : ¬ p ∣ a) (e : ℕ) : VG p (1 / (a
   refine (VG.inv (r := 0)  ?_).mono (by norm_num)
   have h : padicValRat p ((a : ℚ) ^ e) = 0 := by
     rw [padicValRat.pow, padicValRat.of_nat,
-      padicValNat.eq_zero_of_not_dvd ha]
+      multiplicity_eq_zero_of_not_dvd ha]
     simp
   rw [h]; simp
 

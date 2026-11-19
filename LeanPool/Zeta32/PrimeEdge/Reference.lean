@@ -135,7 +135,7 @@ theorem hankelDet_eq (b : Fin p) :
 lemma padicValRat_eq_zero_of_not_dvd [hp : Fact p.Prime] {z d : ℕ} (hz : z ≠ 0) (hd : d ≠ 0)
     (hpz : ¬ p ∣ z) (hpd : ¬ p ∣ d) : padicValRat p ((z : ℚ) / d) = 0 := by
   rw [padicValRat.div (by exact_mod_cast hz) (by exact_mod_cast hd), padicValRat.of_nat,
-    padicValRat.of_nat, padicValNat.eq_zero_of_not_dvd hpz, padicValNat.eq_zero_of_not_dvd hpd]
+    padicValRat.of_nat, multiplicity_eq_zero_of_not_dvd hpz, multiplicity_eq_zero_of_not_dvd hpd]
   simp
 
 lemma not_dvd_of_prime_factor [hp : Fact p.Prime] {q : ℕ} (hq : q.Prime) (hpq : p ≠ q) :
@@ -153,7 +153,7 @@ lemma VG_of_mul_int [hp : Fact p.Prime] (hp7 : 7 ≤ p) {q : ℚ} (z : ℤ) (hq 
     VG p q 0 := by
   have h0 : ((2 ^ 4 * 3 ^ 4 : ℕ) : ℚ) ≠ 0 := by norm_num
   have hv : padicValRat p ((2 ^ 4 * 3 ^ 4 : ℕ) : ℚ) = 0 := by
-    rw [padicValRat.of_nat, padicValNat.eq_zero_of_not_dvd (not_dvd_two_three_pow hp7 4 4)]
+    rw [padicValRat.of_nat, multiplicity_eq_zero_of_not_dvd (not_dvd_two_three_pow hp7 4 4)]
     simp
   have hinv := VG.inv (p := p) (r := 0)  (by rw [hv]; simp)
   have hmul := (VG.intCast (p := p) z).mul hinv

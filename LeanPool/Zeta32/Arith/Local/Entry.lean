@@ -186,16 +186,16 @@ lemma VG_H {e j : ℕ} (hj : j < p ^ 2) : VG p (H e j) (-(e : ℚ)) := by
   rw [one_div]
   apply VG.inv
   rw [show ((v : ℚ) ^ e) = ((v ^ e : ℕ) : ℚ) by push_cast; ring, padicValRat.of_nat,
-    padicValNat.pow v e]
-  have h1 : padicValNat p v ≤ 1 := by
+    Nat.multiplicity_pow v e]
+  have h1 : multiplicity p v ≤ 1 := by
     by_contra hne
     rw [not_le] at hne
-    have h2 : p ^ 2 ∣ v := (padicValNat_dvd_iff_le (by omega)).mpr hne
+    have h2 : p ^ 2 ∣ v := (multiplicity_dvd_iff_le (by omega)).mpr hne
     exact absurd (Nat.le_of_dvd (by omega) h2) (by omega)
-  have h3 : e * padicValNat p v ≤ e := by
-    calc e * padicValNat p v ≤ e * 1 := Nat.mul_le_mul_left _ h1
+  have h3 : e * multiplicity p v ≤ e := by
+    calc e * multiplicity p v ≤ e * 1 := Nat.mul_le_mul_left _ h1
       _ = e := mul_one e
-  have h4 : ((e * padicValNat p v : ℕ) : ℚ) ≤ e := by exact_mod_cast h3
+  have h4 : ((e * multiplicity p v : ℕ) : ℚ) ≤ e := by exact_mod_cast h3
   simpa using h4
 
 lemma VG_beta_weak {r : ℚ} (hr : VG p r 0) {j : ℕ} (hj : j < p ^ 2) :
