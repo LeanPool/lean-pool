@@ -562,11 +562,16 @@ private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Optio
   | Int.negSucc n => return (← readBellmanNat n).map Int.negSucc
   | _ => return none
 
-private meta def readBellmanCoefficients {R : Type}
+private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     (read : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
     Lean.MetaM (Option (DPoly R)) := do
-  let_expr DPoly.mk _ coefficients := expression | return none
-  return (← Lean.Meta.getListLitOf? coefficients read).map fun values => ⟨values.toList⟩
+  let expression := expression.consumeMData
+  match_expr expression with
+  | DPoly.X _ _ _ => return some DPoly.X
+  | DPoly.const _ coefficient => return (← read coefficient).map DPoly.const
+  | DPoly.mk _ coefficients =>
+      return (← Lean.Meta.getListLitOf? coefficients read).map fun values => ⟨values.toList⟩
+  | _ => return none
 
 -- Compute on coefficient data, then have the kernel verify the explicit reduction.
 -- The meta code produces the proposed value; only the checked equality is reused.
@@ -724,6 +729,12 @@ local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
   Lean.Elab.Tactic.evalTactic (← `(tactic| (
     conv_lhs => { arg 1; reduceBellmanPolynomial }
     rfl)))
+
+-- Exercise the expanded spellings of the three variables in a staged proof.
+example :
+    allNonnegative3 (DPoly.X + DPoly.const DPoly.X + DPoly.const (DPoly.const DPoly.X) : Poly3) =
+      true := by
+  checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
