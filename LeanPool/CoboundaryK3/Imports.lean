@@ -10,4 +10,7 @@ public import LeanPool.CoboundaryK3
 public import LeanPool.CoboundaryK3.Basic
 public import LeanPool.CoboundaryK3.Constant
 public import LeanPool.CoboundaryK3.Replication
+public import LeanPool.CoboundaryK3.SmallComplexes
 public import LeanPool.CoboundaryK3.Staircase
+public import LeanPool.CoboundaryK3.TableSearch
+public import LeanPool.CoboundaryK3.Witnesses

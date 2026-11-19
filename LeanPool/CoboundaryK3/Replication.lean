@@ -1,6 +1,6 @@
 /-
 Copyright (c) 2026 Jeromie Beasley. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jeromie Beasley
 -/
 module
@@ -8,6 +8,8 @@ module
 public import LeanPool.CoboundaryK3.Constant
 
 /-!
+# Balanced replication
+
 Balanced replication, kernel-checked (Lemma 6 and Corollary 7 of the paper).
 
 Replace each vertex of `K_k` by a cluster of `q` vertices; put the identity on every edge inside
@@ -208,8 +210,9 @@ theorem sum_one_coord {ι : Type*} [Fintype ι] [DecidableEq ι] {q : ℕ} (j : 
     (H : Fin q → ℕ) :
     ∑ s : ι → Fin q, H (s j) = q ^ (Fintype.card ι - 1) * ∑ b, H b := by
   rw [← Equiv.sum_comp (Equiv.funSplitAt j (Fin q)).symm, Fintype.sum_prod_type]
-  simp [Equiv.funSplitAt, Equiv.piSplitAt, Finset.sum_const, mul_comm]
-  rw [Finset.sum_mul]
+  simp only [ne_eq, Equiv.funSplitAt_symm_apply, ↓reduceDIte, sum_const, card_univ, Fintype.card_pi,
+    Fintype.card_fin, prod_const, Fintype.card_subtype_compl, Fintype.card_unique, smul_eq_mul]
+  rw [Finset.mul_sum]
 
 /-- Fixing two coordinates leaves `q ^ (k - 2)` functions. -/
 theorem sum_two_coords {q : ℕ} (i j : Fin k) (hij : i ≠ j) (G : Fin q → Fin q → ℕ) :

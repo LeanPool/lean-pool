@@ -1,14 +1,12 @@
 /-
 Copyright (c) 2026 Jeromie Beasley. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jeromie Beasley
 -/
 
 module
 
-public import LeanPool.CoboundaryK3.Basic
-public import LeanPool.CoboundaryK3.Constant
-public import LeanPool.CoboundaryK3.Replication
+public import LeanPool.CoboundaryK3.SmallComplexes
 public import LeanPool.CoboundaryK3.Staircase
 
 /-!

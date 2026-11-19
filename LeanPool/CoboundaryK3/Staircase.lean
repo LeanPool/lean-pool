@@ -1,6 +1,6 @@
 /-
 Copyright (c) 2026 Jeromie Beasley. All rights reserved.
-Released under MIT license as described in the file LICENSE.
+Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Jeromie Beasley
 -/
 module
