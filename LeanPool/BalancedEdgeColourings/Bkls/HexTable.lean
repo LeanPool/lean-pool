@@ -1831,29 +1831,128 @@ def okEntry (mask n : Nat) : Bool :=
      (List.range 6).all (okVertex mask n w) &&
        (List.range 3).all fun i => sumAt mask n w i != sumAt mask n w (i + 3))
 
-private theorem check0 : (List.range 4096).all (okEntry 0) = true := by
+/-- Check properness at two opposite vertices and compare their colour sums. -/
+private def checkOpposite (mask index witness first second : Nat) : Bool :=
+  let a := dig witness ((first + 5) % 6)
+  let b := dig witness first
+  let c := qv mask index witness first
+  let d := dig witness ((second + 5) % 6)
+  let e := dig witness second
+  let f := qv mask index witness second
+  (a != b && a != c && b != c) && (d != e && d != f && e != f) && (a + b + c != d + e + f)
+
+/-- Check an entry using a witness that has already been extracted from the table. -/
+private def checkWitness (mask index witness : Nat) : Bool :=
+  !((List.range 3).all fun i => inD mask i || dig index i != dig index (i + 3)) ||
+    (checkOpposite mask index witness 0 3 && checkOpposite mask index witness 1 4 &&
+      checkOpposite mask index witness 2 5)
+
+private theorem groupChecks (p₀ p₁ p₂ p₃ p₄ p₅ d₀ d₁ d₂ : Bool) :
+    ((p₀ && p₃ && d₀) && (p₁ && p₄ && d₁) && (p₂ && p₅ && d₂)) =
+      ((p₀ && p₁ && p₂ && p₃ && p₄ && p₅) && (d₀ && d₁ && d₂)) := by
+  simp only [Bool.and_comm, Bool.and_left_comm]
+
+private theorem checkWitness_eq (mask index witness : Nat) :
+    checkWitness mask index witness =
+      (!((List.range 3).all fun i => inD mask i || dig index i != dig index (i + 3)) ||
+        ((List.range 6).all (okVertex mask index witness) &&
+          (List.range 3).all fun i =>
+            sumAt mask index witness i != sumAt mask index witness (i + 3))) := by
+  let proper := okVertex mask index witness
+  let total := sumAt mask index witness
+  have grouped := groupChecks (proper 0) (proper 1) (proper 2) (proper 3) (proper 4) (proper 5)
+    (total 0 != total 3) (total 1 != total 4) (total 2 != total 5)
+  dsimp only [proper, total] at grouped
+  delta okVertex sumAt at grouped ⊢
+  simpa only [checkWitness, checkOpposite, List.range_succ,
+    List.range_zero, List.all_append, List.all_cons, List.all_nil, Bool.and_true, Bool.true_and,
+    Nat.reduceAdd] using
+    congrArg (fun result =>
+      !((List.range 3).all fun i => inD mask i || dig index i != dig index (i + 3)) || result)
+      grouped
+
+/-- Read the packed witnesses from low to high, discarding each 18-bit word after checking it. -/
+private def checkPacked (mask : Nat) : Nat → Nat → Nat → Bool
+  | 0, _, _ => true
+  | remaining + 1, index, packed =>
+    checkWitness mask index (packed % 262144) &&
+      checkPacked mask remaining (index + 1) (packed / 262144)
+
+private theorem checkedWitness {mask count start packed : Nat}
+    (checked : checkPacked mask count start packed = true) (offset : Nat) (bound : offset < count) :
+    checkWitness mask (start + offset) (packed / 262144 ^ offset % 262144) = true := by
+  induction count generalizing start packed offset with
+  | zero => exact (Nat.not_lt_zero _ bound).elim
+  | succ remaining ih =>
+    simp only [checkPacked, Bool.and_eq_true] at checked
+    cases offset with
+    | zero => simpa only [Nat.add_zero, Nat.pow_zero, Nat.div_one] using checked.1
+    | succ offset =>
+      simpa only [Nat.add_assoc, Nat.add_comm 1 offset, Nat.div_div_eq_div_mul,
+        Nat.pow_succ'] using ih checked.2 offset (Nat.lt_of_succ_lt_succ bound)
+
+private theorem checkPacked_all {mask : Nat}
+    (checked : checkPacked mask 4096 0 (table mask) = true) :
+    (List.range 4096).all (okEntry mask) = true := by
+  apply List.all_eq_true.mpr
+  intro index member
+  have bound := List.mem_range.mp member
+  have quotient : (mask * 4096 + index) / 4096 = mask := by
+    rw [Nat.add_comm, Nat.add_mul_div_right _ _ (by decide), Nat.div_eq_of_lt bound, Nat.zero_add]
+  have remainder : (mask * 4096 + index) % 4096 = index := by
+    rw [Nat.mul_add_mod_self_right, Nat.mod_eq_of_lt bound]
+  delta okEntry wit
+  simpa only [Nat.zero_add, checkWitness_eq, quotient, remainder,
+    Nat.shiftRight_eq_div_pow, Nat.pow_mul] using checkedWitness checked index bound
+
+private theorem packedCheck0 : checkPacked 0 4096 0 (table 0) = true := by
   decide +kernel
+
+private theorem packedCheck1 : checkPacked 1 4096 0 (table 1) = true := by
+  decide +kernel
+
+private theorem packedCheck2 : checkPacked 2 4096 0 (table 2) = true := by
+  decide +kernel
+
+private theorem packedCheck3 : checkPacked 3 4096 0 (table 3) = true := by
+  decide +kernel
+
+private theorem packedCheck4 : checkPacked 4 4096 0 (table 4) = true := by
+  decide +kernel
+
+private theorem packedCheck5 : checkPacked 5 4096 0 (table 5) = true := by
+  decide +kernel
+
+private theorem packedCheck6 : checkPacked 6 4096 0 (table 6) = true := by
+  decide +kernel
+
+private theorem packedCheck7 : checkPacked 7 4096 0 (table 7) = true := by
+  decide +kernel
+
+-- Keep the existing kernel auxiliary proofs at the original statements.
+private theorem check0 : (List.range 4096).all (okEntry 0) = true := by
+  as_aux_lemma => exact checkPacked_all packedCheck0
 
 private theorem check1 : (List.range 4096).all (okEntry 1) = true := by
-  decide +kernel
+  as_aux_lemma => exact checkPacked_all packedCheck1
 
 private theorem check2 : (List.range 4096).all (okEntry 2) = true := by
-  decide +kernel
+  as_aux_lemma => exact checkPacked_all packedCheck2
 
 private theorem check3 : (List.range 4096).all (okEntry 3) = true := by
-  decide +kernel
+  as_aux_lemma => exact checkPacked_all packedCheck3
 
 private theorem check4 : (List.range 4096).all (okEntry 4) = true := by
-  decide +kernel
+  as_aux_lemma => exact checkPacked_all packedCheck4
 
 private theorem check5 : (List.range 4096).all (okEntry 5) = true := by
-  decide +kernel
+  as_aux_lemma => exact checkPacked_all packedCheck5
 
 private theorem check6 : (List.range 4096).all (okEntry 6) = true := by
-  decide +kernel
+  as_aux_lemma => exact checkPacked_all packedCheck6
 
 private theorem check7 : (List.range 4096).all (okEntry 7) = true := by
-  decide +kernel
+  as_aux_lemma => exact checkPacked_all packedCheck7
 
 /-- The complete kernel-checked certificate. -/
 theorem check : (List.range 8).all (fun mask => (List.range 4096).all (okEntry mask)) = true := by
