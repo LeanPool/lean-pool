@@ -31,7 +31,7 @@ open scoped FourierTransform ComplexConjugate ENNReal
 
 section LeafLocalization
 variable {V : Type*} [AddCommGroup V] [Module ℂ V]
-  (Λ : MultilinearMap ℂ (fun _ : Fin 4 => V) ℂ)
+  (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => V) ℂ)
 
 /-! ### Localization at one search leaf -/
 
@@ -117,7 +117,7 @@ theorem leaf_identity {ι γ : Type*} (L : γ → Fin 4 → V →ₗ[ℂ] V) (x 
       simp [Function.update_of_ne hut]
     rw [hxu, hx, Λ.map_update_sum]
     apply Finset.sum_congr rfl; intro v _
-    rw [Λ.map_update_smul, smul_eq_mul, update_comm_apply hut]
+    rw [Λ.map_update_smul, RingHom.id_apply, smul_eq_mul, update_comm_apply hut]
   have hx0 : Λ x = Λ (Function.update x t (x t)) := by rw [Function.update_eq_self]
   have hsplit : ∀ v, Λ (Function.update (Function.update x u (φ v)) t (x t)) =
       ∑ G ∈ Gs, Λ (Function.update (Function.update x u (φ v)) t (L G t (x t))) +
@@ -439,7 +439,7 @@ def searchLeaves : ℕ → ℕ → ℕ → Fin 4 → Option (Fin 4) → (Fin 4 �
       else [⟨ℓ, h, up, low, ls⟩]
 
 /-- Blueprint prop:localize, lines 1841-1843: the search is an exact expansion over its leaves. -/
-theorem searchLeaves_form (Λ : MultilinearMap ℂ (fun _ : Fin 4 => H) ℂ)
+theorem searchLeaves_form (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => H) ℂ)
     (Cum : Fin 4 → ℕ → H →L[ℂ] H) (z : Fin 4 → H) :
     ∀ (fuel ℓ h : ℕ) (up : Fin 4) (low : Option (Fin 4)) (ls : Fin 4 → List (ℕ × Bool)),
       Λ (fun l => layerOp (Cum l) (ls l) (z l)) =
@@ -548,7 +548,7 @@ leaf main terms plus the weighted leaf errors. -/
 theorem search_cell_min {ιc : Type*} (cells : Finset ιc) (wt : ιc → ℝ) (hwt : ∀ I, 0 ≤ wt I)
     {η : ℝ} (hη : 0 ≤ η) {V : ιc → Type*} [∀ I, NormedAddCommGroup (V I)]
     [∀ I, InnerProductSpace ℂ (V I)]
-    (Λ : ∀ I, MultilinearMap ℂ (fun _ : Fin 4 => V I) ℂ)
+    (Λ : ∀ I, MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => V I) ℂ)
     (Cum : ∀ I, Fin 4 → ℕ → V I →L[ℂ] V I) (z : ∀ I, Fin 4 → V I) (fuel Lc : ℕ) (up₀ : Fin 4)
     (Main : ιc → ℕ → ℂ) (err : ιc → ℕ → ℝ)
     (hleaf : ∀ I ∈ cells, ∀ s ∈ Finset.range (searchList fuel Lc up₀).length,
@@ -1091,7 +1091,7 @@ theorem cellForm_pair_le {G : RealDyadicGrid} {I : ℤ × ℤ} {κ : LocalKernel
     rw [← hXt, Function.update_eq_self]
   rw [hXe, Λ.map_update_sum, Finset.mul_sum]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun m hm => ?_)
-  rw [Λ.map_update_smul, smul_eq_mul, norm_mul, mul_comm (‖c m‖)]
+  rw [Λ.map_update_smul, RingHom.id_apply, smul_eq_mul, norm_mul, mul_comm (‖c m‖)]
   refine mul_le_mul_of_nonneg_right ?_ (norm_nonneg _)
   -- one separated pair
   set! z : Fin 4 → ℝ → ℂ := fun l => if l = a then (Sa : ℂ)⁻¹ • augPhys (X a)
@@ -1400,7 +1400,7 @@ theorem ResidOK.combo_le {κ : LocalKernelClass} {Tg : Type*} {G : RealDyadicGri
     rw [← hXu, Function.update_eq_self]
   rw [hXe, Λ.map_update_sum, Finset.sum_mul]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun m hm => ?_)
-  rw [Λ.map_update_smul, smul_eq_mul, norm_mul]
+  rw [Λ.map_update_smul, RingHom.id_apply, smul_eq_mul, norm_mul]
   refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
   obtain ⟨A, hA, hAθ, hAM, hAq, hAe⟩ := hsrc m hm
   exact h.form_le hwI (htag m hm) hut hua hub hta htb hab A hA hAθ hAM hAq _

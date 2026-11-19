@@ -2581,7 +2581,7 @@ theorem trilinear_ht_bound :
       eLpNorm (TrilinearHT.T (fun i ↦ f i)) 1 ≤ (ENNReal.ofReal C) * ∏ i, eLpNorm (f i) 3 := by
   obtain ⟨C, -, hC, -⟩ := tht_main
   refine ⟨C, fun f => ?_⟩
-  rw [schwartz_triple_eq_vecCons, eLpNorm_one_eq_lintegral_enorm
+  rw [schwartz_triple_eq_vecCons, eLpNorm_one_eq_lintegral_eNorm
     (T_measurable (f 0) (f 1) (f 2)).aestronglyMeasurable, Fin.prod_univ_three]
   exact (hC (f 0) (f 1) (f 2)).2.2
 

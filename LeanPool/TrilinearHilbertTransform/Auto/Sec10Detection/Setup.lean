@@ -1898,7 +1898,7 @@ theorem eLpNorm_sub_truncateNorm_le {μ : Measure ℝ} {f : ℝ → ℂ} (hf : M
         eLpNorm_mono_real ((hf.sub (truncateNorm_measurable hf B)).aestronglyMeasurable) hpt
     _ = ENNReal.ofReal (B ^ (1 - q / p)) * eLpNorm f (ENNReal.ofReal q) μ ^ (q / p) := by
         rw [hfun, eLpNorm_const_smul, eLpNorm_norm_rpow f hf.aestronglyMeasurable hqp,
-          Real.enorm_eq_ofReal (by positivity), ← ENNReal.ofReal_mul hp.le,
+          Real.eNorm_eq_ofReal (by positivity), ← ENNReal.ofReal_mul hp.le,
           mul_div_cancel₀ q hp.ne']
 
 /-- Evaluating a product after replacing one input. -/
@@ -2309,7 +2309,7 @@ theorem localProgressionForm_update_congr_ae {κ : LocalKernelClass} {a₀ r : �
     rw [eLpNorm_congr_ae (show g₁ - g₂ =ᵐ[normalizedIntervalMeasure a₀ r] 0 by
       filter_upwards [hae] with x hx; simp [hx]), eLpNorm_zero]
   rw [hz, zero_mul, zero_mul, zero_mul, mul_zero] at hb
-  exact enorm_eq_zero.mp (le_antisymm hb zero_le)
+  exact eNorm_eq_zero.mp (le_antisymm hb zero_le)
 
 /-- Four distinct elements exhaust `Fin 4`. -/
 theorem fin4_eq_of_distinct : ∀ jR ig kb lc j : Fin 4, jR ≠ ig → jR ≠ kb → jR ≠ lc → ig ≠ kb →
@@ -2562,8 +2562,8 @@ theorem detection_structured_slot (κ : LocalKernelClass) :
     have hVint : Integrable V ν := ⟨hVm.aestronglyMeasurable,
       (hVL.integrable (by norm_num)).2⟩
     have hV1 : eLpNorm V 1 ν ≤ ENNReal.ofReal τ := by
-      rw [eLpNorm_one_eq_lintegral_enorm hVm.aestronglyMeasurable,
-        ← ofReal_integral_norm_eq_lintegral_enorm hVint]
+      rw [eLpNorm_one_eq_lintegral_eNorm hVm.aestronglyMeasurable,
+        ← ofReal_integral_norm_eq_lintegral_eNorm hVint]
       apply ENNReal.ofReal_le_ofReal
       refine le_trans (le_of_eq ?_) hv
       rw [probabilityL2L1Norm_eq, hνμ]
@@ -2696,10 +2696,10 @@ theorem real_progression_pair_integral {F G : ℝ → ℂ} (hFm : Measurable F) 
     refine ⟨hΦm.aestronglyMeasurable, ?_⟩
     unfold HasFiniteIntegral
     have he : ∀ z : ℝ × ℝ, ‖F (z.1 + i * z.2) * G (z.1 + j * z.2)‖ₑ =
-        ‖F (z.1 + i * z.2)‖ₑ * ‖G (z.1 + j * z.2)‖ₑ := fun z => enorm_mul _ _
+        ‖F (z.1 + i * z.2)‖ₑ * ‖G (z.1 + j * z.2)‖ₑ := fun z => eNorm_mul _ _
     simp_rw [he]
-    rw [real_progression_pair_lintegral (fun u => ‖F u‖ₑ) (fun v => ‖G v‖ₑ) hFm.enorm
-      hGm.enorm hij]
+    rw [real_progression_pair_lintegral (fun u => ‖F u‖ₑ) (fun v => ‖G v‖ₑ) hFm.eNorm
+      hGm.eNorm hij]
     exact ENNReal.mul_lt_top (ENNReal.mul_lt_top ENNReal.ofReal_lt_top hF.2) hG.2
   refine ⟨hΦ, ?_⟩
   -- Fubini, then a shift in the first variable
@@ -2710,15 +2710,15 @@ theorem real_progression_pair_integral {F G : ℝ → ℂ} (hFm : Measurable F) 
       (volume.prod volume) := by
     refine ⟨hΨm.aestronglyMeasurable, ?_⟩
     unfold HasFiniteIntegral
-    rw [lintegral_prod_symm _ (hΨm.enorm.aemeasurable)]
+    rw [lintegral_prod_symm _ (hΨm.eNorm.aemeasurable)]
     have hin (u : ℝ) : ∫⁻ t : ℝ, ‖F u * G (u + (j - i) * t)‖ₑ =
         ‖F u‖ₑ * (ENNReal.ofReal |(j - i)⁻¹| * ∫⁻ v, ‖G v‖ₑ) := by
-      simp_rw [enorm_mul]
+      simp_rw [eNorm_mul]
       rw [lintegral_const_mul _ (show Measurable (fun t : ℝ => ‖G (u + (j - i) * t)‖ₑ) by
           fun_prop),
-        real_lintegral_affine (fun v => ‖G v‖ₑ) hGm.enorm hc u]
+        real_lintegral_affine (fun v => ‖G v‖ₑ) hGm.eNorm hc u]
     simp only [hin]
-    rw [lintegral_mul_const _ hFm.enorm]
+    rw [lintegral_mul_const _ hFm.eNorm]
     exact ENNReal.mul_lt_top hF.2 (ENNReal.mul_lt_top ENNReal.ofReal_lt_top hG.2)
   calc ∫ z : ℝ × ℝ, F (z.1 + i * z.2) * G (z.1 + j * z.2)
       = ∫ x, ∫ t, F (x + i * t) * G (x + j * t) := by
@@ -2893,7 +2893,7 @@ theorem localProgressionForm_pair_expansion {κ : LocalKernelClass} {a₀ r : �
     have hl : ENNReal.ofReal (r⁻¹ ^ 2 * M₀) = ENNReal.ofReal r⁻¹ ^ 2 *
         ∫⁻ z, ‖w z * ∏ j, g j (realProgressionCoordinate j z)‖ₑ := by
       rw [ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_pow (by positivity), hM₀,
-        ofReal_integral_norm_eq_lintegral_enorm hΦ]
+        ofReal_integral_norm_eq_lintegral_eNorm hΦ]
     have h := (hl.trans_le ha).trans hrhs
     exact (ENNReal.ofReal_le_ofReal_iff (by positivity)).mp h
   have hXb : ∀ q, ‖(r : ℂ)⁻¹ ^ 2 * ∫ z, Y q z‖ ≤ W' * C₁ := by
@@ -3029,8 +3029,8 @@ theorem integral_indicator_norm_le_of_eLpNorm {a₀ r : ℝ} (hr : 0 < r) {g : �
     exact (this.integrable (by norm_num)).2
   have h1 : ∫ y, ‖g y‖ ∂ν ≤ C := by
     have hl : ENNReal.ofReal (∫ y, ‖g y‖ ∂ν) ≤ ENNReal.ofReal C := by
-      rw [ofReal_integral_norm_eq_lintegral_enorm hνi,
-        ← eLpNorm_one_eq_lintegral_enorm hgm.aestronglyMeasurable]
+      rw [ofReal_integral_norm_eq_lintegral_eNorm hνi,
+        ← eLpNorm_one_eq_lintegral_eNorm hgm.aestronglyMeasurable]
       exact (eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)).trans hg
     exact (ENNReal.ofReal_le_ofReal_iff hC).mp hl
   have h2 : ∫ y, ‖g y‖ ∂ν = r⁻¹ * ∫ y in Set.Icc a₀ (a₀ + r), ‖g y‖ := by

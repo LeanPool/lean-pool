@@ -1751,13 +1751,15 @@ theorem multivariableQuadraticChartAtom_measurable {k d : ℕ}
     Measurable (multivariableQuadraticChartAtom A) := by
   unfold multivariableQuadraticChartAtom
   apply Measurable.mul
-  · fun_prop
+  · exact (continuous_subtype_val.comp (Real.continuous_fourierChar.comp
+      (by fun_prop))).measurable
   · apply Measurable.tsum
     intro n
     apply Measurable.mul
     · exact A.smooth.continuous.measurable.comp (by fun_prop)
     · unfold chartMatrixPhase
-      fun_prop
+      exact (continuous_subtype_val.comp (Real.continuous_fourierChar.comp
+        (by fun_prop))).measurable
 
 /-- Localization adds only the cutoff's translation error to a modulation error. -/
 theorem localized_modulation_error {E : Type*} [NormedAddCommGroup E]
@@ -1865,7 +1867,8 @@ theorem localized_multivariableChart_return_error {k d c₀ : ℕ} {H R : ℝ}
     · exact (hθm.comp (by fun_prop)).mul (hQm.comp (by fun_prop))
     · apply Measurable.mul
       · unfold dotProduct
-        fun_prop
+        exact (continuous_subtype_val.comp (Real.continuous_fourierChar.comp
+          (by fun_prop))).measurable
       · exact hθm.mul hQm
   have hEb (z) : ‖E z‖ ≤ K * (‖h‖ + ‖e‖) := by
     exact localized_modulation_error θ (multivariableQuadraticChartAtom A) z h

@@ -269,7 +269,8 @@ def patternPiece (a s e : Fin 4 → V) (σ : Fin 4 → Fin 3) : Fin 4 → V :=
 
 /-- Blueprint `eq:core-side-error` in a 4-linear form: with `Z_l = A_l + S_l + E_l`,
 `H(Z) = Σ_σ H(pieces σ)` over all core/side/error patterns. -/
-theorem form_pattern_expand (Λ : MultilinearMap ℂ (fun _ : Fin 4 => V) ℂ) (a s e : Fin 4 → V) :
+theorem form_pattern_expand
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => V) ℂ) (a s e : Fin 4 → V) :
     Λ (fun l => a l + s l + e l) = ∑ σ : Fin 4 → Fin 3, Λ (patternPiece a s e σ) := by
   have h : (fun l => a l + s l + e l) = fun l => ∑ j : Fin 3, ![a l, s l, e l] j := by
     funext l; simp [Fin.sum_univ_three, add_assoc]

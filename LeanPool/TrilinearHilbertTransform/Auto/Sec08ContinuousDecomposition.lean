@@ -1251,14 +1251,14 @@ theorem four_factor_derivative_geometric {E : Type*}
       (fun j hj => by simpa [pow_succ, mul_comm] using hfi j (hj.trans hi))
       (fun j hj => by simpa [pow_succ, mul_comm] using hgi j (hj.trans hi))
     convert hp using 1
-    all_goals ring
+    ring
   have hhk (i : ℕ) (hi : i ≤ m) :
       ‖iteratedFDeriv ℝ i (fun y => h y * k y) z‖ ≤ R ^ 2 * (2 * R) ^ i := by
     have hp := derivative_product_with_prefactors (m := i) hh hk z hR hR hR hR
       (fun j hj => by simpa [pow_succ, mul_comm] using hhi j (hj.trans hi))
       (fun j hj => by simpa [pow_succ, mul_comm] using hki j (hj.trans hi))
     convert hp using 1
-    all_goals ring
+    ring
   have hp := derivative_product_with_prefactors (m := m) (hf.mul hg) (hh.mul hk) z
     (sq_nonneg R) (sq_nonneg R) (by positivity : 0 ≤ 2 * R) (by positivity : 0 ≤ 2 * R)
     hfg hhk
@@ -1813,7 +1813,8 @@ theorem quadraticChartAtom_measurable {d : ℕ} (A : QuadraticChartData d) :
     · fun_prop
   unfold quadraticChartAtom
   apply Measurable.mul
-  · fun_prop
+  · exact (continuous_subtype_val.comp (Real.continuous_fourierChar.comp
+      (by fun_prop))).measurable
   · exact Measurable.tsum (fun n => (hc n).measurable)
 
 /-- Quasipolynomial budget for the inverse-theorem atomic decomposition. -/
