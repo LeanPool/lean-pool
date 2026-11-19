@@ -170,7 +170,7 @@ private theorem corrAvg_tgt_eq_xFromColoring
   have hσ_apply : ∀ j : Fin t, σ (srcEmb j) = tgtEmb j := by
     intro j
     have := congrArg (fun e : Fin t ↪ Sym n => e j) hσ
-    simpa [Function.Embedding.smul_apply, Equiv.Perm.smul_def, srcEmb, tgtEmb] using this
+    simpa [smul_apply, Equiv.Perm.smul_def, srcEmb, tgtEmb] using this
   -- Convenient indices.
   have ht2 : 2 < t := by simpa [t] using h2lt
   have h0 : (0 : Nat) < t := Nat.lt_trans (by decide : (0 : Nat) < 2) ht2
