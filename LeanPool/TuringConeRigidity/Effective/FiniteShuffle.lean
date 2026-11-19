@@ -93,7 +93,7 @@ theorem code_agree {n : ℕ} {A B G H : Oracle} (ha : Agree n A B) (hg : Agree (
   have hc : count G i = count H i := count_agree (fun j hj => hg (2*j+1) (by omega))
   have ho := hg (2*i+1) (by omega)
   have hl := count_le G i
-  simp only [code,←hc,←ho]
+  simp only [GenericCoding.code,←hc,←ho]
   split
   · exact ha _ (by omega)
   · exact hg _ (by omega)
@@ -101,7 +101,7 @@ theorem code_agree {n : ℕ} {A B G H : Oracle} (ha : Agree n A B) (hg : Agree (
 theorem code_agree_inserted {n : ℕ} {A B G : Oracle} (hg : OddBound n G) (ha : Agree n A B) :
     code A G = code B G := by
   funext i
-  unfold code
+  unfold GenericCoding.code
   split
   · rename_i hb
     have hi : i < n := by
@@ -159,13 +159,13 @@ theorem extendEven_bound {k n : ℕ} {G T : Oracle} (hg : OddBound k G) :
 theorem extendEven_code (n : ℕ) (A G T : Oracle) (hg : OddBound n G)
     (ht : Agree (n + count G n) (code A G) T) : code A (extendEven n G T) = T := by
   funext i
-  simp only [code]
+  simp only [GenericCoding.code]
   rw [extendEven_count]
   simp only [extendEven,join_odd,join_even]
   have hcn := count_le G n
   by_cases hi : i < n + count G n
   · rw [←ht i hi]
-    unfold code
+    unfold GenericCoding.code
     split
     · rfl
     · have hsub : i - count G i < n := by

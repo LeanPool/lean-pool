@@ -105,7 +105,7 @@ theorem rel_numNode (x : S.Core) (n : ℕ) :
 
 theorem collapse_num (n : ℕ) : S.collapse (S.numNode n) = natSet n := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     apply ZFSet.ext
     intro z
     rw [S.mem_collapse,mem_natSet]
