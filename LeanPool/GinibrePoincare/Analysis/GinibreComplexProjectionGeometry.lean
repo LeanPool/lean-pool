@@ -50,55 +50,27 @@ namespace GinibrePoincare
 noncomputable section
 
 theorem ginibreLpStar_involutive {n : ℕ} (x : Lp ℂ 2 (ginibreMeasure n)) :
-    star (star x) = x := by
-  apply Lp.ext
-  filter_upwards [Lp.coeFn_star (star x), Lp.coeFn_star x] with z h1 h2
-  simp only [Pi.star_apply] at h1 h2
-  rw [h1, h2, star_star]
+    star (star x) = x :=
+  Lp_star_star x
 
 theorem ginibreLpStar_add {n : ℕ} (x y : Lp ℂ 2 (ginibreMeasure n)) :
-    star (x + y) = star x + star y := by
-  apply Lp.ext
-  filter_upwards [Lp.coeFn_star (x+y), Lp.coeFn_add x y,
-    Lp.coeFn_add (star x) (star y), Lp.coeFn_star x, Lp.coeFn_star y] with z h1 h2 h3 h4 h5
-  simp only [Pi.star_apply, Pi.add_apply] at h1 h2 h3 h4 h5
-  rw [h1, h2, h3, h4, h5, star_add]
+    star (x + y) = star x + star y :=
+  Lp_star_add x y
 
 theorem ginibreLpStar_sub {n : ℕ} (x y : Lp ℂ 2 (ginibreMeasure n)) :
-    star (x - y) = star x - star y := by
-  apply Lp.ext
-  filter_upwards [Lp.coeFn_star (x-y), Lp.coeFn_sub x y,
-    Lp.coeFn_sub (star x) (star y), Lp.coeFn_star x, Lp.coeFn_star y] with z h1 h2 h3 h4 h5
-  simp only [Pi.star_apply, Pi.sub_apply] at h1 h2 h3 h4 h5
-  rw [h1, h2, h3, h4, h5, star_sub]
+    star (x - y) = star x - star y :=
+  Lp_star_sub x y
 
-theorem ginibreLpStar_zero (n : ℕ) : star (0 : Lp ℂ 2 (ginibreMeasure n)) = 0 := by
-  apply Lp.ext
-  filter_upwards [Lp.coeFn_star (0 : Lp ℂ 2 (ginibreMeasure n)),
-    Lp.coeFn_zero ℂ 2 (ginibreMeasure n)] with z hs hz
-  simp only [Pi.star_apply] at hs
-  rw [hs, hz]
-  simp
+theorem ginibreLpStar_zero (n : ℕ) : star (0 : Lp ℂ 2 (ginibreMeasure n)) = 0 :=
+  Lp_star_zero (μ := ginibreMeasure n)
 
 theorem ginibreLpStar_complex_smul {n : ℕ} (a : ℂ) (x : Lp ℂ 2 (ginibreMeasure n)) :
-    star (a • x) = star a • star x := by
-  apply Lp.ext
-  filter_upwards [Lp.coeFn_star (a • x), Lp.coeFn_smul a x,
-    Lp.coeFn_smul (star a) (star x), Lp.coeFn_star x] with z h1 h2 h3 h4
-  simp only [Pi.star_apply, Pi.smul_apply] at h1 h2 h3 h4
-  rw [h1, h2, h3, h4]
-  simp [smul_eq_mul]
+    star (a • x) = star a • star x :=
+  Lp_star_complex_smul a x
 
 theorem ginibre_inner_star_star {n : ℕ} (x y : Lp ℂ 2 (ginibreMeasure n)) :
-    inner ℂ (star x) (star y) = star (inner ℂ x y) := by
-  rw [MeasureTheory.L2.inner_def, MeasureTheory.L2.inner_def]
-  rw [integral_congr_ae (show
-    (fun z => inner ℂ ((star x) z) ((star y) z)) =ᵐ[ginibreMeasure n]
-      (fun z => star (inner ℂ (x z) (y z))) by
-    filter_upwards [Lp.coeFn_star x, Lp.coeFn_star y] with z hx hy
-    rw [hx, hy]
-    simp [RCLike.inner_apply])]
-  exact integral_conj
+    inner ℂ (star x) (star y) = star (inner ℂ x y) :=
+  Lp_inner_star_star x y
 
 theorem ginibreConstantL2_star (n : ℕ) (hn : 0 < n) (a : ℂ) :
     star (ginibreConstantL2 n hn a) = ginibreConstantL2 n hn (star a) := by
@@ -198,7 +170,7 @@ theorem ginibreConstantProjection_star (n : ℕ) (hn : 0 < n)
   have hsy := ginibreConstantClosedSubspace_star_mem hn hy
   have h := Submodule.starProjection_inner_eq_zero f (star y) hsy
   have hc := congrArg star h
-  rw [← ginibre_inner_star_star, ginibreLpStar_involutive, ginibreLpStar_sub] at hc
+  rw [← Lp_inner_star_star, Lp_star_star, Lp_star_sub] at hc
   simpa using hc
 
 /-- The antiholomorphic orthogonal projection is obtained by conjugating the
@@ -209,27 +181,8 @@ def ginibreAntiholomorphicProjection (n : ℕ) (hn : 0 < n)
 
 /-- Pointwise complex conjugation `star` on Ginibre `L²`, as a real-linear isometry. -/
 def ginibreAmbientConjugationIsometry (n : ℕ) :
-    Lp ℂ 2 (ginibreMeasure n) →ₗᵢ[ℝ] Lp ℂ 2 (ginibreMeasure n) where
-  toLinearMap := {
-    toFun := star
-    map_add' := ginibreLpStar_add
-    map_smul' := by
-      intro r u
-      apply Lp.ext
-      filter_upwards [Lp.coeFn_star (r • u), Lp.coeFn_star u,
-        Lp.coeFn_smul r u, Lp.coeFn_smul r (star u)] with z hru hu hs ht
-      change (r • u) z = r • u z at hs
-      change (r • star u) z = r • star u z at ht
-      change (star (r • u)) z = (r • star u) z
-      rw [hru, ht]
-      calc
-        star ((r • u) z) = star (r • u z) := congrArg star hs
-        _ = r • star (u z) := by simp
-        _ = r • (star u) z := congrArg (r • ·) hu.symm }
-  norm_map' := by
-    intro u
-    rw [Lp.norm_def, Lp.norm_def]
-    exact congrArg ENNReal.toReal AEEqFun.eLpNorm_star
+    Lp ℂ 2 (ginibreMeasure n) →ₗᵢ[ℝ] Lp ℂ 2 (ginibreMeasure n) :=
+  LpConjugationIsometry (ginibreMeasure n)
 
 /-- The genuine closed conjugate-holomorphic subspace. -/
 def ginibreAntiholomorphicAmbientClosedSpan (n : ℕ) (hn : 0 < n) :
@@ -238,19 +191,19 @@ def ginibreAntiholomorphicAmbientClosedSpan (n : ℕ) (hn : 0 < n) :
     carrier := {f | star f ∈ ginibreHolomorphicAmbientClosedSpan n hn}
     zero_mem' := by
       change star (0 : Lp ℂ 2 (ginibreMeasure n)) ∈ ginibreHolomorphicAmbientClosedSpan n hn
-      rw [ginibreLpStar_zero]; exact Submodule.zero_mem _
+      rw [Lp_star_zero]; exact Submodule.zero_mem _
     add_mem' := by
       intro x y hx hy
       change star (x+y) ∈ ginibreHolomorphicAmbientClosedSpan n hn
-      rw [ginibreLpStar_add]
+      rw [Lp_star_add]
       exact (ginibreHolomorphicAmbientClosedSpan n hn).add_mem hx hy
     smul_mem' := by
       intro a x hx
       change star (a • x) ∈ ginibreHolomorphicAmbientClosedSpan n hn
-      rw [ginibreLpStar_complex_smul]
+      rw [Lp_star_complex_smul]
       exact (ginibreHolomorphicAmbientClosedSpan n hn).smul_mem (star a) hx }
   isClosed' := (ginibreHolomorphicAmbientClosedSpan n hn).isClosed.preimage
-    (ginibreAmbientConjugationIsometry n).continuous
+    (LpConjugationIsometry (ginibreMeasure n)).continuous
 
 /-- The conjugated operator is literally the orthogonal projection onto the
 closed conjugate-holomorphic subspace, rather than only a norm comparison. -/
@@ -262,13 +215,13 @@ theorem ginibreAntiholomorphicProjection_eq_starProjection (n : ℕ) (hn : 0 < n
   apply Submodule.eq_starProjection_of_mem_of_inner_eq_zero
   · change star (star ((ginibreHolomorphicAmbientClosedSpan n hn).starProjection (star f))) ∈
       ginibreHolomorphicAmbientClosedSpan n hn
-    rw [ginibreLpStar_involutive]
+    rw [Lp_star_star]
     exact Submodule.starProjection_apply_mem _ (star f)
   · intro y hy
     change star y ∈ ginibreHolomorphicAmbientClosedSpan n hn at hy
     have h := congrArg star (Submodule.starProjection_inner_eq_zero (star f) (star y) hy)
-    rw [← ginibre_inner_star_star, ginibreLpStar_sub, ginibreLpStar_involutive,
-      ginibreLpStar_involutive] at h
+    rw [← Lp_inner_star_star, Lp_star_sub, Lp_star_star,
+      Lp_star_star] at h
     simpa [ginibreAntiholomorphicProjection] using h
 
 /-- Lemma 2.7(2)'s full complex-input two-projection bound for the closed
@@ -293,7 +246,7 @@ theorem ginibre_complex_two_projection_bound (n : ℕ) (hn : 0 < n)
   have hac : inner ℂ a c = 0 := by
     have h := congrArg star (ginibreConstants_positive_orthogonal hn
       (ginibreConstantClosedSubspace_star_mem hn ha) hd)
-    rw [← ginibre_inner_star_star, ginibreLpStar_involutive] at h
+    rw [← Lp_inner_star_star, Lp_star_star] at h
     simpa [c] using h
   have hba : inner ℂ b a = 0 := by rw [← inner_conj_symm b a, hab, map_zero]
   have hca : inner ℂ c a = 0 := by rw [← inner_conj_symm c a, hac, map_zero]
@@ -307,7 +260,7 @@ theorem ginibre_complex_two_projection_bound (n : ℕ) (hn : 0 < n)
     exact sub_eq_zero.mp h
   have hcf : inner ℂ c f = inner ℂ c c := by
     have h := congrArg star (Submodule.starProjection_inner_eq_zero (star f) d hd)
-    rw [← ginibre_inner_star_star, ginibreLpStar_sub, ginibreLpStar_involutive] at h
+    rw [← Lp_inner_star_star, Lp_star_sub, Lp_star_star] at h
     have h' : inner ℂ (f-c) c = 0 := by simpa [c, d] using h
     have h'' : inner ℂ c (f-c) = 0 := by rw [← inner_conj_symm c (f-c), h', map_zero]
     rw [inner_sub_right] at h''
@@ -328,7 +281,7 @@ theorem ginibre_complex_two_projection_bound (n : ℕ) (hn : 0 < n)
     simpa only [pow_two] using norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero a b hab
   have hQ : ginibreAntiholomorphicProjection n hn f = a+c := by
     rw [ginibreAntiholomorphicProjection, ginibreHolomorphicProjection_split,
-      ginibreLpStar_add, ginibreConstantProjection_star, ginibreLpStar_involutive]
+      Lp_star_add, ginibreConstantProjection_star, Lp_star_star]
   have hnormQ : ‖ginibreAntiholomorphicProjection n hn f‖ ^ 2 = ‖a‖ ^ 2 + ‖c‖ ^ 2 := by
     rw [hQ]
     simpa only [pow_two] using norm_add_sq_eq_norm_sq_add_norm_sq_of_inner_eq_zero a c hac
@@ -365,7 +318,7 @@ theorem ginibre_real_centered_projection_geometry (n : ℕ) (hn : 0 < n)
     rw [inner_sub_right, hres, hhs, sub_zero]
   have hsres : inner ℂ (star h) (f-star h) = 0 := by
     have h' := congrArg star hres
-    rw [← ginibre_inner_star_star, ginibreLpStar_sub, hreal] at h'
+    rw [← Lp_inner_star_star, Lp_star_sub, hreal] at h'
     simpa using h'
   have hsr : inner ℂ (star h) r = 0 := by
     have hsH : inner ℂ (star h) h = 0 := by

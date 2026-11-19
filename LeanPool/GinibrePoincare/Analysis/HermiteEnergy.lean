@@ -393,38 +393,6 @@ private theorem differentiable_multivariateNormalized_real (n : ℕ) (hn : 0 < n
   exact (HasFDerivAt.finsetProd (u := Finset.univ) (g := f)
     (fun i _ => (hf i z).hasFDerivAt)).differentiableAt
 
-private theorem dbarComponent_const_mul {n : ℕ} (a : ℂ)
-    (f : Configuration n → ℂ) (hf : Differentiable ℝ f)
-    (j : Fin n) (z : Configuration n) :
-    dbarComponent (fun w => a * f w) j z = a * dbarComponent f j z := by
-  unfold dbarComponent
-  rw [fderiv_const_mul (hf z)]
-  simp only [smul_apply, smul_eq_mul]
-  ring
-
-private theorem dbarComponent_finset_sum {n : ℕ} {ι : Type*}
-    (s : Finset ι) (f : ι → Configuration n → ℂ)
-    (hf : ∀ i ∈ s, Differentiable ℝ (f i)) (j : Fin n) (z : Configuration n) :
-    dbarComponent (fun w => ∑ i ∈ s, f i w) j z =
-      ∑ i ∈ s, dbarComponent (f i) j z := by
-  unfold dbarComponent
-  rw [fderiv_fun_sum (fun i hi => hf i hi z)]
-  simp only [sum_apply]
-  calc
-    _ = (∑ i ∈ s, (1 / 2 : ℂ) *
-          (fderiv ℝ (f i) z) (realCoordinateDirection j)) +
-        ∑ i ∈ s, (1 / 2 : ℂ) * Complex.I *
-          (fderiv ℝ (f i) z) (imaginaryCoordinateDirection j) := by
-      rw [mul_add, Finset.mul_sum]
-      congr 1
-      simp_rw [Finset.mul_sum]
-      ring_nf
-    _ = _ := by
-      rw [← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl
-      intro i hi
-      ring
-
 /-- Pointwise `dbar` of a finite Hermite expansion is the expansion synthesized
 from the collision-safe lowered coefficients. -/
 theorem dbarComponent_finiteHermiteFunction (n : ℕ) (hn : 0 < n)

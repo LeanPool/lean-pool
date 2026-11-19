@@ -40,7 +40,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.Pow
 public import Mathlib.Analysis.Calculus.FDeriv.Comp
 public import Mathlib.Analysis.Calculus.FDeriv.Add
 public import Mathlib.Algebra.MvPolynomial.PDeriv
-public import Mathlib.Tactic
+public import Mathlib.Analysis.Complex.Basic
 
 /-!
 # Polynomial chain rule
