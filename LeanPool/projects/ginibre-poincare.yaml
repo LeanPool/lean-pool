@@ -2,11 +2,17 @@ slug: ginibre-poincare
 title: Sharp symmetric Poincaré inequality for the complex Ginibre log-gas
 summary: Proves the sharp Poincaré inequality for symmetric observables in the weighted weak-H¹
   domain, using ordinary distributional gradients on the collision-free open set, of the complex
-  Ginibre log-gas, with exhaustive affine equality cases. Includes concrete Gaussian and Ginibre
-  measures, Hermite and Slater analysis, smooth approximation, distributional gradients, and
-  closed weak-gradient spaces. Also proves the two Hermite sum-of-squares deficit identities
-  on the real symmetric generator graph, with summability and a distributional gradient
-  supplied by graph membership.
+  Ginibre log-gas, with exhaustive affine equality cases, and the two Hermite sum-of-squares deficit
+  identities on the real symmetric generator graph. Also formalizes the paper's three proofs of the
+  inequality, namely the original Section 2 analytic route on the smooth compact core and the
+  Section 3 spectral and Section 4 Hermite–Slater routes on the weak-H¹ domain. Proves the
+  differential deficits of Theorem 1.10 with ordinary distributional second dbar derivatives, by the
+  Hermite and by the Bochner–Kodaira routes; the Section 2 lemmas (sharp Gaussian dbar gap and
+  equality space, canonical minimum-norm dbar solutions, closedness of the entire L² space, global
+  Vandermonde division of entire alternating functions, holomorphic–antiholomorphic projection
+  geometry); the Gamma law of the recentered radius; Hermite–Laguerre polynomial eigenfunctions,
+  spectrum containment and polynomial-sector incompleteness; unbounded pointwise curvature; the
+  radial log-Sobolev inequality; and the Appendix A core-closure and zero-capacity lemmas.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -24,11 +30,29 @@ status: verified
 provenance: AI
 provenance_evidence: 'Upstream formalization.yaml and proposal #644 identify agent-written Lean
   proofs under Djalil Chafaï''s direction. The Lean Pool port and proof optimization are by
-  Codex. The MIT notice is retained in every imported source.'
+  Codex and Claude. The MIT notice is retained in every imported source.'
 main_declarations:
 - GinibrePoincare.ginibre_symmetric_weak_poincare
 - GinibrePoincare.ginibreEquality_full_weak_affine_iff
 - GinibrePoincare.fullTheoremOneNine_named
+- GinibrePoincare.fullMainAnalyticProof
+- GinibrePoincare.spectral_ginibre_symmetric_weak_poincare
+- GinibrePoincare.slater_ginibre_symmetric_weak_poincare
+- GinibrePoincare.fullTheoremOneTenSchwartz
+- GinibrePoincare.bochnerKodairaTheoremOneTen
+- GinibrePoincare.radialObservable_ginibre_gamma
+- GinibrePoincare.polynomialEigenfunction_eigenvalue_equation_atSpeed
+- GinibrePoincare.ginibreFullGeneratorAtSpeed_all_positive_n_spectrum_containment
+- GinibrePoincare.polynomialSector_incomplete
+- GinibrePoincare.ginibre_pointwise_bakry_emery_curvature_unbounded_below
+- GinibrePoincare.ginibre_pointwise_mean_curvature
+- GinibrePoincare.radial_sobolev_lsi
+- GinibrePoincare.gaussianSchwartzDbar_entire_gap
+- GinibrePoincare.gaussianVolumeClosedForm_canonicalSolvability
+- GinibrePoincare.entire_alternating_vandermonde_factorization
+- GinibrePoincare.ginibreDivisibleEntire_real_centered_geometry
+- GinibrePoincare.ginibreComplexSmoothCore_closure_equivalence
+- GinibrePoincare.ginibreCollisionSet_capacity_zero
 main_results:
 - declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
   informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
@@ -47,6 +71,97 @@ main_results:
     norms and weighted Hermite masses. The weak gradient and moment summability are conclusions.
   source_ref: Generator-graph form of Theorem 1.9 of arXiv:2608.19358v2, formalized upstream
     in Endgame/FullTheoremOneNine.lean.
+- declaration: GinibrePoincare.fullMainAnalyticProof
+  informal: For every n > 0, every smooth, compactly supported, permutation-symmetric real f
+    satisfies Var(f) ≤ E(f)/2 with E(f) = (1/n)∫|∇f|² for the Ginibre law, proved by the
+    paper's original route (Vandermonde energy identity, Gaussian dbar estimate, distance
+    transport, holomorphic–antiholomorphic half-distance). Every analytic input is a proved
+    theorem.
+  source_ref: Original Section 2 proof of Theorem 1.1 of arXiv:2608.19358v2, on the smooth
+    compact symmetric core.
+- declaration: GinibrePoincare.spectral_ginibre_symmetric_weak_poincare
+  informal: For n > 0, every symmetric real Ginibre L² class with an ordinary distributional L²
+    gradient on the collision-free set satisfies Var ≤ E/2, proved through the
+    Vandermonde-transformed Gaussian number forms and the projection bound.
+  source_ref: Section 3 spectral proof of Theorem 1.1 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.slater_ginibre_symmetric_weak_poincare
+  informal: The same weak-H¹ inequality Var ≤ E/2 for n > 0, proved through the
+    factorial-normalized Slater-determinant expansion, its Parseval identity and degree energy.
+  source_ref: Section 4 Hermite–Slater proof of Theorem 1.1 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.fullTheoremOneTenSchwartz
+  informal: For n > 0 and every real symmetric pair (u, v) in the closed Ginibre generator
+    graph, u has a symmetric distributional gradient g, and an explicit deficit vector w has
+    ordinary distributional first and second dbar derivatives. With r the holomorphic
+    remainder, E − 2Var = 2‖r‖² + (4/n)Σ‖∂̄∂̄w‖² and
+    ‖v‖² − 2E = ‖v + 2(u − mean u)‖² + 4‖r‖² + (8/n)Σ‖∂̄∂̄w‖²; equality E = 2Var holds iff
+    u = a + 2Re(c Σzᵢ) almost everywhere.
+  source_ref: Theorem 1.10 of arXiv:2608.19358v2; derived upstream from the Theorem 1.9 Hermite
+    identity.
+- declaration: GinibrePoincare.bochnerKodairaTheoremOneTen
+  informal: The two differential deficit identities of Theorem 1.10, with coefficients 4/n and
+    8/n and ordinary distributional first and second dbar derivatives, on the real symmetric
+    generator graph for n > 0, obtained through the integrated Bochner–Kodaira identity.
+  source_ref: Section 6 integrated Bochner–Kodaira route for Theorem 1.10 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.radialObservable_ginibre_gamma
+  informal: For n ≥ 2, under the Ginibre law the recentered radius n·Σᵢ|zᵢ − (Σⱼzⱼ)/n|² has the
+    Gamma law with shape (n−1)(n+2)/2 and rate 1.
+  source_ref: Gamma-radius part of Theorem 1.2 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.polynomialEigenfunction_eigenvalue_equation_atSpeed
+  informal: For n ≥ 2, any speed α and indices a, b, m, the Hermite–Laguerre polynomial
+    H_{a,b}(S)·L_m(R) satisfies the pointwise eigenvalue equation for the negative Ginibre pregenerator
+    at speed α, with eigenvalue 2(α/n)(a + b + 2m), at every collision-free configuration.
+  source_ref: Theorem 1.4 of arXiv:2608.19358v2 (pointwise eigenvalue equation).
+- declaration: GinibrePoincare.ginibreFullGeneratorAtSpeed_all_positive_n_spectrum_containment
+  informal: For every n > 0 and α > 0, each −2αk/n (k ∈ ℕ) lies in the spectrum of the full
+    symmetric Ginibre generator at speed α, where spectrum means failure of a bounded two-sided
+    resolvent on the graph domain.
+  source_ref: Corollary 1.5 of arXiv:2608.19358v2 (the case n = 1 included).
+- declaration: GinibrePoincare.polynomialSector_incomplete
+  informal: For n ≥ 2, an explicit nonzero permutation-symmetric centered quadratic is
+    orthogonal to the closed span of the Hermite–Laguerre polynomial eigenfunctions, so that
+    closed sector is a proper subspace of the Ginibre L² space.
+  source_ref: Remark 1.6 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.ginibre_pointwise_bakry_emery_curvature_unbounded_below
+  informal: For n ≥ 2 and every real B, some collision-free configuration and unit coordinate
+    direction e give (1/n)·∂²ₑH < B for the Ginibre Hamiltonian H = n|z|² − log|V(z)|², so the
+    pointwise Bakry–Émery curvature has no lower bound.
+  source_ref: Lemma 1.7 of arXiv:2608.19358v2 (with an explicit collapsing witness).
+- declaration: GinibrePoincare.ginibre_pointwise_mean_curvature
+  informal: For n > 0, at every collision-free configuration the Laplacian of the Ginibre
+    Hamiltonian divided by n·2n, the mean eigenvalue of its 1/n-normalized real Hessian, equals 2.
+  source_ref: Remark 1.8 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.radial_sobolev_lsi
+  informal: For n > 0, every pair in the L² value–gradient closure of smooth, compactly
+    supported, symmetric functions of |z₁|²,…,|zₙ|² has integrable f² log f² and satisfies
+    Ent(f²) ≤ (1/n)‖∇f‖² for the Ginibre law.
+  source_ref: Theorem 1.12 of arXiv:2608.19358v2 (radial log-Sobolev inequality and its
+    Sobolev completion).
+- declaration: GinibrePoincare.gaussianSchwartzDbar_entire_gap
+  informal: For n > 0, every u in the Gaussian L² space whose ordinary distributional
+    derivatives ∂̄ⱼu lie in L² satisfies dist(u, entire L² functions)² ≤ (1/n)Σⱼ‖∂̄ⱼu‖².
+  source_ref: Lemma 2.2 of arXiv:2608.19358v2, on the maximal distributional domain.
+- declaration: GinibrePoincare.gaussianVolumeClosedForm_canonicalSolvability
+  informal: For n > 0, every distributionally dbar-closed (0,1)-form with Gaussian L²
+    coefficients D has a unique minimum-norm Gaussian L² solution u of ∂̄u = D, with
+    ‖u‖² ≤ (1/n)Σⱼ‖Dⱼ‖².
+  source_ref: Remark 2.4 of arXiv:2608.19358v2, by a Gaussian-specific Hermite construction
+    rather than the general Hörmander–Berndtsson theorem.
+- declaration: GinibrePoincare.entire_alternating_vandermonde_factorization
+  informal: For n > 0, every entire alternating function on ℂⁿ equals the Vandermonde product
+    times an entire symmetric function, globally including all collision points.
+  source_ref: Lemma 2.6 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.ginibreDivisibleEntire_real_centered_geometry
+  informal: For n > 0 and a real centered Ginibre L² function f with projection h onto the
+    Vandermonde-divisible entire space, h, its conjugate and the remainder r are mutually
+    orthogonal, ‖f‖² = 2‖h‖² + ‖r‖², and dist(f, entire space)² = ‖f‖²/2 + ‖r‖²/2.
+  source_ref: Lemma 2.7 of arXiv:2608.19358v2 (equations 2.26–2.28).
+- declaration: GinibrePoincare.ginibreComplexSmoothCore_closure_equivalence
+  informal: For n > 0, the L² graph closures of complex-valued compactly supported smooth
+    functions on all of ℂⁿ and on the collision-free set coincide.
+  source_ref: Lemma A.2 of arXiv:2608.19358v2 (core equality).
+- declaration: GinibrePoincare.ginibreCollisionSet_capacity_zero
+  informal: For n > 0, the collision set has zero weighted H¹ capacity for the Ginibre law.
+  source_ref: Lemma A.3 of arXiv:2608.19358v2.
 tags:
 - ginibre-ensemble
 - poincare-inequality
