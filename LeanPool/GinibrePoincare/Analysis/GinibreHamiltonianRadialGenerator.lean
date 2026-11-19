@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticCIRGenerator
+public import LeanPool.GinibrePoincare.Analysis.PairwiseRadius
 
 /-!
 # Ginibre Hamiltonian radial generator
@@ -51,10 +52,6 @@ Main results: `contDiff_ginibreCenterSquared`, `ginibreRealPaperSpeedGenerator_c
 open scoped Topology ContDiff
 namespace GinibrePoincare
 noncomputable section
-
-/-- The squared modulus `Complex.normSq (coordinateSum z)` of the sum of the particle
-positions. -/
-def ginibreCenterSquared (n : ℕ) (z : Configuration n) : ℝ := Complex.normSq (coordinateSum z)
 
 theorem contDiff_ginibreCenterSquared (n : ℕ) : ContDiff ℝ ∞ (ginibreCenterSquared n) :=
   ginibre_contDiff_center_normSq n

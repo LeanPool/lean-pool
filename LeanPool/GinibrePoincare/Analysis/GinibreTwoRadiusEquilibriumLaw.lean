@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GaussianBlockRadialLaw
-public import LeanPool.GinibrePoincare.Analysis.GinibreHamiltonianRadialGenerator
 public import LeanPool.GinibrePoincare.Analysis.PairwiseRadius
 
 /-!
