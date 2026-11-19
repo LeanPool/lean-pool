@@ -7,7 +7,6 @@ module
 
 -- Adapted for Lean Pool.
 
-public import Mathlib.Analysis.Normed.Operator.Bilinear
 public import Mathlib.Topology.ContinuousMap.Bounded.Normed
 
 /-!
@@ -23,10 +22,7 @@ by composition, `x ↦ φ ∘ x` (the superposition, or Nemytskii, operator).
   (`superpose_apply`); it is `0` otherwise, a junk value never used;
 * `StableManifold.lipschitzWith_superpose`: a `K`-Lipschitz `φ` gives a `K`-Lipschitz operator;
 * `StableManifold.continuous_superpose`: a continuous `φ` on a proper space gives a continuous
-  operator;
-* `StableManifold.applySeq`: the bounded bilinear map
-  `(ℕ →ᵇ (E →L[ℝ] G)) × (ℕ →ᵇ E) → ℕ →ᵇ G`, `(a, y) ↦ (n ↦ a n (y n))`, through which the
-  derivative of `superpose φ` is expressed (`StableManifold.Sequence.SuperposeContDiff`).
+  operator.
 
 ## Proofs
 
@@ -43,8 +39,6 @@ by composition, `x ↦ φ ∘ x` (the superposition, or Nemytskii, operator).
   (`IsCompact.uniformContinuousOn_of_continuous`), which contains the values of `x` and of every
   `y` with `dist y x < 1`; with `δ` for `ε / 2`, `dist (superpose φ y) (superpose φ x) ≤ ε / 2`
   once `dist y x < min δ 1` (`Metric.continuous_iff`, `BoundedContinuousFunction.dist_le`).
-* `applySeq`: `LinearMap.mkContinuous₂` with the constant `1`, from `‖a n (y n)‖ ≤ ‖a‖ ‖y‖`
-  (`norm_apply_apply_le`). `norm_applySeq_le`: `ContinuousLinearMap.opNorm_le_bound`.
 -/
 
 @[expose] public section
@@ -129,39 +123,5 @@ theorem continuous_superpose [ProperSpace E] {φ : E → G} (hφ : Continuous φ
   exact (hφδ _ hy' _ hx (hyx.trans_le (min_le_left _ _))).le
 
 end Superpose
-
-section ApplySeq
-
-variable {E G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup G]
-  [NormedSpace ℝ G]
-
-theorem norm_apply_apply_le (a : ℕ →ᵇ (E →L[ℝ] G)) (y : ℕ →ᵇ E) (n : ℕ) :
-    ‖a n (y n)‖ ≤ ‖a‖ * ‖y‖ :=
-  ((a n).le_opNorm (y n)).trans
-    (mul_le_mul (a.norm_coe_le_norm n) (y.norm_coe_le_norm n) (norm_nonneg _) (norm_nonneg _))
-
-/-- Pointwise application of a bounded sequence of operators to a bounded sequence of vectors,
-`(a, y) ↦ (n ↦ a n (y n))`, as a bounded bilinear map. -/
-noncomputable def applySeq : (ℕ →ᵇ (E →L[ℝ] G)) →L[ℝ] (ℕ →ᵇ E) →L[ℝ] (ℕ →ᵇ G) :=
-  LinearMap.mkContinuous₂
-    (LinearMap.mk₂ ℝ
-      (fun a y ↦ ofNormedAddCommGroupDiscrete (fun n ↦ a n (y n)) (‖a‖ * ‖y‖)
-        (norm_apply_apply_le a y))
-      (fun _ _ _ ↦ by ext; simp) (fun _ _ _ ↦ by ext; simp) (fun _ _ _ ↦ by ext; simp)
-      (fun _ _ _ ↦ by ext; simp))
-    1 (fun a y ↦ by
-      rw [one_mul]
-      exact norm_ofNormedAddCommGroup_le _ (by positivity) (norm_apply_apply_le a y))
-
-@[simp]
-theorem applySeq_apply (a : ℕ →ᵇ (E →L[ℝ] G)) (y : ℕ →ᵇ E) (n : ℕ) :
-    applySeq a y n = a n (y n) :=
-  rfl
-
-theorem norm_applySeq_le (a : ℕ →ᵇ (E →L[ℝ] G)) : ‖applySeq a‖ ≤ ‖a‖ :=
-  (applySeq a).opNorm_le_bound (norm_nonneg a) fun y ↦
-    (norm_le (by positivity)).2 fun n ↦ by rw [applySeq_apply]; exact norm_apply_apply_le a y n
-
-end ApplySeq
 
 end StableManifold

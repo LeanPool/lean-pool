@@ -26,7 +26,7 @@ Banach space `ℕ →ᵇ E` by a `1/2`-Lipschitz map, hence a homeomorphism (`pe
 `ApproximatesLinearOn.toHomeomorph`), and `orbitSeq = perronHomeomorph⁻¹ ∘ stableOrbit`
 (`orbitSeq_eq_perronHomeomorph_symm`). The superposition operator is `Cⁿ`
 (`StableManifold.contDiff_superpose`), so `perronSub` is `Cⁿ`, with derivative
-`1 - perronOp ∘ applySeq (Dφ ∘ x)` of the form `1 - T`, `‖T‖ ≤ 1/2`, invertible. The inverse
+`1 - perronOp ∘ applyCLM (Dφ ∘ x)` of the form `1 - T`, `‖T‖ ≤ 1/2`, invertible. The inverse
 function theorem in the form `Homeomorph.contDiff_symm` makes `perronHomeomorph⁻¹` of class `Cⁿ`,
 hence `orbitSeq` and `graph = (1 - P) ∘ eval₀ ∘ orbitSeq`. This replaces the fiber contraction
 theorem and the `C^r` section theorem of Hirsch, Pugh and Shub: smoothness of every order comes
@@ -43,10 +43,10 @@ from the smoothness of the superposition operator on bounded sequences.
   `perronHomeomorph_apply` holds by definition.
 * `orbitSeq_eq_perronHomeomorph_symm`: `perronHomeomorph (orbitSeq ξ) = stableOrbit ξ` is the
   fixed point equation `perronMap_orbitSeq`; then `Homeomorph.symm_apply_eq`.
-* `norm_perronOp_comp_applySeq_le`: `‖Dφ y‖ ≤ L` (`norm_fderiv_le_of_lipschitz`), so
+* `norm_perronOp_comp_applyCLM_le`: `‖Dφ y‖ ≤ L` (`norm_fderiv_le_of_lipschitz`), so
   `‖superpose (fderiv ℝ φ) x‖ ≤ L` (`superpose_apply_of_bound`,
-  `BoundedContinuousFunction.norm_le`), and `‖perronOp ∘L applySeq (…)‖ ≤ S.bound L ≤ 1/2`
-  (`ContinuousLinearMap.opNorm_comp_le`, `norm_applySeq_le`).
+  `BoundedContinuousFunction.norm_le`), and `‖perronOp ∘L applyCLM (…)‖ ≤ S.bound L ≤ 1/2`
+  (`ContinuousLinearMap.opNorm_comp_le`, `BoundedContinuousFunction.norm_applyCLM_apply_le`).
 * `hasFDerivAt_perronSub`: `hasFDerivAt_id`, `hasFDerivAt_superpose` and the chain rule for the
   continuous linear map `perronOp`. `contDiff_perronSub`: `contDiff_id`, `contDiff_superpose`
   and `ContinuousLinearMap.contDiff`.
@@ -130,24 +130,24 @@ theorem orbitSeq_eq_perronHomeomorph_symm (ξ : E) :
   rw [perronHomeomorph_apply, perronSub, eq_sub_iff_add_eq]
   exact F.perronMap_orbitSeq ξ
 
-/-- `‖perronOp ∘L applySeq (superpose (fderiv ℝ φ) x)‖ ≤ 1/2`: the derivative of `perronSub` is
+/-- `‖perronOp ∘L applyCLM (superpose (fderiv ℝ φ) x)‖ ≤ 1/2`: the derivative of `perronSub` is
 `1 - T` with `‖T‖ ≤ 1/2`. -/
-theorem norm_perronOp_comp_applySeq_le (x : ℕ →ᵇ E) :
-    ‖S.perronOp ∘L applySeq (superpose (fderiv ℝ F.φ) x)‖ ≤ 1 / 2 := by
+theorem norm_perronOp_comp_applyCLM_le (x : ℕ →ᵇ E) :
+    ‖S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)‖ ≤ 1 / 2 := by
   have hD : ∀ y, ‖fderiv ℝ F.φ y‖ ≤ F.lip := fun y ↦ norm_fderiv_le_of_lipschitz ℝ F.lipschitzWith
   have ha : ‖superpose (fderiv ℝ F.φ) x‖ ≤ F.lip := by
     refine (norm_le F.lip.coe_nonneg).2 fun n ↦ ?_
     rw [superpose_apply_of_bound ⟨F.lip, fun m ↦ hD (x m)⟩]
     exact hD (x n)
-  calc ‖S.perronOp ∘L applySeq (superpose (fderiv ℝ F.φ) x)‖
-      ≤ ‖S.perronOp‖ * ‖applySeq (superpose (fderiv ℝ F.φ) x)‖ := opNorm_comp_le _ _
-    _ ≤ S.bound * F.lip := mul_le_mul S.norm_perronOp_le ((norm_applySeq_le _).trans ha)
+  calc ‖S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)‖
+      ≤ ‖S.perronOp‖ * ‖applyCLM (superpose (fderiv ℝ F.φ) x)‖ := opNorm_comp_le _ _
+    _ ≤ S.bound * F.lip := mul_le_mul S.norm_perronOp_le ((norm_applyCLM_apply_le _).trans ha)
         (norm_nonneg _) S.bound_pos.le
     _ ≤ 1 / 2 := by linarith [F.lip_mul_bound_le]
 
 /-- The derivative of `perronSub`. -/
 theorem hasFDerivAt_perronSub (hφ : ContDiff ℝ 1 F.φ) (x : ℕ →ᵇ E) :
-    HasFDerivAt F.perronSub (1 - S.perronOp ∘L applySeq (superpose (fderiv ℝ F.φ) x)) x :=
+    HasFDerivAt F.perronSub (1 - S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)) x :=
   (hasFDerivAt_id x).sub (S.perronOp.hasFDerivAt.comp x (hasFDerivAt_superpose hφ x))
 
 theorem contDiff_perronSub {n : ℕ∞} (hφ : ContDiff ℝ n F.φ) : ContDiff ℝ n F.perronSub :=
@@ -164,8 +164,8 @@ theorem contDiff_orbitSeq {n : ℕ∞} (hφ : ContDiff ℝ n F.φ) : ContDiff �
   rcases eq_or_ne n 0 with rfl | hn
   · exact contDiff_zero.2 (F.perronHomeomorph.symm.continuous.comp S.stableOrbit.continuous)
   have h1 : ContDiff ℝ 1 F.φ := hφ.of_le (by exact_mod_cast Order.one_le_iff_ne_zero.2 hn)
-  have hT : ∀ x, ‖S.perronOp ∘L applySeq (superpose (fderiv ℝ F.φ) x)‖ < 1 := fun x ↦
-    (F.norm_perronOp_comp_applySeq_le x).trans_lt (by norm_num)
+  have hT : ∀ x, ‖S.perronOp ∘L applyCLM (superpose (fderiv ℝ F.φ) x)‖ < 1 := fun x ↦
+    (F.norm_perronOp_comp_applyCLM_le x).trans_lt (by norm_num)
   refine (F.perronHomeomorph.contDiff_symm
     (f₀' := fun x ↦ ContinuousLinearEquiv.unitsEquiv ℝ _ (Units.oneSub _ (hT x)))
     (fun x ↦ ?_) (F.contDiff_perronSub hφ)).comp S.stableOrbit.contDiff

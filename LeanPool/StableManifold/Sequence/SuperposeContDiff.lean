@@ -11,6 +11,7 @@ public import LeanPool.StableManifold.Sequence.Superpose
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import TauCeti.Topology.ContinuousMap.Bounded.Normed
 
 /-!
 # Smoothness of the superposition operator
@@ -41,16 +42,16 @@ differentiable in the sup norm. No compact support or global bound on `φ` is ne
   mean value inequality on `ball a (min δ 1)`, for `φ` and the linear map `Dφ(a)`
   (`Convex.norm_image_sub_le_of_norm_fderiv_le'`), gives `‖φ (a + b) - φ a - Dφ(a) b‖ ≤ ε ‖b‖`.
 * `hasFDerivAt_superpose`: given `c > 0`, take `δ` from the previous lemma with `R = ‖x‖`. For
-  `‖y‖ < δ`, evaluating at each `n` (`superpose_apply`, `applySeq_apply`) and taking the sup
+  `‖y‖ < δ`, evaluating at each `n` (`superpose_apply`, `applyCLM_apply`) and taking the sup
   (`BoundedContinuousFunction.norm_le`) gives
-  `‖superpose φ (x + y) - superpose φ x - applySeq (superpose (fderiv ℝ φ) x) y‖ ≤ c ‖y‖`, which
+  `‖superpose φ (x + y) - superpose φ x - applyCLM (superpose (fderiv ℝ φ) x) y‖ ≤ c ‖y‖`, which
   is `HasFDerivAt` (`hasFDerivAt_iff_isLittleO_nhds_zero`, `Asymptotics.isLittleO_iff`).
   `fderiv_superpose`: `HasFDerivAt.fderiv`.
 * `contDiff_superpose`: for `m : ℕ`, induction on `m`, generalizing `G` (in the universe `u`).
   `m = 0` is `continuous_superpose` (`contDiff_zero`). For `m + 1`, by `contDiff_succ_iff_fderiv`
   it suffices that `superpose φ` is differentiable (`hasFDerivAt_superpose`) and that
-  `fderiv ℝ (superpose φ) = applySeq ∘ superpose (fderiv ℝ φ)` (`fderiv_superpose`) is `Cᵐ`: the
-  continuous linear map `applySeq` is smooth, and `superpose (fderiv ℝ φ)` is `Cᵐ` by the
+  `fderiv ℝ (superpose φ) = applyCLM ∘ superpose (fderiv ℝ φ)` (`fderiv_superpose`) is `Cᵐ`: the
+  continuous linear map `applyCLM` is smooth, and `superpose (fderiv ℝ φ)` is `Cᵐ` by the
   induction hypothesis for `fderiv ℝ φ : E → (E →L[ℝ] G)`, which is `Cᵐ`
   (`contDiff_succ_iff_fderiv` again). For `n = ∞`, `contDiff_infty` reduces to the finite orders
   (`ENat.recTopCoe`).
@@ -64,6 +65,8 @@ open scoped NNReal BoundedContinuousFunction
 universe u
 
 namespace StableManifold
+
+open BoundedContinuousFunction
 
 variable {E G : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
   [NormedAddCommGroup G] [NormedSpace ℝ G]
@@ -100,7 +103,7 @@ operator has at `x` the derivative `y ↦ (n ↦ Dφ(x n) (y n))`.
 
 Proof: `exists_norm_sub_sub_fderiv_le` with `R = ‖x‖`, evaluated at each `n`. -/
 theorem hasFDerivAt_superpose {φ : E → G} (hφ : ContDiff ℝ 1 φ) (x : ℕ →ᵇ E) :
-    HasFDerivAt (superpose φ) (applySeq (superpose (fderiv ℝ φ) x)) x := by
+    HasFDerivAt (superpose φ) (applyCLM (superpose (fderiv ℝ φ) x)) x := by
   rw [hasFDerivAt_iff_isLittleO_nhds_zero, Asymptotics.isLittleO_iff]
   intro c hc
   obtain ⟨δ, hδ, hTaylor⟩ := exists_norm_sub_sub_fderiv_le hφ ‖x‖ hc
@@ -108,20 +111,20 @@ theorem hasFDerivAt_superpose {φ : E → G} (hφ : ContDiff ℝ 1 φ) (x : ℕ 
   rw [mem_ball_zero_iff] at hy
   refine (BoundedContinuousFunction.norm_le (by positivity)).2 fun n ↦ ?_
   change ‖superpose φ (x + y) n - superpose φ x n -
-    applySeq (superpose (fderiv ℝ φ) x) y n‖ ≤ c * ‖y‖
-  rw [applySeq_apply, superpose_apply hφ.continuous, superpose_apply hφ.continuous,
+    applyCLM (superpose (fderiv ℝ φ) x) y n‖ ≤ c * ‖y‖
+  rw [applyCLM_apply, superpose_apply hφ.continuous, superpose_apply hφ.continuous,
     superpose_apply (hφ.continuous_fderiv one_ne_zero)]
   change ‖φ (x n + y n) - φ (x n) - fderiv ℝ φ (x n) (y n)‖ ≤ c * ‖y‖
   exact (hTaylor (x n) (y n) (x.norm_coe_le_norm n) ((y.norm_coe_le_norm n).trans_lt hy)).trans
     (by gcongr; exact y.norm_coe_le_norm n)
 
 theorem fderiv_superpose {φ : E → G} (hφ : ContDiff ℝ 1 φ) :
-    fderiv ℝ (superpose φ) = fun x ↦ applySeq (superpose (fderiv ℝ φ) x) :=
+    fderiv ℝ (superpose φ) = fun x ↦ applyCLM (superpose (fderiv ℝ φ) x) :=
   funext fun x ↦ (hasFDerivAt_superpose hφ x).fderiv
 
 /-- **The superposition operator of a `Cⁿ` map is `Cⁿ`** on bounded sequences (`n ≤ ∞`).
 
-Proof: induction on `n`, through `fderiv ℝ (superpose φ) = applySeq ∘ superpose (fderiv ℝ φ)`
+Proof: induction on `n`, through `fderiv ℝ (superpose φ) = applyCLM ∘ superpose (fderiv ℝ φ)`
 and the induction hypothesis for `fderiv ℝ φ`; `contDiff_infty` for `n = ∞`. -/
 theorem contDiff_superpose {φ : E → G} {n : ℕ∞} (hφ : ContDiff ℝ n φ) :
     ContDiff ℝ n (superpose φ) := by
@@ -142,6 +145,6 @@ theorem contDiff_superpose {φ : E → G} {n : ℕ∞} (hφ : ContDiff ℝ n φ)
     refine contDiff_succ_iff_fderiv.2 ⟨fun x ↦ (hasFDerivAt_superpose h1 x).differentiableAt,
       by simp, ?_⟩
     rw [fderiv_superpose h1]
-    exact applySeq.contDiff.comp (ih (contDiff_succ_iff_fderiv.1 hφ).2.2)
+    exact applyCLM.contDiff.comp (ih (contDiff_succ_iff_fderiv.1 hφ).2.2)
 
 end StableManifold
