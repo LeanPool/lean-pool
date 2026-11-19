@@ -436,10 +436,17 @@ def main() -> int:
         }
     for error in errors:
         print(error if isinstance(error, str) else error.format(root))
+    if not errors:
+        cache.save()
+        return 0
     # A failed check never has a receipt, so saving after a failure keeps
     # exactly the passes: the next run repeats only what failed or changed.
-    cache.save()
-    return 1 if errors else 0
+    try:
+        cache.save()
+    except OSError as error:
+        # The findings above are the result; losing the passes only costs time.
+        LOGGER.warning("Could not save the passes of this failed run: %s", error)
+    return 1
 
 
 if __name__ == "__main__":

@@ -491,6 +491,25 @@ def test_lint_command_keeps_the_passes_of_a_failed_run(
         assert linted == ["LeanPool.A"]
 
 
+def test_failed_run_reports_its_findings_when_the_passes_cannot_be_saved(
+    repository: Path, monkeypatch, capsys
+) -> None:
+    """An unwritable cache costs the passes, never the result of a failed run."""
+    monkeypatch.setattr(
+        sys, "argv", ["validation_cache", "lint", "--repo", str(repository)]
+    )
+    failure = subprocess.CompletedProcess([], 1, "A.lean:1:1: error: finding\n")
+    with (
+        patch("lean_pool.validation_cache.subprocess.run", return_value=failure),
+        patch(
+            "lean_pool.validation_cache.write_receipts",
+            side_effect=PermissionError("read-only cache"),
+        ),
+    ):
+        assert main() == 1
+    assert "A.lean:1:1: error: finding" in capsys.readouterr().out
+
+
 def _shard(root: Path, *units: str) -> ValidationCache:
     return ValidationCache(
         root, root / ".lake/validation-cache/v1", units=frozenset(units)
