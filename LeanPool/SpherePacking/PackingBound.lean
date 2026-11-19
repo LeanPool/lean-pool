@@ -641,7 +641,7 @@ variable {ι : Sort*} {α β : Type*} {f g : α → ℕ∞} {s t : Set α}
 private protected theorem hasSum : HasSum f (⨆ s : Finset α, ∑ a ∈ s, f a) :=
   tendsto_atTop_iSup fun _ _ ↦ Finset.sum_le_sum_of_subset
 
-@[simp] private protected theorem summable : Summable f :=
+private protected theorem summable : Summable f :=
   ENat.hasSum.summable
 
 private protected theorem tsum_reindex_injective_le {φ : α → β} (hφ : Injective φ) (g : β → ℕ∞) :
