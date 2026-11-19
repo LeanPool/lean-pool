@@ -563,22 +563,35 @@ private meta def exposeBellmanUntil (isTerminal : Lean.Expr → Bool) (expressio
   if isTerminal expression then return expression
   Lean.Meta.withTransparency .all (expose expression)
 
--- Select enclosing fields without reducing the selected expression.
+private meta def bellmanKernelFallback : Lean.Name := `FD1D.BellmanCertificate.kernelFallback
+
+private meta def needsBellmanKernelDecision : Lean.MetaM α :=
+  Lean.throwError (.tagged bellmanKernelFallback "the staged reader would force a coefficient list")
+
+-- Select only visible constructor fields. An unresolved receiver can force a whole chart.
 private meta def exposeBellmanProjections (expose : Lean.Expr → Lean.MetaM Lean.Expr)
     (preserve : Lean.Name → Nat → Bool) (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let exposeReceiver (term : Lean.Expr) := Lean.Meta.withConfig
+    (fun configuration => { configuration with iota := false }) do
+    let head ← Lean.Meta.whnfD term
+    Lean.Meta.withTransparency .all (Lean.Meta.whnf head)
   let mut next := expression
+  let mut fields : List Nat := []
   repeat
     Lean.Core.checkSystem "Bellman projections"
     let term ← Lean.Meta.withConfig (fun configuration => { configuration with proj := .no }) <|
-      expose next
-    let .proj name index _ := term | return term
-    if preserve name index then return term
-    if let some field ← Lean.Meta.reduceProj? term then
-      next := field
-    else if let some field ← Lean.Meta.withTransparency .all (Lean.Meta.reduceProj? term) then
-      next := field
+      if fields.isEmpty then expose next else exposeReceiver next
+    if let .proj name index receiver := term then
+      if preserve name index then
+        if fields.isEmpty then return term
+        needsBellmanKernelDecision
+      fields := index :: fields
+      next := receiver
     else
-      return term
+      let index :: remaining := fields | return term
+      let some field ← Lean.Meta.projectCore? term index | needsBellmanKernelDecision
+      fields := remaining
+      next := field
 
 -- Keep the coefficient projection visible for polynomial eta and append normalization.
 private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
@@ -588,8 +601,10 @@ private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.E
     | .proj name index _ => preserve name index
     | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
         term.isAppOfArity ``List.cons 3 || term.isAppOfArity ``List.append 3 ||
-        term.isAppOfArity ``HAppend.hAppend 6 || term.isAppOfArity ``Append.append 4
-  exposeBellmanProjections (exposeBellmanUntil isTerminal) preserve expression
+        term.isAppOfArity ``HAppend.hAppend 6 || term.isAppOfArity ``Append.append 4 ||
+        term.isAppOfArity ``List.map 4 || term.isAppOfArity ``List.mapTR 4
+  Lean.Meta.withConfig (fun configuration => { configuration with iota := false }) <|
+    exposeBellmanProjections (exposeBellmanUntil isTerminal) preserve expression
 
 -- Stop at heads the staged reader handles so other helpers unfold in any namespace.
 private meta def isBellmanHead (term : Lean.Expr) : Bool :=
@@ -794,25 +809,22 @@ private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Optio
     | _ => return none
   readBellmanClosedValue readHead (← exposeBellmanHead expression)
 
--- Expose each list cell separately so wrappers around the list or its tail are harmless.
+-- A residual list computation may force the entire source polynomial.
 private meta def readBellmanList {R : Type}
     (read : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
     Lean.MetaM (Option (List R)) := do
-  let readCell (term : Lean.Expr) : Lean.MetaM (Option Lean.Expr) :=
-    pure (if term.isAppOfArity ``List.nil 1 || term.isAppOfArity ``List.cons 3 then
-      some term else none)
   let mut next := expression
   let mut values : Array R := #[]
   repeat
     Lean.Core.checkSystem "Bellman coefficient list"
-    let some cell ← readBellmanClosedValue readCell next.consumeMData | return none
+    let cell ← exposeBellmanField next
     match_expr cell with
     | List.nil _ => return some values.toList
     | List.cons _ head tail =>
       let some coefficient ← read head | return none
       values := values.push coefficient
       next := tail
-    | _ => return none
+    | _ => needsBellmanKernelDecision
 
 private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     (read : Lean.Expr → Lean.MetaM (Option R)) (fromNat : Nat → R)
@@ -1014,11 +1026,17 @@ local elab "rewriteBellmanIdentities" : conv => Lean.Elab.Tactic.withMainContext
   if let some equality := proof then
     Lean.Elab.Tactic.Conv.updateLhs polynomial equality
 
--- Keep these charts on the staged path so unsupported edits fail at the offending term.
+-- The kernel decision handles forms that would need to force the source chart.
 local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
-  Lean.Elab.Tactic.evalTactic (← `(tactic| (
-    conv_lhs => { arg 1; reduceBellmanPolynomial }
-    rfl)))
+  let saved ← Lean.Elab.Tactic.saveState
+  try
+    Lean.Elab.Tactic.evalTactic (← `(tactic| (
+      conv_lhs => { arg 1; reduceBellmanPolynomial }
+      rfl)))
+  catch error =>
+    unless error.toMessageData.hasTag (· == bellmanKernelFallback) do throw error
+    saved.restore
+    Lean.Elab.Tactic.evalTactic (← `(tactic| decide +kernel))
 
 @[irreducible]
 private def wrapBellmanValue {α : Type} (value : α) : α := value
