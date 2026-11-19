@@ -182,7 +182,7 @@ theorem setOf_forall_iterate_symm_mem_eq (e : OpenPartialHomeomorph X X) {U : Se
 
 omit [TopologicalSpace X] in
 /-- Along an `f`-orbit in `U`, the iterates of `f` and of any `g` equal to `f` on `U` agree. -/
-private lemma iterate_eq_of_eqOn {f g : X → X} {U : Set X} (h : EqOn f g U) {x : X}
+theorem iterate_eq_of_eqOn {f g : X → X} {U : Set X} (h : EqOn f g U) {x : X}
     (hx : ∀ n, f^[n] x ∈ U) (n : ℕ) : f^[n] x = g^[n] x := by
   induction n with
   | zero => rfl

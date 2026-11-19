@@ -50,7 +50,7 @@ Since the local stable manifold theorem holds for every small neighborhood
   `OpenPartialHomeomorph.contDiffAt_symm` makes `e.symm` of class `Cⁿ`; the argument is
   pointwise, so `n = ∞` needs no uniform neighborhood. The derivative `A⁻¹` of `e.symm` at `f p`
   comes from `HasStrictFDerivAt.to_localInverse`.
-* `exists_graph_ofEq`, `exists_graphs_ofEq`: `subst`.
+* `exists_graphs_ofEq`: transport the graph family along equality of the subspaces.
 * `exists_nhds_localStableSet_localUnstableSet_eq_graph`: write `fderiv ℝ f p = ↑A` (`hinv`) and
   let `e` be the local inverse above. Then `e.symm` fixes `p` (`OpenPartialHomeomorph.left_inv`)
   and has derivative `A⁻¹` there (`HasFDerivAt.fderiv`), so its stable and unstable subspaces are
@@ -125,20 +125,9 @@ theorem exists_openPartialHomeomorph_contDiffOn_symm {f : E → E} {p : E} {W : 
   · exact ((hfa p hpW).hasStrictFDerivAt' hfp hn0).to_localInverse.hasFDerivAt
 
 omit [CompleteSpace E] in
-/-- A graph over a subspace is a graph over any equal subspace (to move between the subspaces of
-`A⁻¹` and those of `A`, equal but not definitionally). -/
-theorem exists_graph_ofEq {K₁ K₂ L₁ L₂ : Submodule ℝ E} (h₁ : K₁ = L₁) (h₂ : K₂ = L₂) {n : ℕ∞}
-    {p : E} {s : Set E} {V : Set K₁} (hV : V ∈ 𝓝 0) {h : K₁ → K₂} (hh : ContDiffOn ℝ n h V)
-    (h0 : h 0 = 0) (hd : fderiv ℝ h 0 = 0) (hs : s = (fun x ↦ p + ↑x + ↑(h x)) '' V) :
-    ∃ V' ∈ 𝓝 (0 : L₁), ∃ h' : L₁ → L₂, ContDiffOn ℝ n h' V' ∧ h' 0 = 0 ∧ fderiv ℝ h' 0 = 0 ∧
-      s = (fun x ↦ p + ↑x + ↑(h' x)) '' V' := by
-  subst h₁ h₂
-  exact ⟨V, hV, h, hh, h0, hd, hs⟩
-
-omit [CompleteSpace E] in
 /-- A family of graphs of one map over a subspace is a family of graphs of one map over any equal
-subspace: `exists_graph_ofEq` for all the sets `s U` with `Q U` at once. -/
-theorem exists_graphs_ofEq {K₁ K₂ L₁ L₂ : Submodule ℝ E} (h₁ : K₁ = L₁) (h₂ : K₂ = L₂)
+subspace, for all sets `s U` satisfying `Q U`. -/
+private lemma exists_graphs_ofEq {K₁ K₂ L₁ L₂ : Submodule ℝ E} (h₁ : K₁ = L₁) (h₂ : K₂ = L₂)
     {n : ℕ∞} {p : E} {Q : Set E → Prop} {s : Set E → Set E} {h : K₁ → K₂}
     (hh : ContDiff ℝ n h) (h0 : h 0 = 0) (hd : fderiv ℝ h 0 = 0)
     (hs : ∀ U, Q U → ∃ V ∈ 𝓝 (0 : K₁), s U = (fun x ↦ p + ↑x + ↑(h x)) '' V) :

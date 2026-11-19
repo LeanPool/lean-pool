@@ -83,10 +83,7 @@ structure HyperbolicSplitting (A : E →L[ℝ] E) where
   const : ℝ
   /-- The rate `λ` of the exponential estimates. -/
   rate : ℝ
-  proj_mul_proj : proj * proj = proj
-  mul_proj_comm : A * proj = proj * A
   unstableInv_mul_proj : unstableInv * proj = 0
-  proj_mul_unstableInv : proj * unstableInv = 0
   mul_unstableInv : A * unstableInv = 1 - proj
   unstableInv_mul : unstableInv * A = 1 - proj
   one_le_const : 1 ≤ const
@@ -125,11 +122,33 @@ theorem norm_proj_le : ‖S.proj‖ ≤ S.const := by
 theorem norm_one_sub_proj_le : ‖1 - S.proj‖ ≤ S.const := by
   simpa using S.norm_unstableInv_pow_mul_le 0
 
+/-- The stable projection is idempotent. -/
+theorem proj_mul_proj : S.proj * S.proj = S.proj := by
+  have h : (1 - S.proj) * S.proj = 0 := by
+    rw [← S.mul_unstableInv, mul_assoc, S.unstableInv_mul_proj, mul_zero]
+  rw [sub_mul, one_mul] at h
+  exact (sub_eq_zero.mp h).symm
+
+/-- The stable projection commutes with the original map. -/
+theorem mul_proj_comm : A * S.proj = S.proj * A := by
+  have h : A * (1 - S.proj) = (1 - S.proj) * A := calc
+    _ = A * (S.unstableInv * A) := congrArg (A * ·) S.unstableInv_mul.symm
+    _ = (A * S.unstableInv) * A := (mul_assoc _ _ _).symm
+    _ = _ := congrArg (· * A) S.mul_unstableInv
+  simpa [mul_sub, sub_mul] using h
+
 theorem unstableInv_mul_one_sub_proj : S.unstableInv * (1 - S.proj) = S.unstableInv := by
   rw [mul_sub, mul_one, S.unstableInv_mul_proj, sub_zero]
 
-theorem one_sub_proj_mul_unstableInv : (1 - S.proj) * S.unstableInv = S.unstableInv := by
-  rw [sub_mul, one_mul, S.proj_mul_unstableInv, sub_zero]
+theorem one_sub_proj_mul_unstableInv : (1 - S.proj) * S.unstableInv = S.unstableInv := calc
+  _ = (S.unstableInv * A) * S.unstableInv := congrArg (· * S.unstableInv) S.unstableInv_mul.symm
+  _ = S.unstableInv * (A * S.unstableInv) := mul_assoc _ _ _
+  _ = S.unstableInv * (1 - S.proj) := congrArg (S.unstableInv * ·) S.mul_unstableInv
+  _ = _ := S.unstableInv_mul_one_sub_proj
+
+/-- The image of the unstable inverse lies in the kernel of the stable projection. -/
+theorem proj_mul_unstableInv : S.proj * S.unstableInv = 0 := by
+  simpa [sub_mul] using S.one_sub_proj_mul_unstableInv
 
 theorem proj_mul_one_sub_proj : S.proj * (1 - S.proj) = 0 := by
   rw [mul_sub, mul_one, S.proj_mul_proj, sub_self]
@@ -383,10 +402,7 @@ theorem nonempty_hyperbolicSplitting [FiniteDimensional ℝ E] {A : E →L[ℝ] 
     unstableInv := B
     const := max C₁ C₂ * max 1 (max ‖P‖ ‖1 - P‖)
     rate := max r₁ r₂
-    proj_mul_proj := hPP
-    mul_proj_comm := hAP
     unstableInv_mul_proj := hBP
-    proj_mul_unstableInv := hPB
     mul_unstableInv := hAB
     unstableInv_mul := hBA
     one_le_const := one_le_mul_of_one_le_of_one_le (hC₁.trans (le_max_left _ _)) hK

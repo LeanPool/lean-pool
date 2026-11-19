@@ -90,16 +90,10 @@ open Filter Topology Polynomial
 namespace Polynomial
 
 /-- If `D ∣ Q` with `Q ≠ 0` and `natDegree Q ≤ natDegree D`, every root of `Q` is a root of `D`:
-the cofactor is a nonzero constant. -/
+the two polynomials are associated. -/
 private lemma eval_eq_zero_of_dvd_of_natDegree_le {Q D : ℂ[X]} (hQ : Q ≠ 0) (hD : D ∣ Q)
     (hdeg : Q.natDegree ≤ D.natDegree) {ν : ℂ} (hν : Q.eval ν = 0) : D.eval ν = 0 := by
-  obtain ⟨R, rfl⟩ := hD
-  have hR0 : R ≠ 0 := right_ne_zero_of_mul hQ
-  rw [natDegree_mul (left_ne_zero_of_mul hQ) hR0] at hdeg
-  have hR : R = C (R.coeff 0) := eq_C_of_natDegree_eq_zero (by omega)
-  rw [eval_mul, hR, eval_C] at hν
-  refine (mul_eq_zero.1 hν).resolve_right fun h ↦ hR0 ?_
-  rw [hR, h, C_0]
+  exact IsRoot.dvd hν (associated_of_dvd_of_natDegree_le hD hQ hdeg).dvd'
 
 /-- The complex roots of an irreducible real polynomial all have the **same modulus**: an
 irreducible real polynomial has degree `1` (one real root) or `2` (a pair of conjugate roots).
@@ -353,14 +347,9 @@ omit [FiniteDimensional ℝ E] in
 /-- If `K' ≤ K` and `L' ≤ L` with `K' ⊔ L' = ⊤` and `K ⊓ L = 0`, then `K = K'`. -/
 private lemma eq_of_le_of_sup_eq_top {K L K' L' : Submodule ℝ E} (hK : K' ≤ K) (hL : L' ≤ L)
     (htop : K' ⊔ L' = ⊤) (hdis : Disjoint K L) : K = K' := by
-  refine le_antisymm (fun v hv ↦ ?_) hK
-  have hv' : v ∈ K' ⊔ L' := by
-    rw [htop]
-    exact Submodule.mem_top
-  obtain ⟨a, ha, b, hb, rfl⟩ := Submodule.mem_sup.1 hv'
-  have hbK : b ∈ K := by simpa using K.sub_mem hv (hK ha)
-  rw [Submodule.disjoint_def.1 hdis b hbK (hL hb), add_zero]
-  exact ha
+  have hcodis : Codisjoint K' L' := codisjoint_iff.2 htop
+  exact ((le_iff_eq_of_codisjoint_of_disjoint hcodis
+    (hdis.symm.mono_left hL)).1 hK).symm
 
 /-- **The stable and unstable subspaces as kernels**: for a hyperbolic `A`, the characteristic
 polynomial is, up to a unit, a product `pₛ pᵤ` of coprime real polynomials with all complex roots
@@ -369,8 +358,8 @@ decomposition, these kernels are the sums of the generalized eigenspaces of the 
 modulus `< 1`, resp. `> 1`.
 
 Proof: `ker pₛ(A) ⊔ ker pᵤ(A) = ⊤`, `ker pₛ(A) ≤ Eₛ`, `ker pᵤ(A) ≤ Eᵤ`, and `Eₛ ⊓ Eᵤ = 0`
-(`disjoint_stableSubspace_unstableSubspace`): a `v ∈ Eₛ` is `a + b` with `a ∈ ker pₛ(A)`,
-`b ∈ ker pᵤ(A)`, and `b = v - a ∈ Eₛ ⊓ Eᵤ` is `0`; symmetrically for `Eᵤ`. -/
+(`disjoint_stableSubspace_unstableSubspace`). The modular-lattice law gives equality in both
+submodule inclusions. -/
 theorem exists_stableSubspace_unstableSubspace_eq_ker_aeval {A : E →L[ℝ] E}
     (hA : A.IsHyperbolic) :
     ∃ ps pu : ℝ[X], Associated (ps * pu) (LinearMap.charpoly (A : E →ₗ[ℝ] E)) ∧

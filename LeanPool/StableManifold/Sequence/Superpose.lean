@@ -68,15 +68,17 @@ theorem superpose_apply_of_bound {φ : E → G} {x : ℕ →ᵇ E} (h : ∃ C, �
   rw [superpose, dite_eq_left h]
   rfl
 
+private theorem superpose_eq_comp {φ : E → G} {K : ℝ≥0} (hφ : LipschitzWith K φ)
+    (x : ℕ →ᵇ E) : superpose φ x = x.comp φ hφ := by
+  ext n
+  exact superpose_apply_of_bound
+    ⟨‖x.comp φ hφ‖, fun m ↦ (x.comp φ hφ).norm_coe_le_norm m⟩ n
+
 /-- For a Lipschitz `φ`, `superpose φ x n = φ (x n)` for every bounded sequence `x`. -/
 theorem superpose_apply_of_lipschitzWith {φ : E → G} {K : ℝ≥0} (hφ : LipschitzWith K φ)
     (x : ℕ →ᵇ E) (n : ℕ) : superpose φ x n = φ (x n) := by
-  refine superpose_apply_of_bound ⟨‖φ 0‖ + K * ‖x‖, fun m ↦ ?_⟩ n
-  calc ‖φ (x m)‖ ≤ ‖φ 0‖ + ‖φ (x m) - φ 0‖ := norm_le_insert' _ _
-    _ ≤ ‖φ 0‖ + K * ‖x m‖ := by
-        gcongr
-        simpa [dist_eq_norm] using hφ.dist_le_mul (x m) 0
-    _ ≤ ‖φ 0‖ + K * ‖x‖ := by gcongr; exact x.norm_coe_le_norm m
+  rw [superpose_eq_comp hφ]
+  rfl
 
 /-- For a continuous `φ` on a proper space, `superpose φ x n = φ (x n)` for every bounded sequence
 `x`. -/
@@ -95,9 +97,8 @@ theorem superpose_zero {φ : E → G} (hφ : φ 0 = 0) : superpose φ 0 = 0 := b
 /-- A `K`-Lipschitz `φ` gives a `K`-Lipschitz superposition operator. -/
 theorem lipschitzWith_superpose {φ : E → G} {K : ℝ≥0} (hφ : LipschitzWith K φ) :
     LipschitzWith K (superpose φ) := by
-  refine LipschitzWith.of_dist_le_mul fun x y ↦ (dist_le (by positivity)).2 fun n ↦ ?_
-  rw [superpose_apply_of_lipschitzWith hφ, superpose_apply_of_lipschitzWith hφ]
-  exact (hφ.dist_le_mul _ _).trans (by gcongr; exact dist_coe_le_dist n)
+  rw [show superpose φ = comp φ hφ from funext (superpose_eq_comp hφ)]
+  exact lipschitz_comp hφ
 
 /-- A continuous `φ` on a proper space gives a continuous superposition operator.
 

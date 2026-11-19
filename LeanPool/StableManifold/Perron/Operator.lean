@@ -368,11 +368,10 @@ theorem eq_stableOrbit_add_perronOp {z y : ℕ →ᵇ E} (hz : ∀ n, z (n + 1) 
   have hB : ∀ n, S.unstableInv (d (n + 1)) = d n := fun n ↦ by
     rw [hd, ← mul_apply_eq_comp, S.unstableInv_mul, _root_.sub_apply, one_apply_eq_self, hP,
       sub_zero]
-  have hBm : ∀ m n, (S.unstableInv ^ m) (d (n + m)) = d n := by
-    intro m
-    induction m with
-    | zero => intro n; rw [pow_zero, one_apply_eq_self, add_zero]
-    | succ m ih => intro n; rw [pow_succ, mul_apply_eq_comp, ← add_assoc, hB, ih]
+  have hBm (m n : ℕ) : (S.unstableInv ^ m) (d (n + m)) = d n := by
+    refine pow_apply_of_backwardOrbit (w := fun k ↦ d (n + k)) (by simp) ?_ m
+    intro k
+    simpa only [Nat.add_assoc] using hB (n + k)
   have hle : ∀ n m, ‖d n‖ ≤ S.const * S.rate ^ m * ‖d‖ := by
     intro n m
     have h : d n = (S.unstableInv ^ m * (1 - S.proj)) (d (n + m)) := by

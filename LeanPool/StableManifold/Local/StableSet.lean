@@ -316,12 +316,16 @@ theorem exists_localStableSet_eq_setOf_forall_iterate_mem {f : E → E} {p : E} 
     rw [mem_ball_zero_iff, ← mem_ball_iff_norm]
     exact hUδ (hx k)
   -- the `F`-orbit of `x - p` is the translate of the `f`-orbit of `x`
+  let translated : E → E := fun y ↦ f (p + y) - p
+  have htranslate : Semiconj (fun y : E ↦ y - p) f translated := by
+    intro y
+    change f y - p = f (p + (y - p)) - p
+    rw [add_comm, sub_add_cancel]
+  have htranslated (k : ℕ) : translated^[k] (x - p) = f^[k] x - p :=
+    (htranslate.iterate_right k x).symm
   have hit (k : ℕ) : F.map^[k] (x - p) = f^[k] x - p := by
-    induction k with
-    | zero => rfl
-    | succ k ih =>
-      rw [iterate_succ_apply', iterate_succ_apply', ih, ← hEq (hball k)]
-      simp
+    rw [← htranslated k]
+    exact (iterate_eq_of_eqOn hEq (fun m ↦ (htranslated m).symm ▸ hball m) k).symm
   have hgraph : (1 - S.proj) (x - p) = F.graph (x - p) :=
     (F.bddOrbit_iff _).1 ⟨δ, fun k ↦ by
       rw [hit]
