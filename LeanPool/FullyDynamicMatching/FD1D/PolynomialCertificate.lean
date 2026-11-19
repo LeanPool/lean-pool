@@ -586,17 +586,18 @@ private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.E
       return term
 
 -- Stop at heads the staged reader handles so other helpers unfold in any namespace.
+private meta def isBellmanHead (term : Lean.Expr) : Bool :=
+  match term.getAppFn.constName? with
+  | some head =>
+    #[``DPoly.mk, ``DPoly.const, ``DPoly.X, ``DPoly.add, ``DPoly.mul, ``DPoly.pow, ``DPoly.neg,
+      ``DPoly.scale, ``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
+      ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc, ``U, ``V, ``Z].contains head
+  | none => false
+
 private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
-  let isTerminalHead (term : Lean.Expr) : Bool :=
-    match term.getAppFn.constName? with
-    | some head =>
-      #[``DPoly.mk, ``DPoly.const, ``DPoly.X, ``DPoly.add, ``DPoly.mul, ``DPoly.pow, ``DPoly.neg,
-        ``DPoly.scale, ``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
-        ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc, ``U, ``V, ``Z].contains head
-    | none => false
   let mut next := expression
   repeat
-    let mut term ← exposeBellmanUntil isTerminalHead next
+    let mut term ← exposeBellmanUntil isBellmanHead next
     -- A constructor applied to the same polynomial's projection exposes
     -- that polynomial before the leaf reader evaluates its coefficient list.
     if term.isAppOfArity ``DPoly.mk 2 then
@@ -854,11 +855,26 @@ local elab "stripBellmanMatcher" : conv => Lean.Elab.Tactic.withMainContext do
   if let some (polynomial, proof) ← bellmanMatcherIdentity (← Lean.Elab.Tactic.Conv.getLhs) then
     Lean.Elab.Tactic.Conv.updateLhs polynomial proof
 
+-- Unfold aliases at the chart head while leaving match scrutinees and fields untouched.
+local elab "exposeBellmanIdentities" : conv => Lean.Elab.Tactic.withMainContext do
+  let original ← Lean.Elab.Tactic.Conv.getLhs
+  let isMatcher (term : Lean.Expr) : Lean.MetaM Bool := do
+    return (← Lean.Meta.matchMatcherApp? term.consumeMData (alsoCasesOn := true)).isSome
+  let exposed ← Lean.Meta.withConfig (fun configuration => {
+      configuration with iota := false, proj := .no }) <|
+    Lean.Meta.whnfHeadPred original fun term => do
+      if isBellmanHead term then return false
+      return !(← isMatcher term)
+  if exposed == original then return
+  if exposed.isAppOfArity ``DPoly.mk 2 || (← isMatcher exposed) then
+    Lean.Elab.Tactic.Conv.changeLhs exposed
+
 -- Rewrite identities without first evaluating the constructor scrutinee or coefficient list.
 local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
   Lean.Elab.Tactic.evalTactic (← `(tactic| (
     conv_lhs => {
       arg 1
+      exposeBellmanIdentities
       stripBellmanMatcher
       try rw [List.append_nil]
       reduceBellmanPolynomial }
@@ -901,8 +917,15 @@ private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true :=
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
-private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
+private def chartOneWithEmptyAppend : Poly3 := DPoly.mk (chartOne.coeffs ++ [])
+
+private theorem chartOne_appended_check : allNonnegative3 chartOneWithEmptyAppend = true := by
   checkBellmanChart
+
+private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
+  have h := chartOne_appended_check
+  conv_lhs at h => { arg 1; exposeBellmanIdentities; rw [List.append_nil] }
+  exact h
 
 theorem chartOne_check : allNonnegative3 chartOne = true := by
   as_aux_lemma => exact chartOne_normalized_check
