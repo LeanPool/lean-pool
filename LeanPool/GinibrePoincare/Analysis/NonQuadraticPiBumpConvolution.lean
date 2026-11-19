@@ -86,7 +86,7 @@ theorem piL2BumpAverage_convolution_ae
       (fun x => ∫ a, (piPlanarBump d φ a : ℂ) * f (x - a)
         ∂(volume : Measure (Configuration d))) := by
   let u := piCompactFunctionL2 d f hf hc
-  unfold piL2BumpAverage
+  unfold piL2BumpAverage lebesgueL2KernelAverage
   have hk : Continuous (fun a => (piPlanarBump d φ a : ℂ)) :=
     Complex.continuous_ofReal.comp (piPlanarBump_continuous d φ)
   have hkc : HasCompactSupport (fun a => (piPlanarBump d φ a : ℂ)) :=
