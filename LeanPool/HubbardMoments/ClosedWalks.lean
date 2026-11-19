@@ -154,23 +154,13 @@ theorem card_support_lt_of_closedWalk (hinj : Function.Injective (walk 0))
   have hdec : ∀ p ∈ D, t (σ p) < t p := by
     intro p hp
     have hq : σ p ∈ D := Equiv.Perm.apply_mem_support.2 hp
-    have hpq : σ p ≠ p := Equiv.Perm.mem_support.1 hp
     obtain ⟨r, hr, huniq⟩ := (hw (t p) (ht_lt p hp)).exists_unique_moves
     have hmp : walk (t p + 1) p ≠ walk (t p) p := (mem_filter.1 (ht_mem p hp)).2
     have hrp : p = r := huniq p hmp
     subst hrp
-    rcases lt_trichotomy (t (σ p)) (t p) with hlt | heq | hgt
-    · exact hlt
-    · exfalso
-      have hmq : walk (t (σ p) + 1) (σ p) ≠ walk (t (σ p)) (σ p) :=
-        (mem_filter.1 (ht_mem (σ p) hq)).2
-      rw [heq] at hmq
-      exact hpq (huniq (σ p) hmq)
-    · exfalso
-      -- `σ p` is still at its initial site, which is `p`'s target
-      have hstill := ht_before (σ p) hq (t p) hgt.le
-      apply hr
-      exact ⟨σ p, by rw [hstill, ← hσ, ht_after p hp]⟩
+    refine lt_of_not_ge fun hbefore => ?_
+    have hstill := ht_before (σ p) hq (t p) hbefore
+    exact hr ⟨σ p, by rw [hstill, ← hσ, ht_after p hp]⟩
   -- summing `t (σ p) < t p` over the moved particles contradicts `∑ t ∘ σ = ∑ t`
   have hDne : D.Nonempty := by
     rw [nonempty_iff_ne_empty, Ne, Equiv.Perm.support_eq_empty_iff]
