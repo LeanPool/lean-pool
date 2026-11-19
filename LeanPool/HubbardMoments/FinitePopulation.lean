@@ -135,23 +135,38 @@ omit [Fintype V] in
 private theorem tupleLabels_zero (tuple : Fin 0 → V) : tupleLabels tuple = ∅ := by
   simp [tupleLabels]
 
+private theorem sum_tuples_four (ε : V → ℝ) (f : Finset V → ℝ → ℝ) :
+    ∑ tuple : Fin 4 → V, f (tupleLabels tuple) (∏ i, ε (tuple i)) =
+      ∑ a, ∑ b, ∑ c, ∑ d, f (insert d (insert c (insert b {a}))) (ε a * ε b * ε c * ε d) := by
+  simp only [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
+    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one, mul_assoc]
+  refine sum_congr rfl fun a _ ↦ sum_congr rfl fun b _ ↦ sum_congr rfl fun c _ ↦
+    sum_congr rfl fun d _ ↦ ?_
+  congr 1
+  ext x
+  simp only [mem_insert, mem_singleton, or_comm, or_left_comm]
+
+private theorem sum_tuples_two (ε : V → ℝ) (f : Finset V → ℝ → ℝ) :
+    ∑ tuple : Fin 2 → V, f (tupleLabels tuple) (∏ i, ε (tuple i)) =
+      ∑ a, ∑ b, f (insert b {a}) (ε a * ε b) := by
+  simp only [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
+    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one]
+  refine sum_congr rfl fun a _ ↦ sum_congr rfl fun b _ ↦ ?_
+  congr 1
+  ext x
+  simp only [mem_insert, mem_singleton, or_comm]
+
 /-- `S_K⁴` as a sum over 4-tuples of sites, each present when the tuple lies in `K`. -/
 theorem sum_pow_four_eq (ε : V → ℝ) (K : Finset V) :
     (∑ i ∈ K, ε i) ^ 4 = ∑ a, ∑ b, ∑ c, ∑ d,
       if insert d (insert c (insert b {a})) ⊆ K then ε a * ε b * ε c * ε d else 0 := by
   rw [sum_pow_eq_sum_tuples]
-  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
-    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one, mul_assoc,
-    insert_subset_iff, singleton_subset_iff, and_comm, and_assoc]
-  rfl
+  exact sum_tuples_four ε (fun labels value ↦ if labels ⊆ K then value else 0)
 
 theorem sum_pow_two_eq (ε : V → ℝ) (K : Finset V) :
     (∑ i ∈ K, ε i) ^ 2 = ∑ a, ∑ b, if insert b {a} ⊆ K then ε a * ε b else 0 := by
   rw [sum_pow_eq_sum_tuples]
-  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
-    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one,
-    insert_subset_iff, singleton_subset_iff, and_comm]
-  rfl
+  exact sum_tuples_two ε (fun labels value ↦ if labels ⊆ K then value else 0)
 
 section Peel
 
@@ -297,25 +312,16 @@ theorem sampleMoment_four_eq {k : ℕ} (hk : k ≤ Fintype.card V) :
       inclusionProb (Fintype.card V) k (insert d (insert c (insert b ({a} : Finset V)))).card *
         (ε a * ε b * ε c * ε d) := by
   rw [sampleMoment_eq_sum_tuples ε 4 hk]
-  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
-    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one, mul_assoc]
-  refine sum_congr rfl fun a _ ↦ sum_congr rfl fun b _ ↦ sum_congr rfl fun c _ ↦
-    sum_congr rfl fun d _ ↦ ?_
-  congr 3
-  ext x
-  simp only [mem_insert, mem_singleton, or_comm, or_left_comm]
+  exact sum_tuples_four ε (fun labels value ↦
+    inclusionProb (Fintype.card V) k labels.card * value)
 
 /-- The sampled second moment as a 2-index sum weighted by `p_m`. -/
 theorem sampleMoment_two_eq {k : ℕ} (hk : k ≤ Fintype.card V) :
     sampleMoment ε k 2 = ∑ a, ∑ b,
       inclusionProb (Fintype.card V) k (insert b ({a} : Finset V)).card * (ε a * ε b) := by
   rw [sampleMoment_eq_sum_tuples ε 2 hk]
-  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
-    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one]
-  refine sum_congr rfl fun a _ ↦ sum_congr rfl fun b _ ↦ ?_
-  congr 3
-  ext x
-  simp only [mem_insert, mem_singleton, or_comm]
+  exact sum_tuples_two ε (fun labels value ↦
+    inclusionProb (Fintype.card V) k labels.card * value)
 
 variable {ε} (hε : ∑ v, ε v = 0)
 include hε
