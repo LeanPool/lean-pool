@@ -22,6 +22,7 @@ import logging
 import os
 import subprocess
 import time
+import uuid
 from collections.abc import Callable, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -192,11 +193,18 @@ def read_receipts(path: Path) -> dict[str, dict[str, Any]]:
 
 
 def write_receipts(directory: Path, receipts: dict[str, dict[str, Any]]) -> None:
-    """Publish a receipts file atomically."""
+    """Publish a receipts file atomically.
+
+    Each write has a temporary file of its own, so two commands that finish
+    together cannot rename each other's.
+    """
     directory.mkdir(parents=True, exist_ok=True)
-    temporary = directory / "passes.tmp"
-    temporary.write_text(json.dumps({"version": 1, "receipts": receipts}) + "\n")
-    temporary.replace(directory / "passes.json")
+    temporary = directory / f"passes.{os.getpid()}.{uuid.uuid4().hex}.tmp"
+    try:
+        temporary.write_text(json.dumps({"version": 1, "receipts": receipts}) + "\n")
+        temporary.replace(directory / "passes.json")
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 class ValidationCache:
@@ -439,8 +447,11 @@ def main() -> int:
     if not errors:
         cache.save()
         return 0
-    # A failed check never has a receipt, so saving after a failure keeps
-    # exactly the passes: the next run repeats only what failed or changed.
+    # A failed check never has a receipt, so the next run repeats only what
+    # failed or changed. A failed run may also have skipped checks, so it
+    # prunes nothing: it adds its passes to the receipts it found, and reuse
+    # compares fingerprints as always.
+    cache.used = cache.receipts | cache.used
     try:
         cache.save()
     except OSError as error:

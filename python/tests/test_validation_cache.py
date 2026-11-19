@@ -30,6 +30,7 @@ from lean_pool.validation_cache import (
     source_inventory,
     unit_name,
     validation_workers,
+    write_receipts,
 )
 
 
@@ -508,6 +509,50 @@ def test_failed_run_reports_its_findings_when_the_passes_cannot_be_saved(
     ):
         assert main() == 1
     assert "A.lean:1:1: error: finding" in capsys.readouterr().out
+
+
+def test_failed_run_keeps_receipts_it_did_not_check_again(
+    repository: Path, monkeypatch
+) -> None:
+    """Only a complete run prunes: a failed one may have skipped checks."""
+    directory = repository / ".lake/validation-cache/v1"
+    unreached = {"fingerprint": "earlier", "modules": ["LeanPool.C"], "passed": True}
+    monkeypatch.setattr(
+        sys, "argv", ["validation_cache", "lint", "--repo", str(repository)]
+    )
+    outcome = {"LeanPool.A": 1}
+
+    def lint(command: list[str], **keywords) -> subprocess.CompletedProcess:
+        return subprocess.CompletedProcess(command, outcome.get(command[5], 0), "")
+
+    with patch("lean_pool.validation_cache.subprocess.run", side_effect=lint):
+        write_receipts(directory, {"lint:LeanPool.C": unreached})
+        assert main() == 1
+        saved = read_receipts(directory / "passes.json")
+        assert saved["lint:LeanPool.C"] == unreached
+        assert sorted(saved) == ["lint:LeanPool", "lint:LeanPool.B", "lint:LeanPool.C"]
+        # The run that passes knows every unit and drops the one that is gone.
+        outcome.clear()
+        assert main() == 0
+    assert sorted(read_receipts(directory / "passes.json")) == [
+        "lint:LeanPool",
+        "lint:LeanPool.A",
+        "lint:LeanPool.B",
+    ]
+
+
+def test_each_write_uses_a_temporary_file_of_its_own(tmp_path: Path) -> None:
+    """Another command's unfinished write is neither overwritten nor renamed."""
+    other = tmp_path / "passes.tmp"
+    other.write_text("another command is still writing")
+    receipt = {"fingerprint": "f", "modules": ["LeanPool.A"], "passed": True}
+    write_receipts(tmp_path, {"lint:LeanPool.A": receipt})
+    assert other.read_text() == "another command is still writing"
+    assert read_receipts(tmp_path / "passes.json") == {"lint:LeanPool.A": receipt}
+    assert sorted(path.name for path in tmp_path.iterdir()) == [
+        "passes.json",
+        "passes.tmp",
+    ]
 
 
 def _shard(root: Path, *units: str) -> ValidationCache:
