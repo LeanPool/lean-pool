@@ -570,7 +570,8 @@ private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.E
     match term with
     | .proj name index _ => name == ``DPoly && index == 0
     | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
-        term.isAppOfArity ``List.cons 3
+        term.isAppOfArity ``List.cons 3 || term.isAppOfArity ``List.append 3 ||
+        term.isAppOfArity ``HAppend.hAppend 6 || term.isAppOfArity ``Append.append 4
   let mut next := expression
   repeat
     Lean.Core.checkSystem "Bellman coefficient field"
@@ -606,6 +607,94 @@ private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Ex
         next := polynomial
         continue
     return term
+
+private theorem repackBellmanPolynomial (p : DPoly R) :
+    (match p with | ⟨coefficients⟩ => DPoly.mk coefficients) = p := by
+  cases p
+  rfl
+
+private theorem repackBellmanAppendEmpty (p : DPoly R) :
+    (match p with | ⟨coefficients⟩ => DPoly.mk (coefficients ++ [])) = p := by
+  cases p
+  simp only [List.append_nil]
+
+-- Match an identity over a variable so conversion cannot evaluate the concrete argument.
+private meta def specializeBellmanIdentity (rules : Array Lean.Name) (argument : Lean.Expr)
+    (repack : Lean.Expr → Lean.Expr) : Lean.MetaM (Option Lean.Expr) := do
+  let type ← Lean.Meta.inferType argument
+  Lean.Meta.withLocalDeclD `argument type fun localArgument => do
+    let target ← Lean.Meta.mkEq (repack localArgument) localArgument
+    for rule in rules do
+      let proof ← Lean.Meta.mkAppM rule #[localArgument]
+      let proofType ← Lean.Meta.inferType proof
+      if ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) then
+        let proof ← Lean.Meta.mkExpectedTypeHint proof target
+        let abstractProof ← Lean.Meta.mkLambdaFVars #[localArgument] proof
+        return some (Lean.mkApp abstractProof argument)
+    return none
+
+private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
+    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
+  let some matcher ← Lean.Meta.matchMatcherApp? expression.consumeMData (alsoCasesOn := true)
+    | return none
+  let #[polynomial] := matcher.discrs | return none
+  unless matcher.alts.size == 1 && matcher.remaining.isEmpty do return none
+  let type ← Lean.Meta.inferType polynomial
+  unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
+  let some proof ← specializeBellmanIdentity
+    #[``repackBellmanPolynomial, ``repackBellmanAppendEmpty] polynomial
+      (fun term => { matcher with discrs := #[term] }.toExpr) | return none
+  return some (polynomial, proof)
+
+private meta def bellmanAppendIdentity (expression : Lean.Expr) :
+    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
+  unless expression.isAppOfArity ``List.append 3 ||
+    expression.isAppOfArity ``HAppend.hAppend 6 || expression.isAppOfArity ``Append.append 4 do
+    return none
+  let left := expression.appFn!.appArg!
+  let right := expression.appArg!
+  unless (← exposeBellmanField right).isAppOfArity ``List.nil 1 do return none
+  let append := expression.appFn!.appFn!
+  let some proof ← specializeBellmanIdentity #[``List.append_nil] left
+    (fun term => Lean.mkApp2 append term right) | return none
+  return some (left, proof)
+
+private meta def exposeBellmanIdentityHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr :=
+  Lean.Meta.withConfig (fun configuration => { configuration with iota := false, proj := .no })
+    do
+      let isReady (term : Lean.Expr) : Lean.MetaM Bool := do
+        if isBellmanHead term then return true
+        return (← Lean.Meta.matchMatcherApp? term.consumeMData (alsoCasesOn := true)).isSome
+      let expose (term : Lean.Expr) := Lean.Meta.whnfHeadPred term fun head => do
+        return !(← isReady head)
+      let exposed ← expose expression.consumeMData
+      if ← isReady exposed then return exposed
+      Lean.Meta.withTransparency .all (expose exposed)
+
+-- Apply these identities before an operand constructor can force its coefficients.
+private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
+    Lean.MetaM (Lean.Expr × Option Lean.Expr) := do
+  let mut next := expression
+  let mut prefixProof := none
+  repeat
+    Lean.Core.checkSystem "Bellman polynomial identities"
+    let exposed ← exposeBellmanIdentityHead next
+    let identity ← if exposed.isAppOfArity ``DPoly.mk 2 then do
+        let coefficients ← exposeBellmanField exposed.appArg!
+        let constructor := exposed.appFn!
+        if let some polynomial ← Lean.Meta.etaStruct?
+            (Lean.mkApp constructor coefficients) (· == ``DPoly) then
+          next := polynomial
+          continue
+        if let some (left, proof) ← bellmanAppendIdentity coefficients then
+          pure (some (Lean.mkApp constructor left, ← Lean.Meta.mkCongrArg constructor proof))
+        else pure none
+      else bellmanMatcherIdentity exposed
+    let some (polynomial, proof) := identity | return (← exposeBellmanHead exposed, prefixProof)
+    prefixProof ← match prefixProof with
+      | some previous => some <$> Lean.Meta.mkEqTrans previous proof
+      | none => pure (some proof)
+    next := polynomial
 
 -- Compute closed coefficients after direct decoding fails. The outer chart
 -- still uses the staged operations.
@@ -735,7 +824,9 @@ private meta def bellmanOperands (expression : Lean.Expr) : Lean.MetaM (Array Le
   return #[]
 
 -- Visit operands before their parents and reuse depths across shared expressions.
-private meta def bellmanReductionDepth (expression : Lean.Expr) : Lean.MetaM Nat := do
+private meta def bellmanReductionDepth
+    (prepare : Lean.Expr → Lean.MetaM (Lean.Expr × Option Lean.Expr))
+    (expression : Lean.Expr) : Lean.MetaM Nat := do
   let mut depths : Lean.ExprStructMap Nat := {}
   let mut pending : Array (Lean.Expr × Option (Array Lean.Expr)) := #[(expression, none)]
   while let some (term, operands) := pending.back? do
@@ -752,7 +843,7 @@ private meta def bellmanReductionDepth (expression : Lean.Expr) : Lean.MetaM Nat
           depth := max depth (childDepth + 1)
         depths := depths.insert key depth
       else
-        let children ← bellmanOperands (← exposeBellmanHead term)
+        let children ← bellmanOperands (← prepare term).1
         pending := pending.push (term, some children)
         for child in children do
           let childKey : Lean.ExprStructEq := ⟨child⟩
@@ -765,6 +856,7 @@ private meta def bellmanReductionDepth (expression : Lean.Expr) : Lean.MetaM Nat
 
 -- The cache is local to one closed chart and includes the kernel proof of each value.
 private meta def normalizeBellmanPolynomial
+    (prepare : Lean.Expr → Lean.MetaM (Lean.Expr × Option Lean.Expr))
     (cache : IO.Ref (Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr)))
     (fuel : Nat) (expression : Lean.Expr) : Lean.MetaM (Poly3 × Lean.Expr × Lean.Expr) := do
   match fuel with
@@ -772,13 +864,14 @@ private meta def normalizeBellmanPolynomial
   | fuel + 1 =>
     let key : Lean.ExprStructEq := ⟨expression⟩
     if let some result := (← cache.get)[key]? then return result
-    let expression ← exposeBellmanHead expression
+    let (expression, prefixProof) ← prepare expression
     let args := expression.getAppArgs
     let (value, operands, congruence) ←
       if let some operation := bellmanBinaryOperation expression then do
-        let (left, leftExpr, leftProof) ← normalizeBellmanPolynomial cache fuel args[args.size - 2]!
+        let (left, leftExpr, leftProof) ←
+          normalizeBellmanPolynomial prepare cache fuel args[args.size - 2]!
         let (right, rightExpr, rightProof) ←
-          normalizeBellmanPolynomial cache fuel args[args.size - 1]!
+          normalizeBellmanPolynomial prepare cache fuel args[args.size - 1]!
         let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 2))
         let firstProof ← Lean.Meta.mkCongrArg operator leftProof
         let congruence ← Lean.Meta.mkCongr firstProof rightProof
@@ -786,19 +879,22 @@ private meta def normalizeBellmanPolynomial
       else if isBellmanPower expression then do
         let exponent := args[args.size - 1]!
         let power ← readBellmanPower exponent
-        let (base, baseExpr, baseProof) ← normalizeBellmanPolynomial cache fuel args[args.size - 2]!
+        let (base, baseExpr, baseProof) ←
+          normalizeBellmanPolynomial prepare cache fuel args[args.size - 2]!
         let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 2))
         let firstProof ← Lean.Meta.mkCongrArg operator baseProof
         let congruence ← Lean.Meta.mkCongrFun firstProof exponent
         pure (base ^ power, Lean.mkApp2 operator baseExpr exponent, congruence)
       else if expression.isAppOfArity ``DPoly.scale 4 then do
         let factor ← readBellmanScaleFactor args[args.size - 2]!
-        let (value, valueExpr, proof) ← normalizeBellmanPolynomial cache fuel args[args.size - 1]!
+        let (value, valueExpr, proof) ←
+          normalizeBellmanPolynomial prepare cache fuel args[args.size - 1]!
         let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 1))
         pure (DPoly.scale factor value, Lean.mkApp operator valueExpr,
           ← Lean.Meta.mkCongrArg operator proof)
       else if isBellmanNegation expression then do
-        let (value, valueExpr, proof) ← normalizeBellmanPolynomial cache fuel args[args.size - 1]!
+        let (value, valueExpr, proof) ←
+          normalizeBellmanPolynomial prepare cache fuel args[args.size - 1]!
         let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 1))
         pure (-value, Lean.mkApp operator valueExpr, ← Lean.Meta.mkCongrArg operator proof)
       else
@@ -808,6 +904,9 @@ private meta def normalizeBellmanPolynomial
     let quoted := Lean.toExpr value
     let reduction ← checkBellmanReduction operands quoted
     let proof ← Lean.Meta.mkEqTrans congruence reduction
+    let proof ← match prefixProof with
+      | some identityProof => Lean.Meta.mkEqTrans identityProof proof
+      | none => pure proof
     let result := (value, quoted, proof)
     cache.modify (·.insert key result)
     return result
@@ -816,68 +915,26 @@ termination_by structural fuel
 local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
   let expression ← Lean.Elab.Tactic.Conv.getLhs
   let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
-  let (_, value, proof) ← normalizeBellmanPolynomial cache
-    (← bellmanReductionDepth expression) expression
+  let preparations ← IO.mkRef ({} : Lean.ExprStructMap (Lean.Expr × Option Lean.Expr))
+  let prepare term := do
+    let key : Lean.ExprStructEq := ⟨term⟩
+    if let some prepared := (← preparations.get)[key]? then return prepared
+    let prepared ← prepareBellmanPolynomial term
+    preparations.modify (·.insert key prepared)
+    return prepared
+  let (_, value, proof) ← normalizeBellmanPolynomial prepare cache
+    (← bellmanReductionDepth prepare expression) expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
-private theorem repackBellmanPolynomial (p : DPoly R) :
-    (match p with | ⟨coefficients⟩ => DPoly.mk coefficients) = p := by
-  cases p
-  rfl
+local elab "rewriteBellmanIdentities" : conv => Lean.Elab.Tactic.withMainContext do
+  let (polynomial, proof) ← prepareBellmanPolynomial (← Lean.Elab.Tactic.Conv.getLhs)
+  if let some equality := proof then
+    Lean.Elab.Tactic.Conv.updateLhs polynomial equality
 
-private theorem repackBellmanAppendEmpty (p : DPoly R) :
-    (match p with | ⟨coefficients⟩ => DPoly.mk (coefficients ++ [])) = p := by
-  cases p
-  simp only [List.append_nil]
-
--- Match the identity over a variable so unification cannot evaluate the chart.
-private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
-    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
-  let some matcher ← Lean.Meta.matchMatcherApp? expression.consumeMData (alsoCasesOn := true)
-    | return none
-  let #[polynomial] := matcher.discrs | return none
-  unless matcher.alts.size == 1 && matcher.remaining.isEmpty do return none
-  let type ← Lean.Meta.inferType polynomial
-  unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
-  Lean.Meta.withLocalDeclD `polynomial type fun localPolynomial => do
-    let repacked := { matcher with discrs := #[localPolynomial] }.toExpr
-    let target ← Lean.Meta.mkEq repacked localPolynomial
-    for ruleName in #[``repackBellmanPolynomial, ``repackBellmanAppendEmpty] do
-      let proof ← Lean.Meta.mkAppM ruleName #[localPolynomial]
-      let proofType ← Lean.Meta.inferType proof
-      if ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) then
-        let proof ← Lean.Meta.mkExpectedTypeHint proof target
-        let abstractProof ← Lean.Meta.mkLambdaFVars #[localPolynomial] proof
-        return some (polynomial, Lean.mkApp abstractProof polynomial)
-    return none
-
-local elab "stripBellmanMatcher" : conv => Lean.Elab.Tactic.withMainContext do
-  if let some (polynomial, proof) ← bellmanMatcherIdentity (← Lean.Elab.Tactic.Conv.getLhs) then
-    Lean.Elab.Tactic.Conv.updateLhs polynomial proof
-
--- Unfold aliases at the chart head while leaving match scrutinees and fields untouched.
-local elab "exposeBellmanIdentities" : conv => Lean.Elab.Tactic.withMainContext do
-  let original ← Lean.Elab.Tactic.Conv.getLhs
-  let isMatcher (term : Lean.Expr) : Lean.MetaM Bool := do
-    return (← Lean.Meta.matchMatcherApp? term.consumeMData (alsoCasesOn := true)).isSome
-  let exposed ← Lean.Meta.withConfig (fun configuration => {
-      configuration with iota := false, proj := .no }) <|
-    Lean.Meta.whnfHeadPred original fun term => do
-      if isBellmanHead term then return false
-      return !(← isMatcher term)
-  if exposed == original then return
-  if exposed.isAppOfArity ``DPoly.mk 2 || (← isMatcher exposed) then
-    Lean.Elab.Tactic.Conv.changeLhs exposed
-
--- Rewrite identities without first evaluating the constructor scrutinee or coefficient list.
+-- Keep these charts on the staged path so unsupported edits fail at the offending term.
 local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
   Lean.Elab.Tactic.evalTactic (← `(tactic| (
-    conv_lhs => {
-      arg 1
-      exposeBellmanIdentities
-      stripBellmanMatcher
-      try rw [List.append_nil]
-      reduceBellmanPolynomial }
+    conv_lhs => { arg 1; reduceBellmanPolynomial }
     rfl)))
 
 @[irreducible]
@@ -911,7 +968,7 @@ private theorem chartPlus_repacked_check :
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
   have h := chartPlus_repacked_check
-  conv_lhs at h => { arg 1; stripBellmanMatcher }
+  conv_lhs at h => { arg 1; rewriteBellmanIdentities }
   exact h
 
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
@@ -924,7 +981,7 @@ private theorem chartOne_appended_check : allNonnegative3 chartOneWithEmptyAppen
 
 private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
   have h := chartOne_appended_check
-  conv_lhs at h => { arg 1; exposeBellmanIdentities; rw [List.append_nil] }
+  conv_lhs at h => { arg 1; rewriteBellmanIdentities }
   exact h
 
 theorem chartOne_check : allNonnegative3 chartOne = true := by
