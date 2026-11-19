@@ -13,36 +13,11 @@ module
 
 namespace Ratpoints
 
-/-- The refusals of a search, each with the number of the error with which the program `ratpoints`
-refuses the input. The program itself refuses too many or too few coefficients, the height bound `0`
-and the heights that are not `long`s, before it calls the library; the library refuses a binary form
-that is not squarefree in the set-up of the search: when the leading zeros of `n + 1` coefficients
-lower `⌈n / 2⌉`, in the reversal check (`Ratpoints.Setup.reversal`) and with the remainder chain of
-the Sturm step (`Ratpoints.Sturm.chain`); and between the last two it refuses search intervals
-without `l ≤ u`, not increasing and strictly apart, or with a NaN end
-(`Ratpoints.searchIntervals`). -/
+/-- Polynomial reversal can fail when the binary form has a repeated factor. -/
 inductive Refusal where
-  /-- More than `Ratpoints.maxDegree + 1` coefficients: error 3. -/
-  | tooManyCoefficients
-  /-- Fewer than two coefficients: error 5. -/
-  | tooFewCoefficients
-  /-- The height bound `0`, or one that is not a `long` (`Ratpoints.fitsLong`): error 4. -/
-  | incorrectHeight
-  /-- A binary form that is not squarefree: error 8. -/
+  /-- The leading coefficients of the reversed form vanish. -/
   | notSquarefree
-  /-- Search intervals without `l ≤ u`, not increasing and strictly apart, or with a NaN end, which
-  the library refuses with `RATPOINTS_BAD_ARGS`: error 9. -/
-  | badArgs
   deriving DecidableEq, Repr
-
-/-- Whether the integer `a` is a C `long`, `-2 ^ 63 ≤ a < 2 ^ 63`, as `mpz_fits_slong_p` of GMP
-decides it: `ratpoints` needs a `long` of 64 bits since version 3.0.0.
-
-C: `rp-private.h:41-43`, `rp-private.h:47`
-
-Deviation: the bounds of a `long` of 64 bits, fixed, where the C code does not compile unless an
-`unsigned long` has exactly 64 bits. -/
-def fitsLong (a : Int) : Bool := -2 ^ 63 ≤ a && a < 2 ^ 63
 
 namespace Setup
 

@@ -12,9 +12,7 @@ public import LeanPool.Ratpoints.Mathlib.Algebra.Group.Even
 public import LeanPool.Ratpoints.Mathlib.Algebra.Order.Field.Basic
 public import LeanPool.Ratpoints.Mathlib.Algebra.Polynomial.Eval.Coeff
 public import LeanPool.Ratpoints.Mathlib.Algebra.Polynomial.FieldDivision
-public import LeanPool.Ratpoints.Mathlib.Algebra.Polynomial.Homogenize
 public import LeanPool.Ratpoints.Mathlib.Algebra.Polynomial.Sturm.Sequence
-public import LeanPool.Ratpoints.Mathlib.Algebra.Squarefree.Basic
 public import LeanPool.Ratpoints.Mathlib.Analysis.Polynomial.Order
 public import LeanPool.Ratpoints.Mathlib.Analysis.Polynomial.Sturm
 public import LeanPool.Ratpoints.Mathlib.Basic.Sign.Defs
@@ -28,7 +26,6 @@ public import LeanPool.Ratpoints.Mathlib.FieldTheory.Perfect
 public import LeanPool.Ratpoints.Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import LeanPool.Ratpoints.Mathlib.Order.WithBotTop
 public import LeanPool.Ratpoints.Mathlib.RingTheory.Coprime.Basic
-public import LeanPool.Ratpoints.Mathlib.RingTheory.MvPolynomial.Homogeneous
 public import LeanPool.Ratpoints.Model.BruteForce
 public import LeanPool.Ratpoints.Model.Candidate
 public import LeanPool.Ratpoints.Model.Double
@@ -44,7 +41,6 @@ public import LeanPool.Ratpoints.Proof.FastDenominators
 public import LeanPool.Ratpoints.Proof.FastSieve
 public import LeanPool.Ratpoints.Proof.Jacobi
 public import LeanPool.Ratpoints.Proof.Region
-public import LeanPool.Ratpoints.Proof.Rounding
 public import LeanPool.Ratpoints.Proof.Setup
 public import LeanPool.Ratpoints.Proof.Sturm
 public import LeanPool.Ratpoints.Proof.SturmCounts

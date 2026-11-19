@@ -309,9 +309,7 @@ Deviation: the intervals of the caller read from the array it gives, where the C
 from a copy on the heap (lines 274-275, 286) and writes the intersection over them; the intersection
 returned as a new array, with no bound on its length, for the writes into `ivlist`, the caller's
 array, which must have room for `1 + ⌊degree / 2⌋` intervals more than it holds (lines 52-53), as
-the C code relies on and as suffices assuming Sturm's theorem
-(`Ratpoints.Sturm.size_run_computeSturm_le`), and for the number `num_inter` of the arguments that
-it sets; natural numbers for the `long` indices. -/
+the C code requires. The model uses natural numbers for the interval indices. -/
 def intersect (loc ivs : Array (Double × Double)) : Id (Array (Double × Double)) := do
   let mut n1 := 0
   let mut n2 := 0

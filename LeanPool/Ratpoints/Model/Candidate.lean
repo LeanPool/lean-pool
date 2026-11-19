@@ -25,9 +25,7 @@ that it finds by this map, and the points at infinity take the candidate `(0, 1)
 their flag of the reversal is set (`Ratpoints.Sieve.checkPoint`,
 `Ratpoints.Sieve.pointsAtInfinity`), and so does the check of the reference
 (`Ratpoints.Sieve.checkNum`). It maps the normalized points of height at most `H` of the reversed
-curve one to one onto those of the caller's curve (`Ratpoints.Sieve.perm_map_swapPoint_bruteForce`).
-Its negations `-b` and `-a` stay in the range of a `long`, since `|a| ≤ H`, `1 ≤ b ≤ H` and
-`H < 2 ^ 63` (`Ratpoints.fitsLong_neg`). -/
+curve one to one onto those of the caller's curve (`Ratpoints.Sieve.perm_map_swapPoint_bruteForce`). -/
 def swapPoint (q : Int × Int × Int) : Int × Int × Int :=
   if 0 ≤ q.1 then (q.2.2, q.2.1, q.1) else (-q.2.2, q.2.1, -q.1)
 

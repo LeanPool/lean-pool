@@ -1254,18 +1254,4 @@ theorem Except.bind_eq_ok {ε α β : Type u} {m : Except ε α} {f : α → Exc
   | error e => cases h
   | ok a => exact ⟨a, rfl, h⟩
 
-/-! ### Strings -/
-
-namespace String
-
-/-- The strings `t :: l` joined by the separator `s` are `t` followed by each string of `l` after
-`s`. -/
-theorem intercalate_cons_eq_append_join (s t : String) (l : List String) :
-    s.intercalate (t :: l) = t ++ String.join (l.map (s ++ ·)) := by
-  induction l generalizing t with
-  | nil => simp [intercalate_singleton, join_nil]
-  | cons u l ih => simp [intercalate_cons_cons, ih, join_cons, String.append_assoc]
-
-end String
-
 end

@@ -30,7 +30,6 @@ challenge restates its definitions verbatim.
 * `Ratpoints.InRegion`: a point lies in the search region.
 * `Ratpoints.IsFullBox`: the search region is the whole box of height `H`, so that `ratpoints` may
   reverse the polynomial.
-* `Ratpoints.denominatorBound`: the largest denominator of the search.
 
 ## Implementation notes
 
@@ -116,11 +115,6 @@ def IsFullBox {α : Type*} (dom : List α) (bLow bHigh : ℤ) (H : ℕ) : Prop :
 instance instDecidableIsFullBox {α : Type*} (dom : List α) (bLow bHigh : ℤ) (H : ℕ) :
     Decidable (IsFullBox dom bLow bHigh H) :=
   inferInstanceAs (Decidable (_ ∧ _))
-
-/-- The largest denominator of the search for the bound `bHigh` and the height bound `H`: `bHigh`
-when `1 ≤ bHigh ≤ H`, and `H` otherwise. -/
-def denominatorBound (bHigh : ℤ) (H : ℕ) : ℕ :=
-  if 1 ≤ bHigh ∧ bHigh ≤ H then bHigh.toNat else H
 
 /-! ### Examples, checked by `decide` -/
 

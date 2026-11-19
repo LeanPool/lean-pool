@@ -49,8 +49,6 @@ integers are in `Ratpoints.Proof.Containers`.
   the half and the powers of `2` of `long`s, for the midpoints of the bisection of the Sturm step.
 * `Int64.toInt_and_ofNat_two_pow_sub_one`: a `long` and-ed with the mask `2 ^ k - 1` is its
   Euclidean remainder modulo `2 ^ k`.
-* `UInt64.toNat_shift_words_of_lt`, `UInt64.toNat_shift_words_of_le`: the two words of a 128-bit
-  number shifted right by `0 < s < 64` and by `64 ≤ s ≤ 127`.
 
 ## Implementation notes
 
@@ -295,34 +293,6 @@ theorem getLsbD_getElem!_set!_or_one_shiftLeft {seen : Array UInt64} (hs : seen.
 theorem toNat_shiftRight_toUInt64 (x : UInt64) {s : Nat} (hs : s < 64) :
     (x >>> s.toUInt64).toNat = x.toNat / 2 ^ s := by
   rw [UInt64.toNat_shiftRight, Nat.toNat_toUInt64_mod_sixty_four hs, Nat.shiftRight_eq_div_pow]
-
-/-- The two words of a 128-bit number `hi 2 ^ 64 + lo` shifted right by `0 < s < 64`. -/
-theorem toNat_shift_words_of_lt (hi lo : UInt64) {s : Nat} (hs0 : 0 < s) (hs : s < 64) :
-    (hi >>> s.toUInt64).toNat * 2 ^ 64 +
-        ((lo >>> s.toUInt64) ||| (hi <<< (64 - s).toUInt64)).toNat =
-      (hi.toNat * 2 ^ 64 + lo.toNat) / 2 ^ s := by
-  have h64 : (2 : Nat) ^ 64 = 2 ^ (64 - s) * 2 ^ s := by rw [← Nat.pow_add]; congr 1; lia
-  have hl : lo.toNat / 2 ^ s < 2 ^ (64 - s) :=
-    Nat.div_lt_of_lt_mul (by rw [Nat.mul_comm, ← h64]; exact lo.toNat_lt)
-  have hsh : (hi <<< (64 - s).toUInt64).toNat = 2 ^ (64 - s) * (hi.toNat % 2 ^ s) := by
-    rw [UInt64.toNat_shiftLeft, Nat.toNat_toUInt64_mod_sixty_four (show 64 - s < 64 by lia),
-      Nat.shiftLeft_eq, h64, Nat.mul_comm (2 ^ (64 - s)) (2 ^ s), Nat.mul_mod_mul_right,
-      Nat.mul_comm]
-  rw [UInt64.toNat_or, toNat_shiftRight_toUInt64 _ hs, toNat_shiftRight_toUInt64 _ hs, hsh,
-    Nat.or_comm, ← Nat.two_pow_add_eq_or_of_lt hl]
-  have hd := Nat.div_add_mod hi.toNat (2 ^ s)
-  rw [show hi.toNat * 2 ^ 64 + lo.toNat =
-    2 ^ s * (hi.toNat / 2 ^ s * 2 ^ 64 + 2 ^ (64 - s) * (hi.toNat % 2 ^ s)) + lo.toNat by grind,
-    Nat.mul_add_div (Nat.two_pow_pos s)]
-  lia
-
-/-- The two words of a 128-bit number `hi 2 ^ 64 + lo` shifted right by `64 ≤ s ≤ 127`. -/
-theorem toNat_shift_words_of_le (hi lo : UInt64) {s : Nat} (hs0 : 64 ≤ s) (hs : s ≤ 127) :
-    (hi >>> (s - 64).toUInt64).toNat = (hi.toNat * 2 ^ 64 + lo.toNat) / 2 ^ s := by
-  obtain ⟨t, rfl⟩ : ∃ t, s = 64 + t := ⟨s - 64, by lia⟩
-  rw [toNat_shiftRight_toUInt64 _ (by lia), Nat.add_sub_cancel_left, Nat.pow_add,
-    ← Nat.div_div_eq_div_mul, Nat.mul_comm hi.toNat, Nat.mul_add_div (Nat.two_pow_pos 64),
-    Nat.div_eq_of_lt lo.toNat_lt, Nat.add_zero]
 
 /-- A word is divisible by `2 ^ t` for the position `t` of its lowest set bit (`t = 64` for the
 word `0`). -/

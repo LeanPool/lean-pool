@@ -9,6 +9,7 @@ public import LeanPool.Ratpoints.Model.BruteForce
 public import LeanPool.Ratpoints.Spec.Basic
 
 import Mathlib.Algebra.Order.Ring.Abs
+import Mathlib.Tactic.Ring
 import LeanPool.Ratpoints.Mathlib.Data.Int.Sqrt
 import LeanPool.Ratpoints.Mathlib.Data.List.Basic
 import LeanPool.Ratpoints.Proof.Containers
@@ -60,7 +61,7 @@ theorem horner_eq_sum (w : List ℤ) (x : ℤ) :
     simp only [horner, List.foldr_cons, List.length_cons, Finset.sum_range_succ',
       List.getD_cons_succ, List.getD_cons_zero, pow_zero, mul_one] at ih ⊢
     rw [ih, Finset.mul_sum, add_comm]
-    exact congr($(Finset.sum_congr rfl fun k _ ↦ by ring) + a)
+    exact congrArg (· + a) (Finset.sum_congr rfl fun k _ ↦ by ring)
 
 theorem horner_scaledCoeffs (c : List ℤ) (d : ℕ) (x z : ℤ) :
     horner (scaledCoeffs c d z) x =

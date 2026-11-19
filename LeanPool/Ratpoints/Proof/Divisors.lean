@@ -6,6 +6,7 @@ Authors: Michael Stoll
 module
 
 public import LeanPool.Ratpoints.Spec.Basic
+public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 
 import LeanPool.Ratpoints.Mathlib.Data.Int.GCD

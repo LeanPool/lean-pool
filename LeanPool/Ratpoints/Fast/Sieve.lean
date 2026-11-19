@@ -436,6 +436,11 @@ def squareDens (n hi : Nat) : ByteArray :=
   (List.range' 1 (min n hi)).foldl (fun a s ↦ if n % s == 0 then markSquares a s 1 hi else a)
     ⟨Array.replicate (hi + 1) 0⟩
 
+/-- The upper finite denominator bound: a positive requested bound capped by the height,
+or the height when the requested bound is nonpositive. -/
+def denominatorBound (bHigh : Int) (H : Nat) : Nat :=
+  if bHigh < 1 then H else min H bHigh.toNat
+
 /-- The denominators of the search, for the degree `d`, the height bound `H` and the range of
 `bLow` and `bHigh`: those `b` with `max 1 bLow ≤ b ≤ H`, and `b ≤ bHigh` unless `bHigh < 1`; for
 odd `d` only those of the form `s k ^ 2` with `s` dividing the leading coefficient
@@ -444,7 +449,7 @@ odd `d` only those of the form `s k ^ 2` with `s` dividing the leading coefficie
 `Ratpoints.Fast.forbiddenDens` would not mark); in ascending order. -/
 def denominators (c : List Int) (d H : Nat) (bLow bHigh : Int) : List Nat :=
   let lo := max 1 bLow.toNat
-  let hi := if bHigh < 1 then H else min H bHigh.toNat
+  let hi := denominatorBound bHigh H
   if d % 2 = 1 then collectMarked (squareDens (c.getD d 0).natAbs hi) 1 lo hi []
   else if 0 < c.getD d 0 && isSquare (c.getD d 0).toNat then List.range' lo (hi + 1 - lo)
   else collectMarked (forbiddenDens (c.getD d 0) hi) 0 lo hi []

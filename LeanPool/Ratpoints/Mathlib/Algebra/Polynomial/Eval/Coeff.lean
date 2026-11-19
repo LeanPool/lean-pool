@@ -26,9 +26,7 @@ namespace Polynomial
 @[simp]
 theorem eval_ratCast_map {R S : Type*} [DivisionRing R] [DivisionRing S] (f : R →+* S) (p : R[X])
     (q : ℚ) : (p.map f).eval (q : S) = f (p.eval q) := by
-  induction p using Polynomial.induction_on' with
-  | add p p' hp hp' => simp only [hp, hp', Polynomial.map_add, map_add, eval_add]
-  | monomial n r => simp only [map_ratCast, eval_monomial, map_monomial, map_pow, map_mul]
+  simpa only [map_ratCast] using eval_map_apply (f := f) (p := p) (q : R)
 
 end Polynomial
 

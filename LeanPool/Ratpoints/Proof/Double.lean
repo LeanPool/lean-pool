@@ -73,6 +73,10 @@ namespace Ratpoints
 
 namespace Double
 
+theorem doubleValue_huge : doubleValue huge.bits = ⊤ := by decide
+
+theorem doubleValue_huge_neg : doubleValue huge.neg.bits = ⊥ := by decide
+
 theorem expField_eq (x : Double) : x.expField = x.bits.toNat / 2 ^ 52 % 2 ^ 11 := by
   rw [expField, UInt64.toNat_and, UInt64.toNat_shiftRight,
     show (0x7ff : UInt64).toNat = 2 ^ 11 - 1 from rfl, Nat.and_two_pow_sub_one_eq_mod,

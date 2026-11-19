@@ -6,50 +6,13 @@ Authors: Michael Stoll
 module
 
 /-!
-# The doubles of the C code
+# Binary64 values for interval endpoints
 
-The C code of `ratpoints` holds the ends of its search intervals as `double`s: the intervals of the
-caller (`args->domain`), the default interval `[-h, h]` of the library and the ends of the intervals
-that the Sturm step keeps. Apart from the estimate of the work in the choice of the moduli
-(`numerators_for`, `Ratpoints.numeratorsFor`, where the ends enter the arithmetic of Lean's `Float`
-by their bits, `Ratpoints.Double.toFloat`), it does no floating-point arithmetic on them: it
-converts `long`s to doubles, compares doubles, takes them apart into mantissa and exponent
-(`frexp`), scales them by powers of 2 (`ldexp`), steps to the next double (`nextafter`), converts
-doubles to `long`s and `unsigned long`s, and prints them, as `printf` of glibc does under the
-conversions `%f` and `%.pf` (`Ratpoints.Double.printFixed`); the report of the library prints
-doubles of its cost model too (`Ratpoints.Double.ofFloat`). The model holds a double as its IEEE 754
-binary64 bits (`Ratpoints.Double`), with these operations as functions on the bits, each doing what
-the operation of the C language or the C library does to a double on the platforms of `ratpoints`
-(IEEE 754 binary64 with rounding to nearest, ties to even, as gcc and glibc implement them): the
-comparisons, in which a NaN is unordered and `-0.0` equals `0.0`, the negation and `fabs`, which act
-on the sign bit, the conversions, `frexp`, `ldexp` and `nextafter` towards `±HUGE_VAL`, but for a
-signalling NaN, which glibc's `frexp`, `ldexp` and `nextafter` return quieted and the model as it is
-(`ratpoints` passes them no NaN). The exact value of a finite double is `m 2 ^ e` for the integers
-of `Ratpoints.Double.toDyadic`, and a dyadic number is rounded to a double, to nearest with ties to
-even, by `Ratpoints.Double.ofDyadic`, a fraction by `Ratpoints.Double.ofRatio` (for `strtod`, which
-the program uses).
-
-## Main definitions
-
-* `Ratpoints.Double`: a C `double`, by its bits.
-* `Ratpoints.Double.isNaN`, `Ratpoints.Double.isInf`, `Ratpoints.Double.isFinite`: the NaNs, the
-  infinities and the finite doubles.
-* `Ratpoints.Double.lt`, `Ratpoints.Double.le`, `Ratpoints.Double.beq`: the comparisons `<`, `<=`
-  and `==` of the C language on doubles.
-* `Ratpoints.Double.neg`, `Ratpoints.Double.fabs`: the negation and the absolute value.
-* `Ratpoints.Double.toDyadic`, `Ratpoints.Double.ofDyadic`: the exact value of a finite double, and
-  the double nearest to a dyadic number.
-* `Ratpoints.Double.toRat`, `Ratpoints.Double.ofRatio`: the exact value of a finite double as a
-  rational number, and the double nearest to a fraction.
-* `Ratpoints.Double.assemble`, `Ratpoints.Double.ofSignificand`: the double of a significand and
-  the exponent of its last place, the last step of both roundings.
-* `Ratpoints.Double.ofInt64`, `Ratpoints.Double.toInt64`, `Ratpoints.Double.toUInt64`: the
-  conversions between `long`s and doubles.
-* `Ratpoints.Double.ldexp`, `Ratpoints.Double.frexp`, `Ratpoints.Double.nextUp`,
-  `Ratpoints.Double.nextDown`: the functions of the C library.
-* `Ratpoints.Double.toFloat`, `Ratpoints.Double.ofFloat`: a double as a value of Lean's `Float`,
-  for the cost model of the choice of the moduli, and back, for the report of the library.
-* `Ratpoints.Double.printFixed`: a double as `printf` prints it under `%.pf`.
+The Sturm step represents interval endpoints by their IEEE 754 binary64 bits. This module
+implements comparisons, integer conversions, rounding, and scaling directly on the bits.
+`Ratpoints.Double.toDyadic` expresses a finite double exactly as an integer times a power
+of two. The operations preserve the distinctions among finite values, infinities, and NaNs
+required by the interval specification.
 -/
 
 @[expose] public section
@@ -82,17 +45,6 @@ def twoPow63 : Double := ⟨0x43e0000000000000⟩
 /-- The double `-1.0`, the literal `-1.0` with which `main.c` sets the tuning fields of the
 arguments that are doubles, meaning "the default" (`Ratpoints.SieveOptions`). -/
 def minusOne : Double := ⟨0xbff0000000000000⟩
-
-/-- The double `x` as a value of Lean's `Float`, the IEEE 754 binary64 type with the arithmetic of
-the platform, by its bits: the doubles that the caller gives the cost model of the choice of the
-moduli enter its arithmetic so, the tuning values of the options of the sieve
-(`Ratpoints.SieveOptions`) and the ends of the search intervals (`Ratpoints.numeratorsFor`). -/
-def toFloat (x : Double) : Float := Float.ofBits x.bits
-
-/-- The value `x` of Lean's `Float` as a double, by its bits: the doubles of the cost model of the
-choice of the moduli that the report of the library prints (`Ratpoints.Report.choice`,
-`Ratpoints.Report.moduli`). -/
-def ofFloat (x : Float) : Double := ⟨x.toBits⟩
 
 /-- The sign bit. -/
 def signBit (x : Double) : Bool := x.bits >>> 63 == 1
@@ -284,21 +236,6 @@ def nextDown (x : Double) : Double :=
   else if x.signBit then ⟨x.bits + 1⟩
   else ⟨x.bits - 1⟩
 
-/-- What `printf` of glibc prints for the double `x` under the conversion `%.pf`, of which `%f` and
-`%lf` are `%.6f`: the exact value of `x` rounded to `p` places after the point, ties to even, in
-full however large it is, without the point for `p = 0`, after a `-` whenever the sign bit is set,
-also for `-0.0` and for a negative value that rounds to `0`; `inf` for an infinity and `nan` for a
-NaN, after a `-` when the sign bit is set. -/
-def printFixed (p : Nat) (x : Double) : String :=
-  let sign := if x.signBit then "-" else ""
-  if x.isNaN then sign ++ "nan"
-  else if x.isInf then sign ++ "inf"
-  else
-    let (m, e) := x.toDyadic
-    let n := roundShift (m.natAbs * 10 ^ p) (-e)
-    let f := toString (n % 10 ^ p)
-    sign ++ toString (n / 10 ^ p) ++ if p = 0 then "" else "." ++ "".pushn '0' (p - f.length) ++ f
-
 /-! ### Examples
 
 The operations on the edge cases that matter (both zeros, the subnormals, the largest finite
@@ -415,22 +352,6 @@ prints for them, as bits. -/
     (0x43efffffffffffff, 18446744073709549568), (0x3fefffffffffffff, 0),
     (0x4330000000000000, 4503599627370496)] :
     List (UInt64 × Nat)).all fun (x, n) ↦ (toUInt64 ⟨x⟩).toNat == n
-
--- `printf` of glibc under `%.0f`, `%.1f` and `%.2f`: ties to even at the last place (`0.5`, `1.5`,
--- `2.5`, `0.25`, `0.75`, `0.125`, `0.375`), `-` on the sign bit also for `-0.0` and for negative
--- values that round to `0`, the double nearest to `0.715` and to `1.005`, which lie below the ties,
--- a large value in full, and no point for `%.0f`.
-#guard ([(0x3fe0000000000000, "0", "0.5", "0.50"), (0x3ff8000000000000, "2", "1.5", "1.50"),
-    (0x4004000000000000, "2", "2.5", "2.50"), (0xbfe0000000000000, "-0", "-0.5", "-0.50"),
-    (0x3fd0000000000000, "0", "0.2", "0.25"), (0x3fe8000000000000, "1", "0.8", "0.75"),
-    (0x3fc0000000000000, "0", "0.1", "0.12"), (0x3fd8000000000000, "0", "0.4", "0.38"),
-    (0xbfa47ae147ae147b, "-0", "-0.0", "-0.04"), (0x3fe6e147ae147ae1, "1", "0.7", "0.71"),
-    (0x3ff0147ae147ae14, "1", "1.0", "1.00"), (0x4050000000000000, "64", "64.0", "64.00"),
-    (0x4450000000000000, "1180591620717411303424", "1180591620717411303424.0",
-      "1180591620717411303424.00"), (0xfff0000000000000, "-inf", "-inf", "-inf")] :
-    List (UInt64 × String × String × String)).all fun (x, s0, s1, s2) ↦
-  (Double.mk x).printFixed 0 == s0 && (Double.mk x).printFixed 1 == s1 &&
-    (Double.mk x).printFixed 2 == s2
 
 end Double
 

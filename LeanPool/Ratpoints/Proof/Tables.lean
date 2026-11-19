@@ -8,6 +8,7 @@ module
 public import LeanPool.Ratpoints.Spec.Basic
 public import Mathlib.Algebra.Field.ZMod
 
+import Mathlib.Tactic.Ring
 import LeanPool.Ratpoints.Mathlib.Algebra.Group.Even
 import LeanPool.Ratpoints.Proof.Containers
 

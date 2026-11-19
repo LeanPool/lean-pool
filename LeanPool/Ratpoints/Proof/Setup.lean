@@ -6,7 +6,7 @@ Authors: Michael Stoll
 module
 
 public import Mathlib.Algebra.Polynomial.Derivative
-public import Mathlib.Algebra.Polynomial.Homogenize
+public import Mathlib.Algebra.Squarefree.Basic
 public import LeanPool.Ratpoints.Model.BruteForce
 public import LeanPool.Ratpoints.Model.Candidate
 public import LeanPool.Ratpoints.Model.Setup
@@ -16,7 +16,6 @@ public import LeanPool.Ratpoints.Spec.Basic
 import Mathlib.Data.List.DropRight
 import Mathlib.Data.List.GetD
 import Mathlib.FieldTheory.Perfect
-import LeanPool.Ratpoints.Mathlib.Algebra.Polynomial.Homogenize
 import LeanPool.Ratpoints.Mathlib.Data.Int.Sqrt
 import LeanPool.Ratpoints.Mathlib.Data.List.Nodup
 import LeanPool.Ratpoints.Mathlib.RingTheory.Coprime.Basic
@@ -24,69 +23,16 @@ import LeanPool.Ratpoints.Proof.BruteForce
 import LeanPool.Ratpoints.Proof.Containers
 
 /-!
-# The set-up of a search: the polynomial of a coefficient list, the remainder chain, the reversal
+# Coefficient polynomials, remainder chains, and reversal
 
-The C code works with the polynomial `f = ∑ cᵢ Xⁱ` of the coefficient list `c` and its degree `d`,
-the refusals speak about the binary form `Φ_c` of degree `N = 2 ⌈n / 2⌉`
-(`Ratpoints.binaryFormPoly`), where `n + 1` is the length of `c`. `Φ_c` is the homogenization of `f`
-of degree `N`, so it is squarefree exactly when `f` is squarefree and `N ≤ d + 1`: the two
-conditions that the C code tests, the second when it drops the leading zeros, the first with the
-remainder chain of its Sturm step. The rows of the chain, as polynomials over `ℚ`, form a
-generalized Sturm sequence, positive rational multiples of the entries of Mathlib's
-`Polynomial.sturmSeq`, along which the coprimality of `f` and `f'` passes down to the last two rows,
-so that the chain detects a repeated factor of `f`. In each of its three cases the reversal check
-replaces `c` by its reflection in the even degree `D = d + d % 2` of the binary form, which
-exchanges `x` and `z` in the binary form and so does not change whether it is squarefree, and its
-refusal, of `c₀ = c₁ = 0` for even `d`, stands for `X ^ 2 ∣ Φ_c`; so once the test of the leading
-zeros has passed, the remainder chain of the polynomial that the check hands on detects exactly the
-forms that are not squarefree. The map of the points of the reversed curve to those of the caller's
-curve (`Ratpoints.Sieve.swapPoint`) is a bijection between the points of height at most `H`.
+`Ratpoints.poly` represents a list of integral coefficients as a polynomial over the rationals.
+The signed remainder chain represents the polynomial and its derivative by arrays of integer
+coefficients. The chain detects repeated factors, and consecutive nonzero rows have the signs
+and relative degrees required by the Sturm sequence.
 
-## Main definitions
-
-* `Ratpoints.poly`: the polynomial `f = ∑ cᵢ Xⁱ` over `ℚ` of a coefficient list `c`.
-
-## Main statements
-
-* `Ratpoints.getD_degree_ne_zero_of_pos`, `Ratpoints.natDegree_poly`: the entry of `c` at a
-  positive degree is not zero, and the degree of `f` is `Ratpoints.degree c`.
-* `Ratpoints.poly_take_of_degree_lt`: the entries of `c` above its degree do not change `f`.
-* `Ratpoints.binaryForm_eq_mul_eval`: `F(a, b) = b ^ D f(a / b)` for `b ≠ 0`, with the even degree
-  `D = d + d % 2`.
-* `Ratpoints.binaryFormPoly_eq_homogenize`: `Φ_c` is the homogenization of `f` of degree `N`.
-* `Ratpoints.squarefree_binaryFormPoly_iff`: `Φ_c` is squarefree if and only if `f` is squarefree
-  and `N ≤ d + 1`.
-* `Ratpoints.not_squarefree_binaryFormPoly_of_lt`,
-  `Ratpoints.not_squarefree_binaryFormPoly_of_getD_zero`: a drop of `⌈n / 2⌉` by the leading
-  zeros, and `c₀ = c₁ = 0`, leave a form that is not squarefree.
-* `Ratpoints.Sturm.IsChain.exists_mul_eq`, `Ratpoints.Sturm.IsChain.natDegree_lt`: three
-  consecutive rows `s_k`, `s_(k+1)`, `s_(k+2)` of a remainder chain satisfy
-  `A s_k = Q s_(k+1) - g s_(k+2)` with integers `A, g > 0`, and the degrees decrease from `f'` on.
-* `Ratpoints.Sturm.run_chain_eq_none_iff`: for `d ≥ 1` and `c_d ≠ 0`, the remainder chain of the
-  model is `none` exactly when the polynomial of `c₀, …, c_d` is not squarefree.
-* `Ratpoints.Setup.getD_eq_of_reversal_eq_ok`, `Ratpoints.Setup.binaryForm_eq_of_reversal_eq_ok`:
-  the list that the reversal check reverses `c` to is the reflection of `c` in the degree `D`, and
-  its binary form is that of `c` with `x` and `z` exchanged.
-* `Ratpoints.Setup.degree_eq_of_reversal_eq_ok`, `Ratpoints.Setup.eq_of_reversal_eq_ok_false`: the
-  degree that the check returns is that of the list it returns, and without a reversal these are
-  `c` and its degree.
-* `Ratpoints.Setup.one_le_of_reversal_eq_ok`, `Ratpoints.Setup.degree_le_of_reversal_eq_ok`: the
-  check keeps the degree at least `1`, and does not raise it.
-* `Ratpoints.Setup.squarefree_binaryFormPoly_iff_of_reversal_eq_ok`: once the test of the leading
-  zeros has passed, `Φ_c` is squarefree exactly when the polynomial that the check hands on is.
-* `Ratpoints.Setup.exists_reversal_eq_error_iff`,
-  `Ratpoints.Setup.not_squarefree_binaryFormPoly_of_reversal_eq_error`: the check refuses exactly
-  the even degrees with `c₀ = c₁ = 0` when its switch lets it run, and only forms that are not
-  squarefree.
-* `Ratpoints.Sturm.run_chain_eq_none_iff_of_reversal_eq_ok`: once the test of the leading zeros has
-  passed, the remainder chain of the polynomial that the check hands on is none exactly when `Φ_c`
-  is not squarefree.
-* `Ratpoints.Sieve.isPoint_swapPoint`, `Ratpoints.Sieve.perm_map_swapPoint_bruteForce`: the map of
-  a reversed search sends the points of the reversed curve to points of the caller's curve, and the
-  brute-force reference of the one, mapped, is a permutation of that of the other.
-* `Ratpoints.IsNormalizedPair.swapPoint`, `Ratpoints.Sieve.swapPoint_inj`: the map keeps the pairs
-  `(x, z)` of normalized points of height at most `H` (`Ratpoints.IsNormalizedPair`), with or
-  without the equation, and it is injective on the normalized triples.
+Reversing the list exchanges the two coordinates of the binary form. The reversal map preserves
+the height and normalization of points, and the resulting correspondence applies to the
+brute-force and fast searches.
 -/
 
 @[expose] public section
@@ -95,12 +41,7 @@ namespace Ratpoints
 
 open Polynomial
 
-/-- The polynomial `f = ∑ cᵢ Xⁱ` over `ℚ` with the coefficient list `c`, constant term first, which
-the C code works with; `Ratpoints.binaryFormPoly c` is its homogenization of degree `2 ⌈n / 2⌉`,
-where `n + 1` is the length of `c` (`Ratpoints.binaryFormPoly_eq_homogenize`). Mathlib's
-`Polynomial.ofCoeffList` builds the same polynomial from the list `c.map (↑)`; the sum here has
-the shape of `Ratpoints.binaryFormPoly`, so that `Ratpoints.binaryFormPoly_eq_homogenize` holds
-term by term. -/
+/-- The polynomial over `ℚ` with the coefficient list `c`, constant term first. -/
 noncomputable def poly (c : List ℤ) : ℚ[X] :=
   ∑ i ∈ Finset.range c.length, C (c.getD i 0 : ℚ) * X ^ i
 
@@ -150,40 +91,6 @@ theorem binaryForm_eq_mul_eval {c : List ℤ} (a : ℤ) {b : ℤ} (hb : b ≠ 0)
   rw [coeff_poly, show degree c + degree c % 2 = degree c + degree c % 2 - i + i by
     simp at hi; lia, pow_add, Nat.add_sub_cancel, div_pow]
   field
-
-theorem binaryFormPoly_eq_homogenize (c : List ℤ) :
-    binaryFormPoly c = (poly c).homogenize (2 * (c.length / 2)) := by
-  rw [binaryFormPoly, poly, homogenize_finsetSum]
-  refine Finset.sum_congr rfl fun i hi ↦ ?_
-  rw [homogenize_C_mul, homogenize_X_pow (by lia [Finset.mem_range.mp hi]), mul_assoc]
-
-/-- The binary form `Ratpoints.binaryFormPoly c` is squarefree exactly when the polynomial
-`Ratpoints.poly c` is squarefree and the degree `2 ⌈n / 2⌉` of the form, `n + 1` the length of `c`,
-exceeds the degree of the polynomial by at most one: the two conditions that the C code tests, the
-second when it drops the leading zeros, the first with the remainder chain of its Sturm step. -/
-theorem squarefree_binaryFormPoly_iff (c : List ℤ) :
-    Squarefree (binaryFormPoly c) ↔ Squarefree (poly c) ∧ 2 * (c.length / 2) ≤ degree c + 1 := by
-  rw [binaryFormPoly_eq_homogenize,
-    squarefree_homogenize_iff (by rw [natDegree_poly]; lia [degree_le_length_sub_one c]),
-    natDegree_poly]
-
-/-- When the leading zeros of `c` lower `⌈n / 2⌉`, for `n + 1` the length of `c`, the square of the
-second variable divides the binary form `Ratpoints.binaryFormPoly c`. -/
-theorem not_squarefree_binaryFormPoly_of_lt {c : List ℤ} (h : (degree c + 1) / 2 < c.length / 2) :
-    ¬ Squarefree (binaryFormPoly c) := by
-  rw [squarefree_binaryFormPoly_iff]
-  lia
-
-/-- With `c₀ = c₁ = 0`, the square of the first variable divides the binary form
-`Ratpoints.binaryFormPoly c`, whatever the degree, the zero polynomial included. -/
-theorem not_squarefree_binaryFormPoly_of_getD_zero {c : List ℤ} (h0 : c.getD 0 0 = 0)
-    (h1 : c.getD 1 0 = 0) : ¬ Squarefree (binaryFormPoly c) := by
-  have hX : X ^ 2 ∣ poly c := X_pow_dvd_iff.mpr fun d hd ↦ by
-    obtain rfl | rfl : d = 0 ∨ d = 1 := by lia
-    · rw [coeff_poly, h0, Int.cast_zero]
-    · rw [coeff_poly, h1, Int.cast_zero]
-  rw [squarefree_binaryFormPoly_iff]
-  exact fun h ↦ not_isUnit_X (h.1 X (by rwa [← sq]))
 
 /-! ### The polynomial of an array -/
 
@@ -418,16 +325,6 @@ private theorem binaryForm_neg_neg (c : List ℤ) (x z : ℤ) :
   rw [neg_pow x, neg_pow z]
   linear_combination c.getD i 0 * x ^ i * z ^ (degree c + degree c % 2 - i) * h1
 
--- The polynomial of a list reflected at `N ≥ degree c` is the reflection of `Ratpoints.poly c`.
-private theorem poly_eq_reflect_of_getD {c c' : List ℤ} {N : ℕ} (hc : degree c ≤ N)
-    (h : ∀ i, c'.getD i 0 = if i ≤ N then c.getD (N - i) 0 else 0) :
-    poly c' = (poly c).reflect N :=
-  Polynomial.ext fun i ↦ by
-    rw [coeff_reflect, coeff_poly, coeff_poly, h]
-    split_ifs with hi
-    · rw [revAt_le hi]
-    · rw [revAt_eq_self_of_lt (by lia), getD_eq_zero_of_degree_lt (by lia), Int.cast_zero]
-
 namespace Setup
 
 /-- The square test of the set-up, as GMP decides it, is `IsSquare`. -/
@@ -467,14 +364,6 @@ theorem eq_of_reversal_eq_ok_false {allow : Bool} {c c' : List ℤ} {d d' : ℕ}
     (h : reversal allow c d = .ok (c', d', false)) : c' = c ∧ d' = d := by
   simp only [reversal] at h
   split_ifs at h <;> simp_all
-
-theorem exists_reversal_eq_error_iff {allow : Bool} {c : List ℤ} {d : ℕ} :
-    (∃ e, reversal allow c d = .error e) ↔
-      allow = true ∧ d % 2 = 0 ∧ c.getD 0 0 = 0 ∧ c.getD 1 0 = 0 := by
-  cases allow
-  · simp
-  · simp only [reversal]
-    split_ifs <;> simp_all
 
 -- The cases that reverse: `c₀ = 0`, `c₁ ≠ 0` and the degree `D - 1` (cases 1 and 3), or `c₀ ≠ 0`,
 -- even `d` and the degree `d` (case 2).
@@ -533,50 +422,7 @@ theorem binaryForm_eq_of_reversal_eq_ok {allow : Bool} {c c' : List ℤ} {d' : �
     (by rw [degree_eq_of_reversal_eq_ok h, add_mod_two_eq_of_reversal_eq_ok h]) (fun i hi ↦ ?_) x z
   rw [getD_eq_of_reversal_eq_ok h, ite_eq_left hi]
 
-/-- Once the test of the leading zeros has passed, the binary form `Ratpoints.binaryFormPoly c` is
-squarefree exactly when the polynomial of the list that the reversal check hands on is, whether it
-reverses or not: the reflection does not change whether the homogenization of degree `d + d % 2` is
-squarefree (`Polynomial.squarefree_homogenize_iff_squarefree_reflect`). -/
-theorem squarefree_binaryFormPoly_iff_of_reversal_eq_ok {allow rev : Bool} {c c' : List ℤ}
-    {d' : ℕ} (hc : c.length / 2 ≤ (degree c + 1) / 2)
-    (h : reversal allow c (degree c) = .ok (c', d', rev)) :
-    Squarefree (binaryFormPoly c) ↔ Squarefree (poly c') := by
-  have hl := degree_le_length_sub_one c
-  cases rev
-  · obtain ⟨rfl, rfl⟩ := eq_of_reversal_eq_ok_false h
-    rw [squarefree_binaryFormPoly_iff, and_iff_left (by lia)]
-  have hr := poly_eq_reflect_of_getD le_self_add (getD_eq_of_reversal_eq_ok h)
-  rw [binaryFormPoly_eq_homogenize, show 2 * (c.length / 2) = degree c + degree c % 2 by lia, hr,
-    squarefree_homogenize_iff_squarefree_reflect (by rw [natDegree_poly]; lia)]
-  rw [← hr, natDegree_poly, degree_eq_of_reversal_eq_ok h]
-  lia [add_mod_two_eq_of_reversal_eq_ok h]
-
-/-- The refusal of the reversal check is sound: it refuses only when the square of the first
-variable divides `Ratpoints.binaryFormPoly c`
-(`Ratpoints.not_squarefree_binaryFormPoly_of_getD_zero`). -/
-theorem not_squarefree_binaryFormPoly_of_reversal_eq_error {allow : Bool} {c : List ℤ} {d : ℕ}
-    {e : Refusal} (h : reversal allow c d = .error e) : ¬ Squarefree (binaryFormPoly c) :=
-  have ⟨_, _, h0, h1⟩ := exists_reversal_eq_error_iff.mp ⟨e, h⟩
-  not_squarefree_binaryFormPoly_of_getD_zero h0 h1
-
 end Setup
-
-/-- Once the test of the leading zeros has passed, the remainder chain of the polynomial that the
-reversal check hands on is none exactly when `Ratpoints.binaryFormPoly c` is not squarefree, whether
-the check reverses or not: the polynomial has the degree `d' ≥ 1` that the check returns
-(`Ratpoints.Setup.one_le_of_reversal_eq_ok`), so that the chain detects its repeated factors
-(`Ratpoints.Sturm.run_chain_eq_none_iff`), and it is squarefree exactly when
-`Ratpoints.binaryFormPoly c` is
-(`Ratpoints.Setup.squarefree_binaryFormPoly_iff_of_reversal_eq_ok`). -/
-theorem Sturm.run_chain_eq_none_iff_of_reversal_eq_ok {allow rev : Bool} {c c' : List ℤ} {d' : ℕ}
-    (h2 : 2 ≤ c.length) (hc : c.length / 2 ≤ (degree c + 1) / 2)
-    (h : Setup.reversal allow c (degree c) = .ok (c', d', rev)) :
-    Id.run (chain c' d') = none ↔ ¬ Squarefree (binaryFormPoly c) := by
-  obtain rfl := Setup.degree_eq_of_reversal_eq_ok h
-  have h1 := Setup.one_le_of_reversal_eq_ok h (by lia)
-  rw [run_chain_eq_none_iff h1 (getD_degree_ne_zero_of_pos h1),
-    poly_take_of_degree_lt (Nat.lt_succ_self _),
-    Setup.squarefree_binaryFormPoly_iff_of_reversal_eq_ok hc h]
 
 /-! ### The map of a reversed search -/
 

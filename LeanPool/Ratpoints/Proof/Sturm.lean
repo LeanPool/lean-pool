@@ -727,26 +727,6 @@ theorem SignsAtInvariant.of_cons {σ : Nat → Int} {total cur : Nat} {suff : Li
   simp only [SignsAtInvariant, List.map_cons, signCount] at h ⊢
   grind
 
-theorem SignsAtInvariant.of_cons_neg {σ : Nat → Int} {total cur : Nat} {suff : List Nat}
-    {cmid : Nat} {s s2 : Int} (h : SignsAtInvariant σ total (cur :: suff) (cmid, s))
-    (h2 : s2 = σ cur) (hn : s2 = -s) : SignsAtInvariant σ total suff (cmid + 1, s2) := by
-  subst h2
-  simpa [hn] using h.of_cons
-
-theorem SignsAtInvariant.of_cons_ne {σ : Nat → Int} {total cur : Nat} {suff : List Nat}
-    {cmid : Nat} {s s2 : Int} (h : SignsAtInvariant σ total (cur :: suff) (cmid, s))
-    (h2 : s2 = σ cur) (hn : ¬s2 = -s) (h0 : ¬s2 = 0) :
-    SignsAtInvariant σ total suff (cmid, s2) := by
-  subst h2
-  simpa [hn, h0] using h.of_cons
-
-theorem SignsAtInvariant.of_cons_zero {σ : Nat → Int} {total cur : Nat} {suff : List Nat}
-    {cmid : Nat} {s s2 : Int} (h : SignsAtInvariant σ total (cur :: suff) (cmid, s))
-    (h2 : s2 = σ cur) (hn : ¬s2 = -s) (h0 : ¬¬s2 = 0) :
-    SignsAtInvariant σ total suff (cmid, s) := by
-  subst h2
-  simpa [hn, h0] using h.of_cons
-
 theorem SignsAtInvariant.eq {σ : Nat → Int} {s0 s1 r0 r1 b : Int} {k cmid : Nat}
     (h0 : s0 = r0) (h1 : s1 = r1)
     (h : SignsAtInvariant σ ((if s0 * s1 = -1 then 1 else 0) +
@@ -866,10 +846,7 @@ theorem signsAt_spec (rows : Array (Array Int)) (k : Nat) (nm dem : Int64) :
         | apply Std.WP.Triple.pure
           rintro ⟨⟨h0, h1, h⟩, hs⟩
           refine ⟨h0, h1, ?_⟩
-          first
-          | exact h.of_cons_neg hs ‹_›
-          | exact h.of_cons_ne hs ‹_› ‹_›
-          | exact h.of_cons_zero hs ‹_› ‹_›
+          simpa (disch := assumption) only [← hs, ite_eq_left, ite_eq_right] using h.of_cons
         | split
     · exact fun ⟨h0, h1⟩ ↦ ⟨h0, h1, signsAtInvariant_init signOf _ _ _⟩
   · rintro ⟨count, lastSign⟩

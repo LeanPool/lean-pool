@@ -20,7 +20,7 @@ import LeanPool.Ratpoints.Proof.Containers
 import LeanPool.Ratpoints.Proof.Divisors
 import LeanPool.Ratpoints.Proof.FastDenominators
 import LeanPool.Ratpoints.Proof.Jacobi
-import LeanPool.Ratpoints.Proof.Rounding
+import LeanPool.Ratpoints.Proof.Double
 import LeanPool.Ratpoints.Proof.SturmCoverage
 
 /-!
@@ -1114,27 +1114,28 @@ theorem getElem!_squareDens_of_isCandidate {c : List ℤ} (hd : degree c % 2 = 1
 order. -/
 theorem denominators_sublist (c : List ℤ) (d H : ℕ) (bLow bHigh : ℤ) :
     (denominators c d H bLow bHigh).Sublist (List.range' (max 1 bLow.toNat)
-      ((if bHigh < 1 then H else min H bHigh.toNat) + 1 - max 1 bLow.toNat)) := by
+      ((denominatorBound bHigh H) + 1 - max 1 bLow.toNat)) := by
   simp only [denominators]
-  generalize (if bHigh < 1 then H else min H bHigh.toNat) = hi
+  generalize denominatorBound bHigh H = hi
   split_ifs <;> first | exact collectMarked_sublist _ _ (le_max_left _ _) _ | exact .refl _
+
+private theorem mem_denominatorRange {H b : ℕ} {bLow bHigh : ℤ} :
+    b ∈ List.range' (max 1 bLow.toNat) (denominatorBound bHigh H + 1 - max 1 bLow.toNat) ↔
+      1 ≤ b ∧ b ≤ H ∧ bLow ≤ b ∧ (bHigh < 1 ∨ (b : ℤ) ≤ bHigh) := by
+  rw [List.mem_range'_1, denominatorBound]
+  split_ifs <;> lia
 
 theorem mem_denominators {c : List ℤ} {d H : ℕ} {bLow bHigh : ℤ} {b : ℕ}
     (h : b ∈ denominators c d H bLow bHigh) :
-    1 ≤ b ∧ b ≤ H ∧ bLow ≤ b ∧ (bHigh < 1 ∨ (b : ℤ) ≤ bHigh) := by
-  have h' := (denominators_sublist ..).subset h
-  rw [List.mem_range'_1] at h'
-  split_ifs at h' <;> lia
+    1 ≤ b ∧ b ≤ H ∧ bLow ≤ b ∧ (bHigh < 1 ∨ (b : ℤ) ≤ bHigh) :=
+  mem_denominatorRange.mp ((denominators_sublist ..).subset h)
 
 theorem mem_denominators_of_isCandidate {c : List ℤ} {H : ℕ} {bLow bHigh : ℤ} {a : ℤ} {b : ℕ}
     (h1 : 1 ≤ b) (h2 : b ≤ H) (h3 : bLow ≤ b) (h4 : bHigh < 1 ∨ (b : ℤ) ≤ bHigh)
     (hc : IsCandidate c a b) : b ∈ denominators c (BruteForce.degree c) H bLow bHigh := by
-  have hr : b ∈ List.range' (max 1 bLow.toNat)
-      ((if bHigh < 1 then H else min H bHigh.toNat) + 1 - max 1 bLow.toNat) := by
-    rw [List.mem_range'_1]
-    split_ifs <;> lia
+  have hr := mem_denominatorRange.mpr ⟨h1, h2, h3, h4⟩
   simp only [denominators]
-  generalize (if bHigh < 1 then H else min H bHigh.toNat) = hi at hr ⊢
+  generalize denominatorBound bHigh H = hi at hr ⊢
   have hbhi : b ≤ hi := by lia [List.mem_range'_1.mp hr]
   split_ifs with hd
   · exact (mem_collectMarked_iff (le_max_left _ _)).mpr

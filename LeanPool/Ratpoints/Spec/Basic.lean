@@ -5,53 +5,28 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.MvPolynomial.Eval
-public import Mathlib.Algebra.Squarefree.Basic
-public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.Group.Abs
+public import Mathlib.Data.Int.GCD
 
-import Mathlib.Algebra.Order.Group.Abs
 import Mathlib.Algebra.Order.Group.Int
+import Mathlib.Basic.Finite.Prod
 import Mathlib.Data.Int.Interval
 import Mathlib.Data.List.DropRight
 import Mathlib.Data.List.GetD
+import Mathlib.Data.Set.Finite.Lattice
 
 /-!
 # The specification
 
-The points that `ratpoints` finds, for a coefficient list `c` (constant term first) and a height
-bound `H`: the binary form `F` of `c` and the normalized points `(x, y, z)` of height at most `H`
-on `y ^ 2 = F(x, z)`; and the binary form over `ℚ` that the refusals of the program speak about.
-The specification uses Mathlib and nothing of the model, so that it can be read on its own; the
-comparator challenge restates `Ratpoints.degree`, `Ratpoints.binaryForm`,
-`Ratpoints.IsNormalizedPair`, `Ratpoints.IsPoint` and `Ratpoints.binaryFormPoly` verbatim.
+A point satisfies the integral binary-form equation `y ^ 2 = F(x, z)`.
+The numerator `x` and denominator `z` are coprime and normalized, with `z > 0` or
+`(x, z) = (1, 0)`. The height is `max |x| z`. This specification is independent
+of the executable search.
 
-## Main definitions
-
-* `Ratpoints.degree`: the degree of the polynomial with coefficient list `c`.
-* `Ratpoints.binaryForm`: the binary form `F(x, z)` of even degree that the program evaluates.
-* `Ratpoints.binaryFormPoly`: the binary form over `ℚ` of degree `2 ⌈n / 2⌉`, where `n + 1` is the
-  length of `c`, whose squarefreeness decides the refusals.
-* `Ratpoints.IsNormalizedPair`: the pair `(x, z)` is normalized and of height at most `H`.
-* `Ratpoints.IsPoint`: `(x, y, z)` is a normalized point of height at most `H`.
-* `Ratpoints.points`: the finite set of these points.
-
-## Main statements
-
-* `Ratpoints.eval_binaryFormPoly`: on every input that the program does not refuse, the two
-  forms agree.
-* `Ratpoints.finite_setOf_isPoint`, `Ratpoints.mem_points`: the points form a finite set.
-
-## Implementation notes
-
-The coefficients are written `c.getD i 0`: Mathlib's notation `c[...]` for cycles makes `c[i]`
-fail for a list named `c` wherever all of Mathlib is imported.
-
-The file imports `Mathlib.Algebra.Squarefree.Basic`, which its definitions do not need, for the
-refusal theorems, which say that `Ratpoints.binaryFormPoly c` is not `Squarefree`: the comparator
-challenge imports, besides the model, which uses no Mathlib, exactly the Mathlib modules among the
-public imports of the files of the specification that it restates (this file,
-`Ratpoints.Spec.Order`, `Ratpoints.Spec.Region` and `Ratpoints.Spec.Sturm`), so that the
-definitions that it restates elaborate to the same terms as here.
+* `Ratpoints.binaryForm` evaluates the binary form at the two coordinates.
+* `Ratpoints.IsPoint` specifies the normalized points of bounded height.
+* `Ratpoints.points` is the finite set of these points.
 -/
 
 @[expose] public section
@@ -66,15 +41,6 @@ def degree (c : List ℤ) : ℕ := (c.reverse.dropWhile (· == 0)).length - 1
 polynomial of degree `d` with coefficient list `c`. -/
 def binaryForm (c : List ℤ) (x z : ℤ) : ℤ :=
   ∑ i ∈ Finset.range (degree c + 1), c.getD i 0 * x ^ i * z ^ (degree c + degree c % 2 - i)
-
-/-- The binary form `Φ = ∑ cᵢ Xⁱ Z^(N - i)` over `ℚ` of degree `N = 2 ⌈n / 2⌉`, where `n + 1` is
-the length of `c`: the polynomial made homogeneous of the even degree that the length of its
-coefficient list allows. The refusals of the program speak about this form; on every input that
-is not refused, it agrees with `Ratpoints.binaryForm` (`Ratpoints.eval_binaryFormPoly`). -/
-noncomputable def binaryFormPoly (c : List ℤ) : MvPolynomial (Fin 2) ℚ :=
-  ∑ i ∈ Finset.range c.length,
-    MvPolynomial.C (c.getD i 0 : ℚ) * MvPolynomial.X 0 ^ i *
-      MvPolynomial.X 1 ^ (2 * (c.length / 2) - i)
 
 theorem degree_def (c : List ℤ) : degree c = (c.reverse.dropWhile (· == 0)).length - 1 := rfl
 
@@ -95,23 +61,6 @@ theorem getD_eq_zero_of_degree_lt {c : List ℤ} {i : ℕ} (hi : degree c < i) :
   · rw [List.getD_eq_getElem _ _ h]
     simpa using List.mem_rtakeWhile_imp (List.getElem_mem h)
   · exact List.getD_eq_default _ _ h
-
-/-- On every input that the program does not refuse, `Ratpoints.binaryFormPoly` evaluates to
-`Ratpoints.binaryForm`: the hypothesis, `⌈n / 2⌉ ≤ ⌈d / 2⌉`, makes the two degrees equal. -/
-theorem eval_binaryFormPoly {c : List ℤ} (h : c.length / 2 ≤ (degree c + 1) / 2) (x z : ℤ) :
-    MvPolynomial.eval ![(x : ℚ), z] (binaryFormPoly c) = (binaryForm c x z : ℚ) := by
-  have hN : 2 * (c.length / 2) = degree c + degree c % 2 := by lia [degree_le_length_sub_one c]
-  simp only [binaryFormPoly, binaryForm, hN, map_sum, map_mul, map_pow, MvPolynomial.eval_C,
-    MvPolynomial.eval_X, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
-    Int.cast_sum, Int.cast_mul, Int.cast_pow]
-  rw [Finset.sum_subset (Finset.range_subset_range.mpr (le_max_left c.length (degree c + 1))),
-    Finset.sum_subset (Finset.range_subset_range.mpr (le_max_right c.length (degree c + 1)))]
-  · intro i _ hi
-    rw [getD_eq_zero_of_degree_lt (by simp at hi; lia)]
-    simp
-  · intro i _ hi
-    rw [List.getD_eq_default _ _ (by simpa using hi)]
-    simp
 
 /-- The pair `(x, z)` is normalized and of height at most `H`, as the program prints the points:
 `gcd(x, z) = 1`, `0 < z` or `(x, z) = (1, 0)`, `|x| ≤ H` and `z ≤ H`. So is the pair `(x, z)` of
