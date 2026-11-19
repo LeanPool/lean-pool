@@ -19,15 +19,15 @@ source:
 license: Apache-2.0
 status: verified
 provenance: AI
-provenance_evidence: Proposal #721 and the upstream README identify human-directed AI-generated
-  proofs; the source headers credit Brian Sanders.
+provenance_evidence: 'Proposal #721 and the upstream README identify human-directed AI-generated
+  proofs; the source headers credit Brian Sanders.'
 main_declarations:
 - SimpleGraph.ramseyBound_of_pascal
 main_results:
 - declaration: SimpleGraph.ramseyBound_of_pascal
   informal: Every threshold satisfying Pascal's inequality is a two-colour Ramsey bound.
-  source_ref: Upstream lean-ramsey-reservoir at 7024820542e42feb8177cbf2c624d64106813332; proposed
-    in #721.
+  source_ref: 'Upstream lean-ramsey-reservoir at 7024820542e42feb8177cbf2c624d64106813332; proposed
+    in #721.'
 tags:
 - ramsey-theory
 - book-graphs
