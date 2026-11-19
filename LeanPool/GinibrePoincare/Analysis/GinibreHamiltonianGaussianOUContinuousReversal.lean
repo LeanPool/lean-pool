@@ -61,25 +61,8 @@ theorem continuousMap_law_eq_of_whole_domain_path_law_eq {Ω D E : Type*}
     [MeasurableSpace C(D, E)] [BorelSpace C(D, E)] [PolishSpace C(D, E)]
     (P : Measure Ω) (X Y : Ω → C(D, E)) (hX : Measurable X) (hY : Measurable Y)
     (hlaw : P.map (fun ω t => X ω t) = P.map (fun ω t => Y ω t)) :
-    P.map X = P.map Y := by
-  let d := TopologicalSpace.denseSeq D
-  let f : C(D, E) → ℕ → E := fun x k => x (d k)
-  have hf : MeasurableEmbedding f :=
-    (continuous_pi (fun k => continuous_eval_const (d k))).measurableEmbedding (by
-      intro x y h
-      apply DFunLike.coe_injective
-      exact (TopologicalSpace.denseRange_denseSeq D).equalizer x.continuous y.continuous h)
-  have hXm : Measurable (fun ω t => X ω t) :=
-    Measurable.of_eval (fun t => (continuous_eval_const t).measurable.comp hX)
-  have hYm : Measurable (fun ω t => Y ω t) :=
-    Measurable.of_eval (fun t => (continuous_eval_const t).measurable.comp hY)
-  let R : (D → E) → ℕ → E := fun x k => x (d k)
-  have hR : Measurable R := Measurable.of_eval (fun k => measurable_pi_apply (d k))
-  apply hf.map_injective
-  rw [Measure.map_map hf.measurable hX, Measure.map_map hf.measurable hY]
-  have hh := congrArg (Measure.map R) hlaw
-  rw [Measure.map_map hR hXm, Measure.map_map hR hYm] at hh
-  exact hh
+    P.map X = P.map Y :=
+  actualContinuousMap_law_eq_of_raw_path_law P P X Y hX hY hlaw
 
 /-- The scalar Brownian Ornstein–Uhlenbeck path with rate `rate`, noise scale `√rate` and
 initial value `Z ω`, restricted to `[0, T]` (the zero path if it is not continuous). -/
