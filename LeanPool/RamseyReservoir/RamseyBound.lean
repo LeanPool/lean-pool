@@ -60,20 +60,6 @@ variable {V : Type*} {n m r s : ℕ}
 
 /-! ### The bridge to FiniteRamsey -/
 
-/-- The two-colouring of the complete graph whose red edges are those of `G`. -/
-private def redColoring (G : SimpleGraph V) [DecidableRel G.Adj] : TwoColoring V :=
-  EdgeLabeling.mk (fun x y _ => decide (G.Adj x y)) (by simp [G.adj_comm])
-
-private theorem labelGraph_redColoring_true (G : SimpleGraph V) [DecidableRel G.Adj] :
-    (redColoring G).labelGraph true = G := by
-  ext x y
-  simpa [redColoring, EdgeLabeling.get_mk, imp_false] using G.ne_of_adj
-
-private theorem labelGraph_redColoring_false (G : SimpleGraph V) [DecidableRel G.Adj] :
-    (redColoring G).labelGraph false = Gᶜ := by
-  ext x y
-  simp [redColoring, EdgeLabeling.get_mk]
-
 /-- In a two-colouring, the blue graph is the complement of the red graph. -/
 private theorem compl_labelGraph_true (C : TwoColoring V) :
     (C.labelGraph true)ᶜ = C.labelGraph false := by
@@ -83,13 +69,16 @@ private theorem compl_labelGraph_true (C : TwoColoring V) :
   · simp [h]
 
 /-- **The bridge.** `RamseyBound` is FiniteRamsey's two-colour Ramsey property, with the red graph
-of a colouring in place of `G` and the blue graph in place of `Gᶜ`. -/
+of a colouring in place of `G` and the blue graph in place of `Gᶜ`. A graph `G` is coloured by
+Mathlib's `SimpleGraph.toTopEdgeLabeling`, recoloured from `Fin 2` to `Bool`. -/
 theorem ramseyBound_iff_ramseyProperty : RamseyBound n r s ↔ RamseyProperty n r s := by
   classical
   refine ⟨fun h C => ?_, fun h G => ?_⟩
   · simpa only [compl_labelGraph_true] using h (C.labelGraph true)
-  · simpa only [HasRedClique, HasBlueClique, RedClique, BlueClique, labelGraph_redColoring_true,
-      labelGraph_redColoring_false] using h (redColoring G)
+  · simpa only [HasRedClique, HasBlueClique, RedClique, BlueClique,
+      EdgeLabeling.labelGraph_compRight_equiv, show finTwoEquiv.symm true = 1 from rfl,
+      show finTwoEquiv.symm false = 0 from rfl, toTopEdgeLabeling_labelGraph,
+      toTopEdgeLabeling_labelGraph_compl] using h (G.toTopEdgeLabeling.compRight finTwoEquiv)
 
 /-- **`R(r, s)` is the least Ramsey bound.** `RamseyBound n r s` holds exactly when FiniteRamsey's
 Ramsey number `ramseyNumber ![r, s]` is at most `n`. -/
