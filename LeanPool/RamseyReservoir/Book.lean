@@ -46,6 +46,15 @@ large enough for the missing clique sizes yields a red or a blue clique.
 
 Codegrees are Mathlib's `Fintype.card (G.commonNeighbors u v)`.
 
+The codegree–triangle identity is not new to Lean Pool. The `AsymptoticTrianglePacking` project
+proves the unordered form, summed over edges as two-element cliques, as
+`Nibble.YusterE.sum_commonNbr_eq_three_mul_triangles`. That proof lives in a large internal
+module of an unrelated project, so this file keeps its own short proof in the ordered,
+`commonNeighbors` form that the book bounds below use. The book form of Mantel's theorem
+(`SimpleGraph.exists_adj_card_commonNeighbors_pos`) is likewise the contrapositive of
+`SimpleGraph.four_mul_card_edgeFinset_le_of_cliqueFree_three` in the `GraphExtremal` project; here
+it falls out of the edge-density book bound.
+
 ## References
 
 * [W. Mantel, *Vraagstuk XXVIII*][Mantel1907]
@@ -78,23 +87,21 @@ theorem ContainsBook.mono_spine {m m' t : ℕ} (h : G.ContainsBook m t) (hm : m'
     G.ContainsBook m' t := by
   obtain ⟨R, rfl, hp⟩ := h
   obtain ⟨s, hs, rfl⟩ := exists_subset_card_eq hm
-  exact ⟨⟨s, R.pool, R.isClique_spine.subset (by simpa using hs), R.disjoint.mono_left hs,
+  exact ⟨⟨s, R.pool, R.isClique_spine.subset (by simpa using hs),
     fun x hx y hy => R.adj x (hs hx) y hy⟩, rfl, hp⟩
 
 /-- A book of `G` is a book of every supergraph of `G`. -/
 theorem ContainsBook.mono_graph {H : SimpleGraph V} {m t : ℕ} (h : G.ContainsBook m t)
     (hGH : G ≤ H) : H.ContainsBook m t :=
   let ⟨R, hm, hp⟩ := h
-  ⟨⟨R.spine, R.pool, R.isClique_spine.mono hGH, R.disjoint, fun x hx y hy => hGH (R.adj x hx y hy)⟩,
-    hm, hp⟩
+  ⟨⟨R.spine, R.pool, R.isClique_spine.mono hGH, fun x hx y hy => hGH (R.adj x hx y hy)⟩, hm, hp⟩
 
 /-- A large enough pool yields a red or blue clique. -/
 theorem Reservoir.exists_of_ramseyBound (R : G.Reservoir) {n r s : ℕ}
     (h : RamseyBound n (r - #R.spine) s) (hn : n ≤ #R.pool) :
     (∃ t, G.IsNClique r t) ∨ ∃ t, Gᶜ.IsNClique s t := by
   classical
-  let S : G.Bireservoir := ⟨R.spine, ∅, R.pool, R.isClique_spine, by simp, R.disjoint,
-    disjoint_empty_left _, R.adj, by simp⟩
+  let S : G.Bireservoir := ⟨R.spine, ∅, R.pool, R.isClique_spine, by simp, R.adj, by simp⟩
   exact S.exists_of_ramseyBound (by simpa [S] using h) hn
 
 /-- **Book forcing.** If `G` has a book with an `m`-vertex spine and `n` pages, and
@@ -128,16 +135,9 @@ theorem containsBook_two_iff {t : ℕ} :
     rw [card_commonNeighbors_eq_card_filter]
     exact card_le_card fun w hw => mem_filter.mpr ⟨mem_univ _, R.adj u hu w hw, R.adj v hv w hw⟩
   · rintro ⟨u, v, huv, ht⟩
-    refine ⟨⟨{u, v}, {w | G.Adj u w ∧ G.Adj v w}, ?_, ?_, ?_⟩, card_pair huv.ne, ?_⟩
+    refine ⟨⟨{u, v}, {w | G.Adj u w ∧ G.Adj v w}, ?_, ?_⟩, card_pair huv.ne, ?_⟩
     · rw [coe_pair]
       exact isClique_pair.mpr fun _ => huv
-    · rw [Finset.disjoint_left]
-      intro w hw hw'
-      rw [mem_filter] at hw'
-      rcases mem_insert.mp hw with rfl | hw
-      · exact G.irrefl hw'.2.1
-      · rw [mem_singleton.mp hw] at hw'
-        exact G.irrefl hw'.2.2
     · intro x hx y hy
       rw [mem_filter] at hy
       rcases mem_insert.mp hx with rfl | hx
@@ -210,7 +210,8 @@ theorem card_orderedTriangles [DecidableEq V] :
     exact ⟨_, _, _, hx.1, hx.2.1, hx.2.2, rfl⟩
 
 /-- **Codegrees count triangles.** Summing the codegree over ordered adjacent pairs counts each
-triangle six times. -/
+triangle six times. This is the ordered form of the pool's
+`Nibble.YusterE.sum_commonNbr_eq_three_mul_triangles`, which sums over unordered edges. -/
 theorem sum_card_commonNeighbors_eq [DecidableEq V] :
     ∑ u, ∑ v ∈ G.neighborFinset u, Fintype.card (G.commonNeighbors u v) =
       6 * #(G.cliqueFinset 3) := by
