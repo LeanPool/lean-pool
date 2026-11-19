@@ -124,10 +124,10 @@ theorem wasserstein1_le_wasserstein1Coupling
   have h_dist_meas : AEStronglyMeasurable (fun z : α × α => dist z.1 z.2) π :=
     (measurable_fst.dist measurable_snd).aestronglyMeasurable
   have h_enorm_eq : ∀ z : α × α, ‖dist z.1 z.2‖ₑ = edist z.1 z.2 := fun z => by
-    rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg dist_nonneg, edist_dist]
+    rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg dist_nonneg, edist_dist]
   have h_dist_int : Integrable (fun z : α × α => dist z.1 z.2) π := by
     refine ⟨h_dist_meas, ?_⟩
-    rw [hasFiniteIntegral_iff_enorm]
+    rw [hasFiniteIntegral_iff_eNorm]
     simp_rw [h_enorm_eq]
     exact h_top.lt_top
   -- Step 3: 1-Lipschitz φ is integrable wrt μ and wrt ν, via |φ y| ≤ |φ x₀| + dist y x₀
@@ -624,7 +624,7 @@ lemma measure_compl_biUnion_range_tendsto_zero
   have hanti : Antitone (fun n => (⋃ j ∈ Finset.range n, As j)ᶜ) :=
     fun a b hab => Set.compl_subset_compl.mpr (hBmono a b hab)
   have hmeas : ∀ n, MeasurableSet ((⋃ j ∈ Finset.range n, As j)ᶜ) :=
-    fun n => (MeasurableSet.biUnion (Finset.countable_toSet _) (fun j _ => hAs_mble j)).compl
+    fun n => ((Finset.range n).measurableSet_biUnion (fun j _ => hAs_mble j)).compl
   -- the union of all partial unions is everything
   have hUnion : (⋃ n, ⋃ j ∈ Finset.range n, As j) = Set.univ := by
     apply Set.eq_univ_of_forall
@@ -690,7 +690,7 @@ theorem exists_finiteRange_map_cost_le
   refine ⟨T, hT_mble, hT_fin, ?_⟩
   -- Step 7: decompose the total lintegral into kept + tail parts
   have hS_mble : MeasurableSet (⋃ n ∈ Finset.range N, As n) :=
-    MeasurableSet.biUnion (Finset.countable_toSet _) (fun n _ => hAs_mble n)
+    (Finset.range N).measurableSet_biUnion (fun n _ => hAs_mble n)
   rw [show ∫⁻ x, ENNReal.ofReal (c x (T x)) ∂μ =
       ∫⁻ x in ⋃ n ∈ Finset.range N, As n, ENNReal.ofReal (c x (T x)) ∂μ +
       ∫⁻ x in (⋃ n ∈ Finset.range N, As n)ᶜ, ENNReal.ofReal (c x (T x)) ∂μ
@@ -1189,12 +1189,12 @@ theorem finiteRange_transportation_dual
   have hμmass : (∑ x ∈ hTfin.toFinset, (Measure.map T μ {x})) = 1 := by
     have h1 : (∑ x ∈ hTfin.toFinset, (Measure.map T μ {x}) • Measure.dirac x) Set.univ = 1 := by
       rw [← hμmap]; exact measure_univ
-    simpa only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, smul_eq_mul,
+    simpa only [FunLike.coe_sum, Finset.sum_apply, smul_apply, smul_eq_mul,
       measure_univ, mul_one] using h1
   have hνmass : (∑ y ∈ hSfin.toFinset, (Measure.map S ν {y})) = 1 := by
     have h1 : (∑ y ∈ hSfin.toFinset, (Measure.map S ν {y}) • Measure.dirac y) Set.univ = 1 := by
       rw [← hνmap]; exact measure_univ
-    simpa only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, smul_eq_mul,
+    simpa only [FunLike.coe_sum, Finset.sum_apply, smul_apply, smul_eq_mul,
       measure_univ, mul_one] using h1
   have ha_sum : ∑ i, a i = 1 := by
     have hcoe : (∑ i, a i) = ∑ x ∈ hTfin.toFinset, ((Measure.map T μ) {x}).toReal :=
@@ -1278,7 +1278,7 @@ theorem finiteRange_transportation_dual
       have hfst : Measure.map Prod.fst π = Measure.map T μ := by
         ext E hE
         rw [Measure.map_apply measurable_fst hE, hπ_def, hμmap]
-        simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, smul_eq_mul,
+        simp only [FunLike.coe_sum, Finset.sum_apply, smul_apply, smul_eq_mul,
           Measure.dirac_apply]
         rw [← Finset.sum_coe_sort hTfin.toFinset
           (fun x => Measure.map T μ {x} * Set.indicator E 1 x)]
@@ -1292,7 +1292,7 @@ theorem finiteRange_transportation_dual
       have hsnd : Measure.map Prod.snd π = Measure.map S ν := by
         ext E hE
         rw [Measure.map_apply measurable_snd hE, hπ_def, hνmap]
-        simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply, smul_eq_mul,
+        simp only [FunLike.coe_sum, Finset.sum_apply, smul_apply, smul_eq_mul,
           Measure.dirac_apply]
         rw [Finset.sum_comm, ← Finset.sum_coe_sort hSfin.toFinset
           (fun y => Measure.map S ν {y} * Set.indicator E 1 y)]
@@ -1528,9 +1528,9 @@ theorem wassersteinCost_dual_singleMap_le
     hc_cont.measurable.comp (measurable_id.prodMk hT)
   have hcT_int : Integrable (fun x => c x (T x)) μ := by
     refine ⟨hcT_meas.aestronglyMeasurable, ?_⟩
-    rw [hasFiniteIntegral_iff_enorm]
+    rw [hasFiniteIntegral_iff_eNorm]
     have henorm : ∀ x, ‖c x (T x)‖ₑ = ENNReal.ofReal (c x (T x)) := fun x => by
-      rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (hc_nonneg x (T x))]
+      rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hc_nonneg x (T x))]
     simp_rw [henorm]
     exact lt_top_iff_ne_top.mpr hItop
   -- `f ∘ T` is `μ`-integrable: `|f (T x)| ≤ |f x| + c x (T x)`.

@@ -795,7 +795,7 @@ lemma vlasov_trajectory_lipschitz_bound_on
     let deriv_val : ℝ → PhaseSpace d → ℝ := fun s z =>
       (fderiv ℝ φ (charX s z, charV s z))
         (charV s z, -(convolveFunctionMeasure gradW (ρ s) (charX s z)))
-    apply Convex.lipschitzOnWith_of_nnnorm_hasDerivWithin_le (convex_Ioo _ _)
+    apply Convex.lipschitzOnWith_of_nnNorm_hasDerivWithin_le (convex_Ioo _ _)
       (f' := fun s => deriv_val s z)
     · -- HasDerivWithinAt for each s ∈ nhd; uses hflow_on at s ∈ Ioo 0 T.
       intro s hs
