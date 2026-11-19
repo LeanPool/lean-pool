@@ -404,7 +404,7 @@ jobs:
             time_base="$BUILD_TIME_BASE"
             PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
           fi
-          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
@@ -668,7 +668,7 @@ jobs:
               --base "$time_base" --modules $modules
           fi
           # shellcheck disable=SC2086 # modules is a space-separated list on purpose
-          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
           if grep -nE '(^|: )warning:' shard-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
@@ -887,7 +887,7 @@ jobs:
             time_base="$BUILD_TIME_BASE"
             PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
           fi
-          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
@@ -1166,7 +1166,7 @@ jobs:
             time_base="$BUILD_TIME_BASE"
             PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
           fi
-          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
