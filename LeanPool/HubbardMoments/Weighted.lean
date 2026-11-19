@@ -41,12 +41,12 @@ variable {V σ : Type*} [Fintype V] [DecidableEq V]
 /-! ### Weighted hop sums over subsets -/
 
 theorem mem_arcs_top {p : V × V} : p ∈ arcs (⊤ : SimpleGraph V) ↔ p.1 ≠ p.2 := by
-  simp [arcs]
+  simp
 
 /-- A sum over ordered pairs of distinct sites. -/
 theorem sum_arcs_top (g : V → V → ℂ) :
     ∑ p ∈ arcs (⊤ : SimpleGraph V), g p.1 p.2 = ∑ i, ∑ j ∈ univ.erase i, g i j := by
-  rw [arcs, sum_filter, Fintype.sum_prod_type]
+  rw [arcs, SimpleGraph.interedges_def, univ_product_univ, sum_filter, Fintype.sum_prod_type]
   refine sum_congr rfl fun i _ => ?_
   rw [← sum_filter]
   simp only [SimpleGraph.top_adj]

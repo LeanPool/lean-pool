@@ -19,6 +19,7 @@ public import LeanPool.HubbardMoments.Main
 public import LeanPool.HubbardMoments.Peierls
 public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.ProjectedHopping
+public import LeanPool.HubbardMoments.SamplingDefinitions
 public import LeanPool.HubbardMoments.SchriefferWolff
 public import LeanPool.HubbardMoments.SecondMoment
 public import LeanPool.HubbardMoments.Sectors

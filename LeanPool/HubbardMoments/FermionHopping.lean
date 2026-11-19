@@ -122,16 +122,16 @@ theorem fermionHopping_isHermitian
     hcr, annihilate_conjTranspose]
   refine sum_nbij' Prod.swap Prod.swap ?_ ?_ ?_ ?_ ?_
   · intro p hp
-    simpa [arcs, G.adj_comm] using hp
+    simpa [G.adj_comm] using hp
   · intro p hp
-    simpa [arcs, G.adj_comm] using hp
+    simpa [G.adj_comm] using hp
   · intro p _
     rfl
   · intro p _
     rfl
   · intro p hp
     refine sum_congr rfl fun _ _ => ?_
-    simp only [h _ _ (mem_filter.mp hp).2, Prod.fst_swap, Prod.snd_swap]
+    simp only [h _ _ ((mem_arcs G).mp hp), Prod.fst_swap, Prod.snd_swap]
 
 /-- **`H_t` is a hopping operator**: it connects only Fock states one hop apart. -/
 theorem fermionHopping_isHoppingOperator :
@@ -139,7 +139,7 @@ theorem fermionHopping_isHoppingOperator :
   refine ⟨fun a b hab => ?_⟩
   rw [fermionHopping_apply]
   refine sum_eq_zero fun p hp => sum_eq_zero fun s _ => ?_
-  have hadj : G.Adj p.1 p.2 := (mem_filter.1 hp).2
+  have hadj : G.Adj p.1 p.2 := (mem_arcs G).mp hp
   rw [ite_eq_right_iff.2 ?_, mul_zero]
   rintro ⟨h₁, h₂, rfl⟩
   refine absurd ⟨p.1, p.2, s, hadj, h₁, fun h => h₂ (mem_erase.2 ⟨?_, h⟩), rfl⟩ hab
@@ -177,7 +177,7 @@ theorem norm_projectedFermionHopping_move {c : Config V σ} {i j : V}
     exact absurd (mem_univ s₀) h
   · intro p hp hpij
     refine sum_eq_zero fun s _ => ?_
-    have hadj' : G.Adj p.1 p.2 := (mem_filter.1 hp).2
+    have hadj' : G.Adj p.1 p.2 := (mem_arcs G).mp hp
     rw [ite_eq_right_iff.2, mul_zero]
     rintro ⟨h₁, h₂, h₃⟩
     have hne : (p.1, s) ≠ (p.2, s) := fun h => G.ne_of_adj hadj' (congrArg Prod.fst h)
@@ -186,7 +186,7 @@ theorem norm_projectedFermionHopping_move {c : Config V σ} {i j : V}
     have e₂' : p.2 = j := congrArg Prod.fst e₂
     exact absurd (Prod.ext e₁' e₂') hpij
   · intro h
-    exact absurd (by simp [arcs, hadj] : (i, j) ∈ arcs G) h
+    exact absurd (by simp [hadj] : (i, j) ∈ arcs G) h
 
 /-- In the configuration basis, an entry vanishes whenever no graph hop gives its target. -/
 theorem projectedFermionHopping_apply_eq_zero (c b : Config V σ)
@@ -194,7 +194,7 @@ theorem projectedFermionHopping_apply_eq_zero (c b : Config V σ)
     projectedFermionHopping G amplitude ord b c = 0 := by
   simp only [projectedFermionHopping, fermionHopping_apply]
   refine sum_eq_zero fun p hp => sum_eq_zero fun s _ => ?_
-  have hadj : G.Adj p.1 p.2 := (mem_filter.1 hp).2
+  have hadj : G.Adj p.1 p.2 := (mem_arcs G).mp hp
   have hne : p.1 ≠ p.2 := G.ne_of_adj hadj
   rw [ite_eq_right_iff.2, mul_zero]
   rintro ⟨h₁, h₂, h₃⟩

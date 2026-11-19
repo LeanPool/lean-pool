@@ -8,7 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import Mathlib.Analysis.Complex.Norm
-public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Density
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 
 /-!
@@ -57,13 +57,26 @@ section Hops
 variable {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
 
 /-- The directed edges of `G`: ordered pairs of adjacent vertices. -/
-def arcs : Finset (V × V) := univ.filter (fun p => G.Adj p.1 p.2)
+def arcs : Finset (V × V) := G.interedges univ univ
+
+@[simp]
+theorem mem_arcs {p : V × V} : p ∈ arcs G ↔ G.Adj p.1 p.2 := by
+  simp [arcs, G.mem_interedges_iff]
 
 /-- The hops out of a configuration `S` (the set of occupied sites): directed edges from
 an occupied site to an empty one. Their number is the `M(S)` of the paper, and the
 diagonal element of `H∞²` at `S` is `λ² M(S)`. -/
 def hops [DecidableEq V] (S : Finset V) : Finset (V × V) :=
-  (arcs G).filter (fun p => p.1 ∈ S ∧ p.2 ∉ S)
+  G.interedges S Sᶜ
+
+theorem mem_hops [DecidableEq V] {S : Finset V} {p : V × V} :
+    p ∈ hops G S ↔ G.Adj p.1 p.2 ∧ p.1 ∈ S ∧ p.2 ∉ S := by
+  simp [hops, G.mem_interedges_iff, and_comm, and_assoc]
+
+theorem hops_eq_filter [DecidableEq V] (S : Finset V) :
+    hops G S = (arcs G).filter (fun p => p.1 ∈ S ∧ p.2 ∉ S) := by
+  ext p
+  simp [mem_hops]
 
 end Hops
 
@@ -241,24 +254,6 @@ noncomputable def projectedHubbardWeighted (tt : V → V → ℂ) (ord : V × σ
   projectedFermionHopping ⊤ (fun i j => -tt j i) ord
 
 end HubbardOperators
-
-section FinitePopulation
-
-variable {V : Type*} [Fintype V] [DecidableEq V]
-
-/-- **Moments of sampling without replacement.** The `ℓ`-th moment of the sum of `k` values
-drawn without replacement from the population `ε`: the average of `(∑_{i ∈ K} ε_i)^ℓ` over
-the `k`-subsets `K` of `V`. For `k` non-interacting fermions of one spin species with
-single-particle energies `ε`, the many-body energies are exactly these sums (one Slater
-determinant per `K`), so this is the `μ_ℓ` of the paper at `U = 0`. -/
-noncomputable def sampleMoment (ε : V → ℝ) (k ℓ : ℕ) : ℝ :=
-  (∑ K ∈ powersetCard k univ, (∑ i ∈ K, ε i) ^ ℓ) / (Fintype.card V).choose k
-
-/-- `p_m = k(k-1)⋯(k-m+1) / (N(N-1)⋯(N-m+1))`: the probability that `m` given distinct labels
-are all among `k` labels drawn without replacement from `N`. It is `0` for `m > k`. -/
-noncomputable def inclusionProb (N k m : ℕ) : ℝ := (k.descFactorial m : ℝ) / N.descFactorial m
-
-end FinitePopulation
 
 /-- **One hop of labelled hard-core particles.** `pos p` is the site of particle `p`. One
 particle `p` moves to a site `w` adjacent to its own that no particle occupies. A closed walk

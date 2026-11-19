@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.PeierlsModel
+public import LeanPool.HubbardMoments.SamplingDefinitions
 public import LeanPool.HubbardMoments.TorusBandDefinition
 public import LeanPool.HubbardMoments.Torus
 public import Mathlib.Combinatorics.SimpleGraph.Clique
@@ -18,12 +19,13 @@ public import Mathlib.GroupTheory.Perm.Cycle.Type
 
 Each definition below is a proposition stating one claim of the paper, in terms of
 the definitions of the hopping matrices and torus band. `HubbardMoments.Main` proves
-each of them.
+each of them. The exact sector counts appear in
+[Supplemental Material S12](https://arxiv.org/src/2611.19929v1/anc/Supplemental_Material.pdf#page=132).
 
 | proposition | paper |
 |---|---|
-| `SectorDimensions` | sector-counting rule (§4, Fig. 3) |
-| `SectorDimensionsQuoted` | the sector dimensions quoted in §4 |
+| `SectorDimensions` | sector-counting rule (S12), with examples in §4, Fig. 3 |
+| `SectorDimensionsQuoted` | exact sector dimensions (S12) |
 | `HopAverage` | exact second-moment theorem, combinatorial part (§5.2) |
 | `HopAverageRegular` | its `z`-regular form (§5.2) |
 | `HopAverageTorus` | its square-lattice form (§5.2) |
@@ -105,7 +107,8 @@ def SectorDimensions : Prop :=
     (sector V a b k).card =
       (Fintype.card V).choose a * a.choose k * (Fintype.card V - a).choose (b - k)
 
-/-- **The quoted sector dimensions.** Two up and two down electrons on the 4 × 4 lattice:
+/-- **The sector dimensions in Supplemental Material S12.** Two up and two down electrons on
+the 4 × 4 lattice:
 10920, 3360 and 120 states with 0, 1 and 2 doublons. Two up and one down electron on the
 5 × 5 lattice: 6900 and 600 states with 0 and 1 doublon. -/
 def SectorDimensionsQuoted : Prop :=

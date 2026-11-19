@@ -7,8 +7,10 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.HubbardMoments.Defs
-import Mathlib.Data.Finset.Powerset
+public import LeanPool.HubbardMoments.SamplingDefinitions
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Nat.Factorial.Cast
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -94,25 +96,62 @@ theorem sum_eq_sum_ite (ε : V → ℝ) (K : Finset V) :
     ∑ i ∈ K, ε i = ∑ i, if i ∈ K then ε i else 0 := by
   rw [sum_ite_mem, univ_inter]
 
+/-- The distinct labels in an ordered tuple. -/
+def tupleLabels {m : ℕ} (tuple : Fin m → V) : Finset V :=
+  univ.image tuple
+
+/-- Expand a power over finite tuples whose labels all belong to the sample. -/
+theorem sum_pow_eq_sum_tuples (ε : V → ℝ) (K : Finset V) (m : ℕ) :
+    (∑ i ∈ K, ε i) ^ m = ∑ tuple : Fin m → V,
+      if tupleLabels tuple ⊆ K then ∏ i, ε (tuple i) else 0 := by
+  rw [Finset.sum_pow', ← sum_filter]
+  congr 1
+  ext tuple
+  rw [Fintype.mem_piFinset]
+  change (∀ i, tuple i ∈ K) ↔ tuple ∈ univ.filter (fun t ↦ univ.image t ⊆ K)
+  rw [mem_filter, image_subset_iff]
+  simp
+
+omit [DecidableEq V] in
+private theorem sum_tuples_succ {m : ℕ} (f : (Fin (m + 1) → V) → ℝ) :
+    ∑ tuple, f tuple = ∑ a, ∑ tail, f (Fin.cons a tail) := by
+  calc
+    _ = ∑ p : V × (Fin m → V), f (Fin.cons p.1 p.2) :=
+      (Fintype.sum_equiv (Fin.consEquiv (fun _ ↦ V)) _ _ fun _ ↦ rfl).symm
+    _ = _ := Fintype.sum_prod_type _
+
+omit [DecidableEq V] in
+private theorem sum_tuples_zero (f : (Fin 0 → V) → ℝ) :
+    ∑ tuple, f tuple = f Fin.elim0 := by
+  exact Fintype.sum_unique _
+
+omit [Fintype V] in
+private theorem tupleLabels_cons {m : ℕ} (a : V) (tail : Fin m → V) :
+    tupleLabels (Fin.cons a tail) = insert a (tupleLabels tail) := by
+  ext v
+  simp [tupleLabels, Fin.exists_fin_succ, eq_comm]
+
+omit [Fintype V] in
+private theorem tupleLabels_zero (tuple : Fin 0 → V) : tupleLabels tuple = ∅ := by
+  simp [tupleLabels]
+
 /-- `S_K⁴` as a sum over 4-tuples of sites, each present when the tuple lies in `K`. -/
 theorem sum_pow_four_eq (ε : V → ℝ) (K : Finset V) :
     (∑ i ∈ K, ε i) ^ 4 = ∑ a, ∑ b, ∑ c, ∑ d,
       if insert d (insert c (insert b {a})) ⊆ K then ε a * ε b * ε c * ε d else 0 := by
-  rw [sum_eq_sum_ite, show ∀ x : ℝ, x ^ 4 = x * x * x * x from fun x => by ring]
-  simp only [sum_mul, mul_sum]
-  refine sum_congr rfl fun a _ => sum_congr rfl fun b _ => sum_congr rfl fun c _ =>
-    sum_congr rfl fun d _ => ?_
-  by_cases ha : a ∈ K <;> by_cases hb : b ∈ K <;> by_cases hc : c ∈ K <;>
-    by_cases hd : d ∈ K <;> simp [ha, hb, hc, hd, insert_subset_iff]
-  ring
+  rw [sum_pow_eq_sum_tuples]
+  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
+    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one, mul_assoc,
+    insert_subset_iff, singleton_subset_iff, and_comm, and_assoc]
+  rfl
 
 theorem sum_pow_two_eq (ε : V → ℝ) (K : Finset V) :
     (∑ i ∈ K, ε i) ^ 2 = ∑ a, ∑ b, if insert b {a} ⊆ K then ε a * ε b else 0 := by
-  rw [sum_eq_sum_ite, sq]
-  simp only [sum_mul, mul_sum]
-  refine sum_congr rfl fun a _ => sum_congr rfl fun b _ => ?_
-  by_cases ha : a ∈ K <;> by_cases hb : b ∈ K <;> simp [ha, hb, insert_subset_iff]
-  ring
+  rw [sum_pow_eq_sum_tuples]
+  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
+    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one,
+    insert_subset_iff, singleton_subset_iff, and_comm]
+  rfl
 
 section Peel
 
@@ -240,29 +279,43 @@ theorem sum_powersetCard_sum_four (k : ℕ) (F : Finset V → V → V → V → 
   refine sum_congr rfl fun c _ => ?_
   rw [sum_comm]
 
+/-- Every tuple contributes to a sample moment with the inclusion probability of its label set. -/
+theorem sampleMoment_eq_sum_tuples (m : ℕ) {k : ℕ} (hk : k ≤ Fintype.card V) :
+    sampleMoment ε k m = ∑ tuple : Fin m → V,
+      inclusionProb (Fintype.card V) k (tupleLabels tuple).card * ∏ i, ε (tuple i) := by
+  have hC : ((Fintype.card V).choose k : ℝ) ≠ 0 := by exact_mod_cast (Nat.choose_pos hk).ne'
+  rw [sampleMoment, div_eq_iff hC]
+  simp_rw [sum_pow_eq_sum_tuples]
+  rw [sum_comm, sum_mul]
+  refine sum_congr rfl fun tuple _ ↦ ?_
+  rw [sum_powersetCard_ite_subset]
+  ring
+
 /-- The sampled fourth moment as a 4-index sum weighted by `p_m`. -/
 theorem sampleMoment_four_eq {k : ℕ} (hk : k ≤ Fintype.card V) :
     sampleMoment ε k 4 = ∑ a, ∑ b, ∑ c, ∑ d,
       inclusionProb (Fintype.card V) k (insert d (insert c (insert b ({a} : Finset V)))).card *
         (ε a * ε b * ε c * ε d) := by
-  have hC : ((Fintype.card V).choose k : ℝ) ≠ 0 := by exact_mod_cast (Nat.choose_pos hk).ne'
-  rw [sampleMoment, sum_congr rfl fun K _ => sum_pow_four_eq ε K, sum_powersetCard_sum_four,
-    div_eq_iff hC]
-  simp only [sum_powersetCard_ite_subset, sum_mul]
-  exact sum_congr rfl fun a _ => sum_congr rfl fun b _ => sum_congr rfl fun c _ =>
-    sum_congr rfl fun d _ => by ring
+  rw [sampleMoment_eq_sum_tuples ε 4 hk]
+  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
+    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one, mul_assoc]
+  refine sum_congr rfl fun a _ ↦ sum_congr rfl fun b _ ↦ sum_congr rfl fun c _ ↦
+    sum_congr rfl fun d _ ↦ ?_
+  congr 3
+  ext x
+  simp only [mem_insert, mem_singleton, or_comm, or_left_comm]
 
 /-- The sampled second moment as a 2-index sum weighted by `p_m`. -/
 theorem sampleMoment_two_eq {k : ℕ} (hk : k ≤ Fintype.card V) :
     sampleMoment ε k 2 = ∑ a, ∑ b,
       inclusionProb (Fintype.card V) k (insert b ({a} : Finset V)).card * (ε a * ε b) := by
-  have hC : ((Fintype.card V).choose k : ℝ) ≠ 0 := by exact_mod_cast (Nat.choose_pos hk).ne'
-  rw [sampleMoment, sum_congr rfl fun K _ => sum_pow_two_eq ε K, sum_comm, div_eq_iff hC]
-  simp only [sum_mul]
-  refine sum_congr rfl fun a _ => ?_
-  rw [sum_comm]
-  simp only [sum_powersetCard_ite_subset]
-  exact sum_congr rfl fun b _ => by ring
+  rw [sampleMoment_eq_sum_tuples ε 2 hk]
+  simp_rw [sum_tuples_succ, sum_tuples_zero, tupleLabels_cons, tupleLabels_zero, insert_empty_eq,
+    Fin.prod_univ_succ, Fin.prod_univ_zero, Fin.cons_zero, Fin.cons_succ, mul_one]
+  refine sum_congr rfl fun a _ ↦ sum_congr rfl fun b _ ↦ ?_
+  congr 3
+  ext x
+  simp only [mem_insert, mem_singleton, or_comm]
 
 variable {ε} (hε : ∑ v, ε v = 0)
 include hε

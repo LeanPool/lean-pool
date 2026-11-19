@@ -246,31 +246,28 @@ theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c
     rw [← hH.isHermitian.apply c b]
     change starRingEnd ℂ (H b c) * H b c = _
     rw [mul_comm, Complex.mul_conj, Complex.normSq_eq_norm_sq, Complex.ofReal_pow]
-  have hmem : ∀ p ∈ hops G (occ c), G.Adj p.1 p.2 ∧ c p.1 ≠ none ∧ c p.2 = none := by
-    intro p hp
-    simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not] at hp
-    exact ⟨hp.1, hp.2.1, hp.2.2⟩
+  have hmem (p : V × V) :
+      p ∈ hops G (occ c) ↔ G.Adj p.1 p.2 ∧ c p.1 ≠ none ∧ c p.2 = none := by
+    rw [mem_hops, mem_occ, mem_occ, not_not]
   have himage : (hops G (occ c)).image (fun p => move c p.1 p.2) ⊆ basis V n := by
     intro b hb
     obtain ⟨p, hp, rfl⟩ := mem_image.mp hb
-    exact move_mem_basis hc (hmem p hp).2.1 (hmem p hp).2.2
+    exact move_mem_basis hc ((hmem p).mp hp).2.1 ((hmem p).mp hp).2.2
   simp_rw [hsq]
   rw [← sum_subset himage]
   · rw [sum_image]
     · refine sum_congr rfl fun p hp => ?_
-      obtain ⟨hadj, hoccupied, hempty⟩ := hmem p hp
+      obtain ⟨hadj, hoccupied, hempty⟩ := (hmem p).mp hp
       rw [hH.norm_apply_move c p.1 p.2 hadj hoccupied hempty]
     · intro p hp q hq hpq
-      have hp' := hmem p (mem_coe.mp hp)
-      have hq' := hmem q (mem_coe.mp hq)
+      have hp' := (hmem p).mp (mem_coe.mp hp)
+      have hq' := (hmem q).mp (mem_coe.mp hq)
       obtain ⟨h1, h2⟩ := move_inj c hp'.2.1 hp'.2.2 hq'.2.1 hq'.2.2 hpq
       exact Prod.ext h1 h2
   · intro b _ hb
     have hentry : H b c = 0 := by
       refine hH.apply_eq_zero c b fun ⟨i, j, hij, hi, hj, hbm⟩ => hb ?_
-      refine mem_image.mpr ⟨(i, j), ?_, hbm.symm⟩
-      simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not]
-      exact ⟨hij, hi, hj⟩
+      exact mem_image.mpr ⟨(i, j), (hmem _).mpr ⟨hij, hi, hj⟩, hbm.symm⟩
     simp [hentry]
 
 /-- **The diagonal of `H²`.** At a configuration `c` of the basis, the diagonal element of

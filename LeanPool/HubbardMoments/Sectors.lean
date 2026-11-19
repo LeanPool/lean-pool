@@ -29,8 +29,9 @@ with doublon number `k`.
 * `card_sector'`: the same number written as `C(N, k) · C(N - k, a - k) · C(N - a, b - k)`
   (place the doublons, then the remaining up electrons, then the remaining down
   electrons), for `k ≤ a`.
-* `sector_dims_L4_two_two`, `sector_dims_L5_two_one`: the sector dimensions quoted
-  with the sector-counting figure of the paper: 10920, 3360 and 120 states with 0, 1
+* `sector_dims_L4_two_two`, `sector_dims_L5_two_one`: the sector dimensions listed in
+  [Supplemental Material S12](https://arxiv.org/src/2611.19929v1/anc/Supplemental_Material.pdf#page=132)
+  for the examples in §4 and Figure 3: 10920, 3360 and 120 states with 0, 1
   and 2 doublons for two up and two down electrons on the 4 × 4 lattice, and 6900 and
   600 states with 0 and 1 doublon for two up and one down electron on the 5 × 5
   lattice.

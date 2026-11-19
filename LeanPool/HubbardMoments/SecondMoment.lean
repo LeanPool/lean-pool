@@ -59,8 +59,9 @@ variable {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableR
 
 omit [DecidableEq V] in
 /-- There are `2|E|` directed edges. -/
-theorem card_arcs : (arcs G).card = 2 * G.edgeFinset.card :=
-  G.two_mul_card_edgeFinset.symm
+theorem card_arcs : (arcs G).card = 2 * G.edgeFinset.card := by
+  rw [arcs, G.interedges_def, univ_product_univ]
+  exact G.two_mul_card_edgeFinset.symm
 
 omit [DecidableEq V] in
 /-- The sum of the degrees of a regular graph counts each edge twice. -/
@@ -103,7 +104,7 @@ of arc weights over all hops factors into an arc sum and one binomial coefficien
 theorem sum_hops {R : Type*} [CommSemiring R] (weight : V × V → R) (n : ℕ) (hn : 1 ≤ n) :
     ∑ S ∈ powersetCard n (univ : Finset V), ∑ p ∈ hops G S, weight p =
       (∑ p ∈ arcs G, weight p) * ((Fintype.card V - 2).choose (n - 1) : R) := by
-  simp only [hops, sum_filter]
+  simp only [hops_eq_filter, sum_filter]
   rw [sum_comm, sum_mul]
   refine sum_congr rfl fun p hp => ?_
   have hadj : G.Adj p.1 p.2 := (mem_filter.mp hp).2
@@ -147,7 +148,7 @@ theorem sum_hops_mul {R : Type*} [CommSemiring R] (weight : V × V → R) (n : �
       (∑ p ∈ arcs G, weight p) *
         ((n * (Fintype.card V - n) * (Fintype.card V).choose n : ℕ) : R) := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [hops]
+  · simp [hops_eq_filter]
   rw [sum_hops G weight n hn, mul_assoc, ← Nat.cast_mul, choose_sub_two_mul _ _ hn]
 
 /-- **The exact hop count.** For every `n` and every finite simple graph,

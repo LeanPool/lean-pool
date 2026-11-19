@@ -11,7 +11,6 @@ public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.FermionHopping
 public import LeanPool.HubbardMoments.SchriefferWolff
 public import LeanPool.HubbardMoments.TorusMoments
-import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Complex.Trigonometric
 
 /-!
@@ -78,8 +77,8 @@ theorem projectedHubbard_isProjectedHopping (ht : 0 ≤ t) {A : V → V → ℝ}
   · intro i j hij
     rw [star_peierlsAmplitude, hA j i hij.symm]
   · intro c i j hadj hci hcj
-    simpa [projectedHubbard, peierlsAmplitude, Complex.norm_mul, Real.norm_of_nonneg ht] using
-      norm_projectedFermionHopping_move G
+    simpa [projectedHubbard, peierlsAmplitude, Complex.norm_mul, Complex.norm_real,
+      Real.norm_of_nonneg ht] using norm_projectedFermionHopping_move G
         (fun i j => peierlsAmplitude t (A j i)) ord hadj hci hcj
 
 /-! ### Consequences -/
