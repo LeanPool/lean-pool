@@ -606,7 +606,7 @@ private meta def readBellmanLeaf (expression : Lean.Expr) : Lean.MetaM (Option P
   readBellmanCoefficients
     (readBellmanCoefficients (readBellmanCoefficients readBellmanInteger)) expression
 
--- Expose transparent wrappers while leaving dense operations for staging or fallback.
+-- Expose transparent wrappers without evaluating dense operations.
 private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
   let isTerminalHead (term : Lean.Expr) : Bool :=
     match term.getAppFn.constName? with
@@ -623,7 +623,7 @@ private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Ex
 private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := do
   if let some power ← readBellmanNat expression then return power
   let some power ← readBellmanNat (← Lean.Meta.whnfD expression)
-    | throwError "expected a closed natural power"
+    | throwError "unsupported Bellman exponent {expression}: expected a closed natural power"
   return power
 
 private meta def bellmanOperands (expression : Lean.Expr) : Lean.MetaM (Array Lean.Expr) := do
@@ -631,10 +631,12 @@ private meta def bellmanOperands (expression : Lean.Expr) : Lean.MetaM (Array Le
   if (bellmanBinaryOperation expression).isSome then
     return #[args[args.size - 2]!, args[args.size - 1]!]
   if isBellmanPower expression then
+    let _ ← readBellmanPower args[args.size - 1]!
     return #[args[args.size - 2]!]
   if isBellmanNegation expression then
     return #[args[args.size - 1]!]
-  let some _ ← readBellmanLeaf expression | throwError "unsupported Bellman polynomial term"
+  let some _ ← readBellmanLeaf expression
+    | throwError "unsupported Bellman polynomial term {expression}"
   return #[]
 
 -- Visit operands before their parents and reuse depths across shared expressions.
@@ -700,7 +702,7 @@ private meta def normalizeBellmanPolynomial
         pure (-value, Lean.mkApp operator valueExpr, ← Lean.Meta.mkCongrArg operator proof)
       else
         let some value ← readBellmanLeaf expression
-          | throwError "unsupported Bellman polynomial term"
+          | throwError "unsupported Bellman polynomial term {expression}"
         pure (value, expression, ← Lean.Meta.mkEqRefl expression)
     let quoted := Lean.toExpr value
     let reduction ← checkBellmanReduction operands quoted
@@ -717,11 +719,11 @@ local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext 
     (← bellmanReductionDepth expression) expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
--- The staged path is optional. Closed charts still admit the original kernel check.
-local macro "checkBellmanChart" : tactic =>
-  `(tactic| first
-    | { conv_lhs => { arg 1; reduceBellmanPolynomial }; rfl }
-    | decide +kernel)
+-- Keep these charts on the staged path so unsupported edits fail at the offending term.
+local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
+  Lean.Elab.Tactic.evalTactic (← `(tactic| (
+    conv_lhs => { arg 1; reduceBellmanPolynomial }
+    rfl)))
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
