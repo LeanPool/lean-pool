@@ -122,7 +122,7 @@ theorem exists_openPartialHomeomorph_contDiffOn_symm {f : E → E} {p : E} {W : 
     refine (e.contDiffAt_symm hy (f₀' := M) ?_ (hfa _ hxW)).contDiffWithinAt
     rw [hM]
     exact hfd _ hxW
-  · exact ((hfa p hpW).hasStrictFDerivAt' hfp hn0).to_localInverse.hasFDerivAt
+  · exact ((hfa p hpW).hasStrictFDerivAt hfp hn0).to_localInverse.hasFDerivAt
 
 omit [CompleteSpace E] in
 /-- A family of graphs of one map over a subspace is a family of graphs of one map over any equal
