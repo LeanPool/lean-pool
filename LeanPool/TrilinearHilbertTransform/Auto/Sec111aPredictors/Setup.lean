@@ -2926,7 +2926,8 @@ theorem bandCutoff_fourier_decay : ∃ C : ℝ, 0 ≤ C ∧ ∀ η : ℝ, η ≠
     ‖∫ u, (bandCutoff u : ℂ) * (Real.fourierChar (-(η * u)) : ℂ)‖ ≤ C / η ^ 2 := by
   set Θ : ℝ → ℂ := fun u => (bandCutoff u : ℂ) with hΘ
   have hΘs : ContDiff ℝ (⊤ : ℕ∞) Θ := Complex.ofRealCLM.contDiff.comp bandCutoff_spec.1
-  have hΘc : HasCompactSupport Θ := bandCutoff_hasCompactSupport.comp_left Complex.ofReal_zero
+  have hΘc : HasCompactSupport Θ :=
+    bandCutoff_hasCompactSupport.comp_left (g := Complex.ofReal) Complex.ofReal_zero
   have h1 : ContDiff ℝ 1 Θ := hΘs.of_le (by simp)
   have hd1 : ContDiff ℝ 1 (deriv Θ) := by
     have := hΘs.iterate_deriv 1

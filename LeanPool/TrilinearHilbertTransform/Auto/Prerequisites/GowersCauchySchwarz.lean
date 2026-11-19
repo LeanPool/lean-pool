@@ -137,15 +137,35 @@ theorem measurable_cubeShift {G : Type*} [AddCommMonoid G] [MeasurableSpace G]
   unfold cubeShift
   fun_prop
 
+/-- Measurability of a cube integrand after measurable changes of both arguments. -/
+theorem measurable_cubeIntegrand_comp {G X : Type*} [AddCommMonoid G] [MeasurableSpace G]
+    [MeasurableAdd₂ G] [MeasurableSpace X] {j : ℕ} (f : (Fin j → Bool) → G → ℂ)
+    (hf : ∀ ω, Measurable (f ω)) (x : X → G) (hx : Measurable x)
+    (h : X → Fin j → G) (hh : Measurable h) :
+    Measurable (fun p => cubeIntegrand f (h p) (x p)) := by
+  unfold cubeIntegrand
+  refine Finset.measurable_prod _ fun ω _ => ?_
+  exact (measurable_cubeConj _).comp ((hf ω).comp
+    (hx.add ((measurable_cubeShift ω).comp hh)))
+
 theorem measurable_cubeIntegrand {G : Type*} [AddCommMonoid G] [MeasurableSpace G]
     [MeasurableAdd₂ G] {j : ℕ} (f : (Fin j → Bool) → G → ℂ)
     (hf : ∀ ω, Measurable (f ω)) :
-    Measurable (fun p : (Fin j → G) × G => cubeIntegrand f p.1 p.2) := by
-  unfold cubeIntegrand
-  apply Finset.measurable_prod
-  intro ω _
-  exact (measurable_cubeConj _).comp ((hf ω).comp
-    (measurable_snd.add ((measurable_cubeShift ω).comp measurable_fst)))
+    Measurable (fun p : (Fin j → G) × G => cubeIntegrand f p.1 p.2) :=
+  measurable_cubeIntegrand_comp f hf Prod.snd measurable_snd Prod.fst measurable_fst
+
+/-- Measurability of a cube integrand with fixed increments. -/
+theorem measurable_cubeIntegrand_fixed {G : Type*} [AddCommMonoid G] [MeasurableSpace G]
+    [MeasurableAdd₂ G] {j : ℕ} (f : (Fin j → Bool) → G → ℂ)
+    (hf : ∀ ω, Measurable (f ω)) (h : Fin j → G) : Measurable (cubeIntegrand f h) :=
+  measurable_cubeIntegrand_comp f hf id measurable_id (fun _ => h) measurable_const
+
+/-- Measurability of the average of a cube integrand in its base point. -/
+theorem measurable_cubeIntegral {G : Type*} [AddCommMonoid G] [MeasurableSpace G]
+    [MeasurableAdd₂ G] (μ : Measure G) [SFinite μ] {j : ℕ}
+    (f : (Fin j → Bool) → G → ℂ) (hf : ∀ ω, Measurable (f ω)) :
+    Measurable (fun h : Fin j → G => ∫ x, cubeIntegrand f h x ∂μ) :=
+  (measurable_cubeIntegrand f hf).stronglyMeasurable.integral_prod_right.measurable
 
 theorem norm_cubeIntegrand_le {G : Type*} [AddCommMonoid G] {j : ℕ}
     (f : (Fin j → Bool) → G → ℂ) {M : ℝ}
@@ -216,10 +236,9 @@ theorem cubeAverage_diagonal_eq_integral_sq {G : Type*} [AddCommGroup G]
     cubeAverage μ (j + 1) (fun _ => f) =
       ((∫ h : Fin j → G, ‖∫ x, diagonalCubeIntegrand j f h x ∂μ‖ ^ 2
         ∂Measure.pi (fun _ => μ) : ℝ) : ℂ) := by
-  have hmeas := measurable_cubeIntegrand (j := j + 1) (fun _ => f) (fun _ => hf)
   have hinnerMeas : Measurable (fun h : Fin (j + 1) → G =>
       ∫ x, cubeIntegrand (fun _ => f) h x ∂μ) :=
-    hmeas.stronglyMeasurable.integral_prod_right.measurable
+    measurable_cubeIntegral μ (fun _ => f) (fun _ => hf)
   have hinnerBound : ∀ h : Fin (j + 1) → G,
       ‖∫ x, cubeIntegrand (fun _ => f) h x ∂μ‖ ≤ M ^ (2 ^ (j + 1)) := by
     intro h
@@ -230,8 +249,7 @@ theorem cubeAverage_diagonal_eq_integral_sq {G : Type*} [AddCommGroup G]
   apply integral_congr_ae
   filter_upwards [] with h
   have hfaceMeas : Measurable (diagonalCubeIntegrand j f h) :=
-    (measurable_cubeIntegrand (fun _ => f) (fun _ => hf)).comp
-      (measurable_const.prodMk measurable_id)
+    measurable_cubeIntegrand_fixed (fun _ => f) (fun _ => hf) h
   have hfaceBound : ∀ x, ‖diagonalCubeIntegrand j f h x‖ ≤ M ^ (2 ^ j) :=
     fun x => norm_cubeIntegrand_le (fun _ => f) (fun _ => hbound) h x
   have heq : ∀ t x, cubeIntegrand (fun _ => f) (Fin.cons t h) x =
@@ -399,9 +417,8 @@ theorem cubeAverage_split {G : Type*} [AddCommGroup G] [MeasurableSpace G]
       (∫ x, cubeIntegrand (cubeFace i false f) h x ∂μ) *
         conj (∫ x, cubeIntegrand (cubeFace i true f) h x ∂μ)
           ∂Measure.pi (fun _ => μ) := by
-  have hmeas := measurable_cubeIntegrand f hf
   have hm : Measurable (fun h : Fin (j + 1) → G => ∫ x, cubeIntegrand f h x ∂μ) :=
-    hmeas.stronglyMeasurable.integral_prod_right.measurable
+    measurable_cubeIntegral μ f hf
   have hb : ∀ h : Fin (j + 1) → G, ‖∫ x, cubeIntegrand f h x ∂μ‖ ≤ M ^ (2 ^ (j + 1)) := by
     intro h
     simpa using norm_integral_le_of_norm_le_const (μ := μ)
@@ -411,12 +428,14 @@ theorem cubeAverage_split {G : Type*} [AddCommGroup G] [MeasurableSpace G]
   filter_upwards [] with h
   simp only [cubeIntegrand_split]
   apply integral_haar_cross_correlation μ
-  · exact (measurable_cubeIntegrand _ (fun ω => hf _)).comp
-      (measurable_const.prodMk measurable_id)
-  · exact (measurable_cubeIntegrand _ (fun ω => hf _)).comp
-      (measurable_const.prodMk measurable_id)
-  · exact norm_cubeIntegrand_le _ (fun ω => hbound _) h
-  · exact norm_cubeIntegrand_le _ (fun ω => hbound _) h
+  · exact measurable_cubeIntegrand_fixed (cubeFace i false f)
+      (fun ω => hf (i.insertNth false ω)) h
+  · exact measurable_cubeIntegrand_fixed (cubeFace i true f)
+      (fun ω => hf (i.insertNth true ω)) h
+  · exact norm_cubeIntegrand_le (j := j) (cubeFace i false f)
+      (fun ω => hbound (i.insertNth false ω)) h
+  · exact norm_cubeIntegrand_le (j := j) (cubeFace i true f)
+      (fun ω => hbound (i.insertNth true ω)) h
 
 theorem norm_integral_mul_conj_sq_le {X : Type*} [MeasurableSpace X]
     (μ : Measure X) [IsFiniteMeasure μ] (f g : X → ℂ)
@@ -478,10 +497,8 @@ theorem cubeAverage_coordinate_cs {G : Type*} [AddCommGroup G] [MeasurableSpace 
     cubeAverage_copy_eq_sq μ i false f hf hbound,
     cubeAverage_copy_eq_sq μ i true f hf hbound, Complex.ofReal_re, Complex.ofReal_re]
   apply norm_integral_mul_conj_sq_le
-  · exact (measurable_cubeIntegrand _ (fun ω => hf _)).stronglyMeasurable
-      |>.integral_prod_right.measurable
-  · exact (measurable_cubeIntegrand _ (fun ω => hf _)).stronglyMeasurable
-      |>.integral_prod_right.measurable
+  · exact measurable_cubeIntegral μ (cubeFace i false f) (fun ω => hf (i.insertNth false ω))
+  · exact measurable_cubeIntegral μ (cubeFace i true f) (fun ω => hf (i.insertNth true ω))
   · intro h
     simpa using norm_integral_le_of_norm_le_const (μ := μ)
       (Filter.Eventually.of_forall (norm_cubeIntegrand_le (cubeFace i false f)
@@ -621,7 +638,7 @@ theorem cubeIntegrand_integrable {G : Type*} [AddCommGroup G] [MeasurableSpace G
     (hbu : ∀ ω x, ‖u ω x‖ ≤ M) (h : Fin j → G) :
     Integrable (cubeIntegrand u h) μ := by
   have hm : Measurable (cubeIntegrand u h) :=
-    (measurable_cubeIntegrand u hu).comp (measurable_const.prodMk measurable_id)
+    measurable_cubeIntegrand_fixed u hu h
   exact integrable_of_measurable_bounded (f := cubeIntegrand u h) hm
     (norm_cubeIntegrand_le u hbu h)
 
@@ -642,8 +659,7 @@ theorem cubeChoice_integral_integrable {G : Type*} [AddCommGroup G] [MeasurableS
     Integrable (fun h : Fin j → G => ∫ x, cubeIntegrand (cubeChoice f g σ) h x ∂μ)
       (Measure.pi (fun _ => μ)) := by
   apply integrable_of_measurable_bounded
-    ((measurable_cubeIntegrand (cubeChoice f g σ)
-      (measurable_cubeChoice f g hf hg σ)).stronglyMeasurable.integral_prod_right.measurable)
+    (measurable_cubeIntegral μ (cubeChoice f g σ) (measurable_cubeChoice f g hf hg σ))
     (M := M ^ (2 ^ j))
   intro h
   simpa using norm_integral_le_of_norm_le_const (μ := μ)
@@ -929,7 +945,8 @@ theorem cubeIntegrand_three_integrable {G : Type*} [AddCommGroup G] [MeasurableS
       ← sub_eq_add_neg] using h
   have hp : Integrable (fun p => A p * B p) (μ.prod (Measure.pi (fun _ => μ))) :=
     memLp_one_iff_integrable.mp (hA.fun_mul hB)
-  apply hp.mono' ((measurable_cubeIntegrand f hf).comp measurable_swap).aestronglyMeasurable
+  apply hp.mono' (measurable_cubeIntegrand_comp f hf Prod.fst measurable_fst
+    Prod.snd measurable_snd).aestronglyMeasurable
   filter_upwards [] with p
   change ‖cubeIntegrand f p.2 p.1‖ ≤ A p * B p
   simp only [cubeIntegrand, norm_prod, norm_cubeConj]
@@ -2084,9 +2101,9 @@ theorem cubeAverage_eq_integral_tuple {G : Type*} [AddCommGroup G]
         ∂Measure.pi (fun _ => μ) := by
   have hm : Measurable (fun z : Fin (j + 1) → G =>
       diagonalCubeIntegrand j g (fun i => z i.succ) (z 0)) :=
-    (measurable_cubeIntegrand (fun _ => g) (fun _ => hg)).comp
-      ((measurable_pi_iff.mpr (fun i => measurable_pi_apply i.succ)).prodMk
-        (measurable_pi_apply 0))
+    measurable_cubeIntegrand_comp (X := Fin (j + 1) → G) (j := j)
+      (fun _ => g) (fun _ => hg) (fun z => z 0) (measurable_pi_apply 0)
+      (fun z i => z i.succ) (measurable_pi_iff.mpr (fun i => measurable_pi_apply i.succ))
   rw [integral_pi_cons μ _ hm (M := 1)]
   · rfl
   · intro z
@@ -2201,13 +2218,15 @@ theorem cubeAverage_L1_error {G : Type*} [AddCommGroup G] [MeasurableSpace G]
   have hif : Integrable (fun p : G × (Fin j → G) =>
       cubeIntegrand (fun _ => f) p.2 p.1) ν :=
     integrable_of_measurable_bounded
-      ((measurable_cubeIntegrand (fun _ => f) (fun _ => hf)).comp measurable_swap)
+      (measurable_cubeIntegrand_comp (fun _ => f) (fun _ => hf) Prod.fst measurable_fst
+        Prod.snd measurable_snd)
       (fun p => by simpa only [one_pow] using
         norm_cubeIntegrand_le (fun _ => f) (fun _ => hfu) p.2 p.1)
   have hig : Integrable (fun p : G × (Fin j → G) =>
       cubeIntegrand (fun _ => g) p.2 p.1) ν :=
     integrable_of_measurable_bounded
-      ((measurable_cubeIntegrand (fun _ => g) (fun _ => hg)).comp measurable_swap)
+      (measurable_cubeIntegrand_comp (fun _ => g) (fun _ => hg) Prod.fst measurable_fst
+        Prod.snd measurable_snd)
       (fun p => by simpa only [one_pow] using
         norm_cubeIntegrand_le (fun _ => g) (fun _ => hgu) p.2 p.1)
   have hdiff : Integrable (fun x => ‖f x - g x‖) μ :=

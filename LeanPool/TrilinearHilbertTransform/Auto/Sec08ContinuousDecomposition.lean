@@ -9,6 +9,8 @@ module
 7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
+meta import LeanPool.TrilinearHilbertTransform.Auto.ProofTools -- shake: keep
+
 public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.HilbertAtomicDecomposition
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec07FiniteInverse
 public import Mathlib.MeasureTheory.Function.Floor
@@ -221,17 +223,17 @@ theorem floor_cutoff_correlation_error {L : ℕ} (hL : 0 < L)
         (g x * b ⌊(L : ℝ) * x⌋)‖ ≤ 2 * ε := by
   let F := fun x : ℝ => g x * b ⌊(L : ℝ) * x⌋
   let q := fun x : ℝ => η (Int.fract ((L : ℝ) * x))
-  have hF : Measurable F := hg.mul
+  have! hF : Measurable F := hg.mul
     ((measurable_of_countable b).comp (measurable_const.mul measurable_id).floor)
-  have hq : Measurable q := hη.measurable.comp
+  have! hq : Measurable q := hη.measurable.comp
     ((measurable_const.mul measurable_id).fract)
   have hFb (x : ℝ) : ‖F x‖ ≤ 1 := by
     dsimp [F]
     rw [norm_mul]
     exact (mul_le_mul (hgb x) (hbb _) (norm_nonneg _) zero_le_one).trans_eq (one_mul 1)
   have hqu (x : ℝ) : q x ∈ Set.Icc (0 : ℝ) 1 := hunit _
-  have hFint := bounded_measurable_intervalIntegrable F hF hFb
-  have hqFint : IntervalIntegrable (fun x => (q x : ℂ) * F x) volume 0 1 := by
+  have! hFint := bounded_measurable_intervalIntegrable F hF hFb
+  have! hqFint : IntervalIntegrable (fun x => (q x : ℂ) * F x) volume 0 1 := by
     apply bounded_measurable_intervalIntegrable _
       ((Complex.continuous_ofReal.measurable.comp hq).mul hF)
     intro x
@@ -242,7 +244,7 @@ theorem floor_cutoff_correlation_error {L : ℕ} (hL : 0 < L)
     rw [show F x - (q x : ℂ) * F x = ((1 - q x : ℝ) : ℂ) * F x by push_cast; ring,
       norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by linarith only [(hqu x).2])]
     exact mul_le_of_le_one_right (by linarith only [(hqu x).2]) (hFb x)
-  have hqi : IntervalIntegrable (fun x => 1 - q x) volume 0 1 :=
+  have! hqi : IntervalIntegrable (fun x => 1 - q x) volume 0 1 :=
     bounded_measurable_real_intervalIntegrable _ (measurable_const.sub hq)
       (M := 1) (fun x => by
         change |1 - q x| ≤ 1
@@ -663,30 +665,30 @@ theorem inverse_half_parameter_budget (C : ℕ) :
   refine ⟨D, by omega, ?_⟩
   intro δ hδ hδ1
   let B := 1 + Real.log (1 / δ)
-  have hinv : 1 ≤ 1 / δ := (le_div_iff₀ hδ).mpr (by linarith only [hδ1])
-  have hB : 1 ≤ B := by
-    have hh := Real.log_nonneg hinv
+  have! hinv : 1 ≤ 1 / δ := (le_div_iff₀ hδ).mpr (by linarith only [hδ1])
+  have! hB : 1 ≤ B := by
+    have! hh := Real.log_nonneg hinv
     dsimp [B]
     linarith only [hh]
-  have hl : Real.log (2 / δ) = Real.log 2 + Real.log (1 / δ) := by
+  have! hl : Real.log (2 / δ) = Real.log 2 + Real.log (1 / δ) := by
     rw [show 2 / δ = 2 * (1 / δ) by ring,
       Real.log_mul (by norm_num) (by positivity)]
-  have hlog2 := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
-  have hu : 1 + Real.log (2 / δ) ≤ 2 * B := by
+  have! hlog2 := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
+  have! hu : 1 + Real.log (2 / δ) ≤ 2 * B := by
     rw [hl]
     dsimp [B] at *
     linarith only [hB, hlog2]
-  have hCD : C ≤ D := by dsimp [D]; omega
-  have hcoef : (C : ℝ) * 2 ^ C ≤ D := by
-    have hh : C * 2 ^ C ≤ D := by dsimp [D]; omega
+  have! hCD : C ≤ D := by dsimp [D]; omega
+  have! hcoef : (C : ℝ) * 2 ^ C ≤ D := by
+    have! hh : C * 2 ^ C ≤ D := by dsimp [D]; omega
     exact_mod_cast hh
   apply Real.exp_le_exp.mpr
   calc
     _ ≤ (C : ℝ) * (2 * B) ^ C := by
       gcongr
       rw [hl]
-      have h1 := Real.log_nonneg hinv
-      have h2 : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num)
+      have! h1 := Real.log_nonneg hinv
+      have! h2 : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num)
       linarith only [h1, h2]
     _ = ((C : ℝ) * 2 ^ C) * B ^ C := by rw [mul_pow]; ring
     _ ≤ (D : ℝ) * B ^ D :=
@@ -767,13 +769,13 @@ theorem integerHorizontalQuadraticChart_phased_summand {d : ℕ} (A : QuadraticC
     (Real.fourierChar (A.quadratic * (n : ℝ) ^ 2 + A.linear * n) : ℂ) *
       quadraticChartLatticeSummand A (n : ℝ) (k + fun i => m i * n) := by
   let w : Fin d → ℝ := (n : ℝ) • a - (fun i => (k i : ℝ))
-  have hz : chartHorizontalPosition A (n : ℝ) =
+  have! hz : chartHorizontalPosition A (n : ℝ) =
       (n : ℝ) • a + (n : ℝ) • (fun i => (m i : ℝ)) := by
     funext i
     dsimp [chartHorizontalPosition]
     rw [hoff i]
     ring
-  have hw : chartLatticeRemainder A (n : ℝ) (k + fun i => m i * n) = w := by
+  have! hw : chartLatticeRemainder A (n : ℝ) (k + fun i => m i * n) = w := by
     funext i
     dsimp [chartLatticeRemainder, w]
     rw [hoff i]
@@ -789,7 +791,7 @@ theorem integerHorizontalQuadraticChart_phased_summand {d : ℕ} (A : QuadraticC
     dsimp [chartLatticeRemainder, integerHorizontalQuadraticChart, w]
     ring
   obtain ⟨r, hr⟩ := chartMatrixPhase_integer_of_coefficients A.matrix m k hint
-  have hp : A.quadratic * (n : ℝ) ^ 2 + A.linear * n +
+  have! hp : A.quadratic * (n : ℝ) ^ 2 + A.linear * n +
       chartMatrixPhase A.matrix ((n : ℝ) • a + (n : ℝ) • (fun i => (m i : ℝ))) w +
         ((n * r : ℤ) : ℝ) =
       (A.quadratic + chartMatrixPhase A.matrix (fun i => (m i : ℝ)) a) * (n : ℝ) ^ 2 +
@@ -800,7 +802,7 @@ theorem integerHorizontalQuadraticChart_phased_summand {d : ℕ} (A : QuadraticC
     rw [← hr]
     push_cast
     ring
-  have he : (Real.fourierChar
+  have! he : (Real.fourierChar
       ((A.quadratic + chartMatrixPhase A.matrix (fun i => (m i : ℝ)) a) * (n : ℝ) ^ 2 +
         A.linear * n + chartMatrixPhase A.matrix ((n : ℝ) • a) w) : ℂ) =
       Real.fourierChar (A.quadratic * (n : ℝ) ^ 2 + A.linear * n +
@@ -909,16 +911,16 @@ theorem floorChartAmplitude_support_subset {d : ℕ} (A : QuadraticChartData d)
   rcases hz with ⟨⟨⟨ha, hh⟩, hr⟩, _⟩
   have hh' := hη _ hh
   have hr' := hρ _ hr
-  have hhabs : |z (Fin.natAdd d (0 : Fin 2))| ≤ 1 := by
+  have! hhabs : |z (Fin.natAdd d (0 : Fin 2))| ≤ 1 := by
     rw [abs_le]
     constructor <;> linarith [hh'.1, hh'.2]
-  have hrabs : |z (Fin.natAdd d (1 : Fin 2))| ≤ 1 :=
+  have! hrabs : |z (Fin.natAdd d (1 : Fin 2))| ≤ 1 :=
     (abs_lt.mpr hr').le
   rw [Metric.mem_closedBall, dist_zero_right]
   apply (pi_norm_le_iff_of_nonneg (by positivity : 0 ≤ H + ‖A.horizontal‖ + 1)).mpr
   intro i
   refine Fin.addCases (fun j => ?_) (fun j => ?_) i
-  · have hu : |A.horizontal j| ≤ ‖A.horizontal‖ := by
+  · have! hu : |A.horizontal j| ≤ ‖A.horizontal‖ := by
       simpa only [Real.norm_eq_abs] using norm_le_pi_norm A.horizontal j
     calc
       ‖z (Fin.castAdd 2 j)‖ =
@@ -980,22 +982,22 @@ theorem floorInterpolatedChart_phased_summand {d : ℕ} (A : QuadraticChartData 
       ((Real.fourierChar (A.quadratic * (m : ℝ) ^ 2 + A.linear * m) : ℂ) *
         quadraticChartLatticeSummand A (m : ℝ) n) := by
   let B := floorInterpolatedChart A η ρ hηsm hρsm hη hρ
-  have hw : (fun i : Fin d =>
+  have! hw : (fun i : Fin d =>
       chartLatticeRemainder B v (Fin.append n ![m, k]) (Fin.castAdd 2 i)) =
       v • A.horizontal - (fun i => (n i : ℝ)) := by
     funext i
     simp [B, chartLatticeRemainder, floorInterpolatedChart, mul_comm]
-  have hz : (fun i : Fin d => chartHorizontalPosition B v (Fin.castAdd 2 i)) =
+  have! hz : (fun i : Fin d => chartHorizontalPosition B v (Fin.castAdd 2 i)) =
       v • A.horizontal := by
     funext i
     simp [B, chartHorizontalPosition, floorInterpolatedChart, mul_comm]
-  have hshear : (fun i : Fin d =>
+  have! hshear : (fun i : Fin d =>
       (v • A.horizontal - (fun i => (n i : ℝ))) i - A.horizontal i * (v - m)) =
       chartLatticeRemainder A (m : ℝ) n := by
     funext i
     dsimp [chartLatticeRemainder]
     ring
-  have hp : A.quadratic * v ^ 2 + A.linear * v +
+  have! hp : A.quadratic * v ^ 2 + A.linear * v +
       (chartMatrixPhase A.matrix (v • A.horizontal)
         (v • A.horizontal - (fun i => (n i : ℝ))) -
           floorChartAlpha A * v * (v - m)) +
@@ -1009,7 +1011,7 @@ theorem floorInterpolatedChart_phased_summand {d : ℕ} (A : QuadraticChartData 
     simp only [floorChartAlpha, chartMatrixPhase_smul_left,
       chartMatrixPhase_sub_right, chartMatrixPhase_smul_right]
     ring
-  have he := congrArg (fun t => (Real.fourierChar t : ℂ)) hp
+  have! he := congrArg (fun t => (Real.fourierChar t : ℂ)) hp
   unfold quadraticChartLatticeSummand
   change _ * (floorChartAmplitude A η ρ _ *
     (Real.fourierChar (chartMatrixPhase (chartBlockMatrix A.matrix floorChartTailMatrix)
@@ -1019,7 +1021,7 @@ theorem floorInterpolatedChart_phased_summand {d : ℕ} (A : QuadraticChartData 
   simp only [B, chartLatticeRemainder, chartHorizontalPosition, floorInterpolatedChart,
     Fin.append_left, Fin.append_right, Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.cons_val_fin_one, one_mul]
-  have hs : (fun i => A.horizontal i * v - (n i : ℝ) - A.horizontal i * (v - (m : ℝ))) =
+  have! hs : (fun i => A.horizontal i * v - (n i : ℝ) - A.horizontal i * (v - (m : ℝ))) =
       (fun i => A.horizontal i * (m : ℝ) - (n i : ℝ)) := by
     funext i
     ring
@@ -1028,12 +1030,12 @@ theorem floorInterpolatedChart_phased_summand {d : ℕ} (A : QuadraticChartData 
   simp only [chartMatrixPhase_smul_left, chartMatrixPhase_sub_right,
     chartMatrixPhase_smul_right] at he
   -- Normalize the remaining phase vectors without expanding their finite sums.
-  have hmz : (fun i => A.horizontal i * (m : ℝ)) = (m : ℝ) • A.horizontal := by
+  have! hmz : (fun i => A.horizontal i * (m : ℝ)) = (m : ℝ) • A.horizontal := by
     funext i; simp [mul_comm]
-  have hmw : (fun i => A.horizontal i * (m : ℝ) - (n i : ℝ)) =
+  have! hmw : (fun i => A.horizontal i * (m : ℝ) - (n i : ℝ)) =
       (m : ℝ) • A.horizontal - (fun i => (n i : ℝ)) := by
     funext i; simp [mul_comm]
-  have hvw : (fun i => A.horizontal i * v - (n i : ℝ)) =
+  have! hvw : (fun i => A.horizontal i * v - (n i : ℝ)) =
       v • A.horizontal - (fun i => (n i : ℝ)) := by
     funext i; simp [mul_comm]
   change (Real.fourierChar (A.quadratic * v ^ 2 + A.linear * v) : ℂ) *
@@ -1074,9 +1076,9 @@ theorem floorInterpolatedChart_atom {d : ℕ} (A : QuadraticChartData d)
   let F : (Fin (d + 2) → ℤ) → ℂ := fun l =>
     (Real.fourierChar (A.quadratic * v ^ 2 + A.linear * v) : ℂ) *
       quadraticChartLatticeSummand B v l
-  have hF : Summable F := (quadraticChartLatticeSummand_summable B v).mul_left _
-  have hFE : Summable (fun p => F (E p)) := hF.comp_injective E.injective
-  have hs : quadraticChartAtom B v =
+  have! hF : Summable F := (quadraticChartLatticeSummand_summable B v).mul_left _
+  have! hFE : Summable (fun p => F (E p)) := hF.comp_injective E.injective
+  have! hs : quadraticChartAtom B v =
       ∑' n : Fin d → ℤ, ∑' m : ℤ, ∑' k : ℤ, F (E (n, (m, k))) := by
     change _ * ∑' l, quadraticChartLatticeSummand B v l = _
     rw [← tsum_mul_left]
@@ -1106,10 +1108,10 @@ theorem floorInterpolatedChart_atom {d : ℕ} (A : QuadraticChartData d)
           quadraticChartLatticeSummand A (⌊v⌋ : ℝ) n) := by
     apply tsum_eq_single ⌊v⌋
     intro m hm
-    have hzero : η (v - (m : ℝ)) = 0 := by
+    have! hzero : η (v - (m : ℝ)) = 0 := by
       by_contra hn
-      have hx := hη _ hn
-      have heq : ⌊v⌋ = m := Int.floor_eq_iff.mpr ⟨by linarith [hx.1], by linarith [hx.2]⟩
+      have! hx := hη _ hn
+      have! heq : ⌊v⌋ = m := Int.floor_eq_iff.mpr ⟨by linarith [hx.1], by linarith [hx.2]⟩
       exact hm heq.symm
     rw [hzero, zero_mul]
   simp_rw [hsingle]
@@ -1198,10 +1200,10 @@ theorem quadratic_linear_phase_derivative_geometric {E : Type*}
     ‖iteratedFDeriv ℝ i (fun y => (Real.fourierChar (L y * K y + J y) : ℂ)) z‖ ≤
       (8 * Real.pi * T ^ 4 * (m + 1 : ℝ)) ^ i := by
   let Q : E → ℝ := fun y => L y * K y + J y
-  have hQ : ContDiff ℝ (⊤ : ℕ∞) Q := (L.contDiff.mul K.contDiff).add J.contDiff
-  have hT0 : 0 ≤ T := by linarith
-  have hT4 : 1 ≤ T ^ 4 := one_le_pow₀ hT
-  have hT24 : T ^ 2 ≤ T ^ 4 := pow_le_pow_right₀ hT (by omega)
+  have! hQ : ContDiff ℝ (⊤ : ℕ∞) Q := (L.contDiff.mul K.contDiff).add J.contDiff
+  have! hT0 : 0 ≤ T := by linarith
+  have! hT4 : 1 ≤ T ^ 4 := one_le_pow₀ hT
+  have! hT24 : T ^ 2 ≤ T ^ 4 := pow_le_pow_right₀ hT (by omega)
   have hinner (j : ℕ) (hj : 1 ≤ j) (_hji : j ≤ i) :
       ‖iteratedFDeriv ℝ j Q z‖ ≤ (4 * T ^ 4) ^ j := by
     dsimp only [Q]
@@ -1214,7 +1216,7 @@ theorem quadratic_linear_phase_derivative_geometric {E : Type*}
         add_le_add (linear_product_derivative_bound L K hT hL hK z hz j)
           (linear_derivative_norm_bound J hT hJ z hz j)
       _ ≤ (2 * T ^ 4) * 2 ^ j := by
-        have hp : (1 : ℝ) ≤ 2 ^ j := one_le_pow₀ (by norm_num)
+        have! hp : (1 : ℝ) ≤ 2 ^ j := one_le_pow₀ (by norm_num)
         nlinarith only [hT24, mul_le_mul_of_nonneg_left hp (pow_nonneg hT0 4)]
       _ ≤ (2 * T ^ 4) ^ j * 2 ^ j :=
         mul_le_mul_of_nonneg_right (le_self_pow₀ (by linarith) (by omega)) (by positivity)
@@ -1224,9 +1226,9 @@ theorem quadratic_linear_phase_derivative_geometric {E : Type*}
         (2 * Real.pi) ^ i := by
     rw [chart_fourierChar_derivative_norm]
     exact pow_le_pow_right₀ (by linarith [Real.pi_gt_three]) hj
-  have h := norm_iteratedFDeriv_comp_le (n := i) chart_fourierChar_smooth hQ
+  have! h := norm_iteratedFDeriv_comp_le (n := i) chart_fourierChar_smooth hQ
     (by simp) z houter hinner
-  have hf : (i.factorial : ℝ) ≤ (m + 1 : ℝ) ^ i :=
+  have! hf : (i.factorial : ℝ) ≤ (m + 1 : ℝ) ^ i :=
     (by exact_mod_cast Nat.factorial_le_pow i : (i.factorial : ℝ) ≤ (i : ℝ) ^ i).trans
       (pow_le_pow_left₀ (Nat.cast_nonneg i) (by exact_mod_cast Nat.le_succ_of_le hi) i)
   apply h.trans
@@ -1384,17 +1386,17 @@ theorem floorChartAmplitude_derivative_local {d c₀ K : ℕ} {H T : ℝ}
   let b := fun y : Fin (d + 2) → ℝ => ρ (y r)
   let p := fun y : Fin (d + 2) → ℝ =>
     (Real.fourierChar (y h * floorChartPhaseLinear A y + floorChartPhaseTail A y) : ℂ)
-  have hT1 : 1 ≤ T := by linarith
-  have hm1 : (1 : ℝ) ≤ m + 1 := by have := Nat.cast_nonneg (α := ℝ) m; linarith
-  have hR1 : 1 ≤ R := one_le_mul_of_one_le_of_one_le (one_le_pow₀ hT1) (one_le_pow₀ hm1)
+  have! hT1 : 1 ≤ T := by linarith
+  have! hm1 : (1 : ℝ) ≤ m + 1 := by have := Nat.cast_nonneg (α := ℝ) m; linarith
+  have! hR1 : 1 ≤ R := one_le_mul_of_one_le_of_one_le (one_le_pow₀ hT1) (one_le_pow₀ hm1)
   have hbase (u w : ℕ) (hu : u ≤ a) (hw : w ≤ a) :
       T ^ u * (m + 1 : ℝ) ^ w ≤ R :=
     mul_le_mul (pow_le_pow_right₀ hT1 hu) (pow_le_pow_right₀ hm1 hw)
       (by positivity) (by positivity)
-  have hf : ContDiff ℝ (⊤ : ℕ∞) f := A.smooth.comp (floorChartShear A).contDiff
-  have hg : ContDiff ℝ (⊤ : ℕ∞) g := hη.comp (contDiff_apply ℝ (fun _ => ℝ) h)
-  have hb : ContDiff ℝ (⊤ : ℕ∞) b := hρ.comp (contDiff_apply ℝ (fun _ => ℝ) r)
-  have hp : ContDiff ℝ (⊤ : ℕ∞) p :=
+  have! hf : ContDiff ℝ (⊤ : ℕ∞) f := A.smooth.comp (floorChartShear A).contDiff
+  have! hg : ContDiff ℝ (⊤ : ℕ∞) g := hη.comp (contDiff_apply ℝ (fun _ => ℝ) h)
+  have! hb : ContDiff ℝ (⊤ : ℕ∞) b := hρ.comp (contDiff_apply ℝ (fun _ => ℝ) r)
+  have! hp : ContDiff ℝ (⊤ : ℕ∞) p :=
     chart_fourierChar_smooth.comp
       (((contDiff_apply ℝ (fun _ => ℝ) h).mul (floorChartPhaseLinear A).contDiff).add
         (floorChartPhaseTail A).contDiff)
@@ -1412,12 +1414,12 @@ theorem floorChartAmplitude_derivative_local {d c₀ K : ℕ} {H T : ℝ}
       _ = (T ^ K * (m + 1 : ℝ) ^ K) ^ (i + 1) := by rw [mul_pow, ← pow_mul, ← pow_mul]
       _ ≤ _ := pow_le_pow_left₀ (by positivity)
         (hbase K K (by dsimp [a]; omega) (by dsimp [a]; omega)) _
-  have hproj : ‖(ContinuousLinearMap.proj h : (Fin (d + 2) → ℝ) →L[ℝ] ℝ)‖ ≤ T := by
+  have! hproj : ‖(ContinuousLinearMap.proj h : (Fin (d + 2) → ℝ) →L[ℝ] ℝ)‖ ≤ T := by
     apply le_trans _ hT1
     apply ContinuousLinearMap.opNorm_le_bound _ zero_le_one
     intro y
     simpa only [ContinuousLinearMap.proj_apply, one_mul] using norm_le_pi_norm y h
-  have hphasebase : 8 * Real.pi * T ^ 4 * (m + 1 : ℝ) ≤ R := by
+  have! hphasebase : 8 * Real.pi * T ^ 4 * (m + 1 : ℝ) ≤ R := by
     calc
       _ ≤ T * T ^ 4 * (m + 1 : ℝ) := by
         gcongr
@@ -1425,12 +1427,12 @@ theorem floorChartAmplitude_derivative_local {d c₀ K : ℕ} {H T : ℝ}
       _ = T ^ 5 * (m + 1 : ℝ) ^ 1 := by ring
       _ ≤ _ := hbase 5 1 (by dsimp [a]; omega) (by dsimp [a]; omega)
   have hpi (i : ℕ) (hi : i ≤ m) : ‖iteratedFDeriv ℝ i p z‖ ≤ R ^ (i + 1) := by
-    have hbound := quadratic_linear_phase_derivative_geometric (E := Fin (d + 2) → ℝ) (T := T)
+    have! hbound := quadratic_linear_phase_derivative_geometric (E := Fin (d + 2) → ℝ) (T := T)
       (ContinuousLinearMap.proj h : (Fin (d + 2) → ℝ) →L[ℝ] ℝ)
       (floorChartPhaseLinear A) (floorChartPhaseTail A) hT1 hproj hL hJ z hz m i hi
     exact hbound.trans ((pow_le_pow_left₀ (by positivity) hphasebase i).trans
       (pow_le_pow_right₀ hR1 (by omega)))
-  have he : floorChartAmplitude A η ρ = (fun y => f y * g y * b y * p y) := by
+  have! he : floorChartAmplitude A η ρ = (fun y => f y * g y * b y * p y) := by
     funext y
     dsimp only [f, g, b, p, Function.comp_apply]
     rw [floorChartPhase_eq]
@@ -1511,23 +1513,23 @@ theorem floor_chart_parameter_controls {d c₀ : ℕ} {H P : ℝ}
     ‖floorChartPhaseTail A‖ ≤ (chartTranslationBase d H) ^ 6 := by
   let B := chartTranslationBase d H
   obtain ⟨hHB, hs, hp⟩ := chart_translation_base_controls hA hP hPH A.horizontal hθ
-  have hH3 : 3 ≤ H := by linarith [hA.lower, Real.add_one_le_exp (2 : ℝ)]
-  have hB3 : 3 ≤ B := hH3.trans hHB
-  have hB1 : 1 ≤ B := by linarith
-  have hB0 : 0 ≤ B := by linarith
-  have hθP : ‖A.horizontal‖ ≤ P :=
+  have! hH3 : 3 ≤ H := by linarith [hA.lower, Real.add_one_le_exp (2 : ℝ)]
+  have! hB3 : 3 ≤ B := hH3.trans hHB
+  have! hB1 : 1 ≤ B := by linarith
+  have! hB0 : 0 ≤ B := by linarith
+  have! hθP : ‖A.horizontal‖ ≤ P :=
     (pi_norm_le_iff_of_nonneg hP).mpr (fun i => by simpa only [Real.norm_eq_abs] using hθ i)
-  have hθB : ‖A.horizontal‖ ≤ B := by linarith only [hθP, hs, hH3]
-  have hLB : ‖chartMatrixLeftLinear A.matrix A.horizontal‖ ≤ B := by
-    have hpi : 1 ≤ 2 * Real.pi := by linarith [Real.pi_gt_three]
+  have! hθB : ‖A.horizontal‖ ≤ B := by linarith only [hθP, hs, hH3]
+  have! hLB : ‖chartMatrixLeftLinear A.matrix A.horizontal‖ ≤ B := by
+    have! hpi : 1 ≤ 2 * Real.pi := by linarith [Real.pi_gt_three]
     exact (le_mul_of_one_le_left (norm_nonneg _) hpi).trans hp
-  have hphase : |chartMatrixPhase A.matrix A.horizontal A.horizontal| ≤ B ^ 2 := by
+  have! hphase : |chartMatrixPhase A.matrix A.horizontal A.horizontal| ≤ B ^ 2 := by
     rw [← chartMatrixLeftLinear_apply, ← Real.norm_eq_abs]
     exact ((chartMatrixLeftLinear A.matrix A.horizontal).le_opNorm A.horizontal).trans
       (by simpa only [pow_two] using mul_le_mul hLB hθB (norm_nonneg _) hB0)
-  have hB6 : B ≤ B ^ 6 := le_self_pow₀ hB1 (by norm_num)
+  have! hB6 : B ≤ B ^ 6 := le_self_pow₀ hB1 (by norm_num)
   refine ⟨?_, hHB.trans hB6, ?_, ?_, ?_, ?_⟩
-  · have hx : (3 : ℝ) ^ 6 ≤ B ^ 6 := pow_le_pow_left₀ (by norm_num) hB3 6
+  · have! hx : (3 : ℝ) ^ 6 ≤ B ^ 6 := pow_le_pow_left₀ (by norm_num) hB3 6
     norm_num at hx
     linarith only [hx]
   · calc
@@ -1562,22 +1564,22 @@ theorem floorInterpolatedChart_complexity {d c₀ K : ℕ} {H P T : ℝ}
       (floorInterpolatedChart A η ρ hη hρ hηs hρs) := by
   obtain ⟨h32, hH, hs, hS, hL, hJ⟩ :=
     floor_chart_parameter_controls hA hP hPH hθ hlam hβ
-  have hHT := hH.trans hBT
-  have hT1 : 1 ≤ T := by linarith [h32.trans hBT]
-  have hz : (chartRationalHeight (0 : ℚ) : ℝ) ≤ T := by
+  have! hHT := hH.trans hBT
+  have! hT1 : 1 ≤ T := by linarith [h32.trans hBT]
+  have! hz : (chartRationalHeight (0 : ℚ) : ℝ) ≤ T := by
     simpa [chartRationalHeight] using hT1
   have ht (i j : Fin 2) : (chartRationalHeight (floorChartTailMatrix i j) : ℝ) ≤ T := by
     unfold floorChartTailMatrix
     split_ifs <;> simpa [chartRationalHeight] using hT1
   constructor
   · exact hA.lower.trans hHT
-  · have hlogH : 2 ≤ Real.log H := by
-      have hh := Real.log_le_log (Real.exp_pos (2 : ℝ)) hA.lower
+  · have! hlogH : 2 ≤ Real.log H := by
+      have! hh := Real.log_le_log (Real.exp_pos (2 : ℝ)) hA.lower
       simpa only [Real.log_exp] using hh
-    have hlogB : Real.log H ≤ Real.log (chartTranslationBase d H) :=
+    have! hlogB : Real.log H ≤ Real.log (chartTranslationBase d H) :=
       Real.log_le_log (quadraticChartComplexity_parameter_pos hA)
         (chart_translation_base_controls hA hP hPH A.horizontal hθ).1
-    have hlogT := Real.log_le_log (by positivity :
+    have! hlogT := Real.log_le_log (by positivity :
       0 < (chartTranslationBase d H) ^ 6) hBT
     rw [Real.log_pow] at hlogT
     push_cast
@@ -1592,7 +1594,7 @@ theorem floorInterpolatedChart_complexity {d c₀ K : ℕ} {H P T : ℝ}
       · simpa [floorInterpolatedChart, chartBlockMatrix] using hz
       · simpa [floorInterpolatedChart, chartBlockMatrix] using ht i j
   · intro z hz' i
-    have hb := floorChartAmplitude_support_subset A η ρ
+    have! hb := floorChartAmplitude_support_subset A η ρ
       (quadraticChartComplexity_parameter_pos hA) hA.support hηs hρs
       (subset_tsupport _ hz')
     rw [Metric.mem_closedBall, dist_zero_right] at hb
@@ -1628,41 +1630,41 @@ theorem quadraticChart_uniform_floor_interpolation (c₀ : ℕ) (hc : 1 ≤ c₀
   obtain ⟨ρ, hρsm, hρnonneg, hρc, hρs, hρpart, C, hC, hρd⟩ := existsGevreyPartition
   let K := max 20 C
   let B := B₀ + (C : ℝ)
-  have hBB₀ : B₀ ≤ B := by dsimp [B]; linarith [Nat.cast_nonneg (α := ℝ) C]
-  have hB8 : 8 ≤ B := hB₀.trans hBB₀
-  have hCB : (C : ℝ) ≤ B := by dsimp [B]; linarith only [hB₀]
+  have! hBB₀ : B₀ ≤ B := by dsimp [B]; linarith [Nat.cast_nonneg (α := ℝ) C]
+  have! hB8 : 8 ≤ B := hB₀.trans hBB₀
+  have! hCB : (C : ℝ) ≤ B := by dsimp [B]; linarith only [hB₀]
   refine ⟨5 * (2 * c₀ + K + 6), B, by omega, hB8, ?_⟩
   intro d H ε A hA hhor hlam hβ hAb hε hεh
   obtain ⟨P, hP, hPH, hθ⟩ := hhor
   obtain ⟨η, hηsm, hηunit, hηc, hηs, hηone, hηd⟩ := hcut ε hε hεh
   let T := chartTranslationBudget H * (B / ε)
-  have hbase : (chartTranslationBase d H) ^ 6 ≤ chartTranslationBudget H :=
+  have! hbase : (chartTranslationBase d H) ^ 6 ≤ chartTranslationBudget H :=
     chartTranslationBase_le_budget hA
-  have hbase32 : 32 ≤ chartTranslationBudget H :=
+  have! hbase32 : 32 ≤ chartTranslationBudget H :=
     (floor_chart_parameter_controls hA hP hPH hθ hlam hβ).1.trans hbase
-  have hε1 : ε ≤ 1 := by linarith only [hεh]
-  have hBε : B ≤ B / ε :=
+  have! hε1 : ε ≤ 1 := by linarith only [hεh]
+  have! hBε : B ≤ B / ε :=
     (le_div_iff₀ hε).mpr (mul_le_of_le_one_right (by linarith only [hB8]) hε1)
-  have hBε1 : 1 ≤ B / ε := by linarith only [hB8, hBε]
-  have hbudget : chartTranslationBudget H ≤ T :=
+  have! hBε1 : 1 ≤ B / ε := by linarith only [hB8, hBε]
+  have! hbudget : chartTranslationBudget H ≤ T :=
     le_mul_of_one_le_right (by linarith only [hbase32]) hBε1
-  have hεT : B / ε ≤ T :=
+  have! hεT : B / ε ≤ T :=
     le_mul_of_one_le_left (by linarith only [hBε1]) (by linarith only [hbase32])
-  have hT1 : 1 ≤ T := by linarith only [hBε1, hεT]
-  have hT0 : 0 ≤ T := by linarith only [hT1]
-  have hB₀εT : B₀ / ε ≤ T :=
+  have! hT1 : 1 ≤ T := by linarith only [hBε1, hεT]
+  have! hT0 : 0 ≤ T := by linarith only [hT1]
+  have! hB₀εT : B₀ / ε ≤ T :=
     ((div_le_div_iff_of_pos_right hε).mpr hBB₀).trans hεT
-  have hCT : (C : ℝ) ≤ T := hCB.trans (hBε.trans hεT)
+  have! hCT : (C : ℝ) ≤ T := hCB.trans (hBε.trans hεT)
   let ηc : ℝ → ℂ := fun x => (η x : ℂ)
   let ρc : ℝ → ℂ := fun x => (ρ x : ℂ)
-  have hηcsm : ContDiff ℝ (⊤ : ℕ∞) ηc := Complex.ofRealCLM.contDiff.comp hηsm
+  have! hηcsm : ContDiff ℝ (⊤ : ℕ∞) ηc := Complex.ofRealCLM.contDiff.comp hηsm
   have hρsm' : ContDiff ℝ (⊤ : ℕ∞) ρ := contDiff_infty.mpr hρsm
-  have hρcsm : ContDiff ℝ (⊤ : ℕ∞) ρc := Complex.ofRealCLM.contDiff.comp hρsm'
-  have hηcs : ∀ x, ηc x ≠ 0 → x ∈ Set.Ioo (0 : ℝ) 1 := by
+  have! hρcsm : ContDiff ℝ (⊤ : ℕ∞) ρc := Complex.ofRealCLM.contDiff.comp hρsm'
+  have! hηcs : ∀ x, ηc x ≠ 0 → x ∈ Set.Ioo (0 : ℝ) 1 := by
     intro x hx
     exact hηs (subset_tsupport η
       (by simpa only [ηc, Function.mem_support, Complex.ofReal_ne_zero] using hx))
-  have hρcs : ∀ x, ρc x ≠ 0 → x ∈ Set.Ioo (-1 : ℝ) 1 := by
+  have! hρcs : ∀ x, ρc x ≠ 0 → x ∈ Set.Ioo (-1 : ℝ) 1 := by
     intro x hx
     exact hρs (subset_tsupport ρ
       (by simpa only [ρc, Function.mem_support, Complex.ofReal_ne_zero] using hx))
@@ -1670,7 +1672,7 @@ theorem quadraticChart_uniform_floor_interpolation (c₀ : ℕ) (hc : 1 ≤ c₀
       ‖iteratedDeriv n ηc x‖ ≤ T ^ (K * (n + 1)) * (n + 1 : ℝ) ^ (K * (n + 1)) := by
     rw [complex_ofReal_iteratedDeriv_norm η hηsm]
     apply (hηd n x).trans
-    have hn1 : (1 : ℝ) ≤ n + 1 := by have := Nat.cast_nonneg (α := ℝ) n; linarith
+    have! hn1 : (1 : ℝ) ≤ n + 1 := by have := Nat.cast_nonneg (α := ℝ) n; linarith
     apply mul_le_mul
     · exact (pow_le_pow_left₀ (by positivity) hB₀εT _).trans
         (pow_le_pow_right₀ hT1 (Nat.mul_le_mul_right _ (le_max_left 20 C)))
@@ -1682,14 +1684,14 @@ theorem quadraticChart_uniform_floor_interpolation (c₀ : ℕ) (hc : 1 ≤ c₀
     rw [complex_ofReal_iteratedDeriv_norm ρ hρsm']
     apply (hρd n x).trans
     rw [mul_pow]
-    have hn1 : (1 : ℝ) ≤ n + 1 := by have := Nat.cast_nonneg (α := ℝ) n; linarith
+    have! hn1 : (1 : ℝ) ≤ n + 1 := by have := Nat.cast_nonneg (α := ℝ) n; linarith
     apply mul_le_mul
     · exact (pow_le_pow_left₀ (Nat.cast_nonneg _) hCT _).trans
         (pow_le_pow_right₀ hT1 (Nat.mul_le_mul_right _ (le_max_right 20 C)))
     · exact pow_le_pow_right₀ hn1 (Nat.mul_le_mul_right _ (le_max_right 20 C))
     · positivity
     · positivity
-  have hpart : ∀ r : ℝ, ∑' k : ℤ, ρc (r - k) = 1 := by
+  have! hpart : ∀ r : ℝ, ∑' k : ℤ, ρc (r - k) = 1 := by
     intro r
     simp only [ρc, ← Complex.ofReal_tsum, hρpart, Complex.ofReal_one]
   let A' := floorInterpolatedChart A ηc ρc hηcsm hρcsm hηcs hρcs
@@ -1721,49 +1723,49 @@ theorem uniform_floor_inverse_budget (C : ℕ) (hC : 1 ≤ C) (B : ℝ) (hB : 8 
       chartTranslationBudget T ≤ Real.exp ((D : ℝ) * X ^ D) ∧
       2 * H ≤ Real.exp ((D : ℝ) * X ^ D) := by
   let A := 100 * (1 + (C : ℝ)) ^ 3 + |Real.log (8 * B)| + (C : ℝ) + 1
-  have hCr : (1 : ℝ) ≤ C := by exact_mod_cast hC
-  have hA1 : 1 ≤ A := by
+  have! hCr : (1 : ℝ) ≤ C := by exact_mod_cast hC
+  have! hA1 : 1 ≤ A := by
     dsimp [A]
-    have hp : 0 ≤ 100 * (1 + (C : ℝ)) ^ 3 := by positivity
+    have! hp : 0 ≤ 100 * (1 + (C : ℝ)) ^ 3 := by positivity
     linarith only [hp, abs_nonneg (Real.log (8 * B)), hCr]
   let A₂ := 100 * (1 + A) ^ 3
-  have hAA₂ : A ≤ A₂ := by
+  have! hAA₂ : A ≤ A₂ := by
     dsimp [A₂]
     nlinarith only [sq_nonneg A, pow_nonneg (by linarith : 0 ≤ A) 3]
   obtain ⟨D, hD, hnD, hcoef, henvelope⟩ := monomial_uniform_natural_envelope A₂ (9 * C)
   refine ⟨D, hD, fun X hX => ?_⟩
   let H := Real.exp ((C : ℝ) * X ^ C)
   let T := chartTranslationBudget H * (8 * B * H)
-  have hX0 : 0 ≤ X := by linarith
-  have hXC : 1 ≤ X ^ C := one_le_pow₀ hX
-  have hH1 : 1 ≤ H := Real.one_le_exp_iff.mpr (by positivity)
-  have hHp : 0 < H := Real.exp_pos _
-  have hlogH : Real.log H = (C : ℝ) * X ^ C := Real.log_exp _
-  have hBP : 0 < 8 * B := by linarith only [hB]
-  have htrans1 : 1 ≤ chartTranslationBudget H := by
+  have! hX0 : 0 ≤ X := by linarith
+  have! hXC : 1 ≤ X ^ C := one_le_pow₀ hX
+  have! hH1 : 1 ≤ H := Real.one_le_exp_iff.mpr (by positivity)
+  have! hHp : 0 < H := Real.exp_pos _
+  have! hlogH : Real.log H = (C : ℝ) * X ^ C := Real.log_exp _
+  have! hBP : 0 < 8 * B := by linarith only [hB]
+  have! htrans1 : 1 ≤ chartTranslationBudget H := by
     apply Real.one_le_exp_iff.mpr
     unfold logarithmicSize
-    have hl : 0 ≤ Real.log H := Real.log_nonneg hH1
+    have! hl : 0 ≤ Real.log H := Real.log_nonneg hH1
     positivity
-  have hT2H : 2 * H ≤ T := by
+  have! hT2H : 2 * H ≤ T := by
     calc
       _ ≤ 8 * B * H := mul_le_mul_of_nonneg_right (by linarith only [hB]) hHp.le
       _ ≤ _ := le_mul_of_one_le_left (by positivity) htrans1
-  have hT1 : 1 ≤ T := by linarith only [hT2H, hH1]
-  have hTp : 0 < T := by linarith only [hT1]
-  have hlogT : Real.log T =
+  have! hT1 : 1 ≤ T := by linarith only [hT2H, hH1]
+  have! hTp : 0 < T := by linarith only [hT1]
+  have! hlogT : Real.log T =
       100 * (1 + (C : ℝ) * X ^ C) ^ 3 + Real.log (8 * B) + (C : ℝ) * X ^ C := by
     dsimp only [T, chartTranslationBudget]
     rw [Real.log_mul (Real.exp_ne_zero _) (mul_ne_zero hBP.ne' hHp.ne'),
       Real.log_mul hBP.ne' hHp.ne']
     simp only [logarithmicSize, Real.log_exp, hlogH, H]
     ring
-  have hlogbound : Real.log T ≤ A * X ^ (3 * C) := by
+  have! hlogbound : Real.log T ≤ A * X ^ (3 * C) := by
     rw [hlogT]
-    have hfirst : 1 + (C : ℝ) * X ^ C ≤ (1 + (C : ℝ)) * X ^ C := by
+    have! hfirst : 1 + (C : ℝ) * X ^ C ≤ (1 + (C : ℝ)) * X ^ C := by
       nlinarith only [hXC]
-    have hpow : X ^ C ≤ X ^ (3 * C) := pow_le_pow_right₀ hX (by omega)
-    have hx3 : 1 ≤ X ^ (3 * C) := one_le_pow₀ hX
+    have! hpow : X ^ C ≤ X ^ (3 * C) := pow_le_pow_right₀ hX (by omega)
+    have! hx3 : 1 ≤ X ^ (3 * C) := one_le_pow₀ hX
     calc
       _ ≤ 100 * ((1 + (C : ℝ)) * X ^ C) ^ 3 +
           |Real.log (8 * B)| * X ^ (3 * C) + (C : ℝ) * X ^ (3 * C) := by
@@ -1777,11 +1779,11 @@ theorem uniform_floor_inverse_budget (C : ℕ) (hC : 1 ≤ C) (B : ℝ) (hB : 8 
         dsimp [A]
         rw [mul_pow, ← pow_mul, show C * 3 = 3 * C by omega]
         nlinarith only [pow_nonneg hX0 (3 * C)]
-  have hlogbound₂ : 100 * logarithmicSize T ^ 3 ≤ A₂ * X ^ (9 * C) := by
-    have hinner : 1 + Real.log T ≤ (1 + A) * X ^ (3 * C) := by
-      have hx3 : 1 ≤ X ^ (3 * C) := one_le_pow₀ hX
+  have! hlogbound₂ : 100 * logarithmicSize T ^ 3 ≤ A₂ * X ^ (9 * C) := by
+    have! hinner : 1 + Real.log T ≤ (1 + A) * X ^ (3 * C) := by
+      have! hx3 : 1 ≤ X ^ (3 * C) := one_le_pow₀ hX
       nlinarith only [hlogbound, hx3]
-    have hlogpos : 0 ≤ logarithmicSize T := by
+    have! hlogpos : 0 ≤ logarithmicSize T := by
       unfold logarithmicSize
       linarith [Real.log_nonneg hT1]
     calc
@@ -1792,12 +1794,12 @@ theorem uniform_floor_inverse_budget (C : ℕ) (hC : 1 ≤ C) (B : ℝ) (hB : 8 
         dsimp [A₂]
         rw [mul_pow, ← pow_mul, show 3 * C * 3 = 9 * C by omega]
         ring
-  have hsmall : Real.log T ≤ (D : ℝ) * X ^ D := by
+  have! hsmall : Real.log T ≤ (D : ℝ) * X ^ D := by
     apply hlogbound.trans
     apply le_trans _ (henvelope X hX)
     exact mul_le_mul hAA₂ (pow_le_pow_right₀ hX (by omega)) (by positivity)
       (by dsimp [A₂]; positivity)
-  have hTfinal : T ≤ Real.exp ((D : ℝ) * X ^ D) := by
+  have! hTfinal : T ≤ Real.exp ((D : ℝ) * X ^ D) := by
     rw [← Real.exp_log hTp]
     exact Real.exp_le_exp.mpr hsmall
   refine ⟨hTfinal, ?_, hT2H.trans hTfinal⟩
@@ -1822,22 +1824,22 @@ noncomputable def inverseDecompositionBudget (C : ℕ) (t : ℝ) : ℝ :=
 
 theorem inverseDecompositionBudget_quasipolynomial {C : ℕ} (hC : 1 ≤ C) :
     QuasipolynomialBound (inverseDecompositionBudget C) := by
-  have hcore : QuasipolynomialBound
+  have! hcore : QuasipolynomialBound
       (fun t : ℝ => Real.exp ((C : ℝ) * (1 + Real.log (4 * t ^ 2)) ^ C)) := by
     let K := 3 + Real.log (4 : ℝ)
-    have hK : 0 ≤ K := by dsimp [K]; positivity
+    have! hK : 0 ≤ K := by dsimp [K]; positivity
     refine ⟨max 1 ((C : ℝ) * K ^ C), le_max_left _ _, C, hC, ?_⟩
     intro t ht
-    have ht0 : 0 < t := by linarith
-    have hX := one_le_logarithmicSize ht
-    have hl : 0 ≤ Real.log t := Real.log_nonneg (by linarith)
-    have hlog4 : 0 ≤ Real.log (4 : ℝ) := Real.log_nonneg (by norm_num)
-    have he : 1 + Real.log (4 * t ^ 2) = 1 + Real.log 4 + 2 * Real.log t := by
+    have! ht0 : 0 < t := by linarith
+    have! hX := one_le_logarithmicSize ht
+    have! hl : 0 ≤ Real.log t := Real.log_nonneg (by linarith)
+    have! hlog4 : 0 ≤ Real.log (4 : ℝ) := Real.log_nonneg (by norm_num)
+    have! he : 1 + Real.log (4 * t ^ 2) = 1 + Real.log 4 + 2 * Real.log t := by
       rw [Real.log_mul (by norm_num) (pow_ne_zero _ ht0.ne'), Real.log_pow]
       norm_num
       ring
-    have hs : 0 ≤ 1 + Real.log (4 * t ^ 2) := by rw [he]; positivity
-    have hb : 1 + Real.log (4 * t ^ 2) ≤ K * logarithmicSize t := by
+    have! hs : 0 ≤ 1 + Real.log (4 * t ^ 2) := by rw [he]; positivity
+    have! hb : 1 + Real.log (4 * t ^ 2) ≤ K * logarithmicSize t := by
       rw [he]
       dsimp [K, logarithmicSize]
       nlinarith only [hl, hlog4, mul_nonneg hl hlog4]
@@ -2184,22 +2186,22 @@ theorem continuous_inverse_affine_coordinates :
   let logBase := 1 + Real.log (1 / δ)
   let H := Real.exp ((C : ℝ) * logBase ^ C)
   let ε := H⁻¹ / 8
-  have hX : 1 ≤ logBase := by
-    have hr : 1 ≤ 1 / δ := (le_div_iff₀ hδ).mpr (by linarith only [hδ2])
-    have hl := Real.log_nonneg hr
+  have! hX : 1 ≤ logBase := by
+    have! hr : 1 ≤ 1 / δ := (le_div_iff₀ hδ).mpr (by linarith only [hδ2])
+    have! hl := Real.log_nonneg hr
     dsimp [logBase]
     linarith only [hl]
-  have hHp : 0 < H := Real.exp_pos _
-  have hH1 : 1 ≤ H := by linarith [hA.lower, Real.add_one_le_exp (2 : ℝ)]
-  have hεp : 0 < ε := by dsimp [ε]; positivity
-  have hεh : ε ≤ 1 / 2 := by
-    have hinv : H⁻¹ ≤ 1 := inv_le_one_of_one_le₀ hH1
+  have! hHp : 0 < H := Real.exp_pos _
+  have! hH1 : 1 ≤ H := by linarith [hA.lower, Real.add_one_le_exp (2 : ℝ)]
+  have! hεp : 0 < ε := by dsimp [ε]; positivity
+  have! hεh : ε ≤ 1 / 2 := by
+    have! hinv : H⁻¹ ≤ 1 := inv_le_one_of_one_le₀ hH1
     dsimp [ε]
     linarith only [hinv]
   obtain ⟨P, Ar, hP, hPH, hAr, hlam, hβ, hθ, _, _, heq⟩ :=
     quadraticChart_reduce_integer_parameters hA
   have hArb (n : ℤ) : ‖quadraticChartAtom Ar (n : ℝ)‖ ≤ 1 := by rw [heq]; exact hAb _
-  have hhor : ∃ P' : ℝ, 0 ≤ P' ∧ P' ≤ H ^ (d ^ 2) ∧
+  have! hhor : ∃ P' : ℝ, 0 ≤ P' ∧ P' ≤ H ^ (d ^ 2) ∧
       ∀ i, |Ar.horizontal i| ≤ P' := by
     refine ⟨P, by positivity, hPH, fun i => ?_⟩
     rw [abs_of_nonneg (hθ i).1]
@@ -2208,9 +2210,9 @@ theorem continuous_inverse_affine_coordinates :
     hinterp d H ε Ar hAr hhor
       (by rw [abs_of_nonneg hlam.1]; exact hlam.2.le)
       (by rw [abs_of_nonneg hβ.1]; exact hβ.2.le) hArb hεp hεh
-  have hscale : B / ε = 8 * B * H := by dsimp [ε]; field_simp
+  have! hscale : B / ε = 8 * B * H := by dsimp [ε]; field_simp
   rw [hscale] at hAi
-  have hbgt := hbudget logBase hX
+  have! hbgt := hbudget logBase hX
   obtain ⟨Af, hAf, hAfb, hAfVal⟩ :=
     quadraticChart_affine_closure hAi hc₁ ((L : ℝ) / s) (-((L : ℝ) * t) / s)
   refine ⟨d + 2, Af, quadraticChartComplexity_mono hAf hbgt.2.1, hAfb hAib, ?_⟩
@@ -2219,7 +2221,7 @@ theorem continuous_inverse_affine_coordinates :
   let old := ∫ x in (0 : ℝ)..1, g x * b ⌊(L : ℝ) * x⌋
   let new := ∫ x in (0 : ℝ)..1, (η (Int.fract ((L : ℝ) * x)) : ℂ) *
     (g x * b ⌊(L : ℝ) * x⌋)
-  have hold : H⁻¹ ≤ ‖old‖ := by
+  have! hold : H⁻¹ ≤ ‖old‖ := by
     dsimp only [old]
     rw [← cell_sum_eq_floor_integral hL g hg hgb b hbb]
     have hv (k : ℕ) : b (k : ℤ) = conj (quadraticChartAtom A (k : ℝ)) := by
@@ -2227,9 +2229,9 @@ theorem continuous_inverse_affine_coordinates :
       rw [heq]
       simp only [Int.cast_natCast]
     simpa only [hv] using hcorr
-  have herr : ‖old - new‖ ≤ 2 * ε :=
+  have! herr : ‖old - new‖ ≤ 2 * ε :=
     floor_cutoff_correlation_error hL g hg hgb b hbb η hηsm.continuous hηunit hεp.le hεh hηone
-  have hnew : new = ∫ x in (0 : ℝ)..1, g x * conj (quadraticChartAtom Af (s * x + t)) := by
+  have! hnew : new = ∫ x in (0 : ℝ)..1, g x * conj (quadraticChartAtom Af (s * x + t)) := by
     apply intervalIntegral.integral_congr
     intro x _
     dsimp only
@@ -2238,12 +2240,12 @@ theorem continuous_inverse_affine_coordinates :
     simp only [map_mul, Complex.conj_ofReal]
     dsimp only [b]
     ring
-  have hnewlower : H⁻¹ / 2 ≤ ‖new‖ := by
-    have ht := norm_le_norm_sub_add old new
+  have! hnewlower : H⁻¹ / 2 ≤ ‖new‖ := by
+    have! ht := norm_le_norm_sub_add old new
     dsimp [ε] at herr
     linarith only [hold, herr, ht, inv_pos.mpr hHp]
-  have hrecip : (Real.exp ((D : ℝ) * logBase ^ D))⁻¹ ≤ H⁻¹ / 2 := by
-    have hi := one_div_le_one_div_of_le (by positivity : 0 < 2 * H) hbgt.2.2
+  have! hrecip : (Real.exp ((D : ℝ) * logBase ^ D))⁻¹ ≤ H⁻¹ / 2 := by
+    have! hi := one_div_le_one_div_of_le (by positivity : 0 < 2 * H) hbgt.2.2
     simpa only [one_div, mul_inv_rev, invOf_eq_inv, div_eq_mul_inv, mul_comm, one_mul] using hi
   exact hrecip.trans (by simpa only [hnew] using hnewlower)
 
@@ -2302,10 +2304,10 @@ theorem continuous_decomposition_interval :
   let σ := τ / 2
   let H0 := Real.exp ((C : ℝ) * (1 + Real.log (1 / σ ^ 2)) ^ C)
   let H := Real.exp 2 + H0
-  have hσ : 0 < σ := by dsimp [σ]; positivity
-  have hσ2 : σ ^ 2 < 1 / 2 := by dsimp [σ]; nlinarith only [hτ, hτ2]
-  have hH0 : 0 < H0 := Real.exp_pos _
-  have hH : 0 < H := add_pos (Real.exp_pos _) hH0
+  have! hσ : 0 < σ := by dsimp [σ]; positivity
+  have! hσ2 : σ ^ 2 < 1 / 2 := by dsimp [σ]; nlinarith only [hτ, hτ2]
+  have! hH0 : 0 < H0 := Real.exp_pos _
+  have! hH : 0 < H := add_pos (Real.exp_pos _) hH0
   let atoms : Set (Lp ℂ 2 (intervalProbabilityMeasure left right)) :=
     {a | ∃ (d : ℕ) (A : QuadraticChartData d),
     QuadraticChartComplexity c₀ H A ∧ IsBoundedQuadraticChart A ∧
@@ -2314,43 +2316,43 @@ theorem continuous_decomposition_interval :
       MemLp (quadraticChartAtom A) 2 (intervalProbabilityMeasure left right) :=
     MemLp.of_bound (quadraticChartAtom_measurable A).aestronglyMeasurable 1
       (Filter.Eventually.of_forall hb)
-  have hane : atoms.Nonempty := by
+  have! hane : atoms.Nonempty := by
     let A := ordinaryQuadraticChart 0 0
-    have hb := ordinaryQuadraticChart_bounded 0 0
-    have hl := atomLp 0 A hb
+    have! hb := ordinaryQuadraticChart_bounded 0 0
+    have! hl := atomLp 0 A hb
     refine ⟨hl.toLp (quadraticChartAtom A), 0, A, ?_, hb, MemLp.coeFn_toLp hl⟩
     exact ordinaryQuadraticChart_complexity c₀ (le_add_of_nonneg_right hH0.le) 0 0
-  have hInv : ∀ g : Lp ℂ 2 (intervalProbabilityMeasure left right),
+  have! hInv : ∀ g : Lp ℂ 2 (intervalProbabilityMeasure left right),
       (∀ᵐ x ∂(intervalProbabilityMeasure left right), ‖g x‖ ≤ 1) →
       σ ^ 2 ≤ intervalL2GowersSeminorm left right g →
       ∃ a ∈ atoms, H⁻¹ ≤ ‖inner ℂ g a‖ := by
     intro g hg hgU
     obtain ⟨G, hGm, hGb, hGe⟩ :=
       l2_bounded_measurable_representative (intervalProbabilityMeasure left right) g hg
-    have hGl : MemLp G 2 (intervalProbabilityMeasure left right) :=
+    have! hGl : MemLp G 2 (intervalProbabilityMeasure left right) :=
       (memLp_congr_ae hGe).mpr (Lp.memLp g)
-    have hGg : hGl.toLp G = g := by
+    have! hGg : hGl.toLp G = g := by
       apply Lp.ext
       exact (MemLp.coeFn_toLp hGl).trans hGe
-    have hGU : σ ^ 2 ≤ intervalGowersNorm left right G := by
+    have! hGU : σ ^ 2 ≤ intervalGowersNorm left right G := by
       rw [← intervalL2GowersSeminorm_toLp left right hGm hGl, hGg]
       exact hgU
     obtain ⟨d, A, hA, hAb, hcorr⟩ :=
       hinv left right hab (σ ^ 2) (sq_pos_of_pos hσ) hσ2 G hGm (fun x _ => hGb x) hGU
-    have hAl := atomLp d A hAb
+    have! hAl := atomLp d A hAb
     refine ⟨hAl.toLp (quadraticChartAtom A),
       ⟨d, A, quadraticChartComplexity_mono hA (le_add_of_nonneg_left (Real.exp_pos _).le),
         hAb, MemLp.coeFn_toLp hAl⟩, ?_⟩
     rw [← hGg, intervalL2_inner_correlation hab]
-    have hc : H0⁻¹ ≤ (right - left)⁻¹ *
+    have! hc : H0⁻¹ ≤ (right - left)⁻¹ *
         ‖∫ x in left..right, G x * conj (quadraticChartAtom A x)‖ := hcorr
-    have hi : H⁻¹ ≤ H0⁻¹ := by
+    have! hi : H⁻¹ ≤ H0⁻¹ := by
       simpa only [one_div] using one_div_le_one_div_of_le hH0
         (le_add_of_nonneg_left (Real.exp_pos (2 : ℝ)).le)
     exact hi.trans hc
-  have hfn : ‖f‖ ≤ 1 := by
+  have! hfn : ‖f‖ ≤ 1 := by
     simpa [measureUnivNNReal] using Lp.norm_le_of_ae_bound (by norm_num : (0 : ℝ) ≤ 1) hf
-  have hcost : σ < (2 * H) * H⁻¹ := by
+  have! hcost : σ < (2 * H) * H⁻¹ := by
     rw [mul_assoc, mul_inv_cancel₀ hH.ne', mul_one]
     dsimp [σ]
     linarith only [hτ2]

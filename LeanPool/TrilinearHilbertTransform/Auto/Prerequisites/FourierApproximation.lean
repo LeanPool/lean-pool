@@ -764,7 +764,8 @@ theorem fourierLp_ae_eq_fourier {f : V → ℂ} (hf1 : Integrable f) (hf2 : MemL
   · exact (continuous_fourier_of_integrable hf1).locallyIntegrable
   intro g hg hgc
   have hg' : ContDiff ℝ ∞ (fun x => (g x : ℂ)) := ofRealCLM.contDiff.comp hg
-  have hgc' : HasCompactSupport (fun x => (g x : ℂ)) := hgc.comp_left Complex.ofReal_zero
+  have hgc' : HasCompactSupport (fun x => (g x : ℂ)) :=
+    hgc.comp_left (g := Complex.ofReal) Complex.ofReal_zero
   set G : 𝓢(V, ℂ) := hgc'.toSchwartzMap hg' with hG
   have hGx : ∀ x, G x = (g x : ℂ) := fun x => rfl
   have hsmul : ∀ (x : V) (z : ℂ), g x • z = G x • z := fun x z => by

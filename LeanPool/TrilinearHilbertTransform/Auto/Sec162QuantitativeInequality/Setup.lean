@@ -1531,7 +1531,7 @@ theorem vtxAt_eq_of_sub {I J : ℤ × ℤ} (hI : I ∈ A.cells) (hJ : J ∈ A.ce
     (hx : bf.occAvail I x) : bf.vtxAt J x = bf.vtxAt I x := by
   unfold vtxAt
   rw [dite_eq_left hJ, dite_eq_left hI]
-  congr 1
+  apply congrArg (Prod.mk x)
   set CI : AdmCell A.G A.R A.treeDepth := ⟨I, A.cells_mem_tree hI⟩
   have hCI : CI ∈ admAnc (G := A.G) (R := A.R) (N := A.treeDepth) bf.occAvail CI x :=
     (mem_admAnc bf.occAvail).mpr ⟨subset_rfl, hx⟩

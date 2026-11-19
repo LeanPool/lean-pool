@@ -88,46 +88,46 @@ private theorem TsideF_le_stage_1 : TsideFLeStage1Statement := by
   intro κ c₀ A P K u Lp Jm E cc kk Vl ρ V0 hS hP hLp hE hρ G0 R L0 hRp hL00 hV0 W hEW Y hY hLL
     hLp4 hJ1 hK1 Bs hBs1 hBsY g frz hfrz1
   set! Z1 := (Lp : ℝ) ^ 2 * (1 + (Jm : ℝ)) * (1 + L0) ^ 2 * (1 + (K : ℝ)) ^ 2 * W with hZ1
-  have hZ10 : 0 ≤ Z1 := by positivity
-  have hYZ : Y = (Lp : ℝ) ^ 2 * (1 + (Jm : ℝ)) * Z1 := by rw [hY, hZ1]; ring
+  have! hZ10 : 0 ≤ Z1 := by positivity
+  have! hYZ : Y = (Lp : ℝ) ^ 2 * (1 + (Jm : ℝ)) * Z1 := by rw [hY, hZ1]; ring
   set! X := (2 / (P : ℝ) * L0) ^ 2 * 6 * ((Lp : ℝ) * Lp * ((Jm : ℝ) * 5) * frz) with hXd
-  have hX : X ≤ 247680 * Z1 * R := by
-    have hW0 : 0 ≤ W := by positivity
+  have! hX : X ≤ 247680 * Z1 * R := by
+    have! hW0 : 0 ≤ W := by positivity
     clear_value G0 W L0 g frz
     have e : X = (Lp : ℝ) ^ 2 * (5 * (Jm : ℝ)) * ((2 / (P : ℝ) * L0) ^ 2 * 6 * frz) := by
       rw [hXd]; ring
     rw [e]
-    have h1 := mul_le_mul_of_nonneg_left hfrz1 (show 0 ≤ (Lp : ℝ) ^ 2 * (5 * (Jm : ℝ)) by
+    have! h1 := mul_le_mul_of_nonneg_left hfrz1 (show 0 ≤ (Lp : ℝ) ^ 2 * (5 * (Jm : ℝ)) by
       positivity)
     refine h1.trans ?_
-    have h2 : (Lp : ℝ) ^ 2 * (5 * (Jm : ℝ)) * (49536 * L0 ^ 2 * (1 + (K : ℝ)) ^ 2 * W * R) =
+    have! h2 : (Lp : ℝ) ^ 2 * (5 * (Jm : ℝ)) * (49536 * L0 ^ 2 * (1 + (K : ℝ)) ^ 2 * W * R) =
         247680 * ((Lp : ℝ) ^ 2 * (Jm : ℝ) * L0 ^ 2 * ((1 + (K : ℝ)) ^ 2 * W)) * R := by ring
     rw [h2]
-    have h3 : (Lp : ℝ) ^ 2 * (Jm : ℝ) * L0 ^ 2 * ((1 + (K : ℝ)) ^ 2 * W) ≤ Z1 := by
+    have! h3 : (Lp : ℝ) ^ 2 * (Jm : ℝ) * L0 ^ 2 * ((1 + (K : ℝ)) ^ 2 * W) ≤ Z1 := by
       rw [hZ1]
-      have hJ : (Jm : ℝ) ≤ 1 + (Jm : ℝ) := by linarith only
-      have hA : (Lp : ℝ) ^ 2 * (Jm : ℝ) * L0 ^ 2 ≤ (Lp : ℝ) ^ 2 * (1 + (Jm : ℝ)) *
+      have! hJ : (Jm : ℝ) ≤ 1 + (Jm : ℝ) := by linarith only
+      have! hA : (Lp : ℝ) ^ 2 * (Jm : ℝ) * L0 ^ 2 ≤ (Lp : ℝ) ^ 2 * (1 + (Jm : ℝ)) *
           (1 + L0) ^ 2 := mul_le_mul (mul_le_mul_of_nonneg_left hJ (by positivity)) hLL
             (by positivity) (by positivity)
-      have hB0 : 0 ≤ (1 + (K : ℝ)) ^ 2 * W := by positivity
+      have! hB0 : 0 ≤ (1 + (K : ℝ)) ^ 2 * W := by positivity
       have := mul_le_mul_of_nonneg_right hA hB0
       calc _ ≤ (Lp : ℝ) ^ 2 * (1 + (Jm : ℝ)) * (1 + L0) ^ 2 * ((1 + (K : ℝ)) ^ 2 * W) := this
         _ = _ := by ring
     have := mul_le_mul_of_nonneg_right h3 hRp.le
     linarith only [this]
-  have hX0 : 0 ≤ X := by positivity
+  have! hX0 : 0 ≤ X := by positivity
   -- the basic-side term
   set! B₀ := max (2 * Real.sqrt 1) A.S with hB₀
-  have hB₀2 : B₀ = 2 := by rw [hB₀, hS, Real.sqrt_one]; norm_num
-  have hU1 : (Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) ≤ 128 * Z1 * R := by
+  have! hB₀2 : B₀ = 2 := by rw [hB₀, hS, Real.sqrt_one]; norm_num
+  have! hU1 : (Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) ≤ 128 * Z1 * R := by
     rw [hB₀2]
-    have hA : (Lp : ℝ) ^ 2 * L0 ^ 2 * E ≤ Z1 := by
+    have! hA : (Lp : ℝ) ^ 2 * L0 ^ 2 * E ≤ Z1 := by
       rw [hZ1]
-      have h1 : (Lp : ℝ) ^ 2 * L0 ^ 2 ≤ (Lp : ℝ) ^ 2 * (1 + L0) ^ 2 :=
+      have! h1 : (Lp : ℝ) ^ 2 * L0 ^ 2 ≤ (Lp : ℝ) ^ 2 * (1 + L0) ^ 2 :=
         mul_le_mul_of_nonneg_left hLL (by positivity)
-      have h2 : (1 : ℝ) ≤ (1 + (Jm : ℝ)) * (1 + (K : ℝ)) ^ 2 :=
+      have! h2 : (1 : ℝ) ≤ (1 + (Jm : ℝ)) * (1 + (K : ℝ)) ^ 2 :=
         one_le_mul_of_one_le_of_one_le (by linarith only) hK1
-      have h3 : (Lp : ℝ) ^ 2 * L0 ^ 2 * E ≤ (Lp : ℝ) ^ 2 * (1 + L0) ^ 2 * W :=
+      have! h3 : (Lp : ℝ) ^ 2 * L0 ^ 2 * E ≤ (Lp : ℝ) ^ 2 * (1 + L0) ^ 2 * W :=
         mul_le_mul h1 hEW hE (by positivity)
       calc (Lp : ℝ) ^ 2 * L0 ^ 2 * E ≤ (Lp : ℝ) ^ 2 * (1 + L0) ^ 2 * W := h3
         _ ≤ (Lp : ℝ) ^ 2 * (1 + L0) ^ 2 * W * ((1 + (Jm : ℝ)) * (1 + (K : ℝ)) ^ 2) :=
@@ -135,47 +135,47 @@ private theorem TsideF_le_stage_1 : TsideFLeStage1Statement := by
         _ = _ := by ring
     have := mul_le_mul_of_nonneg_right hA hRp.le
     linarith only [this]
-  have hU0 : 0 ≤ (Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) := by positivity
-  have hJ5 : 2 * (1 + 5 * (Jm : ℝ)) ≤ 10 * (1 + (Jm : ℝ)) := by linarith only
-  have hJ50 : 0 ≤ 2 * (1 + 5 * (Jm : ℝ)) := by positivity
-  have hLJ : (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) ≤ 10 * ((Lp : ℝ) ^ 2 * (1 + (Jm : ℝ))) := by
+  have! hU0 : 0 ≤ (Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) := by positivity
+  have! hJ5 : 2 * (1 + 5 * (Jm : ℝ)) ≤ 10 * (1 + (Jm : ℝ)) := by linarith only
+  have! hJ50 : 0 ≤ 2 * (1 + 5 * (Jm : ℝ)) := by positivity
+  have! hLJ : (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) ≤ 10 * ((Lp : ℝ) ^ 2 * (1 + (Jm : ℝ))) := by
     have := mul_le_mul_of_nonneg_left hJ5 (sq_nonneg (Lp : ℝ))
     linarith only [this]
   -- the first three-side term
-  have hT1 : (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) *
+  have! hT1 : (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) *
       ((Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) + X) ≤ 2478080 * Y * R := by
     clear_value X Y Z1
-    have h1 : (Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) + X ≤ 247808 * Z1 * R := by
+    have! h1 : (Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) + X ≤ 247808 * Z1 * R := by
       linarith only [hX, hU1]
     have := mul_le_mul hLJ h1 (by positivity) (by positivity)
     calc _ ≤ 10 * ((Lp : ℝ) ^ 2 * (1 + (Jm : ℝ))) * (247808 * Z1 * R) := this
       _ = _ := by rw [hYZ]; ring
   -- the second three-side term
-  have hT2 : (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) * X ≤ 2476800 * Y * R := by
+  have! hT2 : (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) * X ≤ 2476800 * Y * R := by
     clear_value X Y Z1
     have := mul_le_mul hLJ hX (by positivity) (by positivity)
     calc _ ≤ 10 * ((Lp : ℝ) ^ 2 * (1 + (Jm : ℝ))) * (247680 * Z1 * R) := this
       _ = _ := by rw [hYZ]; ring
-  have hT3 : 2 * (L0 * B₀) ^ 2 * Bs ≤ 6400 * Y * R := by
+  have! hT3 : 2 * (L0 * B₀) ^ 2 * Bs ≤ 6400 * Y * R := by
     rw [hB₀2]
-    have hA : L0 ^ 2 * ((1 + (K : ℝ)) * W) ≤ Y := by
+    have! hA : L0 ^ 2 * ((1 + (K : ℝ)) * W) ≤ Y := by
       rw [hY]
-      have h2 : (1 : ℝ) ≤ (Lp : ℝ) ^ 4 * (1 + (Jm : ℝ)) ^ 2 * (1 + (K : ℝ)) :=
+      have! h2 : (1 : ℝ) ≤ (Lp : ℝ) ^ 4 * (1 + (Jm : ℝ)) ^ 2 * (1 + (K : ℝ)) :=
         one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le hLp4 hJ1) (by linarith only)
-      have h3 : L0 ^ 2 * ((1 + (K : ℝ)) * W) ≤ (1 + L0) ^ 2 * ((1 + (K : ℝ)) * W) :=
+      have! h3 : L0 ^ 2 * ((1 + (K : ℝ)) * W) ≤ (1 + L0) ^ 2 * ((1 + (K : ℝ)) * W) :=
         mul_le_mul_of_nonneg_right hLL (by positivity)
       calc L0 ^ 2 * ((1 + (K : ℝ)) * W) ≤ (1 + L0) ^ 2 * ((1 + (K : ℝ)) * W) := h3
         _ ≤ (1 + L0) ^ 2 * ((1 + (K : ℝ)) * W) *
             ((Lp : ℝ) ^ 4 * (1 + (Jm : ℝ)) ^ 2 * (1 + (K : ℝ))) :=
           le_mul_of_one_le_right (by positivity) h2
         _ = _ := by ring
-    have h1 : 2 * (L0 * 2) ^ 2 * Bs ≤ 8 * L0 ^ 2 * (4 * (200 * (1 + (K : ℝ)) * W * R)) := by
+    have! h1 : 2 * (L0 * 2) ^ 2 * Bs ≤ 8 * L0 ^ 2 * (4 * (200 * (1 + (K : ℝ)) * W * R)) := by
       have := mul_le_mul_of_nonneg_left hBs1 (show 0 ≤ 8 * L0 ^ 2 by positivity)
       linarith only [this]
-    have h2 := mul_le_mul_of_nonneg_right hA hRp.le
+    have! h2 := mul_le_mul_of_nonneg_right hA hRp.le
     linarith only [h1, h2]
   -- assembly
-  have hB3 : 2 * (36 * 256 * 256 * ((Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) *
+  have! hB3 : 2 * (36 * 256 * 256 * ((Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) *
       ((Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) + X))) +
       2 * (36 * 256 * 256 * (2 * (L0 * B₀) ^ 2 * Bs +
         (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) * X)) ≤ 4718592 * 4961280 * Y * R := by
@@ -186,11 +186,11 @@ private theorem TsideF_le_stage_1 : TsideFLeStage1Statement := by
       2 * (36 * 256 * 256 * (2 * (L0 * B₀) ^ 2 * Bs +
         (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) * X))) / R) / ρ := rfl
   rw [e, ← add_div, div_div, div_le_iff₀ (by positivity)]
-  have hfin : Bs + (2 * (36 * 256 * 256 * ((Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) *
+  have! hfin : Bs + (2 * (36 * 256 * 256 * ((Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) *
       ((Lp : ℝ) ^ 2 * (L0 ^ 2 * (8 * B₀ ^ 2 * (4 * E * R))) + X))) +
       2 * (36 * 256 * 256 * (2 * (L0 * B₀) ^ 2 * Bs +
         (Lp : ℝ) ^ 2 * (2 * (1 + 5 * (Jm : ℝ))) * X))) ≤ 10 ^ 14 * Y * R := by
-    have hYR : 0 ≤ Y * R := by positivity
+    have! hYR : 0 ≤ Y * R := by positivity
     calc _ ≤ 800 * Y * R + 4718592 * 4961280 * Y * R := add_le_add hBsY hB3
       _ = (800 + 4718592 * 4961280) * (Y * R) := by ring
       _ ≤ 10 ^ 14 * (Y * R) := mul_le_mul_of_nonneg_right (by norm_num) hYR
@@ -215,61 +215,61 @@ theorem TsideF_le {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
     (1 + Real.log (2 * kk)) ^ 2) with hG0
   set R := dyadicGridLength A.G A.R.1 with hR
   set L0 := localFormUniformConstant κ with hL0
-  have hRp : 0 < R := dyadicGridLength_pos A.G A.R.1
-  have hG1 : 1 ≤ G0 := Real.one_le_exp (by positivity)
-  have hL00 : 0 ≤ L0 := localFormUniformConstant_nonneg κ
-  have hV0 : 0 ≤ V0 := le_trans (hVl 0).1 (hVl 0).2
-  have hK0 : (0 : ℝ) ≤ K := Nat.cast_nonneg K
-  have hJ0 : (0 : ℝ) ≤ Jm := Nat.cast_nonneg Jm
-  have hP1 : (1 : ℝ) ≤ P := by exact_mod_cast hP
-  have hLp1 : (1 : ℝ) ≤ Lp := by exact_mod_cast hLp
+  have! hRp : 0 < R := dyadicGridLength_pos A.G A.R.1
+  have! hG1 : 1 ≤ G0 := Real.one_le_exp (by positivity)
+  have! hL00 : 0 ≤ L0 := localFormUniformConstant_nonneg κ
+  have! hV0 : 0 ≤ V0 := le_trans (hVl 0).1 (hVl 0).2
+  have! hK0 : (0 : ℝ) ≤ K := Nat.cast_nonneg K
+  have! hJ0 : (0 : ℝ) ≤ Jm := Nat.cast_nonneg Jm
+  have! hP1 : (1 : ℝ) ≤ P := by exact_mod_cast hP
+  have! hLp1 : (1 : ℝ) ≤ Lp := by exact_mod_cast hLp
   set W := G0 + E + V0 + 1 with hW
-  have hW1 : 1 ≤ W := by linarith only [hE, hG1, hV0]
-  have hEW : E ≤ W := by linarith only [hG1, hV0]
-  have hGW : G0 ≤ W := by linarith only [hE, hV0]
-  have hVW : V0 ≤ W := by linarith only [hE, hG1]
-  have hWR : 0 ≤ W * R := by positivity
+  have! hW1 : 1 ≤ W := by linarith only [hE, hG1, hV0]
+  have! hEW : E ≤ W := by linarith only [hG1, hV0]
+  have! hGW : G0 ≤ W := by linarith only [hE, hV0]
+  have! hVW : V0 ≤ W := by linarith only [hE, hG1]
+  have! hWR : 0 ≤ W * R := by positivity
   -- the common factor
   set! Y := (1 + L0) ^ 2 * (Lp : ℝ) ^ 4 * (1 + (Jm : ℝ)) ^ 2 * (1 + (K : ℝ)) ^ 2 * W with hY
-  have hL1 : 1 ≤ (1 + L0) ^ 2 := one_le_pow₀ (by linarith only [hL00])
-  have hLL : L0 ^ 2 ≤ (1 + L0) ^ 2 := pow_le_pow_left₀ hL00 (by linarith only) 2
-  have hLp4 : (1 : ℝ) ≤ (Lp : ℝ) ^ 4 := one_le_pow₀ hLp1
-  have hLp24 : (Lp : ℝ) ^ 2 ≤ (Lp : ℝ) ^ 4 := pow_le_pow_right₀ hLp1 (by norm_num)
-  have hJ1 : 1 ≤ (1 + (Jm : ℝ)) ^ 2 := one_le_pow₀ (by linarith only)
-  have hJJ : 1 + (Jm : ℝ) ≤ (1 + (Jm : ℝ)) ^ 2 := le_self_pow₀ (by linarith only) (by norm_num)
-  have hK1 : 1 ≤ (1 + (K : ℝ)) ^ 2 := one_le_pow₀ (by linarith only)
-  have hKK : 1 + (K : ℝ) ≤ (1 + (K : ℝ)) ^ 2 := le_self_pow₀ (by linarith only) (by norm_num)
-  have hY0 : 0 ≤ Y := by positivity
+  have! hL1 : 1 ≤ (1 + L0) ^ 2 := one_le_pow₀ (by linarith only [hL00])
+  have! hLL : L0 ^ 2 ≤ (1 + L0) ^ 2 := pow_le_pow_left₀ hL00 (by linarith only) 2
+  have! hLp4 : (1 : ℝ) ≤ (Lp : ℝ) ^ 4 := one_le_pow₀ hLp1
+  have! hLp24 : (Lp : ℝ) ^ 2 ≤ (Lp : ℝ) ^ 4 := pow_le_pow_right₀ hLp1 (by norm_num)
+  have! hJ1 : 1 ≤ (1 + (Jm : ℝ)) ^ 2 := one_le_pow₀ (by linarith only)
+  have! hJJ : 1 + (Jm : ℝ) ≤ (1 + (Jm : ℝ)) ^ 2 := le_self_pow₀ (by linarith only) (by norm_num)
+  have! hK1 : 1 ≤ (1 + (K : ℝ)) ^ 2 := one_le_pow₀ (by linarith only)
+  have! hKK : 1 + (K : ℝ) ≤ (1 + (K : ℝ)) ^ 2 := le_self_pow₀ (by linarith only) (by norm_num)
+  have! hY0 : 0 ≤ Y := by positivity
   -- `Y` dominates each of its factors times `W`
-  have hYW : W ≤ Y := by
+  have! hYW : W ≤ Y := by
     have : (1 : ℝ) ≤ (1 + L0) ^ 2 * (Lp : ℝ) ^ 4 * (1 + (Jm : ℝ)) ^ 2 * (1 + (K : ℝ)) ^ 2 :=
       one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le
         (one_le_mul_of_one_le_of_one_le hL1 hLp4) hJ1) hK1
-    have h := mul_le_mul_of_nonneg_right this (show 0 ≤ W by linarith only [hW1])
+    have! h := mul_le_mul_of_nonneg_right this (show 0 ≤ W by linarith only [hW1])
     rw [one_mul] at h
     exact h
   -- the side budget
   set! Bs := ∑ l : Fin 4, if u = some l then 2 * (4 * E * R) else
     2 * ((K : ℝ) * (20 * G0 + 32) * R) + 2 * ((K : ℝ) * (Vl l * R)) with hBs
-  have hBs1 : Bs ≤ 4 * (200 * (1 + (K : ℝ)) * W * R) := by
+  have! hBs1 : Bs ≤ 4 * (200 * (1 + (K : ℝ)) * W * R) := by
     rw [hBs, show 4 * (200 * (1 + (K : ℝ)) * W * R) = ∑ _l : Fin 4, 200 * (1 + (K : ℝ)) * W * R
       by simp]
     refine Finset.sum_le_sum fun l _ => ?_
-    have hv := hVl l
+    have! hv := hVl l
     split_ifs
-    · have h1 : E * R ≤ W * R := mul_le_mul_of_nonneg_right hEW hRp.le
-      have h2 : 0 ≤ (K : ℝ) * (W * R) := mul_nonneg hK0 hWR
+    · have! h1 : E * R ≤ W * R := mul_le_mul_of_nonneg_right hEW hRp.le
+      have! h2 : 0 ≤ (K : ℝ) * (W * R) := mul_nonneg hK0 hWR
       linarith only [h1, h2, hWR]
-    · have h1 : (K : ℝ) * (20 * G0 + 32) * R ≤ (K : ℝ) * (52 * W) * R := by
+    · have! h1 : (K : ℝ) * (20 * G0 + 32) * R ≤ (K : ℝ) * (52 * W) * R := by
         have : 20 * G0 + 32 ≤ 52 * W := by linarith only [hE, hG1, hV0]
         gcongr
-      have h2 : (K : ℝ) * (Vl l * R) ≤ (K : ℝ) * (W * R) := by
+      have! h2 : (K : ℝ) * (Vl l * R) ≤ (K : ℝ) * (W * R) := by
         have : Vl l ≤ W := hv.2.trans hVW
         gcongr
-      have h3 : 0 ≤ (K : ℝ) * (W * R) := mul_nonneg hK0 hWR
+      have! h3 : 0 ≤ (K : ℝ) * (W * R) := mul_nonneg hK0 hWR
       linarith only [h1, h2, h3, hWR]
-  have hBsY : Bs ≤ 800 * Y * R := by
-    have h1 : (1 + (K : ℝ)) * W ≤ Y := by
+  have! hBsY : Bs ≤ 800 * Y * R := by
+    have! h1 : (1 + (K : ℝ)) * W ≤ Y := by
       have : (1 : ℝ) ≤ (1 + L0) ^ 2 * (Lp : ℝ) ^ 4 * (1 + (Jm : ℝ)) ^ 2 * (1 + (K : ℝ)) :=
         by
           have := one_le_mul_of_one_le_of_one_le (one_le_mul_of_one_le_of_one_le
@@ -279,45 +279,45 @@ theorem TsideF_le {κ : LocalKernelClass} {c₀ : ℕ} (A : ActiveSetup κ c₀)
           ((1 + (K : ℝ)) * W) := by rw [hY]; ring
       rw [e]
       have : 0 ≤ (1 + (K : ℝ)) * W := by positivity
-      have h := mul_le_mul_of_nonneg_right this (show (0 : ℝ) ≤ 1 by norm_num)
-      have h' := mul_le_mul_of_nonneg_right ‹(1 : ℝ) ≤ _› this
+      have! h := mul_le_mul_of_nonneg_right this (show (0 : ℝ) ≤ 1 by norm_num)
+      have! h' := mul_le_mul_of_nonneg_right ‹(1 : ℝ) ≤ _› this
       linarith only [h']
-    have h2 := mul_le_mul_of_nonneg_right h1 hRp.le
+    have! h2 := mul_le_mul_of_nonneg_right h1 hRp.le
     linarith only [hBs1, h2]
-  have hBs0 : 0 ≤ Bs := Finset.sum_nonneg fun l _ => by
+  have! hBs0 : 0 ≤ Bs := Finset.sum_nonneg fun l _ => by
     split_ifs
     · positivity
     · have := (hVl l).1; positivity
   -- the frozen complements
   set! g := (K : ℝ) * (G0 * (4 * R)) with hg
-  have hg0 : 0 ≤ g := by positivity
+  have! hg0 : 0 ≤ g := by positivity
   set! frz := (2 * Real.sqrt 1) ^ 2 * ((64 + 8 * (K : ℝ)) * (g + (P : ℝ) * g) +
     (1 + (K : ℝ)) * g) with hfrz
-  have hfrz0 : 0 ≤ frz := by positivity
-  have hPp : 0 < (P : ℝ) := by linarith only [hP1]
-  have hQ : (64 + 8 * (K : ℝ)) * (1 + P) + (1 + K) ≤ (129 + 17 * (K : ℝ)) * (P : ℝ) ^ 2 := by
-    have h1 : (1 : ℝ) + P ≤ 2 * (P : ℝ) ^ 2 := by
+  have! hfrz0 : 0 ≤ frz := by positivity
+  have! hPp : 0 < (P : ℝ) := by linarith only [hP1]
+  have! hQ : (64 + 8 * (K : ℝ)) * (1 + P) + (1 + K) ≤ (129 + 17 * (K : ℝ)) * (P : ℝ) ^ 2 := by
+    have! h1 : (1 : ℝ) + P ≤ 2 * (P : ℝ) ^ 2 := by
       nlinarith only [mul_nonneg (sub_nonneg.2 hP1) (show (0 : ℝ) ≤ 2 * P + 1 by linarith only)]
-    have h2 : (1 : ℝ) ≤ (P : ℝ) ^ 2 := one_le_pow₀ hP1
-    have h3 := mul_le_mul_of_nonneg_left h1 (show (0 : ℝ) ≤ 64 + 8 * K by linarith only)
-    have h4 := mul_le_mul_of_nonneg_left h2 (show (0 : ℝ) ≤ 1 + K by linarith only)
+    have! h2 : (1 : ℝ) ≤ (P : ℝ) ^ 2 := one_le_pow₀ hP1
+    have! h3 := mul_le_mul_of_nonneg_left h1 (show (0 : ℝ) ≤ 64 + 8 * K by linarith only)
+    have! h4 := mul_le_mul_of_nonneg_left h2 (show (0 : ℝ) ≤ 1 + K by linarith only)
     linarith only [h3, h4]
-  have hfrz1 : (2 / (P : ℝ) * L0) ^ 2 * 6 * frz ≤ 49536 * L0 ^ 2 * (1 + (K : ℝ)) ^ 2 * W * R := by
+  have! hfrz1 : (2 / (P : ℝ) * L0) ^ 2 * 6 * frz ≤ 49536 * L0 ^ 2 * (1 + (K : ℝ)) ^ 2 * W * R := by
     have e : (2 / (P : ℝ) * L0) ^ 2 * 6 * frz = 96 * L0 ^ 2 * g *
         (((64 + 8 * (K : ℝ)) * (1 + P) + (1 + K)) / (P : ℝ) ^ 2) := by
       rw [hfrz, Real.sqrt_one]
       field_simp
       ring
     rw [e]
-    have h1 : ((64 + 8 * (K : ℝ)) * (1 + P) + (1 + K)) / (P : ℝ) ^ 2 ≤ 129 + 17 * (K : ℝ) := by
+    have! h1 : ((64 + 8 * (K : ℝ)) * (1 + P) + (1 + K)) / (P : ℝ) ^ 2 ≤ 129 + 17 * (K : ℝ) := by
       rw [div_le_iff₀ (by positivity)]; exact hQ
-    have h2 : 96 * L0 ^ 2 * g * (((64 + 8 * (K : ℝ)) * (1 + P) + (1 + K)) / (P : ℝ) ^ 2) ≤
+    have! h2 : 96 * L0 ^ 2 * g * (((64 + 8 * (K : ℝ)) * (1 + P) + (1 + K)) / (P : ℝ) ^ 2) ≤
         96 * L0 ^ 2 * g * (129 + 17 * (K : ℝ)) :=
       mul_le_mul_of_nonneg_left h1 (by positivity)
     refine h2.trans ?_
-    have h3 : (K : ℝ) * (129 + 17 * K) ≤ 129 * (1 + (K : ℝ)) ^ 2 := by
+    have! h3 : (K : ℝ) * (129 + 17 * K) ≤ 129 * (1 + (K : ℝ)) ^ 2 := by
       nlinarith only [hK0, sq_nonneg (K : ℝ)]
-    have h4 : G0 * R ≤ W * R := mul_le_mul_of_nonneg_right hGW hRp.le
+    have! h4 : G0 * R ≤ W * R := mul_le_mul_of_nonneg_right hGW hRp.le
     have e2 : 96 * L0 ^ 2 * g * (129 + 17 * (K : ℝ)) =
         384 * L0 ^ 2 * ((K : ℝ) * (129 + 17 * K)) * (G0 * R) := by rw [hg]; ring
     rw [e2]
@@ -369,25 +369,25 @@ theorem coreM4F_le (κ : LocalKernelClass) (S : ModeSchedule) {B L U ε Kc : ℝ
     (hL0 : 0 ≤ Real.logb 2 (U / ε) + 1) (hL : Real.logb 2 (U / ε) + 1 ≤ L) (hKc : 1 ≤ Kc) :
     coreM4F κ S (1 / 1024) 3 U ε Kc ≤ C4c κ * B ^ 30 * L ^ 4 * Kc ^ 2 := by
   unfold coreM4F
-  have hup := (card_upperHeights_le S.Jstar (1 / 1024)).trans hJ
-  have hft := card_fourTypesF_le S (by linarith only [hB]) hD1 hD
-  have hcc := fourCcF_le S hB hd hD1 hH1 hD hH
-  have hcc0 : 0 ≤ fourCcF S := fourCcF_nonneg S hD1 hH1
-  have hband := bandC_nonneg' (1 - (1 / 300 : ℝ) / 4) 3
-  have hK1 : (2 ^ 4 / (1 - 4 * (2 * (1 / 1024 : ℝ)) ^ (1 / (4 : ℝ)))) = K1c := rfl
+  have! hup := (card_upperHeights_le S.Jstar (1 / 1024)).trans hJ
+  have! hft := card_fourTypesF_le S (by linarith only [hB]) hD1 hD
+  have! hcc := fourCcF_le S hB hd hD1 hH1 hD hH
+  have! hcc0 : 0 ≤ fourCcF S := fourCcF_nonneg S hD1 hH1
+  have! hband := bandC_nonneg' (1 - (1 / 300 : ℝ) / 4) 3
+  have! hK1 : (2 ^ 4 / (1 - 4 * (2 * (1 / 1024 : ℝ)) ^ (1 / (4 : ℝ)))) = K1c := rfl
   rw [hK1]
-  have hfk := fourKC_nonneg κ 3
-  have hK1p := K1c_pos
-  have h1 : (K1c * (fourKC κ 3 * 2 * 12 ^ 4)) ^ (1 - (1 / 300 : ℝ) / 4) ≤
+  have! hfk := fourKC_nonneg κ 3
+  have! hK1p := K1c_pos
+  have! h1 : (K1c * (fourKC κ 3 * 2 * 12 ^ 4)) ^ (1 - (1 / 300 : ℝ) / 4) ≤
       1 + K1c * (fourKC κ 3 * 2 * 12 ^ 4) :=
     rpow_le_one_add (by positivity) (by norm_num) (by norm_num)
-  have h2 : Kc ^ (2 - (1 / 300 : ℝ) / 2) ≤ Kc ^ 2 := by
+  have! h2 : Kc ^ (2 - (1 / 300 : ℝ) / 2) ≤ Kc ^ 2 := by
     calc Kc ^ (2 - (1 / 300 : ℝ) / 2) ≤ Kc ^ (2 : ℝ) :=
           Real.rpow_le_rpow_of_exponent_le hKc (by norm_num)
       _ = Kc ^ 2 := by norm_cast
-  have h3 : (Real.logb 2 (U / ε) + 1) ^ 4 ≤ L ^ 4 := pow_le_pow_left₀ hL0 hL 4
-  have hL0' : 0 ≤ L := hL0.trans hL
-  have hB0 : 0 ≤ B := by linarith only [hB]
+  have! h3 : (Real.logb 2 (U / ε) + 1) ^ 4 ≤ L ^ 4 := pow_le_pow_left₀ hL0 hL 4
+  have! hL0' : 0 ≤ L := hL0.trans hL
+  have! hB0 : 0 ≤ B := by linarith only [hB]
   calc ((ModeComponents.upperHeights S.Jstar (1 / 1024)).card : ℝ) * (fourTypesF S).card *
         ((K1c * (fourKC κ 3 * 2 * 12 ^ 4)) ^ (1 - (1 / 300 : ℝ) / 4) *
           (fourCcF S * Kc ^ (2 - (1 / 300 : ℝ) / 2)) *
@@ -409,29 +409,29 @@ theorem coreM3F_le (κ : LocalKernelClass) (S : ModeSchedule) (Iw : ℕ) (l : Fi
     (hI : (Iw : ℝ) + 1 ≤ IB) :
     coreM3F κ S (1 / 1024) 3 1 Iw U ε Kc l ≤ C3c κ * B ^ 30 * IB * L ^ 4 * Kc ^ 2 := by
   unfold coreM3F
-  have hup := (card_upperHeights_le S.Jstar (1 / 1024)).trans hJ
-  have hft : (((fourTypesF S).filter fun κ => κ l = (0, 0)).card : ℝ) ≤ (3 * B) ^ 8 :=
+  have! hup := (card_upperHeights_le S.Jstar (1 / 1024)).trans hJ
+  have! hft : (((fourTypesF S).filter fun κ => κ l = (0, 0)).card : ℝ) ≤ (3 * B) ^ 8 :=
     le_trans (by exact_mod_cast Finset.card_filter_le _ _)
       (card_fourTypesF_le S (by linarith only [hB]) hD1 hD)
-  have hcc := fourCcF_le S hB hd hD1 hH1 hD hH
-  have hcc0 : 0 ≤ fourCcF S := fourCcF_nonneg S hD1 hH1
-  have hband := bandC_nonneg' (1 - (1 / 300 : ℝ) / 4) 3
-  have hK1 : (2 ^ 4 / (1 - 4 * (2 * (1 / 1024 : ℝ)) ^ (1 / (4 : ℝ)))) = K1c := rfl
+  have! hcc := fourCcF_le S hB hd hD1 hH1 hD hH
+  have! hcc0 : 0 ≤ fourCcF S := fourCcF_nonneg S hD1 hH1
+  have! hband := bandC_nonneg' (1 - (1 / 300 : ℝ) / 4) 3
+  have! hK1 : (2 ^ 4 / (1 - 4 * (2 * (1 / 1024 : ℝ)) ^ (1 / (4 : ℝ)))) = K1c := rfl
   rw [hK1]
-  have hfk := entryCU_nonneg' κ 3 1
-  have hK1p := K1c_pos
-  have h1 : (K1c * (8 * entryCU κ 3 1 * 2 ^ (1 + 4) * 12 ^ 3)) ^ (1 - (1 / 300 : ℝ) / 4) ≤
+  have! hfk := entryCU_nonneg' κ 3 1
+  have! hK1p := K1c_pos
+  have! h1 : (K1c * (8 * entryCU κ 3 1 * 2 ^ (1 + 4) * 12 ^ 3)) ^ (1 - (1 / 300 : ℝ) / 4) ≤
       1 + K1c * (8 * entryCU κ 3 1 * 2 ^ (1 + 4) * 12 ^ 3) :=
     rpow_le_one_add (by positivity) (by norm_num) (by norm_num)
-  have h2 : Kc ^ (2 - (1 / 300 : ℝ) / 2) ≤ Kc ^ 2 := by
+  have! h2 : Kc ^ (2 - (1 / 300 : ℝ) / 2) ≤ Kc ^ 2 := by
     calc Kc ^ (2 - (1 / 300 : ℝ) / 2) ≤ Kc ^ (2 : ℝ) :=
           Real.rpow_le_rpow_of_exponent_le hKc (by norm_num)
       _ = Kc ^ 2 := by norm_cast
-  have h3 : (Real.logb 2 (U / ε) + 1) ^ 4 ≤ L ^ 4 := pow_le_pow_left₀ hL0 hL 4
-  have hL0' : 0 ≤ L := hL0.trans hL
-  have hB0 : 0 ≤ B := by linarith only [hB]
-  have hI0 : (0 : ℝ) ≤ (Iw : ℝ) + 1 := by positivity
-  have hIB0 : 0 ≤ IB := hI0.trans hI
+  have! h3 : (Real.logb 2 (U / ε) + 1) ^ 4 ≤ L ^ 4 := pow_le_pow_left₀ hL0 hL 4
+  have! hL0' : 0 ≤ L := hL0.trans hL
+  have! hB0 : 0 ≤ B := by linarith only [hB]
+  have! hI0 : (0 : ℝ) ≤ (Iw : ℝ) + 1 := by positivity
+  have! hIB0 : 0 ≤ IB := hI0.trans hI
   calc ((ModeComponents.upperHeights S.Jstar (1 / 1024)).card : ℝ) *
         ((fourTypesF S).filter fun κ => κ l = (0, 0)).card *
         ((K1c * (8 * entryCU κ 3 1 * 2 ^ (1 + 4) * 12 ^ 3)) ^ (1 - (1 / 300 : ℝ) / 4) *
@@ -458,42 +458,42 @@ theorem nearBndF_le (κ : LocalKernelClass) {c₀ : ℕ} (A : ActiveSetup κ c�
           ((N + 1 : ℕ) : ℝ) * ((ActiveSetup.BasicFamilies.FamParams.SideLeafM.nOs Lp Jm).card *
             Mp * A.famVtxBound)))) *
         Γ / Real.sqrt P * dyadicGridLength A.G A.R.1 := by
-  have hM := nbCM_nonneg κ hq2 hq3
-  have hU := (Classical.choose_spec (near_band_critical_UM κ hq2 hq3)).1
+  have! hM := nbCM_nonneg κ hq2 hq3
+  have! hU := (Classical.choose_spec (near_band_critical_UM κ hq2 hq3)).1
   change 0 ≤ nbCUM κ hq2 hq3 at hU
-  have hCN := (finiteDepthConstant_bounds κ hq2.le Nd).1
-  have hhull : 0 < hullCutConstant (ρ / 2) :=
+  have! hCN := (finiteDepthConstant_bounds κ hq2.le Nd).1
+  have! hhull : 0 < hullCutConstant (ρ / 2) :=
     hullCutConstant_pos (by linarith only [hρ]) (by linarith only [hρ1])
-  have hR := (dyadicGridLength_pos A.G A.R.1).le
-  have hΓ0 : 0 ≤ Γ := (hΓU.1).trans hΓU.2
-  have hP0 : 0 ≤ Real.sqrt P := Real.sqrt_nonneg _
+  have! hR := (dyadicGridLength_pos A.G A.R.1).le
+  have! hΓ0 : 0 ≤ Γ := (hΓU.1).trans hΓU.2
+  have! hP0 : 0 ≤ Real.sqrt P := Real.sqrt_nonneg _
   unfold nearBndF
   set Y : ℝ := (ActiveSetup.BasicFamilies.FamParams.SideLeafM.nOs Lp Jm).card * Mp *
     A.famVtxBound with hY
   set N1 : ℝ := ((N + 1 : ℕ) : ℝ) with hN1d
   set! Z : ℝ := (1 + finiteDepthConstant κ q Nd) * (1 + Real.log ((K : ℝ) + 2)) *
     ((K : ℝ) + 2) ^ (2 * (q - 2) / (q - 1)) * (64 * (2 * C₀) * (2 * C₀)) with hZ
-  have hY0 : 0 ≤ Y := by positivity
-  have hN1 : 1 ≤ N1 := by rw [hN1d]; exact_mod_cast Nat.succ_pos N
-  have hlogK : 0 ≤ Real.log ((K : ℝ) + 2) := Real.log_nonneg (by
+  have! hY0 : 0 ≤ Y := by positivity
+  have! hN1 : 1 ≤ N1 := by rw [hN1d]; exact_mod_cast Nat.succ_pos N
+  have! hlogK : 0 ≤ Real.log ((K : ℝ) + 2) := Real.log_nonneg (by
     have : (0 : ℝ) ≤ K := Nat.cast_nonneg K
     linarith only)
-  have hZ0 : 0 ≤ Z := by
+  have! hZ0 : 0 ≤ Z := by
     rw [hZ]
     have : 0 ≤ ((K : ℝ) + 2) ^ (2 * (q - 2) / (q - 1)) := by positivity
     have : 0 ≤ 1 + Real.log ((K : ℝ) + 2) := by linarith only [hlogK]
     positivity
-  have hlog2 : ∀ x : ℝ, 0 ≤ x → 0 ≤ 1 + Real.log (2 + x) := fun x hx => by
+  have! hlog2 : ∀ x : ℝ, 0 ≤ x → 0 ≤ 1 + Real.log (2 + x) := fun x hx => by
     have := Real.log_nonneg (show (1 : ℝ) ≤ 2 + x by linarith only [hx])
     linarith only [this]
-  have hW0 : 0 ≤ hullCutConstant (ρ / 2) * N1 * (1 + Real.log (2 + N1 * N1 * Y)) :=
+  have! hW0 : 0 ≤ hullCutConstant (ρ / 2) * N1 * (1 + Real.log (2 + N1 * N1 * Y)) :=
     mul_nonneg (mul_nonneg hhull.le (by linarith only [hN1d])) (hlog2 _ (by positivity))
-  have hsq : ∀ x y : ℝ, 0 ≤ x → x ≤ Γ → 0 ≤ y → y ≤ Γ → Real.sqrt (x * y) ≤ Γ := by
+  have! hsq : ∀ x y : ℝ, 0 ≤ x → x ≤ Γ → 0 ≤ y → y ≤ Γ → Real.sqrt (x * y) ≤ Γ := by
     intro x y hx hxΓ hy hyΓ
     calc Real.sqrt (x * y) ≤ Real.sqrt (Γ * Γ) :=
           Real.sqrt_le_sqrt (mul_le_mul hxΓ hyΓ hy hΓ0)
       _ = Γ := Real.sqrt_mul_self hΓ0
-  have hfin : ∀ (c W s : ℝ), 0 ≤ c → c ≤ nbCM κ hq2 hq3 + nbCUM κ hq2 hq3 → 0 ≤ W →
+  have! hfin : ∀ (c W s : ℝ), 0 ≤ c → c ≤ nbCM κ hq2 hq3 + nbCUM κ hq2 hq3 → 0 ≤ W →
       W ≤ hullCutConstant (ρ / 2) * N1 * (1 + Real.log (2 + N1 * N1 * Y)) → 0 ≤ s → s ≤ Γ →
       4 * (c * (1 + finiteDepthConstant κ q Nd) * (1 + Real.log ((K : ℝ) + 2)) *
         ((K : ℝ) + 2) ^ (2 * (q - 2) / (q - 1)) * (64 * (2 * C₀) * (2 * C₀))) * W * s /
@@ -508,9 +508,9 @@ theorem nearBndF_le (κ : LocalKernelClass) {c₀ : ℕ} (A : ActiveSetup κ c�
         ((K : ℝ) + 2) ^ (2 * (q - 2) / (q - 1)) * (64 * (2 * C₀) * (2 * C₀))) =
         4 * (c' * Z) := fun c' => by rw [hZ]; ring
     rw [e, e]
-    have h1 : 4 * (c * Z) ≤ 4 * ((nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) * Z) :=
+    have! h1 : 4 * (c * Z) ≤ 4 * ((nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) * Z) :=
       mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hcM hZ0) (by norm_num)
-    have h2 := mul_le_mul (mul_le_mul h1 hWM hW (by positivity)) hsΓ hs (by positivity)
+    have! h2 := mul_le_mul (mul_le_mul h1 hWM hW (by positivity)) hsΓ hs (by positivity)
     exact mul_le_mul_of_nonneg_right (div_le_div_of_nonneg_right h2 hP0) hR
   split_ifs with h1 h2
   · -- the `U` case
@@ -519,11 +519,11 @@ theorem nearBndF_le (κ : LocalKernelClass) {c₀ : ℕ} (A : ActiveSetup κ c�
     · rw [Nat.cast_one]
       exact mul_nonneg (mul_nonneg hhull.le (by linarith only [hN1d])) (hlog2 _ (by positivity))
     · rw [Nat.cast_one]
-      have h3 : N1 * 1 * Y ≤ N1 * N1 * Y :=
+      have! h3 : N1 * 1 * Y ≤ N1 * N1 * Y :=
         mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hN1 (by linarith only [hN1d])) hY0
-      have h4 : 0 < 2 + N1 * 1 * Y := by positivity
-      have h5 := Real.log_le_log h4 (show 2 + N1 * 1 * Y ≤ 2 + N1 * N1 * Y by linarith only [h3])
-      have h6 : 1 + Real.log (2 + N1 * 1 * Y) ≤ 1 + Real.log (2 + N1 * N1 * Y) := by
+      have! h4 : 0 < 2 + N1 * 1 * Y := by positivity
+      have! h5 := Real.log_le_log h4 (show 2 + N1 * 1 * Y ≤ 2 + N1 * N1 * Y by linarith only [h3])
+      have! h6 : 1 + Real.log (2 + N1 * 1 * Y) ≤ 1 + Real.log (2 + N1 * N1 * Y) := by
         linarith only [h5]
       exact mul_le_mul_of_nonneg_left h6 (mul_nonneg hhull.le (by linarith only [hN1d]))
   · exact hfin _ _ _ hM (by linarith only [hU]) hW0 le_rfl (Real.sqrt_nonneg _)
@@ -652,7 +652,7 @@ theorem leaf_final_hME :
     Real.sqrt Ee ≤ 288 * Real.exp (4 * (k : ℝ) ^ cc) * Real.sqrt δ * R := by
   intro κ k cc cb Nl Mp V hcb hNl4 dB hdB1 δ R hδ hδ8 hRl0 S Iw U ε cE hcEsum Ee hEe0 hEeb hNl0 E1
     hE1 hE11 hMpE hVE1 hcbE hNlE hdBE
-  have hEe00 : 0 ≤ Ee := hEe0
+  have! hEe00 : 0 ≤ Ee := hEe0
   have! hMV' : (((Mp * V : ℕ) : ℝ)) ≤ 5 * E1 ^ 2 := by
     push_cast
     have! this := mul_le_mul hMpE hVE1 (Nat.cast_nonneg _) (by linarith only [hE11])
@@ -808,7 +808,7 @@ theorem leaf_final_hQeMV :
   have! ht := threeErrC_nonneg κ 3 1
   have! hfk := fourKC_nonneg κ 3
   have! hen := entryCU_nonneg' κ 3 1
-  have hK1p := K1c_pos
+  have! hK1p := K1c_pos
   -- the powers of `D_*`
   have! hA1 : 16 * fourErrC κ 3 * ι * MV + 4 * (81 * threeErrC κ 3 1 * ι * U) * MV ≤
       S.Dstar⁻¹ * MV * (16 * fourErrC κ 3 + 324 * threeErrC κ 3 1 *
@@ -915,7 +915,7 @@ theorem leaf_final_hWk :
   let n : ℝ := (↑Nb : ℝ)
   have! hd' : (S.dmax : ℝ) ≤ 4 * (k : ℝ) ^ cc := by
     rw [hSd]; push_cast
-    have hdBk' : (dB : ℝ) ≤ (k : ℝ) ^ cc := hdBk
+    have! hdBk' : (dB : ℝ) ≤ (k : ℝ) ^ cc := hdBk
     linarith only [hdBk', hkcc1]
   have! hlDm : Real.log (2 * S.Dm) ≤ 2 * (k : ℝ) ^ cc := by
     rw [hSDm, Real.log_mul (by norm_num) (by positivity)]
@@ -1082,7 +1082,7 @@ theorem leaf_final_hNEAR :
         omega)
     have! hcm0 : 0 ≤ cm * Cb ^ 59 := mul_nonneg hcmn (by positivity)
     have! hce0 : 0 ≤ ce * Cb ^ 18 := mul_nonneg hcen (by positivity)
-    have hce20 : 0 ≤ ce2 := hce2n
+    have! hce20 : 0 ≤ ce2 := hce2n
     linarith only [h1, h2, hcm0, hce0, hce20, hcQ0]
   have! hfin : 6 * (64 * ZT) ≤ 384 * (655360000 * cQ * ((nbCM κ hq2 hq3 + nbCUM κ hq2 hq3) *
       (1 + finiteDepthConstant κ q Nd) * (Kb + 2) ^ eq') *
@@ -1299,7 +1299,7 @@ theorem leaf_final_hErr :
     have! hA : 0 ≤ 6642 * localFormUniformConstant κ * (60000 + Real.sqrt cT) ^ 3 * 288 :=
       mul_nonneg (mul_nonneg hL6 (by positivity)) (by norm_num)
     have! hYR : 0 ≤ B ^ 18 * G ^ 3 * e4 * R := mul_nonneg hY0 hR0
-    have hce' : ce = 6642 * localFormUniformConstant κ * (60000 + Real.sqrt cT) ^ 3 * 288 +
+    have! hce' : ce = 6642 * localFormUniformConstant κ * (60000 + Real.sqrt cT) ^ 3 * 288 +
         9 * (16 * fourErrC κ 3 + 648 * threeErrC κ 3 1 +
           324 * threeErrC κ 3 1 * Real.sqrt cT) := hce
     have! h5 : 5 * (16 * fourErrC κ 3 + 648 * threeErrC κ 3 1 + 324 * threeErrC κ 3 1 *

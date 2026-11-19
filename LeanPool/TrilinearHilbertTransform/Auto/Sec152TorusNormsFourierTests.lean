@@ -2196,7 +2196,9 @@ theorem coset_sum_eq_haar' {ι : Type*} (P : Finset ι) (c : ι → ℂ)
     exact ((integrable_torusCharacter V _).mul_const _).const_mul _]
   refine Finset.sum_congr rfl fun p _ => ?_
   rw [integral_mul_const, integral_const_mul, rationalAnnihilator_character_integral]
-  split_ifs <;> simp_all
+  by_cases h₁ : (fr p).1 - P₀.1 ∈ rationalIntegerIntersection V <;>
+    by_cases h₂ : (fr p).2 - P₀.2 ∈ rationalIntegerIntersection V <;>
+      simp only [h₁, h₂, and_self, and_false, false_and, ↓reduceIte, mul_one, mul_zero]
 
 open Classical in
 /-- `four_core_test` for a trigonometric expansion indexed by an arbitrary finite set with a

@@ -9,6 +9,8 @@ module
 7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
+meta import LeanPool.TrilinearHilbertTransform.Auto.ProofTools -- shake: keep
+
 public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.FourierApproximation
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec08ContinuousDecomposition
 
@@ -87,26 +89,26 @@ theorem quadraticReturnFrequency_pairing_bound {d k : ℕ}
     (hO' : ‖WithLp.toLp 2 (quadraticReturnFrequency C V Λ h' m')‖ ≤ M) :
     |dotProduct m' ((C - C.transpose).mulVec m)| ≤
       a ^ 2 * ‖realMatrixOperator (C - C.transpose)‖ + 2 * a * M := by
-  have h₁ : |dotProduct h' (quadraticReturnFrequency C V Λ h m)| ≤ a * M :=
+  have! h₁ : |dotProduct h' (quadraticReturnFrequency C V Λ h m)| ≤ a * M :=
     (abs_dotProduct_euclidean_le _ _).trans
       (mul_le_mul hh' hO (norm_nonneg _) ha)
-  have h₂ : |dotProduct h (quadraticReturnFrequency C V Λ h' m')| ≤ a * M :=
+  have! h₂ : |dotProduct h (quadraticReturnFrequency C V Λ h' m')| ≤ a * M :=
     (abs_dotProduct_euclidean_le _ _).trans
       (mul_le_mul hh hO' (norm_nonneg _) ha)
-  have h₃ : |dotProduct (V.mulVec h' - m')
+  have! h₃ : |dotProduct (V.mulVec h' - m')
       ((C - C.transpose).mulVec (V.mulVec h - m))| ≤
       a ^ 2 * ‖realMatrixOperator (C - C.transpose)‖ := by
-    have hop := (realMatrixOperator (C - C.transpose)).le_opNorm
+    have! hop := (realMatrixOperator (C - C.transpose)).le_opNorm
       (WithLp.toLp 2 (V.mulVec h - m))
-    have ho : ‖WithLp.toLp 2 ((C - C.transpose).mulVec (V.mulVec h - m))‖ ≤
+    have! ho : ‖WithLp.toLp 2 ((C - C.transpose).mulVec (V.mulVec h - m))‖ ≤
         ‖realMatrixOperator (C - C.transpose)‖ * a :=
       hop.trans (mul_le_mul_of_nonneg_left hd (norm_nonneg _))
-    have hb := (abs_dotProduct_euclidean_le (V.mulVec h' - m')
+    have! hb := (abs_dotProduct_euclidean_le (V.mulVec h' - m')
       ((C - C.transpose).mulVec (V.mulVec h - m))).trans
         (mul_le_mul hd' ho (norm_nonneg _) ha)
     convert hb using 1
     ring
-  have he := quadraticReturnFrequency_pairing C V Λ hΛ h h' m m'
+  have! he := quadraticReturnFrequency_pairing C V Λ hΛ h h' m m'
   have he' : dotProduct m' ((C - C.transpose).mulVec m) =
       dotProduct (V.mulVec h' - m') ((C - C.transpose).mulVec (V.mulVec h - m)) -
         dotProduct h' (quadraticReturnFrequency C V Λ h m) +
@@ -156,21 +158,21 @@ theorem quadratic_short_returns_isotropic {d k : ℕ}
       dotProduct (fun i => (P : ℝ) * n' i)
         ((C - C.transpose).mulVec (fun i => (P : ℝ) * n i)) = 0 := by
   intro r h h' n n' hh hh'
-  have hr := shortReturnRadius_bound ha hM (norm_nonneg (realMatrixOperator (C - C.transpose)))
+  have! hr := shortReturnRadius_bound ha hM (norm_nonneg (realMatrixOperator (C - C.transpose)))
   change 0 < r ∧ r ≤ a ∧ r ^ 2 * ‖realMatrixOperator (C - C.transpose)‖ + 2 * r * M < 1 at hr
-  have hn := norm_nonneg (WithLp.toLp 2 (V.mulVec h - fun i => (P : ℝ) * n i))
+  have! hn := norm_nonneg (WithLp.toLp 2 (V.mulVec h - fun i => (P : ℝ) * n i))
   have hn' := norm_nonneg (WithLp.toLp 2 (V.mulVec h' - fun i => (P : ℝ) * n' i))
-  have hb := quadraticReturnFrequency_pairing_bound C V Λ hΛ h h'
+  have! hb := quadraticReturnFrequency_pairing_bound C V Λ hΛ h h'
     (fun i => (P : ℝ) * n i) (fun i => (P : ℝ) * n' i) hr.1.le
     (by linarith only [hh, hn]) (by linarith only [hh', hn'])
     (by linarith only [hh, norm_nonneg (WithLp.toLp 2 h)])
     (by linarith only [hh', norm_nonneg (WithLp.toLp 2 h')])
     (hΩ h n (hh.trans hr.2.1)) (hΩ h' n' (hh'.trans hr.2.1))
-  have hlt := hb.trans_lt hr.2.2
+  have! hlt := hb.trans_lt hr.2.2
   obtain ⟨z, hz⟩ := scaled_integer_skew_pairing C P hC n n'
   rw [hz] at hlt ⊢
-  have hi : |z| < 1 := by exact_mod_cast hlt
-  have he : z = 0 := by
+  have! hi : |z| < 1 := by exact_mod_cast hlt
+  have! he : z = 0 := by
     have hz' := abs_lt.mp hi
     omega
   exact_mod_cast he
@@ -329,29 +331,29 @@ lower bound `(2ρ/(k+1))^k`. Used in lem:weyl, line 1333. -/
 theorem euclidean_ball_volume_lower {k : ℕ} {ρ : ℝ} (hρ : 0 < ρ) :
     (2 * (ρ / (k + 1))) ^ k ≤ volume.real (ball (0 : EuclideanSpace ℝ (Fin k)) ρ) := by
   set r := ρ / (k + 1) with hr
-  have hr0 : 0 ≤ r := by positivity
+  have! hr0 : 0 ≤ r := by positivity
   let Q : Set (Fin k → ℝ) := Set.Icc (fun _ => -r) (fun _ => r)
-  have hp : MeasurePreserving (fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) := by
+  have! hp : MeasurePreserving (fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) := by
     convert! PiLp.volume_preserving_ofLp (Fin k)
-  have hsub : (fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) ⁻¹' Q ⊆ ball 0 ρ := by
+  have! hsub : (fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) ⁻¹' Q ⊆ ball 0 ρ := by
     intro x hx
     rw [mem_ball_zero_iff]
-    have hsup : ‖x.ofLp‖ ≤ r := (pi_norm_le_iff_of_nonneg hr0).mpr fun i => by
+    have! hsup : ‖x.ofLp‖ ≤ r := (pi_norm_le_iff_of_nonneg hr0).mpr fun i => by
       rw [Real.norm_eq_abs, abs_le]
       exact ⟨hx.1 i, hx.2 i⟩
-    have hsq : ‖x‖ ^ 2 ≤ (k : ℝ) * r ^ 2 := by
+    have! hsq : ‖x‖ ^ 2 ≤ (k : ℝ) * r ^ 2 := by
       rw [EuclideanSpace.norm_sq_eq]
       calc ∑ i, ‖x i‖ ^ 2 ≤ ∑ _i : Fin k, r ^ 2 := Finset.sum_le_sum fun i _ =>
             pow_le_pow_left₀ (norm_nonneg _) ((norm_le_pi_norm x.ofLp i).trans hsup) 2
         _ = _ := by simp
-    have hkr : (k : ℝ) * r ^ 2 < ρ ^ 2 := by
-      have hk1 : (0 : ℝ) < k + 1 := by positivity
-      have hρr : ρ = (k + 1) * r := by rw [hr]; field_simp
+    have! hkr : (k : ℝ) * r ^ 2 < ρ ^ 2 := by
+      have! hk1 : (0 : ℝ) < k + 1 := by positivity
+      have! hρr : ρ = (k + 1) * r := by rw [hr]; field_simp
       rw [hρr]
       have hr' : 0 < r := by rw [hr]; positivity
       nlinarith [sq_nonneg (k : ℝ), mul_pos hr' hr']
     exact lt_of_pow_lt_pow_left₀ 2 hρ.le (hsq.trans_lt hkr)
-  have hvol : volume.real ((fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) ⁻¹' Q) =
+  have! hvol : volume.real ((fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) ⁻¹' Q) =
       (2 * r) ^ k := by
     rw [measureReal_def, hp.measure_preimage measurableSet_Icc.nullMeasurableSet]
     change (volume Q).toReal = _
@@ -376,32 +378,32 @@ theorem fourier_progression_step_small {E : Type*}
   by_contra hω
   push Not at hω
   set ρ := min (1 / 2) (δ / (6 * L))
-  have hρ1 : ρ ≤ 1 / 2 := min_le_left _ _
-  have hρ2 : ρ ≤ δ / (6 * L) := min_le_right _ _
-  have hLρ : L * ρ ≤ δ / 6 := by
-    have h := mul_le_mul_of_nonneg_left hρ2 hL.le
-    have he : L * (δ / (6 * L)) = δ / 6 := by field_simp
+  have! hρ1 : ρ ≤ 1 / 2 := min_le_left _ _
+  have! hρ2 : ρ ≤ δ / (6 * L) := min_le_right _ _
+  have! hLρ : L * ρ ≤ δ / 6 := by
+    have! h := mul_le_mul_of_nonneg_left hρ2 hL.le
+    have! he : L * (δ / (6 * L)) = δ / 6 := by field_simp
     linarith only [h, he]
-  have hsq : Integrable (fun x => ‖𝓕 f x‖ ^ 2) :=
+  have! hsq : Integrable (fun x => ‖𝓕 f x‖ ^ 2) :=
     (memLp_two_iff_integrable_sq_norm
       (continuous_fourier_of_integrable hf1).aestronglyMeasurable).mp
       (memLp_two_fourier hf1 hf2)
-  have hmass := separated_balls_sq_mass (μ := volume) hsq M (fun j => ξ - j • ω)
+  have! hmass := separated_balls_sq_mass (μ := volume) hsq M (fun j => ξ - j • ω)
     (ρ := ρ) (c := δ / 3)
     (fun i _ j _ hij => by
-      have he : (ξ - i • ω) - (ξ - j • ω) = (((j : ℤ) - i : ℤ) : ℝ) • ω := by
+      have! he : (ξ - i • ω) - (ξ - j • ω) = (((j : ℤ) - i : ℤ) : ℝ) • ω := by
         rw [Int.cast_smul_eq_zsmul, sub_zsmul, natCast_zsmul, natCast_zsmul]
         abel
       have hij' : (1 : ℝ) ≤ |(((j : ℤ) - i : ℤ) : ℝ)| := by
-        have h0 : ((j : ℤ) - i) ≠ 0 := sub_ne_zero.mpr (by exact_mod_cast (Ne.symm hij))
+        have! h0 : ((j : ℤ) - i) ≠ 0 := sub_ne_zero.mpr (by exact_mod_cast (Ne.symm hij))
         exact_mod_cast Int.one_le_abs h0
       rw [dist_eq_norm, he, norm_smul, Real.norm_eq_abs]
       nlinarith only [norm_nonneg ω, hω, hρ1, hij'])
     (fun j hj x hx => by
-      have h1 := hlarge j hj
-      have h2 := hLip x (ξ - j • ω)
-      have h3 : ‖x - (ξ - j • ω)‖ ≤ ρ := (mem_ball_iff_norm.mp hx).le
-      have h4 := norm_sub_norm_le (𝓕 f (ξ - j • ω)) (𝓕 f x)
+      have! h1 := hlarge j hj
+      have! h2 := hLip x (ξ - j • ω)
+      have! h3 : ‖x - (ξ - j • ω)‖ ≤ ρ := (mem_ball_iff_norm.mp hx).le
+      have! h4 := norm_sub_norm_le (𝓕 f (ξ - j • ω)) (𝓕 f x)
       rw [norm_sub_rev] at h4
       nlinarith only [mul_le_mul_of_nonneg_left h3 hL.le, hLρ, h1, h2, h4])
     (by positivity)
@@ -827,46 +829,46 @@ theorem latticeBodySpan_small_dual_basis {E : Type*} [NormedAddCommGroup E]
   intro U
   let L := Submodule.span ℤ (Set.range v)
   let r := Module.finrank ℝ U
-  have hdim : Module.finrank ℝ E = n := by
+  have! hdim : Module.finrank ℝ E = n := by
     simpa only [Fintype.card_fin] using Module.finrank_eq_card_basis v
-  have hn : 0 < n := by omega
-  have hCp : 0 < C := lt_of_lt_of_le (by positivity) hC
-  have hAp : 0 < A := hCp.trans hCA
-  have hAb : 0 < A * b := mul_pos hAp hb
-  have hgt : A * b < successiveMinimum K L (r + 1) := by
+  have! hn : 0 < n := by omega
+  have! hCp : 0 < C := lt_of_lt_of_le (by positivity) hC
+  have! hAp : 0 < A := hCp.trans hCA
+  have! hAb : 0 < A * b := mul_pos hAp hb
+  have! hgt : A * b < successiveMinimum K L (r + 1) := by
     apply latticeBodySpan_rank_gap hK L hb
     · simpa only [hdim] using hgap
     · simpa only [hdim] using hr
   obtain ⟨hp, q, hq, hqm⟩ := successiveMinimum_attained_fullLattice
     (symmetricConvexBody_polar hK) (euclideanDualLattice L)
     (show 0 < n - r by dsimp [r, U]; omega) (by rw [hdim]; omega)
-  have hprod := (successiveMinimum_product_upper hK v
+  have! hprod := (successiveMinimum_product_upper hK v
     (show 0 < r + 1 by omega) (show r + 1 ≤ n by dsimp [r, U]; omega)).trans hC
-  have he : n + 1 - (r + 1) = n - r := by omega
+  have! he : n + 1 - (r + 1) = n - r := by omega
   rw [he] at hprod
-  have hscale : successiveMinimum (euclideanPolar K) (euclideanDualLattice L) (n-r) ≤
+  have! hscale : successiveMinimum (euclideanPolar K) (euclideanDualLattice L) (n-r) ≤
       C / (A * b) := by
     apply (le_div_iff₀ hAb).mpr
-    have hm := (mul_le_mul_of_nonneg_right hgt.le hp.le).trans hprod
+    have! hm := (mul_le_mul_of_nonneg_right hgt.le hp.le).trans hprod
     simpa only [mul_comm] using hm
-  have ht : 0 < C / (A * b) := div_pos hCp hAb
-  have hqt : ∀ i, q i ∈ (C / (A * b)) • euclideanPolar K := by
+  have! ht : 0 < C / (A * b) := div_pos hCp hAb
+  have! hqt : ∀ i, q i ∈ (C / (A * b)) • euclideanPolar K := by
     intro i
     exact (symmetricConvexBody_gauge_le (symmetricConvexBody_polar hK) (q i) ht).mp
       (((symmetricConvexBody_gauge_le (symmetricConvexBody_polar hK) (q i) hp).mpr
         (hqm i)).trans hscale)
-  have hbt : b * (C / (A * b)) < 1 := by
-    have heq : b * (C / (A * b)) = C / A := by field_simp
+  have! hbt : b * (C / (A * b)) < 1 := by
+    have! heq : b * (C / (A * b)) = C / A := by field_simp
     rw [heq]
     exact (div_lt_one hAp).mpr hCA
-  have hsub : Submodule.span ℝ (Set.range q) ≤ Uᗮ := by
+  have! hsub : Submodule.span ℝ (Set.range q) ≤ Uᗮ := by
     apply Submodule.span_le.mpr
     rintro _ ⟨i, rfl⟩
     exact short_dual_vector_mem_orthogonal K L hb.le ht.le hbt (hq.2 i) (hqt i)
   refine ⟨q, hq.1, hq.2, hqt, Submodule.eq_of_le_of_finrank_eq hsub ?_⟩
-  have hqdim : Module.finrank ℝ (Submodule.span ℝ (Set.range q)) = n - r := by
+  have! hqdim : Module.finrank ℝ (Submodule.span ℝ (Set.range q)) = n - r := by
     simpa only [Fintype.card_fin] using finrank_span_eq_card hq.1
-  have hu := U.finrank_add_finrank_orthogonal
+  have! hu := U.finrank_add_finrank_orthogonal
   rw [hdim] at hu
   dsimp [r] at hqdim
   omega
@@ -960,27 +962,27 @@ theorem finite_torus_close_pair {d N : ℕ} (hN : 0 < N)
     ∃ i j : Fin (N ^ d + 1), i < j ∧
       ∀ l, |Int.fract (x j l) - Int.fract (x i l)| ≤ 1 / (N : ℝ) := by
   classical
-  have hNr : (0 : ℝ) < N := by exact_mod_cast hN
+  have! hNr : (0 : ℝ) < N := by exact_mod_cast hN
   let box : Fin (N ^ d + 1) → Fin d → Fin N := fun i l =>
     ⟨⌊(N : ℝ) * Int.fract (x i l)⌋₊, (Nat.floor_lt (by positivity)).mpr
       (by nlinarith only [Int.fract_lt_one (x i l), hNr])⟩
-  have hcard : Fintype.card (Fin d → Fin N) < Fintype.card (Fin (N ^ d + 1)) := by
+  have! hcard : Fintype.card (Fin d → Fin N) < Fintype.card (Fin (N ^ d + 1)) := by
     simp
   obtain ⟨i, j, hij, hbox⟩ := Fintype.exists_ne_map_eq_of_card_lt box hcard
   have hclose (u v : Fin (N ^ d + 1)) (he : box u = box v) (l : Fin d) :
       |Int.fract (x v l) - Int.fract (x u l)| ≤ 1 / (N : ℝ) := by
-    have heq := congrArg Fin.val (congrFun he l)
+    have! heq := congrArg Fin.val (congrFun he l)
     change ⌊(N : ℝ) * Int.fract (x u l)⌋₊ = ⌊(N : ℝ) * Int.fract (x v l)⌋₊ at heq
-    have hul := Nat.floor_le (show 0 ≤ (N : ℝ) * Int.fract (x u l) by positivity)
-    have huv := Nat.lt_floor_add_one ((N : ℝ) * Int.fract (x u l))
-    have hvl := Nat.floor_le (show 0 ≤ (N : ℝ) * Int.fract (x v l) by positivity)
-    have hvv := Nat.lt_floor_add_one ((N : ℝ) * Int.fract (x v l))
+    have! hul := Nat.floor_le (show 0 ≤ (N : ℝ) * Int.fract (x u l) by positivity)
+    have! huv := Nat.lt_floor_add_one ((N : ℝ) * Int.fract (x u l))
+    have! hvl := Nat.floor_le (show 0 ≤ (N : ℝ) * Int.fract (x v l) by positivity)
+    have! hvv := Nat.lt_floor_add_one ((N : ℝ) * Int.fract (x v l))
     rw [heq] at hul huv
     apply abs_le.mpr
     constructor
-    · have hh : (Int.fract (x v l) - Int.fract (x u l)) * N ≥ -1 := by
+    · have! hh : (Int.fract (x v l) - Int.fract (x u l)) * N ≥ -1 := by
         nlinarith only [huv, hvl]
-      have hd := (le_div_iff₀ hNr).mpr (show
+      have! hd := (le_div_iff₀ hNr).mpr (show
         (-(Int.fract (x v l) - Int.fract (x u l))) * N ≤ 1 by linarith only [hh])
       linarith only [hd]
     · apply (le_div_iff₀ hNr).mpr
@@ -1082,51 +1084,51 @@ theorem shortReturnBody_coordinate_return {d k : ℕ}
   let e := EuclideanSpace.basisFun (Fin k) ℝ j
   let v := P⁻¹ • V e
   obtain ⟨M, t, n, hM, hMb, htlo, hthi, hn⟩ := small_line_lattice_return v.ofLp hb
-  have hMr : (0 : ℝ) < M := by exact_mod_cast hM
-  have ht : 0 < t := (div_pos hb hMr).trans_le htlo
+  have! hMr : (0 : ℝ) < M := by exact_mod_cast hM
+  have! ht : 0 < t := (div_pos hb hMr).trans_le htlo
   let h := t • e
   let z : EuclideanSpace ℝ (Fin d) := WithLp.toLp 2 (fun i => (n i : ℝ))
   let w := z - P⁻¹ • V h
   have hw (i : Fin d) : |w i| ≤ b / 4 := by
-    have he : w i = -(t * v i - (n i : ℝ)) := by
+    have! he : w i = -(t * v i - (n i : ℝ)) := by
       simp only [w, z, h, v, map_smul, PiLp.sub_apply, PiLp.smul_apply,
         smul_eq_mul]
       ring
     rw [he, abs_neg]
     exact hn i
-  have hcoord : ∀ l, |h l| ≤ b := by
+  have! hcoord : ∀ l, |h l| ≤ b := by
     intro l
-    have he := (mem_euclideanCoordinateCube e).mp (euclideanCoordinateCube_basis_mem j) l
+    have! he := (mem_euclideanCoordinateCube e).mp (euclideanCoordinateCube_basis_mem j) l
     calc
       |h l| = t * |e l| := by simp only [h, PiLp.smul_apply, smul_eq_mul, abs_mul,
         abs_of_pos ht]
       _ ≤ t := mul_le_of_le_one_right ht.le he
       _ ≤ b := hthi
-  have hz : z ∈ b • shortReturnBody V P := by
+  have! hz : z ∈ b • shortReturnBody V P := by
     apply mem_smul_shortReturnBody_of_representation V P hb h w hcoord
       (fun i => (hw i).trans (by linarith only [hb]))
     dsimp [w]
     abel
-  have hzL : z ∈ coordinateIntegerLattice d :=
+  have! hzL : z ∈ coordinateIntegerLattice d :=
     (mem_coordinateIntegerLattice z).mpr (fun i => ⟨n i, rfl⟩)
-  have hzU : P • z ∈ shortReturnLatticeSpan V P b :=
+  have! hzU : P • z ∈ shortReturnLatticeSpan V P b :=
     Submodule.smul_mem _ P (Submodule.subset_span ⟨hzL, hz⟩)
-  have hd : V h - P • z = -(P • w) := by
+  have! hd : V h - P • z = -(P • w) := by
     simp only [w, smul_sub, smul_smul, mul_inv_cancel₀ hP.ne', one_smul]
     abel
   have hdef (i : Fin d) : |(V h - P • z) i| ≤ P * b / 4 := by
     rw [hd]
     simp only [PiLp.neg_apply, PiLp.smul_apply, smul_eq_mul, abs_neg, abs_mul,
       abs_of_pos hP]
-    have hh := mul_le_mul_of_nonneg_left (hw i) hP.le
+    have! hh := mul_le_mul_of_nonneg_left (hw i) hP.le
     simpa only [mul_div_assoc] using hh
   refine ⟨M, t, n, hM, hMb, htlo, hthi, hz, hzU, hdef, ?_⟩
-  have hhn : ‖h‖ = t := by
+  have! hhn : ‖h‖ = t := by
     simp [h, e, norm_smul, abs_of_pos ht, EuclideanSpace.basisFun_apply]
-  have hdn := euclidean_norm_le_coordinate_bound (V h - P • z) hdef
+  have! hdn := euclidean_norm_le_coordinate_bound (V h - P • z) hdef
   change ‖h‖ + ‖V h - P • z‖ ≤ _
   rw [hhn]
-  have hnonneg : 0 ≤ P * (d : ℝ) * b := by positivity
+  have! hnonneg : 0 ≤ P * (d : ℝ) * b := by positivity
   nlinarith only [hdn, hthi, hnonneg]
 
 /-- Integer generators of the orthogonal complement of the short-return span,
@@ -1148,27 +1150,27 @@ theorem shortReturnLatticeSpan_dual_coordinates {d k : ℕ}
   classical
   by_cases hr : Module.finrank ℝ (shortReturnLatticeSpan V P b) < d
   · obtain ⟨q, hq, hqL, hqt, hspan⟩ := shortReturnLatticeSpan_dual_basis V P hb hgap hr
-    have hd : 0 < d := by omega
-    have hC : 0 < (100 * (d : ℝ)) ^ (10 * d) := by positivity
-    have he : (100 * (d : ℝ)) ^ (10 * d) /
+    have! hd : 0 < d := by omega
+    have! hC : 0 < (100 * (d : ℝ)) ^ (10 * d) := by positivity
+    have! he : (100 * (d : ℝ)) ^ (10 * d) /
         ((16 * (100 * (d : ℝ)) ^ (10 * d)) * b) = b⁻¹ / 16 := by
       field_simp
-    have hs : 0 ≤ b⁻¹ / 16 := by positivity
-    have hsle : b⁻¹ / 16 ≤ b⁻¹ := by have := inv_pos.mpr hb; linarith
+    have! hs : 0 ≤ b⁻¹ / 16 := by positivity
+    have! hsle : b⁻¹ / 16 ≤ b⁻¹ := by have := inv_pos.mpr hb; linarith
     refine ⟨d - Module.finrank ℝ (shortReturnLatticeSpan V P b),
       Nat.sub_le _ _, q, hq, hqL, ?_, ?_, hspan⟩
     · intro i j
-      have hi := hqt i
+      have! hi := hqt i
       rw [he] at hi
       exact ((shortReturnBody_polar_coordinates V hP hs hi).1 j).trans hsle
     · intro i j
-      have hi := hqt i
+      have! hi := hqt i
       rw [he] at hi
       exact ((shortReturnBody_polar_coordinates V hP hs hi).2 j).trans
         (mul_le_mul_of_nonneg_left hsle hP.le)
-  · have htop : shortReturnLatticeSpan V P b = ⊤ := by
+  · have! htop : shortReturnLatticeSpan V P b = ⊤ := by
       apply Submodule.eq_top_of_finrank_eq
-      have hle := (shortReturnLatticeSpan V P b).finrank_le
+      have! hle := (shortReturnLatticeSpan V P b).finrank_le
       simp only [finrank_euclideanSpace, Fintype.card_fin] at hle ⊢
       omega
     refine ⟨0, Nat.zero_le _, Fin.elim0, linearIndependent_empty_type, ?_, ?_, ?_, ?_⟩
@@ -1406,12 +1408,12 @@ theorem shortReturnQuadraticBudget_bound {t a M s : ℝ} (ht : 2 ≤ t)
         (shortReturnAlternatingBudget t * (shortReturnSlowBudget t * a)) +
           (k : ℝ) * d * shortReturnSlowBudget t * (shortReturnAlternatingBudget t * a)) / s) ≤
       shortReturnQuadraticBudget t := by
-  have hL := one_le_logarithmicSize ht
-  have hS := shortReturnSlowBudget_two_le ht
-  have hA := quasipolynomialBound_nonneg shortReturnAlternatingBudget_quasipolynomial ht
-  have hT := quasipolynomialBound_nonneg shortReturnTimeInverseBudget_quasipolynomial ht
-  have hkR : (k : ℝ) ≤ 3 := by exact_mod_cast hk
-  have hnum :
+  have! hL := one_le_logarithmicSize ht
+  have! hS := shortReturnSlowBudget_two_le ht
+  have! hA := quasipolynomialBound_nonneg shortReturnAlternatingBudget_quasipolynomial ht
+  have! hT := quasipolynomialBound_nonneg shortReturnTimeInverseBudget_quasipolynomial ht
+  have! hkR : (k : ℝ) ≤ 3 := by exact_mod_cast hk
+  have! hnum :
       M + (k : ℝ) * d * shortReturnSlowBudget t *
         (shortReturnAlternatingBudget t * (shortReturnSlowBudget t * a)) +
           (k : ℝ) * d * shortReturnSlowBudget t * (shortReturnAlternatingBudget t * a) ≤
@@ -1456,24 +1458,24 @@ theorem shortReturnParameter_product_bounds {H P a M : ℝ}
     2 ≤ t ∧ H ≤ t ∧ P ≤ t ∧ a⁻¹ ≤ t ∧ M ≤ t ∧
       logarithmicSize t = 1 + Real.log H + Real.log P + Real.log (1 / a) + Real.log M := by
   intro t
-  have hH1 : 1 ≤ H := by linarith only [hH]
-  have hH0 : 0 ≤ H := by linarith only [hH]
-  have hP0 : 0 ≤ P := by linarith only [hP]
-  have hM0 : 0 ≤ M := by linarith only [hM]
-  have haI : 1 ≤ a⁻¹ := (one_le_inv₀ ha).mpr ha1
-  have haI0 : 0 ≤ a⁻¹ := inv_nonneg.mpr ha.le
-  have hHP : 1 ≤ H * P := by
+  have! hH1 : 1 ≤ H := by linarith only [hH]
+  have! hH0 : 0 ≤ H := by linarith only [hH]
+  have! hP0 : 0 ≤ P := by linarith only [hP]
+  have! hM0 : 0 ≤ M := by linarith only [hM]
+  have! haI : 1 ≤ a⁻¹ := (one_le_inv₀ ha).mpr ha1
+  have! haI0 : 0 ≤ a⁻¹ := inv_nonneg.mpr ha.le
+  have! hHP : 1 ≤ H * P := by
     simpa using mul_le_mul hH1 hP zero_le_one hH0
-  have hHPA : 1 ≤ H * P * a⁻¹ := by
+  have! hHPA : 1 ≤ H * P * a⁻¹ := by
     simpa using mul_le_mul hHP haI zero_le_one (mul_nonneg hH0 hP0)
-  have htail : H * P ≤ t :=
+  have! htail : H * P ≤ t :=
     (le_mul_of_one_le_right (mul_nonneg hH0 hP0) haI).trans
       (le_mul_of_one_le_right (by positivity) hM)
-  have hh : H ≤ t := (le_mul_of_one_le_right hH0 hP).trans htail
-  have hp : P ≤ t := (le_mul_of_one_le_left hP0 hH1).trans htail
-  have hi : a⁻¹ ≤ t := (le_mul_of_one_le_left haI0 hHP).trans
+  have! hh : H ≤ t := (le_mul_of_one_le_right hH0 hP).trans htail
+  have! hp : P ≤ t := (le_mul_of_one_le_left hP0 hH1).trans htail
+  have! hi : a⁻¹ ≤ t := (le_mul_of_one_le_left haI0 hHP).trans
     (le_mul_of_one_le_right (by positivity) hM)
-  have hm : M ≤ t := le_mul_of_one_le_left hM0 hHPA
+  have! hm : M ≤ t := le_mul_of_one_le_left hM0 hHPA
   refine ⟨hH.trans hh, hh, hp, hi, hm, ?_⟩
   dsimp [t, logarithmicSize]
   rw [Real.log_mul (by positivity) (by positivity),
@@ -1557,15 +1559,15 @@ theorem multivariableQuadraticChart_return_identity {k d : ℕ}
     ((Equiv.addRight m).tsum_eq _).symm, ← tsum_mul_left]
   apply tsum_congr
   intro n
-  have hw : A.horizontal.mulVec (z + h) - (fun i => ((n + m) i : ℝ)) =
+  have! hw : A.horizontal.mulVec (z + h) - (fun i => ((n + m) i : ℝ)) =
       A.horizontal.mulVec z - (fun i => (n i : ℝ)) + e := by
     rw [Matrix.mulVec_add]
     ext i
     simp only [Pi.sub_apply, Pi.add_apply, Int.cast_add, e]
     ring
-  have hp := quadratic_lattice_return_phase C A.horizontal A.quadratic A.symmetric
+  have! hp := quadratic_lattice_return_phase C A.horizontal A.quadratic A.symmetric
     A.linear z h (fun i => (n i : ℝ)) (fun i => (m i : ℝ))
-  have hn : (fun i => ((n + m) i : ℝ)) =
+  have! hn : (fun i => ((n + m) i : ℝ)) =
       (fun i => (n i : ℝ)) + (fun i => (m i : ℝ)) := by ext i; simp
   have hp' : multivariableChartPhase A (z + h) (n + m) +
       chartMatrixPhase A.matrix (fun i => (m i : ℝ)) (fun i => (n i : ℝ)) =
@@ -1576,7 +1578,7 @@ theorem multivariableQuadraticChart_return_identity {k d : ℕ}
     simp only [chartMatrixPhase_eq_dotProduct, quadraticReturnFrequency] at hp ⊢
     linear_combination hp
   obtain ⟨q, hq⟩ := chartMatrixPhase_integer_of_coefficients A.matrix m n hint
-  have hchar := congrArg (fun r : ℝ => (Real.fourierChar r : ℂ)) hp'
+  have! hchar := congrArg (fun r : ℝ => (Real.fourierChar r : ℂ)) hp'
   rw [← hq, chart_fourierChar_add_int] at hchar
   rw [hw, hchar]
   simp only [AddChar.map_add_eq_mul, Circle.coe_mul]
@@ -1629,17 +1631,17 @@ theorem chart_modulated_amplitude_error {d : ℕ}
     ‖χ (w + e) * (Real.fourierChar (chartMatrixPhase C e w) : ℂ) - χ w‖ ≤
       (L + K * (2 * Real.pi * (d : ℝ) ^ 2 * B * R)) * ‖e‖ := by
   let p : ℂ := Real.fourierChar (chartMatrixPhase C e w)
-  have hp : ‖p‖ = 1 := Circle.norm_coe _
-  have he : ‖χ (w + e) - χ w‖ ≤ L * ‖e‖ := by
+  have! hp : ‖p‖ = 1 := Circle.norm_coe _
+  have! he : ‖χ (w + e) - χ w‖ ≤ L * ‖e‖ := by
     simpa only [add_sub_cancel_left] using hLip w (w + e)
-  have hphase : ‖χ w * (p - 1)‖ ≤
+  have! hphase : ‖χ w * (p - 1)‖ ≤
       K * (2 * Real.pi * (d : ℝ) ^ 2 * B * R) * ‖e‖ := by
     by_cases hz : χ w = 0
     · simp only [hz, zero_mul, norm_zero]
       positivity
-    have hn := chartMatrixLeftLinear_norm_le C e hB (norm_nonneg e) hC
+    have! hn := chartMatrixLeftLinear_norm_le C e hB (norm_nonneg e) hC
       (fun i => by simpa only [Real.norm_eq_abs] using norm_le_pi_norm e i)
-    have hval : |chartMatrixPhase C e w| ≤ ((d : ℝ) ^ 2 * ‖e‖ * B) * R := by
+    have! hval : |chartMatrixPhase C e w| ≤ ((d : ℝ) ^ 2 * ‖e‖ * B) * R := by
       rw [← chartMatrixLeftLinear_apply, ← Real.norm_eq_abs]
       exact (chartMatrixLeftLinear C e).le_of_opNorm_le_of_le hn (hsupp w hz)
     rw [norm_mul]
@@ -1673,7 +1675,7 @@ theorem chart_lattice_modulation_error {d : ℕ}
   classical
   let S := chartLatticeBox R u ∪ chartLatticeBox R (u + e)
   let T := (L + K * (2 * Real.pi * (d : ℝ) ^ 2 * B * R)) * ‖e‖
-  have hT : 0 ≤ T := by dsimp [T]; positivity
+  have! hT : 0 ≤ T := by dsimp [T]; positivity
   have hz (v : Fin d → ℝ) (n : Fin d → ℤ) (hn : n ∉ chartLatticeBox R v) :
       χ (v - fun i => (n i : ℝ)) = 0 := by
     by_contra hh
@@ -1686,8 +1688,8 @@ theorem chart_lattice_modulation_error {d : ℕ}
     tsum_eq_sum (s := S) (fun n hn => by
       rw [hz u n (fun h => hn (Finset.mem_union_left _ h))]
       simp), ← Finset.sum_sub_distrib]
-  have hcard : (S.card : ℝ) ≤ 2 * (2 * R + 3) ^ d := by
-    have hh : (S.card : ℝ) ≤
+  have! hcard : (S.card : ℝ) ≤ 2 * (2 * R + 3) ^ d := by
+    have! hh : (S.card : ℝ) ≤
         (chartLatticeBox R u).card + (chartLatticeBox R (u + e)).card := by
       exact_mod_cast Finset.card_union_le (chartLatticeBox R u) (chartLatticeBox R (u + e))
     linarith only [hh, chartLatticeBox_card_le hR u, chartLatticeBox_card_le hR (u + e)]
@@ -1853,13 +1855,13 @@ theorem localized_multivariableChart_return_error {k d c₀ : ℕ} {H R : ℝ}
     Integrable E ∧ ∀ z, (∫ x, ‖E x‖) + ‖E z‖ ≤
       localizedReturnErrorConstant c₀ d k H R * (‖h‖ + ‖e‖) := by
   intro e C ω c E
-  have hH := (quadraticChartComplexity_parameter_pos hA).le
+  have! hH := (quadraticChartComplexity_parameter_pos hA).le
   let K := H * ((2 * H + 3) ^ d * H ^ c₀) + H * chartReturnErrorConstant c₀ d H
-  have hD : 0 ≤ chartReturnErrorConstant c₀ d H := by
+  have! hD : 0 ≤ chartReturnErrorConstant c₀ d H := by
     unfold chartReturnErrorConstant
     positivity
-  have hEm : Measurable E := by
-    have hQm := multivariableQuadraticChartAtom_measurable A
+  have! hEm : Measurable E := by
+    have! hQm := multivariableQuadraticChartAtom_measurable A
     dsimp [E]
     apply Measurable.sub
     · exact (hθm.comp (by fun_prop)).mul (hQm.comp (by fun_prop))
@@ -1876,12 +1878,12 @@ theorem localized_multivariableChart_return_error {k d c₀ : ℕ} {H R : ℝ}
   have hEs (z) (hz : E z ≠ 0) : ∀ i, |z i| ≤ R + 1 := by
     intro i
     by_cases hθz : θ z = 0
-    · have hθzh : θ (z + h) ≠ 0 := by
+    · have! hθzh : θ (z + h) ≠ 0 := by
         intro hh0
         exact hz (by simp [E, hθz, hh0])
-      have hi0 : |h i| ≤ ‖h‖ := by
+      have! hi0 : |h i| ≤ ‖h‖ := by
         simpa only [Real.norm_eq_abs] using norm_le_pi_norm h i
-      have hi : |h i| ≤ 1 := hi0.trans hh
+      have! hi : |h i| ≤ 1 := hi0.trans hh
       have hz' : z i = (z + h) i - h i := by simp
       rw [hz']
       exact (abs_sub _ _).trans (add_le_add (hθsupp (z + h) hθzh i) hi)
@@ -2016,7 +2018,7 @@ theorem localized_multivariableChart_euclidean_size {k d c₀ : ℕ} {H R : ℝ}
   let f := fun z => θ z * multivariableQuadraticChartAtom A z
   obtain ⟨hfm, hfb, _, hfi, hL1, hL2, hsq, hmi, hmb⟩ :=
     localized_multivariableChart_size hA θ hθm hR hθ hθsupp
-  have hp : MeasurePreserving (fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) := by
+  have! hp : MeasurePreserving (fun x : EuclideanSpace ℝ (Fin k) => x.ofLp) := by
     convert! PiLp.volume_preserving_ofLp (Fin k)
   have he (g : (Fin k → ℝ) → ℝ) :
       (∫ z : EuclideanSpace ℝ (Fin k), g z.ofLp) = ∫ z : Fin k → ℝ, g z :=
@@ -2081,9 +2083,9 @@ theorem localized_multivariableChart_fourier_return_lower {k d c₀ : ℕ} {H R 
     (Real.fourierChar (c + dotProduct z ω) : ℂ) * (θ z * multivariableQuadraticChartAtom A z)
   obtain ⟨_, herror⟩ :=
     localized_multivariableChart_return_error hA hc θ hθm hR hθ hθLip hθsupp h hh m hint
-  have hEL : (∫ z, ‖E z‖) ≤ localizedReturnErrorConstant c₀ d k H R * (‖h‖ + ‖e‖) := by
-    have hb := herror 0
-    have hz := norm_nonneg (E 0)
+  have! hEL : (∫ z, ‖E z‖) ≤ localizedReturnErrorConstant c₀ d k H R * (‖h‖ + ‖e‖) := by
+    have! hb := herror 0
+    have! hz := norm_nonneg (E 0)
     change (∫ z, ‖E z‖) + ‖E 0‖ ≤ _ at hb
     linarith only [hb, hz]
   obtain ⟨_, _, hFi, _, _, _, _, _⟩ :=
@@ -2092,21 +2094,21 @@ theorem localized_multivariableChart_fourier_return_lower {k d c₀ : ℕ} {H R 
       inner ℝ z (WithLp.toLp 2 ω) = dotProduct z.ofLp ω := by
     simp only [EuclideanSpace.inner_eq_star_dotProduct, star_trivial,
       dotProduct_comm]
-  have he : (fun z : EuclideanSpace ℝ (Fin k) => F (z + WithLp.toLp 2 h) -
+  have! he : (fun z : EuclideanSpace ℝ (Fin k) => F (z + WithLp.toLp 2 h) -
       (Real.fourierChar (c + inner ℝ z (WithLp.toLp 2 ω)) : ℂ) * F z) =
       fun z => E z.ofLp := by
     funext z
     rw [hpair]
     rfl
-  have hp : MeasurePreserving (fun z : EuclideanSpace ℝ (Fin k) => z.ofLp) := by
+  have! hp : MeasurePreserving (fun z : EuclideanSpace ℝ (Fin k) => z.ofLp) := by
     convert! PiLp.volume_preserving_ofLp (Fin k)
-  have hmeasure : (∫ z : EuclideanSpace ℝ (Fin k), ‖E z.ofLp‖) = ∫ z, ‖E z‖ := by
+  have! hmeasure : (∫ z : EuclideanSpace ℝ (Fin k), ‖E z.ofLp‖) = ∫ z, ‖E z‖ := by
     convert! hp.integral_comp
       (MeasurableEquiv.toLp 2 (Fin k → ℝ)).symm.measurableEmbedding (fun z => ‖E z‖)
-  have hhF := fourier_return_lower hFi (WithLp.toLp 2 h) (WithLp.toLp 2 ω) ξ c
+  have! hhF := fourier_return_lower hFi (WithLp.toLp 2 h) (WithLp.toLp 2 ω) ξ c
   change ‖𝓕 F ξ‖ - (∫ z, ‖F (z + WithLp.toLp 2 h) -
     (Real.fourierChar (c + inner ℝ z (WithLp.toLp 2 ω)) : ℂ) * F z‖) ≤ _ at hhF
-  have hfun : (fun z : EuclideanSpace ℝ (Fin k) => ‖F (z + WithLp.toLp 2 h) -
+  have! hfun : (fun z : EuclideanSpace ℝ (Fin k) => ‖F (z + WithLp.toLp 2 h) -
       (Real.fourierChar (c + inner ℝ z (WithLp.toLp 2 ω)) : ℂ) * F z‖) =
       fun z => ‖E z.ofLp‖ := congrArg (fun f => fun z => ‖f z‖) he
   rw [hfun, hmeasure] at hhF
@@ -2183,23 +2185,23 @@ theorem shortReturn_projection_budget {d k : ℕ}
     shortReturnLatticeSpan_dual_coordinates (realMatrixOperator V) hP hb hgap
   choose Z hZ using fun i => coordinateIntegerLattice_coordinates (hqL i)
   change Matrix (Fin r) (Fin d) ℤ at Z
-  have hfun : q = fun i => WithLp.toLp 2 (fun j => (Z i j : ℝ)) := funext hZ
-  have hB := shortReturnRowBudget_two_le ht
-  have hbB : b⁻¹ ≤ shortReturnRowBudget t :=
+  have! hfun : q = fun i => WithLp.toLp 2 (fun j => (Z i j : ℝ)) := funext hZ
+  have! hB := shortReturnRowBudget_two_le ht
+  have! hbB : b⁻¹ ≤ shortReturnRowBudget t :=
     hbT.trans (le_add_of_nonneg_left (by norm_num))
   have hZi (i j) : |(Z i j : ℝ)| ≤ shortReturnRowBudget t := by
-    have hh := (hqb i j).trans hbB
+    have! hh := (hqb i j).trans hbB
     rw [hZ i] at hh
     exact hh
   have hZV (i j) :
       |(Z.map (fun z : ℤ => (z : ℝ)) * V) i j| ≤ t * shortReturnRowBudget t := by
     rw [real_matrix_mul_entry_eq_row_inner]
-    have hh := hqV i j
+    have! hh := hqV i j
     rw [hZ i] at hh
     exact hh.trans (mul_le_mul hPt hbB (inv_nonneg.mpr hb.le) (by linarith only [ht]))
   obtain ⟨Q, hQ, hQc, hQh, hQch, _, _, hQV⟩ :=
     integer_span_projection_velocity_bounds Z V (hfun ▸ hq) hB (by positivity) hZi hZV
-  have hU : Submodule.span ℝ
+  have! hU : Submodule.span ℝ
       (Set.range (fun i => WithLp.toLp 2 (fun j => (Z i j : ℝ)))) = Uᗮ := by
     rw [← hfun]
     exact hspan
@@ -2244,15 +2246,15 @@ theorem shortReturnSplitting_explicit {d k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3
   classical
   let Cr := C.map (fun q => (q : ℝ))
   let A := Cr - Cr.transpose
-  have hPr : (1 : ℝ) ≤ P := by exact_mod_cast hP
-  have hPpos : (0 : ℝ) < P := by linarith only [hPr]
-  have hL := one_le_logarithmicSize ht
+  have! hPr : (1 : ℝ) ≤ P := by exact_mod_cast hP
+  have! hPpos : (0 : ℝ) < P := by linarith only [hPr]
+  have! hL := one_le_logarithmicSize ht
   have hCa (i j) : |Cr i j| ≤ t := by
-    have hh : |(C i j : ℝ)| ≤ (rationalHeight (C i j) : ℝ) := by
+    have! hh : |(C i j : ℝ)| ≤ (rationalHeight (C i j) : ℝ) := by
       exact_mod_cast rational_abs_le_height (C i j)
     exact hh.trans (hC i j)
-  have hA : ‖realMatrixOperator A‖ ≤ shortReturnAlternatingBudget t := by
-    have hh := realMatrixOperator_norm_le A (show 0 ≤ 2 * t by linarith only [ht])
+  have! hA : ‖realMatrixOperator A‖ ≤ shortReturnAlternatingBudget t := by
+    have! hh := realMatrixOperator_norm_le A (show 0 ≤ 2 * t by linarith only [ht])
       (fun i j => (abs_sub_le (Cr i j) 0 (Cr j i)).trans (by
         simpa only [sub_zero, zero_sub, abs_neg, two_mul] using add_le_add (hCa i j) (hCa j i)))
     calc
@@ -2269,22 +2271,22 @@ theorem shortReturnSplitting_explicit {d k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3
     shortReturnInitialScale_reciprocal_bound ht hPpos hr hPt hri hd hk3
   change 0 < bmax at hbmax
   let g := 16 * (100 * (d : ℝ)) ^ (10 * d)
-  have hg : 1 < g := by
-    have hh : (1 : ℝ) ≤ (100 * (d : ℝ)) ^ (10 * d) := by
+  have! hg : 1 < g := by
+    have! hh : (1 : ℝ) ≤ (100 * (d : ℝ)) ^ (10 * d) := by
       cases d with
       | zero => norm_num
       | succ n =>
         apply one_le_pow₀
-        have hn : (0 : ℝ) ≤ n := Nat.cast_nonneg n
+        have! hn : (0 : ℝ) ≤ n := Nat.cast_nonneg n
         push_cast
         linarith
     dsimp [g]
     linarith only [hh]
   obtain ⟨b, hb, hbb, hbI, hgap⟩ := successiveMinimum_geometric_gap
     (shortReturnBody (realMatrixOperator V) P) (coordinateIntegerLattice d) d hbmax hg
-  have hbT := shortReturnScale_reciprocal_bound ht (le_of_lt (lt_trans zero_lt_one hg))
+  have! hbT := shortReturnScale_reciprocal_bound ht (le_of_lt (lt_trans zero_lt_one hg))
     hd hbmaxI (shortReturnGapBudget_bound ht hd) hbI
-  have hbsmall : b ≤ r / (100 * (P : ℝ) * (d + k + 1)) :=
+  have! hbsmall : b ≤ r / (100 * (P : ℝ) * (d + k + 1)) :=
     hbb.trans (min_le_right _ _)
   let U := shortReturnLatticeSpan (realMatrixOperator V) P b
   have hPCr (i j) : ∃ z : ℤ, (P : ℝ) * Cr i j = z := by
@@ -2292,8 +2294,8 @@ theorem shortReturnSplitting_explicit {d k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3
     refine ⟨z, ?_⟩
     change (P : ℝ) * (C i j : ℝ) = (z : ℝ)
     exact_mod_cast hz
-  have hiso : ∀ x ∈ U, ∀ y ∈ U, inner ℝ y (realMatrixOperator A x) = 0 := by
-    have hh := shortReturnLatticeSpan_isotropic Cr V Λ hΛ P hP hPCr ha hM hb.le hΩ hbsmall
+  have! hiso : ∀ x ∈ U, ∀ y ∈ U, inner ℝ y (realMatrixOperator A x) = 0 := by
+    have! hh := shortReturnLatticeSpan_isotropic Cr V Λ hΛ P hP hPCr ha hM hb.le hΩ hbsmall
     intro x hx y hy
     rw [real_inner_comm]
     simpa only [EuclideanSpace.inner_eq_star_dotProduct, star_trivial,
@@ -2302,7 +2304,7 @@ theorem shortReturnSplitting_explicit {d k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3
     shortReturn_projection_budget V ht hPpos hPt hb hbT hd hk3 hgap
   let S := Q.map (fun q => (q : ℝ)) * V
   let F := (1 - Q).map (fun q => (q : ℝ)) * V
-  have hV : V = F + S := by
+  have! hV : V = F + S := by
     change V = ((1 - Q).map (Rat.castHom ℝ)) * V + (Q.map (Rat.castHom ℝ)) * V
     rw [Matrix.map_sub, Matrix.map_one, Matrix.sub_mul, Matrix.one_mul]
     · abel
@@ -2310,11 +2312,11 @@ theorem shortReturnSplitting_explicit {d k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3
   have hproj (x) : realMatrixOperator F x = U.starProjection (realMatrixOperator V x) := by
     rw [realMatrixOperator_mul_apply, hQc]
   let s := b / (1 + 4 / b) ^ d
-  have hden : 0 < (1 + 4 / b) ^ d := by positivity
-  have hs : 0 < s := div_pos hb hden
-  have hsT : s⁻¹ ≤ shortReturnTimeInverseBudget t := by
+  have! hden : 0 < (1 + 4 / b) ^ d := by positivity
+  have! hs : 0 < s := div_pos hb hden
+  have! hsT : s⁻¹ ≤ shortReturnTimeInverseBudget t := by
     simpa only [s, inv_div] using shortReturnTimeInverseBudget_bound ht hb hbT hd
-  have hreturn : ∀ j : Fin k, ∃ (u : ℝ) (m : EuclideanSpace ℝ (Fin d)),
+  have! hreturn : ∀ j : Fin k, ∃ (u : ℝ) (m : EuclideanSpace ℝ (Fin d)),
       s ≤ u ∧ m ∈ U ∧
       ‖u • EuclideanSpace.basisFun (Fin k) ℝ j‖ +
         ‖realMatrixOperator V (u • EuclideanSpace.basisFun (Fin k) ℝ j) - m‖ ≤ r ∧
@@ -2323,18 +2325,18 @@ theorem shortReturnSplitting_explicit {d k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3
     intro j
     obtain ⟨N, u, n, hN, hNb, hu, _, _, hm, _, hsize⟩ :=
       shortReturnBody_coordinate_return (realMatrixOperator V) hPpos hb j
-    have hNr : (0 : ℝ) < N := by exact_mod_cast hN
-    have hsu : s ≤ u := (div_le_div_of_nonneg_left hb.le hNr hNb).trans hu
+    have! hNr : (0 : ℝ) < N := by exact_mod_cast hN
+    have! hsu : s ≤ u := (div_le_div_of_nonneg_left hb.le hNr hNb).trans hu
     have hsize' : ‖u • EuclideanSpace.basisFun (Fin k) ℝ j‖ +
         ‖realMatrixOperator V (u • EuclideanSpace.basisFun (Fin k) ℝ j) -
           (P : ℝ) • WithLp.toLp 2 (fun i => (n i : ℝ))‖ ≤ r := by
       apply hsize.trans
-      have hkr : (1 : ℝ) ≤ k := by exact_mod_cast hk1
+      have! hkr : (1 : ℝ) ≤ k := by exact_mod_cast hk1
       exact (mul_le_mul_of_nonneg_right (add_le_add hkr le_rfl) hb.le).trans
         (shortReturn_scale_bound d k hPr hb.le hbsmall)
     refine ⟨u, (P : ℝ) • WithLp.toLp 2 (fun i => (n i : ℝ)), hsu, hm, hsize', ?_⟩
     exact hΩ _ n (hsize'.trans hra)
-  have hquad := effectiveReturnQuadratic_norm_of_coordinate_returns Cr Λ V F S hV U
+  have! hquad := effectiveReturnQuadratic_norm_of_coordinate_returns Cr Λ V F S hV U
     hproj hiso hr.le hM hs hQV hA hreturn
   have hquad' := hquad.trans
     (shortReturnQuadraticBudget_bound ht hr.le (hra.trans ha1) hM hMt hs hsT hd hk3)
@@ -2375,20 +2377,20 @@ theorem shortReturnSplitting :
   obtain ⟨D, hD, hbudget⟩ := shortReturnSplittingBudget_uniform
   refine ⟨D, hD, ?_⟩
   intro d k hk1 hk3 H hH hd C hC V Λ hΛ P hP hPC a M ha ha1 hM hΩ B
-  have hH2 : 2 ≤ H := by
-    have hh := Real.add_one_le_exp (2 : ℝ)
+  have! hH2 : 2 ≤ H := by
+    have! hh := Real.add_one_le_exp (2 : ℝ)
     linarith only [hh, hH]
-  have hPr : (1 : ℝ) ≤ P := by exact_mod_cast hP
+  have! hPr : (1 : ℝ) ≤ P := by exact_mod_cast hP
   obtain ⟨ht, hHt, hPt, hat, hMt, _⟩ :=
     shortReturnParameter_product_bounds hH2 hPr ha ha1.le hM
-  have hdT : (d : ℝ) ≤ logarithmicSize (H * P * a⁻¹ * M) := by
+  have! hdT : (d : ℝ) ≤ logarithmicSize (H * P * a⁻¹ * M) := by
     apply hd.trans
-    have hh := Real.log_le_log (show 0 < H by linarith only [hH2]) hHt
+    have! hh := Real.log_le_log (show 0 < H by linarith only [hH2]) hHt
     exact hh.trans (le_add_of_nonneg_left (by norm_num))
   obtain ⟨U, Q, hQ, hQc, hiso, hQh, hQch, hS, hE⟩ :=
     shortReturnSplitting_explicit hk1 hk3 C V Λ hΛ P hP hPC ht hPt hdT
       (fun i j => (hC i j).trans hHt) ha ha1.le hat (by linarith only [hM]) hMt hΩ
-  have hb : shortReturnSplittingBudget (H * P * a⁻¹ * M) ≤ B :=
+  have! hb : shortReturnSplittingBudget (H * P * a⁻¹ * M) ≤ B :=
     hbudget H P a M hH2 hPr ha ha1.le hM
   exact ⟨U, Q, hQ, hQc, hiso, fun i j => (hQh i j).trans hb,
     fun i j => (hQch i j).trans hb, hS.trans hb, hE.trans hb⟩
@@ -2437,43 +2439,43 @@ theorem weyl_return_frequency_lt_one {k d c₀ : ℕ} {H R : ℝ}
     θ z.ofLp * multivariableQuadraticChartAtom A z.ofLp with hF
   set L := 2 * Real.pi * ((k : ℝ) *
     ((2 * R) ^ k * R * (H * ((2 * H + 3) ^ d * H ^ c₀)))) with hL
-  have hH := (quadraticChartComplexity_parameter_pos hA).le
-  have hL0 : 0 ≤ L := by rw [hL]; positivity
+  have! hH := (quadraticChartComplexity_parameter_pos hA).le
+  have! hL0 : 0 ≤ L := by rw [hL]; positivity
   obtain ⟨_, _, hFi, _, hF2, hFsq, _, _⟩ :=
     localized_multivariableChart_euclidean_size hA θ hθm hR hθ hθsupp
   have hLip (ξ η : EuclideanSpace ℝ (Fin k)) : ‖𝓕 F ξ - 𝓕 F η‖ ≤ (L + 1) * ‖ξ - η‖ :=
     (localized_multivariableChart_fourier_lipschitz hA θ hθm hR hθ hθsupp ξ η).trans
       (mul_le_mul_of_nonneg_right (by linarith only) (norm_nonneg _))
   let m : Fin d → ℤ := fun i => P * n i
-  have hint := chart_integer_period_coefficients A.matrix P hPC n
-  have hm : (fun i => (m i : ℝ)) = fun i => (P : ℝ) * n i := by
+  have! hint := chart_integer_period_coefficients A.matrix P hPC n
+  have! hm : (fun i => (m i : ℝ)) = fun i => (P : ℝ) * n i := by
     funext i; simp [m]
-  have hh : ‖h‖ ≤ a := (sup_norm_le_euclidean h).trans
+  have! hh : ‖h‖ ≤ a := (sup_norm_le_euclidean h).trans
     (le_of_add_le_of_nonneg_left hret (norm_nonneg _))
-  have he : ‖A.horizontal.mulVec h - fun i => (m i : ℝ)‖ ≤ a := by
+  have! he : ‖A.horizontal.mulVec h - fun i => (m i : ℝ)‖ ≤ a := by
     rw [hm]
     exact (sup_norm_le_euclidean _).trans
       (le_of_add_le_of_nonneg_right hret (norm_nonneg _))
-  have hK0 : 0 ≤ localizedReturnErrorConstant c₀ d k H R := by
+  have! hK0 : 0 ≤ localizedReturnErrorConstant c₀ d k H R := by
     unfold localizedReturnErrorConstant chartReturnErrorConstant
     positivity
-  have hlarge : ∀ j < M, δ / 2 ≤ ‖𝓕 F (ξ - j • WithLp.toLp 2
+  have! hlarge : ∀ j < M, δ / 2 ≤ ‖𝓕 F (ξ - j • WithLp.toLp 2
       ((2 • A.quadratic + A.horizontal.transpose * A.matrix.map (fun q => (q : ℝ)) *
         A.horizontal).mulVec h -
         (A.horizontal.transpose * (A.matrix.map (fun q => (q : ℝ)) -
           (A.matrix.map (fun q => (q : ℝ))).transpose)).mulVec (fun i => (m i : ℝ))))‖ := by
     intro j hj
-    have hp := localized_multivariableChart_fourier_progression hA hc θ hθm hR hθ hθLip
+    have! hp := localized_multivariableChart_fourier_progression hA hc θ hθm hR hθ hθLip
       hθsupp h (hh.trans ha1) m hint ξ j
-    have hjM : (j : ℝ) ≤ M := by exact_mod_cast hj.le
-    have herr : (j : ℝ) * (localizedReturnErrorConstant c₀ d k H R *
+    have! hjM : (j : ℝ) ≤ M := by exact_mod_cast hj.le
+    have! herr : (j : ℝ) * (localizedReturnErrorConstant c₀ d k H R *
         (‖h‖ + ‖A.horizontal.mulVec h - fun i => (m i : ℝ)‖)) ≤ δ / 4 := by
       refine le_trans ?_ haM
       apply mul_le_mul hjM _ (by positivity) (Nat.cast_nonneg _)
       exact mul_le_mul_of_nonneg_left (by linarith only [hh, he]) hK0
     simp only at hp
     linarith only [hp, hξ, herr]
-  have hsmall := fourier_progression_step_small hFi hF2 (by positivity) hδ hLip hFsq M hM _ ξ
+  have! hsmall := fourier_progression_step_small hFi hF2 (by positivity) hδ hLip hFsq M hM _ ξ
     hlarge
   rw [hm] at hsmall
   simpa only [quadraticReturnFrequency] using hsmall
@@ -2497,34 +2499,34 @@ theorem weyl_constants_le_power {c₀ d k : ℕ} {H R : ℝ} (hH : Real.exp 2 �
     (2 * R) ^ k * B ^ 2 ≤ Z ^ N ∧
     localizedReturnErrorConstant c₀ d k H R ≤ Z ^ N := by
   intro Z N B
-  have h7 := seven_le_exp_two
-  have hH7 : 7 ≤ H := h7.trans hH
-  have hH0 : 0 ≤ H := by linarith only [hH7]
-  have hZ : 70 ≤ Z := by
+  have! h7 := seven_le_exp_two
+  have! hH7 : 7 ≤ H := h7.trans hH
+  have! hH0 : 0 ≤ H := by linarith only [hH7]
+  have! hZ : 70 ≤ Z := by
     dsimp [Z]; nlinarith
-  have hZ1 : 1 ≤ Z := by linarith only [hZ]
+  have! hZ1 : 1 ≤ Z := by linarith only [hZ]
   -- elementary comparisons with `Z`
-  have hHZ : H ≤ Z := by dsimp [Z]; nlinarith
-  have h4HZ : 4 * H ≤ Z := by dsimp [Z]; nlinarith
-  have h2H3 : 2 * H + 3 ≤ Z := by dsimp [Z]; nlinarith
-  have hRZ : 2 * (R + 1) ≤ Z := by dsimp [Z]; nlinarith
-  have h2RZ : 2 * R ≤ Z := by linarith only [hRZ]
+  have! hHZ : H ≤ Z := by dsimp [Z]; nlinarith
+  have! h4HZ : 4 * H ≤ Z := by dsimp [Z]; nlinarith
+  have! h2H3 : 2 * H + 3 ≤ Z := by dsimp [Z]; nlinarith
+  have! hRZ : 2 * (R + 1) ≤ Z := by dsimp [Z]; nlinarith
+  have! h2RZ : 2 * R ≤ Z := by linarith only [hRZ]
   have hR'Z : R ≤ Z := by linarith only [hRZ, hR]
-  have hlogH : Real.log H ≤ H := (Real.log_le_sub_one_of_pos (by linarith only [hH7])).trans
+  have! hlogH : Real.log H ≤ H := (Real.log_le_sub_one_of_pos (by linarith only [hH7])).trans
     (by linarith only)
-  have hdZ : (d : ℝ) ≤ Z := hd.trans (hlogH.trans hHZ)
-  have hkZ : (k : ℝ) ≤ Z := by
-    have : (k : ℝ) ≤ 3 := by exact_mod_cast hk
+  have! hdZ : (d : ℝ) ≤ Z := hd.trans (hlogH.trans hHZ)
+  have! hkZ : (k : ℝ) ≤ Z := by
+    have! this : (k : ℝ) ≤ 3 := by exact_mod_cast hk
     linarith only [this, hZ]
-  have hpi : 2 * Real.pi ≤ Z := by linarith only [Real.pi_lt_four, hZ]
+  have! hpi : 2 * Real.pi ≤ Z := by linarith only [Real.pi_lt_four, hZ]
   have hpow (a b : ℕ) (hab : a ≤ b) : Z ^ a ≤ Z ^ b := pow_le_pow_right₀ hZ1 hab
   have hpk (x : ℝ) (hx0 : 0 ≤ x) (hx : x ≤ Z) : x ^ k ≤ Z ^ 3 :=
     (pow_le_pow_left₀ hx0 hx k).trans (hpow k 3 hk)
-  have hB : B ≤ Z ^ (1 + d + c₀) := by
+  have! hB : B ≤ Z ^ (1 + d + c₀) := by
     calc B = H * ((2 * H + 3) ^ d * H ^ c₀) := rfl
       _ ≤ Z * (Z ^ d * Z ^ c₀) := by gcongr
       _ = _ := by ring
-  have hB0 : 0 ≤ B := by dsimp [B]; positivity
+  have! hB0 : 0 ≤ B := by dsimp [B]; positivity
   refine ⟨hZ, ?_, ?_, ?_⟩
   · calc
       _ ≤ Z * (Z * (Z ^ 3 * Z * Z ^ (1 + d + c₀))) + 1 := by
@@ -2542,17 +2544,17 @@ theorem weyl_constants_le_power {c₀ d k : ℕ} {H R : ℝ} (hH : Real.exp 2 �
         exact hpk _ (by positivity) h2RZ
       _ = Z ^ (2 * c₀ + 2 * d + 5) := by ring
       _ ≤ _ := hpow _ _ (by omega)
-  · have hCRE : chartReturnErrorConstant c₀ d H ≤ 4 * Z ^ (d + 4 * c₀ + 5) := by
+  · have! hCRE : chartReturnErrorConstant c₀ d H ≤ 4 * Z ^ (d + 4 * c₀ + 5) := by
       unfold chartReturnErrorConstant
-      have h1 : H ^ (4 * c₀) * (2 : ℝ) ^ (2 * c₀) ≤ Z ^ (4 * c₀ + 5) := by
+      have! h1 : H ^ (4 * c₀) * (2 : ℝ) ^ (2 * c₀) ≤ Z ^ (4 * c₀ + 5) := by
         calc
           _ = H ^ (3 * c₀) * (4 * H) ^ c₀ := by
-            have h4 : (2 : ℝ) ^ (2 * c₀) = 4 ^ c₀ := by rw [pow_mul]; norm_num
+            have! h4 : (2 : ℝ) ^ (2 * c₀) = 4 ^ c₀ := by rw [pow_mul]; norm_num
             rw [h4]; ring
           _ ≤ Z ^ (3 * c₀) * Z ^ c₀ := by gcongr
           _ = Z ^ (4 * c₀) := by ring
           _ ≤ _ := hpow _ _ (by omega)
-      have h2 : H ^ c₀ * (2 * Real.pi * (d : ℝ) ^ 2 * H * H) ≤ Z ^ (4 * c₀ + 5) := by
+      have! h2 : H ^ c₀ * (2 * Real.pi * (d : ℝ) ^ 2 * H * H) ≤ Z ^ (4 * c₀ + 5) := by
         calc
           _ ≤ Z ^ c₀ * (Z * Z ^ 2 * Z * Z) := by gcongr
           _ = Z ^ (c₀ + 5) := by ring
@@ -2560,7 +2562,7 @@ theorem weyl_constants_le_power {c₀ d k : ℕ} {H R : ℝ} (hH : Real.exp 2 �
       calc
         _ ≤ (2 * Z ^ d) * (Z ^ (4 * c₀ + 5) + Z ^ (4 * c₀ + 5)) := by gcongr
         _ = _ := by ring
-    have hCRE0 : 0 ≤ chartReturnErrorConstant c₀ d H := by
+    have! hCRE0 : 0 ≤ chartReturnErrorConstant c₀ d H := by
       unfold chartReturnErrorConstant; positivity
     unfold localizedReturnErrorConstant
     calc
@@ -2586,34 +2588,34 @@ theorem weyl_threshold_lower {S' V0 K δ W : ℝ} (hW : 70 ≤ W) (hδ : 0 < δ)
     let M : ℕ := ⌈9 * S' / (V0 * δ ^ 2)⌉₊ + 1
     (W ^ 16)⁻¹ ≤ min (1 / 2) (δ / (8 * (K + 1) * M)) := by
   intro M
-  have hW0 : 0 < W := by linarith only [hW]
-  have hV0 : 0 < V0 := lt_of_lt_of_le (by positivity) hV
-  have hδinv : δ⁻¹ ≤ W := by
+  have! hW0 : 0 < W := by linarith only [hW]
+  have! hV0 : 0 < V0 := lt_of_lt_of_le (by positivity) hV
+  have! hδinv : δ⁻¹ ≤ W := by
     rw [inv_le_iff_one_le_mul₀ hδ]; linarith only [hδW, mul_comm δ W]
-  have hM : (M : ℝ) ≤ 15554 * W ^ 6 := by
-    have h1 : (M : ℝ) ≤ 9 * S' / (V0 * δ ^ 2) + 2 := by
-      have := Nat.ceil_lt_add_one (show 0 ≤ 9 * S' / (V0 * δ ^ 2) by positivity)
+  have! hM : (M : ℝ) ≤ 15554 * W ^ 6 := by
+    have! h1 : (M : ℝ) ≤ 9 * S' / (V0 * δ ^ 2) + 2 := by
+      have! this := Nat.ceil_lt_add_one (show 0 ≤ 9 * S' / (V0 * δ ^ 2) by positivity)
       push_cast [M]; linarith only [this]
-    have hVinv : V0⁻¹ ≤ (12 * W) ^ 3 := by
-      have := inv_anti₀ (by positivity) hV
+    have! hVinv : V0⁻¹ ≤ (12 * W) ^ 3 := by
+      have! this := inv_anti₀ (by positivity) hV
       rwa [one_div, inv_pow, inv_inv] at this
-    have h2 : 9 * S' / (V0 * δ ^ 2) ≤ 9 * W * (12 * W) ^ 3 * W ^ 2 := by
+    have! h2 : 9 * S' / (V0 * δ ^ 2) ≤ 9 * W * (12 * W) ^ 3 * W ^ 2 := by
       rw [div_eq_mul_inv, mul_inv, ← inv_pow]
-      have hδ2 : (δ⁻¹) ^ 2 ≤ W ^ 2 := pow_le_pow_left₀ (by positivity) hδinv 2
+      have! hδ2 : (δ⁻¹) ^ 2 ≤ W ^ 2 := pow_le_pow_left₀ (by positivity) hδinv 2
       calc 9 * S' * (V0⁻¹ * δ⁻¹ ^ 2) ≤ 9 * W * ((12 * W) ^ 3 * W ^ 2) := by gcongr
         _ = _ := by ring
-    have h3 : (2 : ℝ) ≤ 2 * W ^ 6 := by
+    have! h3 : (2 : ℝ) ≤ 2 * W ^ 6 := by
       nlinarith only [one_le_pow₀ (show (1 : ℝ) ≤ W by linarith only [hW]) (n := 6)]
     nlinarith only [h1, h2, h3]
-  have hW16 : (W ^ 16)⁻¹ ≤ 1 / 2 := by
+  have! hW16 : (W ^ 16)⁻¹ ≤ 1 / 2 := by
     rw [one_div]; apply inv_anti₀ (by norm_num)
     nlinarith [one_le_pow₀ (show (1 : ℝ) ≤ W by linarith only [hW]) (n := 15),
       pow_succ W 15]
   apply le_min hW16
   rw [inv_le_comm₀ (by positivity) (by positivity), inv_div, div_le_iff₀ hδ]
-  have hW7 : 248864 * W ^ 7 ≤ W ^ 15 := by
-    have h8 : (248864 : ℝ) ≤ W ^ 8 := by
-      have := pow_le_pow_left₀ (by norm_num) hW 8
+  have! hW7 : 248864 * W ^ 7 ≤ W ^ 15 := by
+    have! h8 : (248864 : ℝ) ≤ W ^ 8 := by
+      have! this := pow_le_pow_left₀ (by norm_num) hW 8
       nlinarith [this]
     calc 248864 * W ^ 7 ≤ W ^ 8 * W ^ 7 := by gcongr
       _ = W ^ 15 := by ring
@@ -2635,25 +2637,25 @@ theorem weyl_log_budget {c₀ d : ℕ} {H R δ P a : ℝ} (hH : Real.exp 2 ≤ H
         (1 + Real.log H + Real.log δ⁻¹) ^ 3 := by
   set T := 1 + Real.log H + Real.log δ⁻¹ with hT
   set lam := Real.log (5 * (R + 2))
-  have hH0 : 0 < H := lt_of_lt_of_le (Real.exp_pos 2) hH
-  have hlogH : 2 ≤ Real.log H := by
+  have! hH0 : 0 < H := lt_of_lt_of_le (Real.exp_pos 2) hH
+  have! hlogH : 2 ≤ Real.log H := by
     rw [← Real.log_exp 2]; exact Real.log_le_log (Real.exp_pos 2) hH
-  have hlogδ : 0 ≤ Real.log δ⁻¹ := Real.log_nonneg ((one_le_inv₀ hδ).mpr hδ1)
-  have hlam : 0 ≤ lam := Real.log_nonneg (by linarith only [hR])
-  have hT1 : 1 ≤ T := by linarith only [hlogH, hlogδ]
-  have hHT : Real.log H ≤ T := by linarith only [hlogδ]
-  have hdT : (d : ℝ) ≤ T := hd.trans hHT
-  have hlogP : Real.log P ≤ T ^ 3 := by
+  have! hlogδ : 0 ≤ Real.log δ⁻¹ := Real.log_nonneg ((one_le_inv₀ hδ).mpr hδ1)
+  have! hlam : 0 ≤ lam := Real.log_nonneg (by linarith only [hR])
+  have! hT1 : 1 ≤ T := by linarith only [hlogH, hlogδ]
+  have! hHT : Real.log H ≤ T := by linarith only [hlogδ]
+  have! hdT : (d : ℝ) ≤ T := hd.trans hHT
+  have! hlogP : Real.log P ≤ T ^ 3 := by
     calc Real.log P ≤ Real.log (H ^ (d ^ 2)) := Real.log_le_log (by linarith only [hP]) hPH
       _ = (d : ℝ) ^ 2 * Real.log H := by rw [Real.log_pow]; push_cast; ring
       _ ≤ T ^ 2 * T := by gcongr
       _ = T ^ 3 := by ring
   set Z := 5 * (R + 2) * H
   set N := 4 * c₀ + 3 * d + 20
-  have hlogZ : Real.log Z = lam + Real.log H := Real.log_mul (by positivity) hH0.ne'
-  have hloga : Real.log (1 / a) ≤ 16 * (N * (lam + Real.log H) + Real.log δ⁻¹) := by
-    have h1 : 1 / a ≤ (Z ^ N / δ) ^ 16 := by
-      have hpos : 0 < (Z ^ N / δ) ^ 16 := by positivity
+  have! hlogZ : Real.log Z = lam + Real.log H := Real.log_mul (by positivity) hH0.ne'
+  have! hloga : Real.log (1 / a) ≤ 16 * (N * (lam + Real.log H) + Real.log δ⁻¹) := by
+    have! h1 : 1 / a ≤ (Z ^ N / δ) ^ 16 := by
+      have! hpos : 0 < (Z ^ N / δ) ^ 16 := by positivity
       rw [one_div]; exact (inv_le_comm₀ hpos ha).mp haW
     calc Real.log (1 / a) ≤ Real.log ((Z ^ N / δ) ^ 16) :=
           Real.log_le_log (by positivity) h1
@@ -2661,30 +2663,30 @@ theorem weyl_log_budget {c₀ d : ℕ} {H R δ P a : ℝ} (hH : Real.exp 2 ≤ H
           rw [Real.log_pow, Real.log_div (by positivity) hδ.ne', Real.log_pow, Real.log_inv]
           push_cast; ring
       _ = _ := by rw [hlogZ]
-  have hc0 : (0 : ℝ) ≤ c₀ := Nat.cast_nonneg _
-  have hN : (N : ℝ) ≤ (4 * c₀ + 23) * T := by
-    have : (N : ℝ) = 4 * c₀ + 3 * d + 20 := by simp [N]
+  have! hc0 : (0 : ℝ) ≤ c₀ := Nat.cast_nonneg _
+  have! hN : (N : ℝ) ≤ (4 * c₀ + 23) * T := by
+    have! this : (N : ℝ) = 4 * c₀ + 3 * d + 20 := by simp [N]
     rw [this]; nlinarith only [hd, hlogδ]
-  have hT2 : T ≤ T ^ 3 := by
-    have h1 : 1 ≤ T ^ 2 := one_le_pow₀ hT1
+  have! hT2 : T ≤ T ^ 3 := by
+    have! h1 : 1 ≤ T ^ 2 := one_le_pow₀ hT1
     calc T = T * 1 := (mul_one T).symm
       _ ≤ T * T ^ 2 := by gcongr
       _ = T ^ 3 := by ring
-  have hfin : Real.log (1 / a) ≤ 16 * ((4 * c₀ + 23) * (lam + 1)) * T ^ 3 + 16 * T ^ 3 := by
+  have! hfin : Real.log (1 / a) ≤ 16 * ((4 * c₀ + 23) * (lam + 1)) * T ^ 3 + 16 * T ^ 3 := by
     refine hloga.trans ?_
-    have h1 : (N : ℝ) * (lam + Real.log H) ≤ ((4 * c₀ + 23) * T) * ((lam + 1) * T) := by
+    have! h1 : (N : ℝ) * (lam + Real.log H) ≤ ((4 * c₀ + 23) * T) * ((lam + 1) * T) := by
       gcongr
       nlinarith only [hd, hlogδ, hlam]
-    have h2 : ((4 * c₀ + 23) * T) * ((lam + 1) * T) ≤ (4 * c₀ + 23) * (lam + 1) * T ^ 3 := by
-      have : 0 ≤ (4 * (c₀ : ℝ) + 23) * (lam + 1) := by positivity
-      have hT3 : T ^ 2 ≤ T ^ 3 := pow_le_pow_right₀ hT1 (by norm_num)
+    have! h2 : ((4 * c₀ + 23) * T) * ((lam + 1) * T) ≤ (4 * c₀ + 23) * (lam + 1) * T ^ 3 := by
+      have! this : 0 ≤ (4 * (c₀ : ℝ) + 23) * (lam + 1) := by positivity
+      have! hT3 : T ^ 2 ≤ T ^ 3 := pow_le_pow_right₀ hT1 (by norm_num)
       calc ((4 * c₀ + 23) * T) * ((lam + 1) * T) = (4 * c₀ + 23) * (lam + 1) * T ^ 2 := by ring
         _ ≤ _ := by gcongr
-    have hδT : Real.log δ⁻¹ ≤ T ^ 3 := by linarith only [hlogH, hT2]
+    have! hδT : Real.log δ⁻¹ ≤ T ^ 3 := by linarith only [hlogH, hT2]
     nlinarith only [hd, hT2, h1, h2]
   rw [Real.log_one, add_zero]
   have hlogH' : Real.log H ≤ T ^ 3 := hHT.trans hT2
-  have : 0 ≤ (4 * (c₀ : ℝ) + 23) * (lam + 1) * T ^ 3 := by positivity
+  have! this : 0 ≤ (4 * (c₀ : ℝ) + 23) * (lam + 1) * T ^ 3 := by positivity
   nlinarith only [hlogδ, hlogP, hT2, hfin]
 
 /-- **Blueprint lem:weyl (Weyl alternative), lines 1304–1333.** Let `θ` be
@@ -2726,16 +2728,16 @@ theorem weylSplitting (c₀ : ℕ) (hc : 1 ≤ c₀) (R : ℝ) (hR : 0 ≤ R) :
     ⟨_, Nat.le_ceil _⟩
   refine ⟨D0 * κ ^ D0 + 3 * D0, by nlinarith [Nat.zero_le (D0 * κ ^ D0)], ?_⟩
   intro d k hk1 hk3 H A hA θ hθm hθ hθLip hθsupp δ hδ hsup B
-  have hH0 : 0 ≤ H := (quadraticChartComplexity_parameter_pos hA).le
+  have! hH0 : 0 ≤ H := (quadraticChartComplexity_parameter_pos hA).le
   set! δ' := min δ 1 with hδ'
   have hδ'0 : 0 < δ' := lt_min hδ one_pos
   have hδ'1 : δ' ≤ 1 := min_le_right _ _
   obtain ⟨ξ, hξ⟩ := hsup (3 * δ' / 4) (by
-    have := min_le_left δ 1; linarith only [this, hδ'0])
+    have! this := min_le_left δ 1; linarith only [this, hδ'0])
   obtain ⟨P, Zm, hP, hPH, hZm⟩ := chart_matrix_clear_denominators hH0 A.matrix hA.height
-  have hPC : ∀ i j, ∃ z : ℤ, ((P : ℤ) : ℚ) * A.matrix i j = z := fun i j =>
+  have! hPC : ∀ i j, ∃ z : ℤ, ((P : ℤ) : ℚ) * A.matrix i j = z := fun i j =>
     ⟨Zm i j, by
-      have h := hZm i j
+      have! h := hZm i j
       have h' : ((Zm i j : ℚ) : ℝ) = (((P : ℚ) * A.matrix i j : ℚ) : ℝ) := by
         push_cast; exact h
       push_cast
@@ -2749,35 +2751,35 @@ theorem weylSplitting (c₀ : ℕ) (hc : 1 ≤ c₀) (R : ℝ) (hR : 0 ≤ R) :
   set S' := (2 * R) ^ k * B0 ^ 2 with hS'
   set K := localizedReturnErrorConstant c₀ d k H R with hK
   set! W := Zc ^ N / δ' with hW
-  have hZN1 : 1 ≤ Zc ^ N := one_le_pow₀ (by linarith only [hZ70])
-  have hZNW : Zc ^ N ≤ W := le_div_self (by positivity) hδ'0 hδ'1
-  have hδW : 1 ≤ δ' * W := by
+  have! hZN1 : 1 ≤ Zc ^ N := one_le_pow₀ (by linarith only [hZ70])
+  have! hZNW : Zc ^ N ≤ W := le_div_self (by positivity) hδ'0 hδ'1
+  have! hδW : 1 ≤ δ' * W := by
     rw [show δ' * W = Zc ^ N by rw [hW]; field_simp]; exact hZN1
-  have hW70 : 70 ≤ W := by
+  have! hW70 : 70 ≤ W := by
     calc (70 : ℝ) ≤ Zc := hZ70
       _ = Zc ^ 1 := (pow_one _).symm
       _ ≤ Zc ^ N := pow_le_pow_right₀ (by linarith only [hZ70]) (by omega)
       _ ≤ W := hZNW
-  have hK0 : 0 ≤ K := by
+  have! hK0 : 0 ≤ K := by
     rw [hK]; unfold localizedReturnErrorConstant chartReturnErrorConstant; positivity
-  have hS0 : 0 ≤ S' := by rw [hS']; positivity
-  have hL0 : 0 ≤ L := by rw [hL, hB0]; positivity
+  have! hS0 : 0 ≤ S' := by rw [hS']; positivity
+  have! hL0 : 0 ≤ L := by rw [hL, hB0]; positivity
   set! ρ := min (1 / 2) (δ' / (6 * (L + 1))) with hρdef
   set! V0 := volume.real (Metric.ball (0 : EuclideanSpace ℝ (Fin k)) ρ) with hV0def
-  have hρ : 1 / (6 * W) ≤ ρ := by
+  have! hρ : 1 / (6 * W) ≤ ρ := by
     apply le_min
     · rw [div_le_div_iff₀ (by positivity) (by norm_num)]; linarith only [hW70]
     · rw [show 1 / (6 * W) = δ' / (6 * Zc ^ N) by rw [hW]; field_simp]
       gcongr
-  have hρ0 : 0 < ρ := lt_of_lt_of_le (by positivity) hρ
-  have hV : (1 / (12 * W)) ^ 3 ≤ V0 := by
-    have hvol := euclidean_ball_volume_lower (k := k) hρ0
-    have hk : (k : ℝ) + 1 ≤ 4 := by
-      have : (k : ℝ) ≤ 3 := by exact_mod_cast hk3
+  have! hρ0 : 0 < ρ := lt_of_lt_of_le (by positivity) hρ
+  have! hV : (1 / (12 * W)) ^ 3 ≤ V0 := by
+    have! hvol := euclidean_ball_volume_lower (k := k) hρ0
+    have! hk : (k : ℝ) + 1 ≤ 4 := by
+      have! this : (k : ℝ) ≤ 3 := by exact_mod_cast hk3
       linarith only [this]
-    have hρ2 : ρ / 2 ≤ 1 := by
-      have := min_le_left (1 / 2 : ℝ) (δ' / (6 * (L + 1))); linarith only [this]
-    have h12 : 1 / (12 * W) ≤ ρ / 2 := by
+    have! hρ2 : ρ / 2 ≤ 1 := by
+      have! this := min_le_left (1 / 2 : ℝ) (δ' / (6 * (L + 1))); linarith only [this]
+    have! h12 : 1 / (12 * W) ≤ ρ / 2 := by
       rw [show 1 / (12 * W) = (1 / (6 * W)) / 2 by field_simp; ring]
       linarith only [hρ]
     calc (1 / (12 * W)) ^ 3 ≤ (ρ / 2) ^ 3 := pow_le_pow_left₀ (by positivity) h12 3
@@ -2788,28 +2790,28 @@ theorem weylSplitting (c₀ : ℕ) (hc : 1 ≤ c₀) (R : ℝ) (hR : 0 ≤ R) :
           apply div_le_div_of_nonneg_left hρ0.le (by positivity)
           linarith only [hk]
       _ ≤ V0 := hvol
-  have hV0 : 0 < V0 := lt_of_lt_of_le (by positivity) hV
+  have! hV0 : 0 < V0 := lt_of_lt_of_le (by positivity) hV
   set! M : ℕ := ⌈9 * S' / (V0 * δ' ^ 2)⌉₊ + 1 with hMdef
-  have hM1 : (1 : ℝ) ≤ M := by
+  have! hM1 : (1 : ℝ) ≤ M := by
     rw [hMdef]; push_cast
     linarith only [Nat.cast_nonneg (α := ℝ) ⌈9 * S' / (V0 * δ' ^ 2)⌉₊]
-  have hM : S' < (M : ℝ) * (V0 * (δ' / 3) ^ 2) := by
-    have h1 : 9 * S' / (V0 * δ' ^ 2) < M := by
+  have! hM : S' < (M : ℝ) * (V0 * (δ' / 3) ^ 2) := by
+    have! h1 : 9 * S' / (V0 * δ' ^ 2) < M := by
       rw [hMdef]; push_cast
       linarith only [Nat.le_ceil (9 * S' / (V0 * δ' ^ 2))]
     rw [div_lt_iff₀ (by positivity)] at h1
     nlinarith only [h1]
   set! a := min (1 / 2) (δ' / (8 * (K + 1) * M)) with hadef
-  have ha0 : 0 < a := lt_min (by norm_num) (by positivity)
-  have ha1 : a < 1 := lt_of_le_of_lt (min_le_left _ _) (by norm_num)
-  have haM : (M : ℝ) * (K * (2 * a)) ≤ δ' / 4 := by
-    have h1 : a ≤ δ' / (8 * (K + 1) * M) := min_le_right _ _
+  have! ha0 : 0 < a := lt_min (by norm_num) (by positivity)
+  have! ha1 : a < 1 := lt_of_le_of_lt (min_le_left _ _) (by norm_num)
+  have! haM : (M : ℝ) * (K * (2 * a)) ≤ δ' / 4 := by
+    have! h1 : a ≤ δ' / (8 * (K + 1) * M) := min_le_right _ _
     calc (M : ℝ) * (K * (2 * a)) ≤ M * (K * (2 * (δ' / (8 * (K + 1) * M)))) := by gcongr
       _ = δ' / 4 * (K / (K + 1)) := by field_simp; ring
       _ ≤ δ' / 4 * 1 := by
           gcongr; rw [div_le_one (by positivity)]; linarith only
       _ = _ := mul_one _
-  have hΩ : ∀ (h : Fin k → ℝ) (n : Fin d → ℤ),
+  have! hΩ : ∀ (h : Fin k → ℝ) (n : Fin d → ℤ),
       ‖WithLp.toLp 2 h‖ + ‖WithLp.toLp 2 (A.horizontal.mulVec h -
         fun i => ((P : ℤ) : ℝ) * n i)‖ ≤ a →
       ‖WithLp.toLp 2 (quadraticReturnFrequency (A.matrix.map (fun q => (q : ℝ)))
@@ -2817,34 +2819,34 @@ theorem weylSplitting (c₀ : ℕ) (hc : 1 ≤ c₀) (R : ℝ) (hR : 0 ≤ R) :
     intro h n hret
     exact (weyl_return_frequency_lt_one hA hc θ hθm hR hθ hθLip hθsupp (P : ℤ) hPC hδ'0
       ha1.le M ξ hξ.le hM haM h n hret).le
-  have hheight : ∀ i j, (rationalHeight (A.matrix i j) : ℝ) ≤ H := hA.height
+  have! hheight : ∀ i j, (rationalHeight (A.matrix i j) : ℝ) ≤ H := hA.height
   obtain ⟨U, Q, h1, h2, h3, h4, h5, h6, h7⟩ := hsplit hk1 hk3 H hA.lower hA.dimension A.matrix
     hheight A.horizontal A.quadratic A.symmetric (P : ℤ) (by exact_mod_cast hP) hPC a 1 ha0 ha1
     le_rfl hΩ
-  have hBB : Real.exp ((D0 : ℝ) * (1 + Real.log H + Real.log ((P : ℤ) : ℝ) +
+  have! hBB : Real.exp ((D0 : ℝ) * (1 + Real.log H + Real.log ((P : ℤ) : ℝ) +
       Real.log (1 / a) + Real.log 1) ^ D0) ≤ B := by
-    have hWa : ((Zc ^ N / δ') ^ 16)⁻¹ ≤ a := weyl_threshold_lower hW70 hδ'0 hδW
+    have! hWa : ((Zc ^ N / δ') ^ 16)⁻¹ ≤ a := weyl_threshold_lower hW70 hδ'0 hδW
       (hSb.trans hZNW) hK0 (hKb.trans hZNW) hS0 hV
-    have hlog := weyl_log_budget (c₀ := c₀) hA.lower hA.dimension hR hδ'0 hδ'1
+    have! hlog := weyl_log_budget (c₀ := c₀) hA.lower hA.dimension hR hδ'0 hδ'1
       (P := ((P : ℤ) : ℝ)) (by exact_mod_cast hP) (by push_cast; exact hPH) ha0 hWa
-    have hmax : δ'⁻¹ = max 1 δ⁻¹ := by
+    have! hmax : δ'⁻¹ = max 1 δ⁻¹ := by
       rcases le_total δ 1 with h | h
       · rw [hδ', min_eq_left h, max_eq_right ((one_le_inv₀ hδ).mpr h)]
       · rw [hδ', min_eq_right h, inv_one, max_eq_left (inv_le_one_of_one_le₀ h)]
     rw [hmax] at hlog
-    have hlH : 0 ≤ Real.log H :=
+    have! hlH : 0 ≤ Real.log H :=
       Real.log_nonneg (by linarith only [seven_le_exp_two.trans hA.lower])
     set T := 1 + Real.log H + Real.log (max 1 δ⁻¹) with hT
-    have hT1 : 1 ≤ T := by
-      have : 0 ≤ Real.log (max 1 δ⁻¹) := Real.log_nonneg (le_max_left _ _)
+    have! hT1 : 1 ≤ T := by
+      have! this : 0 ≤ Real.log (max 1 δ⁻¹) := Real.log_nonneg (le_max_left _ _)
       rw [hT]; linarith only [hlH, this]
     set X := 1 + Real.log H + Real.log ((P : ℤ) : ℝ) + Real.log (1 / a) + Real.log 1 with hX
-    have hX0 : 0 ≤ X := by
-      have hlP : 0 ≤ Real.log ((P : ℤ) : ℝ) := Real.log_nonneg (by exact_mod_cast hP)
-      have hla : 0 ≤ Real.log (1 / a) := Real.log_nonneg (by
+    have! hX0 : 0 ≤ X := by
+      have! hlP : 0 ≤ Real.log ((P : ℤ) : ℝ) := Real.log_nonneg (by exact_mod_cast hP)
+      have! hla : 0 ≤ Real.log (1 / a) := Real.log_nonneg (by
         rw [le_div_iff₀ ha0, one_mul]; exact ha1.le)
       rw [hX, Real.log_one]; linarith only [hlH, hlP, hla]
-    have hXT : X ≤ (κ : ℝ) * T ^ 3 :=
+    have! hXT : X ≤ (κ : ℝ) * T ^ 3 :=
       hlog.trans (mul_le_mul_of_nonneg_right hκ' (by positivity))
     apply Real.exp_le_exp.mpr
     calc (D0 : ℝ) * X ^ D0 ≤ D0 * ((κ : ℝ) * T ^ 3) ^ D0 := by gcongr
@@ -2910,49 +2912,49 @@ theorem phase_height_budget {H X : ℝ} {d Dw : ℕ} (hDw : 1 ≤ Dw) (hH1 : 1 �
     4 * H ^ (d ^ 2) * (B ^ (d ^ 2)) ^ 2 * (H + (d : ℝ) ^ 2 * ((1 + B) * H * B) + 1) ≤
       Real.exp ((9 * (1 + (Dw : ℝ))) * X ^ (Dw + 2)) := by
   intro B
-  have hX1 : 1 ≤ X := by linarith
-  have hB1 : 1 ≤ B := Real.one_le_exp (by positivity)
+  have! hX1 : 1 ≤ X := by linarith
+  have! hB1 : 1 ≤ B := Real.one_le_exp (by positivity)
   set E := Real.exp X * B with hE
-  have heX : 1 ≤ Real.exp X := Real.one_le_exp (by linarith)
-  have hE1 : 1 ≤ E := one_le_mul_of_one_le_of_one_le heX hB1
-  have hXe : X + 1 ≤ Real.exp X := Real.add_one_le_exp X
-  have hHE : H ≤ E := by
+  have! heX : 1 ≤ Real.exp X := Real.one_le_exp (by linarith)
+  have! hE1 : 1 ≤ E := one_le_mul_of_one_le_of_one_le heX hB1
+  have! hXe : X + 1 ≤ Real.exp X := Real.add_one_le_exp X
+  have! hHE : H ≤ E := by
     calc H = Real.exp (Real.log H) := (Real.exp_log (by linarith)).symm
       _ ≤ Real.exp X := Real.exp_le_exp.mpr hHX
       _ ≤ E := le_mul_of_one_le_right (by positivity) hB1
-  have hBE : B ≤ E := le_mul_of_one_le_left (by positivity) heX
-  have hdE : (d : ℝ) ≤ E := by
+  have! hBE : B ≤ E := le_mul_of_one_le_left (by positivity) heX
+  have! hdE : (d : ℝ) ≤ E := by
     calc (d : ℝ) ≤ Real.exp X := by linarith
       _ ≤ E := le_mul_of_one_le_right (by positivity) hB1
-  have h16 : 16 ≤ E := by
-    have h3 : Real.exp 3 ≤ Real.exp X := Real.exp_le_exp.mpr hX3
-    have : (16 : ℝ) ≤ Real.exp 3 := by
-      have he := Real.exp_one_gt_d9
-      have h2 : Real.exp 3 = Real.exp 1 ^ 3 := by
+  have! h16 : 16 ≤ E := by
+    have! h3 : Real.exp 3 ≤ Real.exp X := Real.exp_le_exp.mpr hX3
+    have! this : (16 : ℝ) ≤ Real.exp 3 := by
+      have! he := Real.exp_one_gt_d9
+      have! h2 : Real.exp 3 = Real.exp 1 ^ 3 := by
         rw [← Real.exp_nat_mul]; norm_num
       rw [h2]
-      have : (2.7 : ℝ) ^ 3 ≤ Real.exp 1 ^ 3 := pow_le_pow_left₀ (by norm_num) (by linarith) 3
+      have! this : (2.7 : ℝ) ^ 3 ≤ Real.exp 1 ^ 3 := pow_le_pow_left₀ (by norm_num) (by linarith) 3
       norm_num at this ⊢
       linarith
     calc (16 : ℝ) ≤ Real.exp X := by linarith
       _ ≤ E := le_mul_of_one_le_right (by positivity) hB1
-  have hE0 : 0 ≤ E := by linarith
-  have hd0 : (0 : ℝ) ≤ d := Nat.cast_nonneg d
-  have hH0 : 0 ≤ H := by linarith
-  have hB0 : 0 ≤ B := by linarith
-  have hterm : H + (d : ℝ) ^ 2 * ((1 + B) * H * B) + 1 ≤ 4 * E ^ 5 := by
-    have h1 : (d : ℝ) ^ 2 ≤ E ^ 2 := pow_le_pow_left₀ hd0 hdE 2
-    have h2 : (1 + B) * H * B ≤ (2 * E) * E * E :=
+  have! hE0 : 0 ≤ E := by linarith
+  have! hd0 : (0 : ℝ) ≤ d := Nat.cast_nonneg d
+  have! hH0 : 0 ≤ H := by linarith
+  have! hB0 : 0 ≤ B := by linarith
+  have! hterm : H + (d : ℝ) ^ 2 * ((1 + B) * H * B) + 1 ≤ 4 * E ^ 5 := by
+    have! h1 : (d : ℝ) ^ 2 ≤ E ^ 2 := pow_le_pow_left₀ hd0 hdE 2
+    have! h2 : (1 + B) * H * B ≤ (2 * E) * E * E :=
       mul_le_mul (mul_le_mul (by linarith) hHE hH0 (by linarith)) hBE hB0 (by positivity)
-    have h3 : (d : ℝ) ^ 2 * ((1 + B) * H * B) ≤ E ^ 2 * ((2 * E) * E * E) :=
+    have! h3 : (d : ℝ) ^ 2 * ((1 + B) * H * B) ≤ E ^ 2 * ((2 * E) * E * E) :=
       mul_le_mul h1 h2 (by positivity) (by positivity)
-    have h4 : E ≤ E ^ 5 := le_self_pow₀ hE1 (by norm_num)
-    have h5 : (1 : ℝ) ≤ E ^ 5 := one_le_pow₀ hE1
+    have! h4 : E ≤ E ^ 5 := le_self_pow₀ hE1 (by norm_num)
+    have! h5 : (1 : ℝ) ≤ E ^ 5 := one_le_pow₀ hE1
     nlinarith only [hH1, hHE, h3, h4]
-  have hprod : 4 * H ^ (d ^ 2) * (B ^ (d ^ 2)) ^ 2 * (H + (d : ℝ) ^ 2 * ((1 + B) * H * B) + 1) ≤
+  have! hprod : 4 * H ^ (d ^ 2) * (B ^ (d ^ 2)) ^ 2 * (H + (d : ℝ) ^ 2 * ((1 + B) * H * B) + 1) ≤
       E ^ (3 * d ^ 2 + 6) := by
-    have hA : H ^ (d ^ 2) ≤ E ^ (d ^ 2) := pow_le_pow_left₀ hH0 hHE _
-    have hBB : (B ^ (d ^ 2)) ^ 2 ≤ E ^ (2 * d ^ 2) := by
+    have! hA : H ^ (d ^ 2) ≤ E ^ (d ^ 2) := pow_le_pow_left₀ hH0 hHE _
+    have! hBB : (B ^ (d ^ 2)) ^ 2 ≤ E ^ (2 * d ^ 2) := by
       rw [← pow_mul, mul_comm]; exact pow_le_pow_left₀ hB0 hBE _
     calc 4 * H ^ (d ^ 2) * (B ^ (d ^ 2)) ^ 2 * (H + (d : ℝ) ^ 2 * ((1 + B) * H * B) + 1) ≤
         4 * E ^ (d ^ 2) * E ^ (2 * d ^ 2) * (4 * E ^ 5) := by gcongr
@@ -2962,15 +2964,15 @@ theorem phase_height_budget {H X : ℝ} {d Dw : ℕ} (hDw : 1 ≤ Dw) (hH1 : 1 �
   refine hprod.trans ?_
   rw [← Real.exp_log (pow_pos (by linarith : (0 : ℝ) < E) _), Real.log_pow]
   apply Real.exp_le_exp.mpr
-  have hlogE : Real.log E ≤ (1 + Dw) * X ^ Dw := by
+  have! hlogE : Real.log E ≤ (1 + Dw) * X ^ Dw := by
     rw [hE, Real.log_mul (by positivity) (by positivity), Real.log_exp, Real.log_exp]
-    have : X ≤ X ^ Dw := le_self_pow₀ hX1 (by omega)
+    have! this : X ≤ X ^ Dw := le_self_pow₀ hX1 (by omega)
     nlinarith only [this]
-  have hlogE0 : 0 ≤ Real.log E := Real.log_nonneg hE1
-  have hn : ((3 * d ^ 2 + 6 : ℕ) : ℝ) ≤ 9 * X ^ 2 := by
+  have! hlogE0 : 0 ≤ Real.log E := Real.log_nonneg hE1
+  have! hn : ((3 * d ^ 2 + 6 : ℕ) : ℝ) ≤ 9 * X ^ 2 := by
     push_cast
-    have : (d : ℝ) ^ 2 ≤ X ^ 2 := pow_le_pow_left₀ hd0 hdX 2
-    have : (1 : ℝ) ≤ X ^ 2 := one_le_pow₀ hX1
+    have! this : (d : ℝ) ^ 2 ≤ X ^ 2 := pow_le_pow_left₀ hd0 hdX 2
+    have! this : (1 : ℝ) ≤ X ^ 2 := one_le_pow₀ hX1
     linarith
   calc ((3 * d ^ 2 + 6 : ℕ) : ℝ) * Real.log E ≤ (9 * X ^ 2) * ((1 + Dw) * X ^ Dw) :=
         mul_le_mul hn hlogE hlogE0 (by positivity)

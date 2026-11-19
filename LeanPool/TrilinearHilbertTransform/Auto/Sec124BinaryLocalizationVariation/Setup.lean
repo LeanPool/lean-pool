@@ -60,10 +60,12 @@ theorem leaf_telescope {γ : Type*} (L : γ → Fin 4 → V →ₗ[ℂ] V) (x : 
     (hpq : p ≠ q) (G : γ) :
     Λ (Function.update x t (L G t (x t))) =
       Λ (leafGroupOutput L x G) + ∑ i : Fin 3, Λ (leafResiduals L x u t p q G i) := by
-  have hcover : ∀ l : Fin 4, l = u ∨ l = t ∨ l = p ∨ l = q := by
+  have! hcover : ∀ l : Fin 4, l = u ∨ l = t ∨ l = p ∨ l = q := by
     intro l
-    fin_cases u <;> fin_cases t <;> fin_cases p <;> fin_cases q <;> fin_cases l <;>
-      simp_all (config := { decide := true })
+    have huniv : ({u, t, p, q} : Finset (Fin 4)) = Finset.univ :=
+      Finset.eq_univ_of_card _ (by simp [hut, hup, huq, htp, htq, hpq])
+    have hl : l ∈ ({u, t, p, q} : Finset (Fin 4)) := huniv.symm ▸ Finset.mem_univ l
+    simpa only [Finset.mem_insert, Finset.mem_singleton] using hl
   set y0 := Function.update x t (L G t (x t))
   set y1 := Function.update y0 u (L G u (x u))
   set y2 := Function.update y1 p (L G p (x p))
@@ -110,16 +112,16 @@ theorem leaf_identity {ι γ : Type*} (L : γ → Fin 4 → V →ₗ[ℂ] V) (x 
         (x t - ∑ G ∈ Gs, L G t (x t))) +
       ∑ G ∈ Gs, ∑ i : Fin 3, Λ (leafResiduals L x u t p q G i) := by
   -- expand the source slot
-  have hsrc : ∀ y : V, Λ (Function.update x t y) =
+  have! hsrc : ∀ y : V, Λ (Function.update x t y) =
       ∑ v ∈ S, a v * Λ (Function.update (Function.update x u (φ v)) t y) := by
     intro y
-    have hxu : Function.update x t y = Function.update (Function.update x t y) u (x u) := by
+    have! hxu : Function.update x t y = Function.update (Function.update x t y) u (x u) := by
       simp [Function.update_of_ne hut]
     rw [hxu, hx, Λ.map_update_sum]
     apply Finset.sum_congr rfl; intro v _
     rw [Λ.map_update_smul, smul_eq_mul, update_comm_apply hut]
-  have hx0 : Λ x = Λ (Function.update x t (x t)) := by rw [Function.update_eq_self]
-  have hsplit : ∀ v, Λ (Function.update (Function.update x u (φ v)) t (x t)) =
+  have! hx0 : Λ x = Λ (Function.update x t (x t)) := by rw [Function.update_eq_self]
+  have! hsplit : ∀ v, Λ (Function.update (Function.update x u (φ v)) t (x t)) =
       ∑ G ∈ Gs, Λ (Function.update (Function.update x u (φ v)) t (L G t (x t))) +
         Λ (Function.update (Function.update x u (φ v)) t (x t - ∑ G ∈ Gs, L G t (x t))) := by
     intro v
@@ -127,7 +129,7 @@ theorem leaf_identity {ι γ : Type*} (L : γ → Fin 4 → V →ₗ[ℂ] V) (x 
   rw [hx0, hsrc]
   simp_rw [hsplit, mul_add, Finset.sum_add_distrib, Finset.mul_sum]
   rw [Finset.sum_comm]
-  have hG : ∀ G ∈ Gs, ∑ v ∈ S, a v * Λ (Function.update (Function.update x u (φ v)) t
+  have! hG : ∀ G ∈ Gs, ∑ v ∈ S, a v * Λ (Function.update (Function.update x u (φ v)) t
       (L G t (x t))) = Λ (leafGroupOutput L x G) +
         ∑ i : Fin 3, Λ (leafResiduals L x u t p q G i) := by
     intro G _
@@ -157,7 +159,7 @@ theorem leaf_localization {ι γ : Type*} (L : γ → Fin 4 → V →ₗ[ℂ] V)
   classical
   rw [leaf_identity Λ L x hut hup huq htp htq hpq S a φ hx Gs]
   set E := (Gs.card + 1 : ℝ) * εo + εm + Gs.card * εs
-  have hsrc : ∀ v ∈ S, ‖Λ (Function.update (Function.update x u (φ v)) t
+  have! hsrc : ∀ v ∈ S, ‖Λ (Function.update (Function.update x u (φ v)) t
       (x t - ∑ G ∈ Gs, L G t (x t)))‖ ≤ E := by
     intro v hv
     rcases hg : grp v with _ | G₀
@@ -172,7 +174,7 @@ theorem leaf_localization {ι γ : Type*} (L : γ → Fin 4 → V →ₗ[ℂ] V)
             have : 0 ≤ (Gs.card : ℝ) * εs := by positivity
             simp only [E]; nlinarith
     · obtain ⟨hG₀, h1, h2⟩ := hcur v hv G₀ hg
-      have hdec : x t - ∑ G ∈ Gs, L G t (x t) =
+      have! hdec : x t - ∑ G ∈ Gs, L G t (x t) =
           (x t - L G₀ t (x t)) - ∑ G ∈ Gs.erase G₀, L G t (x t) := by
         rw [← Finset.add_sum_erase Gs _ hG₀]; abel
       rw [hdec, Λ.map_update_sub, Λ.map_update_sum]
@@ -183,20 +185,20 @@ theorem leaf_localization {ι γ : Type*} (L : γ → Fin 4 → V →ₗ[ℂ] V)
             ((Finset.sum_le_sum fun G hG => h2 G (Finset.mem_of_mem_erase hG)
               (Finset.ne_of_mem_erase hG)).trans (by rw [Finset.sum_const, nsmul_eq_mul])))
         _ ≤ E := by
-            have hc : ((Gs.erase G₀).card : ℝ) ≤ Gs.card := by
+            have! hc : ((Gs.erase G₀).card : ℝ) ≤ Gs.card := by
               exact_mod_cast Finset.card_erase_le
             have : ((Gs.erase G₀).card : ℝ) * εs ≤ Gs.card * εs :=
               mul_le_mul_of_nonneg_right hc hεs
             have : 0 ≤ (Gs.card + 1 : ℝ) * εo := by positivity
             simp only [E]; linarith
-  have hE : 0 ≤ E := by simp only [E]; positivity
-  have hfirst : ‖∑ v ∈ S, a v * Λ (Function.update (Function.update x u (φ v)) t
+  have! hE : 0 ≤ E := by simp only [E]; positivity
+  have! hfirst : ‖∑ v ∈ S, a v * Λ (Function.update (Function.update x u (φ v)) t
       (x t - ∑ G ∈ Gs, L G t (x t)))‖ ≤ (∑ v ∈ S, ‖a v‖) * E := by
     rw [Finset.sum_mul]
     refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun v hv => ?_)
     rw [norm_mul]
     exact mul_le_mul_of_nonneg_left (hsrc v hv) (norm_nonneg _)
-  have hsecond : ‖∑ G ∈ Gs, ∑ i : Fin 3, Λ (leafResiduals L x u t p q G i)‖ ≤
+  have! hsecond : ‖∑ G ∈ Gs, ∑ i : Fin 3, Λ (leafResiduals L x u t p q G i)‖ ≤
       Gs.card * (3 * εr) := by
     refine (norm_sum_le _ _).trans ?_
     calc ∑ G ∈ Gs, ‖∑ i : Fin 3, Λ (leafResiduals L x u t p q G i)‖ ≤
@@ -327,12 +329,12 @@ theorem joint_bessel_of_wholeRanges {γ κ : Type*} [Fintype γ] [DecidableEq γ
   classical
   set X := ∑ k ∈ s, ‖R k h‖ ^ 2
   set! S := ∑ k ∈ s, ContinuousLinearMap.adjoint (R k) (R k h)
-  have hX0 : 0 ≤ X := Finset.sum_nonneg fun _ _ => sq_nonneg _
-  have hXS : X = RCLike.re (inner ℂ h S) := by
+  have! hX0 : 0 ≤ X := Finset.sum_nonneg fun _ _ => sq_nonneg _
+  have! hXS : X = RCLike.re (inner ℂ h S) := by
     simp only [S, inner_sum, ContinuousLinearMap.adjoint_inner_right, map_sum, X]
     apply Finset.sum_congr rfl; intro k _
     rw [inner_self_eq_norm_sq_to_K, ← RCLike.ofReal_pow, RCLike.ofReal_re]
-  have hSG : ‖S‖ ^ 2 ≤ C * X := by
+  have! hSG : ‖S‖ ^ 2 ≤ C * X := by
     refine (hwr fun k => R k h).trans (mul_le_mul_of_nonneg_left ?_ hC)
     calc ∑ G, ‖∑ k ∈ s.filter (grp · = G), ContinuousLinearMap.adjoint (R k) (R k h)‖ ^ 2 ≤
         ∑ G, 1 * ∑ k ∈ s.filter (grp · = G), ‖R k h‖ ^ 2 :=
@@ -341,16 +343,16 @@ theorem joint_bessel_of_wholeRanges {γ κ : Type*} [Fintype γ] [DecidableEq γ
       _ = X := by
           simp only [one_mul, X]
           exact Finset.sum_fiberwise s grp _
-  have hXle : X ≤ ‖h‖ * Real.sqrt (C * X) := by
+  have! hXle : X ≤ ‖h‖ * Real.sqrt (C * X) := by
     refine hXS.le.trans ((RCLike.re_le_norm _).trans ((norm_inner_le_norm _ _).trans ?_))
     exact mul_le_mul_of_nonneg_left (by
       rw [← Real.sqrt_sq (norm_nonneg S)]; exact Real.sqrt_le_sqrt hSG) (norm_nonneg _)
   rcases eq_or_lt_of_le hX0 with h0 | hpos
   · rw [← h0]; positivity
-  · have h1 : X ^ 2 ≤ ‖h‖ ^ 2 * (C * X) := by
+  · have! h1 : X ^ 2 ≤ ‖h‖ ^ 2 * (C * X) := by
       have := pow_le_pow_left₀ hX0 hXle 2
       rwa [mul_pow, Real.sq_sqrt (by positivity)] at this
-    have h2 : X * X ≤ (C * ‖h‖ ^ 2) * X := by nlinarith
+    have! h2 : X * X ≤ (C * ‖h‖ ^ 2) * X := by nlinarith
     exact le_of_mul_le_mul_right h2 hpos
 
 end CertifiedVariation
@@ -455,14 +457,14 @@ theorem searchLeaves_form (Λ : MultilinearMap ℂ (fun _ : Fin 4 => H) ℂ)
     · rw [List.map_append, List.sum_append, ← ih, ← ih]
       set s := thirdSlot up low
       set m := (ℓ + h) / 2
-      have h1 : (fun l => layerOp (Cum l) (Function.update ls s (ls s ++ [(m, false)]) l) (z l)) =
+      have! h1 : (fun l => layerOp (Cum l) (Function.update ls s (ls s ++ [(m, false)]) l) (z l)) =
           Function.update (fun l => layerOp (Cum l) (ls l) (z l)) s
             (Cum s m (layerOp (Cum s) (ls s) (z s))) := by
         funext l
         by_cases hl : l = s
         · subst hl; simp [layerOp_append]
         · simp [Function.update_of_ne hl]
-      have h2 : (fun l => layerOp (Cum l) (Function.update ls s (ls s ++ [(m, true)]) l) (z l)) =
+      have! h2 : (fun l => layerOp (Cum l) (Function.update ls s (ls s ++ [(m, true)]) l) (z l)) =
           Function.update (fun l => layerOp (Cum l) (ls l) (z l)) s
             (layerOp (Cum s) (ls s) (z s) - Cum s m (layerOp (Cum s) (ls s) (z s))) := by
         funext l
@@ -1029,7 +1031,7 @@ theorem searchLeaves_inv {up₀ : Fin 4} {ℓ₀ h₀ : ℕ} :
         rcases hlow with ⟨hl, hℓ⟩ | ⟨g, ls', hg, hgl, hℓ⟩
         · exact Or.inl ⟨hl, hℓ⟩
         · refine Or.inr ⟨g, ls', hg, ?_, hℓ⟩
-          have hgs : g ≠ s := fun he => hls (by rw [hg, he])
+          have! hgs : g ≠ s := fun he => hls (by rw [hg, he])
           rw [Function.update_of_ne hgs]; exact hgl
       · refine ih _ _ _ _ _ ?_ L hL
         refine ⟨fun he => hsu (Option.some_injective _ he), ?_, Or.inr ⟨s, ls s, rfl, ?_, by omega⟩⟩
@@ -1085,9 +1087,9 @@ theorem cellForm_pair_le {G : RealDyadicGrid} {I : ℤ × ℤ} {κ : LocalKernel
       τ₂ * Sa * Sb * ∑ m ∈ F, ‖c m‖ := by
   classical
   set Λ := cellForm (dyadicGridLength_pos G I.1) hwI V
-  have hcover : ∀ l : Fin 4, l = u ∨ l = t ∨ l = a ∨ l = b := fun l =>
+  have! hcover : ∀ l : Fin 4, l = u ∨ l = t ∨ l = a ∨ l = b := fun l =>
     fin4_cover_of_distinct u t a b l hut hua hub hta htb hab
-  have hXe : X = Function.update X t (∑ m ∈ F, c m • col m) := by
+  have! hXe : X = Function.update X t (∑ m ∈ F, c m • col m) := by
     rw [← hXt, Function.update_eq_self]
   rw [hXe, Λ.map_update_sum, Finset.mul_sum]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun m hm => ?_)
@@ -1096,18 +1098,18 @@ theorem cellForm_pair_le {G : RealDyadicGrid} {I : ℤ × ℤ} {κ : LocalKernel
   -- one separated pair
   set! z : Fin 4 → ℝ → ℂ := fun l => if l = a then (Sa : ℂ)⁻¹ • augPhys (X a)
     else if l = b then (Sb : ℂ)⁻¹ • augPhys (X b) else 0 with hz
-  have hsm := hsep m hm z (fun l => by
+  have! hsm := hsep m hm z (fun l => by
     simp only [hz]; split_ifs
     · exact (columnPhys_measurable _).const_smul _
     · exact (columnPhys_measurable _).const_smul _
     · exact measurable_const) (fun l hlu hlt => by
-    have hscale : ∀ (S : ℝ) (f : ℝ → ℂ), 0 < S → eLpNorm f 2 (normalizedIntervalMeasure
+    have! hscale : ∀ (S : ℝ) (f : ℝ → ℂ), 0 < S → eLpNorm f 2 (normalizedIntervalMeasure
         (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)) ≤ ENNReal.ofReal S →
         eLpNorm ((S : ℂ)⁻¹ • f) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
           (dyadicGridLength G I.1)) ≤ 1 := by
       intro S f hS hf
       rw [eLpNorm_const_smul]
-      have hn : ‖((S : ℂ))⁻¹‖ₑ = ENNReal.ofReal S⁻¹ := by
+      have! hn : ‖((S : ℂ))⁻¹‖ₑ = ENNReal.ofReal S⁻¹ := by
         rw [← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hS]
       rw [hn]
       calc ENNReal.ofReal S⁻¹ * eLpNorm f 2 _ ≤ ENNReal.ofReal S⁻¹ * ENNReal.ofReal S := by
@@ -1121,7 +1123,7 @@ theorem cellForm_pair_le {G : RealDyadicGrid} {I : ℤ × ℤ} {κ : LocalKernel
     · simp only [hz, ↓reduceIte]; exact hscale Sa _ hSa hXa
     · simp only [hz, Ne.symm hab, ↓reduceIte]; exact hscale Sb _ hSb hXb)
   -- rescale and compare on the cell
-  have hform : Λ (Function.update X t (col m)) = (Sa * Sb : ℂ) *
+  have! hform : Λ (Function.update X t (col m)) = (Sa * Sb : ℂ) *
       localProgressionForm (dyadicGridLength G I.1) wI (slotPair z u t Xs (Y m)) := by
     rw [cellForm_apply]
     set! cc : Fin 4 → ℂ := fun l => if l = a then (Sa : ℂ) else if l = b then (Sb : ℂ) else 1
@@ -1145,7 +1147,7 @@ theorem cellForm_pair_le {G : RealDyadicGrid} {I : ℤ × ℤ} {κ : LocalKernel
         rw [mul_inv_cancel₀ (by exact_mod_cast hSb.ne'), one_smul]
     rw [e, localProgressionForm_smul]
     congr 1
-    have huniv : (Finset.univ : Finset (Fin 4)) = {u, t, a, b} := by
+    have! huniv : (Finset.univ : Finset (Fin 4)) = {u, t, a, b} := by
       ext l
       simp only [Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, true_iff]
       exact hcover l
@@ -1154,7 +1156,7 @@ theorem cellForm_pair_le {G : RealDyadicGrid} {I : ℤ × ℤ} {κ : LocalKernel
       Finset.prod_singleton]
     simp only [cc, hua, hub, hta, htb, Ne.symm hab, ↓reduceIte, one_mul]
   rw [hform, norm_mul]
-  have hn : ‖((Sa : ℂ) * Sb)‖ = Sa * Sb := by
+  have! hn : ‖((Sa : ℂ) * Sb)‖ = Sa * Sb := by
     rw [norm_mul, Complex.norm_real, Complex.norm_real, Real.norm_eq_abs, Real.norm_eq_abs,
       abs_of_pos hSa, abs_of_pos hSb]
   rw [hn]
@@ -1307,35 +1309,35 @@ theorem ResidOK.form_le {κ : LocalKernelClass} {Tg : Type*} {G : RealDyadicGrid
     ‖cellForm (dyadicGridLength_pos G I.1) hwI W X‖ ≤ β * Sa * Sb := by
   classical
   set μ := normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2) (dyadicGridLength G I.1)
-  have hcover : ∀ l : Fin 4, l = u ∨ l = t ∨ l = a ∨ l = b := fun l =>
+  have! hcover : ∀ l : Fin 4, l = u ∨ l = t ∨ l = a ∨ l = b := fun l =>
     fin4_cover_of_distinct u t a b l hut hua hub hta htb hab
   set! z : Fin 4 → ℝ → ℂ := fun l => if l = u then quadraticChartAtom A
     else if l = t then augPhys (X t) else if l = a then (Sa : ℂ)⁻¹ • augPhys (X a)
     else (Sb : ℂ)⁻¹ • augPhys (X b) with hz
   set! c : Fin 4 → ℂ := fun l => if l = a then (Sa : ℂ) else if l = b then (Sb : ℂ) else 1 with hc
-  have hzu : z u = quadraticChartAtom A := by simp [hz]
-  have hzt : z t = augPhys (X t) := by simp [hz, Ne.symm hut]
-  have hza : z a = (Sa : ℂ)⁻¹ • augPhys (X a) := by simp [hz, Ne.symm hua, Ne.symm hta]
-  have hzb : z b = (Sb : ℂ)⁻¹ • augPhys (X b) := by
+  have! hzu : z u = quadraticChartAtom A := by simp [hz]
+  have! hzt : z t = augPhys (X t) := by simp [hz, Ne.symm hut]
+  have! hza : z a = (Sa : ℂ)⁻¹ • augPhys (X a) := by simp [hz, Ne.symm hua, Ne.symm hta]
+  have! hzb : z b = (Sb : ℂ)⁻¹ • augPhys (X b) := by
     simp [hz, Ne.symm hub, Ne.symm htb, Ne.symm hab]
-  have hscale : ∀ (S : ℝ) (f : ℝ → ℂ), 0 < S → eLpNorm f 2 μ ≤ ENNReal.ofReal S →
+  have! hscale : ∀ (S : ℝ) (f : ℝ → ℂ), 0 < S → eLpNorm f 2 μ ≤ ENNReal.ofReal S →
       eLpNorm ((S : ℂ)⁻¹ • f) 2 μ ≤ 1 := by
     intro S f hS hf
     rw [eLpNorm_const_smul]
-    have hn : ‖((S : ℂ))⁻¹‖ₑ = ENNReal.ofReal S⁻¹ := by
+    have! hn : ‖((S : ℂ))⁻¹‖ₑ = ENNReal.ofReal S⁻¹ := by
       rw [← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hS]
     rw [hn]
     calc ENNReal.ofReal S⁻¹ * eLpNorm f 2 μ ≤ ENNReal.ofReal S⁻¹ * ENNReal.ofReal S :=
           by gcongr
       _ = 1 := by
           rw [← ENNReal.ofReal_mul (inv_pos.mpr hS).le, inv_mul_cancel₀ hS.ne', ENNReal.ofReal_one]
-  have hpass' := h x hx hut hua hub hta htb hab A hA hAθ hAM hAq z hzu
+  have! hpass' := h x hx hut hua hub hta htb hab A hA hAθ hAM hAq z hzu
     (by rw [hzt, hXt]; rfl)
     (by rw [hza]; exact (columnPhys_measurable _).const_smul _)
     (by rw [hzb]; exact (columnPhys_measurable _).const_smul _)
     (by rw [hza]; exact hscale Sa _ hSa hXa)
     (by rw [hzb]; exact hscale Sb _ hSb hXb)
-  have hform : cellForm (dyadicGridLength_pos G I.1) hwI W X =
+  have! hform : cellForm (dyadicGridLength_pos G I.1) hwI W X =
       (Sa * Sb : ℂ) * localProgressionForm (dyadicGridLength G I.1) wI z := by
     rw [cellForm_apply]
     have e : localProgressionForm (dyadicGridLength G I.1) wI (fun l => augPhys (X l)) =
@@ -1343,20 +1345,20 @@ theorem ResidOK.form_le {κ : LocalKernelClass} {Tg : Type*} {G : RealDyadicGrid
       refine localProgressionForm_congr_cell hwI fun l => ?_
       filter_upwards [hXu] with y hy hyI
       rcases hcover l with hl | hl | hl | hl <;> rw [hl]
-      · have h1 : c u = 1 := by simp only [hc, hua, hub, ↓reduceIte]
+      · have! h1 : c u = 1 := by simp only [hc, hua, hub, ↓reduceIte]
         rw [Pi.smul_apply, h1, one_smul, hzu]
         exact hy hyI
-      · have h1 : c t = 1 := by simp only [hc, hta, htb, ↓reduceIte]
+      · have! h1 : c t = 1 := by simp only [hc, hta, htb, ↓reduceIte]
         rw [Pi.smul_apply, h1, one_smul, hzt]
-      · have h1 : c a = Sa := by simp only [hc, ↓reduceIte]
+      · have! h1 : c a = Sa := by simp only [hc, ↓reduceIte]
         rw [Pi.smul_apply, h1, hza, Pi.smul_apply, smul_smul,
           mul_inv_cancel₀ (by exact_mod_cast hSa.ne'), one_smul]
-      · have h1 : c b = Sb := by simp only [hc, Ne.symm hab, ↓reduceIte]
+      · have! h1 : c b = Sb := by simp only [hc, Ne.symm hab, ↓reduceIte]
         rw [Pi.smul_apply, h1, hzb, Pi.smul_apply, smul_smul,
           mul_inv_cancel₀ (by exact_mod_cast hSb.ne'), one_smul]
     rw [e, localProgressionForm_smul]
     congr 1
-    have huniv : (Finset.univ : Finset (Fin 4)) = {u, t, a, b} := by
+    have! huniv : (Finset.univ : Finset (Fin 4)) = {u, t, a, b} := by
       ext l
       simp only [Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, true_iff]
       exact hcover l
@@ -1365,7 +1367,7 @@ theorem ResidOK.form_le {κ : LocalKernelClass} {Tg : Type*} {G : RealDyadicGrid
       Finset.prod_singleton]
     simp only [hc, hua, hub, hta, htb, Ne.symm hab, ↓reduceIte, one_mul]
   rw [hform, norm_mul]
-  have hn : ‖((Sa * Sb : ℝ) : ℂ)‖ = Sa * Sb := by
+  have! hn : ‖((Sa * Sb : ℝ) : ℂ)‖ = Sa * Sb := by
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (mul_pos hSa hSb)]
   push_cast at hn
   rw [hn]
@@ -1494,12 +1496,12 @@ theorem templateCol_source {x : bf.Vtx} (hx : bf.occAvail x.2.1 x.1) (t : Fin 4)
       A'.quadratic = slotCoeff t * (bf.vtag x).lam ∧
       (templateCol (bf.vtag x) t R γ I r x : CatCol bf.Vtx).atom = quadraticChartAtom A' := by
   obtain ⟨hc, -, -⟩ := bf.vchart_spec x hx
-  have hHm := A.one_le_Hm
-  have hdim : ((bf.vtag x).dim : ℝ) ≤ Real.log A.Hm := hc.dimension
-  have hlogHm : Real.log A.Hm ≤ A.Hm := (Real.log_le_sub_one_of_pos (by linarith)).trans
+  have! hHm := A.one_le_Hm
+  have! hdim : ((bf.vtag x).dim : ℝ) ≤ Real.log A.Hm := hc.dimension
+  have! hlogHm : Real.log A.Hm ≤ A.Hm := (Real.log_le_sub_one_of_pos (by linarith)).trans
     (by linarith)
-  have hHm2 : A.Hm ≤ A.Hm ^ 2 := le_self_pow₀ hHm (by norm_num)
-  have hMW : ∀ a b, (chartRationalHeight (((slotCoeff t : ℚ) • (bf.vtag x).C) a b) : ℝ) ≤
+  have! hHm2 : A.Hm ≤ A.Hm ^ 2 := le_self_pow₀ hHm (by norm_num)
+  have! hMW : ∀ a b, (chartRationalHeight (((slotCoeff t : ℚ) • (bf.vtag x).C) a b) : ℝ) ≤
       A.Hsrc := by
     intro a b
     have e : (((slotCoeff t : ℚ) • (bf.vtag x).C) a b) =
@@ -1509,12 +1511,12 @@ theorem templateCol_source {x : bf.Vtx} (hx : bf.occAvail x.2.1 x.1) (t : Fin 4)
     change (rationalHeight _ : ℝ) ≤ _
     rw [e]
     refine (rationalHeight_mul_le _ _).trans ?_
-    have h1 : (rationalHeight ((slotCoeff t : ℚ) * (slotCoeff x.1.1 : ℚ)⁻¹) : ℝ) ≤ 3 := by
+    have! h1 : (rationalHeight ((slotCoeff t : ℚ) * (slotCoeff x.1.1 : ℚ)⁻¹) : ℝ) ≤ 3 := by
       exact_mod_cast rationalHeight_slotCoeff_ratio t x.1.1
-    have h2 : (rationalHeight ((bf.vchart x).2.matrix a b) : ℝ) ≤ A.Hm := hc.height a b
-    have h0 : (0 : ℝ) ≤ rationalHeight ((slotCoeff t : ℚ) * (slotCoeff x.1.1 : ℚ)⁻¹) :=
+    have! h2 : (rationalHeight ((bf.vchart x).2.matrix a b) : ℝ) ≤ A.Hm := hc.height a b
+    have! h0 : (0 : ℝ) ≤ rationalHeight ((slotCoeff t : ℚ) * (slotCoeff x.1.1 : ℚ)⁻¹) :=
       Nat.cast_nonneg _
-    have h0' : (0 : ℝ) ≤ rationalHeight ((bf.vchart x).2.matrix a b) := Nat.cast_nonneg _
+    have! h0' : (0 : ℝ) ≤ rationalHeight ((bf.vchart x).2.matrix a b) := Nat.cast_nonneg _
     calc 2 * ((rationalHeight ((slotCoeff t : ℚ) * (slotCoeff x.1.1 : ℚ)⁻¹) : ℝ) *
           rationalHeight ((bf.vchart x).2.matrix a b)) ^ 2 ≤ 2 * (3 * A.Hm) ^ 2 := by
           gcongr
@@ -1523,14 +1525,14 @@ theorem templateCol_source {x : bf.Vtx} (hx : bf.occAvail x.2.1 x.1) (t : Fin 4)
           unfold ActiveSetup.Hsrc
           have : (0 : ℝ) ≤ (tagKρ : ℝ) ^ (2 * tagKρ) * A.Hm ^ 2 := by positivity
           nlinarith only [this]
-  have hBW : ((bf.vtag x).dim : ℝ) * (tagKρ : ℝ) ^ (2 * tagKρ) + 2 * Real.pi * (bf.vtag x).dim ≤
+  have! hBW : ((bf.vtag x).dim : ℝ) * (tagKρ : ℝ) ^ (2 * tagKρ) + 2 * Real.pi * (bf.vtag x).dim ≤
       A.Hsrc := by
-    have hpi : 2 * Real.pi ≤ 7 := by linarith [Real.pi_lt_d2]
-    have hd0 : (0 : ℝ) ≤ (bf.vtag x).dim := Nat.cast_nonneg _
-    have hdHm : ((bf.vtag x).dim : ℝ) ≤ A.Hm ^ 2 := hdim.trans (hlogHm.trans hHm2)
+    have! hpi : 2 * Real.pi ≤ 7 := by linarith [Real.pi_lt_d2]
+    have! hd0 : (0 : ℝ) ≤ (bf.vtag x).dim := Nat.cast_nonneg _
+    have! hdHm : ((bf.vtag x).dim : ℝ) ≤ A.Hm ^ 2 := hdim.trans (hlogHm.trans hHm2)
     calc ((bf.vtag x).dim : ℝ) * (tagKρ : ℝ) ^ (2 * tagKρ) + 2 * Real.pi * (bf.vtag x).dim
         ≤ A.Hm ^ 2 * (tagKρ : ℝ) ^ (2 * tagKρ) + 7 * A.Hm ^ 2 := by
-          have h0 : (0 : ℝ) ≤ (tagKρ : ℝ) ^ (2 * tagKρ) := by positivity
+          have! h0 : (0 : ℝ) ≤ (tagKρ : ℝ) ^ (2 * tagKρ) := by positivity
           gcongr
       _ ≤ A.Hsrc := by unfold ActiveSetup.Hsrc; nlinarith [sq_nonneg A.Hm]
   obtain ⟨A', hA', hθ, hM, hq, he⟩ := templateCol_chart (bf.vtag x) t hR γ I r x
@@ -1624,8 +1626,8 @@ theorem layerName_hist (l : Fin 4) (cat : List (CatCol bf.Vtx)) (I : ℤ × ℤ)
         (fun i => (ls.getD i (0, false)).2) ls.length z := by
   unfold MainTest.hist
   set w := fp.testOf l I (fun _ => z) (fp.layerName I r Mt ls hls hlen c)
-  have hm : w.m = ls.length := rfl
-  have htail := operatorComplementProduct_id_tail (fun i => w.Q A.G fp.Mc (bf.origCols l) I cat i)
+  have! hm : w.m = ls.length := rfl
+  have! htail := operatorComplementProduct_id_tail (fun i => w.Q A.G fp.Mc (bf.origCols l) I cat i)
     w.θ ls.length
     (fun i hi => by
       unfold MainTest.Q
@@ -1642,8 +1644,8 @@ theorem layerName_hist (l : Fin 4) (cat : List (CatCol bf.Vtx)) (I : ℤ × ℤ)
   · rfl
   · unfold MainTest.Q
     rw [ite_eq_left_of_eq_true _ _ (eq_true (by rw [hm]; exact hi))]
-    have hg : ls.getD i (0, false) = ls[i] := List.getD_eq_getElem _ _ hi
-    have hc : choiceExt fp.hP c i = c ⟨i, hi⟩ := by
+    have! hg : ls.getD i (0, false) = ls[i] := List.getD_eq_getElem _ _ hi
+    have! hc : choiceExt fp.hP c i = c ⟨i, hi⟩ := by
       unfold choiceExt; rw [dite_eq_left_of_eq_true (eq_true hi)]
     rw [hg, hc]
     change mainProj A.G fp.Mc (bf.origCols l) cat I
@@ -1749,11 +1751,11 @@ theorem leaf_error_resid {W : Type*} [Fintype W] {κ : LocalKernelClass} {Tg : T
   classical
   set Λ := cellForm (dyadicGridLength_pos G I.1) hwI W
   set! Ll : γ → Fin 4 → ColumnL2 W →ₗ[ℂ] ColumnL2 W := fun g l => (L g l).toLinearMap
-  have hsz : ∀ l (y : ColumnL2 W), ‖y‖ ≤ ‖x l‖ →
+  have! hsz : ∀ l (y : ColumnL2 W), ‖y‖ ≤ ‖x l‖ →
       eLpNorm (augPhys y) 2 (normalizedIntervalMeasure (dyadicGridLeft G I.1 I.2)
         (dyadicGridLength G I.1)) ≤ ENNReal.ofReal Sz := fun l y hy =>
       augPhys_size_le G I hy (hSz l)
-  have hbound := leaf_localization Λ Ll x hut hup huq htp htq hpq S a φ hx Gs grp
+  have! hbound := leaf_localization Λ Ll x hut hup huq htp htq hpq S a φ hx Gs grp
     (εo := βo * Sz * Sz) (εm := βm * Sz * Sz) (εs := τ₂ * Sz * Sz * Ct)
     (εr := Ct * (βr * Sz * Sz))
     (fun v hv hg => by
@@ -1781,7 +1783,7 @@ theorem leaf_error_resid {W : Type*} [Fintype W] {κ : LocalKernelClass} {Tg : T
           (by rw [Function.update_of_ne htq.symm, Function.update_of_ne huq.symm]
               exact hsz q (x q) le_rfl)
       · obtain ⟨hxe, hCt⟩ := hexp g hgG
-        have h := cellForm_pair_le hwI hut hup huq htp htq hpq (F g) (c g) col Y (hcol g hgG)
+        have! h := cellForm_pair_le hwI hut hup huq htp htq hpq (F g) (c g) col Y (hcol g hgG)
           (quadraticChartAtom (Ax v)) (hsep v hv g₀ hg g hgG hne)
           (Function.update (Function.update x u (φ v)) t (L g t (x t)))
           (by rw [Function.update_of_ne hut, Function.update_self]; exact he)
@@ -1794,13 +1796,13 @@ theorem leaf_error_resid {W : Type*} [Fintype W] {κ : LocalKernelClass} {Tg : T
         exact mul_le_mul_of_nonneg_left hCt (by positivity))
     (fun g hg i => by
       obtain ⟨hxe, hCt⟩ := hexp g hg
-      have hLt : Ll g t (x t) = ∑ m ∈ F g, c g m • col m := hxe
-      have hc0 : 0 ≤ ∑ m ∈ F g, ‖c g m‖ := Finset.sum_nonneg fun _ _ => norm_nonneg _
+      have! hLt : Ll g t (x t) = ∑ m ∈ F g, c g m • col m := hxe
+      have! hc0 : 0 ≤ ∑ m ∈ F g, ‖c g m‖ := Finset.sum_nonneg fun _ _ => norm_nonneg _
       fin_cases i
       · obtain ⟨M, hM, hR⟩ := hres g hg u hut
         change ‖Λ (Function.update (Function.update x t (Ll g t (x t))) u
           (x u - Ll g u (x u)))‖ ≤ _
-        have h := hR.combo_le hwI hut.symm htp htq hup huq hpq (F g) (c g) col ctag hM
+        have! h := hR.combo_le hwI hut.symm htp htq hup huq hpq (F g) (c g) col ctag hM
           (hsrcT g hg) (Function.update (Function.update x t (L g t (x t))) u (x u - L g u (x u)))
           (by rw [Function.update_of_ne hut.symm, Function.update_self]; exact hLt)
           (by rw [Function.update_self]) hSz0 hSz0
@@ -1812,7 +1814,7 @@ theorem leaf_error_resid {W : Type*} [Fintype W] {κ : LocalKernelClass} {Tg : T
       · obtain ⟨M, hM, hR⟩ := hres g hg p htp.symm
         change ‖Λ (Function.update (Function.update (Function.update x t (Ll g t (x t))) u
           (Ll g u (x u))) p (x p - Ll g p (x p)))‖ ≤ _
-        have h := hR.combo_le hwI htp hut.symm htq hup.symm hpq huq (F g) (c g) col ctag hM
+        have! h := hR.combo_le hwI htp hut.symm htq hup.symm hpq huq (F g) (c g) col ctag hM
           (hsrcT g hg) (Function.update (Function.update (Function.update x t (L g t (x t))) u
             (L g u (x u))) p (x p - L g p (x p)))
           (by rw [Function.update_of_ne htp, Function.update_of_ne hut.symm,
@@ -1826,7 +1828,7 @@ theorem leaf_error_resid {W : Type*} [Fintype W] {κ : LocalKernelClass} {Tg : T
       · obtain ⟨M, hM, hR⟩ := hres g hg q htq.symm
         change ‖Λ (Function.update (Function.update (Function.update (Function.update x t
           (Ll g t (x t))) u (Ll g u (x u))) p (Ll g p (x p))) q (x q - Ll g q (x q)))‖ ≤ _
-        have h := hR.combo_le hwI htq hut.symm htp huq.symm hpq.symm hup (F g) (c g) col ctag hM
+        have! h := hR.combo_le hwI htq hut.symm htp huq.symm hpq.symm hup (F g) (c g) col ctag hM
           (hsrcT g hg) (Function.update (Function.update (Function.update (Function.update x t
             (L g t (x t))) u (L g u (x u))) p (L g p (x p))) q (x q - L g q (x q)))
           (by rw [Function.update_of_ne htq, Function.update_of_ne htp,
@@ -1940,14 +1942,14 @@ theorem avg_expansion (l : Fin 4) {Mc : ℕ} (s : List (CatCol bf.Vtx)) (I : ℤ
         A.colBudget * Real.sqrt (mainLabelsM A.G Mc (bf.origCols l) s I r Mtop d).card * ‖z‖ /
           Real.sqrt (dyadicGridLength A.G I.1) := by
   set F := mainLabelsM A.G Mc (bf.origCols l) s I r Mtop d
-  have hexp := fun p : Fin P => mainRange_exists_coeffM (G := A.G) (O := bf.origCols l)
+  have! hexp := fun p : Fin P => mainRange_exists_coeffM (G := A.G) (O := bf.origCols l)
     (s := s) (I := I) (r := r) (M := M p) d (Submodule.starProjection_apply_mem _ z)
   choose c hc using hexp
   set! c' : Fin P → bf.Lab ⊕ Fin Mc → ℂ := fun p v =>
     if v ∈ mainLabelsM A.G Mc (bf.origCols l) s I r (M p) d then c p v else 0
-  have hsub : ∀ p, mainLabelsM A.G Mc (bf.origCols l) s I r (M p) d ⊆ F := fun p =>
+  have! hsub : ∀ p, mainLabelsM A.G Mc (bf.origCols l) s I r (M p) d ⊆ F := fun p =>
     mainLabelsM_mono s I r (hM p) d
-  have hc' : ∀ p, mainProj A.G Mc (bf.origCols l) s I r (M p) z =
+  have! hc' : ∀ p, mainProj A.G Mc (bf.origCols l) s I r (M p) z =
       ∑ v ∈ F, c' p v • mainCol A.G Mc (bf.origCols l) s I v := by
     intro p
     change (mainRange A.G Mc (bf.origCols l) s I r (M p)).starProjection z = _
@@ -1956,26 +1958,26 @@ theorem avg_expansion (l : Fin 4) {Mc : ℕ} (s : List (CatCol bf.Vtx)) (I : ℤ
     · have : v ∉ mainLabelsM A.G Mc (bf.origCols l) s I r (M p) d := (Finset.mem_sdiff.mp hv).2
       simp only [c', this, ↓reduceIte, zero_smul]
     · simp only [c', hv, ↓reduceIte]
-  have hcb : (0 : ℝ) ≤ A.colBudget := by
+  have! hcb : (0 : ℝ) ≤ A.colBudget := by
     have := A.Dc_nonneg; unfold ActiveSetup.colBudget; positivity
-  have hF : ∀ v ∈ F, v ∈ mainLabels A.G Mc (bf.origCols l) s I r := fun v hv =>
+  have! hF : ∀ v ∈ F, v ∈ mainLabels A.G Mc (bf.origCols l) s I r := fun v hv =>
     mainLabelsM_subset s I r Mtop d hv
-  have hbound : ∀ p, ∑ v ∈ F, ‖c' p v‖ ≤
+  have! hbound : ∀ p, ∑ v ∈ F, ‖c' p v‖ ≤
       A.colBudget * Real.sqrt F.card * ‖z‖ / Real.sqrt (dyadicGridLength A.G I.1) := by
     intro p
-    have h := mainCoeff_sum_le s I F (c' p) (fun v hv => bf.mainLabel_memLp l s I r (hF v hv))
+    have! h := mainCoeff_sum_le s I F (c' p) (fun v hv => bf.mainLabel_memLp l s I r (hF v hv))
       hcb (fun v _ => bf.inv_mainWeight_le l v)
     rw [← hc' p] at h
     refine h.trans ?_
-    have hP' : ‖mainProj A.G Mc (bf.origCols l) s I r (M p) z‖ ≤ ‖z‖ :=
+    have! hP' : ‖mainProj A.G Mc (bf.origCols l) s I r (M p) z‖ ≤ ‖z‖ :=
       Submodule.norm_starProjection_apply_le _ z
-    have hsr : 0 < Real.sqrt (dyadicGridLength A.G I.1) :=
+    have! hsr : 0 < Real.sqrt (dyadicGridLength A.G I.1) :=
       Real.sqrt_pos.mpr (dyadicGridLength_pos A.G I.1)
     rw [div_le_div_iff_of_pos_right hsr]
     calc Real.sqrt F.card * A.colBudget * ‖mainProj A.G Mc (bf.origCols l) s I r (M p) z‖
         ≤ Real.sqrt F.card * A.colBudget * ‖z‖ := mul_le_mul_of_nonneg_left hP' (by positivity)
       _ = A.colBudget * Real.sqrt F.card * ‖z‖ := by ring
-  have hPr : (0 : ℝ) < P := by exact_mod_cast hP
+  have! hPr : (0 : ℝ) < P := by exact_mod_cast hP
   refine ⟨fun v => (P : ℂ)⁻¹ * ∑ p, c' p v, ?_, ?_⟩
   · unfold opAvg
     rw [smul_apply, sum_apply]
@@ -2015,14 +2017,14 @@ theorem mainLabel_source (l : Fin 4) {Mc : ℕ} (s : List (CatCol bf.Vtx))
   classical
   obtain ⟨hvL, hvM⟩ := mem_mainLabelsM.mp hv
   refine ⟨hvM, ?_⟩
-  have hmem := bf.mainLabel_memLp l s I r hvL
-  have hphys : ∀ᵐ y ∂volume, y ∈ dyadicGridCell A.G I.1 I.2 →
+  have! hmem := bf.mainLabel_memLp l s I r hvL
+  have! hphys : ∀ᵐ y ∂volume, y ∈ dyadicGridCell A.G I.1 I.2 →
       augPhys (mainCol A.G Mc (bf.origCols l) s I v) y = mainScalar Mc (bf.origCols l) s v y := by
     filter_upwards [wColumn_coeFn hmem] with y hy hyI
     simp only [augPhys, mainCol]
     rw [hy, Set.indicator_of_mem hyI, privateColumnValue_physical]
   rcases v with x | n
-  · have hvL' : (bf.origCols l).avail I x := mem_mainLabels.mp hvL
+  · have! hvL' : (bf.origCols l).avail I x := mem_mainLabels.mp hvL
     obtain ⟨hc, hb, hθ, hM, hq, he⟩ := bf.origCol_source l hvL'
     refine ⟨(bf.vchart (bf.vtxAt I x)).2, hc, hb, hθ, hM, hq, ?_⟩
     filter_upwards [hphys] with y hy hyI
@@ -2030,13 +2032,13 @@ theorem mainLabel_source (l : Fin 4) {Mc : ℕ} (s : List (CatCol bf.Vtx))
     exact he y hyI
   · obtain ⟨hn, -, -⟩ := (mem_mainLabels.mp hvL : ∃ hn : (n : ℕ) < s.length, _)
     set! e := s[(n : ℕ)]
-    have he : e ∈ s := List.getElem_mem _
+    have! he : e ∈ s := List.getElem_mem _
     obtain ⟨R, hR, γ, hde⟩ := hT e he
-    have htg : labelTag (bf.origCols l) s I d (Sum.inr n : bf.Lab ⊕ Fin Mc) = e.tag := by
+    have! htg : labelTag (bf.origCols l) s I d (Sum.inr n : bf.Lab ⊕ Fin Mc) = e.tag := by
       simp only [labelTag, Sum.elim_inr, hn, ↓reduceDIte]; rfl
     rw [htg]
     obtain ⟨A', hA', hθ, hM, hq, hatom⟩ := bf.templateCol_source (htag e he) l hR γ e.birth e.rank
-    have hatom' : e.atom = quadraticChartAtom A' := by
+    have! hatom' : e.atom = quadraticChartAtom A' := by
       rw [← hatom]; exact congrArg CatCol.atom hde
     refine ⟨A', hA', fun y => by rw [← hatom']; exact e.bound y, hθ, hM, hq, ?_⟩
     filter_upwards [hphys] with y hy hyI

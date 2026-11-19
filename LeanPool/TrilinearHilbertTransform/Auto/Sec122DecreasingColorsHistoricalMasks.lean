@@ -4036,7 +4036,7 @@ theorem admPos_parent [Fintype Λ] {I : AdmCell G R N} (hI : I.1 ≠ R)
   classical
   set P : AdmCell G R N := ⟨dyadicParent G I.1, admParent_mem I hI⟩
   unfold admPos
-  congr 1
+  apply congrArg Finset.card
   ext y
   simp only [Finset.mem_filter]
   constructor
