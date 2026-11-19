@@ -436,12 +436,12 @@ theorem stair_cost_ge (n : ℕ) (β : Fin n → S3) : 2 * cutF (sgnPat β) n ≤
           rw [sgnPat_val, sgnPat_val]
           exact st_par_bound (β u) (β v) (stEdge u.val v.val)
         · simp [huv]
-    _ = cost (stair n) β := (cost_eq _ _).symm
+    _ = cost (stair n) β := (cost_eq_sum _ _).symm
 
 /-- The identity gauge costs twice the number of staircase edges. -/
 theorem stair_cost_one (n : ℕ) : cost (stair n) (fun _ => 1) = 2 * stE n := by
   calc cost (stair n) (fun _ => 1) = ∑ u : Fin n, ∑ v : Fin n,
-        (if u < v then moved ((1 : S3)⁻¹ * stair n u v * 1) else 0) := cost_eq _ _
+        (if u < v then moved ((1 : S3)⁻¹ * stair n u v * 1) else 0) := cost_eq_sum _ _
     _ = ∑ u : Fin n, ∑ v : Fin n, (if u < v then 2 * bnat (stEdge u.val v.val) else 0) := by
         refine Finset.sum_congr rfl fun u _ => Finset.sum_congr rfl fun v _ => ?_
         by_cases huv : u < v

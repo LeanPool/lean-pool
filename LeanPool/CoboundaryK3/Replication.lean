@@ -38,47 +38,16 @@ open Finset
 
 variable {k : ℕ}
 
-/-! ## Edge and triangle sums as finite sums
+/-! ## Triangle sums as finite sums
 
-`cost` and `defect` are list sums over `edges k` and `triangles k`. Rewritten as sums over all
-pairs and triples with an order indicator, they can be reindexed and regrouped. -/
+`cost_eq_sum` and `defect_eq_sum` of `Constant` rewrite `cost` and `defect` as sums over all
+pairs and triples with an order indicator, so they can be reindexed and regrouped. -/
 
-theorem sum_flatMap_map {α β : Type*} (l : List α) (g : α → List β) (f : β → ℕ) :
-    ((l.flatMap g).map f).sum = (l.map fun a => ((g a).map f).sum).sum := by
-  induction l with
-  | nil => simp
-  | cons a t ih => simp [List.flatMap_cons, List.sum_append, ih]
-
-theorem sum_filter_map {α β : Type*} (l : List α) (p : α → Bool) (g : α → β) (f : β → ℕ) :
-    (((l.filter p).map g).map f).sum = (l.map fun a => if p a then f (g a) else 0).sum := by
-  induction l with
-  | nil => simp
-  | cons a t ih => cases h : p a <;> simp_all
-
-theorem cost_eq (α : Fin k → Fin k → S3) (β : Fin k → S3) :
-    cost α β = ∑ u, ∑ v, if u < v then moved ((β u)⁻¹ * α u v * β v) else 0 := by
-  unfold cost edges
-  rw [sum_flatMap_map, Fin.sum_univ_def]
-  congr 1
-  apply List.map_congr_left
-  intro u _
-  rw [sum_filter_map, Fin.sum_univ_def]
-  simp only [decide_eq_true_eq]
-
+/-- `defect_eq_sum` with the holonomy written out. -/
 theorem defect_eq (α : Fin k → Fin k → S3) :
     defect α = ∑ u, ∑ v, ∑ w,
-      if u < v ∧ v < w then moved (val α u v * val α v w * val α w u) else 0 := by
-  unfold defect triangles
-  rw [sum_flatMap_map, Fin.sum_univ_def]
-  congr 1
-  apply List.map_congr_left
-  intro u _
-  rw [sum_flatMap_map, Fin.sum_univ_def]
-  congr 1
-  apply List.map_congr_left
-  intro v _
-  rw [sum_filter_map, Fin.sum_univ_def]
-  simp only [decide_eq_true_eq]
+      if u < v ∧ v < w then moved (val α u v * val α v w * val α w u) else 0 :=
+  defect_eq_sum α
 
 /-! ## Clusters
 
@@ -187,7 +156,7 @@ theorem rep_edge_attain {q : ℕ} (α : Fin k → Fin k → S3) (β : Fin k → 
 /-- **Attainment.** A gauge constant on clusters costs `q²` times its seed cost. -/
 theorem rep_attain (q : ℕ) (α : Fin k → Fin k → S3) (β : Fin k → S3) :
     cost (rep q α) (fun x => β (clus q x)) = q ^ 2 * cost α β := by
-  rw [cost_eq, cost_eq]
+  rw [cost_eq_sum, cost_eq_sum]
   simp only [sum_blocks (q := q), clus_vert, rep_edge_attain, Finset.sum_const,
     Finset.card_univ, Fintype.card_fin, smul_eq_mul, ← Finset.mul_sum]
   ring
@@ -246,7 +215,7 @@ theorem rep_lower (q : ℕ) (hq : 0 < q) (α : Fin k → Fin k → S3) (D : ℕ)
   intro γ
   by_cases hk : k < 2
   · have h0 : cost α (fun _ => 1) = 0 := by
-      rw [cost_eq]
+      rw [cost_eq_sum]
       refine Finset.sum_eq_zero fun u _ => Finset.sum_eq_zero fun v _ => ?_
       have huv : ¬ u < v := by
         intro huv; have := u.isLt; have := v.isLt; rw [Fin.lt_def] at huv; omega
@@ -257,7 +226,7 @@ theorem rep_lower (q : ℕ) (hq : 0 < q) (α : Fin k → Fin k → S3) (D : ℕ)
       if i < j then moved ((γ (vert q i a))⁻¹ * α i j * γ (vert q j b)) else 0 with hG
     -- the cost between clusters is at most the full cost
     have hI' : ∑ i, ∑ a, ∑ j, ∑ b, G i j a b ≤ cost (rep q α) γ := by
-      rw [cost_eq]
+      rw [cost_eq_sum]
       simp only [sum_blocks (q := q)]
       gcongr with i _ a _ j _ b _
       exact rep_edge_lower α γ i j a b
@@ -267,7 +236,7 @@ theorem rep_lower (q : ℕ) (hq : 0 < q) (α : Fin k → Fin k → S3) (D : ℕ)
     -- the section double count
     have hS : ∑ s : Fin k → Fin q, cost α (fun i => γ (vert q i (s i))) =
         q ^ (k - 2) * ∑ i, ∑ j, ∑ a, ∑ b, G i j a b := by
-      simp only [cost_eq]
+      simp only [cost_eq_sum]
       rw [Finset.sum_comm, Finset.mul_sum]
       refine Finset.sum_congr rfl fun i _ => ?_
       rw [Finset.sum_comm, Finset.mul_sum]
