@@ -5,7 +5,7 @@ Authors: Dean Cureton, The Moving Sofa contributors
 -/
 module
 
-public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development004
+public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs
 
 /-!
 # Gerver niche area certificate
