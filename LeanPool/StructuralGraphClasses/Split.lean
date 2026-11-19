@@ -77,7 +77,8 @@ def comap (f : W ↪ V) : SplitPartition (G.comap f) where
     exact P.mem_clique_or_mem_independent (f v)
 
 /-- Restrict a split partition to an arbitrary induced subgraph. -/
-def induce (s : Set V) : SplitPartition (G.induce s) := P.comap (Function.Embedding.subtype s)
+def induce (s : Set V) : SplitPartition (G.induce s) :=
+  P.comap (Function.Embedding.subtype (· ∈ s))
 
 end SplitPartition
 
@@ -100,7 +101,7 @@ theorem IsSplit.comap (h : G.IsSplit) (f : W ↪ V) : (G.comap f).IsSplit := by
 
 /-- Every induced subgraph of a split graph is split. -/
 theorem IsSplit.induce (h : G.IsSplit) (s : Set V) : (G.induce s).IsSplit :=
-  h.comap (Function.Embedding.subtype s)
+  h.comap (Function.Embedding.subtype (· ∈ s))
 
 /-- Graph isomorphisms preserve split membership. -/
 theorem Iso.isSplit_iff {H : SimpleGraph W} (f : G ≃g H) : G.IsSplit ↔ H.IsSplit := by

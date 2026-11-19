@@ -81,7 +81,7 @@ def comap (P : ThresholdPartition G) (f : W ↪ V) : ThresholdPartition (G.comap
 
 /-- Restrict the supplied threshold partition to an induced subgraph. -/
 def induce (P : ThresholdPartition G) (s : Set V) : ThresholdPartition (G.induce s) :=
-  P.comap (Function.Embedding.subtype s)
+  P.comap (Function.Embedding.subtype (· ∈ s))
 
 /-- Complementation exchanges the parts and preserves nestedness. -/
 def compl (P : ThresholdPartition G) : ThresholdPartition Gᶜ where
