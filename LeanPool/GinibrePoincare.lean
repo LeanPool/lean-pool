@@ -7,8 +7,22 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.GinibrePoincare.Analysis.AlternativeBakryEmeryConvexGibbsLSI
+public import LeanPool.GinibrePoincare.Analysis.AlternativeMatrixPoincare
 public import LeanPool.GinibrePoincare.Analysis.AlternativeSlaterPoincare
 public import LeanPool.GinibrePoincare.Analysis.AlternativeSpectralPoincare
+public import LeanPool.GinibrePoincare.Analysis.AlternativeSpectralSupport
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceAuxiliaryEqualityAnalytic
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceAuxiliaryLocalDolbeault
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceAuxiliaryPositiveWeightUniform
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceAuxiliaryTensorGramSchmidt
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceBrascampLiebWeak
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDynamicsGlobalCIR
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDynamicsHunt
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceGUEEndpoints
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceMatrixWeakClosure
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceOperatorErgodicity
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceOperatorFriedrichsSquareRoot
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceOperatorNumberSpectrum
 public import LeanPool.GinibrePoincare.Analysis.DynamicalFactorization
 public import LeanPool.GinibrePoincare.Analysis.EntireVandermondeFactorization
 public import LeanPool.GinibrePoincare.Analysis.FullRadialLSIReduction
@@ -34,12 +48,18 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticStationaryTwoRa
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticTransitionResolventIdentification
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticTransitionSemigroupIdentification
 public import LeanPool.GinibrePoincare.Analysis.GinibreTwoRadiusEquilibriumLaw
+public import LeanPool.GinibrePoincare.Analysis.MatrixGaussianPoincare
 public import LeanPool.GinibrePoincare.Analysis.PolynomialEigenfunctionGenerator
 public import LeanPool.GinibrePoincare.Analysis.PolynomialSectorIncompleteness
 public import LeanPool.GinibrePoincare.Endgame.BochnerKodairaTheoremOneTen
+public import LeanPool.GinibrePoincare.Endgame.CorrespondenceCurvatureCriterion
+public import LeanPool.GinibrePoincare.Endgame.CorrespondenceEndpoints
 public import LeanPool.GinibrePoincare.Endgame.FullMainAnalyticProof
+public import LeanPool.GinibrePoincare.Endgame.FullMatrixLift
 public import LeanPool.GinibrePoincare.Endgame.FullNonQuadraticPotential
+public import LeanPool.GinibrePoincare.Endgame.FullPaper
 public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneNine
+public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneNinePointwiseGamma
 public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneTen
 
 /-!
@@ -76,7 +96,24 @@ Main declarations: `GinibrePoincare.ginibre_symmetric_weak_poincare`,
   `GinibrePoincare.ginibreBrownian_original_transition_eq_paper_ae`,
   `GinibrePoincare.ginibreOriginalEquilibrium_two_radius_gamma_product`,
   `GinibrePoincare.fullNonQuadraticPotentialTheorem`,
-  `GinibrePoincare.bakryEmeryConfigurationGibbs_square_lsi`
+  `GinibrePoincare.bakryEmeryConfigurationGibbs_square_lsi`,
+  `GinibrePoincare.correspondenceMatrix_theorem_1_13`,
+  `GinibrePoincare.fullMatrixLift_functional_inequalities`,
+  `GinibrePoincare.matrixSpectralLift_finite_overlap_gaussian_poincare`,
+  `GinibrePoincare.matrixGaussian_poincare_compactC1`,
+  `GinibrePoincare.fullTheoremOneNinePointwiseGamma`,
+  `GinibrePoincare.correspondence_poincare_iff_integrated_pointwise_curvature`,
+  `GinibrePoincare.spectral_ginibre_full_generator_spectrum_support`,
+  `GinibrePoincare.correspondence_ginibre_global_independent_CIR_equations`,
+  `GinibrePoincare.correspondence_ginibre_continuous_strongMarkov`,
+  `GinibrePoincare.correspondenceOperatorEvolution_ergodic`,
+  `GinibrePoincare.correspondenceFriedrichsSquareRoot_domain_ordinary_H1`,
+  `GinibrePoincare.correspondenceOperatorNumber_spectrum_iff`,
+  `GinibrePoincare.correspondenceBrascampLieb_weak_probability_variance`,
+  `GinibrePoincare.gueFull_C1_H1_inequalities`, `GinibrePoincare.localDolbeault_locallyL2`,
+  `GinibrePoincare.positiveWeightEntire_tendstoLocallyUniformly`,
+  `GinibrePoincare.gaussian_tensor_mixed_monomial_gramSchmidt`,
+  `GinibrePoincare.gaussianGapEqualitySpace_real_analytic_representative`
 Tags: ginibre-ensemble, poincare-inequality, weak-gradients, hermite-polynomials, equality-cases
 MSC: 60E15, 60B20, 46E35
 -/
