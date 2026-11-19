@@ -57,6 +57,10 @@ noncomputable section
 def pairwiseRadius {n : ℕ} (z : Configuration n) : ℝ :=
   ∑ j : Fin n, ∑ k ∈ Finset.Ioi j, Complex.normSq (z j - z k)
 
+/-- The squared modulus `Complex.normSq (coordinateSum z)` of the sum of the particle
+positions. -/
+def ginibreCenterSquared (n : ℕ) (z : Configuration n) : ℝ := Complex.normSq (coordinateSum z)
+
 private theorem normSq_sub_symm (a b : ℂ) :
     Complex.normSq (a - b) = Complex.normSq (b - a) := by
   rw [show a - b = -(b - a) by ring, Complex.normSq_neg]
