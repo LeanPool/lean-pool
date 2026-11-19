@@ -564,14 +564,26 @@ private meta def exposeBellmanUntil (isTerminal : Lean.Expr → Bool) (expressio
   Lean.Meta.withTransparency .all (expose expression)
 
 -- Core WHNF can reduce a native projection before the stopping test sees it.
--- Keep projections intact while peeling wrappers off the constructor field.
-private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.Expr :=
-  Lean.Meta.withConfig (fun configuration => { configuration with proj := .no }) <|
-    exposeBellmanUntil (fun term =>
-      match term with
-      | .proj name index _ => name == ``DPoly && index == 0
-      | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
-          term.isAppOfArity ``List.cons 3) expression
+-- Peel wrappers and select enclosing fields without evaluating DPoly.coeffs.
+private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let isTerminal (term : Lean.Expr) : Bool :=
+    match term with
+    | .proj name index _ => name == ``DPoly && index == 0
+    | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
+        term.isAppOfArity ``List.cons 3
+  let mut next := expression
+  repeat
+    Lean.Core.checkSystem "Bellman coefficient field"
+    let term ← Lean.Meta.withConfig (fun configuration => { configuration with proj := .no }) <|
+      exposeBellmanUntil isTerminal next
+    if isTerminal term then return term
+    let .proj .. := term | return term
+    if let some field ← Lean.Meta.reduceProj? term then
+      next := field
+    else if let some field ← Lean.Meta.withTransparency .all (Lean.Meta.reduceProj? term) then
+      next := field
+    else
+      return term
 
 -- Stop at heads the staged reader handles so other helpers unfold in any namespace.
 private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
@@ -836,7 +848,7 @@ example :
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
-  change allNonnegative3 (DPoly.mk (id chartPlus.coeffs)) = true
+  change allNonnegative3 (DPoly.mk (id (chartPlus.coeffs, ()).1)) = true
   checkBellmanChart
 
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
