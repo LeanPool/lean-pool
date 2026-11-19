@@ -8,7 +8,8 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.StableManifold.Linear.HyperbolicSplitting
-public import LeanPool.StableManifold.Linear.Splitting
+public import LeanPool.StableManifold.Linear.FiniteDimensionalSubspaces
+import Mathlib.LinearAlgebra.Projection
 
 /-! # Constructing an exponential splitting in finite dimension -/
 
@@ -23,9 +24,9 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 /-- **A hyperbolic splitting exists** in finite dimension when the stable and unstable subspaces
 are complementary.
 
-Proof: `P` is the projection onto `Eₛ` along `Eᵤ`; `T = A (1 - P) + P` is invertible, and
-`B = T⁻¹ (1 - P)`. The orbits of `A P` and of `B` tend to `0`, so their powers decay
-geometrically (`exists_norm_pow_le_mul_pow_of_tendsto`), and `Aⁿ P = (A P)ⁿ P`. -/
+Proof: `P` projects onto the stable subspace. Invert the restriction of `A` to the
+unstable subspace and precompose with the complementary projection to obtain `B`.
+The orbits of `A P` and of `B` tend to zero, so their powers decay geometrically. -/
 theorem nonempty_hyperbolicSplitting [FiniteDimensional ℝ E] {A : E →L[ℝ] E}
     (h : IsCompl A.stableSubspace A.unstableSubspace) : Nonempty A.HyperbolicSplitting := by
   -- The projection `P` onto `Eₛ` along `Eᵤ`, continuous in finite dimension.
@@ -47,53 +48,39 @@ theorem nonempty_hyperbolicSplitting [FiniteDimensional ℝ E] {A : E →L[ℝ] 
     change A (P x) = P (A x)
     rw [e, map_add, hPself (map_mem_stableSubspace (hPs x)),
       hPzero.2 (map_mem_unstableSubspace (hPu x)), add_zero]
-  have hP1 : (1 - P) * P = 0 := by rw [sub_mul, one_mul, hPP, sub_self]
-  have hP2 : P * (1 - P) = 0 := by rw [mul_sub, mul_one, hPP, sub_self]
-  -- `T = A (1 - P) + P` (`A` on `Eᵤ`, the identity on `Eₛ`) is injective, hence invertible.
-  set T : E →L[ℝ] E := A * (1 - P) + P with hT
-  have hTP : T * P = P := by rw [hT, add_mul, mul_assoc, hP1, mul_zero, zero_add, hPP]
-  have hPT : P * T = P := by
-    rw [hT, mul_add, ← mul_assoc, ← hAP, mul_assoc, hP2, mul_zero, zero_add, hPP]
-  have hTinj : Function.Injective T := by
-    rw [injective_iff_map_eq_zero]
-    intro x hx
-    have hPx : P x = 0 := by rw [← hPT, mul_apply_eq_comp, hx, map_zero]
-    have hAx : A x = A 0 := by
-      rw [map_zero, ← hx, hT, add_apply, hPx, add_zero, mul_apply_eq_comp, sub_apply,
-        one_apply_eq_self, hPx, sub_zero]
-    exact injOn_unstableSubspace A (hPzero.1 hPx) A.unstableSubspace.zero_mem hAx
-  let e : E ≃L[ℝ] E :=
-    (LinearEquiv.ofInjectiveEndo (T : E →ₗ[ℝ] E) hTinj).toContinuousLinearEquiv
-  have he (x : E) : e x = T x := rfl
-  set R : E →L[ℝ] E := (e.symm : E →L[ℝ] E)
-  have hTR : T * R = 1 := by
-    ext x
-    rw [mul_apply_eq_comp, ← he]
-    exact e.apply_symm_apply x
-  have hRT : R * T = 1 := by
-    ext x
-    rw [mul_apply_eq_comp, ← he]
-    exact e.symm_apply_apply x
-  have hRP : R * P = P := calc
-    R * P = R * (T * P) := by rw [hTP]
-    _ = P := by rw [← mul_assoc, hRT, one_mul]
-  have hPR : P * R = P := calc
-    P * R = P * T * R := by rw [hPT]
-    _ = P := by rw [mul_assoc, hTR, mul_one]
-  -- `B = T⁻¹ (1 - P) = (1 - P) T⁻¹` inverts `A` on `Eᵤ`.
-  set B : E →L[ℝ] E := R * (1 - P) with hB
-  have hB' : B = (1 - P) * R := by rw [hB, mul_sub, sub_mul, mul_one, one_mul, hRP, hPR]
-  have hA1 : (1 - P) * A = A * (1 - P) := by rw [sub_mul, mul_sub, one_mul, mul_one, hAP]
-  have hA2 : A * (1 - P) = T * (1 - P) := by
-    rw [mul_sub T, mul_one, hTP, hT, add_sub_cancel_right]
-  have hA3 : A * (1 - P) = (1 - P) * T := by
-    rw [sub_mul, one_mul, hPT, hT, add_sub_cancel_right]
-  have hBA : B * A = 1 - P := by
-    rw [hB, mul_assoc, hA1, hA2, ← mul_assoc, hRT, one_mul]
+  let T : A.unstableSubspace →L[ℝ] A.unstableSubspace :=
+    A.restrict fun _ hx ↦ map_mem_unstableSubspace hx
+  have hT : Function.Bijective T := by
+    refine ⟨fun x y hxy ↦ ?_, fun x ↦ ?_⟩
+    · exact Subtype.ext (injOn_unstableSubspace A x.2 y.2 (congrArg Subtype.val hxy))
+    · obtain ⟨y, hy, heq⟩ := exists_mem_unstableSubspace_apply_eq x.2
+      exact ⟨⟨y, hy⟩, Subtype.ext heq⟩
+  let e : A.unstableSubspace ≃L[ℝ] A.unstableSubspace :=
+    (LinearEquiv.ofBijective (T : A.unstableSubspace →ₗ[ℝ] A.unstableSubspace) hT)
+      |>.toContinuousLinearEquiv
+  let Q := (1 - P).codRestrict A.unstableSubspace fun x ↦ by
+    simpa only [sub_apply, one_apply_eq_self] using hPu x
+  let B : E →L[ℝ] E := A.unstableSubspace.subtypeL ∘L e.symm.toContinuousLinearMap ∘L Q
   have hAB : A * B = 1 - P := by
-    rw [hB', ← mul_assoc, hA3, mul_assoc, hTR, mul_one]
-  have hBP : B * P = 0 := by rw [hB, mul_assoc, hP1, mul_zero]
-  have hPB : P * B = 0 := by rw [hB, ← mul_assoc, hPR, hP2]
+    ext x
+    change A (e.symm (Q x) : E) = (Q x : E)
+    exact congrArg Subtype.val (e.apply_symm_apply (Q x))
+  have hBA : B * A = 1 - P := by
+    ext x
+    change (e.symm (Q (A x)) : E) = (Q x : E)
+    have hQ : Q (A x) = e (Q x) := by
+      apply Subtype.ext
+      change (1 - P) (A x) = A ((1 - P) x)
+      rw [← mul_apply_eq_comp, ← mul_apply_eq_comp, sub_mul, mul_sub, one_mul, mul_one, hAP]
+    rw [hQ, e.symm_apply_apply]
+  have hBP : B * P = 0 := by
+    ext x
+    change (e.symm (Q (P x)) : E) = 0
+    have hQ : Q (P x) = 0 := by
+      apply Subtype.ext
+      change (1 - P) (P x) = 0
+      rw [sub_apply, one_apply_eq_self, hPself (hPs x), sub_self]
+    rw [hQ, map_zero, Submodule.coe_zero]
   -- Geometric decay on `Eₛ`: the orbits of `A P` tend to `0`.
   have hc : Commute A P := hAP
   have hQ (n : ℕ) : (A * P) ^ n * P = A ^ n * P := by
@@ -123,8 +110,7 @@ theorem nonempty_hyperbolicSplitting [FiniteDimensional ℝ E] {A : E →L[ℝ] 
     exact hwt.congr fun n ↦ (hBpow n).symm
   have hBt (v : E) : Tendsto (fun n : ℕ ↦ (B ^ n) v) atTop (𝓝 0) := by
     rw [← tendsto_add_atTop_iff_nat 1]
-    have hBv : B v ∈ A.unstableSubspace := by
-      rw [← hPzero, ← mul_apply_eq_comp P B, hPB, zero_apply]
+    have hBv : B v ∈ A.unstableSubspace := (e.symm (Q v)).2
     simp_rw [pow_succ, mul_apply_eq_comp]
     exact hBu hBv
   obtain ⟨C₂, r₂, hC₂, hr₂, hr₂', hCr₂⟩ := exists_norm_pow_le_mul_pow_of_tendsto B hBt

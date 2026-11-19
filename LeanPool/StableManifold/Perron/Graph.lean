@@ -287,6 +287,17 @@ theorem orbitSeq_apply_zero (ξ : E) : F.orbitSeq ξ 0 = S.proj ξ + F.graph ξ 
   rw [graph, _root_.sub_apply, one_apply_eq_self, F.proj_orbitSeq_apply_zero]
   abel
 
+/-- The bounded orbit sequence varies Lipschitz-continuously with the initial point. -/
+theorem dist_orbitSeq_le_norm (ξ η : E) :
+    dist (F.orbitSeq ξ) (F.orbitSeq η) ≤ 2 * S.const ^ 2 * ‖ξ - η‖ := by
+  calc dist (F.orbitSeq ξ) (F.orbitSeq η) ≤ 2 * S.const * ‖S.proj ξ - S.proj η‖ :=
+      F.dist_orbitSeq_le ξ η
+    _ ≤ 2 * S.const * (S.const * ‖ξ - η‖) := by
+      apply mul_le_mul_of_nonneg_left _ (by positivity [S.const_pos])
+      rw [← map_sub]
+      exact S.proj.le_of_opNorm_le S.norm_proj_le _
+    _ = 2 * S.const ^ 2 * ‖ξ - η‖ := by ring
+
 /-- `graph` is Lipschitz, with constant `2 C³`. -/
 theorem lipschitzWith_graph : LipschitzWith (2 * S.const ^ 3).toNNReal F.graph := by
   have hC := S.const_pos
@@ -299,13 +310,8 @@ theorem lipschitzWith_graph : LipschitzWith (2 * S.const ^ 3).toNNReal F.graph :
         gcongr
         rw [← dist_eq_norm]
         exact dist_coe_le_dist 0
-    _ ≤ S.const * (2 * S.const * ‖S.proj ξ - S.proj η‖) := by
-        gcongr
-        exact F.dist_orbitSeq_le ξ η
-    _ ≤ S.const * (2 * S.const * (S.const * ‖ξ - η‖)) := by
-        gcongr
-        rw [← map_sub]
-        exact S.proj.le_of_opNorm_le S.norm_proj_le _
+    _ ≤ S.const * (2 * S.const ^ 2 * ‖ξ - η‖) :=
+      mul_le_mul_of_nonneg_left (F.dist_orbitSeq_le_norm ξ η) hC.le
     _ = 2 * S.const ^ 3 * ‖ξ - η‖ := by ring
 
 /-- On the graph, the bounded orbit is the forward `F`-orbit. -/
@@ -367,13 +373,7 @@ theorem hasFDerivAt_graph_zero (hφ : HasFDerivAt F.φ (0 : E →L[ℝ] E) 0) :
   filter_upwards [Metric.ball_mem_nhds (0 : E) hr] with ξ hξ
   rw [mem_ball_zero_iff] at hξ
   have ho : ‖F.orbitSeq ξ‖ ≤ 2 * S.const ^ 2 * ‖ξ‖ := by
-    have h := F.dist_orbitSeq_le ξ 0
-    rw [orbitSeq_zero, dist_zero_right, _root_.map_zero, sub_zero] at h
-    calc ‖F.orbitSeq ξ‖ ≤ 2 * S.const * ‖S.proj ξ‖ := h
-      _ ≤ 2 * S.const * (S.const * ‖ξ‖) := by
-          gcongr
-          exact S.proj.le_of_opNorm_le S.norm_proj_le ξ
-      _ = 2 * S.const ^ 2 * ‖ξ‖ := by ring
+    simpa only [F.orbitSeq_zero, dist_zero_right, sub_zero] using F.dist_orbitSeq_le_norm ξ 0
   have hy : ‖superpose F.φ (F.orbitSeq ξ)‖ ≤
       c / (S.bound * (2 * S.const ^ 2)) * (2 * S.const ^ 2 * ‖ξ‖) := by
     refine (norm_le (by positivity)).2 fun n ↦ ?_

@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.StableManifold.Linear.PowerDecay
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.Analysis.Normed.Algebra.GelfandFormula
 public import Mathlib.LinearAlgebra.Charpoly.Basic
@@ -14,43 +15,14 @@ public import Mathlib.LinearAlgebra.Charpoly.ToMatrix
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
 
 /-!
-# Powers of a linear operator with spectrum in the open unit disk
+# Spectral decay for finite-dimensional real linear operators
 
-For a linear operator `A` of a finite-dimensional real normed space, the eigenvalues are the complex
-roots of its characteristic polynomial `LinearMap.charpoly` (a real operator may have non-real
-eigenvalues, and `spectrum ℝ` would miss them, so hypotheses are stated with `Polynomial.aeval μ`
-for `μ : ℂ`).
-
-* `ContinuousLinearMap.exists_norm_pow_lt_one`: if every complex root of the characteristic
-  polynomial of `A` has modulus `< 1`, then `‖A ^ N‖ < 1` for some `N ≥ 1` (Gelfand's formula);
-* `ContinuousLinearMap.exists_norm_pow_lt_one_of_aeval_eq_zero`: the same when `A` is annihilated
-  by a real polynomial whose complex roots all have modulus `< 1`;
-* `ContinuousLinearMap.exists_norm_pow_lt_one_of_tendsto`: if every orbit `Aⁿ v` tends to `0`,
-  then `‖A ^ N‖ < 1` for some `N ≥ 1` (finite dimension);
-* `ContinuousLinearMap.exists_norm_pow_le_mul_pow`: if `‖A ^ N‖ < 1` with `N ≥ 1`, then
-  `‖Aⁿ‖ ≤ C rⁿ` for all `n`, with `r < 1` (any normed space);
-* `ContinuousLinearMap.exists_norm_pow_le_mul_pow_of_tendsto`,
-  `ContinuousLinearMap.tendsto_pow_apply_of_aeval_eq_zero`: the two combinations used later.
-
-Mathlib has Gelfand's formula (`spectrum.pow_nnnorm_pow_one_div_tendsto_nhds_spectralRadius`, in
-the form `spectrum.spectralRadius_eq_gelfandRadius`) for complex Banach algebras.
-
-## Proofs
-
-* `exists_norm_pow_lt_one`: complexify the matrix of `A` in a basis and apply Gelfand's formula
-  to it (private lemma `exists_entry_bound`).
-* `exists_norm_pow_lt_one_of_aeval_eq_zero` reduces to `exists_norm_pow_lt_one`: a complex root
-  `μ` of the characteristic polynomial lies in the spectrum of the complexified matrix `M` of `A`,
-  so `q(μ) ∈ spectrum ℂ (aeval M q)` (`spectrum.subset_polynomial_aeval`); and `aeval M q = 0`,
-  since `LinearMap.toMatrixAlgEquiv` and the entrywise map `ℝ → ℂ` (`AlgHom.mapMatrix`) are
-  algebra homomorphisms (`Polynomial.aeval_algHom_apply`, `Polynomial.aeval_algEquiv`). The
-  spectrum of `0` lies in `{0}`, so `q(μ) = 0` and `‖μ‖ < 1`.
-* `exists_norm_pow_lt_one_of_tendsto`: with a basis `b` (`Module.finBasis`),
-  `Module.Basis.exists_opNorm_le` bounds `‖Aⁿ‖` by a constant times `∑ᵢ ‖Aⁿ (b i)‖ → 0`.
-* `exists_norm_pow_le_mul_pow`: let `ρ = max (1/2) ‖A ^ N‖ < 1` and `r = ρ ^ (1 / N)` (real
-  power), so that `r ^ N = ρ`. Write `n = N q + j` with `j < N` (`Nat.div_add_mod`); then
-  `‖Aⁿ‖ ≤ ρ ^ q ‖A ^ j‖ ≤ ρ ^ q K ≤ (K / ρ) rⁿ` with `K = 1 + ∑_{j < N} ‖A ^ j‖`.
-* The two combinations compose the lemmas above.
+If the complex roots of the characteristic polynomial all have modulus less than one,
+the powers of the operator tend to zero in norm. Complexify the matrix of the operator in
+a basis and apply the pinned Mathlib limit theorem
+`spectrum.pow_norm_pow_one_div_tendsto_nhds_spectralRadius` to bound its entries.
+The same conclusion follows from an annihilating polynomial with all complex roots of
+modulus less than one, since every eigenvalue is a root of the annihilator.
 -/
 
 @[expose] public section
@@ -144,12 +116,6 @@ theorem tendsto_pow_of_charpoly_roots (A : E →L[ℝ] E)
   have h := (Ψ.continuous_of_finiteDimensional.tendsto 0).comp hM
   simpa [Function.comp_def, hΨ] using h
 
-omit [FiniteDimensional ℝ E] in
-private theorem exists_norm_pow_lt_one_of_norm_tendsto (A : E →L[ℝ] E)
-    (h : Tendsto (fun n : ℕ ↦ ‖A ^ n‖) atTop (𝓝 0)) : ∃ N : ℕ, 0 < N ∧ ‖A ^ N‖ < 1 := by
-  obtain ⟨N, hN⟩ := eventually_atTop.1 (h.eventually (gt_mem_nhds (a := (1 : ℝ)) (by simp)))
-  exact ⟨N + 1, N.succ_pos, hN (N + 1) (Nat.le_succ _)⟩
-
 /-- Eigenvalues of modulus less than one give a power of operator norm less than one. -/
 theorem exists_norm_pow_lt_one (A : E →L[ℝ] E)
     (hA : ∀ μ : ℂ, Polynomial.aeval μ (LinearMap.charpoly (A : E →ₗ[ℝ] E)) = 0 → ‖μ‖ < 1) :
@@ -207,80 +173,6 @@ theorem exists_norm_pow_lt_one_of_aeval_eq_zero (A : E →L[ℝ] E) {q : Polynom
     ∃ N : ℕ, 0 < N ∧ ‖A ^ N‖ < 1 :=
   A.exists_norm_pow_lt_one_of_norm_tendsto
     (by simpa using (A.tendsto_pow_of_aeval_eq_zero hq hroots).norm)
-
-/-- In finite dimension, if every orbit `Aⁿ v` tends to `0`, then some power `A ^ N`, `N ≥ 1`, has
-operator norm `< 1`.
-
-Proof: with a basis `b`, `Module.Basis.exists_opNorm_le` gives `‖Aⁿ‖ ≤ K ∑ᵢ ‖Aⁿ (b i)‖ → 0`. -/
-theorem exists_norm_pow_lt_one_of_tendsto (A : E →L[ℝ] E)
-    (hA : ∀ v, Tendsto (fun n : ℕ ↦ (A ^ n) v) atTop (𝓝 0)) :
-    ∃ N : ℕ, 0 < N ∧ ‖A ^ N‖ < 1 := by
-  let b := Module.finBasis ℝ E
-  obtain ⟨C, -, hC⟩ := b.exists_opNorm_le (F := E)
-  -- `‖Aⁿ‖ ≤ C ∑ᵢ ‖Aⁿ (b i)‖ → 0`
-  have hs : Tendsto (fun n : ℕ ↦ ∑ i, ‖(A ^ n) (b i)‖) atTop (𝓝 0) := by
-    simpa using tendsto_finsetSum Finset.univ fun i _ ↦ (hA (b i)).norm
-  have hT : Tendsto (fun n : ℕ ↦ ‖A ^ n‖) atTop (𝓝 0) := by
-    refine squeeze_zero (fun n ↦ norm_nonneg _)
-      (fun n ↦ hC (Finset.sum_nonneg fun i _ ↦ norm_nonneg _) fun i ↦
-        Finset.single_le_sum (f := fun i ↦ ‖(A ^ n) (b i)‖) (fun i _ ↦ norm_nonneg _)
-          (Finset.mem_univ i)) ?_
-    simpa using hs.const_mul C
-  obtain ⟨N, hN⟩ := eventually_atTop.1 (hT.eventually (gt_mem_nhds (a := (1 : ℝ)) (by simp)))
-  exact ⟨N + 1, N.succ_pos, hN (N + 1) (by omega)⟩
-
-omit [FiniteDimensional ℝ E] in
-/-- **Geometric decay** from one contracting power: if `‖A ^ N‖ < 1` with `N ≥ 1`, then
-`‖Aⁿ‖ ≤ C rⁿ` for all `n`, with `1 ≤ C` and `0 < r < 1`.
-
-Proof: with `ρ = max (1/2) ‖A ^ N‖` and `r = ρ ^ (1 / N)`, write `n = N q + j`, `j < N`; then
-`‖Aⁿ‖ ≤ ρ ^ q K ≤ (K / ρ) rⁿ`, where `K` bounds `‖A ^ j‖` for `j < N`. -/
-theorem exists_norm_pow_le_mul_pow (A : E →L[ℝ] E) {N : ℕ} (hN : 0 < N) (hA : ‖A ^ N‖ < 1) :
-    ∃ C r : ℝ, 1 ≤ C ∧ 0 < r ∧ r < 1 ∧ ∀ n : ℕ, ‖A ^ n‖ ≤ C * r ^ n := by
-  set ρ := max (1 / 2) ‖A ^ N‖
-  have hρ0 : 0 < ρ := lt_max_of_lt_left (by norm_num)
-  have hρ1 : ρ < 1 := max_lt (by norm_num) hA
-  set K := 1 + ∑ j ∈ Finset.range N, ‖A ^ j‖
-  have hK1 : 1 ≤ K := le_add_of_nonneg_right (Finset.sum_nonneg fun j _ ↦ norm_nonneg _)
-  have hKj : ∀ j < N, ‖A ^ j‖ ≤ K := fun j hj ↦
-    (Finset.single_le_sum (f := fun j ↦ ‖A ^ j‖) (fun j _ ↦ norm_nonneg _)
-      (Finset.mem_range.2 hj)).trans (le_add_of_nonneg_left zero_le_one)
-  set r := ρ ^ (1 / (N : ℝ))
-  have hr0 : 0 < r := Real.rpow_pos_of_pos hρ0 _
-  have hr1 : r < 1 := Real.rpow_lt_one hρ0.le hρ1 (by positivity)
-  have hrN : r ^ N = ρ := by
-    rw [← Real.rpow_natCast, ← Real.rpow_mul hρ0.le, one_div_mul_cancel (by positivity),
-      Real.rpow_one]
-  -- along the multiples of `N`
-  have hq : ∀ q j : ℕ, ‖A ^ (N * q + j)‖ ≤ ρ ^ q * ‖A ^ j‖ := by
-    intro q j
-    induction q with
-    | zero => simp
-    | succ q ih =>
-      calc ‖A ^ (N * (q + 1) + j)‖ = ‖A ^ N * A ^ (N * q + j)‖ := by
-            rw [← pow_add]; congr 2; ring
-        _ ≤ ‖A ^ N‖ * ‖A ^ (N * q + j)‖ := norm_mul_le _ _
-        _ ≤ ρ * (ρ ^ q * ‖A ^ j‖) := by gcongr; exact le_max_right _ _
-        _ = ρ ^ (q + 1) * ‖A ^ j‖ := by ring
-  refine ⟨K / ρ, r, (one_le_div hρ0).2 (by linarith), hr0, hr1, fun n ↦ ?_⟩
-  obtain ⟨q, j, hj, rfl⟩ : ∃ q j, j < N ∧ n = N * q + j :=
-    ⟨n / N, n % N, Nat.mod_lt _ hN, (Nat.div_add_mod n N).symm⟩
-  calc ‖A ^ (N * q + j)‖ ≤ ρ ^ q * K := (hq q j).trans (by gcongr; exact hKj j hj)
-    _ = K / ρ * (ρ ^ q * r ^ N) := by rw [hrN]; field_simp
-    _ ≤ K / ρ * (ρ ^ q * r ^ j) := by
-      have := pow_le_pow_of_le_one hr0.le hr1.le hj.le
-      gcongr
-    _ = K / ρ * r ^ (N * q + j) := by rw [pow_add, pow_mul, hrN]
-
-/-- In finite dimension, if every orbit `Aⁿ v` tends to `0`, then `‖Aⁿ‖ ≤ C rⁿ` for all `n`, with
-`1 ≤ C` and `0 < r < 1`.
-
-Proof: `exists_norm_pow_lt_one_of_tendsto` and `exists_norm_pow_le_mul_pow`. -/
-theorem exists_norm_pow_le_mul_pow_of_tendsto (A : E →L[ℝ] E)
-    (hA : ∀ v, Tendsto (fun n : ℕ ↦ (A ^ n) v) atTop (𝓝 0)) :
-    ∃ C r : ℝ, 1 ≤ C ∧ 0 < r ∧ r < 1 ∧ ∀ n : ℕ, ‖A ^ n‖ ≤ C * r ^ n :=
-  let ⟨_, hN, hAN⟩ := A.exists_norm_pow_lt_one_of_tendsto hA
-  A.exists_norm_pow_le_mul_pow hN hAN
 
 /-- If `A` is annihilated by a real polynomial whose complex roots all have modulus `< 1`, then
 every orbit `Aⁿ v` tends to `0`.
