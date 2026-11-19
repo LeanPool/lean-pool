@@ -51,7 +51,7 @@ inside the caller's (`Ratpoints.Sturm.computeSturm_wf`).
 * `Ratpoints.Sturm.iterate_wf`: the intervals that the bisection keeps are well formed.
 * `Ratpoints.Sturm.intervalsWF_intersectList`,
   `Ratpoints.Sturm.inIntervals_of_inIntervals_intersectList`,
-  `Ratpoints.Sturm.inIntervals_intersectList`, `Ratpoints.Sturm.length_intersectList_le`: the
+  `Ratpoints.Sturm.inIntervals_intersectList`: the
   intersection is well formed, inside both lists, holds what lies in both, and has fewer intervals
   than the two lists together.
 * `Ratpoints.Sturm.computeSturm_wf`: the Sturm step leaves well-formed intervals inside the
@@ -508,17 +508,7 @@ theorem toInt_mul_one_shiftLeft_add {k : ℕ} {nl nr del der : Int64}
     (hk : der.toInt - del.toInt = k + 1) (hk63 : k + 1 < 63)
     (hA : |nl.toInt| * 2 ^ (k + 1) ≤ 2 ^ 52) (hB : |nr.toInt| ≤ 2 ^ 52) :
     (nl * ((1 : Int64) <<< (der - del)) + nr).toInt = nl.toInt * 2 ^ (k + 1) + nr.toInt := by
-  have hX0 : (0 : ℤ) < 2 ^ (k + 1) := by positivity
-  have haX : |nl.toInt * 2 ^ (k + 1)| ≤ 2 ^ 52 := by rw [abs_mul, abs_of_pos hX0]; exact hA
-  have hsub : (der - del).toInt = k + 1 := by
-    rw [Int64.toInt_sub_of_lt (by lia) (by lia), hk]
-  have hsh : ((1 : Int64) <<< (der - del)).toInt = 2 ^ (k + 1) := by
-    rw [Int64.toInt_one_shiftLeft (by lia) (by lia), hsub]; rfl
-  have hmul : (nl * ((1 : Int64) <<< (der - del))).toInt = nl.toInt * 2 ^ (k + 1) := by
-    rw [Int64.toInt_mul_of_lt (by rw [hsh]; linarith [abs_le.mp haX])
-      (by rw [hsh]; linarith [abs_le.mp haX]), hsh]
-  rw [Int64.toInt_add_of_lt (by rw [hmul]; linarith [abs_le.mp haX, abs_le.mp hB])
-    (by rw [hmul]; linarith [abs_le.mp haX, abs_le.mp hB]), hmul]
+  simpa only [Int64.add_comm, Int.add_comm] using toInt_add_mul_one_shiftLeft hk hk63 hB hA
 
 theorem EndsWF.midpoint_gt {depth : ℕ} {nl nr del der : Int64} (h : EndsWF depth nl nr del der)
     (hd : depth < 55) (hl : nl ≠ -longMax) (hr : nr ≠ longMax) (hlt : del < der) :
@@ -933,16 +923,6 @@ theorem exists_mem_intersectList {as bs : List (Double × Double)} (has : ∀ a 
           (Bool.eq_false_iff.mpr hf) ha' hxa' hxb').imp fun _ h ↦ ⟨.inl h.1, h.2⟩
       · exact (ih2 has (fun b hb ↦ hbs b (by simp [hb])) hpa hpb.of_cons ⟨a', ha', hxa'⟩
           ⟨b', hb', hxb'⟩).imp fun _ h ↦ ⟨.inr h.1, h.2⟩
-
-theorem length_intersectList_le (as bs : List (Double × Double)) :
-    (intersectList as bs).length ≤ as.length + bs.length - 1 := by
-  induction as, bs using intersectList.induct with
-  | case1 => simp
-  | case2 => simp
-  | case3 a as b bs ih1 ih2 =>
-    rw [intersectList_cons_cons, List.length_append]
-    have : (meet a b).1.toList.length ≤ 1 := by cases (meet a b).1 <;> simp
-    split_ifs <;> simp only [List.length_cons] at ih1 ih2 ⊢ <;> lia
 
 theorem intervalsWF_intersectList {loc ivs : List (Double × Double)}
     (hloc : IntervalsWF (domainBits loc)) (hivs : IntervalsWF (domainBits ivs)) :

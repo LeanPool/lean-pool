@@ -14,57 +14,11 @@ import LeanPool.Ratpoints.Mathlib.Algebra.Order.Field.Basic
 import LeanPool.Ratpoints.Mathlib.Order.WithBotTop
 
 /-!
-# The values of the doubles of the model
+# Values and order of binary64 interval endpoints
 
-The doubles of the model (`Ratpoints.Double`) are bits, with the operations of the C language and of
-the C library on them; the specification gives a double its value in `ℚ` extended by `⊥` and `⊤`
-(`Ratpoints.doubleValue`), which is `±∞` for the largest exponent field and the exact value
-`Ratpoints.Double.toRat` otherwise (`Ratpoints.Double.doubleValue_bits`,
-`Ratpoints.Double.doubleValue_eq_toRat`). This file proves that the operations do on the values what
-the C code relies on: a double that is not a NaN has an order value, its bits without the sign bit,
-negated when the sign bit is set (`Ratpoints.Double.orderValue`), in which its value is strictly
-increasing (`Ratpoints.Double.strictMonoOn_valueOfOrderValue`), so that the comparisons of the C
-language are the order of the values (`Ratpoints.Double.lt_eq_true_iff`,
-`Ratpoints.Double.le_eq_true_iff`, `Ratpoints.Double.beq_eq_true_iff`) and `nextafter` steps to the
-neighbouring double (`Ratpoints.Double.orderValue_nextUp`, `Ratpoints.Double.nextUp_le_of_lt`, and
-downwards `Ratpoints.Double.orderValue_nextDown`, the step upwards of the negation by
-`Ratpoints.Double.nextDown_eq_neg_nextUp_neg`); the negation and `fabs` act on the sign of the
-value; the double that `Ratpoints.Double.assemble` makes from a significand `M` and the exponent `q`
-of its last place has the fields of a subnormal, an infinity or a normal double
-(`Ratpoints.Double.fields_assemble`) and, in the range of the finite doubles, the value `±M 2 ^ q`
-(`Ratpoints.Double.toRat_assemble`); the double `Ratpoints.Double.ofDyadic` nearest to `±m 2 ^ e`,
-which ends with it, is exact when `0 < m < 2 ^ 53`, `e ≥ -1074` and `m 2 ^ e < 2 ^ 1024`
-(`Ratpoints.Double.ofDyadic_exact`, where the last hypothesis reads `Nat.log2 m + e ≤ 1023`); hence
-`(double)n` is exact for `|n| ≤ 2 ^ 53` (`Ratpoints.Double.ofInt64_exact`), `ldexp` and `frexp` are
-exact in the normal range (`Ratpoints.Double.ldexp_exact`,
-`Ratpoints.Double.toRat_frexp_mul_zpow_eq_and_bounds`), and the conversions to `long` and
-`unsigned long` truncate (`Ratpoints.Double.toInt_toInt64`, `Ratpoints.Double.toNat_toUInt64`).
-
-## Main definitions
-
-* `Ratpoints.Double.maxOrderValue`, `Ratpoints.Double.magnitudeUnits`,
-  `Ratpoints.Double.orderValueUnits`, `Ratpoints.Double.valueOfOrderValue`: the order value of
-  `+∞`, and the value of the doubles of an order value.
-
-## Main statements
-
-* `Ratpoints.Double.doubleValue_eq_valueOfOrderValue`,
-  `Ratpoints.Double.strictMonoOn_valueOfOrderValue`: the value of a double that is not a NaN is that
-  of its order value, strictly increasing in it.
-* `Ratpoints.Double.lt_eq_true_iff`, `Ratpoints.Double.le_eq_true_iff`,
-  `Ratpoints.Double.beq_eq_true_iff`: the comparisons of the C language off NaN.
-* `Ratpoints.Double.doubleValue_bits`, `Ratpoints.Double.doubleValue_eq_toRat`: the value of a
-  double by its fields, and that of a finite double.
-* `Ratpoints.Double.fields_assemble`, `Ratpoints.Double.isFinite_assemble_iff`,
-  `Ratpoints.Double.toRat_assemble`: the bits of a significand and an exponent.
-* `Ratpoints.Double.ofDyadic_exact`, `Ratpoints.Double.ofInt64_exact`: the exact rounding of a
-  dyadic number and the conversion of a `long`.
-* `Ratpoints.Double.ldexp_exact`, `Ratpoints.Double.toRat_frexp_mul_zpow_eq_and_bounds`,
-  `Ratpoints.Double.toInt_toInt64`, `Ratpoints.Double.toNat_toUInt64`: the functions of the C
-  library and the conversions.
-* `Ratpoints.Double.orderValue_nextUp`, `Ratpoints.Double.nextUp_le_of_lt`,
-  `Ratpoints.Double.nextDown_eq_neg_nextUp_neg`, `Ratpoints.Double.orderValue_nextDown`,
-  `Ratpoints.Double.le_nextDown_of_lt`: `nextafter` towards `±HUGE_VAL`.
+The interval specification assigns finite doubles their exact rational values and recognizes both
+infinities. The comparisons follow this order off NaN. The integer conversion and power-of-two
+scaling lemmas justify exact endpoint computations within the ranges used by the Sturm step.
 -/
 
 @[expose] public section
@@ -605,98 +559,6 @@ theorem isZero_eq_decide (x : Double) : x.isZero = decide (x.bits.toNat % 2 ^ 63
 
 theorem toNat_huge : huge.bits.toNat = maxOrderValue := rfl
 
-theorem toNat_nextUp {x : Double} (hx : x.isNaN = false) (hi : x.bits ≠ huge.bits) :
-    (nextUp x).bits.toNat = if x.bits.toNat % 2 ^ 63 = 0 then 1
-      else if x.signBit then x.bits.toNat - 1 else x.bits.toNat + 1 := by
-  have h := toNat_bits_eq_mod x
-  have hk := (isNaN_eq_false_iff_le x).mp hx
-  have hi' : x.bits.toNat ≠ maxOrderValue := fun h ↦
-    hi (UInt64.toNat_inj.mp (h.trans toNat_huge.symm))
-  simp only [nextUp, hx, Bool.false_or, beq_iff_eq, hi, ↓reduceIte, isZero_eq_decide,
-    decide_eq_true_eq]
-  split_ifs with h0 hs
-  · rfl
-  · rw [hs] at h
-    rw [UInt64.toNat_sub_of_le _ _ (UInt64.le_iff_toNat_le.mpr (by simp; lia))]; rfl
-  · simp only [hs, Bool.false_eq_true, ↓reduceIte, Nat.zero_add] at h
-    rw [UInt64.toNat_add, Nat.mod_eq_of_lt (by simp [maxOrderValue] at hk ⊢; lia)]; rfl
-
-/-- The order value of a double whose bits are the sign bit `s` and the magnitude `n < 2 ^ 63`, and
-whether it is a NaN. -/
-theorem orderValue_of_toNat_eq {x : Double} {s : Bool} {n : ℕ} (hn : n < 2 ^ 63)
-    (h : x.bits.toNat = (if s then 2 ^ 63 else 0) + n) :
-    x.orderValue = (if s then -(n : ℤ) else n) ∧ (x.isNaN = false ↔ n ≤ maxOrderValue) := by
-  obtain ⟨h1, h2⟩ := signBit_and_mod_of_toNat_eq hn h
-  rw [orderValue_eq_mod, isNaN_eq_false_iff_le, h1, h2]
-  exact ⟨rfl, Iff.rfl⟩
-
-theorem orderValue_nextUp {x : Double} (hx : x.isNaN = false) (hi : x.bits ≠ huge.bits) :
-    (nextUp x).orderValue = x.orderValue + 1 ∧ (nextUp x).isNaN = false := by
-  have h := toNat_nextUp hx hi
-  have hb := toNat_bits_eq_mod x
-  have hk := (isNaN_eq_false_iff_le x).mp hx
-  have hi' : x.bits.toNat ≠ maxOrderValue := fun h ↦
-    hi (UInt64.toNat_inj.mp (h.trans toNat_huge.symm))
-  rw [orderValue_eq_mod x]
-  split_ifs at h with h0 hs
-  · obtain ⟨h1, h2⟩ := orderValue_of_toNat_eq (x := nextUp x) (s := false) (n := 1) (by decide)
-      (by simpa)
-    rw [h1, h2, h0]; cases x.signBit <;> simp [maxOrderValue]
-  · rw [hs] at hb ⊢
-    obtain ⟨h1, h2⟩ := orderValue_of_toNat_eq (x := nextUp x) (s := true)
-      (n := x.bits.toNat % 2 ^ 63 - 1) (by lia) (by simp; lia)
-    simp only [h1, h2, ↓reduceIte]; constructor <;> lia
-  · simp only [hs, Bool.false_eq_true, ↓reduceIte, Nat.zero_add] at hb ⊢
-    obtain ⟨h1, h2⟩ := orderValue_of_toNat_eq (x := nextUp x) (s := false)
-      (n := x.bits.toNat % 2 ^ 63 + 1) (by simp [maxOrderValue] at hk ⊢; lia) (by simp; lia)
-    simp only [h1, h2, Bool.false_eq_true, ↓reduceIte]; constructor <;> lia
-
-theorem nextUp_le_of_lt {x y : Double} (hx : x.isNaN = false) (hy : y.isNaN = false)
-    (hi : x.bits ≠ huge.bits) (h : x.lt y = true) : (nextUp x).le y = true := by
-  obtain ⟨h1, h2⟩ := orderValue_nextUp hx hi
-  simp only [lt, hx, hy, Bool.not_false, Bool.true_and, decide_eq_true_eq] at h
-  simp only [le, h2, hy, Bool.not_false, Bool.true_and, decide_eq_true_eq, h1]
-  lia
-
-/-- `nextafter(x, HUGE_VAL)` lies above `x`: with `Ratpoints.Double.nextUp_le_of_lt`, the least
-double above `x`, as the model describes `Ratpoints.Double.nextUp`. -/
-theorem lt_nextUp {x : Double} (hx : x.isNaN = false) (hi : x.bits ≠ huge.bits) :
-    x.lt (nextUp x) = true := by
-  obtain ⟨h1, h2⟩ := orderValue_nextUp hx hi
-  simp [lt, hx, h2, h1]
-
-theorem toNat_huge_neg : huge.neg.bits.toNat = 2 ^ 63 + maxOrderValue := rfl
-
-theorem isZero_neg (x : Double) : (neg x).isZero = x.isZero := by
-  rw [isZero_eq_decide, isZero_eq_decide, toNat_mod_neg]
-
-theorem nextDown_eq_neg_nextUp_neg (x : Double) : nextDown x = neg (nextUp (neg x)) := by
-  have hn (b : UInt64) : neg ⟨b⟩ = ⟨b + 0x8000000000000000⟩ := congr(Double.mk $(bits_neg ⟨b⟩))
-  have hh : ((neg x).bits == huge.bits) = (x.bits == huge.neg.bits) := by grind [bits_neg]
-  simp only [nextDown, nextUp, isNaN_neg, isZero_neg, signBit_neg, hh]
-  split_ifs <;> first | rw [Double.neg_neg] | rfl | (rw [bits_neg, hn, Double.mk.injEq]; grind)
-
-theorem orderValue_nextDown {x : Double} (hx : x.isNaN = false) (hi : x.bits ≠ huge.neg.bits) :
-    (nextDown x).orderValue = x.orderValue - 1 ∧ (nextDown x).isNaN = false := by
-  have hi' : (neg x).bits ≠ huge.bits := fun h ↦ hi (by grind [bits_neg])
-  obtain ⟨h1, h2⟩ := orderValue_nextUp (x := neg x) (by rwa [isNaN_neg]) hi'
-  rw [nextDown_eq_neg_nextUp_neg, orderValue_neg, isNaN_neg, h1, orderValue_neg]
-  exact ⟨by ring, h2⟩
-
-theorem le_nextDown_of_lt {x y : Double} (hx : x.isNaN = false) (hy : y.isNaN = false)
-    (hi : x.bits ≠ huge.neg.bits) (h : y.lt x = true) : y.le (nextDown x) = true := by
-  obtain ⟨h1, h2⟩ := orderValue_nextDown hx hi
-  simp only [lt, hx, hy, Bool.not_false, Bool.true_and, decide_eq_true_eq] at h
-  simp only [le, h2, hy, Bool.not_false, Bool.true_and, decide_eq_true_eq, h1]
-  lia
-
-/-- `nextafter(x, -HUGE_VAL)` lies below `x`: with `Ratpoints.Double.le_nextDown_of_lt`, the
-greatest double below `x`, as the model describes `Ratpoints.Double.nextDown`. -/
-theorem nextDown_lt {x : Double} (hx : x.isNaN = false) (hi : x.bits ≠ huge.neg.bits) :
-    (nextDown x).lt x = true := by
-  obtain ⟨h1, h2⟩ := orderValue_nextDown hx hi
-  simp [lt, hx, h2, h1]
-
 /-! ### The conversions -/
 
 theorem toDyadic_bounds (x : Double) :
@@ -829,44 +691,6 @@ theorem ldexp_exact {x : Double} {n : ℤ} (hx : x.isFinite = true) (hx0 : x.toR
     (by lia [lt_add_of_two_pow_le_mul hm53 hlo]) (by lia [log2_add_lt_of_mul_lt hm0 hhi])
   rw [ldexp_eq hx hx0]
   exact ⟨h1, h2, by rw [h3, sign_mul_natAbs_mul_zpow]⟩
-
-theorem frexp_eq {x : Double} (hx : x.isFinite = true) (hx0 : x.toRat ≠ 0) :
-    frexp x = (ofDyadic x.signBit x.toDyadic.1.natAbs (-((x.toDyadic.1.natAbs.log2 : ℤ) + 1)),
-      (x.toDyadic.1.natAbs.log2 : ℤ) + 1 + x.toDyadic.2) := by
-  simp only [frexp, isNaN_eq_false_of_isFinite hx, isInf_eq_false_of_isFinite hx,
-    isZero_eq_false_iff.mpr hx0, Bool.or_false, Bool.false_eq_true, ↓reduceIte]
-
-theorem mul_zpow_neg_log2_mem_Ico {a : ℕ} (ha : a ≠ 0) :
-    (a : ℚ) * 2 ^ (-((a.log2 : ℤ) + 1)) ∈ Set.Ico (1 / 2) 1 := by
-  obtain ⟨h1, h2⟩ := two_zpow_log2_le_mul ha (-((a.log2 : ℤ) + 1))
-  rw [show (a.log2 : ℤ) + -((a.log2 : ℤ) + 1) = -1 by ring, zpow_neg_one, ← one_div] at h1
-  rw [show (a.log2 : ℤ) + 1 + -((a.log2 : ℤ) + 1) = 0 by ring, zpow_zero] at h2
-  exact ⟨h1, h2⟩
-
-theorem abs_sign_mul (s : Bool) {v : ℚ} (h : 0 ≤ v) : |(if s then -1 else 1) * v| = v := by
-  split_ifs <;> simp only [neg_one_mul, one_mul, abs_neg, abs_of_nonneg h]
-
-/-- `frexp` of a finite double `x ≠ 0`: a finite double `f` with the sign of `x`, `f 2 ^ e = x` and
-`1 / 2 ≤ |f| < 1`. -/
-theorem toRat_frexp_mul_zpow_eq_and_bounds {x : Double} (hx : x.isFinite = true)
-    (hx0 : x.toRat ≠ 0) :
-    (frexp x).1.isFinite = true ∧ (frexp x).1.signBit = x.signBit ∧
-      (frexp x).1.toRat * 2 ^ (frexp x).2 = x.toRat ∧ 1 / 2 ≤ |(frexp x).1.toRat| ∧
-      |(frexp x).1.toRat| < 1 := by
-  obtain ⟨hm53, -, -⟩ := toDyadic_bounds x
-  have hm0 := natAbs_toDyadic_fst_ne_zero hx0
-  have hl : x.toDyadic.1.natAbs.log2 < 53 := (Nat.log2_lt hm0).mpr hm53
-  obtain ⟨h1, h2, h3⟩ := ofDyadic_exact (neg := x.signBit)
-    (e := -((x.toDyadic.1.natAbs.log2 : ℤ) + 1)) hm0 hm53 (by lia) (by lia)
-  have hb := mul_zpow_neg_log2_mem_Ico hm0
-  rw [frexp_eq hx hx0]
-  refine ⟨h1, h2, ?_, ?_, ?_⟩ <;> dsimp only <;> rw [h3]
-  · rw [mul_assoc, mul_assoc, ← zpow_add₀ two_ne_zero, neg_add_cancel_left,
-      ← add_zero x.toDyadic.2, sign_mul_natAbs_mul_zpow, zpow_zero, mul_one]
-  · rw [abs_sign_mul _ (mul_nonneg (Nat.cast_nonneg _) (zpow_nonneg zero_le_two _))]
-    exact hb.1
-  · rw [abs_sign_mul _ (mul_nonneg (Nat.cast_nonneg _) (zpow_nonneg zero_le_two _))]
-    exact hb.2
 
 theorem ofInt64_exact_of_lt {n : Int64} (hn : n.toInt.natAbs < 2 ^ 53) :
     (ofInt64 n).isFinite = true ∧ (ofInt64 n).toRat = n.toInt := by

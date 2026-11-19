@@ -428,7 +428,7 @@ theorem testBit_baseRow {T : Array (Array Bool)} {m G N r j : ℕ} (hm : 0 < m) 
 
 /-- The family `F` is sound for the step `G` and chunks of at most `L` numerators: it has a row for
 every residue modulo `F.M > 0`, `F.ginv` inverts `G` modulo `F.M`, and the row of `b` has the bit
-`j < L + 8 F.M` set for every candidate `(a, b)` with `a ≡ G j` modulo `F.M`. -/
+`j < L + F.M` set for every candidate `(a, b)` with `a ≡ G j` modulo `F.M`. -/
 structure Family.IsSound (c : List ℤ) (G L : ℕ) (F : Family) : Prop where
   /-- A row for every residue. -/
   size_eq : F.rows.size = F.M
@@ -437,7 +437,7 @@ structure Family.IsSound (c : List ℤ) (G L : ℕ) (F : Family) : Prop where
   /-- `F.ginv` inverts `G`. -/
   mul_ginv : G * F.ginv % F.M = 1 % F.M
   /-- The row of `b` keeps the bit `j` of every candidate `(a, b)` with `a ≡ G j`. -/
-  testBit : ∀ (a : ℤ) (b j : ℕ), j < L + 8 * F.M → IsCandidate c a b → (F.M : ℤ) ∣ a - G * j →
+  testBit : ∀ (a : ℤ) (b j : ℕ), j < L + F.M → IsCandidate c a b → (F.M : ℤ) ∣ a - G * j →
     (F.rows[b % F.M]!).testBit j = true
 
 theorem foldl_mul_fst {α : Type*} (ts : List (ℕ × α)) (k : ℕ) :
@@ -506,13 +506,9 @@ theorem mkFamily_isSound {c : List ℤ} {G L : ℕ} {ts : List (ℕ × Array (Ar
 
 /-! ### The shift -/
 
-theorem Family.shift_lt (F : Family) (hF : 0 < F.M) (a₀ : ℤ) : F.shift a₀ < 8 * F.M := by
-  have hs : (a₀ * F.ginv % (F.M : ℤ)).toNat < F.M := by
-    lia [Int.emod_lt_of_pos (a₀ * F.ginv) (Int.natCast_pos.mpr hF)]
-  simp only [Family.shift]
-  generalize (a₀ * F.ginv % (F.M : ℤ)).toNat = s at hs ⊢
-  have h7 : (8 - s % 8) * F.M % 8 ≤ 7 := Nat.le_of_lt_succ (Nat.mod_lt _ (by decide))
-  lia [Nat.mul_le_mul_left F.M h7]
+theorem Family.shift_lt (F : Family) (hF : 0 < F.M) (a₀ : ℤ) : F.shift a₀ < F.M := by
+  unfold Family.shift
+  lia [Int.emod_lt_of_pos (a₀ * F.ginv) (Int.natCast_pos.mpr hF)]
 
 theorem Family.IsSound.dvd_sub_shift {c : List ℤ} {G L : ℕ} {F : Family}
     (hF : F.IsSound c G L) (a₀ : ℤ) :
@@ -527,13 +523,8 @@ theorem Family.IsSound.dvd_sub_shift {c : List ℤ} {G L : ℕ} {F : Family}
       _ = a₀ * (G * F.ginv) := by ring
       _ ≡ a₀ * 1 [ZMOD F.M] := hg.mul_left _
       _ = a₀ := mul_one a₀
-  obtain ⟨k, hk⟩ : ∃ k, F.shift a₀ = (a₀ * F.ginv % (F.M : ℤ)).toNat + F.M * k := ⟨_, rfl⟩
   have h0 : 0 ≤ a₀ * F.ginv % (F.M : ℤ) := Int.emod_nonneg _ (by lia [hF.pos])
-  rw [hk]
-  push_cast [Int.toNat_of_nonneg h0]
-  refine Int.modEq_iff_dvd.mp ?_
-  rw [mul_add, mul_left_comm]
-  exact Int.modEq_add_fac_self.trans hs
+  simpa only [Family.shift, Int.toNat_of_nonneg h0] using (Int.modEq_iff_dvd.mp hs)
 
 /-- The row of `b`, shifted to the chunk that starts at `a₀` and moved by `o`, keeps the bit `t` of
 every candidate `(a₀ + G (o + t), b)` with `o + t < L`. -/

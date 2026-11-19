@@ -466,23 +466,6 @@ theorem flatMap_range_map_filter {g : Nat → Nat → Bool} {a : Int} {p : Int �
         rw [hg m (Nat.lt_succ_self m) t, decide_eq_true (mem_range.mp ht), Bool.true_and]
         simp [Int.add_assoc]
 
-/-- The positions `t < 64` of the blocks `w = w0, …, w0 + n - 1` that pass the test `g w`, read as
-the numbers `64 w + t`, in increasing order, are the numbers `64 w0, …, 64 (w0 + n) - 1` that pass
-`p`, when `g w t` is `p (64 w + t)`: for `g w` the bits of a word `w`, the numbers of the set bits
-of `n` words; `List.flatMap_range_map_filter` for natural numbers and blocks from `w0` on. -/
-theorem flatMap_range'_map_filter {g : Nat → Nat → Bool} {p : Nat → Bool} {w0 n : Nat}
-    (hg : ∀ w, w0 ≤ w → w < w0 + n → ∀ t < 64, g w t = p (64 * w + t)) :
-    (range' w0 n).flatMap (fun w ↦ ((range 64).filter (g w)).map (64 * w + ·)) =
-      (range' (64 * w0) (64 * n)).filter p := by
-  induction n generalizing w0 with
-  | zero => simp
-  | succ n ih =>
-    rw [range'_succ, flatMap_cons, ih fun w hw hw' ↦ hg w (by lia) (by lia),
-      Nat.mul_add_one 64 w0, show 64 * (n + 1) = 64 + 64 * n by lia,
-      ← range'_append_1, filter_append, range'_eq_map_range (s := 64 * w0), filter_map]
-    exact congrArg (· ++ _) (congrArg (map _) (filter_congr fun t ht ↦
-      hg w0 (Nat.le_refl w0) (by lia) t (mem_range.mp ht)))
-
 /-- Of the numbers `a, …, a + n - 1`, which cover `lo, …, hi`, those from `lo` to `hi` are the
 numbers `lo, …, hi`. -/
 theorem filter_range'_le_and_le {a n lo hi : Nat} (ha : a ≤ lo) (hn : hi < a + n) :

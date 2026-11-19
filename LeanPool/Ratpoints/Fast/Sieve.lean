@@ -35,8 +35,8 @@ the masks held in byte arrays, which lists the same points in another order.
   (`Ratpoints.Fast.Family`): the row of the family of the moduli `m₁, …, mₖ` for `b` has the bit of
   `x` set when for every `mᵢ` the residues of `x` and `b` allow a point. The rows of a family
   depend on `b` modulo `M = m₁ ⋯ mₖ` only, and on `x` modulo `M`: they are made once, for the
-  numerators `0, G, 2G, …`, and shifted to the start of a chunk, by a multiple of `8` when `M` is
-  odd (`Ratpoints.Fast.Family.shift`).
+  numerators `0, G, 2G, …`, and shifted by the least residue that aligns the start of the chunk
+  (`Ratpoints.Fast.Family.shift`).
 * The denominators are the outer loop: for each `b`, every chunk of every class that `b` allows is
   searched in turn, with the same rows, which the search on byte arrays then finds in the cache.
 * The bits that survive go to the exact check of the brute force,
@@ -199,28 +199,26 @@ structure Family where
 
 /-- The family of the moduli `m` of the list `ts` of pairs `(m, T)`, `T` the table
 `Ratpoints.Fast.admitTable c d m`, for the step `G` and chunks of at most `L` numerators, if every
-modulus is positive and `G` is invertible modulo their product `M`: its rows have `L + 8 M` bits,
-enough for a chunk at every shift below `8 M` (`Ratpoints.Fast.Family.shift`). -/
+modulus is positive and `G` is invertible modulo their product `M`: its rows have `L + M` bits,
+enough for a chunk at every shift below `M` (`Ratpoints.Fast.Family.shift`). -/
 def mkFamily (G L : Nat) (ts : List (Nat × Array (Array Bool))) : Option Family :=
   if ts.all (0 < ·.1) then
     let M := ts.foldl (· * ·.1) 1
     match (List.range M).find? fun u ↦ G * u % M == 1 % M with
     | none => none
     | some ginv =>
-      let N := L + 8 * M
+      let N := L + M
       let base := ts.map fun (m, T) ↦ (m, (List.range m).toArray.map (baseRow T m G N))
       let full := 2 ^ N - 1
       some { M, ginv, rows := (List.range M).toArray.map fun r ↦
         base.foldl (fun acc (m, B) ↦ acc &&& B[r % m]!) full }
   else none
 
-/-- The shift that aligns the rows of the family `F` with a chunk starting at the numerator `a₀`:
-`s < 8 F.M` with `G s ≡ a₀` modulo `F.M`, the least one plus the multiple of `F.M` that makes it a
-multiple of `8` when `F.M` is odd (`F.M ^ 2 ≡ 1` modulo `8`), so that the search on byte arrays
-reads whole bytes of the rows. -/
+/-- The least shift aligning the rows with a chunk starting at `a₀`.
+For a positive modulus, it is the least `s` with `G s ≡ a₀` modulo `F.M`, where `G` is the step
+whose inverse is `F.ginv`. -/
 def Family.shift (F : Family) (a₀ : Int) : Nat :=
-  let s := (a₀ * F.ginv % (F.M : Int)).toNat
-  s + F.M * ((8 - s % 8) * F.M % 8)
+  (a₀ * F.ginv % (F.M : Int)).toNat
 
 /-! ### The sieve -/
 

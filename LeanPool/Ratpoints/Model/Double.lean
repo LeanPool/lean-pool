@@ -42,10 +42,6 @@ def huge : Double := ⟨0x7ff0000000000000⟩
 /-- The double `2 ^ 63`, the literal `9223372036854775808.0` of the C code. -/
 def twoPow63 : Double := ⟨0x43e0000000000000⟩
 
-/-- The double `-1.0`, the literal `-1.0` with which `main.c` sets the tuning fields of the
-arguments that are doubles, meaning "the default" (`Ratpoints.SieveOptions`). -/
-def minusOne : Double := ⟨0xbff0000000000000⟩
-
 /-- The sign bit. -/
 def signBit (x : Double) : Bool := x.bits >>> 63 == 1
 
@@ -133,7 +129,7 @@ def assemble (neg : Bool) (M : Nat) (q : Int) : Double :=
   else ⟨s ||| ((q + 1075).toNat.toUInt64 <<< 52) ||| (M - 2 ^ 52).toUInt64⟩
 
 /-- The double with the sign `-` for `neg` of a rounded significand `M ≤ 2 ^ 53` and the exponent
-`q` of its last place, the last step of `Ratpoints.Double.ofDyadic` and `Ratpoints.Double.ofRatio`:
+`q` of its last place, the last step of `Ratpoints.Double.ofDyadic`:
 the significand `2 ^ 53`, which rounding up can reach, carried into the next exponent as `2 ^ 52`,
 then the bits of `Ratpoints.Double.assemble`. -/
 def ofSignificand (neg : Bool) (M : Nat) (q : Int) : Double :=
@@ -145,34 +141,12 @@ of IEEE 754 round their exact results in the rounding mode to nearest: a signed 
 otherwise the last place `2 ^ q` of the result, `q = max (E - 52) (-1074)` for the exponent `E` with
 `2 ^ E ≤ m 2 ^ e < 2 ^ (E + 1)`; `M`, the value divided by `2 ^ q` and rounded, carried into the
 next exponent at `2 ^ 53`; a subnormal or a zero below `2 ^ 52`; and an infinity beyond the largest
-finite double (`Ratpoints.Double.ofSignificand`). The proofs show only that a finite result for
-`m ≠ 0` is a faithful rounding: the value lies strictly between the neighbours of the result
-(`Ratpoints.Double.lt_nextUp_and_nextDown_lt_ofDyadic`). -/
+finite double (`Ratpoints.Double.ofSignificand`). -/
 def ofDyadic (neg : Bool) (m : Nat) (e : Int) : Double :=
   if m = 0 then ⟨if neg then 0x8000000000000000 else 0⟩
   else
     let q : Int := max (m.log2 + e - 52) (-1074)
     ofSignificand neg (roundShift m (q - e)) q
-
-/-- The double nearest to `±n / d` for `d ≠ 0`, the sign `-` for `neg`, with ties to even, as IEEE
-754 rounds an exact result in the rounding mode to nearest: a signed zero for `n = 0`; otherwise the
-exponent `E` with `2 ^ E ≤ n / d < 2 ^ (E + 1)`, which the lengths of `n` and `d` in bits fix up to
-one, the last place `2 ^ q` of the result, `q = max (E - 52) (-1074)`, the quotient `n / (d 2 ^ q)`
-rounded to the nearest integer `M` (`r` the remainder), carried into the next exponent at `2 ^ 53`,
-a subnormal or a zero below `2 ^ 52`, and an infinity beyond the largest finite double
-(`Ratpoints.Double.ofSignificand`). The proofs show only that a finite result for `n ≠ 0` and
-`d ≠ 0` is a faithful rounding: the value lies strictly between the neighbours of the result
-(`Ratpoints.Double.lt_nextUp_and_nextDown_lt_ofRatio`). -/
-def ofRatio (neg : Bool) (n d : Nat) : Double :=
-  if n = 0 then ⟨if neg then 0x8000000000000000 else 0⟩
-  else
-    let e : Int := (n.log2 : Int) - d.log2
-    let atLeast : Bool := if 0 ≤ e then d * 2 ^ e.toNat ≤ n else d ≤ n * 2 ^ (-e).toNat
-    let q : Int := max ((if atLeast then e else e - 1) - 52) (-1074)
-    let (a, b) := if 0 ≤ q then (n, d * 2 ^ q.toNat) else (n * 2 ^ (-q).toNat, d)
-    let r := a % b
-    let M := if b < 2 * r ∨ 2 * r = b ∧ (a / b) % 2 = 1 then a / b + 1 else a / b
-    ofSignificand neg M q
 
 /-- The conversion `(double)n` of a `long` `n` to a double: the double nearest to `n`, ties to even,
 as gcc converts it on the platforms of `ratpoints`, exact for `|n| ≤ 2 ^ 53`, and `±2 ^ 63` for
@@ -204,37 +178,6 @@ def ldexp (x : Double) (n : Int) : Double :=
   else
     let (m, e) := x.toDyadic
     ofDyadic x.signBit m.natAbs (e + n)
-
-/-- `frexp(x, &ex)` of `math.h`: the pair `(f, ex)` with `x = f 2 ^ ex` and `1/2 ≤ |f| < 1`, `f` of
-the sign of `x`, for a finite `x ≠ 0`, also a subnormal one; `(x, 0)` for a zero, an infinity and a
-NaN, as glibc returns them, but for a signalling NaN, which glibc returns quieted (by `x + x`;
-`ratpoints` passes it no NaN). -/
-def frexp (x : Double) : Double × Int :=
-  if x.isNaN || x.isInf || x.isZero then (x, 0)
-  else
-    let (m, e) := x.toDyadic
-    let l : Int := m.natAbs.log2 + 1
-    (ofDyadic x.signBit m.natAbs (-l), l + e)
-
-/-- `nextafter(x, HUGE_VAL)` of `math.h`: the least double above `x`; the least subnormal for both
-zeros, `+∞` for `+∞` and the largest finite double, a NaN as it is (glibc returns a signalling NaN
-quieted, by `x + y`; `ratpoints` passes it no NaN), and for a negative `x` the double towards zero,
-`-0.0` above `-2 ^ (-1074)`. -/
-def nextUp (x : Double) : Double :=
-  if x.isNaN || x.bits == huge.bits then x
-  else if x.isZero then ⟨1⟩
-  else if x.signBit then ⟨x.bits - 1⟩
-  else ⟨x.bits + 1⟩
-
-/-- `nextafter(x, -HUGE_VAL)` of `math.h`: the greatest double below `x`; the least subnormal
-negated for both zeros, `-∞` for `-∞` and the least finite double, a NaN as it is (glibc returns a
-signalling NaN quieted, by `x + y`; `ratpoints` passes it no NaN), and for a positive `x` the double
-towards zero, `0.0` below `2 ^ (-1074)`. -/
-def nextDown (x : Double) : Double :=
-  if x.isNaN || x.bits == huge.neg.bits then x
-  else if x.isZero then ⟨0x8000000000000001⟩
-  else if x.signBit then ⟨x.bits + 1⟩
-  else ⟨x.bits - 1⟩
 
 /-! ### Examples
 
@@ -295,35 +238,6 @@ prints for them, as bits. -/
     (0x7ff8000000000000, 0xfff8000000000000, 0x7ff8000000000000)] :
     List (UInt64 × UInt64 × UInt64)).all fun (x, n, f) ↦
   (neg ⟨x⟩).bits == n && (fabs ⟨x⟩).bits == f
-
--- `nextafter` towards `±HUGE_VAL` and `frexp`.
-#guard ([(0x0000000000000000, 0x0000000000000001, 0x8000000000000001),
-    (0x8000000000000000, 0x0000000000000001, 0x8000000000000001),
-    (0x0000000000000001, 0x0000000000000002, 0x0000000000000000),
-    (0x8000000000000001, 0x8000000000000000, 0x8000000000000002),
-    (0x000fffffffffffff, 0x0010000000000000, 0x000ffffffffffffe),
-    (0x7fefffffffffffff, 0x7ff0000000000000, 0x7feffffffffffffe),
-    (0xffefffffffffffff, 0xffeffffffffffffe, 0xfff0000000000000),
-    (0x7ff0000000000000, 0x7ff0000000000000, 0x7fefffffffffffff),
-    (0xfff0000000000000, 0xffefffffffffffff, 0xfff0000000000000),
-    (0x43dfffffffffffff, 0x43e0000000000000, 0x43dffffffffffffe),
-    (0xc3e0000000000000, 0xc3dfffffffffffff, 0xc3e0000000000001),
-    (0x7ff8000000000000, 0x7ff8000000000000, 0x7ff8000000000000)] :
-    List (UInt64 × UInt64 × UInt64)).all fun (x, u, d) ↦
-  (nextUp ⟨x⟩).bits == u && (nextDown ⟨x⟩).bits == d
-#guard ([(0x0000000000000000, 0x0000000000000000, 0), (0x8000000000000000, 0x8000000000000000, 0),
-    (0x0000000000000001, 0x3fe0000000000000, -1073),
-    (0x8000000000000001, 0xbfe0000000000000, -1073),
-    (0x000fffffffffffff, 0x3feffffffffffffe, -1022),
-    (0x0010000000000000, 0x3fe0000000000000, -1021),
-    (0x3ff0000000000000, 0x3fe0000000000000, 1), (0xbff0000000000000, 0xbfe0000000000000, 1),
-    (0x7fefffffffffffff, 0x3fefffffffffffff, 1024), (0x43e0000000000000, 0x3fe0000000000000, 64),
-    (0x43dfffffffffffff, 0x3fefffffffffffff, 63), (0x3fe8000000000000, 0x3fe8000000000000, 0),
-    (0x0008000000000000, 0x3fe0000000000000, -1022), (0x4340000000000001, 0x3fe0000000000001, 54),
-    (0x3cb0000000000000, 0x3fe0000000000000, -51),
-    (0x000123456789abcd, 0x3fe23456789abcd0, -1025)] :
-    List (UInt64 × UInt64 × Int)).all fun (x, f, e) ↦
-  (frexp ⟨x⟩).1.bits == f && (frexp ⟨x⟩).2 == e
 
 -- `ldexp`: exact, rounded into the subnormals (ties to even), overflow to `+∞`, and the doubles
 -- that `exact_end` scales, `ldexp(f, 53)` for `1/2 ≤ f < 1`.

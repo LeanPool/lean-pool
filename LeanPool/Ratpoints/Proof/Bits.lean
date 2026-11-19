@@ -232,13 +232,6 @@ theorem shiftRight_ctz_ofNat_mod_two {b : Nat} (hb0 : 0 < b) (hb : b < UInt64.si
   rw [UInt64.toBitVec_ofNat', Nat.shiftRight_eq_div_pow]
   simpa [Nat.testBit_eq_decide_div_mod_eq] using ht.2
 
-theorem toNat_shiftRight_32 (x : UInt64) : (x >>> 32).toNat = x.toNat / 2 ^ 32 := by
-  simp [UInt64.toNat_shiftRight, Nat.shiftRight_eq_div_pow]
-
-theorem toNat_and_0xffffffff (x : UInt64) :
-    (x &&& 0xffffffff).toNat = x.toNat % 2 ^ 32 := by
-  simpa using Nat.and_two_pow_sub_one_eq_mod x.toNat 32
-
 theorem and_not_eq_zero_iff (w m : UInt64) :
     w &&& ~~~m = 0 ↔ ∀ t, w.toBitVec.getLsbD t = true → m.toBitVec.getLsbD t = true := by
   rw [← UInt64.toBitVec_inj]
