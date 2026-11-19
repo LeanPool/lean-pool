@@ -47,11 +47,14 @@ center and relative noise paths.
 
 First combine these facts into independence of the two input pairs:
 (initial center, center noise) and (initial relative state, relative noise).
-Compose with the measurable OU and relative solution maps. The next two
-lemmas identify these functionals almost everywhere with the projected
-original path; independence transfers through those equalities. A further
-identity compares the continuous path version with the maximal process on
-one full-measure event for every time.
+Compose with the measurable OU and relative solution maps. The path
+identities `ginibre_independentInitial_path_center` and
+`ginibre_independentInitial_path_recenter` (proved upstream for any almost
+surely collision-free initial law, with no independence assumption) identify
+these functionals almost everywhere with the projected original path;
+independence transfers through those equalities. The identity
+`ginibre_independentInitial_path_eq_original` compares the continuous path
+version with the maximal process on one full-measure event for every time.
 
 Names containing `EquilibriumPath` designate the shared path constructor;
 the main results here allow any `ν` satisfying the stated projection and
@@ -88,7 +91,6 @@ theorem ginibre_independentInitial_center_relative_inputs_independent {Ω : Type
       (fun p => (recenteredConfiguration n p.1,
         ginibreContinuousNoiseRecenter n (ginibreBrownianFullContinuousNoise n B α p.2)))
       (ν.prod P) := by
-  
   have hN := ginibreBrownianFullContinuousNoise_measurable n B P hB α
   apply independent_pairs_on_product_measure ν P
     (coordinateSum : Configuration n → ℂ) (recenteredConfiguration n)
@@ -129,63 +131,6 @@ theorem ginibre_independentInitial_OU_relative_functionals_independent {Ω : Typ
       α).comp
     (ginibreOUPathElement_measurable n α) hrel
 
-/-- Almost sure center factorization for the actual equilibrium-initialized path. -/
-theorem ginibre_independentInitial_path_center {Ω : Type*} [MeasurableSpace Ω]
-    {n : ℕ} (hn : 0 < n) (ν : Measure (Configuration n))
-    (hν : ∀ᵐ z ∂ν, CollisionFree z)
-    (_ : IndepFun (coordinateSum : Configuration n → ℂ) (recenteredConfiguration n) ν) (α : ℝ≥0) (z₀
-        : Configuration n) (hz₀ : CollisionFree z₀)
-    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
-    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
-    (hind : iIndepFun (fun i ω t => B i t ω) P) :
-    (fun p : Configuration n × Ω => ginibrePathCenter n (ginibreEquilibriumPath α z₀ hz₀ B p))
-      =ᵐ[ν.prod P]
-      (fun p => ginibreOUPathElement n α
-        (coordinateSum p.1, ginibreContinuousNoiseCenter n (ginibreBrownianFullContinuousNoise n B α
-            p.2))) := by
-  classical
-  
-  have hS := (ginibrePathCenter_measurable n).comp
-    (ginibreEquilibriumPath_measurable hn α z₀ hz₀ B P hB)
-  have hU := (ginibreOUPathElement_measurable n α).comp
-    (((measurable_coordinateSum n).comp measurable_fst).prodMk
-      (((ginibreContinuousNoiseCenter_continuous n).measurable.comp
-        (ginibreBrownianFullContinuousNoise_measurable n B P hB α)).comp measurable_snd))
-  apply (Measure.ae_prod_iff_ae_ae (measurableSet_eq_fun hS hU)).mpr
-  filter_upwards [hν] with z hz
-  have hv : ginibreFreeInitialVersion z₀ hz₀ z = ⟨z, hz⟩ := by
-    simp [ginibreFreeInitialVersion, hz]
-  simpa only [Function.comp_def, ginibreEquilibriumPath, hv] using
-    ginibreBrownian_global_path_center hn α z hz B P hB hind
-
-/-- Almost sure relative factorization for the actual equilibrium-initialized path. -/
-theorem ginibre_independentInitial_path_recenter {Ω : Type*} [MeasurableSpace Ω]
-    {n : ℕ} (hn : 0 < n) (ν : Measure (Configuration n))
-    (hν : ∀ᵐ z ∂ν, CollisionFree z)
-    (_ : IndepFun (coordinateSum : Configuration n → ℂ) (recenteredConfiguration n) ν) (α : ℝ≥0) (z₀
-        : Configuration n) (hz₀ : CollisionFree z₀)
-    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
-    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
-    (hind : iIndepFun (fun i ω t => B i t ω) P) :
-    (fun p : Configuration n × Ω => ginibrePathRecenter n (ginibreEquilibriumPath α z₀ hz₀ B p))
-      =ᵐ[ν.prod P] ginibreRelativeEquilibriumPath α z₀ hz₀ B := by
-  classical
-  
-  have hS := (ginibrePathRecenter_measurable n).comp
-    (ginibreEquilibriumPath_measurable hn α z₀ hz₀ B P hB)
-  have hU := ginibreRelativeEquilibriumPath_measurable hn α z₀ hz₀ B P hB
-  apply (Measure.ae_prod_iff_ae_ae (measurableSet_eq_fun hS hU)).mpr
-  filter_upwards [hν] with z hz
-  have hv : ginibreFreeInitialVersion z₀ hz₀ z = ⟨z, hz⟩ := by
-    simp [ginibreFreeInitialVersion, hz]
-  have hw : ginibreFreeInitialVersion (recenteredConfiguration n z₀) (collisionFree_recentered hz₀)
-      (recenteredConfiguration n z) = ⟨recenteredConfiguration n z, collisionFree_recentered hz⟩ :=
-          by
-    simp [ginibreFreeInitialVersion, collisionFree_recentered hz]
-  simpa only [Function.comp_def, ginibreEquilibriumPath, ginibreRelativeEquilibriumPath, hv, hw]
-      using
-    ginibreBrownian_global_path_recenter hn α z hz B P hB hind
-
 /-- Independence of the entire center and relative paths initialized from the
  actual Ginibre measure and driven by the original independent Brownian family. -/
 theorem ginibre_independentInitial_center_relative_paths_independent {Ω : Type*} [MeasurableSpace Ω]
@@ -202,49 +147,8 @@ theorem ginibre_independentInitial_center_relative_paths_independent {Ω : Type*
       (ν.prod P) :=
   (ginibre_independentInitial_OU_relative_functionals_independent hn ν hν hνind α z₀ hz₀ B P hB
       hind).congr
-    (ginibre_independentInitial_path_center hn ν hν hνind α z₀ hz₀ B P hB hind).symm
-    (ginibre_independentInitial_path_recenter hn ν hν hνind α z₀ hz₀ B P hB hind).symm
-
-/-- The equilibrium path version agrees at every time with the original canonical
- Brownian solution initialized from the actual Ginibre sample. -/
-theorem ginibre_independentInitial_path_eq_original {Ω : Type*} [MeasurableSpace Ω]
-    {n : ℕ} (hn : 0 < n) (ν : Measure (Configuration n))
-    (hν : ∀ᵐ z ∂ν, CollisionFree z)
-    (_ : IndepFun (coordinateSum : Configuration n → ℂ) (recenteredConfiguration n) ν) (α : ℝ≥0) (z₀
-        : Configuration n) (hz₀ : CollisionFree z₀)
-    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
-    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
-    (hind : iIndepFun (fun i ω t => B i t ω) P) :
-    ∀ᵐ p : Configuration n × Ω ∂ν.prod P, ∀ t : ℝ,
-      ginibreEquilibriumPath α z₀ hz₀ B p t =
-        ginibreBrownianMaximalProcess n α p.1 B (Real.toNNReal t) p.2 := by
-  classical
-  
-  have hm : Measurable (fun p : Configuration n × Ω =>
-      (ginibreFreeInitialVersion z₀ hz₀ p.1, ginibreBrownianFullContinuousNoise n B α p.2)) :=
-    ((ginibreFreeInitialVersion_measurable z₀ hz₀).comp measurable_fst).prodMk
-      ((ginibreBrownianFullContinuousNoise_measurable n B P hB α).comp measurable_snd)
-  have hL : ∀ᵐ p : Configuration n × Ω ∂ν.prod P,
-      ginibreDrivenMaximalLifetime n α (ginibreBrownianFullContinuousNoise n B α p.2).val
-        (ginibreFreeInitialVersion z₀ hz₀ p.1).val = ⊤ := by
-    apply (Measure.ae_prod_iff_ae_ae ((ginibreDriven_global_joint_measurableSet hn α).preimage
-        hm)).mpr
-    exact Eventually.of_forall fun z =>
-      ginibreBrownianMaximalLifetime_top_ae hn α _ (ginibreFreeInitialVersion z₀ hz₀ z).property B P
-          hB hind
-  have hC : ∀ᵐ p : Configuration n × Ω ∂ν.prod P, CollisionFree p.1 := by
-    apply (Measure.ae_prod_iff_ae_ae ((isOpen_collisionFree n).measurableSet.preimage
-        measurable_fst)).mpr
-    exact (hν).mono fun z hz => Eventually.of_forall fun _ => hz
-  filter_upwards [hL, hC] with p hL hC
-  intro t
-  have hv : ginibreFreeInitialVersion z₀ hz₀ p.1 = ⟨p.1, hC⟩ := by
-    simp [ginibreFreeInitialVersion, hC]
-  have hL' : ginibreDrivenMaximalLifetime n α (ginibreBrownianFullContinuousNoise n B α p.2).val p.1
-      = ⊤ := by
-    simpa only [hv] using hL
-  simp only [ginibreEquilibriumPath, ginibreDrivenGlobalPathElement, hv, dite_eq_left hL',
-    ContinuousMap.coe_mk, ginibreBrownianMaximalProcess]
+    (ginibre_independentInitial_path_center hn ν hν α z₀ hz₀ B P hB hind).symm
+    (ginibre_independentInitial_path_recenter hn ν hν α z₀ hz₀ B P hB hind).symm
 
 /-- Actual original Brownian whole-process independence with initial law exactly
  Ginibre; no assumption of stationarity or stochastic factorization is used. -/
@@ -272,12 +176,12 @@ theorem ginibreBrownian_independentInitial_center_relative_processes_independent
   have h := (ginibre_independentInitial_center_relative_paths_independent hn ν hν hνind α z₀ hz₀ B P
       hB hind).comp hS hW
   apply h.congr
-  · filter_upwards [ginibre_independentInitial_path_eq_original hn ν hν hνind α z₀ hz₀ B P hB hind]
+  · filter_upwards [ginibre_independentInitial_path_eq_original hn ν hν α z₀ hz₀ B P hB hind]
       with p hp
     funext t
     simp only [Function.comp_def, ginibrePathCenter, ContinuousMap.comp_apply, ContinuousMap.coe_mk,
       coordinateSumCLM_apply, hp, Real.toNNReal_coe]
-  · filter_upwards [ginibre_independentInitial_path_eq_original hn ν hν hνind α z₀ hz₀ B P hB hind]
+  · filter_upwards [ginibre_independentInitial_path_eq_original hn ν hν α z₀ hz₀ B P hB hind]
       with p hp
     funext t
     simp only [Function.comp_def, ginibrePathRecenter, ContinuousMap.comp_apply,

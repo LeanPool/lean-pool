@@ -36,11 +36,12 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticLampertiGenerator
-public import LeanPool.GinibrePoincare.Analysis.FiniteDimensionalItoDriftRiemann
-public import Mathlib.MeasureTheory.Function.FactorsThrough
+public import LeanPool.GinibrePoincare.Analysis.LampertiRadiusPathFunctional
 
 /-! A genuine measurable Lamperti path functional, built from actual finite
-Riemann sums, with no measurability assumption on an ordinary path integral. -/
+Riemann sums, with no measurability assumption on an ordinary path integral.
+It is the real-radius construction `lampertiRadiusPathFunctional` read through
+`pairwiseRadius`. -/
 
 @[expose] public section
 open Set MeasureTheory Filter
@@ -57,36 +58,28 @@ theorem pairwiseRadius_recentered (n : ℕ) (z : Configuration n) :
 `√(pairwiseRadius z)`, minus a `k + 1`-point Riemann sum of the drift, over `√(2α/n)`. -/
 def ginibreLampertiRiemannFunctional (n : ℕ) (α : ℝ) (z : Configuration n)
     (k : ℕ) (p : ℝ≥0 → Configuration n) (t : ℝ≥0) : ℝ :=
-  (Real.sqrt (pairwiseRadius (p t))-Real.sqrt (pairwiseRadius z)-
-    ∑ i : Fin (k+1), ginibreLampertiRadialDrift n α
-      (pairwiseRadius (p (ginibreUniformBrownianTime t k i)))*((t : ℝ)/((k : ℝ)+1))) /
-        Real.sqrt (2*α/(n : ℝ))
+  lampertiRadiusRiemannFunctional pairwiseRadius (ginibreLampertiRadialDrift n α)
+    (pairwiseRadius z) (Real.sqrt (2*α/(n : ℝ))) k p t
 
 /-- The pathwise radial Lamperti functional: the limit as `k → ∞` of the Riemann-sum
 functionals `ginibreLampertiRiemannFunctional n α z k p t`. -/
 def ginibreLampertiPathFunctional (n : ℕ) (α : ℝ) (z : Configuration n)
     (p : ℝ≥0 → Configuration n) (t : ℝ≥0) : ℝ :=
-  limUnder atTop (fun k => ginibreLampertiRiemannFunctional n α z k p t)
+  lampertiRadiusPathFunctional pairwiseRadius (ginibreLampertiRadialDrift n α)
+    (pairwiseRadius z) (Real.sqrt (2*α/(n : ℝ))) p t
 
 theorem ginibreLampertiRiemannFunctional_measurable (n : ℕ) (α : ℝ)
     (z : Configuration n) (k : ℕ) (t : ℝ≥0) :
-    Measurable (fun p => ginibreLampertiRiemannFunctional n α z k p t) := by
-  have hr (s : ℝ≥0) : Measurable (fun p : ℝ≥0 → Configuration n => pairwiseRadius (p s)) :=
-    (ginibre_contDiff_pairwiseRadius n).continuous.measurable.comp (measurable_pi_apply s)
-  have hg : Measurable (fun p : ℝ≥0 → Configuration n => ∑ i : Fin (k+1),
-      ginibreLampertiRadialDrift n α (pairwiseRadius (p (ginibreUniformBrownianTime t k i)))*
-        ((t : ℝ)/((k : ℝ)+1))) := by
-    apply Finset.measurable_sum
-    intro i hi
-    exact ((ginibreLampertiRadialDrift_measurable n α).comp (hr _)).mul_const _
-  exact (((Real.continuous_sqrt.measurable.comp (hr t)).sub measurable_const).sub hg).div_const _
+    Measurable (fun p => ginibreLampertiRiemannFunctional n α z k p t) :=
+  lampertiRadiusRiemannFunctional_measurable
+    (ginibre_contDiff_pairwiseRadius n).continuous.measurable
+    (ginibreLampertiRadialDrift_measurable n α) _ _ k t
 
 theorem ginibreLampertiPathFunctional_measurable (n : ℕ) (α : ℝ) (z : Configuration n) :
-    Measurable (ginibreLampertiPathFunctional n α z) := by
-  apply Measurable.of_eval
-  intro t
-  exact (StronglyMeasurable.limUnder (fun k =>
-    (ginibreLampertiRiemannFunctional_measurable n α z k t).stronglyMeasurable)).measurable
+    Measurable (ginibreLampertiPathFunctional n α z) :=
+  lampertiRadiusPathFunctional_measurable
+    (ginibre_contDiff_pairwiseRadius n).continuous.measurable
+    (ginibreLampertiRadialDrift_measurable n α) _ _
 
 theorem ginibreLampertiPathFunctional_eq_integral (n : ℕ) (α : ℝ) (z : Configuration n)
     (p : ℝ≥0 → Configuration n) (hp : Continuous p) (hpos : ∀ s, 0 < pairwiseRadius (p s))
@@ -94,20 +87,8 @@ theorem ginibreLampertiPathFunctional_eq_integral (n : ℕ) (α : ℝ) (z : Conf
     ginibreLampertiPathFunctional n α z p t =
       (Real.sqrt (pairwiseRadius (p t))-Real.sqrt (pairwiseRadius z)-
         ∫ s in (0 : ℝ)..t, ginibreLampertiRadialDrift n α (pairwiseRadius (p s.toNNReal))) /
-          Real.sqrt (2*α/(n : ℝ)) := by
-  let w := fun s : ℝ => ginibreLampertiRadialDrift n α (pairwiseRadius (p s.toNNReal))
-  have hw : Continuous w := (ginibreLampertiRadialDrift_continuousOn n α).comp_continuous
-    ((ginibre_contDiff_pairwiseRadius n).continuous.comp (hp.comp continuous_real_toNNReal))
-    (fun s => hpos _)
-  have h := itoContinuousScalarRiemann_fin_tendsto w t hw.continuousOn
-  have hl : Tendsto (fun k => ginibreLampertiRiemannFunctional n α z k p t) atTop
-      (𝓝 ((Real.sqrt (pairwiseRadius (p t))-Real.sqrt (pairwiseRadius z)-
-        ∫ s in (0 : ℝ)..t, w s)/Real.sqrt (2*α/(n : ℝ)))) := by
-    have hc : Tendsto (fun _ : ℕ => Real.sqrt (pairwiseRadius (p t))-Real.sqrt (pairwiseRadius z))
-        atTop (𝓝 (Real.sqrt (pairwiseRadius (p t))-Real.sqrt (pairwiseRadius z))) :=
-            tendsto_const_nhds
-    simpa only [ginibreLampertiRiemannFunctional, w, Real.toNNReal_coe] using
-      (hc.sub h).div_const (Real.sqrt (2*α/(n : ℝ)))
-  exact hl.limUnder_eq
+          Real.sqrt (2*α/(n : ℝ)) :=
+  lampertiRadiusPathFunctional_eq_integral (ginibre_contDiff_pairwiseRadius n).continuous
+    (ginibreLampertiRadialDrift_continuousOn n α) _ _ p hp hpos t
 end
 end GinibrePoincare
