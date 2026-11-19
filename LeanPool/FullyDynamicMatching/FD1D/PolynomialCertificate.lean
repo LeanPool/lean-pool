@@ -567,22 +567,19 @@ private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Ex
   let expression := expression.consumeMData
   if isTerminalHead expression then
     return expression
-  Lean.Meta.whnfHeadPred expression fun term => return !isTerminalHead term
+  let expose := fun term => Lean.Meta.whnfHeadPred term fun head => return !isTerminalHead head
+  let expression ← expose expression
+  if isTerminalHead expression then return expression
+  Lean.Meta.withTransparency .all (expose expression)
 
--- Keep reduction of an unfamiliar closed value small. The outer chart is staged
--- by its operations, and this retry only runs when the direct reader fails.
+-- Compute closed coefficients after direct decoding fails. The outer chart
+-- still uses the staged operations.
 private meta def readBellmanClosedValue {R : Type}
     (readHead : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
     Lean.MetaM (Option R) := do
   if let some value ← readHead expression then return some value
   if expression.hasFVar || expression.hasMVar || expression.hasLooseBVars then return none
-  let start ← IO.getNumHeartbeats
-  let limit := 10000000
-  withTheReader Lean.Core.Context (fun context =>
-    let stop := start - context.initHeartbeats + limit
-    {context with maxHeartbeats :=
-      if context.maxHeartbeats == 0 then stop else min stop context.maxHeartbeats}) do
-    readHead (← Lean.Meta.whnfD expression)
+  readHead (← Lean.Meta.whnfD expression)
 
 private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) := do
   let readHead (term : Lean.Expr) : Lean.MetaM (Option Int) := do
@@ -611,7 +608,7 @@ private meta def readBellmanList {R : Type}
 
 private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     (read : Lean.Expr → Lean.MetaM (Option R)) (fromNat : Nat → R)
-    (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
+    (evaluateCoefficient : Bool) (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
   let expression ← exposeBellmanHead expression
   let readHead (term : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
     match_expr term with
@@ -624,7 +621,7 @@ private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     | DPoly.mk _ coefficients =>
         return (← readBellmanList read coefficients).map fun values => ⟨values⟩
     | _ => return none
-  readBellmanClosedValue readHead expression
+  if evaluateCoefficient then readBellmanClosedValue readHead expression else readHead expression
 
 -- Compute on coefficient data, then have the kernel verify the explicit reduction.
 -- The meta code produces the proposed value; only the checked equality is reused.
@@ -632,8 +629,12 @@ private meta def checkBellmanReduction (operands value : Lean.Expr) :
     Lean.MetaM Lean.Expr := do
   let equality ← Lean.Meta.mkEq operands value
   let reflexivity ← Lean.Meta.mkEqRefl value
-  let certificate ← Lean.withOptions (Lean.Elab.async.set · false) do
-    Lean.Meta.mkAuxLemma [] equality reflexivity (kind? := some `polynomialReduction)
+  let certificate ← Lean.Meta.mkAuxLemma [] equality reflexivity
+    (kind? := some `polynomialReduction)
+  -- Await kernel insertion before reusing the equality. The kernel reports any mismatch.
+  let kernelEnv := (← Lean.getEnv).toKernelEnv
+  let some (.thmInfo _) := kernelEnv.find? certificate
+    | throwError "kernel rejected staged Bellman reduction"
   return Lean.mkConst certificate
 
 private meta def bellmanBinaryOperation (expression : Lean.Expr) :
@@ -654,13 +655,15 @@ private meta def isBellmanNegation (expression : Lean.Expr) : Bool :=
 private meta def readBellmanBivariate (expression : Lean.Expr) :
     Lean.MetaM (Option (DPoly (DPoly ℤ))) :=
   readBellmanCoefficients
-    (readBellmanCoefficients readBellmanInteger Int.ofNat) (DPoly.const ∘ Int.ofNat) expression
+    (readBellmanCoefficients readBellmanInteger Int.ofNat true) (DPoly.const ∘ Int.ofNat)
+    true expression
 
 private meta def readBellmanLeaf (expression : Lean.Expr) : Lean.MetaM (Option Poly3) := do
   if expression.isConstOf ``U then return some DPoly.X
   if expression.isConstOf ``V then return some (DPoly.const DPoly.X)
   if expression.isConstOf ``Z then return some (DPoly.const (DPoly.const DPoly.X))
-  readBellmanCoefficients readBellmanBivariate (DPoly.const ∘ DPoly.const ∘ Int.ofNat) expression
+  readBellmanCoefficients readBellmanBivariate (DPoly.const ∘ DPoly.const ∘ Int.ofNat)
+    false expression
 
 private meta def readBellmanScaleFactor (expression : Lean.Expr) :
     Lean.MetaM (DPoly (DPoly ℤ)) := do
@@ -782,13 +785,16 @@ local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
     conv_lhs => { arg 1; reduceBellmanPolynomial }
     rfl)))
 
+@[irreducible]
+private def wrapBellmanPolynomial (p : Poly3) : Poly3 := p
+
 -- Exercise expanded variables, computed coefficients and wrapped coefficient lists.
 example :
     allNonnegative3
       (DPoly.X + DPoly.const (id DPoly.X) + DPoly.const (DPoly.const DPoly.X) +
         DPoly.const (2 : DPoly (DPoly ℤ)) + DPoly.const (DPoly.X + 0) +
         DPoly.mk (id [1]) + DPoly.const (DPoly.const (DPoly.const (1 + 1 : ℤ))) +
-        DPoly.scale 2 (1 + U) : Poly3) = true := by
+        wrapBellmanPolynomial (DPoly.scale 2 (1 + U)) : Poly3) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
