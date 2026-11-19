@@ -1,0 +1,34 @@
+slug: lattice-dirac-derivation
+title: Lattice derivation of the free Dirac continuum sector
+summary: Provisional card; to be completed during the port.
+branch: mathematical physics
+entry_module: LeanPool.LatticeDiracDerivation
+authors:
+- G. D. Partin
+source:
+  title: Lean LFM-to-Dirac Derivation
+  authors:
+  - G. D. Partin
+  doi: 10.5281/zenodo.24150001
+  url: https://github.com/gpartin/LeanDiracDerivation/tree/867004142ada3eec464d5bd3088d7313fdad1613
+  github_repo: gpartin/LeanDiracDerivation
+  commit: 867004142ada3eec464d5bd3088d7313fdad1613
+license: MIT
+status: verified
+provenance: mix
+provenance_evidence: The proposal in LeanPool/lean-pool issue 800 describes the work as human-directed
+  research with AI-assisted Lean implementation, testing and review.
+main_declarations:
+- LeanDirac.standard_c19_hamiltonian_square_is_continuum_dispersion
+main_results:
+- declaration: LeanDirac.standard_c19_hamiltonian_square_is_continuum_dispersion
+  informal: Provisional.
+tags:
+- mathematical-physics
+- dirac-operator
+- clifford-algebra
+- lattice
+msc:
+- 81Q05
+- 15A66
+- 65M06
