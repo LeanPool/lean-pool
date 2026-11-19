@@ -608,15 +608,11 @@ private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Ex
         continue
     return term
 
-private theorem repackBellmanPolynomial (p : DPoly R) :
-    (match p with | ⟨coefficients⟩ => DPoly.mk coefficients) = p := by
-  cases p
-  rfl
-
-private theorem repackBellmanAppendEmpty (p : DPoly R) :
-    (match p with | ⟨coefficients⟩ => DPoly.mk (coefficients ++ [])) = p := by
-  cases p
-  simp only [List.append_nil]
+private theorem repackBellmanBranch (p : DPoly R) (branch : List R → DPoly R)
+    (identity : ∀ coefficients, branch coefficients = DPoly.mk coefficients) :
+    (match p with | ⟨coefficients⟩ => branch coefficients) = p := by
+  cases p with
+  | mk coefficients => exact identity coefficients
 
 -- Match an identity over a variable so conversion cannot evaluate the concrete argument.
 private meta def specializeBellmanIdentity (rules : Array Lean.Name) (argument : Lean.Expr)
@@ -632,19 +628,6 @@ private meta def specializeBellmanIdentity (rules : Array Lean.Name) (argument :
         let abstractProof ← Lean.Meta.mkLambdaFVars #[localArgument] proof
         return some (Lean.mkApp abstractProof argument)
     return none
-
-private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
-    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
-  let some matcher ← Lean.Meta.matchMatcherApp? expression.consumeMData (alsoCasesOn := true)
-    | return none
-  let #[polynomial] := matcher.discrs | return none
-  unless matcher.alts.size == 1 && matcher.remaining.isEmpty do return none
-  let type ← Lean.Meta.inferType polynomial
-  unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
-  let some proof ← specializeBellmanIdentity
-    #[``repackBellmanPolynomial, ``repackBellmanAppendEmpty] polynomial
-      (fun term => { matcher with discrs := #[term] }.toExpr) | return none
-  return some (polynomial, proof)
 
 private meta def bellmanAppendIdentity (expression : Lean.Expr) :
     Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
@@ -671,6 +654,44 @@ private meta def bellmanAppendIdentity (expression : Lean.Expr) :
   unless (← Lean.Meta.whnfD type).isAppOfArity ``List 1 do return none
   let some proof ← specializeBellmanIdentity #[rule] survivor rebuild | return none
   return some (survivor, proof)
+
+-- Prove the branch identity on its local field before applying it to a chart.
+private meta def proveBellmanRepackBranch (branch : Lean.Expr) :
+    Lean.MetaM (Option Lean.Expr) :=
+  Lean.Meta.lambdaTelescope branch fun fields body => do
+    let #[field] := fields | return none
+    let body ← exposeBellmanUntil (·.isAppOfArity ``DPoly.mk 2) body
+    unless body.isAppOfArity ``DPoly.mk 2 do return none
+    let rules ← ({} : Lean.Meta.SimpTheorems).addConst ``List.append_nil
+    let rules ← rules.addConst ``List.nil_append
+    let context ← Lean.Meta.Simp.mkContext (config := { iota := false, proj := false })
+      (simpTheorems := #[rules])
+    let coefficients := body.appArg!
+    let (result, _) ← Lean.Meta.simp coefficients context
+    unless result.expr.consumeMData == field do return none
+    let proof ← Lean.Meta.mkCongrArg body.appFn! (← result.getProof' coefficients)
+    return some (← Lean.Meta.mkLambdaFVars fields proof)
+
+private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
+    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
+  let some matcher ← Lean.Meta.matchMatcherApp? expression.consumeMData (alsoCasesOn := true)
+    | return none
+  let #[polynomial] := matcher.discrs | return none
+  let #[branch] := matcher.alts | return none
+  unless matcher.remaining.isEmpty do return none
+  let type ← Lean.Meta.inferType polynomial
+  unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
+  let some branchProof ← proveBellmanRepackBranch branch | return none
+  Lean.Meta.withLocalDeclD `polynomial type fun localPolynomial => do
+    let repacked := { matcher with discrs := #[localPolynomial] }.toExpr
+    let target ← Lean.Meta.mkEq repacked localPolynomial
+    let proof ← Lean.Meta.mkAppM ``repackBellmanBranch #[localPolynomial, branch, branchProof]
+    let proofType ← Lean.Meta.inferType proof
+    unless ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) do
+      return none
+    let proof ← Lean.Meta.mkExpectedTypeHint proof target
+    let abstractProof ← Lean.Meta.mkLambdaFVars #[localPolynomial] proof
+    return some (polynomial, Lean.mkApp abstractProof polynomial)
 
 private meta def exposeBellmanIdentityHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr :=
   Lean.Meta.withConfig (fun configuration => { configuration with iota := false, proj := .no })
@@ -981,7 +1002,7 @@ example :
 private theorem chartPlus_repacked_check :
     allNonnegative3
       (match chartPlus with
-      | ⟨coefficients⟩ => DPoly.mk (coefficients ++ [])) = true := by
+      | ⟨coefficients⟩ => DPoly.mk ((coefficients ++ []) ++ [])) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
