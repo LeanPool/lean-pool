@@ -1179,7 +1179,7 @@ theorem zeta3_irrational : ¬ ∃ r : ℚ, r = riemannZeta 3 := by
   simp_rw [← Complex.ofReal_natCast]
   norm_cast
   simp_rw [Nat.cast_pow, Nat.cast_add, Nat.cast_one]
-  by_contra! r
+  intro r
   rcases r with ⟨r, hr⟩
   let q := r.den
   let hq := Rat.den_nz r
