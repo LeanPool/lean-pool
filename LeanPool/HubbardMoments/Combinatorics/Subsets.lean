@@ -37,67 +37,36 @@ open Finset
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- If `x ⊆ u` and `|x| ≤ b`, the `b`-subsets of `V` whose trace on `u` is `x` are
-in bijection with the `(b - |x|)`-subsets of the complement of `u`, through
-`d ↦ d \ u` and `y ↦ x ∪ y`. -/
+/-- If `x ⊆ u` and `|x| ≤ b`, count the `b`-subsets whose intersection with `u` is
+`x` by counting the subsets of `(u \ x)ᶜ` that contain `x`. -/
 theorem card_trace_eq (u x : Finset V) (hxu : x ⊆ u) (b : ℕ) (hxb : x.card ≤ b) :
     ((powersetCard b univ).filter (fun d => u ∩ d = x)).card =
       (Fintype.card V - u.card).choose (b - x.card) := by
-  rw [← card_compl, ← card_powersetCard]
-  refine card_nbij' (fun d => d \ u) (fun y => x ∪ y) ?_ ?_ ?_ ?_
-  · intro d hd
-    simp only [mem_coe, mem_filter, mem_powersetCard, subset_univ, true_and] at hd
-    obtain ⟨hdb, hdx⟩ := hd
-    simp only [mem_coe, mem_powersetCard]
-    refine ⟨fun a ha => ?_, ?_⟩
-    · simp only [mem_sdiff] at ha
-      simpa using ha.2
-    · have h := card_sdiff_add_card_inter d u
-      rw [inter_comm, hdx, hdb] at h
-      omega
-  · intro y hy
-    simp only [mem_coe, mem_powersetCard] at hy
-    obtain ⟨hyu, hyb⟩ := hy
-    have hdisj : Disjoint x y := by
-      rw [disjoint_left]
-      intro a hax hay
-      have := hyu hay
-      simp only [mem_compl] at this
-      exact this (hxu hax)
-    simp only [mem_coe, mem_filter, mem_powersetCard, subset_univ, true_and]
-    refine ⟨?_, ?_⟩
-    · rw [card_union_of_disjoint hdisj, hyb]
-      omega
-    · ext a
-      simp only [mem_inter, mem_union]
-      constructor
-      · rintro ⟨hau, hax | hay⟩
-        · exact hax
-        · have := hyu hay
-          simp only [mem_compl] at this
-          exact absurd hau this
-      · intro hax
-        exact ⟨hxu hax, Or.inl hax⟩
-  · intro d hd
-    simp only [mem_coe, mem_filter, mem_powersetCard, subset_univ, true_and] at hd
-    obtain ⟨-, hdx⟩ := hd
-    ext a
-    simp only [mem_union, mem_sdiff]
-    rw [← hdx]
-    simp only [mem_inter]
-    tauto
-  · intro y hy
-    simp only [mem_coe, mem_powersetCard] at hy
-    ext a
-    simp only [mem_sdiff, mem_union]
+  have hfilter : (powersetCard b (univ : Finset V)).filter (fun d => u ∩ d = x) =
+      (powersetCard b (u \ x)ᶜ).filter (x ⊆ ·) := by
+    ext d
+    simp only [mem_filter, mem_powersetCard, subset_univ, true_and]
     constructor
-    · rintro ⟨hax | hay, hau⟩
-      · exact absurd (hxu hax) hau
-      · exact hay
-    · intro hay
-      have := hy.1 hay
-      simp only [mem_compl] at this
-      exact ⟨Or.inr hay, this⟩
+    · rintro ⟨hcard, hinter⟩
+      refine ⟨⟨fun a ha => ?_, hcard⟩, fun a ha => ?_⟩
+      · simp only [mem_compl, mem_sdiff]
+        exact fun hb => hb.2 (hinter ▸ mem_inter.mpr ⟨hb.1, ha⟩)
+      · rw [← hinter] at ha
+        exact (mem_inter.mp ha).2
+    · rintro ⟨⟨hd, hcard⟩, hxd⟩
+      refine ⟨hcard, ?_⟩
+      ext a
+      rw [mem_inter]
+      refine ⟨fun ha => ?_, fun ha => ⟨hxu ha, hxd ha⟩⟩
+      by_contra ha'
+      exact (mem_compl.mp (hd ha.2)) (mem_sdiff.mpr ⟨ha.1, ha'⟩)
+  have hx : x ⊆ (u \ x)ᶜ := fun _ ha => by simp [ha]
+  rw [hfilter, card_filter_powersetCard_subset _ _ _ hx hxb, card_compl,
+    card_sdiff_of_subset hxu]
+  have hu : u.card ≤ Fintype.card V := card_le_univ _
+  have hxu' := card_le_card hxu
+  congr 1
+  omega
 
 /-- If `k ≤ b`, exactly `C(|u|, k) · C(N - |u|, b - k)` of the `b`-subsets of `V`
 meet `u` in `k` elements: sum `card_trace_eq` over the `k`-subsets `x` of `u`. -/

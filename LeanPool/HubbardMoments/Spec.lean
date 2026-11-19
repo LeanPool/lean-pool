@@ -7,7 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.HubbardMoments.Defs
+public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.TorusBandDefinition
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.GroupTheory.Perm.Cycle.Type
@@ -204,8 +204,8 @@ def SecondMomentTorus : Prop :=
 projected hopping operator (for example the hop matrix with every sign `+`, i.e. hard-core
 bosons). The claims about projected hopping operators are therefore not vacuous. -/
 def ProjectedHoppingExists : Prop :=
-  ∀ (V σ : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    (t : ℝ), 0 ≤ t → ∃ H : Matrix (Config V σ) (Config V σ) ℂ, IsProjectedHopping G t H
+  ∀ (V σ : Type) [DecidableEq V] (G : SimpleGraph V) (t : ℝ),
+    0 ≤ t → ∃ H : Matrix (Config V σ) (Config V σ) ℂ, IsProjectedHopping G t H
 
 /-- **The two-electron model is Hermitian** for antisymmetric Peierls phases,
 `A(x, y) = -A(y, x)`: a check that `pairHopping` is the intended operator. -/

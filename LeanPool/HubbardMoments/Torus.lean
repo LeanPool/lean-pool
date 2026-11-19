@@ -38,11 +38,17 @@ namespace HubbardMoments
 
 open SimpleGraph
 
-/-- For `L ≥ 3`, every site of the torus has exactly four neighbours. -/
-theorem torus_isRegularOfDegree (L : ℕ) (hL : 3 ≤ L) : (torus L).IsRegularOfDegree 4 := by
+private theorem torus_isRegularOfDegree_default (L : ℕ) (hL : 3 ≤ L) :
+    (torus L).IsRegularOfDegree 4 := by
   obtain ⟨m, rfl⟩ : ∃ m, L = m + 3 := ⟨L - 3, by omega⟩
   intro x
   rw [degree_boxProd, cycleGraph_degree_three_le, cycleGraph_degree_three_le]
+
+/-- For `L ≥ 3`, every site of the torus has exactly four neighbours. -/
+theorem torus_isRegularOfDegree (L : ℕ) (hL : 3 ≤ L) :
+    @SimpleGraph.IsRegularOfDegree (Fin L × Fin L) (torus L)
+      (fun v => Subtype.fintype (Membership.mem ((torus L).neighborSet v))) 4 := by
+  convert torus_isRegularOfDegree_default L hL
 
 open Fin.CommRing in
 /-- The cycle `C_L` has no triangle unless `L = 3`: three sites pairwise one step apart

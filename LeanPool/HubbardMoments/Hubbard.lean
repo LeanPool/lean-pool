@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.Fermions
 public import LeanPool.HubbardMoments.ProjectedHopping
 public import LeanPool.HubbardMoments.SchriefferWolff

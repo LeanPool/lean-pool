@@ -351,9 +351,7 @@ theorem second_moment_regular (hH : IsProjectedHopping G t H) {z : ℕ}
       (t : ℂ) ^ 2 * (∑ s, n s : ℕ) * z * ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
         ((Fintype.card V : ℂ) - 1) := by
   rw [second_moment hH n hB hN]
-  have hE : 2 * G.edgeFinset.card = Fintype.card V * z := by
-    rw [← G.sum_degrees_eq_twice_card_edges]
-    simp [hz.degree_eq]
+  have hE := twice_card_edges_of_isRegularOfDegree G hz
   have hE' : (2 * G.edgeFinset.card : ℂ) = Fintype.card V * z := by exact_mod_cast hE
   have hN0 : (Fintype.card V : ℂ) ≠ 0 := by
     exact_mod_cast (by omega : Fintype.card V ≠ 0)
@@ -369,7 +367,7 @@ end Moments
 
 section Witness
 
-variable [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+variable [DecidableEq V] (G : SimpleGraph V)
 
 open Classical in
 /-- The hop matrix with every sign `+` (hard-core bosons): the matrix element from `c` to
@@ -377,7 +375,6 @@ open Classical in
 noncomputable def hopMatrix (t : ℝ) : Matrix (Config V σ) (Config V σ) ℂ := fun b c =>
   if ∃ i j, G.Adj i j ∧ c i ≠ none ∧ c j = none ∧ b = move c i j then (t : ℂ) else 0
 
-omit [Fintype V] [DecidableRel G.Adj] in
 /-- One hop leads from `c` to `b` exactly when one hop leads from `b` back to `c`. -/
 theorem exists_hop_comm {b c : Config V σ} :
     (∃ i j, G.Adj i j ∧ c i ≠ none ∧ c j = none ∧ b = move c i j) ↔
@@ -429,9 +426,7 @@ theorem second_moment_torus {σ : Type*} [Fintype σ] [DecidableEq σ] {L : ℕ}
     secondMoment (basis (Fin L × Fin L) n) H =
       (t : ℂ) ^ 2 * 4 * (∑ s, n s : ℕ) * ((L : ℂ) * L - (∑ s, n s : ℕ)) /
         ((L : ℂ) * L - 1) := by
-  -- `convert` identifies the two finiteness instances for the neighbour sets of the
-  -- torus (box-product and generic); they are equal because `Fintype` is a subsingleton.
-  have h := second_moment_regular hH (by convert torus_isRegularOfDegree L hL) n hB
+  have h := second_moment_regular hH (torus_isRegularOfDegree L hL) n hB
     (by simp only [Fintype.card_prod, Fintype.card_fin]; nlinarith)
   simp only [Fintype.card_prod, Fintype.card_fin] at h
   push_cast at h ⊢

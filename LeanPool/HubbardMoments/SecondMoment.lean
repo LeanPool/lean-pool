@@ -68,6 +68,13 @@ theorem card_arcs : (arcs G).card = 2 * G.edgeFinset.card := by
   refine sum_congr rfl fun v _ => ?_
   rw [← G.card_neighborFinset_eq_degree, G.neighborFinset_eq_filter, card_filter]
 
+omit [DecidableEq V] in
+/-- The sum of the degrees of a regular graph counts each edge twice. -/
+theorem twice_card_edges_of_isRegularOfDegree {z : ℕ} (hz : G.IsRegularOfDegree z) :
+    2 * G.edgeFinset.card = Fintype.card V * z := by
+  rw [← G.sum_degrees_eq_twice_card_edges]
+  simp [hz.degree_eq]
+
 /-- A fixed ordered pair of distinct vertices `(i, j)` has `i` occupied and `j` empty in
 exactly `C(N - 2, n - 1)` of the `n`-subsets. -/
 theorem card_occupied_empty {i j : V} (hij : i ≠ j) (n : ℕ) (hn : 1 ≤ n) :
@@ -182,9 +189,7 @@ theorem average_card_hops_regular {z : ℕ} (hz : G.IsRegularOfDegree z) (n : �
         (Fintype.card V).choose n =
       n * z * (Fintype.card V - n) / (Fintype.card V - 1) := by
   rw [average_card_hops G n hn hN]
-  have hE : 2 * G.edgeFinset.card = Fintype.card V * z := by
-    rw [← G.sum_degrees_eq_twice_card_edges]
-    simp [hz.degree_eq]
+  have hE := twice_card_edges_of_isRegularOfDegree G hz
   have hE' : (2 * G.edgeFinset.card : ℚ) = Fintype.card V * z := by exact_mod_cast hE
   have hN' : (2 : ℚ) ≤ Fintype.card V := by exact_mod_cast hN
   have hN0 : (Fintype.card V : ℚ) ≠ 0 := by apply ne_of_gt; linarith
@@ -199,9 +204,7 @@ theorem average_card_hops_torus (L : ℕ) (hL : 3 ≤ L) (n : ℕ) (hn : n ≤ L
         (L * L).choose n =
       4 * n * (L * L - n) / (L * L - 1) := by
   have hcard : Fintype.card (Fin L × Fin L) = L * L := by simp
-  -- `convert` identifies the two finiteness instances for the neighbour sets of the
-  -- torus (box-product and generic); they are equal because `Fintype` is a subsingleton.
-  have h := average_card_hops_regular (torus L) (by convert torus_isRegularOfDegree L hL) n
+  have h := average_card_hops_regular (torus L) (torus_isRegularOfDegree L hL) n
     (by rw [hcard]; exact hn) (by rw [hcard]; nlinarith)
   rw [hcard] at h
   push_cast at h ⊢

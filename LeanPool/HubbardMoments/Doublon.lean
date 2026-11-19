@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.Torus
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Tactic.FieldSimp
@@ -168,12 +169,10 @@ theorem doublonSecondOrder_self_torus {L : ℕ} (hL : 3 ≤ L) (t : ℝ)
     (hA : ∀ x, (torus L).Adj R x → A x R = -A R x) :
     doublonSecondOrder (pairHopping (torus L) t A) U R R = 8 * (t : ℂ) ^ 2 / U := by
   rw [doublonSecondOrder_self _ _ _ U R hA]
-  -- `convert` identifies the box-product and generic finiteness instances of the
-  -- neighbour set, as in `second_moment_torus`.
   have h4 : ∀ z : ℕ, z = 4 → 2 * (z : ℂ) * (t : ℂ) ^ 2 / U = 8 * (t : ℂ) ^ 2 / U := by
     rintro z rfl
     push_cast
     ring
-  exact h4 _ (by convert torus_isRegularOfDegree L hL R)
+  exact h4 _ (torus_isRegularOfDegree L hL R)
 
 end HubbardMoments

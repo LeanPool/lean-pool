@@ -74,7 +74,7 @@ theorem secondMomentTorus : Spec.SecondMomentTorus := by
   exact second_moment_torus hL hH n hB
 
 theorem projectedHoppingExists : Spec.ProjectedHoppingExists := by
-  intro V σ _ _ G _ t ht
+  intro V σ _ G t ht
   exact ⟨hopMatrix G t, isProjectedHopping_hopMatrix G ht⟩
 
 theorem pairHoppingHermitian : Spec.PairHoppingHermitian := by
