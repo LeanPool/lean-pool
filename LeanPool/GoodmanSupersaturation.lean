@@ -15,7 +15,8 @@ public import LeanPool.GoodmanSupersaturation.Supersaturation
 Source: url:https://github.com/Egly443/lean-goodman-supersaturation
 Authors: Brian Sanders
 Status: verified
-Main declarations: `SimpleGraph.goodman_within`, `SimpleGraph.goodman_bound`, `SimpleGraph.IsRegularOfDegree.goodman_eq`, `SimpleGraph.supersaturation`
+Main declarations: `SimpleGraph.goodman_within`, `SimpleGraph.goodman_bound`,
+  `SimpleGraph.IsRegularOfDegree.goodman_eq`, `SimpleGraph.supersaturation`
 Tags: ramsey-theory, extremal-graph-theory, supersaturation, combinatorics
 MSC: 05C55, 05C35, 05D10
 -/
