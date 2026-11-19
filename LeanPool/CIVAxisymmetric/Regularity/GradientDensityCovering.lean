@@ -92,7 +92,7 @@ private theorem countable_of_positive_disjoint_integrals {ι : Type*}
     (hfin : (∫⁻ w in E, F w) < ⊤) : Countable ι := by
   classical
   have hsum_le : (∑' i, g i) ≤ ∫⁻ w in E, F w := by
-    rw [ENNReal.tsum_eq_iSup_sum]
+    rw [tsum_eq_iSup_sum]
     refine iSup_le fun s => ?_
     have hd : Set.PairwiseDisjoint (↑s : Set ι) A := fun i _ j _ hij => hdisj hij
     calc (∑ i ∈ s, g i) ≤ ∑ i ∈ s, ∫⁻ w in A i, F w :=
