@@ -35,7 +35,8 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreTransitionAnalyticWeakSymmetry
+public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorSymmetry
+public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairClosure
 
 /-!
 # Ginibre transition analytic unrestricted weak comparison

@@ -54,13 +54,28 @@ open scoped Topology NNReal ENNReal
 namespace GinibrePoincare
 noncomputable section
 
-theorem ginibreBrownian_core_test_expectation_with_integrability
+theorem continuous_ginibrePregenerator_of_compact_test {n : ℕ}
+    {f : Configuration n → ℝ} (hf : IsGinibreCollisionFreeCompactTest f) :
+    Continuous (ginibrePregenerator n f) := by
+  rw [continuous_iff_continuousAt]
+  intro z
+  by_cases hz : z ∈ tsupport f
+  · have h2 : (2 : WithTop ℕ∞) ≤ (↑(⊤ : ℕ∞) : WithTop ℕ∞) :=
+      WithTop.coe_le_coe.mpr le_top
+    exact continuousAt_ginibrePregenerator_of_collisionFree (hf.1.of_le h2)
+      ((collisionFree_iff_not_mem_collisionSet z).mpr (hf.2.2 hz))
+  · have heq : ginibrePregenerator n f =ᶠ[𝓝 z] (fun _ => 0) := by
+      filter_upwards [((isClosed_tsupport f).isOpen_compl.mem_nhds hz)] with y hy
+      exact ginibrePregenerator_eq_zero_of_notMem_tsupport f hy
+    exact continuousAt_const.congr_of_eventuallyEq heq
+
+theorem ginibreBrownian_compact_test_expectation_with_integrability
     {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (hn : 0 < n) (α : ℝ≥0)
     (z : Configuration n) (hz : CollisionFree z)
     (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
     [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
     (hind : iIndepFun (fun i ω t => B i t ω) P) (T : ℝ≥0)
-    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+    (f : Configuration n → ℝ) (hf : IsGinibreCollisionFreeCompactTest f) :
     Integrable (fun ω => ∫ s in (0 : ℝ)..(T : ℝ), ginibreRealPaperSpeedGenerator n α f
       (ginibreBrownianMaximalProcess n α z B s.toNNReal ω)) P ∧
     (∫ ω, f (ginibreBrownianMaximalProcess n α z B T ω) ∂P) =
@@ -80,7 +95,7 @@ theorem ginibreBrownian_core_test_expectation_with_integrability
       (ginibreBrownianMaximalProcess n α z B s.toNNReal ω)
   obtain ⟨C, hC⟩ := hf.2.1.exists_bound_of_continuous hf.1.continuous
   have hLf : Continuous (ginibreRealPaperSpeedGenerator n α f) :=
-    (continuous_ginibrePregenerator_of_core hf).const_mul _
+    (continuous_ginibrePregenerator_of_compact_test hf).const_mul _
   have hLc : HasCompactSupport (ginibreRealPaperSpeedGenerator n α f) :=
     by
       change HasCompactSupport ((fun _ => (α : ℝ)/(n : ℝ))*ginibrePregenerator n f)
@@ -94,9 +109,9 @@ theorem ginibreBrownian_core_test_expectation_with_integrability
     exact (integrable_const C).mono' (hf.1.continuous.measurable.comp hXa).aestronglyMeasurable
       (ae_of_all P (fun ω => hC (X m T ω)))
   have hAm (m : ℕ) : Integrable (A m) P :=
-    (ginibreBrownian_stopped_core_test_expectation hn α z hz B P hB hind (R m) (hR m) T f hf).1
+    (ginibreBrownian_stopped_compact_test_expectation hn α z hz B P hB hind (R m) (hR m) T f hf).1
   have hEq (m : ℕ) : (∫ ω, Y m ω ∂P)=f z+∫ ω, A m ω ∂P :=
-    (ginibreBrownian_stopped_core_test_expectation hn α z hz B P hB hind (R m) (hR m) T f hf).2
+    (ginibreBrownian_stopped_compact_test_expectation hn α z hz B P hB hind (R m) (hR m) T f hf).2
   have hσlim : ∀ᵐ ω ∂P, ∀ᶠ m in atTop, σ m ω=T := by
     filter_upwards [ginibreBrownianMaximalLifetime_top_ae hn α z hz B P hB hind] with ω hω
     obtain ⟨c, hc⟩ := ginibreDrivenHamiltonianBoundedStop_eventually_eq_cap hn α
@@ -143,6 +158,33 @@ theorem ginibreBrownian_core_test_expectation_with_integrability
     exact le_of_tendsto hω.norm (Eventually.of_forall hb)
   refine ⟨(integrable_const (D*(T : ℝ))).mono' hAlimMeas hAlimBound,?_⟩
   exact tendsto_nhds_unique hYT (tendsto_const_nhds.add hAT)
+
+theorem ginibreBrownian_compact_test_expectation
+    {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (hn : 0 < n) (α : ℝ≥0)
+    (z : Configuration n) (hz : CollisionFree z)
+    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
+    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
+    (hind : iIndepFun (fun i ω t => B i t ω) P) (T : ℝ≥0)
+    (f : Configuration n → ℝ) (hf : IsGinibreCollisionFreeCompactTest f) :
+    (∫ ω, f (ginibreBrownianMaximalProcess n α z B T ω) ∂P) =
+      f z+∫ ω, (∫ s in (0 : ℝ)..(T : ℝ), ginibreRealPaperSpeedGenerator n α f
+        (ginibreBrownianMaximalProcess n α z B s.toNNReal ω)) ∂P :=
+  (ginibreBrownian_compact_test_expectation_with_integrability hn α z hz B P hB hind T f hf).2
+
+theorem ginibreBrownian_core_test_expectation_with_integrability
+    {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (hn : 0 < n) (α : ℝ≥0)
+    (z : Configuration n) (hz : CollisionFree z)
+    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
+    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
+    (hind : iIndepFun (fun i ω t => B i t ω) P) (T : ℝ≥0)
+    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+    Integrable (fun ω => ∫ s in (0 : ℝ)..(T : ℝ), ginibreRealPaperSpeedGenerator n α f
+      (ginibreBrownianMaximalProcess n α z B s.toNNReal ω)) P ∧
+    (∫ ω, f (ginibreBrownianMaximalProcess n α z B T ω) ∂P) =
+      f z+∫ ω, (∫ s in (0 : ℝ)..(T : ℝ), ginibreRealPaperSpeedGenerator n α f
+        (ginibreBrownianMaximalProcess n α z B s.toNNReal ω)) ∂P := by
+  exact ginibreBrownian_compact_test_expectation_with_integrability hn α z hz B P hB hind T f
+    hf.isCollisionFreeCompactTest
 
 theorem ginibreBrownian_core_test_expectation
     {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (hn : 0 < n) (α : ℝ≥0)
