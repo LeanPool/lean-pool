@@ -69,13 +69,7 @@ theorem ginibreConfigurationBrownianGradientSum_squareRootRadius_full_direction
   apply Finset.sum_congr rfl
   intro j hj
   dsimp only
-  have hjT : itoUniformNNTime t (k+1) j ≤ t :=
-    itoUniformNNTime_le_end t (k+1) j (Nat.succ_pos k) (Finset.mem_range.mp hj).le
-  have he : ginibreBrownianHamiltonianStoppedProcess n α z B R T (itoUniformNNTime t (k+1) j) ω =
-      ginibreBrownianMaximalProcess n α z B (itoUniformNNTime t (k+1) j) ω := by
-    change ginibreBrownianMaximalProcess n α z B
-      (min (itoUniformNNTime t (k+1) j) (ginibreBrownianHamiltonianBoundedStop n α z B R T ω)) ω = _
-    rw [min_eq_left (hjT.trans ht)]
+  have he := ginibreBrownianHamiltonianStoppedProcess_grid_eq_maximal α z B R T t k j hj ω ht
   have hCF := (ginibreBrownianHamiltonianStoppedProcess_range (by omega) α z hz B R hR T
     (itoUniformNNTime t (k+1) j) ω).1
   rw [← mul_assoc, ginibre_squareRootRadius_noise_coordinate hn α hα _ hCF e i, he, mul_assoc]

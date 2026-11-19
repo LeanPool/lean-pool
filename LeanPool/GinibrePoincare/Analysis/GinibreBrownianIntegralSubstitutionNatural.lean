@@ -54,6 +54,53 @@ open scoped NNReal Topology
 namespace GinibrePoincare
 noncomputable section
 
+/-- Aggregation step: terminal mean-square limits `m i` of the coordinate Riemann sums
+identify any in-probability limit `J` of their sum, which is then square integrable and a
+mean-square limit. -/
+theorem brownianAggregateUniformSum_meanSquare_of_coordinate_limits
+    {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
+    (B : ι → ℝ≥0 → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] [P.IsComplete]
+    (hB : ∀ i, IsBrownianReal (B i) P) (hind : iIndepFun (fun i ω t => B i t ω) P)
+    (F : ι → ℝ≥0 → Ω → ℝ)
+    (hF : ∀ i r, @Measurable Ω ℝ
+      (ginibreBrownianAugmentedFiltration B P (fun i => (hB i).toIsPreBrownianReal) r) _ (F i r))
+    (C : ℝ) (hb : ∀ i r ω, ‖F i r ω‖ ≤ C) (T : ℝ≥0) (m : ι → Ω → ℝ)
+    (hmL : ∀ i, MemLp (m i) 2 P)
+    (hmS : ∀ i, Tendsto (fun k => ∫ ω,
+      (brownianUniformLeftSum (B i) (F i) T (k + 1) ω - m i ω) ^ 2 ∂P) atTop (𝓝 0))
+    (J : Ω → ℝ)
+    (hlim : TendstoInMeasure P (fun k ω => ∑ i, brownianUniformLeftSum (B i) (F i) T (k + 1) ω)
+      atTop J) :
+    MemLp J 2 P ∧ Tendsto (fun k => ∫ ω,
+      ((∑ i, brownianUniformLeftSum (B i) (F i) T (k + 1) ω) - J ω) ^ 2 ∂P) atTop (𝓝 0) := by
+  classical
+  have hFi (i : ι) (r : ℝ≥0) : MemLp (F i r) 2 P := MemLp.of_bound
+    (((hF i r).mono ((ginibreBrownianAugmentedFiltration B P
+      (fun i => (hB i).toIsPreBrownianReal)).le r) le_rfl).aestronglyMeasurable)
+    C (Eventually.of_forall (hb i r))
+  have hSL (i : ι) (k : ℕ) : MemLp (brownianUniformLeftSum (B i) (F i) T (k+1)) 2 P :=
+    brownianUniformLeftSum_memLp_two B P (fun i => (hB i).toIsPreBrownianReal) hind
+      i (F i) (hF i) (hFi i) T (k+1)
+  have hsum := itoTendstoInMeasure_finset_sum P Finset.univ
+    (fun i k => brownianUniformLeftSum (B i) (F i) T (k+1)) m
+    (fun i k => (hSL i k).aestronglyMeasurable)
+    (fun i => ginibre_tendstoInMeasure_of_meanSquare P _ _
+      (fun k => ((hSL i k).sub (hmL i)).integrable_sq) (hmS i))
+  have he := tendstoInMeasure_ae_unique hsum hlim
+  have hJL : MemLp (fun ω => ∑ i, m i ω) 2 P := memLp_finsetSum _ (fun i _ => hmL i)
+  refine ⟨hJL.ae_eq he, ?_⟩
+  have hh := actualMeanSquareZero_finset_sum P Finset.univ
+    (fun i k ω => brownianUniformLeftSum (B i) (F i) T (k+1) ω - m i ω)
+    (fun i k => (hSL i k).sub (hmL i)) hmS
+  have hEq (k : ℕ) : (∫ ω,
+      ((∑ i, brownianUniformLeftSum (B i) (F i) T (k+1) ω)-J ω)^2 ∂P) =
+      ∫ ω, (∑ i, (brownianUniformLeftSum (B i) (F i) T (k+1) ω - m i ω))^2 ∂P := by
+    apply integral_congr_ae
+    filter_upwards [he] with ω hω
+    rw [← hω, Finset.sum_sub_distrib]
+  simp_rw [hEq]
+  exact hh
+
 theorem brownianAggregateUniformSum_meanSquare_of_horizon_limit
     {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
     (B : ι → ℝ≥0 → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] [P.IsComplete]
@@ -72,39 +119,9 @@ theorem brownianAggregateUniformSum_meanSquare_of_horizon_limit
   have hex (i : ι) := brownianContinuousIntegral_exists B P hB hind i (F i) (hF i)
     T (hc i) C hC (hb i)
   choose M hM hMC hML hM0 hMP hMS using hex
-  have hi (i : ι) : TendstoInMeasure P
-      (fun k => brownianUniformLeftSum (B i) (F i) T (k+1)) atTop (M i T) := by
-    have he : (fun k => brownianUniformPartialSum (B i) (F i) T (k+1) T) =
-        (fun k => brownianUniformLeftSum (B i) (F i) T (k+1)) := by
-      funext k ω
-      exact brownianUniformPartialSum_terminal (B i) (F i) T (k+1) ω
-    rw [← he]
-    exact hMP i T
-  have hFi (i : ι) (r : ℝ≥0) : MemLp (F i r) 2 P := MemLp.of_bound
-    (((hF i r).mono ((ginibreBrownianAugmentedFiltration B P
-      (fun i => (hB i).toIsPreBrownianReal)).le r) le_rfl).aestronglyMeasurable)
-    C (Eventually.of_forall (hb i r))
-  have hSL (i : ι) (k : ℕ) : MemLp (brownianUniformLeftSum (B i) (F i) T (k+1)) 2 P :=
-    brownianUniformLeftSum_memLp_two B P (fun i => (hB i).toIsPreBrownianReal) hind
-      i (F i) (hF i) (hFi i) T (k+1)
-  have hsum := itoTendstoInMeasure_finset_sum P Finset.univ
-    (fun i k => brownianUniformLeftSum (B i) (F i) T (k+1)) (fun i => M i T)
-    (fun i k => (hSL i k).aestronglyMeasurable) hi
-  have he := tendstoInMeasure_ae_unique hsum hlim
-  have hJL : MemLp (fun ω => ∑ i, M i T ω) 2 P := memLp_finsetSum _ (fun i hi => hML i T)
-  refine ⟨hJL.ae_eq he,?_⟩
-  have hh := actualMeanSquareZero_finset_sum P Finset.univ
-    (fun i k ω => brownianUniformLeftSum (B i) (F i) T (k+1) ω-M i T ω)
-    (fun i k => (hSL i k).sub (hML i T))
-    (fun i => by simpa only [brownianUniformPartialSum_terminal] using hMS i T)
-  have hEq (k : ℕ) : (∫ ω,
-      ((∑ i, brownianUniformLeftSum (B i) (F i) T (k+1) ω)-J ω)^2 ∂P) =
-      ∫ ω, (∑ i, (brownianUniformLeftSum (B i) (F i) T (k+1) ω-M i T ω))^2 ∂P := by
-    apply integral_congr_ae
-    filter_upwards [he] with ω hω
-    rw [← hω, Finset.sum_sub_distrib]
-  simp_rw [hEq]
-  exact hh
+  exact brownianAggregateUniformSum_meanSquare_of_coordinate_limits B P hB hind F hF C hb T
+    (fun i => M i T) (fun i => hML i T)
+    (fun i => by simpa only [brownianUniformPartialSum_terminal] using hMS i T) J hlim
 
 /-- Genuine stochastic substitution under natural bounded continuous
 unit-field assumptions, with integral values specified only by actual horizon

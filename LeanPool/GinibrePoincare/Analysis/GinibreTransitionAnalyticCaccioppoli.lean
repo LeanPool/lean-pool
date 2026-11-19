@@ -35,7 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreTransitionAnalyticWeakCore
+public import Mathlib.MeasureTheory.Function.L2Space
 
 /-! Quantitative energy control from the actual localized weak resolvent test
 identity. The gradient need only be square-integrable after the cutoff. -/

@@ -47,24 +47,22 @@ open scoped NNReal
 namespace GinibrePoincare
 noncomputable section
 
-/-- The concrete full weak resolvent preserves pointwise nonnegativity. -/
-theorem ginibreFullValueResolvent_nonneg (n : ℕ) (hn : 0 < n)
-    (f : GinibreFullValueL2 n) (hf : ∀ᵐ z ∂ginibreMeasure n, 0 ≤ f z) :
-    ∀ᵐ z ∂ginibreMeasure n, 0 ≤ ginibreFullValueResolvent n hn f z := by
+/-- Positivity follows from the actual weak equation at every positive step size. -/
+theorem ginibreFullWeak_backward_nonneg (n : ℕ) (hn : 0 < n)
+    (c : ℝ) (hc : 0 < c) (f u : GinibreFullValueL2 n) (g : GinibreFullGradientL2 n)
+    (hf : ∀ᵐ z ∂ginibreMeasure n, 0 ≤ f z)
+    (hu : IsGinibreDistributionalGradient n u g)
+    (hs : IsGinibreSymmetricWeakPair (u, g))
+    (he : ∀ w : GinibreFullValueL2 n, ∀ h : GinibreFullGradientL2 n,
+      IsGinibreDistributionalGradient n w h → IsGinibreSymmetricWeakPair (w, h) →
+      inner ℝ u w + (c / (n : ℝ)) * inner ℝ g h = inner ℝ f w) :
+    ∀ᵐ z ∂ginibreMeasure n, 0 ≤ u z := by
   obtain ⟨K, hK⟩ := ginibreNegativeTest_lipschitz
-  let p := ginibreFullFormResolvent n hn f
-  let u := ginibreFullFormValue n hn p
-  let g := ginibreFullFormGradient n hn p
   let q := hK.compLp ginibreNegativeTest_zero u
   let r := ginibreFullChainGradient n ginibreNegativeTest ginibreNegativeTest_smooth K hK u g
-  have hp := ginibreFullFormSpace_weak n hn p
   have hq := ginibreFullWeakSpace_smoothChain n hn ginibreNegativeTest ginibreNegativeTest_smooth
-    ginibreNegativeTest_zero K hK u g hp.1 hp.2
-  let Q : ginibreFullWeakSpace n hn := ⟨(q, r), hq⟩
-  have heq := ginibreFullFormResolvent_riesz n hn f (ginibreFullFormOfWeak n hn Q)
-  rw [ginibreFullFormSpace_inner, ginibreFullFormOfWeak_value,
-    ginibreFullFormOfWeak_gradient] at heq
-  change inner ℝ u q + (1 / (n : ℝ)) * inner ℝ g r = inner ℝ f q at heq
+    ginibreNegativeTest_zero K hK u g hu hs
+  have heq := he q r hq.1 hq.2
   have hqa : (q : Configuration n → ℝ) =ᵐ[ginibreMeasure n]
       fun z => ginibreNegativeTest (u z) := hK.coeFn_compLp ginibreNegativeTest_zero u
   have hra := ginibreFullChainGradient_ae n ginibreNegativeTest ginibreNegativeTest_smooth K hK u g
@@ -90,7 +88,7 @@ theorem ginibreFullValueResolvent_nonneg (n : ℕ) (hn : 0 < n)
     simp only [Pi.zero_apply, Real.inner_apply]
     rw [hqz]
     exact mul_nonneg hz (ginibreNegativeTest_nonneg _)
-  have henergy : (1 / (n : ℝ)) * inner ℝ g r ≤ 0 :=
+  have henergy : (c / (n : ℝ)) * inner ℝ g r ≤ 0 :=
     mul_nonpos_of_nonneg_of_nonpos (by positivity) hgrad
   have hzero : inner ℝ u q = 0 := by linarith
   have hneg : ∀ᵐ z ∂ginibreMeasure n, 0 ≤ -inner ℝ (u z) (q z) := by
@@ -108,6 +106,20 @@ theorem ginibreFullValueResolvent_nonneg (n : ℕ) (hn : 0 < n)
   rw [hqz] at hz
   have hprod := neg_eq_zero.mp hz
   exact (mul_ne_zero hupos.ne (ginibreNegativeTest_pos hupos).ne') hprod
+
+/-- The concrete full weak resolvent preserves pointwise nonnegativity. -/
+theorem ginibreFullValueResolvent_nonneg (n : ℕ) (hn : 0 < n)
+    (f : GinibreFullValueL2 n) (hf : ∀ᵐ z ∂ginibreMeasure n, 0 ≤ f z) :
+    ∀ᵐ z ∂ginibreMeasure n, 0 ≤ ginibreFullValueResolvent n hn f z := by
+  let p := ginibreFullFormResolvent n hn f
+  have hp := ginibreFullFormSpace_weak n hn p
+  refine ginibreFullWeak_backward_nonneg n hn 1 one_pos f (ginibreFullFormValue n hn p)
+    (ginibreFullFormGradient n hn p) hf hp.1 hp.2 fun w h hw hs => ?_
+  have heq := ginibreFullFormResolvent_riesz n hn f
+    (ginibreFullFormOfWeak n hn (⟨(w, h), ⟨hw, hs⟩⟩ : ginibreFullWeakSpace n hn))
+  rw [ginibreFullFormSpace_inner, ginibreFullFormOfWeak_value,
+    ginibreFullFormOfWeak_gradient] at heq
+  exact heq
 
 /-- Order preservation for actual almost-everywhere representatives. -/
 theorem ginibreFullValueResolvent_mono (n : ℕ) (hn : 0 < n)
