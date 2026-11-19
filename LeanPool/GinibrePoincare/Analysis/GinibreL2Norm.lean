@@ -104,4 +104,64 @@ theorem Lp_norm_star {α : Type*} [MeasurableSpace α] {μ : Measure α} (u : Lp
   rw [Lp.norm_def, Lp.norm_def]
   exact congrArg ENNReal.toReal AEEqFun.eLpNorm_star
 
+/-- Conjugation is involutive on complex L². -/
+theorem Lp_star_star {α : Type*} [MeasurableSpace α] {μ : Measure α} (u : Lp ℂ 2 μ) :
+    star (star u) = u := by
+  apply Lp.ext
+  filter_upwards [Lp.coeFn_star (star u), Lp.coeFn_star u] with z h1 h2
+  simp only [Pi.star_apply] at h1 h2
+  rw [h1, h2, star_star]
+
+/-- Conjugation distributes over subtraction in complex L². -/
+theorem Lp_star_sub {α : Type*} [MeasurableSpace α] {μ : Measure α} (u v : Lp ℂ 2 μ) :
+    star (u - v) = star u - star v := by
+  apply Lp.ext
+  filter_upwards [Lp.coeFn_star (u - v), Lp.coeFn_sub u v,
+    Lp.coeFn_sub (star u) (star v), Lp.coeFn_star u, Lp.coeFn_star v] with z h1 h2 h3 h4 h5
+  simp only [Pi.star_apply, Pi.sub_apply] at h1 h2 h3 h4 h5
+  rw [h1, h2, h3, h4, h5, star_sub]
+
+/-- Conjugation fixes zero in complex L². -/
+theorem Lp_star_zero {α : Type*} [MeasurableSpace α] {μ : Measure α} :
+    star (0 : Lp ℂ 2 μ) = 0 := by
+  apply Lp.ext
+  filter_upwards [Lp.coeFn_star (0 : Lp ℂ 2 μ), Lp.coeFn_zero ℂ 2 μ] with z hs hz
+  simp only [Pi.star_apply] at hs
+  rw [hs, hz]
+  simp
+
+/-- Conjugation is conjugate-linear for complex scalars in complex L². -/
+theorem Lp_star_complex_smul {α : Type*} [MeasurableSpace α] {μ : Measure α} (a : ℂ)
+    (u : Lp ℂ 2 μ) : star (a • u) = star a • star u := by
+  apply Lp.ext
+  filter_upwards [Lp.coeFn_star (a • u), Lp.coeFn_smul a u,
+    Lp.coeFn_smul (star a) (star u), Lp.coeFn_star u] with z h1 h2 h3 h4
+  simp only [Pi.star_apply, Pi.smul_apply] at h1 h2 h3 h4
+  rw [h1, h2, h3, h4]
+  simp [smul_eq_mul]
+
+/-- Conjugation conjugates the complex L² inner product. -/
+theorem Lp_inner_star_star {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    (u v : Lp ℂ 2 μ) : inner ℂ (star u) (star v) = star (inner ℂ u v) := by
+  rw [MeasureTheory.L2.inner_def, MeasureTheory.L2.inner_def]
+  rw [integral_congr_ae (show
+    (fun z ↦ inner ℂ ((star u) z) ((star v) z)) =ᵐ[μ]
+      (fun z ↦ star (inner ℂ (u z) (v z))) by
+    filter_upwards [Lp.coeFn_star u, Lp.coeFn_star v] with z hu hv
+    rw [hu, hv]
+    simp [RCLike.inner_apply])]
+  exact integral_conj
+
+/-- Pointwise conjugation on complex L², as a real-linear isometry. -/
+def LpConjugationIsometry {α : Type*} [MeasurableSpace α] (μ : Measure α) :
+    Lp ℂ 2 μ →ₗᵢ[ℝ] Lp ℂ 2 μ where
+  toLinearMap :=
+    { toFun := star
+      map_add' := Lp_star_add
+      map_smul' := Lp_star_real_smul }
+  norm_map' := Lp_norm_star
+
+@[simp] theorem LpConjugationIsometry_apply {α : Type*} [MeasurableSpace α] (μ : Measure α)
+    (u : Lp ℂ 2 μ) : LpConjugationIsometry μ u = star u := rfl
+
 end GinibrePoincare

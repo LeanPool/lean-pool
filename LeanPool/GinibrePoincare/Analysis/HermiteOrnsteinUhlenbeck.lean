@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.NormalizedComplexHermite
-public import Mathlib.Tactic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Basic.Complex.Basic
