@@ -10,9 +10,6 @@ module
 public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.Torus
 import Mathlib.Analysis.Complex.Exponential
-import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
@@ -173,6 +170,6 @@ theorem doublonSecondOrder_self_torus {L : ℕ} (hL : 3 ≤ L) (t : ℝ)
     rintro z rfl
     push_cast
     ring
-  exact h4 _ (torus_isRegularOfDegree L hL R)
+  exact h4 _ (torus_isRegularOfDegree_of_fintype L hL R)
 
 end HubbardMoments

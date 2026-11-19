@@ -15,11 +15,13 @@ import Mathlib.Tactic.Ring
 /-!
 # The Schrieffer–Wolff cross term
 
-To second order in `1/U` the Hubbard model on the no-double-occupancy states `P₀` has the
-effective Hamiltonian `T₀ - V/U`, with `T₀ = P₀ H P₀`, `T₁ = Q₁ H P₀` and `V = T₁† T₁`
-(`HubbardMoments.virtualOp`). Its central second moment is
-`μ₂(T₀) - (2/U) ⟨T₀, V⟩ + Var(V)/U²`, and the paper's §7 states that the cross term
-`⟨T₀, V⟩ = Tr(T₀ V)/|P₀|` vanishes for `L ≥ 4`. For every hopping operator `H` on a graph `G`
+Truncating the effective Hamiltonian on the no-double-occupancy sector `P₀` through order
+`1/U` gives `T₀ - V/U`, where `T₀ = P₀ H P₀`, `T₁ = Q₁ H P₀`, and `V = T₁† T₁`
+(`HubbardMoments.virtualOp`). The central second moment of this truncated matrix is
+`μ₂(T₀) - (2/U) ⟨T₀, V⟩ + Var(V)/U²`. The full expansion also has a third-order hopping
+term at order `1/U²`, as described in the paper's §7.1, equations (16) and (17). Section 7
+states that the cross term `⟨T₀, V⟩ = Tr(T₀ V)/|P₀|` vanishes for `L ≥ 4`.
+For every hopping operator `H` on a graph `G`
 (`HubbardMoments.IsHoppingOperator`):
 
 * `apply_self_eq_zero`: the diagonal of `H` vanishes;

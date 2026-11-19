@@ -7,7 +7,8 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.HubbardMoments.Hubbard
+public import LeanPool.HubbardMoments.FermionHopping
+public import LeanPool.HubbardMoments.ProjectedHopping
 
 /-!
 # The second-moment theorem for arbitrary hopping amplitudes

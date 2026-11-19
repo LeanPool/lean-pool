@@ -9,9 +9,7 @@ module
 
 public import LeanPool.HubbardMoments.Defs
 public import Mathlib.GroupTheory.Perm.Cycle.Type
-import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Tactic.IntervalCases

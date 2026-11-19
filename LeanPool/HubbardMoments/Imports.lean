@@ -11,6 +11,7 @@ public import LeanPool.HubbardMoments.ClosedWalks
 public import LeanPool.HubbardMoments.Combinatorics.Subsets
 public import LeanPool.HubbardMoments.Defs
 public import LeanPool.HubbardMoments.Doublon
+public import LeanPool.HubbardMoments.FermionHopping
 public import LeanPool.HubbardMoments.Fermions
 public import LeanPool.HubbardMoments.FinitePopulation
 public import LeanPool.HubbardMoments.Hubbard

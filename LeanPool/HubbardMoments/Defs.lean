@@ -98,6 +98,10 @@ keeping its spin. -/
 def move (c : Config V σ) (i j : V) : Config V σ :=
   Function.update (Function.update c i none) j (c i)
 
+/-- A legal projected hop sends an occupied site to a vacant neighbor and moves its spin. -/
+def IsProjectedHop (G : SimpleGraph V) (c b : Config V σ) : Prop :=
+  ∃ i j, G.Adj i j ∧ c i ≠ none ∧ c j = none ∧ b = move c i j
+
 /-- **Projected hopping operators.** `H`, a matrix on the configurations, is a projected
 hopping operator on the graph `G` with bond moduli `w` if
 
@@ -117,8 +121,7 @@ structure IsGraphProjectedHopping (G : SimpleGraph V) (w : V → V → ℝ)
     (H : Matrix (Config V σ) (Config V σ) ℂ) : Prop where
   isHermitian : H.IsHermitian
   norm_apply_move : ∀ c i j, G.Adj i j → c i ≠ none → c j = none → ‖H (move c i j) c‖ = w i j
-  apply_eq_zero : ∀ c b, (∀ i j, G.Adj i j → c i ≠ none → c j = none → b ≠ move c i j) →
-    H b c = 0
+  apply_eq_zero : ∀ c b, ¬ IsProjectedHop G c b → H b c = 0
 
 /-- A graph hopping operator with constant modulus `t` on every edge. -/
 abbrev IsProjectedHopping (G : SimpleGraph V) (t : ℝ)

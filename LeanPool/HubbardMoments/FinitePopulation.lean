@@ -9,7 +9,7 @@ module
 
 public import LeanPool.HubbardMoments.Combinatorics.Subsets
 public import LeanPool.HubbardMoments.Defs
-import Mathlib.Data.Nat.Choose.Factorization
+import Mathlib.Data.Nat.Factorial.Cast
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -308,13 +308,6 @@ theorem sampleMoment_four {k : ℕ} (hk : k ≤ Fintype.card V) :
   classical
   rw [sampleMoment_four_eq ε hk, sum_tuple_four ε hε]
 
-omit hε in
-theorem cast_descFactorial_two (n : ℕ) : (n.descFactorial 2 : ℝ) = n * (n - 1) := by
-  rcases n with _ | n
-  · simp
-  · simp [Nat.descFactorial]
-    ring
-
 omit [DecidableEq V] in
 /-- **The finite-population correction** (§5.3): the variance of the sum of `k` values drawn
 without replacement is `k σ₁² (N - k)/(N - 1)`, `σ₁² = P₂/N`. -/
@@ -322,7 +315,7 @@ theorem sampleMoment_two_fpc {k : ℕ} (hk : k ≤ Fintype.card V) (hN : 2 ≤ F
     sampleMoment ε k 2 = k * ((∑ i, ε i ^ 2) / Fintype.card V) *
       (Fintype.card V - k) / (Fintype.card V - 1) := by
   rw [sampleMoment_two hε hk, inclusionProb, inclusionProb, Nat.descFactorial_one,
-    Nat.descFactorial_one, cast_descFactorial_two, cast_descFactorial_two]
+    Nat.descFactorial_one, Nat.cast_descFactorial_two, Nat.cast_descFactorial_two]
   have hN0 : (Fintype.card V : ℝ) ≠ 0 := by positivity
   have hN1 : (Fintype.card V : ℝ) - 1 ≠ 0 := by
     have : (2 : ℝ) ≤ Fintype.card V := by exact_mod_cast hN

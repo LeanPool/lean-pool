@@ -10,7 +10,6 @@ module
 public import LeanPool.HubbardMoments.SecondMoment
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
-import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.LinearCombination
 
@@ -231,7 +230,7 @@ omit [Fintype V] [Fintype σ] [DecidableEq σ] [DecidableRel G.Adj] in
 /-- Every diagonal element of a projected hopping operator vanishes. -/
 theorem apply_self_eq_zero {w : V → V → ℝ} (hH : IsGraphProjectedHopping G w H)
     (c : Config V σ) : H c c = 0 :=
-  hH.apply_eq_zero c c fun _ _ _ hi hj h => move_ne_self c hi hj h.symm
+  hH.apply_eq_zero c c fun ⟨_, _, _, hi, hj, h⟩ => move_ne_self c hi hj h.symm
 
 omit [DecidableEq V] [Fintype σ] [DecidableEq σ] in
 theorem mem_occ {c : Config V σ} {v : V} : v ∈ occ c ↔ c v ≠ none := by
@@ -268,7 +267,7 @@ theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c
       exact Prod.ext h1 h2
   · intro b _ hb
     have hentry : H b c = 0 := by
-      refine hH.apply_eq_zero c b fun i j hij hi hj hbm => hb ?_
+      refine hH.apply_eq_zero c b fun ⟨i, j, hij, hi, hj, hbm⟩ => hb ?_
       refine mem_image.mpr ⟨(i, j), ?_, hbm.symm⟩
       simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not]
       exact ⟨hij, hi, hj⟩
@@ -373,15 +372,12 @@ open Classical in
 /-- The hop matrix with every sign `+` (hard-core bosons): the matrix element from `c` to
 `b` is `t` when `b` is obtained from `c` by one hop along an edge, and `0` otherwise. -/
 noncomputable def hopMatrix (t : ℝ) : Matrix (Config V σ) (Config V σ) ℂ := fun b c =>
-  if ∃ i j, G.Adj i j ∧ c i ≠ none ∧ c j = none ∧ b = move c i j then (t : ℂ) else 0
+  if IsProjectedHop G c b then (t : ℂ) else 0
 
 /-- One hop leads from `c` to `b` exactly when one hop leads from `b` back to `c`. -/
 theorem exists_hop_comm {b c : Config V σ} :
-    (∃ i j, G.Adj i j ∧ c i ≠ none ∧ c j = none ∧ b = move c i j) ↔
-      (∃ i j, G.Adj i j ∧ b i ≠ none ∧ b j = none ∧ c = move b i j) := by
-  have key : ∀ b c : Config V σ,
-      (∃ i j, G.Adj i j ∧ c i ≠ none ∧ c j = none ∧ b = move c i j) →
-        (∃ i j, G.Adj i j ∧ b i ≠ none ∧ b j = none ∧ c = move b i j) := by
+    IsProjectedHop G c b ↔ IsProjectedHop G b c := by
+  have key : ∀ b c : Config V σ, IsProjectedHop G c b → IsProjectedHop G b c := by
     rintro b c ⟨i, j, hij, hi, hj, rfl⟩
     refine ⟨j, i, hij.symm, ?_, ?_, ?_⟩
     · rw [move_apply_right]
@@ -405,15 +401,11 @@ theorem isProjectedHopping_hopMatrix {t : ℝ} (ht : 0 ≤ t) :
     · simp
   norm_apply_move := by
     intro c i j hij hi hj
-    have hcond : ∃ i' j', G.Adj i' j' ∧ c i' ≠ none ∧ c j' = none ∧
-        move c i j = move c i' j' := ⟨i, j, hij, hi, hj, rfl⟩
+    have hcond : IsProjectedHop G c (move c i j) := ⟨i, j, hij, hi, hj, rfl⟩
     simp only [hopMatrix, hcond, ↓reduceIte, Complex.norm_real, Real.norm_of_nonneg ht]
   apply_eq_zero := by
     intro c b h
-    have hno : ¬ ∃ i j, G.Adj i j ∧ c i ≠ none ∧ c j = none ∧ b = move c i j := by
-      rintro ⟨i, j, hij, hi, hj, hb⟩
-      exact h i j hij hi hj hb
-    simp only [hopMatrix, hno, ↓reduceIte]
+    simp only [hopMatrix, h, ↓reduceIte]
 
 end Witness
 
@@ -426,7 +418,7 @@ theorem second_moment_torus {σ : Type*} [Fintype σ] [DecidableEq σ] {L : ℕ}
     secondMoment (basis (Fin L × Fin L) n) H =
       (t : ℂ) ^ 2 * 4 * (∑ s, n s : ℕ) * ((L : ℂ) * L - (∑ s, n s : ℕ)) /
         ((L : ℂ) * L - 1) := by
-  have h := second_moment_regular hH (torus_isRegularOfDegree L hL) n hB
+  have h := second_moment_regular hH (torus_isRegularOfDegree_of_fintype L hL) n hB
     (by simp only [Fintype.card_prod, Fintype.card_fin]; nlinarith)
   simp only [Fintype.card_prod, Fintype.card_fin] at h
   push_cast at h ⊢

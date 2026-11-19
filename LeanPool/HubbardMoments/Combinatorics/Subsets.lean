@@ -10,7 +10,6 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Card
-import Mathlib.Tactic.Tauto
 import Mathlib.Algebra.Group.Action.Defs
 
 /-!

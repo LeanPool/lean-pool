@@ -9,7 +9,6 @@ module
 
 public import LeanPool.HubbardMoments.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
 
@@ -44,11 +43,17 @@ private theorem torus_isRegularOfDegree_default (L : ℕ) (hL : 3 ≤ L) :
   intro x
   rw [degree_boxProd, cycleGraph_degree_three_le, cycleGraph_degree_three_le]
 
-/-- For `L ≥ 3`, every site of the torus has exactly four neighbours. -/
-theorem torus_isRegularOfDegree (L : ℕ) (hL : 3 ≤ L) :
+/-- For `L ≥ 3`, every torus site has four neighbors under any neighbor-set enumeration. -/
+theorem torus_isRegularOfDegree (L : ℕ) (hL : 3 ≤ L) [LocallyFinite (torus L)] :
+    (torus L).IsRegularOfDegree 4 := by
+  convert torus_isRegularOfDegree_default L hL
+
+/-- Torus regularity with the neighbor enumeration induced by the ambient finite type. -/
+theorem torus_isRegularOfDegree_of_fintype (L : ℕ) (hL : 3 ≤ L) :
     @SimpleGraph.IsRegularOfDegree (Fin L × Fin L) (torus L)
       (fun v => Subtype.fintype (Membership.mem ((torus L).neighborSet v))) 4 := by
-  convert torus_isRegularOfDegree_default L hL
+  exact @torus_isRegularOfDegree L hL
+    (fun v => Subtype.fintype (Membership.mem ((torus L).neighborSet v)))
 
 open Fin.CommRing in
 /-- The cycle `C_L` has no triangle unless `L = 3`: three sites pairwise one step apart

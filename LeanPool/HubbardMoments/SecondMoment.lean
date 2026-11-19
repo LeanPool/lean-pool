@@ -204,7 +204,7 @@ theorem average_card_hops_torus (L : ℕ) (hL : 3 ≤ L) (n : ℕ) (hn : n ≤ L
         (L * L).choose n =
       4 * n * (L * L - n) / (L * L - 1) := by
   have hcard : Fintype.card (Fin L × Fin L) = L * L := by simp
-  have h := average_card_hops_regular (torus L) (torus_isRegularOfDegree L hL) n
+  have h := average_card_hops_regular (torus L) (torus_isRegularOfDegree_of_fintype L hL) n
     (by rw [hcard]; exact hn) (by rw [hcard]; nlinarith)
   rw [hcard] at h
   push_cast at h ⊢
