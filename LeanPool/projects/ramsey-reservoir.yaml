@@ -1,0 +1,37 @@
+slug: ramsey-reservoir
+title: Reservoir and book calculus for greedy Ramsey arguments
+summary: Reservoir (clique plus common-neighbour pool) and two-colour reservoir state machines behind
+  greedy Ramsey arguments. Proves that every threshold satisfying Pascal's inequality is a two-colour
+  Ramsey bound, the Erdős–Szekeres recursion and binomial bound as instances, R(3, 3) = 6, the
+  codegree–triangle identity, book bounds from triangle and edge density, book forcing, and anchored
+  gluing for homogeneous block quotients.
+branch: combinatorics
+entry_module: LeanPool.RamseyReservoir
+authors:
+- Brian Sanders
+source:
+  title: Reservoir and book calculus for greedy Ramsey arguments
+  authors:
+  - Brian Sanders
+  url: https://github.com/Egly443/lean-ramsey-reservoir
+  github_repo: Egly443/lean-ramsey-reservoir
+  commit: 7024820542e42feb8177cbf2c624d64106813332
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: Proposal #721 and the upstream README identify human-directed AI-generated
+  proofs; the source headers credit Brian Sanders.
+main_declarations:
+- SimpleGraph.ramseyBound_of_pascal
+main_results:
+- declaration: SimpleGraph.ramseyBound_of_pascal
+  informal: Every threshold satisfying Pascal's inequality is a two-colour Ramsey bound.
+  source_ref: Upstream lean-ramsey-reservoir at 7024820542e42feb8177cbf2c624d64106813332; proposed
+    in #721.
+tags:
+- ramsey-theory
+- book-graphs
+- combinatorics
+msc:
+- 05C55
+- 05C35
