@@ -563,13 +563,21 @@ private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Ex
         ``DPoly.scale, ``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
         ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc, ``U, ``V, ``Z].contains head
     | none => false
-  let expression := expression.consumeMData
-  if isTerminalHead expression then
-    return expression
   let expose := fun term => Lean.Meta.whnfHeadPred term fun head => return !isTerminalHead head
-  let expression ← expose expression
-  if isTerminalHead expression then return expression
-  Lean.Meta.withTransparency .all (expose expression)
+  let mut next := expression
+  repeat
+    let mut term := next.consumeMData
+    unless isTerminalHead term do
+      term ← expose term
+      unless isTerminalHead term do
+        term ← Lean.Meta.withTransparency .all (expose term)
+    -- A constructor applied to the same polynomial's projection exposes
+    -- that polynomial before the leaf reader evaluates its coefficient list.
+    if term.isAppOfArity ``DPoly.mk 2 then
+      if let some polynomial ← Lean.Meta.etaStruct? term (· == ``DPoly) then
+        next := polynomial
+        continue
+    return term
 
 -- Compute closed coefficients after direct decoding fails. The outer chart
 -- still uses the staged operations.
@@ -805,8 +813,10 @@ example :
         wrapBellmanValue (DPoly.scale 2 (1 + U)) : Poly3) = true := by
   checkBellmanChart
 
--- A coefficient helper in DPoly can unfold to the same staged operators.
-example : allNonnegative3 (DPoly.eval (id : Poly3 → Poly3) 0 (DPoly.const U)) = true := by
+-- A constructor/projection round trip preserves staging of the helper.
+example :
+    allNonnegative3 (DPoly.mk (DPoly.eval (id : Poly3 → Poly3) 0 (DPoly.const U)).coeffs) =
+      true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
