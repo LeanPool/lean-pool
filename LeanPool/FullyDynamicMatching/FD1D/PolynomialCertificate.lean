@@ -549,46 +549,57 @@ private meta instance {R : Type} [Lean.ToExpr R] : Lean.ToExpr (DPoly R) where
     Lean.mkApp2 (Lean.mkConst ``DPoly.mk) (Lean.toTypeExpr R) (Lean.toExpr coefficients)
   toTypeExpr := Lean.mkApp (Lean.mkConst ``DPoly) (Lean.toTypeExpr R)
 
-private meta def readBellmanNat (expression : Lean.Expr) : Lean.MetaM (Option Nat) := do
-  let expression := expression.consumeMData
-  if expression.isConstOf ``Nat.zero then return some 0
-  Lean.Meta.getNatValue? expression
-
 private meta def bellmanKernelFallback : Lean.Name := `FD1D.BellmanCertificate.kernelFallback
 
 private meta def needsBellmanKernelDecision : Lean.MetaM α :=
   Lean.throwError (.tagged bellmanKernelFallback "the staged reader would force the source chart")
 
--- Deciding a conditional can evaluate the same chart that staging then tries to evaluate.
 private meta def isBellmanConditional (term : Lean.Expr) : Bool :=
-  term.isAppOfArity ``ite 5 || term.isAppOfArity ``dite 5 || term.isAppOfArity ``cond 4
+  term.isAppOf ``ite || term.isAppOf ``dite || term.isAppOf ``cond
 
+-- Apply one kernel recursor rule to an already visible constructor.
+private meta def reduceVisibleBellmanRecursor (recursor : Lean.RecursorVal)
+    (levels : List Lean.Level) (args : Array Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let majorIndex := recursor.getMajorIdx
+  let some major := args[majorIndex]? | needsBellmanKernelDecision
+  let some ctor ← Lean.Meta.isConstructorAppCore? major.consumeMData
+    | needsBellmanKernelDecision
+  let some rule := recursor.rules.find? (·.ctor == ctor.name) | needsBellmanKernelDecision
+  let fields := major.consumeMData.getAppArgs
+  let body := rule.rhs.instantiateLevelParams recursor.levelParams levels
+  let body := Lean.mkAppN body (args.extract 0 (recursor.numParams + recursor.numMotives +
+    recursor.numMinors))
+  let body := Lean.mkAppN body (fields.extract (fields.size - rule.nfields) fields.size)
+  return Lean.mkAppN body (args.extract (majorIndex + 1) args.size)
+
+-- Delta expansion exposes a match without evaluating its discriminants.
+-- A recursor can step only when its major premise is already a constructor.
 private meta def exposeBellmanUntil (isTerminal : Lean.Expr → Lean.MetaM Bool)
     (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
-  let isReady (term : Lean.Expr) := do
+  let mut next := expression
+  repeat
+    Lean.Core.checkSystem "Bellman head exposure"
+    let term ← Lean.Meta.withConfig (fun cfg => { cfg with iota := false, proj := .no }) <|
+      Lean.Meta.whnfCore next
     let term := term.consumeMData
     if isBellmanConditional term then return ← needsBellmanKernelDecision
-    isTerminal term
-  let expression := expression.consumeMData
-  if ← isReady expression then return expression
-  let expose (term : Lean.Expr) :=
-    Lean.Meta.whnfHeadPred term fun head => return !(← isReady head)
-  let expression ← expose expression
-  if ← isReady expression then return expression
-  Lean.Meta.withTransparency .all (expose expression)
+    if ← isTerminal term then return term
+    if let .const name levels := term.getAppFn then
+      if let some (.recInfo recursor) := (← Lean.getEnv).find? name then
+        next ← reduceVisibleBellmanRecursor recursor levels term.getAppArgs
+        continue
+    let some unfolded ← Lean.Meta.delta? term | return term
+    next := unfolded
 
 -- Select only visible constructor fields. An unresolved receiver can force a whole chart.
 private meta def exposeBellmanProjections (expose : Lean.Expr → Lean.MetaM Lean.Expr)
     (preserve : Lean.Name → Nat → Bool) (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
-  let exposeReceiver (term : Lean.Expr) := Lean.Meta.withConfig
-    (fun configuration => { configuration with iota := false }) do
-    exposeBellmanUntil (fun _ => pure false) term
+  let exposeReceiver := exposeBellmanUntil (fun _ => pure false)
   let mut next := expression
   let mut fields : List Nat := []
   repeat
     Lean.Core.checkSystem "Bellman projections"
-    let term ← Lean.Meta.withConfig (fun configuration => { configuration with proj := .no }) <|
-      if fields.isEmpty then expose next else exposeReceiver next
+    let term ← if fields.isEmpty then expose next else exposeReceiver next
     if let .proj name index receiver := term then
       if preserve name index then
         if fields.isEmpty then return term
@@ -612,8 +623,7 @@ private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.E
         term.isAppOfArity ``HAppend.hAppend 6 || term.isAppOfArity ``Append.append 4 ||
         term.isAppOfArity ``List.map 4 || term.isAppOfArity ``List.mapTR 4
   let expose := exposeBellmanUntil fun term => pure (isTerminal term)
-  Lean.Meta.withConfig (fun configuration => { configuration with iota := false }) <|
-    exposeBellmanProjections expose preserve expression
+  exposeBellmanProjections expose preserve expression
 
 -- Stop at heads the staged reader handles so other helpers unfold in any namespace.
 private meta def isBellmanHead (term : Lean.Expr) : Bool :=
@@ -627,7 +637,8 @@ private meta def isBellmanHead (term : Lean.Expr) : Bool :=
 private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
   let mut next := expression
   repeat
-    let mut term ← exposeBellmanUntil (fun term => pure (isBellmanHead term)) next
+    let expose := exposeBellmanUntil fun term => pure (isBellmanHead term)
+    let mut term ← exposeBellmanProjections expose (fun _ _ => false) next
     -- A constructor applied to the same polynomial's projection exposes
     -- that polynomial before the leaf reader evaluates its coefficient list.
     if term.isAppOfArity ``DPoly.mk 2 then
@@ -647,7 +658,8 @@ private theorem repackBellmanBranch (p : DPoly R) (branch : List R → DPoly R)
 private meta def specializeBellmanIdentity (rule : Lean.Name) (argument : Lean.Expr)
     (repack : Lean.Expr → Lean.Expr) : Lean.MetaM (Option Lean.Expr) := do
   let type ← Lean.Meta.inferType argument
-  unless (← Lean.Meta.whnfD type).isAppOfArity ``List 1 do return none
+  let type ← exposeBellmanUntil (fun t => pure (t.isAppOf ``List)) type
+  unless type.isAppOfArity ``List 1 do return none
   Lean.Meta.withLocalDeclD `argument type fun localArgument => do
     let target ← Lean.Meta.mkEq (repack localArgument) localArgument
     let proof ← Lean.Meta.mkAppM rule #[localArgument]
@@ -741,7 +753,8 @@ private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
   let #[branch] := matcher.alts | return none
   unless matcher.remaining.isEmpty do return none
   let type ← Lean.Meta.inferType polynomial
-  unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
+  let type ← exposeBellmanUntil (fun t => pure (t.isAppOf ``DPoly)) type
+  unless type.isAppOf ``DPoly do return none
   let some branchProof ← proveBellmanRepackBranch branch | return none
   Lean.Meta.withLocalDeclD `polynomial type fun localPolynomial => do
     let repacked := { matcher with discrs := #[localPolynomial] }.toExpr
@@ -758,9 +771,7 @@ private meta def exposeBellmanIdentityHead (expression : Lean.Expr) : Lean.MetaM
   let isReady (term : Lean.Expr) : Lean.MetaM Bool := do
     if isBellmanHead term then return true
     return (← Lean.Meta.matchMatcherApp? term.consumeMData (alsoCasesOn := true)).isSome
-  let expose (term : Lean.Expr) := Lean.Meta.withConfig (fun cfg => { cfg with iota := false }) <|
-    exposeBellmanUntil isReady term
-  exposeBellmanProjections expose (fun _ _ => false) expression
+  exposeBellmanProjections (exposeBellmanUntil isReady) (fun _ _ => false) expression
 
 -- Apply these identities before an operand constructor can force its coefficients.
 private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
@@ -783,7 +794,7 @@ private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
         else pure none
       else bellmanMatcherIdentity exposed
     let some (polynomial, proof) := identity | do
-      -- An enclosing match can reveal a constructor only after iota reduction.
+      -- Step past visible constructors before retrying the symbolic identities.
       let reduced ← exposeBellmanHead exposed
       if reduced == exposed then return (reduced, prefixProof)
       next := reduced
@@ -793,26 +804,38 @@ private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
       | none => pure (some proof)
     next := polynomial
 
--- Compute closed coefficients after direct decoding fails. The outer chart
--- still uses the staged operations.
-private meta def readBellmanClosedValue {R : Type}
-    (readHead : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
-    Lean.MetaM (Option R) := do
-  if let some value ← readHead expression then return some value
-  if expression.hasFVar || expression.hasMVar || expression.hasLooseBVars then return none
-  let reduced ← Lean.Meta.whnfD expression
-  if let some value ← readHead reduced then return some value
-  Lean.Meta.withTransparency .all do
-    readHead (← Lean.Meta.whnf reduced)
+-- Only decode visible literals and arithmetic on literal integers. A closed
+-- scalar term can still depend on all the coefficients of the source chart.
+private meta def readBellmanNat (expression : Lean.Expr) : Lean.MetaM (Option Nat) := do
+  let terminal (term : Lean.Expr) := term.isAppOfArity ``OfNat.ofNat 3 ||
+    term.isConstOf ``Nat.zero || (Lean.Meta.getRawNatValue? term).isSome
+  let term ← exposeBellmanUntil (fun term => pure (terminal term)) expression
+  if term.isConstOf ``Nat.zero then return some 0
+  if let some value := Lean.Meta.getRawNatValue? term then return some value
+  let_expr OfNat.ofNat type value _ ← term | return none
+  let type ← exposeBellmanUntil (fun t => pure (t.isConstOf ``Nat)) type
+  if type.isConstOf ``Nat then return Lean.Meta.getRawNatValue? value
+  return none
 
-private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) := do
-  let readHead (term : Lean.Expr) : Lean.MetaM (Option Int) := do
-    if let some integer ← Lean.Meta.getIntValue? term then return some integer
+private meta def readBellmanIntegerAt : Nat → Lean.Expr → Lean.MetaM (Option Int)
+  | 0, _ => pure none
+  | fuel + 1, expression => do
+    let term ← exposeBellmanHead expression
     match_expr term with
-    | Int.ofNat n => return (← readBellmanClosedValue readBellmanNat n).map Int.ofNat
-    | Int.negSucc n => return (← readBellmanClosedValue readBellmanNat n).map Int.negSucc
+    | OfNat.ofNat type value _ =>
+      let type ← exposeBellmanUntil (fun t => pure (t.isConstOf ``Int)) type
+      unless type.isConstOf ``Int do return none
+      return (Lean.Meta.getRawNatValue? value).map Int.ofNat
+    | Int.ofNat value => return (← readBellmanNat value).map Int.ofNat
+    | Int.negSucc value => return (← readBellmanNat value).map Int.negSucc
+    | Neg.neg _ _ value => return (← readBellmanIntegerAt fuel value).map Neg.neg
+    | HAdd.hAdd _ _ _ _ left right =>
+      let some left ← readBellmanIntegerAt fuel left | return none
+      return (← readBellmanIntegerAt fuel right).map (left + ·)
     | _ => return none
-  readBellmanClosedValue readHead (← exposeBellmanHead expression)
+
+private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) :=
+  readBellmanIntegerAt 32 expression
 
 -- A residual list computation may force the entire source polynomial.
 private meta def readBellmanList {R : Type}
@@ -833,20 +856,19 @@ private meta def readBellmanList {R : Type}
 
 private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     (read : Lean.Expr → Lean.MetaM (Option R)) (fromNat : Nat → R)
-    (evaluateCoefficient : Bool) (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
+    (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
   let expression ← exposeBellmanHead expression
-  let readHead (term : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
-    match_expr term with
-    | OfNat.ofNat type n _ =>
-        unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
-        return (← readBellmanClosedValue readBellmanNat n).map fun value =>
-          if value == 0 then 0 else DPoly.const (fromNat value)
-    | DPoly.X _ _ _ => return some DPoly.X
-    | DPoly.const _ coefficient => return (← read coefficient).map DPoly.const
-    | DPoly.mk _ coefficients =>
-        return (← readBellmanList read coefficients).map fun values => ⟨values⟩
-    | _ => return none
-  if evaluateCoefficient then readBellmanClosedValue readHead expression else readHead expression
+  match_expr expression with
+  | OfNat.ofNat type n _ =>
+    let type ← exposeBellmanUntil (fun t => pure (t.isAppOf ``DPoly)) type
+    unless type.isAppOf ``DPoly do return none
+    return (← readBellmanNat n).map fun value =>
+      if value == 0 then 0 else DPoly.const (fromNat value)
+  | DPoly.X _ _ _ => return some DPoly.X
+  | DPoly.const _ coefficient => return (← read coefficient).map DPoly.const
+  | DPoly.mk _ coefficients =>
+    return (← readBellmanList read coefficients).map fun values => ⟨values⟩
+  | _ => return none
 
 -- Compute on coefficient data, then have the kernel verify the explicit reduction.
 -- The meta code produces the proposed value; only the checked equality is reused.
@@ -880,25 +902,24 @@ private meta def isBellmanNegation (expression : Lean.Expr) : Bool :=
 private meta def readBellmanBivariate (expression : Lean.Expr) :
     Lean.MetaM (Option (DPoly (DPoly ℤ))) :=
   readBellmanCoefficients
-    (readBellmanCoefficients readBellmanInteger Int.ofNat true) (DPoly.const ∘ Int.ofNat)
-    true expression
+    (readBellmanCoefficients readBellmanInteger Int.ofNat) (DPoly.const ∘ Int.ofNat)
+    expression
 
 private meta def readBellmanLeaf (expression : Lean.Expr) : Lean.MetaM (Option Poly3) := do
   if expression.isConstOf ``U then return some DPoly.X
   if expression.isConstOf ``V then return some (DPoly.const DPoly.X)
   if expression.isConstOf ``Z then return some (DPoly.const (DPoly.const DPoly.X))
   readBellmanCoefficients readBellmanBivariate (DPoly.const ∘ DPoly.const ∘ Int.ofNat)
-    false expression
+    expression
 
 private meta def readBellmanScaleFactor (expression : Lean.Expr) :
     Lean.MetaM (DPoly (DPoly ℤ)) := do
   let some factor ← readBellmanBivariate expression
-    | throwError "unsupported Bellman scale factor {expression}"
+    | needsBellmanKernelDecision
   return factor
 
 private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := do
-  let some power ← readBellmanClosedValue readBellmanNat expression
-    | throwError "unsupported Bellman exponent {expression}: expected a closed natural power"
+  let some power ← readBellmanNat expression | needsBellmanKernelDecision
   return power
 
 private inductive BellmanStep where
@@ -933,7 +954,7 @@ private meta def parseBellmanStep (expression : Lean.Expr) : Lean.MetaM BellmanS
   if isBellmanNegation expression then
     return .negate (operator 1) args[args.size - 1]!
   let some value ← readBellmanLeaf expression
-    | throwError "unsupported Bellman polynomial term {expression}"
+    | needsBellmanKernelDecision
   return .leaf value
 
 -- Visit operands before their parents and reuse depths across shared expressions.
@@ -1026,11 +1047,6 @@ local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext 
     (← bellmanReductionDepth prepare expression) expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
-local elab "rewriteBellmanIdentities" : conv => Lean.Elab.Tactic.withMainContext do
-  let (polynomial, proof) ← prepareBellmanPolynomial (← Lean.Elab.Tactic.Conv.getLhs)
-  if let some equality := proof then
-    Lean.Elab.Tactic.Conv.updateLhs polynomial equality
-
 local macro "checkStagedBellmanChart" : tactic =>
   `(tactic| (conv_lhs => { arg 1; reduceBellmanPolynomial }; rfl))
 
@@ -1063,7 +1079,7 @@ example :
 example :
     allNonnegative3
       (DPoly.mk
-        (id ((DPoly.eval (id : Poly3 → Poly3) 0 (DPoly.const U)).coeffs, ()).1)) = true := by
+        (id (((U : Poly3)).coeffs, ()).1)) = true := by
   checkStagedBellmanChart
 
 -- Nonliteral coefficient lists use the kernel decision.
@@ -1072,50 +1088,46 @@ example : allNonnegative3 (DPoly.const (DPoly.X + 0)) = true := by
 
 private def emptyBellmanCoefficients : List (DPoly (DPoly ℤ)) := []
 
-private theorem chartPlus_repacked_check :
+example :
     allNonnegative3
-      (match chartPlus with
-      | ⟨coefficients⟩ => DPoly.mk ((coefficients ++ emptyBellmanCoefficients) ++ [])) = true := by
+      (match (V, ()) with
+      | (polynomial, _) => DPoly.mk ([] ++ (polynomial.coeffs ++ ([] ++ [])))) = true := by
   checkStagedBellmanChart
 
--- Preserve the existing auxiliary lemma names of the public chart checks.
+example :
+    allNonnegative3
+      (match U with
+      | ⟨coefficients⟩ => DPoly.mk ((coefficients ++ emptyBellmanCoefficients) ++ [])) =
+      true := by
+  checkStagedBellmanChart
+
+-- Preserve the auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
-  have h := chartPlus_repacked_check
-  conv_lhs at h => { arg 1; rewriteBellmanIdentities }
-  exact h
+  checkBellmanChart
 
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
-private def chartOneWithEmptyAppend : Poly3 :=
-  match (chartOne, ()) with
-  | (polynomial, _) => DPoly.mk ([] ++ (polynomial.coeffs ++ ([] ++ [])))
-
-private theorem chartOne_appended_check : allNonnegative3 chartOneWithEmptyAppend = true := by
-  checkStagedBellmanChart
-
 private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
-  have h := chartOne_appended_check
-  conv_lhs at h => { arg 1; rewriteBellmanIdentities }
-  exact h
+  checkBellmanChart
 
 theorem chartOne_check : allNonnegative3 chartOne = true := by
   as_aux_lemma => exact chartOne_normalized_check
 
 private theorem chartTwo_normalized_check : allNonnegative3 chartTwo = true := by
-  checkStagedBellmanChart
+  checkBellmanChart
 
 theorem chartTwo_check : allNonnegative3 chartTwo = true := by
   as_aux_lemma => exact chartTwo_normalized_check
 
 private theorem chartThree_normalized_check : allNonnegative3 chartThree = true := by
-  checkStagedBellmanChart
+  checkBellmanChart
 
 theorem chartThree_check : allNonnegative3 chartThree = true := by
   as_aux_lemma => exact chartThree_normalized_check
 
 private theorem chartEndpoint_normalized_check : allNonnegative3 chartEndpoint = true := by
-  checkStagedBellmanChart
+  checkBellmanChart
 
 theorem chartEndpoint_check : allNonnegative3 chartEndpoint = true := by
   as_aux_lemma => exact chartEndpoint_normalized_check
