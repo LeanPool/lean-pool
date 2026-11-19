@@ -3,10 +3,9 @@ title: Verified bounded-height rational-point search on hyperelliptic curves
 summary: >
   Formalizes a pure Lean search for normalized bounded-height points on
   hyperelliptic curves over the rationals, with a brute-force reference and an
-  exact modular sieve. Every output of the fast search is a point in the
-  requested denominator range, and outputs are pairwise distinct. Fast-search
-  completeness assumes a stated form of Sturm's theorem for its interval
-  pruning. The brute-force reference is unconditionally sound and complete.
+  exact modular sieve. The fast search outputs all points in the requested
+  denominator range or at infinity, with no duplicates. Its interval pruning
+  uses the Sturm root count from Tau Ceti.
 branch: computational number theory
 entry_module: LeanPool.Ratpoints
 authors:
@@ -32,8 +31,8 @@ main_results:
   informal: The pure Lean fast search only returns bounded-height points whose
     denominators are within the requested range or zero.
 - declaration: Ratpoints.Fast.mem_fastPoints_iff
-  informal: Assuming Sturm's theorem in its stated form, the fast search finds
-    precisely all such points.
+  informal: The pure Lean fast search finds precisely all such points for any
+    tuning parameters.
 - declaration: Ratpoints.Fast.nodup_fastPoints
   informal: The fast search never returns a point twice.
 tags:

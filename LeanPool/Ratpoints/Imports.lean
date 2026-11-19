@@ -50,6 +50,7 @@ public import LeanPool.Ratpoints.Proof.Sturm
 public import LeanPool.Ratpoints.Proof.SturmCounts
 public import LeanPool.Ratpoints.Proof.SturmCoverage
 public import LeanPool.Ratpoints.Proof.SturmSigns
+public import LeanPool.Ratpoints.Proof.SturmTheorem
 public import LeanPool.Ratpoints.Proof.Tables
 public import LeanPool.Ratpoints.Proof.VCSimp
 public import LeanPool.Ratpoints.Spec.Basic

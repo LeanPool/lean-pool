@@ -15,11 +15,9 @@ public import Mathlib.Data.List.SignVariations
 
 Sturm's theorem in the form that the theorems on the Sturm step of `ratpoints` assume: for a
 squarefree real polynomial `p` and reals `a ≤ b`, the number of roots of `p` in `(a, b]` is the
-number of sign variations of the Sturm sequence of `p` and `p'` at `a` less that at `b`. Mathlib has
-the Sturm sequence (`Polynomial.sturmSeq`) and the sign variations of a list
-(`List.signVariations`), but not the theorem; here it is a `Prop`-valued definition, a hypothesis
-of the theorems that need it. The specification uses Mathlib and nothing of the model; the
-comparator challenge restates the definition verbatim.
+change in the Sturm sequence's sign variations from `a` to `b`. This
+`Prop`-valued specification uses Mathlib and is independent of the executable model.
+`Ratpoints.sturmTheorem` establishes the statement using Tau Ceti.
 
 ## Main definitions
 

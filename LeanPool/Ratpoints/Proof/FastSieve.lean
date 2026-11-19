@@ -9,7 +9,7 @@ public import Mathlib.Data.Int.ModEq
 public import LeanPool.Ratpoints.Fast.Sieve
 public import LeanPool.Ratpoints.Spec.Basic
 public import LeanPool.Ratpoints.Spec.Region
-public import LeanPool.Ratpoints.Spec.Sturm
+public import LeanPool.Ratpoints.Proof.SturmTheorem
 
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.List
 import Mathlib.Data.ZMod.Basic
@@ -29,9 +29,9 @@ import LeanPool.Ratpoints.Proof.SturmCoverage
 `Ratpoints.Fast.fastPoints c H bLow bHigh tu` lists only normalized points of height at most `H` on
 `y ^ 2 = F(x, z)` whose denominator is `0` or lies in the range of `bLow` and `bHigh`
 (`Ratpoints.Fast.isPoint_and_inRegion_of_mem_fastPoints`), each once
-(`Ratpoints.Fast.nodup_fastPoints`), and, assuming Sturm's theorem, all of them
-(`Ratpoints.Fast.mem_fastPoints_of_isPoint`, `Ratpoints.Fast.mem_fastPoints_iff`), for every
-setting `tu` of its parameters.
+(`Ratpoints.Fast.nodup_fastPoints`), and includes all such points
+(`Ratpoints.Fast.mem_fastPoints_iff`), for every setting `tu` of its parameters.
+The completeness argument uses `Ratpoints.sturmTheorem` for interval pruning.
 
 The sieve is a sound filter: a point `(a, y, b)` makes `(a, b)` a candidate
 (`Ratpoints.Fast.IsCandidate`), and the residues of a candidate modulo every `m` pass the table
@@ -81,8 +81,7 @@ box (`Ratpoints.IsNormalizedPair.inRegion_of_isFullBox`).
 ## Main statements
 
 * `Ratpoints.Fast.isPoint_and_inRegion_of_mem_fastPoints`: the list holds only points of the region.
-* `Ratpoints.Fast.mem_fastPoints_iff`: assuming Sturm's theorem, it holds exactly the points of the
-  region.
+* `Ratpoints.Fast.mem_fastPoints_iff`: the list holds exactly the points of the region.
 * `Ratpoints.Fast.nodup_fastPoints`: each of them once.
 -/
 
@@ -1314,10 +1313,17 @@ theorem mem_fastPoints_of_isPoint (hS : SturmTheorem) {c : List ℤ} {H : ℕ} {
 /-- **The fast search lists exactly the points** of height at most `H` with their denominator in
 the range of `bLow` and `bHigh`, for every coefficient list, every height bound, every range and
 every setting of the parameters, assuming Sturm's theorem. -/
-theorem mem_fastPoints_iff {c : List ℤ} {H : ℕ} {bLow bHigh : ℤ} {tu : Tuning}
+theorem mem_fastPoints_iff_of_sturmTheorem {c : List ℤ} {H : ℕ} {bLow bHigh : ℤ} {tu : Tuning}
     {p : ℤ × ℤ × ℤ} (hS : SturmTheorem) :
     p ∈ fastPoints c H bLow bHigh tu ↔ IsPoint c H p ∧ InRegion [] bLow bHigh p :=
   ⟨isPoint_and_inRegion_of_mem_fastPoints, fun ⟨hp, hr⟩ ↦ mem_fastPoints_of_isPoint hS hp hr⟩
+
+/-- Fast-search membership is equivalent to being a point in the specified height and
+denominator range, for any tuning parameters. -/
+theorem mem_fastPoints_iff {c : List ℤ} {H : ℕ} {bLow bHigh : ℤ} {tu : Tuning}
+    {p : ℤ × ℤ × ℤ} :
+    p ∈ fastPoints c H bLow bHigh tu ↔ IsPoint c H p ∧ InRegion [] bLow bHigh p :=
+  mem_fastPoints_iff_of_sturmTheorem sturmTheorem
 
 /-- **The fast search lists each point once**: when the coefficients are reversed,
 `Ratpoints.Sieve.swapPoint` is injective on the points of the reversed list
