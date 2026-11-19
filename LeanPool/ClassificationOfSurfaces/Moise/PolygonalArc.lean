@@ -143,13 +143,13 @@ noncomputable def segmentLine (a b : Plane) : Plane →ᵃ[ℝ] ℝ :=
     AffineMap.const ℝ Plane ((b 1 - a 1) * a 0 - (b 0 - a 0) * a 1)
 
 @[simp] theorem segmentLine_apply_left (a b : Plane) : segmentLine a b a = 0 := by
-  simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+  simp only [segmentLine, Fin.isValue, FunLike.coe_sub, FunLike.coe_smul, AffineMap.coe_const,
     Pi.sub_apply,
     Pi.smul_apply, cartesianX_apply, smul_eq_mul, cartesianY_apply,
     Function.const_apply, sub_self]
 
 @[simp] theorem segmentLine_apply_right (a b : Plane) : segmentLine a b b = 0 := by
-  simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+  simp only [segmentLine, Fin.isValue, FunLike.coe_sub, FunLike.coe_smul, AffineMap.coe_const,
     Pi.sub_apply,
     Pi.smul_apply, cartesianX_apply, smul_eq_mul, cartesianY_apply,
     Function.const_apply]
@@ -159,7 +159,7 @@ theorem segmentLine_eq_zero_of_mem_segment (a b : Plane) {x : Plane}
     (hx : x ∈ segment ℝ a b) : segmentLine a b x = 0 := by
   rw [segment_eq_image] at hx
   obtain ⟨t, -, rfl⟩ := hx
-  simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+  simp only [segmentLine, Fin.isValue, FunLike.coe_sub, FunLike.coe_smul, AffineMap.coe_const,
     Pi.sub_apply,
     Pi.smul_apply, cartesianX_apply, PiLp.add_apply, PiLp.smul_apply,
     smul_eq_mul, cartesianY_apply,
@@ -205,7 +205,7 @@ theorem mem_segment_of_segmentLine_eq_zero {a b x : Plane} (hab : a ≠ b)
       field_simp [sub_ne_zero.mpr h0.symm]
       ring
     · dsimp [t]
-      simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul,
+      simp only [segmentLine, Fin.isValue, FunLike.coe_sub, FunLike.coe_smul,
         AffineMap.coe_const, Pi.sub_apply,
     Pi.smul_apply, cartesianX_apply, smul_eq_mul,
         cartesianY_apply, Function.const_apply] at hline
@@ -230,7 +230,7 @@ theorem mem_segment_of_segmentLine_eq_zero {a b x : Plane} (hab : a ≠ b)
     ext i
     fin_cases i
     · dsimp [t]
-      simp only [segmentLine, Fin.isValue, AffineMap.coe_sub, AffineMap.coe_smul,
+      simp only [segmentLine, Fin.isValue, FunLike.coe_sub, FunLike.coe_smul,
         AffineMap.coe_const, Pi.sub_apply,
     Pi.smul_apply, cartesianX_apply, smul_eq_mul,
         cartesianY_apply, Function.const_apply] at hline

@@ -246,7 +246,7 @@ theorem convexHull_inter_of_affine_separation (s t u : Finset Plane)
     rw [← htzero]
     apply Finset.filter_congr
     intro x hx
-    simp only [AffineMap.coe_neg, Pi.neg_apply, neg_eq_zero, g]
+    simp only [FunLike.coe_neg, Pi.neg_apply, neg_eq_zero, g]
   have hsface := convexHull_inter_affine_zero_of_nonneg s f hs
   rw [hszero] at hsface
   have htface := convexHull_inter_affine_zero_of_nonneg t g hg
@@ -1458,23 +1458,23 @@ theorem strictNegativeLocalMesh_support (t : M.Triangle)
     (M.strictNegativeLocalMesh f t h0 h1 h2).toPlaneComplex.support =
       convexHull ℝ (M.position '' (t.1 : Set M.Vertex)) := by
   rw [show M.strictNegativeLocalMesh f t h0 h1 h2 =
-      (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+    _ = (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
       Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-      AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
+      FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (M.position '' (t.1 : Set M.Vertex)) :=
-      M.strictLocalMesh_support (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg,
-        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      M.strictLocalMesh_support (-f) t (by simpa only [Fin.isValue, FunLike.coe_neg,
+        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
 
 /-! The same strict model for an arbitrary ordering of three vertices. -/
 
@@ -1589,23 +1589,23 @@ theorem strictNegativeMeshFor_support (v : Fin 3 → M.Vertex)
     (M.strictNegativeMeshFor f v hv h0 h1 h2).toPlaneComplex.support =
       convexHull ℝ (Set.range (M.position ∘ v)) := by
   rw [show M.strictNegativeMeshFor f v hv h0 h1 h2 =
-      (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+    _ = (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
       Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-      AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
+      FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (Set.range (M.position ∘ v)) :=
-      M.strictMeshFor_support (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg,
-        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      M.strictMeshFor_support (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg,
+        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
 
 /-! The two-triangle model when vertex `2` lies on the cutting line. -/
 
@@ -1739,19 +1739,19 @@ theorem edgeNegativeMeshFor_support (v : Fin 3 → M.Vertex)
     (M.edgeNegativeMeshFor f v hv h0 h1).toPlaneComplex.support =
       convexHull ℝ (Set.range (M.position ∘ v)) := by
   rw [show M.edgeNegativeMeshFor f v hv h0 h1 =
-      (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+    _ = (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
       Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (Set.range (M.position ∘ v)) :=
-      M.edgeMeshFor_support (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      M.edgeMeshFor_support (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff])
 
 /-! ## Choosing the local model from the signs -/
@@ -1896,10 +1896,10 @@ theorem IsMonochromatic.of_neg {N : TriangleMesh}
   rcases hN s hs with h | h
   · right
     intro v hv
-    simpa only [AffineMap.coe_neg, Pi.neg_apply, Left.nonneg_neg_iff] using h v hv
+    simpa only [FunLike.coe_neg, Pi.neg_apply, Left.nonneg_neg_iff] using h v hv
   · left
     intro v hv
-    simpa only [AffineMap.coe_neg, Pi.neg_apply, Left.neg_nonpos_iff] using h v hv
+    simpa only [FunLike.coe_neg, Pi.neg_apply, Left.neg_nonpos_iff] using h v hv
 
 theorem IsMonochromatic.reindex {N : TriangleMesh} {V' : Type} [Fintype V']
     [DecidableEq V'] (position' : V' → Plane) (hposition_injective : Function.Injective position')

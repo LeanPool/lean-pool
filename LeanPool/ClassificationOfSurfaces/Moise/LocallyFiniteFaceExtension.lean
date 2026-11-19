@@ -659,7 +659,7 @@ theorem faceBoundaryMap_affineOn_left
   rw [show K.faceBoundaryMap (G := G) f (K.faceEdgeSourcePoint f i r) =
       A.completePath q from K.faceBoundaryMap_sourcePoint (G := G) f i q,
     LocallyFiniteTriangleComplex.CentralPolygonalArc.completePath_eq_left A q hq]
-  simp only [AffineMap.comp_apply, AffineMap.coe_smul, Pi.smul_apply,
+  simp only [AffineMap.comp_apply, FunLike.coe_smul, Pi.smul_apply,
     faceEdgeParameterAffine_sourcePoint,
     smul_eq_mul, g, scalar, q]
 
@@ -689,7 +689,7 @@ theorem faceBoundaryMap_affineOn_right
   rw [show K.faceBoundaryMap (G := G) f (K.faceEdgeSourcePoint f i r) =
       A.completePath q from K.faceBoundaryMap_sourcePoint (G := G) f i q,
     LocallyFiniteTriangleComplex.CentralPolygonalArc.completePath_eq_right A q hq]
-  simp only [AffineMap.comp_apply, AffineMap.coe_sub, AffineMap.coe_smul, AffineMap.coe_const,
+  simp only [AffineMap.comp_apply, FunLike.coe_sub, FunLike.coe_smul, AffineMap.coe_const,
     Pi.sub_apply,
     Pi.smul_apply, faceEdgeParameterAffine_sourcePoint, smul_eq_mul,
     Function.const_apply, g, scalar, q]
