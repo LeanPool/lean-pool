@@ -161,7 +161,7 @@ theorem copyC_pk {om : OrderMaintenance} {n : Core} {m : State} {p : Nat} (h : W
           rw [h2.cur.cap]
           exact hcapE) (by
           rw [h2.cur.mem _ _ hcapE]
-          try rfl)
+          rfl)
       refine wpB_seq_ofQ (Qc := fun s3 _ => s3.loc = State.upd s2.loc "hh" e.h ∧ s3.mem = s2.mem
         ∧ s3.cap = s2.cap)
         (wp_assign_g e.h hev2 (fun s3 a b c => ⟨a, b, c⟩))

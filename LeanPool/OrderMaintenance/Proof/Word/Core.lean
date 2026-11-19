@@ -119,7 +119,7 @@ theorem wb_sizeAdj {a b : Nat} (hb : (s.Gs.getX b).size + 1 < 2 ^ K) : WB K (siz
   split <;> (have := h.Gs b; recb)
 
 theorem wb_sizeState {c : Nat} (hc : (s.C.getX c).size + 1 < 2 ^ K) : WB K (sizeState s c) := by
-  unfold sizeState; wbx h; all_goals wbv
+  unfold sizeState; wbx h; wbv
 
 theorem wb_linkChunkPair {x y z : Nat} (hx : x < 2 ^ K) (hy : y < 2 ^ K) (hz : z < 2 ^ K) :
     WB K (linkChunkPair s x y z) := by
@@ -132,18 +132,18 @@ theorem wb_markState {x y z : Nat} {job : Job} (hx : x < 2 ^ K) (hy : y < 2 ^ K)
   wbx h
   rotate_left
   · intro j hj'; cases hj'; exact hj
-  all_goals wbv
+  wbv
 
 theorem wb_push2 : WB K (push2 s) := by
-  unfold push2; wbx h; all_goals wbv
+  unfold push2; wbx h; wbv
 
 theorem wb_removeState {p : Nat} (hp : p < 2 ^ K) : WB K (removeState s p) := by
   have h1 := wb_unlinkGroup h hp
   unfold removeState quietG
-  wbx h1; all_goals wbv
+  wbx h1; wbv
 
 theorem wb_cremoveState {x : Nat} : WB K (cremoveState s x) := by
-  unfold cremoveState deadC quietC; wbx h; all_goals wbv
+  unfold cremoveState deadC quietC; wbx h; wbv
 
 theorem wb_moveGroupsLeft {x y : Nat} {u labs : List Nat} (hy : y < 2 ^ K)
     (hu : ∀ g ∈ u, g < 2 ^ K) (hl : ∀ l ∈ labs, l < 2 ^ K) :
@@ -161,7 +161,7 @@ theorem wb_moveGroupsLeft {x y : Nat} {u labs : List Nat} (hy : y < 2 ^ K)
   unfold moveGroupsLeft
   wbx h
   · exact allX_foldChk hy u labs _ h.Gs hl
-  all_goals wbv
+  · wbv
 
 theorem wb_moveGroupsRight {x z : Nat} {u labs : List Nat} (hz : z < 2 ^ K)
     (hu : ∀ g ∈ u, g < 2 ^ K) (hl : ∀ l ∈ labs, l < 2 ^ K) :
@@ -179,7 +179,7 @@ theorem wb_moveGroupsRight {x z : Nat} {u labs : List Nat} (hz : z < 2 ^ K)
   unfold moveGroupsRight
   wbx h
   · exact allX_foldChk hz u labs _ h.Gs hl
-  all_goals wbv
+  · wbv
 
 /-- Chunk sizes after a chunk-split move: the decrement is R, the increment needs the bound. -/
 theorem wb_cmoveSizes {x dst : Nat} {u : List Nat}
@@ -274,7 +274,7 @@ theorem ht_pushFrontLabs {center D : Nat} (hc : center < 2 ^ K) :
 /-! ### Queries and deletion (class R) -/
 
 theorem ht_markDead (x : Nat) : HT K P0 (markDead x) (fun _ => True) := by
-  unfold markDead modE; ht; all_goals htfin
+  unfold markDead modE; ht; htfin
 
 theorem ht_order (x y : Nat) : HT K P0 (order x y) (fun _ => True) := by
   intro s hs hP; rw [order_run]; exact ⟨⟨hs, hP⟩, trivial⟩
@@ -293,7 +293,7 @@ theorem wb_chunkSize {s : Core} (h : WB K s) {c : Nat} {inc : Bool} (hc : c < 2 
   simp only [run_getC_bind, run_modify_bind]
   generalize (if inc = true then (s.C.getX c).size + 1 else (s.C.getX c).size - 1) = n at hnew ⊢
   have h1 : WB K { s with C := s.C.modify c fun C => { C with size := n } } := by
-    wbx h; all_goals wbv
+    wbx h; wbv
   split
   · exact (ht_pqAdjust (P0 := s.P) hc (h.cSize c) hnew).state h1 rfl |>.1
   · exact h1
@@ -488,7 +488,7 @@ theorem ht_newChunk : HT K P0 newChunk (fun _ => True) := by
   intro s hs hP
   refine ⟨⟨?_, hP⟩, trivial⟩
   show WB K { s with C := s.C.push {} }
-  wbx hs; all_goals wbv
+  wbx hs; wbv
 
 /-- A chunk removal: the chunk dies, its siblings become quiet and may enter the queue (R). -/
 theorem ht_removeChunk (x : Nat) : HT K P0 (removeChunk x) (fun _ => True) := by
@@ -523,6 +523,6 @@ theorem ht_moveUnit (x : Nat) (left : Bool) (hL : LabRoom K P0) :
         | exact wb_moveGroupsRight ht (by vb) ‹_› ‹_›)
     | exact ⟨by vb, ‹_›⟩
     | (intro n hn; cases hn)
-  all_goals vb
+  vb
 
 end OrderMaintenance.Proof.Word
