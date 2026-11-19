@@ -554,6 +554,25 @@ private meta def readBellmanNat (expression : Lean.Expr) : Lean.MetaM (Option Na
   if expression.isConstOf ``Nat.zero then return some 0
   Lean.Meta.getNatValue? expression
 
+private meta def exposeBellmanUntil (isTerminal : Lean.Expr → Bool) (expression : Lean.Expr) :
+    Lean.MetaM Lean.Expr := do
+  let expression := expression.consumeMData
+  if isTerminal expression then return expression
+  let expose := fun term => Lean.Meta.whnfHeadPred term fun head => return !isTerminal head
+  let expression ← expose expression
+  if isTerminal expression then return expression
+  Lean.Meta.withTransparency .all (expose expression)
+
+-- Core WHNF can reduce a native projection before the stopping test sees it.
+-- Keep projections intact while peeling wrappers off the constructor field.
+private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.Expr :=
+  Lean.Meta.withConfig (fun configuration => { configuration with proj := .no }) <|
+    exposeBellmanUntil (fun term =>
+      match term with
+      | .proj name index _ => name == ``DPoly && index == 0
+      | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
+          term.isAppOfArity ``List.cons 3) expression
+
 -- Stop at heads the staged reader handles so other helpers unfold in any namespace.
 private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
   let isTerminalHead (term : Lean.Expr) : Bool :=
@@ -563,17 +582,13 @@ private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Ex
         ``DPoly.scale, ``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
         ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc, ``U, ``V, ``Z].contains head
     | none => false
-  let expose := fun term => Lean.Meta.whnfHeadPred term fun head => return !isTerminalHead head
   let mut next := expression
   repeat
-    let mut term := next.consumeMData
-    unless isTerminalHead term do
-      term ← expose term
-      unless isTerminalHead term do
-        term ← Lean.Meta.withTransparency .all (expose term)
+    let mut term ← exposeBellmanUntil isTerminalHead next
     -- A constructor applied to the same polynomial's projection exposes
     -- that polynomial before the leaf reader evaluates its coefficient list.
     if term.isAppOfArity ``DPoly.mk 2 then
+      term := Lean.mkApp term.appFn! (← exposeBellmanField term.appArg!)
       if let some polynomial ← Lean.Meta.etaStruct? term (· == ``DPoly) then
         next := polynomial
         continue
@@ -821,6 +836,7 @@ example :
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
+  change allNonnegative3 (DPoly.mk (id chartPlus.coeffs)) = true
   checkBellmanChart
 
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
