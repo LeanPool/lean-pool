@@ -20,9 +20,12 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroup
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupConstants
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullSemigroupDeficitConsequences
 public import LeanPool.GinibrePoincare.Analysis.GinibreMixedGreenIdentity
+public import LeanPool.GinibrePoincare.Analysis.GinibreNonsymmetricCounterexample
 public import LeanPool.GinibrePoincare.Analysis.GinibreOneParticleSpectrum
 public import LeanPool.GinibrePoincare.Analysis.GinibrePointwiseCurvature
 public import LeanPool.GinibrePoincare.Analysis.GinibreRadialGamma
+public import LeanPool.GinibrePoincare.Analysis.GinibreRadiusNotHolomorphic
+public import LeanPool.GinibrePoincare.Analysis.GinibreTwoRadiusEquilibriumLaw
 public import LeanPool.GinibrePoincare.Analysis.PolynomialEigenfunctionGenerator
 public import LeanPool.GinibrePoincare.Analysis.PolynomialSectorIncompleteness
 public import LeanPool.GinibrePoincare.Endgame.BochnerKodairaTheoremOneTen
@@ -53,7 +56,10 @@ Main declarations: `GinibrePoincare.ginibre_symmetric_weak_poincare`,
   `GinibrePoincare.entire_alternating_vandermonde_factorization`,
   `GinibrePoincare.ginibreDivisibleEntire_real_centered_geometry`,
   `GinibrePoincare.ginibreComplexSmoothCore_closure_equivalence`,
-  `GinibrePoincare.ginibreCollisionSet_capacity_zero`
+  `GinibrePoincare.ginibreCollisionSet_capacity_zero`,
+  `GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product`,
+  `GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound`,
+  `GinibrePoincare.ginibreSquaredNormL2_not_holomorphic`
 Tags: ginibre-ensemble, poincare-inequality, weak-gradients, hermite-polynomials, equality-cases
 MSC: 60E15, 60B20, 46E35
 -/

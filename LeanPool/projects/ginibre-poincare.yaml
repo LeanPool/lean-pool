@@ -12,7 +12,10 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   Vandermonde division of entire alternating functions, holomorphic–antiholomorphic projection
   geometry); the Gamma law of the recentered radius; Hermite–Laguerre polynomial eigenfunctions,
   spectrum containment and polynomial-sector incompleteness; unbounded pointwise curvature; the
-  radial log-Sobolev inequality; and the Appendix A core-closure and zero-capacity lemmas.
+  radial log-Sobolev inequality; and the Appendix A core-closure and zero-capacity lemmas. Builds
+  Brownian stochastic-integration and finite-dimensional Itô infrastructure, and proves the joint
+  Gamma law of the two equilibrium radii, the nonsymmetric constant lower bound (n+1)/4 and the
+  non-holomorphy of the squared radius.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -53,6 +56,9 @@ main_declarations:
 - GinibrePoincare.ginibreDivisibleEntire_real_centered_geometry
 - GinibrePoincare.ginibreComplexSmoothCore_closure_equivalence
 - GinibrePoincare.ginibreCollisionSet_capacity_zero
+- GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product
+- GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound
+- GinibrePoincare.ginibreSquaredNormL2_not_holomorphic
 main_results:
 - declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
   informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
@@ -162,6 +168,22 @@ main_results:
 - declaration: GinibrePoincare.ginibreCollisionSet_capacity_zero
   informal: For n > 0, the collision set has zero weighted H¹ capacity for the Ginibre law.
   source_ref: Lemma A.3 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product
+  informal: For n ≥ 2, under the Ginibre law the pair (|Σᵢzᵢ|², Σ_{j<k}|zⱼ − zₖ|²) has the product
+    law Gamma(1, 1) ⊗ Gamma(κₙ, 1) with κₙ the recentered Gamma shape, the two equilibrium
+    radii of the stochastic factorization.
+  source_ref: Equilibrium radius laws in Theorem 1.2 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound
+  informal: For n ≥ 2, any constant C such that Var(f) ≤ C·E(f) for all smooth integrable f with
+    square-integrable values and gradients, symmetric or not, satisfies C ≥ (n+1)/4; the
+    witness is a real coordinate.
+  source_ref: Nonsymmetric counterexample discussed with Theorem 1.1 of arXiv:2608.19358v2
+    (supplementary result).
+- declaration: GinibrePoincare.ginibreSquaredNormL2_not_holomorphic
+  informal: For n > 0, the squared Euclidean radius Σᵢ|zᵢ|², as an element of the complex
+    Ginibre L² space, does not belong to the closed span of symmetric holomorphic polynomials.
+  source_ref: Supplementary remark on the holomorphic projection geometry of
+    arXiv:2608.19358v2, Section 2.
 tags:
 - ginibre-ensemble
 - poincare-inequality
