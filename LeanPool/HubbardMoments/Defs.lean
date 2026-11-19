@@ -7,16 +7,15 @@ module
 
 -- Adapted for Lean Pool.
 
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import LeanPool.HubbardMoments.Peierls
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
 
 /-!
 # Definitions
 
-Every object that the claims in `HubbardMoments.Spec` refer to is defined here, using
-Mathlib only. Together with `Spec`, this file is all a reader needs to check *what* is
-claimed. The proofs live in the other files.
+This file defines the graph, configurations, and matrices used in
+`HubbardMoments.Spec`. The proofs live in the other files.
 
 * `sector V a b k`: basis states of `a` up and `b` down electrons on the sites `V` with
   exactly `k` doubly occupied sites.
@@ -100,10 +99,10 @@ def move (c : Config V σ) (i j : V) : Config V σ :=
   Function.update (Function.update c i none) j (c i)
 
 /-- **Projected hopping operators.** `H`, a matrix on the configurations, is a projected
-hopping operator on the graph `G` with hopping modulus `t` if
+hopping operator on the graph `G` with bond moduli `w` if
 
 * it is Hermitian;
-* its matrix element from `c` to `move c i j` has modulus `t` whenever `i` and `j` are
+* its matrix element from `c` to `move c i j` has modulus `w i j` whenever `i` and `j` are
   adjacent, `i` is occupied and `j` is empty (one particle hops to an empty neighbour);
 * its matrix element from `c` to `b` vanishes when `b` is not obtained from `c` by such a hop.
 
@@ -114,25 +113,22 @@ the Pauli principle or creates a doubly occupied site, which `P₀` removes. The
 about this structure therefore apply to `H∞`; `projectedHubbard_isProjectedHopping` proves
 it for `H∞` built from fermion operators (`projectedHubbard`), with any ordering of the
 orbitals. -/
-structure IsProjectedHopping (G : SimpleGraph V) (t : ℝ)
+structure IsGraphProjectedHopping (G : SimpleGraph V) (w : V → V → ℝ)
     (H : Matrix (Config V σ) (Config V σ) ℂ) : Prop where
   isHermitian : H.IsHermitian
-  norm_apply_move : ∀ c i j, G.Adj i j → c i ≠ none → c j = none → ‖H (move c i j) c‖ = t
+  norm_apply_move : ∀ c i j, G.Adj i j → c i ≠ none → c j = none → ‖H (move c i j) c‖ = w i j
   apply_eq_zero : ∀ c b, (∀ i j, G.Adj i j → c i ≠ none → c j = none → b ≠ move c i j) →
     H b c = 0
 
-/-- **Projected hopping operators with bond-dependent amplitudes.** `w i j` is the modulus
-`|t_ji|` of the amplitude for a particle to hop from site `i` to site `j` (`0` if there is
-no bond). `H` is Hermitian; its matrix element from `c` to `move c i j` has modulus `w i j`
-whenever `i ≠ j`, `i` is occupied and `j` is empty; and it vanishes between configurations
-not related by one hop. `IsProjectedHopping G t` is the case `w i j = t` on the bonds of `G`
-and `0` elsewhere. -/
-structure IsWeightedProjectedHopping (w : V → V → ℝ) (H : Matrix (Config V σ) (Config V σ) ℂ) :
-    Prop where
-  isHermitian : H.IsHermitian
-  norm_apply_move : ∀ c i j, i ≠ j → c i ≠ none → c j = none → ‖H (move c i j) c‖ = w i j
-  apply_eq_zero : ∀ c b, (∀ i j, i ≠ j → c i ≠ none → c j = none → b ≠ move c i j) →
-    H b c = 0
+/-- A graph hopping operator with constant modulus `t` on every edge. -/
+abbrev IsProjectedHopping (G : SimpleGraph V) (t : ℝ)
+    (H : Matrix (Config V σ) (Config V σ) ℂ) : Prop :=
+  IsGraphProjectedHopping G (fun _ _ => t) H
+
+/-- A hopping operator with modulus `w i j` on each ordered pair of distinct sites. -/
+abbrev IsWeightedProjectedHopping (w : V → V → ℝ) (H : Matrix (Config V σ) (Config V σ) ℂ) :
+    Prop :=
+  IsGraphProjectedHopping ⊤ w H
 
 /-- The second spectral moment of `H` on a finite basis `B`:
 `μ₂ = Tr(H_B²)/|B| - (Tr H_B/|B|)²`, where `H_B` is the block of `H` on `B`. For Hermitian
@@ -154,8 +150,8 @@ to an adjacent site `y` with amplitude `-t e^{i A(y, x)}`: `A y x` is the phase 
 matrix elements. -/
 noncomputable def pairHopping (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ)
     (A : V → V → ℝ) : Matrix (V × V) (V × V) ℂ := fun p q =>
-  (if p.2 = q.2 ∧ G.Adj q.1 p.1 then -t * Complex.exp (A p.1 q.1 * Complex.I) else 0) +
-    (if p.1 = q.1 ∧ G.Adj q.2 p.2 then -t * Complex.exp (A p.2 q.2 * Complex.I) else 0)
+  (if p.2 = q.2 ∧ G.Adj q.1 p.1 then peierlsAmplitude t (A p.1 q.1) else 0) +
+    (if p.1 = q.1 ∧ G.Adj q.2 p.2 then peierlsAmplitude t (A p.2 q.2) else 0)
 
 /-- **The second-order doublon Hamiltonian.** The `O(t²/U)` term of the effective
 Hamiltonian on the doublon states, from second-order degenerate perturbation theory
@@ -253,7 +249,7 @@ orbitals `(site, spin)` ordered by `ord`:
 adjacent sites (`arcs G`). It is Hermitian when `A` is antisymmetric. -/
 noncomputable def hubbardHopping (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ)
     (A : V → V → ℝ) (ord : V × σ ↪ ℕ) : Matrix (FockState V σ) (FockState V σ) ℂ :=
-  fermionHopping G (fun i j => -(t : ℂ) * Complex.exp (A j i * Complex.I)) ord
+  fermionHopping G (fun i j => peierlsAmplitude t (A j i)) ord
 
 /-- **The projected hopping operator `H∞ = P₀ H_t P₀`** of the `U → ∞` Hubbard model, in the
 configuration basis. The configurations are exactly the Fock states without double
@@ -261,7 +257,7 @@ occupancy (`configState` is injective with that image), so the block of `H_t` on
 `c, b ↦ (H_t)_{configState c, configState b}`. -/
 noncomputable def projectedHubbard (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ)
     (A : V → V → ℝ) (ord : V × σ ↪ ℕ) : Matrix (Config V σ) (Config V σ) ℂ :=
-  projectedFermionHopping G (fun i j => -(t : ℂ) * Complex.exp (A j i * Complex.I)) ord
+  projectedFermionHopping G (fun i j => peierlsAmplitude t (A j i)) ord
 
 /-- **The hopping term with arbitrary amplitudes**, `H_t = -∑_{i ≠ j} ∑_s t_{ij} c†_{i s} c_{j s}`
 (a particle hops from `j` to `i` with amplitude `-t_{ij}`). It is Hermitian when
@@ -303,10 +299,5 @@ of `h` hops is a sequence `walk 0, …, walk h` of positions, consecutive ones r
 `walk h p = walk 0 (σ p)`. -/
 def IsParticleHop {P V : Type*} [DecidableEq P] (G : SimpleGraph V) (pos pos' : P → V) : Prop :=
   ∃ p w, G.Adj (pos p) w ∧ w ∉ Set.range pos ∧ pos' = Function.update pos p w
-
-/-- **The tight-binding band of the `L × L` torus**: the single-particle energies
-`ε(q) = -2t (cos q₁ + cos q₂)` at the `L²` momenta `q = 2π (m₁, m₂)/L`. -/
-noncomputable def torusBand (L : ℕ) (t : ℝ) : Fin L × Fin L → ℝ := fun m =>
-  -2 * t * (Real.cos (2 * Real.pi * (m.1 : ℕ) / L) + Real.cos (2 * Real.pi * (m.2 : ℕ) / L))
 
 end HubbardMoments

@@ -13,6 +13,7 @@ import Mathlib.Data.Nat.Choose.Factorization
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Finite-population identities

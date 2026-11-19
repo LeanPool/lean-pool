@@ -10,6 +10,7 @@ module
 public import LeanPool.HubbardMoments.Fermions
 public import LeanPool.HubbardMoments.ProjectedHopping
 public import LeanPool.HubbardMoments.SchriefferWolff
+import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Complex.Trigonometric
 import Mathlib.Tactic.Ring
 
@@ -135,13 +136,14 @@ theorem fermionHopping_apply (S' S : FockState V σ) :
     create_mul_annihilate_apply]
 
 /-- The hopping matrix is Hermitian when reversals conjugate the coefficients. -/
-theorem fermionHopping_isHermitian (h : ∀ i j, star (amplitude i j) = amplitude j i) :
+theorem fermionHopping_isHermitian
+    (h : ∀ i j, G.Adj i j → star (amplitude i j) = amplitude j i) :
     (fermionHopping G amplitude ord).IsHermitian := by
   have hcr : ∀ o, (create ord o)ᴴ = annihilate ord o := fun o => by
     rw [← annihilate_conjTranspose, Matrix.conjTranspose_conjTranspose]
   unfold Matrix.IsHermitian fermionHopping
   simp only [Matrix.conjTranspose_sum, Matrix.conjTranspose_smul, Matrix.conjTranspose_mul,
-    hcr, annihilate_conjTranspose, h]
+    hcr, annihilate_conjTranspose]
   refine sum_nbij' Prod.swap Prod.swap ?_ ?_ ?_ ?_ ?_
   · intro p hp
     simpa [arcs, G.adj_comm] using hp
@@ -151,8 +153,9 @@ theorem fermionHopping_isHermitian (h : ∀ i j, star (amplitude i j) = amplitud
     rfl
   · intro p _
     rfl
-  · intro p _
-    rfl
+  · intro p hp
+    refine sum_congr rfl fun _ _ => ?_
+    simp only [h _ _ (mem_filter.mp hp).2, Prod.fst_swap, Prod.snd_swap]
 
 /-- **`H_t` is a hopping operator**: it connects only Fock states one hop apart. -/
 theorem fermionHopping_isHoppingOperator :
@@ -168,7 +171,8 @@ theorem fermionHopping_isHoppingOperator :
   exact G.ne_of_adj hadj (congrArg Prod.fst he).symm
 
 /-- Restricting a Hermitian hopping matrix to the configuration basis preserves Hermiticity. -/
-theorem projectedFermionHopping_isHermitian (h : ∀ i j, star (amplitude i j) = amplitude j i) :
+theorem projectedFermionHopping_isHermitian
+    (h : ∀ i j, G.Adj i j → star (amplitude i j) = amplitude j i) :
     (projectedFermionHopping G amplitude ord).IsHermitian := by
   ext c b
   exact (fermionHopping_isHermitian G amplitude ord h).apply (configState c) (configState b)
@@ -234,19 +238,10 @@ theorem hubbardHopping_apply (S' S : FockState V σ) :
         else 0 :=
   fermionHopping_apply G _ ord S' S
 
-omit [Fintype V] [DecidableEq V] in
-/-- The amplitude of the reverse hop is the complex conjugate. -/
-theorem star_hopAmplitude {A : V → V → ℝ} (hA : ∀ x y, A y x = -A x y) (x y : V) :
-    star (-(t : ℂ) * exp (A y x * I)) = -(t : ℂ) * exp (A x y * I) := by
-  rw [hA x y, star_mul', star_neg, Complex.star_def, Complex.conj_ofReal, ← exp_conj,
-    map_mul, Complex.conj_ofReal, Complex.conj_I]
-  push_cast
-  ring_nf
-
 /-- **`H_t` is Hermitian** when the Peierls phases are antisymmetric. -/
-theorem hubbardHopping_isHermitian {A : V → V → ℝ} (hA : ∀ x y, A y x = -A x y) :
+theorem hubbardHopping_isHermitian {A : V → V → ℝ} (hA : ∀ x y, G.Adj x y → A y x = -A x y) :
     (hubbardHopping G t A ord).IsHermitian :=
-  fermionHopping_isHermitian G _ ord (star_hopAmplitude t hA)
+  fermionHopping_isHermitian G _ ord (fun i j hij => by rw [star_peierlsAmplitude, hA j i hij.symm])
 
 /-- **`H_t` is a hopping operator**: it connects only Fock states one hop apart. -/
 theorem hubbardHopping_isHoppingOperator : IsHoppingOperator G (hubbardHopping G t A ord) :=
@@ -257,19 +252,22 @@ theorem hubbardHopping_isHoppingOperator : IsHoppingOperator G (hubbardHopping G
 /-- **`H∞` built from fermion operators is a projected hopping operator.** For `t ≥ 0` and
 antisymmetric Peierls phases, with any ordering of the orbitals. -/
 theorem projectedHubbard_isProjectedHopping (ht : 0 ≤ t) {A : V → V → ℝ}
-    (hA : ∀ x y, A y x = -A x y) : IsProjectedHopping G t (projectedHubbard G t A ord) := by
-  refine ⟨projectedFermionHopping_isHermitian G _ ord (star_hopAmplitude t hA), ?_,
+    (hA : ∀ x y, G.Adj x y → A y x = -A x y) :
+    IsProjectedHopping G t (projectedHubbard G t A ord) := by
+  refine ⟨projectedFermionHopping_isHermitian G _ ord ?_, ?_,
     projectedFermionHopping_apply_eq_zero G _ ord⟩
-  intro c i j hadj hci hcj
-  simpa [projectedHubbard, norm_mul, Real.norm_of_nonneg ht] using
-    (norm_projectedFermionHopping_move G
-      (fun i j => -(t : ℂ) * exp (A j i * I)) ord hadj hci hcj)
+  · intro i j hij
+    rw [star_peierlsAmplitude, hA j i hij.symm]
+  · intro c i j hadj hci hcj
+    simpa [projectedHubbard, peierlsAmplitude, Complex.norm_mul, Real.norm_of_nonneg ht] using
+      norm_projectedFermionHopping_move G
+        (fun i j => peierlsAmplitude t (A j i)) ord hadj hci hcj
 
 /-! ### Consequences -/
 
 /-- **The exact second-moment theorem for `H∞` itself.** -/
 theorem secondMoment_projectedHubbard (ht : 0 ≤ t) {A : V → V → ℝ}
-    (hA : ∀ x y, A y x = -A x y) (n : σ → ℕ) (hB : (basis V n).Nonempty)
+    (hA : ∀ x y, G.Adj x y → A y x = -A x y) (n : σ → ℕ) (hB : (basis V n).Nonempty)
     (hN : 2 ≤ Fintype.card V) :
     secondMoment (basis V n) (projectedHubbard G t A ord) =
       (t : ℂ) ^ 2 * (2 * G.edgeFinset.card) * (∑ s, n s : ℕ) *
@@ -289,7 +287,7 @@ theorem secondMoment_hubbardHopping_sub_virtualOp (hG : G.CliqueFree 3)
 /-- **The second moment of `H∞` on the `L × L` torus** (`L ≥ 3`):
 `μ₂ = t² · 4n(L² - n)/(L² - 1)`. -/
 theorem secondMoment_projectedHubbard_torus {L : ℕ} (hL : 3 ≤ L) (ht : 0 ≤ t)
-    {A : Fin L × Fin L → Fin L × Fin L → ℝ} (hA : ∀ x y, A y x = -A x y)
+    {A : Fin L × Fin L → Fin L × Fin L → ℝ} (hA : ∀ x y, (torus L).Adj x y → A y x = -A x y)
     (ord : (Fin L × Fin L) × σ ↪ ℕ) (n : σ → ℕ) (hB : (basis (Fin L × Fin L) n).Nonempty) :
     secondMoment (basis (Fin L × Fin L) n) (projectedHubbard (torus L) t A ord) =
       (t : ℂ) ^ 2 * 4 * (∑ s, n s : ℕ) * ((L : ℂ) * L - (∑ s, n s : ℕ)) / ((L : ℂ) * L - 1) :=

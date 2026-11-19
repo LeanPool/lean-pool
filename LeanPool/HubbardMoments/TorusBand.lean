@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.TorusBandDefinition
 public import LeanPool.HubbardMoments.FinitePopulation
 public import LeanPool.HubbardMoments.ProjectedHopping
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
@@ -118,11 +119,16 @@ momentum-space count of `sampleMoment_torusBand_two` and the real-space count of
 `second_moment_torus` give the same `μ₂`. -/
 theorem sampleMoment_torusBand_eq_secondMoment {L : ℕ} (hL : 3 ≤ L) {t : ℝ}
     {H : Matrix (Config (Fin L × Fin L) Unit) (Config (Fin L × Fin L) Unit) ℂ}
-    (hH : IsProjectedHopping (torus L) t H) {n : ℕ} (hn : n ≤ L * L)
+    (hH : IsProjectedHopping (torus L) t H) {n : ℕ}
     (hB : (basis (Fin L × Fin L) (fun _ : Unit => n)).Nonempty) :
     (sampleMoment (torusBand L t) n 2 : ℂ) =
       secondMoment (basis (Fin L × Fin L) (fun _ : Unit => n)) H := by
-  rw [second_moment_torus hL hH _ hB, sampleMoment_torusBand_two hL t hn]
+  obtain ⟨c, hc⟩ := hB
+  have hn : n ≤ L * L := by
+    have hcard := card_occ hc
+    simp only [univ_unique, sum_singleton] at hcard
+    simpa [hcard, Fintype.card_prod] using card_le_univ (occ c)
+  rw [second_moment_torus hL hH _ ⟨c, hc⟩, sampleMoment_torusBand_two hL t hn]
   simp only [Finset.univ_unique, sum_singleton]
   push_cast
   ring

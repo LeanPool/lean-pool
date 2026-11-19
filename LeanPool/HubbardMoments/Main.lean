@@ -95,11 +95,11 @@ theorem doublonHoppingRange : Spec.DoublonHoppingRange := by
 
 theorem doublonOnSiteShift : Spec.DoublonOnSiteShift := by
   intro V _ _ G _ t A U R hA
-  exact doublonSecondOrder_self G t A hA U R
+  exact doublonSecondOrder_self G t A U R hA
 
 theorem doublonOnSiteShiftTorus : Spec.DoublonOnSiteShiftTorus := by
   intro L t A U R hL hA
-  exact doublonSecondOrder_self_torus hL t A hA U R
+  exact doublonSecondOrder_self_torus hL t A U R hA
 
 theorem torusTriangleFree : Spec.TorusTriangleFree := by
   intro L
@@ -152,8 +152,8 @@ theorem freeFermionSecondMomentTorus : Spec.FreeFermionSecondMomentTorus := by
   exact sampleMoment_torusBand_two hL t hn
 
 theorem freeAndProjectedSecondMomentsAgree : Spec.FreeAndProjectedSecondMomentsAgree := by
-  intro L t H n hL hH hn hB
-  exact sampleMoment_torusBand_eq_secondMoment hL hH hn hB
+  intro L t H n hL hH hB
+  exact sampleMoment_torusBand_eq_secondMoment hL hH hB
 
 theorem finitePopulationTable : Spec.FinitePopulationTable :=
   fpc_table

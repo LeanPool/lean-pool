@@ -12,6 +12,7 @@ import Mathlib.Analysis.Complex.Basic
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # The exact second-moment theorem
@@ -228,7 +229,8 @@ variable [Fintype V] [DecidableEq V] [Fintype σ] [DecidableEq σ]
 
 omit [Fintype V] [Fintype σ] [DecidableEq σ] [DecidableRel G.Adj] in
 /-- Every diagonal element of a projected hopping operator vanishes. -/
-theorem apply_self_eq_zero (hH : IsProjectedHopping G t H) (c : Config V σ) : H c c = 0 :=
+theorem apply_self_eq_zero {w : V → V → ℝ} (hH : IsGraphProjectedHopping G w H)
+    (c : Config V σ) : H c c = 0 :=
   hH.apply_eq_zero c c fun _ _ _ hi hj h => move_ne_self c hi hj h.symm
 
 omit [DecidableEq V] [Fintype σ] [DecidableEq σ] in
@@ -238,15 +240,12 @@ theorem mem_occ {c : Config V σ} {v : V} : v ∈ occ c ↔ c v ≠ none := by
 /-- For a Hermitian hopping matrix supported on graph moves out of a configuration, the diagonal
 of its square on the spin basis is the sum of squared moduli of those moves. -/
 theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c : Config V σ}
-    (hc : c ∈ basis V n) (hHermitian : H.IsHermitian)
-    (hmove : ∀ i j, G.Adj i j → c i ≠ none → c j = none → ‖H (move c i j) c‖ = w i j)
-    (hzero : ∀ b, (∀ i j, G.Adj i j → c i ≠ none → c j = none → b ≠ move c i j) →
-      H b c = 0) :
+    (hc : c ∈ basis V n) (hH : IsGraphProjectedHopping G w H) :
     ∑ b ∈ basis V n, H c b * H b c =
       ∑ p ∈ hops G (occ c), (w p.1 p.2 : ℂ) ^ 2 := by
   have hsq : ∀ b, H c b * H b c = ((‖H b c‖ : ℝ) : ℂ) ^ 2 := by
     intro b
-    rw [← hHermitian.apply c b]
+    rw [← hH.isHermitian.apply c b]
     exact Complex.conj_mul' (H b c)
   have hmem : ∀ p ∈ hops G (occ c), G.Adj p.1 p.2 ∧ c p.1 ≠ none ∧ c p.2 = none := by
     intro p hp
@@ -261,7 +260,7 @@ theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c
   · rw [sum_image]
     · refine sum_congr rfl fun p hp => ?_
       obtain ⟨hadj, hoccupied, hempty⟩ := hmem p hp
-      rw [hmove p.1 p.2 hadj hoccupied hempty]
+      rw [hH.norm_apply_move c p.1 p.2 hadj hoccupied hempty]
     · intro p hp q hq hpq
       have hp' := hmem p (mem_coe.mp hp)
       have hq' := hmem q (mem_coe.mp hq)
@@ -269,7 +268,7 @@ theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c
       exact Prod.ext h1 h2
   · intro b _ hb
     have hentry : H b c = 0 := by
-      refine hzero b fun i j hij hi hj hbm => hb ?_
+      refine hH.apply_eq_zero c b fun i j hij hi hj hbm => hb ?_
       refine mem_image.mpr ⟨(i, j), ?_, hbm.symm⟩
       simp only [hops, arcs, mem_filter, mem_univ, true_and, mem_occ, not_not]
       exact ⟨hij, hi, hj⟩
@@ -280,18 +279,14 @@ theorem sum_mul_apply_self_eq_sum_hops {w : V → V → ℝ} {n : σ → ℕ} {c
 theorem sum_mul_apply_self (hH : IsProjectedHopping G t H) {n : σ → ℕ} {c : Config V σ}
     (hc : c ∈ basis V n) :
     ∑ b ∈ basis V n, H c b * H b c = (t : ℂ) ^ 2 * (hops G (occ c)).card := by
-  rw [sum_mul_apply_self_eq_sum_hops (w := fun _ _ => t) hc hH.isHermitian
-    (hH.norm_apply_move c) (hH.apply_eq_zero c), sum_const, nsmul_eq_mul]
+  rw [sum_mul_apply_self_eq_sum_hops hc hH, sum_const, nsmul_eq_mul]
   ring
 
 /-- The second moment of a projected hopping matrix with varying moduli is a uniform
 occupation factor times the sum of the squared moduli over the graph's arcs. -/
 theorem secondMoment_eq_sum_arcs {w : V → V → ℝ} (n : σ → ℕ)
-    (hB : (basis V n).Nonempty) (hN : 2 ≤ Fintype.card V) (hHermitian : H.IsHermitian)
-    (hmove : ∀ (c : Config V σ) i j, G.Adj i j → c i ≠ none → c j = none →
-      ‖H (move c i j) c‖ = w i j)
-    (hzero : ∀ (c b : Config V σ),
-      (∀ i j, G.Adj i j → c i ≠ none → c j = none → b ≠ move c i j) → H b c = 0) :
+    (hB : (basis V n).Nonempty) (hN : 2 ≤ Fintype.card V)
+    (hH : IsGraphProjectedHopping G w H) :
     secondMoment (basis V n) H =
       (∑ s, n s : ℕ) * ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
           ((Fintype.card V : ℂ) * ((Fintype.card V : ℂ) - 1)) *
@@ -301,10 +296,10 @@ theorem secondMoment_eq_sum_arcs {w : V → V → ℝ} (n : σ → ℕ)
     rw [← card_occ hc₀]
     exact card_le_univ _
   have htr : ∑ c ∈ basis V n, H c c = 0 :=
-    sum_eq_zero fun c _ => hzero c c (fun _ _ _ hi hj h => move_ne_self c hi hj h.symm)
+    sum_eq_zero fun c _ => apply_self_eq_zero hH c
   let f : Finset V → ℂ := fun S => ∑ p ∈ hops G S, (w p.1 p.2 : ℂ) ^ 2
   have hdiag : ∑ c ∈ basis V n, ∑ b ∈ basis V n, H c b * H b c = ∑ c ∈ basis V n, f (occ c) :=
-    sum_congr rfl fun c hc => sum_mul_apply_self_eq_sum_hops hc hHermitian (hmove c) (hzero c)
+    sum_congr rfl fun c hc => sum_mul_apply_self_eq_sum_hops hc hH
   have hspin := sum_basis_comp_occ n f
   have hcount := sum_hops_mul G (fun p => (w p.1 p.2 : ℂ) ^ 2) (∑ s, n s)
   have hB0 : ((basis V n).card : ℂ) ≠ 0 := by
@@ -340,7 +335,7 @@ theorem second_moment (hH : IsProjectedHopping G t H) (n : σ → ℕ)
       (t : ℂ) ^ 2 * (2 * G.edgeFinset.card) * (∑ s, n s : ℕ) *
           ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
         ((Fintype.card V : ℂ) * ((Fintype.card V : ℂ) - 1)) := by
-  rw [secondMoment_eq_sum_arcs n hB hN hH.isHermitian hH.norm_apply_move hH.apply_eq_zero,
+  rw [secondMoment_eq_sum_arcs n hB hN hH,
     sum_const, nsmul_eq_mul, card_arcs]
   push_cast
   rw [div_mul_eq_mul_div]

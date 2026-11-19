@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.Defs
+public import LeanPool.HubbardMoments.TorusBandDefinition
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 
@@ -15,9 +16,8 @@ public import Mathlib.GroupTheory.Perm.Cycle.Type
 # The claims
 
 Each definition below is a proposition stating one claim of the paper, in terms of
-Mathlib and the objects of `HubbardMoments.Defs`. `HubbardMoments.Main` proves each of
-them. Reading this file and `Defs` is enough to know exactly what is proved; the proofs
-can be checked by the machine.
+the definitions of the hopping matrices and torus band. `HubbardMoments.Main` proves
+each of them.
 
 | proposition | paper |
 |---|---|
@@ -211,7 +211,7 @@ def ProjectedHoppingExists : Prop :=
 `A(x, y) = -A(y, x)`: a check that `pairHopping` is the intended operator. -/
 def PairHoppingHermitian : Prop :=
   ∀ (V : Type) [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ)
-    (A : V → V → ℝ), (∀ x y, A y x = -A x y) → (pairHopping G t A).IsHermitian
+    (A : V → V → ℝ), (∀ x y, G.Adj x y → A y x = -A x y) → (pairHopping G t A).IsHermitian
 
 /-- **No single hop connects two doublons**, so the first-order term of the effective
 Hamiltonian on the doublon states vanishes. -/
@@ -238,13 +238,13 @@ def DoublonHoppingRange : Prop :=
 second-order energy shift of a doublon on `R` is `2 z t²/U`, `z` the degree of `R`. -/
 def DoublonOnSiteShift : Prop :=
   ∀ (V : Type) [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ)
-    (A : V → V → ℝ) (U : ℝ) (R : V), (∀ x y, A y x = -A x y) →
+    (A : V → V → ℝ) (U : ℝ) (R : V), (∀ x, G.Adj R x → A x R = -A R x) →
       doublonSecondOrder (pairHopping G t A) U R R = 2 * G.degree R * (t : ℂ) ^ 2 / U
 
 /-- **The on-site shift on the `L × L` torus** (`L ≥ 3`): `8 t²/U`. -/
 def DoublonOnSiteShiftTorus : Prop :=
   ∀ (L : ℕ) (t : ℝ) (A : Fin L × Fin L → Fin L × Fin L → ℝ) (U : ℝ) (R : Fin L × Fin L),
-    3 ≤ L → (∀ x y, A y x = -A x y) →
+    3 ≤ L → (∀ x, (torus L).Adj R x → A x R = -A R x) →
       doublonSecondOrder (pairHopping (torus L) t A) U R R = 8 * (t : ℂ) ^ 2 / U
 
 /-- **Triangles of the torus.** The `L × L` torus has no triangle exactly when `L ≠ 3`. -/
@@ -354,7 +354,7 @@ momentum-space value (sampling without replacement from the band) equals the rea
 value (`SecondMomentTorus`) for every projected hopping operator. -/
 def FreeAndProjectedSecondMomentsAgree : Prop :=
   ∀ (L : ℕ) (t : ℝ) (H : Matrix (Config (Fin L × Fin L) Unit) (Config (Fin L × Fin L) Unit) ℂ)
-    (n : ℕ), 3 ≤ L → IsProjectedHopping (torus L) t H → n ≤ L * L →
+    (n : ℕ), 3 ≤ L → IsProjectedHopping (torus L) t H →
       (basis (Fin L × Fin L) (fun _ : Unit => n)).Nonempty →
         (sampleMoment (torusBand L t) n 2 : ℂ) =
           secondMoment (basis (Fin L × Fin L) (fun _ : Unit => n)) H
@@ -416,7 +416,7 @@ def SortedTupleSignRule : Prop :=
 def HubbardHoppingHermitian : Prop :=
   ∀ (V σ : Type) [Fintype V] [DecidableEq V] [Fintype σ] [DecidableEq σ] (G : SimpleGraph V)
     [DecidableRel G.Adj] (t : ℝ) (A : V → V → ℝ) (ord : V × σ ↪ ℕ),
-    (∀ x y, A y x = -A x y) → (hubbardHopping G t A ord).IsHermitian
+    (∀ x y, G.Adj x y → A y x = -A x y) → (hubbardHopping G t A ord).IsHermitian
 
 /-- **The Hubbard hopping term connects only Fock states one hop apart.** -/
 def HubbardHoppingIsHoppingOperator : Prop :=
@@ -430,7 +430,8 @@ configuration basis has the three properties of `IsProjectedHopping`. -/
 def ProjectedHubbardIsProjectedHopping : Prop :=
   ∀ (V σ : Type) [Fintype V] [DecidableEq V] [Fintype σ] [DecidableEq σ] (G : SimpleGraph V)
     [DecidableRel G.Adj] (t : ℝ) (A : V → V → ℝ) (ord : V × σ ↪ ℕ),
-    0 ≤ t → (∀ x y, A y x = -A x y) → IsProjectedHopping G t (projectedHubbard G t A ord)
+    0 ≤ t → (∀ x y, G.Adj x y → A y x = -A x y) →
+      IsProjectedHopping G t (projectedHubbard G t A ord)
 
 /-- **The exact second-moment theorem for `H∞` itself** (§5.2): on a finite simple graph with
 `N ≥ 2` vertices, `μ₂ = t² · 2|E| · n(N - n)/(N(N - 1))` on the no-double-occupancy basis with
@@ -438,7 +439,7 @@ def ProjectedHubbardIsProjectedHopping : Prop :=
 def SecondMomentHubbard : Prop :=
   ∀ (V σ : Type) [Fintype V] [DecidableEq V] [Fintype σ] [DecidableEq σ] (G : SimpleGraph V)
     [DecidableRel G.Adj] (t : ℝ) (A : V → V → ℝ) (ord : V × σ ↪ ℕ) (n : σ → ℕ),
-    0 ≤ t → (∀ x y, A y x = -A x y) → (basis V n).Nonempty → 2 ≤ Fintype.card V →
+    0 ≤ t → (∀ x y, G.Adj x y → A y x = -A x y) → (basis V n).Nonempty → 2 ≤ Fintype.card V →
       secondMoment (basis V n) (projectedHubbard G t A ord) =
         (t : ℂ) ^ 2 * (2 * G.edgeFinset.card) * (∑ s, n s : ℕ) *
             ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
@@ -449,7 +450,8 @@ def SecondMomentHubbard : Prop :=
 def SecondMomentHubbardTorus : Prop :=
   ∀ (σ : Type) [Fintype σ] [DecidableEq σ] (L : ℕ) (t : ℝ)
     (A : Fin L × Fin L → Fin L × Fin L → ℝ) (ord : (Fin L × Fin L) × σ ↪ ℕ) (n : σ → ℕ),
-    3 ≤ L → 0 ≤ t → (∀ x y, A y x = -A x y) → (basis (Fin L × Fin L) n).Nonempty →
+    3 ≤ L → 0 ≤ t → (∀ x y, (torus L).Adj x y → A y x = -A x y) →
+      (basis (Fin L × Fin L) n).Nonempty →
       secondMoment (basis (Fin L × Fin L) n) (projectedHubbard (torus L) t A ord) =
         (t : ℂ) ^ 2 * 4 * (∑ s, n s : ℕ) * ((L : ℂ) * L - (∑ s, n s : ℕ)) / ((L : ℂ) * L - 1)
 
@@ -486,7 +488,7 @@ the orbitals. -/
 def SecondMomentHubbardWeighted : Prop :=
   ∀ (V σ : Type) [Fintype V] [DecidableEq V] [Fintype σ] [DecidableEq σ] (tt : V → V → ℂ)
     (ord : V × σ ↪ ℕ) (n : σ → ℕ),
-    (∀ i j, tt j i = star (tt i j)) → (basis V n).Nonempty → 2 ≤ Fintype.card V →
+    (∀ i j, i ≠ j → tt j i = star (tt i j)) → (basis V n).Nonempty → 2 ≤ Fintype.card V →
       secondMoment (basis V n) (projectedHubbardWeighted tt ord) =
         (∑ s, n s : ℕ) * ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
             ((Fintype.card V : ℂ) * ((Fintype.card V : ℂ) - 1)) *

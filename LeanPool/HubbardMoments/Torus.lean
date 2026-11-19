@@ -11,6 +11,7 @@ public import LeanPool.HubbardMoments.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # The square-lattice torus
