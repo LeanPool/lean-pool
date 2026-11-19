@@ -45,7 +45,6 @@ namespace RobinsonQ
 
 open ORingStructure
 
-@[simp]
 instance : ℕ↓[ℒₒᵣ] ⊧* 𝐐 :=
   ⟨by
     intro σ h

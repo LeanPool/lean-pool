@@ -32,7 +32,6 @@ namespace Eq
 
 variable (L) (M : Type*) [Nonempty M] [Tarski.Structure L M]
 
-@[simp]
 instance models_eq [Tarski.Structure.Eq L M] : M↓[L] ⊧* 𝐄𝐐 L :=
   ⟨by
     intro φ h

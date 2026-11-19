@@ -123,7 +123,7 @@ lemma reWitness_spec (V : Type) [ORingStructure V] [V↓[ℒₒᵣ] ⊧* 𝐈Σ�
         e).trans
     Semiformula.eval_ex
 
-@[simp, grind .]
+@[grind .]
 lemma rePred_codes_of_RE : REPred (· ∈ Encodable.encode '' T) :=
   (PointwiseComposition.REPred.projection
         ((PointwiseComposition.REPred.and (Theory.RE.re.comp Computable.snd))

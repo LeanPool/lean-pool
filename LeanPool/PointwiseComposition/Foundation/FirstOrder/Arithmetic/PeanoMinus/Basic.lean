@@ -192,7 +192,6 @@ lemma equiv_singleton_finiteConj :
           Entailment.mdp (Entailment.left_Fconj_intro (by simp_all)) (Entailment.by_axm rfl),
         Entailment.WeakerThan.ofAxmProof fun {σ} hσ ↦ by rcases hσ with rfl; exact hConj⟩
 
-@[simp]
 instance instModelsSetStrucORingSentenceStrNat : ℕ↓[ℒₒᵣ] ⊧* 𝐏𝐀⁻ :=
   ⟨by
     intro σ h
