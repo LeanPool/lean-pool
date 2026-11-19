@@ -72,9 +72,7 @@ variable [Fintype V] [DecidableEq V]
 
 /-- The possible edges are the non-diagonal elements of `Sym2 V`. -/
 theorem coe_possibleEdges : (possibleEdges V : Set (Sym2 V)) = Sym2.diagSetᶜ := by
-  ext e
-  induction e using Sym2.ind with
-  | _ v w => simp [possibleEdges, Finset.pairs, Sym2.diagSet]
+  rw [possibleEdges, coe_edgeFinset, edgeSet_top]
 
 /-- The binomial random graph `G(V, p)` gives a set `S` of graphs the probability of any event `Q`
 on sets of possible edges such that `fromEdgeSet A ∈ S ↔ Q A`. -/

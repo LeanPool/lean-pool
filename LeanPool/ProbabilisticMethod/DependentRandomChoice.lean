@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import Mathlib.Algebra.Order.Chebyshev
-public import Mathlib.Tactic.Rify
+public import Mathlib.Basic.Real.Basic
 
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.FieldSimp

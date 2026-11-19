@@ -150,12 +150,10 @@ def LopsidedWeights (Ω : Finset β) (w : β → ℝ) (I : Finset ι) (E : ι �
       Ω.weightProb w (E i) * Ω.weightProb w (Avoids E S)
 
 /-- The lopsided dependence hypothesis on the `p`-biased cube: `LopsidedWeights` for the weights
-`U.bernoulliWeight p` on `U.powerset`. -/
+`U.bernoulliWeight p` on `U.powerset`, whose `weightProb` is `bernoulliProb`. -/
 def Lopsided (U : Finset α) (p : ℝ) (I : Finset ι) (E : ι → Finset α → Prop)
     [∀ i, DecidablePred (E i)] (Γ : ι → Finset ι) : Prop :=
-  ∀ i ∈ I, ∀ S ⊆ I, Disjoint S (Γ i) → i ∉ S →
-    U.bernoulliProb p (fun A => E i A ∧ Avoids E S A) ≤
-      U.bernoulliProb p (E i) * U.bernoulliProb p (Avoids E S)
+  LopsidedWeights U.powerset (U.bernoulliWeight p) I E Γ
 
 section Weights
 
@@ -329,8 +327,7 @@ theorem lopsided_of_dependsOnCoords [DecidableEq ι] {I : Finset ι} {T : ι →
     (hE : ∀ i ∈ I, DependsOnCoords (E i) (T i)) :
     Lopsided U p I E fun i => I.filter fun j => j ≠ i ∧ ¬Disjoint (T i) (T j) := by
   intro i hi S hS hSΓ hiS
-  refine (bernoulliProb_and (hT i hi) (biUnion_subset.mpr fun j hj => hT j (hS hj))
-    ?_ (hE i hi) ?_).le
+  refine (bernoulliProb_and (U := U) (p := p) (T' := S.biUnion T) (hT i hi) ?_ (hE i hi) ?_).le
   · refine (disjoint_biUnion_right _ _ _).mpr fun j hj => ?_
     by_contra hij
     exact disjoint_left.mp hSΓ hj (mem_filter.mpr ⟨hS hj, fun h => hiS (h ▸ hj), hij⟩)

@@ -19,8 +19,8 @@ Authors: Brian Sanders
 Status: verified
 Main declarations: `Finset.prod_one_sub_le_weightProb_forall_not`,
   `Finset.exists_forall_not_of_symmetric_lll`, `SimpleGraph.exists_dependentRandomChoice`,
-  `SimpleGraph.exists_large_cliqueFree_of_deletion`,
-  `SimpleGraph.binomialRandom_real_eq_bernoulliProb`
+  `SimpleGraph.exists_dependentRandomChoice_of_card_edgeFinset`,
+  `SimpleGraph.exists_large_cliqueFree_of_deletion`
 Tags: probabilistic-method, lovasz-local-lemma, dependent-random-choice, random-graphs
 MSC: 05D40, 05C80, 60C05
 -/

@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-public import Mathlib.Tactic.Rify
+public import Mathlib.Basic.Real.Basic
 
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
@@ -117,8 +117,7 @@ theorem bernoulliProb_superset {F : Finset α} (hF : F ⊆ U) :
   have key : ∀ A ∈ U.powerset.filter (F ⊆ ·),
       U.bernoulliWeight p A = p ^ #F * (U \ F).bernoulliWeight p (A \ F) := by
     intro A hA
-    obtain ⟨hAU, hFA⟩ := mem_filter.mp hA
-    rw [mem_powerset] at hAU
+    obtain ⟨-, hFA⟩ := mem_filter.mp hA
     rw [bernoulliWeight, bernoulliWeight, sdiff_sdiff_sdiff_cancel_right hFA,
       card_sdiff_of_subset hFA, ← mul_assoc, ← pow_add, Nat.add_sub_cancel' (card_le_card hFA)]
   rw [sum_congr rfl key, ← mul_sum]
@@ -141,10 +140,10 @@ theorem bernoulliProb_disjoint {F : Finset α} (hF : F ⊆ U) :
   rw [← bernoulliProb_superset (p := 1 - p) hF, bernoulliProb, bernoulliProb]
   refine sum_nbij' (U \ ·) (U \ ·) (fun A hA => ?_) (fun A hA => ?_) (fun A hA => ?_)
     (fun A hA => ?_) fun A hA => ?_
-  · obtain ⟨hAU, hAF⟩ := mem_filter.mp hA
+  · obtain ⟨-, hAF⟩ := mem_filter.mp hA
     refine mem_filter.mpr ⟨mem_powerset.mpr sdiff_subset, fun x hx => mem_sdiff.mpr ⟨hF hx, ?_⟩⟩
     exact fun hxA => disjoint_left.mp hAF hxA hx
-  · obtain ⟨hAU, hFA⟩ := mem_filter.mp hA
+  · obtain ⟨-, hFA⟩ := mem_filter.mp hA
     refine mem_filter.mpr ⟨mem_powerset.mpr sdiff_subset, disjoint_left.mpr fun x hx hxF => ?_⟩
     exact (mem_sdiff.mp hx).2 (hFA hxF)
   · exact sdiff_sdiff_eq_self (mem_powerset.mp (mem_filter.mp hA).1)
@@ -153,7 +152,8 @@ theorem bernoulliProb_disjoint {F : Finset α} (hF : F ⊆ U) :
 
 /-! ### Independence -/
 
-/-- The event `P` depends only on the coordinates in `T`. -/
+/-- The event `P` depends only on the coordinates in `T`: `P A ↔ P B` whenever
+`A ∩ T = B ∩ T`, for all finite sets `A` and `B` of the ambient type, not only subsets of `U`. -/
 def DependsOnCoords (P : Finset α → Prop) (T : Finset α) : Prop :=
   ∀ A B, A ∩ T = B ∩ T → (P A ↔ P B)
 
@@ -192,8 +192,6 @@ private theorem sum_powerset_split {T : Finset α} (hT : T ⊆ U) (f : Finset α
     exact mem_powerset.mpr (union_subset (hx.1.trans hT) (hx.2.trans sdiff_subset))
   · rw [union_comm, sdiff_union_inter]
   · rw [mem_product, mem_powerset, mem_powerset] at hx
-    have hdisj : Disjoint x.1 x.2 :=
-      disjoint_of_subset_left hx.1 (disjoint_of_subset_right hx.2 disjoint_sdiff)
     ext1
     · simp only
       rw [union_inter_distrib_right, inter_eq_left.mpr hx.1,
@@ -205,13 +203,12 @@ private theorem sum_powerset_split {T : Finset α} (hT : T ⊆ U) (f : Finset α
   · simp only
     rw [union_comm, sdiff_union_inter]
 
-/-- **Independence.** Events depending on disjoint coordinate sets `T, T' ⊆ U` are independent:
-`P(P ∧ Q) = P(P) P(Q)`. -/
-theorem bernoulliProb_and {T T' : Finset α} (hT : T ⊆ U) (hT' : T' ⊆ U) (hTT' : Disjoint T T')
+/-- **Independence.** Events depending on disjoint coordinate sets `T ⊆ U` and `T'` are
+independent: `P(P ∧ Q) = P(P) P(Q)`. -/
+theorem bernoulliProb_and {T T' : Finset α} (hT : T ⊆ U) (hTT' : Disjoint T T')
     {P Q : Finset α → Prop} [DecidablePred P] [DecidablePred Q] (hP : DependsOnCoords P T)
     (hQ : DependsOnCoords Q T') :
     U.bernoulliProb p (fun A => P A ∧ Q A) = U.bernoulliProb p P * U.bernoulliProb p Q := by
-  have hT'U : T' ⊆ U \ T := fun x hx => mem_sdiff.mpr ⟨hT' hx, disjoint_right.mp hTT' hx⟩
   -- on `a ∪ b` with `a ⊆ T` and `b ⊆ U \ T`, `P` sees only `a` and `Q` only `b`
   have hPa : ∀ a ⊆ T, ∀ b ⊆ U \ T, (P (a ∪ b) ↔ P a) := fun a ha b hb => hP _ _ (by
     rw [union_inter_distrib_right, inter_eq_left.mpr ha,
@@ -253,27 +250,16 @@ theorem bernoulliProb_and {T T' : Finset α} (hT : T ⊆ U) (hT' : T' ⊆ U) (hT
 
 /-! ### The first-moment method -/
 
-/-- The weight of the empty set or of `U` is positive. -/
-private theorem exists_bernoulliWeight_pos (h0 : 0 ≤ p) (h1 : p ≤ 1) :
-    ∃ A ∈ U.powerset, 0 < U.bernoulliWeight p A := by
-  rcases h1.lt_or_eq with h1 | rfl
-  · exact ⟨∅, empty_mem_powerset U, by
-      rw [bernoulliWeight, card_empty, pow_zero, one_mul, sdiff_empty]
-      exact pow_pos (by linarith) _⟩
-  · exact ⟨U, mem_powerset_self U, by simp [bernoulliWeight]⟩
-
 /-- **The first-moment method.** Some `A ⊆ U` has `f A` at most the expectation
 `∑ A ⊆ U, bernoulliWeight U p A * f A`. -/
 theorem exists_le_expectation (h0 : 0 ≤ p) (h1 : p ≤ 1) (f : Finset α → ℝ) :
     ∃ A ∈ U.powerset, f A ≤ ∑ B ∈ U.powerset, U.bernoulliWeight p B * f B := by
-  by_contra! h
-  obtain ⟨A₀, hA₀, hpos⟩ := exists_bernoulliWeight_pos (U := U) h0 h1
-  have hlt : ∑ B ∈ U.powerset, U.bernoulliWeight p B * (∑ C ∈ U.powerset,
-      U.bernoulliWeight p C * f C) < ∑ B ∈ U.powerset, U.bernoulliWeight p B * f B :=
-    sum_lt_sum (fun B hB => mul_le_mul_of_nonneg_left (h B hB).le
-      (bernoulliWeight_nonneg h0 h1 B)) ⟨A₀, hA₀, mul_lt_mul_of_pos_left (h A₀ hA₀) hpos⟩
-  rw [← sum_mul, sum_bernoulliWeight, one_mul] at hlt
-  exact lt_irrefl _ hlt
+  obtain ⟨A, hA, hmin⟩ := U.powerset.exists_min_image f (powerset_nonempty U)
+  refine ⟨A, hA, ?_⟩
+  calc f A = ∑ B ∈ U.powerset, U.bernoulliWeight p B * f A := by
+        rw [← sum_mul, sum_bernoulliWeight, one_mul]
+    _ ≤ _ := sum_le_sum fun B hB =>
+        mul_le_mul_of_nonneg_left (hmin B hB) (bernoulliWeight_nonneg h0 h1 B)
 
 /-- **Linearity of expectation for counts.** The expected number of the events `E i`, `i ∈ I`,
 that occur is the sum of their probabilities. -/

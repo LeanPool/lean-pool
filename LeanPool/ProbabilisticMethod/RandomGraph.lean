@@ -99,9 +99,20 @@ namespace SimpleGraph
 
 variable {V : Type*} [DecidableEq V]
 
-/-- The pairs of distinct vertices of a finite type: the possible edges. -/
+/-- The pairs of distinct vertices of a finite type: the possible edges, that is, the edges of
+the complete graph. -/
 def possibleEdges (V : Type*) [Fintype V] [DecidableEq V] : Finset (Sym2 V) :=
-  (univ : Finset V).pairs
+  (⊤ : SimpleGraph V).edgeFinset
+
+/-- The possible edges are the pairs of distinct vertices. -/
+theorem possibleEdges_eq_pairs_univ [Fintype V] : possibleEdges V = (univ : Finset V).pairs := by
+  ext e
+  induction e using Sym2.ind with
+  | _ v w => simp [possibleEdges, mem_pairs]
+
+/-- The pairs of any vertex set are possible edges. -/
+theorem pairs_subset_possibleEdges [Fintype V] (s : Finset V) : s.pairs ⊆ possibleEdges V :=
+  possibleEdges_eq_pairs_univ (V := V) ▸ pairs_mono (subset_univ s)
 
 /-- A set `s` is a clique of `fromEdgeSet A` exactly when every pair of `s` lies in `A`. -/
 theorem isClique_fromEdgeSet_iff {A : Finset (Sym2 V)} {s : Finset V} :
@@ -135,13 +146,13 @@ variable [Fintype V] {p : ℝ}
 /-- A fixed set `s` is a clique of `G(n, p)` with probability `p ^ C(|s|, 2)`. -/
 theorem bernoulliProb_isClique (s : Finset V) :
     (possibleEdges V).bernoulliProb p (s.pairs ⊆ ·) = p ^ (#s).choose 2 := by
-  rw [bernoulliProb_superset (show s.pairs ⊆ possibleEdges V from pairs_mono (subset_univ s)),
+  rw [bernoulliProb_superset (pairs_subset_possibleEdges s),
     card_pairs]
 
 /-- A fixed set `s` is independent in `G(n, p)` with probability `(1 - p) ^ C(|s|, 2)`. -/
 theorem bernoulliProb_isClique_compl (s : Finset V) :
     (possibleEdges V).bernoulliProb p (Disjoint · s.pairs) = (1 - p) ^ (#s).choose 2 := by
-  rw [bernoulliProb_disjoint (show s.pairs ⊆ possibleEdges V from pairs_mono (subset_univ s)),
+  rw [bernoulliProb_disjoint (pairs_subset_possibleEdges s),
     card_pairs]
 
 /-- The expected number of `k`-cliques plus independent `l`-sets in `G(n, p)`. -/
