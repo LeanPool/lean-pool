@@ -72,8 +72,10 @@ theorem ginibreCIR_noise_amplitude_factor {n : ℕ} (α : ℝ) (z : Configuratio
       (2*Real.sqrt (pairwiseRadius z))*Real.sqrt (2*α/(n : ℝ)) := by
   have he : (8*α/(n : ℝ))*pairwiseRadius z=(4*pairwiseRadius z)*(2*α/(n : ℝ)) := by ring
   have h4 : Real.sqrt (4*pairwiseRadius z)=2*Real.sqrt (pairwiseRadius z) := by
-    rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4)]
-    norm_num
+    have h2 : Real.sqrt 4 = 2 := by
+      rw [show (4 : ℝ) = 2 ^ 2 by norm_num]
+      exact Real.sqrt_sq (by norm_num)
+    rw [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4), h2]
   rw [he, Real.sqrt_mul (mul_nonneg (by norm_num) hρ), h4]
 
 theorem ginibre_squareRootRadius_noise_coordinate {n : ℕ} (hn : 2 ≤ n)

@@ -12,15 +12,17 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   Vandermonde division of entire alternating functions, holomorphic–antiholomorphic projection
   geometry); the Gamma law of the recentered radius; Hermite–Laguerre polynomial eigenfunctions,
   spectrum containment and polynomial-sector incompleteness; unbounded pointwise curvature; the
-  radial log-Sobolev inequality; and the Appendix A core-closure and zero-capacity lemmas. Builds
-  Brownian stochastic-integration and finite-dimensional Itô infrastructure, and proves the joint
-  Gamma law of the two equilibrium radii, the nonsymmetric constant lower bound (n+1)/4 and the
-  non-holomorphy of the squared radius. Constructs the maximal Brownian-driven solution of the
-  Ginibre Langevin equation, proves stationarity of the Ginibre law along its whole future path, and
-  identifies its transition Laplace transform with the analytic resolvent of the full generator.
-  Proves global noncollision of the original Brownian-driven dynamics, its dynamical factorization
-  into two independent CIR radii (Theorem 1.3), stationarity of their Gamma product law, and
-  identification of the transition semigroup with the analytic generator evolution.
+  radial log-Sobolev inequality; and the Appendix A core-closure and zero-capacity lemmas. Through
+  the Gaussian matrix lift, proves the eigenvector-overlap variance and entropy inequalities of
+  Theorem 1.13, including the Gaussian matrix Poincaré inequality. Builds Brownian
+  stochastic-integration and finite-dimensional Itô infrastructure, and proves the joint Gamma law
+  of the two equilibrium radii, the nonsymmetric constant lower bound (n+1)/4 and the non-holomorphy
+  of the squared radius. Constructs the maximal Brownian-driven solution of the Ginibre Langevin
+  equation, proves stationarity of the Ginibre law along its whole future path, and identifies its
+  transition Laplace transform with the analytic resolvent of the full generator. Proves global
+  noncollision of the original Brownian-driven dynamics, its dynamical factorization into two
+  independent CIR radii (Theorem 1.3), stationarity of their Gamma product law, and identification
+  of the transition semigroup with the analytic generator evolution.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -61,6 +63,10 @@ main_declarations:
 - GinibrePoincare.ginibreDivisibleEntire_real_centered_geometry
 - GinibrePoincare.ginibreComplexSmoothCore_closure_equivalence
 - GinibrePoincare.ginibreCollisionSet_capacity_zero
+- GinibrePoincare.correspondenceMatrix_theorem_1_13
+- GinibrePoincare.fullMatrixLift_functional_inequalities
+- GinibrePoincare.matrixSpectralLift_finite_overlap_gaussian_poincare
+- GinibrePoincare.matrixGaussian_poincare_compactC1
 - GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product
 - GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound
 - GinibrePoincare.ginibreSquaredNormL2_not_holomorphic
@@ -179,6 +185,29 @@ main_results:
 - declaration: GinibrePoincare.ginibreCollisionSet_capacity_zero
   informal: For n > 0, the collision set has zero weighted H¹ capacity for the Ginibre law.
   source_ref: Lemma A.3 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.correspondenceMatrix_theorem_1_13
+  informal: For n > 0 and a permutation-symmetric C¹ observable F on ℂⁿ whose spectral lift
+    F(eigenvalues of A) lies in the Gaussian matrix H¹ space, the eigenvector-overlap energy is
+    integrable, F² log F² is integrable for the Ginibre law, Var(F) ≤ (2/n)·E[overlap energy]
+    and Ent(F²) ≤ (4/n)·E[overlap energy], expectations under the Gaussian matrix law.
+  source_ref: Theorem 1.13 of arXiv:2608.19358v2 (matrix lift and eigenvector-overlap
+    inequalities, on the literal Gaussian matrix H¹ lift domain).
+- declaration: GinibrePoincare.fullMatrixLift_functional_inequalities
+  informal: For n > 0 and a permutation-symmetric C¹ observable F in the Ginibre L² space with
+    integrable eigenvector-overlap energy, F² log F² is integrable, Var(F) ≤ (2/n)·E[overlap
+    energy] and Ent(F²) ≤ (4/n)·E[overlap energy].
+  source_ref: Theorem 1.13 of arXiv:2608.19358v2 (finite overlap-energy domain).
+- declaration: GinibrePoincare.matrixSpectralLift_finite_overlap_gaussian_poincare
+  informal: For n > 0 and a differentiable permutation-symmetric F in the Ginibre L² space with
+    integrable overlap energy, Var(F) ≤ (2/n)·E[overlap energy], proved by the Gaussian matrix
+    Poincaré inequality applied to the spectral lift without invoking Theorem 1.1.
+  source_ref: Gaussian matrix Poincaré proof of the variance part of Theorem 1.13 of
+    arXiv:2608.19358v2.
+- declaration: GinibrePoincare.matrixGaussian_poincare_compactC1
+  informal: For n > 0, every compactly supported C¹ function on the real coordinates of n×n
+    complex matrices satisfies Var ≤ (1/(2n))·E[|∇F|²] under the Gaussian matrix law.
+  source_ref: Gaussian matrix Poincaré inequality used in the proof of Theorem 1.13 of
+    arXiv:2608.19358v2, proved internally from the Gaussian log-Sobolev inequality.
 - declaration: GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product
   informal: For n ≥ 2, under the Ginibre law the pair (|Σᵢzᵢ|², Σ_{j<k}|zⱼ − zₖ|²) has the product
     law Gamma(1, 1) ⊗ Gamma(κₙ, 1) with κₙ the recentered Gamma shape, the two equilibrium

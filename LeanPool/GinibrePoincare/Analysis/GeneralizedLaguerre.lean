@@ -39,7 +39,6 @@ public import Mathlib.Algebra.Polynomial.Derivative
 public import Mathlib.Algebra.Polynomial.Sequence
 public import Mathlib.Analysis.Calculus.Deriv.Polynomial
 public import Mathlib.Data.Nat.Choose.Basic
-public import Mathlib.Tactic
 
 /-! # Generalized Laguerre polynomials with integer Gamma shape
 

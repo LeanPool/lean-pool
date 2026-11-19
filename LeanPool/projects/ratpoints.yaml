@@ -1,0 +1,51 @@
+slug: ratpoints
+title: Verified bounded-height rational-point search on hyperelliptic curves
+summary: >
+  Certifies a pure Lean brute-force reference and modular sieve for normalized
+  integral triples (x, y, z) satisfying a hyperelliptic binary-form equation.
+  Height is max(|x|, z), where x and z are the coprime numerator and denominator.
+  Both searches include eligible points at infinity (z = 0). For finite points
+  the fast search enforces the lower denominator bound and applies the upper
+  bound only when it is positive. The fast search enumerates exactly these
+  points without duplicates, using Tau Ceti's Sturm root count for pruning.
+branch: computational number theory
+entry_module: LeanPool.Ratpoints
+authors:
+- Michael Stoll
+source:
+  title: RatpointsLean, verified bounded-height search
+  url: https://github.com/MichaelStollBayreuth/RatpointsLean/tree/aa11615d33f7b09c063447c1bffd00849db9acba
+  github_repo: MichaelStollBayreuth/RatpointsLean
+  commit: aa11615d33f7b09c063447c1bffd00849db9acba
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Ratpoints.mem_bruteForce_iff
+- Ratpoints.Fast.isPoint_and_inRegion_of_mem_fastPoints
+- Ratpoints.Fast.mem_fastPoints_iff
+- Ratpoints.Fast.nodup_fastPoints
+main_results:
+- declaration: Ratpoints.mem_bruteForce_iff
+  informal: Membership in the brute-force output is equivalent to being a
+    normalized integral solution (x, y, z) with max(|x|, z) at most the
+    height bound.
+- declaration: Ratpoints.Fast.isPoint_and_inRegion_of_mem_fastPoints
+  informal: Every fast-search output is a normalized solution within the
+    height bound. Its denominator is zero or meets the lower bound and any
+    positive upper denominator bound.
+- declaration: Ratpoints.Fast.mem_fastPoints_iff
+  informal: For any tuning parameters, the fast search finds exactly the
+    normalized solutions with max(|x|, z) within the height bound and
+    with z zero or meeting the lower bound and any positive upper bound.
+- declaration: Ratpoints.Fast.nodup_fastPoints
+  informal: The fast search never returns a point twice.
+tags:
+- rational-points
+- hyperelliptic-curves
+- verified-algorithms
+- sieves
+msc:
+- 11G30
+- 11Y50
+- 68V20
