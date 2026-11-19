@@ -2,8 +2,8 @@ slug: ramsey-reservoir
 title: Reservoir and book calculus for greedy Ramsey arguments
 summary: Reservoirs track a clique and its pool of common neighbours. The winning-pivot theorem
   preserves a Pascal threshold for partially built two-colour clique spines. The development also
-  proves greedy and minimum-degree clique bounds, the codegree–triangle identity, book forcing,
-  and anchored gluing for homogeneous block quotients. Starting from empty spines recovers Pascal
+  proves greedy clique bounds from local non-adjacency budgets, books from triangle and edge
+  density, book forcing, and anchored gluing for homogeneous block quotients. Starting from empty spines recovers Pascal
   upper bounds, including the Erdős–Szekeres binomial bound. A five-cycle gives the matching lower
   bound for R(3, 3) = 6. The Ramsey interface uses the two-colour Ramsey property in FiniteRamsey.
 branch: combinatorics
@@ -26,7 +26,7 @@ provenance_evidence: 'Proposal #721 and the upstream README identify human-direc
 main_declarations:
 - SimpleGraph.Bireservoir.IsWinning.exists_pivot
 - SimpleGraph.ramseyNumber_three_three
-- SimpleGraph.sum_card_commonNeighbors_eq
+- SimpleGraph.Reservoir.exists_isNClique_of_card_nonadj_le
 - SimpleGraph.ContainsBook.not_cliqueFree_or
 - SimpleGraph.HomogeneousBlocks.isNClique_anchor
 main_results:
@@ -47,22 +47,23 @@ main_results:
     ramseyNumber ![r, s] is at most n.
   source_ref: Lean Pool bridge to LeanPool.FiniteRamsey, added in this import.
 - declaration: SimpleGraph.ramseyNumber_le_of_isPascal
-  informal: Every threshold satisfying Pascal's inequality bounds the FiniteRamsey Ramsey number
-    ramseyNumber ![r, s] from above.
+  informal: Every threshold R satisfying Pascal's inequality and positive whenever both inputs
+    are positive bounds the FiniteRamsey Ramsey number ramseyNumber ![r, s] above by R r s.
   source_ref: Lean Pool corollary of the upstream Pascal-potential theorem, added in this import.
 - declaration: SimpleGraph.ramseyNumber_three_three
-  informal: The FiniteRamsey Ramsey number ramseyNumber ![3, 3] equals 6; the lower bound uses the
-    five-cycle.
+  informal: The FiniteRamsey Ramsey number ramseyNumber ![3, 3] equals 6. FiniteRamsey already
+    proves the upper bound; the lower bound uses the five-cycle.
   source_ref: 'Upstream ramseyBound_six_three_three and not_ramseyBound_five_three_three at
     7024820542e42feb8177cbf2c624d64106813332.'
+- declaration: SimpleGraph.Reservoir.exists_isNClique_of_card_nonadj_le
+  informal: In a reservoir (a clique spine and a pool of common neighbours), if every pool vertex
+    is non-adjacent to at most d pool vertices, counting itself, and j d is less than the pool
+    size, then G has a clique of size (spine size + j + 1).
+  source_ref: 'Upstream RamseyReservoir/Reservoir.lean at 7024820542e42feb8177cbf2c624d64106813332.'
 - declaration: SimpleGraph.exists_isNClique_of_minDegree
   informal: A finite graph with minimum degree δ on n vertices and j (n - δ) < n contains a
-    (j + 1)-clique.
+    (j + 1)-clique. This empty-spine case also follows from Mathlib's Turán bound.
   source_ref: 'Upstream RamseyReservoir/Reservoir.lean at 7024820542e42feb8177cbf2c624d64106813332.'
-- declaration: SimpleGraph.sum_card_commonNeighbors_eq
-  informal: In a finite graph, summing the number of common neighbours over ordered adjacent pairs
-    gives six times the number of triangles.
-  source_ref: 'Upstream RamseyReservoir/Book.lean at 7024820542e42feb8177cbf2c624d64106813332.'
 - declaration: SimpleGraph.exists_adj_four_mul_card_edgeFinset_le
   informal: A finite graph with e > 0 edges on n vertices has an edge uv whose endpoints have c
     common neighbours with 4e ≤ n (c + n).
