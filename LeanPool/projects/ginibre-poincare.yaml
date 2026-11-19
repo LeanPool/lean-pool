@@ -108,8 +108,8 @@ main_results:
   source_ref: Gamma-radius part of Theorem 1.2 of arXiv:2608.19358v2.
 - declaration: GinibrePoincare.polynomialEigenfunction_eigenvalue_equation_atSpeed
   informal: For n ≥ 2, any speed α and indices a, b, m, the Hermite–Laguerre polynomial
-    H_{a,b}(S)·L_m(R) satisfies the pointwise eigenvalue equation of the Ginibre pregenerator at
-    speed α with eigenvalue 2(α/n)(a + b + 2m), at every collision-free configuration.
+    H_{a,b}(S)·L_m(R) satisfies the pointwise eigenvalue equation for the negative Ginibre pregenerator
+    at speed α, with eigenvalue 2(α/n)(a + b + 2m), at every collision-free configuration.
   source_ref: Theorem 1.4 of arXiv:2608.19358v2 (pointwise eigenvalue equation).
 - declaration: GinibrePoincare.ginibreFullGeneratorAtSpeed_all_positive_n_spectrum_containment
   informal: For every n > 0 and α > 0, each −2αk/n (k ∈ ℕ) lies in the spectrum of the full
