@@ -1,0 +1,47 @@
+slug: ratpoints
+title: Verified bounded-height rational-point search on hyperelliptic curves
+summary: >
+  Formalizes a pure Lean search for normalized bounded-height points on
+  hyperelliptic curves over the rationals, with a brute-force reference and an
+  exact modular sieve. Every output of the fast search is a point in the
+  requested denominator range, and outputs are pairwise distinct. Fast-search
+  completeness assumes a stated form of Sturm's theorem for its interval
+  pruning. The brute-force reference is unconditionally sound and complete.
+branch: computational number theory
+entry_module: LeanPool.Ratpoints
+authors:
+- Michael Stoll
+source:
+  title: RatpointsLean, verified bounded-height search
+  url: https://github.com/MichaelStollBayreuth/RatpointsLean/tree/aa11615d33f7b09c063447c1bffd00849db9acba
+  github_repo: MichaelStollBayreuth/RatpointsLean
+  commit: aa11615d33f7b09c063447c1bffd00849db9acba
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Ratpoints.mem_bruteForce_iff
+- Ratpoints.Fast.isPoint_and_inRegion_of_mem_fastPoints
+- Ratpoints.Fast.mem_fastPoints_iff
+- Ratpoints.Fast.nodup_fastPoints
+main_results:
+- declaration: Ratpoints.mem_bruteForce_iff
+  informal: Membership in the brute-force output is equivalent to being a
+    normalized integral representative of a point within the height bound.
+- declaration: Ratpoints.Fast.isPoint_and_inRegion_of_mem_fastPoints
+  informal: The pure Lean fast search only returns bounded-height points whose
+    denominators are within the requested range or zero.
+- declaration: Ratpoints.Fast.mem_fastPoints_iff
+  informal: Assuming Sturm's theorem in its stated form, the fast search finds
+    precisely all such points.
+- declaration: Ratpoints.Fast.nodup_fastPoints
+  informal: The fast search never returns a point twice.
+tags:
+- rational-points
+- hyperelliptic-curves
+- verified-algorithms
+- sieves
+msc:
+- 11G30
+- 11Y50
+- 68V20
