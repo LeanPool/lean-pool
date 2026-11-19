@@ -579,7 +579,10 @@ private meta def readBellmanClosedValue {R : Type}
     Lean.MetaM (Option R) := do
   if let some value ← readHead expression then return some value
   if expression.hasFVar || expression.hasMVar || expression.hasLooseBVars then return none
-  readHead (← Lean.Meta.whnfD expression)
+  let reduced ← Lean.Meta.whnfD expression
+  if let some value ← readHead reduced then return some value
+  Lean.Meta.withTransparency .all do
+    readHead (← Lean.Meta.whnf reduced)
 
 private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) := do
   let readHead (term : Lean.Expr) : Lean.MetaM (Option Int) := do
@@ -594,11 +597,15 @@ private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Optio
 private meta def readBellmanList {R : Type}
     (read : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
     Lean.MetaM (Option (List R)) := do
+  let readCell (term : Lean.Expr) : Lean.MetaM (Option Lean.Expr) :=
+    pure (if term.isAppOfArity ``List.nil 1 || term.isAppOfArity ``List.cons 3 then
+      some term else none)
   let mut next := expression
   let mut values : Array R := #[]
   repeat
     Lean.Core.checkSystem "Bellman coefficient list"
-    match_expr (← Lean.Meta.whnfD next) with
+    let some cell ← readBellmanClosedValue readCell next.consumeMData | return none
+    match_expr cell with
     | List.nil _ => return some values.toList
     | List.cons _ head tail =>
       let some coefficient ← read head | return none
@@ -614,7 +621,7 @@ private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     match_expr term with
     | OfNat.ofNat type n _ =>
         unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
-        return (← readBellmanNat n).map fun value =>
+        return (← readBellmanClosedValue readBellmanNat n).map fun value =>
           if value == 0 then 0 else DPoly.const (fromNat value)
     | DPoly.X _ _ _ => return some DPoly.X
     | DPoly.const _ coefficient => return (← read coefficient).map DPoly.const
@@ -672,8 +679,7 @@ private meta def readBellmanScaleFactor (expression : Lean.Expr) :
   return factor
 
 private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := do
-  if let some power ← readBellmanNat expression then return power
-  let some power ← readBellmanNat (← Lean.Meta.whnfD expression)
+  let some power ← readBellmanClosedValue readBellmanNat expression
     | throwError "unsupported Bellman exponent {expression}: expected a closed natural power"
   return power
 
@@ -786,15 +792,18 @@ local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
     rfl)))
 
 @[irreducible]
-private def wrapBellmanPolynomial (p : Poly3) : Poly3 := p
+private def wrapBellmanValue {α : Type} (value : α) : α := value
 
 -- Exercise expanded variables, computed coefficients and wrapped coefficient lists.
 example :
     allNonnegative3
       (DPoly.X + DPoly.const (id DPoly.X) + DPoly.const (DPoly.const DPoly.X) +
         DPoly.const (2 : DPoly (DPoly ℤ)) + DPoly.const (DPoly.X + 0) +
-        DPoly.mk (id [1]) + DPoly.const (DPoly.const (DPoly.const (1 + 1 : ℤ))) +
-        wrapBellmanPolynomial (DPoly.scale 2 (1 + U)) : Poly3) = true := by
+        DPoly.mk (wrapBellmanValue (1 :: wrapBellmanValue [2])) +
+        DPoly.const (DPoly.const (DPoly.const (1 + 1 : ℤ))) +
+        DPoly.const (DPoly.const (DPoly.const (Int.ofNat (wrapBellmanValue 2)))) +
+        U ^ wrapBellmanValue (1 : Nat) +
+        wrapBellmanValue (DPoly.scale 2 (1 + U)) : Poly3) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
