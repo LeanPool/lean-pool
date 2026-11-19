@@ -667,6 +667,11 @@ jobs:
             PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
               --base "$time_base" --modules $modules
           fi
+          # Given thousands of module targets, Lake starts several jobs for the
+          # one linter plugin they all load, and each overwrites the others'
+          # link inputs: "no such file or directory" for the plugin library.
+          # Built alone first, the plugin is up to date for every one of them.
+          ~/.elan/bin/lake build LeanPoolLinters:shared
           # shellcheck disable=SC2086 # modules is a space-separated list on purpose
           PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
           if grep -nE '(^|: )warning:' shard-build.log; then
