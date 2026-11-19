@@ -507,6 +507,7 @@ public import LeanPool.GinibrePoincare.Analysis.LebesgueL2MollificationMaps
 public import LeanPool.GinibrePoincare.Analysis.LipschitzMollification
 public import LeanPool.GinibrePoincare.Analysis.MagnitudeGradient
 public import LeanPool.GinibrePoincare.Analysis.MagnitudeNullSets
+public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralSobolevMultiplierL2
 public import LeanPool.GinibrePoincare.Analysis.MeasureTransport
 public import LeanPool.GinibrePoincare.Analysis.MultivariateComplexHermite
 public import LeanPool.GinibrePoincare.Analysis.MultivariateHermiteIntegrability
