@@ -46,7 +46,7 @@ public import LeanPool.GinibrePoincare.Endgame.ConcreteTheoremOneNine
 /-!
 # Concrete nonquadratic log gases
 
-Definitions for the exact density and inequalities of Theorem 1.11, and
+Definitions for the exact density and inequalities of Theorem 1.14, and
 normalization and radial convexity lemmas. The unconditional Poincaré and radial
 logarithmic Sobolev inequalities are assembled in
 `GinibrePoincare.Endgame.FullNonQuadraticPotential`.
@@ -62,7 +62,7 @@ noncomputable section
 /-- A planar external potential, a real-valued function on `ℂ`. -/
 abbrev Potential := ℂ → ℝ
 
-/-- The Lebesgue density in Theorem 1.11, before normalization. -/
+/-- The Lebesgue density in Theorem 1.14, before normalization. -/
 def potentialWeight (n : ℕ) (V : Potential) (z : Configuration n) : ℝ :=
   Real.exp (-(n : ℝ) * ∑ i, V (z i)) * vandermondeWeight z
 
@@ -74,7 +74,7 @@ def rawPotentialMeasure (n : ℕ) (V : Potential) : Measure (Configuration n) :=
 def potentialPartition (n : ℕ) (V : Potential) : ℝ≥0∞ :=
   rawPotentialMeasure n V Set.univ
 
-/-- The Boltzmann–Gibbs measure of Theorem 1.11. -/
+/-- The Boltzmann–Gibbs measure of Theorem 1.14. -/
 def potentialMeasure (n : ℕ) (V : Potential) : Measure (Configuration n) :=
   (potentialPartition n V)⁻¹ • rawPotentialMeasure n V
 
@@ -100,7 +100,7 @@ def potentialVariance (n : ℕ) (V : Potential) (f : Configuration n → ℝ) : 
 def potentialGradientEnergy (n : ℕ) (V : Potential) (f : Configuration n → ℝ) : ℝ :=
   ∫ z, realGradientNormSq f z ∂potentialMeasure n V
 
-/-- Exact analytic conclusions of Theorem 1.11. The unconditional instance for
+/-- Exact analytic conclusions of Theorem 1.14. The unconditional instance for
 positive particle number is exported by `Endgame.FullNonQuadraticPotential`. -/
 structure NonQuadraticPotentialTheorem (n : ℕ) : Prop where
   poincareInequality : ∀ (V : Potential) (ρ : ℝ),
