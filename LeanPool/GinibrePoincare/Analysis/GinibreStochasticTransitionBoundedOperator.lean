@@ -35,7 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticTransitionBoundedResolvent
+public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticTransitionContinuousMean
 
 /-!
 # Ginibre stochastic transition bounded operator

@@ -1282,6 +1282,7 @@ public import LeanPool.GinibrePoincare.Analysis.L2BoundedCoefficientConvergence
 public import LeanPool.GinibrePoincare.Analysis.L2RepresentativeBridges
 public import LeanPool.GinibrePoincare.Analysis.LaguerreGammaNondegeneracy
 public import LeanPool.GinibrePoincare.Analysis.LaguerreGammaOrthogonality
+public import LeanPool.GinibrePoincare.Analysis.LampertiRadiusPathFunctional
 public import LeanPool.GinibrePoincare.Analysis.LebesgueL2Convolution
 public import LeanPool.GinibrePoincare.Analysis.LebesgueL2Mollification
 public import LeanPool.GinibrePoincare.Analysis.LebesgueL2MollificationMaps
