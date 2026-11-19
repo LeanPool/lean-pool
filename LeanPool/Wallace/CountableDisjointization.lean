@@ -72,8 +72,7 @@ abbrev RelevantCode (index : ContinuumIndex ↪ ContinuumIndex) (D : Set Continu
 
 private theorem relevantCode_countable (index : ContinuumIndex ↪ ContinuumIndex)
     (D : Set ContinuumIndex) (hD : D.Countable) : Countable (RelevantCode index D) := by
-  apply Countable.to_subtype
-  exact hD.preimage index.injective
+  exact (hD.preimage index.injective).to_subtype
 
 private theorem relevantLabels_pairwise (index : ContinuumIndex ↪ ContinuumIndex)
     (D : Set ContinuumIndex) :

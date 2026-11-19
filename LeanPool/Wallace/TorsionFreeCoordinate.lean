@@ -77,7 +77,7 @@ theorem mk_divisibleHull (hcard : #G = 𝔠) : #(DivisibleHull G) = 𝔠 := by
     rw [hcard]
     refine max_le ?_ (by simp)
     have hsub : #(↥(nonZeroDivisors ℕ)) ≤ 𝔠 :=
-      (Cardinal.mk_subtype_le (nonZeroDivisors ℕ : Set ℕ)).trans
+      (Cardinal.mk_set_le (nonZeroDivisors ℕ : Set ℕ)).trans
         (by simpa using Cardinal.aleph0_le_continuum)
     simpa using hsub
   · rw [← hcard]
