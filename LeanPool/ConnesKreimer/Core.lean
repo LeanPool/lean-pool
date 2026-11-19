@@ -364,11 +364,11 @@ theorem _root_.CK.coassoc_map :
 /-- Counit monoid hom: every generator ↦ 0, so a word ↦ `0 ^ len` = indicator of empty. -/
 def _root_.CK.εmon : FreeMonoid RTree →* k := FreeMonoid.lift (fun _ => (0 : k))
 
-@[simp] theorem _root_.CK.εmon_nil : εmon k (FreeMonoid.ofList ([] : Forest)) = 1 := map_one _
+theorem _root_.CK.εmon_nil : εmon k (FreeMonoid.ofList ([] : Forest)) = 1 := map_one _
 
 @[simp] theorem _root_.CK.εmon_of (a : RTree) : εmon k (FreeMonoid.of a) = 0 := rfl
 
-@[simp] theorem _root_.CK.εmon_cons (a : RTree) (l : Forest) :
+theorem _root_.CK.εmon_cons (a : RTree) (l : Forest) :
     εmon k (FreeMonoid.ofList (a :: l)) = 0 := by
   change εmon k (FreeMonoid.of a * FreeMonoid.ofList l) = 0
   rw [map_mul, εmon_of, zero_mul]
