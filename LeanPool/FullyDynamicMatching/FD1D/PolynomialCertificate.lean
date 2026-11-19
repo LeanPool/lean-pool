@@ -563,28 +563,33 @@ private meta def exposeBellmanUntil (isTerminal : Lean.Expr → Bool) (expressio
   if isTerminal expression then return expression
   Lean.Meta.withTransparency .all (expose expression)
 
--- Core WHNF can reduce a native projection before the stopping test sees it.
--- Peel wrappers and select enclosing fields without evaluating DPoly.coeffs.
-private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
-  let isTerminal (term : Lean.Expr) : Bool :=
-    match term with
-    | .proj name index _ => name == ``DPoly && index == 0
-    | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
-        term.isAppOfArity ``List.cons 3 || term.isAppOfArity ``List.append 3 ||
-        term.isAppOfArity ``HAppend.hAppend 6 || term.isAppOfArity ``Append.append 4
+-- Select enclosing fields without reducing the selected expression.
+private meta def exposeBellmanProjections (expose : Lean.Expr → Lean.MetaM Lean.Expr)
+    (preserve : Lean.Name → Nat → Bool) (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
   let mut next := expression
   repeat
-    Lean.Core.checkSystem "Bellman coefficient field"
+    Lean.Core.checkSystem "Bellman projections"
     let term ← Lean.Meta.withConfig (fun configuration => { configuration with proj := .no }) <|
-      exposeBellmanUntil isTerminal next
-    if isTerminal term then return term
-    let .proj .. := term | return term
+      expose next
+    let .proj name index _ := term | return term
+    if preserve name index then return term
     if let some field ← Lean.Meta.reduceProj? term then
       next := field
     else if let some field ← Lean.Meta.withTransparency .all (Lean.Meta.reduceProj? term) then
       next := field
     else
       return term
+
+-- Keep the coefficient projection visible for polynomial eta and append normalization.
+private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let preserve (name : Lean.Name) (index : Nat) := name == ``DPoly && index == 0
+  let isTerminal (term : Lean.Expr) : Bool :=
+    match term with
+    | .proj name index _ => preserve name index
+    | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
+        term.isAppOfArity ``List.cons 3 || term.isAppOfArity ``List.append 3 ||
+        term.isAppOfArity ``HAppend.hAppend 6 || term.isAppOfArity ``Append.append 4
+  exposeBellmanProjections (exposeBellmanUntil isTerminal) preserve expression
 
 -- Stop at heads the staged reader handles so other helpers unfold in any namespace.
 private meta def isBellmanHead (term : Lean.Expr) : Bool :=
@@ -693,7 +698,8 @@ private meta def proveBellmanRepackBranch (branch : Lean.Expr) :
     Lean.MetaM (Option Lean.Expr) :=
   Lean.Meta.lambdaTelescope branch fun fields body => do
     let #[field] := fields | return none
-    let body ← exposeBellmanUntil (·.isAppOfArity ``DPoly.mk 2) body
+    let expose := exposeBellmanUntil (·.isAppOfArity ``DPoly.mk 2)
+    let body ← exposeBellmanProjections expose (fun _ _ => false) body
     unless body.isAppOfArity ``DPoly.mk 2 do return none
     let (coefficients, proof) ← normalizeBellmanAppends body.appArg!
     unless coefficients == field do return none
@@ -724,17 +730,17 @@ private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
     let abstractProof ← Lean.Meta.mkLambdaFVars #[localPolynomial] proof
     return some (polynomial, Lean.mkApp abstractProof polynomial)
 
-private meta def exposeBellmanIdentityHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr :=
-  Lean.Meta.withConfig (fun configuration => { configuration with iota := false, proj := .no })
-    do
-      let isReady (term : Lean.Expr) : Lean.MetaM Bool := do
-        if isBellmanHead term then return true
-        return (← Lean.Meta.matchMatcherApp? term.consumeMData (alsoCasesOn := true)).isSome
-      let expose (term : Lean.Expr) := Lean.Meta.whnfHeadPred term fun head => do
-        return !(← isReady head)
-      let exposed ← expose expression.consumeMData
-      if ← isReady exposed then return exposed
-      Lean.Meta.withTransparency .all (expose exposed)
+private meta def exposeBellmanIdentityHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let isReady (term : Lean.Expr) : Lean.MetaM Bool := do
+    if isBellmanHead term then return true
+    return (← Lean.Meta.matchMatcherApp? term.consumeMData (alsoCasesOn := true)).isSome
+  let expose (term : Lean.Expr) := Lean.Meta.withConfig (fun cfg => { cfg with iota := false }) do
+    let head (term : Lean.Expr) := Lean.Meta.whnfHeadPred term fun candidate => do
+      return !(← isReady candidate)
+    let exposed ← head term.consumeMData
+    if ← isReady exposed then return exposed
+    Lean.Meta.withTransparency .all (head exposed)
+  exposeBellmanProjections expose (fun _ _ => false) expression
 
 -- Apply these identities before an operand constructor can force its coefficients.
 private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
@@ -1048,7 +1054,8 @@ private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true :=
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
-private def chartOneWithEmptyAppend : Poly3 := DPoly.mk ([] ++ (chartOne.coeffs ++ ([] ++ [])))
+private def chartOneWithEmptyAppend : Poly3 :=
+  (DPoly.mk ([] ++ (chartOne.coeffs ++ ([] ++ []))), ()).1
 
 private theorem chartOne_appended_check : allNonnegative3 chartOneWithEmptyAppend = true := by
   checkBellmanChart
