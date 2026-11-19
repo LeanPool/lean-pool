@@ -15,6 +15,9 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   radial log-Sobolev inequality; and the Appendix A core-closure and zero-capacity lemmas. Through
   the Gaussian matrix lift, proves the eigenvector-overlap variance and entropy inequalities of
   Theorem 1.13, including the Gaussian matrix Poincaré inequality.
+  Builds Brownian stochastic-integration and finite-dimensional Itô infrastructure, and proves
+  the joint Gamma law of the two equilibrium radii, the nonsymmetric constant lower bound
+  (n+1)/4 and the non-holomorphy of the squared radius.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -59,6 +62,9 @@ main_declarations:
 - GinibrePoincare.fullMatrixLift_functional_inequalities
 - GinibrePoincare.matrixSpectralLift_finite_overlap_gaussian_poincare
 - GinibrePoincare.matrixGaussian_poincare_compactC1
+- GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product
+- GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound
+- GinibrePoincare.ginibreSquaredNormL2_not_holomorphic
 main_results:
 - declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
   informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
@@ -191,6 +197,22 @@ main_results:
     complex matrices satisfies Var ≤ (1/(2n))·E[|∇F|²] under the Gaussian matrix law.
   source_ref: Gaussian matrix Poincaré inequality used in the proof of Theorem 1.13 of
     arXiv:2608.19358v2, proved internally from the Gaussian log-Sobolev inequality.
+- declaration: GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product
+  informal: For n ≥ 2, under the Ginibre law the pair (|Σᵢzᵢ|², Σ_{j<k}|zⱼ − zₖ|²) has the product
+    law Gamma(1, 1) ⊗ Gamma(κₙ, 1) with κₙ the recentered Gamma shape, the two equilibrium
+    radii of the stochastic factorization.
+  source_ref: Equilibrium radius laws in Theorem 1.2 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound
+  informal: For n ≥ 2, any constant C such that Var(f) ≤ C·E(f) for all smooth integrable f with
+    square-integrable values and gradients, symmetric or not, satisfies C ≥ (n+1)/4; the
+    witness is a real coordinate.
+  source_ref: Nonsymmetric counterexample discussed with Theorem 1.1 of arXiv:2608.19358v2
+    (supplementary result).
+- declaration: GinibrePoincare.ginibreSquaredNormL2_not_holomorphic
+  informal: For n > 0, the squared Euclidean radius Σᵢ|zᵢ|², as an element of the complex
+    Ginibre L² space, does not belong to the closed span of symmetric holomorphic polynomials.
+  source_ref: Supplementary remark on the holomorphic projection geometry of
+    arXiv:2608.19358v2, Section 2.
 tags:
 - ginibre-ensemble
 - poincare-inequality
