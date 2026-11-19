@@ -7,6 +7,7 @@ module
 
 public import LeanPool.GoodmanSupersaturation.Supersaturation
 public import LeanPool.FiniteRamsey.RamseyNumber
+import LeanPool.FiniteRamsey.RamseyLowerBoundAsymptotic
 
 /-!
 # Supersaturation at the diagonal Ramsey number
@@ -14,11 +15,11 @@ public import LeanPool.FiniteRamsey.RamseyNumber
 `SimpleGraph.choose_le_card_cliqueFinset_add_mul_choose` assumes that every `m`-set of vertices
 contains a monochromatic `t`-clique. The pool's `FiniteRamsey` project supplies that hypothesis
 for `m = R(t, t)` through `SimpleGraph.exists_isNClique_iff_ramseyNumber_le`, read on the
-two-colouring `toTopEdgeLabeling` of an `m`-set (label `1` is `G`, label `0` is `Gᶜ`).
+two-colouring `toTopEdgeLabeling` of an `m`-set (label `1` is `G`, label `0` is `Gᶜ`), and
+`t ≤ R(t, t)` is `FiniteRamsey`'s `SimpleGraph.le_ramseyNumber_self`.
 
 ## Main statements
 
-* `SimpleGraph.le_ramseyNumber_diag`: `t ≤ R(t, t)`.
 * `SimpleGraph.choose_le_card_cliqueFinset_add_mul_choose_ramseyNumber`: if `R(t, t) ≤ n`, then
   `G` and `Gᶜ` together have at least `C(n, t) / C(R(t, t), t)` `t`-cliques.
 -/
@@ -39,14 +40,6 @@ private theorem finEmbeddingOfCard_mem {M : Finset V} {m : ℕ} (hM : #M = m) (i
     finEmbeddingOfCard hM i ∈ M :=
   (M.equivFin.symm (finCongr hM.symm i)).2
 
-/-- `t ≤ R(t, t)`: a monochromatic `t`-clique in a colouring of `K_{R(t, t)}` has `t` vertices. -/
-theorem le_ramseyNumber_diag (t : ℕ) : t ≤ ramseyNumber ![t, t] := by
-  obtain ⟨c, s, hs⟩ := exists_isNClique_iff_ramseyNumber_le.mpr le_rfl
-    (⊥ : SimpleGraph (Fin (ramseyNumber ![t, t]))).toTopEdgeLabeling
-  have h := hs.card_eq ▸ s.card_le_univ
-  rw [Fintype.card_fin] at h
-  fin_cases c <;> simpa using h
-
 /-- **Supersaturation at the diagonal Ramsey number.** If `R(t, t) ≤ n`, the red/blue colouring of
 `K_n` given by `G` and `Gᶜ` has at least `C(n, t) / C(R(t, t), t)` monochromatic `t`-cliques. -/
 theorem choose_le_card_cliqueFinset_add_mul_choose_ramseyNumber [Fintype V] [DecidableEq V]
@@ -54,7 +47,7 @@ theorem choose_le_card_cliqueFinset_add_mul_choose_ramseyNumber [Fintype V] [Dec
     (hR : ramseyNumber ![t, t] ≤ Fintype.card V) :
     (Fintype.card V).choose t ≤
       (#(G.cliqueFinset t) + #(Gᶜ.cliqueFinset t)) * (ramseyNumber ![t, t]).choose t := by
-  refine choose_le_card_cliqueFinset_add_mul_choose G (le_ramseyNumber_diag t) hR fun M hM => ?_
+  refine choose_le_card_cliqueFinset_add_mul_choose G (le_ramseyNumber_self t) hR fun M hM => ?_
   set e := finEmbeddingOfCard hM
   obtain ⟨c, s, hs⟩ :=
     exists_isNClique_iff_ramseyNumber_le.mpr le_rfl (G.comap e).toTopEdgeLabeling
