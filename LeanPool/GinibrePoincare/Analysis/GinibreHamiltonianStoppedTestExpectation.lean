@@ -55,6 +55,7 @@ open scoped Topology NNReal ENNReal
 namespace GinibrePoincare
 noncomputable section
 
+/-- Smooth compactly supported test functions whose support avoids the collision set. -/
 def IsGinibreCollisionFreeCompactTest {n : ℕ} (f : Configuration n → ℝ) : Prop :=
   ContDiff ℝ (↑(⊤ : ℕ∞) : WithTop ℕ∞) f ∧ HasCompactSupport f ∧ tsupport f ⊆ (collisionSet n)ᶜ
 
