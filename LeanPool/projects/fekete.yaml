@@ -1,0 +1,73 @@
+slug: fekete
+title: Nearly subadditive sequences and Fekete's lemma beyond Mathlib
+summary: Extends Mathlib's Fekete lemma for real sequences on ℕ. Proves the Füredi–Ruzsa window
+  theorem (subadditivity only on N ≤ m ≤ n ≤ μm with μ > 1 gives u n / n → -∞ or a real limit,
+  identified as an infimum), the de Bruijn–Erdős theorem with a monotone error f satisfying
+  ∑ f n / n² < ∞ (extended from f ≥ 0 to errors of any sign), and its sharpness (for monotone
+  f ≥ 0 the summability is equivalent to the absence of a nearly f-subadditive sequence with
+  u n / n → ∞). Also packages corollaries of Mathlib's Subadditive API (the unbounded case of
+  Fekete's lemma, Fekete for superadditive and positive supermultiplicative sequences,
+  bounded-defect and almost-additive versions) and a counterexample showing that positivity
+  cannot be weakened to nonnegativity for supermultiplicative sequences.
+branch: real analysis
+entry_module: LeanPool.Fekete
+authors:
+- Brian Sanders
+source:
+  title: Nearly subadditive sequences
+  authors:
+  - Zoltán Füredi
+  - Imre Z. Ruzsa
+  doi: 10.1007/s10474-020-01071-0
+  arxiv: '1810.11723'
+  url: https://github.com/Egly443/lean-fekete
+  github_repo: Egly443/lean-fekete
+  commit: 5faa67a2cbcf0d670bf2b8353336bab5818d6026
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: 'Proposal #721 and the upstream README state that the code is AI-generated
+  with human guidance; the source headers and commit metadata credit Brian Sanders. Port by Claude
+  Code.'
+main_declarations:
+- NearlySubadditive.tendsto_atBot_or_exists_tendsto
+- NearlySubadditive.tendsto_lim
+- NearlySubadditive.tendsto_atBot_or_exists_tendsto_of_summable
+- summable_div_sq_iff_forall_not_tendsto_atTop
+- Supermultiplicative.exists_nonneg_not_tendsto_rpow_inv
+main_results:
+- declaration: NearlySubadditive.tendsto_atBot_or_exists_tendsto
+  informal: If 1 < μ and u (m + n) ≤ u m + u n whenever N ≤ m ≤ n ≤ μ m, then u n / n tends to -∞
+    or to a real limit.
+  source_ref: Füredi–Ruzsa, Nearly subadditive sequences, Theorem 2 (same number in the journal
+    version and arXiv:1810.11723); the source takes N ≥ 1, while the Lean statement also allows
+    N = 0.
+- declaration: NearlySubadditive.tendsto_lim
+  informal: Under the same window hypothesis, if u n / n is bounded below then it converges to
+    the infimum of u k / k over k ≥ max N 1.
+  source_ref: Limit identification as in Füredi–Ruzsa Theorem 1 (de Bruijn–Erdős, ratio 2),
+    here for every ratio μ > 1; upstream Fekete/Window.lean.
+- declaration: NearlySubadditive.tendsto_atBot_or_exists_tendsto_of_summable
+  informal: If 1 < μ, u (m + n) ≤ u m + u n + f (m + n) for N ≤ m ≤ n ≤ μ m, f is monotone and
+    ∑ f n / n² is summable, then u n / n tends to -∞ or to a real limit. No sign condition on f
+    is assumed.
+  source_ref: Füredi–Ruzsa, Theorem 3 of the journal version (Theorem 5 of arXiv:1810.11723),
+    generalizing de Bruijn–Erdős (1952). The sources assume f ≥ 0; the signed version is an
+    extension, reduced to the nonnegative case through max f 0.
+- declaration: summable_div_sq_iff_forall_not_tendsto_atTop
+  informal: For a nonnegative monotone f, ∑ f n / n² is summable if and only if no sequence with
+    u (m + n) ≤ u m + u n + f (m + n) for all m, n has u n / n → ∞.
+  source_ref: Combines a variant of Füredi–Ruzsa Claim 7 (the witness keeps the f 1 term and
+    index 0) with journal Theorem 3 (arXiv Theorem 5).
+- declaration: Supermultiplicative.exists_nonneg_not_tendsto_rpow_inv
+  informal: Some nonnegative supermultiplicative sequence u has no limit of u n ^ (1 / n), so
+    positivity is needed in the supermultiplicative Fekete lemma.
+  source_ref: Upstream Fekete/SupermultiplicativeCounterexample.lean.
+tags:
+- subadditive-sequences
+- fekete-lemma
+- de-bruijn-erdos
+- sequences-and-limits
+msc:
+- 40A05
+- 39B62
