@@ -93,6 +93,7 @@ def test_violations_cover_changed_files_only(
     log = tmp_path / "build.log"
     log.write_text(LAKE_LOG)
     monkeypatch.setattr(limits, "changed_modules", lambda base, root: changed)
+    monkeypatch.setattr(limits, "added_files", lambda base, root: frozenset())
     # At900s no observed module is too slow; Cached still lacks a fresh timing.
     assert limits.check(log, "base", tmp_path, limit=900) == 1
     output = capsys.readouterr().out
@@ -334,7 +335,7 @@ def test_the_largest_compiler_is_stopped_when_the_machine_runs_out(
 
     def record(self, identity):
         stopped.append(identity.pid)
-        kill(self, identity)
+        return kill(self, identity)
 
     monkeypatch.setattr(limits, "free_memory", free)
     monkeypatch.setattr(limits.MemoryWatch, "_kill", record)
@@ -369,67 +370,140 @@ def test_nothing_is_stopped_while_the_machine_has_memory(
     assert Path(f"{existing}.built").read_text() == "built"
 
 
-def test_relief_waits_until_a_stopped_compiler_is_gone(monkeypatch, capsys) -> None:
-    """One shortage stops one file, not every file seen before memory returns."""
-    first = limits.Process(41, 1, 1, 5, "/toolchain/bin/lean LeanPool/First.lean")
-    second = limits.Process(42, 1, 1, 5, "/toolchain/bin/lean LeanPool/Second.lean")
-    owned = {
-        41: limits.OwnedProcess(41, 1000, 7),
-        42: limits.OwnedProcess(42, 1001, 8),
-    }
-    sizes = {41: 6 * 1024**3, 42: 5 * 1024**3}
+def _processes(monkeypatch, table: dict[int, tuple[int, str, int]]) -> list[int]:
+    """Replace the live process readers by a table: number -> birth, file, bytes."""
     signals: list[int] = []
-    running = {7: True, 8: True}
-    monkeypatch.setattr(limits, "process_memory", sizes.get)
-    monkeypatch.setattr(limits, "free_memory", lambda: 200 * MEBIBYTE)
     monkeypatch.setattr(
-        limits, "_running", lambda identity: running[identity.descriptor]
+        limits,
+        "command_line",
+        lambda pid: ["/toolchain/bin/lean", table[pid][1]] if pid in table else None,
+    )
+    monkeypatch.setattr(
+        limits, "process_memory", lambda pid: table[pid][2] if pid in table else None
+    )
+    monkeypatch.setattr(
+        limits, "_birth", lambda pid: table[pid][0] if pid in table else None
     )
     monkeypatch.setattr(
         limits.signal,
         "pidfd_send_signal",
         lambda descriptor, number: signals.append(descriptor),
     )
+    return signals
+
+
+def test_relief_waits_until_a_stopped_compiler_is_gone(monkeypatch, capsys) -> None:
+    """One shortage stops one file, not every file seen before memory returns."""
+    table = {
+        41: (1000, "LeanPool/First.lean", 6 * 1024**3),
+        42: (1001, "LeanPool/Second.lean", 5 * 1024**3),
+    }
+    owned = {
+        41: limits.OwnedProcess(41, 1000, 7),
+        42: limits.OwnedProcess(42, 1001, 8),
+    }
+    signals = _processes(monkeypatch, table)
+    running = {7: True, 8: True}
+    monkeypatch.setattr(limits, "free_memory", lambda: 200 * MEBIBYTE)
+    monkeypatch.setattr(
+        limits, "_running", lambda identity: running[identity.descriptor]
+    )
     watch = limits.MemoryWatch(limits.MemoryLimits())
     for _ in range(3):
-        watch.check([first, second], owned)
+        watch.check(owned)
     assert signals == [7]
     running[7] = False
-    watch.check([second], owned)
+    del owned[41], table[41]
+    watch.check(owned)
     assert signals == [7, 8]
+    assert watch.failed
     output = capsys.readouterr().out
     assert "LeanPool/First.lean 6.0 GiB, LeanPool/Second.lean 5.0 GiB" in output
     assert watch.peaks == {
-        "LeanPool/First.lean": sizes[41],
-        "LeanPool/Second.lean": sizes[42],
+        "LeanPool/First.lean": 6 * 1024**3,
+        "LeanPool/Second.lean": 5 * 1024**3,
     }
 
 
 def test_relief_is_not_held_back_by_a_reused_descriptor(monkeypatch) -> None:
     """A killed compiler's closed handle number can belong to the next compiler."""
-    first = limits.Process(41, 1, 1, 5, "/toolchain/bin/lean LeanPool/First.lean")
-    later = limits.Process(43, 1, 1, 5, "/toolchain/bin/lean LeanPool/Later.lean")
-    signals: list[int] = []
-    monkeypatch.setattr(limits, "process_memory", lambda pid: 6 * 1024**3)
+    table = {41: (1000, "LeanPool/First.lean", 6 * 1024**3)}
+    signals = _processes(monkeypatch, table)
     monkeypatch.setattr(limits, "free_memory", lambda: 200 * MEBIBYTE)
     # Every handle reports a live process, as a reused descriptor would.
     monkeypatch.setattr(limits, "_running", lambda identity: True)
-    monkeypatch.setattr(
-        limits.signal,
-        "pidfd_send_signal",
-        lambda descriptor, number: signals.append(descriptor),
-    )
     watch = limits.MemoryWatch(limits.MemoryLimits())
-    watch.check([first], {41: limits.OwnedProcess(41, 1000, 7)})
+    watch.check({41: limits.OwnedProcess(41, 1000, 7)})
     assert signals == [7]
     # The first compiler is gone and pruned; a new one received descriptor 7.
-    watch.check([later], {43: limits.OwnedProcess(43, 2000, 7)})
+    table.clear()
+    table[43] = (2000, "LeanPool/Later.lean", 6 * 1024**3)
+    watch.check({43: limits.OwnedProcess(43, 2000, 7)})
     assert signals == [7, 7]
     assert watch.stopped == {(41, 1000), (43, 2000)}
     # A recycled process number with another birth is not the stopped process.
-    recycled = limits.Process(41, 1, 1, 5, "/toolchain/bin/lean LeanPool/Recycled.lean")
-    watch.check([recycled], {41: limits.OwnedProcess(41, 3000, 9)})
+    table.clear()
+    table[41] = (3000, "LeanPool/Recycled.lean", 6 * 1024**3)
+    watch.check({41: limits.OwnedProcess(41, 3000, 9)})
     assert signals == [7, 7, 9]
+
+
+def test_a_compiler_that_already_ended_fails_nothing(monkeypatch, capsys) -> None:
+    """Under a shortage, a candidate that exits before the signal was not stopped."""
+    table = {41: (1000, "LeanPool/Gone.lean", 6 * 1024**3)}
+    _processes(monkeypatch, table)
+    monkeypatch.setattr(limits, "free_memory", lambda: 200 * MEBIBYTE)
+
+    def gone(descriptor, number):
+        raise ProcessLookupError
+
+    monkeypatch.setattr(limits.signal, "pidfd_send_signal", gone)
+    watch = limits.MemoryWatch(limits.MemoryLimits())
+    watch.check({41: limits.OwnedProcess(41, 1000, 7)})
+    assert not watch.failed
+    assert watch.stopped == set()
+    assert "::error" not in capsys.readouterr().out
+
+
+def test_an_added_file_seen_over_its_budget_fails_even_if_it_ends(
+    monkeypatch, capsys
+) -> None:
+    """The budget is on what the file held, not on whether the signal landed."""
+    table = {41: (1000, "LeanPool/New/Added.lean", 4 * 1024**3)}
+    _processes(monkeypatch, table)
+    monkeypatch.setattr(limits, "free_memory", lambda: 64 * 1024**3)
+
+    def gone(descriptor, number):
+        raise ProcessLookupError
+
+    monkeypatch.setattr(limits.signal, "pidfd_send_signal", gone)
+    memory = limits.MemoryLimits(added=frozenset({"LeanPool/New/Added.lean"}))
+    watch = limits.MemoryWatch(memory)
+    for _ in range(2):
+        watch.check({41: limits.OwnedProcess(41, 1000, 7)})
+    assert watch.failed
+    assert capsys.readouterr().out.count("LeanPool/New/Added.lean held 4.0 GiB") == 1
+
+
+def test_a_sample_counts_only_for_the_process_whose_handle_is_held(
+    monkeypatch, capsys
+) -> None:
+    """A reused process number must not lend its memory to another file's budget."""
+    # Number 41 now belongs to a process born later than the one we hold.
+    table = {41: (2000, "LeanPool/New/Added.lean", 4 * 1024**3)}
+    signals = _processes(monkeypatch, table)
+    monkeypatch.setattr(limits, "free_memory", lambda: 100 * MEBIBYTE)
+    memory = limits.MemoryLimits(added=frozenset({"LeanPool/New/Added.lean"}))
+    watch = limits.MemoryWatch(memory)
+    watch.check({41: limits.OwnedProcess(41, 1000, 7)})
+    assert signals == []
+    assert not watch.failed
+    assert watch.peaks == {}
+    assert capsys.readouterr().out == ""
+    # Lake and the shell are read from the process itself too, and never judged.
+    monkeypatch.setattr(limits, "command_line", lambda pid: ["/toolchain/bin/lake"])
+    watch.check({41: limits.OwnedProcess(41, 2000, 7)})
+    assert signals == [] and watch.peaks == {}
 
 
 def test_watch_takes_the_added_files_from_the_base(tmp_path: Path, capfd) -> None:
@@ -454,12 +528,104 @@ def test_watch_takes_the_added_files_from_the_base(tmp_path: Path, capfd) -> Non
 def test_sources_are_matched_however_lake_names_them(tmp_path: Path) -> None:
     """Lake passes absolute paths; the diff names files relative to the root."""
     memory = limits.MemoryLimits(root=tmp_path)
-    inside = limits.Process(1, 1, 1, 1, f"/x/lean {tmp_path}/LeanPool/A/B.lean -o y")
-    relative = limits.Process(1, 1, 1, 1, "/x/lean LeanPool/A/B.lean -o y")
-    outside = limits.Process(1, 1, 1, 1, "/x/lean /elsewhere/C.lean")
-    assert memory.source(inside) == "LeanPool/A/B.lean"
-    assert memory.source(relative) == "LeanPool/A/B.lean"
-    assert memory.source(outside) == "/elsewhere/C.lean"
+    assert memory.relative(f"{tmp_path}/LeanPool/A/B.lean") == "LeanPool/A/B.lean"
+    assert memory.relative("LeanPool/A/B.lean") == "LeanPool/A/B.lean"
+    assert memory.relative("/elsewhere/C.lean") == "/elsewhere/C.lean"
+    spaced = ["/x/bin/lean", "/repo/Lean Pool/A.lean", "-o", "out.olean"]
+    assert limits.lean_source(spaced) == "/repo/Lean Pool/A.lean"
+    assert limits.lean_source(["/x/bin/lake", "build", "A.lean"]) is None
+    assert "python" in limits.command_line(os.getpid())[0]
+    assert limits.command_line(2**22 + 12345) is None
+
+
+def test_a_restored_added_file_needs_proof_of_the_memory_limit(tmp_path: Path) -> None:
+    """An output restored from an earlier run is never seen by this run's watchdog."""
+    root, base = _repository(tmp_path)
+    assert limits.added_files(base, root) == frozenset({BUNDLE})
+    for artifact in _outputs(root, BUNDLE_MODULE):
+        artifact.parent.mkdir(parents=True, exist_ok=True)
+        artifact.write_bytes(b"compiled")
+    stem = limits._output_stem(root, BUNDLE)
+    receipt = stem.with_name(stem.name + limits.RECEIPT_SUFFIX)
+    digest = limits.output_digest(root, BUNDLE)
+    cap = limits.ADDED_FILE_MEMORY_LIMIT_BYTES
+
+    def write(**fields) -> None:
+        receipt.write_text(json.dumps({"seconds": 5, "outputs": digest, **fields}))
+
+    # A receipt from before the limit existed.
+    write(version=1)
+    assert limits.recorded_seconds(root, BUNDLE, added=True) is None
+    # Timed by the current code, but as a modified file: no memory evidence.
+    write(version=limits.RECEIPT_VERSION)
+    assert limits.recorded_seconds(root, BUNDLE, added=False) == 5
+    assert limits.recorded_seconds(root, BUNDLE, added=True) is None
+    # Compiled under a looser cap than today's, or with a malformed one.
+    for bad in (cap + 1, 0, True, "3 GiB"):
+        write(version=limits.RECEIPT_VERSION, memory_limit=bad)
+        assert limits.recorded_seconds(root, BUNDLE, added=True) is None, bad
+    write(version=limits.RECEIPT_VERSION, memory_limit=cap)
+    assert limits.recorded_seconds(root, BUNDLE, added=True) == 5
+    # ``prepare`` keeps that output and removes one without the evidence.
+    assert limits.prepare(base, root) == 0
+    assert limits.output_digest(root, BUNDLE) == digest
+    write(version=limits.RECEIPT_VERSION)
+    assert limits.prepare(base, root) == 0
+    assert limits.output_digest(root, BUNDLE) is None
+
+
+def test_check_rejects_a_restored_added_file_without_the_evidence(
+    tmp_path: Path, capsys
+) -> None:
+    """Even if ``prepare`` did not run, an unseen added file cannot pass ``check``."""
+    root, base = _repository(tmp_path)
+    for artifact in _outputs(root, BUNDLE_MODULE):
+        artifact.parent.mkdir(parents=True, exist_ok=True)
+        artifact.write_bytes(b"compiled")
+    stem = limits._output_stem(root, BUNDLE)
+    receipt = {
+        "version": limits.RECEIPT_VERSION,
+        "seconds": 5,
+        "outputs": limits.output_digest(root, BUNDLE),
+    }
+    stem.with_name(stem.name + limits.RECEIPT_SUFFIX).write_text(json.dumps(receipt))
+    log = tmp_path / "build.log"
+    log.write_text("")
+    assert limits.check(log, base, root, limit=600) == 1
+    assert f"No successful build timing for {BUNDLE}" in capsys.readouterr().out
+    receipt["memory_limit"] = limits.ADDED_FILE_MEMORY_LIMIT_BYTES
+    stem.with_name(stem.name + limits.RECEIPT_SUFFIX).write_text(json.dumps(receipt))
+    assert limits.check(log, base, root, limit=600) == 0
+
+
+def test_check_records_the_memory_limit_for_added_files_only(tmp_path: Path) -> None:
+    """Only a job that compiled the file under its watchdog writes the evidence."""
+    root, base = _repository(tmp_path)
+    modified = "LeanPool/MovingSofa/Certificates/Bundle023.lean"
+    (root / modified).write_text("-- modified\n")
+    _git(root, "commit", "-qam", "modify")
+    for module in (BUNDLE_MODULE, "LeanPool.MovingSofa.Certificates.Bundle023"):
+        for artifact in _outputs(root, module):
+            artifact.parent.mkdir(parents=True, exist_ok=True)
+            artifact.write_bytes(module.encode())
+    log = tmp_path / "build.log"
+    log.write_text(
+        "✔ [1/2] Built LeanPool.MovingSofa.Certificates.Bundle004 (12s)\n"
+        "✔ [2/2] Built LeanPool.MovingSofa.Certificates.Bundle023 (34s)\n"
+    )
+    assert limits.check(log, base, root, limit=600) == 0
+
+    def receipt(path: str) -> dict:
+        stem = limits._output_stem(root, path)
+        return json.loads(stem.with_name(stem.name + limits.RECEIPT_SUFFIX).read_text())
+
+    assert receipt(BUNDLE)["memory_limit"] == limits.ADDED_FILE_MEMORY_LIMIT_BYTES
+    assert "memory_limit" not in receipt(modified)
+    assert receipt(BUNDLE)["version"] == limits.RECEIPT_VERSION == 2
+    # A later run restores both outputs and accepts both without compiling.
+    assert limits.prepare(base, root) == 0
+    assert limits.output_digest(root, BUNDLE) is not None
+    assert limits.output_digest(root, modified) is not None
 
 
 def test_heavy_files_are_listed_after_the_build(capsys) -> None:
@@ -979,11 +1145,11 @@ def test_recorded_time_does_not_cover_different_output(tmp_path: Path, suffix: s
         "{",
         "[]",
         '{"version": 0, "seconds": 1, "outputs": "DIGEST"}',
-        '{"version": 1, "seconds": true, "outputs": "DIGEST"}',
-        '{"version": 1, "seconds": -1, "outputs": "DIGEST"}',
-        '{"version": 1, "seconds": "1", "outputs": "DIGEST"}',
-        '{"version": 1, "outputs": "DIGEST"}',
-        '{"version": 1, "seconds": 1}',
+        '{"version": 2, "seconds": true, "outputs": "DIGEST"}',
+        '{"version": 2, "seconds": -1, "outputs": "DIGEST"}',
+        '{"version": 2, "seconds": "1", "outputs": "DIGEST"}',
+        '{"version": 2, "outputs": "DIGEST"}',
+        '{"version": 2, "seconds": 1}',
     ],
 )
 def test_malformed_receipts_certify_nothing(tmp_path: Path, receipt: str):

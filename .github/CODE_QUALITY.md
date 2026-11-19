@@ -35,11 +35,15 @@ GitHub's 4-vCPU runners. Existing files are checked only once a PR changes them.
 
 The same watchdog looks at the memory of every Lean process once a second. It
 counts anonymous memory, resident or swapped (`RssAnon` and `VmSwap`); the
-compiled imports a process maps are shared and are not counted.
+compiled imports a process maps are shared and are not counted. This is a
+sampled protection: it bounds what a compiler can gain between two looks, and
+cannot guarantee that every workload fits between them.
 
 - The compiler of a file the PR adds is stopped once it holds more than 3 GiB.
   Four compilers at that size, their shared imports and the system fit the
-  runner's 16 GB, so new files cannot exhaust it together.
+  runner's 16 GB. A compiled output restored from an earlier run is not seen
+  by the watchdog, so for an added file it is kept only if its timing receipt
+  records that it was compiled under this limit; otherwise it is rebuilt.
 - When free memory and swap together fall below 1.5 GiB, the Lean process
   holding the most is stopped, and the error names every file that was compiling
   and what it held. Without this the runner dies and the log names nothing.
