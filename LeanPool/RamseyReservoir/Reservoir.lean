@@ -55,20 +55,25 @@ namespace SimpleGraph
 
 variable {V : Type*} (G : SimpleGraph V)
 
-/-- A *reservoir* of `G`: a clique `spine` and a disjoint finite `pool` all of whose vertices are
-adjacent to every spine vertex. -/
+/-- A *reservoir* of `G`: a clique `spine` and a finite `pool` all of whose vertices are adjacent
+to every spine vertex. Since `G` is loopless, the pool is disjoint from the spine
+(`SimpleGraph.Reservoir.disjoint`). -/
 structure Reservoir where
   /-- The clique built so far. -/
   spine : Finset V
   /-- The common neighbours of the spine still available. -/
   pool : Finset V
   isClique_spine : G.IsClique (spine : Set V)
-  disjoint : Disjoint spine pool
   adj : ∀ x ∈ spine, ∀ y ∈ pool, G.Adj x y
 
 namespace Reservoir
 
 variable {G}
+
+/-- The spine and the pool are disjoint, because every spine vertex is adjacent to every pool
+vertex and `G` has no loops. -/
+theorem disjoint (R : G.Reservoir) : Disjoint R.spine R.pool :=
+  Finset.disjoint_left.mpr fun x hs hp => G.irrefl (R.adj x hs x hp)
 
 /-- A clique glued to a set of common neighbours is a clique. -/
 theorem _root_.SimpleGraph.IsClique.union_of_forall_adj {s t : Set V} (hs : G.IsClique s)
@@ -81,7 +86,6 @@ def ofPool (X : Finset V) : G.Reservoir where
   spine := ∅
   pool := X
   isClique_spine := by simp
-  disjoint := disjoint_empty_left _
   adj := by simp
 
 /-- The starting reservoir has an empty spine. -/
@@ -131,10 +135,6 @@ def pivot (v : V) (hv : v ∈ R.pool) : G.Reservoir where
   isClique_spine := by
     rw [coe_insert]
     exact R.isClique_spine.insert fun b hb _ => (R.adj b hb v hv).symm
-  disjoint := by
-    rw [disjoint_insert_left]
-    refine ⟨fun h => G.irrefl (mem_filter.mp h).2, ?_⟩
-    exact R.disjoint.mono_right (filter_subset _ _)
   adj := by
     intro x hx y hy
     rw [mem_filter] at hy
@@ -174,25 +174,25 @@ section Step
 
 variable [DecidableEq V] [DecidableRel G.Adj]
 
-/-- One pivot step. -/
+/-- One pivot step: `R'` is the pivot of `R` at some pool vertex. -/
 def Step (R R' : G.Reservoir) : Prop :=
-  ∃ v ∈ R.pool, R'.spine = insert v R.spine ∧ R'.pool = {w ∈ R.pool | G.Adj v w}
+  ∃ v, ∃ hv : v ∈ R.pool, R' = R.pivot v hv
 
 /-- `R` reaches `R'` by a finite sequence of pivots. -/
 def Reaches : G.Reservoir → G.Reservoir → Prop := Relation.ReflTransGen Step
 
 /-- A pivot is a step. -/
-theorem step_pivot {v : V} (hv : v ∈ R.pool) : Step R (R.pivot v hv) := ⟨v, hv, rfl, rfl⟩
+theorem step_pivot {v : V} (hv : v ∈ R.pool) : Step R (R.pivot v hv) := ⟨v, hv, rfl⟩
 
 /-- A step grows the spine by one. -/
 theorem Step.card_spine {R R' : G.Reservoir} (h : Step R R') : #R'.spine = #R.spine + 1 := by
-  obtain ⟨v, hv, hs, -⟩ := h
-  rw [hs, card_insert_of_notMem (R.not_mem_spine_of_mem_pool hv)]
+  obtain ⟨v, hv, rfl⟩ := h
+  exact R.card_pivot_spine hv
 
 /-- A step strictly shrinks the pool. -/
 theorem Step.pool_ssubset {R R' : G.Reservoir} (h : Step R R') : R'.pool ⊂ R.pool := by
-  obtain ⟨v, hv, -, hp⟩ := h
-  rw [hp]
+  obtain ⟨v, hv, rfl⟩ := h
+  rw [pivot_pool]
   exact (filter_ssubset).mpr ⟨v, hv, G.irrefl⟩
 
 /-- Spines only grow along a run of steps. -/
@@ -200,8 +200,8 @@ theorem Reaches.spine_subset {R R' : G.Reservoir} (h : Reaches R R') : R.spine �
   induction h with
   | refl => exact Subset.rfl
   | tail _ h ih =>
-    obtain ⟨v, -, hs, -⟩ := h
-    exact ih.trans (hs ▸ subset_insert _ _)
+    obtain ⟨v, -, rfl⟩ := h
+    exact ih.trans (subset_insert _ _)
 
 /-- Pools only shrink along a run of steps. -/
 theorem Reaches.pool_subset {R R' : G.Reservoir} (h : Reaches R R') : R'.pool ⊆ R.pool := by

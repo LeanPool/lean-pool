@@ -1,0 +1,144 @@
+slug: lattice-dirac-derivation
+title: Cubical lattice Dirac factorization and its continuum limit
+summary: Studies a quartic two-field lattice action on the 18-neighbour cubic stencil with
+  fixed numerical constants. On a fixed period-two background, its quadratic fluctuation
+  symbol splits into a continuum Klein-Gordon symbol and a fourth-order lattice remainder.
+  The four-component Dirac Hamiltonian squares to that continuum symbol. Two flavour copies
+  of a cubical Clifford representation, built from signed cube incidence maps, are equivalent
+  to the standard alpha/beta Dirac representation. Under the stability bound (dt w)^2 <= 4,
+  with continuum frequency w, a first-order branch solves the centred time recurrence using
+  the continuum symbol. Under the same bound the exact lattice recurrence has a defect
+  proportional to dt^2 times the spatial remainder. At fixed momentum the branch generator
+  tends to the Dirac Hamiltonian as the time step vanishes.
+  The project also proves local continuity for the linearized lattice dynamics, the
+  continuum limit of the lattice current, an orthonormal Fourier frame on
+  finite abelian groups, and spin one-half rotation generators. Free continuum identities
+  include Lorentz boosts, the Pauli-Lubanski invariant and the Gordon decomposition. All
+  results are about this lattice model and the free four-component continuum operator. They
+  do not establish properties of physical electrons.
+branch: mathematical physics
+entry_module: LeanPool.LatticeDiracDerivation
+authors:
+- G. D. Partin
+source:
+  title: Lean LFM-to-Dirac Derivation
+  authors:
+  - G. D. Partin
+  doi: 10.5281/zenodo.24150001
+  url: https://github.com/gpartin/LeanDiracDerivation/tree/867004142ada3eec464d5bd3088d7313fdad1613
+  github_repo: gpartin/LeanDiracDerivation
+  commit: 867004142ada3eec464d5bd3088d7313fdad1613
+license: MIT
+status: verified
+provenance: mix
+provenance_evidence: The author's proposal in LeanPool/lean-pool issue 800 describes the work
+  as human-directed research with AI-assisted Lean implementation, testing and review. The
+  upstream code is dual-licensed under MIT or CC0 1.0 by its LICENSING.md, and the import
+  uses the MIT option. The Lean Pool port to Lean v4.35.0 and the proof repairs that removed
+  upstream heartbeat overrides are by Claude.
+main_declarations:
+- LeanDirac.restricted_action_variation_is_native_variation
+- LeanDirac.native_prepared_modal_potential_expansion
+- LeanDirac.native_psi_tangent_symbol_is_exact_scalar_coefficient
+- LeanDirac.c19_spatial_remainder_bound
+- LeanDirac.standard_c19_hamiltonian_square_is_continuum_dispersion
+- LeanDirac.interpreted_hamiltonian_intertwines_minus
+- LeanDirac.interpreted_hamiltonian_intertwines_plus
+- LeanDirac.native_branch_defect_is_spatial_remainder
+- LeanDirac.recurrence_branch_generator_defect_tends_to_zero
+- LeanDirac.native_tangent_local_continuity
+- LeanDirac.native_cell4_flux_continuum_limit_is_dirac_current
+- LeanDirac.normalized_finite_fourier_basis_orthonormal
+- LeanDirac.exists_unique_admissible_spin_scale
+- LeanDirac.cube_spin_casimir
+- LeanDirac.cube_continuous_turn_two_pi
+- LeanDirac.admissible_two_copy_native_root_is_canonical
+- LeanDirac.c19_first_brillouin_zone_zero_unique
+- LeanDirac.pauli_lubanski_mass_shell_spin_half
+- LeanDirac.gordon_current_decomposition
+main_results:
+- declaration: LeanDirac.restricted_action_variation_is_native_variation
+  informal: Restriction to the aligned eight-corner cube sector commutes with the first variation
+    of the two-field lattice Lagrangian. Along any real line of amplitudes and velocities in that
+    sector, the derivative at zero of the restricted Lagrangian equals the full Lagrangian's state
+    and kinetic first variations at the embedded configuration.
+- declaration: LeanDirac.native_prepared_modal_potential_expansion
+  informal: Fix the prepared period-two background, with the second field at amplitude 19. A plane
+    wave of amplitude eps times a and lattice momentum k in the first field then has local-plus-bond
+    potential at every site exactly eps^2 |a|^2 / 2 times (19^2 + T(k)) plus eps^4 |a|^4 / 4. Here
+    T is the weighted 18-neighbour transport symbol.
+- declaration: LeanDirac.native_psi_tangent_symbol_is_exact_scalar_coefficient
+  informal: The quadratic fluctuation symbol 19^2 + T(k) equals the continuum Klein-Gordon symbol
+    19^2 + 12 |k|^2 plus the lattice remainder R(k) = T(k) - 12 |k|^2.
+- declaration: LeanDirac.c19_spatial_remainder_bound
+  informal: If every component of k satisfies |k_i| <= r with 0 <= r <= 1/2, the lattice remainder
+    satisfies |R(k)| <= 40 r^4.
+- declaration: LeanDirac.standard_c19_hamiltonian_square_is_continuum_dispersion
+  informal: The four-component Dirac Hamiltonian 19 beta + alpha . p in the standard alpha/beta
+    representation, with p = sqrt 12 (-k_2, -k_1, k_0), squares to (19^2 + 12 |k|^2) times the
+    identity. This is the continuum Klein-Gordon symbol of the lattice model.
+- declaration: LeanDirac.interpreted_hamiltonian_intertwines_minus
+  informal: The eight-corner operator m Beta + p_z Gamma_0 - p_y Gamma_1 - p_x Gamma_2 uses the cube
+    parity grading Beta and the signed cube incidence maps Gamma_a. For all complex m and p, the
+    injective embedding of the first rank-four flavour copy intertwines it with the standard Dirac
+    Hamiltonian m beta + alpha . p.
+- declaration: LeanDirac.interpreted_hamiltonian_intertwines_plus
+  informal: The same intertwining holds for the injective embedding of the second rank-four flavour
+    copy.
+- declaration: LeanDirac.native_branch_defect_is_spatial_remainder
+  informal: Let w^2 = 19^2 + 12 |k|^2 be the continuum symbol and assume (dt w)^2 <= 4. Then
+    U_dt z = C z - i (S / w) H(k) z solves the centred second-order time recurrence using that
+    symbol. Its defect in the exact lattice recurrence is dt^2 R(k) U_dt z, where R is the
+    lattice remainder.
+- declaration: LeanDirac.recurrence_branch_generator_defect_tends_to_zero
+  informal: Fix a lattice momentum k and a four-spinor z, and let U_dt be the continuum-symbol
+    branch above. As dt tends to 0 with dt nonzero, each component of (U_dt z - z) / dt + i H(k) z
+    tends to 0. This is a time-step limit at fixed k; the spatial defect relative to the exact
+    lattice recurrence is the separate dt^2 R(k) term.
+- declaration: LeanDirac.native_tangent_local_continuity
+  informal: On any 18-neighbour lattice, take the acceleration given by the linearized (tangent)
+    scalar equation with a mass term. Then at every site the time derivative of the local phase
+    density plus the divergence of the outward bond current vanishes. This concerns the linearized
+    dynamics, not the full quartic equations of motion.
+- declaration: LeanDirac.native_cell4_flux_continuum_limit_is_dirac_current
+  informal: Let z satisfy H_m(k) z = E z with E > 0, where H_m(k) is the Dirac Hamiltonian above
+    with an arbitrary real mass m. For each axis, the normalized positive-frequency lattice flux at
+    momentum s k has derivative at s = 0 equal to the Dirac current of z along that axis.
+- declaration: LeanDirac.normalized_finite_fourier_basis_orthonormal
+  informal: On every finite abelian group G, the additive characters divided by sqrt |G| form an
+    orthonormal family.
+- declaration: LeanDirac.exists_unique_admissible_spin_scale
+  informal: Exactly one nonzero real scale s makes the scaled cubical bivector operators satisfy
+    the commutation relation [S_0, S_1] = i S_2. That scale is 1/2.
+- declaration: LeanDirac.cube_spin_casimir
+  informal: The cubical spin generators with scale 1/2 satisfy S_0^2 + S_1^2 + S_2^2 = 3/4 on the
+    eight-corner space.
+- declaration: LeanDirac.cube_continuous_turn_two_pi
+  informal: The continuous rotation generated by any cubical spin generator acts as -1 at angle
+    2 pi.
+- declaration: LeanDirac.admissible_two_copy_native_root_is_canonical
+  informal: Consider first-order operators mu m Beta + sum_a (T p)_a Gamma_a, chosen independently
+    on the two flavour copies, with real mu >= 0 and a real 3 x 3 matrix T with T_00 >= 0. Suppose
+    each is covariant under the cubic quarter turns and squares to (m^2 + |p|^2) on its copy. Then
+    the operator equals the canonical cubical Dirac symbol.
+- declaration: LeanDirac.c19_first_brillouin_zone_zero_unique
+  informal: In the first Brillouin zone [-pi, pi]^3, the 18-neighbour transport symbol vanishes only
+    at k = 0.
+- declaration: LeanDirac.pauli_lubanski_mass_shell_spin_half
+  informal: On the mass shell E^2 - |p|^2 = m^2, the Pauli-Lubanski square built from the
+    four-component boost and rotation generators equals -(3/4) m^2 times the identity.
+- declaration: LeanDirac.gordon_current_decomposition
+  informal: Let m be nonzero and let the spinors u and v satisfy the momentum-space Dirac equations
+    gamma . q u = m u and gamma . p v = m v. Then the vector bilinear of u and gamma^mu v equals
+    1/(2m) times the Gordon sum of its convection and spin terms.
+tags:
+- mathematical-physics
+- dirac-operator
+- clifford-algebra
+- lattice
+- klein-gordon
+msc:
+- 81Q05
+- 15A66
+- 65M06
+- 81R20
