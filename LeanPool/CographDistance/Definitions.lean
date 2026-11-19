@@ -18,7 +18,7 @@ arXiv:2611.06981v1 (4 November 2026):
 
 > Is there `ε > 0` such that `(-2-ε, -2)` contains no distance eigenvalue of any connected cograph?
 
-`OpenProblemI_negative` says that the answer is no.
+`CographDist.openProblemI_negative` says that the answer is no.
 
 Definitions follow the survey: a cograph is a finite simple graph with no induced path on four
 vertices; the distance matrix of a connected graph is `D(G) = (d(u,v))_{u,v}`.

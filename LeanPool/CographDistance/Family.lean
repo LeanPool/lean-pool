@@ -64,6 +64,7 @@ def fam (m : ℕ) : SimpleGraph (W m) where
     (fam m).Adj (some (some p)) (some (some q)) ↔ p.1 = q.1 ∧ p.2 ≠ q.2 := by
   simp [fam, famAdj]
 
+/-- Each matching endpoint is adjacent to exactly one other matching endpoint. -/
 theorem fam_adj_pair_iff_eq_mate {m : ℕ} (p q : Fin m × Bool) :
     (fam m).Adj (some (some p)) (some (some q)) ↔ q = (p.1, !p.2) := by
   rcases p with ⟨i, b⟩
@@ -93,6 +94,11 @@ theorem fam_adj_center {m : ℕ} {v : W m} (hv : v ≠ none) : (fam m).Adj none 
   · exact absurd rfl hv
   · simp
 
+private theorem ne_center_of_not_adj {m : ℕ} {u v : W m}
+    (hne : u ≠ v) (hn : ¬ (fam m).Adj u v) : u ≠ none := by
+  rintro rfl
+  exact hn (fam_adj_center hne.symm)
+
 theorem fam_connected (m : ℕ) : (fam m).Connected := by
   have h : ∀ v : W m, (fam m).Reachable none v := by
     intro v
@@ -108,21 +114,11 @@ theorem fam_dist {m : ℕ} (u v : W m) :
   split_ifs with h1 h2
   · subst h1; simp
   · exact SimpleGraph.dist_eq_one_iff_adj.2 h2
-  · have hu : u ≠ none := by
-      rintro rfl; exact h2 (fam_adj_center (Ne.symm h1))
-    have hv : v ≠ none := by
-      rintro rfl; exact h2 ((fam_adj_center hu).symm)
-    have hle : (fam m).dist u v ≤ 2 := by
-      have := SimpleGraph.dist_le (SimpleGraph.Walk.cons (fam_adj_center hu).symm
-          (SimpleGraph.Walk.cons (fam_adj_center hv) SimpleGraph.Walk.nil))
-      simpa using this
-    have h0 : (fam m).dist u v ≠ 0 := by
-      intro h
-      exact h1 (((fam_connected m).preconnected u v).dist_eq_zero_iff.1 h)
-    have h1' : (fam m).dist u v ≠ 1 := by
-      intro h
-      exact h2 (SimpleGraph.dist_eq_one_iff_adj.1 h)
-    omega
+  · have hu := ne_center_of_not_adj h1 h2
+    have hv := ne_center_of_not_adj (Ne.symm h1) (fun h => h2 h.symm)
+    have hdist : (fam m).edist u v = 2 := SimpleGraph.edist_eq_two_iff.mpr
+      ⟨h1, h2, ⟨none, (fam_adj_center hu).symm, (fam_adj_center hv).symm⟩⟩
+    exact congrArg ENat.toNat hdist
 
 /-- `G_m` is a cograph. -/
 theorem fam_isCograph (m : ℕ) : ¬(SimpleGraph.pathGraph 4).IsIndContained (fam m) := by
@@ -137,18 +133,9 @@ theorem fam_isCograph (m : ℕ) : ¬(SimpleGraph.pathGraph 4).IsIndContained (fa
     simpa [SimpleGraph.pathGraph_adj] using f.map_adj_iff.mp h
   have d02 : f 0 ≠ f 2 := fun h => absurd (f.injective h) (by decide)
   have d13 : f 1 ≠ f 3 := fun h => absurd (f.injective h) (by decide)
-  have h0 : f 0 ≠ none := by
-    intro h
-    rw [h] at n02 d02
-    exact n02 (fam_adj_center d02.symm)
-  have h1 : f 1 ≠ none := by
-    intro h
-    rw [h] at n13 d13
-    exact n13 (fam_adj_center d13.symm)
-  have h2 : f 2 ≠ none := by
-    intro h
-    rw [h] at n02 d02
-    exact n02 (fam_adj_center d02).symm
+  have h0 := ne_center_of_not_adj d02 n02
+  have h1 := ne_center_of_not_adj d13 n13
+  have h2 := ne_center_of_not_adj d02.symm (fun h => n02 h.symm)
   exact d02 (eq_of_adj_of_ne_center h0 h2 e01 e12 h1)
 
 end CographDist

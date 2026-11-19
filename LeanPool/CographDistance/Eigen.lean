@@ -15,7 +15,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
-import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Topology.Algebra.Ring.Real
 import Mathlib.Topology.Order.IntermediateValue
 
 /-!
@@ -74,6 +74,13 @@ noncomputable def eigvec (m : ℕ) (l : ℝ) : W m → ℝ
   | some none => l * centerCoefficient m l - 2 * m
   | some (some _) => 1
 
+private theorem sum_const_matching_dist {m : ℕ} (v : W m) (d : ℕ)
+    (hd : ∀ q : Fin m × Bool, (fam m).dist v (some (some q)) = d) :
+    ∑ q : Fin m × Bool, ((fam m).dist v (some (some q)) : ℝ) = 2 * m * d := by
+  simp only [hd, sum_const, card_univ, Fintype.card_prod, Fintype.card_fin, Fintype.card_bool,
+    nsmul_eq_mul, Nat.cast_mul, Nat.cast_ofNat]
+  ring
+
 /-- Row sums of the distances from an end of a copy of `K₂` to the ends of all copies. -/
 theorem pair_row_sum {m : ℕ} (p : Fin m × Bool) :
     ∑ q : Fin m × Bool, ((fam m).dist (some (some p)) (some (some q)) : ℝ) = 4 * m - 3 := by
@@ -111,19 +118,22 @@ theorem eigvec_spec (m : ℕ) (hm : 1 ≤ m) (l : ℝ) (hl : l < -2) (hroot : cu
     rw [Fintype.sum_option, Fintype.sum_option]
     rcases v with _ | _ | p
     · -- the centre
-      simp only [SimpleGraph.dist_self, CharP.cast_eq_zero, eigvec, zero_mul, fam_dist,
-        reduceCtorEq, ↓reduceIte, fam_adj_none_some, Nat.cast_one, one_mul, mul_one, sum_const,
-        card_univ, Fintype.card_prod, Fintype.card_fin, Fintype.card_bool, nsmul_eq_mul,
-        Nat.cast_mul, Nat.cast_ofNat, zero_add]
+      have hd (q : Fin m × Bool) : (fam m).dist none (some (some q)) = 1 :=
+        SimpleGraph.dist_eq_one_iff_adj.mpr (fam_adj_none_some m _)
+      simp only [eigvec, mul_one]
+      rw [sum_const_matching_dist none 1 hd]
+      simp only [SimpleGraph.dist_self, Nat.cast_zero, zero_mul, fam_dist,
+        reduceCtorEq, ↓reduceIte, fam_adj_none_some, Nat.cast_one, one_mul, mul_one, zero_add]
       ring
     · -- the isolated vertex
-      simp only [fam_dist, reduceCtorEq, ↓reduceIte, fam_adj_some_none, Nat.cast_one, eigvec,
-        one_mul, SimpleGraph.dist_self, CharP.cast_eq_zero, zero_mul, Option.some.injEq,
-        fam_not_adj_z, Nat.cast_ofNat, mul_one, sum_const, card_univ, Fintype.card_prod,
-        Fintype.card_fin, Fintype.card_bool, nsmul_eq_mul, Nat.cast_mul, zero_add]
-      have : l * (l * α - 2 * m) = α + 4 * m := by nlinarith [hαeq]
-      change α + ↑m * 2 * 2 = l * (l * α - 2 * m)
-      linarith
+      have hd (q : Fin m × Bool) : (fam m).dist (some none) (some (some q)) = 2 := by
+        simp [fam_dist]
+      simp only [eigvec, mul_one]
+      rw [sum_const_matching_dist (some none) 2 hd]
+      simp only [fam_dist, reduceCtorEq, ↓reduceIte, fam_adj_some_none, Nat.cast_one, one_mul,
+        SimpleGraph.dist_self, Nat.cast_zero, zero_mul, Nat.cast_ofNat, zero_add]
+      change α + 2 * m * 2 = l * (l * α - 2 * m)
+      nlinarith [hαeq]
     · -- an end of a copy of `K₂`
       have hs := pair_row_sum p
       simp only [eigvec, mul_one]
