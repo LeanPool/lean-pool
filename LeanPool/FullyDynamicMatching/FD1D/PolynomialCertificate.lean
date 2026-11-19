@@ -569,14 +569,29 @@ private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Ex
     return expression
   Lean.Meta.whnfHeadPred expression fun term => return !isTerminalHead term
 
+-- Keep reduction of an unfamiliar closed value small. The outer chart is staged
+-- by its operations, and this retry only runs when the direct reader fails.
+private meta def readBellmanClosedValue {R : Type}
+    (readHead : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
+    Lean.MetaM (Option R) := do
+  if let some value ← readHead expression then return some value
+  if expression.hasFVar || expression.hasMVar || expression.hasLooseBVars then return none
+  let start ← IO.getNumHeartbeats
+  let limit := 10000000
+  withTheReader Lean.Core.Context (fun context =>
+    let stop := start - context.initHeartbeats + limit
+    {context with maxHeartbeats :=
+      if context.maxHeartbeats == 0 then stop else min stop context.maxHeartbeats}) do
+    readHead (← Lean.Meta.whnfD expression)
+
 private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) := do
-  let expression ← exposeBellmanHead expression
-  if let some integer ← Lean.Meta.getIntValue? expression then
-    return some integer
-  match_expr expression with
-  | Int.ofNat n => return (← readBellmanNat n).map Int.ofNat
-  | Int.negSucc n => return (← readBellmanNat n).map Int.negSucc
-  | _ => return none
+  let readHead (term : Lean.Expr) : Lean.MetaM (Option Int) := do
+    if let some integer ← Lean.Meta.getIntValue? term then return some integer
+    match_expr term with
+    | Int.ofNat n => return (← readBellmanClosedValue readBellmanNat n).map Int.ofNat
+    | Int.negSucc n => return (← readBellmanClosedValue readBellmanNat n).map Int.negSucc
+    | _ => return none
+  readBellmanClosedValue readHead (← exposeBellmanHead expression)
 
 -- Expose each list cell separately so wrappers around the list or its tail are harmless.
 private meta def readBellmanList {R : Type}
@@ -596,7 +611,7 @@ private meta def readBellmanList {R : Type}
 
 private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     (read : Lean.Expr → Lean.MetaM (Option R)) (fromNat : Nat → R)
-    (allowReduction : Bool) (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
+    (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
   let expression ← exposeBellmanHead expression
   let readHead (term : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
     match_expr term with
@@ -609,13 +624,7 @@ private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
     | DPoly.mk _ coefficients =>
         return (← readBellmanList read coefficients).map fun values => ⟨values⟩
     | _ => return none
-  if let some value ← readHead expression then
-    return some value
-  -- Compute closed inner coefficients when necessary. Keep the outer chart staged.
-  if allowReduction && !expression.hasFVar && !expression.hasMVar &&
-      !expression.hasLooseBVars then
-    return ← readHead (← Lean.Meta.whnfD expression)
-  return none
+  readBellmanClosedValue readHead expression
 
 -- Compute on coefficient data, then have the kernel verify the explicit reduction.
 -- The meta code produces the proposed value; only the checked equality is reused.
@@ -642,14 +651,22 @@ private meta def isBellmanPower (expression : Lean.Expr) : Bool :=
 private meta def isBellmanNegation (expression : Lean.Expr) : Bool :=
   expression.isAppOfArity ``Neg.neg 3 || expression.isAppOfArity ``DPoly.neg 3
 
+private meta def readBellmanBivariate (expression : Lean.Expr) :
+    Lean.MetaM (Option (DPoly (DPoly ℤ))) :=
+  readBellmanCoefficients
+    (readBellmanCoefficients readBellmanInteger Int.ofNat) (DPoly.const ∘ Int.ofNat) expression
+
 private meta def readBellmanLeaf (expression : Lean.Expr) : Lean.MetaM (Option Poly3) := do
   if expression.isConstOf ``U then return some DPoly.X
   if expression.isConstOf ``V then return some (DPoly.const DPoly.X)
   if expression.isConstOf ``Z then return some (DPoly.const (DPoly.const DPoly.X))
-  let integerPolynomial : Nat → DPoly ℤ := DPoly.const ∘ Int.ofNat
-  let readIntegerPolynomial := readBellmanCoefficients readBellmanInteger Int.ofNat true
-  let readBivariate := readBellmanCoefficients readIntegerPolynomial integerPolynomial true
-  readBellmanCoefficients readBivariate (DPoly.const ∘ integerPolynomial) false expression
+  readBellmanCoefficients readBellmanBivariate (DPoly.const ∘ DPoly.const ∘ Int.ofNat) expression
+
+private meta def readBellmanScaleFactor (expression : Lean.Expr) :
+    Lean.MetaM (DPoly (DPoly ℤ)) := do
+  let some factor ← readBellmanBivariate expression
+    | throwError "unsupported Bellman scale factor {expression}"
+  return factor
 
 private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := do
   if let some power ← readBellmanNat expression then return power
@@ -664,6 +681,9 @@ private meta def bellmanOperands (expression : Lean.Expr) : Lean.MetaM (Array Le
   if isBellmanPower expression then
     let _ ← readBellmanPower args[args.size - 1]!
     return #[args[args.size - 2]!]
+  if expression.isAppOfArity ``DPoly.scale 4 then
+    let _ ← readBellmanScaleFactor args[args.size - 2]!
+    return #[args[args.size - 1]!]
   if isBellmanNegation expression then
     return #[args[args.size - 1]!]
   let some _ ← readBellmanLeaf expression
@@ -727,6 +747,12 @@ private meta def normalizeBellmanPolynomial
         let firstProof ← Lean.Meta.mkCongrArg operator baseProof
         let congruence ← Lean.Meta.mkCongrFun firstProof exponent
         pure (base ^ power, Lean.mkApp2 operator baseExpr exponent, congruence)
+      else if expression.isAppOfArity ``DPoly.scale 4 then do
+        let factor ← readBellmanScaleFactor args[args.size - 2]!
+        let (value, valueExpr, proof) ← normalizeBellmanPolynomial cache fuel args[args.size - 1]!
+        let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 1))
+        pure (DPoly.scale factor value, Lean.mkApp operator valueExpr,
+          ← Lean.Meta.mkCongrArg operator proof)
       else if isBellmanNegation expression then do
         let (value, valueExpr, proof) ← normalizeBellmanPolynomial cache fuel args[args.size - 1]!
         let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 1))
@@ -761,7 +787,8 @@ example :
     allNonnegative3
       (DPoly.X + DPoly.const (id DPoly.X) + DPoly.const (DPoly.const DPoly.X) +
         DPoly.const (2 : DPoly (DPoly ℤ)) + DPoly.const (DPoly.X + 0) +
-        DPoly.mk (id [1]) : Poly3) = true := by
+        DPoly.mk (id [1]) + DPoly.const (DPoly.const (DPoly.const (1 + 1 : ℤ))) +
+        DPoly.scale 2 (1 + U) : Poly3) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
