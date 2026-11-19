@@ -8,4 +8,5 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.GoodmanSupersaturation
 public import LeanPool.GoodmanSupersaturation.Goodman
+public import LeanPool.GoodmanSupersaturation.RamseyNumber
 public import LeanPool.GoodmanSupersaturation.Supersaturation

@@ -18,8 +18,9 @@ summary: Counts monochromatic structures in a red/blue colouring of a complete g
   finite vertex set and globally, with its degree-imbalance form, the bound n(n-1)(n-5)/24, equality
   for graphs regular of degree k on 2k+1 vertices, and the stronger bound n(n-2)(n-4)/24 for even n.
   Also proves monochromatic books, an edge-balance inequality, supersaturation of monochromatic
-  cliques by averaging, and a counted Erdős–Szekeres recursion giving explicit lower bounds on the
-  number of red k-cliques or blue l-cliques.
+  cliques by averaging (made unconditional at the diagonal Ramsey number of the pool's FiniteRamsey
+  project), and a counted Erdős–Szekeres recursion giving explicit lower bounds on the number of red
+  k-cliques or blue l-cliques.
 entry_module: LeanPool.GoodmanSupersaturation
 source:
   title: Goodman's formula and supersaturation for two-colourings
@@ -33,6 +34,7 @@ main_declarations:
 - SimpleGraph.goodman_bound
 - SimpleGraph.IsRegularOfDegree.goodman_eq
 - SimpleGraph.supersaturation
+- SimpleGraph.choose_le_card_cliqueFinset_add_mul_choose_ramseyNumber
 main_results:
 - declaration: SimpleGraph.goodman_within
   informal: Goodman's formula inside any finite vertex set S. Twice the number of triangles of G and
@@ -56,6 +58,10 @@ main_results:
     where supersaturationBound k l x = x^k 2^(2k+1) / (k! 2^(kl + C(k+1, 2))).
   paper: P. Erdős and G. Szekeres, A combinatorial problem in geometry, Compositio Math. 2 (1935),
     463-470 (the uncounted recursion).
+- declaration: SimpleGraph.choose_le_card_cliqueFinset_add_mul_choose_ramseyNumber
+  informal: Supersaturation by averaging at the diagonal Ramsey number. If R(t, t) is at most n, then
+    C(n, t) is at most C(R(t, t), t) times the number of t-cliques of G plus those of its complement.
+    R(t, t) is the pool's FiniteRamsey ramseyNumber ![t, t]; this bridge was added in the port.
 tags:
 - ramsey-theory
 - extremal-graph-theory

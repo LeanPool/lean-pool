@@ -246,21 +246,6 @@ theorem sum_cliqueCountIn_neighbors_le (S : Finset V) {j : ℕ} (hj : 1 ≤ j) :
     ∑ v ∈ S, G.cliqueCountIn {w ∈ S | G.Adj v w} (j - 1) ≤ j * G.cliqueCountIn S j :=
   (sum_cliqueCountIn_neighbors_eq G S hj).le
 
-private theorem card_nbhd_add (S : Finset V) {v : V} (hv : v ∈ S) :
-    #(nbhd G S v) + #(nbhd Gᶜ S v) + 1 = #S := by
-  have h1 : nbhd G S v = {w ∈ S.erase v | G.Adj v w} := by
-    ext w
-    simp only [mem_filter, mem_erase]
-    exact ⟨fun ⟨hw, ha⟩ => ⟨⟨(G.ne_of_adj ha).symm, hw⟩, ha⟩, fun ⟨⟨_, hw⟩, ha⟩ => ⟨hw, ha⟩⟩
-  have h2 : nbhd Gᶜ S v = {w ∈ S.erase v | ¬G.Adj v w} := by
-    ext w
-    simp only [mem_filter, mem_erase, compl_adj]
-    exact ⟨fun ⟨hw, hne, hna⟩ => ⟨⟨Ne.symm hne, hw⟩, hna⟩,
-      fun ⟨⟨hne, hw⟩, hna⟩ => ⟨hw, Ne.symm hne, hna⟩⟩
-  rw [h1, h2, card_filter_add_card_filter_not, card_erase_of_mem hv]
-  have : 0 < #S := card_pos.mpr ⟨v, hv⟩
-  omega
-
 /-- At least half of `S` has blue degree at least `(|S| - 1) / 2`, or at least half has red degree
 at least `(|S| - 1) / 2`. -/
 private theorem exists_half (S : Finset V) :
@@ -270,7 +255,7 @@ private theorem exists_half (S : Finset V) :
   set B := {v ∈ S | ((#S : ℝ) - 1) / 2 ≤ #(nbhd G S v)}
   have hsub : S ⊆ A ∪ B := fun v hv => by
     have hd : (#(nbhd G S v) : ℝ) + #(nbhd Gᶜ S v) + 1 = #S := by
-      exact_mod_cast card_nbhd_add G S hv
+      exact_mod_cast degreeWithin_add_degreeWithin_compl G hv
     rw [mem_union]
     by_cases hb : ((#S : ℝ) - 1) / 2 ≤ #(nbhd Gᶜ S v)
     · exact .inl (mem_filter.mpr ⟨hv, hb⟩)
