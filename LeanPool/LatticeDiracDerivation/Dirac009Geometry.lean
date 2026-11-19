@@ -81,14 +81,18 @@ theorem prepared_cube_edge_overlap_values
     (axis : Fin 3) (corner : CubeCorner) :
     preparedCubeEdgeOverlap axis corner =
       preparedCubeExpectedEdgeOverlap axis corner := by
-  apply Complex.ext <;> fin_cases axis <;> fin_cases corner <;>
-    simp [preparedCubeEdgeOverlap, preparedCubeExpectedEdgeOverlap,
-      overlap, Fin.sum_univ_succ, tetraCorner, tetraRay0,
-      tetraRay1, tetraRay2, tetraRay3, c3Of, c3Neg,
-      omega, omegaBar, tetraA, tetraB, cubeIncidenceFlip,
-      cellFlip0, cellFlip1, cellFlip2] <;>
-    field_simp [sqrt_three_ne_zero] <;> ring_nf <;>
-    nlinarith [sqrt_three_sq, sqrt_two_sq]
+  obtain ⟨h01, h02, h03, h12, h13, h23⟩ := overlap_tetra_rays
+  obtain ⟨c0, c1, c2, c3, c4, c5, c6, c7⟩ := tetra_corner_values
+  fin_cases axis <;> fin_cases corner <;>
+    simp only [preparedCubeEdgeOverlap, preparedCubeExpectedEdgeOverlap, cubeIncidenceFlip,
+      cellFlip0, cellFlip1, cellFlip2, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      c0, c1, c2, c3, c4, c5, c6, c7, overlap_neg_left, overlap_neg_right] <;>
+    simp only [overlap_swap tetraRay0 tetraRay1, overlap_swap tetraRay0 tetraRay2,
+      overlap_swap tetraRay0 tetraRay3, overlap_swap tetraRay1 tetraRay2,
+      overlap_swap tetraRay1 tetraRay3, overlap_swap tetraRay2 tetraRay3,
+      h01, h02, h03, h12, h13, h23, star_neg, star_mul', Complex.star_def,
+      Complex.conj_ofReal, Complex.conj_I] <;>
+    ring
 
 def preparedGaussianPhaseExponent (z : ℂ) : ZMod 4 :=
   if z.im = 0 then
@@ -128,10 +132,16 @@ theorem prepared_cube_connection_gauge_eq_incidence
   have hfour : (4 : ZMod 4) = 0 := by decide
   have hnegTwo : (-2 : ZMod 4) = 2 := by decide
   fin_cases axis <;> fin_cases corner <;>
-    simp [preparedCubeExpectedEdgeOverlap, preparedGaussianPhaseExponent,
-      preparedCubeGauge4, cubeIncidenceConnection4,
-      cubeIncidenceFlip, cellFlip0, cellFlip1, cellFlip2,
-      cellBit0, cellBit1, tetraA, hA, hAnot]
+    simp only [preparedGaussianPhaseExponent, preparedCubeExpectedEdgeOverlap, tetraA, one_div,
+        Complex.ofReal_inv, Complex.neg_im, Complex.inv_im, Complex.ofReal_im, neg_zero,
+        Complex.normSq_ofReal, Nat.ofNat_nonneg, Real.mul_self_sqrt, zero_div, ↓reduceIte,
+        Complex.neg_re, Complex.inv_re, Complex.ofReal_re, Left.neg_pos_iff, hAnot,
+        preparedCubeGauge4, sub_zero, cubeIncidenceFlip, Fin.zero_eta, Fin.isValue, cellFlip0,
+        Fin.coe_ofNat_eq_mod, Nat.reduceMod, cubeIncidenceConnection4, Complex.mul_im, Complex.I_im,
+        mul_one, Complex.I_re, mul_zero, add_zero, neg_eq_zero, div_eq_zero_iff, Real.sqrt_eq_zero,
+        OfNat.ofNat_ne_zero, or_self, Fin.mk_one, hA, Fin.reduceFinMk, Nat.mod_succ, sub_self,
+        Nat.zero_mod, Nat.one_mod, cellFlip1, cellBit0, one_ne_zero, zero_sub, zero_add, cellFlip2,
+        cellBit1, neg_add_cancel, Nat.reduceAdd, Nat.mod_self]
   all_goals first | exact hfour | exact hnegTwo
 
 def cubeIncidenceGamma (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
@@ -469,12 +479,11 @@ def c19ClosedSymbol (momentum : LatticeMomentum) : ℝ :=
 theorem c19_transport_symbol_closed (momentum : LatticeMomentum) :
     c19TransportSymbol momentum = c19ClosedSymbol momentum := by
   unfold c19TransportSymbol c19ClosedSymbol
-  simp only [Fin.sum_univ_succ]
-  simp only [c19Character]
-  simp_rw [normSq_one_sub_exp_I]
-  simp [c19Weight, c19PhaseAngle, c19Coord, Fin.sum_univ_succ,
-    Real.cos_neg, Real.cos_add]
-  ring
+  simp only [c19Character, normSq_one_sub_exp_I]
+  simp only [Fin.sum_univ_succ, Fin.sum_univ_zero, c19PhaseAngle]
+  norm_num [c19Weight, c19Coord]
+  simp only [Real.cos_neg, Real.cos_add, Real.cos_sub, neg_add_eq_sub, Real.sin_neg]
+  ring_nf
 
 def c19QuadraticSymbol (momentum : LatticeMomentum) : ℝ :=
   12 * (momentum 0 ^ 2 + momentum 1 ^ 2 + momentum 2 ^ 2)
@@ -511,25 +520,28 @@ theorem c19_phase_angle_abs_le_two_mul
     (hmomentum : ∀ axis, |momentum axis| ≤ radius)
     (direction : C19Neighbor) :
     |c19PhaseAngle momentum direction| ≤ 2 * radius := by
-  have h0 := hmomentum (0 : Fin 3)
-  have h1 := hmomentum (1 : Fin 3)
-  have h2 := hmomentum (2 : Fin 3)
-  have h01a := abs_add_le (momentum 0) (momentum 1)
-  have h01s := abs_add_le (momentum 0) (-momentum 1)
-  have h02a := abs_add_le (momentum 0) (momentum 2)
-  have h02s := abs_add_le (momentum 0) (-momentum 2)
-  have h12a := abs_add_le (momentum 1) (momentum 2)
-  have h12s := abs_add_le (momentum 1) (-momentum 2)
-  have h01na := abs_add_le (-momentum 0) (-momentum 1)
-  have h02na := abs_add_le (-momentum 0) (-momentum 2)
-  have h12na := abs_add_le (-momentum 1) (-momentum 2)
-  have h01ns := abs_add_le (-momentum 0) (momentum 1)
-  have h02ns := abs_add_le (-momentum 0) (momentum 2)
-  have h12ns := abs_add_le (-momentum 1) (momentum 2)
-  simp only [abs_neg] at h01s h02s h12s h01na h02na h12na h01ns h02ns h12ns
-  fin_cases direction <;>
-    simp [c19PhaseAngle, c19Coord, Fin.sum_univ_succ] <;>
-    linarith
+  have hsum : |c19Coord 0 direction| + |c19Coord 1 direction| +
+      |c19Coord 2 direction| ≤ 2 := by
+    revert direction
+    decide
+  have hsumReal : |(c19Coord 0 direction : ℝ)| + |(c19Coord 1 direction : ℝ)| +
+      |(c19Coord 2 direction : ℝ)| ≤ 2 := by
+    simp only [← Int.cast_abs]
+    exact_mod_cast hsum
+  have hterm : ∀ axis, |momentum axis * (c19Coord axis direction : ℝ)| ≤
+      radius * |(c19Coord axis direction : ℝ)| := fun axis => by
+    rw [abs_mul]
+    exact mul_le_mul_of_nonneg_right (hmomentum axis) (abs_nonneg _)
+  unfold c19PhaseAngle
+  rw [Fin.sum_univ_three]
+  calc
+    _ ≤ |momentum 0 * (c19Coord 0 direction : ℝ)| +
+        |momentum 1 * (c19Coord 1 direction : ℝ)| +
+        |momentum 2 * (c19Coord 2 direction : ℝ)| := abs_add_three _ _ _
+    _ ≤ radius * (|(c19Coord 0 direction : ℝ)| + |(c19Coord 1 direction : ℝ)| +
+        |(c19Coord 2 direction : ℝ)|) := by
+      linarith [hterm 0, hterm 1, hterm 2]
+    _ ≤ 2 * radius := by nlinarith
 
 theorem cosine_phase_error_bound
     (angle radius : ℝ) (_hradius : 0 ≤ radius)

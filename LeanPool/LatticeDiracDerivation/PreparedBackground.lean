@@ -48,8 +48,10 @@ theorem wedge_planar_companion
   · apply Complex.ext
     · have hu2re := congrArg Complex.re hu2
       have hu2im := congrArg Complex.im hu2
-      simp at hu2re hu2im
-      simp [density, Fin.sum_univ_succ, Complex.normSq] at hnorm
+      simp only [Fin.isValue, zero_re, zero_im] at hu2re hu2im
+      simp only [density, normSq, MonoidWithZeroHom.coe_mk, ZeroHom.coe_mk, Fin.sum_univ_succ,
+          Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique, Fin.default_eq_zero,
+          Finset.sum_singleton, Fin.succ_one_eq_two] at hnorm
       rw [hu2re, hu2im] at hnorm
       simp [wedge, unitArea] at ⊢
       nlinarith

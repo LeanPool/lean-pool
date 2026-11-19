@@ -29,7 +29,6 @@ this free theorem.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section

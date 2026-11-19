@@ -39,7 +39,6 @@ second physical particle.  Those require a native moving-state theorem.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section
@@ -163,6 +162,39 @@ def rawC19Translation
     (direction : C19Neighbor) (amplitude : Cell8) : Cell8 :=
   fun corner => amplitude (cubeC19Neighbor corner direction)
 
+theorem cube_c19_neighbor_flavor_flip
+    (corner : CubeCorner) (direction : C19Neighbor) :
+    cubeC19Neighbor (cellFlip1 (cellFlip2 corner)) direction =
+      cellFlip1 (cellFlip2 (cubeC19Neighbor corner direction)) := by
+  revert corner direction
+  decide
+
+theorem cube_c19_neighbor_bit2_parity
+    (corner : CubeCorner) (direction : C19Neighbor) :
+    (c19Coord 2 direction = 0 →
+        cellBit2 (cubeC19Neighbor corner direction) % 2 = cellBit2 corner % 2) ∧
+      (c19Coord 2 direction ≠ 0 →
+        cellBit2 (cubeC19Neighbor corner direction) % 2 ≠ cellBit2 corner % 2) := by
+  revert corner direction
+  decide
+
+theorem cube_flavor_sign_c19_neighbor
+    (corner : CubeCorner) (direction : C19Neighbor) :
+    cubeFlavorSign (cubeC19Neighbor corner direction) =
+      if c19Coord 2 direction = 0 then cubeFlavorSign corner
+      else -cubeFlavorSign corner := by
+  obtain ⟨hsame, hdifferent⟩ := cube_c19_neighbor_bit2_parity corner direction
+  have hcorner := Nat.mod_lt (cellBit2 corner) two_pos
+  have hneighbor := Nat.mod_lt (cellBit2 (cubeC19Neighbor corner direction)) two_pos
+  unfold cubeFlavorSign
+  by_cases hcoord : c19Coord 2 direction = 0
+  · have hparity := hsame hcoord
+    simp only [hcoord, ↓reduceIte]
+    split_ifs <;> first | omega | rfl
+  · have hparity := hdifferent hcoord
+    simp only [hcoord, ↓reduceIte]
+    split_ifs <;> first | omega | norm_num
+
 theorem raw_c19_translation_copy_relation
     (direction : C19Neighbor) (amplitude : Cell8) :
     cubeFlavor (rawC19Translation direction amplitude) =
@@ -172,10 +204,13 @@ theorem raw_c19_translation_copy_relation
         fun corner => -rawC19Translation direction
           (cubeFlavor amplitude) corner := by
   funext corner
-  fin_cases direction <;> fin_cases corner <;>
-    simp [rawC19Translation, cubeC19Neighbor, c19Coord,
-      cubeFlavor, cubeFlavorSign, cellFlip0, cellFlip1, cellFlip2,
-      cellBit2]
+  by_cases hcoord : c19Coord 2 direction = 0
+  · simp only [hcoord, ↓reduceIte, rawC19Translation, cubeFlavor,
+      cube_c19_neighbor_flavor_flip, cube_flavor_sign_c19_neighbor]
+  · simp only [hcoord, ↓reduceIte, rawC19Translation, cubeFlavor,
+      cube_c19_neighbor_flavor_flip, cube_flavor_sign_c19_neighbor]
+    push_cast
+    ring
 
 def c19CopyExchangeWeight : ℝ :=
   ∑ direction : C19Neighbor,

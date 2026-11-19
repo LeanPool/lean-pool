@@ -119,7 +119,8 @@ def ChiNormalDirection (eta : CubeCorner → C3) : Prop :=
   have h := tetra_wedge_companion_constant corner
   funext component
   have hc := congrFun h component
-  fin_cases component <;> simp [wedge, c3Neg] at hc ⊢ <;>
+  fin_cases component <;> simp only [wedge, Fin.zero_eta, Fin.isValue, c3Neg, Fin.mk_one,
+                              Fin.reduceFinMk] at hc ⊢ <;>
     rw [← hc] <;> ring
 
 theorem c3_inner_unitArea_wedge_planar_companion
@@ -669,8 +670,8 @@ theorem aligned_psi_acceleration [Fintype Edge]
   have hresidual := density_zero_implies_c3_zero residual hpair
   funext component
   have hc := congrFun hresidual component
-  simp [residual, rayResidual, c3Sub, c3Zero, c3ScaleComplex,
-    psiAccelerationAmplitude, acceleration] at hc ⊢
+  simp only [rayResidual, c3Sub, c3ScaleComplex, c3Zero, psiAccelerationAmplitude, residual,
+      acceleration] at hc ⊢
   exact sub_eq_zero.mp hc
 
 theorem aligned_chi_acceleration [Fintype Edge]
@@ -703,8 +704,8 @@ theorem aligned_chi_acceleration [Fintype Edge]
   have hresidual := density_zero_implies_c3_zero residual hpair
   funext component
   have hc := congrFun hresidual component
-  simp [residual, rayResidual, c3Sub, c3Zero, c3ScaleComplex,
-    chiAccelerationAmplitude, acceleration] at hc ⊢
+  simp only [rayResidual, c3Sub, c3ScaleComplex, c3Zero, chiAccelerationAmplitude, residual,
+      acceleration] at hc ⊢
   exact sub_eq_zero.mp hc
 
 theorem native_next_preserves_eight_site_sector [Fintype Edge]

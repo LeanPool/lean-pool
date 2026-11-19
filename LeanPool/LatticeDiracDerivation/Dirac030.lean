@@ -29,7 +29,6 @@ No electromagnetic field or magnetic moment is assumed.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section

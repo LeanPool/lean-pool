@@ -106,7 +106,8 @@ theorem cubic_covariant_coefficients_are_scalar
   have hx21 := congrFun (hx (realCubeBasis 2)) 1
   have hx22 := congrFun (hx (realCubeBasis 2)) 2
   simp [realCubeMatrixApply, realCubeQuarterTurnZ,
-    realCubeQuarterTurnX, realCubeBasis, Fin.sum_univ_succ] at hz00 hz01 hz02 hz10 hz11 hz12 hz20 hz21 hz22 hx00 hx01 hx02 hx10 hx11 hx12 hx20 hx21 hx22
+    realCubeQuarterTurnX, realCubeBasis, Fin.sum_univ_succ]
+    at hz00 hz01 hz02 hz10 hz11 hz12 hz20 hz21 hz22 hx00 hx01 hx02 hx10 hx11 hx12 hx20 hx21 hx22
   refine ⟨matrix 0 0, ?_⟩
   intro row column
   fin_cases row <;> fin_cases column <;>
@@ -509,8 +510,10 @@ theorem positive_flavor_is_exactly_plus_embedding
   have h6 := congrFun hflavor 6
   have h7 := congrFun hflavor 7
   fin_cases corner <;>
-    simp [cubeEmbedPlus, raw, cubeRawCoordinates, cubeFlavor,
-      cubeFlavorSign, cellFlip1, cellFlip2, cellBit2] at h0 h1 h2 h3 h4 h5 h6 h7 ⊢ <;>
+    simp only [cubeFlavor, cubeFlavorSign, cellBit2, Fin.isValue, Nat.zero_mod, ↓reduceIte,
+        ofReal_one, mul_one, cellFlip1, cellFlip2, Nat.mod_succ, one_ne_zero, ofReal_neg, mul_neg,
+        neg_mul, cubeEmbedPlus, Fin.zero_eta, cubeRawCoordinates, raw, Fin.mk_one,
+        Fin.reduceFinMk] at h0 h1 h2 h3 h4 h5 h6 h7 ⊢ <;>
     assumption
 
 theorem negative_flavor_is_exactly_minus_embedding
@@ -530,8 +533,10 @@ theorem negative_flavor_is_exactly_minus_embedding
   have h6 := congrFun hflavor 6
   have h7 := congrFun hflavor 7
   fin_cases corner <;>
-    simp [cubeEmbedMinus, raw, cubeRawCoordinates, cubeFlavor,
-      cubeFlavorSign, cellFlip1, cellFlip2, cellBit2] at h0 h1 h2 h3 h4 h5 h6 h7 ⊢
+    simp only [cubeFlavor, cubeFlavorSign, cellBit2, Fin.isValue, Nat.zero_mod, ↓reduceIte,
+        ofReal_one, mul_one, cellFlip1, cellFlip2, Nat.mod_succ, one_ne_zero, ofReal_neg, mul_neg,
+        neg_mul, neg_inj, cubeEmbedMinus, Fin.zero_eta, cubeRawCoordinates, raw, Fin.mk_one,
+        Fin.reduceFinMk] at h0 h1 h2 h3 h4 h5 h6 h7 ⊢
   all_goals first | assumption | linear_combination (-1 : ℂ) * h2 |
     linear_combination (-1 : ℂ) * h6
 

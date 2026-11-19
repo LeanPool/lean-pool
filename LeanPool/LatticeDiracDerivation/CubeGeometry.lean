@@ -20,7 +20,6 @@ public import LeanPool.LatticeDiracDerivation.C19Geometry
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section
@@ -98,6 +97,54 @@ theorem tetra_corner_density_one (corner : CubeCorner) :
       sqrt_three_pow_five, sqrt_three_pow_six, sqrt_three_pow_eight,
       sqrt_two_pow_four]
 
+theorem overlap_eq_sum (u v : C3) :
+    overlap u v = ∑ component, star (u component) * v component := by
+  apply Complex.ext
+  · simp [overlap, Complex.re_sum, Complex.mul_re]
+  · simp only [overlap, Complex.im_sum, Complex.mul_im, Complex.star_def,
+      Complex.conj_re, Complex.conj_im]
+    exact Finset.sum_congr rfl fun _ _ => by ring
+
+theorem overlap_neg_left (u v : C3) : overlap (c3Neg u) v = -overlap u v := by
+  simp [overlap_eq_sum, c3Neg, Finset.sum_neg_distrib]
+
+theorem overlap_neg_right (u v : C3) : overlap u (c3Neg v) = -overlap u v := by
+  simp [overlap_eq_sum, c3Neg, Finset.sum_neg_distrib]
+
+theorem overlap_swap (u v : C3) : overlap v u = star (overlap u v) := by
+  simp [overlap_eq_sum, star_sum, mul_comm]
+
+theorem tetraA_sq : tetraA ^ 2 = 1 / 3 := by
+  rw [tetraA, div_pow, sqrt_three_sq]
+  norm_num
+
+theorem tetraA_pow_four : tetraA ^ 4 = 1 / 9 := by
+  rw [show tetraA ^ 4 = (tetraA ^ 2) ^ 2 by ring, tetraA_sq]
+  norm_num
+
+/-- Every pair of distinct tetrahedral rays has overlap `tetraA` times a fourth root
+of unity. -/
+theorem overlap_tetra_rays :
+    overlap tetraRay0 tetraRay1 = (tetraA : ℂ) ∧
+    overlap tetraRay0 tetraRay2 = (tetraA : ℂ) ∧
+    overlap tetraRay0 tetraRay3 = (tetraA : ℂ) ∧
+    overlap tetraRay1 tetraRay2 = (tetraA : ℂ) * I ∧
+    overlap tetraRay1 tetraRay3 = -((tetraA : ℂ) * I) ∧
+    overlap tetraRay2 tetraRay3 = (tetraA : ℂ) * I := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    apply Complex.ext <;>
+    simp [overlap, Fin.sum_univ_succ, tetraRay0, tetraRay1, tetraRay2, tetraRay3,
+      c3Of, omega, omegaBar, tetraA, tetraB] <;>
+    field_simp [sqrt_three_ne_zero] <;> ring_nf <;>
+    nlinarith [sqrt_three_sq, sqrt_two_sq, sqrt_three_pow_four]
+
+theorem tetra_corner_values :
+    tetraCorner 0 = tetraRay0 ∧ tetraCorner 1 = tetraRay1 ∧
+    tetraCorner 2 = tetraRay2 ∧ tetraCorner 3 = tetraRay3 ∧
+    tetraCorner 4 = c3Neg tetraRay3 ∧ tetraCorner 5 = c3Neg tetraRay2 ∧
+    tetraCorner 6 = c3Neg tetraRay1 ∧ tetraCorner 7 = c3Neg tetraRay0 :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 theorem all_face_products_negative :
     faceProduct 0 2 3 1 = (-1/9 : ℂ) ∧
     faceProduct 4 6 7 5 = (-1/9 : ℂ) ∧
@@ -105,15 +152,20 @@ theorem all_face_products_negative :
     faceProduct 2 6 7 3 = (-1/9 : ℂ) ∧
     faceProduct 0 4 6 2 = (-1/9 : ℂ) ∧
     faceProduct 1 5 7 3 = (-1/9 : ℂ) := by
-  repeat' apply And.intro
-  all_goals apply Complex.ext <;>
-    simp [faceProduct, overlap, Fin.sum_univ_succ, tetraCorner,
-      tetraRay0, tetraRay1, tetraRay2, tetraRay3, c3Of, c3Neg,
-      omega, omegaBar, tetraA, tetraB] <;>
-    field_simp [sqrt_three_ne_zero] <;> ring_nf <;>
-    nlinarith [sqrt_three_sq, sqrt_two_sq, sqrt_three_pow_four,
-      sqrt_three_pow_five, sqrt_three_pow_six, sqrt_three_pow_eight,
-      sqrt_two_pow_four]
+  obtain ⟨h01, h02, h03, h12, h13, h23⟩ := overlap_tetra_rays
+  obtain ⟨c0, c1, c2, c3, c4, c5, c6, c7⟩ := tetra_corner_values
+  have h4 : ((tetraA : ℂ)) ^ 4 = 1 / 9 := by
+    rw [← Complex.ofReal_pow, tetraA_pow_four]
+    norm_num
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    simp only [faceProduct, c0, c1, c2, c3, c4, c5, c6, c7, overlap_neg_left,
+      overlap_neg_right] <;>
+    simp only [overlap_swap tetraRay0 tetraRay1, overlap_swap tetraRay0 tetraRay2,
+      overlap_swap tetraRay1 tetraRay2,
+      overlap_swap tetraRay1 tetraRay3, overlap_swap tetraRay2 tetraRay3,
+      h01, h02, h03, h12, h13, h23, star_neg, star_mul', Complex.star_def,
+      Complex.conj_ofReal, Complex.conj_I] <;>
+    linear_combination (tetraA : ℂ) ^ 4 * Complex.I_sq - h4
 
 end
 end LeanDirac

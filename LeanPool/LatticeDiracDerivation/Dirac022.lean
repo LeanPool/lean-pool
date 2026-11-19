@@ -34,7 +34,6 @@ position rule, or electromagnetic coupling.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section
@@ -144,11 +143,12 @@ theorem negative_rest_branch_current_zero (time : ℝ) :
 theorem coherent_rest_velocity_cross_term (time : ℝ) :
     restZitterVelocity time =
       c19ContinuumSpeed * Real.cos (2 * chi0 * time) := by
-  simp [restZitterVelocity, coherentRestState,
-    standardC19DiracCurrent, cell4RealPair, scalarRealPair,
-    standardC19VelocityOperator, standardDiracAlphaZ,
-    Complex.mul_re, Complex.mul_im,
-    Fin.sum_univ_succ]
+  simp only [restZitterVelocity, standardC19DiracCurrent, cell4RealPair, scalarRealPair,
+      coherentRestState, RCLike.star_def, standardC19VelocityOperator, Fin.isValue,
+      standardDiracAlphaZ, neg_zero, mul_re, conj_re, ofReal_re, ofReal_im, zero_mul, sub_zero,
+      conj_im, mul_im, add_zero, neg_mul, sub_neg_eq_add, Fin.sum_univ_succ, Fin.succ_ne_zero,
+      imp_self, Fin.succ_zero_eq_one, zero_re, mul_zero, zero_im, Fin.succ_one_eq_two, mul_neg,
+      Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton, Fin.reduceSucc, zero_add]
   rw [show 2 * chi0 * time = 2 * (chi0 * time) by ring,
     Real.cos_two_mul]
   ring_nf
@@ -278,10 +278,13 @@ theorem parametric_rest_velocity_tracks_supplied_mass
     (testMass time : ℝ) :
     parametricRestVelocity testMass time =
       c19ContinuumSpeed * Real.cos (2 * testMass * time) := by
-  simp [parametricRestVelocity, parametricCoherentRestState,
-    standardC19DiracCurrent, cell4RealPair, scalarRealPair,
-    standardC19VelocityOperator, standardDiracAlphaZ,
-    Complex.mul_re, Complex.mul_im, Fin.sum_univ_succ]
+  simp only [parametricRestVelocity, standardC19DiracCurrent, cell4RealPair, scalarRealPair,
+      parametricCoherentRestState, RCLike.star_def, standardC19VelocityOperator, Fin.isValue,
+      standardDiracAlphaZ, neg_zero, mul_re, conj_re, ofReal_re, ofReal_im, zero_mul, sub_zero,
+      conj_im, mul_im, add_zero, neg_mul, sub_neg_eq_add, Fin.sum_univ_succ, Fin.succ_ne_zero,
+      imp_self, Fin.succ_zero_eq_one, zero_re, mul_zero, zero_im, Fin.succ_one_eq_two, mul_neg,
+      Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton, Fin.reduceSucc,
+      zero_add]
   rw [show 2 * testMass * time = 2 * (testMass * time) by ring,
     Real.cos_two_mul]
   ring_nf

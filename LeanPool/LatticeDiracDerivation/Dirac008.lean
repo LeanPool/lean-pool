@@ -187,7 +187,7 @@ theorem native_running_step_velocity_psi
           (accelerationVelocity chi0 B running.current bond).psiDot
             site component := by
   rw [native_running_step_interval_velocity]
-  simp [stateDifferenceVelocity]
+  simp only [stateDifferenceVelocity]
   rw [native_running_step_current_psi]
   field_simp [hdt]
   ring
@@ -203,7 +203,7 @@ theorem native_running_step_velocity_chi
           (accelerationVelocity chi0 B running.current bond).chiDot
             site component := by
   rw [native_running_step_interval_velocity]
-  simp [stateDifferenceVelocity]
+  simp only [stateDifferenceVelocity]
   rw [native_running_step_current_chi]
   field_simp [hdt]
   ring

@@ -51,7 +51,6 @@ preservation, and explicit claim boundary.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section
@@ -203,10 +202,11 @@ theorem cube_spin_closure_iff_scale_equation (scale : ℝ) :
   constructor
   · intro hclosure
     have hcomponent := congrFun (hclosure uniformCubeAmplitude) 0
-    simp [uniformCubeAmplitude, cubeScaledSpin, cubeSigma,
-      cubePlaneBivector, cubeIncidenceGamma, cubeIncidenceSign,
-      cubeIncidenceFlip, cellFlip0, cellFlip1, cellFlip2,
-      cellBit0, cellBit1] at hcomponent
+    simp only [cubeScaledSpin, cubeSigma, cubePlaneBivector, Fin.isValue, cubeIncidenceGamma,
+        cubeIncidenceSign, cellBit0, ↓reduceIte, cubeIncidenceFlip, cellFlip1, cellBit1, zero_add,
+        Nat.mod_succ, one_ne_zero, cellFlip2, uniformCubeAmplitude, mul_one, mul_neg, neg_neg,
+        neg_mul, one_mul, add_zero, Nat.zero_mod, cellFlip0, Nat.reduceAdd, Nat.mod_self,
+        sub_neg_eq_add] at hcomponent
     apply_fun Complex.re at hcomponent
     norm_num at hcomponent
     nlinarith [hcomponent]
@@ -337,14 +337,20 @@ theorem cube_spin_self_adjoint
     cell8Inner first (cubeSpin axis second) =
       cell8Inner (cubeSpin axis first) second := by
   rw [show cubeSpin = cubeScaledSpin nativeSpinScale from rfl]
-  rw [native_spin_scale_eq_half]
-  fin_cases axis <;>
-    apply Complex.ext <;>
-    simp [cell8Inner, cubeScaledSpin, cubeSigma, cubePlaneBivector,
-      cubeIncidenceGamma, cubeIncidenceSign, cubeIncidenceFlip,
-      cellFlip0, cellFlip1, cellFlip2, cellBit0, cellBit1,
-      Fin.sum_univ_succ, Complex.mul_re, Complex.mul_im] <;>
-    ring
+  have h := cube_sigma_self_adjoint axis first second
+  unfold cell8Inner at h ⊢
+  simp only [cubeScaledSpin]
+  have hleft : ∀ corner, star (first corner) *
+      ((nativeSpinScale : ℂ) * cubeSigma axis second corner) =
+      (nativeSpinScale : ℂ) * (star (first corner) * cubeSigma axis second corner) :=
+    fun corner => by ring
+  have hright : ∀ corner,
+      star ((nativeSpinScale : ℂ) * cubeSigma axis first corner) * second corner =
+      (nativeSpinScale : ℂ) * (star (cubeSigma axis first corner) * second corner) :=
+    fun corner => by
+      simp only [star_mul', Complex.star_def, Complex.conj_ofReal]
+      ring
+  simp only [hleft, hright, ← Finset.mul_sum, h]
 
 /-! ## A quarter-turn built from the native incidence algebra -/
 

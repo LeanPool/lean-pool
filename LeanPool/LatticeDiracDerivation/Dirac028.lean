@@ -30,7 +30,6 @@ This is the local/BCH result.  No exact finite Wigner-angle claim is made.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section

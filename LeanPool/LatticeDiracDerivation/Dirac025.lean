@@ -68,7 +68,8 @@ theorem continuum_momentum_magnitude_positive
   unfold continuumMomentumMagnitude
   apply Real.sqrt_pos.2
   unfold continuumMomentumMagnitudeSq
-  simp [Fin.sum_univ_succ]
+  simp only [Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+      Fin.default_eq_zero, Finset.sum_singleton, Fin.succ_one_eq_two]
   by_contra hnonpositive
   have hzero0 : momentum 0 = 0 := by
     nlinarith [sq_nonneg (momentum 0), sq_nonneg (momentum 1),
@@ -123,7 +124,8 @@ theorem longitudinal_velocity_operator_square
         (standardC19LongitudinalVelocityOperator momentum z) =
       fun component => ((c19ContinuumSpeed ^ 2 : ℝ) : ℂ) * z component := by
   have hunit := continuum_momentum_direction_unit momentum hmomentum
-  simp [Fin.sum_univ_succ] at hunit
+  simp only [Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+      Fin.default_eq_zero, Finset.sum_singleton, Fin.succ_one_eq_two] at hunit
   have hunitC :
       (continuumMomentumDirection momentum 0 : ℂ) ^ 2 +
           ((continuumMomentumDirection momentum 1 : ℂ) ^ 2 +
@@ -187,9 +189,12 @@ theorem longitudinal_current_on_positive_frequency_mode
     ne_of_gt (continuum_momentum_magnitude_positive momentum hmomentum)
   have hsquare := continuum_momentum_magnitude_square momentum
   unfold standardC19LongitudinalCurrent continuumMomentumDirection
-  simp [Fin.sum_univ_succ]
+  simp only [Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+      Fin.default_eq_zero, Finset.sum_singleton, Fin.succ_one_eq_two]
   unfold continuumMomentumMagnitudeSq at hsquare
-  simp [Fin.sum_univ_succ] at hsquare
+  simp only [Fin.sum_univ_succ, Fin.isValue, Fin.succ_zero_eq_one, Finset.univ_unique,
+      Fin.default_eq_zero, Finset.sum_singleton,
+      Fin.succ_one_eq_two] at hsquare
   calc
     continuumModeFrequency momentum *
         (momentum 0 / continuumMomentumMagnitude momentum *

@@ -27,7 +27,6 @@ from this algebraic gate explicitly rather than being mislabeled as proved.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section
@@ -216,11 +215,9 @@ theorem cube_quarter_turn_intertwines_plus (axis : Fin 3) (z : Cell4) :
 theorem cell8_inner_self_eq_density (amplitude : Cell8) :
     cell8Inner amplitude amplitude = (cell8Density amplitude : ℂ) := by
   apply Complex.ext
-  ·
-    simp [cell8Inner, cell8Density, Complex.normSq,
+  · simp [cell8Inner, cell8Density, Complex.normSq,
       Complex.mul_re, Fin.sum_univ_succ]
-  ·
-    simp [cell8Inner, cell8Density, Complex.normSq,
+  · simp [cell8Inner, cell8Density, Complex.normSq,
       Complex.mul_im, Fin.sum_univ_succ]
     ring
 
@@ -557,16 +554,21 @@ theorem cube_axis0_quarter_turn_covariance_iff
       rw [hcovariance uniformCubeAmplitude]
       simp
     rw [cube_axis0_quarter_turn_covariance_defect] at hzero
-    have hcomponent := congrFun hzero 2
-    norm_num [uniformCubeAmplitude, cubeIncidenceGamma,
-      cubeIncidenceSign, cubeIncidenceFlip, cellFlip1, cellFlip2,
-      cellBit0, cellBit1] at hcomponent
-    rcases hcomponent with hsum | hdegenerate
-    · have hreal : identityCoeff + planeCoeff = 0 := by
-        exact_mod_cast hsum
-      linarith
-    · change (1 : ℂ) - (-1) = 0 at hdegenerate
-      norm_num at hdegenerate
+    have hcomponent :
+        ((identityCoeff + planeCoeff : ℝ) : ℂ) *
+          (cubeIncidenceGamma 1 uniformCubeAmplitude 2 -
+            cubeIncidenceGamma 2 uniformCubeAmplitude 2) = 0 :=
+      congrFun hzero 2
+    have hfactor : cubeIncidenceGamma 1 uniformCubeAmplitude 2 -
+        cubeIncidenceGamma 2 uniformCubeAmplitude 2 ≠ 0 := by
+      norm_num [uniformCubeAmplitude, cubeIncidenceGamma,
+        cubeIncidenceSign, cubeIncidenceFlip, cellFlip1, cellFlip2,
+        cellBit0, cellBit1]
+    have hsum : ((identityCoeff + planeCoeff : ℝ) : ℂ) = 0 :=
+      (mul_eq_zero.mp hcomponent).resolve_right hfactor
+    have hreal : identityCoeff + planeCoeff = 0 := by
+      exact_mod_cast hsum
+    linarith
   · intro hcoefficient amplitude
     subst planeCoeff
     funext corner

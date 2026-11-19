@@ -32,7 +32,6 @@ the native lattice dynamics.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section
@@ -253,7 +252,7 @@ theorem standard_c19_hamiltonian_on_native_boost_momentum
       standardDiracBeta, standardDiracAlphaX,
       standardDiracAlphaY, standardDiracAlphaZ,
       standardCubeGamma] <;>
-    field_simp [hspeed] <;> ring <;> simp
+    field_simp [hspeed] <;> ring_nf <;> simp
 
 def positiveRestSpinState (spin : Fin 2) : Cell4 :=
   if spin = 0 then cell4Basis0 else cell4Basis1
@@ -287,12 +286,12 @@ theorem boosted_positive_rest_is_energy_eigenstate
       Real.cosh (rapidity / 2) ^ 2 +
         Real.sinh (rapidity / 2) ^ 2 := by
     convert Real.cosh_two_mul (rapidity / 2) using 1
-    all_goals ring
+    all_goals ring_nf
   have hs : Real.sinh rapidity =
       2 * Real.sinh (rapidity / 2) *
         Real.cosh (rapidity / 2) := by
     convert Real.sinh_two_mul (rapidity / 2) using 1
-    all_goals ring
+    all_goals ring_nf
   have hh := Real.cosh_sq_sub_sinh_sq (rapidity / 2)
   have hhalf : rapidity * (1 / 2 : ℝ) = rapidity / 2 := by
     ring
@@ -376,11 +375,11 @@ theorem boosted_positive_rest_is_energy_eigenstate
             standardCubeGamma axis
               (positiveRestSpinState spin) component := by
           push_cast
-          ring
+          ring_nf
     _ = _ := by
       rw [hfirstMulC, hsecondMulC]
       push_cast
-      ring
+      ring_nf
 
 theorem native_boost_mass_shell (rapidity : ℝ) (axis : Fin 3) :
     nativeBoostEnergy rapidity ^ 2 -
@@ -408,7 +407,7 @@ theorem boosted_positive_rest_density
       Real.cosh (rapidity / 2) ^ 2 +
         Real.sinh (rapidity / 2) ^ 2 := by
     convert Real.cosh_two_mul (rapidity / 2) using 1
-    all_goals ring
+    all_goals ring_nf
   fin_cases axis <;> fin_cases spin <;>
     simp [cell4Density, standardC19RapidityBoost,
       positiveRestSpinState, cell4Basis0, cell4Basis1,
@@ -429,7 +428,7 @@ theorem boosted_positive_rest_current
       2 * Real.sinh (rapidity / 2) *
         Real.cosh (rapidity / 2) := by
     convert Real.sinh_two_mul (rapidity / 2) using 1
-    all_goals ring
+    all_goals ring_nf
   fin_cases axis <;> fin_cases spin <;>
     simp [standardC19DiracCurrent, cell4RealPair,
       scalarRealPair, standardC19VelocityOperator,
@@ -439,7 +438,7 @@ theorem boosted_positive_rest_current
       standardDiracAlphaX, standardDiracAlphaY,
       standardDiracAlphaZ, Fin.sum_univ_succ,
       Complex.mul_re, Complex.mul_im] <;>
-    ring_nf <;> try rw [Complex.I_sq]
+    ring_nf
   all_goals
     rw [show rapidity * (1 / 2 : ℝ) = rapidity / 2 by ring]
     rw [hs]

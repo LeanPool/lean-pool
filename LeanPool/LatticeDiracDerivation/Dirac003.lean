@@ -15,6 +15,7 @@ option under the MIT License or CC0 1.0 (see the upstream `LICENSE`,
 module
 
 public import LeanPool.LatticeDiracDerivation.Dirac002
+public import Mathlib.Analysis.Calculus.ParametricIntegral
 
 /-!
 DIRAC-003 derives the reciprocal local force and conjugate-momentum families
@@ -531,7 +532,10 @@ def scaleStateDirection (a : ℝ) (direction : State Site) : State Site where
 
 theorem c3_real_pair_scale_right (a : ℝ) (u v : C3) :
     c3RealPair u (c3ScaleReal a v) = a * c3RealPair u v := by
-  simp [c3RealPair, c3ScaleReal, Finset.mul_sum]
+  simp only [c3RealPair, c3ScaleReal, star_mul', RCLike.star_def, Complex.conj_ofReal,
+      Complex.mul_re, Complex.ofReal_re, Complex.conj_re, Complex.ofReal_im, Complex.conj_im,
+      mul_neg, zero_mul, neg_zero, sub_zero, Complex.mul_im, add_zero, sub_neg_eq_add,
+      Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro component _
   ring
@@ -684,7 +688,8 @@ theorem psi_test_variation_is_lagrangian_derivative
     (purePsiDirection (scaleC3Field g etaPsi)) velocity
     (purePsiVelocity (scaleC3Field gDot etaPsi)) bond using 1
   simp only [kineticVelocityFirstVariation, purePsiVelocity]
-  simp [chiMomentumPair, c3RealPair, c3Zero]
+  simp only [chiMomentumPair, c3RealPair, c3Zero, star_zero, mul_zero, Complex.zero_re,
+      Finset.sum_const_zero, add_zero]
   change g * psiEulerLagrangeForce chi0 state bond etaPsi +
       gDot * psiMomentumPair velocity etaPsi =
     psiEulerLagrangeForce chi0 state bond (scaleC3Field g etaPsi) +
@@ -707,7 +712,8 @@ theorem chi_test_variation_is_lagrangian_derivative
     (pureChiDirection (scaleC3Field g etaChi)) velocity
     (pureChiVelocity (scaleC3Field gDot etaChi)) bond using 1
   simp only [kineticVelocityFirstVariation, pureChiVelocity]
-  simp [psiMomentumPair, c3RealPair, c3Zero]
+  simp only [psiMomentumPair, c3RealPair, c3Zero, star_zero, mul_zero, Complex.zero_re,
+      Finset.sum_const_zero, zero_add]
   change g * chiEulerLagrangeForce chi0 state bond etaChi +
       gDot * chiMomentumPair B velocity etaChi =
     chiEulerLagrangeForce chi0 state bond (scaleC3Field g etaChi) +

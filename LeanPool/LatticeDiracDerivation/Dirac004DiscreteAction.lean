@@ -110,7 +110,8 @@ theorem discrete_action_hasDerivAt [Fintype Site] [Fintype Edge]
       Pi.add_apply, Pi.sub_apply]
     rw [difference_velocity_vary_right, difference_velocity_vary_left]
     ring
-  · simp [discreteActionFirstVariation, lagrangianStateFirstVariation]
+  · simp only [discreteActionFirstVariation, lagrangianStateFirstVariation, sub_zero,
+        mul_eq_mul_left_iff]
     left
     trivial
 
@@ -473,7 +474,8 @@ def scaleVelocity (a : ℝ) (velocity : Velocity Site) : Velocity Site where
 
 theorem c3_real_pair_scale_left (a : ℝ) (u v : C3) :
     c3RealPair (c3ScaleReal a u) v = a * c3RealPair u v := by
-  simp [c3RealPair, c3ScaleReal, Finset.mul_sum]
+  simp only [c3RealPair, c3ScaleReal, RCLike.star_def, mul_re, ofReal_re, ofReal_im, zero_mul,
+      sub_zero, conj_re, mul_im, add_zero, conj_im, mul_neg, sub_neg_eq_add, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro component _
   ring
@@ -559,7 +561,8 @@ theorem discrete_psi_variation_eq_residual
         psiMomentumPair (centeredSecondDifference dt previous current next) eta) := by
   unfold discreteActionFirstVariation kineticVelocityFirstVariation
   rw [state_direction_velocity_pure_psi, state_direction_velocity_pure_psi]
-  simp [purePsiVelocity, chiMomentumPair, c3RealPair, c3Zero]
+  simp only [purePsiVelocity, one_div, chiMomentumPair, c3RealPair, c3Zero, star_zero, mul_zero,
+      zero_re, Finset.sum_const_zero, add_zero, inv_neg, mul_eq_mul_left_iff]
   rw [psi_momentum_scale, psi_momentum_scale]
   rw [centered_difference_as_velocity_difference dt previous current next hdt]
   rw [psi_momentum_velocity_scale, psi_momentum_velocity_add,
@@ -578,7 +581,8 @@ theorem discrete_chi_variation_eq_residual
           (centeredSecondDifference dt previous current next) eta) := by
   unfold discreteActionFirstVariation kineticVelocityFirstVariation
   rw [state_direction_velocity_pure_chi, state_direction_velocity_pure_chi]
-  simp [pureChiVelocity, psiMomentumPair, c3RealPair, c3Zero]
+  simp only [psiMomentumPair, c3RealPair, pureChiVelocity, one_div, c3Zero, star_zero, mul_zero,
+      zero_re, Finset.sum_const_zero, zero_add, inv_neg, mul_eq_mul_left_iff]
   rw [chi_momentum_scale, chi_momentum_scale]
   rw [centered_difference_as_velocity_difference dt previous current next hdt]
   rw [chi_momentum_velocity_scale, chi_momentum_velocity_add,

@@ -40,7 +40,6 @@ not the generator.
 
 @[expose] public section
 
-
 namespace LeanDirac
 
 noncomputable section
