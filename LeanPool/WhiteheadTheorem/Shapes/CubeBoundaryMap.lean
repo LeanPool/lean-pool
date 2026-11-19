@@ -101,10 +101,10 @@ def mapVecOfBotTopSides : (k : Fin 3) → C(botTopSidesCover n k, Z) :=
       apply (f01 1).hom.continuous.comp
       fun_prop⟩
   let gs : C(sides.{u} n, Z) :=
-    { toFun := fun ⟨⟨y, hy⟩, hs⟩ ↦
-        fs ⟨(Cube.splitAtLast y).fst,
-          ⟨(Cube.splitAtLast y).snd,
-            splitAtLast_snd_mem_boundary_of_mem_sides.{u} (y := ⟨y, hy⟩) hs⟩ ⟩
+    { toFun := fun x ↦
+        fs ⟨(Cube.splitAtLast x.val.down.val).fst,
+          ⟨(Cube.splitAtLast x.val.down.val).snd,
+            splitAtLast_snd_mem_boundary_of_mem_sides.{u} (y := x.val) x.property⟩ ⟩
       continuous_toFun := by fun_prop }
   Fin.cons g0 <| Fin.cons g1 <| Fin.cons gs <| finZeroElim
 
@@ -120,11 +120,12 @@ lemma mapVecOfBotTopSides_compatible_botOrTop
   all_goals
     intro ⟨y, ⟨i, hi⟩⟩ hy01 hy2
     change f01 _ _ = fs _
+    dsimp only
     rw [Cube.splitAtLast_fst_eq, hy01]
     let z : ∂𝕀 n :=
       ⟨⟨(Cube.splitAtLast y).snd, splitAtLast_snd_mem_boundary_of_mem_sides hy2⟩⟩
     convert h _ z using 1
-    all_goals rfl
+    rfl
 
 theorem mapVecOfBotTopSides_compatible
     (h : ∀ t y, f01 t (cubeBoundaryIncl _ y) = fs ⟨zeroOneIncl t, y⟩) :
@@ -132,7 +133,7 @@ theorem mapVecOfBotTopSides_compatible
       (mapVecOfBotTopSides f01 fs j) ⟨y, hyj⟩ =
       (mapVecOfBotTopSides f01 fs k) ⟨y, hyk⟩ := by
   intro j k ⟨y, ⟨i, hi⟩⟩ hyj hyk
-  fin_cases j <;> (fin_cases k <;> (try simp only [Fin.zero_eta, Fin.mk_one]))  -- j = k
+  fin_cases j <;> (fin_cases k <;> simp only [Fin.zero_eta, Fin.mk_one])  -- j = k
   · exact False.elim <| (by norm_num : (0 : I) ≠ 1) (hyj.symm.trans hyk)
   · apply (mapVecOfBotTopSides_compatible_botOrTop _ _ h).left
   · exact False.elim <| (by norm_num : (0 : I) ≠ 1) (hyk.symm.trans hyj)
