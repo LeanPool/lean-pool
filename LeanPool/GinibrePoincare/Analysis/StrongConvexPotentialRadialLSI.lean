@@ -105,8 +105,8 @@ theorem potential_smooth_radial_lsi_of_profile_lsi (n : ℕ) {V : Potential} {c 
     hK (max C 0) (le_max_right _ _) hb
   rwa [← he] at ht
 
-/-- Sharp radial LSI for the actual interacting nonquadratic log gas, obtained
-from its actual Kostlan law and the derived contracting Gaussian quantiles. -/
+/-- Radial LSI for the interacting nonquadratic log gas, obtained from its
+Kostlan law and the derived contracting Gaussian quantiles. -/
 theorem rhoConvex_potential_radial_lsi (n : ℕ) (hn : 0 < n)
     (ρ : ℝ) (hρ : 0 < ρ) {V : Potential} (hV : ContDiff ℝ 2 V)
     (hrot : IsRotationalPotential V) (hc : IsRhoConvexPotential ρ V)

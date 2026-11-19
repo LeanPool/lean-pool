@@ -64,8 +64,8 @@ theorem bakryEmery_potential_radial_lsi_lipschitz (n : ℕ) (hn : 0 < n)
   intro F K hF C hb
   exact bakryEmery_radiusProduct_lsi_lipschitz n hn ρ hρ hV hrot hc F hF C hb
 
-/-- The paper's literal bounded Lipschitz radial observable formulation. The
-existential radial witness carries no regularity hypothesis. -/
+/-- A bounded Lipschitz extension of the smooth compactly supported radial inequality
+in Theorem 1.14(2). The existential radial witness carries no regularity hypothesis. -/
 theorem bakryEmery_potential_bounded_lipschitz_radial_lsi (n : ℕ) (hn : 0 < n)
     (ρ : ℝ) (hρ : 0 < ρ) {V : Potential} (hV : ContDiff ℝ 2 V)
     (hrot : IsRotationalPotential V) (hc : IsRhoConvexPotential ρ V)

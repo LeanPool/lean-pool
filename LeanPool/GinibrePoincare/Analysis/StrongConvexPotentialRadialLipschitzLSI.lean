@@ -105,7 +105,7 @@ theorem potential_radial_lsi_lipschitz_of_radiusProduct_lsi (n : ℕ) (hn : 0 < 
     rhoConvex_potential_magnitude_gradient_energy_lipschitz n hn ρ hρ hV hrot hc F hs hF]
   exact hlsi F hF C hb
 
-/-- Reduction of the paper's literal bounded Lipschitz radial observables to their magnitude
+/-- Reduction of bounded Lipschitz radial observables to their magnitude
 profiles: an LSI with constant `c` for bounded Lipschitz symmetric magnitude profiles gives
 the same LSI for every bounded Lipschitz symmetric radial observable. The existential radial
 witness carries no regularity hypothesis. -/
@@ -131,7 +131,7 @@ theorem potential_bounded_lipschitz_radial_lsi_of_profile_lsi (n : ℕ) {V : Pot
   have ht := hlsi (magnitudeProfile f) (magnitudeProfile_symmetric f hs) hp C (fun r => hb _)
   rwa [← he] at ht
 
-/-- Sharp radial LSI for all bounded symmetric Lipschitz magnitude profiles,
+/-- Radial LSI for all bounded symmetric Lipschitz magnitude profiles,
 under the genuine interacting nonquadratic law, with the actual a.e. gradient. -/
 theorem rhoConvex_potential_radial_lsi_lipschitz (n : ℕ) (hn : 0 < n)
     (ρ : ℝ) (hρ : 0 < ρ) {V : Potential} (hV : ContDiff ℝ 2 V)
@@ -144,8 +144,8 @@ theorem rhoConvex_potential_radial_lsi_lipschitz (n : ℕ) (hn : 0 < n)
   intro F K hF C hb
   exact rhoConvex_radiusProduct_lsi_lipschitz n hn ρ hρ hV hrot hc F hF C hb
 
-/-- The paper's literal bounded Lipschitz radial observable formulation. The
-existential radial witness carries no regularity hypothesis. -/
+/-- A bounded Lipschitz extension of the smooth compactly supported radial inequality
+in Theorem 1.14(2). The existential radial witness carries no regularity hypothesis. -/
 theorem rhoConvex_potential_bounded_lipschitz_radial_lsi (n : ℕ) (hn : 0 < n)
     (ρ : ℝ) (hρ : 0 < ρ) {V : Potential} (hV : ContDiff ℝ 2 V)
     (hrot : IsRotationalPotential V) (hc : IsRhoConvexPotential ρ V)
