@@ -127,19 +127,23 @@ theorem perronMap_apply (ξ : E) (x : ℕ →ᵇ E) :
     F.perronMap ξ x = S.stableOrbit ξ + S.perronOp (superpose F.φ x) :=
   rfl
 
-/-- The Lyapunov–Perron map is a `1/2`-contraction.
-
-Proof: it is `L * S.bound`-Lipschitz (`lipschitzWith_superpose`, `norm_perronOp_le`). -/
-theorem contractingWith_perronMap (ξ : E) : ContractingWith (1 / 2) (F.perronMap ξ) := by
-  refine ⟨by norm_num, ?_⟩
-  have h := (LipschitzWith.const (S.stableOrbit ξ)).add
-    (S.perronOp.lipschitzWith.comp (lipschitzWith_superpose F.lipschitzWith))
-  refine h.weaken ?_
-  rw [zero_add, ← NNReal.coe_le_coe, NNReal.coe_mul, coe_nnnorm]
+/-- The nonlinear term of the Lyapunov–Perron map has Lipschitz constant at most `1/2`. -/
+theorem lipschitzWith_perronNonlinear :
+    LipschitzWith (1 / 2) (S.perronOp ∘ superpose F.φ) := by
+  refine (S.perronOp.lipschitzWith.comp (lipschitzWith_superpose F.lipschitzWith)).weaken ?_
+  rw [← NNReal.coe_le_coe, NNReal.coe_mul, coe_nnnorm]
   calc ‖S.perronOp‖ * F.lip ≤ S.bound * F.lip := by gcongr; exact S.norm_perronOp_le
     _ = F.lip * S.bound := mul_comm _ _
     _ ≤ 1 / 2 := F.lip_mul_bound_le
     _ = ((1 / 2 : ℝ≥0) : ℝ) := by norm_num
+
+/-- The Lyapunov–Perron map is a `1/2`-contraction. -/
+theorem contractingWith_perronMap (ξ : E) : ContractingWith (1 / 2) (F.perronMap ξ) := by
+  refine ⟨by norm_num, ?_⟩
+  apply LipschitzWith.of_dist_le_mul
+  intro x y
+  simpa only [perronMap, Function.comp_apply, dist_eq_norm, add_sub_add_left_eq_sub] using
+    F.lipschitzWith_perronNonlinear.norm_sub_le x y
 
 /-- The **bounded orbit** through `ξ`: the fixed point of `perronMap ξ`, the unique bounded
 `F`-orbit with stable component `P ξ` at time `0`. -/

@@ -253,15 +253,6 @@ private lemma coe_aeval_restrict_apply {F : Type*} [AddCommGroup F] [Module ℝ 
     simp only [aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply,
       Submodule.coe_smul, Module.End.pow_restrict n h, LinearMap.restrict_apply]
 
-/-- The `n`-th power of a restriction, applied to `x`, is `Aⁿ x`. -/
-private lemma coe_restrict_pow_apply (A : E →L[ℝ] E) {p : Submodule ℝ E} (h : ∀ x ∈ p, A x ∈ p)
-    (n : ℕ) (x : p) : (((A.restrict h) ^ n) x : E) = (A ^ n) x := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [pow_succ', mul_apply_eq_comp, coe_restrict_apply, ih, pow_succ',
-      mul_apply_eq_comp]
-
 /-- The restriction of `A` to an invariant subspace contained in `ker q(A)` is annihilated by
 `q`. -/
 private lemma aeval_restrict_eq_zero {A : E →L[ℝ] E} {q : ℝ[X]} {p : Submodule ℝ E}

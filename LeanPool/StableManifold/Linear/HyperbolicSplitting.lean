@@ -223,10 +223,7 @@ theorem proj_apply_eq_zero_iff {x : E} : S.proj x = 0 ↔ x ∈ A.unstableSubspa
         _ ≤ ‖S.unstableInv ^ n * (1 - S.proj)‖ * ‖x‖ := le_opNorm _ _
         _ ≤ S.const * S.rate ^ n * ‖x‖ := by gcongr; exact S.norm_unstableInv_pow_mul_le n
   · rintro ⟨w, hw0, hwA, hwt⟩
-    have hpow (n : ℕ) : (A ^ n) (w n) = x := by
-      induction n with
-      | zero => simp [hw0]
-      | succ n ih => rw [pow_succ, mul_apply_eq_comp, hwA, ih]
+    have hpow := pow_apply_of_backwardOrbit hw0 hwA
     have hle (n : ℕ) : ‖S.proj x‖ ≤ S.const * ‖w n‖ := by
       calc ‖S.proj x‖ = ‖(A ^ n * S.proj) (w n)‖ := by
             rw [S.pow_mul_proj_comm, mul_apply_eq_comp, hpow]

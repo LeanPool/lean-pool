@@ -120,24 +120,24 @@ theorem stableSubspace_symm (e : E ≃L[ℝ] E) :
       | succ n ih => rw [pow_succ', mul_apply_eq_comp, ← ih, ← hA n]; simp
     exact ht.congr hw
 
-/-- The unstable subspace of `e⁻¹` is the stable subspace of `e`.
-
-Proof: a backward orbit of `e⁻¹` is unique, `w n = eⁿ v`. -/
+/-- The unstable subspace of `e⁻¹` is the stable subspace of `e`. -/
 theorem unstableSubspace_symm (e : E ≃L[ℝ] E) :
     unstableSubspace (e.symm : E →L[ℝ] E) = stableSubspace (e : E →L[ℝ] E) := by
-  ext v
-  rw [mem_unstableSubspace, mem_stableSubspace]
-  constructor
-  · rintro ⟨w, h0, hA, ht⟩
-    have hw : ∀ n, w n = ((e : E →L[ℝ] E) ^ n) v := by
-      intro n
-      induction n with
-      | zero => simp [h0]
-      | succ n ih => rw [pow_succ', mul_apply_eq_comp, ← ih, ← hA n]; simp
-    exact ht.congr hw
-  · intro hv
-    refine ⟨fun n ↦ ((e : E →L[ℝ] E) ^ n) v, by simp, fun n ↦ ?_, hv⟩
-    simp [pow_succ']
+  simpa using (stableSubspace_symm e.symm).symm
+
+/-- Applying `Aⁿ` to the `n`-th point of a backward orbit returns its starting point. -/
+theorem pow_apply_of_backwardOrbit {A : E →L[ℝ] E} {w : ℕ → E} {v : E}
+    (h0 : w 0 = v) (hA : ∀ n, A (w (n + 1)) = w n) (n : ℕ) : (A ^ n) (w n) = v := by
+  induction n with
+  | zero => simpa using h0
+  | succ n ih => rw [pow_succ, mul_apply_eq_comp, hA, ih]
+
+/-- Evaluating a power of a restriction commutes with the inclusion of the invariant subspace. -/
+theorem coe_restrict_pow_apply (A : E →L[ℝ] E) {p : Submodule ℝ E} (h : ∀ x ∈ p, A x ∈ p)
+    (n : ℕ) (x : p) : (((A.restrict h) ^ n) x : E) = (A ^ n) x := by
+  change (↑((↑((A.restrict h) ^ n) : p →ₗ[ℝ] p) x) : E) = (↑(A ^ n) : E →ₗ[ℝ] E) x
+  rw [toLinearMap_pow, toLinearMap_restrict, Module.End.pow_restrict, LinearMap.restrict_apply,
+    toLinearMap_pow]
 
 end General
 
@@ -157,24 +157,15 @@ theorem disjoint_stableSubspace_unstableSubspace (A : E →L[ℝ] E) :
   -- the restriction `T` of `A` to the stable subspace has bounded powers
   let T : A.stableSubspace →L[ℝ] A.stableSubspace :=
     A.restrict fun _ hx ↦ map_mem_stableSubspace hx
-  have hTn : ∀ (n : ℕ) (x : A.stableSubspace), ((T ^ n) x : E) = (A ^ n) x := by
-    intro n x
-    induction n with
-    | zero => simp
-    | succ n ih =>
-      rw [pow_succ', pow_succ', mul_apply_eq_comp, mul_apply_eq_comp, ← ih]
-      rfl
+  have hTn (n : ℕ) (x : A.stableSubspace) : ((T ^ n) x : E) = (A ^ n) x :=
+    A.coe_restrict_pow_apply (fun _ hx ↦ map_mem_stableSubspace hx) n x
   obtain ⟨C, r, hC1, hr0, hr1, hC⟩ := T.exists_norm_pow_le_mul_pow_of_tendsto fun x ↦ by
     rw [tendsto_subtype_rng]
     simp only [hTn, Submodule.coe_zero]
     exact x.2
   -- the backward orbit `w` of `v` lies in the stable subspace, and `Aⁿ (w n) = v`
   obtain ⟨w, h0, hA, ht⟩ := hu
-  have hwA : ∀ n, (A ^ n) (w n) = v := by
-    intro n
-    induction n with
-    | zero => simp [h0]
-    | succ n ih => rw [pow_succ, mul_apply_eq_comp, hA n, ih]
+  have hwA := pow_apply_of_backwardOrbit h0 hA
   have hws : ∀ n, w n ∈ A.stableSubspace := by
     intro n
     rw [mem_stableSubspace, ← tendsto_add_atTop_iff_nat n]

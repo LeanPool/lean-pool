@@ -31,7 +31,7 @@ Authors: The-Anh Vu-Le
 Status: verified
 Main declarations: `Function.exists_nhds_localStableSet_localUnstableSet_eq_graph`,
   `Function.exists_nhds_localStableSet_localUnstableSet_eq_setOf`,
-  `ContinuousLinearMap.isCompl_stableSubspace_unstableSubspace`, `StableManifold.contDiff_superpose`
+  `ContinuousLinearMap.isCompl_stableSubspace_unstableSubspace`
 Tags: dynamical-systems, invariant-manifolds, functional-analysis
 MSC: 37C25, 37D10, 47H10
 -/

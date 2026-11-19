@@ -75,9 +75,9 @@ open scoped NNReal
 
 namespace StableManifold
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-omit [NormedSpace ℝ E] [FiniteDimensional ℝ E] in
+omit [NormedSpace ℝ E] in
 /-- **Translation**: the local stable set of `f` at `p` is the translate by `p` of the local stable
 set of `x ↦ f (p + x) - p` at `0`.
 
@@ -98,6 +98,10 @@ theorem localStableSet_eq_image_add (f : E → E) (p : E) (U : Set E) :
 namespace Perturbation
 
 variable {A : E →L[ℝ] E} {S : A.HyperbolicSplitting} (F : Perturbation S)
+
+section Complete
+
+variable [CompleteSpace E]
 
 /-- For a bounded `U`, the local stable set of `F|_U` at `0` is the part of the global stable
 manifold whose forward orbit stays in `U`.
@@ -137,14 +141,6 @@ private lemma stableGraph_eq_comp :
   funext ξ
   ext
   simp [unstableProj, F.proj_graph]
-
-/-- The typed graph map is `Cⁿ` when `φ` is.
-
-Proof: `stableGraph = πᵤ ∘ graph ∘ ιₛ` with continuous linear `πᵤ`, `ιₛ`; `contDiff_graph`. -/
-theorem contDiff_stableGraph {n : ℕ∞} (hφ : ContDiff ℝ n F.φ) : ContDiff ℝ n F.stableGraph := by
-  rw [F.stableGraph_eq_comp]
-  exact (unstableProj (S := S)).contDiff.comp
-    ((F.contDiff_graph hφ).comp A.stableSubspace.subtypeL.contDiff)
 
 /-- The typed graph map has derivative `0` at `0` when `φ` has.
 
@@ -202,6 +198,18 @@ theorem exists_localStableSet_map_eq_image {U : Set E} (hU : U ∈ 𝓝 0)
       exact ⟨⟨S.proj x, hPx⟩, fun n ↦ by simpa [hxe] using hxU n, hxe⟩
     · rintro ⟨ξ, hξ, rfl⟩
       exact ⟨(hon ξ).2, hξ⟩
+
+end Complete
+
+variable [FiniteDimensional ℝ E]
+
+/-- The typed graph map is `Cⁿ` when `φ` is.
+
+Proof: `stableGraph = πᵤ ∘ graph ∘ ιₛ` with continuous linear `πᵤ`, `ιₛ`; `contDiff_graph`. -/
+theorem contDiff_stableGraph {n : ℕ∞} (hφ : ContDiff ℝ n F.φ) : ContDiff ℝ n F.stableGraph := by
+  rw [F.stableGraph_eq_comp]
+  exact (unstableProj (S := S)).contDiff.comp
+    ((F.contDiff_graph hφ).comp A.stableSubspace.subtypeL.contDiff)
 
 end Perturbation
 

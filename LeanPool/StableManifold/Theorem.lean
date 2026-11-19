@@ -80,7 +80,11 @@ open Filter Topology Metric Set
 
 namespace Function
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+
+section Complete
+
+variable [CompleteSpace E]
 
 /-- **The local inverse** of a `Cⁿ` map with invertible derivative `A` at `p` (`1 ≤ n ≤ ∞`): an
 open partial homeomorphism `e` with `⇑e = f` and `p` in its source, whose inverse is `Cⁿ` on its
@@ -120,7 +124,7 @@ theorem exists_openPartialHomeomorph_contDiffOn_symm {f : E → E} {p : E} {W : 
     exact hfd _ hxW
   · exact ((hfa p hpW).hasStrictFDerivAt' hfp hn0).to_localInverse.hasFDerivAt
 
-omit [FiniteDimensional ℝ E] in
+omit [CompleteSpace E] in
 /-- A graph over a subspace is a graph over any equal subspace (to move between the subspaces of
 `A⁻¹` and those of `A`, equal but not definitionally). -/
 theorem exists_graph_ofEq {K₁ K₂ L₁ L₂ : Submodule ℝ E} (h₁ : K₁ = L₁) (h₂ : K₂ = L₂) {n : ℕ∞}
@@ -131,7 +135,7 @@ theorem exists_graph_ofEq {K₁ K₂ L₁ L₂ : Submodule ℝ E} (h₁ : K₁ =
   subst h₁ h₂
   exact ⟨V, hV, h, hh, h0, hd, hs⟩
 
-omit [FiniteDimensional ℝ E] in
+omit [CompleteSpace E] in
 /-- A family of graphs of one map over a subspace is a family of graphs of one map over any equal
 subspace: `exists_graph_ofEq` for all the sets `s U` with `Q U` at once. -/
 theorem exists_graphs_ofEq {K₁ K₂ L₁ L₂ : Submodule ℝ E} (h₁ : K₁ = L₁) (h₂ : K₂ = L₂)
@@ -162,7 +166,9 @@ private lemma exists_localInverse_of_isInvertible {f : E → E} {p : E} {W : Set
   · rw [hgd, ContinuousLinearMap.stableSubspace_symm, hA]
   · rw [hgd, ContinuousLinearMap.unstableSubspace_symm, hA]
 
-omit [NormedSpace ℝ E] [FiniteDimensional ℝ E] in
+end Complete
+
+omit [NormedSpace ℝ E] in
 /-- For `U` inside the source and the target of the local inverse `e` of `f`, the local unstable
 set of `f|_U` is the local stable set of `e⁻¹|_U`. -/
 private lemma localUnstableSet_eq_localStableSet_symm {f : E → E} {p : E}
@@ -172,9 +178,13 @@ private lemma localUnstableSet_eq_localStableSet_symm {f : E → E} {p : E}
   rw [localUnstableSet_congr (g := e) fun x _ ↦ by rw [he]]
   exact (localStableSet_symm_eq_localUnstableSet e hU).1.symm
 
-/-- **The stable manifold theorem** for maps, in graph form, for every small neighborhood (Irwin,
-*Smooth Dynamical Systems*, Chapter 6; Hirsch, Pugh and Shub, *Invariant Manifolds*; Shub, *Global
-Stability of Dynamical Systems*). Let `f` be `Cⁿ` (`1 ≤ n ≤ ∞`) on a neighborhood `W` of a fixed
+variable [FiniteDimensional ℝ E]
+
+/-- **A stable manifold theorem for every sufficiently small neighborhood.** The
+[pinned upstream formalization](https://github.com/vltanh/lean4-stable-manifold/blob/4909ed2eb6bdc504f86ccb455e544315f11d3860/StableManifold/Theorem.lean#L191)
+chooses one pair of graph maps for all such neighborhoods. For classical background see Shub,
+*Global Stability of Dynamical Systems*, Theorem 5.2, and Hirsch, Pugh and Shub,
+*Invariant Manifolds*, Theorem 4.1. Let `f` be `Cⁿ` (`1 ≤ n ≤ ∞`) on a neighborhood `W` of a fixed
 point `p`, with invertible and hyperbolic derivative `A = Df(p)` (`f` is a local diffeomorphism at
 `p`), and let `E_s`, `E_u` be the stable and unstable subspaces of `A`. Then there are a
 neighborhood `N` of `p` and `Cⁿ` maps `h_s : E_s → E_u`, `h_u : E_u → E_s`, vanishing with their
@@ -224,13 +234,12 @@ theorem exists_nhds_localStableSet_localUnstableSet_eq_graph {f : E → E} {p : 
   refine ⟨N, hN, hs, hsC, hs0, hsd, hu', hu'C, hu'0, hu'd, fun U hU hUN ↦
     ⟨hsU U hU fun x hx ↦ ball_subset_ball (min_le_left _ _) (hUN hx).1.1, hu'U U ⟨hU, hUN⟩⟩⟩
 
-/-- **The stable manifold theorem** for maps, in graph form, for one neighborhood (Irwin, *Smooth
-Dynamical Systems*, Chapter 6; Hirsch, Pugh and Shub, *Invariant Manifolds*; Shub, *Global
-Stability of Dynamical Systems*). Let `f` be `Cⁿ` (`1 ≤ n ≤ ∞`) on a neighborhood `W` of a fixed
-point `p`, with invertible and hyperbolic derivative `A = Df(p)` (`f` is a local diffeomorphism at
-`p`), and let `E_s`, `E_u` be the stable and unstable subspaces of `A`. Then there are an open
-neighborhood `U` of `p` and `Cⁿ` maps `h_s : E_s → E_u`, `h_u : E_u → E_s`, vanishing with their
-derivatives at `0`, such that
+/-- **The stable manifold theorem in graph form on one open neighborhood.** Take the interior of
+`N` in `exists_nhds_localStableSet_localUnstableSet_eq_graph`. Let `f` be `Cⁿ` (`1 ≤ n ≤ ∞`) on a
+neighborhood `W` of a fixed point `p`, with invertible and hyperbolic derivative `A = Df(p)`
+(`f` is a local diffeomorphism at `p`), and let `E_s`, `E_u` be the stable and unstable subspaces
+of `A`. Then there are an open neighborhood `U` of `p` and `Cⁿ` maps `h_s : E_s → E_u`,
+`h_u : E_u → E_s`, vanishing with their derivatives at `0`, such that
 
 * the local stable set of `f|_U` is the graph `{p + x + h_s(x)}` of `h_s` over a neighborhood
   `V_s` of `0` in `E_s` (near `p`, a `Cⁿ` embedded submanifold tangent at `p` to `E_s`), and

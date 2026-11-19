@@ -85,8 +85,12 @@ theorem subsingleton_or_lt_inv_nnnorm_refl (V : Type*) [NormedAddCommGroup V] [N
 
 namespace Perturbation
 
-variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {A : E →L[ℝ] E} {S : A.HyperbolicSplitting} (F : Perturbation S)
+
+section Complete
+
+variable [CompleteSpace E]
 
 /-- `x ↦ x - perronOp (φ ∘ x)` on bounded sequences: the bounded orbit through `ξ` is the solution
 of `perronSub x = stableOrbit ξ`. -/
@@ -100,20 +104,11 @@ theorem approximatesLinearOn_perronSub :
   intro x _ y _
   have h : F.perronSub x - F.perronSub y -
       ((ContinuousLinearEquiv.refl ℝ (ℕ →ᵇ E) : (ℕ →ᵇ E) →L[ℝ] (ℕ →ᵇ E))) (x - y) =
-      -S.perronOp (superpose F.φ x - superpose F.φ y) := by
-    simp only [perronSub, ContinuousLinearEquiv.coe_refl, ContinuousLinearMap.id_apply, map_sub]
+      -(S.perronOp (superpose F.φ x) - S.perronOp (superpose F.φ y)) := by
+    simp only [perronSub, ContinuousLinearEquiv.coe_refl, ContinuousLinearMap.id_apply]
     abel
   rw [h, norm_neg]
-  calc ‖S.perronOp (superpose F.φ x - superpose F.φ y)‖
-      ≤ S.bound * ‖superpose F.φ x - superpose F.φ y‖ :=
-        (S.perronOp.le_opNorm _).trans
-          (mul_le_mul_of_nonneg_right S.norm_perronOp_le (norm_nonneg _))
-    _ ≤ S.bound * (F.lip * ‖x - y‖) := mul_le_mul_of_nonneg_left
-        ((lipschitzWith_superpose F.lipschitzWith).norm_sub_le x y) S.bound_pos.le
-    _ = (F.lip * S.bound) * ‖x - y‖ := by ring
-    _ ≤ ((1 / 2 : ℝ≥0) : ℝ) * ‖x - y‖ := by
-        gcongr
-        simpa using F.lip_mul_bound_le
+  simpa only [Function.comp_apply] using F.lipschitzWith_perronNonlinear.norm_sub_le x y
 
 /-- `perronSub` as a homeomorphism of the space of bounded sequences. -/
 noncomputable def perronHomeomorph : (ℕ →ᵇ E) ≃ₜ (ℕ →ᵇ E) :=
@@ -144,6 +139,10 @@ theorem norm_perronOp_comp_applyCLM_le (x : ℕ →ᵇ E) :
     _ ≤ S.bound * F.lip := mul_le_mul S.norm_perronOp_le ((norm_applyCLM_apply_le _).trans ha)
         (norm_nonneg _) S.bound_pos.le
     _ ≤ 1 / 2 := by linarith [F.lip_mul_bound_le]
+
+end Complete
+
+variable [FiniteDimensional ℝ E]
 
 /-- The derivative of `perronSub`. -/
 theorem hasFDerivAt_perronSub (hφ : ContDiff ℝ 1 F.φ) (x : ℕ →ᵇ E) :

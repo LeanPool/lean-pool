@@ -97,6 +97,12 @@ private lemma eventually_entry_bound {d : ℕ} (M : Matrix (Fin d) (Fin d) ℂ)
       (Finset.le_sup (f := fun row ↦ ∑ col, ‖(M ^ n) row col‖₊) (Finset.mem_univ i))
   exact (show ‖(M ^ n) i j‖ ≤ ‖M ^ n‖ from hentry).trans hpow.le
 
+private lemma mem_spectrum_complexified_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (M : Matrix ι ι ℝ) (z : ℂ) :
+    z ∈ spectrum ℂ (M.map (algebraMap ℝ ℂ)) ↔ Polynomial.aeval z M.charpoly = 0 := by
+  rw [Matrix.mem_spectrum_iff_isRoot_charpoly, Polynomial.IsRoot.def, Matrix.charpoly_map,
+    Polynomial.eval_map_algebraMap]
+
 /-- If every complex eigenvalue of a linear operator `A` of a finite-dimensional real normed space
 (every root in `ℂ` of its characteristic polynomial) has modulus `< 1`, then some power `A ^ N`,
 `N ≥ 1`, has operator norm `< 1`.
@@ -117,10 +123,8 @@ theorem exists_norm_pow_lt_one (A : E →L[ℝ] E)
   let M := LinearMap.toMatrix b b (A : E →ₗ[ℝ] E)
   -- The complexified matrix: its eigenvalues are the complex roots of the charpoly of `A`.
   obtain ⟨r, hr0, hr1, hbound⟩ := eventually_entry_bound (M.map (algebraMap ℝ ℂ)) fun z hz ↦
-    hA z (by
-      have hz' := Matrix.mem_spectrum_iff_isRoot_charpoly.1 hz
-      rwa [Polynomial.IsRoot.def, Matrix.charpoly_map, LinearMap.charpoly_toMatrix,
-        Polynomial.eval_map_algebraMap] at hz')
+    hA z (by simpa only [M, LinearMap.charpoly_toMatrix] using
+      (mem_spectrum_complexified_iff M z).1 hz)
   -- Hence the real matrices `M ^ n` tend to `0`, entry by entry.
   have hM : Tendsto (fun n : ℕ ↦ M ^ n) atTop (𝓝 0) := by
     refine tendsto_pi_nhds.2 fun i ↦ tendsto_pi_nhds.2 fun j ↦ ?_
@@ -158,9 +162,9 @@ private lemma aeval_eq_zero_of_aeval_charpoly_eq_zero (A : E →L[ℝ] E) {q : P
   classical
   let b := Module.finBasis ℝ E
   let M := (LinearMap.toMatrix b b (A : E →ₗ[ℝ] E)).map (algebraMap ℝ ℂ)
-  have hz : μ ∈ spectrum ℂ M := by
-    rwa [Matrix.mem_spectrum_iff_isRoot_charpoly, Polynomial.IsRoot.def, Matrix.charpoly_map,
-      LinearMap.charpoly_toMatrix, Polynomial.eval_map_algebraMap]
+  have hz : μ ∈ spectrum ℂ M :=
+    (mem_spectrum_complexified_iff (LinearMap.toMatrix b b (A : E →ₗ[ℝ] E)) μ).2
+      (by simpa only [LinearMap.charpoly_toMatrix] using hμ)
   have h0 : Polynomial.aeval M q = 0 := by
     have hM : M = (Algebra.ofId ℝ ℂ).mapMatrix (LinearMap.toMatrixAlgEquiv b A) := rfl
     rw [hM, Polynomial.aeval_algHom_apply, Polynomial.aeval_algEquiv, AlgHom.comp_apply, hq]

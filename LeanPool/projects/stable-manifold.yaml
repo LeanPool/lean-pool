@@ -4,8 +4,8 @@ summary: Uses a Lyapunov–Perron operator on bounded sequences to prove the smo
   local stable and unstable graph theorem for finite-dimensional real dynamics.
   The development identifies the linear stable and unstable subspaces by
   factoring the characteristic polynomial, proves exponential estimates in
-  the two directions, and develops the smoothness of composition operators
-  on bounded sequences. The stable graph construction also applies to
+  the two directions, and proves regularity of the Lyapunov–Perron graph.
+  The stable graph construction also applies to
   noninvertible maps when the stable and unstable subspaces are complementary.
 branch: dynamical systems
 entry_module: LeanPool.StableManifold
@@ -26,7 +26,6 @@ main_declarations:
 - Function.exists_nhds_localStableSet_localUnstableSet_eq_graph
 - Function.exists_nhds_localStableSet_localUnstableSet_eq_setOf
 - ContinuousLinearMap.isCompl_stableSubspace_unstableSubspace
-- StableManifold.contDiff_superpose
 main_results:
 - declaration: Function.exists_nhds_localStableSet_localUnstableSet_eq_graph
   informal: For a map of class C^n near a hyperbolic fixed point in a
@@ -41,9 +40,6 @@ main_results:
 - declaration: ContinuousLinearMap.isCompl_stableSubspace_unstableSubspace
   informal: The forward-decaying and backward-decaying subspaces of a
     hyperbolic real linear map in finite dimension are complementary.
-- declaration: StableManifold.contDiff_superpose
-  informal: Applying a C^n map with finite-dimensional domain pointwise to
-    bounded sequences is C^n.
 msc:
 - 37C25
 - 37D10
