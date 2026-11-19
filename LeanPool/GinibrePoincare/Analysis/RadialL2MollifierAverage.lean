@@ -41,8 +41,11 @@ public import LeanPool.GinibrePoincare.Analysis.LebesgueL2Mollification
 /-! # Strong L² convergence of actual radial kernel averages
 
 The normalized shrinking radial kernels act by Bochner averages of translations
-on scalar and vector Lebesgue L² spaces. These actual averages converge strongly.
-Identification with their pointwise convolutions is a separate step.
+on scalar and vector Lebesgue L² spaces, as the general kernel averages
+`lebesgueL2KernelAverage`. Only the kernel-specific facts (smoothness, compact
+support, positivity, unit mass and shrinking support) are proved here; the averaging
+arguments are the general ones. Identification with pointwise convolution is a
+separate step.
 -/
 
 @[expose] public section
@@ -58,26 +61,31 @@ weighted by the radial mollifier kernel `K = radialMollifierKernel n m`. -/
 def radialL2MollifierAverage (n m : ℕ)
     (u : Lp V 2 (volume : Measure (Configuration n))) : Lp V 2 (volume : Measure (Configuration n))
         :=
-  ∫ y, radialMollifierKernel n m y • lebesgueL2Translate n y u
+  lebesgueL2KernelAverage n (radialMollifierKernel n m) u
+
+theorem continuous_radialMollifierKernel (n m : ℕ) : Continuous (radialMollifierKernel n m) :=
+  (radialMollifierKernel_properties n m).1.continuous
+
+theorem hasCompactSupport_radialMollifierKernel (n m : ℕ) :
+    HasCompactSupport (radialMollifierKernel n m) :=
+  (radialMollifierKernel_properties n m).2.1
 
 omit [CompleteSpace V] in
 /-- The actual radial average is a well-defined Bochner integral in L². -/
 theorem integrable_radialL2MollifierIntegrand (n m : ℕ)
     (u : Lp V 2 (volume : Measure (Configuration n))) :
-    Integrable (fun y => radialMollifierKernel n m y • lebesgueL2Translate n y u) := by
-  obtain ⟨hs, hc, _⟩ := radialMollifierKernel_properties n m
-  exact (hs.continuous.smul (continuous_lebesgueL2Translate n u)).integrable_of_hasCompactSupport
-    hc.smul_right
+    Integrable (fun y => radialMollifierKernel n m y • lebesgueL2Translate n y u) :=
+  integrable_lebesgueL2KernelIntegrand n (continuous_radialMollifierKernel n m)
+    (hasCompactSupport_radialMollifierKernel n m) u
 
 /-- Continuous linear test pairings commute with the actual L² bump average. -/
 theorem radialL2MollifierAverage_pairing (n : ℕ) (m : ℕ)
     (u : Lp V 2 (volume : Measure (Configuration n)))
     (L : Lp V 2 (volume : Measure (Configuration n)) →L[ℝ] ℝ) :
     L (radialL2MollifierAverage n m u) =
-      ∫ y, radialMollifierKernel n m y * L (lebesgueL2Translate n y u) := by
-  unfold radialL2MollifierAverage
-  rw [← L.integral_comp_comm (integrable_radialL2MollifierIntegrand n m u)]
-  simp only [map_smul, smul_eq_mul]
+      ∫ y, radialMollifierKernel n m y * L (lebesgueL2Translate n y u) :=
+  lebesgueL2KernelAverage_pairing n (continuous_radialMollifierKernel n m)
+    (hasCompactSupport_radialMollifierKernel n m) u L
 
 /-- The Bochner L² average has the expected translated representative pairing
 against every actual scalar L² test. -/
@@ -85,82 +93,34 @@ theorem radialL2MollifierAverage_test_pairing (n : ℕ) (m : ℕ)
     (u : Lp ℝ 2 (volume : Measure (Configuration n)))
     (w : Configuration n → ℝ) (hw : MemLp w 2 volume) :
     (∫ x, radialL2MollifierAverage n m u x * w x) =
-      ∫ y, radialMollifierKernel n m y * (∫ x, u (x - y) * w x) := by
-  let L : Lp ℝ 2 (volume : Measure (Configuration n)) →L[ℝ] ℝ :=
-    innerSL ℝ (hw.toLp w)
-  have hL (v : Lp ℝ 2 (volume : Measure (Configuration n))) :
-      L v = ∫ x, v x * w x := by
-    change inner ℝ (hw.toLp w) v = _
-    rw [L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hw.coeFn_toLp] with x hx
-    simp [hx, mul_comm]
-  rw [← hL]
-  rw [radialL2MollifierAverage_pairing]
-  apply integral_congr_ae
-  apply Eventually.of_forall
-  intro y
-  dsimp only
-  rw [hL]
-  congr 1
-  apply integral_congr_ae
-  filter_upwards [lebesgueL2Translate_ae n y u] with x hx
-  rw [hx]
+      ∫ y, radialMollifierKernel n m y * (∫ x, u (x - y) * w x) :=
+  lebesgueL2KernelAverage_test_pairing n (continuous_radialMollifierKernel n m)
+    (hasCompactSupport_radialMollifierKernel n m) u w hw
 
 /-- A bound on translations over the support bounds the radial averaged error. -/
 theorem radialL2MollifierAverage_error_le (n m : ℕ)
     (u : Lp V 2 (volume : Measure (Configuration n))) (ε : ℝ)
     (he : ∀ y ∈ Function.support (radialMollifierKernel n m),
       ‖lebesgueL2Translate n y u - u‖ ≤ ε) :
-    ‖radialL2MollifierAverage n m u - u‖ ≤ ε := by
-  obtain ⟨_, _, hnonneg, hi, hmass⟩ := radialMollifierKernel_properties n m
-  have hconst : Integrable (fun y => radialMollifierKernel n m y • u) := hi.smul_const u
-  have hint := integrable_radialL2MollifierIntegrand n m u
-  have heq : radialL2MollifierAverage n m u - u =
-      ∫ y, radialMollifierKernel n m y • (lebesgueL2Translate n y u - u) := by
-    unfold radialL2MollifierAverage
-    calc
-      _ = (∫ y, radialMollifierKernel n m y • lebesgueL2Translate n y u) -
-          ∫ y, radialMollifierKernel n m y • u := by
-        rw [integral_smul_const, hmass, one_smul]
-      _ = ∫ y, (radialMollifierKernel n m y • lebesgueL2Translate n y u -
-          radialMollifierKernel n m y • u) := (integral_sub hint hconst).symm
-      _ = _ := by
-        apply integral_congr_ae
-        exact Eventually.of_forall (fun y => (smul_sub _ _ _).symm)
-  rw [heq]
-  have hb : ‖∫ y, radialMollifierKernel n m y • (lebesgueL2Translate n y u - u)‖ ≤
-      ∫ y, radialMollifierKernel n m y * ε := by
-    apply norm_integral_le_of_norm_le (hi.mul_const ε)
-    exact Eventually.of_forall (fun y => by
-      rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (hnonneg y)]
-      by_cases hy : radialMollifierKernel n m y = 0
-      · simp [hy]
-      · exact mul_le_mul_of_nonneg_left (he y hy) (hnonneg y))
-  simpa only [integral_mul_const, hmass, one_mul] using hb
+    ‖radialL2MollifierAverage n m u - u‖ ≤ ε :=
+  lebesgueL2KernelAverage_error_le n (continuous_radialMollifierKernel n m)
+    (hasCompactSupport_radialMollifierKernel n m) (radialMollifierKernel_properties n m).2.2.1
+    (radialMollifierKernel_properties n m).2.2.2.2 u ε he
 
 /-- Actual normalized radial kernel averages converge strongly in scalar or vector L². -/
 theorem radialL2MollifierAverage_tendsto (n : ℕ)
     (u : Lp V 2 (volume : Measure (Configuration n))) :
     Tendsto (fun m => radialL2MollifierAverage n m u) atTop (𝓝 u) := by
-  apply Metric.tendsto_atTop.mpr
-  intro ε hε
-  obtain ⟨δ, hδ, ht⟩ := Metric.continuousAt_iff.mp
-    (continuous_lebesgueL2Translate n u).continuousAt (ε / 2) (half_pos hε)
   have hr : Tendsto (fun m : ℕ => 2 / ((m : ℝ) + 1)) atTop (𝓝 0) := by
     have hi : Tendsto (fun m : ℕ => ((m : ℝ) + 1)⁻¹) atTop (𝓝 0) :=
       tendsto_inv_atTop_zero.comp (tendsto_atTop_add_const_right atTop (1 : ℝ)
         tendsto_natCast_atTop_atTop)
     simpa [div_eq_mul_inv] using hi.const_mul 2
-  obtain ⟨M, hM⟩ := eventually_atTop.mp ((tendsto_order.mp hr).2 δ hδ)
-  refine ⟨M, fun m hm => ?_⟩
-  rw [dist_eq_norm]
-  apply (radialL2MollifierAverage_error_le n m u (ε / 2) ?_).trans_lt (half_lt_self hε)
-  intro y hy
-  have hd : dist y 0 < δ := by
-    rw [dist_zero_right]
-    exact (radialMollifierKernel_support_bound n m y hy).trans_lt (hM m hm)
-  simpa only [lebesgueL2Translate_zero, dist_eq_norm] using (ht hd).le
+  exact lebesgueL2KernelAverage_tendsto n (radialMollifierKernel n)
+    (continuous_radialMollifierKernel n) (hasCompactSupport_radialMollifierKernel n)
+    (fun m => (radialMollifierKernel_properties n m).2.2.1)
+    (fun m => (radialMollifierKernel_properties n m).2.2.2.2) _ hr
+    (radialMollifierKernel_support_bound n) u
 
 end
 end GinibrePoincare

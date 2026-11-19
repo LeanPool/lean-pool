@@ -38,10 +38,12 @@ module
 public import LeanPool.GinibrePoincare.Analysis.RadialL2Convolution
 public import LeanPool.GinibrePoincare.Analysis.LebesgueL2MollificationMaps
 
-/-! # Linear compatibility of ordinary L² mollification
+/-! # Linear compatibility of radial L² mollification
 
-Continuous linear maps of the values commute with translation and normalized
-bump averaging. This permits simultaneous mollification of gradient coordinates.
+Continuous linear maps of the values commute with translation and radial kernel
+averaging. This permits simultaneous mollification of gradient coordinates. These are
+the general kernel statements of `LebesgueL2MollificationMaps` specialized to
+`radialMollifierKernel`.
 -/
 
 @[expose] public section
@@ -58,11 +60,9 @@ variable {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [CompleteSpace
 theorem radialL2MollifierAverage_map (n : ℕ) (m : ℕ)
     (L : V →L[ℝ] W) (u : Lp V 2 (volume : Measure (Configuration n))) :
     L.compLpL 2 volume (radialL2MollifierAverage n m u) =
-      radialL2MollifierAverage n m (L.compLpL 2 volume u) := by
-  unfold radialL2MollifierAverage
-  rw [← (L.compLpL 2 volume).integral_comp_comm
-    (integrable_radialL2MollifierIntegrand n m u)]
-  simp only [map_smul, lebesgueL2Translate_map]
+      radialL2MollifierAverage n m (L.compLpL 2 volume u) :=
+  lebesgueL2KernelAverage_map n (continuous_radialMollifierKernel n m)
+    (hasCompactSupport_radialMollifierKernel n m) L u
 
 /-- Every scalar projection of the vector L² average is represented by the
 actual convolution of that projection of a compact representative. -/
@@ -71,17 +71,9 @@ theorem radialL2MollifierAverage_projection_convolution_ae (n : ℕ)
     (f : Configuration n → V) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
     (L.compLpL 2 volume (radialL2MollifierAverage n m (hf.toLp f)) :
       Configuration n → ℝ) =ᵐ[volume]
-      (radialMollifierKernel n m ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] (L ∘ f)) := by
-  have hm : MemLp (L ∘ f) 2 volume := L.comp_memLp' hf
-  have he : L.compLpL 2 volume (hf.toLp f) = hm.toLp (L ∘ f) := by
-    apply Lp.ext
-    filter_upwards [L.coeFn_compLpL (hf.toLp f), hf.coeFn_toLp,
-      hm.coeFn_toLp] with x hx hy hz
-    simp only [Function.comp_apply] at hz
-    rw [hx, hy, hz]
-  rw [radialL2MollifierAverage_map, he]
-  exact radialL2MollifierAverage_convolution_ae n m (L ∘ f) hm
-    (hc.comp_left L.map_zero)
+      (radialMollifierKernel n m ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] (L ∘ f)) :=
+  lebesgueL2KernelAverage_projection_convolution_ae n (radialMollifierKernel_properties n m).1
+    (hasCompactSupport_radialMollifierKernel n m) L f hf hc
 
 end
 end GinibrePoincare

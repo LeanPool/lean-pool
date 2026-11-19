@@ -36,14 +36,15 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.RadialL2MollifierAverage
-public import Mathlib.Analysis.Calculus.ContDiff.Convolution
-public import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
+public import LeanPool.GinibrePoincare.Analysis.LebesgueL2Convolution
 
 /-! # Concrete radial smooth compact convolution in ordinary L²
 
 For compactly supported L² representatives, the actual normalized radial kernel
 convolution represents the Bochner L² average. Consequently the concrete
-smooth compact functions converge strongly in L² as the bump radius shrinks.
+smooth compact functions converge strongly in L² as the kernel radius shrinks.
+These are the general smooth-compact-kernel statements of `LebesgueL2Convolution`
+specialized to `radialMollifierKernel`.
 -/
 
 @[expose] public section
@@ -57,75 +58,25 @@ theorem integral_radial_convolution_mul_test (n : ℕ) (m : ℕ)
     (f θ : Configuration n → ℝ) (hf : Integrable f volume)
     (hθ : Continuous θ) (hc : HasCompactSupport θ) :
     (∫ x, (radialMollifierKernel n m ⋆[lsmul ℝ ℝ, volume] f) x * θ x) =
-      ∫ y, radialMollifierKernel n m y * (∫ x, f (x - y) * θ x) := by
-  obtain ⟨C, hC⟩ := hθ.bounded_above_of_compact_support hc
-  have hb : Integrable (fun p : Configuration n × Configuration n =>
-      radialMollifierKernel n m p.2 * f (p.1 - p.2)) (volume.prod volume) := by
-    simpa only [lsmul_apply, smul_eq_mul] using
-      (radialMollifierKernel_properties n m).2.2.2.1.convolution_integrand (lsmul ℝ ℝ) hf
-  have hi : Integrable (fun p : Configuration n × Configuration n =>
-      radialMollifierKernel n m p.2 * f (p.1 - p.2) * θ p.1) (volume.prod volume) :=
-    hb.mul_bdd (hθ.comp continuous_fst).aestronglyMeasurable
-      (Eventually.of_forall (fun p => hC p.1))
-  calc
-    _ = ∫ x, ∫ y, radialMollifierKernel n m y * f (x - y) * θ x := by
-      simp only [convolution_lsmul, smul_eq_mul, integral_mul_const]
-    _ = ∫ y, ∫ x, radialMollifierKernel n m y * f (x - y) * θ x := integral_integral_swap hi
-    _ = _ := by
-      apply integral_congr_ae
-      apply Eventually.of_forall
-      intro y
-      simp only [mul_assoc, integral_const_mul]
+      ∫ y, radialMollifierKernel n m y * (∫ x, f (x - y) * θ x) :=
+  integral_kernel_convolution_mul_test n (radialMollifierKernel_properties n m).2.2.2.1
+    f θ hf hθ hc
 
 /-- Concrete convolution has an actual smooth compact representative in ordinary L². -/
 theorem memLp_radial_convolution_compact (n : ℕ) (m : ℕ)
     (f : Configuration n → ℝ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
     MemLp (radialMollifierKernel n m ⋆[lsmul ℝ ℝ, volume] f) 2 volume :=
-  ((radialMollifierKernel_properties n m).2.1.contDiff_convolution_left (lsmul ℝ ℝ)
-    (radialMollifierKernel_properties n m).1 (hf.locallyIntegrable (by
-        norm_num))).continuous.memLp_of_hasCompactSupport ((radialMollifierKernel_properties n
-            m).2.1.convolution (lsmul ℝ ℝ) hc)
+  memLp_kernel_convolution_compact n (radialMollifierKernel_properties n m).1
+    (hasCompactSupport_radialMollifierKernel n m) f hf hc
 
 /-- The actual Bochner L² average is represented by the concrete normalized radial kernel
 convolution. -/
 theorem radialL2MollifierAverage_convolution_ae (n : ℕ) (m : ℕ)
     (f : Configuration n → ℝ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
     (radialL2MollifierAverage n m (hf.toLp f) : Configuration n → ℝ) =ᵐ[volume]
-      (radialMollifierKernel n m ⋆[lsmul ℝ ℝ, volume] f) := by
-  have hfl := hf.locallyIntegrable (by norm_num)
-  have hfi : Integrable f volume := by
-    have hi : IntegrableOn f (tsupport f) volume := hfl.integrableOn_isCompact hc
-    apply hi.integrable_of_forall_notMem_eq_zero
-    exact fun x hx => image_eq_zero_of_notMem_tsupport hx
-  have hcl : LocallyIntegrable (radialMollifierKernel n m ⋆[lsmul ℝ ℝ, volume] f) volume :=
-    (memLp_radial_convolution_compact n m f hf hc).locallyIntegrable (by norm_num)
-  apply ae_eq_of_integral_contDiff_smul_eq
-    ((Lp.memLp (radialL2MollifierAverage n m (hf.toLp f))).locallyIntegrable (by norm_num)) hcl
-  intro θ hθ hθc
-  have hθLp : MemLp θ 2 volume := hθ.continuous.memLp_of_hasCompactSupport hθc
-  calc
-    _ = ∫ x, radialL2MollifierAverage n m (hf.toLp f) x * θ x := by
-      apply integral_congr_ae
-      exact Eventually.of_forall (fun x => by simp only [smul_eq_mul]; ring)
-    _ = ∫ y, radialMollifierKernel n m y * (∫ x, (hf.toLp f) (x - y) * θ x) :=
-      radialL2MollifierAverage_test_pairing n m (hf.toLp f) θ hθLp
-    _ = ∫ y, radialMollifierKernel n m y * (∫ x, f (x - y) * θ x) := by
-      apply integral_congr_ae
-      apply Eventually.of_forall
-      intro y
-      dsimp only
-      congr 1
-      apply integral_congr_ae
-      have he : ∀ᵐ x ∂(volume : Measure (Configuration n)),
-          (hf.toLp f) (x + (-y)) = f (x + (-y)) :=
-        (eventually_add_right_iff volume (-y)).mpr hf.coeFn_toLp
-      filter_upwards [he] with x hx
-      simpa only [sub_eq_add_neg] using congrArg (fun t => t * θ x) hx
-    _ = ∫ x, (radialMollifierKernel n m ⋆[lsmul ℝ ℝ, volume] f) x * θ x :=
-      (integral_radial_convolution_mul_test n m f θ hfi hθ.continuous hθc).symm
-    _ = _ := by
-      apply integral_congr_ae
-      exact Eventually.of_forall (fun x => by simp only [smul_eq_mul]; ring)
+      (radialMollifierKernel n m ⋆[lsmul ℝ ℝ, volume] f) :=
+  lebesgueL2KernelAverage_convolution_ae n (radialMollifierKernel_properties n m).1
+    (hasCompactSupport_radialMollifierKernel n m) f hf hc
 
 /-- The convolution of a compactly supported Lebesgue `L²` function `f` with the radial
 mollifier kernel `radialMollifierKernel n m`, as a vector of Lebesgue `L²`. -/

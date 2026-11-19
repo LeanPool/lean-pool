@@ -40,9 +40,10 @@ public import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 
 /-! # Concrete smooth compact convolution in ordinary L²
 
-For compactly supported L² representatives, the actual normalized bump
-convolution represents the Bochner L² average. Consequently the concrete
-smooth compact functions converge strongly in L² as the bump radius shrinks.
+For compactly supported L² representatives and a smooth compactly supported kernel, the
+actual convolution represents the Bochner L² kernel average. Consequently the concrete
+smooth compact functions converge strongly in L² as the kernel support shrinks. Normalized
+smooth bumps are the special case `K = φ.normed volume`.
 -/
 
 
@@ -54,63 +55,62 @@ open scoped Topology ContDiff Convolution
 namespace GinibrePoincare
 noncomputable section
 
+/-! ### General smooth compact kernels -/
 
-theorem integral_bump_convolution_mul_test (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
-    (f θ : Configuration n → ℝ) (hf : Integrable f volume)
+theorem integral_kernel_convolution_mul_test (n : ℕ) {K : Configuration n → ℝ}
+    (hKi : Integrable K volume) (f θ : Configuration n → ℝ) (hf : Integrable f volume)
     (hθ : Continuous θ) (hc : HasCompactSupport θ) :
-    (∫ x, (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) x * θ x) =
-      ∫ y, φ.normed volume y * (∫ x, f (x - y) * θ x) := by
+    (∫ x, (K ⋆[lsmul ℝ ℝ, volume] f) x * θ x) = ∫ y, K y * (∫ x, f (x - y) * θ x) := by
   obtain ⟨C, hC⟩ := hθ.bounded_above_of_compact_support hc
   have hb : Integrable (fun p : Configuration n × Configuration n =>
-      φ.normed volume p.2 * f (p.1 - p.2)) (volume.prod volume) := by
-    simpa only [lsmul_apply, smul_eq_mul] using
-      φ.integrable_normed.convolution_integrand (lsmul ℝ ℝ) hf
+      K p.2 * f (p.1 - p.2)) (volume.prod volume) := by
+    simpa only [lsmul_apply, smul_eq_mul] using hKi.convolution_integrand (lsmul ℝ ℝ) hf
   have hi : Integrable (fun p : Configuration n × Configuration n =>
-      φ.normed volume p.2 * f (p.1 - p.2) * θ p.1) (volume.prod volume) :=
+      K p.2 * f (p.1 - p.2) * θ p.1) (volume.prod volume) :=
     hb.mul_bdd (hθ.comp continuous_fst).aestronglyMeasurable
       (Eventually.of_forall (fun p => hC p.1))
   calc
-    _ = ∫ x, ∫ y, φ.normed volume y * f (x - y) * θ x := by
+    _ = ∫ x, ∫ y, K y * f (x - y) * θ x := by
       simp only [convolution_lsmul, smul_eq_mul, integral_mul_const]
-    _ = ∫ y, ∫ x, φ.normed volume y * f (x - y) * θ x := integral_integral_swap hi
+    _ = ∫ y, ∫ x, K y * f (x - y) * θ x := integral_integral_swap hi
     _ = _ := by
       apply integral_congr_ae
       apply Eventually.of_forall
       intro y
       simp only [mul_assoc, integral_const_mul]
 
-/-- Concrete convolution has an actual smooth compact representative in ordinary L². -/
-theorem memLp_bump_convolution_compact (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
+/-- Convolution with a smooth compact kernel has a smooth compact representative in L². -/
+theorem memLp_kernel_convolution_compact (n : ℕ) {K : Configuration n → ℝ}
+    (hK : ContDiff ℝ ∞ K) (hKc : HasCompactSupport K)
     (f : Configuration n → ℝ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
-    MemLp (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) 2 volume :=
-  (φ.hasCompactSupport_normed.contDiff_convolution_left (lsmul ℝ ℝ)
-    (φ.contDiff_normed (n := ⊤)) (hf.locallyIntegrable (by
-      norm_num))).continuous.memLp_of_hasCompactSupport (φ.hasCompactSupport_normed.convolution
-      (lsmul ℝ ℝ) hc)
+    MemLp (K ⋆[lsmul ℝ ℝ, volume] f) 2 volume :=
+  (hKc.contDiff_convolution_left (lsmul ℝ ℝ) hK (hf.locallyIntegrable (by
+      norm_num))).continuous.memLp_of_hasCompactSupport (hKc.convolution (lsmul ℝ ℝ) hc)
 
-/-- The actual Bochner L² average is represented by the concrete normalized bump convolution. -/
-theorem lebesgueL2BumpAverage_convolution_ae (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
+/-- The Bochner L² kernel average is represented by the concrete convolution. -/
+theorem lebesgueL2KernelAverage_convolution_ae (n : ℕ) {K : Configuration n → ℝ}
+    (hK : ContDiff ℝ ∞ K) (hKc : HasCompactSupport K)
     (f : Configuration n → ℝ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
-    (lebesgueL2BumpAverage n φ (hf.toLp f) : Configuration n → ℝ) =ᵐ[volume]
-      (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) := by
+    (lebesgueL2KernelAverage n K (hf.toLp f) : Configuration n → ℝ) =ᵐ[volume]
+      (K ⋆[lsmul ℝ ℝ, volume] f) := by
   have hfl := hf.locallyIntegrable (by norm_num)
   have hfi : Integrable f volume := by
     have hi : IntegrableOn f (tsupport f) volume := hfl.integrableOn_isCompact hc
     apply hi.integrable_of_forall_notMem_eq_zero
     exact fun x hx => image_eq_zero_of_notMem_tsupport hx
-  have hcl : LocallyIntegrable (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) volume :=
-    (memLp_bump_convolution_compact n φ f hf hc).locallyIntegrable (by norm_num)
+  have hcl : LocallyIntegrable (K ⋆[lsmul ℝ ℝ, volume] f) volume :=
+    (memLp_kernel_convolution_compact n hK hKc f hf hc).locallyIntegrable (by norm_num)
   apply ae_eq_of_integral_contDiff_smul_eq
-    ((Lp.memLp (lebesgueL2BumpAverage n φ (hf.toLp f))).locallyIntegrable (by norm_num)) hcl
+    ((Lp.memLp (lebesgueL2KernelAverage n K (hf.toLp f))).locallyIntegrable (by norm_num)) hcl
   intro θ hθ hθc
   have hθLp : MemLp θ 2 volume := hθ.continuous.memLp_of_hasCompactSupport hθc
   calc
-    _ = ∫ x, lebesgueL2BumpAverage n φ (hf.toLp f) x * θ x := by
+    _ = ∫ x, lebesgueL2KernelAverage n K (hf.toLp f) x * θ x := by
       apply integral_congr_ae
       exact Eventually.of_forall (fun x => by simp only [smul_eq_mul]; ring)
-    _ = ∫ y, φ.normed volume y * (∫ x, (hf.toLp f) (x - y) * θ x) :=
-      lebesgueL2BumpAverage_test_pairing n φ (hf.toLp f) θ hθLp
-    _ = ∫ y, φ.normed volume y * (∫ x, f (x - y) * θ x) := by
+    _ = ∫ y, K y * (∫ x, (hf.toLp f) (x - y) * θ x) :=
+      lebesgueL2KernelAverage_test_pairing n hK.continuous hKc (hf.toLp f) θ hθLp
+    _ = ∫ y, K y * (∫ x, f (x - y) * θ x) := by
       apply integral_congr_ae
       apply Eventually.of_forall
       intro y
@@ -122,11 +122,36 @@ theorem lebesgueL2BumpAverage_convolution_ae (n : ℕ) (φ : ContDiffBump (0 : C
         (eventually_add_right_iff volume (-y)).mpr hf.coeFn_toLp
       filter_upwards [he] with x hx
       simpa only [sub_eq_add_neg] using congrArg (fun t => t * θ x) hx
-    _ = ∫ x, (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) x * θ x :=
-      (integral_bump_convolution_mul_test n φ f θ hfi hθ.continuous hθc).symm
+    _ = ∫ x, (K ⋆[lsmul ℝ ℝ, volume] f) x * θ x :=
+      (integral_kernel_convolution_mul_test n (hK.continuous.integrable_of_hasCompactSupport hKc)
+        f θ hfi hθ.continuous hθc).symm
     _ = _ := by
       apply integral_congr_ae
       exact Eventually.of_forall (fun x => by simp only [smul_eq_mul]; ring)
+
+/-! ### Normalized smooth bumps -/
+
+theorem integral_bump_convolution_mul_test (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
+    (f θ : Configuration n → ℝ) (hf : Integrable f volume)
+    (hθ : Continuous θ) (hc : HasCompactSupport θ) :
+    (∫ x, (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) x * θ x) =
+      ∫ y, φ.normed volume y * (∫ x, f (x - y) * θ x) :=
+  integral_kernel_convolution_mul_test n φ.integrable_normed f θ hf hθ hc
+
+/-- Concrete convolution has an actual smooth compact representative in ordinary L². -/
+theorem memLp_bump_convolution_compact (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
+    (f : Configuration n → ℝ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
+    MemLp (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) 2 volume :=
+  memLp_kernel_convolution_compact n (φ.contDiff_normed (n := ⊤)) φ.hasCompactSupport_normed
+    f hf hc
+
+/-- The actual Bochner L² average is represented by the concrete normalized bump convolution. -/
+theorem lebesgueL2BumpAverage_convolution_ae (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
+    (f : Configuration n → ℝ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
+    (lebesgueL2BumpAverage n φ (hf.toLp f) : Configuration n → ℝ) =ᵐ[volume]
+      (φ.normed volume ⋆[lsmul ℝ ℝ, volume] f) :=
+  lebesgueL2KernelAverage_convolution_ae n (φ.contDiff_normed (n := ⊤))
+    φ.hasCompactSupport_normed f hf hc
 
 /-- The Lebesgue L² class of convolution with a normalized smooth compact bump. -/
 def lebesgueSmoothCompactMollification (n : ℕ) (φ : ContDiffBump (0 : Configuration n))
