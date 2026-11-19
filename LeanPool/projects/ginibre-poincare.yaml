@@ -15,7 +15,9 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   radial log-Sobolev inequality; and the Appendix A core-closure and zero-capacity lemmas. Builds
   Brownian stochastic-integration and finite-dimensional Itô infrastructure, and proves the joint
   Gamma law of the two equilibrium radii, the nonsymmetric constant lower bound (n+1)/4 and the
-  non-holomorphy of the squared radius.
+  non-holomorphy of the squared radius. Constructs the maximal Brownian-driven solution of the
+  Ginibre Langevin equation, proves stationarity of the Ginibre law along its whole future path, and
+  identifies its transition Laplace transform with the analytic resolvent of the full generator.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -59,6 +61,8 @@ main_declarations:
 - GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product
 - GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound
 - GinibrePoincare.ginibreSquaredNormL2_not_holomorphic
+- GinibrePoincare.ginibreBrownian_equilibrium_original_whole_future_stationary
+- GinibrePoincare.ginibreOriginalStochasticL2Resolvent_eq_analytic
 main_results:
 - declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
   informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
@@ -184,6 +188,19 @@ main_results:
     Ginibre L² space, does not belong to the closed span of symmetric holomorphic polynomials.
   source_ref: Supplementary remark on the holomorphic projection geometry of
     arXiv:2608.19358v2, Section 2.
+- declaration: GinibrePoincare.ginibreBrownian_equilibrium_original_whole_future_stationary
+  informal: For n > 0 and speed α, let X be the maximal solution of the Ginibre Langevin equation
+    driven by independent standard real Brownian motions on a complete probability space,
+    started from a Ginibre-distributed configuration independent of the noise. For every s ≥ 0
+    the shifted path t ↦ X_{s+t} has the same law as t ↦ X_t.
+  source_ref: Stationarity of the Ginibre law for the original stochastic dynamics, accompanying
+    Theorem 1.3 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.ginibreOriginalStochasticL2Resolvent_eq_analytic
+  informal: For n > 0 and α > 0, the normalized Laplace transform at rate α/n of the transition
+    operators of the original Brownian-driven Ginibre dynamics equals the analytic unit resolvent
+    of the full symmetric Ginibre generator on every symmetric L² value.
+  source_ref: Identification of the original stochastic dynamics with the generator semigroup
+    (dynamics discussion of arXiv:2608.19358v2, Section 1).
 tags:
 - ginibre-ensemble
 - poincare-inequality
