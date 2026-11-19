@@ -31,7 +31,7 @@ decomposition, these are the sums of the generalized eigenspaces of the eigenval
   resp. outside, the unit circle;
 * `Polynomial.norm_lt_one_of_aeval_reverse_eq_zero`: the roots of the reverse of a polynomial with
   roots outside the unit circle lie inside;
-* `ContinuousLinearMap.aeval_symm_reverse_eq_zero`: if `q(T) = 0` for an invertible `T`, then
+* `LinearEquiv.aeval_symm_reverse_eq_zero`: if `q(T) = 0` for an invertible `T`, then
   `q.reverse (T⁻¹) = 0`;
 * `ContinuousLinearMap.ker_aeval_le_stableSubspace`, `ker_aeval_le_unstableSubspace`: the kernel of
   `pₛ(A)` lies in the stable subspace, the kernel of `pᵤ(A)` in the unstable one;
@@ -195,20 +195,17 @@ theorem norm_lt_one_of_aeval_reverse_eq_zero {q : ℝ[X]} (hq : ∀ μ : ℂ, ae
 
 end Polynomial
 
-namespace ContinuousLinearMap
-
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
 /-- If an invertible operator `T` is annihilated by `q`, its inverse is annihilated by the reverse
 of `q`.
 
 Proof: `q.reverse (T⁻¹) ∘ T ^ q.natDegree = q(T) = 0` (`Polynomial.coeff_reverse`), and
 `T ^ q.natDegree` is invertible. -/
-theorem aeval_symm_reverse_eq_zero (T : E ≃L[ℝ] E) {q : ℝ[X]}
-    (hq : aeval ((T : E →L[ℝ] E) : E →ₗ[ℝ] E) q = 0) :
-    aeval ((T.symm : E →L[ℝ] E) : E →ₗ[ℝ] E) q.reverse = 0 := by
-  set S : Module.End ℝ E := ((T.symm : E →L[ℝ] E) : E →ₗ[ℝ] E)
-  set U : Module.End ℝ E := ((T : E →L[ℝ] E) : E →ₗ[ℝ] E)
+theorem LinearEquiv.aeval_symm_reverse_eq_zero {R M : Type*} [CommSemiring R]
+    [AddCommMonoid M] [Module R M] (T : M ≃ₗ[R] M) {q : R[X]}
+    (hq : aeval T.toLinearMap q = 0) :
+    aeval T.symm.toLinearMap q.reverse = 0 := by
+  set S : Module.End R M := T.symm.toLinearMap
+  set U : Module.End R M := T.toLinearMap
   have hSU : S * U = 1 := LinearMap.ext fun x ↦ by simp [S, U]
   have hUS : U * S = 1 := LinearMap.ext fun x ↦ by simp [S, U]
   have hcomm : Commute S U := hSU.trans hUS.symm
@@ -227,6 +224,10 @@ theorem aeval_symm_reverse_eq_zero (T : E ≃L[ℝ] E) {q : ℝ[X]}
   calc aeval S q.reverse = aeval S q.reverse * U ^ d * S ^ d := by
         rw [mul_assoc, ← hcomm.symm.mul_pow, hUS, one_pow, mul_one]
     _ = 0 := by rw [key, hq, zero_mul]
+
+namespace ContinuousLinearMap
+
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- The kernel of `q(A)` is `A`-invariant. -/
 private lemma map_mem_ker_aeval (A : E →L[ℝ] E) (q : ℝ[X]) {v : E}
@@ -304,11 +305,11 @@ theorem ker_aeval_le_unstableSubspace (A : E →L[ℝ] E) {q : ℝ[X]}
       LinearMap.zero_apply] at h1
     exact (smul_eq_zero.1 h1).resolve_left hc
   -- so it is a continuous linear equivalence `T`, and `T⁻¹` is annihilated by `q.reverse`
-  set T : K ≃L[ℝ] K := (LinearEquiv.ofInjectiveEndo _ hinj).toContinuousLinearEquiv
-  have hT : ((T : K →L[ℝ] K) : K →ₗ[ℝ] K) = (Ak : K →ₗ[ℝ] K) := LinearMap.ext fun _ ↦ rfl
-  have hrev := aeval_symm_reverse_eq_zero T (hT ▸ hAk)
+  let e := LinearEquiv.ofInjectiveEndo (Ak : K →ₗ[ℝ] K) hinj
+  have hrev := e.aeval_symm_reverse_eq_zero hAk
+  let T := e.toContinuousLinearEquiv
   have ht := (continuous_subtype_val.tendsto 0).comp
-    (tendsto_pow_apply_of_aeval_eq_zero _ hrev
+    (tendsto_pow_apply_of_aeval_eq_zero (T.symm : K →L[ℝ] K) hrev
       (fun μ hμ ↦ norm_lt_one_of_aeval_reverse_eq_zero hq hμ) ⟨v, hv⟩)
   -- `n ↦ T⁻ⁿ v` is a backward orbit of `v` tending to `0`
   have hTy (y : K) : (T y : E) = A y := rfl

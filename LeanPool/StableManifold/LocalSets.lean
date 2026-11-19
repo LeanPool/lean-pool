@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.StableManifold.LocalSetDefinitions
+import LeanPool.StableManifold.Orbit
 public import Mathlib.Topology.Algebra.Group.Basic
 public import Mathlib.Topology.OpenPartialHomeomorph.Defs
 
@@ -128,9 +129,9 @@ private lemma apply_iterate_symm_succ (e : OpenPartialHomeomorph X X) {U : Set X
 private lemma iterate_symm_eq_of_backward (e : OpenPartialHomeomorph X X) {U : Set X}
     (hU : U ⊆ e.source) {y : ℕ → X} (hy : ∀ n, y n ∈ U ∧ e (y (n + 1)) = y n) (n : ℕ) :
     e.symm^[n] (y 0) = y n := by
-  induction n with
-  | zero => rfl
-  | succ n ih => rw [iterate_succ_apply', ih, ← (hy n).2, e.left_inv (hU (hy (n + 1)).1)]
+  symm
+  exact StableManifold.orbit_eq_iterate rfl
+    (fun k ↦ ((hy k).2 ▸ e.left_inv (hU (hy (k + 1)).1)).symm) n
 
 /-- One half of `localStableSet_symm_eq_localUnstableSet`. -/
 private lemma localStableSet_symm_eq_localUnstableSet_aux (e : OpenPartialHomeomorph X X) {p : X}

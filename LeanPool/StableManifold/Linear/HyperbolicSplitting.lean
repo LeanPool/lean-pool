@@ -162,7 +162,7 @@ theorem proj_mul_unstableInv_pow_succ (n : ℕ) : S.proj * S.unstableInv ^ (n + 
   rw [pow_succ', ← mul_assoc, S.proj_mul_unstableInv, zero_mul]
 
 /-- `C λⁿ ≤ C`. -/
-private lemma const_mul_rate_pow_le (n : ℕ) : S.const * S.rate ^ n ≤ S.const :=
+theorem const_mul_rate_pow_le (n : ℕ) : S.const * S.rate ^ n ≤ S.const :=
   mul_le_of_le_one_right S.const_pos.le (pow_le_one₀ S.rate_pos.le S.rate_lt_one.le)
 
 /-- `C λⁿ a → 0`. -/

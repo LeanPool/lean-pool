@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+import LeanPool.StableManifold.Orbit
 public import Mathlib.Analysis.Normed.Operator.Mul
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Restrict
 
@@ -113,11 +114,9 @@ theorem stableSubspace_symm (e : E ≃L[ℝ] E) :
     refine ⟨fun n ↦ ((e.symm : E →L[ℝ] E) ^ n) v, by simp, fun n ↦ ?_, hv⟩
     simp [pow_succ']
   · rintro ⟨w, h0, hA, ht⟩
-    have hw : ∀ n, w n = ((e.symm : E →L[ℝ] E) ^ n) v := by
-      intro n
-      induction n with
-      | zero => simp [h0]
-      | succ n ih => rw [pow_succ', mul_apply_eq_comp, ← ih, ← hA n]; simp
+    have hw (n : ℕ) : w n = ((e.symm : E →L[ℝ] E) ^ n) v := by
+      rw [pow_apply_eq_iterate]
+      exact StableManifold.orbit_eq_iterate h0 (fun k ↦ by rw [← hA k]; simp) n
     exact ht.congr hw
 
 /-- The unstable subspace of `e⁻¹` is the stable subspace of `e`. -/

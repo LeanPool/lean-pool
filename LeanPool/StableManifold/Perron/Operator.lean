@@ -99,8 +99,7 @@ theorem norm_pow_apply_proj_le (n : ℕ) (ξ : E) :
 theorem norm_pow_apply_proj_le_const (n : ℕ) (ξ : E) :
     ‖(A ^ n) (S.proj ξ)‖ ≤ S.const * ‖ξ‖ := by
   exact (S.norm_pow_proj_apply_le n ξ).trans (mul_le_mul_of_nonneg_right
-    (mul_le_of_le_one_right S.const_pos.le (pow_le_one₀ S.rate_pos.le S.rate_lt_one.le))
-    (norm_nonneg _))
+    (S.const_mul_rate_pow_le n) (norm_nonneg _))
 
 /-- The **stable orbits** `ξ ↦ (n ↦ Aⁿ (P ξ))`, a bounded linear map into bounded sequences. -/
 noncomputable def stableOrbit : E →L[ℝ] (ℕ →ᵇ E) :=

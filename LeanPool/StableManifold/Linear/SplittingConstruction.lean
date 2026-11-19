@@ -9,6 +9,7 @@ module
 
 public import LeanPool.StableManifold.Linear.HyperbolicSplitting
 public import LeanPool.StableManifold.Linear.FiniteDimensionalSubspaces
+import LeanPool.StableManifold.Orbit
 import Mathlib.LinearAlgebra.Projection
 
 /-! # Constructing an exponential splitting in finite dimension -/
@@ -100,9 +101,8 @@ theorem nonempty_hyperbolicSplitting [FiniteDimensional ℝ E] {A : E →L[ℝ] 
       rw [← hwA n, ← mul_apply_eq_comp B A, hBA, sub_apply, one_apply_eq_self,
         hPzero.2 (mem_unstableSubspace_of_backwardOrbit hwA hwt (n + 1)), sub_zero]
     have hBpow (n : ℕ) : (B ^ n) u = w n := by
-      induction n with
-      | zero => rw [pow_zero, one_apply_eq_self, hw0]
-      | succ n ih => rw [pow_succ', mul_apply_eq_comp, ih, hBw]
+      rw [pow_apply_eq_iterate]
+      exact (StableManifold.orbit_eq_iterate hw0 (fun n ↦ (hBw n).symm) n).symm
     exact hwt.congr fun n ↦ (hBpow n).symm
   have hBt (v : E) : Tendsto (fun n : ℕ ↦ (B ^ n) v) atTop (𝓝 0) := by
     rw [← tendsto_add_atTop_iff_nat 1]

@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.StableManifold.Perron.Operator
+import LeanPool.StableManifold.Orbit
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Topology.MetricSpace.Contracting
 public import LeanPool.StableManifold.Sequence.Superpose
@@ -206,8 +207,7 @@ theorem dist_orbitSeq_le (ξ η : E) :
       refine (S.norm_pow_apply_proj_le n (ξ - η)).trans ?_
       rw [map_sub]
       exact mul_le_mul_of_nonneg_right
-        (mul_le_of_le_one_right S.const_pos.le (pow_le_one₀ S.rate_pos.le S.rate_lt_one.le))
-        (norm_nonneg _)
+        (S.const_mul_rate_pow_le n) (norm_nonneg _)
   refine h.trans (le_of_eq ?_)
   norm_num
   ring
@@ -317,12 +317,9 @@ theorem lipschitzWith_graph : LipschitzWith (2 * S.const ^ 3).toNNReal F.graph :
 /-- On the graph, the bounded orbit is the forward `F`-orbit. -/
 theorem orbitSeq_apply_eq_iterate {x : E} (hx : (1 - S.proj) x = F.graph x) (n : ℕ) :
     F.orbitSeq x n = F.map^[n] x := by
-  induction n with
-  | zero =>
-    rw [Function.iterate_zero_apply, F.orbitSeq_apply_zero, ← hx, _root_.sub_apply,
-      one_apply_eq_self]
-    abel
-  | succ n ih => rw [F.orbitSeq_succ, ih, Function.iterate_succ_apply']
+  refine StableManifold.orbit_eq_iterate ?_ (F.orbitSeq_succ x) n
+  rw [F.orbitSeq_apply_zero, ← hx, _root_.sub_apply, one_apply_eq_self]
+  abel
 
 /-- **The global stable manifold**: the forward `F`-orbit of `x` is bounded if and only if
 `(1 - P) x = graph x`, that is `x = P x + graph (P x)`.
