@@ -39,12 +39,16 @@ variable {Site : Type} {Edge : Type*}
 
 noncomputable section
 
+/-- One forward time step on a pair of layers: the new previous layer is the old current layer,
+and the new current layer is `nativeNextState` applied to the old previous and current layers. -/
 def nativeLayerForward [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (bond : Edge → Bond Site)
     (layers : NativeTwoLayerState Site) : NativeTwoLayerState Site where
   previous := layers.current
   current := nativeNextState chi0 B dt bond layers.previous layers.current
 
+/-- One backward time step on a pair of layers: the new current layer is the old previous layer,
+and the new previous layer is `nativeNextState` applied with the two layers swapped. -/
 def nativeLayerBackward [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (bond : Edge → Bond Site)
     (layers : NativeTwoLayerState Site) : NativeTwoLayerState Site where
@@ -75,6 +79,8 @@ theorem native_layer_forward_after_backward
       · rfl
       · exact native_next_is_reversible chi0 B dt bond current previous
 
+/-- The two-layer time step as a bijection, with forward map `nativeLayerForward` and inverse
+`nativeLayerBackward`. -/
 def nativeLayerEvolutionEquiv
     [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (bond : Edge → Bond Site) :
@@ -84,6 +90,8 @@ def nativeLayerEvolutionEquiv
   left_inv := native_layer_backward_after_forward chi0 B dt bond
   right_inv := native_layer_forward_after_backward chi0 B dt bond
 
+/-- The time step on running states (current state and interval velocity) as a bijection,
+obtained by conjugating `nativeLayerEvolutionEquiv` with `nativeLayersRunningEquiv`. -/
 def nativeRunningEvolutionEquiv
     [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (hdt : dt ≠ 0) (bond : Edge → Bond Site) :
@@ -92,12 +100,15 @@ def nativeRunningEvolutionEquiv
     ((nativeLayerEvolutionEquiv chi0 B dt bond).trans
       (nativeLayersRunningEquiv dt hdt))
 
+/-- One forward time step on running states, given by `nativeRunningEvolutionEquiv`. -/
 def nativeRunningStep
     [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (hdt : dt ≠ 0) (bond : Edge → Bond Site)
     (running : NativeRunningState Site) : NativeRunningState Site :=
   nativeRunningEvolutionEquiv chi0 B dt hdt bond running
 
+/-- One backward time step on running states, given by the inverse of
+`nativeRunningEvolutionEquiv`. -/
 def nativeRunningStepBackward
     [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (hdt : dt ≠ 0) (bond : Edge → Bond Site)
@@ -304,6 +315,8 @@ theorem native_running_step_backward_preserves_eight_site_sector
       (c19Bond cubeC19Geometry) (rebuildNativeLayers dt running))
     hbackward.1 hbackward.2
 
+/-- The restriction of the running-state time step to the eight-site running sector on the cube,
+using the C19 bonds of `cubeC19Geometry`, `chi0` and `chiKineticNormalization`. -/
 def nativeRunningSectorEvolutionEquiv (dt : ℝ) (hdt : dt ≠ 0) :
     NativeRunningSector ≃ NativeRunningSector where
   toFun running :=
@@ -327,6 +340,8 @@ def nativeRunningSectorEvolutionEquiv (dt : ℝ) (hdt : dt ≠ 0) :
     exact native_running_forward_after_backward
       chi0 chiKineticNormalization dt hdt (c19Bond cubeC19Geometry) running.1
 
+/-- The sector time step `nativeRunningSectorEvolutionEquiv` expressed on complex coordinate
+vectors, by conjugating with `nativeRunningSectorCoordinateEquiv`. -/
 def nativeCoordinateEvolutionEquiv (dt : ℝ) (hdt : dt ≠ 0) :
     (NativeUnitCellRunningCoordinate → ℂ) ≃
       (NativeUnitCellRunningCoordinate → ℂ) :=
@@ -357,6 +372,9 @@ theorem native_coordinate_forward_after_backward
       coordinates :=
   (nativeCoordinateEvolutionEquiv dt hdt).right_inv coordinates
 
+/-- The collected properties of the running-state time step on the cube: it satisfies the discrete
+stationary-action condition, is the unique such step, has explicit update formulas, is inverted
+by the backward step, preserves the eight-site sector, and matches the coordinate step. -/
 structure Dirac008Certificate (dt : ℝ) (hdt : dt ≠ 0) : Prop where
   actionStationary : ∀ running : NativeRunningState CubeCorner,
     IsDiscreteActionStationary chi0 chiKineticNormalization dt

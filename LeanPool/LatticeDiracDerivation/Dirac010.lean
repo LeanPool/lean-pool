@@ -42,30 +42,40 @@ open Complex
 
 /-! ## The conventional Dirac representation, introduced only downstream -/
 
+/-- The matrix `β = diag(1, 1, -1, -1)` of the standard Dirac representation, acting on
+four-component vectors. -/
 def standardDiracBeta (z : Cell4) : Cell4
   | 0 => z 0
   | 1 => z 1
   | 2 => -z 2
   | _ => -z 3
 
+/-- The matrix `α_x` of the standard Dirac representation, which reverses the components:
+`(z₀, z₁, z₂, z₃) ↦ (z₃, z₂, z₁, z₀)`. -/
 def standardDiracAlphaX (z : Cell4) : Cell4
   | 0 => z 3
   | 1 => z 2
   | 2 => z 1
   | _ => z 0
 
+/-- The matrix `α_y` of the standard Dirac representation:
+`(z₀, z₁, z₂, z₃) ↦ (-i z₃, i z₂, -i z₁, i z₀)`. -/
 def standardDiracAlphaY (z : Cell4) : Cell4
   | 0 => -I * z 3
   | 1 => I * z 2
   | 2 => -I * z 1
   | _ => I * z 0
 
+/-- The matrix `α_z` of the standard Dirac representation:
+`(z₀, z₁, z₂, z₃) ↦ (z₂, -z₃, z₀, -z₁)`. -/
 def standardDiracAlphaZ (z : Cell4) : Cell4
   | 0 => z 2
   | 1 => -z 3
   | 2 => z 0
   | _ => -z 1
 
+/-- The operator `px α_x + py α_y + pz α_z` built from `standardDiracAlphaX`,
+`standardDiracAlphaY` and `standardDiracAlphaZ`. -/
 def standardDiracSpatial
     (px py pz : ℂ) (z : Cell4) : Cell4 :=
   fun component =>
@@ -73,6 +83,8 @@ def standardDiracSpatial
       py * standardDiracAlphaY z component +
       pz * standardDiracAlphaZ z component
 
+/-- The standard Dirac Hamiltonian `mass β + px α_x + py α_y + pz α_z` acting on four-component
+vectors. -/
 def standardDiracHamiltonian
     (mass px py pz : ℂ) (z : Cell4) : Cell4 :=
   fun component =>
@@ -168,24 +180,32 @@ theorem standard_dirac_hamiltonian_square
 
 /-! ## Basis maps derived for the two retained native flavor sectors -/
 
+/-- The signed permutation `(z₀, z₁, z₂, z₃) ↦ (z₀, -z₃, z₂, z₁)`, changing standard Dirac
+coordinates to the coordinates fed to `cubeEmbedMinus`. -/
 def standardToMinusCubeSpinor (z : Cell4) : Cell4
   | 0 => z 0
   | 1 => -z 3
   | 2 => z 2
   | _ => z 1
 
+/-- The signed permutation `(z₀, z₁, z₂, z₃) ↦ (-z₁, z₂, z₃, z₀)`, changing standard Dirac
+coordinates to the coordinates fed to `cubeEmbedPlus`. -/
 def standardToPlusCubeSpinor (z : Cell4) : Cell4
   | 0 => -z 1
   | 1 => z 2
   | 2 => z 3
   | _ => z 0
 
+/-- The signed permutation `(z₀, z₁, z₂, z₃) ↦ (z₀, z₃, z₂, -z₁)`, the inverse of
+`standardToMinusCubeSpinor`. -/
 def minusCubeSpinorToStandard (z : Cell4) : Cell4
   | 0 => z 0
   | 1 => z 3
   | 2 => z 2
   | _ => -z 1
 
+/-- The signed permutation `(z₀, z₁, z₂, z₃) ↦ (z₃, -z₀, z₁, z₂)`, the inverse of
+`standardToPlusCubeSpinor`. -/
 def plusCubeSpinorToStandard (z : Cell4) : Cell4
   | 0 => z 3
   | 1 => -z 0
@@ -216,9 +236,13 @@ theorem plus_cube_basis_right_inverse (z : Cell4) :
   fin_cases component <;>
     simp [plusCubeSpinorToStandard, standardToPlusCubeSpinor]
 
+/-- The embedding of standard four-component vectors into eight-corner amplitudes, given by
+`cubeEmbedMinus` composed with `standardToMinusCubeSpinor`. -/
 def cubeDiracEmbedMinus (z : Cell4) : Cell8 :=
   cubeEmbedMinus (standardToMinusCubeSpinor z)
 
+/-- The embedding of standard four-component vectors into eight-corner amplitudes, given by
+`cubeEmbedPlus` composed with `standardToPlusCubeSpinor`. -/
 def cubeDiracEmbedPlus (z : Cell4) : Cell8 :=
   cubeEmbedPlus (standardToPlusCubeSpinor z)
 
@@ -335,6 +359,8 @@ theorem cube_gamma2_intertwines_plus (z : Cell4) :
       cubeDiracEmbedPlus, cubeEmbedPlus, standardToPlusCubeSpinor,
       standardDiracAlphaX, cellFlip2, cellBit0, cellBit1]
 
+/-- The operator `pz Γ₀ - py Γ₁ - px Γ₂` on eight-corner amplitudes, where `Γₐ` is
+`cubeIncidenceGamma a`; that is, `cubeIncidenceLinear pz (-py) (-px)`. -/
 def nativeCubeDiracSpatial
     (px py pz : ℂ) (amplitude : Cell8) : Cell8 :=
   cubeIncidenceLinear pz (-py) (-px) amplitude
@@ -346,6 +372,8 @@ The `mass` coefficient is deliberately arbitrary because DIRAC-010 identifies
 the cube-parity grading with standard beta but does not claim that the action
 has selected a physical mass.
 -/
+/-- The operator `mass * cubeParityBeta + nativeCubeDiracSpatial px py pz` on eight-corner
+amplitudes, with an arbitrary complex coefficient `mass`. -/
 def interpretedCubeDiracHamiltonian
     (mass px py pz : ℂ) (amplitude : Cell8) : Cell8 :=
   fun corner =>
@@ -424,6 +452,9 @@ theorem interpreted_hamiltonian_intertwines_plus
       standardDiracAlphaX, standardDiracAlphaY, standardDiracAlphaZ] <;>
     ring
 
+/-- The bundle of results of this file: the `Dirac009ClosedCertificate`, the Clifford relations of
+the standard Dirac matrices and of `cubeParityBeta`, injectivity of the two embeddings, and their
+intertwining of the cube operators with `standardDiracBeta` and `standardDiracHamiltonian`. -/
 structure Dirac010Certificate : Prop where
   previousGate : Dirac009ClosedCertificate
   standardBetaSquare : ∀ z,

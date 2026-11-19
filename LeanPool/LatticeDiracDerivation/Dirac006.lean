@@ -38,6 +38,8 @@ namespace LeanDirac
 noncomputable section
 open BigOperators Complex
 
+/-- The product `chiAmplitude corner * psiAmplitude corner` of two eight-corner amplitudes at
+`corner`. -/
 def productAmplitude (psiAmplitude chiAmplitude : Cell8)
     (corner : CubeCorner) : ℂ :=
   chiAmplitude corner * psiAmplitude corner
@@ -62,6 +64,8 @@ theorem density_scaled_unit_area (z : ℂ) :
   simp [density, c3ScaleComplex, unitArea, Fin.sum_univ_succ,
     Complex.normSq]
 
+/-- The bond energy `weight / (2 * chi0 ^ 2) * Complex.normSq (sourceProduct - targetProduct)` of a
+weighted bond between two complex product amplitudes. -/
 def restrictedBondEnergy (chi0 weight : ℝ)
     (sourceProduct targetProduct : ℂ) : ℝ :=
   weight / (2 * chi0 ^ 2) * Complex.normSq (sourceProduct - targetProduct)
@@ -91,25 +95,36 @@ theorem aligned_exterior_area_is_restricted_bond
       ring]
   exact density_scaled_unit_area _
 
+/-- A lattice momentum, a real vector `Fin 3 → ℝ`. -/
 abbrev LatticeMomentum := Fin 3 → ℝ
+/-- A site of the infinite cubic lattice `ℤ³`, as a function `Fin 3 → ℤ`. -/
 abbrev InfiniteCubicSite := Fin 3 → ℤ
 
+/-- The neighbour of `site` in the infinite cubic lattice obtained by adding the integer offset
+`c19Coord · direction` of the C19 direction `direction`. -/
 def infiniteC19Neighbor (site : InfiniteCubicSite)
     (direction : C19Neighbor) : InfiniteCubicSite :=
   fun axis => site axis + c19Coord axis direction
 
+/-- The phase `∑ axis, momentum axis * site axis` of a lattice site with respect to `momentum`. -/
 def latticePhase (momentum : LatticeMomentum)
     (site : InfiniteCubicSite) : ℝ :=
   ∑ axis, momentum axis * (site axis : ℝ)
 
+/-- The phase `∑ axis, momentum axis * c19Coord axis direction` of the offset of the C19 direction
+`direction` with respect to `momentum`. -/
 def c19PhaseAngle (momentum : LatticeMomentum)
     (direction : C19Neighbor) : ℝ :=
   ∑ axis, momentum axis * (c19Coord axis direction : ℝ)
 
+/-- The unit complex number `exp (I * c19PhaseAngle momentum direction)` attached to a C19
+direction. -/
 def c19Character (momentum : LatticeMomentum)
     (direction : C19Neighbor) : ℂ :=
   Complex.exp (I * (c19PhaseAngle momentum direction : ℂ))
 
+/-- The plane-wave character `exp (I * latticePhase momentum site)` of the infinite cubic
+lattice. -/
 def cubicLatticeCharacter (momentum : LatticeMomentum)
     (site : InfiniteCubicSite) : ℂ :=
   Complex.exp (I * (latticePhase momentum site : ℂ))
@@ -140,6 +155,8 @@ theorem cubic_character_normSq_one (momentum : LatticeMomentum)
   rw [Complex.normSq_eq_norm_sq]
   simp [cubicLatticeCharacter, Complex.norm_exp_I_mul_ofReal]
 
+/-- The integer weight of a C19 direction: `2` for the first six directions and `1` for the
+others. -/
 def c19IntegerWeight (direction : C19Neighbor) : ℤ :=
   if direction.val < 6 then 2 else 1
 
@@ -148,9 +165,14 @@ theorem c19_weight_is_integer_weight (direction : C19Neighbor) :
   unfold c19Weight c19IntegerWeight
   split <;> norm_num
 
+/-- The first moment `∑ direction, c19IntegerWeight direction * c19Coord axis direction` of the
+weighted C19 offsets along `axis`. -/
 def c19FirstMoment (axis : Fin 3) : ℤ :=
   ∑ direction, c19IntegerWeight direction * c19Coord axis direction
 
+/-- The second moment
+`∑ direction, c19IntegerWeight direction * c19Coord axis direction * c19Coord other direction` of
+the weighted C19 offsets. -/
 def c19SecondMoment (axis other : Fin 3) : ℤ :=
   ∑ direction, c19IntegerWeight direction *
     c19Coord axis direction * c19Coord other direction
@@ -163,6 +185,9 @@ theorem c19_second_moment_isotropic (axis other : Fin 3) :
     c19SecondMoment axis other = if axis = other then 12 else 0 := by
   fin_cases axis <;> fin_cases other <;> decide
 
+/-- The transport symbol
+`∑ direction, c19Weight direction * Complex.normSq (1 - c19Character momentum direction)` of the C19
+stencil at `momentum`. -/
 def c19TransportSymbol (momentum : LatticeMomentum) : ℝ :=
   ∑ direction,
     c19Weight direction *
@@ -193,6 +218,8 @@ theorem restricted_bond_character_factorization
     Complex.normSq_mul]
   ring
 
+/-- The sum over the C19 directions of the `restrictedBondEnergy` between `q` and
+`c19Character momentum direction * q`, with bond weights `c19Weight`. -/
 def restrictedCharacterTransportEnergy (chi0 : ℝ) (q : ℂ)
     (momentum : LatticeMomentum) : ℝ :=
   ∑ direction,
@@ -230,6 +257,8 @@ theorem repeated_character_bond_factorization
     cubic_character_normSq_one]
   ring
 
+/-- The sum over the C19 directions of the `restrictedBondEnergy` between the plane-wave amplitudes
+`cubicLatticeCharacter momentum · * q` at `site` and at its C19 neighbours. -/
 def repeatedCharacterTransportEnergy (chi0 : ℝ) (q : ℂ)
     (momentum : LatticeMomentum) (site : InfiniteCubicSite) : ℝ :=
   ∑ direction,
@@ -257,6 +286,7 @@ DIRAC-005.  No ray label evolves independently: it only specifies the prepared
 native Psi/chi state whose bond energy is evaluated below.
 -/
 
+/-- The parity of an integer, `true` exactly when `coordinate % 2 = 1`. -/
 def integerParityBit (coordinate : ℤ) : Bool :=
   decide (coordinate % 2 = 1)
 
@@ -278,6 +308,8 @@ theorem integer_parity_bit_add_neg_one (coordinate : ℤ) :
     have hnext : (coordinate + -1) % 2 = 1 := by omega
     simp [integerParityBit, hzero, hnext]
 
+/-- The cube corner with binary digits given by three parity bits, the first bit being the most
+significant. -/
 def cornerFromParity : Bool → Bool → Bool → CubeCorner
   | false, false, false => 0
   | false, false, true => 1
@@ -288,6 +320,7 @@ def cornerFromParity : Bool → Bool → Bool → CubeCorner
   | true, true, false => 6
   | true, true, true => 7
 
+/-- The cube corner whose three bits are the parities of the coordinates of `site`. -/
 def periodTwoCornerAt (site : InfiniteCubicSite) : CubeCorner :=
   cornerFromParity (integerParityBit (site 0))
     (integerParityBit (site 1)) (integerParityBit (site 2))
@@ -305,6 +338,9 @@ theorem period_two_corner_neighbor (site : InfiniteCubicSite)
     cases h2 : integerParityBit (site 2) <;>
     rfl
 
+/-- The state on the infinite cubic lattice whose `psi` field at `site` is
+`tetraCorner (cornerAt site)` scaled by `cubicLatticeCharacter momentum site * psiAmplitude`, and
+whose `chi` field is `companion (cornerAt site)` scaled by `chiAmplitude`. -/
 def repeatedAlignedCharacterState
     (cornerAt : InfiniteCubicSite → CubeCorner)
     (psiAmplitude chiAmplitude : ℂ) (momentum : LatticeMomentum) :
@@ -314,6 +350,8 @@ def repeatedAlignedCharacterState
     (tetraCorner (cornerAt site))
   chi site := c3ScaleComplex chiAmplitude (companion (cornerAt site))
 
+/-- The bond of the infinite cubic lattice from `site` to its neighbour in the C19 direction
+`direction`, with weight `c19Weight direction`. -/
 def infiniteC19Bond (site : InfiniteCubicSite)
     (direction : C19Neighbor) : Bond InfiniteCubicSite where
   source := site
@@ -383,6 +421,8 @@ theorem repeated_aligned_native_bond_is_restricted
         ring]
   exact density_scaled_unit_area _
 
+/-- The sum over the C19 directions of the `exteriorAreaBond` energies of
+`repeatedAlignedCharacterState` along the bonds `infiniteC19Bond site direction`. -/
 def nativeRepeatedCharacterTransportEnergy
     (chi0 : ℝ) (cornerAt : InfiniteCubicSite → CubeCorner)
     (psiAmplitude chiAmplitude : ℂ) (momentum : LatticeMomentum)
@@ -419,6 +459,8 @@ theorem native_period_two_state_energy_has_c19_symbol
   native_repeated_state_energy_has_c19_symbol chi0 periodTwoCornerAt
     psiAmplitude chiAmplitude momentum site
 
+/-- The first-order variation `chi0 * dPsi + psi0 * dChi` of the product `chi * psi` at
+`(psi0, chi0)` in the direction `(dPsi, dChi)`. -/
 def productTangent (psi0 chi0 dPsi dChi : ℂ) : ℂ :=
   chi0 * dPsi + psi0 * dChi
 
@@ -430,6 +472,10 @@ theorem product_amplitude_first_order_expansion
   unfold productTangent
   ring
 
+/-- The results of this file collected in one proposition: the reduction of the exterior-area bond
+energy to `restrictedBondEnergy`, the nonnegativity and zero-momentum value of `c19TransportSymbol`,
+the moments of the C19 weights, and the factorizations of the transport energies through
+`c19TransportSymbol`. -/
 structure Dirac006Certificate : Prop where
   exactSectorBond : ∀ chi0 psiAmplitude chiAmplitude edge,
     exteriorAreaBond chi0

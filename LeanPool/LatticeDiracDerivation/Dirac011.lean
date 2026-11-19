@@ -38,6 +38,8 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The negative-frequency embedding of a cube amplitude into canonical states: the position is
+`amplitude` and the velocity is `I` times `c19ContinuumDiracSymbol` applied to `amplitude`. -/
 def c19NegativeFrequencyEmbedding
     (mass : ℂ) (momentum : LatticeMomentum)
     (amplitude : Cell8) : CubeCanonicalState where
@@ -80,6 +82,8 @@ theorem c19_negative_embedding_velocity_residual_is_spatial_remainder
   rw [Complex.I_sq]
   ring
 
+/-- The standard Dirac Hamiltonian on four-component vectors with momentum components
+`(-c p₂, -c p₁, c p₀)`, where `c = c19ContinuumSpeed = √12` and `p = momentum`. -/
 def standardC19Hamiltonian
     (mass : ℂ) (momentum : LatticeMomentum) (z : Cell4) : Cell4 :=
   standardDiracHamiltonian mass
@@ -87,6 +91,7 @@ def standardC19Hamiltonian
     (-((c19ContinuumSpeed * momentum 1 : ℝ) : ℂ))
     (((c19ContinuumSpeed * momentum 0 : ℝ) : ℂ)) z
 
+/-- The zero lattice momentum. -/
 def zeroLatticeMomentum : LatticeMomentum := fun _ => 0
 
 theorem c19_continuum_symbol_eq_interpreted
@@ -211,6 +216,9 @@ theorem standard_c19_rest_square_matches_native_frequency
   simpa [standardC19Hamiltonian, zeroLatticeMomentum] using
     standard_dirac_hamiltonian_square (chi0 : ℂ) 0 0 0 z
 
+/-- The collected results on the negative-frequency embedding and its spatial remainder, the
+intertwining of `c19ContinuumDiracSymbol` with `standardC19Hamiltonian` under both cube
+embeddings, and the uniqueness of the nonnegative rest mass `chi0`. -/
 structure Dirac011Certificate : Prop where
   previousGate : Dirac010Certificate
   negativePositionBranch : ∀ mass momentum amplitude,

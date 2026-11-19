@@ -38,9 +38,11 @@ namespace LeanDirac
 noncomputable section
 open Complex Filter Topology
 
+/-- The squared continuum frequency `chi0 ^ 2 + c19QuadraticSymbol momentum`. -/
 def continuumModeSquare (momentum : LatticeMomentum) : ℝ :=
   chi0 ^ 2 + c19QuadraticSymbol momentum
 
+/-- The continuum frequency, the square root of `continuumModeSquare momentum`. -/
 def continuumModeFrequency (momentum : LatticeMomentum) : ℝ :=
   Real.sqrt (continuumModeSquare momentum)
 
@@ -57,12 +59,17 @@ theorem continuum_mode_frequency_square (momentum : LatticeMomentum) :
     continuumModeFrequency momentum ^ 2 = continuumModeSquare momentum := by
   exact Real.sq_sqrt (le_of_lt (continuum_mode_square_positive momentum))
 
+/-- The cosine coefficient `1 - (dt * frequency) ^ 2 / 2` of the one-step branch of the centered
+recurrence. -/
 def recurrenceBranchCos (dt frequency : ℝ) : ℝ :=
   1 - (dt * frequency) ^ 2 / 2
 
+/-- The square root `√(1 - (dt * frequency) ^ 2 / 4)`. -/
 def recurrenceBranchRadical (dt frequency : ℝ) : ℝ :=
   Real.sqrt (1 - (dt * frequency) ^ 2 / 4)
 
+/-- The sine coefficient `dt * frequency * recurrenceBranchRadical dt frequency` of the one-step
+branch of the centered recurrence. -/
 def recurrenceBranchSin (dt frequency : ℝ) : ℝ :=
   dt * frequency * recurrenceBranchRadical dt frequency
 
@@ -86,6 +93,7 @@ theorem recurrence_branch_circle
   unfold recurrenceBranchCos
   ring
 
+/-- The linear combination `a • z + b • w` of two four-component vectors. -/
 def cell4LinearCombination
     (a b : ℂ) (z w : Cell4) : Cell4 :=
   fun component => a * z component + b * w component
@@ -105,6 +113,9 @@ theorem standard_c19_hamiltonian_linear_combination
       standardDiracAlphaY, standardDiracAlphaZ,
       cell4LinearCombination] <;> ring
 
+/-- The one-step branch map `z ↦ C z - I (S / ω) H z`, where `ω = continuumModeFrequency momentum`,
+`C` and `S` are `recurrenceBranchCos` and `recurrenceBranchSin` at `dt` and `ω`, and `H` is
+`standardC19Hamiltonian` with mass `chi0`. -/
 def recurrenceDiracBranchStep
     (dt : ℝ) (momentum : LatticeMomentum) (z : Cell4) : Cell4 :=
   let frequency := continuumModeFrequency momentum
@@ -225,6 +236,9 @@ theorem recurrence_dirac_branch_solves_continuum_centered_recurrence
       (Complex.I * standardC19Hamiltonian (chi0 : ℂ) momentum z component) *
         hvelocityC
 
+/-- The defect of the branch map in the centered recurrence with the exact C19 symbol: for
+`u = recurrenceDiracBranchStep dt momentum`, the vector
+`u (u z) - 2 u z + z + dt ^ 2 * nativePsiTangentSymbol momentum * u z`. -/
 def nativeBranchRecurrenceDefect
     (dt : ℝ) (momentum : LatticeMomentum) (z : Cell4) : Cell4 :=
   fun component =>
@@ -259,6 +273,8 @@ theorem native_branch_defect_is_spatial_remainder
   push_cast
   ring
 
+/-- The vector `(u z - z) / dt + I * standardC19Hamiltonian chi0 momentum z`, where
+`u = recurrenceDiracBranchStep dt momentum`. -/
 def recurrenceBranchGeneratorDefect
     (dt : ℝ) (momentum : LatticeMomentum) (z : Cell4) : Cell4 :=
   fun component =>
@@ -363,6 +379,9 @@ theorem recurrence_branch_generator_defect_tends_to_zero
     (recurrence_branch_generator_defect_exact dt momentum z hne) component
   simpa only [extension] using hexact.symm
 
+/-- The collected results on the one-step branch: it solves the continuum centered recurrence
+exactly, its defect in the exact C19 recurrence is the spatial remainder, and its generator defect
+tends to `0` as `dt → 0`. -/
 structure Dirac012RecurrenceBranchCertificate : Prop where
   frequencyPositive : ∀ momentum, 0 < continuumModeFrequency momentum
   frequencySquare : ∀ momentum,
@@ -419,6 +438,7 @@ theorem dirac012_native_recurrence_branch :
 bound from the original gate, but no longer asks that bound to establish the
 first-order evolution.  The second field is the native-recurrence bridge that
 does that work. -/
+/-- The conjunction of `Dirac012Certificate` and `Dirac012RecurrenceBranchCertificate`. -/
 structure Dirac012CompleteCertificate : Prop where
   scalarModeControl : Dirac012Certificate
   recurrenceBranch : Dirac012RecurrenceBranchCertificate

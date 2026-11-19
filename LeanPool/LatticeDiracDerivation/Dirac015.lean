@@ -45,6 +45,11 @@ namespace LeanDirac
 
 noncomputable section
 
+/-- The DIRAC-015 statement bundle: the DIRAC-006 and DIRAC-013 certificates, the expansion of
+`nativePreparedModalPotential` with quadratic coefficient `nativePsiTangentSymbol`, the
+splitting `nativePsiTangentSymbol = chi0 ^ 2 + c19QuadraticSymbol + c19SpatialRemainder`, the
+identity `standardC19Hamiltonian ^ 2 = chi0 ^ 2 + c19QuadraticSymbol`, and the DIRAC-012
+recurrence branch certificate. -/
 structure LFMFreeDiracContinuumCertificate : Prop where
   completePriorChain : Dirac013Certificate
   actionRestrictionAndVariation : Dirac006ActionRestrictionCertificate

@@ -34,12 +34,15 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators Complex
 
+/-- The forward difference quotient `(right - left) / dt` of two states, taken componentwise
+in both fields, as a velocity. -/
 def stateDifferenceVelocity (dt : ℝ) (left right : State Site) : Velocity Site where
   psiDot := fun site component =>
     (right.psi site component - left.psi site component) / (dt : ℂ)
   chiDot := fun site component =>
     (right.chi site component - left.chi site component) / (dt : ℂ)
 
+/-- The state direction divided by `dt` componentwise in both fields, as a velocity. -/
 def stateDirectionVelocity (dt : ℝ) (direction : State Site) : Velocity Site where
   psiDot := fun site component => direction.psi site component / (dt : ℂ)
   chiDot := fun site component => direction.chi site component / (dt : ℂ)
@@ -62,18 +65,25 @@ theorem difference_velocity_vary_left (dt : ℝ)
     simp [stateDifferenceVelocity, stateDirectionVelocity,
       stateLine, c3Line, c3Add, c3ScaleReal] <;> ring
 
+/-- The one-step discrete Lagrangian `dt * (kinetic B ((right - left) / dt) - potential left)`,
+with the potential evaluated at the left state. -/
 def discreteLagrangian [Fintype Site] [Fintype Edge]
     (chi0 B dt : ℝ) (left right : State Site)
     (bond : Edge → Bond Site) : ℝ :=
   dt * (kinetic B (stateDifferenceVelocity dt left right) -
     potential chi0 left bond)
 
+/-- The sum of `discreteLagrangian` over the two steps `previous → current` and
+`current → next`. -/
 def discreteTwoStepAction [Fintype Site] [Fintype Edge]
     (chi0 B dt : ℝ) (previous current next : State Site)
     (bond : Edge → Bond Site) : ℝ :=
   discreteLagrangian chi0 B dt previous current bond +
     discreteLagrangian chi0 B dt current next bond
 
+/-- The first variation of `discreteTwoStepAction` when the middle state `current` moves along
+`direction`: `dt` times the two kinetic variations of the difference velocities plus the state
+first variation of the Lagrangian at `current`. -/
 def discreteActionFirstVariation [Fintype Site] [Fintype Edge]
     (chi0 B dt : ℝ) (previous current next direction : State Site)
     (bond : Edge → Bond Site) : ℝ :=
@@ -115,9 +125,11 @@ theorem discrete_action_hasDerivAt [Fintype Site] [Fintype Edge]
     left
     trivial
 
+/-- Sitewise and componentwise sum of two `C3`-valued fields. -/
 def addC3Field (eta zeta : Site → C3) : Site → C3 :=
   fun site component => eta site component + zeta site component
 
+/-- The sum of two state directions, taken separately in the `psi` and `chi` fields. -/
 def addStateDirection (direction other : State Site) : State Site where
   psi := addC3Field direction.psi other.psi
   chi := addC3Field direction.chi other.chi
@@ -232,6 +244,8 @@ theorem chi_force_add [Fintype Site] [Fintype Edge]
     chiEulerLagrangeForce]
   ring
 
+/-- The part of `eta` at the coordinate (`site`, `component`): `Re (eta site component)` times
+the real unit direction plus `Im (eta site component)` times the imaginary unit direction. -/
 def coordinateTerm [DecidableEq Site] (eta : Site → C3)
     (site : Site) (component : Fin 3) : Site → C3 :=
   addC3Field
@@ -240,6 +254,7 @@ def coordinateTerm [DecidableEq Site] (eta : Site → C3)
     (scaleC3Field (eta site component).im
       (imagCoordinateDirection site component))
 
+/-- The sum of `coordinateTerm eta` over all sites and all three components. -/
 def coordinateExpansion [Fintype Site] [DecidableEq Site]
     (eta : Site → C3) : Site → C3 :=
   ∑ site, ∑ component, coordinateTerm eta site component
@@ -464,10 +479,12 @@ theorem chi_acceleration_all_directions
   intro component _
   exact chi_acceleration_coordinate_term chi0 B state bond hB eta site component
 
+/-- The sum of two velocities, taken separately in the `psiDot` and `chiDot` fields. -/
 def addVelocity (velocity other : Velocity Site) : Velocity Site where
   psiDot := addC3Field velocity.psiDot other.psiDot
   chiDot := addC3Field velocity.chiDot other.chiDot
 
+/-- Multiplication of both components of a velocity by the real scalar `a`. -/
 def scaleVelocity (a : ℝ) (velocity : Velocity Site) : Velocity Site where
   psiDot := scaleC3Field a velocity.psiDot
   chiDot := scaleC3Field a velocity.chiDot
@@ -659,6 +676,8 @@ theorem state_direction_psi_chi_decomposition (direction : State Site) :
     simp [addC3Field, purePsiDirection,
       pureChiDirection, c3Zero]
 
+/-- `discreteTwoStepAction` has derivative `0` at `eps = 0` when `current` moves along any
+state direction, with `previous` and `next` fixed. -/
 def IsDiscreteActionStationary [Fintype Site] [Fintype Edge]
     (chi0 B dt : ℝ) (previous current next : State Site)
     (bond : Edge → Bond Site) : Prop :=
@@ -913,6 +932,9 @@ theorem discrete_stationarity_determines_native_next
   rw [hacceleration]
   exact (centered_difference_native_next chi0 B dt bond previous current hdt).symm
 
+/-- The update `nativeNextState` makes the two-step discrete action stationary, is the unique
+such next state, is reversible, and its centered second difference satisfies the `psi` and `chi`
+force equations at `current`. -/
 structure DiscreteActionUpdateCertificate
     [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (bond : Edge → Bond Site)

@@ -28,11 +28,14 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators Complex
 
+/-- The companion vector of `tetraCorner corner = (u₀, u₁, u₂)`, namely
+`(-conj u₁, conj u₀, 0)`. -/
 def companion (corner : CubeCorner) : C3
   | 0 => -star (tetraCorner corner 1)
   | 1 => star (tetraCorner corner 0)
   | _ => 0
 
+/-- The first standard basis vector `(1, 0, 0)` of `ℂ³`. -/
 def unitArea : C3
   | 0 => 1
   | _ => 0

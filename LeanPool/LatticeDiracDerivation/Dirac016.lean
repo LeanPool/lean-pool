@@ -43,6 +43,8 @@ namespace LeanDirac
 
 noncomputable section
 
+/-- The unsigned translation of an eight-corner amplitude along `axis`: its value at `corner` is
+the value of `amplitude` at `cubeIncidenceFlip axis corner`. -/
 def rawCubeTranslation (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   fun corner => amplitude (cubeIncidenceFlip axis corner)
 
@@ -50,6 +52,7 @@ def rawCubeTranslation (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
 cube translation.  Its formula is verified below against both embeddings,
 and injectivity proves that it is the unique coordinate map with that
 property. -/
+/-- The permutation of four-component vectors that swaps components `0 ↔ 2` and `1 ↔ 3`. -/
 def standardCopyHalfShift (z : Cell4) : Cell4
   | 0 => z 2
   | 1 => z 3
@@ -158,6 +161,8 @@ theorem raw_cube_translation_preserves_density
 copy-exchanging translation classes.  Their declared relative weights are
 exactly balanced; this is a consequence of the existing C19 table, not a
 new coefficient choice. -/
+/-- The unsigned translation of an eight-corner amplitude along a C19 direction: its value at
+`corner` is the value of `amplitude` at `cubeC19Neighbor corner direction`. -/
 def rawC19Translation
     (direction : C19Neighbor) (amplitude : Cell8) : Cell8 :=
   fun corner => amplitude (cubeC19Neighbor corner direction)
@@ -212,10 +217,12 @@ theorem raw_c19_translation_copy_relation
     push_cast
     ring
 
+/-- The total `c19Weight` of the C19 directions with nonzero third coordinate. -/
 def c19CopyExchangeWeight : ℝ :=
   ∑ direction : C19Neighbor,
     if c19Coord 2 direction = 0 then 0 else c19Weight direction
 
+/-- The total `c19Weight` of the C19 directions with zero third coordinate. -/
 def c19CopyPreservingWeight : ℝ :=
   ∑ direction : C19Neighbor,
     if c19Coord 2 direction = 0 then c19Weight direction else 0
@@ -242,6 +249,9 @@ theorem prepared_incidence_axis2_preserves_plus (z : Cell4) :
       fun corner => -cubeDiracEmbedPlus (standardDiracAlphaX z) corner :=
   cube_gamma2_intertwines_plus z
 
+/-- The collected results on cube translations: translation along the third axis exchanges the
+two embeddings `cubeDiracEmbedMinus` and `cubeDiracEmbedPlus` via `standardCopyHalfShift`, the
+other two axes preserve them, and the exchanging and preserving C19 weights both equal `12`. -/
 structure Dirac016CopyTranslationCertificate : Prop where
   priorDerivation : LFMFreeDiracContinuumCertificate
   translationIsInvolutive : ∀ axis amplitude,

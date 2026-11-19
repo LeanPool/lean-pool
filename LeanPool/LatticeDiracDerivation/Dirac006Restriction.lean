@@ -40,22 +40,30 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators Complex
 
+/-- The velocity on the cube corners whose `psi` part at `corner` is `tetraCorner corner` scaled by
+`psiVelocity corner` and whose `chi` part is `companion corner` scaled by `chiVelocity corner`. -/
 def restrictedAlignedEightSiteVelocity
     (psiVelocity chiVelocity : Cell8) : Velocity CubeCorner where
   psiDot corner := c3ScaleComplex (psiVelocity corner) (tetraCorner corner)
   chiDot corner := c3ScaleComplex (chiVelocity corner) (companion corner)
 
+/-- The site potential `(ρχ - chi0 ^ 2) ^ 2 / 4 + ρχ * ρψ / 2 + ρψ ^ 2 / 4`, where `ρψ` and `ρχ` are
+the squared norms of `psiAmplitude` and `chiAmplitude`. -/
 def restrictedSitePotential
     (chi0 : ℝ) (psiAmplitude chiAmplitude : ℂ) : ℝ :=
   let rhoPsi := Complex.normSq psiAmplitude
   let rhoChi := Complex.normSq chiAmplitude
   (rhoChi - chi0 ^ 2) ^ 2 / 4 + rhoChi * rhoPsi / 2 + rhoPsi ^ 2 / 4
 
+/-- The kinetic energy `∑ |psiVelocity corner|² / 2 + B * ∑ |chiVelocity corner|² / 2` of two
+eight-corner velocity amplitudes. -/
 def restrictedEightSiteKinetic
     (B : ℝ) (psiVelocity chiVelocity : Cell8) : ℝ :=
   (∑ corner, Complex.normSq (psiVelocity corner)) / 2 +
     B * (∑ corner, Complex.normSq (chiVelocity corner)) / 2
 
+/-- The sum over the cube corners of `restrictedSitePotential` plus the sum over the edges of the
+`restrictedBondEnergy` of the product amplitudes at the ends of each bond. -/
 def restrictedEightSitePotential [Fintype Edge]
     (chi0 : ℝ) (psiAmplitude chiAmplitude : Cell8)
     (bond : Edge → Bond CubeCorner) : ℝ :=
@@ -65,6 +73,8 @@ def restrictedEightSitePotential [Fintype Edge]
       (productAmplitude psiAmplitude chiAmplitude (bond edge).source)
       (productAmplitude psiAmplitude chiAmplitude (bond edge).target)
 
+/-- The Lagrangian `restrictedEightSiteKinetic - restrictedEightSitePotential` of the eight-corner
+amplitudes and velocities. -/
 def restrictedEightSiteLagrangian [Fintype Edge]
     (chi0 B : ℝ) (psiAmplitude chiAmplitude : Cell8)
     (psiVelocity chiVelocity : Cell8)
@@ -174,6 +184,8 @@ theorem aligned_chi_normal_momentum_zero
     simp]
   ring
 
+/-- The real line `base + eps * direction` through `base` in the direction `direction` in the space
+of eight-corner amplitudes. -/
 def cell8RealLine (base direction : Cell8) (eps : ℝ) : Cell8 :=
   fun corner => base corner + (eps : ℂ) * direction corner
 
@@ -241,6 +253,10 @@ theorem restricted_action_variation_is_native_variation [Fintype Edge]
     aligned_velocity_line_is_amplitude_line,
     aligned_lagrangian_is_restricted]
 
+/-- The results of this file collected in one proposition, for the C19 bonds of the cube: the
+Lagrangian of `alignedEightSiteState` equals `restrictedEightSiteLagrangian`, its derivative along
+`cell8RealLine` is the first variation of the full Lagrangian, and the forces and momentum pairings
+vanish on normal directions. -/
 structure Dirac006ActionRestrictionCertificate : Prop where
   exactActionRestriction : ∀
       (chi0 B : ℝ) (psiAmplitude chiAmplitude : Cell8)

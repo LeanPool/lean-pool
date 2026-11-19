@@ -48,13 +48,18 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open Complex
 
+/-- An orthonormal family of complex functions on a finite set of sites, indexed by a finite set of
+modes. -/
 structure FiniteSpatialFrame (Mode Site : Type) [Fintype Mode] [Fintype Site]
     [DecidableEq Mode] where
+  /-- The function on sites attached to each mode. -/
   basis : Mode → Site → ℂ
   orthonormal : ∀ first second,
     (∑ site, starRingEnd ℂ (basis first site) * basis second site) =
       if first = second then 1 else 0
 
+/-- The complex function on sites `∑ mode, frame.basis mode site * amplitude mode` synthesized from
+mode amplitudes. -/
 def scalarSpatialSynthesis
     {Mode Site : Type} [Fintype Mode] [Fintype Site]
     [DecidableEq Mode]
@@ -128,6 +133,7 @@ theorem scalar_spatial_synthesis_real_pair
   have hre := congrArg Complex.re h
   simpa [scalarRealPair] using hre
 
+/-- The componentwise `scalarSpatialSynthesis` of a family of four-component mode amplitudes. -/
 def cell4SpatialSynthesis
     {Mode Site : Type} [Fintype Mode] [Fintype Site]
     [DecidableEq Mode]
@@ -202,6 +208,8 @@ theorem cell4_spatial_synthesis_current_parseval
   exact cell4_spatial_synthesis_real_pair frame amplitude
     (fun mode => standardC19VelocityOperator axis (amplitude mode))
 
+/-- The four-component field on sites synthesized by `frame` from the mode amplitudes of `packet`
+after `step` updates of `positiveModeEvolution` with time step `dt`. -/
 def coherentSpatialPacket
     {Mode Site : Type} [Fintype Mode] [Fintype Site]
     [DecidableEq Mode]
@@ -211,6 +219,7 @@ def coherentSpatialPacket
   cell4SpatialSynthesis frame
     (fun mode => positiveModeEvolution dt (packet.mode mode) step) site
 
+/-- The total density `∑ site, cell4Density` of `coherentSpatialPacket frame packet dt step`. -/
 def coherentSpatialPacketDensity
     {Mode Site : Type} [Fintype Mode] [Fintype Site]
     [DecidableEq Mode]
@@ -218,6 +227,8 @@ def coherentSpatialPacketDensity
     (packet : FinitePositivePacket Mode) (dt : ℝ) (step : ℕ) : ℝ :=
   ∑ site, cell4Density (coherentSpatialPacket frame packet dt step site)
 
+/-- The total current `∑ site, standardC19DiracCurrent axis` of
+`coherentSpatialPacket frame packet dt step` along `axis`. -/
 def coherentSpatialPacketCurrent
     {Mode Site : Type} [Fintype Mode] [Fintype Site]
     [DecidableEq Mode]
@@ -280,6 +291,7 @@ theorem coherent_spatial_packet_has_nonzero_transport
     frame packet dt step axis hstable]
   exact hmoving
 
+/-- The unit complex number `exp (-I * dt * continuumModeFrequency momentum)`. -/
 def exactContinuumPositivePhase (dt : ℝ) (momentum : LatticeMomentum) : ℂ :=
   Complex.exp (-Complex.I *
     ((dt * continuumModeFrequency momentum : ℝ) : ℂ))
@@ -336,6 +348,8 @@ theorem recurrence_phase_finite_step_error
     (recurrence_positive_phase_norm dt momentum hstable)
     (exact_continuum_positive_phase_norm dt momentum)
 
+/-- The amplitude of `mode` multiplied by the `step`-th power of
+`exactContinuumPositivePhase dt mode.momentum`. -/
 def exactPositiveModeEvolution
     (dt : ℝ) (mode : PositiveFrequencyMode) (step : ℕ) : Cell4 :=
   fun component =>
@@ -364,6 +378,8 @@ theorem positive_mode_finite_step_component_error
   gcongr
   exact recurrence_phase_finite_step_error dt mode.momentum step hstable
 
+/-- The four-component field on sites synthesized by `frame` from the mode amplitudes of `packet`
+after `step` steps of `exactPositiveModeEvolution` with time step `dt`. -/
 def exactCoherentSpatialPacket
     {Mode Site : Type} [Fintype Mode] [Fintype Site]
     [DecidableEq Mode]
@@ -373,6 +389,9 @@ def exactCoherentSpatialPacket
   cell4SpatialSynthesis frame
     (fun mode => exactPositiveModeEvolution dt (packet.mode mode) step) site
 
+/-- The sum over modes of `‖frame.basis mode site‖` times `step` times the norm of the difference of
+`recurrencePositivePhase dt` and `exactContinuumPositivePhase dt` at the momentum of the mode, times
+the norm of the mode amplitude at `component`. -/
 def coherentSpatialPointErrorBound
     {Mode Site : Type} [Fintype Mode] [Fintype Site]
     [DecidableEq Mode]
@@ -453,6 +472,8 @@ theorem finite_addchar_sum_orthogonality
   field_simp [hcard] at h
   simpa [mul_comm] using h
 
+/-- The additive character `mode` of a finite abelian group divided by the square root of the order
+of the group. -/
 def normalizedFiniteFourierBasis
     {G : Type} [AddCommGroup G] [Fintype G]
     (mode : AddChar G ℂ) (site : G) : ℂ :=
@@ -484,6 +505,8 @@ theorem normalized_finite_fourier_basis_orthonormal
     exact_mod_cast (Fintype.card_ne_zero : Fintype.card G ≠ 0)
   field_simp [hcard]
 
+/-- The orthonormal frame on a finite abelian group `G` given by its normalized additive characters
+`normalizedFiniteFourierBasis`. -/
 noncomputable def finiteFourierSpatialFrame
     (G : Type) [AddCommGroup G] [Fintype G] :
     FiniteSpatialFrame (AddChar G ℂ) G := by
@@ -497,17 +520,20 @@ mode must be the same label.  The following construction closes that bridge
 rather than silently pairing an arbitrary orthonormal basis vector with an
 unrelated momentum. -/
 
+/-- The momentum whose component along `axis` is the argument of the character value
+`mode (axisStep axis)`. -/
 def characterMomentum
-    {G : Type} [AddCommGroup G] [Fintype G]
+    {G : Type} [AddCommGroup G]
     (axisStep : Fin 3 → G) (mode : AddChar G ℂ) : LatticeMomentum :=
   fun axis => Complex.arg (mode (axisStep axis))
 
 theorem character_value_is_momentum_phase
-    {G : Type} [AddCommGroup G] [Fintype G]
+    {G : Type} [AddCommGroup G] [Finite G]
     (axisStep : Fin 3 → G) (mode : AddChar G ℂ) (axis : Fin 3) :
     mode (axisStep axis) =
       Complex.exp (Complex.I *
         ((characterMomentum axisStep mode axis : ℝ) : ℂ)) := by
+  have : Fintype G := Fintype.ofFinite G
   rw [show Complex.I *
       ((characterMomentum axisStep mode axis : ℝ) : ℂ) =
       (Complex.arg (mode (axisStep axis)) : ℂ) * Complex.I by
@@ -537,19 +563,26 @@ theorem normalized_finite_fourier_basis_translation_phase
   rw [character_value_is_momentum_phase axisStep mode axis]
   ring
 
+/-- The packet indexed by the additive characters of `G` whose mode at a character is
+`canonicalPositiveFrequencyMode` at its `characterMomentum`. -/
 def canonicalCharacterPacket
     {G : Type} [AddCommGroup G] [Fintype G]
     (axisStep : Fin 3 → G) : FinitePositivePacket (AddChar G ℂ) where
   mode character :=
     canonicalPositiveFrequencyMode (characterMomentum axisStep character)
 
+/-- A packet indexed by the additive characters of `G` in which the momentum of each mode equals the
+`characterMomentum` of its character. -/
 structure MomentumCompatibleCharacterPacket
     (G : Type) [AddCommGroup G] [Fintype G]
     (axisStep : Fin 3 → G) where
+  /-- The underlying packet indexed by the additive characters of `G`. -/
   packet : FinitePositivePacket (AddChar G ℂ)
   momentumMatchesCharacter : ∀ mode,
     (packet.mode mode).momentum = characterMomentum axisStep mode
 
+/-- The packet `canonicalCharacterPacket axisStep` together with the proof that its momenta are the
+character momenta. -/
 def canonicalMomentumCompatibleCharacterPacket
     {G : Type} [AddCommGroup G] [Fintype G]
     (axisStep : Fin 3 → G) :
@@ -587,8 +620,11 @@ theorem momentum_compatible_packet_basis_translation
   exact normalized_finite_fourier_basis_translation_phase
     axisStep mode site axis
 
+/-- The sites `(ZMod N)³` of the periodic cubic lattice of side `N`, as functions
+`Fin 3 → ZMod N`. -/
 abbrev PeriodicCubicSites (N : ℕ) := Fin 3 → ZMod N
 
+/-- The unit step of the periodic cubic lattice along `axis`. -/
 def periodicCubicAxisStep (N : ℕ) (axis : Fin 3) : PeriodicCubicSites N :=
   fun component => if component = axis then 1 else 0
 
@@ -666,6 +702,10 @@ theorem momentum_compatible_coherent_finite_step_error
     (finiteFourierSpatialFrame G) spatialPacket.packet dt step site component
       hstable
 
+/-- The results of this file collected in one proposition, together with
+`Dirac019FinitePacketTransportCertificate`: the orthonormality of the finite Fourier frame, the
+agreement of character momenta with translation phases, density preservation and the velocity-moment
+current of coherent packets, and the pointwise error bound against exact phase evolution. -/
 structure Dirac020CoherentSpatialTransportCertificate : Prop where
   priorChain : Dirac019FinitePacketTransportCertificate
   explicitFiniteFourierFrameIsOrthonormal :

@@ -34,14 +34,18 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The componentwise complex conjugate of a four-component vector. -/
 def cell4Conjugate (z : Cell4) : Cell4 :=
   fun component => starRingEnd ℂ (z component)
 
+/-- The antilinear map `z ↦ I * β (α_y (conj z))` on four-component vectors, where `β` and `α_y`
+are `standardDiracBeta` and `standardDiracAlphaY`. -/
 def standardChargeConjugation (z : Cell4) : Cell4 :=
   fun component =>
     I * standardDiracBeta
       (standardDiracAlphaY (cell4Conjugate z)) component
 
+/-- The negative `-momentum` of a lattice momentum. -/
 def negateLatticeMomentum (momentum : LatticeMomentum) : LatticeMomentum :=
   fun axis => -momentum axis
 
@@ -135,6 +139,9 @@ theorem charge_conjugate_plus_copy_remains_a_plus_copy (z : Cell4) :
       cubeEmbedPlus (standardChargeConjugation z) :=
   cube_embed_plus_has_positive_flavor (standardChargeConjugation z)
 
+/-- The collected results on `standardChargeConjugation`: it is an involution, preserves
+`cell4Density`, maps an eigenvector of `standardC19Hamiltonian` with eigenvalue `energy` to one
+with eigenvalue `-energy` at the negated momentum, and preserves both cube embeddings. -/
 structure Dirac029ChargeConjugationCertificate : Prop where
   previousGate : Dirac028WignerThomasCertificate
   involution : ∀ z, standardChargeConjugation

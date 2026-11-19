@@ -37,6 +37,8 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The boost generator along `axis` on four-component vectors, `I / 2` times
+`standardCubeGamma axis`. -/
 def standardC19BoostGenerator (axis : Fin 3) (z : Cell4) : Cell4 :=
   fun component =>
     (I / 2) * standardCubeGamma axis z component
@@ -176,12 +178,16 @@ theorem rotation_boost_commutator_20 (z : Cell4) :
       standardDiracAlphaY, standardDiracAlphaZ] <;>
     ring_nf
 
+/-- The real number `cosh (rapidity / 2)`, viewed as a complex number. -/
 def boostCoshHalf (rapidity : ℝ) : ℂ :=
   ⟨Real.cosh (rapidity / 2), 0⟩
 
+/-- The real number `sinh (rapidity / 2)`, viewed as a complex number. -/
 def boostSinhHalf (rapidity : ℝ) : ℂ :=
   ⟨Real.sinh (rapidity / 2), 0⟩
 
+/-- The boost of rapidity `rapidity` along `axis` on four-component vectors:
+`z ↦ cosh (rapidity / 2) • z + sinh (rapidity / 2) • standardCubeGamma axis z`. -/
 def standardC19RapidityBoost
     (rapidity : ℝ) (axis : Fin 3) (z : Cell4) : Cell4 :=
   fun component =>
@@ -224,6 +230,8 @@ theorem standard_c19_rapidity_boost_inverse
     rw [hcoshHalf, hsinhHalf]
     linear_combination (z component).im * hhyper
 
+/-- The lattice momentum with component `chi0 * sinh rapidity / c19ContinuumSpeed` along `axis`
+and zero along the other two axes. -/
 def nativeBoostMomentum
     (rapidity : ℝ) (axis : Fin 3) : LatticeMomentum :=
   fun component =>
@@ -231,6 +239,7 @@ def nativeBoostMomentum
       chi0 * Real.sinh rapidity / c19ContinuumSpeed
     else 0
 
+/-- The energy `chi0 * cosh rapidity`. -/
 def nativeBoostEnergy (rapidity : ℝ) : ℝ :=
   chi0 * Real.cosh rapidity
 
@@ -254,6 +263,8 @@ theorem standard_c19_hamiltonian_on_native_boost_momentum
       standardCubeGamma] <;>
     field_simp [hspeed] <;> ring_nf <;> simp
 
+/-- The standard basis vector `cell4Basis0` for `spin = 0` and `cell4Basis1` for `spin = 1`; both
+are fixed by `standardDiracBeta`. -/
 def positiveRestSpinState (spin : Fin 2) : Cell4 :=
   if spin = 0 then cell4Basis0 else cell4Basis1
 
@@ -444,6 +455,10 @@ theorem boosted_positive_rest_current
     rw [hs]
     ring
 
+/-- The collected results on boosts: the commutation relations of the boost generators with each
+other and with `standardCubeSpin`, invertibility of `standardC19RapidityBoost`, and the boosted
+rest states being eigenvectors of `standardC19Hamiltonian` with eigenvalue
+`chi0 * cosh rapidity`. -/
 structure Dirac026FreeLorentzBoostCertificate : Prop where
   previousGate : Dirac025VelocityClockCertificate
   boostBoostCommutator :

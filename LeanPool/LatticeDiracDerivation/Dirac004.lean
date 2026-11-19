@@ -39,6 +39,8 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators Complex
 
+/-- The `C3`-valued field equal to the standard basis vector `selectedComponent` at `selectedSite`
+and zero elsewhere. -/
 def realCoordinateDirection [DecidableEq Site]
     (selectedSite : Site) (selectedComponent : Fin 3) : Site → C3 :=
   fun site component =>
@@ -46,6 +48,8 @@ def realCoordinateDirection [DecidableEq Site]
       if component = selectedComponent then 1 else 0
     else 0
 
+/-- The `C3`-valued field equal to `I` times the standard basis vector `selectedComponent` at
+`selectedSite` and zero elsewhere. -/
 def imagCoordinateDirection [DecidableEq Site]
     (selectedSite : Site) (selectedComponent : Fin 3) : Site → C3 :=
   fun site component =>
@@ -53,6 +57,9 @@ def imagCoordinateDirection [DecidableEq Site]
       if component = selectedComponent then I else 0
     else 0
 
+/-- The `psi` acceleration field whose real and imaginary parts at each site and component are the
+values of `psiEulerLagrangeForce` on `realCoordinateDirection` and `imagCoordinateDirection`
+there. -/
 def psiAcceleration [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 : ℝ) (state : State Site) (bond : Edge → Bond Site) : Site → C3 :=
   fun site component =>
@@ -61,6 +68,9 @@ def psiAcceleration [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (psiEulerLagrangeForce chi0 state bond
       (imagCoordinateDirection site component) : ℂ) * I
 
+/-- The `chi` acceleration field whose real and imaginary parts at each site and component are the
+values of `chiEulerLagrangeForce` on `realCoordinateDirection` and `imagCoordinateDirection` there,
+divided by `B`. -/
 def chiAcceleration [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (bond : Edge → Bond Site) : Site → C3 :=
   fun site component =>
@@ -69,6 +79,7 @@ def chiAcceleration [Fintype Site] [DecidableEq Site] [Fintype Edge]
     ((chiEulerLagrangeForce chi0 state bond
       (imagCoordinateDirection site component) / B : ℝ) : ℂ) * I
 
+/-- The pair of fields `psiAcceleration` and `chiAcceleration`, packaged as a `Velocity`. -/
 def accelerationVelocity [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (bond : Edge → Bond Site) : Velocity Site where
   psiDot := psiAcceleration chi0 state bond
@@ -164,6 +175,8 @@ theorem chi_acceleration_imag_coordinate
     simp [c3RealPair, imagCoordinateDirection, hne]
   · simp
 
+/-- The next state of the centered update `next = 2 * current - previous + dt ^ 2 * acceleration`,
+applied to both fields with the acceleration `accelerationVelocity chi0 B current bond`. -/
 def nativeNextState [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (bond : Edge → Bond Site)
     (previous current : State Site) : State Site :=
@@ -175,6 +188,8 @@ def nativeNextState [Fintype Site] [DecidableEq Site] [Fintype Edge]
       2 * current.chi site component - previous.chi site component +
         (dt ^ 2 : ℂ) * acceleration.chiDot site component }
 
+/-- The centered second difference `(next - 2 * current + previous) / dt ^ 2` of three states,
+applied to both fields. -/
 def centeredSecondDifference (dt : ℝ)
     (previous current next : State Site) : Velocity Site where
   psiDot := fun site component =>
@@ -260,6 +275,9 @@ theorem native_next_chi_imag_equation
   rw [centered_difference_native_next chi0 B dt bond previous current hdt]
   exact chi_acceleration_imag_coordinate chi0 B current bond hB site component
 
+/-- The properties of `nativeNextState` for the given data: time reversibility, agreement of its
+centered second difference with `accelerationVelocity`, and the four coordinate equations against
+`psiEulerLagrangeForce` and `chiEulerLagrangeForce`. -/
 structure NativeUpdateCertificate
     [Fintype Site] [DecidableEq Site] [Fintype Edge]
     (chi0 B dt : ℝ) (bond : Edge → Bond Site)

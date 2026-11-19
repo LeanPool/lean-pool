@@ -102,6 +102,9 @@ theorem native_repeated_site_potential_on_prepared_vacuum
   rw [hchi]
   ring
 
+/-- The site potential plus the C19 transport energy at `site` of the period-two
+`repeatedAlignedCharacterState` with `psi` amplitude `eps * amplitude` and `chi` amplitude
+`chi0`. -/
 def nativePreparedModalPotential
     (eps : ℝ) (amplitude : ℂ) (momentum : LatticeMomentum)
     (site : InfiniteCubicSite) : ℝ :=
@@ -112,6 +115,7 @@ def nativePreparedModalPotential
       ((eps : ℂ) * amplitude) (chi0 : ℂ) momentum site
 
 /-! The quadratic coefficient of the native local-plus-bond potential. -/
+/-- The scalar symbol `chi0 ^ 2 + c19TransportSymbol momentum`. -/
 def nativePsiTangentSymbol (momentum : LatticeMomentum) : ℝ :=
   chi0 ^ 2 + c19TransportSymbol momentum
 
@@ -142,9 +146,11 @@ theorem native_psi_tangent_symbol_is_exact_scalar_coefficient
 
 /-! Centered Verlet measures a mode of angular frequency `frequency` through
 `2(1-cos(dt*frequency))`, not through `(dt*frequency) ^ 2` exactly. -/
+/-- The quantity `2 * (1 - cos (dt * frequency))`. -/
 def centeredTimeNumerator (dt frequency : ℝ) : ℝ :=
   2 * (1 - Real.cos (dt * frequency))
 
+/-- The difference `centeredTimeNumerator dt frequency - (dt * frequency) ^ 2`. -/
 def centeredTimeRemainder (dt frequency : ℝ) : ℝ :=
   centeredTimeNumerator dt frequency - (dt * frequency) ^ 2
 
@@ -162,11 +168,15 @@ theorem centered_time_remainder_bound
 
 /-! Residual of a continuum Dirac frequency when inserted into the actual
 centered-time, exact-C19 scalar recurrence. -/
+/-- The residual `centeredTimeNumerator dt frequency - dt ^ 2 * nativePsiTangentSymbol momentum`
+of the centered-time scalar recurrence at the given frequency. -/
 def nativeDiracModeResidual
     (dt frequency : ℝ) (momentum : LatticeMomentum) : ℝ :=
   centeredTimeNumerator dt frequency -
     dt ^ 2 * nativePsiTangentSymbol momentum
 
+/-- The centered second-difference defect of the mode `amplitude * exp (-I * t * frequency)`
+sampled at times `-dt, 0, dt`, plus `dt ^ 2 * nativePsiTangentSymbol momentum * amplitude`. -/
 def nativeCenteredModeDefect
     (dt frequency : ℝ) (momentum : LatticeMomentum)
     (amplitude : ℂ) : ℂ :=
@@ -248,6 +258,7 @@ theorem native_dirac_mode_residual_bound
       rw [abs_mul, abs_of_nonneg (sq_nonneg dt)]
       exact add_le_add ht (mul_le_mul_of_nonneg_left hs (sq_nonneg dt))
 
+/-- The residual `nativeDiracModeResidual dt frequency momentum` divided by `dt ^ 2`. -/
 def normalizedNativeDiracModeResidual
     (dt frequency : ℝ) (momentum : LatticeMomentum) : ℝ :=
   nativeDiracModeResidual dt frequency momentum / dt ^ 2
@@ -296,6 +307,9 @@ theorem standard_c19_hamiltonian_square_is_continuum_dispersion
   simp [c19QuadraticSymbol]
   ring
 
+/-- The collected results on the prepared-vacuum potential expansion, the square of
+`standardC19Hamiltonian`, and the explicit bounds `(5/48) |dt * frequency| ^ 4` (time) and
+`40 * radius ^ 4` (space) on the centered-time mode residual. -/
 structure Dirac012Certificate : Prop where
   previousGate : Dirac011Certificate
   localMassFromAction : ∀ psiAmplitude corner,

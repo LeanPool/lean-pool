@@ -33,6 +33,8 @@ variable {Site : Type} {Edge : Type*}
 
 noncomputable section
 
+/-- The value of `lagrangian` as the state moves along the pure `psi` direction `etaPsi`,
+as a function of `eps`, with the velocity held fixed. -/
 def ExpectedPsiStateCurve
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)
@@ -40,6 +42,8 @@ def ExpectedPsiStateCurve
   lagrangian chi0 B
     (stateLine state (purePsiDirection etaPsi) eps) velocity bond
 
+/-- The value of `lagrangian` as the state moves along the pure `chi` direction `etaChi`,
+as a function of `eps`, with the velocity held fixed. -/
 def ExpectedChiStateCurve
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)
@@ -47,6 +51,8 @@ def ExpectedChiStateCurve
   lagrangian chi0 B
     (stateLine state (pureChiDirection etaChi) eps) velocity bond
 
+/-- The value of `lagrangian` as the velocity moves along the pure `psiDot` direction `etaPsi`,
+as a function of `eps`, with the state held fixed. -/
 def ExpectedPsiVelocityCurve
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)
@@ -54,6 +60,8 @@ def ExpectedPsiVelocityCurve
   lagrangian chi0 B state
     (velocityLine velocity (purePsiVelocity etaPsi) eps) bond
 
+/-- The value of `lagrangian` as the velocity moves along the pure `chiDot` direction `etaChi`,
+as a function of `eps`, with the state held fixed. -/
 def ExpectedChiVelocityCurve
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)

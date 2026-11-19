@@ -31,6 +31,8 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The time component `px S₀ + py S₁ + pz S₂` of the Pauli–Lubanski operator, where
+`Sᵢ = standardCubeSpin i`. -/
 def pauliLubanskiTime
     (px py pz : ℝ) (z : Cell4) : Cell4 :=
   fun component =>
@@ -38,6 +40,8 @@ def pauliLubanskiTime
       (py : ℂ) * standardCubeSpin 1 z component +
       (pz : ℂ) * standardCubeSpin 2 z component
 
+/-- The first spatial component `energy S₀ - py K₂ + pz K₁` of the Pauli–Lubanski operator, where
+`Sᵢ = standardCubeSpin i` and `Kᵢ = standardC19BoostGenerator i`. -/
 def pauliLubanskiX
     (energy py pz : ℝ) (z : Cell4) : Cell4 :=
   fun component =>
@@ -45,6 +49,8 @@ def pauliLubanskiX
       (py : ℂ) * standardC19BoostGenerator 2 z component +
       (pz : ℂ) * standardC19BoostGenerator 1 z component
 
+/-- The second spatial component `energy S₁ - pz K₀ + px K₂` of the Pauli–Lubanski operator,
+where `Sᵢ = standardCubeSpin i` and `Kᵢ = standardC19BoostGenerator i`. -/
 def pauliLubanskiY
     (energy pz px : ℝ) (z : Cell4) : Cell4 :=
   fun component =>
@@ -52,6 +58,8 @@ def pauliLubanskiY
       (pz : ℂ) * standardC19BoostGenerator 0 z component +
       (px : ℂ) * standardC19BoostGenerator 2 z component
 
+/-- The third spatial component `energy S₂ - px K₁ + py K₀` of the Pauli–Lubanski operator, where
+`Sᵢ = standardCubeSpin i` and `Kᵢ = standardC19BoostGenerator i`. -/
 def pauliLubanskiZ
     (energy px py : ℝ) (z : Cell4) : Cell4 :=
   fun component =>
@@ -59,6 +67,8 @@ def pauliLubanskiZ
       (px : ℂ) * standardC19BoostGenerator 1 z component +
       (py : ℂ) * standardC19BoostGenerator 0 z component
 
+/-- The Minkowski square `W₀² - W₁² - W₂² - W₃²` of the Pauli–Lubanski operator, with components
+`pauliLubanskiTime`, `pauliLubanskiX`, `pauliLubanskiY` and `pauliLubanskiZ`. -/
 def pauliLubanskiSquare
     (energy px py pz : ℝ) (z : Cell4) : Cell4 :=
   fun component =>
@@ -132,6 +142,9 @@ theorem pauli_lubanski_native_boost_spin_half
     nlinarith [hm, hscaled]
   rw [hbracket]
 
+/-- The statement that `pauliLubanskiSquare` acts as the scalar
+`-(3 / 4) * (energy ^ 2 - px ^ 2 - py ^ 2 - pz ^ 2)`, equal to `-(3 / 4) * chi0 ^ 2` on the boosted
+energy and momentum. -/
 structure Dirac027PauliLubanskiCertificate : Prop where
   previousGate : Dirac026FreeLorentzBoostCertificate
   relativisticSpinInvariant : ∀ energy px py pz z,

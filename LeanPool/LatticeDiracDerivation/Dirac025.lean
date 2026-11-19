@@ -43,12 +43,15 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The squared Euclidean length `∑ axis, momentum axis ^ 2` of a lattice momentum. -/
 def continuumMomentumMagnitudeSq (momentum : LatticeMomentum) : ℝ :=
   ∑ axis, momentum axis ^ 2
 
+/-- The Euclidean length of a lattice momentum. -/
 def continuumMomentumMagnitude (momentum : LatticeMomentum) : ℝ :=
   Real.sqrt (continuumMomentumMagnitudeSq momentum)
 
+/-- The component along `axis` of the unit vector `momentum / |momentum|`. -/
 def continuumMomentumDirection
     (momentum : LatticeMomentum) (axis : Fin 3) : ℝ :=
   momentum axis / continuumMomentumMagnitude momentum
@@ -95,6 +98,8 @@ theorem continuum_momentum_direction_unit
   field_simp [hmagnitude]
   nlinarith
 
+/-- The velocity operator along the unit momentum direction: the sum over axes of
+`continuumMomentumDirection momentum axis` times `standardC19VelocityOperator axis`. -/
 def standardC19LongitudinalVelocityOperator
     (momentum : LatticeMomentum) (z : Cell4) : Cell4 :=
   fun component =>
@@ -102,6 +107,8 @@ def standardC19LongitudinalVelocityOperator
       (continuumMomentumDirection momentum axis : ℂ) *
         standardC19VelocityOperator axis z component
 
+/-- The current of `z` along the unit momentum direction: the sum over axes of
+`continuumMomentumDirection momentum axis` times `standardC19DiracCurrent axis z`. -/
 def standardC19LongitudinalCurrent
     (momentum : LatticeMomentum) (z : Cell4) : ℝ :=
   ∑ axis,
@@ -225,10 +232,14 @@ theorem longitudinal_current_on_positive_frequency_mode
       field_simp [hmagnitude]
       rw [← hsquare]
 
+/-- The mean longitudinal velocity of `z`: `standardC19LongitudinalCurrent momentum z` divided by
+`cell4Density z`. -/
 def longitudinalVelocityMean
     (momentum : LatticeMomentum) (z : Cell4) : ℝ :=
   standardC19LongitudinalCurrent momentum z / cell4Density z
 
+/-- The second moment of the longitudinal velocity of `z`: the real pairing of `z` with `V (V z)`,
+for `V = standardC19LongitudinalVelocityOperator momentum`, divided by `cell4Density z`. -/
 def longitudinalVelocitySecondMoment
     (momentum : LatticeMomentum) (z : Cell4) : ℝ :=
   cell4RealPair z
@@ -236,11 +247,15 @@ def longitudinalVelocitySecondMoment
         (standardC19LongitudinalVelocityOperator momentum z)) /
     cell4Density z
 
+/-- The variance of the longitudinal velocity of `z`: the second moment minus the square of the
+mean. -/
 def longitudinalVelocityVariance
     (momentum : LatticeMomentum) (z : Cell4) : ℝ :=
   longitudinalVelocitySecondMoment momentum z -
     longitudinalVelocityMean momentum z ^ 2
 
+/-- The square root of `longitudinalVelocityVariance momentum z`, divided by
+`c19ContinuumSpeed`. -/
 def normalizedLongitudinalVelocityRms
     (momentum : LatticeMomentum) (z : Cell4) : ℝ :=
   Real.sqrt (longitudinalVelocityVariance momentum z) /
@@ -353,6 +368,9 @@ theorem three_four_five_clock_control
   rw [continuum_clock_ratio_is_sqrt_speed_factor, hspeed]
   norm_num
 
+/-- The collected results on the longitudinal velocity operator: it squares to
+`c19ContinuumSpeed ^ 2`, and on a positive-frequency eigenvector its normalized standard deviation
+equals `continuumTransportClockRatio momentum`. -/
 structure Dirac025VelocityClockCertificate : Prop where
   previousGate : Dirac024ProjectiveZitterSpinCertificate
   longitudinalOperatorIsHamiltonianDerived :

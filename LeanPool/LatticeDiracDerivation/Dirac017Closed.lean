@@ -34,18 +34,23 @@ open Complex
 
 /-! ## The same generators in the conventional Dirac basis -/
 
+/-- The standard-basis counterpart of `cubeIncidenceGamma axis`: `α_z`, `-α_y` or `-α_x` for
+`axis = 0, 1, 2`. -/
 def standardCubeGamma (axis : Fin 3) (z : Cell4) : Cell4 :=
   match axis with
   | 0 => standardDiracAlphaZ z
   | 1 => fun component => -standardDiracAlphaY z component
   | _ => fun component => -standardDiracAlphaX z component
 
+/-- The product `Gⱼ Gₖ` of `standardCubeGamma` operators for the cyclic pair `(j, k)` following
+`axis`: `G₁ G₂`, `G₂ G₀` or `G₀ G₁` for `axis = 0, 1, 2`. -/
 def standardCubePlaneBivector (axis : Fin 3) (z : Cell4) : Cell4 :=
   match axis with
   | 0 => standardCubeGamma 1 (standardCubeGamma 2 z)
   | 1 => standardCubeGamma 2 (standardCubeGamma 0 z)
   | _ => standardCubeGamma 0 (standardCubeGamma 1 z)
 
+/-- The operator `(1 / 2) * (-i) * standardCubePlaneBivector axis` on four-component vectors. -/
 def standardCubeSpin (axis : Fin 3) (z : Cell4) : Cell4 :=
   fun component =>
     (1 / 2 : ℂ) * (-I * standardCubePlaneBivector axis z component)
@@ -116,18 +121,24 @@ theorem cube_beta_commutes_quarter_turn
       cellFlip0, cellFlip1, cellFlip2, cellBit0, cellBit1, cellBit2] <;>
     ring
 
+/-- The first component of `(px, py, pz)` after the signed permutation attached to a quarter-turn
+about `axis`: `py`, `pz` or `px` for `axis = 0, 1, 2`. -/
 def cubeRotatedPx (axis : Fin 3) (px py pz : ℂ) : ℂ :=
   match axis with
   | 0 => py
   | 1 => pz
   | _ => px
 
+/-- The second component of `(px, py, pz)` after the signed permutation attached to a quarter-turn
+about `axis`: `-px`, `py` or `-pz` for `axis = 0, 1, 2`. -/
 def cubeRotatedPy (axis : Fin 3) (px py pz : ℂ) : ℂ :=
   match axis with
   | 0 => -px
   | 1 => py
   | _ => -pz
 
+/-- The third component of `(px, py, pz)` after the signed permutation attached to a quarter-turn
+about `axis`: `pz`, `-px` or `py` for `axis = 0, 1, 2`. -/
 def cubeRotatedPz (axis : Fin 3) (px py pz : ℂ) : ℂ :=
   match axis with
   | 0 => pz
@@ -159,6 +170,9 @@ real angle; the physical momentum rotates through the full angle while the
 spinor rotor uses the derived half-angle.
 -/
 
+/-- The first component of `(px, py, pz)` after rotation by `θ = angle` in the `(px, py)`,
+`(px, pz)` or `(py, pz)` plane for `axis = 0, 1, 2`: `cos θ px + sin θ py`, `cos θ px + sin θ pz`
+or `px`. -/
 def cubeContinuousRotatedPx
     (angle : ℝ) (axis : Fin 3) (px py pz : ℂ) : ℂ :=
   match axis with
@@ -166,6 +180,9 @@ def cubeContinuousRotatedPx
   | 1 => Real.cos angle * px + Real.sin angle * pz
   | _ => px
 
+/-- The second component of `(px, py, pz)` after rotation by `θ = angle` in the `(px, py)`,
+`(px, pz)` or `(py, pz)` plane for `axis = 0, 1, 2`: `-sin θ px + cos θ py`, `py`
+or `cos θ py - sin θ pz`. -/
 def cubeContinuousRotatedPy
     (angle : ℝ) (axis : Fin 3) (px py pz : ℂ) : ℂ :=
   match axis with
@@ -173,6 +190,9 @@ def cubeContinuousRotatedPy
   | 1 => py
   | _ => Real.cos angle * py - Real.sin angle * pz
 
+/-- The third component of `(px, py, pz)` after rotation by `θ = angle` in the `(px, py)`,
+`(px, pz)` or `(py, pz)` plane for `axis = 0, 1, 2`: `pz`, `-sin θ px + cos θ pz`
+or `sin θ py + cos θ pz`. -/
 def cubeContinuousRotatedPz
     (angle : ℝ) (axis : Fin 3) (px py pz : ℂ) : ℂ :=
   match axis with
@@ -180,6 +200,8 @@ def cubeContinuousRotatedPz
   | 1 => -Real.sin angle * px + Real.cos angle * pz
   | _ => Real.sin angle * py + Real.cos angle * pz
 
+/-- The operator `(1 - 2 i S) / √2` on four-component vectors, where `S = standardCubeSpin axis`;
+the standard-basis counterpart of `cubeQuarterTurn axis`. -/
 def standardCubeQuarterTurn (axis : Fin 3) (z : Cell4) : Cell4 :=
   fun component => (((1 / Real.sqrt 2 : ℝ) : ℂ) *
     (z component - 2 * I * standardCubeSpin axis z component))
@@ -263,6 +285,8 @@ theorem cube_quarter_turn_preserves_inner
 
 /-! ## The two-plus/two-minus component spectrum is explicit -/
 
+/-- The standard basis vector of `Cell4` with a `1` in position `basisComponent` and `0`
+elsewhere. -/
 def standardCell4Basis (basisComponent : Fin 4) : Cell4 :=
   fun component => if component = basisComponent then 1 else 0
 
@@ -303,6 +327,8 @@ theorem standard_cube_spin0_basis_spectrum :
 
 /-! ## Continuous native rotations -/
 
+/-- The operator `cos (s θ) - sin (s θ) B` on eight-corner amplitudes, where `θ = angle`,
+`s = nativeSpinScale` (which equals `1 / 2`) and `B = cubePlaneBivector axis`. -/
 def cubeContinuousTurn
     (angle : ℝ) (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   fun corner =>
@@ -504,6 +530,8 @@ theorem cube_continuous_turn_preserves_density
 
 /-! ## The quarter-turn is characterized, not merely selected -/
 
+/-- The operator `identityCoeff + planeCoeff * B` on eight-corner amplitudes, where
+`B = cubePlaneBivector axis`. -/
 def cubePlaneRotor
     (identityCoeff planeCoeff : ℝ)
     (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
@@ -511,6 +539,8 @@ def cubePlaneRotor
     (identityCoeff : ℂ) * amplitude corner +
       (planeCoeff : ℂ) * cubePlaneBivector axis amplitude corner
 
+/-- The condition `R Γ₁ = Γ₂ R` on every amplitude, where `R = cubePlaneRotor identityCoeff
+planeCoeff 0` and `Γₐ = cubeIncidenceGamma a`. -/
 def cubeAxis0QuarterTurnCovariance
     (identityCoeff planeCoeff : ℝ) : Prop :=
   ∀ amplitude : Cell8,
@@ -578,6 +608,9 @@ theorem cube_axis0_quarter_turn_covariance_iff
         cellFlip1, cellFlip2, cellBit0, cellBit1] <;>
       ring
 
+/-- The coefficient pair is admissible when `identityCoeff` is positive, the rotor
+`cubePlaneRotor identityCoeff planeCoeff 0` satisfies `cubeAxis0QuarterTurnCovariance`, and it
+preserves `cell8Density`. -/
 def admissibleCubeQuarterTurnCoefficients
     (identityCoeff planeCoeff : ℝ) : Prop :=
   0 < identityCoeff ∧
@@ -586,6 +619,7 @@ def admissibleCubeQuarterTurnCoefficients
     cell8Density (cubePlaneRotor identityCoeff planeCoeff 0 amplitude) =
       cell8Density amplitude
 
+/-- The standard basis vector of `Cell8` with a `1` at corner `basisCorner` and `0` elsewhere. -/
 def cell8CornerBasis (basisCorner : Fin 8) : Cell8 :=
   fun corner => if corner = basisCorner then 1 else 0
 
@@ -655,6 +689,8 @@ theorem exists_unique_admissible_cube_quarter_turn_coefficients :
 
 /-! ## Continuous rotations in the conventional four-component basis -/
 
+/-- The operator `cos (s θ) - 2 i sin (s θ) S` on four-component vectors, where `θ = angle`,
+`s = nativeSpinScale` and `S = standardCubeSpin axis`. -/
 def standardCubeContinuousTurn
     (angle : ℝ) (axis : Fin 3) (z : Cell4) : Cell4 :=
   fun component =>
@@ -706,6 +742,10 @@ theorem cube_continuous_turn_intertwines_plus
 
 /-! ## Strengthened representation certificate -/
 
+/-- The bundle of results of this file: intertwining of `cubeSpin`, `cubeQuarterTurn` and
+`cubeContinuousTurn` with their standard-basis counterparts, covariance of
+`interpretedCubeDiracHamiltonian`, unitarity, the `2π` sign and `4π` return of
+`cubeContinuousTurn`, and uniqueness of the quarter-turn coefficients. -/
 structure Dirac017ClosedSpinHalfRepresentationCertificate : Prop where
   priorRepresentation : Dirac017NativeSpinHalfCertificate
   standardSpinIntertwining :

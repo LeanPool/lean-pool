@@ -43,24 +43,36 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators Complex
 
+/-- A complex amplitude at each of the eight cube corners. -/
 abbrev Cell8 := Fin 8 → ℂ
+/-- Index set of the sixteen unit-cell coordinates: eight corners for `psi` (left summand) and
+eight corners for `chi` (right summand). -/
 abbrev NativeUnitCellCoordinate := Fin 8 ⊕ Fin 8
+/-- Index set of the thirty-two coordinates of two unit-cell layers, each indexed by
+`NativeUnitCellCoordinate`. -/
 abbrev NativeUnitCellTwoLayerCoordinate :=
   NativeUnitCellCoordinate ⊕ NativeUnitCellCoordinate
+/-- A pair of eight-corner amplitude vectors, the first for `psi` and the second for `chi`. -/
 abbrev NativeUnitCellAmplitudes := Cell8 × Cell8
 
+/-- Flattens a pair of eight-corner amplitudes into a function on the sixteen coordinates
+`NativeUnitCellCoordinate`. -/
 def nativeUnitCellAmplitudeCoordinates
     (amplitudes : NativeUnitCellAmplitudes) :
     NativeUnitCellCoordinate → ℂ
   | Sum.inl corner => amplitudes.1 corner
   | Sum.inr corner => amplitudes.2 corner
 
+/-- Splits a function on the sixteen coordinates `NativeUnitCellCoordinate` into its `psi` and
+`chi` eight-corner amplitudes. -/
 def nativeUnitCellCoordinatesAmplitude
     (coordinates : NativeUnitCellCoordinate → ℂ) :
     NativeUnitCellAmplitudes :=
   (fun corner => coordinates (Sum.inl corner),
     fun corner => coordinates (Sum.inr corner))
 
+/-- The equivalence between pairs of eight-corner amplitudes and functions on the sixteen
+coordinates `NativeUnitCellCoordinate`. -/
 def nativeUnitCellAmplitudeCoordinateEquiv :
     NativeUnitCellAmplitudes ≃ (NativeUnitCellCoordinate → ℂ) where
   toFun := nativeUnitCellAmplitudeCoordinates
@@ -82,35 +94,47 @@ theorem native_unit_cell_two_layer_coordinate_count :
     Fintype.card NativeUnitCellTwoLayerCoordinate = 32 := by
   decide
 
+/-- Scalar multiplication of the vector `u` in `ℂ³` by the complex number `a`. -/
 def c3ScaleComplex (a : ℂ) (u : C3) : C3 :=
   fun component => a * u component
 
+/-- The Hermitian inner product `∑ᵢ conj (u i) * v i` on `ℂ³`, conjugate-linear in `u`. -/
 def c3Inner (u v : C3) : ℂ :=
   ∑ component, star (u component) * v component
 
+/-- The cube state whose `psi` field at each corner is `psiAmplitude corner` times
+`tetraCorner corner` and whose `chi` field is `chiAmplitude corner` times `companion corner`. -/
 def alignedEightSiteState (psiAmplitude chiAmplitude : Cell8) :
     State CubeCorner where
   psi corner := c3ScaleComplex (psiAmplitude corner) (tetraCorner corner)
   chi corner := c3ScaleComplex (chiAmplitude corner) (companion corner)
 
+/-- A cube state lies in the eight-site sector if it equals `alignedEightSiteState` for some
+pair of eight-corner amplitudes. -/
 def InEightSiteSector (state : State CubeCorner) : Prop :=
   ∃ psiAmplitude chiAmplitude,
     state = alignedEightSiteState psiAmplitude chiAmplitude
 
+/-- `alignedEightSiteState` applied to the two components of an amplitude pair. -/
 def alignedEightSiteStateFromAmplitudes
     (amplitudes : NativeUnitCellAmplitudes) : State CubeCorner :=
   alignedEightSiteState amplitudes.1 amplitudes.2
 
+/-- The amplitudes of a cube state along the reference rays: at each corner, the inner products
+`c3Inner (tetraCorner corner) (psi corner)` and `c3Inner (companion corner) (chi corner)`. -/
 def recoverEightSiteAmplitudes
     (state : State CubeCorner) : NativeUnitCellAmplitudes :=
   (fun corner => c3Inner (tetraCorner corner) (state.psi corner),
     fun corner => c3Inner (companion corner) (state.chi corner))
 
+/-- The vector `eta` is orthogonal to `u` for the Hermitian inner product `c3Inner`. -/
 def ComplexNormalTo (u eta : C3) : Prop := c3Inner u eta = 0
 
+/-- At every cube corner, `eta corner` is orthogonal to `tetraCorner corner`. -/
 def PsiNormalDirection (eta : CubeCorner → C3) : Prop :=
   ∀ corner, ComplexNormalTo (tetraCorner corner) (eta corner)
 
+/-- At every cube corner, `eta corner` is orthogonal to `companion corner`. -/
 def ChiNormalDirection (eta : CubeCorner → C3) : Prop :=
   ∀ corner, ComplexNormalTo (companion corner) (eta corner)
 
@@ -439,8 +463,10 @@ theorem aligned_chi_cross_block_zero [Fintype Edge]
       ring]
   ring
 
+/-- Componentwise difference `u - v` of two vectors in `ℂ³`. -/
 def c3Sub (u v : C3) : C3 := fun component => u component - v component
 
+/-- The residual `z - (c3Inner u z) • u` of `z` after removing its component along `u`. -/
 def rayResidual (u z : C3) : C3 :=
   c3Sub z (c3ScaleComplex (c3Inner u z) u)
 
@@ -521,6 +547,7 @@ theorem density_zero_implies_c3_zero (u : C3) (h : density u = 0) :
       sq_nonneg (u 1).re, sq_nonneg (u 1).im,
       sq_nonneg (u 2).re, sq_nonneg (u 2).im]
 
+/-- The field on the cube corners equal to `z` at the corner `selected` and zero elsewhere. -/
 def singleSiteField (selected : CubeCorner) (z : C3) : CubeCorner → C3 :=
   fun site => if site = selected then z else c3Zero
 
@@ -611,9 +638,12 @@ theorem aligned_recovered_state_of_in_eight_site_sector
     alignedEightSiteStateFromAmplitudes (psiAmplitude, chiAmplitude)
   rw [recover_aligned_eight_site_amplitudes]
 
+/-- The subtype of cube states lying in the eight-site sector `InEightSiteSector`. -/
 abbrev EightSiteSectorState :=
   { state : State CubeCorner // InEightSiteSector state }
 
+/-- The equivalence between pairs of eight-corner amplitudes and states in the eight-site sector,
+given by `alignedEightSiteStateFromAmplitudes` with inverse `recoverEightSiteAmplitudes`. -/
 def nativeUnitCellAmplitudeSectorEquiv :
     NativeUnitCellAmplitudes ≃ EightSiteSectorState where
   toFun amplitudes :=
@@ -627,6 +657,8 @@ def nativeUnitCellAmplitudeSectorEquiv :
     exact aligned_recovered_state_of_in_eight_site_sector
       sectorState.1 sectorState.2
 
+/-- At each corner, the inner product with `tetraCorner corner` of the `psi` component of
+`accelerationVelocity` evaluated at the aligned state built from the two amplitudes. -/
 def psiAccelerationAmplitude [Fintype Edge]
     (chi0 B : ℝ) (psiAmplitude chiAmplitude : Cell8)
     (bond : Edge → Bond CubeCorner) : Cell8 :=
@@ -634,6 +666,8 @@ def psiAccelerationAmplitude [Fintype Edge]
     ((accelerationVelocity chi0 B
       (alignedEightSiteState psiAmplitude chiAmplitude) bond).psiDot corner)
 
+/-- At each corner, the inner product with `companion corner` of the `chi` component of
+`accelerationVelocity` evaluated at the aligned state built from the two amplitudes. -/
 def chiAccelerationAmplitude [Fintype Edge]
     (chi0 B : ℝ) (psiAmplitude chiAmplitude : Cell8)
     (bond : Edge → Bond CubeCorner) : Cell8 :=
@@ -750,30 +784,38 @@ Period-two C19 geometry.  This connects the eight-site table used by the
 sector proof to the already declared periodic C19 coordinate geometry.
 -/
 
+/-- The involution of `Fin 8` that toggles the binary digit of value `4` (`i ↦ i xor 4`). -/
 def cellFlip0 : Fin 8 → Fin 8
   | 0 => 4 | 1 => 5 | 2 => 6 | 3 => 7
   | 4 => 0 | 5 => 1 | 6 => 2 | _ => 3
 
+/-- The involution of `Fin 8` that toggles the binary digit of value `2` (`i ↦ i xor 2`). -/
 def cellFlip1 : Fin 8 → Fin 8
   | 0 => 2 | 1 => 3 | 2 => 0 | 3 => 1
   | 4 => 6 | 5 => 7 | 6 => 4 | _ => 5
 
+/-- The involution of `Fin 8` that toggles the binary digit of value `1` (`i ↦ i xor 1`). -/
 def cellFlip2 : Fin 8 → Fin 8
   | 0 => 1 | 1 => 0 | 2 => 3 | 3 => 2
   | 4 => 5 | 5 => 4 | 6 => 7 | _ => 6
 
+/-- The binary digit of value `1` of an element of `Fin 8`. -/
 def cellBit2 : Fin 8 → Nat
   | 0 | 2 | 4 | 6 => 0
   | _ => 1
 
+/-- The binary digit of value `4` of an element of `Fin 8`. -/
 def cellBit0 : Fin 8 → Nat
   | 0 | 1 | 2 | 3 => 0
   | _ => 1
 
+/-- The binary digit of value `2` of an element of `Fin 8`. -/
 def cellBit1 : Fin 8 → Nat
   | 0 | 1 | 4 | 5 => 0
   | _ => 1
 
+/-- The site of the period-two cubic lattice whose coordinates along axes `0`, `1`, `2` are the
+binary digits `cellBit0`, `cellBit1`, `cellBit2` of the corner. -/
 def cubeCornerCoordinate (corner : CubeCorner) : PeriodicCubicSite 2
   | 0 => cellBit0 corner
   | 1 => cellBit1 corner
@@ -784,6 +826,8 @@ theorem cube_corner_coordinate_injective :
   intro a b
   fin_cases a <;> fin_cases b <;> decide
 
+/-- The C19 neighbor map on the eight cube corners with period two: each direction toggles the
+binary digits of the corner along the axes on which its offset is nonzero. -/
 def cubeC19Neighbor (corner : CubeCorner)
     (direction : C19Neighbor) : CubeCorner :=
   match direction.val with
@@ -809,6 +853,7 @@ theorem cube_c19_neighbor_is_periodic_c19 (corner : CubeCorner)
   fin_cases corner <;> fin_cases direction <;> fin_cases axis <;>
     decide
 
+/-- The number of axes `axis` with `c19Coord axis direction ≠ 0`. -/
 def c19NonzeroAxisCount (direction : C19Neighbor) : Nat :=
   (Finset.univ.filter (fun axis : Fin 3 => c19Coord axis direction ≠ 0)).card
 
@@ -821,10 +866,14 @@ theorem c19_direction_has_declared_class (direction : C19Neighbor) :
     norm_num [c19Weight]
   all_goals decide
 
+/-- The C19 lattice structure on the eight cube corners with neighbor map `cubeC19Neighbor`. -/
 def cubeC19Geometry : C19Lattice CubeCorner where
   neighbor := cubeC19Neighbor
   neighbor_reverse := cube_c19_neighbor_reverse
 
+/-- The DIRAC-005 statement bundle: amplitude recovery and reconstruction for the eight-site
+sector, the coordinate counts `16` and `32`, vanishing of the `psi` and `chi` first-variation
+forces along normal directions, and preservation of the sector by `nativeNextState`. -/
 structure Dirac005Certificate [Fintype Edge]
     (chi0 B dt : ℝ) (bond : Edge → Bond CubeCorner)
     (previous current : State CubeCorner) : Prop where

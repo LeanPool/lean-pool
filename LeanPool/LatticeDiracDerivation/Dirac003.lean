@@ -36,20 +36,26 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators
 
+/-- `HasDerivAt f f' x` for a real function of a real variable, with the instance path through
+the real inner product space structure fixed explicitly. -/
 abbrev AnalyticHasDerivAt (f : ℝ → ℝ) (f' x : ℝ) : Prop :=
   @HasDerivAt ℝ inferInstance ℝ
     Real.normedAddCommGroup.toAddCommGroup
     RCLike.toInnerProductSpaceReal.toModule
     inferInstance inferInstance f f' x
 
+/-- The real inner product `∑ᵢ Re (uᵢ * conj vᵢ)` of two vectors in `C3`. -/
 def c3RealPair (u v : C3) : ℝ :=
   ∑ component, (u component * star (v component)).re
 
+/-- Componentwise addition of two vectors in `C3`. -/
 def c3Add (u v : C3) : C3 := fun component => u component + v component
 
+/-- Multiplication of a vector in `C3` by the real scalar `a`, componentwise. -/
 def c3ScaleReal (a : ℝ) (u : C3) : C3 :=
   fun component => (a : ℂ) * u component
 
+/-- The quadratic curve `u + eps • v + eps ^ 2 • q` in `C3`, with real parameter `eps`. -/
 def c3QuadraticLine (u v q : C3) (eps : ℝ) : C3 :=
   c3Add (c3Add u (c3ScaleReal eps v)) (c3ScaleReal (eps ^ 2) q)
 
@@ -89,6 +95,7 @@ theorem density_quadratic_line_hasDerivAt (u v q : C3) :
     simp only [Pi.add_apply, id_eq]
   · norm_num
 
+/-- The zero vector of `C3`. -/
 def c3Zero : C3 := fun _ => 0
 
 @[simp] theorem c3_scale_zero (a : ℝ) : c3ScaleReal a c3Zero = c3Zero := by
@@ -103,18 +110,25 @@ def c3Zero : C3 := fun _ => 0
   funext component
   simp [c3Add, c3Zero]
 
+/-- The straight line `u + eps • v` in `C3`, with real parameter `eps`. -/
 def c3Line (u v : C3) (eps : ℝ) : C3 :=
   c3Add u (c3ScaleReal eps v)
 
+/-- The state `state + eps • direction`, obtained by moving both the `psi` and `chi` fields
+along `direction` at every site. -/
 def stateLine (state direction : State Site) (eps : ℝ) : State Site where
   psi site := c3Line (state.psi site) (direction.psi site) eps
   chi site := c3Line (state.chi site) (direction.chi site) eps
 
+/-- The first-order coefficient of `wedge chi psi` at `site` along `direction`:
+`wedge δchi psi + wedge chi δpsi`. -/
 def wedgeFirstVariation (state direction : State Site) (site : Site) : C3 :=
   c3Add
     (wedge (direction.chi site) (state.psi site))
     (wedge (state.chi site) (direction.psi site))
 
+/-- The second-order coefficient `wedge δchi δpsi` of `wedge chi psi` at `site` along
+`direction`. -/
 def wedgeSecondVariation (direction : State Site) (site : Site) : C3 :=
   wedge (direction.chi site) (direction.psi site)
 
@@ -132,17 +146,22 @@ theorem wedge_state_line_exact (state direction : State Site)
       wedgeFirstVariation, wedgeSecondVariation, wedge] <;>
     ring
 
+/-- The difference of `wedge chi psi` between the target and the source site of `edge`. -/
 def bondAreaDifference (state : State Site) (edge : Bond Site) : C3 :=
   difference
     (wedge (state.chi edge.source) (state.psi edge.source))
     (wedge (state.chi edge.target) (state.psi edge.target))
 
+/-- The first-order coefficient of `bondAreaDifference` along `direction`: the target-minus-source
+difference of `wedgeFirstVariation`. -/
 def bondAreaFirstVariation (state direction : State Site)
     (edge : Bond Site) : C3 :=
   difference
     (wedgeFirstVariation state direction edge.source)
     (wedgeFirstVariation state direction edge.target)
 
+/-- The second-order coefficient of `bondAreaDifference` along `direction`: the target-minus-source
+difference of `wedgeSecondVariation`. -/
 def bondAreaSecondVariation (direction : State Site)
     (edge : Bond Site) : C3 :=
   difference
@@ -162,6 +181,9 @@ theorem bond_area_state_line_exact (state direction : State Site)
     bondAreaFirstVariation, bondAreaSecondVariation]
   ring_nf
 
+/-- The derivative at `0` of `exteriorAreaBond` along `stateLine state direction`:
+`edge.weight / chi0 ^ 2` times the real pairing of the bond area difference with its first
+variation. -/
 def exteriorAreaBondFirstVariation (chi0 : ℝ)
     (state direction : State Site) (edge : Bond Site) : ℝ :=
   edge.weight / chi0 ^ 2 *
@@ -187,6 +209,8 @@ theorem exterior_area_bond_hasDerivAt (chi0 : ℝ)
   · unfold exteriorAreaBondFirstVariation
     ring
 
+/-- The derivative at `0` of `sitePotential chi0` at `site` along `stateLine state direction`,
+written in terms of the densities `ρψ`, `ρχ` and the real pairings with the direction. -/
 def sitePotentialFirstVariation (chi0 : ℝ)
     (state direction : State Site) (site : Site) : ℝ :=
   let rhoPsi := density (state.psi site)
@@ -229,6 +253,8 @@ theorem site_potential_hasDerivAt (chi0 : ℝ)
     simp [stateLine, c3Line]
     ring
 
+/-- The first variation of `potential` along `direction`: the sum over sites of
+`sitePotentialFirstVariation` plus the sum over edges of `exteriorAreaBondFirstVariation`. -/
 def potentialFirstVariation [Fintype Site] [Fintype Edge]
     (chi0 : ℝ) (state direction : State Site)
     (bond : Edge → Bond Site) : ℝ :=
@@ -254,6 +280,8 @@ theorem potential_hasDerivAt [Fintype Site] [Fintype Edge]
     simp [potential]
   · rfl
 
+/-- The first variation of `lagrangian` with respect to the state along `direction`, namely
+`-potentialFirstVariation` (the kinetic term does not depend on the state). -/
 def lagrangianStateFirstVariation [Fintype Site] [Fintype Edge]
     (chi0 : ℝ) (state direction : State Site)
     (bond : Edge → Bond Site) : ℝ :=
@@ -274,20 +302,24 @@ theorem lagrangian_state_hasDerivAt [Fintype Site] [Fintype Edge]
     rfl
   · simp [lagrangianStateFirstVariation]
 
+/-- The state direction with `psi` component `etaPsi` and zero `chi` component. -/
 def purePsiDirection (etaPsi : Site → C3) : State Site where
   psi := etaPsi
   chi := fun _ => c3Zero
 
+/-- The state direction with zero `psi` component and `chi` component `etaChi`. -/
 def pureChiDirection (etaChi : Site → C3) : State Site where
   psi := fun _ => c3Zero
   chi := etaChi
 
+/-- The state first variation of `lagrangian` in the pure `psi` direction `etaPsi`. -/
 def psiEulerLagrangeForce [Fintype Site] [Fintype Edge]
     (chi0 : ℝ) (state : State Site) (bond : Edge → Bond Site)
     (etaPsi : Site → C3) : ℝ :=
   lagrangianStateFirstVariation chi0 state
     (purePsiDirection etaPsi) bond
 
+/-- The state first variation of `lagrangian` in the pure `chi` direction `etaChi`. -/
 def chiEulerLagrangeForce [Fintype Site] [Fintype Edge]
     (chi0 : ℝ) (state : State Site) (bond : Edge → Bond Site)
     (etaChi : Site → C3) : ℝ :=
@@ -316,23 +348,30 @@ theorem chi_force_is_full_action_variation
   exact lagrangian_state_hasDerivAt chi0 B state
     (pureChiDirection etaChi) velocity bond
 
+/-- The sum over sites of the real pairing of `velocity.psiDot` with the test field `etaPsi`. -/
 def psiMomentumPair [Fintype Site]
     (velocity : Velocity Site) (etaPsi : Site → C3) : ℝ :=
   ∑ site, c3RealPair (velocity.psiDot site) (etaPsi site)
 
+/-- `B` times the sum over sites of the real pairing of `velocity.chiDot` with the test field
+`etaChi`. -/
 def chiMomentumPair [Fintype Site]
     (B : ℝ) (velocity : Velocity Site) (etaChi : Site → C3) : ℝ :=
   B * ∑ site, c3RealPair (velocity.chiDot site) (etaChi site)
 
+/-- The velocity `velocity + eps • direction`, moving both velocity components along
+`direction` at every site. -/
 def velocityLine (velocity direction : Velocity Site) (eps : ℝ) :
     Velocity Site where
   psiDot site := c3Line (velocity.psiDot site) (direction.psiDot site) eps
   chiDot site := c3Line (velocity.chiDot site) (direction.chiDot site) eps
 
+/-- The velocity direction with `psiDot` component `etaPsi` and zero `chiDot` component. -/
 def purePsiVelocity (etaPsi : Site → C3) : Velocity Site where
   psiDot := etaPsi
   chiDot := fun _ => c3Zero
 
+/-- The velocity direction with zero `psiDot` component and `chiDot` component `etaChi`. -/
 def pureChiVelocity (etaChi : Site → C3) : Velocity Site where
   psiDot := fun _ => c3Zero
   chiDot := etaChi
@@ -344,6 +383,8 @@ theorem density_line_hasDerivAt (u v : C3) :
   funext eps
   simp [c3Line, c3QuadraticLine]
 
+/-- The first variation of `kinetic B` along the velocity `direction`: `psiMomentumPair` plus
+`chiMomentumPair B` evaluated on the components of `direction`. -/
 def kineticVelocityFirstVariation [Fintype Site]
     (B : ℝ) (velocity direction : Velocity Site) : ℝ :=
   psiMomentumPair velocity direction.psiDot +
@@ -413,10 +454,16 @@ theorem chi_momentum_is_full_action_velocity_variation
   simp [kineticVelocityFirstVariation, pureChiVelocity,
     psiMomentumPair, chiMomentumPair, c3RealPair, c3Zero]
 
+/-- A time-dependent pair consisting of a state curve and a velocity curve, with no
+compatibility between them imposed. -/
 structure NativeTrajectory (Site : Type) where
+  /-- The state at time `t`. -/
   state : ℝ → State Site
+  /-- The velocity at time `t`. -/
   velocity : ℝ → Velocity Site
 
+/-- The `psi` Euler-Lagrange equation at time `t`: for every test field `etaPsi`, the time
+derivative of `psiMomentumPair` equals `psiEulerLagrangeForce` at the state at time `t`. -/
 def PsiEulerLagrangeEquationAt [Fintype Site] [Fintype Edge]
     (chi0 : ℝ) (bond : Edge → Bond Site)
     (trajectory : NativeTrajectory Site) (t : ℝ) : Prop :=
@@ -425,6 +472,8 @@ def PsiEulerLagrangeEquationAt [Fintype Site] [Fintype Edge]
       (fun tau => psiMomentumPair (trajectory.velocity tau) etaPsi)
       (psiEulerLagrangeForce chi0 (trajectory.state t) bond etaPsi) t
 
+/-- The `chi` Euler-Lagrange equation at time `t`: for every test field `etaChi`, the time
+derivative of `chiMomentumPair B` equals `chiEulerLagrangeForce` at the state at time `t`. -/
 def ChiEulerLagrangeEquationAt [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
     (trajectory : NativeTrajectory Site) (t : ℝ) : Prop :=
@@ -433,6 +482,8 @@ def ChiEulerLagrangeEquationAt [Fintype Site] [Fintype Edge]
       (fun tau => chiMomentumPair B (trajectory.velocity tau) etaChi)
       (chiEulerLagrangeForce chi0 (trajectory.state t) bond etaChi) t
 
+/-- The conjunction of the `psi` and `chi` Euler-Lagrange equations for `trajectory` at
+time `t`. -/
 structure TwoEulerLagrangeEquationFamiliesAt
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
@@ -450,14 +501,18 @@ Euler--Lagrange equation.
 
 open MeasureTheory SchwartzMap
 
+/-- The integral `∫ (test t * force t + test' t * momentum t) dt` of Schwartz functions
+on `ℝ`. -/
 def integratedFirstVariation
     (force momentum test : SchwartzMap ℝ ℝ) : ℝ :=
   ∫ t : ℝ, test t * force t + deriv test t * momentum t
 
+/-- `integratedFirstVariation force momentum test` vanishes for every Schwartz test function. -/
 def IsIntegratedActionStationary
     (force momentum : SchwartzMap ℝ ℝ) : Prop :=
   ∀ test : SchwartzMap ℝ ℝ, integratedFirstVariation force momentum test = 0
 
+/-- The function `t ↦ force t - momentum' t`. -/
 def eulerLagrangeResidual
     (force momentum : SchwartzMap ℝ ℝ) : ℝ → ℝ :=
   fun t => force t - deriv momentum t
@@ -523,9 +578,11 @@ theorem integrated_stationarity_forces_euler_lagrange
     MeasureTheory.Measure.eq_of_ae_eq hzero_ae hcontinuous continuous_const
   exact fun t => congrFun hfun t
 
+/-- Multiplication of a `C3`-valued field by the real scalar `a` at every site. -/
 def scaleC3Field (a : ℝ) (eta : Site → C3) : Site → C3 :=
   fun site => c3ScaleReal a (eta site)
 
+/-- Multiplication of both components of a state direction by the real scalar `a`. -/
 def scaleStateDirection (a : ℝ) (direction : State Site) : State Site where
   psi := scaleC3Field a direction.psi
   chi := scaleC3Field a direction.chi
@@ -720,28 +777,38 @@ theorem chi_test_variation_is_lagrangian_derivative
       chiMomentumPair B velocity (scaleC3Field gDot etaChi)
   rw [chi_force_scale, chi_momentum_scale]
 
+/-- Schwartz functions on `ℝ` that agree pointwise in time with `psiEulerLagrangeForce` and
+`psiMomentumPair` along `trajectory` for the fixed test field `etaPsi`. -/
 structure PsiProjectedActionData
     [Fintype Site] [Fintype Edge]
     (chi0 : ℝ) (bond : Edge → Bond Site)
     (trajectory : NativeTrajectory Site) (etaPsi : Site → C3) where
+  /-- The Schwartz function equal to `psiEulerLagrangeForce` along the trajectory. -/
   force : SchwartzMap ℝ ℝ
+  /-- The Schwartz function equal to `psiMomentumPair` along the trajectory. -/
   momentum : SchwartzMap ℝ ℝ
   force_eq : ∀ t : ℝ,
     force t = psiEulerLagrangeForce chi0 (trajectory.state t) bond etaPsi
   momentum_eq : ∀ t : ℝ,
     momentum t = psiMomentumPair (trajectory.velocity t) etaPsi
 
+/-- Schwartz functions on `ℝ` that agree pointwise in time with `chiEulerLagrangeForce` and
+`chiMomentumPair B` along `trajectory` for the fixed test field `etaChi`. -/
 structure ChiProjectedActionData
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
     (trajectory : NativeTrajectory Site) (etaChi : Site → C3) where
+  /-- The Schwartz function equal to `chiEulerLagrangeForce` along the trajectory. -/
   force : SchwartzMap ℝ ℝ
+  /-- The Schwartz function equal to `chiMomentumPair B` along the trajectory. -/
   momentum : SchwartzMap ℝ ℝ
   force_eq : ∀ t : ℝ,
     force t = chiEulerLagrangeForce chi0 (trajectory.state t) bond etaChi
   momentum_eq : ∀ t : ℝ,
     momentum t = chiMomentumPair B (trajectory.velocity t) etaChi
 
+/-- The real and imaginary parts of every component of `psi` and `chi` along `trajectory` have
+time derivatives given by the corresponding components of `psiDot` and `chiDot`. -/
 def TrajectoryVelocityCompatible
     (trajectory : NativeTrajectory Site) : Prop :=
   (∀ (site : Site) (component : Fin 3) (t : ℝ),
@@ -842,6 +909,8 @@ theorem dirac003_two_equation_families_from_stationary_action
       chi0 B bond trajectory etaChi (chiData etaChi)
       (hChiStationary etaChi) t
 
+/-- The change in `lagrangian` at time `t` when the state moves by `eps • test t • etaPsi` in
+`psi` and the velocity moves by `eps • test' t • etaPsi` in `psiDot`. -/
 def psiActionIncrementIntegrand
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
@@ -855,6 +924,8 @@ def psiActionIncrementIntegrand
         (purePsiVelocity velocityDirection) eps) bond -
     lagrangian chi0 B (trajectory.state t) (trajectory.velocity t) bond
 
+/-- The change in `lagrangian` at time `t` when the state moves by `eps • test t • etaChi` in
+`chi` and the velocity moves by `eps • test' t • etaChi` in `chiDot`. -/
 def chiActionIncrementIntegrand
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
@@ -868,6 +939,7 @@ def chiActionIncrementIntegrand
         (pureChiVelocity velocityDirection) eps) bond -
     lagrangian chi0 B (trajectory.state t) (trajectory.velocity t) bond
 
+/-- The time integral of `psiActionIncrementIntegrand`, as a function of `eps`. -/
 def psiActionIncrement
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
@@ -876,6 +948,7 @@ def psiActionIncrement
   ∫ t : ℝ,
     psiActionIncrementIntegrand chi0 B bond trajectory etaPsi test eps t
 
+/-- The time integral of `chiActionIncrementIntegrand`, as a function of `eps`. -/
 def chiActionIncrement
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
@@ -884,16 +957,22 @@ def chiActionIncrement
   ∫ t : ℝ,
     chiActionIncrementIntegrand chi0 B bond trajectory etaChi test eps t
 
+/-- Hypotheses for differentiating `eps ↦ ∫ F eps t dt` under the integral sign at `0`:
+a neighborhood of `0`, a.e. strong measurability of `F eps` near `0`, and an integrable bound
+serving as a Lipschitz constant in `eps` on the neighborhood for almost every `t`. -/
 structure IntegralVariationControl (F : ℝ → ℝ → ℝ) where
+  /-- A neighborhood of `0` in the parameter `eps`. -/
   neighborhood : Set ℝ
   neighborhood_mem : neighborhood ∈ nhds 0
   measurable_near_zero : ∀ᶠ eps in nhds 0,
     AEStronglyMeasurable (F eps)
+  /-- An integrable function of `t` bounding the Lipschitz constant of `eps ↦ F eps t`. -/
   bound : ℝ → ℝ
   bound_integrable : Integrable bound
   locally_lipschitz : ∀ᵐ t : ℝ,
     LipschitzOnWith (Real.nnabs (bound t)) (fun eps => F eps t) neighborhood
 
+/-- For every Schwartz test function, `psiActionIncrement` has derivative `0` at `eps = 0`. -/
 def HasStationaryPsiAction
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
@@ -902,6 +981,7 @@ def HasStationaryPsiAction
     AnalyticHasDerivAt
       (psiActionIncrement chi0 B bond trajectory etaPsi test) 0 0
 
+/-- For every Schwartz test function, `chiActionIncrement` has derivative `0` at `eps = 0`. -/
 def HasStationaryChiAction
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (bond : Edge → Bond Site)
@@ -1096,6 +1176,9 @@ field families.  The older global weak-form theorem above remains a valid
 auxiliary theorem, but is not the production gate.
 -/
 
+/-- At a fixed `state` and `velocity`, the derivatives at `0` of `lagrangian` along pure `psi`
+and pure `chi` state directions, pure `psiDot` and `chiDot` velocity directions, and arbitrary
+combined directions are the corresponding force, momentum and first-variation terms. -/
 structure LocalTwoFieldVariationCertificate
     [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)

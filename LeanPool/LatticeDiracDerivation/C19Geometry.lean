@@ -28,8 +28,12 @@ namespace LeanDirac
 
 variable {Site : Type} {Edge : Type*}
 
+/-- The index type of the eighteen neighbors of a C19 stencil: indices `0`–`5` are the six face
+neighbors and `6`–`17` are the twelve edge neighbors. -/
 abbrev C19Neighbor := Fin 18
 
+/-- The integer coordinate along `axis` of the offset vector of `neighbor`: each face neighbor
+has one entry `±1`, each edge neighbor has two entries `±1`, and all other entries are `0`. -/
 def c19Coord (axis : Fin 3) (neighbor : C19Neighbor) : ℤ :=
   match neighbor.val, axis.val with
   | 0, 0 => 1 | 1, 0 => -1 | 2, 1 => 1 | 3, 1 => -1
@@ -48,9 +52,13 @@ def c19Coord (axis : Fin 3) (neighbor : C19Neighbor) : ℤ :=
   | 17, 1 => 1 | 17, 2 => 1
   | _, _ => 0
 
+/-- The bond weight of a C19 neighbor: `2` for the six face neighbors (indices below `6`) and
+`1` for the twelve edge neighbors. -/
 def c19Weight (neighbor : C19Neighbor) : ℝ :=
   if neighbor.val < 6 then 2 else 1
 
+/-- The opposite C19 neighbor, whose offset vector is the negative of the offset of
+`neighbor`. -/
 def c19Reverse (neighbor : C19Neighbor) : C19Neighbor :=
   ⟨match neighbor.val with
     | 0 => 1 | 1 => 0 | 2 => 3 | 3 => 2 | 4 => 5 | 5 => 4
@@ -78,13 +86,19 @@ theorem c19_weight_positive (neighbor : C19Neighbor) :
   unfold c19Weight
   split <;> norm_num
 
+/-- A C19 lattice on `Site`: a neighbor map for each of the eighteen C19 directions such that
+stepping in a direction and then in the reverse direction returns to the starting site. -/
 structure C19Lattice (Site : Type) where
+  /-- The site reached from `site` by stepping in the given C19 direction. -/
   neighbor : Site → C19Neighbor → Site
   neighbor_reverse : ∀ site direction,
     neighbor (neighbor site direction) (c19Reverse direction) = site
 
+/-- A directed C19 edge, given by its source site and the C19 direction it points in. -/
 abbrev C19Edge (Site : Type) := Site × C19Neighbor
 
+/-- The weighted bond of a directed C19 edge: from the source site to its neighbor in the edge's
+direction, with weight `c19Weight` of that direction. -/
 def c19Bond (geometry : C19Lattice Site) (edge : C19Edge Site) : Bond Site where
   source := edge.1
   target := geometry.neighbor edge.1 edge.2
@@ -95,6 +109,8 @@ theorem c19_bond_weight_positive (geometry : C19Lattice Site)
     0 < (c19Bond geometry edge).weight :=
   c19_weight_positive edge.2
 
+/-- The reversed directed C19 edge, starting at the target of `edge` and pointing in the reverse
+direction. -/
 def reverseC19Edge (geometry : C19Lattice Site)
     (edge : C19Edge Site) : C19Edge Site :=
   (geometry.neighbor edge.1 edge.2, c19Reverse edge.2)
@@ -117,8 +133,11 @@ theorem c19_reverse_bond_weight (geometry : C19Lattice Site)
       (c19Bond geometry edge).weight := by
   exact c19_reverse_weight edge.2
 
+/-- A site of the periodic cubic lattice of side `L`, given by three coordinates in `ZMod L`. -/
 abbrev PeriodicCubicSite (L : ℕ) := Fin 3 → ZMod L
 
+/-- The neighbor of `site` on the periodic cubic lattice of side `L`, obtained by adding the C19
+offset vector of `neighbor` coordinatewise modulo `L`. -/
 def periodicC19Neighbor (L : ℕ) (site : PeriodicCubicSite L)
     (neighbor : C19Neighbor) : PeriodicCubicSite L :=
   fun axis => site axis + (c19Coord axis neighbor : ℤ)
@@ -130,6 +149,8 @@ theorem periodic_c19_neighbor_reverse (L : ℕ)
   funext axis
   simp [periodicC19Neighbor, c19_reverse_coord]
 
+/-- The C19 lattice structure on the periodic cubic lattice of side `L`, with neighbors given by
+`periodicC19Neighbor`. -/
 def periodicC19Geometry (L : ℕ) : C19Lattice (PeriodicCubicSite L) where
   neighbor := periodicC19Neighbor L
   neighbor_reverse := periodic_c19_neighbor_reverse L

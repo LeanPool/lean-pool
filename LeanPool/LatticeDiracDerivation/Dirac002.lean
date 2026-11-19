@@ -60,6 +60,8 @@ theorem dirac002_positive_periodic_c19_two_field_action
   dirac002_positive_c19_two_field_action
     chi0 B state velocity (periodicC19Geometry L) hchi hB
 
+/-- At every corner `wedge (tetraCorner corner) (companion corner) = unitArea`, and the
+`faceProduct` around each of the six faces of the cube equals `-1/9`. -/
 def PreparedCubeGeometry : Prop :=
     (∀ corner : CubeCorner,
       wedge (tetraCorner corner) (companion corner) = unitArea) ∧
@@ -83,6 +85,9 @@ positivity on the period-two C19 lattice and the complete prepared cube
 geometry.
 -/
 
+/-- The DIRAC-002 statement bundle: `c19Hamiltonian` with constants `chi0 = 19` and
+`chiKineticNormalization = 1197` is nonnegative on the period-two C19 lattice, and
+`PreparedCubeGeometry` holds. -/
 structure Dirac002Certificate : Prop where
   positivePeriodicAction : ∀
       (state : State (PeriodicCubicSite 2))

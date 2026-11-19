@@ -46,6 +46,8 @@ noncomputable section
 /-! The phase velocity seen along one coordinate direction.  This is defined
 only as an algebraic value here; the reciprocity theorem below requires the
 selected momentum component to be nonzero. -/
+/-- The phase velocity along `axis`, the quotient of `continuumModeFrequency momentum` by the
+momentum component `momentum axis`. -/
 def continuumDirectionalPhaseVelocity
     (momentum : LatticeMomentum) (axis : Fin 3) : ℝ :=
   continuumModeFrequency momentum / momentum axis
@@ -53,6 +55,8 @@ def continuumDirectionalPhaseVelocity
 /-! A one-direction slice of the continuum plane-wave phase `p*x - E*t`.
 This gives the phase-velocity definition an operational test: moving at that
 speed must keep the phase fixed. -/
+/-- The plane-wave phase `p * x - E * t` restricted to one coordinate direction, with
+`p = momentum axis`, `x = position`, `t = time` and `E = continuumModeFrequency momentum`. -/
 def continuumDirectionalPlanePhase
     (momentum : LatticeMomentum) (axis : Fin 3)
     (position time : ℝ) : ℝ :=
@@ -69,12 +73,16 @@ theorem directional_phase_velocity_keeps_plane_phase_fixed
 
 /-! Rate of the plane-wave phase along the packet center `x(t) = v t`, where
 `v` is the current-derived transport velocity from DIRAC-013/019. -/
+/-- The rate `E - p · v` of the plane-wave phase along the moving center, where
+`E = continuumModeFrequency momentum` and `v = continuumTransportVelocity momentum`. -/
 def continuumTransportPhaseRate (momentum : LatticeMomentum) : ℝ :=
   continuumModeFrequency momentum -
     ∑ axis, momentum axis * continuumTransportVelocity momentum axis
 
 /-! The complete three-direction plane-wave phase evaluated on the packet
 center moving with the independently derived transport velocity. -/
+/-- The three-dimensional plane-wave phase `p · x - E * t` evaluated at `x = v * time`, where
+`v = continuumTransportVelocity momentum` and `E = continuumModeFrequency momentum`. -/
 def continuumPlanePhaseAlongTransport
     (momentum : LatticeMomentum) (time : ℝ) : ℝ :=
   (∑ axis,
@@ -91,12 +99,14 @@ theorem plane_phase_along_transport_is_accumulated_clock
 
 /-! Dimensionless clock-rate ratio, derived from the phase accumulated along
 the packet center and normalized only by the action-selected rest clock. -/
+/-- The ratio of `continuumTransportPhaseRate momentum` to `nativeRestAngularFrequency`. -/
 def continuumTransportClockRatio (momentum : LatticeMomentum) : ℝ :=
   continuumTransportPhaseRate momentum / nativeRestAngularFrequency
 
 /-! Dimensionless energy ratio relative to the same action-selected rest
 frequency.  The theorem below proves that it is reciprocal to the clock ratio;
 that reciprocity is not assumed in either definition. -/
+/-- The ratio of `continuumModeFrequency momentum` to `nativeRestAngularFrequency`. -/
 def continuumEnergyRatio (momentum : LatticeMomentum) : ℝ :=
   continuumModeFrequency momentum / nativeRestAngularFrequency
 
@@ -211,6 +221,9 @@ theorem zitter_scale_lock_is_emergent_speed :
       c19ContinuumSpeed :=
   native_zitter_amplitude_times_frequency
 
+/-- The collected phase identities: group and phase velocities multiply to
+`c19ContinuumSpeed ^ 2`, the phase rate along the moving center is `chi0 ^ 2 / E`, the energy and
+clock ratios are reciprocal, and the clock ratio is `√(1 - |v| ^ 2 / c19ContinuumSpeed ^ 2)`. -/
 structure Dirac023PhaseHarmonyCertificate : Prop where
   previousGate : Dirac022ZitterbewegungCertificate
   phaseVelocityHasOperationalMeaning :

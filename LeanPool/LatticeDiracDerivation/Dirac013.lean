@@ -44,15 +44,22 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators Complex
 
+/-- The real part of `star source * target`, that is, the real inner product of two complex numbers
+viewed as vectors in `ℝ²`. -/
 def scalarRealPair (source target : ℂ) : ℝ :=
   (star source * target).re
 
+/-- The imaginary part of `star source * target`. -/
 def scalarPhasePair (source target : ℂ) : ℝ :=
   (star source * target).im
 
+/-- The first-order phase rotation `value + eps * I * value` of the complex number `value` by the
+real parameter `eps`. -/
 def infinitesimalPhaseLine (eps : ℝ) (value : ℂ) : ℂ :=
   value + (eps : ℂ) * Complex.I * value
 
+/-- The energy `weight / 2 * Complex.normSq (source - target)` of a weighted bond between two
+complex amplitudes. -/
 def preparedTangentBondEnergy (weight : ℝ) (source target : ℂ) : ℝ :=
   weight / 2 * Complex.normSq (source - target)
 
@@ -100,6 +107,8 @@ theorem prepared_bond_local_phase_expansion
     scalarPhasePair, Complex.normSq, Complex.mul_re, Complex.mul_im]
   ring
 
+/-- The outward current `-2 * weight * scalarPhasePair source target` along a weighted bond from
+`source` to `target`. -/
 def nativeOutwardBondCurrent (weight : ℝ) (source target : ℂ) : ℝ :=
   -2 * weight * scalarPhasePair source target
 
@@ -110,10 +119,14 @@ theorem native_outward_current_reverses
   simp [nativeOutwardBondCurrent, scalarPhasePair, Complex.mul_im]
   ring
 
+/-- The phase density `scalarPhasePair position velocity` of a complex position and velocity. -/
 def nativePhaseDensity (position velocity : ℂ) : ℝ :=
   scalarPhasePair position velocity
 
-def scalarTangentAcceleration [Fintype Site]
+/-- The acceleration of the complex field `position` at `site` of a C19 lattice:
+`-massSq * position site` minus twice the `c19Weight`-weighted sum of the differences between
+`position site` and its neighbours. -/
+def scalarTangentAcceleration
     (massSq : ℝ) (geometry : C19Lattice Site)
     (position : Site → ℂ) (site : Site) : ℂ :=
   -(massSq : ℂ) * position site -
@@ -121,7 +134,9 @@ def scalarTangentAcceleration [Fintype Site]
       (c19Weight direction : ℂ) *
         (position site - position (geometry.neighbor site direction))
 
-def nativeOutwardCurrentDivergence [Fintype Site]
+/-- The sum over the C19 neighbour directions of the outward bond currents, with weights
+`c19Weight`, from `site` to its neighbours. -/
+def nativeOutwardCurrentDivergence
     (geometry : C19Lattice Site) (position : Site → ℂ) (site : Site) : ℝ :=
   ∑ direction : C19Neighbor,
     nativeOutwardBondCurrent (c19Weight direction)
@@ -130,7 +145,10 @@ def nativeOutwardCurrentDivergence [Fintype Site]
 /-! This is exactly the part of the full tangent potential that depends on
 one site: the local quadratic term plus both appearances of every adjacent
 directed bond.  It is not a new energy. -/
-def scalarTangentLocalPotential [Fintype Site]
+/-- The part of the scalar potential that depends on `site`:
+`massSq / 2 * Complex.normSq (position site)` plus twice the `preparedTangentBondEnergy` of each C19
+bond at `site`. -/
+def scalarTangentLocalPotential
     (massSq : ℝ) (geometry : C19Lattice Site)
     (position : Site → ℂ) (site : Site) : ℝ :=
   massSq / 2 * Complex.normSq (position site) +
@@ -138,7 +156,9 @@ def scalarTangentLocalPotential [Fintype Site]
       2 * preparedTangentBondEnergy (c19Weight direction)
         (position site) (position (geometry.neighbor site direction))
 
-def scalarTangentLocalPhasePotential [Fintype Site]
+/-- The local potential `scalarTangentLocalPotential` with the value at `site` replaced by its
+first-order phase rotation `infinitesimalPhaseLine eps (position site)`. -/
+def scalarTangentLocalPhasePotential
     (massSq eps : ℝ) (geometry : C19Lattice Site)
     (position : Site → ℂ) (site : Site) : ℝ :=
   massSq / 2 * Complex.normSq
@@ -158,7 +178,7 @@ theorem infinitesimal_phase_line_normSq
 
 /-! The coefficient linear in the site's phase change is exactly the outward
 bond-current divergence. This is the explicit action-to-current bridge. -/
-theorem scalar_tangent_local_phase_variation_from_action [Fintype Site]
+theorem scalar_tangent_local_phase_variation_from_action
     (massSq eps : ℝ) (geometry : C19Lattice Site)
     (position : Site → ℂ) (site : Site) :
     scalarTangentLocalPhasePotential massSq eps geometry position site =
@@ -236,6 +256,8 @@ theorem scalar_tangent_local_phase_variation_from_action [Fintype Site]
 
 /-! This is the time derivative of the native phase density when position,
 velocity, and acceleration are evaluated at one instant. -/
+/-- The derivative `scalarPhasePair velocity velocity + scalarPhasePair position acceleration` of
+the phase density, given position, velocity and acceleration at one instant. -/
 def nativePhaseDensityDerivative
     (position velocity acceleration : ℂ) : ℝ :=
   scalarPhasePair velocity velocity + scalarPhasePair position acceleration
@@ -245,7 +267,7 @@ theorem scalar_phase_pair_self_zero (value : ℂ) :
   simp [scalarPhasePair, Complex.mul_im]
   ring
 
-theorem native_tangent_local_continuity [Fintype Site]
+theorem native_tangent_local_continuity
     (massSq : ℝ) (geometry : C19Lattice Site)
     (position velocity : Site → ℂ) (site : Site) :
     nativePhaseDensityDerivative (position site) (velocity site)
@@ -268,12 +290,17 @@ theorem native_tangent_local_continuity [Fintype Site]
 /-! Four-component density and current are introduced only after the native
 continuity law.  They are explicit readouts of the standard basis already
 intertwined with both cubical copies in DIRAC-010/011. -/
+/-- The squared norm `∑ i, Complex.normSq (z i)` of a four-component vector. -/
 def cell4Density (z : Cell4) : ℝ :=
   ∑ component, Complex.normSq (z component)
 
+/-- The real inner product `∑ i, scalarRealPair (z i) (w i)` of two four-component vectors. -/
 def cell4RealPair (z w : Cell4) : ℝ :=
   ∑ component, scalarRealPair (z component) (w component)
 
+/-- The velocity operator along `axis` on four-component vectors: `c19ContinuumSpeed` times
+`standardDiracAlphaZ`, `-standardDiracAlphaY` or `-standardDiracAlphaX` for the axes `0`, `1` and
+`2` respectively. -/
 def standardC19VelocityOperator
     (axis : Fin 3) (z : Cell4) : Cell4 :=
   match axis with
@@ -284,10 +311,14 @@ def standardC19VelocityOperator
   | _ => fun component =>
       -(c19ContinuumSpeed : ℂ) * standardDiracAlphaX z component
 
+/-- The current `cell4RealPair z (standardC19VelocityOperator axis z)` of the four-component vector
+`z` along `axis`. -/
 def standardC19DiracCurrent
     (axis : Fin 3) (z : Cell4) : ℝ :=
   cell4RealPair z (standardC19VelocityOperator axis z)
 
+/-- The lattice momentum obtained from `momentum` by adding `delta` to its component along
+`axis`. -/
 def shiftLatticeMomentum
     (axis : Fin 3) (delta : ℝ) (momentum : LatticeMomentum) :
     LatticeMomentum :=
@@ -422,6 +453,8 @@ theorem positive_frequency_dirac_current_is_group_velocity
 /-! The vector first moment of the exact C19 bond flow.  The factor one half
 relative to the directed-bond sum avoids counting both orientations of every
 physical bond. -/
+/-- The sum over the C19 directions of
+`c19Weight direction * c19Coord axis direction * Real.sin (c19PhaseAngle momentum direction)`. -/
 def c19FluxSymbol (axis : Fin 3) (momentum : LatticeMomentum) : ℝ :=
   ∑ direction : C19Neighbor,
     c19Weight direction * (c19Coord axis direction : ℝ) *
@@ -528,6 +561,8 @@ theorem prepared_plane_wave_bond_current
     Complex.sin_ofReal_re]
   ring
 
+/-- The phase density of `amplitude` with velocity `-I * energy * amplitude`, multiplied by `-2`; it
+equals `2 * energy * Complex.normSq amplitude`. -/
 def nativePositiveFrequencyDensity
     (energy : ℝ) (amplitude : ℂ) : ℝ :=
   -2 * nativePhaseDensity amplitude
@@ -541,6 +576,8 @@ theorem native_positive_frequency_density
     scalarPhasePair, Complex.normSq, Complex.mul_re, Complex.mul_im]
   ring
 
+/-- The flux `2 * c19FluxSymbol axis momentum * Complex.normSq amplitude` along `axis`; it does not
+depend on the energy argument. -/
 def nativePositiveFrequencyFlux
     (_energy : ℝ) (axis : Fin 3) (momentum : LatticeMomentum)
     (amplitude : ℂ) : ℝ :=
@@ -556,15 +593,20 @@ theorem native_positive_frequency_flux_over_density
   unfold nativePositiveFrequencyFlux
   field_simp
 
+/-- The four-component vector `z` divided componentwise by `Real.sqrt (2 * energy)`. -/
 def normalizedPositiveFrequencyAmplitude
     (energy : ℝ) (z : Cell4) : Cell4 :=
   fun component => z component / (Real.sqrt (2 * energy) : ℂ)
 
+/-- The sum over the four components of `nativePositiveFrequencyDensity energy` applied to the
+normalized vector `normalizedPositiveFrequencyAmplitude energy z`. -/
 def nativeCell4PositiveDensity (energy : ℝ) (z : Cell4) : ℝ :=
   ∑ component,
     nativePositiveFrequencyDensity energy
       (normalizedPositiveFrequencyAmplitude energy z component)
 
+/-- The sum over the four components of `nativePositiveFrequencyFlux energy axis momentum` applied
+to the normalized vector `normalizedPositiveFrequencyAmplitude energy z`. -/
 def nativeCell4PositiveFlux
     (energy : ℝ) (axis : Fin 3) (momentum : LatticeMomentum)
     (z : Cell4) : ℝ :=
@@ -660,6 +702,7 @@ intertwine the native operator with the conventional four-component basis.
 Each unnormalized embedding stores every four-component entry at two corners,
 so its native eight-corner norm is exactly twice the Cell4 norm.  This factor
 is exposed rather than hidden in a new state convention. -/
+/-- The squared norm `∑ corner, Complex.normSq (z corner)` of an eight-corner amplitude. -/
 def cell8Density (z : Cell8) : ℝ :=
   ∑ corner, Complex.normSq (z corner)
 
@@ -699,6 +742,11 @@ theorem cube_dirac_embed_plus_density (z : Cell4) :
   unfold cubeDiracEmbedPlus
   rw [cube_embed_plus_density, plus_cube_basis_preserves_density]
 
+/-- The results of this file collected in one proposition, together with
+`Dirac012CompleteCertificate`: the bond energy and bond current identities, the local phase
+variation and continuity laws, the positive-frequency density and flux normalizations, the momentum
+response of the Hamiltonian, the continuum current limit, and the factor `2` in the density of both
+cubical embeddings. -/
 structure Dirac013Certificate : Prop where
   previousGate : Dirac012CompleteCertificate
   restrictedBondFromAction : ∀ weight source target,
@@ -717,7 +765,7 @@ structure Dirac013Certificate : Prop where
   reverseBondLaw : ∀ weight source target,
     nativeOutwardBondCurrent weight target source =
       -nativeOutwardBondCurrent weight source target
-  localPhaseVariationFromAction : ∀ {Site : Type} [Fintype Site]
+  localPhaseVariationFromAction : ∀ {Site : Type}
       (massSq eps : ℝ) (geometry : C19Lattice Site)
       (position : Site → ℂ) (site : Site),
     scalarTangentLocalPhasePotential massSq eps geometry position site =
@@ -726,7 +774,7 @@ structure Dirac013Certificate : Prop where
         eps ^ 2 * (massSq / 2 +
           ∑ direction : C19Neighbor, c19Weight direction) *
             Complex.normSq (position site)
-  exactLocalContinuity : ∀ {Site : Type} [Fintype Site]
+  exactLocalContinuity : ∀ {Site : Type}
       (massSq : ℝ) (geometry : C19Lattice Site)
       (position velocity : Site → ℂ) (site : Site),
     nativePhaseDensityDerivative (position site) (velocity site)

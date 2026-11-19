@@ -38,10 +38,14 @@ namespace LeanDirac
 noncomputable section
 open Complex Filter Topology
 
+/-- The transport velocity `c19ContinuumSpeed ^ 2 * momentum axis / continuumModeFrequency momentum`
+along `axis`. -/
 def continuumTransportVelocity
     (momentum : LatticeMomentum) (axis : Fin 3) : ℝ :=
   c19ContinuumSpeed ^ 2 * momentum axis / continuumModeFrequency momentum
 
+/-- The squared length `∑ axis, continuumTransportVelocity momentum axis ^ 2` of the transport
+velocity. -/
 def continuumTransportSpeedSq (momentum : LatticeMomentum) : ℝ :=
   ∑ axis, continuumTransportVelocity momentum axis ^ 2
 
@@ -61,6 +65,8 @@ theorem continuum_transport_speed_strictly_subluminal
   nlinarith [sq_nonneg (momentum 0), sq_nonneg (momentum 1),
     sq_nonneg (momentum 2)]
 
+/-- The complex number `recurrenceBranchCos dt ω - I * recurrenceBranchSin dt ω`, where
+`ω = continuumModeFrequency momentum`. -/
 def recurrencePositivePhase (dt : ℝ) (momentum : LatticeMomentum) : ℂ :=
   (recurrenceBranchCos dt (continuumModeFrequency momentum) : ℂ) -
     Complex.I *
@@ -78,17 +84,24 @@ theorem recurrence_positive_phase_normSq
     ring]
   exact recurrence_branch_circle dt (continuumModeFrequency momentum) hstable
 
+/-- A momentum together with a four-component eigenvector of `standardC19Hamiltonian chi0 momentum`
+with eigenvalue `continuumModeFrequency momentum`. -/
 structure PositiveFrequencyMode where
+  /-- The momentum of the mode. -/
   momentum : LatticeMomentum
+  /-- The four-component amplitude of the mode. -/
   amplitude : Cell4
   eigen : standardC19Hamiltonian (chi0 : ℂ) momentum amplitude =
     fun component => (continuumModeFrequency momentum : ℂ) *
       amplitude component
 
+/-- The first standard basis vector of `Cell4`. -/
 def cell4Basis0 : Cell4
   | 0 => 1
   | _ => 0
 
+/-- The vector `H cell4Basis0 + ω * cell4Basis0`, where `H = standardC19Hamiltonian chi0 momentum`
+and `ω = continuumModeFrequency momentum`. -/
 def canonicalPositiveAmplitude (momentum : LatticeMomentum) : Cell4 :=
   cell4LinearCombination 1 (continuumModeFrequency momentum : ℂ)
     (standardC19Hamiltonian (chi0 : ℂ) momentum cell4Basis0)
@@ -108,6 +121,8 @@ theorem canonical_positive_amplitude_is_eigen
   push_cast
   ring
 
+/-- The positive-frequency mode at `momentum` with amplitude
+`canonicalPositiveAmplitude momentum`. -/
 def canonicalPositiveFrequencyMode
     (momentum : LatticeMomentum) : PositiveFrequencyMode where
   momentum := momentum
@@ -179,6 +194,8 @@ theorem standard_c19_hamiltonian_complex_scale
             funext component
             simp [cell4LinearCombination]
 
+/-- The amplitude of `mode` multiplied by the `step`-th power of
+`recurrencePositivePhase dt mode.momentum`. -/
 def positiveModeEvolution
     (dt : ℝ) (mode : PositiveFrequencyMode) (step : ℕ) : Cell4 :=
   fun component =>
@@ -270,19 +287,26 @@ theorem positive_mode_evolution_current_is_initial_velocity_moment
   rw [positive_mode_evolution_preserves_density dt mode step hstable]
   rfl
 
+/-- A family of positive-frequency modes indexed by a finite type `Mode`. -/
 structure FinitePositivePacket (Mode : Type) [Fintype Mode] where
+  /-- The positive-frequency mode at each index. -/
   mode : Mode → PositiveFrequencyMode
 
+/-- The total density `∑ index, cell4Density` of the mode amplitudes of `packet`. -/
 def finitePacketDensity {Mode : Type} [Fintype Mode]
     (packet : FinitePositivePacket Mode) : ℝ :=
   ∑ index, cell4Density (packet.mode index).amplitude
 
+/-- The total density of the mode amplitudes of `packet` after one `recurrenceDiracBranchStep` with
+time step `dt`. -/
 def finitePacketAdvancedDensity {Mode : Type} [Fintype Mode]
     (dt : ℝ) (packet : FinitePositivePacket Mode) : ℝ :=
   ∑ index, cell4Density
     (recurrenceDiracBranchStep dt (packet.mode index).momentum
       (packet.mode index).amplitude)
 
+/-- The total density of the mode amplitudes of `packet` after `step` steps of
+`positiveModeEvolution` with time step `dt`. -/
 def finitePacketEvolvedDensity {Mode : Type} [Fintype Mode]
     (dt : ℝ) (packet : FinitePositivePacket Mode) (step : ℕ) : ℝ :=
   ∑ index, cell4Density (positiveModeEvolution dt (packet.mode index) step)
@@ -311,16 +335,22 @@ theorem finite_packet_evolution_preserves_density
   exact positive_mode_evolution_preserves_density dt (packet.mode index) step
     (hstable index)
 
+/-- The total current `∑ index, standardC19DiracCurrent axis` of the mode amplitudes of `packet`. -/
 def finitePacketDiracCurrent {Mode : Type} [Fintype Mode]
     (axis : Fin 3) (packet : FinitePositivePacket Mode) : ℝ :=
   ∑ index, standardC19DiracCurrent axis (packet.mode index).amplitude
 
+/-- The total current along `axis` of the mode amplitudes of `packet` after `step` steps of
+`positiveModeEvolution` with time step `dt`. -/
 def finitePacketEvolvedDiracCurrent {Mode : Type} [Fintype Mode]
     (dt : ℝ) (axis : Fin 3) (packet : FinitePositivePacket Mode)
     (step : ℕ) : ℝ :=
   ∑ index, standardC19DiracCurrent axis
     (positiveModeEvolution dt (packet.mode index) step)
 
+/-- The density-weighted sum
+`∑ index, continuumTransportVelocity momentum axis * cell4Density amplitude` over the modes of
+`packet`, using the momentum and amplitude of each mode. -/
 def finitePacketVelocityMoment {Mode : Type} [Fintype Mode]
     (axis : Fin 3) (packet : FinitePositivePacket Mode) : ℝ :=
   ∑ index,
@@ -356,6 +386,8 @@ theorem finite_packet_evolved_current_is_density_weighted_velocity
   exact positive_mode_evolution_current_is_initial_velocity_moment
     dt (packet.mode index) step axis (hstable index)
 
+/-- The sum over the modes of `packet` of `recurrenceBranchGeneratorDefect dt` at component
+`component`. -/
 def finitePacketGeneratorDefect {Mode : Type} [Fintype Mode]
     (dt : ℝ) (packet : FinitePositivePacket Mode)
     (component : Fin 4) : ℂ :=
@@ -380,6 +412,11 @@ theorem finite_packet_generator_defect_tends_to_zero
   simpa using
     (tendsto_finsetSum (Finset.univ : Finset Mode) hterm)
 
+/-- The results of this file collected in one proposition, together with
+`Dirac018NativeFactorizationClassificationCertificate`: nonzero canonical modes at every momentum,
+the bound `continuumTransportSpeedSq momentum < c19ContinuumSpeed ^ 2`, density preservation under
+stable recurrence steps, the velocity-moment form of the packet current, and the vanishing of the
+packet generator defect as `dt → 0`. -/
 structure Dirac019FinitePacketTransportCertificate : Prop where
   priorChain : Dirac018NativeFactorizationClassificationCertificate
   nonzeroPositiveModeExistsAtEveryMomentum : ∀ momentum,

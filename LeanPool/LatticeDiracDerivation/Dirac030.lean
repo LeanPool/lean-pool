@@ -34,12 +34,15 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The gamma matrices on four-component vectors: `γ⁰ = β` and `γⁱ = β * standardCubeGamma (i - 1)`
+for `i = 1, 2, 3`, where `β = standardDiracBeta`. -/
 def c19Gamma (mu : Fin 4) (z : Cell4) : Cell4 :=
   if mu = 0 then standardDiracBeta z
   else if mu = 1 then standardDiracBeta (standardCubeGamma 0 z)
   else if mu = 2 then standardDiracBeta (standardCubeGamma 1 z)
   else standardDiracBeta (standardCubeGamma 2 z)
 
+/-- The contravariant four-momentum `(energy, px, py, pz)`, indexed by `mu`. -/
 def fourMomentumContravariant
     (energy px py pz : ℝ) (mu : Fin 4) : ℝ :=
   if mu = 0 then energy
@@ -47,6 +50,7 @@ def fourMomentumContravariant
   else if mu = 2 then py
   else pz
 
+/-- The covariant four-momentum `(energy, -px, -py, -pz)`, indexed by `mu`. -/
 def fourMomentumCovariant
     (energy px py pz : ℝ) (mu : Fin 4) : ℝ :=
   if mu = 0 then energy
@@ -54,12 +58,15 @@ def fourMomentumCovariant
   else if mu = 2 then -py
   else -pz
 
+/-- The Feynman slash `∑ μ, p_μ γ^μ` of the four-momentum, with covariant components
+`fourMomentumCovariant` and gamma matrices `c19Gamma`. -/
 def c19Slash
     (energy px py pz : ℝ) (z : Cell4) : Cell4 :=
   fun component =>
     ∑ mu, (fourMomentumCovariant energy px py pz mu : ℂ) *
       c19Gamma mu z component
 
+/-- The operator `σ^{μν} = (I / 2) [γ^μ, γ^ν]` built from the gamma matrices `c19Gamma`. -/
 def c19Sigma (mu nu : Fin 4) (z : Cell4) : Cell4 :=
   fun component =>
     (I / 2) *
@@ -94,6 +101,8 @@ theorem c19_gordon_kernel_identity
   all_goals simp only [hI3, Complex.I_sq]
   all_goals ring
 
+/-- The Dirac-adjoint bilinear form `∑ i, conj (left i) * (β right) i`, where
+`β = standardDiracBeta`. -/
 def diracBilinear (left right : Cell4) : ℂ :=
   ∑ component,
     starRingEnd ℂ (left component) * standardDiracBeta right component
@@ -142,6 +151,9 @@ theorem c19_slash_dirac_adjoint_symmetric
     standardDiracAlphaZ]
   ring
 
+/-- The right-hand side of the Gordon decomposition: `(q^μ + p^μ)` times
+`diracBilinear left right`, plus `I` times the sum over `ν` of `(q_ν - p_ν)` times
+`diracBilinear left (c19Sigma mu nu right)`. -/
 def gordonConvectionSpin
     (mu : Fin 4)
     (q0 qx qy qz p0 px py pz : ℝ)
@@ -200,6 +212,9 @@ theorem gordon_current_decomposition
   push_cast
   ring
 
+/-- The Gordon kernel identity for `c19Slash` and `c19Gamma`, together with the decomposition of
+`diracBilinear left (c19Gamma mu right)` as `gordonConvectionSpin / (2 * mass)` when `left` and
+`right` satisfy the Dirac equation with nonzero `mass`. -/
 structure Dirac030GordonCertificate : Prop where
   previousGate : Dirac029ChargeConjugationCertificate
   kernelIdentity : ∀ mu q0 qx qy qz p0 px py pz z,

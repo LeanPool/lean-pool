@@ -35,6 +35,7 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The commutator `[K₀, K₁]` applied to `z`, where `Kᵢ = standardC19BoostGenerator i`. -/
 def boostCommutator01 (z : Cell4) : Cell4 :=
   fun component =>
     standardC19BoostGenerator 0
@@ -42,6 +43,7 @@ def boostCommutator01 (z : Cell4) : Cell4 :=
       standardC19BoostGenerator 1
         (standardC19BoostGenerator 0 z) component
 
+/-- The commutator `[K₁, K₂]` applied to `z`, where `Kᵢ = standardC19BoostGenerator i`. -/
 def boostCommutator12 (z : Cell4) : Cell4 :=
   fun component =>
     standardC19BoostGenerator 1
@@ -49,6 +51,7 @@ def boostCommutator12 (z : Cell4) : Cell4 :=
       standardC19BoostGenerator 2
         (standardC19BoostGenerator 1 z) component
 
+/-- The commutator `[K₂, K₀]` applied to `z`, where `Kᵢ = standardC19BoostGenerator i`. -/
 def boostCommutator20 (z : Cell4) : Cell4 :=
   fun component =>
     standardC19BoostGenerator 2
@@ -56,12 +59,18 @@ def boostCommutator20 (z : Cell4) : Cell4 :=
       standardC19BoostGenerator 0
         (standardC19BoostGenerator 2 z) component
 
+/-- One half of `boostCommutator01 z`, the antisymmetric part of the product `K₀ K₁` applied to
+`z`, where `Kᵢ = standardC19BoostGenerator i`. -/
 def mixedWignerTerm01 (z : Cell4) : Cell4 :=
   fun component => (1 / 2 : ℂ) * boostCommutator01 z component
 
+/-- One half of `boostCommutator12 z`, the antisymmetric part of the product `K₁ K₂` applied to
+`z`, where `Kᵢ = standardC19BoostGenerator i`. -/
 def mixedWignerTerm12 (z : Cell4) : Cell4 :=
   fun component => (1 / 2 : ℂ) * boostCommutator12 z component
 
+/-- One half of `boostCommutator20 z`, the antisymmetric part of the product `K₂ K₀` applied to
+`z`, where `Kᵢ = standardC19BoostGenerator i`. -/
 def mixedWignerTerm20 (z : Cell4) : Cell4 :=
   fun component => (1 / 2 : ℂ) * boostCommutator20 z component
 
@@ -123,6 +132,10 @@ theorem sequential_boost_mixed_decomposition (z : Cell4) :
   simp [mixedWignerTerm01, boostCommutator01]
   ring
 
+/-- The collected results on the mixed boost terms: each equals `-I / 2` times a component of
+`standardCubeSpin`, the factor `1 / 2` is the unique scalar with this property for
+`boostCommutator01`, and the product `K₀ K₁` of boost generators splits into its symmetric part
+plus `mixedWignerTerm01`. -/
 structure Dirac028WignerThomasCertificate : Prop where
   previousGate : Dirac027PauliLubanskiCertificate
   threeAxisHalfRotation :

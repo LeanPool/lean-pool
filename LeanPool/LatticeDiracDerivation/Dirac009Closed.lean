@@ -31,6 +31,8 @@ to the action.
 
 namespace LeanDirac
 
+/-- The DIRAC-009 statement bundle: the DIRAC-002 certificate, the DIRAC-008 certificate for
+every nonzero timestep `dt`, and `Dirac009NecessaryGeometry`. -/
 structure Dirac009ClosedCertificate : Prop where
   candidateAction : Dirac002Certificate
   throughFirstOrderMap : ∀ (dt : ℝ) (hdt : dt ≠ 0),

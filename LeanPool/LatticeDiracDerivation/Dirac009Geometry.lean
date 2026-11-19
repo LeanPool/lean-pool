@@ -51,16 +51,22 @@ variable {Site : Type} {Edge : Type*}
 
 noncomputable section
 
+/-- The involution of the cube corners that moves along the edge in direction `axis`: it toggles
+the binary digit of value `4`, `2` or `1` for `axis = 0, 1, 2` respectively. -/
 def cubeIncidenceFlip (axis : Fin 3) : CubeCorner → CubeCorner :=
   match axis with
   | 0 => cellFlip0
   | 1 => cellFlip1
   | _ => cellFlip2
 
+/-- The complex overlap of the `tetraCorner` vectors at the two endpoints of the cube edge in
+direction `axis` starting at `corner`. -/
 def preparedCubeEdgeOverlap (axis : Fin 3) (corner : CubeCorner) : ℂ :=
   overlap (tetraCorner corner)
     (tetraCorner (cubeIncidenceFlip axis corner))
 
+/-- An explicit table of values `±tetraA` or `±tetraA * I` for each axis and corner, proved
+equal to `preparedCubeEdgeOverlap` in `prepared_cube_edge_overlap_values`. -/
 def preparedCubeExpectedEdgeOverlap
     (axis : Fin 3) (corner : CubeCorner) : ℂ :=
   match axis.val, corner.val with
@@ -94,26 +100,38 @@ theorem prepared_cube_edge_overlap_values
       Complex.conj_ofReal, Complex.conj_I] <;>
     ring
 
+/-- A `ZMod 4` phase exponent of `z`: `0` if `z` is a positive real, `2` if `z` is real and
+not positive, `1` if `z` has positive imaginary part, and `3` if it has negative imaginary part.
+For nonzero `z` on a coordinate axis, `z` is a positive multiple of `I ^ n`. -/
 def preparedGaussianPhaseExponent (z : ℂ) : ZMod 4 :=
   if z.im = 0 then
     if 0 < z.re then 0 else 2
   else if 0 < z.im then 1 else 3
 
+/-- The `ZMod 4` phase exponent `preparedGaussianPhaseExponent` of the edge overlap
+`preparedCubeEdgeOverlap axis corner`. -/
 def preparedCubeConnection4
     (axis : Fin 3) (corner : CubeCorner) : ZMod 4 :=
   preparedGaussianPhaseExponent (preparedCubeEdgeOverlap axis corner)
 
+/-- A fixed `ZMod 4`-valued function on the cube corners, with values
+`0, 0, 0, 1, 2, 1, 3, 3` at corners `0, …, 7`. -/
 def preparedCubeGauge4 (corner : CubeCorner) : ZMod 4 :=
   match corner.val with
   | 0 => 0 | 1 => 0 | 2 => 0 | 3 => 1
   | 4 => 2 | 5 => 1 | 6 => 3 | _ => 3
 
+/-- The orientation sign of the cube edge in direction `axis` at `corner`: `1` for `axis = 0`,
+`(-1) ^ b₀` for `axis = 1`, and `(-1) ^ (b₀ + b₁)` for `axis = 2`, where `b₀ = cellBit0 corner`
+and `b₁ = cellBit1 corner`. -/
 def cubeIncidenceSign (axis : Fin 3) (corner : CubeCorner) : ℂ :=
   match axis with
   | 0 => 1
   | 1 => if cellBit0 corner = 0 then 1 else -1
   | _ => if (cellBit0 corner + cellBit1 corner) % 2 = 0 then 1 else -1
 
+/-- The `ZMod 4` exponent of `cubeIncidenceSign axis corner` as a power of `I`: `0` for the
+sign `1` and `2` for the sign `-1`. -/
 def cubeIncidenceConnection4
     (axis : Fin 3) (corner : CubeCorner) : ZMod 4 :=
   match axis with
@@ -144,11 +162,16 @@ theorem prepared_cube_connection_gauge_eq_incidence
         cellBit1, neg_add_cancel, Nat.reduceAdd, Nat.mod_self]
   all_goals first | exact hfour | exact hnegTwo
 
+/-- The signed incidence operator of the cube along `axis`, acting on eight-corner amplitudes:
+the value at `corner` is `cubeIncidenceSign axis corner` times the amplitude at the adjacent
+corner along `axis`. -/
 def cubeIncidenceGamma (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   fun corner =>
     cubeIncidenceSign axis corner *
       amplitude (cubeIncidenceFlip axis corner)
 
+/-- The parity operator on eight-corner amplitudes: multiplication by `(-1) ^ (b₀ + b₁ + b₂)`,
+where `b₀, b₁, b₂` are the three binary digits of the corner. -/
 def cubeParityBeta (amplitude : Cell8) : Cell8 :=
   fun corner =>
     if (cellBit0 corner + cellBit1 corner + cellBit2 corner) % 2 = 0 then
@@ -194,6 +217,8 @@ theorem cube_parity_beta_anticommutes
         cubeIncidenceFlip, cellFlip0, cellFlip1, cellFlip2,
         cellBit0, cellBit1, cellBit2]
 
+/-- The linear combination `k0 • Γ₀ + k1 • Γ₁ + k2 • Γ₂` of the three incidence operators
+`cubeIncidenceGamma`, applied to `amplitude`. -/
 def cubeIncidenceLinear
     (k0 k1 k2 : ℂ) (amplitude : Cell8) : Cell8 :=
   fun corner =>
@@ -220,11 +245,16 @@ and parity bits as the incidence connection; it is not an independent
 projector supplied to the dynamics.
 -/
 
+/-- Four-component complex amplitudes, `Fin 4 → ℂ`. -/
 abbrev Cell4 := Fin 4 → ℂ
 
+/-- The sign `(-1) ^ b₂` of a cube corner, where `b₂ = cellBit2 corner` is its binary digit of
+value `1`. -/
 def cubeFlavorSign (corner : CubeCorner) : ℝ :=
   if cellBit2 corner % 2 = 0 then 1 else -1
 
+/-- The operator on eight-corner amplitudes whose value at `corner` is
+`I * cubeFlavorSign corner` times the amplitude at `cellFlip1 (cellFlip2 corner)`. -/
 def cubeFlavor (amplitude : Cell8) : Cell8 := fun corner =>
   Complex.I * (cubeFlavorSign corner : ℂ) *
     amplitude (cellFlip1 (cellFlip2 corner))
@@ -254,10 +284,14 @@ theorem cube_flavor_commutes_beta (amplitude : Cell8) :
     simp [cubeFlavor, cubeFlavorSign, cubeParityBeta,
       cellFlip1, cellFlip2, cellBit0, cellBit1, cellBit2]
 
+/-- A linear injection of four-component amplitudes into eight-corner amplitudes, with image in
+the `-1` eigenspace of `cubeFlavor`. -/
 def cubeEmbedMinus (z : Cell4) : Cell8
   | 0 => z 0 | 1 => z 1 | 2 => -Complex.I * z 1 | 3 => Complex.I * z 0
   | 4 => z 2 | 5 => z 3 | 6 => -Complex.I * z 3 | _ => Complex.I * z 2
 
+/-- A linear injection of four-component amplitudes into eight-corner amplitudes, with image in
+the `+1` eigenspace of `cubeFlavor`. -/
 def cubeEmbedPlus (z : Cell4) : Cell8
   | 0 => z 0 | 1 => z 1 | 2 => Complex.I * z 1 | 3 => -Complex.I * z 0
   | 4 => z 2 | 5 => z 3 | 6 => Complex.I * z 3 | _ => -Complex.I * z 2
@@ -296,11 +330,15 @@ theorem cube_embed_plus_has_positive_flavor (z : Cell4) :
       cellFlip1, cellFlip2, cellBit2] <;>
     ring_nf <;> rw [Complex.I_sq] <;> ring
 
+/-- The operator `mass • cubeParityBeta + cubeIncidenceLinear k0 k1 k2` on eight-corner
+amplitudes. -/
 def cubeDiracSymbol
     (mass k0 k1 k2 : ℂ) (amplitude : Cell8) : Cell8 := fun corner =>
   mass * cubeParityBeta amplitude corner +
     cubeIncidenceLinear k0 k1 k2 amplitude corner
 
+/-- Multiplication of an eight-corner amplitude by the scalar `mass ^ 2 + k0 ^ 2 + k1 ^ 2 +
+k2 ^ 2`. -/
 def cubeScalarSymbol
     (mass k0 k1 k2 : ℂ) (amplitude : Cell8) : Cell8 := fun corner =>
   (mass ^ 2 + k0 ^ 2 + k1 ^ 2 + k2 ^ 2) * amplitude corner
@@ -355,8 +393,11 @@ theorem cube_dirac_symbol_preserves_minus
       cellFlip0, cellFlip1, cellFlip2, cellBit0, cellBit1, cellBit2] <;>
     ring
 
+/-- A pair of eight-corner amplitudes, a position and a velocity. -/
 structure CubeCanonicalState where
+  /-- The position amplitude. -/
   position : Cell8
+  /-- The velocity amplitude. -/
   velocity : Cell8
 
 @[ext] theorem cube_canonical_state_ext
@@ -367,11 +408,15 @@ structure CubeCanonicalState where
   cases second
   simp_all
 
+/-- The first-order vector field `(x, v) ↦ (v, -S x)` of the second-order equation
+`x'' = -S x`, where `S = cubeScalarSymbol mass k0 k1 k2`. -/
 def cubeScalarCanonicalVector
     (mass k0 k1 k2 : ℂ) (state : CubeCanonicalState) : CubeCanonicalState where
   position := state.velocity
   velocity := fun corner => -cubeScalarSymbol mass k0 k1 k2 state.position corner
 
+/-- The map `a ↦ (a, -I * D a)` into position-velocity pairs, where
+`D = cubeDiracSymbol mass k0 k1 k2`. -/
 def cubePositiveFrequencyEmbedding
     (mass k0 k1 k2 : ℂ) (amplitude : Cell8) : CubeCanonicalState where
   position := amplitude
@@ -402,6 +447,7 @@ square root supplies the common conversion from continuum wave number to the
 three incidence coefficients.
 -/
 
+/-- The constant `√12`. -/
 def c19ContinuumSpeed : ℝ := Real.sqrt 12
 
 theorem c19_continuum_speed_square : c19ContinuumSpeed ^ 2 = 12 := by
@@ -431,6 +477,8 @@ only the two field densities.  Thus the current action preserves the track but
 does not give its corner orientation a local restoring scale.
 -/
 
+/-- The cube state `alignedEightSiteState` with the same `psi` amplitude `psiAmplitude` and the
+same `chi` amplitude `chiAmplitude` at every corner. -/
 def constantAlignedEightSiteState (psiAmplitude chiAmplitude : ℂ) :
     State CubeCorner :=
   alignedEightSiteState (fun _ => psiAmplitude) (fun _ => chiAmplitude)
@@ -468,6 +516,8 @@ theorem normSq_one_sub_exp_I (angle : ℝ) :
   simp [Complex.cos_ofReal_re, Complex.sin_ofReal_re]
   nlinarith [Real.sin_sq_add_cos_sq angle]
 
+/-- The closed trigonometric form `8 * ∑ (1 - cos kᵢ) + 8 * ∑_{i < j} (1 - cos kᵢ * cos kⱼ)`
+of the C19 transport symbol at `momentum = (k₀, k₁, k₂)`. -/
 def c19ClosedSymbol (momentum : LatticeMomentum) : ℝ :=
   8 * ((1 - Real.cos (momentum 0)) +
     (1 - Real.cos (momentum 1)) +
@@ -485,6 +535,7 @@ theorem c19_transport_symbol_closed (momentum : LatticeMomentum) :
   simp only [Real.cos_neg, Real.cos_add, Real.cos_sub, neg_add_eq_sub, Real.sin_neg]
   ring_nf
 
+/-- The quadratic symbol `12 * (k₀ ^ 2 + k₁ ^ 2 + k₂ ^ 2)` at `momentum = (k₀, k₁, k₂)`. -/
 def c19QuadraticSymbol (momentum : LatticeMomentum) : ℝ :=
   12 * (momentum 0 ^ 2 + momentum 1 ^ 2 + momentum 2 ^ 2)
 
@@ -498,6 +549,7 @@ theorem c19_quadratic_symbol_is_phase_square_sum
   simp [c19Weight, c19Coord]
   ring
 
+/-- The difference `c19TransportSymbol momentum - c19QuadraticSymbol momentum`. -/
 def c19SpatialRemainder (momentum : LatticeMomentum) : ℝ :=
   c19TransportSymbol momentum - c19QuadraticSymbol momentum
 
@@ -602,6 +654,7 @@ theorem c19_spatial_remainder_zero_at_origin :
   simp [c19SpatialRemainder, c19QuadraticSymbol,
     c19_transport_symbol_zero]
 
+/-- `cubeDiracSymbol` with coefficients `√12 * kᵢ`, where `momentum = (k₀, k₁, k₂)`. -/
 def c19ContinuumDiracSymbol
     (mass : ℂ) (momentum : Fin 3 → ℝ) (amplitude : Cell8) : Cell8 :=
   cubeDiracSymbol mass
@@ -609,6 +662,8 @@ def c19ContinuumDiracSymbol
     (c19ContinuumSpeed * momentum 1)
     (c19ContinuumSpeed * momentum 2) amplitude
 
+/-- Multiplication of an eight-corner amplitude by `mass ^ 2 + 12 * (k₀ ^ 2 + k₁ ^ 2 + k₂ ^ 2)`,
+where `momentum = (k₀, k₁, k₂)`. -/
 def c19ContinuumScalarSymbol
     (mass : ℂ) (momentum : Fin 3 → ℝ) (amplitude : Cell8) : Cell8 :=
   fun corner =>
@@ -616,6 +671,7 @@ def c19ContinuumScalarSymbol
       ((momentum 0 : ℂ) ^ 2 + (momentum 1 : ℂ) ^ 2 +
         (momentum 2 : ℂ) ^ 2)) * amplitude corner
 
+/-- Multiplication of an eight-corner amplitude by `mass ^ 2 + c19TransportSymbol momentum`. -/
 def c19ExactScalarSymbol
     (mass : ℂ) (momentum : LatticeMomentum) (amplitude : Cell8) : Cell8 :=
   fun corner =>
@@ -660,6 +716,8 @@ theorem c19_continuum_dirac_square_is_native_quadratic_symbol
   rw [cube_dirac_symbol_square]
   exact cube_scalar_scaled_is_c19_continuum_symbol mass momentum amplitude
 
+/-- The first-order vector field `(x, v) ↦ (v, -S x)` of the second-order equation
+`x'' = -S x`, where `S = c19ExactScalarSymbol mass momentum`. -/
 def c19ExactCanonicalVector
     (mass : ℂ) (momentum : LatticeMomentum)
     (state : CubeCanonicalState) : CubeCanonicalState where
@@ -667,6 +725,8 @@ def c19ExactCanonicalVector
   velocity := fun corner =>
     -c19ExactScalarSymbol mass momentum state.position corner
 
+/-- The map `a ↦ (a, -I * D a)` into position-velocity pairs, where
+`D = c19ContinuumDiracSymbol mass momentum`. -/
 def c19PositiveFrequencyEmbedding
     (mass : ℂ) (momentum : LatticeMomentum)
     (amplitude : Cell8) : CubeCanonicalState where
@@ -715,6 +775,8 @@ theorem c19_native_second_moment_selects_continuum_speed :
     c19ContinuumSpeed ^ 2 = 12 :=
   ⟨c19_second_moment_isotropic, c19_continuum_speed_square⟩
 
+/-- The product of the four `cubeIncidenceSign` values around the square face of the cube
+spanned by `axis` and `other` at `corner`. -/
 def cubeIncidenceFaceSign
     (axis other : Fin 3) (corner : CubeCorner) : ℂ :=
   cubeIncidenceSign axis corner *
@@ -755,6 +817,9 @@ theorem prepared_and_incidence_faces_are_odd :
     fun axis other corner haxis =>
       cube_incidence_face_sign_negative axis other haxis corner⟩
 
+/-- The conjunction of the facts proved in this file, including the Clifford relations of the
+incidence and parity operators, `cubeDiracSymbol` squaring to `cubeScalarSymbol`, and the exact
+finite-lattice residual with its bound `40 * radius ^ 4`. -/
 structure Dirac009NecessaryGeometry : Prop where
   alignedFirstMomentZero : ∀ axis, c19FirstMoment axis = 0
   preparedConnectionSelectsIncidence : ∀ axis corner,

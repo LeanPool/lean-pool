@@ -39,15 +39,19 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The normalization constant `1 / √2`. -/
 def zitterNormalization : ℝ :=
   1 / Real.sqrt 2
 
+/-- The vector `(positiveRestEvolution t + negativeRestEvolution t) / √2` at real time `t`. -/
 def coherentRestPhaseSuperposition (time : ℝ) : Cell4 :=
   fun component =>
     (zitterNormalization : ℂ) *
       (positiveRestEvolution (time : ℂ) component +
         negativeRestEvolution (time : ℂ) component)
 
+/-- The four-component vector `(exp (-i chi0 t) / √2, 0, exp (i chi0 t) / √2, 0)` at real time
+`t`, written through real and imaginary parts; it equals `coherentRestPhaseSuperposition t`. -/
 def coherentRestState (time : ℝ) : Cell4
   | 0 => ⟨zitterNormalization * Real.cos (chi0 * time),
       -(zitterNormalization * Real.sin (chi0 * time))⟩
@@ -56,18 +60,25 @@ def coherentRestState (time : ℝ) : Cell4
       zitterNormalization * Real.sin (chi0 * time)⟩
   | _ => 0
 
+/-- The current `standardC19DiracCurrent` along axis `0` of `coherentRestState t`. -/
 def restZitterVelocity (time : ℝ) : ℝ :=
   standardC19DiracCurrent 0 (coherentRestState time)
 
+/-- The angular frequency `nativeBranchBeatAngularFrequency`, which equals `2 * chi0 = 38`. -/
 def nativeZitterAngularFrequency : ℝ :=
   nativeBranchBeatAngularFrequency
 
+/-- The amplitude `c19ContinuumSpeed / (2 * nativeRestAngularFrequency)`, which equals
+`√12 / 38`. -/
 def nativeZitterAmplitude : ℝ :=
   c19ContinuumSpeed / (2 * nativeRestAngularFrequency)
 
+/-- The oscillating position `A sin (ω t)`, where `A = nativeZitterAmplitude` and
+`ω = nativeZitterAngularFrequency`; its time derivative is `restZitterVelocity`. -/
 def nativeZitterPosition (time : ℝ) : ℝ :=
   nativeZitterAmplitude * Real.sin (nativeZitterAngularFrequency * time)
 
+/-- The peak-to-peak displacement `2 * nativeZitterAmplitude` of `nativeZitterPosition`. -/
 def nativeZitterPeakToPeak : ℝ :=
   2 * nativeZitterAmplitude
 
@@ -226,6 +237,7 @@ theorem native_zitter_position_has_velocity_derivative (time : ℝ) :
     _ = c19ContinuumSpeed * Real.cos (2 * chi0 * time) := by
       rw [native_zitter_frequency_is_twice_action_mass]
 
+/-- The standard basis vector of `Cell4` with a `1` in position `1` and `0` elsewhere. -/
 def cell4Basis1 : Cell4
   | 1 => 1
   | _ => 0
@@ -240,6 +252,8 @@ theorem second_positive_rest_state_has_native_energy :
       standardDiracAlphaX, standardDiracAlphaY, standardDiracAlphaZ,
       cell4Basis1]
 
+/-- The vector `positiveRestPhase t * (cell4Basis0 + cell4Basis1) / √2` at real time `t`, a
+superposition of two eigenvectors with the same eigenvalue `chi0`. -/
 def sameSignPositiveRestState (time : ℝ) : Cell4 :=
   fun component =>
     (zitterNormalization : ℂ) * positiveRestPhase (time : ℂ) *
@@ -252,6 +266,8 @@ theorem same_sign_rest_control_has_zero_current (time : ℝ) :
     standardDiracAlphaZ, cell4Basis0, cell4Basis1,
     Complex.mul_re, Complex.mul_im, Fin.sum_univ_succ]
 
+/-- The average of the axis-`0` currents `standardC19DiracCurrent 0` of `positiveRestEvolution t`
+and `negativeRestEvolution t`. -/
 def incoherentRestMixtureCurrent (time : ℝ) : ℝ :=
   (standardC19DiracCurrent 0 (positiveRestEvolution (time : ℂ)) +
     standardC19DiracCurrent 0 (negativeRestEvolution (time : ℂ))) / 2
@@ -263,6 +279,8 @@ theorem incoherent_rest_mixture_has_zero_current (time : ℝ) :
     negative_rest_branch_current_zero]
   norm_num
 
+/-- The vector `coherentRestState` with `chi0` replaced by an arbitrary real `testMass`:
+`(exp (-i m t) / √2, 0, exp (i m t) / √2, 0)` with `m = testMass`. -/
 def parametricCoherentRestState (testMass time : ℝ) : Cell4
   | 0 => ⟨zitterNormalization * Real.cos (testMass * time),
       -(zitterNormalization * Real.sin (testMass * time))⟩
@@ -271,6 +289,7 @@ def parametricCoherentRestState (testMass time : ℝ) : Cell4
       zitterNormalization * Real.sin (testMass * time)⟩
   | _ => 0
 
+/-- The current `standardC19DiracCurrent` along axis `0` of `parametricCoherentRestState`. -/
 def parametricRestVelocity (testMass time : ℝ) : ℝ :=
   standardC19DiracCurrent 0 (parametricCoherentRestState testMass time)
 
@@ -334,6 +353,9 @@ theorem rest_hamiltonian_velocity_anticommute (z : Cell4) :
     (standard_c19_hamiltonian_velocity_anticommutator
       chi0 zeroLatticeMomentum 0 z)
 
+/-- The bundle of results of this file: `coherentRestState` is normalized and its axis-`0` current
+is `c19ContinuumSpeed * cos (2 chi0 t)`, the derivative of `nativeZitterPosition`, while the
+pure-branch, same-sign and incoherent controls have zero current, with the stated constants. -/
 structure Dirac022ZitterbewegungCertificate : Prop where
   previousGate : Dirac021RestClockCertificate
   phaseConstruction : ∀ time,

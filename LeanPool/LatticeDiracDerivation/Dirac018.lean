@@ -54,26 +54,34 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- A real vector in `ℝ³`, as a function `Fin 3 → ℝ`. -/
 abbrev RealCubeVector := Fin 3 → ℝ
+/-- A real `3 × 3` matrix, as a function of a row index and a column index. -/
 abbrev RealCubeMatrix := Fin 3 → Fin 3 → ℝ
 
+/-- The standard basis vector of `ℝ³` with a `1` in position `axis` and `0` elsewhere. -/
 def realCubeBasis (axis : Fin 3) : RealCubeVector :=
   fun component => if component = axis then 1 else 0
 
+/-- The matrix-vector product of a real `3 × 3` matrix with a vector in `ℝ³`. -/
 def realCubeMatrixApply
     (matrix : RealCubeMatrix) (vector : RealCubeVector) : RealCubeVector :=
   fun row => ∑ column, matrix row column * vector column
 
+/-- The quarter turn about the third axis, `(x, y, z) ↦ (-y, x, z)`. -/
 def realCubeQuarterTurnZ (vector : RealCubeVector) : RealCubeVector
   | 0 => -vector 1
   | 1 => vector 0
   | _ => vector 2
 
+/-- The quarter turn about the first axis, `(x, y, z) ↦ (x, -z, y)`. -/
 def realCubeQuarterTurnX (vector : RealCubeVector) : RealCubeVector
   | 0 => vector 0
   | 1 => -vector 2
   | _ => vector 1
 
+/-- The matrix commutes with both quarter turns `realCubeQuarterTurnZ` and
+`realCubeQuarterTurnX`. -/
 def CubicCoefficientCovariant (matrix : RealCubeMatrix) : Prop :=
   (∀ vector,
     realCubeMatrixApply matrix (realCubeQuarterTurnZ vector) =
@@ -114,16 +122,23 @@ theorem cubic_covariant_coefficients_are_scalar
     simp <;>
     linarith
 
+/-- The coefficients of a first-order operator on eight-corner amplitudes: a real scale for the
+mass term and a real `3 × 3` transport matrix acting on the momentum. -/
 structure NativeCubicalRootCandidate where
+  /-- The real factor multiplying the mass term. -/
   massScale : ℝ
+  /-- The real `3 × 3` matrix applied to the momentum before the incidence operators. -/
   transport : RealCubeMatrix
 
+/-- The `axis` component of the transport matrix of `candidate` applied to `momentum`. -/
 def candidateIncidenceMomentum
     (candidate : NativeCubicalRootCandidate)
     (momentum : Fin 3 → ℂ) (axis : Fin 3) : ℂ :=
   ∑ component,
     (candidate.transport axis component : ℂ) * momentum component
 
+/-- The operator `massScale * mass * cubeParityBeta + cubeIncidenceLinear k₀ k₁ k₂` on
+eight-corner amplitudes, where `kᵢ` is `candidateIncidenceMomentum candidate momentum i`. -/
 def nativeCubicalRootOperator
     (candidate : NativeCubicalRootCandidate)
     (mass : ℂ) (momentum : Fin 3 → ℂ) (amplitude : Cell8) : Cell8 :=
@@ -135,6 +150,8 @@ def nativeCubicalRootOperator
         (candidateIncidenceMomentum candidate momentum 2)
         amplitude corner
 
+/-- For every mass, momentum and amplitude, the square of `nativeCubicalRootOperator candidate`
+is multiplication by `mass ^ 2 + ∑ᵢ momentum i ^ 2` (the operator `cubeScalarSymbol`). -/
 def NativeCubicalRootMatchesScalar
     (candidate : NativeCubicalRootCandidate) : Prop :=
   ∀ mass momentum amplitude,
@@ -142,6 +159,8 @@ def NativeCubicalRootMatchesScalar
         (nativeCubicalRootOperator candidate mass momentum amplitude) =
       cubeScalarSymbol mass (momentum 0) (momentum 1) (momentum 2) amplitude
 
+/-- The candidate has a transport matrix commuting with the two quarter turns, squares to the
+scalar symbol, and has nonnegative `massScale` and nonnegative entry `transport 0 0`. -/
 def NativeCubicalRootAdmissible
     (candidate : NativeCubicalRootCandidate) : Prop :=
   CubicCoefficientCovariant candidate.transport ∧
@@ -177,17 +196,21 @@ covariance.  Thus neither positivity nor cubic covariance is a redundant
 decoration of the theorem.
 -/
 
+/-- The negative of the `3 × 3` identity matrix. -/
 def negativeIdentityCubeMatrix : RealCubeMatrix :=
   fun row column => if row = column then -1 else 0
 
+/-- The diagonal matrix `diag (-1, 1, 1)`, the reflection of the first axis. -/
 def reflectedAxisCubeMatrix : RealCubeMatrix :=
   fun row column =>
     if row = column then if row = 0 then -1 else 1 else 0
 
+/-- The candidate with mass scale `-1` and transport matrix `negativeIdentityCubeMatrix`. -/
 def overallNegativeRootCandidate : NativeCubicalRootCandidate where
   massScale := -1
   transport := negativeIdentityCubeMatrix
 
+/-- The candidate with mass scale `1` and transport matrix `reflectedAxisCubeMatrix`. -/
 def reflectedAxisRootCandidate : NativeCubicalRootCandidate where
   massScale := 1
   transport := reflectedAxisCubeMatrix
@@ -308,9 +331,13 @@ theorem admissible_native_cubical_root_is_canonical
 
 /-! ## Exact census of the two internal cube copies -/
 
+/-- The projection `(amplitude + cubeFlavor amplitude) / 2` onto the `+1` eigenspace of the
+involution `cubeFlavor`. -/
 def cubeFlavorPlusProjection (amplitude : Cell8) : Cell8 :=
   fun corner => (amplitude corner + cubeFlavor amplitude corner) / 2
 
+/-- The projection `(amplitude - cubeFlavor amplitude) / 2` onto the `-1` eigenspace of the
+involution `cubeFlavor`. -/
 def cubeFlavorMinusProjection (amplitude : Cell8) : Cell8 :=
   fun corner => (amplitude corner - cubeFlavor amplitude corner) / 2
 
@@ -348,10 +375,15 @@ projection.  This prevents copy symmetry from being smuggled in as an
 unstated assumption.
 -/
 
+/-- A pair of candidate coefficient sets, one acting on each eigenspace of `cubeFlavor`. -/
 structure NativeTwoCopyCubicalRootCandidate where
+  /-- The candidate coefficients used on the `+1` eigenspace of `cubeFlavor`. -/
   plus : NativeCubicalRootCandidate
+  /-- The candidate coefficients used on the `-1` eigenspace of `cubeFlavor`. -/
   minus : NativeCubicalRootCandidate
 
+/-- The square of `nativeCubicalRootOperator candidate` agrees with `cubeScalarSymbol` on every
+amplitude in the image of `embedding`, for every mass and momentum. -/
 def NativeCubicalRootMatchesOnEmbedding
     (candidate : NativeCubicalRootCandidate)
     (embedding : Cell4 → Cell8) : Prop :=
@@ -361,6 +393,8 @@ def NativeCubicalRootMatchesOnEmbedding
       cubeScalarSymbol mass (momentum 0) (momentum 1) (momentum 2)
         (embedding z)
 
+/-- The variant of `NativeCubicalRootAdmissible` in which the squaring condition is required
+only on the image of `embedding`. -/
 def NativeCubicalRootAdmissibleOnEmbedding
     (candidate : NativeCubicalRootCandidate)
     (embedding : Cell4 → Cell8) : Prop :=
@@ -369,6 +403,7 @@ def NativeCubicalRootAdmissibleOnEmbedding
   0 ≤ candidate.massScale ∧
   0 ≤ candidate.transport 0 0
 
+/-- The first standard basis vector of `Cell4`, with a `1` in position `0`. -/
 def cell4FirstBasis : Cell4
   | 0 => 1
   | _ => 0
@@ -444,6 +479,8 @@ theorem embedding_admissible_root_is_canonical
       cubeDiracSymbol, cubeIncidenceLinear, hmass, hmatrix, hscale,
       Fin.sum_univ_succ]
 
+/-- The operator applying `nativeCubicalRootOperator candidate.plus` to the `+1` flavor
+projection and `nativeCubicalRootOperator candidate.minus` to the `-1` projection, summed. -/
 def nativeTwoCopyCubicalRootOperator
     (candidate : NativeTwoCopyCubicalRootCandidate)
     (mass : ℂ) (momentum : Fin 3 → ℂ) (amplitude : Cell8) : Cell8 :=
@@ -453,6 +490,8 @@ def nativeTwoCopyCubicalRootOperator
       nativeCubicalRootOperator candidate.minus mass momentum
         (cubeFlavorMinusProjection amplitude) corner
 
+/-- `candidate.plus` is admissible on the image of `cubeDiracEmbedPlus` and `candidate.minus` is
+admissible on the image of `cubeDiracEmbedMinus`. -/
 def NativeTwoCopyCubicalRootAdmissible
     (candidate : NativeTwoCopyCubicalRootCandidate) : Prop :=
   NativeCubicalRootAdmissibleOnEmbedding candidate.plus cubeDiracEmbedPlus ∧
@@ -488,6 +527,7 @@ theorem admissible_two_copy_native_root_is_canonical
       cellBit0, cellBit1, cellBit2] <;>
     ring
 
+/-- The four amplitudes at the corners `0`, `1`, `4`, `5`, read off as a `Cell4`. -/
 def cubeRawCoordinates (amplitude : Cell8) : Cell4
   | 0 => amplitude 0
   | 1 => amplitude 1
@@ -557,6 +597,7 @@ theorem cube_flavor_copies_intersect_only_at_zero
 
 /-! ## Full first-Brillouin-zone zero census for the C19 scalar symbol -/
 
+/-- Every component of the momentum lies in the closed interval `[-π, π]`. -/
 def InFirstBrillouinZone (momentum : LatticeMomentum) : Prop :=
   ∀ axis, -Real.pi ≤ momentum axis ∧ momentum axis ≤ Real.pi
 
@@ -618,6 +659,11 @@ theorem c19_first_brillouin_zone_zero_unique
     fin_cases axis <;> assumption
   exact (Real.cos_eq_one_iff_of_lt_of_lt hlower hupper).mp hcos
 
+/-- The DIRAC-018 statement bundle: the DIRAC-017 certificate holds, admissible first-order
+candidates equal `cubeDiracSymbol`,
+the two `cubeFlavor` eigenspaces are exactly the images of `cubeDiracEmbedPlus` and
+`cubeDiracEmbedMinus`, `c19TransportSymbol` vanishes in `[-π, π]³` only at zero, and the
+orientation and covariance hypotheses are each necessary. -/
 structure Dirac018NativeFactorizationClassificationCertificate : Prop where
   priorChain : Dirac017ClosedSpinHalfRepresentationCertificate
   covariantCoefficientsAreScalar : ∀ matrix,

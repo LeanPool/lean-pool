@@ -45,9 +45,11 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The oscillation period `2 * π / nativeZitterAngularFrequency`. -/
 def nativeZitterPeriod : ℝ :=
   2 * Real.pi / nativeZitterAngularFrequency
 
+/-- Half of the oscillation period `nativeZitterPeriod`. -/
 def nativeZitterHalfPeriod : ℝ :=
   nativeZitterPeriod / 2
 
@@ -222,6 +224,9 @@ theorem spatial_spin0_acts_equally_on_zitter_branches :
       cell4Basis0, cell4Basis2] <;>
     ring_nf
 
+/-- The collected results on the oscillation period: after one period `coherentRestState` changes
+sign while its velocity, position and density return, after two periods it returns, and on both
+cube embeddings one and two periods match the cube rotations by `2 * π` and `4 * π`. -/
 structure Dirac024ProjectiveZitterSpinCertificate : Prop where
   previousGate : Dirac023PhaseHarmonyCertificate
   zitterPeriodIsDerivedBeatPeriod :

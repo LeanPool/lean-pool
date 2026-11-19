@@ -44,6 +44,7 @@ namespace LeanDirac
 noncomputable section
 open Complex
 
+/-- The standard basis vector of `Cell4` with a `1` in position `2` and `0` elsewhere. -/
 def cell4Basis2 : Cell4
   | 2 => 1
   | _ => 0
@@ -78,9 +79,11 @@ theorem negative_rest_state_has_native_energy :
       standardDiracAlphaX, standardDiracAlphaY, standardDiracAlphaZ,
       cell4Basis2]
 
+/-- The phase factor `exp (-i chi0 t)` at time `t`, with `chi0 = 19`. -/
 def positiveRestPhase (time : ℂ) : ℂ :=
   Complex.exp (-Complex.I * (chi0 : ℂ) * time)
 
+/-- The phase factor `exp (i chi0 t)` at time `t`, with `chi0 = 19`. -/
 def negativeRestPhase (time : ℂ) : ℂ :=
   Complex.exp (Complex.I * (chi0 : ℂ) * time)
 
@@ -114,9 +117,11 @@ theorem negative_rest_phase_has_deriv_at (time : ℂ) :
       Complex.exp ((Complex.I * (chi0 : ℂ)) * time)) time
   simpa only [mul_comm] using hlinear.cexp
 
+/-- The four-component vector `positiveRestPhase t • cell4Basis0` at time `t`. -/
 def positiveRestEvolution (time : ℂ) : Cell4 :=
   fun component => positiveRestPhase time * cell4Basis0 component
 
+/-- The four-component vector `negativeRestPhase t • cell4Basis2` at time `t`. -/
 def negativeRestEvolution (time : ℂ) : Cell4 :=
   fun component => negativeRestPhase time * cell4Basis2 component
 
@@ -177,6 +182,7 @@ theorem negative_rest_evolution_satisfies_dirac (time : ℂ) :
     Complex.I_mul_I]
   ring
 
+/-- The ratio `positiveRestPhase t / negativeRestPhase t`, which equals `exp (-2 i chi0 t)`. -/
 def restBranchRelativePhase (time : ℂ) : ℂ :=
   positiveRestPhase time / negativeRestPhase time
 
@@ -189,21 +195,27 @@ theorem rest_branch_relative_phase_is_doubled (time : ℂ) :
   push_cast
   ring
 
+/-- The continuum frequency `continuumModeFrequency` at zero momentum, which equals `19`. -/
 def nativeRestAngularFrequency : ℝ :=
   continuumModeFrequency zeroLatticeMomentum
 
+/-- Twice the zero-momentum frequency `nativeRestAngularFrequency`, which equals `38`. -/
 def nativeBranchBeatAngularFrequency : ℝ :=
   2 * nativeRestAngularFrequency
 
+/-- The period `2π / nativeRestAngularFrequency`, which equals `2π / 19`. -/
 def nativeRestClockPeriod : ℝ :=
   2 * Real.pi / nativeRestAngularFrequency
 
+/-- The period `π / nativeRestAngularFrequency`, which equals `π / 19`. -/
 def nativeBranchBeatPeriod : ℝ :=
   Real.pi / nativeRestAngularFrequency
 
+/-- The reciprocal `1 / nativeRestAngularFrequency`, which equals `1 / 19`. -/
 def nativeInverseMassScale : ℝ :=
   1 / nativeRestAngularFrequency
 
+/-- The ratio `c19ContinuumSpeed / nativeRestAngularFrequency`, which equals `√12 / 19`. -/
 def nativeReducedComptonLength : ℝ :=
   c19ContinuumSpeed / nativeRestAngularFrequency
 
@@ -282,6 +294,10 @@ theorem rest_branch_coherence_returns_after_native_beat_period :
   rw [hexponent, Complex.exp_neg, Complex.exp_two_pi_mul_I]
   simp
 
+/-- The bundle of results of this file: the zero-momentum frequency is `chi0`; `cell4Basis0` and
+`cell4Basis2` are eigenvectors of `standardC19Hamiltonian chi0 zeroLatticeMomentum` with
+eigenvalues `chi0` and `-chi0`; the two phase evolutions solve the corresponding first-order
+equations; and the frequencies `19` and `38`, the periods and the scales take the stated values. -/
 structure Dirac021RestClockCertificate : Prop where
   previousGate : Dirac020CoherentSpatialTransportCertificate
   nativeRestFrequency : continuumModeFrequency zeroLatticeMomentum = chi0

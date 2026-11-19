@@ -59,12 +59,15 @@ open Complex
 
 /-! ## Native oriented cube planes -/
 
+/-- The product `Γⱼ Γₖ` of two incidence operators `cubeIncidenceGamma` for the cyclic pair
+`(j, k)` following `axis`: `Γ₁ Γ₂`, `Γ₂ Γ₀` or `Γ₀ Γ₁` for `axis = 0, 1, 2`. -/
 def cubePlaneBivector (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   match axis with
   | 0 => cubeIncidenceGamma 1 (cubeIncidenceGamma 2 amplitude)
   | 1 => cubeIncidenceGamma 2 (cubeIncidenceGamma 0 amplitude)
   | _ => cubeIncidenceGamma 0 (cubeIncidenceGamma 1 amplitude)
 
+/-- The operator `-i` times `cubePlaneBivector axis`, which squares to the identity. -/
 def cubeSigma (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   fun corner => -I * cubePlaneBivector axis amplitude corner
 
@@ -143,6 +146,7 @@ theorem cube_sigma_02_product (amplitude : Cell8) :
 
 /-! ## The rotation algebra selects the nonzero scale -/
 
+/-- The operator `cubeSigma axis` multiplied by the real coefficient `scale`. -/
 def cubeScaledSpin (scale : ℝ) (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   fun corner => (scale : ℂ) * cubeSigma axis amplitude corner
 
@@ -188,6 +192,8 @@ theorem cube_scaled_spin_commutator_20
       cellFlip0, cellFlip1, cellFlip2, cellBit0, cellBit1] <;>
     ring
 
+/-- The commutation relation `[S₀, S₁] = i S₂` for the operators `Sₐ = cubeScaledSpin scale a`,
+required on every eight-corner amplitude. -/
 def cubeSpinClosureAtScale (scale : ℝ) : Prop :=
   ∀ amplitude : Cell8,
     (fun corner =>
@@ -195,6 +201,7 @@ def cubeSpinClosureAtScale (scale : ℝ) : Prop :=
         cubeScaledSpin scale 1 (cubeScaledSpin scale 0 amplitude) corner) =
       fun corner => I * cubeScaledSpin scale 2 amplitude corner
 
+/-- The constant eight-corner amplitude equal to `1` at every corner. -/
 def uniformCubeAmplitude : Cell8 := fun _ => 1
 
 theorem cube_spin_closure_iff_scale_equation (scale : ℝ) :
@@ -217,6 +224,7 @@ theorem cube_spin_closure_iff_scale_equation (scale : ℝ) :
     simp [cubeScaledSpin]
     ring
 
+/-- A real `scale` is admissible when it is nonzero and satisfies `cubeSpinClosureAtScale`. -/
 def admissibleSpinScale (scale : ℝ) : Prop :=
   scale ≠ 0 ∧ cubeSpinClosureAtScale scale
 
@@ -243,6 +251,8 @@ theorem exists_unique_admissible_spin_scale :
   intro scale hscale
   exact admissible_spin_scale_unique scale hscale
 
+/-- The unique admissible spin scale, chosen from `exists_unique_admissible_spin_scale`; it equals
+`1 / 2` by `native_spin_scale_eq_half`. -/
 noncomputable def nativeSpinScale : ℝ :=
   Classical.choose exists_unique_admissible_spin_scale
 
@@ -253,6 +263,8 @@ theorem native_spin_scale_admissible :
 theorem native_spin_scale_eq_half : nativeSpinScale = 1 / 2 :=
   admissible_spin_scale_unique nativeSpinScale native_spin_scale_admissible
 
+/-- The spin operator `cubeScaledSpin nativeSpinScale axis`, which equals
+`(1 / 2) * cubeSigma axis`. -/
 def cubeSpin (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   cubeScaledSpin nativeSpinScale axis amplitude
 
@@ -317,6 +329,7 @@ theorem cube_spin_casimir (amplitude : Cell8) :
   rw [h0, h1, h2]
   ring
 
+/-- The Hermitian inner product `∑ c, conj (first c) * second c` on eight-corner amplitudes. -/
 def cell8Inner (first second : Cell8) : ℂ :=
   ∑ corner, star (first corner) * second corner
 
@@ -356,11 +369,14 @@ theorem cube_spin_self_adjoint
 
 theorem sqrt_two_ne_zero : Real.sqrt 2 ≠ 0 := by positivity
 
+/-- The operator `(1 - B) / √2` with `B = cubePlaneBivector axis`, a quarter-turn about `axis`. -/
 def cubeQuarterTurn (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   fun corner =>
     (((1 / Real.sqrt 2 : ℝ) : ℂ) *
       (amplitude corner - cubePlaneBivector axis amplitude corner))
 
+/-- The operator `(1 + B) / √2` with `B = cubePlaneBivector axis`, the inverse of
+`cubeQuarterTurn axis`. -/
 def cubeQuarterTurnInverse (axis : Fin 3) (amplitude : Cell8) : Cell8 :=
   fun corner =>
     (((1 / Real.sqrt 2 : ℝ) : ℂ) *
@@ -582,6 +598,9 @@ theorem cube_spin_preserves_plus_copy (axis : Fin 3) (z : Cell4) :
       cubeSpin axis (cubeDiracEmbedPlus z) := by
   rw [cube_flavor_commutes_spin, cube_dirac_embed_plus_has_positive_flavor]
 
+/-- The bundle of results of this file: the commutation relations, unique admissible scale `1 / 2`,
+Casimir `3 / 4` and self-adjointness of `cubeSpin`, and the properties of `cubeQuarterTurn` (axis
+rotation, fourth power `-1`, eighth power `1`, density and copy preservation). -/
 structure Dirac017NativeSpinHalfCertificate : Prop where
   priorDerivation : Dirac016CopyTranslationCertificate
   nativePlaneSquare : ∀ axis amplitude,

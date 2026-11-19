@@ -38,19 +38,29 @@ variable {Site : Type} {Edge : Type*}
 
 noncomputable section
 
+/-- A pair of states at two consecutive time steps. -/
 structure NativeTwoLayerState (Site : Type) where
+  /-- The state at the earlier time step. -/
   previous : State Site
+  /-- The state at the later time step. -/
   current : State Site
 
+/-- A state together with a velocity, used as position-velocity coordinates for two time
+steps. -/
 structure NativeRunningState (Site : Type) where
+  /-- The state at the current time step. -/
   current : State Site
+  /-- The difference quotient of the state over the preceding time interval. -/
   intervalVelocity : Velocity Site
 
+/-- The map sending two layers to the current layer and the backward difference quotient
+`(current - previous) / dt`. -/
 def nativePairedReadout (dt : ℝ) (layers : NativeTwoLayerState Site) :
     NativeRunningState Site where
   current := layers.current
   intervalVelocity := stateDifferenceVelocity dt layers.previous layers.current
 
+/-- The state `current - dt * intervalVelocity`, computed componentwise for `psi` and `chi`. -/
 def rebuildPreviousState (dt : ℝ) (running : NativeRunningState Site) :
     State Site where
   psi := fun site component =>
@@ -60,6 +70,8 @@ def rebuildPreviousState (dt : ℝ) (running : NativeRunningState Site) :
     running.current.chi site component -
       (dt : ℂ) * running.intervalVelocity.chiDot site component
 
+/-- The two layers with previous layer `rebuildPreviousState dt running` and current layer
+`running.current`. -/
 def rebuildNativeLayers (dt : ℝ) (running : NativeRunningState Site) :
     NativeTwoLayerState Site where
   previous := rebuildPreviousState dt running
@@ -93,6 +105,8 @@ theorem native_readout_after_rebuild
           simp [rebuildNativeLayers, rebuildPreviousState] <;>
           field_simp [hdt]
 
+/-- For nonzero `dt`, the equivalence between two-layer states and position-velocity states
+given by `nativePairedReadout dt` with inverse `rebuildNativeLayers dt`. -/
 def nativeLayersRunningEquiv (dt : ℝ) (hdt : dt ≠ 0) :
     NativeTwoLayerState Site ≃ NativeRunningState Site where
   toFun := nativePairedReadout dt
@@ -100,15 +114,21 @@ def nativeLayersRunningEquiv (dt : ℝ) (hdt : dt ≠ 0) :
   left_inv := rebuild_after_native_readout dt hdt
   right_inv := native_readout_after_rebuild dt hdt
 
+/-- The cube velocity whose `psi` part at each corner is `psiVelocity corner` times
+`tetraCorner corner` and whose `chi` part is `chiVelocity corner` times `companion corner`. -/
 def alignedEightSiteVelocity (psiVelocity chiVelocity : Cell8) :
     Velocity CubeCorner where
   psiDot corner := c3ScaleComplex (psiVelocity corner) (tetraCorner corner)
   chiDot corner := c3ScaleComplex (chiVelocity corner) (companion corner)
 
+/-- A cube velocity lies in the eight-site sector if it equals `alignedEightSiteVelocity` for
+some pair of eight-corner amplitudes. -/
 def InEightSiteVelocitySector (velocity : Velocity CubeCorner) : Prop :=
   ∃ psiVelocity chiVelocity,
     velocity = alignedEightSiteVelocity psiVelocity chiVelocity
 
+/-- Both the state and the velocity of a position-velocity cube state lie in the eight-site
+sector. -/
 def InEightSiteRunningSector
     (running : NativeRunningState CubeCorner) : Prop :=
   InEightSiteSector running.current ∧
@@ -164,20 +184,27 @@ theorem rebuild_native_layers_preserves_eight_site_sector
       running.current running.intervalVelocity hrunning.1 hrunning.2,
     hrunning.1⟩
 
+/-- The subtype of two-layer cube states whose both layers lie in the eight-site sector. -/
 abbrev NativeTwoLayerSector :=
   { layers : NativeTwoLayerState CubeCorner //
     InEightSiteSector layers.previous ∧ InEightSiteSector layers.current }
 
+/-- The subtype of position-velocity cube states lying in `InEightSiteRunningSector`. -/
 abbrev NativeRunningSector :=
   { running : NativeRunningState CubeCorner //
     InEightSiteRunningSector running }
 
+/-- A pair of unit-cell amplitude pairs, one for each of two layers. -/
 abbrev NativeTwoLayerAmplitudes :=
   NativeUnitCellAmplitudes × NativeUnitCellAmplitudes
 
+/-- The thirty-two coordinate indices `NativeUnitCellTwoLayerCoordinate`, used for the
+position-velocity sector. -/
 abbrev NativeUnitCellRunningCoordinate :=
   NativeUnitCellTwoLayerCoordinate
 
+/-- Flattens two layers of amplitudes into a function on the thirty-two coordinates, using
+`nativeUnitCellAmplitudeCoordinates` on each layer. -/
 def nativeTwoLayerAmplitudeCoordinates
     (amplitudes : NativeTwoLayerAmplitudes) :
     NativeUnitCellRunningCoordinate → ℂ
@@ -186,6 +213,8 @@ def nativeTwoLayerAmplitudeCoordinates
   | Sum.inr coordinate =>
       nativeUnitCellAmplitudeCoordinates amplitudes.2 coordinate
 
+/-- Splits a function on the thirty-two coordinates into two layers of amplitudes, using
+`nativeUnitCellCoordinatesAmplitude` on each summand. -/
 def nativeTwoLayerCoordinatesAmplitude
     (coordinates : NativeUnitCellRunningCoordinate → ℂ) :
     NativeTwoLayerAmplitudes :=
@@ -194,6 +223,8 @@ def nativeTwoLayerCoordinatesAmplitude
     nativeUnitCellCoordinatesAmplitude
       (fun coordinate => coordinates (Sum.inr coordinate)))
 
+/-- The equivalence between two layers of amplitudes and functions on the thirty-two
+coordinates `NativeUnitCellRunningCoordinate`. -/
 def nativeTwoLayerAmplitudeCoordinateEquiv :
     NativeTwoLayerAmplitudes ≃
       (NativeUnitCellRunningCoordinate → ℂ) where
@@ -218,6 +249,8 @@ def nativeTwoLayerAmplitudeCoordinateEquiv :
           (nativeUnitCellAmplitudeCoordinateEquiv.right_inv
             (fun coordinate => coordinates (Sum.inr coordinate))) inner
 
+/-- The equivalence between two layers of amplitudes and two-layer states in the eight-site
+sector, applying `alignedEightSiteStateFromAmplitudes` to each layer. -/
 def nativeTwoLayerAmplitudeSectorEquiv :
     NativeTwoLayerAmplitudes ≃ NativeTwoLayerSector where
   toFun amplitudes :=
@@ -242,6 +275,8 @@ def nativeTwoLayerAmplitudeSectorEquiv :
     · exact aligned_recovered_state_of_in_eight_site_sector
         layers.1.current layers.2.2
 
+/-- For nonzero `dt`, the restriction of `nativeLayersRunningEquiv` to an equivalence between
+the eight-site two-layer sector and the eight-site position-velocity sector. -/
 def nativeTwoLayerRunningSectorEquiv (dt : ℝ) (hdt : dt ≠ 0) :
     NativeTwoLayerSector ≃ NativeRunningSector where
   toFun layers :=
@@ -261,6 +296,8 @@ def nativeTwoLayerRunningSectorEquiv (dt : ℝ) (hdt : dt ≠ 0) :
     apply Subtype.ext
     exact native_readout_after_rebuild dt hdt running.1
 
+/-- For nonzero `dt`, the equivalence between the eight-site position-velocity sector and
+functions on the thirty-two coordinates, through the two-layer sector and its amplitudes. -/
 def nativeRunningSectorCoordinateEquiv (dt : ℝ) (hdt : dt ≠ 0) :
     NativeRunningSector ≃ (NativeUnitCellRunningCoordinate → ℂ) :=
   (nativeTwoLayerRunningSectorEquiv dt hdt).symm |>.trans
@@ -285,6 +322,9 @@ theorem native_unit_cell_running_coordinate_count :
     Fintype.card NativeUnitCellRunningCoordinate = 32 := by
   exact native_unit_cell_two_layer_coordinate_count
 
+/-- The DIRAC-007 statement bundle: `nativePairedReadout dt` and `rebuildNativeLayers dt` are
+mutually inverse, both preserve the eight-site sectors, the sector coordinate equivalence
+round-trips, and there are `32` coordinates. -/
 structure Dirac007Certificate (dt : ℝ) (hdt : dt ≠ 0) : Prop where
   layerRoundTrip : ∀ layers : NativeTwoLayerState CubeCorner,
     rebuildNativeLayers dt (nativePairedReadout dt layers) = layers

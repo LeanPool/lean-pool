@@ -25,22 +25,35 @@ namespace LeanDirac
 noncomputable section
 open BigOperators Complex
 
+/-- The eight corners of a cube, indexed by `Fin 8`. -/
 abbrev CubeCorner := Fin 8
 
+/-- The real number `1 / √3`. -/
 def tetraA : ℝ := 1 / Real.sqrt 3
+/-- The real number `√2 / √3`. -/
 def tetraB : ℝ := Real.sqrt 2 / Real.sqrt 3
+/-- The primitive cube root of unity `-1/2 + (√3 / 2) i`. -/
 def omega : ℂ := (-1/2 : ℝ) + (Real.sqrt 3 / 2 : ℝ) * I
+/-- The complex conjugate `-1/2 - (√3 / 2) i` of `omega`. -/
 def omegaBar : ℂ := (-1/2 : ℝ) - (Real.sqrt 3 / 2 : ℝ) * I
 
+/-- The vector in `C3` with components `x`, `y`, `z`. -/
 def c3Of (x y z : ℂ) : C3
   | 0 => x | 1 => y | _ => z
 
+/-- The unit vector `(1, 0, 0)`. -/
 def tetraRay0 : C3 := c3Of 1 0 0
+/-- The unit vector `(tetraA, tetraB, 0) = (1 / √3, √2 / √3, 0)`. -/
 def tetraRay1 : C3 := c3Of tetraA tetraB 0
+/-- The unit vector `(tetraA, tetraB * omega, 0)`. -/
 def tetraRay2 : C3 := c3Of tetraA (tetraB * omega) 0
+/-- The unit vector `(tetraA, tetraB * omegaBar, 0)`. -/
 def tetraRay3 : C3 := c3Of tetraA (tetraB * omegaBar) 0
+/-- The componentwise negation of `u`. -/
 def c3Neg (u : C3) : C3 := fun component => -u component
 
+/-- The vector assigned to each cube corner: corners `0`–`3` get `tetraRay0`–`tetraRay3`, and
+corners `4`–`7` get the negations of `tetraRay3`, `tetraRay2`, `tetraRay1`, `tetraRay0`. -/
 def tetraCorner (corner : CubeCorner) : C3 :=
   match corner.val with
   | 0 => tetraRay0 | 1 => tetraRay1
@@ -48,6 +61,8 @@ def tetraCorner (corner : CubeCorner) : C3 :=
   | 4 => c3Neg tetraRay3 | 5 => c3Neg tetraRay2
   | 6 => c3Neg tetraRay1 | _ => c3Neg tetraRay0
 
+/-- The Hermitian inner product `∑ i, conj (u i) * v i`, written out through real and
+imaginary parts. -/
 def overlap (u v : C3) : ℂ :=
   ⟨(∑ component : Fin 3,
       ((u component).re * (v component).re +
@@ -56,6 +71,8 @@ def overlap (u v : C3) : ℂ :=
       ((u component).re * (v component).im -
         (u component).im * (v component).re))⟩
 
+/-- The product of the overlaps of `tetraCorner` vectors around the closed cycle
+`a → b → c → d → a` of cube corners. -/
 def faceProduct (a b c d : CubeCorner) : ℂ :=
   overlap (tetraCorner a) (tetraCorner b) *
     overlap (tetraCorner b) (tetraCorner c) *

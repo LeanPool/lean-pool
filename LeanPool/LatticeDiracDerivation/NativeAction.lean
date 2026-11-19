@@ -28,35 +28,44 @@ variable {Site : Type} {Edge : Type*}
 noncomputable section
 open BigOperators
 
+/-- The on-site potential `(ρχ - chi0 ^ 2) ^ 2 / 4 + ρχ * ρψ / 2 + ρψ ^ 2 / 4`, where `ρψ` and
+`ρχ` are the squared norms of the `psi` and `chi` fields at `site`. -/
 def sitePotential (chi0 : ℝ) (state : State Site) (site : Site) : ℝ :=
   let rhoPsi := density (state.psi site)
   let rhoChi := density (state.chi site)
   (rhoChi - chi0 ^ 2) ^ 2 / 4 + rhoChi * rhoPsi / 2 + rhoPsi ^ 2 / 4
 
+/-- The total potential energy: the sum of `sitePotential` over all sites plus the sum of
+`exteriorAreaBond` over all edges, each edge mapped to a bond by `bond`. -/
 def potential [Fintype Site] [Fintype Edge]
     (chi0 : ℝ) (state : State Site) (bond : Edge → Bond Site) : ℝ :=
   (∑ site, sitePotential chi0 state site) +
     ∑ edge, exteriorAreaBond chi0 state (bond edge)
 
+/-- The Lagrangian, kinetic energy minus potential energy. -/
 def lagrangian [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)
     (bond : Edge → Bond Site) : ℝ :=
   kinetic B velocity - potential chi0 state bond
 
+/-- The Hamiltonian, kinetic energy plus potential energy. -/
 def hamiltonian [Fintype Site] [Fintype Edge]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)
     (bond : Edge → Bond Site) : ℝ :=
   kinetic B velocity + potential chi0 state bond
 
+/-- The potential energy `potential` with edges the directed C19 edges of `geometry`. -/
 def c19Potential [Fintype Site]
     (chi0 : ℝ) (state : State Site) (geometry : C19Lattice Site) : ℝ :=
   potential (Edge := C19Edge Site) chi0 state (c19Bond geometry)
 
+/-- The Lagrangian `lagrangian` with edges the directed C19 edges of `geometry`. -/
 def c19Lagrangian [Fintype Site]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)
     (geometry : C19Lattice Site) : ℝ :=
   lagrangian (Edge := C19Edge Site) chi0 B state velocity (c19Bond geometry)
 
+/-- The Hamiltonian `hamiltonian` with edges the directed C19 edges of `geometry`. -/
 def c19Hamiltonian [Fintype Site]
     (chi0 B : ℝ) (state : State Site) (velocity : Velocity Site)
     (geometry : C19Lattice Site) : ℝ :=
