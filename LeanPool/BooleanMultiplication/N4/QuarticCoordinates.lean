@@ -112,22 +112,82 @@ def quarticPoneVector (a b : F₂) : LinearForm :=
 def quarticPzeroVector (c d : F₂) : LinearForm :=
   c • placeA 0 + d • placeB 0
 
+/-- Evaluate a packed covector by summing the two-form coordinates at its set bits. -/
+def evalPackedQuarticCovector (mask : Nat) (q : TwoForm) : F₂ :=
+  let pairs := ((List.finRange 28).filter (fun k => mask.testBit k.val)).map upperPair
+  (pairs.map (fun pair => q pair.1 pair.2)).sum
+
+private theorem sum_filterSupport (mask : Nat) (q : TwoForm) (indices : List (Fin 28)) :
+    ((indices.filter (fun k => mask.testBit k.val)).map
+      (fun k => q (upperPair k).1 (upperPair k).2)).sum =
+    (indices.map (fun k => if mask.testBit k.val then q (upperPair k).1 (upperPair k).2
+      else 0)).sum := by
+  induction indices with
+  | nil => rfl
+  | cons k rest ih =>
+    by_cases h : mask.testBit k.val <;> simp [h, ih]
+
+/-- The packed evaluator agrees with the linear combination of coordinate projections. -/
+theorem sum_twoFormCoordinate_apply (mask : Nat) (q : TwoForm) :
+    (∑ k : Fin 28, (if mask.testBit k.val then (1 : F₂) else 0) •
+      twoFormCoordinate (upperPair k).1 (upperPair k).2) q = evalPackedQuarticCovector mask q := by
+  unfold evalPackedQuarticCovector
+  simp only [List.map_map, Function.comp_def]
+  rw [sum_filterSupport, ← List.ofFn_eq_map, List.sum_ofFn, LinearMap.sum_apply]
+  apply Finset.sum_congr rfl
+  intro k _
+  rw [LinearMap.smul_apply]
+  change (if mask.testBit k.val then (1 : F₂) else 0) • q (upperPair k).1 (upperPair k).2 = _
+  rw [ite_smul, one_smul, zero_smul]
+
+private theorem quarticSeparatorLinear_apply_packed (a b c d : F₂) (i : Fin 9) (q : TwoForm) :
+    quarticSeparatorLinear a b c d i q =
+      evalPackedQuarticCovector (quarticLowLowSeparatorTable (quarticSeparatorIndex a b c d i)) q :=
+  sum_twoFormCoordinate_apply _ _
+
+private theorem quarticSeparator_target_check_packed :
+    ∀ (a b c d : F₂) (i : Fin 9),
+      evalPackedQuarticCovector
+        (quarticLowLowSeparatorTable (quarticSeparatorIndex a b c d i))
+        (targetTwo (outsideRankTwoWord i)) = 1 := by
+  decide +kernel
+
 theorem quarticSeparator_target_check :
     ∀ (a b c d : F₂) (i : Fin 9),
       quarticSeparatorLinear a b c d i (targetTwo (outsideRankTwoWord i)) = 1 := by
+  as_aux_lemma =>
+    simp only [quarticSeparatorLinear_apply_packed]
+    exact quarticSeparator_target_check_packed
+
+private theorem quarticSeparator_pone_basis_check_packed :
+    ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
+      evalPackedQuarticCovector
+        (quarticLowLowSeparatorTable (quarticSeparatorIndex a b c d i))
+        (vectorWedge (quarticPoneVector a b) (coordinateLinear j)) = 0 := by
   decide +kernel
 
 theorem quarticSeparator_pone_basis_check :
     ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
       quarticSeparatorLinear a b c d i
         (vectorWedge (quarticPoneVector a b) (coordinateLinear j)) = 0 := by
+  as_aux_lemma =>
+    simp only [quarticSeparatorLinear_apply_packed]
+    exact quarticSeparator_pone_basis_check_packed
+
+private theorem quarticSeparator_pzero_basis_check_packed :
+    ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
+      evalPackedQuarticCovector
+        (quarticLowLowSeparatorTable (quarticSeparatorIndex a b c d i))
+        (vectorWedge (quarticPzeroVector c d) (coordinateLinear j)) = 0 := by
   decide +kernel
 
 theorem quarticSeparator_pzero_basis_check :
     ∀ (a b c d : F₂) (i : Fin 9) (j : Fin 8),
       quarticSeparatorLinear a b c d i
         (vectorWedge (quarticPzeroVector c d) (coordinateLinear j)) = 0 := by
-  decide +kernel
+  as_aux_lemma =>
+    simp only [quarticSeparatorLinear_apply_packed]
+    exact quarticSeparator_pzero_basis_check_packed
 
 theorem quarticSeparator_pone (a b c d : F₂) (i : Fin 9)
     (z : LinearForm) :

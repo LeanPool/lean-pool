@@ -94,6 +94,45 @@ private theorem anfQuarticAnnihilatorProbe_target_mul
   simp only [Finset.sum_mul, Finset.mul_sum, smul_mul_smul, map_sum, map_smul,
     anfQuarticAnnihilatorProbeLinear_apply, anfQuarticAnnihilatorProbe_monomial_mul]
 
+private theorem anfQuarticAnnihilatorProbe_target_mul_wedge
+    (c d : TargetCoeff) (k : Fin 9) :
+    anfQuarticAnnihilatorProbe (targetANF c * targetANF d) k =
+      quarticAnnihilatorProbe (targetTwo c) (targetTwo d) k := by
+  rw [anfQuarticAnnihilatorProbe_target_mul]
+  simp only [smul_eq_mul]
+  fin_cases k
+  · exact targetConvolution_eq_wedge c d (a := 0) (b := 1) (x := 0) (y := 1)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 0) (b := 3) (x := 1) (y := 3)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 0) (b := 1) (x := 0) (y := 2)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 0) (b := 3) (x := 0) (y := 3)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 0) (b := 3) (x := 2) (y := 3)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 0) (b := 1) (x := 0) (y := 3)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 1) (b := 3) (x := 2) (y := 3)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 0) (b := 2) (x := 0) (y := 3)
+      (by decide) (by decide)
+  · exact targetConvolution_eq_wedge c d (a := 2) (b := 3) (x := 2) (y := 3)
+      (by decide) (by decide)
+
+private theorem anfQuarticAnnihilatorProbe_convolution_mul_place
+    (s : Fin 7) (theta : Fin 3) (k : Fin 9) :
+    (∑ u : Fin 4, ∑ v : Fin 4, ∑ i : Fin 4, ∑ j : Fin 4,
+        (targetBasis s (hankelIndex i j) * rationalPlaceCoeff theta (hankelIndex u v)) •
+          (if targetPair i j ∪ targetPair u v = quarticAnnihilatorSet k
+            then (1 : F₂) else 0)) =
+      quarticAnnihilatorCoeffProbe (targetBasis s) (rationalSingleton theta) k := by
+  have hplace : rationalCoeffRep (rationalSingleton theta) = rationalPlaceCoeff theta := by
+    fin_cases theta <;> simp [rationalCoeffRep, rationalSingleton, rationalPlaceCoeff]
+  rw [← anfQuarticAnnihilatorProbe_target_mul, anfQuarticAnnihilatorProbe_target_mul_wedge,
+    quarticAnnihilatorCoeffProbe_eq, ← targetTwo_rationalCoeffRep, hplace]
+
+-- These auxiliary proofs retain the propositions previously checked by kernel evaluation.
 private theorem anfQuarticAnnihilatorProbe_basis_zero_zero
     (k : Fin 9) :
     anfQuarticAnnihilatorProbe
@@ -103,7 +142,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_zero_zero
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 0 0 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_zero_one
     (k : Fin 9) :
@@ -114,7 +156,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_zero_one
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 0 1 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_zero_two
     (k : Fin 9) :
@@ -125,7 +170,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_zero_two
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 0 2 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_one_zero
     (k : Fin 9) :
@@ -136,7 +184,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_one_zero
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 1 0 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_one_one
     (k : Fin 9) :
@@ -147,7 +198,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_one_one
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 1 1 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_one_two
     (k : Fin 9) :
@@ -158,7 +212,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_one_two
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 1 2 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_two_zero
     (k : Fin 9) :
@@ -169,7 +226,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_two_zero
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 2 0 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_two_one
     (k : Fin 9) :
@@ -180,7 +240,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_two_one
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 2 1 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_two_two
     (k : Fin 9) :
@@ -191,7 +254,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_two_two
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 2 2 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_three_zero
     (k : Fin 9) :
@@ -202,7 +268,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_three_zero
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 3 0 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_three_one
     (k : Fin 9) :
@@ -213,7 +282,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_three_one
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 3 1 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_three_two
     (k : Fin 9) :
@@ -224,7 +296,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_three_two
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 3 2 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_four_zero
     (k : Fin 9) :
@@ -235,7 +310,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_four_zero
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 4 0 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_four_one
     (k : Fin 9) :
@@ -246,7 +324,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_four_one
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 4 1 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_four_two
     (k : Fin 9) :
@@ -257,7 +338,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_four_two
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 4 2 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_five_zero
     (k : Fin 9) :
@@ -268,7 +352,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_five_zero
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 5 0 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_five_one
     (k : Fin 9) :
@@ -279,7 +366,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_five_one
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 5 1 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_five_two
     (k : Fin 9) :
@@ -290,7 +380,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_five_two
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 5 2 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_six_zero
     (k : Fin 9) :
@@ -301,7 +394,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_six_zero
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 6 0 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_six_one
     (k : Fin 9) :
@@ -312,7 +408,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_six_one
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 6 1 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_six_two
     (k : Fin 9) :
@@ -323,7 +422,10 @@ private theorem anfQuarticAnnihilatorProbe_basis_six_two
   rw [← targetANF_targetBasis, anfQuarticAnnihilatorProbe_target_mul]
   simp only [targetBasis, Pi.basisFun_apply, smul_eq_mul]
   revert k
-  decide +kernel
+  as_aux_lemma =>
+    intro k
+    simpa only [targetBasis, Pi.basisFun_apply, smul_eq_mul] using
+      anfQuarticAnnihilatorProbe_convolution_mul_place 6 2 k
 
 private theorem anfQuarticAnnihilatorProbe_basis_zero
     (theta : Fin 3) (k : Fin 9) :

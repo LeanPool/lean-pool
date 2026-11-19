@@ -75,10 +75,39 @@ theorem feedbackQuarticProbeANF_eq_zero_of_degreeLE_three
     (feedbackQuarticCoord u).2.2.1)
     (feedbackQuarticCoord u).2.2.2
 
+private theorem feedbackQuarticProbe_target_convolution
+    (c d : TargetCoeff) (k : Fin 6) :
+    (if ({(feedbackQuarticCoord k).1, (feedbackQuarticCoord k).2.1,
+        (feedbackQuarticCoord k).2.2.1, (feedbackQuarticCoord k).2.2.2} : Finset (Fin 8)).card = 4
+      then
+        ∑ u : Fin 4, ∑ v : Fin 4, ∑ i : Fin 4, ∑ j : Fin 4,
+          (c (hankelIndex i j) * d (hankelIndex u v)) *
+            (if targetPair i j ∪ targetPair u v =
+                {(feedbackQuarticCoord k).1, (feedbackQuarticCoord k).2.1,
+                  (feedbackQuarticCoord k).2.2.1, (feedbackQuarticCoord k).2.2.2}
+              then (1 : F₂) else 0)
+      else 0) =
+      feedbackQuarticWedgeProbe (targetTwo c) (targetTwo d) k := by
+  rw [← coeff_targetANF_mul_targetANF]
+  fin_cases k
+  · exact anfFourProjection_target_mul_quartic c d (a := 0) (b := 1) (x := 0) (y := 1)
+      (by decide) (by decide)
+  · exact anfFourProjection_target_mul_quartic c d (a := 0) (b := 1) (x := 0) (y := 2)
+      (by decide) (by decide)
+  · exact anfFourProjection_target_mul_quartic c d (a := 0) (b := 3) (x := 0) (y := 3)
+      (by decide) (by decide)
+  · exact anfFourProjection_target_mul_quartic c d (a := 0) (b := 3) (x := 1) (y := 3)
+      (by decide) (by decide)
+  · exact anfFourProjection_target_mul_quartic c d (a := 0) (b := 3) (x := 2) (y := 3)
+      (by decide) (by decide)
+  · exact anfFourProjection_target_mul_quartic c d (a := 0) (b := 1) (x := 2) (y := 3)
+      (by decide) (by decide)
+
 private theorem targetANF_targetBasis_feedback_quartic (s : Fin 7) :
     targetANF (targetBasis s) = Mul 4 s := by
   simp [targetANF, targetBasis_apply]
 
+-- These auxiliary proofs retain the propositions previously checked by kernel evaluation.
 private theorem feedbackQuarticProbe_Mul_mul_zero :
     ∀ t : Fin 7, feedbackQuarticProbeANF (Mul 4 0 * Mul 4 t) =
       feedbackQuarticWedgeProbe
@@ -92,7 +121,10 @@ private theorem feedbackQuarticProbe_Mul_mul_zero :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      feedbackQuarticProbe_target_convolution (targetBasis 0) (targetBasis t) u
 
 private theorem feedbackQuarticProbe_Mul_mul_one :
     ∀ t : Fin 7, feedbackQuarticProbeANF (Mul 4 1 * Mul 4 t) =
@@ -107,7 +139,10 @@ private theorem feedbackQuarticProbe_Mul_mul_one :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      feedbackQuarticProbe_target_convolution (targetBasis 1) (targetBasis t) u
 
 private theorem feedbackQuarticProbe_Mul_mul_two :
     ∀ t : Fin 7, feedbackQuarticProbeANF (Mul 4 2 * Mul 4 t) =
@@ -122,7 +157,10 @@ private theorem feedbackQuarticProbe_Mul_mul_two :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      feedbackQuarticProbe_target_convolution (targetBasis 2) (targetBasis t) u
 
 private theorem feedbackQuarticProbe_Mul_mul_three :
     ∀ t : Fin 7, feedbackQuarticProbeANF (Mul 4 3 * Mul 4 t) =
@@ -137,7 +175,10 @@ private theorem feedbackQuarticProbe_Mul_mul_three :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      feedbackQuarticProbe_target_convolution (targetBasis 3) (targetBasis t) u
 
 private theorem feedbackQuarticProbe_Mul_mul_four :
     ∀ t : Fin 7, feedbackQuarticProbeANF (Mul 4 4 * Mul 4 t) =
@@ -152,7 +193,10 @@ private theorem feedbackQuarticProbe_Mul_mul_four :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      feedbackQuarticProbe_target_convolution (targetBasis 4) (targetBasis t) u
 
 private theorem feedbackQuarticProbe_Mul_mul_five :
     ∀ t : Fin 7, feedbackQuarticProbeANF (Mul 4 5 * Mul 4 t) =
@@ -167,7 +211,10 @@ private theorem feedbackQuarticProbe_Mul_mul_five :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      feedbackQuarticProbe_target_convolution (targetBasis 5) (targetBasis t) u
 
 private theorem feedbackQuarticProbe_Mul_mul_six :
     ∀ t : Fin 7, feedbackQuarticProbeANF (Mul 4 6 * Mul 4 t) =
@@ -182,7 +229,10 @@ private theorem feedbackQuarticProbe_Mul_mul_six :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      feedbackQuarticProbe_target_convolution (targetBasis 6) (targetBasis t) u
 
 private theorem feedbackQuarticProbe_Mul_mul (s t : Fin 7) :
     feedbackQuarticProbeANF (Mul 4 s * Mul 4 t) =
