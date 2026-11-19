@@ -55,14 +55,23 @@ open scoped Topology NNReal ENNReal
 namespace GinibrePoincare
 noncomputable section
 
-theorem ginibreBrownian_stopped_core_test_expectation
+/-- Smooth compactly supported test functions whose support avoids the collision set. -/
+def IsGinibreCollisionFreeCompactTest {n : ℕ} (f : Configuration n → ℝ) : Prop :=
+  ContDiff ℝ (↑(⊤ : ℕ∞) : WithTop ℕ∞) f ∧ HasCompactSupport f ∧ tsupport f ⊆ (collisionSet n)ᶜ
+
+/-- The symmetric core is a collision-free compact test class. -/
+theorem IsTheoremOneNineCore.isCollisionFreeCompactTest {n : ℕ} {f : Configuration n → ℝ}
+    (hf : IsTheoremOneNineCore f) : IsGinibreCollisionFreeCompactTest f :=
+  ⟨hf.1, hf.2.1, hf.2.2.1⟩
+
+theorem ginibreBrownian_stopped_compact_test_expectation
     {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (hn : 0 < n) (α : ℝ≥0)
     (z : Configuration n) (hz : CollisionFree z)
     (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
     [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
     (hind : iIndepFun (fun i ω t => B i t ω) P)
     (R : ℝ) (hR : ginibreHamiltonian n z ≤ R) (T : ℝ≥0)
-    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+    (f : Configuration n → ℝ) (hf : IsGinibreCollisionFreeCompactTest f) :
     Integrable (fun ω => ∫ s in (0 : ℝ)..(ginibreBrownianHamiltonianBoundedStop n α z B R T ω : ℝ),
       ginibreRealPaperSpeedGenerator n α f
         (ginibreBrownianHamiltonianStoppedProcess n α z B R T s.toNNReal ω)) P ∧
@@ -105,6 +114,24 @@ theorem ginibreBrownian_stopped_core_test_expectation
     integral_add (f := fun _ => f z) (g := fun ω => J (σ ω) ω)
       (integrable_const (f z)) hStop.1, hJmean] at hInt
   simpa using hInt
+
+theorem ginibreBrownian_stopped_core_test_expectation
+    {Ω : Type*} [MeasurableSpace Ω] {n : ℕ} (hn : 0 < n) (α : ℝ≥0)
+    (z : Configuration n) (hz : CollisionFree z)
+    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
+    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
+    (hind : iIndepFun (fun i ω t => B i t ω) P)
+    (R : ℝ) (hR : ginibreHamiltonian n z ≤ R) (T : ℝ≥0)
+    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+    Integrable (fun ω => ∫ s in (0 : ℝ)..(ginibreBrownianHamiltonianBoundedStop n α z B R T ω : ℝ),
+      ginibreRealPaperSpeedGenerator n α f
+        (ginibreBrownianHamiltonianStoppedProcess n α z B R T s.toNNReal ω)) P ∧
+    (∫ ω, f (ginibreBrownianHamiltonianStoppedProcess n α z B R T T ω) ∂P) =
+      f z+∫ ω, (∫ s in (0 : ℝ)..(ginibreBrownianHamiltonianBoundedStop n α z B R T ω : ℝ),
+        ginibreRealPaperSpeedGenerator n α f
+          (ginibreBrownianHamiltonianStoppedProcess n α z B R T s.toNNReal ω)) ∂P := by
+  exact ginibreBrownian_stopped_compact_test_expectation hn α z hz B P hB hind R hR T f
+    hf.isCollisionFreeCompactTest
 
 end
 end GinibrePoincare

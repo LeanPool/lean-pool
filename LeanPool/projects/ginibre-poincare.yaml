@@ -225,7 +225,7 @@ main_results:
   source_ref: Supplementary remark on the holomorphic projection geometry of
     arXiv:2608.19358v2, Section 2.
 - declaration: GinibrePoincare.ginibreBrownian_equilibrium_original_whole_future_stationary
-  informal: For n > 0 and speed α, let X be the maximal solution of the Ginibre Langevin equation
+  informal: For n > 0 and speed α ≥ 0, let X be the maximal solution of the Ginibre Langevin equation
     driven by independent standard real Brownian motions on a complete probability space,
     started from a Ginibre-distributed configuration independent of the noise. For every s ≥ 0
     the shifted path t ↦ X_{s+t} has the same law as t ↦ X_t.

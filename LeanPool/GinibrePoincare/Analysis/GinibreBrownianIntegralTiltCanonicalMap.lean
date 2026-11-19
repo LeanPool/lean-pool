@@ -35,7 +35,6 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralTiltOUReference
 public import LeanPool.GinibrePoincare.Analysis.GinibreHamiltonianJointEvaluation
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticContinuousNoisePath
 
@@ -47,8 +46,7 @@ Ginibre Poincaré formalization.
 
 Main results: `ginibreFiniteNoise_extension_canonical_prefix`,
 `ginibreFiniteNoise_canonical_evaluation_identDistrib`,
-`ginibreFiniteNoise_canonical_whole_path_identDistrib`,
-`actualContinuousMap_law_eq_of_raw_path_law`.
+`ginibreFiniteNoise_canonical_whole_path_identDistrib`.
 -/
 
 @[expose] public section
@@ -181,44 +179,6 @@ theorem ginibreFiniteNoise_canonical_whole_path_identDistrib {Ω Ω' : Type*}
     intro t
     exact ginibreFiniteNoise_canonical_evaluation_measurable hn α z hz T t.val
   exact (show IdentDistrib X Y P Q from ⟨hX.aemeasurable, hY.aemeasurable, hLaw⟩).comp hm
-
-/-- Equal actual raw laws of continuous paths on different probability spaces
-identify their continuous-map random-element laws. -/
-theorem actualContinuousMap_law_eq_of_raw_path_law {Ω Ω' D E : Type*}
-    [MeasurableSpace Ω] [MeasurableSpace Ω'] [TopologicalSpace D]
-    [TopologicalSpace.SeparableSpace D] [Nonempty D]
-    [TopologicalSpace E] [SecondCountableTopology E] [T2Space E]
-    [MeasurableSpace E] [BorelSpace E]
-    [MeasurableSpace C(D, E)] [BorelSpace C(D, E)] [PolishSpace C(D, E)]
-    (P : Measure Ω) (Q : Measure Ω') (X : Ω → C(D, E)) (Y : Ω' → C(D, E))
-    (hX : Measurable X) (hY : Measurable Y)
-    (hraw : P.map (fun ω t => X ω t) = Q.map (fun ω t => Y ω t)) :
-    P.map X=Q.map Y := by
-  let d := TopologicalSpace.denseSeq D
-  let f : C(D, E) → ℕ → E := fun x k => x (d k)
-  have hf : MeasurableEmbedding f :=
-    (continuous_pi (fun k => continuous_eval_const (d k))).measurableEmbedding (by
-      intro x y h
-      apply DFunLike.coe_injective
-      exact (TopologicalSpace.denseRange_denseSeq D).equalizer x.continuous y.continuous h)
-  have hXm : Measurable (fun ω t => X ω t) := by
-    apply Measurable.of_eval
-    intro t
-    exact (continuous_eval_const t).measurable.comp hX
-  have hYm : Measurable (fun ω t => Y ω t) := by
-    apply Measurable.of_eval
-    intro t
-    exact (continuous_eval_const t).measurable.comp hY
-  let R : (D→E) → ℕ→E := fun x k => x (d k)
-  have hR : Measurable R := by
-    apply Measurable.of_eval
-    intro k
-    exact measurable_pi_apply _
-  apply hf.map_injective
-  rw [Measure.map_map hf.measurable hX, Measure.map_map hf.measurable hY]
-  have hh := congrArg (Measure.map R) hraw
-  rw [Measure.map_map hR hXm, Measure.map_map hR hYm] at hh
-  exact hh
 
 end
 end GinibrePoincare

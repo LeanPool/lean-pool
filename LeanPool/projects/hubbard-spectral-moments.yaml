@@ -1,0 +1,61 @@
+slug: hubbard-spectral-moments
+title: Spectral moments of the projected Hubbard configuration graph
+summary: Constructs finite fermion creation and annihilation matrices and the
+  projected Hubbard hopping operator. Proves the weighted second-moment
+  formula for Hermitian hopping, the vanishing of the Schrieffer–Wolff cross
+  term on triangle-free graphs, the doubled Peierls phase of the second-order
+  pair hop, and the classification of permutations induced by four closed
+  hard-core hops. Includes finite-population moment identities and torus
+  calculations used in the paper.
+branch: mathematical physics
+entry_module: LeanPool.HubbardMoments
+authors:
+- Daniel Souza
+source:
+  title: "Spectral Moments of the Projected Hubbard Configuration Graph: Connectivity, Exchange, and Virtual Doublons"
+  authors:
+  - Daniel Souza
+  arxiv: '2611.19929'
+  url: https://github.com/zhineos/hubbard-spectral-moments/tree/66d5104785daae03e2f91bbb681aa0fbcea1e6d4/lean
+  github_repo: zhineos/hubbard-spectral-moments
+  commit: 66d5104785daae03e2f91bbb681aa0fbcea1e6d4
+  announcement_url: https://github.com/zhineos/hubbard-spectral-moments/releases/tag/v1.0.0
+  announcement_date: '2026-11-15'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: The upstream provenance document credits Claude with the
+  Lean proofs under Daniel Souza's direction and credits Souza with checking
+  the resulting claims.
+main_declarations:
+- HubbardMoments.secondMomentHubbardWeighted
+- HubbardMoments.schriefferWolffHubbard
+- HubbardMoments.doubledPeierlsPhase
+- HubbardMoments.fourHopPermutations
+main_results:
+- declaration: HubbardMoments.secondMomentHubbardWeighted
+  informal: In a nonempty no-double-occupancy spin sector with n particles
+    on N sites, N at least two, the projected hopping matrix for Hermitian
+    bond amplitudes has normalized second moment n(N-n)/(N(N-1)) times the
+    sum of squared moduli of the off-diagonal hopping amplitudes.
+- declaration: HubbardMoments.schriefferWolffHubbard
+  informal: For the Hubbard hopping operator on a triangle-free graph, the
+    cross term between projected hopping and the virtual operator vanishes
+    when the projected states have no double occupation and the intermediate
+    states each contain a doubly occupied site.
+- declaration: HubbardMoments.doubledPeierlsPhase
+  informal: Evaluating the second-order two-particle effective matrix element
+    for a pair hopping to an adjacent site gives 2t²/U with twice the
+    single-hop phase.
+- declaration: HubbardMoments.fourHopPermutations
+  informal: A closed walk of four single-particle hops with exclusion can
+    induce only the identity, a transposition or a three-cycle.
+msc:
+- 81V70
+- 05C50
+- 82B20
+tags:
+- mathematical-physics
+- hubbard-model
+- spectral-moments
+- graph-theory

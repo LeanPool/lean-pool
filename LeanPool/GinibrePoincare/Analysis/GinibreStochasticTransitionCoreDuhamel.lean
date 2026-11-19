@@ -63,12 +63,12 @@ local instance stochasticDuhamelFullPathBorel (n : ℕ) : BorelSpace C(ℝ, Conf
 /-- The genuine original Brownian Dynkin equation as a time integral of
 actual transition expectations. All martingale identities and the Fubini
 integrability are derived from the actual compact core test. -/
-theorem ginibreBrownian_core_test_transition_duhamel {Ω : Type*} [MeasurableSpace Ω]
+theorem ginibreBrownian_compact_test_transition_duhamel {Ω : Type*} [MeasurableSpace Ω]
     {n : ℕ} (hn : 0 < n) (α : ℝ≥0) (z : Configuration n) (hz : CollisionFree z)
     (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
     [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
     (hind : iIndepFun (fun i ω t => B i t ω) P) (T : ℝ≥0)
-    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+    (f : Configuration n → ℝ) (hf : IsGinibreCollisionFreeCompactTest f) :
     (∫ ω, f (ginibreBrownianMaximalProcess n α z B T ω) ∂P)=f z+
       ∫ s in (0 : ℝ)..(T : ℝ), (∫ ω, ginibreRealPaperSpeedGenerator n α f
         (ginibreBrownianMaximalProcess n α z B s.toNNReal ω) ∂P) := by
@@ -77,7 +77,7 @@ theorem ginibreBrownian_core_test_transition_duhamel {Ω : Type*} [MeasurableSpa
       B α ω)
   have hXm : Measurable X := (ginibreDrivenGlobalPathElement_measurable hn α).comp
     (measurable_const.prodMk (ginibreBrownianFullContinuousNoise_measurable n B P hB α))
-  have hLc : Continuous L := (continuous_ginibrePregenerator_of_core hf).const_mul _
+  have hLc : Continuous L := (continuous_ginibrePregenerator_of_compact_test hf).const_mul _
   have hLs : HasCompactSupport L := by
     change HasCompactSupport ((fun _ => (α : ℝ)/(n : ℝ))*ginibrePregenerator n f)
     exact (hasCompactSupport_ginibrePregenerator hf.2.1).mul_left
@@ -111,13 +111,25 @@ theorem ginibreBrownian_core_test_transition_duhamel {Ω : Type*} [MeasurableSpa
     intro s hs
     apply integral_congr_ae
     exact hEq.mono (fun ω hω => hω s)
-  rw [ginibreBrownian_core_test_expectation hn α z hz B P hB hind T f hf, hLeft]
+  rw [ginibreBrownian_compact_test_expectation hn α z hz B P hB hind T f hf, hLeft]
   congr 1
   have heSwap : (∫ ω, (∫ s in (0 : ℝ)..(T : ℝ), L (X ω s)) ∂P)=
       ∫ s in (0 : ℝ)..(T : ℝ), (∫ ω, L (X ω s) ∂P) := by
     simp_rw [intervalIntegral.integral_of_le (show (0 : ℝ)≤(T : ℝ) from T.property)]
     exact hSwap.symm
   exact heSwap.trans hRight
+
+theorem ginibreBrownian_core_test_transition_duhamel {Ω : Type*} [MeasurableSpace Ω]
+    {n : ℕ} (hn : 0 < n) (α : ℝ≥0) (z : Configuration n) (hz : CollisionFree z)
+    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
+    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
+    (hind : iIndepFun (fun i ω t => B i t ω) P) (T : ℝ≥0)
+    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+    (∫ ω, f (ginibreBrownianMaximalProcess n α z B T ω) ∂P)=f z+
+      ∫ s in (0 : ℝ)..(T : ℝ), (∫ ω, ginibreRealPaperSpeedGenerator n α f
+        (ginibreBrownianMaximalProcess n α z B s.toNNReal ω) ∂P) := by
+  exact ginibreBrownian_compact_test_transition_duhamel hn α z hz B P hB hind T f
+    hf.isCollisionFreeCompactTest
 
 theorem ginibreBrownian_bounded_continuous_transition_mean_continuous {Ω : Type*}
     [MeasurableSpace Ω] {n : ℕ} (hn : 0 < n) (α : ℝ≥0)

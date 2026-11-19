@@ -1,0 +1,50 @@
+slug: stable-manifold
+title: The stable manifold theorem for hyperbolic fixed points
+summary: Uses a Lyapunov–Perron operator on bounded sequences to prove the smooth
+  local stable and unstable graph theorem for finite-dimensional real dynamics.
+  The development identifies the linear stable and unstable subspaces by
+  factoring the characteristic polynomial, proves exponential estimates in
+  the two directions, and proves regularity of the Lyapunov–Perron graph.
+  The stable graph construction also applies to
+  noninvertible maps when the stable and unstable subspaces are complementary.
+branch: dynamical systems
+entry_module: LeanPool.StableManifold
+authors:
+- The-Anh Vu-Le
+source:
+  url: https://github.com/vltanh/lean4-stable-manifold/tree/4909ed2eb6bdc504f86ccb455e544315f11d3860
+  github_repo: vltanh/lean4-stable-manifold
+  commit: 4909ed2eb6bdc504f86ccb455e544315f11d3860
+  announcement_url: https://github.com/vltanh/lean4-stable-manifold/commit/4909ed2eb6bdc504f86ccb455e544315f11d3860
+  announcement_date: '2026-11-14'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: The upstream README credits Claude Opus 5.5 with writing
+  the Lean code and The-Anh Vu-Le with maintaining the project.
+main_declarations:
+- Function.exists_nhds_localStableSet_localUnstableSet_eq_graph
+- Function.exists_nhds_localStableSet_localUnstableSet_eq_setOf
+- ContinuousLinearMap.isCompl_stableSubspace_unstableSubspace
+main_results:
+- declaration: Function.exists_nhds_localStableSet_localUnstableSet_eq_graph
+  informal: For a map of class C^n near a hyperbolic fixed point in a
+    finite-dimensional real normed space, with n at least one and invertible
+    derivative, the local stable and unstable sets are graphs over their
+    respective linear subspaces in every sufficiently small neighborhood.
+    The graph maps are C^n and have zero derivative at the origin.
+- declaration: Function.exists_nhds_localStableSet_localUnstableSet_eq_setOf
+  informal: Under the same smoothness, fixed-point, invertibility and
+    hyperbolicity hypotheses, a forward or backward orbit that stays in a
+    sufficiently small neighborhood of the fixed point converges to it.
+- declaration: ContinuousLinearMap.isCompl_stableSubspace_unstableSubspace
+  informal: The forward-decaying and backward-decaying subspaces of a
+    hyperbolic real linear map in finite dimension are complementary.
+msc:
+- 37C25
+- 37D10
+- 47H10
+tags:
+- dynamical-systems
+- invariant-manifolds
+- functional-analysis

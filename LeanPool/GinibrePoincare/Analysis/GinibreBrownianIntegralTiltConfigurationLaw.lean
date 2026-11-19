@@ -36,6 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralTiltContinuousLaw
+public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralTiltVolterra
 
 /-!
 # Ginibre Brownian integral tilt configuration law
