@@ -106,7 +106,7 @@ private lemma eLpNorm_count_two_fintype [MeasurableSpace ι] [MeasurableSingleto
     [Fintype ι] (a : ι → ℂ) :
     eLpNorm a 2 (Measure.count : Measure ι) =
       ENNReal.ofReal ((∑ j : ι, ‖a j‖ ^ 2) ^ (2 : ℝ)⁻¹) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (by norm_num : (2 : ENNReal) ≠ 0) (by norm_num : (2 : ENNReal) ≠ ⊤)
     AEStronglyMeasurable.of_discrete]
   rw [lintegral_count, tsum_fintype]
@@ -443,7 +443,7 @@ private lemma lintegral_sum_norm_pow_le_pointwise_bound [Finite ι] {f : ι → 
           rw [hdiff]
           simp
     _ ≤ ∫⁻ x, ‖R x - P x‖ₑ ∂μ :=
-          enorm_integral_le_lintegral_enorm (fun x ↦ R x - P x)
+          eNorm_integral_le_lintegral_eNorm (fun x ↦ R x - P x)
     _ ≤ ∫⁻ x, (((2 * r)! - 1 : ENNReal) * (ENNReal.ofReal (sqfct f x)) ^ 2 *
         (max ‖(∑' j, f j) x‖ₑ (ENNReal.ofReal (sqfct f x))) ^ (2 * r - 2)) ∂μ := by
           apply lintegral_mono
@@ -600,7 +600,7 @@ private lemma lintegral_pointwise_bound_le_split [Finite ι] {f : ι → α → 
   let A : α → ENNReal := fun x ↦ ‖(∑' j, f j) x‖ₑ
   have hSae : AEMeasurable S μ := hsq.aemeasurable.ennreal_ofReal
   have hAae : AEMeasurable A μ :=
-    (aestronglyMeasurable_tsum_finite (μ := μ) hf).aemeasurable.enorm
+    (aestronglyMeasurable_tsum_finite (μ := μ) hf).aemeasurable.eNorm
   have hsplit_ae :
       AEMeasurable (fun x ↦ S x ^ (2 * r) + S x ^ 2 * A x ^ (2 * r - 2)) μ :=
     (hSae.pow_const (2 * r)).add ((hSae.pow_const 2).mul (hAae.pow_const (2 * r - 2)))
@@ -627,7 +627,7 @@ private lemma lintegral_mixed_le_lintegral_powers [Finite ι] {f : ι → α →
   let A : α → ENNReal := fun x ↦ ‖(∑' j, f j) x‖ₑ
   have hSae : AEMeasurable S μ := hsq.aemeasurable.ennreal_ofReal
   have hAae : AEMeasurable A μ :=
-    (aestronglyMeasurable_tsum_finite (μ := μ) hf).aemeasurable.enorm
+    (aestronglyMeasurable_tsum_finite (μ := μ) hf).aemeasurable.eNorm
   have hrR : 1 ≤ (r : ℝ) := by exact_mod_cast hr
   have hp : 0 ≤ 1 / (r : ℝ) := by positivity
   have hq : 0 ≤ 1 - 1 / (r : ℝ) := by
@@ -1038,7 +1038,7 @@ private lemma finset_sum_bound_by_sqtail [Countable ι] [Fact (1 ≤ (2 * (r : E
       exact (Finset.sum_coe_sort t (fun i ↦ f i x)).symm
   calc
     ENNReal.ofReal ‖∑ i ∈ t, f i‖ = eLpNorm (∑' i, g i) (2 * r) μ := by
-      rw [ofReal_norm, Lp.enorm_def]
+      rw [ofReal_norm, Lp.eNorm_def]
       exact eLpNorm_congr_ae hsum_ae
     _ ≤ C r * eLpNorm (sqfct g) (2 * r) μ := hfinite
     _ ≤ C r * eLpNorm (sqtail (fun i ↦ (f i : α → ℂ)) s) (2 * r) μ := by
@@ -1111,7 +1111,7 @@ private lemma tendsto_eLpNorm_sqtail_atTop_zero [Countable ι] (hr : 1 ≤ r)
           ∫⁻ x, ‖sqtail (fun i ↦ (f i : α → ℂ)) s x‖ₑ ^ p.toReal ∂μ)
         Filter.atTop (nhds 0) := by
     have hfin : (∫⁻ x, ‖sqfct (fun i ↦ (f i : α → ℂ)) x‖ₑ ^ p.toReal ∂μ) ≠ ⊤ := by
-      exact (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top hp0 hptop hsq).ne
+      exact (lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top hp0 hptop hsq).ne
     have hlim : ∀ᵐ x ∂μ,
         Filter.Tendsto
           (fun s : Finset ι ↦
@@ -1133,7 +1133,7 @@ private lemma tendsto_eLpNorm_sqtail_atTop_zero [Countable ι] (hr : 1 ≤ r)
       have henorm :
           Filter.Tendsto (fun s : Finset ι ↦ ‖sqtail (fun i ↦ (f i : α → ℂ)) s x‖ₑ)
             Filter.atTop (nhds (0 : ENNReal)) := by
-        simpa [Function.comp_def] using (continuous_enorm.tendsto (0 : ℝ)).comp htail
+        simpa [Function.comp_def] using (continuous_eNorm.tendsto (0 : ℝ)).comp htail
       have hpow :
           Filter.Tendsto (fun y : ENNReal ↦ y ^ p.toReal) (nhds (0 : ENNReal)) (nhds 0) := by
         simpa [ENNReal.zero_rpow_of_pos hp_pos] using
@@ -1150,13 +1150,13 @@ private lemma tendsto_eLpNorm_sqtail_atTop_zero [Countable ι] (hr : 1 ≤ r)
       (bound := fun x ↦ ‖sqfct (fun i ↦ (f i : α → ℂ)) x‖ₑ ^ p.toReal)
       (by
         exact Filter.Eventually.of_forall fun s ↦
-          ((aemeasurable_sqtail (μ := μ) hf.measurable s).enorm.pow_const _))
+          ((aemeasurable_sqtail (μ := μ) hf.measurable s).eNorm.pow_const _))
       (by
         exact Filter.Eventually.of_forall fun s ↦
           (sqtail_le_sqfct_ae (μ := μ)
             (f := fun i ↦ (f i : α → ℂ)) hsum s).mono fun x hx ↦
               ENNReal.rpow_le_rpow
-                (by simpa [enorm_le_iff_norm_le, Real.norm_of_nonneg (sqtail_nonneg s x),
+                (by simpa [eNorm_le_iff_norm_le, Real.norm_of_nonneg (sqtail_nonneg s x),
                   Real.norm_of_nonneg (sqfct_nonneg_of_summable x)] using hx)
                 (by positivity))
       hfin hlim
@@ -1182,7 +1182,7 @@ private lemma tendsto_eLpNorm_sqtail_atTop_zero [Countable ι] (hr : 1 ≤ r)
       eLpNorm (sqtail (fun i ↦ (f i : α → ℂ)) s) (2 * r) μ =
         (∫⁻ x, ‖sqtail (fun i ↦ (f i : α → ℂ)) s x‖ₑ ^ p.toReal ∂μ) ^
           (1 / p.toReal) :=
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop
       ((aemeasurable_sqtail (μ := μ) hf.measurable s).aestronglyMeasurable)
   simpa only [heq] using hnorm
 
