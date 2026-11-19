@@ -63,10 +63,11 @@ theorem configurationRadialSmoothingKernel_contDiff (n : ℕ) :
   exact contDiff_prod (fun i _ => planarRadialSmoothingKernel_contDiff.comp (contDiff_apply ℝ (fun _
       => ℂ) i))
 
-theorem configurationRadialSmoothingKernel_compact (n : ℕ) :
-    HasCompactSupport (configurationRadialSmoothingKernel n) := by
-  apply HasCompactSupport.of_support_subset_isCompact
-    (isCompact_closedBall (0 : Configuration n) 2)
+/-- The product radial smoothing kernel is supported in the closed sup-norm ball of radius `2`. -/
+theorem configurationRadialSmoothingKernel_tsupport_subset (n : ℕ) :
+    tsupport (configurationRadialSmoothingKernel n) ⊆
+      Metric.closedBall (0 : Configuration n) 2 := by
+  apply closure_minimal _ Metric.isClosed_closedBall
   intro z hz
   rw [Metric.mem_closedBall, dist_zero_right]
   apply pi_norm_le_iff_of_nonneg (by norm_num) |>.mpr
@@ -82,6 +83,11 @@ theorem configurationRadialSmoothingKernel_compact (n : ℕ) :
     exact hbase (Real.smoothTransition.zero_of_nonpos (le_of_not_gt h))
   rw [Complex.normSq_eq_norm_sq] at hpos
   nlinarith [norm_nonneg (z i)]
+
+theorem configurationRadialSmoothingKernel_compact (n : ℕ) :
+    HasCompactSupport (configurationRadialSmoothingKernel n) :=
+  (isCompact_closedBall (0 : Configuration n) 2).of_isClosed_subset (isClosed_tsupport _)
+    (configurationRadialSmoothingKernel_tsupport_subset n)
 
 theorem configurationRadialSmoothingKernel_integral (n : ℕ) :
     (∫ z : Configuration n, configurationRadialSmoothingKernel n z) = 1 := by

@@ -164,32 +164,13 @@ theorem correspondencePolynomial_ginibre_memLp {n : ℕ} (hn : 0 < n)
     rw [MvPolynomial.eval_rename]
     change MvPolynomial.eval z (polynomialVandermonde n) = _
     exact eval_polynomialVandermonde n z
-  let f := ginibreMixedPolynomialEval P
-  have hL : MemLp (fun z => normalizedVandermondeMultiplier n z * f z) 2
-      (complexGaussianMeasure n) := by
-    have h := (correspondencePolynomial_gaussian_memLp n (V * P)).const_mul
-      ((groundStateNormalization n : ℂ)⁻¹)
-    convert h using 1
-    funext z
-    change ((groundStateNormalization n : ℂ)⁻¹ * vandermonde z) * ginibreMixedPolynomialEval P z =
-      (groundStateNormalization n : ℂ)⁻¹ * ginibreMixedPolynomialEval (V*P) z
-    unfold ginibreMixedPolynomialEval
-    rw [map_mul]
-    rw [show MvPolynomial.eval (fun k => if k.2=0 then z k.1 else conj (z k.1)) V =
-      vandermonde z from hV z]
-    ring
-  let u := hL.toLp (fun z => normalizedVandermondeMultiplier n z * f z)
-  have hac : ginibreMeasure n ≪ complexGaussianMeasure n := by
-    unfold ginibreMeasure rawGinibreMeasure
-    exact Measure.smul_absolutelyContinuous.trans (withDensity_absolutelyContinuous _ _)
-  apply (inverseVandermonde_memLp (ginibreMassEvaluation n hn) u).ae_eq
-  filter_upwards [hac.ae_eq hL.coeFn_toLp, hac.ae_le (vandermondeDensity_ne_zero_ae n)] with z hz hD
-  have hcf : z ∉ collisionSet n := by
-    intro hc
-    exact hD (by simp [vandermondeDensity, (vandermondeWeight_eq_zero_iff z).mpr hc])
-  unfold inverseVandermondeFunction
-  rw [hz, ← mul_assoc, inverse_mul_normalizedVandermondeMultiplier (ginibreMassEvaluation n hn) hcf,
-      one_mul]
+  apply correspondencePolynomial_memLp_of_vandermonde hn
+  convert correspondencePolynomial_gaussian_memLp n (V * P) using 1
+  funext z
+  unfold ginibreMixedPolynomialEval
+  rw [map_mul]
+  rw [show MvPolynomial.eval (fun k => if k.2=0 then z k.1 else conj (z k.1)) V =
+    vandermonde z from hV z]
 
 end
 end GinibrePoincare

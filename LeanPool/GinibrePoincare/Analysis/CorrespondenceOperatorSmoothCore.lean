@@ -154,15 +154,18 @@ theorem correspondenceOperator_integral_pregenerator_eq_zero {n : ℕ} (hn : 0 <
     exact (hInt _).add
       (hInt _)
 
-/-- The integrated pointwise iterated carré du champ equals the squared
-actual differential generator on the paper's compact collision-free core. -/
-theorem correspondenceOperator_integral_pointwiseGammaTwo {n : ℕ} (hn : 0 < n)
-    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+/-- The integrated pointwise iterated carré du champ equals the squared generator for every
+smooth compactly supported collision-free test `f`, given the mixed Green identity for the
+pair `(f, Lf)`. -/
+theorem correspondenceOperator_integral_pointwiseGammaTwo_of_green {n : ℕ} (hn : 0 < n)
+    (f : Configuration n → ℝ) (hf : ContDiff ℝ ∞ f ∧ HasCompactSupport f ∧
+      tsupport f ⊆ {z | CollisionFree z})
+    (hgreen : (∫ z, f z * ginibrePregenerator n (ginibrePregenerator n f) z ∂ginibreMeasure n) =
+      ∫ z, ginibrePregenerator n f z * ginibrePregenerator n f z ∂ginibreMeasure n) :
     (∫ z, ginibrePointwiseGammaTwo n f z ∂ginibreMeasure n) =
       ∫ z, (ginibrePregenerator n f z)^2 ∂ginibreMeasure n := by
   let := ginibreMeasure_isProbabilityMeasure hn
-  have hs : tsupport f ⊆ {z | CollisionFree z} := fun z hz =>
-    (collisionFree_iff_not_mem_collisionSet z).mpr (hf.2.2.1 hz)
+  have hs : tsupport f ⊆ {z | CollisionFree z} := hf.2.2
   let g := ginibrePregenerator n f
   have hg := correspondenceOperator_pregenerator_preserves_core hn f hf.1 hf.2.1 hs
   have hgg := correspondenceOperator_pregenerator_preserves_core hn g hg.1 hg.2.1 hg.2.2
@@ -216,11 +219,23 @@ theorem correspondenceOperator_integral_pointwiseGammaTwo {n : ℕ} (hn : 0 < n)
     hlinear2, hlinear3,
     correspondenceOperator_integral_pregenerator_eq_zero hn hQ hcQ,
     correspondenceOperator_integral_pregenerator_eq_zero hn hfg hcfg,
-    ginibre_mixed_green_identity hn hf hg.1]
+    hgreen]
   change 0/2-(0-(∫ z, g z*g z ∂ginibreMeasure n)-
     (∫ z, g z*g z ∂ginibreMeasure n))/2=∫ z, (g z)^2 ∂ginibreMeasure n
   simp only [pow_two]
   ring
+
+/-- The integrated pointwise iterated carré du champ equals the squared
+actual differential generator on the paper's compact collision-free core. -/
+theorem correspondenceOperator_integral_pointwiseGammaTwo {n : ℕ} (hn : 0 < n)
+    (f : Configuration n → ℝ) (hf : IsTheoremOneNineCore f) :
+    (∫ z, ginibrePointwiseGammaTwo n f z ∂ginibreMeasure n) =
+      ∫ z, (ginibrePregenerator n f z)^2 ∂ginibreMeasure n := by
+  have hs : tsupport f ⊆ {z | CollisionFree z} := fun z hz =>
+    (collisionFree_iff_not_mem_collisionSet z).mpr (hf.2.2.1 hz)
+  exact correspondenceOperator_integral_pointwiseGammaTwo_of_green hn f ⟨hf.1, hf.2.1, hs⟩
+    (ginibre_mixed_green_identity hn hf
+      (correspondenceOperator_pregenerator_preserves_core hn f hf.1 hf.2.1 hs).1)
 
 end
 end GinibrePoincare

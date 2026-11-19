@@ -63,25 +63,6 @@ private theorem kernel_bound (n : ℕ) :
   · rw [image_eq_zero_of_notMem_tsupport hz, norm_zero]
     exact le_max_left _ _
 
-private theorem kernel_support_ball (n : ℕ) :
-    tsupport (configurationRadialSmoothingKernel n) ⊆ closedBall (0 : Configuration n) 2 := by
-  apply closure_minimal _ isClosed_closedBall
-  intro z hz
-  rw [Metric.mem_closedBall, dist_zero_right]
-  apply pi_norm_le_iff_of_nonneg (by norm_num) |>.mpr
-  intro i
-  have hzi : planarRadialSmoothingKernel (z i) ≠ 0 := by
-    intro hi
-    exact hz (Finset.prod_eq_zero (Finset.mem_univ i) hi)
-  have hbase : planarRadialSmoothingBase (z i) ≠ 0 := by
-    intro h
-    exact hzi (by simp [planarRadialSmoothingKernel, h])
-  have hpos : 0 < 2-Complex.normSq (z i) := by
-    by_contra h
-    exact hbase (Real.smoothTransition.zero_of_nonpos (le_of_not_gt h))
-  rw [Complex.normSq_eq_norm_sq] at hpos
-  nlinarith [norm_nonneg (z i)]
-
 /-- Arbitrary positive-local weighted L² controls entire representatives
 uniformly on each bounded set, through the actual product mean-value kernel. -/
 theorem positiveWeightEntire_local_bound (n : ℕ) (w : Configuration n → ℝ)
@@ -137,7 +118,7 @@ theorem positiveWeightEntire_local_bound (n : ℕ) (w : Configuration n → ℝ)
       intro y hy
       have hnot : z-y ∉ tsupport (configurationRadialSmoothingKernel n) := by
         intro h
-        have hk := kernel_support_ball n h
+        have hk := configurationRadialSmoothingKernel_tsupport_subset n h
         have hnorm : ‖z-y‖ ≤ 2 := by simpa [Metric.mem_closedBall, dist_zero_right] using hk
         apply hy
         change dist y 0 ≤ R+2

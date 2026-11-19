@@ -34,7 +34,7 @@ SOFTWARE.
 -/
 
 module
-public import LeanPool.GinibrePoincare.Analysis.CorrespondenceBrascampLiebDense
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceBrascampLiebWeak
 /-!
 # Correspondence Brascamp Lieb
 
@@ -67,26 +67,9 @@ theorem correspondenceBrascampLieb_variance
       (correspondenceBrascampLiebMeasure W)) :
     (∫ x, correspondenceBrascampLiebCenter W g x^2 ∂correspondenceBrascampLiebMeasure W) ≤
       ∫ x, correspondenceBrascampLiebInverseEnergy W g b x
-      ∂correspondenceBrascampLiebMeasure W := by
-  let := correspondenceBrascampLieb_finite_measure W hWi
-  have hgc : ContDiff ℝ 1 (correspondenceBrascampLiebCenter W g) := hg.sub contDiff_const
-  have hgcL2 := correspondenceBrascampLieb_center_memLp W g hgL2
-  have he : correspondenceBrascampLiebInverseEnergy W (correspondenceBrascampLiebCenter W g) b =
-      correspondenceBrascampLiebInverseEnergy W g b := by
-    funext x
-    unfold correspondenceBrascampLiebInverseEnergy
-    rw [correspondenceBrascampLieb_center_gradient W g b]
-  have hgcE : Integrable (correspondenceBrascampLiebInverseEnergy W
-      (correspondenceBrascampLiebCenter W g) b) (correspondenceBrascampLiebMeasure W) := by
-    rw [he]
-    exact hgE
-  have hc : hgcL2.toLp (correspondenceBrascampLiebCenter W g) ∈
-      (correspondenceBrascampLiebCoreRange W b hW).topologicalClosure := by
-    rw [correspondenceBrascampLieb_core_dense_centered W b hW]
-    exact correspondenceBrascampLieb_center_orthogonal W g hWi hgL2
-  have hv := correspondenceBrascampLieb_closed_core_bound W (correspondenceBrascampLiebCenter W g)
-    b hW hgc hpos hgcL2 hgcE hc
-  rwa [he] at hv
+      ∂correspondenceBrascampLiebMeasure W :=
+  correspondenceBrascampLieb_localLipschitz_variance W g b hW hWi hpos hg.locallyLipschitz hgL2
+    hgE
 
 omit [CompleteSpace E] in
 /-- Probability-normalized form of the exact inverse-Hessian inequality. -/

@@ -85,62 +85,16 @@ theorem gueSymmetric_smooth_pair_mem_paperH1 {n : ℕ} (hn : 0 < n)
     (hv : MemLp f 2 (gueFullMeasure n))
     (hg : MemLp (gradient f) 2 (gueFullMeasure n)) :
     (hv.toLp f, hg.toLp (gradient f))∈guePaperH1Completion n := by
-  have hf1 : ContDiff ℝ 1 f := hf.of_le (by simp)
-  let := gueFullMeasure_probability hn
-  let μ := gueFullMeasure n
-  let F := fun k => gueSymmetricSpatialTruncation n k f
-  have hFC k : ContDiff ℝ 1 (F k) := gueSymmetricSpatialTruncation_contDiff n k f hf1
-  have hFS k : HasCompactSupport (F k) := gueSymmetricSpatialTruncation_compact n k f
-  have hFV k : MemLp (F k) 2 μ := (hFC k).continuous.memLp_of_hasCompactSupport (hFS k)
-  have hFG k : MemLp (gradient (F k)) 2 μ := by
-    have hgc : Continuous (gradient (F k)) :=
-      (InnerProductSpace.toDual ℝ (EuclideanSpace ℝ (Fin n))).symm.continuous.comp
-        ((hFC k).fderiv_right (m := 0) (by norm_num)).continuous
-    exact hgc.memLp_of_hasCompactSupport ((hFS k).fderiv ℝ |>.comp_left
-      (g := (InnerProductSpace.toDual ℝ (EuclideanSpace ℝ (Fin n))).symm) (map_zero _))
-  have hD i : MemLp (fun x => fderiv ℝ f x (EuclideanSpace.basisFun (Fin n) ℝ i)) 2 μ := by
-    have h := memLp_piLp_iff.mp hg i
-    have he : (fun x => (gradient f x) i)=(fun x => fderiv ℝ f x (EuclideanSpace.basisFun (Fin n) ℝ
-        i)) :=
-      funext (fun x => gue_gradient_coordinate f x i)
-    rwa [he] at h
-  have hDE k i : Integrable (fun x => (fderiv ℝ (F k) x (EuclideanSpace.basisFun (Fin n) ℝ i)-
-      fderiv ℝ f x (EuclideanSpace.basisFun (Fin n) ℝ i))^2) μ := by
-    have h := memLp_piLp_iff.mp (hFG k) i
-    have he : (fun x => (gradient (F k) x) i)=(fun x => fderiv ℝ (F k) x (EuclideanSpace.basisFun
-        (Fin n) ℝ i)) :=
-      funext (fun x => gue_gradient_coordinate (F k) x i)
-    rw [he] at h
-    exact (h.sub (hD i)).integrable_sq
-  have htV : Tendsto (fun k => (hFV k).toLp (F k)) atTop (nhds (hv.toLp f)) := by
-    apply tendsto_iff_dist_tendsto_zero.mpr
-    simp_rw [gueL2_toLp_dist_eq_sqrt, Real.norm_eq_abs, sq_abs]
-    simpa [F] using (gueSymmetricSpatialTruncation_L2_errors n μ f hf1 hv 0 (by simp)).1.sqrt
-  have htG : Tendsto (fun k => (hFG k).toLp (gradient (F k))) atTop (nhds (hg.toLp (gradient f))) :=
-      by
-    apply tendsto_iff_dist_tendsto_zero.mpr
-    simp_rw [gueL2_toLp_dist_eq_sqrt]
-    have he k : (∫x, ‖gradient (F k) x-gradient f x‖^2 ∂μ)=
-        ∑i,∫x, (fderiv ℝ (F k) x (EuclideanSpace.basisFun (Fin n) ℝ i)-
-          fderiv ℝ f x (EuclideanSpace.basisFun (Fin n) ℝ i))^2 ∂μ := by
-      simp only [EuclideanSpace.real_norm_sq_eq, PiLp.sub_apply, gue_gradient_coordinate]
-      exact integral_finsetSum _ (fun i hi => hDE k i)
-    simp_rw [he]
-    have ht := tendsto_finsetSum Finset.univ (fun i hi =>
-      (gueSymmetricSpatialTruncation_L2_errors n μ f hf1 hv (EuclideanSpace.basisFun (Fin n) ℝ i)
-          (hD i)).2)
-    simpa [F] using ht.sqrt
-  apply isClosed_closure.mem_of_tendsto (htV.prodMk_nhds htG)
-  apply Eventually.of_forall
-  intro k
-  apply subset_closure
-  have hFinf : ContDiff ℝ ∞ (F k) := by
-    unfold F gueSymmetricSpatialTruncation
+  refine gueSymmetric_C1_pair_mem_closure hn f (hf.of_le (by simp)) hv hg
+    (guePaperSmoothPairs n) ?_
+  intro k hV hG
+  refine ⟨gueSymmetricSpatialTruncation n k f, ?_, gueSymmetricSpatialTruncation_compact n k f,
+    ?_, hV.coeFn_toLp, hG.coeFn_toLp⟩
+  · unfold gueSymmetricSpatialTruncation
     exact (gueSymmetricSpatialCutoff_smooth n k).mul hf
-  refine ⟨F k, hFinf, hFS k,?_, (hFV k).coeFn_toLp, (hFG k).coeFn_toLp⟩
-  intro σ x
-  unfold F gueSymmetricSpatialTruncation
-  rw [gueSymmetricSpatialCutoff_symmetric, hs]
+  · intro σ x
+    unfold gueSymmetricSpatialTruncation
+    rw [gueSymmetricSpatialCutoff_symmetric, hs]
 
 theorem guePaper_center_witness_mem_H1 {n : ℕ} (hn : 0 < n) :
     ((gueCenterCoordinate_memLp hn).toLp (gueCenterCoordinate n),

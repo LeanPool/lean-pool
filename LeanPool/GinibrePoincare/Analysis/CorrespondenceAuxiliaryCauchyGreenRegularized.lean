@@ -55,7 +55,8 @@ noncomputable section
 def cauchyGreenRegularizedKernel (τ : ℝ) (z : ℂ) : ℂ :=
   conj z / ((Real.pi * (Complex.normSq z+τ) : ℝ) : ℂ)
 
-private theorem normSq_hasFDerivAt (z : ℂ) :
+/-- The real Fréchet derivative of `Complex.normSq` at `z` is `v ↦ 2 (re z re v + im z im v)`. -/
+theorem normSq_hasFDerivAt (z : ℂ) :
     HasFDerivAt Complex.normSq
       ((2*z.re) • Complex.reCLM + (2*z.im) • Complex.imCLM) z := by
   have h := (Complex.reCLM.hasFDerivAt (x := z)).mul (Complex.reCLM.hasFDerivAt (x := z))

@@ -62,12 +62,17 @@ theorem gueL2_toLp_dist_eq_sqrt {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin
     simp only [hx, Pi.sub_apply, hfx, hgx]
   rw [he, Real.sqrt_sq_eq_abs, abs_of_nonneg (norm_nonneg _), dist_eq_norm]
 
-theorem gueSymmetric_C1_pair_mem_H1Completion {n : ℕ} (hn : 0 < n)
+/-- The symmetric spatial truncations of a `C¹` function with square-integrable value and
+gradient converge to its value/gradient pair, so the pair lies in the closure of every set of
+pairs containing all truncation pairs. -/
+theorem gueSymmetric_C1_pair_mem_closure {n : ℕ} (hn : 0 < n)
     (f : EuclideanSpace ℝ (Fin n) → ℝ) (hf : ContDiff ℝ 1 f)
-    (hs : ∀ σ x, f (guePermute n σ x) = f x)
     (hv : MemLp f 2 (gueFullMeasure n))
-    (hg : MemLp (gradient f) 2 (gueFullMeasure n)) :
-    (hv.toLp f, hg.toLp (gradient f))∈gueSymmetricH1Completion n := by
+    (hg : MemLp (gradient f) 2 (gueFullMeasure n)) (S : Set (GUEFullSobolevPair n))
+    (hS : ∀ k (hV : MemLp (gueSymmetricSpatialTruncation n k f) 2 (gueFullMeasure n))
+      (hG : MemLp (gradient (gueSymmetricSpatialTruncation n k f)) 2 (gueFullMeasure n)),
+      (hV.toLp _, hG.toLp _) ∈ S) :
+    (hv.toLp f, hg.toLp (gradient f)) ∈ closure S := by
   let := gueFullMeasure_probability hn
   let μ := gueFullMeasure n
   let F := fun k => gueSymmetricSpatialTruncation n k f
@@ -113,12 +118,20 @@ theorem gueSymmetric_C1_pair_mem_H1Completion {n : ℕ} (hn : 0 < n)
           i)).2)
     simpa [F] using ht.sqrt
   apply isClosed_closure.mem_of_tendsto (htV.prodMk_nhds htG)
-  apply Eventually.of_forall
-  intro k
-  apply subset_closure
-  refine ⟨F k, hFC k, hFS k,?_, (hFV k).coeFn_toLp, (hFG k).coeFn_toLp⟩
+  exact Eventually.of_forall fun k => subset_closure (hS k (hFV k) (hFG k))
+
+theorem gueSymmetric_C1_pair_mem_H1Completion {n : ℕ} (hn : 0 < n)
+    (f : EuclideanSpace ℝ (Fin n) → ℝ) (hf : ContDiff ℝ 1 f)
+    (hs : ∀ σ x, f (guePermute n σ x) = f x)
+    (hv : MemLp f 2 (gueFullMeasure n))
+    (hg : MemLp (gradient f) 2 (gueFullMeasure n)) :
+    (hv.toLp f, hg.toLp (gradient f))∈gueSymmetricH1Completion n := by
+  refine gueSymmetric_C1_pair_mem_closure hn f hf hv hg (gueSymmetricCompactC1Pairs n) ?_
+  intro k hV hG
+  refine ⟨gueSymmetricSpatialTruncation n k f, gueSymmetricSpatialTruncation_contDiff n k f hf,
+    gueSymmetricSpatialTruncation_compact n k f, ?_, hV.coeFn_toLp, hG.coeFn_toLp⟩
   intro σ x
-  unfold F gueSymmetricSpatialTruncation
+  unfold gueSymmetricSpatialTruncation
   rw [gueSymmetricSpatialCutoff_symmetric, hs]
 
 end

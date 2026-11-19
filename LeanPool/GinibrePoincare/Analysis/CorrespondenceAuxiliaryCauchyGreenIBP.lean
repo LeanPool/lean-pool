@@ -52,11 +52,13 @@ open scoped ContDiff
 namespace GinibrePoincare
 noncomputable section
 
-/-- Ordinary planar Wirtinger integration by parts with a compact test;
-the differentiated function need not have compact support. -/
-theorem planarDbar_compact_integrationByParts (f θ : ℂ → ℂ)
+/-- Planar integration by parts with a compact test for a fixed complex combination
+`a ∂ₓ + b ∂_y` of the real coordinate derivatives; the differentiated function need not have
+compact support. -/
+theorem planarCombination_compact_integrationByParts (a b : ℂ) (f θ : ℂ → ℂ)
     (hf : ContDiff ℝ 1 f) (hθ : ContDiff ℝ 1 θ) (hc : HasCompactSupport θ) :
-    (∫ z : ℂ, f z * planarDbar θ z) = -(∫ z : ℂ, planarDbar f z * θ z) := by
+    (∫ z : ℂ, f z * (a * fderiv ℝ θ z 1 + b * fderiv ℝ θ z Complex.I)) =
+      -(∫ z : ℂ, (a * fderiv ℝ f z 1 + b * fderiv ℝ f z Complex.I) * θ z) := by
   have hdf (v : ℂ) : Continuous (fun z => fderiv ℝ f z v) :=
     (hf.continuous_fderiv (by norm_num)).clm_apply continuous_const
   have hdθ (v : ℂ) : Continuous (fun z => fderiv ℝ θ z v) :=
@@ -73,30 +75,42 @@ theorem planarDbar_compact_integrationByParts (f θ : ℂ → ℂ)
       ((hf.continuous.mul hθ.continuous).integrable_of_hasCompactSupport hc.mul_left)
       (fun z _ => (hf.differentiable (by norm_num)).differentiableAt)
       (fun z _ => (hθ.differentiable (by norm_num)).differentiableAt)
-  have hleft : (∫ z : ℂ, f z * planarDbar θ z) =
-      (1/2 : ℂ) * ((∫ z : ℂ, f z * fderiv ℝ θ z 1) +
-        Complex.I*(∫ z : ℂ, f z * fderiv ℝ θ z Complex.I)) := by
-    have he : (fun z : ℂ => f z * planarDbar θ z) =
-        (fun z : ℂ => (1/2 : ℂ)*(f z*fderiv ℝ θ z 1 +
-          Complex.I*(f z*fderiv ℝ θ z Complex.I))) := by
+  have hleft : (∫ z : ℂ, f z * (a * fderiv ℝ θ z 1 + b * fderiv ℝ θ z Complex.I)) =
+      a * (∫ z : ℂ, f z * fderiv ℝ θ z 1) + b * (∫ z : ℂ, f z * fderiv ℝ θ z Complex.I) := by
+    have he : (fun z : ℂ => f z * (a * fderiv ℝ θ z 1 + b * fderiv ℝ θ z Complex.I)) =
+        fun z : ℂ => a * (f z * fderiv ℝ θ z 1) + b * (f z * fderiv ℝ θ z Complex.I) := by
       funext z
-      unfold planarDbar
       ring
-    rw [he, integral_const_mul, integral_add (hi1 1) ((hi1 Complex.I).const_mul Complex.I),
-      integral_const_mul]
-  have hright : (∫ z : ℂ, planarDbar f z * θ z) =
-      (1/2 : ℂ) * ((∫ z : ℂ, fderiv ℝ f z 1 * θ z) +
-        Complex.I*(∫ z : ℂ, fderiv ℝ f z Complex.I * θ z)) := by
-    have he : (fun z : ℂ => planarDbar f z * θ z) =
-        (fun z : ℂ => (1/2 : ℂ)*(fderiv ℝ f z 1*θ z +
-          Complex.I*(fderiv ℝ f z Complex.I*θ z))) := by
+    rw [he, integral_add ((hi1 1).const_mul a) ((hi1 Complex.I).const_mul b),
+      integral_const_mul, integral_const_mul]
+  have hright : (∫ z : ℂ, (a * fderiv ℝ f z 1 + b * fderiv ℝ f z Complex.I) * θ z) =
+      a * (∫ z : ℂ, fderiv ℝ f z 1 * θ z) + b * (∫ z : ℂ, fderiv ℝ f z Complex.I * θ z) := by
+    have he : (fun z : ℂ => (a * fderiv ℝ f z 1 + b * fderiv ℝ f z Complex.I) * θ z) =
+        fun z : ℂ => a * (fderiv ℝ f z 1 * θ z) + b * (fderiv ℝ f z Complex.I * θ z) := by
       funext z
-      unfold planarDbar
       ring
-    rw [he, integral_const_mul, integral_add (hi2 1) ((hi2 Complex.I).const_mul Complex.I),
-      integral_const_mul]
+    rw [he, integral_add ((hi2 1).const_mul a) ((hi2 Complex.I).const_mul b),
+      integral_const_mul, integral_const_mul]
   rw [hleft, hright, hibp 1, hibp Complex.I]
   ring
+
+/-- Ordinary planar Wirtinger integration by parts with a compact test;
+the differentiated function need not have compact support. -/
+theorem planarDbar_compact_integrationByParts (f θ : ℂ → ℂ)
+    (hf : ContDiff ℝ 1 f) (hθ : ContDiff ℝ 1 θ) (hc : HasCompactSupport θ) :
+    (∫ z : ℂ, f z * planarDbar θ z) = -(∫ z : ℂ, planarDbar f z * θ z) := by
+  have hl : (fun z : ℂ => f z * planarDbar θ z) = fun z : ℂ =>
+      f z * ((1/2 : ℂ) * fderiv ℝ θ z 1 + (1/2 * Complex.I) * fderiv ℝ θ z Complex.I) := by
+    funext z
+    unfold planarDbar
+    ring
+  have hr : (fun z : ℂ => planarDbar f z * θ z) = fun z : ℂ =>
+      ((1/2 : ℂ) * fderiv ℝ f z 1 + (1/2 * Complex.I) * fderiv ℝ f z Complex.I) * θ z := by
+    funext z
+    unfold planarDbar
+    ring
+  rw [hl, hr]
+  exact planarCombination_compact_integrationByParts _ _ f θ hf hθ hc
 
 theorem cauchyGreenRegularizedKernel_test_identity (τ : ℝ) (hτ : 0 < τ)
     (θ : ℂ → ℂ) (hθ : ContDiff ℝ 1 θ) (hc : HasCompactSupport θ) :
