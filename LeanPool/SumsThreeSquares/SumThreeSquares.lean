@@ -511,7 +511,7 @@ private lemma exists_lattice_xyz_lt_two_m (m q : ℕ) (t b : ℤ) (hm : 0 < m) (
   obtain ⟨T, ht⟩ := h 2
   use R, S, T
   constructor
-  · contrapose! hx0
+  · contrapose hx0
     ext i
     fin_cases i <;> aesop
   · convert (show (‖linearMapMEuclidean m q t b x‖ ^ 2 : ℝ) < 2 * m from ?_)
@@ -813,7 +813,7 @@ lemma p_mod4_eq1_of_dvd_v_not_dvd_m (p : ℕ) (q : ℤ) (b h x y v R m : ℤ)
     have hm_mod : (R ^ 2 : ℤ) ≡ m [ZMOD p] := by
       norm_num [← hRv, Int.modEq_iff_dvd]
       refine dvd_mul_of_dvd_right ?_ _
-      contrapose! hpv
+      contrapose hpv
       simp_all +decide [padicValInt.eq_zero_of_not_dvd]
     have := Fact.mk hp
     simp_all +decide only [ne_eq, Nat.not_even_iff_odd, ← ZMod.intCast_eq_intCast_iff,
@@ -938,6 +938,8 @@ lemma even_padicVal_of_mod4_eq3 (p : ℕ) (q : ℕ) (b h x y : ℤ) (R : ℤ) (v
     (hRv : R ^ 2 + 2 * (v : ℤ) = (m : ℤ))
     (hjac : ∀ p', p' ∣ m → Nat.Prime p' → jacobiSym (-2 * ↑q) ↑p' = 1) :
     Even (padicValNat p (2 * v)) := by
+  have := Fact.mk hp
+  rw [Nat.padicValNat_def]
   by_cases hp2 : p = 2
   · aesop
   · by_cases hpv : (p : ℤ) ∣ v
@@ -952,10 +954,10 @@ lemma even_padicVal_of_mod4_eq3 (p : ℕ) (q : ℕ) (b h x y : ℤ) (R : ℤ) (v
           cases this.symm.trans hp3
         simp_all +decide only [Int.reduceNeg, neg_mul, Nat.not_even_iff_odd,
           imp_false, Nat.not_odd_iff_even, ne_eq, hv_pos.ne', not_false_eq_true,
-          padicValNat.mul]
+          Nat.multiplicity_mul]
         simp_all only [← hv_def, padicValInt.of_nat]
-        rw [padicValNat.eq_zero_of_not_dvd] <;> simp_all +decide [Nat.prime_dvd_prime_iff_eq]
-    · rw [padicValNat.eq_zero_of_not_dvd] <;> norm_num
+        rw [multiplicity_eq_zero_of_not_dvd] <;> simp_all +decide [Nat.prime_dvd_prime_iff_eq]
+    · rw [multiplicity_eq_zero_of_not_dvd] <;> norm_num
       exact fun h => hpv <| Int.natCast_dvd_natCast.mpr <| hp.dvd_mul.mp h |> Or.resolve_left <| by
         intro t
         have := Nat.le_of_dvd (by positivity) t
