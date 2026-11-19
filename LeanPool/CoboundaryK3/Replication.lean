@@ -1,0 +1,325 @@
+/-
+Copyright (c) 2026 Jeromie Beasley. All rights reserved.
+Released under MIT license as described in the file LICENSE.
+Authors: Jeromie Beasley
+-/
+module
+
+public import LeanPool.CoboundaryK3.Constant
+
+/-!
+Balanced replication, kernel-checked (Lemma 6 and Corollary 7 of the paper).
+
+Replace each vertex of `K_k` by a cluster of `q` vertices; put the identity on every edge inside
+a cluster and the seed value on every edge between two clusters. For every cochain `α`, every
+`k` and every `q ≥ 1`:
+
+* `rep_defect`: the triangle defect is multiplied by exactly `q³`;
+* `rep_attain`: a gauge constant on clusters costs exactly `q²` times its seed cost;
+* `rep_lower`: every gauge, constant on clusters or not, costs at least `q²` times the seed
+  minimum (the finite double count over the `q^k` sections);
+* `rep_seed`: with `witness_k4`, the replicated seed on `K_{4q}` has `N = 8q³` and gauge minimum
+  exactly `6q²`, so `N/D = 4q/3 = k/3` at every multiple of four;
+* `h1_eq_four_mul`: with the star bound of `Constant`, `h₁(K_{4q}) = 4q/3` for every `q ≥ 1`.
+
+The structure of this file (clusters through `finProdFinEquiv`, the order of the blocks, the
+closing of triangles with two corners in one cluster, the restriction of a gauge to a section)
+was drafted by Grok (xAI) on 8 October 2026; the counting lemmas and the compiled proofs were
+completed with Claude.
+-/
+
+@[expose] public section
+
+namespace CoboundaryK3
+
+open Finset
+
+variable {k : ℕ}
+
+/-! ## Edge and triangle sums as finite sums
+
+`cost` and `defect` are list sums over `edges k` and `triangles k`. Rewritten as sums over all
+pairs and triples with an order indicator, they can be reindexed and regrouped. -/
+
+theorem sum_flatMap_map {α β : Type*} (l : List α) (g : α → List β) (f : β → ℕ) :
+    ((l.flatMap g).map f).sum = (l.map fun a => ((g a).map f).sum).sum := by
+  induction l with
+  | nil => simp
+  | cons a t ih => simp [List.flatMap_cons, List.sum_append, ih]
+
+theorem sum_filter_map {α β : Type*} (l : List α) (p : α → Bool) (g : α → β) (f : β → ℕ) :
+    (((l.filter p).map g).map f).sum = (l.map fun a => if p a then f (g a) else 0).sum := by
+  induction l with
+  | nil => simp
+  | cons a t ih => cases h : p a <;> simp_all
+
+theorem cost_eq (α : Fin k → Fin k → S3) (β : Fin k → S3) :
+    cost α β = ∑ u, ∑ v, if u < v then moved ((β u)⁻¹ * α u v * β v) else 0 := by
+  unfold cost edges
+  rw [sum_flatMap_map, Fin.sum_univ_def]
+  congr 1
+  apply List.map_congr_left
+  intro u _
+  rw [sum_filter_map, Fin.sum_univ_def]
+  simp only [decide_eq_true_eq]
+
+theorem defect_eq (α : Fin k → Fin k → S3) :
+    defect α = ∑ u, ∑ v, ∑ w,
+      if u < v ∧ v < w then moved (val α u v * val α v w * val α w u) else 0 := by
+  unfold defect triangles
+  rw [sum_flatMap_map, Fin.sum_univ_def]
+  congr 1
+  apply List.map_congr_left
+  intro u _
+  rw [sum_flatMap_map, Fin.sum_univ_def]
+  congr 1
+  apply List.map_congr_left
+  intro v _
+  rw [sum_filter_map, Fin.sum_univ_def]
+  simp only [decide_eq_true_eq]
+
+/-! ## Clusters
+
+`finProdFinEquiv : Fin k × Fin q ≃ Fin (k * q)` sends `(i, a)` to `a + q * i`, so the vertices
+of cluster `i` are the contiguous block `q * i, …, q * i + q - 1`. -/
+
+/-- The cluster of a vertex of `K_{kq}`. -/
+def clus (q : ℕ) (x : Fin (k * q)) : Fin k := (finProdFinEquiv.symm x).1
+
+/-- Vertex `a` of cluster `i`. -/
+def vert (q : ℕ) (i : Fin k) (a : Fin q) : Fin (k * q) := finProdFinEquiv (i, a)
+
+@[simp] theorem clus_vert (q : ℕ) (i : Fin k) (a : Fin q) : clus q (vert q i a) = i := by
+  simp [clus, vert]
+
+/-- A sum over the vertices of `K_{kq}` is a sum over clusters and positions inside them. -/
+theorem sum_blocks {q : ℕ} (F : Fin (k * q) → ℕ) : ∑ x, F x = ∑ i, ∑ a, F (vert q i a) := by
+  rw [← Equiv.sum_comp finProdFinEquiv F, Fintype.sum_prod_type]
+  rfl
+
+theorem block_lt (a b i j q : ℕ) (ha : a < q) (hb : b < q) :
+    a + q * i < b + q * j ↔ i < j ∨ (i = j ∧ a < b) := by
+  rcases lt_trichotomy i j with h | rfl | h
+  · have h' : q * (i + 1) ≤ q * j := Nat.mul_le_mul_left q h
+    rw [Nat.mul_add, Nat.mul_one] at h'
+    generalize q * i = X at *
+    generalize q * j = Y at *
+    constructor
+    · intro; exact Or.inl h
+    · intro; omega
+  · constructor
+    · intro hh; right; exact ⟨rfl, by omega⟩
+    · rintro (hh | ⟨_, hh⟩)
+      · exact absurd hh (lt_irrefl _)
+      · omega
+  · have h' : q * (j + 1) ≤ q * i := Nat.mul_le_mul_left q h
+    rw [Nat.mul_add, Nat.mul_one] at h'
+    generalize q * i = X at *
+    generalize q * j = Y at *
+    constructor
+    · intro; omega
+    · rintro (hh | ⟨hh, _⟩) <;> omega
+
+/-- Vertices are ordered cluster first, then position. -/
+theorem vert_lt_iff {q : ℕ} (i j : Fin k) (a b : Fin q) :
+    vert q i a < vert q j b ↔ i < j ∨ (i = j ∧ a < b) := by
+  rw [Fin.lt_def]
+  simp only [vert, finProdFinEquiv_apply_val]
+  rw [block_lt _ _ _ _ _ a.isLt b.isLt, Fin.lt_def, Fin.lt_def, Fin.ext_iff]
+
+/-! ## Balanced replication -/
+
+/-- The replicated cochain on `K_{kq}`: the identity inside a cluster, the seed value between
+clusters. -/
+def rep (q : ℕ) (α : Fin k → Fin k → S3) : Fin (k * q) → Fin (k * q) → S3 :=
+  fun x y => if clus q x = clus q y then 1 else val α (clus q x) (clus q y)
+
+
+/-- A triangle across three clusters carries the seed holonomy; any other triangle closes. -/
+theorem rep_tri {q : ℕ} (α : Fin k → Fin k → S3) (i j l : Fin k) (a b c : Fin q) :
+    (if vert q i a < vert q j b ∧ vert q j b < vert q l c then
+        moved (val (rep q α) (vert q i a) (vert q j b) * val (rep q α) (vert q j b) (vert q l c) *
+          val (rep q α) (vert q l c) (vert q i a)) else 0) =
+      if i < j ∧ j < l then moved (val α i j * val α j l * val α l i) else 0 := by
+  by_cases hijl : i < j ∧ j < l
+  · have h1 : vert q i a < vert q j b := (vert_lt_iff _ _ _ _).2 (Or.inl hijl.1)
+    have h2 : vert q j b < vert q l c := (vert_lt_iff _ _ _ _).2 (Or.inl hijl.2)
+    have hil : i < l := lt_trans hijl.1 hijl.2
+    have h3 : ¬ vert q l c < vert q i a := not_lt.2 (lt_trans h1 h2).le
+    simp only [h1, h2, hijl, and_self, ↓reduceIte]
+    simp [val, rep, h1, h2, h3, hijl.1, hijl.2, hil, hijl.1.ne, hijl.2.ne, hil.ne, not_lt.2 hil.le]
+  · simp only [hijl, ↓reduceIte]
+    split_ifs with hord
+    · have hxz : vert q i a < vert q l c := lt_trans hord.1 hord.2
+      have h3 : ¬ vert q l c < vert q i a := not_lt.2 hxz.le
+      rcases (vert_lt_iff _ _ _ _).1 hord.1 with hij | ⟨rfl, _⟩
+      · rcases (vert_lt_iff _ _ _ _).1 hord.2 with hjl | ⟨rfl, _⟩
+        · exact absurd ⟨hij, hjl⟩ hijl
+        · simp [val, rep, hord.1, hord.2, h3, hij.ne, moved_one]
+      · simp [val, rep, hord.1, hord.2, h3, moved_one]
+    · rfl
+
+/-- **The defect of the replicated cochain.** Each seed triangle has `q³` lifts across three
+clusters, each with the seed holonomy; every other triangle closes. -/
+theorem rep_defect (q : ℕ) (α : Fin k → Fin k → S3) :
+    defect (rep q α) = q ^ 3 * defect α := by
+  rw [defect_eq, defect_eq]
+  simp only [sum_blocks (q := q), rep_tri, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+    smul_eq_mul, ← Finset.mul_sum]
+  ring
+
+theorem rep_edge_attain {q : ℕ} (α : Fin k → Fin k → S3) (β : Fin k → S3) (i j : Fin k)
+    (a b : Fin q) :
+    (if vert q i a < vert q j b then moved ((β i)⁻¹ * rep q α (vert q i a) (vert q j b) * β j)
+      else 0) = if i < j then moved ((β i)⁻¹ * α i j * β j) else 0 := by
+  by_cases hij : i < j
+  · simp only [(vert_lt_iff _ _ _ _).2 (Or.inl hij), hij, ↓reduceIte]
+    simp [rep, val, hij, hij.ne]
+  · simp only [hij, ↓reduceIte]
+    split_ifs with h
+    · rcases (vert_lt_iff _ _ _ _).1 h with h' | ⟨rfl, _⟩
+      · exact absurd h' hij
+      · simp [rep, moved_one]
+    · rfl
+
+/-- **Attainment.** A gauge constant on clusters costs `q²` times its seed cost. -/
+theorem rep_attain (q : ℕ) (α : Fin k → Fin k → S3) (β : Fin k → S3) :
+    cost (rep q α) (fun x => β (clus q x)) = q ^ 2 * cost α β := by
+  rw [cost_eq, cost_eq]
+  simp only [sum_blocks (q := q), clus_vert, rep_edge_attain, Finset.sum_const,
+    Finset.card_univ, Fintype.card_fin, smul_eq_mul, ← Finset.mul_sum]
+  ring
+
+theorem rep_edge_lower {q : ℕ} (α : Fin k → Fin k → S3) (γ : Fin (k * q) → S3) (i j : Fin k)
+    (a b : Fin q) :
+    (if i < j then moved ((γ (vert q i a))⁻¹ * α i j * γ (vert q j b)) else 0) ≤
+      if vert q i a < vert q j b then
+        moved ((γ (vert q i a))⁻¹ * rep q α (vert q i a) (vert q j b) * γ (vert q j b)) else 0 := by
+  by_cases hij : i < j
+  · simp only [(vert_lt_iff _ _ _ _).2 (Or.inl hij), hij, ↓reduceIte]
+    simp [rep, val, hij, hij.ne]
+  · simp only [hij, ↓reduceIte]
+    exact Nat.zero_le _
+
+/-! ## Sections -/
+
+/-- Fixing one coordinate of a function `ι → Fin q` leaves `q ^ (|ι| - 1)` functions. -/
+theorem sum_one_coord {ι : Type*} [Fintype ι] [DecidableEq ι] {q : ℕ} (j : ι)
+    (H : Fin q → ℕ) :
+    ∑ s : ι → Fin q, H (s j) = q ^ (Fintype.card ι - 1) * ∑ b, H b := by
+  rw [← Equiv.sum_comp (Equiv.funSplitAt j (Fin q)).symm, Fintype.sum_prod_type]
+  simp [Equiv.funSplitAt, Equiv.piSplitAt, Finset.sum_const, mul_comm]
+  rw [Finset.sum_mul]
+
+/-- Fixing two coordinates leaves `q ^ (k - 2)` functions. -/
+theorem sum_two_coords {q : ℕ} (i j : Fin k) (hij : i ≠ j) (G : Fin q → Fin q → ℕ) :
+    ∑ s : Fin k → Fin q, G (s i) (s j) = q ^ (k - 2) * ∑ a, ∑ b, G a b := by
+  rw [← Equiv.sum_comp (Equiv.funSplitAt i (Fin q)).symm, Fintype.sum_prod_type]
+  have hj : j ≠ i := hij.symm
+  have key : ∀ a : Fin q, ∑ s' : {x // x ≠ i} → Fin q,
+      G ((Equiv.funSplitAt i (Fin q)).symm (a, s') i)
+        ((Equiv.funSplitAt i (Fin q)).symm (a, s') j) =
+      q ^ (k - 2) * ∑ b, G a b := by
+    intro a
+    have e : ∀ s' : {x // x ≠ i} → Fin q,
+        G ((Equiv.funSplitAt i (Fin q)).symm (a, s') i)
+          ((Equiv.funSplitAt i (Fin q)).symm (a, s') j) = G a (s' ⟨j, hj⟩) := by
+      intro s'
+      simp [Equiv.funSplitAt, Equiv.piSplitAt, hj]
+    simp only [e]
+    rw [sum_one_coord (ι := {x // x ≠ i}) ⟨j, hj⟩ (G a)]
+    congr 2
+    simp
+    omega
+  simp only [key, ← Finset.mul_sum]
+
+/-- **The lower bound.** Every gauge of the replicated cochain, constant on clusters or not,
+costs at least `q²` times the seed minimum. Proof: a section picks one vertex per cluster; each
+of the `q^k` sections restricts the gauge to a gauge of the seed, costing at least `D`; each edge
+between two clusters lies in exactly `q^(k-2)` sections; edges inside clusters cost `≥ 0`. -/
+theorem rep_lower (q : ℕ) (hq : 0 < q) (α : Fin k → Fin k → S3) (D : ℕ)
+    (hD : ∀ β : Fin k → S3, D ≤ cost α β) :
+    ∀ γ : Fin (k * q) → S3, q ^ 2 * D ≤ cost (rep q α) γ := by
+  intro γ
+  by_cases hk : k < 2
+  · have h0 : cost α (fun _ => 1) = 0 := by
+      rw [cost_eq]
+      refine Finset.sum_eq_zero fun u _ => Finset.sum_eq_zero fun v _ => ?_
+      have huv : ¬ u < v := by
+        intro huv; have := u.isLt; have := v.isLt; rw [Fin.lt_def] at huv; omega
+      simp [huv]
+    have : D = 0 := by have := hD (fun _ => 1); omega
+    simp [this]
+  · set G : Fin k → Fin k → Fin q → Fin q → ℕ := fun i j a b =>
+      if i < j then moved ((γ (vert q i a))⁻¹ * α i j * γ (vert q j b)) else 0 with hG
+    -- the cost between clusters is at most the full cost
+    have hI' : ∑ i, ∑ a, ∑ j, ∑ b, G i j a b ≤ cost (rep q α) γ := by
+      rw [cost_eq]
+      simp only [sum_blocks (q := q)]
+      gcongr with i _ a _ j _ b _
+      exact rep_edge_lower α γ i j a b
+    have hswap : ∑ i, ∑ a, ∑ j, ∑ b, G i j a b = ∑ i, ∑ j, ∑ a, ∑ b, G i j a b :=
+      Finset.sum_congr rfl fun i _ => Finset.sum_comm
+    have hI : ∑ i, ∑ j, ∑ a, ∑ b, G i j a b ≤ cost (rep q α) γ := hswap ▸ hI'
+    -- the section double count
+    have hS : ∑ s : Fin k → Fin q, cost α (fun i => γ (vert q i (s i))) =
+        q ^ (k - 2) * ∑ i, ∑ j, ∑ a, ∑ b, G i j a b := by
+      simp only [cost_eq]
+      rw [Finset.sum_comm, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [Finset.sum_comm, Finset.mul_sum]
+      refine Finset.sum_congr rfl fun j _ => ?_
+      by_cases hij : i < j
+      · exact sum_two_coords i j hij.ne (G i j)
+      · simp [hG, hij]
+    have hsec : q ^ k * D ≤ ∑ s : Fin k → Fin q, cost α (fun i => γ (vert q i (s i))) := by
+      have := Finset.sum_le_sum fun (s : Fin k → Fin q) (_ : s ∈ Finset.univ) =>
+        hD (fun i => γ (vert q i (s i)))
+      simpa [Finset.sum_const, Finset.card_univ, Fintype.card_fun, Fintype.card_fin,
+        mul_comm] using this
+    have hpow : q ^ k = q ^ (k - 2) * q ^ 2 := by
+      rw [← pow_add]; congr 1; omega
+    have hmain : q ^ (k - 2) * (q ^ 2 * D) ≤ q ^ (k - 2) * cost (rep q α) γ := by
+      calc q ^ (k - 2) * (q ^ 2 * D) = q ^ k * D := by rw [hpow, mul_assoc]
+        _ ≤ _ := hsec
+        _ = _ := hS
+        _ ≤ _ := Nat.mul_le_mul_left _ hI
+    exact Nat.le_of_mul_le_mul_left hmain (pow_pos hq _)
+
+
+/-- **The `k = 4q` seed.** The replicated `k = 4` witness has defect `8q³`, a gauge of cost
+`6q²`, and no gauge cheaper than `6q²`: `N/D = 4q/3 = k/3` for every `q ≥ 1`. -/
+theorem rep_seed (q : ℕ) (hq : 0 < q) :
+    defect (rep q w4) = 8 * q ^ 3 ∧ cost (rep q w4) (fun _ => 1) = 6 * q ^ 2 ∧
+      ∀ γ : Fin (4 * q) → S3, 6 * q ^ 2 ≤ cost (rep q w4) γ := by
+  obtain ⟨hN, hD, hC, -⟩ := witness_k4
+  refine ⟨by rw [rep_defect, hN]; ring, ?_,
+    fun γ => by simpa [mul_comm] using rep_lower q hq w4 6 hD γ⟩
+  have h := rep_attain q w4 (fun _ => 1)
+  simpa [hC, mul_comm] using h
+
+/-! ## The constant at every multiple of four -/
+
+/-- The replicated seed has gauge distance exactly `6q²`. -/
+theorem gaugeDist_rep_seed (q : ℕ) (hq : 0 < q) : gaugeDist (rep q w4) = 6 * q ^ 2 := by
+  obtain ⟨-, hC, hlow⟩ := rep_seed q hq
+  exact gaugeDist_eq_of hlow _ hC
+
+/-- **Corollary 7.** `h₁(K_{4q}) = 4q/3` for every `q ≥ 1`: the coboundary constant equals `k/3`
+at every multiple of four. -/
+theorem h1_eq_four_mul (q : ℕ) (hq : 0 < q) : h1 (4 * q) = ((4 * q : ℕ) : ℝ) / 3 := by
+  have hD : 0 < gaugeDist (rep q w4) := by
+    rw [gaugeDist_rep_seed q hq]
+    exact Nat.mul_pos (by norm_num) (pow_pos hq 2)
+  apply le_antisymm
+  · have h := h1_le_of_pos hD
+    rw [gaugeDist_rep_seed q hq, (rep_seed q hq).1] at h
+    have hq' : (q : ℝ) ≠ 0 := by exact_mod_cast hq.ne'
+    calc h1 (4 * q) ≤ ((8 * q ^ 3 : ℕ) : ℝ) / ((6 * q ^ 2 : ℕ) : ℝ) := h
+      _ = ((4 * q : ℕ) : ℝ) / 3 := by
+        push_cast
+        field_simp
+        ring
+  · exact k_div_three_le_h1 ⟨rep q w4, hD⟩
+
+end CoboundaryK3
