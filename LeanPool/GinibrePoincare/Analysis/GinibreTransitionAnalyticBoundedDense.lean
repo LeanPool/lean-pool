@@ -108,24 +108,27 @@ theorem actualBoundedRealVersion_memLp {Ω : Type*} [MeasurableSpace Ω]
     (hb : ∀ᵐ x ∂μ, ‖f x‖ ≤ A) : MemLp (actualBoundedRealVersion f A) 2 μ :=
   hf.ae_eq (actualBoundedRealVersion_ae μ f A hb).symm
 
-theorem ginibreFullSymmetric_operators_eq_of_bounded_values (n : ℕ)
-    (R S : ginibreFullSymmetricValues n →L[ℝ] ginibreFullSymmetricValues n)
+/-- Equality on genuinely bounded values extends to the full symmetric L² source,
+with no assumption that either target operator preserves symmetry. -/
+theorem ginibreSymmetricSource_operators_eq_of_bounded_values (n : ℕ)
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (R S : ginibreFullSymmetricValues n →L[ℝ] E)
     (heq : ∀ u : ginibreFullSymmetricValues n,
-      (∃ A : ℝ, ∀ᵐ z ∂ginibreMeasure n, ‖u.val z‖ ≤ A) → R u=S u) : R=S := by
+      (∃ A : ℝ, ∀ᵐ z ∂ginibreMeasure n, ‖u.val z‖≤A) → R u=S u) : R=S := by
   apply ContinuousLinearMap.ext
   intro u
   have ht := ginibreFullSymmetricBoundedTruncation_tendsto n u
   have hh (m : ℕ) : R (ginibreFullSymmetricBoundedTruncation n m u)=
       S (ginibreFullSymmetricBoundedTruncation n m u) :=
     heq _ ⟨2*((m : ℝ)+1), ginibreFullSymmetricBoundedTruncation_bound n m u⟩
-  have hRt : Tendsto (fun m => R (ginibreFullSymmetricBoundedTruncation n m u)) atTop (𝓝 (R u)) :=
-    R.continuous.tendsto u |>.comp ht
-  have hSt : Tendsto (fun m => R (ginibreFullSymmetricBoundedTruncation n m u)) atTop (𝓝 (S u)) :=
-      by
-    convert (S.continuous.tendsto u |>.comp ht) using 1
-    funext m
-    exact hh m
-  exact tendsto_nhds_unique hRt hSt
+  exact tendsto_nhds_unique (R.continuous.tendsto u |>.comp ht)
+    ((S.continuous.tendsto u |>.comp ht).congr fun m => (hh m).symm)
+
+theorem ginibreFullSymmetric_operators_eq_of_bounded_values (n : ℕ)
+    (R S : ginibreFullSymmetricValues n →L[ℝ] ginibreFullSymmetricValues n)
+    (heq : ∀ u : ginibreFullSymmetricValues n,
+      (∃ A : ℝ, ∀ᵐ z ∂ginibreMeasure n, ‖u.val z‖ ≤ A) → R u=S u) : R=S :=
+  ginibreSymmetricSource_operators_eq_of_bounded_values n R S heq
 
 end
 end GinibrePoincare

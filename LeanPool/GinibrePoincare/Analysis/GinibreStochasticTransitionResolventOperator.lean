@@ -46,7 +46,7 @@ Part of the ginibre stochastic dynamics development of the
 Ginibre Poincaré formalization.
 
 Main results: `ginibreOriginalStochasticL2ResolventOperator_apply`,
-`ginibreBoundedLp_measurable_version`, `ginibreSymmetricSource_operators_eq_of_bounded_values`.
+`ginibreBoundedLp_measurable_version`.
 -/
 
 @[expose] public section
@@ -89,27 +89,6 @@ theorem ginibreBoundedLp_measurable_version {n : ℕ} (_ : 0 < n)
   have hb' : ∀ᵐ z ∂ginibreMeasure n, ‖f z‖≤max A 0 := hb.mono fun z hz => hz.trans (le_max_left _ _)
   exact ⟨v, hm, actualBoundedRealVersion_bound f (max A 0) (le_max_right _ _),
     (actualBoundedRealVersion_ae _ f _ hb').symm⟩
-
-/-- Equality on genuinely bounded values extends to the full symmetric L² source,
-with no assumption that either target operator preserves symmetry. -/
-theorem ginibreSymmetricSource_operators_eq_of_bounded_values (n : ℕ)
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    (R S : ginibreFullSymmetricValues n →L[ℝ] E)
-    (heq : ∀ u : ginibreFullSymmetricValues n,
-      (∃ A : ℝ, ∀ᵐ z ∂ginibreMeasure n, ‖u.val z‖≤A) → R u=S u) : R=S := by
-  apply ContinuousLinearMap.ext
-  intro u
-  have ht := ginibreFullSymmetricBoundedTruncation_tendsto n u
-  have hh (m : ℕ) : R (ginibreFullSymmetricBoundedTruncation n m u)=
-      S (ginibreFullSymmetricBoundedTruncation n m u) :=
-    heq _ ⟨2*((m : ℝ)+1), ginibreFullSymmetricBoundedTruncation_bound n m u⟩
-  have hRt := R.continuous.tendsto u |>.comp ht
-  have hSt : Tendsto (fun m => R (ginibreFullSymmetricBoundedTruncation n m u)) atTop (𝓝 (S u)) :=
-      by
-    convert (S.continuous.tendsto u |>.comp ht) using 1
-    funext m
-    exact hh m
-  exact tendsto_nhds_unique hRt hSt
 
 end
 end GinibrePoincare
