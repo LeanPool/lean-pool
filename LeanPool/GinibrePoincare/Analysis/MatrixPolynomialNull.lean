@@ -82,7 +82,7 @@ theorem complexMvPolynomial_fin_eval_ne_zero_ae (μ : Measure ℂ)
     obtain ⟨k, hk⟩ : ∃ k, q.coeff k ≠ 0 := by
       by_contra h
       simp only [not_exists, not_not] at h
-      exact hq (Polynomial.ext fun k => by simpa using h k)
+      exact hq (AddMonoidAlgebra.ext (Finsupp.ext fun k => by simpa using h k))
     have htail : ∀ᵐ y ∂Measure.pi (fun _ : Fin d => μ),
         ∀ᵐ x ∂μ, MvPolynomial.eval (Fin.cons x y) p ≠ 0 := by
       filter_upwards [ih (q.coeff k) hk] with y hy
@@ -95,10 +95,10 @@ theorem complexMvPolynomial_fin_eval_ne_zero_ae (μ : Measure ℂ)
         complexPolynomial_eval_ne_zero_ae μ (q.map (MvPolynomial.eval y)) hmap
     have hm : MeasurableSet {z : ℂ × (Fin d → ℂ) |
         MvPolynomial.eval (Fin.cons z.1 z.2) p ≠ 0} := by
-      apply MeasurableSet.compl
-      have hc : Continuous (fun z : ℂ × (Fin d → ℂ) => (Fin.cons z.1 z.2 : Fin (d + 1) → ℂ)) := by
-          fun_prop
-      exact ((MvPolynomial.continuous_eval p).comp hc).measurable (measurableSet_singleton 0)
+      have hc : Continuous (fun z : ℂ × (Fin d → ℂ) =>
+          (Fin.cons z.1 z.2 : Fin (d + 1) → ℂ)) := by
+        fun_prop
+      exact ((MvPolynomial.continuous_eval p).comp hc).measurable (measurableSet_singleton 0).compl
     have hprod : ∀ᵐ z ∂μ.prod (Measure.pi (fun _ : Fin d => μ)),
         MvPolynomial.eval (Fin.cons z.1 z.2) p ≠ 0 :=
       (Measure.ae_prod_iff_ae_ae hm).mpr ((Measure.ae_ae_comm hm).mpr htail)
