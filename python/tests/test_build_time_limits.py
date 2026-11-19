@@ -1447,8 +1447,11 @@ def test_workflow_rebuilds_changed_modules_after_all_compiled_restores() -> None
         assert len(indices) == 1
         index = indices[0]
         script = steps[index]["run"]
-        for command in ("prepare", "watch", "check"):
-            assert script.count(f"lean_pool.build_time_limits {command}") == 1
+        # A shard also builds the linter plugin under the watchdog
+        # (test_linter_plugin_build.py).
+        watches = 2 if name == "shard" else 1
+        for command, count in (("prepare", 1), ("watch", watches), ("check", 1)):
+            assert script.count(f"lean_pool.build_time_limits {command}") == count
         assert script.index("build_time_limits prepare") < script.index(
             "build_time_limits watch"
         )
@@ -1456,7 +1459,7 @@ def test_workflow_rebuilds_changed_modules_after_all_compiled_restores() -> None
             "build_time_limits check"
         )
         # ``prepare`` and ``check`` need the base; ``watch`` takes it when known.
-        assert script.count('--base "$time_base"') == 3
+        assert script.count('--base "$time_base"') == 2 + watches
         assert (
             ' watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build '
             in script

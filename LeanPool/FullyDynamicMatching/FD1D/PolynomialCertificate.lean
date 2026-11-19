@@ -8,6 +8,8 @@ module
 
 public import Mathlib.Data.List.Basic
 public import Mathlib.Tactic
+public import LeanPool.FullyDynamicMatching.FD1D.DensePolynomial
+meta import LeanPool.FullyDynamicMatching.FD1D.DensePolynomial
 
 /-!
 # Sparse exact polynomial certificate
@@ -24,72 +26,7 @@ namespace FD1D
 
 namespace BellmanCertificate
 
-/-- A dense polynomial represented by its coefficient list, in increasing degree order. -/
-structure DPoly (R : Type) where
-  /-- Coefficients in increasing degree order; trailing zero coefficients are permitted. -/
-  coeffs : List R
-deriving DecidableEq, Repr
-
 namespace DPoly
-
-/-- The dense representation of a constant polynomial. -/
-def const (a : R) : DPoly R := ⟨[a]⟩
-
-/-- Coefficientwise addition, extending the shorter list by zeros. -/
-def addCoeffs [Add R] : List R → List R → List R
-  | [], q => q
-  | p, [] => p
-  | a :: p, b :: q => (a + b) :: addCoeffs p q
-
-/-- Negation of every coefficient. -/
-def neg [Neg R] (p : DPoly R) : DPoly R :=
-  ⟨p.coeffs.map (-·)⟩
-
-/-- Addition of dense polynomials by their coefficient lists. -/
-def add [Add R] (p q : DPoly R) : DPoly R :=
-  ⟨addCoeffs p.coeffs q.coeffs⟩
-
-/-- Left multiplication of every coefficient by the given scalar. -/
-def scale [Mul R] (a : R) (p : DPoly R) : DPoly R :=
-  ⟨p.coeffs.map (a * ·)⟩
-
-/-- Convolution of coefficient lists for polynomial multiplication. -/
-def mulCoeffs [Zero R] [Add R] [Mul R] : List R → List R → List R
-  | [], _ => []
-  | a :: p, q =>
-      addCoeffs (q.map (a * ·)) (0 :: mulCoeffs p q)
-
-/-- Multiplication of dense polynomials by coefficient convolution. -/
-def mul [Zero R] [Add R] [Mul R] (p q : DPoly R) : DPoly R :=
-  ⟨mulCoeffs p.coeffs q.coeffs⟩
-
-/-- Natural powers computed by repeated polynomial multiplication. -/
-def pow [Zero R] [One R] [Add R] [Mul R] (p : DPoly R) : ℕ → DPoly R
-  | 0 => const 1
-  | n + 1 => mul (pow p n) p
-
-instance : Zero (DPoly R) := ⟨⟨[]⟩⟩
-instance [One R] : One (DPoly R) := ⟨const 1⟩
-instance [Add R] : Add (DPoly R) := ⟨add⟩
-instance [Neg R] : Neg (DPoly R) := ⟨neg⟩
-instance [Neg R] [Add R] : Sub (DPoly R) := ⟨fun p q => p + -q⟩
-instance [Zero R] [Add R] [Mul R] : Mul (DPoly R) := ⟨mul⟩
-instance [Zero R] [One R] [Add R] [Mul R] : Pow (DPoly R) Nat := ⟨pow⟩
-instance (n : ℕ) [OfNat R (n + 2)] : OfNat (DPoly R) (n + 2) :=
-  ⟨const (OfNat.ofNat (n + 2))⟩
-
-@[simp] theorem coeffs_zero :
-    (0 : DPoly R).coeffs = [] := rfl
-
-@[simp] theorem coeffs_one [One R] :
-    (1 : DPoly R).coeffs = [1] := rfl
-
-@[simp] theorem coeffs_ofNat (n : ℕ) [OfNat R (n + 2)] :
-    (OfNat.ofNat (n + 2) : DPoly R).coeffs =
-      [OfNat.ofNat (n + 2)] := rfl
-
-/-- The indeterminate, with coefficient list `[0, 1]`. -/
-def X [Zero R] [One R] : DPoly R := ⟨[0, 1]⟩
 
 /-- Horner evaluation of a coefficient list after applying the coefficient map. -/
 def evalCoeffs [Zero S] [Add S] [Mul S]
@@ -605,16 +542,595 @@ theorem eval3_nonnegative
     allNonnegative2 (fun q => eval2 q v z) ?_ hu p hp
   intro q hq
   exact eval2_nonnegative hq hv hz
+
+private meta instance {R : Type} [Lean.ToExpr R] : Lean.ToExpr (DPoly R) where
+  toExpr p :=
+    let ⟨coefficients⟩ := p
+    Lean.mkApp2 (Lean.mkConst ``DPoly.mk) (Lean.toTypeExpr R) (Lean.toExpr coefficients)
+  toTypeExpr := Lean.mkApp (Lean.mkConst ``DPoly) (Lean.toTypeExpr R)
+
+private meta def bellmanKernelFallback : Lean.Name := `FD1D.BellmanCertificate.kernelFallback
+
+private meta def needsBellmanKernelDecision : Lean.MetaM α :=
+  Lean.throwError (.tagged bellmanKernelFallback "the staged reader would force the source chart")
+
+private meta def isBellmanConditional (term : Lean.Expr) : Bool :=
+  term.isAppOf ``ite || term.isAppOf ``dite || term.isAppOf ``cond
+
+-- Apply one kernel recursor rule to an already visible constructor.
+private meta def reduceVisibleBellmanRecursor (recursor : Lean.RecursorVal)
+    (levels : List Lean.Level) (args : Array Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let majorIndex := recursor.getMajorIdx
+  let some major := args[majorIndex]? | needsBellmanKernelDecision
+  let some ctor ← Lean.Meta.isConstructorAppCore? major.consumeMData
+    | needsBellmanKernelDecision
+  let some rule := recursor.rules.find? (·.ctor == ctor.name) | needsBellmanKernelDecision
+  let fields := major.consumeMData.getAppArgs
+  let body := rule.rhs.instantiateLevelParams recursor.levelParams levels
+  let body := Lean.mkAppN body (args.extract 0 (recursor.numParams + recursor.numMotives +
+    recursor.numMinors))
+  let body := Lean.mkAppN body (fields.extract (fields.size - rule.nfields) fields.size)
+  return Lean.mkAppN body (args.extract (majorIndex + 1) args.size)
+
+-- Delta expansion exposes a match without evaluating its discriminants.
+-- A recursor can step only when its major premise is already a constructor.
+private meta def exposeBellmanUntil (isTerminal : Lean.Expr → Lean.MetaM Bool)
+    (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let mut next := expression
+  repeat
+    Lean.Core.checkSystem "Bellman head exposure"
+    let term ← Lean.Meta.withConfig (fun cfg => { cfg with iota := false, proj := .no }) <|
+      Lean.Meta.whnfCore next
+    let term := term.consumeMData
+    if isBellmanConditional term then return ← needsBellmanKernelDecision
+    if ← isTerminal term then return term
+    if let .const name levels := term.getAppFn then
+      if let some (.recInfo recursor) := (← Lean.getEnv).find? name then
+        next ← reduceVisibleBellmanRecursor recursor levels term.getAppArgs
+        continue
+    let some unfolded ← Lean.Meta.delta? term | return term
+    next := unfolded
+
+-- Select only visible constructor fields. An unresolved receiver can force a whole chart.
+private meta def exposeBellmanProjections (expose : Lean.Expr → Lean.MetaM Lean.Expr)
+    (preserve : Lean.Name → Nat → Bool) (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let exposeReceiver := exposeBellmanUntil (fun _ => pure false)
+  let mut next := expression
+  let mut fields : List Nat := []
+  repeat
+    Lean.Core.checkSystem "Bellman projections"
+    let term ← if fields.isEmpty then expose next else exposeReceiver next
+    if let .proj name index receiver := term then
+      if preserve name index then
+        if fields.isEmpty then return term
+        needsBellmanKernelDecision
+      fields := index :: fields
+      next := receiver
+    else
+      let index :: remaining := fields | return term
+      let some field ← Lean.Meta.projectCore? term index | needsBellmanKernelDecision
+      fields := remaining
+      next := field
+
+-- Keep the coefficient projection visible for polynomial eta and append normalization.
+private meta def exposeBellmanField (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let preserve (name : Lean.Name) (index : Nat) := name == ``DPoly && index == 0
+  let isTerminal (term : Lean.Expr) : Bool :=
+    match term with
+    | .proj name index _ => preserve name index
+    | _ => term.isAppOfArity ``DPoly.coeffs 2 || term.isAppOfArity ``List.nil 1 ||
+        term.isAppOfArity ``List.cons 3 || term.isAppOfArity ``List.append 3 ||
+        term.isAppOfArity ``HAppend.hAppend 6 || term.isAppOfArity ``Append.append 4 ||
+        term.isAppOfArity ``List.map 4 || term.isAppOfArity ``List.mapTR 4
+  let expose := exposeBellmanUntil fun term => pure (isTerminal term)
+  exposeBellmanProjections expose preserve expression
+
+-- Stop at heads the staged reader handles so other helpers unfold in any namespace.
+private meta def isBellmanHead (term : Lean.Expr) : Bool :=
+  match term.getAppFn.constName? with
+  | some head =>
+    #[``DPoly.mk, ``DPoly.const, ``DPoly.X, ``DPoly.add, ``DPoly.mul, ``DPoly.pow, ``DPoly.neg,
+      ``DPoly.scale, ``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
+      ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc, ``U, ``V, ``Z].contains head
+  | none => false
+
+private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let mut next := expression
+  repeat
+    let expose := exposeBellmanUntil fun term => pure (isBellmanHead term)
+    let mut term ← exposeBellmanProjections expose (fun _ _ => false) next
+    -- A constructor applied to the same polynomial's projection exposes
+    -- that polynomial before the leaf reader evaluates its coefficient list.
+    if term.isAppOfArity ``DPoly.mk 2 then
+      term := Lean.mkApp term.appFn! (← exposeBellmanField term.appArg!)
+      if let some polynomial ← Lean.Meta.etaStruct? term (· == ``DPoly) then
+        next := polynomial
+        continue
+    return term
+
+private theorem repackBellmanBranch (p : DPoly R) (branch : List R → DPoly R)
+    (identity : ∀ coefficients, branch coefficients = DPoly.mk coefficients) :
+    (match p with | ⟨coefficients⟩ => branch coefficients) = p := by
+  cases p with
+  | mk coefficients => exact identity coefficients
+
+-- Match an identity over a variable so conversion cannot evaluate the concrete argument.
+private meta def specializeBellmanIdentity (rule : Lean.Name) (argument : Lean.Expr)
+    (repack : Lean.Expr → Lean.Expr) : Lean.MetaM (Option Lean.Expr) := do
+  let type ← Lean.Meta.inferType argument
+  let type ← exposeBellmanUntil (fun t => pure (t.isAppOf ``List)) type
+  unless type.isAppOfArity ``List 1 do return none
+  Lean.Meta.withLocalDeclD `argument type fun localArgument => do
+    let target ← Lean.Meta.mkEq (repack localArgument) localArgument
+    let proof ← Lean.Meta.mkAppM rule #[localArgument]
+    let proofType ← Lean.Meta.inferType proof
+    unless ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) do
+      return none
+    let proof ← Lean.Meta.mkExpectedTypeHint proof target
+    let abstractProof ← Lean.Meta.mkLambdaFVars #[localArgument] proof
+    return some (Lean.mkApp abstractProof argument)
+
+private meta def peelBellmanAppend (operator left right : Lean.Expr) :
+    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
+  let (rule, survivor, rebuild) ←
+    if right.isAppOfArity ``List.nil 1 then
+      pure (``List.append_nil, left, fun term => Lean.mkApp2 operator term right)
+    else if left.isAppOfArity ``List.nil 1 then
+      pure (``List.nil_append, right, fun term => Lean.mkApp2 operator left term)
+    else
+      return none
+  let some proof ← specializeBellmanIdentity rule survivor rebuild | return none
+  return some (survivor, proof)
+
+private meta inductive BellmanAppendWork where
+  | visit (expression : Lean.Expr)
+  | combine (operator left right : Lean.Expr)
+
+private meta def combineBellmanAppends (operator oldLeft oldRight : Lean.Expr)
+    (left right : Lean.Expr × Option Lean.Expr) :
+    Lean.MetaM (Lean.Expr × Option Lean.Expr) := do
+  let (newLeft, leftProof) := left
+  let (newRight, rightProof) := right
+  let proof ← match leftProof, rightProof with
+    | none, none => pure none
+    | none, some h => some <$> Lean.Meta.mkCongrArg (Lean.mkApp operator oldLeft) h
+    | some h, none =>
+      some <$> Lean.Meta.mkCongrFun (← Lean.Meta.mkCongrArg operator h) oldRight
+    | some hl, some hr => some <$> Lean.Meta.mkCongr (← Lean.Meta.mkCongrArg operator hl) hr
+  let some (survivor, identity) ← peelBellmanAppend operator newLeft newRight
+    | return (Lean.mkApp2 operator newLeft newRight, proof)
+  return (survivor, ← Lean.Meta.mkEqTrans? proof (some identity))
+
+-- Visit only the append tree. Coefficient projections and list cells remain opaque.
+private meta def normalizeBellmanAppends (expression : Lean.Expr) :
+    Lean.MetaM (Lean.Expr × Option Lean.Expr) := do
+  let mut work := [BellmanAppendWork.visit expression]
+  let mut results : List (Lean.Expr × Option Lean.Expr) := []
+  repeat
+    Lean.Core.checkSystem "Bellman coefficient appends"
+    let task :: pending := work | break
+    work := pending
+    match task with
+    | .visit expression =>
+      let term ← exposeBellmanField expression
+      if term.isAppOfArity ``List.append 3 || term.isAppOfArity ``HAppend.hAppend 6 ||
+          term.isAppOfArity ``Append.append 4 then
+        let left := term.appFn!.appArg!
+        let right := term.appArg!
+        work := .visit left :: .visit right :: .combine term.appFn!.appFn! left right :: work
+      else
+        results := (term, none) :: results
+    | .combine operator left right =>
+      let newRight :: newLeft :: rest := results | Lean.throwError "missing append operands"
+      results := (← combineBellmanAppends operator left right newLeft newRight) :: rest
+  let [(normalized, proof)] := results | Lean.throwError "incomplete append normalization"
+  let proof ← proof.mapM fun proof => do
+    let equality ← Lean.Meta.mkEq expression normalized
+    return Lean.Meta.mkExpectedPropHint proof equality
+  return (normalized, proof)
+
+-- Prove the branch identity on its local field before applying it to a chart.
+private meta def proveBellmanRepackBranch (branch : Lean.Expr) :
+    Lean.MetaM (Option Lean.Expr) :=
+  Lean.Meta.lambdaTelescope branch fun fields body => do
+    let #[field] := fields | return none
+    let expose := exposeBellmanUntil (fun term => pure (term.isAppOfArity ``DPoly.mk 2))
+    let body ← exposeBellmanProjections expose (fun _ _ => false) body
+    unless body.isAppOfArity ``DPoly.mk 2 do return none
+    let (coefficients, proof) ← normalizeBellmanAppends body.appArg!
+    unless coefficients == field do return none
+    let proof ← match proof with
+      | some proof => pure proof
+      | none => Lean.Meta.mkEqRefl coefficients
+    let proof ← Lean.Meta.mkCongrArg body.appFn! proof
+    return some (← Lean.Meta.mkLambdaFVars fields proof)
+
+private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
+    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
+  let some matcher ← Lean.Meta.matchMatcherApp? expression.consumeMData (alsoCasesOn := true)
+    | return none
+  let #[polynomial] := matcher.discrs | return none
+  let #[branch] := matcher.alts | return none
+  unless matcher.remaining.isEmpty do return none
+  let type ← Lean.Meta.inferType polynomial
+  let type ← exposeBellmanUntil (fun t => pure (t.isAppOf ``DPoly)) type
+  unless type.isAppOf ``DPoly do return none
+  let some branchProof ← proveBellmanRepackBranch branch | return none
+  Lean.Meta.withLocalDeclD `polynomial type fun localPolynomial => do
+    let repacked := { matcher with discrs := #[localPolynomial] }.toExpr
+    let target ← Lean.Meta.mkEq repacked localPolynomial
+    let proof ← Lean.Meta.mkAppM ``repackBellmanBranch #[localPolynomial, branch, branchProof]
+    let proofType ← Lean.Meta.inferType proof
+    unless ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) do
+      return none
+    let proof ← Lean.Meta.mkExpectedTypeHint proof target
+    let abstractProof ← Lean.Meta.mkLambdaFVars #[localPolynomial] proof
+    return some (polynomial, Lean.mkApp abstractProof polynomial)
+
+private meta def exposeBellmanIdentityHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let isReady (term : Lean.Expr) : Lean.MetaM Bool := do
+    if isBellmanHead term then return true
+    return (← Lean.Meta.matchMatcherApp? term.consumeMData (alsoCasesOn := true)).isSome
+  exposeBellmanProjections (exposeBellmanUntil isReady) (fun _ _ => false) expression
+
+-- Apply these identities before an operand constructor can force its coefficients.
+private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
+    Lean.MetaM (Lean.Expr × Option Lean.Expr) := do
+  let mut next := expression
+  let mut prefixProof := none
+  repeat
+    Lean.Core.checkSystem "Bellman polynomial identities"
+    let exposed ← exposeBellmanIdentityHead next
+    let identity ← if exposed.isAppOfArity ``DPoly.mk 2 then do
+        let coefficients ← exposeBellmanField exposed.appArg!
+        let constructor := exposed.appFn!
+        if let some polynomial ← Lean.Meta.etaStruct?
+            (Lean.mkApp constructor coefficients) (· == ``DPoly) then
+          next := polynomial
+          continue
+        let (normalized, proof) ← normalizeBellmanAppends coefficients
+        if let some proof := proof then
+          pure (some (Lean.mkApp constructor normalized, ← Lean.Meta.mkCongrArg constructor proof))
+        else pure none
+      else bellmanMatcherIdentity exposed
+    let some (polynomial, proof) := identity | do
+      -- Step past visible constructors before retrying the symbolic identities.
+      let reduced ← exposeBellmanHead exposed
+      if reduced == exposed then return (reduced, prefixProof)
+      next := reduced
+      continue
+    prefixProof ← match prefixProof with
+      | some previous => some <$> Lean.Meta.mkEqTrans previous proof
+      | none => pure (some proof)
+    next := polynomial
+
+-- Only decode visible literals and arithmetic on literal integers. A closed
+-- scalar term can still depend on all the coefficients of the source chart.
+private meta def readBellmanNat (expression : Lean.Expr) : Lean.MetaM (Option Nat) := do
+  let terminal (term : Lean.Expr) := term.isAppOfArity ``OfNat.ofNat 3 ||
+    term.isConstOf ``Nat.zero || (Lean.Meta.getRawNatValue? term).isSome
+  let term ← exposeBellmanUntil (fun term => pure (terminal term)) expression
+  if term.isConstOf ``Nat.zero then return some 0
+  if let some value := Lean.Meta.getRawNatValue? term then return some value
+  let_expr OfNat.ofNat type value _ ← term | return none
+  let type ← exposeBellmanUntil (fun t => pure (t.isConstOf ``Nat)) type
+  if type.isConstOf ``Nat then return Lean.Meta.getRawNatValue? value
+  return none
+
+private meta def readBellmanIntegerAt : Nat → Lean.Expr → Lean.MetaM (Option Int)
+  | 0, _ => pure none
+  | fuel + 1, expression => do
+    let term ← exposeBellmanHead expression
+    match_expr term with
+    | OfNat.ofNat type value _ =>
+      let type ← exposeBellmanUntil (fun t => pure (t.isConstOf ``Int)) type
+      unless type.isConstOf ``Int do return none
+      return (Lean.Meta.getRawNatValue? value).map Int.ofNat
+    | Int.ofNat value => return (← readBellmanNat value).map Int.ofNat
+    | Int.negSucc value => return (← readBellmanNat value).map Int.negSucc
+    | Neg.neg _ _ value => return (← readBellmanIntegerAt fuel value).map Neg.neg
+    | HAdd.hAdd _ _ _ _ left right =>
+      let some left ← readBellmanIntegerAt fuel left | return none
+      return (← readBellmanIntegerAt fuel right).map (left + ·)
+    | _ => return none
+
+private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) :=
+  readBellmanIntegerAt 32 expression
+
+-- A residual list computation may force the entire source polynomial.
+private meta def readBellmanList {R : Type}
+    (read : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
+    Lean.MetaM (Option (List R)) := do
+  let mut next := expression
+  let mut values : Array R := #[]
+  repeat
+    Lean.Core.checkSystem "Bellman coefficient list"
+    let cell ← exposeBellmanField next
+    match_expr cell with
+    | List.nil _ => return some values.toList
+    | List.cons _ head tail =>
+      let some coefficient ← read head | return none
+      values := values.push coefficient
+      next := tail
+    | _ => needsBellmanKernelDecision
+
+private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
+    (read : Lean.Expr → Lean.MetaM (Option R)) (fromNat : Nat → R)
+    (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
+  let expression ← exposeBellmanHead expression
+  match_expr expression with
+  | OfNat.ofNat type n _ =>
+    let type ← exposeBellmanUntil (fun t => pure (t.isAppOf ``DPoly)) type
+    unless type.isAppOf ``DPoly do return none
+    return (← readBellmanNat n).map fun value =>
+      if value == 0 then 0 else DPoly.const (fromNat value)
+  | DPoly.X _ _ _ => return some DPoly.X
+  | DPoly.const _ coefficient => return (← read coefficient).map DPoly.const
+  | DPoly.mk _ coefficients =>
+    return (← readBellmanList read coefficients).map fun values => ⟨values⟩
+  | _ => return none
+
+-- Compute on coefficient data, then have the kernel verify the explicit reduction.
+-- The meta code produces the proposed value; only the checked equality is reused.
+private meta def checkBellmanReduction (operands value : Lean.Expr) :
+    Lean.MetaM Lean.Expr := do
+  let equality ← Lean.Meta.mkEq operands value
+  let reflexivity ← Lean.Meta.mkEqRefl value
+  let certificate ← Lean.Meta.mkAuxLemma [] equality reflexivity
+    (kind? := some `polynomialReduction)
+  -- Await kernel insertion before reusing the equality. The kernel reports any mismatch.
+  let kernelEnv := (← Lean.getEnv).toKernelEnv
+  let some (.thmInfo _) := kernelEnv.find? certificate
+    | throwError "kernel rejected staged Bellman reduction"
+  return Lean.mkConst certificate
+
+private meta def bellmanBinaryOperation (expression : Lean.Expr) :
+    Option (Poly3 → Poly3 → Poly3) :=
+  if expression.isAppOfArity ``HAdd.hAdd 6 || expression.isAppOfArity ``DPoly.add 4 then
+    some (· + ·)
+  else if expression.isAppOfArity ``HSub.hSub 6 then some (· - ·)
+  else if expression.isAppOfArity ``HMul.hMul 6 || expression.isAppOfArity ``DPoly.mul 6 then
+    some (· * ·)
+  else none
+
+private meta def isBellmanPower (expression : Lean.Expr) : Bool :=
+  expression.isAppOfArity ``HPow.hPow 6 || expression.isAppOfArity ``DPoly.pow 7
+
+private meta def isBellmanNegation (expression : Lean.Expr) : Bool :=
+  expression.isAppOfArity ``Neg.neg 3 || expression.isAppOfArity ``DPoly.neg 3
+
+private meta def readBellmanBivariate (expression : Lean.Expr) :
+    Lean.MetaM (Option (DPoly (DPoly ℤ))) :=
+  readBellmanCoefficients
+    (readBellmanCoefficients readBellmanInteger Int.ofNat) (DPoly.const ∘ Int.ofNat)
+    expression
+
+private meta def readBellmanLeaf (expression : Lean.Expr) : Lean.MetaM (Option Poly3) := do
+  if expression.isConstOf ``U then return some DPoly.X
+  if expression.isConstOf ``V then return some (DPoly.const DPoly.X)
+  if expression.isConstOf ``Z then return some (DPoly.const (DPoly.const DPoly.X))
+  readBellmanCoefficients readBellmanBivariate (DPoly.const ∘ DPoly.const ∘ Int.ofNat)
+    expression
+
+private meta def readBellmanScaleFactor (expression : Lean.Expr) :
+    Lean.MetaM (DPoly (DPoly ℤ)) := do
+  let some factor ← readBellmanBivariate expression
+    | needsBellmanKernelDecision
+  return factor
+
+private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := do
+  let some power ← readBellmanNat expression | needsBellmanKernelDecision
+  return power
+
+private inductive BellmanStep where
+  | binary (operator left right : Lean.Expr) (evaluate : Poly3 → Poly3 → Poly3)
+  | power (operator base exponent : Lean.Expr) (value : Nat)
+  | scale (operator child : Lean.Expr) (factor : DPoly (DPoly ℤ))
+  | negate (operator child : Lean.Expr)
+  | leaf (value : Poly3)
+
+private structure PreparedBellmanPolynomial where
+  expression : Lean.Expr
+  identityProof : Option Lean.Expr
+  step : BellmanStep
+
+private meta def BellmanStep.operands : BellmanStep → Array Lean.Expr
+  | .binary _ left right _ => #[left, right]
+  | .power _ base _ _ => #[base]
+  | .scale _ child _ | .negate _ child => #[child]
+  | .leaf _ => #[]
+
+private meta def parseBellmanStep (expression : Lean.Expr) : Lean.MetaM BellmanStep := do
+  let args := expression.getAppArgs
+  let operator (arity : Nat) := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - arity))
+  if let some evaluate := bellmanBinaryOperation expression then
+    return .binary (operator 2) args[args.size - 2]! args[args.size - 1]! evaluate
+  if isBellmanPower expression then
+    let exponent := args[args.size - 1]!
+    return .power (operator 2) args[args.size - 2]! exponent (← readBellmanPower exponent)
+  if expression.isAppOfArity ``DPoly.scale 4 then
+    let factor ← readBellmanScaleFactor args[args.size - 2]!
+    return .scale (operator 1) args[args.size - 1]! factor
+  if isBellmanNegation expression then
+    return .negate (operator 1) args[args.size - 1]!
+  let some value ← readBellmanLeaf expression
+    | needsBellmanKernelDecision
+  return .leaf value
+
+-- Visit operands before their parents and reuse depths across shared expressions.
+private meta def bellmanReductionDepth
+    (prepare : Lean.Expr → Lean.MetaM PreparedBellmanPolynomial)
+    (expression : Lean.Expr) : Lean.MetaM Nat := do
+  let mut depths : Lean.ExprStructMap Nat := {}
+  let mut pending : Array (Lean.Expr × Option (Array Lean.Expr)) := #[(expression, none)]
+  while let some (term, operands) := pending.back? do
+    Lean.Core.checkSystem "Bellman depth"
+    pending := pending.pop
+    let key : Lean.ExprStructEq := ⟨term⟩
+    if (depths[key]?).isNone then
+      if let some children := operands then
+        let mut depth := 1
+        for child in children do
+          let childKey : Lean.ExprStructEq := ⟨child⟩
+          let some childDepth := depths[childKey]?
+            | throwError "Bellman operand depth is missing"
+          depth := max depth (childDepth + 1)
+        depths := depths.insert key depth
+      else
+        let children := (← prepare term).step.operands
+        pending := pending.push (term, some children)
+        for child in children do
+          let childKey : Lean.ExprStructEq := ⟨child⟩
+          if (depths[childKey]?).isNone then
+            pending := pending.push (child, none)
+  let rootKey : Lean.ExprStructEq := ⟨expression⟩
+  let some depth := depths[rootKey]?
+    | throwError "Bellman polynomial depth is missing"
+  return depth
+
+-- The cache is local to one closed chart and includes the kernel proof of each value.
+private meta def normalizeBellmanPolynomial
+    (prepare : Lean.Expr → Lean.MetaM PreparedBellmanPolynomial)
+    (cache : IO.Ref (Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr)))
+    (fuel : Nat) (expression : Lean.Expr) : Lean.MetaM (Poly3 × Lean.Expr × Lean.Expr) := do
+  match fuel with
+  | 0 => throwError "invalid Bellman reduction tree"
+  | fuel + 1 =>
+    let key : Lean.ExprStructEq := ⟨expression⟩
+    if let some result := (← cache.get)[key]? then return result
+    let prepared ← prepare expression
+    let (value, operands, congruence) ← match prepared.step with
+      | .binary operator left right evaluate => do
+        let (left, leftExpr, leftProof) ← normalizeBellmanPolynomial prepare cache fuel left
+        let (right, rightExpr, rightProof) ← normalizeBellmanPolynomial prepare cache fuel right
+        let firstProof ← Lean.Meta.mkCongrArg operator leftProof
+        let congruence ← Lean.Meta.mkCongr firstProof rightProof
+        pure (evaluate left right, Lean.mkApp2 operator leftExpr rightExpr, congruence)
+      | .power operator base exponent power => do
+        let (base, baseExpr, baseProof) ← normalizeBellmanPolynomial prepare cache fuel base
+        let firstProof ← Lean.Meta.mkCongrArg operator baseProof
+        let congruence ← Lean.Meta.mkCongrFun firstProof exponent
+        pure (base ^ power, Lean.mkApp2 operator baseExpr exponent, congruence)
+      | .scale operator child factor => do
+        let (value, valueExpr, proof) ← normalizeBellmanPolynomial prepare cache fuel child
+        pure (DPoly.scale factor value, Lean.mkApp operator valueExpr,
+          ← Lean.Meta.mkCongrArg operator proof)
+      | .negate operator child => do
+        let (value, valueExpr, proof) ← normalizeBellmanPolynomial prepare cache fuel child
+        pure (-value, Lean.mkApp operator valueExpr, ← Lean.Meta.mkCongrArg operator proof)
+      | .leaf value =>
+        pure (value, prepared.expression, ← Lean.Meta.mkEqRefl prepared.expression)
+    let quoted := Lean.toExpr value
+    let reduction ← checkBellmanReduction operands quoted
+    let proof ← Lean.Meta.mkEqTrans congruence reduction
+    let proof ← match prepared.identityProof with
+      | some identityProof => Lean.Meta.mkEqTrans identityProof proof
+      | none => pure proof
+    let result := (value, quoted, proof)
+    cache.modify (·.insert key result)
+    return result
+termination_by structural fuel
+
+local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
+  let expression ← Lean.Elab.Tactic.Conv.getLhs
+  let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
+  let preparations ← IO.mkRef ({} : Lean.ExprStructMap PreparedBellmanPolynomial)
+  let prepare term := do
+    let key : Lean.ExprStructEq := ⟨term⟩
+    if let some prepared := (← preparations.get)[key]? then return prepared
+    let (expression, identityProof) ← prepareBellmanPolynomial term
+    let step ← parseBellmanStep expression
+    let prepared : PreparedBellmanPolynomial := ⟨expression, identityProof, step⟩
+    preparations.modify (·.insert key prepared)
+    return prepared
+  let (_, value, proof) ← normalizeBellmanPolynomial prepare cache
+    (← bellmanReductionDepth prepare expression) expression
+  Lean.Elab.Tactic.Conv.updateLhs value proof
+
+local macro "checkStagedBellmanChart" : tactic =>
+  `(tactic| (conv_lhs => { arg 1; reduceBellmanPolynomial }; rfl))
+
+-- The kernel decision handles forms that would need to force the source chart.
+local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
+  let saved ← Lean.Elab.Tactic.saveState
+  try
+    Lean.Elab.Tactic.evalTactic (← `(tactic| checkStagedBellmanChart))
+  catch error =>
+    unless error.toMessageData.hasTag (· == bellmanKernelFallback) do throw error
+    saved.restore
+    Lean.Elab.Tactic.evalTactic (← `(tactic| decide +kernel))
+
+@[irreducible]
+private def wrapBellmanValue {α : Type} (value : α) : α := value
+
+-- Exercise expanded variables, computed coefficients and wrapped coefficient lists.
+example :
+    allNonnegative3
+      (DPoly.X + DPoly.const (id DPoly.X) + DPoly.const (DPoly.const DPoly.X) +
+        DPoly.const (2 : DPoly (DPoly ℤ)) +
+        DPoly.mk (wrapBellmanValue (1 :: wrapBellmanValue [2])) +
+        DPoly.const (DPoly.const (DPoly.const (1 + 1 : ℤ))) +
+        DPoly.const (DPoly.const (DPoly.const (Int.ofNat (wrapBellmanValue 2)))) +
+        U ^ wrapBellmanValue (1 : Nat) +
+        wrapBellmanValue (DPoly.scale 2 (1 + U)) : Poly3) = true := by
+  checkStagedBellmanChart
+
+-- A constructor/projection round trip preserves staging of the helper.
+example :
+    allNonnegative3
+      (DPoly.mk
+        (id (((U : Poly3)).coeffs, ()).1)) = true := by
+  checkStagedBellmanChart
+
+-- Nonliteral coefficient lists use the kernel decision.
+example : allNonnegative3 (DPoly.const (DPoly.X + 0)) = true := by
+  checkBellmanChart
+
+private def emptyBellmanCoefficients : List (DPoly (DPoly ℤ)) := []
+
+example :
+    allNonnegative3
+      (match (V, ()) with
+      | (polynomial, _) => DPoly.mk ([] ++ (polynomial.coeffs ++ ([] ++ [])))) = true := by
+  checkStagedBellmanChart
+
+example :
+    allNonnegative3
+      (match U with
+      | ⟨coefficients⟩ => DPoly.mk ((coefficients ++ emptyBellmanCoefficients) ++ [])) =
+      true := by
+  checkStagedBellmanChart
+
+-- Preserve the auxiliary lemma names of the public chart checks.
+private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
+  checkBellmanChart
+
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
-  decide +kernel
+  as_aux_lemma => exact chartPlus_normalized_check
+
+private theorem chartOne_normalized_check : allNonnegative3 chartOne = true := by
+  checkBellmanChart
+
 theorem chartOne_check : allNonnegative3 chartOne = true := by
-  decide +kernel
+  as_aux_lemma => exact chartOne_normalized_check
+
+private theorem chartTwo_normalized_check : allNonnegative3 chartTwo = true := by
+  checkBellmanChart
+
 theorem chartTwo_check : allNonnegative3 chartTwo = true := by
-  decide +kernel
+  as_aux_lemma => exact chartTwo_normalized_check
+
+private theorem chartThree_normalized_check : allNonnegative3 chartThree = true := by
+  checkBellmanChart
+
 theorem chartThree_check : allNonnegative3 chartThree = true := by
-  decide +kernel
+  as_aux_lemma => exact chartThree_normalized_check
+
+private theorem chartEndpoint_normalized_check : allNonnegative3 chartEndpoint = true := by
+  checkBellmanChart
+
 theorem chartEndpoint_check : allNonnegative3 chartEndpoint = true := by
-  decide +kernel
+  as_aux_lemma => exact chartEndpoint_normalized_check
 
 theorem chartPlus_nonnegative
     {u v z : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) (hz : 0 ≤ z) :

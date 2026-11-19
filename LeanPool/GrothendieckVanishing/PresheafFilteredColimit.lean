@@ -6,6 +6,7 @@ Authors: Vasily Ilin, Brian Nugent
 module
 
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitCore
+public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitZero
 import Mathlib.Algebra.Category.Grp.AB
 
 /-!
@@ -26,15 +27,6 @@ attribute [local implicit_reducible]
   sheafHFilteredColimitSuccInjCocone sheafHFilteredColimitSuccShortComplex
   sheafHFilteredColimitSuccQuotient sheafHFilteredColimitSuccQuotientCocone
   sheafHFilteredColimitSuccShiftCodomainIso sheafHFilteredColimitComparison
-
-/-- The global-sections functor used in the degree-`1` filtered-colimit boundary
-construction. -/
-@[implicit_reducible]
-noncomputable def sheafHFilteredColimitH1SectionsFunctor
-    {X : TopCat.{u}} :
-    TopCat.Sheaf AddCommGrpCat.{u} X ⥤ AddCommGrpCat.{u} :=
-  sheafToPresheaf (Opens.grothendieckTopology X) AddCommGrpCat.{u} ⋙
-    (CategoryTheory.evaluation (Opens X)ᵒᵖ AddCommGrpCat.{u}).obj (op ⊤)
 
 section FilteredColimitH1
 
@@ -535,108 +527,6 @@ noncomputable def sheafHFilteredColimitComparisonOneIso :
           mapIso.hom ≫ globalIso.hom =
     (sheafCohomologyFunctor X 1).map (csh.ι.app j)
   exact hleft.trans hright
-
-/-- The degree-`0` comparison up to identifying `H⁰` with global sections. -/
-noncomputable def sheafHFilteredColimitZeroSectionsIso :
-    colimit (Ysh ⋙ sheafCohomologyFunctor X 0) ≅
-      (sheafHFilteredColimitH1SectionsFunctor (X := X)).obj csh.pt := by
-  let sectionsFunctor := sheafHFilteredColimitH1SectionsFunctor (X := X)
-  let h0Iso :
-      Ysh ⋙ sheafCohomologyFunctor X 0 ≅ Ysh ⋙ sectionsFunctor :=
-    Functor.isoWhiskerLeft Ysh (sheafH0NatIsoSections (X := X))
-  let toPsh := sheafToPresheaf (Opens.grothendieckTopology X) AddCommGrpCat.{u}
-  haveI : CreatesColimit Ysh toPsh :=
-    createsFilteredColimit Ysh
-  haveI hPres : PreservesColimit Ysh toPsh :=
-    preservesColimit_of_createsColimit_and_hasColimit Ysh toPsh
-  have hc_psh : IsColimit (toPsh.mapCocone csh) :=
-    (hPres.preserves hcsh).some
-  have hc_sections : IsColimit (sectionsFunctor.mapCocone csh) :=
-    isColimitOfPreserves
-      ((CategoryTheory.evaluation (Opens X)ᵒᵖ AddCommGrpCat.{u}).obj (op ⊤)) hc_psh
-  exact
-    HasColimit.isoOfNatIso h0Iso ≪≫
-      (colimit.isColimit (Ysh ⋙ sectionsFunctor)).coconePointUniqueUpToIso hc_sections
-
-/-- The degree-`0` filtered-colimit comparison isomorphism, obtained from global sections. -/
-noncomputable def sheafHFilteredColimitComparisonZeroIso :
-    colimit (Ysh ⋙ sheafCohomologyFunctor X 0) ≅
-      (sheafCohomologyFunctor X 0).obj csh.pt :=
-  sheafHFilteredColimitZeroSectionsIso (Ysh := Ysh) csh hcsh ≪≫
-    ((sheafH0EquivSections csh.pt).toAddCommGrpIso).symm
-
-@[simp] theorem sheafH_filtered_colimit_comparison_zero_iso_hom :
-    (sheafHFilteredColimitComparisonZeroIso
-      (Ysh := Ysh) (csh := csh) (hcsh := hcsh)).hom =
-      sheafHFilteredColimitComparison Ysh 0 csh := by
-  let sectionsFunctor := sheafHFilteredColimitH1SectionsFunctor (X := X)
-  let toPsh := sheafToPresheaf (Opens.grothendieckTopology X) AddCommGrpCat.{u}
-  have : CreatesColimit Ysh toPsh :=
-    createsFilteredColimit Ysh
-  have hPres : PreservesColimit Ysh toPsh :=
-    preservesColimit_of_createsColimit_and_hasColimit Ysh toPsh
-  have hc_psh : IsColimit (toPsh.mapCocone csh) :=
-    (hPres.preserves hcsh).some
-  have hc_sections : IsColimit (sectionsFunctor.mapCocone csh) :=
-    isColimitOfPreserves
-      ((CategoryTheory.evaluation (Opens X)ᵒᵖ AddCommGrpCat.{u}).obj (op ⊤)) hc_psh
-  let h0Iso :
-      Ysh ⋙ sheafCohomologyFunctor X 0 ≅ Ysh ⋙ sectionsFunctor :=
-    Functor.isoWhiskerLeft Ysh (sheafH0NatIsoSections (X := X))
-  let h0SymmIso :
-      sectionsFunctor.obj csh.pt ≅ (sheafCohomologyFunctor X 0).obj csh.pt :=
-    ((sheafH0EquivSections csh.pt).toAddCommGrpIso).symm
-  let h0Symm :
-      sectionsFunctor.obj csh.pt ⟶ (sheafCohomologyFunctor X 0).obj csh.pt :=
-    h0SymmIso.hom
-  let e :
-      colimit (Ysh ⋙ sectionsFunctor) ≅ sectionsFunctor.obj csh.pt :=
-    (colimit.isColimit (Ysh ⋙ sectionsFunctor)).coconePointUniqueUpToIso hc_sections
-  apply colimit.hom_ext
-  intro j
-  have hsections :
-      colimit.ι (Ysh ⋙ sectionsFunctor) j ≫ e.hom ≫ h0Symm =
-        sectionsFunctor.map (csh.ι.app j) ≫ h0Symm :=
-    colimit.comp_coconePointUniqueUpToIso_hom_assoc hc_sections j h0Symm
-  have hleft :
-      h0Iso.hom.app j ≫ colimit.ι (Ysh ⋙ sectionsFunctor) j ≫ e.hom ≫ h0Symm =
-        h0Iso.hom.app j ≫ sectionsFunctor.map (csh.ι.app j) ≫ h0Symm :=
-    congrArg (fun t ↦ h0Iso.hom.app j ≫ t) hsections
-  have hright :
-      h0Iso.hom.app j ≫ sectionsFunctor.map (csh.ι.app j) ≫ h0Symm =
-        (sheafCohomologyFunctor X 0).map (csh.ι.app j) := by
-    ext x
-    change (sheafH0EquivSections csh.pt).symm
-        (ConcreteCategory.hom ((csh.ι.app j).hom.app (op ⊤))
-          (sheafH0EquivSections (Ysh.obj j) x)) =
-      ConcreteCategory.hom ((sheafCohomologyFunctor X 0).map (csh.ι.app j)) x
-    apply (sheafH0EquivSections csh.pt).injective
-    rw [AddEquiv.apply_symm_apply]
-    change ConcreteCategory.hom ((csh.ι.app j).hom.app (op ⊤))
-        (sheafH0EquivSections (Ysh.obj j) x) =
-      sheafH0EquivSections csh.pt
-        (x.comp (Ext.mk₀ (csh.ι.app j)) (add_zero 0))
-    exact
-      (sheafH0EquivSections_natural (f := csh.ι.app j) (x := x)).symm
-  calc
-    colimit.ι (Ysh ⋙ sheafCohomologyFunctor X 0) j ≫
-          (sheafHFilteredColimitComparisonZeroIso
-            (Ysh := Ysh) (csh := csh) (hcsh := hcsh)).hom =
-        h0Iso.hom.app j ≫ colimit.ι (Ysh ⋙ sectionsFunctor) j ≫
-          e.hom ≫ h0Symm := by
-      change colimit.ι (Ysh ⋙ sheafCohomologyFunctor X 0) j ≫
-          ((HasColimit.isoOfNatIso h0Iso ≪≫ e) ≪≫ h0SymmIso).hom =
-        h0Iso.hom.app j ≫ colimit.ι (Ysh ⋙ sectionsFunctor) j ≫
-          e.hom ≫ h0Symm
-      change colimit.ι (Ysh ⋙ sheafCohomologyFunctor X 0) j ≫
-          (HasColimit.isoOfNatIso h0Iso).hom ≫ (e.hom ≫ h0Symm) =
-        h0Iso.hom.app j ≫ colimit.ι (Ysh ⋙ sectionsFunctor) j ≫
-          e.hom ≫ h0Symm
-      rw [HasColimit.ι_isoOfNatIso_hom_assoc]
-    _ = colimit.ι (Ysh ⋙ sheafCohomologyFunctor X 0) j ≫
-        sheafHFilteredColimitComparison Ysh 0 csh := by
-      rw [colimit_ι_sheafH_filtered_colimit_comparison]
-      exact hleft.trans hright
 
 private theorem sheafH_filtered_colimit_comparison_isIso_zero :
     IsIso (sheafHFilteredColimitComparison Ysh 0 csh) := by

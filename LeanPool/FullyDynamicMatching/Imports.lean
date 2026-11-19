@@ -14,6 +14,7 @@ public import LeanPool.FullyDynamicMatching.FD1D.Basic
 public import LeanPool.FullyDynamicMatching.FD1D.Bellman
 public import LeanPool.FullyDynamicMatching.FD1D.Bounds
 public import LeanPool.FullyDynamicMatching.FD1D.ConcreteTransport
+public import LeanPool.FullyDynamicMatching.FD1D.DensePolynomial
 public import LeanPool.FullyDynamicMatching.FD1D.Drift
 public import LeanPool.FullyDynamicMatching.FD1D.Dynamics
 public import LeanPool.FullyDynamicMatching.FD1D.Expectations

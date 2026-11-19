@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Topology.NoetherianSpace
 public import LeanPool.GrothendieckVanishing.FlasqueVanishing
-import LeanPool.GrothendieckVanishing.PresheafFilteredColimitGeneral
+public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitBase
 import Mathlib.Algebra.Category.Grp.AB
 import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Colim
 
@@ -17,7 +17,6 @@ import Mathlib.CategoryTheory.Abelian.GrothendieckAxioms.Colim
 Building blocks for the proof that sheaf cohomology commutes with filtered colimits on
 Noetherian spaces:
 
-* creation of filtered colimits by `sheafToPresheaf` (`createsFilteredColimit`);
 * flasqueness of filtered colimits of flasque sheaves (`isFlasque_filtered_colimit`);
 * successor-stage dimension shifts and presheaf-boundary comparison maps used in the
   degree-`n+1` colimit comparison.
@@ -28,42 +27,6 @@ Noetherian spaces:
 universe u
 
 open CategoryTheory TopologicalSpace Abelian Limits Opposite TopCat
-
-/-- On a Noetherian space, a filtered colimit cocone of presheaves is a sheaf if all
-    diagram objects are sheaves. Proof: compactness reduces the sheaf condition to finite
-    covers, then filtered colimit merging passes from per-piece data to glued data. -/
-theorem isSheaf_of_isColimit_of_isSheaf
-    {X : TopCat.{u}} [NoetherianSpace X]
-    {J' : Type u} [SmallCategory J'] [IsFiltered J']
-    (P : J' ⥤ (Opens X)ᵒᵖ ⥤ AddCommGrpCat.{u})
-    (hP : ∀ j, TopCat.Presheaf.IsSheaf (P.obj j))
-    (c : Cocone P) (hc : IsColimit c) :
-    TopCat.Presheaf.IsSheaf c.pt := by
-  rw [TopCat.Presheaf.isSheaf_iff_isSheafUniqueGluing]
-  intro ι U sf hcompat
-  obtain ⟨t, ht⟩ := (NoetherianSpace.isCompact (↑(iSup U) : Set X)).elim_finite_subcover
-    (fun i ↦ ↑(U i)) (fun i ↦ (U i).isOpen) (by simp [Opens.coe_iSup])
-  have hsup_le : iSup U ≤ ⨆ i ∈ t, U i := by
-    rw [IsConcreteLE.le_iff]
-    intro x hx
-    obtain ⟨i, hi, hxi⟩ := Set.mem_iUnion₂.mp (ht hx)
-    exact Opens.mem_iSup.mpr ⟨i, Opens.mem_iSup.mpr ⟨hi, hxi⟩⟩
-  exact colimit_existsUnique_gluing_of_compatible_finite_subcover
-    P hP hc U sf hcompat hsup_le
-
-/-- On a Noetherian space, `sheafToPresheaf` creates filtered colimits of sheaves by
-    applying `isSheaf_of_isColimit_of_isSheaf` to the underlying presheaf diagram. -/
-@[implicit_reducible]
-noncomputable def createsFilteredColimit
-    {X : TopCat.{u}} [NoetherianSpace X]
-    {J' : Type u} [SmallCategory J'] [IsFiltered J']
-    (Y' : J' ⥤ TopCat.Sheaf AddCommGrpCat.{u} X) :
-    CreatesColimit Y' (sheafToPresheaf _ _) :=
-  Sheaf.createsColimitOfIsSheaf Y' (fun c hc ↦
-    isSheaf_of_isColimit_of_isSheaf
-      (P := Y' ⋙ sheafToPresheaf _ _)
-      (hP := fun j ↦ (Y'.obj j).property)
-      (c := c) (hc := hc))
 
 /-! ### Filtered colimits of flasque sheaves
 
@@ -515,16 +478,6 @@ theorem sheafH_filtered_colimit_succ_inj_subsingleton
 
 end SheafHFilteredColimitSucc
 
-/-- The canonical comparison morphism `colim H^n(F_j) ⟶ H^n(colim F_j)` induced by a cocone. -/
-noncomputable def sheafHFilteredColimitComparison
-    {X : TopCat.{u}}
-    {J' : Type u} [SmallCategory J']
-    (Y' : J' ⥤ TopCat.Sheaf AddCommGrpCat.{u} X)
-    (n : ℕ) (c' : Cocone Y') :
-    colimit (Y' ⋙ sheafCohomologyFunctor X n) ⟶
-      (sheafCohomologyFunctor X n).obj c'.pt :=
-  colimit.desc _ ((sheafCohomologyFunctor X n).mapCocone c')
-
 attribute [local implicit_reducible] sheafHFilteredColimitComparison
 
 @[simp] theorem colimit_ι_sheafH_filtered_colimit_comparison
@@ -536,6 +489,17 @@ attribute [local implicit_reducible] sheafHFilteredColimitComparison
         sheafHFilteredColimitComparison Y' n c' =
       (sheafCohomologyFunctor X n).map (c'.ι.app j) :=
   colimit.ι_desc ((sheafCohomologyFunctor X n).mapCocone c') j
+
+-- Prove the colimit square once for arbitrary cocones. Specializing the square to
+-- the cohomology diagrams avoids unfolding their isomorphisms in each rewrite.
+private theorem colimit_isoOfNatIso_hom_desc {J C : Type*} [Category J] [Category C]
+    {F G : J ⥤ C} [HasColimit F] [HasColimit G] (e : F ≅ G)
+    (cF : Cocone F) (cG : Cocone G) (f : cF.pt ⟶ cG.pt)
+    (comm : ∀ j, e.hom.app j ≫ cG.ι.app j = cF.ι.app j ≫ f) :
+    (HasColimit.isoOfNatIso e).hom ≫ colimit.desc G cG = colimit.desc F cF ≫ f := by
+  apply colimit.hom_ext
+  intro j
+  rw [HasColimit.ι_isoOfNatIso_hom_assoc, colimit.ι_desc, colimit.ι_desc_assoc, comm]
 
 /-- Successor-step compatibility for the filtered-colimit comparison map: whenever the
 associated sheaf diagram and its colimit have vanishing injective-replacement cohomology in
@@ -566,34 +530,13 @@ theorem sheafH_filtered_colimit_comparison_succ_compatibility
         (sheafHFilteredColimitSuccQuotientCocone Ysh csh hcsh) ≫
       (sheafHFilteredColimitSuccShiftCodomainIso Ysh csh hcsh n
         h_colim_n h_colim_succ).hom := by
-  apply colimit.hom_ext
+  refine colimit_isoOfNatIso_hom_desc
+    (sheafHFilteredColimitSuccShiftNatIso Ysh n h_mid_n h_mid_succ)
+    ((sheafCohomologyFunctor X n).mapCocone
+      (sheafHFilteredColimitSuccQuotientCocone Ysh csh hcsh))
+    ((sheafCohomologyFunctor X (n + 1)).mapCocone csh)
+    (sheafHFilteredColimitSuccShiftCodomainIso Ysh csh hcsh n h_colim_n h_colim_succ).hom ?_
   intro j
-  rw [show (sheafHFilteredColimitSuccShiftDomainIso Ysh n h_mid_n h_mid_succ).hom =
-      (HasColimit.isoOfNatIso (sheafHFilteredColimitSuccShiftNatIso Ysh n
-        h_mid_n h_mid_succ)).hom from rfl]
-  rw [HasColimit.ι_isoOfNatIso_hom_assoc]
-  rw [colimit_ι_sheafH_filtered_colimit_comparison]
-  rw [show
-      colimit.ι (sheafHFilteredColimitSuccQuotient Ysh ⋙ sheafCohomologyFunctor X n) j ≫
-          sheafHFilteredColimitComparison (sheafHFilteredColimitSuccQuotient Ysh) n
-            (sheafHFilteredColimitSuccQuotientCocone Ysh csh hcsh) ≫
-        (sheafHFilteredColimitSuccShiftCodomainIso Ysh csh hcsh n
-          h_colim_n h_colim_succ).hom =
-      (sheafCohomologyFunctor X n).map
-        ((sheafHFilteredColimitSuccQuotientCocone Ysh csh hcsh).ι.app j) ≫
-      (sheafHFilteredColimitSuccShiftCodomainIso Ysh csh hcsh n
-        h_colim_n h_colim_succ).hom from by
-    rw [← Category.assoc]
-    rw [colimit_ι_sheafH_filtered_colimit_comparison]]
-  change
-    (sheafHSuccIsoOfSubsingletonMiddle
-        (sheafH_filtered_colimit_succ_stage_shortExact (Y' := Ysh) j) n
-        (h_mid_n j) (h_mid_succ j)).hom ≫
-      (sheafCohomologyFunctor X (n + 1)).map (csh.ι.app j) =
-    (sheafCohomologyFunctor X n).map
-        ((sheafHFilteredColimitSuccQuotientCocone Ysh csh hcsh).ι.app j) ≫
-      (sheafHFilteredColimitSuccShiftCodomainIso Ysh csh hcsh n
-        h_colim_n h_colim_succ).hom
   let φ := sheafHFilteredColimitSuccStageHom Ysh csh hcsh j
   change
     (sheafHSuccIsoOfSubsingletonMiddle
