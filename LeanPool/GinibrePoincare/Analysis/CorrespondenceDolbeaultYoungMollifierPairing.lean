@@ -94,7 +94,9 @@ theorem dolbeaultPiBump_average_test (n : ℕ) (φ : ContDiffBump (0 : ℂ))
     rw [dolbeaultCompactPairing_eq_integral θ hθ hc]
     apply integral_congr_ae
     exact ae_of_all _ (fun x => mul_comm _ _)
-  rw [← ht, piL2BumpAverage,← T.integral_comp_comm (integrable_piL2BumpIntegrand n φ u)]
+  rw [← ht]
+  change T (∫ x, piPlanarBump n φ x • lebesgueL2Translate n x u) = _
+  rw [← T.integral_comp_comm (integrable_piL2BumpIntegrand n φ u)]
   apply integral_congr_ae
   exact ae_of_all _ (fun y => by
     dsimp only

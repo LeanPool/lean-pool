@@ -39,7 +39,6 @@ public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Calculus.ContDiff.Operations
 public import Mathlib.Analysis.Calculus.ContDiff.Comp
-public import Mathlib.Tactic
 
 /-!
 # Ginibre pointwise Bochner directional

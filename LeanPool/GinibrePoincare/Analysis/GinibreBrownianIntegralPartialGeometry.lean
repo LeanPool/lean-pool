@@ -59,7 +59,7 @@ theorem brownianFrozenStep_eq_clipped_increment {Ω : Type*} (B : ℝ≥0 → Ω
     (F : Ω → ℝ) (a b t : ℝ≥0) (hab : a ≤ b) (ω : Ω) :
     brownianFrozenStep B F a b t ω = F ω*(B (min t b) ω-B (min t a) ω) := by
   by_cases hta : t ≤ a
-  · simp only [brownianFrozenStep, 
+  · simp only [brownianFrozenStep,
       min_eq_left (hta.trans hab), min_eq_left hta, max_eq_left hta, sub_self, mul_zero]
   · have hat : a ≤ t := le_of_not_ge hta
     simp only [brownianFrozenStep, max_eq_right (le_min hat hab), min_eq_right hat]

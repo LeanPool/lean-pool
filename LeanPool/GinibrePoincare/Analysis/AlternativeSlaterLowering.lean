@@ -73,38 +73,6 @@ theorem slaterDeterminant_signed_tensor_sum {n : ℕ} (hn : 0 < n)
       intro σ hσ
       simp [f, permutationSign, Equiv.Perm.sign_inv, slaterPermutedIndex, multivariateNormalized]
 
-private theorem slater_dbar_const_mul {n : ℕ} (a : ℂ)
-    (f : Configuration n → ℂ) (hf : Differentiable ℝ f)
-    (j : Fin n) (z : Configuration n) :
-    dbarComponent (fun w => a * f w) j z = a * dbarComponent f j z := by
-  unfold dbarComponent
-  rw [fderiv_const_mul (hf z)]
-  simp only [smul_apply, smul_eq_mul]
-  ring
-
-private theorem slater_dbar_finset_sum {n : ℕ} {ι : Type*}
-    (s : Finset ι) (f : ι → Configuration n → ℂ)
-    (hf : ∀ i ∈ s, Differentiable ℝ (f i)) (j : Fin n) (z : Configuration n) :
-    dbarComponent (fun w => ∑ i ∈ s, f i w) j z =
-      ∑ i ∈ s, dbarComponent (f i) j z := by
-  unfold dbarComponent
-  rw [fderiv_fun_sum (fun i hi => hf i hi z)]
-  simp only [sum_apply]
-  calc
-    _ = (∑ i ∈ s, (1 / 2 : ℂ) *
-          (fderiv ℝ (f i) z) (realCoordinateDirection j)) +
-        ∑ i ∈ s, (1 / 2 : ℂ) * Complex.I *
-          (fderiv ℝ (f i) z) (imaginaryCoordinateDirection j) := by
-      rw [mul_add, Finset.mul_sum]
-      congr 1
-      simp_rw [Finset.mul_sum]
-      ring_nf
-    _ = _ := by
-      rw [← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl
-      intro i hi
-      ring
-
 /-- Literal ordinary Wirtinger lowering of a Slater determinant. The derivative
 lowers the orbital at the differentiated particle in every permutation term,
 with exactly the paper's factor `sqrt(n b)`. -/
@@ -132,9 +100,9 @@ theorem dbarComponent_slaterDeterminant {n : ℕ} (hn : 0 < n)
       ∑ σ : ParticlePermutation n, permutationSign σ *
         multivariateNormalized n hn (slaterPermutedIndex σ pq).1 (slaterPermutedIndex σ pq).2 w by
     funext w; exact slaterDeterminant_signed_tensor_sum hn pq w]
-  rw [slater_dbar_const_mul _ _ hs,
-    slater_dbar_finset_sum _ _ (fun σ _ => (hd σ).const_mul _)]
-  simp_rw [slater_dbar_const_mul _ _ (hd _) j z, dbarComponent_multivariateNormalized]
+  rw [dbarComponent_const_mul _ _ hs,
+    dbarComponent_finset_sum _ _ (fun σ _ => (hd σ).const_mul _)]
+  simp_rw [dbarComponent_const_mul _ _ (hd _) j z, dbarComponent_multivariateNormalized]
   rfl
 
 /-- Permuting labels leaves the Slater total antiholomorphic degree unchanged. -/
