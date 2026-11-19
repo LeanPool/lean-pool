@@ -54,7 +54,7 @@ private lemma rightComposition_pow_apply (D : Module.End k R)
   induction a with
   | zero => simp [rightComposition]
   | succ a ih =>
-      rw [pow_succ', Module.End.mul_apply, ih]
+      rw [pow_succ', mul_apply_eq_comp, ih]
       simp [rightComposition, pow_succ, mul_assoc]
 
 omit [CharZero k] in
@@ -82,7 +82,7 @@ private lemma delta_iterate_preserves_kernel (x y : R) (a : ℕ)
   induction a with
   | zero => simpa using hP
   | succ a ih =>
-      rw [pow_succ', Module.End.mul_apply]
+      rw [pow_succ', mul_apply_eq_comp]
       rw [deltas_commute, ih]
       exact (delta x).map_zero
 
@@ -94,9 +94,7 @@ private lemma right_derivation_preserves_kernel (y : R) (D : Derivation k R R)
   induction a with
   | zero => simpa using hP
   | succ a ih =>
-      rw [pow_succ', Module.End.mul_apply]
-      change delta y (rightComposition D.toLinearMap
-        ((rightComposition D.toLinearMap ^ a) P)) = 0
+      rw [pow_succ', mul_apply_eq_comp]
       rw [show rightComposition D.toLinearMap
           ((rightComposition D.toLinearMap ^ a) P) =
           (rightComposition D.toLinearMap ^ a) P * D.toLinearMap by rfl,
@@ -119,16 +117,16 @@ private lemma delta_pow_order_zero (m : ℕ) (x : R)
       rw [pow_one]
       exact hP x
   | succ m ih =>
-      rw [pow_succ, Module.End.mul_apply]
+      rw [pow_succ, mul_apply_eq_comp]
       exact ih (delta x P) (delta_mem_order x P hP)
 
 omit [CharZero k] in
 private lemma delta_pow_after_zero (x : R) (m a : ℕ) (P : Module.End k R)
     (h : (delta x ^ m) P = 0) :
     (delta x ^ m) ((delta x ^ a) P) = 0 := by
-  rw [← Module.End.mul_apply, ← pow_add]
+  rw [← mul_apply_eq_comp, ← pow_add]
   rw [Nat.add_comm]
-  rw [pow_add, Module.End.mul_apply, h, map_zero]
+  rw [pow_add, mul_apply_eq_comp, h, map_zero]
 
 omit [CharZero k] in
 private lemma delta_mem_algebra (x : R) (P : Module.End k R)
@@ -151,7 +149,7 @@ private lemma delta_pow_mem_algebra (x : R) (a : ℕ)
   induction a with
   | zero => simpa using hP
   | succ a ih =>
-      rw [pow_succ', Module.End.mul_apply]
+      rw [pow_succ', mul_apply_eq_comp]
       exact delta_mem_algebra x _ ih
 
 private def projection (x : R) (D : Derivation k R R) (m : ℕ)
@@ -168,7 +166,7 @@ private lemma projectorMapG_apply (x : R) (D : Derivation k R R) (m : ℕ)
   rw [LinearMap.sum_apply]
   apply Finset.sum_congr rfl
   intro a ha
-  simp only [LinearMap.smul_apply, Module.End.mul_apply]
+  simp only [LinearMap.smul_apply, mul_apply_eq_comp]
   rw [rightComposition_pow_apply]
 
 private lemma delta_derivation_pow (x : R) (D : Derivation k R R)
@@ -201,7 +199,7 @@ private lemma projection_kernel (x : R) (D : Derivation k R R) (hDx : D x = 1)
           ((a : k) • ((delta x ^ a) P * D.toLinearMap ^ (a - 1)))) := by
     rw [map_smul, delta_mul, delta_derivation_pow x D hDx]
     rw [show delta x ((delta x ^ a) P) = (delta x ^ (a + 1)) P by
-      rw [pow_succ', Module.End.mul_apply]]
+      rw [pow_succ', mul_apply_eq_comp]]
     simp only [smul_add]
     rw [mul_smul_comm, smul_smul]
   simp_rw [hterm]
@@ -326,7 +324,7 @@ theorem mem_submodule_of_coordinates'
         apply Submodule.sum_mem
         intro a ha
         apply Submodule.smul_mem
-        rw [Module.End.mul_apply, Module.End.mul_apply,
+        rw [mul_apply_eq_comp, mul_apply_eq_comp,
           projectorMapG_apply, rightComposition_pow_apply]
         apply hright_pow
         apply hend _ (projection_mem_algebra (x i) (D i) m _

@@ -108,7 +108,7 @@ theorem rightMul_surjective_of_euler_normal
     have hmem := I.smul_mem (MulOpposite.op ((r : A) * p)) hU
     change (1 + (U : A) * x) * ((r : A) * p) ∈ I at hmem
     convert hmem using 1
-    all_goals simp only [Subring.coe_neg, Subring.coe_mul]
+    simp only [Subring.coe_neg, Subring.coe_mul]
     calc
       (r : A) * p - -((U : A) * (s : A) * (x * p)) =
           (r : A) * p + (U : A) * ((s : A) * x) * p := by noncomm_ring

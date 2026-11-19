@@ -394,7 +394,7 @@ theorem completedDVRPowerSeriesMap_injective
       PowerSeries.coeff r (f - g) = 0 := by
     intro r
     induction r using Nat.strong_induction_on with
-    | h r ih =>
+    | ind r ih =>
         apply coeff_eq_zero_of_coordinate_eq_zero E V hsep (f - g) r ih
         have := congrArg (fun z ↦ z.val (r + 1)) hmap
         change powerSeriesCoordinateMap E V hsep (r + 1) (f - g) = 0 at this

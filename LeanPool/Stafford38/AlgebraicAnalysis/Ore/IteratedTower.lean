@@ -201,11 +201,8 @@ def iteratedNormalForm : (Ds : List (Derivation B)) →
         AddMonoidAlgebra.coeffAddEquiv
       let ep : Polynomial P.carrier ≃+
           Polynomial T.carrier :=
-        (Polynomial.toFinsuppIso P.carrier).toAddEquiv.trans
-          (pCoeff.trans
-            ((Finsupp.mapRange.addEquiv (ι := ℕ) e).trans
-              (tCoeff.symm.trans
-                (Polynomial.toFinsuppIso T.carrier).toAddEquiv.symm)))
+        pCoeff.trans
+          ((Finsupp.mapRange.addEquiv (ι := ℕ) e).trans tCoeff.symm)
       exact ep.trans (normalFormAddEquiv (T.extend D hD))
 
 theorem iteratedNormalForm_injective (Ds : List (Derivation B))

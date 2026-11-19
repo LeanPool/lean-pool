@@ -395,7 +395,7 @@ theorem normalOre_rightIdeal_fg_of_op_noetherian
       p.natDegree = n → normalForm D p ∈ I → normalForm D p ∈ K := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro p hpn hpI
       by_cases hp0 : p = 0
       · subst p

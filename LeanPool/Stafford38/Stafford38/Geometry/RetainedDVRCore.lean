@@ -118,6 +118,12 @@ theorem exists_retainedDVRPlace
   let : Q.IsMaximal := hQmax
   let RQ : Type w := Localization.subalgebra.ofField L Q.primeCompl
     Q.primeCompl_le_nonZeroDivisors
+  let : Algebra A RQ :=
+    (Localization.subalgebra.ofField L Q.primeCompl
+      Q.primeCompl_le_nonZeroDivisors).algebra'
+  let : SMul C RQ :=
+    (Localization.subalgebra.ofField L Q.primeCompl
+      Q.primeCompl_le_nonZeroDivisors).algebra.toSMul
   let : IsDiscreteValuationRing RQ :=
     IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain
       C hQ_ne RQ
@@ -136,9 +142,9 @@ theorem exists_retainedDVRPlace
     change IsDiscreteValuationRing RQ
     infer_instance
   let : IsScalarTower A C RQ :=
-    IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+    IsScalarTower.of_algebraMap_eq (R := A) (S := C) (A := RQ) fun _ ↦ rfl
   let : IsScalarTower A RQ L :=
-    IsScalarTower.of_algebraMap_eq fun _ ↦ rfl
+    IsScalarTower.of_algebraMap_eq (R := A) (S := RQ) (A := L) fun _ ↦ rfl
   let factor : A →+* RQ := algebraMap A RQ
   have hfactor : V.toSubring.subtype.comp factor = algebraMap A L := by
     ext r

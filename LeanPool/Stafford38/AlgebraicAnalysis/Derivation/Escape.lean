@@ -96,7 +96,8 @@ lemma iterate_commutator_normal (p : Polynomial E) (k : ℕ) :
 lemma iterate_derivative_natDegree (p : Polynomial E) :
     derivative^[p.natDegree] p =
       C ((Nat.factorial p.natDegree) • p.leadingCoeff) := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro m
   by_cases hm : m = 0
   · subst m
