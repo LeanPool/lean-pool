@@ -653,11 +653,24 @@ private meta def bellmanAppendIdentity (expression : Lean.Expr) :
     return none
   let left := expression.appFn!.appArg!
   let right := expression.appArg!
-  unless (← exposeBellmanField right).isAppOfArity ``List.nil 1 do return none
   let append := expression.appFn!.appFn!
-  let some proof ← specializeBellmanIdentity #[``List.append_nil] left
-    (fun term => Lean.mkApp2 append term right) | return none
-  return some (left, proof)
+  let leftIsLiteralNil := left.consumeMData.isAppOfArity ``List.nil 1
+  let rightIsNil ← if leftIsLiteralNil then
+      pure (right.consumeMData.isAppOfArity ``List.nil 1)
+    else
+      pure ((← exposeBellmanField right).isAppOfArity ``List.nil 1)
+  let (rule, survivor, rebuild) ←
+    if rightIsNil then
+      pure (``List.append_nil, left, fun term => Lean.mkApp2 append term right)
+    else
+      let leftIsNil ← if leftIsLiteralNil then pure true else
+        pure ((← exposeBellmanField left).isAppOfArity ``List.nil 1)
+      unless leftIsNil do return none
+      pure (``List.nil_append, right, fun term => Lean.mkApp2 append left term)
+  let type ← Lean.Meta.inferType survivor
+  unless (← Lean.Meta.whnfD type).isAppOfArity ``List 1 do return none
+  let some proof ← specializeBellmanIdentity #[rule] survivor rebuild | return none
+  return some (survivor, proof)
 
 private meta def exposeBellmanIdentityHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr :=
   Lean.Meta.withConfig (fun configuration => { configuration with iota := false, proj := .no })
@@ -807,25 +820,44 @@ private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := d
     | throwError "unsupported Bellman exponent {expression}: expected a closed natural power"
   return power
 
-private meta def bellmanOperands (expression : Lean.Expr) : Lean.MetaM (Array Lean.Expr) := do
+private inductive BellmanStep where
+  | binary (operator left right : Lean.Expr) (evaluate : Poly3 → Poly3 → Poly3)
+  | power (operator base exponent : Lean.Expr) (value : Nat)
+  | scale (operator child : Lean.Expr) (factor : DPoly (DPoly ℤ))
+  | negate (operator child : Lean.Expr)
+  | leaf (value : Poly3)
+
+private structure PreparedBellmanPolynomial where
+  expression : Lean.Expr
+  identityProof : Option Lean.Expr
+  step : BellmanStep
+
+private meta def BellmanStep.operands : BellmanStep → Array Lean.Expr
+  | .binary _ left right _ => #[left, right]
+  | .power _ base _ _ => #[base]
+  | .scale _ child _ | .negate _ child => #[child]
+  | .leaf _ => #[]
+
+private meta def parseBellmanStep (expression : Lean.Expr) : Lean.MetaM BellmanStep := do
   let args := expression.getAppArgs
-  if (bellmanBinaryOperation expression).isSome then
-    return #[args[args.size - 2]!, args[args.size - 1]!]
+  let operator (arity : Nat) := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - arity))
+  if let some evaluate := bellmanBinaryOperation expression then
+    return .binary (operator 2) args[args.size - 2]! args[args.size - 1]! evaluate
   if isBellmanPower expression then
-    let _ ← readBellmanPower args[args.size - 1]!
-    return #[args[args.size - 2]!]
+    let exponent := args[args.size - 1]!
+    return .power (operator 2) args[args.size - 2]! exponent (← readBellmanPower exponent)
   if expression.isAppOfArity ``DPoly.scale 4 then
-    let _ ← readBellmanScaleFactor args[args.size - 2]!
-    return #[args[args.size - 1]!]
+    let factor ← readBellmanScaleFactor args[args.size - 2]!
+    return .scale (operator 1) args[args.size - 1]! factor
   if isBellmanNegation expression then
-    return #[args[args.size - 1]!]
-  let some _ ← readBellmanLeaf expression
+    return .negate (operator 1) args[args.size - 1]!
+  let some value ← readBellmanLeaf expression
     | throwError "unsupported Bellman polynomial term {expression}"
-  return #[]
+  return .leaf value
 
 -- Visit operands before their parents and reuse depths across shared expressions.
 private meta def bellmanReductionDepth
-    (prepare : Lean.Expr → Lean.MetaM (Lean.Expr × Option Lean.Expr))
+    (prepare : Lean.Expr → Lean.MetaM PreparedBellmanPolynomial)
     (expression : Lean.Expr) : Lean.MetaM Nat := do
   let mut depths : Lean.ExprStructMap Nat := {}
   let mut pending : Array (Lean.Expr × Option (Array Lean.Expr)) := #[(expression, none)]
@@ -843,7 +875,7 @@ private meta def bellmanReductionDepth
           depth := max depth (childDepth + 1)
         depths := depths.insert key depth
       else
-        let children ← bellmanOperands (← prepare term).1
+        let children := (← prepare term).step.operands
         pending := pending.push (term, some children)
         for child in children do
           let childKey : Lean.ExprStructEq := ⟨child⟩
@@ -856,7 +888,7 @@ private meta def bellmanReductionDepth
 
 -- The cache is local to one closed chart and includes the kernel proof of each value.
 private meta def normalizeBellmanPolynomial
-    (prepare : Lean.Expr → Lean.MetaM (Lean.Expr × Option Lean.Expr))
+    (prepare : Lean.Expr → Lean.MetaM PreparedBellmanPolynomial)
     (cache : IO.Ref (Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr)))
     (fuel : Nat) (expression : Lean.Expr) : Lean.MetaM (Poly3 × Lean.Expr × Lean.Expr) := do
   match fuel with
@@ -864,47 +896,32 @@ private meta def normalizeBellmanPolynomial
   | fuel + 1 =>
     let key : Lean.ExprStructEq := ⟨expression⟩
     if let some result := (← cache.get)[key]? then return result
-    let (expression, prefixProof) ← prepare expression
-    let args := expression.getAppArgs
-    let (value, operands, congruence) ←
-      if let some operation := bellmanBinaryOperation expression then do
-        let (left, leftExpr, leftProof) ←
-          normalizeBellmanPolynomial prepare cache fuel args[args.size - 2]!
-        let (right, rightExpr, rightProof) ←
-          normalizeBellmanPolynomial prepare cache fuel args[args.size - 1]!
-        let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 2))
+    let prepared ← prepare expression
+    let (value, operands, congruence) ← match prepared.step with
+      | .binary operator left right evaluate => do
+        let (left, leftExpr, leftProof) ← normalizeBellmanPolynomial prepare cache fuel left
+        let (right, rightExpr, rightProof) ← normalizeBellmanPolynomial prepare cache fuel right
         let firstProof ← Lean.Meta.mkCongrArg operator leftProof
         let congruence ← Lean.Meta.mkCongr firstProof rightProof
-        pure (operation left right, Lean.mkApp2 operator leftExpr rightExpr, congruence)
-      else if isBellmanPower expression then do
-        let exponent := args[args.size - 1]!
-        let power ← readBellmanPower exponent
-        let (base, baseExpr, baseProof) ←
-          normalizeBellmanPolynomial prepare cache fuel args[args.size - 2]!
-        let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 2))
+        pure (evaluate left right, Lean.mkApp2 operator leftExpr rightExpr, congruence)
+      | .power operator base exponent power => do
+        let (base, baseExpr, baseProof) ← normalizeBellmanPolynomial prepare cache fuel base
         let firstProof ← Lean.Meta.mkCongrArg operator baseProof
         let congruence ← Lean.Meta.mkCongrFun firstProof exponent
         pure (base ^ power, Lean.mkApp2 operator baseExpr exponent, congruence)
-      else if expression.isAppOfArity ``DPoly.scale 4 then do
-        let factor ← readBellmanScaleFactor args[args.size - 2]!
-        let (value, valueExpr, proof) ←
-          normalizeBellmanPolynomial prepare cache fuel args[args.size - 1]!
-        let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 1))
+      | .scale operator child factor => do
+        let (value, valueExpr, proof) ← normalizeBellmanPolynomial prepare cache fuel child
         pure (DPoly.scale factor value, Lean.mkApp operator valueExpr,
           ← Lean.Meta.mkCongrArg operator proof)
-      else if isBellmanNegation expression then do
-        let (value, valueExpr, proof) ←
-          normalizeBellmanPolynomial prepare cache fuel args[args.size - 1]!
-        let operator := Lean.mkAppN expression.getAppFn (args.extract 0 (args.size - 1))
+      | .negate operator child => do
+        let (value, valueExpr, proof) ← normalizeBellmanPolynomial prepare cache fuel child
         pure (-value, Lean.mkApp operator valueExpr, ← Lean.Meta.mkCongrArg operator proof)
-      else
-        let some value ← readBellmanLeaf expression
-          | throwError "unsupported Bellman polynomial term {expression}"
-        pure (value, expression, ← Lean.Meta.mkEqRefl expression)
+      | .leaf value =>
+        pure (value, prepared.expression, ← Lean.Meta.mkEqRefl prepared.expression)
     let quoted := Lean.toExpr value
     let reduction ← checkBellmanReduction operands quoted
     let proof ← Lean.Meta.mkEqTrans congruence reduction
-    let proof ← match prefixProof with
+    let proof ← match prepared.identityProof with
       | some identityProof => Lean.Meta.mkEqTrans identityProof proof
       | none => pure proof
     let result := (value, quoted, proof)
@@ -915,11 +932,13 @@ termination_by structural fuel
 local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext do
   let expression ← Lean.Elab.Tactic.Conv.getLhs
   let cache ← IO.mkRef ({} : Lean.ExprStructMap (Poly3 × Lean.Expr × Lean.Expr))
-  let preparations ← IO.mkRef ({} : Lean.ExprStructMap (Lean.Expr × Option Lean.Expr))
+  let preparations ← IO.mkRef ({} : Lean.ExprStructMap PreparedBellmanPolynomial)
   let prepare term := do
     let key : Lean.ExprStructEq := ⟨term⟩
     if let some prepared := (← preparations.get)[key]? then return prepared
-    let prepared ← prepareBellmanPolynomial term
+    let (expression, identityProof) ← prepareBellmanPolynomial term
+    let step ← parseBellmanStep expression
+    let prepared : PreparedBellmanPolynomial := ⟨expression, identityProof, step⟩
     preparations.modify (·.insert key prepared)
     return prepared
   let (_, value, proof) ← normalizeBellmanPolynomial prepare cache
@@ -974,7 +993,7 @@ private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true :=
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
-private def chartOneWithEmptyAppend : Poly3 := DPoly.mk (chartOne.coeffs ++ [])
+private def chartOneWithEmptyAppend : Poly3 := DPoly.mk ([] ++ (chartOne.coeffs ++ []))
 
 private theorem chartOne_appended_check : allNonnegative3 chartOneWithEmptyAppend = true := by
   checkBellmanChart
