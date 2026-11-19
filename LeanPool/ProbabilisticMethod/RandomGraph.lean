@@ -251,7 +251,12 @@ private theorem two_pow_lt_factorial_sq {k : ℕ} (hk : 3 ≤ k) : 2 ^ (k + 2) <
 
 omit [DecidableEq V] in
 /-- **Erdős's lower bound** `R(k, k) > 2 ^ (k / 2)`. If `k ≥ 3` and `n ^ 2 ≤ 2 ^ k`, some graph on
-`n` vertices has neither a `k`-clique nor an independent `k`-set. -/
+`n` vertices has neither a `k`-clique nor an independent `k`-set.
+
+This is the `p = 1 / 2` case of `exists_cliqueFree_of_lt_one`. The pool's `FiniteRamsey` project
+proves the Ramsey-number form `2 ^ (k / 2) ≤ ramseyNumber ![k, k]` with natural-number division
+in the exponent (`SimpleGraph.two_pow_half_le_ramseyNumber`), by counting colourings. For odd `k`
+the hypothesis `n ^ 2 ≤ 2 ^ k` allows every `n` up to `√(2 ^ k)`, which exceeds `2 ^ (k / 2)`. -/
 theorem exists_cliqueFree_of_sq_le_two_pow {k : ℕ} (hk : 3 ≤ k)
     (hn : Fintype.card V ^ 2 ≤ 2 ^ k) :
     ∃ G : SimpleGraph V, G.CliqueFree k ∧ Gᶜ.CliqueFree k := by

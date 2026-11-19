@@ -157,27 +157,6 @@ def Lopsided (U : Finset α) (p : ℝ) (I : Finset ι) (E : ι → Finset α →
     U.bernoulliProb p (fun A => E i A ∧ Avoids E S A) ≤
       U.bernoulliProb p (E i) * U.bernoulliProb p (Avoids E S)
 
-/-- A product of factors in `[0, 1]` is at most `1`. -/
-private theorem prod_le_one_of_mem_Icc {s : Finset ι} {f : ι → ℝ} (h0 : ∀ i ∈ s, 0 ≤ f i)
-    (h1 : ∀ i ∈ s, f i ≤ 1) : ∏ i ∈ s, f i ≤ 1 := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    rw [prod_insert ha]
-    have hs0 : 0 ≤ ∏ i ∈ s, f i := prod_nonneg fun i hi => h0 i (mem_insert_of_mem hi)
-    have hs1 := ih (fun i hi => h0 i (mem_insert_of_mem hi)) fun i hi => h1 i (mem_insert_of_mem hi)
-    nlinarith [h0 a (mem_insert_self a s), h1 a (mem_insert_self a s)]
-
-/-- A product of factors in `[0, 1]` over a superset is smaller. -/
-private theorem prod_le_prod_of_superset_of_le_one {s t : Finset ι} (hst : s ⊆ t) (f : ι → ℝ)
-    (h0 : ∀ i ∈ t, 0 ≤ f i) (h1 : ∀ i ∈ t, f i ≤ 1) : ∏ i ∈ t, f i ≤ ∏ i ∈ s, f i := by
-  classical
-  rw [← prod_sdiff hst]
-  refine mul_le_of_le_one_left (prod_nonneg fun i hi => h0 i (hst hi)) ?_
-  exact prod_le_one_of_mem_Icc (fun i hi => h0 i (mem_sdiff.mp hi).1)
-    fun i hi => h1 i (mem_sdiff.mp hi).1
-
 section Weights
 
 variable {Ω : Finset β} {w : β → ℝ}
@@ -259,9 +238,8 @@ private theorem weightProb_and_avoids_le (hw0 : ∀ a ∈ Ω, 0 ≤ w a) {I : Fi
     have hgrowS := hgrow S₁ Subset.rfl
     rw [hS12] at hgrowS
     have hprod : ∏ j ∈ Γ i, (1 - x j) ≤ ∏ j ∈ S₁, (1 - x j) := by
-      refine prod_le_prod_of_superset_of_le_one (fun j hj => (mem_filter.mp hj).2) _
-        (fun j _ => ?_)
-        (fun j _ => ?_)
+      refine prod_le_prod_of_subset_of_le_one₀ (fun j hj => (mem_filter.mp hj).2)
+        (fun j _ => ?_) (fun j _ _ => ?_)
       · linarith [hx1 j]
       · linarith [hx0 j]
     calc μ (fun a => E i a ∧ Avoids E S a)
