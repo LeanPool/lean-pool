@@ -819,10 +819,49 @@ local elab "reduceBellmanPolynomial" : conv => Lean.Elab.Tactic.withMainContext 
     (← bellmanReductionDepth expression) expression
   Lean.Elab.Tactic.Conv.updateLhs value proof
 
--- Keep these charts on the staged path so unsupported edits fail at the offending term.
+private theorem repackBellmanPolynomial (p : DPoly R) :
+    (match p with | ⟨coefficients⟩ => DPoly.mk coefficients) = p := by
+  cases p
+  rfl
+
+private theorem repackBellmanAppendEmpty (p : DPoly R) :
+    (match p with | ⟨coefficients⟩ => DPoly.mk (coefficients ++ [])) = p := by
+  cases p
+  simp only [List.append_nil]
+
+-- Match the identity over a variable so unification cannot evaluate the chart.
+private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
+    Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
+  let some matcher ← Lean.Meta.matchMatcherApp? expression.consumeMData (alsoCasesOn := true)
+    | return none
+  let #[polynomial] := matcher.discrs | return none
+  unless matcher.alts.size == 1 && matcher.remaining.isEmpty do return none
+  let type ← Lean.Meta.inferType polynomial
+  unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
+  Lean.Meta.withLocalDeclD `polynomial type fun localPolynomial => do
+    let repacked := { matcher with discrs := #[localPolynomial] }.toExpr
+    let target ← Lean.Meta.mkEq repacked localPolynomial
+    for ruleName in #[``repackBellmanPolynomial, ``repackBellmanAppendEmpty] do
+      let proof ← Lean.Meta.mkAppM ruleName #[localPolynomial]
+      let proofType ← Lean.Meta.inferType proof
+      if ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) then
+        let proof ← Lean.Meta.mkExpectedTypeHint proof target
+        let abstractProof ← Lean.Meta.mkLambdaFVars #[localPolynomial] proof
+        return some (polynomial, Lean.mkApp abstractProof polynomial)
+    return none
+
+local elab "stripBellmanMatcher" : conv => Lean.Elab.Tactic.withMainContext do
+  if let some (polynomial, proof) ← bellmanMatcherIdentity (← Lean.Elab.Tactic.Conv.getLhs) then
+    Lean.Elab.Tactic.Conv.updateLhs polynomial proof
+
+-- Rewrite identities without first evaluating the constructor scrutinee or coefficient list.
 local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
   Lean.Elab.Tactic.evalTactic (← `(tactic| (
-    conv_lhs => { arg 1; reduceBellmanPolynomial }
+    conv_lhs => {
+      arg 1
+      stripBellmanMatcher
+      try rw [List.append_nil]
+      reduceBellmanPolynomial }
     rfl)))
 
 @[irreducible]
@@ -842,14 +881,22 @@ example :
 
 -- A constructor/projection round trip preserves staging of the helper.
 example :
-    allNonnegative3 (DPoly.mk (DPoly.eval (id : Poly3 → Poly3) 0 (DPoly.const U)).coeffs) =
-      true := by
+    allNonnegative3
+      (DPoly.mk
+        (id ((DPoly.eval (id : Poly3 → Poly3) 0 (DPoly.const U)).coeffs, ()).1)) = true := by
+  checkBellmanChart
+
+private theorem chartPlus_repacked_check :
+    allNonnegative3
+      (match chartPlus with
+      | ⟨coefficients⟩ => DPoly.mk (coefficients ++ [])) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
 private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true := by
-  change allNonnegative3 (DPoly.mk (id (chartPlus.coeffs, ()).1)) = true
-  checkBellmanChart
+  have h := chartPlus_repacked_check
+  conv_lhs at h => { arg 1; stripBellmanMatcher }
+  exact h
 
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
