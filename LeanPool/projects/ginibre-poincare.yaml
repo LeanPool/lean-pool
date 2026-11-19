@@ -19,7 +19,10 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   of the two equilibrium radii, the nonsymmetric constant lower bound (n+1)/4 and the non-holomorphy
   of the squared radius. Constructs the maximal Brownian-driven solution of the Ginibre Langevin
   equation, proves stationarity of the Ginibre law along its whole future path, and identifies its
-  transition Laplace transform with the analytic resolvent of the full generator.
+  transition Laplace transform with the analytic resolvent of the full generator. Proves global
+  noncollision of the original Brownian-driven dynamics, its dynamical factorization into two
+  independent CIR radii (Theorem 1.3), stationarity of their Gamma product law, and identification
+  of the transition semigroup with the analytic generator evolution.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -69,6 +72,10 @@ main_declarations:
 - GinibrePoincare.ginibreSquaredNormL2_not_holomorphic
 - GinibrePoincare.ginibreBrownian_equilibrium_original_whole_future_stationary
 - GinibrePoincare.ginibreOriginalStochasticL2Resolvent_eq_analytic
+- GinibrePoincare.ginibreBrownianMaximalProcess_global_original_solution
+- GinibrePoincare.ginibreBrownian_full_two_radius_independent_CIR_realization
+- GinibrePoincare.ginibreBrownian_original_transition_eq_paper_ae
+- GinibrePoincare.ginibreOriginalEquilibrium_two_radius_gamma_product
 main_results:
 - declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
   informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
@@ -230,6 +237,31 @@ main_results:
     of the full symmetric Ginibre generator on every symmetric L² value.
   source_ref: Identification of the original stochastic dynamics with the generator semigroup
     (dynamics discussion of arXiv:2608.19358v2, Section 1).
+- declaration: GinibrePoincare.ginibreBrownianMaximalProcess_global_original_solution
+  informal: For n > 0, speed α ≥ 0 and a collision-free start z, the maximal solution of the
+    Ginibre Langevin equation driven by independent standard Brownian motions is adapted, almost
+    surely continuous, starts at z, never collides and solves the original singular equation
+    for all times.
+  source_ref: Global existence and noncollision for the original Brownian dynamics of
+    arXiv:2608.19358v2 (Theorem 1.3 setting).
+- declaration: GinibrePoincare.ginibreBrownian_full_two_radius_independent_CIR_realization
+  informal: For n ≥ 2, speed α ≥ 0 and a collision-free start, there are two independent
+    standard Brownian motions such that, up to every bounded Hamiltonian stopping time, the
+    center radius |Σzᵢ|² and the pairwise radius Σ_{j<k}|zⱼ − zₖ|² of the original process
+    satisfy the CIR equations with drifts (4α/n)(1 − ·) and (4α/n)(κₙ − ·), whose martingale
+    parts are stochastic integrals against these drivers.
+  source_ref: Dynamical factorization, Theorem 1.3 of arXiv:2608.19358v2 (localized by bounded
+    Hamiltonian stops; deterministic collision-free initial state).
+- declaration: GinibrePoincare.ginibreBrownian_original_transition_eq_paper_ae
+  informal: For n > 0 and α ≥ 0, the transition expectation z ↦ E[v(X_T^z)] of the original
+    process equals, Ginibre-almost everywhere, the analytic paper-speed evolution of the full
+    symmetric generator applied to any bounded measurable symmetric observable v.
+  source_ref: Identification of the original Ginibre dynamics with the generator semigroup,
+    arXiv:2608.19358v2, Section 1.
+- declaration: GinibrePoincare.ginibreOriginalEquilibrium_two_radius_gamma_product
+  informal: For n ≥ 2 and α ≥ 0, started from the Ginibre law, at every time T the two radii
+    of the original process have the product law Gamma(1, 1) ⊗ Gamma(κₙ, 1).
+  source_ref: Stationary radius laws in Theorems 1.2–1.3 of arXiv:2608.19358v2.
 tags:
 - ginibre-ensemble
 - poincare-inequality
