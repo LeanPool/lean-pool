@@ -122,7 +122,9 @@ lemma small_range_le (n : ℕ) (hn : 1 ≤ n) :
     have h24 : cPrime k * (padicValNat k 24 : ℝ) ≤ (if k ≤ 24 then 4 else 0) := by
       unfold cPrime
       split_ifs with hp h24
-      · have hv : k ^ padicValNat k 24 ∣ 24 := by have := Fact.mk hp; exact pow_padicValNat_dvd
+      · have hv : k ^ padicValNat k 24 ∣ 24 := by
+          rw [Nat.padicValNat_def]
+          exact pow_multiplicity_dvd k 24
         have := Nat.le_of_dvd (by norm_num) hv
         have h' : ((k ^ padicValNat k 24 : ℕ) : ℝ) ≤ 24 := by exact_mod_cast this
         have hk0 : (0 : ℝ) < k := by exact_mod_cast hp.pos
@@ -138,8 +140,9 @@ lemma small_range_le (n : ℕ) (hn : 1 ≤ n) :
             rw [← Real.log_mul (by norm_num) (by norm_num)]; norm_num
           linarith
         linarith
-      · have : padicValNat k 24 = 0 :=
-          padicValNat.eq_zero_of_not_dvd
+      · have : padicValNat k 24 = 0 := by
+          rw [Nat.padicValNat_def]
+          exact multiplicity_eq_zero_of_not_dvd
             (fun h => by have := Nat.le_of_dvd (by norm_num) h; omega)
         rw [this]; simp
       · simp
