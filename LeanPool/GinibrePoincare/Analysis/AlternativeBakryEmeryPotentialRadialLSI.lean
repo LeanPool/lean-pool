@@ -36,8 +36,7 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.AlternativeBakryEmeryRadialProductLSI
-public import LeanPool.GinibrePoincare.Analysis.StrongConvexRadialGradientTransfer
-public import LeanPool.GinibrePoincare.Analysis.StrongConvexPotentialPartition
+public import LeanPool.GinibrePoincare.Analysis.StrongConvexPotentialRadialLSI
 
 /-!
 # Alternative Bakry Emery potential radial LSI
@@ -67,11 +66,8 @@ theorem bakryEmery_potential_radial_lsi (n : ℕ) (hn : 0 < n)
     squareEntropy (potentialMeasure n V) (fun z => F (magnitudeVector z)) ≤
       (2 / ((n : ℝ) * ρ)) *
         potentialGradientEnergy n V (fun z => F (magnitudeVector z)) := by
-  have hfin := rhoConvex_potentialPartition_lt_top n hn ρ hρ hV hrot hc
-  rw [potential_magnitude_entropy_eq_radiusProduct n hn hV.continuous hrot hfin
-    F hF.continuous hs C hb,
-    potential_magnitude_gradient_energy_eq_radiusProduct n hn hV.continuous hrot hfin
-      F hF hs hLip]
+  refine potential_radial_lsi_of_radiusProduct_lsi n hn ρ hρ hV hrot hc ?_ F hF hs hLip C hC hb
+  intro F hF K hLip C hC hb
   exact bakryEmery_radiusProduct_lsi n hn ρ hρ hV hrot hc F hF hLip C hC hb
 
 /-- The paper's smooth compact radial observables, with all profile regularity
@@ -83,21 +79,9 @@ theorem bakryEmery_potential_smooth_radial_lsi (n : ℕ) (hn : 0 < n)
     (hr : ∃ F : (Fin n → ℝ) → ℝ, ∀ z, f z = F (fun i => Complex.normSq (z i))) :
     squareEntropy (potentialMeasure n V) f ≤
       (2 / ((n : ℝ) * ρ)) * potentialGradientEnergy n V f := by
-  have hF := contDiff_magnitudeProfile f hf.1
-  have hsupp := compactSupport_magnitudeProfile f hf.2.1
-  obtain ⟨K, hK⟩ := ContDiff.lipschitzWith_of_hasCompactSupport hsupp hF (by simp)
-  obtain ⟨C, hC⟩ := hsupp.exists_bound_of_continuous hF.continuous
-  have he : f = (fun z => magnitudeProfile f (magnitudeVector z)) := by
-    funext z
-    exact radial_eq_magnitudeProfile f hr z
-  have hb : ∀ r, |magnitudeProfile f r| ≤ max C 0 := by
-    intro r
-    have hh : |magnitudeProfile f r| ≤ C := by simpa only [Real.norm_eq_abs] using hC r
-    exact hh.trans (le_max_left _ _)
-  have ht := bakryEmery_potential_radial_lsi n hn ρ hρ hV hrot hc
-    (magnitudeProfile f) (hF.of_le (by simp)) (magnitudeProfile_symmetric f hf.2.2)
-    hK (max C 0) (le_max_right _ _) hb
-  rwa [← he] at ht
+  refine potential_smooth_radial_lsi_of_profile_lsi n ?_ f hf hr
+  intro F hF hs K hLip C hC hb
+  exact bakryEmery_potential_radial_lsi n hn ρ hρ hV hrot hc F hF hs hLip C hC hb
 
 end
 end GinibrePoincare

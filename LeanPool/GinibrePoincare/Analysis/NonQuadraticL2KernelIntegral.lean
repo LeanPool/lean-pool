@@ -61,10 +61,11 @@ theorem separatedPlanarKernel_hasCompactSupport
     subset_closure (fun h => hx (by simp [h]))⟩
 
 /-- Compact coefficient and compact translated kernel have jointly compact
-support in the integration and evaluation variables. -/
-theorem translatedProductKernel_hasCompactSupport
-    (f k : ℂ × ℂ → ℂ) (hf : HasCompactSupport f) (hk : HasCompactSupport k) :
-    HasCompactSupport (fun p : (ℂ × ℂ) × (ℂ × ℂ) => f p.1 * k (p.2 - p.1)) := by
+support in the integration and evaluation variables, in any normed group. -/
+theorem finiteTranslatedKernel_hasCompactSupport
+    {E : Type*} [NormedAddCommGroup E]
+    (f k : E → ℂ) (hf : HasCompactSupport f) (hk : HasCompactSupport k) :
+    HasCompactSupport (fun p : E × E => f p.1 * k (p.2 - p.1)) := by
   have hS : IsCompact ((tsupport f).prod (tsupport f + tsupport k)) :=
     IsCompact.prod hf (IsCompact.add hf hk)
   apply hS.of_isClosed_subset isClosed_closure
@@ -75,17 +76,26 @@ theorem translatedProductKernel_hasCompactSupport
   exact ⟨subset_closure hf', ⟨p.1, subset_closure hf', p.2 - p.1,
     subset_closure hk', by abel_nf⟩⟩
 
-/-- A genuine integrable L²-valued compact kernel family has the actual
-pointwise integral as its almost-everywhere representative. -/
-theorem productL2_kernel_integral_ae
-    (g : (ℂ × ℂ) × (ℂ × ℂ) → ℂ) (hg : Continuous g) (hc : HasCompactSupport g)
-    (G : ℂ × ℂ → Lp ℂ 2 ((volume : Measure ℂ).prod volume))
-    (hG : Integrable G ((volume : Measure ℂ).prod volume))
-    (hcoef : ∀ a, (G a : ℂ × ℂ → ℂ) =ᵐ[(volume : Measure ℂ).prod volume] (fun x => g (a, x))) :
-    (((∫ a, G a ∂((volume : Measure ℂ).prod volume)) : Lp ℂ 2 ((volume : Measure ℂ).prod volume)) :
-        ℂ × ℂ → ℂ) =ᵐ[(volume : Measure ℂ).prod volume]
-      (fun x => ∫ a, g (a, x) ∂((volume : Measure ℂ).prod volume)) := by
-  let μ : Measure (ℂ × ℂ) := (volume : Measure ℂ).prod volume
+/-- Compact coefficient and compact translated kernel have jointly compact
+support in the integration and evaluation variables. -/
+theorem translatedProductKernel_hasCompactSupport
+    (f k : ℂ × ℂ → ℂ) (hf : HasCompactSupport f) (hk : HasCompactSupport k) :
+    HasCompactSupport (fun p : (ℂ × ℂ) × (ℂ × ℂ) => f p.1 * k (p.2 - p.1)) :=
+  finiteTranslatedKernel_hasCompactSupport f k hf hk
+
+/-- On a finite-dimensional real normed space with a locally finite σ-finite measure, a
+genuine integrable L²-valued compact kernel family has the actual pointwise integral as its
+almost-everywhere representative. -/
+theorem finiteDimensionalL2_kernel_integral_ae
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E]
+    (μ : Measure E) [IsLocallyFiniteMeasure μ] [SigmaFinite μ]
+    (g : E × E → ℂ) (hg : Continuous g) (hc : HasCompactSupport g)
+    (G : E → Lp ℂ 2 μ)
+    (hG : Integrable G μ)
+    (hcoef : ∀ a, (G a : E → ℂ) =ᵐ[μ] (fun x => g (a, x))) :
+    (((∫ a, G a ∂μ) : Lp ℂ 2 μ) : E → ℂ) =ᵐ[μ]
+      (fun x => ∫ a, g (a, x) ∂μ) := by
   have hgi : Integrable g (μ.prod μ) := hg.integrable_of_hasCompactSupport hc
   apply ae_eq_of_integral_contDiff_smul_eq
     ((Lp.memLp (∫ a, G a ∂μ)).locallyIntegrable (by norm_num))
@@ -119,6 +129,19 @@ theorem productL2_kernel_integral_ae
     _ = _ := by
       apply integral_congr_ae
       exact Eventually.of_forall (fun x => integral_smul (θ x) (fun a => g (a, x)))
+
+/-- A genuine integrable L²-valued compact kernel family has the actual
+pointwise integral as its almost-everywhere representative. -/
+theorem productL2_kernel_integral_ae
+    (g : (ℂ × ℂ) × (ℂ × ℂ) → ℂ) (hg : Continuous g) (hc : HasCompactSupport g)
+    (G : ℂ × ℂ → Lp ℂ 2 ((volume : Measure ℂ).prod volume))
+    (hG : Integrable G ((volume : Measure ℂ).prod volume))
+    (hcoef : ∀ a, (G a : ℂ × ℂ → ℂ) =ᵐ[(volume : Measure ℂ).prod volume] (fun x => g (a, x))) :
+    (((∫ a, G a ∂((volume : Measure ℂ).prod volume)) : Lp ℂ 2 ((volume : Measure ℂ).prod volume)) :
+        ℂ × ℂ → ℂ) =ᵐ[(volume : Measure ℂ).prod volume]
+      (fun x => ∫ a, g (a, x) ∂((volume : Measure ℂ).prod volume)) :=
+  finiteDimensionalL2_kernel_integral_ae _ g hg hc G hG hcoef
+
 /-- The actual weighted average of translated compact kernels is the
 weighted scalar convolution, almost everywhere. -/
 theorem productL2_weighted_translated_kernel_integral_ae
