@@ -2977,11 +2977,8 @@ end ActiveSetup.BasicFamilies.FamParams
 theorem sq6_le (x₁ x₂ x₃ x₄ x₅ x₆ : ℝ) :
     (x₁ + x₂ + x₃ + x₄ + x₅ + x₆) ^ 2 ≤
       6 * (x₁ ^ 2 + x₂ ^ 2 + x₃ ^ 2 + x₄ ^ 2 + x₅ ^ 2 + x₆ ^ 2) := by
-  nlinarith only [sq_nonneg (x₁ - x₂), sq_nonneg (x₁ - x₃), sq_nonneg (x₁ - x₄),
-      sq_nonneg (x₁ - x₅),
-    sq_nonneg (x₁ - x₆), sq_nonneg (x₂ - x₃), sq_nonneg (x₂ - x₄), sq_nonneg (x₂ - x₅),
-    sq_nonneg (x₂ - x₆), sq_nonneg (x₃ - x₄), sq_nonneg (x₃ - x₅), sq_nonneg (x₃ - x₆),
-    sq_nonneg (x₄ - x₅), sq_nonneg (x₄ - x₆), sq_nonneg (x₅ - x₆)]
+  simpa [Fin.sum_univ_succ, add_assoc] using
+    (sq_sum_le_card_mul_sum_sq (s := Finset.univ) (f := ![x₁, x₂, x₃, x₄, x₅, x₆]))
 
 /-- A length times a squared normalized root: `L (C √E / √L)² = C² E`. -/
 theorem len_sq_root {L C E : ℝ} (hL : 0 < L) (hE : 0 ≤ E) :

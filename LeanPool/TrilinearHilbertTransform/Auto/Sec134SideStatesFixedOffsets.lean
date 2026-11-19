@@ -1868,7 +1868,7 @@ theorem sideState_budget_blocks (l : Fin 4) (s : List (CatCol bf.Vtx))
         simp only [Finset.sum_add_distrib, Finset.mul_sum]
     _ ≤ _ := by
         refine add_le_add (mul_le_mul_of_nonneg_left hroll (by norm_num)) (le_of_eq ?_)
-        congr 1
+        apply congrArg (fun x : ℝ => 2 * x)
         refine Finset.sum_congr rfl fun t ht => ?_
         rw [Nat.mul_div_cancel' (hSdK t ht)]
 

@@ -9,6 +9,8 @@ module
 7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
+meta import LeanPool.TrilinearHilbertTransform.Auto.ProofTools -- shake: keep
+
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 
 public import LeanPool.TrilinearHilbertTransform.Auto.Prerequisites.DyadicStopping
@@ -456,7 +458,7 @@ theorem columnPartition_restriction_sum {V : Type*} [Fintype V] (D : ColumnTreeD
   classical
   let R := fun c : {c // c ∈ π.cells} => columnL2Restriction
     (dyadicGridCell D.grid c.val.1 c.val.2) (dyadicGridCell_measurable D.grid c.val.1 c.val.2) z
-  have hall : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ π.cells},
+  have! hall : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ π.cells},
       (R c : ℝ → ColumnHilbert V) y = (dyadicGridCell D.grid c.val.1 c.val.2).indicator z y :=
     ae_all_iff.mpr (fun c => columnL2Indicator_coeFn
       (dyadicGridCell D.grid c.val.1 c.val.2)
@@ -476,7 +478,7 @@ theorem columnPartition_restriction_sum {V : Type*} [Fintype V] (D : ColumnTreeD
     rw [Finset.sum_eq_single (⟨c, hc⟩ : {c // c ∈ π.cells})]
     · rw [Set.indicator_of_mem hyc, Set.indicator_of_mem (D.below_root c (π.subset hc) hyc)]
     · intro d _ hdc
-      have hyd : y ∉ dyadicGridCell D.grid d.val.1 d.val.2 := by
+      have! hyd : y ∉ dyadicGridCell D.grid d.val.1 d.val.2 := by
         intro hyd
         exact Set.disjoint_left.mp
           (π.disjoint d.property hc (fun h => hdc (Subtype.ext h))) hyd hyc
@@ -1077,19 +1079,19 @@ theorem cellColumnProjection_ae_bound {V : Type*} [Fintype V] (D : ColumnTreeDat
     ∀ᵐ y ∂volume.restrict (dyadicGridCell D.grid c.1 c.2),
       ‖cellColumnProjection D A hc z y‖ ≤ D.budget ^ 5 *
         ((∫ t in dyadicGridCell D.grid c.1 c.2, ‖z t‖) / dyadicGridLength D.grid c.1) := by
-  have hL := dyadicGridLength_pos D.grid c.1
-  have hi := (integrableOn_Lp_of_measure_ne_top (s := dyadicGridCell D.grid c.1 c.2)
+  have! hL := dyadicGridLength_pos D.grid c.1
+  have! hi := (integrableOn_Lp_of_measure_ne_top (s := dyadicGridCell D.grid c.1 c.2)
     z (by norm_num : (1 : ENNReal) ≤ 2)
     (by rw [dyadicGridCell_volume]; exact ENNReal.ofReal_ne_top)).norm
   filter_upwards [ae_restrict_of_ae (cellColumnProjection_kernel D A hc z),
     ae_restrict_mem (dyadicGridCell_measurable D.grid c.1 c.2),
     cellProjectionKernel_ae_norm_le D A hc] with y hy hym hyk
-  have hk : Integrable (fun t => cellProjectionKernel D A hc y t (z t))
+  have! hk : Integrable (fun t => cellProjectionKernel D A hc y t (z t))
       (volume.restrict (dyadicGridCell D.grid c.1 c.2)) :=
     ((columnEvaluation D A c y).comp
       (cellColumnGramEquiv D A hc).symm.toContinuousLinearMap).integrable_comp
         (columnEvaluation_adjoint_integrable D A hc z)
-  have hb : (∫ t in dyadicGridCell D.grid c.1 c.2,
+  have! hb : (∫ t in dyadicGridCell D.grid c.1 c.2,
       ‖cellProjectionKernel D A hc y t (z t)‖) ≤
         D.budget ^ 5 * ∫ t in dyadicGridCell D.grid c.1 c.2, ‖z t‖ := by
     rw [← integral_const_mul]
@@ -1192,7 +1194,7 @@ theorem cellColumnProjection_predictor_moment {V : Type*} [Fintype V]
   let m : ℝ → ℂ := fun y =>
     (f y - cellColumnProjection D A hc z y none) * star (D.scalar v y)
   let b : ℂ := (D.privateWeight v : ℂ) * a v
-  have he : g =ᵐ[volume.restrict (dyadicGridCell D.grid c.1 c.2)] fun y => m y - b := by
+  have! he : g =ᵐ[volume.restrict (dyadicGridCell D.grid c.1 c.2)] fun y => m y - b := by
     filter_upwards [ae_restrict_of_ae (physicalColumnInput_coeFn (V := V) f),
       ae_restrict_of_ae (cellColumnProjection_coeFn D A hc z),
       ae_restrict_mem (dyadicGridCell_measurable D.grid c.1 c.2)] with y hf hp hy
@@ -1201,7 +1203,7 @@ theorem cellColumnProjection_predictor_moment {V : Type*} [Fintype V]
         (f y - cellColumnProjection D A hc z y none) * star (D.scalar v y) - b
     rw [hf, hp, Set.indicator_of_mem hy]
     exact privateColumnValue_inner_residual D A c a v y (f y)
-  have hg : Integrable g (volume.restrict (dyadicGridCell D.grid c.1 c.2)) := by
+  have! hg : Integrable g (volume.restrict (dyadicGridCell D.grid c.1 c.2)) := by
     apply ((MeasureTheory.L2.integrable_inner (𝕜 := ℂ) (cellColumnLp D A hc v)
       (z - cellColumnProjection D A hc z)).restrict).congr
     filter_upwards [ae_restrict_of_ae (cellColumnLp_coeFn D A hc v),
@@ -1209,12 +1211,12 @@ theorem cellColumnProjection_predictor_moment {V : Type*} [Fintype V]
       ae_restrict_mem (dyadicGridCell_measurable D.grid c.1 c.2)] with y hv hz hy
     rw [hv, hz, Set.indicator_of_mem hy]
     rfl
-  have hb : Integrable (fun _ : ℝ => b) (volume.restrict (dyadicGridCell D.grid c.1 c.2)) :=
+  have! hb : Integrable (fun _ : ℝ => b) (volume.restrict (dyadicGridCell D.grid c.1 c.2)) :=
     integrableOn_const (by rw [dyadicGridCell_volume]; exact ENNReal.ofReal_ne_top)
-  have hem : m =ᵐ[volume.restrict (dyadicGridCell D.grid c.1 c.2)] fun y => g y + b := by
+  have! hem : m =ᵐ[volume.restrict (dyadicGridCell D.grid c.1 c.2)] fun y => g y + b := by
     filter_upwards [he] with y hy
     rw [hy, sub_add_cancel]
-  have hm : (∫ y in dyadicGridCell D.grid c.1 c.2, m y) =
+  have! hm : (∫ y in dyadicGridCell D.grid c.1 c.2, m y) =
       (dyadicGridLength D.grid c.1) • b := by
     rw [integral_congr_ae hem, integral_add hg hb]
     change (∫ y in dyadicGridCell D.grid c.1 c.2,
@@ -1588,9 +1590,9 @@ theorem columnMomentRepresentative_ae_bound {V : Type*} [Fintype V] (D : ColumnT
   let F := fun c : {c // c ∈ columnSizeCuts D z K} =>
     cellColumnProjection (completedColumnTree D) (columnSegmentMask D A z K)
       (columnSizeCuts_subset D z hK c.property) z
-  have hrep : columnMomentRepresentative D A z hK = ∑ c, F c :=
+  have! hrep : columnMomentRepresentative D A z hK = ∑ c, F c :=
     columnMomentRepresentative_eq_sum D A z hK
-  have hbound : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ columnSizeCuts D z K},
+  have! hbound : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ columnSizeCuts D z K},
       y ∈ dyadicGridCell D.grid c.val.1 c.val.2 → ‖F c y‖ ≤
         4 * D.budget ^ 5 * columnCellAverage D z K := by
     apply ae_all_iff.mpr
@@ -1600,10 +1602,10 @@ theorem columnMomentRepresentative_ae_bound {V : Type*} [Fintype V] (D : ColumnT
       (columnSegmentMask D A z K) (columnSizeCuts_subset D z hK c.property) z] with y hy
     change ‖F c y‖ ≤ D.budget ^ 5 * columnCellAverage D z c.val at hy
     exact hy.trans (by
-      have hb := mul_le_mul_of_nonneg_left (columnSizeCuts_average_le D z K c.property)
+      have! hb := mul_le_mul_of_nonneg_left (columnSizeCuts_average_le D z K c.property)
         (pow_nonneg (le_trans (by norm_num : (0 : ℝ) ≤ 2) D.two_le_budget) 5)
       nlinarith)
-  have hzero : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ columnSizeCuts D z K},
+  have! hzero : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ columnSizeCuts D z K},
       y ∉ dyadicGridCell D.grid c.val.1 c.val.2 → (F c : ℝ → ColumnHilbert V) y = 0 :=
     ae_all_iff.mpr (fun c => cellColumnRange_ae_zero_off (completedColumnTree D)
       (columnSegmentMask D A z K) (columnSizeCuts_subset D z hK c.property)
@@ -1682,13 +1684,13 @@ theorem cutColumn_restriction_sum {V : Type*} [Fintype V] (D : ColumnTreeData V)
       columnL2Restriction (dyadicGridCell D.grid u.1 u.2)
         (dyadicGridCell_measurable D.grid u.1 u.2) z := by
   classical
-  have hsub : ∀ c ∈ C, dyadicGridCell D.grid c.1 c.2 ⊆ dyadicGridCell D.grid u.1 u.2 := by
+  have! hsub : ∀ c ∈ C, dyadicGridCell D.grid c.1 c.2 ⊆ dyadicGridCell D.grid u.1 u.2 := by
     intro c hc y hy
     rw [← hcover]
     exact Set.mem_iUnion₂.mpr ⟨c, hc, hy⟩
   let R := fun c : {c // c ∈ C} => columnL2Restriction
     (dyadicGridCell D.grid c.val.1 c.val.2) (dyadicGridCell_measurable D.grid c.val.1 c.val.2) z
-  have hall : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ C},
+  have! hall : ∀ᵐ y ∂volume, ∀ c : {c // c ∈ C},
       (R c : ℝ → ColumnHilbert V) y = (dyadicGridCell D.grid c.val.1 c.val.2).indicator z y :=
     ae_all_iff.mpr (fun c => columnL2Indicator_coeFn
       (dyadicGridCell D.grid c.val.1 c.val.2)
@@ -1899,8 +1901,8 @@ theorem columnMomentEnergy_quadratic {V : Type*} [Fintype V] (D : ColumnTreeData
     (A : InheritedColumnMask D) (z : ColumnL2 V) :
     columnMomentEnergy D A z ≤ 4 * D.budget⁻¹ ^ 2 * ‖z‖ ^ 2 +
       Real.sqrt (columnMomentLogCount D : ℝ) * ‖z‖ * Real.sqrt (columnMomentEnergy D A z) := by
-  have hD : 0 < D.budget := by linarith [D.two_le_budget]
-  have he := dyadic_stopped_moment_energy D.grid D.root (columnCompletionDepth D)
+  have! hD : 0 < D.budget := by linarith [D.two_le_budget]
+  have! he := dyadic_stopped_moment_energy D.grid D.root (columnCompletionDepth D)
     (columnCellAverage D z) (fun c _ => columnCellAverage_nonneg D z c)
     z (columnMomentFamily D A z) (columnDyadicMax D z) (columnDyadicMax_memLp D z)
     (columnDyadicMax_nonneg D z) (4 * D.budget ^ 5) (4 * D.budget ^ 7)
@@ -1916,15 +1918,15 @@ theorem columnMomentEnergy_quadratic {V : Type*} [Fintype V] (D : ColumnTreeData
     (fun K hK => by
       rw [columnMomentFamily_of_mem D A z hK]
       exact columnMomentRepresentative_norm_sq D A z hK)
-  have hc : 2 * (4 * D.budget ^ 5) / (4 * D.budget ^ 7) = 2 * D.budget⁻¹ ^ 2 := by
+  have! hc : 2 * (4 * D.budget ^ 5) / (4 * D.budget ^ 7) = 2 * D.budget⁻¹ ^ 2 := by
     field_simp
   change columnMomentEnergy D A z ≤
     (2 * (4 * D.budget ^ 5) / (4 * D.budget ^ 7)) * ‖z‖ *
       Real.sqrt (∫ x, columnDyadicMax D z x ^ 2) +
       Real.sqrt (columnMomentLogCount D : ℝ) * ‖z‖ * Real.sqrt (columnMomentEnergy D A z) at he
   rw [hc] at he
-  have hmax : Real.sqrt (∫ x, columnDyadicMax D z x ^ 2) ≤ 2 * ‖z‖ := by
-    have h := Real.sqrt_le_sqrt (columnDyadicMax_energy_le D z)
+  have! hmax : Real.sqrt (∫ x, columnDyadicMax D z x ^ 2) ≤ 2 * ‖z‖ := by
+    have! h := Real.sqrt_le_sqrt (columnDyadicMax_energy_le D z)
     rwa [Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4), Real.sqrt_sq (norm_nonneg z),
       show Real.sqrt (4 : ℝ) = 2 by norm_num] at h
   calc
@@ -2407,14 +2409,14 @@ theorem columnAnchorProduct_restrict_atom {V : Type*} [Fintype V]
         cellColumnProjection (completedColumnTree D) (completedColumnMask D (A j)) cMem
           (cellColumnProduct (completedColumnTree D) (fun l => completedColumnMask D (A l))
             cMem j (Rc z))
-      have hcut := cutColumnProjection_restrict_atom (completedColumnTree D)
+      have! hcut := cutColumnProjection_restrict_atom (completedColumnTree D)
         (completedColumnMask D (A j)) _ (completedColumnAnchorCuts_subset D A m g a hR n)
         (completedColumnAnchorCuts_disjoint D A m g a R n) hc
         (nestedProjectionProduct (columnAnchorProjection D A m g a hR) j n z)
       change Rc (cutColumnProjection (completedColumnTree D) (completedColumnMask D (A j))
         _ _ (nestedProjectionProduct (columnAnchorProjection D A m g a hR) j n z)) = _ at hcut
       rw [hcut]
-      have hloc := congrArg (fun L : ColumnL2 V →L[ℂ] ColumnL2 V =>
+      have! hloc := congrArg (fun L : ColumnL2 V →L[ℂ] ColumnL2 V =>
         L (nestedProjectionProduct (columnAnchorProjection D A m g a hR) j n z))
         (cellColumnProjection_input_locality (completedColumnTree D)
           (completedColumnMask D (A j)) cMem)
@@ -2525,9 +2527,9 @@ theorem columnAnchorProduct_restart_budget_sharp {V : Type*} [Fintype V]
   let Z := fun n => nestedProjectionProduct (columnAnchorProjection D A m g a hR) (m + 1) n z
   let u := fun n : Fin T => Z (n.val + 1) - Z n.val
   let δ := D.budget⁻¹ * columnAnchorTolerance D a
-  have hδ : 0 ≤ δ := mul_nonneg
+  have! hδ : 0 ≤ δ := mul_nonneg
     (inv_nonneg.mpr (by linarith [D.two_le_budget])) (columnAnchorTolerance_nonneg D ha)
-  have hdis : (C : Set (ℤ × ℤ)).PairwiseDisjoint (fun c => dyadicGridCell D.grid c.1 c.2) :=
+  have! hdis : (C : Set (ℤ × ℤ)).PairwiseDisjoint (fun c => dyadicGridCell D.grid c.1 c.2) :=
     columnAnchors_pairwiseDisjoint (completedColumnTree D)
       (fun l => completedColumnMask D (A l)) m g a R T
   have hpoint (n : Fin T) :
@@ -2545,8 +2547,8 @@ theorem columnAnchorProduct_restart_budget_sharp {V : Type*} [Fintype V]
       exact (hy (hrc hyr)).le
     filter_upwards [ae_all_iff.mpr hlocal] with y hy r hr hyr
     exact hy ⟨r, hr⟩ hyr
-  have hmass := dyadic_jump_mass_le_energy D.grid C hdis T u δ hδ hpoint
-  have hupper := columnAnchorProjection_product_jumps D A m g a hR T z
+  have! hmass := dyadic_jump_mass_le_energy D.grid C hdis T u δ hδ hpoint
+  have! hupper := columnAnchorProjection_product_jumps D A m g a hR T z
   calc
     _ = (T : ℝ) * δ ^ 2 * (∑ r ∈ C, dyadicGridLength D.grid r.1) := by
       dsimp [δ, columnAnchorTolerance, C]
@@ -3279,15 +3281,15 @@ theorem columnRowFamily_coefficient_rows_bound {V ι F : Type*} [Fintype V] [Fin
   let W := fun v => columnL2Restriction (dyadicGridCell D.grid R.1 R.2)
     (dyadicGridCell_measurable D.grid R.1 R.2) (birthColumnLp D v)
   have hnorm (z : ColumnL2 V) : ∑ i, ‖B.row i z‖ ^ 2 ≤ ‖z‖ ^ 2 := by
-    have hsq : B.bound ^ 2 ≤ 1 := by
+    have! hsq : B.bound ^ 2 ≤ 1 := by
       simpa using (sq_le_sq₀ B.bound_nonneg zero_le_one).mpr hB
     exact (B.square_sum z).trans (by
       simpa using (mul_le_mul_of_nonneg_right hsq (sq_nonneg ‖z‖)))
   have hrow (i : ι) : ‖∑ v, e i v • B.row i (W v)‖ ^ 2 ≤
       δ ^ 2 * ∑ v, ‖B.row i (W v)‖ ^ 2 := by
-    have hn : ‖∑ v, e i v • B.row i (W v)‖ ≤ ∑ v, ‖e i v‖ * ‖B.row i (W v)‖ := by
+    have! hn : ‖∑ v, e i v • B.row i (W v)‖ ≤ ∑ v, ‖e i v‖ * ‖B.row i (W v)‖ := by
       simpa only [norm_smul] using (norm_sum_le Finset.univ (fun v => e i v • B.row i (W v)))
-    have hcs := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ
+    have! hcs := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ
       (fun v => ‖e i v‖) (fun v => ‖B.row i (W v)‖)
     rw [← EuclideanSpace.norm_sq_eq (e i)] at hcs
     exact ((sq_le_sq₀ (norm_nonneg _) (Finset.sum_nonneg
@@ -3338,12 +3340,12 @@ theorem columnAnchorProduct_error_rows_bound {V ι F : Type*} [Fintype V] [Finty
       columnCoefficientField_of_mem (completedColumnTree D)
         (fun l => completedColumnMask D (A l)) m g
         (completedColumnAnchorCuts_subset D A m g a hR (n i) (hb i))] using he i
-  have h := columnRowFamily_coefficient_rows_bound (completedColumnTree D)
+  have! h := columnRowFamily_coefficient_rows_bound (completedColumnTree D)
     (completedColumnRows D B) hB R e (columnAnchorTolerance_nonneg D ha) he'
   convert h using 1
   · apply Finset.sum_congr rfl
     intro i _
-    have huR : dyadicGridCell D.grid (B.decision i).1 (B.decision i).2 ⊆
+    have! huR : dyadicGridCell D.grid (B.decision i).1 (B.decision i).2 ⊆
         dyadicGridCell D.grid R.1 R.2 := by
       intro y hy
       rw [← completedColumnAnchorCuts_union D A m g a hR (n i)]
@@ -3426,7 +3428,7 @@ theorem columnAttemptFamily_rows_bound {V ι F : Type*} [Fintype V] [Fintype ι]
   let f := fun i => ‖B.row i (cellColumnProduct (completedColumnTree D)
     (fun l => completedColumnMask D (A l))
     (columnCompletion_contains D (B.decision_mem i)) (m + 1) g)‖ ^ 2
-  have hassign := fun i => completedColumnAttemptRoots_anchor_assignment D A m g ha hR
+  have! hassign := fun i => completedColumnAttemptRoots_anchor_assignment D A m g ha hR
     (columnCompletion_contains D (B.decision_mem i)) (huR i)
   choose r hr n hn b hb hu he using hassign
   have hlocal (q : ℤ × ℤ) (hq : q ∈ roots) :
@@ -3437,8 +3439,8 @@ theorem columnAttemptFamily_rows_bound {V ι F : Type*} [Fintype V] [Fintype ι]
     have hqi (i : s) : r i.val = q := (Finset.mem_filter.mp i.property).2
     have hb' (i : s) : b i.val ∈ completedColumnAnchorCuts D A m g a q (n i.val) := by
       simpa only [hqi i] using hb i.val
-    have hqD := completedColumnAttemptRoots_subset D A m g a hR hq
-    have h := columnAttempt_rows_bound D A m g ha hqD Bs hB
+    have! hqD := completedColumnAttemptRoots_subset D A m g a hR hq
+    have! h := columnAttempt_rows_bound D A m g ha hqD Bs hB
       (fun i => n i.val) (fun i => hn i.val) (fun i => b i.val) hb'
       (fun i => hu i.val) (fun i => he i.val)
     change (∑ i : s, f i.val) ≤
@@ -3447,23 +3449,23 @@ theorem columnAttemptFamily_rows_bound {V ι F : Type*} [Fintype V] [Fintype ι]
     rw [Finset.sum_coe_sort s f] at h
     dsimp only [C]
     nlinarith only [h]
-  have hsum : (∑ i, f i) ≤ ∑ q ∈ roots,
+  have! hsum : (∑ i, f i) ≤ ∑ q ∈ roots,
       (2 * L * E q + 2 * C * dyadicGridLength D.grid q.1) := by
     rw [← Finset.sum_fiberwise_of_maps_to
       (s := Finset.univ) (t := roots) (g := r) (fun i _ => hr i) f]
     exact Finset.sum_le_sum (fun q hq => hlocal q hq)
-  have hp := completedColumnAttempts_packing D A m g ha hg hR
-  have hlen : (∑ q ∈ roots, dyadicGridLength D.grid q.1) ≤
+  have! hp := completedColumnAttempts_packing D A m g ha hg hR
+  have! hlen : (∑ q ∈ roots, dyadicGridLength D.grid q.1) ≤
       2 * dyadicGridLength D.grid R.1 :=
     (completedColumnAttemptRoots_cost_le D A m g a R _
       (fun q => (dyadicGridLength_pos D.grid q.1).le) hp.1).trans hp.2.1
-  have henergy : (∑ q ∈ roots, E q) ≤ 2 * E R :=
+  have! henergy : (∑ q ∈ roots, E q) ≤ 2 * E R :=
     (completedColumnAttemptRoots_cost_le D A m g a R E
       (fun _ => sq_nonneg _) hp.2.2.1).trans hp.2.2.2
-  have hL : 0 ≤ L := pow_nonneg
+  have! hL : 0 ≤ L := pow_nonneg
     (zero_le_one.trans (projectionPrefixConstant_one_le _)) _
-  have hD : 0 ≤ D.budget := by linarith [D.two_le_budget]
-  have hC : 0 ≤ C := mul_nonneg (sq_nonneg _) (pow_nonneg hD _)
+  have! hD : 0 ≤ D.budget := by linarith [D.two_le_budget]
+  have! hC : 0 ≤ C := mul_nonneg (sq_nonneg _) (pow_nonneg hD _)
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum] at hsum
   have henergy' := mul_le_mul_of_nonneg_left henergy (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hL)
   have hlen' := mul_le_mul_of_nonneg_left hlen (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hC)
@@ -3544,22 +3546,22 @@ theorem columnCompression_size_sum {V ι F : Type*} [Fintype V] [Fintype ι]
     let s := Finset.univ.filter (fun i => K i = q)
     let Bs := columnRowFamilyRestrict D B s
     have hsegment (i : s) : B.decision i.val ∈ columnSizeSegment D z q := by
-      have hi := (Finset.mem_filter.mp i.property).2
+      have! hi := (Finset.mem_filter.mp i.property).2
       simpa only [hi] using hseg i.val
     have hbelow (i : s) : dyadicGridCell D.grid (Bs.decision i).1 (Bs.decision i).2 ⊆
         dyadicGridCell D.grid q.1 q.2 := (Finset.mem_filter.mp (hsegment i)).2.1
-    have h := columnMoment_segment_rows_bound D A m z hq Bs hB hbelow
+    have! h := columnMoment_segment_rows_bound D A m z hq Bs hB hbelow
     rw [← Finset.sum_coe_sort s f, columnMomentFamily_of_mem D (A 0) z hq]
     convert h using 1
     apply Finset.sum_congr rfl
     intro i _
-    have hprod := (congrArg
+    have! hprod := (congrArg
       (fun P : ColumnL2 V →L[ℂ] ColumnL2 V => P (columnMomentRepresentative D (A 0) z hq))
       (completedColumnMask_product_eq D A (B.decision_mem i.val) (m + 1))).trans
         (columnMomentRepresentative_preserves_product D A z hq
           (B.decision_mem i.val) (hsegment i) m)
     exact congrArg (fun w : ColumnL2 V => ‖B.row i.val w‖ ^ 2) hprod.symm
-  have hsum : (∑ i, f i) ≤ ∑ q ∈ columnSizeRoots D z,
+  have! hsum : (∑ i, f i) ≤ ∑ q ∈ columnSizeRoots D z,
       (4 * L * ‖columnMomentFamily D (A 0) z q‖ ^ 2 +
         4 * columnAnchorTolerance D (columnCellAverage D z q) ^ 2 * D.budget ^ 3 *
           dyadicGridLength D.grid q.1) := by
@@ -3619,28 +3621,28 @@ theorem columnCompression_clean_square_bound {V ι F : Type*} [Fintype V] [Finty
     (∑ i, ‖B.row i (cellColumnProduct D A (B.decision_mem i) (m + 1) z)‖ ^ 2) ≤
       128 * projectionPrefixConstant (columnRestartCount D (m + 1)) ^ (2 * (m + 1)) *
         Real.log (2 * D.budget) * ‖z‖ ^ 2 := by
-  have h := columnCompression_logarithmic_square_bound D A m z B hB
+  have! h := columnCompression_logarithmic_square_bound D A m z B hB
   let P := projectionPrefixConstant (columnRestartCount D (m + 1)) ^ (2 * (m + 1))
-  have hP : 1 ≤ P := one_le_pow₀ (projectionPrefixConstant_one_le _)
-  have hlog := columnBudget_log_one_le D
-  have hD : 1 ≤ D.budget := by linarith [D.two_le_budget]
-  have hD0 : 0 < D.budget := by linarith
-  have herr : D.budget⁻¹ ^ 20 * D.budget ^ 3 ≤ 1 := by
-    have hp : D.budget ^ 3 ≤ D.budget ^ 20 := pow_le_pow_right₀ hD (by norm_num)
-    have hd := (div_le_one (pow_pos hD0 20)).mpr hp
+  have! hP : 1 ≤ P := one_le_pow₀ (projectionPrefixConstant_one_le _)
+  have! hlog := columnBudget_log_one_le D
+  have! hD : 1 ≤ D.budget := by linarith [D.two_le_budget]
+  have! hD0 : 0 < D.budget := by linarith
+  have! herr : D.budget⁻¹ ^ 20 * D.budget ^ 3 ≤ 1 := by
+    have! hp : D.budget ^ 3 ≤ D.budget ^ 20 := pow_le_pow_right₀ hD (by norm_num)
+    have! hd := (div_le_one (pow_pos hD0 20)).mpr hp
     simpa only [div_eq_mul_inv, inv_pow, mul_comm] using hd
-  have hl2 : (1 / 2 : ℝ) ≤ Real.log 2 := by
-    have hh := Real.one_sub_inv_le_log_of_pos (by norm_num : (0 : ℝ) < 2)
+  have! hl2 : (1 / 2 : ℝ) ≤ Real.log 2 := by
+    have! hh := Real.one_sub_inv_le_log_of_pos (by norm_num : (0 : ℝ) < 2)
     norm_num at hh ⊢
     linarith
-  have hdiv : 7 / Real.log 2 ≤ 14 :=
+  have! hdiv : 7 / Real.log 2 ≤ 14 :=
     (div_le_iff₀ (by linarith : 0 < Real.log 2)).mpr (by linarith)
-  have hmul := mul_le_mul_of_nonneg_left hdiv
+  have! hmul := mul_le_mul_of_nonneg_left hdiv
     (show 0 ≤ 4 * P * Real.log (2 * D.budget) by positivity)
-  have herror := mul_le_mul_of_nonneg_left herr (by norm_num : (0 : ℝ) ≤ 64 / 3)
-  have hdom : 1 ≤ P * Real.log (2 * D.budget) :=
+  have! herror := mul_le_mul_of_nonneg_left herr (by norm_num : (0 : ℝ) ≤ 64 / 3)
+  have! hdom : 1 ≤ P * Real.log (2 * D.budget) :=
     hP.trans (le_mul_of_one_le_right (zero_le_one.trans hP) hlog)
-  have hc : 4 * P * ((7 / Real.log 2) * Real.log (2 * D.budget)) +
+  have! hc : 4 * P * ((7 / Real.log 2) * Real.log (2 * D.budget)) +
       (64 / 3 : ℝ) * D.budget⁻¹ ^ 20 * D.budget ^ 3 ≤
         128 * P * Real.log (2 * D.budget) := by
     nlinarith only [hmul, herror, hdom]
@@ -3657,37 +3659,37 @@ theorem columnCompression_nonempty_bound {V ι F : Type*} [Fintype V] [Fintype �
   let s := (m : ℝ) + 2
   let x := 512 * s ^ 3 * Real.log (2 * D.budget)
   let L := projectionPrefixConstant (columnRestartCount D (m + 1))
-  have hs : 1 ≤ s := by dsimp [s]; have := Nat.cast_nonneg (α := ℝ) m; linarith
-  have hlog := columnBudget_log_one_le D
-  have hs3 : 1 ≤ s ^ 3 := one_le_pow₀ hs
-  have hxlog : 512 * Real.log (2 * D.budget) ≤ x := by
-    have h := mul_le_mul_of_nonneg_right hs3 (show 0 ≤ 512 * Real.log (2 * D.budget) by positivity)
+  have! hs : 1 ≤ s := by dsimp [s]; have! this := Nat.cast_nonneg (α := ℝ) m; linarith
+  have! hlog := columnBudget_log_one_le D
+  have! hs3 : 1 ≤ s ^ 3 := one_le_pow₀ hs
+  have! hxlog : 512 * Real.log (2 * D.budget) ≤ x := by
+    have! h := mul_le_mul_of_nonneg_right hs3 (show 0 ≤ 512 * Real.log (2 * D.budget) by positivity)
     dsimp only [x]
     nlinarith only [h]
-  have hx : 1 ≤ x := by nlinarith only [hxlog, hlog]
-  have hx0 : 0 ≤ x := zero_le_one.trans hx
-  have hL0 : 0 ≤ L := zero_le_one.trans (projectionPrefixConstant_one_le _)
-  have hLx : L ≤ x := by
-    have h := projectionRestartTime_prefix_polynomial D.two_le_budget (m := m + 1) (by omega)
+  have! hx : 1 ≤ x := by nlinarith only [hxlog, hlog]
+  have! hx0 : 0 ≤ x := zero_le_one.trans hx
+  have! hL0 : 0 ≤ L := zero_le_one.trans (projectionPrefixConstant_one_le _)
+  have! hLx : L ≤ x := by
+    have! h := projectionRestartTime_prefix_polynomial D.two_le_budget (m := m + 1) (by omega)
     change L ≤ 258 * ((m + 1 : ℕ) + 1 : ℝ) ^ 3 * Real.log (2 * D.budget) at h
     norm_num only [Nat.cast_add, Nat.cast_one] at h
-    have hs0 : 0 ≤ s ^ 3 * Real.log (2 * D.budget) := by positivity
-    have he : (m : ℝ) + 1 + 1 = s := by dsimp [s]; ring
+    have! hs0 : 0 ≤ s ^ 3 * Real.log (2 * D.budget) := by positivity
+    have! he : (m : ℝ) + 1 + 1 = s := by dsimp [s]; ring
     rw [he] at h
     dsimp only [x]
     nlinarith only [h, hs0]
-  have hlogx : 128 * Real.log (2 * D.budget) ≤ x ^ 2 := by
+  have! hlogx : 128 * Real.log (2 * D.budget) ≤ x ^ 2 := by
     nlinarith only [hxlog, hx, hlog, sq_nonneg (x - 1)]
-  have hpow := pow_le_pow_left₀ hL0 hLx (2 * (m + 1))
-  have hc := mul_le_mul hpow hlogx
+  have! hpow := pow_le_pow_left₀ hL0 hLx (2 * (m + 1))
+  have! hc := mul_le_mul hpow hlogx
     (show 0 ≤ 128 * Real.log (2 * D.budget) by positivity) (pow_nonneg hx0 _)
-  have hexp : x ^ (2 * (m + 1)) * x ^ 2 = (x ^ (m + 2)) ^ 2 := by
+  have! hexp : x ^ (2 * (m + 1)) * x ^ 2 = (x ^ (m + 2)) ^ 2 := by
     rw [← pow_add, ← pow_mul]
     congr 1
     omega
   rw [hexp] at hc
-  have h := columnCompression_clean_square_bound D A m z B hB
-  have hfinal := h.trans (mul_le_mul_of_nonneg_right
+  have! h := columnCompression_clean_square_bound D A m z B hB
+  have! hfinal := h.trans (mul_le_mul_of_nonneg_right
     (show 128 * L ^ (2 * (m + 1)) * Real.log (2 * D.budget) ≤ (x ^ (m + 2)) ^ 2 by
       nlinarith only [hc]) (sq_nonneg ‖z‖))
   apply finiteRowNorm_le_of_sq_le _ (mul_nonneg (pow_nonneg hx0 _) (norm_nonneg z))
@@ -3703,15 +3705,15 @@ theorem columnSpatialCompression {V ι F : Type*} [Fintype V] [Fintype ι]
     (B : ColumnRowFamily D ι F) (hB : B.bound ≤ 1) :
     finiteRowNorm (fun i => B.row i (cellColumnProduct D A (B.decision_mem i) m z)) ≤
       (512 * ((m : ℝ) + 1) ^ 512 * Real.log (2 * D.budget)) ^ (512 * (m + 1)) * ‖z‖ := by
-  have hlog := columnBudget_log_one_le D
+  have! hlog := columnBudget_log_one_le D
   cases m with
   | zero =>
-    have hsq : ∑ i, ‖B.row i z‖ ^ 2 ≤ ‖z‖ ^ 2 := by
-      have hb : B.bound ^ 2 ≤ 1 := by
+    have! hsq : ∑ i, ‖B.row i z‖ ^ 2 ≤ ‖z‖ ^ 2 := by
+      have! hb : B.bound ^ 2 ≤ 1 := by
         simpa using (sq_le_sq₀ B.bound_nonneg zero_le_one).mpr hB
       exact (B.square_sum z).trans (by
         simpa using (mul_le_mul_of_nonneg_right hb (sq_nonneg ‖z‖)))
-    have h := (finiteRowNorm_le_of_sq_le (fun i => B.row i z) (norm_nonneg z) hsq).trans
+    have! h := (finiteRowNorm_le_of_sq_le (fun i => B.row i z) (norm_nonneg z) hsq).trans
       (le_mul_of_one_le_left (norm_nonneg z)
         (one_le_pow₀ (show 1 ≤ 512 * Real.log (2 * D.budget) by nlinarith) (n := 512)))
     simpa only [Nat.cast_zero, zero_add, one_pow, mul_one, cellColumnProduct,
@@ -3720,16 +3722,16 @@ theorem columnSpatialCompression {V ι F : Type*} [Fintype V] [Fintype ι]
     let s := (n : ℝ) + 2
     let x := 512 * s ^ 3 * Real.log (2 * D.budget)
     let y := 512 * s ^ 512 * Real.log (2 * D.budget)
-    have hs : 1 ≤ s := by dsimp [s]; have := Nat.cast_nonneg (α := ℝ) n; linarith
-    have hx0 : 0 ≤ x := by dsimp [x]; positivity
-    have hxy : x ≤ y := by
+    have! hs : 1 ≤ s := by dsimp [s]; have! this := Nat.cast_nonneg (α := ℝ) n; linarith
+    have! hx0 : 0 ≤ x := by dsimp [x]; positivity
+    have! hxy : x ≤ y := by
       dsimp only [x, y]
       exact mul_le_mul_of_nonneg_right
         (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hs (by norm_num : 3 ≤ 512))
           (by norm_num : (0 : ℝ) ≤ 512)) (by linarith)
-    have hy1 : 1 ≤ y := by
-      have hp : 1 ≤ s ^ 512 := one_le_pow₀ hs
-      have hh : 1 ≤ s ^ 512 * Real.log (2 * D.budget) :=
+    have! hy1 : 1 ≤ y := by
+      have! hp : 1 ≤ s ^ 512 := one_le_pow₀ hs
+      have! hh : 1 ≤ s ^ 512 * Real.log (2 * D.budget) :=
         hp.trans (le_mul_of_one_le_right (zero_le_one.trans hp) hlog)
       dsimp only [y]
       calc
@@ -3737,11 +3739,11 @@ theorem columnSpatialCompression {V ι F : Type*} [Fintype V] [Fintype ι]
         _ ≤ 512 * (s ^ 512 * Real.log (2 * D.budget)) :=
           le_mul_of_one_le_left (zero_le_one.trans hh) (by norm_num)
         _ = _ := (mul_assoc _ _ _).symm
-    have hpow : x ^ (n + 2) ≤ y ^ (512 * (n + 1 + 1)) :=
+    have! hpow : x ^ (n + 2) ≤ y ^ (512 * (n + 1 + 1)) :=
       (pow_le_pow_left₀ hx0 hxy (n + 2)).trans (pow_le_pow_right₀ hy1 (by omega))
-    have h := (columnCompression_nonempty_bound D A n z B hB).trans
+    have! h := (columnCompression_nonempty_bound D A n z B hB).trans
       (mul_le_mul_of_nonneg_right hpow (norm_nonneg z))
-    have he : ((n + 1 : ℕ) : ℝ) + 1 = s := by
+    have! he : ((n + 1 : ℕ) : ℝ) + 1 = s := by
       dsimp only [s]
       push_cast
       ring
@@ -3868,31 +3870,31 @@ theorem columnSpatialCompression_complements {V ι F : Type*} [Fintype V] [Finty
   let s := (m : ℝ) + 1
   let Y := 1024 * s ^ 1024 * Real.log (2 * D.budget)
   let N := 512 * (m + 1)
-  have hs : 1 ≤ s := le_add_of_nonneg_left (Nat.cast_nonneg m)
-  have hlog := columnBudget_log_one_le D
-  have hY : 2 ≤ Y := by
-    have hp : 1 ≤ s ^ 1024 := one_le_pow₀ hs
-    have hh : 1 ≤ s ^ 1024 * Real.log (2 * D.budget) :=
+  have! hs : 1 ≤ s := le_add_of_nonneg_left (Nat.cast_nonneg m)
+  have! hlog := columnBudget_log_one_le D
+  have! hY : 2 ≤ Y := by
+    have! hp : 1 ≤ s ^ 1024 := one_le_pow₀ hs
+    have! hh : 1 ≤ s ^ 1024 * Real.log (2 * D.budget) :=
       hp.trans (le_mul_of_one_le_right (zero_le_one.trans hp) hlog)
     calc
       _ ≤ (1024 : ℝ) := by norm_num
       _ ≤ 1024 * (s ^ 1024 * Real.log (2 * D.budget)) :=
         le_mul_of_one_le_right (by norm_num) hh
       _ = _ := (mul_assoc _ _ _).symm
-  have hY1 : 1 ≤ Y := le_trans (by norm_num) hY
-  have hY0 : 0 ≤ Y := zero_le_one.trans hY1
-  have hbase : columnCompressionBase D m ≤ Y := by
+  have! hY1 : 1 ≤ Y := le_trans (by norm_num) hY
+  have! hY0 : 0 ≤ Y := zero_le_one.trans hY1
+  have! hbase : columnCompressionBase D m ≤ Y := by
     change 512 * s ^ 512 * Real.log (2 * D.budget) ≤ _
     exact mul_le_mul_of_nonneg_right
       (mul_le_mul (by norm_num : (512 : ℝ) ≤ 1024)
         (pow_le_pow_right₀ hs (by norm_num : 512 ≤ 1024))
         (pow_nonneg (zero_le_one.trans hs) _) (by norm_num)) (zero_le_one.trans hlog)
-  have hfirst : (2 : ℝ) ^ m ≤ Y ^ N :=
+  have! hfirst : (2 : ℝ) ^ m ≤ Y ^ N :=
     (pow_le_pow_left₀ (by norm_num) hY m).trans
       (pow_le_pow_right₀ hY1 (by dsimp [N]; omega))
-  have hsecond : columnCompressionBound D m ≤ Y ^ N :=
+  have! hsecond : columnCompressionBound D m ≤ Y ^ N :=
     pow_le_pow_left₀ (zero_le_one.trans (columnCompressionBase_one_le D m)) hbase N
-  have hproduct : (2 : ℝ) ^ m * columnCompressionBound D m ≤ Y ^ (1024 * (m + 1)) := by
+  have! hproduct : (2 : ℝ) ^ m * columnCompressionBound D m ≤ Y ^ (1024 * (m + 1)) := by
     calc
       _ ≤ Y ^ N * Y ^ N := mul_le_mul hfirst hsecond
         (zero_le_one.trans (columnCompressionBound_one_le D m)) (pow_nonneg hY0 _)

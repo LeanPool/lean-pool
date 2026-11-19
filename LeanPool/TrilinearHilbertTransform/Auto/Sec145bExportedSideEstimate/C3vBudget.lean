@@ -1376,7 +1376,7 @@ theorem globHist_cmp_cum (cat : Fin 4 → List (CatCol bf.Vtx)) (mbs : ∀ l, bf
   obtain ⟨m, hm⟩ := hcum _ hmem hw
   have hm2 : (D.getD y.1 (true, 0, none)).2.2.getD 0 = m := by rw [hm]; rfl
   rw [hm2]
-  congr 1
+  apply congrArg opAvg
   funext p
   rw [fp.cmpMaskM_cum cat mbs c d G jc jd w D y.1 p hm]
 
@@ -1669,7 +1669,7 @@ theorem ball_avg_eq (cat : Fin 4 → List (CatCol bf.Vtx)) (mbs : ∀ l, bf.Main
       (w, fp.brank (if w then jc else jd), none) h).1 = w := rfl
   simp only [List.map_cons]
   rw [chainVal_cons_pad _ _ _ _ _ hfst, opAvg_apply]
-  congr 1
+  apply congrArg (fun z : ColumnL2 (bf.Lab ⊕ Fin fp.Mc) => (fp.P : ℂ)⁻¹ • z)
   refine Finset.sum_congr rfl fun p _ => ?_
   have hl := fp.cum_hist_left cat mbs a c d rH G jc jd w D post (k₀ + 1) hpost hcum h x
   unfold gOutM

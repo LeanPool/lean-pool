@@ -1,0 +1,67 @@
+slug: coboundary-k3
+title: The Sym(3) permutation coboundary constant of the complete complex
+summary: Defines the Sym(3) permutation coboundary constant h1 k of the complete complex K_k as the
+  infimum of the moved-point ratio N/D over Sym(3)-valued non-coboundaries, where N counts points
+  moved by triangle holonomies and D is the minimum moved-point cost over Sym(3) gauges. Proves
+  h1 k = k/3 for every k ≥ 3. The lower bound is the star-gauge double count (Chapman–Lubotzky,
+  Proposition 3.2), proved here only for Sym(3) in this same-degree counting convention. The upper
+  bound comes from balanced replication of a k = 4 witness and of Kozlov's staircase seeds. Explicit
+  witnesses for k = 4, ..., 8 are checked by kernel-evaluated gauge exhaustions. Not formalized, and
+  only cited, are the general symmetric-group form of the Chapman–Lubotzky bound, the paper's cross-degree
+  convention and its comparison (Proposition 10), the coefficient-subgroup minima (Proposition 5),
+  and Section 5 beyond the displacement Gram formula.
+branch: combinatorics
+entry_module: LeanPool.CoboundaryK3
+authors:
+- Jeromie Beasley
+source:
+  title: The Permutation Coboundary Constant of the Complete Complex Is k/3 for Every k ≥ 4
+  authors:
+  - Jeromie Beasley
+  doi: 10.5281/zenodo.23245792
+  url: https://github.com/dicipler-pixel/coboundary-k3-lean/tree/70a2b3de40f88f3bbe25b63e581e1fc84e88d841
+  github_repo: dicipler-pixel/coboundary-k3-lean
+  commit: 70a2b3de40f88f3bbe25b63e581e1fc84e88d841
+license: MIT
+status: verified
+provenance: AI
+provenance_evidence: The upstream AI_USE.md states that Claude and ChatGPT wrote and repaired the
+  Lean proofs and that Grok drafted the structure of the replication module; the research questions
+  are credited to Jeromie Beasley. Proposed in issue 725. The Lean Pool port is by Claude.
+main_declarations:
+- CoboundaryK3.h1_eq_all
+- CoboundaryK3.k_div_three_le_h1
+- CoboundaryK3.stair_gaugeDist
+- CoboundaryK3.h1_eq_four_mul
+- CoboundaryK3.witness_k8
+main_results:
+- declaration: CoboundaryK3.h1_eq_all
+  informal: For every k ≥ 3, the Sym(3) permutation coboundary constant h1 k of the complete
+    complex K_k, in the same-degree moved-point counting convention, equals k/3.
+  source_ref: Theorem 8 of doi:10.5281/zenodo.23245792 (stated there for k ≥ 4).
+- declaration: CoboundaryK3.k_div_three_le_h1
+  informal: If K_k carries a Sym(3)-valued non-coboundary, then k/3 ≤ h1 k; the star gauges at
+    the k vertices cost three times the triangle defect in total.
+  source_ref: Proposition 1 of doi:10.5281/zenodo.23245792, which is Chapman–Lubotzky,
+    arXiv:2311.06706, Proposition 3.2, here only for Sym(3) in the counting convention.
+- declaration: CoboundaryK3.stair_gaugeDist
+  informal: Kozlov's staircase cochain on K_{2t+1} has Sym(3) gauge distance exactly t(t+1).
+  source_ref: Kozlov, arXiv:1610.07136, Definition 3.2 and Lemma 3.8, with the Sym(3) parity
+    transfer of doi:10.5281/zenodo.23245792.
+- declaration: CoboundaryK3.h1_eq_four_mul
+  informal: Balanced replication of the k = 4 witness gives h1 (4q) = 4q/3 for every q ≥ 1.
+  source_ref: Corollary 7 of doi:10.5281/zenodo.23245792.
+- declaration: CoboundaryK3.witness_k8
+  informal: The explicit k = 8 witness of Appendix A has triangle defect 72, every Sym(3) gauge
+    costs at least 27, and the identity gauge costs exactly 27.
+  source_ref: Theorem 4 and Appendix A of doi:10.5281/zenodo.23245792.
+tags:
+- coboundary-expansion
+- cocycles
+- symmetric-group
+- complete-complex
+- kernel-decision
+msc:
+- 05E45
+- 20B30
+- 55U10

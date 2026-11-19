@@ -9,6 +9,8 @@ module
 7b4209609e6a7fb9d9935973ee8541495f943660. Imports, names, proof organization and
 Mathlib interfaces have been updated; original authorship is retained above. -/
 
+meta import LeanPool.TrilinearHilbertTransform.Auto.ProofTools -- shake: keep
+
 public import LeanPool.TrilinearHilbertTransform.Auto.Sec134SideStatesFixedOffsets
 
 /-!
@@ -175,15 +177,15 @@ theorem predecessor_nesting (C : ModeComponents Mode P) (C' : ModeComponents Mod
   set Fl := C'.F h m'
   set El := C'.E (h - Δ) m'
   set Ee := (C.E (h - Δ) m).image f
-  have hFm : C'.F h (f m) = Fl := C'.F_comp h m' (f m) hlink
-  have hEe : Ee ⊆ Fl := by
+  have! hFm : C'.F h (f m) = Fl := C'.F_comp h m' (f m) hlink
+  have! hEe : Ee ⊆ Fl := by
     intro z hz
     obtain ⟨y, hy, rfl⟩ := Finset.mem_image.mp hz
-    have hyF : y ∈ C.F h m := C.F_mono (h - Δ) h m (Nat.sub_le _ _) (C.E_le_F _ m hy)
+    have! hyF : y ∈ C.F h m := C.F_mono (h - Δ) h m (Nat.sub_le _ _) (C.E_le_F _ m hy)
     rw [← hFm]
     exact hF h m y hyF
-  have hEl : El ⊆ Fl := (C'.E_le_F _ m').trans (C'.F_mono _ _ m' (Nat.sub_le _ _))
-  have hlab : Ee.image C'.π = C.labels (C.E (h - Δ) m) := by
+  have! hEl : El ⊆ Fl := (C'.E_le_F _ m').trans (C'.F_mono _ _ m' (Nat.sub_le _ _))
+  have! hlab : Ee.image C'.π = C.labels (C.E (h - Δ) m) := by
     simp only [Ee, Finset.image_image, labels]
     congr 1
     funext x
@@ -195,19 +197,19 @@ theorem predecessor_nesting (C : ModeComponents Mode P) (C' : ModeComponents Mod
     exact htype
   · intro x hx x' hx' hxx' hg
     -- the common good primary joins `x` to the later predecessor
-    have hxEl : x ∈ El := by
-      have h1 := hstab x' x (hxx' ▸ hg) hxx' (by
+    have! hxEl : x ∈ El := by
+      have! h1 := hstab x' x (hxx' ▸ hg) hxx' (by
         rw [C'.F_comp h m' x' (hEl hx'), ← C'.F_comp h m' x (hEe hx)]
         exact C'.E_le_F h x (C'.E_self h x))
-      have h2 : C'.E (h - Δ) x' = El := C'.E_comp _ m' x' hx'
+      have! h2 : C'.E (h - Δ) x' = El := C'.E_comp _ m' x' hx'
       rw [h2] at h1
       exact h1
     obtain ⟨y₀, hy₀, rfl⟩ := Finset.mem_image.mp hx
     intro z hz
     obtain ⟨y, hy, rfl⟩ := Finset.mem_image.mp hz
-    have hyy : y ∈ C.E (h - Δ) y₀ := by rw [C.E_comp _ m y₀ hy₀]; exact hy
-    have h3 := hE _ y₀ y hyy
-    have h4 : C'.E (h - Δ) (f y₀) = El := C'.E_comp _ m' (f y₀) hxEl
+    have! hyy : y ∈ C.E (h - Δ) y₀ := by rw [C.E_comp _ m y₀ hy₀]; exact hy
+    have! h3 := hE _ y₀ y hyy
+    have! h4 : C'.E (h - Δ) (f y₀) = El := C'.E_comp _ m' (f y₀) hxEl
     rw [h4] at h3
     exact h3
 
@@ -309,11 +311,11 @@ theorem representative_separation {b' : ℤ} {J' : ℤ × ℤ} (hJ' : J'.1 = b' 
         dyadicGridLength Gd J'.1),
       S.Ξ / 2 * max rI⁻¹ rI'⁻¹ < |Ms.slope z'.1 x - Ms.slope z.1 x +
         (∑ i, (n i : ℝ) * (Ms.zc.θ i / S.Q0)) / ModeSchedule.Lh h| := by
-  have hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
-  have h1 : J'.1 ≤ b' + S.K := by rw [hJ']; omega
-  have hrt := dyadicGridLength_pos Gd (b' + S.K)
+  have! hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! h1 : J'.1 ≤ b' + S.K := by rw [hJ']; omega
+  have! hrt := dyadicGridLength_pos Gd (b' + S.K)
   -- no CURRENT edge between the two modes
-  have hne : ¬ S.gapEdge
+  have! hne : ¬ S.gapEdge
       (fun (x : Ms.alive (ancAt Gd J' (b' - 4 * S.K))) (y : ℝ) => Ms.slope x.1 y)
       (fun l => Ms.zc.θ l / S.Q0)
       (dyadicGridLeft Gd J'.1 J'.2) (dyadicGridLength Gd J'.1)
@@ -323,7 +325,7 @@ theorem representative_separation {b' : ℤ} {J' : ℤ × ℤ} (hJ' : J'.1 = b' 
     rw [Ms.blockComps_eq S hA h1]
     unfold preComps ModeSchedule.preCurrent
     exact ModeComponents.ofEdges_F_of_cur _ _ _ _ _ _ hedge
-  have hsep := S.sep_of_not_gapEdge
+  have! hsep := S.sep_of_not_gapEdge
     (fun (x : Ms.alive (ancAt Gd J' (b' - 4 * S.K))) (y : ℝ) => Ms.slope x.1 y)
     (fun l => Ms.zc.θ l / S.Q0)
     (dyadicGridLeft Gd J'.1 J'.2) (dyadicGridLength Gd J'.1)
@@ -333,8 +335,8 @@ theorem representative_separation {b' : ℤ} {J' : ℤ × ℤ} (hJ' : J'.1 = b' 
       Ms.γOf z.1) (fun x : ℝ => by simp only [slope]; ring) hvar n hn
   intro x hx
   refine lt_of_le_of_lt ?_ (hsep x hx)
-  have hΞ := Ξ_nonneg S
-  have hmax : max rI⁻¹ rI'⁻¹ ≤ (dyadicGridLength Gd (b' + S.K))⁻¹ :=
+  have! hΞ := Ξ_nonneg S
+  have! hmax : max rI⁻¹ rI'⁻¹ ≤ (dyadicGridLength Gd (b' + S.K))⁻¹ :=
     max_le (inv_anti₀ hrt hrI) (inv_anti₀ hrt hrI')
   calc S.Ξ / 2 * max rI⁻¹ rI'⁻¹ ≤ S.Ξ / 2 * (dyadicGridLength Gd (b' + S.K))⁻¹ :=
         mul_le_mul_of_nonneg_left hmax (div_nonneg hΞ (by norm_num))
@@ -460,7 +462,7 @@ theorem tops_count_cut (G : RealDyadicGrid) (S : Finset (ℤ × ℤ)) {ι : Type
         (fun I => ((T.filter fun t => cell t = I).card : ℝ)) (M / ρ) ∧
           x ∈ dyadicGridCell G (cell t).1 (cell t).2).card : ℝ) ≤ M / ρ := by
   set a : ℤ × ℤ → ℝ := fun I => ((T.filter fun t => cell t = I).card : ℝ)
-  have hmass : dyadicWeightedMass G S a = ∑ t ∈ T, dyadicGridLength G (cell t).1 := by
+  have! hmass : dyadicWeightedMass G S a = ∑ t ∈ T, dyadicGridLength G (cell t).1 := by
     unfold dyadicWeightedMass
     simp only [a]
     rw [← Finset.sum_fiberwise_of_maps_to (s := T) (t := S) (g := cell) hT]
@@ -510,37 +512,37 @@ theorem alive_curvature_gap {b' : ℤ} {J' : ℤ × ℤ} (hJ' : J'.1 = b' - 2 * 
     2 * |Ms.lamOf z'.1 - Ms.lamOf z.1| * dyadicGridLength Gd J'.1 ≤
       S.Ξ / dyadicGridLength Gd (b' + S.K) / 2 := by
   set ru := dyadicGridLength Gd (b' - 4 * S.K)
-  have hru := dyadicGridLength_pos Gd (b' - 4 * S.K)
-  have hlen : ∀ m : Ms.alive (ancAt Gd J' (b' - 4 * S.K)), |Ms.lamOf m.1| ≤ Ms.Λ / ru ^ 2 := by
+  have! hru := dyadicGridLength_pos Gd (b' - 4 * S.K)
+  have! hlen : ∀ m : Ms.alive (ancAt Gd J' (b' - 4 * S.K)), |Ms.lamOf m.1| ≤ Ms.Λ / ru ^ 2 := by
     intro m
-    have hsub := (Ms.mem_alive).mp m.2
-    have hR := dyadicGridLength_le_of_subset Gd hsub
-    have hRpos := dyadicGridLength_pos Gd (Ms.cellOf m.1).1
-    have hlam := Ms.lam_le m.1
-    have hΛ0 : 0 ≤ Ms.Λ := le_trans (by positivity) hlam
-    have hu : (ancAt Gd J' (b' - 4 * S.K)).1 = b' - 4 * S.K := rfl
+    have! hsub := (Ms.mem_alive).mp m.2
+    have! hR := dyadicGridLength_le_of_subset Gd hsub
+    have! hRpos := dyadicGridLength_pos Gd (Ms.cellOf m.1).1
+    have! hlam := Ms.lam_le m.1
+    have! hΛ0 : 0 ≤ Ms.Λ := le_trans (by positivity) hlam
+    have! hu : (ancAt Gd J' (b' - 4 * S.K)).1 = b' - 4 * S.K := rfl
     rw [hu] at hR
     rw [le_div_iff₀ (by positivity)]
     calc |Ms.lamOf m.1| * ru ^ 2 ≤ |Ms.lamOf m.1| * dyadicGridLength Gd (Ms.cellOf m.1).1 ^ 2 :=
           mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hru.le hR 2) (abs_nonneg _)
       _ ≤ Ms.Λ := hlam
-  have hΛ0 : 0 ≤ Ms.Λ := le_trans (by positivity) (Ms.lam_le z.1)
-  have hd : |Ms.lamOf z'.1 - Ms.lamOf z.1| ≤ 2 * (Ms.Λ / ru ^ 2) := by
+  have! hΛ0 : 0 ≤ Ms.Λ := le_trans (by positivity) (Ms.lam_le z.1)
+  have! hd : |Ms.lamOf z'.1 - Ms.lamOf z.1| ≤ 2 * (Ms.Λ / ru ^ 2) := by
     have := abs_sub (Ms.lamOf z'.1) (Ms.lamOf z.1)
     linarith [hlen z, hlen z']
   set q : ℝ := (2 : ℝ)⁻¹ ^ S.K
-  have hq0 : 0 < q := by positivity
-  have hq1 : q ≤ 1 := pow_le_one₀ (by norm_num) (by norm_num)
-  have hJ : dyadicGridLength Gd J'.1 = ru * q ^ 2 := by
+  have! hq0 : 0 < q := by positivity
+  have! hq1 : q ≤ 1 := pow_le_one₀ (by norm_num) (by norm_num)
+  have! hJ : dyadicGridLength Gd J'.1 = ru * q ^ 2 := by
     rw [hJ', show b' - 2 * (S.K : ℤ) = (b' - 4 * S.K) + ((2 * S.K : ℕ) : ℤ) by push_cast; ring,
       dyadicGridLength_add_nat, pow_mul']
-  have hT : dyadicGridLength Gd (b' + S.K) = ru * q ^ 5 := by
+  have! hT : dyadicGridLength Gd (b' + S.K) = ru * q ^ 5 := by
     rw [show b' + (S.K : ℤ) = (b' - 4 * S.K) + ((5 * S.K : ℕ) : ℤ) by push_cast; ring,
       dyadicGridLength_add_nat, pow_mul']
   rw [hJ, hT]
-  have hq2 : q ^ 2 ≤ 1 := pow_le_one₀ hq0.le hq1
-  have hq5 : q ^ 5 ≤ 1 := pow_le_one₀ hq0.le hq1
-  have hq5p : 0 < q ^ 5 := by positivity
+  have! hq2 : q ^ 2 ≤ 1 := pow_le_one₀ hq0.le hq1
+  have! hq5 : q ^ 5 ≤ 1 := pow_le_one₀ hq0.le hq1
+  have! hq5p : 0 < q ^ 5 := by positivity
   calc 2 * |Ms.lamOf z'.1 - Ms.lamOf z.1| * (ru * q ^ 2)
       ≤ 2 * (2 * (Ms.Λ / ru ^ 2)) * (ru * 1) := by
         gcongr
@@ -549,7 +551,7 @@ theorem alive_curvature_gap {b' : ℤ} {J' : ℤ × ℤ} (hJ' : J'.1 = b' - 2 * 
         rw [div_le_div_iff₀ hru (by positivity)]; nlinarith
     _ ≤ S.Ξ / (ru * q ^ 5) / 2 := by
         rw [div_div, mul_comm (ru * q ^ 5) 2]
-        have hΞ : 0 ≤ S.Ξ := le_trans (by positivity) hΛ
+        have! hΞ : 0 ≤ S.Ξ := le_trans (by positivity) hΛ
         exact div_le_div_of_nonneg_left hΞ (by positivity)
           (mul_le_mul_of_nonneg_left (by nlinarith) (by norm_num))
 
@@ -767,16 +769,16 @@ theorem attempt_representatives3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
           z'.1 ∈ Ms.predOfMode S hA Δ h c' → z ∉ (Ms.blockComps S hA c'.1 c'.2.1).F h z') := by
   set lt := nodeLt3 (Gd := Gd) Ms Nd
   set! d : ℤ × (ℤ × ℤ) × Ms.Md → ℕ := fun c => (c.1 - Bmin).toNat
-  have hd : ∀ c c', lt c c' → d c < d c' := by
+  have! hd : ∀ c c', lt c c' → d c < d c' := by
     intro c c' hcc'
     obtain ⟨hc, hc', -, hlt⟩ := hcc'
     have := hBmin c hc
     have := hBmin c' hc'
     simp only [d]
     omega
-  have hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
   set E := Ms.predOfMode S hA Δ h
-  have hne : ∀ c, (E c).Nonempty := by
+  have! hne : ∀ c, (E c).Nonempty := by
     intro c
     by_cases hm : c.2.2 ∈ Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))
     · rw [show E c = _ from Ms.predOfMode_eq S hA Δ h hm]
@@ -784,18 +786,18 @@ theorem attempt_representatives3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
     · simp only [E, predOfMode, dite_eq_right_of_eq_false (eq_false hm)]
       exact Finset.singleton_nonempty _
   -- linked predecessors along a path are nested
-  have hlinked : ∀ c c', lt c c' → ∀ z z' : Ms.alive (ancAt Gd c'.2.1 (c'.1 - 4 * S.K)),
+  have! hlinked : ∀ c c', lt c c' → ∀ z z' : Ms.alive (ancAt Gd c'.2.1 (c'.1 - 4 * S.K)),
       z.1 ∈ E c → z'.1 ∈ E c' → z ∈ (Ms.blockComps S hA c'.1 c'.2.1).F h z' → E c ⊆ E c' := by
     intro c c' hcc' z z' hz hz' hzF
     obtain ⟨hc, hc', hsub, hlt⟩ := hcc'
-    have hUU := ancAt_block_subset S (hNd c hc) hlt.le hsub
-    have hper := fun h' {x y : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))} =>
+    have! hUU := ancAt_block_subset S (hNd c hc) hlt.le hsub
+    have! hper := fun h' {x y : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))} =>
       Ms.blockComps_persist S hA (hNd c hc) (hNd c' hc') hlt.le hsub h' hUU (x := x) (y := y)
     set C := Ms.blockComps S hA c.1 c.2.1
     set C' := Ms.blockComps S hA c'.1 c'.2.1
     set! mc : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K)) := ⟨c.2.2, halive c hc⟩
     set! mc' : Ms.alive (ancAt Gd c'.2.1 (c'.1 - 4 * S.K)) := ⟨c'.2.2, halive c' hc'⟩
-    have hEc : E c = (C.E (h - Δ) mc).map ⟨Subtype.val, Subtype.val_injective⟩ :=
+    have! hEc : E c = (C.E (h - Δ) mc).map ⟨Subtype.val, Subtype.val_injective⟩ :=
       Ms.predOfMode_eq S hA Δ h (halive c hc)
     have hEc' : E c' = (C'.E (h - Δ) mc').map ⟨Subtype.val, Subtype.val_injective⟩ :=
       Ms.predOfMode_eq S hA Δ h (halive c' hc')
@@ -803,22 +805,22 @@ theorem attempt_representatives3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
     rw [hEc'] at hz' ⊢
     obtain ⟨y1, hy1E, hy1⟩ := Finset.mem_map.mp hz
     obtain ⟨y2, hy2E, hy2⟩ := Finset.mem_map.mp hz'
-    have hfy : Ms.aliveMap hUU y1 = z := Subtype.ext hy1
-    have hy2z : y2 = z' := Subtype.ext hy2
+    have! hfy : Ms.aliveMap hUU y1 = z := Subtype.ext hy1
+    have! hy2z : y2 = z' := Subtype.ext hy2
     subst hy2z
-    have hlink : Ms.aliveMap hUU mc ∈ C'.F h mc' := by
-      have h1 : z ∈ C'.E (h - Δ) (Ms.aliveMap hUU mc) := by
+    have! hlink : Ms.aliveMap hUU mc ∈ C'.F h mc' := by
+      have! h1 : z ∈ C'.E (h - Δ) (Ms.aliveMap hUU mc) := by
         rw [← hfy]; exact (hper (h - Δ)).1 hy1E
       have h1' : Ms.aliveMap hUU mc ∈ C'.F h z := by
         have : Ms.aliveMap hUU mc ∈ C'.E (h - Δ) z := by
           rw [C'.E_comp _ _ z h1]; exact C'.E_self _ _
         exact C'.F_mono _ h _ (Nat.sub_le _ _) (C'.E_le_F _ _ this)
-      have h2 : C'.F h z = C'.F h mc' := by
+      have! h2 : C'.F h z = C'.F h mc' := by
         rw [C'.F_comp h y2 z hzF]
         exact C'.F_comp h mc' y2
           (C'.F_mono _ h _ (Nat.sub_le _ _) (C'.E_le_F _ _ hy2E))
       rw [← h2]; exact h1'
-    have htype : (C'.labels (C'.E (h - Δ) mc')).card <
+    have! htype : (C'.labels (C'.E (h - Δ) mc')).card <
         2 * (C.labels (C.E (h - Δ) mc)).card := by
       refine ModeComponents.card_lt_two_mul_of_log2_eq ?_
         ((htype1 c hc).trans (htype1 c' hc').symm)
@@ -832,7 +834,7 @@ theorem attempt_representatives3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
     exact Finset.mem_map.mpr ⟨Ms.aliveMap hUU y1,
       hnest' (Finset.mem_image_of_mem _ hy1), rfl⟩
   -- predecessors meeting along a path are nested
-  have hnest : ∀ c c', lt c c' → (E c ∩ E c').Nonempty → E c ⊆ E c' := by
+  have! hnest : ∀ c c', lt c c' → (E c ∩ E c').Nonempty → E c ⊆ E c' := by
     intro c c' hcc' hmeet
     obtain ⟨y, hy⟩ := hmeet
     obtain ⟨hy1, hy2⟩ := Finset.mem_inter.mp hy
@@ -845,28 +847,28 @@ theorem attempt_representatives3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
     exact hlinked c c' hcc' y2 y2 hy1 hy2
       ((Ms.blockComps S hA c'.1 c'.2.1).E_le_F h y2 (ModeComponents.E_self _ h y2))
   -- ancestors with meeting predecessors are comparable
-  have hpath : ∀ a b c, lt a c → lt b c → (E a ∩ E b).Nonempty → a = b ∨ lt a b ∨ lt b a := by
+  have! hpath : ∀ a b c, lt a c → lt b c → (E a ∩ E b).Nonempty → a = b ∨ lt a b ∨ lt b a := by
     intro a b c hac hbc hmeet
     obtain ⟨ha, hc, hca, hlt⟩ := hac
     obtain ⟨hb, -, hcb, hlt'⟩ := hbc
-    have hda := hNd a ha
-    have hdb := hNd b hb
+    have! hda := hNd a ha
+    have! hdb := hNd b hb
     rcases lt_trichotomy a.1 b.1 with h1 | h1 | h1
     · refine Or.inr (Or.inl ⟨ha, hb, ?_, h1⟩)
       exact dyadicGridCell_subset_of_common Gd hcb hca (by omega)
-    · have hJ : a.2.1 = b.2.1 := dyadicGridCell_eq_of_meet Gd (by omega)
+    · have! hJ : a.2.1 = b.2.1 := dyadicGridCell_eq_of_meet Gd (by omega)
         ⟨_, hca (dyadicGridCell_left_mem Gd c.2.1.1 c.2.1.2),
           hcb (dyadicGridCell_left_mem Gd _ _)⟩
       by_cases hab : a = b
       · exact Or.inl hab
       · exfalso
-        have hF := hdist a ha b hb h1 hJ hab
+        have! hF := hdist a ha b hb h1 hJ hab
         set C := Ms.blockComps S hA a.1 a.2.1
         obtain ⟨y, hy⟩ := hmeet
         obtain ⟨hya, hyb⟩ := Finset.mem_inter.mp hy
         rw [show E a = _ from Ms.predOfMode_eq S hA Δ h (halive a ha)] at hya
         obtain ⟨y1, hy1, rfl⟩ := Finset.mem_map.mp hya
-        have hEb : E b = (C.E (h - Δ) ⟨b.2.2, by rw [h1, hJ]; exact halive b hb⟩).map
+        have! hEb : E b = (C.E (h - Δ) ⟨b.2.2, by rw [h1, hJ]; exact halive b hb⟩).map
             ⟨Subtype.val, Subtype.val_injective⟩ := by
           rw [show E b = _ from Ms.predOfMode_eq S hA Δ h (halive b hb)]
           obtain ⟨b1, b2, b3⟩ := b
@@ -875,12 +877,12 @@ theorem attempt_representatives3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
           rfl
         rw [hEb] at hyb
         obtain ⟨y2, hy2, hyy⟩ := Finset.mem_map.mp hyb
-        have hy12 : y2 = y1 := Subtype.ext hyy
+        have! hy12 : y2 = y1 := Subtype.ext hyy
         subst hy12
         -- `y2` lies in both CURRENT components
-        have hfa : y2 ∈ C.F h ⟨a.2.2, halive a ha⟩ :=
+        have! hfa : y2 ∈ C.F h ⟨a.2.2, halive a ha⟩ :=
           C.F_mono _ h _ (Nat.sub_le _ _) (C.E_le_F _ _ hy1)
-        have hfb : y2 ∈ C.F h ⟨b.2.2, by rw [h1, hJ]; exact halive b hb⟩ :=
+        have! hfb : y2 ∈ C.F h ⟨b.2.2, by rw [h1, hJ]; exact halive b hb⟩ :=
           C.F_mono _ h _ (Nat.sub_le _ _) (C.E_le_F _ _ hy2)
         apply hF
         have e1 := C.F_comp h _ _ hfa
@@ -889,7 +891,7 @@ theorem attempt_representatives3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
         exact C.E_le_F _ _ (C.E_self _ _)
     · refine Or.inr (Or.inr ⟨hb, ha, ?_, h1⟩)
       exact dyadicGridCell_subset_of_common Gd hca hcb (by omega)
-  have hmaj : ∀ c c', lt c c' → E c ⊆ E c' → (E c').card < 2 * (E c).card := by
+  have! hmaj : ∀ c c', lt c c' → E c ⊆ E c' → (E c').card < 2 * (E c).card := by
     intro c c' hcc' _
     exact ModeComponents.card_lt_two_mul_of_log2_eq (Finset.card_pos.mpr (hne c))
       ((htype2 c hcc'.1).trans (htype2 c' hcc'.2.1).symm)
@@ -949,7 +951,7 @@ theorem typed_representatives (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
         ∀ z z' : Ms.alive (ancAt Gd c'.2.1 (c'.1 - 4 * S.K)), z.1 ∈ Ms.predOfMode S hA Δ h c →
           z'.1 ∈ Ms.predOfMode S hA Δ h c' → z ∉ (Ms.blockComps S hA c'.1 c'.2.1).F h z') := by
     intro k₁ k₂
-    have hsub : ∀ c ∈ Nd.filter (fun c => Ms.nodeType1 S hA Δ h c = k₁ ∧
+    have! hsub : ∀ c ∈ Nd.filter (fun c => Ms.nodeType1 S hA Δ h c = k₁ ∧
         Ms.nodeType2 S hA Δ h c = k₂), c ∈ Nd := fun c hc => (Finset.mem_filter.mp hc).1
     exact Ms.attempt_representatives3 S hA SP _ (fun c hc => hNd c (hsub c hc))
       (fun c hc => hBmin c (hsub c hc)) Δ h (fun c hc => halive c (hsub c hc))
@@ -957,7 +959,7 @@ theorem typed_representatives (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
       (fun c hc c' hc' h1 h2 hne => hdist c (hsub c hc) c' (hsub c' hc') h1 h2 hne)
       (k1 := k₁) (k2 := k₂)
       (fun c hc => by
-        have h1 := (Finset.mem_filter.mp hc).2.1
+        have! h1 := (Finset.mem_filter.mp hc).2.1
         unfold nodeType1 at h1
         rwa [dite_eq_left_of_eq_true (eq_true (halive c (hsub c hc)))] at h1)
       (fun c hc => (Finset.mem_filter.mp hc).2.2) dflt
@@ -1040,11 +1042,11 @@ theorem role_label_separation3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
     (hrI' : dyadicGridLength Gd (max c.1 c'.1 + S.K) ≤ rI') :
     S.Ξ / 2 * max rI⁻¹ rI'⁻¹ < |Ms.slope (rep c) xs - Ms.slope (rep c') xs +
       (∑ i, (n i : ℝ) * (Ms.zc.θ i / S.Q0)) / ModeSchedule.Lh h| := by
-  have hIcc : ∀ d ∈ Nd, xs ∈ Set.Icc (dyadicGridLeft Gd d.2.1.1 d.2.1.2)
+  have! hIcc : ∀ d ∈ Nd, xs ∈ Set.Icc (dyadicGridLeft Gd d.2.1.1 d.2.1.2)
       (dyadicGridLeft Gd d.2.1.1 d.2.1.2 + dyadicGridLength Gd d.2.1.1) := fun d hd =>
     Set.Ico_subset_Icc_self (hxs d hd)
   -- the flip of the shift
-  have hflip : |Ms.slope (rep c') xs - Ms.slope (rep c) xs +
+  have! hflip : |Ms.slope (rep c') xs - Ms.slope (rep c) xs +
       (∑ i, ((-n i : ℤ) : ℝ) * (Ms.zc.θ i / S.Q0)) / ModeSchedule.Lh h| =
       |Ms.slope (rep c) xs - Ms.slope (rep c') xs +
         (∑ i, (n i : ℝ) * (Ms.zc.θ i / S.Q0)) / ModeSchedule.Lh h| := by
@@ -1063,27 +1065,27 @@ theorem role_label_separation3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
       S.Ξ / 2 * max ρ⁻¹ ρ'⁻¹ < |Ms.slope (rep c₂) xs - Ms.slope (rep c₁) xs +
         (∑ i, (m i : ℝ) * (Ms.zc.θ i / S.Q0)) / ModeSchedule.Lh h| := by
     intro c₁ hc₁ c₂ hc₂ hle hsub hrne m hm ρ ρ' hρ hρ'
-    have hUU := ancAt_block_subset S (hNd c₁ hc₁) hle hsub
-    have hz1 : rep c₁ ∈ Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K)) :=
+    have! hUU := ancAt_block_subset S (hNd c₁ hc₁) hle hsub
+    have! hz1 : rep c₁ ∈ Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K)) :=
       (Ms.mem_alive).mpr (hUU.trans ((Ms.mem_alive).mp
         (Ms.mem_alive_of_mem_predOfMode S hA Δ h (halive c₁ hc₁) (hrep c₁))))
-    have hz2 : rep c₂ ∈ Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K)) :=
+    have! hz2 : rep c₂ ∈ Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K)) :=
       Ms.mem_alive_of_mem_predOfMode S hA Δ h (halive c₂ hc₂) (hrep c₂)
-    have hF : (⟨rep c₁, hz1⟩ : Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K))) ∉
+    have! hF : (⟨rep c₁, hz1⟩ : Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K))) ∉
         (Ms.blockComps S hA c₂.1 c₂.2.1).F h ⟨rep c₂, hz2⟩ := by
       rcases hle.lt_or_eq with hlt | heq
       · exact hsepF c₁ c₂ ⟨hc₁, hc₂, hsub, hlt⟩ hrne _ _ (hrep c₁) (hrep c₂)
       · -- same block: the pre-cells agree, the nodes differ, so the components differ
-        have hJ : c₁.2.1 = c₂.2.1 := dyadicGridCell_eq_of_meet Gd
+        have! hJ : c₁.2.1 = c₂.2.1 := dyadicGridCell_eq_of_meet Gd
           (by rw [hNd c₁ hc₁, hNd c₂ hc₂, heq])
           ⟨xs, hxs c₁ hc₁, hxs c₂ hc₂⟩
-        have hcne : c₁ ≠ c₂ := fun h => hrne (by rw [h])
+        have! hcne : c₁ ≠ c₂ := fun h => hrne (by rw [h])
         set C := Ms.blockComps S hA c₂.1 c₂.2.1
-        have hm1 : c₁.2.2 ∈ Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K)) := by
+        have! hm1 : c₁.2.2 ∈ Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K)) := by
           rw [← heq, ← hJ]; exact halive c₁ hc₁
-        have hd := hdist c₂ hc₂ c₁ hc₁ heq.symm hJ.symm (Ne.symm hcne)
+        have! hd := hdist c₂ hc₂ c₁ hc₁ heq.symm hJ.symm (Ne.symm hcne)
         -- representatives lie in the CURRENT components of their modes
-        have hE1 : Ms.predOfMode S hA Δ h c₁ = (C.E (h - Δ) ⟨c₁.2.2, hm1⟩).map
+        have! hE1 : Ms.predOfMode S hA Δ h c₁ = (C.E (h - Δ) ⟨c₁.2.2, hm1⟩).map
             ⟨Subtype.val, Subtype.val_injective⟩ := by
           rw [Ms.predOfMode_eq S hA Δ h (halive c₁ hc₁)]
           obtain ⟨b1, J1, m1⟩ := c₁
@@ -1091,10 +1093,10 @@ theorem role_label_separation3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
           simp only at heq hJ ⊢
           subst heq hJ
           rfl
-        have h1 := hrep c₁
+        have! h1 := hrep c₁
         rw [hE1] at h1
         obtain ⟨y1, hy1, hy1e⟩ := Finset.mem_map.mp h1
-        have h2 := hrep c₂
+        have! h2 := hrep c₂
         rw [Ms.predOfMode_eq S hA Δ h (halive c₂ hc₂)] at h2
         obtain ⟨y2, hy2, hy2e⟩ := Finset.mem_map.mp h2
         have hy1' : (⟨rep c₁, hz1⟩ : Ms.alive (ancAt Gd c₂.2.1 (c₂.1 - 4 * S.K))) = y1 :=
@@ -1103,8 +1105,8 @@ theorem role_label_separation3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
           Subtype.ext hy2e.symm
         rw [hy1', hy2']
         intro hmem
-        have hf1 : y1 ∈ C.F h ⟨c₁.2.2, hm1⟩ := C.F_mono _ h _ (Nat.sub_le _ _) (C.E_le_F _ _ hy1)
-        have hf2 : y2 ∈ C.F h ⟨c₂.2.2, halive c₂ hc₂⟩ :=
+        have! hf1 : y1 ∈ C.F h ⟨c₁.2.2, hm1⟩ := C.F_mono _ h _ (Nat.sub_le _ _) (C.E_le_F _ _ hy1)
+        have! hf2 : y2 ∈ C.F h ⟨c₂.2.2, halive c₂ hc₂⟩ :=
           C.F_mono _ h _ (Nat.sub_le _ _) (C.E_le_F _ _ hy2)
         apply hd
         have e1 := C.F_comp h _ _ hf1
@@ -1116,13 +1118,13 @@ theorem role_label_separation3 (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
       (hIcc c₂ hc₂)
   -- the two orders
   rcases le_total c.1 c'.1 with hle | hle
-  · have hsub : dyadicGridCell Gd c'.2.1.1 c'.2.1.2 ⊆ dyadicGridCell Gd c.2.1.1 c.2.1.2 :=
+  · have! hsub : dyadicGridCell Gd c'.2.1.1 c'.2.1.2 ⊆ dyadicGridCell Gd c.2.1.1 c.2.1.2 :=
       dyadicGridCell_subset_of_common_point Gd (hxs c' hc') (hxs c hc)
         (by rw [hNd c hc, hNd c' hc']; omega)
     rw [max_eq_right hle] at hrI hrI'
     have := key c hc c' hc' hle hsub hne (fun i => -n i) hn' hrI hrI'
     rwa [hflip] at this
-  · have hsub : dyadicGridCell Gd c.2.1.1 c.2.1.2 ⊆ dyadicGridCell Gd c'.2.1.1 c'.2.1.2 :=
+  · have! hsub : dyadicGridCell Gd c.2.1.1 c.2.1.2 ⊆ dyadicGridCell Gd c'.2.1.1 c'.2.1.2 :=
       dyadicGridCell_subset_of_common_point Gd (hxs c hc) (hxs c' hc')
         (by rw [hNd c hc, hNd c' hc']; omega)
     rw [max_eq_left hle] at hrI hrI'
@@ -1185,34 +1187,34 @@ theorem cellMode_inner_le_of_sep {Ξ' : ℝ} (hδ : 0 < Ms.δc) (hΛ : 8 * Ms.Λ
     ‖inner ℂ (Ms.cellMode J m) (Ms.cellMode J m')‖ ≤
       pairConst Ms.zc.dim Ms.δc Ξ' Kf * dyadicGridLength Gd J.1 := by
   set r := dyadicGridLength Gd J.1
-  have hr := dyadicGridLength_pos Gd J.1
+  have! hr := dyadicGridLength_pos Gd J.1
   unfold cellMode
   rw [inner_augMode_toLp_ne (dyadicGridCell_measurable Gd J.1 J.2)
     (dyadicGridCell_volume_ne_top Gd J) (Ms.wave_measurable m) (Ms.wave_norm_le m)
     (Ms.wave_measurable m') (Ms.wave_norm_le m') _ _ hne]
-  have hcell : dyadicGridCell Gd J.1 J.2 =
+  have! hcell : dyadicGridCell Gd J.1 J.2 =
       Set.Ico (dyadicGridLeft Gd J.1 J.2) (dyadicGridLeft Gd J.1 J.2 + r) := rfl
   rw [hcell, ← integral_Icc_eq_integral_Ico]
   -- slope variation
-  have hlen := dyadicGridLength_le_of_subset Gd hm
+  have! hlen := dyadicGridLength_le_of_subset Gd hm
   have hlen' := dyadicGridLength_le_of_subset Gd hm'
-  have hr2 : |Ms.lamOf m| * r ^ 2 ≤ Ms.Λ :=
+  have! hr2 : |Ms.lamOf m| * r ^ 2 ≤ Ms.Λ :=
     (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hr.le hlen 2) (abs_nonneg _)).trans (Ms.lam_le m)
   have hr2' : |Ms.lamOf m'| * r ^ 2 ≤ Ms.Λ :=
     (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hr.le hlen' 2) (abs_nonneg _)).trans
       (Ms.lam_le m')
-  have hvar : 2 * |Ms.lamOf m - Ms.lamOf m'| * r ≤ Ξ' / r / 2 := by
-    have habs := abs_sub (Ms.lamOf m) (Ms.lamOf m')
+  have! hvar : 2 * |Ms.lamOf m - Ms.lamOf m'| * r ≤ Ξ' / r / 2 := by
+    have! habs := abs_sub (Ms.lamOf m) (Ms.lamOf m')
     rw [div_div, le_div_iff₀ (by positivity)]
     nlinarith [mul_le_mul_of_nonneg_right habs (sq_nonneg r)]
-  have h := modeWave_pair_le_full Ms.zc hδ Ms.ρ Ms.cl (Ms.lamOf m)
+  have! h := modeWave_pair_le_full Ms.zc hδ Ms.ρ Ms.cl (Ms.lamOf m)
     (dyadicGridLeft Gd (Ms.cellOf m).1 (Ms.cellOf m).2) (Ms.γOf m) (Ms.lamOf m')
     (dyadicGridLeft Gd (Ms.cellOf m').1 (Ms.cellOf m').2) (Ms.γOf m') hr (div_pos hΞ hr) hQ0 Kf
     hbox (fun n hn => by
       obtain ⟨x, hx, hl⟩ := hsep n hn
       refine ⟨x, hx, le_of_le_of_eq hl ?_⟩
       simp only [slope]) hvar
-  have hconj : ∫ y in Set.Icc (dyadicGridLeft Gd J.1 J.2) (dyadicGridLeft Gd J.1 J.2 + r),
+  have! hconj : ∫ y in Set.Icc (dyadicGridLeft Gd J.1 J.2) (dyadicGridLeft Gd J.1 J.2 + r),
       (starRingEnd ℂ) (Ms.wave m y) * Ms.wave m' y =
       (starRingEnd ℂ) (∫ y in Set.Icc (dyadicGridLeft Gd J.1 J.2) (dyadicGridLeft Gd J.1 J.2 + r),
         Ms.wave m y * (starRingEnd ℂ) (Ms.wave m' y)) := by
@@ -1524,38 +1526,38 @@ theorem size_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
           (Ms.compModes S hA b J h x : Set Ms.Md))).starProjection (Ms.frozenEval S b J c)‖ ^ 2 +
         ‖∑ m ∈ (Ms.compModes S hA b J h x).filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m),
           c m • Ms.cellMode I m‖ ^ 2) / dyadicGridLength Gd I.1) + 3 * Bc / S.Dstar ^ 59 := by
-  have hDp : 0 < S.Dstar := by linarith
-  have hD1 : (1 : ℝ) ≤ S.Dstar := by linarith
-  have hΞ : 0 < S.Ξ := pow_pos hDp 1000
-  have hΛ16 := Ms.sixteen_Λ_le S hD hΛ
-  have hr : 0 < dyadicGridLength Gd I.1 := dyadicGridLength_pos Gd I.1
-  have hε : 0 < S.Dstar⁻¹ := inv_pos.mpr hDp
+  have! hDp : 0 < S.Dstar := by linarith
+  have! hD1 : (1 : ℝ) ≤ S.Dstar := by linarith
+  have! hΞ : 0 < S.Ξ := pow_pos hDp 1000
+  have! hΛ16 := Ms.sixteen_Λ_le S hD hΛ
+  have! hr : 0 < dyadicGridLength Gd I.1 := dyadicGridLength_pos Gd I.1
+  have! hε : 0 < S.Dstar⁻¹ := inv_pos.mpr hDp
   obtain ⟨η, hηe⟩ : ∃ η, η = pairConst Ms.zc.dim Ms.δc (S.Ξ / 2) Kf := ⟨_, rfl⟩
-  have hη0 : 0 ≤ η := by rw [hηe]; exact pairConst_nonneg _ hδ (by linarith) Kf
-  have hη200 : η * S.Dstar ^ 200 ≤ 2 := by rw [hηe]; exact S.pairConst_half_mul_le hD hδ hDg hKf
-  have hBc : 0 ≤ Bc := le_trans (Finset.sum_nonneg fun _ _ => sq_nonneg _) hc
+  have! hη0 : 0 ≤ η := by rw [hηe]; exact pairConst_nonneg _ hδ (by linarith) Kf
+  have! hη200 : η * S.Dstar ^ 200 ≤ 2 := by rw [hηe]; exact S.pairConst_half_mul_le hD hδ hDg hKf
+  have! hBc : 0 ≤ Bc := le_trans (Finset.sum_nonneg fun _ _ => sq_nonneg _) hc
   obtain ⟨hηD, hη2⟩ := eta_sched_bounds hD hη0 hη200 hBc
-  have hFal := Ms.compModes_subset_alive S hA b J h x
+  have! hFal := Ms.compModes_subset_alive S hA b J h x
   -- pairings of modes in different minimal CURRENT components
-  have hpairA : ∀ a a' : Ms.alive (ancAt Gd J (b - 4 * S.K)),
+  have! hpairA : ∀ a a' : Ms.alive (ancAt Gd J (b - 4 * S.K)),
       a' ∉ (Ms.blockComps S hA b J).F 0 a →
       ‖inner ℂ (Ms.cellMode I a.1) (Ms.cellMode I a'.1)‖ ≤ η * dyadicGridLength Gd I.1 :=
     fun a a' h0 => by
       rw [hηe]; exact Ms.actualCell_inner_le S hA hJ hIJ hIt hδ hΛ16 hΞ hQ0 Kf hbox h0
   -- the projected frozen evaluation on `I`
-  have hres : columnL2Restriction (dyadicGridCell Gd I.1 I.2)
+  have! hres : columnL2Restriction (dyadicGridCell Gd I.1 I.2)
       (dyadicGridCell_measurable Gd I.1 I.2) (Ms.frozenEval S b J c) =
       ∑ m ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)), c m • Ms.cellMode I m := by
     unfold frozenEval
     rw [map_sum]
     refine Finset.sum_congr rfl fun m _ => ?_
     rw [map_smul, Ms.cellMode_restrict hIJ]
-  have hPZ := Ms.eventProj_restrict I (Ms.compModes S hA b J h x)
+  have! hPZ := Ms.eventProj_restrict I (Ms.compModes S hA b J h x)
     (dyadicGridCell_measurable Gd I.1 I.2) le_rfl (Ms.frozenEval S b J c)
   rw [hres] at hPZ
   rw [← hPZ]
   -- the complementary pairing error
-  have hclose := projection_subtotal_close (Ms.compModes S hA b J h x)
+  have! hclose := projection_subtotal_close (Ms.compModes S hA b J h x)
     (Ms.alive (ancAt Gd J (b - 4 * S.K))) hFal (Ms.cellMode I) c (η := η)
     (L := dyadicGridLength Gd I.1) (ε := S.Dstar⁻¹) (ℓ := dyadicGridLength Gd I.1)
     (mul_nonneg hη0 hr.le) (mul_pos hε hr) (fun m hm m' hm' => ?_)
@@ -1572,15 +1574,15 @@ theorem size_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
           Real.sqrt (∑ m' ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x,
             ‖c m'‖ ^ 2))) / Real.sqrt (S.Dstar⁻¹ * dyadicGridLength Gd I.1) := ⟨_, rfl⟩
   rw [← hεce] at hclose
-  have hεc0 : 0 ≤ εc := by rw [hεce]; positivity
-  have hεc2 : εc ^ 2 ≤ η ^ 2 * S.Dstar ^ 3 * Bc * dyadicGridLength Gd I.1 := by
-    have hFc : ((Ms.compModes S hA b J h x).card : ℝ) ≤ S.Dstar :=
+  have! hεc0 : 0 ≤ εc := by rw [hεce]; positivity
+  have! hεc2 : εc ^ 2 ≤ η ^ 2 * S.Dstar ^ 3 * Bc * dyadicGridLength Gd I.1 := by
+    have! hFc : ((Ms.compModes S hA b J h x).card : ℝ) ≤ S.Dstar :=
       le_trans (by exact_mod_cast Finset.card_le_card hFal) halive
-    have hGc : ((Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x).card : ℝ) ≤
+    have! hGc : ((Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x).card : ℝ) ≤
         S.Dstar := le_trans (by exact_mod_cast Finset.card_le_card Finset.sdiff_subset) halive
-    have hS0 : 0 ≤ ∑ m' ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x,
+    have! hS0 : 0 ≤ ∑ m' ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x,
         ‖c m'‖ ^ 2 := Finset.sum_nonneg fun _ _ => sq_nonneg _
-    have hSB : ∑ m' ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x,
+    have! hSB : ∑ m' ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x,
         ‖c m'‖ ^ 2 ≤ Bc := le_trans (Finset.sum_le_sum_of_subset_of_nonneg Finset.sdiff_subset
           fun _ _ _ => sq_nonneg _) hc
     have e : εc ^ 2 = η ^ 2 * dyadicGridLength Gd I.1 * S.Dstar *
@@ -1592,25 +1594,25 @@ theorem size_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
         Real.sq_sqrt (Nat.cast_nonneg _), Real.sq_sqrt hS0, Real.sq_sqrt (by positivity)]
       field_simp
     rw [e]
-    have h1 : ((Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x).card : ℝ) *
+    have! h1 : ((Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x).card : ℝ) *
         ∑ m' ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x, ‖c m'‖ ^ 2 ≤
         S.Dstar * Bc := mul_le_mul hGc hSB hS0 hDp.le
-    have h2 : ((Ms.compModes S hA b J h x).card : ℝ) *
+    have! h2 : ((Ms.compModes S hA b J h x).card : ℝ) *
         (((Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x).card : ℝ) *
           ∑ m' ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)) \ Ms.compModes S hA b J h x, ‖c m'‖ ^ 2) ≤
         S.Dstar * (S.Dstar * Bc) := mul_le_mul hFc h1 (by positivity) hDp.le
-    have h3 : 0 ≤ η ^ 2 * dyadicGridLength Gd I.1 * S.Dstar := by positivity
+    have! h3 : 0 ≤ η ^ 2 * dyadicGridLength Gd I.1 * S.Dstar := by positivity
     calc _ ≤ η ^ 2 * dyadicGridLength Gd I.1 * S.Dstar * (S.Dstar * (S.Dstar * Bc)) :=
           mul_le_mul_of_nonneg_left h2 h3
       _ = η ^ 2 * S.Dstar ^ 3 * Bc * dyadicGridLength Gd I.1 := by ring
   -- the decomposition of the core part into minimal CURRENT components
-  have hdis : ∀ D ∈ Ms.minComps S hA b J h x, ∀ D' ∈ Ms.minComps S hA b J h x, D ≠ D' →
+  have! hdis : ∀ D ∈ Ms.minComps S hA b J h x, ∀ D' ∈ Ms.minComps S hA b J h x, D ≠ D' →
       Disjoint D D' := by
     intro D hD D' hD' hne
     obtain ⟨y, -, rfl⟩ := (Ms.mem_minComps S hA).mp hD
     obtain ⟨y', -, rfl⟩ := (Ms.mem_minComps S hA).mp hD'
     exact (Ms.comp_eq_or_disjoint S hA b J 0 y y').resolve_left hne
-  have hT : ∑ m ∈ Ms.compModes S hA b J h x, c m • Ms.cellMode I m -
+  have! hT : ∑ m ∈ Ms.compModes S hA b J h x, c m • Ms.cellMode I m -
       ∑ m ∈ (Ms.compModes S hA b J h x).filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m),
         c m • Ms.cellMode I m =
       ∑ D ∈ Ms.minComps S hA b J h x, ∑ m ∈ D.filter (Ms.IsCoreAt S hA SP b J),
@@ -1622,25 +1624,25 @@ theorem size_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
   obtain ⟨y, hye⟩ : ∃ y : Finset Ms.Md → ℝ, y = fun D => (S.Dstar ^ 30)⁻¹ *
       (∑ m ∈ D.filter (Ms.IsCoreAt S hA SP b J), ‖c m‖) * Real.sqrt (dyadicGridLength Gd I.1) :=
     ⟨_, rfl⟩
-  have hy : ∑ D ∈ Ms.minComps S hA b J h x, y D ^ 2 ≤
+  have! hy : ∑ D ∈ Ms.minComps S hA b J h x, y D ^ 2 ≤
       Bc * dyadicGridLength Gd I.1 / S.Dstar ^ 59 := by
-    have hsq : ∀ D, y D ^ 2 = ((S.Dstar ^ 30)⁻¹) ^ 2 * dyadicGridLength Gd I.1 *
+    have! hsq : ∀ D, y D ^ 2 = ((S.Dstar ^ 30)⁻¹) ^ 2 * dyadicGridLength Gd I.1 *
         (∑ m ∈ D.filter (Ms.IsCoreAt S hA SP b J), ‖c m‖) ^ 2 := fun D => by
       rw [hye]; simp only; rw [mul_pow, mul_pow, Real.sq_sqrt hr.le]; ring
     simp only [hsq]
     rw [← Finset.mul_sum]
-    have hsum : ∑ D ∈ Ms.minComps S hA b J h x,
+    have! hsum : ∑ D ∈ Ms.minComps S hA b J h x,
         (∑ m ∈ D.filter (Ms.IsCoreAt S hA SP b J), ‖c m‖) ^ 2 ≤ S.Dstar * Bc := by
       refine (Finset.sum_sq_le_sq_sum_of_nonneg fun D _ =>
         Finset.sum_nonneg fun _ _ => norm_nonneg _).trans ?_
       rw [sum_filter_disjoint_family _ hdis, Ms.biUnion_minComps S hA b J h x]
-      have h1 : ∑ m ∈ (Ms.compModes S hA b J h x).filter (Ms.IsCoreAt S hA SP b J), ‖c m‖ ≤
+      have! h1 : ∑ m ∈ (Ms.compModes S hA b J h x).filter (Ms.IsCoreAt S hA SP b J), ‖c m‖ ≤
           ∑ m ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)), ‖c m‖ :=
         Finset.sum_le_sum_of_subset_of_nonneg ((Finset.filter_subset _ _).trans hFal)
           fun _ _ _ => norm_nonneg _
-      have h2 := sq_sum_le_card_mul_sum_sq (s := Ms.alive (ancAt Gd J (b - 4 * S.K)))
+      have! h2 := sq_sum_le_card_mul_sum_sq (s := Ms.alive (ancAt Gd J (b - 4 * S.K)))
         (f := fun m => ‖c m‖)
-      have hS0 : 0 ≤ ∑ m ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)), ‖c m‖ ^ 2 :=
+      have! hS0 : 0 ≤ ∑ m ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)), ‖c m‖ ^ 2 :=
         Finset.sum_nonneg fun _ _ => sq_nonneg _
       calc (∑ m ∈ (Ms.compModes S hA b J h x).filter (Ms.IsCoreAt S hA SP b J), ‖c m‖) ^ 2
           ≤ (∑ m ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)), ‖c m‖) ^ 2 :=
@@ -1648,12 +1650,12 @@ theorem size_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
         _ ≤ (Ms.alive (ancAt Gd J (b - 4 * S.K))).card *
             ∑ m ∈ Ms.alive (ancAt Gd J (b - 4 * S.K)), ‖c m‖ ^ 2 := h2
         _ ≤ S.Dstar * Bc := mul_le_mul halive hc hS0 hDp.le
-    have hk : ((S.Dstar ^ 30)⁻¹) ^ 2 * dyadicGridLength Gd I.1 * (S.Dstar * Bc) =
+    have! hk : ((S.Dstar ^ 30)⁻¹) ^ 2 * dyadicGridLength Gd I.1 * (S.Dstar * Bc) =
         Bc * dyadicGridLength Gd I.1 / S.Dstar ^ 59 := by
       field_simp
     rw [← hk]
     exact mul_le_mul_of_nonneg_left hsum (by positivity)
-  have hcs := component_sizes (Ms.minComps S hA b J h x)
+  have! hcs := component_sizes (Ms.minComps S hA b J h x)
     (fun D => D.filter (Ms.IsCoreAt S hA SP b J)) (Ms.cellMode I) c hη0 hr.le hε hDp.le
     (fun D hD D' hD' hne m hm m' hm' => ?_)
     (fun D _ => Ms.cellMode_synthesis_ge I _ c hε.le hεw)
@@ -1665,14 +1667,14 @@ theorem size_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
     obtain ⟨a, ha, rfl⟩ := Finset.mem_map.mp (Finset.mem_filter.mp hm).1
     obtain ⟨a', ha', rfl⟩ := Finset.mem_map.mp (Finset.mem_filter.mp hm').1
     exact hpairA a a' (Ms.not_mem_F_of_ne S hA b J 0 hne ha ha')
-  · have hsub : D.filter (Ms.IsCoreAt S hA SP b J) ⊆ Ms.alive (ancAt Gd J (b - 4 * S.K)) :=
+  · have! hsub : D.filter (Ms.IsCoreAt S hA SP b J) ⊆ Ms.alive (ancAt Gd J (b - 4 * S.K)) :=
       (Finset.filter_subset _ _).trans (Ms.minComps_subset_alive S hA hD)
-    have hc1 : ((D.filter (Ms.IsCoreAt S hA SP b J)).card : ℝ) ≤ S.Dstar :=
+    have! hc1 : ((D.filter (Ms.IsCoreAt S hA SP b J)).card : ℝ) ≤ S.Dstar :=
       le_trans (by exact_mod_cast Finset.card_le_card hsub) halive
     rw [sq, ← mul_assoc, inv_mul_cancel₀ hDp.ne', one_mul]
     exact hc1
   -- normalize
-  have hsizes : Ms.compSizeSq S hA SP I b J h x c * dyadicGridLength Gd I.1 =
+  have! hsizes : Ms.compSizeSq S hA SP I b J h x c * dyadicGridLength Gd I.1 =
       ∑ D ∈ Ms.minComps S hA b J h x,
         (‖∑ m ∈ D.filter (Ms.IsCoreAt S hA SP b J), c m • Ms.cellMode I m‖ + y D) ^ 2 := by
     unfold compSizeSq
@@ -1681,7 +1683,7 @@ theorem size_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
     rw [hye]
     simp only
     rw [sq_div_sqrt_add_mul _ _ hr]
-  have hεr : 12 * εc ^ 2 ≤ Bc / S.Dstar ^ 59 * dyadicGridLength Gd I.1 := by
+  have! hεr : 12 * εc ^ 2 ≤ Bc / S.Dstar ^ 59 * dyadicGridLength Gd I.1 := by
     calc 12 * εc ^ 2 ≤ 12 * (η ^ 2 * S.Dstar ^ 3 * Bc * dyadicGridLength Gd I.1) :=
           mul_le_mul_of_nonneg_left hεc2 (by norm_num)
       _ = 12 * (η ^ 2 * S.Dstar ^ 3 * Bc) * dyadicGridLength Gd I.1 := by ring
@@ -1714,23 +1716,23 @@ theorem side_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
     ∑ F ∈ Fs, ‖∑ m ∈ F.filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m), c m • Ms.cellMode I m‖ ^ 2 ≤
       2 * ‖∑ m ∈ (Ms.alive (ancAt Gd J (b - 4 * S.K))).filter
         (fun m => ¬ Ms.IsCoreAt S hA SP b J m), c m • Ms.cellMode I m‖ ^ 2 := by
-  have hDp : 0 < S.Dstar := by linarith
-  have hD1 : (1 : ℝ) ≤ S.Dstar := by linarith
-  have hΞ : 0 < S.Ξ := pow_pos hDp 1000
-  have hΛ16 := Ms.sixteen_Λ_le S hD hΛ
-  have hr : 0 < dyadicGridLength Gd I.1 := dyadicGridLength_pos Gd I.1
-  have hε : 0 < S.Dstar⁻¹ := inv_pos.mpr hDp
+  have! hDp : 0 < S.Dstar := by linarith
+  have! hD1 : (1 : ℝ) ≤ S.Dstar := by linarith
+  have! hΞ : 0 < S.Ξ := pow_pos hDp 1000
+  have! hΛ16 := Ms.sixteen_Λ_le S hD hΛ
+  have! hr : 0 < dyadicGridLength Gd I.1 := dyadicGridLength_pos Gd I.1
+  have! hε : 0 < S.Dstar⁻¹ := inv_pos.mpr hDp
   obtain ⟨η, hηe⟩ : ∃ η, η = pairConst Ms.zc.dim Ms.δc (S.Ξ / 2) Kf := ⟨_, rfl⟩
-  have hη0 : 0 ≤ η := by rw [hηe]; exact pairConst_nonneg _ hδ (by linarith) Kf
-  have hη200 : η * S.Dstar ^ 200 ≤ 2 := by rw [hηe]; exact S.pairConst_half_mul_le hD hδ hDg hKf
-  have hηD := (eta_sched_bounds hD hη0 hη200 le_rfl).1
-  have hdis : ∀ F ∈ Ms.curComps S hA b J h, ∀ F' ∈ Ms.curComps S hA b J h, F ≠ F' →
+  have! hη0 : 0 ≤ η := by rw [hηe]; exact pairConst_nonneg _ hδ (by linarith) Kf
+  have! hη200 : η * S.Dstar ^ 200 ≤ 2 := by rw [hηe]; exact S.pairConst_half_mul_le hD hδ hDg hKf
+  have! hηD := (eta_sched_bounds hD hη0 hη200 le_rfl).1
+  have! hdis : ∀ F ∈ Ms.curComps S hA b J h, ∀ F' ∈ Ms.curComps S hA b J h, F ≠ F' →
       Disjoint F F' := by
     intro F hF F' hF' hne
     obtain ⟨y, -, rfl⟩ := Finset.mem_image.mp hF
     obtain ⟨y', -, rfl⟩ := Finset.mem_image.mp hF'
     exact (Ms.comp_eq_or_disjoint S hA b J h y y').resolve_left hne
-  have hcover : (Ms.curComps S hA b J h).biUnion id = Ms.alive (ancAt Gd J (b - 4 * S.K)) := by
+  have! hcover : (Ms.curComps S hA b J h).biUnion id = Ms.alive (ancAt Gd J (b - 4 * S.K)) := by
     ext m
     simp only [Finset.mem_biUnion, id]
     constructor
@@ -1741,7 +1743,7 @@ theorem side_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
     · intro hm
       refine ⟨_, Finset.mem_image_of_mem _ (Finset.mem_univ ⟨m, hm⟩), Finset.mem_map.mpr
         ⟨⟨m, hm⟩, (Ms.blockComps S hA b J).E_le_F h _ ((Ms.blockComps S hA b J).E_self h _), rfl⟩⟩
-  have hsub := side_subtotals_le (Ms.curComps S hA b J h)
+  have! hsub := side_subtotals_le (Ms.curComps S hA b J h)
     (fun F => F.filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m)) (Ms.cellMode I) c hη0 hr.le hε
     hDp.le (fun F hF F' hF' hne m hm m' hm' => ?_)
     (fun F _ => Ms.cellMode_synthesis_ge I _ c hε.le hεw) ?_ (fun F hF => ?_) hηD
@@ -1750,7 +1752,7 @@ theorem side_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
     obtain ⟨y2, -, rfl⟩ := Finset.mem_image.mp hF'
     obtain ⟨a, ha, rfl⟩ := Finset.mem_map.mp (Finset.mem_filter.mp hm).1
     obtain ⟨a', ha', rfl⟩ := Finset.mem_map.mp (Finset.mem_filter.mp hm').1
-    have h0 : a' ∉ (Ms.blockComps S hA b J).F 0 a := fun h0 =>
+    have! h0 : a' ∉ (Ms.blockComps S hA b J).F 0 a := fun h0 =>
       Ms.not_mem_F_of_ne S hA b J h hne ha ha'
         ((Ms.blockComps S hA b J).F_mono 0 h a (Nat.zero_le _) h0)
     rw [hηe]; exact Ms.actualCell_inner_le S hA hJ hIJ hIt hδ hΛ16 hΞ hQ0 Kf hbox h0
@@ -1758,14 +1760,14 @@ theorem side_comparison {b : ℤ} {J I : ℤ × ℤ} (hJ : J.1 = b - 2 * S.K)
     unfold curComps
     exact_mod_cast Finset.card_image_le.trans ((Finset.card_le_univ _).trans
       (le_of_eq (Fintype.card_coe _)))
-  · have hFal : F ⊆ Ms.alive (ancAt Gd J (b - 4 * S.K)) := by
+  · have! hFal : F ⊆ Ms.alive (ancAt Gd J (b - 4 * S.K)) := by
       obtain ⟨y, -, rfl⟩ := Finset.mem_image.mp hF
       intro m hm
       obtain ⟨a, -, rfl⟩ := Finset.mem_map.mp hm
       exact a.2
-    have hsub : F.filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m) ⊆
+    have! hsub : F.filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m) ⊆
         Ms.alive (ancAt Gd J (b - 4 * S.K)) := (Finset.filter_subset _ _).trans hFal
-    have hc1 : ((F.filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m)).card : ℝ) ≤ S.Dstar :=
+    have! hc1 : ((F.filter (fun m => ¬ Ms.IsCoreAt S hA SP b J m)).card : ℝ) ≤ S.Dstar :=
       le_trans (by exact_mod_cast Finset.card_le_card hsub) halive
     rw [sq, ← mul_assoc, inv_mul_cancel₀ hDp.ne', one_mul]
     exact hc1
@@ -2025,9 +2027,9 @@ theorem tops_rows_path {s : Finset Ms.Event} (hδ : 0 < Ms.δc) (h1 : ∀ e ∈ 
       by_contra h
       exact hov (by rw [Set.not_nonempty_iff_eq_empty.mp h, measure_empty])
     obtain ⟨c, hcell, -, hna⟩ := htop e he e' he' hne hov'
-    have hr := dyadicGridLength_pos Gd c.1
+    have! hr := dyadicGridLength_pos Gd c.1
     refine ⟨dyadicGridLeft Gd c.1 c.2, dyadicGridLength Gd c.1, hr, hcell, fun m hm m' hm' => ?_⟩
-    have hcm : dyadicGridCell Gd c.1 c.2 ⊆ dyadicGridCell Gd (Ms.cellOf m).1 (Ms.cellOf m).2 := by
+    have! hcm : dyadicGridCell Gd c.1 c.2 ⊆ dyadicGridCell Gd (Ms.cellOf m).1 (Ms.cellOf m).2 := by
       rw [← hcell]; exact Set.inter_subset_left.trans (h2 e he m hm)
     have hcm' : dyadicGridCell Gd c.1 c.2 ⊆
         dyadicGridCell Gd (Ms.cellOf m').1 (Ms.cellOf m').2 := by
@@ -2036,16 +2038,16 @@ theorem tops_rows_path {s : Finset Ms.Event} (hδ : 0 < Ms.δc) (h1 : ∀ e ∈ 
     · obtain ⟨x, hx, hl⟩ := hna m hm m' hm' n hn
       exact ⟨x, hx, hl⟩
     · -- slope variation from the curvature bounds on the first-match cells
-      have hlm := Ms.lam_le m
+      have! hlm := Ms.lam_le m
       have hlm' := Ms.lam_le m'
-      have hlen := dyadicGridLength_le_of_subset Gd hcm
+      have! hlen := dyadicGridLength_le_of_subset Gd hcm
       have hlen' := dyadicGridLength_le_of_subset Gd hcm'
       set r := dyadicGridLength Gd c.1
-      have hr2 : |Ms.lamOf m| * r ^ 2 ≤ Ms.Λ :=
+      have! hr2 : |Ms.lamOf m| * r ^ 2 ≤ Ms.Λ :=
         (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hr.le hlen 2) (abs_nonneg _)).trans hlm
       have hr2' : |Ms.lamOf m'| * r ^ 2 ≤ Ms.Λ :=
         (mul_le_mul_of_nonneg_left (pow_le_pow_left₀ hr.le hlen' 2) (abs_nonneg _)).trans hlm'
-      have habs := abs_sub (Ms.lamOf m) (Ms.lamOf m')
+      have! habs := abs_sub (Ms.lamOf m) (Ms.lamOf m')
       rw [div_div, le_div_iff₀ (by positivity)]
       nlinarith only [mul_le_mul_of_nonneg_right habs (sq_nonneg r), hΛ, hr2, hr2']
   · -- multiplicity: the rows through a point have disjoint mode sets alive at the point
@@ -2066,7 +2068,7 @@ theorem tops_rows_path {s : Finset Ms.Event} (hδ : 0 < Ms.δc) (h1 : ∀ e ∈ 
       exact hdis
   · -- mode counts: the modes of a row are alive at the left endpoint of its cell
     intro e he
-    have hy : dyadicGridLeft Gd e.2.1.1 e.2.1.2 ∈ Ms.evCell e :=
+    have! hy : dyadicGridLeft Gd e.2.1.1 e.2.1.2 ∈ Ms.evCell e :=
       dyadicGridCell_left_mem Gd e.2.1.1 e.2.1.2
     refine le_trans (Nat.cast_le.mpr (Finset.card_le_card fun m hm => ?_))
       (hD2 (dyadicGridLeft Gd e.2.1.1 e.2.1.2))
@@ -2185,7 +2187,7 @@ theorem firstTops_pair_sep (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
             |Ms.slope m (dyadicGridLeft Gd p.1.1 p.1.2) -
               Ms.slope m' (dyadicGridLeft Gd p.1.1 p.1.2) +
                 ∑ i, (n i : ℝ) * (Ms.zc.θ i / S.Q0)| := by
-  have hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
   obtain ⟨I, c⟩ := p
   obtain ⟨I', c'⟩ := p'
   simp only at hsub hne ⊢
@@ -2194,25 +2196,25 @@ theorem firstTops_pair_sep (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
   obtain ⟨hc, hIJ, hb1, hb2⟩ := hX _ hpX
   obtain ⟨hc', hIJ', hb1', hb2'⟩ := hX _ hp'X
   simp only at hc hIJ hb1 hb2 hc' hIJ' hb1' hb2' hσp hσp' hmax
-  have hII := dyadicGridLength_le_of_subset Gd hsub
-  have hIdepth : I'.1 ≤ I.1 := by
+  have! hII := dyadicGridLength_le_of_subset Gd hsub
+  have! hIdepth : I'.1 ≤ I.1 := by
     by_contra hlt
     push Not at hlt
     have := (dyadicGridLength_strictAnti Gd) hlt
     linarith
   -- the later node is `c` (block of the inner cell); the earlier is `c'`
-  have hbb : c'.1 ≤ c.1 := by
+  have! hbb : c'.1 ≤ c.1 := by
     by_contra hlt
     push Not at hlt
     rcases hsp c hc c' hc' (by omega) with h1 | h1 <;> omega
-  have hJJ : dyadicGridCell Gd c.2.1.1 c.2.1.2 ⊆ dyadicGridCell Gd c'.2.1.1 c'.2.1.2 :=
+  have! hJJ : dyadicGridCell Gd c.2.1.1 c.2.1.2 ⊆ dyadicGridCell Gd c'.2.1.1 c'.2.1.2 :=
     dyadicGridCell_subset_of_common_point Gd (hIJ (dyadicGridCell_left_mem Gd I.1 I.2))
       (hIJ' (hsub (dyadicGridCell_left_mem Gd I.1 I.2)))
       (by rw [hNd c hc, hNd c' hc']; omega)
   -- the alive transport from the earlier decision cell
-  have hUU := ancAt_block_subset S (hNd c' hc') hbb hJJ
+  have! hUU := ancAt_block_subset S (hNd c' hc') hbb hJJ
   -- the separation for modes of the later component against modes in other later components
-  have hsepF : ∀ z z' : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K)),
+  have! hsepF : ∀ z z' : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K)),
       z ∉ (Ms.blockComps S hA c.1 c.2.1).F h z' →
       z.1 ≠ z'.1 ∧ ∀ n : Fin Ms.zc.dim → ℤ, (∀ i, |(n i : ℝ)| ≤ S.Eh 0) →
         S.Ξ / 2 / dyadicGridLength Gd I.1 < |Ms.slope z'.1 (dyadicGridLeft Gd I.1 I.2) -
@@ -2223,21 +2225,21 @@ theorem firstTops_pair_sep (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
     rw [show z = z' from Subtype.ext he]
     exact (Ms.blockComps S hA c.1 c.2.1).E_le_F _ _ ((Ms.blockComps S hA c.1 c.2.1).E_self _ _)
   -- the representatives differ
-  have hrne : rep c ≠ rep c' := by
+  have! hrne : rep c ≠ rep c' := by
     intro hreq
     have hI'I : I' = I := hmax _ hp'X hσp' hreq.symm hsub
     subst hI'I
-    have hbe : c.1 = c'.1 := by
+    have! hbe : c.1 = c'.1 := by
       by_contra hb
       rcases hsp c hc c' hc' hb with h1 | h1 <;> omega
-    have hJe : c.2.1 = c'.2.1 := dyadicGridCell_eq_of_meet Gd
+    have! hJe : c.2.1 = c'.2.1 := dyadicGridCell_eq_of_meet Gd
       (by rw [hNd c hc, hNd c' hc', hbe])
       ⟨_, hIJ (dyadicGridCell_left_mem Gd I'.1 I'.2), hIJ' (dyadicGridCell_left_mem Gd I'.1 I'.2)⟩
-    have hcc : c ≠ c' := fun h => hne (by rw [h])
-    have hd := hdist c hc c' hc' hbe hJe hcc
+    have! hcc : c ≠ c' := fun h => hne (by rw [h])
+    have! hd := hdist c hc c' hc' hbe hJe hcc
     -- the representatives lie in the two distinct components
-    have h1 := Ms.predOfMode_subset_nodeComp S hA Δ h (halive c hc) (hrep c)
-    have h2 := Ms.predOfMode_subset_nodeComp S hA Δ h (halive c' hc') (hrep c')
+    have! h1 := Ms.predOfMode_subset_nodeComp S hA Δ h (halive c hc) (hrep c)
+    have! h2 := Ms.predOfMode_subset_nodeComp S hA Δ h (halive c' hc') (hrep c')
     rw [Ms.nodeComp_eq S hA h (halive c hc)] at h1
     rw [Ms.nodeComp_eq S hA h (halive c' hc')] at h2
     obtain ⟨y1, hy1, hy1e⟩ := Finset.mem_map.mp h1
@@ -2249,7 +2251,7 @@ theorem firstTops_pair_sep (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
       simp only at hbe hJe y2 hy2 ⊢
       subst hbe hJe
       exact hy2
-    have he : (⟨y2.1, by rw [hbe, hJe]; exact y2.2⟩ : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))) =
+    have! he : (⟨y2.1, by rw [hbe, hJe]; exact y2.2⟩ : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))) =
         y1 := Subtype.ext ((hy2e.trans hreq.symm).trans hy1e.symm)
     rw [he] at hy2'
     apply hd
@@ -2257,7 +2259,7 @@ theorem firstTops_pair_sep (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
       (Ms.blockComps S hA c.1 c.2.1).F_comp h _ _ hy2']
     exact (Ms.blockComps S hA c.1 c.2.1).E_le_F _ _ ((Ms.blockComps S hA c.1 c.2.1).E_self _ _)
   -- every outer mode, transported, is not CURRENT-joined to an inner mode
-  have hkey : ∀ m ∈ Ms.nodeComp S hA h c, ∀ m' ∈ Ms.nodeComp S hA h c',
+  have! hkey : ∀ m ∈ Ms.nodeComp S hA h c, ∀ m' ∈ Ms.nodeComp S hA h c',
       ∃ (z z' : Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))), z'.1 = m ∧ z.1 = m' ∧
         z ∉ (Ms.blockComps S hA c.1 c.2.1).F h z' := by
     intro m hm m' hm'
@@ -2271,12 +2273,12 @@ theorem firstTops_pair_sep (Nd : Finset (ℤ × (ℤ × ℤ) × Ms.Md))
       exact Ms.comp_cross_sep S hA SP Nd hNd Δ h halive hgood hstab htype1 rep hinh
         ⟨hc', hc, hJJ, hlt⟩ hrne.symm _ a (Finset.mem_map.mpr ⟨a', ha', rfl⟩) ha
     · -- one block: the pre-cells agree and the nodes lie in different components
-      have hJe : c'.2.1 = c.2.1 := dyadicGridCell_eq_of_meet Gd
+      have! hJe : c'.2.1 = c.2.1 := dyadicGridCell_eq_of_meet Gd
         (by rw [hNd c hc, hNd c' hc', heq])
         ⟨_, hJJ (dyadicGridCell_left_mem Gd c.2.1.1 c.2.1.2),
           dyadicGridCell_left_mem Gd c.2.1.1 c.2.1.2⟩
-      have hcc : c' ≠ c := fun h => hrne (by rw [h])
-      have hd := hdist c hc c' hc' heq.symm hJe.symm hcc.symm
+      have! hcc : c' ≠ c := fun h => hrne (by rw [h])
+      have! hd := hdist c hc c' hc' heq.symm hJe.symm hcc.symm
       intro hmem
       apply hd
       have ha'' : Ms.aliveMap hUU a' ∈ (Ms.blockComps S hA c.1 c.2.1).F h
@@ -2423,17 +2425,17 @@ theorem RepClass.firstTops_rows {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
         ‖(Submodule.span ℂ ((Ms.evMode e) '' (e.2.2 : Set Ms.Md))).starProjection F‖ ^ 2 ≤
       2 * ‖F‖ ^ 2 := by
   classical
-  have hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
-  have hDp : 0 < S.Dstar := by linarith
-  have hΞ : 0 < S.Ξ := pow_pos hDp 1000
-  have hΛ16 := Ms.sixteen_Λ_le S hD hΛ
-  have hε : 0 < S.Dstar⁻¹ := inv_pos.mpr hDp
-  have hη0 := pairConst_nonneg Ms.zc.dim hδ (by linarith : 0 < S.Ξ / 2) Kf
-  have hη200 := S.pairConst_half_mul_le hD hδ hDg hKf
-  have hηD := (eta_sched_bounds hD hη0 hη200 le_rfl).1
-  have hpt2 : ∀ y, ((Ms.ptSet y).card : ℝ) ≤ S.Dstar⁻¹ * S.Dstar ^ 2 := fun y => by
+  have! hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hDp : 0 < S.Dstar := by linarith
+  have! hΞ : 0 < S.Ξ := pow_pos hDp 1000
+  have! hΛ16 := Ms.sixteen_Λ_le S hD hΛ
+  have! hε : 0 < S.Dstar⁻¹ := inv_pos.mpr hDp
+  have! hη0 := pairConst_nonneg Ms.zc.dim hδ (by linarith : 0 < S.Ξ / 2) Kf
+  have! hη200 := S.pairConst_half_mul_le hD hδ hDg hKf
+  have! hηD := (eta_sched_bounds hD hη0 hη200 le_rfl).1
+  have! hpt2 : ∀ y, ((Ms.ptSet y).card : ℝ) ≤ S.Dstar⁻¹ * S.Dstar ^ 2 := fun y => by
     rw [sq, ← mul_assoc, inv_mul_cancel₀ hDp.ne', one_mul]; exact hpt y
-  have hrows := Ms.tops_rows_path S (s := (Ms.firstTops X R.rep σ σ₀).image (Ms.topRow S hA h))
+  have! hrows := Ms.tops_rows_path S (s := (Ms.firstTops X R.rep σ σ₀).image (Ms.topRow S hA h))
     hδ ?_ ?_ (Ξ' := S.Ξ / 2) ?_ (by linarith) (by linarith) hQ0 Kf hbox hε hεw hDp.le hpt hpt2
     (inst := inst) F
   · refine hrows.trans (mul_le_mul_of_nonneg_right ?_ (sq_nonneg _))
@@ -2452,7 +2454,7 @@ theorem RepClass.firstTops_rows {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
     simp only [topRow] at hm
     rw [Ms.nodeComp_eq S hA h (R.halive _ hc)] at hm
     obtain ⟨a, -, rfl⟩ := Finset.mem_map.mp hm
-    have hJU := subset_ancAt Gd p.2.2.1 (show p.2.1 - 4 * S.K ≤ p.2.2.1.1 by
+    have! hJU := subset_ancAt Gd p.2.2.1 (show p.2.1 - 4 * S.K ≤ p.2.2.1.1 by
       rw [R.hNd _ hc]; omega)
     exact hIJ.trans (hJU.trans ((Ms.mem_alive).mp a.2))
   · -- overlapping rows
@@ -2462,11 +2464,11 @@ theorem RepClass.firstTops_rows {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
     obtain ⟨y, hy, hy'⟩ := hov
     simp only [evCell, topRow] at hy hy' ⊢
     rcases le_total p'.1.1 p.1.1 with hle | hle
-    · have hsub := dyadicGridCell_subset_of_common_point Gd hy hy' hle
+    · have! hsub := dyadicGridCell_subset_of_common_point Gd hy hy' hle
       obtain ⟨hdis, hsep⟩ := R.pair_sep hX σ σ₀ (by linarith) hp hp' hsub hne
       refine ⟨p.1, Set.inter_eq_left.mpr hsub, hdis, fun m hm m' hm' n hn =>
         ⟨_, ⟨le_rfl, by linarith [dyadicGridLength_pos Gd p.1.1]⟩, (hsep m hm m' hm' n hn).le⟩⟩
-    · have hsub := dyadicGridCell_subset_of_common_point Gd hy' hy hle
+    · have! hsub := dyadicGridCell_subset_of_common_point Gd hy' hy hle
       obtain ⟨hdis, hsep⟩ := R.pair_sep hX σ σ₀ (by linarith) hp' hp hsub (Ne.symm hne)
       refine ⟨p'.1, Set.inter_eq_right.mpr hsub, hdis.symm, fun m hm m' hm' n hn =>
         ⟨_, ⟨le_rfl, by linarith [dyadicGridLength_pos Gd p'.1.1]⟩, ?_⟩⟩
@@ -2534,9 +2536,9 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
         ‖∑ m ∈ (Ms.nodeComp S hA h p.2).filter (fun m => ¬ Ms.IsCoreAt S hA SP p.2.1 p.2.2.1 m),
           c p.2.1 p.2.2.1 m • Ms.cellMode p.1 m‖ ^ 2 ≤
       2 * S.K * ∑ b ∈ Bs, ‖Ms.blockSide S hA SP b (cells b) (c b)‖ ^ 2 := by
-  have hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
   set T := Ms.firstTops X R.rep σ σ₀ with hT
-  have hTX : ∀ p ∈ T, p ∈ X := fun p hp => (Finset.mem_filter.mp hp).1
+  have! hTX : ∀ p ∈ T, p ∈ X := fun p hp => (Finset.mem_filter.mp hp).1
   set f : (ℤ × ℤ) × (ℤ × (ℤ × ℤ) × Ms.Md) → ℝ := fun p =>
     ‖∑ m ∈ (Ms.nodeComp S hA h p.2).filter (fun m => ¬ Ms.IsCoreAt S hA SP p.2.1 p.2.2.1 m),
       c p.2.1 p.2.2.1 m • Ms.cellMode p.1 m‖ ^ 2 with hf
@@ -2544,13 +2546,13 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
     (dyadicGridCell_measurable Gd k.2.1 k.2.2) (Ms.blockSide S hA SP k.1 (cells k.1) (c k.1))‖ ^ 2
     with hg
   -- step 1: the tops at one block and cell
-  have hstep1 : ∀ k ∈ T.image (fun p => (p.2.1, p.1)),
+  have! hstep1 : ∀ k ∈ T.image (fun p => (p.2.1, p.1)),
       ∑ p ∈ T.filter (fun p => (p.2.1, p.1) = k), f p ≤ 2 * g k := by
     intro k hk
     obtain ⟨p0, hp0, rfl⟩ := Finset.mem_image.mp hk
     obtain ⟨hc0, hIJ0, hb10, hb20⟩ := hX _ (hTX p0 hp0)
     -- all tops of the fiber share the pre-cell of `p0`
-    have hJ : ∀ p ∈ T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1)), p.2.2.1 = p0.2.2.1 := by
+    have! hJ : ∀ p ∈ T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1)), p.2.2.1 = p0.2.2.1 := by
       intro p hp
       obtain ⟨hpT, hpk⟩ := Finset.mem_filter.mp hp
       simp only [Prod.mk.injEq] at hpk
@@ -2560,7 +2562,7 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
       · exact hIJ (dyadicGridCell_left_mem Gd p.1.1 p.1.2)
       · rw [hpk.2]; exact hIJ0 (dyadicGridCell_left_mem Gd p0.1.1 p0.1.2)
     -- the components of the fiber
-    have hinj : Set.InjOn (fun p : (ℤ × ℤ) × (ℤ × (ℤ × ℤ) × Ms.Md) => Ms.nodeComp S hA h p.2)
+    have! hinj : Set.InjOn (fun p : (ℤ × ℤ) × (ℤ × (ℤ × ℤ) × Ms.Md) => Ms.nodeComp S hA h p.2)
         (T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1)) : Set _) := by
       intro p hp p' hp' heq
       obtain ⟨hpT, hpk⟩ := Finset.mem_filter.mp (Finset.mem_coe.mp hp)
@@ -2569,7 +2571,7 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
       refine R.topRow_injOn hX σ σ₀ (Finset.mem_coe.mpr hpT) (Finset.mem_coe.mpr hp'T) ?_
       simp only [topRow, Prod.mk.injEq]
       exact ⟨hpk.1.trans hp'k.1.symm, hpk.2.trans hp'k.2.symm, heq⟩
-    have hsum : ∑ p ∈ T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1)), f p =
+    have! hsum : ∑ p ∈ T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1)), f p =
         ∑ F ∈ (T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1))).image
           (fun p => Ms.nodeComp S hA h p.2),
           ‖∑ m ∈ F.filter (fun m => ¬ Ms.IsCoreAt S hA SP p0.2.1 p0.2.2.1 m),
@@ -2580,14 +2582,14 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
       simp only [Prod.mk.injEq] at hpk
       simp only [hf, hpk.1, hpk.2, hJ p hp]
     rw [hsum]
-    have hFs : (T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1))).image
+    have! hFs : (T.filter (fun p => (p.2.1, p.1) = (p0.2.1, p0.1))).image
         (fun p => Ms.nodeComp S hA h p.2) ⊆ Ms.curComps S hA p0.2.1 p0.2.2.1 h := by
       intro F hF
       obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hF
       obtain ⟨hpT, hpk⟩ := Finset.mem_filter.mp hp
       simp only [Prod.mk.injEq] at hpk
       obtain ⟨hc, -, -, -⟩ := hX _ (hTX p hpT)
-      have hJp := hJ p hp
+      have! hJp := hJ p hp
       rw [Ms.nodeComp_eq S hA h (R.halive _ hc)]
       have key : ∀ (b : ℤ) (J : ℤ × ℤ) (m : Ms.Md) (hm : m ∈ Ms.alive (ancAt Gd J (b - 4 * S.K))),
           b = p0.2.1 → J = p0.2.2.1 → ((Ms.blockComps S hA b J).F h ⟨m, hm⟩).map
@@ -2595,22 +2597,22 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
         rintro b J m hm rfl rfl
         exact Finset.mem_image_of_mem _ (Finset.mem_univ _)
       exact key _ _ _ _ hpk.1 hJp
-    have hside := Ms.side_comparison_block S hA SP (hdepth p0.2.1) (c p0.2.1)
+    have! hside := Ms.side_comparison_block S hA SP (hdepth p0.2.1) (c p0.2.1)
       (hXc p0 (hTX p0 hp0)) hIJ0 (by omega) hD hδ hΛ hQ0 Kf hbox hDg hKf hεw
       (hal _ _ (hXc p0 (hTX p0 hp0))) h hFs
     exact hside
   -- step 2: group the tops by block and cell
-  have hT1 : ∑ p ∈ T, f p = ∑ k ∈ T.image (fun p => (p.2.1, p.1)),
+  have! hT1 : ∑ p ∈ T, f p = ∑ k ∈ T.image (fun p => (p.2.1, p.1)),
       ∑ p ∈ T.filter (fun p => (p.2.1, p.1) = k), f p :=
     (Finset.sum_fiberwise_of_maps_to (fun p hp => Finset.mem_image_of_mem _ hp) f).symm
   -- step 3: the cells of one block and depth are disjoint
-  have hkey : ∀ k ∈ T.image (fun p => (p.2.1, p.1)),
+  have! hkey : ∀ k ∈ T.image (fun p => (p.2.1, p.1)),
       k.1 ∈ Bs ∧ k.1 ≤ k.2.1 ∧ k.2.1 < k.1 + S.K := by
     intro k hk
     obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hk
     obtain ⟨-, -, hb1, hb2⟩ := hX _ (hTX p hp)
     exact ⟨hXB p (hTX p hp), hb1, hb2⟩
-  have hstep3 : ∑ k ∈ T.image (fun p => (p.2.1, p.1)), g k ≤
+  have! hstep3 : ∑ k ∈ T.image (fun p => (p.2.1, p.1)), g k ≤
       S.K * ∑ b ∈ Bs, ‖Ms.blockSide S hA SP b (cells b) (c b)‖ ^ 2 := by
     rw [← Finset.sum_fiberwise_of_maps_to (g := fun k : ℤ × (ℤ × ℤ) => (k.1, k.2.1))
       (t := (T.image (fun p => (p.2.1, p.1))).image (fun k : ℤ × (ℤ × ℤ) => (k.1, k.2.1)))
@@ -2621,13 +2623,13 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
     · -- one block and depth
       set Φ := (T.image (fun p => (p.2.1, p.1))).filter
         (fun k : ℤ × (ℤ × ℤ) => (k.1, k.2.1) = bd)
-      have hΦ : ∀ k ∈ Φ, k.1 = bd.1 ∧ k.2.1 = bd.2 := fun k hk => by
+      have! hΦ : ∀ k ∈ Φ, k.1 = bd.1 ∧ k.2.1 = bd.2 := fun k hk => by
         have := (Finset.mem_filter.mp hk).2
         exact ⟨congrArg Prod.fst this, congrArg Prod.snd this⟩
-      have hinjΦ : Set.InjOn (fun k : ℤ × (ℤ × ℤ) => k.2) (Φ : Set _) := by
+      have! hinjΦ : Set.InjOn (fun k : ℤ × (ℤ × ℤ) => k.2) (Φ : Set _) := by
         intro x hx y hy hxy
         exact Prod.ext ((hΦ x hx).1.trans (hΦ y hy).1.symm) hxy
-      have hsumΦ : ∑ k ∈ Φ, g k = ∑ I ∈ Φ.image (fun k => k.2),
+      have! hsumΦ : ∑ k ∈ Φ, g k = ∑ I ∈ Φ.image (fun k => k.2),
           ‖columnL2Restriction (dyadicGridCell Gd I.1 I.2) (dyadicGridCell_measurable Gd I.1 I.2)
             (Ms.blockSide S hA SP bd.1 (cells bd.1) (c bd.1))‖ ^ 2 := by
         rw [Finset.sum_image hinjΦ]
@@ -2644,7 +2646,7 @@ theorem RepClass.tops_side {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
           (Set.nonempty_iff_ne_empty.mpr hov))
     · obtain ⟨k, hk, rfl⟩ := Finset.mem_image.mp hbd
       exact hkey k hk
-  have hg0 : ∀ k, 0 ≤ g k := fun k => sq_nonneg _
+  have! hg0 : ∀ k, 0 ≤ g k := fun k => sq_nonneg _
   calc ∑ p ∈ T, f p = ∑ k ∈ T.image (fun p => (p.2.1, p.1)),
         ∑ p ∈ T.filter (fun p => (p.2.1, p.1) = k), f p := hT1
     _ ≤ ∑ k ∈ T.image (fun p => (p.2.1, p.1)), 2 * g k := Finset.sum_le_sum hstep1
@@ -2714,20 +2716,20 @@ theorem RepClass.tops_absorb {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
           ‖∑ m ∈ (Ms.nodeComp S hA h p.2).filter
             (fun m => ¬ Ms.IsCoreAt S hA SP p.2.1 p.2.2.1 m),
             c p.2.1 p.2.2.1 m • Ms.cellMode p.1 m‖ ^ 2) := by
-  have hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
   rw [Finset.mul_sum, ← Finset.sum_add_distrib, Finset.mul_sum]
   refine Finset.sum_le_sum fun p hp => ?_
   obtain ⟨hpX, hσp, -⟩ := Finset.mem_filter.mp hp
   obtain ⟨hcN, hIJ, hb1, hb2⟩ := hX p hpX
-  have hm := R.halive _ hcN
-  have hr := dyadicGridLength_pos Gd p.1.1
+  have! hm := R.halive _ hcN
+  have! hr := dyadicGridLength_pos Gd p.1.1
   rw [Ms.nodeSize_eq S hA SP c h hm] at hσp
-  have hinst : (Submodule.span ℂ ((Ms.cellMode p.1) ''
+  have! hinst : (Submodule.span ℂ ((Ms.cellMode p.1) ''
       (Ms.compModes S hA p.2.1 p.2.2.1 h ⟨p.2.2.2, hm⟩ : Set Ms.Md))).HasOrthogonalProjection := by
     have := inst (Ms.topRow S hA h p)
     simp only [topRow, Ms.nodeComp_eq_compModes S hA h hm] at this
     exact this
-  have hsz := Ms.size_comparison S hA SP (R.hNd _ hcN) hIJ (by omega) hD hδ hΛ hQ0 Kf hbox hDg hKf
+  have! hsz := Ms.size_comparison S hA SP (R.hNd _ hcN) hIJ (by omega) hD hδ hΛ hQ0 Kf hbox hDg hKf
     hεw (hal p hpX) (c p.2.1 p.2.2.1) (hc p hpX) h ⟨p.2.2.2, hm⟩
   -- the projections and side subtotals of the row are those of the size comparison
   have e1 : ‖(Submodule.span ℂ ((Ms.evMode (Ms.topRow S hA h p)) ''
@@ -2747,12 +2749,12 @@ theorem RepClass.tops_absorb {Δ h : ℕ} (R : Ms.RepClass S hA SP Δ h)
       (Ms.frozenEval S p.2.1 p.2.2.1 (c p.2.1 p.2.2.1))‖ ^ 2
   set V2 := ‖∑ m ∈ (Ms.compModes S hA p.2.1 p.2.2.1 h ⟨p.2.2.2, hm⟩).filter
       (fun m => ¬ Ms.IsCoreAt S hA SP p.2.1 p.2.2.1 m), c p.2.1 p.2.2.1 m • Ms.cellMode p.1 m‖ ^ 2
-  have h1 : σ₀ ≤ 12 * ((P2 + V2) / dyadicGridLength Gd p.1.1) + σ₀ / 2 := by
+  have! h1 : σ₀ ≤ 12 * ((P2 + V2) / dyadicGridLength Gd p.1.1) + σ₀ / 2 := by
     have : 3 * Bc / S.Dstar ^ 59 ≤ σ₀ / 2 := by
       have e : 3 * Bc / S.Dstar ^ 59 = (6 * Bc / S.Dstar ^ 59) / 2 := by ring
       rw [e]; linarith
     linarith [hσp.trans hsz]
-  have h2 : σ₀ ≤ 24 * ((P2 + V2) / dyadicGridLength Gd p.1.1) := by linarith
+  have! h2 : σ₀ ≤ 24 * ((P2 + V2) / dyadicGridLength Gd p.1.1) := by linarith
   have e3 : 24 * ((P2 + V2) / dyadicGridLength Gd p.1.1) * dyadicGridLength Gd p.1.1 =
       24 * (P2 + V2) := by field_simp
   calc σ₀ * dyadicGridLength Gd p.1.1 ≤ 24 * ((P2 + V2) / dyadicGridLength Gd p.1.1) *
@@ -2865,8 +2867,8 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
         dyadicGridLength A.G p.1.1 ≤
       24 * (2 * Real.exp ((6144 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + 4) *
           (1 + Real.log (2 * kq)) ^ 2) * dyadicGridLength A.G A.R.1 + 2 * S.K * VE) := by
-  have hK0 : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
-  have hR0 : 0 < dyadicGridLength A.G A.R.1 := dyadicGridLength_pos A.G A.R.1
+  have! hK0 : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hR0 : 0 < dyadicGridLength A.G A.R.1 := dyadicGridLength_pos A.G A.R.1
   -- the span projections of the rows
   have inst : ∀ G (e : (Ms G).Event),
       (Submodule.span ℂ (((Ms G).evMode e) '' (e.2.2 : Set (Ms G).Md))).HasOrthogonalProjection :=
@@ -2876,7 +2878,7 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
         FiniteDimensional.span_of_finite ℂ (e.2.2.finite_toSet.image _)
       infer_instance
   -- the decision cells of the tops
-  have hdec : ∀ G, ∀ p ∈ X G, A.R.1 ≤ p.2.1 - 4 * S.K →
+  have! hdec : ∀ G, ∀ p ∈ X G, A.R.1 ≤ p.2.1 - 4 * S.K →
       ancAt A.G p.1 (p.2.1 - 4 * S.K) ∈ A.cells ∧
         dyadicGridCell A.G p.1.1 p.1.2 ⊆ dyadicGridCell A.G (ancAt A.G p.1 (p.2.1 - 4 * S.K)).1
           (ancAt A.G p.1 (p.2.1 - 4 * S.K)).2 ∧
@@ -2885,14 +2887,14 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
     obtain ⟨hcN, hIJ, -, -⟩ := hX G p hp
     obtain ⟨-, hJr⟩ := hXr G p hp
     obtain ⟨hJU, hUc, hcert⟩ := fp.retained_decision hanc hJr hR
-    have he : ancAt A.G p.1 (p.2.1 - 4 * S.K) = ancAt A.G p.2.2.1 (p.2.1 - 4 * S.K) :=
+    have! he : ancAt A.G p.1 (p.2.1 - 4 * S.K) = ancAt A.G p.2.2.1 (p.2.1 - 4 * S.K) :=
       ancAt_eq_ancAt_of_subset hIJ
           (by rw [(R G).hNd _ hcN]; simp only [ModeSchedule.withQ0_K]; omega)
     rw [he]
     refine ⟨hUc, hIJ.trans hJU, ?_⟩
     rw [← hcol G]; exact hcert
   -- absorption on each group
-  have habs : ∀ G, σ₀ * ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA
+  have! habs : ∀ G, σ₀ * ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA
       SP (c G) h) σ₀,
       dyadicGridLength A.G p.1.1 ≤
       24 * (∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP (c G) h)
@@ -2909,7 +2911,7 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
       (fun p _ => halive G _) (fun p hp => hcB G p.2.1 (hXr G p hp).1 p.2.2.1 (hXr G p hp).2) hab
       (inst := inst G)
   -- the side part (`RepClass.tops_side` and `eq:linear-energy`)
-  have hside : ∀ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
+  have! hside : ∀ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
       (c G) h) σ₀,
       ‖∑ m ∈ ((Ms G).nodeComp (S.withQ0 (q G)) hA h p.2).filter
         (fun m => ¬ (Ms G).IsCoreAt (S.withQ0 (q G)) hA SP p.2.1 p.2.2.1 m),
@@ -2922,7 +2924,7 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
       (ModeSchedule.withQ0_box (hq G).2 (by positivity) hbox) (hDg G) (hKf G) (hεw G)
       (fun b J _ => halive G _)
   -- the row outputs: the blocks before the attempt root contribute nothing
-  have hPZ : ∀ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
+  have! hPZ : ∀ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
       (c G) h) σ₀,
       ‖(Submodule.span ℂ (((Ms G).evMode ((Ms G).topRow (S.withQ0 (q G)) hA h p)) ''
         (((Ms G).topRow (S.withQ0 (q G)) hA h p).2.2 : Set (Ms G).Md))).starProjection
@@ -2934,14 +2936,14 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
           ((L G).op (fp.basicOut l s mb (grp G) j ls
             (ancAt A.G e.2.1 (e.1 - 4 * S.K)).1))‖ ^ 2 := by
     intro G
-    have hinj : Set.InjOn ((Ms G).topRow (S.withQ0 (q G)) hA h)
+    have! hinj : Set.InjOn ((Ms G).topRow (S.withQ0 (q G)) hA h)
         ((((Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP (c G) h)
             σ₀).filter
           (fun p => A.R.1 ≤ p.2.1 - 4 * S.K) : Finset _) : Set _) :=
       ((R G).topRow_injOn (hX G) _ σ₀).mono (Finset.coe_subset.mpr (Finset.filter_subset _ _))
     rw [Finset.sum_image hinj, ← Finset.sum_filter_add_sum_filter_not _
       (fun p => A.R.1 ≤ p.2.1 - 4 * S.K)]
-    have hzero : ∑ p ∈ ((Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
+    have! hzero : ∑ p ∈ ((Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
         (c G) h)
         σ₀).filter (fun p => ¬ A.R.1 ≤ p.2.1 - 4 * S.K),
         ‖(Submodule.span ℂ (((Ms G).evMode ((Ms G).topRow (S.withQ0 (q G)) hA h p)) ''
@@ -2949,8 +2951,8 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
           ((Ms G).frozenEval (S.withQ0 (q G)) p.2.1 p.2.2.1 (c G p.2.1 p.2.2.1))‖ ^ 2 = 0 := by
       refine Finset.sum_eq_zero fun p hp => ?_
       obtain ⟨hpT, hR⟩ := Finset.mem_filter.mp hp
-      have hpX : p ∈ X G := (Finset.mem_filter.mp hpT).1
-      have hfz : fp.frozenZ l s mb (grp G) j ls (p.2.1 - 4 * S.K) = 0 := by
+      have! hpX : p ∈ X G := (Finset.mem_filter.mp hpT).1
+      have! hfz : fp.frozenZ l s mb (grp G) j ls (p.2.1 - 4 * S.K) = 0 := by
         simp [frozenZ, not_le.mp hR]
       rw [hcrep G p.2.1 (hXr G p hpX).1 p.2.2.1 (hXr G p hpX).2, hfz, map_zero, map_zero,
         map_zero, norm_zero]
@@ -2958,10 +2960,10 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
     rw [hzero, add_zero]
     refine Finset.sum_congr rfl fun p hp => ?_
     obtain ⟨hpT, hR⟩ := Finset.mem_filter.mp hp
-    have hpX : p ∈ X G := (Finset.mem_filter.mp hpT).1
+    have! hpX : p ∈ X G := (Finset.mem_filter.mp hpT).1
     obtain ⟨hcN, hIJ, -, -⟩ := hX G p hpX
     rw [hcrep G p.2.1 (hXr G p hpX).1 p.2.2.1 (hXr G p hpX).2]
-    have hz : fp.frozenZ l s mb (grp G) j ls (p.2.1 - 4 * S.K) =
+    have! hz : fp.frozenZ l s mb (grp G) j ls (p.2.1 - 4 * S.K) =
         fp.basicOut l s mb (grp G) j ls (ancAt A.G p.1 (p.2.1 - 4 * S.K)).1 := by
       simp [frozenZ, not_lt.mpr hR, ancAt]
     rw [hz]
@@ -2969,7 +2971,7 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
         p)
       (dyadicGridCell_measurable A.G p.2.2.1.1 p.2.2.1.2) hIJ _)
   -- lem:lift-composition on the rows of the tops
-  have hrows := fp.lift_composition_dep l s hT htag d mb hne (ρ := fun G => (Ms G).Event) grp hgrp
+  have! hrows := fp.lift_composition_dep l s hT htag d mb hne (ρ := fun G => (Ms G).Event) grp hgrp
     k j hPH ls (fun G => (Ms G).Md) L (fun G => ColumnL2 (Ms G).Md)
     (fun G => (((Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP (c G) h)
         σ₀).filter
@@ -2995,11 +2997,11 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
     obtain ⟨hpT, hR⟩ := Finset.mem_filter.mp hp
     exact (hdec G p (Finset.mem_filter.mp hpT).1 hR).2.2
   · convert hNq using 0
-  have hG0 := fp.liftConst_le_G0 l s mb ls (c := 2) (by norm_num) hτ hτN cc hcc hkq hDmq hDb hn
+  have! hG0 := fp.liftConst_le_G0 l s mb ls (c := 2) (by norm_num) hτ hτN cc hcc hkq hDmq hDb hn
   -- combine
   set G0 := Real.exp ((6144 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + 4) *
     (1 + Real.log (2 * kq)) ^ 2)
-  have hPZsum : ∑ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
+  have! hPZsum : ∑ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
       (c G) h) σ₀,
       ‖(Submodule.span ℂ (((Ms G).evMode ((Ms G).topRow (S.withQ0 (q G)) hA h p)) ''
         (((Ms G).topRow (S.withQ0 (q G)) hA h p).2.2 : Set (Ms G).Md))).starProjection
@@ -3007,7 +3009,7 @@ theorem tops_energy (l : Fin 4) (s : List (CatCol bf.Vtx))
       2 * G0 * dyadicGridLength A.G A.R.1 := by
     rw [Finset.sum_congr rfl fun G _ => hPZ G]
     exact hrows.trans (mul_le_mul_of_nonneg_right hG0 hR0.le)
-  have hVsum : ∑ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
+  have! hVsum : ∑ G, ∑ p ∈ (Ms G).firstTops (X G) (R G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
       (c G) h) σ₀,
       ‖∑ m ∈ ((Ms G).nodeComp (S.withQ0 (q G)) hA h p.2).filter
         (fun m => ¬ (Ms G).IsCoreAt (S.withQ0 (q G)) hA SP p.2.1 p.2.2.1 m),
@@ -3098,13 +3100,13 @@ theorem tops_cut_many (G : RealDyadicGrid) (S : Finset (ℤ × ℤ)) {ι κ : Ty
         (((T ch).filter fun t => (∀ d ∈ Cut, ¬ dyadicGridCell G (cell t).1 (cell t).2 ⊆
           dyadicGridCell G d.1 d.2) ∧ x ∈ dyadicGridCell G (cell t).1 (cell t).2).card : ℝ) ≤
           M ch * CH.card / ρ := by
-  have hN : (0 : ℝ) < CH.card := by exact_mod_cast hCH.card_pos
-  have hN1 : (1 : ℝ) ≤ CH.card := by exact_mod_cast hCH.card_pos
+  have! hN : (0 : ℝ) < CH.card := by exact_mod_cast hCH.card_pos
+  have! hN1 : (1 : ℝ) ≤ CH.card := by exact_mod_cast hCH.card_pos
   set ρ' := ρ / CH.card
   have hρ' : 0 < ρ' := div_pos hρ hN
   have hρ'1 : ρ' < 1 := lt_of_le_of_lt (div_le_self hρ.le hN1) hρ1
   set a : κ → ℤ × ℤ → ℝ := fun ch I => (((T ch).filter fun t => cell t = I).card : ℝ)
-  have hcut := fun ch (hch : ch ∈ CH) =>
+  have! hcut := fun ch (hch : ch ∈ CH) =>
     tops_count_cut G S (T ch) cell (hT ch hch) root hroot hρ' hρ'1 (hM ch hch)
   refine ⟨CH.biUnion fun ch => dyadicFirstCrossings G S (a ch) (M ch / ρ'), ?_, ?_⟩
   · -- the union of the first crossings
@@ -3119,7 +3121,7 @@ theorem tops_cut_many (G : RealDyadicGrid) (S : Finset (ℤ × ℤ)) {ι κ : Ty
           simp only [ρ']
           field_simp
   · intro x ch hch
-    have hsub : (T ch).filter (fun t => (∀ d ∈ CH.biUnion fun ch =>
+    have! hsub : (T ch).filter (fun t => (∀ d ∈ CH.biUnion fun ch =>
         dyadicFirstCrossings G S (a ch) (M ch / ρ'), ¬ dyadicGridCell G (cell t).1 (cell t).2 ⊆
           dyadicGridCell G d.1 d.2) ∧ x ∈ dyadicGridCell G (cell t).1 (cell t).2) ⊆
         (T ch).filter (fun t => cell t ∈ dyadicRetainedCells G S (a ch) (M ch / ρ') ∧
@@ -3205,8 +3207,8 @@ theorem first_top_count (l : Fin 4) (s : List (CatCol bf.Vtx))
           min S.Dstar (24 * (2 * Real.exp ((6144 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + 4) *
             (1 + Real.log (2 * kq)) ^ 2) + 2 * S.K * V₀) * (Hs ×ˢ Ts ×ˢ Thr).card /
               (ρ * σ ^ 2)) := by
-  have hDp : 0 < S.Dstar := by linarith
-  have hR0 : 0 < dyadicGridLength A.G A.R.1 := dyadicGridLength_pos A.G A.R.1
+  have! hDp : 0 < S.Dstar := by linarith
+  have! hR0 : 0 < dyadicGridLength A.G A.R.1 := dyadicGridLength_pos A.G A.R.1
   set G0 := Real.exp ((6144 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + 4) *
     (1 + Real.log (2 * kq)) ^ 2) with hG0
   set M := 24 * (2 * G0 + 2 * S.K * V₀) with hM
@@ -3217,21 +3219,21 @@ theorem first_top_count (l : Fin 4) (s : List (CatCol bf.Vtx))
   set! cellOf : (Σ G, (ℤ × ℤ) × (ℤ × (ℤ × ℤ) × (Ms G).Md)) → ℤ × ℤ := fun t => t.2.1 with hcellOf
   set! Sc := (Hs ×ˢ Ts ×ˢ Thr).biUnion fun ch => (Tch ch).image cellOf with hSc
   -- the mass of the tops of each choice
-  have hpt : ∀ G y, (((Ms G).ptSet y).card : ℝ) ≤ S.Dstar := fun G y =>
+  have! hpt : ∀ G y, (((Ms G).ptSet y).card : ℝ) ≤ S.Dstar := fun G y =>
     (Finset.single_le_sum (f := fun G => (((Ms G).ptSet y).card : ℝ))
       (fun _ _ => Nat.cast_nonneg _) (Finset.mem_univ G)).trans (hpath y)
-  have hmass : ∀ ch ∈ Hs ×ˢ Ts ×ˢ Thr, ∑ t ∈ Tch ch, dyadicGridLength A.G (cellOf t).1 ≤
+  have! hmass : ∀ ch ∈ Hs ×ˢ Ts ×ˢ Thr, ∑ t ∈ Tch ch, dyadicGridLength A.G (cellOf t).1 ≤
       M / ch.2.2 ^ 2 * dyadicGridLength A.G A.R.1 := by
     intro ch hch
-    have hσ : ch.2.2 ∈ Thr := (Finset.mem_product.mp (Finset.mem_product.mp hch).2).2
-    have hσpos : 0 < ch.2.2 := lt_of_lt_of_le (inv_pos.mpr hDp) (hThr _ hσ)
+    have! hσ : ch.2.2 ∈ Thr := (Finset.mem_product.mp (Finset.mem_product.mp hch).2).2
+    have! hσpos : 0 < ch.2.2 := lt_of_lt_of_le (inv_pos.mpr hDp) (hThr _ hσ)
     have hab' : 6 * Bc / S.Dstar ^ 59 ≤ ch.2.2 ^ 2 :=
       hab.trans (pow_le_pow_left₀ (inv_pos.mpr hDp).le (hThr _ hσ) 2)
-    have hE := fp.tops_energy l s hT htag d mb hne hanc grp hgrp k hcol j hPH ls S hA SP Ms q hq L
+    have! hE := fp.tops_energy l s hT htag d mb hne hanc grp hgrp k hcol j hPH ls S hA SP Ms q hq L
         Bs c
       hcrep hcB hVE (R := R ch.1 ch.2.1) (X ch.1 ch.2.1) (hX ch.1 ch.2.1) (hXr ch.1 ch.2.1) hD hδ
       hΛ hQ0 Kf hbox hDg hKf hεw halive hpt hroot hτ hτ1 hHτ hNq hτN cc hcc hkq hDmq hDb hn hab'
-    have hsum : ∑ t ∈ Tch ch, dyadicGridLength A.G (cellOf t).1 =
+    have! hsum : ∑ t ∈ Tch ch, dyadicGridLength A.G (cellOf t).1 =
         ∑ G, ∑ p ∈ (Ms G).firstTops (X ch.1 ch.2.1 G) (R ch.1 ch.2.1 G).rep
           ((Ms G).nodeSize (S.withQ0 (q G)) hA SP (c G) ch.1) (ch.2.2 ^ 2), dyadicGridLength A.G
               p.1.1 := by
@@ -3242,13 +3244,13 @@ theorem first_top_count (l : Fin 4) (s : List (CatCol bf.Vtx))
     simp only [hM, hG0]
     ring
   -- all top cells lie in the root
-  have hrootR : ∀ e ∈ Sc, dyadicGridCell A.G e.1 e.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2 := by
+  have! hrootR : ∀ e ∈ Sc, dyadicGridCell A.G e.1 e.2 ⊆ dyadicGridCell A.G A.R.1 A.R.2 := by
     intro e he
     obtain ⟨ch, -, het⟩ := Finset.mem_biUnion.mp he
     obtain ⟨t, ht, rfl⟩ := Finset.mem_image.mp het
     obtain ⟨G, p⟩ := t
-    have hp := (Finset.mem_sigma.mp ht).2
-    have hpX := (Finset.mem_filter.mp hp).1
+    have! hp := (Finset.mem_sigma.mp ht).2
+    have! hpX := (Finset.mem_filter.mp hp).1
     obtain ⟨-, hIJ, -, -⟩ := hX _ _ G p hpX
     obtain ⟨-, hJr⟩ := hXr _ _ G p hpX
     exact hIJ.trans ((dyadicFiniteTree_mem_iff A.G A.R _ _).mp ((fp.mem_retainedV).mp hJr).1).1
@@ -3262,18 +3264,18 @@ theorem first_top_count (l : Fin 4) (s : List (CatCol bf.Vtx))
     obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp ha
     obtain ⟨hpX, -, hy', -⟩ := Finset.mem_filter.mp hp
     obtain ⟨hcN, hIJ, -, -⟩ := hX h t G p hpX
-    have hal := (Ms G).mem_alive_of_mem_predOfMode (S.withQ0 (q G)) hA Δ h ((R h t G).halive _ hcN)
+    have! hal := (Ms G).mem_alive_of_mem_predOfMode (S.withQ0 (q G)) hA Δ h ((R h t G).halive _ hcN)
       ((R h t G).hrep p.2)
-    have hJU := subset_ancAt A.G p.2.2.1 (show p.2.1 - 4 * S.K ≤ p.2.2.1.1 by
+    have! hJU := subset_ancAt A.G p.2.2.1 (show p.2.1 - 4 * S.K ≤ p.2.2.1.1 by
       rw [(R h t G).hNd _ hcN]; simp only [ModeSchedule.withQ0_K]
       have := (Nat.cast_nonneg S.K : (0 : ℤ) ≤ S.K); omega)
     exact ((Ms G).mem_ptSet).mpr ((Ms G).mem_alive.mp hal (hJU (hIJ hy')))
   · -- the retained first tops
-    have hch : (h, t, σ) ∈ Hs ×ˢ Ts ×ˢ Thr :=
+    have! hch : (h, t, σ) ∈ Hs ×ˢ Ts ×ˢ Thr :=
       Finset.mem_product.mpr ⟨hh, Finset.mem_product.mpr ⟨ht, hσ⟩⟩
-    have hσpos : 0 < σ := lt_of_lt_of_le (inv_pos.mpr hDp) (hThr _ hσ)
-    have hc := hcount y (h, t, σ) hch
-    have hsig : (((Tch (h, t, σ)).filter fun t' => (∀ d ∈ Cut,
+    have! hσpos : 0 < σ := lt_of_lt_of_le (inv_pos.mpr hDp) (hThr _ hσ)
+    have! hc := hcount y (h, t, σ) hch
+    have! hsig : (((Tch (h, t, σ)).filter fun t' => (∀ d ∈ Cut,
         ¬ dyadicGridCell A.G (cellOf t').1 (cellOf t').2 ⊆ dyadicGridCell A.G d.1 d.2) ∧
           y ∈ dyadicGridCell A.G (cellOf t').1 (cellOf t').2).card : ℝ) =
         ∑ G, ((((Ms G).firstTops (X h t G) (R h t G).rep ((Ms G).nodeSize (S.withQ0 (q G)) hA SP
@@ -3286,7 +3288,7 @@ theorem first_top_count (l : Fin 4) (s : List (CatCol bf.Vtx))
       refine Finset.sum_congr rfl fun G _ => Finset.sum_congr rfl fun q _ => ?_
       split_ifs <;> rfl
     rw [hsig] at hc
-    have hG : ∀ G, ((((X h t G).filter fun p => (∀ e ∈ Cut, ¬ dyadicGridCell A.G p.1.1 p.1.2 ⊆
+    have! hG : ∀ G, ((((X h t G).filter fun p => (∀ e ∈ Cut, ¬ dyadicGridCell A.G p.1.1 p.1.2 ⊆
         dyadicGridCell A.G e.1 e.2) ∧ y ∈ dyadicGridCell A.G p.1.1 p.1.2 ∧
           σ ^ 2 ≤ (Ms G).nodeSize (S.withQ0 (q G)) hA SP (c G) h p).image
             (fun p => (R h t G).rep p.2)).card : ℝ) ≤
@@ -3294,7 +3296,7 @@ theorem first_top_count (l : Fin 4) (s : List (CatCol bf.Vtx))
           (c G) h) (σ ^ 2)).filter fun q => (∀ d ∈ Cut, ¬ dyadicGridCell A.G q.1.1 q.1.2 ⊆
             dyadicGridCell A.G d.1 d.2) ∧ y ∈ dyadicGridCell A.G q.1.1 q.1.2).card : ℝ) := by
       intro G
-      have hP : ∀ I J : ℤ × ℤ, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G J.1 J.2 →
+      have! hP : ∀ I J : ℤ × ℤ, dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G J.1 J.2 →
           (∀ e ∈ Cut, ¬ dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G e.1 e.2) →
             ∀ e ∈ Cut, ¬ dyadicGridCell A.G J.1 J.2 ⊆ dyadicGridCell A.G e.1 e.2 :=
         fun I J hIJ hI e he hJe => hI e he (hIJ.trans hJe)
@@ -3359,7 +3361,7 @@ theorem exists_repClass {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : S.Valid Cj CA CT
     (k1 k2 : ℕ) :
     ∃ R : Ms.RepClass S hA (S.sideParams δs) 10 h, R.Nd = Nd.filter
       (fun c => Ms.nodeType1 S hA 10 h c = k1 ∧ Ms.nodeType2 S hA 10 h c = k2) := by
-  have hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hK : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
   by_cases hNd0 : Nd.Nonempty
   swap
   · refine ⟨RepClass.trivial Ms S hA (S.sideParams δs) 10 h, ?_⟩
@@ -3372,7 +3374,7 @@ theorem exists_repClass {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : S.Valid Cj CA CT
     hNd hBmin hcard hJh halive hgood hdist hNd0.choose.2.2
   obtain ⟨hmem, hinh, -, hsepP⟩ := hrep k1 k2
   set Nk := Nd.filter fun c => Ms.nodeType1 S hA 10 h c = k1 ∧ Ms.nodeType2 S hA 10 h c = k2
-  have hsub : ∀ c ∈ Nk, c ∈ Nd := fun c hc => (Finset.mem_filter.mp hc).1
+  have! hsub : ∀ c ∈ Nk, c ∈ Nd := fun c hc => (Finset.mem_filter.mp hc).1
   refine ⟨{ Nd := Nk
             hNd := fun c hc => hNd c (hsub c hc)
             halive := fun c hc => halive c (hsub c hc)
@@ -3381,7 +3383,7 @@ theorem exists_repClass {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : S.Valid Cj CA CT
               hdim hBσ (hNd c (hsub c hc)) (hcard c (hsub c hc)) hJh z z' hg hπ hF
             k1 := k1
             htype1 := fun c hc => by
-              have h1 := (Finset.mem_filter.mp hc).2.1
+              have! h1 := (Finset.mem_filter.mp hc).2.1
               unfold nodeType1 at h1
               rwa [dite_eq_left_of_eq_true (eq_true (halive c (hsub c hc)))] at h1
             hdist := fun c hc c' hc' h1 h2 hne => hdist c (hsub c hc) c' (hsub c' hc') h1 h2 hne
@@ -3393,7 +3395,7 @@ theorem exists_repClass {Cj CA CT CK : ℕ} {δs W : ℝ} (hV : S.Valid Cj CA CT
   -- the blocks are `K`-spaced
   obtain ⟨q, hq⟩ := Int.dvd_sub (hblk c (hsub c hc)) (hblk c' (hsub c' hc'))
   have hq' : c.1 - c'.1 = S.K * q := by rw [← hq]; ring
-  have hq0 : q ≠ 0 := by
+  have! hq0 : q ≠ 0 := by
     rintro rfl
     exact hne (by linarith [hq'])
   rcases lt_or_gt_of_ne hq0 with hlt | hgt
@@ -3473,7 +3475,7 @@ theorem succNodes_props (SP : SideParams) (P : Finset (ℤ × (ℤ × ℤ)))
         (⟨c'.2.2, by rw [h1, h2]; exact halive c' hc'⟩ :
           Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K))) ∉
           (Ms.blockComps S hA c.1 c.2.1).F h ⟨c.2.2, halive c hc⟩) := by
-  have halive : ∀ c ∈ Ms.succNodes S hA SP P h,
+  have! halive : ∀ c ∈ Ms.succNodes S hA SP P h,
       c.2.2 ∈ Ms.alive (ancAt Gd c.2.1 (c.1 - 4 * S.K)) := by
     intro c hc
     obtain ⟨bJ, -, x, -, rfl⟩ := (Ms.mem_succNodes S hA).mp hc
@@ -3496,11 +3498,11 @@ theorem succNodes_props (SP : SideParams) (P : Finset (ℤ × (ℤ × ℤ)))
     have hmem' : x' ∈ (Ms.blockComps S hA b J).F h x := hmem
     obtain ⟨-, hxg, -, hxmin⟩ := Finset.mem_filter.mp hx
     obtain ⟨-, hx'g, -, hx'min⟩ := Finset.mem_filter.mp hx'
-    have hF := (Ms.blockComps S hA b J).F_comp h x x' hmem'
+    have! hF := (Ms.blockComps S hA b J).F_comp h x x' hmem'
     have i1 := hxmin x' hmem' hx'g
     have i2 := hx'min x (by
       rw [hF]; exact (Ms.blockComps S hA b J).E_le_F _ _ ((Ms.blockComps S hA b J).E_self _ _)) hxg
-    have he : x.1 = x'.1 := Ms.modeIdx_injective (le_antisymm i1 i2)
+    have! he : x.1 = x'.1 := Ms.modeIdx_injective (le_antisymm i1 i2)
     exact hne (by rw [he])
 
 end ModeSystem
@@ -3653,9 +3655,9 @@ theorem first_top_count_main (l : Fin 4) (s : List (CatCol bf.Vtx))
                     (Real.exp ((6144 * (cc + 1) * (1024 * (cc + 1) + cc + 7) + 4) *
                       (1 + Real.log (2 * kq)) ^ 2) + 2 * CF / S.Dstar ^ 394))) *
                   (Finset.range (S.Jstar + 1) ×ˢ Ts ×ˢ Thr).card / (ρ * σ ^ 2)) := by
-  have hK0 : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
-  have hDp : 0 < S.Dstar := by linarith
-  have hD1 : (1 : ℝ) ≤ S.Dstar := by linarith
+  have! hK0 : (0 : ℤ) ≤ S.K := Nat.cast_nonneg _
+  have! hDp : 0 < S.Dstar := by linarith
+  have! hD1 : (1 : ℝ) ≤ S.Dstar := by linarith
   -- the frozen coefficients and the linear-side energy (`eq:linear-energy`)
   obtain ⟨c, hcrep, hcB, hVE⟩ := fp.linear_energy l s hT htag d mb hne hanc grp hgrp k hcol hj
     hPH ls S hV hCj (le_trans (by norm_num) hCA) hδs hδ1 hd2 hD hB hQ hDm hW D dB hHed hH hδc hN0
@@ -3664,22 +3666,22 @@ theorem first_top_count_main (l : Fin 4) (s : List (CatCol bf.Vtx))
     Bs hgrid hroot hτ hτ1 hHτ hNq hτN cc hcc hkq hDmq hDb hn
   refine ⟨c, hcrep, hcB, hVE, ?_⟩
   -- the box of shifts at height zero
-  have hbox : (S.Q0 : ℝ) * 2 ^ (Kf + 1) ≤ S.Eh 0 := by
-    have hBA : S.Bstar ≤ S.A0 := by
-      have hb := hV.base_le_A0 (le_trans (by norm_num) hCA) hd2 hD hB
-      have hC := hV.two_le_Cstar hd2 hD
-      have h6 : (1 : ℝ) ≤ 6 ^ S.Rht := one_le_pow₀ (by norm_num)
-      have h1 : 1 ≤ S.Cstar * 6 ^ S.Rht := one_le_mul_of_one_le_of_one_le (by linarith) h6
-      have h2 : S.Bstar ≤ S.Cstar * 6 ^ S.Rht * S.Bstar :=
+  have! hbox : (S.Q0 : ℝ) * 2 ^ (Kf + 1) ≤ S.Eh 0 := by
+    have! hBA : S.Bstar ≤ S.A0 := by
+      have! hb := hV.base_le_A0 (le_trans (by norm_num) hCA) hd2 hD hB
+      have! hC := hV.two_le_Cstar hd2 hD
+      have! h6 : (1 : ℝ) ≤ 6 ^ S.Rht := one_le_pow₀ (by norm_num)
+      have! h1 : 1 ≤ S.Cstar * 6 ^ S.Rht := one_le_mul_of_one_le_of_one_le (by linarith) h6
+      have! h2 : S.Bstar ≤ S.Cstar * 6 ^ S.Rht * S.Bstar :=
         le_mul_of_one_le_left (by linarith) h1
-      have h3 : S.Cstar * 6 ^ S.Rht * S.Bstar ≤ S.Cstar * 6 ^ S.Rht * S.Bstar * S.Dstar :=
+      have! h3 : S.Cstar * 6 ^ S.Rht * S.Bstar ≤ S.Cstar * 6 ^ S.Rht * S.Bstar * S.Dstar :=
         le_mul_of_one_le_right (by positivity) hD1
       linarith
-    have hE0 : S.Eh 0 = S.A0 := by unfold ModeSchedule.Eh; ring
+    have! hE0 : S.Eh 0 = S.A0 := by unfold ModeSchedule.Eh; ring
     rw [hE0]; linarith
-  have hQ0 : 0 < S.Q0 := by omega
+  have! hQ0 : 0 < S.Q0 := by omega
   -- the representative classes of the successful nodes
-  have hRex : ∀ (h : ℕ) (t : ℕ × ℕ) G, ∃ R : (Ms G).RepClass (S.withQ0 (q G)) hA (S.sideParams δs)
+  have! hRex : ∀ (h : ℕ) (t : ℕ × ℕ) G, ∃ R : (Ms G).RepClass (S.withQ0 (q G)) hA (S.sideParams δs)
       10 h,
       (h ≤ S.Jstar → R.Nd = ((Ms G).succNodes (S.withQ0 (q G)) hA (S.sideParams δs)
         (fp.retainedPairs (grp G) Bs S.K) h).filter
@@ -3688,12 +3690,12 @@ theorem first_top_count_main (l : Fin 4) (s : List (CatCol bf.Vtx))
       (¬ h ≤ S.Jstar → R.Nd = ∅) := by
     intro h t G
     by_cases hh : h ≤ S.Jstar
-    · have hP : ∀ bJ ∈ fp.retainedPairs (grp G) Bs S.K, bJ.2.1 = bJ.1 - 2 * S.K := fun bJ hbJ =>
+    · have! hP : ∀ bJ ∈ fp.retainedPairs (grp G) Bs S.K, bJ.2.1 = bJ.1 - 2 * S.K := fun bJ hbJ =>
         ((fp.mem_retainedV).mp ((fp.mem_retainedPairs).mp hbJ).2).2.1
       obtain ⟨hal, hNd, hgood, hdist⟩ := (Ms G).succNodes_props (S.withQ0 (q G)) hA
           (S.sideParams δs)
         (fp.retainedPairs (grp G) Bs S.K) hP h
-      have hblk : ∀ c ∈ (Ms G).succNodes (S.withQ0 (q G)) hA (S.sideParams δs)
+      have! hblk : ∀ c ∈ (Ms G).succNodes (S.withQ0 (q G)) hA (S.sideParams δs)
           (fp.retainedPairs (grp G) Bs S.K) h, (S.K : ℤ) ∣ c.1 - R₀ := by
         intro c hc
         obtain ⟨bJ, hbJ, x, -, rfl⟩ := ((Ms G).mem_succNodes (S.withQ0 (q G)) hA).mp hc
@@ -3708,14 +3710,14 @@ theorem first_top_count_main (l : Fin 4) (s : List (CatCol bf.Vtx))
   choose R hR hR0 using hRex
   refine ⟨R, fun h hh t G => hR h t G hh, ?_⟩
   -- the instances
-  have hX : ∀ h t G, (R h t G).Inst (fp.useInst (grp G) S.K (R h t G).Nd) := by
+  have! hX : ∀ h t G, (R h t G).Inst (fp.useInst (grp G) S.K (R h t G).Nd) := by
     intro h t G p hp
     obtain ⟨hpc, hu, hIJ, hb1, hb2⟩ := Finset.mem_filter.mp hp
     exact ⟨(Finset.mem_product.mp hpc).2, hIJ, hb1, hb2⟩
-  have hXr : ∀ h t G, ∀ p ∈ fp.useInst (grp G) S.K (R h t G).Nd,
+  have! hXr : ∀ h t G, ∀ p ∈ fp.useInst (grp G) S.K (R h t G).Nd,
       p.2.1 ∈ Bs ∧ p.2.2.1 ∈ fp.retainedV (grp G) p.2.1 S.K := by
     intro h t G p hp
-    have hpN := (Finset.mem_product.mp (Finset.mem_filter.mp hp).1).2
+    have! hpN := (Finset.mem_product.mp (Finset.mem_filter.mp hp).1).2
     by_cases hh : h ≤ S.Jstar
     · rw [hR h t G hh] at hpN
       obtain ⟨bJ, hbJ, x, -, he⟩ := ((Ms G).mem_succNodes (S.withQ0 (q G)) hA).mp
@@ -3724,15 +3726,15 @@ theorem first_top_count_main (l : Fin 4) (s : List (CatCol bf.Vtx))
       exact (fp.mem_retainedPairs).mp hbJ
     · rw [hR0 h t G hh] at hpN
       exact absurd hpN (Finset.notMem_empty _)
-  have hab : 6 * (4 * S.Dstar ^ 2 * CF) / S.Dstar ^ 59 ≤ S.Dstar⁻¹ ^ 2 := by
+  have! hab : 6 * (4 * S.Dstar ^ 2 * CF) / S.Dstar ^ 59 ≤ S.Dstar⁻¹ ^ 2 := by
     rw [div_le_iff₀ (by positivity)]
     have e : S.Dstar⁻¹ ^ 2 * S.Dstar ^ 59 = S.Dstar ^ 2 * S.Dstar ^ 55 := by
       field_simp
     rw [e]
-    have h2 : 0 ≤ S.Dstar ^ 2 := by positivity
+    have! h2 : 0 ≤ S.Dstar ^ 2 := by positivity
     have := mul_le_mul_of_nonneg_left hCFD h2
     linarith
-  have hCH : (Finset.range (S.Jstar + 1) ×ˢ Ts ×ˢ Thr).Nonempty :=
+  have! hCH : (Finset.range (S.Jstar + 1) ×ˢ Ts ×ˢ Thr).Nonempty :=
     Finset.Nonempty.product ⟨0, Finset.mem_range.mpr (Nat.succ_pos _)⟩
       (Finset.Nonempty.product hTs hThr0)
   exact fp.first_top_count l s hT htag d mb hne hanc grp hgrp k hcol j hPH ls S hA
