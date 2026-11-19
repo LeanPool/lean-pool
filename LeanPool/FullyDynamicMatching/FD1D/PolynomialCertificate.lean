@@ -615,45 +615,78 @@ private theorem repackBellmanBranch (p : DPoly R) (branch : List R → DPoly R)
   | mk coefficients => exact identity coefficients
 
 -- Match an identity over a variable so conversion cannot evaluate the concrete argument.
-private meta def specializeBellmanIdentity (rules : Array Lean.Name) (argument : Lean.Expr)
+private meta def specializeBellmanIdentity (rule : Lean.Name) (argument : Lean.Expr)
     (repack : Lean.Expr → Lean.Expr) : Lean.MetaM (Option Lean.Expr) := do
   let type ← Lean.Meta.inferType argument
+  unless (← Lean.Meta.whnfD type).isAppOfArity ``List 1 do return none
   Lean.Meta.withLocalDeclD `argument type fun localArgument => do
     let target ← Lean.Meta.mkEq (repack localArgument) localArgument
-    for rule in rules do
-      let proof ← Lean.Meta.mkAppM rule #[localArgument]
-      let proofType ← Lean.Meta.inferType proof
-      if ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) then
-        let proof ← Lean.Meta.mkExpectedTypeHint proof target
-        let abstractProof ← Lean.Meta.mkLambdaFVars #[localArgument] proof
-        return some (Lean.mkApp abstractProof argument)
-    return none
+    let proof ← Lean.Meta.mkAppM rule #[localArgument]
+    let proofType ← Lean.Meta.inferType proof
+    unless ← Lean.Meta.withTransparency .all (Lean.Meta.isDefEqGuarded proofType target) do
+      return none
+    let proof ← Lean.Meta.mkExpectedTypeHint proof target
+    let abstractProof ← Lean.Meta.mkLambdaFVars #[localArgument] proof
+    return some (Lean.mkApp abstractProof argument)
 
-private meta def bellmanAppendIdentity (expression : Lean.Expr) :
+private meta def peelBellmanAppend (operator left right : Lean.Expr) :
     Lean.MetaM (Option (Lean.Expr × Lean.Expr)) := do
-  unless expression.isAppOfArity ``List.append 3 ||
-    expression.isAppOfArity ``HAppend.hAppend 6 || expression.isAppOfArity ``Append.append 4 do
-    return none
-  let left := expression.appFn!.appArg!
-  let right := expression.appArg!
-  let append := expression.appFn!.appFn!
-  let leftIsLiteralNil := left.consumeMData.isAppOfArity ``List.nil 1
-  let rightIsNil ← if leftIsLiteralNil then
-      pure (right.consumeMData.isAppOfArity ``List.nil 1)
-    else
-      pure ((← exposeBellmanField right).isAppOfArity ``List.nil 1)
   let (rule, survivor, rebuild) ←
-    if rightIsNil then
-      pure (``List.append_nil, left, fun term => Lean.mkApp2 append term right)
+    if right.isAppOfArity ``List.nil 1 then
+      pure (``List.append_nil, left, fun term => Lean.mkApp2 operator term right)
+    else if left.isAppOfArity ``List.nil 1 then
+      pure (``List.nil_append, right, fun term => Lean.mkApp2 operator left term)
     else
-      let leftIsNil ← if leftIsLiteralNil then pure true else
-        pure ((← exposeBellmanField left).isAppOfArity ``List.nil 1)
-      unless leftIsNil do return none
-      pure (``List.nil_append, right, fun term => Lean.mkApp2 append left term)
-  let type ← Lean.Meta.inferType survivor
-  unless (← Lean.Meta.whnfD type).isAppOfArity ``List 1 do return none
-  let some proof ← specializeBellmanIdentity #[rule] survivor rebuild | return none
+      return none
+  let some proof ← specializeBellmanIdentity rule survivor rebuild | return none
   return some (survivor, proof)
+
+private meta inductive BellmanAppendWork where
+  | visit (expression : Lean.Expr)
+  | combine (operator left right : Lean.Expr)
+
+private meta def combineBellmanAppends (operator oldLeft oldRight : Lean.Expr)
+    (left right : Lean.Expr × Option Lean.Expr) :
+    Lean.MetaM (Lean.Expr × Option Lean.Expr) := do
+  let (newLeft, leftProof) := left
+  let (newRight, rightProof) := right
+  let proof ← match leftProof, rightProof with
+    | none, none => pure none
+    | none, some h => some <$> Lean.Meta.mkCongrArg (Lean.mkApp operator oldLeft) h
+    | some h, none =>
+      some <$> Lean.Meta.mkCongrFun (← Lean.Meta.mkCongrArg operator h) oldRight
+    | some hl, some hr => some <$> Lean.Meta.mkCongr (← Lean.Meta.mkCongrArg operator hl) hr
+  let some (survivor, identity) ← peelBellmanAppend operator newLeft newRight
+    | return (Lean.mkApp2 operator newLeft newRight, proof)
+  return (survivor, ← Lean.Meta.mkEqTrans? proof (some identity))
+
+-- Visit only the append tree. Coefficient projections and list cells remain opaque.
+private meta def normalizeBellmanAppends (expression : Lean.Expr) :
+    Lean.MetaM (Lean.Expr × Option Lean.Expr) := do
+  let mut work := [BellmanAppendWork.visit expression]
+  let mut results : List (Lean.Expr × Option Lean.Expr) := []
+  repeat
+    Lean.Core.checkSystem "Bellman coefficient appends"
+    let task :: pending := work | break
+    work := pending
+    match task with
+    | .visit expression =>
+      let term ← exposeBellmanField expression
+      if term.isAppOfArity ``List.append 3 || term.isAppOfArity ``HAppend.hAppend 6 ||
+          term.isAppOfArity ``Append.append 4 then
+        let left := term.appFn!.appArg!
+        let right := term.appArg!
+        work := .visit left :: .visit right :: .combine term.appFn!.appFn! left right :: work
+      else
+        results := (term, none) :: results
+    | .combine operator left right =>
+      let newRight :: newLeft :: rest := results | Lean.throwError "missing append operands"
+      results := (← combineBellmanAppends operator left right newLeft newRight) :: rest
+  let [(normalized, proof)] := results | Lean.throwError "incomplete append normalization"
+  let proof ← proof.mapM fun proof => do
+    let equality ← Lean.Meta.mkEq expression normalized
+    return Lean.Meta.mkExpectedPropHint proof equality
+  return (normalized, proof)
 
 -- Prove the branch identity on its local field before applying it to a chart.
 private meta def proveBellmanRepackBranch (branch : Lean.Expr) :
@@ -662,14 +695,12 @@ private meta def proveBellmanRepackBranch (branch : Lean.Expr) :
     let #[field] := fields | return none
     let body ← exposeBellmanUntil (·.isAppOfArity ``DPoly.mk 2) body
     unless body.isAppOfArity ``DPoly.mk 2 do return none
-    let rules ← ({} : Lean.Meta.SimpTheorems).addConst ``List.append_nil
-    let rules ← rules.addConst ``List.nil_append
-    let context ← Lean.Meta.Simp.mkContext (config := { iota := false, proj := false })
-      (simpTheorems := #[rules])
-    let coefficients := body.appArg!
-    let (result, _) ← Lean.Meta.simp coefficients context
-    unless result.expr.consumeMData == field do return none
-    let proof ← Lean.Meta.mkCongrArg body.appFn! (← result.getProof' coefficients)
+    let (coefficients, proof) ← normalizeBellmanAppends body.appArg!
+    unless coefficients == field do return none
+    let proof ← match proof with
+      | some proof => pure proof
+      | none => Lean.Meta.mkEqRefl coefficients
+    let proof ← Lean.Meta.mkCongrArg body.appFn! proof
     return some (← Lean.Meta.mkLambdaFVars fields proof)
 
 private meta def bellmanMatcherIdentity (expression : Lean.Expr) :
@@ -720,8 +751,9 @@ private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
             (Lean.mkApp constructor coefficients) (· == ``DPoly) then
           next := polynomial
           continue
-        if let some (left, proof) ← bellmanAppendIdentity coefficients then
-          pure (some (Lean.mkApp constructor left, ← Lean.Meta.mkCongrArg constructor proof))
+        let (normalized, proof) ← normalizeBellmanAppends coefficients
+        if let some proof := proof then
+          pure (some (Lean.mkApp constructor normalized, ← Lean.Meta.mkCongrArg constructor proof))
         else pure none
       else bellmanMatcherIdentity exposed
     let some (polynomial, proof) := identity | return (← exposeBellmanHead exposed, prefixProof)
@@ -999,10 +1031,12 @@ example :
         (id ((DPoly.eval (id : Poly3 → Poly3) 0 (DPoly.const U)).coeffs, ()).1)) = true := by
   checkBellmanChart
 
+private def emptyBellmanCoefficients : List (DPoly (DPoly ℤ)) := []
+
 private theorem chartPlus_repacked_check :
     allNonnegative3
       (match chartPlus with
-      | ⟨coefficients⟩ => DPoly.mk ((coefficients ++ []) ++ [])) = true := by
+      | ⟨coefficients⟩ => DPoly.mk ((coefficients ++ emptyBellmanCoefficients) ++ [])) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
@@ -1014,7 +1048,7 @@ private theorem chartPlus_normalized_check : allNonnegative3 chartPlus = true :=
 theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
-private def chartOneWithEmptyAppend : Poly3 := DPoly.mk ([] ++ (chartOne.coeffs ++ []))
+private def chartOneWithEmptyAppend : Poly3 := DPoly.mk ([] ++ (chartOne.coeffs ++ ([] ++ [])))
 
 private theorem chartOne_appended_check : allNonnegative3 chartOneWithEmptyAppend = true := by
   checkBellmanChart
