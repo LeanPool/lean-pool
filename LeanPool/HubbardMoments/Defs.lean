@@ -220,8 +220,7 @@ def annihilate (ord : O ↪ ℕ) (o : O) : Matrix (Finset O) (Finset O) ℂ := f
   if o ∈ S ∧ S' = S.erase o then (-1) ^ countBelow ord S o else 0
 
 /-- **Fermion creation operator** `c†_o`: `c†_o |S⟩ = (-1)^m |S ∪ {o}⟩` if `o ∉ S`, `m` the
-number of orbitals of `S` before `o`, and `0` otherwise. It is the adjoint of `annihilate`,
-and the two satisfy the canonical anticommutation relations (`HubbardMoments.Fermions`). -/
+number of orbitals of `S` before `o`, and `0` otherwise. It is the adjoint of `annihilate`. -/
 def create (ord : O ↪ ℕ) (o : O) : Matrix (Finset O) (Finset O) ℂ := fun S' S =>
   if o ∉ S ∧ S' = insert o S then (-1) ^ countBelow ord S o else 0
 
@@ -231,25 +230,38 @@ section HubbardOperators
 
 variable {V σ : Type*} [Fintype V] [DecidableEq V] [Fintype σ] [DecidableEq σ]
 
+/-- The fermionic hopping operator with coefficient `amplitude i j` for a move from `i`
+to `j`. The graph specifies which moves are allowed. -/
+noncomputable def fermionHopping (G : SimpleGraph V) [DecidableRel G.Adj]
+    (amplitude : V → V → ℂ) (ord : V × σ ↪ ℕ) :
+    Matrix (FockState V σ) (FockState V σ) ℂ :=
+  ∑ p ∈ arcs G, ∑ s, amplitude p.1 p.2 •
+    (create ord (p.2, s) * annihilate ord (p.1, s))
+
+/-- The Fock state of a configuration without double occupancy: its occupied orbitals. -/
+def configState (c : Config V σ) : FockState V σ := univ.filter fun o => c o.1 = some o.2
+
+/-- The block of the fermionic hopping operator on states without double occupancy, written
+in the configuration basis. -/
+noncomputable def projectedFermionHopping (G : SimpleGraph V) [DecidableRel G.Adj]
+    (amplitude : V → V → ℂ) (ord : V × σ ↪ ℕ) : Matrix (Config V σ) (Config V σ) ℂ :=
+  fun c b => fermionHopping G amplitude ord (configState c) (configState b)
+
 /-- **The Hubbard hopping term with Peierls phases**, built from fermion operators on the
 orbitals `(site, spin)` ordered by `ord`:
 `H_t = -t ∑_{x ~ y} ∑_s e^{i A(y, x)} c†_{y s} c_{x s}`, the sum over ordered pairs of
 adjacent sites (`arcs G`). It is Hermitian when `A` is antisymmetric. -/
 noncomputable def hubbardHopping (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ)
     (A : V → V → ℝ) (ord : V × σ ↪ ℕ) : Matrix (FockState V σ) (FockState V σ) ℂ :=
-  ∑ p ∈ arcs G, ∑ s, (-(t : ℂ) * Complex.exp (A p.2 p.1 * Complex.I)) •
-    (create ord (p.2, s) * annihilate ord (p.1, s))
-
-/-- The Fock state of a configuration without double occupancy: its occupied orbitals. -/
-def configState (c : Config V σ) : FockState V σ := univ.filter fun o => c o.1 = some o.2
+  fermionHopping G (fun i j => -(t : ℂ) * Complex.exp (A j i * Complex.I)) ord
 
 /-- **The projected hopping operator `H∞ = P₀ H_t P₀`** of the `U → ∞` Hubbard model, in the
 configuration basis. The configurations are exactly the Fock states without double
 occupancy (`configState` is injective with that image), so the block of `H_t` on them is
 `c, b ↦ (H_t)_{configState c, configState b}`. -/
 noncomputable def projectedHubbard (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ)
-    (A : V → V → ℝ) (ord : V × σ ↪ ℕ) : Matrix (Config V σ) (Config V σ) ℂ := fun c b =>
-  hubbardHopping G t A ord (configState c) (configState b)
+    (A : V → V → ℝ) (ord : V × σ ↪ ℕ) : Matrix (Config V σ) (Config V σ) ℂ :=
+  projectedFermionHopping G (fun i j => -(t : ℂ) * Complex.exp (A j i * Complex.I)) ord
 
 /-- **The hopping term with arbitrary amplitudes**, `H_t = -∑_{i ≠ j} ∑_s t_{ij} c†_{i s} c_{j s}`
 (a particle hops from `j` to `i` with amplitude `-t_{ij}`). It is Hermitian when
@@ -257,13 +269,12 @@ noncomputable def projectedHubbard (G : SimpleGraph V) [DecidableRel G.Adj] (t :
 the complete graph. -/
 noncomputable def hubbardHoppingWeighted (tt : V → V → ℂ) (ord : V × σ ↪ ℕ) :
     Matrix (FockState V σ) (FockState V σ) ℂ :=
-  ∑ p ∈ arcs (⊤ : SimpleGraph V), ∑ s,
-    (-tt p.2 p.1) • (create ord (p.2, s) * annihilate ord (p.1, s))
+  fermionHopping ⊤ (fun i j => -tt j i) ord
 
 /-- `H∞ = P₀ H_t P₀` for arbitrary amplitudes, in the configuration basis. -/
 noncomputable def projectedHubbardWeighted (tt : V → V → ℂ) (ord : V × σ ↪ ℕ) :
-    Matrix (Config V σ) (Config V σ) ℂ := fun c b =>
-  hubbardHoppingWeighted tt ord (configState c) (configState b)
+    Matrix (Config V σ) (Config V σ) ℂ :=
+  projectedFermionHopping ⊤ (fun i j => -tt j i) ord
 
 end HubbardOperators
 

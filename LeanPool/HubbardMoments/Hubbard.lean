@@ -69,7 +69,7 @@ theorem configState_injective : Function.Injective (configState : Config V σ �
 
 /-- The Fock state after one hop of the configuration. -/
 theorem configState_move {c : Config V σ} {i j : V} {s : σ} (hi : c i = some s)
-    (hj : c j = none) (hij : i ≠ j) :
+    (hj : c j = none) :
     configState (move c i j) = insert (j, s) ((configState c).erase (i, s)) := by
   ext ⟨v, s'⟩
   simp only [mem_configState, move, Function.update_apply, mem_insert, mem_erase, ne_eq,
@@ -100,11 +100,11 @@ theorem config_eq_move_of_replace {c b : Config V σ} {i j : V} {s : σ} (hij : 
     have hspin : s' = s := Option.some.inj (hb'.symm.trans hbj)
     subst s'
     exact hj hmem
-  exact ⟨by simp [hci], hcj, configState_injective (hb.trans (configState_move hci hcj hij).symm)⟩
+  exact ⟨by simp [hci], hcj, configState_injective (hb.trans (configState_move hci hcj).symm)⟩
 
 /-- Two hops from the same Fock state that give the same state are the same hop. -/
 theorem hop_unique {O : Type*} [DecidableEq O] {S : Finset O} {o₁ o₁' o₂ o₂' : O}
-    (h₁ : o₁ ∈ S) (h₁' : o₁' ∉ S.erase o₁) (hne : o₁ ≠ o₁') (h₂ : o₂ ∈ S)
+    (h₁ : o₁ ∈ S) (h₁' : o₁' ∉ S.erase o₁) (hne : o₁ ≠ o₁')
     (heq : insert o₁' (S.erase o₁) = insert o₂' (S.erase o₂)) : o₁ = o₂ ∧ o₁' = o₂' := by
   have hn : o₁ ∉ insert o₁' (S.erase o₁) := by simp [hne]
   rw [heq] at hn
@@ -120,35 +120,28 @@ theorem hop_unique {O : Type*} [DecidableEq O] {S : Finset O} {o₁ o₁' o₂ o
 
 /-! ### The hopping term -/
 
-variable (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ) (A : V → V → ℝ) (ord : V × σ ↪ ℕ)
+section FermionHopping
+
+variable (G : SimpleGraph V) [DecidableRel G.Adj] (amplitude : V → V → ℂ) (ord : V × σ ↪ ℕ)
 
 /-- The matrix elements of `H_t`. -/
-theorem hubbardHopping_apply (S' S : FockState V σ) :
-    hubbardHopping G t A ord S' S = ∑ p ∈ arcs G, ∑ s,
-      (-(t : ℂ) * exp (A p.2 p.1 * I)) *
+theorem fermionHopping_apply (S' S : FockState V σ) :
+    fermionHopping G amplitude ord S' S = ∑ p ∈ arcs G, ∑ s,
+      amplitude p.1 p.2 *
         if (p.1, s) ∈ S ∧ (p.2, s) ∉ S.erase (p.1, s) ∧ S' = insert (p.2, s) (S.erase (p.1, s))
         then (-1) ^ (countBelow ord S (p.1, s) + countBelow ord (S.erase (p.1, s)) (p.2, s))
         else 0 := by
-  simp only [hubbardHopping, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul,
+  simp only [fermionHopping, Matrix.sum_apply, Matrix.smul_apply, smul_eq_mul,
     create_mul_annihilate_apply]
 
-omit [Fintype V] [DecidableEq V] in
-/-- The amplitude of the reverse hop is the complex conjugate. -/
-theorem star_hopAmplitude {A : V → V → ℝ} (hA : ∀ x y, A y x = -A x y) (x y : V) :
-    star (-(t : ℂ) * exp (A y x * I)) = -(t : ℂ) * exp (A x y * I) := by
-  rw [hA x y, star_mul', star_neg, Complex.star_def, Complex.conj_ofReal, ← exp_conj,
-    map_mul, Complex.conj_ofReal, Complex.conj_I]
-  push_cast
-  ring_nf
-
-/-- **`H_t` is Hermitian** when the Peierls phases are antisymmetric. -/
-theorem hubbardHopping_isHermitian {A : V → V → ℝ} (hA : ∀ x y, A y x = -A x y) :
-    (hubbardHopping G t A ord).IsHermitian := by
+/-- The hopping matrix is Hermitian when reversals conjugate the coefficients. -/
+theorem fermionHopping_isHermitian (h : ∀ i j, star (amplitude i j) = amplitude j i) :
+    (fermionHopping G amplitude ord).IsHermitian := by
   have hcr : ∀ o, (create ord o)ᴴ = annihilate ord o := fun o => by
     rw [← annihilate_conjTranspose, Matrix.conjTranspose_conjTranspose]
-  unfold Matrix.IsHermitian hubbardHopping
+  unfold Matrix.IsHermitian fermionHopping
   simp only [Matrix.conjTranspose_sum, Matrix.conjTranspose_smul, Matrix.conjTranspose_mul,
-    hcr, annihilate_conjTranspose, star_hopAmplitude t hA]
+    hcr, annihilate_conjTranspose, h]
   refine sum_nbij' Prod.swap Prod.swap ?_ ?_ ?_ ?_ ?_
   · intro p hp
     simpa [arcs, G.adj_comm] using hp
@@ -162,9 +155,10 @@ theorem hubbardHopping_isHermitian {A : V → V → ℝ} (hA : ∀ x y, A y x = 
     rfl
 
 /-- **`H_t` is a hopping operator**: it connects only Fock states one hop apart. -/
-theorem hubbardHopping_isHoppingOperator : IsHoppingOperator G (hubbardHopping G t A ord) := by
+theorem fermionHopping_isHoppingOperator :
+    IsHoppingOperator G (fermionHopping G amplitude ord) := by
   refine ⟨fun a b hab => ?_⟩
-  rw [hubbardHopping_apply]
+  rw [fermionHopping_apply]
   refine sum_eq_zero fun p hp => sum_eq_zero fun s _ => ?_
   have hadj : G.Adj p.1 p.2 := (mem_filter.1 hp).2
   rw [ite_eq_right_iff.2 ?_, mul_zero]
@@ -173,55 +167,103 @@ theorem hubbardHopping_isHoppingOperator : IsHoppingOperator G (hubbardHopping G
   intro he
   exact G.ne_of_adj hadj (congrArg Prod.fst he).symm
 
+/-- Restricting a Hermitian hopping matrix to the configuration basis preserves Hermiticity. -/
+theorem projectedFermionHopping_isHermitian (h : ∀ i j, star (amplitude i j) = amplitude j i) :
+    (projectedFermionHopping G amplitude ord).IsHermitian := by
+  ext c b
+  exact (fermionHopping_isHermitian G amplitude ord h).apply (configState c) (configState b)
+
+/-- Only the specified hop and its spin contribute to the corresponding matrix entry. -/
+theorem norm_projectedFermionHopping_move {c : Config V σ} {i j : V}
+    (hadj : G.Adj i j) (hci : c i ≠ none) (hcj : c j = none) :
+    ‖projectedFermionHopping G amplitude ord (move c i j) c‖ = ‖amplitude i j‖ := by
+  obtain ⟨s₀, hs₀⟩ := Option.ne_none_iff_exists'.1 hci
+  have hij : i ≠ j := G.ne_of_adj hadj
+  have hmem : (i, s₀) ∈ configState c := mem_configState.2 hs₀
+  have hnot : (j, s₀) ∉ configState c := by simp [mem_configState, hcj]
+  simp only [projectedFermionHopping, configState_move hs₀ hcj, fermionHopping_apply]
+  -- only the hop `i → j` of spin `s₀` contributes
+  rw [sum_eq_single (i, j), sum_eq_single s₀]
+  · have hnot' : (j, s₀) ∉ (configState c).erase (i, s₀) := fun h => hnot (mem_of_mem_erase h)
+    simp [hmem, hnot']
+  · intro s _ hs
+    rw [ite_eq_right_iff.2, mul_zero]
+    rintro ⟨h₁, h₂, h₃⟩
+    exfalso
+    exact hs (Prod.mk.inj (hop_unique h₁ h₂ (by simp [hij]) h₃.symm).1).2
+  · intro h
+    exact absurd (mem_univ s₀) h
+  · intro p hp hpij
+    refine sum_eq_zero fun s _ => ?_
+    have hadj' : G.Adj p.1 p.2 := (mem_filter.1 hp).2
+    rw [ite_eq_right_iff.2, mul_zero]
+    rintro ⟨h₁, h₂, h₃⟩
+    have hne : (p.1, s) ≠ (p.2, s) := fun h => G.ne_of_adj hadj' (congrArg Prod.fst h)
+    obtain ⟨e₁, e₂⟩ := hop_unique h₁ h₂ hne h₃.symm
+    have e₁' : p.1 = i := congrArg Prod.fst e₁
+    have e₂' : p.2 = j := congrArg Prod.fst e₂
+    exact absurd (Prod.ext e₁' e₂') hpij
+  · intro h
+    exact absurd (by simp [arcs, hadj] : (i, j) ∈ arcs G) h
+
+/-- In the configuration basis, an entry vanishes whenever no graph hop gives its target. -/
+theorem projectedFermionHopping_apply_eq_zero (c b : Config V σ)
+    (hb : ∀ i j, G.Adj i j → c i ≠ none → c j = none → b ≠ move c i j) :
+    projectedFermionHopping G amplitude ord b c = 0 := by
+  simp only [projectedFermionHopping, fermionHopping_apply]
+  refine sum_eq_zero fun p hp => sum_eq_zero fun s _ => ?_
+  have hadj : G.Adj p.1 p.2 := (mem_filter.1 hp).2
+  have hne : p.1 ≠ p.2 := G.ne_of_adj hadj
+  rw [ite_eq_right_iff.2, mul_zero]
+  rintro ⟨h₁, h₂, h₃⟩
+  obtain ⟨hci, hcj, hmove⟩ := config_eq_move_of_replace hne h₁ h₂ h₃
+  exact (hb p.1 p.2 hadj hci hcj hmove).elim
+
+end FermionHopping
+
+/-! ### Hubbard hopping with Peierls phases -/
+
+variable (G : SimpleGraph V) [DecidableRel G.Adj] (t : ℝ) (A : V → V → ℝ) (ord : V × σ ↪ ℕ)
+
+/-- The matrix elements of `H_t`. -/
+theorem hubbardHopping_apply (S' S : FockState V σ) :
+    hubbardHopping G t A ord S' S = ∑ p ∈ arcs G, ∑ s,
+      (-(t : ℂ) * exp (A p.2 p.1 * I)) *
+        if (p.1, s) ∈ S ∧ (p.2, s) ∉ S.erase (p.1, s) ∧ S' = insert (p.2, s) (S.erase (p.1, s))
+        then (-1) ^ (countBelow ord S (p.1, s) + countBelow ord (S.erase (p.1, s)) (p.2, s))
+        else 0 :=
+  fermionHopping_apply G _ ord S' S
+
+omit [Fintype V] [DecidableEq V] in
+/-- The amplitude of the reverse hop is the complex conjugate. -/
+theorem star_hopAmplitude {A : V → V → ℝ} (hA : ∀ x y, A y x = -A x y) (x y : V) :
+    star (-(t : ℂ) * exp (A y x * I)) = -(t : ℂ) * exp (A x y * I) := by
+  rw [hA x y, star_mul', star_neg, Complex.star_def, Complex.conj_ofReal, ← exp_conj,
+    map_mul, Complex.conj_ofReal, Complex.conj_I]
+  push_cast
+  ring_nf
+
+/-- **`H_t` is Hermitian** when the Peierls phases are antisymmetric. -/
+theorem hubbardHopping_isHermitian {A : V → V → ℝ} (hA : ∀ x y, A y x = -A x y) :
+    (hubbardHopping G t A ord).IsHermitian :=
+  fermionHopping_isHermitian G _ ord (star_hopAmplitude t hA)
+
+/-- **`H_t` is a hopping operator**: it connects only Fock states one hop apart. -/
+theorem hubbardHopping_isHoppingOperator : IsHoppingOperator G (hubbardHopping G t A ord) :=
+  fermionHopping_isHoppingOperator G _ ord
+
 /-! ### `H∞ = P₀ H_t P₀` -/
 
 /-- **`H∞` built from fermion operators is a projected hopping operator.** For `t ≥ 0` and
 antisymmetric Peierls phases, with any ordering of the orbitals. -/
 theorem projectedHubbard_isProjectedHopping (ht : 0 ≤ t) {A : V → V → ℝ}
     (hA : ∀ x y, A y x = -A x y) : IsProjectedHopping G t (projectedHubbard G t A ord) := by
-  refine ⟨?_, ?_, ?_⟩
-  · ext c b
-    exact (hubbardHopping_isHermitian G t ord hA).apply (configState c) (configState b)
-  · intro c i j hadj hci hcj
-    obtain ⟨s₀, hs₀⟩ := Option.ne_none_iff_exists'.1 hci
-    have hij : i ≠ j := G.ne_of_adj hadj
-    have hmem : (i, s₀) ∈ configState c := mem_configState.2 hs₀
-    have hnot : (j, s₀) ∉ configState c := by simp [mem_configState, hcj]
-    simp only [projectedHubbard, configState_move hs₀ hcj hij, hubbardHopping_apply]
-    -- only the hop `i → j` of spin `s₀` contributes
-    rw [sum_eq_single (i, j), sum_eq_single s₀]
-    · have hnot' : (j, s₀) ∉ (configState c).erase (i, s₀) := fun h => hnot (mem_of_mem_erase h)
-      simp only [hmem, hnot', not_false_eq_true, and_self, ↓reduceIte, norm_mul, norm_neg,
-        norm_real, norm_exp_ofReal_mul_I, norm_pow, mul_one, Real.norm_of_nonneg ht]
-      simp
-    · intro s _ hs
-      rw [ite_eq_right_iff.2, mul_zero]
-      rintro ⟨h₁, h₂, h₃⟩
-      exfalso
-      exact hs (Prod.mk.inj (hop_unique h₁ h₂ (by simp [hij]) hmem h₃.symm).1).2
-    · intro h
-      exact absurd (mem_univ s₀) h
-    · intro p hp hpij
-      refine sum_eq_zero fun s _ => ?_
-      have hadj' : G.Adj p.1 p.2 := (mem_filter.1 hp).2
-      rw [ite_eq_right_iff.2, mul_zero]
-      rintro ⟨h₁, h₂, h₃⟩
-      have hne : (p.1, s) ≠ (p.2, s) := fun h => G.ne_of_adj hadj' (congrArg Prod.fst h)
-      obtain ⟨e₁, e₂⟩ := hop_unique h₁ h₂ hne hmem h₃.symm
-      have e₁' : p.1 = i := congrArg Prod.fst e₁
-      have e₂' : p.2 = j := congrArg Prod.fst e₂
-      exact absurd (Prod.ext e₁' e₂') hpij
-    · intro h
-      exact absurd (by simp [arcs, hadj] : (i, j) ∈ arcs G) h
-  · intro c b hb
-    simp only [projectedHubbard, hubbardHopping_apply]
-    refine sum_eq_zero fun p hp => sum_eq_zero fun s _ => ?_
-    have hadj : G.Adj p.1 p.2 := (mem_filter.1 hp).2
-    have hne : p.1 ≠ p.2 := G.ne_of_adj hadj
-    rw [ite_eq_right_iff.2, mul_zero]
-    rintro ⟨h₁, h₂, h₃⟩
-    obtain ⟨hci, hcj, hmove⟩ := config_eq_move_of_replace hne h₁ h₂ h₃
-    exact (hb p.1 p.2 hadj hci hcj hmove).elim
+  refine ⟨projectedFermionHopping_isHermitian G _ ord (star_hopAmplitude t hA), ?_,
+    projectedFermionHopping_apply_eq_zero G _ ord⟩
+  intro c i j hadj hci hcj
+  simpa [projectedHubbard, norm_mul, Real.norm_of_nonneg ht] using
+    (norm_projectedFermionHopping_move G
+      (fun i j => -(t : ℂ) * exp (A j i * I)) ord hadj hci hcj)
 
 /-! ### Consequences -/
 

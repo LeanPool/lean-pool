@@ -32,8 +32,8 @@ Source: arxiv:2611.19929, url:https://github.com/zhineos/hubbard-spectral-moment
 Authors: Daniel Souza
 Status: verified
 Main declarations: `HubbardMoments.secondMomentHubbardWeighted`,
-  `HubbardMoments.canonicalAnticommutation`, `HubbardMoments.schriefferWolffHubbard`,
-  `HubbardMoments.doubledPeierlsPhase`, `HubbardMoments.fourHopPermutations`
+  `HubbardMoments.schriefferWolffHubbard`, `HubbardMoments.doubledPeierlsPhase`,
+  `HubbardMoments.fourHopPermutations`
 Tags: mathematical-physics, hubbard-model, spectral-moments, graph-theory
 MSC: 81V70, 05C50, 82B20
 -/

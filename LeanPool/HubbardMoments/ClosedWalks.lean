@@ -133,13 +133,13 @@ theorem card_support_lt_of_closedWalk (hinj : Function.Injective (walk 0))
     simp only [t, hp, ↓reduceDIte]
     exact min'_mem _ _
   have ht_lt : ∀ p ∈ D, t p < h := fun p hp => mem_range.1 (mem_filter.1 (ht_mem p hp)).1
-  have ht_before : ∀ p ∈ D, walk (t p) p = walk 0 p := by
-    intro p hp
+  have ht_before : ∀ p ∈ D, ∀ j ≤ t p, walk j p = walk 0 p := by
+    intro p hp j hj
     refine walk_eq_of_not_moved (Nat.zero_le _) fun i _ hi => ?_
     by_contra hm
-    have hi' : i ∈ T p := mem_filter.2 ⟨mem_range.2 (hi.trans (ht_lt p hp)), hm⟩
+    have hi' : i ∈ T p := mem_filter.2 ⟨mem_range.2 ((hi.trans_le hj).trans (ht_lt p hp)), hm⟩
     have := min'_le (T p) i hi'
-    simp only [t, hp, ↓reduceDIte] at hi
+    simp only [t, hp, ↓reduceDIte] at hj
     omega
   have ht_after : ∀ p ∈ D, walk h p = walk (t p + 1) p := by
     intro p hp
@@ -168,13 +168,7 @@ theorem card_support_lt_of_closedWalk (hinj : Function.Injective (walk 0))
       exact hpq (huniq (σ p) hmq)
     · exfalso
       -- `σ p` is still at its initial site, which is `p`'s target
-      have hstill : walk (t p) (σ p) = walk 0 (σ p) := by
-        refine walk_eq_of_not_moved (Nat.zero_le _) fun i _ hi => ?_
-        by_contra hm
-        have hi' : i ∈ T (σ p) := mem_filter.2 ⟨mem_range.2 (hi.trans (ht_lt p hp)), hm⟩
-        have := min'_le (T (σ p)) i hi'
-        have htq : t (σ p) = (T (σ p)).min' (hT _ hq) := by simp only [t, hq, ↓reduceDIte]
-        omega
+      have hstill := ht_before (σ p) hq (t p) hgt.le
       apply hr
       exact ⟨σ p, by rw [hstill, ← hσ, ht_after p hp]⟩
   -- summing `t (σ p) < t p` over the moved particles contradicts `∑ t ∘ σ = ∑ t`

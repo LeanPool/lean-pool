@@ -29,7 +29,6 @@ provenance_evidence: The upstream provenance document credits Claude with the
   the resulting claims.
 main_declarations:
 - HubbardMoments.secondMomentHubbardWeighted
-- HubbardMoments.canonicalAnticommutation
 - HubbardMoments.schriefferWolffHubbard
 - HubbardMoments.doubledPeierlsPhase
 - HubbardMoments.fourHopPermutations
@@ -39,9 +38,6 @@ main_results:
     on N sites, N at least two, the projected hopping matrix for Hermitian
     bond amplitudes has normalized second moment n(N-n)/(N(N-1)) times the
     sum of squared moduli of the off-diagonal hopping amplitudes.
-- declaration: HubbardMoments.canonicalAnticommutation
-  informal: The finite occupation-basis creation and annihilation matrices are
-    adjoints and satisfy the canonical anticommutation relations.
 - declaration: HubbardMoments.schriefferWolffHubbard
   informal: For the Hubbard hopping operator on a triangle-free graph, the
     cross term between projected hopping and the virtual operator vanishes

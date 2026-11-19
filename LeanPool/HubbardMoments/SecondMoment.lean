@@ -96,26 +96,23 @@ theorem card_occupied_empty {i j : V} (hij : i ≠ j) (n : ℕ) (hn : 1 ≤ n) :
       exact hij.symm
     exact ⟨(mem_inter.mp hi).2, fun hjS => hj (mem_inter.mpr ⟨by simp, hjS⟩)⟩
 
+/-- For every arc, the same number of configurations admit that hop. Consequently the sum
+of arc weights over all hops factors into an arc sum and one binomial coefficient. -/
+theorem sum_hops {R : Type*} [CommSemiring R] (weight : V × V → R) (n : ℕ) (hn : 1 ≤ n) :
+    ∑ S ∈ powersetCard n (univ : Finset V), ∑ p ∈ hops G S, weight p =
+      (∑ p ∈ arcs G, weight p) * ((Fintype.card V - 2).choose (n - 1) : R) := by
+  simp only [hops, sum_filter]
+  rw [sum_comm, sum_mul]
+  refine sum_congr rfl fun p hp => ?_
+  have hadj : G.Adj p.1 p.2 := (mem_filter.mp hp).2
+  rw [← sum_filter, sum_const, nsmul_eq_mul, card_occupied_empty hadj.ne n hn, mul_comm]
+
 /-- Summed over all `n`-subsets (`n ≥ 1`), the number of hops is the number of directed
 edges times `C(N - 2, n - 1)`. -/
 theorem sum_card_hops (n : ℕ) (hn : 1 ≤ n) :
     ∑ S ∈ powersetCard n (univ : Finset V), (hops G S).card =
       (arcs G).card * (Fintype.card V - 2).choose (n - 1) := by
-  calc ∑ S ∈ powersetCard n (univ : Finset V), (hops G S).card
-      = ∑ S ∈ powersetCard n (univ : Finset V),
-          ∑ p ∈ arcs G, if p.1 ∈ S ∧ p.2 ∉ S then 1 else 0 := by
-        simp only [hops, card_filter]
-    _ = ∑ p ∈ arcs G, ∑ S ∈ powersetCard n (univ : Finset V),
-          if p.1 ∈ S ∧ p.2 ∉ S then 1 else 0 := sum_comm
-    _ = ∑ p ∈ arcs G,
-          ((powersetCard n (univ : Finset V)).filter (fun S => p.1 ∈ S ∧ p.2 ∉ S)).card := by
-        simp only [card_filter]
-    _ = ∑ _p ∈ arcs G, (Fintype.card V - 2).choose (n - 1) := by
-        refine sum_congr rfl fun p hp => ?_
-        have hadj : G.Adj p.1 p.2 := (mem_filter.mp hp).2
-        exact card_occupied_empty hadj.ne n hn
-    _ = (arcs G).card * (Fintype.card V - 2).choose (n - 1) := by
-        rw [sum_const, smul_eq_mul]
+  simpa using sum_hops G (fun _ => (1 : ℕ)) n hn
 
 /-- The binomial identity `C(N - 2, n - 1) · N(N - 1) = n(N - n) · C(N, n)` for
 `n ≥ 1`, which turns the count above into an average. -/
@@ -140,16 +137,24 @@ theorem choose_sub_two_mul (N n : ℕ) (hn : 1 ≤ n) :
       _ = (r + 1) * ((m + 2).choose (r + 1) * (m + 2 - (r + 1))) := by rw [h2]
       _ = (r + 1) * (m + 2 - (r + 1)) * (m + 2).choose (r + 1) := by ring
 
+/-- The weighted hop sum, multiplied by `N(N - 1)`, equals the arc sum times
+`n(N - n) C(N, n)`. This form also holds when either side is zero. -/
+theorem sum_hops_mul {R : Type*} [CommSemiring R] (weight : V × V → R) (n : ℕ) :
+    (∑ S ∈ powersetCard n (univ : Finset V), ∑ p ∈ hops G S, weight p) *
+        ((Fintype.card V * (Fintype.card V - 1) : ℕ) : R) =
+      (∑ p ∈ arcs G, weight p) *
+        ((n * (Fintype.card V - n) * (Fintype.card V).choose n : ℕ) : R) := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [hops]
+  rw [sum_hops G weight n hn, mul_assoc, ← Nat.cast_mul, choose_sub_two_mul _ _ hn]
+
 /-- **The exact hop count.** For every `n` and every finite simple graph,
 `(∑_S M(S)) · N(N - 1) = (number of directed edges) · n(N - n) · C(N, n)`. -/
 theorem sum_card_hops_mul (n : ℕ) :
     (∑ S ∈ powersetCard n (univ : Finset V), (hops G S).card) *
         (Fintype.card V * (Fintype.card V - 1)) =
       (arcs G).card * (n * (Fintype.card V - n)) * (Fintype.card V).choose n := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [hops]
-  · rw [sum_card_hops G n hn, mul_assoc, choose_sub_two_mul _ _ hn]
-    ring
+  simpa [mul_assoc] using sum_hops_mul G (fun _ => (1 : ℕ)) n
 
 /-- **The average hop count.** For `n ≤ N` and `N ≥ 2`, the average of `M` over the
 `C(N, n)` configurations is `2|E| · n(N - n) / (N(N - 1))`. -/

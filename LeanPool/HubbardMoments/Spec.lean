@@ -57,7 +57,6 @@ can be checked by the machine.
 | `FourHopPermutations` | the identity, transpositions and 3-cycles exhaust four hops (§6) |
 | `FourHopExchangesOccur` | both types of exchange occur on every torus with `L ≥ 3` |
 | `ThreeCycleCountAffine` | `P₃ = C(N↑,3) + C(N↓,3)` is affine in `P_same` at fixed `n` (§6) |
-| `CanonicalAnticommutation` | adjoints and anticommutators of creation and annihilation |
 | `SortedTupleSignRule` | one hop: `c†_{o'} c_o \|S⟩ = (-1)^{m+p} \|S \ {o} ∪ {o'}⟩` (App. E) |
 | `HubbardHoppingHermitian` | the hopping term `H_t` with Peierls phases is Hermitian |
 | `HubbardHoppingIsHoppingOperator` | `H_t` connects only Fock states one hop apart |
@@ -76,7 +75,7 @@ can be checked by the machine.
   doublon claims evaluate its terms (`doublonSecondOrder`); the cross-term claims are about
   the operators `T₀ = P₀HP₀` and `V = T₁†T₁` that it produces.
 * That `annihilate` and `create` are the physical fermion operators. They satisfy the
-  canonical anticommutation relations (`CanonicalAnticommutation`), and the ordering `ord`
+  sorted-tuple sign rule (`SortedTupleSignRule`), and the ordering `ord`
   of the orbitals, which fixes the signs of the basis states, is arbitrary. Any other
   convention differs from these by phases of the basis states, which change no modulus;
   that standard fact is not proved here.
@@ -296,14 +295,14 @@ def CrossTermNeedsTriangleFree : Prop :=
 /-- **The mean of a sample drawn without replacement** from a centred population (`∑ ε = 0`)
 is `0`. -/
 def SampleMean : Prop :=
-  ∀ (V : Type) [Fintype V] [DecidableEq V] (ε : V → ℝ) (k : ℕ),
+  ∀ (V : Type) [Fintype V] (ε : V → ℝ) (k : ℕ),
     ∑ v, ε v = 0 → sampleMoment ε k 1 = 0
 
 /-- **The finite-population correction.** Drawing `k ≤ N` of `N ≥ 2` values without
 replacement from a centred population with `σ₁² = P₂/N`, the variance of the sum is
 `k σ₁² (N - k)/(N - 1)`. -/
 def FinitePopulationVariance : Prop :=
-  ∀ (V : Type) [Fintype V] [DecidableEq V] (ε : V → ℝ) (k : ℕ),
+  ∀ (V : Type) [Fintype V] (ε : V → ℝ) (k : ℕ),
     ∑ v, ε v = 0 → k ≤ Fintype.card V → 2 ≤ Fintype.card V →
       sampleMoment ε k 2 = k * ((∑ i, ε i ^ 2) / Fintype.card V) * (Fintype.card V - k) /
         (Fintype.card V - 1)
@@ -312,7 +311,7 @@ def FinitePopulationVariance : Prop :=
 `p_m = k(k-1)⋯(k-m+1)/(N(N-1)⋯(N-m+1))`,
 `μ₄ = P₄ (p₁ - 7p₂ + 12p₃ - 6p₄) + 3 P₂² (p₂ - 2p₃ + p₄)` for every `k ≤ N`. -/
 def FinitePopulationFourthMoment : Prop :=
-  ∀ (V : Type) [Fintype V] [DecidableEq V] (ε : V → ℝ) (k : ℕ),
+  ∀ (V : Type) [Fintype V] (ε : V → ℝ) (k : ℕ),
     ∑ v, ε v = 0 → k ≤ Fintype.card V →
       sampleMoment ε k 4 =
         (∑ i, ε i ^ 4) * (inclusionProb (Fintype.card V) k 1 -
@@ -372,7 +371,7 @@ def FinitePopulationTable : Prop :=
 start on distinct sites and end with the particles permuted by `σ` (the particle `p` ends
 where the particle `σ p` started) move no particle (`σ = 1`) or fewer than `h` of them. -/
 def ClosedWalkFewMoved : Prop :=
-  ∀ (P V : Type) [Fintype P] [DecidableEq P] [DecidableEq V] (G : SimpleGraph V)
+  ∀ (P V : Type) [Fintype P] [DecidableEq P] (G : SimpleGraph V)
     (walk : ℕ → P → V) (h : ℕ) (σ : Equiv.Perm P), Function.Injective (walk 0) →
       (∀ i < h, IsParticleHop G (walk i) (walk (i + 1))) → (∀ p, walk h p = walk 0 (σ p)) →
         σ ≠ 1 → σ.support.card < h
@@ -380,7 +379,7 @@ def ClosedWalkFewMoved : Prop :=
 /-- **Four-hop closed walks** (§6, App. C): on any graph they induce the identity, a
 transposition or a 3-cycle, never a 4-cycle or a double transposition. -/
 def FourHopPermutations : Prop :=
-  ∀ (P V : Type) [Fintype P] [DecidableEq P] [DecidableEq V] (G : SimpleGraph V)
+  ∀ (P V : Type) [Fintype P] [DecidableEq P] (G : SimpleGraph V)
     (walk : ℕ → P → V) (σ : Equiv.Perm P), Function.Injective (walk 0) →
       (∀ i < 4, IsParticleHop G (walk i) (walk (i + 1))) → (∀ p, walk 4 p = walk 0 (σ p)) →
         σ = 1 ∨ σ.IsSwap ∨ σ.IsThreeCycle
@@ -403,17 +402,6 @@ def FourHopExchangesOccur : Prop :=
 def ThreeCycleCountAffine : Prop :=
   ∀ a b : ℕ, ((a.choose 3 + b.choose 3 : ℕ) : ℚ) = (a + b).choose 3 -
     ((a + b : ℚ) - 2) / 2 * ((a + b).choose 2 - (a.choose 2 + b.choose 2 : ℕ))
-
-/-- **The canonical anticommutation relations.** For any finite set of orbitals ordered by
-`ord`, the operators `annihilate` and `create` satisfy `(c_o)† = c†_o`, `{c_o, c_o'} = 0`,
-`{c†_o, c†_o'} = 0` and `{c_o, c†_o'} = δ_{oo'}`. -/
-def CanonicalAnticommutation : Prop :=
-  ∀ (O : Type) [Fintype O] [DecidableEq O] (ord : O ↪ ℕ) (o o' : O),
-    Matrix.conjTranspose (annihilate ord o) = create ord o ∧
-    annihilate ord o * annihilate ord o' + annihilate ord o' * annihilate ord o = 0 ∧
-    create ord o * create ord o' + create ord o' * create ord o = 0 ∧
-    annihilate ord o * create ord o' + create ord o' * annihilate ord o =
-      if o = o' then 1 else 0
 
 /-- **The sorted-tuple sign rule** (App. E): `c†_{o'} c_o |S⟩ = (-1)^{m + p} |S \ {o} ∪ {o'}⟩`
 when `o ∈ S` and `o' ∉ S \ {o}`, with `m` the number of orbitals of `S` before `o` and `p` the

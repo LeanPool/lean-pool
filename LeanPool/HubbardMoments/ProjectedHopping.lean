@@ -284,36 +284,33 @@ theorem sum_mul_apply_self (hH : IsProjectedHopping G t H) {n : σ → ℕ} {c :
     (hH.norm_apply_move c) (hH.apply_eq_zero c), sum_const, nsmul_eq_mul]
   ring
 
-/-- **The exact second-moment theorem.** On the no-double-occupancy basis `B` with `n_s`
-particles of spin `s` (assumed nonempty) of a graph with `N ≥ 2` vertices, the second
-spectral moment of a projected hopping operator is `t² · 2|E| · n(N - n)/(N(N - 1))`, with
-`n = ∑ n_s`. -/
-theorem second_moment (hH : IsProjectedHopping G t H) (n : σ → ℕ)
-    (hB : (basis V n : Finset (Config V σ)).Nonempty) (hN : 2 ≤ Fintype.card V) :
+/-- The second moment of a projected hopping matrix with varying moduli is a uniform
+occupation factor times the sum of the squared moduli over the graph's arcs. -/
+theorem secondMoment_eq_sum_arcs {w : V → V → ℝ} (n : σ → ℕ)
+    (hB : (basis V n).Nonempty) (hN : 2 ≤ Fintype.card V) (hHermitian : H.IsHermitian)
+    (hmove : ∀ (c : Config V σ) i j, G.Adj i j → c i ≠ none → c j = none →
+      ‖H (move c i j) c‖ = w i j)
+    (hzero : ∀ (c b : Config V σ),
+      (∀ i j, G.Adj i j → c i ≠ none → c j = none → b ≠ move c i j) → H b c = 0) :
     secondMoment (basis V n) H =
-      (t : ℂ) ^ 2 * (2 * G.edgeFinset.card) * (∑ s, n s : ℕ) *
-          ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
-        ((Fintype.card V : ℂ) * ((Fintype.card V : ℂ) - 1)) := by
-  rw [secondMoment]
+      (∑ s, n s : ℕ) * ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
+          ((Fintype.card V : ℂ) * ((Fintype.card V : ℂ) - 1)) *
+        ∑ p ∈ arcs G, (w p.1 p.2 : ℂ) ^ 2 := by
   obtain ⟨c₀, hc₀⟩ := hB
   have hmN : ∑ s, n s ≤ Fintype.card V := by
     rw [← card_occ hc₀]
     exact card_le_univ _
-  -- The trace vanishes.
-  have htr : ∑ c ∈ basis V n, H c c = 0 := sum_eq_zero fun c _ => apply_self_eq_zero hH c
-  -- The diagonal of `H²`.
-  have hdiag : ∑ c ∈ basis V n, ∑ b ∈ basis V n, H c b * H b c =
-      (t : ℂ) ^ 2 * ∑ c ∈ basis V n, ((hops G (occ c)).card : ℂ) := by
-    rw [mul_sum]
-    exact sum_congr rfl fun c hc => sum_mul_apply_self hH hc
-  -- Spin plays no role.
-  have hspin := sum_basis_comp_occ n (fun S => ((hops G S).card : ℂ))
-  -- The hop count over the `n`-subsets.
-  have hcount := congrArg (Nat.cast : ℕ → ℂ) (sum_card_hops_mul G (∑ s, n s))
-  rw [card_arcs] at hcount
+  have htr : ∑ c ∈ basis V n, H c c = 0 :=
+    sum_eq_zero fun c _ => hzero c c (fun _ _ _ hi hj h => move_ne_self c hi hj h.symm)
+  let f : Finset V → ℂ := fun S => ∑ p ∈ hops G S, (w p.1 p.2 : ℂ) ^ 2
+  have hdiag : ∑ c ∈ basis V n, ∑ b ∈ basis V n, H c b * H b c = ∑ c ∈ basis V n, f (occ c) :=
+    sum_congr rfl fun c hc => sum_mul_apply_self_eq_sum_hops hc hHermitian (hmove c) (hzero c)
+  have hspin := sum_basis_comp_occ n f
+  have hcount := sum_hops_mul G (fun p => (w p.1 p.2 : ℂ) ^ 2) (∑ s, n s)
   have hB0 : ((basis V n).card : ℂ) ≠ 0 := by
     exact_mod_cast (card_pos.mpr ⟨c₀, hc₀⟩).ne'
-  rw [htr, hdiag, zero_div, zero_pow two_ne_zero, sub_zero]
+  rw [secondMoment, htr, hdiag, zero_div, zero_pow two_ne_zero, sub_zero]
+  set W := ∑ p ∈ arcs G, (w p.1 p.2 : ℂ) ^ 2
   generalize ∑ s, n s = m at hspin hcount hmN ⊢
   generalize Fintype.card V = N at hspin hcount hmN hN ⊢
   push_cast [Nat.cast_sub hmN, Nat.cast_sub (by omega : 1 ≤ N)] at hcount
@@ -324,16 +321,31 @@ theorem second_moment (hH : IsProjectedHopping G t H) (n : σ → ℕ)
   have hN1 : (N : ℂ) - 1 ≠ 0 := by
     rw [sub_ne_zero]
     exact_mod_cast (by omega : N ≠ 1)
-  -- Combine: `A · N(N - 1) = |B| · 2|E| · m(N - m)`, where `A = ∑_{c ∈ B} M(c)`.
-  set A := ∑ c ∈ basis V n, ((hops G (occ c)).card : ℂ) with hA
+  set A := ∑ c ∈ basis V n, f (occ c)
   have hkey : (N.choose m : ℂ) *
-      (A * (N * (N - 1)) - (basis V n).card * (2 * G.edgeFinset.card * (m * (N - m)))) = 0 := by
+      (A * (N * (N - 1)) - (basis V n).card * (W * (m * (N - m)))) = 0 := by
     linear_combination ((N : ℂ) * (N - 1)) * hspin + ((basis V n).card : ℂ) * hcount
-  have hkey' : A * (N * (N - 1)) =
-      (basis V n).card * (2 * G.edgeFinset.card * (m * (N - m))) :=
+  have hkey' : A * (N * (N - 1)) = (basis V n).card * (W * (m * (N - m))) :=
     sub_eq_zero.mp ((mul_eq_zero.mp hkey).resolve_left hC0)
-  rw [div_eq_div_iff hB0 (mul_ne_zero hN0 hN1)]
-  linear_combination (t : ℂ) ^ 2 * hkey'
+  rw [div_mul_eq_mul_div, div_eq_div_iff hB0 (mul_ne_zero hN0 hN1)]
+  linear_combination hkey'
+
+/-- **The exact second-moment theorem.** On the no-double-occupancy basis `B` with `n_s`
+particles of spin `s` (assumed nonempty) of a graph with `N ≥ 2` vertices, the second
+spectral moment of a projected hopping operator is `t² · 2|E| · n(N - n)/(N(N - 1))`, with
+`n = ∑ n_s`. -/
+theorem second_moment (hH : IsProjectedHopping G t H) (n : σ → ℕ)
+    (hB : (basis V n : Finset (Config V σ)).Nonempty) (hN : 2 ≤ Fintype.card V) :
+    secondMoment (basis V n) H =
+      (t : ℂ) ^ 2 * (2 * G.edgeFinset.card) * (∑ s, n s : ℕ) *
+          ((Fintype.card V : ℂ) - (∑ s, n s : ℕ)) /
+        ((Fintype.card V : ℂ) * ((Fintype.card V : ℂ) - 1)) := by
+  rw [secondMoment_eq_sum_arcs n hB hN hH.isHermitian hH.norm_apply_move hH.apply_eq_zero,
+    sum_const, nsmul_eq_mul, card_arcs]
+  push_cast
+  rw [div_mul_eq_mul_div]
+  congr 1
+  ring
 
 /-- **On a `z`-regular graph**, `μ₂ = t² n z (N - n)/(N - 1)`: the form used throughout
 the paper. -/

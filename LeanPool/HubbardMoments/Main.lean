@@ -124,15 +124,15 @@ theorem crossTermNeedsTriangleFree : Spec.CrossTermNeedsTriangleFree :=
   exists_crossTerm_ne_zero_torus_three
 
 theorem sampleMean : Spec.SampleMean := by
-  intro V _ _ ε k hε
+  intro V _ ε k hε
   exact sampleMoment_one hε k
 
 theorem finitePopulationVariance : Spec.FinitePopulationVariance := by
-  intro V _ _ ε k hε hk hN
+  intro V _ ε k hε hk hN
   exact sampleMoment_two_fpc hε hk hN
 
 theorem finitePopulationFourthMoment : Spec.FinitePopulationFourthMoment := by
-  intro V _ _ ε k hε hk
+  intro V _ ε k hε hk
   exact sampleMoment_four hε hk
 
 theorem independentSumSecondMoment : Spec.IndependentSumSecondMoment := by
@@ -159,11 +159,11 @@ theorem finitePopulationTable : Spec.FinitePopulationTable :=
   fpc_table
 
 theorem closedWalkFewMoved : Spec.ClosedWalkFewMoved := by
-  intro P V _ _ _ G walk h σ hinj hw hσ hne
+  intro P V _ _ G walk h σ hinj hw hσ hne
   exact card_support_lt_of_closedWalk hinj hw hσ hne
 
 theorem fourHopPermutations : Spec.FourHopPermutations := by
-  intro P V _ _ _ G walk σ hinj hw hσ
+  intro P V _ _ G walk σ hinj hw hσ
   exact closedWalk_four hinj hw hσ
 
 theorem fourHopExchangesOccur : Spec.FourHopExchangesOccur := by
@@ -173,11 +173,6 @@ theorem fourHopExchangesOccur : Spec.FourHopExchangesOccur := by
 theorem threeCycleCountAffine : Spec.ThreeCycleCountAffine := by
   intro a b
   exact choose_three_add_choose_three a b
-
-theorem canonicalAnticommutation : Spec.CanonicalAnticommutation := by
-  intro O _ _ ord o o'
-  exact ⟨annihilate_conjTranspose ord o, annihilate_anticomm ord o o', create_anticomm ord o o',
-    annihilate_create_anticomm ord o o'⟩
 
 theorem sortedTupleSignRule : Spec.SortedTupleSignRule := by
   intro O _ _ ord o o' S' S
