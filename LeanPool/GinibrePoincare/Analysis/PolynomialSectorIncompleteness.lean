@@ -212,7 +212,7 @@ theorem ginibreCenteredQuadratic_quarterTurn {n : ℕ} (hn : 0 < n)
   rw [recentered_ginibreRelativeQuarterTurn hn]
   simp only [mul_pow, Complex.I_sq, neg_one_mul, Finset.sum_neg_distrib]
 
-/-- The paper's quadratic is genuinely orthogonal to every polynomial in S, S̄, R. -/
+/-- The paper's quadratic is genuinely orthogonal to every polynomial in `S`, `conj S`, and `R`. -/
 theorem ginibreCenteredQuadratic_orthogonal_polynomial {n : ℕ} (hn : 0 < n)
     (F : Configuration n → ℂ) (hF : IsPolynomialInSConjSR F) :
     (∫ z, conj (ginibreCenteredQuadratic n z) * F z ∂ginibreMeasure n) = 0 := by

@@ -83,8 +83,8 @@ theorem contDiff_multivariateNormalized_real_smooth (n : ℕ) (hn : 0 < n)
   | @insert i t hit ih =>
       simpa only [Finset.prod_insert hit] using (hf i).mul ih
 
-/-- `D` is a weak `∂̄_j` derivative of `u` against smooth compactly supported tests `θ`:
-`∫ θ D dγ = ∫ u (n z_j θ - ∂̄_j θ) dγ` for the complex Gaussian measure `γ`. -/
+/-- `D` is a weak `dbar_j` derivative of `u` against smooth compactly supported tests `θ`:
+`∫ θ D dγ = ∫ u (n z_j θ - dbar_j θ) dγ` for the complex Gaussian measure `γ`. -/
 def IsGaussianSmoothTestDbar (n : ℕ)
     (u D : Lp ℂ 2 (complexGaussianMeasure n)) (j : Fin n) : Prop :=
   ∀ (θ : Configuration n → ℂ), ContDiff ℝ ∞ θ → HasCompactSupport θ →

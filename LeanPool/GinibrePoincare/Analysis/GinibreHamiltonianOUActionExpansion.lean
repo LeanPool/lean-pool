@@ -98,7 +98,7 @@ theorem ginibreHamiltonianOUPathQuotient_expansion {n : ℕ} (hn : 0 < n)
   rw [← Real.exp_sub, ginibreHamiltonianGradientNormSq_path_integral T hT x hx hCF, he, he]
   congr 1
   field_simp
- ; ring
+  ring
 
 theorem ginibreHamiltonianOUPathQuotient_le_endpoint {n : ℕ} (hn : 0 < n)
     (α T : ℝ) (hα : 0 ≤ α) (hT : 0 ≤ T) (x : ℝ → Configuration n)
