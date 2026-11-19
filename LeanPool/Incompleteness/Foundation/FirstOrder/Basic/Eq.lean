@@ -107,7 +107,7 @@ namespace Structure
 
 namespace Eq
 
-@[simp] lemma models_eqAxiom {M : Type u} [Nonempty M] [Structure L M] [Structure.Eq L M] :
+lemma models_eqAxiom {M : Type u} [Nonempty M] [Structure L M] [Structure.Eq L M] :
     M ⊧ₘ* (𝐄𝐐 :
     Theory L) :=
   ⟨by
