@@ -349,7 +349,7 @@ lemma PFR_projection'
     obtain ⟨H', hlog', hup'⟩ := app_ent_PFR _ _ _ _ α hent (.comp .of_discrete hX)
       (.comp .of_discrete hY)
     have H_ne_bot : H' ≠ ⊥ := by
-      by_contra!
+      by_contra
       rcases this with rfl
       have inj : Function.Injective (Submodule.mkQ (⊥ : Submodule (ZMod 2) G')) :=
         QuotientAddGroup.quotientBot.symm.injective
@@ -537,7 +537,7 @@ lemma single_fibres {G H Ω Ω' : Type*}
         have : _ ∧ _ := ⟨hUA.restrict hUA' (φ.toFun ⁻¹' {x}), hUB.restrict hUB' (φ.toFun ⁻¹' {y})⟩
         rwa [Set.inter_comm _ A, Set.inter_comm _ B] at this
       rw [setRuzsaDist_eq_rdist h_μ_unif.1 h_μ_unif.2 hUA' hUB']
-      change _ = (Measure.real _ (UA ⁻¹' (_ ⁻¹' _))) * (Measure.real _ (UB ⁻¹' (_ ⁻¹' _))) * _
+      simp only [Set.preimage_comp]
       rewrite [hUA_coe.measureReal_preimage hUA', hUB_coe.measureReal_preimage hUB']
       simp_rw [p, A_, B_, probReal_univ, one_mul]
       rewrite [mul_div_mul_comm, Set.inter_comm A, Set.inter_comm B]
@@ -921,7 +921,9 @@ lemma weak_PFR_asymm (A B : Set G) [Finite A] [Finite B] (hA : A.Nonempty) (hB :
   suffices ∀ M, (∀ M', M' < M → P M') → P M by
     set M := Nat.card A + Nat.card B
     have hM : Nat.card A + Nat.card B ≤ M := Nat.le_refl _
-    convert (Nat.strong_induction_on (p := P) M this) G ‹_› ‹_› ‹_› ‹_› _ ‹_› A B ‹_› ‹_› ‹_› ‹_› hM
+    have hP : P M := Nat.strong_induction_on M this
+    exact hP G inferInstance inferInstance inferInstance inferInstance inferInstance inferInstance
+      A B inferInstance inferInstance hA hB hM
   intro M h_induct
   -- wlog we can assume A, B are not in cosets of a smaller subgroup
   suffices ∀ (G : Type _) (hG_comm : AddCommGroup G) (_hG_free : Module.Free ℤ G)

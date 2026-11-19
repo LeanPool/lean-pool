@@ -67,7 +67,8 @@ theorem approx_hom_pfr (f : G → G') (K : ℝ) (hK : K > 0)
   classical
   let A := (Set.univ.graphOn f).toFinite.toFinset
   have hA : #A = Nat.card G := by rw [Set.Finite.card_toFinset]; simp [← Nat.card_eq_fintype_card]
-  have hA_nonempty : A.Nonempty := by simp [A]
+  have hA_nonempty : A.Nonempty := by
+    simp only [A, Set.Finite.toFinset_nonempty, Set.graphOn_nonempty, Set.univ_nonempty]
   have : #{x : G × G | f (x.1 + x.2) = f x.1 + f x.2} = #({ab ∈ A ×ˢ A | ab.1 + ab.2 ∈ A}) := by
     rw [← Nat.card_eq_finsetCard, ← Finset.coe_sort_coe, Finset.coe_filter,
       Set.Finite.toFinset_prod]
@@ -263,7 +264,7 @@ theorem card_of_dual_constrained [Finite G] (x : G) (hx : x ≠ 0) :
         have _ := DFunLike.finite (G →+ ZMod 2)
         rw [← h_partition, Nat.card_congr <| Equiv.Set.union <| Set.disjoint_left.mpr <| by
           simp +contextual]
-        simp [Nat.card, Cardinal.toNat_add]
+        exact Nat.card_sum.symm
       · simp
     -- Since there are $|G|$ homomorphisms in total, we have $|G| = |H_1| + |H_0|$.
     simp_all only [ne_eq, Set.coe_ofPred, card_of_dual]

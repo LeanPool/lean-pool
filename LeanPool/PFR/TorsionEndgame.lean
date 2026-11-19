@@ -103,19 +103,18 @@ lemma mutual_information_le_t_12 : I[Z1 : Z2 | W] ≤ p.m * (4*p.m+1) * p.η * k
   have := mutual_information_le (by fun_prop) (hindep_j zero) ?_ h_mes h_indep ?_
   · have k_eq : k = D[fun i ω ↦ Y (i, zero) ω; fun x ↦ hΩ'] := by
       apply multiDist_copy; intro i; exact (hident i zero).symm
-    rw [←k_eq, condMutualInfo_comm] at this
-    · refine .trans ?_ this
-      convert! condMutual_comp_comp_le _ _ _ _ (fun (x: Fin p.m → G) ↦ ∑ i, i.val • x i)
-        (fun (x: Fin p.m → G) ↦ ∑ i, i.val • x i) _
-      with ω <;> try infer_instance
-      all_goals try fun_prop
-      · ext ω; simp [Finset.smul_sum]
-      · ext ω
-        simp only [natCast_zsmul, Finset.sum_apply, Pi.smul_apply, Function.comp_apply,
-          Finset.smul_sum]
-        rw [Finset.sum_comm]
-      simp
+    rw [←k_eq, condMutualInfo_comm (by fun_prop) (by fun_prop)] at this
+    refine .trans ?_ this
+    convert! condMutual_comp_comp_le _ _ _ _ (fun (x: Fin p.m → G) ↦ ∑ i, i.val • x i)
+      (fun (x: Fin p.m → G) ↦ ∑ i, i.val • x i) _
+    with ω <;> try infer_instance
     all_goals try fun_prop
+    · ext ω; simp [Finset.smul_sum]
+    · ext ω
+      simp only [natCast_zsmul, Finset.sum_apply, Pi.smul_apply, Function.comp_apply,
+        Finset.smul_sum]
+      rw [Finset.sum_comm]
+    simp
   · apply multiTauMinimizes_of_ident p _ _ _ h_min
     intro i; exact (hident i zero).symm
   intro j; use Equiv.refl _
@@ -487,9 +486,8 @@ lemma sum_of_conditional_distance_le : ∑ i, d[ X i # Z2 | W] ≤ 4 * (p.m^3 - 
     _ ≤ ∑ i, (d[ X i # X i] + (H[Z2] - H[X i])/ 2 + (p.m-1) * k) := by
       apply Finset.sum_le_sum; intro i _; calc
         _ ≤ d[X i # Z2] + I[W:Z2] / 2 := by
-          rw [mutualInfo_comm]
-          convert condRuzsaDist_le' _ _ _ _ _ <;> try infer_instance
-          all_goals fun_prop
+          rw [mutualInfo_comm measurableW measurableZ2]
+          exact condRuzsaDist_le' _ _ (hX_mes i) measurableZ2 measurableW
         _ ≤ (d[X i # X i] + (H[Z2] - H[X i]) / 2) + (2*(p.m-1) * k)/2 := by
           gcongr
           · rw [div_eq_inv_mul]
@@ -651,8 +649,8 @@ lemma dist_of_U_add_le {G : Type*} [MeasurableFinGroup G] {Ω : Type u} [hΩ : M
       all_goals fun_prop
     _ ≤ d[Y i # T₂] + δ / 2 := by
       gcongr
-      have : I[T₁ : T₂] ≥ 0 := by apply mutualInfo_nonneg <;> try fun_prop
-      have : I[T₁ : T₃] ≥ 0 := by apply mutualInfo_nonneg <;> try fun_prop
+      have : I[T₁ : T₂] ≥ 0 := mutualInfo_nonneg (by fun_prop) (by fun_prop) _
+      have : I[T₁ : T₃] ≥ 0 := mutualInfo_nonneg (by fun_prop) (by fun_prop) _
       linarith
   set F : G → ℝ := fun z ↦ d[T₂; ℙ[|(T₁ + T₂) ⁻¹' {z}] # T₂; ℙ[|(T₁ + T₂) ⁻¹' {z}]] +
       α * ∑ i, d[Y i; ℙ # T₂; ℙ[|(T₁ + T₂) ⁻¹' {z}]]
@@ -1041,7 +1039,7 @@ lemma torsion_exists_subgroup_subset_card_le {G : Type*} {m : ℕ} (hm : m ≥ 2
     refine ⟨K, hK.2, ?_, hK.1⟩
     rcases LE.le.lt_or_eq hK.1 with heq | heq
     · have hneq : (K:Set G) ≠ (H:Set G) := by
-        contrapose! heq
+        contrapose heq
         simp only [SetLike.coe_set_eq] at heq
         simp only [heq, lt_self_iff_false, not_false_eq_true]
       obtain ⟨a, ha, ha'⟩ := exists_of_ssubset (ssubset_of_subset_of_ne hK.1 hneq)
