@@ -419,7 +419,11 @@ noncomputable def sheafH1CokernelIsoOfSubsingletonMiddle {X : TopCat.{u}}
     obtain ⟨y, hy⟩ := sheafH_succ_map_exists_preimage_of_subsingleton_middle hS 0 h₂H x
     refine ⟨ConcreteCategory.hom (cokernel.π (S.g.hom.app (op ⊤)))
       (sheafH0EquivSections S.X₃ y), ?_⟩
-    simpa [πH, δ] using hy
+    refine (cokernel.π_desc_apply _ δ hδ _).trans ?_
+    change ConcreteCategory.hom (sheafHSuccMap hS 0)
+      ((sheafH0EquivSections S.X₃).symm (sheafH0EquivSections S.X₃ y)) = x
+    exact (congrArg (ConcreteCategory.hom (sheafHSuccMap hS 0))
+      ((sheafH0EquivSections S.X₃).symm_apply_apply y)).trans hy
   have hπH_mono : Mono πH := by
     rw [AddCommGrpCat.mono_iff_injective]
     intro a b hab
@@ -673,12 +677,13 @@ noncomputable def sheafH0NatIsoSections {X : TopCat.{u}} :
         (CategoryTheory.evaluation (Opens X)ᵒᵖ AddCommGrpCat.{u}).obj (op ⊤) :=
   NatIso.ofComponents (fun F ↦ (sheafH0EquivSections F).toAddCommGrpIso)
     fun {F G} f ↦ by
-    ext x
-    exact show
-        (sheafH0EquivSections G)
-            (ConcreteCategory.hom ((sheafCohomologyFunctor X 0).map f) x) =
-          ConcreteCategory.hom (f.hom.app (op ⊤)) ((sheafH0EquivSections F) x) from
-      (sheafH0EquivSections_natural (f := f) (x := x))
+    apply AddCommGrpCat.ext
+    intro x
+    change (sheafH0EquivSections G)
+          (ConcreteCategory.hom ((sheafCohomologyFunctor X 0).map f) x) =
+        ConcreteCategory.hom (f.hom.app (op ⊤)) ((sheafH0EquivSections F) x)
+    exact (congrArg (sheafH0EquivSections G) (sheafCohomologyFunctor_map_apply X 0 f x)).trans
+      (sheafH0EquivSections_natural f x)
 
 /-- Higher-degree connecting additive equivalence for a short exact sequence of sheaves:
 if the middle cohomology groups in degrees `n` and `n + 1` are subsingleton, then the

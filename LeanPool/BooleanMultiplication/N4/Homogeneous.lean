@@ -395,10 +395,133 @@ def quarticWedgeProbe (q r : TwoForm) : Fin 3 → F₂ :=
   ![wedgeTwo q r 0 1 4 6, wedgeTwo q r 1 3 5 7,
     wedgeTwo q r 0 3 4 7]
 
+private theorem finset_pair_eq_iff {α : Type*} [DecidableEq α] {x y a b : α} :
+    ({x, y} : Finset α) = {a, b} ↔ (x = a ∧ y = b) ∨ (x = b ∧ y = a) := by
+  rw [← Finset.coe_inj]
+  simpa only [Finset.coe_insert, Finset.coe_singleton] using
+    (Set.pair_eq_pair_iff (x := x) (y := y) (z := a) (w := b))
+
+private theorem aCoord_injective : Function.Injective aCoord :=
+  fun _ _ h => Fin.ext (congrArg (fun p : Fin 8 => p.val) h)
+
+private theorem bCoord_injective : Function.Injective bCoord :=
+  fun _ _ h => Fin.ext (Nat.add_left_cancel (congrArg Fin.val h))
+
+private theorem aCoord_ne_bCoord (a b : Fin 4) : aCoord a ≠ bCoord b := by
+  intro h
+  have hv := congrArg Fin.val h
+  change a.val = 4 + b.val at hv
+  omega
+
+private theorem targetPair_union_eq {i j u v a b x y : Fin 4} :
+    targetPair i j ∪ targetPair u v = {aCoord a, aCoord b, bCoord x, bCoord y} ↔
+      ({u, i} : Finset (Fin 4)) = {a, b} ∧ ({v, j} : Finset (Fin 4)) = {x, y} := by
+  simp only [Finset.ext_iff, targetPair, Finset.mem_union, Finset.mem_insert,
+    Finset.mem_singleton]
+  constructor
+  · intro h
+    exact ⟨fun p => by
+      simpa [aCoord_injective.eq_iff, aCoord_ne_bCoord, or_comm] using h (aCoord p),
+      fun p => by
+        simpa [bCoord_injective.eq_iff, Ne.symm (aCoord_ne_bCoord _ _), or_comm] using h (bCoord p)⟩
+  · rintro ⟨ha, hb⟩ p
+    by_cases hp : p.val < 4
+    · have he : p = aCoord ⟨p.val, hp⟩ := rfl
+      rw [he]
+      simpa [aCoord_injective.eq_iff, aCoord_ne_bCoord, or_comm] using ha ⟨p.val, hp⟩
+    · let k : Fin 4 := ⟨p.val - 4, by omega⟩
+      have he : p = bCoord k := Fin.ext (by change p.val = 4 + (p.val - 4); omega)
+      rw [he]
+      simpa [bCoord_injective.eq_iff, Ne.symm (aCoord_ne_bCoord _ _), or_comm] using hb k
+
+private theorem sum_pairing {α β : Type*} [Fintype α] [DecidableEq α] [AddCommMonoid β]
+    {x y : α} (hne : x ≠ y) (f : α → α → β) :
+    (∑ i, ∑ j, if (i = x ∧ j = y) ∨ (i = y ∧ j = x) then f i j else 0) =
+      f x y + f y x := by
+  calc
+    _ = ∑ i, ((if i = x then f i y else 0) + (if i = y then f i x else 0)) := by
+      apply Finset.sum_congr rfl
+      intro i _
+      by_cases hx : i = x
+      · subst i
+        simp [hne]
+      · by_cases hy : i = y
+        · subst i
+          simp [hne.symm]
+        · simp [hx, hy]
+    _ = _ := by simp [Finset.sum_add_distrib]
+
+/-- In bidegree `(2, 2)`, only the four mixed pairings of the two inputs contribute
+to the quartic Hankel convolution. -/
+theorem targetConvolution_eq_wedge (c d : TargetCoeff) {a b x y : Fin 4}
+    (hab : a ≠ b) (hxy : x ≠ y) :
+    (∑ u : Fin 4, ∑ v : Fin 4, ∑ i : Fin 4, ∑ j : Fin 4,
+        (c (hankelIndex i j) * d (hankelIndex u v)) *
+          (if targetPair i j ∪ targetPair u v = {aCoord a, aCoord b, bCoord x, bCoord y}
+            then (1 : F₂) else 0)) =
+      wedgeTwo (targetTwo c) (targetTwo d) (aCoord a) (aCoord b) (bCoord x) (bCoord y) := by
+  simp only [targetPair_union_eq, finset_pair_eq_iff,
+    mul_ite, mul_zero, mul_one]
+  -- Group the two first-input indices and the two second-input indices.
+  conv_lhs =>
+    arg 2
+    ext u
+    rw [Finset.sum_comm]
+  have hinner (u i : Fin 4) :
+      (∑ v : Fin 4, ∑ j : Fin 4,
+        if ((u = a ∧ i = b) ∨ (u = b ∧ i = a)) ∧
+            ((v = x ∧ j = y) ∨ (v = y ∧ j = x))
+          then c (hankelIndex i j) * d (hankelIndex u v) else 0) =
+        if (u = a ∧ i = b) ∨ (u = b ∧ i = a) then
+          c (hankelIndex i y) * d (hankelIndex u x) +
+            c (hankelIndex i x) * d (hankelIndex u y)
+        else 0 := by
+    split_ifs with h <;> simp only [h, true_and, false_and, ↓reduceIte, Finset.sum_const_zero]
+    exact sum_pairing hxy _
+  simp_rw [hinner]
+  rw [sum_pairing hab]
+  simp only [wedgeTwo, targetTwo_sameA, targetTwo_sameB, targetTwo_cross, zero_mul, zero_add]
+  unfold hankelIndex
+  ac_rfl
+
+private theorem coeff_target_mul_quartic (c d : TargetCoeff) {a b x y : Fin 4}
+    (hab : a ≠ b) (hxy : x ≠ y) :
+    (targetANF c * targetANF d).coeff ⟨{aCoord a, aCoord b, bCoord x, bCoord y}⟩ =
+      wedgeTwo (targetTwo c) (targetTwo d) (aCoord a) (aCoord b) (bCoord x) (bCoord y) :=
+  (coeff_targetANF_mul_targetANF c d _).trans (targetConvolution_eq_wedge c d hab hxy)
+
+/-- The quartic projection of a product of Hankel targets is its exterior product on
+two distinct coordinates from each input. -/
+theorem anfFourProjection_target_mul_quartic (c d : TargetCoeff) {a b x y : Fin 4}
+    (hab : a ≠ b) (hxy : x ≠ y) :
+    anfFourProjection (targetANF c * targetANF d) (aCoord a) (aCoord b) (bCoord x) (bCoord y) =
+      wedgeTwo (targetTwo c) (targetTwo d) (aCoord a) (aCoord b) (bCoord x) (bCoord y) := by
+  have hcard : ({aCoord a, aCoord b, bCoord x, bCoord y} : Finset (Fin 8)).card = 4 := by
+    simp [Finset.card_insert_of_notMem, aCoord_ne_bCoord, aCoord_injective.eq_iff,
+      bCoord_injective.eq_iff, hab, hxy]
+  change (if _ then (targetANF c * targetANF d).coeff _ else 0) = _
+  rw [ite_eq_left hcard]
+  exact coeff_target_mul_quartic c d hab hxy
+
+private theorem quarticProbe_target_convolution (c d : TargetCoeff) (k : Fin 3) :
+    (∑ u : Fin 4, ∑ v : Fin 4, ∑ i : Fin 4, ∑ j : Fin 4,
+        (c (hankelIndex i j) * d (hankelIndex u v)) *
+          (if targetPair i j ∪ targetPair u v = quarticProbeSet k then (1 : F₂) else 0)) =
+      quarticWedgeProbe (targetTwo c) (targetTwo d) k := by
+  rw [← coeff_targetANF_mul_targetANF]
+  fin_cases k
+  · exact coeff_target_mul_quartic c d (a := 0) (b := 1) (x := 0) (y := 2)
+      (by decide) (by decide)
+  · exact coeff_target_mul_quartic c d (a := 1) (b := 3) (x := 1) (y := 3)
+      (by decide) (by decide)
+  · exact coeff_target_mul_quartic c d (a := 0) (b := 3) (x := 0) (y := 3)
+      (by decide) (by decide)
+
 private theorem targetANF_targetBasis_homogeneous (s : Fin 7) :
     targetANF (targetBasis s) = Mul 4 s := by
   simp [targetANF, targetBasis_apply]
 
+-- These auxiliary proofs retain the propositions previously checked by kernel evaluation.
 private theorem quarticProbe_Mul_mul_zero :
     ∀ t : Fin 7,
       quarticProbeANF
@@ -413,7 +536,10 @@ private theorem quarticProbe_Mul_mul_zero :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      quarticProbe_target_convolution (targetBasis 0) (targetBasis t) u
 
 private theorem quarticProbe_Mul_mul_one :
     ∀ t : Fin 7,
@@ -428,7 +554,10 @@ private theorem quarticProbe_Mul_mul_one :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      quarticProbe_target_convolution (targetBasis 1) (targetBasis t) u
 
 private theorem quarticProbe_Mul_mul_two :
     ∀ t : Fin 7,
@@ -443,7 +572,10 @@ private theorem quarticProbe_Mul_mul_two :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      quarticProbe_target_convolution (targetBasis 2) (targetBasis t) u
 
 private theorem quarticProbe_Mul_mul_three :
     ∀ t : Fin 7,
@@ -458,7 +590,10 @@ private theorem quarticProbe_Mul_mul_three :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      quarticProbe_target_convolution (targetBasis 3) (targetBasis t) u
 
 private theorem quarticProbe_Mul_mul_four :
     ∀ t : Fin 7,
@@ -473,7 +608,10 @@ private theorem quarticProbe_Mul_mul_four :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      quarticProbe_target_convolution (targetBasis 4) (targetBasis t) u
 
 private theorem quarticProbe_Mul_mul_five :
     ∀ t : Fin 7,
@@ -488,7 +626,10 @@ private theorem quarticProbe_Mul_mul_five :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      quarticProbe_target_convolution (targetBasis 5) (targetBasis t) u
 
 private theorem quarticProbe_Mul_mul_six :
     ∀ t : Fin 7,
@@ -503,7 +644,10 @@ private theorem quarticProbe_Mul_mul_six :
   rw [coeff_targetANF_mul_targetANF]
   simp only [targetBasis, Pi.basisFun_apply]
   revert t u
-  decide +kernel
+  as_aux_lemma =>
+    intro t u
+    simpa only [targetBasis, Pi.basisFun_apply] using
+      quarticProbe_target_convolution (targetBasis 6) (targetBasis t) u
 
 private theorem quarticProbe_Mul_mul (s t : Fin 7) :
     quarticProbeANF (Mul 4 s * Mul 4 t) =
