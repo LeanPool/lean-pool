@@ -1,0 +1,36 @@
+slug: cograph-distance
+title: Connected cographs with distance eigenvalues approaching −2 from below
+summary: >
+  Constructs connected cographs with a distance eigenvalue arbitrarily close to
+  −2 from below. For each positive m, the join of a singleton with the disjoint
+  union of a singleton and m edges has a distance eigenvalue between
+  −2 − 1/(2m) and −2. The proof lifts a root of a cubic to an explicit eigenvector.
+branch: spectral graph theory
+entry_module: LeanPool.CographDistance
+authors:
+- Horace Dong
+source:
+  title: Connected cographs with distance eigenvalues just below −2
+  url: https://github.com/Horace-Maxwell/ai4math-results/blob/a104be9c0d4aaeeea65f6f62fed064525180a939/papers/cograph-distance/note.pdf
+  github_repo: Horace-Maxwell/ai4math-results
+  commit: a104be9c0d4aaeeea65f6f62fed064525180a939
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- CographDist.family_theorem
+- CographDist.openProblemI_negative
+main_results:
+- declaration: CographDist.family_theorem
+  informal: For each positive m, the stated family is connected and P4-free
+    and has a distance eigenvalue in (−2 − 1/(2m), −2).
+- declaration: CographDist.openProblemI_negative
+  informal: Every open interval with right endpoint −2 contains a distance
+    eigenvalue of a finite connected cograph.
+tags:
+- cographs
+- distance-matrices
+- spectral-graph-theory
+msc:
+- 05C50
+- 05C75
