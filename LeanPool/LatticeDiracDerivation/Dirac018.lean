@@ -258,22 +258,56 @@ theorem reflected_axis_root_is_rejected :
   intro hadmissible
   exact reflected_axis_cube_matrix_not_covariant hadmissible.1
 
-theorem admissible_mass_scale_square
+/-! The classification is proved once, for a squaring condition imposed only on the image of
+an arbitrary embedding that has a component equal to one somewhere. The all-amplitude
+statements are the special case of the constant embedding. -/
+
+/-- The square of `nativeCubicalRootOperator candidate` agrees with `cubeScalarSymbol` on every
+amplitude in the image of `embedding`, for every mass and momentum. -/
+def NativeCubicalRootMatchesOnEmbedding
     (candidate : NativeCubicalRootCandidate)
-    (hadmissible : NativeCubicalRootAdmissible candidate) :
+    (embedding : Cell4 → Cell8) : Prop :=
+  ∀ mass momentum z,
+    nativeCubicalRootOperator candidate mass momentum
+        (nativeCubicalRootOperator candidate mass momentum (embedding z)) =
+      cubeScalarSymbol mass (momentum 0) (momentum 1) (momentum 2)
+        (embedding z)
+
+/-- The variant of `NativeCubicalRootAdmissible` in which the squaring condition is required
+only on the image of `embedding`. -/
+def NativeCubicalRootAdmissibleOnEmbedding
+    (candidate : NativeCubicalRootCandidate)
+    (embedding : Cell4 → Cell8) : Prop :=
+  CubicCoefficientCovariant candidate.transport ∧
+  NativeCubicalRootMatchesOnEmbedding candidate embedding ∧
+  0 ≤ candidate.massScale ∧
+  0 ≤ candidate.transport 0 0
+
+/-- The first standard basis vector of `Cell4`, with a `1` in position `0`. -/
+def cell4FirstBasis : Cell4
+  | 0 => 1
+  | _ => 0
+
+theorem embedding_admissible_mass_scale_square
+    (candidate : NativeCubicalRootCandidate)
+    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
+    (hprobe : embedding probe corner = 1)
+    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding) :
     candidate.massScale ^ 2 = 1 := by
   rcases hadmissible with ⟨_, hscalar, _, _⟩
   have h := congrFun
-    (hscalar (1 : ℂ) (fun _ => 0) (fun _ => 1)) 0
+    (hscalar (1 : ℂ) (fun _ => 0) probe) corner
   rw [native_cubical_root_operator_square] at h
   have hre := congrArg Complex.re h
   norm_num [cubeScalarSymbol, candidateIncidenceMomentum,
-    Fin.sum_univ_succ] at hre
+    Fin.sum_univ_succ, hprobe] at hre
   simpa [pow_two] using hre
 
-theorem admissible_transport_scale_square
+theorem embedding_admissible_transport_scale_square
     (candidate : NativeCubicalRootCandidate)
-    (hadmissible : NativeCubicalRootAdmissible candidate) :
+    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
+    (hprobe : embedding probe corner = 1)
+    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding) :
     candidate.transport 0 0 ^ 2 = 1 := by
   rcases hadmissible with ⟨hcovariant, hscalar, _, _⟩
   obtain ⟨scale, hmatrix⟩ :=
@@ -282,32 +316,37 @@ theorem admissible_transport_scale_square
     simpa using (hmatrix 0 0).symm
   have h := congrFun
     (hscalar (0 : ℂ)
-      (fun axis => if axis = 0 then 1 else 0)
-      (fun _ => 1)) 0
+      (fun axis => if axis = 0 then 1 else 0) probe) corner
   rw [native_cubical_root_operator_square] at h
   have hre := congrArg Complex.re h
   norm_num [cubeScalarSymbol, candidateIncidenceMomentum,
-    Fin.sum_univ_succ, hmatrix] at hre
+    Fin.sum_univ_succ, hmatrix, hprobe] at hre
   rw [hscale] at hre
   simpa [pow_two] using hre
 
-theorem admissible_mass_scale_eq_one
+theorem embedding_admissible_mass_scale_eq_one
     (candidate : NativeCubicalRootCandidate)
-    (hadmissible : NativeCubicalRootAdmissible candidate) :
+    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
+    (hprobe : embedding probe corner = 1)
+    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding) :
     candidate.massScale = 1 := by
-  have hsquare := admissible_mass_scale_square candidate hadmissible
+  have hsquare := embedding_admissible_mass_scale_square
+    candidate embedding probe corner hprobe hadmissible
   nlinarith [hadmissible.2.2.1]
 
-theorem admissible_transport_is_identity
+theorem embedding_admissible_transport_is_identity
     (candidate : NativeCubicalRootCandidate)
-    (hadmissible : NativeCubicalRootAdmissible candidate) :
+    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
+    (hprobe : embedding probe corner = 1)
+    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding) :
     ∀ row column,
       candidate.transport row column = if row = column then 1 else 0 := by
   obtain ⟨scale, hmatrix⟩ :=
     cubic_covariant_coefficients_are_scalar candidate.transport hadmissible.1
   have hscale0 : scale = candidate.transport 0 0 := by
     simpa using (hmatrix 0 0).symm
-  have hsquare := admissible_transport_scale_square candidate hadmissible
+  have hsquare := embedding_admissible_transport_scale_square
+    candidate embedding probe corner hprobe hadmissible
   have hpositive : 0 ≤ scale := by
     rw [hscale0]
     exact hadmissible.2.2.2
@@ -315,19 +354,58 @@ theorem admissible_transport_is_identity
   intro row column
   rw [hmatrix, hscale]
 
+theorem embedding_admissible_root_is_canonical
+    (candidate : NativeCubicalRootCandidate)
+    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
+    (hprobe : embedding probe corner = 1)
+    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding)
+    (mass : ℂ) (momentum : Fin 3 → ℂ) (amplitude : Cell8) :
+    nativeCubicalRootOperator candidate mass momentum amplitude =
+      cubeDiracSymbol mass (momentum 0) (momentum 1) (momentum 2) amplitude := by
+  have hmass := embedding_admissible_mass_scale_eq_one
+    candidate embedding probe corner hprobe hadmissible
+  have htransport := embedding_admissible_transport_is_identity
+    candidate embedding probe corner hprobe hadmissible
+  funext outputCorner
+  fin_cases outputCorner <;>
+    simp [nativeCubicalRootOperator, candidateIncidenceMomentum,
+      cubeDiracSymbol, cubeIncidenceLinear, hmass, htransport,
+      Fin.sum_univ_succ]
+
+/-- The embedding of `Cell4` into eight-corner amplitudes that places the first component
+at every corner. -/
+def constantCubeEmbedding (z : Cell4) : Cell8 := fun _ => z 0
+
+theorem admissible_on_constant_embedding
+    (candidate : NativeCubicalRootCandidate)
+    (hadmissible : NativeCubicalRootAdmissible candidate) :
+    NativeCubicalRootAdmissibleOnEmbedding candidate constantCubeEmbedding :=
+  ⟨hadmissible.1, fun mass momentum _ => hadmissible.2.1 mass momentum _,
+    hadmissible.2.2.1, hadmissible.2.2.2⟩
+
+theorem admissible_mass_scale_eq_one
+    (candidate : NativeCubicalRootCandidate)
+    (hadmissible : NativeCubicalRootAdmissible candidate) :
+    candidate.massScale = 1 :=
+  embedding_admissible_mass_scale_eq_one candidate constantCubeEmbedding cell4FirstBasis 0
+    rfl (admissible_on_constant_embedding candidate hadmissible)
+
+theorem admissible_transport_is_identity
+    (candidate : NativeCubicalRootCandidate)
+    (hadmissible : NativeCubicalRootAdmissible candidate) :
+    ∀ row column,
+      candidate.transport row column = if row = column then 1 else 0 :=
+  embedding_admissible_transport_is_identity candidate constantCubeEmbedding cell4FirstBasis 0
+    rfl (admissible_on_constant_embedding candidate hadmissible)
+
 theorem admissible_native_cubical_root_is_canonical
     (candidate : NativeCubicalRootCandidate)
     (hadmissible : NativeCubicalRootAdmissible candidate)
     (mass : ℂ) (momentum : Fin 3 → ℂ) (amplitude : Cell8) :
     nativeCubicalRootOperator candidate mass momentum amplitude =
-      cubeDiracSymbol mass (momentum 0) (momentum 1) (momentum 2) amplitude := by
-  have hmass := admissible_mass_scale_eq_one candidate hadmissible
-  have htransport := admissible_transport_is_identity candidate hadmissible
-  funext corner
-  fin_cases corner <;>
-    simp [nativeCubicalRootOperator, candidateIncidenceMomentum,
-      cubeDiracSymbol, cubeIncidenceLinear, hmass, htransport,
-      Fin.sum_univ_succ]
+      cubeDiracSymbol mass (momentum 0) (momentum 1) (momentum 2) amplitude :=
+  embedding_admissible_root_is_canonical candidate constantCubeEmbedding cell4FirstBasis 0
+    rfl (admissible_on_constant_embedding candidate hadmissible) mass momentum amplitude
 
 /-! ## Exact census of the two internal cube copies -/
 
@@ -382,102 +460,11 @@ structure NativeTwoCopyCubicalRootCandidate where
   /-- The candidate coefficients used on the `-1` eigenspace of `cubeFlavor`. -/
   minus : NativeCubicalRootCandidate
 
-/-- The square of `nativeCubicalRootOperator candidate` agrees with `cubeScalarSymbol` on every
-amplitude in the image of `embedding`, for every mass and momentum. -/
-def NativeCubicalRootMatchesOnEmbedding
-    (candidate : NativeCubicalRootCandidate)
-    (embedding : Cell4 → Cell8) : Prop :=
-  ∀ mass momentum z,
-    nativeCubicalRootOperator candidate mass momentum
-        (nativeCubicalRootOperator candidate mass momentum (embedding z)) =
-      cubeScalarSymbol mass (momentum 0) (momentum 1) (momentum 2)
-        (embedding z)
-
-/-- The variant of `NativeCubicalRootAdmissible` in which the squaring condition is required
-only on the image of `embedding`. -/
-def NativeCubicalRootAdmissibleOnEmbedding
-    (candidate : NativeCubicalRootCandidate)
-    (embedding : Cell4 → Cell8) : Prop :=
-  CubicCoefficientCovariant candidate.transport ∧
-  NativeCubicalRootMatchesOnEmbedding candidate embedding ∧
-  0 ≤ candidate.massScale ∧
-  0 ≤ candidate.transport 0 0
-
-/-- The first standard basis vector of `Cell4`, with a `1` in position `0`. -/
-def cell4FirstBasis : Cell4
-  | 0 => 1
-  | _ => 0
-
 theorem plus_probe_component_is_one :
     cubeDiracEmbedPlus cell4FirstBasis 5 = 1 := by rfl
 
 theorem minus_probe_component_is_one :
     cubeDiracEmbedMinus cell4FirstBasis 0 = 1 := by rfl
-
-theorem embedding_admissible_mass_scale_square
-    (candidate : NativeCubicalRootCandidate)
-    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
-    (hprobe : embedding probe corner = 1)
-    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding) :
-    candidate.massScale ^ 2 = 1 := by
-  rcases hadmissible with ⟨_, hscalar, _, _⟩
-  have h := congrFun
-    (hscalar (1 : ℂ) (fun _ => 0) probe) corner
-  rw [native_cubical_root_operator_square] at h
-  have hre := congrArg Complex.re h
-  norm_num [cubeScalarSymbol, candidateIncidenceMomentum,
-    Fin.sum_univ_succ, hprobe] at hre
-  simpa [pow_two] using hre
-
-theorem embedding_admissible_transport_scale_square
-    (candidate : NativeCubicalRootCandidate)
-    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
-    (hprobe : embedding probe corner = 1)
-    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding) :
-    candidate.transport 0 0 ^ 2 = 1 := by
-  rcases hadmissible with ⟨hcovariant, hscalar, _, _⟩
-  obtain ⟨scale, hmatrix⟩ :=
-    cubic_covariant_coefficients_are_scalar candidate.transport hcovariant
-  have hscale : scale = candidate.transport 0 0 := by
-    simpa using (hmatrix 0 0).symm
-  have h := congrFun
-    (hscalar (0 : ℂ)
-      (fun axis => if axis = 0 then 1 else 0) probe) corner
-  rw [native_cubical_root_operator_square] at h
-  have hre := congrArg Complex.re h
-  norm_num [cubeScalarSymbol, candidateIncidenceMomentum,
-    Fin.sum_univ_succ, hmatrix, hprobe] at hre
-  rw [hscale] at hre
-  simpa [pow_two] using hre
-
-theorem embedding_admissible_root_is_canonical
-    (candidate : NativeCubicalRootCandidate)
-    (embedding : Cell4 → Cell8) (probe : Cell4) (corner : CubeCorner)
-    (hprobe : embedding probe corner = 1)
-    (hadmissible : NativeCubicalRootAdmissibleOnEmbedding candidate embedding)
-    (mass : ℂ) (momentum : Fin 3 → ℂ) (amplitude : Cell8) :
-    nativeCubicalRootOperator candidate mass momentum amplitude =
-      cubeDiracSymbol mass (momentum 0) (momentum 1) (momentum 2) amplitude := by
-  have hmassSquare := embedding_admissible_mass_scale_square
-    candidate embedding probe corner hprobe hadmissible
-  have hmass : candidate.massScale = 1 := by
-    nlinarith [hadmissible.2.2.1]
-  obtain ⟨scale, hmatrix⟩ :=
-    cubic_covariant_coefficients_are_scalar candidate.transport hadmissible.1
-  have hscale0 : scale = candidate.transport 0 0 := by
-    simpa using (hmatrix 0 0).symm
-  have htransportSquare := embedding_admissible_transport_scale_square
-    candidate embedding probe corner hprobe hadmissible
-  have hscale : scale = 1 := by
-    have hpositive : 0 ≤ scale := by
-      rw [hscale0]
-      exact hadmissible.2.2.2
-    nlinarith
-  funext outputCorner
-  fin_cases outputCorner <;>
-    simp [nativeCubicalRootOperator, candidateIncidenceMomentum,
-      cubeDiracSymbol, cubeIncidenceLinear, hmass, hmatrix, hscale,
-      Fin.sum_univ_succ]
 
 /-- The operator applying `nativeCubicalRootOperator candidate.plus` to the `+1` flavor
 projection and `nativeCubicalRootOperator candidate.minus` to the `-1` projection, summed. -/

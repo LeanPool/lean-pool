@@ -5,9 +5,12 @@ summary: Studies a quartic two-field lattice action on the 18-neighbour cubic st
   symbol splits into a continuum Klein-Gordon symbol and a fourth-order lattice remainder.
   The four-component Dirac Hamiltonian squares to that continuum symbol. Two flavour copies
   of a cubical Clifford representation, built from signed cube incidence maps, are equivalent
-  to the standard alpha/beta Dirac representation. The project also proves a vanishing
-  time-step limit for the generator of a recurrence-derived first-order branch, local
-  continuity and the continuum limit of the lattice current, an orthonormal Fourier frame on
+  to the standard alpha/beta Dirac representation. A first-order branch solves the centred
+  time recurrence with the continuum symbol in place of the lattice symbol. In the exact
+  lattice recurrence it leaves an explicit defect proportional to dt^2 times the lattice
+  remainder, and its generator tends to the Dirac Hamiltonian as the time step vanishes.
+  The project also proves local continuity for the linearized lattice dynamics, the
+  continuum limit of the lattice current, an orthonormal Fourier frame on
   finite abelian groups, and spin one-half rotation generators. Free continuum identities
   include Lorentz boosts, the Pauli-Lubanski invariant and the Gordon decomposition. All
   results are about this lattice model and the free four-component continuum operator. They
@@ -40,6 +43,7 @@ main_declarations:
 - LeanDirac.standard_c19_hamiltonian_square_is_continuum_dispersion
 - LeanDirac.interpreted_hamiltonian_intertwines_minus
 - LeanDirac.interpreted_hamiltonian_intertwines_plus
+- LeanDirac.native_branch_defect_is_spatial_remainder
 - LeanDirac.recurrence_branch_generator_defect_tends_to_zero
 - LeanDirac.native_tangent_local_continuity
 - LeanDirac.native_cell4_flux_continuum_limit_is_dirac_current
@@ -80,14 +84,21 @@ main_results:
 - declaration: LeanDirac.interpreted_hamiltonian_intertwines_plus
   informal: The same intertwining holds for the injective embedding of the second rank-four flavour
     copy.
+- declaration: LeanDirac.native_branch_defect_is_spatial_remainder
+  informal: The one-step map U_dt z = C z - i (S / w) H(k) z, with w^2 = 19^2 + 12 |k|^2 the
+    continuum symbol, solves the centred second-order time recurrence for that continuum symbol,
+    not for the exact lattice symbol. If (dt w)^2 <= 4, its defect in the exact lattice recurrence
+    is exactly dt^2 R(k) U_dt z, where R is the lattice remainder.
 - declaration: LeanDirac.recurrence_branch_generator_defect_tends_to_zero
-  informal: Fix a lattice momentum k and a four-spinor z. The first-order branch U_dt is extracted
-    from the centred second-order time recurrence. As dt tends to 0 with dt nonzero, each component
-    of (U_dt z - z) / dt + i H(k) z tends to 0.
+  informal: Fix a lattice momentum k and a four-spinor z, and let U_dt be the continuum-symbol
+    branch above. As dt tends to 0 with dt nonzero, each component of (U_dt z - z) / dt + i H(k) z
+    tends to 0. This is a time-step limit at fixed k; the spatial defect relative to the exact
+    lattice recurrence is the separate dt^2 R(k) term.
 - declaration: LeanDirac.native_tangent_local_continuity
-  informal: On any finite 18-neighbour lattice, take the acceleration given by the scalar tangent
-    equation. Then at every site the time derivative of the local phase density plus the
-    divergence of the outward bond current vanishes.
+  informal: On any 18-neighbour lattice, take the acceleration given by the linearized (tangent)
+    scalar equation with a mass term. Then at every site the time derivative of the local phase
+    density plus the divergence of the outward bond current vanishes. This concerns the linearized
+    dynamics, not the full quartic equations of motion.
 - declaration: LeanDirac.native_cell4_flux_continuum_limit_is_dirac_current
   informal: Let z satisfy H_m(k) z = E z with E > 0, where H_m(k) is the Dirac Hamiltonian above
     with an arbitrary real mass m. For each axis, the normalized positive-frequency lattice flux at

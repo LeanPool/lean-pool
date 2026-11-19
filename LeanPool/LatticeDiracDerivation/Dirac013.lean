@@ -469,23 +469,6 @@ theorem c19_phase_angle_scale
   simp_rw [mul_assoc]
   rw [← Finset.mul_sum]
 
-/-- Integer weights of the C19 bonds: two on faces, one on edges. -/
-def c19IntWeight (direction : C19Neighbor) : ℤ :=
-  if direction.val < 6 then 2 else 1
-
-theorem c19_weight_eq_int_weight (direction : C19Neighbor) :
-    c19Weight direction = (c19IntWeight direction : ℝ) := by
-  unfold c19Weight c19IntWeight
-  split_ifs <;> norm_num
-
-/-- The weighted second moments of the C19 bond vectors are twelve times the identity. -/
-theorem c19_coord_second_moment (first second : Fin 3) :
-    (∑ direction : C19Neighbor, c19IntWeight direction *
-        c19Coord first direction * c19Coord second direction) =
-      if first = second then 12 else 0 := by
-  revert first second
-  decide
-
 theorem c19_flux_linear_coefficient
     (axis : Fin 3) (momentum : LatticeMomentum) :
     (∑ direction : C19Neighbor,
@@ -495,17 +478,17 @@ theorem c19_flux_linear_coefficient
   have hsplit : ∀ other : Fin 3,
       (∑ direction : C19Neighbor, c19Weight direction * (c19Coord axis direction : ℝ) *
         (momentum other * (c19Coord other direction : ℝ))) =
-        momentum other * ((∑ direction : C19Neighbor, c19IntWeight direction *
-          c19Coord axis direction * c19Coord other direction : ℤ) : ℝ) := by
+        momentum other * (c19SecondMoment axis other : ℝ) := by
     intro other
+    unfold c19SecondMoment
     push_cast
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun direction _ => ?_
-    rw [c19_weight_eq_int_weight]
+    rw [c19_weight_is_integer_weight]
     ring
   simp only [c19PhaseAngle, Finset.mul_sum]
   rw [Finset.sum_comm]
-  simp only [hsplit, c19_coord_second_moment, Fin.sum_univ_three]
+  simp only [hsplit, c19_second_moment_isotropic, Fin.sum_univ_three]
   fin_cases axis <;> norm_num <;> ring
 
 theorem c19_flux_has_continuum_derivative
