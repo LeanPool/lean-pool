@@ -6,8 +6,10 @@ Authors: Djalil Chafaï
 
 module
 
+public import LeanPool.GinibrePoincare.Analysis.AlternativeMatrixPoincare
 public import LeanPool.GinibrePoincare.Analysis.AlternativeSlaterPoincare
 public import LeanPool.GinibrePoincare.Analysis.AlternativeSpectralPoincare
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceMatrixWeakClosure
 public import LeanPool.GinibrePoincare.Analysis.EntireVandermondeFactorization
 public import LeanPool.GinibrePoincare.Analysis.FullRadialLSIReduction
 public import LeanPool.GinibrePoincare.Analysis.GaussianCanonicalDbarSolution
@@ -26,10 +28,12 @@ public import LeanPool.GinibrePoincare.Analysis.GinibrePointwiseCurvature
 public import LeanPool.GinibrePoincare.Analysis.GinibreRadialGamma
 public import LeanPool.GinibrePoincare.Analysis.GinibreRadiusNotHolomorphic
 public import LeanPool.GinibrePoincare.Analysis.GinibreTwoRadiusEquilibriumLaw
+public import LeanPool.GinibrePoincare.Analysis.MatrixGaussianPoincare
 public import LeanPool.GinibrePoincare.Analysis.PolynomialEigenfunctionGenerator
 public import LeanPool.GinibrePoincare.Analysis.PolynomialSectorIncompleteness
 public import LeanPool.GinibrePoincare.Endgame.BochnerKodairaTheoremOneTen
 public import LeanPool.GinibrePoincare.Endgame.FullMainAnalyticProof
+public import LeanPool.GinibrePoincare.Endgame.FullMatrixLift
 public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneNine
 public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneTen
 
@@ -57,6 +61,10 @@ Main declarations: `GinibrePoincare.ginibre_symmetric_weak_poincare`,
   `GinibrePoincare.ginibreDivisibleEntire_real_centered_geometry`,
   `GinibrePoincare.ginibreComplexSmoothCore_closure_equivalence`,
   `GinibrePoincare.ginibreCollisionSet_capacity_zero`,
+  `GinibrePoincare.correspondenceMatrix_theorem_1_13`,
+  `GinibrePoincare.fullMatrixLift_functional_inequalities`,
+  `GinibrePoincare.matrixSpectralLift_finite_overlap_gaussian_poincare`,
+  `GinibrePoincare.matrixGaussian_poincare_compactC1`,
   `GinibrePoincare.ginibreTwoRadius_equilibrium_gamma_product`,
   `GinibrePoincare.ginibre_nonsymmetric_poincare_constant_lower_bound`,
   `GinibrePoincare.ginibreSquaredNormL2_not_holomorphic`

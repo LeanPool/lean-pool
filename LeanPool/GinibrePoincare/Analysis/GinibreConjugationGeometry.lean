@@ -996,14 +996,6 @@ theorem inner_star_eq_zero_of_mem_positiveQuotientAlgebraicSpan
   exact inner_star_eq_zero_of_mem_finiteQuotientDegreeClosures hn
     (Nat.add_pos_left r.2 s.1) hxr hys
 
-private def ginibreLpConjugationIsometry (n : ℕ) :
-    Lp ℂ 2 (ginibreMeasure n) →ₗᵢ[ℝ] Lp ℂ 2 (ginibreMeasure n) where
-  toLinearMap :=
-    { toFun := star
-      map_add' := Lp_star_add
-      map_smul' := Lp_star_real_smul }
-  norm_map' := Lp_norm_star
-
 private theorem inner_star_eq_zero_positiveClosure_left
     {n : ℕ} (hn : 0 < n) {x y : Lp ℂ 2 (ginibreMeasure n)}
     (hx : x ∈ ginibrePositiveQuotientGradedClosedSpan n hn)
@@ -1034,7 +1026,7 @@ theorem inner_star_eq_zero_of_mem_positiveQuotientGradedClosedSpan
   have hZ : IsClosed Z := by
     apply isClosed_eq
     · exact continuous_inner.comp
-        (continuous_const.prodMk (ginibreLpConjugationIsometry n).continuous)
+        (continuous_const.prodMk (LpConjugationIsometry (ginibreMeasure n)).continuous)
     · exact continuous_const
   exact (closure_minimal (fun z hz ↦
     inner_star_eq_zero_positiveClosure_left hn hx hz) hZ) hy
@@ -1221,18 +1213,6 @@ theorem inner_holomorphicProjection_star_eq_zero
   · exact holomorphicProjection_centeredObservable_mem_positive hn f hf
   · exact holomorphicProjection_centeredObservable_mem_positive hn f hf
 
-private theorem inner_Lp_star_star {n : ℕ}
-    (x y : Lp ℂ 2 (ginibreMeasure n)) :
-    inner ℂ (star x) (star y) = star (inner ℂ x y) := by
-  rw [MeasureTheory.L2.inner_def, MeasureTheory.L2.inner_def]
-  rw [integral_congr_ae (show
-    (fun z ↦ inner ℂ ((star x) z) ((star y) z)) =ᵐ[ginibreMeasure n]
-      (fun z ↦ star (inner ℂ (x z) (y z))) by
-    filter_upwards [Lp.coeFn_star x, Lp.coeFn_star y] with z hx hy
-    rw [hx, hy]
-    simp [RCLike.inner_apply])]
-  exact integral_conj
-
 /-- Pythagorean identity for the three-term real/holomorphic geometry once
 the three pairwise orthogonality relations have been established. -/
 theorem norm_sq_eq_two_mul_norm_sq_add_of_h_star_remainder_orthogonal
@@ -1283,7 +1263,7 @@ theorem centeredHolomorphicRemainderGeometry
     rw [hneg, hstaru]
     simp [sub_eq_add_neg]
   have hse : inner ℂ (star h) (u - star h) = 0 := by
-    have hc := inner_Lp_star_star h (u - h)
+    have hc := Lp_inner_star_star h (u - h)
     rw [hhe, hstarsub] at hc
     simpa using hc
   have hsr : inner ℂ (star h) r = 0 := by
