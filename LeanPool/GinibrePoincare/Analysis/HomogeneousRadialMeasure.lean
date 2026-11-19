@@ -103,7 +103,7 @@ theorem homogeneous_withDensity_smul
       change t⁻¹ • (t • w) ∈ s
       simpa [smul_smul, ht.ne'] using hw
   have hm := congrArg (fun ν : Measure E => ν s) hmap
-  rw [e.map_apply s, hpre, Measure.smul_apply, smul_eq_mul] at hm
+  rw [e.map_apply s, hpre, smul_apply, smul_eq_mul] at hm
   exact hm
 
 /-- Transporting a density which depends only on the mapped random variable. -/
@@ -211,7 +211,7 @@ theorem map_quadratic_homogeneous_measure
   let ν := ((k : ℝ≥0∞) * K) • radialPowerMeasure k
   have hcdfν : ∀ x : ℝ, ν (Iic x) = (μ.map q) (Iic x) := by
     intro x
-    rw [Measure.smul_apply, radialPowerMeasure_Iic k hk, hcdf]
+    rw [smul_apply, radialPowerMeasure_Iic k hk, hcdf]
     by_cases hx : 0 ≤ x
     · rw [ite_eq_left hx, ite_eq_left hx, smul_eq_mul]
       have hkR : (0 : ℝ) < k := by exact_mod_cast hk
@@ -271,7 +271,7 @@ theorem normalized_gaussian_tilt_gamma
     ProbabilityTheory.isProbabilityMeasure_gammaMeasure (by exact_mod_cast hk) (by norm_num)
   rw [radialPowerMeasure_gaussian_tilt k hk, smul_smul] at hprob ⊢
   have htotal := hprob.measure_univ
-  rw [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one] at htotal
+  rw [smul_apply, measure_univ, smul_eq_mul, mul_one] at htotal
   rw [htotal, one_smul]
 
 end

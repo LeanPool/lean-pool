@@ -101,7 +101,7 @@ theorem closedPolynomialGenerator_graph_symmetric (n : ℕ) (hn : 2 ≤ n)
   have hc : IsClosed {q : GinibrePolynomialL2 n × GinibrePolynomialL2 n |
       inner ℂ p.2 q.1 = inner ℂ p.1 q.2} := by
     apply isClosed_eq <;> fun_prop
-  exact closure_minimal hfinite hc hq
+  exact closure_minimal (fun q hq => hfinite q hq) hc hq
 
 /-- Domain-valued symmetry for the closed partial linear operator. -/
 theorem closedPolynomialGenerator_symmetric (n : ℕ) (hn : 2 ≤ n)

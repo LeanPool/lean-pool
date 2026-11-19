@@ -135,7 +135,9 @@ theorem finitePolynomialSpectralEvolution_hasDerivAt (n : ℕ) (hn : 2 ≤ n)
       (fun u : ℝ => (Real.exp (-eigenvalue n i.a i.b i.m * u) : ℂ))
       (-(eigenvalue n i.a i.b i.m : ℂ) *
         (Real.exp (-eigenvalue n i.a i.b i.m * t) : ℂ)) t := by
-    convert h using 1 <;> (try simp only [id_eq, mul_one]); push_cast; ring
+    convert h using 1 <;> simp only [id_eq, mul_one]
+    push_cast
+    ring
   exact h'.smul_const (c i • polynomialEigenfunctionL2 n hn i)
 
 /-- Each strictly positive spectral mode tends to zero in actual Ginibre L². -/

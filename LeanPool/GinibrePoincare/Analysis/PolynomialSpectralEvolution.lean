@@ -118,8 +118,9 @@ theorem polynomialSpectralEvolution_eigenfunction_hasDerivAt (n : ℕ) (hn : 2 �
           (polynomialEigenfunctionBasis n hn i) : Configuration n → ℂ) z) t := by
   simp only [polynomialSpectralEvolution_eigenfunction]
   have h := (((hasDerivAt_id t).const_mul (-eigenvalue n i.a i.b i.m)).exp).ofReal_comp
-  convert h.mul_const (polynomialEigenfunction n i z) using 1 <;> (try simp only [id_eq, mul_one])
-     ; push_cast; ring
+  convert h.mul_const (polynomialEigenfunction n i z) using 1 <;> simp only [id_eq, mul_one]
+  push_cast
+  ring
 
 end
 end GinibrePoincare
