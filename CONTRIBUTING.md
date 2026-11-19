@@ -54,6 +54,8 @@ Warnings are not allowed. `lakefile.toml` sets `warningAsError = true`, so any w
 
 Every file has a build-time budget. Any file you add or modify must build in under 600 seconds on CI, and CI stops any single Lean process after 60 minutes. Split slow files or make their proofs cheaper; the advisory `/profile` report shows where the time goes.
 
+Every new file also has a memory budget. CI compiles four files at once on a 16 GB runner, so it stops the compiler of any file your PR adds once it holds more than 3 GiB of memory. If the runner still runs short, CI stops the compiler holding the most and names the files that were compiling. Split such a file, or make its proofs or certificates cheaper to check. To measure a file yourself, read `RssAnon` in `/proc/<pid>/status` while `lean` compiles it.
+
 **Python.** From `python/`: `uv run ruff check`, `uv run ruff format`, and `uv run --group test pytest`.
 
 ## Coding guidelines
