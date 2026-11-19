@@ -84,6 +84,13 @@ theorem map_mem_unstableSubspace {A : E →L[ℝ] E} {v : E} (hv : v ∈ A.unsta
   | zero => simp [h0]
   | succ n => exact hA n
 
+/-- Every point of a backward orbit tending to zero lies in the unstable subspace. -/
+theorem mem_unstableSubspace_of_backwardOrbit {A : E →L[ℝ] E} {w : ℕ → E}
+    (hA : ∀ n, A (w (n + 1)) = w n) (ht : Tendsto w atTop (𝓝 0)) (n : ℕ) :
+    w n ∈ A.unstableSubspace :=
+  ⟨fun k ↦ w (k + n), by simp, fun k ↦ by simpa only [Nat.add_right_comm k 1 n] using hA (k + n),
+    (tendsto_add_atTop_iff_nat n).2 ht⟩
+
 /-- `A` maps the unstable subspace onto itself: a vector of the unstable subspace has a preimage
 in it.
 
@@ -91,8 +98,7 @@ Proof: `w 1`, with the backward orbit `n ↦ w (n + 1)`. -/
 theorem exists_mem_unstableSubspace_apply_eq {A : E →L[ℝ] E} {v : E}
     (hv : v ∈ A.unstableSubspace) : ∃ w ∈ A.unstableSubspace, A w = v := by
   obtain ⟨w, h0, hA, ht⟩ := hv
-  exact ⟨w 1, ⟨fun n ↦ w (n + 1), rfl, fun n ↦ hA (n + 1), (tendsto_add_atTop_iff_nat 1).2 ht⟩,
-    by rw [hA 0, h0]⟩
+  exact ⟨w 1, mem_unstableSubspace_of_backwardOrbit hA ht 1, by rw [hA 0, h0]⟩
 
 /-- The stable subspace of `e⁻¹` is the unstable subspace of `e`.
 

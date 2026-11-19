@@ -96,13 +96,9 @@ theorem nonempty_hyperbolicSplitting [FiniteDimensional ℝ E] {A : E →L[ℝ] 
   have hBu {u : E} (hu : u ∈ A.unstableSubspace) :
       Tendsto (fun n : ℕ ↦ (B ^ n) u) atTop (𝓝 0) := by
     obtain ⟨w, hw0, hwA, hwt⟩ := hu
-    have hwmem (n : ℕ) : w n ∈ A.unstableSubspace :=
-      ⟨fun k ↦ w (k + n), by simp, fun k ↦ by
-        change A (w (k + 1 + n)) = w (k + n); rw [Nat.add_right_comm]; exact hwA _,
-        (tendsto_add_atTop_iff_nat n).2 hwt⟩
     have hBw (n : ℕ) : B (w n) = w (n + 1) := by
       rw [← hwA n, ← mul_apply_eq_comp B A, hBA, sub_apply, one_apply_eq_self,
-        hPzero.2 (hwmem (n + 1)), sub_zero]
+        hPzero.2 (mem_unstableSubspace_of_backwardOrbit hwA hwt (n + 1)), sub_zero]
     have hBpow (n : ℕ) : (B ^ n) u = w n := by
       induction n with
       | zero => rw [pow_zero, one_apply_eq_self, hw0]

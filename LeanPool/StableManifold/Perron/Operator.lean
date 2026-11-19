@@ -144,29 +144,26 @@ private theorem proj_unstableInv_pow_succ_apply (n : ℕ) (x : E) :
     S.proj ((S.unstableInv ^ (n + 1)) x) = 0 := by
   rw [← mul_apply_eq_comp S.proj, S.proj_mul_unstableInv_pow_succ, zero_apply]
 
-/-- `∑_{k < n} λ^(n-1-k) ≤ 1 / (1 - λ)`. -/
-private theorem sum_rate_pow_le (n : ℕ) :
-    ∑ k ∈ Finset.range n, S.rate ^ (n - 1 - k) ≤ (1 - S.rate)⁻¹ := by
-  rw [Finset.sum_range_reflect (fun k ↦ S.rate ^ k) n,
-    ← tsum_geometric_of_lt_one S.rate_pos.le S.rate_lt_one]
-  exact (summable_geometric_of_lt_one S.rate_pos.le S.rate_lt_one).sum_le_tsum _
-    fun k _ ↦ pow_nonneg S.rate_pos.le k
-
-/-- `∑_{k < n} θ^k λ^(n-1-k) ≤ 2 θⁿ / (1 - λ)`, with `θ = (1 + λ) / 2`. -/
-private theorem sum_decayRate_pow_mul_rate_pow_le (n : ℕ) :
-    ∑ k ∈ Finset.range n, S.decayRate ^ k * S.rate ^ (n - 1 - k) ≤
-      2 * (1 - S.rate)⁻¹ * S.decayRate ^ n := by
-  have h := geom_sum₂_mul S.decayRate S.rate n
-  have hθ : S.decayRate - S.rate = (1 - S.rate) / 2 := by unfold decayRate; ring
-  have h1 : 0 < 1 - S.rate := sub_pos.2 S.rate_lt_one
-  set s := ∑ k ∈ Finset.range n, S.decayRate ^ k * S.rate ^ (n - 1 - k)
-  have hs : s * (1 - S.rate) ≤ 2 * S.decayRate ^ n := by
-    have : s * (1 - S.rate) = 2 * (s * (S.decayRate - S.rate)) := by rw [hθ]; ring
-    rw [this, h]
-    linarith [pow_nonneg S.rate_pos.le n]
+/-- Bound the geometric convolution for any weight at least the decay rate. -/
+private theorem sum_weight_pow_mul_rate_pow_le {weight : ℝ} (hweight : S.decayRate ≤ weight)
+    (n : ℕ) :
+    ∑ k ∈ Finset.range n, weight ^ k * S.rate ^ (n - 1 - k) ≤
+      2 * (1 - S.rate)⁻¹ * weight ^ n := by
+  have h := geom_sum₂_mul weight S.rate n
+  have hd : (1 - S.rate) / 2 ≤ weight - S.rate := by
+    unfold decayRate at hweight
+    linarith
+  have hrate : 0 < 1 - S.rate := sub_pos.2 S.rate_lt_one
+  have hw : 0 ≤ weight := S.decayRate_pos.le.trans hweight
+  set s := ∑ k ∈ Finset.range n, weight ^ k * S.rate ^ (n - 1 - k)
+  have hs : 0 ≤ s := Finset.sum_nonneg fun k _ ↦
+    mul_nonneg (pow_nonneg hw k) (pow_nonneg S.rate_pos.le _)
+  have hscaled : s * (1 - S.rate) ≤ 2 * weight ^ n := by
+    nlinarith [mul_le_mul_of_nonneg_left hd hs, pow_nonneg S.rate_pos.le n]
   calc s = s * (1 - S.rate) * (1 - S.rate)⁻¹ := by field_simp
-    _ ≤ 2 * S.decayRate ^ n * (1 - S.rate)⁻¹ := by gcongr
-    _ = 2 * (1 - S.rate)⁻¹ * S.decayRate ^ n := by ring
+    _ ≤ 2 * weight ^ n * (1 - S.rate)⁻¹ :=
+      mul_le_mul_of_nonneg_right hscaled (inv_nonneg.mpr hrate.le)
+    _ = 2 * (1 - S.rate)⁻¹ * weight ^ n := by ring
 
 /-- `‖∑_{k < n} A^(n-1-k) P (x k)‖ ≤ ∑_{k < n} C λ^(n-1-k) ‖x k‖`. -/
 private theorem norm_sum_pow_proj_apply_le (x : ℕ → E) (n : ℕ) :
@@ -191,8 +188,7 @@ private theorem norm_tsum_unstableInv_pow_apply_le {x : ℕ → E} {a : ℝ} (hx
     mul_le_of_le_one_right S.const_pos.le S.rate_lt_one.le
   gcongr
 
-variable [CompleteSpace E]
-
+variable [CompleteSpace E] in
 /-- The unstable series converges: `‖B^(j+1) (y (n + j))‖ ≤ C λ^(j+1) ‖y‖`. -/
 theorem summable_unstableInv_pow_apply (y : ℕ →ᵇ E) (n : ℕ) :
     Summable fun j : ℕ ↦ (S.unstableInv ^ (j + 1)) (y (n + j)) := by
@@ -202,30 +198,46 @@ theorem summable_unstableInv_pow_apply (y : ℕ →ᵇ E) (n : ℕ) :
   · exact (S.norm_unstableInv_pow_succ_apply_le j _).trans
       (mul_le_mul_of_nonneg_left (y.norm_coe_le_norm _) (by positivity [S.const_pos, S.rate_pos]))
 
-omit [CompleteSpace E] in
-/-- `‖perronTerm y n‖ ≤ 2 C / (1 - λ) ‖y‖ ≤ S.bound ‖y‖`. -/
-private theorem norm_perronTerm_le (y : ℕ →ᵇ E) (n : ℕ) : ‖perronTerm S y n‖ ≤ S.bound * ‖y‖ := by
+/-- Estimate a Perron term on a sequence bounded by a geometric weight. -/
+private theorem norm_perronTerm_le_of_le {y : ℕ →ᵇ E} {M weight : ℝ}
+    (hweightOne : weight ≤ 1) (hweight : S.decayRate ≤ weight)
+    (hy : ∀ n, ‖y n‖ ≤ M * weight ^ n) (n : ℕ) :
+    ‖perronTerm S y n‖ ≤ S.bound * M * weight ^ n := by
+  have hM : 0 ≤ M := by simpa using (norm_nonneg _).trans (hy 0)
   have h1 : 0 < 1 - S.rate := sub_pos.2 S.rate_lt_one
+  have hw : 0 ≤ weight := S.decayRate_pos.le.trans hweight
   have hs : ‖∑ k ∈ Finset.range n, (A ^ (n - 1 - k)) (S.proj (y k))‖ ≤
-      S.const * (1 - S.rate)⁻¹ * ‖y‖ := by
+      S.const * M * (2 * (1 - S.rate)⁻¹ * weight ^ n) := by
     refine (S.norm_sum_pow_proj_apply_le y n).trans ?_
     calc ∑ k ∈ Finset.range n, S.const * S.rate ^ (n - 1 - k) * ‖y k‖
-        ≤ ∑ k ∈ Finset.range n, S.const * S.rate ^ (n - 1 - k) * ‖y‖ := by
-          gcongr
+        ≤ ∑ k ∈ Finset.range n, S.const * S.rate ^ (n - 1 - k) * (M * weight ^ k) := by
+          gcongr with k
           · exact mul_nonneg S.const_pos.le (pow_nonneg S.rate_pos.le _)
-          · exact y.norm_coe_le_norm k
-      _ = S.const * (∑ k ∈ Finset.range n, S.rate ^ (n - 1 - k)) * ‖y‖ := by
-          rw [Finset.mul_sum, Finset.sum_mul]
-      _ ≤ S.const * (1 - S.rate)⁻¹ * ‖y‖ := by
+          · exact hy k
+      _ = S.const * M * ∑ k ∈ Finset.range n, weight ^ k * S.rate ^ (n - 1 - k) := by
+          rw [Finset.mul_sum]
+          exact Finset.sum_congr rfl fun k _ ↦ by ring
+      _ ≤ S.const * M * (2 * (1 - S.rate)⁻¹ * weight ^ n) := by
           gcongr
-          · exact S.const_pos.le
-          · exact S.sum_rate_pow_le n
+          · exact mul_nonneg S.const_pos.le hM
+          · exact S.sum_weight_pow_mul_rate_pow_le hweight n
   have ht := S.norm_tsum_unstableInv_pow_apply_le (x := fun j ↦ y (n + j))
-    fun j ↦ y.norm_coe_le_norm (n + j)
-  have hb : S.bound * ‖y‖ = 3 * (S.const * (1 - S.rate)⁻¹ * ‖y‖) := by unfold bound; ring
-  have h0 : 0 ≤ S.const * (1 - S.rate)⁻¹ * ‖y‖ := by positivity [S.const_pos]
-  rw [hb]
-  exact (norm_sub_le _ _).trans (by linarith)
+    (a := M * weight ^ n) fun j ↦ (hy (n + j)).trans <| by
+      rw [pow_add]
+      exact mul_le_mul_of_nonneg_left
+        (mul_le_of_le_one_right (pow_nonneg hw n) (pow_le_one₀ hw hweightOne))
+        hM
+  have hb : S.bound * M * weight ^ n =
+      3 * (S.const * (1 - S.rate)⁻¹ * (M * weight ^ n)) := by unfold bound; ring
+  rw [hb, perronTerm]
+  exact (norm_sub_le _ _).trans (by nlinarith)
+
+private theorem norm_perronTerm_le (y : ℕ →ᵇ E) (n : ℕ) :
+    ‖perronTerm S y n‖ ≤ S.bound * ‖y‖ := by
+  simpa using norm_perronTerm_le_of_le S le_rfl S.decayRate_lt_one.le
+    (fun k ↦ by simpa using y.norm_coe_le_norm k) n
+
+variable [CompleteSpace E]
 
 private theorem perronTerm_add (y z : ℕ →ᵇ E) (n : ℕ) :
     perronTerm S (y + z) n = perronTerm S y n + perronTerm S z n := by
@@ -273,36 +285,7 @@ Proof: `∑_{k<n} C λ^(n-1-k) M θ^k ≤ 2 C M θⁿ / (1 - λ)` and
 theorem norm_perronOp_apply_le_of_le {y : ℕ →ᵇ E} {M : ℝ}
     (hy : ∀ n, ‖y n‖ ≤ M * S.decayRate ^ n) (n : ℕ) :
     ‖S.perronOp y n‖ ≤ S.bound * M * S.decayRate ^ n := by
-  have hM : 0 ≤ M := by simpa using (norm_nonneg _).trans (hy 0)
-  have h1 : 0 < 1 - S.rate := sub_pos.2 S.rate_lt_one
-  have hθ := S.decayRate_pos
-  have hs : ‖∑ k ∈ Finset.range n, (A ^ (n - 1 - k)) (S.proj (y k))‖ ≤
-      S.const * M * (2 * (1 - S.rate)⁻¹ * S.decayRate ^ n) := by
-    refine (S.norm_sum_pow_proj_apply_le y n).trans ?_
-    calc ∑ k ∈ Finset.range n, S.const * S.rate ^ (n - 1 - k) * ‖y k‖
-        ≤ ∑ k ∈ Finset.range n, S.const * S.rate ^ (n - 1 - k) * (M * S.decayRate ^ k) := by
-          gcongr with k
-          · exact mul_nonneg S.const_pos.le (pow_nonneg S.rate_pos.le _)
-          · exact hy k
-      _ = S.const * M * ∑ k ∈ Finset.range n, S.decayRate ^ k * S.rate ^ (n - 1 - k) := by
-          rw [Finset.mul_sum]
-          exact Finset.sum_congr rfl fun k _ ↦ by ring
-      _ ≤ S.const * M * (2 * (1 - S.rate)⁻¹ * S.decayRate ^ n) := by
-          gcongr
-          · exact mul_nonneg S.const_pos.le hM
-          · exact S.sum_decayRate_pow_mul_rate_pow_le n
-  have ht := S.norm_tsum_unstableInv_pow_apply_le (x := fun j ↦ y (n + j))
-    (a := M * S.decayRate ^ n) fun j ↦ (hy (n + j)).trans <| by
-      rw [pow_add]
-      exact mul_le_mul_of_nonneg_left
-        (mul_le_of_le_one_right (pow_nonneg hθ.le n) (pow_le_one₀ hθ.le S.decayRate_lt_one.le))
-        hM
-  have hb : S.bound * M * S.decayRate ^ n =
-      3 * (S.const * (1 - S.rate)⁻¹ * (M * S.decayRate ^ n)) := by unfold bound; ring
-  have he : S.const * M * (2 * (1 - S.rate)⁻¹ * S.decayRate ^ n) =
-      2 * (S.const * (1 - S.rate)⁻¹ * (M * S.decayRate ^ n)) := by ring
-  rw [hb, perronOp_apply]
-  exact (norm_sub_le _ _).trans (by linarith)
+  exact norm_perronTerm_le_of_le S S.decayRate_lt_one.le le_rfl hy n
 
 /-- The Lyapunov–Perron term vanishes on the stable component at time `0`. -/
 theorem proj_perronOp_apply_zero (y : ℕ →ᵇ E) : S.proj (S.perronOp y 0) = 0 := by

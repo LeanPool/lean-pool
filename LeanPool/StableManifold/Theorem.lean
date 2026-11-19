@@ -157,16 +157,6 @@ private lemma exists_localInverse_of_isInvertible {f : E → E} {p : E} {W : Set
 
 end Complete
 
-omit [NormedSpace ℝ E] in
-/-- For `U` inside the source and the target of the local inverse `e` of `f`, the local unstable
-set of `f|_U` is the local stable set of `e⁻¹|_U`. -/
-private lemma localUnstableSet_eq_localStableSet_symm {f : E → E} {p : E}
-    {e : OpenPartialHomeomorph E E} (he : (e : E → E) = f) {U : Set E}
-    (hU : U ⊆ e.source ∩ e.target) :
-    localUnstableSet f p U = localStableSet e.symm p U := by
-  rw [localUnstableSet_congr (g := e) fun x _ ↦ by rw [he]]
-  exact (localStableSet_symm_eq_localUnstableSet e hU).1.symm
-
 variable [FiniteDimensional ℝ E]
 
 /-- **A stable manifold theorem for every sufficiently small neighborhood.** The

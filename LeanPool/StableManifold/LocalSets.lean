@@ -8,6 +8,7 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.StableManifold.LocalSetDefinitions
+public import Mathlib.Topology.Algebra.Group.Basic
 public import Mathlib.Topology.OpenPartialHomeomorph.Defs
 
 /-!
@@ -211,6 +212,15 @@ theorem localUnstableSet_congr {f g : X → X} {p : X} {U : Set X} (h : EqOn f g
     exact ⟨y, hy0, fun n ↦ ⟨(hy n).1, by rw [← h (hy (n + 1)).1, (hy n).2]⟩, hyt⟩
   exact (key h).antisymm (key h.symm)
 
+/-- For `U` inside the source and the target of the local inverse `e` of `f`, the local unstable
+set of `f|_U` is the local stable set of `e⁻¹|_U`. -/
+theorem localUnstableSet_eq_localStableSet_symm {f : X → X} {p : X}
+    {e : OpenPartialHomeomorph X X} (he : (e : X → X) = f) {U : Set X}
+    (hU : U ⊆ e.source ∩ e.target) :
+    localUnstableSet f p U = localStableSet e.symm p U := by
+  rw [localUnstableSet_congr (g := e) fun x _ ↦ by rw [he]]
+  exact (localStableSet_symm_eq_localUnstableSet e hU).1.symm
+
 /-- **Conjugation** carries local stable sets along: for a homeomorphism `e : X ≃ₜ Y`, the local
 stable set of `e ∘ f ∘ e⁻¹` at `e p` in `e '' U` is the image by `e` of the local stable set of `f`
 at `p` in `U`.
@@ -259,3 +269,25 @@ theorem localUnstableSet_conj {Y : Type*} [TopologicalSpace Y] (e : X ≃ₜ Y) 
     simp [(hy n).2]
 
 end Function
+
+namespace StableManifold
+
+/-- **Translation**: the local stable set of `f` at `p` is the translate by `p` of the local stable
+set of `x ↦ f (p + x) - p` at `0`.
+
+Proof: `Function.localStableSet_conj` with `Homeomorph.addLeft p`. -/
+theorem localStableSet_eq_image_add {X : Type*} [TopologicalSpace X] [AddCommGroup X]
+    [ContinuousAdd X] (f : X → X) (p : X) (U : Set X) :
+    Function.localStableSet f p U =
+      (p + ·) '' Function.localStableSet (fun x ↦ f (p + x) - p) 0 ((p + ·) ⁻¹' U) := by
+  have h := Function.localStableSet_conj (Homeomorph.addLeft p) (fun x ↦ f (p + x) - p) 0
+    ((p + ·) ⁻¹' U)
+  have hf : (Homeomorph.addLeft p) ∘ (fun x ↦ f (p + x) - p) ∘ (Homeomorph.addLeft p).symm = f := by
+    funext y
+    simp [Homeomorph.addLeft_symm]
+  have hU : (Homeomorph.addLeft p) '' ((p + ·) ⁻¹' U) = U :=
+    image_preimage_eq U (Homeomorph.addLeft p).surjective
+  rw [hf, hU] at h
+  simpa using h
+
+end StableManifold

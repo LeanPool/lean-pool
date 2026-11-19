@@ -78,24 +78,6 @@ namespace StableManifold
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-omit [NormedSpace ℝ E] in
-/-- **Translation**: the local stable set of `f` at `p` is the translate by `p` of the local stable
-set of `x ↦ f (p + x) - p` at `0`.
-
-Proof: `Function.localStableSet_conj` with `Homeomorph.addLeft p`. -/
-theorem localStableSet_eq_image_add (f : E → E) (p : E) (U : Set E) :
-    Function.localStableSet f p U =
-      (p + ·) '' Function.localStableSet (fun x ↦ f (p + x) - p) 0 ((p + ·) ⁻¹' U) := by
-  have h := Function.localStableSet_conj (Homeomorph.addLeft p) (fun x ↦ f (p + x) - p) 0
-    ((p + ·) ⁻¹' U)
-  have hf : (Homeomorph.addLeft p) ∘ (fun x ↦ f (p + x) - p) ∘ (Homeomorph.addLeft p).symm = f := by
-    funext y
-    simp [Homeomorph.addLeft_symm]
-  have hU : (Homeomorph.addLeft p) '' ((p + ·) ⁻¹' U) = U :=
-    image_preimage_eq U (Homeomorph.addLeft p).surjective
-  rw [hf, hU] at h
-  simpa using h
-
 namespace Perturbation
 
 variable {A : E →L[ℝ] E} {S : A.HyperbolicSplitting} (F : Perturbation S)
