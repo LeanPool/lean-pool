@@ -60,23 +60,23 @@ local instance (n : ℕ) : BorelSpace C(ℝ, Configuration n) := ⟨rfl⟩
 local instance instBorelBrownianOrthogonalEquilibriumOriginal57 : MeasurableSpace C(ℝ, ℂ) := borel _
 local instance : BorelSpace C(ℝ, ℂ) := ⟨rfl⟩
 
-/-- The equilibrium path version agrees at every time with the original canonical
- Brownian solution initialized from the actual Ginibre sample. -/
-theorem ginibre_equilibrium_path_eq_original {Ω : Type*} [MeasurableSpace Ω]
-    {n : ℕ} (hn : 0 < n) (α : ℝ≥0) (z₀ : Configuration n) (hz₀ : CollisionFree z₀)
+/-- The shared path constructor agrees at every time with the original canonical
+ Brownian solution, for any initial law `ν` that is almost surely collision-free. -/
+theorem ginibre_independentInitial_path_eq_original {Ω : Type*} [MeasurableSpace Ω]
+    {n : ℕ} (hn : 0 < n) (ν : Measure (Configuration n)) (hν : ∀ᵐ z ∂ν, CollisionFree z)
+    (α : ℝ≥0) (z₀ : Configuration n) (hz₀ : CollisionFree z₀)
     (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
     [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
     (hind : iIndepFun (fun i ω t => B i t ω) P) :
-    ∀ᵐ p : Configuration n × Ω ∂(ginibreMeasure n).prod P, ∀ t : ℝ,
+    ∀ᵐ p : Configuration n × Ω ∂ν.prod P, ∀ t : ℝ,
       ginibreEquilibriumPath α z₀ hz₀ B p t =
         ginibreBrownianMaximalProcess n α p.1 B (Real.toNNReal t) p.2 := by
   classical
-  let := ginibreMeasure_isProbabilityMeasure hn
   have hm : Measurable (fun p : Configuration n × Ω =>
       (ginibreFreeInitialVersion z₀ hz₀ p.1, ginibreBrownianFullContinuousNoise n B α p.2)) :=
     ((ginibreFreeInitialVersion_measurable z₀ hz₀).comp measurable_fst).prodMk
       ((ginibreBrownianFullContinuousNoise_measurable n B P hB α).comp measurable_snd)
-  have hL : ∀ᵐ p : Configuration n × Ω ∂(ginibreMeasure n).prod P,
+  have hL : ∀ᵐ p : Configuration n × Ω ∂ν.prod P,
       ginibreDrivenMaximalLifetime n α (ginibreBrownianFullContinuousNoise n B α p.2).val
         (ginibreFreeInitialVersion z₀ hz₀ p.1).val = ⊤ := by
     apply (Measure.ae_prod_iff_ae_ae ((ginibreDriven_global_joint_measurableSet hn α).preimage
@@ -84,10 +84,10 @@ theorem ginibre_equilibrium_path_eq_original {Ω : Type*} [MeasurableSpace Ω]
     exact Eventually.of_forall fun z =>
       ginibreBrownianMaximalLifetime_top_ae hn α _ (ginibreFreeInitialVersion z₀ hz₀ z).property B P
           hB hind
-  have hC : ∀ᵐ p : Configuration n × Ω ∂(ginibreMeasure n).prod P, CollisionFree p.1 := by
+  have hC : ∀ᵐ p : Configuration n × Ω ∂ν.prod P, CollisionFree p.1 := by
     apply (Measure.ae_prod_iff_ae_ae ((isOpen_collisionFree n).measurableSet.preimage
         measurable_fst)).mpr
-    exact (ginibre_ae_collisionFree n hn).mono fun z hz => Eventually.of_forall fun _ => hz
+    exact hν.mono fun z hz => Eventually.of_forall fun _ => hz
   filter_upwards [hL, hC] with p hL hC
   intro t
   have hv : ginibreFreeInitialVersion z₀ hz₀ p.1 = ⟨p.1, hC⟩ := by
@@ -97,6 +97,19 @@ theorem ginibre_equilibrium_path_eq_original {Ω : Type*} [MeasurableSpace Ω]
     simpa only [hv] using hL
   simp only [ginibreEquilibriumPath, ginibreDrivenGlobalPathElement, hv, dite_eq_left hL',
     ContinuousMap.coe_mk, ginibreBrownianMaximalProcess]
+
+/-- The equilibrium path version agrees at every time with the original canonical
+ Brownian solution initialized from the actual Ginibre sample. -/
+theorem ginibre_equilibrium_path_eq_original {Ω : Type*} [MeasurableSpace Ω]
+    {n : ℕ} (hn : 0 < n) (α : ℝ≥0) (z₀ : Configuration n) (hz₀ : CollisionFree z₀)
+    (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
+    [IsProbabilityMeasure P] [P.IsComplete] (hB : ∀ i, IsBrownianReal (B i) P)
+    (hind : iIndepFun (fun i ω t => B i t ω) P) :
+    ∀ᵐ p : Configuration n × Ω ∂(ginibreMeasure n).prod P, ∀ t : ℝ,
+      ginibreEquilibriumPath α z₀ hz₀ B p t =
+        ginibreBrownianMaximalProcess n α p.1 B (Real.toNNReal t) p.2 :=
+  ginibre_independentInitial_path_eq_original hn _ (ginibre_ae_collisionFree n hn) α z₀ hz₀ B P
+    hB hind
 
 /-- Actual original Brownian whole-process independence with initial law exactly
  Ginibre; no assumption of stationarity or stochastic factorization is used. -/
