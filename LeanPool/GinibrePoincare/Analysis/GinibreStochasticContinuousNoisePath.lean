@@ -66,6 +66,44 @@ theorem ginibre_measurable_continuousMap_of_evaluations
   intro k
   exact hF (d k)
 
+/-- Equal actual raw laws of continuous paths on different probability spaces
+identify their continuous-map random-element laws. -/
+theorem actualContinuousMap_law_eq_of_raw_path_law {Ω Ω' D E : Type*}
+    [MeasurableSpace Ω] [MeasurableSpace Ω'] [TopologicalSpace D]
+    [TopologicalSpace.SeparableSpace D] [Nonempty D]
+    [TopologicalSpace E] [SecondCountableTopology E] [T2Space E]
+    [MeasurableSpace E] [BorelSpace E]
+    [MeasurableSpace C(D, E)] [BorelSpace C(D, E)] [PolishSpace C(D, E)]
+    (P : Measure Ω) (Q : Measure Ω') (X : Ω → C(D, E)) (Y : Ω' → C(D, E))
+    (hX : Measurable X) (hY : Measurable Y)
+    (hraw : P.map (fun ω t => X ω t) = Q.map (fun ω t => Y ω t)) :
+    P.map X=Q.map Y := by
+  let d := TopologicalSpace.denseSeq D
+  let f : C(D, E) → ℕ → E := fun x k => x (d k)
+  have hf : MeasurableEmbedding f :=
+    (continuous_pi (fun k => continuous_eval_const (d k))).measurableEmbedding (by
+      intro x y h
+      apply DFunLike.coe_injective
+      exact (TopologicalSpace.denseRange_denseSeq D).equalizer x.continuous y.continuous h)
+  have hXm : Measurable (fun ω t => X ω t) := by
+    apply Measurable.of_eval
+    intro t
+    exact (continuous_eval_const t).measurable.comp hX
+  have hYm : Measurable (fun ω t => Y ω t) := by
+    apply Measurable.of_eval
+    intro t
+    exact (continuous_eval_const t).measurable.comp hY
+  let R : (D→E) → ℕ→E := fun x k => x (d k)
+  have hR : Measurable R := by
+    apply Measurable.of_eval
+    intro k
+    exact measurable_pi_apply _
+  apply hf.map_injective
+  rw [Measure.map_map hf.measurable hX, Measure.map_map hf.measurable hY]
+  have hh := congrArg (Measure.map R) hraw
+  rw [Measure.map_map hR hXm, Measure.map_map hR hYm] at hh
+  exact hh
+
 /-- The configuration Brownian noise of the sample `ω` on `[-1, 1]`, as a continuous map
 (replaced by `0` if it is not continuous). -/
 def ginibreConfigurationBrownianContinuousPath {Ω : Type*} (n : ℕ)
