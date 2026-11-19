@@ -73,7 +73,7 @@ private theorem enorm_normalizedVandermondeMultiplier_sq {n : ℕ}
   have hsquare (x : ℂ) : ‖x‖ₑ ^ (2 : ℝ) =
       ENNReal.ofReal (Complex.normSq x) := by
     rw [ENNReal.rpow_two, ← Complex.sq_norm]
-    simp [enorm]
+    simp
   rw [hsquare]
   rw [Complex.normSq_mul, Complex.normSq_inv, Complex.normSq_ofReal]
   rw [ENNReal.ofReal_mul (by positivity :
@@ -108,7 +108,7 @@ private theorem normalizedVandermonde_lintegral {n : ℕ}
   have hd : Measurable d := by
     unfold d normalizedVandermondeMultiplier
     exact (ENNReal.continuous_rpow_const.comp
-      (continuous_vandermonde.const_mul _).enorm).measurable
+      (continuous_vandermonde.const_mul _).eNorm).measurable
   have hdtop : ∀ᵐ z ∂complexGaussianMeasure n, d z < ⊤ :=
     Filter.Eventually.of_forall fun z ↦ by
       unfold d
@@ -120,7 +120,7 @@ private theorem normalizedVandermonde_lintegral {n : ℕ}
       apply lintegral_congr
       intro z
       unfold d
-      rw [enorm_mul, ENNReal.mul_rpow_of_nonneg]
+      rw [eNorm_mul, ENNReal.mul_rpow_of_nonneg]
       positivity
     _ = ∫⁻ z, ‖u z‖ₑ ^ (2 : ℝ)
         ∂(complexGaussianMeasure n).withDensity d := by
@@ -144,12 +144,12 @@ theorem normalizedVandermonde_memLp {n : ℕ}
       ((Lp.aestronglyMeasurable u).mono_ac hac)
   rw [memLp_iff]
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hf,
-    eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm]
   norm_num only [ENNReal.toReal_ofNat]
   rw [normalizedVandermonde_lintegral h u]
   have hu := (Lp.memLp u).eLpNorm_lt_top
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable u),
-    eLpNorm'_eq_lintegral_enorm] at hu
+    eLpNorm'_eq_lintegral_eNorm] at hu
   exact hu
 
 theorem normalizedVandermonde_norm {n : ℕ}
@@ -162,7 +162,7 @@ theorem normalizedVandermonde_norm {n : ℕ}
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (normalizedVandermonde_memLp h
     u).aestronglyMeasurable,
     eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable u),
-    eLpNorm'_eq_lintegral_enorm, eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm, eLpNorm'_eq_lintegral_eNorm]
   norm_num only [ENNReal.toReal_ofNat]
   rw [normalizedVandermonde_lintegral h u]
 
