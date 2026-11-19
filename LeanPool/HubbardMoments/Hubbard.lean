@@ -72,14 +72,12 @@ antisymmetric Peierls phases, with any ordering of the orbitals. -/
 theorem projectedHubbard_isProjectedHopping (ht : 0 ≤ t) {A : V → V → ℝ}
     (hA : ∀ x y, G.Adj x y → A y x = -A x y) :
     IsProjectedHopping G t (projectedHubbard G t A ord) := by
-  refine ⟨projectedFermionHopping_isHermitian G _ ord ?_, ?_,
+  refine ⟨(hubbardHopping_isHermitian G t ord hA).submatrix configState, ?_,
     projectedFermionHopping_apply_eq_zero G _ ord⟩
-  · intro i j hij
-    rw [star_peierlsAmplitude, hA j i hij.symm]
-  · intro c i j hadj hci hcj
-    simpa [projectedHubbard, peierlsAmplitude, Complex.norm_mul, Complex.norm_real,
-      Real.norm_of_nonneg ht] using norm_projectedFermionHopping_move G
-        (fun i j => peierlsAmplitude t (A j i)) ord hadj hci hcj
+  intro c i j hadj hci hcj
+  simpa [projectedHubbard, peierlsAmplitude, Complex.norm_mul, Complex.norm_real,
+    Real.norm_of_nonneg ht] using norm_projectedFermionHopping_move G
+      (fun i j ↦ peierlsAmplitude t (A j i)) ord hadj hci hcj
 
 /-! ### Consequences -/
 

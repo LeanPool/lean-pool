@@ -15,6 +15,7 @@ public import LeanPool.HubbardMoments.FermionHopping
 public import LeanPool.HubbardMoments.FermionOperators
 public import LeanPool.HubbardMoments.Fermions
 public import LeanPool.HubbardMoments.FinitePopulation
+public import LeanPool.HubbardMoments.GraphHops
 public import LeanPool.HubbardMoments.Hubbard
 public import LeanPool.HubbardMoments.Main
 public import LeanPool.HubbardMoments.ParticleHop

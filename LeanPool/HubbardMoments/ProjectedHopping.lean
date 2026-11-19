@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.Defs
 public import LeanPool.HubbardMoments.SecondMoment
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Mathlib.Tactic.Ring
@@ -298,6 +299,7 @@ theorem secondMoment_eq_sum_arcs {w : V → V → ℝ} (n : σ → ℕ)
     sum_congr rfl fun c hc => sum_mul_apply_self_eq_sum_hops hc hH
   have hspin := sum_basis_comp_occ n f
   have hcount := sum_hops_mul G (fun p => (w p.1 p.2 : ℂ) ^ 2) (∑ s, n s)
+  simp only [nsmul_eq_mul] at hcount
   have hB0 : ((basis V n).card : ℂ) ≠ 0 := by
     exact_mod_cast (card_pos.mpr ⟨c₀, hc₀⟩).ne'
   rw [secondMoment, htr, hdiag, zero_div, zero_pow two_ne_zero, sub_zero]

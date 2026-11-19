@@ -8,8 +8,9 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.Combinatorics.Subsets
-public import LeanPool.HubbardMoments.Defs
+public import LeanPool.HubbardMoments.GraphHops
 public import Mathlib.Combinatorics.SimpleGraph.Finite
+import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
@@ -101,21 +102,14 @@ theorem card_occupied_empty {i j : V} (hij : i ≠ j) (n : ℕ) (hn : 1 ≤ n) :
 
 /-- For every arc, the same number of configurations admit that hop. Consequently the sum
 of arc weights over all hops factors into an arc sum and one binomial coefficient. -/
-theorem sum_hops {R : Type*} [CommSemiring R] (weight : V × V → R) (n : ℕ) (hn : 1 ≤ n) :
+theorem sum_hops {R : Type*} [AddCommMonoid R] (weight : V × V → R) (n : ℕ) (hn : 1 ≤ n) :
     ∑ S ∈ powersetCard n (univ : Finset V), ∑ p ∈ hops G S, weight p =
-      (∑ p ∈ arcs G, weight p) * ((Fintype.card V - 2).choose (n - 1) : R) := by
+      (Fintype.card V - 2).choose (n - 1) • ∑ p ∈ arcs G, weight p := by
   simp only [hops_eq_filter, sum_filter]
-  rw [sum_comm, sum_mul]
-  refine sum_congr rfl fun p hp => ?_
-  have hadj : G.Adj p.1 p.2 := (mem_filter.mp hp).2
-  rw [← sum_filter, sum_const, nsmul_eq_mul, card_occupied_empty hadj.ne n hn, mul_comm]
-
-/-- Summed over all `n`-subsets (`n ≥ 1`), the number of hops is the number of directed
-edges times `C(N - 2, n - 1)`. -/
-theorem sum_card_hops (n : ℕ) (hn : 1 ≤ n) :
-    ∑ S ∈ powersetCard n (univ : Finset V), (hops G S).card =
-      (arcs G).card * (Fintype.card V - 2).choose (n - 1) := by
-  simpa using sum_hops G (fun _ => (1 : ℕ)) n hn
+  rw [sum_comm, Finset.smul_sum]
+  refine sum_congr rfl fun p hp ↦ ?_
+  have hadj := (mem_arcs G).mp hp
+  rw [← sum_filter, sum_const, card_occupied_empty hadj.ne n hn]
 
 /-- The binomial identity `C(N - 2, n - 1) · N(N - 1) = n(N - n) · C(N, n)` for
 `n ≥ 1`, which turns the count above into an average. -/
@@ -142,14 +136,14 @@ theorem choose_sub_two_mul (N n : ℕ) (hn : 1 ≤ n) :
 
 /-- The weighted hop sum, multiplied by `N(N - 1)`, equals the arc sum times
 `n(N - n) C(N, n)`. This form also holds when either side is zero. -/
-theorem sum_hops_mul {R : Type*} [CommSemiring R] (weight : V × V → R) (n : ℕ) :
-    (∑ S ∈ powersetCard n (univ : Finset V), ∑ p ∈ hops G S, weight p) *
-        ((Fintype.card V * (Fintype.card V - 1) : ℕ) : R) =
-      (∑ p ∈ arcs G, weight p) *
-        ((n * (Fintype.card V - n) * (Fintype.card V).choose n : ℕ) : R) := by
+theorem sum_hops_mul {R : Type*} [AddCommMonoid R] (weight : V × V → R) (n : ℕ) :
+    (Fintype.card V * (Fintype.card V - 1)) •
+        (∑ S ∈ powersetCard n (univ : Finset V), ∑ p ∈ hops G S, weight p) =
+      (n * (Fintype.card V - n) * (Fintype.card V).choose n) • ∑ p ∈ arcs G, weight p := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [hops_eq_filter]
-  rw [sum_hops G weight n hn, mul_assoc, ← Nat.cast_mul, choose_sub_two_mul _ _ hn]
+  rw [sum_hops G weight n hn, ← mul_nsmul',
+    Nat.mul_comm (Fintype.card V * (Fintype.card V - 1)), choose_sub_two_mul _ _ hn]
 
 /-- **The exact hop count.** For every `n` and every finite simple graph,
 `(∑_S M(S)) · N(N - 1) = (number of directed edges) · n(N - n) · C(N, n)`. -/
@@ -157,7 +151,7 @@ theorem sum_card_hops_mul (n : ℕ) :
     (∑ S ∈ powersetCard n (univ : Finset V), (hops G S).card) *
         (Fintype.card V * (Fintype.card V - 1)) =
       (arcs G).card * (n * (Fintype.card V - n)) * (Fintype.card V).choose n := by
-  simpa [mul_assoc] using sum_hops_mul G (fun _ => (1 : ℕ)) n
+  simpa [nsmul_eq_mul, mul_assoc, mul_left_comm, mul_comm] using sum_hops_mul G (fun _ => (1 : ℕ)) n
 
 /-- **The average hop count.** For `n ≤ N` and `N ≥ 2`, the average of `M` over the
 `C(N, n)` configurations is `2|E| · n(N - n) / (N(N - 1))`. -/

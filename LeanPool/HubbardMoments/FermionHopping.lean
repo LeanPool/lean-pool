@@ -141,9 +141,8 @@ theorem fermionHopping_isHoppingOperator :
 /-- Restricting a Hermitian hopping matrix to the configuration basis preserves Hermiticity. -/
 theorem projectedFermionHopping_isHermitian
     (h : ∀ i j, G.Adj i j → star (amplitude i j) = amplitude j i) :
-    (projectedFermionHopping G amplitude ord).IsHermitian := by
-  ext c b
-  exact (fermionHopping_isHermitian G amplitude ord h).apply (configState c) (configState b)
+    (projectedFermionHopping G amplitude ord).IsHermitian :=
+  (fermionHopping_isHermitian G amplitude ord h).submatrix configState
 
 /-- Only the specified hop and its spin contribute to the corresponding matrix entry. -/
 theorem norm_projectedFermionHopping_move {c : Config V σ} {i j : V}

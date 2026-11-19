@@ -40,9 +40,6 @@ variable {V σ : Type*} [Fintype V] [DecidableEq V]
 
 /-! ### Weighted hop sums over subsets -/
 
-theorem mem_arcs_top {p : V × V} : p ∈ arcs (⊤ : SimpleGraph V) ↔ p.1 ≠ p.2 := by
-  simp
-
 /-- A sum over ordered pairs of distinct sites. -/
 theorem sum_arcs_top (g : V → V → ℂ) :
     ∑ p ∈ arcs (⊤ : SimpleGraph V), g p.1 p.2 = ∑ i, ∑ j ∈ univ.erase i, g i j := by
@@ -60,13 +57,6 @@ theorem sum_arcs_top_swap (g : V → V → ℂ) :
 /-! ### The weighted second-moment theorem -/
 
 variable [Fintype σ] [DecidableEq σ] {w : V → V → ℝ} {H : Matrix (Config V σ) (Config V σ) ℂ}
-
-/-- **The diagonal of `H²`** is the sum of `w(i, j)²` over the hops `i → j` out of `c`. -/
-theorem sum_mul_apply_self_weighted (hH : IsWeightedProjectedHopping w H) {n : σ → ℕ}
-    {c : Config V σ} (hc : c ∈ basis V n) :
-    ∑ b ∈ basis V n, H c b * H b c =
-      ∑ p ∈ hops (⊤ : SimpleGraph V) (occ c), ((w p.1 p.2 : ℝ) : ℂ) ^ 2 := by
-  exact sum_mul_apply_self_eq_sum_hops (G := ⊤) hc hH
 
 /-- **The exact second-moment theorem for arbitrary amplitudes.** On the nonempty
 no-double-occupancy basis with `n = ∑ n_s` particles, `N ≥ 2` sites,
@@ -105,9 +95,7 @@ theorem hubbardHoppingWeighted_isHermitian {tt : V → V → ℂ}
 theorem projectedHubbardWeighted_isWeightedProjectedHopping {tt : V → V → ℂ}
     (htt : ∀ i j, i ≠ j → tt j i = star (tt i j)) :
     IsWeightedProjectedHopping (fun i j => ‖tt j i‖) (projectedHubbardWeighted tt ord) := by
-  have hstar (i j : V) (hij : i ≠ j) : star (-tt j i) = -tt i j := by
-    rw [star_neg, ← htt j i hij.symm]
-  refine ⟨projectedFermionHopping_isHermitian ⊤ _ ord hstar, ?_,
+  refine ⟨(hubbardHoppingWeighted_isHermitian ord htt).submatrix configState, ?_,
     projectedFermionHopping_apply_eq_zero ⊤ _ ord⟩
   intro c i j hij hci hcj
   simpa [projectedHubbardWeighted] using
