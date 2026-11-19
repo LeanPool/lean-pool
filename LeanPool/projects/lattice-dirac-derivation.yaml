@@ -5,10 +5,11 @@ summary: Studies a quartic two-field lattice action on the 18-neighbour cubic st
   symbol splits into a continuum Klein-Gordon symbol and a fourth-order lattice remainder.
   The four-component Dirac Hamiltonian squares to that continuum symbol. Two flavour copies
   of a cubical Clifford representation, built from signed cube incidence maps, are equivalent
-  to the standard alpha/beta Dirac representation. A first-order branch solves the centred
-  time recurrence with the continuum symbol in place of the lattice symbol. In the exact
-  lattice recurrence it leaves an explicit defect proportional to dt^2 times the lattice
-  remainder, and its generator tends to the Dirac Hamiltonian as the time step vanishes.
+  to the standard alpha/beta Dirac representation. Under the stability bound (dt w)^2 <= 4,
+  with continuum frequency w, a first-order branch solves the centred time recurrence using
+  the continuum symbol. Under the same bound the exact lattice recurrence has a defect
+  proportional to dt^2 times the spatial remainder. At fixed momentum the branch generator
+  tends to the Dirac Hamiltonian as the time step vanishes.
   The project also proves local continuity for the linearized lattice dynamics, the
   continuum limit of the lattice current, an orthonormal Fourier frame on
   finite abelian groups, and spin one-half rotation generators. Free continuum identities
@@ -85,10 +86,10 @@ main_results:
   informal: The same intertwining holds for the injective embedding of the second rank-four flavour
     copy.
 - declaration: LeanDirac.native_branch_defect_is_spatial_remainder
-  informal: The one-step map U_dt z = C z - i (S / w) H(k) z, with w^2 = 19^2 + 12 |k|^2 the
-    continuum symbol, solves the centred second-order time recurrence for that continuum symbol,
-    not for the exact lattice symbol. If (dt w)^2 <= 4, its defect in the exact lattice recurrence
-    is exactly dt^2 R(k) U_dt z, where R is the lattice remainder.
+  informal: Let w^2 = 19^2 + 12 |k|^2 be the continuum symbol and assume (dt w)^2 <= 4. Then
+    U_dt z = C z - i (S / w) H(k) z solves the centred second-order time recurrence using that
+    symbol. Its defect in the exact lattice recurrence is dt^2 R(k) U_dt z, where R is the
+    lattice remainder.
 - declaration: LeanDirac.recurrence_branch_generator_defect_tends_to_zero
   informal: Fix a lattice momentum k and a four-spinor z, and let U_dt be the continuum-symbol
     branch above. As dt tends to 0 with dt nonzero, each component of (U_dt z - z) / dt + i H(k) z
