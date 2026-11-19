@@ -6,7 +6,10 @@ summary: Defines the Sym(3) permutation coboundary constant h1 k of the complete
   h1 k = k/3 for every k ≥ 3. The lower bound is the star-gauge double count (Chapman–Lubotzky,
   Proposition 3.2), proved here only for Sym(3) in this same-degree counting convention. The upper
   bound comes from balanced replication of a k = 4 witness and of Kozlov's staircase seeds. Explicit
-  witnesses for k = 4, ..., 8 are checked by kernel-evaluated gauge exhaustions.
+  witnesses for k = 4, ..., 8 are checked by kernel-evaluated gauge exhaustions. Not formalized, and
+  only cited, are the general symmetric-group form of the Chapman–Lubotzky bound, the paper's cross-degree
+  convention and its comparison (Proposition 10), the coefficient-subgroup minima (Proposition 5),
+  and Section 5 beyond the displacement Gram formula.
 branch: combinatorics
 entry_module: LeanPool.CoboundaryK3
 authors:
