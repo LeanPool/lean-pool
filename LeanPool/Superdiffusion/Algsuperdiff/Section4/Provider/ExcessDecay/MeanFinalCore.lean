@@ -138,7 +138,7 @@ theorem normalizedL2On_doubled_le {i : Fin d} {a : ℝ} {K D : Set (Vec d)}
     have hmono : ∫ y in B \ K, G y ^ 2 ≤ ∫ y in B, G y ^ 2 :=
       MeasureTheory.setIntegral_mono_set hintB
         (Filter.Eventually.of_forall fun y => sq_nonneg (G y))
-        (LE.le.eventuallyLE Set.sdiff_subset)
+        (LE.le.eventuallySubset Set.sdiff_subset)
     rw [hcongr, hunion, hadd]
     linarith only [hmono]
   -- the change of variables on the reflected part
@@ -171,7 +171,7 @@ theorem normalizedL2On_doubled_le {i : Fin d} {a : ℝ} {K D : Set (Vec d)}
     rw [← h1]
     exact MeasureTheory.setIntegral_mono_set hintKshift
       (Filter.Eventually.of_forall fun x => sq_nonneg _)
-      (LE.le.eventuallyLE hpreB)
+      (LE.le.eventuallySubset hpreB)
   -- the pointwise expansion on `K`
   have hexpand : ∫ x in K, (G x + 2 * beta) ^ 2
       ≤ 2 * (∫ x in K, G x ^ 2) + 8 * beta ^ 2 * (volume K).toReal := by

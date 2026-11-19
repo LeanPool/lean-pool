@@ -38,9 +38,9 @@ pieces the chain-rule argument threads together with the `L²` convergence of
 theorem lipschitzWith_of_abs_deriv_le {G : ℝ → ℝ} {M : ℝ} (hM : 0 ≤ M)
     (hG : Differentiable ℝ G) (hderiv : ∀ t, |deriv G t| ≤ M) :
     LipschitzWith M.toNNReal G := by
-  apply lipschitzWith_of_nnnorm_deriv_le hG
+  apply lipschitzWith_of_nnNorm_deriv_le hG
   intro t
-  rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal M hM, Real.norm_eq_abs]
+  rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal M hM, Real.norm_eq_abs]
   exact hderiv t
 
 /-- Coordinate form of the chain rule: the `i`-th partial of `G ∘ w` is
@@ -75,6 +75,6 @@ theorem eLpNorm_comp_sub_le_of_lipschitz {d : ℕ} {U : Set (Vec d)} {G : ℝ �
     _ = ENNReal.ofReal M * eLpNorm (fun x => f x - g x) 2 (volumeMeasureOn U) := by
         rw [show (fun x => M • (f x - g x)) = (M • fun x => f x - g x) from rfl,
           eLpNorm_const_smul]
-        simp [Real.enorm_eq_ofReal hM]
+        simp [Real.eNorm_eq_ofReal hM]
 
 end HCPolySupport

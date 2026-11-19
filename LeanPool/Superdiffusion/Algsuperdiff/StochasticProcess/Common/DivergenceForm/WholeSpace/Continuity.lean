@@ -238,7 +238,7 @@ private theorem scalarLInfSizeOn_const_mul
     simp only [Pi.smul_apply, smul_eq_mul]
   rw [heq, eLpNorm_const_smul]
   rw [ENNReal.toReal_mul]
-  rw [Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg c)]
+  rw [Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg c)]
 
 /-- At every point, a tail of the cubic exhaustion has one common local
 `C^{0,1/2}` modulus.  The radius is obtained by freezing the continuous skew

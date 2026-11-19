@@ -137,7 +137,7 @@ theorem sum_coreEnergy_le [NeZero d] {Θ : ℝ} {m : ℤ} {ℓ : ℝ} (hℓ : 0 
     Set.iUnion_subset (fun k => Set.inter_subset_right)
   have hunionle : (∫ x in ⋃ k : {k // k ∈ K}, (coreBox ℓ σ k.val ∩ U), g x)
       ≤ ∫ x in U, g x := by
-    refine setIntegral_mono_set hgint ?_ (LE.le.eventuallyLE hsub)
+    refine setIntegral_mono_set hgint ?_ (LE.le.eventuallySubset hsub)
     exact (ae_restrict_iff' hU).2 (Filter.Eventually.of_forall (fun x hx => hg0 x hx))
   -- whole-cube energy `= (vol U)·F(c) ≤ (vol U)·2M²`
   have hFeq : blockVecDot P (blockMatVecMul (coarseBlockMatrix U c) P)

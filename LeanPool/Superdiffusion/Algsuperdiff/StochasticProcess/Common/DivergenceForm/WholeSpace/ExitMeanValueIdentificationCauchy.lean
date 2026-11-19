@@ -277,7 +277,7 @@ theorem exists_cubeCauchyConstant (v : ℕ) (mu : PositiveShift) {f : Vec d → 
       change vecNormSq (Z.grad x) = eta x ^ 2 * vecNormSq (Z.grad x)
       rw [hetaOne x hx, one_pow, one_mul]
     rw [hcongr]
-    refine setIntegral_mono_set hinnerInt ?_ hVW.eventuallyLE
+    refine setIntegral_mono_set hinnerInt ?_ hVW.eventuallySubset
     filter_upwards with x
     have := vecNormSq_nonneg (Z.grad x)
     positivity

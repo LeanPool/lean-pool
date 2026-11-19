@@ -358,13 +358,16 @@ theorem superposedCompetitorDivergence_decomp_clauses_badFamily (hd : 2 ≤ d) {
           superposedCompetitorCellDivergence m hn (badFamily M m hn omega) q
             (T : KuhnCell d) = q) :=
   ⟨fun T =>
-      (superposedCompetitorDivergence_eq_cellDivergence hd hmono (fun _ hQ => hQ.1) hwin
+      (superposedCompetitorDivergence_eq_cellDivergence (I := badFamily M m hn omega)
+        hd hmono (fun _ hQ => hQ.1) hwin
         q T.2).1,
     fun T =>
-      (superposedCompetitorDivergence_eq_cellDivergence hd hmono (fun _ hQ => hQ.1) hwin
+      (superposedCompetitorDivergence_eq_cellDivergence (I := badFamily M m hn omega)
+        hd hmono (fun _ hQ => hQ.1) hwin
         q T.2).2.1,
     fun T =>
-      (superposedCompetitorDivergence_eq_cellDivergence hd hmono (fun _ hQ => hQ.1) hwin
+      (superposedCompetitorDivergence_eq_cellDivergence (I := badFamily M m hn omega)
+        hd hmono (fun _ hQ => hQ.1) hwin
         q T.2).2.2⟩
 
 /-! ## The collar layer envelope of `∇·D̂_q` -/
@@ -480,7 +483,8 @@ theorem badFamily_vecNormSq_superposedCompetitorCellDivergence_sub_le_layerEnvel
       superposedDivConst d ^ 2 *
         (3 : ℝ) ^ (2 * (b * ((k : ℝ) + (whitneyScale M m E b k₀ omega k : ℝ)))) *
         vecNormSq q :=
-  vecNormSq_superposedCompetitorCellDivergence_sub_le_layerEnvelope hd hb0 hb hk₀
+  vecNormSq_superposedCompetitorCellDivergence_sub_le_layerEnvelope
+    (S := badFamily M m (whitneyScale M m E b k₀ omega) omega) hd hb0 hb hk₀
     (fun _ hh _ hu => Percolation.badClusterDiam_lt_of_hsep_le hne hh hu)
     (fun _ hQ => hQ.1) (fun _ hQ => hQ.2) q hRlay hT
 

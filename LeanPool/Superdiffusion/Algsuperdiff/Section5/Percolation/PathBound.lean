@@ -298,7 +298,7 @@ theorem path_bound (d : ℕ) :
         Real.exp (-(R * N)) * Real.exp (-R) ^ m by
       exact hsum.symm]
     rw [ENNReal.ofReal_tsum_of_nonneg (fun m => by positivity) hsummable]
-    refine (measure_iUnion_le _).trans (ENNReal.tsum_le_tsum fun m => ?_)
+    refine (measure_iUnion_le _).trans (tsum_le_tsum fun m => ?_)
     rw [← ENNReal.ofReal_toReal (measure_ne_top P (E m))]
     apply ENNReal.ofReal_le_ofReal
     rw [← htermEq]

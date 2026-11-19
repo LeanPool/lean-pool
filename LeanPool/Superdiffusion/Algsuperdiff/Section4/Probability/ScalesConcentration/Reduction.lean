@@ -176,7 +176,7 @@ lemma indicator_Yk_le_tsum {s lam : ℝ} (hs : 0 < s) (hs1 : s ≤ 1)
     calc (1 : ℝ≥0∞) = (if thr s lam k j₀ < X k j₀ ω then (1 : ℝ≥0∞) else 0) := by
             simp [hj₀]
       _ ≤ ∑' j : ℤ, (if thr s lam k j < X k j ω then (1 : ℝ≥0∞) else 0) :=
-            ENNReal.le_tsum (f := fun j => if thr s lam k j < X k j ω then (1 : ℝ≥0∞) else 0) j₀
+            le_tsum (fun j => if thr s lam k j < X k j ω then (1 : ℝ≥0∞) else 0) j₀
   · simp [hY]
 
 /-- Swap a finite sum and a `tsum` in `ℝ≥0∞` (both always defined). -/
@@ -185,7 +185,7 @@ lemma tsum_finsetSum_swap {ι : Type*} (s : Finset ι) (f : ι → ℤ → ℝ�
   induction s using Finset.cons_induction with
   | empty => simp
   | cons a s ha ih =>
-      rw [Finset.sum_cons, ih, ← ENNReal.tsum_add]
+      rw [Finset.sum_cons, ih, ← tsum_add]
       exact tsum_congr (fun j => (Finset.sum_cons (f := fun i => f i j) ha).symm)
 
 open Classical in

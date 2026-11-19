@@ -261,7 +261,7 @@ theorem lintegral_XcalE_le (M : ABKModel d) (s : {s : ℝ // 0 < s}) {A1 A2 : �
           (gammaMomentConst 1 * (annulusPenalty d 1 (i + 1) * (2 * A1 ^ 2)) +
             gammaMomentConst (1 / 4) *
               (annulusPenalty d (1 / 4) (i + 1) * (2 * A2 ^ 2)))) :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ = ENNReal.ofReal (∑' i : ℕ, weightThird ((s : ℝ) / 4) (i + 1) *
           (gammaMomentConst 1 * (annulusPenalty d 1 (i + 1) * (2 * A1 ^ 2)) +
             gammaMomentConst (1 / 4) *
@@ -351,7 +351,7 @@ theorem lintegral_XrowTwoE_le (M : ABKModel d) (s : {s : ℝ // 0 < s}) {A1 A2 :
   calc ∑' j : ℤ, ∫⁻ omega, ENNReal.ofReal (wt ((s : ℝ) / 4) m j *
           (XcalE M s j omega).toReal) ∂(Cutoff.cutoffSampleLaw M).toMeasure
       ≤ ∑' j : ℤ, ENNReal.ofReal (wt ((s : ℝ) / 4) m j * xcalMoment d (s : ℝ) A1 A2) :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ = ENNReal.ofReal (∑' j : ℤ, wt ((s : ℝ) / 4) m j * xcalMoment d (s : ℝ) A1 A2) :=
         (ENNReal.ofReal_tsum_of_nonneg
           (fun j => mul_nonneg (wt_nonneg _ m j) hmom0) hsum').symm
@@ -430,7 +430,7 @@ theorem XrowE_le_XrowTwoE (M : ABKModel d) (s : {s : ℝ // 0 < s}) (m : ℤ)
       _ = ENNReal.ofReal (wt ((s : ℝ) / 4) m j.1 * (XcalE M s j.1 omega).toReal) :=
           (ENNReal.ofReal_mul (wt_nonneg _ m j.1)).symm
   rw [hcongr]
-  exact ENNReal.tsum_comp_le_tsum_of_injective (f := fun j : {j : ℤ // j ≤ m} => j.1)
+  exact tsum_comp_le_tsum_of_injective (f := fun j : {j : ℤ // j ≤ m} => j.1)
     Subtype.val_injective
     (fun j : ℤ => ENNReal.ofReal (wt ((s : ℝ) / 4) m j * (XcalE M s j omega).toReal))
 

@@ -234,7 +234,7 @@ theorem interiorGradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
       smallContrastZerothGradientExtraConstant, smallContrastGradientConstant,
       smallContrastZerothOrderDataSize, smallContrastDataSize, H, P, Pd, D, F, G] at hprice ⊢
     convert hprice using 1
-    all_goals ring
+    ring
 
 /-- Concentric gradient row for the zeroth-order equation. -/
 theorem gradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
@@ -297,8 +297,8 @@ theorem gradientScaleBound_of_smallContrast_zerothOrder [NeZero d]
       smallContrastZerothGradientExtraConstant, smallContrastGradientConstant,
       smallContrastZerothOrderDataSize, smallContrastDataSize, H, P, Pd, D, F, G] at hprice ⊢
     convert hprice using 1
-    all_goals try simp only [smallContrastUnitBall, Real.one_rpow, one_mul]
-    all_goals ring
+    simp only [smallContrastUnitBall, Real.one_rpow, one_mul]
+    ring
 
 end
 

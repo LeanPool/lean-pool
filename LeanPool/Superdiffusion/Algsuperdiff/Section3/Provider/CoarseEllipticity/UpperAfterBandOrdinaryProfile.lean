@@ -1416,7 +1416,7 @@ theorem exists_tunedAfterBand_good_finite_trace_split
     have hbound := mul_le_mul_of_nonneg_right
       (mul_le_mul_of_nonneg_right hordinaryConst hcstar0) htarget0
     convert hbound using 1
-    all_goals (dsimp only [target]; push_cast; ring)
+    (dsimp only [target]; push_cast; ring)
   let K : ℝ := probeSharpAfterBandTunedRareTracePrefactor d
   let X : ℝ := (E : ℝ)⁻¹ ^ 2 * M.gamma⁻¹
   let eps : ℝ := Real.exp (-(Cup⁻¹ * X))

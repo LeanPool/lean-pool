@@ -346,7 +346,7 @@ theorem dOne_le_ofReal_windowKickSum (M : ABKModel d) (s : {s : ℝ // 0 < s}) (
     have hchain : annularHalfSum M s k omega
         ≤ ENNReal.ofReal (windowKickSum M s lam K k omega) := by
       rw [annularHalfSum_eq_tsum, windowKickSum_eq]
-      refine le_trans (ENNReal.tsum_le_tsum hterm) (le_of_eq ?_)
+      refine le_trans (tsum_le_tsum hterm) (le_of_eq ?_)
       refine (ENNReal.ofReal_tsum_of_nonneg (fun p => ?_) hsum).symm
       exact mul_nonneg (weightThird_pos p).le (kickCollapsed_nonneg M s hlam K _ omega)
     rw [dOne, Set.indicator_of_mem hmem, ENNReal.ofReal_mul hsq0.le]

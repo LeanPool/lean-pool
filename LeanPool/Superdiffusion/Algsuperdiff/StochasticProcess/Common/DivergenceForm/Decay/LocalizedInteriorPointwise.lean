@@ -158,7 +158,7 @@ private theorem localizedInteriorPointwise_comparisonBounds1 :
         {y ∈ Om | fderiv ℝ eta y ≠ 0} =
         (volume {y ∈ Om | fderiv ℝ eta y ≠ 0}).toReal := by
       rw [measureReal_def, Measure.restrict_apply hlayerMeas,
-        Set.inter_eq_left.mpr fun _ hy => hy.1]
+        Set.inter_eq_left.mpr (show {y ∈ Om | fderiv ℝ eta y ≠ 0} ⊆ Om from fun _ hy => hy.1)]
     rw [hmeasure, smul_eq_mul] at hmono
     have hcnn : (0 : ℝ) ≤ M ^ 2 * Ceta * Real.exp (2 * (kappa * tA)) :=
       mul_nonneg (mul_nonneg (sq_nonneg M) hCeta) (Real.exp_pos _).le

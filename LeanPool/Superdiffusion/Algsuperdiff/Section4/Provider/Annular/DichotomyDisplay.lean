@@ -87,7 +87,7 @@ theorem ofReal_annFamError_tsum_le_clauseOneTermOne (M : ABKModel d) (m : ℤ)
         ENNReal.ofReal ((3 : ℝ) ^ (-((s : ℝ) * ((m - n.1 : ℤ) : ℝ)))
           * annularErrorLatticeMax M s omega j.1 n.1))
       ≤ clauseOneTermOne M m s omega := by
-  refine ENNReal.tsum_le_tsum fun j => ENNReal.tsum_le_tsum fun n => ?_
+  refine tsum_le_tsum fun j => tsum_le_tsum fun n => ?_
   have hnj : n.1 ≤ j.1 := by
     have hn := n.2
     omega

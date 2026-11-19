@@ -373,7 +373,7 @@ theorem exists_mem_cubeSetAt_abs_lt_of_mem_frontier {y : Vec d} {n : ℤ}
     rw [hRdef, ENNReal.ofReal_toReal hRtop]
     exact hconst.trans (hrest.trans hgradle)
   rw [eLpNorm_const' _ (by norm_num) (by norm_num), Measure.restrict_apply_univ, hvolQ,
-    Real.enorm_eq_ofReal_abs, abs_of_pos (show (0 : ℝ) < eps / t by positivity),
+    Real.eNorm_eq_ofReal_abs, abs_of_pos (show (0 : ℝ) < eps / t by positivity),
     show ((2 : ℝ≥0∞).toReal) = 2 by norm_num,
     ENNReal.ofReal_rpow_of_nonneg (by positivity) (by norm_num),
     ← ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_le_ofReal_iff hR0] at hchain

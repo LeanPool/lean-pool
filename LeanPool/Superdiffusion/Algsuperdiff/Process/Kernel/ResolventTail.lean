@@ -155,10 +155,9 @@ theorem mul_operator_smul_operator_le (R : PositiveC0ContractiveResolvent Y)
   have hB : 0 ≤ R.toContractiveResolvent.operator nu g z := R.isPositive nu g hg z
   have hid := congrArg (fun w : C₀(Y, ℝ) ↦ w z)
     (DFunLike.congr_fun (R.toContractiveResolvent.resolvent_identity nu mu) g)
-  simp only [sub_apply, ZeroAtInftyContinuousMap.sub_apply,
-    smul_apply, ZeroAtInftyContinuousMap.smul_apply,
+  simp only [sub_apply, smul_apply,
     ContinuousLinearMap.coe_comp, Function.comp_apply, smul_eq_mul] at hid
-  rw [map_smul, ZeroAtInftyContinuousMap.smul_apply, ZeroAtInftyContinuousMap.smul_apply,
+  rw [map_smul, smul_apply, smul_apply,
     smul_eq_mul, smul_eq_mul]
   set A := R.toContractiveResolvent.operator mu g z with hA
   set B := R.toContractiveResolvent.operator nu g z with hBdef
@@ -230,7 +229,7 @@ private theorem mul_onePointResolvent_assemble_coe (R : PositiveC0ContractiveRes
   have h := congrArg (fun w : C₀(OnePoint X, ℝ) ↦ w (y : OnePoint X))
     (R.onePointResolvent_operator mu (onePointAssemble (-psi) 1))
   simp only [onePointAssemble_coe, onePointAssemble_infty, onePointRemainder_assemble,
-    map_neg, ZeroAtInftyContinuousMap.neg_apply] at h
+    map_neg, neg_apply] at h
   rw [h]
   field_simp
   ring
@@ -314,13 +313,13 @@ theorem measure_compl_ball_le_of_hasResolventTail (R : PositiveC0ContractiveReso
             OnePoint.infty = 1 := by
     refine ⟨onePointAssemble (-psi) 1, fun z ↦ ?_, onePointAssemble_infty _ _,
       mul_onePointResolvent_assemble_coe R mu psi, mul_onePointResolvent_assemble_infty R mu psi⟩
-    rw [onePointAssemble_coe, ZeroAtInftyContinuousMap.neg_apply]
+    rw [onePointAssemble_coe, neg_apply]
     ring
   obtain ⟨fhat, hfhat_coe, hfhat_infty⟩ :
       ∃ fhat : C₀(OnePoint X, ℝ),
         (∀ z : X, fhat (z : OnePoint X) = 1 - chi z) ∧ fhat OnePoint.infty = 1 := by
     refine ⟨onePointAssemble (-chi) 1, fun z ↦ ?_, onePointAssemble_infty _ _⟩
-    rw [onePointAssemble_coe, ZeroAtInftyContinuousMap.neg_apply]
+    rw [onePointAssemble_coe, neg_apply]
     ring
   have hghat_nonneg : ∀ z, 0 ≤ ghat z := by
     intro z
@@ -388,7 +387,7 @@ theorem measure_compl_ball_le_of_hasResolventTail (R : PositiveC0ContractiveReso
         2 * ((mu : ℝ) *
           R.onePointResolvent.toContractiveResolvent.operator mu ghat w) := by
     intro w
-    rw [ZeroAtInftyContinuousMap.smul_apply, smul_eq_mul, mul_assoc]
+    rw [smul_apply, smul_eq_mul, mul_assoc]
   have hfv : ∀ z : OnePoint X, fhat z ≤
       ((2 * (mu : ℝ)) • R.onePointResolvent.toContractiveResolvent.operator mu ghat) z := by
     intro z

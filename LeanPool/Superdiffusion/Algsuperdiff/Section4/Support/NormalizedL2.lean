@@ -223,7 +223,7 @@ theorem volumeAverage_le_of_subset {W W' : Set (Vec d)} {f : Vec d → ℝ}
       ≤ ((volume W).toReal / (volume W').toReal) * volumeAverage W f := by
   have hmono : ∫ x in W', f x ≤ ∫ x in W, f x :=
     setIntegral_mono_set hint (Filter.Eventually.of_forall hf0)
-      (LE.le.eventuallyLE hsub)
+      (LE.le.eventuallySubset hsub)
   have hstep : ((volume W').toReal)⁻¹ * ∫ x in W', f x
       ≤ ((volume W').toReal)⁻¹ * ∫ x in W, f x :=
     mul_le_mul_of_nonneg_left hmono (by positivity)

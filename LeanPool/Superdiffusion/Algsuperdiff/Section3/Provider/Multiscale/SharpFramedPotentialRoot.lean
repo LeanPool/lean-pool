@@ -104,7 +104,7 @@ theorem probe_ofReal_cutoffBBlockFamily_inv_le_sum_tsum_sharpFramedMeanLayerEnve
         [probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
           hd M hS m hb0 hb hk₀ hmi hi hmL (basisVec j), hsepAe]
       with omega hraw hne
-    refine (hraw hne).trans (ENNReal.tsum_le_tsum fun n => ?_)
+    refine (hraw hne).trans (tsum_le_tsum fun n => ?_)
     exact ENNReal.ofReal_le_ofReal
       (probe_framedGood_add_collar_layer_rhs_le_sharpEnvelope
         M hd hb0 hb (by omega) i hmL n omega hne (basisVec j)

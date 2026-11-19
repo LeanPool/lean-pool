@@ -186,7 +186,7 @@ theorem cubeLpNorm_const_mul_of_nonneg {E : Type*} [NormedAddCommGroup E]
   have hfun : (fun x => c • f x) = c • f := rfl
   rw [hfun, eLpNorm_const_smul, ENNReal.toReal_mul]
   congr 1
-  simp [Real.enorm_eq_ofReal hc, ENNReal.toReal_ofReal hc]
+  simp [Real.eNorm_eq_ofReal hc, ENNReal.toReal_ofReal hc]
 
 /-! ## The Euclidean normalized cube norm -/
 
