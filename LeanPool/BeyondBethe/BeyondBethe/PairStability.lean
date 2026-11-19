@@ -134,7 +134,7 @@ theorem pairBilinearForm_eq_offDiag
     intro i _
     ring
   rw [hdiag]
-  ring
+  ring_nf
 
 theorem pairPolynomial_eval_eq_quadraticForm
     {ι : Type*} [Fintype ι]
@@ -183,7 +183,7 @@ theorem pairPolynomial_eval₂_complex_im
   simp only [Complex.ofReal_mul, Complex.im_sum, Complex.mul_im, Complex.mul_re,
     Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero, zero_mul, add_zero]
   rw [pairBilinearForm_eq_offDiag]
-  ring
+  ring_nf
 
 theorem realDot_sub_mul
     {ι : Type*} [Fintype ι]

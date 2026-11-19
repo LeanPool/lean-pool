@@ -88,6 +88,18 @@ def sources_match(root: Path, previous: str, base: str) -> bool:
     )
 
 
+def inputs_match(root: Path, previous: str) -> bool:
+    """Avoid downloading artifacts compiled under other pinned build inputs."""
+    return (
+        subprocess.run(
+            ["git", "diff", "--quiet", previous, "--", *rebase_fastpath.PINNED_INPUTS],
+            cwd=root,
+            check=False,
+        ).returncode
+        == 0
+    )
+
+
 def restore_prior_build(
     root: Path,
     repository: str,
@@ -97,7 +109,12 @@ def restore_prior_build(
     base: str,
     current_run: int = 0,
 ) -> bool:
-    """Restore matching compiled files; Lake and every normal check still run."""
+    """Restore the newest earlier build of this PR; Lake and every check still run.
+
+    The PR's sources may have changed since that build. Only modules whose own
+    source is unchanged are restored; Lake recompiles the rest and any restored
+    module whose imports changed, and the build-time gate times what it compiles.
+    """
     if not all(rebase_fastpath.SHA.fullmatch(value) for value in (head, base)):
         raise ValueError("invalid PR revisions")
     candidates = (
@@ -114,17 +131,19 @@ def restore_prior_build(
         except RECOVERY_ERRORS:
             LOGGER.info("Merged project reuse unavailable; checking the PR's build")
     for run in chain(() if history is None else (history,), candidates):
-        if not sources_match(root, run["head_sha"], base):
+        if not inputs_match(root, run["head_sha"]):
             continue
         try:
-            rebase_fastpath.restore(root, repository, run["id"], run["head_sha"])
-            LOGGER.info("Restored matching PR build from run %s", run["id"])
+            rebase_fastpath.restore(
+                root, repository, run["id"], run["head_sha"], changed_sources=True
+            )
+            LOGGER.info("Restored unchanged modules from PR run %s", run["id"])
             return True
         except RECOVERY_ERRORS:
             LOGGER.info(
                 "PR build %s unavailable or changed; trying older run", run["id"]
             )
-    LOGGER.info("No matching PR build; Lake will compile the current sources")
+    LOGGER.info("No earlier PR build; Lake will compile the current sources")
     return False
 
 

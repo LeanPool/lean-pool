@@ -113,9 +113,9 @@ lemma memSobolev_derivCoeff {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
     congr 1; ring
   convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ ) ( norm_derivCoeff_le hα
       a m ) 2 ) ( weight_nonneg s m ) using 1
-  first
+  all_goals (first
     | (ring!; done)
-    | (rw [h_weight_split]; ring)
+    | (rw [h_weight_split]; ring_nf))
 
 /-
 If `a ∈ ℓ²_(s+k)`, `2s > n`, and `|α| ≤ k`, then `m ↦ (im)^α aₘ ∈ ℓ¹`.
@@ -163,10 +163,10 @@ theorem fourierSynthesis_supBound {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
         congr 1; push_cast; ring
       convert mul_le_mul_of_nonneg_left ( pow_le_pow_left₀ ( norm_nonneg _ )
           h_norm_derivCoeff_le 2 ) ( weight_nonneg s m ) using 1
-      first
+      all_goals (first
         | (ring; done)
         | (unfold weight
-           rw [mul_pow, h_pow_sq_div, ← mul_assoc, ← Real.rpow_add hXp])
+           rw [mul_pow, h_pow_sq_div, ← mul_assoc, ← Real.rpow_add hXp]))
     apply_rules [ Summable.tsum_le_tsum ];
     exact Summable.of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _ ) )
         h_norm_derivCoeff_le_sum ha;
@@ -178,9 +178,10 @@ theorem fourierSynthesis_supBound {s : ℝ} {k : ℕ} {α : Fin n → ℕ}
   convert h_triangle.trans ( Real.le_sqrt_of_sq_le h_cauchy_schwarz ) |> le_trans <|
       Real.sqrt_le_sqrt <| mul_le_mul_of_nonneg_left h_norm_derivCoeff_le_sum <| tsum_nonneg fun
       _ => weight_nonneg _ _ using 1
-  unfold sobolevNormSq
-  rw [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow, ← Real.sqrt_mul (tsum_nonneg fun _ =>
-    weight_nonneg _ _)]
+  all_goals (first
+    | (unfold sobolevNormSq
+       rw [← Real.sqrt_eq_rpow, ← Real.sqrt_eq_rpow, ← Real.sqrt_mul (tsum_nonneg fun _ =>
+           weight_nonneg _ _)]))
 
 /-- **Fourier synthesis: 2π-periodicity.** The Fourier synthesis `a_check` is
 `2π`-periodic in each variable. -/
@@ -299,7 +300,7 @@ lemma fourierSynthesis_inner
     · intro m; apply_rules [ Continuous.aestronglyMeasurable, Continuous.mul, continuous_const ];
       · exact Complex.continuous_exp.comp <| Continuous.mul continuous_const <| by continuity;
       · exact Complex.continuous_conj.comp ( Complex.continuous_exp.comp <| by continuity );
-    · refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum
+    · refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum
           (g := fun m => ENNReal.ofReal (‖a m‖ * (2 * Real.pi) ^ n)) (fun m => ?_)) ?_)
       · refine le_trans (MeasureTheory.lintegral_mono
             (g := fun _ => ENNReal.ofReal ‖a m‖) (fun x => ?_)) ?_

@@ -7,13 +7,11 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.DegreeTwo.DegreeTwo
 
-import Mathlib.Topology.Compactness.Compact
-import Mathlib.Topology.Instances.Real.Lemmas
-import Mathlib.Topology.Order.OrderClosed
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueFinalSegment
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueImage
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueConstantMul
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # The degree-two factorisation classification

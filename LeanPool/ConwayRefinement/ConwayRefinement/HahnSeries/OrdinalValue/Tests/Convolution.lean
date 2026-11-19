@@ -8,9 +8,8 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Tests.Fixtures.ApproachZero
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Convolution
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.SupportSupremum
-import Mathlib.Topology.Instances.Real.Lemmas
-import Mathlib.Topology.Order.IsLUB
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # API checks for the convolution index

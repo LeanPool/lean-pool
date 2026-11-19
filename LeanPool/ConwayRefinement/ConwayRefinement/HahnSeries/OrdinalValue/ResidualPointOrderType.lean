@@ -13,7 +13,8 @@ import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Ordina
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.ResidualPointCofinality
 import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.OrderedUnion
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
-import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # The residual-point tail order type

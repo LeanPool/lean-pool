@@ -759,12 +759,7 @@ private lemma fockNorm_polar_local {D : ℕ} (a : Fin D → ℂ) :
     simp only [smul_eq_mul, norm_polyEval_eq_norm_polyEvalCircle, Complex.norm_polarCoord_symm,
       sq_abs]
   simp_rw [integrand_rw]
-  have hint : IntegrableOn
-      (fun p : ℝ × ℝ =>
-        p.1 * (‖polyEvalCircle a p.1 (QuotientAddGroup.mk p.2)‖ ^ 2 *
-          Real.exp (-p.1 ^ 2)))
-      (Set.Ioi 0 ×ˢ Set.Ioo (-Real.pi) Real.pi)
-      (volume.prod volume) := integrableOn_polar_norm a
+  have hint := integrableOn_polar_norm a
   rw [show (volume : Measure (ℝ × ℝ)) = volume.prod volume from Measure.volume_eq_prod ℝ ℝ]
   rw [setIntegral_prod _ hint]
   simp only []
@@ -1210,11 +1205,7 @@ private lemma rho_const_add_le (u : ℝ) (w : ℂ) :
       |‖(1 : ℂ) + w‖ - ‖(1 : ℂ) + ((u : ℂ) + w)‖|
           ≤ ‖((1 : ℂ) + w) - ((1 : ℂ) + ((u : ℂ) + w))‖ := abs_norm_sub_norm_le _ _
       _ = |u| := by simp [Complex.norm_real]
-  have htri :
-      |‖(1 : ℂ) + w‖ - 1| ≤
-        |‖(1 : ℂ) + w‖ - ‖(1 : ℂ) + ((u : ℂ) + w)‖| +
-          |‖(1 : ℂ) + ((u : ℂ) + w)‖ - 1| := by
-    exact abs_sub_le ‖(1 : ℂ) + w‖ ‖(1 : ℂ) + ((u : ℂ) + w)‖ 1
+  have htri := abs_sub_le ‖(1 : ℂ) + w‖ ‖(1 : ℂ) + ((u : ℂ) + w)‖ 1
   exact le_trans htri (add_le_add hnorm le_rfl)
 
 /-- The Gaussian integral of `(rho ∘ q.eval)²` is bounded by `(|u| + m)²`, where
@@ -1518,13 +1509,13 @@ theorem LocalFockSPR_of_small_norm
   have hm_sq : m ^ 2 = m2 := by unfold m; rw [Real.sq_sqrt hm2_nonneg]
   have hy_sq : y ^ 2 = q2 := by unfold y; rw [Real.sq_sqrt hq2_nonneg]
   have hx_mu : ∫ z, N z ^ 2 ∂gaussianMeasure = x2 := by
-    simpa [N, x2] using integral_gaussianMeasure_eq (fun z : ℂ => ‖p.eval z‖ ^ 2)
+    exact integral_gaussianMeasure_eq (fun z : ℂ => ‖p.eval z‖ ^ 2)
   have hm_mu : ∫ z, R z ^ 2 ∂gaussianMeasure = m2 := by
-    simpa [R, m2] using integral_gaussianMeasure_eq (fun z : ℂ => rho (p.eval z) ^ 2)
+    exact integral_gaussianMeasure_eq (fun z : ℂ => rho (p.eval z) ^ 2)
   have hq_mu : ∫ z, ‖q.eval z‖ ^ 2 ∂gaussianMeasure = q2 := by
-    simpa [q2] using integral_gaussianMeasure_eq (fun z : ℂ => ‖q.eval z‖ ^ 2)
+    exact integral_gaussianMeasure_eq (fun z : ℂ => ‖q.eval z‖ ^ 2)
   have hrq_mu : ∫ z, rho (q.eval z) ^ 2 ∂gaussianMeasure = rq2 := by
-    simpa [rq2] using integral_gaussianMeasure_eq (fun z : ℂ => rho (q.eval z) ^ 2)
+    exact integral_gaussianMeasure_eq (fun z : ℂ => rho (q.eval z) ^ 2)
   have hN_meas : AEStronglyMeasurable N gaussianMeasure := by
     have hcont : Continuous N := by
       simpa [N, hp_eval] using
@@ -1575,10 +1566,8 @@ theorem LocalFockSPR_of_small_norm
     simpa [hm_mu] using gaussian_l1_sq_le hR_meas hR2_int
   have hx_nonneg : 0 ≤ x := Real.sqrt_nonneg _
   have hm_nonneg : 0 ≤ m := Real.sqrt_nonneg _
-  have hN_l1_le : ∫ z, N z ∂gaussianMeasure ≤ x := by
-    exact le_of_sq_le_sq (hN_l1_sq.trans_eq hx_sq.symm) hx_nonneg
-  have hR_l1_le : ∫ z, R z ∂gaussianMeasure ≤ m := by
-    exact le_of_sq_le_sq (hR_l1_sq.trans_eq hm_sq.symm) hm_nonneg
+  have hN_l1_le := le_of_sq_le_sq (hN_l1_sq.trans_eq hx_sq.symm) hx_nonneg
+  have hR_l1_le := le_of_sq_le_sq (hR_l1_sq.trans_eq hm_sq.symm) hm_nonneg
   have hB_nonneg : ∀ z, 0 ≤ B z := fun z => by unfold B; positivity
   have hB_le : ∀ z, B z ≤ 2 + N z := by
     intro z
@@ -1607,7 +1596,7 @@ theorem LocalFockSPR_of_small_norm
         mul_le_mul hscalar_raw hscalar_raw (abs_nonneg (2 * u + x2)) hprod_nonneg
     refine le_trans hraw_sq ?_
     simpa [hm_mu, s2] using integral_cauchy_schwarz hR_int hB_int hR2_int hB2_int hRB_int
-  have hx2_small : x2 ≤ (1 / 4601 : ℝ) ^ 2 := by simpa [x2] using hsmall
+  have hx2_small : x2 ≤ (1 / 4601 : ℝ) ^ 2 := by exact hsmall
   have hq_basic : q2 ≤ 4600 ^ 2 * rq2 := by
     unfold q2 rq2
     have hmain :

@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext230000240000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 230000 240000 2
@@ -43,6 +44,8 @@ SOFTWARE.
 -/
 
 @[expose] public section
+
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext230000240000.model0
 
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
@@ -439,7 +442,7 @@ theorem excluded16_0 : ExcludedOn (model16.B 0 ++ [step16.q]) 9000000000000 (mod
       14, 5)) (.next ([1410000000000], [405000000000]) (some (10, 14, 5)) (some (10, 14, 5))
       fan16Owner0Part5))))))))))))))))))))))
       (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded16_1 : ExcludedOn (model16.B 1 ++ [step16.q]) 9000000000000 (model16.caps 1)
     (model16.ord 1) 0 1 100 := by
@@ -503,7 +506,7 @@ theorem excluded16_9 : ExcludedOn (model16.B 9 ++ [step16.q]) 9000000000000 (mod
       (.next ([-5775000000000, 9000000000000], [7125000000000, 0]) (some (0, 1, 4)) (some (0, 1, 4))
       (.terminal (some (0, 1, 4)) (some (0, 1, 4)) (some (0, 1, 4))))))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem checked16 : StepValid model16 9000000000000 step16 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -566,7 +569,7 @@ theorem excluded17_5 : ExcludedOn (model17.B 5 ++ [step17.q]) 9000000000000 (mod
       (.next ([-5550000000000, 0], [7245000000000, 9000000000000]) (some (4, 2, 4)) (some (4, 2, 4))
       (.terminal (some (4, 2, 4)) (some (0, 2, 4)) (some (4, 2, 4))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded17_6 : ExcludedOn (model17.B 6 ++ [step17.q]) 9000000000000 (model17.caps 6)
     (model17.ord 6) 0 1 100 := by
@@ -636,7 +639,7 @@ theorem excluded18_0 : ExcludedOn (model18.B 0 ++ [step18.q]) 9000000000000 (mod
       ([255000000000], [60000000000]) (some (10, 14, 5)) (some (10, 14, 5)) (.next ([3075000000000],
       [735000000000]) (some (10, 14, 5)) (some (10, 14, 5)) fan18Owner0Part5))))))))))))))))))))))
       (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded18_1 : ExcludedOn (model18.B 1 ++ [step18.q]) 9000000000000 (model18.caps 1)
     (model18.ord 1) 0 1 100 := by
@@ -664,7 +667,7 @@ theorem excluded18_3 : ExcludedOn (model18.B 3 ++ [step18.q]) 9000000000000 (mod
       -9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.terminal (some (0, 3, 1)) (some (3, 3,
       1)) (some (3, 3, 1))))))))))))) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
       100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded18_5 : ExcludedOn (model18.B 5 ++ [step18.q]) 9000000000000 (model18.caps 5)
     (model18.ord 5) 0 1 100 := by
@@ -749,7 +752,7 @@ theorem excluded19_3 : ExcludedOn (model19.B 3 ++ [step19.q]) 9000000000000 (mod
       [7965000000000, -9000000000000]) (some (0, 3, 1)) (some (0, 3, 1)) (.terminal (some (0, 3, 1))
       (some (3, 3, 1)) (some (3, 3, 1))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded19_5 : ExcludedOn (model19.B 5 ++ [step19.q]) 9000000000000 (model19.caps 5)
     (model19.ord 5) 0 1 100 := by
@@ -852,7 +855,7 @@ theorem excluded20_4 : ExcludedOn (model20.B 4 ++ [step20.q]) 9000000000000 (mod
       ([-4500000000000], [4860000000000]) (some (5, 2, 5)) (some (5, 2, 5)) (.terminal (some (5, 2,
       5)) (some (0, 2, 5)) (some (5, 2, 5))))))))))))))))))))))))))) (den := 9000000000000) (fuel :=
       12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded20_5 : ExcludedOn (model20.B 5 ++ [step20.q]) 9000000000000 (model20.caps 5)
     (model20.ord 5) 0 1 100 := by
@@ -924,7 +927,7 @@ theorem excluded21_4 : ExcludedOn (model21.B 4 ++ [step21.q]) 9000000000000 (mod
       (some (5, 1, 2)) (some (5, 1, 3)) (.next ([4815000000000], [3675000000000]) (some (5, 1, 3))
       (some (5, 1, 3)) fan21Owner4Part0)))) (den := 9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded21_5 : ExcludedOn (model21.B 5 ++ [step21.q]) 9000000000000 (model21.caps 5)
     (model21.ord 5) 0 1 100 := by
@@ -957,7 +960,7 @@ theorem excluded21_8 : ExcludedOn (model21.B 8 ++ [step21.q]) 9000000000000 (mod
       (.next ([-4815000000000], [4830000000000]) (some (0, 3, 2)) (some (0, 3, 2)) (.terminal (some
       (0, 3, 2)) (some (0, 3, 0)) (some (0, 3, 2))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded21_9 : ExcludedOn (model21.B 9 ++ [step21.q]) 9000000000000 (model21.caps 9)
     (model21.ord 9) 0 1 100 := by
@@ -1012,7 +1015,7 @@ theorem excluded22_2 : ExcludedOn (model22.B 2 ++ [step22.q]) 9000000000000 (mod
       0], [7830000000000, -9000000000000]) (some (3, 1, 2)) (some (3, 1, 2)) (.terminal (some (3, 1,
       2)) (some (3, 1, 0)) (some (3, 1, 2))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded22_4 : ExcludedOn (model22.B 4 ++ [step22.q]) 9000000000000 (model22.caps 4)
     (model22.ord 4) 0 1 100 := by
@@ -1021,7 +1024,7 @@ theorem excluded22_4 : ExcludedOn (model22.B 4 ++ [step22.q]) 9000000000000 (mod
       (.next ([4260000000000], [1050000000000]) (some (5, 1, 3)) (some (5, 1, 3))
       fan22Owner4Part0)))) (den := 9000000000000)
       (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded22_5 : ExcludedOn (model22.B 5 ++ [step22.q]) 9000000000000 (model22.caps 5)
     (model22.ord 5) 0 1 100 := by
@@ -1100,14 +1103,14 @@ theorem excluded23_2 : ExcludedOn (model23.B 2 ++ [step23.q]) 9000000000000 (mod
       0], [7416000000000, -9000000000000]) (some (3, 1, 2)) (some (3, 1, 2)) (.terminal (some (3, 1,
       2)) (some (3, 1, 0)) (some (3, 1, 2))))))))))))) (den := 9000000000000) (fuel := 12)
       (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded23_4 : ExcludedOn (model23.B 4 ++ [step23.q]) 9000000000000 (model23.caps 4)
     (model23.ord 4) 0 1 100 := by
   apply ExclusionHint.sound (.witnessedFan (.next ([660000000000], [15000000000]) (some (5, 0, 2))
       (some (5, 1, 2)) fan23Owner4Part0)) (den := 9000000000000) (fuel
       := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded23_5 : ExcludedOn (model23.B 5 ++ [step23.q]) 9000000000000 (model23.caps 5)
     (model23.ord 5) 0 1 100 := by

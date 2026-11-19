@@ -7,7 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.NormalizedSeriesMaximalFinite
 
-import Mathlib.Algebra.GCDMonoid.Basic
+
 
 /-!
 # Primality of finite-support elements in the Hahn-series ring

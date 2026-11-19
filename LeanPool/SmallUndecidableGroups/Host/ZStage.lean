@@ -6,7 +6,7 @@ Authors: Marc Kegel, Shana Yunsheng Li, Qiuyu Ren
 
 module
 
-public import LeanPool.SmallUndecidableGroups.Host.ThetaCT
+public import LeanPool.SmallUndecidableGroups.Host.ZStage.Definitions
 
 /-!
 # The second compression HNN extension
@@ -55,109 +55,6 @@ private theorem restrictedPhi_refl_coe
     (a : restrictedA (A := K) H) :
     (((restrictedPhi H hphi) a : restrictedB (B := K) H) : H) =
       (a : H) := rfl
-
-/-- The first compression HNN extension, adjoining the stable generator `y`. -/
-abbrev Y := YStage datum theta
-
-/-- The image of `d` in the first compression extension. -/
-def dY : Y datum theta := toYStage datum theta (d datum)
-/-- The image of `t` in the first compression extension. -/
-def tY : Y datum theta := toYStage datum theta (t datum)
-/-- The image of `c` in the first compression extension. -/
-def cY : Y datum theta := toYStage datum theta (c datum)
-/-- The image of `k` in the first compression extension. -/
-def kY : Y datum theta := toYStage datum theta (k datum)
-/-- The new stable generator `y` of the first compression extension. -/
-def y : Y datum theta := yLetter datum theta
-
-/-- The source subgroup for the second HNN extension: `⟨d,t,c⟩`. -/
-def DTC : Subgroup (Y datum theta) :=
-  Subgroup.closure ({dY datum theta, tY datum theta, cY datum theta} :
-    Set (Y datum theta))
-
-/-- The target subgroup for the second HNN extension: `⟨t,c,y⟩`. -/
-def TCY : Subgroup (Y datum theta) :=
-  Subgroup.closure ({tY datum theta, cY datum theta, y datum theta} :
-    Set (Y datum theta))
-
-@[simp] theorem dY_mem_DTC : dY datum theta ∈ DTC datum theta := by
-  apply Subgroup.subset_closure
-  simp
-
-@[simp] theorem tY_mem_DTC : tY datum theta ∈ DTC datum theta := by
-  apply Subgroup.subset_closure
-  simp
-
-@[simp] theorem cY_mem_DTC : cY datum theta ∈ DTC datum theta := by
-  apply Subgroup.subset_closure
-  simp
-
-@[simp] theorem tY_mem_TCY : tY datum theta ∈ TCY datum theta := by
-  apply Subgroup.subset_closure
-  simp
-
-@[simp] theorem cY_mem_TCY : cY datum theta ∈ TCY datum theta := by
-  apply Subgroup.subset_closure
-  simp
-
-@[simp] theorem y_mem_TCY : y datum theta ∈ TCY datum theta := by
-  apply Subgroup.subset_closure
-  simp
-
-theorem kY_eq_y_inv_tY_y :
-    kY datum theta =
-      (y datum theta)⁻¹ * tY datum theta * y datum theta :=
-  (y_conjugates_t datum theta).symm
-
-@[simp] theorem kY_mem_TCY : kY datum theta ∈ TCY datum theta := by
-  rw [kY_eq_y_inv_tY_y]
-  exact (TCY datum theta).mul_mem
-    ((TCY datum theta).mul_mem
-      ((TCY datum theta).inv_mem (y_mem_TCY datum theta))
-      (tY_mem_TCY datum theta))
-    (y_mem_TCY datum theta)
-
-/-! ## Exact restricted presentation of `⟨t,c,y⟩` -/
-
-/-- The first associated subgroup of the `y` extension restricted to the `k,c` subgroup. -/
-abbrev YRestrictedA :=
-  restrictedA (A := HMinus datum) (Kc datum)
-
-/-- The second associated subgroup of the `y` extension restricted to the `k,c` subgroup. -/
-abbrev YRestrictedB :=
-  restrictedB (B := HPlus datum) (Kc datum)
-
-/-- The restricted associated-subgroup isomorphism for the `y` extension. -/
-def yRestrictedPhi :
-    YRestrictedA datum ≃* YRestrictedB datum :=
-  restrictedPhi (Kc datum) (theta_mem_Kc_iff datum theta)
-
-/-- The HNN extension obtained by restricting the `y`-stage to
-`Kc = ⟨t,c,k⟩`. -/
-abbrev YRestricted :=
-  HNNExtension (Kc datum) (YRestrictedA datum) (YRestrictedB datum)
-    (yRestrictedPhi datum theta)
-
-/-- The canonical embedding of the restricted model into the ambient
-`y`-stage. -/
-def yRestrictedEmbedding : YRestricted datum theta →* Y datum theta :=
-  restrictedEmbedding (Kc datum) (theta_mem_Kc_iff datum theta)
-
-theorem yRestrictedEmbedding_injective :
-    Function.Injective (yRestrictedEmbedding datum theta) :=
-  restrictedEmbedding_injective (Kc datum) (theta_mem_Kc_iff datum theta)
-
-@[simp] theorem yRestrictedEmbedding_of (x : Kc datum) :
-    yRestrictedEmbedding datum theta (HNNExtension.of x) =
-      toYStage datum theta (x : HostYStage.Gamma datum) :=
-  restrictedEmbedding_of
-    (Kc datum) (theta_mem_Kc_iff datum theta) x
-
-@[simp] theorem yRestrictedEmbedding_t :
-    yRestrictedEmbedding datum theta HNNExtension.t =
-      (HNNExtension.t : Y datum theta) :=
-  restrictedEmbedding_t
-    (Kc datum) (theta_mem_Kc_iff datum theta)
 
 private theorem CTInGamma_maps_into_TCY :
     CTInGamma datum ≤
@@ -247,51 +144,6 @@ def yRestrictedEquivTCY : YRestricted datum theta ≃* TCY datum theta :=
   exact restrictedEquivGeneratedWithStable_coe
     (Kc datum) (theta_mem_Kc_iff datum theta) x
 
-/-! ## Exact restricted presentation of `⟨d,t,c⟩` -/
-
-/-- The first source-model associated subgroup restricted to the `c,d` subgroup. -/
-abbrev SourceRestrictedA :=
-  restrictedA
-    (A := CD datum (HostYStage.FreeInput datum))
-    (CD datum (HostYStage.FreeInput datum))
-
-/-- The second source-model associated subgroup restricted to the `c,d` subgroup. -/
-abbrev SourceRestrictedB :=
-  restrictedB
-    (B := CD datum (HostYStage.FreeInput datum))
-    (CD datum (HostYStage.FreeInput datum))
-
-theorem source_mem_iff
-    (a : CD datum (HostYStage.FreeInput datum)) :
-    (a : Gamma2 datum (HostYStage.FreeInput datum)) ∈
-          CD datum (HostYStage.FreeInput datum) ↔
-      (((MulEquiv.refl (CD datum (HostYStage.FreeInput datum))) a :
-          CD datum (HostYStage.FreeInput datum)) :
-            Gamma2 datum (HostYStage.FreeInput datum)) ∈
-        CD datum (HostYStage.FreeInput datum) := by
-  simp
-
-/-- The source-model associated-subgroup isomorphism restricted to the `c,d` subgroup. -/
-def sourceRestrictedPhi :
-    SourceRestrictedA datum ≃* SourceRestrictedB datum :=
-  restrictedPhi (CD datum (HostYStage.FreeInput datum))
-    (source_mem_iff datum)
-
-/-- The restriction of the `t`-centralizer HNN extension to `⟨c,d⟩`.
-It is the exact semantic path group underlying `⟨d,t,c⟩`. -/
-abbrev SourceModel :=
-  HNNExtension
-    (CD datum (HostYStage.FreeInput datum))
-    (SourceRestrictedA datum) (SourceRestrictedB datum)
-    (sourceRestrictedPhi datum)
-
-/-- The embedding of the restricted source model into the `t` HNN stage. -/
-def sourceToTStage :
-    SourceModel datum →*
-      TStage datum (HostYStage.FreeInput datum) :=
-  restrictedEmbedding (CD datum (HostYStage.FreeInput datum))
-    (source_mem_iff datum)
-
 @[simp] private theorem sourceToTStage_of
     (h : CD datum (HostYStage.FreeInput datum)) :
     sourceToTStage datum (HNNExtension.of h) =
@@ -305,21 +157,6 @@ def sourceToTStage :
       tLetter datum (HostYStage.FreeInput datum) :=
   restrictedEmbedding_t
     (CD datum (HostYStage.FreeInput datum)) (source_mem_iff datum)
-
-/-- The canonical realization of the source path model inside `G_y`. -/
-def sourceEmbedding : SourceModel datum →* Y datum theta :=
-  (toYStage datum theta).comp
-    ((toFinalStage datum (HostYStage.FreeInput datum)).comp
-      (sourceToTStage datum))
-
-theorem sourceEmbedding_injective :
-    Function.Injective (sourceEmbedding datum theta) :=
-  (toYStage_injective datum theta).comp
-    ((HNNExtension.of_injective
-      (MulEquiv.refl (KSubgroup datum (HostYStage.FreeInput datum)))).comp
-        (restrictedEmbedding_injective
-          (CD datum (HostYStage.FreeInput datum))
-          (source_mem_iff datum)))
 
 private theorem CD_maps_into_DTC :
     CD datum (HostYStage.FreeInput datum) ≤
@@ -419,19 +256,6 @@ def sourceModelC : SourceModel datum :=
   simp [sourceModelC, sourceEmbedding,
     cY, HostYStage.c, modelC, cStageToFinal]
 
-/-- The generator `t` in the restricted `y`-extension model. -/
-def yRestrictedT : YRestricted datum theta :=
-  HNNExtension.of
-    (⟨t datum, CTInGamma_le_Kc datum (t_mem_CTInGamma datum)⟩ : Kc datum)
-
-/-- The generator `c` in the restricted `y`-extension model. -/
-def yRestrictedC : YRestricted datum theta :=
-  HNNExtension.of
-    (⟨c datum, CTInGamma_le_Kc datum (c_mem_CTInGamma datum)⟩ : Kc datum)
-
-/-- The inverse stable letter representing the generator `y` in the restricted HNN model. -/
-def yRestrictedY : YRestricted datum theta := HNNExtension.t⁻¹
-
 @[simp] theorem yRestrictedEquivTCY_t :
     yRestrictedEquivTCY datum theta (yRestrictedT datum theta) =
       ⟨tY datum theta, tY_mem_TCY datum theta⟩ := by
@@ -502,10 +326,6 @@ def freeEquivDCyclic : FreeGroup Unit ≃* dCyclic :=
   (MonoidHom.ofInjective dFreeToGamma3_injective).trans
     (MulEquiv.subgroupCongr dFreeToGamma3_range)
 
-/-- The generator `d₃`, regarded as an element of its cyclic subgroup. -/
-def dInCyclic : dCyclic :=
-  ⟨d3, Subgroup.subset_closure (by rfl)⟩
-
 @[simp] private theorem freeEquivDCyclic_of :
     freeEquivDCyclic (FreeGroup.of ()) = dInCyclic := by
   apply Subtype.ext
@@ -558,11 +378,11 @@ def dRestrictedToYRestricted :
 @[simp] private theorem dRestrictedToYRestricted_of (x : dCyclic) :
     dRestrictedToYRestricted datum theta (HNNExtension.of x) =
       dCyclicToYRestricted datum theta x := by
-  simp [dRestrictedToYRestricted]
+  simp only [dRestrictedToYRestricted, HNNExtension.lift_of]
 
 @[simp] private theorem dRestrictedToYRestricted_t :
     dRestrictedToYRestricted datum theta HNNExtension.t = HNNExtension.t := by
-  simp [dRestrictedToYRestricted]
+  exact HNNExtension.lift_t _ _ _
 
 /-- The homomorphism from the `c,d` subgroup to the restricted `y` model. -/
 def CDToYRestricted :
@@ -748,12 +568,12 @@ def sourceModelToYRestricted :
     (x : CD datum (HostYStage.FreeInput datum)) :
     sourceModelToYRestricted datum theta (HNNExtension.of x) =
       CDToYRestricted datum theta x := by
-  simp [sourceModelToYRestricted]
+  simp only [sourceModelToYRestricted, HNNExtension.lift_of]
 
 @[simp] private theorem sourceModelToYRestricted_t :
     sourceModelToYRestricted datum theta HNNExtension.t =
       yRestrictedC datum theta := by
-  simp [sourceModelToYRestricted]
+  exact HNNExtension.lift_t _ _ _
 
 @[simp] private theorem sourceModelToYRestricted_d :
     sourceModelToYRestricted datum theta (sourceModelD datum) =
@@ -828,11 +648,11 @@ def CTModelToSourceModel :
     (x : HostZBaseIntersections.C0 datum) :
     CTModelToSourceModel datum (HNNExtension.of x) =
       C0ToSourceModel datum x := by
-  simp [CTModelToSourceModel]
+  simp only [CTModelToSourceModel, HNNExtension.lift_of]
 
 @[simp] private theorem CTModelToSourceModel_t :
     CTModelToSourceModel datum HNNExtension.t = sourceModelD datum := by
-  simp [CTModelToSourceModel]
+  exact HNNExtension.lift_t _ _ _
 
 /-- The homomorphism from the `c,t` subgroup to the source model. -/
 def CTToSourceModel :
@@ -843,32 +663,18 @@ def CTToSourceModel :
 @[simp] private theorem CTToSourceModel_c :
     CTToSourceModel datum (HostKcModel.baseC datum) =
       sourceModelT datum := by
-  have hpre :
-      (HostKcModel.ctModelEquivCT datum).symm
-          (HostKcModel.baseC datum) =
-        HostKcModel.ctModelC datum := by
-    rw [← HostKcModel.ctModelEquivCT_c]
-    exact (HostKcModel.ctModelEquivCT datum).symm_apply_apply _
-  change CTModelToSourceModel datum
-    ((HostKcModel.ctModelEquivCT datum).symm
-      (HostKcModel.baseC datum)) = _
-  rw [hpre]
-  simp [HostKcModel.ctModelC]
+  exact (congrArg (CTModelToSourceModel datum)
+    ((HostKcModel.ctModelEquivCT datum).symm_apply_eq.mpr
+      (HostKcModel.ctModelEquivCT_c datum).symm)).trans
+        (CTModelToSourceModel_of datum (HostKcModel.cInC0 datum) |>.trans (C0ToSourceModel_c datum))
 
 @[simp] private theorem CTToSourceModel_t :
     CTToSourceModel datum (HostKcModel.baseT datum) =
       sourceModelD datum := by
-  have hpre :
-      (HostKcModel.ctModelEquivCT datum).symm
-          (HostKcModel.baseT datum) =
-        HostKcModel.ctModelT datum := by
-    rw [← HostKcModel.ctModelEquivCT_t]
-    exact (HostKcModel.ctModelEquivCT datum).symm_apply_apply _
-  change CTModelToSourceModel datum
-    ((HostKcModel.ctModelEquivCT datum).symm
-      (HostKcModel.baseT datum)) = _
-  rw [hpre]
-  simp [HostKcModel.ctModelT]
+  exact (congrArg (CTModelToSourceModel datum)
+    ((HostKcModel.ctModelEquivCT datum).symm_apply_eq.mpr
+      (HostKcModel.ctModelEquivCT_t datum).symm)).trans
+        (CTModelToSourceModel_t datum)
 
 /-- The homomorphism placing the cyclic `c` subgroup in the `c,t` subgroup. -/
 def C0ToCT :
@@ -976,12 +782,12 @@ def RestrictedToSourceModel :
     (x : HostZBaseIntersections.CT datum) :
     RestrictedToSourceModel datum (HNNExtension.of x) =
       CTToSourceModel datum x := by
-  simp [RestrictedToSourceModel]
+  simp only [RestrictedToSourceModel, HNNExtension.lift_of]
 
 @[simp] private theorem RestrictedToSourceModel_k :
     RestrictedToSourceModel datum HNNExtension.t =
       sourceConjugatedD datum := by
-  simp [RestrictedToSourceModel]
+  exact HNNExtension.lift_t _ _ _
 
 @[simp] private theorem RestrictedToSourceModel_t :
     RestrictedToSourceModel datum (HostKcModel.restrictedT datum) =
@@ -993,22 +799,6 @@ def RestrictedToSourceModel :
       sourceModelT datum := by
   simp [HostKcModel.restrictedC]
 
-/-- The generator `k` regarded as an element of the `k,c` subgroup. -/
-def kInKc : Kc datum :=
-  ⟨HostYStage.k datum, by
-    apply Subgroup.subset_closure
-    exact Or.inr rfl⟩
-
-/-- The generator `t` regarded as an element of the `k,c` subgroup. -/
-def tInKc : Kc datum :=
-  ⟨HostYStage.t datum,
-    CTInGamma_le_Kc datum (t_mem_CTInGamma datum)⟩
-
-/-- The generator `c` regarded as an element of the `k,c` subgroup. -/
-def cInKc : Kc datum :=
-  ⟨HostYStage.c datum,
-    CTInGamma_le_Kc datum (c_mem_CTInGamma datum)⟩
-
 /-- The homomorphism from the `k,c` subgroup to the source model. -/
 def KcToSourceModel : Kc datum →* SourceModel datum :=
   (RestrictedToSourceModel datum).comp
@@ -1016,42 +806,24 @@ def KcToSourceModel : Kc datum →* SourceModel datum :=
 
 @[simp] private theorem KcToSourceModel_t :
     KcToSourceModel datum (tInKc datum) = sourceModelD datum := by
-  have hpre :
-      (HostKcModel.restrictedEquivKc datum).symm (tInKc datum) =
-        HostKcModel.restrictedT datum := by
-    apply (HostKcModel.restrictedEquivKc datum).injective
-    rw [(HostKcModel.restrictedEquivKc datum).apply_symm_apply]
-    simp [tInKc]
-  change RestrictedToSourceModel datum
-    ((HostKcModel.restrictedEquivKc datum).symm (tInKc datum)) = _
-  rw [hpre]
-  exact RestrictedToSourceModel_t datum
+  exact (congrArg (RestrictedToSourceModel datum)
+    ((HostKcModel.restrictedEquivKc datum).symm_apply_eq.mpr
+      (HostKcModel.restrictedEquivKc_t datum).symm)).trans
+        (RestrictedToSourceModel_t datum)
 
 @[simp] private theorem KcToSourceModel_c :
     KcToSourceModel datum (cInKc datum) = sourceModelT datum := by
-  have hpre :
-      (HostKcModel.restrictedEquivKc datum).symm (cInKc datum) =
-        HostKcModel.restrictedC datum := by
-    apply (HostKcModel.restrictedEquivKc datum).injective
-    rw [(HostKcModel.restrictedEquivKc datum).apply_symm_apply]
-    simp [cInKc]
-  change RestrictedToSourceModel datum
-    ((HostKcModel.restrictedEquivKc datum).symm (cInKc datum)) = _
-  rw [hpre]
-  exact RestrictedToSourceModel_c datum
+  exact (congrArg (RestrictedToSourceModel datum)
+    ((HostKcModel.restrictedEquivKc datum).symm_apply_eq.mpr
+      (HostKcModel.restrictedEquivKc_c datum).symm)).trans
+        (RestrictedToSourceModel_c datum)
 
 @[simp] private theorem KcToSourceModel_k :
     KcToSourceModel datum (kInKc datum) = sourceConjugatedD datum := by
-  have hpre :
-      (HostKcModel.restrictedEquivKc datum).symm (kInKc datum) =
-        HostKcModel.restrictedK datum := by
-    apply (HostKcModel.restrictedEquivKc datum).injective
-    rw [(HostKcModel.restrictedEquivKc datum).apply_symm_apply]
-    simp [kInKc]
-  change RestrictedToSourceModel datum
-    ((HostKcModel.restrictedEquivKc datum).symm (kInKc datum)) = _
-  rw [hpre]
-  exact RestrictedToSourceModel_k datum
+  exact (congrArg (RestrictedToSourceModel datum)
+    ((HostKcModel.restrictedEquivKc datum).symm_apply_eq.mpr
+      (HostKcModel.restrictedEquivKc_k datum).symm)).trans
+        (RestrictedToSourceModel_k datum)
 
 /-- The homomorphism obtained by composing the subgroup map `θ` with the source-model map. -/
 def thetaThenKcToSourceModel :
@@ -1098,42 +870,13 @@ private theorem conjugatedCTToSourceModel_t :
 private theorem thetaThenKcToSourceModel_eq_conjugated :
     thetaThenKcToSourceModel datum theta =
       conjugatedCTToSourceModel datum := by
-  have hmodel :
-      (thetaThenKcToSourceModel datum theta).comp
-          (HostKcModel.ctModelEquivCT datum).toMonoidHom =
-        (conjugatedCTToSourceModel datum).comp
-          (HostKcModel.ctModelEquivCT datum).toMonoidHom := by
-    apply HNNExtension.hom_ext
-    · apply MonoidHom.ext
-      intro x
-      rcases Subgroup.mem_closure_singleton.mp x.property with ⟨n, hn⟩
-      have hx : x = HostKcModel.cInC0 datum ^ n := by
-        apply Subtype.ext
-        exact hn.symm
-      rw [hx]
-      simp only [map_zpow]
-      apply congrArg (fun q : SourceModel datum ↦ q ^ n)
-      change thetaThenKcToSourceModel datum theta
-          (HostKcModel.ctModelEquivCT datum
-            (HNNExtension.of (HostKcModel.cInC0 datum))) =
-        conjugatedCTToSourceModel datum
-          (HostKcModel.ctModelEquivCT datum
-            (HNNExtension.of (HostKcModel.cInC0 datum)))
-      rw [ctModelEquivCT_of_C0, C0ToCT_cInC0]
-      exact (thetaThenKcToSourceModel_c datum theta).trans
+  apply cyclic_hom_ext_of_equiv _ (HostKcModel.ctModelEquivCT datum)
+  · exact (HostKcModel.ctModelEquivCT_c datum).symm ▸
+      (thetaThenKcToSourceModel_c datum theta).trans
         (conjugatedCTToSourceModel_c datum).symm
-    · change thetaThenKcToSourceModel datum theta
-          (HostKcModel.ctModelEquivCT datum HNNExtension.t) =
-        conjugatedCTToSourceModel datum
-          (HostKcModel.ctModelEquivCT datum HNNExtension.t)
-      rw [ctModelEquivCT_stable]
-      exact (thetaThenKcToSourceModel_t datum theta).trans
+  · exact (HostKcModel.ctModelEquivCT_t datum).symm ▸
+      (thetaThenKcToSourceModel_t datum theta).trans
         (conjugatedCTToSourceModel_t datum).symm
-  apply MonoidHom.ext
-  intro x
-  have hx := DFunLike.congr_fun hmodel
-    ((HostKcModel.ctModelEquivCT datum).symm x)
-  simpa using hx
 
 /-- The subgroup homomorphism from the `c,t` subgroup to the `k,c` subgroup. -/
 def CTToKc :
@@ -1251,12 +994,12 @@ def YRestrictedToSourceModel :
 @[simp] private theorem YRestrictedToSourceModel_of (x : Kc datum) :
     YRestrictedToSourceModel datum theta (HNNExtension.of x) =
       KcToSourceModel datum x := by
-  simp [YRestrictedToSourceModel]
+  simp only [YRestrictedToSourceModel, HNNExtension.lift_of]
 
 @[simp] private theorem YRestrictedToSourceModel_stable :
     YRestrictedToSourceModel datum theta HNNExtension.t =
       (sourceModelC datum)⁻¹ := by
-  simp [YRestrictedToSourceModel]
+  exact HNNExtension.lift_t _ _ _
 
 @[simp] private theorem YRestrictedToSourceModel_t :
     YRestrictedToSourceModel datum theta (yRestrictedT datum theta) =
@@ -1280,38 +1023,14 @@ private theorem CD_hom_ext {Q : Type*} [Group Q]
     (hd : f (dInCD datum) = g (dInCD datum))
     (hc : f (cInCD datum) = g (cInCD datum)) :
     f = g := by
-  apply MonoidHom.ext
-  intro x
-  let p : (q : Gamma2 datum (HostYStage.FreeInput datum)) →
-      q ∈ CD datum (HostYStage.FreeInput datum) → Prop :=
-    fun q hq ↦ f ⟨q, hq⟩ = g ⟨q, hq⟩
-  have hp : p (x : Gamma2 datum (HostYStage.FreeInput datum)) x.property := by
-    apply Subgroup.closure_induction
-    · intro q hq
-      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hq
-      rcases hq with rfl | rfl
-      · simpa [p, cInCD] using hc
-      · simpa [p, dInCD] using hd
-    · change f 1 = g 1
-      rw [map_one, map_one]
-    · intro a b ha hb hpa hpb
-      let aa : CD datum (HostYStage.FreeInput datum) :=
-        ⟨a, show a ∈ CD datum (HostYStage.FreeInput datum) from ha⟩
-      let bb : CD datum (HostYStage.FreeInput datum) :=
-        ⟨b, show b ∈ CD datum (HostYStage.FreeInput datum) from hb⟩
-      change f aa = g aa at hpa
-      change f bb = g bb at hpb
-      change f (aa * bb) = g (aa * bb)
-      rw [map_mul, map_mul]
-      exact congrArg₂ (fun u v : Q ↦ u * v) hpa hpb
-    · intro a ha hpa
-      let aa : CD datum (HostYStage.FreeInput datum) :=
-        ⟨a, show a ∈ CD datum (HostYStage.FreeInput datum) from ha⟩
-      change f aa = g aa at hpa
-      change f aa⁻¹ = g aa⁻¹
-      rw [map_inv, map_inv]
-      exact congrArg (fun u : Q ↦ u⁻¹) hpa
-  simpa [p] using hp
+  apply closure_hom_ext
+  intro x hx
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+  rcases hx with rfl | rfl
+  · change f (cInCD datum) = g (cInCD datum)
+    simpa only [cInCD] using hc
+  · change f (dInCD datum) = g (dInCD datum)
+    simpa only [dInCD] using hd
 
 theorem YRestrictedToSourceModel_comp_sourceModelToYRestricted :
     (YRestrictedToSourceModel datum theta).comp
@@ -1319,55 +1038,25 @@ theorem YRestrictedToSourceModel_comp_sourceModelToYRestricted :
       MonoidHom.id (SourceModel datum) := by
   apply HNNExtension.hom_ext
   · apply CD_hom_ext datum
-    · change YRestrictedToSourceModel datum theta
-        (sourceModelToYRestricted datum theta (sourceModelD datum)) =
-          sourceModelD datum
-      rw [sourceModelToYRestricted_d, YRestrictedToSourceModel_t]
-    · change YRestrictedToSourceModel datum theta
-        (sourceModelToYRestricted datum theta (sourceModelC datum)) =
-          sourceModelC datum
-      rw [sourceModelToYRestricted_c, YRestrictedToSourceModel_y]
-  · change YRestrictedToSourceModel datum theta
-      (sourceModelToYRestricted datum theta (sourceModelT datum)) =
-        sourceModelT datum
-    change YRestrictedToSourceModel datum theta
-      (sourceModelToYRestricted datum theta HNNExtension.t) =
-        sourceModelT datum
-    rw [sourceModelToYRestricted_t, YRestrictedToSourceModel_c]
+    · exact (congrArg (YRestrictedToSourceModel datum theta)
+        (sourceModelToYRestricted_d datum theta)).trans
+          (YRestrictedToSourceModel_t datum theta)
+    · exact (congrArg (YRestrictedToSourceModel datum theta)
+        (sourceModelToYRestricted_c datum theta)).trans
+          (YRestrictedToSourceModel_y datum theta)
+  · exact (congrArg (YRestrictedToSourceModel datum theta)
+      (sourceModelToYRestricted_t datum theta)).trans
+        (YRestrictedToSourceModel_c datum theta)
 
 private theorem CT_hom_ext {Q : Type*} [Group Q]
     {f g : HostZBaseIntersections.CT datum →* Q}
     (ht : f (HostKcModel.baseT datum) = g (HostKcModel.baseT datum))
     (hc : f (HostKcModel.baseC datum) = g (HostKcModel.baseC datum)) :
     f = g := by
-  have hmodel :
-      f.comp (HostKcModel.ctModelEquivCT datum).toMonoidHom =
-        g.comp (HostKcModel.ctModelEquivCT datum).toMonoidHom := by
-    apply HNNExtension.hom_ext
-    · apply MonoidHom.ext
-      intro x
-      rcases Subgroup.mem_closure_singleton.mp x.property with ⟨n, hn⟩
-      have hx : x = HostKcModel.cInC0 datum ^ n := by
-        apply Subtype.ext
-        exact hn.symm
-      rw [hx]
-      simp only [map_zpow]
-      apply congrArg (fun q : Q ↦ q ^ n)
-      change f (HostKcModel.ctModelEquivCT datum
-          (HNNExtension.of (HostKcModel.cInC0 datum))) =
-        g (HostKcModel.ctModelEquivCT datum
-          (HNNExtension.of (HostKcModel.cInC0 datum)))
-      rw [ctModelEquivCT_of_C0, C0ToCT_cInC0]
-      exact hc
-    · change f (HostKcModel.ctModelEquivCT datum HNNExtension.t) =
-        g (HostKcModel.ctModelEquivCT datum HNNExtension.t)
-      rw [ctModelEquivCT_stable]
-      exact ht
-  apply MonoidHom.ext
-  intro x
-  have hx := DFunLike.congr_fun hmodel
-    ((HostKcModel.ctModelEquivCT datum).symm x)
-  simpa using hx
+  apply cyclic_hom_ext_of_equiv _ (HostKcModel.ctModelEquivCT datum)
+  · exact ((ctModelEquivCT_of_C0 datum (HostKcModel.cInC0 datum)).trans
+      (C0ToCT_cInC0 datum)).symm ▸ hc
+  · exact (ctModelEquivCT_stable datum).symm ▸ ht
 
 private theorem Kc_hom_ext {Q : Type*} [Group Q]
     {f g : Kc datum →* Q}
@@ -1375,32 +1064,15 @@ private theorem Kc_hom_ext {Q : Type*} [Group Q]
     (hc : f (cInKc datum) = g (cInKc datum))
     (hk : f (kInKc datum) = g (kInKc datum)) :
     f = g := by
-  have hmodel :
-      f.comp (HostKcModel.restrictedEquivKc datum).toMonoidHom =
-        g.comp (HostKcModel.restrictedEquivKc datum).toMonoidHom := by
-    apply HNNExtension.hom_ext
-    · apply CT_hom_ext datum
-      · change f (HostKcModel.restrictedEquivKc datum
-            (HNNExtension.of (HostKcModel.baseT datum))) =
-          g (HostKcModel.restrictedEquivKc datum
-            (HNNExtension.of (HostKcModel.baseT datum)))
-        rw [restrictedEquivKc_of_CT, CTToKc_t]
-        exact ht
-      · change f (HostKcModel.restrictedEquivKc datum
-            (HNNExtension.of (HostKcModel.baseC datum))) =
-          g (HostKcModel.restrictedEquivKc datum
-            (HNNExtension.of (HostKcModel.baseC datum)))
-        rw [restrictedEquivKc_of_CT, CTToKc_c]
-        exact hc
-    · change f (HostKcModel.restrictedEquivKc datum HNNExtension.t) =
-        g (HostKcModel.restrictedEquivKc datum HNNExtension.t)
-      rw [restrictedEquivKc_stable]
-      exact hk
-  apply MonoidHom.ext
-  intro x
-  have hx := DFunLike.congr_fun hmodel
-    ((HostKcModel.restrictedEquivKc datum).symm x)
-  simpa using hx
+  apply hom_ext_of_equiv (HostKcModel.restrictedEquivKc datum)
+  · apply CT_hom_ext datum
+    · exact (congrArg (fun x => f x = g x)
+        ((restrictedEquivKc_of_CT datum (HostKcModel.baseT datum)).trans
+          (CTToKc_t datum))).mpr ht
+    · exact (congrArg (fun x => f x = g x)
+        ((restrictedEquivKc_of_CT datum (HostKcModel.baseC datum)).trans
+          (CTToKc_c datum))).mpr hc
+  · exact (restrictedEquivKc_stable datum).symm ▸ hk
 
 private theorem yRestricted_conjugates_t :
     (yRestrictedY datum theta)⁻¹ * yRestrictedT datum theta *
@@ -1418,21 +1090,12 @@ theorem sourceModelToYRestricted_comp_YRestrictedToSourceModel :
       MonoidHom.id (YRestricted datum theta) := by
   apply HNNExtension.hom_ext
   · apply Kc_hom_ext datum
-    · change sourceModelToYRestricted datum theta
-        (YRestrictedToSourceModel datum theta
-          (HNNExtension.of (tInKc datum))) =
-        (HNNExtension.of (tInKc datum) : YRestricted datum theta)
-      rw [YRestrictedToSourceModel_of, KcToSourceModel_t,
-        sourceModelToYRestricted_d]
-      rfl
-    · change sourceModelToYRestricted datum theta
-        (YRestrictedToSourceModel datum theta
-          (HNNExtension.of (cInKc datum))) =
-        (HNNExtension.of (cInKc datum) : YRestricted datum theta)
-      rw [YRestrictedToSourceModel_of, KcToSourceModel_c,
-        show sourceModelT datum = HNNExtension.t by rfl,
-        sourceModelToYRestricted_t]
-      rfl
+    · exact (congrArg (sourceModelToYRestricted datum theta)
+        ((YRestrictedToSourceModel_of datum theta (tInKc datum)).trans
+          (KcToSourceModel_t datum))).trans (sourceModelToYRestricted_d datum theta)
+    · exact (congrArg (sourceModelToYRestricted datum theta)
+        ((YRestrictedToSourceModel_of datum theta (cInKc datum)).trans
+          (KcToSourceModel_c datum))).trans (sourceModelToYRestricted_t datum theta)
     · change sourceModelToYRestricted datum theta
         (YRestrictedToSourceModel datum theta
           (HNNExtension.of (kInKc datum))) =
@@ -1444,12 +1107,11 @@ theorem sourceModelToYRestricted_comp_YRestrictedToSourceModel :
       rw [map_mul, map_mul, map_inv, sourceModelToYRestricted_c,
         sourceModelToYRestricted_d]
       exact yRestricted_conjugates_t datum theta
-  · change sourceModelToYRestricted datum theta
-      (YRestrictedToSourceModel datum theta HNNExtension.t) =
-        (HNNExtension.t : YRestricted datum theta)
-    rw [YRestrictedToSourceModel_stable, map_inv,
-      sourceModelToYRestricted_c]
-    simp [yRestrictedY]
+  · exact (congrArg (sourceModelToYRestricted datum theta)
+      (YRestrictedToSourceModel_stable datum theta)).trans
+        ((map_inv (sourceModelToYRestricted datum theta) (sourceModelC datum)).trans
+          ((congrArg Inv.inv (sourceModelToYRestricted_c datum theta)).trans
+            (inv_inv HNNExtension.t)))
 
 /-- The equivalence identifying the source model with the restricted `y` model. -/
 def sourceModelEquivYRestricted :

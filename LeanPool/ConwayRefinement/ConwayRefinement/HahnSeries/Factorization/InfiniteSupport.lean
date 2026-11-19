@@ -194,7 +194,7 @@ theorem HasOnlyUnitFiniteSupportDivisors.exists_factorization
       refine ⟨kc * kd, cs ++ ds, mul_ne_zero hkc hkd, ?_, ?_, ?_⟩
       · rw [hfactor, hcFactor, hdFactor, List.prod_append,
           map_mul, mul_assoc]
-        ring
+        ac_rfl
       · intro q hq
         rw [List.mem_append] at hq
         exact hq.elim (hcs q) (hds q)
@@ -278,7 +278,7 @@ theorem exists_series_infinite_support_factorization_of_exists_gcd
   refine ⟨k, factors, hk, ?_, hfactors, ?_⟩
   · change b = HahnSeries.Nonpositive.C k * (p : Series K) * factors.prod
     rw [hq, hqFactor]
-    ring
+    ac_rfl
   · apply hbound.trans_eq
     apply HahnSeries.degreeCantorTermCount_congr
     rw [hq, HahnSeries.Nonpositive.degree_mul]

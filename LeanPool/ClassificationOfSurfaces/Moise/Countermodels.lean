@@ -45,7 +45,9 @@ namespace Countermodels
 theorem geometricRealization_single_face :
     GeometricRealization (Fin 3) {Finset.univ} = stdSimplex ℝ (Fin 3) := by
   ext x
-  simp [GeometricRealization]
+  simp only [GeometricRealization, Finset.mem_singleton, exists_eq_left, Finset.mem_univ,
+    not_true_eq_false,
+    IsEmpty.forall_iff, implies_true, and_true, Set.ofPred_mem_eq]
 
 /-- The standard 2-simplex carries a geometric triangulation with a single face. -/
 noncomputable def stdSimplexTriangulation :
@@ -219,7 +221,8 @@ theorem disconnectedBoundaryFaces_isSurfaceValid :
   refine ⟨⟨false⟩, ?_, ?_, ?_⟩
   · intro f g h
     change [pos f] ~r [pos g] at h
-    have hmem : pos f ∈ [pos g] := h.mem_iff.mp (by simp)
+    have hmem : pos f ∈ [pos g] := h.mem_iff.mp (by simp only [List.mem_cons, List.not_mem_nil,
+      or_false])
     exact SurfaceCellComplex.SignedDart.pos.inj (List.mem_singleton.mp hmem)
   · intro d
     cases d with
@@ -236,7 +239,8 @@ theorem disconnectedBoundaryFaces_isSurfaceValid :
     cases d with
     | pos b =>
         let o : disconnectedBoundaryFaces.BoundaryOccurrence :=
-          ⟨b, ⟨0, by simp [disconnectedBoundaryFaces]⟩⟩
+          ⟨b, ⟨0, by simp only [disconnectedBoundaryFaces, List.length_cons, List.length_nil,
+            zero_add, Order.lt_one_iff]⟩⟩
         refine ⟨o, Or.inl rfl, ?_⟩
         rintro ⟨f, i⟩ hi
         change Fin 1 at i
@@ -244,8 +248,12 @@ theorem disconnectedBoundaryFaces_isSurfaceValid :
         have hfb : f = b := by
           have hi' : pos f = pos b ∨
               pos f = disconnectedBoundaryFaces.inv (pos b) := by
-            simpa [SurfaceCellComplex.Occurs, SurfaceCellComplex.SameEdge,
-              SurfaceCellComplex.BoundaryOccurrence.dart, disconnectedBoundaryFaces] using hi
+            simpa only [disconnectedBoundaryFaces, SurfaceCellComplex.Occurs,
+              SurfaceCellComplex.SameEdge,
+    SurfaceCellComplex.BoundaryOccurrence.dart,
+              List.length_cons, List.length_nil, Nat.reduceAdd, Fin.zero_eta,
+    Fin.isValue,
+              List.get_eq_getElem, Fin.val_eq_zero, List.getElem_cons_zero] using hi
           rcases hi' with hi' | hi'
           · exact SurfaceCellComplex.SignedDart.pos.inj hi'
           · change pos f = neg b at hi'
@@ -254,7 +262,8 @@ theorem disconnectedBoundaryFaces_isSurfaceValid :
         rfl
     | neg b =>
         let o : disconnectedBoundaryFaces.BoundaryOccurrence :=
-          ⟨b, ⟨0, by simp [disconnectedBoundaryFaces]⟩⟩
+          ⟨b, ⟨0, by simp only [disconnectedBoundaryFaces, List.length_cons, List.length_nil,
+            zero_add, Order.lt_one_iff]⟩⟩
         refine ⟨o, Or.inr rfl, ?_⟩
         rintro ⟨f, i⟩ hi
         change Fin 1 at i

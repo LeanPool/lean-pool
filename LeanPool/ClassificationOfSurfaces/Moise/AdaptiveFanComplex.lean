@@ -455,10 +455,12 @@ theorem adaptiveFanSourcePoint_vertex (hU : IsOpen U)
   rw [K.adaptiveFanSourcePoint_val]
   dsimp only
   rw [Finset.sum_eq_single p]
-  · simp
+  · simp only [stdSimplex.vertex_coe, Pi.single_eq_same, one_mul]
   · intro q _ hqp
-    simp [hqp]
-  · simp
+    simp only [stdSimplex.vertex_coe, ne_eq, hqp, not_false_eq_true, Pi.single_eq_of_ne, zero_mul]
+  · simp only [Finset.univ_eq_attach, Finset.mem_attach, not_true_eq_false,
+    stdSimplex.vertex_coe,
+    Pi.single_eq_same, one_mul, IsEmpty.forall_iff]
 
 /-- Pulling an edge point back through the faithful subdivision gives zero in every coordinate
 outside that edge. -/
@@ -555,7 +557,7 @@ theorem adaptiveFanSourcePoint_opposite (hU : IsOpen U)
         simpa only [adaptiveFanVertexSource, hp] using
           K.adaptiveEdgeIntervalSecond_source_opposite U hU f.1 f.2.1 f.2.2)
   · intro hcNot
-    simp at hcNot
+    simp only [Finset.univ_eq_attach, Finset.mem_attach, not_true_eq_false] at hcNot
 
 /-- The cone-center contribution is a lower bound for every barycentric coordinate of a fan
 point in its ambient refined face.  At the coordinate opposite the fan base this bound is an
@@ -1110,14 +1112,18 @@ theorem adaptiveFanBaseSimplexPath_zero (hU : IsOpen U)
     K.adaptiveFanBaseSimplexPath U hU f ⟨0, by simp⟩ =
       stdSimplex.vertex (K.adaptiveFanFirstVertex U hU f) := by
   apply Subtype.ext
-  simp [adaptiveFanBaseSimplexPath, AffineMap.lineMap_apply_module]
+  simp only [adaptiveFanBaseSimplexPath, stdSimplex.vertex_coe, AffineMap.lineMap_apply_module,
+    sub_zero,
+    one_smul, zero_smul, add_zero]
 
 theorem adaptiveFanBaseSimplexPath_one (hU : IsOpen U)
     (f : K.AdaptiveFanFace U hU) :
     K.adaptiveFanBaseSimplexPath U hU f ⟨1, by simp⟩ =
       stdSimplex.vertex (K.adaptiveFanSecondVertex U hU f) := by
   apply Subtype.ext
-  simp [adaptiveFanBaseSimplexPath, AffineMap.lineMap_apply_module]
+  simp only [adaptiveFanBaseSimplexPath, stdSimplex.vertex_coe, AffineMap.lineMap_apply_module,
+    sub_self,
+    zero_smul, one_smul, zero_add]
 
 theorem adaptiveFanBasePath_zero (hU : IsOpen U)
     (f : K.AdaptiveFanFace U hU) :
@@ -2026,7 +2032,7 @@ theorem adaptiveFanLaterBasePath_subset_earlierBaseEdge_of_faceMap_eq
   have harEdge := hclosureAedge harClosure
   exact (K.adaptiveFacePlaneHomeomorph_mem_edge_iff U f.1 f.2.1
     (hLaterInEarlier (K.adaptiveFanBasePath_mem_baseEdge U hU g r))).mp
-      (by simpa [a, q] using harEdge)
+      (by simpa only [a, q] using harEdge)
 
 /-- A continuous injective path through an open interval matches its two boundary values at the
 domain endpoints, up to reversing their order, provided neither boundary value occurs inside. -/
@@ -2362,7 +2368,9 @@ theorem extendFaceCoordinates_adaptiveFanFace (hU : IsOpen U)
     have hcEq : (⟨c.1, hcMem⟩ :
         {z // z ∈ K.adaptiveFanFaceVertices U hU f}) = c := Subtype.ext rfl
     rw [hcEq]
-    simp [c, p, q, hcp, hcq]
+    simp only [Pi.add_apply, Pi.single_eq_same, ne_eq, hcp, not_false_eq_true, Pi.single_eq_of_ne,
+      add_zero, hcq,
+    c, p, q]
   by_cases hvp : v = p.1
   · subst v
     have hpMem : p.1 ∈ K.adaptiveFanFaceVertices U hU f := p.2
@@ -2370,7 +2378,9 @@ theorem extendFaceCoordinates_adaptiveFanFace (hU : IsOpen U)
     have hpEq : (⟨p.1, hpMem⟩ :
         {z // z ∈ K.adaptiveFanFaceVertices U hU f}) = p := Subtype.ext rfl
     rw [hpEq]
-    simp [c, p, q, hcp, hpq]
+    simp only [Pi.add_apply, ne_eq, hcp, not_false_eq_true, Pi.single_eq_of_ne', Pi.single_eq_same,
+      zero_add, hpq,
+    Pi.single_eq_of_ne, add_zero, p, q, c]
   by_cases hvq : v = q.1
   · subst v
     have hqMem : q.1 ∈ K.adaptiveFanFaceVertices U hU f := q.2
@@ -2378,14 +2388,17 @@ theorem extendFaceCoordinates_adaptiveFanFace (hU : IsOpen U)
     have hqEq : (⟨q.1, hqMem⟩ :
         {z // z ∈ K.adaptiveFanFaceVertices U hU f}) = q := Subtype.ext rfl
     rw [hqEq]
-    simp [c, p, q, hcq, hpq]
+    simp only [Pi.add_apply, ne_eq, hcq, not_false_eq_true, Pi.single_eq_of_ne', hpq, add_zero,
+      Pi.single_eq_same,
+    zero_add, q, p, c]
   · have hvNot : v ∉ K.adaptiveFanFaceVertices U hU f := by
       intro hv
       simp only [adaptiveFanFaceVertices, Finset.mem_insert,
         Finset.mem_singleton] at hv
       exact hv.elim hvc (fun h ↦ h.elim hvp hvq)
     rw [extendFaceCoordinates_of_notMem _ _ hvNot]
-    simp [c, p, q, hvc, hvp, hvq]
+    simp only [Pi.add_apply, ne_eq, hvc, not_false_eq_true, Pi.single_eq_of_ne, hvp, add_zero, hvq,
+      p, q, c]
 
 /-- Radial projection to the fan base recovers the original global coordinates after restoring
 the cone-center weight. -/
@@ -2556,7 +2569,8 @@ theorem adaptiveFanEndpointData_of_center_eq_zero_of_not_base_weights_pos
   by_cases hxFirst : x (K.adaptiveFanFirstVertex U hU f) = 0
   · right
     have hxSecond : x (K.adaptiveFanSecondVertex U hU f) = 1 := by linarith
-    let rone : Set.Icc (0 : ℝ) 1 := ⟨1, by simp⟩
+    let rone : Set.Icc (0 : ℝ) 1 := ⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl,
+      and_self]⟩
     have hxPath : K.adaptiveFanBaseSimplexPath U hU f rone = x :=
       K.adaptiveFanBaseSimplexPath_eq_of_secondWeight U hU f x rone
         hxSecond.symm hxCenter
@@ -2569,15 +2583,19 @@ theorem adaptiveFanEndpointData_of_center_eq_zero_of_not_base_weights_pos
       funext v
       by_cases hv : v = (K.adaptiveFanSecondVertex U hU f).1
       · subst v
-        simp [extendFaceCoordinates,
-          (K.adaptiveFanSecondVertex U hU f).2]
+        simp only [extendFaceCoordinates, (K.adaptiveFanSecondVertex U hU f).2, ↓reduceDIte,
+          Subtype.coe_eta,
+    stdSimplex.vertex_coe, Pi.single_eq_same]
       · by_cases hmem : v ∈ K.adaptiveFanFaceVertices U hU f
         · have hne :
             (⟨v, hmem⟩ : {p // p ∈ K.adaptiveFanFaceVertices U hU f}) ≠
               K.adaptiveFanSecondVertex U hU f := by
             exact fun h ↦ hv (congrArg Subtype.val h)
-          simp [extendFaceCoordinates, hmem, hv, hne]
-        · simp [extendFaceCoordinates, hmem, hv]
+          simp only [extendFaceCoordinates, hmem, ↓reduceDIte, stdSimplex.vertex_coe, ne_eq, hne,
+            not_false_eq_true,
+    Pi.single_eq_of_ne, hv]
+        · simp only [extendFaceCoordinates, hmem, ↓reduceDIte, ne_eq, hv, not_false_eq_true,
+          Pi.single_eq_of_ne]
   · left
     have hxFirstPos : 0 < x (K.adaptiveFanFirstVertex U hU f) :=
       lt_of_le_of_ne hxFirstNonneg (Ne.symm hxFirst)
@@ -2588,7 +2606,8 @@ theorem adaptiveFanEndpointData_of_center_eq_zero_of_not_base_weights_pos
         exact hxNot ⟨hxFirstPos, hxSecondPos⟩
       · exact hxSecondNonneg
     have hxFirstOne : x (K.adaptiveFanFirstVertex U hU f) = 1 := by linarith
-    let rzero : Set.Icc (0 : ℝ) 1 := ⟨0, by simp⟩
+    let rzero : Set.Icc (0 : ℝ) 1 := ⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one,
+      and_self]⟩
     have hxPath : K.adaptiveFanBaseSimplexPath U hU f rzero = x :=
       K.adaptiveFanBaseSimplexPath_eq_of_secondWeight U hU f x rzero
         hxSecond.symm hxCenter
@@ -2601,15 +2620,19 @@ theorem adaptiveFanEndpointData_of_center_eq_zero_of_not_base_weights_pos
       funext v
       by_cases hv : v = (K.adaptiveFanFirstVertex U hU f).1
       · subst v
-        simp [extendFaceCoordinates,
-          (K.adaptiveFanFirstVertex U hU f).2]
+        simp only [extendFaceCoordinates, (K.adaptiveFanFirstVertex U hU f).2, ↓reduceDIte,
+          Subtype.coe_eta,
+    stdSimplex.vertex_coe, Pi.single_eq_same]
       · by_cases hmem : v ∈ K.adaptiveFanFaceVertices U hU f
         · have hne :
             (⟨v, hmem⟩ : {p // p ∈ K.adaptiveFanFaceVertices U hU f}) ≠
               K.adaptiveFanFirstVertex U hU f := by
             exact fun h ↦ hv (congrArg Subtype.val h)
-          simp [extendFaceCoordinates, hmem, hv, hne]
-        · simp [extendFaceCoordinates, hmem, hv]
+          simp only [extendFaceCoordinates, hmem, ↓reduceDIte, stdSimplex.vertex_coe, ne_eq, hne,
+            not_false_eq_true,
+    Pi.single_eq_of_ne, hv]
+        · simp only [extendFaceCoordinates, hmem, ↓reduceDIte, ne_eq, hv, not_false_eq_true,
+          Pi.single_eq_of_ne]
 
 theorem adaptiveFanFaceMap_mem_boundaryVertices_of_center_zero_of_not_base_weights_pos
     (hU : IsOpen U) (f : K.AdaptiveFanFace U hU)

@@ -10,7 +10,6 @@ public import Mathlib.Algebra.MvPolynomial.CommRing
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 import Mathlib.Algebra.MvPolynomial.NoZeroDivisors
-import Mathlib.RingTheory.Polynomial.Basic
 import Mathlib.RingTheory.Polynomial.Content
 
 /-!

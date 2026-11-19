@@ -10,7 +10,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.HahnSeries.Card
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.RefinementConjecture
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.RationalTailQuotient
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Divisibility.PrimalPreimage
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 
 /-!

@@ -1,0 +1,211 @@
+/-
+Copyright (c) 2026 Djalil Chafaï. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Djalil Chafaï
+-/
+
+/-
+Adapted for Lean Pool from djalilchafai/ginibre-
+poincare/GinibrePoincare/Analysis/GinibreArbitraryWeakPairClosure.lean.
+Module paths, interfaces, and proofs are ported to the pool's toolchain and gates.
+The original source is MIT licensed; its notice follows.
+
+MIT License
+
+Copyright (c) 2026 Djalil Chafai
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-/
+
+module
+
+public import LeanPool.GinibrePoincare.Analysis.GinibreArbitraryWeakPairApproximation
+public import LeanPool.GinibrePoincare.Analysis.GinibreCollisionCutoffSobolevApproximation
+public import LeanPool.GinibrePoincare.Analysis.GinibrePermutationAverage
+public import LeanPool.GinibrePoincare.Analysis.GinibreValueTruncationWeakChain
+public import LeanPool.GinibrePoincare.Analysis.GinibreWeakPermutation
+
+/-!
+# Ginibre Arbitrary Weak Pair Closure
+-/
+
+
+@[expose] public section
+
+open MeasureTheory Filter
+open scoped Topology ContDiff
+namespace GinibrePoincare
+noncomputable section
+
+/-- Every value truncation of a weak pair is in the closure of the smooth
+collision-free compact value-gradient pairs. -/
+theorem ginibreValueTruncation_mem_closure_interiorSmooth {n : ℕ} (hn : 0 < n)
+    (u : Lp ℝ 2 (ginibreMeasure n))
+    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
+    (hg : IsGinibreDistributionalGradient n u g) (k : ℕ) :
+    ((ginibreValueTruncation_memLp n k u (Lp.memLp u)).toLp
+        (fun z => sobolevValueTruncation k (u z)),
+      (ginibreValueTruncation_vector_memLp n k u (Lp.aestronglyMeasurable u) g
+        (Lp.memLp g)).toLp
+          (fun z => deriv (sobolevValueTruncation k) (u z) • g z)) ∈
+      closure (ginibreInteriorSmoothPair n) := by
+  let U := (ginibreValueTruncation_memLp n k u (Lp.memLp u)).toLp
+    (fun z => sobolevValueTruncation k (u z))
+  let G := (ginibreValueTruncation_vector_memLp n k u (Lp.aestronglyMeasurable u) g
+    (Lp.memLp g)).toLp (fun z => deriv (sobolevValueTruncation k) (u z) • g z)
+  have hweak := ginibreValueTruncation_distributional n hn k u g hg
+  have hspatial (j : ℕ) :
+      ginibreWeakSpatialTruncation n hn U G j ∈ closure (ginibreInteriorSmoothPair n) := by
+    let f (z : Configuration n) := ginibreSpatialCutoff n j z *
+      sobolevValueTruncation k (u z)
+    have hf : ((ginibreWeakSpatialTruncation n hn U G j).1 : Configuration n → ℝ)
+        =ᵐ[ginibreMeasure n] f := by
+      apply (ginibreWeakSpatialTruncation_value_ae n hn U G j).trans
+      filter_upwards [(ginibreValueTruncation_memLp n k u (Lp.memLp u)).coeFn_toLp]
+        with z hz
+      change _ = ginibreSpatialCutoff n j z * sobolevValueTruncation k (u z)
+      rw [hz]
+    have hfc : HasCompactSupport f := by
+      dsimp [f]
+      exact (ginibreSpatialCutoff_compact n j).mul_right
+    have hA : ∀ z, ‖f z‖ ≤ 2 * ((k : ℝ) + 1) := by
+      intro z
+      dsimp [f]
+      have hχ := ginibreSpatialCutoff_mem_unit n j z
+      rw [abs_mul, abs_of_nonneg hχ.1]
+      exact (mul_le_of_le_one_left
+        (abs_nonneg (sobolevValueTruncation k (u z))) hχ.2).trans (by
+          simpa only [Real.norm_eq_abs] using sobolevValueTruncation_bounded k (u z))
+    exact ginibreBoundedCompactWeakPair_mem_closure_interiorSmooth hn _ _
+      (ginibreWeakSpatialTruncation_distributional n hn U G hweak j) f hf hfc
+      (2 * ((k : ℝ) + 1)) (by positivity) hA
+  exact isClosed_closure.mem_of_tendsto
+    (ginibreWeakSpatialTruncation_tendsto n hn U G) (Eventually.of_forall hspatial)
+
+/-- Every Ginibre distributional weak pair lies in the closure of smooth compact
+pairs supported away from collisions. -/
+theorem ginibreWeakPair_mem_closure_interiorSmooth {n : ℕ} (hn : 0 < n)
+    (u : Lp ℝ 2 (ginibreMeasure n))
+    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
+    (hg : IsGinibreDistributionalGradient n u g) :
+    (u, g) ∈ closure (ginibreInteriorSmoothPair n) := by
+  have htVal := ginibreValueTruncation_L2_tendsto n u
+  have htGrad := ginibreValueTruncation_vector_L2_tendsto n u g
+  have ht := htVal.prodMk_nhds htGrad
+  apply isClosed_closure.mem_of_tendsto ht
+  exact Eventually.of_forall (fun k =>
+    ginibreValueTruncation_mem_closure_interiorSmooth hn u g hg k)
+
+/-- Averaging a smooth compact weak-pair approximation yields an element of the
+collision-free core closure. -/
+theorem ginibreInteriorSmoothPair_average_mem_coreClosure {n : ℕ} (hn : 0 < n)
+    (p : Lp ℝ 2 (ginibreMeasure n) ×
+      Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
+    (hp : p ∈ ginibreInteriorSmoothPair n) :
+    (ginibreRealPermutationAverageL2 p.1,
+      ginibreGradientPermutationAverageL2 p.2) ∈ closure (ginibreTheoremOneNineCorePairs n) := by
+  obtain ⟨f, hf, hfc, hfs, hpv, hpg⟩ := hp
+  let F := ginibrePermutationAverage f
+  have hF : IsSmoothCompactSymmetric F := by
+    simpa [F] using ginibrePermutationAverage_smoothCompact f hf hfc
+  let := ginibreMeasure_isProbabilityMeasure hn
+  have hvF : MemLp F 2 (ginibreMeasure n) :=
+    hF.1.continuous.memLp_of_hasCompactSupport hF.2.1
+  have hdF : MemLp (ginibreEuclideanGradient F) 2 (ginibreMeasure n) :=
+    (continuous_ginibreEuclideanGradient F hF.1).memLp_of_hasCompactSupport
+      (compactSupport_ginibreEuclideanGradient F hF.2.1)
+  obtain ⟨q, hq, hqconv⟩ :=
+    ginibreCollisionCutoff_smoothPair_core_sequence_of_smoothCompact n hn F hF hvF hdF
+  -- The averaged L² pair is exactly the value-gradient pair of `F`.
+  have hpvF : (ginibreRealPermutationAverageL2 p.1 : Configuration n → ℝ)
+      =ᵐ[ginibreMeasure n] F :=
+    ginibreRealPermutationAverageL2_ae p.1 f hpv
+  have hpgF : (ginibreGradientPermutationAverageL2 p.2 :
+      Configuration n → EuclideanSpace ℝ (Fin n × Fin 2))
+      =ᵐ[ginibreMeasure n] ginibreEuclideanGradient F := by
+    classical
+    have hterm (σ : ParticlePermutation n) :
+        (ginibreGradientPermutationL2 σ p.2 :
+          Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) =ᵐ[ginibreMeasure n]
+          fun z => ginibreEuclideanGradient (fun y => f (permute σ y)) z := by
+      have hcomp := (ginibre_measurePreserving_permute σ).quasiMeasurePreserving.ae_eq_comp hpg
+      filter_upwards [ginibreGradientPermutationL2_ae σ p.2, hcomp] with z hz hp
+      rw [hz, ginibreEuclideanGradient_comp_permute σ f hf z]
+      congr 1
+      ext k
+      exact congrArg (fun v : EuclideanSpace ℝ (Fin n × Fin 2) =>
+        v (σ.symm k.1, k.2)) hp
+    have hsum (s : Finset (ParticlePermutation n)) :
+        ((∑ σ ∈ s, ginibreGradientPermutationL2 σ p.2 :
+          Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n)) :
+          Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) =ᵐ[ginibreMeasure n]
+          fun z => ∑ σ ∈ s, ginibreEuclideanGradient (fun y => f (permute σ y)) z := by
+      refine (Lp.coeFn_fun_finsetSum s
+        (fun σ => ginibreGradientPermutationL2 σ p.2)).trans ?_
+      filter_upwards [eventuallyEq_sum (s := s) (fun σ _ => hterm σ)] with z hz
+      simpa only [Finset.sum_apply] using hz
+    unfold ginibreGradientPermutationAverageL2
+    simp only [smul_apply, sum_apply]
+    filter_upwards [Lp.coeFn_smul
+      ((Fintype.card (ParticlePermutation n) : ℝ)⁻¹)
+      (∑ σ : ParticlePermutation n, ginibreGradientPermutationL2 σ p.2),
+      hsum Finset.univ] with z hscale hsumz
+    rw [hscale]
+    change (Fintype.card (ParticlePermutation n) : ℝ)⁻¹ •
+      (↑(∑ σ : ParticlePermutation n, ginibreGradientPermutationL2 σ p.2) :
+        Configuration n → EuclideanSpace ℝ (Fin n × Fin 2)) z =
+      ginibreEuclideanGradient F z
+    rw [hsumz]
+    simpa [F] using (ginibreEuclideanGradient_permutationAverage f hf z).symm
+  have heq : (ginibreRealPermutationAverageL2 p.1,
+      ginibreGradientPermutationAverageL2 p.2) =
+      (hvF.toLp F, hdF.toLp (ginibreEuclideanGradient F)) := by
+    apply Prod.ext
+    · apply Lp.ext
+      exact hpvF.trans hvF.coeFn_toLp.symm
+    · apply Lp.ext
+      exact hpgF.trans hdF.coeFn_toLp.symm
+  rw [heq]
+  exact isClosed_closure.mem_of_tendsto hqconv
+    (Eventually.of_forall fun m => subset_closure (hq m))
+
+/-- Every permutation-invariant Ginibre weak pair is approximated in the full
+value-gradient L² norm by actual collision-free Theorem 1.9 core pairs. -/
+theorem ginibreSymmetricWeakPair_exists_core_sequence {n : ℕ} (hn : 0 < n)
+    (u : Lp ℝ 2 (ginibreMeasure n))
+    (g : Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n))
+    (hg : IsGinibreDistributionalGradient n u g)
+    (hs : IsGinibreSymmetricWeakPair (u, g)) :
+    ∃ q : ℕ → Lp ℝ 2 (ginibreMeasure n) ×
+      Lp (EuclideanSpace ℝ (Fin n × Fin 2)) 2 (ginibreMeasure n),
+      (∀ m, q m ∈ ginibreTheoremOneNineCorePairs n) ∧
+        Tendsto q atTop (𝓝 (u, g)) := by
+  have hinner := ginibreWeakPair_mem_closure_interiorSmooth hn u g hg
+  obtain ⟨p, hp, hpt⟩ := mem_closure_iff_seq_limit.mp hinner
+  let r (m : ℕ) := (ginibreRealPermutationAverageL2 (p m).1,
+    ginibreGradientPermutationAverageL2 (p m).2)
+  have hmem (m : ℕ) : r m ∈ closure (ginibreTheoremOneNineCorePairs n) := by
+    exact ginibreInteriorSmoothPair_average_mem_coreClosure hn (p m) (hp m)
+  have hlim : Tendsto r atTop (𝓝 (u, g)) := by
+    exact ginibreWeakPair_average_tendsto_of_tendsto p u g hpt hs
+  have hclosed : (u, g) ∈ closure (ginibreTheoremOneNineCorePairs n) :=
+    isClosed_closure.mem_of_tendsto hlim (Eventually.of_forall hmem)
+  exact mem_closure_iff_seq_limit.mp hclosed
+end
+end GinibrePoincare

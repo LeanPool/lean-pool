@@ -190,7 +190,7 @@ theorem orientableRel_to_polygonEqvGen
               (orientableOccurrencePoint p n
                 (orientableBoundaryPosition p n (Fin.rev i) 2)
                 (unitInterval.symm t)) := by
-        simpa using
+        simpa only [neg_add_rev, Fin.isValue, Fin.rev_rev] using
           orientableBoundary_trustedSource_eq_carrier_c_neg
             (p := p) (Fin.rev i) t
       have htarget :
@@ -200,7 +200,7 @@ theorem orientableRel_to_polygonEqvGen
               (orientableBoundaryWord p n)
               (orientableOccurrencePoint p n
                 (orientableBoundaryPosition p n (Fin.rev i) 0) t) := by
-        simpa using
+        simpa only [neg_sub, Fin.isValue, Fin.rev_rev] using
           orientableBoundary_trustedTarget_eq_carrier_c_pos
             (p := p) (Fin.rev i) t
       rw [hsource, htarget]
@@ -251,7 +251,7 @@ theorem nonOrientableRel_to_polygonEqvGen
               (nonOrientableOccurrencePoint p n
                 (nonOrientableBoundaryPosition p n (Fin.rev i) 2)
                 (unitInterval.symm t)) := by
-        simpa using
+        simpa only [neg_add_rev, Fin.isValue, Fin.rev_rev] using
           nonOrientableBoundary_trustedSource_eq_carrier_c_neg
             (p := p) (Fin.rev i) t
       have htarget :
@@ -261,7 +261,7 @@ theorem nonOrientableRel_to_polygonEqvGen
               (nonOrientableBoundaryWord p n)
               (nonOrientableOccurrencePoint p n
                 (nonOrientableBoundaryPosition p n (Fin.rev i) 0) t) := by
-        simpa using
+        simpa only [neg_sub, Fin.isValue, Fin.rev_rev] using
           nonOrientableBoundary_trustedTarget_eq_carrier_c_pos
             (p := p) (Fin.rev i) t
       rw [hsource, htarget]

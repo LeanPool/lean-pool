@@ -207,7 +207,7 @@ private theorem phase_stability_coefficients_of_ne_zero
     rw [hcoeff, explicitPkappaNorm_smul, Complex.norm_of_nonneg (le_of_lt ha_pos)]
   have hdef_scale :
       modulusDefect κ Fn Qn = a * modulusDefect κ F Q := by
-    simpa [Fn, Qn] using explicitModulusDefect_smul_of_nonneg hd κ a (le_of_lt ha_pos) F Q
+    exact explicitModulusDefect_smul_of_nonneg hd κ a (le_of_lt ha_pos) F Q
   have hscaled :
       a * explicitPkappaNorm (phase • Q - F) ≤
         C_F * (a * modulusDefect κ F Q) := by simpa [hleft_scale, hdef_scale] using hbound'

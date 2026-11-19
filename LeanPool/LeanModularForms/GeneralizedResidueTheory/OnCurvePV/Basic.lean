@@ -80,7 +80,7 @@ lemma pv_limit_via_dyadic {γ : ℝ → ℂ} {a b t₀ : ℝ} {L : ℂ}
         tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 2)
       have h_tendsto_inv : Tendsto (fun n : ℕ => 1 / (2 : ℝ) ^ n) atTop (𝓝 0) := by
         simp_rw [one_div]; exact tendsto_inv_atTop_zero.comp h_tendsto_pow
-      convert Tendsto.const_mul (K * δ) h_tendsto_inv using 1 <;> [ext n; skip] <;> ring
+      convert Tendsto.const_mul (K * δ) h_tendsto_inv using 1 <;> [ext n; skip] <;> ring_nf
     rw [Metric.tendsto_atTop] at this
     obtain ⟨N₂, hN₂⟩ := this (η / 4) (by linarith only [hη_pos])
     refine ⟨N₂, ?_⟩

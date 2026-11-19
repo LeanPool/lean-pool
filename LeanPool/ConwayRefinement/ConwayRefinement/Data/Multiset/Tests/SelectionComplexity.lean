@@ -5,7 +5,6 @@ Authors: Dan Abramov
 -/
 module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Data.Multiset.SelectionComplexity
-import Mathlib.Tactic.Tauto
 
 /-!
 # Distinct-factor complexity checks

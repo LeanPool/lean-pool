@@ -10,7 +10,7 @@ import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.Primality.IrreducibleOmnificIntegers
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.FiniteClassPrimality
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.CardinalTruncationResidue
+
 
 /-!
 # Primality for finitely many support classes

@@ -278,11 +278,25 @@ private def boxVar (k : Mu) : Var :=
 private def boxCoeff (k : Mu) : Q :=
   (muBoxCoeff[k.1]! : Q)
 
+private lemma aVec_eq_boxRow (k : Mu) (hk : muBoxCoeff[k.1]! ≠ 0) :
+    aVec k = Array.ofFn (fun i : Var => if i = boxVar k then muBoxCoeff[k.1]! else 0) := by
+  -- Check each integer row once, before projecting individual coefficients.
+  fin_cases k <;> (try cases hk rfl) <;> decide +kernel
+
 private lemma aCoeff_eq_boxCoeff (k : Mu) (hk : muBoxCoeff[k.1]! ≠ 0) (i : Var) :
     aCoeff k i = if i = boxVar k then boxCoeff k else 0 := by
-  classical
-  fin_cases k <;> fin_cases i <;> (try cases hk rfl) <;>
-    decide
+  let row := Array.ofFn (fun j : Var => if j = boxVar k then muBoxCoeff[k.1]! else 0)
+  have indexInBounds : i.1 < row.size := by
+    simpa only [row, Array.size_ofFn] using i.2
+  have entry : row.getD i.1 0 = if i = boxVar k then muBoxCoeff[k.1]! else 0 := by
+    rw [← Array.getElem_eq_getD (h := indexInBounds)]
+    exact Array.getElem_ofFn indexInBounds
+  rw [aCoeff, aCoeffInt, N1000000.coeffAt, aVec_eq_boxRow k hk]
+  change (row.getD i.1 0 : Q) = _
+  rw [entry]
+  by_cases atBox : i = boxVar k
+  · simp only [ite_eq_left atBox, boxCoeff]
+  · simp only [ite_eq_right atBox, Int.cast_zero]
 
 private lemma aDot_eq_box (f : Coloring n) (k : Mu) (hk : muBoxCoeff[k.1]! ≠ 0) :
     aDot k (xFromColoring f) = boxCoeff k * xFromColoring f (boxVar k) := by

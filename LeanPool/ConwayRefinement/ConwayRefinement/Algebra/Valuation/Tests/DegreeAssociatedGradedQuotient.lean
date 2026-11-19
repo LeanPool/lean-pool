@@ -10,7 +10,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.Tests
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.Tests.Fixtures.PolynomialQuotientDegree
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreePrincipalInitialIdeal
-import Mathlib.Algebra.Polynomial.Degree.Operations
+import Mathlib.Algebra.CharP.Defs
 
 /-!
 # API checks for the associated graded ring of a quotient

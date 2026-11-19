@@ -158,17 +158,17 @@ private theorem partial_product_truncation_bound (b c : HahnSeries G R)
       (max_le_max ((cantorBendixsonValue_add_le _ _).trans (max_le_max hA hD)) hP.le)
   have h1 : t * (V (T b, γ) * (v ^ m * w)) < v ^ (m + 1) * r * w := by
     calc
-      _ = (t * V (T b, γ)) * (v ^ m * w) := by ring
+      _ = (t * V (T b, γ)) * (v ^ m * w) := by ac_rfl
       _ < (r * v) * (v ^ m * w) :=
         mul_lt_mul_of_pos_right (small_values_mul_lt B B le_rfl ht hbt)
           (mul_pos (pow_pos hv m) hw)
       _ = _ := by ring
   have h2 : t * (v ^ (m + 1) * V (T c, γ)) < v ^ (m + 1) * r * w := by
     calc
-      _ = v ^ (m + 1) * (t * V (T c, γ)) := by ring
+      _ = v ^ (m + 1) * (t * V (T c, γ)) := by ac_rfl
       _ < v ^ (m + 1) * (r * w) :=
         mul_lt_mul_of_pos_left (small_values_mul_lt B C hp ht hct) (pow_pos hv (m + 1))
-      _ = _ := by ring
+      _ = _ := by ac_rfl
   have h3 : t * (v ^ m * r * w) < v ^ (m + 1) * r * w := by
     calc
       _ < v * (v ^ m * r * w) :=

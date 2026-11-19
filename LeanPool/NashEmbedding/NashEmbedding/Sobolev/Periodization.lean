@@ -92,7 +92,7 @@ def periodicExtension (n : ℕ) (φ : (Fin n → ℝ) → ℂ) (x : Fin n → �
 lemma periodicExtension_isPeriodic2Pi (φ : (Fin n → ℝ) → ℂ) :
     IsPeriodic2Pi (periodicExtension n φ) := by
   unfold periodicExtension; intro x k; symm; simp +decide only ;
-  rw [ ← Equiv.tsum_eq ( Equiv.addLeft k ) ]; simp +decide only [Equiv.coe_addLeft]; ring;
+  rw [ ← Equiv.tsum_eq ( Equiv.addLeft k ) ]; simp +decide only [Equiv.coe_addLeft]; ring_nf;
   unfold periodicShift; congr; ext; simp +decide only [Pi.add_apply, Int.cast_add, add_assoc] ;
   exact congr_arg _ ( by ext; simp +decide [ mul_add ] )
 
@@ -262,7 +262,7 @@ lemma hasDerivAt_fourierExp_update (c : Fin n → ℤ) (θ : Fin n → ℝ) (j :
       * (θ j : ℂ)) ) using 1
   all_goals (first
     | rfl
-    | (simp only [Pi.add_apply, id_eq]; push_cast; ring))
+    | (simp only [Pi.add_apply, id_eq]; push_cast; ring_nf))
 
 lemma fderiv_fourierExp_single (c : Fin n → ℤ) (θ : Fin n → ℝ) (j : Fin n) :
     fderiv ℝ (fourierExp n c) θ (Pi.single j 1) = Complex.I * (c j : ℂ) * fourierExp n c θ := by

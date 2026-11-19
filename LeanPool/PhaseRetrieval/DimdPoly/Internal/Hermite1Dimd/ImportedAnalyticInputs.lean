@@ -563,7 +563,7 @@ private lemma zero_shift_exp_compare
         ((j : ℝ) - ((k + 4 : ℕ) : ℝ)) ^ 2 ≤
           4 * (((j : ℝ) - ((k + 5 : ℕ) : ℝ)) ^ 2 + 1) := by
       rw [hrel]
-      simpa [y] using hsq
+      exact hsq
     nlinarith only [hc0, hsq']
 
 /-- Imported positive-frequency circle estimate with frozen constant `144`. -/
@@ -759,7 +759,7 @@ theorem scaledPositiveFrequencyCircleEstimate
       positiveFrequencyCircleEstimate E (fun n => a⁻¹ * b n) hpos hQ
     have hbaseQ :
         circleL2NormSq Q ≤
-          144 * E.card * circleL2NormSq (fun t => rho 1 (Q t)) := by simpa [Q] using hbase
+          144 * E.card * circleL2NormSq (fun t => rho 1 (Q t)) := by exact hbase
     have hmulP : (fun t => a * Q t) = positiveFrequencyPolynomial E b := by
       funext t
       simp only [Q, positiveFrequencyPolynomial, Finset.mul_sum]
@@ -801,7 +801,7 @@ theorem scaledHighFrequencyBandEstimate
     have hQ : HasBandlimitedSupport Q N L := ⟨fun m => a⁻¹ * c m, rfl⟩
     have hbase := highFrequencyBandEstimate N L (fun m => a⁻¹ * c m) hgap hQ
     have hbaseQ : circleL2NormSq Q ≤ 32 * circleL2NormSq (fun t => rho 1 (Q t)) := by
-      simpa [Q] using hbase
+      exact hbase
     have hmulP : (fun t => a * Q t) = bandLimitedPolynomial N L c := by
       funext t
       simp only [Q, bandLimitedPolynomial, Finset.mul_sum]

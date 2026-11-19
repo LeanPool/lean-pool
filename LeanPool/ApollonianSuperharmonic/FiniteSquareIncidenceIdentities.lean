@@ -387,7 +387,7 @@ private theorem hedgeSet :
     · refine ⟨c, hc, Or.inr (Or.inr (Or.inr ?_))⟩
       change ({c + I, c + I + 1} : Finset GaussianInt) =
         {c + I, c + 1 + I}
-      congr 1; ring
+      congr 1; ring_nf
     · exact ⟨c, hc, Or.inr (Or.inr (Or.inl rfl))⟩
   · rintro ⟨c, hc, he | he | he | he⟩
     · refine ⟨(c, false), ?_, ?_⟩
@@ -408,7 +408,7 @@ private theorem hedgeSet :
       · rw [he]
         change ({c + I, c + I + 1} : Finset GaussianInt) =
           {c + I, c + 1 + I}
-        congr 1; ring
+        congr 1; ring_nf
 
 private theorem hedgeCard :
     ∀ (T : ProtoTile),

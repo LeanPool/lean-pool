@@ -39,7 +39,7 @@ theorem orientableCarrier_occurrencePoint (p n : ℕ)
         (orientableOccurrencePoint p n i t) =
       ClosedUnitDisc.bdyPtOfReal
         (((i.val : ℝ) + (t : ℝ)) / (orientableBoundaryWord p n).length) := by
-  simpa [orientableCellComplex, orientableOccurrencePoint] using
+  simpa only [orientableOccurrencePoint, orientableCellComplex] using
     oneFacePolygonalPreRealizationHomeomorph_sidePoint
       (orientableBoundaryWord p n) i t
 
@@ -172,7 +172,9 @@ theorem orientableBoundary_trustedSource_eq_carrier_c_neg
     _ = ClosedUnitDisc.bdyPtOfReal
         ((4 * (p : ℝ) + 3 * (j : ℝ) + 3 - (t : ℝ)) /
           (4 * p + 3 * n)) := by
-      simpa using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
+      simpa only [Fin.val_rev, Order.add_one_le_iff, Fin.is_lt, Nat.cast_sub, Nat.cast_add,
+        Nat.cast_one,
+    neg_add_rev, Int.cast_one] using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
     _ = oneFacePolygonalPreRealizationHomeomorph (orientableBoundaryWord p n)
         (orientableOccurrencePoint p n (orientableBoundaryPosition p n j 2)
           (unitInterval.symm t)) :=
@@ -211,7 +213,9 @@ theorem orientableBoundary_trustedTarget_eq_carrier_c_pos
     _ = ClosedUnitDisc.bdyPtOfReal
         ((4 * (p : ℝ) + 3 * (j : ℝ) + (t : ℝ)) /
           (4 * p + 3 * n)) := by
-      simpa using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
+      simpa only [Fin.val_rev, Order.add_one_le_iff, Fin.is_lt, Nat.cast_sub, Nat.cast_add,
+        Nat.cast_one, neg_sub,
+    Int.cast_one] using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
     _ = oneFacePolygonalPreRealizationHomeomorph (orientableBoundaryWord p n)
         (orientableOccurrencePoint p n (orientableBoundaryPosition p n j 0) t) :=
       (orientableCarrier_boundary_c_pos j t).symm
@@ -270,7 +274,7 @@ theorem nonOrientableCarrier_occurrencePoint (p n : ℕ)
         (nonOrientableOccurrencePoint p n i t) =
       ClosedUnitDisc.bdyPtOfReal
         (((i.val : ℝ) + (t : ℝ)) / (nonOrientableBoundaryWord p n).length) := by
-  simpa [nonOrientableCellComplex, nonOrientableOccurrencePoint] using
+  simpa only [nonOrientableOccurrencePoint, nonOrientableCellComplex] using
     oneFacePolygonalPreRealizationHomeomorph_sidePoint
       (nonOrientableBoundaryWord p n) i t
 
@@ -379,7 +383,9 @@ theorem nonOrientableBoundary_trustedSource_eq_carrier_c_neg
     _ = ClosedUnitDisc.bdyPtOfReal
         ((2 * (p : ℝ) + 3 * (j : ℝ) + 3 - (t : ℝ)) /
           (2 * p + 3 * n)) := by
-      simpa using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
+      simpa only [Fin.val_rev, Order.add_one_le_iff, Fin.is_lt, Nat.cast_sub, Nat.cast_add,
+        Nat.cast_one,
+    neg_add_rev, Int.cast_one] using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
     _ = oneFacePolygonalPreRealizationHomeomorph (nonOrientableBoundaryWord p n)
         (nonOrientableOccurrencePoint p n
           (nonOrientableBoundaryPosition p n j 2) (unitInterval.symm t)) :=
@@ -420,7 +426,9 @@ theorem nonOrientableBoundary_trustedTarget_eq_carrier_c_pos
     _ = ClosedUnitDisc.bdyPtOfReal
         ((2 * (p : ℝ) + 3 * (j : ℝ) + (t : ℝ)) /
           (2 * p + 3 * n)) := by
-      simpa using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
+      simpa only [Fin.val_rev, Order.add_one_le_iff, Fin.is_lt, Nat.cast_sub, Nat.cast_add,
+        Nat.cast_one, neg_sub,
+    Int.cast_one] using congrArg ClosedUnitDisc.bdyPtOfReal harg.symm
     _ = oneFacePolygonalPreRealizationHomeomorph (nonOrientableBoundaryWord p n)
         (nonOrientableOccurrencePoint p n
           (nonOrientableBoundaryPosition p n j 0) t) :=

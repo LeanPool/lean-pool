@@ -83,14 +83,14 @@ theorem edgeFirstPoint_mem_edgeMarks (e : K.Edge) :
   rw [M.mem_edgeMarks_iff e]
   refine ⟨M.first_mem e, ?_⟩
   rw [← K.range_edgePath e]
-  exact ⟨⟨0, by simp⟩, K.edgePath_zero e⟩
+  exact ⟨⟨0, by simp only [Set.mem_Icc, Std.le_refl, zero_le_one, and_self]⟩, K.edgePath_zero e⟩
 
 theorem edgeSecondPoint_mem_edgeMarks (e : K.Edge) :
     K.edgeSecondPoint e ∈ M.edgeMarks e := by
   rw [M.mem_edgeMarks_iff e]
   refine ⟨M.second_mem e, ?_⟩
   rw [← K.range_edgePath e]
-  exact ⟨⟨1, by simp⟩, K.edgePath_one e⟩
+  exact ⟨⟨1, by simp only [Set.mem_Icc, zero_le_one, Std.le_refl, and_self]⟩, K.edgePath_one e⟩
 
 /-- A total real edge parameter.  Only its value on the edge carrier is used; totality avoids
 dependent proof terms in the finite sorting relation. -/
@@ -822,7 +822,7 @@ theorem faceCenter_mem_fanFaceVertices_iff (f g : M.FanFace) :
     · exact False.elim (M.fanCenter_ne_fanSecond f g h)
   · intro h
     rw [h]
-    simp [fanFaceVertices]
+    simp only [fanFaceVertices, Finset.mem_insert, Finset.mem_singleton, true_or]
 
 /-- Removing the center from a two-element subface of a fan triangle leaves exactly its marked
 base pair. -/
@@ -839,11 +839,13 @@ theorem eq_fanBase_of_card_two_of_subset_of_center_notMem
     simp only [fanFaceVertices, Finset.mem_insert, Finset.mem_singleton] at hp'
     rcases hp' with hp' | hp' | hp'
     · exact False.elim (hcenter (hp' ▸ hp))
-    · simp [hp']
-    · simp [hp']
+    · simp only [hp', Finset.mem_insert, Finset.mem_singleton, true_or]
+    · simp only [hp', Finset.mem_insert, Finset.mem_singleton, or_true]
   · rw [hecard]
-    simp [M.edgeIntervalFirst_ne_second
-      (K.faceEdge f.1 f.2.1) f.2.2]
+    simp only [Finset.mem_singleton,
+      M.edgeIntervalFirst_ne_second (K.faceEdge f.1 f.2.1) f.2.2,
+    not_false_eq_true,
+      Finset.card_insert_of_notMem, Finset.card_singleton, Nat.reduceAdd, Std.le_refl]
 
 /-- Three fan triangles with one old parent which all contain the same radial edge cannot be
 pairwise distinct.  Away from an old vertex all three bases lie on one globally ordered old
@@ -1143,10 +1145,12 @@ theorem fanFaceMap_vertex (f : M.FanFace)
   change (∑ q, (stdSimplex.vertex p :
       stdSimplex ℝ {p // p ∈ M.fanFaceVertices f}) q * q.1.1 v) = p.1.1 v
   rw [Finset.sum_eq_single p]
-  · simp
+  · simp only [stdSimplex.vertex_coe, Pi.single_eq_same, one_mul]
   · intro q _ hqp
-    simp [hqp]
-  · simp
+    simp only [stdSimplex.vertex_coe, ne_eq, hqp, not_false_eq_true, Pi.single_eq_of_ne, zero_mul]
+  · simp only [Finset.univ_eq_attach, Finset.mem_attach, not_true_eq_false,
+    stdSimplex.vertex_coe,
+    Pi.single_eq_same, one_mul, IsEmpty.forall_iff]
 
 theorem fanVertex_val_injective (f : M.FanFace) :
     Function.Injective
@@ -1209,18 +1213,24 @@ theorem affineIndependent_fanVertex_val (f : M.FanFace) :
       rcases hr with hr | hr | hr
       · have hrc : r = c := Subtype.ext hr
         subst r
-        exact ⟨2, by simp⟩
+        exact ⟨2, by simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue, Matrix.cons_val]⟩
       · have hrp : r = p := Subtype.ext hr
         subst r
-        exact ⟨0, by simp⟩
+        exact ⟨0, by simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue,
+          Matrix.cons_val_zero]⟩
       · have hrq : r = q := Subtype.ext hr
         subst r
-        exact ⟨1, by simp⟩
+        exact ⟨1, by simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.isValue,
+          Matrix.cons_val_one, Matrix.cons_val_zero]⟩
     · rintro ⟨r, rfl⟩
       fin_cases r
-      · exact ⟨p, by simp⟩
-      · exact ⟨q, by simp⟩
-      · exact ⟨c, by simp⟩
+      · exact ⟨p, by simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.zero_eta, Fin.isValue,
+        Matrix.cons_val_zero]⟩
+      · exact ⟨q, by simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.mk_one, Fin.isValue,
+        Matrix.cons_val_one,
+    Matrix.cons_val_zero]⟩
+      · exact ⟨c, by simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Fin.reduceFinMk,
+        Matrix.cons_val]⟩
   apply AffineIndependent.of_set_of_injective
   · rw [hrange]
     exact hthree.range
@@ -1805,7 +1815,7 @@ theorem fanFaceMap_opposite (f : M.FanFace)
       exact hpEdge opposite
         (K.intrinsicFaceVertex_add_two_not_mem_faceEdge f.1 f.2.1)
   · intro hcNot
-    simp at hcNot
+    simp only [Finset.univ_eq_attach, Finset.mem_attach, not_true_eq_false] at hcNot
 
 /-- A fan point lies on its declared base edge only if its cone-center weight vanishes. -/
 theorem fanCenterWeight_eq_zero_of_mem_baseEdge
@@ -2095,7 +2105,9 @@ theorem extendFaceCoordinates_fanFace (f : M.FanFace)
     have hcEq : (⟨c.1, hcMem⟩ :
         {z // z ∈ M.fanFaceVertices f}) = c := Subtype.ext rfl
     rw [hcEq]
-    simp [c, p, q, hcp, hcq]
+    simp only [Pi.add_apply, Pi.single_eq_same, ne_eq, hcp, not_false_eq_true, Pi.single_eq_of_ne,
+      add_zero, hcq,
+    c, p, q]
   by_cases hvp : v = p.1
   · subst v
     have hpMem : p.1 ∈ M.fanFaceVertices f := p.2
@@ -2103,7 +2115,9 @@ theorem extendFaceCoordinates_fanFace (f : M.FanFace)
     have hpEq : (⟨p.1, hpMem⟩ :
         {z // z ∈ M.fanFaceVertices f}) = p := Subtype.ext rfl
     rw [hpEq]
-    simp [c, p, q, hcp, hpq]
+    simp only [Pi.add_apply, ne_eq, hcp, not_false_eq_true, Pi.single_eq_of_ne', Pi.single_eq_same,
+      zero_add, hpq,
+    Pi.single_eq_of_ne, add_zero, p, c, q]
   by_cases hvq : v = q.1
   · subst v
     have hqMem : q.1 ∈ M.fanFaceVertices f := q.2
@@ -2111,14 +2125,17 @@ theorem extendFaceCoordinates_fanFace (f : M.FanFace)
     have hqEq : (⟨q.1, hqMem⟩ :
         {z // z ∈ M.fanFaceVertices f}) = q := Subtype.ext rfl
     rw [hqEq]
-    simp [c, p, q, hcq, hpq]
+    simp only [Pi.add_apply, ne_eq, hcq, not_false_eq_true, Pi.single_eq_of_ne', hpq, add_zero,
+      Pi.single_eq_same,
+    zero_add, q, c, p]
   · have hvNot : v ∉ M.fanFaceVertices f := by
       intro hv
       simp only [fanFaceVertices, Finset.mem_insert,
         Finset.mem_singleton] at hv
       exact hv.elim hvc (fun h ↦ h.elim hvp hvq)
     rw [extendFaceCoordinates_of_notMem _ _ hvNot]
-    simp [c, p, q, hvc, hvp, hvq]
+    simp only [Pi.add_apply, ne_eq, hvc, not_false_eq_true, Pi.single_eq_of_ne, hvp, add_zero, hvq,
+      c, p, q]
 
 /-- A zero-center fan point outside the relative interior of its base is one of the declared
 base vertices, both geometrically and in zero-extended barycentric coordinates. -/
@@ -2165,7 +2182,7 @@ theorem fanEndpointData_of_center_eq_zero_of_not_base_weights_pos
     · rw [hxVertex, M.fanFaceMap_vertex f]
     · rw [M.extendFaceCoordinates_fanFace f x,
         hxCenter, hxFirst, hxSecond]
-      simp
+      simp only [Pi.single_zero, add_zero, zero_add]
   · left
     have hxFirstPos : 0 < x (M.fanFirstVertex f) :=
       lt_of_le_of_ne hxFirstNonneg (Ne.symm hxFirst)
@@ -2200,7 +2217,7 @@ theorem fanEndpointData_of_center_eq_zero_of_not_base_weights_pos
     · rw [hxVertex, M.fanFaceMap_vertex f]
     · rw [M.extendFaceCoordinates_fanFace f x,
         hxCenter, hxFirstOne, hxSecond]
-      simp
+      simp only [Pi.single_zero, zero_add, add_zero]
 
 /-- Relative-interior points of fan bases use the same zero-extended coordinates in every fan
 triangle that contains them.  Distinct old edges have disjoint open barycentric carriers, while
@@ -2781,14 +2798,16 @@ theorem eq_globalFanBase_of_card_two_of_subset_of_center_notMem
     simp only [Finset.mem_insert, Finset.mem_singleton] at hv'
     rcases hv' with hv' | hv' | hv'
     · exact False.elim (hcenter (hv' ▸ hv))
-    · simp [hv']
-    · simp [hv']
+    · simp only [hv', Finset.mem_insert, Finset.mem_singleton, true_or]
+    · simp only [hv', Finset.mem_insert, Finset.mem_singleton, or_true]
   · rw [hecard]
     have hne : M.globalFanFirst f ≠ M.globalFanSecond f := by
       intro h
       exact M.edgeIntervalFirst_ne_second
         (K.faceEdge f.1 f.2.1) f.2.2 (congrArg Subtype.val h)
-    simp [hne]
+    simp only [Finset.mem_singleton, hne, not_false_eq_true, Finset.card_insert_of_notMem,
+      Finset.card_singleton,
+    Nat.reduceAdd, Std.le_refl]
 
 /-- Relabel global vertices of one face by their underlying intrinsic points. -/
 noncomputable def fanFaceVertexEquiv (f : M.FanFace) :
@@ -2850,7 +2869,7 @@ theorem fanRelabel_extended_apply (f : M.FanFace)
         apply Subtype.ext
         rfl
     rw [hfilter]
-    simp [q]
+    simp only [Finset.sum_singleton, q]
   · have hp : v.1 ∉ M.fanFaceVertices f :=
       fun hp ↦ hv ((M.mem_globalFanFaceVertices_iff f v).mpr hp)
     rw [extendFaceCoordinates_of_notMem _ _ hp,
@@ -2934,7 +2953,10 @@ noncomputable def fanBarycentricAffine :
     M.fanBarycentricAffine z =
       fun k ↦ ∑ v : M.FanVertex, z v * v.1.1 k := by
   funext k
-  simp [fanBarycentricAffine, Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [fanBarycentricAffine, Finset.univ_eq_attach, LinearMap.coe_toAffineMap,
+    LinearMap.coe_sum,
+    LinearMap.coe_smulRight, LinearMap.coe_proj, Function.eval,
+    Finset.sum_apply, Pi.smul_apply, smul_eq_mul]
 
 /-- A globally relabeled fan-face map is affine evaluation at its actual intrinsic vertices. -/
 theorem globalFanFaceMap_val_eq_fanBarycentricAffine
@@ -3076,11 +3098,11 @@ private theorem oldFaceEdge_eq_of_globalFanBase_eq (f g : M.FanFace)
   have hp₀Pair : M.globalFanFirst f ∈
       ({M.globalFanFirst g, M.globalFanSecond g} : Finset M.FanVertex) := by
     rw [← hbase]
-    simp
+    simp only [Finset.mem_insert, Finset.mem_singleton, true_or]
   have hp₁Pair : M.globalFanSecond f ∈
       ({M.globalFanFirst g, M.globalFanSecond g} : Finset M.FanVertex) := by
     rw [← hbase]
-    simp
+    simp only [Finset.mem_insert, Finset.mem_singleton, or_true]
   simp only [Finset.mem_insert, Finset.mem_singleton] at hp₀Pair hp₁Pair
   have hp₀D : p₀ ∈ K.faceCarrier D.1 := by
     change (M.globalFanFirst f).1 ∈ K.faceCarrier D.1

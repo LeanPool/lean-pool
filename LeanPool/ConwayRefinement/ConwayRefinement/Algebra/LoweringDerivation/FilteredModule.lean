@@ -11,7 +11,6 @@ public import Mathlib.LinearAlgebra.TensorProduct.Tower
 
 import Mathlib.LinearAlgebra.TensorProduct.Finiteness
 import Mathlib.RingTheory.TensorProduct.Free
-import Mathlib.Algebra.BigOperators.Group.Finset.Preimage
 
 /-!
 # Freeness over the finite-degree part

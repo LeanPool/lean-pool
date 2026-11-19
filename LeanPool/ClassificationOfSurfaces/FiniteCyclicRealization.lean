@@ -94,7 +94,7 @@ theorem mem_edgeOccurrences (P : FiniteCyclicPresentation) (e : P.Edge)
     (o : P.BoundaryOccurrence) :
     o ∈ P.edgeOccurrences e ↔ o.edge = e := by
   classical
-  simp [edgeOccurrences]
+  simp only [edgeOccurrences, Finset.mem_filter, Finset.mem_univ, true_and]
 
 private noncomputable def boundaryIndexCount
     (P : FiniteCyclicPresentation) (f : P.Face) (e : P.Edge) : ℕ := by

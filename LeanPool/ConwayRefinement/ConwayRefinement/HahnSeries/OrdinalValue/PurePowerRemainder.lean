@@ -57,7 +57,7 @@ theorem germAt_purePower_decomp (b : SeriesWithOrdinalValueAboveOne K) (m : ℕ)
 theorem powerRemainderBound_self (b : SeriesWithOrdinalValueAboveOne K) (m : ℕ) :
     powerRemainderBound b b m = powerRemainderBoundOne b (m + 1) := by
   rw [powerRemainderBound_eq, powerRemainderBoundOne_eq, pow_succ]
-  ring
+  ac_rfl
 
 /-- Taking both factors equal shifts the two-factor remainder by one exponent. -/
 theorem powerRemainderOne_succ (b : SeriesWithOrdinalValueAboveOne K) (m : ℕ) (γ : ℝ) :

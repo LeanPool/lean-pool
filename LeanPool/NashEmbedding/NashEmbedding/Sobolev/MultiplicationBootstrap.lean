@@ -278,8 +278,8 @@ lemma refined_weight_half {k : ℕ} (hk : 1 ≤ k) (i j : Fin n → ℤ) :
       j) ^ 2 + (weight n (1 / 2 : ℝ) i * weight n ((k - 1) / 2 : ℝ) j) ^ 2) := by
     convert refined_weight_ineq hk i j using 1;
     · convert weight_half_mul ( k : ℝ ) ( i + j ) |> Eq.symm using 1; ring;
-    · norm_num [ weight_mul ]; ring;
-      norm_num [ sq, weight_mul ]; ring;
+    · norm_num [ weight_mul ]; ring_nf;
+      norm_num [ sq, weight_mul ]; ring_nf;
   have h_sqrt : (weight n (k / 2 : ℝ) (i + j)) ≤ Real.sqrt (2 * ((weight n (k / 2 : ℝ) i) ^ 2 +
       (weight n (k / 2 : ℝ) j) ^ 2)) + Real.sqrt (mt3BStar k * ((weight n ((k - 1) / 2 : ℝ) i *
       weight n (1 / 2 : ℝ) j) ^ 2 + (weight n (1 / 2 : ℝ) i * weight n ((k - 1) / 2 : ℝ) j) ^
@@ -369,7 +369,7 @@ lemma tsum_weighted_norm_sq_le {r : ℝ} (hn : 0 < n) (hr : 1 + (n : ℝ) / 2 < 
                ^ 2 ) ^ ( r - 1 ) * ( 1 + ∑ i : Fin n, ( m i : ℝ ) ^ 2 ) by
                rw [ ← Real.rpow_add_one ( by
                  exact ne_of_gt <| add_pos_of_pos_of_nonneg zero_lt_one <| Finset.sum_nonneg fun
-                   _ _ => sq_nonneg _ ) ]; ring ]; linarith))
+                   _ _ => sq_nonneg _ ) ]; ring_nf ]; linarith))
   simp_all +decide only [one_div, mul_comm, Complex.norm_mul, norm_real, norm_eq_abs, mul_pow,
     sq_abs, mul_left_comm, ge_iff_le];
   convert h_apply_tsum_norm_sq_le using 3
@@ -465,11 +465,11 @@ lemma mt3_young_S2
   · exact fun m => mul_nonneg ( weight_nonneg _ _ ) ( norm_nonneg _ );
   · exact summable_norm_of_memSobolev hn ( by linarith ) ha;
   · convert hb using 1;
-    unfold MemSobolev; ring;
-    unfold weight; ring;
+    unfold MemSobolev; ring_nf;
+    unfold weight; ring_nf;
     exact iff_of_eq ( by
       congr; ext m; rw [ ← Real.rpow_natCast, ← Real.rpow_mul ( by
-        positivity ) ]; ring )
+        positivity ) ]; ring_nf )
 
 /-
 Young bound for S3: ∑ (α^{k-1} ⊛ β^1)² ≤ (∑ w^{1/2}|b|)² · ‖a‖²_{(k-1)}
@@ -538,7 +538,7 @@ lemma mt3_young_S4
     unfold MemSobolev; norm_num [ mul_pow, weight ] ;
     exact iff_of_eq ( by
       congr; ext; rw [ ← Real.rpow_natCast, ← Real.rpow_mul ( by
-        exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ]; ring );
+        exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ]; ring_nf );
   · refine mul_le_mul ?_ ?_ ?_ ?_;
     · convert tsum_weighted_norm_sq_le hn hr ha using 1;
     · rw [ show sobolevNormSq n ( k - 1 ) b = ∑' m : Fin n → ℤ, ( weight n ( ( k - 1 ) / 2 ) m *
@@ -614,11 +614,11 @@ lemma mt3_unsquared_bound {k : ℕ} (hk : 1 ≤ k)
       · have h_weight_prod : weight n ((k : ℝ) - 1) i = weight n ((k - 1) / 2) i * weight n ((k
           - 1) / 2) i ∧ weight n 1 (m - i) = weight n (1 / 2) (m - i) * weight n (1 / 2) (m - i)
           := by
-          unfold weight; ring; norm_num;
+          unfold weight; ring_nf; norm_num;
           exact ⟨ by
             rw [ ← Real.rpow_natCast _ 2, ← Real.rpow_mul ( by
               exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ];
-                ring, by
+                ring_nf, by
             rw [ ← Real.rpow_natCast _ 2, ← Real.rpow_mul ( by
               exact add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _ ) ];
                 norm_num ⟩;

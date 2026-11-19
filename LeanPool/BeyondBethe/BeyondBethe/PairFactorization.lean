@@ -52,7 +52,7 @@ theorem hasMultiplicativeKKT_of_logKKT
         (X i j) ^ (1 + τ) * (1 - X i j) := by
       rw [Real.exp_add, Real.exp_add, Real.exp_add,
         Real.rpow_def_of_pos hx, Real.exp_log hcomp]
-      ring
+      ring_nf
 
 theorem multiplicativeKKT_eq_row_column_transfer
     {ι : Type*} [Fintype ι] [DecidableEq ι]

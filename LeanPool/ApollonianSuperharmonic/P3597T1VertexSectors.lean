@@ -471,7 +471,7 @@ private theorem hnoPosMultiple :
   have hqb : v + t • b = q := by
     rw [hba, smul_smul]
     congr 1
-    ring
+    ring_nf
   have hqB : q ∈ segment Real (p.vertex prev) v := by
     rw [← hqb, segment_symm Real (p.vertex prev) v]
     have hseg := lineMap_mem_segment Real v (p.vertex prev)

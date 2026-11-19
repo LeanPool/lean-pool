@@ -32,20 +32,36 @@ After the build, it reads Lake's per-module times from the log and fails when a 
 the PR adds or modifies took more than 600 s. Times are Lake's wall-clock times on
 GitHub's 4-vCPU runners. Existing files are checked only once a PR changes them.
 
-After all cache and artifact restores, `prepare` removes the compiled outputs
-of the added or modified modules that job is responsible for timing. This happens
-even for a cache produced under the same policy: an untouched file in that cache
-need not have passed the changed-file limit. Each changed module must emit a
-fresh successful build timing in its responsible job; missing timings and cache
-replays fail that check.
+`check` records each changed module's time in a receipt next to its compiled
+output (`<Module>.timing.json`), bound to a hash of that output's `.olean` files.
+After all cache and artifact restores, `prepare` removes the compiled outputs of
+every added or modified module the job is responsible for whose output has no
+matching receipt. So output that was compiled without being timed is always
+rebuilt, even from a cache produced under the same policy: an untouched file in
+that cache need not have passed the changed-file limit. Each changed module must
+then have either a fresh successful build timing from its responsible job or the
+recorded time of the exact output being reused; that time is checked against the
+limit either way, and a module with neither fails the check.
 
-Shards check their assigned modules. Assembly excludes projects listed in the
-same run's shard matrix and checks all remaining changed modules; the canonical
-gate requires every shard and assembly to succeed. Single and rebased root builds
-check all changed modules. Untouched modules can still reuse compiled output.
+A receipt counts only for output that is present: a module whose `.olean` is
+missing has no recorded time, whatever its receipt says, and is compiled and
+timed again.
 
+Shards check their assigned modules. Assembly, like single and rebased root
+builds, checks every changed module, including those in the shards' projects. It
+reuses a shard's output when that output arrived with its receipt; anything
+assembly compiles itself is judged by assembly's own build time, which replaces
+any time recorded earlier. No job can exempt a project from the check. The
+canonical gate requires every shard and assembly to succeed. Untouched modules
+can still reuse compiled output.
+
+"Changed" is measured from the main commit the run is tested against: the tested
+merge commit's first parent for a PR, not the event's `base.sha`, which can trail
+main and would count projects merged since as the PR's own.
+
+A later push to a PR restores the outputs of modules whose own source is unchanged
+from that PR's newest successful run; Lake's traces decide which are still valid.
 Reused PR, rebase and queue artifacts must still match `build_time_limits.py`.
-That match does not replace the fresh timing required for a changed module.
 
 The Lean workflow runs on Lean, Lake, project metadata, quality-checker, and workflow changes. It restores and saves Lake caches and pulls Mathlib oleans with `lake exe cache get` when the cache is cold.
 
@@ -99,6 +115,7 @@ Current checks:
 - project entry modules and listed main declarations resolve in Lean
 - generated entry-point project cards match `LeanPool/projects/*.yaml`
 - public declarations depend only on the allowed axiom set: `Classical.choice`, `propext`, and `Quot.sound`
+- no pool module prints a message when it is compiled. Lake keeps each module's compiler output beside its compiled files, and the checker rejects every entry there: a `Try this` suggestion nobody followed (from `simp?`, `exact?`, a `ring` that fell back to `ring_nf`, a linter hint), `@[simps?]` or `to_additive?` output, or anything a custom elaborator logs. Write the suggested tactic and remove the output. A module without a readable log fails
 - a Lean environment audit (run via `lake env lean --run` with extensions disabled, so project notation cannot interfere) walks **every** declaration compiled into a pool module — including elaborator auxiliaries and generated declarations the textual scans cannot see — and rejects any that references option-manipulating constants, embeds a gated option-name literal (however the `Name` was assembled), directly references an axiom-injecting constant (`sorryAx`, `ofReduceBool`, ...), or is itself an axiom declared inside a pool module (which is how `native_decide` and `addDecl`-of-an-axiom backdoors surface)
 
 The checker also has `--write-project-cards` to regenerate entry-point module docstrings from `LeanPool/projects/*.yaml`.
@@ -132,7 +149,7 @@ Branch protection requires the build, separation and documentation gates; the me
 
 ### 6. LLM Review
 
-A private worker polls open PRs and `/review` comments every ten minutes. Automatic content reviews wait for successful Lean Action CI on the current head. Anyone can request a review on any open PR with `/review`. The worker posts the existing sticky comment with the reviewed head SHA, rubric verdicts, findings, and token accounting. Reviews use GPT-6-Astra at `xhigh` with Codex subscription quota and no paid API fallback. See [review operations](../python/review-operations.md).
+A private worker polls open PRs and `/review` comments every ten minutes. Automatic content reviews wait for successful Lean Action CI on the current head. Anyone can request a review on any open PR with `/review`. The worker posts the existing sticky comment with the reviewed head SHA, rubric verdicts, findings, and token accounting. Reviews run at `xhigh` on Codex subscription quota with no paid API fallback; the heading of each review names the model that produced it. See [review operations](../python/review-operations.md).
 
 The rules applied depend on what the PR does:
 

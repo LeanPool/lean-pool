@@ -12,7 +12,7 @@ public import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Data.Rat.Cast.Order
 import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Ring.RingNF
 
 /-!
 # Surreal division

@@ -15,13 +15,6 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.LinearAlgebra.Basis.Fin
 public import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.Convert
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.FunProp
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.NormNum.Basic
-import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.Ring
 
 /-!
 # Areas in skew coordinates

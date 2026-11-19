@@ -8,10 +8,7 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Random.HereditaryIndependence
 public import Mathlib.LinearAlgebra.Quotient.Basic
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeSum
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueImage
-import Mathlib.LinearAlgebra.Finsupp.LinearCombination
-import Mathlib.LinearAlgebra.LinearIndependent.Basic
 
 /-!
 # The space of reducible classes and the property `(*)_α`

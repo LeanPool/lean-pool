@@ -694,11 +694,15 @@ theorem map_faceAdjacent {P Q : FiniteCyclicPresentation}
   rcases h with ⟨a, hfa, hga⟩
   refine ⟨e.edgeEquiv a, ?_, ?_⟩
   · apply ((e.boundary_rotated f).map edgeOfDart).mem_iff.mp
-    simpa [Function.comp_def] using
+    simpa only [List.map_map, Function.comp_def, edgeOfDart_mapEquiv,
+      List.mem_map,
+    EmbeddingLike.apply_eq_iff_eq] using
       (List.mem_map.mpr ⟨a, hfa, rfl⟩ :
         e.edgeEquiv a ∈ ((P.boundary f).map edgeOfDart).map e.edgeEquiv)
   · apply ((e.boundary_rotated g).map edgeOfDart).mem_iff.mp
-    simpa [Function.comp_def] using
+    simpa only [List.map_map, Function.comp_def, edgeOfDart_mapEquiv,
+      List.mem_map,
+    EmbeddingLike.apply_eq_iff_eq] using
       (List.mem_map.mpr ⟨a, hga, rfl⟩ :
         e.edgeEquiv a ∈ ((P.boundary g).map edgeOfDart).map e.edgeEquiv)
 
@@ -955,11 +959,15 @@ theorem map_faceAdjacent {P Q : FiniteCyclicPresentation}
   rcases h with ⟨a, hfa, hga⟩
   refine ⟨e.edgeEquiv a, ?_, ?_⟩
   · apply ((e.boundary_rotated f).map edgeOfDart).mem_iff.mp
-    simpa [Function.comp_def] using
+    simpa only [List.map_map, Function.comp_def, EdgeRelabeling.edgeOfDart_mapDart,
+      List.mem_map,
+    EmbeddingLike.apply_eq_iff_eq] using
       (List.mem_map.mpr ⟨a, hfa, rfl⟩ :
         e.edgeEquiv a ∈ ((P.boundary f).map edgeOfDart).map e.edgeEquiv)
   · apply ((e.boundary_rotated g).map edgeOfDart).mem_iff.mp
-    simpa [Function.comp_def] using
+    simpa only [List.map_map, Function.comp_def, EdgeRelabeling.edgeOfDart_mapDart,
+      List.mem_map,
+    EmbeddingLike.apply_eq_iff_eq] using
       (List.mem_map.mpr ⟨a, hga, rfl⟩ :
         e.edgeEquiv a ∈ ((P.boundary g).map edgeOfDart).map e.edgeEquiv)
 
@@ -1044,13 +1052,15 @@ theorem IsEmptyWordSphere.edgeCount_eq_zero
     {P : FiniteCyclicPresentation} (h : P.IsEmptyWordSphere) :
     P.edgeCount = 0 := by
   rcases h with ⟨e⟩
-  simpa [emptyWordSphere] using (Fintype.card_congr e.edgeEquiv).symm
+  simpa only [Fintype.card_fin, emptyWordSphere,
+    Fintype.card_eq_zero] using (Fintype.card_congr e.edgeEquiv).symm
 
 theorem IsEmptyWordSphere.faces_length_eq_one
     {P : FiniteCyclicPresentation} (h : P.IsEmptyWordSphere) :
     P.faces.length = 1 := by
   rcases h with ⟨e⟩
-  simpa [emptyWordSphere] using (Fintype.card_congr e.faceEquiv).symm
+  simpa only [Fintype.card_fin, emptyWordSphere, List.length_cons, List.length_nil,
+    zero_add] using (Fintype.card_congr e.faceEquiv).symm
 
 theorem IsEmptyWordSphere.boundary_eq_nil
     {P : FiniteCyclicPresentation} (h : P.IsEmptyWordSphere) (f : P.Face) :

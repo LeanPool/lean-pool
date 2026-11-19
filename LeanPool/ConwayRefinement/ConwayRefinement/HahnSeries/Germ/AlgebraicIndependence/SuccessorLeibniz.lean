@@ -5,9 +5,7 @@ Authors: Dan Abramov
 -/
 module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Derivative
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Leibniz
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.FinitePart
-import Mathlib.Tactic.Abel
 
 /-!
 # Product rule for translated truncations of homogeneous representatives

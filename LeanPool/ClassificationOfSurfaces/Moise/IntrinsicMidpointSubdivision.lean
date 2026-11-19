@@ -164,8 +164,11 @@ theorem midpointPosition_nonneg (w : K.MidpointVertex) (u : K.Vertex) :
 theorem sum_midpointPosition (w : K.MidpointVertex) :
     ∑ v, K.midpointPosition w v = 1 := by
   rcases w with v | e
-  · simp [midpointPosition]
-  · simp [midpointPosition, K.card_of_mem_edges e.2]
+  · simp only [midpointPosition, Finset.sum_pi_single', Finset.mem_univ, ↓reduceIte]
+  · simp only [midpointPosition, Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const,
+    K.card_of_mem_edges e.2,
+    nsmul_eq_mul, Nat.cast_ofNat, ne_eq, OfNat.ofNat_ne_zero,
+    not_false_eq_true, mul_inv_cancel₀]
 
 /-- Affine barycentric evaluation from midpoint coordinates to old coordinates. -/
 noncomputable def midpointEvalAffine :
@@ -174,7 +177,11 @@ noncomputable def midpointEvalAffine :
 
 @[simp] theorem midpointEvalAffine_apply (x : K.MidpointVertex → ℝ) :
     K.midpointEvalAffine x = ∑ w, x w • K.midpointPosition w := by
-  simp [midpointEvalAffine]
+  simp only [midpointEvalAffine, Fintype.sum_sum_type, midpointPosition_old,
+    Finset.univ_eq_attach,
+    LinearMap.coe_toAffineMap, LinearMap.add_apply, LinearMap.coe_sum,
+    LinearMap.coe_smulRight, LinearMap.coe_proj,
+    Function.eval, Finset.sum_apply]
 
 theorem midpointEvalAffine_eq_sum_of_support {x : K.MidpointVertex → ℝ}
     {s : Finset K.MidpointVertex} (hsupp : ∀ w ∉ s, x w = 0) :
@@ -205,7 +212,7 @@ theorem midpointCentralFace_eq (t : K.Face) (i : ZMod 3) :
     simp only [Finset.mem_univ, Finset.mem_insert, Finset.mem_singleton, true_iff]
     exact (by decide : ∀ i j : ZMod 3, j = i ∨ j = i + 1 ∨ j = i + 2) i j
   rw [hu]
-  simp
+  simp only [Finset.image_insert, Finset.image_singleton]
 
 theorem midpointEval_corner_self
     (t : K.Face) (i : ZMod 3) {x : K.MidpointVertex → ℝ}
@@ -284,7 +291,7 @@ theorem midpointRecoverEdge_faceEdge (p : K.Vertex → ℝ) (t : K.Face) (i : ZM
         (min (2 * p (K.faceVertex t (i + 1)))
           (2 * (p (K.faceVertex t i) + p (K.faceVertex t (i + 1))) - 1))) := by
   rcases K.faceEdge_endpoint_order t i with h | h
-  · simp [midpointRecoverEdge, h.1, h.2]
+  · simp only [midpointRecoverEdge, h.1, h.2]
   · simp only [midpointRecoverEdge, h.1, h.2]
     congr 1
     ac_rfl
@@ -337,14 +344,18 @@ theorem midpointPosition_support_of_mem_face
         fun h => hv (by rw [h]; exact K.faceVertex_mem t i)
       have hvj : v ≠ K.faceVertex t (i + 1) :=
         fun h => hv (by rw [h]; exact K.faceVertex_mem t (i + 1))
-      simp [midpointPosition, hvi, hvj]
+      simp only [midpointPosition, faceEdge_val, Finset.mem_insert, hvi, Finset.mem_singleton, hvj,
+        or_self,
+    ↓reduceIte]
     · have hvi : v ≠ K.faceVertex t (i + 2) :=
         fun h => hv (by rw [h]; exact K.faceVertex_mem t (i + 2))
       have hvj : v ≠ K.faceVertex t (i + 2 + 1) :=
         fun h => hv (by rw [h]; exact K.faceVertex_mem t (i + 2 + 1))
       have hv0 : v ≠ K.faceVertex t i :=
         fun h => hv (by rw [h]; exact K.faceVertex_mem t i)
-      simp [midpointPosition, hvi, hv0]
+      simp only [midpointPosition, faceEdge_val, zmod3_add_two_add_one, Finset.mem_insert,
+        hvi,
+    Finset.mem_singleton, hv0, or_self, ↓reduceIte]
   · rw [Finset.mem_singleton.mp hs] at hw
     rw [midpointCentralFace] at hw
     obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hw
@@ -352,7 +363,9 @@ theorem midpointPosition_support_of_mem_face
       fun h => hv (by rw [h]; exact K.faceVertex_mem t i)
     have hvj : v ≠ K.faceVertex t (i + 1) :=
       fun h => hv (by rw [h]; exact K.faceVertex_mem t (i + 1))
-    simp [midpointPosition, hvi, hvj]
+    simp only [midpointPosition, faceEdge_val, Finset.mem_insert, hvi, Finset.mem_singleton, hvj,
+      or_self,
+    ↓reduceIte]
 
 /-- The affine midpoint evaluation sends a refined face into its parent old face. -/
 theorem midpointEvalAffine_support
@@ -383,20 +396,32 @@ theorem exists_midpointPosition_pos_of_mem_parent
       hji | hji | hji
     · subst j
       refine ⟨Sum.inl (K.faceVertex t i), ?_, ?_⟩
-      · simp [midpointCornerFace]
-      · simp [midpointPosition]
+      · simp only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Finset.mem_singleton,
+        or_self, or_false]
+      · simp only [midpointPosition, Pi.single_eq_same, zero_lt_one]
     · subst j
       refine ⟨Sum.inr (K.faceEdge t i), ?_, ?_⟩
-      · simp [midpointCornerFace]
-      · simp [midpointPosition]
+      · simp only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Finset.mem_singleton,
+        Sum.inr.injEq, true_or,
+    or_true]
+      · simp only [midpointPosition, faceEdge_val, Finset.mem_insert, Finset.mem_singleton,
+        or_true, ↓reduceIte,
+    inv_pos, Nat.ofNat_pos]
     · subst j
       refine ⟨Sum.inr (K.faceEdge t (i + 2)), ?_, ?_⟩
-      · simp [midpointCornerFace]
-      · simp [midpointPosition]
+      · simp only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Sum.inr.injEq,
+        Finset.mem_singleton, or_true]
+      · simp only [midpointPosition, faceEdge_val, zmod3_add_two_add_one, Finset.mem_insert,
+        Finset.mem_singleton,
+    true_or, ↓reduceIte, inv_pos, Nat.ofNat_pos]
   · rw [Finset.mem_singleton.mp hcentral]
     refine ⟨Sum.inr (K.faceEdge t j), ?_, ?_⟩
-    · simp [midpointCentralFace]
-    · simp [midpointPosition]
+    · simp only [midpointCentralFace, Finset.mem_image, Finset.mem_univ, Sum.inr.injEq,
+      true_and,
+    exists_apply_eq_apply]
+    · simp only [midpointPosition, faceEdge_val, Finset.mem_insert, Finset.mem_singleton, true_or,
+      ↓reduceIte,
+    inv_pos, Nat.ofNat_pos]
 
 /-- A point with strictly positive coordinates on a midpoint child maps to a point with strictly
 positive coordinates on its parent. -/
@@ -423,14 +448,14 @@ theorem midpointFacesOver_parent_unique
     fun w ↦ if w ∈ s then 1 else 0
   have hxs : ∀ w ∉ s, x w = 0 := by
     intro w hw
-    simp [x, hw]
+    simp only [hw, ↓reduceIte, x]
   have hx0 : ∀ w, 0 ≤ x w := by
     intro w
     simp only [x]
     split_ifs <;> norm_num
   have hxpos : ∀ w ∈ s, 0 < x w := by
     intro w hw
-    simp [x, hw]
+    simp only [hw, ↓reduceIte, zero_lt_one, x]
   apply Subtype.ext
   apply Finset.Subset.antisymm
   · intro v hvt
@@ -516,12 +541,16 @@ theorem oldVertex_eq_of_mem_midpointFace
   rcases hs with hcorner | hcentral
   · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hcorner
     have hv' : v = K.faceVertex t i := by
-      simpa [midpointCornerFace] using hv
+      simpa only [midpointCornerFace, Finset.mem_insert, Sum.inl.injEq, reduceCtorEq,
+        Finset.mem_singleton, or_self,
+    or_false] using hv
     have hw' : w = K.faceVertex t i := by
-      simpa [midpointCornerFace] using hw
+      simpa only [midpointCornerFace, Finset.mem_insert, Sum.inl.injEq, reduceCtorEq,
+        Finset.mem_singleton, or_self,
+    or_false] using hw
     exact hv'.trans hw'.symm
   · rw [Finset.mem_singleton.mp hcentral, midpointCentralFace] at hv
-    simp at hv
+    simp only [Finset.mem_image, Finset.mem_univ, reduceCtorEq, and_false, exists_const] at hv
 
 /-- Two distinct edges of a triangular face cover the whole face. -/
 theorem faceEdge_union_eq_face_of_ne
@@ -538,7 +567,10 @@ theorem faceEdge_union_eq_face_of_ne
       obtain ⟨k, rfl⟩ := K.exists_faceVertex_eq_of_mem t hv
       rcases (by decide :
           ∀ i k : ZMod 3, k = i ∨ k = i + 1 ∨ k = i + 2) i k with
-        rfl | rfl | rfl <;> simp []
+        rfl | rfl | rfl <;> simp only [faceEdge_val, zmod3_add_one_add_one, Finset.union_insert,
+          Finset.insert_union,
+    Finset.singleton_union, Finset.mem_insert, Finset.mem_singleton,
+          true_or, or_true, Finset.insert_eq_of_mem]
   · subst j
     apply Finset.Subset.antisymm
     · exact Finset.union_subset (K.faceEdge_subset_face t i)
@@ -585,16 +617,24 @@ theorem midpointCornerFace_eq_of_two_midpoints_mem
     K.midpointCornerFace t i = K.midpointCornerFace t j := by
   have hei' :
       e = K.faceEdge t i ∨ e = K.faceEdge t (i + 2) := by
-    simpa [midpointCornerFace] using hei
+    simpa only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Sum.inr.injEq,
+      Finset.mem_singleton,
+    false_or] using hei
   have hdi' :
       d = K.faceEdge t i ∨ d = K.faceEdge t (i + 2) := by
-    simpa [midpointCornerFace] using hdi
+    simpa only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Sum.inr.injEq,
+      Finset.mem_singleton,
+    false_or] using hdi
   have hej' :
       e = K.faceEdge t j ∨ e = K.faceEdge t (j + 2) := by
-    simpa [midpointCornerFace] using hej
+    simpa only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Sum.inr.injEq,
+      Finset.mem_singleton,
+    false_or] using hej
   have hdj' :
       d = K.faceEdge t j ∨ d = K.faceEdge t (j + 2) := by
-    simpa [midpointCornerFace] using hdj
+    simpa only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Sum.inr.injEq,
+      Finset.mem_singleton,
+    false_or] using hdj
   have hi :
       (e = K.faceEdge t i ∧ d = K.faceEdge t (i + 2)) ∨
         (e = K.faceEdge t (i + 2) ∧ d = K.faceEdge t i) := by
@@ -795,7 +835,10 @@ theorem midpointRecoverOld_corner
   have hsum : x (Sum.inl (K.faceVertex t i)) +
       x (Sum.inr (K.faceEdge t i)) + x (Sum.inr (K.faceEdge t (i + 2))) = 1 := by
     rw [K.sum_eq_sum_of_midpointSupport hx] at hx1
-    simpa [midpointCornerFace, K.faceEdge_ne_add_two t i, add_assoc] using hx1
+    simpa only [add_assoc, midpointCornerFace, Finset.mem_insert, reduceCtorEq,
+      Finset.mem_singleton, or_self,
+    not_false_eq_true, Finset.sum_insert, Sum.inr.injEq,
+      K.faceEdge_ne_add_two t i, Finset.sum_singleton] using hx1
   by_cases hv : v ∈ t.1
   · obtain ⟨j, rfl⟩ := K.exists_faceVertex_eq_of_mem t hv
     rcases (by decide : ∀ i j : ZMod 3, j = i ∨ j = i + 1 ∨ j = i + 2) i j with
@@ -816,7 +859,10 @@ theorem midpointRecoverOld_corner
           hx0 (Sum.inr (K.faceEdge t (i + 2)))]
       rw [max_eq_right (by linarith)]
       exact (hx (Sum.inl (K.faceVertex t (i + 1))) (by
-        simp [midpointCornerFace, (K.faceVertex_ne_next t i).symm])).symm
+        simp only [midpointCornerFace, Finset.mem_insert, Sum.inl.injEq,
+          (K.faceVertex_ne_next t i).symm,
+    reduceCtorEq, Finset.mem_singleton, or_self,
+          not_false_eq_true])).symm
     · subst j
       unfold midpointRecoverOld
       rw [K.midpointEval_corner_prev t i hx]
@@ -825,7 +871,10 @@ theorem midpointRecoverOld_corner
           hx0 (Sum.inr (K.faceEdge t i))]
       rw [max_eq_right (by linarith)]
       exact (hx (Sum.inl (K.faceVertex t (i + 2))) (by
-        simp [midpointCornerFace, (K.faceVertex_ne_add_two t i).symm])).symm
+        simp only [midpointCornerFace, Finset.mem_insert, Sum.inl.injEq,
+          (K.faceVertex_ne_add_two t i).symm,
+    reduceCtorEq, Finset.mem_singleton, or_self,
+          not_false_eq_true])).symm
   · have hface : K.midpointCornerFace t i ∈ K.midpointFacesOver t := by
       apply Finset.mem_union_left
       exact Finset.mem_image.mpr ⟨i, Finset.mem_univ i, rfl⟩
@@ -836,7 +885,9 @@ theorem midpointRecoverOld_corner
     simp only [mul_zero, zero_sub, max_eq_right (by norm_num : (-1 : ℝ) ≤ 0)]
     have hvi : v ≠ K.faceVertex t i :=
       fun h => hv (by rw [h]; exact K.faceVertex_mem t i)
-    exact (hx (Sum.inl v) (by simp [midpointCornerFace, hvi])).symm
+    exact (hx (Sum.inl v) (by simp only [midpointCornerFace, Finset.mem_insert, Sum.inl.injEq, hvi,
+      reduceCtorEq, Finset.mem_singleton,
+    or_self, not_false_eq_true])).symm
 
 theorem midpointRecoverOld_central
     (t : K.Face) {x : K.MidpointVertex → ℝ}
@@ -853,14 +904,19 @@ theorem midpointRecoverOld_central
       have he02 : K.faceEdge t i ≠ K.faceEdge t (i + 2) := K.faceEdge_ne_add_two t i
       have he12 : K.faceEdge t (i + 1) ≠ K.faceEdge t (i + 2) := by
         simpa only [zmod3_add_one_add_one] using K.faceEdge_ne_next t (i + 1)
-      simpa [K.midpointCentralFace_eq t i, he01, he02, he12, add_assoc] using hx1
+      simpa only [add_assoc, K.midpointCentralFace_eq t i, Finset.mem_insert, Sum.inr.injEq,
+        he01,
+    Finset.mem_singleton, he02, or_self, not_false_eq_true, Finset.sum_insert, he12,
+        Finset.sum_singleton] using hx1
     unfold midpointRecoverOld
     rw [K.midpointEval_central_coord t i hx]
     have hnonpos : 2 * ((x (Sum.inr (K.faceEdge t i)) +
         x (Sum.inr (K.faceEdge t (i + 2)))) / 2) - 1 ≤ 0 := by
       linarith [hx0 (Sum.inr (K.faceEdge t (i + 1)))]
     rw [max_eq_right hnonpos]
-    exact (hx (Sum.inl (K.faceVertex t i)) (by simp [midpointCentralFace])).symm
+    exact (hx (Sum.inl (K.faceVertex t i)) (by simp only [midpointCentralFace, Finset.mem_image,
+      Finset.mem_univ, reduceCtorEq, and_false, exists_const,
+    not_false_eq_true])).symm
   · have hface : K.midpointCentralFace t ∈ K.midpointFacesOver t :=
       Finset.mem_union_right _ (Finset.mem_singleton_self _)
     have hp : K.midpointEvalAffine x v = 0 :=
@@ -869,7 +925,9 @@ theorem midpointRecoverOld_central
     rw [hp]
     simp only [mul_zero, zero_sub,
       max_eq_right (by norm_num : (-1 : ℝ) ≤ 0)]
-    exact (hx (Sum.inl v) (by simp [midpointCentralFace])).symm
+    exact (hx (Sum.inl v) (by simp only [midpointCentralFace, Finset.mem_image, Finset.mem_univ,
+      reduceCtorEq, and_false, exists_const,
+    not_false_eq_true])).symm
 
 theorem midpointRecoverEdge_corner
     (t : K.Face) (i : ZMod 3) {x : K.MidpointVertex → ℝ}
@@ -881,7 +939,10 @@ theorem midpointRecoverEdge_corner
   let C := x (Sum.inr (K.faceEdge t (i + 2)))
   have hsum : A + B + C = 1 := by
     rw [K.sum_eq_sum_of_midpointSupport hx] at hx1
-    simpa [A, B, C, midpointCornerFace, K.faceEdge_ne_add_two t i, add_assoc] using hx1
+    simpa only [add_assoc, midpointCornerFace, Finset.mem_insert, reduceCtorEq,
+      Finset.mem_singleton, or_self,
+    not_false_eq_true, Finset.sum_insert, Sum.inr.injEq,
+      K.faceEdge_ne_add_two t i, Finset.sum_singleton] using hx1
   have hA0 : 0 ≤ A := hx0 _
   have hB0 : 0 ≤ B := hx0 _
   have hC0 : 0 ≤ C := hx0 _
@@ -915,7 +976,9 @@ theorem midpointRecoverEdge_corner
           (K.faceEdge_ne_next t i).symm
         have h12 : K.faceEdge t (i + 1) ≠ K.faceEdge t (i + 2) := by
           simpa only [zmod3_add_one_add_one] using K.faceEdge_ne_next t (i + 1)
-        simp [midpointCornerFace, h10, h12])).symm
+        simp only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Sum.inr.injEq, h10,
+          Finset.mem_singleton, h12,
+    or_self, not_false_eq_true])).symm
     · subst j
       rw [K.midpointRecoverEdge_faceEdge, K.midpointEval_corner_prev t i hx]
       simp only [zmod3_add_two_add_one]
@@ -1095,7 +1158,9 @@ theorem sum_faceVertex_coords (t : K.Face) (p : K.Vertex → ℝ)
     have hi01 : i ≠ i + 1 := (by decide : ∀ i : ZMod 3, i ≠ i + 1) i
     have hi02 : i ≠ i + 2 := (by decide : ∀ i : ZMod 3, i ≠ i + 2) i
     have hi12 : i + 1 ≠ i + 2 := (by decide : ∀ i : ZMod 3, i + 1 ≠ i + 2) i
-    simpa [hi01, hi02, hi12, add_assoc] using hsum'
+    simpa only [add_assoc, Finset.mem_insert, hi01, Finset.mem_singleton, hi02, or_self,
+      not_false_eq_true,
+    Finset.sum_insert, hi12, Finset.sum_singleton] using hsum'
   · exact fun a _ b _ hab => K.faceVertex_injective t hab
 
 /-- Explicit inverse coordinates in a corner triangle. -/
@@ -1131,9 +1196,14 @@ theorem midpointCornerWeights_support (t : K.Face) (i : ZMod 3)
   intro w hw
   simp only [midpointCornerWeights]
   split_ifs with h₁ h₂ h₃
-  · exact (hw (by simp [midpointCornerFace, h₁])).elim
-  · exact (hw (by simp [midpointCornerFace, h₂])).elim
-  · exact (hw (by simp [midpointCornerFace, h₃])).elim
+  · exact (hw (by simp only [midpointCornerFace, h₁, Finset.mem_insert, reduceCtorEq,
+    Finset.mem_singleton, or_self, or_false])).elim
+  · exact (hw (by simp only [midpointCornerFace, h₂, Finset.mem_insert, reduceCtorEq,
+    Finset.mem_singleton, Sum.inr.injEq,
+    true_or, or_true])).elim
+  · exact (hw (by simp only [midpointCornerFace, h₃, Finset.mem_insert, reduceCtorEq,
+    Sum.inr.injEq, Finset.mem_singleton,
+    or_true])).elim
   · rfl
 
 theorem midpointCornerWeights_nonneg (t : K.Face) (i : ZMod 3)
@@ -1151,7 +1221,12 @@ theorem sum_midpointCornerWeights (t : K.Face) (i : ZMod 3)
       p (K.faceVertex t (i + 2)) = 1) :
     ∑ w, K.midpointCornerWeights t i p w = 1 := by
   rw [K.sum_eq_sum_of_midpointSupport (K.midpointCornerWeights_support t i p)]
-  simp [midpointCornerFace, K.faceEdge_ne_add_two t i]
+  simp only [midpointCornerFace, Finset.mem_insert, reduceCtorEq, Finset.mem_singleton,
+    or_self,
+    not_false_eq_true, Finset.sum_insert, midpointCornerWeights_old, Sum.inr.injEq,
+    K.faceEdge_ne_add_two t i,
+    midpointCornerWeights_nextEdge, Finset.sum_singleton,
+    midpointCornerWeights_prevEdge]
   linarith
 
 /-- Explicit inverse coordinates in the central triangle. -/

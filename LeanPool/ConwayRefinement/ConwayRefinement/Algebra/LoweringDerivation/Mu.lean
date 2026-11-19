@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.LoweringDerivation.Grading
 public import LeanPool.ConwayRefinement.ConwayRefinement.Order.Filter.FunAtZeroMinus
 
-import Mathlib.LinearAlgebra.TensorProduct.RightExactness
 import Mathlib.LinearAlgebra.TensorProduct.Finiteness
 
 /-!
@@ -269,7 +268,7 @@ theorem mu_lTensor_mulLeft (j : ℕ) (B : R) (T : 𝒜 (j : NatOrdinal) ⊗[E] F
     change Ideal.Quotient.mk _ ((a : R) * (B * b)) = Ideal.Quotient.mk _ ((a : R) * b) * _
     rw [← map_mul]
     congr 1
-    ring
+    ac_rfl
   | add x y hx hy => rw [map_add, map_add, hx, hy, map_add, add_mul]
 
 /-- `μ_j` is onto `I_{≥j}/I_{≥j+1}`: the class of an element of `I_{≥j}` modulo `I_{≥j+1}` is in

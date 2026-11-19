@@ -155,10 +155,10 @@ theorem commonEdgeRelabeling_retainWord {n : ℕ} (a : Fin n)
       have hda : edgeOfDart d ≠ a := by
         intro h
         apply ha
-        simp [h]
+        simp only [List.map_cons, h, List.mem_cons, List.mem_map, true_or]
       have htail : a ∉ word.map edgeOfDart := by
         intro h
-        exact ha (by simp [h])
+        exact ha (by simp only [List.map_cons, List.mem_cons, h, or_true])
       change
         (commonEdgeRelabeling a).mapDart (P1.castSuccDart d) ::
             (P2.retainWord word).map (commonEdgeRelabeling a).mapDart =

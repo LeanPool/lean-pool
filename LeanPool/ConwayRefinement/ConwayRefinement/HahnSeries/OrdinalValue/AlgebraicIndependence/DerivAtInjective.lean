@@ -10,12 +10,7 @@ import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.DerivAt
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.UnboundedTruncations
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.StableInterval
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueFinalSegment
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueImage
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.SetOrderType
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.AdditivelyPrincipal
-import Mathlib.Topology.Instances.Real.Lemmas
 
 /-!
 # Injectivity of translated truncation on `P_α` for successor `α`

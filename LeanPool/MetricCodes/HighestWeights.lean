@@ -7,9 +7,6 @@ module
 
 public import LeanPool.MetricCodes.Interlacing
 import Mathlib.Algebra.MvPolynomial.Monad
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Highest-weight identities
@@ -2185,7 +2182,7 @@ theorem pivot_lt_diamondUpperSuffixNext
       (hU ((Finset.mem_sort (· ≤ ·)).mp hmem))).2
   · have hnexttarget : next = target := by simpa only [List.mem_cons, List.not_mem_nil,
                                              or_false] using hmem
-    simpa [next, hnexttarget] using hpivot
+    simpa only [hnexttarget, gt_iff_lt, next] using hpivot
 
 theorem sum_weightedDiamondPairResidual_eq_sum_spectralPrefix_suffix
     {r n : ℕ} (lam : Fin (r + 1) → ℕ) (hdom : Antitone lam)
@@ -2329,7 +2326,7 @@ theorem polarization_diamondPathOperator_pivot_sub
       ite_eq_right hstart_ne, zero_add,
       upperPolarizationPathCommutator_append_pivot
         pivot target hpt (S.sort (· ≤ ·)) hlistnon hlist]
-    simp [diamondPathOperator_apply, hstarts]
+    simp only [diamondPathOperator_apply, hstarts]
   · have hempty : S = ∅ := Finset.not_nonempty_iff_eq_empty.mp hnon
     subst S
     simp only [diamondPathOperator_apply, polarizationPathStart_empty,
@@ -4525,7 +4522,9 @@ theorem complex_eigenpair_im_eq_zero_of_symmetric
         (real_inner_self_pos.mpr hvne) real_inner_self_nonneg
     · exact add_pos_of_nonneg_of_pos
         real_inner_self_nonneg (real_inner_self_pos.mpr hwne)
-  nlinarith
+  have hmul : b * (⟪v, v⟫_ℝ + ⟪w, w⟫_ℝ) = 0 := by
+    linear_combination -hsym
+  exact (mul_eq_zero.mp hmul).resolve_right hsum.ne'
 
 theorem symmetric_eq_smul_id_of_complex_cyclic_eigenvector
     {V I : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
@@ -6003,7 +6002,7 @@ theorem pderiv_odd_conjugateIsotropicVariable {r n : ℕ}
     DeterminantVectors.variableIndex_eq_iff, eq_comm, evenCoordinate_ne_oddCoordinate, and_false,
     not_false_eq_true, Pi.single_eq_of_ne, Derivation.leibniz, Pi.single_apply, oddCoordinate_inj,
     smul_eq_mul, mul_ite, mul_one, mul_zero, MvPolynomial.derivation_C, add_zero, zero_sub]
-  split_ifs <;> simp
+  split_ifs <;> simp only [neg_zero]
 
 theorem ambientCartan_conjugateIsotropicVariable {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
@@ -6426,7 +6425,7 @@ theorem monomial_mem_weightedPolynomialFiltration {σ : Type*}
   intro e he
   rw [MvPolynomial.coeff_monomial] at he
   split_ifs at he with hed
-  · simp [hed]
+  · simp only [hed, Std.le_refl]
   · exact (he rfl).elim
 
 /-- The polynomial submodule supported on monomials of weighted degree strictly below `k`. -/

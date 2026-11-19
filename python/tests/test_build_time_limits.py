@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import signal
 import subprocess
@@ -95,7 +96,7 @@ def test_violations_cover_changed_files_only(
     # At900s no observed module is too slow; Cached still lacks a fresh timing.
     assert limits.check(log, "base", tmp_path, limit=900) == 1
     output = capsys.readouterr().out
-    assert "No fresh successful build timing for LeanPool/Quick/Cached.lean" in output
+    assert "No successful build timing for LeanPool/Quick/Cached.lean" in output
 
 
 def _git(root: Path, *arguments: str) -> str:
@@ -258,9 +259,6 @@ def test_prepare_rebuilds_even_with_a_matching_legacy_policy_marker(
     """A global marker cannot certify a changed file on a later source reversion."""
     root, base = _repository(tmp_path)
     changed = _outputs(root, BUNDLE_MODULE)
-    log = tmp_path / "build.log"
-    log.write_text(f"✔ [1/1] Built {BUNDLE_MODULE} (300s)\n")
-    assert limits.check(log, base, root, limit=600) == 0
     marker = root / ".lake/build/lean-pool-build-time-policy"
     marker.write_text(hashlib.sha256(Path(limits.__file__).read_bytes()).hexdigest())
     assert limits.prepare(base, root) == 0
@@ -591,7 +589,7 @@ def test_check_rejects_missing_or_replayed_changed_file_timing(
     log = tmp_path / "build.log"
     log.write_text(log_text)
     assert limits.check(log, base, root, 600) == 1
-    assert "No fresh successful build timing" in capsys.readouterr().out
+    assert "No successful build timing" in capsys.readouterr().out
 
 
 def test_same_policy_source_revert_rebuilds_and_checks_slow_file(tmp_path: Path):
@@ -618,6 +616,138 @@ def test_same_policy_source_revert_rebuilds_and_checks_slow_file(tmp_path: Path)
     assert limits.check(log, base, root, 600) == 0
 
 
+def _timed(root: Path, base: str, tmp_path: Path, seconds: int = 300) -> Path:
+    """Compile outputs for the changed bundle and record their build time."""
+    artifact = _artifact(root, BUNDLE_MODULE, ".olean")
+    log = tmp_path / "timed.log"
+    log.write_text(f"Built {BUNDLE_MODULE} ({seconds}s)\n")
+    assert limits.check(log, base, root, 900) == 0
+    return artifact
+
+
+def test_recorded_time_spares_the_rebuild_of_unchanged_output(tmp_path: Path, capsys):
+    """Output timed by an earlier run is kept and passes without a fresh build."""
+    root, base = _repository(tmp_path)
+    artifact = _timed(root, base, tmp_path)
+    assert limits.recorded_seconds(root, BUNDLE) == 300.0
+    assert limits.prepare(base, root) == 0
+    assert artifact.exists()
+    log = tmp_path / "build.log"
+    log.write_text(f"Replayed {BUNDLE_MODULE}\n")
+    capsys.readouterr()
+    assert limits.check(log, base, root, 600) == 0
+    assert "0 compiled in this job, 1 with a time recorded" in capsys.readouterr().out
+
+
+def test_recorded_time_over_the_limit_still_fails(tmp_path: Path, capsys):
+    """Reusing output never launders a slow file: its recorded time is checked."""
+    root, base = _repository(tmp_path)
+    _timed(root, base, tmp_path, seconds=865)
+    log = tmp_path / "build.log"
+    log.write_text("")
+    assert limits.check(log, base, root, 600) == 1
+    assert "took 865 s to build" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("suffix", [".olean", ".olean.private", ".olean.server"])
+def test_recorded_time_does_not_cover_different_output(tmp_path: Path, suffix: str):
+    """A receipt certifies only the exact compiled files it was measured for."""
+    root, base = _repository(tmp_path)
+    artifact = _timed(root, base, tmp_path)
+    _artifact(root, BUNDLE_MODULE, suffix).write_text("compiled by an untimed build\n")
+    assert limits.recorded_seconds(root, BUNDLE) is None
+    assert limits.prepare(base, root) == 0
+    assert not artifact.exists()
+    stem = artifact.with_suffix("")
+    assert not stem.with_name(stem.name + limits.RECEIPT_SUFFIX).exists()
+    log = tmp_path / "build.log"
+    log.write_text("")
+    assert limits.check(log, base, root, 600) == 1
+
+
+@pytest.mark.parametrize(
+    "receipt",
+    [
+        "{",
+        "[]",
+        '{"version": 0, "seconds": 1, "outputs": "DIGEST"}',
+        '{"version": 1, "seconds": true, "outputs": "DIGEST"}',
+        '{"version": 1, "seconds": -1, "outputs": "DIGEST"}',
+        '{"version": 1, "seconds": "1", "outputs": "DIGEST"}',
+        '{"version": 1, "outputs": "DIGEST"}',
+        '{"version": 1, "seconds": 1}',
+    ],
+)
+def test_malformed_receipts_certify_nothing(tmp_path: Path, receipt: str):
+    """Anything but a well-formed receipt for the current output forces a rebuild."""
+    root, base = _repository(tmp_path)
+    artifact = _artifact(root, BUNDLE_MODULE, ".olean")
+    digest = limits.output_digest(root, BUNDLE)
+    stem = artifact.with_suffix("")
+    stem.with_name(stem.name + limits.RECEIPT_SUFFIX).write_text(
+        receipt.replace("DIGEST", digest)
+    )
+    assert limits.recorded_seconds(root, BUNDLE) is None
+    assert limits.prepare(base, root) == 0
+    assert not artifact.exists()
+
+
+def test_fresh_build_replaces_the_recorded_time(tmp_path: Path):
+    """A module compiled in this job is judged by this job's measurement."""
+    root, base = _repository(tmp_path)
+    _timed(root, base, tmp_path, seconds=865)
+    log = tmp_path / "build.log"
+    log.write_text(f"Built {BUNDLE_MODULE} (300s)\n")
+    assert limits.check(log, base, root, 600) == 0
+    assert limits.recorded_seconds(root, BUNDLE) == 300.0
+
+
+def test_only_changed_modules_get_receipts(tmp_path: Path):
+    """Untouched files are outside the limit, so their builds record nothing."""
+    root, base = _repository(tmp_path)
+    unchanged = "LeanPool/MovingSofa/Certificates/Bundle023.lean"
+    _artifact(root, BUNDLE_MODULE, ".olean")
+    _artifact(root, "LeanPool.MovingSofa.Certificates.Bundle023", ".olean")
+    log = tmp_path / "build.log"
+    log.write_text(LAKE_LOG.replace("(865s)", "(300s)"))
+    assert limits.check(log, base, root, 600) == 0
+    assert limits.recorded_seconds(root, BUNDLE) == 300.0
+    assert limits.recorded_seconds(root, unchanged) is None
+
+
+def test_receipt_without_compiled_output_certifies_nothing(tmp_path: Path, capsys):
+    """A receipt naming no output cannot stand in for a module that is not built."""
+    root, base = _repository(tmp_path)
+    stem = root / ".lake/build/lib/lean" / Path(BUNDLE).with_suffix("")
+    stem.parent.mkdir(parents=True)
+    receipt = stem.with_name(stem.name + limits.RECEIPT_SUFFIX)
+    receipt.write_text(
+        json.dumps({"version": limits.RECEIPT_VERSION, "seconds": 1, "outputs": None})
+    )
+    assert limits.output_digest(root, BUNDLE) is None
+    assert limits.recorded_seconds(root, BUNDLE) is None
+    assert limits.prepare(base, root) == 0
+    assert not receipt.exists()
+    receipt.write_text(
+        json.dumps({"version": limits.RECEIPT_VERSION, "seconds": 1, "outputs": None})
+    )
+    log = tmp_path / "build.log"
+    log.write_text("")
+    capsys.readouterr()
+    assert limits.check(log, base, root, 600) == 1
+    assert "No successful build timing" in capsys.readouterr().out
+
+
+def test_missing_output_records_nothing(tmp_path: Path):
+    """A timing without compiled output cannot certify a later restore."""
+    root, base = _repository(tmp_path)
+    log = tmp_path / "build.log"
+    log.write_text(f"Built {BUNDLE_MODULE} (300s)\n")
+    assert limits.check(log, base, root, 600) == 0
+    assert limits.recorded_seconds(root, BUNDLE) is None
+    assert limits.output_digest(root, BUNDLE) is None
+
+
 def test_prepare_and_check_scope_other_shard_and_explicit_empty(tmp_path: Path):
     """A shard checks only changed modules it builds; an empty scope checks none."""
     root, base = _repository(tmp_path)
@@ -641,16 +771,48 @@ def test_prepare_and_check_scope_other_shard_and_explicit_empty(tmp_path: Path):
     assert limits.check(log, base, root, 600) == 1
 
 
-def test_assembly_skips_projects_its_shards_already_timed(tmp_path: Path):
-    """Assembly neither rebuilds nor re-times changed files a shard just checked."""
+def test_assembly_reuses_output_a_shard_timed(tmp_path: Path):
+    """Assembly keeps a shard's delivered output and judges its recorded time."""
     root, base = _repository(tmp_path)
-    shard_output = _artifact(root, BUNDLE_MODULE, ".olean")
-    log = tmp_path / "build.log"
-    log.write_text("")
-    assert limits.prepare(base, root, exclude_projects=["MovingSofa"]) == 0
+    shard_output = _timed(root, base, tmp_path)
+    assert limits.prepare(base, root) == 0
     assert shard_output.exists()
-    assert limits.check(log, base, root, 600, exclude_projects=["MovingSofa"]) == 0
-    assert limits.check(log, base, root, 600, exclude_projects=["Other"]) == 1
+    log = tmp_path / "build.log"
+    log.write_text(f"Replayed {BUNDLE_MODULE}\n")
+    assert limits.check(log, base, root, 600) == 0
+
+
+def test_assembly_times_a_shard_project_it_compiles_itself(tmp_path: Path, capsys):
+    """Output that never reached assembly is rebuilt there and held to the limit."""
+    root, base = _repository(tmp_path)
+    undelivered = _artifact(root, BUNDLE_MODULE, ".olean")
+    assert limits.prepare(base, root) == 0
+    assert not undelivered.exists()
+    log = tmp_path / "build.log"
+    log.write_text(f"Built {BUNDLE_MODULE} (865s)\n")
+    capsys.readouterr()
+    assert limits.check(log, base, root, 600) == 1
+    assert "took 865 s to build" in capsys.readouterr().out
+
+
+def test_fresh_slow_build_overrides_a_recorded_passing_time(tmp_path: Path):
+    """A module rebuilt over the limit fails although an earlier build passed."""
+    root, base = _repository(tmp_path)
+    _timed(root, base, tmp_path, seconds=300)
+    log = tmp_path / "build.log"
+    log.write_text(f"Built {BUNDLE_MODULE} (865s)\n")
+    assert limits.check(log, base, root, 600) == 1
+    assert limits.recorded_seconds(root, BUNDLE) == 865.0
+
+
+@pytest.mark.parametrize("command", ["prepare", "check"])
+def test_no_job_can_exempt_projects_from_timing(tmp_path: Path, command: str):
+    """The command line offers no way to leave a changed project unchecked."""
+    arguments = [command, "--base", "HEAD", "--exclude-projects", "MovingSofa"]
+    if command == "check":
+        arguments += ["--log", str(tmp_path / "build.log")]
+    with pytest.raises(SystemExit):
+        limits.main(arguments)
 
 
 def test_noncontent_change_has_no_fresh_timing_requirement(tmp_path: Path):
@@ -764,8 +926,13 @@ def test_workflow_rebuilds_changed_modules_after_all_compiled_restores() -> None
             "build_time_limits check"
         )
         assert script.count('--base "$time_base"') == 2
+        assert steps[index]["env"]["BUILD_TIME_BASE"] == (
+            "${{ needs.plan.outputs.diff_base }}"
+        )
         assert 'git cat-file -e "$BUILD_TIME_BASE"' in script
         assert 'time_base=""' in script
+        if name != "rebase":
+            assert any("-m lean_pool.ci_pr_build" in s.get("run", "") for s in steps)
         if name == "shard":
             assert (
                 'git ls-files -- "LeanPool/$project.lean" "LeanPool/$project/"'
@@ -776,11 +943,8 @@ def test_workflow_rebuilds_changed_modules_after_all_compiled_restores() -> None
         else:
             assert "--modules" not in script
             assert "lake build LeanPool" in script
-        if name == "finalize":
-            assert "include.*.projects" in steps[index]["env"]["SHARD_PROJECTS"]
-            assert script.count("--exclude-projects $SHARD_PROJECTS") == 2
-        else:
-            assert "--exclude-projects" not in script
+        assert "--exclude-projects" not in script
+        assert "SHARD_PROJECTS" not in steps[index]["env"]
         for restore_index, step in enumerate(steps):
             run = step.get("run", "")
             cache = step.get("uses", "").startswith("actions/cache/restore@") and (

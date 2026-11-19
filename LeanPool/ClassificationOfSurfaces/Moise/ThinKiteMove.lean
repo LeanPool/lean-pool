@@ -466,7 +466,8 @@ theorem exists_thinKitePatch_inter_leftSegment_eq_singleton {q : Plane}
       apply plane_ext
       · simp only [planePoint_apply_zero]
         linarith only [hdx0]
-      · simpa [planePoint] using hdy0
+      · simpa only [Fin.isValue, planePoint, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one] using hdy0
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
@@ -592,7 +593,8 @@ theorem exists_thinKitePatch_inter_rightSegment_eq_singleton {q : Plane}
       apply plane_ext
       · simp only [planePoint_apply_zero]
         linarith only [hdx0]
-      · simpa [planePoint] using hdy0
+      · simpa only [Fin.isValue, planePoint, Matrix.cons_val_one,
+        Matrix.cons_val_fin_one] using hdy0
     · intro p hp
       rw [Set.mem_singleton_iff] at hp
       subst p
@@ -1163,6 +1165,25 @@ theorem thinKiteAmbientHomeomorph_image_rightSpoke (δ : ℝ) (hδ : 0 < δ) :
       ⟨c, hc, rfl⟩, thinKiteAmbientHomeomorph_rightSpoke δ hδ c hc⟩
 
 /-- The thin-kite homeomorphism is affine on every subsegment of its left base half. -/
+theorem image_subsegment_of_lineMap_eq (f : Plane → Plane) (p q p' q' : Plane)
+    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1,
+      f (AffineMap.lineMap p q t) = AffineMap.lineMap p' q' t)
+    {a b : Plane} (ha : a ∈ segment ℝ p q) (hb : b ∈ segment ℝ p q) :
+    f '' segment ℝ a b = segment ℝ (f a) (f b) := by
+  rw [segment_eq_image_lineMap] at ha hb
+  obtain ⟨s, hs, rfl⟩ := ha
+  obtain ⟨r, hr, rfl⟩ := hb
+  have hsub : segment ℝ s r ⊆ Set.Icc (0 : ℝ) 1 :=
+    (convex_Icc (0 : ℝ) 1).segment_subset hs hr
+  calc
+    _ = f '' (AffineMap.lineMap p q '' segment ℝ s r) := by
+      rw [image_segment]
+    _ = AffineMap.lineMap p' q' '' segment ℝ s r := by
+      rw [Set.image_image]
+      exact Set.image_congr fun t ht => hf t (hsub ht)
+    _ = _ := by rw [image_segment, hf s hs, hf r hr]
+
+/-- The thin-kite homeomorphism is affine on every subsegment of its left base half. -/
 theorem thinKiteAmbientHomeomorph_image_segment_of_endpoints_mem_leftSpoke
     (δ : ℝ) (hδ : 0 < δ) {a b : Plane}
     (ha : a ∈ segment ℝ (planePoint (-1) 0) (planePoint 0 0))
@@ -1170,42 +1191,8 @@ theorem thinKiteAmbientHomeomorph_image_segment_of_endpoints_mem_leftSpoke
     thinKiteAmbientHomeomorph δ hδ '' segment ℝ a b =
       segment ℝ (thinKiteAmbientHomeomorph δ hδ a)
         (thinKiteAmbientHomeomorph δ hδ b) := by
-  rw [segment_eq_image_lineMap] at ha hb
-  obtain ⟨s, hs, rfl⟩ := ha
-  obtain ⟨r, hr, rfl⟩ := hb
-  let L := planePoint (-1) 0
-  let C := planePoint 0 0
-  let A := planePoint 0 1
-  have hline (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
-      thinKiteAmbientHomeomorph δ hδ
-          (AffineMap.lineMap (AffineMap.lineMap L C s)
-            (AffineMap.lineMap L C r) t) =
-        AffineMap.lineMap
-          (thinKiteAmbientHomeomorph δ hδ (AffineMap.lineMap L C s))
-          (thinKiteAmbientHomeomorph δ hδ (AffineMap.lineMap L C r)) t := by
-    have hsr : (1 - t) * s + t * r ∈ Set.Icc (0 : ℝ) 1 := by
-      have hmem := (convex_Icc (0 : ℝ) 1).segment_subset hs hr
-        (lineMap_mem_segment ℝ s r ht)
-      simpa [AffineMap.lineMap_apply_module] using hmem
-    rw [show AffineMap.lineMap (AffineMap.lineMap L C s)
-          (AffineMap.lineMap L C r) t =
-        AffineMap.lineMap L C ((1 - t) * s + t * r) by
-      ext i
-      fin_cases i <;> simp [AffineMap.lineMap_apply_module] <;> ring]
-    rw [thinKiteAmbientHomeomorph_leftSpoke δ hδ _ hsr,
-      thinKiteAmbientHomeomorph_leftSpoke δ hδ s hs,
-      thinKiteAmbientHomeomorph_leftSpoke δ hδ r hr]
-    ext i
-    fin_cases i <;> simp [AffineMap.lineMap_apply_module] ; ring
-  rw [segment_eq_image_lineMap, segment_eq_image_lineMap]
-  ext p
-  constructor
-  · rintro ⟨q, ⟨t, ht, rfl⟩, rfl⟩
-    exact ⟨t, ht, by simpa [L, C] using (hline t ht).symm⟩
-  · rintro ⟨t, ht, rfl⟩
-    exact ⟨AffineMap.lineMap (AffineMap.lineMap L C s)
-      (AffineMap.lineMap L C r) t, ⟨t, ht, rfl⟩,
-        by simpa [L, C] using hline t ht⟩
+  exact image_subsegment_of_lineMap_eq _ _ _ _ _
+    (thinKiteAmbientHomeomorph_leftSpoke δ hδ) ha hb
 
 /-- The thin-kite homeomorphism is affine on every subsegment of its right base half. -/
 theorem thinKiteAmbientHomeomorph_image_segment_of_endpoints_mem_rightSpoke
@@ -1216,42 +1203,8 @@ theorem thinKiteAmbientHomeomorph_image_segment_of_endpoints_mem_rightSpoke
       segment ℝ (thinKiteAmbientHomeomorph δ hδ a)
         (thinKiteAmbientHomeomorph δ hδ b) := by
   rw [segment_symm] at ha hb
-  rw [segment_eq_image_lineMap] at ha hb
-  obtain ⟨s, hs, rfl⟩ := ha
-  obtain ⟨r, hr, rfl⟩ := hb
-  let R := planePoint 1 0
-  let C := planePoint 0 0
-  let A := planePoint 0 1
-  have hline (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
-      thinKiteAmbientHomeomorph δ hδ
-          (AffineMap.lineMap (AffineMap.lineMap R C s)
-            (AffineMap.lineMap R C r) t) =
-        AffineMap.lineMap
-          (thinKiteAmbientHomeomorph δ hδ (AffineMap.lineMap R C s))
-          (thinKiteAmbientHomeomorph δ hδ (AffineMap.lineMap R C r)) t := by
-    have hsr : (1 - t) * s + t * r ∈ Set.Icc (0 : ℝ) 1 := by
-      have hmem := (convex_Icc (0 : ℝ) 1).segment_subset hs hr
-        (lineMap_mem_segment ℝ s r ht)
-      simpa [AffineMap.lineMap_apply_module] using hmem
-    rw [show AffineMap.lineMap (AffineMap.lineMap R C s)
-          (AffineMap.lineMap R C r) t =
-        AffineMap.lineMap R C ((1 - t) * s + t * r) by
-      ext i
-      fin_cases i <;> simp [AffineMap.lineMap_apply_module] <;> ring]
-    rw [thinKiteAmbientHomeomorph_rightSpoke δ hδ _ hsr,
-      thinKiteAmbientHomeomorph_rightSpoke δ hδ s hs,
-      thinKiteAmbientHomeomorph_rightSpoke δ hδ r hr]
-    ext i
-    fin_cases i <;> simp [AffineMap.lineMap_apply_module] ; ring
-  rw [segment_eq_image_lineMap, segment_eq_image_lineMap]
-  ext p
-  constructor
-  · rintro ⟨q, ⟨t, ht, rfl⟩, rfl⟩
-    exact ⟨t, ht, by simpa [R, C] using (hline t ht).symm⟩
-  · rintro ⟨t, ht, rfl⟩
-    exact ⟨AffineMap.lineMap (AffineMap.lineMap R C s)
-      (AffineMap.lineMap R C r) t, ⟨t, ht, rfl⟩,
-        by simpa [R, C] using hline t ht⟩
+  exact image_subsegment_of_lineMap_eq _ _ _ _ _
+    (thinKiteAmbientHomeomorph_rightSpoke δ hδ) ha hb
 
 theorem baseSegment_eq_spokes :
     segment ℝ (planePoint (-1) 0) (planePoint 1 0) =

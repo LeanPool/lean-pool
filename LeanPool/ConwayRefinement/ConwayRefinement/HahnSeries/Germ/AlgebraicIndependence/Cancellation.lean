@@ -8,7 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Power
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
-import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Nonpositive
 import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.NaturalPrincipal
 import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.NaturalPowerFactorization

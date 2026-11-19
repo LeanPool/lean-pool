@@ -7,10 +7,7 @@ module
 
 public import LeanPool.MetricCodes.Rigidity
 public import Mathlib.LinearAlgebra.Lagrange
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.LinearAlgebra.Eigenspace.Minpoly
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Canonical spectral decomposition
@@ -1105,11 +1102,10 @@ theorem rotationIntertwiner_ambientPositiveRoot_zero_of_signatures
       simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
         Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
         one_smul, zero_smul, add_zero, zero_add, add_assoc,
-        add_apply, smul_apply]
+        Derivation.add_apply, Derivation.smul_apply]
         using hroot)
-  simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
-    Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-    one_smul, zero_smul, add_zero, zero_add, add_assoc]
+  simpa only [add_assoc, Fin.sum_univ_succ, Matrix.cons_val_zero, one_smul, Matrix.cons_val_succ,
+      Fin.sum_univ_zero, add_zero, zero_smul]
     using h
 
 theorem rotationIntertwiner_ambientSumPositiveRoot_zero_of_signatures
@@ -1148,13 +1144,11 @@ theorem rotationIntertwiner_ambientSumPositiveRoot_zero_of_signatures
       simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
         Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
         one_smul, neg_one_smul, zero_smul, add_zero,
-        zero_add, sub_eq_add_neg, add_assoc, add_apply,
-        neg_apply, LinearMap.neg_apply,
-        smul_apply] using hroot)
-  simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
-    Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-    one_smul, neg_one_smul, zero_smul, add_zero,
-    zero_add, sub_eq_add_neg, add_assoc] using h
+        zero_add, sub_eq_add_neg, add_assoc, Derivation.add_apply,
+        neg_apply, LinearMap.neg_apply, Derivation.neg_apply,
+        Derivation.smul_apply] using hroot)
+  simpa only [sub_eq_add_neg, add_assoc, Fin.sum_univ_succ, Matrix.cons_val_zero, one_smul,
+      Matrix.cons_val_succ, neg_one_smul, Fin.sum_univ_zero, add_zero, zero_smul] using h
 
 theorem rotationIntertwiner_ambientShortPositiveRoot_zero_of_signatures
     {r n : ℕ} (hn : 2 * (r + 1) ≤ n)
@@ -1183,8 +1177,8 @@ theorem rotationIntertwiner_ambientShortPositiveRoot_zero_of_signatures
     ![t, t] ![(1 : ℂ), Complex.I] 0 p q (by
       simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
         Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-        one_smul, zero_smul, add_zero, zero_add, add_apply,
-        smul_apply] using hroot)
+        one_smul, zero_smul, add_zero, zero_add, Derivation.add_apply,
+        Derivation.smul_apply] using hroot)
   simpa only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.cons_zero,
     Fin.cons_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
     one_smul, zero_smul, add_zero, zero_add] using h
@@ -3118,7 +3112,7 @@ theorem characteristicResidue_unique_of_resolvent
     have hnonzero : characteristic.eval z ≠ 0 :=
       Lagrange.eval_nodal_not_at_node
         (fun j _ => haway j)
-    exact (div_left_inj₀ hnonzero).mp
+    exact (div_left_inj' hnonzero).mp
       ((hresolvent z haway).trans (hinterpolation z haway).symm)
   apply (eq_div_iff (hderivative i)).2
   calc
@@ -3489,7 +3483,7 @@ theorem signedCharacteristicProjector_eigen_of_aeval_apply
     Polynomial.aeval_C] at hzero
   have happly := LinearMap.congr_fun hzero v
   apply sub_eq_zero.mp
-  simpa only [signedCharacteristicProjector, Module.algebraMap_end_eq_smul_id, mul_apply_eq_comp,
+  simpa only [signedCharacteristicProjector, Module.algebraMap_end_eq_smul_id, Module.End.mul_apply,
     LinearMap.sub_apply, LinearMap.smul_apply, LinearMap.id_coe, id_eq, Algebra.smul_mul_assoc,
       hchar, smul_zero] using
     happly
@@ -5876,7 +5870,7 @@ theorem gtSignedEigenvectorSpan_gtRelativeCasimir_iterate_mem
     (gtRelativeCasimir (n := n) lam ^ k) v ∈
       gtSignedEigenvectorSpan (n := n) lam := by
   induction k with
-  | zero => simpa only [pow_zero, one_apply_eq_self] using hv
+  | zero => simpa only [pow_zero, Module.End.one_apply] using hv
   | succ k ih =>
       rw [pow_succ', Module.End.mul_eq_comp, LinearMap.comp_apply]
       exact gtSignedEigenvectorSpan_gtRelativeCasimir_mem lam _ ih
@@ -7735,9 +7729,7 @@ theorem gtRelativeCasimir_eigen_inner_eq_zero
   rw [hu, hv] at hsym
   rw [real_inner_smul_left u v s,
     real_inner_smul_right u v t] at hsym
-  have hmul : (s - t) * ⟪u, v⟫_ℝ = 0 := by
-    nlinarith
-  exact (mul_eq_zero.mp hmul).resolve_left (sub_ne_zero.mpr hne)
+  exact (mul_eq_mul_right_iff.mp hsym).resolve_left hne
 
 end AllRankGTRelativeCasimirCompressedResolvent
 

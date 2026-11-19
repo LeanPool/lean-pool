@@ -1957,6 +1957,13 @@ abbrev Symbol (S : ℕ) := Fin (S + 1)
 
 /-- GapCVP reduction support. -/
 abbrev Variable (T S : ℕ) := Time T × Position T × Symbol S
+/-- Encoding a tableau variable only depends on the values of its finite indices. -/
+theorem encode_variable {T S : ℕ} (time : Time T) (position : Position T)
+    (symbol : Symbol S) :
+    Encodable.encode ((time, position, symbol) : Variable T S) =
+      Nat.pair time.val (Nat.pair position.val symbol.val) := by
+  rfl
+
 /-- GapCVP reduction support. -/
 abbrev SignedLiteral (T S : ℕ) := Variable T S × Bool
 /-- GapCVP reduction support. -/

@@ -1094,7 +1094,7 @@ theorem I12_eq_rectangular (r : ℝ) : I12 r = I12Vert r + I12Horiz r := by
     have := (head_integral_tendsto_zero (continuousOn_diagonal_integrand r)).sub
       (head_integral_tendsto_zero (continuousOn_vertical_integrand r))
       |>.add (G_diff_tendsto_zero r G hG)
-    convert this using 1; ext; ring
+    convert this using 1; ext; ring_nf
   exact tendsto_nhds_unique (tendsto_const_nhds.congr' heq) hS
 
 /-! ### Summary of sorry dependencies

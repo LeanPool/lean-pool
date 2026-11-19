@@ -9,7 +9,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.CantorBe
 public import Mathlib.Algebra.Order.Group.PiLex
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
-import Mathlib.Order.Interval.Set.OrdConnected
 
 /-!
 # The Cantor–Bendixson convex cover has a nondegenerate model

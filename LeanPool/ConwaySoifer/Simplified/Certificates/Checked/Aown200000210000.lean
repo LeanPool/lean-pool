@@ -9,7 +9,6 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown2000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2000002100000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2000002100001
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Steps.Aown2000002100002
-import Mathlib.Tactic.FinCases
 
 /-!
 # Aown 200000 210000

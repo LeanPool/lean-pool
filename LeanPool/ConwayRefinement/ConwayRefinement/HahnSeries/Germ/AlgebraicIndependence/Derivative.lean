@@ -7,7 +7,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Germ.AlgebraicIndependence.Graded
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.LeastTermSup
 public import Mathlib.Order.Filter.Germ.Basic
-import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.LeftNeighborhood
 
 /-!
 # Translated truncation from degree `α + 1` to degree `α`

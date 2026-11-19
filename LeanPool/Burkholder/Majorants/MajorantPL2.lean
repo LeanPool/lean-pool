@@ -1493,7 +1493,7 @@ private lemma scalar_deriv_sum_lower_leTwo
               rw [Real.rpow_one]
           _ = p ^ ((1 : ℝ) + (1 - p)) := by
               rw [Real.rpow_add hp_pos]
-          _ = p ^ (2 - p) := by ring
+          _ = p ^ (2 - p) := by ring_nf
       rw [← hpow_shift]
       field_simp [hp_ne, hpden_pos.ne']
     have hcoeff_eq :
@@ -1813,7 +1813,7 @@ private lemma uCandidate_tangent_x_increment_of_y_neg_leTwo_of_pos
   have hdx := DxuCandidate_neg_neg_of_y_neg_leTwo (p := p) (x := x) (y := y) hy_neg
   calc
     uCandidate p (x + h) y = uCandidate p (-(x + h)) (-y) := hend
-    _ = uCandidate p ((-x) + (-h)) (-y) := by ring
+    _ = uCandidate p ((-x) + (-h)) (-y) := by ring_nf
     _ ≤ uCandidate p (-x) (-y) + DxuCandidate p (-x) (-y) * (-h) := hmain
     _ = uCandidate p x y + DxuCandidate p x y * h := by
       rw [← hstart, hdx]

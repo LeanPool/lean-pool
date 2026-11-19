@@ -10,10 +10,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalSubring
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.LeibnizRemainder
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Convolution
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueSubmultiplicative
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.OrdinalValueImage
-import Mathlib.Topology.Instances.Real.Lemmas
 
 /-!
 # The Leibniz rule on the spaces `P_α`

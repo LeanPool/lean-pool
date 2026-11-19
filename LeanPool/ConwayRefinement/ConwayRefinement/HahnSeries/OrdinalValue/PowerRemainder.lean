@@ -199,7 +199,7 @@ private theorem exists_mul_germOrdinalValue_powerProduct_lt
         (by rw [← NatOrdinal.of_val b.principalValue]; exact NatOrdinal.of.lt_iff_lt.mpr hα₁)
         (mul_pos hρpos hρpos)
     calc t * (NatOrdinal.of (b.residualValue.val * α₁) * (V ^ m * W))
-        = t * NatOrdinal.of (b.residualValue.val * α₁) * (V ^ m * W) := by ring
+        = t * NatOrdinal.of (b.residualValue.val * α₁) * (V ^ m * W) := by ac_rfl
       _ < b.residualValue * b.residualValue * b.principalValue * (V ^ m * W) :=
           mul_lt_mul_of_pos_right key hVmW
       _ = powerRemainderBound b c (m + 1) := by
@@ -216,13 +216,13 @@ private theorem exists_mul_germOrdinalValue_powerProduct_lt
         (by rw [← NatOrdinal.of_val c.principalValue]; exact NatOrdinal.of.lt_iff_lt.mpr hα₂)
         (mul_pos hρpos hσpos)
     calc t * (V ^ (m + 1) * NatOrdinal.of (c.residualValue.val * α₂))
-        = V ^ (m + 1) * (t * NatOrdinal.of (c.residualValue.val * α₂)) := by ring
+        = V ^ (m + 1) * (t * NatOrdinal.of (c.residualValue.val * α₂)) := by ac_rfl
       _ < V ^ (m + 1) * (b.residualValue * c.residualValue * c.principalValue) :=
           mul_lt_mul_of_pos_left key hVm1
       _ = powerRemainderBound b c (m + 1) := by
           rw [powerRemainderBound, mul_assoc b.residualValue c.residualValue,
             c.residualValue_mul_principalValue]
-          ring
+          ac_rfl
   have h3 : t * (V ^ m * b.residualValue * W) < powerRemainderBound b c (m + 1) := by
     have htV : t < V := by
       have hle : t ≤ b.residualValue * NatOrdinal.of α := by
@@ -249,6 +249,15 @@ private theorem exists_mul_germOrdinalValue_powerProduct_lt
           (t * (V ^ m * b.residualValue * W)) := by
         rw [hmono.map_max, hmono.map_max]
     _ < powerRemainderBound b c (m + 1) := max_lt (max_lt h1 h2) h3
+
+/-- A term can be split off even outside the summation set if it vanishes there. -/
+private theorem sum_eq_add_sum_erase_of_eq_zero {ι M : Type*} [DecidableEq ι]
+    [AddCommMonoid M] (s : Finset ι) (f : ι → M) (a : ι)
+    (ha : a ∉ s → f a = 0) :
+    ∑ i ∈ s, f i = f a + ∑ i ∈ s.erase a, f i := by
+  by_cases h : a ∈ s
+  · exact (Finset.add_sum_erase s f h).symm
+  · rw [Finset.erase_eq_of_notMem h, ha h, zero_add]
 
 private theorem powerRemainder_step
     (b c : SeriesWithOrdinalValueAboveOne K) (hp : b.principalValue ≤ c.principalValue) (m : ℕ)
@@ -295,17 +304,14 @@ private theorem powerRemainder_step
     by_cases hb : (0 : ℝ) ∈ closure (b.1 : K⟦ℝ⟧).support
     · rw [germAt_eq_zero_of_not_mem_closure_support (hmem hb), mul_zero]
     · rw [germAt_eq_zero_of_not_mem_closure_support hb, zero_mul]
-  have hstep1 : ∑ β ∈ T, f β = f γ + ∑ β ∈ T.erase γ, f β := by
-    by_cases hmem : γ ∈ T
-    · exact (Finset.add_sum_erase T f hmem).symm
-    · rw [Finset.erase_eq_of_notMem hmem, hfγzero hmem, zero_add]
+  have hstep1 : ∑ β ∈ T, f β = f γ + ∑ β ∈ T.erase γ, f β :=
+    sum_eq_add_sum_erase_of_eq_zero T f γ hfγzero
   have hmem0 : (0 : ℝ) ∈ T.erase γ ↔ (0 : ℝ) ∈ T := by
     rw [Finset.mem_erase]
     exact ⟨fun h ↦ h.2, fun h ↦ ⟨(ne_of_lt hhigh).symm, h⟩⟩
-  have hstep2 : ∑ β ∈ T.erase γ, f β = f 0 + ∑ β ∈ (T.erase γ).erase 0, f β := by
-    by_cases hmem : (0 : ℝ) ∈ T.erase γ
-    · exact (Finset.add_sum_erase _ f hmem).symm
-    · rw [Finset.erase_eq_of_notMem hmem, hf0zero (fun h ↦ hmem (hmem0.mpr h)), zero_add]
+  have hstep2 : ∑ β ∈ T.erase γ, f β = f 0 + ∑ β ∈ (T.erase γ).erase 0, f β :=
+    sum_eq_add_sum_erase_of_eq_zero (T.erase γ) f 0
+      (fun hmem ↦ hf0zero (fun h ↦ hmem (hmem0.mpr h)))
   have hSeries : (b.1 ^ (m + 1 + 1) * c.1 : Series K) = b.1 * d := by
     rw [hddef]; ring
   have hcoe : ((b.1 ^ (m + 1 + 1) * c.1 : Series K) : K⟦ℝ⟧)
@@ -349,10 +355,7 @@ private theorem powerRemainder_step
     have hβle : β ≤ 0 := hclosb hβT.1
     have hβneg : β < 0 := lt_of_le_of_ne hβle hβ0
     have hγβle : γ - β ≤ 0 := hclosd hβT.2
-    have hγβ : γ < β := by
-      rcases lt_or_eq_of_le (by linarith : γ ≤ β) with h | h
-      · exact h
-      · exact absurd h.symm hβγ
+    have hγβ : γ < β := lt_of_le_of_ne (sub_nonpos.mp hγβle) hβγ.symm
     obtain ⟨α, hα, hαle⟩ := hcutb β (hγb.trans hγβ) hβneg
     have hb₁ : germOrdinalValue (germAt (b.1 : K⟦ℝ⟧) β) ≤
         NatOrdinal.of (b.residualValue.val * α) := by
@@ -360,7 +363,9 @@ private theorem powerRemainder_step
       simpa using NatOrdinal.of.le_iff_le.mpr hαle
     refine lt_of_le_of_lt ((germOrdinalValue_mul_le_naturalMul _ _).trans
       (mul_le_mul_left hb₁ _)) ?_
-    exact hQ (γ - β) (by linarith) (by linarith) α hα
+    exact hQ (γ - β)
+      (lt_sub_iff_add_lt.mpr ((add_lt_of_neg_right ηQ hβneg).trans hγQ))
+      (sub_neg.mpr hγβ) α hα
 
 /-- Berarducci, Lemma 7.7 in the product-rule form used by Lemma 8.2: the germ of `b ^ (m + 1) * c`
 at a sufficiently high negative cutoff differs from `(m + 1) * b^{|γ} b^m c + b^{m+1} c^{|γ}` by a

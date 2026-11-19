@@ -639,389 +639,357 @@ theorem law_summand_eq (γ : ℝ) (w : fivePathGraph.V → Bool)
   rw [PM_resp, PM_resp, PM_resp, PM_resp, PM_resp, presp0, presp1, presp2, presp3, presp4,
     crespMass_bool, crespMass_bool, crespMass_ite, crespMass_bool, crespMass_bool]
 
+-- The endpoint observations fix the two endpoint masks. For fixed auxiliary signs, the
+-- observations at vertices 1 and 3 then fix the two interior masks by XOR cancellation.
+private theorem lawSum_bySigns (γ : ℝ) (w : Fin 5 → Bool) :
+    (∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
+        lawSummand γ w p.1 p.2.1 p.2.2.1 p.2.2.2) =
+      ∑ u : Bool, ∑ v : Bool,
+        (pmu γ E12 (false, u) * pmu γ E23 (false, v) / 4) *
+          (if u = v then
+            if w 2 = xor (xor (w 1) (w 0 && u)) (xor (w 3) (w 4 && v)) then 1 else 0
+          else 1 / 2) := by
+  let relabel : (Bool × Bool × Bool × Bool) × (Bool × Bool) × (Bool × Bool) ≃
+      (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool) :=
+    { toFun := fun ((x, b, d, z), (u, v), (x', z')) =>
+        ((x, x'), (xor b (x && u), u), (xor d (z && v), v), (z, z'))
+      invFun := fun ((x, x'), (r, u), (s, v), (z, z')) =>
+        ((x, xor r (x && u), xor s (z && v), z), (u, v), (x', z'))
+      left_inv := by
+        rintro ⟨⟨x, b, d, z⟩, ⟨u, v⟩, ⟨x', z'⟩⟩
+        simp only [Bool.xor_assoc, Bool.xor_self, Bool.xor_false]
+      right_inv := by
+        rintro ⟨⟨x, x'⟩, ⟨r, u⟩, ⟨s, v⟩, ⟨z, z'⟩⟩
+        simp only [Bool.xor_assoc, Bool.xor_self, Bool.xor_false] }
+  let weight : Bool × Bool → ℂ := fun (u, v) =>
+    (pmu γ E12 (false, u) * pmu γ E23 (false, v) / 4) *
+      (if u = v then
+        if w 2 = xor (xor (w 1) (w 0 && u)) (xor (w 3) (w 4 && v)) then 1 else 0
+      else 1 / 2)
+  let observed := (w 0, w 1, w 3, w 4)
+  have reindex : (∑ q : (Bool × Bool × Bool × Bool) × (Bool × Bool) × (Bool × Bool),
+      if observed = q.1 then weight q.2.1 / 4 else 0) =
+      ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
+        lawSummand γ w p.1 p.2.1 p.2.2.1 p.2.2.2 := by
+    refine Fintype.sum_equiv relabel _ _ ?_
+    rintro ⟨⟨x, b, d, z⟩, ⟨u, v⟩, ⟨x', z'⟩⟩
+    dsimp [observed, weight, relabel]
+    simp only [lawSummand, Prod.mk.injEq, pmu_E01, pmu_E12, pmu_E23, pmu_E34,
+      Bool.xor_assoc, Bool.xor_self, Bool.xor_false]
+    by_cases hx : w 0 = x <;> by_cases hb : w 1 = b <;>
+      by_cases hd : w 3 = d <;> by_cases hz : w 4 = z <;>
+      simp only [hx, hb, hd, hz, and_true, and_false,
+        ite_true, ite_false, mul_one, mul_zero, zero_mul]
+    ring
+  -- Each endpoint auxiliary bit is unused. Their four choices remove a factor of 1/4.
+  have sumUnused (o : Bool × Bool × Bool × Bool) (signs : Bool × Bool) :
+      (∑ _ : Bool × Bool, if observed = o then weight signs / 4 else 0) =
+        if observed = o then weight signs else 0 := by
+    by_cases h : observed = o
+    · simp only [h, ite_true, Fintype.sum_prod_type, Fintype.sum_bool]
+      ring
+    · simp [h]
+  rw [← reindex, Fintype.sum_prod_type]
+  simp_rw [Fintype.sum_prod_type (α₁ := Bool × Bool) (α₂ := Bool × Bool), sumUnused]
+  rw [Finset.sum_comm]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+  exact Fintype.sum_prod_type weight
+
+private theorem sign_xor (a b : Bool) :
+    (sgn (xor a b) : ℂ) = (sgn a : ℂ) * (sgn b : ℂ) := by
+  cases a <;> cases b <;> norm_num [sgn]
+
+private theorem bitMass_eq (a b : Bool) :
+    (if a = b then 1 else 0 : ℂ) = (1 + (sgn a : ℂ) * (sgn b : ℂ)) / 2 := by
+  cases a <;> cases b <;> norm_num [sgn]
+
+private theorem lawSum_eval (γ h : ℝ) (square : (γ : ℂ) ^ 2 = (h : ℂ)) (w : Fin 5 → Bool) :
+    (∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
+        lawSummand γ w p.1 p.2.1 p.2.2.1 p.2.2.2) =
+      ((fivePathTarget h w : ℝ) : ℂ) := by
+  rw [lawSum_bySigns]
+  let parity : ℂ := (sgn (w 1) : ℂ) * (sgn (w 2) : ℂ) * (sgn (w 3) : ℂ)
+  let endpoints : ℂ := (sgn (w 0) : ℂ) * (sgn (w 4) : ℂ)
+  have sameFalse : (if w 2 = xor (w 1) (w 3) then 1 else 0 : ℂ) = (1 + parity) / 2 := by
+    rw [bitMass_eq, sign_xor]
+    dsimp [parity]
+    ring
+  have sameTrue :
+      (if w 2 = xor (xor (w 1) (w 0)) (xor (w 3) (w 4)) then 1 else 0 : ℂ) =
+        (1 + parity * endpoints) / 2 := by
+    simp only [bitMass_eq, sign_xor, parity, endpoints]
+    ring
+  simp only [Fintype.sum_bool, ↓reduceIte, ite_eq_right Bool.false_ne_true,
+    ite_eq_right Bool.false_ne_true.symm, Bool.and_false, Bool.and_true, Bool.xor_false,
+    sameFalse, sameTrue, pmu_E12, pmu_E23,
+    show sgn false = 1 from rfl, show sgn true = -1 from rfl,
+    Complex.ofReal_one, Complex.ofReal_neg, mul_one, mul_neg]
+  -- Opposite signs give the fair middle response, while equal signs contribute its bias.
+  calc
+    _ = (1 / 32 : ℂ) *
+        (1 + parity * ((1 - (Complex.I * (γ : ℂ)) ^ 2) / 4) * (1 + endpoints)) := by ring
+    _ = _ := by
+      rw [mul_pow, Complex.I_sq, neg_one_mul, sub_neg_eq_add, square]
+      push_cast [fivePathTarget, parity, endpoints]
+      rfl
+
+-- In the equal-endpoint cases the old proofs generated reverse power-cast lemmas.
+-- Keep those declarations explicitly and use them to specialize the shared computation.
+private theorem lawSum_00000._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
+
 private theorem lawSum_00000 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, false, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, false, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_00000._simp_1_2 γ 2)
+    ![false, false, false, false, false]
 
 private theorem lawSum_00001 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, false, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, false, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, false, false, false, true]
+
+private theorem lawSum_00010._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_00010 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, false, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, false, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_00010._simp_1_2 γ 2)
+    ![false, false, false, true, false]
 
 private theorem lawSum_00011 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, false, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, false, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, false, false, true, true]
+
+private theorem lawSum_00100._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_00100 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, true, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, true, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_00100._simp_1_2 γ 2)
+    ![false, false, true, false, false]
 
 private theorem lawSum_00101 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, true, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, true, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, false, true, false, true]
+
+private theorem lawSum_00110._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_00110 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, true, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, true, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_00110._simp_1_2 γ 2)
+    ![false, false, true, true, false]
 
 private theorem lawSum_00111 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, false, true, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, false, true, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, false, true, true, true]
+
+private theorem lawSum_01000._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_01000 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, false, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, false, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_01000._simp_1_2 γ 2)
+    ![false, true, false, false, false]
 
 private theorem lawSum_01001 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, false, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, false, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, true, false, false, true]
+
+private theorem lawSum_01010._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_01010 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, false, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, false, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_01010._simp_1_2 γ 2)
+    ![false, true, false, true, false]
 
 private theorem lawSum_01011 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, false, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, false, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, true, false, true, true]
+
+private theorem lawSum_01100._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_01100 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, true, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, true, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_01100._simp_1_2 γ 2)
+    ![false, true, true, false, false]
 
 private theorem lawSum_01101 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, true, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, true, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, true, true, false, true]
+
+private theorem lawSum_01110._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_01110 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, true, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, true, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_01110._simp_1_2 γ 2)
+    ![false, true, true, true, false]
 
 private theorem lawSum_01111 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![false, true, true, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![false, true, true, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![false, true, true, true, true]
 
 private theorem lawSum_10000 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, false, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, false, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, false, false, false, false]
+
+private theorem lawSum_10001._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_10001 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, false, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, false, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_10001._simp_1_2 γ 2)
+    ![true, false, false, false, true]
 
 private theorem lawSum_10010 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, false, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, false, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, false, false, true, false]
+
+private theorem lawSum_10011._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_10011 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, false, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, false, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_10011._simp_1_2 γ 2)
+    ![true, false, false, true, true]
 
 private theorem lawSum_10100 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, true, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, true, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, false, true, false, false]
+
+private theorem lawSum_10101._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_10101 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, true, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, true, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_10101._simp_1_2 γ 2)
+    ![true, false, true, false, true]
 
 private theorem lawSum_10110 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, true, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, true, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, false, true, true, false]
+
+private theorem lawSum_10111._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_10111 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, false, true, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, false, true, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_10111._simp_1_2 γ 2)
+    ![true, false, true, true, true]
 
 private theorem lawSum_11000 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, false, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, false, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, true, false, false, false]
+
+private theorem lawSum_11001._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_11001 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, false, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, false, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_11001._simp_1_2 γ 2)
+    ![true, true, false, false, true]
 
 private theorem lawSum_11010 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, false, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, false, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, true, false, true, false]
+
+private theorem lawSum_11011._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_11011 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, false, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, false, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_11011._simp_1_2 γ 2)
+    ![true, true, false, true, true]
 
 private theorem lawSum_11100 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, true, false, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, true, false, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, true, true, false, false]
+
+private theorem lawSum_11101._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_11101 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, true, false, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, true, false, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_11101._simp_1_2 γ 2)
+    ![true, true, true, false, true]
 
 private theorem lawSum_11110 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, true, true, false] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, true, true, false] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp
-  all_goals ring
+  exact lawSum_eval γ _ (Complex.ofReal_pow _ _).symm ![true, true, true, true, false]
+
+private theorem lawSum_11111._simp_1_2 (r : ℝ) (n : ℕ) :
+    (r : ℂ) ^ n = ((r ^ n : ℝ) : ℂ) := (Complex.ofReal_pow r n).symm
 
 private theorem lawSum_11111 (γ : ℝ) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),
         lawSummand γ ![true, true, true, true, true] p.1 p.2.1 p.2.2.1 p.2.2.2
       = ((fivePathTarget (γ ^ 2) ![true, true, true, true, true] : ℝ) : ℂ) := by
-  simp only [lawSummand, Fintype.sum_prod_type, Fintype.sum_bool, pmu_E01, pmu_E12, pmu_E23,
-    pmu_E34, sgn, fivePathTarget]
-  norm_num
-  rw [Complex.ext_iff]
-  constructor
-  all_goals simp [← Complex.ofReal_pow]
-  all_goals ring
+  exact lawSum_eval γ _ (lawSum_11111._simp_1_2 γ 2)
+    ![true, true, true, true, true]
 
 theorem lawSum (γ : ℝ) (w : Fin 5 → Bool) :
     ∑ p : (Bool × Bool) × (Bool × Bool) × (Bool × Bool) × (Bool × Bool),

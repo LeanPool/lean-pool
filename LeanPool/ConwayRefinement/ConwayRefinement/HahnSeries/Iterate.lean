@@ -9,7 +9,6 @@ public import Mathlib.RingTheory.HahnSeries.Multiplication
 public import Mathlib.RingTheory.HahnSeries.Cardinal
 public import Mathlib.Algebra.Order.Monoid.Prod
 public import Mathlib.SetTheory.Cardinal.Regular
-import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 
 /-!
 # Iterated Hahn series as Hahn series on a lexicographic product

@@ -87,11 +87,13 @@ theorem surjective_foldDiskToHalfDisk :
     Function.Surjective foldDiskToHalfDisk := by
   intro q
   let p : ChartKind.disk.modelRegion := ⟨q.1, by
-    simpa [ChartKind.modelRegion] using q.2.1⟩
+    simpa only [ChartKind.modelRegion, Fin.isValue, mem_ofPred_eq, Metric.mem_ball,
+      dist_zero_right] using q.2.1⟩
   refine ⟨p, Subtype.ext ?_⟩
   apply plane_ext
-  · simp [foldDiskToHalfDisk, foldPlaneToHalfSpace, abs_of_nonneg q.2.2, p]
-  · simp [foldDiskToHalfDisk, foldPlaneToHalfSpace, p]
+  · simp only [Fin.isValue, foldDiskToHalfDisk, foldPlaneToHalfSpace, ↓reduceIte,
+    abs_of_nonneg q.2.2, p]
+  · simp only [Fin.isValue, foldDiskToHalfDisk, foldPlaneToHalfSpace, one_ne_zero, ↓reduceIte, p]
 
 /-- An open disk with finitely many points deleted is path-connected. -/
 theorem diskModel_compl_finite_isPathConnected

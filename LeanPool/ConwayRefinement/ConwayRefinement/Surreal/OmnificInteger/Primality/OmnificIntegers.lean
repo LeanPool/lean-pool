@@ -10,7 +10,7 @@ import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.ReducedPrimality
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.Primality.OrdinaryIntegers
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.ArchimedeanAssumptions
+
 
 /-!
 # Every nonordinary reduced omnific integer is primal

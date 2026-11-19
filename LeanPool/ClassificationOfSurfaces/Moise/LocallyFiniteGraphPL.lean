@@ -76,7 +76,7 @@ theorem CentralPolygonalArc.completePath_eq_middle
   rw [A.parameterization.curve_eq]
   congr 1
   simp only [Path.segment_apply, AffineMap.lineMap_apply_module, smul_eq_mul]
-  ring
+  ring_nf
 
 /-- On the final piece, the complete replacement path is the affine second spoke. -/
 theorem CentralPolygonalArc.completePath_eq_right
@@ -267,11 +267,19 @@ private theorem sourcePoint_mem_axis_segment_iff {p : Plane}
   rw [A.parameterization.source_support, segment_eq_image_lineMap] at hp
   obtain ⟨t, ht, rfl⟩ := hp
   constructor
-  · simp [AffineMap.lineMap_apply_module, planePoint]
+  · simp only [Fin.isValue, planePoint, AffineMap.lineMap_apply_module, PiLp.add_apply,
+    PiLp.smul_apply,
+    Matrix.cons_val_one, Matrix.cons_val_fin_one, smul_eq_mul, mul_zero,
+    add_zero]
   · have hn : (0 : ℝ) ≤ A.parameterization.length := by positivity
     constructor
-    · simpa [AffineMap.lineMap_apply_module, planePoint] using mul_nonneg ht.1 hn
-    · simp [AffineMap.lineMap_apply_module, planePoint]
+    · simpa only [Fin.isValue, planePoint, AffineMap.lineMap_apply_module, PiLp.add_apply,
+      PiLp.smul_apply,
+    Matrix.cons_val_zero, smul_eq_mul, mul_zero,
+      zero_add] using mul_nonneg ht.1 hn
+    · simp only [Fin.isValue, planePoint, AffineMap.lineMap_apply_module, PiLp.add_apply,
+      PiLp.smul_apply,
+    Matrix.cons_val_zero, smul_eq_mul, mul_zero, zero_add]
       nlinarith [mul_le_mul_of_nonneg_left ht.2 hn]
 
 private theorem mem_sourceSubsegment_of_axis_bounds {p : Plane}
@@ -546,7 +554,7 @@ private theorem exists_trimActive_vertex (i : Fin 2) :
           (({w} : Finset A.trimSubdivision.Vertex) : Set A.trimSubdivision.Vertex) =
           {A.trimSubdivision.position w} := by
         ext z
-        simp
+        simp only [Finset.coe_singleton, Set.image_singleton, Set.mem_singleton_iff]
       rw [himage, convexHull_singleton] at hx
       exact hx
     rw [hxw, hpos]
@@ -648,7 +656,7 @@ noncomputable def completeChain : BrokenLineData (Set.univ : Set Plane) := by
 
 @[simp] theorem completeChain_vertex_zero :
     A.completeChain.vertex 0 = G.vertexImage (K.edgeFirst e) := by
-  simp [completeChain]
+  simp only [completeChain, Fin.val_eq_zero_iff, Fin.coe_ofNat_eq_mod, Nat.zero_mod, ↓reduceIte]
 
 @[simp] theorem completeChain_vertex_one :
     A.completeChain.vertex ⟨1, by simp [completeChain]⟩ = A.leftEndpoint := by

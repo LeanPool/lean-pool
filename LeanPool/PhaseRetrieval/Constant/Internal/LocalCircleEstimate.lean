@@ -579,10 +579,7 @@ private lemma large_amplitude {L : ℕ} (hL : 1 ≤ L) {E : Finset ℕ}
       (fun t => le_abs_self _))
     simp_all
   -- Step 4: Cauchy-Schwarz: (∫ ρ·g)² ≤ (∫ ρ²)·(∫ g²)
-  have h_cs : (∫ t : AddCircle T,
-      rho (P t) * (‖(1 : ℂ) + P t‖ + 1) ∂AddCircle.haarAddCircle) ^ 2 ≤
-      y * ∫ t : AddCircle T, (‖(1 : ℂ) + P t‖ + 1) ^ 2
-        ∂AddCircle.haarAddCircle :=
+  have h_cs :=
     integral_cauchy_schwarz
       (real_cont_integrable h_rho_comp)
       (real_cont_integrable h_g_cont)

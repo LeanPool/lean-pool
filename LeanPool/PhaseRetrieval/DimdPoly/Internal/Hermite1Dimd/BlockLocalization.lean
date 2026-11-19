@@ -343,10 +343,7 @@ private lemma productBasis_annulusFactorization
           (fun z : CSpace 1 => F q (z 0) * conj (F q (z 0)))
           (gaussianMeasure 1) := by
     intro q
-    have hbase :
-        Integrable
-          (fun z : CSpace 1 => oneDimPhi (κ q) (α q) (z 0) * conj (oneDimPhi (κ q) (α q) (z 0)))
-          (gaussianMeasure 1) :=
+    have hbase :=
       integrable_oneDimPhi_cross_gaussian (κ q) (α q) (α q)
     have hind :
         Integrable
@@ -616,9 +613,7 @@ private lemma shell_cardinality_bound_filter
       cases hab
       rfl
     let := finiteShellSubtype ℓ hr
-    have hcard :
-        Nat.card {j // j ∈ s.filter fun j => blockDistance j ℓ = r} ≤
-          Nat.card {j : MultiIndex d // blockDistance j ℓ = r} :=
+    have hcard :=
       Nat.card_le_card_of_injective f hf
     have hfilter :
         Nat.card {j // j ∈ s.filter fun j => blockDistance j ℓ = r} =

@@ -144,7 +144,7 @@ lemma geom_sum_exp (M : ℕ) (hM : 0 < M) (q : ℤ) :
     have h_geo_series : ∑ j ∈ Finset.range M, ω ^ j = (ω ^ M - 1) / (ω - 1) := by
       rw [ geom_sum_eq hω_ne_one ];
     convert h_geo_series using 1 <;> norm_num [ ← Complex.exp_nat_mul, mul_div_assoc, mul_comm ];
-    · rw [ Finset.sum_range ]; congr; ext; rw [ ← Complex.exp_nat_mul ]; ring;
+    · rw [ Finset.sum_range ]; congr; ext; rw [ ← Complex.exp_nat_mul ]; ring_nf;
     · rw [ hω_pow_M, sub_self, zero_div ]
 
 /-! ## Riemann sum of a single Fourier exponential -/
@@ -175,7 +175,7 @@ lemma riemannSum_fourierExp (M : ℕ) (hM : 0 < M) (ℓ : Fin n → ℤ) :
       obtain ⟨ a, ha ⟩ := h; use a; have := geom_sum_exp M hM ( ℓ a ) ; aesop;
     convert h_prod using 1;
     rw [ Fintype.prod_sum ];
-    unfold fourierExp meshPoint; norm_num [ ← Complex.exp_sum ] ; ring;
+    unfold fourierExp meshPoint; norm_num [ ← Complex.exp_sum ] ; ring_nf;
     simp +decide only [mul_comm, mul_assoc, Finset.mul_sum _ _ _, mul_left_comm]
 
 /-! ## Bound on the normalized discrete Fourier coefficient -/
@@ -480,8 +480,8 @@ theorem riemannSum_convergence (φ : (Fin n → ℝ) → ℂ)
     have h_fourier_coeff : fourierCoeffDistrib (riemannSumDistrib n φ u M - convDistrib n φ u) m
         = ftRn n φ (fun j => (m j : ℝ)) * (((2 * π : ℝ) ^ n : ℝ)⁻¹ * riemannK n u M m -
         fourierCoeffDistrib u m) := by
-      rw [ fourierCoeffDistrib_sub ]; ring!;
-      rw [ fourierCoeffDistrib_riemannSumDistrib, fourierCoeffDistrib_convDistrib ]; ring!;
+      rw [ fourierCoeffDistrib_sub ]; ring_nf!;
+      rw [ fourierCoeffDistrib_riemannSumDistrib, fourierCoeffDistrib_convDistrib ]; ring_nf!;
           norm_num [ mul_assoc, mul_comm, mul_left_comm, Real.pi_ne_zero ];
       exact Or.inl <| by rw [ inv_eq_one_div, div_pow ]; norm_num;
     have h_fourier_coeff_bound : ‖(((2 * π : ℝ) ^ n : ℝ)⁻¹ * riemannK n u M m -

@@ -288,6 +288,140 @@ def test_request_review_drops_rejected_effort(monkeypatch) -> None:
     assert result.effort is None
 
 
+class _ScriptedClient:
+    """Stub OpenAI client that records requests and replays scripted outcomes."""
+
+    def __init__(self, outcomes: list) -> None:
+        """Queue one outcome per request: an exception to raise or ``None``."""
+        self.requests: list[dict] = []
+        self._outcomes = list(outcomes)
+        self.chat = types.SimpleNamespace(
+            completions=types.SimpleNamespace(create=self._create)
+        )
+
+    def _create(self, **kwargs):
+        """Record the request, then raise or answer as scripted."""
+        self.requests.append(kwargs)
+        outcome = self._outcomes.pop(0)
+        if outcome is not None:
+            raise outcome
+        message = types.SimpleNamespace(content='{"summary": "ok"}')
+        usage = types.SimpleNamespace(prompt_tokens=1_000_000, completion_tokens=0)
+        return types.SimpleNamespace(
+            choices=[types.SimpleNamespace(message=message)],
+            usage=usage,
+            model=kwargs["model"],
+        )
+
+
+def _review_through(client: _ScriptedClient, monkeypatch, model: str):
+    """Run one explicit-API review of a tiny diff through ``client``."""
+    from lean_pool import review
+
+    monkeypatch.setattr(review, "OpenAI", lambda timeout: client)
+    return review.request_review(
+        model=model,
+        rules="rules",
+        diff="diff --git a/x b/x\n",
+        system_prompt="s",
+        effort="xhigh",
+    )
+
+
+def test_default_model_is_the_model_the_restricted_worker_serves() -> None:
+    """The client default and the worker pin cannot drift within a revision."""
+    from lean_pool import codex_review, review
+
+    assert review.DEFAULT_MODEL == codex_review.MODEL
+    assert review.priced_tiers(review.DEFAULT_MODEL) == {"standard"}
+
+
+def test_standard_only_model_is_requested_and_priced_at_standard(monkeypatch) -> None:
+    """A model without a Flex rate never goes out on an unpriced tier."""
+    from lean_pool import review
+
+    client = _ScriptedClient([None])
+    result = _review_through(client, monkeypatch, review.DEFAULT_MODEL)
+
+    assert [request["service_tier"] for request in client.requests] == ["default"]
+    assert result.tier == "standard"
+    footer = review.render_usage(result.usage, result.model, result.tier, result.effort)
+    assert "**Cost:** $16.0000" in footer
+    assert "no pricing recorded" not in footer
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        openai.BadRequestError("Invalid service_tier."),
+        openai.RateLimitError("Rate limit reached."),
+        openai.APIStatusError("Internal server error."),
+    ],
+    ids=["400", "429", "500"],
+)
+def test_standard_only_model_never_retries_on_another_tier(monkeypatch, error) -> None:
+    """With one priced tier there is nothing to fall back to: errors surface."""
+    from lean_pool import review
+
+    client = _ScriptedClient([error])
+    with pytest.raises(type(error)):
+        _review_through(client, monkeypatch, review.DEFAULT_MODEL)
+
+    assert [request["service_tier"] for request in client.requests] == ["default"]
+
+
+def test_standard_only_model_keeps_its_tier_when_effort_is_rejected(
+    monkeypatch,
+) -> None:
+    """Dropping a rejected effort value does not change the requested tier."""
+    from lean_pool import review
+
+    rejection = openai.BadRequestError(
+        "Unsupported value for parameter 'reasoning_effort'."
+    )
+    client = _ScriptedClient([rejection, None])
+    result = _review_through(client, monkeypatch, review.DEFAULT_MODEL)
+
+    assert [request["service_tier"] for request in client.requests] == [
+        "default",
+        "default",
+    ]
+    assert "reasoning_effort" not in client.requests[1]
+    assert result.tier == "standard"
+    assert result.effort is None
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        openai.RateLimitError("Flex capacity exhausted."),
+        openai.APIStatusError("Internal server error."),
+    ],
+    ids=["429", "500"],
+)
+def test_flex_priced_model_starts_on_flex_and_falls_back(monkeypatch, error) -> None:
+    """Models with a Flex rate keep the Flex-first route and its fallback."""
+    first_try = _ScriptedClient([None])
+    assert _review_through(first_try, monkeypatch, "gpt-5.6-sol").tier == "flex"
+    assert [request["service_tier"] for request in first_try.requests] == ["flex"]
+
+    fallback = _ScriptedClient([error, None])
+    assert _review_through(fallback, monkeypatch, "gpt-5.6-sol").tier == "standard"
+    assert [request["service_tier"] for request in fallback.requests] == [
+        "flex",
+        "auto",
+    ]
+
+
+def test_flex_priced_model_does_not_retry_a_bad_request(monkeypatch) -> None:
+    """A 400 on Flex is a request defect, not missing capacity."""
+    client = _ScriptedClient([openai.BadRequestError("Invalid value.")])
+    with pytest.raises(openai.BadRequestError):
+        _review_through(client, monkeypatch, "gpt-5.6-sol")
+
+    assert [request["service_tier"] for request in client.requests] == ["flex"]
+
+
 def test_pricing_rates_prefix_match_and_long_context() -> None:
     """Snapshot names price by family prefix; big inputs hit the long rate."""
     from lean_pool import review

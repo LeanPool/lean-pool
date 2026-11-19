@@ -550,7 +550,7 @@ theorem hasWeakL1Bound_finset_sum_of_pos
     simp_rw [entropySummand_eq (hA _).ne']
     rw [Finset.sum_add_distrib, Finset.mul_sum, Finset.mul_sum]
     dsimp [S]
-    ring
+    ring_nf
   have hweightS : S ≤ ∑ i : Fin n, kaltonWeight i.val * A i := by
     dsimp [S]
     apply Finset.sum_le_sum

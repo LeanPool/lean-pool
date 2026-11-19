@@ -167,7 +167,7 @@ theorem faceToEndpoints_selected
   change
     (Equiv.swap (moveFirst g) (lastFace P f)) (moveFirst f) =
       zero
-  rw [show moveFirst f = zero by simp [moveFirst]]
+  rw [show moveFirst f = zero by simp only [Equiv.swap_apply_left, moveFirst]]
   exact Equiv.swap_apply_of_ne_of_ne hgzero.symm hlastZero.symm
 
 @[simp]
@@ -228,7 +228,7 @@ theorem middleOriginalFace_ne_selected
       faceToEndpoints P f g
           (middleOriginalFace P f g hfg i) =
         middleFacePosition P f g hfg i := by
-    simp [middleOriginalFace]
+    simp only [middleOriginalFace, Equiv.apply_symm_apply]
   rw [hmiddle, faceToEndpoints_selected P f g hfg] at hpositions
   have hval := congrArg Fin.val hpositions
   change i.val + 1 = 0 at hval
@@ -244,7 +244,7 @@ theorem middleOriginalFace_ne_right
       faceToEndpoints P f g
           (middleOriginalFace P f g hfg i) =
         middleFacePosition P f g hfg i := by
-    simp [middleOriginalFace]
+    simp only [middleOriginalFace, Equiv.apply_symm_apply]
   rw [hmiddle, faceToEndpoints_right] at hpositions
   have hval := congrArg Fin.val hpositions
   change i.val + 1 = P.faces.length - 1 at hval
@@ -346,11 +346,13 @@ theorem add_faceEdgeMultiplicity_le_edgeMultiplicity
   have hsubset :
       ({f, g} : Finset P.Face) ⊆ Finset.univ := by
     intro x hx
-    simp
+    simp only [Finset.mem_univ]
   have hsum :=
     Finset.sum_le_sum_of_subset
       (f := fun q ↦ P.faceEdgeMultiplicity q e) hsubset
-  simpa [hfg] using hsum
+  simpa only [ge_iff_le, Finset.mem_singleton, hfg, not_false_eq_true,
+    Finset.sum_insert,
+    Finset.sum_singleton] using hsum
 
 /-- Three distinct face contributions are bounded by total edge multiplicity. -/
 theorem add_three_faceEdgeMultiplicity_le_edgeMultiplicity
@@ -366,11 +368,13 @@ theorem add_three_faceEdgeMultiplicity_le_edgeMultiplicity
   have hsubset :
       ({f, g, q} : Finset P.Face) ⊆ Finset.univ := by
     intro x hx
-    simp
+    simp only [Finset.mem_univ]
   have hsum :=
     Finset.sum_le_sum_of_subset
       (f := fun r ↦ P.faceEdgeMultiplicity r e) hsubset
-  simpa [hfg, hfq, hgq, Nat.add_assoc] using hsum
+  simpa only [Nat.add_assoc, ge_iff_le, Finset.mem_insert, hfg, Finset.mem_singleton, hfq,
+    or_self,
+    not_false_eq_true, Finset.sum_insert, hgq, Finset.sum_singleton] using hsum
 
 /-- Once two distinct faces contain an edge of surface multiplicity at most two, no third face
 contains that edge. -/
@@ -520,7 +524,8 @@ theorem PositiveOccurrence.edge_mem_boundary
     occurrence.boundary_rotated.map edgeOfDart
   have horientedMem :
       e ∈ (P.orientedBoundary occurrence.orientedFace).map edgeOfDart :=
-    hmapRotated.mem_iff.mpr (by simp [edgeOfDart])
+    hmapRotated.mem_iff.mpr (by simp only [List.map_cons, edgeOfDart, List.mem_cons, List.mem_map,
+      true_or])
   have horientedPositive :
       0 <
         ((P.orientedBoundary occurrence.orientedFace).map
@@ -543,7 +548,8 @@ theorem NegativeOccurrence.edge_mem_boundary
     occurrence.boundary_rotated.map edgeOfDart
   have horientedMem :
       e ∈ (P.orientedBoundary occurrence.orientedFace).map edgeOfDart :=
-    hmapRotated.mem_iff.mpr (by simp [edgeOfDart])
+    hmapRotated.mem_iff.mpr (by simp only [List.map_cons, edgeOfDart, List.mem_cons, List.mem_map,
+      true_or])
   have horientedPositive :
       0 <
         ((P.orientedBoundary occurrence.orientedFace).map
@@ -662,8 +668,9 @@ theorem mergeMiddleWords_get
           exact i.isLt⟩ =
       lowerTail P e
         (P.boundary (middleOriginalFace P f g hfg i)) := by
-  simp [mergeMiddleWords, middleOriginalFaces,
-    middleOriginalFace]
+  simp only [mergeMiddleWords, middleOriginalFaces, List.get_eq_getElem, List.map_ofFn,
+    List.getElem_ofFn,
+    Fin.eta, Function.comp_apply, middleOriginalFace]
 
 theorem faceCountBetween_add_two
     (P : FiniteCyclicPresentation) (f g : P.Face)
@@ -769,7 +776,9 @@ theorem mergeFaceEquiv_right
   rw [show
     (mergeFaceEquiv left right hfg g).val =
       (lastFace P f).val by
-    simp [mergeFaceEquiv]]
+    simp only [P2.split_edgeCount, List.length_cons, mergeFaceEquiv, Equiv.trans_apply,
+      faceToEndpoints_right,
+    finCongr_apply, Fin.val_cast]]
   change P.faces.length - 1 =
     (mergeMiddleWords P e f g hfg).length + 1
   rw [mergeMiddleWords_length]

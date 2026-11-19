@@ -7,7 +7,6 @@ module
 
 public import LeanPool.ConwaySoifer.Geometry.Symmetry
 public import LeanPool.ConwaySoifer.Geometry.Owners
-import Mathlib.Tactic.FinCases
 
 /-!
 # Moving the minimal side section to `vertex 0`

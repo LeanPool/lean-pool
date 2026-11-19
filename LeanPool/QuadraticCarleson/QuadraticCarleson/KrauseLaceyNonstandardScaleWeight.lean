@@ -73,7 +73,7 @@ theorem nonstandardScaleWeight_le (s : ℕ) :
       rw [mul_assoc]
       rw [← Real.rpow_add (by norm_num1 : (0 : ℝ) < 2)]
       congr 1
-      ring
+      ring_nf
 
 /-- The source weight is controlled by the concrete ratio already summed in
 `KrauseLaceyScaleSummation`, with a universal factor eight. -/

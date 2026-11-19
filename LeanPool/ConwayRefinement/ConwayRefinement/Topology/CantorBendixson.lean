@@ -10,7 +10,6 @@ public import Mathlib.Topology.Sets.Closeds
 public import Mathlib.SetTheory.Ordinal.Arithmetic
 import Mathlib.Order.TransfiniteIteration
 public import Mathlib.Topology.Maps.Basic
-import Mathlib.Topology.Compactness.Compact
 
 /-!
 # Transfinite Cantor–Bendixson derivatives

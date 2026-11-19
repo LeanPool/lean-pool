@@ -9,12 +9,7 @@ public import LeanPool.MetricCodes.Representation
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.RingTheory.Regular.RegularSequence
 public import Mathlib.RingTheory.MvPolynomial.MonomialOrder
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.RingTheory.MvPolynomial.Groebner
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Harmonic Young branching
@@ -332,7 +327,7 @@ theorem polarization_eq_zero_of_simpleRoots
       have hfirst : a.castSucc = i := Fin.ext rfl
       have hsecond : a.succ = j := by
         apply Fin.ext
-        simpa [a] using hstep.symm
+        simpa only [Fin.succ_mk, a] using hstep.symm
       simpa only [polarization_apply, hfirst, hsecond] using hsimple a
     · let k : Fin (r + 1) := ⟨i.val + 1, by omega⟩
       have hik : i < k := by
@@ -1006,8 +1001,7 @@ theorem tendsto_flooredCoordinates_ratio {I : Type*}
     Tendsto
       (fun n : ℕ => (flooredCoordinates a n i : ℝ) / (n : ℝ))
       atTop (𝓝 (a i)) := by
-  simpa only [flooredCoordinates, Function.comp_def] using
-    (tendsto_nat_floor_mul_div_atTop ha).comp (tendsto_natCast_atTop_atTop (R := ℝ))
+  exact Hamming.tendsto_longitudinal_ratio ha
 
 theorem tendsto_wallShift_div (r : ℕ) :
     Tendsto (fun n : ℕ => wallShift n r / (n : ℝ))
@@ -2181,7 +2175,7 @@ theorem matrix_irreducible {r m : ℕ}
     (matrix_pos_of_grid_adj a b n hpositive)
   let v : Vertex r m := fun _ => 0
   have hv : (v (0 : Fin (r + 1))).val < m := by
-    simpa [v] using hm
+    simpa only [Fin.coe_ofNat_eq_mod, Nat.zero_mod, v] using hm
   exact ⟨v, nextVertex v 0 hv, grid_adj_nextVertex v 0 hv⟩
 
 theorem eventually_matrix_irreducible {r m : ℕ}
@@ -3274,8 +3268,7 @@ theorem liftChannel_adjoint_axis_ne
         ((coordinateInclusion (n := n) lam target).adjoint
           (x.val ⊗ₜ[ℝ]
             vertexInclusion (YoungVertex (n := n) lam) j v))) = 0
-  simp only [coordinateInclusion_adjoint_axis_ne lam target j h,
-    map_zero, map_zero]
+  simp only [coordinateInclusion_adjoint_axis_ne lam target j h, map_zero]
 
 /-- The lifted Young edge channel when its transition probability is positive, and zero
 otherwise. -/
@@ -4232,7 +4225,7 @@ theorem mem_ideal_smul_top_iff {R : Type*} [CommRing R]
     p ∈ (I • (⊤ : Submodule R R) : Submodule R R) ↔ p ∈ I := by
   rw [Ideal.smul_top_eq_map]
   simpa only using (show p ∈ Submodule.restrictScalars R (Ideal.map (algebraMap R R) I) ↔ p ∈ I
-    by simp)
+    by simp only [Algebra.algebraMap_self, Ideal.map_id, Submodule.restrictScalars_self])
 
 theorem gramQuadraticList_weaklyRegular_iff_saturation
     (r n : ℕ) :
@@ -5430,7 +5423,7 @@ private theorem buchberger_correction_pair_lt
         have hscaled :
             m.toSyn (m.degree
               (Pij * ((m.leadingTerm (b j) - b j) * b i))) < d := by
-          simpa [hPij, hij, htopij] using hlt
+          simpa only [hPij, hij, ↓reduceIte, htopij] using hlt
         have hc0 : cij ≠ 0 := by
           intro hz
           simp only [hz, zero_smul, mul_zero, not_true_eq_false] at hzero
@@ -5507,7 +5500,7 @@ private theorem buchberger_correction_pair_lt
         have hscaled :
             m.toSyn (m.degree
               (Pij * ((b i - m.leadingTerm (b i)) * b j))) < d := by
-          simpa [hPij, hij, htopij] using hlt
+          simpa only [hPij, hij, ↓reduceIte, htopij] using hlt
         have hc0 : cij ≠ 0 := by
           intro hz
           simp only [hz, zero_smul, mul_zero, not_true_eq_false] at hzero
@@ -5804,7 +5797,7 @@ theorem mem_ideal_smul_top_iff {R : Type*} [CommRing R]
     p ∈ (I • (⊤ : Submodule R R) : Submodule R R) ↔ p ∈ I := by
   rw [Ideal.smul_top_eq_map]
   simpa only using (show p ∈ Submodule.restrictScalars R (Ideal.map (algebraMap R R) I) ↔ p ∈ I
-    by simp)
+    by simp only [Algebra.algebraMap_self, Ideal.map_id, Submodule.restrictScalars_self])
 
 theorem mem_of_X_mul_mem_of_avoids_leading_support
     {σ K : Type*} [Field K]
@@ -6131,7 +6124,7 @@ theorem arbitraryRowAxialRaise_isHomogeneous
   simpa only [zero_add] using
     (MvPolynomial.isHomogeneous_C (Fin ((r + 1) * n)) (polarizationPathCoefficient lam row S)).mul
       (by
-        simpa [Nat.add_comm] using
+        simpa only [Nat.add_comm] using
           (MvPolynomial.isHomogeneous_X ℝ (variableIndex (polarizationPathStart row S) k)).mul
             (lowerPolarizationPath_isHomogeneous ((S.sort (· ≤ ·)) ++ [row]) p hp))
 
@@ -6557,7 +6550,7 @@ theorem sortedPolarizationPath_le_row
   · exact le_of_lt ((mem_precedingRows i row).mp
       (hsub ((Finset.mem_sort (· ≤ ·)).mp hi)))
   · have : i = row := by simpa only [List.mem_cons, List.not_mem_nil, or_false] using hi
-    simp [this]
+    simp only [this, Std.le_refl]
 
 theorem polarizationPathStart_le_row
     {r : ℕ} (row : Fin (r + 1))

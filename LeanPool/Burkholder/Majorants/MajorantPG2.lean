@@ -6126,7 +6126,7 @@ private lemma uCandidate_tangent_x_increment_of_y_neg
   have hdx := DxuCandidate_neg_neg_of_y_neg (p := p) (x := x) (y := y) hy_neg
   calc
     uCandidate p (x + h) y = uCandidate p (-(x + h)) (-y) := hend
-    _ = uCandidate p ((-x) + (-h)) (-y) := by ring
+    _ = uCandidate p ((-x) + (-h)) (-y) := by ring_nf
     _ ≤ uCandidate p (-x) (-y) + DxuCandidate p (-x) (-y) * (-h) := hmain
     _ = uCandidate p x y + DxuCandidate p x y * h := by
       rw [← hstart, hdx]

@@ -8,9 +8,6 @@ module
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.ResidualPoint
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.StableInterval
-import Mathlib.Order.Bounds.OrderIso
-import Mathlib.SetTheory.Ordinal.Arithmetic
-import Mathlib.Tactic.Linarith
 
 /-!
 # Cofinality of Berarducci residual points

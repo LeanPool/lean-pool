@@ -176,9 +176,13 @@ theorem orientableBoundaryWord_get_handle_block (p n : ℕ) (i : Fin p) (k : Fin
       (orientableBoundaryWord p n)[i.val * 4 + k.val]? =
         some ((orientableHandleBlock (n := n) i).get k) := by
     simp only [orientableBoundaryWord, orientableHandleWords_eq_ofFn]
-    rw [List.getElem?_append_left (by simp; omega)]
+    rw [List.getElem?_append_left (by simp only [List.length_ofFn]; omega)]
     rw [List.getElem?_ofFn, dite_eq_left (by omega)]
-    simp [orientableHandleLinearDart, orientableHandleBlock, Nat.mod_eq_of_lt k.isLt]
+    simp only [orientableHandleLinearDart, orientableHandleBlock, finProdFinEquiv_symm_apply,
+      Fin.divNat_linear,
+    List.get_eq_getElem, List.length_cons, List.length_nil, Nat.reduceAdd,
+      Fin.coe_modNat, Nat.mul_add_mod_self_right,
+    Nat.mod_eq_of_lt k.isLt]
   simp only [hopt]
   exact Option.get_some _ _
 
@@ -193,12 +197,17 @@ theorem orientableBoundaryWord_get_boundary_block (p n : ℕ) (j : Fin n) (k : F
         some ((orientableBoundaryBlock (p := p) j).get k) := by
     simp only [orientableBoundaryWord, orientableHandleWords_eq_ofFn,
       orientableBoundaryWords_eq_ofFn]
-    rw [List.getElem?_append_right (by simp; omega)]
+    rw [List.getElem?_append_right (by simp only [List.length_ofFn]; omega)]
     simp only [List.length_ofFn]
     have hidx : 4 * p + j.val * 3 + k.val - p * 4 = j.val * 3 + k.val := by
       omega
     rw [hidx, List.getElem?_ofFn, dite_eq_left (by omega)]
-    simp [orientableBoundaryLinearDart, orientableBoundaryBlock, Nat.mod_eq_of_lt k.isLt]
+    simp only [orientableBoundaryLinearDart, orientableBoundaryBlock,
+      finProdFinEquiv_symm_apply,
+    Fin.divNat_linear, List.get_eq_getElem, List.length_cons,
+      List.length_nil, Nat.reduceAdd, Fin.coe_modNat,
+    Nat.mul_add_mod_self_right,
+      Nat.mod_eq_of_lt k.isLt]
   simp only [hopt]
   exact Option.get_some _ _
 
@@ -303,9 +312,13 @@ theorem nonOrientableBoundaryWord_get_crosscap_block
       (nonOrientableBoundaryWord p n)[i.val * 2 + k.val]? =
         some ((nonOrientableCrosscapBlock (n := n) i).get k) := by
     simp only [nonOrientableBoundaryWord, nonOrientableCrosscapWords_eq_ofFn]
-    rw [List.getElem?_append_left (by simp; omega)]
+    rw [List.getElem?_append_left (by simp only [List.length_ofFn]; omega)]
     rw [List.getElem?_ofFn, dite_eq_left (by omega)]
-    simp [nonOrientableCrosscapLinearDart, nonOrientableCrosscapBlock,
+    simp only [nonOrientableCrosscapLinearDart, nonOrientableCrosscapBlock,
+      finProdFinEquiv_symm_apply,
+    Fin.divNat_linear, List.get_eq_getElem, List.length_cons,
+      List.length_nil, Nat.reduceAdd, Fin.coe_modNat,
+    Nat.mul_add_mod_self_right,
       Nat.mod_eq_of_lt k.isLt]
   simp only [hopt]
   exact Option.get_some _ _
@@ -322,12 +335,16 @@ theorem nonOrientableBoundaryWord_get_boundary_block
         some ((nonOrientableBoundaryBlock (p := p) j).get k) := by
     simp only [nonOrientableBoundaryWord, nonOrientableCrosscapWords_eq_ofFn,
       nonOrientableBoundaryWords_eq_ofFn]
-    rw [List.getElem?_append_right (by simp; omega)]
+    rw [List.getElem?_append_right (by simp only [List.length_ofFn]; omega)]
     simp only [List.length_ofFn]
     have hidx : 2 * p + j.val * 3 + k.val - p * 2 = j.val * 3 + k.val := by
       omega
     rw [hidx, List.getElem?_ofFn, dite_eq_left (by omega)]
-    simp [nonOrientableBoundaryLinearDart, nonOrientableBoundaryBlock,
+    simp only [nonOrientableBoundaryLinearDart, nonOrientableBoundaryBlock,
+      finProdFinEquiv_symm_apply,
+    Fin.divNat_linear, List.get_eq_getElem, List.length_cons,
+      List.length_nil, Nat.reduceAdd, Fin.coe_modNat,
+    Nat.mul_add_mod_self_right,
       Nat.mod_eq_of_lt k.isLt]
   simp only [hopt]
   exact Option.get_some _ _

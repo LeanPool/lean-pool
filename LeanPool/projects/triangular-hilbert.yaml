@@ -1,0 +1,51 @@
+slug: triangular-hilbert
+title: The symmetric triangular Hilbert form
+summary: >-
+  Proves the symmetric L³ estimate and principal-value existence for the
+  triangular Hilbert form on complex Schwartz inputs, and its unique bounded
+  trilinear extension to L³. The proof develops matrix trace estimates, Gaussian
+  scale kernels, heat-flow identities and the passage from finite lattice sums
+  to the Euclidean estimate. As an application it reduces continuous periodic
+  Fourier convergence to the triangular estimate through localized modulated
+  kernel estimates. Lean Pool's CarlesonLT project proves the convergence theorem
+  for periodic functions that are square-integrable on a period.
+branch: harmonic analysis
+entry_module: LeanPool.Triangular
+authors:
+  - Joris Roos
+source:
+  url: https://github.com/roos-j/lean-triangular/tree/9edcdf82f32466c0275ba6d67f5b37876c23ed0c
+  github_repo: roos-j/lean-triangular
+  commit: 9edcdf82f32466c0275ba6d67f5b37876c23ed0c
+  completion_url: https://github.com/roos-j/lean-triangular/commit/069e117a02a6b8a5946fbe35bff29308bcfb17f7
+  completion_date: '2026-11-11T16:14:58Z'
+  manuscript_url: https://github.com/openai/math/blob/adc7f1241b42e322a6451854ab7e4b4c146bf78a/preprints/The-maximal-triangular-Hilbert-transform-at-the-symmetric-point-September-24-2026/paper.pdf
+  manuscript_locator: Proposition 7.4 (scalar equivalence)
+  matrix_and_heat_flow_source: https://github.com/roos-j/lean-twocommuting/tree/33b69ccacc013c703a151421658187ea4d2029fb/TwoCommuting/Auto
+  related_carleson_result: https://github.com/LeanPool/lean-pool/pull/666
+  dense_extension_source: https://github.com/roos-j/lean-trilinearht/blob/12d795893f2fca76632579c0ad3a6a9b0a9e7c17/TrilinearHT/Auto/SecCompletion.lean
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+  - Triangular.triangular_ht_bound
+  - Triangular.Auto.tendsto_truncatedForm
+  - Triangular.Auto.triangularHilbert_unique_extension
+main_results:
+  - declaration: Triangular.triangular_ht_bound
+    informal: >-
+      The norm of the triangular Hilbert trilinear form is at most an absolute
+      constant times the product of the three L³ norms for complex Schwartz inputs.
+  - declaration: Triangular.Auto.tendsto_truncatedForm
+    informal: The trilinear truncations converge to the principal value as the cutoff decreases to zero.
+  - declaration: Triangular.Auto.triangularHilbert_unique_extension
+    informal: >-
+      The principal-value form extends uniquely to a continuous complex
+      trilinear form on L³, with the same norm bound.
+tags:
+  - harmonic-analysis
+  - singular-integrals
+  - fourier-series
+msc:
+  - 42B20
+  - 42A20

@@ -1,0 +1,245 @@
+/-
+Copyright (c) 2026 Wesley Pegden. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Wesley Pegden
+-/
+module
+
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceTransport
+
+public import LeanPool.GoldbergSeymour.HierarchyTreeFacts
+
+public import LeanPool.GoldbergSeymour.TreeInterchangeableFacts
+
+public import LeanPool.GoldbergSeymour.TreeSequenceColoringFacts
+
+public import LeanPool.GoldbergSeymour.SharedFacts.ChangeLemmaBothOutsidePreparation1
+
+public import LeanPool.GoldbergSeymour.SharedFacts.MixedChangeTransport.Preparation1
+public import LeanPool.GoldbergSeymour.TashkinovAugmentationSequenceInitialSegment
+
+/-!
+# Shared facts for ChangeLemmaMixedClosedFinal
+
+These interfaces and proofs are shared across the imported proof branches.
+Extracted from Wesley Pegden’s Trellis formalization at
+88d98c1d1a59d1f1bf7c4eb58e73f3945f6daf12 during the Lean Pool port.
+-/
+
+@[expose] public section
+
+namespace GoldbergSeymour.SharedFacts.MixedChangeTransport
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+alias initialSegmentTransitive :=
+  SharedFacts.ChangeLemmaBothOutsidePreparation1.initialSegmentTransitive
+
+alias comparableInitialSegments :=
+  SharedFacts.ChangeLemmaBothOutsidePreparation1.comparableInitialSegments
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem stageInitialSegment.{u_1, u_2} : stageInitialSegmentStatement.{u_1, u_2} := by
+  intro V E _ _ _ _ G k e0 input T phi ett base C H segRefl segTrans a d hbound
+  exact H.stageInitialSegmentOfLE _ _ (by change a ≤ a + d; exact Nat.le_add_right _ _)
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem stageInitialSegmentOfFinalTree.{u_1, u_2} :
+    stageInitialSegmentOfFinalTreeStatement.{u_1, u_2} := by
+  intro V E _ _ _ _ G k e0 input T phi ett base C H stageSegment j
+  exact H.stageInitialSegment j
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem lastStagePositive.{u_1, u_2} : lastStagePositiveStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C H q A hz
+  obtain hzero | ⟨i, hi⟩ := Fin.eq_zero_or_eq_succ q
+  · have hv := congrArg Fin.val hzero
+    simp only [Fin.val_last, Fin.coe_ofNat_eq_mod, Nat.zero_mod, q] at hv
+    exact (hz hv).elim
+  · simp only [A, HierarchyStarredStage, hi, Fin.cases_succ]
+    congr 1
+    apply Fin.ext
+    have hv := congrArg Fin.val hi
+    simpa [q] using hv.symm
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem coreInitialSegmentOfStarredStage.{u_1, u_2} :
+    coreInitialSegmentOfStarredStageStatement.{u_1, u_2} := by
+  intro V E _ _ _ _ G k e0 input T phi ett base C H q A segRefl segTrans stageSegment lastZero
+      lastPositive
+  exact H.coreInitialSegmentOfStarredStage q
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem terminalStageInitialSegmentOfCore.{u_1, u_2} :
+    terminalStageInitialSegmentOfCoreStatement.{u_1, u_2} := by
+  intro V E _ _ _ _ G k e0 input T phi ett base n Tn segRefl
+  exact base.lastRoundInitialSegmentCore
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem starredStageInitialSegmentOfFinalTree.{u_1, u_2} :
+    starredStageInitialSegmentOfFinalTreeStatement.{u_1, u_2} := by
+  intro V E _ _ _ _ G k e0 input T phi ett base C H q A segTrans stageToT lastZero lastPositive
+  exact H.lastStarredInitialSegment
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem ordinaryStageInitialSegmentOfStarredStage.{u_1, u_2} :
+    ordinaryStageInitialSegmentOfStarredStageStatement.{u_1, u_2} := by
+  intro V E _ _ _ _ G k e0 input T phi ett base C H q A n Tn stageSegment lastZero lastPositive
+      TnToA j
+  exact H.stageInitialSegmentOfStarredStage j q (Fin.le_last _)
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem firstMissingPositionWitness.{u_1, u_2} : firstMissingPositionWitnessStatement.{u_1,
+    u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C H q A ell yLength Y YToT c hc
+  exact TreeSequenceFirstMissingPositionPrefixWitness YToT hc
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem missingPositionOutsidePrefix.{u_1, u_2} : missingPositionOutsidePrefixStatement.{u_1,
+    u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C H q A AToT i hi
+  by_contra h
+  have hle : i.val ≤ A.length := by omega
+  apply hi
+  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and]
+  exact ⟨⟨i.val, by omega⟩, (AToT.2.1 ⟨i.val, by omega⟩).symm⟩
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem colorNotMissingOnStarredStage.{u_1, u_2} :
+    colorNotMissingOnStarredStageStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne H q A ell yLength Y hElementaryY
+      AToY c i hmi hiy hia
+  clear * - hmi hiy hia AToY hElementaryY
+  intro hc
+  obtain ⟨v, hv, hcv⟩ := Finset.mem_biUnion.mp hc
+  have hne : v ≠ T.vertex i := by intro he; exact hia (he ▸ hv)
+  exact (Finset.disjoint_left.mp
+    (hElementaryY (TreeSequenceInitialSegmentVertexSetSubset AToY hv) hiy hne)) hcv hmi
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem distinctMissingPositionIndices.{u_1, u_2} :
+    distinctMissingPositionIndicesStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta ia ib horder
+  obtain ⟨i, j, hi, hj, hij⟩ := horder.1
+  have hei := T.vertex_injective hi
+  have hej := T.vertex_injective hj
+  simpa [hei, hej] using hij
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem prefixStrictlyShorterThanFinalTree.{u_1, u_2} :
+    prefixStrictlyShorterThanFinalTreeStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib ell yLength Y AToT hAib B
+      ABstrict BToY
+  clear * - AToT BToY ABstrict Y
+  have hAT := AToT.1
+  have hY : Y.length = min (A.length + (T.length - A.length - 1)) T.length := rfl
+  have hBY := BToY.1
+  have hAB := ABstrict
+  omega
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem pathMissing.{u_1, u_2} : pathMissingStatement.{u_1, u_2} := by
+  intro V E _ _ G k phi hproper v c d hcd hc
+  exact TwoColorPathComponent.of_missing hproper hcd hc
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem notMissingBeforeFirstPosition.{u_1, u_2} :
+    notMissingBeforeFirstPositionStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta hne H q A ia ib va vb ell yLength Y
+      hElementaryY ha hb haY hbY hAib B BToY K sigma haK behavior edgeOfVertex v hv hvb
+  by_cases hvK : Sum.inl v ∈ K
+  · have hva : v ≠ va := by intro he; exact haK (he ▸ hvK)
+    have hvY := TreeSequenceInitialSegmentVertexSetSubset BToY hv
+    have han : alpha ∉ MissingColors G phi v := fun hc =>
+      Finset.disjoint_left.mp (hElementaryY hvY haY hva) hc ha.1
+    have hbn : beta ∉ MissingColors G phi v := fun hc =>
+      Finset.disjoint_left.mp (hElementaryY hvY hbY hvb) hc hb.1
+    have hpa : ∃ f, Incident G v f ∧ phi f = some alpha := by
+      simpa [MissingColors, PresentColors] using han
+    have hpb : ∃ f, Incident G v f ∧ phi f = some beta := by
+      simpa [MissingColors, PresentColors] using hbn
+    obtain ⟨fa, hfa, hfca⟩ := hpa
+    obtain ⟨fb, hfb, hfcb⟩ := hpb
+    have hfaK := edgeOfVertex hvK hfa (Or.inl hfca)
+    have hfbK := edgeOfVertex hvK hfb (Or.inr hfcb)
+    have hnewa : sigma fb = some alpha := by
+      simp [sigma, TwoColorComponentSwap, K, hfbK, hfcb, hne.symm]
+    have hnewb : sigma fa = some beta := by
+      simp [sigma, TwoColorComponentSwap, K, hfaK, hfca]
+    have hana : alpha ∉ MissingColors G sigma v := by
+      simp only [MissingColors, Finset.mem_sdiff, Finset.mem_univ, true_and,
+        PresentColors, Finset.mem_filter, not_not]
+      exact ⟨fb, hfb, hnewa⟩
+    have hbnb : beta ∉ MissingColors G sigma v := by
+      simp only [MissingColors, Finset.mem_sdiff, Finset.mem_univ, true_and,
+        PresentColors, Finset.mem_filter, not_not]
+      exact ⟨fa, hfa, hnewb⟩
+    ext c
+    by_cases hca : c = alpha
+    · subst c; simp [hana, han]
+    · by_cases hcb : c = beta
+      · subst c; simp [hbnb, hbn]
+      · exact behavior.2.2.2 v c hca hcb
+  · exact behavior.1 v hvK
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem routeTransport.{u_1, u_2} : routeTransportStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib vb segTrans hAib B BToT
+      sigma missingBefore edgesFixed S hs
+  apply TashkinovAugmentationSequence.transport_of_fixed edgesFixed ?_ hs
+  intro initial segment strict vertex member
+  apply missingBefore vertex (TreeSequenceInitialSegmentVertexSetSubset segment member)
+  intro equal
+  simp only [TreeSequenceVertexSet, Finset.mem_image, Finset.mem_univ, true_and] at member
+  obtain ⟨index, atVertex⟩ := member
+  have inTarget := segment.2.1 index
+  have inTree := BToT.2.1 (Fin.castLE (Nat.succ_le_succ segment.1) index)
+  have sameVertex : T.vertex (Fin.castLE (Nat.succ_le_succ BToT.1)
+      (Fin.castLE (Nat.succ_le_succ segment.1) index)) = T.vertex ib :=
+    inTree.trans (inTarget.trans (atVertex.trans equal))
+  have sameIndex := congrArg Fin.val (T.vertex_injective sameVertex)
+  have := index.isLt
+  change index.val = ib.val at sameIndex
+  change initial.length < ib.val at strict
+  omega
+
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem replacementStageInitialSegmentOfPrefix.{u_1, u_2} :
+    replacementStageInitialSegmentOfPrefixStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A ib segRefl segTrans hAib B rpB
+      aboveB strictB belowB genB baseB HB j
+  exact HB.stageInitialSegment j
+
+/-- A common proof used by the branches of this transport or construction argument. -/
+theorem closureInitialSegmentOfStarredStage.{u_1, u_2} :
+    closureInitialSegmentOfStarredStageStatement.{u_1, u_2} := by
+  classical
+  intro V E _ _ _ _ G k e0 input T phi ett base C alpha beta H q A n ib coreToA hAib B rpB aboveB
+      strictB belowB genB baseB hcoreB hp
+  clear * - hp baseB coreToA hcoreB
+  obtain ⟨_, _, ⟨u⟩⟩ := baseB.parallel hp
+  intro v hv
+  apply TreeSequenceInitialSegmentVertexSetSubset coreToA
+  rw [← hcoreB, u.vertexSet]
+  exact Finset.mem_union_right _ hv
+
+end GoldbergSeymour.SharedFacts.MixedChangeTransport
+
+end

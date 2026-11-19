@@ -338,7 +338,7 @@ def test_unresolved_evidence_stays_visible(kind):
     )
     body = review.render_comment(
         payload,
-        "gpt-6-astra",
+        "gpt-6.2-astra",
         None,
         "codex-azure",
         "test-head",

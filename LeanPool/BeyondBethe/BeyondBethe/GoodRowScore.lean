@@ -421,7 +421,7 @@ theorem rowT_ge_two_core_suffix_bound
           suffixError (p b) (p a + (1 - p a - p b))) ≤
       uniformAverage (fun π : Equiv.Perm (Fin n) ↦
         suffixError (p b) (strictRightMass p π b)) := by
-    convert hb0 using 1; ring
+    convert hb0 using 1; ring_nf
   have hcore := rowT_ge_core_errors hp hab
   rw [uniformAverage_add] at hcore
   nlinarith

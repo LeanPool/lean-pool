@@ -9,11 +9,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Random.GradedIrreducible
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NormalForm
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalComponentDegree
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalComponentTensor
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Degree.Statements.Degree
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeSum
-import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.DegreeInitialForm
 
 /-!
 # Irreducibility of non-principal series of finite degree
@@ -190,7 +186,7 @@ theorem irreducible_blockSum {n : ℕ} (hn : 1 ≤ n) {ι : Type} [Fintype ι]
           ⟨(γm : ℝ) + ((δ i : exponentMonoid ℝ) : ℝ), (exponentMonoid ℝ).add_mem γm.2 (δ i).2⟩ from
         Subtype.ext (by change γ i = γ m + (γ i - γ m); ring),
       ← finiteSupportMonomial_mul, map_mul]
-    ring
+    ac_rfl
   -- The block form and the monomial are nonzero, so `B` has degree exactly `n`.
   have hBform_ne : Bform ≠ 0 := by
     intro h

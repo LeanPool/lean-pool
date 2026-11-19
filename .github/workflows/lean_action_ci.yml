@@ -32,6 +32,7 @@ on:
     paths:
       - '**/*.lean'
       - 'lakefile.toml'
+      - 'lakefile.lean'
       - 'lean-toolchain'
       - 'lake-manifest.json'
       - 'LeanPool/projects/**'
@@ -42,6 +43,7 @@ on:
       - 'python/lean_pool/indexes.py'
       - 'python/lean_pool/queue_build.py'
       - 'python/lean_pool/validation_cache.py'
+      - 'python/lean_pool/shard_validation.py'
       - 'python/lean_pool/ci_artifacts.py'
       - 'python/lean_pool/ci_cache.py'
       - 'python/lean_pool/ci_pr_build.py'
@@ -50,6 +52,7 @@ on:
       - 'python/pyproject.toml'
       - 'python/uv.lock'
       - 'scripts/nolints-style.txt'
+      - 'scripts/nolints.json'
       - 'scripts/ci/**'
       - '.github/CODE_QUALITY.md'
       - '.github/workflows/lean_action_ci.yml'
@@ -97,6 +100,7 @@ jobs:
       reuse_run_id: ${{ steps.plan.outputs.reuse_run_id }}
       previous_head: ${{ steps.plan.outputs.previous_head }}
       queue_build: ${{ steps.plan.outputs.queue_build }}
+      diff_base: ${{ steps.plan.outputs.diff_base }}
     steps:
       - name: Checkout project
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
@@ -162,14 +166,24 @@ jobs:
           # exceeds the kernel's 128 KiB limit on a single environment string.
           changed_files="$RUNNER_TEMP/changed-files.txt"
           : > "$changed_files"
+          # The revision this run's own changes are measured from, for the plan
+          # and for every job's build-time gate.
+          diff_base="$BASE_SHA"
           case "$EVENT_NAME" in
             merge_group)
               git diff --name-only --no-renames "$BASE_SHA"..HEAD > "$changed_files"
               ;;
             pull_request)
-              git diff --name-only --no-renames "$BASE_SHA"...HEAD > "$changed_files"
+              # The event's base.sha can trail main by days, which would count
+              # everything main merged since as this PR's change. The tested
+              # merge commit's first parent is the main tip it merges into.
+              if [ "$(git rev-parse -q --verify 'HEAD^2' || true)" = "$PR_HEAD" ]; then
+                diff_base=$(git rev-parse 'HEAD^1')
+              fi
+              git diff --name-only --no-renames "$diff_base"...HEAD > "$changed_files"
               ;;
             push)
+              diff_base="$BEFORE_SHA"
               if [ -n "$BEFORE_SHA" ] \
                  && ! printf '%s' "$BEFORE_SHA" | grep -q '^0*$' \
                  && git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
@@ -182,6 +196,7 @@ jobs:
               diff_available=false
               ;;
           esac
+          echo "diff_base=$diff_base" >> "$GITHUB_OUTPUT"
           minimal_build=false
           if [ "$EVENT_NAME" = pull_request ] && grep -Eq '^(python/lean_pool/(exposition/|ci_artifacts.py$)|scripts/exposition/|.github/workflows/exposition-verify.yml$)' "$changed_files"; then
             minimal_build=true
@@ -376,12 +391,13 @@ jobs:
       - name: Build project
         id: compilation
         env:
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
         run: |
           set -euo pipefail
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
@@ -603,10 +619,30 @@ jobs:
             echo "Mathlib already present from cache"
           fi
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff
+        with:
+          enable-cache: true
+
+      - name: Reuse compiled files from this PR's successful runs
+        if: github.event_name == 'pull_request' && steps.cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          CURRENT_RUN: ${{ github.run_id }}
+        run: >-
+          PYTHONPATH=python uv run --project python --locked python -m lean_pool.ci_pr_build
+          --number "$PR_NUMBER" --branch "$PR_BRANCH"
+          --head "$PR_HEAD" --base "$PR_BASE" --current-run "$CURRENT_RUN"
+
       - name: Build this shard's projects
         env:
           PROJECTS: ${{ matrix.projects }}
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
         run: |
           set -euo pipefail
           touch "$RUNNER_TEMP/build-stamp"
@@ -619,9 +655,10 @@ jobs:
               | tr '\n' ' ')
             modules="$modules $project_modules"
           done
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
@@ -669,6 +706,44 @@ jobs:
           name: ci-oleans-${{ matrix.shard }}
           path: shard-oleans-*.tar.gz
           if-no-files-found: ignore
+          retention-days: 1
+
+      # Lint and audit this shard's projects here, in parallel with the other
+      # shards, instead of one after another in `finalize`. Only passes are
+      # handed on: `finalize` recomputes every fingerprint and runs whatever
+      # has no matching pass, so a failure here is reported there.
+      - name: Restore project validation
+        uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae
+        with:
+          path: .lake/validation-cache/v1
+          key: LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          restore-keys: |
+            LeanValidation-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+
+      - name: Install validation dependencies
+        continue-on-error: true
+        run: cd python && uv sync --locked
+
+      - name: Lint and audit this shard's projects
+        id: shard-validation
+        continue-on-error: true
+        env:
+          PROJECTS: ${{ matrix.projects }}
+        run: |
+          cd python
+          # shellcheck disable=SC2086 # word-split the project list on purpose
+          uv run python -m lean_pool.shard_validation --repo .. --units $PROJECTS
+
+      - name: Upload validation passes
+        if: always() && steps.shard-validation.outcome != 'skipped'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ci-validation-${{ matrix.shard }}
+          path: .lake/validation-cache/v1/passes.json
+          include-hidden-files: true
+          if-no-files-found: ignore
+          compression-level: 1
           retention-days: 1
 
   finalize:
@@ -799,22 +874,18 @@ jobs:
       - name: Build project
         id: compilation
         env:
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
-          # This run's shards already compiled and timed these projects'
-          # changed files, so assembly neither rebuilds nor re-times them.
-          SHARD_PROJECTS: ${{ join(fromJSON(needs.plan.outputs.matrix).include.*.projects, ' ') }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
         run: |
           set -euo pipefail
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then
             time_base="$BUILD_TIME_BASE"
-            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
-            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare \
-              --base "$time_base" --exclude-projects $SHARD_PROJECTS
+            PYTHONPATH=python python3 -m lean_pool.build_time_limits prepare --base "$time_base"
           fi
           PYTHONPATH=python python3 -m lean_pool.build_time_limits watch -- ~/.elan/bin/lake build LeanPool 2>&1 | tee lean-build.log
           if grep -nE '(^|: )warning:' lean-build.log; then
@@ -822,9 +893,8 @@ jobs:
             exit 1
           fi
           if [ -n "$time_base" ]; then
-            # shellcheck disable=SC2086 # SHARD_PROJECTS is a space-separated list on purpose
             PYTHONPATH=python python3 -m lean_pool.build_time_limits check \
-              --log lean-build.log --base "$time_base" --exclude-projects $SHARD_PROJECTS
+              --log lean-build.log --base "$time_base"
           fi
 
       # Lake writes setup files only as compiler inputs, each listing every
@@ -892,6 +962,21 @@ jobs:
         run: >-
           PYTHONPATH=python uv run --project python --locked python -m lean_pool.queue_build
           --base "$BASE_SHA" --head "$HEAD_SHA" --receipts
+
+      - name: Download shard validation passes
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ci-validation-*
+          path: ${{ runner.temp }}/shard-validation
+
+      - name: Merge shard validation passes
+        continue-on-error: true
+        env:
+          FRAGMENTS: ${{ runner.temp }}/shard-validation
+        run: >-
+          PYTHONPATH=python python3 -m lean_pool.validation_cache merge
+          "$FRAGMENTS"
 
       - name: Lint
         run: |
@@ -1068,12 +1153,13 @@ jobs:
 
       - name: Build combined Lean root
         env:
-          BUILD_TIME_BASE: ${{ github.event.merge_group.base_sha || github.event.pull_request.base.sha || github.event.before }}
+          BUILD_TIME_BASE: ${{ needs.plan.outputs.diff_base }}
         run: |
           set -euo pipefail
-          # Always rebuild this job's changed files after every cache/artifact
-          # restore. A same-policy cache need not have timed them while changed.
-          # `check` requires fresh timings; `watch` retains the 60-minute limit.
+          # After every cache/artifact restore, `prepare` forces a rebuild of
+          # each changed file whose restored output has no recorded build time,
+          # so `check` judges a time measured in CI for every changed file.
+          # `watch` retains the 60-minute limit.
           time_base=""
           if [ -n "$BUILD_TIME_BASE" ] && ! printf '%s' "$BUILD_TIME_BASE" | grep -q '^0*$' \
              && git cat-file -e "$BUILD_TIME_BASE" 2>/dev/null; then

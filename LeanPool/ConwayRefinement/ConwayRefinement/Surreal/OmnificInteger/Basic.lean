@@ -10,8 +10,6 @@ public import Mathlib.Algebra.Ring.Subring.Defs
 public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.Round
 
 import LeanPool.ConwayRefinement.CombinatorialGames.Tactic.GameCmp
-import Mathlib.Tactic.Abel
-import Mathlib.Tactic.Ring
 
 /-!
 # Omnific integers

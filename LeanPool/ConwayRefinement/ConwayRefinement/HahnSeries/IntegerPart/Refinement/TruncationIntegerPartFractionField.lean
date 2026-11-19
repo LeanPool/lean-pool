@@ -5,10 +5,10 @@ Authors: Dan Abramov
 -/
 module
 
+
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.IntegerPart.Refinement.CompleteGermRefinement
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.TruncationIntegerPartPrimal
 
-import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.ArchimedeanBallBase
 import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 

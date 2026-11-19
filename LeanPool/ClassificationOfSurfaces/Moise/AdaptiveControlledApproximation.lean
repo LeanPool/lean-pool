@@ -98,13 +98,13 @@ noncomputable def regionMeshControl {X : Type*} (V : Set Plane)
 theorem regionMeshControl_le_one {X : Type*} (V : Set Plane)
     (f : X → Plane) (x : X) : regionMeshControl V f x ≤ 1 := by
   by_cases hcomp : Vᶜ.Nonempty
-  · simp [regionMeshControl, hcomp]
-  · simp [regionMeshControl, hcomp]
+  · simp only [regionMeshControl, hcomp, ↓reduceDIte, min_le_iff, Std.le_refl, true_or]
+  · simp only [regionMeshControl, hcomp, ↓reduceDIte, Std.le_refl]
 
 theorem regionMeshControl_le_frontier {X : Type*} {V : Set Plane}
     (hcomp : Vᶜ.Nonempty) (f : X → Plane) (x : X) :
     regionMeshControl V f x ≤ frontierDistance V (f x) / 4 := by
-  simp [regionMeshControl, hcomp]
+  simp only [regionMeshControl, hcomp, ↓reduceDIte, min_le_iff, Std.le_refl, or_true]
 
 /-- The target-region mesh control is strongly positive along any continuous map landing in
 that region. -/

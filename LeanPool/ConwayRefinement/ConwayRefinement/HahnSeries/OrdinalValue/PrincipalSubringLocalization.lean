@@ -10,8 +10,9 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportScalarTensor
 
 import Mathlib.LinearAlgebra.Basis.VectorSpace
-import Mathlib.RingTheory.TensorProduct.Maps
-import Mathlib.RingTheory.Flat.Domain
+import Mathlib.RingTheory.Flat.Basic
+import Mathlib.RingTheory.Localization.BaseChange
+import Mathlib.Tactic.ContinuousFunctionalCalculus
 
 /-!
 # Localization of the degree-graded ring

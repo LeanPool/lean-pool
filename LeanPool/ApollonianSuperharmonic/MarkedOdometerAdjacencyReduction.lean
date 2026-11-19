@@ -787,7 +787,7 @@ private theorem matrixCov :
         BandPackingSymmetryCircleAction, BandPackingSymmetryVectorAction,
         GaussianInt.intCast_re,
         GaussianInt.intCast_im];
-        norm_num [GaussianInt.toComplex_def]; ring; simp
+        norm_num [GaussianInt.toComplex_def]; ring_nf; simp
   | negate =>
       intro c w hc
       rcases c with ⟨k, ⟨cx, cy⟩⟩
@@ -798,7 +798,7 @@ private theorem matrixCov :
         BandPackingSymmetryCircleAction, BandPackingSymmetryVectorAction,
         GaussianQuarterTurn, GaussianInt.intCast_re,
         GaussianInt.intCast_im];
-         ring; simp
+         ring_nf; simp
   | conjugate =>
       intro c w hc
       rcases c with ⟨k, ⟨cx, cy⟩⟩

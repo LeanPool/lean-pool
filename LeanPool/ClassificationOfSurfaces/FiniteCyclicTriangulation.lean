@@ -80,7 +80,7 @@ noncomputable def toFiniteCyclicPresentation (T : FiniteSurfaceTriangulation S) 
 
 theorem toFiniteCyclicPresentation_faces_length (T : FiniteSurfaceTriangulation S) :
     T.toFiniteCyclicPresentation.faces.length = Fintype.card T.Triangle := by
-  simp [toFiniteCyclicPresentation]
+  simp only [toFiniteCyclicPresentation, List.length_ofFn]
 
 /-- The original unoriented edge names are equivalent to the enumerated presentation edges. -/
 noncomputable def finiteCyclicEdgeEquiv (T : FiniteSurfaceTriangulation S) :
@@ -119,8 +119,11 @@ theorem toFiniteCyclicPresentation_boundary_faceEquiv
     (T : FiniteSurfaceTriangulation S) (f : T.Triangle) :
     T.toFiniteCyclicPresentation.boundary (T.finiteCyclicFaceEquiv f) =
       (T.triangleBoundary f).map T.finiteCyclicDartEquiv := by
-  simp [FiniteCyclicPresentation.boundary, toFiniteCyclicPresentation,
-    finiteCyclicFaceEquiv]
+  simp only [toFiniteCyclicPresentation, FiniteCyclicPresentation.boundary,
+    finiteCyclicFaceEquiv,
+    Equiv.trans_apply, RelIso.coe_fn_toEquiv, Fin.castOrderIso_apply,
+    List.get_eq_getElem, Fin.val_cast,
+    List.getElem_ofFn, Fin.eta, Equiv.symm_apply_apply]
 
 theorem toFiniteCyclicPresentation_boundary_faceEquiv_length
     (T : FiniteSurfaceTriangulation S) (f : T.Triangle) :

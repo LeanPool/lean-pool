@@ -278,7 +278,7 @@ theorem preSmoothingBase_mul_exp_quarter (ε : ℝ) :
   rw [preSmoothingBase, finalBase]
   rw [mul_assoc, ← Real.exp_add]
   congr 1
-  ring
+  ring_nf
 
 /-- The scalar completion of the smoothing argument.  This theorem is the
 exact non-algorithmic content of the last paragraph of the paper: a certified

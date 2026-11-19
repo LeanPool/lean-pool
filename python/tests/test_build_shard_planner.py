@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pytest
 
+from lean_pool.validation_cache import GLOBAL_INPUTS
+
 ROOT = Path(__file__).resolve().parents[2]
 PLANNER = runpy.run_path(str(ROOT / "scripts/ci/plan-build-shards.py"))
 MEASURER = runpy.run_path(str(ROOT / "scripts/ci/measure-build-costs.py"))
@@ -175,6 +177,31 @@ def test_cold_plan_covers_pool_in_balanced_shards(
     loads = plan["shard_seconds"]
     assert len(loads) == len(shards)
     assert max(loads) <= 1.25 * sum(loads) / len(loads)
+
+
+def test_checker_input_change_fans_validation_out_over_the_pool(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    """Every project must be validated again, so each shard takes its share."""
+    listing = str(tmp_path / "changed.txt")
+    for changed in (".github/workflows/lean_action_ci.yml", "scripts/nolints.json"):
+        plan = _plan(monkeypatch, capsys, [changed], CHANGED_FILES_PATH=listing)
+        shards = plan["matrix"]["include"]
+        assert plan["mode"] == "sharded"
+        assert "lint or quality checker inputs changed" in plan["reason"]
+        projects = [name for shard in shards for name in shard["projects"].split()]
+        assert sorted(projects) == sorted(PLANNER["unit_sources"]())
+    plan = _plan(
+        monkeypatch, capsys, ["python/lean_pool/stats.py"], CHANGED_FILES_PATH=listing
+    )
+    assert plan["mode"] == "single"
+
+
+def test_validation_inputs_match_the_receipt_fingerprints() -> None:
+    """The planner reads the checker inputs from the validation cache itself."""
+    assert PLANNER["validation_inputs"]() == set(GLOBAL_INPUTS)
 
 
 def test_dirty_projects_are_sharded_by_cost_only_when_large(

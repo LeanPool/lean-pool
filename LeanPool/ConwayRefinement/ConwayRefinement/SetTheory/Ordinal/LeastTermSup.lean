@@ -8,7 +8,6 @@ module
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.LeastTerm
-import LeanPool.ConwayRefinement.ConwayRefinement.SetTheory.Ordinal.CantorTermCount
 
 /-!
 # Approaching a natural sum from below in one summand

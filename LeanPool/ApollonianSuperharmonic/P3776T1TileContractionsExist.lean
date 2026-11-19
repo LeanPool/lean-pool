@@ -374,7 +374,7 @@ theorem P3776T1TileContractionsExist {ι : Type} (P : PeriodicTileCore ι) :
   · intro u a
     unfold center
     rw [rep_shift u a, period_shift u a, point_add]
-    apply Prod.ext <;> abel
+    apply Prod.ext <;> abel_nf
   · intro u a t z ht hz
     have hy := translated_preimage a z hz
     have hrep := rep_shift u a

@@ -94,7 +94,7 @@ lemma hasDerivAt_kernelLineGradient_of_ne_zero {r theta : ℝ}
         kernelLineHessian r theta x h t := by
     rw [kernelLineHessian, linePowerDerivative, linePowerPair]
     field_simp
-    ring
+    ring_nf
   have hfun : kernelLineGradient r theta x h =
       fun s : ℝ ↦ (4 * theta) *
         (linePower r x h s ^ (2 * theta / r - 1) * linePowerPair r x h s) := by

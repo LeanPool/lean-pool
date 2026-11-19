@@ -15,8 +15,8 @@ import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.SubgroupAlgebra
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.SubgroupGCD
 import LeanPool.ConwayRefinement.ConwayRefinement.RingTheory.LaurentTower
 import Mathlib.LinearAlgebra.FreeModule.PID
-import Mathlib.RingTheory.Int.Basic
 import Mathlib.RingTheory.UniqueFactorizationDomain.GCDMonoid
+import Mathlib.Algebra.EuclideanDomain.Int
 
 /-!
 # Greatest common divisors of finite-support nonpositive series

@@ -7,7 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalSubring
 
-import Mathlib.Tactic.NormNum
+
 
 /-!
 # API checks for `P̂`

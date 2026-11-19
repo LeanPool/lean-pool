@@ -3,6 +3,12 @@
 CI restores receipts from main or earlier runs of the same PR. Every receipt
 covers module inventories, transitive local imports, dependency pins, and code.
 Static repository invariants and text style lint still run on every checkout.
+
+Build shards can validate their own projects in parallel
+(``lean_pool.shard_validation``) and hand their pass receipts to the assembling
+job (``merge``). That job still recomputes every fingerprint and runs whatever a
+shard did not pass, so it alone decides.
+
 Missed quality audits run as concurrent Lean processes; receipts and reported
 errors keep the sequential check order.
 """
@@ -30,6 +36,7 @@ SHARED_INPUTS = (
     "lakefile.lean",
     "scripts/ci/LeanPoolLinters.lean",
     "python/lean_pool/validation_cache.py",
+    "python/lean_pool/shard_validation.py",
     "python/pyproject.toml",
     "python/uv.lock",
     ".github/workflows/lean_action_ci.yml",
@@ -94,9 +101,15 @@ def checker_inputs(kind: str | None) -> tuple[str, ...]:
     """Track each check's implementation; unknown checks retain every input."""
     if kind == "lint":
         return SHARED_INPUTS + LINT_INPUTS
-    if kind in {"axioms", "backdoors", "declarations"}:
+    if kind in {"axioms", "backdoors", "declarations", "messages"}:
         return SHARED_INPUTS + QUALITY_INPUTS
     return GLOBAL_INPUTS
+
+
+def unit_name(module: str) -> str:
+    """The pool unit that owns a module; the root index is its own unit."""
+    parts = module.split(".")
+    return parts[1] if len(parts) > 1 else "__root__"
 
 
 def pool_units(root: Path) -> list[list[str]]:
@@ -167,6 +180,25 @@ def source_inventory(
     return paths
 
 
+def read_receipts(path: Path) -> dict[str, dict[str, Any]]:
+    """Read a receipts file; a missing or corrupt one holds no receipts."""
+    try:
+        data = json.loads(path.read_text())
+        if data["version"] == 1 and isinstance(data["receipts"], dict):
+            return data["receipts"]
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    return {}
+
+
+def write_receipts(directory: Path, receipts: dict[str, dict[str, Any]]) -> None:
+    """Publish a receipts file atomically."""
+    directory.mkdir(parents=True, exist_ok=True)
+    temporary = directory / "passes.tmp"
+    temporary.write_text(json.dumps({"version": 1, "receipts": receipts}) + "\n")
+    temporary.replace(directory / "passes.json")
+
+
 class ValidationCache:
     """Store pass receipts only, with content fingerprints and atomic publication."""
 
@@ -176,12 +208,17 @@ class ValidationCache:
         directory: Path,
         *,
         refresh: bool = False,
+        units: frozenset[str] | None = None,
         workers: int | None = None,
     ) -> None:
-        """Load optional receipts; a missing or corrupt cache is a cold run."""
+        """Load optional receipts; a missing or corrupt cache is a cold run.
+
+        With ``units``, checks of every other unit are skipped without a receipt.
+        """
         self.root = root
         self.directory = directory
         self.refresh = refresh
+        self.units = units
         self.workers = validation_workers() if workers is None else workers
         self.digests: dict[Path, str] = {}
         # Compilation finishes before validation; reuse inventories and path
@@ -195,12 +232,7 @@ class ValidationCache:
         self.used: dict[str, dict[str, Any]] = {}
         self.hits = 0
         self.misses = 0
-        try:
-            data = json.loads((directory / "passes.json").read_text())
-            if data["version"] == 1 and isinstance(data["receipts"], dict):
-                self.receipts = data["receipts"]
-        except (OSError, ValueError, KeyError, TypeError):
-            pass
+        self.receipts = read_receipts(directory / "passes.json")
 
     def fingerprint(
         self, modules: list[str], metadata: Any = None, *, kind: str | None = None
@@ -256,17 +288,22 @@ class ValidationCache:
         """Run every missed check concurrently; return errors in check order.
 
         Fingerprints, hit/miss counts and receipts are computed and recorded on
-        the calling thread, so worker threads only run the validators.
+        the calling thread, so worker threads only run the validators. Checks of
+        units outside ``units`` are skipped: no errors, and no receipt.
         """
-        keys: list[str] = []
-        expected: list[dict[str, Any]] = []
+        keys: dict[int, str] = {}
+        expected: dict[int, dict[str, Any]] = {}
         missed: list[int] = []
         for index, check in enumerate(checks):
+            if self.units is not None and unit_name(check.modules[0]) not in self.units:
+                continue
             digest = self.fingerprint(check.modules, check.metadata, kind=check.kind)
-            keys.append(f"{check.kind}:{check.modules[0]}")
-            expected.append(
-                {"fingerprint": digest, "modules": check.modules, "passed": True}
-            )
+            keys[index] = f"{check.kind}:{check.modules[0]}"
+            expected[index] = {
+                "fingerprint": digest,
+                "modules": check.modules,
+                "passed": True,
+            }
             if not self.refresh and self.receipts.get(keys[index]) == expected[index]:
                 self.hits += 1
                 LOGGER.info("%s: cache hit", keys[index])
@@ -280,17 +317,14 @@ class ValidationCache:
         results: list[list[T]] = [[] for _ in checks]
         for index, errors in zip(missed, outcomes, strict=True):
             results[index] = errors
-        for index, errors in enumerate(results):
-            if not errors:
-                self.used[keys[index]] = expected[index]
+        for index, key in keys.items():
+            if not results[index]:
+                self.used[key] = expected[index]
         return results
 
     def save(self) -> None:
         """Publish only receipts used in this run, pruning deleted/changed projects."""
-        self.directory.mkdir(parents=True, exist_ok=True)
-        temporary = self.directory / "passes.tmp"
-        temporary.write_text(json.dumps({"version": 1, "receipts": self.used}) + "\n")
-        temporary.replace(self.directory / "passes.json")
+        write_receipts(self.directory, self.used)
         LOGGER.info(
             "Validation: %d cached checks, %d fresh checks", self.hits, self.misses
         )
@@ -341,16 +375,47 @@ def lint_pool(root: Path, cache: ValidationCache) -> list[str]:
     return [error for errors in results for error in errors]
 
 
+def merge_receipts(directory: Path, fragments: list[Path]) -> int:
+    """Add shards' pass receipts to the cache; return how many were added.
+
+    Each fragment is a receipts file or a directory of downloaded ones.
+
+    A receipt only counts where the assembling job computes the same
+    fingerprint for the same modules, so merging cannot certify other inputs.
+    """
+    receipts = read_receipts(directory / "passes.json")
+    added = 0
+    files = [
+        file
+        for fragment in fragments
+        for file in (
+            sorted(fragment.rglob("passes.json")) if fragment.is_dir() else [fragment]
+        )
+    ]
+    for fragment in files:
+        for key, receipt in read_receipts(fragment).items():
+            if isinstance(receipt, dict) and receipts.get(key) != receipt:
+                receipts[key] = receipt
+                added += 1
+    write_receipts(directory, receipts)
+    return added
+
+
 def main() -> int:
     """Run the cached declaration linter or repository quality checker."""
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("check", choices=("lint", "quality"))
+    parser.add_argument("check", choices=("lint", "quality", "merge"))
     parser.add_argument("--repo", type=Path, default=Path.cwd())
     parser.add_argument("--cache", type=Path, default=Path(".lake/validation-cache/v1"))
     parser.add_argument("--refresh", action="store_true")
+    parser.add_argument("fragments", nargs="*", type=Path)
     arguments = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="validation: %(message)s")
     root = arguments.repo.resolve()
+    if arguments.check == "merge":
+        added = merge_receipts(root / arguments.cache, arguments.fragments)
+        LOGGER.info("Merged %d shard receipts", added)
+        return 0
     cache = ValidationCache(root, root / arguments.cache, refresh=arguments.refresh)
     if arguments.check == "lint":
         errors = lint_pool(root, cache)

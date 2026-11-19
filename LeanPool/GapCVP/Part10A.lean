@@ -2165,19 +2165,7 @@ theorem BinaryAffineSystem.effectivePivotRow_eq_some_of_mem
 
 private theorem effective_binary_add_eq_zero_iff_eq (left right : ZMod 2) :
     left + right = 0 ↔ left = right := by
-  constructor
-  · intro hzero
-    calc
-      left = left + 0 := (add_zero left).symm
-      _ = left + (right + right) := by
-        rw [EffectiveBinaryGaussian.binary_add_self]
-      _ = (left + right) + right := by
-        rw [add_assoc]
-      _ = 0 + right := by rw [hzero]
-      _ = right := zero_add right
-  · intro hequal
-    rw [hequal]
-    exact EffectiveBinaryGaussian.binary_add_self right
+  exact CharTwo.add_eq_zero
 
 theorem BinaryAffineSystem.effectiveReducedRow_mulVec
     (H : BinaryAffineSystem)

@@ -320,7 +320,7 @@ theorem fourierInv_conjugatePoissonSpectralKernel {r : ℝ} (hr : 0 < r) (x : �
     rw [mul_assoc, mul_left_comm (Complex.exp _) (-Complex.I), ← Complex.exp_add]
     congr 1
     simp [positiveHalfInverseExponent]
-    ring)]
+    ring_nf)]
   rw [integral_const_mul, integral_exp_mul_complex_Ioi (by
     rw [positiveHalfInverseExponent_re]
     nlinarith only [hr, Real.pi_pos]) 0]
@@ -341,7 +341,7 @@ theorem fourierInv_conjugatePoissonSpectralKernel {r : ℝ} (hr : 0 < r) (x : �
     rw [mul_assoc, mul_left_comm (Complex.exp _) Complex.I, ← Complex.exp_add]
     congr 1
     simp [negativeHalfInverseExponent]
-    ring)]
+    ring_nf)]
   rw [integral_const_mul, integral_exp_mul_complex_Iic (by
     rw [negativeHalfInverseExponent_re]
     positivity) 0]
@@ -397,7 +397,7 @@ theorem cotlarConjugatePoissonAction_eq_shiftedSpectral
         congr 1
         funext z
         congr 2
-        ring
+        ring_nf
   rw [cotlarConjugatePoissonAction, htranslate, cotlarShiftedSpectralAction]
   have hpoint : ∀ z : ℝ,
       (cotlarConjugatePoissonKernel r (-z) : ℂ) =

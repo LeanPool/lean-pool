@@ -44,7 +44,9 @@ noncomputable def baryEvalAffine : (K.Vertex → ℝ) →ᵃ[ℝ] Plane :=
 
 @[simp] theorem baryEvalAffine_apply (x : K.Vertex → ℝ) :
     K.baryEvalAffine x = K.baryEval x := by
-  simp [baryEvalAffine, baryEval]
+  simp only [baryEvalAffine, LinearMap.coe_toAffineMap, LinearMap.coe_sum,
+    LinearMap.coe_smulRight,
+    LinearMap.coe_proj, Function.eval, Finset.sum_apply, baryEval]
 
 /-- Barycentric coordinates in one maximal triangle, extended by zero to all vertices of the
 complex. -/
@@ -68,7 +70,8 @@ noncomputable def faceCoords (T : K.toTriangleMesh.Triangle) :
         (K.toTriangleMesh.orderedVertex_affineIndependent T)).coord
           (K.toTriangleMesh.triangleEquiv T ⟨v, hv⟩) p := by
   classical
-  simp [faceCoords, hv]
+  simp only [faceCoords, toTriangleMesh_triangles, toTriangleMesh_position, AffineMap.pi_apply, hv,
+    ↓reduceDIte]
 
 @[simp] theorem faceCoords_apply_of_notMem (T : K.toTriangleMesh.Triangle)
     {v : K.Vertex} (hv : v ∉ T.1) (p : Plane) :
@@ -148,11 +151,11 @@ theorem faceCoords_position (T : K.toTriangleMesh.Triangle) {v : K.Vertex}
       intro h
       subst w
       exact hw hv
-    simp [hwv]
+    simp only [ne_eq, hwv, not_false_eq_true, Pi.single_eq_of_ne]
   · exact K.sum_faceCoords T (K.position v)
-  · simp
+  · simp only [Finset.sum_pi_single', Finset.mem_univ, ↓reduceIte]
   · rw [K.baryEval_faceCoords]
-    simp [PlaneComplex.baryEval]
+    simp only [baryEval, Fintype.sum_single_smul, one_smul]
 
 /-- The inverse barycentric realization map sends a point of a maximal geometric triangle to
 the corresponding intrinsic face. -/

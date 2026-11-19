@@ -217,7 +217,7 @@ theorem DiamondTileRecursiveIdentification (K : DiamondParameter) :
       have htrans := (TileTranslationFormulas (DiamondTile (k - 1)) ⟨0, 2⟩).2.2.2.2.1
       fin_cases i <;> cases s <;>
         simp [S, singleton_centroid, centroid, htrans, h32, h13, h21,
-          GaussianRealPoint, Prod.ext_iff, Nat.cast_sub hsucc] <;> ring <;> simp
+          GaussianRealPoint, Prod.ext_iff, Nat.cast_sub hsucc] <;> ring_nf <;> simp
     refine ⟨BandPrototile.decompose hq hparents hcells hfoot hcentroid,
       S, ?_, hcells, rfl, rfl, rfl, rfl, rfl, rfl⟩
     intro i s

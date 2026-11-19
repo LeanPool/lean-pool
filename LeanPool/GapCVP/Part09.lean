@@ -14,12 +14,13 @@ public import Mathlib.RingTheory.Valuation.Basic
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Star.Int
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
-import Mathlib.RingTheory.Henselian
+-- Preserve the instance environment available to importing clients.
+import Mathlib.RingTheory.Henselian -- shake: keep
 import Mathlib.RingTheory.MvPolynomial.Symmetric.FundamentalTheorem
 import Mathlib.RingTheory.MvPolynomial.Symmetric.NewtonIdentities
 import Mathlib.RingTheory.Polynomial.Resultant.Basic
 import Mathlib.RingTheory.Polynomial.Vieta
-import Mathlib.RingTheory.RegularLocalRing.Defs
+import Mathlib.RingTheory.RegularLocalRing.Defs -- shake: keep
 
 /-! # GapCVP proof, part 09 -/
 
@@ -8462,7 +8463,7 @@ private theorem sourceFormulaShiftedCommonRoot_separation
         encodingLength F z hz clause tuple localVar).natDegree =
       sourceFormulaGenericRank encodingLength F z hz (.inr ⟨clause, tuple⟩) := by
     simp only [sourceFormulaNormalizedAffineRootPolynomial_natDegree]
-  apply LE.le.trans_eq
+  exact
     (functionFieldExtendedValuation_monic_root_separation
       (sourceFormulaVariablePlace encodingLength F localVar.val)
       (sourceFormulaNormalizedAffineRootPolynomial
@@ -8471,8 +8472,7 @@ private theorem sourceFormulaShiftedCommonRoot_separation
         encodingLength F z hz clause tuple localVar) _
       (sourceFormulaNormalizedAffineRootPolynomial_eval₂_eq_zero
         encodingLength F z hz hshort clause tuple localVar index)
-      hlarge)
-  exact congrArg (fun exponent : ℕ => _ ^ exponent) degree
+      hlarge).trans_eq (congrArg (fun exponent : ℕ => _ ^ exponent) degree)
 
 theorem sourceFormulaShiftedCommonRoot_highPower_separation
     (encodingLength : ℕ) (F : Formula)

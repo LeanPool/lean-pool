@@ -212,7 +212,7 @@ private theorem integrable_mvBetaIntegrand_snoc_slice {n : ℕ} {b₀ : ℂ}
           Fin.sum_univ_castSucc, Fin.prod_univ_castSucc,
           Fin.snoc_last, Fin.snoc_castSucc]
         push_cast
-        ring
+        ring_nf
       · have hnmem : (y, t) ∉ piFinSnoc (fun _ : Fin (n + 1) ↦ ℝ) ⁻¹' mvBetaSimplex (n + 1) := by
           rw [piFinSnoc_preimage_mvBetaSimplex]
           exact fun h => ht h.2
@@ -250,7 +250,7 @@ private theorem integral_mvBetaIntegrand_snoc_slice {n : ℕ} {b₀ : ℂ}
     simp only [mvBetaIntegrand, piFinSnoc_apply, Fin.sum_univ_castSucc, Fin.prod_univ_castSucc,
       Fin.snoc_last, Fin.snoc_castSucc]
     push_cast
-    ring
+    ring_nf
   rw [integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le hs0]
   simp_rw [hmul]
   rw [intervalIntegral.integral_const_mul,
@@ -302,7 +302,7 @@ private theorem mvBetaIntegral_eq_mvBeta_aux {n : ℕ} {b₀ : ℂ} {b : Fin n �
         intro y t
         simp [f, mvBetaIntegrand, piFinSnoc_apply, Fin.sum_univ_castSucc,
           Fin.prod_univ_castSucc]
-        ring
+        ring_nf
       have hslice (y : Fin n → ℝ) :
           Integrable fun t : ℝ =>
             (piFinSnoc (fun _ : Fin (n + 1) ↦ ℝ) ⁻¹' mvBetaSimplex (n + 1)).indicator (f ∘
@@ -388,7 +388,7 @@ private theorem mvBetaIntegral_eq_mvBeta_aux {n : ℕ} {b₀ : ℂ} {b : Fin n �
                 rw [norm_cpow_eq_rpow_re_of_pos hs, sub_re, add_re, one_re]
               rw [hI, hscale, Set.indicator_of_mem hy, hf'eq]
               simp only [C, add_re]
-              ring
+              ring_nf
             · have h0 : ∀ t,
                   (piFinSnoc (fun _ : Fin (n + 1) ↦ ℝ) ⁻¹' mvBetaSimplex (n + 1)).indicator
                     (f ∘ piFinSnoc (fun _ : Fin (n + 1) ↦ ℝ)) (y, t) = 0 := by

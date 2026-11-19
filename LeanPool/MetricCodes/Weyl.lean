@@ -6,9 +6,6 @@ Authors: OpenAI, Dean Cureton
 module
 
 public import LeanPool.MetricCodes.RootComplex
-import Mathlib.Algebra.Order.Floor.Semifield
-import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Tactic.NormNum.RealSqrt
 
 /-!
 # Weyl and root-complex identities
@@ -468,7 +465,7 @@ theorem weightedExteriorActionCoboundary_apply_erase {r n k : ℕ}
           simp only [Finset.mem_erase, ne_eq, not_true_eq_false, false_and, not_false_eq_true]
         have hins : ∀ i, 0 ≤ signedRootWeight lam
             (insert α T₀.val.val) i := by
-          simpa [T₀, Finset.insert_erase hαS] using S.property
+          simpa only [rootAdmissibleErase_val, Finset.insert_erase hαS, T₀] using S.property
         have heq : rootAdmissibleInsert lam T₀ α hnot hins = S :=
           (rootAdmissibleInsert_eq_iff_erase lam T₀ α hnot hins S
             hαS herase).2 rfl
@@ -536,8 +533,7 @@ private theorem actionFischerCore_zero_right_metriccodes2_209634ef
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (p : V) :
     c.inner p 0 = 0 := by
-  rw [actionFischerCore_inner_comm_metriccodes2_209634ef,
-    actionFischerCore_zero_left_metriccodes2_209634ef]
+  exact InnerProductSpace.Core.inner_zero_right p
 
 private theorem actionFischerCore_sum_left_metriccodes2_209634ef
     {ι V : Type*} [Fintype ι]
@@ -578,9 +574,7 @@ private theorem actionFischerCore_smul_right_metriccodes2_209634ef
     (c : InnerProductSpace.Core ℝ V)
     (a : ℝ) (p q : V) :
     c.inner p (a • q) = a * c.inner p q := by
-  rw [actionFischerCore_inner_comm_metriccodes2_209634ef,
-    actionFischerCore_smul_left_metriccodes2_209634ef,
-    actionFischerCore_inner_comm_metriccodes2_209634ef c q p]
+  exact InnerProductSpace.Core.inner_smul_right p q
 
 private theorem weightedExteriorActionRoot_transpose_sum_metriccodes2_209634ef
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -850,7 +844,7 @@ private theorem degreeZeroFischerCore_inner_comm_metriccodes2_89cbd172
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (p q : V) :
     c.inner p q = c.inner q p := by
-  simpa only [Real.ringHom_apply] using c.conj_inner_symm q p
+  exact actionFischerCore_inner_comm_metriccodes2_209634ef c p q
 
 private theorem degreeZero_realExteriorRootSign_singleton_metriccodes2_89cbd172
     {ι : Type*} [LinearOrder ι] (a : ι) :
@@ -2300,7 +2294,7 @@ theorem orthogonalCompleteSymmetricCoefficient_descend_commonDenominator
     convert Finset.prod_range_add
       (fun q : ℕ => ((n : ℤ) + z + (r : ℤ) - 1 - (q : ℤ)))
       k (L - k) using 1;
-      simp [Nat.add_sub_of_le hk]
+      simp only [Nat.add_sub_of_le hk]
   rw [hsplit]
   have hdesc := orthogonalCompleteSymmetricCoefficient_descend
     hn z r k
@@ -5566,7 +5560,7 @@ theorem sum_offDiagonal_eq_sum_orderedPairs
       rw [← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl
       intro b _
-      split_ifs <;> simp
+      split_ifs <;> simp only [add_zero]
 
 end
 
@@ -5665,7 +5659,7 @@ theorem realExteriorRootSign_insert_erase_anticommute
   have hUa : a ∈ U := by simp only [Finset.mem_insert, true_or, U]
   have hUb : b ∈ U := by simp only [Finset.mem_insert, hb, or_true, U]
   have herasea : U.erase a = S := by
-    simpa [U] using ha
+    simpa only [Finset.erase_insert_eq_erase, Finset.erase_eq_self, U] using ha
   have heraseb : U.erase b = insert a (S.erase b) := by
     ext z
     simp only [U, Finset.mem_erase, Finset.mem_insert]
@@ -6639,7 +6633,7 @@ private theorem bracketFischerCore_inner_comm_metriccodes2_9c41043c
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (p q : V) :
     c.inner p q = c.inner q p := by
-  simpa only [Real.ringHom_apply] using c.conj_inner_symm q p
+  exact actionFischerCore_inner_comm_metriccodes2_209634ef c p q
 
 private theorem bracketFischerCore_zero_left_metriccodes2_9c41043c
     {V : Type*} [AddCommGroup V] [Module ℝ V]
@@ -6653,8 +6647,7 @@ private theorem bracketFischerCore_zero_right_metriccodes2_9c41043c
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V) (p : V) :
     c.inner p 0 = 0 := by
-  rw [bracketFischerCore_inner_comm_metriccodes2_9c41043c,
-    bracketFischerCore_zero_left_metriccodes2_9c41043c]
+  exact actionFischerCore_zero_right_metriccodes2_209634ef c p
 
 private theorem bracketFischerCore_sum_left_metriccodes2_9c41043c
     {ι V : Type*} [Fintype ι]
@@ -6688,16 +6681,14 @@ private theorem bracketFischerCore_smul_left_metriccodes2_9c41043c
     (c : InnerProductSpace.Core ℝ V)
     (a : ℝ) (p q : V) :
     c.inner (a • p) q = a * c.inner p q := by
-  simpa only [Real.ringHom_apply] using c.smul_left p q a
+  exact actionFischerCore_smul_left_metriccodes2_209634ef c a p q
 
 private theorem bracketFischerCore_smul_right_metriccodes2_9c41043c
     {V : Type*} [AddCommGroup V] [Module ℝ V]
     (c : InnerProductSpace.Core ℝ V)
     (a : ℝ) (p q : V) :
     c.inner p (a • q) = a * c.inner p q := by
-  rw [bracketFischerCore_inner_comm_metriccodes2_9c41043c,
-    bracketFischerCore_smul_left_metriccodes2_9c41043c,
-    bracketFischerCore_inner_comm_metriccodes2_9c41043c c q p]
+  exact actionFischerCore_smul_right_metriccodes2_209634ef c a p q
 
 theorem weightedRootBracketBoundary_fischer_adjoint
     {r n k : ℕ} (lam : Fin (r + 1) → ℕ)
@@ -7032,8 +7023,7 @@ theorem fullRootExteriorPolynomialAction_commutator
         rootStructureConstant α β γ •
           fullRootExteriorPolynomialAction r n γ) f S
   rw [LinearMap.sum_apply]
-  simp only [LinearMap.smul_apply,
-    ]
+  simp only [LinearMap.smul_apply]
   simpa only [positiveRootOperator_apply, polarization_apply, map_sum, Derivation.leibniz,
     smul_eq_mul,
     MvPolynomial.pderiv_X, Finset.sum_apply, Pi.smul_apply,
@@ -7143,8 +7133,7 @@ theorem rootActionBoundary_eq_exteriorContraction_zeroExtension
   apply Finset.sum_congr rfl
   intro α _
   by_cases hα : α ∈ T.val
-  · simp only [hα, ↓reduceDIte, actualExteriorRootContraction_apply, ↓reduceIte,
-      map_zero, ]
+  · simp only [hα, ↓reduceDIte, actualExteriorRootContraction_apply, ↓reduceIte, map_zero]
   · have hcard : (insert α T.val).card = k + 1 := by
       simp only [hα, not_false_eq_true, Finset.card_insert_of_notMem, T.property]
     have hwedge : rootWedgeInsert T α hα =
@@ -7405,7 +7394,7 @@ theorem positiveRootUpperOperator_eq_zero_of_inadmissible_target
       0 ≤ signedRootWeight lam (insert α T.val.val) i := by
     intro hgood
     apply hS
-    simpa [T, Finset.insert_erase hα] using hgood
+    simpa only [rootWedgeErase_val, Finset.insert_erase hα, T] using hgood
   exact upperRootOperator_eq_zero_of_inadmissible_insert
     lam T α hnot hbad p
 
@@ -7440,8 +7429,7 @@ theorem rootActionCoboundary_eq_exteriorCreation_zeroExtension
       congr 1
       ext x
       simp only [Finset.mem_erase, ne_eq]
-  · simp only [hα, ↓reduceDIte, actualExteriorRootCreation_apply, ↓reduceIte,
-      map_zero, ]
+  · simp only [hα, ↓reduceDIte, actualExteriorRootCreation_apply, ↓reduceIte, map_zero]
 
 /-- The full root exterior upper polynomial action used in the spherical-code argument. -/
 def fullRootExteriorUpperPolynomialAction (r n : ℕ) (α : PositiveRoot r) :
@@ -7513,8 +7501,7 @@ theorem rootActionCoboundary_zeroExtension
           simp only [Finset.mem_erase, ne_eq]
         omega
       · simp only [map_zero, smul_zero]
-    · simp only [hα, ↓reduceIte, map_zero,
-        ]
+    · simp only [hα, ↓reduceIte, map_zero]
 
 end
 

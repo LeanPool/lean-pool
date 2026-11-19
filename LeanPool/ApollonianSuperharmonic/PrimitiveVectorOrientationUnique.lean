@@ -46,17 +46,17 @@ private theorem baseGood : ∀ z, Good (![ (1, 1 + 2 * z),
         Matrix.cons_val_zero, Fin.reduceFinMk, Matrix.cons_val, Fin.zero_eta, or_self]
     · exact (hij rfl).elim
     · exact Or.inr (PrimitiveVectorOrientation.base10 z)
-    · convert Or.inr (PrimitiveVectorOrientation.base21 (z - ⟨0, 1⟩)) using 1; ring
-    · convert Or.inr (PrimitiveVectorOrientation.base31 (z - ⟨0, 1⟩)) using 1; ring
+    · convert Or.inr (PrimitiveVectorOrientation.base21 (z - ⟨0, 1⟩)) using 1; ring_nf
+    · convert Or.inr (PrimitiveVectorOrientation.base31 (z - ⟨0, 1⟩)) using 1; ring_nf
     · exact Or.inl (PrimitiveVectorOrientation.base10 z)
     · exact (hij rfl).elim
     · exact Or.inr (PrimitiveVectorOrientation.base21 z)
     · exact Or.inr (PrimitiveVectorOrientation.base31 z)
-    · convert Or.inl (PrimitiveVectorOrientation.base21 (z - ⟨0, 1⟩)) using 1; ring
+    · convert Or.inl (PrimitiveVectorOrientation.base21 (z - ⟨0, 1⟩)) using 1; ring_nf
     · exact Or.inl (PrimitiveVectorOrientation.base21 z)
     · exact (hij rfl).elim
     · exact Or.inr (PrimitiveVectorOrientation.base32 z)
-    · convert Or.inl (PrimitiveVectorOrientation.base31 (z - ⟨0, 1⟩)) using 1; ring
+    · convert Or.inl (PrimitiveVectorOrientation.base31 (z - ⟨0, 1⟩)) using 1; ring_nf
     · exact Or.inl (PrimitiveVectorOrientation.base31 z)
     · exact Or.inl (PrimitiveVectorOrientation.base32 z)
     · exact (hij rfl).elim

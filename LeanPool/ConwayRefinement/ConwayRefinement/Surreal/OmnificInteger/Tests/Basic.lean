@@ -9,7 +9,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.
 public import LeanPool.ConwayRefinement.CombinatorialGames.Surreal.Ordinal
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Surreal.OmnificInteger.Ordinal
-import Mathlib.Algebra.Order.Ring.Cast
 
 /-!
 # API checks for omnific integers

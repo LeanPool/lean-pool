@@ -7,14 +7,9 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.CriticalPoint
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NormalForm
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.PrincipalAddition
 import LeanPool.ConwayRefinement.ConwayRefinement.Topology.Order.PWOSumset
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.GermDegree
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.MainLemma
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalComponentDegree
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.ResidualPointWellOrdered
-import Mathlib.Tactic.Linarith
 
 /-!
 # Existence of Berarducci critical points

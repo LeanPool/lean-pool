@@ -1438,7 +1438,7 @@ theorem row_defect_eq_bernoulliExcess
     hplus, hminus,
     Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) ha0.ne',
     Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) h1a.ne']
-  ring
+  ring_nf
 
 /-- In the original largest-coordinate variable. -/
 theorem row_defect_quartic

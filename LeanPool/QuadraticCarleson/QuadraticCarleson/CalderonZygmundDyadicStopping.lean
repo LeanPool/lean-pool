@@ -760,7 +760,7 @@ theorem tendsto_containingRadius_nhdsGT_zero {L : ℝ} (hL : 0 < L) :
       rw [← inv_pow]
       norm_num
       ac_rfl
-    · ring
+    · ring_nf
   · exact Filter.Eventually.of_forall fun n ↦
       half_pos (dyadicLength_pos hL n)
 

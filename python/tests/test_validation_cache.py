@@ -13,6 +13,8 @@ from unittest.mock import patch
 import pytest
 
 from lean_pool.quality import _cached_pool_audits
+from lean_pool.shard_validation import main as shard_main
+from lean_pool.shard_validation import validate_shard
 from lean_pool.validation_cache import (
     GLOBAL_INPUTS,
     WORKERS_VARIABLE,
@@ -21,9 +23,12 @@ from lean_pool.validation_cache import (
     _module_sources,
     lint_pool,
     main,
+    merge_receipts,
     pool_units,
+    read_receipts,
     run_ordered,
     source_inventory,
+    unit_name,
     validation_workers,
 )
 
@@ -100,7 +105,7 @@ def test_checker_edits_invalidate_only_dependent_checks(
     repository: Path, name: str
 ) -> None:
     """Unrelated tooling edits preserve passes; shared inputs invalidate all kinds."""
-    kinds = ("lint", "axioms", "backdoors", "declarations", "future-check")
+    kinds = ("lint", "axioms", "backdoors", "declarations", "messages", "future-check")
     directory = repository / ".lake/validation-cache/v1"
     cache = ValidationCache(repository, directory)
     for kind in kinds:
@@ -119,7 +124,13 @@ def test_checker_edits_invalidate_only_dependent_checks(
         "python/lean_pool/registry.py",
         "python/lean_pool/indexes.py",
     }:
-        fresh_kinds = ("axioms", "backdoors", "declarations", "future-check")
+        fresh_kinds = (
+            "axioms",
+            "backdoors",
+            "declarations",
+            "messages",
+            "future-check",
+        )
     elif name in {"scripts/ci/lint-project.lean", "scripts/nolints.json"}:
         fresh_kinds = ("lint", "future-check")
     else:
@@ -130,7 +141,9 @@ def test_checker_edits_invalidate_only_dependent_checks(
     assert len(calls) >= 3
 
 
-@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+@pytest.mark.parametrize(
+    "kind", ("lint", "axioms", "backdoors", "declarations", "messages")
+)
 def test_source_changes_invalidate_every_check_kind(
     repository: Path, kind: str
 ) -> None:
@@ -154,7 +167,7 @@ def test_quality_check_kinds_reuse_source_comparisons(repository: Path) -> None:
     with patch.object(
         cache, "_fingerprint_inputs", wraps=cache._fingerprint_inputs
     ) as inputs:
-        for kind in ("axioms", "backdoors", "declarations"):
+        for kind in ("axioms", "backdoors", "declarations", "messages"):
             cache.check(kind, ["LeanPool.A"], lambda: [])
         assert inputs.call_count == 1
 
@@ -208,13 +221,40 @@ def test_added_deleted_sources_change_coverage(repository: Path) -> None:
     assert "lint:LeanPool.B" not in cache.used
 
 
+def _build_log(root: Path, module: str, *messages: str) -> None:
+    """Write the log Lake keeps for one compiled module."""
+    path = root / ".lake/build/lib/lean" / (module.replace(".", "/") + ".trace")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    source = module.replace(".", "/") + ".lean"
+    log = [{"level": "trace", "message": f".> lean /pool/{source} -o out.olean"}]
+    log += [{"level": "info", "message": message} for message in messages]
+    path.write_text(json.dumps({"schemaVersion": "2025-09-10", "log": log}))
+
+
 def test_quality_audits_cover_every_owned_module(repository: Path) -> None:
-    """Cold and warm checks preserve complete axiom/backdoor coverage."""
+    """Cold and warm checks preserve complete axiom, backdoor and message coverage."""
     cache = ValidationCache(repository, repository / ".lake/validation-cache/v1")
+    for modules in pool_units(repository):
+        for module in modules:
+            _build_log(repository, module)
     with (
         patch("lean_pool.quality._audit_axioms", return_value=[]) as axioms,
         patch("lean_pool.quality._run_option_audit", return_value=[]) as backdoors,
     ):
+        _build_log(
+            repository,
+            "LeanPool.A.Detail",
+            "LeanPool/A/Detail.lean:1:2: Try this:\n  [apply] ring_nf",
+        )
+        [noisy] = _cached_pool_audits(repository, cache)
+        assert noisy.path == repository / "LeanPool/A/Detail.lean"
+        assert "Try this: [apply] ring_nf" in noisy.message
+        assert "messages:LeanPool.A" not in cache.used
+        assert "messages:LeanPool.B" in cache.used
+        _build_log(repository, "LeanPool.A.Detail")
+        cache = ValidationCache(repository, cache.directory)
+        axioms.reset_mock()
+        backdoors.reset_mock()
         assert _cached_pool_audits(repository, cache) == []
         # Audits run concurrently, so compare coverage rather than call order.
         assert sorted(call.args[1] for call in axioms.call_args_list) == sorted(
@@ -281,7 +321,9 @@ def test_missing_pool_import_falls_back_after_memoized_lookup(repository: Path) 
     assert len(_run(repository)[1]) == 3
 
 
-@pytest.mark.parametrize("kind", ("lint", "axioms", "backdoors", "declarations"))
+@pytest.mark.parametrize(
+    "kind", ("lint", "axioms", "backdoors", "declarations", "messages")
+)
 def test_inventory_fallback_preserves_discovered_external_dependencies(
     repository: Path, kind: str
 ) -> None:
@@ -433,3 +475,118 @@ def test_lint_command_fails_without_saving_receipts(
         assert main() == 1
     assert "A.lean:1:1: error: finding" in capsys.readouterr().out
     assert not (repository / ".lake/validation-cache/v1/passes.json").exists()
+
+
+def _shard(root: Path, *units: str) -> ValidationCache:
+    return ValidationCache(
+        root, root / ".lake/validation-cache/v1", units=frozenset(units)
+    )
+
+
+def _build_logs(root: Path) -> None:
+    for modules in pool_units(root):
+        for module in modules:
+            _build_log(root, module)
+
+
+def test_units_belong_to_their_project_and_the_root_to_itself() -> None:
+    """Shard project names select the same units the pool is partitioned into."""
+    assert unit_name("LeanPool.A.Detail") == unit_name("LeanPool.A") == "A"
+    assert unit_name("LeanPool") == "__root__"
+
+
+def test_shard_cache_validates_only_its_units(repository: Path) -> None:
+    """Other shards' units are neither run nor given a receipt."""
+    cache = _shard(repository, "A")
+    calls: list[str] = []
+    for modules in pool_units(repository):
+        cache.check("lint", modules, lambda: calls.append(modules[0]) or [])
+    assert calls == ["LeanPool.A"]
+    assert list(cache.used) == ["lint:LeanPool.A"]
+
+
+def test_shard_passes_satisfy_the_whole_pool_run_only_while_inputs_match(
+    repository: Path,
+) -> None:
+    """Merged passes are reused by fingerprint; an edited project is checked again."""
+    _build_logs(repository)
+    with (
+        patch("lean_pool.validation_cache.subprocess.run") as lint,
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        lint.return_value.returncode = 0
+        fragment = repository / "fragments/ci-validation-00"
+        shard = ValidationCache(repository, fragment, units=frozenset({"A"}))
+        assert validate_shard(repository, shard)
+    assert sorted(read_receipts(fragment / "passes.json")) == [
+        "axioms:LeanPool.A",
+        "backdoors:LeanPool.A",
+        "lint:LeanPool.A",
+        "messages:LeanPool.A",
+    ]
+    directory = repository / ".lake/validation-cache/v1"
+    assert merge_receipts(directory, [fragment.parent]) == 4
+    assert merge_receipts(directory, [fragment / "passes.json"]) == 0
+    assert _run(repository)[1] == ["LeanPool.B", "LeanPool"]
+    (repository / "LeanPool/A.lean").write_text("-- edited after the shard ran\n")
+    merge_receipts(directory, [fragment.parent])
+    assert _run(repository)[1] == ["LeanPool.A", "LeanPool"]
+
+
+def test_shard_keeps_passes_and_reports_a_failing_unit(repository: Path) -> None:
+    """One failing project costs the assembling job only that project's checks."""
+    _build_logs(repository)
+
+    def lint(command, **kwargs):
+        assert kwargs["check"] is False
+        failed = "LeanPool.A" in command
+        return type("Process", (), {"returncode": int(failed), "stdout": "output"})()
+
+    with (
+        patch("lean_pool.validation_cache.subprocess.run", side_effect=lint),
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        shard = _shard(repository, "A", "B")
+        assert not validate_shard(repository, shard)
+    saved = read_receipts(repository / ".lake/validation-cache/v1/passes.json")
+    assert "lint:LeanPool.B" in saved and "lint:LeanPool.A" not in saved
+    assert "axioms:LeanPool.A" in saved
+
+
+def test_corrupt_fragments_merge_nothing(repository: Path) -> None:
+    """Unreadable or malformed shard output leaves the cache as it was."""
+    directory = repository / ".lake/validation-cache/v1"
+    _run(repository)
+    before = read_receipts(directory / "passes.json")
+    bad = repository / "fragments"
+    bad.mkdir()
+    (bad / "passes.json").write_text("{")
+    listed = bad / "list"
+    listed.mkdir()
+    (listed / "passes.json").write_text('{"version": 1, "receipts": {"lint:X": 1}}')
+    assert merge_receipts(directory, [bad, repository / "missing.json"]) == 0
+    assert read_receipts(directory / "passes.json") == before
+
+
+def test_shard_command_validates_the_named_units(repository: Path) -> None:
+    """The workflow's entry point scopes the cache to its project list."""
+    _build_logs(repository)
+    with (
+        patch("lean_pool.validation_cache.subprocess.run") as lint,
+        patch("lean_pool.shard_validation._check_projects", return_value=[]),
+        patch("lean_pool.quality._audit_axioms", return_value=[]),
+        patch("lean_pool.quality._run_option_audit", return_value=[]),
+    ):
+        lint.return_value.returncode = 0
+        assert shard_main(["--repo", str(repository), "--units", "B"]) == 0
+    saved = read_receipts(repository / ".lake/validation-cache/v1/passes.json")
+    assert sorted(saved) == [
+        "axioms:LeanPool.B",
+        "backdoors:LeanPool.B",
+        "lint:LeanPool.B",
+        "messages:LeanPool.B",
+    ]

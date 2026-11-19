@@ -75,7 +75,9 @@ jobs:
           git reset --hard origin/main
           (cd python && uv run python -m lean_pool.stats --repo ..)
           (cd python && uv run python -m lean_pool.notice --repo ..)
-          unexpected=$(git diff --name-only | { grep -vE '^(NOTICE|README\.md)$' || true; })
+          # Agents read AGENTS.md and CLAUDE.md, which copy README.md.
+          make agent-docs
+          unexpected=$(git diff --name-only | { grep -vE '^(NOTICE|README\.md|AGENTS\.md|CLAUDE\.md)$' || true; })
           if [ -n "$unexpected" ]; then
             echo '::error::Metadata generators changed other files.'
             exit 1
@@ -84,7 +86,7 @@ jobs:
             echo 'Generated metadata is already current.'
             exit 0
           fi
-          git add README.md NOTICE
+          git add README.md NOTICE AGENTS.md CLAUDE.md
           git commit -m 'Refresh generated project statistics and attribution'
           if git push origin HEAD:main; then
             exit 0

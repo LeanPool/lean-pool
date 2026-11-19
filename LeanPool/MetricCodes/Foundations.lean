@@ -17,7 +17,6 @@ import Mathlib.Algebra.Order.Archimedean.Real.Hom
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Matrix.Hermitian
 import Mathlib.Data.Nat.Dist
 import Mathlib.LinearAlgebra.Matrix.PosDef
@@ -222,7 +221,9 @@ theorem hammingJacobiEntry_pos {n k i : ℕ}
   · apply mul_pos <;> linarith
   · apply mul_pos hn'
     apply Real.sqrt_pos.2
-    apply mul_pos <;> linarith
+    exact mul_pos
+      (add_pos_of_nonneg_of_pos (Nat.cast_nonneg i) zero_lt_one)
+      (sub_pos.mpr ((le_add_of_nonneg_right (Nat.cast_nonneg k)).trans_lt hi'))
 
 /-- The hamming jacobi matrix used in the metric-code argument. -/
 def hammingJacobiMatrix (n k L : ℕ) :
@@ -1330,7 +1331,11 @@ theorem raise_eq_zero_iff_of_level {i : ℕ}
       exact_mod_cast hi
     have hnonneg := normSq_nonneg (lower f)
     have hfn := normSq_nonneg f
-    have hnorm : (dot f f) = 0 := by nlinarith only [hfn, hidentity, hnonneg, hi']
+    have hproduct : ((n : ℝ) - 2 * (i : ℝ)) * dot f f = 0 :=
+      ((add_eq_zero_iff_of_nonneg hnonneg
+        (mul_nonneg (sub_pos.mpr hi').le hfn)).mp hidentity.symm).2
+    have hnorm : (dot f f) = 0 :=
+      (mul_eq_zero.mp hproduct).resolve_left (sub_pos.mpr hi').ne'
     exact (normSq_eq_zero_iff f).mp hnorm
   · intro hfzero
     subst f
@@ -4018,7 +4023,7 @@ theorem hammingProjectionGramFeature_inner
   have haxis' :
       (∑ a : Fin n, hammingAxis x a * hammingAxis y a) =
         MetricCodes.hammingCorrelation x y := by
-    simpa only [PiLp.inner_apply, Real.inner_apply, mul_comm] using
+    simpa only [PiLp.inner_apply, Real.inner_apply] using
       hammingAxis_inner hn x y
   change
     @inner ℝ
@@ -5364,7 +5369,7 @@ theorem neg_mul_logb_le_binaryEntropy {b : ℝ}
     (hb : 0 ≤ b) (hb' : b ≤ 1) :
     b * (-Real.logb 2 b) ≤ MetricCodes.binaryEntropy b := by
   have hlog : Real.logb 2 (1 - b) ≤ 0 :=
-    Real.logb_nonpos (by norm_num) (by linarith) (by linarith)
+    Real.logb_nonpos (by norm_num) (by linarith only [hb']) (by linarith)
   have hterm : (1 - b) * Real.logb 2 (1 - b) ≤ 0 :=
     mul_nonpos_of_nonneg_of_nonpos (by linarith only [hb']) hlog
   unfold MetricCodes.binaryEntropy
@@ -5397,7 +5402,7 @@ theorem eventually_binaryEntropy_improvement {a : ℝ}
           MetricCodes.binaryEntropy a) < M := by
     have h := hslope.eventually (gt_mem_nhds hM)
     filter_upwards [h] with b hb
-    simpa [f, improvementPath, smul_eq_mul] using hb
+    simpa only [improvementPath, zero_add, mul_zero, add_zero, smul_eq_mul, f] using hb
   have hloglim :
       Tendsto (fun b : ℝ => -Real.logb 2 b) (𝓝[>] 0) atTop := by
     simpa only [tendsto_neg_atTop_iff, Function.comp_def] using
@@ -5486,8 +5491,7 @@ theorem tendsto_longitudinal_ratio {a : ℝ} (ha : 0 ≤ a) :
 theorem tendsto_transverse_ratio {b : ℝ} (hb : 0 ≤ b) :
     Tendsto (fun n : ℕ => (transverseDegree b n : ℝ) / (n : ℝ))
       atTop (nhds b) := by
-  simpa only [transverseDegree, Function.comp_def] using
-    (tendsto_nat_floor_mul_div_atTop hb).comp (tendsto_natCast_atTop_atTop (R := ℝ))
+  exact tendsto_longitudinal_ratio hb
 
 theorem tendsto_terminal_degree_ratio {a : ℝ}
     (ha : 0 < a) (r : ℕ) :
@@ -5565,7 +5569,7 @@ theorem tendsto_terminal_coefficient {a b : ℝ}
           ((1 : ℝ) / (n : ℝ)))
         atTop (nhds (normalizedCoefficient a b 0)) := by
     simpa only [normalizedCoefficient, one_div, add_zero] using
-      pointwise_div (hnum.div hroot (by simpa using hrootne))
+      pointwise_div (hnum.div hroot (by simpa only [add_zero, ne_eq] using hrootne))
   rw [normalizedCoefficient_zero] at hnorm
   refine hnorm.congr' ?_
   filter_upwards [eventually_gt_atTop (0 : ℕ)] with n hn

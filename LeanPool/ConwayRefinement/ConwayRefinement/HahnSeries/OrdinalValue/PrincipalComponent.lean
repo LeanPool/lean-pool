@@ -12,7 +12,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NormalForm
 
 import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.Valuation.Residue
-import Mathlib.Tactic.Abel
 
 /-!
 # The spaces `P_α`

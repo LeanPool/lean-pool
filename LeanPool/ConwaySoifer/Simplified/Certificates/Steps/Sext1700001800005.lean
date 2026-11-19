@@ -5,8 +5,9 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.FanCertificate
+
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext170000180000
-import Mathlib.Tactic.FinCases
 
 /-!
 # Sext 170000 180000 5
@@ -44,6 +45,8 @@ SOFTWARE.
 
 @[expose] public section
 
+prepare_fan_cache ConwaySoifer.Simplified.Certificates.Sext170000180000.model0
+
 -- Generated checkpoints are proposals; all acceptance proofs are checked by the kernel.
 
 namespace ConwaySoifer.Simplified.Certificates
@@ -67,7 +70,7 @@ theorem excluded40_1 : ExcludedOn (model40.B 1 ++ [step40.q]) 9000000000000 (mod
       ([-5655000000000, -9000000000000], [5760000000000, 0]) (some (0, 1, 4)) (some (0, 1, 4))
       (.terminal (some (0, 1, 4)) (some (0, 1, 4)) (some (0, 1, 4))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_2 : ExcludedOn (model40.B 2 ++ [step40.q]) 9000000000000 (model40.caps 2)
     (model40.ord 2) 0 1 100 := by
@@ -85,7 +88,7 @@ theorem excluded40_2 : ExcludedOn (model40.B 2 ++ [step40.q]) 9000000000000 (mod
       (.next ([-4590000000000], [5031000000000]) (some (0, 4, 3)) (some (0, 4, 3)) (.terminal (some
       (0, 4, 3)) (some (0, 4, 0)) (some (0, 4, 3))))))))))))))))) (den := 9000000000000) (fuel :=
       12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_3 : ExcludedOn (model40.B 3 ++ [step40.q]) 9000000000000 (model40.caps 3)
     (model40.ord 3) 0 1 100 := by
@@ -131,7 +134,7 @@ theorem excluded40_7 : ExcludedOn (model40.B 7 ++ [step40.q]) 9000000000000 (mod
       (some (4, 1, 3)) (.next ([-5625000000000], [6246000000000]) (some (4, 1, 3)) (some (4, 2, 3))
       (.terminal (some (4, 2, 3)) (some (4, 2, 0)) (some (4, 2, 3))))))))))))))))))))) (den :=
       9000000000000) (fuel := 12) (by decide +kernel) 0 1 100 (by decide +kernel)
-  decide +kernel
+  certify_fan
 
 theorem excluded40_8 : ExcludedOn (model40.B 8 ++ [step40.q]) 9000000000000 (model40.caps 8)
     (model40.ord 8) 0 1 100 := by

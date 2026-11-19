@@ -451,7 +451,7 @@ private theorem qChildE :
     have h := tdiff t
     omega
   rw [hs, he]
-  ring
+  ring_nf
 
 private theorem qChildN :
     (by
@@ -483,7 +483,7 @@ private theorem qChildN :
     have h := tdiff (t+1)
     have h' : (t+1)*t/2-t*(t-1)/2=t := by
       simpa [show t+1-1=t by ring, show t+1-2=t-1 by ring] using h
-    have hmul : (t+1)*t/2=t*(t+1)/2 := by ring
+    have hmul : (t+1)*t/2=t*(t+1)/2 := by ring_nf
     rw [← hmul]
     omega
   rw [hs, hn]
@@ -527,7 +527,7 @@ private theorem qPredWlt :
   simp only [Q, Int.natCast_natAbs]
   rw [abs_of_nonneg (by omega : 0 ≤ k-t-1)]
   rw [show (k-t-1)-(k+t-2)=1-2*t by ring, floorOdd]
-  ring
+  ring_nf
 
 private theorem qPredWeq :
     (by

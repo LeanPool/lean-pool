@@ -8,7 +8,7 @@ module
 public import Mathlib.RingTheory.AlgebraicIndependent.Defs
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
-import Mathlib.Algebra.MvPolynomial.Basic
+
 
 /-!
 # Determinants of matrices of algebraically independent entries

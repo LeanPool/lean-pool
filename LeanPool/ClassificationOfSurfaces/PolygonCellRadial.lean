@@ -99,7 +99,7 @@ theorem radialMap_symm_apply (h : Circle ≃ₜ Circle) (z : ℂ) :
     radialMap h.symm (radialMap h z) = z := by
   by_cases hz : z = 0
   · subst z
-    simp
+    simp only [radialMap_zero]
   · rw [radialMap_of_ne h.symm (radialMap_ne_zero h hz),
       direction_radialMap h hz, h.symm_apply_apply, norm_radialMap,
       coe_direction]

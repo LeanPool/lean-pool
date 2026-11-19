@@ -7,7 +7,7 @@ module
 
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.FiniteSupportFactorUniqueness
 
-import Mathlib.Tactic.NormNum
+
 
 /-!
 # API checks for LM24 Section 6.4

@@ -11,12 +11,10 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorizatio
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.DegreeTwo.TranslatedTruncationSpan
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Convolution
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Monomial
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 import Mathlib.LinearAlgebra.Dimension.Constructions
-import Mathlib.Topology.Instances.Real.Lemmas
-import Mathlib.Topology.Order.OrderClosed
+import Mathlib.Data.EReal.Operations
+import Mathlib.Topology.MetricSpace.Bounded
 
 /-!
 # Translated-truncation spans of degree-two factorisations

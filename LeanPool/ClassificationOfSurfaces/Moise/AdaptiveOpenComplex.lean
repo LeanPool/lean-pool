@@ -847,7 +847,7 @@ theorem levelFaceVertexPoint_not_mem_relInterior {n : ℕ} (t : K.LevelFace n)
   obtain ⟨w, hwt, hwv⟩ := Finset.exists_mem_ne hone v.1
   have hzero : ((K.safeSubdivision n).refined.facePoint t v).1 w = 0 := by
     rw [(K.safeSubdivision n).refined.facePoint_val t v]
-    simp [hwv]
+    simp only [ne_eq, hwv, not_false_eq_true, Pi.single_eq_of_ne]
   have hcoord := congrFun (congrArg Subtype.val hsource) w
   linarith [hx.2 w hwt]
 

@@ -10,7 +10,6 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSuppor
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.GermDegree
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.NormalForm
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.PrincipalAddition
 import Mathlib.LinearAlgebra.TensorProduct.Basis
 
@@ -54,7 +53,7 @@ private theorem coe_translatedTruncation_translate (p : Series K) (h g : ℝ) :
   rw [coe_translatedTruncation, HahnSeries.truncLE_translate,
     HahnSeries.translate_add_apply]
   congr 2
-  · ring
+  · ac_rfl
 
 variable (K) in
 /-- On a series `b` of degree `≤ α`, the class of the translated truncation `b^{|γ}` in `P_α`,

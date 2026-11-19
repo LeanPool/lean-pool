@@ -204,9 +204,9 @@ theorem young_conv_sq_bound
             exact Finset.sum_le_sum fun i hi => Finset.sum_le_sum fun j hj => h_cauchy_schwarz i j;
           convert h_cauchy_schwarz using 1 <;> norm_num [ Finset.sum_add_distrib, ←
               Finset.mul_sum _ _ _, ← Finset.sum_div ];
-          · ring
+          · ring_nf
             simp +decide only [sq, Finset.mul_sum _ _ _, mul_comm, mul_left_comm];
-          · simp +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, mul_assoc, mul_comm ]; ring;
+          · simp +decide [ ← Finset.mul_sum _ _ _, ← Finset.sum_mul, mul_assoc, mul_comm ]; ring_nf;
             simp +decide [ mul_assoc, Finset.mul_sum _ _ _ ]; ring;
         exact h_cauchy_schwarz u v hu hv;
       have h_cauchy_schwarz : Filter.Tendsto (fun N : Finset (Fin n → ℤ) => (∑ i ∈ N, u i * v i)
@@ -270,16 +270,16 @@ theorem sobolev_mul_seq {s : ℝ}
             * Real.sqrt (weight n s (m - i)) := by
           have h_peetre : weight n s m ≤ (2 : ℝ) ^ (|s|) * weight n (|s|) i * weight n s (m - i)
               := by
-            convert peetre_weight s m ( m - i ) using 1; ring;
+            convert peetre_weight s m ( m - i ) using 1; ring_nf;
           convert Real.sqrt_le_sqrt h_peetre using 1;
           have htwo : (2 : ℝ) ^ |s| = (2 ^ (|s| / 2)) ^ 2 := by
             rw [← Real.rpow_natCast, ← Real.rpow_mul (by positivity)]
-            ring
+            ring_nf
           have hweight : weight n |s| i = (weight n (|s| / 2) i) ^ 2 := by
             unfold weight
             rw [← Real.rpow_natCast, ← Real.rpow_mul
               (add_nonneg zero_le_one <| Finset.sum_nonneg fun _ _ => sq_nonneg _)]
-            ring
+            ring_nf
           rw [htwo, hweight]
           rw [Real.sqrt_mul (by positivity), Real.sqrt_mul (by positivity),
             Real.sqrt_sq (by positivity), Real.sqrt_sq (weight_nonneg _ _)]

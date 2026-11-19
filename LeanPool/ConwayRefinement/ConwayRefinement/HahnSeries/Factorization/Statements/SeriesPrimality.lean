@@ -11,9 +11,7 @@ public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Nonpositive
 public import Mathlib.Algebra.Divisibility.Basic
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.SeriesPrimality
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.Statements.ProductValue
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.FiniteSupportGCDProof
-import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Degree.Statements.Degree
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.Factorization.Statements.MaximalFiniteMultiplicativity
 
 /-!
