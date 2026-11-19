@@ -5,8 +5,6 @@ Authors: Horace Dong
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Basic.Real.Basic

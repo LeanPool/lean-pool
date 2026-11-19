@@ -5,6 +5,7 @@ Authors: Horace Dong
 -/
 module
 
+public import LeanPool.CographDistance.Definitions
 public import LeanPool.CographDistance.Family
 
 import Mathlib.Data.Fintype.BigOperators
@@ -57,54 +58,50 @@ theorem cubic_root (m : ℝ) (hm : 0 < m) :
     rw [cubic_left m hm]
     have : 0 < (4 * m ^ 2 + 6 * m + 1) / (8 * m ^ 3) := by positivity
     rw [neg_div]; linarith
-  have h0 : (0 : ℝ) ∈ Set.Icc (cubic m (-2 - 1 / (2 * m))) (cubic m (-2)) := by
-    rw [cubic_neg_two]; exact ⟨hl.le, by norm_num⟩
-  obtain ⟨x, ⟨hx1, hx2⟩, hx⟩ := intermediate_value_Icc hab hcont h0
-  refine ⟨x, lt_of_le_of_ne hx1 ?_, lt_of_le_of_ne hx2 ?_, hx⟩
-  · rintro rfl; rw [hx] at hl; exact lt_irrefl _ hl
-  · rintro rfl; rw [cubic_neg_two] at hx; norm_num at hx
+  have h0 : (0 : ℝ) ∈ Set.Ioo (cubic m (-2 - 1 / (2 * m))) (cubic m (-2)) := by
+    rw [cubic_neg_two]
+    exact ⟨hl, by norm_num⟩
+  obtain ⟨x, ⟨hx1, hx2⟩, hx⟩ := intermediate_value_Ioo hab hcont h0
+  exact ⟨x, hx1, hx2, hx⟩
+
+/-- The coefficient of the dominating vertex in the lifted eigenvector. -/
+noncomputable def centerCoefficient (m : ℕ) (l : ℝ) : ℝ :=
+  2 * m * (l + 2) / (l ^ 2 - 1)
 
 /-- The eigenvector of `D(G_m)` attached to a root `l` of `p_m`. -/
 noncomputable def eigvec (m : ℕ) (l : ℝ) : W m → ℝ
-  | none => 2 * m * (l + 2) / (l ^ 2 - 1)
-  | some none => l * (2 * m * (l + 2) / (l ^ 2 - 1)) - 2 * m
+  | none => centerCoefficient m l
+  | some none => l * centerCoefficient m l - 2 * m
   | some (some _) => 1
 
 /-- Row sums of the distances from an end of a copy of `K₂` to the ends of all copies. -/
 theorem pair_row_sum {m : ℕ} (p : Fin m × Bool) :
     ∑ q : Fin m × Bool, ((fam m).dist (some (some p)) (some (some q)) : ℝ) = 4 * m - 3 := by
   classical
-  have hd : ∀ q : Fin m × Bool, ((fam m).dist (some (some p)) (some (some q)) : ℝ) =
-      if q.1 = p.1 then (if q.2 = p.2 then 0 else 1) else 2 := by
-    intro q
-    rw [fam_dist]
-    obtain ⟨a, b⟩ := p
-    obtain ⟨c, d⟩ := q
-    by_cases hca : c = a
-    · subst hca
-      by_cases hdb : d = b
-      · subst hdb; simp
-      · simp [hdb, Ne.symm hdb]
-    · simp [hca, Ne.symm hca]
-  simp only [hd]
-  rw [Fintype.sum_prod_type]
-  have hin : ∀ i : Fin m, (∑ b : Bool, (if i = p.1 then (if b = p.2 then (0 : ℝ) else 1) else 2))
-      = 4 - 3 * (if i = p.1 then 1 else 0) := by
-    intro i
-    by_cases hi : i = p.1
-    · cases hb : p.2 <;> simp [hi] <;> norm_num
-    · simp [hi]; norm_num
-  simp only [hin]
-  rw [Finset.sum_sub_distrib, ← Finset.mul_sum]
-  simp
+  have hmate : p ≠ (p.1, !p.2) := by
+    intro h
+    have hb : p.2 = !p.2 := congrArg Prod.snd h
+    cases hbit : p.2 <;> rw [hbit] at hb <;> contradiction
+  have hd (q : Fin m × Bool) :
+      ((fam m).dist (some (some p)) (some (some q)) : ℝ) =
+        2 - (if q = p then 2 else 0) - (if q = (p.1, !p.2) then 1 else 0) := by
+    rw [fam_dist, fam_adj_pair_iff_eq_mate]
+    by_cases hp : q = p
+    · subst q
+      norm_num [hmate]
+    · by_cases hq : q = (p.1, !p.2) <;> norm_num [hp, Ne.symm hp, hq, hmate, Ne.symm hmate]
+  simp only [hd, Finset.sum_sub_distrib]
+  simp [Fintype.card_prod]
   ring
 
 theorem eigvec_spec (m : ℕ) (hm : 1 ≤ m) (l : ℝ) (hl : l < -2) (hroot : cubic m l = 0) :
     eigvec m l ≠ 0 ∧ (distMatrix (fam m)).mulVec (eigvec m l) = l • eigvec m l := by
   classical
   have hden : l ^ 2 - 1 ≠ 0 := by nlinarith
-  set α : ℝ := 2 * m * (l + 2) / (l ^ 2 - 1) with hα
-  have hαeq : α * (l ^ 2 - 1) = 2 * m * (l + 2) := by rw [hα]; field_simp
+  let α := centerCoefficient m l
+  have hαeq : α * (l ^ 2 - 1) = 2 * m * (l + 2) := by
+    dsimp [α, centerCoefficient]
+    field_simp
   refine ⟨?_, ?_⟩
   · intro h
     have := congrFun h (some (some (⟨0, hm⟩, true)))
@@ -124,13 +121,13 @@ theorem eigvec_spec (m : ℕ) (hm : 1 ≤ m) (l : ℝ) (hl : l < -2) (hroot : cu
         one_mul, SimpleGraph.dist_self, CharP.cast_eq_zero, zero_mul, Option.some.injEq,
         fam_not_adj_z, Nat.cast_ofNat, mul_one, sum_const, card_univ, Fintype.card_prod,
         Fintype.card_fin, Fintype.card_bool, nsmul_eq_mul, Nat.cast_mul, zero_add]
-      rw [← hα]
       have : l * (l * α - 2 * m) = α + 4 * m := by nlinarith [hαeq]
+      change α + ↑m * 2 * 2 = l * (l * α - 2 * m)
       linarith
     · -- an end of a copy of `K₂`
       have hs := pair_row_sum p
       simp only [eigvec, mul_one]
-      rw [hs, ← hα]
+      rw [hs]
       simp only [fam_dist, reduceCtorEq, ↓reduceIte, fam_adj_some_none, Nat.cast_one,
         one_mul, Option.some.injEq, fam_not_adj_to_z, Nat.cast_ofNat]
       have hc : cubic m l = 0 := hroot
@@ -139,6 +136,7 @@ theorem eigvec_spec (m : ℕ) (hm : 1 ≤ m) (l : ℝ) (hl : l < -2) (hroot : cu
         have h1 : α * (1 + 2 * l) * (l ^ 2 - 1) = (l + 3) * (l ^ 2 - 1) := by
           rw [mul_right_comm, hαeq]; nlinarith [hc]
         exact mul_right_cancel₀ hden h1
+      change α + (2 * (l * α - 2 * m) + (4 * m - 3)) = l
       linarith
 
 /-- For every `m ≥ 1`, `G_m` has a distance eigenvalue in `(-2 - 1/(2m), -2)`. -/

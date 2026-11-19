@@ -5,7 +5,9 @@ Authors: Horace Dong
 -/
 module
 
-public import LeanPool.CographDistance.Definitions
+public import Mathlib.Combinatorics.SimpleGraph.Copy
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
+public import Mathlib.Combinatorics.SimpleGraph.Metric
 
 import Mathlib.Tactic.SplitIfs
 
@@ -62,6 +64,30 @@ def fam (m : ℕ) : SimpleGraph (W m) where
     (fam m).Adj (some (some p)) (some (some q)) ↔ p.1 = q.1 ∧ p.2 ≠ q.2 := by
   simp [fam, famAdj]
 
+theorem fam_adj_pair_iff_eq_mate {m : ℕ} (p q : Fin m × Bool) :
+    (fam m).Adj (some (some p)) (some (some q)) ↔ q = (p.1, !p.2) := by
+  rcases p with ⟨i, b⟩
+  rcases q with ⟨j, c⟩
+  cases b <;> cases c <;> simp [eq_comm]
+
+private theorem eq_of_adj_of_ne_center {m : ℕ} {u v w : W m}
+    (hu : u ≠ none) (hw : w ≠ none) (huv : (fam m).Adj u v) (hvw : (fam m).Adj v w)
+    (hv : v ≠ none) : u = w := by
+  rcases u with _ | u
+  · exact (hu rfl).elim
+  rcases w with _ | w
+  · exact (hw rfl).elim
+  rcases v with _ | _ | p
+  · exact (hv rfl).elim
+  · exact (fam_not_adj_z m w hvw).elim
+  rcases u with _ | q
+  · exact (fam_not_adj_z m _ huv).elim
+  rcases w with _ | r
+  · exact (fam_not_adj_to_z m p hvw).elim
+  exact congrArg (fun z => some (some z))
+    (((fam_adj_pair_iff_eq_mate p q).1 huv.symm).trans
+      ((fam_adj_pair_iff_eq_mate p r).1 hvw).symm)
+
 theorem fam_adj_center {m : ℕ} {v : W m} (hv : v ≠ none) : (fam m).Adj none v := by
   rcases v with _ | v
   · exact absurd rfl hv
@@ -111,39 +137,18 @@ theorem fam_isCograph (m : ℕ) : ¬(SimpleGraph.pathGraph 4).IsIndContained (fa
     simpa [SimpleGraph.pathGraph_adj] using f.map_adj_iff.mp h
   have d02 : f 0 ≠ f 2 := fun h => absurd (f.injective h) (by decide)
   have d13 : f 1 ≠ f 3 := fun h => absurd (f.injective h) (by decide)
-  rcases h1 : f 1 with _ | _ | p
-  · -- `f 1` is the dominating vertex: it is adjacent to `f 3`
-    rw [h1] at n13 d13
-    exact n13 (fam_adj_center (Ne.symm d13))
-  · -- `f 1` is the isolated vertex `z`: both `f 0` and `f 2` must be the centre
-    rw [h1] at e01 e12
-    rcases h0 : f 0 with _ | v0
-    · rcases h2 : f 2 with _ | v2
-      · exact d02 (h0.trans h2.symm)
-      · rw [h2] at e12; exact fam_not_adj_z m v2 e12
-    · rw [h0] at e01; exact fam_not_adj_z m v0 e01.symm
-  · rw [h1] at e01 e12
-    rcases h0 : f 0 with _ | _ | q0
-    · -- `f 0` is the centre, adjacent to `f 2`
-      rw [h0] at n02 d02
-      exact n02 (fam_adj_center (Ne.symm d02))
-    · rw [h0] at e01; exact fam_not_adj_z m _ e01
-    · rcases h2 : f 2 with _ | _ | q2
-      · rw [h2] at n02 d02
-        exact n02 (fam_adj_center d02).symm
-      · rw [h2] at e12; exact fam_not_adj_to_z m p e12
-      · rw [h0] at e01; rw [h2] at e12
-        rw [fam_adj_pair] at e01 e12
-        apply d02
-        rw [h0, h2]
-        obtain ⟨a0, b0⟩ := q0
-        obtain ⟨a2, b2⟩ := q2
-        obtain ⟨a1, b1⟩ := p
-        simp only at e01 e12
-        obtain ⟨rfl, hb0⟩ := e01
-        obtain ⟨rfl, hb2⟩ := e12
-        have : b0 = b2 := by
-          cases b0 <;> cases b1 <;> cases b2 <;> simp_all
-        rw [this]
+  have h0 : f 0 ≠ none := by
+    intro h
+    rw [h] at n02 d02
+    exact n02 (fam_adj_center d02.symm)
+  have h1 : f 1 ≠ none := by
+    intro h
+    rw [h] at n13 d13
+    exact n13 (fam_adj_center d13.symm)
+  have h2 : f 2 ≠ none := by
+    intro h
+    rw [h] at n02 d02
+    exact n02 (fam_adj_center d02).symm
+  exact d02 (eq_of_adj_of_ne_center h0 h2 e01 e12 h1)
 
 end CographDist
