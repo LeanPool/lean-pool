@@ -209,11 +209,11 @@ theorem local_stability
     have hXnorm : ‖X‖ = ‖A‖ := by
       dsimp [X]
       rw [MeasureTheory.Lp.norm_toLp, MeasureTheory.toReal_eLpNorm]
-      simpa [Xfun] using lpNorm_norm_l2 μ A
+      exact lpNorm_norm_l2 μ A
     have hYnorm : ‖Y‖ = ‖F‖ := by
       dsimp [Y]
       rw [MeasureTheory.Lp.norm_toLp, MeasureTheory.toReal_eLpNorm]
-      simpa [Yfun] using lpNorm_norm_l2 μ F
+      exact lpNorm_norm_l2 μ F
     have hsubnorm : ‖X - Y‖ = defect h := by
       have hsub : X - Y = (hX_mem.sub hY_mem).toLp (Xfun - Yfun) := by
         dsimp [X, Y]

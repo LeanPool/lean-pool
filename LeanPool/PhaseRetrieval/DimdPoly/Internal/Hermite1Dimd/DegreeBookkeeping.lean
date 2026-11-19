@@ -270,7 +270,7 @@ theorem highAnnulusDegreeBounds
       degreeWidth j M ≤ d * (2 * M + 1) * (2 * annulusRadius j + 1) := by
   let R := annulusRadius j
   let C := (2 * M + 1) * (2 * R + 1)
-  have hMR : M + 1 ≤ R := by simpa [R] using hj
+  have hMR : M + 1 ≤ R := by exact hj
   have hlower : (annulusRadius j - M) ^ 2 ≤ degreeIntervalLower j M :=
     highAnnulusDegreeLowerBound (hd := hd) (j := j) (M := M) hj
   rcases annulusRadius_exists_coord (hd := hd) (j := j) with ⟨q0, hq0⟩
@@ -326,7 +326,7 @@ theorem highFrequencyThreshold
     have hprod : 0 < 120 * d * (2 * M + 1) := Nat.mul_pos (Nat.mul_pos (by decide) hdpos) hodd
     omega
   have hhigh' : M + 1 ≤ annulusRadius j := le_trans hM1 hj
-  have hhigh : M + 1 ≤ R := by simpa [R] using hhigh'
+  have hhigh : M + 1 ≤ R := by exact hhigh'
   rcases highAnnulusDegreeBounds (hd := hd) (j := j) (M := M) hhigh with ⟨hlower, hwidth⟩
   have hx_ge : 120 * d * (2 * M + 1) ≤ x := by
     dsimp [x, R]
@@ -349,7 +349,7 @@ theorem highFrequencyThreshold
       _ ≤ x * x := hstep3
   have h40 : 40 * degreeWidth j M ≤ x * x := by
     have hmul : 40 * degreeWidth j M ≤ 40 * (d * (2 * M + 1) * (2 * R + 1)) :=
-      Nat.mul_le_mul_left 40 (by simpa [R] using hwidth)
+      Nat.mul_le_mul_left 40 (by exact hwidth)
     exact le_trans hmul (by simpa [mul_assoc] using h40base)
   have h1600 : 1600 * (degreeWidth j M) ^ 2 ≤ x ^ 4 := by
     have hsq := Nat.mul_self_le_mul_self h40
@@ -357,7 +357,7 @@ theorem highFrequencyThreshold
   have h1343 : 1343 * (degreeWidth j M) ^ 2 ≤ x ^ 4 :=
     le_trans (Nat.mul_le_mul_right ((degreeWidth j M) ^ 2) (by decide : 1343 ≤ 1600)) h1600
   have hlower_sq : x ^ 4 ≤ (degreeIntervalLower j M) ^ 2 := by
-    have hsq := Nat.mul_self_le_mul_self (by simpa [x, R] using hlower)
+    have hsq := Nat.mul_self_le_mul_self (by exact hlower)
     simpa [pow_two, pow_succ, x, mul_assoc, mul_left_comm, mul_comm] using hsq
   exact le_trans h1343 hlower_sq
 

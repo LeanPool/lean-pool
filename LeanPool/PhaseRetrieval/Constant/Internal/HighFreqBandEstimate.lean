@@ -16,6 +16,8 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
 -/
 module
 
+import LeanPool.PhaseRetrieval.FourierParseval
+
 public import LeanPool.PhaseRetrieval.Constant.Internal.Definitions
 import LeanPool.PhaseRetrieval.Constant.Internal.LipschitzRho
 import LeanPool.PhaseRetrieval.Constant.Internal.MissingMathlib.Poincare
@@ -353,99 +355,11 @@ private lemma parseval_fin_fourier {L : ℕ} (c : Fin L → ℂ) :
     circleNormSq (fun t : AddCircle T =>
       ∑ m : Fin L, c m * fourier (m.val : ℤ) t) =
     ∑ m : Fin L, ‖c m‖ ^ 2 := by
-  let E := Finset.range L
-  let b' : ℕ → ℂ := fun n =>
-    if h : n < L then c ⟨n, h⟩ else 0
-  -- Convert Fin L sum to range L sum
-  have h_func_eq :
-      (fun t : AddCircle T =>
-        ∑ m : Fin L, c m * fourier (↑↑m : ℤ) t) =
-      fun t => ∑ n ∈ E, b' n * fourier (↑n : ℤ) t := by
-    ext t; simp only [E]; rw [@sum_fin_eq_sum_range]
-    refine Finset.sum_congr rfl fun n hn => ?_
-    simp [b', Finset.mem_range.mp hn]
-  rw [h_func_eq]
-  -- Set up L² machinery
-  let Pcont : C(AddCircle T, ℂ) :=
-    ∑ n ∈ E, b' n • fourier (n : ℤ)
-  let PLp := (ContinuousMap.toLp
-    (α := AddCircle T) 2 AddCircle.haarAddCircle ℂ) Pcont
-  let E' :=
-    E.map ⟨(Nat.cast : ℕ → ℤ), Nat.cast_injective⟩
-  let d : ℤ → ℂ := fun k => b' (Int.toNat k)
-  have hPLp : PLp = ∑ k ∈ E', d k • fourierLp 2 k := by
-    simp only [PLp, Pcont, E', d, fourierLp,
-      map_sum, map_smul]
-    rw [Finset.sum_map]; simp
-  have hinner_orth :
-      @inner ℂ _ _ PLp PLp =
-        Complex.ofReal (∑ n ∈ E, ‖b' n‖ ^ 2) := by
-    rw [hPLp, orthonormal_fourier.inner_sum d d E',
-      show E' = E.map ⟨(Nat.cast : ℕ → ℤ),
-        Nat.cast_injective⟩ from rfl,
-      Finset.sum_map, Complex.ofReal_sum]
-    congr 1; ext n
-    simp only [Function.Embedding.coeFn_mk, d,
-      Int.toNat_natCast]
-    rw [mul_comm, mul_conj]; congr 1
-    exact (Complex.sq_norm (b' n)).symm
-  have hcombine :=
-    (L2.inner_def (𝕜 := ℂ) PLp PLp).symm.trans hinner_orth
-  have hae := ContinuousMap.coeFn_toLp
-    (μ := AddCircle.haarAddCircle) (𝕜 := ℂ) (p := 2) Pcont
-  have hPcont_eq :
-      ∀ t : AddCircle T, (Pcont : AddCircle T → ℂ) t =
-        ∑ n ∈ E, b' n * (fourier (n : ℤ)) t := by
-    intro t
-    simp [Pcont, ContinuousMap.coe_sum,
-      ContinuousMap.coe_smul, smul_eq_mul]
-  -- Convert range L sums back to Fin L
-  have h_sum_eq :
-      ∑ n ∈ E, ‖b' n‖ ^ 2 = ∑ m : Fin L, ‖c m‖ ^ 2 := by
-    simp only [E]; rw [@sum_fin_eq_sum_range]
-    refine Finset.sum_congr rfl fun n hn => ?_
-    simp [b', Finset.mem_range.mp hn]
-  calc circleNormSq
-        (fun t => ∑ n ∈ E, b' n * (fourier (↑n : ℤ)) t)
-      = ∫ t : AddCircle T,
-          ‖(↑↑PLp : AddCircle T → ℂ) t‖ ^ 2
-            ∂AddCircle.haarAddCircle := by
-        unfold circleNormSq; symm; apply integral_congr_ae
-        filter_upwards [hae] with t ht
-        rw [show (↑↑PLp : AddCircle T → ℂ) t =
-          Pcont t from ht, hPcont_eq t]
-    _ = (∫ t : AddCircle T,
-          @inner ℂ ℂ _
-            ((↑↑PLp : AddCircle T → ℂ) t)
-            ((↑↑PLp : AddCircle T → ℂ) t)
-            ∂AddCircle.haarAddCircle).re := by
-        have hint :=
-          L2.integrable_inner (𝕜 := ℂ) PLp PLp
-        symm
-        calc _ = Complex.reCLM (∫ t,
-              @inner ℂ ℂ _
-                ((↑↑PLp : AddCircle T → ℂ) t)
-                ((↑↑PLp : AddCircle T → ℂ) t)
-                ∂AddCircle.haarAddCircle) := rfl
-          _ = ∫ t, Complex.reCLM
-              (@inner ℂ ℂ _
-                ((↑↑PLp : AddCircle T → ℂ) t)
-                ((↑↑PLp : AddCircle T → ℂ) t))
-              ∂AddCircle.haarAddCircle :=
-            (ContinuousLinearMap.integral_comp_comm
-              _ hint).symm
-          _ = _ := by
-            congr 1; ext t
-            exact @inner_self_eq_norm_sq ℂ ℂ _ _ _
-              ((↑↑PLp : AddCircle T → ℂ) t)
-    _ = ∑ m : Fin L, ‖c m‖ ^ 2 := by
-        rw [show (∫ t : AddCircle T,
-            @inner ℂ ℂ _
-              ((↑↑PLp : AddCircle T → ℂ) t)
-              ((↑↑PLp : AddCircle T → ℂ) t)
-              ∂AddCircle.haarAddCircle) =
-            Complex.ofReal (∑ n ∈ E, ‖b' n‖ ^ 2)
-          from hcombine, Complex.ofReal_re, h_sum_eq]
+  let frequencies : Fin L ↪ ℤ :=
+    ⟨fun i => (i.val : ℤ), fun i j h => Fin.ext (Nat.cast_injective h)⟩
+  have hfrequencies (i : Fin L) : frequencies i = (i.val : ℤ) := rfl
+  simpa only [circleNormSq, hfrequencies] using
+    PhaseRetrieval.integral_norm_sq_fourier_sum (period := T) frequencies c
 
 /-- Derivative L² norm bounded by (L-1)² times function
     L² norm (Parseval). -/
