@@ -34,7 +34,7 @@ private theorem helper_buildContext_130.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 input T generating ett hMP hdegree hlarge n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       have completeLower : LowerRoundInductionHypothesis G k e0 n := by
         intro input T generating ett hpositive hround hMP
         have ctx : TechnicalInductionContext G k e0 ett.rounds :=

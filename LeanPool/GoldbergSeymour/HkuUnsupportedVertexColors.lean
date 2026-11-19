@@ -326,7 +326,7 @@ private theorem helper_chain_383.{u_1, u_2} :
   intro V E _ _ _ G k rounds e0 input series q p vertex_transfer one_step next_segment a b hab x
       hxa hnu
   induction h : b.val - a.val using Nat.strong_induction_on generalizing a b with
-  | h n ih =>
+  | ind n ih =>
     by_cases he : a.val = b.val
     · have habeq : a = b := Fin.ext he
       subst b

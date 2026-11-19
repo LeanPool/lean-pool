@@ -931,7 +931,7 @@ private theorem helper_hTpreviousBefore_6081.{u_1, u_2} :
                     (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ), by
                           omega⟩ :
                         Fin ett.rounds).succ.castSucc)
-              all_goals omega))
+              omega))
         (Fin.last seed.length);
     ∀ (_ : (ett.series.data.tree jSlot.succ.castSucc).vertex terminalInTj = v)
       (_ : (0 : ℕ) < (↑jSlot : ℕ)),
@@ -1135,7 +1135,7 @@ private theorem helper_branch_6176.{u_1, u_2} :
                     (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ), by
                           omega⟩ :
                         Fin ett.rounds).succ.castSucc)
-              all_goals omega))
+              omega))
         (Fin.last seed.length);
     ∀ (_ : (↑terminalInTj : ℕ) = seed.length)
       (lower :
@@ -1603,7 +1603,7 @@ private theorem helper_hrouteUM_6564.{u_1, u_2} :
                     (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ), by
                           omega⟩ :
                         Fin ett.rounds).succ.castSucc)
-              all_goals omega))
+              omega))
         (Fin.last seed.length);
     ∀ (_ : (↑terminalInTj : ℕ) = seed.length)
       (huPositionPositive : (1 : ℕ) ≤ (↑uPosition : ℕ))
