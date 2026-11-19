@@ -43,7 +43,8 @@ public import LeanPool.GinibrePoincare.Analysis.MatrixSchurAngularDensity
 Part of the matrix lift and eigenvector overlaps development of the
 Ginibre Poincaré formalization.
 
-Main results: `matrixSchur_product_integral`.
+Main results: `matrixSchur_product_integral_of_injective` and its existence form
+`matrixSchur_product_integral`.
 -/
 
 @[expose] public section
@@ -53,26 +54,26 @@ open scoped Matrix Matrix.Norms.Operator Topology ENNReal
 namespace GinibrePoincare
 noncomputable section
 
-/-- An actual product Schur chart separates its angular integral from its spectral and
-strict upper integral for every measurable unitary-conjugation-invariant observable. -/
-theorem matrixSchur_product_integral (n : ℕ) :
-    ∃ V : Set (SchurLowerIndex n → ℂ), IsOpen V ∧ 0 ∈ V ∧
-      ∀ g : Matrix (Fin n) (Fin n) ℂ → ℝ≥0∞, Measurable g →
-        (∀ U ∈ Matrix.unitaryGroup (Fin n) ℂ, ∀ A, g (U * A * Uᴴ) = g A) →
-        ∫⁻ A in matrixSchurFrameChart (matrixSchurExponentialFrame n) (0 : Matrix (Fin n) (Fin n) ℂ)
-            ''
-            (V ×ˢ matrixSchurSortedUpperDomain n), g A =
-          (∫⁻ x in V, ENNReal.ofReal (matrixSchurAngularDensity n x)) *
-            ∫⁻ y in matrixSchurSortedUpperDomain n,
-              ENNReal.ofReal (vandermondeWeight (fun i => schurUpperCombination y i i)) *
-                g (schurUpperCombination y) := by
+/-- On a measurable angular domain where the sorted Schur chart is injective, the chart
+separates the angular integral from the spectral and strict upper integral for every
+measurable unitary-conjugation-invariant observable. -/
+theorem matrixSchur_product_integral_of_injective (n : ℕ)
+    (V : Set (SchurLowerIndex n → ℂ)) (hV : MeasurableSet V)
+    (hinj : InjOn (matrixSchurFrameChart (matrixSchurExponentialFrame n) (0 : Matrix (Fin n) (Fin n)
+        ℂ))
+      (V ×ˢ matrixSchurSortedUpperDomain n))
+    (g : Matrix (Fin n) (Fin n) ℂ → ℝ≥0∞) (hg : Measurable g)
+    (hInv : ∀ U ∈ Matrix.unitaryGroup (Fin n) ℂ, ∀ A, g (U * A * Uᴴ) = g A) :
+    ∫⁻ A in matrixSchurFrameChart (matrixSchurExponentialFrame n) (0 : Matrix (Fin n) (Fin n) ℂ) ''
+        (V ×ˢ matrixSchurSortedUpperDomain n), g A =
+      (∫⁻ x in V, ENNReal.ofReal (matrixSchurAngularDensity n x)) *
+        ∫⁻ y in matrixSchurSortedUpperDomain n,
+          ENNReal.ofReal (vandermondeWeight (fun i => schurUpperCombination y i i)) *
+            g (schurUpperCombination y) := by
   let : BorelSpace (Matrix (Fin n) (Fin n) ℂ) :=
     inferInstanceAs (BorelSpace (Fin n → Fin n → ℂ))
-  obtain ⟨V, hV, h0, hinj⟩ := matrixSchurSortedDomain_exists_injective n
-  refine ⟨V, hV, h0, ?_⟩
-  intro g hg hInv
   have hs : MeasurableSet (V ×ˢ matrixSchurSortedUpperDomain n) :=
-    hV.measurableSet.prod (measurableSet_matrixSchurSortedUpperDomain n)
+    hV.prod (measurableSet_matrixSchurSortedUpperDomain n)
   have hi := matrixSchurChart_lintegral_of_injOn (0 : Matrix (Fin n) (Fin n) ℂ)
     (by intros; rfl) (V ×ˢ matrixSchurSortedUpperDomain n) hs hinj g
   rw [hi]
@@ -103,6 +104,23 @@ theorem matrixSchur_product_integral (n : ℕ) :
   exact lintegral_prod_mul
     (ENNReal.measurable_ofReal.comp (measurable_matrixSchurAngularDensity n)).aemeasurable
     ((ENNReal.measurable_ofReal.comp hv).mul (hg.comp hU)).aemeasurable
+
+/-- An actual product Schur chart separates its angular integral from its spectral and
+strict upper integral for every measurable unitary-conjugation-invariant observable. -/
+theorem matrixSchur_product_integral (n : ℕ) :
+    ∃ V : Set (SchurLowerIndex n → ℂ), IsOpen V ∧ 0 ∈ V ∧
+      ∀ g : Matrix (Fin n) (Fin n) ℂ → ℝ≥0∞, Measurable g →
+        (∀ U ∈ Matrix.unitaryGroup (Fin n) ℂ, ∀ A, g (U * A * Uᴴ) = g A) →
+        ∫⁻ A in matrixSchurFrameChart (matrixSchurExponentialFrame n) (0 : Matrix (Fin n) (Fin n) ℂ)
+            ''
+            (V ×ˢ matrixSchurSortedUpperDomain n), g A =
+          (∫⁻ x in V, ENNReal.ofReal (matrixSchurAngularDensity n x)) *
+            ∫⁻ y in matrixSchurSortedUpperDomain n,
+              ENNReal.ofReal (vandermondeWeight (fun i => schurUpperCombination y i i)) *
+                g (schurUpperCombination y) := by
+  obtain ⟨V, hV, h0, hinj⟩ := matrixSchurSortedDomain_exists_injective n
+  exact ⟨V, hV, h0, fun g hg hInv =>
+    matrixSchur_product_integral_of_injective n V hV.measurableSet hinj g hg hInv⟩
 
 end
 end GinibrePoincare

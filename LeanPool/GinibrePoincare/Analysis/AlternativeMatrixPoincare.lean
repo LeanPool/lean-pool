@@ -37,10 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.MatrixGaussianPoincare
 public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralLiftLSITransport
-public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralLiftFullEntry
-public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralSobolevSpectralWeak
-public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralLiftEntryLp
-public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralSobolevWeakDomain
+public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralLiftLSIWeak
 
 /-! # The Gaussian matrix route to the overlap variance inequality
 
@@ -120,44 +117,8 @@ theorem matrixSpectralLift_ordinary_weak_gaussian_poincare {n m : ℕ} (hn : 0 <
       (∫ x, g x i * θ x) = -(∫ x, u x * fderiv ℝ θ x (ginibreCoordinateDirection i))) :
     smoothGinibreVariance n F ≤
       (2/(n : ℝ))*∫ A, matrixSpectralOverlapEnergy n F A ∂matrixGaussianMeasure n := by
-  let q : MatrixGaussianSobolevPair n := (matrixEntryL2ToMatrix hn e u,
-    fun i => matrixEntryL2ToMatrix hn e
-      ((configurationGradientComponent m ((matrixEntryRealIndexEquiv e).symm i)).compLpL
-        2 (matrixEntryGaussianMeasure e) g))
-  have hpairInCompletion : q ∈ matrixGaussianH1Completion n :=
-    matrixEntry_full_weak_pair_mem_H1Completion hn e u g hweak
-  have hpres :=
-    (matrixComplexEntryEquiv_gaussian_preserving hn e).symm (matrixEntryMeasurableEquiv e)
-  have hv : (q.1 : MatrixRealSpace n → ℝ) =ᵐ[matrixGaussianMeasure n] matrixSymmetricLift n F := by
-    filter_upwards [matrixEntryL2ToMatrix_ae hn e u, hpres.quasiMeasurePreserving.ae hu]
-      with A hA hB
-    change u ((matrixComplexEntryEquiv e).symm A) =
-      matrixSymmetricLift n F (matrixComplexEntryEquiv e ((matrixComplexEntryEquiv e).symm A)) at hB
-    exact hA.trans (hB.trans
-      (congrArg (matrixSymmetricLift n F) ((matrixComplexEntryEquiv e).apply_symm_apply A)))
-  have hd : ∀ i, (q.2 i : MatrixRealSpace n → ℝ) =ᵐ[matrixGaussianMeasure n]
-      (fun A => fderiv ℝ (matrixSymmetricLift n F) A
-        (matrixRealCoordinates n (Pi.single i 1))) := by
-    intro i
-    let j := (matrixEntryRealIndexEquiv e).symm i
-    have hc := (configurationGradientComponent m j).coeFn_compLpL g
-    filter_upwards [matrixEntryL2ToMatrix_ae hn e ((configurationGradientComponent m j).compLpL
-      2 (matrixEntryGaussianMeasure e) g), hpres.quasiMeasurePreserving.ae hc,
-      hpres.quasiMeasurePreserving.ae hg] with A hA hB hC
-    change ((configurationGradientComponent m j).compLpL 2 (matrixEntryGaussianMeasure e) g)
-      ((matrixComplexEntryEquiv e).symm A) = g ((matrixComplexEntryEquiv e).symm A) j at hB
-    change g ((matrixComplexEntryEquiv e).symm A) =
-      matrixEntryIntrinsicSpectralGradient e F ((matrixComplexEntryEquiv e).symm A) at hC
-    rw [hA, hB]
-    have hCj := congrArg (fun v : EuclideanSpace ℝ (Fin m × Fin 2) => v j) hC
-    rw [hCj]
-    change fderiv ℝ (matrixSymmetricLift n F)
-      (matrixComplexEntryEquiv e ((matrixComplexEntryEquiv e).symm A))
-      (matrixRealCoordinates n (Pi.single (matrixEntryRealIndexEquiv e j) 1)) = _
-    have h1 := (matrixComplexEntryEquiv e).apply_symm_apply A
-    have h2 : matrixEntryRealIndexEquiv e j = i := Equiv.apply_symm_apply _ i
-    rw [h1, h2]
-  exact matrixSpectralLift_H1_gaussian_poincare hn F hF hsym q hpairInCompletion hv hd
+  obtain ⟨hq, hv, hd⟩ := matrixSpectralLift_ordinary_weak_pair hn e F u g hu hg hweak
+  exact matrixSpectralLift_H1_gaussian_poincare hn F hF hsym _ hq hv hd
 
 /-- Finite actual overlap energy supplies the original matrix H¹ domain. -/
 theorem matrixSpectralLift_finite_overlap_gaussian_poincare_of_entries {n d : ℕ} (hn : 0 < n)
@@ -167,50 +128,8 @@ theorem matrixSpectralLift_finite_overlap_gaussian_poincare_of_entries {n d : �
     (hE : Integrable (matrixSpectralOverlapEnergy n F) (matrixGaussianMeasure n)) :
     smoothGinibreVariance n F ≤
       (2/(n : ℝ))*∫ A, matrixSpectralOverlapEnergy n F A ∂matrixGaussianMeasure n := by
-  let V := fun x : Configuration (d+1) => matrixSymmetricLift n F (matrixComplexEntryEquiv e x)
-  have hV : MemLp V 2 (matrixEntryGaussianMeasure e) :=
-    matrixEntryIntrinsicSpectralValue_memLp hn e F hF.continuous.measurable hsym hFL2
-  have hG := matrixEntryIntrinsicSpectralGradient_memLp hn e F hF hsym hE
-  let u : Lp ℝ 2 (matrixEntryGaussianMeasure e) := hV.toLp V
-  let g : Lp (EuclideanSpace ℝ (Fin (d+1) × Fin 2)) 2 (matrixEntryGaussianMeasure e) :=
-    hG.toLp (matrixEntryIntrinsicSpectralGradient e F)
-  have hu : (u : Configuration (d+1) → ℝ) =ᵐ[matrixEntryGaussianMeasure e] V := hV.coeFn_toLp
-  have hg : (g : Configuration (d+1) → EuclideanSpace ℝ (Fin (d+1) × Fin 2))
-      =ᵐ[matrixEntryGaussianMeasure e] matrixEntryIntrinsicSpectralGradient e F := hG.coeFn_toLp
-  have hfullLift_ae : matrixEntryFullSpectralLift e F =ᵐ[matrixEntryGaussianMeasure e] V := by
-    filter_upwards [(matrixComplexEntryEquiv_gaussian_preserving hn e).quasiMeasurePreserving.ae
-      (matrixFullSymmetricSpectralLift_eq_ae n F hsym)] with x hx
-    exact hx
-  have hvalue_fullLift := hu.trans hfullLift_ae.symm
-  have hvalue_volume : (u : Configuration (d+1) → ℝ) =ᵐ[volume] matrixEntryFullSpectralLift e F :=
-    (matrixEntryGaussian_ae_iff_volume hn e _).mp hvalue_fullLift
-  have hweak : ∀ i : Fin (d+1) × Fin 2, ∀ θ : Configuration (d+1) → ℝ,
-      ContDiff ℝ ∞ θ → HasCompactSupport θ →
-      (∫ x, g x i * θ x) = -(∫ x, u x * fderiv ℝ θ x (ginibreCoordinateDirection i)) := by
-    intro i θ hθ hc
-    have hgScalar : (fun x => g x i) =ᵐ[matrixEntryGaussianMeasure e]
-        (fun x => matrixEntryIntrinsicSpectralGradient e F x i) := by
-      filter_upwards [hg] with x hx
-      exact congrArg (fun v : EuclideanSpace ℝ (Fin (d+1) × Fin 2) => v i) hx
-    have hder := matrixEntryFullSpectralLift_derivative_ae hn e F hF hsym i
-    have hgradient_volume : (fun x => g x i) =ᵐ[volume]
-        (fun x => fderiv ℝ (matrixEntryFullSpectralLift e F) x (ginibreCoordinateDirection i)) :=
-      (matrixEntryGaussian_ae_iff_volume hn e _).mp (hgScalar.trans hder.symm)
-    have ht := matrixFullSpectralLift_coordinate_weak_test n d e F hF hsym i
-      (matrixEntryFullSpectralLift_derivative_locallyIntegrable hn e F hF hsym hE i) θ hθ hc
-    calc
-      _ = ∫ x, fderiv ℝ (matrixEntryFullSpectralLift e F) x (ginibreCoordinateDirection i) * θ x :=
-          by
-        apply integral_congr_ae
-        filter_upwards [hgradient_volume] with x hx
-        exact congrArg (fun v : ℝ => v * θ x) hx
-      _ = -(∫ x, matrixEntryFullSpectralLift e F x * fderiv ℝ θ x (ginibreCoordinateDirection i)) :=
-          ht
-      _ = _ := by
-        congr 1
-        apply integral_congr_ae
-        filter_upwards [hvalue_volume] with x hx
-        exact congrArg (fun v : ℝ => v * fderiv ℝ θ x (ginibreCoordinateDirection i)) hx.symm
+  obtain ⟨u, g, hu, hg, hweak⟩ :=
+    matrixSpectralLift_finite_overlap_weak_pair hn e F hF hsym hFL2 hE
   exact matrixSpectralLift_ordinary_weak_gaussian_poincare hn e F hF hsym u g hu hg hweak
 
 /-- Concrete full finite-overlap Theorem 1.13 variance endpoint by the Gaussian matrix route. -/

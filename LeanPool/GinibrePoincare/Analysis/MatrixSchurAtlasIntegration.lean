@@ -40,12 +40,10 @@ public import LeanPool.GinibrePoincare.Analysis.MatrixSchurProductIntegration
 
 /-! # Integration on one injective Schur atlas piece
 
-Change of variables on an injective sorted Schur chart contributes its actual
-Jacobian, the product of an angular density and the Vandermonde weight. For a
-unitary-invariant observable, the angular conjugation drops out of its value.
-Tonelli factorization separates the angular and upper-triangular integrals.
-The last theorem transports this formula to a chart centered at any unitary
-matrix; conjugation preserves volume because its absolute real determinant is one.
+The identity-centered product formula `matrixSchur_product_integral_of_injective`
+(change of variables on an injective sorted Schur chart, then Tonelli factorization)
+is transported here to a chart centered at any unitary matrix; conjugation preserves
+volume because its absolute real determinant is one.
 -/
 
 @[expose] public section
@@ -54,54 +52,6 @@ open Matrix NormedSpace MeasureTheory Filter Set
 open scoped Matrix Matrix.Norms.Operator Topology ENNReal
 namespace GinibrePoincare
 noncomputable section
-
-theorem matrixSchur_product_integral_of_injective (n : ℕ)
-    (V : Set (SchurLowerIndex n → ℂ)) (hV : MeasurableSet V)
-    (hinj : InjOn (matrixSchurFrameChart (matrixSchurExponentialFrame n) (0 : Matrix (Fin n) (Fin n)
-        ℂ))
-      (V ×ˢ matrixSchurSortedUpperDomain n))
-    (g : Matrix (Fin n) (Fin n) ℂ → ℝ≥0∞) (hg : Measurable g)
-    (hInv : ∀ U ∈ Matrix.unitaryGroup (Fin n) ℂ, ∀ A, g (U * A * Uᴴ) = g A) :
-    ∫⁻ A in matrixSchurFrameChart (matrixSchurExponentialFrame n) (0 : Matrix (Fin n) (Fin n) ℂ) ''
-        (V ×ˢ matrixSchurSortedUpperDomain n), g A =
-      (∫⁻ x in V, ENNReal.ofReal (matrixSchurAngularDensity n x)) *
-        ∫⁻ y in matrixSchurSortedUpperDomain n,
-          ENNReal.ofReal (vandermondeWeight (fun i => schurUpperCombination y i i)) *
-            g (schurUpperCombination y) := by
-  let : BorelSpace (Matrix (Fin n) (Fin n) ℂ) :=
-    inferInstanceAs (BorelSpace (Fin n → Fin n → ℂ))
-  have hs : MeasurableSet (V ×ˢ matrixSchurSortedUpperDomain n) :=
-    hV.prod (measurableSet_matrixSchurSortedUpperDomain n)
-  have hi := matrixSchurChart_lintegral_of_injOn (0 : Matrix (Fin n) (Fin n) ℂ)
-    (by intros; rfl) (V ×ˢ matrixSchurSortedUpperDomain n) hs hinj g
-  rw [hi]
-  have hfun : (fun p : SchurCoordinates n =>
-      ENNReal.ofReal (vandermondeWeight (fun i => ((0 : Matrix (Fin n) (Fin n) ℂ) +
-          schurUpperCombination p.2) i i) *
-        matrixSchurAngularDensity n p.1) *
-        g (matrixSchurFrameChart (matrixSchurExponentialFrame n) 0 p)) =
-      (fun p => ENNReal.ofReal (matrixSchurAngularDensity n p.1) *
-        (ENNReal.ofReal (vandermondeWeight (fun i => schurUpperCombination p.2 i i)) *
-          g (schurUpperCombination p.2))) := by
-    funext p
-    simp only [zero_add, matrixSchurFrameChart]
-    rw [hInv _ (matrixSchurExponentialFrame_unitary n p.1),
-      ENNReal.ofReal_mul (vandermondeWeight_nonneg _)]
-    ac_rfl
-  rw [hfun, Measure.volume_eq_prod, ← Measure.prod_restrict]
-  have hU : Measurable (schurUpperCombination (n := n)) := by
-    have he : (schurUpperCombination (n := n)) = schurUpperCLM n :=
-      funext fun y => (schurUpperCLM_apply n y).symm
-    rw [he]
-    exact (schurUpperCLM n).continuous.measurable
-  have hv : Measurable (fun y : SchurUpperIndex n → ℂ =>
-      vandermondeWeight (fun i => schurUpperCombination y i i)) := by
-    have hd : Measurable (fun y : SchurUpperIndex n → ℂ =>
-        fun i : Fin n => schurUpperCombination y i i) := by fun_prop
-    exact Complex.continuous_normSq.measurable.comp (continuous_vandermonde.measurable.comp hd)
-  exact lintegral_prod_mul
-    (ENNReal.measurable_ofReal.comp (measurable_matrixSchurAngularDensity n)).aemeasurable
-    ((ENNReal.measurable_ofReal.comp hv).mul (hg.comp hU)).aemeasurable
 
 theorem matrixUnitaryConjugation_injective {n : ℕ}
     (U : Matrix (Fin n) (Fin n) ℂ) (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ) :

@@ -36,8 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralLiftLSIWeak
-public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralLiftFullEntry
-public import LeanPool.GinibrePoincare.Analysis.MatrixSpectralSobolevSpectralWeak
 
 /-!
 # Matrix spectral lift LSI finite
@@ -66,50 +64,8 @@ theorem matrixSpectralLift_finite_overlap_lsi_of_entries {n d : ℕ} (hn : 0 < n
     Integrable (fun z => F z ^ 2 * Real.log (F z ^ 2)) (ginibreMeasure n) ∧
       squareEntropy (ginibreMeasure n) F ≤
         (4 / (n : ℝ)) * ∫ A, matrixSpectralOverlapEnergy n F A ∂matrixGaussianMeasure n := by
-  let V := fun x : Configuration (d+1) => matrixSymmetricLift n F (matrixComplexEntryEquiv e x)
-  have hV : MemLp V 2 (matrixEntryGaussianMeasure e) :=
-    matrixEntryIntrinsicSpectralValue_memLp hn e F hF.continuous.measurable hsym hFL2
-  have hG := matrixEntryIntrinsicSpectralGradient_memLp hn e F hF hsym hE
-  let u : Lp ℝ 2 (matrixEntryGaussianMeasure e) := hV.toLp V
-  let g : Lp (EuclideanSpace ℝ (Fin (d+1) × Fin 2)) 2 (matrixEntryGaussianMeasure e) :=
-    hG.toLp (matrixEntryIntrinsicSpectralGradient e F)
-  have hu : (u : Configuration (d+1) → ℝ) =ᵐ[matrixEntryGaussianMeasure e] V := hV.coeFn_toLp
-  have hg : (g : Configuration (d+1) → EuclideanSpace ℝ (Fin (d+1) × Fin 2))
-      =ᵐ[matrixEntryGaussianMeasure e] matrixEntryIntrinsicSpectralGradient e F := hG.coeFn_toLp
-  have hFull : matrixEntryFullSpectralLift e F =ᵐ[matrixEntryGaussianMeasure e] V := by
-    filter_upwards [(matrixComplexEntryEquiv_gaussian_preserving hn e).quasiMeasurePreserving.ae
-      (matrixFullSymmetricSpectralLift_eq_ae n F hsym)] with x hx
-    exact hx
-  have huFull := hu.trans hFull.symm
-  have huVol : (u : Configuration (d+1) → ℝ) =ᵐ[volume] matrixEntryFullSpectralLift e F :=
-    (matrixEntryGaussian_ae_iff_volume hn e _).mp huFull
-  have hweak : ∀ i : Fin (d+1) × Fin 2, ∀ θ : Configuration (d+1) → ℝ,
-      ContDiff ℝ ∞ θ → HasCompactSupport θ →
-      (∫ x, g x i * θ x) = -(∫ x, u x * fderiv ℝ θ x (ginibreCoordinateDirection i)) := by
-    intro i θ hθ hc
-    have hgScalar : (fun x => g x i) =ᵐ[matrixEntryGaussianMeasure e]
-        (fun x => matrixEntryIntrinsicSpectralGradient e F x i) := by
-      filter_upwards [hg] with x hx
-      exact congrArg (fun v : EuclideanSpace ℝ (Fin (d+1) × Fin 2) => v i) hx
-    have hder := matrixEntryFullSpectralLift_derivative_ae hn e F hF hsym i
-    have hgVol : (fun x => g x i) =ᵐ[volume]
-        (fun x => fderiv ℝ (matrixEntryFullSpectralLift e F) x (ginibreCoordinateDirection i)) :=
-      (matrixEntryGaussian_ae_iff_volume hn e _).mp (hgScalar.trans hder.symm)
-    have ht := matrixFullSpectralLift_coordinate_weak_test n d e F hF hsym i
-      (matrixEntryFullSpectralLift_derivative_locallyIntegrable hn e F hF hsym hE i) θ hθ hc
-    calc
-      _ = ∫ x, fderiv ℝ (matrixEntryFullSpectralLift e F) x (ginibreCoordinateDirection i) * θ x :=
-          by
-        apply integral_congr_ae
-        filter_upwards [hgVol] with x hx
-        exact congrArg (fun v : ℝ => v * θ x) hx
-      _ = -(∫ x, matrixEntryFullSpectralLift e F x * fderiv ℝ θ x (ginibreCoordinateDirection i)) :=
-          ht
-      _ = _ := by
-        congr 1
-        apply integral_congr_ae
-        filter_upwards [huVol] with x hx
-        exact congrArg (fun v : ℝ => v * fderiv ℝ θ x (ginibreCoordinateDirection i)) hx.symm
+  obtain ⟨u, g, hu, hg, hweak⟩ :=
+    matrixSpectralLift_finite_overlap_weak_pair hn e F hF hsym hFL2 hE
   exact matrixSpectralLift_ordinary_weak_lsi hn e F hF hsym u g hu hg hweak
 
 /-- Exact finite-energy matrix-overlap logarithmic Sobolev inequality under the
