@@ -41,14 +41,16 @@ binomial coefficients give the Erdős–Szekeres bound.
   winning (the potential never runs out).
 * `SimpleGraph.Bireservoir.IsWinning.exists_isNClique`: a winning state yields a red `K_r` or a blue
   `K_s`.
-* `SimpleGraph.ramseyBound_of_pascal`: every Pascal-superadditive threshold is a Ramsey bound.
-* `SimpleGraph.RamseyBound.add`: the Erdős–Szekeres recursion
-  `R(r + 1, s + 1) ≤ R(r, s + 1) + R(r + 1, s)`.
+* `SimpleGraph.ramseyBound_of_pascal`, `SimpleGraph.ramseyNumber_le_of_isPascal`: every
+  Pascal-superadditive threshold is a Ramsey bound, so it bounds FiniteRamsey's `ramseyNumber`.
 * `SimpleGraph.isPascal_choose`, `SimpleGraph.ramseyBound_choose`: the binomial threshold is
-  Pascal, hence **Erdős–Szekeres**, `R(r + 1, s + 1) ≤ C(r + s, r)`.
+  Pascal, hence **Erdős–Szekeres**, `R(r + 1, s + 1) ≤ C(r + s, r)`. This recovers, as one instance
+  of the potential argument, the bound that FiniteRamsey proves by direct recursion
+  (`SimpleGraph.ramsey_upper_bound`).
 * `SimpleGraph.ramseyBound_four_pow`: `R(k + 1, k + 1) ≤ 4 ^ k`.
-* `SimpleGraph.ramseyBound_six_three_three`, `SimpleGraph.not_ramseyBound_five_three_three`:
-  `R(3, 3) = 6`; the five-cycle shows that `5` vertices do not suffice.
+* `SimpleGraph.not_ramseyBound_five_three_three`, `SimpleGraph.ramseyNumber_three_three`:
+  the five-cycle shows that `5` vertices do not suffice for `(3, 3)`, so
+  `ramseyNumber ![3, 3] = 6`.
 
 ## References
 
@@ -215,15 +217,6 @@ theorem _root_.SimpleGraph.IsClique.exists_isNClique_subset {H : SimpleGraph V} 
   obtain ⟨t, hts, ht⟩ := exists_subset_card_eq hr
   exact ⟨t, hts, ⟨hs.subset (by simpa using hts), ht⟩⟩
 
-/-- Smaller targets: a Ramsey bound for `(r, s)` is one for `(r', s')` when `r' ≤ r`, `s' ≤ s`. -/
-theorem _root_.SimpleGraph.RamseyBound.mono_sizes {n r s r' s' : ℕ} (h : RamseyBound n r s)
-    (hr : r' ≤ r) (hs : s' ≤ s) : RamseyBound n r' s' := fun H => by
-  rcases h H with ⟨t, ht⟩ | ⟨t, ht⟩
-  · obtain ⟨u, -, hu⟩ := ht.isClique.exists_isNClique_subset (ht.card_eq ▸ hr)
-    exact .inl ⟨u, hu⟩
-  · obtain ⟨u, -, hu⟩ := ht.isClique.exists_isNClique_subset (ht.card_eq ▸ hs)
-    exact .inr ⟨u, hu⟩
-
 /-- **Large pools win.** If the pool has at least `n` vertices and `RamseyBound n (r - #red)
 (s - #blue)`, then `G` has an `r`-clique or `Gᶜ` has an `s`-clique. -/
 theorem exists_of_ramseyBound {n r s : ℕ} (h : RamseyBound n (r - #S.red) (s - #S.blue))
@@ -302,18 +295,11 @@ theorem ramseyBound_of_pascal {R : ℕ → ℕ → ℕ} (hR : IsPascal R) (r s :
   Bireservoir.IsWinning.exists_isNClique (S := Bireservoir.ofPool (G := G) univ) hR
     (by simp [Bireservoir.IsWinning])
 
-/-- **The Erdős–Szekeres recursion.** `R(r + 1, s + 1) ≤ R(r, s + 1) + R(r + 1, s)`. -/
-theorem RamseyBound.add {a b r s : ℕ} (ha : RamseyBound a r (s + 1))
-    (hb : RamseyBound b (r + 1) s) (hab : 0 < a + b) : RamseyBound (a + b) (r + 1) (s + 1) := by
-  classical
-  intro G
-  set S := Bireservoir.ofPool (G := G) univ with hS
-  have hv : (⟨0, hab⟩ : Fin (a + b)) ∈ S.pool := mem_univ _
-  have hpart := S.card_redPivot_pool_add_card_bluePivot_pool hv
-  have hcard : #S.pool = a + b := by simp [hS]
-  by_cases hred : a ≤ #(S.redPivot hv).pool
-  · exact (S.redPivot hv).exists_of_ramseyBound (by simpa [hS] using ha) hred
-  · exact (S.bluePivot hv).exists_of_ramseyBound (by simpa [hS] using hb) (by omega)
+/-- **Pascal thresholds bound the Ramsey number.** If `R` satisfies Pascal's inequality, then
+FiniteRamsey's `ramseyNumber ![r, s]` is at most `R r s`. -/
+theorem ramseyNumber_le_of_isPascal {R : ℕ → ℕ → ℕ} (hR : IsPascal R) (r s : ℕ) :
+    ramseyNumber ![r, s] ≤ R r s :=
+  ramseyBound_iff_ramseyNumber_le.mp (ramseyBound_of_pascal hR r s)
 
 /-- The binomial threshold `C(a + b - 2, a - 1)`, extended by zero when `a = 0` or `b = 0`,
 satisfies Pascal's inequality. -/
@@ -333,7 +319,8 @@ theorem isPascal_choose :
     exact (Nat.choose_succ_succ' _ _).ge
 
 /-- **Erdős–Szekeres.** `R(r + 1, s + 1) ≤ C(r + s, r)`, as the binomial instance of the Pascal
-potential argument. -/
+potential argument. FiniteRamsey proves the same bound by direct recursion as
+`SimpleGraph.ramsey_upper_bound`; here it is a corollary of `ramseyBound_of_pascal`. -/
 theorem ramseyBound_choose (r s : ℕ) : RamseyBound ((r + s).choose r) (r + 1) (s + 1) := by
   simpa [show r + 1 + (s + 1) - 2 = r + s by omega] using
     ramseyBound_of_pascal isPascal_choose (r + 1) (s + 1)
@@ -357,5 +344,11 @@ theorem not_ramseyBound_five_three_three : ¬RamseyBound 5 3 3 := by
       decide
   rcases h (cycleGraph 5) with ⟨t, ht⟩ | ⟨t, ht⟩
   exacts [hfree.1 t ht, hfree.2 t ht]
+
+/-- **`R(3, 3) = 6`** for FiniteRamsey's Ramsey number. -/
+theorem ramseyNumber_three_three : ramseyNumber ![3, 3] = 6 := by
+  refine le_antisymm (ramseyBound_iff_ramseyNumber_le.mp ramseyBound_six_three_three) ?_
+  by_contra! h
+  exact not_ramseyBound_five_three_three (ramseyBound_iff_ramseyNumber_le.mpr (by omega))
 
 end SimpleGraph
