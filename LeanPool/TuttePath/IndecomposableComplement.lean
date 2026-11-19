@@ -59,7 +59,7 @@ theorem exists_indecomposable_complement (hS : Indecomposable M S)
       natRank M M.E - natRank M R = natRank M U - natRank M T := by
   generalize hn : natRank M M.E - natRank M U = n
   induction n using Nat.strong_induction_on generalizing T U with
-  | h n ih =>
+  | ind n ih =>
     by_cases hUE : U = M.E
     · subst U
       exact ⟨T, hT, Set.Subset.rfl, hTS,
