@@ -762,7 +762,12 @@ private meta def prepareBellmanPolynomial (expression : Lean.Expr) :
           pure (some (Lean.mkApp constructor normalized, ← Lean.Meta.mkCongrArg constructor proof))
         else pure none
       else bellmanMatcherIdentity exposed
-    let some (polynomial, proof) := identity | return (← exposeBellmanHead exposed, prefixProof)
+    let some (polynomial, proof) := identity | do
+      -- An enclosing match can reveal a constructor only after iota reduction.
+      let reduced ← exposeBellmanHead exposed
+      if reduced == exposed then return (reduced, prefixProof)
+      next := reduced
+      continue
     prefixProof ← match prefixProof with
       | some previous => some <$> Lean.Meta.mkEqTrans previous proof
       | none => pure (some proof)
@@ -1055,7 +1060,8 @@ theorem chartPlus_check : allNonnegative3 chartPlus = true := by
   as_aux_lemma => exact chartPlus_normalized_check
 
 private def chartOneWithEmptyAppend : Poly3 :=
-  (DPoly.mk ([] ++ (chartOne.coeffs ++ ([] ++ []))), ()).1
+  match (chartOne, ()) with
+  | (polynomial, _) => DPoly.mk ([] ++ (polynomial.coeffs ++ ([] ++ [])))
 
 private theorem chartOne_appended_check : allNonnegative3 chartOneWithEmptyAppend = true := by
   checkBellmanChart
