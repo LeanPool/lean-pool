@@ -37,7 +37,6 @@ module
 
 public import Mathlib.Analysis.Normed.Module.Convex
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Tactic
 
 /-! # Extracting the scalar convex radial profile
 The planar convexity assumption implies convexity and monotonicity of the
