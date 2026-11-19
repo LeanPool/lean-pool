@@ -5,16 +5,15 @@ Authors: Michael Stoll
 -/
 module
 
-public import Mathlib.Algebra.Polynomial.Sturm.Sequence
+public import TauCeti.Algebra.Polynomial.Sturm.Sequence
 
 import LeanPool.Ratpoints.Mathlib.Algebra.Polynomial.FieldDivision
 
 /-!
 # Sturm sequences of positive multiples and generalized Sturm sequences
 
-Candidates for `Mathlib.Algebra.Polynomial.Sturm.Sequence`: the Sturm sequence commutes with a map
-of fields (`Polynomial.sturmSeq_map`); over an ordered field, the Sturm sequences of positive
-multiples are entrywise positive multiples (`Polynomial.forall₂_posAssoc_sturmSeq`), and a list of
+Over an ordered field, the Sturm sequences of positive multiples are entrywise positive
+multiples (`Polynomial.forall₂_posAssoc_sturmSeq`), and a list of
 nonzero polynomials, each from the third on a positive multiple of the negated remainder of the
 two before and the last a unit, is entrywise a list of positive multiples of the entries of the
 Sturm sequence of its first two (`Polynomial.forall₂_posAssoc_sturmSeq_of_getElem`): a generalized
@@ -26,7 +25,6 @@ Sturm sequence, such as the remainder chain that integer arithmetic computes.
 
 ## Main statements
 
-* `Polynomial.sturmSeq_map`: the Sturm sequence of the images under a map of fields.
 * `Polynomial.forall₂_posAssoc_sturmSeq`: the Sturm sequences of positive multiples.
 * `Polynomial.forall₂_posAssoc_sturmSeq_of_getElem`: a generalized Sturm sequence.
 -/
@@ -34,21 +32,6 @@ Sturm sequence, such as the remainder chain that integer arithmetic computes.
 @[expose] public section
 
 namespace Polynomial
-
-section Map
-
-variable {K L : Type*} [Field K] [Field L] [DecidableEq K] [DecidableEq L]
-
-/-- The Sturm sequence commutes with a map of fields. -/
-theorem sturmSeq_map (φ : K →+* L) (p q : K[X]) :
-    sturmSeq (p.map φ) (q.map φ) = (sturmSeq p q).map (map φ) := by
-  induction p, q using sturmSeq.induct with
-  | case1 q => simp
-  | case2 p q hp ih =>
-    rw [sturmSeq_cons hp, sturmSeq_cons ((Polynomial.map_ne_zero_iff φ.injective).mpr hp),
-      List.map_cons, ← ih, map_mod, Polynomial.map_neg]
-
-end Map
 
 section Ordered
 
