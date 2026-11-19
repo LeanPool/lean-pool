@@ -554,7 +554,23 @@ private meta def readBellmanNat (expression : Lean.Expr) : Lean.MetaM (Option Na
   if expression.isConstOf ``Nat.zero then return some 0
   Lean.Meta.getNatValue? expression
 
+-- Expose transparent wrappers without evaluating dense operations.
+private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
+  let isTerminalHead (term : Lean.Expr) : Bool :=
+    match term.getAppFn.constName? with
+    | some head =>
+      head.getPrefix == ``DPoly ||
+        #[``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
+          ``HSMul.hSMul, ``SMul.smul, ``OfNat.ofNat, ``Int.ofNat, ``Int.negSucc,
+          ``U, ``V, ``Z].contains head
+    | none => false
+  let expression := expression.consumeMData
+  if isTerminalHead expression then
+    return expression
+  Lean.Meta.whnfHeadPred expression fun term => return !isTerminalHead term
+
 private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Option Int) := do
+  let expression ← exposeBellmanHead expression
   if let some integer ← Lean.Meta.getIntValue? expression then
     return some integer
   match_expr expression with
@@ -563,10 +579,14 @@ private meta def readBellmanInteger (expression : Lean.Expr) : Lean.MetaM (Optio
   | _ => return none
 
 private meta def readBellmanCoefficients {R : Type} [Zero R] [One R]
-    (read : Lean.Expr → Lean.MetaM (Option R)) (expression : Lean.Expr) :
-    Lean.MetaM (Option (DPoly R)) := do
-  let expression := expression.consumeMData
+    (read : Lean.Expr → Lean.MetaM (Option R)) (fromNat : Nat → R)
+    (expression : Lean.Expr) : Lean.MetaM (Option (DPoly R)) := do
+  let expression ← exposeBellmanHead expression
   match_expr expression with
+  | OfNat.ofNat type n _ =>
+      unless (← Lean.Meta.whnfD type).getAppFn.isConstOf ``DPoly do return none
+      return (← readBellmanNat n).map fun value =>
+        if value == 0 then 0 else DPoly.const (fromNat value)
   | DPoly.X _ _ _ => return some DPoly.X
   | DPoly.const _ coefficient => return (← read coefficient).map DPoly.const
   | DPoly.mk _ coefficients =>
@@ -606,24 +626,10 @@ private meta def readBellmanLeaf (expression : Lean.Expr) : Lean.MetaM (Option P
   if expression.isConstOf ``U then return some DPoly.X
   if expression.isConstOf ``V then return some (DPoly.const DPoly.X)
   if expression.isConstOf ``Z then return some (DPoly.const (DPoly.const DPoly.X))
-  if let some (n, _) ← Lean.Meta.getOfNatValue? expression ``DPoly then
-    return some (if n == 0 then 0 else DPoly.const (DPoly.const (DPoly.const (Int.ofNat n))))
-  readBellmanCoefficients
-    (readBellmanCoefficients (readBellmanCoefficients readBellmanInteger)) expression
-
--- Expose transparent wrappers without evaluating dense operations.
-private meta def exposeBellmanHead (expression : Lean.Expr) : Lean.MetaM Lean.Expr := do
-  let isTerminalHead (term : Lean.Expr) : Bool :=
-    match term.getAppFn.constName? with
-    | some head =>
-      head.getPrefix == ``DPoly ||
-        #[``HAdd.hAdd, ``HSub.hSub, ``HMul.hMul, ``HPow.hPow, ``Neg.neg,
-          ``HSMul.hSMul, ``SMul.smul, ``OfNat.ofNat, ``U, ``V, ``Z].contains head
-    | none => false
-  let expression := expression.consumeMData
-  if isTerminalHead expression then
-    return expression
-  Lean.Meta.whnfHeadPred expression fun term => return !isTerminalHead term
+  let integerPolynomial : Nat → DPoly ℤ := DPoly.const ∘ Int.ofNat
+  let readIntegerPolynomial := readBellmanCoefficients readBellmanInteger Int.ofNat
+  let readBivariate := readBellmanCoefficients readIntegerPolynomial integerPolynomial
+  readBellmanCoefficients readBivariate (DPoly.const ∘ integerPolynomial) expression
 
 private meta def readBellmanPower (expression : Lean.Expr) : Lean.MetaM Nat := do
   if let some power ← readBellmanNat expression then return power
@@ -730,10 +736,11 @@ local elab "checkBellmanChart" : tactic => Lean.Elab.Tactic.withoutRecover do
     conv_lhs => { arg 1; reduceBellmanPolynomial }
     rfl)))
 
--- Exercise the expanded spellings of the three variables in a staged proof.
+-- Exercise expanded variable spellings, transparent wrappers, and nested numerals.
 example :
-    allNonnegative3 (DPoly.X + DPoly.const DPoly.X + DPoly.const (DPoly.const DPoly.X) : Poly3) =
-      true := by
+    allNonnegative3
+      (DPoly.X + DPoly.const (id DPoly.X) + DPoly.const (DPoly.const DPoly.X) +
+        DPoly.const (2 : DPoly (DPoly ℤ)) : Poly3) = true := by
   checkBellmanChart
 
 -- Preserve the existing auxiliary lemma names of the public chart checks.
