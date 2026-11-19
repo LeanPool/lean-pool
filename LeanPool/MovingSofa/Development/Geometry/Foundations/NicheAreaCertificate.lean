@@ -6,6 +6,7 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs
+import Mathlib.Tactic.NormNum
 
 /-!
 # Gerver niche area certificate

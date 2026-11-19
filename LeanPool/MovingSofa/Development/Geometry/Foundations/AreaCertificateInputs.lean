@@ -5,8 +5,8 @@ Authors: Dean Cureton, The Moving Sofa contributors
 -/
 module
 
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
-public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development001
+public import Mathlib.Data.Int.Notation
+public import Mathlib.Data.Nat.Notation
 
 /-!
 # Numerical inputs for the Gerver area certificate
@@ -15,8 +15,10 @@ This module defines the interval operations, grid, and sums shared by the cap
 and niche certificates. The two certificate modules verify the subtotals, and
 `Development004` proves the soundness of the interval calculations.
 
-After an intentional change to the numerical inputs, copy the following into
-a temporary Lean file and run `lake env lean <file>` from the repository root.
+After an intentional change to the numerical inputs, run
+`lake build +LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs`
+from the repository root. Then copy the following into a temporary Lean file
+and run `lake env lean <file>` to evaluate the rebuilt inputs.
 The cap output gives the start index, length, and subtotal of each block. The
 niche output gives the row index and subtotal. Update the certificate splits
 as well if the grid size or number of rows changes.
@@ -318,9 +320,12 @@ def nicheSumZ : ℤ := (List.range 7).foldl (fun acc r => acc + rowSumZ r) 0
 
 /-! ### The two decidable numeric conclusions -/
 
+/-- Compare integer bounds without reducing their operands in the soundness lemma. -/
+def areaLe (left right : ℤ) : Bool := decide (left ≤ right)
+
 /-- The closed numeric cap check: `2 * 28609 / 10000 ≤ capDoubledZ.lo / M`. -/
-def capOK : Bool := 2 * 28609 * M ≤ 10000 * capDoubledZ.lo
+def capOK : Bool := areaLe (2 * 28609 * M) (10000 * capDoubledZ.lo)
 /-- The closed numeric niche check: `nicheSumZ / M ^ 2 ≤ 3301 / 5000`. -/
-def nicheOK : Bool := 5000 * nicheSumZ ≤ 3301 * M * M
+def nicheOK : Bool := areaLe (5000 * nicheSumZ) (3301 * M * M)
 
 end MovingSofa.GerverAreaCert

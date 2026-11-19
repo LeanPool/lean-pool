@@ -376,15 +376,14 @@ theorem contains_piHalfZ : SI.Contains piHalfZ (Real.pi / 2) := by
   change SI.Contains (SI.divn piZ 2) (Real.pi / 2)
   simpa using SI.contains_divn (b := 2) (by norm_num) contains_piZ
 
+private theorem areaLe_eq_true {left right : ℤ} (bound : left ≤ right) :
+    areaLe left right = true := decide_eq_true bound
+
 /-- The Boolean niche check follows from the staged integer bound. -/
-theorem nicheOK_true : nicheOK = true := by
-  unfold nicheOK
-  exact decide_eq_true niche_bound_checked
+theorem nicheOK_true : nicheOK = true := areaLe_eq_true niche_bound_checked
 
 /-- The Boolean cap check follows from the staged integer bound. -/
-theorem capOK_true : capOK = true := by
-  unfold capOK
-  exact decide_eq_true cap_bound_checked
+theorem capOK_true : capOK = true := areaLe_eq_true cap_bound_checked
 
 end MovingSofa.GerverAreaCert
 
