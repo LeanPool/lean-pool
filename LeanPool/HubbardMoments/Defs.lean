@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.FermionOperators
 public import Mathlib.Analysis.Complex.Norm
 public import Mathlib.Combinatorics.SimpleGraph.Density
 public import Mathlib.LinearAlgebra.Matrix.Hermitian
@@ -17,8 +18,6 @@ public import Mathlib.LinearAlgebra.Matrix.Hermitian
 This file defines the graph, configurations, and matrices used in
 `HubbardMoments.Spec`. The proofs live in the other files.
 
-* `sector V a b k`: basis states of `a` up and `b` down electrons on the sites `V` with
-  exactly `k` doubly occupied sites.
 * `arcs G`: the directed edges of a graph `G`.
 * `hops G S`: the hops out of a configuration `S`, from an occupied site to an empty
   neighbouring site.
@@ -39,19 +38,6 @@ namespace HubbardMoments
 
 open Finset SimpleGraph
 
-section Sector
-
-variable (V : Type*) [Fintype V] [DecidableEq V]
-
-/-- The basis states with `a` up electrons, `b` down electrons and exactly `k` doubly
-occupied sites, as pairs (up-occupied sites, down-occupied sites). A pair `(u, d)` of
-subsets of the sites labels exactly one Fock basis state, so these pairs count the
-states. -/
-def sector (a b k : ℕ) : Finset (Finset V × Finset V) :=
-  (powersetCard a univ ×ˢ powersetCard b univ).filter (fun p => (p.1 ∩ p.2).card = k)
-
-end Sector
-
 section Hops
 
 variable {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -62,6 +48,11 @@ def arcs : Finset (V × V) := G.interedges univ univ
 @[simp]
 theorem mem_arcs {p : V × V} : p ∈ arcs G ↔ G.Adj p.1 p.2 := by
   simp [arcs, G.mem_interedges_iff]
+
+/-- Reversing the orientation of every arc leaves the sum unchanged. -/
+theorem sum_arcs_swap {R : Type*} [AddCommMonoid R] (weight : V × V → R) :
+    ∑ p ∈ arcs G, weight p.swap = ∑ p ∈ arcs G, weight p :=
+  sum_equiv (Equiv.prodComm V V) (fun p ↦ by simp [G.adj_comm]) fun _ _ ↦ rfl
 
 /-- The hops out of a configuration `S` (the set of occupied sites): directed edges from
 an occupied site to an empty one. Their number is the `M(S)` of the paper, and the
@@ -198,27 +189,6 @@ noncomputable def virtualOp (Q : Finset (FockState V σ))
 
 end Fock
 
-section FermionOperators
-
-variable {O : Type*} [DecidableEq O]
-
-/-- The number of occupied orbitals of `S` that come before `o` in the order `ord`. -/
-def countBelow (ord : O ↪ ℕ) (S : Finset O) (o : O) : ℕ := (S.filter fun x => ord x < ord o).card
-
-/-- **Fermion annihilation operator** `c_o` on the Fock space of the orbitals `O`. The basis
-state of an occupied set `S` is `|S⟩ = c†_{o₁} ⋯ c†_{o_k} |0⟩`, with `o₁, …, o_k` the orbitals
-of `S` in the order `ord`. Then `c_o |S⟩ = (-1)^m |S \ {o}⟩` if `o ∈ S`, `m` the number of
-orbitals of `S` before `o`, and `c_o |S⟩ = 0` otherwise. -/
-def annihilate (ord : O ↪ ℕ) (o : O) : Matrix (Finset O) (Finset O) ℂ := fun S' S =>
-  if o ∈ S ∧ S' = S.erase o then (-1) ^ countBelow ord S o else 0
-
-/-- **Fermion creation operator** `c†_o`: `c†_o |S⟩ = (-1)^m |S ∪ {o}⟩` if `o ∉ S`, `m` the
-number of orbitals of `S` before `o`, and `0` otherwise. It is the adjoint of `annihilate`. -/
-def create (ord : O ↪ ℕ) (o : O) : Matrix (Finset O) (Finset O) ℂ := fun S' S =>
-  if o ∉ S ∧ S' = insert o S then (-1) ^ countBelow ord S o else 0
-
-end FermionOperators
-
 section HubbardOperators
 
 variable {V σ : Type*} [Fintype V] [DecidableEq V] [Fintype σ] [DecidableEq σ]
@@ -254,13 +224,5 @@ noncomputable def projectedHubbardWeighted (tt : V → V → ℂ) (ord : V × σ
   projectedFermionHopping ⊤ (fun i j => -tt j i) ord
 
 end HubbardOperators
-
-/-- **One hop of labelled hard-core particles.** `pos p` is the site of particle `p`. One
-particle `p` moves to a site `w` adjacent to its own that no particle occupies. A closed walk
-of `h` hops is a sequence `walk 0, …, walk h` of positions, consecutive ones related by
-`IsParticleHop`, whose final sites are a permutation `σ` of the initial ones:
-`walk h p = walk 0 (σ p)`. -/
-def IsParticleHop {P V : Type*} [DecidableEq P] (G : SimpleGraph V) (pos pos' : P → V) : Prop :=
-  ∃ p w, G.Adj (pos p) w ∧ w ∉ Set.range pos ∧ pos' = Function.update pos p w
 
 end HubbardMoments

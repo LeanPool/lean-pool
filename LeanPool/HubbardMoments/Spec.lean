@@ -7,8 +7,10 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.ParticleHop
 public import LeanPool.HubbardMoments.PeierlsModel
 public import LeanPool.HubbardMoments.SamplingDefinitions
+public import LeanPool.HubbardMoments.SectorDefinition
 public import LeanPool.HubbardMoments.TorusBandDefinition
 public import LeanPool.HubbardMoments.Torus
 public import Mathlib.Combinatorics.SimpleGraph.Clique

@@ -7,6 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
+public import LeanPool.HubbardMoments.Defs
 public import LeanPool.HubbardMoments.Fermions
 
 /-! # Fermionic hopping matrices on finite graphs -/
@@ -120,18 +121,9 @@ theorem fermionHopping_isHermitian
   unfold Matrix.IsHermitian fermionHopping
   simp only [Matrix.conjTranspose_sum, Matrix.conjTranspose_smul, Matrix.conjTranspose_mul,
     hcr, annihilate_conjTranspose]
-  refine sum_nbij' Prod.swap Prod.swap ?_ ?_ ?_ ?_ ?_
-  · intro p hp
-    simpa [G.adj_comm] using hp
-  · intro p hp
-    simpa [G.adj_comm] using hp
-  · intro p _
-    rfl
-  · intro p _
-    rfl
-  · intro p hp
-    refine sum_congr rfl fun _ _ => ?_
-    simp only [h _ _ ((mem_arcs G).mp hp), Prod.fst_swap, Prod.snd_swap]
+  conv_rhs => rw [← sum_arcs_swap G]
+  refine sum_congr rfl fun p hp ↦ sum_congr rfl fun _ _ ↦ ?_
+  simp only [h _ _ ((mem_arcs G).mp hp), Prod.fst_swap, Prod.snd_swap]
 
 /-- **`H_t` is a hopping operator**: it connects only Fock states one hop apart. -/
 theorem fermionHopping_isHoppingOperator :

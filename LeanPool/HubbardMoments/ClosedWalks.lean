@@ -7,7 +7,7 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.HubbardMoments.Defs
+public import LeanPool.HubbardMoments.ParticleHop
 public import LeanPool.HubbardMoments.Torus
 public import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Tactic.FinCases
@@ -268,7 +268,7 @@ theorem cast_choose_three (a : ℕ) : (a.choose 3 : ℚ) = a * (a - 1) * (a - 2)
     ring
   rw [h] at h'
   push_cast [Nat.factorial] at h'
-  linarith
+  exact (eq_div_iff (by norm_num : (6 : ℚ) ≠ 0)).2 (by simpa [mul_comm] using h')
 
 /-- `P₃ = C(N↑, 3) + C(N↓, 3)` is affine in `P_same = C(N↑, 2) + C(N↓, 2)` at fixed
 `n = N↑ + N↓`. -/

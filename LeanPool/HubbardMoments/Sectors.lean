@@ -8,13 +8,17 @@ module
 -- Adapted for Lean Pool.
 
 public import LeanPool.HubbardMoments.Combinatorics.Subsets
-public import LeanPool.HubbardMoments.Defs
+public import LeanPool.HubbardMoments.SectorDefinition
+public import Mathlib.Data.Fintype.Prod
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Tactic.NormNum
 
 /-!
 # Sector dimensions
 
-Proofs about `HubbardMoments.sector` (defined in `HubbardMoments.Defs`).
+Proofs about `HubbardMoments.sector` (defined in `HubbardMoments.SectorDefinition`).
 
 A basis state of `a` spin-up and `b` spin-down electrons on a finite set of sites `V`
 is a pair `(u, d)` of subsets of `V` with `|u| = a` and `|d| = b`: the sites holding an

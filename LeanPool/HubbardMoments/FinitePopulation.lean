@@ -156,18 +156,6 @@ private theorem sum_tuples_two (ε : V → ℝ) (f : Finset V → ℝ → ℝ) :
   ext x
   simp only [mem_insert, mem_singleton, or_comm]
 
-/-- `S_K⁴` as a sum over 4-tuples of sites, each present when the tuple lies in `K`. -/
-theorem sum_pow_four_eq (ε : V → ℝ) (K : Finset V) :
-    (∑ i ∈ K, ε i) ^ 4 = ∑ a, ∑ b, ∑ c, ∑ d,
-      if insert d (insert c (insert b {a})) ⊆ K then ε a * ε b * ε c * ε d else 0 := by
-  rw [sum_pow_eq_sum_tuples]
-  exact sum_tuples_four ε (fun labels value ↦ if labels ⊆ K then value else 0)
-
-theorem sum_pow_two_eq (ε : V → ℝ) (K : Finset V) :
-    (∑ i ∈ K, ε i) ^ 2 = ∑ a, ∑ b, if insert b {a} ⊆ K then ε a * ε b else 0 := by
-  rw [sum_pow_eq_sum_tuples]
-  exact sum_tuples_two ε (fun labels value ↦ if labels ⊆ K then value else 0)
-
 section Peel
 
 variable (ε : V → ℝ) (hε : ∑ v, ε v = 0)
@@ -280,19 +268,6 @@ end Peel
 section Moments
 
 variable (ε : V → ℝ)
-
-omit [DecidableEq V] in
-/-- Moving the sum over subsets inside a 4-fold sum over labels. -/
-theorem sum_powersetCard_sum_four (k : ℕ) (F : Finset V → V → V → V → V → ℝ) :
-    ∑ K ∈ powersetCard k univ, ∑ a, ∑ b, ∑ c, ∑ d, F K a b c d =
-      ∑ a, ∑ b, ∑ c, ∑ d, ∑ K ∈ powersetCard k univ, F K a b c d := by
-  rw [sum_comm]
-  refine sum_congr rfl fun a _ => ?_
-  rw [sum_comm]
-  refine sum_congr rfl fun b _ => ?_
-  rw [sum_comm]
-  refine sum_congr rfl fun c _ => ?_
-  rw [sum_comm]
 
 /-- Every tuple contributes to a sample moment with the inclusion probability of its label set. -/
 theorem sampleMoment_eq_sum_tuples (m : ℕ) {k : ℕ} (hk : k ≤ Fintype.card V) :

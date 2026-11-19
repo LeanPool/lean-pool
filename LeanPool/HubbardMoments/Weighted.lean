@@ -54,12 +54,8 @@ theorem sum_arcs_top (g : V → V → ℂ) :
 
 /-- The same sum with the two sites exchanged. -/
 theorem sum_arcs_top_swap (g : V → V → ℂ) :
-    ∑ p ∈ arcs (⊤ : SimpleGraph V), g p.2 p.1 = ∑ p ∈ arcs (⊤ : SimpleGraph V), g p.1 p.2 := by
-  refine sum_nbij' Prod.swap Prod.swap ?_ ?_ (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl)
-  · intro p hp
-    simpa [mem_arcs_top, eq_comm] using hp
-  · intro p hp
-    simpa [mem_arcs_top, eq_comm] using hp
+    ∑ p ∈ arcs (⊤ : SimpleGraph V), g p.2 p.1 = ∑ p ∈ arcs (⊤ : SimpleGraph V), g p.1 p.2 :=
+  sum_arcs_swap ⊤ (fun p ↦ g p.1 p.2)
 
 /-! ### The weighted second-moment theorem -/
 

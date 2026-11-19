@@ -7,7 +7,9 @@ module
 
 -- Adapted for Lean Pool.
 
-public import LeanPool.HubbardMoments.Defs
+public import LeanPool.HubbardMoments.FermionOperators
+public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.LinearAlgebra.Matrix.Hermitian
 
 /-!
 # Fermion operators
