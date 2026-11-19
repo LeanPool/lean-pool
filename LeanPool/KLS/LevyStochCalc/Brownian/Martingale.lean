@@ -89,7 +89,7 @@ lemma brownianMotion_integrable
   by_cases hs_neg : s < 0
   · -- s < 0: W_s = 0 a.s.
     refine ⟨(W.measurable_eval s).aestronglyMeasurable, ?_⟩
-    rw [MeasureTheory.hasFiniteIntegral_iff_enorm]
+    rw [MeasureTheory.hasFiniteIntegral_iff_eNorm]
     have h_nn : ∀ᵐ ω ∂P, ‖W.W s ω‖ₑ = 0 := by
       filter_upwards [W.negative_zero s hs_neg] with ω hω
       rw [hω]; simp
@@ -101,7 +101,7 @@ lemma brownianMotion_integrable
   by_cases hs_zero : s = 0
   · subst hs_zero
     refine ⟨(W.measurable_eval 0).aestronglyMeasurable, ?_⟩
-    rw [MeasureTheory.hasFiniteIntegral_iff_enorm]
+    rw [MeasureTheory.hasFiniteIntegral_iff_eNorm]
     have h_nn : ∀ᵐ ω ∂P, ‖W.W 0 ω‖ₑ = 0 := by
       filter_upwards [W.initial_zero] with ω hω
       rw [hω]; simp
@@ -135,7 +135,7 @@ lemma brownianMotion_memLp_2
   by_cases hs_neg : s < 0
   · -- s < 0: W_s = 0 a.s.
     rw [MeasureTheory.memLp_iff,
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by simp)
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by simp)
         (W.measurable_eval s).aestronglyMeasurable]
     have h_zero : ∀ᵐ ω ∂P, ‖W.W s ω‖ₑ ^ ((2 : ℝ≥0∞).toReal) = 0 := by
       filter_upwards [W.negative_zero s hs_neg] with ω hω
@@ -147,7 +147,7 @@ lemma brownianMotion_memLp_2
   by_cases hs_zero : s = 0
   · subst hs_zero
     rw [MeasureTheory.memLp_iff,
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by simp)
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by simp)
         (W.measurable_eval 0).aestronglyMeasurable]
     have h_zero : ∀ᵐ ω ∂P, ‖W.W 0 ω‖ₑ ^ ((2 : ℝ≥0∞).toReal) = 0 := by
       filter_upwards [W.initial_zero] with ω hω
@@ -181,7 +181,7 @@ lemma brownianMotion_sq_integrable
   by_cases hs_neg : s < 0
   · -- s < 0
     refine ⟨((W.measurable_eval s).pow_const 2).aestronglyMeasurable, ?_⟩
-    rw [MeasureTheory.hasFiniteIntegral_iff_enorm]
+    rw [MeasureTheory.hasFiniteIntegral_iff_eNorm]
     have h_nn : ∀ᵐ ω ∂P, ‖(W.W s ω)^2‖ₑ = 0 := by
       filter_upwards [W.negative_zero s hs_neg] with ω hω
       rw [hω]; simp
@@ -192,7 +192,7 @@ lemma brownianMotion_sq_integrable
   by_cases hs_zero : s = 0
   · subst hs_zero
     refine ⟨((W.measurable_eval 0).pow_const 2).aestronglyMeasurable, ?_⟩
-    rw [MeasureTheory.hasFiniteIntegral_iff_enorm]
+    rw [MeasureTheory.hasFiniteIntegral_iff_eNorm]
     have h_nn : ∀ᵐ ω ∂P, ‖(W.W 0 ω)^2‖ₑ = 0 := by
       filter_upwards [W.initial_zero] with ω hω
       rw [hω]; simp

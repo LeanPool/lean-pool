@@ -114,7 +114,7 @@ lemma bieleckiEDist_comm
     bieleckiEDist β T X Y = bieleckiEDist β T Y X := by
   -- It suffices to show, per-`(t, ω, i)`, that the inner summands agree.
   -- ‖X t ω i - Y t ω i‖₊ = ‖-(Y t ω i - X t ω i)‖₊ = ‖Y t ω i - X t ω i‖₊
-  -- (by `nnnorm_neg`).
+  -- (by `nnNorm_neg`).
   unfold bieleckiEDist bieleckiNorm SBoundedProcess.pathDiff
   -- The integrand pointwise equality:
   have h_pw : ∀ t : ℝ, ∀ ω : Ω,
@@ -125,7 +125,7 @@ lemma bieleckiEDist_comm
     congr 2
     rw [show (X.X t ω - Y.X t ω) i = -((Y.X t ω - X.X t ω) i) by
       simp [Pi.sub_apply]]
-    exact nnnorm_neg _
+    exact nnNorm_neg _
   -- Lift to lintegral, then to (1/2)-rpow, then to multiplication, then to sup.
   refine iSup_congr (fun t => ?_)
   refine iSup_congr (fun _ => ?_)
@@ -196,7 +196,7 @@ lemma bieleckiNorm_add_le
             ≤ (‖Y₁ t ω i‖₊ : ℝ≥0∞) + (‖Y₂ t ω i‖₊ : ℝ≥0∞) := by
         intro i
         rw [show (Y₁ t ω + Y₂ t ω) i = Y₁ t ω i + Y₂ t ω i from rfl]
-        exact_mod_cast nnnorm_add_le _ _
+        exact_mod_cast nnNorm_add_le _ _
       -- Convert sums to the ℝ-power form, apply Minkowski, convert back.
       -- The Bielecki defn uses `^ (2 : ℕ)` but `sum_sq_nnreal_add_le`
       -- and `ENNReal.Lp_add_le` use `^ (2 : ℝ)`. Convert via

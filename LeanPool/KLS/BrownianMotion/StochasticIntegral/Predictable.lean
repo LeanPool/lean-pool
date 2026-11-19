@@ -119,9 +119,10 @@ private lemma roundDown_lt_of_ne_bot {s : Finset ι} {i : ι} (h : i ≠ ⊥) :
     roundDown s i < i := by
   apply lt_of_le_of_ne
   · apply Finset.max'_le _ _ _ (fun _ _ ↦ by grind)
-  · contrapose! h
-    simp [roundDown, Finset.max'_eq_iff] at h
-    aesop
+  · intro heq
+    have hi := Finset.max'_mem (insert ⊥ {j ∈ s | j < i}) (by simp)
+    change roundDown s i ∈ _ at hi
+    simp [heq, h] at hi
 
 private lemma roundDown_le_of_subset {s t : Finset ι} {i : ι} (h : s ⊆ t) :
     roundDown s i ≤ roundDown t i :=
@@ -217,7 +218,7 @@ lemma StronglyAdapted.isStronglyPredictable_of_leftContinuous (h_adap : Strongly
   rw [tendsto_pi_nhds]
   intro ⟨i, ω⟩
   apply (h_cont ω i).insert.tendsto.comp
-  simp_rw [Iio_insert, tendsto_nhdsWithin_iff]
+  simp_rw [insert_Iio, tendsto_nhdsWithin_iff]
   by_cases! hi_bot : i = ⊥
   · simp [hi_bot, roundDown_bot]
   refine ⟨?_, .of_forall <| fun _ ↦ le_of_lt <| roundDown_lt_of_ne_bot hi_bot⟩
@@ -329,13 +330,14 @@ variable {Ω ι : Type*} {m : MeasurableSpace Ω} {E : Type*} [TopologicalSpace 
 
 /-- A filtration `𝓕` is complete with respect to a measure `μ` if for all `i`, `𝓕 i` contains all
 the `μ`-null sets. -/
-class IsComplete (𝓕 : Filtration ι m) (μ : Measure Ω := by volume_tac) where
+class IsCompleteKLS (𝓕 : Filtration ι m) (μ : Measure Ω := by volume_tac) where
     /-- `𝓕 ⊥` contains all the null sets. -/
     measurableSet_of_null ⦃s : Set Ω⦄ (hs : μ s = 0) (t : ι) : MeasurableSet[𝓕 t] s
 
-instance {𝓕 : Filtration ι m} {μ : Measure Ω} [u : IsComplete 𝓕 μ] {i : ι} :
+instance {𝓕 : Filtration ι m} {μ : Measure Ω} [u : IsCompleteKLS 𝓕 μ] {i : ι} :
     (μ.trim <| 𝓕.le i).IsComplete :=
-  ⟨fun _ hs ↦ IsComplete.measurableSet_of_null (measure_eq_zero_of_trim_eq_zero (𝓕.le i) hs) i⟩
+  ⟨fun _ hs ↦ IsCompleteKLS.measurableSet_of_null (measure_eq_zero_of_trim_eq_zero (𝓕.le i) hs)
+    i⟩
 
 /-- The class of **predictable rectangles** associated to a filtration `𝓕` is the family of sets
 `(i, j] ×ˢ A` for `i < j` in `ι` and `A ∈ 𝓕 i`, together with `{⊥} ×ˢ A` for `A ∈ 𝓕 ⊥`. -/

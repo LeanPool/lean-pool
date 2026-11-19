@@ -140,11 +140,11 @@ theorem exists_value_of_optimizer {u : E → ℝ} {K : Set E} (hK : IsCompact K)
       ⟨fun p => innerSL ℝ (P p), (innerSL ℝ).continuous.comp hPC, hd⟩
   obtain ⟨R, hR, hKR⟩ := hK.isBounded.exists_pos_norm_le
   have hLip : LipschitzWith R.toNNReal ψ := by
-    apply lipschitzWith_of_nnnorm_fderiv_le (fun p => (hd p).differentiableAt)
+    apply lipschitzWith_of_nnNorm_fderiv_le (fun p => (hd p).differentiableAt)
     intro p
     rw [(hd p).fderiv]
     apply NNReal.coe_le_coe.mp
-    simp only [coe_nnnorm, innerSL_apply_norm, Real.coe_toNNReal R hR.le]
+    simp only [coe_nnNorm, innerSL_apply_norm, Real.coe_toNNReal R hR.le]
     exact hKR (P p) (hP p).1
   exact ⟨ψ, R.toNNReal, fun _ => rfl, hv, hconv, hLip, hC1, hd⟩
 

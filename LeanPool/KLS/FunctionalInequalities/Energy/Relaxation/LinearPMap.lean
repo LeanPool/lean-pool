@@ -279,7 +279,7 @@ omit [CompleteSpace H]
 theorem ofLinearPMap_quadratic : (ofLinearPMap T).Quadratic := by
   have hsmul : ∀ (c : ℝ) (f : T.domain), ‖T (c • f)‖₊ ^ 2 = ‖c‖₊ ^ 2 * ‖T f‖₊ ^ 2 := by
     intro c f
-    rw [T.map_smul, nnnorm_smul, mul_pow]
+    rw [T.map_smul, nnNorm_smul, mul_pow]
   have hpar : ∀ f g : T.domain,
       ‖T (f + g)‖₊ ^ 2 + ‖T (f - g)‖₊ ^ 2 = 2 * ‖T f‖₊ ^ 2 + 2 * ‖T g‖₊ ^ 2 := by
     intro f g
@@ -317,7 +317,7 @@ theorem sequentialRelaxation_ofLinearPMap_le (hT : T.IsClosable) (x : T.closure.
     have h3 : Tendsto (fun n ↦ T (f n)) atTop (𝓝 (T.closure x)) :=
       (continuous_snd.tendsto _).comp hf
     have h4 : Tendsto (fun n ↦ ‖T (f n)‖₊ ^ 2) atTop (𝓝 (‖T.closure x‖₊ ^ 2)) :=
-      (h3.nnnorm).pow 2
+      (h3.nnNorm).pow 2
     exact (ENNReal.tendsto_coe.mpr h4)
   refine ((ofLinearPMap T).sequentialRelaxation_le_sequenceEnergy ⟨f, h1⟩).trans_eq ?_
   exact h2.liminf_eq

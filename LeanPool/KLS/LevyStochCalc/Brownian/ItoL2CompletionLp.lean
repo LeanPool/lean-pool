@@ -99,8 +99,8 @@ lemma simpleIntegral_memLp_brownian
     refine Measurable.mul (H.ξ_measurable i) ?_
     exact (W.measurable_eval _).sub (W.measurable_eval _)
   · -- eLpNorm < ⊤: from C0b.10-pre1 (∫⁻ ‖simpleIntegral‖² < ⊤) via
-    -- eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top.
-    rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    -- eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top.
+    rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
         (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by simp : (2 : ℝ≥0∞) ≠ ⊤) hmeas]
     have h_two_toReal : (2 : ℝ≥0∞).toReal = 2 := by simp
     rw [h_two_toReal]
@@ -399,7 +399,7 @@ theorem norm_simpleIntegralLp_tendsto_norm_itoIntegralLp_brownian
 /-- **C0b.10-post4: `eLpNorm (↑↑(simpleIntegralLp (G n))) 2 P` converges
 to `eLpNorm (↑↑(itoIntegralLp ...)) 2 P` in `ℝ≥0∞`.** ENNReal-valued
 companion to `norm_simpleIntegralLp_tendsto_norm_itoIntegralLp_brownian`,
-via `Filter.Tendsto.enorm` and `Lp.enorm_def`. -/
+via `Filter.Tendsto.eNorm` and `Lp.eNorm_def`. -/
 theorem eLpNorm_simpleIntegralLp_tendsto_eLpNorm_itoIntegralLp_brownian
     {P : MeasureTheory.Measure Ω} [MeasureTheory.IsProbabilityMeasure P]
     (W : LevyStochCalc.Brownian.BrownianMotion P)
@@ -424,10 +424,10 @@ theorem eLpNorm_simpleIntegralLp_tendsto_eLpNorm_itoIntegralLp_brownian
       (nhds (MeasureTheory.eLpNorm
         (↑↑(itoIntegralLpBrownian W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval) : Ω → ℝ) 2 P)) := by
   have h_tendsto :=
-    (itoIntegralLp_brownian_tendsto W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval).enorm
+    (itoIntegralLp_brownian_tendsto W ℱ hℱ hT G h_eq h_adapt h_cauchy_eval).eNorm
   -- h_tendsto : Tendsto (fun n => ‖Lp_n‖ₑ) atTop (nhds ‖Lp_lim‖ₑ)
-  -- Use Lp.enorm_def to convert ‖f‖ₑ = eLpNorm (↑↑f) p μ.
-  simp only [MeasureTheory.Lp.enorm_def] at h_tendsto
+  -- Use Lp.eNorm_def to convert ‖f‖ₑ = eLpNorm (↑↑f) p μ.
+  simp only [MeasureTheory.Lp.eNorm_def] at h_tendsto
   exact h_tendsto
 
 /-- **C0b.10-post5: `eLpNorm (simpleIntegralLp (G n)) ^ (2:ℝ)` converges

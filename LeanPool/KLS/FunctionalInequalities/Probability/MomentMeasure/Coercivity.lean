@@ -220,7 +220,7 @@ theorem exists_coercivity_of_centered_probability (dx μ : Measure E) [dx.IsAddH
   have hμ : μ ≠ 0 := by
     intro hz
     have hu : μ Set.univ = 1 := measure_univ
-    simp only [hz, Measure.coe_zero, Pi.zero_apply, zero_ne_one] at hu
+    simp only [hz, FunLike.coe_zero, Pi.zero_apply, zero_ne_one] at hu
   have h0 :=
     FunctionalInequalities.Probability.zero_mem_interior_convexHull_support_of_integral_eq_zero
       μ hμ hsub hint hbar

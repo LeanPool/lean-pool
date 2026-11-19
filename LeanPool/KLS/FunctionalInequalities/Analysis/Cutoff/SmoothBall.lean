@@ -109,9 +109,9 @@ theorem norm_fderiv_scaled_le {R : ℝ} (hR : 0 < R) {M : ℝ}
 theorem lipschitzWith_scaled {R : ℝ} (hR : 0 < R) {M : ℝ} (hM0 : 0 ≤ M)
     (hM : ∀ x : E, ‖fderiv ℝ (⇑(bump (E := E))) x‖ ≤ M) :
     LipschitzWith (R⁻¹ * M).toNNReal (scaled (E := E) R) := by
-  apply lipschitzWith_of_nnnorm_fderiv_le ((contDiff_scaled R).differentiable (by simp))
+  apply lipschitzWith_of_nnNorm_fderiv_le ((contDiff_scaled R).differentiable (by simp))
   intro x
-  rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ (by positivity)]
+  rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ (by positivity)]
   exact norm_fderiv_scaled_le hR hM x
 
 theorem gradient_scaled_mul [CompleteSpace E] {R : ℝ} {g : E → ℝ} {x : E}

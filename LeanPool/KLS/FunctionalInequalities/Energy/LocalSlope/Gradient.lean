@@ -129,7 +129,7 @@ theorem admissible_iff_memLp_gradient (hν : (ν : Measure E) ≪ m) (f : E → 
       LocallyLipschitz f ∧ MemLp f 2 (ν : Measure E) ∧ MemLp (gradient f) 2 (ν : Measure E) := by
   have hmem : MemLp (gradient f) 2 (ν : Measure E) ↔
       (∫⁻ x, (ENNReal.ofReal ‖gradient f x‖) ^ 2 ∂(ν : Measure E)) ≠ ⊤ := by
-    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num)
+    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num)
       (Energy.Euclidean.LipschitzApproximation.aestronglyMeasurable_gradient f _)]
     simp [← ofReal_norm, lt_top_iff_ne_top]
   constructor

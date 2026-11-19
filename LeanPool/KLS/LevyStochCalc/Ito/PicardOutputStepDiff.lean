@@ -352,14 +352,14 @@ theorem lintegral_sq_picardStep_diff_le
       picardStepJump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X h_γ_sq_X t ω i
         - picardStepJump N ℱ hℱN coeffs Y h_γ_meas_Y h_γ_progMeas_Y h_γ_sq_Y t ω i)
     (fun i => ((((measurable_picardStep_drift coeffs X x₀ i (hμX i) t).sub
-      (measurable_picardStep_drift coeffs Y x₀ i (hμY i) t)).nnnorm).coe_nnreal_ennreal).pow_const
+      (measurable_picardStep_drift coeffs Y x₀ i (hμY i) t)).nnNorm).coe_nnreal_ennreal).pow_const
         2)
     (fun i => ((((measurable_picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X
       h_σ_sq_X i t).sub (measurable_picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y
-        h_σ_progMeas_Y h_σ_sq_Y i t)).nnnorm).coe_nnreal_ennreal).pow_const 2)
+        h_σ_progMeas_Y h_σ_sq_Y i t)).nnNorm).coe_nnreal_ennreal).pow_const 2)
     (fun i => ((((measurable_picardStep_jump N ℱ hℱN coeffs X h_γ_meas_X h_γ_progMeas_X
       h_γ_sq_X i t).sub (measurable_picardStep_jump N ℱ hℱN coeffs Y h_γ_meas_Y
-        h_γ_progMeas_Y h_γ_sq_Y i t)).nnnorm).coe_nnreal_ennreal).pow_const 2)
+        h_γ_progMeas_Y h_γ_sq_Y i t)).nnNorm).coe_nnreal_ennreal).pow_const 2)
     ?_ ?_ ?_
   · rw [← lintegral_ofReal_sum_sq_eq]
     exact (drift_diff_lintegral_sq_bound coeffs hLip.1 (mu_lip_componentwise coeffs hLip) X Y x₀

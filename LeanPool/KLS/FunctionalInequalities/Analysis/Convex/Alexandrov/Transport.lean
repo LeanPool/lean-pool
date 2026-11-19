@@ -113,8 +113,7 @@ theorem lintegral_subgradientImage_eq_of_map_gradient [FiniteDimensional ℝ E]
     exact ae_iff.mpr (hν (ae_iff.mp (hu.ae_differentiableAt (μ := (volume : Measure E)))))
   have hsets : (gradient u ⁻¹' subgradientImage u S) =ᵐ[ν] S := by
     filter_upwards [hdiff, havoid] with x hx hxD
-    change (gradient u x ∈ subgradientImage u S) = (x ∈ S)
-    apply propext
+    change gradient u x ∈ subgradientImage u S ↔ x ∈ S
     constructor
     · rintro ⟨y, hyS, hy⟩
       by_contra hxS

@@ -73,7 +73,8 @@ private lemma predictable_convergence_set_measurable
       refine Finset.measurable_sum _ ?_
       intro i _
       refine Measurable.ite ?_ ?_ measurable_const
-      · refine MeasurableSet.inter ?_ ?_
+      · rw [Set.ofPred_and]
+        refine MeasurableSet.inter ?_ ?_
         · exact measurable_snd (measurableSet_Ioi
             (a := (predictableDyadicSimpleBrownian hT g h_meas M h_bound n).partition
               i.castSucc))
@@ -184,7 +185,8 @@ lemma predictableDyadicSimple_brownian_L2_converges
       refine Finset.measurable_sum _ ?_
       intro i _
       refine Measurable.ite ?_ ?_ measurable_const
-      · refine MeasurableSet.inter ?_ ?_
+      · rw [Set.ofPred_and]
+        refine MeasurableSet.inter ?_ ?_
         · exact measurable_snd (measurableSet_Ioi
             (a := (predictableDyadicSimpleBrownian hT g h_meas M h_bound n).partition
               i.castSucc))
@@ -197,7 +199,7 @@ lemma predictableDyadicSimple_brownian_L2_converges
         (predictableDyadicSimpleBrownian hT g h_meas M h_bound n).eval p.2 p.1) :=
       (h_meas.comp (by fun_prop : Measurable (fun (p : Ω × ℝ) => (p.1, p.2)))).sub
         h_eval_meas
-    exact ((ENNReal.continuous_coe.measurable.comp h_diff.nnnorm)).pow_const 2
+    exact ((ENNReal.continuous_coe.measurable.comp h_diff.nnNorm)).pow_const 2
   have h_bound_integrable : ∫⁻ _ : Ω × ℝ, ENNReal.ofReal (CC ^ 2)
       ∂(P.prod (volume.restrict (Set.Icc (0 : ℝ) T))) ≠ ⊤ := by
     rw [MeasureTheory.lintegral_const]
@@ -224,7 +226,7 @@ lemma predictableDyadicSimple_brownian_L2_converges
        (predictableDyadicSimpleBrownian hT g h_meas M h_bound n).eval p.2 p.1‖₊)
         Filter.atTop (nhds 0) := by
       rw [show (0 : ℝ≥0) = ‖(0 : ℝ)‖₊ from by simp]
-      exact (continuous_nnnorm.tendsto _).comp h_diff_zero
+      exact (continuous_nnNorm.tendsto _).comp h_diff_zero
     have h_enorm_zero : Filter.Tendsto
         (fun n => ((‖g p.1 p.2 -
        (predictableDyadicSimpleBrownian hT g h_meas M h_bound n).eval p.2 p.1‖₊
@@ -331,7 +333,8 @@ lemma predictableDyadicSimple_brownian_eval_jointly_measurable
   refine Finset.measurable_sum _ ?_
   intro i _
   refine Measurable.ite ?_ ?_ measurable_const
-  · refine MeasurableSet.inter ?_ ?_
+  · rw [Set.ofPred_and]
+    refine MeasurableSet.inter ?_ ?_
     · exact measurable_snd (measurableSet_Ioi
         (a := (predictableDyadicSimpleBrownian hT g h_meas M h_bound n).partition
           i.castSucc))
@@ -354,7 +357,8 @@ lemma SimplePredictable.eval_jointly_measurable
   refine Finset.measurable_sum _ ?_
   intro i _
   refine Measurable.ite ?_ ?_ measurable_const
-  · refine MeasurableSet.inter ?_ ?_
+  · rw [Set.ofPred_and]
+    refine MeasurableSet.inter ?_ ?_
     · exact measurable_snd (measurableSet_Ioi (a := H.partition i.castSucc))
     · exact measurable_snd (measurableSet_Iic (a := H.partition i.succ))
   · exact (H.ξ_measurable i).comp measurable_fst
@@ -412,7 +416,7 @@ lemma L2_cauchy_of_L2_tendsto_brownian
     simp only [hA]
     congr 1
     rw [show (Hn n).eval s ω - H ω s = -(H ω s - (Hn n).eval s ω) from by ring]
-    rw [nnnorm_neg]
+    rw [nnNorm_neg]
   have h_int_A_lt :
       (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, A ω s ∂volume ∂P) < ε / 4 := by
     have h_eq : (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, A ω s ∂volume ∂P)
@@ -438,7 +442,7 @@ lemma L2_cauchy_of_L2_tendsto_brownian
     have h_H_meas : Measurable (fun s : ℝ => H ω s) :=
       h_meas_H.comp (by fun_prop : Measurable (fun s : ℝ => (ω, s)))
     exact ((ENNReal.continuous_coe.measurable.comp
-      (h_eval_n_meas.sub h_H_meas).nnnorm)).pow_const 2
+      (h_eval_n_meas.sub h_H_meas).nnNorm)).pow_const 2
   have h_meas_A_outer : Measurable (fun ω =>
       ∫⁻ s in Set.Icc (0 : ℝ) T, A ω s ∂volume) := by
     have h_meas_A_pair : Measurable (fun (q : Ω × ℝ) => A q.1 q.2) := by
@@ -448,7 +452,7 @@ lemma L2_cauchy_of_L2_tendsto_brownian
       have h_H_pair : Measurable (fun (q : Ω × ℝ) => H q.1 q.2) :=
         h_meas_H.comp (by fun_prop : Measurable (fun (q : Ω × ℝ) => (q.1, q.2)))
       exact ((ENNReal.continuous_coe.measurable.comp
-        (h_eval_n_pair.sub h_H_pair).nnnorm)).pow_const 2
+        (h_eval_n_pair.sub h_H_pair).nnNorm)).pow_const 2
     exact Measurable.lintegral_prod_right'
       (ν := volume.restrict (Set.Icc (0:ℝ) T)) h_meas_A_pair
   have h_C_int_le :

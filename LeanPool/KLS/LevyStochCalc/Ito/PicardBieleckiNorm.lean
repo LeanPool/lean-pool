@@ -114,7 +114,7 @@ theorem lintegral_lintegral_sq_stopOf_le {n : ℕ} {P : Measure Ω} [IsProbabili
   have hjoint : Measurable (Function.uncurry fun (ω : Ω) (s : ℝ) =>
       ∑ i, (‖Z (min s T) ω i‖₊ : ℝ≥0∞) ^ 2) :=
     Finset.measurable_sum _ fun i _ =>
-      (ENNReal.continuous_coe.measurable.comp (hZi i).nnnorm).pow_const 2
+      (ENNReal.continuous_coe.measurable.comp (hZi i).nnNorm).pow_const 2
   rw [MeasureTheory.lintegral_lintegral_swap (μ := P)
     (ν := volume.restrict (Set.Icc (0 : ℝ) T'))
     (f := fun (ω : Ω) (s : ℝ) => ∑ i, (‖Z (min s T) ω i‖₊ : ℝ≥0∞) ^ 2) hjoint.aemeasurable]

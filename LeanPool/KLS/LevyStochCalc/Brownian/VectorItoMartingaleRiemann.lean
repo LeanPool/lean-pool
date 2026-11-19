@@ -88,7 +88,7 @@ theorem IsVectorItoVersion.lintegral_sq_frozen_sub_le
   have hjoint : Measurable (Function.uncurry fun ω s =>
       (‖(SimplePredictable.ofUnifGrid hT hm0 ξ hbdd hmeas).eval s ω
         - φ (X s ω)‖₊ : ℝ≥0∞) ^ 2) :=
-    (hsub.nnnorm.coe_nnreal_ennreal).pow_const 2
+    (hsub.nnNorm.coe_nnreal_ennreal).pow_const 2
   have hmeasCell : ∀ i : ℕ, Measurable fun ω : Ω =>
       ∫⁻ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
         (‖(SimplePredictable.ofUnifGrid hT hm0 ξ hbdd hmeas).eval s ω

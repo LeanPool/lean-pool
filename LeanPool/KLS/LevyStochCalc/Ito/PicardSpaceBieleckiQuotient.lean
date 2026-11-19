@@ -146,7 +146,7 @@ lemma bieleckiNorm_inner_aemeasurable
     intro i
     refine (Measurable.pow_const ?_ _)
     refine (ENNReal.continuous_coe.measurable.comp ?_)
-    exact ((h_comp i).nnnorm)
+    exact ((h_comp i).nnNorm)
   -- Finite sum is measurable.
   have h_sum : Measurable (fun ω => ∑ i, ((‖X t ω i‖₊ : ℝ≥0∞)) ^ 2) :=
     Finset.measurable_sum _ (fun i _ => h_summand i)

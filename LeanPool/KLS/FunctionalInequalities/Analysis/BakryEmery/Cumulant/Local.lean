@@ -551,7 +551,7 @@ theorem iteratedFDeriv_centeredGradient_logLaplace_zero_of_compact (μ : Probabi
     iteratedFDeriv ℝ r (fun z : E =>
       gradient (logLaplace (μ : Measure E)) z - gradient (logLaplace (μ : Measure E)) 0) 0 h =
       cumulantVector (μ : Measure E) (List.ofFn h) := by
-    have : CompleteSpace E := FiniteDimensional.complete ℝ E
+    have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
     let Λ : E → ℝ := logLaplace (μ : Measure E)
     have hΛ : ContDiff ℝ ∞ Λ := by
       dsimp [Λ]

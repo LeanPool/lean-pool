@@ -124,7 +124,7 @@ lemma simpleIntegral_diagonal
       rw [show (‖ξi ω * ÑB ω‖₊ : ℝ≥0∞)
           = ((‖ξi ω * ÑB ω‖₊ : ℝ≥0) : ℝ≥0∞) from rfl]
       rw [show (‖ξi ω * ÑB ω‖₊ : ℝ≥0)
-          = ‖ξi ω‖₊ * ‖ÑB ω‖₊ from nnnorm_mul _ _]
+          = ‖ξi ω‖₊ * ‖ÑB ω‖₊ from nnNorm_mul _ _]
       push_cast; rfl]
     ring
   -- Step 4: Apply lintegral_mul.

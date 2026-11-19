@@ -256,7 +256,7 @@ theorem energy_smul (c : ℝ) (f : Test mu) :
     (c • f).energy = ‖c‖₊ ^ 2 * f.energy := by
   change (smul c f).energy = ‖c‖₊ ^ 2 * f.energy
   apply NNReal.eq
-  simp only [coe_energy, NNReal.coe_mul, NNReal.coe_pow, coe_nnnorm, smul,
+  simp only [coe_energy, NNReal.coe_mul, NNReal.coe_pow, coe_nnNorm, smul,
     gradient_smul, norm_smul, mul_pow, integral_const_mul]
 
 /-- Gradient energy satisfies the parallelogram identity on smooth tests. -/

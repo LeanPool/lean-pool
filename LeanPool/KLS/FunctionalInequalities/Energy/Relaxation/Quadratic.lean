@@ -137,9 +137,9 @@ theorem sequentialRelaxation_smul_of_ne_zero (h : P.Quadratic) (c : ℝ) (hc : c
     simpa [hc, mul_comm, mul_left_comm, mul_assoc] using hscaled
   have hcoeff : (‖c‖₊ ^ 2 : ENNReal) * (‖c⁻¹‖₊ ^ 2 : ENNReal) = 1 := by
     rw [← mul_pow]
-    simp only [nnnorm_inv]
-    rw [ENNReal.coe_inv (nnnorm_ne_zero_iff.mpr hc),
-      ENNReal.mul_inv_cancel (ENNReal.coe_ne_zero.mpr (nnnorm_ne_zero_iff.mpr hc))
+    simp only [nnNorm_inv]
+    rw [ENNReal.coe_inv (nnNorm_ne_zero_iff.mpr hc),
+      ENNReal.mul_inv_cancel (ENNReal.coe_ne_zero.mpr (nnNorm_ne_zero_iff.mpr hc))
         ENNReal.coe_ne_top,
       one_pow]
   calc

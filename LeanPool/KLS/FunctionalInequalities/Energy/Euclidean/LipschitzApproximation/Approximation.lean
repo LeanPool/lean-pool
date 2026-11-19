@@ -416,7 +416,7 @@ theorem exists_smooth_weighted_L2
                   exact B.le_opNorm _
               _ = ‖B‖ₑ * eLpNorm (fun x => gradient (v j (k j)) x - gradient (u j) x) 2
                   (ν : Measure E) := by
-                  rw [eLpNorm_const_smul, enorm_norm, eLpNorm_norm
+                  rw [eLpNorm_const_smul, eNorm_norm, eLpNorm_norm
                     (fun x => gradient (v j (k j)) x - gradient (u j) x)
                     ((aestronglyMeasurable_gradient _ _).sub (aestronglyMeasurable_gradient _ _))]
               _ ≤ ‖B‖ₑ * ENNReal.ofReal (radius j) := by
@@ -425,7 +425,7 @@ theorem exists_smooth_weighted_L2
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds ?_ (fun _ => zero_le) hle
     have h1 : Tendsto (fun j => ‖B‖ₑ * ENNReal.ofReal (radius j)) atTop (𝓝 0) := by
       have := ENNReal.Tendsto.const_mul (ENNReal.tendsto_ofReal tendsto_radius) (a := ‖B‖ₑ)
-        (Or.inr enorm_ne_top)
+        (Or.inr eNorm_ne_top)
       simpa using this
     simpa using h1.add hu2
 

@@ -71,7 +71,7 @@ private theorem localSlope_le_covariance_norm_of_covariance_constant {V : E → 
   have h := Poincare.L2Energy.constant_le_mul_of_energy_le_mul hh hcmp
   rw [hlit]
   refine h.trans (le_of_eq ?_)
-  rw [ENNReal.coe_mul, mul_comm, ← coe_nnnorm, ENNReal.ofReal_coe_nnreal]
+  rw [ENNReal.coe_mul, mul_comm, ← coe_nnNorm, ENNReal.ofReal_coe_nnreal]
 
 /--
 **Conditional Poincaré transfer** (BKL Section 2, p. 5): if every isotropic regular law (with

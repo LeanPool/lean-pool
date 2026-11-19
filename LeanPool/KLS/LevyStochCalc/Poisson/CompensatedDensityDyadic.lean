@@ -239,7 +239,7 @@ lemma bounded_locallyIntegrable (g : ℝ → ℝ) (h_meas : Measurable g)
   intro x
   refine ⟨Set.Ioo (x - 1) (x + 1), isOpen_Ioo.mem_nhds (by simp), ?_⟩
   refine ⟨h_meas.aestronglyMeasurable, ?_⟩
-  refine MeasureTheory.HasFiniteIntegral.restrict_of_bounded_enorm
+  refine MeasureTheory.HasFiniteIntegral.restrict_of_bounded_eNorm
     (C := ENNReal.ofReal M) ?_ ?_ ?_
   · simp
   · rw [Real.volume_Ioo]; exact ENNReal.ofReal_ne_top
@@ -416,7 +416,7 @@ lemma dyadicEval_inner_L2_tendsto
     (bound := fun _ => ENNReal.ofReal ((2 * M) ^ 2)) ?_ ?_ ?_ ?_
   · intro n
     exact ((ENNReal.continuous_coe.measurable.comp
-      (h_meas_slice.sub (dyadicEval_measurable_in_time φ n ω e)).nnnorm).pow_const 2).aemeasurable
+      (h_meas_slice.sub (dyadicEval_measurable_in_time φ n ω e)).nnNorm).pow_const 2).aemeasurable
   · intro n
     refine Filter.Eventually.of_forall (fun s => ?_)
     simp only []
@@ -436,7 +436,7 @@ lemma dyadicEval_inner_L2_tendsto
         Filter.atTop (nhds 0) := by
       simpa using (tendsto_const_nhds (x := φ ω s e)).sub hs
     have hg : Continuous (fun x : ℝ => (‖x‖₊ : ℝ≥0∞) ^ 2) :=
-      (ENNReal.continuous_pow 2).comp (ENNReal.continuous_coe.comp continuous_nnnorm)
+      (ENNReal.continuous_pow 2).comp (ENNReal.continuous_coe.comp continuous_nnNorm)
     simpa [Function.comp_def] using (hg.tendsto 0).comp hdiff
 
 omit [MeasurableSpace Ω] [MeasurableSpace E] in
@@ -538,7 +538,7 @@ lemma dyadicEval_L2_tendsto
   have hFmeas : ∀ n : ℕ, Measurable (fun p : Ω × ℝ × E =>
       (‖φ p.1 p.2.1 p.2.2 - dyadicEval T φ n p.2.1 p.1 p.2.2‖₊ : ℝ≥0∞) ^ 2) := fun n =>
     (ENNReal.continuous_coe.measurable.comp
-      (h_meas.sub (dyadicEval_measurable_triple φ h_meas n)).nnnorm).pow_const 2
+      (h_meas.sub (dyadicEval_measurable_triple φ h_meas n)).nnNorm).pow_const 2
   have h_inner_le : ∀ n ω e,
       (∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖φ ω s e - dyadicEval T φ n s ω e‖₊ : ℝ≥0∞) ^ 2 ∂volume)
@@ -572,7 +572,7 @@ lemma dyadicEval_L2_tendsto
         intro s
         rw [hSupp ω e he s, dyadicEval_eq_zero φ n s ω e (hSupp ω e he), sub_zero]
       rw [Set.indicator_of_notMem he]
-      simp only [hzero, nnnorm_zero, ENNReal.coe_zero]
+      simp only [hzero, nnNorm_zero, ENNReal.coe_zero]
       simp
   have hfinite : (∫⁻ e, S.indicator (fun _ => cT) e ∂ν) ≠ ⊤ := by
     rw [MeasureTheory.lintegral_indicator hS_meas, MeasureTheory.setLIntegral_const]

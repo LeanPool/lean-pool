@@ -86,12 +86,12 @@ theorem iSup_dyadicRunMax_drift_le
       ≤ ∫ s in Set.Icc (0 : ℝ) T', ‖coeffs.μ s (X s ω) i‖ :=
     le_trans (MeasureTheory.norm_integral_le_integral_norm _) hmono
   rw [hval]
-  refine le_trans (by rw [← ENNReal.coe_add]; exact ENNReal.coe_le_coe.mpr (nnnorm_add_le _ _))
+  refine le_trans (by rw [← ENNReal.coe_add]; exact ENNReal.coe_le_coe.mpr (nnNorm_add_le _ _))
     (add_le_add le_rfl ?_)
   have hnn : (0 : ℝ) ≤ ∫ s in Set.Icc (0 : ℝ) T', ‖coeffs.μ s (X s ω) i‖ :=
     MeasureTheory.integral_nonneg fun _ => norm_nonneg _
   refine ENNReal.coe_le_coe.mpr (NNReal.coe_le_coe.mp ?_)
-  rw [coe_nnnorm, coe_nnnorm,
+  rw [coe_nnNorm, coe_nnNorm,
     show ‖∫ s in Set.Icc (0 : ℝ) T', ‖coeffs.μ s (X s ω) i‖‖
         = ∫ s in Set.Icc (0 : ℝ) T', ‖coeffs.μ s (X s ω) i‖ from
       by rw [Real.norm_eq_abs, abs_of_nonneg hnn]]
@@ -110,7 +110,7 @@ theorem lintegral_sq_drift_bound_lt_top
   have hfin' : ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T',
       (‖‖coeffs.μ s (X s ω) i‖‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤ := by
     refine lt_of_le_of_lt (le_of_eq ?_) hfin
-    exact lintegral_congr fun ω => lintegral_congr fun s => by rw [nnnorm_norm]
+    exact lintegral_congr fun ω => lintegral_congr fun s => by rw [nnNorm_norm]
   have hkey := lintegral_sq_setIntegral_le (P := P)
     (f := fun ω s => ‖coeffs.μ s (X s ω) i‖) hμm.norm hT' hfin'
   have hbfin : ∫⁻ ω, (‖∫ s in Set.Icc (0 : ℝ) T', ‖coeffs.μ s (X s ω) i‖‖₊ : ℝ≥0∞) ^ 2 ∂P
@@ -118,7 +118,7 @@ theorem lintegral_sq_drift_bound_lt_top
   have hbm : Measurable fun ω : Ω =>
       (‖∫ s in Set.Icc (0 : ℝ) T', ‖coeffs.μ s (X s ω) i‖‖₊ : ℝ≥0∞) ^ 2 :=
     (ENNReal.continuous_coe.measurable.comp
-      (measurable_setIntegral_slice hμm.norm T').nnnorm).pow_const 2
+      (measurable_setIntegral_slice hμm.norm T').nnNorm).pow_const 2
   refine lt_of_le_of_lt (lintegral_mono fun ω => sq_add_le_four_mul _ _) ?_
   rw [lintegral_const_mul' _ _ (by norm_num : (4 : ℝ≥0∞) ≠ ⊤),
     lintegral_add_left measurable_const, lintegral_const, measure_univ, mul_one]

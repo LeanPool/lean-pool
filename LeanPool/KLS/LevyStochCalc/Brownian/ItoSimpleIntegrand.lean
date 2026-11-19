@@ -258,7 +258,7 @@ lemma lintegral_eval_sq_outer
     exact ENNReal.ofReal_ne_top
   · intro i _
     refine Measurable.const_mul ?_ _
-    exact (H.ξ_measurable i).enorm.pow_const 2
+    exact (H.ξ_measurable i).eNorm.pow_const 2
 
 /-- The simple integral at time `0` is identically zero (each term is
 `ξ_i · (W_{0∧0} − W_{0∧0}) = ξ_i · 0`). -/

@@ -269,7 +269,7 @@ lemma dyadicEvalShifted_inner_L2_tendsto
     exact ((ENNReal.continuous_coe.measurable.comp
       ((h_meas.comp (by fun_prop : Measurable fun s : ℝ => ((ω, s, e) : Ω × ℝ × E))).sub
         ((dyadicEvalShifted_measurable_prod φ h_meas n ω).comp
-          (by fun_prop : Measurable fun s : ℝ => ((s, e) : ℝ × E)))).nnnorm).pow_const
+          (by fun_prop : Measurable fun s : ℝ => ((s, e) : ℝ × E)))).nnNorm).pow_const
             2).aemeasurable
   · intro n
     refine Filter.Eventually.of_forall (fun s => ?_)
@@ -292,7 +292,7 @@ lemma dyadicEvalShifted_inner_L2_tendsto
         Filter.atTop (nhds 0) := by
       simpa using (tendsto_const_nhds (x := φ ω s e)).sub hs
     have hg : Continuous (fun x : ℝ => (‖x‖₊ : ℝ≥0∞) ^ 2) :=
-      (ENNReal.continuous_pow 2).comp (ENNReal.continuous_coe.comp continuous_nnnorm)
+      (ENNReal.continuous_pow 2).comp (ENNReal.continuous_coe.comp continuous_nnNorm)
     simpa [Function.comp_def] using (hg.tendsto 0).comp hdiff
 
 -- maxHeartbeats: typechecker budget for proof-heavy goal below.
@@ -315,7 +315,7 @@ lemma dyadicEvalShifted_L2_tendsto
   have hFmeas : ∀ n : ℕ, Measurable (fun p : Ω × ℝ × E =>
       (‖φ p.1 p.2.1 p.2.2 - dyadicEvalShifted T φ n p.2.1 p.1 p.2.2‖₊ : ℝ≥0∞) ^ 2) := fun n =>
     (ENNReal.continuous_coe.measurable.comp
-      (h_meas.sub (dyadicEvalShifted_measurable_triple φ h_meas n)).nnnorm).pow_const 2
+      (h_meas.sub (dyadicEvalShifted_measurable_triple φ h_meas n)).nnNorm).pow_const 2
   have h_inner_le : ∀ n ω e,
       (∫⁻ s in Set.Icc (0 : ℝ) T,
         (‖φ ω s e - dyadicEvalShifted T φ n s ω e‖₊ : ℝ≥0∞) ^ 2 ∂volume)
@@ -348,7 +348,7 @@ lemma dyadicEvalShifted_L2_tendsto
         intro s
         rw [hSupp ω e he s, dyadicEvalShifted_eq_zero φ n s ω e (hSupp ω e he), sub_zero]
       rw [Set.indicator_of_notMem he]
-      simp only [hzero, nnnorm_zero, ENNReal.coe_zero]
+      simp only [hzero, nnNorm_zero, ENNReal.coe_zero]
       simp
   have hfinite : (∫⁻ e, S.indicator (fun _ => cT) e ∂ν) ≠ ⊤ := by
     rw [MeasureTheory.lintegral_indicator hS_meas, MeasureTheory.setLIntegral_const]

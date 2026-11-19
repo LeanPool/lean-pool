@@ -126,7 +126,7 @@ theorem exists_limit_ge_normalized_supremum (dx μ : Measure E) [dx.IsAddHaarMea
   have hμ : μ ≠ 0 := by
     intro hz
     have hu : μ univ = 1 := measure_univ
-    simp only [hz, Measure.coe_zero, Pi.zero_apply, zero_ne_one] at hu
+    simp only [hz, FunLike.coe_zero, Pi.zero_apply, zero_ne_one] at hu
   have h0 :=
     FunctionalInequalities.Probability.zero_mem_interior_convexHull_support_of_integral_eq_zero
       μ hμ hsub hfirstMoment hbar
@@ -178,7 +178,7 @@ theorem exists_variational_maximum (dx μ : Measure E) [dx.IsAddHaarMeasure]
   have hμ : μ ≠ 0 := by
     intro hz
     have hu : μ univ = 1 := measure_univ
-    simp only [hz, Measure.coe_zero, Pi.zero_apply, zero_ne_one] at hu
+    simp only [hz, FunLike.coe_zero, Pi.zero_apply, zero_ne_one] at hu
   have htr : lowerTruncate ψ 0 = ψ := by
     funext x
     simpa only [lowerTruncate, neg_zero, EReal.coe_zero] using max_eq_left (hψnn x)

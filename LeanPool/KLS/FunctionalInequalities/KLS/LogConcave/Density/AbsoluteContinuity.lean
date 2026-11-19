@@ -48,9 +48,9 @@ private theorem ball_subset_of_nearby_points {S : Set E} (hS : Convex ℝ S) (a 
       linarith
     have hfn : 0 < ‖f‖ := norm_pos_iff.mpr hf0
     have hfnn : 0 < ‖f‖₊ := by exact_mod_cast hfn
-    obtain ⟨v, hvn, hvf⟩ := f.exists_nnnorm_eq_one_lt_apply_of_lt_opNNNorm (half_lt_self hfnn)
+    obtain ⟨v, hvn, hvf⟩ := f.exists_nnNorm_eq_one_lt_apply_of_lt_opNNNorm (half_lt_self hfnn)
     have hvn' : ‖v‖ = 1 := by
-      simpa only [← coe_nnnorm, NNReal.coe_one] using congrArg ((↑) : NNReal → ℝ) hvn
+      simpa only [← coe_nnNorm, NNReal.coe_one] using congrArg ((↑) : NNReal → ℝ) hvn
     have hvf' : ‖f‖ / 2 < |f v| := by exact_mod_cast hvf
     obtain ⟨v, hvn, hvf⟩ : ∃ v : E, ‖v‖ = 1 ∧ ‖f‖ / 2 < f v := by
       rcases lt_abs.mp hvf' with h | h
@@ -81,7 +81,7 @@ private theorem ball_subset_of_nearby_points {S : Set E} (hS : Convex ℝ S) (a 
       ball_subset_closedBall.trans
         (hclosure.trans
           (closure_minimal (subset_affineSpan ℝ S)
-            (affineSpan ℝ S).closed_of_finiteDimensional))
+            (affineSpan ℝ S).isClosed_of_finiteDimensional))
     apply top_unique
     rw [← isOpen_ball.affineSpan_eq_top (u := ball a R) (nonempty_ball.mpr hR)]
     exact affineSpan_le.mpr hsub
