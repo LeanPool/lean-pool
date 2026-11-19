@@ -36,6 +36,7 @@ SOFTWARE.
 module
 public import LeanPool.GinibrePoincare.Analysis.AlternativeBakryEmeryBrownianDyadicTents
 public import Mathlib.Analysis.SpecificLimits.Normed
+public import Mathlib.Algebra.BigOperators.Field
 /-!
 # Alternative Bakry Emery Brownian dyadic covariance
 

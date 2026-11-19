@@ -36,7 +36,6 @@ SOFTWARE.
 module
 public import Mathlib.Topology.ContinuousMap.Compact
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Tactic
 /-!
 # Alternative Bakry Emery Brownian dyadic tents
 
