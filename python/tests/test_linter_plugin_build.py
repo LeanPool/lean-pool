@@ -48,6 +48,13 @@ def test_module_list_builds_link_the_plugin_first() -> None:
         assert len(earlier) == 1, job
         # The plugin's compiler keeps the time and memory limits of every other.
         assert "lean_pool.build_time_limits watch" in earlier[0], job
+        # Its output starts the log that the warning gate reads, and the
+        # module build is appended to it; a failure of either stops the step.
+        assert earlier[0].endswith("2>&1 | tee shard-build.log"), job
+        modules = script[build.start() :].splitlines()[0]
+        assert modules.endswith("2>&1 | tee -a shard-build.log"), job
+        assert script.startswith("set -euo pipefail\n"), job
+        assert "grep -nE '(^|: )warning:' shard-build.log" in script, job
 
 
 def test_plugin_target_is_the_one_the_pool_loads() -> None:

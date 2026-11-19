@@ -670,11 +670,11 @@ jobs:
           # Given thousands of module targets, Lake starts several jobs for the
           # one linter plugin they all load, and each overwrites the others'
           # link inputs: "no such file or directory" for the plugin library.
-          # Built alone first, under the same limits, the plugin is up to date
-          # for every one of them.
-          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build LeanPoolLinters:shared
+          # Built alone first, under the same limits and into the same log,
+          # the plugin is up to date for every one of them.
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build LeanPoolLinters:shared 2>&1 | tee shard-build.log
           # shellcheck disable=SC2086 # modules is a space-separated list on purpose
-          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build $modules 2>&1 | tee shard-build.log
+          PYTHONPATH=python python3 -m lean_pool.build_time_limits watch ${time_base:+--base "$time_base"} -- ~/.elan/bin/lake build $modules 2>&1 | tee -a shard-build.log
           if grep -nE '(^|: )warning:' shard-build.log; then
             echo "::error::Lean build emitted warnings; fix them before merging."
             exit 1
