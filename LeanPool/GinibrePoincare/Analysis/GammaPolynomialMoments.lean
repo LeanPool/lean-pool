@@ -38,7 +38,7 @@ module
 public import Mathlib.Probability.Distributions.Gamma
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.Analysis.Calculus.Deriv.Polynomial
-public import Mathlib.Tactic
+public import Mathlib.Algebra.Polynomial.Eval.SMul
 
 /-!
 # Gamma polynomial moments

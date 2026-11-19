@@ -156,7 +156,7 @@ theorem ginibreCenterSumL2_conjugateProjection_zero (n : ℕ) (hn : 0 < n) :
   let P := ginibrePositiveQuotientGradedClosedSpan n hn
   have hC : C.starProjection (star S) = 0 := by
     rw [ginibreConstantProjection_star, ginibreCenterSumL2_constantProjection_zero,
-      ginibreLpStar_zero]
+      Lp_star_zero]
   apply Submodule.eq_starProjection_of_mem_of_inner_eq_zero
     ((ginibreHolomorphicAmbientClosedSpan n hn).zero_mem)
   intro y hy

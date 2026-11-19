@@ -52,12 +52,8 @@ open scoped Topology
 
 /-- Pointwise conjugation on complex Ginibre L², viewed as a real-linear isometry. -/
 def ginibreFullLpConjugationIsometry (n : ℕ) :
-    Lp ℂ 2 (ginibreMeasure n) →ₗᵢ[ℝ] Lp ℂ 2 (ginibreMeasure n) where
-  toLinearMap :=
-    { toFun := star
-      map_add' := by exact Lp_star_add
-      map_smul' := by exact Lp_star_real_smul }
-  norm_map' := by exact Lp_norm_star
+    Lp ℂ 2 (ginibreMeasure n) →ₗᵢ[ℝ] Lp ℂ 2 (ginibreMeasure n) :=
+  LpConjugationIsometry (ginibreMeasure n)
 
 /-- Centered residual after subtracting the holomorphic projection and its conjugate. -/
 def ginibreFullHolomorphicRemainder (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :=

@@ -37,6 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.LaguerreGammaOrthogonality
 public import Mathlib.MeasureTheory.Measure.OpenPos
+public import Mathlib.Topology.Algebra.Polynomial
 
 /-!
 # Laguerre gamma nondegeneracy
