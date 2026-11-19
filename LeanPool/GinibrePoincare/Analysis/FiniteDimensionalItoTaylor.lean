@@ -66,30 +66,40 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 def itoDirectionalHessian (f : E → ℝ) (x h : E) : ℝ :=
   iteratedFDeriv ℝ 2 f x (fun _ => h)
 
+/-- Exact second-order integral Taylor formula along a segment on which the test is C². -/
+theorem itoTaylor_integral_of_segment (f : E → ℝ) (x h : E)
+    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1, ContDiffAt ℝ 2 f (x + t • h)) :
+    f (x+h) = f x + fderiv ℝ f x h +
+      ∫ t in (0 : ℝ)..1, (1-t)*itoDirectionalHessian f (x+t•h) h := by
+  have ht := map_add_eq_sum_add_integral_iteratedFDeriv (n := 1) (x := x) (y := h) hf
+  simpa [Finset.sum_range_succ, iteratedFDeriv_zero_apply, iteratedFDeriv_one_apply,
+    itoDirectionalHessian] using ht
+
 /-- Exact second-order integral Taylor formula for a genuine C² test. -/
 theorem itoTaylor_integral (f : E → ℝ) (hf : ContDiff ℝ 2 f) (x h : E) :
     f (x + h) = f x + fderiv ℝ f x h +
-      ∫ t in (0 : ℝ)..1, (1 - t) * itoDirectionalHessian f (x + t • h) h := by
-  have ht := map_add_eq_sum_add_integral_iteratedFDeriv (n := 1) (x := x) (y := h)
-    (fun t ht => hf.contDiffAt)
-  simpa [Finset.sum_range_succ, iteratedFDeriv_zero_apply, iteratedFDeriv_one_apply,
-    itoDirectionalHessian] using ht
+      ∫ t in (0 : ℝ)..1, (1 - t) * itoDirectionalHessian f (x + t • h) h :=
+  itoTaylor_integral_of_segment f x h fun _ _ => hf.contDiffAt
 
 /-- The quadratic Taylor error is exactly the averaged Hessian oscillation. -/
 def itoTaylorRemainder (f : E → ℝ) (x h : E) : ℝ :=
   f (x + h) - f x - fderiv ℝ f x h - (1 / 2 : ℝ) * itoDirectionalHessian f x h
 
-/-- Exact centered Hessian remainder, with no third differentiability assumption. -/
-theorem itoTaylorRemainder_eq_integral (f : E → ℝ) (hf : ContDiff ℝ 2 f) (x h : E) :
+/-- Exact centered Hessian remainder along a segment on which the test is C²,
+with no third differentiability assumption. -/
+theorem itoTaylorRemainder_eq_integral_of_segment (f : E → ℝ) (x h : E)
+    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1, ContDiffAt ℝ 2 f (x + t • h)) :
     itoTaylorRemainder f x h = ∫ t in (0 : ℝ)..1,
       (1 - t) * (itoDirectionalHessian f (x + t • h) h - itoDirectionalHessian f x h) := by
-  have hc : Continuous (fun t : ℝ => itoDirectionalHessian f (x + t • h) h) := by
-    unfold itoDirectionalHessian
-    exact (continuous_eval_const (fun _ : Fin 2 => h)).comp
-      ((hf.continuous_iteratedFDeriv (m := 2) (by norm_num)).comp
-        (show Continuous (fun t : ℝ => x + t • h) by fun_prop))
+  have hc : ContinuousOn (fun t : ℝ => itoDirectionalHessian f (x+t•h) h) (Set.Icc 0 1) := by
+    intro t ht
+    have hd : ContinuousAt (iteratedFDeriv ℝ 2 f) (x+t•h) :=
+      (hf t ht).continuousAt_iteratedFDeriv (k := 2) (by norm_num)
+    have hl : ContinuousAt (fun s : ℝ => x+s•h) t := by fun_prop
+    exact ((continuous_eval_const (fun _ : Fin 2 => h)).continuousAt.comp
+      (hd.comp (f := fun s : ℝ => x+s•h) (x := t) hl)).continuousWithinAt
   have hi : IntervalIntegrable (fun t : ℝ => (1-t)*itoDirectionalHessian f (x+t•h) h) volume 0 1 :=
-    ((continuous_const.sub continuous_id).mul hc).intervalIntegrable _ _
+    ((continuous_const.sub continuous_id).continuousOn.mul hc).intervalIntegrable_of_Icc zero_le_one
   have hj : IntervalIntegrable (fun t : ℝ => (1-t)*itoDirectionalHessian f x h) volume 0 1 :=
     (by fun_prop : Continuous (fun t : ℝ => (1-t)*itoDirectionalHessian f x h)).intervalIntegrable _
         _
@@ -105,16 +115,22 @@ theorem itoTaylorRemainder_eq_integral (f : E → ℝ) (hf : ContDiff ℝ 2 f) (
     norm_num
   rw [hw]
   unfold itoTaylorRemainder
-  rw [itoTaylor_integral f hf x h]
+  rw [itoTaylor_integral_of_segment f x h hf]
   ring
 
-/-- A quantitative C² remainder bound from the actual operator-norm Hessian oscillation. -/
-theorem itoTaylorRemainder_norm_le (f : E → ℝ) (hf : ContDiff ℝ 2 f)
-    (x h : E) (ε : ℝ) (hε : 0 ≤ ε)
+/-- Exact centered Hessian remainder, with no third differentiability assumption. -/
+theorem itoTaylorRemainder_eq_integral (f : E → ℝ) (hf : ContDiff ℝ 2 f) (x h : E) :
+    itoTaylorRemainder f x h = ∫ t in (0 : ℝ)..1,
+      (1 - t) * (itoDirectionalHessian f (x + t • h) h - itoDirectionalHessian f x h) :=
+  itoTaylorRemainder_eq_integral_of_segment f x h fun _ _ => hf.contDiffAt
+
+/-- A quantitative C² remainder bound along a segment on which the test is C². -/
+theorem itoTaylorRemainder_norm_le_of_segment (f : E → ℝ) (x h : E)
+    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1, ContDiffAt ℝ 2 f (x + t • h)) (ε : ℝ) (hε : 0 ≤ ε)
     (hosc : ∀ t ∈ Set.Icc (0 : ℝ) 1,
       ‖iteratedFDeriv ℝ 2 f (x + t • h) - iteratedFDeriv ℝ 2 f x‖ ≤ ε) :
     ‖itoTaylorRemainder f x h‖ ≤ ε * ‖h‖ ^ 2 := by
-  rw [itoTaylorRemainder_eq_integral f hf]
+  rw [itoTaylorRemainder_eq_integral_of_segment f x h hf]
   have hb : ∀ t ∈ Set.uIoc (0 : ℝ) 1,
       ‖(1-t)*(itoDirectionalHessian f (x+t•h) h - itoDirectionalHessian f x h)‖ ≤
         ε * ‖h‖^2 := by
@@ -131,6 +147,14 @@ theorem itoTaylorRemainder_norm_le (f : E → ℝ) (hf : ContDiff ℝ 2 f)
     exact (mul_le_mul_of_nonneg_left hd (sub_nonneg.mpr ht'.2)).trans
       (mul_le_of_le_one_left (by positivity) (by linarith [ht'.1]))
   simpa using intervalIntegral.norm_integral_le_of_norm_le_const hb
+
+/-- A quantitative C² remainder bound from the actual operator-norm Hessian oscillation. -/
+theorem itoTaylorRemainder_norm_le (f : E → ℝ) (hf : ContDiff ℝ 2 f)
+    (x h : E) (ε : ℝ) (hε : 0 ≤ ε)
+    (hosc : ∀ t ∈ Set.Icc (0 : ℝ) 1,
+      ‖iteratedFDeriv ℝ 2 f (x + t • h) - iteratedFDeriv ℝ 2 f x‖ ≤ ε) :
+    ‖itoTaylorRemainder f x h‖ ≤ ε * ‖h‖ ^ 2 :=
+  itoTaylorRemainder_norm_le_of_segment f x h (fun _ _ => hf.contDiffAt) ε hε hosc
 
 /-- The genuine quadratic Taylor remainder is uniformly small on a compact convex set. -/
 theorem itoTaylorRemainder_uniform_compact (f : E → ℝ) (hf : ContDiff ℝ 2 f)

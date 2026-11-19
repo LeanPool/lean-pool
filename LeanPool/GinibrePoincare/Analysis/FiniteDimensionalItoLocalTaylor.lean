@@ -41,8 +41,10 @@ public import Mathlib.Topology.MetricSpace.Thickening
 /-! # C² Taylor control on an open domain
 
 The segment versions of the Taylor formula and Hessian-oscillation bound
-require C² regularity only along `x + t • h`, for `0 ≤ t ≤ 1`. They therefore
-apply to functions defined smoothly away from a singular set.
+(`itoTaylorRemainder_norm_le_of_segment` and its companions in
+`FiniteDimensionalItoTaylor`) require C² regularity only along `x + t • h`,
+for `0 ≤ t ≤ 1`. They therefore apply to functions defined smoothly away from
+a singular set.
 
 For a compact subset `K` of an open domain `U`, choose a positive closed
 thickening of `K` still contained in `U`. Properness makes this thickening
@@ -57,69 +59,6 @@ open MeasureTheory Metric
 namespace GinibrePoincare
 noncomputable section
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-theorem itoTaylor_integral_of_segment (f : E → ℝ) (x h : E)
-    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1, ContDiffAt ℝ 2 f (x + t • h)) :
-    f (x+h) = f x + fderiv ℝ f x h +
-      ∫ t in (0 : ℝ)..1, (1-t)*itoDirectionalHessian f (x+t•h) h := by
-  have ht := map_add_eq_sum_add_integral_iteratedFDeriv (n := 1) (x := x) (y := h) hf
-  simpa [Finset.sum_range_succ, iteratedFDeriv_zero_apply, iteratedFDeriv_one_apply,
-    itoDirectionalHessian] using ht
-
-theorem itoTaylorRemainder_eq_integral_of_segment (f : E → ℝ) (x h : E)
-    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1, ContDiffAt ℝ 2 f (x + t • h)) :
-    itoTaylorRemainder f x h = ∫ t in (0 : ℝ)..1,
-      (1 - t) * (itoDirectionalHessian f (x + t • h) h - itoDirectionalHessian f x h) := by
-  have hc : ContinuousOn (fun t : ℝ => itoDirectionalHessian f (x+t•h) h) (Set.Icc 0 1) := by
-    intro t ht
-    have hd : ContinuousAt (iteratedFDeriv ℝ 2 f) (x+t•h) :=
-      (hf t ht).continuousAt_iteratedFDeriv (k := 2) (by norm_num)
-    have hl : ContinuousAt (fun s : ℝ => x+s•h) t := by fun_prop
-    exact ((continuous_eval_const (fun _ : Fin 2 => h)).continuousAt.comp
-      (hd.comp (f := fun s : ℝ => x+s•h) (x := t) hl)).continuousWithinAt
-  have hi : IntervalIntegrable (fun t : ℝ => (1-t)*itoDirectionalHessian f (x+t•h) h) volume 0 1 :=
-    ((continuous_const.sub continuous_id).continuousOn.mul hc).intervalIntegrable_of_Icc zero_le_one
-  have hj : IntervalIntegrable (fun t : ℝ => (1-t)*itoDirectionalHessian f x h) volume 0 1 :=
-    (by fun_prop : Continuous (fun t : ℝ => (1-t)*itoDirectionalHessian f x h)).intervalIntegrable _
-        _
-  simp_rw [mul_sub]
-  rw [intervalIntegral.integral_sub hi hj, intervalIntegral.integral_mul_const]
-  have hw : ∫ t in (0 : ℝ)..1, 1-t = (1/2 : ℝ) := by
-    rw [intervalIntegral.integral_sub
-      (show IntervalIntegrable (fun _ : ℝ => (1 : ℝ)) volume 0 1 from
-          continuous_const.intervalIntegrable _ _)
-      (show IntervalIntegrable (fun t : ℝ => t) volume 0 1 from continuous_id.intervalIntegrable _
-          _),
-      intervalIntegral.integral_const, integral_id]
-    norm_num
-  rw [hw]
-  unfold itoTaylorRemainder
-  rw [itoTaylor_integral_of_segment f x h hf]
-  ring
-
-/-- A quantitative C² remainder bound from the actual operator-norm Hessian oscillation. -/
-theorem itoTaylorRemainder_norm_le_of_segment (f : E → ℝ) (x h : E)
-    (hf : ∀ t ∈ Set.Icc (0 : ℝ) 1, ContDiffAt ℝ 2 f (x + t • h)) (ε : ℝ) (hε : 0 ≤ ε)
-    (hosc : ∀ t ∈ Set.Icc (0 : ℝ) 1,
-      ‖iteratedFDeriv ℝ 2 f (x + t • h) - iteratedFDeriv ℝ 2 f x‖ ≤ ε) :
-    ‖itoTaylorRemainder f x h‖ ≤ ε * ‖h‖ ^ 2 := by
-  rw [itoTaylorRemainder_eq_integral_of_segment f x h hf]
-  have hb : ∀ t ∈ Set.uIoc (0 : ℝ) 1,
-      ‖(1-t)*(itoDirectionalHessian f (x+t•h) h - itoDirectionalHessian f x h)‖ ≤
-        ε * ‖h‖^2 := by
-    intro t ht
-    have ht' : t ∈ Set.Icc (0 : ℝ) 1 := by
-       simpa [Set.uIoc, min_eq_left zero_le_one, max_eq_right zero_le_one] using
-           Set.Ioc_subset_Icc_self ht
-    have hd : ‖itoDirectionalHessian f (x+t•h) h - itoDirectionalHessian f x h‖ ≤
-        ε * ‖h‖^2 := by
-      have hop := (iteratedFDeriv ℝ 2 f (x+t•h) - iteratedFDeriv ℝ 2 f x).le_opNorm (fun _ => h)
-      simp only [sub_apply, Fin.prod_univ_two, pow_two] at hop ⊢
-      exact hop.trans (mul_le_mul_of_nonneg_right (hosc t ht') (mul_self_nonneg _))
-    rw [norm_mul, Real.norm_eq_abs, abs_of_nonneg (sub_nonneg.mpr ht'.2)]
-    exact (mul_le_mul_of_nonneg_left hd (sub_nonneg.mpr ht'.2)).trans
-      (mul_le_of_le_one_left (by positivity) (by linarith [ht'.1]))
-  simpa using intervalIntegral.norm_integral_le_of_norm_le_const hb
 
 /-- Uniform quadratic remainder on any compact subset of an open C² domain.
 The domain need not be convex; short increment segments stay inside it. -/
