@@ -36,7 +36,6 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreRadialGamma
-public import Mathlib.Tactic
 
 /-!
 # Pairwise radius
