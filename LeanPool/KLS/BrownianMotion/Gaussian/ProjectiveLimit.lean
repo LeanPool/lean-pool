@@ -27,7 +27,7 @@ open scoped ENNReal NNReal
 namespace L2
 
 /- In an `L2` space, the matrix of intersections of pairs of sets is positive semi-definite. -/
-lemma posSemidef_interMatrix {ι : Type*} [Finite ι] {α : Type*} {mα : MeasurableSpace α}
+lemma posSemidef_interMatrix {ι : Type*} {α : Type*} {mα : MeasurableSpace α}
     {μ : Measure α} {v : ι → (Set α)}
     (hv₁ : ∀ j, MeasurableSet (v j)) (hv₂ : ∀ j, μ (v j) ≠ ∞ := by finiteness) :
     Matrix.PosSemidef (Matrix.of fun i j : ι ↦ μ.real (v i ∩ v j)) := by
