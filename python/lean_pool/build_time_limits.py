@@ -16,9 +16,12 @@ therefore also watches memory:
 * when the machine is about to run out of memory, the Lean process holding the
   most is killed and the log names every file that was compiling.
 
-Either way Lake reports the file as failed and goes on, so one run names
-every file over its limit. Memory is looked at once a second: that bounds
-what a compiler can gain unseen, but it is a sample, not a guarantee.
+Lake reports a killed file as failed and goes on, so one run names every file
+over its limit. A file seen over its own limit fails the build. A stop asked
+for under a shortage fails it only if the build then fails: a compiler that
+finished just before the signal was not stopped. Memory is looked at once a
+second: that bounds what a compiler can gain unseen, but it is a sample, not a
+guarantee.
 
 Existing files are only checked once a PR changes them. Times are the wall-clock
 times Lake reports for each module on the CI runner.
@@ -478,10 +481,20 @@ class MemoryWatch:
         # process is gone, and the system then reuses the descriptor number.
         self.stopped: set[tuple[int, int]] = set()
         self.peaks: dict[str, int] = {}
-        self.failed = False
+        # A file seen over its own budget fails the build whatever follows.
+        self.over_budget = False
+        # A stop asked for under a shortage is only a request: the compiler may
+        # have finished first, and then the build's own result stands.
+        self.relief: list[tuple[str, str]] = []
 
     def _kill(self, identity: OwnedProcess) -> bool:
-        """Kill one process; ``False`` if it had already gone."""
+        """Ask the kernel to kill one process; ``False`` if it had already gone.
+
+        ``True`` does not prove the process was stopped: a compiler that has
+        just finished accepts the signal until it is reaped.
+        """
+        if not _running(identity):
+            return False
         try:
             # Lake reports the file as failed and goes on with the others.
             signal.pidfd_send_signal(identity.descriptor, signal.SIGKILL)
@@ -518,13 +531,12 @@ class MemoryWatch:
             self.peaks[source] = max(self.peaks.get(source, 0), used)
             if source in self.limits.added and used > self.limits.added_file:
                 # Seen over its budget: a violation even if it ends by itself.
-                self.failed = True
+                self.over_budget = True
                 print(
                     f"::error file={source}::{source} held {_gibibytes(used)} of "
-                    f"memory while compiling and was stopped. Lean Pool's limit "
-                    f"for a file a pull request adds is "
-                    f"{_gibibytes(self.limits.added_file)}; split the file or "
-                    f"make its proofs cheaper.",
+                    f"memory while compiling. Lean Pool's limit for a file a pull "
+                    f"request adds is {_gibibytes(self.limits.added_file)}; split "
+                    f"the file or make its proofs cheaper.",
                     flush=True,
                 )
                 if not self._kill(identity):
@@ -556,17 +568,32 @@ class MemoryWatch:
         holding.sort(key=lambda entry: entry[0], reverse=True)
         used, source, identity = holding[0]
         # A compiler that ended meanwhile freed its memory itself: look again
-        # next time instead of failing a build that nothing was stopped in.
+        # next time.
         if not self._kill(identity):
             return
-        self.failed = True
         compiling = ", ".join(f"{name} {_gibibytes(size)}" for size, name, _ in holding)
-        print(
-            f"::error file={source}::The machine had {_gibibytes(free)} of memory "
-            f"left while these files were compiling: {compiling}. {source} held "
-            f"the most and was stopped; split it or make its proofs cheaper.",
-            flush=True,
+        shortage = (
+            f"The machine had {_gibibytes(free)} of memory left while these files "
+            f"were compiling: {compiling}."
         )
+        self.relief.append((source, shortage))
+        print(f"{shortage} Asked to stop {source}, which held the most.", flush=True)
+
+    def outcome(self, returncode: int) -> int | None:
+        """The watchdog's verdict on memory once the build has ended.
+
+        ``None`` leaves the build's own result in place.
+        """
+        if returncode != 0:
+            for source, shortage in self.relief:
+                print(
+                    f"::error file={source}::{shortage} {source} held the most and "
+                    f"was stopped; split it or make its proofs cheaper.",
+                    flush=True,
+                )
+        if self.over_budget or (self.relief and returncode != 0):
+            return MEMORY_STATUS
+        return None
 
     def report(self, threshold: int = MEMORY_REPORT_BYTES) -> None:
         """List the files whose compiler held the most memory, largest first."""
@@ -697,8 +724,8 @@ def watch(
                 for process in owned.values():
                     os.close(process.descriptor)
     memory_watch.report()
-    if status is None and memory_watch.failed:
-        return MEMORY_STATUS
+    if status is None:
+        status = memory_watch.outcome(returncode)
     return returncode if status is None else status
 
 

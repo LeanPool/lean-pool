@@ -49,7 +49,9 @@ cannot guarantee that every workload fits between them.
   and what it held. Without this the runner dies and the log names nothing.
 
 Lake reports a stopped file as failed and builds the rest, so one run names every
-file over its limit; the build then fails. Existing files have no fixed limit:
+file over its limit. A file seen over its own limit fails the build. A stop asked
+for under a shortage fails it only if the build then fails: a compiler that had
+just finished is not counted as stopped. Existing files have no fixed limit:
 when the budget was set (`main`, 2026-11-19, Lean v4.35.0) two files exceeded
 it, `MovingSofa/Development/Geometry/Applications/Development001.lean` (8.6 GiB)
 and `MovingSofa/Development/Geometry/Foundations/Development004.lean` (7.8 GiB),

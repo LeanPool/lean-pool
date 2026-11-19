@@ -318,6 +318,7 @@ def test_the_largest_compiler_is_stopped_when_the_machine_runs_out(
     tmp_path: Path, monkeypatch, capfd
 ) -> None:
     """A runner that is about to die names what was compiling and stops one file."""
+    # Like Lake, the build fails when one of its compilers was killed.
     lean, large = _fake_lean(tmp_path, HOLD_MEMORY)
     small = tmp_path / "small.py"
     small.write_text(
@@ -342,7 +343,8 @@ def test_the_largest_compiler_is_stopped_when_the_machine_runs_out(
     build = [
         "/bin/sh",
         "-c",
-        f"'{lean}' '{large}' '{heavy}' & sleep 0.5; '{lean}' '{small}' '{light}'; wait",
+        f"'{lean}' '{large}' '{heavy}' & first=$!; sleep 0.5; "
+        f"'{lean}' '{small}' '{light}'; wait $first",
     ]
     memory = _limits(tmp_path, floor=1024**3)
     status = limits.watch(build, limit=60, poll=0.1, grace=0.5, memory=memory)
@@ -384,6 +386,7 @@ def _processes(monkeypatch, table: dict[int, tuple[int, str, int]]) -> list[int]
     monkeypatch.setattr(
         limits, "_birth", lambda pid: table[pid][0] if pid in table else None
     )
+    monkeypatch.setattr(limits, "_running", lambda identity: True)
     monkeypatch.setattr(
         limits.signal,
         "pidfd_send_signal",
@@ -416,9 +419,14 @@ def test_relief_waits_until_a_stopped_compiler_is_gone(monkeypatch, capsys) -> N
     del owned[41], table[41]
     watch.check(owned)
     assert signals == [7, 8]
-    assert watch.failed
+    assert [source for source, _ in watch.relief] == [
+        "LeanPool/First.lean",
+        "LeanPool/Second.lean",
+    ]
     output = capsys.readouterr().out
     assert "LeanPool/First.lean 6.0 GiB, LeanPool/Second.lean 5.0 GiB" in output
+    assert "Asked to stop LeanPool/First.lean, which held the most." in output
+    assert "::error" not in output
     assert watch.peaks == {
         "LeanPool/First.lean": 6 * 1024**3,
         "LeanPool/Second.lean": 5 * 1024**3,
@@ -460,9 +468,55 @@ def test_a_compiler_that_already_ended_fails_nothing(monkeypatch, capsys) -> Non
     monkeypatch.setattr(limits.signal, "pidfd_send_signal", gone)
     watch = limits.MemoryWatch(limits.MemoryLimits())
     watch.check({41: limits.OwnedProcess(41, 1000, 7)})
-    assert not watch.failed
-    assert watch.stopped == set()
-    assert "::error" not in capsys.readouterr().out
+    assert watch.relief == [] and watch.stopped == set()
+    # A compiler whose handle already reports its end is not even signalled.
+    asked = []
+    monkeypatch.setattr(limits, "_running", lambda identity: False)
+    monkeypatch.setattr(
+        limits.signal, "pidfd_send_signal", lambda *arguments: asked.append(arguments)
+    )
+    watch.check({41: limits.OwnedProcess(41, 1000, 7)})
+    assert asked == [] and watch.relief == []
+    assert watch.outcome(0) is None
+    assert capsys.readouterr().out == ""
+
+
+def test_a_stop_request_fails_only_a_build_that_fails(monkeypatch, capsys) -> None:
+    """A finished compiler accepts the signal until it is reaped; Lake knows better."""
+    table = {41: (1000, "LeanPool/Heavy.lean", 6 * 1024**3)}
+    signals = _processes(monkeypatch, table)
+    monkeypatch.setattr(limits, "free_memory", lambda: 200 * MEBIBYTE)
+    watch = limits.MemoryWatch(limits.MemoryLimits())
+    watch.check({41: limits.OwnedProcess(41, 1000, 7)})
+    assert signals == [7]
+    assert "Asked to stop LeanPool/Heavy.lean" in capsys.readouterr().out
+    # Lake succeeded: the compiler had finished, and nothing was stopped.
+    assert watch.outcome(0) is None
+    assert capsys.readouterr().out == ""
+    # Lake failed: the stop took effect, and the error names the file.
+    assert watch.outcome(1) == limits.MEMORY_STATUS
+    output = capsys.readouterr().out
+    assert output.startswith(
+        "::error file=LeanPool/Heavy.lean::The machine had 0.2 GiB"
+    )
+    assert "LeanPool/Heavy.lean held the most and was stopped" in output
+
+
+def test_a_signal_that_stops_nothing_leaves_the_build_passing(
+    tmp_path: Path, monkeypatch, capfd
+) -> None:
+    """End to end: a shortage, a signal the kernel discards, and a build that passes."""
+    monkeypatch.setattr(limits, "free_memory", lambda: 100 * MEBIBYTE)
+    monkeypatch.setattr(limits.signal, "pidfd_send_signal", lambda *arguments: None)
+    lean, script = _fake_lean(tmp_path, HOLD_AND_FINISH)
+    (source,) = _sources(tmp_path, "Old/Existing.lean")
+    build = ["/bin/sh", "-c", f"'{lean}' '{script}' '{source}'"]
+    memory = _limits(tmp_path, floor=1024**3)
+    assert limits.watch(build, limit=60, poll=0.1, grace=0.5, memory=memory) == 0
+    assert Path(f"{source}.built").read_text() == "built"
+    output = capfd.readouterr().out
+    assert "Asked to stop LeanPool/Old/Existing.lean" in output
+    assert "::error" not in output
 
 
 def test_an_added_file_seen_over_its_budget_fails_even_if_it_ends(
@@ -481,8 +535,10 @@ def test_an_added_file_seen_over_its_budget_fails_even_if_it_ends(
     watch = limits.MemoryWatch(memory)
     for _ in range(2):
         watch.check({41: limits.OwnedProcess(41, 1000, 7)})
-    assert watch.failed
+    assert watch.over_budget and watch.relief == []
     assert capsys.readouterr().out.count("LeanPool/New/Added.lean held 4.0 GiB") == 1
+    # Fatal even if Lake reports success.
+    assert watch.outcome(0) == limits.MEMORY_STATUS
 
 
 def test_a_sample_counts_only_for_the_process_whose_handle_is_held(
@@ -497,7 +553,7 @@ def test_a_sample_counts_only_for_the_process_whose_handle_is_held(
     watch = limits.MemoryWatch(memory)
     watch.check({41: limits.OwnedProcess(41, 1000, 7)})
     assert signals == []
-    assert not watch.failed
+    assert not watch.over_budget and watch.relief == []
     assert watch.peaks == {}
     assert capsys.readouterr().out == ""
     # Lake and the shell are read from the process itself too, and never judged.
