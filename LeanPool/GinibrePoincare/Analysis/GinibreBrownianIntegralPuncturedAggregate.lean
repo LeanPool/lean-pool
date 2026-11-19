@@ -38,6 +38,7 @@ module
 public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralPuncturedPartialContinuous
 public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralSubstitution
 public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticUnitFieldPartialMeanSquare
+public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralSubstitutionNatural
 
 /-!
 # Ginibre Brownian integral punctured aggregate
@@ -73,46 +74,9 @@ theorem brownianAggregateUniformSum_punctured_meanSquare_of_horizon_limit
   have hex (i : ι) := brownianPuncturedPartialIntegral_exists B P hB hind i (F i) (hF i)
     (hc i) C hC (hb i) T hT
   choose M hM hMC hML hM0 hMS using hex
-  have hi (i : ι) : TendstoInMeasure P
-      (fun k => brownianUniformLeftSum (B i) (F i) T (k+1)) atTop (M i T) := by
-    have he : (fun k => brownianUniformPartialSum (B i) (F i) T (k+1) T) =
-        (fun k => brownianUniformLeftSum (B i) (F i) T (k+1)) := by
-      funext k ω
-      exact brownianUniformPartialSum_terminal (B i) (F i) T (k+1) ω
-    rw [← he]
-    apply ginibre_tendstoInMeasure_of_meanSquare P _ _
-    · intro k
-      exact ((brownianUniformPartialSum_memLp_two B P (fun i => (hB i).toIsPreBrownianReal)
-        hind i (F i) (hF i) (fun r => MemLp.of_bound
-          (((hF i r).mono ((ginibreBrownianAugmentedFiltration B P
-            (fun i => (hB i).toIsPreBrownianReal)).le r) le_rfl).aestronglyMeasurable)
-          C (ae_of_all P (hb i r))) T (k+1) T).sub (hML i T)).integrable_sq
-    · exact hMS i T le_rfl
-  have hFi (i : ι) (r : ℝ≥0) : MemLp (F i r) 2 P := MemLp.of_bound
-    (((hF i r).mono ((ginibreBrownianAugmentedFiltration B P
-      (fun i => (hB i).toIsPreBrownianReal)).le r) le_rfl).aestronglyMeasurable)
-    C (Eventually.of_forall (hb i r))
-  have hSL (i : ι) (k : ℕ) : MemLp (brownianUniformLeftSum (B i) (F i) T (k+1)) 2 P :=
-    brownianUniformLeftSum_memLp_two B P (fun i => (hB i).toIsPreBrownianReal) hind
-      i (F i) (hF i) (hFi i) T (k+1)
-  have hsum := itoTendstoInMeasure_finset_sum P Finset.univ
-    (fun i k => brownianUniformLeftSum (B i) (F i) T (k+1)) (fun i => M i T)
-    (fun i k => (hSL i k).aestronglyMeasurable) hi
-  have he := tendstoInMeasure_ae_unique hsum hlim
-  have hJL : MemLp (fun ω => ∑ i, M i T ω) 2 P := memLp_finsetSum _ (fun i hi => hML i T)
-  refine ⟨hJL.ae_eq he,?_⟩
-  have hh := actualMeanSquareZero_finset_sum P Finset.univ
-    (fun i k ω => brownianUniformLeftSum (B i) (F i) T (k+1) ω-M i T ω)
-    (fun i k => (hSL i k).sub (hML i T))
-    (fun i => by simpa only [brownianUniformPartialSum_terminal] using hMS i T le_rfl)
-  have hEq (k : ℕ) : (∫ ω,
-      ((∑ i, brownianUniformLeftSum (B i) (F i) T (k+1) ω)-J ω)^2 ∂P) =
-      ∫ ω, (∑ i, (brownianUniformLeftSum (B i) (F i) T (k+1) ω-M i T ω))^2 ∂P := by
-    apply integral_congr_ae
-    filter_upwards [he] with ω hω
-    rw [← hω, Finset.sum_sub_distrib]
-  simp_rw [hEq]
-  exact hh
+  exact brownianAggregateUniformSum_meanSquare_of_coordinate_limits B P hB hind F hF C hb T
+    (fun i => M i T) (fun i => hML i T)
+    (fun i => by simpa only [brownianUniformPartialSum_terminal] using hMS i T le_rfl) J hlim
 
 end
 end GinibrePoincare

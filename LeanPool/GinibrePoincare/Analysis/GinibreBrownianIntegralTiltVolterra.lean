@@ -47,7 +47,8 @@ Ginibre Poincaré formalization.
 
 Main results: `ginibreBrownianEmbeddingCLM_apply`, `ginibreOUPath_corrected_canonical_prefix`,
 `ginibreInteractionCorrectedBrownian_noise_continuous`,
-`ginibreOUPath_correctedBrownian_original_volterra`.
+`ginibreOUPath_correctedBrownian_original_volterra`,
+`ginibreOUPath_correctedBrownian_canonical_prefix_ae`.
 -/
 
 @[expose] public section
@@ -274,6 +275,45 @@ theorem ginibreOUPath_correctedBrownian_original_volterra {Ω : Type*}
     (fun i r ω => B i r ω-B i 0 ω-∫ s in (0 : ℝ)..(r : ℝ),
       ginibreInteractionBrownianTilt n α (Y s.toNNReal ω) i) α ω t+_
   simpa only [y, Real.toNNReal_coe, ginibreInteractionCorrectedNoise,← hnoise] using he
+
+/-- Almost surely, a continuous collision-free reference OU path solving the OU Volterra
+equation up to a random time `θ` agrees there with the canonical original Ginibre solution
+driven by its corrected Brownian noise. -/
+theorem ginibreOUPath_correctedBrownian_canonical_prefix_ae {Ω : Type*} [MeasurableSpace Ω]
+    (n : ℕ) (α : ℝ≥0) (B : (Fin n × Fin 2) → ℝ≥0 → Ω → ℝ) (P : Measure Ω)
+    (hB : ∀ i, IsBrownianReal (B i) P) (Y : ℝ≥0 → Ω → Configuration n) (z : Configuration n)
+    (θ : Ω → ℝ≥0) (hYC : ∀ ω, Continuous (fun t => Y t ω))
+    (hcf : ∀ t ω, CollisionFree (Y t ω)) (hY0 : ∀ ω, Y 0 ω = z)
+    (hEq : ∀ᵐ ω ∂P, ∀ t ≤ θ ω, Y t ω = z + ginibreConfigurationBrownianNoise n B α ω t +
+      ∫ s in (0 : ℝ)..(t : ℝ), (-2 * (α : ℝ) / (n : ℝ)) • Y s.toNNReal ω) :
+    ∀ᵐ ω ∂P, ∀ t : ℝ≥0, t ≤ θ ω → ginibreDrivenMaximalValue n α
+      (ginibreConfigurationBrownianNoise n (ginibreInteractionCorrectedBrownian n α B Y) α ω) z
+        t = Y t ω := by
+  have hBcont := ae_all_iff.mpr (fun i => (hB i).cont)
+  filter_upwards [hEq, ginibreConfigurationBrownianNoise_actual n B P hB α, hBcont] with ω hEqω hNω
+      hBω
+  let y := fun s : ℝ => Y s.toNNReal ω
+  let N := ginibreConfigurationBrownianNoise n (ginibreInteractionCorrectedBrownian n α B Y) α ω
+  have hVol := ginibreOUPath_correctedBrownian_original_volterra n α α.property B Y ω z (θ ω)
+    (hYC ω) (fun t => hcf t ω) hNω.2 hEqω
+  have hD : Continuous (fun s : ℝ => ginibreLangevinDrift n α (y s)) := by
+    apply continuous_iff_continuousAt.mpr
+    intro s
+    exact (ginibreLangevinDrift_contDiffAt n α (y s) (hcf _ ω)).continuousAt.comp
+      ((hYC ω).comp continuous_real_toNNReal).continuousAt
+  have hseg : GinibreDrivenSegment n α N z (θ ω) y := by
+    refine ⟨((hYC ω).comp continuous_real_toNNReal).continuousOn,?_,?_⟩
+    · simpa only [y, Real.toNNReal_zero] using hY0 ω
+    · intro s hs
+      refine ⟨hcf _ ω, hD.intervalIntegrable 0 s,?_⟩
+      have he := hVol s.toNNReal (Real.toNNReal_le_iff_le_coe.mpr hs.2)
+      simpa only [y, N, Real.coe_toNNReal _ hs.1] using he
+  have hN := ginibreInteractionCorrectedBrownian_noise_continuous n α B Y ω hBω (hYC ω)
+    (fun t => hcf t ω)
+  have hL := hseg.horizon_lt_lifetime hN.1 hN.2
+  intro t ht
+  simpa only [y, N, Real.toNNReal_coe] using
+    ginibreDrivenMaximalValue_eq_segment hseg t ht ((ENNReal.coe_le_coe.mpr ht).trans_lt hL)
 
 end
 end GinibrePoincare

@@ -37,6 +37,7 @@ module
 
 public import LeanPool.GinibrePoincare.Analysis.BrownianOrthogonalPathLaw
 public import LeanPool.GinibrePoincare.Analysis.BrownianOrthogonalFutureContinuousNoise
+public import LeanPool.GinibrePoincare.Analysis.GinibreStochasticContinuousNoisePath
 
 /-!
 # Brownian orthogonal continuous path law
@@ -60,32 +61,8 @@ theorem continuousMap_law_eq_of_whole_path_law_eq {Ω E : Type*}
     [MeasurableSpace C(ℝ, E)] [BorelSpace C(ℝ, E)] [PolishSpace C(ℝ, E)]
     (P : Measure Ω) (X Y : Ω → C(ℝ, E)) (hX : Measurable X) (hY : Measurable Y)
     (hlaw : P.map (fun ω t => X ω t) = P.map (fun ω t => Y ω t)) :
-    P.map X = P.map Y := by
-  let d := TopologicalSpace.denseSeq ℝ
-  let f : C(ℝ, E) → ℕ → E := fun x k => x (d k)
-  have hf : MeasurableEmbedding f :=
-    (continuous_pi (fun k => continuous_eval_const (d k))).measurableEmbedding (by
-      intro x y h
-      apply DFunLike.coe_injective
-      exact (TopologicalSpace.denseRange_denseSeq ℝ).equalizer x.continuous y.continuous h)
-  have hXm : Measurable (fun ω t => X ω t) := by
-    apply Measurable.of_eval
-    intro t
-    exact (continuous_eval_const t).measurable.comp hX
-  have hYm : Measurable (fun ω t => Y ω t) := by
-    apply Measurable.of_eval
-    intro t
-    exact (continuous_eval_const t).measurable.comp hY
-  let R : (ℝ → E) → ℕ → E := fun x k => x (d k)
-  have hR : Measurable R := by
-    apply Measurable.of_eval
-    intro k
-    exact measurable_pi_apply (d k)
-  apply hf.map_injective
-  rw [Measure.map_map hf.measurable hX, Measure.map_map hf.measurable hY]
-  have hh := congrArg (Measure.map R) hlaw
-  rw [Measure.map_map hR hXm, Measure.map_map hR hYm] at hh
-  exact hh
+    P.map X = P.map Y :=
+  actualContinuousMap_law_eq_of_raw_path_law P P X Y hX hY hlaw
 
 /-- Assembles real coordinate paths into the configuration noise path whose coordinate `j` at
 time `t` is `√(2α/n²) • (p (j, 0) t + I * p (j, 1) t)`, with `t` read as `t.toNNReal`. -/

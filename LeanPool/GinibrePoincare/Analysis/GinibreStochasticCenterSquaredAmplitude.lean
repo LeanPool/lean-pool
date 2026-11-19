@@ -59,17 +59,9 @@ theorem ginibreBrownianHamiltonianStoppedProcess_center_CIR_amplitude_properties
         ∧
     (∀ ω, Continuous (fun t => a t ω)) ∧
     ∃ C > (0 : ℝ), ∀ t ω, ‖a t ω‖ ≤ C := by
-  dsimp only
-  let f : Configuration n → ℝ := fun x => Real.sqrt ((8*α/(n : ℝ))*(ginibreCenterSquared n) x)
-  have hf : Continuous f := Real.continuous_sqrt.comp
-    (continuous_const.mul (contDiff_ginibreCenterSquared n).continuous)
-  have hAdapt := ginibreBrownianHamiltonianStoppedProcess_stronglyAdapted hn α z hz B P hB R hR T
-  have hCont := ginibreBrownianHamiltonianStoppedProcess_continuous hn α z hz B R hR T
-  refine ⟨fun t => (hf.measurable.comp (hAdapt t).measurable).stronglyMeasurable,
-    fun ω => hf.comp (hCont ω),?_⟩
-  obtain ⟨C, hC, hb⟩ := ((ginibreHamiltonianSublevel_isCompact hn R).image
-      hf).isBounded.exists_pos_norm_le
-  refine ⟨C, hC, fun t ω => hb _ ?_⟩
-  exact ⟨_, ginibreBrownianHamiltonianStoppedProcess_range hn α z hz B R hR T t ω, rfl⟩
+  exact ginibreBrownianHamiltonianStoppedProcess_continuous_function_properties hn α z hz B P hB
+    R hR T (fun x => Real.sqrt ((8*α/(n : ℝ))*(ginibreCenterSquared n) x))
+    (Real.continuous_sqrt.comp
+      (continuous_const.mul (contDiff_ginibreCenterSquared n).continuous))
 end
 end GinibrePoincare

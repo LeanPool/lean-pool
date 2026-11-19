@@ -184,32 +184,9 @@ theorem ginibreActualOU_sublevel_canonical_whole_path_law_exists {Ω : Type*}
     have hQP : Q ≪ P := withDensity_absolutelyContinuous P _
     have hCan : ∀ᵐ ω ∂P, ∀ t : ℝ≥0, t≤θ ω → ginibreDrivenMaximalValue n α
         (ginibreConfigurationBrownianNoise n (ginibreInteractionCorrectedBrownian n α B Y) α ω) z
-            t=Y t ω := by
-      have hBcont := ae_all_iff.mpr (fun i => (hB i).cont)
-      filter_upwards [hEq, ginibreConfigurationBrownianNoise_actual n B P hB α, hBcont] with ω hEqω
-          hNω hBω
-      let y := fun s : ℝ => Y s.toNNReal ω
-      let N := ginibreConfigurationBrownianNoise n (ginibreInteractionCorrectedBrownian n α B Y) α ω
-      have hVol := ginibreOUPath_correctedBrownian_original_volterra n α α.property B Y ω z (θ ω)
-        (hYC ω) (fun t => hCF _ (hYR t ω)) hNω.2 hEqω
-      have hD : Continuous (fun s : ℝ => ginibreLangevinDrift n α (y s)) := by
-        apply continuous_iff_continuousAt.mpr
-        intro s
-        exact (ginibreLangevinDrift_contDiffAt n α (y s) (hCF _ (hYR _ ω))).continuousAt.comp
-          ((hYC ω).comp continuous_real_toNNReal).continuousAt
-      have hseg : GinibreDrivenSegment n α N z (θ ω) y := by
-        refine ⟨((hYC ω).comp continuous_real_toNNReal).continuousOn,?_,?_⟩
-        · simpa only [y, Real.toNNReal_zero] using hY0 ω
-        · intro s hs
-          refine ⟨hCF _ (hYR _ ω), hD.intervalIntegrable 0 s,?_⟩
-          have he := hVol s.toNNReal (Real.toNNReal_le_iff_le_coe.mpr hs.2)
-          simpa only [y, N, Real.coe_toNNReal _ hs.1] using he
-      have hN := ginibreInteractionCorrectedBrownian_noise_continuous n α B Y ω hBω (hYC ω) (fun t
-          => hCF _ (hYR t ω))
-      have hL := hseg.horizon_lt_lifetime hN.1 hN.2
-      intro t ht
-      simpa only [y, N, Real.toNNReal_coe] using
-        ginibreDrivenMaximalValue_eq_segment hseg t ht ((ENNReal.coe_le_coe.mpr ht).trans_lt hL)
+            t=Y t ω :=
+      ginibreOUPath_correctedBrownian_canonical_prefix_ae n α B P hB Y z θ hYC
+        (fun t ω => hCF _ (hYR t ω)) hY0 hEq
     have hCanQ : ∀ᵐ ω ∂Q, ∀ t : ℝ≥0, t≤θ ω → ginibreDrivenMaximalValue n α
         (ginibreConfigurationBrownianNoise n (ginibreInteractionCorrectedBrownian n α B Y) α ω) z
             t=Y t ω := hQP.ae_le hCan

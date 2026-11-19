@@ -35,8 +35,7 @@ SOFTWARE.
 
 module
 
-public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralPuncturedCauchy
-public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralHorizon
+public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralPuncturedPartialApproximation
 
 /-! Genuine continuous stochastic integral approximants for a bounded adapted
 integrand continuous at every positive time. -/
@@ -67,31 +66,9 @@ theorem brownianPuncturedIntegral_continuous_approximants {Ω ι : Type*}
         (brownianUniformLeftSum (B j) (brownianInitialTimeCutoff F (1/((n : ℝ)+1)))
           t (k+1) ω-M n t ω)^2 ∂P) atTop (𝓝 0)) ∧
       Tendsto (fun q : ℕ × ℕ => ∫ ω, (M q.1 T ω-M q.2 T ω)^2 ∂P) atTop (𝓝 0) := by
-  have := Fintype.ofFinite ι
-  let ε := fun n : ℕ => 1/((n : ℝ)+1)
-  have he (n : ℕ) : 0 < ε n := by dsimp [ε]; positivity
-  let A := fun n => brownianInitialTimeCutoff F (ε n)
-  have ha (n : ℕ) := brownianInitialTimeCutoff_adapted F (ε n) _ hF
-  have hac (n : ℕ) : ∀ᵐ ω ∂P, ContinuousOn (fun t => A n t ω) (Set.Icc 0 T) :=
-    hc.mono fun ω hω => (brownianInitialTimeCutoff_continuous F (he n) ω hω).continuousOn
-  have hab (n : ℕ) : ∀ t ω, ‖A n t ω‖ ≤ C :=
-    fun t ω => brownianInitialTimeCutoff_bound F (ε n) C hb t ω
-  have hex (n : ℕ) := brownianContinuousIntegral_exists B P hB hind j (A n) (ha n)
-    T (hac n) C hC (hab n)
-  choose M hM hMC hML hM0 hMP hMS using hex
-  have hleft (n : ℕ) (t : ℝ≥0) (ht : t ≤ T) : Tendsto (fun k => ∫ ω,
-      (brownianUniformLeftSum (B j) (A n) t (k+1) ω-M n t ω)^2 ∂P) atTop (𝓝 0) :=
-    (brownianContinuousIntegral_horizon_limit B P (fun i => (hB i).toIsPreBrownianReal)
-      hind j (A n) (ha n) T t ht (hac n) C hC (hab n) (M n t) (hML n t) (hMS n t)).1
-  refine ⟨M, hM, hMC, hML, hM0, hleft,?_⟩
-  apply brownianInitialCutoff_integral_limits_cauchy B P
-    (fun i => (hB i).toIsPreBrownianReal) hind j F hF C hC hb T hT
-    (fun n => M n T) (fun n => hML n T)
-  intro n
-  convert hleft n T le_rfl using 1
-  funext k
-  apply integral_congr_ae
-  exact ae_of_all P fun ω => by dsimp [A, ε]; ring
+  obtain ⟨M, hM, hMC, hML, hM0, hleft, -, hterm⟩ :=
+    brownianPuncturedIntegral_partial_approximants B P hB hind j F hF hc C hC hb T hT
+  exact ⟨M, hM, hMC, hML, hM0, hleft, hterm⟩
 
 end
 end GinibrePoincare

@@ -47,28 +47,25 @@ open scoped NNReal Topology
 namespace GinibrePoincare
 noncomputable section
 
-theorem brownianPuncturedContinuousIntegral_exists {Ω ι : Type*}
-    [MeasurableSpace Ω] [Finite ι]
+/-- Horizon-capped limit of approximating martingales: continuous `L²` martingales started at
+zero whose terminal values are Cauchy in mean square converge in mean square, at every time up
+to the horizon `T`, to a continuous `L²` martingale started at zero. -/
+theorem brownianCappedApproximants_limit {Ω ι : Type*} [MeasurableSpace Ω]
     (B : ι → ℝ≥0 → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] [P.IsComplete]
-    (hB : ∀ i, IsBrownianReal (B i) P) (hind : iIndepFun (fun i ω t => B i t ω) P)
-    (j : ι) (F : ℝ≥0 → Ω → ℝ)
-    (hF : ∀ t, @Measurable Ω ℝ (ginibreBrownianAugmentedFiltration B P
-      (fun i => (hB i).toIsPreBrownianReal) t) _ (F t))
-    (hc : ∀ᵐ ω ∂P, ContinuousOn (fun t => F t ω) (Set.Ioi 0))
-    (C : ℝ) (hC : 0 ≤ C) (hb : ∀ t ω, ‖F t ω‖ ≤ C)
-    (T : ℝ≥0) (hT : 0 < T) :
+    (hB : ∀ i, IsBrownianReal (B i) P) (A : ℕ → ℝ≥0 → Ω → ℝ)
+    (hAM : ∀ n, Martingale (A n) (ginibreBrownianAugmentedFiltration B P
+      (fun i => (hB i).toIsPreBrownianReal)) P)
+    (hAC : ∀ n ω, Continuous (fun t => A n t ω)) (hAL : ∀ n t, MemLp (A n t) 2 P)
+    (hA0 : ∀ n, A n 0 =ᵐ[P] (fun _ => 0)) (T : ℝ≥0)
+    (hAT : Tendsto (fun q : ℕ × ℕ => ∫ ω, (A q.1 T ω - A q.2 T ω) ^ 2 ∂P) atTop (𝓝 0)) :
     ∃ M : ℝ≥0 → Ω → ℝ,
       Martingale M (ginibreBrownianAugmentedFiltration B P
         (fun i => (hB i).toIsPreBrownianReal)) P ∧
       (∀ ω, Continuous (fun t => M t ω)) ∧
       (∀ t, MemLp (M t) 2 P) ∧ M 0 =ᵐ[P] (fun _ => 0) ∧
-      ∀ t, t ≤ T → Tendsto (fun k => ∫ ω,
-        (brownianUniformLeftSum (B j) F t (k+1) ω-M t ω)^2 ∂P) atTop (𝓝 0) := by
-  have := Fintype.ofFinite ι
+      ∀ t ≤ T, Tendsto (fun n => ∫ ω, (A n t ω - M t ω) ^ 2 ∂P) atTop (𝓝 0) := by
   let hbrown := fun i => (hB i).toIsPreBrownianReal
   let ℱ := ginibreBrownianAugmentedFiltration B P hbrown
-  obtain ⟨A, hAM, hAC, hAL, hA0, hAS, hAT⟩ :=
-    brownianPuncturedIntegral_continuous_approximants B P hB hind j F hF hc C hC hb T hT
   let K := fun n => realMartingaleHorizonCap (A n) T
   have hKM (n : ℕ) : Martingale (K n) ℱ P :=
     realMartingaleHorizonCap_martingale P ℱ (A n) (hAM n) (hAL n) T
@@ -94,6 +91,33 @@ theorem brownianPuncturedContinuousIntegral_exists {Ω ι : Type*}
       tendstoInMeasure_of_tendsto_ae (fun _ => aestronglyMeasurable_const)
         (ae_of_all P fun _ => tendsto_const_nhds)
     exact tendstoInMeasure_ae_unique hp hpz
+  refine ⟨M, hMM, hMC, hML, hz, fun t htT => ?_⟩
+  simpa only [K, realMartingaleHorizonCap, min_eq_left htT] using hMS t
+
+theorem brownianPuncturedContinuousIntegral_exists {Ω ι : Type*}
+    [MeasurableSpace Ω] [Finite ι]
+    (B : ι → ℝ≥0 → Ω → ℝ) (P : Measure Ω) [IsProbabilityMeasure P] [P.IsComplete]
+    (hB : ∀ i, IsBrownianReal (B i) P) (hind : iIndepFun (fun i ω t => B i t ω) P)
+    (j : ι) (F : ℝ≥0 → Ω → ℝ)
+    (hF : ∀ t, @Measurable Ω ℝ (ginibreBrownianAugmentedFiltration B P
+      (fun i => (hB i).toIsPreBrownianReal) t) _ (F t))
+    (hc : ∀ᵐ ω ∂P, ContinuousOn (fun t => F t ω) (Set.Ioi 0))
+    (C : ℝ) (hC : 0 ≤ C) (hb : ∀ t ω, ‖F t ω‖ ≤ C)
+    (T : ℝ≥0) (hT : 0 < T) :
+    ∃ M : ℝ≥0 → Ω → ℝ,
+      Martingale M (ginibreBrownianAugmentedFiltration B P
+        (fun i => (hB i).toIsPreBrownianReal)) P ∧
+      (∀ ω, Continuous (fun t => M t ω)) ∧
+      (∀ t, MemLp (M t) 2 P) ∧ M 0 =ᵐ[P] (fun _ => 0) ∧
+      ∀ t, t ≤ T → Tendsto (fun k => ∫ ω,
+        (brownianUniformLeftSum (B j) F t (k+1) ω-M t ω)^2 ∂P) atTop (𝓝 0) := by
+  have := Fintype.ofFinite ι
+  let hbrown := fun i => (hB i).toIsPreBrownianReal
+  let ℱ := ginibreBrownianAugmentedFiltration B P hbrown
+  obtain ⟨A, hAM, hAC, hAL, hA0, hAS, hAT⟩ :=
+    brownianPuncturedIntegral_continuous_approximants B P hB hind j F hF hc C hC hb T hT
+  obtain ⟨M, hMM, hMC, hML, hz, hMS⟩ :=
+    brownianCappedApproximants_limit B P hB A hAM hAC hAL hA0 T hAT
   refine ⟨M, hMM, hMC, hML, hz,?_⟩
   intro t htT
   by_cases ht0 : t=0
@@ -119,8 +143,8 @@ theorem brownianPuncturedContinuousIntegral_exists {Ω ι : Type*}
       ((had s).mono (ℱ.le s) le_rfl).aestronglyMeasurable C
       (ae_of_all P fun ω => brownianInitialTimeCutoff_bound F (ε n) C hb s ω)
     exact brownianUniformLeftSum_memLp_two B P hbrown hind j _ had hi t (k+1)
-  apply actualMeanSquareLimit_initial_cutoff_transfer P S D (fun n => K n t) (M t)
-    hSL hDL (fun n => hKL n t) (hML t)
+  apply actualMeanSquareLimit_initial_cutoff_transfer P S D (fun n => A n t) (M t)
+    hSL hDL (fun n => hAL n t) (hML t)
     (fun n => C^2*(2*ε n)) (fun k => C^2*((t : ℝ)/((k : ℝ)+1)))
   · convert (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_mul (C^2*2) using 1 <;> (try
       funext k) <;> (try dsimp [ε]) <;> ring_nf
@@ -131,8 +155,8 @@ theorem brownianPuncturedContinuousIntegral_exists {Ω ι : Type*}
       C (ε n) hC (by dsimp [ε]; positivity) hb t ht (k+1) (Nat.succ_pos k)
     simpa only [S, D, Nat.cast_add, Nat.cast_one, mul_add] using hh
   · intro n
-    simpa only [D, ε, K, realMartingaleHorizonCap, min_eq_left htT] using hAS n t htT
-  · exact hMS t
+    exact hAS n t htT
+  · exact hMS t htT
 
 end
 end GinibrePoincare

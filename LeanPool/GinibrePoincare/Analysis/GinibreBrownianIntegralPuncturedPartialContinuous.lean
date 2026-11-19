@@ -39,6 +39,7 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralApproxima
 public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralPuncturedPartialBound
 public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralPuncturedPartialApproximation
 public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralMartingaleCap
+public import LeanPool.GinibrePoincare.Analysis.GinibreBrownianIntegralPuncturedContinuous
 
 /-! The actual bounded adapted stochastic integral remains a continuous L²
 martingale when the integrand is continuous only at positive times. -/
@@ -71,31 +72,8 @@ theorem brownianPuncturedPartialIntegral_exists {Ω ι : Type*}
   let ℱ := ginibreBrownianAugmentedFiltration B P hbrown
   obtain ⟨A, hAM, hAC, hAL, hA0, hAS, hAPS, hAT⟩ :=
     brownianPuncturedIntegral_partial_approximants B P hB hind j F hF hc C hC hb T hT
-  let K := fun n => realMartingaleHorizonCap (A n) T
-  have hKM (n : ℕ) : Martingale (K n) ℱ P :=
-    realMartingaleHorizonCap_martingale P ℱ (A n) (hAM n) (hAL n) T
-  have hKL (n : ℕ) (t : ℝ≥0) : MemLp (K n t) 2 P := hAL n (min t T)
-  have hKC (n : ℕ) : ∀ᵐ ω ∂P, ContinuousOn (fun t => K n t ω) (Set.Icc 0 T) :=
-    ae_of_all P fun ω => (realMartingaleHorizonCap_continuous (A n) (hAC n) T ω).continuousOn
-  have hcap (n : ℕ) (t : ℝ≥0) (ω : Ω) : K n t ω=K n (min t T) ω := by
-    simp [K, realMartingaleHorizonCap]
-  have hterm : Tendsto (fun q : ℕ × ℕ => ∫ ω, (K q.2 T ω-K q.1 T ω)^2 ∂P)
-      atTop (𝓝 0) := by
-    convert hAT using 1
-    funext q
-    apply integral_congr_ae
-    exact ae_of_all P fun ω => by simp only [K, realMartingaleHorizonCap, min_self]; ring
-  obtain ⟨M, hMM, hMC, hML, hMP, hMS⟩ := realMartingale_terminal_cauchy_exists_continuous_martingale
-    P ℱ (ginibreBrownianFamilyPastSpace B) (ginibreBrownianFamilyPastSpace_le B P hbrown)
-    (fun t => rfl) K hKM T (fun n => hKL n T) hKC hcap hterm
-  have hz : M 0 =ᵐ[P] (fun _ => 0) := by
-    have hK0 (n : ℕ) : K n 0 =ᵐ[P] (fun _ => 0) := by
-      simpa only [K, realMartingaleHorizonCap, zero_min] using hA0 n
-    have hp := (hMP 0).congr hK0 EventuallyEq.rfl
-    have hpz : TendstoInMeasure P (fun _ : ℕ => (fun _ : Ω => (0 : ℝ))) atTop (fun _ => 0) :=
-      tendstoInMeasure_of_tendsto_ae (fun _ => aestronglyMeasurable_const)
-        (ae_of_all P fun _ => tendsto_const_nhds)
-    exact tendstoInMeasure_ae_unique hp hpz
+  obtain ⟨M, hMM, hMC, hML, hz, hMS⟩ :=
+    brownianCappedApproximants_limit B P hB A hAM hAC hAL hA0 T hAT
   refine ⟨M, hMM, hMC, hML, hz,?_⟩
   intro t htT
   by_cases ht0 : t=0
@@ -121,8 +99,8 @@ theorem brownianPuncturedPartialIntegral_exists {Ω ι : Type*}
       ((had s).mono (ℱ.le s) le_rfl).aestronglyMeasurable C
       (ae_of_all P fun ω => brownianInitialTimeCutoff_bound F (ε n) C hb s ω)
     exact brownianUniformPartialSum_memLp_two B P hbrown hind j _ had hi T (k+1) t
-  apply actualMeanSquareLimit_initial_cutoff_transfer P S D (fun n => K n t) (M t)
-    hSL hDL (fun n => hKL n t) (hML t)
+  apply actualMeanSquareLimit_initial_cutoff_transfer P S D (fun n => A n t) (M t)
+    hSL hDL (fun n => hAL n t) (hML t)
     (fun n => C^2*(2*ε n)) (fun k => C^2*((T : ℝ)/((k : ℝ)+1)))
   · convert (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_mul (C^2*2) using 1 <;> (try
       funext k) <;> (try dsimp [ε]) <;> ring_nf
@@ -133,8 +111,8 @@ theorem brownianPuncturedPartialIntegral_exists {Ω ι : Type*}
       C (ε n) hC (by dsimp [ε]; positivity) hb T t hT htT (k+1) (Nat.succ_pos k)
     simpa only [S, D, Nat.cast_add, Nat.cast_one, mul_add] using hh
   · intro n
-    simpa only [D, ε, K, realMartingaleHorizonCap, min_eq_left htT] using hAPS n t
-  · exact hMS t
+    exact hAPS n t
+  · exact hMS t htT
 
 end
 end GinibrePoincare

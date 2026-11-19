@@ -76,8 +76,7 @@ theorem lebesgueL2KernelAverage_map (n : ℕ) {K : Configuration n → ℝ}
     (L : V →L[ℝ] W) (u : Lp V 2 (volume : Measure (Configuration n))) :
     L.compLpL 2 volume (lebesgueL2KernelAverage n K u) =
       lebesgueL2KernelAverage n K (L.compLpL 2 volume u) := by
-  change L.compLpL 2 volume (∫ y, K y • lebesgueL2Translate n y u) =
-    ∫ y, K y • lebesgueL2Translate n y (L.compLpL 2 volume u)
+  unfold lebesgueL2KernelAverage
   rw [← (L.compLpL 2 volume).integral_comp_comm
     (integrable_lebesgueL2KernelIntegrand n hK hKc u)]
   simp only [map_smul, lebesgueL2Translate_map]
