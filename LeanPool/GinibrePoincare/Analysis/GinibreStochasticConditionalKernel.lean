@@ -46,15 +46,6 @@ open scoped MeasureTheory
 namespace GinibrePoincare
 noncomputable section
 
-theorem ginibreIndependent_condDistrib {Ω β : Type*} [MeasurableSpace Ω] [MeasurableSpace β]
-    (P : Measure Ω) [IsProbabilityMeasure P] (R : Ω → β) (Z : Ω → ℝ)
-    (hR : Measurable R) (ν : Measure ℝ) [IsProbabilityMeasure ν]
-    (hZ : HasLaw Z ν P) (hind : IndepFun Z R P) :
-    condDistrib Z R P =ᵐ[P.map R] Kernel.const β ν := by
-  apply condDistrib_ae_eq_of_measure_eq_compProd hR.aemeasurable hZ.aemeasurable
-  rw [Measure.compProd_const]
-  rw [hind.symm.map_prod_eq_prod_map_map hR.aemeasurable hZ.aemeasurable, hZ.map_eq]
-
 theorem ginibreIndependent_condDistrib_general {Ω β ζ : Type*}
     [MeasurableSpace Ω] [MeasurableSpace β] [MeasurableSpace ζ]
     [StandardBorelSpace ζ] [Nonempty ζ]
@@ -65,6 +56,13 @@ theorem ginibreIndependent_condDistrib_general {Ω β ζ : Type*}
   apply condDistrib_ae_eq_of_measure_eq_compProd hR.aemeasurable hZ.aemeasurable
   rw [Measure.compProd_const]
   rw [hind.symm.map_prod_eq_prod_map_map hR.aemeasurable hZ.aemeasurable, hZ.map_eq]
+
+theorem ginibreIndependent_condDistrib {Ω β : Type*} [MeasurableSpace Ω] [MeasurableSpace β]
+    (P : Measure Ω) [IsProbabilityMeasure P] (R : Ω → β) (Z : Ω → ℝ)
+    (hR : Measurable R) (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    (hZ : HasLaw Z ν P) (hind : IndepFun Z R P) :
+    condDistrib Z R P =ᵐ[P.map R] Kernel.const β ν :=
+  ginibreIndependent_condDistrib_general P R Z hR ν hZ hind
 
 end
 end GinibrePoincare
