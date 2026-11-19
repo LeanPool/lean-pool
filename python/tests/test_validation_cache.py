@@ -463,18 +463,32 @@ def test_lint_pool_reports_every_failed_unit_in_order(repository: Path) -> None:
     assert list(cache.used) == ["lint:LeanPool.A"]
 
 
-def test_lint_command_fails_without_saving_receipts(
+def test_lint_command_keeps_the_passes_of_a_failed_run(
     repository: Path, monkeypatch, capsys
 ) -> None:
-    """A lint failure exits non-zero, prints the finding, and saves nothing."""
+    """A failed run saves its passes and no failure, so the next repeats only that."""
     monkeypatch.setattr(
         sys, "argv", ["validation_cache", "lint", "--repo", str(repository)]
     )
-    failure = subprocess.CompletedProcess([], 1, "A.lean:1:1: error: finding\n")
-    with patch("lean_pool.validation_cache.subprocess.run", return_value=failure):
+    linted: list[str] = []
+
+    def lint(command: list[str], **keywords) -> subprocess.CompletedProcess:
+        unit = command[5]
+        linted.append(unit)
+        failed = unit == "LeanPool.A"
+        output = "A.lean:1:1: error: finding\n" if failed else "Lint passed.\n"
+        return subprocess.CompletedProcess(command, int(failed), output)
+
+    with patch("lean_pool.validation_cache.subprocess.run", side_effect=lint):
         assert main() == 1
-    assert "A.lean:1:1: error: finding" in capsys.readouterr().out
-    assert not (repository / ".lake/validation-cache/v1/passes.json").exists()
+        assert "A.lean:1:1: error: finding" in capsys.readouterr().out
+        saved = read_receipts(repository / ".lake/validation-cache/v1/passes.json")
+        assert sorted(saved) == ["lint:LeanPool", "lint:LeanPool.B"]
+        assert sorted(linted) == ["LeanPool", "LeanPool.A", "LeanPool.B"]
+        # Unchanged, the failing unit fails again and nothing else is repeated.
+        linted.clear()
+        assert main() == 1
+        assert linted == ["LeanPool.A"]
 
 
 def _shard(root: Path, *units: str) -> ValidationCache:

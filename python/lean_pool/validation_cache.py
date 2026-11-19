@@ -436,10 +436,10 @@ def main() -> int:
         }
     for error in errors:
         print(error if isinstance(error, str) else error.format(root))
-    if errors:
-        return 1
+    # A failed check never has a receipt, so saving after a failure keeps
+    # exactly the passes: the next run repeats only what failed or changed.
     cache.save()
-    return 0
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":
