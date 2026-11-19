@@ -1,0 +1,72 @@
+authors:
+- Brian Sanders
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: 'Proposal #721, the upstream README ("AI-generated with human guidance") and its
+  agent instructions identify human-directed AI-written proofs; the source headers credit Brian
+  Sanders. Port and optimization by Claude.'
+branch: combinatorics
+msc:
+- 05D40
+- 05C80
+- 60C05
+slug: probabilistic-method
+title: The finite probabilistic method for graphs
+summary: Finite, counting-based tools of the probabilistic method. Proves the asymmetric lopsided
+  Lovász Local Lemma for arbitrary nonnegative weights of total one on a finite sample set, its
+  p-biased-cube and symmetric corollaries for events on coordinate sets, dependent random choice,
+  and first-moment and deletion bounds for cliques and independent sets of G(n, p). Identifies the
+  counting probability with Mathlib's setBer(U, p) and binomial random graph G(V, p).
+entry_module: LeanPool.ProbabilisticMethod
+source:
+  title: The finite probabilistic method for graphs
+  authors:
+  - Brian Sanders
+  url: https://github.com/Egly443/lean-probabilistic-method
+  github_repo: Egly443/lean-probabilistic-method
+  commit: 841e3042ef057564ae3cbd2322e0f369bbf64d34
+main_declarations:
+- Finset.prod_one_sub_le_weightProb_forall_not
+- Finset.exists_forall_not_of_symmetric_lll
+- SimpleGraph.exists_dependentRandomChoice
+- SimpleGraph.exists_large_cliqueFree_of_deletion
+- SimpleGraph.binomialRandom_real_eq_bernoulliProb
+main_results:
+- declaration: Finset.prod_one_sub_le_weightProb_forall_not
+  informal: Let w be nonnegative weights of total one on a finite set Ω, and let events E i, i ∈ I,
+    satisfy the lopsided hypothesis that P(E i and no E j, j ∈ S) ≤ P(E i) P(no E j, j ∈ S) for
+    every S ⊆ I avoiding i and Γ i. If 0 ≤ x ≤ 1 and P(E i) ≤ x i ∏ j ∈ Γ i, (1 - x j) for
+    i ∈ I, then the probability that no E i occurs is at least ∏ i ∈ I, (1 - x i).
+  source_ref: 'Upstream lean-probabilistic-method at 841e3042ef057564ae3cbd2322e0f369bbf64d34,
+    LocalLemma.lean; Erdős–Lovász (1975) and the lopsided form of Erdős–Spencer (1991).'
+- declaration: Finset.exists_forall_not_of_symmetric_lll
+  informal: On the p-biased cube of a finite set U with 0 ≤ p ≤ 1, let each event E i depend only
+    on coordinates T i ⊆ U, have probability at most q, and have T i meet T j for at most d other
+    indices j ∈ I. If e q (d + 1) ≤ 1, some subset of U avoids every E i.
+  source_ref: 'Upstream lean-probabilistic-method at 841e3042ef057564ae3cbd2322e0f369bbf64d34,
+    LocalLemma.lean; symmetric Local Lemma as in Alon–Spencer, The probabilistic method.'
+- declaration: SimpleGraph.exists_dependentRandomChoice
+  informal: For a graph on a finite nonempty vertex set of size n and r ≥ 1, if
+    a n ^ t + C(n, r) m ^ t ≤ ∑ v, deg v ^ t, there is a vertex set W with at least a elements in
+    which every r-element subset has at least m common neighbours.
+  source_ref: 'Upstream lean-probabilistic-method at 841e3042ef057564ae3cbd2322e0f369bbf64d34,
+    DependentRandomChoice.lean; Fox–Sudakov, Dependent random choice (2011).'
+- declaration: SimpleGraph.exists_large_cliqueFree_of_deletion
+  informal: For 0 ≤ p ≤ 1 and k, l ≥ 1, some graph G on n vertices has a vertex set t of size at
+    least n - C(n, k) p ^ C(k, 2) - C(n, l) (1 - p) ^ C(l, 2) such that no k-clique of G and no
+    l-clique of its complement lies inside t.
+  source_ref: 'Upstream lean-probabilistic-method at 841e3042ef057564ae3cbd2322e0f369bbf64d34,
+    RandomGraph.lean; deletion method as in Alon–Spencer, The probabilistic method.'
+- declaration: SimpleGraph.binomialRandom_real_eq_bernoulliProb
+  informal: For p in [0, 1], Mathlib's binomial random graph G(V, p) assigns a set S of graphs
+    the counting probability, over p-random sets A of possible edges, of any event Q with
+    fromEdgeSet A ∈ S ↔ Q A for all such A.
+  source_ref: 'Upstream lean-probabilistic-method at 841e3042ef057564ae3cbd2322e0f369bbf64d34,
+    MeasureBridge.lean; bridge to Mathlib''s binomialRandom.'
+tags:
+- probabilistic-method
+- lovasz-local-lemma
+- dependent-random-choice
+- random-graphs
+- ramsey-theory
