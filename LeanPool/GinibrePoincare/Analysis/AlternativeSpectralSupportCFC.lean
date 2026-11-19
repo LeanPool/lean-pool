@@ -35,7 +35,6 @@ SOFTWARE.
 
 module
 public import Mathlib.Analysis.InnerProductSpace.StarOrder
-public import Mathlib.Tactic
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 /-!
 # Alternative spectral support CFC
