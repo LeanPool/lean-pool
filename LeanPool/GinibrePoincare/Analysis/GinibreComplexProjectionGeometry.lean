@@ -49,6 +49,29 @@ open scoped ComplexConjugate ENNReal
 namespace GinibrePoincare
 noncomputable section
 
+theorem ginibreLpStar_involutive {n : ℕ} (x : Lp ℂ 2 (ginibreMeasure n)) :
+    star (star x) = x :=
+  Lp_star_star x
+
+theorem ginibreLpStar_add {n : ℕ} (x y : Lp ℂ 2 (ginibreMeasure n)) :
+    star (x + y) = star x + star y :=
+  Lp_star_add x y
+
+theorem ginibreLpStar_sub {n : ℕ} (x y : Lp ℂ 2 (ginibreMeasure n)) :
+    star (x - y) = star x - star y :=
+  Lp_star_sub x y
+
+theorem ginibreLpStar_zero (n : ℕ) : star (0 : Lp ℂ 2 (ginibreMeasure n)) = 0 :=
+  Lp_star_zero (μ := ginibreMeasure n)
+
+theorem ginibreLpStar_complex_smul {n : ℕ} (a : ℂ) (x : Lp ℂ 2 (ginibreMeasure n)) :
+    star (a • x) = star a • star x :=
+  Lp_star_complex_smul a x
+
+theorem ginibre_inner_star_star {n : ℕ} (x y : Lp ℂ 2 (ginibreMeasure n)) :
+    inner ℂ (star x) (star y) = star (inner ℂ x y) :=
+  Lp_inner_star_star x y
+
 theorem ginibreConstantL2_star (n : ℕ) (hn : 0 < n) (a : ℂ) :
     star (ginibreConstantL2 n hn a) = ginibreConstantL2 n hn (star a) := by
   let := ginibreProbabilityInstance hn
@@ -155,6 +178,11 @@ holomorphic orthogonal projection by the genuine antiunitary involution. -/
 def ginibreAntiholomorphicProjection (n : ℕ) (hn : 0 < n)
     (f : Lp ℂ 2 (ginibreMeasure n)) : Lp ℂ 2 (ginibreMeasure n) :=
   star ((ginibreHolomorphicAmbientClosedSpan n hn).starProjection (star f))
+
+/-- Pointwise complex conjugation `star` on Ginibre `L²`, as a real-linear isometry. -/
+def ginibreAmbientConjugationIsometry (n : ℕ) :
+    Lp ℂ 2 (ginibreMeasure n) →ₗᵢ[ℝ] Lp ℂ 2 (ginibreMeasure n) :=
+  LpConjugationIsometry (ginibreMeasure n)
 
 /-- The genuine closed conjugate-holomorphic subspace. -/
 def ginibreAntiholomorphicAmbientClosedSpan (n : ℕ) (hn : 0 < n) :
