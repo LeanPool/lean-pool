@@ -67,8 +67,9 @@ open Filter Set
 open scoped Topology
 
 /-- A sequence `u` is *nearly subadditive* with error `f`, window ratio `μ` and threshold `N` if
-`u (m + n) ≤ u m + u n + f (m + n)` for all `N ≤ m ≤ n ≤ μ * m`. With `f = 0` and `μ ≥ 2` this is
-the condition of de Bruijn and Erdős; Füredi and Ruzsa allow any `μ > 1`. -/
+`u (m + n) ≤ u m + u n + f (m + n)` for all `N ≤ m ≤ n ≤ μ * m`. With `f = 0`, `μ = 2` and
+`N = 1` this is the condition of de Bruijn and Erdős (their Theorem 22). Füredi and Ruzsa state it
+with a general threshold `N` (their Theorem 1) and allow any `μ > 1` (their Theorem 2). -/
 def NearlySubadditive (f : ℕ → ℝ) (μ : ℝ) (N : ℕ) (u : ℕ → ℝ) : Prop :=
   ∀ ⦃m n : ℕ⦄, N ≤ m → m ≤ n → (n : ℝ) ≤ μ * m → u (m + n) ≤ u m + u n + f (m + n)
 
@@ -240,8 +241,10 @@ private theorem exists_add_eq (hμ : 1 < μ) {n : ℕ} (hn : (1 + μ) ≤ (μ - 
   · rw [Nat.cast_sub (by omega)]
     linarith
 
-/-- One propagation step (Füredi–Ruzsa, Claim 4): a deficit `η` at every point of
-`[2^i n, cᵢ]` becomes a deficit `η / (1 + μ)` at every point of `[2^(i+1) n, cᵢ₊₁]`. -/
+/-- The propagation estimate, iterated (Füredi–Ruzsa, Claim 6 of the journal version, Claim 4 of
+the arXiv preprint): each step turns a deficit `η` at every point of `[2^i n, cᵢ]` into a deficit
+`η / (1 + μ)` at every point of `[2^(i+1) n, cᵢ₊₁]`, so a deficit `η` at `n` gives a deficit
+`η / (1 + μ) ^ i` on `[2^i n, cᵢ]`. -/
 private theorem propagate (hμ : 1 < μ) (h : NearlySubadditive 0 μ N u) {n : ℕ} {l ε η : ℝ}
     (hN : N ≤ n) (hn : (1 + μ) ≤ (μ - 1) * n) (hup : ∀ y, n ≤ y → u y / y ≤ l + ε)
     (hxn : u n / n = l + ε - η) (hη : 0 ≤ η) :
@@ -316,11 +319,8 @@ theorem tendsto_atBot_or_exists_tendsto (hμ : 1 < μ) (h : NearlySubadditive 0 
     filter_upwards [eventually_ge_atTop (max M N₃)] with n hn
     obtain ⟨hNn, h2n, hμn⟩ := hM n (by omega)
     have hup : ∀ y, n ≤ y → u y / y ≤ l + ε := fun y hy ↦ hN₃ y (by omega)
-    by_cases hx : l + ε ≤ u n / n
-    · have := mul_pos hε (pow_pos hμ0 K)
-      linarith
     set η := l + ε - u n / n with hη_def
-    have hη : 0 ≤ η := by linarith
+    have hη : 0 ≤ η := by linarith [hup n le_rfl]
     have hprop := propagate hμ h hNn hμn hup (by ring) hη K
     -- the interval `[2^K n, c_K]` contains the block `[2^K n, 2 * 2^K n]`
     have hcK : 2 * (2 ^ K * n) ≤ windowEnd μ n K := by

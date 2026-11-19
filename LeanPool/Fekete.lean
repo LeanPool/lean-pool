@@ -20,8 +20,8 @@ Authors: Brian Sanders
 Status: verified
 Main declarations: `NearlySubadditive.tendsto_atBot_or_exists_tendsto`,
   `NearlySubadditive.tendsto_lim`, `NearlySubadditive.tendsto_atBot_or_exists_tendsto_of_summable`,
-  `summable_div_sq_iff_forall_not_tendsto_atTop`, `Subadditive.tendsto_div_atBot`,
-  `exists_tendsto_div_of_le_add_const`, `Supermultiplicative.exists_nonneg_not_tendsto_rpow_inv`
+  `summable_div_sq_iff_forall_not_tendsto_atTop`,
+  `Supermultiplicative.exists_nonneg_not_tendsto_rpow_inv`
 Tags: subadditive-sequences, fekete-lemma, de-bruijn-erdos, sequences-and-limits
 MSC: 40A05, 39B62
 -/

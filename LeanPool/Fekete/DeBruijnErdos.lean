@@ -6,7 +6,6 @@ Authors: Brian Sanders
 module
 
 public import LeanPool.Fekete.Window
-public import Mathlib.Analysis.PSeries
 
 /-!
 # Fekete's lemma with an error term (de Bruijn–Erdős)
@@ -14,7 +13,9 @@ public import Mathlib.Analysis.PSeries
 If `u (m + n) ≤ u m + u n + f (m + n)` on a window `N ≤ m ≤ n ≤ μ * m` with `μ > 1`, where the
 error `f` is monotone and `∑ f n / n ^ 2 < ∞`, then `u n / n` tends to `-∞` or to a
 real limit. This is the theorem of de Bruijn and Erdős (for `μ = 2`, `N = 1`), in the generality
-of Füredi and Ruzsa. The summability condition is sharp; see
+of Füredi and Ruzsa (Theorem 3 of the journal version, Theorem 5 of the arXiv preprint). Both
+sources assume `f ≥ 0`; the version here has no sign condition on `f`, an extension obtained by
+applying the nonnegative case to `max f 0`. The summability condition is sharp; see
 `summable_div_sq_iff_forall_not_tendsto_atTop`.
 
 The bounded-defect case `u (m + n) ≤ u m + u n + C` for all `m, n`, which follows directly from
@@ -109,9 +110,11 @@ private theorem le_sum_corr (hf0 : 0 ≤ f) (hf : Monotone f) {c m n p : ℕ} (h
   exact div_le_div_of_nonneg_right (hf (hp.trans (Nat.mul_le_mul_left c (by omega))))
     (sq_nonneg _)
 
-/-- **De Bruijn–Erdős, Füredi–Ruzsa.** If `u (m + n) ≤ u m + u n + f (m + n)` on the window
-`N ≤ m ≤ n ≤ μ * m` with `μ > 1`, where `f` is monotone and `∑ f n / n ^ 2 < ∞`, then
-`u n / n` tends either to `-∞` or to a real limit. -/
+/-- **De Bruijn–Erdős, Füredi–Ruzsa** (journal Theorem 3, arXiv Theorem 5). If
+`u (m + n) ≤ u m + u n + f (m + n)` on the window `N ≤ m ≤ n ≤ μ * m` with `μ > 1`, where `f` is
+monotone and `∑ f n / n ^ 2 < ∞`, then `u n / n` tends either to `-∞` or to a real limit. The
+sources assume `f ≥ 0`; dropping that assumption is an extension, reduced to the nonnegative case
+through `max f 0`. -/
 theorem tendsto_atBot_or_exists_tendsto_of_summable (hμ : 1 < μ) (h : NearlySubadditive f μ N u)
     (hf : Monotone f) (hfs : Summable fun n : ℕ ↦ f n / (n : ℝ) ^ 2) :
     Tendsto (fun n ↦ u n / n) atTop atBot ∨ ∃ L, Tendsto (fun n ↦ u n / n) atTop (𝓝 L) := by

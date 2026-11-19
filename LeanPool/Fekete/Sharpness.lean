@@ -6,6 +6,7 @@ Authors: Brian Sanders
 module
 
 public import LeanPool.Fekete.DeBruijnErdos
+public import Mathlib.Analysis.PSeries
 
 /-!
 # Sharpness of the de Bruijn–Erdős condition
@@ -13,7 +14,7 @@ public import LeanPool.Fekete.DeBruijnErdos
 For a nonnegative monotone error `f`, the condition `∑ f n / n ^ 2 < ∞` in the de Bruijn–Erdős
 theorem cannot be weakened. If the series diverges, the sequence
 `u n = n * ∑_{i ≤ n} f i / i ^ 2` satisfies `u (m + n) ≤ u m + u n + f (m + n)` for *all* `m, n`
-while `u n / n → ∞` (Füredi–Ruzsa, Claim 7). Together with
+while `u n / n → ∞` (a variant of Füredi–Ruzsa, Claim 7). Together with
 `NearlySubadditive.tendsto_atBot_or_exists_tendsto_of_summable` this gives an exact
 characterisation: `∑ f n / n ^ 2 < ∞` if and only if no nearly `f`-subadditive sequence has
 `u n / n → ∞`.
@@ -26,8 +27,9 @@ characterisation: `∑ f n / n ^ 2 < ∞` if and only if no nearly `f`-subadditi
 
 ## TODO
 
-Füredi and Ruzsa prove more: when the series diverges there is a nearly `f`-subadditive sequence
-whose slopes `u n / n` take every rational value exactly once.
+Füredi and Ruzsa prove more (Theorem 4 of the journal version, Theorem 6 of the arXiv preprint):
+when the series diverges there is a nearly `f`-subadditive sequence whose slopes `u n / n` take
+every rational value.
 
 ## References
 
@@ -64,7 +66,10 @@ private theorem sum_block_le (hf0 : 0 ≤ f) (hf : Monotone f) {m : ℕ} (hm : 0
   rw [← div_eq_mul_inv]
   exact div_le_div_of_nonneg_right (hf (by have := mem_range.1 hk; omega)) (sq_nonneg _)
 
-/-- **Füredi–Ruzsa, Claim 7.** The witness is nearly `f`-subadditive for all pairs. -/
+/-- **A variant of Füredi–Ruzsa, Claim 7.** The witness is nearly `f`-subadditive for all pairs,
+including those with an index `0`. Claim 7 sets `f 1 = a 1 = 0` and uses positive indices only.
+Here the sum keeps the term `f 1 / 1 ^ 2`, which adds `n * f 1` to the witness: this preserves the
+defect inequality and shifts every slope `u n / n` with `n > 0` by the constant `f 1`. -/
 theorem witness_le_add (hf0 : 0 ≤ f) (hf : Monotone f) (m n : ℕ) :
     witness f (m + n) ≤ witness f m + witness f n + f (m + n) := by
   set A : ℕ → ℝ := fun p ↦ ∑ i ∈ range (p + 1), f i / (i : ℝ) ^ 2
