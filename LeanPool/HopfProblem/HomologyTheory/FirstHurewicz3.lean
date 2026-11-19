@@ -380,7 +380,6 @@ private def FirstHurewicz.inverseHurewiczMap {X : Type} [TopologicalSpace X] {b 
     (r : ∀ x : X, Path b x) : SingularH1 X →ₗ[ℤ] AbelianPi1 X b :=
   homologyDescOfChain X (edgeLoopCochain r) (edgeLoopCochain_boundaryTwo r)
 
-@[simp]
 private theorem FirstHurewicz.inverseHurewiczMap_cycleClass {X : Type} [TopologicalSpace X] {b : X}
     (r : ∀ x : X, Path b x) (c : Cycles1 X) :
     inverseHurewiczMap r (cycleClass X c) = edgeLoopCochain r c.1 :=
@@ -525,7 +524,6 @@ private theorem FirstHurewicz.inducedChain_pathChain {X Y : Type} [TopologicalSp
     inducedChain f 1 (pathChain p) = pathChain (p.map f.continuous) := by
   simp only [pathChain, inducedChain_simplex, pathSimplex_map]
 
-@[simp]
 private theorem FirstHurewicz.inducedCycles_loopCycle {X Y : Type} [TopologicalSpace X]
     [TopologicalSpace Y] (f : C(X, Y)) (b : X) (p : Path b b) :
     inducedCycles f (loopCycle p) = loopCycle (p.map f.continuous) := by

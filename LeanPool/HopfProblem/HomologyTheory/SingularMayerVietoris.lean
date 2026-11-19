@@ -902,7 +902,6 @@ attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule in
 attribute [local instance] FirstHurewicz.ChainHomology.shortOpchainsModule in
 attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule
     FirstHurewicz.ChainHomology.shortOpchainsModule FirstHurewicz.ChainHomology.opchainsModule in
-@[simp]
 private theorem FirstHurewicz.ChainHomology.homologyToChainClass_cycleClass
     (K : ChainComplex (ModuleCat.{0} ℤ) ℕ) (c : Cycle1 K) :
     homologyToChainClass K (cycleClass K c) = chainClass K c.1 := by
@@ -939,7 +938,6 @@ attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule in
 attribute [local instance] FirstHurewicz.ChainHomology.shortOpchainsModule in
 attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule
     FirstHurewicz.ChainHomology.shortOpchainsModule FirstHurewicz.ChainHomology.opchainsModule in
-@[simp]
 private theorem
     FirstHurewicz.ChainHomology.homologyDesc_cycleClass (K : ChainComplex (ModuleCat.{0} ℤ) ℕ)
     {M : Type*} [AddCommGroup M] [Module ℤ M] (f : Cycle1 K →ₗ[ℤ] M)
@@ -1023,7 +1021,6 @@ private def FirstHurewicz.homologyDesc (X : Type) [TopologicalSpace X] {M : Type
     SingularH1 X →ₗ[ℤ] M :=
   ChainHomology.homologyDesc (singularComplex X) f hf
 
-@[simp]
 private theorem FirstHurewicz.homologyDesc_cycleClass (X : Type) [TopologicalSpace X] {M : Type*}
     [AddCommGroup M] [Module ℤ M] (f : Cycles1 X →ₗ[ℤ] M)
     (hf : ∀ b : Chains X 2, f (boundaryCycle X b) = 0) (c : Cycles1 X) :
@@ -1036,7 +1033,6 @@ private def
     SingularH1 X →ₗ[ℤ] M :=
   homologyDesc X (f.comp (cycleVal X)) hf
 
-@[simp]
 private theorem
     FirstHurewicz.homologyDescOfChain_cycleClass (X : Type) [TopologicalSpace X] {M : Type*}
     [AddCommGroup M] [Module ℤ M] (f : Chains X 1 →ₗ[ℤ] M)
@@ -1128,7 +1124,6 @@ private def
 
 attribute [local instance] FirstHurewicz.ChainHomology.shortCycleModule
     FirstHurewicz.ChainHomology.shortOpchainsModule FirstHurewicz.ChainHomology.opchainsModule in
-@[simp]
 private theorem FirstHurewicz.ChainHomology.mapCycles_val {K L : ChainComplex (ModuleCat.{0} ℤ) ℕ}
     (F : K ⟶ L) (c : Cycle1 K) : (mapCycles F c).1 = (F.f 1).hom c.1 := by
   have hcat :
@@ -1160,13 +1155,11 @@ private def FirstHurewicz.inducedCycles {X Y : Type} [TopologicalSpace X] [Topol
     (f : C(X, Y)) : Cycles1 X →ₗ[ℤ] Cycles1 Y :=
   ChainHomology.mapCycles (singularChainMap f)
 
-@[simp]
 private theorem
     FirstHurewicz.inducedCycles_val {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     (f : C(X, Y)) (c : Cycles1 X) : (inducedCycles f c).1 = inducedChain f 1 c.1 :=
   ChainHomology.mapCycles_val (singularChainMap f) c
 
-@[simp]
 private theorem FirstHurewicz.inducedHomology_cycleClass {X Y : Type} [TopologicalSpace X]
     [TopologicalSpace Y] (f : C(X, Y)) (c : Cycles1 X) :
     inducedHomology f (cycleClass X c) = cycleClass Y (inducedCycles f c) :=
