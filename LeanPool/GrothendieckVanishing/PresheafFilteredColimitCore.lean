@@ -184,7 +184,7 @@ noncomputable def sheafHFilteredColimitSuccIota
   hc'.desc (sheafHFilteredColimitSuccIotaCocone Y')
 
 theorem sheafH_filtered_colimit_succ_iota_fac
-    {X : TopCat.{u}} {J' : Type u} [SmallCategory J'] [IsFiltered J']
+    {X : TopCat.{u}} {J' : Type u} [SmallCategory J']
     (Y' : J' ⥤ TopCat.Sheaf AddCommGrpCat.{u} X)
     [Zero (TopCat.Sheaf AddCommGrpCat.{u} X)]
     (c' : Cocone Y') (hc' : IsColimit c') (j : J') :
