@@ -96,8 +96,36 @@ public import LeanPool.GinibrePoincare.Endgame.CorrespondenceEndpoints
 
 The concrete paper results are exported on their stated domains:
 
-For a mathematical reading order, use the pinned [upstream reading guide][reading-guide]
-and its four topic guides. To consume large conclusions without positional projections,
+For a mathematical reading order, follow these modules, each under the
+`LeanPool.GinibrePoincare` prefix:
+
+1. Theorem 1.1, sharp inequality and equality cases:
+   `Endgame.FullMainAnalyticProof`, then `Analysis.GaussianDbarEqualitySpace`
+   and `Analysis.GaussianEntireHilbertIdentification`.
+2. Theorems 1.2 and 1.3, equilibrium coordinates, dynamics and CIR:
+   `Analysis.EquilibriumFactorization`, `Analysis.DynamicalFactorization`, and
+   `Analysis.CorrespondenceDynamicsGlobalCIR`.
+3. Theorem 1.4 and Corollary 1.5, polynomial sector and generator spectrum:
+   `Analysis.PolynomialEigenfunctionGenerator` for the eigenvalue equation and
+   `Analysis.GinibreOneParticleSpectrum` for spectrum containment in every positive
+   dimension. The spectrum of the Gaussian number operator, a separate result,
+   is in `Analysis.CorrespondenceOperatorNumberSpectrum`.
+4. Lemma 1.7 and Remark 1.8, curvature unbounded below and constant mean
+   curvature: `Analysis.GinibrePointwiseCurvature`.
+5. Theorems 1.9 and 1.10, exact deficits: `Endgame.FullTheoremOneNine`,
+   `Endgame.FullTheoremOneNinePointwiseGamma`, and `Endgame.FullTheoremOneTen`.
+6. Theorems 1.12 to 1.14, radial LSI, matrix lift and general potentials:
+   `Analysis.LogSobolevInequality`, `Endgame.FullMatrixLift`, and
+   `Endgame.FullNonQuadraticPotential`.
+7. Section 2 and Appendices A and B, domains, cores and dbar foundations:
+   `Analysis.GaussianDbarCompactCore`, `Analysis.CorrespondenceCollisionCutoff`,
+   `Analysis.GinibreCollisionCapacity` for the collision capacity of Lemma A.3,
+   and `Analysis.CorrespondenceAuxiliaryHermiteLeading`.
+
+The pinned [upstream reading guide][reading-guide] and its four topic guides
+give longer routes, under the upstream module names.
+
+To consume large conclusions without positional projections,
 use `fullTheoremOneNine_named`, `fullTheoremOneTen_named`,
 `fullMatrixLift_named`, `correspondenceOperatorNumber_has_bochner_data`, and
 `ginibreBrownianMaximalProcess_CIR_realization_named`. Their result records

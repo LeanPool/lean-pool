@@ -36,39 +36,17 @@ SOFTWARE.
 module
 
 public import LeanPool.GinibrePoincare.Analysis.GinibreFullGeneratorPolynomialCompatibility
+public import LeanPool.GinibrePoincare.Analysis.GraphOperatorSpectrum
 public import LeanPool.GinibrePoincare.Analysis.PolynomialSectorHilbertBasis
 
 /-! # Spectrum containment from the concrete polynomial eigenfunctions
 
-The resolvent definition below is the usual bounded, two-sided inverse of
-`zeta - L` on the exact domain of an unbounded operator. Mathlib's algebra
-spectrum applies to bounded operators and cannot directly be used here.
+The full symmetric generator uses the shared graph-operator spectrum.
 -/
 
 @[expose] public section
 namespace GinibrePoincare
 noncomputable section
-
-variable {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
-
-/-- The ordinary bounded resolvent condition for a graph-defined operator. -/
-def HasBoundedGraphResolvent (L : H →ₗ.[ℂ] H) (zeta : ℂ) : Prop :=
-  ∃ R : H →L[ℂ] H,
-    (∀ f, (R f, zeta • R f - f) ∈ L.graph) ∧
-    (∀ u v, (u, v) ∈ L.graph → R (zeta • u - v) = u)
-
-/-- Spectrum of an unbounded operator: the complement of its bounded resolvent set. -/
-def graphOperatorSpectrum (L : H →ₗ.[ℂ] H) : Set ℂ :=
-  {zeta | ¬ HasBoundedGraphResolvent L zeta}
-
-/-- A nonzero eigenvector prevents a bounded two-sided resolvent. -/
-theorem eigenpair_mem_graphOperatorSpectrum (L : H →ₗ.[ℂ] H) (zeta : ℂ)
-    (u : H) (hu : u ≠ 0) (hg : (u, zeta • u) ∈ L.graph) :
-    zeta ∈ graphOperatorSpectrum L := by
-  rintro ⟨R, _, hleft⟩
-  have h := hleft u (zeta • u) hg
-  rw [sub_self, map_zero] at h
-  exact hu h.symm
 
 /-- Corollary 1.5, concrete speed `αₙ = n`, for the actual full symmetric
 Ginibre generator and `n ≥ 2`. These are full-space spectral points, although

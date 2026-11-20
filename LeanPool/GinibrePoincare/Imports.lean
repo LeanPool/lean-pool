@@ -350,7 +350,6 @@ public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungInve
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungInverseSlice
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungKernel
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungMollifier
-public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungMollifierPairing
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungMultiplier
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungMultiplierComposition
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungPairing
@@ -1240,6 +1239,7 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreWeightedRadialInteriorMol
 public import LeanPool.GinibrePoincare.Analysis.GinibreZeroPairCutoff
 public import LeanPool.GinibrePoincare.Analysis.GinibreZeroPairIntegrability
 public import LeanPool.GinibrePoincare.Analysis.GlobalPhaseAction
+public import LeanPool.GinibrePoincare.Analysis.GraphOperatorSpectrum
 public import LeanPool.GinibrePoincare.Analysis.GroundStateDbar
 public import LeanPool.GinibrePoincare.Analysis.HermiteBinomialIdentity
 public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy

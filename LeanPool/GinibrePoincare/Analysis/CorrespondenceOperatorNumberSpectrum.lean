@@ -36,6 +36,7 @@ SOFTWARE.
 module
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceOperatorComplexHermiteMultiplier
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceOperatorNumberSelfAdjoint
+public import LeanPool.GinibrePoincare.Analysis.GraphOperatorSpectrum
 public import Mathlib.Order.Filter.IsBounded
 /-! # Spectrum of the maximal Gaussian number operator
 
@@ -47,9 +48,8 @@ weights are bounded separately. A bounded Hermite multiplier then supplies both
 inverse identities on the maximal graph. At a level `n * k`, a single normalized
 Hermite vector is a nonzero eigenvector, which rules out a two-sided inverse.
 
-`correspondenceOperatorNumberHasResolvent` records the inverse identities
-explicitly for this partially defined operator. The concluding equivalence uses
-that graph-based notion of resolvent.
+Both directions use the shared graph-operator notions `HasBoundedGraphResolvent`
+and `graphOperatorSpectrum`, so the result composes with their lemmas.
 -/
 
 @[expose] public section
@@ -79,17 +79,11 @@ theorem correspondenceOperatorNumber_inverse_weights_bounded (n : ℕ) (hn : 0 <
   intro k
   exact le_trans (hbound (mem_range_self k)) (le_max_right _ _)
 
-/-- The genuine unbounded resolvent condition: a bounded map is a two-sided
-inverse to the literal maximal differential graph shifted by z. -/
-def correspondenceOperatorNumberHasResolvent (n : ℕ) (hn : 0 < n) (z : ℂ) : Prop :=
-  ∃inverse : Lp ℂ 2 (complexGaussianMeasure n)→L[ℂ]Lp ℂ 2 (complexGaussianMeasure n),
-    (∀f, (inverse f, f+z • inverse f)∈(correspondenceOperatorNumber n hn).graph) ∧
-    (∀u v, (u, v)∈(correspondenceOperatorNumber n hn).graph→inverse (v-z • u)=u)
-
 /-- Every complex number outside the literal nℕ eigenvalues has a genuine
 bounded two-sided resolvent on the full maximal operator domain. -/
 theorem correspondenceOperatorNumber_resolvent_outside (n : ℕ) (hn : 0 < n) (z : ℂ)
-    (hz : ∀ k : ℕ, z≠((n*k : ℕ) : ℂ)) : correspondenceOperatorNumberHasResolvent n hn z := by
+    (hz : ∀ k : ℕ, z≠((n*k : ℕ) : ℂ)) :
+    HasBoundedGraphResolvent (correspondenceOperatorNumber n hn) z := by
   obtain ⟨bound, hbound, hweightBound⟩ := correspondenceOperatorNumber_inverse_weights_bounded n hn
       z
   -- Normalize reciprocal eigenvalue differences to use the contraction multiplier.
@@ -115,9 +109,9 @@ theorem correspondenceOperatorNumber_resolvent_outside (n : ℕ) (hn : 0 < n) (z
     dsimp [normalizedWeight]
     have hbound_ne_zero : (bound : ℂ)≠0 := by exact_mod_cast hbound.ne'
     field_simp
-  -- The coefficient formula proves the two inverse laws separately.
-  refine ⟨inverse,?_,?_⟩
-  · intro f
+  -- The coefficient formula proves the two inverse laws of `(L - z)⁻¹` separately.
+  have hRight : ∀ f, (inverse f, f+z • inverse f)∈(correspondenceOperatorNumber n hn).graph := by
+    intro f
     rw [correspondenceOperatorNumber_graph]
     intro pq
     have he : (((n*totalAntiDegree pq : ℕ) : ℂ)-z)≠0 := sub_ne_zero.mpr (Ne.symm (hz _))
@@ -125,7 +119,8 @@ theorem correspondenceOperatorNumber_resolvent_outside (n : ℕ) (hn : 0 < n) (z
     simp only [← gaussianHermiteCoefficient_eq_inner]
     rw [hresolventCoefficient]
     field_simp; ring
-  · intro u v huv
+  have hLeft : ∀ u v, (u, v)∈(correspondenceOperatorNumber n hn).graph→inverse (v-z • u)=u := by
+    intro u v huv
     rw [correspondenceOperatorNumber_graph] at huv
     apply gaussianHermiteCoefficient_ext hn
     intro pq
@@ -135,6 +130,16 @@ theorem correspondenceOperatorNumber_resolvent_outside (n : ℕ) (hn : 0 < n) (z
     simp only [← gaussianHermiteCoefficient_eq_inner]
     rw [huv pq]
     field_simp
+  -- The shared resolvent convention inverts `z - L`, the negative of `L - z`.
+  apply (hasBoundedGraphResolvent_iff (correspondenceOperatorNumber n hn) z).mpr
+  refine ⟨-inverse, fun f => ?_, fun u v huv => ?_⟩
+  · have hNegated := (correspondenceOperatorNumber n hn).graph.neg_mem (hRight f)
+    convert hNegated using 1
+    simp only [neg_apply, Prod.neg_mk, Prod.mk.injEq, smul_neg, neg_add_rev,
+      true_and]
+    abel
+  · rw [neg_apply, ← map_neg, neg_sub]
+    exact hLeft u v huv
 
 /-- Every n-times-integer level is a literal eigenvalue of the actual operator. -/
 theorem correspondenceOperatorNumber_level_eigenvector (n : ℕ) (hn : 0 < n) (k : ℕ) :
@@ -163,20 +168,20 @@ theorem correspondenceOperatorNumber_level_eigenvector (n : ℕ) (hn : 0 < n) (k
     simp [hantiDegree]
   · simp [h]
 
-/-- Exact complex spectrum of the maximal differential number operator,
-expressed by failure of a bounded two-sided inverse on its literal graph. -/
+/-- Exact complex spectrum of the maximal differential number operator, in the
+shared `graphOperatorSpectrum` sense: failure of a bounded two-sided inverse of
+`z - L` on its literal graph. -/
 theorem correspondenceOperatorNumber_spectrum_iff (n : ℕ) (hn : 0 < n) (z : ℂ) :
-    ¬correspondenceOperatorNumberHasResolvent n hn z ↔ ∃k : ℕ, z=((n*k : ℕ) : ℂ) := by
+    z ∈ graphOperatorSpectrum (correspondenceOperatorNumber n hn) ↔
+      ∃k : ℕ, z=((n*k : ℕ) : ℂ) := by
   constructor
   · intro hz
     by_contra h
     push Not at h
     exact hz (correspondenceOperatorNumber_resolvent_outside n hn z h)
-  · rintro ⟨k, rfl⟩ ⟨inverse, hR, hL⟩
+  · rintro ⟨k, rfl⟩
     obtain ⟨u, heigenvector_ne_zero, heigenvectorGraph⟩ :=
         correspondenceOperatorNumber_level_eigenvector n hn k
-    have he := hL u (((n*k : ℕ) : ℂ) • u) heigenvectorGraph
-    simp only [sub_self, map_zero] at he
-    exact heigenvector_ne_zero he.symm
+    exact eigenpair_mem_graphOperatorSpectrum _ _ u heigenvector_ne_zero heigenvectorGraph
 end
 end GinibrePoincare

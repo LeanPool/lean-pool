@@ -62,11 +62,6 @@ def piL2BumpAverage (d : ℕ) (φ : ContDiffBump (0 : ℂ))
         :=
   lebesgueL2KernelAverage d (piPlanarBump d φ) u
 
-theorem piPlanarBump_integrable (d : ℕ) (φ : ContDiffBump (0 : ℂ)) :
-    Integrable (piPlanarBump d φ) (volume : Measure (Configuration d)) :=
-  (piPlanarBump_continuous d φ).integrable_of_hasCompactSupport
-    (piPlanarBump_compact d φ)
-
 omit [CompleteSpace W] in
 theorem integrable_piL2BumpIntegrand (d : ℕ) (φ : ContDiffBump (0 : ℂ))
     (u : Lp W 2 (volume : Measure (Configuration d))) :

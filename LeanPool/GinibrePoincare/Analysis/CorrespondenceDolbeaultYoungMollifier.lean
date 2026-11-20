@@ -34,13 +34,19 @@ SOFTWARE.
 -/
 
 module
-public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungMollifierPairing
+public import LeanPool.GinibrePoincare.Analysis.CorrespondenceDolbeaultYoungMultiplierComposition
+public import LeanPool.GinibrePoincare.Analysis.LebesgueL2MollificationMaps
+public import LeanPool.GinibrePoincare.Analysis.NonQuadraticPiBumpAverage
+public import Mathlib.Analysis.Calculus.ContDiff.Convolution
 
 /-!
 # Correspondence Dolbeault Young mollifier
 
 Part of the complex Gaussian and Hermite analysis development of the
-Ginibre Poincaré formalization.
+Ginibre Poincaré formalization. The complex representation of the bump
+average is read off from the shared real projection lemma
+`lebesgueL2KernelAverage_projection_convolution_ae`, applied to the real
+and imaginary parts.
 
 Main results: `dolbeaultPiBump_convolution_tendsto`.
 -/
@@ -50,6 +56,13 @@ open MeasureTheory Filter ContinuousLinearMap
 open scoped Topology ContDiff Convolution
 namespace GinibrePoincare
 noncomputable section
+
+theorem dolbeaultPiBump_contDiff (n : ℕ) (φ : ContDiffBump (0 : ℂ)) :
+    ContDiff ℝ ∞ (piPlanarBump n φ) := by
+  unfold piPlanarBump
+  apply contDiff_prod
+  intro i hi
+  exact (φ.contDiff_normed (n := ⊤)).comp (contDiff_apply ℝ (fun _ => ℂ) i)
 
 theorem dolbeaultPiBump_convolution_smooth (n : ℕ) (φ : ContDiffBump (0 : ℂ))
     (f : Configuration n → ℂ) (hf : MemLp f 2 volume) :
@@ -69,34 +82,22 @@ theorem dolbeaultPiBump_convolution_ae (n : ℕ) (φ : ContDiffBump (0 : ℂ))
     (f : Configuration n → ℂ) (hf : MemLp f 2 volume) (hc : HasCompactSupport f) :
     (piL2BumpAverage n φ (hf.toLp f) : Configuration n → ℂ) =ᵐ[volume]
       piPlanarBump n φ ⋆[lsmul ℝ ℝ, volume] f := by
-  have hfi : Integrable f volume := by
-    have hI := (hf.locallyIntegrable (by norm_num)).integrableOn_isCompact hc
-    exact hI.integrable_of_forall_notMem_eq_zero (fun x hx => image_eq_zero_of_notMem_tsupport hx)
-  apply ae_eq_of_integral_contDiff_smul_eq
-    ((Lp.memLp (piL2BumpAverage n φ (hf.toLp f))).locallyIntegrable (by norm_num))
-    ((dolbeaultPiBump_convolution_memLp n φ f hf hc).locallyIntegrable (by norm_num))
-  intro θ hθ hθc
-  let Θ : Configuration n → ℂ := fun x => (θ x : ℂ)
-  have hΘ : Continuous Θ := Complex.continuous_ofReal.comp hθ.continuous
-  have hcΘ : HasCompactSupport Θ := hθc.comp_left Complex.ofReal_zero
-  have he (a : Configuration n) : (∫ x, (hf.toLp f) (x-a)*Θ x) =
-      ∫ x, f (x-a)*Θ x := by
-    apply integral_congr_ae
-    have h := (eventually_add_right_iff (volume : Measure (Configuration n)) (-a)).mpr hf.coeFn_toLp
-    filter_upwards [h] with x hx
-    simpa only [sub_eq_add_neg] using congrArg (fun t => t*Θ x) hx
-  calc
-    _ = ∫ x, (piL2BumpAverage n φ (hf.toLp f)) x*Θ x := by
-      apply integral_congr_ae
-      exact ae_of_all _ (fun x => by simp [Θ, Complex.real_smul, mul_comm])
-    _ = ∫ a, (piPlanarBump n φ a : ℂ)*(∫ x, (hf.toLp f) (x-a)*Θ x) :=
-      dolbeaultPiBump_average_test n φ (hf.toLp f) Θ hΘ hcΘ
-    _ = ∫ a, (piPlanarBump n φ a : ℂ)*(∫ x, f (x-a)*Θ x) := by simp_rw [he]
-    _ = ∫ x, (piPlanarBump n φ ⋆[lsmul ℝ ℝ, volume] f) x*Θ x :=
-      (dolbeaultPiBump_convolution_test n φ f Θ hfi hΘ hcΘ).symm
-    _ = _ := by
-      apply integral_congr_ae
-      exact ae_of_all _ (fun x => by simp [Θ, Complex.real_smul, mul_comm])
+  have hK := dolbeaultPiBump_contDiff n φ
+  have hKc := piPlanarBump_compact n φ
+  have hExists := hKc.convolutionExists_left (lsmul ℝ ℝ) hK.continuous
+    (hf.locallyIntegrable (by norm_num))
+  -- Each real projection of both sides is the convolution of that projection of `f`.
+  have hPart (L : ℂ →L[ℝ] ℝ) : ∀ᵐ x ∂volume,
+      L ((piL2BumpAverage n φ (hf.toLp f)) x) =
+        L ((piPlanarBump n φ ⋆[lsmul ℝ ℝ, volume] f) x) := by
+    filter_upwards [L.coeFn_compLpL (piL2BumpAverage n φ (hf.toLp f)),
+      lebesgueL2KernelAverage_projection_convolution_ae n hK hKc L f hf hc] with x hx hy
+    rw [← hx]
+    refine hy.trans ?_
+    rw [convolution_def, convolution_def, ← L.integral_comp_comm (hExists x)]
+    simp only [lsmul_apply, Function.comp_apply, map_smul, smul_eq_mul]
+  filter_upwards [hPart Complex.reCLM, hPart Complex.imCLM] with x hre him
+  exact Complex.ext (by simpa using hre) (by simpa using him)
 
 theorem dolbeaultPiBump_convolution_tendsto (n : ℕ) (φ : ℕ → ContDiffBump (0 : ℂ))
     (hφ : Tendsto (fun m => (φ m).rOut) atTop (𝓝 0))
