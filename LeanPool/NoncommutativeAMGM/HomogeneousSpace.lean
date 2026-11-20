@@ -7,6 +7,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.HarmonicCoefficients
+public import LeanPool.NoncommutativeAMGM.ScalarHomogeneousSpace
 
 /-!
 # Homogeneous coefficient spaces and the up/down operators
@@ -20,91 +21,46 @@ namespace NoncommutativeAMGM
 
 open scoped BigOperators RealInnerProductSpace
 
-/-- The square-free monomials of exactly degree `r`. -/
-abbrev HomogeneousIndex (n r : ℕ) := {S : Finset (Fin n) // S.card = r}
-
-/-- Euclidean coefficient space of homogeneous square-free polynomials. -/
-abbrev HomogeneousSpace (n r : ℕ) := EuclideanSpace ℝ (HomogeneousIndex n r)
+/-- Euclidean coefficient space of real homogeneous square-free polynomials. -/
+abbrev HomogeneousSpace (n r : ℕ) := ScalarHomogeneousSpace ℝ n r
 
 /-- The incidence operator adding one new variable to a square-free monomial. -/
 noncomputable def homogeneousUp (n r : ℕ) :
-    HomogeneousSpace n r →ₗ[ℝ] HomogeneousSpace n (r + 1) where
-  toFun c := WithLp.toLp 2 (fun T ↦ ∑ S : HomogeneousIndex n r,
-    if S.val ⊆ T.val then c S else 0)
-  map_add' c d := by
-    ext T
-    simp only [PiLp.add_apply]
-    rw [← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl
-    intro S _
-    split_ifs <;> simp
-  map_smul' a c := by
-    ext T
-    simp only [PiLp.smul_apply, smul_eq_mul, RingHom.id_apply]
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro S _
-    split_ifs <;> simp
+    HomogeneousSpace n r →ₗ[ℝ] HomogeneousSpace n (r + 1) :=
+  scalarHomogeneousUp ℝ n r
 
 /-- The coefficient Laplacian, removing one variable from a square-free monomial. -/
 noncomputable def homogeneousDown (n r : ℕ) :
-    HomogeneousSpace n (r + 1) →ₗ[ℝ] HomogeneousSpace n r where
-  toFun c := WithLp.toLp 2 (fun S ↦ ∑ T : HomogeneousIndex n (r + 1),
-    if S.val ⊆ T.val then c T else 0)
-  map_add' c d := by
-    ext S
-    simp only [PiLp.add_apply]
-    rw [← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl
-    intro T _
-    split_ifs <;> simp
-  map_smul' a c := by
-    ext S
-    simp only [PiLp.smul_apply, smul_eq_mul, RingHom.id_apply]
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro T _
-    split_ifs <;> simp
+    HomogeneousSpace n (r + 1) →ₗ[ℝ] HomogeneousSpace n r :=
+  scalarHomogeneousDown ℝ n r
 
 theorem homogeneousUp_apply {n r : ℕ} (c : HomogeneousSpace n r)
     (T : HomogeneousIndex n (r + 1)) :
     homogeneousUp n r c T = ∑ S : HomogeneousIndex n r,
-      if S.val ⊆ T.val then c S else 0 := rfl
+      if S.val ⊆ T.val then c S else 0 :=
+  scalarHomogeneousUp_apply ℝ c T
 
 theorem homogeneousDown_apply {n r : ℕ} (c : HomogeneousSpace n (r + 1))
     (S : HomogeneousIndex n r) :
     homogeneousDown n r c S = ∑ T : HomogeneousIndex n (r + 1),
-      if S.val ⊆ T.val then c T else 0 := rfl
+      if S.val ⊆ T.val then c T else 0 :=
+  scalarHomogeneousDown_apply ℝ c S
 
 /-- The actual subset-incidence up operator is the adjoint of the Laplacian. -/
 theorem homogeneousUp_eq_adjoint (n r : ℕ) :
-    homogeneousUp n r = (homogeneousDown n r).adjoint := by
-  apply (LinearMap.eq_adjoint_iff _ _).mpr
-  intro c d
-  simp only [PiLp.inner_apply, Real.inner_apply, homogeneousUp_apply,
-    homogeneousDown_apply]
-  simp_rw [Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl
-  intro S _
-  apply Finset.sum_congr rfl
-  intro T _
-  split_ifs <;> simp
+    homogeneousUp n r = (homogeneousDown n r).adjoint :=
+  scalarHomogeneousUp_eq_adjoint ℝ n r
 
 /-- Orthogonality to all raised polynomials is exactly harmonicity. -/
 theorem homogeneousUp_range_orthogonal (n r : ℕ) :
-    (homogeneousUp n r).rangeᗮ = (homogeneousDown n r).ker := by
-  rw [homogeneousUp_eq_adjoint, LinearMap.orthogonal_range, LinearMap.adjoint_adjoint]
+    (homogeneousUp n r).rangeᗮ = (homogeneousDown n r).ker :=
+  scalarHomogeneousUp_range_orthogonal ℝ n r
 
 /-- Every homogeneous coefficient vector is a harmonic vector plus a raised vector. -/
 theorem homogeneous_harmonic_decomposition {n r : ℕ} (c : HomogeneousSpace n (r + 1)) :
     ∃ h : HomogeneousSpace n (r + 1), ∃ q : HomogeneousSpace n r,
-      homogeneousDown n r h = 0 ∧ c = h + homogeneousUp n r q := by
-  obtain ⟨v, hv, h, hh, hc⟩ :=
-    (homogeneousUp n r).range.exists_add_mem_mem_orthogonal c
-  obtain ⟨q, rfl⟩ := hv
-  rw [homogeneousUp_range_orthogonal] at hh
-  exact ⟨h, q, hh, hc.trans (add_comm _ _)⟩
+      homogeneousDown n r h = 0 ∧ c = h + homogeneousUp n r q :=
+  scalarHomogeneous_harmonic_decomposition ℝ c
 
 /-- Extend a homogeneous coefficient vector by zero outside its degree. -/
 noncomputable def homogeneousCoefficient {n r : ℕ} (c : HomogeneousSpace n r)

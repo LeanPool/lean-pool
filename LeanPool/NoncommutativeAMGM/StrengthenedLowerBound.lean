@@ -27,8 +27,8 @@ theorem withoutReplacementMean_endpoint_lower {n m dim : ℕ}
   have hm2 : 2 ≤ m := by omega
   let E : Fin n → Matrix (Fin dim) (Fin dim) ℝ := fun a ↦ (n : ℝ)⁻¹ • A a
   obtain ⟨hE, hmean⟩ := admissible_normalized hn A hA
-  let ζ : ℂ := Complex.exp (2 * Real.pi * Complex.I / (m : ℂ))
-  have hζ : IsPrimitiveRoot ζ m := Complex.isPrimitiveRoot_exp m (by omega)
+  let ζ := cosineRoot m
+  have hζ : IsPrimitiveRoot ζ m := cosineRoot_primitive (by omega)
   let ξ := cosineHalfRoot m
   have hξ : ξ ^ m = -1 := cosineHalfRoot_pow (by omega)
   have hp := rootSlice_chebyshev_plus_endpoint E hE hmean hn hm2 hnd hζ
@@ -38,15 +38,8 @@ theorem withoutReplacementMean_endpoint_lower {n m dim : ℕ}
     (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))
   let N := booleanMatrixImage (rootSliceLinearMap n m ξ ζ)
     (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))
-  have hdifference : P - N = (2 : ℝ) • withoutReplacementMean n m A := by
-    have he := rootSlice_chebyshev_difference E hn (by omega) hζ
-      (show (1 : ℂ) ^ m = 1 by simp) hξ
-    change P - N = _ at he
-    rw [he]
-    calc
-      _ = (2 : ℝ) • (((n : ℝ) ^ m / falling n m) • distinctProductSum n m E) := by
-        rw [smul_smul, mul_div_assoc]
-      _ = _ := by rw [normalized_distinctProductSum hn hmn A]
+  have hdifference : P - N = (2 : ℝ) • withoutReplacementMean n m A :=
+    cosineRootSlice_mean_difference A hn (by omega) hmn
   have hPone := booleanMatrixImage_one (ι := Fin dim) (rootSliceLinearMap n m 1 ζ)
     (rootSliceLinearMap_one n (by omega) 1 ζ)
   have hNone := booleanMatrixImage_one (ι := Fin dim) (rootSliceLinearMap n m ξ ζ)

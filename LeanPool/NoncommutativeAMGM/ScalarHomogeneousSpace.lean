@@ -6,7 +6,8 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.HomogeneousSpace
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Data.Fintype.Powerset
 
 /-! # Complex and real homogeneous incidence operators
 
@@ -18,6 +19,9 @@ Appendix C's adjoint and orthogonal splitting are constructed uniformly over eve
 namespace NoncommutativeAMGM
 
 open scoped BigOperators
+
+/-- The square-free monomials of exactly degree `r`. -/
+abbrev HomogeneousIndex (n r : ℕ) := {S : Finset (Fin n) // S.card = r}
 
 variable (𝕜 : Type*) [RCLike 𝕜]
 
