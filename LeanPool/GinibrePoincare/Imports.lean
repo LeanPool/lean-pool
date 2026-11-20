@@ -1239,6 +1239,7 @@ public import LeanPool.GinibrePoincare.Analysis.GinibreWeightedRadialInteriorMol
 public import LeanPool.GinibrePoincare.Analysis.GinibreZeroPairCutoff
 public import LeanPool.GinibrePoincare.Analysis.GinibreZeroPairIntegrability
 public import LeanPool.GinibrePoincare.Analysis.GlobalPhaseAction
+public import LeanPool.GinibrePoincare.Analysis.GraphOperatorSpectrum
 public import LeanPool.GinibrePoincare.Analysis.GroundStateDbar
 public import LeanPool.GinibrePoincare.Analysis.HermiteBinomialIdentity
 public import LeanPool.GinibrePoincare.Analysis.HermiteEnergy

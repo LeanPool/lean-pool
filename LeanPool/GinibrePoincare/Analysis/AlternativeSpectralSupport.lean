@@ -75,6 +75,7 @@ theorem spectral_graph_resolvent_of_pencil_unit
   have hST_apply (x : H) : S (x + (z-1) • R x) = x := by
     have h := congrArg (fun T : H →L[ℂ] H => T x) hST
     simpa [mul_apply_eq_comp] using h
+  apply (hasBoundedGraphResolvent_iff L z).mpr
   refine ⟨S * R, ?_, ?_⟩
   · intro f
     apply (hgraph _ _).mpr

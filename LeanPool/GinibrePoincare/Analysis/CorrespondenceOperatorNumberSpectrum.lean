@@ -36,7 +36,7 @@ SOFTWARE.
 module
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceOperatorComplexHermiteMultiplier
 public import LeanPool.GinibrePoincare.Analysis.CorrespondenceOperatorNumberSelfAdjoint
-public import LeanPool.GinibrePoincare.Analysis.PolynomialGeneratorSpectrum
+public import LeanPool.GinibrePoincare.Analysis.GraphOperatorSpectrum
 public import Mathlib.Order.Filter.IsBounded
 /-! # Spectrum of the maximal Gaussian number operator
 
@@ -131,6 +131,7 @@ theorem correspondenceOperatorNumber_resolvent_outside (n : ℕ) (hn : 0 < n) (z
     rw [huv pq]
     field_simp
   -- The shared resolvent convention inverts `z - L`, the negative of `L - z`.
+  apply (hasBoundedGraphResolvent_iff (correspondenceOperatorNumber n hn) z).mpr
   refine ⟨-inverse, fun f => ?_, fun u v huv => ?_⟩
   · have hNegated := (correspondenceOperatorNumber n hn).graph.neg_mem (hRight f)
     convert hNegated using 1
