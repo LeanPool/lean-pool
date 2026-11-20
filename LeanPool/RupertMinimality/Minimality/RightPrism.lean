@@ -60,8 +60,7 @@ theorem liftPt_sub_two (q₁ q₂ : ℝ²) (z₁ z₂ : ℝ) :
 theorem finite_affine_zero {a b : ℝ} (h : a ≠ 0 ∨ b ≠ 0) : {t : ℝ | a * t + b = 0}.Finite := by
   by_cases ha : a = 0
   · have hb : b ≠ 0 := h.resolve_left (not_not.mpr ha)
-    convert Set.finite_empty
-    ext t; simp [ha, hb]
+    simp [ha, hb]
   · refine (Set.finite_singleton (-b / a)).subset fun t ht => ?_
     simp only [Set.mem_ofPred_eq] at ht
     simp only [Set.mem_singleton_iff]

@@ -795,16 +795,15 @@ theorem isRupert_T3_b1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
       rcases hmemV z hz with rfl | rfl | rfl | rfl | rfl | rfl <;>
         try (first | exact absurd rfl hx0 | exact absurd rfl hx1 | exact absurd rfl hx2 |
           exact absurd rfl hx3 | exact absurd rfl hx4)
-      all_goals
-        rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, hP,
-          add_cmb_sub, hu₀] <;>
-        first
-          | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-              (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-              (by simp only [detc]; clear * - hα hα' hβ' h1α haa Q1 Q2; linarith)
-          | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-              (by simp only [detc]; clear * - hα hα' hβ' h1α haa Q1 Q2; linarith)
+      rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, hP,
+        add_cmb_sub, hu₀] <;>
+      first
+        | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+            (by simp only [detc]; clear * - hα hα' hβ' h1α haa Q1 Q2; linarith)
+        | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (by simp only [detc]; clear * - hα hα' hβ' h1α haa Q1 Q2; linarith)
 
 /-- **T3, degenerate case `AA' ∥ CC'`**: `LU`, `UU`, or the 5-cycle `(A, A', B', B, C)`. -/
 theorem isRupert_T3_a1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) ≠ 0)
@@ -955,16 +954,15 @@ theorem isRupert_T3_a1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
       rcases hmemV z hz with rfl | rfl | rfl | rfl | rfl | rfl <;>
         try (first | exact absurd rfl hx0 | exact absurd rfl hx1 | exact absurd rfl hx2 |
           exact absurd rfl hx3 | exact absurd rfl hx4)
-      all_goals
-        rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, hP,
-          add_cmb_sub, hu₀] <;>
-        first
-          | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-              (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-              (by simp only [detc]; clear * - hα' hβ hβ' h1β hbb R1 R2 R3; linarith)
-          | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-              (by simp only [detc]; clear * - hα' hβ hβ' h1β hbb R1 R2 R3; linarith)
+      rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, hP,
+        add_cmb_sub, hu₀] <;>
+      first
+        | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+            (by simp only [detc]; clear * - hα' hβ hβ' h1β hbb R1 R2 R3; linarith)
+        | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (by simp only [detc]; clear * - hα' hβ hβ' h1β hbb R1 R2 R3; linarith)
 
 /-- **Theorem 8.4.**  Every T3 is Rupert. -/
 theorem isRupert_T3 {A B C A' B' C' : ℝ³} (h : IsT3 A B C A' B' C') :
