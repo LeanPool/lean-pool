@@ -64,4 +64,5 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundl
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle030
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle031
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle032
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
 public import LeanPool.MovingSofa.KernelCertificate

@@ -3153,21 +3153,32 @@ theorem D_zero_y_zero : (D 0).2 = 0 := by
 /-! Exact mesh transport for the literal core path.  Cells 1--62 are uniformly
 above the base.  Cells 0 and 63 are intentionally excluded: their interval
 hulls contain the terminal base contacts and have a tiny negative lower hull. -/
+-- The core-cell check can reuse the exact path enclosures already certified in Part B.
+private theorem cached_core_path_cell_lo_pos :
+    ∀ i : PartB.Cell, 1 ≤ i.1 → i.1 ≤ 62 →
+      (0 : ℚ) < (PartB.cachedPath i).2.lo := by
+  decide +kernel
+
 private theorem core_path_cell_lo_nonneg :
     ∀ i : PartB.Cell, 1 ≤ i.1 → i.1 ≤ 62 →
       (0 : ℚ) ≤ (PartB.cellPathInterval i).2.lo := by
-  decide +kernel
+  as_aux_lemma =>
+    intro i lower upper
+    rw [PartB.cachedPath_eq]
+    exact (cached_core_path_cell_lo_pos i lower upper).le
 
-/-! C30 strengthens the already kernel-checked cell statement from nonnegativity
-to strict positivity on every core cell.  The computation is the same finite
-exact-rational decision problem; only the target relation is stronger. -/
 private theorem core_path_cell_lo_pos :
     ∀ i : PartB.Cell, 1 ≤ i.1 → i.1 ≤ 62 →
       (0 : ℚ) < (PartB.cellPathInterval i).2.lo := by
-  decide +kernel
+  as_aux_lemma =>
+    intro i lower upper
+    rw [PartB.cachedPath_eq]
+    exact cached_core_path_cell_lo_pos i lower upper
+
 private theorem cell1_path_y_lo_pos :
     (0 : ℚ) < (PartB.cellPathInterval (1 : PartB.Cell)).2.lo := by
-  decide +kernel
+  as_aux_lemma =>
+    exact core_path_cell_lo_pos 1 (by decide) (by decide)
 
 /-- The first core contact is strictly above the base. -/
 theorem B_eta_y_pos : 0 < (B eta).2 := by

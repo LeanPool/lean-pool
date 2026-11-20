@@ -5,12 +5,17 @@ Authors: Dawid Trela
 -/
 module
 
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
+
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 /-!
 # Gerver sofa: related certificate and semantic modules
 
 * `GerverSofa.KernelOnly.PartE.Semantics.Batch002`.
 -/
+
+-- Use the faster exact decision procedure only within this certificate module.
+attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejected
 
 @[expose] public section
 
