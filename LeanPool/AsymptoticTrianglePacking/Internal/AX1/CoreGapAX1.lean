@@ -1271,7 +1271,7 @@ theorem packOpt_triInc_eq_nu3star : packOpt (triInc G) = nu3star G := by
                 exact Subtype.ext hchoose
               simp only [w', hT, hchoose]
               simp
-            all_goals simp
+            simp
           rw [heq_sum]
           -- Now show this equals the constraint sum
           have heq_sum2 : ∑ t : Tri G, (if e ∈ t.val.powersetCard 2 then w t else 0) =

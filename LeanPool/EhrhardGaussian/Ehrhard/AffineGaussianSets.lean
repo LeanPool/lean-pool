@@ -58,7 +58,7 @@ theorem affine_standardGaussian_map_apply {n : ℕ} {F : Type*}
     exact ⟨x, rfl⟩
   have he : MeasurableEmbedding e := by
     exact ((Homeomorph.addLeft m).isClosedEmbedding.comp
-      L.range.closed_of_finiteDimensional.isClosedEmbedding_subtypeVal).measurableEmbedding
+      L.range.isClosed_of_finiteDimensional.isClosedEmbedding_subtypeVal).measurableEmbedding
   have hconv : Convex ℝ ((fun x => m + L x) ⁻¹' A) :=
     (hA.translate_preimage_right m).linear_preimage L.toLinearMap
   have hfront : standardGaussianMeasure n (frontier (π ⁻¹' (e ⁻¹' A))) = 0 :=

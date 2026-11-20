@@ -60,7 +60,7 @@ variable {H₁ H₂ : Ω → ℝ → ℝ}
 theorem measurable_energyDensity (hm : Measurable (Function.uncurry H₁)) (T : ℝ) :
     Measurable fun ω => ∫⁻ s in Set.Icc (0 : ℝ) T, (‖H₁ ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume := by
   have hf : Measurable fun p : Ω × ℝ => (‖H₁ p.1 p.2‖₊ : ℝ≥0∞) ^ 2 :=
-    (((measurable_nnnorm.comp hm).coe_nnreal_ennreal).pow_const 2)
+    (((measurable_nnNorm.comp hm).coe_nnreal_ennreal).pow_const 2)
   exact hf.lintegral_prod_right'
 
 omit [IsProbabilityMeasure P] in
@@ -90,11 +90,11 @@ theorem lintegral_energy_parallelogram (hm₁ : Measurable (Function.uncurry H�
           + 2 * ∫⁻ s in Set.Icc (0 : ℝ) T, (‖H₂ ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume := by
     intro ω
     have h1 : Measurable fun s => (‖H₁ ω s‖₊ : ℝ≥0∞) ^ 2 :=
-      (((measurable_nnnorm.comp (hm₁.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
+      (((measurable_nnNorm.comp (hm₁.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
     have h2 : Measurable fun s => (‖H₂ ω s‖₊ : ℝ≥0∞) ^ 2 :=
-      (((measurable_nnnorm.comp (hm₂.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
+      (((measurable_nnNorm.comp (hm₂.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
     have ha : Measurable fun s => (‖H₁ ω s + H₂ ω s‖₊ : ℝ≥0∞) ^ 2 :=
-      (((measurable_nnnorm.comp (hma.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
+      (((measurable_nnNorm.comp (hma.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
     rw [← lintegral_add_left ha, ← lintegral_const_mul 2 h1, ← lintegral_const_mul 2 h2,
       ← lintegral_add_left (h1.const_mul 2)]
     exact lintegral_congr fun s => hpt _ _
@@ -128,9 +128,9 @@ theorem lintegral_energy_lt_top_of_bound {K : Ω → ℝ → ℝ}
       ← lintegral_add_left (e1.const_mul 2)]
     refine lintegral_mono fun ω => ?_
     have h1 : Measurable fun s => (‖H₁ ω s‖₊ : ℝ≥0∞) ^ 2 :=
-      (((measurable_nnnorm.comp (hm₁.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
+      (((measurable_nnNorm.comp (hm₁.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
     have h2 : Measurable fun s => (‖H₂ ω s‖₊ : ℝ≥0∞) ^ 2 :=
-      (((measurable_nnnorm.comp (hm₂.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
+      (((measurable_nnNorm.comp (hm₂.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
     rw [← lintegral_const_mul 2 h1, ← lintegral_const_mul 2 h2,
       ← lintegral_add_left (h1.const_mul 2)]
     refine lintegral_mono fun s => ?_
@@ -177,7 +177,7 @@ theorem lintegral_energy_const_mul {H : Ω → ℝ → ℝ} (hm : Measurable (Fu
           * ∫⁻ s in Set.Icc (0 : ℝ) T, (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume := by
     intro ω
     have h1 : Measurable fun s => (‖H ω s‖₊ : ℝ≥0∞) ^ 2 :=
-      (((measurable_nnnorm.comp (hm.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
+      (((measurable_nnNorm.comp (hm.comp measurable_prodMk_left)).coe_nnreal_ennreal).pow_const 2)
     rw [← lintegral_const_mul _ h1]
     exact lintegral_congr fun s => hpt _
   rw [← lintegral_const_mul _ (measurable_energyDensity hm T)]

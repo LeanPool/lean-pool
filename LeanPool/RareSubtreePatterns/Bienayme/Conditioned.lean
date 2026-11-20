@@ -48,7 +48,7 @@ theorem bienayme_vertexCount_eq (μ : PMF ℕ) (n : ℕ) :
 
 /-- A size is admissible iff some tree of that size has positive weight. -/
 theorem admissible_iff : Admissible μ n ↔ ∃ T, T.vertexCount = n ∧ weight μ T ≠ 0 := by
-  rw [Admissible, pos_iff_ne_zero, Ne, bienayme_apply, ENNReal.tsum_eq_zero]
+  rw [Admissible, pos_iff_ne_zero, Ne, bienayme_apply, tsum_eq_zero_iff]
   push Not
   constructor
   · rintro ⟨T, hT⟩

@@ -126,7 +126,7 @@ lemma one_smul1 (K A B M : Type u)
     [Field K] [Ring A] [Algebra K A] [Ring B] [Algebra K B] [AddCommGroup M]
     [Module K M] [Module A M] [IsScalarTower K A M] (f : B →ₐ[K] A) :
     ∀ (m : moduleInst K A B M f), smul1 K A B M f m 1 = m := fun (m : M) ↦ by
-  rw [Algebra.TensorProduct.one_def, smul1_tmul, map_one, Module.End.one_apply, one_smul]
+  rw [Algebra.TensorProduct.one_def, smul1_tmul, map_one, one_apply_eq_self, one_smul]
 
 /-- The tensor-product action of anything on `0` vanishes. -/
 lemma smul1_zero_left (K A B M : Type u)
@@ -164,7 +164,7 @@ lemma mul_smul1 (K A B M : Type u)
     induction y using TensorProduct.inductionOn with
     | tmul b2 l2 =>
       rw [Algebra.TensorProduct.tmul_mul_tmul, smul1_tmul, smul1_tmul, smul1_tmul,
-        map_mul, Module.End.mul_apply, map_smul, mul_smul]
+        map_mul, mul_apply_eq_comp, map_smul, mul_smul]
     | add y1 y2 hy1 hy2 =>
       rw [mul_add, map_add, hy1, hy2, map_add]
       exact (smul1_add K A B M f (b1 ⊗ₜ[K] l1) _ _).symm
@@ -224,7 +224,7 @@ instance moduleInst_findim (K A B M : Type u)
     ((algebraMap K (B ⊗[K] Module.End A M) (c k)) • (show moduleInst K A B M f from k)) by
       simp only [Algebra.TensorProduct.algebraMap_apply]
       change _ = smul1 K A B M f k _
-      rw [smul1_tmul, AlgHom.commutes, Module.End.one_apply, algebraMap_smul]]
+      rw [smul1_tmul, AlgHom.commutes, one_apply_eq_self, algebraMap_smul]]
   refine Submodule.smul_mem _ _ ?_
   simp only
   refine Submodule.subset_span ?_
@@ -322,7 +322,7 @@ theorem SkolemNoether (K A B M : Type u)
   apply_fun ISO using AlgEquiv.injective _
   simp only [endEndIso, map_mul, AlgEquiv.apply_symm_apply, ISO, Φ, Ψ]
   ext m
-  simp only [toEndEndAlgHom, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom, Module.End.mul_apply,
+  simp only [toEndEndAlgHom, AddHom.toFun_eq_coe, LinearMap.coe_toAddHom, mul_apply_eq_comp,
     LinearMap.coe_mk]
   have e1 : smul1 K A B M f (φ.symm m) (x ⊗ₜ[K] LinearMap.id) = f x • φ.symm m :=
     smul1_tmul K A B M f _ x LinearMap.id

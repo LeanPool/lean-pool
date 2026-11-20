@@ -107,8 +107,8 @@ theorem exists_holomorphic_implicit_mapping {D : Set (P × Q)} (hD : IsOpen D)
         (-((fderiv ℂ f (a, b)).comp (ContinuousLinearMap.inr ℂ P Q)).inverse |>.comp
           ((fderiv ℂ f (a, b)).comp (ContinuousLinearMap.inl ℂ P Q))) a ∧
       ∀ x ∈ U, ∀ y ∈ V, f (x, y) = f (a, b) ↔ y = g x := by
-  let := FiniteDimensional.complete ℂ P
-  let := FiniteDimensional.complete ℂ Q
+  let := FiniteDimensional.completeSpace ℂ P
+  let := FiniteDimensional.completeSpace ℂ Q
   obtain ⟨U, V, g, hU, ha, hV, hb, hsub, hg, hm, hga, hd, heq⟩ :=
     exists_analytic_implicit_mapping hD hab (hf.analyticOnNhd_of_finiteDimensional hD _ hab) hi
   exact ⟨U, V, g, hU, ha, hV, hb, hsub, hg.differentiableOn, hm, hga, hd, heq⟩

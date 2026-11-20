@@ -339,7 +339,7 @@ lemma eta_logderivs_const' : ∃ z : ℂ, z ≠ 0 ∧ {z : ℂ | 0 < z.im}.EqOn 
   · exact h
   · apply DifferentiableOn.comp
     pick_goal 4
-    · use ({z : ℂ | 0 < z.im})
+    · exact {z : ℂ | 0 < z.im}
     · rw [DifferentiableOn]
       intro x hx
       apply DifferentiableAt.differentiableWithinAt
@@ -351,13 +351,8 @@ lemma eta_logderivs_const' : ∃ z : ℂ, z ≠ 0 ∧ {z : ℂ | 0 < z.im}.EqOn 
         have hx2 := ne_zero (⟨x, hx⟩ : ℍ)
         norm_cast at *
     · intro y hy
-      simp only [mem_ofPred_eq]
-      have := UpperHalfPlane.im_inv_neg_coe_pos (⟨y, hy⟩ : ℍ)
-      conv =>
-        enter [2,1]
-        rw [neg_div, div_eq_mul_inv]
-        simp
-      simp_all
+      simpa [div_eq_mul_inv] using
+        UpperHalfPlane.im_inv_neg_coe_pos (⟨y, hy⟩ : ℍ)
   · apply DifferentiableOn.mul
     · simp only [DifferentiableOn, mem_ofPred_eq]
       intro x hx
@@ -377,7 +372,7 @@ lemma eta_logderivs_const' : ∃ z : ℂ, z ≠ 0 ∧ {z : ℂ | 0 < z.im}.EqOn 
   · intro x hx
     simp only [comp_apply, ne_eq]
     have := dedekindEtaFun'_ne_zero ⟨-1 / x, by simpa using pnat_div_upper 1 ⟨x, hx⟩⟩
-    simpa only [ne_eq, coe_mk] using this
+    simpa only [ne_eq, UpperHalfPlane.coe_mk] using this
 
 lemma eta_equality' : {z : ℂ | 0 < z.im}.EqOn ((η ∘ (fun z : ℂ => -1/z)))
    ((csqrt (Complex.I))⁻¹ • ((csqrt) * η)) := by

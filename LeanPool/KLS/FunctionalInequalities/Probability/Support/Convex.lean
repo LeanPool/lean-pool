@@ -441,7 +441,7 @@ theorem mem_interior_setOf_ne_top_of_lintegral_ne_top [FiniteDimensional ℝ E]
     Measure.support_subset_of_isClosed isClosed_closure
       (h_ae.mono fun _ hx => subset_closure hx)
   have h_closed_span : closure D ⊆ (affineSpan ℝ D : Set E) :=
-    closure_minimal (subset_affineSpan ℝ D) (affineSpan ℝ D).closed_of_finiteDimensional
+    closure_minimal (subset_affineSpan ℝ D) (affineSpan ℝ D).isClosed_of_finiteDimensional
   have h_support_span : affineSpan ℝ μ.support = ⊤ :=
     affineSpan_eq_top_of_nonempty_interior ⟨x₀, hx₀⟩
   have h_span : affineSpan ℝ D = ⊤ := by
@@ -486,7 +486,7 @@ theorem exists_pos_le_measure_halfspace_of_mem_interior_convexHull_support_of_is
   have hfmne : fm ≠ 0 := by
     intro hz
     exact hμne (congrArg (fun η : FiniteMeasure E => (η : Measure E)) hz)
-  have hmassne : fm.mass ≠ 0 := fm.mass_nonzero_iff.mpr hfmne
+  have hmassne : fm.mass ≠ 0 := fm.mass_ne_zero_iff.mpr hfmne
   have hmasspos : 0 < (fm.mass : ℝ) := by exact_mod_cast (pos_iff_ne_zero.mpr hmassne)
   let ν : ProbabilityMeasure E := fm.normalize
   have hnull (s : Set E) : (ν : Measure E) s = 0 ↔ μ s = 0 := by

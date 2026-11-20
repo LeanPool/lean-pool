@@ -166,13 +166,13 @@ theorem integrable_and_integral_weakGradient_mul_spatialPartial {q : ℝ}
   have hDum' : AEStronglyMeasurable (fun z : Vec3 × ℝ => Du z) μB := by rw [hμB']; exact hDum
   have hum' : AEStronglyMeasurable (fun z : Vec3 × ℝ => u z) μB := by rw [hμB']; exact hum
   have hDu2 : MemLp (fun z : Vec3 × ℝ => Du z) 2 μB := by
-    rw [MemLp, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num) hDum',
+    rw [MemLp, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num) hDum',
       hμB']
     refine lt_of_le_of_lt (lintegral_mono (fun z => ?_)) hL2'
     simp only [ENNReal.toReal_ofNat]
     exact le_add_self
   have hu2 : MemLp (fun z : Vec3 × ℝ => u z) 2 μB := by
-    rw [MemLp, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num) hum',
+    rw [MemLp, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num) hum',
       hμB']
     refine lt_of_le_of_lt (lintegral_mono (fun z => ?_)) hL2'
     simp only [ENNReal.toReal_ofNat]

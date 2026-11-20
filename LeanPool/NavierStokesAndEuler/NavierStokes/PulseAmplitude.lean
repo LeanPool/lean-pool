@@ -540,7 +540,7 @@ noncomputable def rowMoment (a : ℝ) : ℝ := ∫ x, x ^ a * radialTemplate x
 noncomputable def rowFloor : ℝ := Real.exp (-1) * templateMass
 
 theorem templateMass_pos : 0 < templateMass := by
-  apply integral_pos_of_integrable_nonneg_nonzero radialTemplate_contDiff.continuous
+  apply integral_pos_of_integrable_nonneg_ne_zero radialTemplate_contDiff.continuous
     (radialTemplate_contDiff.continuous.integrable_of_hasCompactSupport
       radialTemplate_hasCompactSupport) radialTemplate_nonneg
     (x := (templateLower + templateUpper) / 2)

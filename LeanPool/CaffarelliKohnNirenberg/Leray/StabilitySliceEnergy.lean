@@ -43,7 +43,7 @@ theorem stability_essSup_slice_energy_lt_top
         (nhds (‖G (t, x)‖ₑ ^ (2 : ℝ))) := by
     filter_upwards [hae] with t ht
     filter_upwards [ht] with x hx
-    exact (ENNReal.continuous_rpow_const.tendsto _).comp hx.enorm
+    exact (ENNReal.continuous_rpow_const.tendsto _).comp hx.eNorm
   have hslicebound (n : ℕ) :
       ∀ᵐ t ∂ν, (∫⁻ x, ‖F (σ n) (t, x)‖ₑ ^ (2 : ℝ) ∂μ) ≤ M := by
     filter_upwards [ENNReal.ae_le_essSup

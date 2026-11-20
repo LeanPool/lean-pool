@@ -133,7 +133,7 @@ theorem strong_l2_to_compactnessMollifiedLimit_on_exhaustion
         ‖f k (x,t)‖ₑ ^ (2 : ℝ) ∂μ) ≤ M := by
       simpa only [f, μ, ← ofReal_norm, ← vec3EuclideanNorm_eq_l2] using
         hMb (σ k) t ht
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) (hsource k t ht).aestronglyMeasurable]
     simpa only [ENNReal.toReal_ofNat] using
       ENNReal.rpow_le_rpow henergy (by norm_num : (0 : ℝ) ≤ 1 / 2)

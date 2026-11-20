@@ -561,9 +561,8 @@ private theorem kvm_decomposition_indep_helper {Ω G : Type*} [MeasurableSpace �
   rw [h_sum]
   refine iIndepFun.finsetSum _ h_disjoint ?_ (fun i ↦ by by_cases hi : i ∈ t <;> measurability)
   apply iIndepFun.comp hindep
-  all_goals
-    intro i
-    by_cases hi : i ∈ t <;> measurability
+  intro i
+  by_cases hi : i ∈ t <;> measurability
 
 private theorem entropy_kvm_decomposition {I : Type*} {s t : Finset I} (hdisj : Disjoint s t)
     (X : I → Ω → G) (hX : ∀ i, Measurable (X i))
@@ -1439,7 +1438,7 @@ lemma multidist_ruzsa_IV {m : ℕ} (hm : m ≥ 2) {Ω : Type u} [MeasureSpace Ω
           true_and, exists_eq_right, S] at hd hc ⊢
         intro _
         replace hc := hc.1 hc.2.symm
-        contrapose! hc
+        contrapose hc
         rw [←hc, hd.2]
       have h_disjoint : Set.PairwiseDisjoint Set.univ S := by
         rw [Set.PairwiseDisjoint, Set.Pairwise]
@@ -2359,7 +2358,7 @@ private lemma tailProjectionMultiDistSum [Fintype G] {m : ℕ} {Ω : Type*}
               have h_disjoint : Disjoint T T' := by
                 rw [Finset.disjoint_iff_ne]
                 intro ⟨i₁, j₁⟩ h₁ ⟨i₂, j₂⟩ h₂
-                by_contra! h
+                by_contra h
                 simp only [ge_iff_le, Finset.mem_filter, Finset.mem_univ, true_and, Prod.mk.injEq,
                   T, T'] at h₁ h₂ h
                 rw [h.2] at h₁
@@ -2403,7 +2402,7 @@ private lemma tailProjectionMultiDistSum [Fintype G] {m : ℕ} {Ω : Type*}
             have h_disjoint' : Disjoint T T' := by
               rw [Finset.disjoint_iff_ne]
               intro ⟨i₁, j₁⟩ h₁ ⟨i₂, j₂⟩ h₂
-              by_contra! h
+              by_contra h
               simp only [ge_iff_le, Finset.mem_filter, Finset.mem_univ, true_and, Prod.mk.injEq, T,
                 T'] at h₁ h₂ h
               rw [h.2] at h₁

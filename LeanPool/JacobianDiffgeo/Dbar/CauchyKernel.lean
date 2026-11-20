@@ -56,7 +56,7 @@ theorem integrableOn_cauchyKernel_ball (ρ : ℝ) :
   push Not at hρ0
   have hρ : 0 < ρ := hρ0
   refine ⟨aestronglyMeasurable_cauchyKernel.restrict, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   have hind : (∫⁻ w in ball (0 : ℂ) ρ, ‖cauchyKernel w‖ₑ ∂volume) =
       ∫⁻ w, (ball (0 : ℂ) ρ).indicator (fun w => ‖cauchyKernel w‖ₑ) w ∂volume := by
     rw [lintegral_indicator measurableSet_ball]

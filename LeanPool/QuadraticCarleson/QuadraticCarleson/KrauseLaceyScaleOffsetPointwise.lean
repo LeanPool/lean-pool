@@ -63,7 +63,7 @@ theorem enorm_smoothHighPass_sub_le_maximal
     _ ≤ (‖∫ y, radiusRoundingBoundaryKernel lam ε ρ (x - y) * f y‖ₑ +
         ‖∫ y, cutoffBoundaryKernel lam ε (x - y) * f y‖ₑ) +
           ‖∫ y, cutoffBoundaryKernel lam ρ (x - y) * f y‖ₑ :=
-      (enorm_add_le _ _).trans (add_le_add enorm_sub_le le_rfl)
+      (eNorm_add_le _ _).trans (add_le_add eNorm_sub_le le_rfl)
     _ ≤ (8 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x +
         8 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x) +
           8 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x :=
@@ -94,7 +94,7 @@ theorem enorm_smoothHighPass_le_dyadicRounded_add_maximal
           smoothQuadraticHighPass lam (dyadicCeilRadius ρ hρ) f x)‖ₑ := by
       congr 1
       ring
-    _ ≤ _ := (enorm_add_le _ _).trans (add_le_add le_rfl
+    _ ≤ _ := (eNorm_add_le _ _).trans (add_le_add le_rfl
       (enorm_smoothHighPass_sub_dyadicRounded_le_maximal lam hρ hf hfi x))
 
 /-- The minimum of the rounded scales of the actual positive radii. -/

@@ -30,7 +30,7 @@ open scoped Topology NNReal
 
 namespace PoissonDeclumping.PlaneTree
 
-variable [MeasurableSpace PlaneTree] {B : Set ℕ} {G : PlaneTree → Prop}
+variable {measurableSpace : MeasurableSpace PlaneTree} {B : Set ℕ} {G : PlaneTree → Prop}
 
 /-- The difference of the zero-event probabilities is between zero and the
 root-mark probability, exactly as in the proof of Lemma `lem:declump_to_raw`. -/

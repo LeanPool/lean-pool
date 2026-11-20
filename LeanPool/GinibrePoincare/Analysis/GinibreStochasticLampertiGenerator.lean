@@ -57,8 +57,7 @@ theorem ginibre_deriv_deriv_sqrt {r : ℝ} (hr : 0 < r) :
     convert! h using 1
     · funext x
       simp only [one_div, Pi.inv_apply]
-    · field_simp
-     ; ring
+    · field_simp; ring
   exact (hg.congr_of_eventuallyEq he).deriv
 
 /-- The drift `(α / n) * (2γ - 1) / √r - (2α / n) * √r` of the square-root radius, at radius
@@ -101,7 +100,6 @@ theorem ginibreRealPaperSpeedGenerator_squareRootRadius {n : ℕ} (hn : 2 ≤ n)
   have hsq := Real.sq_sqrt hρ.le
   generalize he : Real.sqrt (pairwiseRadius z)=r at hs hsq ⊢
   rw [← hsq]
-  field_simp
- ; ring
+  field_simp; ring
 end
 end GinibrePoincare

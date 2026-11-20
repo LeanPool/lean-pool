@@ -36,7 +36,7 @@ theorem exists_global_spatial_lipschitz
     change ‖fderiv ℝ F p‖₊ ≤ K
     exact_mod_cast hp
   have hLip : LipschitzWith K F :=
-    lipschitzWith_of_nnnorm_fderiv_le hdiff hderiv
+    lipschitzWith_of_nnNorm_fderiv_le hdiff hderiv
   refine ⟨L, hL, ?_⟩
   intro t x y
   have h := hLip.dist_le_mul (t, x) (t, y)

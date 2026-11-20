@@ -90,7 +90,7 @@ variable {G : Type*} [Group G] {K : Type*} [CommRing K] {V : Type*} [AddCommGrou
 theorem coeffCocycles_apply_one {ρ : Representation K G V} {z : G → V} (hz : z ∈ coeffCocycles ρ) :
     z 1 = 0 := by
   have h := hz 1 1
-  rw [mul_one, map_one, Module.End.one_apply] at h
+  rw [mul_one, map_one, one_apply_eq_self] at h
   have : z 1 + z 1 = z 1 + 0 := by rw [add_zero]; exact h.symm
   exact add_left_cancel this
 
@@ -516,20 +516,20 @@ theorem mem_range_of_mem_closure (hy : y ∈ coeffCocycles ρ) (w : V) {s : Set 
     {g : G} (hg : g ∈ Subgroup.closure s) : y g = ρ g w - w := by
   induction hg using Subgroup.closure_induction with
   | mem x hx => exact hs x hx
-  | one => rw [coeffCocycles_apply_one hy, map_one, Module.End.one_apply, sub_self]
+  | one => rw [coeffCocycles_apply_one hy, map_one, one_apply_eq_self, sub_self]
   | mul a b _ _ iha ihb =>
-    rw [hy a b, iha, ihb, map_mul, Module.End.mul_apply, map_sub]
+    rw [hy a b, iha, ihb, map_mul, mul_apply_eq_comp, map_sub]
     abel
   | inv a _ iha =>
-    rw [coeffCocycles_apply_inv hy, iha, map_sub, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel,
+    rw [coeffCocycles_apply_inv hy, iha, map_sub, ← mul_apply_eq_comp, ← map_mul, inv_mul_cancel,
       map_one,
-      Module.End.one_apply]
+      one_apply_eq_self]
     abel
 
 theorem apply_conj (hy : y ∈ coeffCocycles ρ) (g v : G) :
     y (g * v * g⁻¹) = ρ g (y v) - (ρ (g * v * g⁻¹) (y g) - y g) := by
   have h3 : ρ (g * v) (ρ g⁻¹ (y g)) = ρ (g * v * g⁻¹) (y g) := by
-    rw [← Module.End.mul_apply, ← map_mul]
+    rw [← mul_apply_eq_comp, ← map_mul]
   rw [hy (g * v) g⁻¹, hy g v, coeffCocycles_apply_inv hy, map_neg, h3]
   abel
 
@@ -537,10 +537,10 @@ theorem apply_conj_mem_range (hy : y ∈ coeffCocycles ρ) {v : G} {w : V} (hv :
     (g : G) :
     y (g * v * g⁻¹) ∈ LinearMap.range (ρ (g * v * g⁻¹) - 1) := by
   refine ⟨ρ g w - y g, ?_⟩
-  rw [apply_conj hy, hv, LinearMap.sub_apply, Module.End.one_apply, map_sub, map_sub]
+  rw [apply_conj hy, hv, LinearMap.sub_apply, one_apply_eq_self, map_sub, map_sub]
   have : ρ (g * v * g⁻¹) (ρ g w) = ρ g (ρ v w) := by
-    rw [← Module.End.mul_apply, ← map_mul, show g * v * g⁻¹ * g = g * v by
-      group, map_mul, Module.End.mul_apply]
+    rw [← mul_apply_eq_comp, ← map_mul, show g * v * g⁻¹ * g = g * v by
+      group, map_mul, mul_apply_eq_comp]
   rw [this]
   abel
 
@@ -602,7 +602,7 @@ theorem isParabolicCocycle_of_cuspWitnesses (n N : ℕ) [NeZero N]
     have hym₁ : y m₁ = 0 := by
       have h1 := hycoc m₁ m₁
       have hmm : m₁ * m₁ = 1 := Subtype.ext (by simp [hm₁])
-      rw [hmm, coeffCocycles_apply_one hycoc, hρm₁, Module.End.one_apply] at h1
+      rw [hmm, coeffCocycles_apply_one hycoc, hρm₁, one_apply_eq_self] at h1
       apply Subtype.ext; ext d
       have h2 :=
         congrArg (fun P : ↥(BinaryForm ℤ n) => AddMonoidAlgebra.coeff (P : MvPolynomial (Fin 2) ℤ)
@@ -611,7 +611,7 @@ theorem isParabolicCocycle_of_cuspWitnesses (n N : ℕ) [NeZero N]
         Submodule.coe_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply] at h2
       simp only [Submodule.coe_zero, AddMonoidAlgebra.coeff_zero, Finsupp.zero_apply]
       omega
-    rw [hγm, hycoc m₁ γ', hym₁, zero_add, hρm₁, Module.End.one_apply, map_mul, hρm₁, one_mul]
+    rw [hγm, hycoc m₁ γ', hym₁, zero_add, hρm₁, one_apply_eq_self, map_mul, hρm₁, one_mul]
     exact hpar'
 
 theorem mk_eq_zero_of_odd (n N : ℕ) (hodd : Odd n)
@@ -682,7 +682,7 @@ theorem main
       rw [Even.neg_one_pow heven, one_smul]
     have hρm1 : binaryFormRepSL ℤ n (-1) = 1 := by
       refine LinearMap.ext fun P => ?_
-      rw [Module.End.one_apply]
+      rw [one_apply_eq_self]
       exact (binaryFormRepSL_neg_one_apply ℤ n P).trans (hgen ℤ P)
     obtain ⟨_, S, _, hS⟩ := Group.fg_iff'.mp (instGroupFG_Gamma0 N)
     choose w hw using fun q : SL(2, ℤ) ⧸ Gamma0 N => z.2.2 (cuspGen N q) (trace_cuspGen_sq N q)
@@ -741,7 +741,7 @@ theorem main
       obtain ⟨W, hW⟩ := exists_eq_pushForm_of_isInt n hiw
       refine ⟨W, pushForm_ι_injective n ?_⟩
       have h1 := hw q
-      rw [LinearMap.sub_apply, Module.End.one_apply] at h1
+      rw [LinearMap.sub_apply, one_apply_eq_self] at h1
       rw [hyv, pushForm_sub, pushForm_binaryFormRepSL, hW, ← hρQ', LinearMap.map_smul, ← smul_sub,
         h1]
     have hypar := isParabolicCocycle_of_cuspWitnesses n N hρm1 hycoc hWq
@@ -754,7 +754,7 @@ theorem main
       change MvPolynomial.map (Int.castRingHom ℚ) ((y g : ↥(BinaryForm ℤ n)) : MvPolynomial (Fin 2)
         ℤ) = _
       rw [← coe_pushForm_ι, hyv]
-      try rfl
+      rfl
     rw [this, LinearMap.map_smul, Int.cast_smul_eq_zsmul]
 
 end ZQAux

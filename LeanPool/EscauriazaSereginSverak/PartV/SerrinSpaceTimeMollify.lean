@@ -109,7 +109,7 @@ private theorem serrin_eLpNorm_rpow_eq {g : Vec3 → ℝ} {p : ℝ≥0∞} (hp0 
     (hptop : p ≠ ⊤) (hg : AEStronglyMeasurable g volume) :
     eLpNorm g p volume ^ p.toReal = ∫⁻ x, ‖g x‖ₑ ^ p.toReal := by
   have hr : 0 < p.toReal := ENNReal.toReal_pos hp0 hptop
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hg, ← ENNReal.rpow_mul,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hg, ← ENNReal.rpow_mul,
     one_div_mul_cancel hr.ne', ENNReal.rpow_one]
 
 /-- Slice-wise spatial mollification converges in space-time `L^p` on the slab,
@@ -134,7 +134,7 @@ theorem serrinSM_tendsto_prod {T : ℝ} {g : Vec3 × ℝ → ℝ} {p : ℝ≥0�
   have hhm (n : ℕ) : AEStronglyMeasurable (h n) ν := (hSM n).sub hg.aestronglyMeasurable
   -- reduce to the integral of the `r`-th power
   have hpow : ∀ n, eLpNorm (h n) p ν = (∫⁻ z, ‖h n z‖ₑ ^ r ∂ν) ^ (1 / r) := fun n =>
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop (hhm n)
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop (hhm n)
   simp_rw [show (fun n => eLpNorm (fun z : Vec3 × ℝ =>
       CKN.mollify (fun x : Vec3 => g (x, z.2)) (serrinRadius n) (serrinRadius_pos n) z.1
         - g z) p ν) = fun n => eLpNorm (h n) p ν from rfl, hpow]
@@ -143,16 +143,16 @@ theorem serrinSM_tendsto_prod {T : ℝ} {g : Vec3 × ℝ → ℝ} {p : ℝ≥0�
   refine (ENNReal.continuous_rpow_const.tendsto 0).comp ?_
   -- Tonelli in the time variable
   have hmeasPow (n : ℕ) : AEMeasurable (fun z => ‖h n z‖ₑ ^ r) ν :=
-    (hhm n).enorm.pow_const r
+    (hhm n).eNorm.pow_const r
   have hTon (n : ℕ) : (∫⁻ z, ‖h n z‖ₑ ^ r ∂ν) =
       ∫⁻ τ, ∫⁻ x, ‖h n (x, τ)‖ₑ ^ r ∂volume ∂(volume.restrict (Ioo 0 T)) :=
     lintegral_prod_symm _ (hmeasPow n)
   simp_rw [hTon]
   -- the slices of `g`
-  have hgm : AEMeasurable (fun z => ‖g z‖ₑ ^ r) ν := hg.aestronglyMeasurable.enorm.pow_const r
+  have hgm : AEMeasurable (fun z => ‖g z‖ₑ ^ r) ν := hg.aestronglyMeasurable.eNorm.pow_const r
   have hgfin : (∫⁻ z, ‖g z‖ₑ ^ r ∂ν) ≠ ⊤ := by
     have h1 := hg.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hg.aestronglyMeasurable] at h1
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hg.aestronglyMeasurable] at h1
     exact (ENNReal.rpow_lt_top_iff_of_pos (by positivity)).mp h1 |>.ne
   set G : ℝ → ℝ≥0∞ := fun τ => ∫⁻ x, ‖g (x, τ)‖ₑ ^ r ∂volume
   have hGm : AEMeasurable G (volume.restrict (Ioo 0 T)) := hgm.lintegral_prod_left'
@@ -165,7 +165,7 @@ theorem serrinSM_tendsto_prod {T : ℝ} {g : Vec3 × ℝ → ℝ} {p : ℝ≥0�
     exact ⟨h1, h2⟩
   have hsliceLp : ∀ᵐ τ ∂(volume.restrict (Ioo 0 T)), MemLp (fun x => g (x, τ)) p volume := by
     filter_upwards [hslice] with τ ⟨hm, hG⟩
-    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hm]
+    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hm]
     exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hG.ne
   have hlim : Tendsto (fun n => ∫⁻ τ, ∫⁻ x, ‖h n (x, τ)‖ₑ ^ r ∂volume
       ∂(volume.restrict (Ioo 0 T))) atTop (𝓝 (∫⁻ _τ, (0 : ℝ≥0∞) ∂(volume.restrict (Ioo 0 T)))) := by

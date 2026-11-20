@@ -255,7 +255,7 @@ theorem isTightMeasureSet_of_cauchySeq
           ((⋃ x ∈ F j, closedBall x ((1 / 2 : ℝ) ^ j))ᶜ) :=
         measure_iUnion_le _
     _ ≤ ∑' j : ℕ, ENNReal.ofReal (e * (1 / 2 : ℝ) ^ (j + 1)) :=
-        ENNReal.tsum_le_tsum hlayer_le
+        tsum_le_tsum hlayer_le
     _ = ENNReal.ofReal e := hgeom
     _ ≤ ε := heε
 
@@ -331,8 +331,8 @@ instance diracMix_isProbabilityMeasure (x₀ : Ω) {N : ℕ}
     have htop : (∑ i, (a i : ℝ≥0∞)) ≠ ∞ := by
       rw [← Nat.cast_sum]
       exact ENNReal.natCast_ne_top _
-    rw [Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
-    simp only [Measure.smul_apply, smul_eq_mul]
+    rw [smul_apply, FunLike.coe_sum, Finset.sum_apply]
+    simp only [smul_apply, smul_eq_mul]
     rw [show (∑ i, (a i : ℝ≥0∞) * Measure.dirac (x i) univ)
         = ∑ i, (a i : ℝ≥0∞) by
       refine Finset.sum_congr rfl fun i _ => ?_
@@ -374,8 +374,8 @@ theorem le_diracMix_apply (x₀ : Ω) {N : ℕ} (x : Fin N → Ω) (a : Fin N �
         ≤ (∑ i, (a i : ℝ≥0∞))⁻¹ * ∑ i, (a i : ℝ≥0∞) * Measure.dirac (x i) E :=
           mul_le_mul' hinv hstep
       _ = ((∑ i, (a i : ℝ≥0∞))⁻¹ • ∑ i, (a i : ℝ≥0∞) • Measure.dirac (x i)) E := by
-          rw [Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply]
-          simp only [Measure.smul_apply, smul_eq_mul]
+          rw [smul_apply, FunLike.coe_sum, Finset.sum_apply]
+          simp only [smul_apply, smul_eq_mul]
 
 
 omit [CompleteSpace Ω] in

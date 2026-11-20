@@ -51,9 +51,9 @@ theorem tendsto_eLpNorm_truncation {f : Vec3 × ℝ → ℝ} {p : ℝ≥0∞} (h
   have hmeas (k : ℕ) : AEStronglyMeasurable ((positiveTimeTruncation k).indicator f - f) volume :=
     (hf.aestronglyMeasurable.indicator (positiveTimeTruncation_measurableSet k)).sub
       hf.aestronglyMeasurable
-  simp_rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop (hmeas _)]
+  simp_rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop (hmeas _)]
   have hbound := hf.eLpNorm_lt_top
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hf.aestronglyMeasurable] at hbound
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hf.aestronglyMeasurable] at hbound
   have hfin : ∫⁻ z, ‖f z‖ₑ ^ p.toReal ≠ ∞ := by
     intro htop
     rw [htop, ENNReal.top_rpow_of_pos (by positivity)] at hbound
@@ -69,23 +69,23 @@ theorem tendsto_eLpNorm_truncation {f : Vec3 × ℝ → ℝ} {p : ℝ≥0∞} (h
     have hzero : (∫⁻ _z : Vec3 × ℝ, (0 : ℝ≥0∞)) = 0 := lintegral_zero
     rw [← hzero]
     refine tendsto_lintegral_of_dominated_convergence' (fun z => ‖f z‖ₑ ^ p.toReal)
-      (fun k => (hmeas k).aemeasurable.enorm.pow_const p.toReal) (fun k => ?_) hfin ?_
+      (fun k => (hmeas k).aemeasurable.eNorm.pow_const p.toReal) (fun k => ?_) hfin ?_
     · refine Eventually.of_forall fun z => ?_
       dsimp only
-      rw [hpoint, enorm_neg]
+      rw [hpoint, eNorm_neg]
       apply ENNReal.rpow_le_rpow _ hpt.le
       by_cases hz : z ∈ (positiveTimeTruncation k)ᶜ
       · rw [indicator_of_mem hz]
-      · rw [indicator_of_notMem hz, enorm_zero]
+      · rw [indicator_of_notMem hz, eNorm_zero]
         exact bot_le
     · refine Eventually.of_forall fun z => ?_
       by_cases hfz : f z = 0
       · have h0 (k : ℕ) : ‖((positiveTimeTruncation k).indicator f - f) z‖ₑ ^ p.toReal = 0 := by
           rw [hpoint]
           by_cases hz : z ∈ (positiveTimeTruncation k)ᶜ
-          · rw [indicator_of_mem hz, hfz, neg_zero, enorm_zero,
+          · rw [indicator_of_mem hz, hfz, neg_zero, eNorm_zero,
               ENNReal.zero_rpow_of_pos hpt]
-          · rw [indicator_of_notMem hz, neg_zero, enorm_zero, ENNReal.zero_rpow_of_pos hpt]
+          · rw [indicator_of_notMem hz, neg_zero, eNorm_zero, ENNReal.zero_rpow_of_pos hpt]
         simp only [h0]
         exact tendsto_const_nhds
       · have hz2 : 0 < z.2 := hsupp z hfz
@@ -100,7 +100,7 @@ theorem tendsto_eLpNorm_truncation {f : Vec3 × ℝ → ℝ} {p : ℝ≥0∞} (h
           exact ⟨hk1, hk3, hk2⟩
         refine tendsto_const_nhds.congr' ?_
         filter_upwards [hev] with k hk
-        rw [hpoint, indicator_of_notMem (Set.notMem_compl_iff.mpr hk), neg_zero, enorm_zero,
+        rw [hpoint, indicator_of_notMem (Set.notMem_compl_iff.mpr hk), neg_zero, eNorm_zero,
           ENNReal.zero_rpow_of_pos hpt]
   have hcont := (ENNReal.continuous_rpow_const (y := 1 / p.toReal)).tendsto 0
   rw [ENNReal.zero_rpow_of_pos (by positivity)] at hcont

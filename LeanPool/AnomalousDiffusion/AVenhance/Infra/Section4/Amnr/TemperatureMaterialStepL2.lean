@@ -107,7 +107,7 @@ theorem amnr_gradient_material_step_L2 {U : Set AmnrSpace} (hU : IsOpen U)
   have hκDs : eLpNorm (fun z => κ * ∑ q : Fin 2, amnrWord b (w ++ [some q, some q]) (g p) z) 2 μ ≤
       ENNReal.ofReal (κ * (2 * (K * G * amnrWeight S H w * S ^ 2))) := by
     change eLpNorm (κ • (fun z => ∑ q : Fin 2, amnrWord b (w ++ [some q, some q]) (g p) z)) 2 μ ≤ _
-    rw [eLpNorm_const_smul, Real.enorm_of_nonneg hκ]
+    rw [eLpNorm_const_smul, Real.eNorm_of_nonneg hκ]
     exact (mul_le_mul_right hDs _).trans_eq (ENNReal.ofReal_mul hκ).symm
   refine (eLpNorm_sub_le (by norm_num : (1 : ENNReal) ≤ 2)).trans
     ((add_le_add ((eLpNorm_add_le (by norm_num : (1 : ENNReal) ≤ 2)).trans

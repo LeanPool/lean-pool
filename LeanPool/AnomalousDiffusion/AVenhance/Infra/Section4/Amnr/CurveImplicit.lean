@@ -33,7 +33,7 @@ theorem amnr_contDiffAt_of_invertible_left_equation {E F : Type*}
     rw [← heq x]
     exact hP.to_localInverse hD hn
   have hleft : ∀ᶠ z in 𝓝 (Q x), G (P z) = z :=
-    (hP.hasStrictFDerivAt' hD hn).eventually_left_inverse
+    (hP.hasStrictFDerivAt hD hn).eventually_left_inverse
   have hnear : ∀ᶠ y in 𝓝 x, G (R y) = Q y := by
     have hh := hQ.eventually hleft
     exact hh.mono fun y hy => by rw [← heq y]; exact hy

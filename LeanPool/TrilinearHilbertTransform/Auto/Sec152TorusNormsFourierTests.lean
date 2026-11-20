@@ -1110,11 +1110,11 @@ theorem coset_haar_four_le
   have hlin : ∫⁻ z, ‖F z‖ₑ ∂(μ.prod μ) ≤
       ENNReal.ofReal W * ∏ i, eLpNorm (g i) 2 μ := by
     have h := haar_four V (fun _ => ENNReal.ofReal W) measurable_const (fun _ => le_refl _) l
-      (fun i x => ‖g i x‖ₑ) (fun i => (hg i).enorm.measurable)
+      (fun i x => ‖g i x‖ₑ) (fun i => (hg i).eNorm.measurable)
     calc ∫⁻ z, ‖F z‖ₑ ∂(μ.prod μ) ≤ ∫⁻ z, ENNReal.ofReal W *
           ∏ i, ‖g i (z.1 + ((i : ℤ) - l) • z.2)‖ₑ ∂(μ.prod μ) := by
           refine lintegral_mono fun z => ?_
-          simp only [F, enorm_mul]
+          simp only [F, eNorm_mul]
           calc ‖Rm z‖ₑ * ‖∏ i, g i (z.1 + ((i : ℤ) - l) • z.2)‖ₑ * ‖χ z‖ₑ
               ≤ ENNReal.ofReal W * ‖∏ i, g i (z.1 + ((i : ℤ) - l) • z.2)‖ₑ * 1 := by
                 gcongr
@@ -1123,14 +1123,14 @@ theorem coset_haar_four_le
             _ = ENNReal.ofReal W * ∏ i, ‖g i (z.1 + ((i : ℤ) - l) • z.2)‖ₑ := by
                 rw [mul_one]
                 congr 1
-                simp only [enorm_eq_nnnorm, nnnorm_prod, ENNReal.ofNNReal_finsetProd]
+                simp only [eNorm_eq_nnNorm, nnNorm_prod, ENNReal.ofNNReal_finsetProd]
       _ ≤ ENNReal.ofReal W * ∏ i, eLpNorm (fun x => ‖g i x‖ₑ) 2 μ := h
       _ = ENNReal.ofReal W * ∏ i, eLpNorm (g i) 2 μ := by
           congr 1
-          exact Finset.prod_congr rfl fun i _ => eLpNorm_enorm _ (hmeas i)
+          exact Finset.prod_congr rfl fun i _ => eLpNorm_eNorm _ (hmeas i)
   rw [← integral_prod F hFi]
   refine (norm_integral_le_integral_norm _).trans ?_
-  rw [integral_norm_eq_lintegral_enorm hFi.aestronglyMeasurable]
+  rw [integral_norm_eq_lintegral_eNorm hFi.aestronglyMeasurable]
   have hR : ENNReal.ofReal W * ∏ i, eLpNorm (g i) 2 μ ≠ ⊤ :=
     ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.prod_ne_top fun i _ => hfin i)
   calc (∫⁻ z, ‖F z‖ₑ ∂(μ.prod μ)).toReal ≤ (ENNReal.ofReal W * ∏ i, eLpNorm (g i) 2 μ).toReal :=
@@ -4984,7 +4984,8 @@ their components, sides and errors fixed): the pattern form is at most
 masked slot sums grouped by the final-height classes `cls h` are at most principal quantities
 `Ψ_p` plus the errors of their member tuples, and the history averages of `Σ_p Ψ_p` obey the
 moment bound (`first_success_bound`, `multilinear_regroup`). -/
-theorem pattern_leaf_bound (Λ : MultilinearMap ℂ (fun _ : Fin 4 => V) ℂ) (σ : Fin 4 → Fin 3)
+theorem pattern_leaf_bound
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => V) ℂ) (σ : Fin 4 → Fin 3)
     {κ : Fin 4 → Type*} (Ks : ∀ l, Finset (κ l)) (sub : ∀ l, κ l → V) (s e : Fin 4 → V)
     (H : Finset ℕ) (good : ∀ l, ℕ → Option (κ l) → Prop)
     (hp : ∀ r ∈ Fintype.piFinset (compIdx σ Ks),

@@ -153,8 +153,9 @@ theorem whitneyCellIntegrals_le_row_cauchySchwarz
         ∑' i : system.CellIndex,
           (volume (system.cell i) * N i) ^ (1 / 2 : ℝ) *
             (volume (system.cell i) * P i) ^ (1 / 2 : ℝ) := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro i
+      dsimp only
       rw [← volume_mul_ofReal_abs_volumeAverage_whitneyCell system i f,
         ← volume_mul_half_products]
       exact mul_le_mul_right (hcell i) _
@@ -207,8 +208,7 @@ theorem ofReal_abs_volumeAverage_le_whitneyRow_cauchySchwarz
     have hdiff : volume (U \ A) = 0 := by
       rw [hiUnionRows]
       exact system.ae_exhaustion hd hU
-    exact _root_.Filter.EventuallyLE.antisymm (ae_of_all volume hAU)
-      (ae_le_set.mpr hdiff)
+    exact hAU.eventuallySubset.antisymm (ae_subset.mpr hdiff)
   have hmeas : ∀ i : system.CellIndex,
       MeasurableSet (system.cell i) := by
     intro i

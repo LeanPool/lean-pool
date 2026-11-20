@@ -476,10 +476,10 @@ instance instAlgebraEndOfIsScalarTowerLeanPool (M : Type v) [AddCommGroup M] [Mo
       map_smul' := by
         simp only [Module.End.smul_def, RingHom.id_apply, LinearMap.map_smul_of_tower,
           implies_true] }
-    map_one' := by ext; simp only [one_smul, LinearMap.coe_mk, AddHom.coe_mk, Module.End.one_apply]
+    map_one' := by ext; simp only [one_smul, LinearMap.coe_mk, AddHom.coe_mk, one_apply_eq_self]
     map_mul' := by
       intros; ext
-      simp only [LinearMap.coe_mk, AddHom.coe_mk, Module.End.mul_apply, LinearMap.map_smul_of_tower]
+      simp only [LinearMap.coe_mk, AddHom.coe_mk, mul_apply_eq_comp, LinearMap.map_smul_of_tower]
       rw [mul_comm, mul_smul]
     map_zero' := by ext; simp
     map_add' := by
@@ -514,7 +514,7 @@ instance instAlgebraEndOfIsScalarTowerLeanPool (M : Type v) [AddCommGroup M] [Mo
   smul_def' := by
     intro r f
     ext m
-    simp only [RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk, Module.End.mul_apply,
+    simp only [RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk, mul_apply_eq_comp,
       LinearMap.coe_mk, AddHom.coe_mk]
     let s : Module.End A M :=
       { toFun x := r • x

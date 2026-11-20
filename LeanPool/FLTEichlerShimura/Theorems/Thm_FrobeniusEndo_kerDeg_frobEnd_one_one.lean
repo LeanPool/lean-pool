@@ -81,7 +81,7 @@ theorem pow_card_eq_self_iff (x : k) : x ^ Fintype.card F = x ↔ x ∈ Set.rang
     set q := Fintype.card F with hq
     have hq1 : 1 < q := Fintype.one_lt_card
     set f : k[X] := X ^ q - X with hf
-    have hf0 : f ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero k hq1
+    have hf0 : f ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hq1
     set T : Finset k := Finset.univ.image (algebraMap F k) with hT
     have hTcard : T.card = q := by
       rw [hT, Finset.card_image_of_injective _ (algebraMap F k).injective, Finset.card_univ]
@@ -92,7 +92,7 @@ theorem pow_card_eq_self_iff (x : k) : x ^ Fintype.card F = x ↔ x ∈ Set.rang
         FiniteField.pow_card, sub_self]
     have hle : f.roots.toFinset.card ≤ q :=
       (Multiset.toFinset_card_le _).trans ((card_roots' f).trans_eq
-        (FiniteField.X_pow_card_sub_X_natDegree_eq k hq1))
+        (Polynomial.natDegree_X_pow_sub_X hq1))
     have heq : T = f.roots.toFinset :=
       Finset.eq_of_subset_of_card_le hTroots (hle.trans_eq hTcard.symm)
     have hxroot : x ∈ f.roots.toFinset := by

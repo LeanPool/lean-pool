@@ -69,7 +69,7 @@ theorem pressureNewtonianDerivativePotential_enorm_le_rieszPotentialOne
         ENNReal.ofReal ((4 * Real.pi)⁻¹) * rieszKernelOne x y := by
     filter_upwards [Measure.ae_ne volume x] with y hy
     exact pressure_derivative_kernel_enorm_le hy.symm
-  have hmain := enorm_integral_le_lintegral_enorm
+  have hmain := eNorm_integral_le_lintegral_eNorm
     (μ := volume)
     (fun y : Vec3 => CKN.spatialDeriv CKN.Foundation.Heat.newtonianKernel i
       (x - y) * g y)
@@ -91,7 +91,7 @@ theorem pressureNewtonianDerivativePotential_enorm_le_rieszPotentialOne
               (x - y)‖ₑ * ENNReal.ofReal |g y| := by
           have hg : ENNReal.ofReal |g y| = ‖g y‖ₑ := by
             simpa only [Real.norm_eq_abs] using ofReal_norm (g y)
-          rw [hg, ← enorm_mul]
+          rw [hg, ← eNorm_mul]
         _ ≤ (ENNReal.ofReal ((4 * Real.pi)⁻¹) * rieszKernelOne x y) *
             ENNReal.ofReal |g y| :=
           mul_le_mul_of_nonneg_right hy (by positivity)
@@ -126,7 +126,7 @@ theorem pressureNewtonianDerivativePotential_eLpNorm15_le_hls
         volume =
         (∫⁻ x, ‖pressureNewtonianDerivativePotential i g x‖ₑ ^ (15 : ℝ)) ^
           (1 / 15 : ℝ) := by
-      rw [eLpNorm'_eq_lintegral_enorm]
+      rw [eLpNorm'_eq_lintegral_eNorm]
     _ ≤ (∫⁻ x, (ENNReal.ofReal K * rieszPotentialOne g x) ^ (15 : ℝ)) ^
           (1 / 15 : ℝ) := by
       exact ENNReal.rpow_le_rpow (lintegral_mono_ae hpow) (by norm_num)

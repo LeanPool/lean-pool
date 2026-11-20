@@ -134,13 +134,13 @@ inductive ChartKind where
 deriving DecidableEq, Repr
 
 /-- The model region of a chart kind: the open unit disk, or its closed-right half. -/
-def ChartKind.modelRegion : ChartKind → Set Plane
+noncomputable def ChartKind.modelRegion : ChartKind → Set Plane
   | .disk => Metric.ball 0 1
   | .halfDisk => {x ∈ Metric.ball 0 1 | 0 ≤ x 0}
 
 /-- The model core of a chart kind: the closed disk of radius one half, or its right half.  Cores
 are compact and their union over a chart cover is what the Radó induction absorbs. -/
-def ChartKind.modelCore : ChartKind → Set Plane
+noncomputable def ChartKind.modelCore : ChartKind → Set Plane
   | .disk => Metric.closedBall 0 (1 / 2)
   | .halfDisk => {x ∈ Metric.closedBall 0 (1 / 2) | 0 ≤ x 0}
 

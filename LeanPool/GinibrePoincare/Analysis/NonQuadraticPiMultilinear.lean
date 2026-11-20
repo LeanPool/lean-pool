@@ -81,7 +81,8 @@ theorem l2PiProductVector_update_smul [DecidableEq (Fin (m + 1))] (u : ∀ i, Lp
   rfl
 
 /-- The tensor product `l2PiProductVector` of `L²` vectors, as a multilinear map. -/
-def l2PiProductMultilinear : MultilinearMap ℂ (fun i => Lp ℂ 2 (μ i)) (Lp ℂ 2 (Measure.pi μ)) where
+def l2PiProductMultilinear :
+    MultilinearMap (RingHom.id ℂ) (fun i => Lp ℂ 2 (μ i)) (Lp ℂ 2 (Measure.pi μ)) where
   toFun := l2PiProductVector μ
   map_update_add' u i a b := l2PiProductVector_update_add μ u i a b
   map_update_smul' u i c a := l2PiProductVector_update_smul μ u i c a

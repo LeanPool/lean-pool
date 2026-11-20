@@ -134,7 +134,7 @@ private theorem vec3Euclidean_mass_lt_top {a : Vec3 → Vec3}
     (ha : MemLp a 2 volume) :
     (∫⁻ x : Vec3, ENNReal.ofReal (vec3EuclideanNorm (a x)) ^ (2 : ℝ)) < ⊤ := by
   have hmass : (∫⁻ x : Vec3, ‖a x‖ₑ ^ (2 : ℝ)) < ⊤ :=
-    (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (by norm_num : (2 : ℝ≥0∞) ≠ 0)
       (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
       ha.aestronglyMeasurable).mp ha.eLpNorm_lt_top
@@ -346,7 +346,7 @@ theorem lerayHopf_memLp_three_with_energy_bound
           (by norm_num)).symm]
   have hMemThree : MemLp u (ENNReal.ofReal 3) μ := by
     rw [memLp_iff,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (by norm_num : ENNReal.ofReal 3 ≠ 0) ENNReal.ofReal_ne_top hQmeas,
       ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3)]
     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hSupM3top.ne

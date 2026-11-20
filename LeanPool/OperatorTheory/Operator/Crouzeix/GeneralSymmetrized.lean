@@ -195,7 +195,7 @@ private theorem intervalIntegrable_boundaryDatum_smul_outwardKernel
     congr 1
     ring
   rw [hfun]
-  exact ⟨hcontour.1.smul_enorm (-I), hcontour.2.smul_enorm (-I)⟩
+  exact ⟨hcontour.1.smul_eNorm (-I), hcontour.2.smul_eNorm (-I)⟩
 
 private theorem intervalIntegrable_adjoint
     {g : ℝ → E →L[ℂ] E} {a b : ℝ}

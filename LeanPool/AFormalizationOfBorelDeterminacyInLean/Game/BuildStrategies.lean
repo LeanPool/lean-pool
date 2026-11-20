@@ -98,7 +98,7 @@ lemma _root_.GaleStewartGame.Game.AllWinning.existsWinning
   subset_trans (by simp) (Set.image_mono h.superset)⟩
 /-- Extend a pre-strategy to a quasi-strategy. The definition boundary keeps API-level simp
 lemmas stated through `extQuasi` instead of exposing the `tryAndElse` implementation. -/
-def extQuasi (S : PreStrategy T p) (h : IsPruned T) : QuasiStrategy T p :=
+noncomputable def extQuasi (S : PreStrategy T p) (h : IsPruned T) : QuasiStrategy T p :=
   ⟨tryAndElse S ⊤, quasi_of_planB <| top_isQuasi h⟩
 lemma eq_extQuasi (S : PreStrategy T p) (hT : IsPruned T)
   (h : ∀ (x : S.subtree) (hp : IsPosition x.val p), ∃ a, a ∈ S (S.subtreeIncl x) hp) :
@@ -313,7 +313,7 @@ def defensivePre (G : Game A) (p : Player) : PreStrategy G.tree p :=
 @[congr] lemma defensivePre_subtree {hG : G = G'} {hp : p = p'} :
   (defensivePre G p).subtree = (defensivePre G' p').subtree := by congr!
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def defensiveQuasi (G : Game A) (p : Player) := (defensivePre G p).extQuasi
+noncomputable def defensiveQuasi (G : Game A) (p : Player) := (defensivePre G p).extQuasi
 @[congr] lemma defensiveQuasi_subtree {hG : G = G'} {hp : p = p'} h :
   (defensiveQuasi G p h).1.subtree = (defensiveQuasi G' p' (hG ▸ h)).1.subtree := by
   subst hG hp; rfl

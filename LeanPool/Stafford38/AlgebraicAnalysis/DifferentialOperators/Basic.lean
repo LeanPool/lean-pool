@@ -132,7 +132,7 @@ theorem order_mono {m n : ℕ} (h : m ≤ n) :
 theorem commutator_mul (P Q : End (k := k) (R := R)) (a : R) :
     commutator (P * Q) a = P * commutator Q a + commutator P a * Q := by
   ext x
-  simp [commutator_apply, Module.End.mul_apply]
+  simp [commutator_apply]
 
 private theorem orderZero_mul {P Q : End (k := k) (R := R)} {n : ℕ}
     (hP : P ∈ order (k := k) (R := R) 0) (hQ : Q ∈ order n) :

@@ -403,7 +403,7 @@ lemma Improve_loose_contribution_zero (W : FunToMax G) (loose gain : α)
   apply Finset.sum_eq_zero
   intro e he
   rcases Sym2.mem_iff_exists.mp (helper_gain_mem G e he) with ⟨x, rfl | rfl⟩
-  all_goals simp
+  simp
 
 /-- Shows that the edges not incident to gain or loose (not in `affectedEdges`)
 have the same weightw under the `Improve` operation -/
@@ -515,7 +515,7 @@ lemma Improve_support_strictly_reduced (W : FunToMax G) (loose gain : α)
         simp_rw [@pos_iff_ne_zero NNReal]
         refine ⟨xmem.1, ?_⟩
         replace xmem := xmem.2
-        contrapose! xmem
+        contrapose xmem
         exact Improve_support_remains_zero G W loose gain h_neq h_supp1 x xmem
 
 omit [DecidableEq α] in
@@ -1213,7 +1213,7 @@ def theBij (W : FunToMax G) (loose gain : α) (h_lt : W.w gain < W.w loose)
               · simp only [coe_filter, mem_univ, true_and, Set.mem_ofPred_eq]
                 apply inSupport_other
                 exact eSupp
-              · contrapose! enot
+              · contrapose enot
                 simp_all
             · left; rfl
           · dsimp [inSupport]
@@ -2143,7 +2143,8 @@ lemma UniformBetter_constant_support (W : FunToMax G)
       rw [←not_iff_not]
       simp_all
     have card_eq : #(filter (fun i => (UniformBetter G W hW).w i > 0) univ) =
-        #(filter (fun i => W.w i > 0) univ) := by congr
+        #(filter (fun i => W.w i > 0) univ) :=
+      congrArg Finset.card (Finset.filter_congr fun i _ => Set.ext_iff.mp h_eq i)
     rw [←card_eq]
     rw [mem_filter] at hv
     have hv' : v ∈ filter (fun i => (UniformBetter G W hW).w i > 0) univ := by

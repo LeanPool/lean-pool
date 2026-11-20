@@ -45,7 +45,7 @@ theorem normalizedEuclideanLpENorm_two_sq_eq_eVolumeAverage
   unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
     BoundedMeasurableDomain.normalizedLpENorm
   rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
     (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hF]
   norm_num only [ENNReal.toReal_ofNat]
   rw [← ENNReal.rpow_natCast]
@@ -53,7 +53,7 @@ theorem normalizedEuclideanLpENorm_two_sq_eq_eVolumeAverage
   norm_num
   unfold eVolumeAverage normalizedCubeMeasure cubeMeasure
   rw [lintegral_smul_measure]
-  simp_rw [Real.enorm_eq_ofReal (euclideanNorm_nonneg _),
+  simp_rw [Real.eNorm_eq_ofReal (euclideanNorm_nonneg _),
     ← ENNReal.ofReal_pow (euclideanNorm_nonneg _),
     euclideanNorm_sq]
   rw [volume_openCubeSet_eq_volume_cubeSet]
@@ -165,7 +165,7 @@ theorem cubeEuclideanWspESeminorm_two_sq_eq_fracSeminormSq
       ((HilbertVec.ofVecL d).continuous.comp_aestronglyMeasurable (hfst.sub hsnd))
   unfold cubeEuclideanWspESeminorm
   norm_num only [FiniteLpExponent.two_exponent]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
     (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hK]
   norm_num only [FiniteLpExponent.two_exponent, ENNReal.toReal_ofNat]
   rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]

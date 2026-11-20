@@ -292,8 +292,9 @@ theorem coprime_centralBinom_prime_iff {p : ℕ} [hp : Fact p.Prime] (n : ℕ) :
   -- coprime ⇔ ¬ p ∣ C ⇔ ν = 0 ⇔ carryCount = 0 ⇔ LowDoubleDigits.
   have hcop : Nat.Coprime (Nat.centralBinom n) p ↔ ¬ p ∣ Nat.centralBinom n := by
     rw [Nat.coprime_comm]; exact hpprime.coprime_iff_not_dvd
-  have hdvd : p ∣ Nat.centralBinom n ↔ padicValNat p (Nat.centralBinom n) ≠ 0 :=
-    dvd_iff_padicValNat_ne_zero (Nat.centralBinom_ne_zero n)
+  have hdvd : p ∣ Nat.centralBinom n ↔ padicValNat p (Nat.centralBinom n) ≠ 0 := by
+    simpa only [Nat.padicValNat_def] using
+      dvd_iff_multiplicity_ne_zero (p := p) (Nat.centralBinom_ne_zero n)
   rw [hcop, hdvd, not_not, hval_eq, doubleCarryCount]
   exact carryCount_eq_zero_iff hp2 (Nat.digits p n)
 

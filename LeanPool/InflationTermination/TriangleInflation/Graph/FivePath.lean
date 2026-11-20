@@ -513,7 +513,7 @@ theorem target_num (h : ℝ) (x z : Bool) :
     (∑ w : Fin 5 → Bool,
         if w 0 = x ∧ w 4 = z then sgn (w 1) * sgn (w 2) * sgn (w 3) * fivePathTarget h w else 0)
       = (1 / 4) * ((1 + h) / 4 * (1 + sgn x * sgn z)) := by
-  cases x <;> cases z <;> (rw [sum_five]; simp [fivePathTarget, sgn]; try ring)
+  cases x <;> cases z <;> (rw [sum_five]; simp [fivePathTarget, sgn]) <;> ring
 
 theorem target_corr (h : ℝ) (x z : Bool) :
     fivePathCorr (fivePathTarget h) x z = (1 + h) / 4 * (1 + sgn x * sgn z) := by

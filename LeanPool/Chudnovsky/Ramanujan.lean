@@ -632,7 +632,7 @@ private lemma smul_const_of_tendsto {k : ℤ} {e : ModularForm 𝒮ℒ k} {g : �
 /-- The Serre-derivative form of Ramanujan's identity for `E₄`:
 `D E₄ - (1/3)·E₂·E₄ = -(1/3)·E₆`. -/
 theorem serreDerivative_E₄_eq : serreDerivative 4 (⇑E₄) = fun τ : ℍ ↦ -(3⁻¹) * E₆ τ := by
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' E₆ (E_ne_zero _ ⟨3, rfl⟩)).mp
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' E₆ (E_ne_zero _ ⟨3, rfl⟩)).mp
     (Module.rank_eq_one_iff_finrank_eq_one.mp ModularForm.levelOne_weight_six_rank_one) serreE₄
   have hfun : (⇑(c • E₆) : ℍ → ℂ) = serreDerivative 4 (⇑E₄) :=
     congrArg (fun F : ModularForm 𝒮ℒ 6 ↦ (F : ℍ → ℂ)) hc
@@ -651,7 +651,7 @@ theorem serreDerivative_E₄_eq : serreDerivative 4 (⇑E₄) = fun τ : ℍ ↦
 `D E₆ - (1/2)·E₂·E₆ = -(1/2)·E₄²`. -/
 theorem serreDerivative_E₆_eq :
     serreDerivative 6 (⇑E₆) = fun τ : ℍ ↦ -(2⁻¹) * (E₄ τ * E₄ τ) := by
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' E₄sq E₄sq_ne_zero).mp
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' E₄sq E₄sq_ne_zero).mp
     (Module.rank_eq_one_iff_finrank_eq_one.mp rank_eight) serreE₆
   have hfun : (⇑(c • E₄sq) : ℍ → ℂ) = serreDerivative 6 (⇑E₆) :=
     congrArg (fun F : ModularForm 𝒮ℒ 8 ↦ (F : ℍ → ℂ)) hc
@@ -670,7 +670,7 @@ theorem serreDerivative_E₆_eq :
 /-- The Serre-derivative form of Ramanujan's identity for `E₂`:
 `D E₂ - (1/12)·E₂² = -(1/12)·E₄`. -/
 theorem serreDerivative_E2_eq : serreDerivative 1 E2 = fun τ : ℍ ↦ -(12⁻¹) * E₄ τ := by
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' E₄ (E_ne_zero _ ⟨2, rfl⟩)).mp
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' E₄ (E_ne_zero _ ⟨2, rfl⟩)).mp
     (Module.rank_eq_one_iff_finrank_eq_one.mp ModularForm.levelOne_weight_four_rank_one) serreE2
   have hfun : (⇑(c • E₄) : ℍ → ℂ) = serreDerivative 1 E2 :=
     congrArg (fun F : ModularForm 𝒮ℒ 4 ↦ (F : ℍ → ℂ)) hc

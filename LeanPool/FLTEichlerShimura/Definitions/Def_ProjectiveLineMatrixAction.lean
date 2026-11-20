@@ -211,7 +211,7 @@ noncomputable def projLineRepSL : Representation K SL(2, ℤ) (ProjectiveLine (Z
     apply LinearMap.ext
     intro f
     funext P
-    simp only [LinearMap.funLeft_apply, Module.End.mul_apply, projLineAct_coe_mul]
+    simp only [LinearMap.funLeft_apply, mul_apply_eq_comp, projLineAct_coe_mul]
 
 @[simp]
 theorem projLineRepSL_apply (g : SL(2, ℤ)) (f : ProjectiveLine (ZMod N) → K)

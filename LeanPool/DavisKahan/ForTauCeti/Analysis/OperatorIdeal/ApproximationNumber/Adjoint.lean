@@ -82,7 +82,7 @@ theorem rank_adjoint_le_natCast_of_rank_le
     exact (Cardinal.cast_toNat_of_lt_aleph0 hlt).symm
   let : FiniteDimensional 𝕜 R.range :=
     Module.finite_of_rank_eq_nat hrank_eq
-  let : CompleteSpace R.range := FiniteDimensional.complete 𝕜 R.range
+  let : CompleteSpace R.range := FiniteDimensional.completeSpace 𝕜 R.range
   have hadj : R.adjoint =
       R.rangeRestrict.adjoint ∘L R.range.subtypeL.adjoint := by
     rw [← ContinuousLinearMap.adjoint_comp]

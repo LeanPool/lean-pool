@@ -35,7 +35,8 @@ namespace Nat
 ramification estimates consume. -/
 theorem mul_padicValNat_le {p e : ℕ} (hpe : e + 1 < p) (n : ℕ) :
     (e + 2) * padicValNat p n ≤ n :=
-  (Nat.mul_le_mul_right _ (show e + 2 ≤ p by lia)).trans _root_.mul_padicValNat_le
+  (Nat.mul_le_mul_right _ (show e + 2 ≤ p by lia)).trans
+    (by simpa only [padicValNat_def] using (_root_.mul_multiplicity_le (p := p) (n := n)))
 
 /-- The gap `n - e·v_p(n)` is at least `B` as soon as `n ≥ (e + 2)·B`. -/
 theorem add_mul_padicValNat_le {p e : ℕ} (hpe : e + 1 < p) {B n : ℕ} (hn : (e + 2) * B ≤ n) :

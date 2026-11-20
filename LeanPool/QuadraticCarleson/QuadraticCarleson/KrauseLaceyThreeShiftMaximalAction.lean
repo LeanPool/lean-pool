@@ -85,7 +85,7 @@ theorem measurable_finitePositiveGlobalTailMaximal
     (hf : Measurable f) :
     Measurable (finitePositiveGlobalTailMaximal ell₀ topScale depths f) :=
   Measurable.iSup fun ell ↦
-    (measurable_finitePositiveGlobalTail topScale depths hf ell.1).enorm
+    (measurable_finitePositiveGlobalTail topScale depths hf ell.1).eNorm
 
 /-- One concrete set of three shifted families simultaneously controls every
 cutoff in the finite global maximal operator, and every family lies in its
@@ -111,7 +111,7 @@ theorem exists_threeShiftForests_globalTailMaximal
   intro ell
   unfold finitePositiveGlobalTail
   rw [← hsum ell.1 x]
-  apply (enorm_sum_le _ _).trans
+  apply (eNorm_sum_le _ _).trans
   apply Finset.sum_le_sum
   intro shift hshift
   exact le_iSup

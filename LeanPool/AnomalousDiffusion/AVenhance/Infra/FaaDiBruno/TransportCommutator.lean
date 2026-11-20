@@ -542,7 +542,7 @@ theorem jointTransportCommutator
   have hV : Differentiable ℝ V := by fun_prop
   have hcomm := VectorField.fderiv_apply_lieBracket
     (𝕜 := ℝ) (f := F) (W := W) (V := V)
-    (x := p) (hF.contDiffAt) (by simp) (hW p) (hV p)
+    (x := p) (hF.contDiffAt) (by simp) (hV p) (hW p)
   have hbracket : VectorField.lieBracket ℝ V W p = fderiv ℝ W p (V p) := by
     simp [VectorField.lieBracket, V]
   have hcomm' := hcomm

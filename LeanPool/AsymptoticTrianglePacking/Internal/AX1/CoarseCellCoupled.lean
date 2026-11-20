@@ -2042,7 +2042,8 @@ theorem dOpp_mul_dOpp_mul_dens (th : Finset {S : Finset V // S ∈ Pp.parts}) {a
   rcases zmod3_cases a with rfl | rfl | rfl <;> rcases zmod3_cases b with rfl | rfl | rfl <;>
       first
         | (exact absurd rfl hab)
-        | (simp only [dProd, dOpp_zero, dOpp_one, dOpp_two, h10, h20, h21]; try ring)
+        | simp only [dProd, dOpp_zero, dOpp_one, dOpp_two, h10, h20, h21,
+            mul_comm, mul_left_comm, mul_assoc]
 
 
 /-! ### Arithmetic of the parameters -/

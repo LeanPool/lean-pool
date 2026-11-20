@@ -77,7 +77,7 @@ noncomputable def mapAlgEquiv (e : K ≃ₐ[k] L) (v : Place k K) : Place k L :=
         exact hc
       isDiscrete := by
         let h := Valuation.isEquiv_valuation_valuationSubring q
-        exact ⟨h.orderMonoidIso.symm.trans
+        exact ⟨h.orderMonoidIso₀.symm.trans
           (Valuation.IsRankOneDiscrete.valueGroup₀_equiv_withZeroMulInt q)⟩ }
 
 /-- The valuation subring of a transported place is the corresponding pullback. -/
@@ -128,7 +128,7 @@ theorem mapAlgEquiv_valuation_eq_comap (e : K ≃ₐ[k] L) (v : Place k K) :
   let h := Valuation.isEquiv_valuation_valuationSubring q
   let ε : ValueGroup₀ (.ofClass V.valuation) ≃*o
       WithZero (Multiplicative ℤ) :=
-    h.orderMonoidIso.symm.trans
+    h.orderMonoidIso₀.symm.trans
       (Valuation.IsRankOneDiscrete.valueGroup₀_equiv_withZeroMulInt q)
   have hnorm : (mapAlgEquiv e v).normalization = ε :=
     orderMonoidIso_withZeroMulInt_unique _ _
@@ -137,12 +137,12 @@ theorem mapAlgEquiv_valuation_eq_comap (e : K ≃ₐ[k] L) (v : Place k K) :
       (V.valuation.restrict x) = q x
   rw [hnorm]
   change (Valuation.IsRankOneDiscrete.valueGroup₀_equiv_withZeroMulInt q)
-      (h.orderMonoidIso.symm (V.valuation.restrict x)) = q x
-  rw [show h.orderMonoidIso.symm (V.valuation.restrict x) = q.restrict x by
-    change h.orderMonoidIso.symm
+      (h.orderMonoidIso₀.symm (V.valuation.restrict x)) = q x
+  rw [show h.orderMonoidIso₀.symm (V.valuation.restrict x) = q.restrict x by
+    change h.orderMonoidIso₀.symm
       (q.valuationSubring.valuation.restrict x) = q.restrict x
-    exact h.orderMonoidIso.symm_apply_eq.mpr
-      (h.orderMonoidIso_spec x).symm]
+    exact h.orderMonoidIso₀.symm_apply_eq.mpr
+      (h.orderMonoidIso₀_spec x).symm]
   exact
     Valuation.IsRankOneDiscrete.valueGroup₀_equiv_withZeroMulInt_restrict_apply_of_surjective
       hqsurj x

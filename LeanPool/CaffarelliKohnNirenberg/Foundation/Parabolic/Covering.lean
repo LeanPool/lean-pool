@@ -422,7 +422,7 @@ theorem parabolicHausdorffMeasure_one_le_integral_of_small_cylinders
           ∑' i : index n, ediam (enlarged n i) := by
         simp only [ENNReal.rpow_one]
       _ ≤ ∑' i : index n, K * (∫⁻ y in cylinder n i, g y) :=
-        ENNReal.tsum_le_tsum (fun i => diameter_integral_le n i)
+        tsum_le_tsum (fun i => diameter_integral_le n i)
       _ = K * (∑' i : index n, ∫⁻ y in cylinder n i, g y) :=
         ENNReal.tsum_mul_left
       _ ≤ K * (∫⁻ y in U, g y) :=
@@ -539,7 +539,7 @@ theorem parabolicHausdorffMeasure_one_lt_top_imp_volume_zero {E : Set ParabolicP
   have hμ : μ ≤ MeasureTheory.Measure.hausdorffMeasure (5 : ℝ) := by
     refine MeasureTheory.Measure.le_hausdorffMeasure 5 μ ∞ ENNReal.coe_lt_top ?_
     intro s hsdiam
-    rw [Measure.smul_apply, smul_eq_mul]
+    rw [smul_apply, smul_eq_mul]
     calc
       parabolicVolumeConstant⁻¹ * volume s ≤
           parabolicVolumeConstant⁻¹ *

@@ -129,7 +129,7 @@ private theorem directionAxisHom_coeff {R : Type*} [CommRing R]
   | add f g hf hg =>
     simp only [map_add, coeff_add, leadingDirectionPolynomial_add, eval_add, hf, hg]
   | monomial m c =>
-    rw [directionAxisHom_monomial, leadingDirectionPolynomial_monomial, coeff_monomial]
+    rw [directionAxisHom_monomial, leadingDirectionPolynomial_monomial, coeff_monomial_apply]
     split_ifs <;> simp [eval_monomial]
 
 private lemma bivariateShear_totalDegree {R : Type*} [CommRing R] [Nontrivial R]

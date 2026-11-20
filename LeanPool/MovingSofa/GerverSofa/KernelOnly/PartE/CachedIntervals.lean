@@ -7,7 +7,7 @@ module
 
 public meta import Lean.Elab.Tactic.ElabTerm
 public meta import Lean.Meta.Tactic.AuxLemma
-public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
 
 /-!
 # Shared exact interval evaluations for the Gerver certificates
@@ -26,40 +26,9 @@ open LeanCert.Core LeanCert.Engine GerverSofa.PartALeanCert
 /-- The two residual intervals with the first-angle trigonometric values supplied explicitly. -/
 def residualIntervals (phi theta : IntervalRat) (configuration : EvalConfig)
     (cosinePhi sinePhi : IntervalRat) : IntervalRat × IntervalRat :=
-  let subtract := fun a b => IntervalRat.add a (IntervalRat.neg b)
-  let scale := fun q a => IntervalRat.mul (IntervalRat.singleton q) a
-  let one := IntervalRat.singleton 1
-  let half := IntervalRat.singleton (1 / 2)
-  let delta := subtract theta phi
-  let cosineTheta := IntervalRat.cosComputable theta configuration.taylorDepth
-  let sineTheta := IntervalRat.sinComputable theta configuration.taylorDepth
-  let base := IntervalRat.add
-    (IntervalRat.add (subtract (subtract (scale (1 / 2) kernelPiInterval) phi) theta)
-      (scale (1 / 2) delta)) (scale (1 / 4) (IntervalRat.mul delta delta))
-  let denominator := subtract cosinePhi
-    (IntervalRat.mul (IntervalRat.add one (scale (1 / 2) delta)) sinePhi)
-  let numerator := IntervalRat.add
-    (IntervalRat.add (IntervalRat.add sinePhi half) (IntervalRat.neg (scale (1 / 2) cosinePhi)))
-    (IntervalRat.mul base sinePhi)
-  let numeratorB := IntervalRat.add
-    (IntervalRat.mul numerator (IntervalRat.add one (scale (1 / 2) delta)))
-    (IntervalRat.mul base denominator)
-  let first := IntervalRat.add
-    (IntervalRat.add (IntervalRat.add (IntervalRat.add
-      (subtract (IntervalRat.mul numerator (subtract cosineTheta cosinePhi))
-        (IntervalRat.mul (scale 2 numeratorB) sinePhi))
-      (IntervalRat.mul (IntervalRat.mul (subtract delta one) cosineTheta) denominator))
-      (IntervalRat.neg (IntervalRat.mul sineTheta denominator)))
-      (IntervalRat.mul cosinePhi denominator)) (IntervalRat.mul sinePhi denominator)
-  let second := IntervalRat.add
-    (IntervalRat.add (IntervalRat.add (IntervalRat.add
-      (subtract (IntervalRat.mul numerator (IntervalRat.add (scale 3 sineTheta) sinePhi))
-        (IntervalRat.mul (scale 2 numeratorB) cosinePhi))
-      (IntervalRat.mul (IntervalRat.mul (scale 3 (subtract delta one)) sineTheta) denominator))
-      (IntervalRat.mul (scale 3 cosineTheta) denominator))
-      (IntervalRat.neg (IntervalRat.mul sinePhi denominator)))
-    (IntervalRat.mul cosinePhi denominator)
-  (first, second)
+  FastIntervals.residualIntervals IntervalRat.mul phi theta cosinePhi sinePhi
+    (IntervalRat.cosComputable theta configuration.taylorDepth)
+    (IntervalRat.sinComputable theta configuration.taylorDepth)
 
 /-- Rejection using previously evaluated first-angle sine and cosine intervals. -/
 def rejected (cell : AngleCell) (configuration : EvalConfig)

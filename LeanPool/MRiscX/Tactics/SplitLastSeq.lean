@@ -158,7 +158,7 @@ elab "peelLastInstr" : tactic => do
     let pcAsExpr := oGoalType.getArg! 2
     let L_w'_expr := oGoalType.getArg! 3
     let L_b''_expr  := oGoalType.getArg! 4
-    let L_b_expr ← mkAppM ``Union.union #[L_b''_expr, L_w'_expr]
+    let L_b_expr ← mkAppM ``max #[L_b''_expr, L_w'_expr]
     let codeEqExpr ← Meta.whnf (←findHypTypeM ctx `h_code')
     let codeExpr := codeEqExpr.getArg! 2
     let L_w' ← parseSingletonExpr L_w'_expr

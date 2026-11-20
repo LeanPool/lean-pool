@@ -307,11 +307,11 @@ private abbrev helperContinuation3898Conditions.{u_1, u_2} : Prop :=
          have := hBminus.1
          have := hminusStar.1
          have := hBstar.1
-         try dsimp only [H] at *
-         try dsimp only [GoldbergSeymour.HierarchyFullTailLength] at *
-         try dsimp only [GoldbergSeymour.HierarchyFullTailPrefix] at *
-         try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *
-         all_goals omega))
+         dsimp only [H] at *
+         dsimp only [GoldbergSeymour.HierarchyFullTailLength] at *
+         dsimp only [GoldbergSeymour.HierarchyFullTailPrefix] at *
+         dsimp only [GoldbergSeymour.TreeSequencePrefix] at *
+         omega))
       (Fin.last HStar.dividerCount) =
      q)
    (hstarStarred : HierarchyStarredStage HStar (Fin.last HStar.dividerCount) = A),

@@ -146,7 +146,7 @@ instance potentialSymmetrizedRadiusProduct_isProbability (n : ℕ) (V : Potentia
     IsProbabilityMeasure (potentialSymmetrizedRadiusProduct n V) := by
   classical
   constructor
-  rw [potentialSymmetrizedRadiusProduct, Measure.smul_apply, Measure.finsetSum_apply]
+  rw [potentialSymmetrizedRadiusProduct, smul_apply, _root_.sum_apply]
   have hu (e : Equiv.Perm (Fin n)) :
       ((potentialRadiusProduct n V).map (fun r => r ∘ e)) univ = 1 := by
     have hp : Measurable (fun r : Fin n → ℝ => r ∘ e) :=

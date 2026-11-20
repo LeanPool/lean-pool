@@ -1789,7 +1789,7 @@ private def deletionOperator (i : Fin 2) : Module.End (ZMod 2) leavittSequence w
 private theorem deletion_mul_prefix (i j : Fin 2) :
     deletionOperator i * prefixOperator j = if i = j then 1 else 0 := by
   fin_cases i <;> fin_cases j <;> ext x n <;>
-    simp [deletionOperator, prefixOperator, Module.End.mul_apply, Nat.add_mod]
+    simp [deletionOperator, prefixOperator, Nat.add_mod]
   congr 1
   omega
 
@@ -1797,7 +1797,7 @@ private theorem prefix_deletion_partition :
     prefixOperator 0 * deletionOperator 0 +
       prefixOperator 1 * deletionOperator 1 = 1 := by
   ext x n
-  simp only [LinearMap.add_apply, Module.End.mul_apply, Module.End.one_apply]
+  simp only [LinearMap.add_apply, mul_apply_eq_comp, one_apply_eq_self]
   change
     (if n % 2 = 0 then x (2 * (n / 2)) else 0) +
       (if n % 2 = 1 then x (2 * (n / 2) + 1) else 0) = x n
@@ -1852,8 +1852,8 @@ private theorem prefix_deletion_ne_one :
     (fun f : Module.End (ZMod 2) leavittSequence => f (fun _ => 1) 1) h
   simp only [prefixOperator, Fin.isValue, Fin.coe_ofNat_eq_mod, Nat.zero_mod, deletionOperator,
     add_zero,
-    Module.End.mul_apply, LinearMap.coe_mk, AddHom.coe_mk, Nat.mod_succ, one_ne_zero, ↓reduceIte,
-      Module.End.one_apply,
+    mul_apply_eq_comp, LinearMap.coe_mk, AddHom.coe_mk, Nat.mod_succ, one_ne_zero, ↓reduceIte,
+      one_apply_eq_self,
     zero_ne_one] at h'
 
 private theorem leavittS_mul_T_ne_one : leavittS 0 * leavittT 0 ≠ 1 := by

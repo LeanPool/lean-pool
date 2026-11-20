@@ -120,8 +120,6 @@ theorem matrixSchur_global_integral_of_atlas {n : ℕ}
   have hcover_ae : (⋃ k, matrixPiece k) =ᵐ[volume] (Set.univ : Set (Matrix (Fin n) (Fin n) ℂ)) := by
     filter_upwards [matrixVolume_charpoly_separable_ae n] with G hG
     obtain ⟨k, p, hp, he⟩ := matrixSchurAtlas_partition_cover V C hC G hG
-    change (Matrix.of G ∈ ⋃ k, matrixPiece k) = True
-    apply propext
     exact iff_true_intro (Set.mem_iUnion.mpr ⟨k, ⟨p, hp, he.symm⟩⟩)
   have hc := setLIntegral_congr hcover_ae (f := g)
   rw [setLIntegral_univ] at hc

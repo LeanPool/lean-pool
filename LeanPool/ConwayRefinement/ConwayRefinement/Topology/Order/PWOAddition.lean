@@ -82,7 +82,8 @@ omit [UniformSpace G] [IsUniformAddGroup G] [OrderTopology G] [Nontrivial G] in
 theorem Set.IsPWO.finite_add_fiber {s t : Set G} (hs : s.IsPWO) (ht : t.IsPWO) (z : G) :
     {p : G × G | p ∈ s ×ˢ t ∧ p.1 + p.2 = z}.Finite := by
   apply IsAntichain.finite_of_partiallyWellOrderedOn _
-    ((hs.prod ht).mono fun _ h ↦ h.1)
+    ((hs.prod ht).mono (s := {p : G × G | p ∈ s ×ˢ t ∧ p.1 + p.2 = z})
+      fun _ h ↦ h.1)
   intro p hp q hq hne hpq
   apply hne
   have hfst : p.1 = q.1 := le_antisymm hpq.1 <|

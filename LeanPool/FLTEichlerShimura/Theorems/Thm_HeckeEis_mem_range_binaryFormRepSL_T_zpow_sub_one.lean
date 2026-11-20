@@ -127,7 +127,7 @@ theorem mono_mem_range_T_zpow_sub_one (n : ℕ) {h : ℤ} (hh : h ≠ 0) :
     have hmem : (binaryFormRepSL K n (ModularGroup.T ^ h) - 1) (mono K n (b + 1))
         ∈ LinearMap.range (binaryFormRepSL K n (ModularGroup.T ^ h) - 1) := LinearMap.mem_range_self
           _ _
-    rw [LinearMap.sub_apply, Module.End.one_apply, hexp, add_sub_cancel_right] at hmem
+    rw [LinearMap.sub_apply, one_apply_eq_self, hexp, add_sub_cancel_right] at hmem
     have hsum : ∑ i ∈ Finset.range b, (((b + 1).choose i : K) * (h : K) ^ (b + 1 - i)) • mono K n i
         ∈ LinearMap.range (binaryFormRepSL K n (ModularGroup.T ^ h) - 1) :=
       Submodule.sum_mem _ fun i hi => by

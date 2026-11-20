@@ -232,7 +232,7 @@ private theorem cutoff_half_le_volumeAverage {q : Mat d} [NeZero d] (hq : IsUnit
   have hmono : ∫ x in V, f x ≤ ∫ x in HighContrast.adaptedCell q t, f x := by
     refine setIntegral_mono_set hfint ?_ ?_
     · filter_upwards with x using hnonneg x
-    · exact LE.le.eventuallyLE hVsub
+    · exact Filter.Eventually.of_forall hVsub
   have hkey : 2 * r = (3 : ℝ) ^ t * ρ := by rw [hrdef]; ring
   have hTS : (1 / 2 : ℝ) * ((3 : ℝ) ^ t) ^ d ≤ (2 * r) ^ d := by
     rw [hkey, mul_pow]
@@ -479,9 +479,9 @@ theorem exists_isResponseCutoff {q : Mat d} (hq : IsUnit q) (t : ℤ) :
   · have hfun : (fun y : Vec d => A⁻¹ * η (matVecMul q y)) = fun y : Vec d => A⁻¹ * ψ y :=
       funext fun y => by rw [hηpull y]
     rw [hfun]
-    apply lipschitzWith_of_nnnorm_fderiv_le (hψdiff.const_mul A⁻¹)
+    apply lipschitzWith_of_nnNorm_fderiv_le (hψdiff.const_mul A⁻¹)
     intro x
-    rw [← NNReal.coe_le_coe, coe_nnnorm,
+    rw [← NNReal.coe_le_coe, coe_nnNorm,
       Real.coe_toNNReal _
         (mul_nonneg (mul_nonneg (by positivity : (0 : ℝ) ≤ 32 * (d : ℝ) ^ 2) hΘpos.le)
           h3npos.le)]

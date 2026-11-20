@@ -121,12 +121,12 @@ theorem lintegral_pow_six_euclideanNorm_le_sum_components {v w : Vec3 → Vec3} 
       (∫⁻ x in vec3Ball (0 : Vec3) ρ, ‖f x‖ₑ ^ (6 : ℝ)) ^ (1 / 6 : ℝ)
         = eLpNorm f 6 (volume.restrict (vec3Ball (0 : Vec3) ρ)) := by
     intro f hf
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
     norm_num
   have hLHS : (∫⁻ x in vec3Ball (0 : Vec3) ρ, ENNReal.ofReal (vec3EuclideanNorm (v x)) ^ (6 : ℝ))
       = ∫⁻ x in vec3Ball (0 : Vec3) ρ, ‖vec3EuclideanNorm (w x)‖ₑ ^ (6 : ℝ) := by
     refine setLIntegral_congr_fun hB fun x hx => ?_
-    rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _), heq x hx]
+    rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _), heq x hx]
   have hRHS : ∀ i : Fin 3,
       (∫⁻ x in vec3Ball (0 : Vec3) ρ, ENNReal.ofReal |v x i| ^ (6 : ℝ)) ^ (1 / 6 : ℝ)
         = eLpNorm (fun x : Vec3 => |w x i|) 6 (volume.restrict (vec3Ball (0 : Vec3) ρ)) := by
@@ -134,7 +134,7 @@ theorem lintegral_pow_six_euclideanNorm_le_sum_components {v w : Vec3 → Vec3} 
     have hcongr : (∫⁻ x in vec3Ball (0 : Vec3) ρ, ENNReal.ofReal |v x i| ^ (6 : ℝ))
         = ∫⁻ x in vec3Ball (0 : Vec3) ρ, ‖|w x i|‖ₑ ^ (6 : ℝ) := by
       refine setLIntegral_congr_fun hB fun x hx => ?_
-      rw [Real.enorm_eq_ofReal (abs_nonneg _), heq x hx]
+      rw [Real.eNorm_eq_ofReal (abs_nonneg _), heq x hx]
     rw [hcongr, key _ ((hw i).abs).aestronglyMeasurable]
   rw [hLHS, key _ hnormcont.aestronglyMeasurable]
   simp only [hRHS]
@@ -177,7 +177,7 @@ theorem eLpNorm_fderiv_comp_two_le {w : Vec3 → Vec3} (hw : ContDiff ℝ (⊤ :
     refine ENNReal.ofReal_le_ofReal ?_
     rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast]
     exact sq_opNorm_le_three_mul_sum_sq_basisVec _
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     hcont.aestronglyMeasurable]
   have htoReal : (2 : ℝ≥0∞).toReal = 2 := by norm_num
   rw [htoReal]

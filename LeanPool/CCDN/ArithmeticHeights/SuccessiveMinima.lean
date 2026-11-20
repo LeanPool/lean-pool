@@ -304,7 +304,7 @@ private theorem exists_pos_le_gauge (L : Submodule ℤ E) [DiscreteTopology L] [
   obtain ⟨b, hb⟩ := exists_basis_mem L
   have hne : {x : E | x ∈ (L : Set E) ∧ x ≠ 0}.Nonempty :=
     ⟨b ⟨0, hE⟩, hb _, b.ne_zero _⟩
-  obtain ⟨w, hw, hwmin⟩ := exists_gauge_min L h₀ hB₃ (fun y hy ↦ hy.1) hne
+  obtain ⟨w, hw, hwmin⟩ := exists_gauge_min L h₀ hB₃ (fun _ ↦ And.left) hne
   refine ⟨gauge B w, ?_, fun x hx hx0 ↦ hwmin x ⟨hx, hx0⟩⟩
   rw [gauge_pos (absorbent_nhds_zero h₀) ((NormedSpace.isVonNBounded_iff ℝ).2 hB₃)]
   exact hw.2
@@ -355,7 +355,7 @@ private theorem exists_gauge_eq_aux (L : Submodule ℤ E) [DiscreteTopology L] [
       refine Submodule.span_le.2 fun y hy ↦ ?_
       by_contra hyW
       exact hcon y ⟨hy, hyW⟩
-    obtain ⟨w, hw, hwmin⟩ := exists_gauge_min L h₀ hB₃ (fun y hy ↦ hy.1) hne
+    obtain ⟨w, hw, hwmin⟩ := exists_gauge_min L h₀ hB₃ (fun _ ↦ And.left) hne
     obtain ⟨hwL, hwW⟩ := hw
     have hgle : ∀ j : Fin (m + 1), gauge B ((Fin.snoc v w : Fin (m + 1) → E) j) ≤ gauge B w := by
       refine Fin.lastCases ?_ fun k ↦ ?_

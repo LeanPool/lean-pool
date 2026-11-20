@@ -126,7 +126,8 @@ private theorem exists_bound_taylorCoeff_mul_radius {U K : Set (Fin n → ℂ)}
     (K ×ˢ closedBall 0 1)
   have hTc : IsCompact T := (hK.prod (isCompact_closedBall _ _)).image_of_continuousOn
     (continuous_fst.continuousOn.add ((continuousOn_const.mul
-      (hq.continuousOn.comp continuous_fst.continuousOn (fun _ h => hKU h.1))).smul
+      (hq.continuousOn.comp (s := K ×ˢ closedBall (0 : Fin n → ℂ) 1)
+        continuous_fst.continuousOn (fun _ h => hKU h.1))).smul
         continuous_snd.continuousOn))
   have hTU : T ⊆ U := by
     rintro _ ⟨⟨w, v⟩, ⟨hw, hv⟩, rfl⟩

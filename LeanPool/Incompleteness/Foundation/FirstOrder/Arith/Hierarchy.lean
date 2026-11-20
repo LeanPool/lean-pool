@@ -58,7 +58,7 @@ namespace Hierarchy
     Hierarchy Γ s (φ ⋏ ψ) ↔ Hierarchy Γ s φ ∧ Hierarchy Γ s ψ :=
   ⟨by generalize hr : φ ⋏ ψ = r
       intro H
-      induction H <;> try
+      induction H <;>
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.and_inj] at hr
       case and =>
         simp_all,
@@ -68,7 +68,7 @@ namespace Hierarchy
     Hierarchy Γ s (φ ⋎ ψ) ↔ Hierarchy Γ s φ ∧ Hierarchy Γ s ψ :=
   ⟨by generalize hr : φ ⋎ ψ = r
       intro H
-      induction H <;> try
+      induction H <;>
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.or_inj] at hr
       case or =>
         simp_all,
@@ -186,7 +186,7 @@ end «lp_section_1»
 
 lemma neg {φ : Semiformula L ξ n} : Hierarchy Γ s φ → Hierarchy Γ.alt s (∼φ) := by
   intro h
-  induction h <;> try
+  induction h <;>
     simp only [DeMorgan.verum, DeMorgan.falsum, Semiformula.neg_rel,
       Semiformula.neg_nrel, DeMorgan.and, DeMorgan.or, Semiformula.neg_ball,
       Semiformula.neg_bex, Polarity.alt_sigma, Polarity.alt_pi, Semiformula.neg_ex,
@@ -211,7 +211,7 @@ lemma neg {φ : Semiformula L ξ n} : Hierarchy Γ s φ → Hierarchy Γ.alt s (
     Hierarchy Γ s (∀[“x. x < !!t”] φ) ↔ Hierarchy Γ s φ :=
   ⟨by generalize hq : (∀[“x. x < !!t”] φ) = ψ
       intro H
-      induction H <;> try
+      induction H <;>
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.all_inj,
           Semiformula.imp_inj, Semiformula.Operator.LT.lt_inj, true_and] at hq
       case ball φ t pt hp ih =>
@@ -233,7 +233,7 @@ lemma neg {φ : Semiformula L ξ n} : Hierarchy Γ s φ → Hierarchy Γ.alt s (
     Hierarchy Γ s (∃[“x. x < !!t”] φ) ↔ Hierarchy Γ s φ :=
   ⟨by generalize hq : (∃[“x. x < !!t”] φ) = ψ
       intro H
-      induction H <;> try
+      induction H <;>
         simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.ex_inj,
           Semiformula.and_inj, Semiformula.Operator.LT.lt_inj, true_and] at hq
       case bex φ t pt hp ih =>
@@ -268,7 +268,7 @@ lemma pi_of_pi_all {φ : Semiformula L ξ (n + 1)} : Hierarchy Pg s (∀' φ) �
   generalize hr : ∀' φ = r
   generalize hb : (Pg : Polarity) = Γ
   intro H
-  cases H <;> try
+  cases H <;>
     simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.all_inj] at hr
   case ball => rcases hr with rfl; simpa
   case all => rcases hr with rfl; simpa
@@ -284,7 +284,7 @@ lemma sigma_of_sigma_ex {φ : Semiformula L ξ (n + 1)} :
   generalize hr : ∃' φ = r
   generalize hb : (Sg : Polarity) = Γ
   intro H
-  cases H <;> try
+  cases H <;>
     simp only [LO.ball, LO.bex, reduceCtorEq, Semiformula.ex_inj] at hr
   case bex => rcases hr with rfl; simpa
   case ex => rcases hr with rfl; simpa
@@ -298,7 +298,7 @@ lemma sigma_of_sigma_ex {φ : Semiformula L ξ (n + 1)} :
 lemma rew (ω : Rew L ξ₁ n₁ ξ₂ n₂) {φ : Semiformula L ξ₁ n₁} :
     Hierarchy Γ s φ → Hierarchy Γ s (ω ▹ φ) := by
   intro h
-  induction h generalizing n₂ <;> try
+  induction h generalizing n₂ <;>
     simp only [LogicalConnective.HomClass.map_top, verum, LogicalConnective.HomClass.map_bot,
       falsum, Semiformula.rew_rel, rel, Semiformula.rew_nrel, nrel,
       LogicalConnective.HomClass.map_and, and_iff, LogicalConnective.HomClass.map_or,
@@ -316,7 +316,7 @@ lemma rew (ω : Rew L ξ₁ n₁ ξ₂ n₂) {φ : Semiformula L ξ₁ n₁} :
   · generalize eq : ω ▹ φ = ψ
     intro hq
     induction hq generalizing φ n₁
-      <;> try simp only [Semiformula.eq_top_iff, Semiformula.eq_bot_iff,
+      <;> simp only [Semiformula.eq_top_iff, Semiformula.eq_bot_iff,
         Semiformula.eq_rel_iff, Semiformula.eq_nrel_iff, Semiformula.eq_and_iff,
         Semiformula.eq_or_iff, Semiformula.eq_ball_iff, Semiformula.eq_bex_iff,
         Semiformula.eq_all_iff, Semiformula.eq_ex_iff, exists_and_left] at eq
@@ -395,7 +395,7 @@ lemma oringEmb {φ : Semiformula ℒₒᵣ ξ n} :
     Hierarchy Γ s φ → Hierarchy Γ s (Semiformula.lMap (Language.oringEmb :
     ℒₒᵣ →ᵥ L) φ) := by
   intro h
-  induction h <;> try
+  induction h <;>
     simp only [LogicalConnective.HomClass.map_top, verum, LogicalConnective.HomClass.map_bot,
       falsum, Semiformula.lMap_rel, rel, Semiformula.lMap_nrel, nrel,
       LogicalConnective.HomClass.map_and, and_iff, LogicalConnective.HomClass.map_or,
@@ -445,7 +445,7 @@ variable {L : Language} [L.LT] [Structure L ℕ]
 abbrev Sigma1Sound (T : Theory L) := SoundOn T (Hierarchy Sg 1)
 
 lemma consistent_of_sigma1Sound (T : Theory L) [Sigma1Sound T] :
-    Entailment.Consistent T := consistent_of_sound T (Hierarchy Sg 1) (Hierarchy.falsum _ _ _)
+    Entailment.Consistent T := consistent_of_sound T {σ | Hierarchy Sg 1 σ} (Hierarchy.falsum _ _ _)
 
 end «lp_section_2»
 

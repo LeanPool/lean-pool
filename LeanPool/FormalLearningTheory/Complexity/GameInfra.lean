@@ -11,6 +11,7 @@ public import LeanPool.FormalLearningTheory.Criterion.Online
 -- Corrected: depth-indexed complete trees + path-wise shattering.
 -- Path B (Γ₂₁): WithBot (WithTop ℕ) for LittlestoneDim
 -- Required for CompleteLattice instance and ConditionallyCompleteLinearOrderBot ℕ
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 public import Mathlib.Order.Lattice.Nat
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
@@ -69,8 +70,8 @@ theorem LTree.isShattered_mono {X : Type} {n : ℕ} (T : LTree X n)
   | branch x l r ihl ihr =>
     intro ⟨⟨ct, hct, hctx⟩, ⟨cf, hcf, hcfx⟩, hsl, hsr⟩
     refine ⟨⟨ct, h hct, hctx⟩, ⟨cf, h hcf, hcfx⟩, ?_, ?_⟩
-    · exact ihl (fun _ hm => ⟨h hm.1, hm.2⟩) hsl
-    · exact ihr (fun _ hm => ⟨h hm.1, hm.2⟩) hsr
+    · exact ihl (C := {c ∈ C | c x = true}) (fun _ hm => ⟨h hm.1, hm.2⟩) hsl
+    · exact ihr (C := {c ∈ C | c x = false}) (fun _ hm => ⟨h hm.1, hm.2⟩) hsr
 
 /-- Littlestone dimension: the maximum depth of a complete shattered tree.
     Path B: returns WithBot (WithTop ℕ) so Ldim(∅) = ⊥ (NA₁₀). -/

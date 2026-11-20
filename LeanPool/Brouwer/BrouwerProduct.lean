@@ -44,7 +44,7 @@ private lemma card_pos_real (i : I) : 0 < (card i : ℝ) := by
   norm_cast; exact PNat.pos (card i)
 
 /-- The big simplex on `totalCard card` coordinates. -/
-abbrev BigSimplex := standardSimplex ℝ (Fin (totalCard card))
+noncomputable abbrev BigSimplex := standardSimplex ℝ (Fin (totalCard card))
 
 /-- The product of simplices indexed by `I`. -/
 abbrev ProductSimplices := (i : I) → standardSimplex ℝ (Fin (card i))

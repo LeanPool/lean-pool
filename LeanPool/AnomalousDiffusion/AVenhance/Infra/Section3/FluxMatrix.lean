@@ -232,7 +232,7 @@ theorem FluxMatrix.fluxIntegrand_active_one_matrix {β : ℝ} (I : Ingredients �
   fin_cases i <;> fin_cases j
   all_goals
     simp [Matrix.mul_apply, Fin.sum_univ_two, sigmaMat, h00, h01, h10, h11]
-    all_goals ring
+  all_goals ring
 
 theorem FluxMatrix.fluxIntegrand_active_three_matrix {β : ℝ} (I : Ingredients β)
     {m : ℕ} (hm : 1 ≤ m) (κ : ℝ) (k : ℤ) (t : ℝ)
@@ -482,7 +482,7 @@ theorem flux_eq_kappa_of_no_odd_active {β : ℝ} (I : Ingredients β)
     fin_cases i <;> fin_cases j
     all_goals
       simp [Matrix.mul_apply, Matrix.one_apply, sigmaMat, gradMatrix]
-      all_goals ring
+    all_goals ring
   unfold Ingredients.flux
   change spaceAvgMat (fun x => I.fluxIntegrand κ m t x) = _
   rw [hfluxfun]

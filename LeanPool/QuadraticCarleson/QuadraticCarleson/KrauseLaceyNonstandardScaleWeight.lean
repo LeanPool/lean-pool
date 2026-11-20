@@ -29,7 +29,7 @@ theorem sq_succ_le_sixtyFour_mul_rpow_four_fifths (s : ℕ) :
     (((s + 1 : ℕ) : ℝ) ^ 2) ≤
       64 * (2 : ℝ) ^ ((4 : ℝ) * s / 5) := by
   induction s using Nat.strong_induction_on with
-  | h s ih =>
+  | ind s ih =>
       by_cases hs : s ≤ 5
       · have hsq : (((s + 1 : ℕ) : ℝ) ^ 2) ≤ 36 := by
           norm_num at hs ⊢

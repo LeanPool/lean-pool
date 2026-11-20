@@ -2271,7 +2271,7 @@ private lemma kTemplate_adj_color_ne
     simp_all [kTemplate, SimpleGraph.fromRel_adj,
       kTemplateRelation, kColor, subdivisionColor,
       subdivisionRelation, kSpecifiedCenter]
-  all_goals aesop
+  aesop
 
 private def jQuotientProjectionHom
     {f : JVertex → JVertex} (hf : JAdmissible f) :

@@ -135,7 +135,7 @@ theorem coefficientAct_add (f g : AddMonoidAlgebra R Lattice) (c : Configuration
 coefficient-ring filters composes their actions. -/
 theorem coefficientAct_mul (f g : AddMonoidAlgebra R Lattice) (c : Configuration R) :
     coefficientAct (f * g) c = coefficientAct f (coefficientAct g c) := by
-  simp [coefficientAct, Module.End.mul_apply]
+  simp [coefficientAct]
 
 /-- Auxiliary to Proposition 3.3 (`prop:product`), Appendix A (`app:product`): the action of a
 finite filter sum is the corresponding sum of outputs. -/

@@ -139,7 +139,7 @@ theorem finiteExtensionClosedPlaceEvenError_isBigO_of_exactConstantExtension_bou
       simpa [S] using FiniteField.finrank_extension C p (2 * n)
     rw [hfinrank, Nat.mul_one] at h
     convert h using 1
-    all_goals congr 1
+    congr 1
   have hcard : Nat.card S = Nat.card C ^ (2 * n) := by
     simpa [S] using FiniteField.natCard_extension C p (2 * n)
   have hreal := hbound n hn

@@ -48,7 +48,7 @@ lemma T_pow_width_mem : T ^ Γ.width ∈ Γ :=
 /-- The integers `n` such that `[1, n; 0, 1] ∈ Γ` are precisely the multiples of `Γ.width`. -/
 lemma T_zpow_mem_iff {n : ℤ} : T ^ n ∈ Γ ↔ ↑Γ.width ∣ n := by
   let A : AddSubgroup ℤ := (Γ.comap (zpowersHom _ T)).toAddSubgroup'
-  obtain ⟨m, hm⟩ := A.isAddCyclic_iff_exists_zmultiples_eq_top.mp inferInstance
+  obtain ⟨m, hm⟩ := A.isAddCyclic_iff_exists_zmultiples_eq.mp inferInstance
   have h₁ : (Γ.comap (zpowersHom _ T)).index = Γ.width := Γ.index_comap _
   have h₂ : Γ.width = A.index := by simpa [A, h₁] using A.index_toSubgroup
   rw [h₂, (by rfl : T ^ n ∈ Γ ↔ n ∈ A), ← hm,

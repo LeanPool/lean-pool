@@ -51,15 +51,15 @@ theorem forcePressure_pairing_bound {ψ : Vec3 → ℝ}
       (forcePressureSlice_memLp v).aestronglyMeasurable hψ.aestronglyMeasurable
       (Eventually.of_forall fun x => by simp [Real.norm_eq_abs])
   have hgrad : eLpNorm (forcePressureGradientL2 v) 2 volume ≤ ENNReal.ofReal (2 * ‖v‖) := by
-    rw [← Lp.enorm_def, ← ofReal_norm]
+    rw [← Lp.eNorm_def, ← ofReal_norm]
     exact ENNReal.ofReal_le_ofReal (forcePressureGradientL2_norm_le v)
   have hmain : ‖∫ x, forcePressureSlice v x * ψ x‖ₑ ≤
       (C * A) * ENNReal.ofReal (2 * ‖v‖) := by
     calc
       ‖∫ x, forcePressureSlice v x * ψ x‖ₑ ≤
-          ∫⁻ x, ‖forcePressureSlice v x * ψ x‖ₑ := enorm_integral_le_lintegral_enorm _
+          ∫⁻ x, ‖forcePressureSlice v x * ψ x‖ₑ := eNorm_integral_le_lintegral_eNorm _
       _ = eLpNorm (fun x => forcePressureSlice v x * ψ x) 1 volume :=
-          (eLpNorm_one_eq_lintegral_enorm
+          (eLpNorm_one_eq_lintegral_eNorm
             (forcePressure_integrable_mul hψ v).aestronglyMeasurable).symm
       _ ≤ eLpNorm (forcePressureSlice v) 6 volume * A := hholder
       _ ≤ (C * eLpNorm (forcePressureGradientL2 v) 2 volume) * A := by
@@ -70,7 +70,7 @@ theorem forcePressure_pairing_bound {ψ : Vec3 → ℝ}
   have hfin : (C * A) * ENNReal.ofReal (2 * ‖v‖) ≠ ⊤ :=
     ENNReal.mul_ne_top (ENNReal.mul_ne_top hCtop hAtop) ENNReal.ofReal_ne_top
   have hreal := ENNReal.toReal_mono hfin hmain
-  rw [toReal_enorm, ENNReal.toReal_mul, ENNReal.toReal_ofReal (by positivity)] at hreal
+  rw [toReal_eNorm, ENNReal.toReal_mul, ENNReal.toReal_ofReal (by positivity)] at hreal
   calc
     ‖∫ x, forcePressureSlice v x * ψ x‖ ≤ (C * A).toReal * (2 * ‖v‖) := hreal
     _ = ((C * A).toReal * 2) * ‖v‖ := by ring

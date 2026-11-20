@@ -85,7 +85,7 @@ theorem bu_short_uc_affine_l2
       (fun z => ‖(buAffineField τ scale w) z‖ₑ ^ (2 : ℝ))
       (volume.restrict K) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hscaled.1.mono_set hK).aestronglyMeasurable.enorm)
+      ((hscaled.1.mono_set hK).aestronglyMeasurable.eNorm)
   have hsplit := lintegral_add_left' hWmeas
     (fun z => ‖(buAffineDw τ scale Dw) z‖ₑ ^ (2 : ℝ) +
       ‖(buAffineD2w τ scale D2w) z‖ₑ ^ (2 : ℝ) +

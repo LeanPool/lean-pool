@@ -92,7 +92,7 @@ theorem eq_zero_of_sum_mul_traceMatrix [Nontrivial A] (hu : u.Monic) (hs : IsCop
     rw [← (modByMonic_eq_self_iff hu).mpr hpdeg, (modByMonic_eq_zero_iff_dvd hu).mpr hpdvd]
   funext i
   simpa [hp, coeff_C_mul, coeff_X_pow, Finset.sum_ite_eq' Finset.univ i, Fin.val_eq_val] using
-    congrArg (fun q ↦ Polynomial.coeff q (i : ℕ)) hp0
+    congrArg (fun q ↦ AddMonoidAlgebra.coeff q (i : ℕ)) hp0
 
 /-- **The trace matrix is nondegenerate**, hence invertible over a domain. It is the Gram
 matrix of the residue pairing `(p, q) ↦ -λ_u(p·q·s)` on `A[X]/u`, and that pairing is
@@ -156,7 +156,7 @@ theorem sum_smul_tracePoly_ne_zero [NeZero (2 : K)] (hu : u.Monic) (hs : IsCopri
   have hsum := (smul_eq_zero.mp h0).resolve_left (inv_ne_zero (two_ne_zero (α := K)))
   have hw : cs ᵥ* A⁻¹ = 0 := by
     funext j
-    have := congrArg (fun q ↦ Polynomial.coeff q (j : ℕ)) hsum
+    have := congrArg (fun q ↦ AddMonoidAlgebra.coeff q (j : ℕ)) hsum
     simpa [coeff_C_mul, coeff_X_pow, Finset.sum_ite_eq' Finset.univ j,
       Fin.val_eq_val] using this
   have hdet : IsUnit A.det := (det_traceMatrix_ne_zero hu hs).isUnit

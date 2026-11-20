@@ -450,7 +450,7 @@ instance [Finite d] : OrderClosedTopology (HermitianMat d 𝕜) where
     classical
     let := Fintype.ofFinite d
     convert IsClosed.preimage (X := (HermitianMat d 𝕜 × HermitianMat d 𝕜))
-      (f := fun xy ↦ (xy.2 - xy.1)) (by fun_prop) isClosed_nonneg
+      (f := fun xy ↦ (xy.2 - xy.1)) (by fun_prop) isClosed_nonneg using 1
     ext ⟨x, y⟩
     simp only [Set.mem_ofPred_eq, Set.mem_preimage, ← sub_nonneg (b := x)]
 

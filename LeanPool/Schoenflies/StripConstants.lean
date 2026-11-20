@@ -107,7 +107,7 @@ theorem vertex_notMem_edge (hj1 : j ≠ i - 1) (hj2 : j ≠ i) : P.vertex i ∉ 
 
 /-- The trimmed core of edge `i`: the points of the edge at distance at least `lam` from both
 of its endpoints. An edge block of `StripData` hugs this core. -/
-def trimmed (P : ClosedPolygon m) (i : ZMod (m + 3)) (lam : ℝ) : Set Plane :=
+noncomputable def trimmed (P : ClosedPolygon m) (i : ZMod (m + 3)) (lam : ℝ) : Set Plane :=
   P.pt i '' Set.Icc lam (P.len i - lam)
 
 theorem pt_mem_trimmed (hc : c ∈ Set.Icc lam (P.len i - lam)) : P.pt i c ∈ P.trimmed i lam :=

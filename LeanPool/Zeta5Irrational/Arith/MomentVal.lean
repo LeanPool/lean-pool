@@ -45,11 +45,11 @@ lemma VG_bernoulli_even (k : ℕ) : VG p (_root_.bernoulli (2 * k)) (-1) := by
   rw [one_div]
   refine VG.inv hq0 ?_
   rw [padicValRat.of_nat]
-  have : padicValNat p q ≤ 1 := by
+  have : multiplicity p q ≤ 1 := by
     by_cases hpq : p = q
-    · subst hpq; rw [padicValNat_self]
+    · subst hpq; rw [Nat.Prime.multiplicity_self]
     · have := Fact.mk hq.2.1
-      rw [padicValNat_primes hpq]; omega
+      rw [multiplicity_primes hpq]; omega
   exact_mod_cast this
 
 lemma VG_bernoulli_even_int (k : ℕ) (hk : ¬(p - 1) ∣ 2 * k) : VG p (_root_.bernoulli (2 * k)) 0 :=
@@ -67,11 +67,12 @@ lemma VG_bernoulli_even_int (k : ℕ) (hk : ¬(p - 1) ∣ 2 * k) : VG p (_root_.
   rw [one_div]
   refine (VG.inv (r := 0) hq0 ?_).mono (by norm_num)
   have := Fact.mk hq.2.1
-  rw [padicValRat.of_nat, padicValNat_primes hpq]; simp
+  rw [padicValRat.of_nat, multiplicity_primes hpq]; simp
 
 lemma VG_inv24 (hp5 : 5 ≤ p) : VG p ((24 : ℚ)⁻¹) 0 := by
   refine (VG.inv (r := 0) (by norm_num) ?_).mono (by norm_num)
-  rw [show (24 : ℚ) = ((24 : ℕ) : ℚ) by norm_num, padicValRat.of_nat, padicValNat_24 hp5]; simp
+  rw [show (24 : ℚ) = ((24 : ℕ) : ℚ) by norm_num, padicValRat.of_nat,
+    ← Nat.padicValNat_def, padicValNat_24 hp5]; simp
 
 /-- `v_p(μ(t^e)) ≥ -1`. -/
 theorem VG_μmono (hp5 : 5 ≤ p) (e : ℕ) : VG p (μmono e) (-1) := by
@@ -116,7 +117,7 @@ theorem VG_μmono_int (hp5 : 5 ≤ p) {e : ℕ} (he : e + 3 < 2 * p) : VG p (μm
         · exact Dvd.dvd.mul_right (Dvd.dvd.mul_left ⟨2, by omega⟩ _) _
         · exact Dvd.dvd.mul_left ⟨3, by omega⟩ _
       have hne' : (2 * e + 3) * (2 * e + 4) * (2 * e + 5) ≠ 0 := by positivity
-      have := one_le_padicValNat_of_dvd hne' hdvd
+      have := one_le_multiplicity_of_dvd hne' hdvd
       exact_mod_cast this
     have := ((h1.mul (VG_bernoulli_even (e + 1))).mul hprod).mul (VG_inv24 hp5)
     push_cast at this

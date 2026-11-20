@@ -179,7 +179,7 @@ private theorem forcedLerayLimitStrong_eLpNorm_le
         rw [← vec3EuclideanNorm_eq_l2]
         exact norm_le_vec3EuclideanNorm _
     _ = _ := by
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hG]
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hG]
         simp only [ENNReal.toReal_ofNat]
 
 private theorem limit_slice_lintegral_bound_of_compactExhaustion
@@ -241,7 +241,7 @@ private theorem forcedLerayLimitStrong_indicator_enorm_sq
   funext z
   by_cases hz : z ∈ Kᶜ
   · simp only [Set.indicator_of_mem hz]
-  · simp only [Set.indicator_of_notMem hz, WithLp.toLp_zero, enorm_zero]
+  · simp only [Set.indicator_of_notMem hz, WithLp.toLp_zero, eNorm_zero]
     exact ENNReal.zero_rpow_of_pos (by norm_num)
 
 /-- The strong convergence clauses of `prop:forced-limit` on one slab
@@ -410,7 +410,7 @@ theorem forcedLerayLimit_strong_clauses
     refine forcedLerayLimitStrong_complement_lintegral_le T (R m) (δ m) (hδpos m).le
       _ ?_ (S m) (A ^ (2 : ℕ)) (fun t ht => hStailU m n t ht)
       (fun t ht => hAslice (σ n) t ht.1 ht.2.le)
-    exact ((PiLp.continuous_toLp 2 _).measurable.comp (hUmeas n)).enorm.pow_const _
+    exact ((PiLp.continuous_toLp 2 _).measurable.comp (hUmeas n)).eNorm.pow_const _
   have huTail : ∀ ε : ℝ≥0∞, 0 < ε → ∀ᶠ m : ℕ in atTop,
       eLpNorm ((K m)ᶜ.indicator u) 2
         ((volume : Measure ParabolicPoint).restrict
@@ -432,7 +432,7 @@ theorem forcedLerayLimit_strong_clauses
     refine ENNReal.rpow_le_rpow ?_ (by norm_num)
     refine forcedLerayLimitStrong_complement_lintegral_le T (R m) (δ m) (hδpos m).le
       _ ?_ (S m) (A ^ (2 : ℕ)) (fun t ht => hStailV m t ht) (fun t ht => hVslice t ht)
-    exact ((PiLp.continuous_toLp 2 _).measurable.comp hv).enorm.pow_const _
+    exact ((PiLp.continuous_toLp 2 _).measurable.comp hv).eNorm.pow_const _
   -- the energy-space and `L^{10/3}` bounds
   have hEnergy : ∀ n, MemLp (U n) (ENNReal.ofReal 2)
       ((volume : Measure ParabolicPoint).restrict (spaceTimeSet Set.univ (Ioo 0 T))) := by

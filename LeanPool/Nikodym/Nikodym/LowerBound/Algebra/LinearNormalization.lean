@@ -220,7 +220,7 @@ dimension `0`, hence `= 𝔪ₙ`; so its radical is `𝔪ₙ`, and `𝔪ₙ` is 
 theorem pow_idealOfVars_le_of_quotDim_eq_zero {J : Ideal (MvPolynomial (Fin n) K)}
     (hJh : J.IsHomogeneous (homogeneousSubmodule (Fin n) K)) (h0 : quotDim J = 0) :
     ∃ N : ℕ, idealOfVars (Fin n) K ^ N ≤ J := by
-  refine Ideal.exists_pow_le_of_le_radical_of_fg ?_ (idealOfVars_fg _ _)
+  refine Ideal.exists_pow_le_of_le_radical_of_fg ?_ (fg_idealOfVars _ _)
   rw [← Ideal.sInf_minimalPrimes, le_sInf_iff]
   intro p hp
   have := hp.1.1

@@ -110,7 +110,8 @@ theorem ginibreEquality_first_quotient_closedSpan_le_coordinateSum {n : ℕ} (hn
     rw [hsmul]
     change c * s.val z = h z
     rw [hsz, hz]
-  · exact (Submodule.span ℂ ({s.val} : Set (Lp ℂ 2 (ginibreMeasure n)))).closed_of_finiteDimensional
+  · exact Submodule.isClosed_of_finiteDimensional
+      (Submodule.span ℂ ({s.val} : Set (Lp ℂ 2 (ginibreMeasure n))))
 
 /-- Exhaustive actual L² classification of the closed first positive
 holomorphic quotient sector. -/

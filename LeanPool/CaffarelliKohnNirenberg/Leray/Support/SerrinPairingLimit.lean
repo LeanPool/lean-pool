@@ -44,13 +44,13 @@ theorem serrin_memLp_interpolate {E : Type} [NormedAddCommGroup E] {f : α → E
   have hrq' : r.toReal ≤ q.toReal := ENNReal.toReal_mono hqtop hrq
   have hpfin : (∫⁻ x, ‖f x‖ₑ ^ p.toReal ∂μ) ≠ ⊤ := by
     have h1 := hfp.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hm] at h1
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hm] at h1
     exact (ENNReal.rpow_lt_top_iff_of_pos (by
       have := ENNReal.toReal_pos hp0 hptop
       positivity)).mp h1 |>.ne
   have hqfin : (∫⁻ x, ‖f x‖ₑ ^ q.toReal ∂μ) ≠ ⊤ := by
     have h1 := hfq.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hq0 hqtop hm] at h1
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hq0 hqtop hm] at h1
     exact (ENNReal.rpow_lt_top_iff_of_pos (by
       have := ENNReal.toReal_pos hq0 hqtop
       positivity)).mp h1 |>.ne
@@ -63,16 +63,16 @@ theorem serrin_memLp_interpolate {E : Type} [NormedAddCommGroup E] {f : α → E
       (∫⁻ x, ‖f x‖ₑ ^ r.toReal ∂μ) ≤ ∫⁻ x, (‖f x‖ₑ ^ p.toReal + ‖f x‖ₑ ^ q.toReal) ∂μ :=
         lintegral_mono hpoint
       _ = (∫⁻ x, ‖f x‖ₑ ^ p.toReal ∂μ) + ∫⁻ x, ‖f x‖ₑ ^ q.toReal ∂μ :=
-        lintegral_add_left' (hm.enorm.pow_const _) _
+        lintegral_add_left' (hm.eNorm.pow_const _) _
       _ < ⊤ := ENNReal.add_lt_top.mpr ⟨hpfin.lt_top, hqfin.lt_top⟩
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal hr0 hrtop hm]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal hr0 hrtop hm]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hrfin.ne
 
 private theorem serrin_eLpNorm_mul_le {p q : ℝ≥0∞} [ENNReal.HolderTriple p q 1]
     {F G : α → ℝ} (hF : AEStronglyMeasurable F μ) (hG : AEStronglyMeasurable G μ) :
     (∫⁻ x, ‖F x * G x‖ₑ ∂μ) ≤ eLpNorm F p μ * eLpNorm G q μ := by
   have h := eLpNorm_smul_le_mul_eLpNorm (p := p) (q := q) (r := 1) hF hG
-  rw [eLpNorm_one_eq_lintegral_enorm (hF.smul hG)] at h
+  rw [eLpNorm_one_eq_lintegral_eNorm (hF.smul hG)] at h
   simpa only [Pi.smul_apply, smul_eq_mul, Pi.mul_apply] using h
 
 private theorem serrin_tendsto_mul_bounded {a b : ℕ → ℝ≥0∞} {B : ℝ≥0∞} (hB : B ≠ ⊤)
@@ -143,12 +143,12 @@ theorem serrin_weighted_pairing_tendsto {p q : ℝ≥0∞} [hpq : ENNReal.Holder
   have hE3 : Tendsto (fun n => ∫⁻ x, ‖(cs n x - c x) * (F x * G x)‖ₑ ∂μ) atTop (𝓝 0) := by
     have hlim := tendsto_lintegral_of_dominated_convergence'
       (fun x => 2 * ‖F x * G x‖ₑ)
-      (fun n => (((hcm n).sub hcm').mul hFG.aestronglyMeasurable).enorm)
+      (fun n => (((hcm n).sub hcm').mul hFG.aestronglyMeasurable).eNorm)
       (fun n => Eventually.of_forall fun x => by
         change ‖(cs n x - c x) * (F x * G x)‖ₑ ≤ 2 * ‖F x * G x‖ₑ
-        rw [enorm_mul]
+        rw [eNorm_mul]
         gcongr
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         calc
           ENNReal.ofReal |cs n x - c x| ≤ ENNReal.ofReal 2 := by
             apply ENNReal.ofReal_le_ofReal
@@ -164,7 +164,7 @@ theorem serrin_weighted_pairing_tendsto {p q : ℝ≥0∞} [hpq : ENNReal.Holder
         filter_upwards [hc] with x hx
         have h1 : Tendsto (fun n => cs n x - c x) atTop (𝓝 0) := by
           simpa using hx.sub_const (c x)
-        have h2 := (h1.mul_const (F x * G x)).enorm
+        have h2 := (h1.mul_const (F x * G x)).eNorm
         simpa using h2)
     simpa using hlim
   have hFsLp : ∀ᶠ n in atTop, MemLp (Fs n) p μ := by
@@ -197,9 +197,9 @@ theorem serrin_weighted_pairing_tendsto {p q : ℝ≥0∞} [hpq : ENNReal.Holder
       (Eventually.of_forall fun _ => bot_le) ?_
     filter_upwards [hFs, hGs] with n hFn hGn
     have hm1 : AEMeasurable (fun x => ‖(Fs n x - F x) * Gs n x‖ₑ) μ :=
-      ((hFn.sub hFm).mul hGn).enorm
+      ((hFn.sub hFm).mul hGn).eNorm
     have hm2 : AEMeasurable (fun x => ‖F x * (Gs n x - G x)‖ₑ) μ :=
-      (hFm.mul (hGn.sub hGm)).enorm
+      (hFm.mul (hGn.sub hGm)).eNorm
     have hm12 : AEMeasurable
         (fun x => ‖(Fs n x - F x) * Gs n x‖ₑ + ‖F x * (Gs n x - G x)‖ₑ) μ := hm1.add hm2
     rw [← lintegral_add_left' hm1, ← lintegral_add_left' hm12]
@@ -210,17 +210,17 @@ theorem serrin_weighted_pairing_tendsto {p q : ℝ≥0∞} [hpq : ENNReal.Holder
           (cs n x - c x) * (F x * G x) := by ring
     rw [hid]
     have hc1 : ‖cs n x‖ₑ ≤ 1 := by
-      rw [Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs]
       exact ENNReal.ofReal_le_one.mpr (hcb n x)
     calc
       ‖cs n x * ((Fs n x - F x) * Gs n x) + cs n x * (F x * (Gs n x - G x)) +
           (cs n x - c x) * (F x * G x)‖ₑ ≤
           ‖cs n x * ((Fs n x - F x) * Gs n x)‖ₑ + ‖cs n x * (F x * (Gs n x - G x))‖ₑ +
             ‖(cs n x - c x) * (F x * G x)‖ₑ :=
-        (enorm_add_le _ _).trans (add_le_add (enorm_add_le _ _) le_rfl)
+        (eNorm_add_le _ _).trans (add_le_add (eNorm_add_le _ _) le_rfl)
       _ ≤ ‖(Fs n x - F x) * Gs n x‖ₑ + ‖F x * (Gs n x - G x)‖ₑ +
             ‖(cs n x - c x) * (F x * G x)‖ₑ := by
-        rw [enorm_mul, enorm_mul (cs n x)]
+        rw [eNorm_mul, eNorm_mul (cs n x)]
         gcongr
         · exact mul_le_of_le_one_left zero_le hc1
         · exact mul_le_of_le_one_left zero_le hc1
@@ -256,7 +256,7 @@ theorem serrin_weighted_pairing_tendsto_zero {p q : ℝ≥0∞} [hpq : ENNReal.H
       (∫⁻ x, ‖cs n x * Fs n x * Gs n x‖ₑ ∂μ) ≤
           ∫⁻ x, ENNReal.ofReal (ε n) * ‖Fs n x * Gs n x‖ₑ ∂μ := by
         refine lintegral_mono fun x => ?_
-        rw [mul_assoc, enorm_mul, Real.enorm_eq_ofReal_abs]
+        rw [mul_assoc, eNorm_mul, Real.eNorm_eq_ofReal_abs]
         gcongr
         exact hcb n x
       _ = ENNReal.ofReal (ε n) * ∫⁻ x, ‖Fs n x * Gs n x‖ₑ ∂μ :=

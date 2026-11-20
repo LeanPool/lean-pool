@@ -54,7 +54,7 @@ theorem cutoff_force_slice_eLpNorm_le
       (ENNReal.ofReal (6 / 5 : ℝ)) volume ≤
       eLpNorm ((vec3Ball z.1 ρ).indicator (fun y => f (y, s)))
         (ENNReal.ofReal (6 / 5 : ℝ)) volume := by
-    refine eLpNorm_mono_enorm hmem (fun y => ?_)
+    refine eLpNorm_mono_eNorm hmem (fun y => ?_)
     by_cases hy : y ∈ vec3Ball z.1 ρ
     · rw [Set.indicator_of_mem hy, ← ofReal_norm, ← ofReal_norm, Real.norm_eq_abs, abs_mul]
       refine ENNReal.ofReal_le_ofReal ?_
@@ -65,7 +65,7 @@ theorem cutoff_force_slice_eLpNorm_le
         simpa only [Real.norm_eq_abs] using norm_le_pi_norm (f (y, s)) j
       have h₃ : (0 : ℝ) ≤ |f (y, s) j| := abs_nonneg _
       nlinarith only [h₁, h₂, h₃, abs_nonneg (mollifiedBallCutoff z.1 hρ y)]
-    · rw [hzero y hy, zero_mul, enorm_zero]
+    · rw [hzero y hy, zero_mul, eNorm_zero]
       exact bot_le
   exact hmono.trans_eq
     (eLpNorm_indicator_eq_eLpNorm_restrict (vec3Ball_measurable z.1 ρ).nullMeasurableSet)
@@ -202,7 +202,7 @@ theorem collar_slice_gradient_eLpNorm_le
       norm_num
     have huniv : μ' Set.univ = volume (vec3Ball z.1 (ρ / 2)) := by
       rw [hμ', Measure.restrict_apply_univ]
-    have h := eLpNorm_le_of_ae_enorm_bound (p := ENNReal.ofReal (6 / 5 : ℝ)) hBm hbd
+    have h := eLpNorm_le_of_ae_eNorm_bound (p := ENNReal.ofReal (6 / 5 : ℝ)) hBm hbd
     rw [smul_eq_mul, hexp, huniv] at h
     exact h
   · rw [hCg]

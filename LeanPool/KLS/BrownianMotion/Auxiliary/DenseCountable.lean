@@ -16,7 +16,8 @@ public import Mathlib.Topology.Bases
 @[expose] public section
 
 /-- A countable dense subset of a second-countable topological space. -/
-def denseCountable (T : Type*) [TopologicalSpace T] [SecondCountableTopology T] : Set T :=
+noncomputable def denseCountable (T : Type*) [TopologicalSpace T] [SecondCountableTopology T] :
+    Set T :=
   (TopologicalSpace.exists_countable_dense T).choose
 
 lemma dense_denseCountable {T : Type*} [TopologicalSpace T] [SecondCountableTopology T] :

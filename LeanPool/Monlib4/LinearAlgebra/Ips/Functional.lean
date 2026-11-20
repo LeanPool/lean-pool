@@ -69,7 +69,7 @@ theorem Module.Dual.apply (φ : Module.Dual R (Matrix n n R)) (a : Matrix n n R)
     φ a = (φ.matrix * a).trace := by
   simp_rw [Module.Dual.matrix, smul_single' _ _ (φ _)]
   simp_rw [Matrix.sum_mul, Matrix.smul_mul, trace_sum, trace_smul, Matrix.trace, Matrix.diag,
-    mul_apply, single_eq, boole_mul, ite_and, Finset.sum_ite_irrel, Finset.sum_const_zero,
+    Matrix.mul_apply, single_eq, boole_mul, ite_and, Finset.sum_ite_irrel, Finset.sum_const_zero,
     Finset.sum_ite_eq, Finset.mem_univ, ite_true, ← ite_and, smul_eq_mul]
   have :
     ∀ ⦃i : n⦄ ⦃j : n⦄ ⦃a : R⦄,
@@ -486,7 +486,7 @@ private lemma Module.Dual.tracial_posSemidef_matrix_eq_re_smul_one
     0 ≤ RCLike.re (φ.matrix i i) ∧
       φ.matrix = ((RCLike.re (φ.matrix i i) : ℝ) : ℂ) • 1 := by
   simp_rw [Module.Dual.IsTracial, Module.Dual.apply, Matrix.trace, Matrix.diag,
-    mul_apply] at h2
+    Matrix.mul_apply] at h2
   set Q := φ.matrix with hQdef
   have hdiag : ∀ p q r : n, Q p q = ite (p = q) (Q r r) 0 := fun p q r =>
     calc
@@ -586,7 +586,7 @@ theorem Module.Dual.isTracial_faithful_pos_map_iff_of_matrix [Nonempty n]
       simp_rw [← Subtype.coe_inj] at hy ⊢
       exact h _ hy
   · rintro ⟨α, ⟨h1, _⟩⟩
-    have : 0 < (α : NNReal) := Subtype.mem α
+    have : 0 < (α : NNReal) := α.property
     constructor
     · simp_rw [Module.Dual.IsFaithful, Module.Dual.apply, h1, Matrix.smul_mul, Matrix.one_mul,
         trace_smul, smul_eq_zero, Complex.ofReal_eq_zero, NNReal.coe_eq_zero, ne_zero_of_lt this,

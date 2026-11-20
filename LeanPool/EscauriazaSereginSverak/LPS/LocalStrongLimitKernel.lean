@@ -284,7 +284,7 @@ theorem lps_curve_dist_sq_le (hab : a < b)
       norm_integral_le_of_norm_le hg (ae_restrict_of_ae_restrict_of_subset hsub hF')
     have h2 : ∫ q in Ioc s t, |c| / 2 * (IU q + IV q) ≤
         ∫ q in Ioc a b, |c| / 2 * (IU q + IV q) :=
-      setIntegral_mono_set hgIoc (Eventually.of_forall hnn) hsub.eventuallyLE
+      setIntegral_mono_set hgIoc (Eventually.of_forall hnn) hsub.eventuallySubset
     have h3 : ∫ q in Ioc a b, |c| / 2 * (IU q + IV q) = |c| / 2 * ∫ q in Ioo a b, (IU q + IV q)
       := by
       rw [← hcongr, integral_const_mul]

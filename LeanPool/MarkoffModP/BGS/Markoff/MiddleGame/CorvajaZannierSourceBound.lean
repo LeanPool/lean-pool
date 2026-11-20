@@ -40,7 +40,7 @@ private lemma thirtyTwo_rpow_one_third_le_sixteen :
     rw [show (4096 : ℝ) = 16 ^ (3 : ℕ) by norm_num]
     convert Real.pow_rpow_inv_natCast (by norm_num : (0 : ℝ) ≤ 16)
       (by norm_num : (3 : ℕ) ≠ 0) using 1
-    all_goals norm_num
+    norm_num
   rw [← hpow]
   exact Real.rpow_le_rpow (by norm_num) (by norm_num) (by norm_num)
 
@@ -49,7 +49,7 @@ private lemma sixtyFour_rpow_one_third_eq_four :
   rw [show (64 : ℝ) = 4 ^ (3 : ℕ) by norm_num]
   convert Real.pow_rpow_inv_natCast (by norm_num : (0 : ℝ) ≤ 4)
     (by norm_num : (3 : ℕ) ≠ 0) using 1
-  all_goals norm_num
+  norm_num
 
 /-- The exact `(2,2)` and Euler-characteristic-four specialization used by the
 Markoff middle game is dominated by the source-faithful coefficient `48`. -/

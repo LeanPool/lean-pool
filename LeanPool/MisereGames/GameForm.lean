@@ -15,6 +15,8 @@ Misere combinatorial games.
 
 namespace MisereGames
 
+open scoped Pointwise
+
 universe u
 
 open Form
@@ -213,7 +215,7 @@ theorem ofSetsRecOn_ofSets {motive : GameForm.{u} → Sort*}
     ofSetsRecOn !{s | t} mk = mk _ _ (fun y _ ↦ ofSetsRecOn y mk) (fun y _ ↦ ofSetsRecOn y mk) := by
   rw [ofSetsRecOn, cast_eq_iff_heq, moveRecOn_eq]
   congr
-  any_goals simp only [moves_ofSets, Player.cases, heq_eq_eq]
+  all_goals simp only [moves_ofSets, Player.cases, heq_eq_eq]
   all_goals
     refine Function.hfunext rfl fun x _ h ↦ ?_
     cases h

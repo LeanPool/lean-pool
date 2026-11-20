@@ -3157,9 +3157,18 @@ private theorem mulFast_hi (I J : IntervalRat) : (mulFast I J).hi = (mul I J).hi
             (by nlinarith [I.le, J.le])
         · rfl
 
-/-- `mulFast` preserves the containment property of `mul`.
-    This is retained as documentation and a future audited optimization hook;
-    production certificate checking currently uses `mul` directly. -/
+/-- Sign-based multiplication computes the same interval as the four-product formula. -/
+theorem mulFast_eq_mul (I J : IntervalRat) : mulFast I J = mul I J := by
+  have equalOfEndpoints {left right : IntervalRat}
+      (lower : left.lo = right.lo) (upper : left.hi = right.hi) : left = right := by
+    cases left
+    cases right
+    cases lower
+    cases upper
+    rfl
+  exact equalOfEndpoints (mulFast_lo I J) (mulFast_hi I J)
+
+/-- `mulFast` preserves the containment property of `mul`. -/
 theorem mem_mulFast {x y : ℝ} {I J : IntervalRat} (hx : x ∈ I) (hy : y ∈ J) :
     x * y ∈ mulFast I J := by
   simp only [mem_def]
@@ -4708,7 +4717,7 @@ lemma iteratedDerivWithin_Icc_interior_eq {f : ℝ → ℝ} {a b : ℝ} {x : ℝ
   congr 1
   have heq : (Set.Icc a b : Set ℝ) =ᶠ[𝓝 x] (Set.univ : Set ℝ) := by
     filter_upwards [h_nhds] with y hy
-    exact propext ⟨fun _ => trivial, fun _ => hy⟩
+    exact ⟨fun _ => trivial, fun _ => hy⟩
   rw [iteratedFDerivWithin_congr_set heq n, iteratedFDerivWithin_univ]
 
 /-- At the left endpoint of [c, x], iteratedDerivWithin equals iteratedDeriv for ContDiff functions.

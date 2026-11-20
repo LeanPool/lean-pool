@@ -136,7 +136,7 @@ theorem eventually_atBot_sturm {F : ℝ[X]} (hF : F ≠ 0) :
     ∀ᶠ y in atBot, sturmV F y = vBot F ∧ ¬ F.IsRoot y ∧
       SignType.sign (F.eval y) = SignType.sign ((-1) ^ F.natDegree * F.leadingCoeff) :=
   (eventually_atBot_signVariations fun _ hp ↦ ne_zero_of_mem_sturmSeq hp).and
-    ((eventually_atBot_not_isRoot F hF).and (eventually_atBot_sign_eval hF))
+    ((eventually_atBot_not_isRoot hF).and (eventually_atBot_sign_eval hF))
 
 /-- Far right, the count is `V(+∞)`, `F` has no root, and the sign of `F` is that of its leading
 coefficient. -/
@@ -144,7 +144,7 @@ theorem eventually_atTop_sturm {F : ℝ[X]} (hF : F ≠ 0) :
     ∀ᶠ y in atTop, sturmV F y = vTop F ∧ ¬ F.IsRoot y ∧
       SignType.sign (F.eval y) = SignType.sign F.leadingCoeff :=
   (eventually_atTop_signVariations fun _ hp ↦ ne_zero_of_mem_sturmSeq hp).and
-    ((eventually_atTop_not_isRoot F hF).and (eventually_atTop_sign_eval hF))
+    ((eventually_atTop_not_isRoot hF).and (eventually_atTop_sign_eval hF))
 
 /-- A finite point `l' < x` standing for the lower end `l` left of `x`: `l` itself, or a point far
 left, with the count and the sign just right of it of the end. -/

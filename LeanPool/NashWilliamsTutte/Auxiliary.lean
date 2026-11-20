@@ -260,7 +260,8 @@ theorem ExchangeStep.total_eq [Finite V] {F F' : Fin k → SimpleGraph V} (h : E
   have hne : u ≠ v := huv.1.ne
   have h2 : ((F i).deleteEdges {s(x, y)} ⊔ edge u v).edgeSet.ncard = (F i).edgeSet.ncard := by
     rw [edgeSet_sup, edgeSet_deleteEdges, edgeSet_edge_of_ne hne,
-      Set.ncard_union_eq (Set.disjoint_singleton_right.2 fun h ↦ huv.2 i h.1) (Set.toFinite _)
+      Set.ncard_union_eq (s := (F i).edgeSet \ {s(x, y)})
+        (Set.disjoint_singleton_right.2 fun h ↦ huv.2 i h.1) (Set.toFinite _)
         (Set.toFinite _), Set.ncard_singleton]
     exact Set.ncard_sdiff_singleton_add_one (show s(x, y) ∈ (F i).edgeSet from hxy)
       (Set.toFinite _)

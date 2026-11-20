@@ -102,7 +102,7 @@ theorem rhoConvex_raw_squaredRadius_mass_lt_top (n k : ℕ) (hn : 0 < n)
     rawPotentialSquaredRadiusLaw n k V univ < ⊤ := by
   have hi := rhoConvexPotential_radial_density_integrable n k hn ρ hρ hV hrot hc
   rw [rawPotentialSquaredRadiusLaw_eq_square_map n k V hV.continuous,
-    Measure.smul_apply, Measure.map_apply (by fun_prop) MeasurableSet.univ]
+    smul_apply, Measure.map_apply (by fun_prop) MeasurableSet.univ]
   simp only [preimage_univ, smul_eq_mul]
   rw [rawRadialConfinementLaw_mass n k (fun r : ℝ => V (r : ℂ))
     (hV.continuous.comp Complex.continuous_ofReal) hi]
@@ -115,7 +115,7 @@ theorem rhoConvex_raw_Kostlan_mass_lt_top (n k : ℕ) (hn : 0 < n)
   have he := rawPotentialKostlanCoordinateLaw_squaredRadius n k hn hV.continuous hrot
   have hm := congrArg (fun μ : Measure ℝ => μ univ) he
   rw [Measure.map_apply Complex.continuous_normSq.measurable MeasurableSet.univ,
-    Measure.smul_apply] at hm
+    smul_apply] at hm
   simp only [preimage_univ, smul_eq_mul] at hm
   rw [hm]
   exact ENNReal.mul_lt_top

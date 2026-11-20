@@ -131,6 +131,6 @@ lemma hasBasis_principalOpen' : (nhds a).HasBasis
   isOpen_iff_mem_nhds.mpr fun a h ↦ (hasBasis_principalOpen a).mem_iff.mpr ⟨x, h, subset_rfl⟩
 @[simp] lemma principalOpen_isClosed : IsClosed (principalOpen x) := by
   rw [← isOpen_compl_iff, principalOpen_complement]
-  exact isOpen_biUnion fun i _ ↦ principalOpen_isOpen i
+  exact isOpen_iUnion fun i ↦ isOpen_iUnion fun _ ↦ principalOpen_isOpen i
 end Discrete
 end Stream'

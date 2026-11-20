@@ -49,7 +49,7 @@ theorem densityField_fourier_enorm_sq_ae {N q : ℕ} (i : Fin N) (ψ : State N q
   rw [hft]
   filter_upwards [Lp.coeFn_smul (Real.sqrt N : ℂ)
     (Lp.fourierTransformₗᵢ Position (OneParticleFiber i q) (oneParticleCurrying i ψ))] with ξ hξ
-  rw [hξ, Pi.smul_apply, enorm_smul, mul_pow, hc]
+  rw [hξ, Pi.smul_apply, eNorm_smul, mul_pow, hc]
 
 /-- The literal density-field Fourier energy is the full kinetic energy. -/
 theorem kineticEnergy_eq_densityField_fourier {N q : ℕ} (i : Fin N)

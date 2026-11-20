@@ -330,7 +330,7 @@ theorem compileAt_correct_internal
       rw [hbranchRun.1, hbranchRun.2.1, hbranchRun.2.2]
       simp [stepLogCost, curInstr_append_head, Instr.logCost, Store.space,
         Cfg.space, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
-      all_goals omega
+      omega
   | ifNonzero htest hbranch ih =>
       exact compileAt_ifNonzero_correct htest ih pre suffix
   | whileZero htest =>

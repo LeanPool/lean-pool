@@ -243,11 +243,11 @@ variable {n : ℕ}
 
 theorem coe_rep_inv_rep (σ : SL(2, ℤ)) (X : ↥(BinaryForm ℂ n)) :
     binaryFormRepSL ℂ n σ (binaryFormRepSL ℂ n σ⁻¹ X) = X := by
-  rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
+  rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self]
 
 theorem rep_inv_rep (σ : SL(2, ℤ)) (X : ↥(BinaryForm ℂ n)) :
     binaryFormRepSL ℂ n σ⁻¹ (binaryFormRepSL ℂ n σ X) = X := by
-  rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
+  rw [← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self]
 
 theorem binarySubst_inv_mul (σ : SL(2, ℤ)) (Q : MvPolynomial (Fin 2) ℂ) :
     binarySubst ℂ ((σ⁻¹ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) (binarySubst ℂ (σ : Matrix (Fin 2)

@@ -43,7 +43,7 @@ abbrev K := arithJumpSet 1
 
 /-- A set `A` is decidable in `O` if its indicator is computable in `O`. -/
 def decidableIn (O : Set (ℕ →. ℕ)) (A : Set ℕ) : Prop :=
-  ∃ f : ℕ → Bool, ComputableIn O f ∧ ∀ n, A n ↔ f n = true
+  ∃ f : ℕ → Bool, ComputableIn O f ∧ ∀ n, n ∈ A ↔ f n = true
 
 /-- The base level `Δ⁰₀`: sets decidable in the empty oracle. -/
 def Delta00 (A : Set ℕ) : Prop := decidableIn {} A

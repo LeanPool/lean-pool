@@ -215,7 +215,7 @@ bound; the Riesz isomorphism (`InnerProductSpace.toDual`) then represents the ex
 by a vector. -/
 theorem Seminorm.exists_inner_le_of_apply (q : Seminorm 𝕜 E) (u : E) :
     ∃ v : E, (∀ x, re ⟪x, v⟫_𝕜 ≤ q x) ∧ re ⟪u, v⟫_𝕜 = q u := by
-  have : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  have : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   rcases eq_or_ne u 0 with rfl | hu
   · exact ⟨0, fun x => by simp, by simp⟩
   -- `f : c • u ↦ c * q u` on the span of `u`; at `z = c • u` both sides are `‖c‖ * q u`

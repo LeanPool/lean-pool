@@ -306,7 +306,7 @@ theorem eval_codeLift_iff {k : ℕ} (d : Code k) (z t : M) (v : Fin k → M) :
     Semiformula.Evalb (z :> (t :> v)) (FFL.FirstOrder.Arithmetic.code (codeLift d)) ↔
       Semiformula.Evalb (z :> v) (FFL.FirstOrder.Arithmetic.code d) :=
   by
-  simp only [Nat.succ_eq_add_one, code, Matrix.zero_cons_succ_eq_self, codeLift, codeAux,
+  simp only [Nat.succ_eq_add_one, Arithmetic.code, Matrix.zero_cons_succ_eq_self, codeLift, codeAux,
     Rew.hom_finitary2, Rew.bind_fvar, Matrix.cons_val_zero, Matrix.cons_val_succ,
     Semiformula.eval_rew, Matrix.empty_eq, Function.comp_def, Semiterm.val_bvar,
     Semiformula.eval_exsClosure, LogicalConnective.HomClass.map_and, Matrix.comp_vecCons',

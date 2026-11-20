@@ -28,7 +28,7 @@ private lemma exists_projective_separating_minor {n : ℕ}
     (hxy : x ≠ y) :
     ∃ a b, y.rep b * x.rep a - y.rep a * x.rep b ≠ 0 := by
   by_contra! h
-  obtain ⟨b, hb⟩ := Function.ne_iff.mp y.rep_nonzero
+  obtain ⟨b, hb⟩ := Function.ne_iff.mp y.rep_ne_zero
   change y.rep b ≠ 0 at hb
   apply hxy
   have he : x.rep = (x.rep b / y.rep b) • y.rep := by
@@ -39,8 +39,8 @@ private lemma exists_projective_separating_minor {n : ℕ}
     rw [ha]
     field_simp
   calc
-    x = Projectivization.mk K x.rep x.rep_nonzero := x.mk_rep.symm
-    _ = Projectivization.mk K y.rep y.rep_nonzero := by
+    x = Projectivization.mk K x.rep x.rep_ne_zero := x.mk_rep.symm
+    _ = Projectivization.mk K y.rep y.rep_ne_zero := by
       rw [Projectivization.mk_eq_mk_iff']
       exact ⟨_, he.symm⟩
     _ = y := y.mk_rep
@@ -104,7 +104,7 @@ theorem exists_projective_point_separators_degree {n M : ℕ} {ι : Type*}
   classical
   obtain ⟨h, hhom, heval⟩ := exists_projective_point_separators z hz
   have hcoord (j : ι) : ∃ k, (z j).rep k ≠ 0 :=
-    Function.ne_iff.mp (z j).rep_nonzero
+    Function.ne_iff.mp (z j).rep_ne_zero
   choose k hk using hcoord
   let L (j : ι) := C ((z j).rep (k j))⁻¹ * X (k j)
   have hL (j : ι) : (L j).IsHomogeneous 1 := isHomogeneous_C_mul_X _ _

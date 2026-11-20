@@ -178,7 +178,7 @@ lemma padicValRat_factorial_small {m : ℕ} (hm : m < p ^ 2) :
     rcases Nat.eq_zero_or_pos m with h | h
     · simp [h]
     · exact Nat.log_lt_of_lt_pow (by omega) hm
-  rw [padicValNat_factorial hlog]
+  rw [multiplicity_factorial hlog]
   simp
 
 lemma padicValRat_neg_one_pow (m : ℕ) : padicValRat p ((-1:ℚ)^m) = 0 := by

@@ -153,10 +153,10 @@ theorem hasKolmogorovMoments_driftSemigroup (v : E) :
   have hmeas : Measurable (fun z : E ↦ edist z y ^ (2 : ℝ)) :=
     (measurable_edist_left (x := y)).pow_const 2
   have hnn : nndist (y + (h : ℝ) • v) y = h * ‖v‖₊ := by
-    rw [nndist_eq_nnnorm, add_sub_cancel_left, nnnorm_smul]
+    rw [nnDist_eq_nnNorm, add_sub_cancel_left, nnNorm_smul]
     congr 1
     apply NNReal.coe_injective
-    rw [coe_nnnorm, Real.norm_of_nonneg h.coe_nonneg]
+    rw [coe_nnNorm, Real.norm_of_nonneg h.coe_nonneg]
   rw [driftSemigroup_apply, lintegral_dirac' _ hmeas, edist_nndist, hnn,
     ENNReal.rpow_two, ENNReal.rpow_two, ENNReal.coe_mul, mul_pow, ENNReal.coe_pow]
   exact le_of_eq (mul_comm _ _)

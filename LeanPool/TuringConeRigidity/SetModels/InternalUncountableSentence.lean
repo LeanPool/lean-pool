@@ -74,7 +74,8 @@ theorem uncountableOrdinalSentence_spec (M : ZFSet.{0}) (hM : Transitive M)
     cons_zero,ZFSet.isOrdinal_iff_forall_mem_isTransitive,not_or]
   rfl
 
-theorem no_surjection [Uncountable (Conditions (Ordinal.omega 1 : Ordinal.{0}).toZFSet)]
+theorem no_surjection
+    (huncountable : Uncountable (Conditions (Ordinal.omega 1 : Ordinal.{0}).toZFSet))
     (f : ZFSet.{0}) (hf : FunctionGraph ZFSet.omega (Ordinal.omega 1 : Ordinal.{0}).toZFSet f)
     (hs : ∀ x ∈ (Ordinal.omega 1 : Ordinal.{0}).toZFSet, ∃ n ∈ ZFSet.omega, ZFSet.pair n x ∈ f) :
       False := by
@@ -88,7 +89,7 @@ theorem no_surjection [Uncountable (Conditions (Ordinal.omega 1 : Ordinal.{0}).t
     obtain ⟨n,rfl⟩ := (mem_omega n).mp hn
     have heq := (orbitGraph_pair E n (label _ x)).mp (hEf.symm ▸ hnx)
     exact ⟨n,label_injective _ (by simpa only [t,label,Equiv.symm_apply_apply] using heq.symm)⟩
-  exact not_countable ht.countable
+  exact (uncountable_iff_not_countable _).mp huncountable ht.countable
 
 theorem ambient_uncountable_ordinal :
     uncountableOrdinalSentence.Sat Set.univ
@@ -98,7 +99,7 @@ theorem ambient_uncountable_ordinal :
     change Cardinal.aleph0 < ((Ordinal.omega 1 : Ordinal.{0}).toZFSet).card
     rw [Ordinal.card_toZFSet,Ordinal.card_omega]
     exact Cardinal.aleph0_lt_aleph_one
-  have : Uncountable (Conditions (Ordinal.omega 1 : Ordinal.{0}).toZFSet) :=
+  have huncountable : Uncountable (Conditions (Ordinal.omega 1 : Ordinal.{0}).toZFSet) :=
     Cardinal.aleph0_lt_mk_iff.mp hc
   change (fromBounded _).Sat _ _ ∧ (¬ (fromBounded _).Sat _ _) ∧ ¬ (countableSentence 0 1).Sat _ _
   rw [bounded_univ,bounded_univ]
@@ -115,7 +116,7 @@ theorem ambient_uncountable_ordinal :
     exact hpos.ne' hr
   · rintro ⟨f,_,hf⟩
     have h := (ontoMatrix_spec 0 2 1 _).mp ((bounded_univ _ _).mp hf)
-    exact no_surjection f h.1 h.2
+    exact no_surjection huncountable f h.1 h.2
 
 end TuringRigidity.InternalUncountableSentence
 

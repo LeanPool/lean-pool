@@ -269,7 +269,7 @@ theorem sparseForm_le_lintegral_on_of_majorSubsets
         ENNReal.ofReal
           (I.1.length * localAverage 1 f I.1 * localAverage p g I.1) ≤
       ∑' I : {I : RealInterval // I ∈ S},
-        ENNReal.ofReal η⁻¹ * ∫⁻ x in E I, M x := ENNReal.tsum_le_tsum hterm
+        ENNReal.ofReal η⁻¹ * ∫⁻ x in E I, M x := tsum_le_tsum hterm
     _ = ENNReal.ofReal η⁻¹ * ∫⁻ x in ⋃ I, E I, M x := by
       rw [ENNReal.tsum_mul_left, lintegral_iUnion (fun I ↦ hEmeas I) hEdisj]
     _ ≤ ENNReal.ofReal η⁻¹ * ∫⁻ x in D, M x := by
@@ -561,12 +561,12 @@ theorem sparseForm_foliation_leaf_le
           ENNReal.ofReal (centeredHardyLittlewoodRpowConstant (r / p)) *
             ∫⁻ x, ‖g x‖ₑ ^ r) ^ (1 / r)) := by
   let F : ℝ → ℝ≥0∞ := fun y ↦ ‖f y‖ₑ
-  have hF : Measurable F := f.measurable_toFun.enorm
+  have hF : Measurable F := f.measurable_toFun.eNorm
   let H : Set ℝ := {y | ENNReal.ofReal b < centeredHardyLittlewoodMaximal F y}
   have hH : MeasurableSet H := measurableSet_lt measurable_const
     (measurable_centeredHardyLittlewoodMaximal hF)
   have hmassTop : (∫⁻ y, F y) ≠ ∞ := by
-    have hfhi := hasFiniteIntegral_iff_enorm.mp
+    have hfhi := hasFiniteIntegral_iff_eNorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral
     change (∫⁻ y, ‖f y‖ₑ) < ∞ at hfhi
     exact ne_of_lt (by exact hfhi)
@@ -659,7 +659,7 @@ theorem lintegral_enorm_setIndicator_rpow
       ‖setIndicatorL0Infinity G K hG hK hGK x‖ₑ ^ r =
         G.indicator (fun _ ↦ (1 : ℝ≥0∞)) x := by
     by_cases hx : x ∈ G
-    · simp only [setIndicatorL0Infinity_apply, hx, indicator_of_mem, enorm_one, ENNReal.one_rpow]
+    · simp only [setIndicatorL0Infinity_apply, hx, indicator_of_mem, eNorm_one, ENNReal.one_rpow]
     · simp [setIndicatorL0Infinity_apply, hx, ENNReal.zero_rpow_of_pos hr]
   simp_rw [hpoint]
   rw [lintegral_indicator hG]
@@ -836,7 +836,7 @@ theorem finiteMaxRep_compact_level_bound
         ENNReal.ofReal (centeredHardyLittlewoodRpowConstant (r / p))) ^
           (1 / r)
   have hmassTop : mass ≠ ∞ := by
-    have hfhi := hasFiniteIntegral_iff_enorm.mp
+    have hfhi := hasFiniteIntegral_iff_eNorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral
     exact ne_of_lt (by exact hfhi)
   have hEtop : volume E ≠ ∞ :=
@@ -850,7 +850,7 @@ theorem finiteMaxRep_compact_level_bound
   let Hwide : Set ℝ := {x | (1 : ℝ≥0∞) / 32 <
     centeredHardyLittlewoodMaximal (H.indicator 1) x}
   let G : Set ℝ := E \ (H ∪ Hwide)
-  have hF : Measurable F := f.measurable_toFun.enorm
+  have hF : Measurable F := f.measurable_toFun.eNorm
   have hH : MeasurableSet H := measurableSet_lt measurable_const
     (measurable_centeredHardyLittlewoodMaximal hF)
   have hHwide : MeasurableSet Hwide := measurableSet_lt measurable_const
@@ -1256,7 +1256,7 @@ theorem finiteMaxRep_compact_level_bound_normalized
         ENNReal.ofReal (centeredHardyLittlewoodRpowConstant (r / p))) ^
           (1 / r)
   have hmassTop : mass ≠ ∞ := by
-    have hfhi := hasFiniteIntegral_iff_enorm.mp
+    have hfhi := hasFiniteIntegral_iff_eNorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral
     exact ne_of_lt (by simpa only [mass] using hfhi)
   have hEtop : volume E ≠ ∞ :=
@@ -1343,7 +1343,7 @@ theorem finiteMaxRep_compact_level_bound_optimized
     hpr hε f K E hK hE hEK hElevel hmassZero hEzero
   have hfactor := finiteSparse_normalized_factor_le (N := n + 1) hT.1 hp hr hpr hr4 hε
   have hmassTop : (∫⁻ y, ‖f y‖ₑ) ≠ ∞ := by
-    exact ne_of_lt (hasFiniteIntegral_iff_enorm.mp
+    exact ne_of_lt (hasFiniteIntegral_iff_eNorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral)
   have hmassReal0 : 0 ≤ (∫⁻ y, ‖f y‖ₑ).toReal := ENNReal.toReal_nonneg
   have hraw0 := finiteSparseRawFactor_nonneg hp hr hpr
@@ -1414,7 +1414,7 @@ theorem sparseForm_eq_zero_of_ae_eq_zero
     (S : Set RealInterval) : sparseForm p f g S = 0 := by
   classical
   unfold sparseForm
-  rw [ENNReal.tsum_eq_zero]
+  rw [tsum_eq_zero_iff]
   intro I
   simp only [localAverage_one_eq_zero_of_ae_eq_zero hf I.1, mul_zero, zero_mul, ENNReal.ofReal_zero]
 
@@ -1428,9 +1428,9 @@ theorem finiteMaxRep_ae_eq_zero_of_mass_zero
     measurableFiniteMaxRep T f (fun j ↦ hT.2.1 j f) =ᵐ[volume] 0 := by
   classical
   have hfzero : (f : ℝ → ℂ) =ᵐ[volume] 0 := by
-    have henorm := (lintegral_eq_zero_iff f.measurable_toFun.enorm).mp hmass
+    have henorm := (lintegral_eq_zero_iff f.measurable_toFun.eNorm).mp hmass
     filter_upwards [henorm] with x hx
-    exact enorm_eq_zero.mp hx
+    exact eNorm_eq_zero.mp hx
   have hTzero (j : Fin N) : T j f =ᵐ[volume] 0 := by
     have hlocal := hT.2.1 j f
     have hp : (1 : ℝ) < 3 / 2 := by norm_num
@@ -1505,7 +1505,6 @@ theorem finiteMaxRep_level_bound_optimized
       have hae : {x | a < u x} =ᵐ[volume] (∅ : Set ℝ) := by
         filter_upwards [hzero] with x hx
         have hx' : u x = 0 := by simpa only [Pi.zero_apply] using hx
-        apply propext
         change (a < u x ↔ False)
         rw [hx']
         simp only [not_lt_of_ge ha.le]
@@ -1596,7 +1595,7 @@ theorem finiteMaxRep_level_bound_logarithmic
       atTop (nhds (ENNReal.ofReal (c * A * l))) :=
     ENNReal.tendsto_ofReal hct
   have hmassTop : mass ≠ ∞ := by
-    exact ne_of_lt (hasFiniteIntegral_iff_enorm.mp
+    exact ne_of_lt (hasFiniteIntegral_iff_eNorm.mp
       f.integrable_finiteSparseProof.hasFiniteIntegral)
   have hlim := ENNReal.Tendsto.mul henn (Or.inr hmassTop) tendsto_const_nhds
     (Or.inr ENNReal.ofReal_ne_top)

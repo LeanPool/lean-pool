@@ -3340,7 +3340,7 @@ def ambientCoordinateDerivation {r n : ℕ} (a b : Fin n) :
         MvPolynomial.X (variableIndex i a) *
           MvPolynomial.pderiv (variableIndex i b) p := by
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ i : Fin (r + 1),
         (MvPolynomial.X (variableIndex i a) : PolynomialSpace r n) •
           (MvPolynomial.pderiv (variableIndex i b) :
@@ -3387,7 +3387,7 @@ def rowPolarizationDerivation {r n : ℕ} (i j : Fin (r + 1)) :
     (i j : Fin (r + 1)) (p : PolynomialSpace r n) :
     rowPolarizationDerivation i j p = polarization r n i j p := by
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ a : Fin n,
         (MvPolynomial.X (variableIndex i a) : PolynomialSpace r n) •
           (MvPolynomial.pderiv (variableIndex j a) :
@@ -3445,7 +3445,7 @@ theorem ambientCoordinateDerivation_rowPolarization_commutator {r n : ℕ}
           (MvPolynomial.X (variableIndex k c)) := by
     simp only [derivationBracket_apply,
       rowPolarizationDerivation_X, ambientCoordinateDerivation_X,
-      Derivation.zero_apply]
+      zero_apply]
     split_ifs <;>
       simp_all only [rowPolarizationDerivation_X,
         ambientCoordinateDerivation_X, map_zero, sub_self,
@@ -3473,7 +3473,7 @@ theorem ambientCoordinateDerivation_polarization_comm {r n : ℕ}
           (ambientCoordinateDerivation (r := r) a b p) := by
     apply sub_eq_zero.mp
     simpa only [derivationBracket_apply,
-      Derivation.zero_apply] using h
+      zero_apply] using h
   simpa only [rowPolarizationDerivation_apply] using hcomm
 
 theorem ambientRotation_polarization_comm {r n : ℕ}

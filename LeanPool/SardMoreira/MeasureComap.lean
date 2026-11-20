@@ -26,8 +26,8 @@ theorem _root_.MeasureTheory.nullMeasurableSet_sum {ι α : Type*} {_ : Measurab
   use ⋂ i, toMeasurable (μ i) s, by measurability
   apply Measure.ae_sum_iff.mpr
   intro i
-  refine (subset_iInter fun i ↦ subset_toMeasurable (μ i) s).eventuallyLE.antisymm ?_
-  exact (iInter_subset _ i).eventuallyLE.trans (h i).toMeasurable_ae_eq.le
+  refine (subset_iInter fun i ↦ subset_toMeasurable (μ i) s).eventuallySubset.antisymm ?_
+  exact (iInter_subset _ i).eventuallySubset.trans (h i).toMeasurable_ae_eq.subset
 
 instance {α β : Type*} {_ : MeasurableSpace α} {_ : MeasurableSpace β} (μ : Measure β) (f : α → β)
     [IsFiniteMeasure μ] : IsFiniteMeasure (μ.comap f) where

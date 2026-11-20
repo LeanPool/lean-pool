@@ -278,7 +278,9 @@ open scoped LinearAlgebra.Projectivization
 /-- Neighbors of a vertex `⟦L⟧` correspond the projectivization of `L ⧸ ϖ L`. -/
 def neighborSetEquivProjectivization (L : Lattice R) :
     BTgraph.neighborSet ⟦L⟧ ≃ ℙ (ResidueField R) L.quotient :=
-  (Set.equivOfEq <| by ext; simp [BTgraph_adj, isNeighbour_symm]; rfl).trans <|
+  (Set.equivOfEq (s := BTgraph.neighborSet ⟦L⟧)
+    (t := { y : Vertices R | IsNeighbour y ⟦L⟧ }) <| by
+    ext; simp [BTgraph_adj, isNeighbour_symm]).trans <|
   (neighborsEquivLines L).trans
     (Projectivization.equivSubmodule (ResidueField R) L.quotient).symm
 

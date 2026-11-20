@@ -237,7 +237,7 @@ lemma zKron_mul_transpose (s t : Fin k → ℝ) :
       simp [zKron]
       ring
     _ = (zKron s t * (zKron s t)ᵀ) i h := by
-      simp [mul_apply, transpose_apply]
+      simp [Matrix.mul_apply, transpose_apply]
 
 /-- The squared-Gram `z`-block is positive semidefinite. -/
 lemma zGram_posSemidef (s t : Fin k → ℝ) :

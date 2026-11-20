@@ -344,7 +344,7 @@ private lemma pressureP234_bound_hP₂_3 :
   have hGpos : 0 ≤ G w.2 := by
     dsimp [G]
     positivity
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hGpos,
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hGpos,
     ENNReal.ofReal_mul hK] using ENNReal.ofReal_le_ofReal habs
 
 private lemma pressureP234_bound_hP₃_4 :
@@ -413,7 +413,7 @@ private lemma pressureP234_bound_hP₃_4 :
   have hGpos : 0 ≤ G w.2 := by
     dsimp [G]
     positivity
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hGpos,
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hGpos,
     ENNReal.ofReal_mul hK] using ENNReal.ofReal_le_ofReal habs
 
 private lemma pressureP234_bound_hP₄_5 :
@@ -482,7 +482,7 @@ private lemma pressureP234_bound_hP₄_5 :
   have hGpos : 0 ≤ G w.2 := by
     dsimp [G]
     positivity
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hGpos,
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hGpos,
     ENNReal.ofReal_mul hK] using ENNReal.ofReal_le_ofReal habs
 
 theorem pressureP234_bound
@@ -596,7 +596,7 @@ theorem pressureP234_bound
         congr 1
         apply lintegral_congr
         intro s
-        rw [Real.enorm_eq_ofReal (by positivity : 0 ≤ G s)]
+        rw [Real.eNorm_eq_ofReal (by positivity : 0 ≤ G s)]
       _ ≤ ENNReal.ofReal r ^ (1 / 3 : ℝ) *
           eLpNorm' G 2 (volume.restrict Tρ) := hholder.1
       _ ≤ _ := by

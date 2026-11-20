@@ -158,7 +158,7 @@ theorem isDistinguishedAt_of_monic_dvd {p w : Polynomial (AnalyticGerm ℂ (0 : 
   have hdeg : p.natDegree = k := by
     simpa only [hp.natDegree_map, Polynomial.natDegree_X_pow] using congrArg Polynomial.natDegree he
   refine ⟨⟨fun {j} hj => ?_⟩, hp⟩
-  have hc := congrArg (fun r => Polynomial.coeff r j) he
+  have hc := congrArg (fun r => AddMonoidAlgebra.coeff r j) he
   have hjk : j ≠ k := ne_of_lt (hdeg ▸ hj)
   have hz : π (p.coeff j) = 0 := by
     simpa only [Polynomial.coeff_map, Polynomial.coeff_X_pow, ite_eq_right hjk] using hc
@@ -209,7 +209,7 @@ theorem isDistinguishedAt_mul {p q : Polynomial (AnalyticGerm ℂ (0 : E))}
   have he : (p * q).map (Ideal.Quotient.mk (IsLocalRing.maximalIdeal (AnalyticGerm ℂ (0 : E)))) =
       Polynomial.X ^ (p * q).natDegree := by
     rw [Polynomial.map_mul, hp.map_eq_X_pow, hq.map_eq_X_pow, hdeg, pow_add]
-  have hc := congrArg (fun r => Polynomial.coeff r j) he
+  have hc := congrArg (fun r => AddMonoidAlgebra.coeff r j) he
   have hz : (Ideal.Quotient.mk (IsLocalRing.maximalIdeal (AnalyticGerm ℂ (0 : E))))
       ((p * q).coeff j)
       = 0 := by

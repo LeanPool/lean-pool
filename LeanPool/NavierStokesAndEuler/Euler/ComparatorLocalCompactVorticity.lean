@@ -425,7 +425,7 @@ theorem norm_sub_le_mul_of_hasDerivAt_Ioo (X X' : ℝ → E) {T M : ℝ}
     (hbound : ∀ s ∈ Ioo 0 T, ‖X' s‖ ≤ M) :
     ‖X T - X 0‖ ≤ M * T := by
   have hlip : LipschitzOnWith ⟨M, hM⟩ X (Ioo 0 T) :=
-    (convex_Ioo (0 : ℝ) T).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+    (convex_Ioo (0 : ℝ) T).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
       (fun s hs => (hderiv s hs).hasDerivWithinAt) (fun s hs => hbound s hs)
   have hcl : closure (Ioo (0 : ℝ) T) = Icc 0 T := closure_Ioo hT.ne
   have hlipclosed : LipschitzOnWith ⟨M, hM⟩ X (Icc 0 T) := by

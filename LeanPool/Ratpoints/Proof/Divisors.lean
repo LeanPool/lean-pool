@@ -45,8 +45,9 @@ private theorem pow_dvd_of_add_one_le {c : List ℤ} {a b' : ℤ} {p m val k : �
   rcases eq_or_ne (c.getD k 0) 0 with h0 | h0
   · rw [h0, zero_mul, zero_mul]
     exact dvd_zero _
-  have hc : (p : ℤ) ^ padicValNat p (c.getD k 0).natAbs ∣ c.getD k 0 :=
-    Int.natCast_dvd.mpr (by simpa using pow_padicValNat_dvd)
+  have hc : (p : ℤ) ^ padicValNat p (c.getD k 0).natAbs ∣ c.getD k 0 := by
+    rw [Nat.padicValNat_def, ← Nat.cast_pow]
+    exact Int.natCast_dvd.mpr (pow_multiplicity_dvd ..)
   have hle : val + m + 1 ≤ padicValNat p (c.getD k 0).natAbs + m * (degree c + 1 - k) := by
     rw [Nat.sub_add_comm hk.le]
     lia [hmin h0]
@@ -65,9 +66,10 @@ theorem even_add_of_sq_eq_binaryForm_of_odd {c : List ℤ} {a y : ℤ} {b p val 
       val + 1 ≤ padicValNat p (c.getD k 0).natAbs + (degree c - k) * padicValNat p b)
     (hab : Int.gcd a b = 1) (hm : padicValNat p b ≠ 0) (hy : y ^ 2 = binaryForm c a b) :
     Even (val + padicValNat p b) := by
+  simp only [Nat.padicValNat_def] at hval hmin hm ⊢
   have hpp : Prime (p : ℤ) := Nat.prime_iff_prime_int.mp hp.out
   have hpa := Int.not_natCast_dvd_of_gcd_eq_one hp.out.ne_one hab
-    (dvd_of_one_le_padicValNat (Nat.one_le_iff_ne_zero.mpr hm))
+    (dvd_of_one_le_multiplicity (Nat.one_le_iff_ne_zero.mpr hm))
   obtain ⟨b', hb', hpb'⟩ := Int.exists_eq_pow_padicValInt_mul hp.out.ne_one (n := b)
     fun h ↦ by simp_all
   rw [padicValInt.of_nat] at hb'
@@ -78,7 +80,7 @@ theorem even_add_of_sq_eq_binaryForm_of_odd {c : List ℤ} {a y : ℤ} {b p val 
     (by rw [hr, hb', pow_add]; ring)
     (hpp.not_dvd_mul (hpp.not_dvd_mul hpr (mt hpp.dvd_of_dvd_pow hpa)) hpb') fun i hi ↦ ?_
   rw [hb']
-  exact pow_dvd_of_add_one_le hi (hmin i hi)
+  exact pow_dvd_of_add_one_le hi (by simpa only [Nat.padicValNat_def] using hmin i hi)
 
 /-- For odd degree, a prime `p ∤ c_d` divides the denominator `b` of every point an even number of
 times: for `v_p(b) ≥ 1` the term `c_d a ^ d b` of `F(a, b)` alone has the least valuation `v_p(b)`
@@ -89,7 +91,7 @@ theorem even_of_sq_eq_binaryForm_of_odd {c : List ℤ} {a y : ℤ} {b p : ℕ} [
   rcases eq_or_ne (padicValNat p b) 0 with h0 | hm
   · simp [h0]
   simpa using even_add_of_sq_eq_binaryForm_of_odd hd
-    (padicValNat.eq_zero_of_not_dvd (mt Int.natCast_dvd.mpr hc))
+    (Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd (mt Int.natCast_dvd.mpr hc)))
     (fun k hk _ ↦ le_add_left (Nat.mul_pos (Nat.sub_pos_of_lt hk) (Nat.pos_of_ne_zero hm)))
     hab hm hy
 
@@ -101,7 +103,7 @@ theorem isSquare_of_sq_eq_binaryForm_of_odd {c : List ℤ} (hd : degree c % 2 = 
     (hy : y ^ 2 = binaryForm c a b) : IsSquare b := by
   refine Nat.isSquare_iff_even_factorization.mpr fun p hp ↦ ?_
   have : Fact p.Prime := ⟨hp⟩
-  rw [Nat.factorization_def _ hp]
+  rw [Nat.factorization_def _ hp, ← Nat.padicValNat_def]
   exact even_of_sq_eq_binaryForm_of_odd hd
     (fun h ↦ (Nat.prime_iff_prime_int.mp hp).not_isUnit (isUnit_of_dvd_unit h hc)) hab hy
 
@@ -125,8 +127,9 @@ theorem exists_eq_mul_mul_of_sq_eq_binaryForm_of_odd {c : List ℤ} (hd : degree
     by simpa using h0⟩
   have : Fact p.Prime := ⟨hpp⟩
   have hev := even_of_sq_eq_binaryForm_of_odd hd hc hab hy
-  rw [← Nat.factorization_def _ hpp, ← hks, Nat.factorization_mul (left_ne_zero_of_mul (hks ▸ hb))
-    hs.ne_zero, Finsupp.add_apply, Nat.factorization_pow, Finsupp.smul_apply, smul_eq_mul,
+  rw [Nat.padicValNat_def, ← Nat.factorization_def _ hpp, ← hks,
+    Nat.factorization_mul (left_ne_zero_of_mul (hks ▸ hb)) hs.ne_zero, Finsupp.add_apply,
+    Nat.factorization_pow, Finsupp.smul_apply, smul_eq_mul,
     Nat.factorization_eq_one_of_squarefree hs hpp hps] at hev
   exact Nat.not_even_iff_odd.mpr ⟨_, rfl⟩ hev
 

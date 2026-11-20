@@ -1593,7 +1593,7 @@ theorem piece_band_bound (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 : 
         ((hy p).norm.pow_const 2))
     · exact (hf j).norm
   have hsq : ∀ (S : ℝ), 0 ≤ S → ‖Real.sqrt S‖ₑ ^ 2 = ENNReal.ofReal S := fun S hS => by
-    rw [Real.enorm_eq_ofReal (Real.sqrt_nonneg _), ← ENNReal.ofReal_pow (Real.sqrt_nonneg _),
+    rw [Real.eNorm_eq_ofReal (Real.sqrt_nonneg _), ← ENNReal.ofReal_pow (Real.sqrt_nonneg _),
       Real.sq_sqrt hS]
   have hleaf : ∀ j, ∀ L ∈ T.leaves, ∫⁻ r in dyadicGridCell G L.1 L.2, ‖z j r‖ₑ ^ 2 ≤
       ENNReal.ofReal (sv j ^ 2 * dyadicGridLength G L.1) := by
@@ -1618,7 +1618,7 @@ theorem piece_band_bound (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 : 
       exact hsq _ (Finset.sum_nonneg fun _ _ => sq_nonneg _)
     · refine le_trans (le_of_eq ?_) (hlo j hja hjb hjc L hL)
       refine setLIntegral_congr_fun (dyadicGridCell_measurable _ _ _) fun r _ => ?_
-      simp only [z, hja, hjb, hjc, ↓reduceIte, enorm_norm]
+      simp only [z, hja, hjb, hjc, ↓reduceIte, eNorm_norm]
   have hzσm : ∀ j ω, Measurable (zσ j ω) := by
     intro j ω
     change Measurable (randTuple3 a b c f s t u x w y ω.1.1 ω.2.1.1 ω.2.2.1 j)
@@ -1636,21 +1636,21 @@ theorem piece_band_bound (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 : 
     · subst hja
       simp_rw [hza]
       have hzz : ‖z j r‖ₑ = ENNReal.ofReal (Real.sqrt (∑ i ∈ s, ∑ p ∈ u, ‖x i p r‖ ^ 2)) := by
-        simp only [z, ↓reduceIte]; exact Real.enorm_eq_ofReal (Real.sqrt_nonneg _)
+        simp only [z, ↓reduceIte]; exact Real.eNorm_eq_ofReal (Real.sqrt_nonneg _)
       rw [hzz]
       exact moment_three_a s t u (fun i p => x i p r)
     by_cases hjb : j = b
     · subst hjb
       simp_rw [hzb]
       have hzz : ‖z j r‖ₑ = ENNReal.ofReal (Real.sqrt (∑ k ∈ t, ‖w k r‖ ^ 2)) := by
-        simp only [z, hja, ↓reduceIte]; exact Real.enorm_eq_ofReal (Real.sqrt_nonneg _)
+        simp only [z, hja, ↓reduceIte]; exact Real.eNorm_eq_ofReal (Real.sqrt_nonneg _)
       rw [hzz]
       exact moment_three_b s t u (fun k => w k r)
     by_cases hjc : j = c
     · subst hjc
       simp_rw [hzc]
       have hzz : ‖z j r‖ₑ = ENNReal.ofReal (Real.sqrt (∑ p ∈ u, ‖y p r‖ ^ 2)) := by
-        simp only [z, hja, hjb, ↓reduceIte]; exact Real.enorm_eq_ofReal (Real.sqrt_nonneg _)
+        simp only [z, hja, hjb, ↓reduceIte]; exact Real.eNorm_eq_ofReal (Real.sqrt_nonneg _)
       rw [hzz]
       exact moment_three_c s t u (fun p => y p r)
     · simp_rw [hzo j hja hjb hjc]
@@ -1658,7 +1658,7 @@ theorem piece_band_bound (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 : 
         ENNReal.inv_mul_cancel (by simp) (by simp), one_mul, ← ENNReal.rpow_mul,
         show (4 : ℝ) * (1 / 4) = 1 by norm_num, ENNReal.rpow_one]
       have hzz : ‖z j r‖ₑ = ‖f j r‖ₑ := by
-        simp only [z, hja, hjb, hjc, ↓reduceIte, enorm_norm]
+        simp only [z, hja, hjb, hjc, ↓reduceIte, eNorm_norm]
       rw [hzz]
       exact le_mul_of_one_le_left (by simp) (by rw [ENNReal.one_le_ofReal]; norm_num)
   have hε1 : ∀ I ω, ‖ε I ω‖ ≤ 1 := by
@@ -1936,7 +1936,7 @@ theorem sparse_root_sum (G : RealDyadicGrid) {N : Type*} (Ns : Finset N) (K : �
   have hsplit : ∀ ν ∈ Ns, ‖∑ I ∈ U ν, F ν I‖ₑ ≤ ∑ Q ∈ Qs ν, term ν Q := by
     intro ν hν
     rw [← Finset.sum_fiberwise_of_maps_to (g := own ν) (hownQ ν hν)]
-    exact enorm_sum_le _ _
+    exact eNorm_sum_le _ _
   -- membership of sparse roots
   have hQmem : ∀ ν ∈ Ns, ∀ Q ∈ Qs ν, ∃ r ∈ Rt ν, Q ∈ H ν ∧
       dyadicGridCell G Q.1 Q.2 ⊆ dyadicGridCell G r.1 r.2 := by
@@ -2291,7 +2291,8 @@ patterns with at least three sides: their contribution to the active minimum is 
 `η^{1-p} (81 C B)^p T^{3p/2} |R|`. -/
 theorem three_side_patterns_sum_le (Gd : RealDyadicGrid) {γ : Type*} (S : Finset (ℤ × ℤ))
     (root : ℤ × ℤ) (hroot : ∀ I ∈ S, dyadicGridCell Gd I.1 I.2 ⊆ dyadicGridCell Gd root.1 root.2)
-    (Gs : ℤ × ℤ → Finset γ) (Λ : ℤ × ℤ → MultilinearMap ℂ (fun _ : Fin 4 => W) ℂ) {C Bs : ℝ}
+    (Gs : ℤ × ℤ → Finset γ)
+    (Λ : ℤ × ℤ → MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => W) ℂ) {C Bs : ℝ}
     (hC : 0 ≤ C) (hBs : 0 ≤ Bs)
     (hΛ : ∀ I ∈ S, ∀ x : Fin 4 → W, ‖Λ I x‖ ≤
       C * ∏ l, (‖x l‖ / Real.sqrt (dyadicGridLength Gd I.1)))
@@ -2406,7 +2407,8 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 open Classical in
 /-- The near band defect of one step, by offsets: the sum over the five offsets `o` of
 `(2 - o)/P` times the band sums with the paired bands `p` and `p + o - 2`. -/
-theorem defTerm_near (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P : ℕ) (a c d : Fin 4)
+theorem defTerm_near
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) (P : ℕ) (a c d : Fin 4)
     (x : Fin 4 → E) (yc yd : E) (st : TransferStep E) (rest : List (TransferStep E)) (xa : E) :
     defTerm Λ P a c d x yc yd (fun p q => ¬ (q + 2 < p ∨ p + 2 < q)) st rest xa =
       ∑ o ∈ Finset.range 5, (((2 : ℂ) - o) / P) * ∑ p ∈ (Finset.range (P + 1)).filter
@@ -2792,7 +2794,7 @@ theorem stackDens_enorm_sq {V : Type*} [Fintype V] {ι β : Type*} (s : Finset �
     ‖stackDens s u X y‖ₑ ^ (2 : ℕ) =
       ENNReal.ofReal (∑ i ∈ s, ∑ p ∈ u, ‖augPhys (X i p) y‖ ^ 2) := by
   unfold stackDens
-  rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (Real.sqrt_nonneg _), ← ENNReal.ofReal_pow
+  rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (Real.sqrt_nonneg _), ← ENNReal.ofReal_pow
     (Real.sqrt_nonneg _), Real.sq_sqrt (Finset.sum_nonneg fun i _ => Finset.sum_nonneg
       fun p _ => by positivity)]
 
@@ -3774,7 +3776,7 @@ theorem near_band_stacksM (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 :
       _ ≤ ∑ ka ∈ Finset.univ.filter (fun k => actA k I),
             ∑ kb ∈ Finset.univ.filter (fun k => actB k I),
               ‖(dyadicGridLength A.G I.1 : ℂ) * ∑ p ∈ u m, f ka kb p‖ₑ :=
-          (enorm_sum_le _ _).trans (Finset.sum_le_sum fun ka _ => enorm_sum_le _ _)
+          (eNorm_sum_le _ _).trans (Finset.sum_le_sum fun ka _ => eNorm_sum_le _ _)
       _ = ∑ ka, ∑ kb, if actA ka I ∧ actB kb I then T (m, ka, kb) I else 0 := by
           rw [Finset.sum_filter]
           refine Finset.sum_congr rfl fun ka _ => ?_

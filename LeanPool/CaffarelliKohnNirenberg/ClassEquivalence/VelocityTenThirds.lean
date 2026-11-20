@@ -108,7 +108,7 @@ private theorem memLp_two_of_lintegral_lt_top {α E : Type} [MeasurableSpace α]
     [NormedAddCommGroup E] {μ : Measure α} {v : α → E}
     (hv : AEStronglyMeasurable v μ) (hlt : (∫⁻ z, ‖v z‖ₑ ^ (2 : ℝ) ∂μ) < ⊤) :
     MemLp v 2 μ := by
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hv]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hv]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hlt.ne
 
@@ -118,7 +118,7 @@ private theorem memLp_ofReal_of_lintegral_lt_top {α E : Type} [MeasurableSpace 
     [NormedAddCommGroup E] {μ : Measure α} {t : ℝ} (ht : 0 < t) {v : α → E}
     (hv : AEStronglyMeasurable v μ) (hlt : (∫⁻ z, ‖v z‖ₑ ^ t ∂μ) < ⊤) :
     MemLp v (ENNReal.ofReal t) μ := by
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by simpa using ht) ENNReal.ofReal_ne_top hv,
     ENNReal.toReal_ofReal ht.le]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hlt.ne
@@ -130,7 +130,7 @@ private theorem lintegral_lt_top_of_memLp_ofReal {α E : Type} [MeasurableSpace 
     (hv : MemLp v (ENNReal.ofReal t) μ) :
     (∫⁻ z, ‖v z‖ₑ ^ t ∂μ) < ⊤ := by
   have hmeas := hv.aestronglyMeasurable
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by simpa using ht) ENNReal.ofReal_ne_top hmeas,
     ENNReal.toReal_ofReal ht.le] at hv
   by_contra hcon
@@ -276,7 +276,7 @@ private theorem essSup_slice_eLpNorm_lt_top_of_data
         (volume.restrict (vec3Ball x₀ r)) :=
       ((memLp_pi_iff.mp hmem.1 i).mono_measure
         (Measure.restrict_mono hball le_rfl)).aestronglyMeasurable
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hmeas]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hmeas]
     simp only [ENNReal.toReal_ofNat]
     refine ENNReal.rpow_le_rpow ?_ (by norm_num)
     calc (∫⁻ x in vec3Ball x₀ r, ‖u (x, s) i‖ₑ ^ (2 : ℝ))

@@ -100,11 +100,11 @@ theorem eLpNorm_two_sqrt_vecNormSq (mu : Measure (Vec d)) (f : Vec d → Vec d)
     (hf : AEStronglyMeasurable (fun y => Real.sqrt (vecNormSq (f y))) mu) :
     eLpNorm (fun y => Real.sqrt (vecNormSq (f y))) 2 mu =
       (∫⁻ x, ENNReal.ofReal (vecNormSq (f x)) ∂mu) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat]
   congr 1
   refine lintegral_congr fun x => ?_
-  rw [Real.enorm_eq_ofReal (Real.sqrt_nonneg _),
+  rw [Real.eNorm_eq_ofReal (Real.sqrt_nonneg _),
     ENNReal.ofReal_rpow_of_nonneg (Real.sqrt_nonneg (vecNormSq (f x)))
       (by norm_num : (0 : ℝ) ≤ 2)]
   congr 1

@@ -294,8 +294,9 @@ theorem adaptedWeakSeminorm_affinePullback_le {q : Mat d} (hq : q.PosDef)
     Real.sqrt_nonneg _
   rw [adaptedWeakSeminorm_eq, adaptedWeakSeminorm_eq,
     ← ENNReal.tsum_mul_left]
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro j
+  dsimp only
   rw [← ENNReal.ofReal_mul hC]
   exact ENNReal.ofReal_le_ofReal
     (adaptedWeakScaleTerm_affinePullback_le hq A B t s F hF₁ hF₂ j)

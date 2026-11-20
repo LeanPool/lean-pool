@@ -254,7 +254,7 @@ theorem psi_barNorm_le {β : ℝ} (I : AVenhance.Ingredients β)
 /-- Continuous derivatives allow the essential supremum to be evaluated pointwise. -/
 theorem continuous_eLpNorm_top_eq_iSup (f : Vec 2 → ℝ) (hf : Continuous f) :
     eLpNorm f ⊤ volume = ⨆ x, ‖f x‖ₑ := by
-  rw [eLpNorm_exponent_top hf.aestronglyMeasurable, eLpNormEssSup_eq_essSup_enorm]
+  rw [eLpNorm_exponent_top hf.aestronglyMeasurable, eLpNormEssSup_eq_essSup_eNorm]
   apply le_antisymm essSup_le_iSup
   apply iSup_le
   intro x
@@ -262,8 +262,8 @@ theorem continuous_eLpNorm_top_eq_iSup (f : Vec 2 → ℝ) (hf : Continuous f) :
   have heq : (fun y => min ‖f y‖ₑ (essSup (fun z => ‖f z‖ₑ) volume)) =
       fun y => ‖f y‖ₑ := by
     apply Measure.eq_of_ae_eq (hae.mono (fun y hy => min_eq_left hy))
-    · exact hf.enorm.min continuous_const
-    · exact hf.enorm
+    · exact hf.eNorm.min continuous_const
+    · exact hf.eNorm
   have hx := congrFun heq x
   exact (min_eq_left_iff).mp hx
 
@@ -296,7 +296,7 @@ theorem barNorm_add_le (f g : Vec 2 → ℝ) (n : ℕ) (R : ℝ)
   intro x
   rw [iteratedFDeriv_add_apply hf.contDiffAt hg.contDiffAt,
     add_apply]
-  exact (enorm_add_le _ _).trans (add_le_add
+  exact (eNorm_add_le _ _).trans (add_le_add
     (le_iSup_of_le J (le_iSup_of_le x le_rfl))
     (le_iSup_of_le J (le_iSup_of_le x le_rfl)))
 

@@ -91,7 +91,7 @@ instance instClosedBallCoveringMeasureOfIsUnifLocDoublingMeasure
           (lt_min (lt_min hε hδ₀) (scalingScaleOf_pos _ _)) with ⟨r, hrf, hr₀, hrε⟩
         rw [lt_min_iff, lt_min_iff] at hrε
         refine ⟨(x, r), ⟨hx, ⟨hrf, hr₀, hrε.2⟩, ?_⟩, hrε.1.1.le, rfl⟩
-        grw [hrε.1.2, hδU]
+        exact (closedBall_subset_closedBall hrε.1.2.le).trans hδU
     rcases exists_closedBall_covering_tsum_measure_le_of_measure_zero μ (ENNReal.half_pos hε₀).ne'
       f _ hμ (fun x hx δ hδ ↦ hf x hx.1 δ hδ) with ⟨v, r', hvc, hv_sub, hrf, hs_sub, hv_tsum⟩
     set goodR : α → ℝ := Function.extend (fun x : u ↦ x.1.1) (fun cr ↦ cr.1.2) r'
@@ -135,12 +135,12 @@ instance instClosedBallCoveringMeasureOfIsUnifLocDoublingMeasure
         refine (hv_sub hc).2 <| mem_iUnion₂_of_mem hy ?_
         simp [(hus hy).2.1.2.1.le]
     · rw [tsum_congr_set_coe (fun x ↦ μ (closedBall x (goodR x))) Set.union_sdiff_self.symm]
-      grw [ENNReal.tsum_union_le (fun x ↦ μ (closedBall x (goodR x)))]
+      grw [tsum_union_le (fun x ↦ μ (closedBall x (goodR x)))]
       rw [tsum_image (fun x ↦ μ (closedBall x (goodR x))) hinj]
       simp only [hgoodR_fst_u _ (Subtype.prop _),
         fun x : ↑(v \ Prod.fst '' u) ↦ hgoodR_not_u x x.2.2]
       grw [← measure_biUnion huc hud (fun _ _ ↦ measurableSet_closedBall),
-        ENNReal.tsum_mono_subtype (fun x ↦ μ (closedBall x (r' x))) sdiff_subset, ← ε.add_halves,
+        tsum_mono_subtype (fun x ↦ μ (closedBall x (r' x))) sdiff_subset, ← ε.add_halves,
         ← add_assoc, hv_tsum, ← hμU]
       gcongr
       refine iUnion₂_subset fun x hx ↦ ?_

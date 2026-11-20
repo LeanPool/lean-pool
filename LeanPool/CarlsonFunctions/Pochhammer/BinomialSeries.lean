@@ -41,7 +41,7 @@ theorem hasSum_ascPochhammer_mul_pow_div_factorial (a t : ℂ) (ht : ‖t‖ < 1
   have h := (Complex.one_div_one_sub_cpow_hasFPowerSeriesOnBall_zero a).hasSum
     (show t ∈ Metric.eball (0 : ℂ) 1 by
       simp only [Metric.mem_eball, edist_zero_right]
-      rw [enorm_eq_nnnorm]
+      rw [eNorm_eq_nnNorm]
       exact_mod_cast ht)
   have hmulti : HasSum (fun n : ℕ ↦ Ring.multichoose a n * t ^ n)
       (1 / (1 - t) ^ a) := by
@@ -58,7 +58,7 @@ theorem summable_norm_ascPochhammer_mul_pow_div_factorial (a t : ℂ) (ht : ‖t
       ‖(ascPochhammer ℂ n).eval a / (n.factorial : ℂ) * t ^ n‖ := by
   have hp := Complex.one_div_one_sub_cpow_hasFPowerSeriesOnBall_zero a
   have htball : t ∈ Metric.eball (0 : ℂ) 1 := by
-    simp only [Metric.mem_eball, edist_zero_right, enorm_eq_nnnorm]
+    simp only [Metric.mem_eball, edist_zero_right, eNorm_eq_nnNorm]
     exact_mod_cast ht
   have hx : t ∈ Metric.eball (0 : ℂ)
       (FormalMultilinearSeries.ofScalars ℂ

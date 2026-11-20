@@ -50,7 +50,7 @@ theorem mul_tsum_ediam_badConvexSets_le_measure
     (∑' V : chosen,
       ENNReal.ofReal alpha * Metric.ediam (V : Set (EuclideanSpace ℝ (Fin 2)))) ≤
         ∑' V : chosen, mu ((V : Set (EuclideanSpace ℝ (Fin 2))) \ F) :=
-      ENNReal.tsum_le_tsum fun V ↦ (hchosen V.property).2.2.2.le
+      tsum_le_tsum fun V ↦ (hchosen V.property).2.2.2.le
     _ = mu (⋃ V : chosen, (V : Set (EuclideanSpace ℝ (Fin 2))) \ F) :=
       (measure_iUnion hpair hmeasurable).symm
     _ ≤ mu (ambient \ F) := measure_mono <| iUnion_subset fun V x hx ↦

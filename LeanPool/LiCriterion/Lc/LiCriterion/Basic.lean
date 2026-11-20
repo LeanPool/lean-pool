@@ -1804,8 +1804,9 @@ theorem xi_hadamard_genus_one_shifted_linear_coeff_zero
 /-! ### Small derived lemmas for the paired/genus‑1 pipeline -/
 
 /-- `ξ(1 / 2)` is nonzero: in the shifted product every factor has argument `0`. -/
-lemma xi_half_ne_zero [Fact xiFactorizationShiftedProd] : riemannXi (1 / 2 : ℂ) ≠ 0 := by
-  obtain ⟨a, hξ⟩ := (Fact.out : xiFactorizationShiftedProd)
+lemma xi_half_ne_zero (hfactorization : Fact xiFactorizationShiftedProd) :
+    riemannXi (1 / 2 : ℂ) ≠ 0 := by
+  obtain ⟨a, hξ⟩ := hfactorization.out
   have hE : xiE1ShiftedProd (2⁻¹ : ℂ) = 1 := by
     -- Every factor is `E₁(0) = 1`.
     simp [xiE1ShiftedProd, Hadamard.weierstrass_E_one]
@@ -1817,13 +1818,14 @@ lemma xi_half_ne_zero [Fact xiFactorizationShiftedProd] : riemannXi (1 / 2 : ℂ
   exact this ▸ Complex.exp_ne_zero a
 
 /-- A nontrivial zero is never equal to `1 / 2` (or else ξ would vanish there). -/
-lemma NontrivialZero.ne_half [Fact xiFactorizationShiftedProd] (ρ : NontrivialZero) :
+lemma NontrivialZero.ne_half (hfactorization : Fact xiFactorizationShiftedProd)
+    (ρ : NontrivialZero) :
     ρ.val ≠ (1 / 2 : ℂ) := by
   intro hρ
   have hzero : riemannXi ρ.val = 0 :=
     (xi_zeros_are_nontrivial_zeros (s := ρ.val)).2 ⟨ρ, rfl⟩
   have : riemannXi (1 / 2 : ℂ) = 0 := by simpa [hρ] using hzero
-  exact xi_half_ne_zero this
+  exact xi_half_ne_zero hfactorization this
 
 private lemma weierstrass_E_one_eq_zero_iff (w : ℂ) :
     Hadamard.weierstrassE 1 w = 0 ↔ w = 1 := by
@@ -1861,7 +1863,8 @@ lemma taylorCoeff_const_mul (c : ℂ) (hc : c ≠ 0) (f : ℂ → ℂ) (n : ℕ)
 noncomputable def xiPairedFactor (ρ : NontrivialZero) (s : ℂ) : ℂ :=
   1 - (((s - (1 / 2 : ℂ)) / (ρ.val - (1 / 2 : ℂ))) ^ 2)
 
-private lemma xiPairedFactor_eq_const_mul_pairLinear [Fact xiFactorizationShiftedProd]
+private lemma xiPairedFactor_eq_const_mul_pairLinear
+    (hfactorization : Fact xiFactorizationShiftedProd)
     (ρ : NontrivialZero) (s : ℂ) :
     xiPairedFactor ρ s =
       (-(ρ.val * (pairedZero ρ).val) / (ρ.val - (1 / 2 : ℂ)) ^ 2) *
@@ -1869,7 +1872,7 @@ private lemma xiPairedFactor_eq_const_mul_pairLinear [Fact xiFactorizationShifte
   have hρ0 : (ρ.val : ℂ) ≠ 0 := NontrivialZero.ne_zero ρ
   have hρ1 : (ρ.val : ℂ) ≠ 1 := NontrivialZero.ne_one ρ
   have hρhalf : (ρ.val : ℂ) - (1 / 2 : ℂ) ≠ 0 :=
-    sub_ne_zero.mpr (NontrivialZero.ne_half ρ)
+    sub_ne_zero.mpr (NontrivialZero.ne_half hfactorization ρ)
   have h1ρ : (1 - (ρ.val : ℂ)) ≠ 0 := sub_ne_zero.mpr hρ1.symm
   -- Unfold and clear denominators.
   classical
@@ -2568,7 +2571,8 @@ private lemma taylorCoeff_square_singleLinearFactor (ρ : NontrivialZero) (n : �
   simp [taylorCoeff, g1, hEqIter', hconst, hsingle', f, mul_div_assoc]
 
 /-- Taylor coefficients for a single paired quadratic factor give the paired Li summand. -/
-lemma taylorCoeff_xiPairedFactor [Fact xiFactorizationShiftedProd] (ρ : NontrivialZero) (n : ℕ) :
+lemma taylorCoeff_xiPairedFactor (hfactorization : Fact xiFactorizationShiftedProd)
+    (ρ : NontrivialZero) (n : ℕ) :
     taylorCoeff (xiPairedFactor ρ) n = liPairedSummand n ρ := by
   classical
   let c : ℂ :=
@@ -2576,7 +2580,7 @@ lemma taylorCoeff_xiPairedFactor [Fact xiFactorizationShiftedProd] (ρ : Nontriv
   have hc : c ≠ 0 := by
     have hρ0 : (ρ.val : ℂ) ≠ 0 := NontrivialZero.ne_zero ρ
     have hρhalf : (ρ.val : ℂ) - (1 / 2 : ℂ) ≠ 0 :=
-      sub_ne_zero.mpr (NontrivialZero.ne_half ρ)
+      sub_ne_zero.mpr (NontrivialZero.ne_half hfactorization ρ)
     have hpair0 : (pairedZero ρ).val ≠ 0 := NontrivialZero.ne_zero (pairedZero ρ)
     have hnum : -(ρ.val * (pairedZero ρ).val) ≠ 0 := by
       simpa [neg_eq_zero] using mul_ne_zero hρ0 hpair0
@@ -2586,7 +2590,7 @@ lemma taylorCoeff_xiPairedFactor [Fact xiFactorizationShiftedProd] (ρ : Nontriv
       xiPairedFactor ρ = fun s =>
         c * ((1 - s / ρ.val) * (1 - s / (pairedZero ρ).val)) := by
     funext s
-    simpa [c] using (xiPairedFactor_eq_const_mul_pairLinear ρ s)
+    simpa [c] using (xiPairedFactor_eq_const_mul_pairLinear hfactorization ρ s)
   have htaylor_const :
       taylorCoeff (fun s => c * ((1 - s / ρ.val) * (1 - s / (pairedZero ρ).val))) n
         =
@@ -2605,7 +2609,7 @@ lemma taylorCoeff_xiPairedFactor [Fact xiFactorizationShiftedProd] (ρ : Nontriv
     have h2' : (ρ.val : ℂ) * (2 : ℂ) = 1 := by simpa [mul_comm] using h2
     have : (ρ.val : ℂ) = (1 / 2 : ℂ) :=
       (eq_div_iff (by norm_num : (2 : ℂ) ≠ 0)).2 h2'
-    exact (NontrivialZero.ne_half ρ) this
+    exact (NontrivialZero.ne_half hfactorization ρ) this
   have hS0 : (0 : ℂ) ∉ S := by
     have h0pair : (0 : ℂ) ≠ 1 - (ρ.val : ℂ) :=
       (sub_ne_zero.mpr (NontrivialZero.ne_one ρ).symm).symm

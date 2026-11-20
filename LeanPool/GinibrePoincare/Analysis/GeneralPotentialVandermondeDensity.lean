@@ -92,7 +92,7 @@ theorem potentialVandermondeMultiplier_enorm_sq (n : ℕ) (hn : 0 < n)
   have hpos := potentialPartition_pos n hn hV
   have hsquare (x : ℂ) : ‖x‖ₑ ^ (2 : ℝ) = ENNReal.ofReal (Complex.normSq x) := by
     rw [ENNReal.rpow_two, ← Complex.sq_norm]
-    simp [enorm]
+    simp
   let S : ℝ := (∑ i, V (z i))
   have he : Real.exp (-(n : ℝ) * S / 2) ^ 2 = Real.exp (-(n : ℝ) * S) := by
     rw [pow_two, ← Real.exp_add]
@@ -150,7 +150,7 @@ theorem potentialVandermondeMultiplier_normSq (n : ℕ) (hn : 0 < n)
     Complex.normSq (potentialVandermondeMultiplier n V z) =
       (potentialPartition n V).toReal⁻¹ * potentialWeight n V z := by
   have he := congrArg ENNReal.toReal (potentialVandermondeMultiplier_enorm_sq n hn hV hfin z)
-  simpa [enorm, ENNReal.rpow_two, ENNReal.toReal_mul, ENNReal.toReal_inv,
+  simpa [eNorm, ENNReal.rpow_two, ENNReal.toReal_mul, ENNReal.toReal_inv,
     ENNReal.toReal_ofReal (potentialWeight_nonneg n V z), Complex.sq_norm] using he
 
 end

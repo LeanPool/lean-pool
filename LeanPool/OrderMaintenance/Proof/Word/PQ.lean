@@ -66,6 +66,6 @@ theorem ht_pqEnterIfAbove {c : Nat} (hc : c < 2 ^ K) : HT K P0 (pqEnterIfAbove c
 theorem ht_pqPopMax : HT K P0 pqPopMax (· < 2 ^ K) := by
   unfold pqPopMax
   ht [ht_pqDel _]
-  all_goals htfin
+  htfin
 
 end OrderMaintenance.Proof.Word

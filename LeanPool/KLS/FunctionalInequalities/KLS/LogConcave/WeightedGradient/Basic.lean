@@ -82,7 +82,7 @@ theorem locallyDominates (hν : LogConcave ν)
   set a' : ℝ≥0 := Real.toNNReal a with ha'
   have ha'0 : a' ≠ 0 := (Real.toNNReal_pos.mpr ha).ne'
   refine ⟨a'⁻¹, Measure.le_iff.mpr fun s hs ↦ ?_⟩
-  rw [Measure.smul_apply, Measure.restrict_apply hs, Measure.restrict_apply hs, smul_eq_mul,
+  rw [smul_apply, Measure.restrict_apply hs, Measure.restrict_apply hs, smul_eq_mul,
     ENNReal.coe_inv ha'0]
   have hν' : (ν : Measure V) (s ∩ K) = ∫⁻ x in s ∩ K, ENNReal.ofReal (ρ x) ∂m := by
     rw [← hρ.withDensity_eq, withDensity_apply _ (hs.inter hK.measurableSet)]

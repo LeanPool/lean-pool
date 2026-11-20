@@ -74,7 +74,7 @@ theorem HasBand.mul {m l : ℕ}
   unfold HasBand at hQ hT
   intro r c q u n
   simp only [Matrix.mul_apply, Polynomial.finsetSum_coeff, Polynomial.coeff_mul,
-    LinearMap.sum_apply, Finset.sum_apply, Module.End.mul_apply, hQ, hT,
+    LinearMap.sum_apply, Finset.sum_apply, mul_apply_eq_comp, hQ, hT,
     map_sum, map_mul, Finset.sum_mul, Nat.add_assoc, mul_assoc]
 
 theorem linear_combination_apply (v : ℕ → Triple k) (b : Fin 3 → k)

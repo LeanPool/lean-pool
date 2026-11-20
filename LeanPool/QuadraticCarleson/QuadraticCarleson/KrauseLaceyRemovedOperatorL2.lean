@@ -148,7 +148,7 @@ theorem eLpNorm_removed_badLengthTailMaximal_sq_le_of_geometry
     Finset.sdiff_subset.trans ((activeBadIntervals_subset S f I₀ k₀ s scale N).trans hN)
   have heq : eLpNorm (badLengthTailMaximal S f I₀ k₀ s scale R) 2 volume ^ 2 =
       ∫⁻ x, ‖badLengthTailMaximal S f I₀ k₀ s scale R x‖ₑ ^ 2 := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by norm_num)
       (aemeasurable_badLengthTailMaximal S hf I₀ k₀ s scale R).aestronglyMeasurable]
     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
     rw [← ENNReal.rpow_mul_natCast]
@@ -163,7 +163,7 @@ theorem eLpNorm_removed_badLengthTailMaximal_sq_le_of_geometry
         hlam hsub R hR x
       have he : ‖badLengthTailMaximal S f I₀ k₀ s scale R x‖ₑ ≤
           ENNReal.ofReal (badPieceUniformBound f I₀) * (overlapCount R x : ℝ≥0∞) := by
-        rw [Real.enorm_of_nonneg (badLengthTailMaximal_nonneg_of_geometry
+        rw [Real.eNorm_of_nonneg (badLengthTailMaximal_nonneg_of_geometry
           f I₀ k₀ s scale hlam R hR x),
           ← ENNReal.ofReal_natCast, ← ENNReal.ofReal_mul (badPieceUniformBound_nonneg f I₀)]
         exact ENNReal.ofReal_le_ofReal hpoint

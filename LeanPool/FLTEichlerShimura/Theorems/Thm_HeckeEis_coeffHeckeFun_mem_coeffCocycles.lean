@@ -98,8 +98,8 @@ theorem mem_coeffCocycles {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
     intro q
     rw [transferAux_mul, map_mul, hz, map_add, map_add, mul_smul]
     congr 1
-    rw [ha_apply N ℓ ρ a ha, ← Module.End.mul_apply, ← map_mul, out_mul_transferAux, map_mul,
-      Module.End.mul_apply]
+    rw [ha_apply N ℓ ρ a ha, ← mul_apply_eq_comp, ← map_mul, out_mul_transferAux, map_mul,
+      mul_apply_eq_comp]
   rw [Finset.sum_congr rfl fun q _ => key q, Finset.sum_add_distrib, map_sum]
   congr 1
   exact Fintype.sum_bijective (h • ·) (MulAction.bijective h) _ _ fun q => rfl

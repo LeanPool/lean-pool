@@ -363,8 +363,9 @@ theorem BandOrderedGeneralMarkedSectorTransport
     | (have hrouted := hL rfl
        have hi := hindex.symm.trans hExt
        rcases placement.right_slots_cyclic with ⟨hr, ht, hd⟩ | ⟨hr, ht, hd⟩ | ⟨hr, ht, hd⟩
-       all_goals simp [hbranch.1, hbranch.2.1, hbranch.2.2, hr, ht, hd] at hi
-       all_goals simpa [hr, ht, hd, hu, hv] using hrouted)
+       all_goals first
+         | simpa [hr, ht, hd, hu, hv] using hrouted
+         | simp [hbranch.1, hbranch.2.1, hbranch.2.2, hr, ht, hd] at hi)
 
 end ApollonianSuperharmonic
 

@@ -124,17 +124,17 @@ lemma eLpNorm_one_mul_le {μ : MeasureTheory.Measure Ω} {f g : Ω → ℝ}
       ≤ MeasureTheory.eLpNorm f 2 μ * MeasureTheory.eLpNorm g 2 μ := by
   have hpq : Real.HolderConjugate 2 2 :=
     Real.holderConjugate_iff.mpr ⟨by norm_num, by norm_num⟩
-  rw [MeasureTheory.eLpNorm_one_eq_lintegral_enorm (hf.mul hg).aestronglyMeasurable]
+  rw [MeasureTheory.eLpNorm_one_eq_lintegral_eNorm (hf.mul hg).aestronglyMeasurable]
   calc ∫⁻ x, ‖(f * g) x‖ₑ ∂μ
       = ∫⁻ x, ‖f x‖ₑ * ‖g x‖ₑ ∂μ := by
-        refine lintegral_congr (fun x => ?_); rw [Pi.mul_apply, enorm_mul]
+        refine lintegral_congr (fun x => ?_); rw [Pi.mul_apply, eNorm_mul]
     _ ≤ (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ))
         * (∫⁻ x, ‖g x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) :=
-        ENNReal.lintegral_mul_le_Lp_mul_Lq μ hpq hf.enorm hg.enorm
+        ENNReal.lintegral_mul_le_Lp_mul_Lq μ hpq hf.eNorm hg.eNorm
     _ = MeasureTheory.eLpNorm f 2 μ * MeasureTheory.eLpNorm g 2 μ := by
-        rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
               hf.aestronglyMeasurable,
-            MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+            MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
               hg.aestronglyMeasurable]
         norm_num
 
@@ -168,7 +168,7 @@ lemma tendsto_eLpNorm_one_sq_sub
       _ ≤ MeasureTheory.eLpNorm (a n - b) 2 μ + 2 * MeasureTheory.eLpNorm b 2 μ := by
           gcongr
           refine le_trans MeasureTheory.eLpNorm_const_smul_le (le_of_eq ?_)
-          rw [show ‖(2 : ℝ)‖ₑ = (2 : ℝ≥0∞) from by simp [Real.enorm_eq_ofReal_abs]]
+          rw [show ‖(2 : ℝ)‖ₑ = (2 : ℝ≥0∞) from by simp [Real.eNorm_eq_ofReal_abs]]
   have htend_bound : Filter.Tendsto
       (fun n => MeasureTheory.eLpNorm (a n - b) 2 μ
         * (MeasureTheory.eLpNorm (a n - b) 2 μ + 2 * MeasureTheory.eLpNorm b 2 μ))

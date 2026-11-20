@@ -180,7 +180,7 @@ lemma models_indScheme_of_models_indH (Γ n) [M ⊧ₘ* Theory.indH Γ n] :
   ModelsTheory.of_add_right M 𝐏𝐀⁻ (Theory.indScheme _ (Arith.Hierarchy Γ n))
 
 instance models_PeanoMinus_of_models_peano [M ⊧ₘ* 𝐏𝐀] :
-    M ⊧ₘ* 𝐏𝐀⁻ := ModelsTheory.of_add_left M 𝐏𝐀⁻ (Theory.indScheme _ Set.univ)
+    M ⊧ₘ* 𝐏𝐀⁻ := ModelsTheory.of_add_left M 𝐏𝐀⁻ (Theory.indScheme _ (fun _ => True))
 
 end «lp_section_4»
 
@@ -239,18 +239,20 @@ lemma models_succInd (φ : Semiformula ℒₒᵣ ℕ 1) : ℕ ⊧ₘ succInd φ 
   | succ x ih => exact hsucc x ih
 
 instance models_iSigma (Γ k) : ℕ ⊧ₘ* 𝐈𝐍𝐃Γ k := by
-  simp only [ModelsTheory.add_iff, models_PeanoMinus, Theory.indScheme,
-    Semantics.RealizeSet.setOf_iff, forall_exists_index, and_imp, true_and]
-  rintro _ φ _ rfl; simp [models_succInd]
+  apply ModelsTheory.add_iff.mpr
+  refine ⟨inferInstance, ⟨?_⟩⟩
+  rintro _ ⟨φ, _, rfl⟩
+  exact models_succInd φ
 
 instance models_iSigmaZero : ℕ ⊧ₘ* 𝐈Sg0 := inferInstance
 
 instance models_iSigmaOne : ℕ ⊧ₘ* 𝐈Sg1 := inferInstance
 
 instance models_peano : ℕ ⊧ₘ* 𝐏𝐀 := by
-  simp only [Theory.peano, Theory.indScheme, ModelsTheory.add_iff, models_PeanoMinus,
-    Semantics.RealizeSet.setOf_iff, forall_exists_index, and_imp, true_and]
-  rintro _ φ _ rfl; simp [models_succInd]
+  apply ModelsTheory.add_iff.mpr
+  refine ⟨inferInstance, ⟨?_⟩⟩
+  rintro _ ⟨φ, _, rfl⟩
+  exact models_succInd φ
 
 end Standard
 

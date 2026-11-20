@@ -774,36 +774,37 @@ theorem summable_auxil_1 (k : ℕ) (z : ℍ) :
     cexp (2 * ↑π * Complex.I * ↑z * ↑(↑(c.snd) : ℕ × ℕ).1 * ↑↑(↑(c.snd) : ℕ × ℕ).2) := by
   apply Summable.of_norm
   rw [summable_sigma_of_nonneg]
-  constructor
-  · apply fun n => (hasSum_fintype _).summable
-  · simp only [Complex.norm_mul, norm_pow, RCLike.norm_natCast, tsum_fintype, Finset.univ_eq_attach]
-    have H (n : ℕ+) := Finset.sum_attach ((n : ℕ).divisorsAntidiagonal) (fun (x : ℕ × ℕ) =>
-      (x.1 : ℝ) ^ (k : ℕ) * ‖Complex.exp (2 * ↑π * Complex.I * z * x.1 * x.2)‖)
-    have H2 (n : ℕ+) := Nat.sum_divisorsAntidiagonal ((fun (x : ℕ) => fun (y : ℕ) =>
-      (x : ℝ) ^ (k : ℕ) * ‖Complex.exp (2 * ↑π * Complex.I * z * x * y)‖)) (n := n)
-    conv =>
-      enter [1]
-      ext b
-      rw [H b, H2 b]
-    have hsum := hsum k z
-    apply Summable.of_nonneg_of_le _ _ hsum
-    · intro b
-      apply Finset.sum_nonneg
-      simp_all only [Finset.sum_const, nsmul_eq_mul, Nat.mem_divisors, ne_eq, PNat.ne_zero,
-        not_false_eq_true, and_true, Nat.cast_div_charZero, norm_pos_iff, exp_ne_zero,
-        mul_nonneg_iff_of_pos_right, Nat.cast_nonneg, pow_nonneg, implies_true]
-    · intro b
-      apply Finset.sum_le_sum
-      intro i hi
-      simp only [Nat.mem_divisors, ne_eq, PNat.ne_zero, not_false_eq_true, and_true] at hi
-      gcongr
-      · apply Nat.le_of_dvd b.2 hi
-      apply le_of_eq
-      have hni : (i : ℂ) * (b / i : ℕ) = b := by
-        norm_cast
-        simp only [Finset.sum_const, nsmul_eq_mul] at *
-        exact Nat.mul_div_cancel' hi
-      rw [mul_assoc, hni]
+  · constructor
+    · apply fun n => (hasSum_fintype _).summable
+    · simp only [Complex.norm_mul, norm_pow, RCLike.norm_natCast, tsum_fintype,
+        Finset.univ_eq_attach]
+      have H (n : ℕ+) := Finset.sum_attach ((n : ℕ).divisorsAntidiagonal) (fun (x : ℕ × ℕ) =>
+        (x.1 : ℝ) ^ (k : ℕ) * ‖Complex.exp (2 * ↑π * Complex.I * z * x.1 * x.2)‖)
+      have H2 (n : ℕ+) := Nat.sum_divisorsAntidiagonal ((fun (x : ℕ) => fun (y : ℕ) =>
+        (x : ℝ) ^ (k : ℕ) * ‖Complex.exp (2 * ↑π * Complex.I * z * x * y)‖)) (n := n)
+      conv =>
+        enter [1]
+        ext b
+        rw [H b, H2 b]
+      have hsum := hsum k z
+      apply Summable.of_nonneg_of_le _ _ hsum
+      · intro b
+        apply Finset.sum_nonneg
+        simp_all only [Finset.sum_const, nsmul_eq_mul, Nat.mem_divisors, ne_eq, PNat.ne_zero,
+          not_false_eq_true, and_true, Nat.cast_div_charZero, norm_pos_iff, exp_ne_zero,
+          mul_nonneg_iff_of_pos_right, Nat.cast_nonneg, pow_nonneg, implies_true]
+      · intro b
+        apply Finset.sum_le_sum
+        intro i hi
+        simp only [Nat.mem_divisors, ne_eq, PNat.ne_zero, not_false_eq_true, and_true] at hi
+        gcongr
+        · apply Nat.le_of_dvd b.2 hi
+        apply le_of_eq
+        have hni : (i : ℂ) * (b / i : ℕ) = b := by
+          norm_cast
+          simp only [Finset.sum_const, nsmul_eq_mul] at *
+          exact Nat.mul_div_cancel' hi
+        rw [mul_assoc, hni]
   · simp_all only [Complex.norm_mul, norm_pow, RCLike.norm_natCast, norm_pos_iff, ne_eq,
     exp_ne_zero, not_false_eq_true, mul_nonneg_iff_of_pos_right, Nat.cast_nonneg, pow_nonneg,
     implies_true]

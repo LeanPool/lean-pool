@@ -205,7 +205,7 @@ theorem conditions_recursive :
   change Part.some (code (condition (Nat.unpair (construction C s)).1)) = _
   have he := congrArg I.condition (construction_eq I C s)
   simp only [state, I.condition_make] at he
-  exact congrArg (fun p => Part.some (code p)) he
+  exact congrArg (fun p => Part.some (EncodedForcing.code p)) he
 
 include hpair hopen in
 theorem limits_recursive :

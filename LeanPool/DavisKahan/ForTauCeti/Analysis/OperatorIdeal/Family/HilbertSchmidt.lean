@@ -81,15 +81,15 @@ theorem tsum_rpow_add_le {p : ℝ} (hp : 1 ≤ p) (f g : ι → ℝ≥0∞) :
     have hfin := ENNReal.Lp_add_le (s := s) (f := f) (g := g) (p := p) hp
     rw [one_div] at hfin
     have hfA : (∑ i ∈ s, f i ^ p) ^ p⁻¹ ≤ A :=
-      ENNReal.rpow_le_rpow (ENNReal.sum_le_tsum s) (by positivity)
+      ENNReal.rpow_le_rpow (_root_.sum_le_tsum s) (by positivity)
     have hgB : (∑ i ∈ s, g i ^ p) ^ p⁻¹ ≤ B :=
-      ENNReal.rpow_le_rpow (ENNReal.sum_le_tsum s) (by positivity)
+      ENNReal.rpow_le_rpow (_root_.sum_le_tsum s) (by positivity)
     calc ∑ i ∈ s, (f i + g i) ^ p
         = ((∑ i ∈ s, (f i + g i) ^ p) ^ p⁻¹) ^ p := (hpow _).symm
       _ ≤ (A + B) ^ p :=
           ENNReal.rpow_le_rpow (hfin.trans (add_le_add hfA hgB)) hp0.le
   have hsum : ∑' i, (f i + g i) ^ p ≤ (A + B) ^ p :=
-    ENNReal.tsum_eq_iSup_sum.trans_le (iSup_le key)
+    _root_.tsum_eq_iSup_sum.trans_le (iSup_le key)
   calc (∑' i, (f i + g i) ^ p) ^ p⁻¹
       ≤ ((A + B) ^ p) ^ p⁻¹ := ENNReal.rpow_le_rpow hsum (by positivity)
     _ = A + B := by rw [← ENNReal.rpow_mul, mul_inv_cancel₀ hp0.ne', ENNReal.rpow_one]
@@ -182,9 +182,9 @@ theorem hilbertSchmidtENorm_add_le (S T : E →L[𝕜] F) :
   rw [(S + T).hilbertSchmidtENorm_eq b, S.hilbertSchmidtENorm_eq b, T.hilbertSchmidtENorm_eq b]
   refine le_trans (ENNReal.rpow_le_rpow ?_ (by norm_num)) <|
     ENNReal.tsum_sq_add_rpow_le (fun i => ‖S (b i)‖ₑ) (fun i => ‖T (b i)‖ₑ)
-  refine ENNReal.tsum_le_tsum fun i => ?_
+  refine tsum_le_tsum fun i => ?_
   gcongr
-  exact enorm_add_le _ _
+  exact eNorm_add_le _ _
 
 /-- **The Hilbert--Schmidt norm dominates the operator norm.** -/
 theorem enorm_le_hilbertSchmidtENorm (T : E →L[𝕜] F) : ‖T‖ₑ ≤ T.hilbertSchmidtENorm := by
@@ -245,7 +245,7 @@ theorem isHilbertSchmidt_iff_summable (T : E →L[𝕜] F) (b : HilbertBasis ι 
     T.IsHilbertSchmidt ↔ Summable fun i => ‖T (b i)‖ ^ 2 := by
   rw [T.isHilbertSchmidt_iff_energy_ne_top b, hilbertSchmidtEnergy]
   have hcoe : ∀ i, ‖T (b i)‖ₑ ^ 2 = ((‖T (b i)‖₊ ^ 2 : ℝ≥0) : ℝ≥0∞) := fun i => by
-    simp [enorm_eq_nnnorm]
+    simp [eNorm_eq_nnNorm]
   simp only [hcoe]
   rw [ENNReal.tsum_coe_ne_top_iff_summable, ← NNReal.summable_coe]
   simp
@@ -367,7 +367,7 @@ theorem hilbertSchmidtENorm_le_liminf {ι : Type*} (b : HilbertBasis ι 𝕜 E)
       = Filter.liminf (fun n => ∑ i ∈ s, ‖T n (b i)‖ₑ ^ 2) u := hfin.liminf_eq.symm
     _ ≤ Filter.liminf (fun n => (T n).hilbertSchmidtENorm ^ (2 : ℝ)) u :=
         Filter.liminf_le_liminf (Filter.Eventually.of_forall fun n => by
-          rw [hT n]; exact ENNReal.sum_le_tsum s)
+          rw [hT n]; exact sum_le_tsum s)
 
 
 /-! ### The real-valued norm
@@ -419,7 +419,7 @@ off the ideal, and `‖c‖ * 0 = 0`. -/
 theorem hilbertSchmidtNorm_smul (c : 𝕜) (T : E →L[𝕜] F) :
     (c • T).hilbertSchmidtNorm = ‖c‖ * T.hilbertSchmidtNorm := by
   rw [hilbertSchmidtNorm, hilbertSchmidtENorm_smul, ENNReal.toReal_mul,
-    hilbertSchmidtNorm, enorm_eq_nnnorm, ENNReal.coe_toReal, coe_nnnorm]
+    hilbertSchmidtNorm, eNorm_eq_nnNorm, ENNReal.coe_toReal, coe_nnNorm]
 
 /-- **Adjoint invariance**, in `ℝ`. -/
 theorem hilbertSchmidtNorm_adjoint (T : E →L[𝕜] F) :
@@ -442,8 +442,8 @@ theorem hilbertSchmidtNorm_comp_le (L : F →L[𝕜] G) {T : E →L[𝕜] F}
   have hfin : ‖L‖ₑ * T.hilbertSchmidtENorm * ‖R‖ₑ ≠ ∞ :=
     ENNReal.mul_ne_top (ENNReal.mul_ne_top (by simp) hT) (by simp)
   have h := ENNReal.toReal_mono hfin (hilbertSchmidtENorm_comp_le L T R)
-  rwa [ENNReal.toReal_mul, ENNReal.toReal_mul, enorm_eq_nnnorm, enorm_eq_nnnorm,
-    ENNReal.coe_toReal, ENNReal.coe_toReal, coe_nnnorm, coe_nnnorm] at h
+  rwa [ENNReal.toReal_mul, ENNReal.toReal_mul, eNorm_eq_nnNorm, eNorm_eq_nnNorm,
+    ENNReal.coe_toReal, ENNReal.coe_toReal, coe_nnNorm, coe_nnNorm] at h
 
 /-- **Contractions do not enlarge the Hilbert--Schmidt norm.**  This is the
 two-sided ideal bound with both factors of norm at most one. -/
@@ -460,7 +460,7 @@ theorem hilbertSchmidtNorm_comp_isometries_le (L : F →L[𝕜] G) {T : E →L[�
 theorem norm_le_hilbertSchmidtNorm {T : E →L[𝕜] F} (hT : T.IsHilbertSchmidt) :
     ‖T‖ ≤ T.hilbertSchmidtNorm := by
   have h := ENNReal.toReal_mono hT (enorm_le_hilbertSchmidtENorm T)
-  rwa [enorm_eq_nnnorm, ENNReal.coe_toReal, coe_nnnorm] at h
+  rwa [eNorm_eq_nnNorm, ENNReal.coe_toReal, coe_nnNorm] at h
 
 
 end ContinuousLinearMap
@@ -513,7 +513,7 @@ instance isComplete_hilbertSchmidtIdealFamily {𝕜 : Type u} [RCLike 𝕜] :
         simpa using
           ((ContinuousLinearMap.apply 𝕜 F (b i)).continuous.tendsto L).comp hL |>.sub
             tendsto_const_nhds
-      exact (ENNReal.continuous_pow 2).tendsto _ |>.comp ((continuous_enorm.tendsto _).comp h1)
+      exact (ENNReal.continuous_pow 2).tendsto _ |>.comp ((continuous_eNorm.tendsto _).comp h1)
     -- Fatou: the limit's energy is controlled by the tail of the Cauchy estimate
     have hfatou : ∀ n : ℕ,
         (L - (a n).val).hilbertSchmidtENorm ^ (2 : ℝ) ≤

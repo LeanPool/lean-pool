@@ -419,7 +419,7 @@ theorem JetStartDerivative.flowSpatialFDerivApply_space_hasStrictFDerivAt
   have happly : ContDiff ℝ 1 (fun y : Vec 2 => J y v) :=
     hJ.clm_apply contDiff_const
   have hAt : ContDiffAt ℝ 1 (fun y : Vec 2 => J y v) x := happly.contDiffAt
-  have hstrict := hAt.hasStrictFDerivAt (by norm_num : (1 : ℕ∞ω) ≠ 0)
+  have hstrict := hAt.hasStrictFDerivAt_fderiv (by norm_num : (1 : ℕ∞ω) ≠ 0)
   have hEq := (JetStartDerivative.flowSpatialFDerivApply_space_hasFDerivAt hb hX v t x s).fderiv
   rw [hEq] at hstrict
   simpa [J] using hstrict
@@ -504,7 +504,7 @@ theorem flow_spatialFDeriv_apply_contDiff_one_all
     have hinnerContDiff := JetStartDerivative.flowSpatialFDerivApply_contDiff_start_space hb hX v t
     have hAt : ContDiffAt ℝ 1 (fun w : ℝ × Vec 2 =>
         (fderiv ℝ (fun y => X t y w.1) w.2) v) q := hinnerContDiff.contDiffAt
-    have hstrict := hAt.hasStrictFDerivAt (by norm_num : (1 : ℕ∞ω) ≠ 0)
+    have hstrict := hAt.hasStrictFDerivAt_fderiv (by norm_num : (1 : ℕ∞ω) ≠ 0)
     have hEq := hinner.fderiv
     rw [hEq] at hstrict
     simpa [f, dparam, fInner, dtimeInner, dparamInner] using hstrict

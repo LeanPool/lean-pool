@@ -82,7 +82,7 @@ theorem enorm_block_sub_normalizedHighBlock_le
         smoothQuadraticHighPass (a ^ 2) ((2 : ℝ) ^ ((B : ℤ) - 1) / a) f x) := by ring
   rw [heq]
   calc
-    _ ≤ _ + _ := enorm_sub_le
+    _ ≤ _ + _ := eNorm_sub_le
     _ ≤ 24 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x +
         24 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x :=
       add_le_add
@@ -106,8 +106,8 @@ theorem enorm_finiteBlock_le_suffixMaxOperator
     exact finiteFullDyadicTail_succ_eq_finiteQuadraticDyadicBlock lam j B
       (memLp_two_L0Infinity f) x
   rw [hz] at hsup
-  simpa only [finiteFullDyadicSuffixMaxOperator, enorm_eq_nnnorm,
-    ENNReal.coe_le_coe, Complex.nnnorm_real, NNReal.nnnorm_eq,
+  simpa only [finiteFullDyadicSuffixMaxOperator, eNorm_eq_nnNorm,
+    ENNReal.coe_le_coe, Complex.nnNorm_real, NNReal.nnNorm_eq,
     finiteFullDyadicSuffixMaxNNNorm] using hsup
 
 /-- The exact paper block is controlled by a normalized high suffix and one
@@ -133,7 +133,7 @@ theorem enorm_paperLowDyadicOperator_le_dilatedHighSuffix_add_maximal
         finiteQuadraticDyadicBlock 1 1 B (L0Infinity.dilate a ha f) (a * x)) +
         finiteQuadraticDyadicBlock 1 1 B (L0Infinity.dilate a ha f) (a * x)‖ₑ :=
       congrArg (fun z : ℂ ↦ ‖z‖ₑ) (sub_add_cancel _ _).symm
-    _ ≤ _ + _ := enorm_add_le _ _
+    _ ≤ _ + _ := eNorm_add_le _ _
     _ ≤ 48 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x +
         ‖finiteFullDyadicSuffixMaxOperator 1 1 (B + 1)
           (L0Infinity.dilate a ha f) (a * x)‖ₑ :=

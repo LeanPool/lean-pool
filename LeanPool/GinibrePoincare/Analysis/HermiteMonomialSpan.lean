@@ -82,7 +82,7 @@ theorem mixedMonomial_mem_normalizedEvalRectangleSpan
     (fun z : ℂ ↦ z ^ p * (conj z) ^ q) ∈
       normalizedEvalRectangleSpan n hn p q := by
   induction h : min p q using Nat.strong_induction_on generalizing p q with
-  | h m ih =>
+  | ind m ih =>
       let S := normalizedEvalRectangleSpan n hn p q
       let N : ℂ :=
         ((oneDimNormalization n p * oneDimNormalization n q : ℝ) : ℂ)

@@ -667,7 +667,7 @@ theorem relaxation_le_asymptoticLipschitz_of_lipschitzWith (ν : ProbabilityMeas
     simp_rw [henergy_eq]
   rw [hliminf]
   have hmeas : ∀ j, Measurable (fun x ↦ ‖gradient (gj j) x‖ₑ ^ 2) := fun j ↦
-    ((measurable_gradient (gj j)).enorm).pow_const 2
+    ((measurable_gradient (gj j)).eNorm).pow_const 2
   have hbound : ∀ j, (fun x ↦ ‖gradient (gj j) x‖ₑ ^ 2) ≤ᵐ[(ν : Measure V)]
       fun _ ↦ ((K : ℝ≥0∞)) ^ 2 := by
     intro j

@@ -593,7 +593,7 @@ theorem integral_Ioc_one_L_tail_le_momentBoosted_fixedBase
       setIntegral_mono_set hg_Ioi hg_nonneg (by
         exact (show Set.Ioc (1 : ℝ) L ⊆ Set.Ioi 0 by
           intro t ht
-          exact lt_trans zero_lt_one ht.1).eventuallyLE)
+          exact lt_trans zero_lt_one ht.1).eventuallySubset)
     _ = momentBoostedTailKernelConst sigma := by
       simpa [g] using integral_momentBoosted_tail_kernel_eq hsigma
     _ ≤ (48 : ℝ) ^ (2 / sigma) :=

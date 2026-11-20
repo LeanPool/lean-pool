@@ -185,15 +185,18 @@ theorem GV_F_Lp {n : ℕ} (hn : 1 ≤ n) : GV p (F n) (Lp n p) := by
 
 /-! ### Integrality -/
 
-lemma padicValNat_factorial_lt {k : ℕ} (hk : k < p) : padicValNat p k.factorial = 0 :=
-  padicValNat.eq_zero_of_not_dvd
+lemma padicValNat_factorial_lt {k : ℕ} (hk : k < p) : padicValNat p k.factorial = 0 := by
+  rw [Nat.padicValNat_def]
+  exact multiplicity_eq_zero_of_not_dvd
     (fun h => by have := (Nat.Prime.dvd_factorial hp.out).mp h; omega)
 
 lemma vSK_big {n : ℕ} (hn : 1 ≤ n) (hbig : 2 * (37 * n) < p) : vSK n p = 0 := by
   have h := vS_eq (by omega : 0 < n) hp.out
   rw [h, padicValNat_factorial_lt (by omega), padicValNat_factorial_lt (by omega)]
-  have h4 : padicValNat p 4 = 0 :=
-    padicValNat.eq_zero_of_not_dvd (fun hd => by have := Nat.le_of_dvd (by norm_num) hd; omega)
+  have h4 : padicValNat p 4 = 0 := by
+    rw [Nat.padicValNat_def]
+    exact multiplicity_eq_zero_of_not_dvd
+      (fun hd => by have := Nat.le_of_dvd (by norm_num) hd; omega)
   rw [h4,
     Finset.sum_eq_zero
       (fun i hi => by
@@ -260,13 +263,13 @@ lemma padicValRat_mN (n : ℕ) (p : ℕ) [Fact p.Prime] :
   simp only [padicValRat.zpow, padicValRat.of_nat]
   have hval :
     ∀ q ∈ (range (2 * (37 * n) + 1)).filter Nat.Prime,
-      (padicValNat p q : ℤ) = if q = p then 1 else 0 := by
+      (multiplicity p q : ℤ) = if q = p then 1 else 0 := by
     intro q hq
     have hq' : q.Prime := (Finset.mem_filter.mp hq).2
     have := Fact.mk hq'
     split_ifs with h
     · subst h; simp []
-    · rw [padicValNat_primes (Ne.symm h)]; rfl
+    · rw [multiplicity_primes (Ne.symm h)]; rfl
   rw [Finset.sum_congr rfl (fun q hq => by rw [hval q hq])]
   simp only [mul_ite, mul_one, mul_zero]
   rw [Finset.sum_ite_eq']
@@ -281,7 +284,7 @@ lemma padicValRat_mN (n : ℕ) (p : ℕ) [Fact p.Prime] :
 /-- A rational number which is `p`-integral at every prime is an integer. -/
 lemma rat_int_of_VG {q : ℚ} (h : ∀ p : ℕ, ∀ _ : Fact p.Prime, VG p q 0) : ∃ z : ℤ, q = z := by
   by_contra hne
-  have hden : q.den ≠ 1 := fun h1 => hne ⟨q.num, (Rat.coe_int_num_of_den_eq_one h1).symm⟩
+  have hden : q.den ≠ 1 := fun h1 => hne ⟨q.num, (Rat.intCast_num_of_den_eq_one h1).symm⟩
   set p := q.den.minFac with hpdef
   have hpp : p.Prime := Nat.minFac_prime hden
   have := Fact.mk hpp
@@ -295,8 +298,8 @@ lemma rat_int_of_VG {q : ℚ} (h : ∀ p : ℕ, ∀ _ : Fact p.Prime, VG p q 0) 
       rw [hc] at this
       exact hpp.one_lt.ne' (Nat.dvd_one.mp this)
     have h1 : padicValInt p q.num = 0 := padicValInt.eq_zero_of_not_dvd hnum
-    have h2 : 1 ≤ padicValNat p q.den := one_le_padicValNat_of_dvd q.den_ne_zero hdvd
-    have e : padicValRat p q = padicValInt p q.num - padicValNat p q.den := rfl
+    have h2 : 1 ≤ multiplicity p q.den := one_le_multiplicity_of_dvd q.den_ne_zero hdvd
+    have e : padicValRat p q = padicValInt p q.num - multiplicity p q.den := rfl
     have hlt : padicValRat p q < 0 := by rw [e, h1]; omega
     have : (padicValRat p q : ℚ) < 0 := by exact_mod_cast hlt
     linarith

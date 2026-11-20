@@ -899,7 +899,7 @@ theorem vorticityProducts_H2
         eLpNorm (fun y => vec3EuclideanNorm (v y)) ⊤ volume := by
       have hx' : ENNReal.ofReal (vec3EuclideanNorm (v x)) ≤
           eLpNormEssSup (fun y => vec3EuclideanNorm (v y)) volume := by
-        simpa only [Real.enorm_eq_ofReal_abs,
+        simpa only [Real.eNorm_eq_ofReal_abs,
           abs_of_nonneg (vec3EuclideanNorm_nonneg _)] using hx
       exact hx'.trans eLpNormEssSup_le_eLpNorm_top
     have hr := ENNReal.toReal_mono hMtop.ne hle

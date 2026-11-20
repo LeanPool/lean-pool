@@ -319,9 +319,11 @@ theorem rotYOp_mem_unitaryGroup (theta : ℝ) :
   generalize Real.sin (theta / 2) = s at hcs' ⊢
   ext i j
   fin_cases i <;> fin_cases j <;>
-    · simp [Matrix.mul_apply, Matrix.star_apply, Complex.conj_ofReal]
-      try ring_nf
-      try linear_combination hcs'
+    simp [Matrix.mul_apply, Matrix.star_apply, Complex.conj_ofReal]
+  · linear_combination hcs'
+  · ring
+  · ring
+  · linear_combination hcs'
 
 /-- The standard `R_Y(theta)` gate. -/
 def rotY (theta : ℝ) : Gate 1 :=

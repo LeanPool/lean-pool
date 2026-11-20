@@ -171,6 +171,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/HighContrastHomogenization
                                      https://github.com/scottnarmstrong/HighContrastHomogenization
   LeanPool/HopfProblem               https://github.com/plby/HopfProblem
+  LeanPool/HubbardMoments            https://github.com/zhineos/hubbard-spectral-moments
   LeanPool/HyperellipticCurves       https://github.com/MichaelStollBayreuth/HyperellipticCurves
   LeanPool/Incompleteness            https://github.com/FormalizedFormalLogic/Incompleteness
   LeanPool/InfinitaryLogic           https://github.com/cameronfreer/infinitary-logic
@@ -325,6 +326,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
   LeanPool/SpherePacking             https://github.com/openai/ten-proofs
+  LeanPool/StableManifold            https://github.com/vltanh/lean4-stable-manifold
   LeanPool/Stafford38                https://github.com/itpplasma/stafford38-formal
   LeanPool/StallingsFolding          https://github.com/Arthur742Ramos/stallings-folding
   LeanPool/SteinerSpanners           https://github.com/goranzuzic/high-dimensional-steiner-spanners

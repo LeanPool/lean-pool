@@ -364,7 +364,7 @@ theorem iIndep_cutoffSampleLocalSigma_of_iIndep_completion (M : ABKModel d)
     obtain ⟨s', hs', hpre⟩ := MeasurableSpace.measurableSet_comap.1 (hf i hi)
     obtain ⟨s0, hs0, hs0eq⟩ := hs'
     refine ⟨s0, lowerShellLocalSigma_le_borel (Lidx i) (U i) s0 hs0,
-      ⟨s0, hs0, Filter.EventuallyEq.rfl⟩, ?_⟩
+      ⟨s0, hs0, Filter.EventuallyEqSet.rfl⟩, ?_⟩
     rw [← hpre]
     exact ae_preimage_cutoffSampleLaw M hs0eq
   choose! t htmeas htcomp hft using hchoice

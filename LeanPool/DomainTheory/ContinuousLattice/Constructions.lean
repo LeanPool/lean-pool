@@ -62,7 +62,7 @@ x ≪ y}`. -/
 theorem proposition_2_8 [Finite D] : IsContinuousLattice D := by
   intro y
   have hopen : ScottOpen (Set.Ici y) := by
-    refine ⟨isUpperSet_Ici y, fun S hSne hSdir hmem => ?_⟩
+    refine ⟨IsUpperSet.Ici y, fun S hSne hSdir hmem => ?_⟩
     exact ⟨sSup S, directedOn_finite_sSup_mem (Set.toFinite S) hSne hSdir, hmem⟩
   have hyy : y ≪ y := wayBelow_self_iff_scottOpen_Ici.mpr hopen
   exact ⟨fun x hx => hx.le, fun b hb => hb hyy⟩

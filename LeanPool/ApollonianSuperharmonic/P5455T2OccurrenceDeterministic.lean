@@ -155,7 +155,7 @@ private theorem main :
   classical
   intro Normalize noMix rotUnique n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro q hq i hi a b ha hb hn
     obtain ⟨t, r, j, hqa, hia, enda⟩ := Normalize ha
     obtain ⟨t', r', j', hqb, hib, endb⟩ := Normalize hb

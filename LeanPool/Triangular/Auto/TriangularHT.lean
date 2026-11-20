@@ -328,7 +328,7 @@ theorem triangular_schwartz_bounds (F : SchwartzMap (ℝ × ℝ) ℂ) :
     change ‖F p‖ ≤ A + B + D
     linarith
   refine ⟨M, ?_, hsize, ?_⟩
-  · apply lipschitzWith_of_nnnorm_fderiv_le F.differentiable
+  · apply lipschitzWith_of_nnNorm_fderiv_le F.differentiable
     intro p
     have h := (SchwartzMap.fderivCLM ℝ (ℝ × ℝ) ℂ F).norm_le_seminorm ℝ p
     change ‖fderiv ℝ F p‖ ≤ D at h

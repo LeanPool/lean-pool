@@ -75,7 +75,7 @@ theorem tsum_le_liminf_tsum {ι : Type*} {β : Type*} {u : Filter β} [u.NeBot]
     (h : ∀ i, Filter.Tendsto (fun n => f n i) u (nhds (g i))) :
     ∑' i, g i ≤ Filter.liminf (fun n => ∑' i, f n i) u := by
   classical
-  rw [ENNReal.tsum_eq_iSup_sum]
+  rw [_root_.tsum_eq_iSup_sum]
   refine iSup_le fun s => ?_
   have hfin : Filter.Tendsto (fun n => ∑ i ∈ s, f n i) u (nhds (∑ i ∈ s, g i)) :=
     tendsto_finsetSum _ fun i _ => h i
@@ -83,7 +83,7 @@ theorem tsum_le_liminf_tsum {ι : Type*} {β : Type*} {u : Filter β} [u.NeBot]
       = Filter.liminf (fun n => ∑ i ∈ s, f n i) u := hfin.liminf_eq.symm
     _ ≤ Filter.liminf (fun n => ∑' i, f n i) u :=
         Filter.liminf_le_liminf
-          (Filter.Eventually.of_forall fun _ => ENNReal.sum_le_tsum s)
+          (Filter.Eventually.of_forall fun _ => _root_.sum_le_tsum s)
 
 end ENNReal
 

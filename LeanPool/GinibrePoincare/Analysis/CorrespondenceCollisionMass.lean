@@ -71,7 +71,7 @@ theorem correspondenceCollision_compact_tube_mass {n : ℕ} (hn : 0 < n)
     have hc : Continuous (fun z : Configuration n => ‖z p.val.1 - z p.val.2‖) := by fun_prop
     have hT : MeasurableSet T := hK.measurableSet.inter
       (isClosed_le hc continuous_const).measurableSet
-    rw [ginibreMeasure_eq_real_withDensity hn, Measure.smul_apply,
+    rw [ginibreMeasure_eq_real_withDensity hn, _root_.smul_apply,
       withDensity_apply _ hT]
     have hb : (∫⁻ z in T, ENNReal.ofReal (ginibreLebesgueDensityReal n z)) ≤
         ∫⁻ _ in T, ENNReal.ofReal (C * r ^ 2) := by

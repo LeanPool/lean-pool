@@ -206,7 +206,7 @@ theorem exists_det_one_columnMatrix_negativeOrdersPairwiseDistinct
         (indexedLaurentSeriesColumnCombination f A) ∧
       ∀ i, a ≤ (indexedLaurentSeriesColumnCombination f A i).order := by
   induction hN : laurentPoleWeight f using Nat.strong_induction_on generalizing f with
-  | h N ih =>
+  | ind N ih =>
       by_cases hdistinct : NegativeOrdersPairwiseDistinct f
       · refine ⟨1, Matrix.det_one, ?_, ?_⟩
         · simpa [indexedLaurentSeriesColumnCombination_one]

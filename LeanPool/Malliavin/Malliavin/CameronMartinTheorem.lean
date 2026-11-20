@@ -638,7 +638,7 @@ lemma law_eq_centeredGaussian {Ω : Type*} [MeasurableSpace Ω]
   rw [hfG.map_eq_gaussianReal, hf₀, variance_coe_L2_eq_norm_sq μ f hf₀]
   congr 1
   apply NNReal.eq
-  simp only [Real.coe_toNNReal _ (sq_nonneg _), NNReal.coe_pow, coe_nnnorm]
+  simp only [Real.coe_toNNReal _ (sq_nonneg _), NNReal.coe_pow, coe_nnNorm]
 
 /-- A limit in `L²` of centered Gaussian random variables is Gaussian. -/
 lemma hasGaussianLaw_L2_limit_of_centered
@@ -654,7 +654,7 @@ lemma hasGaussianLaw_L2_limit_of_centered
       (𝓝 (lawPM μ (g : Ω → ℝ) (Lp.aestronglyMeasurable g).aemeasurable)) :=
     hdist.tendsto
   have hv : Tendsto (fun n ↦ ‖f n‖₊ ^ 2) atTop (𝓝 (‖g‖₊ ^ 2)) :=
-    hfg.nnnorm.pow 2
+    hfg.nnNorm.pow 2
   have hgauss := tendsto_centeredGaussianPM hv
   have heq : (fun n ↦ lawPM μ (f n : Ω → ℝ)
       (Lp.aestronglyMeasurable (f n)).aemeasurable) =
@@ -829,7 +829,7 @@ theorem mgf_tilted_dual (h : Space μ) (L : StrongDual ℝ W) (t : ℝ) :
     ring
   unfold mgf
   rw [integral_exp_tilted, hnum, integral_exp_coe μ h, hsq]
-  simp only [coe_nnnorm, NNReal.coe_pow]
+  simp only [coe_nnNorm, NNReal.coe_pow]
   rw [← Real.exp_add, ← Real.exp_sub]
   congr 1
   ring

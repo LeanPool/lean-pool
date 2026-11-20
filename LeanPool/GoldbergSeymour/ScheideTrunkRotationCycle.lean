@@ -271,7 +271,7 @@ private theorem helper_hcolors_261.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e0 phi T N hheight hends hpositive_color hinjective one hone n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro hnlt hnpos
       by_cases hn : n = 1
       · subst n

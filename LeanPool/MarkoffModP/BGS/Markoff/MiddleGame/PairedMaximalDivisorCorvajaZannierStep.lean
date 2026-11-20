@@ -133,7 +133,7 @@ theorem orderCount_mul_pairedCorvajaZannierEnvelope_lt_currentOrder
       (mul_nonneg horderNonneg horderNonneg)]
     convert Real.pow_rpow_inv_natCast horderNonneg
       (by norm_num : (3 : ℕ) ≠ 0) using 1
-    all_goals ring_nf
+    ring_nf
   have hrootTerm :
       rootCoefficient *
           (((currentOrder * currentOrder : ℕ) : ℝ) ^

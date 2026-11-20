@@ -82,7 +82,7 @@ namespace TriangularDecomposition
 
 variable {𝕜 𝓰} in
 /-- The triangular decomposition induced by a basis and a partition of the basis indices. -/
-def ofBasis {ι : Type*} [Nontrivial 𝕜] [IsCancelMulZero 𝕜] [Module.IsTorsionFree 𝕜 𝓰]
+noncomputable def ofBasis {ι : Type*} [Nontrivial 𝕜] [IsCancelMulZero 𝕜] [Module.IsTorsionFree 𝕜 𝓰]
     (B : Basis ι 𝕜 𝓰) (Bp : SignType → Set ι)
     (Bp_disj : Pairwise (fun ε₁ ε₂ ↦ Disjoint (Bp ε₁) (Bp ε₂)))
     (Bp_cover : ⋃ ε, Bp ε = Set.univ) :

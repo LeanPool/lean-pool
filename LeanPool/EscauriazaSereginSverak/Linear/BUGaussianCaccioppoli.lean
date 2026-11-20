@@ -35,7 +35,7 @@ private theorem buGaussian_memLp_of_local_l2
     (hfin : (∫⁻ z in U, ‖f z‖ₑ ^ (2 : ℝ)) < ⊤) :
     MemLp f 2 (volume.restrict U) := by
   have hrestrict : MemLp f 2 (volume.restrict U) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (μ := volume.restrict U) (by norm_num) (by norm_num)
       hlocal.aestronglyMeasurable).2
     simpa using hfin
@@ -76,7 +76,7 @@ theorem buGaussian_local_energy_integrable
     buGaussian_memLp_of_local_l2 hweak.2.1 (by simpa [U] using hDvfin)
   have hVnorm : MemLp (fun z => vec3EuclideanNorm (v z)) 2
       (volume.restrict U) := by
-    apply hVmem.of_nnnorm_le_mul (c := 2)
+    apply hVmem.of_nnNorm_le_mul (c := 2)
       (continuous_vec3EuclideanNorm.comp_aestronglyMeasurable
         hVmem.aestronglyMeasurable)
     filter_upwards [] with z
@@ -88,12 +88,12 @@ theorem buGaussian_local_energy_integrable
         _ ≤ 2 * ‖v z‖ := mul_le_mul_of_nonneg_right hsqrt (norm_nonneg _)
     have hreal' : (‖vec3EuclideanNorm (v z)‖₊ : ℝ) ≤
         2 * (‖‖v z‖‖₊ : ℝ) := by
-      simpa only [coe_nnnorm, Real.norm_eq_abs,
+      simpa only [coe_nnNorm, Real.norm_eq_abs,
         abs_of_nonneg (vec3EuclideanNorm_nonneg _),
         abs_of_nonneg (norm_nonneg _)] using hreal
     have hreal'' : (‖vec3EuclideanNorm (v z)‖₊ : ℝ) ≤
         2 * (‖v z‖₊ : ℝ) := by
-      simpa only [coe_nnnorm, Real.norm_eq_abs,
+      simpa only [coe_nnNorm, Real.norm_eq_abs,
         abs_of_nonneg (norm_nonneg _)] using hreal'
     exact_mod_cast hreal''
   have hVint : Integrable (fun z => vec3EuclideanNorm (v z) ^ 2)

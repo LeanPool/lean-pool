@@ -80,6 +80,7 @@ def openOverlapCubeSet {d : ℕ} (S : TriadicCube d) : Set (Vec d) :=
 theorem measurableSet_coord_overlapHalfOpenStrip {d : ℕ}
     (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a ≤ x i ∧ x i < b} := by
+  change MeasurableSet ({x : Vec d | a ≤ x i} ∩ {x : Vec d | x i < b})
   refine MeasurableSet.inter ?_ ?_
   · exact (isClosed_le continuous_const (continuous_apply i)).measurableSet
   · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet
@@ -87,6 +88,7 @@ theorem measurableSet_coord_overlapHalfOpenStrip {d : ℕ}
 theorem measurableSet_coord_overlapOpenStrip {d : ℕ}
     (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a < x i ∧ x i < b} := by
+  change MeasurableSet ({x : Vec d | a < x i} ∩ {x : Vec d | x i < b})
   refine MeasurableSet.inter ?_ ?_
   · exact (isOpen_lt continuous_const (continuous_apply i)).measurableSet
   · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet
@@ -645,7 +647,7 @@ theorem overlapCubeMeasure_apply_univ_eq {d : ℕ} (S : TriadicCube d) :
 
 @[simp] theorem normalizedOverlapCubeMeasure_apply_univ {d : ℕ} (S : TriadicCube d) :
     normalizedOverlapCubeMeasure S Set.univ = 1 := by
-  rw [normalizedOverlapCubeMeasure, MeasureTheory.Measure.smul_apply,
+  rw [normalizedOverlapCubeMeasure, smul_apply,
     overlapCubeMeasure_apply_univ_eq S]
   rw [ENNReal.ofReal_inv_of_pos (overlapCubeVolume_pos S)]
   have hvol : ENNReal.ofReal (overlapCubeVolume S) ≠ 0 :=

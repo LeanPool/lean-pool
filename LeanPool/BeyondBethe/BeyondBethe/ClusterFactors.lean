@@ -55,7 +55,7 @@ theorem injectionPolynomial_fin_one
     {n : ℕ} (B : Fin 1 → Fin n → ℝ) :
     injectionPolynomial B = positiveLinearPolynomial (B 0) := by
   rw [injectionPolynomial, positiveLinearPolynomial]
-  let e := Function.Embedding.oneEmbeddingEquiv (one := Fin 1) (α := Fin n)
+  let e := Equiv.embeddingUnique (α := Fin 1) (β := Fin n)
   calc
     (∑ f : Fin 1 ↪ Fin n,
         monomial (∑ k, Finsupp.single (f k) 1)
@@ -64,7 +64,7 @@ theorem injectionPolynomial_fin_one
           monomial (Finsupp.single (e f) 1) (B 0 (e f)) := by
             apply Finset.sum_congr rfl
             intro f _
-            simp [e, Function.Embedding.oneEmbeddingEquiv]
+            simp [e, Equiv.embeddingUnique]
     _ = ∑ j : Fin n, monomial (Finsupp.single j 1) (B 0 j) :=
       Equiv.sum_comp e
         (fun j ↦ monomial (Finsupp.single j 1) (B 0 j))

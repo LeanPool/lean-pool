@@ -170,7 +170,7 @@ theorem exists_integrable_exp_norm {ν : ProbabilityMeasure V} (hν : BorelLogCo
         exact mul_le_mul_of_nonneg_left hlt.le ht₀.le
       _ = f n v := by simp [hf_def, Set.indicator_of_mem hmem]
       _ ≤ ∑' k, f k v :=
-        ENNReal.le_tsum (f := fun k : ℕ ↦ f k v) n
+        le_tsum (fun k : ℕ ↦ f k v) n
   -- the series
   have hcb : ∀ k, c k * b k = (3 : ℝ) ^ ((3 : ℝ) / 4) * ((3 : ℝ) ^ (-(1 / 4 : ℝ))) ^ k := by
     intro k
@@ -202,7 +202,7 @@ theorem exists_integrable_exp_norm {ν : ProbabilityMeasure V} (hν : BorelLogCo
         congr 1; ext k;
         exact lintegral_indicator_const (hA k) _
       _ ≤ ∑' k, ENNReal.ofReal (c k) * ENNReal.ofReal (b k) :=
-        ENNReal.tsum_le_tsum fun k ↦ mul_le_mul' le_rfl (tail k)
+        tsum_le_tsum fun k ↦ mul_le_mul' le_rfl (tail k)
       _ = ∑' k, ENNReal.ofReal (c k * b k) := by
         congr 1; ext k;
         rw [ENNReal.ofReal_mul (hc_pos k).le]
@@ -300,7 +300,7 @@ theorem integral_exp_norm_le_of_ball {ν : ProbabilityMeasure V} (hν : KLS.Bore
         exact mul_le_mul_of_nonneg_left hlt.le ht₀.le
       _ = f n v := by simp [hf_def, Set.indicator_of_mem hmem]
       _ ≤ ∑' k, f k v :=
-        ENNReal.le_tsum (f := fun k : ℕ ↦ f k v) n
+        le_tsum (fun k : ℕ ↦ f k v) n
   -- the series
   have hcb : ∀ k, c k * b k = (3 : ℝ) ^ ((3 : ℝ) / 4) * ((3 : ℝ) ^ (-(1 / 4 : ℝ))) ^ k := by
     intro k
@@ -334,7 +334,7 @@ theorem integral_exp_norm_le_of_ball {ν : ProbabilityMeasure V} (hν : KLS.Bore
         congr 1; ext k;
         exact lintegral_indicator_const (hA k) _
       _ ≤ ∑' k, ENNReal.ofReal (c k) * ENNReal.ofReal (b k) :=
-        ENNReal.tsum_le_tsum fun k ↦ mul_le_mul' le_rfl (tail k)
+        tsum_le_tsum fun k ↦ mul_le_mul' le_rfl (tail k)
       _ = ∑' k, ENNReal.ofReal (c k * b k) := by
         congr 1; ext k;
         rw [ENNReal.ofReal_mul (hc_pos k).le]

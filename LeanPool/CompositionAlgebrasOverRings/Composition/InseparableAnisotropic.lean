@@ -82,7 +82,7 @@ abbrev InsepBase : Type := RatFunc (ZMod 2)
 noncomputable abbrev insepPoly : InsepBase[X] := X ^ 2 - C RatFunc.X
 
 theorem irreducible_insepPoly : Irreducible insepPoly :=
-  X_pow_sub_C_irreducible_of_prime Nat.prime_two fun b ↦ by
+  irreducible_X_pow_sub_C_of_prime Nat.prime_two fun b ↦ by
     rw [pow_two]; exact RatFunc.sq_ne_X b
 
 noncomputable instance : Fact (Irreducible insepPoly) := ⟨irreducible_insepPoly⟩
@@ -96,7 +96,7 @@ theorem insepPoly_ne_zero : insepPoly ≠ 0 := irreducible_insepPoly.ne_zero
 theorem finrank_insepSqrt : Module.finrank InsepBase insepSqrt = 2 := by
   rw [(AdjoinRoot.powerBasis insepPoly_ne_zero).finrank,
     AdjoinRoot.powerBasis_dim insepPoly_ne_zero]
-  exact natDegree_X_pow_sub_C
+  exact natDegree_X_pow_sub_C RatFunc.X
 
 noncomputable instance : Module.Finite InsepBase insepSqrt :=
   (AdjoinRoot.powerBasis insepPoly_ne_zero).finite

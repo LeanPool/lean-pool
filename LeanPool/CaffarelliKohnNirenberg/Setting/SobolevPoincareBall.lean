@@ -475,7 +475,7 @@ theorem seeleyLocalizedSobolevBound (v : Vec 3 → ℝ) (c : ℝ)
       exact (seeleyCutoffExtension_eq_on_unitBall (v := fun y => v y - c) hx).symm
     _ ≤ _ := by
       convert hsob using 1
-      all_goals norm_num
+      norm_num
 
 /-- Finite coefficient in the L⁶ Poincare–Sobolev estimate on a Euclidean ball. -/
 noncomputable def sobolevPoincareL6Constant : ℝ≥0∞ :=
@@ -683,7 +683,7 @@ theorem sobolevPoincare_L6_ball
       hr hgradv 2
     rw [hcomp]
     norm_num
-    rw [Real.enorm_eq_ofReal hr.le]
+    rw [Real.eNorm_eq_ofReal hr.le]
   have hscale :
       ENNReal.ofReal r * ENNReal.ofReal (r⁻¹ ^ 3) ^ (1 / 2 : ℝ) =
         ENNReal.ofReal (r⁻¹ ^ 3) ^ (1 / 6 : ℝ) := by

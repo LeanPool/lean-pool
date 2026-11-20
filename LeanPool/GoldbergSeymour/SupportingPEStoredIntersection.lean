@@ -431,7 +431,7 @@ private theorem helper_residual_transport_478.{u_1, u_2} :
   intro V E _ _ _ G k rounds p e0 input series q u hu indices hincreasing henumerates deltaLast
       hdeltaLast hlocal hgap gammaLast hgammaLast a b
   induction hdist : b.val - a.val using Nat.strong_induction_on generalizing a b with
-  | h n ih =>
+  | ind n ih =>
     intro ga da hab hstrict hga hda hleft hright hbLast
     by_cases heq : a.val = b.val
     · have hfalse : a.val < a.val := by omega

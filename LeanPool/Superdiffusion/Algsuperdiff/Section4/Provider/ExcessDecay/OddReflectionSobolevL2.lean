@@ -304,7 +304,7 @@ theorem setLIntegral_comp_windowFold_le (x : Vec d) {m k : ℤ} (hkm : k < m)
       rw [MeasureTheory.ae_iff]
       simpa [hN] using volume_foldInterface_eq_zero x m k
     filter_upwards [hNc] with y hy
-    exact propext ⟨fun h => ⟨h, hy⟩, fun h => h.1⟩
+    exact ⟨fun h => ⟨h, hy⟩, fun h => h.1⟩
   have hstep0 : ∫⁻ y in A, g (windowFold x m k y) =
       ∫⁻ y in A \ N, g (windowFold x m k y) := setLIntegral_congr hae
   -- (ii) the cells cover
@@ -345,7 +345,7 @@ theorem setLIntegral_comp_windowFold_le (x : Vec d) {m k : ℤ} (hkm : k < m)
     _ ≤ ∑' S : Finset (Fin d), ∫⁻ y in B S, g (windowFold x m k y) :=
         lintegral_iUnion_le _ _
     _ ≤ ∑' _S : Finset (Fin d), ∫⁻ y in V, g y := by
-        refine ENNReal.tsum_le_tsum fun S => ?_
+        refine tsum_le_tsum fun S => ?_
         have hcongr : ∫⁻ y in B S, g (windowFold x m k y) =
             ∫⁻ y in B S, g (cellMap x m k S y) := by
           refine setLIntegral_congr_fun (hBmeas S) fun y hy => ?_
@@ -395,7 +395,7 @@ private theorem quasiMeasurePreserving_windowFold (x : Vec d) {m k : ℤ} (hkm :
       (volume.restrict (reflectedWindow x m k))
       (volume.restrict (truncatedWindow x m k)) := by
   have hmeas : Measurable (windowFold x m k) := (continuous_windowFold x m k).measurable
-  refine ⟨hmeas, Measure.AbsolutelyContinuous.mk ?_⟩
+  refine ⟨hmeas.aemeasurable, Measure.AbsolutelyContinuous.mk ?_⟩
   intro T hT hT0
   rw [Measure.map_apply hmeas hT]
   have h := setLIntegral_comp_windowFold_le x hkm (T.indicator 1)
@@ -425,11 +425,11 @@ theorem eLpNorm_oddExtend_le (x : Vec d) {m k : ℤ} (hkm : k < m) (f : Vec d �
       (volume.restrict (reflectedWindow x m k)) =
       (∫⁻ y in reflectedWindow x m k, ‖oddExtend x m k f y‖ₑ ^ (2 : ℝ)) ^
         ((1 : ℝ) / 2) := by
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hodd,
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hodd,
       htoReal]
   have hV : eLpNorm f 2 (volume.restrict (truncatedWindow x m k)) =
       (∫⁻ y in truncatedWindow x m k, ‖f y‖ₑ ^ (2 : ℝ)) ^ ((1 : ℝ) / 2) := by
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf,
       htoReal]
   rw [hA, hV]
   have hle := setLIntegral_enorm_rpow_oddExtend_le x hkm f (2 : ℝ)

@@ -265,7 +265,7 @@ theorem mem_largeScaleEvent_of_forall_le (M : ABKModel d) {C0 ep : ℝ} (n : ℤ
   rw [mem_largeScaleEvent_iff_tsum]
   calc (∑' L : ℕ, ENNReal.ofReal (largeScaleShellTerm M n (n + (L : ℤ)) y omega))
       ≤ ∑' L : ℕ, ENNReal.ofReal (shellThreshold M C0 ep L) :=
-        ENNReal.tsum_le_tsum fun L => ENNReal.ofReal_le_ofReal (h L)
+        tsum_le_tsum fun L => ENNReal.ofReal_le_ofReal (h L)
     _ = ENNReal.ofReal (∑' L : ℕ, shellThreshold M C0 ep L) :=
         (ENNReal.ofReal_tsum_of_nonneg
           (fun L => shellThreshold_nonneg M hC0 hep L)

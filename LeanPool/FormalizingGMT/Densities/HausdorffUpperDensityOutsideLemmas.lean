@@ -326,7 +326,7 @@ lemma vitali_cover_at_scale (s : ℝ) (_hs : 0 ≤ s)
     have h_dens_bound : ∑' x : u, ENNReal.ofReal ((2 * ρ ↑x) ^ s) ≤
         t⁻¹ * ∑' x : u, (hsOuter s) (E ∩ closedBall (↑x) (ρ ↑x)) := by
       rw [← ENNReal.tsum_mul_left]
-      exact ENNReal.tsum_le_tsum fun x =>
+      exact tsum_le_tsum fun x =>
         density_bound_inv ht ht_top (by
           have := hρ_dens ↑x (hu_sub x.2)
           simp only [hsRestrict, OuterMeasure.restrict_apply, Set.inter_comm] at this
@@ -388,7 +388,7 @@ lemma hausdorffMeasure_le_of_scale_covers {d : ℝ} (hd : 0 ≤ d)
     exact Filter.Eventually.of_forall fun k => by simpa [C] using hr₁ k
   refine (hausdorffMeasure_le_liminf_tsum d S scale hscale C hdiam hcover).trans ?_
   apply Filter.liminf_le_of_frequently_le'
-  exact Filter.Frequently.of_forall fun k => (ENNReal.tsum_le_tsum fun x => by
+  exact Filter.Frequently.of_forall fun k => (tsum_le_tsum fun x => by
     have hed : ediam (C k x) ≤ ENNReal.ofReal (2 * r k x) := by
       refine ediam_le ?_
       intro y hy z hz

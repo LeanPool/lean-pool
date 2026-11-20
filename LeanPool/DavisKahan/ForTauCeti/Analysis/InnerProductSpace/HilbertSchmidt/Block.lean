@@ -110,9 +110,9 @@ theorem norm_blockFun_le (f : lp (fun _ : ι => E) 2) :
     gcongr
     exact ContinuousLinearMap.hilbertSchmidtEnergy_comp_left_le _ _ b
   have hPe : ‖P‖ₑ = ENNReal.ofReal ‖P‖ := by
-    rw [enorm_eq_nnnorm, ← ENNReal.ofReal_coe_nnreal, coe_nnnorm]
+    rw [eNorm_eq_nnNorm, ← ENNReal.ofReal_coe_nnreal, coe_nnNorm]
   have hQe : ‖Q‖ₑ = ENNReal.ofReal ‖Q‖ := by
-    rw [enorm_eq_nnnorm, ← ENNReal.ofReal_coe_nnreal, coe_nnnorm]
+    rw [eNorm_eq_nnNorm, ← ENNReal.ofReal_coe_nnreal, coe_nnNorm]
   have hrw : ‖Q‖ₑ ^ 2 * (‖P‖ₑ ^ 2 * ENNReal.ofReal (‖f‖ ^ 2))
       = ENNReal.ofReal ((‖P‖ * ‖Q‖ * ‖f‖) ^ 2) := by
     rw [hPe, hQe, ← ENNReal.ofReal_pow (norm_nonneg Q), ← ENNReal.ofReal_pow (norm_nonneg P),
@@ -161,7 +161,7 @@ omit [CompleteSpace F] in
 /-- The `ℓ²` norm squared is the Hilbert–Schmidt energy, in `ℝ≥0∞`. -/
 theorem enorm_sq_eq_energy (b : HilbertBasis ι 𝕜 F) (f : lp (fun _ : ι => E) 2) :
     ‖f‖ₑ ^ 2 = (ofLp b f).hilbertSchmidtEnergy b := by
-  rw [energy_ofLp, enorm_eq_nnnorm, ← ENNReal.ofReal_coe_nnreal, coe_nnnorm,
+  rw [energy_ofLp, eNorm_eq_nnNorm, ← ENNReal.ofReal_coe_nnreal, coe_nnNorm,
     ← ENNReal.ofReal_pow (norm_nonneg _)]
 
 /-- **Two-sided blocks split the `ℓ²` norm.**  This is the hypothesis
@@ -177,7 +177,7 @@ theorem tsum_enorm_sq_blockFun {ι' : Type*} (b : HilbertBasis ι 𝕜 F) (c : H
       = (((P p.1).comp (ofLp b f)).comp (Q p.2)).hilbertSchmidtEnergy b := by
     intro p
     rw [enorm_sq_eq_energy b, ofLp_blockFun]
-  rw [tsum_congr hterm, ENNReal.tsum_prod', ENNReal.tsum_comm, enorm_sq_eq_energy b f]
+  rw [tsum_congr hterm, tsum_prod', tsum_comm, enorm_sq_eq_energy b f]
   exact tsum_tsum_energy_blocks b c (ofLp b f) P Q hP hQ
 
 

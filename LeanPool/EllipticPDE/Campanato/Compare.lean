@@ -92,11 +92,13 @@ theorem sq_ballAverage_sub_le {Ω : Set (EuclideanSpace ℝ (Fin d))}
   have hAmono : ∫ w in Metric.ball z σ, (u w - A) ^ 2
       ≤ ∫ w in Metric.ball x r, (u w - A) ^ 2 :=
     setIntegral_mono_set (integrableOn_sq_sub_const hu hxr A)
-      (Filter.Eventually.of_forall fun w => sq_nonneg _) hzx.eventuallyLE
+      (Filter.Eventually.of_forall fun w => sq_nonneg _)
+      (Filter.Eventually.of_forall fun _ hw => hzx hw)
   have hBmono : ∫ w in Metric.ball z σ, (u w - B) ^ 2
       ≤ ∫ w in Metric.ball y t, (u w - B) ^ 2 :=
     setIntegral_mono_set (integrableOn_sq_sub_const hu hyt B)
-      (Filter.Eventually.of_forall fun w => sq_nonneg _) hzy.eventuallyLE
+      (Filter.Eventually.of_forall fun w => sq_nonneg _)
+      (Filter.Eventually.of_forall fun _ hw => hzy hw)
   have hAc : ∫ w in Metric.ball x r, (u w - A) ^ 2 ≤ M ^ 2 * r ^ ((d : ℝ) + 2 * α) :=
     hcamp x r hr hxr
   have hBc : ∫ w in Metric.ball y t, (u w - B) ^ 2 ≤ M ^ 2 * t ^ ((d : ℝ) + 2 * α) :=

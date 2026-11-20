@@ -150,8 +150,8 @@ theorem young_convolution_nonneg_integral_one
   have hconv_aestrong : AEStronglyMeasurable
       (convolution ρ g (ContinuousLinearMap.lsmul ℝ ℝ) volume) volume :=
     hρ_aestrong.convolution (L := ContinuousLinearMap.lsmul ℝ ℝ) hg_aestrong
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp_ne_zero hp_top hconv_aestrong]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp_ne_zero hp_top hg_aestrong]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp_ne_zero hp_top hconv_aestrong]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp_ne_zero hp_top hg_aestrong]
   apply ENNReal.rpow_le_rpow _ (by positivity : 0 ≤ 1 / p.toReal)
   have hfubini := fubini_translation_key (d := d) (fun t => ENNReal.ofReal (ρ t)) g
     p.toReal hρ_meas.ennreal_ofReal hg_meas
@@ -163,7 +163,7 @@ theorem young_convolution_nonneg_integral_one
     intro x
     rw [convolution_def]
     simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul]
-    rw [Real.enorm_eq_ofReal_abs]
+    rw [Real.eNorm_eq_ofReal_abs]
     have heq_int : ∫ t, ρ t * g (x - t) = ∫ t, g (x - t) ∂μ := by
       symm
       exact integral_withDensity_ofReal_eq_integral_mul hρ_nonneg hρ_meas.aemeasurable
@@ -250,7 +250,7 @@ theorem young_convolution_nonneg_integral_one
     _ = ∫⁻ x, ‖g x‖ₑ ^ p.toReal ∂volume := by
       congr 1
       ext x
-      rw [Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs]
 
 theorem young_convolution_nonneg_integral_one_of_aemeasurable
     {d : ℕ} {ρ g : Vec d → ℝ} {p : ENNReal} (hp : 1 ≤ p) (hp_top : p ≠ ∞)

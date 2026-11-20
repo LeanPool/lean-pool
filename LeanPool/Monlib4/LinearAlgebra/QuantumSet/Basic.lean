@@ -690,7 +690,7 @@ theorem rankOne_trace {𝕜 A : Type*} [RCLike 𝕜] [NormedAddCommGroup A]
 lemma _root_.LinearMap.apply_eq_id {R M : Type*} [Semiring R] [AddCommMonoid M]
     [Module R M] {f : M →ₗ[R] M} :
     (∀ x, f x = x) ↔ f = 1 := by
-  simp_rw [LinearMap.ext_iff, Module.End.one_apply]
+  simp_rw [LinearMap.ext_iff, one_apply_eq_self]
 
 theorem _root_.QuantumSet.starAlgEquiv_is_isometry_tfae [QuantumSet A] [QuantumSet B]
     (f : A ≃⋆ₐ[ℂ] B) :
@@ -707,7 +707,7 @@ theorem _root_.QuantumSet.starAlgEquiv_is_isometry_tfae [QuantumSet A] [QuantumS
           ⟪f x, f y⟫_ℂ - ⟪x, y⟫_ℂ =
             ⟪(LinearMap.adjoint f.toLinearMap ∘ₗ f.toLinearMap - 1) x, y⟫_ℂ := by
       intro x y
-      simp only [LinearMap.sub_apply, Module.End.one_apply, inner_sub_left,
+      simp only [LinearMap.sub_apply, one_apply_eq_self, inner_sub_left,
         LinearMap.comp_apply, LinearMap.adjoint_inner_left, StarAlgEquiv.toLinearMap_apply]
     simp_rw [this, inner_map_self_eq_zero, sub_eq_zero, StarAlgEquiv.comp_eq_iff,
       LinearMap.one_comp]

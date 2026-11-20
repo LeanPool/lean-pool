@@ -104,7 +104,7 @@ private theorem shifted_geometric_weight_sum_le (γ : ℝ)
     intro j _
     congr 1
     push_cast
-    try ring
+    ring
   rw [hset, heq]
   exact profile_geometric_weight_sum_le γ hγ (m + 1) (m + (h : ℤ) + 1)
 
@@ -261,7 +261,7 @@ theorem new_fluctuation_sum_le (d : ℕ) (hd : 2 ≤ d) (γ : ℝ)
       · intro a _
         congr 2
         push_cast
-        try ring
+        ring
     rw [hreindex]
     have hie1 : ∀ i ∈ Finset.Icc (m + 1 - (h : ℤ)) m,
         (1 : ℝ) ≤ Real.exp ((bigQ d γ : ℝ) * detIncrement P q i m) := by

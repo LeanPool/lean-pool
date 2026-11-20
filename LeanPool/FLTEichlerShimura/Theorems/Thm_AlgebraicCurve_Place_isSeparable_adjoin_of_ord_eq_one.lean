@@ -17,6 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+
+public import Mathlib.FieldTheory.Perfect
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import Mathlib.FieldTheory.Relrank
@@ -195,7 +199,7 @@ private theorem pDigits_linearIndependent {t : M} (htp : ∀ a : M, a ^ p ≠ t)
     simpa only [frobenius_def] using hcp'
   have hirr : Irreducible (X ^ p - C (⟨t ^ p, pow_mem_frobeniusSubfield p t⟩ :
       frobeniusSubfield M p)) :=
-    X_pow_sub_C_irreducible_of_prime hp.out htp'
+    irreducible_X_pow_sub_C_of_prime hp.out htp'
   have hroot : (aeval (R := ↥(frobeniusSubfield M p)) t)
       (X ^ p - C (⟨t ^ p, pow_mem_frobeniusSubfield p t⟩ : frobeniusSubfield M p)) = 0 := by
     simp only [map_sub, map_pow, aeval_X, aeval_C]
@@ -337,7 +341,7 @@ private theorem finrank_frobeniusSubfield_adjoin_transcendental [PerfectField K]
         Polynomial.natDegree_le_of_dvd (minpoly.dvd _ _ (by
           simp only [map_sub, map_pow, aeval_X, aeval_C]; exact sub_eq_zero.mpr rfl))
           (monic_X_pow_sub_C _ hp.out.ne_zero).ne_zero
-    _ = p := natDegree_X_pow_sub_C
+    _ = p := natDegree_X_pow_sub_C tp
 
 end AdjoinIndex
 

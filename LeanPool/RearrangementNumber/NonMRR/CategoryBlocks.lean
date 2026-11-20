@@ -215,7 +215,7 @@ theorem isMeagre_iff_eventually_misses_blocks {M : Set (ℕ → Bool)} :
   constructor
   · exact meagre_subset_eventually_misses_blocks
   · rintro ⟨g, a, _, h⟩
-    exact (isMeagre_eventually_misses_blocks g a).mono h
+    exact (isMeagre_eventually_misses_blocks g a).mono (fun x hx => h x hx)
 
 /-- Blocks fitting between consecutive points of a strictly increasing
 sequence can be pasted into one element of Cantor space. -/

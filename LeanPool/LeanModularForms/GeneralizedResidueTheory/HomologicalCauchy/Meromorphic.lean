@@ -181,7 +181,7 @@ private theorem diff_sub_principalParts_differentiableOn (S : Finset ℂ) (f : �
   intro z hz
   exact (hf_diff z hz).sub (DifferentiableWithinAt.fun_sum fun s hs =>
     ((GeneralizedResidueTheory.meromorphicPrincipalPart_differentiableOn f s
-      (hf_mero s hs)).mono (fun w hw =>
+      (hf_mero s hs)).mono (s := U \ ↑S) (fun w hw =>
         Set.mem_compl_singleton_iff.mpr (fun h =>
           hw.2 (h ▸ Finset.mem_coe.mpr hs)))) z hz)
 

@@ -1255,7 +1255,7 @@ theorem apply_update_augPhys {V : Type*} [Fintype V] (x : Fin 4 → ColumnL2 V) 
 coordinates enter). -/
 noncomputable def cellForm {κ : LocalKernelClass} {a₀ r : ℝ} (hr : 0 < r) {w : ℝ × ℝ → ℂ}
     (hw : IsAdmissibleLocalKernel κ a₀ r w) (V : Type*) [Fintype V] :
-    MultilinearMap ℂ (fun _ : Fin 4 => ColumnL2 V) ℂ where
+    MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => ColumnL2 V) ℂ where
   toFun x := localProgressionForm r w (fun l => augPhys (x l))
   map_update_add' := by
     intro inst x k a b

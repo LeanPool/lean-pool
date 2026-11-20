@@ -234,7 +234,7 @@ theorem padicValRat_binomPolyCoeff_nonneg {p : ℕ} (hp : p.Prime) {m : ℕ} (hm
     0 ≤ padicValRat p (binomPolyCoeff p m n) := by
   have : Fact p.Prime := ⟨hp⟩
   have hfac : padicValRat p (m.factorial : ℚ) = 0 := by
-    rw [padicValRat.of_nat, padicValNat.eq_zero_of_not_dvd, Nat.cast_zero]
+    rw [padicValRat.of_nat, multiplicity_eq_zero_of_not_dvd, Nat.cast_zero]
     rw [hp.dvd_factorial]
     omega
   have := neg_padicValRat_factorial_le_padicValRat_binomPolyCoeff hp m n

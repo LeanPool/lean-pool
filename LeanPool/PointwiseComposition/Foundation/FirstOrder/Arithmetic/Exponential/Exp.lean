@@ -546,7 +546,7 @@ lemma bit_one {x y : V} : Exponential x y → Exponential (2 * x + 1) (2 * y ^ 2
           _              = 2 * ext i Y' ^ 2 := by rw [ext_append_of_lt ppi ppi.sq hiisq]
   have hseqₘ' : Seqₘ (2 * x + 1) (2 * y ^ 2) X' Y' :=
     ⟨i ^ 2, sq_le_sq.mpr (le_trans hi <| by simp), ppi.sq_ne_two, ppi.sq,
-     by rw [ext_append_last, ext_append_last] <;> try simp [hxsqi, hysqi]⟩
+     by rw [ext_append_last, ext_append_last] <;> simp [hxsqi, hysqi]⟩
   exact Or.inr <| ⟨X', bX', Y', bY', hseq₀', hseqₛ', hseqₘ'⟩
 
 lemma exponential_odd {x y : V} :
@@ -743,7 +743,9 @@ protected lemma uniq {x y₁ y₂ : V} : Exponential x y₁ → Exponential x y�
   suffices ∀ x < y₂, ∀ y₁ ≤ y₂, Exponential x y₁ → Exponential x y₂ → y₁ = y₂ by
     intro x y₁ h₁ h₂ hy; exact this x h₂.lt y₁ hy h₁ h₂
   induction y₂ using ISigma0.order_induction
-  · definability
+  · have : Σ-[0].Definable (fun v : Fin 3 → V ↦ v 0 = v 2) :=
+      HierarchySymbol.Definable.equal' 0 2
+    definability
   case ind y₂ IH =>
     intro x _ y₁ h h₁ h₂
     rcases zero_or_succ x with (rfl | ⟨x, rfl⟩)

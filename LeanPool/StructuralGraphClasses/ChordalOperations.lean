@@ -44,7 +44,7 @@ theorem IsPEO.comap {ord : V → ℕ} (h : G.IsPEO ord) (f : W ↪ V) :
 
 /-- Restrict a perfect elimination order without changing surviving ranks. -/
 theorem IsPEO.induce {ord : V → ℕ} (h : G.IsPEO ord) (s : Set V) :
-    (G.induce s).IsPEO (ord ∘ Subtype.val) := h.comap (Function.Embedding.subtype s)
+    (G.induce s).IsPEO (ord ∘ Subtype.val) := h.comap (Function.Embedding.subtype (· ∈ s))
 
 /-- Relabel a perfect elimination order along an isomorphism. -/
 theorem IsPEO.mapIso {ord : V → ℕ} (h : G.IsPEO ord) (f : G ≃g H) :

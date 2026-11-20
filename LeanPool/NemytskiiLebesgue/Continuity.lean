@@ -87,11 +87,11 @@ lemma memLp_nemytskii_of_growth_of_aestronglyMeasurable
     · filter_upwards [hfuaCpq] with ω hω
       rw [Real.norm_of_nonneg (Real.rpow_nonneg (norm_nonneg (f ω (u ω))) q.toReal)]
       exact Real.rpow_le_rpow (norm_nonneg (f ω (u ω))) hω ENNReal.toReal_nonneg
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (ne_zero_of_ge_one h1q) hq hfu]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (ne_zero_of_ge_one h1q) hq hfu]
   · apply ENNReal.rpow_lt_top_of_nonneg
     · positivity
     · convert integrble.right.ne using 1
-      simp [Real.enorm_rpow_of_nonneg (norm_nonneg _) ENNReal.toReal_nonneg]
+      simp [Real.eNorm_rpow_of_nonneg (norm_nonneg _) ENNReal.toReal_nonneg]
 
 theorem IsCaratheodory.memLp_nemytskii_of_growth
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
@@ -216,8 +216,8 @@ lemma ae_summable_norm_of_tsum_eLpNorm_ne_top_of_aestronglyMeas
           (∫⁻ ω : Ω, (∑ n ∈ Finset.range N, ‖g n ω‖ₑ) ^ p.toReal ∂μ) ^ (1 / p.toReal) ≤
           ∑ n ∈ Finset.range N, eLpNorm (g n) p μ := by
         convert integral_le_step using 1
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal]
-        · simp [Real.enorm_eq_ofReal (Finset.sum_nonneg ↓↓(norm_nonneg _))]
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal]
+        · simp [Real.eNorm_eq_ofReal (Finset.sum_nonneg ↓↓(norm_nonneg _))]
           simp [ENNReal.ofReal_sum_of_nonneg ↓↓(norm_nonneg _)]
         · exact ne_of_gt (lt_of_lt_of_le zero_lt_one h1p)
         · exact hp
@@ -255,7 +255,7 @@ lemma ae_summable_norm_of_tsum_eLpNorm_ne_top_of_aestronglyMeas
           ENNReal.rpow_le_rpow (Finset.sum_le_sum_of_subset (Finset.range_mono hle))
             ENNReal.toReal_nonneg))
     · apply ENNReal.continuous_rpow_const.continuousAt.tendsto.comp
-      exact ENNReal.summable.hasSum.tendsto_sum_nat
+      exact CompleteLattice.summable.hasSum.tendsto_sum_nat
   have finite_ae : ∀ᵐ ω : Ω ∂μ, (∑' n : ℕ, ‖g n ω‖ₑ) ^ p.toReal < ⊤ :=
     have finite_integr : ∫⁻ ω : Ω, (∑' n : ℕ, ‖g n ω‖ₑ) ^ p.toReal ∂μ < ⊤ :=
       lt_of_le_of_lt finite_integral (ENNReal.rpow_lt_top_of_nonneg ENNReal.toReal_nonneg hgp)
@@ -340,13 +340,13 @@ private lemma memLp_norm_add_tsum_dist_of_eastronglyMeas_of_memLp
           right
           exact (ENNReal.toReal_pos (ne_zero_of_ge_one h1p) hp)
       convert ENNReal.continuous_rpow_const.continuousAt.tendsto.comp eLpNorm_suummm using 2
-      any_goals exact p.toReal⁻¹
+      on_goal 3 => exact p.toReal⁻¹
       · norm_num [eLpNorm, sum_meas]
         split_ifs <;> simp_all [eLpNorm']
         simp [←ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) ENNReal.toReal_nonneg,
-          Real.enorm_eq_ofReal_abs]
-      · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal]
-        · simp only [one_div, Real.norm_eq_abs, Real.enorm_eq_ofReal_abs,
+          Real.eNorm_eq_ofReal_abs]
+      · rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal]
+        · simp only [one_div, Real.norm_eq_abs, Real.eNorm_eq_ofReal_abs,
             abs_of_nonneg (tsum_nonneg (fun _ => norm_nonneg _))]
           congr! 2
           ext ω
@@ -358,7 +358,7 @@ private lemma memLp_norm_add_tsum_dist_of_eastronglyMeas_of_memLp
       le_of_tendsto
         eLpNorm_suum
         (eventually_atTop.← ⟨0, ↓↓(le_trans (by solve_by_elim) (Summable.sum_le_tsum _ ↓↓(by
-          positivity) ENNReal.summable))⟩)
+          positivity) CompleteLattice.summable))⟩)
   apply hup.norm.add
   apply eLpNorm_sum.trans_lt
   have hnorm (n : ℕ) :
@@ -385,7 +385,7 @@ theorem IsCaratheodory.nemytskii_seqContinuous_of_aestronglyMeas_of_growth
   intro s hs
   obtain ⟨s', _, hs'⟩ := Filter.Tendsto.exists_fast_subseq (huuₙ.comp hs)
   have tsum_ne_top : ∑' n : ℕ, eLpNorm (uₙ (s (s' n)) - u) p μ ≠ ⊤ := by
-    refine ne_top_of_le_ne_top ?_ (ENNReal.tsum_le_tsum hs')
+    refine ne_top_of_le_ne_top ?_ (tsum_le_tsum hs')
     rw [ENNReal.tsum_geometric]
     simp
   have ae_summable : ∀ᵐ ω : Ω ∂μ, Summable (fun n : ℕ => ‖uₙ (s (s' n)) ω - u ω‖) :=

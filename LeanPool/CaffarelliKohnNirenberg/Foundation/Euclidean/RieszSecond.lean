@@ -215,7 +215,7 @@ theorem rieszSecondCubeStar_volume_sum {F : Vec3 → ℝ} {height : ℝ}
         ∑' Q : {Q // Q ∈ D.cubes},
           ENNReal.ofReal (32 * Real.pi * Real.sqrt 3) *
             volume (dyadicCubeSet Q.1) := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro Q
       exact rieszSecondCubeStar_volume Q.1
     _ = ENNReal.ofReal (32 * Real.pi * Real.sqrt 3) *
@@ -610,7 +610,7 @@ theorem rieszSecond_hormander_sum_bound {F : Vec3 → ℝ} {height : ℝ}
         ∑' Q : {Q // Q ∈ D.cubes},
           C_H * ∫⁻ x in dyadicCubeSet Q.1,
             ENNReal.ofReal |dyadicBadPart F Q.1 x| := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro Q
       exact hH Q
     _ = C_H * (∑' Q : {Q // Q ∈ D.cubes},
@@ -689,7 +689,7 @@ theorem rieszSecond_bad_part_exterior_bound
           ∑' Q : {Q // Q ∈ D.cubes},
             ∫⁻ x in (rieszSecondCubeStar Q.1)ᶜ,
               ENNReal.ofReal |Tbad Q x| := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro Q
         have hsub : Uᶜ ⊆ (rieszSecondCubeStar Q.1)ᶜ := by
           intro x hx hxQ
@@ -698,7 +698,7 @@ theorem rieszSecond_bad_part_exterior_bound
       _ ≤ ∑' Q : {Q // Q ∈ D.cubes}, C_H *
           ∫⁻ x in dyadicCubeSet Q.1,
             ENNReal.ofReal |dyadicBadPart F Q.1 x| := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro Q
         exact hbridge Q
       _ = C_H * (∑' Q : {Q // Q ∈ D.cubes},

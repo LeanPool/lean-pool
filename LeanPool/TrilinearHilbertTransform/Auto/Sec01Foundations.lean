@@ -290,7 +290,7 @@ theorem quadratic_oscillatory_integral_bound (α β γ : ℝ) {a b A : ℝ}
     intro x _
     convert ((((hasDerivAt_id x).pow 2).const_mul α).add
       ((hasDerivAt_id x).const_mul β)).add_const γ using 1 <;> dsimp [p, q]
-    all_goals ring
+    ring
   have hq : ∀ x, HasDerivAt q (2 * α) x := by
     intro x
     simpa [q] using ((hasDerivAt_id x).const_mul (2 * α)).add_const β
@@ -438,7 +438,7 @@ theorem centeredMaximalQ_mixedNorm {Ω : Type*} [MeasurableSpace Ω] (ν : Measu
   have hg : Measurable g := hf.norm.pow_const q
   have h := feffermanStein_real ν hpr hsr hg
   have hgn (z) : ‖g z‖ₑ = ‖f z‖ₑ ^ q := by
-    rw [Real.enorm_eq_ofReal (Real.rpow_nonneg (norm_nonneg _) _),
+    rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg (norm_nonneg _) _),
       ← ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) hq0.le, ofReal_norm]
   have hMq : (fun z => centeredMaximalQ q f z ^ q) = realMixedMaximal g := by
     funext z

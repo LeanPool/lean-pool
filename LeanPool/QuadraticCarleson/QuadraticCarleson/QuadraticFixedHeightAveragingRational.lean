@@ -108,7 +108,7 @@ theorem fixedScale_signedSquare_integral_enorm_le_rational
     phase (signedSquareModulation negative s * (x - t) ^ 2) * f t‖ₑ
   have hF : Continuous F :=
     ((continuous_dyadicQuadraticConvolution_parameter j hf x).comp
-      (continuous_signedSquareModulation negative)).enorm
+      (continuous_signedSquareModulation negative)).eNorm
   have hclosed : IsClosed {s | F s ≤ rationalFixedHeightQuadraticMaximal height f x} :=
     isClosed_le hF continuous_const
   have hsub : Ioo a b ∩ range (fun q : ℚ ↦ (q : ℝ)) ⊆

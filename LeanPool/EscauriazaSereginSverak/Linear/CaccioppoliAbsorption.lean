@@ -561,7 +561,7 @@ private theorem caccioppoli_zero_extend_memLp
     exact hdata.2.2.2
   have hWnorm : MemLp (fun q => vec3EuclideanNorm (W q)) 2
       (volume : Measure (Vec3 × ℝ)) := by
-    apply hWdata.norm.of_nnnorm_le_mul (c := 2)
+    apply hWdata.norm.of_nnNorm_le_mul (c := 2)
       ((continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hWdata.aestronglyMeasurable))
     filter_upwards [] with q
     have hsqrt : Real.sqrt 3 ≤ 2 := (Real.sqrt_le_iff).2 ⟨by norm_num, by norm_num⟩
@@ -572,7 +572,7 @@ private theorem caccioppoli_zero_extend_memLp
         _ ≤ 2 * ‖W q‖ := mul_le_mul_of_nonneg_right hsqrt (norm_nonneg _)
     have hreal' : (‖vec3EuclideanNorm (W q)‖₊ : ℝ) ≤
         2 * (‖‖W q‖‖₊ : ℝ) := by
-      simpa only [coe_nnnorm, Real.norm_eq_abs,
+      simpa only [coe_nnNorm, Real.norm_eq_abs,
         abs_of_nonneg (vec3EuclideanNorm_nonneg _),
         abs_of_nonneg (norm_nonneg _)] using hreal
     exact_mod_cast hreal'
@@ -795,7 +795,7 @@ theorem caccioppoliWeightedEnergyBound
   obtain ⟨Cφ, hCφ⟩ := hφbound
   have hφboundReal (q : Vec3 × ℝ) : ‖φ q‖ ≤ Cφ := by
     have hreal : (‖φ q‖₊ : ℝ) ≤ Cφ := by exact_mod_cast hCφ q
-    simpa only [coe_nnnorm] using hreal
+    simpa only [coe_nnNorm] using hreal
   have hφmeas : AEStronglyMeasurable φ (volume : Measure (Vec3 × ℝ)) :=
     hφ.continuous.aestronglyMeasurable
   let hd (j : Fin 3) : Vec3 × ℝ → ℝ := fun q => (fderiv ℝ φ q) (basisVec j, 0)
@@ -819,7 +819,7 @@ theorem caccioppoliWeightedEnergyBound
   obtain ⟨Ct, hCt⟩ := hdtbound
   have hdtboundReal (q : Vec3 × ℝ) : ‖hdt q‖ ≤ Ct := by
     have hreal : (‖hdt q‖₊ : ℝ) ≤ Ct := by exact_mod_cast hCt q
-    simpa only [coe_nnnorm] using hreal
+    simpa only [coe_nnNorm] using hreal
   have hφGint : Integrable (fun q => φ q * G q) (volume : Measure (Vec3 × ℝ)) := by
     have hGint : Integrable G (volume : Measure (Vec3 × ℝ)) := by
       change Integrable (fun q => ∑ i : Fin 3, ∑ j : Fin 3, (D q i j) ^ 2) _
@@ -850,7 +850,7 @@ theorem caccioppoliWeightedEnergyBound
     obtain ⟨Cj, hCj⟩ := hdbound j
     have hboundReal (q : Vec3 × ℝ) : ‖hd j q‖ ≤ Cj := by
       have hreal : (‖hd j q‖₊ : ℝ) ≤ Cj := by exact_mod_cast hCj q
-      simpa only [coe_nnnorm] using hreal
+      simpa only [coe_nnNorm] using hreal
     have hweighted := hbase.bdd_mul (hdcont j).aestronglyMeasurable
       (Filter.Eventually.of_forall hboundReal)
     simpa [mul_assoc, mul_comm, mul_left_comm] using hweighted

@@ -45,7 +45,7 @@ theorem exists_tendsto_measure_of_finite {α X : Type*} [Finite X] [MeasurableSp
   have h : ∀ a, π a S = ∑ x, π a {x} * Measure.dirac x S := fun a => by
     conv_lhs => rw [← Measure.sum_smul_dirac (π a)]
     simp
-  simp only [h, Measure.sum_apply _ hS, tsum_fintype, Measure.smul_apply, smul_eq_mul]
+  simp only [h, Measure.sum_apply _ hS, tsum_fintype, smul_apply, smul_eq_mul]
   exact tendsto_finsetSum _ fun x _ =>
     ENNReal.Tendsto.mul_const (hm x) (Or.inr (measure_ne_top _ _))
 

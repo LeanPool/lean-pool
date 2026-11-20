@@ -76,8 +76,7 @@ omit [Fintype κ] in
 matrix
 `G_{ij} = Σ_{a,b,c,d} A_{ac} A_{bd} (T_i)_{ab} (T_j)_{cd} = (F (A ⊗ A) Fᵀ)_{ij}` is positive
 semidefinite. -/
-theorem posSemidef_weightedGram [Finite κ] (A : Matrix ι ι ℝ) (hA : A.PosSemidef) (T : κ →
-  Matrix ι ι ℝ) :
+theorem posSemidef_weightedGram (A : Matrix ι ι ℝ) (hA : A.PosSemidef) (T : κ → Matrix ι ι ℝ) :
     (Matrix.of fun i j => ∑ a, ∑ b, ∑ c, ∑ d, A a c * A b d * T i a b * T j c d).PosSemidef := by
   let F : Matrix κ (ι × ι) ℝ := fun i ab => T i ab.1 ab.2
   have h := (hA.kronecker hA).mul_mul_conjTranspose_same F
@@ -430,7 +429,7 @@ theorem trace_mul_nonneg {ι : Type*} [Fintype ι]
 
 /-- The matrix indexed by derivative directions with entries `tr(B Tᵤ B Tᵥ)`
 is a genuine PSD weighted Gram matrix. -/
-theorem traceGram_posSemidef {ι κ : Type*} [Fintype ι] [Finite κ]
+theorem traceGram_posSemidef {ι κ : Type*} [Fintype ι]
     (B : Matrix ι ι ℝ) (hB : B.PosSemidef)
     (T : κ → Matrix ι ι ℝ) (hT : ∀ a, (T a).IsSymm) :
     (Matrix.of fun a b => (B * T a * B * T b).trace).PosSemidef := by

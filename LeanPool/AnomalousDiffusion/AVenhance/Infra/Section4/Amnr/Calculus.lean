@@ -216,7 +216,7 @@ theorem amnrL2_mul_le {U : Set AmnrSpace} (hU : IsOpen U)
       abs_of_nonneg hC]
     exact mul_le_mul_of_nonneg_right (hbound z hz) (abs_nonneg _)
   have hh := eLpNorm_mono_ae hm hnorm (p := 2)
-  rw [eLpNorm_const_smul, Real.enorm_of_nonneg hC] at hh
+  rw [eLpNorm_const_smul, Real.eNorm_of_nonneg hC] at hh
   exact hh
 
 /-- Quantitative mixed Leibniz rule. The two factors consume complementary

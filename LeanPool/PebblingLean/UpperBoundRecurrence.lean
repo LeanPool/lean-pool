@@ -57,7 +57,7 @@ theorem highDemandDistribution_of_recursive_step
     ∀ n : ℕ, HasHighDemandDistribution n 1 (costBound n) (minPile n) := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       by_cases hn : n < n0
       · exact hbase n hn
       · exact hstep n (Nat.le_of_not_gt hn) ih

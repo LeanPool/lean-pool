@@ -105,7 +105,7 @@ theorem eval_weightedCoefficientSeries_eq_of_hasFPowerSeriesOnBall {n : ℕ}
     have hpair : (‖(z, w)‖₊ : ℝ≥0∞) ≤
       ‖(z, (0 : ℂ))‖₊ + ‖((0 : Base n), w)‖₊ := by
       rw [show (z, w) = (z, (0 : ℂ)) + ((0 : Base n), w) by ext <;> simp]
-      exact_mod_cast nnnorm_add_le (z, (0 : ℂ)) ((0 : Base n), w)
+      exact_mod_cast nnNorm_add_le (z, (0 : ℂ)) ((0 : Base n), w)
     exact hpair.trans_lt hzw
   simpa only [zero_add] using hp.sum hball
 

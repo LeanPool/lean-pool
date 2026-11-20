@@ -759,7 +759,7 @@ lemma compress_VU_eq_blockReplace {N : ℕ} {U V : Cube N} (hd : Disjoint U V) (
     UV.compress V U S = (if U ⊆ S ∧ Disjoint V S then blockReplace U V S else S) := by
   unfold UV.compress blockReplace
   by_cases h : U ⊆ S ∧ Disjoint V S
-  · rw [ite_eq_left h, ite_eq_left ⟨h.2, h.1⟩, Finset.sup_eq_union, Finset.union_sdiff_distrib]
+  · rw [ite_eq_left h, ite_eq_left ⟨h.2, h.1⟩, Finset.union_sdiff_distrib]
     have hVU : V \ U = V := (Finset.sdiff_eq_self_iff_disjoint).2 hd.symm
     rw [hVU]
   · rw [ite_eq_right h, ite_eq_right (by tauto)]

@@ -69,7 +69,7 @@ open scoped BigOperators
 namespace GinibrePoincare
 noncomputable section
 
-/-- The inverse square root `N⁻¹ᐟ²` of the number operator applied to the centered
+/-- The inverse square root `N^(-1/2)` of the number operator applied to the centered
 Vandermonde transform of `u` with its antiholomorphic-degree-zero Hermite mode removed. -/
 def ginibreDifferentialDeficitVector (n : ℕ) (hn : 0 < n) (u : GinibreFullValueL2 n) :
     Lp ℂ 2 (complexGaussianMeasure n) :=
@@ -77,14 +77,14 @@ def ginibreDifferentialDeficitVector (n : ℕ) (hn : 0 < n) (u : GinibreFullValu
     (ginibreFullCenteredTransform n hn u -
       gaussianHermiteMode hn 0 (ginibreFullCenteredTransform n hn u))
 
-/-- The first inverse square root synthesis of the transformed weak `∂̄_j` derivative of the
+/-- The first inverse square root synthesis of the transformed weak `dbar_j` derivative of the
 gradient field `g`. -/
 def ginibreDifferentialFirstDerivative (n : ℕ) (hn : 0 < n)
     (g : GinibreFullGradientL2 n) (j : Fin n) : Lp ℂ 2 (complexGaussianMeasure n) :=
   gaussianInverseSquareRootFirstSynthesis hn (ginibreFullTransformedDbar n hn j g) j
 
 /-- The second inverse square root synthesis, in coordinates `j` and `k`, of the transformed
-weak `∂̄_j` derivative of the gradient field `g`. -/
+weak `dbar_j` derivative of the gradient field `g`. -/
 def ginibreDifferentialSecondDerivative (n : ℕ) (hn : 0 < n)
     (g : GinibreFullGradientL2 n) (j k : Fin n) : Lp ℂ 2 (complexGaussianMeasure n) :=
   gaussianInverseSquareRootSecondSynthesis hn (ginibreFullTransformedDbar n hn j g) j k

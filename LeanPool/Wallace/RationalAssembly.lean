@@ -47,7 +47,7 @@ def localCharacter (x : {x : ContinuumRationalGroup // x ≠ 0}) :
 
 theorem localCharacter_self_ne_zero
     (x : {x : ContinuumRationalGroup // x ≠ 0}) :
-    localCharacter x (Finsupp.subtypeDomain (closure N hN M x.1) x.1) ≠ 0 :=
+    localCharacter x (Finsupp.subtypeDomain (· ∈ closure N hN M x.1) x.1) ≠ 0 :=
   (localRunCertificate x).self_ne_zero
 
 theorem localCharacter_admissible

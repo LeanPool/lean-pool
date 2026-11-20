@@ -303,7 +303,7 @@ lemma multipliable_compl_of_multipliable (b : ℕ) (hb : 2 ≤ b) (T : Finset �
   have h_full_sum := sum_localDensityFactor_deviation_summable b hb T hT
   have h_compl_sum : Summable ((fun p : Nat.Primes => |localDensityFactor (p : ℕ) b T -
       1|) ∘ Subtype.val (p := (· ∉ S))) :=
-    h_full_sum.subtype {p | p ∉ S}
+    h_full_sum.subtype (· ∉ S)
   exact multipliable_of_deviation_summable_subtype b hb T hT {p | p ∉ S} h_compl_sum
 
 lemma tprod_compl_le_one (b : ℕ) (_hb : 2 ≤ b) (T : Finset ℕ) (_hT : T ⊆ Finset.range b)

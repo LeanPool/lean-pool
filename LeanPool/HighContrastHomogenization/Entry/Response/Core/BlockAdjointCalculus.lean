@@ -108,11 +108,10 @@ theorem response_by_centered_energies_aux_adjoint_pos {A : BlockMat d}
     exact Prod.ext h1 h2
   have h := hp (X.1, -X.2) hX'
   convert h using 1
-  all_goals
-    simp [blockVecDot, blockMatVecMul, matVecMul_neg, neg_matVecMul,
-      vecDot_neg_left]
-  all_goals simp [vecDot_add_right, vecDot_neg_right]
-  all_goals ring
+  simp [blockVecDot, blockMatVecMul, matVecMul_neg, neg_matVecMul,
+    vecDot_neg_left]
+  simp [vecDot_add_right, vecDot_neg_right]
+  ring
 
 /-- The block response mean `blockResponseMean A (-p, q')`, expanded through the Schur
 cancellation identities `schur_cancel` into the skew and Schur-complement pieces of `A`. -/

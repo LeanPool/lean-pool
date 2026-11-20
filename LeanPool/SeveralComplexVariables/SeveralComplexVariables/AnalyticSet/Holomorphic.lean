@@ -61,7 +61,7 @@ theorem isAnalyticSet_zeroSet_pi_of_differentiableOn [FiniteDimensional ℂ E]
 theorem IsAnalyticSet.image_biholomorphic [FiniteDimensional ℂ E] [FiniteDimensional ℂ F]
     {e : OpenPartialHomeomorph E F} (he : IsBiholomorphic e)
     {A : Set E} (hA : IsAnalyticSet e.source A) : IsAnalyticSet e.target (e '' A) := by
-  let := FiniteDimensional.complete ℂ E
+  let := FiniteDimensional.completeSpace ℂ E
   have h := hA.preimage e.open_target
     (he.2.analyticOnNhd_of_finiteDimensional e.open_target) e.symm.mapsTo
   convert h using 1

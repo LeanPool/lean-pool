@@ -40,7 +40,7 @@ theorem lintegral_enorm_sq_le_of_weak_l2_bounded
       norm_num
   have hsource (k : ℕ) :
       eLpNorm (f k) 2 μ ≤ B ^ (1 / 2 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) (hf k).aestronglyMeasurable]
     simpa only [ENNReal.toReal_ofNat] using
       ENNReal.rpow_le_rpow (hbound k) (by norm_num : (0 : ℝ) ≤ 1 / 2)

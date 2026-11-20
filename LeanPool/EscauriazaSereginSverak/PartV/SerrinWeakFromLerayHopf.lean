@@ -61,9 +61,9 @@ theorem serrin_integral_mul_tendsto_filter {ι : Type} {l : Filter ι}
           (∫⁻ x : Vec3, ‖f x * (gseq n x - g x)‖ₑ).toReal := by
         have h := norm_integral_le_lintegral_norm (μ := volume)
           (fun x : Vec3 => f x * (gseq n x - g x))
-        simpa only [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs] using h
+        simpa only [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs] using h
       _ = (eLpNorm (f * fun x => gseq n x - g x) 1 volume).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm (hf.aestronglyMeasurable.mul
+        rw [eLpNorm_one_eq_lintegral_eNorm (hf.aestronglyMeasurable.mul
           hdiff.aestronglyMeasurable)]
         simp only [Pi.mul_apply]
       _ ≤ (eLpNorm f 2 volume * eLpNorm (fun x => gseq n x - g x) 2 volume).toReal :=

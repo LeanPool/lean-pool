@@ -4370,7 +4370,7 @@ theorem leafUpdate_best (G : Graph) (path : Array Nat) (invPath : Array UInt64)
   all_goals (try exact Or.inr rfl)
   all_goals (try exact Or.inl rfl)
   all_goals (try exact Or.inl (addAuto_best _ _))
-  all_goals (try exact Or.inl ((addAuto_best _ _).trans (addAuto_best _ _)))
+  exact Or.inl ((addAuto_best _ _).trans (addAuto_best _ _))
 
 /-- Same for the first leaf, which is only ever set once. -/
 theorem leafUpdate_first (G : Graph) (path : Array Nat) (invPath : Array UInt64)
@@ -4385,7 +4385,7 @@ theorem leafUpdate_first (G : Graph) (path : Array Nat) (invPath : Array UInt64)
   all_goals (try exact Or.inl rfl)
   all_goals (try exact Or.inl (addAuto_first _ _))
   all_goals (try exact Or.inl ((addAuto_first _ _).trans (addAuto_first _ _)))
-  all_goals (try exact Or.inr (addAuto_first _ _))
+  exact Or.inr (addAuto_first _ _)
 
 /-! ## The search only ever stores honest leaves
 

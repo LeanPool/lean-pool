@@ -337,7 +337,7 @@ theorem associator_word (a b : α) (p q r : NonAssocWord) :
     associator (p.eval a b) (q.eval a b) (r.eval a b) = 0 := by
   generalize hn : p.degree + q.degree + r.degree = n
   induction n using Nat.strong_induction_on generalizing p q r with
-  | h n ih =>
+  | ind n ih =>
       have lower : ∀ p' q' r' : NonAssocWord,
           p'.degree + q'.degree + r'.degree < n →
             associator (p'.eval a b) (q'.eval a b) (r'.eval a b) = 0 := by

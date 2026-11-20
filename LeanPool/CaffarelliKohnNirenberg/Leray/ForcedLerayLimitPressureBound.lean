@@ -103,7 +103,7 @@ theorem forcedLerayLimit_lintegral_cube_le {α : Type*} [MeasurableSpace α] {μ
       (∫⁻ x, ‖g x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / 4 : ℝ) *
         (∫⁻ x, ‖g x‖ₑ ^ (10 / 3 : ℝ) ∂μ) ^ (3 / 4 : ℝ) := by
   have hpq : (4 : ℝ).HolderConjugate (4 / 3) := ⟨by norm_num, by norm_num, by norm_num⟩
-  have hm : AEMeasurable (fun x => ‖g x‖ₑ) μ := hg.enorm
+  have hm : AEMeasurable (fun x => ‖g x‖ₑ) μ := hg.eNorm
   have h := ENNReal.lintegral_mul_le_Lp_mul_Lq μ hpq (hm.pow_const (1 / 2 : ℝ))
     (hm.pow_const (5 / 2 : ℝ))
   have hprod : ∀ x, ((fun x => ‖g x‖ₑ ^ (1 / 2 : ℝ)) * fun x => ‖g x‖ₑ ^ (5 / 2 : ℝ)) x =
@@ -195,7 +195,7 @@ theorem forcedLerayLimit_uniform_slab_bounds
           ENNReal.ofReal E := by
         intro t ht
         have hmem := (hSlice t ht.1.le).eval j
-        rw [lintegral_rpow_enorm_eq_rpow_eLpNorm' (by norm_num : (0 : ℝ) < 2),
+        rw [lintegral_rpow_eNorm_eq_rpow_eLpNorm' (by norm_num : (0 : ℝ) < 2),
           ← ENNReal.toReal_ofNat 2,
           ← eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hmem.aestronglyMeasurable,
           vorticity_eLpNorm_two_eq_sqrt hmem, ENNReal.toReal_ofNat,
@@ -207,7 +207,7 @@ theorem forcedLerayLimit_uniform_slab_bounds
         exact Finset.single_le_sum (f := fun j : Fin 3 => ∫ x : Vec3, U (x, t) j ^ 2)
           (fun j _ => integral_nonneg fun x => sq_nonneg _) (Finset.mem_univ j)
       have hmeas : Measurable fun z : Vec3 × ℝ => ‖U z j‖ₑ ^ (2 : ℝ) :=
-        hjm.enorm.pow_const _
+        hjm.eNorm.pow_const _
       calc ∫⁻ z, ‖U z j‖ₑ ^ (2 : ℝ) ∂μ
           = ∫⁻ t in Ioo (0 : ℝ) T, ∫⁻ x : Vec3, ‖U (x, t) j‖ₑ ^ (2 : ℝ) :=
             (lintegral_slab_eq_prod _ (Ioo 0 T)).trans
@@ -219,13 +219,13 @@ theorem forcedLerayLimit_uniform_slab_bounds
     have h103 : ∫⁻ z, ‖U z j‖ₑ ^ (10 / 3 : ℝ) ∂μ ≤ B := by
       have hb := hU103 j
       rw [eLpNorm_eq_eLpNorm' (by norm_num) ENNReal.ofReal_ne_top hjm.aestronglyMeasurable,
-        ENNReal.toReal_ofReal (by norm_num), eLpNorm'_eq_lintegral_enorm,
+        ENNReal.toReal_ofReal (by norm_num), eLpNorm'_eq_lintegral_eNorm,
         ← ENNReal.rpow_mul] at hb
       simpa using hb
     have h3 := forcedLerayLimit_lintegral_cube_le (μ := μ) hjm.aemeasurable
     rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hjm.aestronglyMeasurable,
       ENNReal.toReal_ofNat,
-      eLpNorm'_eq_lintegral_enorm]
+      eLpNorm'_eq_lintegral_eNorm]
     refine ENNReal.rpow_le_rpow (h3.trans ?_) (by norm_num)
     gcongr
   let J := regUniformMollifiedVelocity ρ ε hε U

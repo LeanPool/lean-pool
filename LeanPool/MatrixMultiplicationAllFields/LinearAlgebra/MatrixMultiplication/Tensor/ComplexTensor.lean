@@ -319,8 +319,8 @@ theorem BorderRankAtMost.product {U V W : Type*}
     {T : Tensor ℂ X Y Z} {S : Tensor ℂ U V W} {r s : ℕ}
     (hT : BorderRankAtMost T r) (hS : BorderRankAtMost S s) :
     BorderRankAtMost (Tensor.product T S) (r * s) := by
-  have hexact : ∀ T' : Tensor ℂ X Y Z, RankAtMost T' r →
-      BorderRankAtMost (Tensor.product T' S) (r * s) := by
+  have hexact : {T' : Tensor ℂ X Y Z | RankAtMost T' r} ⊆
+      {T' | BorderRankAtMost (Tensor.product T' S) (r * s)} := by
     intro T' hT'
     have hclosed : IsClosed {S' : Tensor ℂ U V W |
         BorderRankAtMost (Tensor.product T' S') (r * s)} :=

@@ -6898,7 +6898,7 @@ def rankTwoLinearAction (A : Type) [CommRing A] :
     apply Multiplicative.toAdd.injective
     change Matrix.SpecialLinearGroup.toLin' 1 (Multiplicative.toAdd v) =
       Multiplicative.toAdd v
-    simp only [map_one, LinearEquiv.coe_one, id_eq]
+    simp only [map_one, FunLike.coe_one_eq_id, id_eq]
   map_mul' g h := by
     apply MulEquiv.ext
     intro v
@@ -7546,7 +7546,7 @@ private theorem posSemidef_of_tendsto_entries
     (hA : ∀ n, (A n).PosSemidef)
     (hlim : ∀ i j, Tendsto (fun n => A n i j) l (𝓝 (B i j))) :
     B.PosSemidef := by
-  exact (Matrix.posSemidef_is_closed (n := I) (𝕜 := ℂ)).mem_of_tendsto
+  exact (isClosed_setOfPred_posSemidef (n := I) (R := ℂ)).mem_of_tendsto
     (tendsto_pi_nhds.mpr fun i => tendsto_pi_nhds.mpr fun j => hlim i j)
     (Eventually.of_forall hA)
 

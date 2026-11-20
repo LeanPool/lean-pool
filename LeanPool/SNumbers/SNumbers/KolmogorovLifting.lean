@@ -478,7 +478,7 @@ private lemma one_le_norm_Q_sub_L (n : ℕ) (h_dim : n < Module.finrank 𝕜 X)
   have hV_lt : Module.finrank 𝕜 V < Module.finrank 𝕜 X :=
     lt_of_le_of_lt (Module.finrank_le_of_rank_le hL) h_dim
   have hV_ne_top : V ≠ ⊤ := fun h => by rw [h, finrank_top] at hV_lt; exact lt_irrefl _ hV_lt
-  have hV_closed : IsClosed (V : Set X) := V.closed_of_finiteDimensional
+  have hV_closed : IsClosed (V : Set X) := V.isClosed_of_finiteDimensional
   have hV_exists : ∃ x : X, x ∉ V := SetLike.exists_notMem_of_ne_top V hV_ne_top
   -- Limit `r → 1`: enough to show `1 ≤ ‖Q − L‖ + ε` for every `ε > 0`. The
   -- `ε ≥ 1` case is trivial; for `ε ∈ (0, 1)` we run Riesz at level `1 − ε/2`.
@@ -616,7 +616,7 @@ lemma approx_le_kolmogorovNumber (S : X →L[𝕜] Y) (n : ℕ) :
   -- `V` is finite-dimensional (rank `≤ n < ℵ₀`), hence complete.
   have hVfin : FiniteDimensional 𝕜 V :=
     Module.rank_lt_aleph0_iff.mp (lt_of_le_of_lt hV (Cardinal.natCast_lt_aleph0))
-  have : CompleteSpace V := FiniteDimensional.complete 𝕜 V
+  have : CompleteSpace V := FiniteDimensional.completeSpace 𝕜 V
   refine le_of_forall_pos_le_add fun ε hε => ?_
   -- Choose, for each `x ∈ B_X`, a point `w x ∈ V` with `‖S x − w x‖ < d + ε`.
   have hchoice : ∀ x : Ball X, ∃ w : V, ‖S (x : X) - (w : Y)‖ < d + ε := by

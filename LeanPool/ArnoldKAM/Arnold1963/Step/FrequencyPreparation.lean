@@ -60,23 +60,25 @@ def iterationE (K N : ℝ) : Set (ComplexSpace n) :=
 theorem iterationChart (K N : ℝ) :
     AnalyticFrequencyChart (fun p => A p + Δ p) h.newInverse (h.iterationDomain K N)
       (erosion (nonresonantDomain Ω id K N) ((5 + 7 * Θ) * β)) := by
-  have hh := h.innerChart (fun _ hx => hx.1)
+  have hh := h.innerChart (Ω₀ := nonresonantDomain Ω id K N) (fun _ hx => hx.1)
     (isCompact_nonresonant_frequency_domain h.chart.image_compact K N)
     (nonresonantDomain_conj h.chart.image_conj (fun _ _ => rfl)) (3 * β)
   simpa only [iterationDomain, innerFrequency, frequencyLossRadius_three] using hh
 
 theorem iterationE_subset (K N : ℝ) : h.iterationE K N ⊆ erosion G β :=
-  (h.neighborhood_subset (fun _ hx => hx.1) (3 * β)).trans h.outer_subset
+  (h.neighborhood_subset (Ω₀ := nonresonantDomain Ω id K N)
+    (fun _ hx => hx.1) (3 * β)).trans h.outer_subset
 
 theorem iteration_derivative_bounds (K N : ℝ) {p} (hp : p ∈ h.iterationDomain K N)
     (v : ComplexSpace n) :
     ((θ : ℝ) * (1 - (κ : ℝ))) * ‖v‖ ≤ ‖fderiv ℂ (fun x => A x + Δ x) p v‖ ∧
       ‖fderiv ℂ (fun x => A x + Δ x) p v‖ ≤ ((Θ : ℝ) * (1 + (κ : ℝ))) * ‖v‖ :=
-  h.new_derivative_bounds (h.inner_subset_outerDomain (fun _ hx => hx.1) (3 * β) hp) v
+  h.new_derivative_bounds (h.inner_subset_outerDomain (Ω₀ := nonresonantDomain Ω id K N)
+    (fun _ hx => hx.1) (3 * β) hp) v
 
 theorem iterationE_nonresonant (K N : ℝ) {p} (hp : p ∈ h.iterationE K N) :
     FiniteNonresonant (A p + Δ p) K N :=
-  (h.neighborhood_maps (fun _ hx => hx.1) (3 * β) hp).2
+  (h.neighborhood_maps (Ω₀ := nonresonantDomain Ω id K N) (fun _ hx => hx.1) (3 * β) hp).2
 
 theorem iterationE_compact (K N : ℝ) : IsCompact (h.iterationE K N) :=
   isCompact_closedBallNeighborhood (h.iterationChart K N).compact _
@@ -93,7 +95,7 @@ theorem iteration_target_buffer (K N : ℝ) :
 theorem iteration_measure (K N : ℝ) :
     realVolume (G \ h.iterationDomain K N) ≤ ENNReal.ofReal ((θ : ℝ)⁻¹ ^ n) *
       realVolume (Ω \ erosion (nonresonantDomain Ω id K N) ((6 + 7 * Θ) * β)) := by
-  have hh := h.measure_loss (fun _ hx => hx.1)
+  have hh := h.measure_loss (Ω₀ := nonresonantDomain Ω id K N) (fun _ hx => hx.1)
     (isCompact_nonresonant_frequency_domain h.chart.image_compact K N) (3 * β)
   simpa only [iterationDomain, frequencyMeasureRadius_three] using hh
 

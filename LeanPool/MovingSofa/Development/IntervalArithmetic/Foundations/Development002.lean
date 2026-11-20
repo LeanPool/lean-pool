@@ -4988,7 +4988,7 @@ theorem jacobianAt_mem_intervalJacobian {n : Nat} (F : Fin n → Expr)
 /-- Interpret a real matrix as a continuous linear map on finite coordinate vectors. -/
 noncomputable def matrixCLM {n : Nat} (A : Matrix (Fin n) (Fin n) ℝ) :
     (Fin n → ℝ) →L[ℝ] (Fin n → ℝ) :=
-  ContinuousLinearMap.mk (Matrix.mulVecLin A)
+  ContinuousLinearMap.mk (Matrix.mulVecLin A) (Matrix.mulVecLin A).continuous_of_finiteDimensional
 
 /-- The preconditioned Newton map `x ↦ x - Y (F x)`. -/
 noncomputable def newtonMap {n : Nat} (Y : Matrix (Fin n) (Fin n) ℝ)
@@ -5219,7 +5219,7 @@ theorem matrix_norm_le_intervalMatrixBound {n : Nat}
   apply NNReal.coe_le_coe.mpr
   refine Finset.sup_le fun i _ => ?_
   apply NNReal.coe_le_coe.mp
-  simp only [NNReal.coe_sum, coe_nnnorm]
+  simp only [NNReal.coe_sum, coe_nnNorm]
   change (∑ j, |R i j|) ≤ (intervalMatrixBound A : ℝ)
   calc
     (∑ j, |R i j|) ≤ ∑ j, (intervalAbsBound (A i j) : ℝ) :=

@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisor
 

@@ -260,7 +260,8 @@ theorem radial_subset_cover (hgood : ∀ P ∈ ps, GoodRadius x P r) (hr : 0 < r
       rw [← segment_inter_closedBall hcx hr hrc]
       exact inter_subset_left
     have h2 : segment ℝ x c ⊆ P.seg := (convex_segment P.1 P.2).segment_subset hxP hc
-    exact h1.trans (h2.trans (Set.subset_biUnion_of_mem (u := fun P : Piece => P.seg) hP))
+    exact h1.trans (h2.trans
+      (Set.subset_iUnion₂ (s := fun (Q : Piece) (_ : Q ∈ ps) => Q.seg) P hP))
   rcases hcase with ⟨h1, rfl⟩ | ⟨h2, rfl⟩
   · exact key P.1 (left_mem_segment ℝ _ _) h1 ((hgood P hP).2.1 h1)
   · exact key P.2 (right_mem_segment ℝ _ _) h2 ((hgood P hP).2.2 h2)

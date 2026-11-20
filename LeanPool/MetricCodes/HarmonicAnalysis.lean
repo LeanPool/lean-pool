@@ -740,10 +740,10 @@ def directionalDerivation (n : ℕ) (x : Euclidean n) :
       (∑ i ∈ s, x i • MvPolynomial.pderiv i) p =
         ∑ i ∈ s, x i • MvPolynomial.pderiv i p := by
     induction s using Finset.induction_on with
-    | empty => simp only [Finset.sum_empty, Derivation.coe_zero, Pi.zero_apply]
+    | empty => simp only [Finset.sum_empty, FunLike.coe_zero, Pi.zero_apply]
     | @insert a s ha ih =>
-        simp only [ha, not_false_eq_true, Finset.sum_insert, Derivation.add_apply,
-          Derivation.smul_apply, ih]
+        simp only [ha, not_false_eq_true, Finset.sum_insert, add_apply,
+          smul_apply, ih]
   simpa only [directionalDerivation, directionalDerivative_apply] using hsum Finset.univ
 
 theorem directionalDerivative_mul
@@ -5694,7 +5694,7 @@ theorem nonnegative_eigenvector_coordinate_pos
             Nat.dist i.val q.val = distance → v q = 0 := by
       intro distance
       induction distance using Nat.strong_induction_on with
-      | h distance ih =>
+      | ind distance ih =>
           intro q hdistance
           by_cases hequal : i.val = q.val
           · have hiq : i = q := Fin.ext hequal

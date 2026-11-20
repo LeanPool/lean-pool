@@ -42,7 +42,7 @@ theorem _root_.AnalyticAt.eventuallyEq_zero_of_iteratedFDeriv_eq_zero {f : E →
   obtain ⟨p, r, hp⟩ := hf
   filter_upwards [eball_mem_nhds a hp.r_pos] with y hy
   have hs := hp.hasSum_iteratedFDeriv (y := y - a) (by
-    simpa only [mem_eball, edist_zero_right, edist_eq_enorm_sub, sub_zero] using hy)
+    simpa only [mem_eball, edist_zero_right, eDist_eq_eNorm_sub, sub_zero] using hy)
   simpa [hzero] using hs.tsum_eq.symm
 
 /-- A nonempty proper scalar zero set is contained in the zero set of an analytic function whose

@@ -578,10 +578,11 @@ theorem cantorPipeline_map_constantCoeff_of_pair (hf : f.Monic) {u₁ v₁ : (O�
     simp only [Polynomial.map_mul, Polynomial.map_sub, Polynomial.map_X, map_C]
   have hidv₃ : (phiV₃ xQ yQ m₀).map ρ = pairV (φF xQ) (φF yQ) (φF m₀) := by
     rw [phiV₃, Polynomial.map_map, hcompC, pairV_map]
-  have hidD : (diskConfig u₁ v₁ a xQ yQ m₀ uτ vτ).map ρ
-      = ⟨(X - C (φF a)) * (X - C (φF xQ)), pairV (φF a) (φF b) (φF (ε m)), uτ.map φF,
-        vτ.map φF, (X - C (φF xQ)) * (X - C (φF a)), pairV (φF xQ) (φF yQ) (φF m₀)⟩ := by
-    simp only [PipelineData.map, diskConfig, hidu₁, hidv₁, hidu₂, hidv₂, hidu₃, hidv₃]
+  let DF : PipelineData F :=
+    ⟨(X - C (φF a)) * (X - C (φF xQ)), pairV (φF a) (φF b) (φF (ε m)), uτ.map φF,
+      vτ.map φF, (X - C (φF xQ)) * (X - C (φF a)), pairV (φF xQ) (φF yQ) (φF m₀)⟩
+  have hidD : (diskConfig u₁ v₁ a xQ yQ m₀ uτ vτ).map ρ = DF := by
+    simp only [DF, PipelineData.map, diskConfig, hidu₁, hidv₁, hidu₂, hidv₂, hidu₃, hidv₃]
   -- transport the certificate pack to `F` and rewrite along the identifications
   have hcertsF := hcerts.map ρ hu₁ hu₂ hu₃
   rw [hidf, hidD, ← huτ.natDegree_map φF] at hcertsF
@@ -618,7 +619,8 @@ theorem cantorPipeline_map_constantCoeff_of_pair (hf : f.Monic) {u₁ v₁ : (O�
     rw [huτ.natDegree_map, hf.natDegree_map]
     exact hgτ
   -- the pipeline over `F` returns the τ-datum
-  rw [cantorPipeline_eq_middle hu₁F hd₁F hu₂F hd₂F hu₃F hd₃F hcertsF hcancel hv₂F hgF hgF]
+  rw [cantorPipeline_eq_middle (D := DF)
+    hu₁F hd₁F hu₂F hd₂F hu₃F hd₃F hcertsF hcancel hv₂F hgF hgF]
     at hmap
   obtain ⟨h1, h2⟩ := Prod.ext_iff.mp hmap
   dsimp only at h1 h2
@@ -798,8 +800,10 @@ theorem mk0_cantorPipeline_eval_of_pair {u₁ v₁ : (O⟦X⟧)[X]} {px py α β
   have hd₃K := map_dvd_sq_sub ρ hd₃
   rw [hidf, hidu₃, hidv₃] at hd₃K
   -- the class formula for the mapped pipeline
-  have hfinK := cantorPipeline_monic_dvd_degree_lt hu₁K hd₁K hu₂K hd₂K hu₃K hd₃K hcertsK
-  have hcls := mk0_cantorPipeline_generic hu₁K hd₁K hu₂K hd₂K hu₃K hd₃K hcertsK hfinK.1
+  have hfinK := cantorPipeline_monic_dvd_degree_lt (D := DK)
+    hu₁K hd₁K hu₂K hd₂K hu₃K hd₃K hcertsK
+  have hcls := mk0_cantorPipeline_generic (D := DK)
+    hu₁K hd₁K hu₂K hd₂K hu₃K hd₃K hcertsK hfinK.1
   -- identify the goal datum with the mapped pipeline
   obtain ⟨h1, h2⟩ := Prod.ext_iff.mp hmap
   dsimp only at h1 h2

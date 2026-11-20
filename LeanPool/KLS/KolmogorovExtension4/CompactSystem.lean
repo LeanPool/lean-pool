@@ -29,10 +29,11 @@ variable {α : Type*} {p : Set α → Prop} {C : ℕ → Set α}
 /-- In a compact system, given a countable family with empty intersection, we choose a finite
 subfamily with empty intersection. -/
 noncomputable
-def IsCompactSystem.support (hp : IsCompactSystem p) (hC : ∀ i, p (C i)) (hC_empty : ⋂ i, C i = ∅) :
+def IsCompactSystem.support (hp : IsCompactSystem {s | p s}) (hC : ∀ i, p (C i))
+    (hC_empty : ⋂ i, C i = ∅) :
     ℕ := (hp C hC hC_empty).choose
 
-lemma IsCompactSystem.iInter_eq_empty (hp : IsCompactSystem p) (hC : ∀ i, p (C i))
+lemma IsCompactSystem.iInter_eq_empty (hp : IsCompactSystem {s | p s}) (hC : ∀ i, p (C i))
     (hC_empty : ⋂ i, C i = ∅) :
     ⋂ i ≤ hp.support hC hC_empty, C i = ∅ :=
   (hp C hC hC_empty).choose_spec
@@ -52,7 +53,7 @@ section AllProj
 
 /-- All indices in `ι` that are constrained by the condition `∀ n, s n ∈ closedCompactCylinders α`.
 That is, the union of all indices in the bases of the cylinders. -/
-def allProj (hs : ∀ n, s n ∈ closedCompactCylinders α) : Set ι := ⋃ n, Js (hs n)
+noncomputable def allProj (hs : ∀ n, s n ∈ closedCompactCylinders α) : Set ι := ⋃ n, Js (hs n)
 
 theorem subset_allProj (hs : ∀ n, s n ∈ closedCompactCylinders α) (n : ℕ) :
     ↑(Js (hs n)) ⊆ allProj hs :=
@@ -91,7 +92,7 @@ section projCylinder
 
 /-- Given a countable family of closed cylinders, consider one of them as depending only on
 the countably many coordinates that appear in all of them. -/
-def projCylinder (hs : ∀ n, s n ∈ closedCompactCylinders α) (n : ℕ) :
+noncomputable def projCylinder (hs : ∀ n, s n ∈ closedCompactCylinders α) (n : ℕ) :
     Set (Π i : allProj hs, α i) :=
   (fun (f : Π i : allProj hs, α i) (i : Js (hs n)) ↦ f ⟨i, subset_allProj hs _ i.2⟩) ⁻¹' (As (hs n))
 
@@ -216,7 +217,7 @@ theorem nonempty_iInter_projCylinder_inter_piCylinderSet (hs : ∀ n, s n ∈ cl
     rw [this]
     have hyi : y ∈ projCylinder hs i := by
       suffices ⋂ j ≤ n, projCylinder hs j ⊆ projCylinder hs i by exact this hy
-      exact biInter_subset_of_mem hi
+      exact dissipate_subset (s := projCylinder hs) hi
     rwa [mem_projCylinder] at hyi
   · rw [mem_piCylinderSet]
     intro i
@@ -224,7 +225,7 @@ theorem nonempty_iInter_projCylinder_inter_piCylinderSet (hs : ∀ n, s n ∈ cl
     · let m := indexProj hs i
       have hy' : y ∈ projCylinder hs m := by
         suffices ⋂ j ≤ n, projCylinder hs j ⊆ projCylinder hs m by exact this hy
-        exact biInter_subset_of_mem hi_le
+        exact dissipate_subset (s := projCylinder hs) hi_le
       rw [mem_projCylinder] at hy'
       refine ⟨fun j ↦ y ⟨j, subset_allProj hs _ j.2⟩, hy', ?_⟩
       simp_rw [z, ite_eq_left hi_le]
@@ -247,7 +248,7 @@ theorem nonempty_iInter_projCylinder (hs : ∀ n, s n ∈ closedCompactCylinders
     exact ⟨fun h i j _ ↦ h j, fun h i ↦ h i i le_rfl⟩
   rw [this, iInter_inter]
   have h_closed : ∀ n, IsClosed (⋂ i ≤ n, projCylinder hs i) :=
-    fun n ↦ isClosed_biInter (fun i _ ↦ isClosed_projCylinder hs
+    fun n ↦ isClosed_iInter (fun i ↦ isClosed_iInter fun _ : i ≤ n ↦ isClosed_projCylinder hs
       (fun n ↦ (closedCompactCylinders.isClosed (hs n))) i)
   refine IsCompact.nonempty_iInter_of_sequence_nonempty_isCompact_isClosed
     (fun n ↦ (⋂ i ≤ n, projCylinder hs i) ∩ piCylinderSet hs) ?_ ?_ ?_ ?_

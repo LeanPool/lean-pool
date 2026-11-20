@@ -51,7 +51,7 @@ theorem lps_h1_finite_slice_memLp_ae
       (fun z : Vec3 × ℝ => vec3EuclideanNorm (u z)) ν :=
     continuous_vec3EuclideanNorm.comp_aestronglyMeasurable huν
   let F : Vec3 × ℝ → ℝ≥0∞ := fun z => ‖vec3EuclideanNorm (u z)‖ₑ ^ s
-  have hF : AEMeasurable F ν := hscalar.enorm.pow_const _
+  have hF : AEMeasurable F ν := hscalar.eNorm.pow_const _
   have hG : AEMeasurable (fun t : ℝ => ∫⁻ x : Vec3, F (x, t) ∂volume)
       (volume.restrict (Ioo t₀ t₁)) := hF.lintegral_prod_left'
   have hp : 0 < (2 * s / (s - 3)) / s := by
@@ -66,7 +66,7 @@ theorem lps_h1_finite_slice_memLp_ae
         ∂(volume.restrict (Ioo t₀ t₁))) < ⊤ := by
     have hFraw (z : Vec3 × ℝ) :
         ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ s = F z := by
-      rw [← Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+      rw [← Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
     have hEq :
         (∫⁻ t in Ioo t₀ t₁, (∫⁻ x : Vec3, F (x, t) ∂volume) ^ ((2 * s / (s - 3)) / s)) =
         (∫⁻ t in Ioo t₀ t₁, (∫⁻ x : Vec3,
@@ -93,7 +93,7 @@ theorem lps_h1_finite_slice_memLp_ae
   filter_upwards [hslice, hsliceMeas] with t hfin hmeas
   have hp0 : ENNReal.ofReal s ≠ 0 := (ENNReal.ofReal_pos.mpr (lt_trans (by norm_num) hs)).ne'
   have hptop : ENNReal.ofReal s ≠ ⊤ := ENNReal.ofReal_ne_top
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hmeas]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hmeas]
   rw [show (ENNReal.ofReal s).toReal = s from
     ENNReal.toReal_ofReal (le_of_lt (lt_trans (by norm_num) hs))]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hfin.ne

@@ -188,7 +188,7 @@ theorem serrinWeak_velocity_memLp_two
   have hLT : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T),
       ‖u z‖ₑ ^ (2 : ℝ)) < ⊤ :=
     lt_of_le_of_lt (lintegral_mono fun z => le_self_add) hU.energy
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hU.meas_u]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hU.meas_u]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hLT.ne
 
@@ -202,7 +202,7 @@ theorem serrinWeak_gradient_memLp_two
   have hLT : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T),
       ‖Du z‖ₑ ^ (2 : ℝ)) < ⊤ :=
     lt_of_le_of_lt (lintegral_mono fun z => le_add_self) hU.energy
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hU.meas_Du]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hU.meas_Du]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hLT.ne
 

@@ -1946,7 +1946,7 @@ private theorem fullTwoRungCanonicalFrame_exists
     apply forced_penultimate_height_constraint_reparam
     dsimp [heightDrop]
     convert hradius using 1
-    all_goals ring
+    ring
   exact ⟨{
     scale := scale
     c := c

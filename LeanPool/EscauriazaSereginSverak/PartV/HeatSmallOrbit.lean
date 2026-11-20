@@ -49,7 +49,7 @@ theorem tendsto_eLpNorm_spaceTimeSet_zero {E : Type*} [NormedAddCommGroup E]
     exact ⟨hz.1, hz.2.1, lt_of_lt_of_le hz.2.2 hij⟩
   have hnorm {τ : ℝ} (hτ : 0 < τ) :
       eLpNorm F r (volume.restrict (Q τ)) = ν (Q τ) ^ (1 / r.toReal) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hr0 hrtop (hF τ hτ).aestronglyMeasurable, hν]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hr0 hrtop (hF τ hτ).aestronglyMeasurable, hν]
   have hfin : ∃ τ > (0 : ℝ), ν (Q τ) ≠ ⊤ := by
     refine ⟨1, one_pos, ?_⟩
     have hlt := (hF 1 one_pos).eLpNorm_lt_top

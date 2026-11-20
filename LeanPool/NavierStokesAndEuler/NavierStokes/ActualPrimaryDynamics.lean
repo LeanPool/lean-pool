@@ -337,7 +337,7 @@ theorem copyPoint_fast_line (j : Fin 2) (L : Label B N0) (n : ℕ)
   rw [copyPoint_affine]
   ext <;> simp only [Prod.smul_mk, smul_zero, smul_eq_mul, mul_zero, Prod.fst_add, add_zero,
       Prod.snd_add]
-  all_goals ring
+  ring
 
 /-- Slot linear as an element of `FullPoint →L[ℝ] PhaseCalculus.Slot`. -/
 noncomputable def slotLinear (j : Fin 2) (L : Label B N0) (n : ℕ) :

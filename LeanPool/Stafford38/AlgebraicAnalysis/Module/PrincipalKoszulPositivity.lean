@@ -70,13 +70,13 @@ theorem isArtinian_kernel_power (f : Module.End R E)
     let := ih
     have hle : f.ker ≤ (f ^ (n + 1)).ker := by
       intro z hz
-      rw [LinearMap.mem_ker, pow_succ, Module.End.mul_apply,
+      rw [LinearMap.mem_ker, pow_succ, mul_apply_eq_comp,
         LinearMap.mem_ker.mp hz, map_zero]
     let i : f.ker →ₗ[R] (f ^ (n + 1)).ker := Submodule.inclusion hle
     let g : (f ^ (n + 1)).ker →ₗ[R] (f ^ n).ker := f.restrict (by
       intro z hz
       rw [LinearMap.mem_ker] at hz ⊢
-      simpa [pow_succ, Module.End.mul_apply] using hz)
+      simpa [pow_succ, mul_apply_eq_comp] using hz)
     have hexact : i.range = g.ker := by
       ext z
       constructor
@@ -97,17 +97,17 @@ theorem quotient_by_stable_kernel_power_injective (f : Module.End R E) (n : ℕ)
         intro z hz
         change f z ∈ LinearMap.ker (f ^ n)
         rw [LinearMap.mem_ker] at hz ⊢
-        rw [← Module.End.mul_apply, (Commute.self_pow f n).eq.symm,
-          Module.End.mul_apply, hz, f.map_zero])) := by
+        rw [← mul_apply_eq_comp, (Commute.self_pow f n).eq.symm,
+          mul_apply_eq_comp, hz, f.map_zero])) := by
   rw [← LinearMap.ker_eq_bot, Submodule.ker_mapQ]
   have hcomap :
       (LinearMap.ker (f ^ n)).comap f = LinearMap.ker (f ^ n) := by
     ext z
     rw [Submodule.mem_comap]
     change (f ^ n) (f z) = 0 ↔ (f ^ n) z = 0
-    rw [← Module.End.mul_apply, (Commute.self_pow f n).eq.symm,
-      Module.End.mul_apply]
-    simpa [Module.End.pow_apply, Function.iterate_succ_apply'] using
+    rw [← mul_apply_eq_comp, (Commute.self_pow f n).eq.symm,
+      mul_apply_eq_comp]
+    simpa [pow_apply_eq_iterate, Function.iterate_succ_apply'] using
       congrArg (fun K : Submodule R E ↦ z ∈ K) hstable.symm
   rw [hcomap]
   simp
@@ -302,9 +302,9 @@ theorem length_cokernel_smul_gt_kernel_of_support_prime
     ext z
     rw [Submodule.mem_comap]
     change (f ^ n) (f z) = 0 ↔ (f ^ n) z = 0
-    rw [← Module.End.mul_apply, (Commute.self_pow f n).eq.symm,
-      Module.End.mul_apply]
-    simpa [Module.End.pow_apply, Function.iterate_succ_apply'] using
+    rw [← mul_apply_eq_comp, (Commute.self_pow f n).eq.symm,
+      mul_apply_eq_comp]
+    simpa [pow_apply_eq_iterate, Function.iterate_succ_apply'] using
       congrArg (fun K : Submodule R E ↦ z ∈ K) hn.symm
   have hpower : ∀ m (z : E), (f ^ m) z = x ^ m • z := by
     intro m
@@ -312,7 +312,7 @@ theorem length_cokernel_smul_gt_kernel_of_support_prime
     | zero => intro z; simp
     | succ m ih =>
       intro z
-      simp [pow_succ, Module.End.mul_apply, ih, f, scalarEnd, smul_smul]
+      simp [pow_succ, ih, f, scalarEnd, smul_smul]
   have hproper : T ≠ ⊤ := by
     intro htop
     apply hxP

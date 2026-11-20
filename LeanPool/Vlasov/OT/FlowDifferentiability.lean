@@ -138,7 +138,8 @@ lemma vlasovField_taylorRemainder_uniform
   have hmap : ContinuousOn (fun q : ℝ × PhaseSpace d => ((q.1, Φ q.1 + q.2) : ℝ × PhaseSpace d))
       (Set.Icc 0 T ×ˢ ball1) :=
     continuousOn_fst.prodMk
-      ((hcontIcc.comp continuousOn_fst (fun q hq => hq.1)).add continuousOn_snd)
+      ((hcontIcc.comp continuousOn_fst
+        (fun q (hq : q ∈ Set.Icc 0 T ×ˢ ball1) => hq.1)).add continuousOn_snd)
   set Γ : Set (ℝ × PhaseSpace d) :=
     (fun q : ℝ × PhaseSpace d => ((q.1, Φ q.1 + q.2) : ℝ × PhaseSpace d)) '' (Set.Icc 0 T ×ˢ ball1)
     with hΓ
@@ -744,7 +745,7 @@ theorem exists_global_c1_inverse_of_antilipschitz
   have he_coe : ∀ z, ((e z : E →L[ℝ] E)) = M z := fun _ => rfl
   have hC1 : ContDiff ℝ 1 Φ := contDiff_one_iff_hasFDerivAt.mpr ⟨M, hM_cont, hderiv⟩
   have hstrict : ∀ z, HasStrictFDerivAt Φ ((e z : E →L[ℝ] E)) z := fun z => by
-    rw [he_coe z]; exact hC1.contDiffAt.hasStrictFDerivAt' (hderiv z) (by norm_num)
+    rw [he_coe z]; exact hC1.contDiffAt.hasStrictFDerivAt (hderiv z) (by norm_num)
   have hopen : IsOpenMap Φ := isOpenMap_of_hasStrictFDerivAt_equiv hstrict
   have hrange_open : IsOpen (Set.range Φ) := hopen.isOpen_range
   have hrange_closed : IsClosed (Set.range Φ) := hanti.isClosed_range hlip.uniformContinuous
@@ -1117,7 +1118,7 @@ regularity via the space-time chart.
    `b := b_{s₀}(Φ_{s₀}z₀)`, `M := M_{s₀}z₀` invertible (Step 2's `e₀ z₀`).  Build the `ℝ×E ≃L ℝ×E`
    via `ContinuousLinearEquiv.ofBijective` (inject: `(h,k)↦0 ⇒ h=0`, then `M k=0 ⇒ k=0`; finite-dim
    `LinearMap.injective_iff_surjective`).  `HasStrictFDerivAt Ξ (this ≃L) (s₀,z₀)` via
-   `ContDiffAt.hasStrictFDerivAt'`.
+   `ContDiffAt.hasStrictFDerivAt`.
 3. **Local `C¹` inverse + patch.**  `ContDiffAt.to_localInverse`
    (`Mathlib/.../InverseFunctionTheorem/ContDiff.lean:66`) ⇒ `Ξ.localInverse` is `ContDiffAt ℝ 1` at
    `Ξ(s₀,z₀) = (s₀, Φ_{s₀}z₀)`.  The global `(s,w)↦(s, Ψ_s w)` agrees with
@@ -1224,7 +1225,7 @@ theorem charFlow_inverse_contDiffOn_joint
     hΞ_hd
   have hlocinv : ContDiffAt ℝ 1 (hΞ_cda.localInverse hΞ_hd' one_ne_zero) (Ξ (pt.1, z₀)) :=
     hΞ_cda.to_localInverse hΞ_hd' one_ne_zero
-  have hstrict := hΞ_cda.hasStrictFDerivAt' hΞ_hd' (one_ne_zero)
+  have hstrict := hΞ_cda.hasStrictFDerivAt hΞ_hd' (one_ne_zero)
   have hloc : ∀ᶠ x in 𝓝 ((pt.1, z₀) : ℝ × PhaseSpace d),
       ((fun y : ℝ × PhaseSpace d => ((y.1, Ψ y.1 y.2) : ℝ × PhaseSpace d)) (Ξ x)) = x := by
     have hIoo : ∀ᶠ x in 𝓝 ((pt.1, z₀) : ℝ × PhaseSpace d), x.1 ∈ Set.Ioo (0 : ℝ) T :=

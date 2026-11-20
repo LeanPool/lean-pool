@@ -48,7 +48,7 @@ theorem paperOscillatoryMaximal_add_le {f g : ℝ → ℂ}
   apply iSup_le
   intro lam
   rw [paperOscillatoryAction_add_of_integrable lam.1 lam.2 hf hg]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   exact add_le_add
     (le_iSup (fun μ : {μ : ℝ // μ ≠ 0} ↦ ‖paperOscillatoryAction μ.1 μ.2 f x‖ₑ) lam)
     (le_iSup (fun μ : {μ : ℝ // μ ≠ 0} ↦ ‖paperOscillatoryAction μ.1 μ.2 g x‖ₑ) lam)

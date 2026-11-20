@@ -125,7 +125,7 @@ theorem qamA.toMatrix [hφ : φ.IsFaithfulPosMap] (x : { x : ℍ // x ≠ 0 }) :
 noncomputable def hasSmul.unitsMatrixNeZero : SMul ℂˣ { x : Matrix n n ℂ // x ≠ 0 }
     where smul α x :=
     (⟨((α : ℂ) • x.1 : Matrix n n ℂ),
-        smul_ne_zero (Units.ne_zero α) (Set.mem_ofPred.mp (Subtype.mem x))⟩ :
+        smul_ne_zero (Units.ne_zero α) x.property⟩ :
       { x : Matrix n n ℂ // x ≠ 0 })
 
 omit [Fintype n] [DecidableEq n] in
@@ -175,7 +175,7 @@ theorem qamA.is_idempotent [hφ : φ.IsFaithfulPosMap] (x : { x : Matrix n n ℂ
           ((rankOne ℂ x.1 x.1 : L(ℍ)) : l(ℍ)) : l(ℍ)) =
         (‖x.1‖ ^ 2 : ℂ) • ((rankOne ℂ x.1 x.1 : L(ℍ)) : l(ℍ)) := by
     ext y i j
-    simp [Module.End.mul_apply, inner_self_eq_norm_sq_to_K]
+    simp [mul_apply_eq_comp, inner_self_eq_norm_sq_to_K]
     ring
   rw [hrank]
   simp_rw [_root_.map_smul, smul_smul, mul_assoc]
@@ -223,13 +223,13 @@ theorem Psi.one [hφ : φ.IsFaithfulPosMap] :
   rw [hφ.inner_coord, ← PosDef.rpow_neg_one_eq_inv_self hφ.matrixIsPosDef]
   simp only [Matrix.sum_apply, kroneckerMap_apply, transpose_apply, starAlgebra.modAut_zero,
     AlgEquiv.one_apply, Module.Dual.IsFaithfulPosMap.orthonormalBasis_apply]
-  simp only [mul_apply]
+  simp only [Matrix.mul_apply]
   simp only [single_eq, boole_mul]
   simp_rw [ite_and, Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq,
     Finset.mem_univ, ite_true, ite_mul, zero_mul, Prod.swap, mul_ite, mul_zero,
     Finset.sum_product_univ, Finset.sum_ite_irrel, Finset.sum_const_zero,
     Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  simp_rw [← mul_apply]
+  simp_rw [← Matrix.mul_apply]
   rw [PosDef.rpow_mul_rpow]
   ring_nf
   rw [← conjTranspose_apply, (PosDef.rpow.isPosDef _ _).1.eq, mul_comm]
@@ -267,7 +267,7 @@ theorem one_map_transpose_psi_eq [hφ : φ.IsFaithfulPosMap] (A : l(ℍ)) :
           ((modAut 0)
             (stdBasisMatrix x x_1 1 * hφ.matrixIsPosDef.rpow (-(1 / 2)))) := by
     simp_all
-  simp_rw [hzero, TensorProduct.map_tmul, Module.End.one_apply, ← TensorProduct.map_tmul A,
+  simp_rw [hzero, TensorProduct.map_tmul, one_apply_eq_self, ← TensorProduct.map_tmul A,
     ← QuantumSet.PsiToFun_apply, ← QuantumSet.Psi_apply, ← map_sum, ← Finset.sum_product',
     ← Module.Dual.IsFaithfulPosMap.orthonormalBasis_apply, Finset.univ_product_univ,
     rankOne.sum_orthonormalBasis_eq_id_lm]
@@ -282,7 +282,7 @@ theorem one_map_transpose_psi_eq [hφ : φ.IsFaithfulPosMap] (A : l(ℍ)) :
     intro x
     rw [Matrix.kmul_representation x]
     simp_rw [map_sum, _root_.map_smul, oneMapTranspose_symm_eq,
-      kroneckerToTensorProduct_apply, TensorProduct.map_tmul, Module.End.one_apply,
+      kroneckerToTensorProduct_apply, TensorProduct.map_tmul, one_apply_eq_self,
       AlgEquiv.toLinearMap_apply, AlgEquiv.symm_apply_apply]
   simp_rw [this]
 

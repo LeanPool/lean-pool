@@ -48,8 +48,8 @@ theorem cylinderPowerIntegral_eq_lintegral_slices
     have h1 : AEMeasurable (fun w : ParabolicPoint => ‖g w‖ₑ ^ P)
         ((volume.restrict (vec3Ball x r)).prod
           (volume.restrict (Set.Ioc (t - r ^ 2) t))) :=
-      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hmeas'.enorm
-    simpa only [Real.enorm_eq_ofReal_abs] using h1
+      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hmeas'.eNorm
+    simpa only [Real.eNorm_eq_ofReal_abs] using h1
   unfold cylinderPowerIntegral
   exact CKN.Foundation.Parabolic.Integration.prod_lintegral_swap_cyl hF
 
@@ -77,7 +77,7 @@ theorem cylinderPowerIntegral_le_of_slice_eLpNorm
     have heq : eLpNorm (fun y => g (y, s)) (ENNReal.ofReal P)
         (volume.restrict (vec3Ball x r)) =
         (∫⁻ y, ‖g (y, s)‖ₑ ^ P ∂(volume.restrict (vec3Ball x r))) ^ (1 / P) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (ENNReal.ofReal_ne_zero_iff.mpr hP) ENNReal.ofReal_ne_top hf,
         ENNReal.toReal_ofReal hP.le]
     have hstep : (∫⁻ y in vec3Ball x r, ENNReal.ofReal |g (y, s)| ^ P) =
@@ -85,7 +85,7 @@ theorem cylinderPowerIntegral_le_of_slice_eLpNorm
           (volume.restrict (vec3Ball x r))) ^ P := by
       rw [heq, one_div, ← ENNReal.rpow_mul]
       rw [inv_mul_cancel₀ hP.ne', ENNReal.rpow_one]
-      simp only [Real.enorm_eq_ofReal_abs]
+      simp only [Real.eNorm_eq_ofReal_abs]
     rw [hstep]
     exact ENNReal.rpow_le_rpow hs hP.le
 

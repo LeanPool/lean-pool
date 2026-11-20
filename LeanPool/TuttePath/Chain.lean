@@ -21,7 +21,7 @@ theorem exists_indecomposable_of_rank (hS : Indecomposable M S) (hT : Indecompos
     ∃ U, Indecomposable M U ∧ T ⊆ U ∧ U ⊆ S ∧ natRank M U = k := by
   generalize hn : natRank M S - k = n
   induction n using Nat.strong_induction_on generalizing S with
-  | h n ih =>
+  | ind n ih =>
     by_cases heq : natRank M S = k
     · exact ⟨S, hS, hTS, Set.Subset.rfl, heq⟩
     have hstrict : T ⊂ S := Set.ssubset_iff_subset_ne.mpr ⟨hTS, by

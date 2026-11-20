@@ -33,7 +33,7 @@ theorem AnalyticAt.analyticAt_dslope
     {f : ℝ → ℝ} {base : ℝ} (hf : AnalyticAt ℝ f base) :
     AnalyticAt ℝ (dslope f base) base := by
   rcases hf with ⟨series, hseries⟩
-  exact hseries.has_fpower_series_dslope_fslope.analyticAt
+  exact hseries.dslope_fslope.analyticAt
 
 /-- If an analytic function vanishes at the base point, its differentiable slope reconstructs it
 after multiplication by the corresponding linear factor. -/

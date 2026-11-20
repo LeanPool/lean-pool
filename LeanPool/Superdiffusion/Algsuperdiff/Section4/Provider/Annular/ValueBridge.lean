@@ -266,7 +266,7 @@ theorem matrixNorm_sub_cubeAverageMat_originCube_le (m : ℤ)
       (integrableOn_cubeSet_shell_entry (originCube d m) g i j) ?_
     intro y hy
     have hstep : |g y i j - g x i j| ≤ ‖g y - g x‖ := by
-      have hsup := Matrix.norm_entry_le_entrywise_sup_norm
+      have hsup := Matrix.norm_apply_le_norm
         (A := g y - g x) (i := i) (j := j)
       rw [Real.norm_eq_abs] at hsup
       exact hsup

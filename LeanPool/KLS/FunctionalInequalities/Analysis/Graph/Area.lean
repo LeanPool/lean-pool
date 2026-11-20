@@ -255,7 +255,7 @@ private theorem hausdorffMeasure_image_dilate {u : H} (hu : ‖u‖ = 1) {c : �
   have hH := hausdorffMeasure_finrank_eq_smul_volume H
   have himg : (dilate u c) '' s = (dilate u c : H →ₗ[ℝ] H) '' s := rfl
   rw [himg, hH]
-  simp only [Measure.smul_apply, smul_eq_mul]
+  simp only [smul_apply, smul_eq_mul]
   rw [Measure.addHaar_image_linearMap (volume : Measure H) (dilate u c : H →ₗ[ℝ] H) s,
     det_dilate hu c, abs_of_nonneg hc]
   ring
@@ -781,8 +781,8 @@ theorem graphMap_estimates (ι : H →ₗᵢ[ℝ] V) {e : V} (he : ‖e‖ = 1)
         _ = ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * (ENNReal.ofReal (graphJacobian (a n)) * μ (u n)) := by
             rw [mul_assoc]
         _ ≤ ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * (∫⁻ y in u n, J y ∂μ + ε * μ (u n)) := by gcongr
-    simpa only [ENNReal.tsum_mul_left, ENNReal.tsum_add, ← hsplitint, ← hsplitmeas]
-      using ENNReal.tsum_le_tsum hterm
+    simpa only [ENNReal.tsum_mul_left, tsum_add, ← hsplitint, ← hsplitmeas]
+      using tsum_le_tsum hterm
   · rw [hsplitint]
     have hterm : ∀ n, ∫⁻ y in u n, J y ∂μ
         ≤ ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' (u n)) + ε * μ (u n) := by
@@ -797,9 +797,9 @@ theorem graphMap_estimates (ι : H →ₗᵢ[ℝ] V) {e : V} (he : ‖e‖ = 1)
         _ ≤ ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' (u n)) + ε * μ (u n) := by gcongr
     calc ∑' n, ∫⁻ y in u n, J y ∂μ
         ≤ ∑' n, (((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' (u n)) + ε * μ (u n)) :=
-          ENNReal.tsum_le_tsum hterm
+          tsum_le_tsum hterm
       _ = ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * (∑' n, μH[k] (Ψ '' (u n))) + ε * ∑' n, μ (u n) := by
-          rw [ENNReal.tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left]
+          rw [tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left]
       _ = ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' s) + ε * μ s := by
           rw [← hsplitμ, ← hsplitmeas]
 
@@ -916,7 +916,7 @@ theorem hausdorffNormalized_image_graphMap (ι : H →ₗᵢ[ℝ] V) {e : V} (he
     rw [← ENNReal.ofReal_mul (by positivity)]
     rw [show KLS.unitBallVolume k / 2 ^ k * (2 ^ k / KLS.unitBallVolume k) = 1 by field_simp]
     exact ENNReal.ofReal_one
-  rw [KLS.hausdorffNormalized, Measure.smul_apply, smul_eq_mul,
+  rw [KLS.hausdorffNormalized, smul_apply, smul_eq_mul,
     hausdorffMeasure_image_graphMap ι he hperp hg hs]
   rw [hausdorffMeasure_finrank_eq_smul_volume H]
   rw [Measure.restrict_smul, lintegral_smul_measure, smul_eq_mul, ← hk, ← mul_assoc, hcancel,

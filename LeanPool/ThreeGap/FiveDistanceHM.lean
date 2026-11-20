@@ -65,7 +65,7 @@ theorem norm_recVec_neg (α : Fin 2 → ℝ) (t : ℤ) (p : Fin 2 → ℤ) :
 /-- A record and its antipode point in exactly opposite directions (`angle = π`), when nonzero. -/
 theorem angle_recVec_neg (α : Fin 2 → ℝ) (t : ℤ) (p : Fin 2 → ℤ) (h : recVec α t p ≠ 0) :
     InnerProductGeometry.angle (recVec α t p) (recVec α (-t) (-p)) = Real.pi := by
-  rw [recVec_neg]; exact InnerProductGeometry.angle_self_neg_of_nonzero h
+  rw [recVec_neg]; exact InnerProductGeometry.angle_self_neg_of_ne_zero h
 
 /-! ## Height coordinate (atom HM-2) -/
 

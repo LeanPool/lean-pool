@@ -137,7 +137,7 @@ theorem pressureSplit_scaledSpatial_sup_le
                 r ^ 2 * p (φ x)
               rw [← congrFun hφ x]
             rw [hfun, eLpNormEssSup_const_smul]
-            simp only [Real.enorm_eq_ofReal_abs, abs_of_nonneg (sq_nonneg r)]
+            simp only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (sq_nonneg r)]
     _ ≤ ENNReal.ofReal (r ^ 2) *
         eLpNormEssSup p (volume.restrict (CKN.euclideanBall (0 : Vec3) (3 / 4 : ℝ))) := by
             rw [← hsupE]

@@ -73,13 +73,13 @@ theorem chiM_component_contDiff {β : ℝ} (I : Ingredients β) {m : ℕ}
         · simp only [uShear, ↓reduceIte, Fin.isValue, Fin.zero_eta, Matrix.cons_val_zero,
             uShear, hk1, ↓reduceIte, Fin.isValue, Fin.mk_one, Matrix.cons_val_one,
             Matrix.cons_val_fin_one]
-          all_goals fun_prop
+          fun_prop
         · by_cases hk3 : k % 4 = 3
           · simp only [uShear, OfNat.ofNat_ne_one, ↓reduceIte, Fin.isValue, Fin.zero_eta,
               Matrix.cons_val_zero, uShear, hk3, OfNat.ofNat_ne_one, ↓reduceIte, Fin.isValue,
               Fin.mk_one, Matrix.cons_val_one,
               Matrix.cons_val_fin_one]
-            all_goals fun_prop
+            fun_prop
           · simp only [uShear, ↓reduceIte, Pi.zero_apply, uShear, hk1, ↓reduceIte, hk3,
               Pi.zero_apply]
             exact contDiff_const

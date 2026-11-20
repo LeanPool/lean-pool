@@ -381,7 +381,7 @@ private theorem regEquicontinuity_eLpNormENNReal_pow_eq_lintegral
     (hf : AEStronglyMeasurable f (volume : Measure ℝ)) :
     eLpNorm f (ENNReal.ofReal r) volume ^ r = ∫⁻ t, f t ^ r ∂volume := by
   have hr0 : ENNReal.ofReal r ≠ 0 := (ENNReal.ofReal_pos.mpr hr).ne'
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hr0 ENNReal.ofReal_ne_top hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hr0 ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal hr.le, ← ENNReal.rpow_mul]
   rw [one_div_mul_cancel hr.ne', ENNReal.rpow_one]
   apply lintegral_congr_ae
@@ -503,7 +503,7 @@ private theorem regEquicontinuity_slice_to_product_bound
     calc
       eLpNorm (fJ i) q volume ≤
         eLpNorm (fun t : ℝ => ∑ j : Fin 3, fU j t) q volume := by
-        apply eLpNorm_mono_enorm_ae ((hfJmeas i).aestronglyMeasurable)
+        apply eLpNorm_mono_eNorm_ae ((hfJmeas i).aestronglyMeasurable)
         filter_upwards [hJsliceBound i] with t ht
         simpa using ht
       _ ≤ ∑ j : Fin 3, eLpNorm (fU j) q volume :=

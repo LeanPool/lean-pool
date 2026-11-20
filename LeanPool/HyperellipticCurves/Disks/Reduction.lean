@@ -148,7 +148,7 @@ theorem exists_lift_of_redPoint_affine {f : O[X]}
       simp only [reduceCtorEq] at hP
 
 /-- The residue disk of `P_bar`: the fiber of the reduction map over `P_bar`. -/
-def ResidueDisk {f : O[X]} (P : CurvePoint (ResidueField O) (f.map (residue O))) :
+noncomputable def ResidueDisk {f : O[X]} (P : CurvePoint (ResidueField O) (f.map (residue O))) :
     Set (CurvePoint K (f.map (algebraMap O K))) := redPoint ⁻¹' {P}
 
 theorem mem_residueDisk {f : O[X]} {P : CurvePoint (ResidueField O) (f.map (residue O))}

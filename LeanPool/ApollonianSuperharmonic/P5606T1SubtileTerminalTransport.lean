@@ -72,7 +72,7 @@ theorem P5606T1SubtileTerminalTransport
     fin_cases a <;> fin_cases i <;> rfl
   have hproper : ProperBandQuadruple r := by
     fin_cases a
-    · convert hq using 1; (try funext j; fin_cases j) <;> rfl
+    · convert hq using 1; (funext j; fin_cases j) <;> rfl
     · refine ⟨SemiProperQuadruple.rotate hq.1, ?_⟩
       intro j
       fin_cases j

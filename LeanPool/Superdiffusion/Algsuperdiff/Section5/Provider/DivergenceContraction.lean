@@ -109,7 +109,7 @@ bounded by its operator norm. -/
 private theorem abs_apply_basisVec_entry_le (D : Vec d →L[ℝ] Mat d) (i j : Fin d) :
     |D (basisVec i) i j| ≤ ‖D‖ := by
   have h1 : ‖D (basisVec i) i j‖ ≤ ‖D (basisVec i)‖ :=
-    Matrix.norm_entry_le_entrywise_sup_norm _
+    Matrix.norm_apply_le_norm _
   have h2 : ‖D (basisVec i)‖ ≤ ‖D‖ * ‖(basisVec i : Vec d)‖ := D.le_opNorm _
   have h4 : ‖D‖ * ‖(basisVec i : Vec d)‖ ≤ ‖D‖ * 1 :=
     mul_le_mul_of_nonneg_left (norm_basisVec_le_one i) (norm_nonneg _)

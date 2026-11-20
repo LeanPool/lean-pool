@@ -250,7 +250,7 @@ theorem Delta_boundedfactor :
       obtain ⟨a, ha0, ha⟩ := h1
       obtain ⟨a2, ha2, ha3⟩ := h00
       have hminmem: min a a2 ∈ atImInfty := by
-        simp only [inf_eq_inter, inter_mem_iff, ha0, ha2, and_self]
+        simp only [inter_mem_iff, ha0, ha2, and_self]
       have hT := atImInfy_pnat_mono (min a a2) hminmem 1
       obtain ⟨A, hA, hAmem⟩ := hT
       use (a ⊓ a2) ∩ {z | A ⊔ 1 ≤ z.im}
@@ -265,7 +265,7 @@ theorem Delta_boundedfactor :
       simp_rw [← mul_assoc] at haa
       rw [haa]
       simp only [forall_exists_index, and_imp, gt_iff_lt, CharP.cast_eq_zero, zero_add, mul_one,
-        dist_zero_right, norm_neg, inf_eq_inter, inter_mem_iff, sup_le_iff, mem_inter_iff,
+        dist_zero_right, norm_neg, inter_mem_iff, sup_le_iff, mem_inter_iff,
         mem_ofPred_eq, one_div, Complex.norm_mul, norm_ofNat, Nat.ofNat_pos, mul_le_mul_iff_right₀,
         ge_iff_le] at *
       apply le_trans (this ?_)

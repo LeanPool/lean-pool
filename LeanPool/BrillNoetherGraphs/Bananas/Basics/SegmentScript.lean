@@ -203,7 +203,7 @@ theorem segSlope_diff (hlo : lo < target) (hhi : target < hi) (k : ℕ)
             ite_eq_left (by omega : k - lo = hi - lo),
             ite_eq_right (by omega : ¬ (k - lo = target - lo)),
             ite_eq_right (by omega : ¬ (k - lo = hi - lo - (target - lo)))] at hdiv
-          try omega
+          omega
 
 theorem prin_seg_core (hlo : lo < target) (hhi : target < hi)
     (hlen : hi ≤ spec.length star) (v : Fin n) :

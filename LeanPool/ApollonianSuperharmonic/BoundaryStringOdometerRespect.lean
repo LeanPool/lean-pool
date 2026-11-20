@@ -503,7 +503,7 @@ theorem BoundaryStringOdometerRespect :
             AncestorOdometer C.1.1 F.outer.1.1 U F.tile k F.odometer := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro C ε B R S g h F hn
       have root := BoundaryOdometerGeometry.root C ε B R S g h F
       obtain ⟨T, H, hband, hsub, hcells, hfoot, hcent, hdom, hvalue, hcompat, hslope⟩ :=

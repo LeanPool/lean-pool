@@ -100,7 +100,7 @@ theorem eLpNorm_interpolationLow_le_rpow
     (hg : Measurable g) :
     eLpNorm (interpolationLow g a) 2 volume ≤
       (ENNReal.ofReal (a ^ (2 - p)) * ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
     (stronglyMeasurable_interpolationLow hg.stronglyMeasurable a).aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   apply ENNReal.rpow_le_rpow _ (by norm_num1)
@@ -123,7 +123,7 @@ theorem lintegral_pairing_le_threshold_of_L2
     (∫⁻ x, ‖F x‖ₑ * ‖g x‖ₑ) ≤
       B * (ENNReal.ofReal (a ^ (2 - p)) *
         ∫⁻ x, ENNReal.ofReal (‖g x‖ ^ p)) ^ (1 / 2 : ℝ) + D := by
-  have hF := hFm.enorm
+  have hF := hFm.eNorm
   have hlow := integrable_interpolationLow_local hg hgi a
   have hnorm (x : ℝ) : ‖g x‖ₑ = ‖interpolationLow g a x‖ₑ + ‖interpolationHigh g a x‖ₑ := by
     by_cases hx : ‖g x‖ ≤ a
@@ -132,16 +132,16 @@ theorem lintegral_pairing_le_threshold_of_L2
   have hlowpair : (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) ≤
       eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume := by
     have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
-      hF hlow.aestronglyMeasurable.enorm
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+      hF hlow.aestronglyMeasurable.eNorm
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
         hFm.aestronglyMeasurable,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num) hlow.aestronglyMeasurable]
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by norm_num) hlow.aestronglyMeasurable]
     exact h
   calc
     _ = (∫⁻ x, ‖F x‖ₑ * ‖interpolationLow g a x‖ₑ) +
         ∫⁻ x, ‖F x‖ₑ * ‖interpolationHigh g a x‖ₑ := by
       simp_rw [hnorm, mul_add]
-      exact lintegral_add_left' (hF.mul hlow.aestronglyMeasurable.enorm) _
+      exact lintegral_add_left' (hF.mul hlow.aestronglyMeasurable.eNorm) _
     _ ≤ (eLpNorm F 2 volume * eLpNorm (interpolationLow g a) 2 volume) + D :=
       add_le_add hlowpair hhighpair
     _ ≤ _ := add_le_add_left

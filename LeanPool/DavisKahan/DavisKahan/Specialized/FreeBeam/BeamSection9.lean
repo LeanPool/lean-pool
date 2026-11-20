@@ -118,7 +118,7 @@ noncomputable instance : FiniteDimensional ℂ beamTrial := by
   exact FiniteDimensional.span_of_finite ℂ (Set.toFinite _)
 
 /-- A finite-dimensional subspace is complete. -/
-noncomputable instance : CompleteSpace beamTrial := FiniteDimensional.complete ℂ _
+noncomputable instance : CompleteSpace beamTrial := FiniteDimensional.completeSpace ℂ _
 
 /-- The trial subspace lies in the operator's domain: it is the affine kernel
 identified in `BeamSpectrum`. -/

@@ -306,9 +306,9 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
         (𝓞 K)ˣ ⧸ MonoidHom.range
           (Units.map (algebraMap (𝓞 k) (𝓞 K) : (𝓞 k) →* (𝓞 K))))) = 0
   rw [sum_ofMul_quotient_mk_eq_zero_iff, QuotientGroup.eq_one_iff]
-  use Units.map (RingOfIntegers.norm k) x
+  use Units.map (NumberField.RingOfIntegers.norm k) x
   ext
-  simp only [Units.coe_map, MonoidHom.coe_ofClass, RingOfIntegers.coe_algebraMap_norm,
+  simp only [Units.coe_map, MonoidHom.coe_ofClass, NumberField.RingOfIntegers.coe_algebraMap_norm,
     Units.coe_prod, Algebra.norm_eq_prod_automorphisms]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
@@ -688,7 +688,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) : ∃ η : (𝓞 K)ˣ, Algebra.norm k (�
   · exact Hilbert92_aux0 p hKL σ h ν hν H
   simp only [ne_eq, not_forall, not_not] at H
   obtain ⟨E, hE⟩ := H
-  let NE := Units.map (RingOfIntegers.norm k) E
+  let NE := Units.map (NumberField.RingOfIntegers.norm k) E
   obtain ⟨S, hS⟩ := Hilbert91 p (K := K) (k := k) hp hKL σ hσ
   have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ p := by
     ext
@@ -702,7 +702,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) : ∃ η : (𝓞 K)ˣ, Algebra.norm k (�
       Nat.succ_sub_succ_eq_sub, tsub_zero, dvd_refl]
   let H := unitlifts p hp hKL σ hσ S
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
-    fun e ↦ Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
+    fun e ↦ Additive.ofMul (Units.map (NumberField.RingOfIntegers.norm k) (Additive.toMul (H e)))
   let η : Fin (r + 2) → Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
   obtain ⟨a, ι, i, ha, ha', ha''⟩ := lh_pow_free p hp ν (k := k) hν' η
   let H2 : Fin (r + 2) → Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul E)
@@ -715,10 +715,11 @@ lemma almostHilbert92 (hpodd : p ≠ 2) : ∃ η : (𝓞 K)ˣ, Algebra.norm k (�
     intro i
     induction i using Fin.lastCases with
     | last =>
-      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE, η, H2]
+      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, NumberField.RingOfIntegers.coe_norm,
+        NE, η, H2]
     | cast i =>
-      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE,
-        η, H2, N, H]
+      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, NumberField.RingOfIntegers.coe_norm,
+        NE, η, H2, N, H]
   · intro ε hε
     refine hS.corollary p hp _ _ (finrank_G p hp hKL σ hσ) _ (ι ∘ Fin.castSucc) ?_ (mkG ε) ?_
     · by_contra hε'

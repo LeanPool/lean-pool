@@ -193,8 +193,6 @@ theorem sliceSum_slice (μ : ℕ → Measure X) (n : ℕ) :
     refine Set.ext fun x => ?_
     simp [slice]
   · intro m hm
-    convert measure_empty (μ := μ m)
-    refine Set.ext fun x => ?_
     simp [slice, hm]
 
 /-- **The slice sum, pushed forward along the first coordinate, is the sum of its members.**
@@ -223,10 +221,10 @@ theorem measureEquiv_sliceSum {μ ν : ℕ → Measure X} (h : ∀ n, MeasureEqu
     MeasureEquiv (sliceSum μ) (sliceSum ν) := by
   constructor
   · refine Measure.AbsolutelyContinuous.mk fun t ht h0 => ?_
-    rw [sliceSum_apply _ ht, ENNReal.tsum_eq_zero] at h0 ⊢
+    rw [sliceSum_apply _ ht, tsum_eq_zero_iff] at h0 ⊢
     exact fun n => (h n).1 (h0 n)
   · refine Measure.AbsolutelyContinuous.mk fun t ht h0 => ?_
-    rw [sliceSum_apply _ ht, ENNReal.tsum_eq_zero] at h0 ⊢
+    rw [sliceSum_apply _ ht, tsum_eq_zero_iff] at h0 ⊢
     exact fun n => (h n).2 (h0 n)
 
 /-- **The Lebesgue integral against a slice sum** is the sum of the sliced integrals. -/
@@ -261,7 +259,7 @@ theorem ae_sliceSum_of_forall {μ : ℕ → Measure X} {p : X × ℕ → Prop}
     exact Set.mem_iUnion.mpr ⟨n, hNsub n hq, rfl⟩
   · have hmeas : MeasurableSet (⋃ n, N n ×ˢ ({n} : Set ℕ)) :=
       MeasurableSet.iUnion fun n => (hNm n).prod (measurableSet_singleton n)
-    rw [sliceSum_apply _ hmeas, ENNReal.tsum_eq_zero]
+    rw [sliceSum_apply _ hmeas, tsum_eq_zero_iff]
     intro n
     refine measure_mono_null (t := N n) (fun x hx => ?_) (hN0 n)
     obtain ⟨m, hm⟩ := Set.mem_iUnion.mp hx
@@ -276,7 +274,7 @@ theorem ae_sliceSum {μ : ℕ → Measure X} {p : X × ℕ → Prop}
   set t := toMeasurable (sliceSum μ) {q | ¬ p q} with ht
   have htm : MeasurableSet t := measurableSet_toMeasurable _ _
   have ht0 : sliceSum μ t = 0 := by rw [ht, measure_toMeasurable, h]
-  rw [sliceSum_apply _ htm, ENNReal.tsum_eq_zero] at ht0
+  rw [sliceSum_apply _ htm, tsum_eq_zero_iff] at ht0
   refine measure_mono_null (t := {x | (x, n) ∈ t}) (fun x hx => ?_) (ht0 n)
   exact subset_toMeasurable _ _ hx
 

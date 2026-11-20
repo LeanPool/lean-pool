@@ -36,7 +36,7 @@ private theorem force_time_norm_bound
       ‖g s‖ₑ ^ q = H s := by
     filter_upwards [hHae] with s hs
     have hmul : (1 / q) * q = (1 : ℝ) := by field_simp
-    rw [Real.enorm_eq_ofReal (Real.rpow_nonneg ENNReal.toReal_nonneg _)]
+    rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg ENNReal.toReal_nonneg _)]
     rw [ENNReal.ofReal_rpow_of_nonneg
       (Real.rpow_nonneg ENNReal.toReal_nonneg _) hq.le]
     rw [← Real.rpow_mul ENNReal.toReal_nonneg, hmul, Real.rpow_one,
@@ -45,7 +45,7 @@ private theorem force_time_norm_bound
     apply lintegral_congr_ae
     exact hpow
   have hnorm : eLpNorm' g q (volume.restrict T) ≤ ENNReal.ofReal A := by
-    rw [eLpNorm'_eq_lintegral_enorm, hlin]
+    rw [eLpNorm'_eq_lintegral_eNorm, hlin]
     calc
       (∫⁻ s in T, H s) ^ (1 / q) ≤
           (ENNReal.ofReal (A ^ q)) ^ (1 / q) :=
@@ -81,7 +81,7 @@ private lemma pressureP8_bound_hX_1 :
       congr 1
       apply lintegral_congr
       intro s
-      rw [Real.enorm_eq_ofReal (by dsimp [G]; positivity)]
+      rw [Real.eNorm_eq_ofReal (by dsimp [G]; positivity)]
     _ ≤ (ENNReal.ofReal r) ^ (2 * (2 / 3 - 1 / q : ℝ)) *
         eLpNorm' G q (volume.restrict Tρ) := by
       simpa [Tr, Tρ] using htime_holder
@@ -266,7 +266,7 @@ private lemma pressureP8_bound_hP8_3 :
   change w ∈ vec3Ball z.1 r ×ˢ Ioc (z.2 - r ^ 2) z.2 at hwm
   have habs := hw w.1 hwm.1
   have hGpos : 0 ≤ G w.2 := by dsimp [G]; positivity
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hGpos,
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hGpos,
     ENNReal.ofReal_mul hK] using ENNReal.ofReal_le_ofReal habs
 
 private lemma pressureP8_bound_hscale_4 :

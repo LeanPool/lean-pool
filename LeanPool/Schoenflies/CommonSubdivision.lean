@@ -1089,7 +1089,7 @@ theorem outerSet_realize {d : S.SubdivData} {R : S.Realization}
       rw [CellStructure.SubdivData.outer, subdivGraph_vertexSet]
       simp only [d.outer_isLink he, and_true, Set.ofPred_eq_eq_singleton,
         Set.image_union, Set.image_singleton, d.realizePos_newVertex]
-      rw [Set.union_comm]
+      rw [Set.union_comm, Set.singleton_union]
       congr 1
       apply Set.image_congr
       intro z hz

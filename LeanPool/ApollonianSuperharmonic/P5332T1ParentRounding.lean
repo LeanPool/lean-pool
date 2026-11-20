@@ -101,7 +101,6 @@ theorem P5332T1ParentRounding (P : FordFareyParameter) (hq : 1 < P.q)
       have h' := P5332T1SignedParentIntervals P.p₁ P.p P.q₁ P.q (P.q₁-t) 1
         hr' hrl' (by omega) (by omega) (Or.inl rfl) det1
       dsimp only at h h'
-      try
       fin_cases k <;> dsimp [P5332T1ParentRows] <;>
         norm_num only [ht0, false_and, ite_false, h.1, h.2.1, h.2.2.1,
           h.2.2.2.1, h.2.2.2.2, h'.1, h'.2.1, h'.2.2.1,
@@ -112,7 +111,7 @@ theorem P5332T1ParentRounding (P : FordFareyParameter) (hq : 1 < P.q)
       have h' := P5332T1SignedParentIntervals P.p₂ P.p P.q₂ P.q (P.q₂-t) (-1)
         hs' hsl' (by omega) (by omega) (Or.inr rfl) det2
       dsimp only at h h'
-      try simp only [← sub_eq_add_neg] at h h'
+      simp only [← sub_eq_add_neg] at h h'
       fin_cases k <;> dsimp [P5332T1ParentRows] <;>
         norm_num only [ht0, false_and, ite_false, h.1, h.2.1, h.2.2.1,
           h.2.2.2.1, h.2.2.2.2, h'.1, h'.2.1, h'.2.2.1,

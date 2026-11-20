@@ -304,7 +304,7 @@ lemma sugawaraGen_apply_eq_finsum_shift (n s : ℤ) (v : V) :
 lemma commutator_sugawaraGen_apply_eq_finsum_commutator_apply (n : ℤ) (A : V →ₗ[𝕜] V) (v : V) :
     (sugawaraGen heiTrunc n).commutator A v =
       (2 : 𝕜)⁻¹ • ∑ᶠ k, ((pairNO heiOper (n - k) k).commutator A) v := by
-  simp only [LinearMap.commutator, LinearMap.sub_apply, Module.End.mul_apply]
+  simp only [LinearMap.commutator, LinearMap.sub_apply, mul_apply_eq_comp]
   simp_rw [sub_eq_add_neg]
   rw [finsum_add_distrib]
   · rw [smul_add]
@@ -530,8 +530,8 @@ lemma _root_.VirasoroProject.commutator_sugawaraGen [CharZero 𝕜] (n m : ℤ) 
   rw [finsum_add_distrib]
   · simp only [neg_add_rev, neg_neg, le_add_neg_iff_add_le, zero_add, add_neg_lt_iff_lt_add,
                lt_neg_add_iff_add_lt, neg_add_le_iff_le_add, smul_ite, smul_zero, smul_add,
-               zsmul_eq_mul, Int.cast_add, Int.cast_neg, LinearMap.add_apply, Module.End.mul_apply,
-               Module.End.intCast_apply, LinearMap.neg_apply]
+               zsmul_eq_mul, Int.cast_add, Int.cast_neg, LinearMap.add_apply, mul_apply_eq_comp,
+               intCast_apply_eq_smul, LinearMap.neg_apply]
     rw [finsum_add_distrib]
     · simp only [smul_add]
       rw [add_comm, ← add_assoc]
@@ -574,7 +574,7 @@ lemma _root_.VirasoroProject.commutator_sugawaraGen [CharZero 𝕜] (n m : ℤ) 
         by_cases hnm : n + m = 0
         · have m_eq_neg_n : m = -n := by linarith
           simp only [m_eq_neg_n, add_neg_cancel, and_true, neg_neg, add_zero, zero_add, neg_smul,
-                     smul_neg, ↓reduceIte, LinearMap.smul_apply, Module.End.one_apply]
+                     smul_neg, ↓reduceIte, LinearMap.smul_apply, one_apply_eq_self]
           by_cases hn : 0 ≤ n
           · have obs (i : ℤ) : ¬ (i ≤ -n ∧ 0 < i) := by grind
             simp only [obs, ↓reduceIte]

@@ -88,11 +88,11 @@ theorem blowupRieszPressure_eventually_bounded_pastBox
       (3 / 2 : ℝ≥0∞) μfull =
       (∫⁻ z : Vec3 × ℝ, ENNReal.ofReal |P (z.1,z.2)| ^ (3 / 2 : ℝ)
         ∂μfull) ^ (2 / 3 : ℝ)
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 / 2 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 / 2 : ℝ≥0∞) ≠ ⊤) hPm]
     norm_num
-    simp only [Real.enorm_eq_ofReal_abs]
+    simp only [Real.eNorm_eq_ofReal_abs]
   calc
     eLpNorm P (3 / 2 : ℝ≥0∞) (volume.restrict C) ≤
         eLpNorm P (3 / 2 : ℝ≥0∞) μfull :=

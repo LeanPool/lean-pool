@@ -35,9 +35,8 @@ theorem stability_velocity_memLp_three_on_localBox
   obtain ⟨_hopen, hΩcompact, hΩsub, _hconn, hJcompact, hJsub⟩ := hbox
   let K : Set ParabolicPoint := closure Ω' ×ˢ closure J
   have hK : IsCompact K := by
-    apply parabolicHomeomorph.isCompact_preimage.mpr
-    change IsCompact (closure Ω' ×ˢ closure J)
-    exact hΩcompact.prod hJcompact
+    exact (parabolicHomeomorph.isCompact_preimage
+      (s := closure Ω' ×ˢ closure J)).mpr (hΩcompact.prod hJcompact)
   have hKsub : K ⊆ CKN.spaceTimeSet Ω I := by
     rintro ⟨x, t⟩ ⟨hx, ht⟩
     exact ⟨hΩsub hx, hJsub ht⟩

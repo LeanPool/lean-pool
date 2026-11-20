@@ -41,13 +41,13 @@ theorem affineSupport_translateLaw :
   · apply affineSupport_le_of_ae_mem
     · exact
         ((affineSupport μ).map
-            (AffineEquiv.constVAdd ℝ E b).toAffineMap).closed_of_finiteDimensional
+            (AffineEquiv.constVAdd ℝ E b).toAffineMap).isClosed_of_finiteDimensional
     · rw [coe_translateLaw]
       refine
         (ae_map_iff (measurable_const_add b).aemeasurable
               ((affineSupport μ).map
                   (AffineEquiv.constVAdd ℝ E
-                      b).toAffineMap).closed_of_finiteDimensional.measurableSet).2
+                      b).toAffineMap).isClosed_of_finiteDimensional.measurableSet).2
           ?_
       filter_upwards [ae_mem_affineSupport μ] with x hx
       exact ⟨x, hx, rfl⟩

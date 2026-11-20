@@ -67,7 +67,7 @@ theorem actualL2Limit_memLp_of_energy_bound {Ω E : Type*} [MeasurableSpace Ω]
     rw [← actualL2_toLp_norm_sq μ (f n) (hf n)] at hh
     exact (Real.le_sqrt (norm_nonneg _) hD).mpr hh
   have he (n : ℕ) : eLpNorm (f n) 2 μ ≤ ENNReal.ofReal (Real.sqrt D) := by
-    rw [← Lp.enorm_toLp (hf n),← ofReal_norm]
+    rw [← Lp.eNorm_toLp (hf n), ← ofReal_norm]
     exact ENNReal.ofReal_le_ofReal (hn n)
   exact (Lp.eLpNorm_le_of_ae_tendsto (Eventually.of_forall he) (fun n => (hf
       n).aestronglyMeasurable) hg ht).trans_lt

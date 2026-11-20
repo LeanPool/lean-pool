@@ -61,8 +61,8 @@ open scoped Topology ComplexConjugate
 namespace GinibrePoincare
 noncomputable section
 
-/-- The Gaussian formal adjoint of `∂̄_j` applied to a test function:
-`n · conj (z j) · φ z - conj (∂̄_j (conj ∘ φ) z)`. -/
+/-- The Gaussian formal adjoint of `dbar_j` applied to a test function:
+`n · conj (z j) · φ z - conj (dbar_j (conj ∘ φ) z)`. -/
 def gaussianDbarAdjointTest {n : ℕ} (j : Fin n)
     (φ : Configuration n → ℂ) (z : Configuration n) : ℂ :=
   (n : ℂ) * conj (z j) * φ z -

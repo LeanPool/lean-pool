@@ -263,7 +263,7 @@ theorem abs_setIntegral_energy_sub_le
         (ae_mono (Measure.restrict_mono hSU le_rfl) heBtY0U)
     -- monotonicity: `∫_S eBtY ≤ G`
     have hmono : (∫ x in S, eBtY x) ≤ G := by
-      rw [hG]; exact setIntegral_mono_set hID heBtY0U (LE.le.eventuallyLE hSU)
+      rw [hG]; exact setIntegral_mono_set hID heBtY0U (LE.le.eventuallySubset hSU)
     have hsqrtES : (0 : ℝ) ≤ Real.sqrt ES := Real.sqrt_nonneg _
     have hmono' : Real.sqrt (∫ x in S, eBtY x) ≤ Real.sqrt G := Real.sqrt_le_sqrt hmono
     calc G = |∫ x in S, δ1 x| := habs

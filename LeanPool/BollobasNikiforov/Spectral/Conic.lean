@@ -8,6 +8,7 @@ module
 public import LeanPool.BollobasNikiforov.Basic.Graph
 public import LeanPool.BollobasNikiforov.Basic.Inner
 public import Mathlib.Combinatorics.SimpleGraph.AdjMatrix
+import LeanPool.BollobasNikiforov.CP.Basic
 import LeanPool.BollobasNikiforov.Spectral.Gram
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Analysis.Matrix.PosDef
@@ -96,8 +97,7 @@ omit [DecidableEq V] [Fintype V] in
 variable [Finite V] in
 lemma posSemidef_add_vecMulVec (u v : V → ℝ) :
     (vecMulVec u u + vecMulVec v v).PosSemidef :=
-  ((posSemidef_vecMulVec_self_star (R := ℝ) u).add
-    (posSemidef_vecMulVec_self_star (R := ℝ) v))
+  (posSemidef_vecMulVec_self u).add (posSemidef_vecMulVec_self v)
 
 omit [DecidableEq V] in
 lemma rank_add_vecMulVec_le (u v : V → ℝ) :

@@ -210,7 +210,7 @@ theorem backward_taylor_remainder {f : ℝ → ℝ} {B s t : ℝ} (k : ℕ)
       (j.factorial : ℝ)⁻¹ * ((t - s) ^ j * (-1 : ℝ) ^ j) * iteratedDeriv j f t by ring,
       ← mul_pow, show (t - s) * (-1 : ℝ) = s - t by ring]
   have h := taylor_mean_remainder_bound (n := k) (a := (0 : ℝ)) (b := t - s)
-    (x := t - s) (C := B) hu.le (hg.of_le (by simp)).contDiffOn
+    (x := t - s) (C := B) (hg.of_le (by simp)).contDiffOn
     ⟨hu.le, le_refl _⟩ hbound
   rw [htaylor, Real.norm_eq_abs] at h
   simpa [g] using h

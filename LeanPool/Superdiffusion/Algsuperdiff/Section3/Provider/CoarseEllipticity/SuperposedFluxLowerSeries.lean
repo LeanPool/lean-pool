@@ -210,7 +210,7 @@ private theorem rootedWeight_mul_depthAmp_eq
         endpointWeight (2 * s - M.gamma) n := by
     rw [endpointWeight_eq_rpow]
     convert rpow_collar_eq_endpointWeight s M.gamma n using 1
-    all_goals ring_nf
+    ring_nf
   rw [geometricWeight_rpow_two_div_eq_endpointWeight hsq hq]
   unfold superposedFluxDepthAmpProfile
   calc
@@ -237,7 +237,7 @@ private theorem endpointWeight_mul_depthAmp_eq
         endpointWeight (2 * s - M.gamma) n := by
     rw [endpointWeight_eq_rpow]
     convert rpow_collar_eq_endpointWeight s M.gamma n using 1
-    all_goals ring_nf
+    ring_nf
   unfold superposedFluxDepthAmpProfile
   calc
     _ = (superposedFluxDepthAmpConst d *

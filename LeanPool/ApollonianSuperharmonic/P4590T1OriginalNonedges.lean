@@ -87,8 +87,7 @@ theorem P4590T1OriginalNonedges (q : Fin 4 → CircleCoordinates)
         refine ⟨⟨h3, h4, h1, h2⟩, ?_⟩
         simpa only [and_comm, or_comm, or_left_comm, or_assoc] using hp
       | _ =>
-        simp
-        all_goals omega
+        simp +contextual [add_eq_zero_iff_eq_neg, sub_eq_zero]
     apply haux h
     simp only
     refine ⟨by simp, ?_⟩

@@ -338,7 +338,7 @@ private theorem helper_continuation_613.{u_1, u_2} :
                       GoldbergSeymour.TreeSequence.positive
                         (HierarchyStarredStage H (Fin.last H.dividerCount))
                     have := GoldbergSeymour.TreeSequence.positive T
-                    all_goals omega)
+                    omega)
     ) (Nat.min_le_right ((HierarchyStarredStage H (Fin.last H.dividerCount)).length + i)
         T.length)).length),
     let q : Fin (H.dividerCount + (1 : ℕ)) := Fin.last H.dividerCount;

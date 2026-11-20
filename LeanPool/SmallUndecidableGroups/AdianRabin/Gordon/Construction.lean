@@ -43,7 +43,7 @@ structure TorsionData (P : FP n m) where
   q : Fin p → ℕ
   gcd_q : Finset.univ.gcd q = 1
   exactOrder : ∀ i,
-    orderOf (Abelianization.of
+    orderOf (Group.Abelianization.of
       (PresentedGroup.of (selected i) : P.Group)) = q i
   /-- The distinct positive exponents assigned to the original generators. -/
   degree : Fin n → ℕ
@@ -322,11 +322,11 @@ theorem presentsTrivial_transform_of_wordProblem
   let : CommGroup (transform P data w).Group := IsCyclic.commGroup
   have haSq (i : Fin data.p) : a ^ (data.q i ^ 2) = 1 := by
     have hab :
-        (Abelianization.of
+        (Group.Abelianization.of
           (PresentedGroup.of (data.selected i) : P.Group)) ^ data.q i = 1 := by
       rw [← data.exactOrder i]
       exact pow_orderOf_eq_one _
-    have hmapped := congrArg (Abelianization.lift f) hab
+    have hmapped := congrArg (Group.Abelianization.lift f) hab
     have hfi : f (PresentedGroup.of (data.selected i)) ^ data.q i = 1 := by
       simpa using hmapped
     rw [hf, hencoded, data.degree_selected] at hfi

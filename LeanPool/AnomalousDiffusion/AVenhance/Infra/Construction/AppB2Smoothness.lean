@@ -220,7 +220,7 @@ theorem AppB2Smoothness.snorm_neg_eq_vec {n : ℕ} {S : ℝ} (f : Vec 2 → Vec 
   have hpartial (I : Fin n → Fin 2) :
       partialSup n (fun x => -f x) I = partialSup n f I := by
     unfold partialSup
-    rw [eLpNormEssSup_eq_essSup_enorm, eLpNormEssSup_eq_essSup_enorm]
+    rw [eLpNormEssSup_eq_essSup_eNorm, eLpNormEssSup_eq_essSup_eNorm]
     apply essSup_congr_ae
     filter_upwards with x
     have h : orderedPartial n (fun x => -f x) x I = -orderedPartial n f x I := by

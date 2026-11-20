@@ -36,13 +36,13 @@ private theorem integrable_tsum_of_summable_integral_norm
   have hnorm (i : ι) :
       ‖G i‖ = ∫ a, ‖F i a‖ ∂μ := by
     rw [show G i = (hF_int i).toL1 (F i) by grind,
-      Integrable.norm_toL1, integral_norm_eq_lintegral_enorm
+      Integrable.norm_toL1, integral_norm_eq_lintegral_eNorm
         (hF_int i).aestronglyMeasurable]
     simp only [edist_zero_right]
   have hG_norm : Summable fun i ↦ ‖G i‖ :=
     hF_sum.congr fun i ↦ (hnorm i).symm
   have hG_enorm : ∑' i, ‖G i‖ₑ ≠ ∞ :=
-    tsum_enorm_ne_top_iff_summable_norm.mpr hG_norm
+    tsum_eNorm_ne_top_iff_summable_norm.mpr hG_norm
   have hcoe :
       (⇑(∑' i, G i) : α → E) =ᵐ[μ]
         fun a ↦ ∑' i, F i a := by

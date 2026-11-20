@@ -831,7 +831,7 @@ lemma segment_in_boundary_imp_in_side {T : Triangle} {L : Segment} (hdet : det T
         intro j hji
         have h₁ := haux j δ  hji (by simp only [abs_of_pos hδ, le_refl])
         have h₂ := haux j (-δ) hji (by simp only [abs_neg, abs_of_pos hδ, le_refl])
-        rw [←(div_left_inj' hdet), zero_div]
+        rw [←(div_left_inj₀ hdet), zero_div]
         rw [mul_div_assoc] at h₁ h₂
         linarith [nonneg_of_mul_nonneg_right h₁ hδ,
           nonpos_of_mul_nonneg_right h₂ (neg_neg_iff_pos.mpr hδ)]
@@ -1399,7 +1399,7 @@ lemma closedHull_eq_imp_eq_or_rev_seg {u v x y : ℝ²}
       rw [←reverseSegment_closedHull] at h
       obtain ⟨hv, hv⟩ := closedHull_eq_imp_eq_or_rev_seg_aux h
     )
-  all_goals try simp_all [toSegment]
+  all_goals simp_all [toSegment]
   all_goals simp_all [closedHull_eq_imp_eq_triv (by rfl) h]
 
 lemma closedHull_eq_imp_eq_or_rev {L₁ L₂ : Segment}
@@ -2078,7 +2078,7 @@ lemma disjoint_opens_implies_disjoint_open_closed {T₁ T₂ : Triangle}
     have hContra := (seg_inter_open_triangle (T := T₂) (S := toSegment x y) hDet ?_)
     · rw [@Set.disjoint_iff_inter_eq_empty] at hT
       apply hContra
-      refine Set.subset_eq_empty (s := ∅) ?_ rfl
+      refine Set.eq_empty_of_subset (s := ∅) ?_ rfl
       rw [←hT]
       exact Set.inter_subset_inter hS fun ⦃a⦄ a ↦ a
     · rw [← Set.nonempty_iff_ne_empty]

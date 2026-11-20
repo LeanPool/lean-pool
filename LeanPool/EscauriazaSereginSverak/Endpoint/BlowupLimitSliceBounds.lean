@@ -89,7 +89,7 @@ theorem blowup_limit_trace_rescaled_compact_slice_bound
   have hsq' : (eLpNorm f 2 μ) ^ (2 : ℝ) =
       ∫⁻ x in C, ENNReal.ofReal (vec3EuclideanNorm
         (r • g (x₀ + r • x))) ^ (2 : ℝ) ∂volume := by
-    simpa [f, μ, Real.enorm_eq_ofReal_abs,
+    simpa [f, μ, Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)] using hsq
   rw [← hsq']
   gcongr

@@ -159,7 +159,7 @@ theorem charEq_on_torsionBy_of_isotropic
   have hmem : P ∈ Submodule.torsionBy ℤ (W⁄K).Point p := (Submodule.mem_torsionBy_iff _ _).mpr hP
   have hx := LinearMap.ext_iff.mp hEnd ⟨P, hmem⟩
   simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
-    Module.End.mul_apply, Module.End.one_apply, LinearMap.zero_apply] at hx
+    mul_apply_eq_comp, one_apply_eq_self, LinearMap.zero_apply] at hx
   have hcoe := congrArg Subtype.val hx
   simpa only [Submodule.coe_sub, Submodule.coe_add, Submodule.coe_smul_of_tower,
     galoisRepModuleEnd_apply, coe_galois_smul_torsionBy, ZeroMemClass.coe_zero] using hcoe

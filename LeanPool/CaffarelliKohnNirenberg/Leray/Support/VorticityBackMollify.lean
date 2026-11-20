@@ -281,7 +281,7 @@ private theorem vorticity_translate_tendsto_of_continuous {g : Vec3 × ℝ → �
         ∂(volume : Measure (Vec3 × ℝ)))) := by
     refine tendsto_lintegral_filter_of_dominated_convergence bound ?_ ?_ hbound_fin ?_
     · exact Eventually.of_forall fun n =>
-        ((hg.comp (continuous_id.sub continuous_const)).sub hg).measurable.enorm.pow_const _
+        ((hg.comp (continuous_id.sub continuous_const)).sub hg).measurable.eNorm.pow_const _
     · filter_upwards [hsmall] with n hn
       refine Eventually.of_forall fun z => ?_
       by_cases hz : z ∈ K
@@ -314,7 +314,7 @@ private theorem vorticity_translate_tendsto_of_continuous {g : Vec3 × ℝ → �
       have hcont : Tendsto (fun n => g (z - h n) - g z) atTop (𝓝 (g (z - 0) - g z)) :=
         ((hg.tendsto (z - 0)).comp (tendsto_const_nhds.sub hh)).sub tendsto_const_nhds
       simp only [sub_zero, sub_self] at hcont
-      have hcont' := (continuous_enorm.tendsto 0).comp hcont
+      have hcont' := (continuous_eNorm.tendsto 0).comp hcont
       have hpow := (ENNReal.continuous_rpow_const (y := (2 : ℝ))).tendsto _ |>.comp hcont'
       simpa [Function.comp_def] using hpow
   simp only [lintegral_const, zero_mul] at hlint
@@ -326,7 +326,7 @@ private theorem vorticity_translate_tendsto_of_continuous {g : Vec3 × ℝ → �
     have hm : AEStronglyMeasurable (fun z => g (z - h n) - g z)
         (volume : Measure (Vec3 × ℝ)) :=
       (show Continuous fun z => g (z - h n) - g z by fun_prop).aestronglyMeasurable
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hm]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm]
     norm_num
   rw [heq]
   have hlim := (ENNReal.continuous_rpow_const (y := 1 / (2 : ℝ))).tendsto 0 |>.comp hlint

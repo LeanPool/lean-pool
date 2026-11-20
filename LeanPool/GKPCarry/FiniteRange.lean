@@ -41,7 +41,7 @@ decreasing_by all_goals exact Nat.div_lt_self (Nat.pos_of_ne_zero hzero) (by dec
 theorem hasAtLeastTernaryTwos_eq_true (required n : ℕ) :
     hasAtLeastTernaryTwos required n = true ↔ required ≤ (Nat.digits 3 n).count 2 := by
   induction n using Nat.strong_induction_on generalizing required with
-  | h n ih =>
+  | ind n ih =>
       cases required with
       | zero => simp [hasAtLeastTernaryTwos]
       | succ required =>

@@ -250,6 +250,7 @@ theorem cadlag_globalPatch {Y : ℕ → ℝ → Ω → (Fin n → ℝ)}
     · obtain ⟨ℓ, hℓ⟩ := (hcad k t).2 i
       refine ⟨ℓ, Filter.Tendsto.congr' ?_ hℓ⟩
       have hmem : Set.Ioo (0 : ℝ) t ∈ nhdsWithin t (Set.Iio t) := by
+        rw [← Set.Ioi_inter_Iio]
         refine Filter.inter_mem ?_ self_mem_nhdsWithin
         exact nhdsWithin_le_nhds (Ioi_mem_nhds ht0)
       filter_upwards [hmem] with s hs

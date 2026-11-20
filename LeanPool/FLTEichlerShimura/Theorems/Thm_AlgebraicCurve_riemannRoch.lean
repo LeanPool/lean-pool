@@ -6,6 +6,8 @@ Authors: David Loeffler
 
 module
 
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_ModularCurve_CanonicalDivisor
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_AdelicIndex
 

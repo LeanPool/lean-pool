@@ -254,13 +254,8 @@ noncomputable def chain [∀ i, Preorder (P i)] (φ : Chain (Var I P)) : Var I f
             · have hid :
                   @Measurable { j // (φ n).embed j = i } { j // (φ n).embed j = i }
                     inferInstance ⊤ id := by
-                apply Measurable.le
-                · rw [top_le_iff]
-                  ext
-                  simp only [MeasurableSpace.measurableSet_top, iff_true]
-                  apply MeasurableSet.of_subtype_image
-                  simp only [MeasurableSpace.measurableSet_top]
-                · apply measurable_id
+                intro s _
+                exact MeasurableSet.of_discrete
               exact hid
             · apply Measurable.subtype_mk hψ
         · rintro ⟨m, rfl⟩
@@ -271,13 +266,12 @@ noncomputable def chain [∀ i, Preorder (P i)] (φ : Chain (Var I P)) : Var I f
       · fun_prop)
     (measurable_index := by
       let : MeasurableSpace I := ⊤
-      apply Measurable.mono
-      · apply Measurable.rangeFactorization
-        fun_prop
-      · rfl
-      · simp only [top_le_iff]
-        ext
-        simp only [MeasurableSpace.measurableSet_top, MeasurableSet.of_subtype_image])
+      have hf : Measurable (fun r ↦ (φ 0).embed ((φ 0).index r)) :=
+        measurable_from_top.comp (φ 0).measurable_index
+      apply Measurable.comp (g := id) (mβ := @Subtype.instMeasurableSpace I _ ⊤)
+      · intro s _
+        exact MeasurableSet.of_discrete
+      · exact hf.rangeFactorization)
 
 @[simp]
 lemma chain_apply [∀ i, Preorder (P i)] (φ : Chain (Var I P)) (r)
@@ -456,13 +450,11 @@ instance
           simp only [Sigma.eta]
           fun_prop
         · fun_prop
-      · intro _ _
-        apply Measurable.subtype_mk
-        · apply Measurable.fun_comp
-          · simp only [MeasureTheory.Sigma.measurable_fst]
-          · apply h
-        · apply MeasurableSet.of_subtype_image
-          apply MeasurableSpace.measurableSet_top
+      · let : MeasurableSpace I := ⊤
+        apply Measurable.comp (g := id) (mβ := @Subtype.instMeasurableSpace I _ ⊤)
+        · intro s _
+          exact MeasurableSet.of_discrete
+        · exact (MeasureTheory.Sigma.measurable_fst.comp h).subtype_mk
 
 end QuasiBorelSpace.Sigma
 

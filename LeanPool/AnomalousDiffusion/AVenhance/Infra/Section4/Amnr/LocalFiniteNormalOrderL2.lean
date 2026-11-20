@@ -59,7 +59,7 @@ theorem amnr_word_L2_le_on_of_finite_mixed_bounds_and_lower_gradients
     exact hh.trans_eq (by dsimp [K, E]; ring)
   have he := amnrCanonicalEnvelope_finite_L2_le hU hμ (hb.of_le (by simp)).contDiffOn hf hS hH hfb
   have hh := eLpNorm_mono_ae hm hpoint (p := 2)
-  rw [eLpNorm_const_smul, Real.enorm_of_nonneg hK] at hh
+  rw [eLpNorm_const_smul, Real.eNorm_of_nonneg hK] at hh
   refine (hh.trans (mul_le_mul_right he _)).trans_eq ?_
   rw [← ENNReal.ofReal_mul hK]
   congr 1

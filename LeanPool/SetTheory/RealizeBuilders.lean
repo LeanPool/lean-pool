@@ -12,6 +12,7 @@ import Mathlib.Tactic.FinCases
 import LeanPool.SetTheory.SimpAttr
 
 public import LeanPool.SetTheory.RealizeCore
+public import Lean.Elab.Command
 
 /-!
 # Generating realization companion declarations

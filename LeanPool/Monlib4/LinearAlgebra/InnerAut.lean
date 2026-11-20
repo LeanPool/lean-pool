@@ -263,7 +263,7 @@ theorem _root_.Matrix.innerAut.spectrum_eq [DecidableEq n] (U : unitaryGroup n �
 
 theorem innerAut_one [DecidableEq n] : innerAut (1 : unitaryGroup n 𝕜) = 1 := by
   simp_rw [LinearMap.ext_iff, innerAut_apply, UnitaryGroup.inv_apply, UnitaryGroup.one_apply,
-    star_one, Matrix.mul_one, Matrix.one_mul, Module.End.one_apply, forall_true_iff]
+    star_one, Matrix.mul_one, Matrix.one_mul, one_apply_eq_self, forall_true_iff]
 
 theorem innerAut_comp_innerAut_inv [DecidableEq n] (U : unitaryGroup n 𝕜) :
     innerAut U ∘ₗ innerAut U⁻¹ = 1 := by
@@ -280,7 +280,7 @@ theorem innerAut_apply_innerAut_inv [DecidableEq n] (U₁ U₂ : unitaryGroup n 
 theorem innerAut_apply_innerAut_inv_self [DecidableEq n] (U : unitaryGroup n 𝕜)
     (x : Matrix n n 𝕜) :
     innerAut U (innerAut U⁻¹ x) = x := by
-  rw [innerAut_apply_innerAut_inv, mul_inv_cancel, innerAut_one, Module.End.one_apply]
+  rw [innerAut_apply_innerAut_inv, mul_inv_cancel, innerAut_one, one_apply_eq_self]
 
 theorem innerAut_inv_apply_innerAut_self [DecidableEq n] (U : unitaryGroup n 𝕜)
     (x : Matrix n n 𝕜) :
@@ -623,7 +623,7 @@ theorem _root_.Matrix.innerAut_commutes_with_map_lid_symm (U : Matrix.unitaryGro
       (TensorProduct.lid 𝕜 (Matrix n n 𝕜)).symm.toLinearMap ∘ₗ innerAut U := by
   simp_rw [LinearMap.ext_iff, LinearMap.comp_apply,
     LinearEquiv.coe_coe, TensorProduct.lid_symm_apply, TensorProduct.map_tmul,
-    Module.End.one_apply]
+    one_apply_eq_self]
   simp_all
 
 theorem _root_.Matrix.innerAut_commutes_with_lid_comm (U : Matrix.unitaryGroup n 𝕜) :
@@ -635,7 +635,7 @@ theorem _root_.Matrix.innerAut_commutes_with_lid_comm (U : Matrix.unitaryGroup n
           (TensorProduct.comm 𝕜 (Matrix n n 𝕜) 𝕜).toLinearMap := by
   simp_rw [TensorProduct.ext_iff', LinearMap.comp_apply, TensorProduct.map_apply,
     LinearEquiv.coe_coe, TensorProduct.comm_tmul, TensorProduct.lid_tmul,
-    Module.End.one_apply, _root_.map_smul, forall₂_true_iff]
+    one_apply_eq_self, _root_.map_smul, forall₂_true_iff]
 
 theorem _root_.Matrix.innerAut_comp_inj (U : Matrix.unitaryGroup n 𝕜)
     (S T : Matrix n n 𝕜 →ₗ[𝕜] Matrix n n 𝕜) :

@@ -569,7 +569,7 @@ theorem single_site_chi_normal (selected : CubeCorner) (z : C3)
     simpa [singleSiteField] using h
   · simp [singleSiteField, hs, ComplexNormalTo, c3Inner, c3Zero]
 
-theorem psi_momentum_single_site [Fintype CubeCorner]
+theorem psi_momentum_single_site
     (velocity : Velocity CubeCorner) (selected : CubeCorner) (z : C3) :
     psiMomentumPair velocity (singleSiteField selected z) =
       c3RealPair (velocity.psiDot selected) z := by
@@ -580,7 +580,7 @@ theorem psi_momentum_single_site [Fintype CubeCorner]
     simp [singleSiteField, hne, c3RealPair, c3Zero]
   · simp
 
-theorem chi_momentum_single_site [Fintype CubeCorner]
+theorem chi_momentum_single_site
     (B : ℝ) (velocity : Velocity CubeCorner) (selected : CubeCorner) (z : C3) :
     chiMomentumPair B velocity (singleSiteField selected z) =
       B * c3RealPair (velocity.chiDot selected) z := by

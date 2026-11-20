@@ -101,7 +101,7 @@ theorem BoundedParabolicUniqueness.parabolicSpatialBox_compact (R : ℝ) :
 
 theorem BoundedParabolicUniqueness.parabolicSpatialBox_mem_of_coord_bounds {R : ℝ} {x : Vec 2}
     (hx : ∀ i : Fin 2, -R ≤ x i ∧ x i ≤ R) :
-    BoundedParabolicUniqueness.parabolicSpatialBox R x := by
+    x ∈ BoundedParabolicUniqueness.parabolicSpatialBox R := by
   change ∀ i ∈ (Set.univ : Set (Fin 2)), x i ∈ Set.Icc (-R) R
   intro i _
   exact Set.mem_Icc.mpr (hx i)
@@ -143,7 +143,7 @@ theorem BoundedParabolicUniqueness.barrier_compact_max_interior {ε A s T R M t�
     (hφ : ∀ p, φ p = u p.1 p.2 - parabolicBarrier ε A s p)
     (hφC : ContDiff ℝ 2 φ)
     (hs : s < t₀) (hts : s < t) (htT : t < T)
-    (hbox : BoundedParabolicUniqueness.parabolicSpatialBox R x) (hφtarget : 0 < φ (t, x))
+    (hbox : x ∈ BoundedParabolicUniqueness.parabolicSpatialBox R) (hφtarget : 0 < φ (t, x))
     (hside : M < ε * (1 + R ^ 2))
     (htop : M < ε * Real.exp (A * (T - s))) :
     ∃ p ∈ Set.Icc s T ×ˢ BoundedParabolicUniqueness.parabolicSpatialBox R,
@@ -252,7 +252,7 @@ private theorem BoundedParabolicUniqueness.boundedParabolic_le_zero_boxTarget1 :
   let ε : ℝ := u t x / den;
   let Moverε : ℝ := M / ε;
   let R : ℝ := Moverε + |x (0 : Fin (2 : ℕ))| + |x (1 : Fin (2 : ℕ))| + (3 : ℝ);
-  (0 : ℝ) ≤ Moverε → parabolicSpatialBox R x
+  (0 : ℝ) ≤ Moverε → x ∈ parabolicSpatialBox R
     := by
   intro κ D M t₀ u t x s A r den ε Moverε R hMoverε
   have hAbs0 : |x 0| < R := by
@@ -383,7 +383,7 @@ theorem BoundedParabolicUniqueness.boundedParabolic_le_zero {κ D M t₀ : ℝ} 
         dsimp [φ]
         rw [htargetBarrier]
         linarith
-      have hboxTarget : BoundedParabolicUniqueness.parabolicSpatialBox R x := by
+      have hboxTarget : x ∈ BoundedParabolicUniqueness.parabolicSpatialBox R := by
         exact @BoundedParabolicUniqueness.boundedParabolic_le_zero_boxTarget1 κ D M t₀ u t x hMoverε
       have htop : M < ε * Real.exp (A * (T - s)) := by
         rw [hTexp]

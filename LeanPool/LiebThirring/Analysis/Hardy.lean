@@ -26,7 +26,7 @@ omit [CompleteSpace E] in
 /-- Squared Schwartz L² norm, in nonnegative extended-integral form. -/
 theorem lintegral_schwartz_norm_sq_eq_enorm_toLp_sq (f : 𝓢(Position, E)) :
     (∫⁻ x, (‖f x‖₊ : ℝ≥0∞) ^ 2) = ‖f.toLp 2 volume‖ₑ ^ 2 := by
-  rw [SchwartzMap.toLp, Lp.enorm_toLp]
+  rw [SchwartzMap.toLp, Lp.eNorm_toLp]
   exact lintegral_norm_sq_eq_eLpNorm_sq f.continuous.aestronglyMeasurable
 
 /-- Every L² state has its Coulomb expectation bounded by its mass plus four
@@ -59,7 +59,7 @@ theorem lintegral_coulomb_le_of_fourier (c : Position) (u : Lp E 2 (volume : Mea
     change Tendsto (fun n => 𝓕⁻ ((f n).toLp 2 volume)) atTop (𝓝 (𝓕⁻ v)) at hh
     simpa only [SchwartzMap.toLp_fourierInv_eq, v, fourierInv_fourier_eq] using hh
   have hn : Tendsto (fun n => ‖w n‖ₑ ^ 2) atTop (𝓝 (‖u‖ₑ ^ 2)) := by
-    exact ((ENNReal.continuous_pow 2).tendsto _).comp ((continuous_enorm.tendsto _).comp hw)
+    exact ((ENNReal.continuous_pow 2).tendsto _).comp ((continuous_eNorm.tendsto _).comp hw)
   have hk : Tendsto (fun n => 4 * (K * ∫⁻ ξ, (‖ξ‖₊ : ℝ≥0∞) ^ 2 * (‖f n ξ‖₊ : ℝ≥0∞) ^ 2))
       atTop (𝓝 (4 * (K * ∫⁻ ξ, (‖ξ‖₊ : ℝ≥0∞) ^ 2 * (‖v ξ‖₊ : ℝ≥0∞) ^ 2))) :=
     ENNReal.Tendsto.const_mul (ENNReal.Tendsto.const_mul hf₁ (Or.inr hK)) (Or.inr (by finiteness))
@@ -84,14 +84,14 @@ theorem lintegral_coulomb_le_of_fourier (c : Position) (u : Lp E 2 (volume : Mea
       apply ENNReal.inv_ne_top.mpr
       exact (ENNReal.ofReal_pos.mpr (norm_pos_iff.mpr (sub_ne_zero.mpr hxc))).ne'
     apply ENNReal.Tendsto.const_mul _ (Or.inr hkx)
-    exact ((ENNReal.continuous_pow 2).tendsto _).comp ((continuous_enorm.tendsto _).comp hx)
+    exact ((ENNReal.continuous_pow 2).tendsto _).comp ((continuous_eNorm.tendsto _).comp hx)
   have hm (n : ℕ) : AEMeasurable (fun x => coulombKernel x c * (‖w (ns n) x‖₊ : ℝ≥0∞) ^ 2) volume
     := by
     have hkx : Measurable (fun x : Position => coulombKernel x c) := by
       exact (ENNReal.continuous_ofReal.measurable.comp
         ((continuous_norm.comp (continuous_id.sub continuous_const)).measurable)).inv
     exact hkx.aemeasurable.mul
-      ((Lp.aestronglyMeasurable (w (ns n))).nnnorm.aemeasurable.coe_nnreal_ennreal.pow_const 2)
+      ((Lp.aestronglyMeasurable (w (ns n))).nnNorm.aemeasurable.coe_nnreal_ennreal.pow_const 2)
   have hr := (hn.add hk).comp hns.tendsto_atTop
   have hfat : (∫⁻ x, coulombKernel x c * (‖u x‖₊ : ℝ≥0∞) ^ 2) ≤
       liminf (fun n => ∫⁻ x, coulombKernel x c * (‖w (ns n) x‖₊ : ℝ≥0∞) ^ 2) atTop := by

@@ -305,10 +305,10 @@ theorem IsCaratheodory.nnnorm
     {f : Ω → D → F} (hf : IsCaratheodory f μ) :
     IsCaratheodory (‖f · ·‖₊) μ where
   isStronglyMeasurable x :=
-    (hf.isStronglyMeasurable x).nnnorm
+    (hf.isStronglyMeasurable x).nnNorm
   ae_continuous := by
     filter_upwards [hf.ae_continuous] with ω hω
-    exact hω.nnnorm
+    exact hω.nnNorm
 
 theorem IsCaratheodory.prod
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}

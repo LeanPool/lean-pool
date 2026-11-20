@@ -102,7 +102,7 @@ theorem integral_campanatoCutoff_ge {m j : ℤ} {z : Vec d}
       ≤ ∫ y in openCubeSet (originCube d m), campanatoCutoff z j y ∂volume := by
     refine setIntegral_mono_set hηint.integrableOn
       (Filter.Eventually.of_forall fun y => campanatoCutoff_nonneg z j y)
-      (LE.le.eventuallyLE hBsub)
+      (LE.le.eventuallySubset hBsub)
   rw [hBint] at hmono
   linarith only [hvol, hmono]
 

@@ -36,7 +36,7 @@ theorem P3475T1BoundaryReduction {n : Nat}
 -- BODY
   classical
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hcorner : ∀ i : Fin (n + 3),
         P3381T1TriangleDeterminant (fun j : Fin 3 =>
           p.vertex (i + ⟨j.val, Nat.lt_of_lt_of_le j.isLt (Nat.le_add_left 3 n)⟩)) ≠ 0

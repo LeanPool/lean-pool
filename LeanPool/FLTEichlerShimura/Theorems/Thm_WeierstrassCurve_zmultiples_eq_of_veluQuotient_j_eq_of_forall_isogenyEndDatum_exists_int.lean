@@ -18,6 +18,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+
 public import Mathlib.RingTheory.HahnSeries.Summable
 public import LeanPool.FLTEichlerShimura.Definitions.Def_Isogeny_ConditionalCurrency
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
@@ -551,8 +553,9 @@ end
 
 open WeierstrassCurve.Affine WeierstrassCurve AlgebraicCurve in
 theorem solution
-    [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))] [CharZero (HahnSeries ℚ (AlgebraicClosure ℚ))]
-    [IsAlgClosed (HahnSeries ℚ (AlgebraicClosure ℚ))]
+    [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
+    {charZero : CharZero (HahnSeries ℚ (AlgebraicClosure ℚ))}
+    {isAlgClosed : IsAlgClosed (HahnSeries ℚ (AlgebraicClosure ℚ))}
     (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
     [GenusOnePlaceGate W.toAffine] [GenusOnePlaceGate.IsCentred W.toAffine] [AbelTheorem W.toAffine]
     (hNs : ∀ D : IsogenyEndDatum W.toAffine, NormFormulaAlong (HahnSeries ℚ (AlgebraicClosure ℚ))
@@ -569,8 +572,11 @@ theorem solution
         hΔ'⟩
       (W.veluQuotient (W.oddOrderSummingSet Q n)).j = (W.veluQuotient (W.oddOrderSummingSet Q'
         n)).j) :
-    AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q' :=
-  ModularCurve.kw_veluOddQuotientJInjOnCyclic_of_isogenyEndInt W hNs hEnd n Q Q' hQ hQ' hΔ hΔ' hj
+    AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q' := by
+  have := charZero
+  have := isAlgClosed
+  exact ModularCurve.kw_veluOddQuotientJInjOnCyclic_of_isogenyEndInt
+    W hNs hEnd n Q Q' hQ hQ' hΔ hΔ' hj
 
 end privateSection
 
@@ -579,8 +585,9 @@ public section publicSection
 
 open WeierstrassCurve WeierstrassCurve.Affine AlgebraicCurve
 theorem WeierstrassCurve.zmultiples_eq_of_veluQuotient_j_eq_of_forall_isogenyEndDatum_exists_int
-    [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))] [CharZero (HahnSeries ℚ (AlgebraicClosure ℚ))]
-    [IsAlgClosed (HahnSeries ℚ (AlgebraicClosure ℚ))]
+    [DecidableEq (HahnSeries ℚ (AlgebraicClosure ℚ))]
+    {charZero : CharZero (HahnSeries ℚ (AlgebraicClosure ℚ))}
+    {isAlgClosed : IsAlgClosed (HahnSeries ℚ (AlgebraicClosure ℚ))}
     (W : WeierstrassCurve (HahnSeries ℚ (AlgebraicClosure ℚ))) [W.IsElliptic]
     [GenusOnePlaceGate W.toAffine] [GenusOnePlaceGate.IsCentred W.toAffine] [AbelTheorem W.toAffine]
     (hNs : ∀ D : IsogenyEndDatum W.toAffine, NormFormulaAlong (HahnSeries ℚ (AlgebraicClosure ℚ))
@@ -598,6 +605,7 @@ theorem WeierstrassCurve.zmultiples_eq_of_veluQuotient_j_eq_of_forall_isogenyEnd
       (W.veluQuotient (W.oddOrderSummingSet Q n)).j = (W.veluQuotient (W.oddOrderSummingSet Q'
         n)).j) :
     AddSubgroup.zmultiples Q = AddSubgroup.zmultiples Q' :=
-  solution W hNs hEnd n Q Q' hQ hQ' hΔ hΔ' hj
+  solution (charZero := charZero) (isAlgClosed := isAlgClosed)
+    W hNs hEnd n Q Q' hQ hQ' hΔ hΔ' hj
 
 end publicSection

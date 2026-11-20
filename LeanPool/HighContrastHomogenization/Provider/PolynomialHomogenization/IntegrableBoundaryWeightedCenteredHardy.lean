@@ -65,7 +65,7 @@ private theorem normalizedChainMeasure_isProbability
     (c x : Vec d) {rho : ℝ} (hrho : 0 < rho) (n : ℕ) :
     IsProbabilityMeasure (normalizedChainMeasure c x rho n) := by
   refine ⟨?_⟩
-  rw [normalizedChainMeasure, Measure.smul_apply,
+  rw [normalizedChainMeasure, smul_apply,
     Measure.restrict_apply_univ, smul_eq_mul]
   exact ENNReal.inv_mul_cancel
     (volume_chainBall_pos_integrable c x hrho n).ne'
@@ -149,8 +149,8 @@ private theorem normalizedChainMeasure_le_closedBallAverage
         mul_le_mul_right hvolLower A
   apply Measure.le_iff'.2
   intro S
-  rw [normalizedChainMeasure, Measure.smul_apply, Measure.smul_apply,
-    Measure.smul_apply, smul_eq_mul, smul_eq_mul]
+  rw [normalizedChainMeasure, smul_apply, smul_apply,
+    smul_apply, smul_eq_mul, smul_eq_mul]
   have hrestr : (volume.restrict (convexFractionalChainBall c x rho n)) S ≤
       (volume.restrict (Metric.closedBall z r)) S :=
     Measure.restrict_mono_set volume hsub S
@@ -241,7 +241,7 @@ private theorem norm_integral_normalizedChainMeasure_le_closedBallAverage
   let : IsProbabilityMeasure νn := by
     refine ⟨?_⟩
     dsimp only [νn]
-    rw [Measure.smul_apply, Measure.restrict_apply_univ, smul_eq_mul]
+    rw [smul_apply, Measure.restrict_apply_univ, smul_eq_mul]
     exact ENNReal.inv_mul_cancel
       (Metric.measure_closedBall_pos volume _
         (mul_pos (convexFractionalChainScale_pos n) hrho)).ne'
@@ -498,7 +498,7 @@ private theorem edist_coreMean_le_fractionalRieszPotential_of_tendsto
             (convexFractionalChainScale n ^ (s - (d : ℝ))) *
             ∫⁻ z in convexFractionalChainBall c x rho n,
               fractionalGagliardoAmplitude U s G z ∂volume) := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro n
       simpa only [mul_assoc] using
         edist_convexFractionalChainMean_succ_le_scale_amplitude

@@ -115,7 +115,7 @@ theorem lerayLimit_everyTime_pairing_tendsto_of_local_energy
       exact (setLIntegral_le_lintegral _ _).trans (hEnergyT (σ n) s hs.1 hs.2)
     · have hzero : ∀ x, ENNReal.ofReal (vec3EuclideanNorm (F' n s x)) ^ (2 : ℝ) = 0 := by
         intro x
-        simp only [F', hs, ↓reduceIte, henorm, WithLp.toLp_zero, enorm_zero]
+        simp only [F', hs, ↓reduceIte, henorm, WithLp.toLp_zero, eNorm_zero]
         exact ENNReal.zero_rpow_of_pos (by norm_num)
       simp only [hzero, lintegral_zero]
       exact zero_le
@@ -128,7 +128,7 @@ theorem lerayLimit_everyTime_pairing_tendsto_of_local_energy
     swap
     · have hzero : ∀ x, ENNReal.ofReal (vec3EuclideanNorm (u' s x)) ^ (2 : ℝ) = 0 := by
         intro x
-        simp only [u', hst, ↓reduceIte, henorm, WithLp.toLp_zero, enorm_zero]
+        simp only [u', hst, ↓reduceIte, henorm, WithLp.toLp_zero, eNorm_zero]
         exact ENNReal.zero_rpow_of_pos (by norm_num)
       simp only [hzero, lintegral_zero]
       exact zero_le

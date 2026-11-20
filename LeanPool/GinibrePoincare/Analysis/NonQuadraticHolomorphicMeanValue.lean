@@ -60,7 +60,7 @@ private theorem complex_polar_integrable (F : ℂ → ℂ) (hFc : Continuous F)
       polarCoord.target]
       (fun p => ENNReal.ofReal p.1 • ‖F (Complex.polarCoord.symm p)‖ₑ) := by
     filter_upwards [ae_restrict_mem polarCoord.open_target.measurableSet] with p hp
-    rw [enorm_smul, Real.enorm_eq_ofReal hp.1.le]
+    rw [eNorm_smul, Real.eNorm_eq_ofReal hp.1.le]
     rfl
   change (∫⁻ p in polarCoord.target, ‖p.1 • F (Complex.polarCoord.symm p)‖ₑ) < ⊤
   rw [lintegral_congr_ae he, Complex.lintegral_comp_polarCoord_symm (fun w => ‖F w‖ₑ)]

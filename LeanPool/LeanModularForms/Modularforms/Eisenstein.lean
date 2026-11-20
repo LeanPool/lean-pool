@@ -39,7 +39,7 @@ noncomputable section
 /-- In a rank-one module, every element is a scalar multiple of any nonzero element. -/
 lemma exists_smul_eq_of_rank_one {M : Type*} [AddCommGroup M] [Module ℂ M]
     (hrank : Module.rank ℂ M = 1) {e : M} (he : e ≠ 0) (f : M) : ∃ c : ℂ, f = c • e := by
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' e he).mp
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' e he).mp
     (Module.rank_eq_one_iff_finrank_eq_one.mp hrank) f
   exact ⟨c, hc.symm⟩
 
@@ -47,7 +47,7 @@ lemma exists_smul_eq_of_rank_one {M : Type*} [AddCommGroup M] [Module ℂ M]
 /-- Symmetric version: `c • e = f` instead of `f = c • e`. -/
 lemma exists_smul_eq_of_rank_one' {M : Type*} [AddCommGroup M] [Module ℂ M]
     (hrank : Module.rank ℂ M = 1) {e : M} (he : e ≠ 0) (f : M) : ∃ c : ℂ, c • e = f :=
-  (finrank_eq_one_iff_of_nonzero' e he).mp (Module.rank_eq_one_iff_finrank_eq_one.mp hrank) f
+  (finrank_eq_one_iff_of_ne_zero' e he).mp (Module.rank_eq_one_iff_finrank_eq_one.mp hrank) f
 
 /-- Convert smul equality of modular forms to pointwise equality. -/
 lemma smul_modularForm_eq_pointwise {Γ : Subgroup SL(2, ℤ)} {k : ℤ} {f g : ModularForm Γ k}
@@ -311,9 +311,9 @@ lemma q_exp_unique (c : ℕ → ℂ) (f : ModularForm Γ(n) k) [hn : NeZero n]
         simpa using hfz
     refine ⟨H21 , zero_lt_one, ?_⟩
     intro y hy
-    rw [Metric.mem_eball, edist_zero_right, enorm_eq_nnnorm, ENNReal.coe_lt_one_iff, ←
+    rw [Metric.mem_eball, edist_zero_right, eNorm_eq_nnNorm, ENNReal.coe_lt_one_iff, ←
       NNReal.coe_lt_one,
-    coe_nnnorm] at hy
+    coe_nnNorm] at hy
     simp only [FormalMultilinearSeries.apply_eq_prod_smul_coeff, Finset.prod_const,
       Finset.card_univ, Fintype.card_fin, smul_eq_mul, zero_add]
     have := modfom_q_exp_cuspfunc n c f hf y hy
@@ -629,7 +629,7 @@ lemma Delta_cuspFuntion_eq : Set.EqOn (cuspFunction 1 Delta)
     have := CuspFormClass.cuspFunction_apply_zero (h := 1) Delta zero_lt_one (by simp)
     rw [cuspFunction] at this
     simpa using this
-  · rw [Function.Periodic.cuspFunction_eq_of_nonzero]
+  · rw [Function.Periodic.cuspFunction_eq_of_ne_zero]
     · simp only [comp_apply]
       have hz := Function.Periodic.im_invQParam_pos_of_norm_lt_one (h := 1) (by exact
         Real.zero_lt_one) (q := y) ?_ ?_

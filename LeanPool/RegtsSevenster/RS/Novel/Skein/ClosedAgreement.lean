@@ -55,7 +55,7 @@ theorem EdgeSubset.coreFlags_eq_flags (F : EdgeSubset W) :
 /-- On a closed fragment, the through product is 1: each
 through-flag's factor is 1 because `W.attach f` always lands in
 `Sum.inl`. -/
-theorem EdgeSubset.throughProduct_one [LinearOrder (Fin 0)]
+theorem EdgeSubset.throughProduct_one
     (F : EdgeSubset W) {k ℓ : ℕ}
     (st : GenBoundaryState k ℓ (Fin 0)) :
     F.throughProduct st = 1 := by
@@ -222,7 +222,6 @@ theorem EdgeSubset.openCircuitCount_eq_circuitCount (F : EdgeSubset W)
 /-- On a closed fragment, the through summand at an Eulerian
 subset equals the standard mixed summand. -/
 theorem EdgeSubset.throughSummand_eq_mixedSummand
-    [LinearOrder (Fin 0)]
     (F : EdgeSubset W) {k ℓ : ℕ} (h : MixedFunctional k ℓ)
     (st : GenBoundaryState k ℓ (Fin 0))
     (hbnd : genBoundarySubsetMatches W F.flags st)

@@ -219,7 +219,7 @@ lemma _root_.ProbabilityTheory.condIndep_copies
     measurable_fst.comp measurable_fst, measurable_snd.comp measurable_fst,
     measurable_snd, ?_, ?_, ?_⟩
   · constructor
-    simp only [coe_finsetSum, Finset.sum_apply, ν]
+    simp only [FunLike.coe_sum, Finset.sum_apply, ν]
     have : ∑ y ∈ finY.toFinset, μ (Y ⁻¹' {y}) * 1 = 1 := by
       simp only [mul_one]
       rw [sum_measure_preimage_singleton]
@@ -253,7 +253,7 @@ lemma _root_.ProbabilityTheory.condIndep_copies
         apply measure_inter_null_of_null_left E
         rw [← Measure.map_apply measurable_snd (by simp), MeasureTheory.Measure.map_snd_prod]
         simp_all
-      simp only [coe_finsetSum, coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, ν]
+      simp only [FunLike.coe_sum, FunLike.coe_smul, Finset.sum_apply, Pi.smul_apply, smul_eq_mul, ν]
       rw [Finset.sum_eq_single_of_mem y ?_]
       · rw [h3, ← mul_assoc, ENNReal.inv_mul_cancel hy'', one_mul]
         finiteness

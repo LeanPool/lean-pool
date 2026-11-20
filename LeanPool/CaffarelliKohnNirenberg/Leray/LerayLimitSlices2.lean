@@ -59,7 +59,7 @@ theorem lerayLimit_slice_memLp_of_compactIntegralBounds
       (fun x : Vec3 => (WithLp.toLp 2 (u t x) : L2Vec3)) 2 volume :=
     CKN.Foundation.memLp_two_vec3_of_lintegral_sq_lt_top volume (u t)
       (huMeas t) (by simpa [f] using hfinite)
-  have hnorm := eLpNorm_eq_lintegral_rpow_enorm_toReal
+  have hnorm := eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (p := (2 : ℝ≥0∞)) (μ := volume)
     (f := fun x : Vec3 => (WithLp.toLp 2 (u t x) : L2Vec3))
     (by norm_num) (by norm_num) hu.aestronglyMeasurable

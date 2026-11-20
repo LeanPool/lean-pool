@@ -165,7 +165,8 @@ private theorem regularisedR12TimeFinal_core
         ((continuous_apply i).comp (hη.continuous.comp continuous_fst)).continuousOn
     have hK : IsCompact (tsupport η ×ˢ Icc t₁ t₂) := hηc.isCompact.prod isCompact_Icc
     have hgK : IntegrableOn g (tsupport η ×ˢ Icc t₁ t₂) (volume : Measure (Vec3 × ℝ)) :=
-      (hgc.mono fun w hw => ⟨Set.mem_univ _, hIcc hw.2⟩).integrableOn_compact hK
+      (hgc.mono (fun w (hw : w ∈ tsupport η ×ˢ Icc t₁ t₂) =>
+        ⟨Set.mem_univ _, hIcc hw.2⟩)).integrableOn_compact hK
     have hgS : IntegrableOn g (Set.univ ×ˢ Ioc t₁ t₂) (volume : Measure (Vec3 × ℝ)) := by
       refine hgK.of_forall_sdiff_eq_zero (MeasurableSet.univ.prod measurableSet_Ioc) ?_
       rintro w ⟨⟨-, hw2⟩, hwn⟩

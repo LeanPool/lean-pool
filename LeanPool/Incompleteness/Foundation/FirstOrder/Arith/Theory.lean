@@ -37,7 +37,7 @@ namespace Theory
 variable (L)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-inductive CobhamR0 : Theory ℒₒᵣ
+inductive CobhamR0 : SyntacticFormula ℒₒᵣ → Prop
   | equal : ∀ φ ∈ 𝐄𝐐, CobhamR0 φ
   | Ω₁ (n m : ℕ)  : CobhamR0 “↑n + ↑m = ↑(n + m)”
   | Ω₂ (n m : ℕ)  : CobhamR0 “↑n * ↑m = ↑(n * m)”
@@ -45,7 +45,7 @@ inductive CobhamR0 : Theory ℒₒᵣ
   | Ω₄ (n : ℕ) : CobhamR0 “∀ x, x < ↑n ↔ ⋁ i < n, x = ↑i”
 
 /-- Imported declaration from the Incompleteness formalization. -/
-notation "𝐑₀" => CobhamR0
+notation "𝐑₀" => Set.ofPred CobhamR0
 
 variable {L}
 
@@ -93,7 +93,7 @@ abbrev _root_.LO.FirstOrder.Theory.Arith.ltTri :
     SyntacticFormula L := “x y | x < y ∨ x = y ∨ x > y”
 
 /-- Imported declaration from the Incompleteness formalization. -/
-inductive PeanoMinus : Theory ℒₒᵣ
+inductive PeanoMinus : SyntacticFormula ℒₒᵣ → Prop
   | equal         : ∀ φ ∈ 𝐄𝐐, PeanoMinus φ
   | addZero       : PeanoMinus Arith.addZero
   | addAssoc      : PeanoMinus Arith.addAssoc
@@ -114,7 +114,7 @@ inductive PeanoMinus : Theory ℒₒᵣ
   | ltTri         : PeanoMinus Arith.ltTri
 
 /-- Imported declaration from the Incompleteness formalization. -/
-notation "𝐏𝐀⁻" => PeanoMinus
+notation "𝐏𝐀⁻" => Set.ofPred PeanoMinus
 
 variable (L)
 
@@ -159,7 +159,7 @@ notation "𝐈Sg1" => iSigma 1
 notation "𝐈Pg1" => iPi 1
 
 /-- Imported declaration from the Incompleteness formalization. -/
-abbrev peano : Theory ℒₒᵣ := 𝐏𝐀⁻ + indScheme ℒₒᵣ Set.univ
+abbrev peano : Theory ℒₒᵣ := 𝐏𝐀⁻ + indScheme ℒₒᵣ (fun _ => True)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 notation "𝐏𝐀" => peano

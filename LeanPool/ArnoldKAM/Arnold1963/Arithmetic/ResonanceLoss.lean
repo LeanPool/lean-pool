@@ -90,7 +90,10 @@ theorem TypeD.ar_loss_le {n : ℕ} {K N₀ N₁ D : ℝ} {Ω : Set (ComplexSpace
     nlinarith [hh]
   calc
     _ ≤ realVolume ((E \ F) ∪ (F \ erosion F d)) := realVolume_mono hsub
-    _ ≤ realVolume (E \ F) + realVolume (F \ erosion F d) := measure_union_le _ _
+    _ ≤ realVolume (E \ F) + realVolume (F \ erosion F d) := by
+      unfold realVolume realSlice
+      rw [preimage_union]
+      exact measure_union_le (μ := realLebesgue n) _ _
     _ ≤ ENNReal.ofReal (resonanceLossConstant n * D * (K * newShellBudget N₀ N₁)) * realVolume Ω +
         ENNReal.ofReal (resonanceLossConstant n * D * (d : ℝ) * N₁ ^ n) * realVolume Ω :=
       add_le_add hnew' herode

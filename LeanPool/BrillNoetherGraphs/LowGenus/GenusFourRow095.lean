@@ -131,7 +131,7 @@ def abProfile (hNorm : length 0 ≤ length 5) :
     intro edge
     fin_cases edge
     all_goals simp [core, A, X]
-    all_goals omega
+    omega
 
 @[simp] theorem abProfile_slope (hNorm : length 0 ≤ length 5)
     (edge : Fin 9) :

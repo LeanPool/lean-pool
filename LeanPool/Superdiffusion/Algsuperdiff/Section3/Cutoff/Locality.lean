@@ -96,7 +96,7 @@ abbrev lowerShellLocalCompletion (M : ABKModel d) (m : ℤ) (U : Set (Vec d)) :
   MeasurableSet' s := ∃ t,
     MeasurableSet[lowerShellLocalSigma m U] t ∧ s =ᵐ[M.P.toMeasure] t
   measurableSet_empty :=
-    ⟨∅, @MeasurableSet.empty _ (lowerShellLocalSigma m U), EventuallyEq.rfl⟩
+    ⟨∅, @MeasurableSet.empty _ (lowerShellLocalSigma m U), EventuallyEqSet.rfl⟩
   measurableSet_compl := by
     rintro s ⟨t, ht, hst⟩
     exact ⟨tᶜ, ht.compl, hst.compl⟩
@@ -111,7 +111,7 @@ theorem lowerShellLocalSigma_le_completion (M : ABKModel d) (m : ℤ)
     (U : Set (Vec d)) :
     lowerShellLocalSigma m U ≤ lowerShellLocalCompletion M m U := by
   intro s hs
-  exact ⟨s, hs, EventuallyEq.rfl⟩
+  exact ⟨s, hs, EventuallyEqSet.rfl⟩
 
 /-- The completion is stable under almost-everywhere replacement. -/
 theorem measurable_lowerShellLocalCompletion_of_ae_eq_completion

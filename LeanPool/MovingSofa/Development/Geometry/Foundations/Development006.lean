@@ -817,10 +817,10 @@ theorem rotationCalculation_convex (d : ℝ) (hd : 1 ≤ d) :
     convert (((hasDerivAt_const t 1).sub
       ((hasDerivAt_const t d).mul ((Real.hasDerivAt_cos t).div
         (Real.hasDerivAt_sin t) (hsin t ht)))).pow 2) using 1
-    all_goals simp only [Pi.mul_apply, Pi.sub_apply, Pi.div_apply]
-    all_goals norm_num
-    all_goals simp only [htrig]
-    all_goals field_simp [hsin t ht]
+    simp only [Pi.mul_apply, Pi.sub_apply, Pi.div_apply]
+    norm_num
+    simp only [htrig]
+    field_simp [hsin t ht]
   have hsecond (t : ℝ) (ht : t ∈ D) : HasDerivAt
       (fun s ↦ 2 * d * (1 - d * (Real.cos s / Real.sin s)) / Real.sin s ^ 2)
       (2 * d / Real.sin t ^ 4 *
@@ -833,11 +833,11 @@ theorem rotationCalculation_convex (d : ℝ) (hd : 1 ≤ d) :
         ((hasDerivAt_const t d).mul ((Real.hasDerivAt_cos t).div
           (Real.hasDerivAt_sin t) hs)))).div
       ((Real.hasDerivAt_sin t).pow 2) (pow_ne_zero 2 hs)) using 1
-    all_goals simp only [Pi.mul_apply, Pi.sub_apply, Pi.div_apply, Pi.pow_apply]
-    all_goals norm_num
-    all_goals simp only [htrig]
-    all_goals field_simp [hs]
-    all_goals ring
+    simp only [Pi.mul_apply, Pi.sub_apply, Pi.div_apply, Pi.pow_apply]
+    norm_num
+    simp only [htrig]
+    field_simp [hs]
+    ring
   constructor
   · apply convexOn_of_hasDerivWithinAt2_nonneg
       (f' := fun t ↦ 2 * d * (1 - d * (Real.cos t / Real.sin t)) / Real.sin t ^ 2)
@@ -2850,7 +2850,7 @@ Authors: Dean Cureton
 noncomputable section
 
 open Filter MeasureTheory
-open scoped Topology
+open scoped Pointwise Topology
 
 namespace MovingSofa
 
@@ -4183,8 +4183,8 @@ theorem intervalStieltjesMeasure_eq_sum_properEdgeNormals
     intro t ht
     exact ⟨hEa t ht.1, not_ne_iff.mp (fun hne ↦ ht.2 ⟨hEa t ht.1, hne⟩)⟩
   have hdiffzero : μ (E \ S) = 0 := by
-    rw [← enorm_eq_zero, ← le_zero_iff]
-    exact (μ.enorm_measure_le_variation (E \ S)).trans
+    rw [← eNorm_eq_zero, ← le_zero_iff]
+    exact (μ.eNorm_measure_le_variation (E \ S)).trans
       (by rw [measure_mono_null hdiffsub hTzero])
   have hsplit : E = S ∩ E ∪ (E \ S) := by
     ext t
@@ -5551,13 +5551,13 @@ theorem surfaceAreaMeasure_convexBodyCombination (t : I)
   have hright :
       (ENNReal.ofReal (1 - (t : ℝ)) • surfaceAreaMeasure K +
         ENNReal.ofReal (t : ℝ) • surfaceAreaMeasure L) A ≠ ⊤ := by
-    rw [Measure.add_apply]
-    simp only [Measure.smul_apply]
+    rw [add_apply]
+    simp only [smul_apply]
     exact ENNReal.add_ne_top.mpr ⟨ENNReal.mul_ne_top ENNReal.ofReal_ne_top hKtop,
       ENNReal.mul_ne_top ENNReal.ofReal_ne_top hLtop⟩
   apply (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ A) hright).mp
   rw [show convexBodyCombination t K L = M from rfl, hreal]
-  simp only [Measure.add_apply, Measure.smul_apply, smul_eq_mul]
+  simp only [add_apply, smul_apply, smul_eq_mul]
   rw [ENNReal.toReal_add
     (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hKtop)
     (ENNReal.mul_ne_top ENNReal.ofReal_ne_top hLtop),

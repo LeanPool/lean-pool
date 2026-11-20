@@ -250,7 +250,7 @@ private theorem canonical_cutoff_lipschitz_bound
   have hηlip : ∀ x y, |η x - η y| ≤ (D / t) * ‖x - y‖ := by
     have hDt : 0 ≤ D / t := div_nonneg hD ht.le
     have hlip : LipschitzWith (D / t).toNNReal η := by
-      refine lipschitzWith_of_nnnorm_fderiv_le
+      refine lipschitzWith_of_nnNorm_fderiv_le
         (hηsmooth.differentiable (by simp)) ?_
       intro x
       exact (Real.le_toNNReal_iff_coe_le hDt).mpr (by

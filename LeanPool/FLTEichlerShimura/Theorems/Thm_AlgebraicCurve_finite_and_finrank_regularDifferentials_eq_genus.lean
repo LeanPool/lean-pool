@@ -132,7 +132,7 @@ theorem differentialCoeff_ne_zero {ω : Ω[F⁄K]} (hω : ω ≠ 0) (v : Place K
 
 theorem exists_smul_eq [IsCurveOver K F] {ω₀ : Ω[F⁄K]} (hω₀ : ω₀ ≠ 0) (ω : Ω[F⁄K]) :
     ∃ h : F, h • ω₀ = ω :=
-  (finrank_eq_one_iff_of_nonzero' ω₀ hω₀).mp IsCurveOver.finrank_kaehler ω
+  (finrank_eq_one_iff_of_ne_zero' ω₀ hω₀).mp IsCurveOver.finrank_kaehler ω
 
 section Comparison
 

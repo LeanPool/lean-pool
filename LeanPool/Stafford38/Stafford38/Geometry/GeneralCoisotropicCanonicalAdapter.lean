@@ -103,7 +103,8 @@ private theorem zeroLocus_isFibreConical_of_isHomogeneous
     rcases i with i | i <;> rfl
   have hline (f : SymbolRing k n) (hf : f ∈ J) :
       fibreLinePolynomial y ξ f = 0 := by
-    apply Polynomial.ext
+    apply AddMonoidAlgebra.ext
+    apply Finsupp.ext
     intro d
     rw [coeff_fibreLinePolynomial_eq_eval_weightedHomogeneousComponent]
     rw [← hqsplit]

@@ -204,20 +204,21 @@ lemma Partition.probabilityAt_eq_of_le {P Q : Partition Ω} (hP : P.Measurable)
     (hP' : ∀ s ∈ P, μ s > 0) (hQ : P ≤ Q) {E : Set Ω} (hE : MeasurableSet E) (ω : Ω) {p : ENNReal}
     (h : ∀ ω' ∈ Q.class ω, P.probabilityAt μ E ω' = p) :
     Q.probabilityAt μ E ω = p := by
-  have hP'' := P.countable_of_measure_pos hP hP'
+  have hP'' : {s ∈ P | s ⊆ Q.class ω}.Countable :=
+    (P.countable_of_measure_pos hP hP').mono fun _ hs ↦ hs.1
   rw [eq_comm, ENNReal.eq_div_iff (pos_mono (P.class_mono hQ ω) (hP' _ (P.class_mem ω))).ne'
       (measure_ne_top _ _),
     P.class_eq_biUnion_of_le hQ ω, Set.inter_iUnion₂,
-    measure_biUnion (hP''.mono fun s hs ↦ hs.1) ?_ (fun s hs ↦ hP s hs.1), ← ENNReal.tsum_mul_right,
-    measure_biUnion (hP''.mono fun s hs ↦ hs.1) ?_ (fun s hs ↦ hE.inter (hP s hs.1))]
+    measure_biUnion hP'' ?_ (fun s hs ↦ hP s hs.1), ← ENNReal.tsum_mul_right,
+    measure_biUnion hP'' ?_ (fun s hs ↦ hE.inter (hP s hs.1))]
   · congr; ext s
     have ⟨ω', hω'⟩ := Setoid.nonempty_of_mem_partition P.2 s.2.1
     rw [← P.class_eq_of_mem s.2.1 hω',
       ← ENNReal.eq_div_iff (hP' _ (P.class_mem ω')).ne' (measure_ne_top _ _), eq_comm]
     exact h _ (s.2.2 hω')
-  · exact (Set.Pairwise.mono inter_subset_left P.2.pairwiseDisjoint).mono'
-      (fun s t h ↦ h.mono inf_le_right inf_le_right)
-  · exact Set.Pairwise.mono inter_subset_left P.2.pairwiseDisjoint
+  · exact fun s hs t ht hst ↦
+      (P.2.pairwiseDisjoint hs.1 ht.1 hst).mono inter_subset_right inter_subset_right
+  · exact fun s hs t ht hst ↦ P.2.pairwiseDisjoint hs.1 ht.1 hst
 
 /-- Let `Ω` be a probability measure space, `P₁` and `P₂` two measurable partitions representing
 the information partitions of two agents, `E` a measurable set and `ω` an event. Then if it is
@@ -229,8 +230,8 @@ lemma agreeToDisagree {P₁ P₂ : Partition Ω} (hP₁ : P₁.Measurable) (hP�
     (h : (P₁ ⊔ P₂).class ω ⊆ {ω' | P₁.probabilityAt μ₁ E ω' = p₁ ∧ P₂.probabilityAt μ₂ E ω' = p₂})
     (h' : (P₁ ⊔ P₂).probabilityAt μ₁ E ω = (P₁ ⊔ P₂).probabilityAt μ₂ E ω) :
     p₁ = p₂ := by
-  rw [← P₁.probabilityAt_eq_of_le hP₁ hP₁' le_sup_left hE ω (h.trans inter_subset_left),
-    ← P₂.probabilityAt_eq_of_le hP₂ hP₂' le_sup_right hE ω (h.trans inter_subset_right)]
+  rw [← P₁.probabilityAt_eq_of_le hP₁ hP₁' le_sup_left hE ω (fun _ hω' ↦ (h hω').1),
+    ← P₂.probabilityAt_eq_of_le hP₂ hP₂' le_sup_right hE ω (fun _ hω' ↦ (h hω').2)]
   exact h'
 
 /-- Let `Ω` be a probability measure space, `P` a family of measurable partitions representing

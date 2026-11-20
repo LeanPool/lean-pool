@@ -96,7 +96,7 @@ theorem replacementSegment_eq_cellCarrier
     (Classical.choose_spec (private_decl% (K.replacementSegmentFace_has_endpoints q)))).symm
 
 /-- Union of all selected segment faces over all complete replacement edges. -/
-def replacementGraphCarrier : Set Plane :=
+noncomputable def replacementGraphCarrier : Set Plane :=
   ⋃ q : K.ReplacementSegmentFace
       (hcont := hcont) (hinj := hinj) (D := D) (C := C),
     segment ℝ (K.replacementSegmentLeft q) (K.replacementSegmentRight q)

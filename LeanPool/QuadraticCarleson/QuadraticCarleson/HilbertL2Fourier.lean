@@ -171,14 +171,14 @@ theorem norm_ordinaryHilbertMultiplierL2_eq (f : Lp (α := ℝ) ℂ 2 volume) :
     calc
       ‖ordinaryHilbertMultiplierL2 f‖ₑ =
           eLpNorm (multipliedFourierRepresentative f) 2 volume :=
-        Lp.enorm_toLp (memLp_ordinaryHilbertMultiplier_mul_fourier f)
+        Lp.eNorm_toLp (memLp_ordinaryHilbertMultiplier_mul_fourier f)
       _ = ENNReal.ofReal Real.pi * eLpNorm (fourierL2Representative f) 2 volume :=
         eLpNorm_multipliedFourierRepresentative_eq f
       _ = ENNReal.ofReal Real.pi * ‖Lp.fourierTransformₗᵢ ℝ ℂ f‖ₑ := by
         have heq : MemLp.toLp (fourierL2Representative f)
             (memLp_fourierL2Representative f) = Lp.fourierTransformₗᵢ ℝ ℂ f :=
           Lp.toLp_coeFn _ _
-        rw [← Lp.enorm_toLp (memLp_fourierL2Representative f), heq]
+        rw [← Lp.eNorm_toLp (memLp_fourierL2Representative f), heq]
       _ = _ := by simp
   have hreal := congrArg ENNReal.toReal henorm
   simpa [ENNReal.toReal_mul, ENNReal.toReal_ofReal Real.pi_pos.le] using hreal

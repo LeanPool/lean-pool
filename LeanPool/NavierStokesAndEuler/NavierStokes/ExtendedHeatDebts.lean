@@ -968,8 +968,10 @@ theorem actualIntegrand_joint_contDiffOn (d : TailData) {K : ℝ} (hK : 1 ≤ K)
   have hn : ContDiffOn ℝ ∞ (fun p : ℝ × ℝ =>
       weightedJet (tailWeight d K square) square d.h K q 0 p.1 p.2)
       ((univ : Set ℝ) ×ˢ Ioi K) :=
-    ((contDiffOn_snd.rpow_const_of_ne (fun p hp => (hKp.trans hp.2).ne')).mul
-      (hW.comp contDiffOn_snd (fun p hp => hKp.trans hp.2))).mul he
+    ((contDiffOn_snd.rpow_const_of_ne
+      (fun p (hp : p ∈ (univ : Set ℝ) ×ˢ Ioi K) => (hKp.trans hp.2).ne')).mul
+      (hW.comp contDiffOn_snd
+        (fun p (hp : p ∈ (univ : Set ℝ) ×ˢ Ioi K) => hKp.trans hp.2))).mul he
   exact hn.comp ((diffusion_contDiff.comp_contDiffOn contDiffOn_fst).prodMk contDiffOn_snd)
     (fun p hp => ⟨mem_univ _, hp.2⟩)
 

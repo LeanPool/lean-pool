@@ -48,7 +48,7 @@ theorem offspringGF_one (μ : PMF ℕ) : offspringGF μ 1 = 1 := by
   simp [offspringGF, μ.tsum_coe]
 
 theorem offspringGF_le_one (μ : PMF ℕ) {s : ℝ≥0∞} (hs : s ≤ 1) : offspringGF μ s ≤ 1 :=
-  (ENNReal.tsum_le_tsum fun _ => mul_le_of_le_one_right' (pow_le_one₀ zero_le hs)).trans
+  (tsum_le_tsum fun _ => mul_le_of_le_one_right' (pow_le_one₀ zero_le hs)).trans
     μ.tsum_coe.le
 
 /-- A critical law with `μ_1 ≠ 1` puts mass on some `j ≥ 2`. -/
@@ -112,7 +112,7 @@ theorem IsCritical.eq_one_of_offspringGF_eq (hc : IsCritical μ) (hne : μ 1 ≠
     have := one_add_mul_sub_lt_pow hx0 hx1 m
     linarith
   have hsum : ∑' k, μ k * (s ^ k + (k : ℝ≥0∞) * (1 - s)) = 1 := by
-    simp only [mul_add, ENNReal.tsum_add]
+    simp only [mul_add, tsum_add]
     have : ∀ k : ℕ, μ k * ((k : ℝ≥0∞) * (1 - s)) = (1 - s) * ((k : ℝ≥0∞) * μ k) := by
       intro k; ring
     simp only [this, ENNReal.tsum_mul_left]

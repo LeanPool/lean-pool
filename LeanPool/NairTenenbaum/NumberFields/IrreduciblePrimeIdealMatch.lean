@@ -42,13 +42,13 @@ theorem exists_irreducible_prime_ideal_match {Q : ℤ[X]}
     exact hirr.natDegree_pos
   have hc0 : Q.leadingCoeff.natAbs ≠ 0 := Int.natAbs_ne_zero.mpr (leadingCoeff_ne_zero.mpr hQ0)
   have he0 := conductor_exponent_ne_zero θ B' hB'
-  refine ⟨max Q.leadingCoeff.natAbs (RingOfIntegers.exponent θ), ?_⟩
+  refine ⟨max Q.leadingCoeff.natAbs (NumberField.RingOfIntegers.exponent θ), ?_⟩
   intro p hp hpN
   have hpc : Q.leadingCoeff.natAbs < p := (le_max_left _ _).trans_lt hpN
-  have hpe : RingOfIntegers.exponent θ < p := (le_max_right _ _).trans_lt hpN
+  have hpe : NumberField.RingOfIntegers.exponent θ < p := (le_max_right _ _).trans_lt hpN
   have hgood : ¬p ∣ Q.leadingCoeff.natAbs :=
     fun hd => (not_le_of_gt hpc) (Nat.le_of_dvd (Nat.pos_of_ne_zero hc0) hd)
-  have hcop : p.Coprime (RingOfIntegers.exponent θ) := hp.coprime_iff_not_dvd.mpr
+  have hcop : p.Coprime (NumberField.RingOfIntegers.exponent θ) := hp.coprime_iff_not_dvd.mpr
     (fun hd => (not_le_of_gt hpe) (Nat.le_of_dvd (Nat.pos_of_ne_zero he0) hd))
   rw [← rootCount_integralNormalization_eq hdegpos hp hgood, ← hmin]
   exact rootCount_minpoly_eq_idealNormCount θ hp hcop

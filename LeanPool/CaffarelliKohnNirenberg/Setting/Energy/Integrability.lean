@@ -307,7 +307,7 @@ theorem sws_timeSliceBallEnergy_essSup_lt_top
           ∫⁻ y in vec3Ball x₀ R,
             ENNReal.ofReal (vec3EuclideanNorm (u (y, s))) ^ (2 : ℝ) :=
         lintegral_congr (fun y => by
-          rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)])
+          rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)])
       _ ≤ ∫⁻ y in vec3Ball x₀ R, 3 * ‖u (y, s)‖ₑ ^ (2 : ℝ) :=
         lintegral_mono
           (fun y => ofReal_vec3EuclideanNorm_pow_two_le_energy (u (y, s)))

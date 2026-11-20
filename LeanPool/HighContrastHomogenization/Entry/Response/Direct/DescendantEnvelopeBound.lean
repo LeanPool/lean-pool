@@ -108,7 +108,7 @@ theorem aeSummable_and_integrable_tsum_of_summable_integral
             rw [Finset.sum_range_succ, Finset.sum_range_succ, ← ih,
               ← ENNReal.ofReal_add (Finset.sum_nonneg fun n _ => hg0 n a) (hg0 M a)]
       rw [h1]
-      exact ENNReal.sum_le_tsum (Finset.range N)
+      exact sum_le_tsum (Finset.range N)
     have h2 : (ENNReal.ofReal (∑ n ∈ Finset.range N, g n a)).toReal
         ≤ (∑' n : ℕ, G n a).toReal := ENNReal.toReal_mono ha hle
     rwa [ENNReal.toReal_ofReal (Finset.sum_nonneg fun n _ => hg0 n a)] at h2
@@ -127,7 +127,7 @@ theorem aeSummable_and_integrable_tsum_of_summable_integral
   have : ∫⁻ a, ‖(∑' n : ℕ, G n a).toReal‖ₑ ∂P ≤ ∫⁻ a, (∑' n : ℕ, G n a) ∂P := by
     refine lintegral_mono_ae ?_
     filter_upwards [hfin] with a ha
-    rw [Real.enorm_eq_ofReal ENNReal.toReal_nonneg, ENNReal.ofReal_toReal ha]
+    rw [Real.eNorm_eq_ofReal ENNReal.toReal_nonneg, ENNReal.ofReal_toReal ha]
   exact lt_of_le_of_lt this (lt_top_iff_ne_top.2 htop)
 
 end

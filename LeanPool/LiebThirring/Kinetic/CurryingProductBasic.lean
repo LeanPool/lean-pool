@@ -32,7 +32,7 @@ theorem lintegral_l2_enorm_sq (u : Lp E 2 μ) :
   have h := eLpNorm_nnreal_pow_eq_lintegral (p := (2 : ℝ≥0))
     (by norm_num) (Lp.aestronglyMeasurable u)
   simpa only [ENNReal.coe_ofNat, NNReal.coe_ofNat, ENNReal.rpow_two,
-    ← Lp.enorm_def] using h.symm
+    ← Lp.eNorm_def] using h.symm
 
 /-- The L² seminorm of a strongly measurable slice is a Tonelli formula. -/
 theorem l2_slice_eLpNorm_eq (f : α × β → E) (hf : StronglyMeasurable f) (x : α) :
@@ -41,7 +41,7 @@ theorem l2_slice_eLpNorm_eq (f : α × β → E) (hf : StronglyMeasurable f) (x 
   have hm : AEStronglyMeasurable (fun y => f (x, y)) ν :=
     (hf.comp_measurable measurable_prodMk_left).aestronglyMeasurable
   simpa only [ENNReal.toReal_ofNat, ENNReal.rpow_two] using
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
       (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hm
 
 /-- Slice seminorms are measurable, even before slices are known to be L². -/
@@ -50,23 +50,23 @@ theorem measurable_l2_slice_eLpNorm [SFinite ν] (f : α × β → E)
     Measurable (fun x => eLpNorm (fun y => f (x, y)) 2 ν) := by
   simp_rw [l2_slice_eLpNorm_eq f hf]
   exact (ENNReal.continuous_rpow_const (y := (1 / 2 : ℝ))).measurable.comp
-    ((hf.enorm.pow_const 2).lintegral_prod_right')
+    ((hf.eNorm.pow_const 2).lintegral_prod_right')
 
 /-- A product L² function has L² slices on almost every outer coordinate. -/
 theorem memLp_l2_slice_ae [SFinite ν] (f : α × β → E)
     (hf : StronglyMeasurable f) (hLp : MemLp f 2 (μ.prod ν)) :
     ∀ᵐ x ∂μ, MemLp (fun y => f (x, y)) 2 ν := by
   have hm : Measurable (fun x => ∫⁻ y, ‖f (x, y)‖ₑ ^ 2 ∂ν) :=
-    (hf.enorm.pow_const 2).lintegral_prod_right'
+    (hf.eNorm.pow_const 2).lintegral_prod_right'
   have hmass : (∫⁻ x, ∫⁻ y, ‖f (x, y)‖ₑ ^ 2 ∂ν ∂μ) < ⊤ := by
-    rw [← lintegral_prod _ (hf.enorm.pow_const 2).aemeasurable]
+    rw [← lintegral_prod _ (hf.eNorm.pow_const 2).aemeasurable]
     simpa only [ENNReal.toReal_ofNat, ENNReal.rpow_two] using
-      lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+      lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
         (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hLp
   filter_upwards [ae_lt_top hm hmass.ne] with x hx
   have hsm : AEStronglyMeasurable (fun y => f (x, y)) ν :=
     (hf.comp_measurable measurable_prodMk_left).aestronglyMeasurable
-  apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hsm).mpr
   simpa only [ENNReal.toReal_ofNat, ENNReal.rpow_two] using hx
 

@@ -31,7 +31,7 @@ def compacts (U : Set ℂ) : Set (Set ℂ) := {K ⊆ U | IsCompact K}
     (fun z hz => ⟨{z}, ⟨singleton_subset_iff.2 hz, isCompact_singleton⟩, mem_singleton z⟩)
 
 /-- The open unit disk `{z : ℂ | ‖z‖ < 1}`. -/
-def 𝔻 : Set ℂ := ball 0 1
+noncomputable def 𝔻 : Set ℂ := ball 0 1
 
 lemma mem_𝔻_iff : u ∈ 𝔻 ↔ ‖u‖ < 1 :=
   mem_ball_zero_iff
@@ -108,7 +108,7 @@ noncomputable def embedding.sqrt' [good_domain U] (f : embedding U 𝔻) (hf : �
 
 lemma ne_center_of_not_mem_closed_ball {w : ℂ} {r : ℝ} (hr : 0 ≤ r) ⦃z : ℂ⦄
     (hz : z ∈ (closedBall w r)ᶜ) : z ≠ w := by
-  contrapose! hz
+  contrapose hz
   simp [hz, hr]
 
 /-- The conformal inversion `z ↦ r / (z - w)` realised as an `embedding`

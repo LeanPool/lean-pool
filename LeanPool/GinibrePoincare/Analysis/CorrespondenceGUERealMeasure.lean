@@ -84,7 +84,7 @@ theorem gueOrderedMeasure_probability {n : ℕ} (hn : 0 < n) :
     IsProbabilityMeasure (gueOrderedMeasure n) := by
   constructor
   unfold gueOrderedMeasure
-  rw [Measure.smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
+  rw [_root_.smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
     ← ofReal_integral_eq_lintegral_ofReal (gueOrderedRawDensity_integrable hn)
       (Eventually.of_forall (gueOrderedRawDensity_nonneg n))]
   exact ENNReal.inv_mul_cancel

@@ -156,7 +156,7 @@ theorem divisor_ideal_sum_eq_normalizedFactors_sum (J : Ideal R) (hJ : J ≠ ⊥
   have hcoeff (v : HeightOneSpectrum R) :
       divisor (Units.mk0 (J : FractionalIdeal R⁰ K) (coeIdeal_ne_zero.mpr hJ)) v =
         (s.count v.asIdeal : ℤ) := by
-    rw [divisor_apply, Units.val_mk0, count_coe K v hJ,
+    rw [divisor_apply, Units.val_mk0, count_coeIdeal K v hJ,
       Ideal.count_associates_factors_eq hJ v.isPrime v.ne_bot]
   have hsum :
       ∑ v ∈ (divisor
@@ -231,8 +231,8 @@ theorem weightedDegree_principal_mk' (w : Ideal R → ℕ) (x : Kˣ) (n : R)
       count K v (Ideal.span {n} : FractionalIdeal R⁰ K) -
         count K v (Ideal.span {(d : R)} : FractionalIdeal R⁰ K)
     rw [count_well_defined K v (spanSingleton_ne_zero_iff.mpr x.ne_zero) hspan,
-      count_coe K v (Ideal.span_singleton_eq_bot.not.mpr hn),
-      count_coe K v (Ideal.span_singleton_eq_bot.not.mpr hd)]
+      count_coeIdeal K v (Ideal.span_singleton_eq_bot.not.mpr hn),
+      count_coeIdeal K v (Ideal.span_singleton_eq_bot.not.mpr hd)]
   rw [hdiv, map_sub,
     weightedDegree_divisor_ideal (K := K) (Ideal.span {n})
       (Ideal.span_singleton_eq_bot.not.mpr hn) w,

@@ -298,7 +298,7 @@ theorem stateAggregate_count_subtreeSwap
         ((d + 1) + r) (subtreeSwap v r w) =
       (stateAggregate x).count ((d + 1) + r) w := by
   induction hgap : n - r using Nat.strong_induction_on generalizing r with
-  | h gap ih =>
+  | ind gap ih =>
       by_cases hre : r = n
       · subst r
         simp [stateAggregate_leaf_count]
@@ -392,7 +392,7 @@ theorem stateAggregate_count_aboveSwap
     (stateAggregate (inventoryPerm (subtreeSwap v n) x)).count k w =
       (stateAggregate x).count k w := by
   induction hgap : d - k using Nat.strong_induction_on generalizing k with
-  | h gap ih =>
+  | ind gap ih =>
       by_cases hkeq : k = d
       · subst k
         exact stateAggregate_count_swapLevel v w x

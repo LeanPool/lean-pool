@@ -350,7 +350,7 @@ theorem probe_sum_ofReal_goodCellForm_layer_le_framedMeanFourth_ae
     rw [hframe_eq]
     simp only [smul_zero] at hchain
     convert hchain using 1
-    all_goals ring_nf
+    ring_nf
   have hsum := Finset.sum_le_sum fun Q hQ =>
     Finset.sum_le_sum fun T hT => hterm Q hQ T hT
   have hmean := probeLayerSimplexMeanSq_le_sqrt_mass_mul_sqrt_fourth
@@ -367,7 +367,7 @@ theorem probe_sum_ofReal_goodCellForm_layer_le_framedMeanFourth_ae
   dsimp only [probeFramedGoodLayerMeanRhs, probeFramedLayerWaveFactor,
     probeMeanLayerFrame, B, C, j] at hagg ⊢
   convert hagg using 2
-  all_goals ring
+  ring
 
 /-- Internal conditional aggregation of the framed potential majorant over a
 collar Whitney layer. -/
@@ -456,7 +456,7 @@ theorem probe_sum_ofReal_collarCellForm_layer_le_framedMeanFourth_ae
     dsimp only [A, B, C]
     rw [hframe_eq]
     convert hchain using 1
-    all_goals ring_nf
+    ring_nf
   have hsum := Finset.sum_le_sum fun Q hQ =>
     Finset.sum_le_sum fun T hT => hterm Q hQ T hT
   have hmean := probe_sum_collarLayer_meanSq_le_sqrt_mass_mul_sqrt_fourth
@@ -473,7 +473,7 @@ theorem probe_sum_ofReal_collarCellForm_layer_le_framedMeanFourth_ae
   dsimp only [probeFramedCollarLayerMeanRhs, probeFramedLayerWaveFactor,
     probeMeanLayerFrame, A, B, C, j] at hagg ⊢
   convert hagg using 2
-  all_goals ring
+  ring
 
 end
 

@@ -261,7 +261,7 @@ theorem directedProjectionGap_lt_one_of_transverse {U V : Submodule 𝕜 E}
     (h : ∀ x ∈ U, V.starProjection x = 0 → x = 0) :
     U.directedProjectionGap V < 1 := by
   classical
-  have : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  have : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   have : ProperSpace E := FiniteDimensional.proper 𝕜 E
   by_cases hU : U = ⊥
   · subst hU
@@ -272,7 +272,7 @@ theorem directedProjectionGap_lt_one_of_transverse {U V : Submodule 𝕜 E}
     simp
   set K : Set E := (U : Set E) ∩ Metric.sphere (0 : E) 1 with hKdef
   have hKcompact : IsCompact K :=
-    (isCompact_sphere (0 : E) 1).inter_left U.closed_of_finiteDimensional
+    (isCompact_sphere (0 : E) 1).inter_left U.isClosed_of_finiteDimensional
   have hKne : K.Nonempty := by
     obtain ⟨u, huU, hu0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hU
     have hnu : ‖u‖ ≠ 0 := norm_ne_zero_iff.mpr hu0
@@ -345,7 +345,7 @@ attaining it is acute in the printed sense while `‖P_U - P_V‖ = 1`. -/
 theorem projectionGap_lt_one_of_isAcute {U V : Submodule 𝕜 E}
     [U.HasOrthogonalProjection] [V.HasOrthogonalProjection]
     (h : IsAcute U V) : U.projectionGap V < 1 := by
-  have : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  have : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   rw [Submodule.projectionGap_eq_max_directedProjectionGap]
   exact max_lt (directedProjectionGap_lt_one_of_transverse h.1)
     (directedProjectionGap_lt_one_of_transverse h.2)
@@ -559,7 +559,7 @@ theorem opNorm_projection_sub_eq_opNorm_sinThetaMap (U V : Submodule 𝕜 E)
     ‖(projection U - projection V).toContinuousLinearMap‖ =
       ‖(sinThetaMap U V).toContinuousLinearMap‖ := by
   classical
-  let : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  let : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   -- names the application so the norm bound applies to it directly.
   change ‖U.starProjection - V.starProjection‖ =
     ‖Vᗮ.starProjection ∘L U.starProjection‖

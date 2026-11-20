@@ -811,7 +811,7 @@ local instance instSmoothCylinderComposition4 (n : ℕ) : BorelSpace (LiftTangen
 local instance instSmoothCylinderComposition5 (n : ℕ) : FiniteDimensional ℝ (LiftTangent [×n]→L[ℝ]
     LiftTangent) := by
   let J : (LiftTangent [×n]→L[ℝ] LiftTangent) →ₗ[ℝ]
-      MultilinearMap ℝ (fun _ : Fin n => LiftTangent) LiftTangent :=
+      MultilinearMap (RingHom.id ℝ) (fun _ : Fin n => LiftTangent) LiftTangent :=
     ContinuousMultilinearMap.toMultilinearMapLinear
   exact FiniteDimensional.of_injective J ContinuousMultilinearMap.toMultilinearMap_injective
 
@@ -905,7 +905,7 @@ local instance instSmoothCylinderAccelerationLp4 (n : ℕ) : BorelSpace (LiftTan
 local instance instSmoothCylinderAccelerationLp5 (n : ℕ) : FiniteDimensional ℝ (LiftTangent
     [×n]→L[ℝ] LiftTangent) := by
   let J : (LiftTangent [×n]→L[ℝ] LiftTangent) →ₗ[ℝ]
-      MultilinearMap ℝ (fun _ : Fin n => LiftTangent) LiftTangent :=
+      MultilinearMap (RingHom.id ℝ) (fun _ : Fin n => LiftTangent) LiftTangent :=
     ContinuousMultilinearMap.toMultilinearMapLinear
   exact FiniteDimensional.of_injective J ContinuousMultilinearMap.toMultilinearMap_injective
 
@@ -1375,7 +1375,7 @@ local instance instSmoothCylinderGevrey6 (n : ℕ) : BorelSpace (LiftTangent [×
 local instance instSmoothCylinderGevrey7 (n : ℕ) : FiniteDimensional ℝ (LiftTangent [×n]→L[ℝ]
     LiftTangent) := by
   let J : (LiftTangent [×n]→L[ℝ] LiftTangent) →ₗ[ℝ]
-      MultilinearMap ℝ (fun _ : Fin n => LiftTangent) LiftTangent :=
+      MultilinearMap (RingHom.id ℝ) (fun _ : Fin n => LiftTangent) LiftTangent :=
     ContinuousMultilinearMap.toMultilinearMapLinear
   exact FiniteDimensional.of_injective J ContinuousMultilinearMap.toMultilinearMap_injective
 

@@ -166,7 +166,7 @@ variable (K : Type*) [Field K] [NumberField K]
 noncomputable instance countableIdealRingOfIntegers :
     Countable (Ideal (𝓞 K)) := by
   let (n : ℕ) : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-    (Ideal.finite_setOfPred_absNorm_eq n).fintype
+    (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
   exact Countable.of_equiv
     ((n : ℕ) × {I : Ideal (𝓞 K) // absNorm I = n})
     (Equiv.sigmaFiberEquiv (absNorm : Ideal (𝓞 K) → ℕ))

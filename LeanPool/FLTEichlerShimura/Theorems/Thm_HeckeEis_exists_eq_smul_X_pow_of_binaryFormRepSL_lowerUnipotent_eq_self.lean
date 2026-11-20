@@ -105,14 +105,14 @@ theorem SolMain.A3 {R : Type*} [CommRing R] [IsDomain R] (n : ℕ)
   set Q : ↥(BinaryForm R n) := binaryFormRepSL R n ModularGroup.S⁻¹ P with hQ
   have hQfix : binaryFormRepSL R n (ModularGroup.T ^ (-h)) Q = Q := by
     have h1 : binaryFormRepSL R n ModularGroup.S⁻¹ (binaryFormRepSL R n g P) = Q := by rw [hP]
-    rwa [hgS, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, ← Module.End.mul_apply
+    rwa [hgS, map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, ← mul_apply_eq_comp
       (binaryFormRepSL R n _),
-      ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply] at h1
+      ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self] at h1
   have hh' : ((-h : ℤ) : R) ≠ 0 := by rw [Int.cast_neg]; exact neg_ne_zero.mpr hh
   obtain ⟨c, hc⟩ := exists_eq_smul_X_pow_of_binaryFormRepSL_T_zpow_eq_self n hh' hn Q hQfix
   refine ⟨c, ?_⟩
   have hPQ : P = binaryFormRepSL R n ModularGroup.S Q := by
-    rw [hQ, ← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
+    rw [hQ, ← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self]
   rw [hPQ, binaryFormRepSL_apply_coe, hc, map_smul, binarySubst_S_X_zero_pow]
 
 end HeckeEis

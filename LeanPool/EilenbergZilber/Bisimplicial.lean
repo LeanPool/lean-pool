@@ -869,7 +869,7 @@ private lemma ezComponent_boundary_right (X : BisimplicialObject C) (p q' j : �
       · intro hdiag
         simp only [Shuffle.isDiagonalVertex] at hdiag
         split_ifs at hdiag with h1 h2
-        all_goals simp only [Shuffle.isLeftStep] at hdiag; all_goals omega
+        simp only [Shuffle.isLeftStep] at hdiag; omega
       · exact Shuffle.insertRightStep_not_diagonal ν k
     · -- This is exactly the right-type condition.
       rw [hL]

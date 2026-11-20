@@ -76,10 +76,9 @@ private theorem helper_edge_has_neighbor_89.{u_1, u_2} :
       rcases hleft' with hleft' | hleft' <;>
         rcases hright.1 with hright' | hright' <;>
         simp_all
-      all_goals
-        have heqpath : n - 1 = n + 1 := hpath.getVert_injOn
-          (by simp; omega) (by simp; omega) (by simp [hl, hr])
-        omega
+      have heqpath : n - 1 = n + 1 := hpath.getVert_injOn
+        (by simp; omega) (by simp; omega) (by simp [hl, hr])
+      omega
     | inr er =>
       rw [hr] at hright
       exfalso
@@ -152,10 +151,9 @@ private theorem helper_edge_before_146.{u_1, u_2} :
       rcases hleft' with hleft' | hleft' <;>
         rcases hright.1 with hright' | hright' <;>
         simp_all
-      all_goals
-        have heqpath : n - 1 = n + 1 := hpath.getVert_injOn
-          (by simp; omega) (by simp; omega) (by simp [hl, hr])
-        omega
+      have heqpath : n - 1 = n + 1 := hpath.getVert_injOn
+        (by simp; omega) (by simp; omega) (by simp [hl, hr])
+      omega
     | inr er =>
       rw [hr] at hright
       simp [TwoColorIncidenceGraph] at hright

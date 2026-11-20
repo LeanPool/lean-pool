@@ -202,11 +202,11 @@ theorem exists_kernel_bound (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p) :
     fun_prop
   have hKmem : MemLp (fun y => (dist x y ^ n)⁻¹) (ENNReal.ofReal q)
       (volume.restrict (ball x R)) := by
-    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
         (by rw [Ne, ENNReal.ofReal_eq_zero, not_le]; exact hq0) ENNReal.ofReal_ne_top
         hKmeas,
       ENNReal.toReal_ofReal hq0.le, lintegral_congr hpe]
-    exact hasFiniteIntegral_iff_enorm.mp hKint.2
+    exact hasFiniteIntegral_iff_eNorm.mp hKint.2
   -- Hölder's inequality at the Bochner level.
   have hf_nn : 0 ≤ᵐ[volume.restrict (ball x R)] (fun y => ‖g y‖) :=
     ae_of_all _ (fun y => norm_nonneg _)
@@ -422,7 +422,8 @@ theorem exists_holder_smooth (hd : 0 < d) {p : ℝ} (hp : (d : ℝ) < p) :
         (eLpNorm (fun y => ‖fderiv ℝ φ y‖) (ENNReal.ofReal p) (volume.restrict W)).toReal
           ≤ E.toReal :=
       ENNReal.toReal_mono hE_ne_top
-        (eLpNorm_mono_measure _ (Measure.restrict_mono (fun z hz => hz.2) le_rfl))
+        (eLpNorm_mono_measure _
+          (Measure.restrict_mono (s := W) (fun z hz => hz.2) le_rfl))
     -- Per-point lens bound (applied at `x` and at `x'`).
     have hkey : ∀ a : EuclideanSpace ℝ (Fin d), a ∈ ball c r → a ∈ W →
         W ⊆ ball a (2 * dist x x') →

@@ -128,11 +128,11 @@ private abbrev helperCaseContinuation868Conditions.{u_1, u_2} : Prop :=
            have := congrArg GoldbergSeymour.TreeSequence.length hcoreP
            have := GoldbergSeymour.TreeSequence.positive (H.stage q.castSucc)
            have := GoldbergSeymour.TreeSequence.positive A
-           try dsimp only [H] at *
-           try dsimp only [q] at *
-           try dsimp only [A] at *
-           try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *
-           all_goals omega)⟩ :
+           dsimp only [H] at *
+           dsimp only [q] at *
+           dsimp only [A] at *
+           dsimp only [GoldbergSeymour.TreeSequencePrefix] at *
+           omega)⟩ :
         Fin (A.length + (1 : ℕ)));
       let HP : TashkinovHierarchy ettP baseP :=
        {
@@ -159,7 +159,7 @@ private abbrev helperCaseContinuation868Conditions.{u_1, u_2} : Prop :=
                  have := congrArg GoldbergSeymour.TreeSequence.length hA
                  have := congrArg GoldbergSeymour.TreeSequence.length hcoreP
                  have := GoldbergSeymour.TreeSequence.positive (H.stage q.castSucc)
-                 try dsimp only [H] at *))
+                 dsimp only [H] at *))
               (H0.dividerPositive i) (Nat.le_of_lt_succ (dividerP i).isLt))))) ▸
           H0.dividerStage i),
         coreInsideFirst := H0.coreInsideFirst : TashkinovHierarchy ettP baseP };
@@ -351,11 +351,11 @@ private abbrev helperCaseContinuation1156Conditions.{u_1, u_2} : Prop :=
             have := congrArg GoldbergSeymour.TreeSequence.length hclosureP
             have := GoldbergSeymour.TreeSequence.positive (H.stage q.castSucc)
             have := GoldbergSeymour.TreeSequence.positive A
-            try dsimp only [H] at *
-            try dsimp only [q] at *
-            try dsimp only [A] at *
-            try dsimp only [GoldbergSeymour.TreeSequencePrefix] at *
-            all_goals omega)⟩ :
+            dsimp only [H] at *
+            dsimp only [q] at *
+            dsimp only [A] at *
+            dsimp only [GoldbergSeymour.TreeSequencePrefix] at *
+            omega)⟩ :
          Fin (A.length + (1 : ℕ)));
        let HP : TashkinovHierarchy ettP baseP :=
         {
@@ -385,7 +385,7 @@ private abbrev helperCaseContinuation1156Conditions.{u_1, u_2} : Prop :=
                   have := congrArg GoldbergSeymour.TreeSequence.length hcoreP
                   have := congrArg GoldbergSeymour.TreeSequence.length hclosureP
                   have := GoldbergSeymour.TreeSequence.positive (H.stage q.castSucc)
-                  try dsimp only [H] at *))
+                  dsimp only [H] at *))
                (H0.dividerPositive i) (Nat.le_of_lt_succ (dividerP i).isLt))))) ▸
            H0.dividerStage i),
          coreInsideFirst := H0.coreInsideFirst : TashkinovHierarchy ettP baseP };

@@ -68,7 +68,7 @@ theorem product_indicator_slice_eq_of_support
   funext y
   by_cases hy : y ∈ B
   · exact Set.indicator_of_mem (show (y, s) ∈ B ×ˢ J from ⟨hy, hs⟩) F
-  · rw [Set.indicator_of_notMem (fun h => hy h.1), hF y hy]
+  · rw [Set.indicator_of_notMem (fun h : (y, s) ∈ B ×ˢ J => hy h.1), hF y hy]
 
 /-- The fixed force-free source vanishes pointwise outside its cutoff ball. -/
 theorem fixed_centred_source_eq_zero_off_ball

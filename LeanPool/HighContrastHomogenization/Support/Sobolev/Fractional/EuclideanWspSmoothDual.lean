@@ -307,7 +307,7 @@ theorem cubeEuclideanNegativeWspSmoothDualENorm_lt_top_iff {d : ℕ}
           (fun x => r • h.toField x) = 1
         rw [cubeEuclideanWspFullENorm_smul]
         change ‖r‖ₑ * N = 1
-        rw [Real.enorm_eq_ofReal hrpos.le, show ENNReal.ofReal r = N⁻¹ by
+        rw [Real.eNorm_eq_ofReal hrpos.le, show ENNReal.ofReal r = N⁻¹ by
           dsimp [r]
           rw [ENNReal.ofReal_inv_of_pos (ENNReal.toReal_pos hNzero hNtop),
             ENNReal.ofReal_toReal hNtop], ENNReal.inv_mul_cancel hNzero hNtop]

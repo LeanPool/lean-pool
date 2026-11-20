@@ -523,7 +523,7 @@ lemma CV [LogicalNeutral F] [HasAxiomImplyK 𝓢] [HasAxiomVerum 𝓢] : 𝓢 �
 
 @[grind →]
 lemma unprovable_C_trans [HasAxiomImplyK 𝓢] [HasAxiomImplyS 𝓢] (hpq : 𝓢 ⊢ φ ⇒ₗ ψ) :
-    𝓢 ⊬ φ ⇒ₗ χ → 𝓢 ⊬ ψ ⇒ₗ χ := by contrapose!; exact C_trans hpq;
+    𝓢 ⊬ φ ⇒ₗ χ → 𝓢 ⊬ ψ ⇒ₗ χ := fun h hq ↦ h (C_trans hpq hq)
 
 @[grind →]
 lemma uniff_of_E [HasAxiomAndElim 𝓢] (H : 𝓢 ⊢ φ ⇔ₗ ψ) : 𝓢 ⊬ φ ↔ 𝓢 ⊬ ψ :=

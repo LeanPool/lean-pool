@@ -194,7 +194,7 @@ theorem tsum_sum_weight_mul_rotate (μ : PMF ℕ) (n : ℕ) (g : List ℤ → �
       ∑' x : bridgeSet n, (x.1.map fun a => μ (a + 1).toNat).prod * g x.1 := by
   rw [← (shiftEquiv n).tsum_eq]
   simp_rw [← tsum_fintype (L := SummationFilter.unconditional (Fin n))]
-  rw [← ENNReal.tsum_prod]
+  rw [← tsum_prod]
   refine tsum_congr fun p => ?_
   rw [coe_shiftEquiv_apply, ← weight_eq_prod_rotate]
 

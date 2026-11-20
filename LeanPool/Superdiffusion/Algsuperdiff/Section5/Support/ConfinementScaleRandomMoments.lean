@@ -228,7 +228,7 @@ theorem lintegral_three_zpow_isConfinementScale_rpow_le (mu : Measure Omega)
           ENNReal.ofReal ((3 : ℝ) ^ (m omega)) ^ p ∂mu :=
         lintegral_eq_tsum_levelSet mu hmmeas hm0 _
     _ ≤ ∑' k : ℕ, ENNReal.ofReal (729 * C ^ (2 : ℕ) * (3 : ℝ) ^ m0) ^ p *
-          (ENNReal.ofReal ((3 : ℝ)⁻¹) ^ p) ^ k := ENNReal.tsum_le_tsum hterm
+          (ENNReal.ofReal ((3 : ℝ)⁻¹) ^ p) ^ k := tsum_le_tsum hterm
     _ = ENNReal.ofReal (729 * C ^ (2 : ℕ) * (3 : ℝ) ^ m0) ^ p *
           (1 - ENNReal.ofReal ((3 : ℝ)⁻¹) ^ p)⁻¹ := by
         rw [ENNReal.tsum_mul_left, ENNReal.tsum_geometric]
@@ -324,7 +324,7 @@ theorem lintegral_atConfinementScale_rpow_le (mu : Measure Omega) [IsProbability
           ENNReal.ofReal (F (m omega) omega) ^ p ∂mu :=
         lintegral_eq_tsum_levelSet mu hmmeas hm0 _
     _ ≤ ∑' k : ℕ, ENNReal.ofReal (27 * C * D) ^ p * (ENNReal.ofReal ((3 : ℝ)⁻¹) ^ p) ^ k :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ = ENNReal.ofReal (27 * C * D) ^ p * (1 - ENNReal.ofReal ((3 : ℝ)⁻¹) ^ p)⁻¹ := by
         rw [ENNReal.tsum_mul_left, ENNReal.tsum_geometric]
     _ ≤ ENNReal.ofReal (27 * C * D) ^ p * ENNReal.ofReal (3 / 2) := by

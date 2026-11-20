@@ -175,7 +175,7 @@ theorem cylindricalCurl_pull {Γ : E → F} {R : F → ℝ} {r : E → ℝ}
         Complex.ofReal_one, mul_one, Complex.real_smul, Complex.ofReal_inv, h3, h1, Fin.zero_eta,
             Matrix.cons_val_zero, hR, mul_inv_rev, Complex.ofReal_mul, Fin.mk_one,
                 Matrix.cons_val_one, Fin.reduceFinMk, Matrix.cons_val]
-        <;> (try field_simp [hlc, hrc])
+        <;> field_simp [hlc, hrc]
 
 theorem phaseNormal_pull {Γ : E → F} {R : F → ℝ} {r : E → ℝ}
     {Vr Vθ Vz : F → F} {Sr Sθ Sz : E → E} {x : E} {l : ℝ}

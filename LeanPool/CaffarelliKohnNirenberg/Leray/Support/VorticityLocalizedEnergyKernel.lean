@@ -185,7 +185,7 @@ theorem vlConv_eLpNorm_le {k h : Vec3 → ℝ} (hk : IsVlKernel k)
         eLpNorm_const_smul c _ 2 volume
       _ ≤ ‖c‖ₑ * eLpNorm (fun y => |h y|) 2 volume := by gcongr
       _ = ENNReal.ofReal c * eLpNorm h 2 volume := by
-        rw [Real.enorm_eq_ofReal hc0]
+        rw [Real.eNorm_eq_ofReal hc0]
         congr 1
         simpa [Real.norm_eq_abs] using eLpNorm_norm h hh.aestronglyMeasurable (p := 2)
 

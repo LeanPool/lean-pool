@@ -259,7 +259,7 @@ lemma exists_isMaxOn_adjMatrix_quadratic_isClique_support [Nonempty V] :
         G.IsClique {v | z v ≠ 0} := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro y hy hmax hn
       by_cases hc : G.IsClique {v | y v ≠ 0}
       · exact ⟨y, hy, hmax, hc⟩

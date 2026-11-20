@@ -29,12 +29,14 @@ private theorem adjacent_ne :
     ∀ a b : GaussianInt, FourNeighborAdjacent a b → a ≠ b := by
   intro a b hab heq
   rcases hab with hab | hab | hab | hab <;> subst b
-  all_goals
-    have hr := congrArg (fun z : GaussianInt => z.re) hab
-    have hi := congrArg (fun z : GaussianInt => z.im) hab
-    try norm_num at hr
-    try norm_num at hi
-    try omega
+  · have hr : a.re = a.re + 1 := congrArg (fun z : GaussianInt => z.re) hab
+    omega
+  · have hr : a.re = a.re - 1 := congrArg (fun z : GaussianInt => z.re) hab
+    omega
+  · have hi : a.im = a.im + 1 := congrArg (fun z : GaussianInt => z.im) hab
+    omega
+  · have hi : a.im = a.im - 1 := congrArg (fun z : GaussianInt => z.im) hab
+    omega
 
 end GridEncodingFacts
 

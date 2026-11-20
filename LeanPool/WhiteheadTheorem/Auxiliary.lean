@@ -133,8 +133,9 @@ noncomputable def liftCoverClosed : C(α, β) :=
       conv => lhs; rhs; ext hxi; arg 2; equals Φ x => exact Eq.symm (Set.liftCover_of_mem hxi)
       tauto
     have : Φ ⁻¹' Y = ⋃ i, Subtype.val '' (φ i ⁻¹' Y) := by
-      conv_rhs => ext x; arg 1; ext i; rw [this]
-      conv_rhs => ext x; rw [← Set.iUnion_inter, H, Set.univ_inter]
+      symm
+      simp_rw [this]
+      rw [← Set.iUnion_inter, H, Set.univ_inter]
     rw [this]
     exact isClosed_iUnion_of_finite fun i ↦
       IsClosed.trans (IsClosed.preimage (φ i).continuous hY) (hS_closed i)

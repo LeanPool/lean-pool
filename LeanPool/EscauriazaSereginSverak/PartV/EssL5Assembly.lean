@@ -51,13 +51,13 @@ theorem lerayHopf_slice_l3_bound_ae {T : ℝ} {a : Vec3 → Vec3}
     serrinWeak_slices_ae hU] with t ht hs
   have hm : AEStronglyMeasurable (fun x : Vec3 => vec3EuclideanNorm (u (x, t))) volume :=
     CKN.continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hs.1.aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simp) (by simp) hm]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by simp) (by simp) hm]
   have hr : (ENNReal.ofReal (3 : ℝ)).toReal = 3 := by simp
   rw [hr]
   have heq : (∫⁻ x : Vec3, ‖vec3EuclideanNorm (u (x, t))‖ₑ ^ (3 : ℝ)) =
       ∫⁻ x : Vec3, ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ (3 : ℝ) := by
     refine lintegral_congr fun x => ?_
-    rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+    rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
   rw [heq]
   gcongr
 
@@ -70,11 +70,11 @@ theorem serrin_memLp_union {f : ParabolicPoint → Vec3} {p : ℝ≥0∞} (hp0 :
   have hfin (C : Set ParabolicPoint) (hC : MemLp f p (volume.restrict C)) :
       (∫⁻ z in C, ‖f z‖ₑ ^ p.toReal) < ⊤ := by
     have h1 := hC.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hC.aestronglyMeasurable] at h1
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hC.aestronglyMeasurable] at h1
     exact (ENNReal.rpow_lt_top_iff_of_pos (by
       have := ENNReal.toReal_pos hp0 hptop
       positivity)).mp h1
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hm]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hm]
   refine ENNReal.rpow_lt_top_of_nonneg (by positivity) ?_
   exact (lt_of_le_of_lt (lintegral_union_le _ A B)
     (ENNReal.add_lt_top.mpr ⟨hfin A hA, hfin B hB⟩)).ne

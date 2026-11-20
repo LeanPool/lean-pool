@@ -149,6 +149,8 @@ abbrev KFld : IntermediateField ↥F K := IntermediateField.adjoin ↥F S
 
 abbrev TRng : Subalgebra ↥F K := Algebra.adjoin ↥F B
 
+local instance : Algebra ↥F ↥(TRng F B) := (TRng F B).algebra
+
 def RSet : Set K := {y | y ∈ KFld F S ∧ IsIntegral ↥(TRng F B) y}
 
 variable {B S}

@@ -34,3 +34,12 @@ Supporting results for bicausal optimal transport and measurable selection.
 
 -- Re-export for downstream modules
 open MeasureTheory
+
+theorem MeasureTheory.AnalyticSet.eq_empty_or_exists_range
+    {α : Type*} [TopologicalSpace α] {s : Set α} (hs : AnalyticSet s) :
+    s = ∅ ∨ ∃ f : (ℕ → ℕ) → α, Continuous f ∧ Set.range f = s := by
+  obtain ⟨β, _, _, f, hf, rfl⟩ := analyticSet_iff_exists_polishSpace_range.mp hs
+  cases isEmpty_or_nonempty β
+  · exact Or.inl (Set.range_eq_empty f)
+  · obtain ⟨g, hg, hsurj⟩ := PolishSpace.exists_nat_nat_continuous_surjective β
+    exact Or.inr ⟨f ∘ g, hf.comp hg, hsurj.range_comp f⟩

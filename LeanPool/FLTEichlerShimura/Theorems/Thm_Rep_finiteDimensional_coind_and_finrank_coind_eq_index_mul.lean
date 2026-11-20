@@ -104,7 +104,7 @@ theorem solution {k G : Type u} [Field k] [Group G] (S : Subgroup G) [S.FiniteIn
           Quotient.sound (by
             change @Setoid.r _ (QuotientGroup.rightRel S) ((s : G) * h) h
             rw [QuotientGroup.rightRel_apply]; simp)
-        rw [← Module.End.mul_apply, ← map_mul]
+        rw [← mul_apply_eq_comp, ← map_mul]
         have hmem : (s : G) * h * (rep ((s : G) * h))⁻¹ ∈ S := rep_spec _
         have : (⟨(s : G) * h * (rep ((s : G) * h))⁻¹, hmem⟩ : S) = s * ⟨h * (rep h)⁻¹, rep_spec h⟩
           :=

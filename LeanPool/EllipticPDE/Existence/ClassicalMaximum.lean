@@ -108,7 +108,7 @@ theorem sum_mul_nonpos_of_posSemidef {A H : Matrix (Fin d) (Fin d) ℝ} (hA : A.
     linarith
   -- the sum as a trace
   have htr : ∑ i, ∑ j, A i j * H i j = trace (A * H) := by
-    simp only [trace, diag_apply, mul_apply]
+    simp only [trace, diag_apply]
     refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => ?_
     rw [hHs i j]
   rw [htr]

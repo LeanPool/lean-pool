@@ -165,7 +165,7 @@ theorem exists_finiteExtensionFinitePlace_canonicalDifferent_scaling_certificate
       intro t
       obtain ⟨t', ht'⟩ := hδpreserves t
       refine ⟨t', ?_⟩
-      simpa only [c, E, Derivation.smul_apply, Algebra.smul_def,
+      simpa only [c, E, smul_apply, Algebra.smul_def,
         Algebra.algebraMap_self_apply, Derivation.restrictScalars_apply] using ht'
     exact ambientDerivation_preserves_localizationAtPrime_of_preserves
       q.asIdeal (c • D) hGlobal

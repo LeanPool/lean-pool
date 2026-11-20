@@ -123,12 +123,12 @@ theorem lps_test_slice_l2_tendsto {φ : Vec3 × ℝ → ℝ} (hφ : Continuous �
       (𝓝 (∫⁻ x : Vec3, (0 : ℝ≥0∞))) := by
     refine tendsto_lintegral_filter_of_dominated_convergence bound ?_ ?_ ?_ ?_
     · exact Eventually.of_forall fun t =>
-        (((hcont t).sub (hcont b)).measurable.enorm.pow_const _)
+        (((hcont t).sub (hcont b)).measurable.eNorm.pow_const _)
     · refine Eventually.of_forall fun t => Eventually.of_forall fun x => ?_
       by_cases hx : x ∈ Prod.fst '' tsupport φ
       · simp only [bound, indicator_of_mem hx]
         refine ENNReal.rpow_le_rpow ?_ (by norm_num)
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         refine ENNReal.ofReal_le_ofReal ?_
         calc |φ (x, t) - φ (x, b)| ≤ |φ (x, t)| + |φ (x, b)| := abs_sub _ _
           _ ≤ C + C := add_le_add (by simpa using hC (x, t)) (by simpa using hC (x, b))
@@ -151,7 +151,7 @@ theorem lps_test_slice_l2_tendsto {φ : Vec3 × ℝ → ℝ} (hφ : Continuous �
         have := (hc.tendsto b).sub_const (φ (x, b))
         simpa using this
       have hx' : Tendsto (fun t : ℝ => ‖φ (x, t) - φ (x, b)‖ₑ) (𝓝 b) (𝓝 0) := by
-        simpa using hx.enorm
+        simpa using hx.eNorm
       have := (ENNReal.continuous_rpow_const (y := (2 : ℝ)) |>.tendsto 0).comp hx'
       simpa [Function.comp_def, ENNReal.zero_rpow_of_pos (by norm_num : (0 : ℝ) < 2)] using this
   simp only [lintegral_zero] at hlim
@@ -159,7 +159,7 @@ theorem lps_test_slice_l2_tendsto {φ : Vec3 × ℝ → ℝ} (hφ : Continuous �
       (∫⁻ x : Vec3, ‖φ (x, t) - φ (x, b)‖ₑ ^ (2 : ℝ)) ^ (1 / (2 : ℝ)) := by
     have hm : AEStronglyMeasurable (fun x : Vec3 => φ (x, t) - φ (x, b)) volume :=
       ((hcont t).sub (hcont b)).aestronglyMeasurable
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hm]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hm]
     norm_num
   simp_rw [hform]
   have := (ENNReal.continuous_rpow_const (y := 1 / (2 : ℝ))).tendsto 0 |>.comp hlim
@@ -177,7 +177,7 @@ theorem lps_abs_integral_mul_le {f g : Vec3 → ℝ} (hf : MemLp f 2 volume) (hg
   have h4 : (∫⁻ x : Vec3, ‖f x * g x‖ₑ) ≤ eLpNorm f 2 volume * eLpNorm g 2 volume := by
     refine le_trans (le_of_eq ?_) h3
     refine lintegral_congr fun x => ?_
-    rw [enorm_mul]
+    rw [eNorm_mul]
   have h5 := ENNReal.toReal_mono hfin h4
   rw [ENNReal.toReal_mul] at h5
   have hI : ∫ x : Vec3, ‖f x * g x‖ = (∫⁻ x : Vec3, ‖f x * g x‖ₑ).toReal := by
@@ -185,7 +185,7 @@ theorem lps_abs_integral_mul_le {f g : Vec3 → ℝ} (hf : MemLp f 2 volume) (hg
       hint.aestronglyMeasurable.norm]
     congr 1
     refine lintegral_congr fun x => ?_
-    rw [Real.enorm_eq_ofReal_abs]
+    rw [Real.eNorm_eq_ofReal_abs]
     simp
   calc |∫ x : Vec3, f x * g x| = ‖∫ x : Vec3, f x * g x‖ := (Real.norm_eq_abs _).symm
     _ ≤ ∫ x : Vec3, ‖f x * g x‖ := norm_integral_le_integral_norm _

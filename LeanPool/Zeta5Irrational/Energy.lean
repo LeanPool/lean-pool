@@ -284,7 +284,7 @@ lemma integral_one_add_pow_mul_exp {K : ℝ} (hK : 1 ≤ K) :
         integral_pow_mul_exp_neg_mul 5 hr]
     _ = (2 * Real.pi) ^ 5 * 32 * (K + 120 * K ^ 6) := by
       simp only [Nat.factorial]; norm_num
-      all_goals field_simp
+      field_simp
     _ ≤ (2 * Real.pi) ^ 5 * 32 * 121 * K ^ 6 := by
       have : K ≤ K ^ 6 := by
         calc

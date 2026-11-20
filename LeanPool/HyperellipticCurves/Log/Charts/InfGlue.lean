@@ -143,7 +143,7 @@ theorem map_constantCoeff_infVred (hf : f.Monic) (huτ : uτ.Monic)
   rw [hmod, map_neg, neg_mul, neg_neg] at hVπ
   -- cancel `z` against the ideal `(z²)`
   have hcoeff (i : ℕ) : PowerSeries.constantCoeff (V.coeff i) = vτ.coeff i := by
-    have h := congrArg (fun p ↦ Polynomial.coeff p i) hVπ
+    have h := congrArg (fun p ↦ AddMonoidAlgebra.coeff p i) hVπ
     simp only [coeff_C_mul, coeff_map] at h
     have h2 : π (PowerSeries.X * (V.coeff i - PowerSeries.C (vτ.coeff i))) = 0 := by
       rw [map_mul, map_sub, mul_sub, h, hφ₂, RingHom.comp_apply, sub_self]

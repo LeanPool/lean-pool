@@ -578,7 +578,7 @@ lemma lLift_mem_tree h (hL : (H.lift h).Lost) : hL.toLLift'.liftVal ∈ H.R.pre.
       · ext1
         · simp [hnx]
         · simp [Lift.LLift.toWLLift, Lift.Lost'.mk, Lift.LLift.takeMin, take_coe, hnx]
-      all_goals omega
+      omega
   · have hnLift := hn
     replace hn : n < H.x.val.length := by
       simpa using hn

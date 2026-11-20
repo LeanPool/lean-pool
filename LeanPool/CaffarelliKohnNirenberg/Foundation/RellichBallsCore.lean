@@ -95,7 +95,7 @@ theorem norm_toLp_two_cutoff_vec3_le
       (fun x => χ x • f x)‖ ≤ (M ^ (1 / 2 : ℝ)).toReal := by
   let hcut := memLp_two_cutoff_vec3_global hK f hf χ hχ hχsupport hχbound
   have hlocal : eLpNorm f 2 (volume.restrict K) ≤ M ^ (1 / 2 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hf.aestronglyMeasurable]
     simpa only [ENNReal.toReal_ofNat] using
       (ENNReal.rpow_le_rpow henergy (by norm_num : (0 : ℝ) ≤ 1 / 2))
@@ -187,7 +187,7 @@ theorem memLp_two_vec3_of_lintegral_sq_lt_top
       _ < ∞ := hfinite
   have hgSM : AEStronglyMeasurable g μ := hg.aestronglyMeasurable
   have hnormLp : MemLp (fun x => ‖g x‖) 2 μ := by
-    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (by norm_num) (by norm_num) hgSM.norm]
     simpa [ENNReal.toReal_ofNat] using hfinite'
   exact (memLp_norm_iff hgSM).mp hnormLp
@@ -200,9 +200,9 @@ theorem memLp_two_real_of_lintegral_sq_lt_top
     (hfinite : ∫⁻ x, ENNReal.ofReal |f x| ^ (2 : ℝ) ∂μ < ∞) :
     MemLp f 2 μ := by
   have hsm : AEStronglyMeasurable f μ := hf.aestronglyMeasurable
-  rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (by norm_num) (by norm_num) hsm]
-  simpa [ENNReal.toReal_ofNat, Real.enorm_eq_ofReal_abs] using hfinite
+  simpa [ENNReal.toReal_ofNat, Real.eNorm_eq_ofReal_abs] using hfinite
 
 /-- The same squared-norm bound gives `L²` membership for Vec3 with its
 native CKN function-space carrier. -/
@@ -617,6 +617,6 @@ theorem lintegral_component_ball_average_error_le_of_field_energy
     simpa [f, g, C, B, avg, ui, mul_assoc, mul_left_comm, mul_comm] using hi
   have hsq := lintegral_prod_sq_le_of_ae_eLpNorm_two_le
     hfMeas hgMeas hle
-  simpa [f, g, C, B, avg, ui, Real.enorm_eq_ofReal_abs] using hsq
+  simpa [f, g, C, B, avg, ui, Real.eNorm_eq_ofReal_abs] using hsq
 
 end CKN.Foundation

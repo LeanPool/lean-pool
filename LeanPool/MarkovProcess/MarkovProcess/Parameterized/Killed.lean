@@ -62,13 +62,12 @@ theorem IsConservative.measurable_killedKernelOn_family :
     (ContinuousEval.continuous_eval.comp continuous_swap).measurable
   have hS : MeasurableSet {p : (Theta × (NNReal × U)) × ContinuousPath alpha |
       (p.1.2.1 : ℝ≥0∞) < ContinuousPath.exitTime U p.2 ∧ p.2 p.1.2.1 ∈ Subtype.val '' B} := by
-    refine MeasurableSet.inter ?_ ?_
-    · exact measurableSet_lt
-        (measurable_coe_nnreal_ennreal.comp (measurable_fst.comp (measurable_snd.comp
-            measurable_fst)))
-        ((ContinuousPath.measurable_exitTime U hU).comp measurable_snd)
-    · exact (heval.comp ((measurable_fst.comp (measurable_snd.comp measurable_fst)).prodMk
-        measurable_snd)) hB'
+    exact (measurableSet_lt
+      (measurable_coe_nnreal_ennreal.comp (measurable_fst.comp (measurable_snd.comp
+        measurable_fst)))
+      ((ContinuousPath.measurable_exitTime U hU).comp measurable_snd)).inter
+        ((heval.comp ((measurable_fst.comp (measurable_snd.comp measurable_fst)).prodMk
+          measurable_snd)) hB')
   exact Kernel.measurable_kernel_prodMk_left
     (κ := (IsConservative.continuousProcess P hP).comap _ hg) hS
 

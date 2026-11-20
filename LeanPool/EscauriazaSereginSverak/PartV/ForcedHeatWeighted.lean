@@ -89,7 +89,7 @@ theorem heatKernelSpaceDerivative_window_lintegral_lt_top {τ : ℝ} (hτ : 0 < 
   have hfin := hint.hasFiniteIntegral
   rw [Measure.volume_eq_prod, ← Measure.prod_restrict, Measure.restrict_univ]
   refine lt_of_le_of_lt (lintegral_mono fun p => ?_) hfin
-  rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs]
   apply ENNReal.ofReal_le_ofReal
   refine le_trans ?_ (le_abs_self _)
   exact Finset.single_le_sum (f := fun k => |heatKernelSpaceDerivative p.1 p.2 k|)
@@ -133,11 +133,11 @@ theorem kernel_weighted_lintegral_le {τ : ℝ} (hτ : 0 < τ) (j : Fin 3) :
   have hH' : StronglyMeasurable H' := hH.stronglyMeasurable_mk
   have hHH' : H =ᵐ[volume] H' := hH.ae_eq_mk
   have hKm := heatKernelSpaceDerivative_vecTime_measurable j
-  have hkBm : Measurable kB := (hKm.enorm).indicator hB
+  have hkBm : Measurable kB := (hKm.eNorm).indicator hB
   have ham : Measurable a :=
     (ENNReal.measurable_ofReal.comp (forcedHeatWeight_continuous.measurable.comp
       measurable_fst)).indicator hA
-  have hh'm : Measurable (fun z : Vec3 × ℝ => ‖H' z‖ₑ) := hH'.measurable.enorm
+  have hh'm : Measurable (fun z : Vec3 × ℝ => ‖H' z‖ₑ) := hH'.measurable.eNorm
   -- step 1: restrict the kernel to the window and pass to the measurable modification
   have hstep1 : ∀ z ∈ A, ∫⁻ p, ‖heatKernelSpaceDerivative p.1 p.2 j * H (z - p)‖ₑ ≤
       ∫⁻ p, kB p * ‖H' (z - p)‖ₑ := by
@@ -151,7 +151,7 @@ theorem kernel_weighted_lintegral_le {τ : ℝ} (hτ : 0 < τ) (j : Fin 3) :
         apply lintegral_mono
         intro p
         dsimp only
-        rw [enorm_mul]
+        rw [eNorm_mul]
         by_cases hp : p ∈ B
         · simp only [kB, indicator_of_mem hp]
           exact le_rfl
@@ -180,7 +180,7 @@ theorem kernel_weighted_lintegral_le {τ : ℝ} (hτ : 0 < τ) (j : Fin 3) :
   have hconj : (2 : ℝ).HolderConjugate 2 :=
     (Real.holderConjugate_iff_eq_conjExponent (by norm_num)).2 (by norm_num)
   have hnormH : eLpNorm H 2 volume = (∫⁻ z, ‖H' z‖ₑ ^ (2 : ℝ)) ^ (1 / (2 : ℝ)) := by
-    rw [eLpNorm_congr_ae hHH', eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num)
+    rw [eLpNorm_congr_ae hHH', eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num)
       (by norm_num) hH'.aestronglyMeasurable]
     norm_num
   have hholder (p : Vec3 × ℝ) : ∫⁻ z, a z * ‖H' (z - p)‖ₑ ≤ Ia * eLpNorm H 2 volume := by

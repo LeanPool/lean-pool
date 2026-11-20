@@ -140,7 +140,7 @@ lemma eventuallyEq_zero (L L' : PeriodPair) (h₂ : L.g₂ = L'.g₂) (h₃ : L.
     rw [weierstrassP_eq_except L, weierstrassP_eq_except L', hz]
   by_contra hD0
   obtain ⟨m, E, hE, hE0, hDE⟩ :=
-    (hP₁.sub hP₂).exists_eventuallyEq_pow_smul_nonzero_iff.mpr hD0
+    (hP₁.sub hP₂).exists_eventuallyEq_pow_smul_ne_zero_iff.mpr hD0
   have hDE' : ∀ᶠ z in 𝓝 (0 : ℂ),
       ((L.weierstrassPExcept 0) - (L'.weierstrassPExcept 0)) z = z ^ m * E z := by
     filter_upwards [hDE] with z hz

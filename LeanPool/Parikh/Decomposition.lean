@@ -234,7 +234,7 @@ theorem decomposition (g : ContextFreeGrammar T) (t : ParseTree T g.NT)
       (∀ C ∈ Cs, IsBoundedCycle g C) ∧ InsertionSequence g B Cs t := by
   classical
   induction hn : t.productionSize using Nat.strong_induction_on generalizing t with
-  | h n ih =>
+  | ind n ih =>
     by_cases hs : t.Simple
     · exact ⟨t, [], ht, rfl, hs, by simp, .nil t⟩
     · obtain ⟨smaller, C, hsmaller, hroot, hbounded, hstep, hsize⟩ :=

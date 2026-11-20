@@ -171,7 +171,7 @@ theorem lintegral_ofReal_three_pow_rpow_le_of_tail (mu : Measure Omega)
         _ = ENNReal.ofReal (Real.exp (-(a / 2))) ^ N :=
             ENNReal.ofReal_pow (Real.exp_pos _).le N
   calc (∑' N : ℕ, ENNReal.ofReal ((3 : ℝ) ^ N) ^ p * mu (Y ⁻¹' {N}))
-      ≤ ∑' N : ℕ, ENNReal.ofReal (Real.exp (-(a / 2))) ^ N := ENNReal.tsum_le_tsum hterm
+      ≤ ∑' N : ℕ, ENNReal.ofReal (Real.exp (-(a / 2))) ^ N := tsum_le_tsum hterm
     _ = (1 - ENNReal.ofReal (Real.exp (-(a / 2))))⁻¹ := ENNReal.tsum_geometric _
     _ = ENNReal.ofReal (1 - Real.exp (-(a / 2)))⁻¹ := by
         rw [ENNReal.ofReal_inv_of_pos hpos, ENNReal.ofReal_sub _ (Real.exp_pos _).le,

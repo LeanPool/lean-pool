@@ -65,7 +65,7 @@ theorem measurable_finiteConvolutionMaximal {N : ℕ}
   intro i
   have hm : Measurable (fun z : ℝ × ℝ ↦ κ i (z.1 - z.2) * f z.2) :=
     ((hκ i).comp (measurable_fst.sub measurable_snd)).mul (hf.comp measurable_snd)
-  exact hm.stronglyMeasurable.integral_prod_right'.measurable.enorm
+  exact hm.stronglyMeasurable.integral_prod_right'.measurable.eNorm
 
 /-- Measurable finite linearization turns the concrete fixed-height kernel
 correlation estimate into the maximal second-moment estimate. -/

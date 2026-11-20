@@ -176,7 +176,7 @@ theorem P5596T1LineParent
   have hr3 : r (2 : Fin 3).succ = q i.succ := by rw [hindex]; rfl
   have hproper : ProperBandQuadruple r := by
     fin_cases a
-    · convert hq using 1; (try funext j; fin_cases j) <;> rfl
+    · convert hq using 1; (funext j; fin_cases j) <;> rfl
     · refine ⟨?_, ?_⟩
       · exact SemiProperQuadruple.rotate hq.1
       · intro j

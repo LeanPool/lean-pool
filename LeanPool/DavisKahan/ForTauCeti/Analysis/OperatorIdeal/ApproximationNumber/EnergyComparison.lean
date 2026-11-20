@@ -445,7 +445,7 @@ theorem tsum_approximationNumber_comp_basisTruncation_sq_le {ι : Type v}
   set c := (EuclideanSpace.basisFun (Fin s.card) 𝕜').toHilbertBasis with hc
   calc ∑' n : ℕ, ENNReal.ofReal ((T ∘L basisTruncation b s).approximationNumber n) ^ 2
       ≤ ∑' n : ℕ, ENNReal.ofReal ((T ∘L V).approximationNumber n) ^ 2 := by
-        refine ENNReal.tsum_le_tsum fun n => ?_
+        refine tsum_le_tsum fun n => ?_
         refine pow_le_pow_left' (ENNReal.ofReal_le_ofReal ?_) 2
         rw [hfactor]
         refine (approximationNumber_comp_le_mul_norm (T ∘L V) Q n).trans ?_
@@ -460,7 +460,7 @@ theorem tsum_approximationNumber_comp_basisTruncation_sq_le {ι : Type v}
         rw [Finset.sum_image fun i _ j _ h => hf h]
     _ ≤ T.hilbertSchmidtEnergy b := by
         rw [hilbertSchmidtEnergy]
-        exact ENNReal.sum_le_tsum s
+        exact sum_le_tsum s
 
 
 /-- **The truncation error vanishes along the finite subsets**, when the energy is finite.
@@ -642,7 +642,7 @@ theorem hilbertSchmidtEnergy_le_tsum_approximationNumber_sq {ι : Type v}
           (mul_le_of_le_one_right (mul_nonneg (norm_nonneg P) hnn) hVnorm) hPa
     _ ≤ ∑' n : ℕ, ENNReal.ofReal (T.approximationNumber n) ^ 2 := by
         rw [Fin.sum_univ_eq_sum_range (fun n => ENNReal.ofReal (T.approximationNumber n) ^ 2)]
-        exact ENNReal.sum_le_tsum _
+        exact sum_le_tsum _
 
 /-- **The `p = 2` identity: the Schatten-2 gauge is the Hilbert--Schmidt energy.**
 

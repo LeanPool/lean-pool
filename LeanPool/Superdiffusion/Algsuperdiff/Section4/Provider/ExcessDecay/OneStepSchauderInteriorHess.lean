@@ -461,7 +461,7 @@ theorem interiorSecondDerivEstimateL2_ball (d : ℕ) [NeZero d] :
   have hIle : ∫ z in ball y (r / 4), (u z - c) ^ 2 ∂volume
       ≤ ∫ z in ball x r, (u z - c) ^ 2 ∂volume :=
     setIntegral_mono_set hIntOn (Filter.Eventually.of_forall fun _ => sq_nonneg _)
-      hsubY.eventuallyLE
+      hsubY.eventuallySubset
   have hmsdX : SX = (volume (ball x r)).toReal⁻¹ * ∫ z in ball x r, (u z - c) ^ 2 ∂volume := by
     rw [hSX]; exact meanSquareDeviationOn_euclideanBall_eq u x hr c
   have hmsdY : SY = (volume (ball y (r / 4))).toReal⁻¹ *

@@ -18,7 +18,7 @@ namespace LentilLib
 
 /-- Add a single theorem to the environment by providing its name, type and proof. -/
 def simpleAddTheorem (name : Name) (lvlParams : List Name) (type value : Expr) (nonComputable? : Bool) : CoreM Unit := do
-  let thm := Declaration.thmDecl <| mkTheoremValEx name lvlParams type value []
+  let thm := Declaration.thmDecl { name, levelParams := lvlParams, type, value, all := [] }
   if nonComputable? then
     addDecl <| thm
     setEnv <| addNoncomputable (← getEnv) name

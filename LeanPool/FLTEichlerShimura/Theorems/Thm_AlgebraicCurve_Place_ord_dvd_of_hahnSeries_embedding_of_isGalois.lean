@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.Galois.Basic
+
 public import Mathlib.FieldTheory.RatFunc.Basic
 public import Mathlib.RingTheory.HahnSeries.PowerSeries
 public import Mathlib.RingTheory.SimpleRing.Principal

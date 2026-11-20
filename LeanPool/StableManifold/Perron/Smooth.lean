@@ -35,7 +35,7 @@ from the smoothness of the superposition operator on bounded sequences.
 ## Proofs
 
 * `subsingleton_or_lt_inv_nnnorm_refl`: on a nontrivial space `‖id‖₊ = 1`
-  (`ContinuousLinearMap.nnnorm_id`), and `1/2 < 1`.
+  (`ContinuousLinearMap.nnNorm_id`), and `1/2 < 1`.
 * `approximatesLinearOn_perronSub`: `perronSub x - perronSub y - (x - y)` is
   `-perronOp (superpose φ x - superpose φ y)`, of norm `≤ S.bound L ‖x - y‖ ≤ ‖x - y‖ / 2`
   (`norm_perronOp_le`, `lipschitzWith_superpose`, `lip_mul_bound_le`).
@@ -78,7 +78,7 @@ theorem subsingleton_or_lt_inv_nnnorm_refl (V : Type*) [NormedAddCommGroup V] [N
   · exact Or.inl h
   · right
     rw [ContinuousLinearEquiv.refl_symm, ContinuousLinearEquiv.coe_refl,
-      ContinuousLinearMap.nnnorm_id, inv_one]
+      ContinuousLinearMap.nnNorm_id, inv_one]
     norm_num
 
 namespace Perturbation

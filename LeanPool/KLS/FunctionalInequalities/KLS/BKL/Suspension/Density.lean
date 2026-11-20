@@ -106,7 +106,7 @@ private theorem normalized_of_probability_density {A : Type*} [MeasurableSpace A
   have hInt : Integrable (fun x => C * Real.exp (W x)) μ := by
     refine ⟨hmeas.aestronglyMeasurable, ?_⟩
     unfold HasFiniteIntegral
-    simp_rw [Real.enorm_eq_ofReal (hnonneg _)]
+    simp_rw [Real.eNorm_eq_ofReal (hnonneg _)]
     rw [hmass]
     exact ENNReal.one_lt_top
   have hexp : Integrable (fun x => Real.exp (W x)) μ := by

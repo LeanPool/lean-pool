@@ -74,7 +74,7 @@ theorem FordTileRecursiveIdentification (P : FordFareyParameter) :
   classical
   generalize hn : P.q = n
   induction n using Nat.strong_induction_on generalizing P with
-  | h n ih =>
+  | ind n ih =>
     subst n
     by_cases hu : P.q = 1
     · have htile : FordTile P.q = ⟨{0}, 0⟩ := by

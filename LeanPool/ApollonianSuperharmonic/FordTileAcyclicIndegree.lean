@@ -46,7 +46,7 @@ theorem FordTileAcyclicIndegree (P : FordFareyParameter)
         (fun x => 2 + FourNeighborLaplacian (FordOdometer P) x)) := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro P hn
       let σ : GaussianInt → Int := fun x => 2 + FourNeighborLaplacian (FordOdometer P) x
       have empty (D : Finset GaussianInt) (hD : D = ∅) :

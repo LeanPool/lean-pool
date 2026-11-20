@@ -61,7 +61,7 @@ theorem integral_vecNormSq_le_of_eLpNorm_le {α : Type*} [MeasurableSpace α]
     have hmeas : AEStronglyMeasurable g μ :=
       aestronglyMeasurable_of_eLpNorm_ne_top (ne_top_of_le_ne_top ENNReal.ofReal_ne_top h)
     have hsq : eLpNorm g 2 μ ^ 2 = ∫⁻ z, ‖g z‖ₑ ^ (2 : ℕ) ∂μ := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hmeas]
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hmeas]
       simp only [ENNReal.toReal_ofNat, one_div]
       rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
       norm_num

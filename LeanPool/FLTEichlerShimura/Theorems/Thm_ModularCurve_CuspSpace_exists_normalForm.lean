@@ -84,7 +84,7 @@ lemma exists_dvd_sub_and_isCoprime {M : ℤ} (hM : M ≠ 0) {s₀ : ℤ} (hs₀ 
     rwa [Int.isCoprime_iff_gcd_eq_one, hm, Int.gcd, Int.natAbs_natCast, ← Int.gcd,
       ← Int.isCoprime_iff_gcd_eq_one]
   have hunit : IsUnit ((s₀ : ZMod m)) :=
-    .of_mul_eq_one _ (ZMod.coe_int_mul_inv_eq_one hcop)
+    .of_mul_eq_one _ (ZMod.intCast_mul_inv_eq_one hcop)
   obtain ⟨S, hS⟩ := ZMod.unitsMap_surjective (n := m) (Nat.dvd_mul_right m e) hunit.unit
   refine ⟨((S : ZMod (m * e)).val : ℤ), ?_, ?_⟩
   · have h1 : (((S : ZMod (m * e)).val : ℤ) : ZMod m) = ((s₀ : ZMod m)) := by

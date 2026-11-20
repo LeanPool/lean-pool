@@ -857,6 +857,7 @@ theorem isClosed_range_j : IsClosed (Set.range (j : ℍ → ℂ)) := by
   set Kc : Set ℂ :=
     {z | 1 ≤ Complex.normSq z ∧ |z.re| ≤ 1 / 2 ∧ (3 : ℝ) / 4 ≤ z.im ∧ z.im ≤ M} with hKc
   have hKc_closed : IsClosed Kc := by
+    simp only [hKc, Set.ofPred_and]
     apply IsClosed.inter
     · exact isClosed_le continuous_const Complex.continuous_normSq
     apply IsClosed.inter

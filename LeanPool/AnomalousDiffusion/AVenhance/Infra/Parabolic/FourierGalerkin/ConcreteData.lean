@@ -445,7 +445,7 @@ theorem frozenDrift_torus_slice_aestronglyMeasurable
   let cell : Set (Vec 2) := AVenhance.Infra.Torus.unitCell 2
   have hcellLe : (volume : Measure (Vec 2)).restrict cell ≤
       (volume : Measure (Vec 2)).restrict AVenhance.unitCube := by
-    exact Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.le
+    exact Measure.restrict_mono_ae AVenhance.Infra.Torus.unitCell_ae_eq_unitCube.subset
   have htCell : AEStronglyMeasurable (fun x : Vec 2 => b t x)
       ((volume : Measure (Vec 2)).restrict cell) := ht.mono_measure hcellLe
   let cellSubtype := {x : Vec 2 // x ∈ cell}

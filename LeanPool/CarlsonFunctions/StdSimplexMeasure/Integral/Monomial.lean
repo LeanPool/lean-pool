@@ -132,7 +132,7 @@ theorem integral_stdSimplex_explicit_monomial (m : ι → ℕ) [Nonempty ι] :
     exact h (card ι) ι rfl m inferInstance
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro α _ hα a hne
       let : Nonempty α := hne
       cases subsingleton_or_nontrivial α with

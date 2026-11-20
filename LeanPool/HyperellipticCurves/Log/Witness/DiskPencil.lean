@@ -438,7 +438,7 @@ theorem exists_pencil_param [IsAlgClosed K] [NeZero (2 : K)] (hf : f.Monic) (hu 
     rcases ht with h | h | ⟨r, hr, h⟩ | ⟨r, hr, hra, h⟩ | h
     exacts [.inl (.inl (.inl (.inl h))), .inl (.inl (.inl (.inr h))),
       .inl (.inl (.inr (Set.mem_biUnion hr h))),
-      .inl (.inr (Set.mem_biUnion (Set.mem_sep hr hra) h)), .inr h]
+      .inl (.inr (Set.mem_biUnion ⟨hr, hra⟩ h)), .inr h]
   obtain ⟨t, ht⟩ := hbad.infinite_compl.nonempty
   simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_or, not_exists, not_and] at ht
   obtain ⟨ht0, hta, htu, htf, httang⟩ := ht

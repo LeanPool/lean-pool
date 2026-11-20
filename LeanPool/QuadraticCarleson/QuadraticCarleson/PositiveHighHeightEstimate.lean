@@ -101,11 +101,11 @@ theorem disjointLevelAtomSum_sq_lintegral_le {ι : Type*} [Countable ι]
     (fun b ↦ ‖b‖ₑ ^ 2) (by simp) x
   simp_rw [hp]
   rw [lintegral_tsum (fun i ↦
-    ((measurable_levelAtom hf k (z i) (R i)).enorm.pow_const 2).aemeasurable)]
+    ((measurable_levelAtom hf k (z i) (R i)).eNorm.pow_const 2).aemeasurable)]
   calc
     _ ≤ ∑' i, ENNReal.ofReal (2 * A k) *
         ENNReal.ofReal (∫ x, ‖levelAtom A f k (z i) (R i) x‖) :=
-      ENNReal.tsum_le_tsum (fun i ↦ lintegral_sq_enorm_levelAtom_le hf hAk (hR i))
+      tsum_le_tsum (fun i ↦ lintegral_sq_enorm_levelAtom_le hf hAk (hR i))
     _ = ENNReal.ofReal (2 * A k) *
         ∑' i, ENNReal.ofReal (∫ x, ‖levelAtom A f k (z i) (R i) x‖) := ENNReal.tsum_mul_left
     _ ≤ ENNReal.ofReal (2 * A k) * (2 * magnitudeLevelL1Mass volume A f k) :=
@@ -130,7 +130,7 @@ theorem memLp_disjointLevelAtomSum {ι : Type*} [Countable ι]
   have hs : (∫⁻ x, ‖disjointLevelAtomSum A f k z R x‖ₑ ^ 2) < ∞ :=
     (disjointLevelAtomSum_sq_lintegral_le hf hAk z R hR hdisj).trans_lt
       (ENNReal.mul_lt_top (by finiteness) hmass)
-  rw [MemLp, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+  rw [MemLp, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
     hm.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num1) hs.ne
@@ -147,7 +147,7 @@ theorem fixedHeight_disjointLevelAtomSum_eLpNorm_le {ι : Type*} [Countable ι]
   apply (paperFixedHeightQuadraticMaximal_eLpNorm_decay height
     (memLp_disjointLevelAtomSum hf hfi hAk z R hR hdisj)).trans
   apply mul_le_mul' le_rfl
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
     (measurable_disjointLevelAtomSum (A := A) hf k z R).aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   exact ENNReal.rpow_le_rpow (disjointLevelAtomSum_sq_lintegral_le hf hAk z R hR hdisj)

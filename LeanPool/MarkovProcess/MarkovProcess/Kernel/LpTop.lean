@@ -36,7 +36,7 @@ theorem enorm_kernelIntegral_le_of_ae {κ : ProbabilityTheory.Kernel α α}
     ‖kernelIntegral κ f x‖ₑ ≤ C := by
   calc
     ‖kernelIntegral κ f x‖ₑ ≤ ∫⁻ y, ‖f y‖ₑ ∂κ x :=
-      enorm_integral_le_lintegral_enorm f
+      eNorm_integral_le_lintegral_eNorm f
     _ ≤ ∫⁻ _y, C ∂κ x := lintegral_mono_ae hf
     _ = C * κ x Set.univ := lintegral_const C
     _ ≤ C * 1 := mul_le_mul_right (hκ.measure_le_one x Set.univ) C
@@ -49,7 +49,7 @@ theorem enorm_kernelIntegral_ae_le_eLpNormEssSup {μ : Measure α}
     (hκμ : κ ∘ₘ μ ≤ μ) (f : α → ℝ) :
     ∀ᵐ x ∂μ, ‖kernelIntegral κ f x‖ₑ ≤ eLpNormEssSup f μ := by
   filter_upwards
-    [ae_ae_kernel_of_comp_le hκμ (enorm_ae_le_eLpNormEssSup f μ)] with x hx
+    [ae_ae_kernel_of_comp_le hκμ (eNorm_ae_le_eLpNormEssSup f μ)] with x hx
   exact enorm_kernelIntegral_le_of_ae hκ hx
 
 /-- Integration against a sub-Markov kernel is a contraction for the raw
@@ -60,7 +60,7 @@ theorem eLpNorm_kernelIntegral_top_le {μ : Measure α}
     eLpNorm (kernelIntegral κ f) ∞ μ ≤ eLpNorm f ∞ μ := by
   by_cases hf : AEStronglyMeasurable f μ
   · rw [eLpNorm_exponent_top (AEStronglyMeasurable.kernelIntegral hf hκμ), eLpNorm_exponent_top hf]
-    exact eLpNormEssSup_le_of_ae_enorm_bound
+    exact eLpNormEssSup_le_of_ae_eNorm_bound
       (enorm_kernelIntegral_ae_le_eLpNormEssSup hκ hκμ f)
   · rw [eLpNorm_of_not_aestronglyMeasurable hf]
     exact le_top

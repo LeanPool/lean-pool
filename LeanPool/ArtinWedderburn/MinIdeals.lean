@@ -62,8 +62,8 @@ open Pointwise Set
 -- IJ is nonzero, then there are x in I and y in J, such that x * y ≠ 0
 theorem mul_ne_zero_imply_set_ne_zero (I J : Ideal R) (h : I * J ≠ ⊥) :
     ∃ x ∈ I, ∃ y ∈ J, x * y ≠ 0 := by
-  have hnzz : ∃ z, z ∈ (↑I : Set R) * (↑J : Set R) ∧ z ≠ 0 :=
-    not_subset.mp ((not_iff_not.mpr Ideal.span_eq_bot).mp h)
+  have hnzz : ∃ z, z ∈ (↑I : Set R) * (↑J : Set R) ∧ z ≠ 0 := by
+    simpa only [not_forall, exists_prop] using (not_iff_not.mpr Ideal.span_eq_bot).mp h
   obtain ⟨z, ⟨⟨x, ⟨hx, ⟨y, ⟨hy, hz⟩⟩⟩⟩, hnz⟩⟩ := hnzz
   refine ⟨x, hx, y, hy, ?_⟩
   simp_all

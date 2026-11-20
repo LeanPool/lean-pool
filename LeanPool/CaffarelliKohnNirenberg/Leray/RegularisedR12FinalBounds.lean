@@ -90,7 +90,7 @@ theorem regR12WeightedField_slice_lintegral_le (M : L2Vec3 → ℂ) (hM : AEStro
       _ = ENNReal.ofReal C * eLpNorm (G : L2Vec3 → E) 2 volume := by
           rw [show (fun ξ => C * ‖(G : L2Vec3 → E) ξ‖) =
               C • (fun ξ => ‖(G : L2Vec3 → E) ξ‖) from rfl,
-            eLpNorm_const_smul, Real.enorm_of_nonneg hC,
+            eLpNorm_const_smul, Real.eNorm_of_nonneg hC,
               eLpNorm_norm _ (Lp.aestronglyMeasurable G)]
       _ = ENNReal.ofReal (C * ‖G‖) := by
           rw [ENNReal.ofReal_mul hC, Lp.norm_def, ENNReal.ofReal_toReal (Lp.eLpNorm_ne_top G)]
@@ -106,7 +106,7 @@ theorem regR12WeightedField_slice_lintegral_le (M : L2Vec3 → ℂ) (hM : AEStro
         filter_upwards [hrep] with y hy
         rw [hy]
     _ = eLpNorm (H : L2Vec3 → E) 2 volume ^ (2 : ℝ) := by
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
           (Lp.aestronglyMeasurable H), ENNReal.toReal_ofNat, ← ENNReal.rpow_mul]
         norm_num
     _ ≤ ENNReal.ofReal (C * ‖G‖) ^ (2 : ℝ) := by
@@ -127,10 +127,10 @@ theorem regR12SpaceTimeField_memLp_slab (c : E →L[ℝ] ℝ) (M : L2Vec3 → �
   have hmeas : AEStronglyMeasurable (regR12SpaceTimeField c M G)
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo δ T))) :=
     hgc.aestronglyMeasurable
-  rw [MemLp, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num) hmeas,
+  rw [MemLp, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num) hmeas,
     ENNReal.toReal_ofNat]
   let Φ : Vec3 × ℝ → ℝ≥0∞ := fun z => ‖g z‖ₑ ^ (2 : ℝ)
-  have hΦ : Measurable Φ := (hgc.measurable.enorm).pow_const _
+  have hΦ : Measurable Φ := (hgc.measurable.eNorm).pow_const _
   have hslice : ∀ t ∈ Ioo δ T, (∫⁻ x, Φ (x, t)) ≤
       ENNReal.ofReal ‖c‖ ^ (2 : ℝ) * ENNReal.ofReal (C * B) ^ (2 : ℝ) := by
     intro t ht

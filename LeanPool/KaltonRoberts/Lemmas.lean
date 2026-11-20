@@ -93,7 +93,6 @@ theorem finite_boolean_algebra_bound_of_powerset
       have hsup : e.symm (A ⊔ B) = e.symm A ∪ e.symm B := by
         apply e.injective
         rw [e.apply_symm_apply]
-        change A ⊔ B = e (e.symm A ⊔ e.symm B)
         rw [e.map_sup]
         simp
       rw [hsup]
@@ -341,7 +340,9 @@ theorem approx_modularity {U : Type*} [DecidableEq U]
   set Y := B \ A;
   -- Then A = I ∪ X (disjoint), B = I ∪ Y (disjoint), A ∪ B = I ∪ X ∪ Y.
   have hA : A = I ∪ X := by
-    simp only [I, X]; ext x; simp [Finset.mem_union, Finset.mem_inter, Finset.mem_sdiff]; tauto
+    simp only [I, X]
+    ext x
+    simp
   have hB : B = I ∪ Y := by
     grind
   have hAB : A ∪ B = I ∪ X ∪ Y := by

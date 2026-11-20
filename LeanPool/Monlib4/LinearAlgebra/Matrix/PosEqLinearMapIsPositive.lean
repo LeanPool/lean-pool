@@ -167,7 +167,7 @@ theorem Matrix.posSemidef_iff_vecMulVec [Finite n] {x : Matrix n n 𝕜} :
     apply (Matrix.posSemidef_iff_eq_sum_vecMulVec (𝕜 := 𝕜) (M := x)).mpr
     exact ⟨m, fun i => (v i : n → 𝕜), by simpa using hv⟩
 
-theorem vecMulVec_posSemidef [Finite n] (x : n → 𝕜) :
+theorem vecMulVec_posSemidef (x : n → 𝕜) :
     (vecMulVec x (star x)).PosSemidef :=
   Matrix.posSemidef_vecMulVec_self_star x
 
@@ -523,8 +523,7 @@ theorem conjTranspose_hMul_self_eq_zero {m : Type*} [Fintype n]
     xᴴ * x = 0 ↔ x = 0 :=
   Matrix.conjTranspose_mul_self_eq_zero
 
-theorem _root_.Matrix.PosSemidef.replicateColMulConjTransposereplicateCol [Finite n]
-    (x : n → 𝕜) :
+theorem _root_.Matrix.PosSemidef.replicateColMulConjTransposereplicateCol (x : n → 𝕜) :
     (replicateCol (Fin 1) x * (replicateCol (Fin 1) x)ᴴ : Matrix n n 𝕜).PosSemidef := by
   rw [← Matrix.vecMulVec_eq_replicateCol_conjTranspose]
   exact Matrix.posSemidef_vecMulVec_self_star x

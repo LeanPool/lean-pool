@@ -121,7 +121,7 @@ theorem descendantsENNAverage_normalizedEuclideanLpENorm_rpow_eq {d n : ℕ}
     unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
     unfold BoundedMeasurableDomain.normalizedLpENorm
     rw [cubeBoundedMeasurableDomain_normalizedVolume_eq_normalizedCubeMeasure,
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hR, ← ENNReal.rpow_mul]
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hR, ← ENNReal.rpow_mul]
     have hpr : (1 / p.toReal) * p.toReal = 1 := by field_simp
     rw [hpr, ENNReal.rpow_one]
   by_cases hQ : AEStronglyMeasurable (fun x => euclideanNorm (F x)) (normalizedCubeMeasure Q)

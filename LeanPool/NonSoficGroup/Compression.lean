@@ -5035,7 +5035,7 @@ theorem twiceCompleted_sourceGenerator_normalizedHamming_tendsto_zero
           (Finset.univ \ D n :
             Finset {x : V n // x ∈ P n})) = D n := by
       ext x
-      simp only [Finset.univ_eq_attach, sdiff_sdiff_right_self, Finset.inf_eq_inter',
+      simp only [Finset.univ_eq_attach, sdiff_sdiff_right_self,
         Finset.mem_inter,
         Finset.mem_attach, true_and]
     rw [hset]
@@ -5823,13 +5823,14 @@ private theorem exists_kazhdanPair_on_exact_sourceAmbientSymmetricGenerators
         (SΓ : Set
           (prefixElementaryGroup
             alphaPrefixCode)) = ⊤)
-    [HasPropertyT.{0, 0}
+    (propertyT : HasPropertyT.{0, 0}
       (prefixElementaryGroup
-        ninePrefixCode)] :
+        ninePrefixCode)) :
     ∃ P : KazhdanPair.{0, 0}
         (prefixElementaryGroup
           ninePrefixCode),
       P.generators = sourceAmbientSymmetricGenerators SΓ := by
+  let := propertyT
   exact exists_kazhdanPair_with_exact_symmetric_generators
     (sourceAmbientSymmetricGenerators SΓ)
     (sourceAmbientSymmetricGenerators_inv_mem SΓ)
@@ -6085,7 +6086,7 @@ theorem exists_unconditional_actual_source_generator_data :
       SΓ hsymmetricΓ hgeneratesΓ
   obtain ⟨PG, hPG⟩ :=
     exists_kazhdanPair_on_exact_sourceAmbientSymmetricGenerators
-      SΓ hgeneratesΓ
+      SΓ hgeneratesΓ inferInstance
   refine ⟨SΓ, PΓ, PG, honeΓ, hsymmetricΓ, hgeneratesΓ,
     hPΓ, one_mem_sourceAmbientSymmetricGenerators SΓ,
     sourceAmbientSymmetricGenerators_inv_mem SΓ,
@@ -7315,7 +7316,7 @@ private theorem additive_permutation_small_support_coarea
   generalize hn :
     (CheegerPoincare.positiveSupport f).card = n
   induction n using Nat.strong_induction_on generalizing f M with
-  | h n ih =>
+  | ind n ih =>
     by_cases hnonempty :
         (CheegerPoincare.positiveSupport f).Nonempty
     · let A : Finset V :=

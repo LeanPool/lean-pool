@@ -59,7 +59,7 @@ lemma projectiveIdealZeroLocus_rep {n : ℕ}
     {I : Ideal (MvPolynomial (Fin (n + 1)) K)} {x : Projectivization K (Fin (n + 1) → K)}
     (hx : x ∈ projectiveIdealZeroLocus I) :
     x.rep ∈ idealZeroLocus I :=
-  hx x.rep x.rep_nonzero x.mk_rep
+  hx x.rep x.rep_ne_zero x.mk_rep
 
 private lemma homogeneousCoordinateSpace_mul_mem {n M m : ℕ}
     (I : Ideal (MvPolynomial (Fin (n + 1)) K))

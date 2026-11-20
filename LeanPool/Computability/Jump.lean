@@ -45,7 +45,7 @@ def recursivelyEnumerableIn₁ (X : α → ℕ →. ℕ) (A : Set ℕ) :=
 /-- A set `A` is recursively enumerable in a single oracle `g` if it is the domain of a function
 recursive in `{g}`. -/
 def recursivelyEnumerableIn₂ (g : ℕ →. ℕ) (A : ℕ → Prop) :=
- ∃ f, (RecursiveIn {g} f) ∧ A = f.Dom
+ ∃ f, (RecursiveIn {g} f) ∧ A = (· ∈ f.Dom)
 
 /-- A set `A` is recursively enumerable if it is the domain of a partial recursive function. -/
 def recursivelyEnumerable (A : Set ℕ) :=
@@ -135,9 +135,9 @@ end decide
 def Kf (f : ℕ →. ℕ) (n : ℕ) : Prop := (jump f n).Dom
 
 theorem re_in_trans (A : Set ℕ) (f h : ℕ →. ℕ) :
-  recursivelyEnumerableIn₂ f A →
+  recursivelyEnumerableIn₂ f (· ∈ A) →
   f ≤ᵀ h →
-  recursivelyEnumerableIn₂ h A := by
+  recursivelyEnumerableIn₂ h (· ∈ A) := by
   intro freInA fh
   obtain ⟨g, hg, hA⟩ := freInA
   exact ⟨g, TuringReducible.trans hg fh, hA⟩

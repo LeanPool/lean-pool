@@ -74,10 +74,9 @@ theorem P5435T1Cocycle (K : DiamondParameter) :
       · dsimp [DiamondPeakMatrix]
         ext i; fin_cases i <;>
           simp [Matrix.mulVec, dotProduct, k]
-        all_goals
-          try field_simp [show (K.1 : Real) ≠ 0 by simpa [k] using hk,
-            show (K.1 : Real)+1 ≠ 0 by simpa [k] using hk1]
-          ring
+        field_simp [show (K.1 : Real) ≠ 0 by simpa [k] using hk,
+          show (K.1 : Real)+1 ≠ 0 by simpa [k] using hk1]
+        ring
       · intro x
         have h := ha x
         have h0 := ha 0
@@ -92,7 +91,7 @@ theorem P5435T1Cocycle (K : DiamondParameter) :
         ext i; fin_cases i <;>
           simp [Matrix.mulVec, dotProduct, k]
         all_goals
-          try field_simp [show (K.1 : Real) ≠ 0 by simpa [k] using hk,
+          field_simp [show (K.1 : Real) ≠ 0 by simpa [k] using hk,
             show (K.1 : Real)+1 ≠ 0 by simpa [k] using hk1]
           ring
       · intro x

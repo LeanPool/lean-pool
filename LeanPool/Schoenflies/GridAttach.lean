@@ -406,11 +406,11 @@ theorem isConnected_union_joins {A : Set Plane} {r₀ : Plane} (hr₀ : r₀ ∈
     refine ⟨S ∪ T r, ?_, Or.inr (hThub r hr), Or.inl hzS,
       hSconn.union' ⟨r, hrS, hTrep r hr⟩ (hTconn r hr)⟩
     exact union_subset (hSA.trans subset_union_left)
-      (fun w hw => Or.inr (mem_biUnion hr hw))
+      (fun w hw => Or.inr (mem_iUnion₂_of_mem hr hw))
   · -- on a joining set: it already contains the hub
     simp only [mem_iUnion, exists_prop] at hz
     obtain ⟨r, hr, hzT⟩ := hz
-    exact ⟨T r, fun w hw => Or.inr (mem_biUnion hr hw), hThub r hr, hzT, hTconn r hr⟩
+    exact ⟨T r, fun w hw => Or.inr (mem_iUnion₂_of_mem hr hw), hThub r hr, hzT, hTconn r hr⟩
 
 /-! ## The construction
 

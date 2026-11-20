@@ -52,7 +52,7 @@ theorem LatticeEdgeRegularity (C : BandCircle) (T : ProtoTile)
         ¬ OpenLatticeEdge x y ⊆ interior (TileRealization U) := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro D U hn hpositive hproto hdisk
       cases hproto with
       | line w a hw => simp at hpositive

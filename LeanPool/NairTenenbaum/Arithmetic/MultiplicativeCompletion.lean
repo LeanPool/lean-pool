@@ -50,7 +50,7 @@ theorem multiplicativeCompletion_prime_pow (f : ArithmeticFunction R) (hf : f 1 
 theorem convolution_prime_pow_congr {f g g' : ArithmeticFunction R} {p k : ℕ}
     (hp : p.Prime) (hg : ∀ j ≤ k, g (p ^ j) = g' (p ^ j)) :
     (f * g) (p ^ k) = (f * g') (p ^ k) := by
-  simp only [mul_apply]
+  simp only [ArithmeticFunction.mul_apply]
   apply sum_congr rfl
   intro de hde
   have H := (Nat.mem_divisorsAntidiagonal.mp hde).1

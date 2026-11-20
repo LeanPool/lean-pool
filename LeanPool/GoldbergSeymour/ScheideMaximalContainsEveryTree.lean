@@ -84,7 +84,7 @@ theorem ScheideMaximalContainsEveryTree {V E : Type*}
       S.vertex ⟨n, hn⟩ ∈ X := by
     intro n hn
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       by_cases hj : n < 2
       · exact first_mem ⟨n, by omega⟩
       · by_contra hout

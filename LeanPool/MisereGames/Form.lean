@@ -16,6 +16,8 @@ Misere combinatorial games.
 
 namespace MisereGames
 
+open scoped Pointwise
+
 universe u v
 
 public section
@@ -287,7 +289,7 @@ theorem not_isEnd_exists_move {g : G} {p : Player}
   by_contra h4
   simp only [not_exists] at h4
   absurd h1
-  exact Set.subset_eq_empty h4 rfl
+  exact Set.eq_empty_iff_forall_notMem.mpr h4
 
 @[simp]
 theorem not_mem_moves_of_isEnd {p : Player} {g gp : G} (h1 : IsEnd p g) : gp ∉ moves p g := by

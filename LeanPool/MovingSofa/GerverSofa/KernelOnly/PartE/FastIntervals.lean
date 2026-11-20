@@ -37,73 +37,6 @@ private theorem endpoints_mul_of_nonneg_right (I J : IntervalRat) (h : 0 ≤ J.l
     (mul_le_mul_of_nonneg_right I.le h')), max_eq_right
     (max_le_max (mul_le_mul_of_nonneg_right I.le h) (mul_le_mul_of_nonneg_right I.le h'))⟩
 
-private theorem endpoints_mul_of_nonpos_right (I J : IntervalRat) (h : J.hi ≤ 0) :
-    (I.mul J).lo = min (I.hi * J.lo) (I.hi * J.hi) ∧
-    (I.mul J).hi = max (I.lo * J.lo) (I.lo * J.hi) := by
-  have h' := J.le.trans h
-  exact ⟨min_eq_right (min_le_min (mul_le_mul_of_nonpos_right I.le h')
-    (mul_le_mul_of_nonpos_right I.le h)), max_eq_left
-    (max_le_max (mul_le_mul_of_nonpos_right I.le h') (mul_le_mul_of_nonpos_right I.le h))⟩
-
-private theorem interval_mul_comm (I J : IntervalRat) : I.mul J = J.mul I := by
-  apply interval_eq
-  · simp only [IntervalRat.mul, IntervalRat.min4, mul_comm J.lo I.lo, mul_comm J.lo I.hi,
-      mul_comm J.hi I.lo, mul_comm J.hi I.hi, min_left_comm, min_comm]
-  · simp only [IntervalRat.mul, IntervalRat.max4, mul_comm J.lo I.lo, mul_comm J.lo I.hi,
-      mul_comm J.hi I.lo, mul_comm J.hi I.hi, max_left_comm, max_comm]
-
-private theorem mulFast_eq (I J : IntervalRat) : I.mulFast J = I.mul J := by
-  unfold IntervalRat.mulFast
-  split_ifs with hIlo hJlo hJhi hIhi hJlo hJhi hJlo hJhi
-  · apply interval_eq
-    · rw [(endpoints_mul_of_nonneg_right I J hJlo).1, min_eq_left]
-      exact mul_le_mul_of_nonneg_left J.le hIlo
-    · rw [(endpoints_mul_of_nonneg_right I J hJlo).2, max_eq_right]
-      exact mul_le_mul_of_nonneg_left J.le (hIlo.trans I.le)
-  · apply interval_eq
-    · rw [(endpoints_mul_of_nonpos_right I J hJhi).1, min_eq_left]
-      exact mul_le_mul_of_nonneg_left J.le (hIlo.trans I.le)
-    · rw [(endpoints_mul_of_nonpos_right I J hJhi).2, max_eq_right]
-      exact mul_le_mul_of_nonneg_left J.le hIlo
-  · rw [interval_mul_comm I J]
-    apply interval_eq
-    · change I.hi * J.lo = _
-      rw [mul_comm I.hi J.lo, (endpoints_mul_of_nonneg_right J I hIlo).1, min_eq_right]
-      exact mul_le_mul_of_nonpos_left I.le (le_of_lt (lt_of_not_ge hJlo))
-    · change I.hi * J.hi = _
-      rw [mul_comm I.hi J.hi, (endpoints_mul_of_nonneg_right J I hIlo).2, max_eq_right]
-      exact mul_le_mul_of_nonneg_left I.le (le_of_lt (lt_of_not_ge hJhi))
-  · apply interval_eq
-    · rw [(endpoints_mul_of_nonneg_right I J hJlo).1, min_eq_right]
-      exact mul_le_mul_of_nonpos_left J.le (I.le.trans hIhi)
-    · rw [(endpoints_mul_of_nonneg_right I J hJlo).2, max_eq_left]
-      exact mul_le_mul_of_nonpos_left J.le hIhi
-  · apply interval_eq
-    · rw [(endpoints_mul_of_nonpos_right I J hJhi).1, min_eq_right]
-      exact mul_le_mul_of_nonpos_left J.le hIhi
-    · rw [(endpoints_mul_of_nonpos_right I J hJhi).2, max_eq_left]
-      exact mul_le_mul_of_nonpos_left J.le (I.le.trans hIhi)
-  · rw [interval_mul_comm I J]
-    apply interval_eq
-    · change I.lo * J.hi = _
-      rw [mul_comm I.lo J.hi, (endpoints_mul_of_nonpos_right J I hIhi).1, min_eq_left]
-      exact mul_le_mul_of_nonneg_left I.le (le_of_lt (lt_of_not_ge hJhi))
-    · change I.lo * J.lo = _
-      rw [mul_comm I.lo J.lo, (endpoints_mul_of_nonpos_right J I hIhi).2, max_eq_left]
-      exact mul_le_mul_of_nonpos_left I.le (le_of_lt (lt_of_not_ge hJlo))
-  · apply interval_eq
-    · rw [(endpoints_mul_of_nonneg_right I J hJlo).1, min_eq_right]
-      exact mul_le_mul_of_nonpos_left J.le (le_of_lt (lt_of_not_ge hIlo))
-    · rw [(endpoints_mul_of_nonneg_right I J hJlo).2, max_eq_right]
-      exact mul_le_mul_of_nonneg_left J.le (le_of_lt (lt_of_not_ge hIhi))
-  · apply interval_eq
-    · rw [(endpoints_mul_of_nonpos_right I J hJhi).1, min_eq_left]
-      exact mul_le_mul_of_nonneg_left J.le (le_of_lt (lt_of_not_ge hIhi))
-    · rw [(endpoints_mul_of_nonpos_right I J hJhi).2, max_eq_left]
-      exact mul_le_mul_of_nonpos_left J.le (le_of_lt (lt_of_not_ge hIlo))
-  · rfl
-
-
 open IntervalRat
 
 /-- In a nonnegative interval, choose the factor for a lower endpoint by its sign. -/
@@ -150,7 +83,7 @@ private theorem multiplyForTaylor_eq (partialSum interval : IntervalRat) :
         (endpoints_mul_of_nonneg_right partialSum interval nonnegative).1.symm
     · exact (upperProduct_eq _ _).trans
         (endpoints_mul_of_nonneg_right partialSum interval nonnegative).2.symm
-  · exact mulFast_eq partialSum interval
+  · exact mulFast_eq_mul partialSum interval
 
 /-- Evaluate a Taylor polynomial by Horner iteration with sign-based multiplication. -/
 def evalTaylor (coefficients : List ℚ) (interval : IntervalRat) : IntervalRat :=
@@ -254,7 +187,7 @@ private theorem rejectWith_eq (cell : AngleCell) :
 
 private theorem rejected_eq (cell : AngleCell) : rejected cell = cell.rejected := by
   have multiplication : mulFast = mul :=
-    funext fun left => funext fun right => mulFast_eq left right
+    funext fun left => funext fun right => mulFast_eq_mul left right
   simp only [rejected, cosine_eq, sine_eq, multiplication, rejectWith_eq]
 
 /-- Decide a rejection certificate through the faster exact evaluator. -/

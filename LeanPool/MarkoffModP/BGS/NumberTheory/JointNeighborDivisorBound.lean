@@ -141,12 +141,12 @@ private theorem neighboringDivisorSum_dominant_constant
         P * (R ^ 10 * D * p) := by
     calc
       P * ((R + 1) ^ 10 * K * (p + 1)) =
-          ((R + 1) ^ 10 * K) * (P * (p + 1)) := by ac_rfl
+          ((R + 1) ^ 10 * K) * (P * (p + 1)) := by rw [Nat.mul_left_comm]
       _ ≤ ((R + 1) ^ 10 * K) * ((P + 1) * p) :=
         Nat.mul_le_mul_left _ hlinear
-      _ = ((R + 1) ^ 10 * K * (P + 1)) * p := by ac_rfl
+      _ = ((R + 1) ^ 10 * K * (P + 1)) * p := (Nat.mul_assoc _ _ _).symm
       _ ≤ (R ^ 10 * D * P) * p := Nat.mul_le_mul_right _ hground
-      _ = P * (R ^ 10 * D * p) := by ac_rfl
+      _ = P * (R ^ 10 * D * p) := by rw [Nat.mul_right_comm, Nat.mul_comm _ P]
   exact Nat.le_of_mul_le_mul_left hcombined (by decide : 0 < P)
 
 /-- Square-root form of the joint product moment. -/

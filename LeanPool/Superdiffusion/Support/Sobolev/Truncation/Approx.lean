@@ -250,7 +250,7 @@ private theorem weakGradientComposition_gradientConvergence :
             eLpNorm (fun x => Dwn (σ k) x - u.grad x i) 2 (volumeMeasureOn U) := by
           rw [show (fun x => M • (Dwn (σ k) x - u.grad x i))
                 = M • (fun x => Dwn (σ k) x - u.grad x i) from rfl, eLpNorm_const_smul]
-          simp [Real.enorm_eq_ofReal hM]
+          simp [Real.eNorm_eq_ofReal hM]
   have hTA_conv : Tendsto
       (fun k => eLpNorm (fun x => deriv G (w (σ k) x) * (Dwn (σ k) x - u.grad x i)) 2
         (volumeMeasureOn U)) atTop (𝓝 0) := by
@@ -566,11 +566,11 @@ theorem hasWeakGradientOn_comp_of_deriv_bounded
               eLpNorm (fun x => smi n x - u.grad x i) 2 (volumeMeasureOn U) := by
         rw [show (fun x => (1 - e n) * (smi n x - u.grad x i))
               = (1 - e n) • (fun x => smi n x - u.grad x i) from rfl,
-          eLpNorm_const_smul, Real.enorm_eq_ofReal (by linarith [he_le n])]
+          eLpNorm_const_smul, Real.eNorm_eq_ofReal (by linarith [he_le n])]
       have hB : eLpNorm (fun x => e n * u.grad x i) 2 (volumeMeasureOn U)
           = ENNReal.ofReal (e n) * C := by
         rw [show (fun x => e n * u.grad x i) = e n • (fun x => u.grad x i) from rfl,
-          eLpNorm_const_smul, Real.enorm_eq_ofReal (he_pos n).le, hC]
+          eLpNorm_const_smul, Real.eNorm_eq_ofReal (he_pos n).le, hC]
       rw [eLpNorm_congr_ae hae]
       calc eLpNorm
               (fun x => (1 - e n) * (smi n x - u.grad x i) - e n * u.grad x i) 2 (volumeMeasureOn U)

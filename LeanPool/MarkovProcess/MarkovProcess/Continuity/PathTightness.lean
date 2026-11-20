@@ -331,7 +331,7 @@ theorem isTightMeasureSet_of_measure_compl_modulusSet_le [ProperSpace alpha]
         add_le_add (hstart mu hmu).le (measure_iUnion_le _)
     _ ≤ ∑' n : ℕ, eps * ((2 : ℝ≥0∞) ^ (n + 1))⁻¹ := by
         rw [zero_add]
-        exact ENNReal.tsum_le_tsum fun n ↦ hdeltaS n mu hmu
+        exact tsum_le_tsum fun n ↦ hdeltaS n mu hmu
     _ = eps := tsum_geometric_half eps
 
 end Tight

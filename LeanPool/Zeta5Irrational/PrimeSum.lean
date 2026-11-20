@@ -62,9 +62,8 @@ lemma wsum_eq {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) :
 lemma theta_eventually_close {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ y : ℝ in atTop, |Chebyshev.theta y - y| ≤ ε * y := by
   have h := theta_asymptotic
-  rw [IsEquivalent, IsLittleO] at h
+  rw [IsEquivalent, isLittleO_iff] at h
   have h2 := h hε
-  rw [IsBigOWith] at h2
   filter_upwards [h2, eventually_ge_atTop 0] with y hy hy0
   simp only [Pi.sub_apply, id, Real.norm_eq_abs, abs_of_nonneg hy0] at hy
   exact hy

@@ -29,5 +29,5 @@ lemma ZMod.intCast_eq_neg_intCast_of_dvd_add {a b : ℤ} {m : ℕ} (h : (m : ℤ
 /-- If `m` is coprime to `a` and divides `a + b`, then `b` is a unit mod `m`. -/
 lemma ZMod.isUnit_intCast_of_isCoprime_of_dvd_add {a b : ℤ} {m : ℕ}
     (hcop : IsCoprime (m : ℤ) a) (h : (m : ℤ) ∣ a + b) : IsUnit ((b : ZMod m)) := by
-  have hu := (ZMod.coe_int_isUnit_iff_isCoprime a m).mpr hcop
+  have hu := (ZMod.isUnit_intCast_iff_isCoprime a m).mpr hcop
   simpa [ZMod.intCast_eq_neg_intCast_of_dvd_add h] using hu.neg

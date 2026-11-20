@@ -533,9 +533,9 @@ theorem isBoundedAtImInfty_H_slash : IsBoundedAtImInfty (H₂ ∣[(2 : ℤ)] γ)
   · intro x hx y _ h
     simp_rw [slash_mul]
     rcases hx with (rfl | rfl | rfl | _)
-    · simp_rw [H₂_S_action, H₃_S_action, H₄_S_action, neg_slash, isBoundedAtImInfty_neg_iff]
+    · simp_rw [H₂_S_action, H₃_S_action, H₄_S_action, neg_slash, _root_.isBoundedAtImInfty_neg_iff]
       use h.right.right, h.right.left, h.left
-    · simp_rw [H₂_T_action, H₃_T_action, H₄_T_action, neg_slash, isBoundedAtImInfty_neg_iff]
+    · simp_rw [H₂_T_action, H₃_T_action, H₄_T_action, neg_slash, _root_.isBoundedAtImInfty_neg_iff]
       use h.left, h.right.right, h.right.left
     · rw [SL_slash, H₂_negI_action, H₃_negI_action, H₄_negI_action]
       exact h
@@ -543,10 +543,10 @@ theorem isBoundedAtImInfty_H_slash : IsBoundedAtImInfty (H₂ ∣[(2 : ℤ)] γ)
     simp_rw [slash_mul]
     rcases hx with (rfl | rfl | rfl | _)
     · simp_rw [H₂_S_inv_action, H₃_S_inv_action, H₄_S_inv_action, neg_slash,
-        isBoundedAtImInfty_neg_iff]
+        _root_.isBoundedAtImInfty_neg_iff]
       use h.right.right, h.right.left, h.left
     · simp_rw [H₂_T_inv_action, H₃_T_inv_action, H₄_T_inv_action, neg_slash,
-        isBoundedAtImInfty_neg_iff]
+        _root_.isBoundedAtImInfty_neg_iff]
       use h.left, h.right.right, h.right.left
     · rw [← Subgroup.coe_inv, modular_negI_inv, SL_slash,
         modular_slash_negI_of_even _ 2 (by decide)]
@@ -965,7 +965,7 @@ private lemma finrank_cuspform_12 :
 
 private lemma theta_prod_sq_proportional :
     ∃ c : ℂ, c • Delta = theta_prod_sq_CF :=
-  (finrank_eq_one_iff_of_nonzero' Delta Delta_ne_zero).mp finrank_cuspform_12 theta_prod_sq_CF
+  (finrank_eq_one_iff_of_ne_zero' Delta Delta_ne_zero).mp finrank_cuspform_12 theta_prod_sq_CF
 
 private lemma H₂_div_exp_tendsto :
     Tendsto (fun z : ℍ ↦ H₂ z / cexp (↑π * I * ↑z)) atImInfty (nhds 16) := by

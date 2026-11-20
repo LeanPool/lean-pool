@@ -133,9 +133,9 @@ theorem tsum_sparseBlockMass_le
       · simp only [sparseBlockMass, hτρ, ↓reduceIte, false_and, tsum_zero]
     _ = ∑' j : ℤ, ∑' τ : ℤ,
           (if τ ≡ ρ [ZMOD sparseModulus] ∧ j ∈ R B c τ then a j else 0) :=
-      ENNReal.tsum_comm
+      tsum_comm
     _ ≤ ∑' j : ℤ, a j := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro j
       exact tsum_sparse_membership_le B c hB hc ρ j (a j)
 
@@ -152,7 +152,7 @@ theorem tsum_atomScaleMass_eq
     (w : ι → ENNReal) :
     ∑' j : ℤ, atomScaleMass length w j = ∑' I : ι, w I := by
   unfold atomScaleMass
-  rw [ENNReal.tsum_comm]
+  rw [tsum_comm]
   apply tsum_congr
   intro I
   let j₀ := QuadraticCarleson.dyadicAtomScaleIndex length hlength I

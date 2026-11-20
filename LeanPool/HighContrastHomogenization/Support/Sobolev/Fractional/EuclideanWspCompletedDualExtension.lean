@@ -101,7 +101,7 @@ private theorem fullENorm_smul {d : ℕ} {Q : TriadicCube d}
     cubeEuclideanWspFullENorm Q s p (c • h).toField =
       ‖c‖ₑ * cubeEuclideanWspFullENorm Q s p h.toField := by
   rw [← graph_enorm_eq_cubeEuclideanWspFullENorm (c • h),
-    ← graph_enorm_eq_cubeEuclideanWspFullENorm h, graph.map_smul, enorm_smul]
+    ← graph_enorm_eq_cubeEuclideanWspFullENorm h, graph.map_smul, eNorm_smul]
 
 private theorem normalizedEuclideanLpENorm_eq_zero_of_fullENorm_eq_zero
     {d : ℕ} (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)
@@ -182,7 +182,7 @@ private theorem pairing_le_dual_mul_full {d : ℕ}
         dsimp [r]
         rw [ENNReal.ofReal_inv_of_pos (ENNReal.toReal_pos hNzero hNtop.ne),
           ENNReal.ofReal_toReal hNtop.ne]
-      rw [Real.enorm_eq_ofReal hrpos.le, hr,
+      rw [Real.eNorm_eq_ofReal hrpos.le, hr,
         ENNReal.inv_mul_cancel hNzero hNtop.ne]
     let u : CubeEuclideanWspSmoothUnitTest Q s p.conjugate := ⟨hs, hhsnorm.le⟩
     have hu : ENNReal.ofReal |cubeEuclideanNormalizedSmoothPairing F hs| ≤ D := by
@@ -225,7 +225,7 @@ private theorem smooth_fullENorm_lt_top {d : ℕ} {Q : TriadicCube d}
     (h : CubeEuclideanWspSmoothTest Q s p) :
     cubeEuclideanWspFullENorm Q s p h.toField < ∞ := by
   rw [← graph_enorm_eq_cubeEuclideanWspFullENorm h]
-  exact enorm_lt_top
+  exact eNorm_lt_top
 
 private theorem norm_graphToCompleted_eq_fullENorm_toReal {d : ℕ}
     {Q : TriadicCube d} {s : FractionalOrder} {p : FiniteLpExponent}
@@ -233,7 +233,7 @@ private theorem norm_graphToCompleted_eq_fullENorm_toReal {d : ℕ}
     ‖graphToCompleted (Q := Q) (s := s) (p := p) h‖ =
       (cubeEuclideanWspFullENorm Q s p h.toField).toReal := by
   change ‖graph (Q := Q) (s := s) (p := p) h‖ = _
-  rw [← toReal_enorm]
+  rw [← toReal_eNorm]
   exact congrArg ENNReal.toReal (graph_enorm_eq_cubeEuclideanWspFullENorm h)
 
 private theorem pairing_norm_bound_of_dual_finite {d : ℕ} {Q : TriadicCube d}
@@ -324,7 +324,7 @@ theorem enorm_completedPairingExtension_eq_negativeWspSmoothDualENorm {d : ℕ}
           ‖E (graphToCompleted (Q := Q) (s := s) (p := p.conjugate) h)‖ₑ := by
         rw [show E = completedPairingExtension (Q := Q) (s := s) (p := p) F hD by rfl,
           completedPairingExtension_apply_graphToCompleted F hD h]
-        exact (Real.enorm_eq_ofReal_abs _).symm
+        exact (Real.eNorm_eq_ofReal_abs _).symm
       _ ≤ ‖E‖ₑ * ‖graphToCompleted (Q := Q) (s := s) (p := p.conjugate) h‖ₑ :=
         E.le_opENorm _
       _ ≤ ‖E‖ₑ * 1 := by

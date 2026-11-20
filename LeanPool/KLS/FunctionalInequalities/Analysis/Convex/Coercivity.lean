@@ -180,7 +180,7 @@ theorem exists_forall_le_and_isCompact_sublevel_of_convexOn_integrable_exp_neg
   classical
   have hcont : Continuous φ := continuousOn_univ.mp (ConvexOn.continuousOn isOpen_univ hconv)
   have hfinite : (∫⁻ x, ENNReal.ofReal (Real.exp (-φ x)) ∂m) < (⊤ : ENNReal) := by
-    simpa [HasFiniteIntegral, Real.enorm_eq_ofReal_abs] using hint.hasFiniteIntegral
+    simpa [HasFiniteIntegral, Real.eNorm_eq_ofReal_abs] using hint.hasFiniteIntegral
   -- Use exponential integrability to make every sublevel have finite measure.
   have hlevel_finite (c : ℝ) : m {x | φ x ≤ c} < (⊤ : ENNReal) := by
     have hs : MeasurableSet {x | φ x ≤ c} := (isClosed_le hcont continuous_const).measurableSet

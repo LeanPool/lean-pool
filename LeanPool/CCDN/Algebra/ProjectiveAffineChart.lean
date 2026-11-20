@@ -45,7 +45,7 @@ private lemma projectiveAffineCoordinates_mk {n : ℕ}
     Projectivization.mk K (Fin.cons 1 (projectiveAffineCoordinates x))
       (affineCoordinateVector_ne_zero _) = x := by
   calc
-    _ = Projectivization.mk K x.rep x.rep_nonzero := by
+    _ = Projectivization.mk K x.rep x.rep_ne_zero := by
       rw [Projectivization.mk_eq_mk_iff']
       exact ⟨_, (projectiveAffineCoordinates_normalization x hx).symm⟩
     _ = x := x.mk_rep

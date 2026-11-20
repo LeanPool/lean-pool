@@ -151,7 +151,7 @@ theorem Pi.tensorProj_apply_pi_tensorOf {R : Type _} [CommRing R] {ι₁ : Type 
   simp only [Pi.tensorOf, Pi.tensorProj, ← LinearMap.comp_apply, ← TensorProduct.map_comp, t1, t2]
   split_ifs with h
   · rw [h]
-    simp only [directSumFromTo_apply_same, TensorProduct.map_one, Module.End.one_apply]
+    simp only [directSumFromTo_apply_same, TensorProduct.map_one, one_apply_eq_self]
   · rw [Prod.eq_iff_fst_eq_snd_eq, not_and_or] at h
     rcases h with (h | h)
     · rw [directSumFromTo_apply_ne_same h, TensorProduct.map_zero_left, LinearMap.zero_apply]

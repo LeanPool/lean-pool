@@ -220,7 +220,8 @@ private theorem translationBoundaryVertices (T : ProtoTile) (u : GaussianInt) :
                 simp [translatedCell, sub_eq_add_neg,
                   add_assoc, add_comm, add_left_comm]
             · simp [GaussianTranslation, Finset.image_insert, sub_eq_add_neg,
-                add_assoc, add_comm]; try abel_nf
+                add_assoc, add_comm]
+              abel_nf
           · refine ⟨{z - u, (z - u) + 1}, ?_, ?_⟩
             · change ∃ w, ({z - u, (z - u) + 1} = {w, w + 1} ∧
                 ((w ∈ T.cells ∧ w - ⟨0, 1⟩ ∉ T.cells) ∨
@@ -233,7 +234,8 @@ private theorem translationBoundaryVertices (T : ProtoTile) (u : GaussianInt) :
                 simp [translatedCell, sub_eq_add_neg,
                   add_assoc, add_comm, add_left_comm]
             · simp [GaussianTranslation, Finset.image_insert, sub_eq_add_neg,
-                add_assoc, add_comm]; try abel_nf
+                add_assoc, add_comm]
+              abel_nf
         · rcases hz with hz | hz
           · refine ⟨{z - u, (z - u) + ⟨0, 1⟩}, ?_, ?_⟩
             · change ∃ w, ({z - u, (z - u) + ⟨0, 1⟩} = {w, w + 1} ∧
@@ -247,7 +249,8 @@ private theorem translationBoundaryVertices (T : ProtoTile) (u : GaussianInt) :
                 simp [translatedCell, sub_eq_add_neg,
                   add_assoc, add_comm, add_left_comm]
             · simp [GaussianTranslation, Finset.image_insert, sub_eq_add_neg,
-                add_assoc, add_comm]; try abel_nf
+                add_assoc, add_comm]
+              abel_nf
           · refine ⟨{z - u, (z - u) + ⟨0, 1⟩}, ?_, ?_⟩
             · change ∃ w, ({z - u, (z - u) + ⟨0, 1⟩} = {w, w + 1} ∧
                 ((w ∈ T.cells ∧ w - ⟨0, 1⟩ ∉ T.cells) ∨
@@ -260,7 +263,8 @@ private theorem translationBoundaryVertices (T : ProtoTile) (u : GaussianInt) :
                 simp [translatedCell, sub_eq_add_neg,
                   add_assoc, add_comm, add_left_comm]
             · simp [GaussianTranslation, Finset.image_insert, sub_eq_add_neg,
-                add_assoc, add_comm]; try abel_nf
+                add_assoc, add_comm]
+              abel_nf
       · rintro ⟨f, hf, rfl⟩
         rcases hf with ⟨z, hz⟩
         rcases hz with ⟨hf, hz⟩ | ⟨hf, hz⟩
@@ -271,7 +275,7 @@ private theorem translationBoundaryVertices (T : ProtoTile) (u : GaussianInt) :
             using congrArg (fun q => q.image (GaussianTranslation u)) hf
           · convert hz using 1 <;>
               simp [translatedCell, sub_eq_add_neg,
-                add_assoc, add_comm, add_left_comm] <;> try abel_nf; simp
+                add_assoc, add_comm, add_left_comm] <;> abel_nf <;> simp
         · refine ⟨z + u, ?_⟩
           right
           refine ⟨?_, ?_⟩
@@ -279,7 +283,7 @@ private theorem translationBoundaryVertices (T : ProtoTile) (u : GaussianInt) :
             using congrArg (fun q => q.image (GaussianTranslation u)) hf
           · convert hz using 1 <;>
               simp [translatedCell, sub_eq_add_neg,
-                add_assoc, add_comm, add_left_comm] <;> try abel_nf; simp
+                add_assoc, add_comm, add_left_comm] <;> abel_nf <;> simp
     have imageNonempty : (T.cells.image (GaussianTranslation u)).Nonempty :=
       h.image _
     simp only [ite_eq_left imageNonempty]

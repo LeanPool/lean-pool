@@ -353,7 +353,7 @@ theorem crouzeixProductRemainderPolynomial_smul
         a * (p /ₘ (Polynomial.X - Polynomial.C z)).coeff i := by
     rw [Polynomial.coeff_divByMonic_X_sub_C, Polynomial.coeff_divByMonic_X_sub_C]
     rw [Polynomial.natDegree_smul p ha]
-    simp only [Polynomial.coeff_smul, smul_eq_mul, Finset.mul_sum]
+    simp only [AddMonoidAlgebra.coeff_smul_apply, smul_eq_mul, Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro j hj
     ring

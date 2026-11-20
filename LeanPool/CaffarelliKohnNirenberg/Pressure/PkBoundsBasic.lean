@@ -181,7 +181,7 @@ theorem pressure_cylinder_eLpNorm_le {P : Vec3 × ℝ → ℝ} {G : ℝ → ℝ}
       hHprodS hineq hq
     simpa only [one_mul] using h
   have htime : AEMeasurable (fun s : ℝ => ‖G s‖ₑ ^ q) μt :=
-    hGmeas.enorm.pow_const q
+    hGmeas.eNorm.pow_const q
   have hlin : (∫⁻ z, ‖H z‖ₑ ^ q ∂(μx.prod μt)) =
       (ENNReal.ofReal K) ^ q * μx Set.univ *
         (∫⁻ s, ‖G s‖ₑ ^ q ∂μt) := by
@@ -204,7 +204,7 @@ theorem pressure_cylinder_eLpNorm_le {P : Vec3 × ℝ → ℝ} {G : ℝ → ℝ}
       exact congrArg (fun m : Measure (Vec3 × ℝ) => eLpNorm' P q m) hμ.symm
     _ ≤ eLpNorm' H q (μx.prod μt) := hmono
     _ = (∫⁻ z, ‖H z‖ₑ ^ q ∂(μx.prod μt)) ^ (1 / q) :=
-      eLpNorm'_eq_lintegral_enorm H q (μx.prod μt)
+      eLpNorm'_eq_lintegral_eNorm H q (μx.prod μt)
     _ = ((ENNReal.ofReal K) ^ q * volume (vec3Ball x₀ r) *
         (∫⁻ s in Ioc (t - r ^ 2) t, ‖G s‖ₑ ^ q)) ^ (1 / q) := by
       rw [hlin]

@@ -29,7 +29,7 @@ namespace subformulas
 variable [DecidableEq α]
 
 @[simp] lemma mem_self {φ : Formula α} :
-    φ ∈ φ.subformulas := by induction φ <;> { simp [subformulas]; try tauto; }
+    φ ∈ φ.subformulas := by induction φ <;> simp [subformulas] <;> tauto
 
 variable {φ ψ χ : Formula α}
 

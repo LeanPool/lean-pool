@@ -429,7 +429,7 @@ theorem measureReal_scaleSeparationFail_le_of_gates (M : ABKModel d) {m : ℤ}
           Real.exp (-(3 : ℝ) ^ ((1 / 2 : ℝ) * ((j : ℝ) + (k : ℝ)))))) := by
     refine le_trans (measure_mono hcover) ?_
     rw [ENNReal.ofReal_tsum_of_nonneg (fun k => by positivity) hsum]
-    refine le_trans (measure_iUnion_le _) (ENNReal.tsum_le_tsum fun k => ?_)
+    refine le_trans (measure_iUnion_le _) (tsum_le_tsum fun k => ?_)
     refine le_trans (measure_union_le _ _) ?_
     have hfin1 : (cutoffSampleLaw M).toMeasure (badClusterDiamFail M m b (j + k)) ≠ ⊤ :=
       measure_ne_top _ _

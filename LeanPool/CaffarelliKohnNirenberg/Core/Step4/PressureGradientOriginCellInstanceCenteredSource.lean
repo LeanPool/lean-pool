@@ -45,7 +45,7 @@ private theorem eLpNorm_mul_two_three_le
     (c := (1 : NNReal)) (by exact continuous_mul) hf hg (by
       filter_upwards [] with x
       simp only [one_mul]
-      simp [nnnorm_mul])
+      simp)
   simpa using h
 
 private theorem eLpNorm_mul_three_three_le
@@ -67,7 +67,7 @@ private theorem eLpNorm_mul_three_three_le
     (c := (1 : NNReal)) (by exact continuous_mul) hf hg (by
       filter_upwards [] with x
       simp only [one_mul]
-      simp [nnnorm_mul])
+      simp)
   simpa using h
 
 private theorem eLpNorm_mul_const_le
@@ -88,7 +88,7 @@ private theorem eLpNorm_mul_const_le
     funext x
     rfl
   rw [hsmul, eLpNorm_const_smul] at hmono
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hC] using hmono
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hC] using hmono
 
 private theorem eLpNorm_three_half_to_six_fifths
     {μ : Measure Vec3} {f : Vec3 → ℝ} (hf : AEStronglyMeasurable f μ)

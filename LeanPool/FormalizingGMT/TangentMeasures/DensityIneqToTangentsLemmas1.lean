@@ -105,14 +105,14 @@ lemma blowUpMap_preimage_closedBall' (a x : EuclideanSpace ℝ (Fin n)) {r : ℝ
 lemma blowUp_smul_apply_ball (μ : Measure (EuclideanSpace ℝ (Fin n)))
     (a x : EuclideanSpace ℝ (Fin n)) {r : ℝ} (hr : 0 < r) (c : ℝ≥0∞) (ρ : ℝ) :
     (c • Measure.map (blowUpMap a r) μ) (ball x ρ) = c * μ (ball (a + r • x) (r * ρ)) := by
-  rw [Measure.smul_apply, smul_eq_mul,
+  rw [smul_apply, smul_eq_mul,
     Measure.map_apply (measurable_blowUpMap a r) measurableSet_ball,
     blowUpMap_preimage_ball' a x hr ρ]
 lemma blowUp_smul_apply_closedBall (μ : Measure (EuclideanSpace ℝ (Fin n)))
     (a x : EuclideanSpace ℝ (Fin n)) {r : ℝ} (hr : 0 < r) (c : ℝ≥0∞) (ρ : ℝ) :
     (c • Measure.map (blowUpMap a r) μ) (closedBall x ρ)
       = c * μ (closedBall (a + r • x) (r * ρ)) := by
-  rw [Measure.smul_apply, smul_eq_mul,
+  rw [smul_apply, smul_eq_mul,
     Measure.map_apply (measurable_blowUpMap a r) measurableSet_closedBall,
     blowUpMap_preimage_closedBall' a x hr ρ]
 

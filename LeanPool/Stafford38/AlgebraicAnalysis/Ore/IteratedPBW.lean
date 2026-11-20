@@ -59,11 +59,11 @@ def exponentIndex : List (KDerivation K) → Type
 
 instance polynomialKSMul (R : Type*) [Semiring R] [Module K R] :
     SMul K (Polynomial R) :=
-  Polynomial.distribSMul.toSMul
+  AddMonoidAlgebra.distribSMul.toSMul
 
 instance polynomialKModule (R : Type*) [Semiring R] [Module K R] :
     Module K (Polynomial R) :=
-  Polynomial.module
+  AddMonoidAlgebra.instModule
 
 lemma polynomial_smul_eq_C_mul {R : Type*} [Ring R] [Module K R]
     (φ : K →+* R) (hφ : ∀ c : K, ∀ r : R, c • r = φ c * r)
@@ -73,16 +73,14 @@ lemma polynomial_smul_eq_C_mul {R : Type*} [Ring R] [Module K R]
   | add p q hp hq =>
       rw [smul_add, mul_add, hp, hq]
   | monomial n r =>
-      apply (Polynomial.toFinsuppIso R).injective
-      simp [Polynomial.toFinsuppIso, hφ]
+      rw [Polynomial.smul_monomial, hφ, Polynomial.C_mul_monomial]
 
 /-- The coefficient-wise additive coordinates of a polynomial. -/
 def polynomialToFinsuppLinearEquiv {R : Type*} [Ring R]
     [Module K R] :
     Polynomial R ≃ₗ[K] (ℕ →₀ R) := by
   exact
-    { (Polynomial.toFinsuppIso R).toAddEquiv.trans
-        (AddMonoidAlgebra.coeffLinearEquiv K).toAddEquiv with
+    { (AddMonoidAlgebra.coeffLinearEquiv K).toAddEquiv with
       map_smul' := by
         intro c p
         rfl }

@@ -2978,7 +2978,7 @@ theorem spectralStep_same_target_commute
             intro p
             simp only [LinearMap.add_apply, LinearMap.sub_apply,
               LinearMap.neg_apply, LinearMap.smul_apply,
-              Module.End.mul_apply]
+              mul_apply_eq_comp]
             module
     _ = 0 := by rw [hcross]; simp only [neg_sub, sub_add_sub_cancel, sub_self, zero_mul]
 
@@ -3682,7 +3682,7 @@ def sourceColumnRoot {m : ℕ} (i j : Fin m) :
       ∑ k : Fin m,
         MvPolynomial.X (i, k) * MvPolynomial.pderiv (j, k) p := by
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ k : Fin m,
         (MvPolynomial.X (i, k) : SourceMatrix m) •
           (MvPolynomial.pderiv (j, k) :
@@ -3696,7 +3696,7 @@ def sourceColumnRoot {m : ℕ} (i j : Fin m) :
       ∑ k : Fin m,
         MvPolynomial.X (k, i) * MvPolynomial.pderiv (k, j) p := by
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ k : Fin m,
         (MvPolynomial.X (k, i) : SourceMatrix m) •
           (MvPolynomial.pderiv (k, j) :
@@ -4272,7 +4272,7 @@ def complexAmbientCoordinateDerivation {r n : ℕ} (a b : Fin n) :
         MvPolynomial.X (variableIndex i a) *
           MvPolynomial.pderiv (variableIndex i b) p := by
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ i : Fin (r + 1),
         (MvPolynomial.X (variableIndex i a) :
           MvPolynomial (Fin ((r + 1) * n)) ℂ) •
@@ -5611,7 +5611,7 @@ theorem eq_zero_of_upperRoots_of_massZero_coeff
       belowDiagonalMass d = k → p.coeff d = 0 := by
     intro k
     induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
         intro d hd
         by_cases hk : k = 0
         · apply hzero d
@@ -6081,7 +6081,7 @@ def totalAmbientCartan {r n : ℕ}
     (h : 2 * (r + 1) ≤ n)
     (f : MvPolynomial (Fin ((r + 1) * n)) ℂ) :
     totalAmbientCartan h f = ∑ p : Fin (r + 1), ambientCartan h p f := by
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ p : Fin (r + 1), ambientCartan h p)) f = _
   rw [map_sum, Finset.sum_apply]
   rfl
@@ -6244,7 +6244,7 @@ theorem ambientSumPositiveRoot_apply {r n : ℕ}
           (MvPolynomial.pderiv (variableIndex a (evenCoordinate h p)) f +
             MvPolynomial.C Complex.I *
               MvPolynomial.pderiv (variableIndex a (oddCoordinate h p)) f)) := by
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ a : Fin (r + 1),
       (isotropicVariable h a p • antiholomorphicDerivative h a q -
         isotropicVariable h a q • antiholomorphicDerivative h a p))) f = _
@@ -6328,7 +6328,7 @@ theorem ambientShortPositiveRoot_apply {r n : ℕ}
             (MvPolynomial.pderiv (variableIndex a (evenCoordinate h p)) f +
               MvPolynomial.C Complex.I *
                 MvPolynomial.pderiv (variableIndex a (oddCoordinate h p)) f)) := by
-  change (Derivation.coeFnAddMonoidHom
+  change (FunLike.coeAddMonoidHom _ _ _
     (∑ a : Fin (r + 1),
       (isotropicVariable h a p •
         (MvPolynomial.pderiv (variableIndex a t) :

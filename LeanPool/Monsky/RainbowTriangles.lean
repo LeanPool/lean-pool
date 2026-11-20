@@ -257,7 +257,7 @@ lemma fun_in_bijections :
 -- if the vertices are supplied in a different order b
 lemma det_perm {T : Triangle} (b : Fin 6) :
     det T = (bSign b) * det (T ∘ (σ b)) := by
-  fin_cases b <;> (simp_all [det, bSign, σ]; try ring)
+  fin_cases b <;> simp_all [det, bSign, σ] <;> ring
 
 -- If the determinant is 0 then for any combinations of rows it's also 0
 lemma det_zero_perm {T : Triangle} (hT : det T = 0) :

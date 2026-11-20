@@ -74,7 +74,7 @@ private theorem mk_level_le_beth [Countable (Index α)] (h : IsLadderModel α (M
       _ ≤ 2 ^ Cardinal.beth (idxVal i') :=
           Cardinal.power_le_power_left two_ne_zero (IH i' hi'.1)
       _ = Cardinal.beth (idxVal i' + 1) := by
-          rw [← Cardinal.beth_succ, Order.succ_eq_add_one]
+          rw [Cardinal.beth_add_one]
       _ = Cardinal.beth (idxVal i) := by rw [covBy_iff_idxVal.mp hi']
   · have hlim : Order.IsSuccLimit i := by
       constructor

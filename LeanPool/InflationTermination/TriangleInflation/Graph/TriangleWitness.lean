@@ -297,7 +297,7 @@ theorem block_boundary (q : ℝ) (i j k : Fin t) (U : Finset (Obs t))
         Finset.prod_insert (by simp : Obs.B i k ∉ ({Obs.C j k} : Finset (Obs t))),
         Finset.prod_singleton]
       rw [← triParity_momABC q]
-      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit]; try ring)
+      exact Finset.sum_congr rfl (fun w _ => by simp only [Obs.party, partyBit]; ring)
 
 /-! ### The master character computation -/
 

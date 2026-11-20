@@ -62,8 +62,7 @@ theorem iUnion_whitneyCells_ae_eq_domain
     dsimp only [A]
     rw [iUnion_whitneyCells_eq_rows system]
     exact system.ae_exhaustion hd hU
-  exact Filter.EventuallyLE.antisymm (ae_of_all volume hAU)
-    (ae_le_set.mpr hdiff)
+  exact hAU.eventuallySubset.antisymm (ae_subset.mpr hdiff)
 
 /-- Distinct ruled indices represent disjoint cell interiors. -/
 theorem pairwise_disjoint_whitneyCells

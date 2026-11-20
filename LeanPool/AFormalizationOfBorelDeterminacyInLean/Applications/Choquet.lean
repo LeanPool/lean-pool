@@ -46,7 +46,7 @@ def chainTree.concat (x : chainTree V) (A : V) (h : ∀ hx, A ≤ x.val.getLast 
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
 def interGame : Game V where
     tree := chainTree V
-    payoff A := PO (⋂ n, A.1 n)
+    payoff := {A | (⋂ n, A.1 n) ∈ PO}
 variable {V}
 variable {W : Set (Set X)} (hWV : W ⊆ V) (hW : ∀ A ∈ V, ∃ B ∈ W, B ⊆ A)
 lemma extend_mem_iff (x : List W) : x.map (Set.inclusion hWV) ∈ chainTree V ↔ x ∈ chainTree W := by
@@ -63,12 +63,12 @@ lemma extend_mem_iff (x : List W) : x.map (Set.inclusion hWV) ∈ chainTree V �
         rw [← List.map_singleton, extend_coe, ← List.map_append, extend_mem_iff]
         exact a.prop
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def choosePair (A : V) : W where
+noncomputable def choosePair (A : V) : W where
     val := (hW A A.coe_prop).choose
     property := (hW A A.coe_prop).choose_spec.1
 lemma choosePairSub A : (choosePair hW A).val ⊆ A.val := (hW A A.coe_prop).choose_spec.2
 /-- Auxiliary declaration for the Borel determinacy formalization. -/
-def shrink' {x : chainTree W} (a : Tree.ExtensionsAt (extend hWV x)) :
+noncomputable def shrink' {x : chainTree W} (a : Tree.ExtensionsAt (extend hWV x)) :
     Tree.ExtensionsAt x := ⟨_, (chainTree.concat W x (choosePair hW a.val) (by
         intro hx; apply (choosePairSub hW a.val).trans
         have ha := a.prop; rw [concat_mem_chainTree] at ha

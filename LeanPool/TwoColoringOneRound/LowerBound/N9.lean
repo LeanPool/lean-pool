@@ -169,7 +169,7 @@ noncomputable instance (f : Coloring9) : Fintype (CycleMonoPairs f) := by
 noncomputable def edgeEmb (e : Edge n) : Emb4 := ⟨e.1, e.2⟩
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
-abbrev Extra (e : Edge n) : Set Sym9 := (Set.range (edgeEmb e))ᶜ
+noncomputable abbrev Extra (e : Edge n) : Set Sym9 := (Set.range (edgeEmb e))ᶜ
 
 noncomputable instance (e : Edge n) : Fintype (Extra e) := by
   classical

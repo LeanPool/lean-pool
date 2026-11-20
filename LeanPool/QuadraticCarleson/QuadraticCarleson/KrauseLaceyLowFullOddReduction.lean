@@ -126,7 +126,7 @@ theorem finiteFullDyadicTail_one_enorm_le_zero_add_maximal
     rw [← herr]
     ring
   rw [heq]
-  exact (enorm_add_le _ _).trans (add_le_add le_rfl
+  exact (eNorm_add_le _ _).trans (add_le_add le_rfl
     (finiteLowFullPhaseErrorOperator_enorm_le_maximal htop hfm x))
 
 /-- The same comparison in the moving-lower-cutoff suffix orientation used by

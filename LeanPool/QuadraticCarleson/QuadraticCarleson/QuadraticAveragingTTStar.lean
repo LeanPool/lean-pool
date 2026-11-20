@@ -167,22 +167,22 @@ theorem adjoint_energy_le_correlation_enorm (K : FiniteRangeKernel)
   rw [heq, K.adjoint_energy_eq_correlation_pairing hg]
   calc
     _ ≤ ∫⁻ x, ‖(∫ y, K.correlation x y * g y) * conj (g x)‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ x, ∫⁻ y, ‖K.correlation x y‖ₑ * ‖g x‖ₑ * ‖g y‖ₑ := by
       apply lintegral_mono
       intro x
       have hconj : ‖conj (g x)‖ₑ = ‖g x‖ₑ := by
         simp only [← ofReal_norm, RCLike.norm_conj]
       dsimp only
-      rw [enorm_mul, hconj]
+      rw [eNorm_mul, hconj]
       calc
         _ ≤ (∫⁻ y, ‖K.correlation x y * g y‖ₑ) * ‖g x‖ₑ :=
-          mul_le_mul' (enorm_integral_le_lintegral_enorm _) le_rfl
+          mul_le_mul' (eNorm_integral_le_lintegral_eNorm _) le_rfl
         _ = ∫⁻ y, ‖K.correlation x y‖ₑ * ‖g x‖ₑ * ‖g y‖ₑ := by
           rw [← lintegral_mul_const' _ _ (by finiteness)]
           apply lintegral_congr
           intro y
-          rw [enorm_mul]
+          rw [eNorm_mul]
           ring
 
 /-- Operator-level adjoint `L²` decay from the symmetric centered averaging
@@ -212,7 +212,7 @@ theorem adjoint_sq_lintegral_le_of_selectedAverageKernel {N : ℕ}
         selectedAverageKernel r σ y x) * ‖g x‖ₑ * ‖g y‖ₑ) := by
       simp_rw [lintegral_const_mul' _ _ hC]
     _ ≤ C * (66 * ∫⁻ x, ‖g x‖ₑ ^ 2) :=
-      mul_le_mul' le_rfl (symmetric_selectedAverageKernel_pairing_le r hr hσ hgm.enorm)
+      mul_le_mul' le_rfl (symmetric_selectedAverageKernel_pairing_le r hr hσ hgm.eNorm)
     _ = _ := by ac_rfl
 
 end FiniteRangeKernel

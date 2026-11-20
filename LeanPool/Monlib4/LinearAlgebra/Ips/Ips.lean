@@ -102,7 +102,7 @@ theorem LinearMap.IsProj.isCompl_range_ker {V R : Type _} [Ring R] [AddCommGroup
     constructor
     · intro h'
       rcases h'.2 with ⟨y, hy⟩
-      rw [← hy, ← IsIdempotentElem.eq this, Module.End.mul_apply, hy]
+      rw [← hy, ← IsIdempotentElem.eq this, mul_apply_eq_comp, hy]
       exact h'.1
     · intro h'
       rw [h', map_zero]
@@ -119,7 +119,7 @@ theorem LinearMap.IsProj.isCompl_range_ker {V R : Type _} [Ring R] [AddCommGroup
     intro x
     use ⟨x - T x, ?_⟩, ⟨T x, ?_⟩
     · simp only [sub_add_cancel]
-    · rw [LinearMap.mem_ker, map_sub, ← Module.End.mul_apply, IsIdempotentElem.eq this, sub_self]
+    · rw [LinearMap.mem_ker, map_sub, ← mul_apply_eq_comp, IsIdempotentElem.eq this, sub_self]
     · simp_all
 
 /--
@@ -140,7 +140,7 @@ theorem LinearMap.is_idempotent_isSelfAdjoint_iff_ker_ortho_range [InnerProductS
     simp only [LinearMap.sub_apply, inner_sub_left, LinearMap.adjoint_inner_left]
     rcases SetLike.coe_mem w with ⟨y, hy⟩
     rw [← hvw, map_add, LinearMap.mem_ker.mp (SetLike.coe_mem v), ← hy,
-      ← Module.End.mul_apply, IsIdempotentElem.eq h, zero_add, hy, inner_add_left,
+      ← mul_apply_eq_comp, IsIdempotentElem.eq h, zero_add, hy, inner_add_left,
       inner_add_right, ← inner_conj_symm (w : V) (v : V),
       (Submodule.mem_orthogonal (ker T) (w : V)).mp (by rw [h1]; exact SetLike.coe_mem w) v
         (SetLike.coe_mem v),
@@ -161,7 +161,7 @@ by rw [Commute.symm_iff]; exact ⟨fun hT => hT.star_comm_self, IsStarNormal.mk�
 
 theorem isSymmetric_hMul_adjoint_self [FiniteDimensional 𝕜 V] (T : V →ₗ[𝕜] V) :
     IsSymmetric (T * (adjoint T)) := fun u v => by
-  simp_rw [Module.End.mul_apply, ← adjoint_inner_left T, ← adjoint_inner_right T]
+  simp_rw [mul_apply_eq_comp, ← adjoint_inner_left T, ← adjoint_inner_right T]
 
 theorem IsSymmetric.neg (T : V →ₗ[𝕜] V) (hT : T.IsSymmetric) : IsSymmetric (-T) := by
   intro u v
@@ -180,7 +180,7 @@ theorem LinearMap.IsStarNormal.norm_eq_adjoint [FiniteDimensional 𝕜 V] (T : V
   simp_rw [←
     IsSymmetric.inner_map_self_eq_zero
       (IsSymmetric.sub (isSymmetric_hMul_adjoint_self T) (isSymmetric_adjoint_mul_self T)),
-    sub_apply, inner_sub_left, Module.End.mul_apply, adjoint_inner_left,
+    LinearMap.sub_apply, inner_sub_left, mul_apply_eq_comp, adjoint_inner_left,
     inner_self_eq_norm_sq_to_K, ← adjoint_inner_right T, inner_self_eq_norm_sq_to_K, sub_eq_zero, ←
     sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)]
   norm_cast
@@ -277,7 +277,7 @@ theorem ContinuousLinearMap.IsIdempotentElem.isSelfAdjoint_iff_ker_isOrtho_to_ra
     rcases SetLike.coe_mem w with ⟨y, hy⟩
     simp_rw [ContinuousLinearMap.coe_coe, ContinuousLinearMap.adjoint_inner_left, ←
       ContinuousLinearMap.coe_coe, ← hvw, map_add, LinearMap.mem_ker.mp (SetLike.coe_mem v), ← hy,
-      ← Module.End.mul_apply, IsIdempotentElem.eq h_toLinearMap, zero_add, hy,
+      ← mul_apply_eq_comp, IsIdempotentElem.eq h_toLinearMap, zero_add, hy,
       inner_add_left, inner_add_right, ←
       inner_conj_symm (w : V) (v : V),
       (Submodule.mem_orthogonal T.ker (w : V)).mp
@@ -310,7 +310,7 @@ theorem LinearMap.IsStarNormal.eigenvec_in_eigenspace_iff_eigenvec_in_adjoint_co
   suffices (adjoint T - conj μ • 1) v = 0
     by
     rw [mem_eigenspace_iff, ← sub_eq_zero]
-    rw [sub_apply, smul_apply, one_apply] at this; exact this
+    rw [LinearMap.sub_apply, LinearMap.smul_apply, one_apply_eq_self] at this; exact this
   rw [← norm_eq_zero]
   have nh : IsStarNormal (T - μ • 1) := by
     apply IsStarNormal.mk

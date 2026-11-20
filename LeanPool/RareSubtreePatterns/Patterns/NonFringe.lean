@@ -322,7 +322,7 @@ theorem forestLaw_univ (μ : PMF ℕ) (L : ℕ) : forestLaw μ L Set.univ = bien
 theorem forestLaw_pi (μ : PMF ℕ) (L : ℕ) (A : ℕ → Set PlaneTree) :
     forestLaw μ L {ls | ∀ (i : ℕ) (hi : i < ls.length), ls[i] ∈ A i} =
       ∏ i ∈ Finset.range L, bienayme μ (A i) := by
-  rw [forestLaw_apply, ← List.equivSigmaTuple.symm.tsum_eq, ENNReal.tsum_sigma', tsum_eq_single L]
+  rw [forestLaw_apply, ← List.equivSigmaTuple.symm.tsum_eq, tsum_sigma', tsum_eq_single L]
   · rw [← Fin.prod_univ_eq_prod_range (fun i => bienayme μ (A i)) L,
       ← tsum_forest_fin μ L (fun i => A i)]
     refine tsum_congr fun f => ?_
@@ -341,7 +341,7 @@ theorem forestLaw_pi (μ : PMF ℕ) (L : ℕ) (A : ℕ → Set PlaneTree) :
       · rintro ⟨h, -⟩
         exact hf fun i => by simpa using h i (by simp)
   · intro j hj
-    refine ENNReal.tsum_eq_zero.2 fun f => Set.indicator_of_notMem ?_ _
+    refine tsum_eq_zero_iff.2 fun f => Set.indicator_of_notMem ?_ _
     rintro ⟨-, h⟩
     simp only [List.equivSigmaTuple_symm_apply, Set.mem_ofPred_eq, List.length_ofFn] at h
     exact hj h
@@ -352,7 +352,7 @@ theorem forestLaw_singleton (μ : PMF ℕ) (L : ℕ) (ls : List PlaneTree) :
   rw [forestLaw_apply, tsum_eq_single ls]
   · by_cases hL : ls.length = L <;> simp [hL]
   · intro ls' h
-    exact Set.indicator_of_notMem (fun h' => h h'.1) _
+    exact Set.indicator_of_notMem (fun h' => h (And.left h')) _
 
 /-! ### U06: the law of a non-fringe pattern occurrence -/
 
@@ -382,7 +382,7 @@ theorem bienayme_embeds_leafTrees_mem (μ : PMF ℕ) (T' : PlaneTree) (B : Set (
         Set.indicator_of_notMem (show ls.1 ∉ B ∩ _ from fun h => hB h.1), mul_zero]
   · intro ls hls
     by_contra h
-    exact hls (by dsimp only; rw [Set.indicator_of_notMem (fun h' => h h'.2), mul_zero])
+    exact hls (by dsimp only; rw [Set.indicator_of_notMem (fun h' => h (And.right h')), mul_zero])
 
 theorem bienayme_embeds (μ : PMF ℕ) (T' : PlaneTree) :
     bienayme μ {T | Embeds T' T} = patternWeight μ T' * bienayme μ Set.univ ^ leafCount T' := by
@@ -446,7 +446,7 @@ theorem forestLaw_length_eq (μ : PMF ℕ) (L n : ℕ) :
   · subst h
     rw [← forestLaw_univ, forestLaw_apply]
     simp
-  · refine ENNReal.tsum_eq_zero.2 fun ls => Set.indicator_of_notMem ?_ _
+  · refine tsum_eq_zero_iff.2 fun ls => Set.indicator_of_notMem ?_ _
     rintro ⟨h1, h2⟩
     exact h (h1.symm.trans h2)
 

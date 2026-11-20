@@ -180,7 +180,7 @@ private theorem PeriodPoint.step₂_fourth (p : PeriodPoint) (h : p.τ ≠ 0) :
     p.step₂.step₂.step₂.step₂ = p := by
   rw [step₂_sq (p.step₂.step₂), step₂_sq p h]
   · apply PeriodPoint.ext <;> simp
-    all_goals ring
+    ring
   · simpa [step₂] using h
 
 private theorem PeriodPoint.step₁_step₂ (p : PeriodPoint) (h : p.τ ≠ 0) :

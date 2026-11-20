@@ -49,7 +49,7 @@ theorem heatStrong_eLpNorm_tendsto_zero {ι : Type*} {l : Filter ι} [l.IsCounta
       (fun x => ENNReal.ofReal (g x ^ p)) ?_ ?_ hg.lintegral_lt_top.ne ?_
     · simpa using h
     · filter_upwards [hmeas] with n hn
-      exact hn.enorm.pow_const p
+      exact hn.eNorm.pow_const p
     · filter_upwards [hdom] with n hn
       refine Eventually.of_forall fun x => ?_
       rw [← ofReal_norm, ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) hp.le]
@@ -58,14 +58,14 @@ theorem heatStrong_eLpNorm_tendsto_zero {ι : Type*} {l : Filter ι} [l.IsCounta
       exact hn x
     · refine Eventually.of_forall fun x => ?_
       have h1 : Tendsto (fun n => ‖F n x‖ₑ) l (𝓝 0) := by
-        simpa using (hlim x).enorm
+        simpa using (hlim x).eNorm
       have h2 := ((ENNReal.continuous_rpow_const (y := p)).tendsto 0).comp h1
       rwa [ENNReal.zero_rpow_of_pos hp] at h2
   have hroot := ((ENNReal.continuous_rpow_const (y := 1 / p)).tendsto 0).comp hlint
   rw [ENNReal.zero_rpow_of_pos (by positivity)] at hroot
   refine hroot.congr' ?_
   filter_upwards [hmeas] with n hn
-  rw [Function.comp_apply, eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top hn,
+  rw [Function.comp_apply, eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 ENNReal.ofReal_ne_top hn,
     ENNReal.toReal_ofReal hp.le]
 
 /-- The `p`-th power of a cubic tail is integrable for `2 ≤ p`. -/

@@ -198,7 +198,7 @@ theorem enorm_quadraticHilbertTrunc_stoppingGoodPart_le_cotlar
         (fun y ↦ ‖stoppingGoodPart f y‖ₑ) x := by
   apply (enorm_quadraticHilbertTrunc_stoppingGoodPart_le_conjugatePoisson hf hfi hr x).trans
   apply add_le_add ?_ le_rfl
-  rw [cotlarConjugatePoissonAction_stoppingGoodPart_eq_poisson hf hfi hr x, enorm_mul]
+  rw [cotlarConjugatePoissonAction_stoppingGoodPart_eq_poisson hf hfi hr x, eNorm_mul]
   have hpi : ‖(Real.pi : ℂ)⁻¹‖ₑ = ENNReal.ofReal Real.pi⁻¹ := by
     rw [← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos Real.pi_pos]

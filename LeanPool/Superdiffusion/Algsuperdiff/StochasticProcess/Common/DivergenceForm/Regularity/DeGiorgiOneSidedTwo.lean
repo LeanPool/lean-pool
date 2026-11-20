@@ -177,8 +177,9 @@ theorem deGiorgi_one_sided_core_two :
             volume (axisCube z L) := by
         simpa only [add_zero] using hmedian
       have hm := ENNReal.toReal_mono hVolU_top hmedian'
-      rw [ENNReal.toReal_add (hSub_top _ fun x hx => hx.1)
-        (hSub_top _ fun x hx => hx.1)] at hm
+      rw [ENNReal.toReal_add
+        (hSub_top {x | x ∈ axisCube z L ∧ m₀ + 0 < w₁.toFun x} fun _ hx => hx.1)
+        (hSub_top {x | x ∈ axisCube z L ∧ m₀ + 0 < w₂.toFun x} fun _ hx => hx.1)] at hm
       exact hm
     have hKcond :
         (((C ^ 2 * L * E₀ ^ 2) / K ^ 2) ^ (2 : ℝ)) * 16 *
@@ -203,7 +204,8 @@ theorem deGiorgi_one_sided_core_two :
           have hn := deGiorgiLevel_lt hK n
           linarith only [hx, hn]⟩
       have hfirst := ENNReal.toReal_mono
-        (hSub_top _ fun x hx => hx.1) (measure_mono hsub)
+        (hSub_top {x | x ∈ axisCube z L ∧ m₀ + deGiorgiLevel K n < w₁.toFun x}
+          fun _ hx => hx.1) (measure_mono hsub)
       exact le_trans hfirst (le_add_of_nonneg_right ENNReal.toReal_nonneg)
     refine (MeasureTheory.ae_iff).mpr ?_
     have hset : {x | ¬w₁.toFun x ≤ m₀ + Cd * L * E₀} =

@@ -113,11 +113,11 @@ theorem ofReal_annDouble_le_ennDouble {m : ℤ} {h : ℤ → ℤ → ℝ} {H : �
       = ∑' j : ℤ, (if j ≤ m then ∑' n : {n : ℤ // n ≤ j - 1}, H j n.1 else 0) :=
     ennreal_tsum_guard m (fun j => ∑' n : {n : ℤ // n ≤ j - 1}, H j n.1)
   rw [annDouble_def, hRHS]
-  refine le_trans (ofReal_tsum_le hstep0) (ENNReal.tsum_le_tsum fun j => ?_)
+  refine le_trans (ofReal_tsum_le hstep0) (tsum_le_tsum fun j => ?_)
   by_cases hj : j ≤ m
   · rw [ofReal_ite_zero, ite_eq_left hj, ite_eq_left hj,
       ennreal_tsum_guard (j - 1) (fun n => H j n)]
-    refine le_trans (ofReal_tsum_le (fun n => ?_)) (ENNReal.tsum_le_tsum fun n => ?_)
+    refine le_trans (ofReal_tsum_le (fun n => ?_)) (tsum_le_tsum fun n => ?_)
     · split_ifs
       · exact hh0 j n
       · exact le_rfl

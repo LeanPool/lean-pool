@@ -63,7 +63,7 @@ private theorem force_sources_memLp_of_slice_data
   have hF : MemLp (fun y : Vec3 => f (y, s))
       (ENNReal.ofReal q) (volume.restrict B) := by
     rw [memLp_iff, eLpNorm_eq_eLpNorm' (ENNReal.ofReal_pos.mpr hq0).ne'
-      ENNReal.ofReal_ne_top hf, eLpNorm'_eq_lintegral_enorm]
+      ENNReal.ofReal_ne_top hf, eLpNorm'_eq_lintegral_eNorm]
     have hI' : (∫⁻ y in B, ‖f (y, s)‖ₑ ^ (ENNReal.ofReal q).toReal) < ⊤ := by
       simpa only [B, ENNReal.toReal_ofReal hq0.le] using hI
     exact ENNReal.rpow_lt_top_of_nonneg (by positivity) (ne_of_lt hI')

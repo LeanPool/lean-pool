@@ -136,8 +136,9 @@ theorem tsubE_maxv_le {s : State} {a b : Expr} {B : Nat}
     | some y =>
       have hx := (eval_le_maxv hae).trans ha
       have hy := (eval_le_maxv hbe).trans hb
+      have hxy : x ≤ B + y := Nat.le_add_right_of_le hx
       by_cases h : y ≤ x <;>
-        simp [tsubE, Expr.maxv, Expr.eval, BinOp.eval, hae, hbe, h, ha, hb, hx, hy, hB]
+        simp [tsubE, Expr.maxv, Expr.eval, BinOp.eval, hae, hbe, h, ha, hb, hx, hy, hB, hxy]
 
 /-- Addition bounds every intermediate value by the sum of the operand peak bounds. -/
 theorem addE_maxv_le {s : State} {a b : Expr} {A B : Nat}

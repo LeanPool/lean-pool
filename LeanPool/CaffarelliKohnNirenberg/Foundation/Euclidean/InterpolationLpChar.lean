@@ -47,19 +47,19 @@ open CKN.Foundation.Parabolic
 lemma lintegral_absE_rpow_lt_top {f : Vec3 → ℝ} {p : ℝ} (hp : 0 < p)
     (hf : MemLp f (ENNReal.ofReal p) volume) :
     ∫⁻ x, absE f x ^ p < ∞ := by
-  have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (p := ENNReal.ofReal p) (f := f) (μ := volume)
     (ENNReal.ofReal_pos.mpr hp).ne' ENNReal.ofReal_ne_top hf
-  simpa only [absE, Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp.le] using h
+  simpa only [absE, Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp.le] using h
 
 lemma memLp_ofReal_of_lintegral_absE_rpow_lt_top {f : Vec3 → ℝ} {p : ℝ} (hp : 0 < p)
     (hf : AEStronglyMeasurable f volume) (h : ∫⁻ x, absE f x ^ p < ∞) :
     MemLp f (ENNReal.ofReal p) volume := by
   rw [memLp_iff]
-  refine (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  refine (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (p := ENNReal.ofReal p) (f := f) (μ := volume)
     (ENNReal.ofReal_pos.mpr hp).ne' ENNReal.ofReal_ne_top hf).mpr ?_
-  simpa only [absE, Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp.le] using h
+  simpa only [absE, Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp.le] using h
 
 lemma memLp_two_of_lintegral_absE_sq_lt_top {f : Vec3 → ℝ}
     (hf : AEStronglyMeasurable f volume) (h : ∫⁻ x, absE f x ^ 2 < ∞) :
@@ -74,7 +74,7 @@ lemma integrable_of_lintegral_absE_lt_top {f : Vec3 → ℝ}
     (hf : AEStronglyMeasurable f volume) (h : ∫⁻ x, absE f x < ∞) :
     Integrable f volume := by
   refine ⟨hf, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
-  simpa only [absE, Real.enorm_eq_ofReal_abs] using h
+  rw [hasFiniteIntegral_iff_eNorm]
+  simpa only [absE, Real.eNorm_eq_ofReal_abs] using h
 
 end CKN.Foundation.Euclidean

@@ -20,7 +20,8 @@ module
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.Valuation.ValuationSubring
 
-import Mathlib.RingTheory.DedekindDomain.AdicValuation
+import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 
 /-!
 # Localisation of ℤ̄ at a maximal ideal is a valuation subring

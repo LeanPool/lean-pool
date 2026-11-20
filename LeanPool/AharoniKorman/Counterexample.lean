@@ -709,8 +709,11 @@ lemma apply_eq_of_line_eq_step (f : SpinalMap C) {n xl yl xh yh : ℕ}
     rw [card_image_of_injective _ (embed n).injective, card_union_of_disjoint,
       card_chainBetween h₂l.1 h₁l.2, card_chainBetween h₁h.1 h₂h.2]
     · omega
-    · simp [disjoint_left, chainBetween, *]
-      omega
+    · refine disjoint_left.mpr ?_
+      intro a ha hb
+      have ha' := (Finset.mem_Icc.mp (chainBetween_subset ha)).2
+      have hb' := (Finset.mem_Icc.mp (chainBetween_subset hb)).1
+      exact Nat.not_succ_le_self x (hb'.1.trans ha'.1)
   -- It is easy to see that our chain `B` lives entirely within `int`
   have hB : B ⊆ int := by
     refine Finset.image_subset_image ?_

@@ -1341,7 +1341,7 @@ private theorem SpecialPeriods.MuTorsor.CuspCoordinates.tDivQ_analyticAt_zero
     (π : Diffeomorph 𝓘(ℂ) 𝓘(ℂ) SpecialPeriods.TriangleCompactifiedOrbitSpace RiemannSphere ω)
     (hπ : π SpecialPeriods.triangleCuspPoint = ((OnePoint.infty) : RiemannSphere)) :
     AnalyticAt ℂ (tDivQ π) 0 :=
-  (t_analyticAt_zero π hπ).hasFPowerSeriesAt.has_fpower_series_dslope_fslope.analyticAt
+  (t_analyticAt_zero π hπ).hasFPowerSeriesAt.dslope_fslope.analyticAt
 
 attribute [local instance] SpecialPeriods.triangleCompactifiedChartedSpace in
 private theorem SpecialPeriods.MuTorsor.CuspCoordinates.t_eq_mul_tDivQ
@@ -2919,7 +2919,7 @@ private def SpecialPeriods.modularCuspUnit : ℂ → ℂ :=
   dslope modularCuspQ 0
 
 private theorem SpecialPeriods.modularCuspUnit_analyticAt_zero : AnalyticAt ℂ modularCuspUnit 0 :=
-  modularCuspQ_analyticAt_zero.hasFPowerSeriesAt.has_fpower_series_dslope_fslope.analyticAt
+  modularCuspQ_analyticAt_zero.hasFPowerSeriesAt.dslope_fslope.analyticAt
 
 @[simp]
 private theorem SpecialPeriods.modularCuspUnit_zero : modularCuspUnit 0 = 1 / 1728 := by

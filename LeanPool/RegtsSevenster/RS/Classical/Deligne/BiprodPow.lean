@@ -706,14 +706,14 @@ private theorem merge_step_glue [Category.{v} A] [MonoidalCategory A]
       = (P ◁ (α_ U M W).inv) ≫ ((P ◁ (u ▷ W)) ≫
           (α_ P B' W).inv) ≫ (c ▷ W) := by
         rw [MonoidalCategory.whiskerLeft_comp]
-        try simp only [Category.assoc]
+        simp only [Category.assoc]
     _ = (P ◁ (α_ U M W).inv) ≫ ((α_ P (U ⊗ M) W).inv ≫
           ((P ◁ u) ▷ W)) ≫ (c ▷ W) := by
         rw [MonoidalCategory.associator_inv_naturality_middle]
     _ = (P ◁ (α_ U M W).inv) ≫ (α_ P (U ⊗ M) W).inv ≫
           ((P ◁ u) ≫ c) ▷ W := by
         rw [MonoidalCategory.comp_whiskerRight]
-        try simp only [Category.assoc]
+        simp only [Category.assoc]
     _ = (P ◁ (α_ U M W).inv) ≫ (α_ P (U ⊗ M) W).inv ≫
           ((α_ P U M).inv ▷ W) ≫ (c' ▷ W) ≫ (E ▷ W) := by
         rw [hih, MonoidalCategory.comp_whiskerRight,
@@ -724,7 +724,7 @@ private theorem merge_step_glue [Category.{v} A] [MonoidalCategory A]
     _ = (α_ P U (M ⊗ W)).inv ≫ (α_ (P ⊗ U) M W).inv ≫
           (c' ▷ W) ≫ (E ▷ W) := by
         rw [hpent]
-        try simp only [Category.assoc]
+        simp only [Category.assoc]
 
 /-- **The bottom merge concatenates**: merging a factor below the
 second block and concatenating is reassociating it onto the first

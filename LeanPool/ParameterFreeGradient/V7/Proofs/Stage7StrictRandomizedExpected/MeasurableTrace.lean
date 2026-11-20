@@ -207,7 +207,7 @@ theorem causalTrace_measurable {Ω : Type*} [MeasurableSpace Ω]
     ∀ n : ℕ, Measurable (causalTrace method x0 oracle n) := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       apply measurable_strictTranscript_of_fixedLength (n := n)
       · intro k hk
         have hquery : Measurable (fun ω => causalQuery method x0 ω k

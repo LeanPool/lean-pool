@@ -57,9 +57,9 @@ theorem map_d_eq_one_of_commGroup
 
 /-- The image of `D` is trivial in the abelianization of the host group. -/
 theorem d_eq_one_in_abelianization (datum : Thue.StandingDatum) :
-    Abelianization.of
+    Group.Abelianization.of
       (PresentedGroup.of (0 : Fin 3) : (presentationOf datum).Group) = 1 :=
-  map_d_eq_one_of_commGroup datum Abelianization.of
+  map_d_eq_one_of_commGroup datum Group.Abelianization.of
 
 end Host
 end Undecidability

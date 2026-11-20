@@ -130,11 +130,11 @@ theorem lps_slice_trilinear_bound_infinite
   have hVtop : MemLp V ⊤ volume := by
     simpa only [memLp_iff] using hvInf
   have hVbound : ∀ᵐ x ∂volume, V x ≤ M := by
-    have hEss := enorm_ae_le_eLpNormEssSup V volume
+    have hEss := eNorm_ae_le_eLpNormEssSup V volume
     rw [← eLpNorm_exponent_top hVmeas] at hEss
     filter_upwards [hEss] with x hx
     have hVnonneg : 0 ≤ V x := vec3EuclideanNorm_nonneg _
-    have hVeq : ‖V x‖ₑ = ENNReal.ofReal (V x) := Real.enorm_eq_ofReal hVnonneg
+    have hVeq : ‖V x‖ₑ = ENNReal.ofReal (V x) := Real.eNorm_eq_ofReal hVnonneg
     have hle : ENNReal.ofReal (V x) ≤ eLpNorm V ⊤ volume := by
       simpa only [hVeq] using hx
     have hreal := ENNReal.toReal_mono hvInf.ne hle

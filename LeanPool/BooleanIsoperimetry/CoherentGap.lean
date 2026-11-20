@@ -403,7 +403,7 @@ theorem recurrenceCertificate_exists (tower : WeightTower)
       Nonempty (Certificate (tower.weights dimension) (basis coordinate)) := by
   intro dimension
   induction dimension using Nat.strong_induction_on with
-  | h dimension inductionHypothesis =>
+  | ind dimension inductionHypothesis =>
       intro coordinate
       rcases dimension with _ | dimension
       · exact Fin.elim0 coordinate

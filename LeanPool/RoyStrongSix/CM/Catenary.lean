@@ -49,7 +49,8 @@ lemma Ideal.ofList_height_le_length (rs : List R) (h : Ideal.ofList rs ≠ ⊤) 
 
 lemma IsLocalRing.Ideal.ofList_height_le_length' [IsLocalRing R] (rs : List R)
     (mem : ∀ r ∈ rs, r ∈ maximalIdeal R) : (Ideal.ofList rs).height ≤ rs.length :=
-  Ideal.ofList_height_le_length rs (lt_of_le_of_lt (span_le.mpr mem) IsPrime.ne_top'.lt_top).ne_top
+  Ideal.ofList_height_le_length rs
+    (lt_of_le_of_lt ((span_le (s := {r | r ∈ rs})).mpr mem) IsPrime.ne_top'.lt_top).ne_top
 
 lemma Ideal.ofList_height_eq_length_of_isWeaklyRegular (rs : List R) (reg : IsWeaklyRegular R rs)
     (h : Ideal.ofList rs ≠ ⊤) : (Ideal.ofList rs).height = rs.length := by
@@ -91,7 +92,7 @@ lemma Ideal.ofList_height_eq_length_of_isWeaklyRegular' [IsLocalRing R] (rs : Li
     (reg : IsWeaklyRegular R rs) (mem : ∀ r ∈ rs, r ∈ maximalIdeal R) :
     (Ideal.ofList rs).height = rs.length :=
   Ideal.ofList_height_eq_length_of_isWeaklyRegular rs reg
-    (lt_of_le_of_lt (span_le.mpr mem) IsPrime.ne_top'.lt_top).ne_top
+    (lt_of_le_of_lt ((span_le (s := {r | r ∈ rs})).mpr mem) IsPrime.ne_top'.lt_top).ne_top
 
 omit [IsNoetherianRing R] in
 lemma IsLocalRing.height_eq_height_maximalIdeal_of_maximalIdeal_mem_minimalPrimes [IsLocalRing R]
@@ -200,7 +201,7 @@ lemma maximalIdeal_mem_minimalPrimes_of_surjective {R S : Type*} [CommRing R] [C
     maximalIdeal S ∈ J.minimalPrimes := by
   refine ⟨⟨Ideal.IsMaximal.isPrime' _, le_maximalIdeal ne⟩, fun q ⟨hq, Jle⟩ _ ↦ ?_⟩
   have eq_map : maximalIdeal S = Ideal.map f (maximalIdeal R) := by
-    have := ((local_hom_TFAE f).out 1 5).mp (Function.Surjective.isLocalHom f h)
+    have := ((local_hom_tfae f).out 1 5).mp (Function.Surjective.isLocalHom f h)
     rw [← Ideal.map_comap_of_surjective f h (maximalIdeal S), this]
   rw [eq_map, Ideal.map_le_iff_le_comap]
   exact min.2 ⟨q.comap_isPrime f, le_trans le (Ideal.comap_mono Jle)⟩
@@ -310,7 +311,8 @@ lemma isRegular_of_ofList_height_eq_length_of_isCohenMacaulayLocalRing [IsCohenM
     rw [List.take_append_of_le_length (le_of_lt hi)] at this
     simpa [List.getElem_append_left' hi rs'] using this
   · simpa using (show (⊤ : Ideal R) ≠ Ideal.ofList rs from  -- PORT
-      (ne_top_of_le_ne_top Ideal.IsPrime.ne_top' (span_le.mpr mem)).symm)
+      (ne_top_of_le_ne_top Ideal.IsPrime.ne_top'
+        ((span_le (s := {r | r ∈ rs})).mpr mem)).symm)
 
 lemma Ideal.depth_le_height [IsLocalRing R] (I : Ideal R) (netop : I ≠ ⊤) :
     I.depth (ModuleCat.of R R) ≤ I.height := by

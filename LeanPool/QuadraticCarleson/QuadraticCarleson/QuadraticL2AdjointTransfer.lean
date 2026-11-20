@@ -29,14 +29,14 @@ theorem enorm_integral_pairing_sq_le {f g : ℝ → ℂ}
     ‖∫ x, f x * conj (g x)‖ₑ ^ 2 ≤
       (∫⁻ x, ‖f x‖ₑ ^ 2) * ∫⁻ x, ‖g x‖ₑ ^ 2 := by
   have hnorm : ‖∫ x, f x * conj (g x)‖ₑ ≤ ∫⁻ x, ‖f x‖ₑ * ‖g x‖ₑ := by
-    apply (enorm_integral_le_lintegral_enorm _).trans_eq
+    apply (eNorm_integral_le_lintegral_eNorm _).trans_eq
     apply lintegral_congr
     intro x
-    rw [enorm_mul]
+    rw [eNorm_mul]
     simp only [← ofReal_norm, RCLike.norm_conj]
   have hh := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume : Measure ℝ)
     (p := 2) (q := 2) (Real.holderConjugate_iff.mpr ⟨by norm_num1, by norm_num1⟩)
-    hf.enorm.aemeasurable hg.enorm.aemeasurable
+    hf.eNorm.aemeasurable hg.eNorm.aemeasurable
   simp only [Pi.mul_apply, ENNReal.rpow_two] at hh
   have hsqrt (v : ℝ≥0∞) : (v ^ (1 / (2 : ℝ))) ^ 2 = v := by
     rw [← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
@@ -127,7 +127,7 @@ theorem sq_lintegral_le_of_correlation_form_bound_memLp
   intro g hgm hgi
   apply K.sq_lintegral_bound_of_adjoint A ?_ hgm hgi
   intro h hhm hhi
-  exact (K.adjoint_energy_le_correlation_enorm hhi).trans (hbound _ hhm.enorm)
+  exact (K.adjoint_energy_le_correlation_enorm hhi).trans (hbound _ hhm.eNorm)
 
 /-- The symmetric correlation-kernel majorant controls the actual forward
 operator on every measurable `L²` input. -/

@@ -50,7 +50,7 @@ theorem span_range_eq_top_of_isMonicOfDegree (p : ℕ → Polynomial ℝ)
   have hpow : ∀ n : ℕ, (Polynomial.X : Polynomial ℝ) ^ n ∈ H := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
         by_cases hn : n = 0
         · subst n
           have hp0 : p 0 = 1 := Polynomial.isMonicOfDegree_zero_iff.mp (hp 0)

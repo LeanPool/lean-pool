@@ -39,13 +39,13 @@ theorem fullHighMajorant_sq_lintegral_le_orlicz
             (1 / 2 : ℝ) := by
     apply he.trans
     apply mul_le_mul' le_rfl
-    exact ENNReal.tsum_le_tsum (fun k ↦ mul_le_mul' le_rfl
+    exact tsum_le_tsum (fun k ↦ mul_le_mul' le_rfl
       (disjointLevelAtomSum_eLpNorm_le hf (fullAmplitude_pos k).le z R hR hdisj))
   have hs := pow_le_pow_left₀ bot_le hb 2
   have hm := measurable_highContributionMajorant fullHighCutoff
     (fun k ↦ memLp_disjointLevelAtomSum hf hfi (fullAmplitude_pos k).le z R hR hdisj)
   rw [eLpNorm_two_sq_lintegral _ hm.aestronglyMeasurable] at hs
-  simp only [enorm_eq_self, mul_pow] at hs
+  simp only [eNorm_eq_self, mul_pow] at hs
   have hw := weighted_level_sum_sq_le fullAmplitude
     (fun k ↦ (2 : ℝ) ^ (-((fullHighCutoff k : ℕ) : ℝ) / 10)) (fullCutoff 20)
     (magnitudeLevelL1Mass volume fullAmplitude f) (fun k ↦ (fullAmplitude_pos k).le)
@@ -102,8 +102,11 @@ theorem half_levelSet_measure_le_two_lintegral {F : ℝ → ℝ≥0∞} (hF : Me
     volume {x | (1/2 : ℝ≥0∞) < F x} ≤ 2 * ∫⁻ x, F x := by
   have hm := mul_meas_ge_le_lintegral (μ := volume) hF (1/2)
   calc
-    _ ≤ volume {x | (1/2 : ℝ≥0∞) ≤ F x} :=
-      measure_mono (fun x (hx : (1/2 : ℝ≥0∞) < F x) ↦ hx.le)
+    _ ≤ volume {x | (1/2 : ℝ≥0∞) ≤ F x} := by
+      apply measure_mono
+      intro x hx
+      change (1/2 : ℝ≥0∞) < F x at hx
+      exact hx.le
     _ = 2 * ((1/2 : ℝ≥0∞) * volume {x | (1/2 : ℝ≥0∞) ≤ F x}) := by
       rw [← mul_assoc, one_div, ENNReal.mul_inv_cancel (by norm_num1) (by finiteness), one_mul]
     _ ≤ _ := mul_le_mul' le_rfl hm
@@ -112,8 +115,11 @@ theorem half_levelSet_measure_le_four_sq_lintegral {F : ℝ → ℝ≥0∞} (hF 
     volume {x | (1/2 : ℝ≥0∞) < F x} ≤ 4 * ∫⁻ x, F x ^ 2 := by
   have hm := mul_meas_ge_le_lintegral (μ := volume) (hF.pow_const 2) ((1/2 : ℝ≥0∞)^2)
   calc
-    _ ≤ volume {x | (1/2 : ℝ≥0∞)^2 ≤ F x ^ 2} :=
-      measure_mono (fun x hx ↦ pow_le_pow_left₀ bot_le hx.le 2)
+    _ ≤ volume {x | (1/2 : ℝ≥0∞)^2 ≤ F x ^ 2} := by
+      apply measure_mono
+      intro x hx
+      change (1/2 : ℝ≥0∞) < F x at hx
+      exact pow_le_pow_left₀ bot_le hx.le 2
     _ = 4 * (((1/2 : ℝ≥0∞)^2) * volume {x | (1/2 : ℝ≥0∞)^2 ≤ F x ^ 2}) := by
       rw [← mul_assoc, show (4 : ℝ≥0∞) = 2 ^ 2 by norm_num1, ← mul_pow, one_div,
         ENNReal.mul_inv_cancel (by norm_num1) (by finiteness), one_pow, one_mul]

@@ -87,7 +87,7 @@ private theorem dyadicGoodPart_l1_le
             exact setLIntegral_const _ _
       _ ≤ tsum (fun Q : {Q // Q ∈ D} =>
           ∫⁻ x in dyadicCubeSet Q.1, ENNReal.ofReal |F x|) := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro Q
         have hI : IntegrableOn (fun x => |F x|)
             (dyadicCubeSet Q.1) volume := hF.norm.integrableOn
@@ -255,7 +255,7 @@ private theorem dyadicBadPart_l1_sum_le
         ENNReal.ofReal |dyadicBadPart F Q.1 x|)) ≤
         tsum (fun Q : {Q // Q ∈ D} =>
           2 * (∫⁻ x in dyadicCubeSet Q.1, ENNReal.ofReal |F x|)) :=
-      ENNReal.tsum_le_tsum (fun Q => hbad Q)
+      tsum_le_tsum (fun Q => hbad Q)
     _ = 2 * (tsum (fun Q : {Q // Q ∈ D} =>
         ∫⁻ x in dyadicCubeSet Q.1, ENNReal.ofReal |F x|)) := by
       rw [ENNReal.tsum_mul_left]

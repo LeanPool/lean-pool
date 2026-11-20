@@ -295,7 +295,7 @@ lemma config_eq_of_le_and_degree {q : G.V} {c1 c2 : Config G q} (h_le : c2 ≤ c
   have h_gt : c2.chips v < c1.chips v := by
     specialize h_le' v
     apply lt_of_le_of_ne h_le'
-    contrapose! h_v_ne
+    contrapose h_v_ne
     simp only [h_v_ne]
   suffices configDegree c2 < configDegree c1 by
     exact ne_of_gt this
@@ -490,13 +490,13 @@ private lemma extend_burn_list (G : CFGraph) {q : G.V} (c : Config G q) (h_ss : 
     use v
     dsimp only [S]
     simp only [mem_sdiff, mem_univ, List.mem_toFinset, true_and]
-    contrapose! h_v_not_in_L with h_raa
+    contrapose h_v_not_in_L with h_raa
     simp only [List.contains_eq_mem, h_raa, decide_true]
   have h_S_Vtilde : S ⊆ Vtilde q := by
     intro v h_v_in_S
     dsimp only [Vtilde, ne_eq]
     simp only [Finset.mem_filter, mem_univ, true_and]
-    contrapose! h_v_in_S with h_eq
+    contrapose h_v_in_S with h_eq
     rw [h_eq]
     dsimp only [S]
     simp only [mem_sdiff, mem_univ, List.mem_toFinset, true_and, Decidable.not_not]
@@ -716,13 +716,13 @@ lemma burnin_degree {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) 
             · intro h_neq
               simp only [ne_eq] at h_neq
               apply Nat.zero_lt_of_ne_zero
-              contrapose! h_neq with h_eq_zero
+              contrapose h_neq with h_eq_zero
               rw [h_eq_zero]
           rw [this]
           have : 0 ≠ List.idxOf w (x :: rest) ↔ w ≠ x := by
             constructor
             · intro h_neq
-              contrapose! h_neq with h_eq
+              contrapose h_neq with h_eq
               rw [h_eq]
               simp only [List.idxOf_cons_self]
             · intro h_neq
@@ -733,12 +733,12 @@ lemma burnin_degree {G : CFGraph} {q : G.V} {c : Config G q} (L : burnList G c) 
           constructor
           · -- Forward direction
             intro h_w
-            by_contra!
+            by_contra
             simp only [this, or_false, ne_eq, and_not_self] at h_w
           · -- Reverse direction
             intro h_w_in_rest
             simp only [h_w_in_rest, or_true, ne_eq, true_and]
-            by_contra!
+            by_contra
             rw [this] at h_w_in_rest
             have := h_bl.2.1
             rw [h_vx] at this

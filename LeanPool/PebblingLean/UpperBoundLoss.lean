@@ -182,7 +182,7 @@ theorem exists_terminal_iterate_of_decreasing
     (hnext : ∀ n : ℕ, n0 ≤ n → next n < n) (n : ℕ) :
     ∃ k : ℕ, ActiveFor next n0 k n ∧ iterate next k n < n0 := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       by_cases hn : n < n0
       · exact ⟨0, trivial, hn⟩
       · have hn0 : n0 ≤ n := Nat.le_of_not_gt hn

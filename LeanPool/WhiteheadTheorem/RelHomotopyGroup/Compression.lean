@@ -70,7 +70,7 @@ lemma compression_criterion_2
     ∃ g : C(I^ Fin n, X), Set.range g ⊆ A ∧ ContinuousMap.HomotopicRel f g (∂I^n) := by
   have H : ContinuousMap.HomotopicWith .. := Quotient.eq.mp fz.symm
   let R := Cube.strongDeformRetrToBoundaryJar n
-  use H.some.toContinuousMap.comp <| (toContinuousMap Cube.splitAtLast).comp <|
+  use H.some.toContinuousMap.comp <| (ContinuousMap.ofClass Cube.splitAtLast).comp <|
     R.r.comp <| Cube.inclToTop
   constructor
   · intro x hx
@@ -87,7 +87,7 @@ lemma compression_criterion_2
     exact this (R.r <| Cube.inclToTop y) <| R.r_range <| Set.mem_range_self _
   · exact Nonempty.intro <|
     { toFun := (ContinuousMap.Homotopy.refl H.some.toContinuousMap).comp <|
-          (ContinuousMap.Homotopy.refl (toContinuousMap Cube.splitAtLast)).comp <|
+          (ContinuousMap.Homotopy.refl (ContinuousMap.ofClass Cube.splitAtLast)).comp <|
           R.H.toHomotopy.comp <| ContinuousMap.Homotopy.refl Cube.inclToTop
       continuous_toFun := ContinuousMapClass.map_continuous _
       map_zero_left y := by

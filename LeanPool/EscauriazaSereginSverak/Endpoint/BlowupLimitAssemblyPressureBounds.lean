@@ -106,13 +106,13 @@ theorem blowupLimitAssemblyPressure_memLp_three_of_slices
     eLpNorm w 3 ((volume : Measure (Vec3 × ℝ)).restrict (S ×ˢ I)) ≤
       (volume I * N ^ (3 : ℝ)) ^ (1 / 3 : ℝ) := by
   have hmeasE : Measurable (fun z : Vec3 × ℝ => ‖w z‖ₑ ^ (3 : ℝ)) :=
-    hw.enorm.pow_const _
+    hw.eNorm.pow_const _
   have hslice' : ∀ᵐ t ∂volume.restrict I,
       (∫⁻ x, ‖w (x,t)‖ₑ ^ (3 : ℝ)) ≤ N ^ (3 : ℝ) := by
     filter_upwards [hslice] with t ht
     have hmeas : AEStronglyMeasurable (fun x : Vec3 => w (x,t)) volume :=
       (hw.comp measurable_prodMk_right).aestronglyMeasurable
-    rw [lintegral_rpow_enorm_eq_rpow_eLpNorm' (by norm_num)]
+    rw [lintegral_rpow_eNorm_eq_rpow_eLpNorm' (by norm_num)]
     rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hmeas] at ht
     simpa using ENNReal.rpow_le_rpow ht (by norm_num : (0 : ℝ) ≤ 3)
   have hint : (∫⁻ z in S ×ˢ I, ‖w z‖ₑ ^ (3 : ℝ)) ≤ volume I * N ^ (3 : ℝ) := by
@@ -126,7 +126,7 @@ theorem blowupLimitAssemblyPressure_memLp_three_of_slices
       _ ≤ ∫⁻ _t in I, N ^ (3 : ℝ) := lintegral_mono_ae hslice'
       _ = volume I * N ^ (3 : ℝ) := by
         rw [lintegral_const, Measure.restrict_apply_univ, mul_comm]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     hw.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_le_rpow hint (by norm_num)

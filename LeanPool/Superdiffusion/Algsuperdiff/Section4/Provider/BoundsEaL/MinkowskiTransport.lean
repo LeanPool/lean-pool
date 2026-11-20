@@ -411,7 +411,7 @@ private theorem observableSup_rpow_le_minkowski_core [NeZero d] (M : ABKModel d)
       ← ENNReal.ofReal_rpow_of_nonneg hA0 (by norm_num : (0 : ℝ) ≤ 1 / 2),
       ← ENNReal.rpow_mul, show (1 : ℝ) / 2 * p = p / 2 from by ring]
     refine ENNReal.rpow_le_rpow (le_trans (ofRealTsumLe hterm0) ?_) hq0.le
-    refine ENNReal.tsum_le_tsum fun l => ?_
+    refine tsum_le_tsum fun l => ?_
     rw [hF, ENNReal.ofReal_mul (hw0 l)]
     refine mul_le_mul_right ?_ _
     -- the descendant maximum, paid at the norm level
@@ -453,7 +453,7 @@ private theorem observableSup_rpow_le_minkowski_core [NeZero d] (M : ABKModel d)
     (hMajMeas) (G) (hG) (hcube) (hs0) (hq0) (hqinv) (hw0) (hscale) (hF)
   -- STEP D: assembly
   refine le_trans hstepB (le_trans (ENNReal.rpow_le_rpow
-    (ENNReal.tsum_le_tsum hper) hq0.le) (le_of_eq ?_))
+    (tsum_le_tsum hper) hq0.le) (le_of_eq ?_))
   rw [ENNReal.tsum_mul_left, ENNReal.mul_rpow_of_nonneg _ _ hq0.le, ofRealRpowThree hq0.le,
     ofRealRpowThree hp0.le]
   congr 3

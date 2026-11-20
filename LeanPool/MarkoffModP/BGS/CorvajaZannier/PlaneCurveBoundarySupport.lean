@@ -423,14 +423,13 @@ private theorem valuationCenterIdeal_ne_bot_of_mem_nonunits
       IsLocalRing.maximalIdeal V
     rw [IsLocalRing.mem_maximalIdeal]
     apply ValuationSubring.coe_mem_nonunits_iff.mp
-    all_goals
-      have hφa :
-          ((integralClosureToValuationSubring (S := S) V hbase a : V) : F) =
-            algebraMap S F a :=
-        IsIntegralClosure.algebraMap_equiv R S F (integralClosure R F) a
-      have hSR : algebraMap S F a = algebraMap R F r := by
-        rw [IsScalarTower.algebraMap_apply R S F]
-      simpa only [hφa.trans hSR] using hr
+    have hφa :
+        ((integralClosureToValuationSubring (S := S) V hbase a : V) : F) =
+          algebraMap S F a :=
+      IsIntegralClosure.algebraMap_equiv R S F (integralClosure R F) a
+    have hSR : algebraMap S F a = algebraMap R F r := by
+      rw [IsScalarTower.algebraMap_apply R S F]
+    simpa only [hφa.trans hSR] using hr
   rw [hbot] at ha
   exact ha0 (Ideal.mem_bot.mp ha)
 

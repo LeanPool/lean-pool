@@ -34,7 +34,7 @@ theorem countable_Iio_of_lt_omega1 (β : Ordinal.{0}) (hβ : β < Ordinal.omega 
     exact Order.lt_succ_iff.mp hlt
   rw [← Cardinal.mk_le_aleph0_iff]
   calc Cardinal.mk (Set.Iio β)
-      = Cardinal.lift.{1, 0} β.card := Cardinal.mk_Iio_ordinal β
+      = Cardinal.lift.{1, 0} β.card := Ordinal.cardinalMk_Iio β
     _ ≤ Cardinal.lift.{1, 0} Cardinal.aleph0 := Cardinal.lift_le.mpr hle
     _ = Cardinal.aleph0 := by simp
 

@@ -370,7 +370,7 @@ def matrixEquivMatrixMopAlgebra (n : ℕ) :
   invFun M := M.unop.transpose.map (fun d => op d)
   left_inv a := by aesop
   right_inv a := by aesop
-  map_mul' x y := unop_injective <| by ext; simp [transpose_map, transpose_apply, mul_apply]
+  map_mul' x y := unop_injective <| by ext; simp [transpose_map, transpose_apply, Matrix.mul_apply]
   map_add' x y := by aesop
   commutes' k := by
     simp only [MulOpposite.algebraMap_apply, op_inj]; ext i j

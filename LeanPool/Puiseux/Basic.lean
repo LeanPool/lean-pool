@@ -82,7 +82,7 @@ def expand (m : ℕ+) : LaurentSeries K →+* LaurentSeries K :=
 def toHahn (n : ℕ+) : LaurentSeries K →+* HahnSeries ℚ K :=
   HahnSeries.embDomainRingHom
     (AddMonoidHom.mk' (fun k : ℤ => (k : ℚ) / (n : ℕ)) fun a b => by push_cast; ring)
-    (fun _ _ h => Int.cast_injective ((div_left_inj' (Nat.cast_ne_zero.mpr n.ne_zero)).mp h))
+    (fun _ _ h => Int.cast_injective ((div_left_inj₀ (Nat.cast_ne_zero.mpr n.ne_zero)).mp h))
     fun _ _ => (div_le_div_iff_of_pos_right (Nat.cast_pos.mpr n.pos)).trans Int.cast_le
 
 @[simp]

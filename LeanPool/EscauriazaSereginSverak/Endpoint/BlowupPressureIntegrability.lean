@@ -51,12 +51,12 @@ theorem blowupScalarTimeThreeHalves_eq
       (p := (3 / 2 : NNReal)) (f := fun x : Vec3 => p (x, t))
       (by norm_num) ht
     norm_num at h ⊢
-    simpa [Real.enorm_eq_ofReal_abs] using h
+    simpa [Real.eNorm_eq_ofReal_abs] using h
   have hmeas : AEMeasurable
       (fun z : Vec3 × ℝ => ENNReal.ofReal |p z| ^ (3 / 2 : ℝ))
       (μx.prod μt) := by
-    simpa only [μx, μt, Real.enorm_eq_ofReal_abs, Function.comp_def] using
-      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.enorm)
+    simpa only [μx, μt, Real.eNorm_eq_ofReal_abs, Function.comp_def] using
+      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.eNorm)
   calc
     (∫⁻ t in J,
       eLpNorm (fun x : Vec3 => p (x, t)) (3 / 2 : ℝ≥0∞)
@@ -95,7 +95,7 @@ theorem pressureSlice_memLp_ae
     have heq : (∫⁻ z, ENNReal.ofReal |p z| ^ (3 / 2 : ℝ)
         ∂(μx.prod μt)) = eLpNorm (fun z : Vec3 × ℝ => p (z.1,z.2))
         (3 / 2 : ℝ≥0∞) (μx.prod μt) ^ (3 / 2 : ℝ) := by
-      simpa only [Real.enorm_eq_ofReal_abs] using h.symm
+      simpa only [Real.eNorm_eq_ofReal_abs] using h.symm
     rw [heq]
     exact htop
   have htimeTop : (∫⁻ t,
@@ -104,9 +104,9 @@ theorem pressureSlice_memLp_ae
   have hpowMeas : AEMeasurable
       (fun z : Vec3 × ℝ => ENNReal.ofReal |p z| ^ (3 / 2 : ℝ))
       (μx.prod μt) := by
-    simpa only [μx, μt, Real.enorm_eq_ofReal_abs, Function.comp_def] using
+    simpa only [μx, μt, Real.eNorm_eq_ofReal_abs, Function.comp_def] using
       (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-        hp.aestronglyMeasurable.enorm)
+        hp.aestronglyMeasurable.eNorm)
   have hinnerMeas : AEMeasurable
       (fun t : ℝ => ∫⁻ x, ENNReal.ofReal |p (x,t)| ^ (3 / 2 : ℝ) ∂μx)
       μt := hpowMeas.lintegral_prod_left'
@@ -123,7 +123,7 @@ theorem pressureSlice_memLp_ae
       (3 / 2 : ℝ≥0∞) μx ^ (3 / 2 : ℝ) =
       ∫⁻ x, ENNReal.ofReal |p (x,t)| ^ (3 / 2 : ℝ) ∂μx := by
     norm_num at h ⊢
-    simpa only [μx, Real.enorm_eq_ofReal_abs] using h
+    simpa only [μx, Real.eNorm_eq_ofReal_abs] using h
   have hnormPow : eLpNorm (fun x : Vec3 => p (x,t))
       (3 / 2 : ℝ≥0∞) μx ^ (3 / 2 : ℝ) < ⊤ := heq.trans_lt hfin
   exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num : (0 : ℝ) < 3 / 2)).mp hnormPow
@@ -175,7 +175,7 @@ theorem blowupHarmonicPressure_bound
           (volume.restrict J)) ^ (3 / 2 : ℝ) := by
     norm_num at htotal ⊢
     rw [htime]
-    simpa only [Real.enorm_eq_ofReal_abs] using htotal.symm
+    simpa only [Real.eNorm_eq_ofReal_abs] using htotal.symm
   rw [heq] at hraw
   exact hraw
 

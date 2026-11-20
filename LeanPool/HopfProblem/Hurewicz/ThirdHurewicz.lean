@@ -3166,7 +3166,7 @@ private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_zero (s : FirstHurewi
     simp [fourSimplexFillA_zero, fourSimplexFillA_one, fourSimplexFillA_two,
       fourSimplexFillA_three, fourSimplexFillA_four, fourSimplexTetrahedron_zero_coordinate,
       min_eq_right hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_zero (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillB (Geometry.cubeTetrahedron (Geometry.cubePermutation 0) s) : Fin 5 → ℝ) =
@@ -3188,7 +3188,7 @@ private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_zero (s : FirstHurewi
     simp [fourSimplexFillB_zero, fourSimplexFillB_one, fourSimplexFillB_two,
       fourSimplexFillB_three, fourSimplexFillB_four, fourSimplexTetrahedron_zero_coordinate,
       min_eq_right hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_one (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillA (Geometry.cubeTetrahedron (Geometry.cubePermutation 1) s) : Fin 5 → ℝ) =
@@ -3212,7 +3212,7 @@ private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_one (s : FirstHurewic
     simp [fourSimplexFillA_zero, fourSimplexFillA_one, fourSimplexFillA_two,
       fourSimplexFillA_three, fourSimplexFillA_four, fourSimplexTetrahedron_one_coordinate,
       max_eq_left hca, min_eq_right hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_one (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillB (Geometry.cubeTetrahedron (Geometry.cubePermutation 1) s) : Fin 5 → ℝ) =
@@ -3234,7 +3234,7 @@ private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_one (s : FirstHurewic
     simp [fourSimplexFillB_zero, fourSimplexFillB_one, fourSimplexFillB_two,
       fourSimplexFillB_three, fourSimplexFillB_four, fourSimplexTetrahedron_one_coordinate,
       min_eq_right hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_two (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillA (Geometry.cubeTetrahedron (Geometry.cubePermutation 2) s) : Fin 5 → ℝ) =
@@ -3258,7 +3258,7 @@ private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_two (s : FirstHurewic
     simp [fourSimplexFillA_zero, fourSimplexFillA_one, fourSimplexFillA_two,
       fourSimplexFillA_three, fourSimplexFillA_four, fourSimplexTetrahedron_two_coordinate,
       max_eq_left hca, min_eq_right hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_two (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillB (Geometry.cubeTetrahedron (Geometry.cubePermutation 2) s) : Fin 5 → ℝ) =
@@ -3280,7 +3280,7 @@ private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_two (s : FirstHurewic
     simp [fourSimplexFillB_zero, fourSimplexFillB_one, fourSimplexFillB_two,
       fourSimplexFillB_three, fourSimplexFillB_four, fourSimplexTetrahedron_two_coordinate,
       max_eq_left hca, min_eq_right hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_three (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillA (Geometry.cubeTetrahedron (Geometry.cubePermutation 3) s) : Fin 5 → ℝ) =
@@ -3304,7 +3304,7 @@ private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_three (s : FirstHurew
     simp [fourSimplexFillA_zero, fourSimplexFillA_one, fourSimplexFillA_two,
       fourSimplexFillA_three, fourSimplexFillA_four, fourSimplexTetrahedron_three_coordinate,
       max_eq_right hca, min_eq_left hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_three (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillB (Geometry.cubeTetrahedron (Geometry.cubePermutation 3) s) : Fin 5 → ℝ) =
@@ -3326,7 +3326,7 @@ private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_three (s : FirstHurew
     simp [fourSimplexFillB_zero, fourSimplexFillB_one, fourSimplexFillB_two,
       fourSimplexFillB_three, fourSimplexFillB_four, fourSimplexTetrahedron_three_coordinate,
       max_eq_right hca, min_eq_left hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_four (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillA (Geometry.cubeTetrahedron (Geometry.cubePermutation 4) s) : Fin 5 → ℝ) =
@@ -3350,7 +3350,7 @@ private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_four (s : FirstHurewi
     simp [fourSimplexFillA_zero, fourSimplexFillA_one, fourSimplexFillA_two,
       fourSimplexFillA_three, fourSimplexFillA_four, fourSimplexTetrahedron_four_coordinate,
       max_eq_right hca, min_eq_left hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_four (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillB (Geometry.cubeTetrahedron (Geometry.cubePermutation 4) s) : Fin 5 → ℝ) =
@@ -3372,7 +3372,7 @@ private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_four (s : FirstHurewi
     simp [fourSimplexFillB_zero, fourSimplexFillB_one, fourSimplexFillB_two,
       fourSimplexFillB_three, fourSimplexFillB_four, fourSimplexTetrahedron_four_coordinate,
       min_eq_left hca, max_eq_right hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_five (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillA (Geometry.cubeTetrahedron (Geometry.cubePermutation 5) s) : Fin 5 → ℝ) =
@@ -3396,7 +3396,7 @@ private theorem ThirdHurewicz.fourSimplexFillA_tetrahedron_five (s : FirstHurewi
     simp [fourSimplexFillA_zero, fourSimplexFillA_one, fourSimplexFillA_two,
       fourSimplexFillA_three, fourSimplexFillA_four, fourSimplexTetrahedron_five_coordinate,
       min_eq_left hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_five (s : FirstHurewicz.Simplex 3) :
     (fourSimplexFillB (Geometry.cubeTetrahedron (Geometry.cubePermutation 5) s) : Fin 5 → ℝ) =
@@ -3418,7 +3418,7 @@ private theorem ThirdHurewicz.fourSimplexFillB_tetrahedron_five (s : FirstHurewi
     simp [fourSimplexFillB_zero, fourSimplexFillB_one, fourSimplexFillB_two,
       fourSimplexFillB_three, fourSimplexFillB_four, fourSimplexTetrahedron_five_coordinate,
       max_eq_right hca, min_eq_left hca]
-  all_goals linarith
+  linarith
 
 private theorem ThirdHurewicz.simplexFace_three_zero (s : FirstHurewicz.Simplex 3) :
     (FirstHurewicz.simplexFace 3 0 s : Fin 5 → ℝ) = ![0, s 0, s 1, s 2, s 3] := by

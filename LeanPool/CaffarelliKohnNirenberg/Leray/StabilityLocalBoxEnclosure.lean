@@ -31,9 +31,8 @@ theorem stability_localBox_compact_enclosure
       K ⊆ CKN.spaceTimeSet Ω I := by
   obtain ⟨_hΩopen, hΩcompact, hΩsub, _hJconn, hJcompact, hJsub⟩ := hbox
   refine ⟨closure Ω' ×ˢ closure J, ?_, ?_, ?_⟩
-  · apply parabolicHomeomorph.isCompact_preimage.mpr
-    change IsCompact (closure Ω' ×ˢ closure J)
-    exact hΩcompact.prod hJcompact
+  · exact (parabolicHomeomorph.isCompact_preimage
+      (s := closure Ω' ×ˢ closure J)).mpr (hΩcompact.prod hJcompact)
   · exact Set.prod_mono subset_closure subset_closure
   · exact Set.prod_mono hΩsub hJsub
 

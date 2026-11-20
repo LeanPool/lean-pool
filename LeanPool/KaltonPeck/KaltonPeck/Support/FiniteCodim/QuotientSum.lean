@@ -174,7 +174,7 @@ def sumQuotientPackage {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
       map_add' := fun _ _ ↦ rfl
       map_smul' := fun _ _ ↦ rfl }
   refine
-    { finiteSubspaceClosed := N.closed_of_finiteDimensional
+    { finiteSubspaceClosed := N.isClosed_of_finiteDimensional
       supClosed := hSupClosed
       supFiniteCodimensional := inferInstance
       quotientImageClosed := hImageClosed

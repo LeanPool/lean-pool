@@ -334,13 +334,13 @@ private theorem Elliptic.HigherHomology.fibreDifference_three_apply (v : FibreLa
     fibreDifference .three v = ![v 1 - v 0, -v 0 - 2 * v 1, v 0] := by
   ext i
   fin_cases i <;> simp [fibreDifference, fibreMatrix, dotProduct, Fin.sum_univ_succ]
-  all_goals ring
+  ring
 
 private theorem Elliptic.HigherHomology.fibreDifference_four_apply (v : FibreLattice) :
     fibreDifference .four v = ![-v 0 - v 1, v 0 - v 1, v 1] := by
   ext i
   fin_cases i <;> simp [fibreDifference, fibreMatrix, dotProduct, Fin.sum_univ_succ]
-  all_goals ring
+  ring
 
 private theorem Elliptic.HigherHomology.fibreDifference_mem_ker_iff (j : Elliptic.Kind)
     (v : FibreLattice) : v ∈ LinearMap.ker (fibreDifference j) ↔ v 0 = 0 ∧ v 1 = 0 := by
@@ -434,13 +434,13 @@ private theorem Elliptic.HigherHomology.fibreDifference_rangePreimage (j : Ellip
     rw [fibreDifference_three_apply]
     ext i
     fin_cases i <;> simp [fibreRangePreimage]
-    all_goals omega
+    omega
   | four =>
     change v 0 + v 1 + 2 * v 2 = 0 at hv
     rw [fibreDifference_four_apply]
     ext i
     fin_cases i <;> simp [fibreRangePreimage]
-    all_goals omega
+    omega
 
 private theorem
     Elliptic.HigherHomology.fibreDifference_range_iff (j : Elliptic.Kind) (v : FibreLattice) :

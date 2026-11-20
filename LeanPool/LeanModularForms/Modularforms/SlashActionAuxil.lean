@@ -117,17 +117,13 @@ theorem modular_slash_S_apply :
   rw [SL_slash_apply, denom, UpperHalfPlane.modular_S_smul]
   simp only [SpecialLinearGroup.coe_GL_coe_matrix]
   rw [SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) S]
-  simp only [inv_neg, S, Int.reduceNeg, Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom,
-    map_apply, of_apply, cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, Int.cast_one,
-    Complex.ofReal_one, one_mul, Int.cast_zero, Complex.ofReal_zero, add_zero, zpow_neg]
+  simp [S]
 
 theorem modular_slash_T_apply : (f ∣[k] T) z = f ((1 : ℝ) +ᵥ z) := by
   rw [SL_slash_apply, denom, UpperHalfPlane.modular_T_smul]
   simp only [SpecialLinearGroup.coe_GL_coe_matrix]
   rw [SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) T]
-  simp only [T, Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom, map_apply, of_apply,
-    cons_val', cons_val_zero, cons_val_fin_one, cons_val_one, Int.cast_zero, Complex.ofReal_zero,
-    zero_mul, Int.cast_one, Complex.ofReal_one, zero_add, zpow_neg, one_zpow, inv_one, mul_one]
+  simp [T]
 
 end slash_action
 
@@ -144,10 +140,10 @@ private theorem α_zpow_val (k : ℤ) : (α ^ k : SL(2, ℤ)).val = !![1, 2 * k;
   induction k using Int.induction_on with
   | zero => exact Matrix.one_fin_two
   | succ n ih =>
-    simp only [zpow_add, zpow_one, SpecialLinearGroup.coe_mul, ih]
+    simp only [_root_.zpow_add, zpow_one, SpecialLinearGroup.coe_mul, ih]
     ext i j; fin_cases i <;> fin_cases j <;> simp [α, αMatrix]; ring
   | pred n ih =>
-    simp only [zpow_sub, zpow_one, SpecialLinearGroup.coe_mul, SpecialLinearGroup.coe_inv,
+    simp only [_root_.zpow_sub, zpow_one, SpecialLinearGroup.coe_mul, SpecialLinearGroup.coe_inv,
       Matrix.adjugate_fin_two, ih]
     ext i j; fin_cases i <;> fin_cases j <;> simp [α, αMatrix]; ring
 
@@ -156,10 +152,10 @@ private theorem β_zpow_val (k : ℤ) : (β ^ k : SL(2, ℤ)).val = !![1, 0; 2 *
   induction k using Int.induction_on with
   | zero => exact Matrix.one_fin_two
   | succ n ih =>
-    simp only [zpow_add, zpow_one, SpecialLinearGroup.coe_mul, ih]
+    simp only [_root_.zpow_add, zpow_one, SpecialLinearGroup.coe_mul, ih]
     ext i j; fin_cases i <;> fin_cases j <;> simp [β, βMatrix, Matrix.mul_apply]; ring
   | pred n ih =>
-    simp only [zpow_sub, zpow_one, SpecialLinearGroup.coe_mul, SpecialLinearGroup.coe_inv,
+    simp only [_root_.zpow_sub, zpow_one, SpecialLinearGroup.coe_mul, SpecialLinearGroup.coe_inv,
       Matrix.adjugate_fin_two, ih]
     ext i j; fin_cases i <;> fin_cases j <;> simp [β, βMatrix, Matrix.mul_apply]; ring
 
@@ -183,7 +179,7 @@ lemma Γ2_c_eq_zero (A : Γ 2) (h : A.1 1 0 = 0) : A ∈ Subgroup.closure {α, �
       have h11 : val.val 1 1 = -1 := by have := val.2; rw [Matrix.det_fin_two] at this; grind
       have h_val : val = negI * α^(-k) := by
         refine Subtype.ext ?_
-        simp only [SpecialLinearGroup.coe_mul, zpow_neg, SpecialLinearGroup.coe_inv]
+        simp only [SpecialLinearGroup.coe_mul, _root_.zpow_neg, SpecialLinearGroup.coe_inv]
         rw [α_zpow_val]
         ext i j; fin_cases i <;> fin_cases j
           <;> simp [negI, negIMatrix, Matrix.mul_apply, Matrix.adjugate_fin_two, hk, h, h_2, h11]
@@ -192,7 +188,7 @@ lemma Γ2_c_eq_zero (A : Γ 2) (h : A.1 1 0 = 0) : A ∈ Subgroup.closure {α, �
       have hα_mem : α ∈ Subgroup.closure {α, β, negI} :=
         Subgroup.subset_closure (Set.mem_insert _ _)
       convert Subgroup.mul_mem _ hnegI_mem (Subgroup.inv_mem _ (Subgroup.zpow_mem _ hα_mem k))
-      simp only [zpow_neg, Subgroup.coe_mul, Subgroup.coe_inv, SubgroupClass.coe_zpow, h_val]
+      simp only [_root_.zpow_neg, Subgroup.coe_mul, Subgroup.coe_inv, SubgroupClass.coe_zpow, h_val]
   · have h_det : (A.val.val 0 0) * (A.val.val 1 1) = 1 := by
       have := A.1.2; rw [Matrix.det_fin_two] at this
       simp_all only [Fin.isValue, Int.reduceNeg, not_or, mul_zero, sub_zero]

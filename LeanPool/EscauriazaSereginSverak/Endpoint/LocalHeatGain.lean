@@ -334,7 +334,7 @@ private theorem localHeatGain_lpCurve_restrict_continuous
     filter_upwards [self_mem_nhdsWithin] with t' ht'
     have ht'ab := hsub ht'
     have htab := hsub ht
-    rw [hlink t' ht'ab, hlink t htab, ofReal_norm, Lp.enorm_def]
+    rw [hlink t' ht'ab, hlink t htab, ofReal_norm, Lp.eNorm_def]
     calc
       eLpNorm ((F t' : Vec3 → ℝ) - (F t : Vec3 → ℝ)) 2 (volume.restrict B) ≤
           eLpNorm ((F t' : Vec3 → ℝ) - (F t : Vec3 → ℝ)) 2 volume :=

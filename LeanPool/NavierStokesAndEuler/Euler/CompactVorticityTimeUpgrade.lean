@@ -83,7 +83,7 @@ theorem lipschitzOnWith_of_dense_scalar_derivative
       LipschitzOnWith (C * ‖φ‖₊) (fun t => inner ℝ φ (u t)) (Icc a c) := by
     have hopen : LipschitzOnWith (C * ‖φ‖₊)
         (fun t => inner ℝ φ (u t)) (Ioo a c) := by
-      apply (convex_Ioo a c).lipschitzOnWith_of_nnnorm_deriv_le
+      apply (convex_Ioo a c).lipschitzOnWith_of_nnNorm_deriv_le
       · intro t ht
         exact (hderiv φ hφ t ht).choose_spec.1.differentiableAt
       · intro t ht
@@ -97,7 +97,7 @@ theorem lipschitzOnWith_of_dense_scalar_derivative
   apply norm_le_of_dense_inner_bound hD (mul_nonneg C.coe_nonneg (norm_nonneg _))
   intro φ hφ
   have hb := (lipschitzOnWith_iff_norm_sub_le.mp (hscalar φ hφ)) ht hs
-  simpa only [inner_sub_right, NNReal.coe_mul, coe_nnnorm, mul_right_comm] using hb
+  simpa only [inner_sub_right, NNReal.coe_mul, coe_nnNorm, mul_right_comm] using hb
 
 /-- Strong continuity follows from weak scalar equations with uniformly
 bounded derivatives, including at the endpoints. -/

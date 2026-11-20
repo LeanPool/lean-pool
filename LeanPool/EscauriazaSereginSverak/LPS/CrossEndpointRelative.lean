@@ -81,7 +81,7 @@ theorem lps_endpoint_velocity_convection_integrable
     refine lintegral_congr_ae ?_
     filter_upwards [hsum.1] with τ h
     rw [ENNReal.ofReal_one] at h ⊢
-    rw [eLpNorm_one_eq_lintegral_enorm h.aestronglyMeasurable]
+    rw [eLpNorm_one_eq_lintegral_eNorm h.aestronglyMeasurable]
 
 /-- Integrability of an `L∞_t L²_x` velocity component against the advective
 convection of an essentially bounded `L²_t L∞_x` field. -/

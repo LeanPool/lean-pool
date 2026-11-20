@@ -167,12 +167,12 @@ theorem chiMK_grad_cross_eq_zero_of_odd_overlap {β : ℝ}
       MovingEnergyReduction.chiMKGrad_vertical I κ l t hl3 hε y]
     ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.single]
+      simp [Matrix.mul_apply, Function.swap, Matrix.single]
   · rw [MovingEnergyReduction.chiMKGrad_vertical I κ k t hk3 hε x,
       MovingEnergyReduction.chiMKGrad_horizontal I κ l t hl1 hε y]
     ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.single]
+      simp [Matrix.mul_apply, Function.swap, Matrix.single]
 
 /-- The moving-cutoff double sum of gradient Gram matrices has only its
 diagonal terms. This is the exact reduction of the quadratic part of the

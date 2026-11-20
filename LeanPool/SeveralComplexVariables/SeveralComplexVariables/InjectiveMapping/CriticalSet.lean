@@ -117,7 +117,7 @@ theorem isInvertible_fderiv_of_injOn_coordinates {ι : Type*} [Finite ι]
   intro hJa
   obtain ⟨c, hc⟩ := exists_regularPoint_zeroSet hV isPreconnected_ball hJ
     ⟨b, hb, hJb⟩ ⟨a, haV, hJa⟩
-  apply not_isRegularAnalyticSetAt_criticalSet rfl hU hf hi
+  apply not_isRegularAnalyticSetAt_criticalSet (A := V ∩ J ⁻¹' {0}) rfl hU hf hi
     (fun z hz => hball hz.1) (a := c) _ hc
   intro z hz hinv
   exact ((det_complexJacobian_ne_zero_iff

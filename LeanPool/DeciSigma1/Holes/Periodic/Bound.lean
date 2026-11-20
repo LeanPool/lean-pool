@@ -248,7 +248,7 @@ theorem simplePath_le_pow_split {β γ : Type*} (f : β → List γ) (head : β 
   classical
   generalize he : p.length = n
   induction n using Nat.strong_induction_on generalizing p with
-  | h n ih =>
+  | ind n ih =>
     by_cases hall : ∀ x ∈ p, head x
     · have hb := simplePath_le_pow_prefix f h p hnd hp
         (fun c hc hcomp => hh c hc (fun x hx => hall x (hc x hx)) hcomp)

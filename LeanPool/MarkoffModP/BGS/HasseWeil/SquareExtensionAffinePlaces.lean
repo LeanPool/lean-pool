@@ -516,8 +516,8 @@ theorem exists_squareExtensionClosedPoint_exhaustiveFinitePlace
     rw [← hm]
     exact squareExtensionFrobeniusElement_mem_pointMaximalIdeal K p f z
   have hP0 : P ≠ 0 := by
-    exact FiniteField.X_pow_card_pow_sub_X_ne_zero K (by omega)
-      Finite.one_lt_card
+    exact Polynomial.X_pow_sub_X_ne_zero
+      (Nat.one_lt_pow (by omega) Finite.one_lt_card)
   have hPMap : algebraMap (Polynomial K) E P =
       planeCurveFunction f 0 ^ (Nat.card K) ^ 2 -
         planeCurveFunction f 0 := by

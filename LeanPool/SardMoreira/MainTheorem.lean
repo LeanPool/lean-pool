@@ -364,7 +364,7 @@ theorem hausdorffMeasure_image_null_of_isBigO {X : Type*} [MetricSpace X]
         rcases exists_nat_gt C with ⟨N, hN⟩
         refine Set.mem_iUnion_of_mem N ?_
         use hx
-        rw [Asymptotics.IsBigOWith_def] at hC
+        rw [Asymptotics.isBigOWith_iff] at hC
         refine hC.mono fun y hy ↦ ?_
         rw [Real.norm_of_nonneg (by positivity)] at hy
         grw [hy, dist_eq_norm_sub, hN, Real.norm_of_nonneg (by positivity)]
@@ -373,7 +373,7 @@ theorem hausdorffMeasure_image_null_of_isBigO {X : Type*} [MetricSpace X]
       _ ≤ ∑' N, μH[sardMoreiraBound n k α (dim E)] (f '' t N) := by
         grw [Set.image_iUnion, measure_iUnion_le]
       _ = 0 := by
-        rw [ENNReal.tsum_eq_zero]
+        rw [tsum_eq_zero_iff]
         intro N
         apply this
         · exact fun x hx ↦ hcE x hx.1
@@ -407,7 +407,7 @@ theorem hausdorffMeasure_image_null_of_isLittleO {X : Type*} [MetricSpace X]
         rw [Set.image_iUnion]
         apply measure_iUnion_le
       _ = 0 := by
-        rw [ENNReal.tsum_eq_zero]
+        rw [tsum_eq_zero_iff]
         intro N
         apply this
         · exact fun x hx ↦ hcE x hx.1
@@ -480,7 +480,7 @@ theorem hausdorffMeasure_image_piProd_fst_null_of_isBigO_isLittleO
       μH[d] (g '' s) ≤ μH[d] (g '' ⋃ N, s ∩ t N) := by
         gcongr
         intro x hx
-        rcases (h_contDiff x hx).hasStrictFDerivAt (by simp) |>.isBigO_sub.bound with ⟨C, hC⟩
+        rcases (h_contDiff x hx).hasStrictFDerivAt_fderiv (by simp) |>.isBigO_sub.bound with ⟨C, hC⟩
         rcases exists_nat_gt C with ⟨N, hN⟩
         refine Set.mem_iUnion_of_mem N ⟨hx, ?_⟩
         refine hC.mono fun y hy hy_eq ↦ ?_
@@ -495,7 +495,7 @@ theorem hausdorffMeasure_image_piProd_fst_null_of_isBigO_isLittleO
         simp only [Set.image_iUnion]
         apply measure_iUnion_le
       _ = 0 := by
-        rw [ENNReal.tsum_eq_zero]
+        rw [tsum_eq_zero_iff]
         intro N
         apply this
         · exact fun x hx ↦ h_contDiff x hx.1
@@ -510,7 +510,7 @@ theorem hausdorffMeasure_image_piProd_fst_null_of_isBigO_isLittleO
     hausdorffMeasure_image_null_of_isLittleO hk hnp hn (fun x hx ↦ hcE x hx.1) fun x hx ↦ by
       simpa [t, dist_eq_norm_sub] using hx.2
   have ht' : μH[d] (g '' (s \ t)) = 0 := by
-    apply hausdorffMeasure_image_null_of_isBigO hk hn (fun x hx ↦ hcE x hx.1)
+    apply hausdorffMeasure_image_null_of_isBigO (s := s \ t) hk hn (fun x hx ↦ hcE x hx.1)
     · simp_all
     · refine measure_mono_null ?_ h_isLittleO
       rintro x ⟨hxs, hxt⟩ hxs'
@@ -616,7 +616,8 @@ theorem hausdorffMeasure_image_nhdsWithin_null_of_finrank_eq
     have hker : (fderiv ℝ f a).ker.ClosedComplemented := .of_finiteDimensional _
     have hrange : (fderiv ℝ f a).range.ClosedComplemented := .of_finiteDimensional _
     use (fderiv ℝ f a).ker, (fderiv ℝ f a).range, hrange.choose.ker
-    have hdf := (hf a ha).contDiffAt.hasStrictFDerivAt (by simpa [Nat.one_le_iff_ne_zero])
+    have hdf := (hf a ha).contDiffAt.hasStrictFDerivAt_fderiv (by
+      simpa [Nat.one_le_iff_ne_zero])
     set eDom := hdf.implicitToOpenPartialHomeomorphOfComplementedKerRange _ _ hker hrange
     refine ⟨eDom,
       .equivOfRightInverse hrange.choose (Submodule.subtypeL _) hrange.choose_spec,

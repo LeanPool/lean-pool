@@ -253,8 +253,10 @@ theorem exists_finset_adaptedCellCenter_mem {q : Mat d} (hq : q.PosDef) {j p : �
   have hcast : ((3 ^ n : ℕ) : ℤ) = 2 * m + 1 := by rw [← hm]; push_cast; ring
   refine ⟨Fintype.piFinset fun _ : Fin d => Finset.Icc (-m) m, ?_, ?_⟩
   · ext w
-    rw [Set.mem_ofPred_eq, adaptedCellCenter_mem_adaptedCell_iff hq hjp]
-    simp only [Finset.mem_coe, Fintype.mem_piFinset, Finset.mem_Icc]
+    change w ∈ (Fintype.piFinset fun _ : Fin d => Finset.Icc (-m) m) ↔
+      adaptedCellCenter q j w ∈ adaptedCell q p
+    rw [adaptedCellCenter_mem_adaptedCell_iff hq hjp]
+    simp only [Fintype.mem_piFinset, Finset.mem_Icc]
     refine forall_congr' fun i => ?_
     rw [← hn, hm, ← abs_le]
     omega

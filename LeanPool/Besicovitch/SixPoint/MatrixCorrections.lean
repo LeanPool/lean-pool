@@ -37,7 +37,7 @@ def pairCorrection (r : ℝ) (i j : ι) : Matrix ι ι ℝ :=
   |r| • Matrix.vecMulVec (pairVector r i j) (pairVector r i j)
 
 /-- The correction matrix is positive semidefinite. -/
-theorem pairCorrection_posSemidef [Finite ι] (r : ℝ) (i j : ι) :
+theorem pairCorrection_posSemidef (r : ℝ) (i j : ι) :
     (pairCorrection r i j).PosSemidef :=
   (Matrix.posSemidef_vecMulVec_self_star (pairVector r i j)).smul (abs_nonneg r)
 

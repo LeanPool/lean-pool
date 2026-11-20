@@ -68,7 +68,7 @@ private def zeroPoisson {Ω : Type u} [MeasurableSpace Ω] (P : Measure Ω)
     | @insert i S hi ih => by_cases hz : (0 : ℝ≥0∞) ∈ sets i <;> simp_all [Set.preimage_const]
   joint_past_future_independent := by
     intro s t _ _ A _ _
-    simp only [Measure.coe_zero, Pi.zero_apply, MeasurableSpace.comap_const]
+    simp only [FunLike.coe_zero, Pi.zero_apply, MeasurableSpace.comap_const]
     exact indep_bot_right _
 
 private theorem zeroPoisson_filtration {Ω : Type*} [MeasurableSpace Ω]
@@ -243,7 +243,7 @@ theorem exists_isDiffusion (W : MultidimBrownianMotion P d)
                 2 ∂P) =
             0 := by
           simpa using hiso
-        filter_upwards [(lintegral_eq_zero_iff ((hjm.nnnorm.coe_nnreal_ennreal).pow_const 2)).mp
+        filter_upwards [(lintegral_eq_zero_iff ((hjm.nnNorm.coe_nnreal_ennreal).pow_const 2)).mp
             hz] with
           ω hω
         change

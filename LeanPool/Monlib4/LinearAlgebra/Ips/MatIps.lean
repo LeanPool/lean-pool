@@ -388,7 +388,7 @@ theorem starAlgEquiv_is_isometry_tFAE [hφ : φ.IsFaithfulPosMap]
         ⟪f x, f y⟫_ℂ - ⟪x, y⟫_ℂ =
           ⟪(LinearMap.adjoint f.toLinearMap ∘ₗ f.toLinearMap - 1) x, y⟫_ℂ := by
       intro x y
-      simp only [LinearMap.sub_apply, Module.End.one_apply, inner_sub_left, LinearMap.comp_apply,
+      simp only [LinearMap.sub_apply, one_apply_eq_self, inner_sub_left, LinearMap.comp_apply,
         LinearMap.adjoint_inner_left, StarAlgEquiv.toLinearMap_apply]
     simp_rw [this, inner_map_self_eq_zero, sub_eq_zero, StarAlgEquiv.comp_eq_iff,
       LinearMap.one_comp]
@@ -457,11 +457,11 @@ protected noncomputable def basis (hφ : φ.IsFaithfulPosMap) : Basis (n × n) �
   · simp_rw [top_le_iff]
     ext x
     simp_rw [Submodule.mem_top, iff_true, Submodule.mem_span_range_iff_exists_fun, ← smul_mul,
-      ← Finset.sum_mul, ← Matrix.ext_iff, mul_apply, Matrix.sum_apply,
+      ← Finset.sum_mul, ← Matrix.ext_iff, Matrix.mul_apply, Matrix.sum_apply,
       Matrix.smul_apply, single, of_apply, smul_ite, smul_zero, ← Prod.mk_inj, Prod.mk.eta,
       Finset.sum_ite_eq', Finset.mem_univ, ite_true, smul_mul_assoc, one_mul]
     exists fun ij : n × n => (x * hQ.rpow (1 / 2) : Matrix n n ℂ) ij.1 ij.2
-    simp_rw [smul_eq_mul, ← mul_apply, Matrix.mul_assoc, Matrix.PosDef.rpow_mul_rpow,
+    simp_rw [smul_eq_mul, ← Matrix.mul_apply, Matrix.mul_assoc, Matrix.PosDef.rpow_mul_rpow,
       add_neg_cancel,
       Matrix.PosDef.rpow_zero, Matrix.mul_one, forall₂_true_iff]
 
@@ -545,7 +545,7 @@ theorem inner_coord (hφ : φ.IsFaithfulPosMap) (ij : n × n) (y : Matrix n n �
       _ = hQ.rpow (1 + -(1 / 2)) := by rw [Matrix.PosDef.rpow_mul_rpow]
       _ = hQ.rpow (1 / 2) := by ring_nf
   rw [this]
-  simp_rw [trace_iff, mul_apply, single, of_apply, mul_boole, ite_and]
+  simp_rw [trace_iff, Matrix.mul_apply, single, of_apply, mul_boole, ite_and]
   simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true, ite_mul, MulZeroClass.zero_mul]
   simp_rw [mul_comm]
 
@@ -983,7 +983,7 @@ theorem inner_single_left [hφ : φ.IsFaithfulPosMap] (i j : n) (x : Matrix n n 
 theorem inner_single_single [hφ : φ.IsFaithfulPosMap] (i j k l : n) :
     withMatrixInner[φ]
     (⟪single i j (1 : ℂ), single k l (1 : ℂ)⟫_ℂ = ite (i = k) (φ.matrix l j) 0) := by
-  simp_rw [inner_single_left, mul_apply, single, of_apply, boole_mul, ite_and]
+  simp_rw [inner_single_left, Matrix.mul_apply, single, of_apply, boole_mul, ite_and]
   simp only [Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ,
     ite_true, Finset.sum_ite_eq]
   simp_rw [@eq_comm _ (k : n) (i : n)]
@@ -1117,7 +1117,7 @@ theorem Qam.Nontracial.mul_comp_mul_adjoint [hφ : φ.IsFaithfulPosMap] :
     LinearMap.mul'_apply, single_hMul, mul_one, ite_smul, one_smul, zero_smul,
     smul_ite, smul_zero]
   simp only [Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq,
-    Finset.mem_univ, ite_true, LinearMap.smul_apply, Module.End.one_apply]
+    Finset.mem_univ, ite_true, LinearMap.smul_apply, one_apply_eq_self]
   simp_rw [mul_comm (x _ _), mul_smul, ← Finset.smul_sum, ← Finset.sum_smul]
   rw [← trace_iff, ← Finset.smul_sum]
   congr 1
@@ -1276,7 +1276,7 @@ private theorem linear_map.pi_mul'_comp_mul_adjoint_aux [hψ : ∀ i, (ψ i).IsF
   pi_inner_instances ψ
   rw [LinearMap.pi_mul'_adjoint_single_block, LinearMap.pi_mul'_apply_includeBlock]
   simp_rw [← LinearMap.comp_apply, Qam.Nontracial.mul_comp_mul_adjoint, LinearMap.comp_apply,
-    LinearMap.smul_apply, _root_.map_smul, Module.End.one_apply]
+    LinearMap.smul_apply, _root_.map_smul, one_apply_eq_self]
 
 theorem LinearMap.pi_mul'_comp_mul'_adjoint [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k s) :
     withPiInner[ψ]
@@ -1305,7 +1305,7 @@ theorem LinearMap.pi_mul'_comp_mul'_adjoint_eq_smul_id_iff [hψ : ∀ i, (ψ i).
   simp_rw [LinearMap.ext_iff, LinearMap.comp_apply, LinearMap.pi_mul'_comp_mul'_adjoint,
     funext_iff, Finset.sum_apply, ← LinearMap.map_smul,
     includeBlock_apply, Finset.sum_dite_eq', Finset.mem_univ, ite_true,
-    LinearMap.smul_apply, Module.End.one_apply, Pi.smul_apply]
+    LinearMap.smul_apply, one_apply_eq_self, Pi.smul_apply]
   simp only [eq_mp_eq_cast, cast_eq, ← Pi.smul_apply]
   constructor
   · intro h

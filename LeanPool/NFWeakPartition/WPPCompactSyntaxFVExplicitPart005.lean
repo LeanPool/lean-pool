@@ -76,8 +76,7 @@ theorem fv_syn_cfdcolcodemap (R : Class) (A : Class) (B : Class) :
   ext u
   simp [synCfdcolcodemap,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfdglobalrowmap,
-    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfdpointrel];
-  aesop
+    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfdpointrel]
 
 theorem fv_syn_chwcodes (A : Class) : (synChwcodes A).fv = A.fv :=
   by

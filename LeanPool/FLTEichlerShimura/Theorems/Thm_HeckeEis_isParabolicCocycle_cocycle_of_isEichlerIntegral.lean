@@ -130,9 +130,9 @@ theorem solution (N n : ℕ) [NeZero N]
     rw [Gamma0_mem]
     simp
   have hRinv : ∀ (x : SL(2, ℤ)) (v : ↥(BinaryForm ℂ n)), R x⁻¹ (R x v) = v := fun x v => by
-    rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
+    rw [← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self]
   have hRinv' : ∀ (x : SL(2, ℤ)) (v : ↥(BinaryForm ℂ n)), R x (R x⁻¹ v) = v := fun x v => by
-    rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
+    rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self]
   intro γ hγ
   rcases Nat.even_or_odd n with heven | hodd
   · obtain ⟨ε, δ, h, hε, hγeq⟩ :=
@@ -142,7 +142,7 @@ theorem solution (N n : ℕ) [NeZero N]
       · exact map_one R
       · refine LinearMap.ext fun P => ?_
         rw [hR, binaryFormRepSL_neg_one_apply, Even.neg_one_pow heven, one_smul,
-          Module.End.one_apply]
+          one_apply_eq_self]
     have hRεx : ∀ x : SL(2, ℤ), R (ε * x) = R x := fun x => by rw [map_mul, hRε, one_mul]
     have hεsmul : ∀ (x : SL(2, ℤ)) (τ : ℍ), (ε * x) • τ = x • τ := by
       rcases hε with rfl | rfl
@@ -165,15 +165,15 @@ theorem solution (N n : ℕ) [NeZero N]
     have hcoc : hF.cocycle γ = R δ (G (ModularGroup.T ^ h • I) - R (ModularGroup.T ^ h) (G I)) := by
       rw [← hF.sub_eq_cocycle γ (δ • I), hρapp, hγeq, hεsmul, hRεx, ← mul_smul,
         inv_mul_cancel_right, mul_smul,
-        hFG, hFG, map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, hRinv, map_sub]
+        hFG, hFG, map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, hRinv, map_sub]
     have htrans : ∀ y ∈ LinearMap.range (R (ModularGroup.T ^ h) - 1), R δ y ∈ LinearMap.range (ρ γ -
       1) :=
       by
       rintro _ ⟨w, rfl⟩
       refine ⟨R δ w, ?_⟩
-      rw [LinearMap.sub_apply, Module.End.one_apply, hρapp, hγeq, hRεx, map_mul, map_mul,
-        Module.End.mul_apply,
-        Module.End.mul_apply, hRinv, LinearMap.sub_apply, Module.End.one_apply, map_sub]
+      rw [LinearMap.sub_apply, one_apply_eq_self, hρapp, hγeq, hRεx, map_mul, map_mul,
+        mul_apply_eq_comp,
+        mul_apply_eq_comp, hRinv, LinearMap.sub_apply, one_apply_eq_self, map_sub]
     rw [hcoc]
     apply htrans
     rcases eq_or_ne h 0 with rfl | hh
@@ -198,7 +198,7 @@ theorem solution (N n : ℕ) [NeZero N]
         _ = hF.cocycle γ + (hF.cocycle m + -hF.cocycle γ) := by rw [h1]
         _ = hF.cocycle m := by abel
     refine ⟨-((2 : ℂ)⁻¹ • hF.cocycle m), ?_⟩
-    rw [LinearMap.sub_apply, Module.End.one_apply, map_neg, map_smul, sub_neg_eq_add]
+    rw [LinearMap.sub_apply, one_apply_eq_self, map_neg, map_smul, sub_neg_eq_add]
     calc -((2 : ℂ)⁻¹ • ρ γ (hF.cocycle m)) + (2 : ℂ)⁻¹ • hF.cocycle m
         = (2 : ℂ)⁻¹ • (hF.cocycle m - ρ γ (hF.cocycle m)) := by rw [smul_sub]; abel
       _ = (2 : ℂ)⁻¹ • (hF.cocycle γ + hF.cocycle γ) := by rw [h4]

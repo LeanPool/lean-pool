@@ -93,13 +93,13 @@ theorem measurable_dist_slice_class [SFinite μ] (Γ : α × β → E) (hΓ : St
     have hm : AEStronglyMeasurable (fun x => Γ (x, s) - (c : α → E) x) μ :=
       ((hΓ.comp_measurable (measurable_id.prodMk measurable_const)).sub
         (Lp.stronglyMeasurable c)).aestronglyMeasurable
-    rw [eLpNorm_congr_ae hae, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hm]
+    rw [eLpNorm_congr_ae hae, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm]
     simp
   rw [heq]
   refine ENNReal.measurable_toReal.comp (Measurable.pow_const ?_ _)
   exact Measurable.lintegral_prod_left'
     (f := fun q : α × β => ‖Γ q - (c : α → E) q.1‖ₑ ^ (2 : ℝ))
-    ((hΓ.sub ((Lp.stronglyMeasurable c).comp_measurable measurable_fst)).enorm.pow_const _)
+    ((hΓ.sub ((Lp.stronglyMeasurable c).comp_measurable measurable_fst)).eNorm.pow_const _)
 
 /-- A curve of `L²` classes represented slice by slice by a jointly measurable
 field is strongly measurable. -/

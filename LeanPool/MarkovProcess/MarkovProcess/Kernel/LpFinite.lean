@@ -61,8 +61,8 @@ theorem enorm_integral_rpow_le_lintegral_enorm_rpow
   have hp0 : p ≠ 0 := ne_of_gt (zero_lt_one.trans_le hp)
   have hnorm : ‖∫ y, f y ∂ν‖ₑ ≤ eLpNorm f p ν := by
     calc
-      ‖∫ y, f y ∂ν‖ₑ ≤ ∫⁻ y, ‖f y‖ₑ ∂ν := enorm_integral_le_lintegral_enorm f
-      _ = eLpNorm f 1 ν := (eLpNorm_one_eq_lintegral_enorm hf.aestronglyMeasurable).symm
+      ‖∫ y, f y ∂ν‖ₑ ≤ ∫⁻ y, ‖f y‖ₑ ∂ν := eNorm_integral_le_lintegral_eNorm f
+      _ = eLpNorm f 1 ν := (eLpNorm_one_eq_lintegral_eNorm hf.aestronglyMeasurable).symm
       _ ≤ eLpNorm f p ν := eLpNorm_one_le_of_measure_univ_le_one hp hν hf.aestronglyMeasurable
   calc
     ‖∫ y, f y ∂ν‖ₑ ^ (p : ℝ) ≤ eLpNorm f p ν ^ (p : ℝ) := by
@@ -98,7 +98,7 @@ theorem lintegral_enorm_kernelIntegral_rpow_le
     _ = ∫⁻ y, ‖f y‖ₑ ^ (p : ℝ) ∂(κ ∘ₘ μ) := by
           symm
           exact Measure.lintegral_bind (Kernel.aemeasurable κ)
-            (hfComp.aestronglyMeasurable.enorm.pow_const (p : ℝ))
+            (hfComp.aestronglyMeasurable.eNorm.pow_const (p : ℝ))
     _ ≤ ∫⁻ y, ‖f y‖ₑ ^ (p : ℝ) ∂μ :=
       lintegral_mono' hκμ le_rfl
 

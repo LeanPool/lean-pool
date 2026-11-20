@@ -640,7 +640,7 @@ theorem hasFPowerSeriesOnBall_polydiscCauchy_full {d : ℕ}
     have hr : (r : ℝ≥0∞) = ENNReal.ofReal R := by
       rw [ENNReal.coe_nnreal_eq]
       rfl
-    rw [← hr, Metric.mem_eball, edist_eq_enorm_sub, sub_zero, enorm_lt_coe] at hh
+    rw [← hr, Metric.mem_eball, eDist_eq_eNorm_sub, sub_zero, eNorm_lt_coe] at hh
     exact hasSum_polydiscCauchySeries hR
       (fun i => (norm_le_pi_norm h i).trans_lt hh) hfc hfa hM
 

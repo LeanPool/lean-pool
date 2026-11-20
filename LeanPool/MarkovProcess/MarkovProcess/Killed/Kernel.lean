@@ -170,10 +170,9 @@ theorem IsConservative.measurable_killedKernel :
     (ContinuousEval.continuous_eval.comp continuous_swap).measurable
   have hS : MeasurableSet {p : (NNReal × alpha) × ContinuousPath alpha |
       (p.1.1 : ℝ≥0∞) < ContinuousPath.exitTime U p.2 ∧ p.2 p.1.1 ∈ B} := by
-    refine MeasurableSet.inter ?_ ?_
-    · exact measurableSet_lt (measurable_coe_nnreal_ennreal.comp measurable_fst.fst)
-        ((ContinuousPath.measurable_exitTime U hU).comp measurable_snd)
-    · exact (heval.comp (measurable_fst.fst.prodMk measurable_snd)) hB
+    exact (measurableSet_lt (measurable_coe_nnreal_ennreal.comp measurable_fst.fst)
+      ((ContinuousPath.measurable_exitTime U hU).comp measurable_snd)).inter
+        ((heval.comp (measurable_fst.fst.prodMk measurable_snd)) hB)
   exact Kernel.measurable_kernel_prodMk_left
     (κ := Kernel.prodMkLeft NNReal (IsConservative.continuousProcess P hP)) hS
 
@@ -190,7 +189,7 @@ theorem IsConservative.killedKernel_apply_of_notMem (hK : P.KolmogorovRegular hP
       Measure.dirac_apply' x hU.measurableSet, Set.indicator_of_notMem hx] at h
     exact h
   refine Measure.ext fun B hB ↦ ?_
-  rw [IsConservative.killedKernel_apply P hP U hU t x hB, Measure.coe_zero, Pi.zero_apply]
+  rw [IsConservative.killedKernel_apply P hP U hU t x hB, FunLike.coe_zero, Pi.zero_apply]
   refine measure_mono_null (fun omega homega ↦ ?_) hzero
   obtain ⟨hlt, -⟩ := (ContinuousPath.mem_killedEvent_iff U t B omega).mp homega
   exact (ContinuousPath.exitTime_pos_iff U hU omega).mp (lt_of_le_of_lt zero_le hlt)

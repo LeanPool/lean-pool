@@ -97,7 +97,7 @@ theorem exists_schwartz_weighted_approximation (v : Lp E 2 (volume : Measure Pos
       (∫⁻ x, (‖g x‖₊ : ℝ≥0∞) ^ 2 ∂ν) =
         ∫⁻ x, (‖x‖₊ : ℝ≥0∞) ^ 2 * (‖g x‖₊ : ℝ≥0∞) ^ 2 := by
     rw [lintegral_withDensity_eq_lintegral_mul₀ hm.aemeasurable
-      (hg.nnnorm.aemeasurable.coe_nnreal_ennreal.pow_const 2)]
+      (hg.nnNorm.aemeasurable.coe_nnreal_ennreal.pow_const 2)]
     apply lintegral_congr
     intro x
     dsimp only [Pi.mul_apply]
@@ -127,14 +127,14 @@ theorem exists_schwartz_weighted_approximation (v : Lp E 2 (volume : Measure Pos
       apply Lp.ext
       exact (Lp.memLp v).coeFn_toLp
     simpa only [SchwartzMap.toLp, hi] using h₀
-  · have hh := (ENNReal.continuous_pow 2).tendsto _ |>.comp (continuous_enorm.tendsto _ |>.comp h₁)
+  · have hh := (ENNReal.continuous_pow 2).tendsto _ |>.comp (continuous_eNorm.tendsto _ |>.comp h₁)
     have hn (n : ℕ) : ‖(hfν n).toLp (f n)‖ₑ ^ 2 =
         ∫⁻ x, (‖x‖₊ : ℝ≥0∞) ^ 2 * (‖f n x‖₊ : ℝ≥0∞) ^ 2 := by
-      rw [Lp.enorm_toLp, ← lintegral_norm_sq_eq_eLpNorm_sq (hfν n).aestronglyMeasurable,
+      rw [Lp.eNorm_toLp, ← lintegral_norm_sq_eq_eLpNorm_sq (hfν n).aestronglyMeasurable,
         he _ (f n).continuous.aestronglyMeasurable]
     have hv' : ‖hvν.toLp (fun x => v x)‖ₑ ^ 2 =
         ∫⁻ x, (‖x‖₊ : ℝ≥0∞) ^ 2 * (‖v x‖₊ : ℝ≥0∞) ^ 2 := by
-      rw [Lp.enorm_toLp, ← lintegral_norm_sq_eq_eLpNorm_sq haν, he _ (Lp.aestronglyMeasurable v)]
+      rw [Lp.eNorm_toLp, ← lintegral_norm_sq_eq_eLpNorm_sq haν, he _ (Lp.aestronglyMeasurable v)]
     simpa only [Function.comp_def, hn, hv'] using hh
 
 end LiebThirring

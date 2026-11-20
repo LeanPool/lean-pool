@@ -184,7 +184,7 @@ theorem compact_inner_left {f g : Space → Space} (hf : HasCompactSupport f) :
     HasCompactSupport (fun x => ⟪f x, g x⟫_ℝ) := by
   apply hf.mono
   intro x hx
-  contrapose! hx
+  contrapose hx
   simp only [mem_support, not_not] at hx ⊢
   rw [hx, inner_zero_left]
 

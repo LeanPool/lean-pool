@@ -205,7 +205,7 @@ theorem exists_ae_eq_const_of_weakDeriv_zero {a b : ℝ} (hab : a < b)
     exists_contDiff_tsupport_subset (n := ⊤) (isOpen_Ioo.mem_nhds ⟨haq, hqb⟩)
   have hρnonneg : ∀ x, 0 ≤ ρ x := fun x => (hρrange ⟨x, rfl⟩).1
   have hρpos : 0 < ∫ x, ρ x := by
-    apply hρsmooth.continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero
+    apply hρsmooth.continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero
       hρcompact hρnonneg
     rw [hρq]
     exact one_ne_zero
@@ -599,7 +599,7 @@ theorem abs_sq_le_time_integral_sq_of_continuous_weakDeriv {τ : ℝ} (hτ : 0 <
   let J : ℝ → ℝ := fun t => ∫ s in 0..t, gExt s
   have hgExtInterval : IntervalIntegrable gExt volume (-1) 1 := by
     apply intervalIntegrable_iff.mpr
-    exact hgExtInt.integrableOn.mono_set (fun _ _ => trivial)
+    exact hgExtInt.integrableOn
   have hJac := hgExtInterval.absolutelyContinuousOnInterval_intervalIntegral
     (c := 0) (by simp [uIcc])
   have hJcontOn : ContinuousOn J (Icc (-1) 1) := by

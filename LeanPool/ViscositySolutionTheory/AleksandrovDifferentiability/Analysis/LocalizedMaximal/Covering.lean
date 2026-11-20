@@ -291,7 +291,7 @@ theorem volume_biUnion_enlarged_witnessBall_le_tsum_average
         ∑' I : u,
           ENNReal.ofReal
             ((τ / t) * μ.real (SourceMaximalWitnessInterval.interval I.1)) :=
-      ENNReal.tsum_le_tsum fun I =>
+      tsum_le_tsum fun I =>
         SourceMaximalWitnessInterval.volume_enlargedBall_le_of_average I.1 ht hτ
 
 /-- The source pointwise ball estimate summed in measure-valued form over a countable selected
@@ -320,7 +320,7 @@ theorem volume_biUnion_enlarged_witnessBall_le_mul_tsum_measure
         ∑' I : u,
           ENNReal.ofReal (τ / t) *
             μ (SourceMaximalWitnessInterval.interval I.1) := by
-      refine ENNReal.tsum_le_tsum fun I => ?_
+      refine tsum_le_tsum fun I => ?_
       have hfiniteI :
           μ (SourceMaximalWitnessInterval.interval I.1) ≠ ⊤ :=
         (measure_ne_top_of_subset

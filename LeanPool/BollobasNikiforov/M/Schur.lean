@@ -195,7 +195,7 @@ lemma configF_mul_transpose_apply (s t : Fin k → ℝ) (ρ x : Fin p → ℝ)
     (α β : ConfigIdx k p) :
     (configF s t ρ x * (configF s t ρ x)ᵀ) α β =
       configF s t ρ x α ⬝ᵥ configF s t ρ x β := by
-  simp [mul_apply, transpose_apply, dotProduct]
+  simp [Matrix.mul_apply, transpose_apply, dotProduct]
 
 /-! Feature inner products -/
 
@@ -860,7 +860,7 @@ lemma configγ_eq_schur (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j) :
       (diagonal fun i : Fin k => s i * configD t ρ x i) *
         (diagonal fun i => (s i * configD t ρ x i)⁻¹) = 1 := by
     ext i j
-    simp only [mul_apply, diagonal_apply, one_apply]
+    simp only [Matrix.mul_apply, diagonal_apply, Matrix.one_apply]
     by_cases hij : i = j
     · subst hij
       rw [Fintype.sum_eq_single i]
@@ -920,7 +920,7 @@ lemma mul_vecMulVec (A : Matrix (Option (Fin k)) (Option (Fin k)) ℝ)
     (u w : Option (Fin k) → ℝ) :
     A * vecMulVec u w = vecMulVec (A *ᵥ u) w := by
   ext i j
-  simp only [mul_apply, vecMulVec_apply, mulVec, dotProduct, Finset.sum_mul, mul_assoc]
+  simp only [Matrix.mul_apply, vecMulVec_apply, mulVec, dotProduct, Finset.sum_mul, mul_assoc]
 
 lemma configLEE_mul_invDiag_apply (a b : Option (Fin k)) :
     (configLEE s t ρ x * configLEEInvDiag s t ρ x) a b =
@@ -929,11 +929,11 @@ lemma configLEE_mul_invDiag_apply (a b : Option (Fin k)) :
       | some j => configLEE s t ρ x a (some j) * (s j * configD t ρ x j)⁻¹ := by
   cases b with
   | none =>
-    simp only [mul_apply, configLEEInvDiag]
+    simp only [Matrix.mul_apply, configLEEInvDiag]
     refine Fintype.sum_eq_zero _ fun c => ?_
     cases c <;> simp [diagonal]
   | some j =>
-    simp only [mul_apply, configLEEInvDiag]
+    simp only [Matrix.mul_apply, configLEEInvDiag]
     rw [Fintype.sum_eq_single (some j)]
     · simp [diagonal]
     · intro c hc
@@ -975,7 +975,7 @@ lemma configLEE_inv (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
                 (configW t ρ x)) none none =
             (configγ s t ρ x)⁻¹ * configγ s t ρ x := by
         simp [vecMulVec_apply, configW]
-      simp [Matrix.add_apply, hL, hR, one_apply]
+      simp [Matrix.add_apply, hL, hR]
       field_simp [hγne]
     | some j =>
       have hL : (configLEE s t ρ x * configLEEInvDiag s t ρ x) none (some j) =
@@ -993,8 +993,8 @@ lemma configLEE_inv (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
         ring
       have hd : configD t ρ x j ≠ 0 := (configD_pos t hρ x j).ne'
       have hsj : s j ≠ 0 := (hs j).ne'
-      simp only [Matrix.add_apply, hL, _root_.mul_inv_rev, neg_mul, hR, one_apply, reduceCtorEq,
-        ↓reduceIte]
+      simp only [Matrix.add_apply, hL, _root_.mul_inv_rev, neg_mul, hR, Matrix.one_apply,
+        reduceCtorEq, ↓reduceIte]
       rw [← mul_assoc, inv_mul_cancel₀ hγne, one_mul]
       field_simp [hsj, hd]
       ring
@@ -1010,7 +1010,7 @@ lemma configLEE_inv (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
                   if a = none then configγ s t ρ x else 0)
                 (configW t ρ x)) (some i) none = 0 := by
         simp [vecMulVec_apply]
-      simp [Matrix.add_apply, hL, hR, one_apply]
+      simp [Matrix.add_apply, hL, hR]
     | some j =>
       have hL : (configLEE s t ρ x * configLEEInvDiag s t ρ x) (some i) (some j) =
           (if i = j then s i * configD t ρ x i else 0) *
@@ -1026,7 +1026,7 @@ lemma configLEE_inv (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
         simp [vecMulVec_apply]
       have hdj : configD t ρ x j ≠ 0 := (configD_pos t hρ x j).ne'
       have hsj : s j ≠ 0 := (hs j).ne'
-      simp [Matrix.add_apply, hL, hR, one_apply]
+      simp [Matrix.add_apply, hL, hR, Matrix.one_apply]
       by_cases hij : i = j
       · subst hij
         simp
@@ -1147,7 +1147,7 @@ def configInvFE : Matrix (Option (Fin k)) (Fin 3) ℝ :=
 lemma configLEE_invDiag_mul_FE_none :
     (configLEEInvDiag s t ρ x * configFE s t ρ x) none = (0 : Fin 3 → ℝ) := by
   ext c
-  simp only [mul_apply, configLEEInvDiag, Pi.zero_apply]
+  simp only [Matrix.mul_apply, configLEEInvDiag, Pi.zero_apply]
   refine Fintype.sum_eq_zero _ fun a => ?_
   cases a <;> simp [diagonal]
 
@@ -1156,7 +1156,7 @@ lemma configLEE_invDiag_mul_FE_some (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j
     (configLEEInvDiag s t ρ x * configFE s t ρ x) (some i) =
       (configD t ρ x i)⁻¹ • v (t i) := by
   ext c
-  simp only [mul_apply, configLEEInvDiag, Pi.smul_apply, smul_eq_mul]
+  simp only [Matrix.mul_apply, configLEEInvDiag, Pi.smul_apply, smul_eq_mul]
   rw [Fintype.sum_eq_single (some i)]
   · have hsi : s i ≠ 0 := (hs i).ne'
     have hd : configD t ρ x i ≠ 0 := (configD_pos t hρ x i).ne'
@@ -1176,7 +1176,7 @@ lemma vecMulVec_w_mul_FE (a : Option (Fin k)) :
     (vecMulVec (configW t ρ x) (configW t ρ x) * configFE s t ρ x) a =
       configW t ρ x a • Vvec t (configQ s t ρ x) := by
   ext c
-  simp only [mul_apply, vecMulVec_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [Matrix.mul_apply, vecMulVec_apply, Pi.smul_apply, smul_eq_mul]
   have hdot : ∑ b, configW t ρ x b * configFE s t ρ x b c =
       Vvec t (configQ s t ρ x) c := by
     have := congrArg (fun f => f c) (configFE_transpose_mulVec_w s t ρ x)
@@ -1199,7 +1199,7 @@ lemma configInvFE_none (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
   ext c
   simp only [configInvFE]
   rw [configLEE_inv s t ρ x hs hρ hγ]
-  simp only [mul_apply, Matrix.add_apply, Matrix.smul_apply, vecMulVec_apply,
+  simp only [Matrix.mul_apply, Matrix.add_apply, Matrix.smul_apply, vecMulVec_apply,
     smul_eq_mul]
   have hterm (a : Option (Fin k)) :
       (configLEEInvDiag s t ρ x none a +
@@ -1215,7 +1215,7 @@ lemma configInvFE_none (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
   have hW : ∑ a, configW t ρ x none * (configW t ρ x a * configFE s t ρ x a c) =
       Vvec t (configQ s t ρ x) c := by
     have := congrArg (fun f => f c) (vecMulVec_w_mul_FE s t ρ x none)
-    simp only [mul_apply, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, configW] at this
+    simp only [Matrix.mul_apply, vecMulVec_apply, Pi.smul_apply, smul_eq_mul, configW] at this
     simpa [configW, one_mul, mul_assoc] using this
   rw [hD, zero_add, ← Finset.mul_sum, hW]
   simp [smul_eq_mul]
@@ -1228,7 +1228,7 @@ lemma configInvFE_some (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
   ext c
   simp only [configInvFE]
   rw [configLEE_inv s t ρ x hs hρ hγ]
-  simp only [mul_apply, Matrix.add_apply, Matrix.smul_apply, vecMulVec_apply,
+  simp only [Matrix.mul_apply, Matrix.add_apply, Matrix.smul_apply, vecMulVec_apply,
     smul_eq_mul]
   have hterm (a : Option (Fin k)) :
       (configLEEInvDiag s t ρ x (some i) a +
@@ -1245,7 +1245,7 @@ lemma configInvFE_some (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
   have hW : ∑ a, configW t ρ x (some i) * (configW t ρ x a * configFE s t ρ x a c) =
       configW t ρ x (some i) * Vvec t (configQ s t ρ x) c := by
     have := congrArg (fun f => f c) (vecMulVec_w_mul_FE s t ρ x (some i))
-    simp only [mul_apply, vecMulVec_apply, Pi.smul_apply, smul_eq_mul] at this
+    simp only [Matrix.mul_apply, vecMulVec_apply, Pi.smul_apply, smul_eq_mul] at this
     convert this using 1
     refine Fintype.sum_congr _ _ fun a => ?_
     ring
@@ -1270,9 +1270,9 @@ lemma one_add_configFE_conj_inv (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
       ((configFE s t ρ x)ᵀ * configInvFE s t ρ x) c d =
         configFE s t ρ x none c * configInvFE s t ρ x none d +
           ∑ i, configFE s t ρ x (some i) c * configInvFE s t ρ x (some i) d := by
-    simp only [mul_apply, transpose_apply]
+    simp only [Matrix.mul_apply, transpose_apply]
     rw [Fintype.sum_option]
-  rw [Matrix.add_apply, one_apply, hentry]
+  rw [Matrix.add_apply, Matrix.one_apply, hentry]
   simp only [configFE_none, configInvFE_none s t ρ x hs hρ hγ, configFE_some,
     configInvFE_some s t ρ x hs hρ hγ, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   have hV : e (0 : Fin 3) c + ∑ i, configQ s t ρ x i * v (t i) c =
@@ -1314,7 +1314,7 @@ lemma configLTE_mul_InvFE (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
           (h t (configQ s t ρ x) (x j) / configγ s t ρ x) •
             Vvec t (configQ s t ρ x)) := by
   ext c
-  simp only [mul_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [Matrix.mul_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
   rw [Fintype.sum_option]
   simp only [configLTE_none, configLTE_some, configInvFE_some s t ρ x hs hρ hγ,
     Pi.add_apply, Pi.smul_apply, smul_eq_mul, zero_mul, zero_add]
@@ -1403,7 +1403,7 @@ lemma configLred_of_ne (hs : ∀ i, 0 < s i) (hρ : ∀ j, 0 < ρ j)
       · intro b hb
         simp only [configLEEInvDiag]
         rw [diagonal_apply_ne _ hb, mul_zero]
-    simp only [mul_apply]
+    simp only [Matrix.mul_apply]
     have : ∑ a, (∑ b, configLTE s t ρ x j b * configLEEInvDiag s t ρ x b a) *
         configLET s t ρ x a ℓ =
         ∑ a, configLTE s t ρ x j a * configLEEInvDiag s t ρ x a a *
@@ -1748,7 +1748,7 @@ lemma elimEE_eq_LEE_add_FE (hs : ∀ i, 0 < s i) (ht : ∀ i, 0 < t i)
   change M (Xconfig s t ρ x) (elimEEmbed a) (elimEEmbed b) =
     (configLEE s t ρ x + configFE s t ρ x * (configFE s t ρ x)ᵀ) a b
   rw [hM]
-  simp only [elimEEmbed, Matrix.add_apply, mul_apply, transpose_apply, configLEE, configFE,
+  simp only [elimEEmbed, Matrix.add_apply, Matrix.mul_apply, transpose_apply, configLEE, configFE,
     transpose_submatrix, submatrix_apply, configEEmbed, id_eq]
   exact add_comm _ _
 
@@ -1761,8 +1761,8 @@ lemma elimET_eq_LET_add_FE_FT (hs : ∀ i, 0 < s i) (ht : ∀ i, 0 < t i)
   change M (Xconfig s t ρ x) (elimEEmbed a) (elimT j) =
     (configLET s t ρ x + configFE s t ρ x * (configFT s t ρ x)ᵀ) a j
   rw [hM]
-  simp only [elimEEmbed, elimT, Matrix.add_apply, mul_apply, transpose_apply, configLET, configFE,
-    configFT, transpose_submatrix, submatrix_apply, configEEmbed, id_eq]
+  simp only [elimEEmbed, elimT, Matrix.add_apply, Matrix.mul_apply, transpose_apply, configLET,
+    configFE, configFT, transpose_submatrix, submatrix_apply, configEEmbed, id_eq]
   exact add_comm _ _
 
 lemma elimTE_eq_LTE_add_FT_FE (hs : ∀ i, 0 < s i) (ht : ∀ i, 0 < t i)
@@ -1774,8 +1774,8 @@ lemma elimTE_eq_LTE_add_FT_FE (hs : ∀ i, 0 < s i) (ht : ∀ i, 0 < t i)
   change M (Xconfig s t ρ x) (elimT j) (elimEEmbed a) =
     (configLTE s t ρ x + configFT s t ρ x * (configFE s t ρ x)ᵀ) j a
   rw [hM]
-  simp only [elimT, elimEEmbed, Matrix.add_apply, mul_apply, transpose_apply, configLTE, configFT,
-    configFE, transpose_submatrix, submatrix_apply, configEEmbed, id_eq]
+  simp only [elimT, elimEEmbed, Matrix.add_apply, Matrix.mul_apply, transpose_apply, configLTE,
+    configFT, configFE, transpose_submatrix, submatrix_apply, configEEmbed, id_eq]
   exact add_comm _ _
 
 lemma elimTT_eq_LTT_add_FT_FT (hs : ∀ i, 0 < s i) (ht : ∀ i, 0 < t i)
@@ -1787,7 +1787,7 @@ lemma elimTT_eq_LTT_add_FT_FT (hs : ∀ i, 0 < s i) (ht : ∀ i, 0 < t i)
   change M (Xconfig s t ρ x) (elimT j) (elimT ℓ) =
     (configLTT s t ρ x + configFT s t ρ x * (configFT s t ρ x)ᵀ) j ℓ
   rw [hM]
-  simp [configLTT, configFT, Matrix.add_apply, submatrix_apply, mul_apply,
+  simp [configLTT, configFT, Matrix.add_apply, submatrix_apply, Matrix.mul_apply,
     transpose_apply, elimT]
   abel
 
@@ -2040,7 +2040,7 @@ lemma isCompletelyPositive_of_submatrix_pad {ι n : Type*} [Finite ι]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [Finset.sum_comm]
       refine Finset.sum_congr rfl fun b _ => ?_
-      split_ifs <;> simp [mul_apply, transpose_apply]
+      split_ifs <;> simp [Matrix.mul_apply, transpose_apply]
     change C i j = (A' * A'ᵀ) i j
     have hAT : (A' * A'ᵀ) i j = ∑ k : Fin r, A' i k * A' j k := by
       simp [Matrix.mul_apply, Matrix.transpose_apply]

@@ -7,11 +7,11 @@ module
 
 public import LeanPool.Ratpoints.Spec.Sturm
 
+import Mathlib.FieldTheory.IsRealClosed.Real
 import LeanPool.Ratpoints.Mathlib.FieldTheory.Perfect
 import TauCeti.Algebra.Polynomial.Sturm.GCD
 import TauCeti.Algebra.Polynomial.Sturm.OneSided
 import TauCeti.Algebra.Polynomial.Sturm.Variation
-import TauCeti.FieldTheory.IsRealClosed.Real
 
 /-!
 # Root counting for the Ratpoints Sturm specification
@@ -41,12 +41,12 @@ private theorem squarefree_sturmSeq_alternating {p : ℝ[X]} (hp : Squarefree p)
 
 private theorem signRight_eq_sign_derivative_of_simple_root {p : ℝ[X]} {a : ℝ}
     (ha : p.IsRoot a) (hd : p.derivative.eval a ≠ 0) :
-    p.signRight a = sign (p.derivative.eval a) := by
+    p.derivSignRight a = sign (p.derivative.eval a) := by
   have hm := derivative_rootMultiplicity_of_root ha
   rw [rootMultiplicity_eq_zero hd] at hm
   have hpos := (rootMultiplicity_pos (show p ≠ 0 from fun h => hd (by simp [h]))).mpr ha
   have hone : p.rootMultiplicity a = 1 := by omega
-  simp [signRight_def, hone]
+  simp [derivSignRight_def, hone]
 
 private theorem signVariationsRight_sturmSeq_eq_at {p : ℝ[X]} (hp : Squarefree p) (a : ℝ) :
     signVariationsRight (sturmSeq p p.derivative) a =
@@ -57,9 +57,9 @@ private theorem signVariationsRight_sturmSeq_eq_at {p : ℝ[X]} (hp : Squarefree
   obtain ⟨x, hax, hxu⟩ := exists_between hau
   have hs (q : ℝ[X]) (hq : q ∈ cs) := hu q hq x ⟨hax, hxu⟩
   have hn (q : ℝ[X]) (hq : q ∈ cs) :=
-    eval_ne_zero_of_sign_eq_signRight (halt.nonzero q hq) (hs q hq)
+    eval_ne_zero_of_sign_eq_derivSignRight (halt.nonzero q hq) (hs q hq)
   have ha (q : ℝ[X]) (hq : q ∈ cs) (hq0 : q.eval a ≠ 0) :=
-    (hs q hq).trans (signRight_eq_sign_eval q hq0)
+    (hs q hq).trans (derivSignRight_eq_sign_eval q hq0)
   change signVariationsRight cs a = signVariationsAt cs a
   rw [← signVariationsAt_eq_right hs]
   by_cases hpa : p.IsRoot a

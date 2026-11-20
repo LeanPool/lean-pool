@@ -53,8 +53,8 @@ theorem X_pow_sub_C_irreducible_of_sqrt_neg_one
       apply hn
       simp [hnZero]
     rw [mul_comm]
-    have hirred := X_pow_sub_C_irreducible_of_prime hp (ha p hp (dvd_mul_right _ _))
-    apply X_pow_mul_sub_C_irreducible hirred
+    have hirred := irreducible_X_pow_sub_C_of_prime hp (ha p hp (dvd_mul_right _ _))
+    apply irreducible_X_pow_mul_sub_C hirred
     let : Fact (Irreducible (X ^ p - C a)) := ⟨hirred⟩
     let iE : AdjoinRoot (X ^ p - C a) := algebraMap K _ i
     have hiE : iE ^ 2 = -1 := by
@@ -219,7 +219,7 @@ private theorem generalSplitTraceEtaKummerPolynomial_natDegree
   let hBaseIrred := splitTraceBaseKummerPolynomial_irreducible sigma hsigma
   let : Fact (Irreducible (splitTraceBaseKummerPolynomial sigma)) := ⟨hBaseIrred⟩
   change (X ^ e - C (splitTraceBaseV sigma)).natDegree = e
-  exact natDegree_X_pow_sub_C
+  exact natDegree_X_pow_sub_C _
 
 private theorem generalSplitTraceXiKummerPolynomial_natDegree
     (sigma : K) (hsigma : sigma ≠ 0) (i : K) (hi : i ^ 2 = -1)
@@ -236,7 +236,7 @@ private theorem generalSplitTraceXiKummerPolynomial_natDegree
     sigma hsigma i hi e he
   let : Fact (Irreducible (splitTraceEtaKummerPolynomial sigma e)) := ⟨hEtaIrred⟩
   change (X ^ d - C (splitTraceXiRadicand sigma e)).natDegree = d
-  exact natDegree_X_pow_sub_C
+  exact natDegree_X_pow_sub_C _
 
 /-- Rectangular residue index for arbitrary positive coprime exponents. -/
 def generalSplitTraceMonomialNormalIndex

@@ -333,7 +333,7 @@ theorem pressure_divergence_cutoff_source_slice_le
         (ENNReal.ofReal (6 / 5 : ℝ)) μ := by
     let a : Vec3 → ℝ := fun x => ∑ i,
       |pressureDivergenceCutoffSource η dη u Du f x i|
-    apply eLpNorm_mono_enorm_ae hsourceMeas
+    apply eLpNorm_mono_eNorm_ae hsourceMeas
     filter_upwards [] with x
     have hnonneg : 0 ≤ a x := Finset.sum_nonneg (fun i _ => abs_nonneg _)
     have hpoint : ‖pressureDivergenceCutoffSource η dη u Du f x‖ ≤ a x := by
@@ -343,7 +343,7 @@ theorem pressure_divergence_cutoff_source_slice_le
           space_norm_le_vec3_euclidean _
         _ ≤ a x := by exact vec3_norm_le_sum_abs _
     change ‖pressureDivergenceCutoffSource η dη u Du f x‖ₑ ≤ ‖a x‖ₑ
-    rw [← ofReal_norm, Real.enorm_eq_ofReal hnonneg]
+    rw [← ofReal_norm, Real.eNorm_eq_ofReal hnonneg]
     exact ENNReal.ofReal_le_ofReal hpoint
   have hsumBound : eLpNorm (fun x => ∑ i,
       |pressureDivergenceCutoffSource η dη u Du f x i|)

@@ -105,10 +105,10 @@ theorem memLp_columns_iff (b : HilbertBasis ι 𝕜 F) (T : F →L[𝕜] E) :
     ContinuousLinearMap.hilbertSchmidtEnergy_def]
   have hpow : ∀ i : ι, ‖T (b i)‖ₑ ^ 2 = ((‖T (b i)‖₊ ^ 2 : ℝ≥0) : ℝ≥0∞) := by
     intro i
-    rw [enorm_eq_nnnorm, ENNReal.coe_pow]
+    rw [eNorm_eq_nnNorm, ENNReal.coe_pow]
   rw [tsum_congr hpow, ENNReal.tsum_coe_ne_top_iff_summable, ← NNReal.summable_coe]
   refine summable_congr fun i => ?_
-  rw [NNReal.coe_pow, coe_nnnorm]
+  rw [NNReal.coe_pow, coe_nnNorm]
   rw [show ((2 : ℝ≥0∞).toReal) = ((2 : ℕ) : ℝ) by simp]
   exact Real.rpow_natCast _ 2
 

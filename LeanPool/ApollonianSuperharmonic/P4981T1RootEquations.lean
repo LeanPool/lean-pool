@@ -170,7 +170,7 @@ theorem P4981T1RootEquations
             (F (X z, B)).2 = (F (C, B)).2 - ii * (F (B, A z)).2
       all_goals simp only [cb, ba z, ac z, ax z, bx z, cx z, xc z, xa z, xb z]
       all_goals refine ⟨?_, ?_, ?_, ?_⟩
-      all_goals try simp only [mul_add, mul_sub, mul_neg, square, mul_one, mul_zero]
+      all_goals simp only [mul_add, mul_sub, mul_neg, square, mul_one, mul_zero]
       all_goals ring
 
 end ApollonianSuperharmonic

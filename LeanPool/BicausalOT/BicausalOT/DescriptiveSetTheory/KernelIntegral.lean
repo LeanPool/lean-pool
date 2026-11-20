@@ -68,8 +68,7 @@ theorem MeasureTheory.AnalyticSet.preimage_of_continuous
     [TopologicalSpace V] [T2Space V]
     {S : Set V} (hS : AnalyticSet S) {h : W → V} (hh : Continuous h) :
     AnalyticSet (h ⁻¹' S) := by
-  rw [AnalyticSet] at hS
-  rcases hS with rfl | ⟨g, hg_cont, hg_range⟩
+  rcases hS.eq_empty_or_exists_range with rfl | ⟨g, hg_cont, hg_range⟩
   · rw [preimage_empty]; exact analyticSet_empty
   have hpre : h ⁻¹' range g = Prod.fst '' {p : W × (ℕ → ℕ) | g p.2 = h p.1} := by
     ext w
@@ -148,8 +147,8 @@ theorem MeasureTheory.AnalyticSet.prod_apply
     μ.prod ν S = ∫⁻ v, ν (Prod.mk v ⁻¹' S) ∂μ := by
   obtain ⟨B, hBmeas, haeq⟩ := hS.nullMeasurableSet (μ.prod ν)
   have h1 : μ.prod ν S = μ.prod ν B := measure_congr haeq
-  have hSB : μ.prod ν (S \ B) = 0 := ae_le_set.mp haeq.le
-  have hBS : μ.prod ν (B \ S) = 0 := ae_le_set.mp haeq.symm.le
+  have hSB : μ.prod ν (S \ B) = 0 := ae_subset.mp haeq.subset
+  have hBS : μ.prod ν (B \ S) = 0 := ae_subset.mp haeq.symm.subset
   -- measurable hulls of the two null differences
   set N₁ := toMeasurable (μ.prod ν) (S \ B) with hN₁
   set N₂ := toMeasurable (μ.prod ν) (B \ S) with hN₂

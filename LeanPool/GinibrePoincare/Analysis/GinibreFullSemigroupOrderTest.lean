@@ -100,7 +100,7 @@ theorem ginibreNegativeTest_lipschitz : ∃ K : ℝ≥0, LipschitzWith K ginibre
     · rw [smoothTransition_deriv_zero_outside hx, norm_zero]
       exact le_max_right _ _
   have hl : LipschitzWith ⟨max B 0, le_max_right _ _⟩ Real.smoothTransition :=
-    lipschitzWith_of_nnnorm_deriv_le
+    lipschitzWith_of_nnNorm_deriv_le
       ((Real.smoothTransition.contDiff : ContDiff ℝ ∞ Real.smoothTransition).differentiable (by
           simp))
       (fun x => by exact_mod_cast hb x)

@@ -123,12 +123,12 @@ theorem measureEquiv_map_fst_measure (D : MultiplicityDatum ℂ) :
   rw [MultiplicityDatum.measure_def, map_fst_sliceSum]
   constructor
   · refine Measure.AbsolutelyContinuous.mk fun t ht h0 => ?_
-    rw [Measure.sum_apply _ ht, ENNReal.tsum_eq_zero]
+    rw [Measure.sum_apply _ ht, tsum_eq_zero_iff]
     intro k
     rw [Measure.restrict_apply ht]
     exact measure_mono_null Set.inter_subset_left h0
   · refine Measure.AbsolutelyContinuous.mk fun t ht h0 => ?_
-    rw [Measure.sum_apply _ ht, ENNReal.tsum_eq_zero] at h0
+    rw [Measure.sum_apply _ ht, tsum_eq_zero_iff] at h0
     have h00 := h0 0
     rw [Measure.restrict_apply ht] at h00
     have hsub : t ⊆ (t ∩ D.level 0) ∪ (D.level 0)ᶜ := by

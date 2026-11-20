@@ -46,12 +46,12 @@ theorem blowupScalarTimeThree_eq
       (p := (3 : NNReal)) (f := fun x : Vec3 => g (x, t))
       (by norm_num) ht
     norm_num at h ⊢
-    simpa [Real.enorm_eq_ofReal_abs] using h
+    simpa [Real.eNorm_eq_ofReal_abs] using h
   have hmeas : AEMeasurable
       (fun z : Vec3 × ℝ => ENNReal.ofReal |g z| ^ (3 : ℝ))
       (μx.prod μt) := by
-    simpa only [μx, μt, Real.enorm_eq_ofReal_abs, Function.comp_def] using
-      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hg.enorm)
+    simpa only [μx, μt, Real.eNorm_eq_ofReal_abs, Function.comp_def] using
+      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hg.eNorm)
   calc
     (∫⁻ t in J,
       eLpNorm (fun x : Vec3 => g (x, t)) (3 : ℝ≥0∞)

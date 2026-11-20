@@ -979,14 +979,14 @@ private lemma hermite_series_memLp (f : SchwartzMap ℝ ℝ) :
     rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) from by norm_num]
     simp_rw [ENNReal.rpow_natCast]
     rw [show (fun x => ‖g x‖ₑ ^ 2) = (fun x => ENNReal.ofReal (g x ^ 2)) from by
-      ext x; rw [← enorm_pow, enorm_eq_ofReal (sq_nonneg _)]]
+      ext x; rw [← eNorm_pow, eNorm_eq_ofReal (sq_nonneg _)]]
     rw [← ofReal_integral_eq_lintegral_ofReal hg h_nn]
   -- Helper: eLpNorm(S_N) ≤ eLpNorm(f) for all N
   have h_eLpNorm_le : ∀ N, eLpNorm (S N) 2 volume ≤ eLpNorm f 2 volume := by
     intro N
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
           (hS_memLp N).aestronglyMeasurable,
-        eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+        eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
           (f.memLp 2 volume).aestronglyMeasurable]
     apply ENNReal.rpow_le_rpow _ (by positivity)
     rw [h_lintegral_sq (S N) (hS_memLp N).integrable_sq,
@@ -1024,7 +1024,7 @@ private lemma integral_tsum_mul_hermite (f : SchwartzMap ℝ ℝ) (m : ℕ) :
       have h_summable_nn : Summable (fun n => ‖hermiteCoeff1D n f‖₊) := by
         rw [← NNReal.summable_coe]
         exact (hermiteCoeff_abs_summable f).congr
-          (fun n => by simp [coe_nnnorm, Real.norm_eq_abs])
+          (fun n => by simp [Real.norm_eq_abs])
       -- Helper: ∫ ψₖ² = 1 (from orthonormality)
       have hψ_sq : ∀ k, ∫ x, hermiteFunction k x ^ 2 = 1 := fun k => by
         simpa only [pow_two, ite_true] using hermiteFunction_orthonormal k k
@@ -1058,7 +1058,7 @@ private lemma integral_tsum_mul_hermite (f : SchwartzMap ℝ ℝ) (m : ℕ) :
         change ∫⁻ a, ↑‖hermiteCoeff1D n f * hermiteFunction n a *
             hermiteFunction m a‖₊ ≤ ↑‖hermiteCoeff1D n f‖₊
         -- Factor out constant: ‖c * (ψₙ * ψₘ)‖₊ = ‖c‖₊ * ‖ψₙ * ψₘ‖₊
-        conv_lhs => arg 2; ext a; rw [mul_assoc, nnnorm_mul, ENNReal.coe_mul]
+        conv_lhs => arg 2; ext a; rw [mul_assoc, nnNorm_mul, ENNReal.coe_mul]
         rw [lintegral_const_mul' _ _ ENNReal.coe_ne_top]
         suffices h : ∫⁻ a, ↑‖hermiteFunction n a * hermiteFunction m a‖₊ ≤ 1 by
           calc ↑‖hermiteCoeff1D n f‖₊ * ∫⁻ a, ↑‖hermiteFunction n a *
@@ -1084,7 +1084,7 @@ private lemma integral_tsum_mul_hermite (f : SchwartzMap ℝ ℝ) (m : ℕ) :
       -- Sum the bound: ∑' ‖cₙ‖₊ < ⊤
       apply ne_top_of_le_ne_top
         (ENNReal.tsum_coe_ne_top_iff_summable.mpr h_summable_nn)
-      exact ENNReal.tsum_le_tsum h_bound)]
+      exact tsum_le_tsum h_bound)]
 
 -- The Hermite series converges to f a.e. (key lemma, uses hermiteFunction_complete)
 private lemma hermite_series_eq_f_ae (f : SchwartzMap ℝ ℝ) :

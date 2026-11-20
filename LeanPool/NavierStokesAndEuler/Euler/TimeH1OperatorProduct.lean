@@ -87,7 +87,7 @@ theorem operatorPath_absolutelyContinuous
       HasDerivWithinAt (extendPath T hT A) (A' t) (Icc (0 : ℝ) T) t) :
     AbsolutelyContinuousOnInterval (extendPath T hT A) 0 T := by
   have hl : LipschitzOnWith ‖A'‖₊ (extendPath T hT A) (Icc (0 : ℝ) T) := by
-    apply (convex_Icc (0 : ℝ) T).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+    apply (convex_Icc (0 : ℝ) T).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
       (f' := extendPath T hT A')
     · intro t ht
       simpa only [extendPath, projIcc_of_mem hT ht] using hA ⟨t, ht⟩

@@ -64,7 +64,7 @@ open PlaneTree
 /-- `c_B = 1 - μ_1` for `B = {d | d ≠ 1}` (criticality: `∑ j μ_j = 1`). -/
 theorem cB_ne_one {μ : PMF ℕ} (hc : IsCritical μ) : cB μ {d | d ≠ 1} = 1 - μ 1 := by
   classical
-  have h := ENNReal.tsum_eq_add_tsum_ite (f := fun j : ℕ => (j : ℝ≥0∞) * μ j) 1
+  have h := tsum_eq_add_tsum_ite (f := fun j : ℕ => (j : ℝ≥0∞) * μ j) 1
   have hc' : ∑' j : ℕ, (j : ℝ≥0∞) * μ j = 1 := hc
   rw [hc'] at h
   have hcB : cB μ {d | d ≠ 1} = ∑' x : ℕ, ite (x = 1) 0 ((x : ℝ≥0∞) * μ x) := by

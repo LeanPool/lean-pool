@@ -146,7 +146,7 @@ theorem transportSolution_spatialDerivative_equation
   have hV : Differentiable ℝ V := by fun_prop
   have hcomm := VectorField.fderiv_apply_lieBracket
     (𝕜 := ℝ) (f := F) (W := W) (V := V)
-    (x := p) (hY.smooth.contDiffAt) (by simp) (hW p) (hV p)
+    (x := p) (hY.smooth.contDiffAt) (by simp) (hV p) (hW p)
   have hEq : (fun q => fderiv ℝ F q (W q)) = G := by
     funext q
     exact hY.equation q.1 q.2

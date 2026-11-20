@@ -155,7 +155,7 @@ theorem mk_mul_add (x y z : IGame) : mk (x * (y + z)) = mk (x * y) + mk (x * z) 
   congr! 2
   ext p
   nth_rewrite 2 [union_left_comm]
-  congrm _ ∈ ?_ ∪ (?_ ∪ (?_ ∪ ?_))
+  congrm _ ∈ (?_ : Set ConwayGame) ∪ (?_ ∪ (?_ ∪ ?_))
   all_goals
     ext
     simp only [mulOption, mk_sub, mk_add, mem_image, mem_prod, and_assoc, Prod.exists,

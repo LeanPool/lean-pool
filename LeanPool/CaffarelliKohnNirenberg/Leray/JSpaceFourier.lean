@@ -152,7 +152,7 @@ private theorem cutoffSchwartzGradient_radius_factor_tendsto :
   have habs : Tendsto (fun n : ℕ => |(32 : ℝ) / ((n + 1 : ℕ) : ℝ)|)
       atTop (nhds 0) := hreal.congr' (Filter.Eventually.of_forall fun n =>
         (abs_of_nonneg (by positivity : 0 ≤ (32 : ℝ) / ((n + 1 : ℕ) : ℝ))).symm)
-  simpa only [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_zero] using
+  simpa only [Real.eNorm_eq_ofReal_abs, ENNReal.ofReal_zero] using
     ENNReal.tendsto_ofReal habs
 
 private theorem schwartz_abs_eLpNorm (ψ : 𝓢(Vec3, ℝ)) :
@@ -356,7 +356,7 @@ private theorem cutoffSchwartzGradient_toLp_tendsto (ψ : 𝓢(Vec3, ℝ)) :
       _ = (3 : ℝ≥0∞) * eLpNorm
           (fun x : Vec3 => ‖((CKN.euclideanBall (0 : Vec3) (r n))ᶜ.indicator grad) x‖ +
             (32 / r n) * |ψ x|) 2 volume := by
-        simp only [Real.enorm_eq_ofReal_abs, abs_of_pos (by norm_num : 0 < (3 : ℝ)),
+        simp only [Real.eNorm_eq_ofReal_abs, abs_of_pos (by norm_num : 0 < (3 : ℝ)),
           ENNReal.ofReal_ofNat]
         rfl
   have herrorTendsto : Tendsto

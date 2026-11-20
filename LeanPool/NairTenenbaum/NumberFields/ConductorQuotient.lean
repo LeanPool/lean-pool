@@ -26,16 +26,16 @@ open Polynomial NumberField Ideal KummerDedekind
 variable {K : Type*} [Field K] [NumberField K] (θ : 𝓞 K) {n : ℕ}
 
 omit [NumberField K] in
-theorem conductor_sup_span_eq_top (hn : n.Coprime (RingOfIntegers.exponent θ)) :
+theorem conductor_sup_span_eq_top (hn : n.Coprime (NumberField.RingOfIntegers.exponent θ)) :
     (conductor ℤ θ).comap (algebraMap ℤ (𝓞 K)) ⊔ Ideal.span {(n : ℤ)} = ⊤ := by
   have H := (Ideal.isCoprime_span_singleton_iff
-    (RingOfIntegers.exponent θ : ℤ) (n : ℤ)).mpr hn.symm.isCoprime
-  rw [RingOfIntegers.exponent, Int.ideal_span_absNorm_eq_self] at H
+    (NumberField.RingOfIntegers.exponent θ : ℤ) (n : ℤ)).mpr hn.symm.isCoprime
+  rw [NumberField.RingOfIntegers.exponent, Int.ideal_span_absNorm_eq_self] at H
   exact (isCoprime_iff_codisjoint.mp H).eq_top
 
 /-- The equivalence between the polynomial quotient and the residue algebra. -/
 noncomputable def residuePolynomialQuotientEquiv
-    (hn : n.Coprime (RingOfIntegers.exponent θ)) :
+    (hn : n.Coprime (NumberField.RingOfIntegers.exponent θ)) :
     (ZMod n)[X] ⧸ Ideal.span {Polynomial.map (Int.castRingHom (ZMod n)) (minpoly ℤ θ)} ≃+*
       𝓞 K ⧸ Ideal.span {(n : 𝓞 K)} :=
   (quotientEquivAlgOfEq ℤ (by simp [Ideal.map_span, Polynomial.map_map])).toRingEquiv.trans
@@ -43,7 +43,7 @@ noncomputable def residuePolynomialQuotientEquiv
       ((quotMapEquivQuotQuotMap (conductor_sup_span_eq_top θ hn) θ.isIntegral).symm.trans
         (quotientEquivAlgOfEq ℤ (by simp [map_span])).toRingEquiv))
 
-theorem residuePolynomialQuotientEquiv_mk (hn : n.Coprime (RingOfIntegers.exponent θ))
+theorem residuePolynomialQuotientEquiv_mk (hn : n.Coprime (NumberField.RingOfIntegers.exponent θ))
     (Q : ℤ[X]) :
     residuePolynomialQuotientEquiv θ hn
       ((Ideal.Quotient.mk (Ideal.span {Polynomial.map (Int.castRingHom (ZMod n)) (minpoly ℤ θ)}))

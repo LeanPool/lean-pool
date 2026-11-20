@@ -182,7 +182,7 @@ variable {X : Type*} [MeasurableSpace X]
 theorem eLpNorm_two_lt_top_iff_lintegral (ν : Measure X) (f : X → ℂ)
     (hf : AEStronglyMeasurable f ν) :
     eLpNorm f 2 ν < ∞ ↔ ∫⁻ x, ‖f x‖ₑ ^ 2 ∂ν < ∞ := by
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num) hf]
   have h2 : ((2 : ℝ≥0∞)).toReal = ((2 : ℕ) : ℝ) := by norm_num
   rw [h2]
   refine Iff.of_eq (congrArg (· < ∞) (lintegral_congr fun x => ?_))
@@ -194,8 +194,8 @@ theorem memLp_two_section {ν : ℕ → Measure X} {f : X × ℕ → ℂ} (hm : 
     MemLp (fun z => f (z, n)) 2 (ν n) := by
   rw [MemLp, eLpNorm_two_lt_top_iff_lintegral (ν n) (fun z => f (z, n))
     (hm.comp (measurable_id.prodMk measurable_const)).aestronglyMeasurable]
-  rw [lintegral_sliceSum ν (hm.enorm.pow_const 2)] at hf
-  exact (ENNReal.le_tsum n).trans_lt hf
+  rw [lintegral_sliceSum ν (hm.eNorm.pow_const 2)] at hf
+  exact (le_tsum _ n).trans_lt hf
 
 /-- Every `L²` element admits a genuinely measurable representative with finite quadratic
 Lebesgue integral.  The almost-everywhere representative of the class is only almost
@@ -284,10 +284,7 @@ theorem spectralGeneratedLE_mulLp_datumSymbol (E : MultiplicityDatum ℂ) {S : S
     rw [tsum_eq_single (j : ℕ) ?_]
     · exact ne_of_lt (lt_of_le_of_lt (measure_mono (Set.subset_univ _)) (measure_lt_top _ _))
     · intro n hn
-      convert measure_empty (μ := E.base.restrict (E.level n))
-      refine Set.eq_empty_iff_forall_notMem.mpr fun z hz => ?_
-      simp only [Set.mem_ofPred_eq, Set.mem_prod, Set.mem_singleton_iff] at hz
-      exact hn hz.2
+      simp [hn]
   refine spectralGeneratedLE_of_generators
     (fun j => indicatorConstLp 2 (hAm j) (hAfin j) (1 : ℂ)) fun x => ?_
   refine mem_closure_iSup_cyclicSubspace_of_forall_inner _ _ fun w hw => ?_
@@ -390,7 +387,7 @@ private theorem defect_vector_mass (D : MultiplicityDatum ℂ) {S : Set ℂ} {k 
       have := j.isLt
       omega
     exact D.antitone_level hjk hz.2
-  rw [MultiplicityDatum.measure_def, lintegral_sliceSum _ (hWm.enorm.pow_const 2)]
+  rw [MultiplicityDatum.measure_def, lintegral_sliceSum _ (hWm.eNorm.pow_const 2)]
   have hterm : ∀ j : Fin (k + 1),
       ∫⁻ z, ‖W (z, (j : ℕ))‖ₑ ^ 2 ∂(D.base.restrict (D.level (j : ℕ)))
         = ∫⁻ z, ‖w₀ z j‖ₑ ^ 2 ∂(D.base.restrict (S ∩ D.level k)) := by
@@ -401,7 +398,7 @@ private theorem defect_vector_mass (D : MultiplicityDatum ℂ) {S : Set ℂ} {k 
       rw [hWval z (j : ℕ) j.isLt, Fin.eta]
       by_cases hz : z ∈ S ∩ D.level k
       · rw [Set.indicator_of_mem hz, Set.indicator_of_mem hz]
-      · rw [Set.indicator_of_notMem hz, Set.indicator_of_notMem hz, enorm_zero]
+      · rw [Set.indicator_of_notMem hz, Set.indicator_of_notMem hz, eNorm_zero]
         simp
     rw [lintegral_congr hpt, lintegral_indicator hS'm, ← hrestr j]
   rw [tsum_eq_sum (s := Finset.range (k + 1)) ?_, ← Fin.sum_univ_eq_sum_range]
@@ -409,7 +406,7 @@ private theorem defect_vector_mass (D : MultiplicityDatum ℂ) {S : Set ℂ} {k 
         ∫⁻ z, ‖W (z, (j : ℕ))‖ₑ ^ 2 ∂(D.base.restrict (D.level (j : ℕ)))
           = ∫⁻ z, ‖w₀ z j‖ₑ ^ 2 ∂(D.base.restrict (S ∩ D.level k)) := hterm
     rw [Finset.sum_congr rfl fun j _ => hstep j, ← lintegral_finsetSum _
-      (fun j _ => (hw₀m j).enorm.pow_const 2)]
+      (fun j _ => (hw₀m j).eNorm.pow_const 2)]
     have hone : ∀ z, (∑ j : Fin (k + 1), ‖w₀ z j‖ₑ ^ 2) = 1 := by
       intro z
       have h2 : ∀ j : Fin (k + 1), ‖w₀ z j‖ₑ ^ 2 = ENNReal.ofReal (‖w₀ z j‖ ^ 2) := by
@@ -660,16 +657,14 @@ theorem base_level_diff_eq_zero_of_operatorUnitaryEquiv {D E : MultiplicityDatum
     (D.measurableSet_level k).diff (E.measurableSet_level k)
   -- The set avoids `E.level k`, so on the `E` side `k` generators suffice.
   have hnullE : E.base ((D.level k \ E.level k) ∩ E.level k) = 0 := by
-    convert measure_empty (μ := E.base)
-    refine Set.eq_empty_iff_forall_notMem.mpr fun z hz => ?_
-    exact hz.1.2 hz.2
+    simp
   have hupper := spectralGeneratedLE_mulLp_datumSymbol E hSm hnullE
   rw [operator_eq_mulLp_datumSymbol D, operator_eq_mulLp_datumSymbol E] at h
   obtain ⟨e, he⟩ := h.symm.exists_intertwiner
   have htrans := spectralGeneratedLE_of_intertwines _ e he hupper
   -- But the set fills `D.level k` with positive measure, so on the `D` side they cannot.
   refine not_spectralGeneratedLE_mulLp_datumSymbol D hSm ?_ htrans
-  rw [Set.inter_eq_self_of_subset_left fun z hz => hz.1]
+  rw [Set.inter_eq_self_of_subset_left Set.sdiff_subset]
   exact hpos
 
 /-- **The level sets of a multiplicity datum are unitary invariants.**  This is the level-set

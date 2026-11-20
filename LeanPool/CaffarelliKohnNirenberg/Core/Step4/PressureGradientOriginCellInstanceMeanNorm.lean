@@ -53,10 +53,10 @@ theorem origin_slice_mean_free_component_norm_bound
       rw [Real.norm_of_nonneg (vec3EuclideanNorm_nonneg _), Real.norm_eq_abs]
       exact abs_apply_le_vec3EuclideanNorm _ j))
   refine hj.trans ?_
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) ENNReal.ofReal_ne_top hvN,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) ENNReal.ofReal_ne_top huM]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) ENNReal.ofReal_ne_top hvN,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) ENNReal.ofReal_ne_top huM]
   simp only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3),
-    Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+    Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
   have h := origin_slice_mean_free_cube_bound hr hu hu3
   have hid := meanFreeVec_eq_sub_spatialAverage hu
   have hmean : (∫⁻ y in vec3Ball x r,

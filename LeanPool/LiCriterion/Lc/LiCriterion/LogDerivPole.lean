@@ -151,7 +151,7 @@ theorem tendsto_norm_logDeriv_of_analyticAt_of_eq_zero {f : ℂ → ℂ} {z0 : �
     (hf : AnalyticAt ℂ f z0) (hf0 : f z0 = 0) (hne : ¬ (∀ᶠ z in 𝓝 z0, f z = 0)) :
     Tendsto (fun z => ‖_root_.logDeriv f z‖) (𝓝[≠] z0) atTop := by
   classical
-  rcases (AnalyticAt.exists_eventuallyEq_pow_smul_nonzero_iff (f := f) (z₀ := z0) hf).2 hne with
+  rcases (AnalyticAt.exists_eventuallyEq_pow_smul_ne_zero_iff (f := f) (z₀ := z0) hf).2 hne with
     ⟨n, g, hg_an, hg0_ne, hfg⟩
   have hfg_mul : ∀ᶠ z in 𝓝 z0, f z = (z - z0) ^ n * g z := by
     filter_upwards [hfg] with z hz

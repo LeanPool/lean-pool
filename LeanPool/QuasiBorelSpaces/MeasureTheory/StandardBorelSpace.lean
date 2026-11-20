@@ -38,7 +38,7 @@ lemma standardBorelSpace_iff (A : Type*) [MeasurableSpace A]
           fun_prop
         simp_all
       | inr h₃ =>
-        obtain ⟨h₄⟩ := MeasureTheory.measurableEquiv_range_coe_nat_of_infinite_of_countable A
+        obtain ⟨h₄⟩ := MeasureTheory.measurableEquiv_range_natCast_of_infinite_of_countable A
         left
         constructor
         intro s

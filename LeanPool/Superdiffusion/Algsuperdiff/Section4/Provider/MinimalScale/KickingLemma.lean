@@ -318,7 +318,7 @@ theorem dThree_le_ofReal_mul_hessInnerE (M : ABKModel d) (s : {s : ℝ // 0 < s}
           ((Real.sqrt (Disorder.cstar M))⁻¹ * ((s : ℝ))⁻¹ * Real.sqrt M.gamma) *
         hessInnerE M ((s : ℝ) / 4) k omega := by
   rw [dThree, hessInnerE]
-  refine mul_le_mul_right (ENNReal.tsum_le_tsum fun n => ?_) _
+  refine mul_le_mul_right (tsum_le_tsum fun n => ?_) _
   rw [three_rpow_quarter_eq_stepThreeWt (s : ℝ) (k - n.1)]
   refine mul_le_mul_right (Finset.sum_le_sum fun i hi => ?_) _
   have hik : i ≤ k := (Finset.mem_Icc.1 hi).2

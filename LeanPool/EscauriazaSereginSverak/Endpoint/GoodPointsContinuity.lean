@@ -49,7 +49,7 @@ private theorem goodPointPressureDensity_lintegrableOn_compact
   have hp := pressure_memLp_threeHalves_on_compact_of_data hdata hK hKsub'
   have hmeas := hp.aestronglyMeasurable
   have hp' := memLp_iff.mp hp
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : ENNReal.ofReal (3 / 2 : ℝ) ≠ 0)
       ENNReal.ofReal_ne_top hmeas,
     ENNReal.toReal_ofReal (by norm_num : (3 / 2 : ℝ) ≥ 0)] at hp'

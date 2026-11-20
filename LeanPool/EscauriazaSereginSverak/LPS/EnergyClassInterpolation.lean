@@ -39,7 +39,7 @@ private theorem lps_eLpNorm_two_pow_two_eq
   have hsq (x : ℝ≥0∞) : (x ^ (1 / (2 : ℝ))) ^ (2 : ℝ) = x := by
     rw [← ENNReal.rpow_mul]
     norm_num
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     hf.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, hsq]
 
@@ -53,7 +53,7 @@ private theorem lps_gradient_slice_square_moment_lt_top
   let Q : Set ParabolicPoint := spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)
   let ν : Measure (Vec3 × ℝ) := (volume : Measure Vec3).prod μt
   let G : Vec3 × ℝ → ℝ≥0∞ := fun z => ‖Du z‖ₑ ^ (2 : ℝ)
-  have hGmeas : AEMeasurable G ν := (serrin_aesm_prod hU.meas_Du).enorm.pow_const _
+  have hGmeas : AEMeasurable G ν := (serrin_aesm_prod hU.meas_Du).eNorm.pow_const _
   have hTonelli :
       (∫⁻ z in Q, ‖Du z‖ₑ ^ (2 : ℝ)) =
         ∫⁻ t : ℝ, ∫⁻ x : Vec3, ‖Du (x, t)‖ₑ ^ (2 : ℝ) ∂volume ∂μt := by
@@ -152,7 +152,7 @@ theorem lps_energy_class_mixed_moment
       have hqpos : 0 < q := by dsimp [q]; positivity
       have hqreal : (ENNReal.ofReal q).toReal = q :=
         ENNReal.toReal_ofReal hqpos.le
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (ENNReal.ofReal_pos.mpr hqpos).ne' ENNReal.ofReal_ne_top hslice.1.aestronglyMeasurable,
         hqreal, ← ENNReal.rpow_mul]
       congr 1
@@ -239,7 +239,7 @@ theorem lps_endpoint_branch_memLp_four
   have huProd := serrin_aesm_prod hU.meas_u
   let G : Vec3 × ℝ → ℝ≥0∞ := fun z => ‖u (z : ParabolicPoint)‖ₑ ^ (4 : ℝ)
   have hGmeas : AEMeasurable G ν :=
-    huProd.enorm.pow_const _
+    huProd.eNorm.pow_const _
   have hTonelli :
       (∫⁻ z in Q, ‖u z‖ₑ ^ (4 : ℝ)) =
         ∫⁻ t : ℝ, ∫⁻ x : Vec3, ‖u ((x, t) : ParabolicPoint)‖ₑ ^ (4 : ℝ) ∂volume ∂μt := by
@@ -280,7 +280,7 @@ theorem lps_endpoint_branch_memLp_four
       _ = N t ^ (2 : ℝ) *
           (∫⁻ x : Vec3, ‖u (x, t)‖ₑ ^ (2 : ℝ) ∂volume) := by
         rw [lintegral_const_mul'' _
-          (hslice.1.aestronglyMeasurable.enorm.pow_const _)]
+          (hslice.1.aestronglyMeasurable.eNorm.pow_const _)]
       _ ≤ N t ^ (2 : ℝ) * K := by
         calc
           _ = (∫⁻ x : Vec3, ‖u (x, t)‖ₑ ^ (2 : ℝ) ∂volume) * N t ^ (2 : ℝ) :=
@@ -298,7 +298,7 @@ theorem lps_endpoint_branch_memLp_four
         apply ENNReal.mul_lt_top hKfinite
         simpa [N] using hEndpoint
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hLH.2.2.1]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hLH.2.2.1]
   rw [show (ENNReal.ofReal (4 : ℝ)).toReal = 4 by norm_num]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hjoint.ne
 
@@ -353,9 +353,9 @@ theorem lps_finite_branch_memLp_four
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) := hU.meas_u
   have huProd := serrin_aesm_prod huMeas
   have hAmeas : AEMeasurable A μt := by
-    exact (huProd.enorm.pow_const s).lintegral_prod_left'
+    exact (huProd.eNorm.pow_const s).lintegral_prod_left'
   have hBmeas : AEMeasurable B μt := by
-    exact (huProd.enorm.pow_const q).lintegral_prod_left'
+    exact (huProd.eNorm.pow_const q).lintegral_prod_left'
   have hRfin : (∫⁻ t : ℝ, R t ^ (ell / s) ∂μt) < ⊤ := by
     simpa [R, ell, μt] using hSerrin
   have hBfin : (∫⁻ t : ℝ, B t ^ (moment / q) ∂μt) < ⊤ := by
@@ -408,8 +408,8 @@ theorem lps_finite_branch_memLp_four
     filter_upwards [serrinWeak_slices_ae hU] with t ht
     let wt : Vec3 → ℝ≥0∞ := fun x => ‖u (x, t)‖ₑ ^ s
     let vt : Vec3 → ℝ≥0∞ := fun x => ‖u (x, t)‖ₑ ^ q
-    have hwt : AEMeasurable wt volume := ht.1.aestronglyMeasurable.enorm.pow_const s
-    have hvt : AEMeasurable vt volume := ht.1.aestronglyMeasurable.enorm.pow_const q
+    have hwt : AEMeasurable wt volume := ht.1.aestronglyMeasurable.eNorm.pow_const s
+    have hvt : AEMeasurable vt volume := ht.1.aestronglyMeasurable.eNorm.pow_const q
     have hwpow : AEMeasurable (fun x => wt x ^ (2 / s)) volume :=
       (ENNReal.continuous_rpow_const (y := 2 / s)).measurable.comp_aemeasurable hwt
     have hvpow : AEMeasurable (fun x => vt x ^ (2 / q)) volume :=
@@ -464,7 +464,7 @@ theorem lps_finite_branch_memLp_four
           rw [hroot]
   let Q : Set ParabolicPoint := spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)
   let F : Vec3 × ℝ → ℝ≥0∞ := fun z => ‖u (z : ParabolicPoint)‖ₑ ^ (4 : ℝ)
-  have hFmeas : AEMeasurable F ν := huProd.enorm.pow_const _
+  have hFmeas : AEMeasurable F ν := huProd.eNorm.pow_const _
   have hTonelli :
       (∫⁻ z in Q, ‖u z‖ₑ ^ (4 : ℝ)) =
         ∫⁻ t : ℝ, ∫⁻ x : Vec3, ‖u ((x, t) : ParabolicPoint)‖ₑ ^ (4 : ℝ) ∂volume ∂μt := by
@@ -475,7 +475,7 @@ theorem lps_finite_branch_memLp_four
     rw [hTonelli]
     exact lt_of_le_of_lt (lintegral_mono_ae hgoodSlice) hHolderFin
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) huMeas]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) huMeas]
   rw [show (ENNReal.ofReal (4 : ℝ)).toReal = 4 by norm_num]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hJoint.ne
 

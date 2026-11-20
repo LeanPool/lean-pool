@@ -69,7 +69,7 @@ theorem tsum_prod_weight_mul (μ : PMF ℕ) (L : ℕ) (H : ℕ → ℝ≥0∞) :
     ∑' f : Fin L → PlaneTree, (∏ i, weight μ (f i)) * H (∑ i, (f i).vertexCount) =
       ∑' q, forestSizeWeight μ L q * H q := by
   simp only [forestSizeWeight, ← ENNReal.tsum_mul_right]
-  rw [ENNReal.tsum_comm]
+  rw [tsum_comm]
   refine tsum_congr fun f => ?_
   rw [tsum_eq_single (∑ i, (f i).vertexCount)]
   · rw [ite_eq_left rfl]
@@ -81,7 +81,7 @@ theorem tsum_prod_weight_mul (μ : PMF ℕ) (L : ℕ) (H : ℕ → ℝ≥0∞) :
 theorem tsum_list_prod_weight_mul (μ : PMF ℕ) (Φ : ℕ → ℕ → ℝ≥0∞) :
     ∑' ts : List PlaneTree, (ts.map (weight μ)).prod * Φ ts.length (ts.map vertexCount).sum =
       ∑' L, ∑' q, forestSizeWeight μ L q * Φ L q := by
-  rw [← List.equivSigmaTuple.symm.tsum_eq, ENNReal.tsum_sigma']
+  rw [← List.equivSigmaTuple.symm.tsum_eq, tsum_sigma']
   refine tsum_congr fun L => ?_
   rw [← tsum_prod_weight_mul]
   refine tsum_congr fun f => ?_
@@ -99,7 +99,7 @@ theorem lintegral_core_length (ρ : Measure (PlaneTree × ℕ × List PlaneTree)
   have hm : Measurable fun ω : PlaneTree × ℕ × List PlaneTree => (ω.2.1, ω.2.2.length) :=
     Measurable.of_discrete
   have h := lintegral_map (μ := ρ) (f := fun p : ℕ × ℕ => g p.1 p.2) Measurable.of_discrete hm
-  rw [← h, lintegral_countable', ENNReal.tsum_prod']
+  rw [← h, lintegral_countable', tsum_prod']
   refine tsum_congr fun c => tsum_congr fun L => ?_
   rw [Measure.map_apply hm (MeasurableSet.singleton _), mul_comm]
   congr 2
@@ -118,7 +118,7 @@ theorem lintegral_skeleton {G : PlaneTree → Prop} {ρ : Measure (PlaneTree × 
   have h1 := lintegral_map (μ := ρ)
     (f := fun p : ℕ × List PlaneTree => h p.1 p.2.length (p.2.map vertexCount).sum)
     Measurable.of_discrete hm
-  rw [← h1, lintegral_countable', ENNReal.tsum_prod']
+  rw [← h1, lintegral_countable', tsum_prod']
   refine tsum_congr fun c => ?_
   have h2 : ∀ ts : List PlaneTree, (ρ.map fun ω => ω.2) {(c, ts)} =
       ρ {ω | ω.2.1 = c ∧ ω.2.2.length = ts.length} * (ts.map (weight μ)).prod := by
@@ -151,9 +151,9 @@ theorem lintegral_skeleton_le {G : PlaneTree → Prop}
       K * ∫⁻ ω, (ω.2.2.length : ℝ≥0∞) ∂ρ := by
   rw [lintegral_skeleton hρ, lintegral_core_length ρ (fun _ L => (L : ℝ≥0∞)),
     ← ENNReal.tsum_mul_left]
-  refine ENNReal.tsum_le_tsum fun c => ?_
+  refine tsum_le_tsum fun c => ?_
   rw [← ENNReal.tsum_mul_left]
-  refine ENNReal.tsum_le_tsum fun L => ?_
+  refine tsum_le_tsum fun L => ?_
   calc ρ {ω | ω.2.1 = c ∧ ω.2.2.length = L} * ∑' q, forestSizeWeight μ L q * h c L q
       ≤ ρ {ω | ω.2.1 = c ∧ ω.2.2.length = L} * (K * L) := by gcongr; exact hK c L
     _ = K * (ρ {ω | ω.2.1 = c ∧ ω.2.2.length = L} * L) := by ring
@@ -827,7 +827,7 @@ theorem cond_vertexCount_eq_le (hT : StableToolkit μ α a) :
               C₀ * L * ((2 * ((n - c : ℕ) : ℝ)) * (Cc * a (n - c))) := by gcongr
           nlinarith
         · have h1 : ∑' q, forestSizeWeight μ L q * h₂ c L q = 0 := by
-            refine ENNReal.tsum_eq_zero.2 fun q => ?_
+            refine tsum_eq_zero_iff.2 fun q => ?_
             simp only [hh₂]
             rw [ite_eq_right (fun h => h2 h.1), mul_zero]
           rw [h1]

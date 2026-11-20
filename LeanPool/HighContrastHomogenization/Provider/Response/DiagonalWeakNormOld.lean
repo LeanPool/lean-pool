@@ -167,7 +167,7 @@ theorem normalized_adaptedWeakSeminorm_good_tail_le [NeZero d]
                     blockCellAverage (adaptedCell q t)
                       (diagonalWeakState hq t a p r)))))) ≤
         ∑' j : ℕ, ENNReal.ofReal (b j) :=
-      ENNReal.tsum_le_tsum fun j => ENNReal.ofReal_le_ofReal (hscale j)
+      tsum_le_tsum fun j => ENNReal.ofReal_le_ofReal (hscale j)
     _ = ENNReal.ofReal (∑' j, b j) :=
       (ENNReal.ofReal_tsum_of_nonneg hb0 hbsum).symm
     _ ≤ ENNReal.ofReal (C *
@@ -309,7 +309,7 @@ theorem normalized_adaptedWeakSeminorm_good_tail_at_level_le [NeZero d]
                     blockCellAverage (adaptedCell q t)
                       (diagonalWeakState hq t a p r)))))) ≤
         ∑' j : ℕ, ENNReal.ofReal (b j) :=
-      ENNReal.tsum_le_tsum fun j => ENNReal.ofReal_le_ofReal (hscale j)
+      tsum_le_tsum fun j => ENNReal.ofReal_le_ofReal (hscale j)
     _ = ENNReal.ofReal (∑' j, b j) :=
       (ENNReal.ofReal_tsum_of_nonneg hb0 hbsum).symm
     _ ≤ ENNReal.ofReal (C *

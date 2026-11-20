@@ -112,7 +112,7 @@ theorem exists_power_eq_mul_of_analyticAt_oneVariable
     rw [oneCoordinateEquiv.symm_apply_apply] at hx
     exact hx
   obtain ⟨m, u, hu, hu0, hfactor⟩ :=
-    hF.exists_eventuallyEq_pow_smul_nonzero_iff.mpr hF_ne
+    hF.exists_eventuallyEq_pow_smul_ne_zero_iff.mpr hF_ne
   have hm : 0 < m := by
     by_contra hm
     have hm0 : m = 0 := Nat.eq_zero_of_not_pos hm
@@ -123,7 +123,7 @@ theorem exists_power_eq_mul_of_analyticAt_oneVariable
   obtain ⟨p, hp⟩ := hG
   let q : ℂ → ℂ := dslope G 0
   have hq : AnalyticAt ℂ q 0 :=
-    ⟨p.fslope, hp.has_fpower_series_dslope_fslope⟩
+    ⟨p.fslope, hp.dslope_fslope⟩
   have hGfactor : ∀ z : ℂ, G z = z * q z := by
     intro z
     simpa [q] using (sub_smul_dslope_of_zero hG0 z).symm

@@ -151,22 +151,22 @@ private theorem small_on_subsets
   have hsum (s : Finset ℕ) : ‖∑ i ∈ s, v i‖ ≤ δ⁻¹ := by
     apply (BoundedContinuousFunction.norm_le (show 0 ≤ δ⁻¹ by positivity)).2
     intro x
-    rw [BoundedContinuousFunction.sum_apply]
+    rw [sum_apply]
     by_cases hx : ∃ i ∈ s, x ∈ B i
     · obtain ⟨i, hi, hxi⟩ := hx
       have heq : (∑ j ∈ s, (v j) x) = (v i) x := by
         apply Finset.sum_eq_single i
         · intro j hj hji
           have hxj : x ∉ B j := fun hxj => hji (hdisj hxj hxi)
-          simp [v, BoundedContinuousFunction.smul_apply, smul_eq_mul, hxj]
+          simp [v, smul_eq_mul, hxj]
         · intro hnot
           exact (hnot hi).elim
       rw [heq]
-      simpa [v, BoundedContinuousFunction.smul_apply, smul_eq_mul, hxi] using hcoef i
+      simpa [v, smul_apply, smul_eq_mul, hxi] using hcoef i
     · have hzero : ∀ i ∈ s, (v i) x = 0 := by
         intro i hi
         have hxi : x ∉ B i := fun hxi => hx ⟨i, hi, hxi⟩
-        simp [v, BoundedContinuousFunction.smul_apply, smul_eq_mul, hxi]
+        simp [v, smul_eq_mul, hxi]
       rw [Finset.sum_eq_zero hzero, norm_zero]
       positivity
   obtain ⟨N, hN⟩ := exists_nat_gt (‖φ‖ * δ⁻¹)
@@ -282,7 +282,7 @@ theorem diagonal_of_indicator_tendsto
       chi (𝕜 := 𝕜) A = chi (F i) + e (n i) + chi (B i) := by
     apply BoundedContinuousFunction.ext
     intro x
-    simp only [BoundedContinuousFunction.add_apply, chi_apply, e_apply]
+    simp only [add_apply, chi_apply, e_apply]
     by_cases hx : x ∈ A
     · obtain ⟨j, rfl⟩ := hx
       have hA : n j ∈ A := ⟨j, rfl⟩
@@ -381,8 +381,7 @@ private noncomputable def finiteVector (s : Finset ℕ) (c : ℕ → 𝕜) : Lin
 private theorem finiteVector_apply (s : Finset ℕ) (c : ℕ → 𝕜) (k : ℕ) :
     finiteVector s c k = if k ∈ s then c k else 0 := by
   classical
-  simp only [finiteVector, BoundedContinuousFunction.sum_apply,
-    BoundedContinuousFunction.smul_apply, e_apply, smul_eq_mul]
+  simp only [finiteVector, sum_apply, smul_apply, e_apply, smul_eq_mul]
   by_cases hk : k ∈ s
   · rw [ite_eq_left hk]
     calc

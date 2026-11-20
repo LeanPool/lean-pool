@@ -22,7 +22,8 @@ variable {K : Type*} [Field K] [NumberField K]
 
 theorem primeIdeals_degreeOne_sum_le (θ : 𝓞 K) (S : Finset (Ideal (𝓞 K)))
     (hS : ∀ P ∈ S, Prime P) (hdeg : ∀ P ∈ S, Ideal.absNorm P = rationalPrimeBelow P)
-    (hgood : ∀ P ∈ S, (rationalPrimeBelow P).Coprime (RingOfIntegers.exponent θ)) (σ : ℝ) :
+    (hgood : ∀ P ∈ S, (rationalPrimeBelow P).Coprime (NumberField.RingOfIntegers.exponent θ))
+    (σ : ℝ) :
     (∑ P ∈ S, (Ideal.absNorm P : ℝ) ^ (-σ)) ≤
       ∑ p ∈ S.image rationalPrimeBelow, (rootCount (minpoly ℤ θ) p : ℝ) * (p : ℝ) ^ (-σ) := by
   classical
@@ -32,14 +33,14 @@ theorem primeIdeals_degreeOne_sum_le (θ : 𝓞 K) (S : Finset (Ideal (𝓞 K)))
   intro p hp
   obtain ⟨P, hP, hPb⟩ := mem_image.mp hp
   have hp' : p.Prime := hPb ▸ rationalPrimeBelow_prime (hS P hP)
-  have hc : p.Coprime (RingOfIntegers.exponent θ) := hPb ▸ hgood P hP
+  have hc : p.Coprime (NumberField.RingOfIntegers.exponent θ) := hPb ▸ hgood P hP
   let T := S.filter (fun P => rationalPrimeBelow P = p)
   let f : T → {I : Ideal (𝓞 K) // Ideal.absNorm I = p} :=
     fun I => ⟨I.1, (hdeg I.1 (mem_filter.mp I.2).1).trans (mem_filter.mp I.2).2⟩
   have hf : Function.Injective f := fun I J h => Subtype.ext
     (show I.1 = J.1 from congrArg (fun x => x.1) h)
-  let : Finite {I : Ideal (𝓞 K) // Ideal.absNorm I = p} := (Ideal.finite_setOfPred_absNorm_eq
-      p).to_subtype
+  let : Finite {I : Ideal (𝓞 K) // Ideal.absNorm I = p} :=
+    (Ring.HasFiniteQuotients.finite_absNorm_eq p).to_subtype
   have hcard : T.card ≤ rootCount (minpoly ℤ θ) p := by
     rw [rootCount_minpoly_eq_idealNormCount θ hp' hc]
     simpa [idealNormCount] using Nat.card_le_card_of_injective f hf
@@ -71,16 +72,19 @@ theorem primeIdeals_bad_sum_le {D : ℕ} (hD : D ≠ 0) (S : Finset (Ideal (𝓞
     _ ≤ _ := hcard.trans (mul_le_mul_of_nonneg_left (by
       exact_mod_cast card_le_card hsub) (Nat.cast_nonneg _))
 
-theorem primeIdeals_sum_le_rootSum_add_error (θ : 𝓞 K) (hD : RingOfIntegers.exponent θ ≠ 0)
+theorem primeIdeals_sum_le_rootSum_add_error (θ : 𝓞 K)
+    (hD : NumberField.RingOfIntegers.exponent θ ≠ 0)
     (S : Finset (Ideal (𝓞 K))) (hS : ∀ P ∈ S, Prime P) {σ : ℝ} (hσ : 1 ≤ σ) :
     (∑ P ∈ S, (Ideal.absNorm P : ℝ) ^ (-σ)) ≤
       (∑ p ∈ S.image rationalPrimeBelow, (rootCount (minpoly ℤ θ) p : ℝ) * (p : ℝ) ^ (-σ)) +
-      (Module.finrank ℚ K : ℝ) * ((RingOfIntegers.exponent θ).primeFactors.card +
+      (Module.finrank ℚ K : ℝ) * ((NumberField.RingOfIntegers.exponent θ).primeFactors.card +
         ∑' n : ℕ, (n : ℝ) ^ (-2 : ℝ)) := by
   classical
   let T := S.filter (fun P => Ideal.absNorm P = rationalPrimeBelow P)
-  let G := T.filter (fun P => (rationalPrimeBelow P).Coprime (RingOfIntegers.exponent θ))
-  let B := T.filter (fun P => ¬(rationalPrimeBelow P).Coprime (RingOfIntegers.exponent θ))
+  let G := T.filter
+    (fun P => (rationalPrimeBelow P).Coprime (NumberField.RingOfIntegers.exponent θ))
+  let B := T.filter
+    (fun P => ¬(rationalPrimeBelow P).Coprime (NumberField.RingOfIntegers.exponent θ))
   have hT (P : Ideal (𝓞 K)) (hP : P ∈ T) := hS P (mem_filter.mp hP).1
   have HG := primeIdeals_degreeOne_sum_le θ G
     (fun P hP => hT P (mem_filter.mp hP).1)
@@ -100,17 +104,17 @@ theorem primeIdeals_sum_le_rootSum_add_error (θ : 𝓞 K) (hD : RingOfIntegers.
   have HE₁ := sum_filter_add_sum_filter_not S (fun P => Ideal.absNorm P = rationalPrimeBelow P)
     (fun P => (Ideal.absNorm P : ℝ) ^ (-σ))
   have HE₂ := sum_filter_add_sum_filter_not T
-    (fun P => (rationalPrimeBelow P).Coprime (RingOfIntegers.exponent θ))
+    (fun P => (rationalPrimeBelow P).Coprime (NumberField.RingOfIntegers.exponent θ))
     (fun P => (Ideal.absNorm P : ℝ) ^ (-σ))
   change (∑ P ∈ G, _) + (∑ P ∈ B, _) = ∑ P ∈ T, _ at HE₂
   change (∑ P ∈ T, _) + _ = _ at HE₁
   nlinarith
 
-theorem primeIdeals_eulerExponent_le (θ : 𝓞 K) (hD : RingOfIntegers.exponent θ ≠ 0)
+theorem primeIdeals_eulerExponent_le (θ : 𝓞 K) (hD : NumberField.RingOfIntegers.exponent θ ≠ 0)
     (S : Finset (Ideal (𝓞 K))) (hS : ∀ P ∈ S, Prime P) {σ : ℝ} (hσ : 1 ≤ σ) :
     (∑ P ∈ S, ((Ideal.absNorm P : ℝ) ^ (-σ) + 2 * ((Ideal.absNorm P : ℝ) ^ (-σ)) ^ 2)) ≤
       (∑ p ∈ S.image rationalPrimeBelow, (rootCount (minpoly ℤ θ) p : ℝ) * (p : ℝ) ^ (-σ)) +
-      (Module.finrank ℚ K : ℝ) * ((RingOfIntegers.exponent θ).primeFactors.card +
+      (Module.finrank ℚ K : ℝ) * ((NumberField.RingOfIntegers.exponent θ).primeFactors.card +
         3 * ∑' n : ℕ, (n : ℝ) ^ (-2 : ℝ)) := by
   have H := primeIdeals_sum_le_rootSum_add_error θ hD S hS hσ
   have H₂ := primeIdeal_square_error_sum_le S hS hσ

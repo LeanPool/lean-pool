@@ -51,7 +51,7 @@ theorem eLpNorm_hilbertifyVecField_eq_rpow_lintegral_vecNormSq
     (hF : AEStronglyMeasurable (hilbertifyVecField F) (volume.restrict U)) :
     eLpNorm (hilbertifyVecField F) 2 (volume.restrict U) =
       (∫⁻ x in U, ENNReal.ofReal (vecNormSq (F x)) ∂volume) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hF]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hF]
   norm_num only [ENNReal.toReal_ofNat]
   congr 1
   apply lintegral_congr

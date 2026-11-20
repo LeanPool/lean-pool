@@ -30,7 +30,7 @@ private theorem uc_enorm_smul_sq_le
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (c : ℝ) (hc : 0 ≤ c) (hc1 : c ≤ 1) (v : E) :
     ‖c • v‖ₑ ^ (2 : ℝ) ≤ ‖v‖ₑ ^ (2 : ℝ) := by
-  rw [enorm_smul, ← ofReal_norm c, Real.norm_eq_abs, abs_of_nonneg hc]
+  rw [eNorm_smul, ← ofReal_norm c, Real.norm_eq_abs, abs_of_nonneg hc]
   rw [ENNReal.rpow_ofNat, mul_pow]
   have hcoef : ENNReal.ofReal c ^ (2 : ℕ) ≤ 1 := by
     exact pow_le_one₀ bot_le (ENNReal.ofReal_le_one.mpr hc1)
@@ -71,19 +71,19 @@ theorem uc_scaled_l2_data
   have hwm : AEMeasurable (fun z : ParabolicPoint => ‖w z‖ₑ ^ (2 : ℝ))
       (volume.restrict Q) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hweak.1.mono_set hQsubS).aestronglyMeasurable.enorm)
+      ((hweak.1.mono_set hQsubS).aestronglyMeasurable.eNorm)
   have hDwm : AEMeasurable (fun z : ParabolicPoint => ‖Dw z‖ₑ ^ (2 : ℝ))
       (volume.restrict Q) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hweak.2.1.mono_set hQsubS).aestronglyMeasurable.enorm)
+      ((hweak.2.1.mono_set hQsubS).aestronglyMeasurable.eNorm)
   have hD2m : AEMeasurable (fun z : ParabolicPoint => ‖D2w z‖ₑ ^ (2 : ℝ))
       (volume.restrict Q) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hweak.2.2.1.mono_set hQsubS).aestronglyMeasurable.enorm)
+      ((hweak.2.2.1.mono_set hQsubS).aestronglyMeasurable.eNorm)
   have hDtm : AEMeasurable (fun z : ParabolicPoint => ‖Dtw z‖ₑ ^ (2 : ℝ))
       (volume.restrict Q) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hweak.2.2.2.1.mono_set hQsubS).aestronglyMeasurable.enorm)
+      ((hweak.2.2.2.1.mono_set hQsubS).aestronglyMeasurable.eNorm)
   have hFm : AEMeasurable F (volume.restrict Q) :=
     ((hwm.add hDwm).add hD2m).add hDtm
   have hΩ : MeasurableSet (vec3Ball x₀ (scale * ρ)) :=

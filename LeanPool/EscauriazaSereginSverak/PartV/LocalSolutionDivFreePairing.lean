@@ -100,7 +100,7 @@ theorem forcedHeat_divergence_pairing_eq_zero {G : Fin 3 → Fin 3 → Parabolic
           ∫⁻ p : Vec3 × ℝ,
             ‖heatKernelSpaceDerivative p.1 p.2 j * G i j (x - p.1, t - p.2)‖ₑ) := by
       have hdx : ‖d i x‖ₑ ≤ ENNReal.ofReal (c i) * ENNReal.ofReal (forcedHeatWeight x) := by
-        rw [← ENNReal.ofReal_mul (hc0 i), Real.enorm_eq_ofReal_abs]
+        rw [← ENNReal.ofReal_mul (hc0 i), Real.eNorm_eq_ofReal_abs]
         exact ENNReal.ofReal_le_ofReal (hc i x)
       calc
         ∫⁻ p : Vec3 × ℝ, ‖J i j (x, p)‖ₑ = ∫⁻ p : Vec3 × ℝ,
@@ -108,17 +108,17 @@ theorem forcedHeat_divergence_pairing_eq_zero {G : Fin 3 → Fin 3 → Parabolic
           congr 1
           funext p
           simp only [J]
-          rw [enorm_mul]
+          rw [eNorm_mul]
         _ = (∫⁻ p : Vec3 × ℝ,
             ‖heatKernelSpaceDerivative p.1 p.2 j * G i j (x - p.1, t - p.2)‖ₑ) * ‖d i x‖ₑ :=
-          lintegral_mul_const' _ _ enorm_ne_top
+          lintegral_mul_const' _ _ eNorm_ne_top
         _ ≤ (∫⁻ p : Vec3 × ℝ,
             ‖heatKernelSpaceDerivative p.1 p.2 j * G i j (x - p.1, t - p.2)‖ₑ) *
               (ENNReal.ofReal (c i) * ENNReal.ofReal (forcedHeatWeight x)) := by
           gcongr
         _ = _ := by ring
     change ∫⁻ q, ‖J i j q‖ₑ ∂((volume : Measure Vec3).prod (volume : Measure (Vec3 × ℝ))) < ∞
-    rw [lintegral_prod _ (hJm i j).enorm.aemeasurable]
+    rw [lintegral_prod _ (hJm i j).eNorm.aemeasurable]
     calc
       ∫⁻ x : Vec3, ∫⁻ p : Vec3 × ℝ, ‖J i j (x, p)‖ₑ ≤
           ∫⁻ x : Vec3, ENNReal.ofReal (c i) * (ENNReal.ofReal (forcedHeatWeight x) *

@@ -288,7 +288,7 @@ theorem annealedBlock_adaptedCellAt_le [NeZero d] {P : Measure (CoeffSpace d)}
               toFullBlockMat E)) X) := by linarith only [hstep0]
   rw [half_blockQuadratic_majorant] at hstep1
   -- the rows
-  have hins : Finset.Icc J r = insert r (Finset.Ico J r) := (Finset.Ico_insert_right hJr).symm
+  have hins : Finset.Icc J r = insert r (Finset.Ico J r) := (Finset.insert_right_Ico hJr).symm
   have hnotmem : r ∉ Finset.Ico J r := by simp
   rw [hins, Finset.sum_insert hnotmem] at hstep1
   have hrowtop : (∑ v ∈ Z r, (volume (adaptedCellAt (1 : Mat d) r v)).toReal /

@@ -129,14 +129,14 @@ theorem isStepSlope_ramp (h : RampData spec pot sgn lo t) :
     have h2 : min (offset.val - lo edge) t = offset.val - lo edge := by omega
     rw [h1, h2]
     push_cast
-    try ring
+    ring
   · rw [ite_eq_right hw]
     have h1 : min (offset.val + 1 - lo edge) t =
         min (offset.val - lo edge) t := by
       simp only [not_and_or, not_le, not_lt] at hw
       omega
     rw [h1]
-    try ring
+    ring
 
 theorem prin_ramp_coreVertex (h : RampData spec pot sgn lo t) (v : Fin n) :
     prin spec.graph (rampScript spec pot sgn lo t) (spec.coreVertex v) =
@@ -193,7 +193,7 @@ theorem rampSlope_diff (sgn : Fin p → ℤ) (lo : Fin p → ℕ) (t : ℕ)
       by_cases h2 : lo edge ≤ k - 1 ∧ k - 1 < lo edge + t
       · rw [ite_eq_left h2, ite_eq_right (show ¬ (k = lo edge ∧ 0 < t) by omega),
           ite_eq_right (show ¬ (k = lo edge + t ∧ 0 < t) by omega)]
-        try ring
+        ring
       · rw [ite_eq_right h2, ite_eq_left (show k = lo edge ∧ 0 < t by omega),
           ite_eq_right (show ¬ (k = lo edge + t ∧ 0 < t) by omega)]
     · rw [ite_eq_right h1]

@@ -253,8 +253,7 @@ theorem empiricalMeasureError_eq_empiricalError (X : Type u) [MeasurableSpace X]
   unfold EmpiricalMeasureError TrueError EmpiricalMeasure
   rw [dite_eq_right hm']
   unfold EmpiricalError
-  rw [ite_eq_right hm', MeasureTheory.Measure.smul_apply,
-      MeasureTheory.Measure.finsetSum_apply]
+  rw [ite_eq_right hm', smul_apply, sum_apply]
   simp only [MeasureTheory.Measure.dirac_apply, Set.indicator, Set.mem_ofPred_eq, Pi.one_apply]
   rw [smul_eq_mul]
   have hne_top : ∀ i ∈ Finset.univ, (if h (xs i) ≠ c (xs i) then (1 : ENNReal) else 0) ≠ ⊤ := by
@@ -1446,7 +1445,7 @@ theorem nfl_core (X : Type u) [MeasurableSpace X] [Fintype X]
     have hD_seen_le : D (Set.range xs) ≤ 1 / 2 := by
       change uniformMeasure X hne _ ≤ _
       unfold uniformMeasure
-      rw [MeasureTheory.Measure.smul_apply, smul_eq_mul,
+      rw [smul_apply, smul_eq_mul,
           MeasureTheory.Measure.count_apply_finite' hfin hfin.measurableSet]
       have hrc : hfin.toFinset.card ≤ m := by
         calc hfin.toFinset.card
@@ -1499,7 +1498,7 @@ theorem nfl_core (X : Type u) [MeasurableSpace X] [Fintype X]
         -- D {xs₀ i} ≠ 0: uniformMeasure gives mass 1/|X| > 0 to every singleton
         change D {xs₀ i} ≠ 0
         change (uniformMeasure X hne) {xs₀ i} ≠ 0
-        simp only [uniformMeasure, MeasureTheory.Measure.smul_apply, smul_eq_mul]
+        simp only [uniformMeasure, smul_apply, smul_eq_mul]
         simp_all
     _ ≤ MeasureTheory.Measure.pi (fun _ : Fin m => D)
           { xs | D { x | L.learn (fun i => (xs i, c₀ (xs i))) x ≠ c₀ x }
@@ -1602,7 +1601,7 @@ theorem pac_lower_bound_good_event_le_half
     have hunif : D_sub { t : ↥T | c₀ (↑t) ≠ h_val (↑t) } =
         ((Finset.univ.filter fun t : ↥T => c₀ (↑t) ≠ h_val (↑t)).card : ENNReal) /
           (T.card : ENNReal) := by
-      simp only [D_sub, uniformMeasure, MeasureTheory.Measure.smul_apply, smul_eq_mul]
+      simp only [D_sub, uniformMeasure, smul_apply, smul_eq_mul]
       rw [@MeasureTheory.Measure.count_apply_finite' ↥T ⊤ _
         (Set.toFinite _) MeasurableSpace.measurableSet_top]
       simp only [Fintype.card_coe, one_div, ne_eq, Set.Finite.toFinset_ofPred,
@@ -1650,7 +1649,7 @@ theorem pac_lower_bound_good_event_le_half
       @MeasureTheory.IsFiniteMeasure.toSigmaFinite ↥T ⊤ D_sub inferInstance
     have hD_sub_singleton : ∀ t : ↥T, D_sub {t} = 1 / (T.card : ENNReal) := by
       intro t
-      simp only [D_sub, uniformMeasure, MeasureTheory.Measure.smul_apply, smul_eq_mul]
+      simp only [D_sub, uniformMeasure, smul_apply, smul_eq_mul]
       simp_all
     have hpi_singleton : ∀ xs : Fin m → ↥T,
         μ_pi {xs} = (1 / (T.card : ENNReal)) ^ m := by

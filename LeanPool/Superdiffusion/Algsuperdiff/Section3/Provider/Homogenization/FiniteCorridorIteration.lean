@@ -251,7 +251,7 @@ private theorem weightedDefect_decay_of_kernel {F : ℕ → ℝ} {A C K₀ K δ 
   have hKδ : 0 ≤ K * δ := mul_nonneg hK hδ
   intro j
   induction j using Nat.strong_induction_on with
-  | h j ih =>
+  | ind j ih =>
       rcases Nat.eq_zero_or_pos j with hj | hj
       · subst hj
         have h1 : K₀ * δ ≤ K * δ := mul_le_mul_of_nonneg_right hK₀K hδ

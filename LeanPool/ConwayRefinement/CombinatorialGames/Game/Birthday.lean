@@ -212,7 +212,7 @@ instance small_setOf_birthday_lt (o : NatOrdinal.{u}) : Small.{u} {x | birthday 
     simp_rw [lt_succ_iff, birthday_le_iff] at hx
     ext p; cases p <;> simp_all
   | isSuccPrelimit o ho ih =>
-    convert @small_biUnion _ _ (Iio o) _ (fun i _ => {x : IGame.{u} | x.birthday < i}) ih
+    convert @small_biUnion _ _ (Iio o) _ (fun i _ => {x : IGame.{u} | x.birthday < i}) ih using 2
     ext x
     simpa [Set.nonempty_def, and_comm] using ho.lt_iff_nonempty_Ioo
 
@@ -317,7 +317,7 @@ noncomputable def birthday (x : ConwayGame.{u}) : NatOrdinal.{u} :=
 
 theorem birthday_eq_iGameBirthday (x : ConwayGame) :
     ∃ y : IGame, ConwayGame.mk y = x ∧ y.birthday = birthday x := by
-  refine csInf_mem (image_nonempty.2 ?_)
+  refine csInf_mem (s := IGame.birthday '' (mk ⁻¹' {x})) (image_nonempty.2 ?_)
   exact ⟨_, x.out_eq⟩
 
 theorem birthday_mk_le (x : IGame) : birthday (mk x) ≤ x.birthday :=

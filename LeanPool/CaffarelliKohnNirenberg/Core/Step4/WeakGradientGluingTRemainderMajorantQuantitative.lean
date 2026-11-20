@@ -243,7 +243,7 @@ private lemma pressure_utensor_integral_le_two_energy
         (∫ y, (‖F y‖ : ℝ) ^ (2 : ℕ) ∂μ) ^ (1 / 2 : ℝ) *
           (∫ y, (‖G y‖ : ℝ) ^ (2 : ℕ) ∂μ) ^ (1 / 2 : ℝ) := by
     convert hholder using 1
-    all_goals norm_num [Real.rpow_natCast]
+    norm_num [Real.rpow_natCast]
   have hprodle := @pressure_utensor_integral_le_two_energy_hprodle_3 μ F G hFnonneg hGle hholder'
   have hUnorm : ∀ y, pressureUTensorNorm u c s y = gu y * gv y := by
     intro y
@@ -606,8 +606,8 @@ theorem fixed_remainder_slice_majorant_moment_of_sws
 
 private theorem ofReal_integral_le_mass (B : Set Vec3) (g : Vec3 → ℝ) :
     ENNReal.ofReal (∫ y in B, g y) ≤ ∫⁻ y in B, ENNReal.ofReal |g y| := by
-  have h := enorm_integral_le_lintegral_enorm (μ := volume.restrict B) g
-  simp only [Real.enorm_eq_ofReal_abs] at h
+  have h := eNorm_integral_le_lintegral_eNorm (μ := volume.restrict B) g
+  simp only [Real.eNorm_eq_ofReal_abs] at h
   exact (ENNReal.ofReal_le_ofReal (le_abs_self _)).trans h
 
 /-- A universal harmonic constant gives a quantitative majorant for the actual fixed remainder. -/
@@ -691,7 +691,7 @@ theorem exists_fixed_remainder_quantitative_majorant :
       nlinarith only [ht]
     have hb' := hb.trans (mul_le_mul_of_nonneg_right (le_abs_self Cf)
       (integral_nonneg (fun _ => vec3EuclideanNorm_nonneg _)))
-    rw [Real.enorm_eq_ofReal_abs]
+    rw [Real.eNorm_eq_ofReal_abs]
     apply (ENNReal.ofReal_le_ofReal hb').trans
     rw [ENNReal.ofReal_mul (abs_nonneg _)]
     apply mul_le_mul' le_rfl
@@ -699,7 +699,7 @@ theorem exists_fixed_remainder_quantitative_majorant :
       ofReal_integral_le_mass B (fun y => vec3EuclideanNorm (f (y,s)))
   change ‖classicalGradient (h+v) x i‖ₑ ≤ _
   rw [hgrad]
-  exact (enorm_add_le _ _).trans (add_le_add hhb hvb)
+  exact (eNorm_add_le _ _).trans (add_le_add hhb hvb)
 
 /-- The explicit moment coefficient is finite for every fixed real collar radius. -/
 theorem fixedRemainderMomentConstant_lt_top (C ρ : ℝ) (x : Vec3) :

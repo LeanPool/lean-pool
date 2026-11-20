@@ -742,7 +742,7 @@ lemma ZetaSum_aux1 {a b : ℕ} {s : ℂ} (s_ne_one : s ≠ 1) (s_ne_zero : s ≠
   · rw [Nat.floor_natCast, Nat.floor_natCast, ← intervalIntegral.integral_const_mul]
     simp_rw [mul_div, ← mul_div, φ, ZetaSum_aux1₁ s_ne_one ha]
     conv => rhs; rw [sub_eq_add_neg]
-    congr; any_goals norm_cast; simp only [one_div, add_sub_cancel_left]
+    congr; all_goals norm_cast; simp only [one_div, add_sub_cancel_left]
     rw [← intervalIntegral.integral_neg, intervalIntegral.integral_congr]
     simp only [φ, one_div] at φderiv
     intro x hx; simp_rw [φderiv x hx, φ']; ring_nf
@@ -1016,7 +1016,7 @@ lemma ZetaBnd_aux1p (N : ℕ) (Npos : 1 ≤ N) {σ : ℝ} (hσ : σ ∈ Ioc 0 2)
     (fun (t : ℝ) ↦
       ‖(σ + t * I) * ∫ x in Ioi (N : ℝ), (⌊x⌋ + 1 / 2 - x) / (x : ℂ) ^ ((σ + t * I) + 1)‖)
     =O[Filter.principal {t | 2 ≤ |t|}] fun t ↦ |t| * N ^ (-σ) / σ := by
-  rw [Asymptotics.IsBigO_def]
+  rw [Asymptotics.isBigO_iff_isBigOWith]
   use 2
   rw [Asymptotics.isBigOWith_principal]
   intro t ht
@@ -1039,7 +1039,7 @@ lemma ZetaBnd_aux1p (N : ℕ) (Npos : 1 ≤ N) {σ : ℝ} (hσ : σ ∈ Ioc 0 2)
   linarith only [hσ.2, ht, hσ]
 
 lemma isOpen_aux : IsOpen {z : ℂ | z ≠ 1 ∧ 0 < z.re} := by
-  refine IsOpen.inter isOpen_ne ?_
+  refine IsOpen.and isOpen_ne ?_
   exact isOpen_lt (g := fun (z : ℂ) ↦ z.re) (by continuity) (by continuity)
 
 open MeasureTheory in
@@ -2173,7 +2173,7 @@ lemma ZetaNear1BndExact :
   have cont : ContinuousOn ζ {ofReal z | z ∈ W} := by
     apply HasDerivAt.continuousOn (f' := ζ')
     intro σ hσ
-    exact (differentiableAt_riemannZeta (by contrapose! hσ; simp [W, hσ, εpos])).hasDerivAt
+    exact (differentiableAt_riemannZeta (by contrapose hσ; simp [W, hσ, εpos])).hasDerivAt
   obtain ⟨C, hC⟩ := IsCompact.exists_bound_of_continuousOn W_compact cont
   let C' := max (C + 1) 1
   replace hC : ∀ (σ : ℝ), σ ∈ W → ‖ζ σ‖ < C' := by
@@ -2428,7 +2428,7 @@ lemma Zeta_eq_int_derivZeta {σ₁ σ₂ t : ℝ} (t_ne_zero : t ≠ 0) :
   have diff : ∀ (σ : ℝ), DifferentiableAt ℂ ζ (σ + t * I) := by
     intro σ
     refine differentiableAt_riemannZeta ?_
-    contrapose! t_ne_zero; apply And.right; simpa [Complex.ext_iff] using t_ne_zero
+    contrapose t_ne_zero; apply And.right; simpa [Complex.ext_iff] using t_ne_zero
   apply intervalIntegral.integral_deriv_eq_sub'
   · exact deriv_fun_re diff
   · intro s _
@@ -2440,7 +2440,7 @@ lemma Zeta_eq_int_derivZeta {σ₁ σ₂ t : ℝ} (t_ne_zero : t ≠ 0) :
       intro x hx
       apply hasDerivAt_deriv_iff.mpr
       replace hx : x ≠ 1 := by
-        contrapose! hx
+        contrapose hx
         simp only [hx, mem_image, Complex.ext_iff, add_re, ofReal_re, mul_re, I_re, mul_zero,
           ofReal_im,
           I_im, mul_one, sub_self, add_zero, one_re, add_im, mul_im, zero_add, one_im, not_exists,

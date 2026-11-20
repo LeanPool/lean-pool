@@ -39,7 +39,7 @@ theorem isClosedMap {f : Ordinal.{u} → Ordinal.{u}} (hf : IsNormal f) : IsClos
     exact ⟨ι, hι, x, hx, rfl⟩
   refine ⟨⨆ i, x i, hxsup, ?_⟩
   have hbounded : BddAbove (range x) := Ordinal.bddAbove_of_small
-  rw [hf.map_iSup hbounded]
+  rw [hf.leftOrdContinuous.map_ciSup hbounded]
   exact iSup_congr hfx
 
 /-- A normal ordinal function is a closed topological embedding. -/

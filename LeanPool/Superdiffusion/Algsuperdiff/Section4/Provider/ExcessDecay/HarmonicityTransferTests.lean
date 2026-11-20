@@ -99,7 +99,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNormTwo {W : Set (Vec d)}
   intro n
   rw [hdiff_eq n]
   have hbound : ∀ᵐ x ∂μ, ‖(f n x - g x) * h x‖₊ ≤ 1 * ‖f n x - g x‖₊ * ‖h x‖₊ :=
-    Eventually.of_forall fun x => by rw [nnnorm_mul]; simp
+    Eventually.of_forall fun x => by rw [nnNorm_mul]; simp
   have hHolder : eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
     have hh' := eLpNorm_le_eLpNorm_mul_eLpNorm
       (p := (2 : ℝ≥0∞)) (q := (2 : ℝ≥0∞)) (r := 1)
@@ -112,7 +112,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNormTwo {W : Set (Vec d)}
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
         have hm : AEStronglyMeasurable (fun x => (f n x - g x) * h x) μ :=
           ((hf n).sub hg).aestronglyMeasurable.mul hh.aestronglyMeasurable
-        rw [eLpNorm_one_eq_lintegral_enorm hm]
+        rw [eLpNorm_one_eq_lintegral_eNorm hm]
         simp_rw [ofReal_norm]
     _ ≤ (B n).toReal := by
         refine ENNReal.toReal_mono ?_ hHolder

@@ -46,7 +46,7 @@ theorem lps_slab_lintegral_eq {T : ℝ} {h : ParabolicPoint → ℝ}
       (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)))) =
       ∫⁻ t : ℝ, (∫⁻ x : Vec3, ‖h (x,t)‖ₑ) ∂(volume.restrict (Ioo 0 T)) := by
   rw [serrin_slab_measure_eq T]
-  exact lintegral_prod_symm _ (serrin_aesm_prod hh).enorm
+  exact lintegral_prod_symm _ (serrin_aesm_prod hh).eNorm
 
 /-- The slice `L¹` norm of a slab-measurable function is measurable in time. -/
 theorem lps_slice_lintegral_aemeasurable {T : ℝ} {h : ParabolicPoint → ℝ}
@@ -54,7 +54,7 @@ theorem lps_slice_lintegral_aemeasurable {T : ℝ} {h : ParabolicPoint → ℝ}
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T)))) :
     AEMeasurable (fun t : ℝ => ∫⁻ x : Vec3, ‖h (x,t)‖ₑ)
       (volume.restrict (Ioo 0 T)) :=
-  (serrin_aesm_prod hh).enorm.lintegral_prod_left'
+  (serrin_aesm_prod hh).eNorm.lintegral_prod_left'
 
 /-- Cauchy–Schwarz in time for two profiles with finite square moments. -/
 theorem lps_lintegral_mul_ne_top_of_sq {μ : Measure ℝ} {a b : ℝ → ℝ≥0∞}
@@ -143,9 +143,9 @@ theorem lps_endpoint_cutoff_pairing_limit_linf_l1
         ∫⁻ x : Vec3, ENNReal.ofReal (β τ) * ‖g (x,τ)‖ₑ := by
           refine lintegral_mono_ae ?_
           filter_upwards [hτ] with x hx
-          rw [enorm_mul]
+          rw [eNorm_mul]
           gcongr
-          rw [Real.enorm_eq_ofReal_abs]
+          rw [Real.eNorm_eq_ofReal_abs]
           exact ENNReal.ofReal_le_ofReal hx
       _ = ENNReal.ofReal (β τ) * h τ := lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
   have hDint : (∫⁻ τ in Ioo 0 t, 4 * (ENNReal.ofReal (β τ) * h τ)) ≠ ⊤ := by
@@ -230,7 +230,7 @@ theorem lps_endpoint_cutoff_pairing_limit_l2_l2
       calc (∫⁻ x : Vec3, ‖f (x,τ) * g (x,τ)‖ₑ) ≤
           eLpNorm (fun x : Vec3 => f (x,τ)) 2 volume *
             eLpNorm (fun x : Vec3 => g (x,τ)) 2 volume := by
-            simpa only [enorm_mul] using lps_lintegral_mul_le_two hfτ hgτ
+            simpa only [eNorm_mul] using lps_lintegral_mul_le_two hfτ hgτ
         _ ≤ _ := by gcongr
     refine lt_of_le_of_lt hle ?_
     rw [lintegral_const_mul' _ _ hK]

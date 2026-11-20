@@ -392,7 +392,7 @@ private theorem residueAt_zpow_sum (s : ℂ) (N : ℕ) (hN : 0 < N) (c : ℕ →
           rw [Metric.mem_sphere] at hmem
           simp [dist_self] at hmem
           exact hr_ne (abs_eq_zero.mp hmem.symm))))
-      exact h_zpow_ci.const_fun_smul
+      simpa only [smul_eq_mul] using h_zpow_ci.const_fun_smul (a := c k)
     have : ∀ S : Finset ℕ,
         (∮ z in C(s, r), ∑ k ∈ S, c k * (z - s) ^ ((k : ℤ) - (N : ℤ))) =
         ∑ k ∈ S, (∮ z in C(s, r), c k * (z - s) ^ ((k : ℤ) - (N : ℤ))) := by

@@ -73,17 +73,17 @@ theorem eLpNorm_indicator_gt_one_le_mul_measure
   have hnorm2 :
       eLpNorm (bad.indicator M) 2 P =
         (∫⁻ a, (M * I) a ^ (2 : ℝ) ∂P) ^ (1 / (2 : ℝ)) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       (hM.indicator₀ hbad).aestronglyMeasurable]
-    simp only [ENNReal.toReal_ofNat, enorm_eq_self, hmul]
+    simp only [ENNReal.toReal_ofNat, eNorm_eq_self, hmul]
   have hnormQ :
       eLpNorm M (ENNReal.ofReal Q) P =
         (∫⁻ a, M a ^ Q ∂P) ^ (1 / Q) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by
       rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
       exact hQ0) ENNReal.ofReal_ne_top hM.aestronglyMeasurable,
       ENNReal.toReal_ofReal hQ0.le]
-    simp only [enorm_eq_self]
+    simp only [eNorm_eq_self]
   have hnormI :
       (∫⁻ a, I a ^ R ∂P) ^ (1 / R) = P bad ^ (1 / R) := by
     have hRp : ENNReal.ofReal R ≠ 0 := by
@@ -91,9 +91,9 @@ theorem eLpNorm_indicator_gt_one_le_mul_measure
       exact hR0
     have hdef : eLpNorm I (ENNReal.ofReal R) P =
         (∫⁻ a, I a ^ R ∂P) ^ (1 / R) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hRp ENNReal.ofReal_ne_top
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hRp ENNReal.ofReal_ne_top
         hI.aestronglyMeasurable, ENNReal.toReal_ofReal hR0.le]
-      simp only [enorm_eq_self]
+      simp only [eNorm_eq_self]
     rw [← hdef, show I = bad.indicator (fun _ : Ω => (1 : ℝ≥0∞)) by rfl,
       eLpNorm_indicator_const₀ hbad hRp ENNReal.ofReal_ne_top,
       ENNReal.toReal_ofReal hR0.le]
@@ -275,17 +275,17 @@ theorem eLpNorm_indicator_gt_level_le_mul_measure
   have hnorm2 :
       eLpNorm (bad.indicator M) 2 P =
         (∫⁻ a, (M * I) a ^ (2 : ℝ) ∂P) ^ (1 / (2 : ℝ)) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       (hM.indicator₀ hbad).aestronglyMeasurable]
-    simp only [ENNReal.toReal_ofNat, enorm_eq_self, hmul]
+    simp only [ENNReal.toReal_ofNat, eNorm_eq_self, hmul]
   have hnormQ :
       eLpNorm M (ENNReal.ofReal Q) P =
         (∫⁻ a, M a ^ Q ∂P) ^ (1 / Q) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by
       rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
       exact hQ0) ENNReal.ofReal_ne_top hM.aestronglyMeasurable,
       ENNReal.toReal_ofReal hQ0.le]
-    simp only [enorm_eq_self]
+    simp only [eNorm_eq_self]
   have hnormI :
       (∫⁻ a, I a ^ R ∂P) ^ (1 / R) = P bad ^ (1 / R) := by
     have hRp : ENNReal.ofReal R ≠ 0 := by
@@ -293,9 +293,9 @@ theorem eLpNorm_indicator_gt_level_le_mul_measure
       exact hR0
     have hdef : eLpNorm I (ENNReal.ofReal R) P =
         (∫⁻ a, I a ^ R ∂P) ^ (1 / R) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hRp ENNReal.ofReal_ne_top
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hRp ENNReal.ofReal_ne_top
         hI.aestronglyMeasurable, ENNReal.toReal_ofReal hR0.le]
-      simp only [enorm_eq_self]
+      simp only [eNorm_eq_self]
     rw [← hdef, show I = bad.indicator (fun _ : Ω => (1 : ℝ≥0∞)) by rfl,
       eLpNorm_indicator_const₀ hbad hRp ENNReal.ofReal_ne_top,
       ENNReal.toReal_ofReal hR0.le]

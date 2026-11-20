@@ -31,7 +31,7 @@ namespace NRR.Halfspace
 /-- The public closed half‑space with inner normal `u` and offset `c`, defined as a direct
 wrapper around the implemented geometry half‑space `Geometry.lowerClosedHalfspace u c`, i.e.
 `{x : E2 | ⟪u, x⟫ ≤ c}`. (`E2` is a definitional alias of `Geometry.Plane`.) -/
-def of (u : E2) (c : ℝ) : Set E2 :=
+noncomputable def of (u : E2) (c : ℝ) : Set E2 :=
   Geometry.lowerClosedHalfspace u c
 
 @[simp] theorem of_eq_lowerClosedHalfspace (u : E2) (c : ℝ) :

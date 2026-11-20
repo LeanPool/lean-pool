@@ -551,7 +551,7 @@ theorem RightSubtileOdometerCompatibility :
         OdometerCompatibility h₀ hᵢ) := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       constructor
       · intro C T T' h h' hn hadj
         by_cases hs : ((h.domain : Set GaussianInt) ∩

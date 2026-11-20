@@ -266,7 +266,7 @@ private theorem inner_map_eigenvectorBasis {M : E →ₗ[ℝ] E} {d : ℕ}
     (hGbasis : ∀ k, (M.adjoint * M) (b k) = μ k • b k) (j k : Fin d) :
     ⟪M (b j), M (b k)⟫_ℝ = if j = k then μ j else 0 := by
   have hadj : ⟪M (b j), M (b k)⟫_ℝ = ⟪(M.adjoint * M) (b j), b k⟫_ℝ := by
-    rw [Module.End.mul_apply, LinearMap.adjoint_inner_left]
+    rw [mul_apply_eq_comp, LinearMap.adjoint_inner_left]
   rw [hadj, hGbasis j, real_inner_smul_left]
   by_cases hjk : j = k
   · subst hjk; rw [hunit j, ite_eq_left rfl, mul_one]
@@ -308,7 +308,7 @@ private theorem abs_eigenvalue_sub_one_le {M : E →ₗ[ℝ] E} {δ : ℝ}
     {v : E} (hv : ⟪v, v⟫_ℝ = 1) {lam : ℝ}
     (hGv : (M.adjoint * M) v = lam • v) : |lam - 1| ≤ δ := by
   have hquad : ⟪(M.adjoint * M) v, v⟫_ℝ = ⟪M v, M v⟫_ℝ := by
-    rw [Module.End.mul_apply, LinearMap.adjoint_inner_left]
+    rw [mul_apply_eq_comp, LinearMap.adjoint_inner_left]
   have hlam : ⟪(M.adjoint * M) v, v⟫_ℝ = lam := by
     rw [hGv, real_inner_smul_left, hv, mul_one]
   have hb := hM v

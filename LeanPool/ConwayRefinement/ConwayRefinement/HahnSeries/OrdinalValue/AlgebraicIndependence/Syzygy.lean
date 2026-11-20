@@ -239,7 +239,8 @@ theorem exists_forall_componentsGE_pol_translatedTruncation_aeval_pderiv_mem
         exact isWeightedHomogeneous_zero _ _ _⟩
   choose c hc using hgen
   have : Finite {j : ι // j ∈ F.vars ∧ wt v' < wt j} :=
-    (F.vars.finite_toSet.subset fun j (hj : j ∈ F.vars ∧ wt v' < wt j) ↦ hj.1).to_subtype
+    (F.vars.finite_toSet.subset (t := {j : ι | j ∈ F.vars ∧ wt v' < wt j})
+      fun _ hj ↦ hj.1).to_subtype
   refine componentsGE_mem_span wt hc ?_ τ
   refine Ideal.sum_mem _ fun j hj ↦ ?_
   have hj' := Finset.mem_filter.mp hj

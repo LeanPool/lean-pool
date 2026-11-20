@@ -255,7 +255,8 @@ by the two arcs are exactly the two components of the ball minus the two inciden
 segments, which is what makes the labelling at a vertex well defined. -/
 
 /-- The open sector of radius `ρ` about `v` spanned by the set `A` of directions. -/
-def cone (v : Plane) (A : Set Plane) (ρ : ℝ) : Set Plane := {x | x - v ∈ A} ∩ ball v ρ
+noncomputable def cone (v : Plane) (A : Set Plane) (ρ : ℝ) : Set Plane :=
+  {x | x - v ∈ A} ∩ ball v ρ
 
 theorem mem_cone_iff {v : Plane} {A : Set Plane} :
     x ∈ cone v A ρ ↔ x - v ∈ A ∧ dist x v < ρ := Iff.rfl
@@ -683,30 +684,30 @@ theorem rho_lt_R : D.rho < D.R := by
 /-! ### The four families of blocks -/
 
 /-- The left block of edge `i`. -/
-def blockL (i : ZMod (m + 3)) : Set Plane :=
+noncomputable def blockL (i : ZMod (m + 3)) : Set Plane :=
   strip (P.vertex i) (P.tang i) D.lam (P.len i - D.lam) 0 D.rho
 
 /-- The right block of edge `i`. -/
-def blockR (i : ZMod (m + 3)) : Set Plane :=
+noncomputable def blockR (i : ZMod (m + 3)) : Set Plane :=
   strip (P.vertex i) (P.tang i) D.lam (P.len i - D.lam) (-D.rho) 0
 
 /-- The left sector at vertex `i`: the arc `arcCCW (tang i) (rayIn i)` is the one carrying both
 left germs, by `Plane.germs_split'`. -/
-def sectorL (i : ZMod (m + 3)) : Set Plane :=
+noncomputable def sectorL (i : ZMod (m + 3)) : Set Plane :=
   cone (P.vertex i) (arcCCW (P.tang i) (P.rayIn i)) D.R
 
 /-- The right sector at vertex `i`. -/
-def sectorR (i : ZMod (m + 3)) : Set Plane :=
+noncomputable def sectorR (i : ZMod (m + 3)) : Set Plane :=
   cone (P.vertex i) (arcCCW (P.rayIn i) (P.tang i)) D.R
 
 /-- The left side of the collar. -/
-def sideL : Set Plane := ⋃ i, (D.sectorL i ∪ D.blockL i)
+noncomputable def sideL : Set Plane := ⋃ i, (D.sectorL i ∪ D.blockL i)
 
 /-- The right side of the collar. -/
-def sideR : Set Plane := ⋃ i, (D.sectorR i ∪ D.blockR i)
+noncomputable def sideR : Set Plane := ⋃ i, (D.sectorR i ∪ D.blockR i)
 
 /-- The collar itself. -/
-def nbhd : Set Plane := D.sideL ∪ D.sideR ∪ P.carrier
+noncomputable def nbhd : Set Plane := D.sideL ∪ D.sideR ∪ P.carrier
 
 theorem mem_blockL_iff : x ∈ D.blockL i ↔
     D.lam < coordAlong (P.vertex i) (P.tang i) x ∧

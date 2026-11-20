@@ -83,7 +83,7 @@ noncomputable def compactOperatorIdealFamily (𝕜 : Type u) [RCLike 𝕜] :
     · by_cases hB : IsCompactOperator B
       · have hAB : IsCompactOperator (A + B) := hA.add hB
         simp only [ite_eq_left hA, ite_eq_left hB, ite_eq_left hAB]
-        simpa [enorm_eq_nnnorm, ← ENNReal.coe_add] using nnnorm_add_le A B
+        simpa [eNorm_eq_nnNorm, ← ENNReal.coe_add] using nnNorm_add_le A B
       · simp [ite_eq_right hB]
     · simp [ite_eq_right hA]
   gauge_smul c A := by
@@ -92,13 +92,13 @@ noncomputable def compactOperatorIdealFamily (𝕜 : Type u) [RCLike 𝕜] :
     · have hz : IsCompactOperator ((0 : 𝕜) • A) := by
         rw [zero_smul]; exact isCompactOperator_zero
       have h1 : ‖((0 : 𝕜) • A)‖ₑ = 0 := by
-        rw [zero_smul]; simp [enorm_eq_nnnorm]
-      have h2 : ‖(0 : 𝕜)‖ₑ = 0 := by simp [enorm_eq_nnnorm]
+        rw [zero_smul]; simp [eNorm_eq_nnNorm]
+      have h2 : ‖(0 : 𝕜)‖ₑ = 0 := by simp [eNorm_eq_nnNorm]
       rw [ite_eq_left hz, h1, h2, zero_mul]
     · by_cases hA : IsCompactOperator A
       · have hcA : IsCompactOperator (c • A) := hA.smul c
         simp only [ite_eq_left hA, ite_eq_left hcA]
-        simp [enorm_eq_nnnorm, nnnorm_smul]
+        simp [eNorm_eq_nnNorm, nnNorm_smul]
       · have hcA : ¬ IsCompactOperator (c • A) := by
           intro h
           refine hA ?_
@@ -127,7 +127,7 @@ noncomputable def compactOperatorIdealFamily (𝕜 : Type u) [RCLike 𝕜] :
         have hz : IsCompactOperator (L ∘L A ∘L R) := by
           rw [hzero]; exact isCompactOperator_zero
         have hz0 : ‖L ∘L A ∘L R‖ₑ = 0 := by
-          rw [hzero]; simp [enorm_eq_nnnorm]
+          rw [hzero]; simp [eNorm_eq_nnNorm]
         rw [ite_eq_left hz, hz0]
         exact zero_le
       by_cases hR : R = 0
@@ -136,14 +136,14 @@ noncomputable def compactOperatorIdealFamily (𝕜 : Type u) [RCLike 𝕜] :
         have hz : IsCompactOperator (L ∘L A ∘L R) := by
           rw [hzero]; exact isCompactOperator_zero
         have hz0 : ‖L ∘L A ∘L R‖ₑ = 0 := by
-          rw [hzero]; simp [enorm_eq_nnnorm]
+          rw [hzero]; simp [eNorm_eq_nnNorm]
         rw [ite_eq_left hz, hz0]
         exact zero_le
       · have hLe : ‖L‖ₑ ≠ 0 := by
-          simp only [enorm_eq_nnnorm, ne_eq, ENNReal.coe_eq_zero, nnnorm_eq_zero]
+          simp only [eNorm_eq_nnNorm, ne_eq, ENNReal.coe_eq_zero, nnNorm_eq_zero]
           exact hL
         have hRe : ‖R‖ₑ ≠ 0 := by
-          simp only [enorm_eq_nnnorm, ne_eq, ENNReal.coe_eq_zero, nnnorm_eq_zero]
+          simp only [eNorm_eq_nnNorm, ne_eq, ENNReal.coe_eq_zero, nnNorm_eq_zero]
           exact hR
         rw [ENNReal.mul_top hLe, ENNReal.top_mul hRe]
         exact le_top
@@ -160,7 +160,7 @@ theorem mem_carrier_compactOperatorIdealFamily {A : E →L[𝕜] F} :
   classical
   rw [OperatorIdealFamily.mem_carrier_iff, gauge_compactOperatorIdealFamily]
   by_cases hA : IsCompactOperator A
-  · simp only [ite_eq_left hA, ne_eq, enorm_ne_top, not_false_eq_true, true_iff]
+  · simp only [ite_eq_left hA, ne_eq, eNorm_ne_top, not_false_eq_true, true_iff]
     exact hA
   · simp [hA]
 
@@ -202,7 +202,7 @@ noncomputable def compactOperatorIdealFamilyElemEquiv :
       mem_carrier_compactOperatorIdealFamily.mp A.val_mem
     change ‖A.val‖ = ‖A‖
     rw [OperatorIdealFamily.Elem.norm_def,
-      gauge_compactOperatorIdealFamily_of_isCompactOperator hA, toReal_enorm]
+      gauge_compactOperatorIdealFamily_of_isCompactOperator hA, toReal_eNorm]
 
 /-- **The compact ideal is complete.**  The compact operators are closed for the
 operator norm, and on them the ideal norm *is* the operator norm, so the ideal

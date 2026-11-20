@@ -130,7 +130,7 @@ private theorem ae_restrictedVolume_of_ae_normalizedVolume {d : ℕ} {m : ℤ}
   rw [BoundedMeasurableDomain.normalizedVolume] at hFG
   unfold Filter.EventuallyEq at hFG ⊢
   rw [ae_iff] at hFG ⊢
-  rw [Measure.smul_apply, smul_eq_mul, mul_eq_zero,
+  rw [smul_apply, smul_eq_mul, mul_eq_zero,
     or_iff_right (ENNReal.inv_ne_zero.mpr (centeredCubeDomain d m).volume_ne_top)] at hFG
   exact hFG
 

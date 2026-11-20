@@ -86,8 +86,8 @@ theorem ratFuncCoefficientAlgHom_inftyValuation (z : RatFunc K) :
   have hmap : ratFuncCoefficientAlgHom K E z ≠ 0 := by
     simpa using (ratFuncCoefficientAlgHom_injective K E).ne hz
   rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero E hmap,
-    RatFunc.inftyValuation_of_nonzero K hz,
+    RatFunc.inftyValuation_of_ne_zero E hmap,
+    RatFunc.inftyValuation_of_ne_zero K hz,
     ratFuncCoefficientAlgHom_intDegree K E z]
 
 /-- Coefficient extension restricted to the infinity valuation rings. -/

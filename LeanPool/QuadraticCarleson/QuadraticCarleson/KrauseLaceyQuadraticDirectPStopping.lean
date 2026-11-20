@@ -347,7 +347,7 @@ theorem pStopping_good_part_pairing_directQuadratic_of_pos_averages
   have hgnorm (x : ℝ) : ‖g x‖ₑ = ENNReal.ofReal b * ‖g₀ x‖ₑ := by
     have hx := congrFun hgback x
     rw [L0Infinity.smul_apply] at hx
-    rw [← hx, enorm_mul, ← ofReal_norm, Complex.norm_real,
+    rw [← hx, eNorm_mul, ← ofReal_norm, Complex.norm_real,
       Real.norm_eq_abs, abs_of_pos hb']
   have hpair :
       (∫⁻ x, localizedTailMaximal ell₀ scale T f x * ‖g x‖ₑ) =
@@ -426,7 +426,7 @@ theorem hasOneNodePStoppingGoodPartPairingBound_directQuadratic :
         _ = 0 := by
           apply lintegral_eq_zero_of_ae_eq_zero
           filter_upwards [hgzero] with x hx
-          simp only [hx, Pi.zero_apply, enorm_zero, mul_zero]
+          simp only [hx, Pi.zero_apply, eNorm_zero, mul_zero]
         _ ≤ ENNReal.ofReal
               (directQuadraticOneNodeConstant * holderConjugate p) *
             pStoppingSparseAtom p f g I := bot_le

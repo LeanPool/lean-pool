@@ -189,6 +189,7 @@ noncomputable def sheafHFilteredColimitH1StageNatIso
 
 variable (c' : Cocone Y') (hc' : IsColimit c')
 
+omit [IsFiltered J'] in
 private theorem sheafH_filtered_colimit_h1_boundary_square
     (hc_sections_inj : IsColimit ((sheafHFilteredColimitH1SectionsFunctor (X := X)).mapCocone
       (sheafHFilteredColimitSuccInjCocone Y')))

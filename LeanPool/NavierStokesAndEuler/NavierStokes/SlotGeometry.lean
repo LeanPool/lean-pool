@@ -143,7 +143,7 @@ theorem center_injective (m D : ℕ) : Function.Injective (center m D) := by
   have h1 := congrArg Prod.fst h
   change ((i.val : ℝ) + 1) / denominator m D =
     ((j.val : ℝ) + 1) / denominator m D at h1
-  have hnum := (div_left_inj' (ne_of_gt (denominator_pos m D))).mp h1
+  have hnum := (div_left_inj₀ (ne_of_gt (denominator_pos m D))).mp h1
   apply Fin.ext
   exact_mod_cast (add_right_cancel hnum)
 

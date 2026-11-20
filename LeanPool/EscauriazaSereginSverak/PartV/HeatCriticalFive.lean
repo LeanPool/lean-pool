@@ -156,7 +156,7 @@ theorem heatRegG_tenThirds_lintegral_le {b : Vec3 → Vec3}
   have hm := heatOrbit_aestronglyMeasurable_smooth hb hbc τ
   have hmeas : AEMeasurable (fun z => ‖heatRegG η (heatOrbit b z)‖ₑ ^ (10 / 3 : ℝ))
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 τ))) :=
-    ((heatRegG_contDiff hη).continuous.comp_aestronglyMeasurable hm).aemeasurable.enorm.pow_const _
+    ((heatRegG_contDiff hη).continuous.comp_aestronglyMeasurable hm).aemeasurable.eNorm.pow_const _
   have hDnonneg {t : ℝ} (ht : 0 < t) : 0 ≤ D t := by
     have h := heatRegG_heatConv_spatial_grad_sq_integral_le_dissipation hb hbc ht hη
     have hnn : 0 ≤ ∫ x : Vec3, ∑ j : Fin 3,
@@ -286,11 +286,11 @@ theorem heatOrbit_five_lintegral_smooth {b : Vec3 → Vec3}
       (nhds (ENNReal.ofReal (vec3EuclideanNorm (heatOrbit b z)) ^ (5 : ℝ))) := by
     have h1 := (heatRegG_tendsto_zero (heatOrbit b z)).comp hη0
     have h2 := (ENNReal.continuous_rpow_const (y := (10 / 3 : ℝ))).tendsto _ |>.comp
-      ((continuous_enorm.tendsto _).comp h1)
+      ((continuous_eNorm.tendsto _).comp h1)
     have hval : ‖vec3EuclideanNorm (heatOrbit b z) ^ (3 / 2 : ℝ)‖ₑ ^ (10 / 3 : ℝ) =
         ENNReal.ofReal (vec3EuclideanNorm (heatOrbit b z)) ^ (5 : ℝ) := by
       have hn := vec3EuclideanNorm_nonneg (heatOrbit b z)
-      rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (Real.rpow_nonneg hn _),
+      rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (Real.rpow_nonneg hn _),
         ← ENNReal.ofReal_rpow_of_nonneg hn (by norm_num), ← ENNReal.rpow_mul]
       norm_num
     rw [← hval]
@@ -298,7 +298,7 @@ theorem heatOrbit_five_lintegral_smooth {b : Vec3 → Vec3}
   have hm := heatOrbit_aestronglyMeasurable_smooth hb hbc τ
   have hmeas (n : ℕ) : AEMeasurable (f n) (volume.restrict Q) :=
     ((heatRegG_contDiff (hηpos n)).continuous.comp_aestronglyMeasurable
-      hm).aemeasurable.enorm.pow_const _
+      hm).aemeasurable.eNorm.pow_const _
   let E : ℕ → ℝ := fun n => ∫ x : Vec3, heatRegEnergy (η n) (b x)
   have hE : Tendsto E atTop (nhds L) := heatRegEnergy_initial_tendsto_l3 hb hbc
   let R : ℕ → ℝ≥0∞ := fun n => S ^ (2 : ℝ) * ENNReal.ofReal (27 * E n) ^ (2 / 3 : ℝ) *

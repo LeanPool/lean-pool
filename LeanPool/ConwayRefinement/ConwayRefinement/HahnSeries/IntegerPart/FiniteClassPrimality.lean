@@ -58,7 +58,7 @@ theorem isPrimal_of_supportArchimedeanClasses_finite_of_reduced
       (classes y).ncard = n → (classes y).Finite → IsPrimal y := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
         intro y hn hyFinite
         let yN := CardSuppLTTruncationIntegerPart.toNonpositiveRingHom Z y
         by_cases horder : (yN : R⟦G⟧).order = 0

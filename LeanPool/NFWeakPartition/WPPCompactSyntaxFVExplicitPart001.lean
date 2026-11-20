@@ -40,7 +40,8 @@ theorem fv_syn_wiso (H : Class) (R : Class) (S : Class) (A : Class) (B : Class) 
       freshVar (H.fv ∪ R.fv ∪ S.fv ∪ A.fv ∪ B.fv) 1 :=
     freshVar_injective (H.fv ∪ R.fv ∪ S.fv ∪ A.fv ∪ B.fv) (by decide)
   ext u
-  simp [synWiso, Class.fv]; aesop
+  simp [synWiso, Class.fv]
+  grind only
 
 theorem fv_syn_cpprod (A : Class) (B : Class) : (synCpprod A B).fv = (A.fv) ∪ (B.fv) :=
   by

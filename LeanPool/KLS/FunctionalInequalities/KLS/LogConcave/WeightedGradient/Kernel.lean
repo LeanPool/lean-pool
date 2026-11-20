@@ -105,7 +105,7 @@ theorem restrict_le_smul_of_eq_tilted (hνU : (ν : Measure V) = m.tilted (-U)) 
     · exact ⟨0, fun x hx => (hKne ⟨x, hx⟩).elim⟩
   refine ⟨ENNReal.ofReal (Z * Real.exp M), ENNReal.ofReal_ne_top, ?_⟩
   refine Measure.le_intro fun s hs _ => ?_
-  rw [Measure.restrict_apply hs, Measure.smul_apply, hνU, Measure.tilted,
+  rw [Measure.restrict_apply hs, smul_apply, hνU, Measure.tilted,
     withDensity_apply _ hs, smul_eq_mul]
   calc
     m (s ∩ K) = ∫⁻ x in s ∩ K, 1 ∂m := by simp

@@ -211,7 +211,7 @@ private theorem hessianQuadForm_continuousOn {d : ℕ} {f : E d → ℝ} {U : Se
     (hgrad_C1.fderiv_of_isOpen hU_is_open
       (show (0 : WithTop ℕ∞) + 1 ≤ 1 by norm_num)).continuousOn
   simp only [hessianQuadForm]
-  exact ((hDgrad_cont.comp continuousOn_fst (fun p hp => hp.1)).clm_apply
+  exact ((hDgrad_cont.comp (s := U ×ˢ Set.univ) continuousOn_fst (fun p hp => hp.1)).clm_apply
     continuousOn_snd).inner continuousOn_snd
 
 /-- A lower bound `a` for the Hessian quadratic form on unit vectors satisfying a

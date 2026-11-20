@@ -164,7 +164,7 @@ theorem measureReal_badUnion_siteBadEvent_le_of_gates (M : ABKModel d) (base : �
   have hbound : (cutoffSampleLaw M).toMeasure (badUnion (siteBadEvent M base) u) ≤
       ENNReal.ofReal (∑' l : ℕ, Real.exp (-κ) * Real.exp (-κ) ^ l) := by
     rw [hcover, ENNReal.ofReal_tsum_of_nonneg (fun l => by positivity) hsummable]
-    refine le_trans (measure_iUnion_le _) (ENNReal.tsum_le_tsum fun l => ?_)
+    refine le_trans (measure_iUnion_le _) (tsum_le_tsum fun l => ?_)
     have hfin : (cutoffSampleLaw M).toMeasure (siteBadEvent M base l u) ≠ ⊤ :=
       measure_ne_top _ _
     rw [← ENNReal.ofReal_toReal hfin]

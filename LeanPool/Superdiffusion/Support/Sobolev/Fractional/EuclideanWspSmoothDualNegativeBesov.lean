@@ -92,7 +92,7 @@ theorem cubeEuclideanNegativeBesovScalarPartialENorm_le {d : ℕ}
             gcongr with j hj
             exact cubeEuclideanNegativeBesovScalarDepthEnergy_le Q s p F i j
       _ ≤ ∑' j, cubeEuclideanNegativeBesovDepthEnergy Q s p F j :=
-        ENNReal.sum_le_tsum (Finset.range N)
+        sum_le_tsum (Finset.range N)
   · exact inv_nonneg.mpr (by positivity)
 
 theorem cubeEuclideanNegativeBesovScalarENorm_le {d : ℕ}
@@ -103,7 +103,7 @@ theorem cubeEuclideanNegativeBesovScalarENorm_le {d : ℕ}
   unfold cubeEuclideanNegativeBesovScalarENorm
   rw [cubeEuclideanNegativeBesovESeminorm_eq_tsum_depthEnergy]
   apply ENNReal.rpow_le_rpow
-  · exact ENNReal.tsum_le_tsum
+  · exact tsum_le_tsum
       (cubeEuclideanNegativeBesovScalarDepthEnergy_le Q s p F i)
   · exact inv_nonneg.mpr (by positivity)
 

@@ -361,7 +361,7 @@ The energy is valued in the extended nonnegative reals and indexed by a Hilbert 
 Frobenius is the finite real-valued seminorm. The equality uses the standard orthonormal
 basis, and `hilbertSchmidtEnergy_indep` transports the energy to any Hilbert basis.
 
-Completeness is explicit because `FiniteDimensional.complete` is not a global instance. -/
+Completeness is explicit because `FiniteDimensional.completeSpace` is not a global instance. -/
 theorem hilbertSchmidtEnergy_eq_ofReal_frobenius_sq [CompleteSpace E] (A : E →L[𝕜] F) :
     A.hilbertSchmidtEnergy (stdOrthonormalBasis 𝕜 E).toHilbertBasis
       = ENNReal.ofReal (frobenius A.toLinearMap ^ 2) := by

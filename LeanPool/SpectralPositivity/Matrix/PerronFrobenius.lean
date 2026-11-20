@@ -182,7 +182,7 @@ lemma Matrix.IsIrreducible.row_has_pos_entry {A : Matrix n n ℝ}
   cases k with
   | zero => omega
   | succ m =>
-    rw [pow_succ', mul_apply] at hk_entry
+    rw [pow_succ', Matrix.mul_apply] at hk_entry
     -- Now hk_entry : 0 < ∑ j, A i j * (A^m) j i
     have h_nn_terms : ∀ j ∈ Finset.univ, 0 ≤ A i j * (A ^ m) j i :=
       fun j _ => mul_nonneg (hnn i j) ((hnn.pow m) j i)

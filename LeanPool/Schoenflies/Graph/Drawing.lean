@@ -156,7 +156,7 @@ theorem IsDrawing.isOpen_exterior [G.Finite] (h : IsDrawing G drawing) :
 
 /-- A face of a plane graph, named by a point of the exterior rather than indexed: no face has
 to be produced before it can be spoken about. -/
-def face (G : Graph Plane β) (drawing : β → ℝ → Plane) (base : Plane) : Set Plane :=
+noncomputable def face (G : Graph Plane β) (drawing : β → ℝ → Plane) (base : Plane) : Set Plane :=
   connectedComponentIn (exterior G drawing) base
 
 theorem face_subset_exterior (G : Graph Plane β) (drawing : β → ℝ → Plane) (base : Plane) :

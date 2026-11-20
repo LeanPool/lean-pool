@@ -134,14 +134,14 @@ private theorem unitOpenCubeSup_eq_eLpNorm_top
             ∀ᵐ y ∂(volume.restrict U), ‖f y‖ₑ ≤ E := by
           dsimp only [E]
           simpa only [eLpNorm_exponent_top hf.aestronglyMeasurable] using!
-            enorm_ae_le_eLpNormEssSup f (volume.restrict U)
+            eNorm_ae_le_eLpNormEssSup f (volume.restrict U)
         have hae_not_mem : ∀ᵐ y ∂(volume.restrict U), y ∉ V := by
           filter_upwards [hae_enorm_le] with y hy
           intro hyV
           have hylt : E.toReal < f y := hyV.2
           have hbad : E < ‖f y‖ₑ := by
             rw [← ENNReal.ofReal_toReal hE_ne_top]
-            rw [Real.enorm_eq_ofReal (hf_nonneg y)]
+            rw [Real.eNorm_eq_ofReal (hf_nonneg y)]
             exact
               (ENNReal.ofReal_lt_ofReal_iff_of_nonneg ENNReal.toReal_nonneg).2
                 hylt

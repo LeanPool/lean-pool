@@ -141,7 +141,7 @@ theorem tendsto_energy_clampAt_sub {G : Ω → ℝ → ℝ} (hm : Measurable (Fu
       (bound := fun s => (‖G ω s‖₊ : ℝ≥0∞) ^ 2)
       (fun j => ((((continuous_clampAt ((j : ℕ) : ℝ)).measurable.comp
           (Measurable.of_uncurry_left hm)).sub
-        (Measurable.of_uncurry_left hm)).nnnorm.coe_nnreal_ennreal).pow_const 2)
+        (Measurable.of_uncurry_left hm)).nnNorm.coe_nnreal_ennreal).pow_const 2)
       (fun j => Filter.Eventually.of_forall fun s => hptw j ω s) hfin.ne ?_
     · simpa using hlim
     · filter_upwards with s

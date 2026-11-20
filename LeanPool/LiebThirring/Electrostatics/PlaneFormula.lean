@@ -37,7 +37,7 @@ theorem isClosedEmbedding_planeGraph (n b : Position) (a : Fin 3) (ha : n a ≠ 
     funext q
     exact (planeProjectionChart_symm_frame n b a ha F q).symm
   rw [hfun]
-  exact (affinePlane n b).closed_of_finiteDimensional.isClosedEmbedding_subtypeVal.comp
+  exact (affinePlane n b).isClosed_of_finiteDimensional.isClosedEmbedding_subtypeVal.comp
     (F.toHomeomorph.isClosedEmbedding.comp
       (AffineEquiv.toContinuousAffineEquiv e.symm).toHomeomorph.isClosedEmbedding)
 

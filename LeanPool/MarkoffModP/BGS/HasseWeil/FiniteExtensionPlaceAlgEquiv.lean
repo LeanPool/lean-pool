@@ -349,11 +349,11 @@ theorem finiteExtensionInfinityPlace_degree_eq_residue_finrank
       (A := Localization.AtPrime P.1) (fun x => ?_)
     simp only [RingHom.algebraMap_toAlgebra, RingHom.comp_apply,
       Localization.localRingHom_to_map]
-  let _ : Module.Free p.ResidueField P.1.ResidueField :=
-    Module.Free.of_divisionRing p.ResidueField P.1.ResidueField
   let : Algebra p.ResidueField P.1.ResidueField :=
     IsLocalRing.ResidueField.instAlgebra
   let : Module p.ResidueField P.1.ResidueField := Algebra.toModule
+  let _ : Module.Free p.ResidueField P.1.ResidueField :=
+    Module.Free.of_divisionRing p.ResidueField P.1.ResidueField
   let : IsScalarTower K p.ResidueField P.1.ResidueField := inferInstance
   rw [finiteExtensionPlaceDegree, Ideal.inertiaDeg_eq p P.1]
   have hbase : Module.finrank K p.ResidueField = 1 :=

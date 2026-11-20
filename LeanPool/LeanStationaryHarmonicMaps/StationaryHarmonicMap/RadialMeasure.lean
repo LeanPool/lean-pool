@@ -45,14 +45,14 @@ theorem normPushforwardVolume_absolutelyContinuous (n : ℕ) [NeZero n] :
   refine Measure.AbsolutelyContinuous.mk ?_
   intro s hs hzero
   rw [Measure.map_apply continuous_norm.measurable hs]
-  let A : Set (Domain n) := {x | s (norm x)}
+  let A : Set (Domain n) := {x | norm x ∈ s}
   have hA_meas : MeasurableSet A := by
     dsimp [A]
     exact hs.preimage continuous_norm.measurable
-  have hs_ae : ∀ᵐ y ∂(volume : Measure ℝ), ¬ s y :=
+  have hs_ae : ∀ᵐ y ∂(volume : Measure ℝ), y ∉ s :=
     (measure_eq_zero_iff_ae_notMem).1 hzero
   have hs_ae_restrict :
-      ∀ᵐ y ∂((volume : Measure ℝ).restrict (Ioi (0 : ℝ))), ¬ s y :=
+      ∀ᵐ y ∂((volume : Measure ℝ).restrict (Ioi (0 : ℝ))), y ∉ s :=
     ae_mono Measure.restrict_le_self hs_ae
   have hrad_ae :
       (fun y : ℝ =>
@@ -145,7 +145,7 @@ theorem radiusPushforward_absolutelyContinuous_euclidean {n : ℕ} [NeZero n]
   have hzero_t : (volume : Measure ℝ) t = 0 := by
     simpa [t, radiusIntervalMeasure, Measure.restrict_apply hs] using hzero
   have hnorm_t :
-      (volume : Measure (Domain n)) {x : Domain n | t (norm x)} = 0 := by
+      (volume : Measure (Domain n)) {x : Domain n | norm x ∈ t} = 0 := by
     have hmap_t := normPushforwardVolume_absolutelyContinuous n hzero_t
     have ht_meas : MeasurableSet t := by
       dsimp [t]
@@ -156,7 +156,7 @@ theorem radiusPushforward_absolutelyContinuous_euclidean {n : ℕ} [NeZero n]
     simp
   have hunion_zero :
       (volume : Measure (Domain n))
-        (Set.union {x : Domain n | t (norm x)} ({0} : Set (Domain n))) = 0 :=
+        (Set.union {x : Domain n | norm x ∈ t} ({0} : Set (Domain n))) = 0 :=
     measure_union_null hnorm_t hsingleton
   refine measure_mono_null ?_ hunion_zero
   intro x hx

@@ -259,7 +259,7 @@ theorem exists_finiteAffineGradientExcess_candidate_le
   let T : Vec d →ₗ[ℝ] H := finiteAffineHarmonicGradientLinearMap a hnm
   let Ksub : Submodule ℝ H := LinearMap.range T
   let : FiniteDimensional ℝ Ksub := T.finiteDimensional_range
-  have hKclosed : IsClosed (Ksub : Set H) := Ksub.closed_of_finiteDimensional
+  have hKclosed : IsClosed (Ksub : Set H) := Ksub.isClosed_of_finiteDimensional
   let K : ClosedSubmodule ℝ H := ⟨Ksub, hKclosed⟩
   let B : H →L[ℝ] H →L[ℝ] ℝ :=
     AHarmonicGradientHilbert.symmCoeffBilin M hEll

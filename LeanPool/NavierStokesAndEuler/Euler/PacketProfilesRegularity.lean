@@ -41,7 +41,7 @@ include hT I C hmean hhigh hcorrector hprimary in
 theorem profiles_regular (p : ℕ) :
     Nonempty (ProfileRegularity P M.T M.T_pos.le D.support (profiles O primary p)) := by
   induction p using Nat.strong_induction_on with
-  | h p ih =>
+  | ind p ih =>
     by_cases hp0 : p = 0
     · subst p
       rw [profiles_zero]

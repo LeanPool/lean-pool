@@ -994,7 +994,7 @@ theorem exists_scalarIdentityFiniteAffineBestFitErrorInductionConstants
               (finiteAffineBestFitSlope a j m hjm b) := by
     intro q
     induction q using Nat.strong_induction_on with
-    | h q ih =>
+    | ind q ih =>
       intro hqtotal j hjn hjm hgapq
       by_cases hband : m - (L : ℤ) ≤ j
       · have herrm := hgood.weakError_le

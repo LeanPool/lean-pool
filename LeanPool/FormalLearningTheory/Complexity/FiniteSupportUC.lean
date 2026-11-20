@@ -341,7 +341,7 @@ theorem finite_support_vc_approx
       apply hx
       change (μ.toPMF.map Sum.inl) x = 0
       rw [PMF.map_apply]
-      apply ENNReal.tsum_eq_zero.mpr; intro h
+      apply tsum_eq_zero_iff.mpr; intro h
       -- goal: (if x = Sum.inl h then μ.toPMF h else 0) = 0
       split_ifs with heq
       · exact absurd ⟨h, heq.symm⟩ habs
@@ -349,7 +349,7 @@ theorem finite_support_vc_approx
     have hD_inl : D (Set.range Sum.inl)ᶜ = 0 := by
       rw [hD_eq, @PMF.toMeasure_apply_eq_toOuterMeasure X ⊤ p ⟨fun _ => trivial⟩]
       rw [PMF.toOuterMeasure_apply]
-      apply ENNReal.tsum_eq_zero.mpr; intro x
+      apply tsum_eq_zero_iff.mpr; intro x
       by_cases hx : x ∈ (Set.range (Sum.inl : H → X))ᶜ
       · -- x ∉ range Sum.inl, so x ∉ p.support, so p x = 0
         simp only [Set.indicator_apply, hx, ↓reduceIte]
@@ -375,7 +375,7 @@ theorem finite_support_vc_approx
               MeasureTheory.measure_mono hsub
           _ ≤ ∑' i, Measure.pi (fun _ => D) {xs | xs i ∉ Set.range Sum.inl} :=
               MeasureTheory.measure_iUnion_le _
-          _ = 0 := ENNReal.tsum_eq_zero.mpr hzero
+          _ = 0 := tsum_eq_zero_iff.mpr hzero
       exact le_antisymm hle zero_le
     have hinter_pos : 0 < Measure.pi (fun _ => D) (badᶜ ∩ allInl) := by
       by_contra h; push Not at h
