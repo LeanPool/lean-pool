@@ -21,9 +21,11 @@ public import LeanPool.PersistentSOS.MomentBlock5
 public import LeanPool.PersistentSOS.MomentBlock6
 public import LeanPool.PersistentSOS.MomentBlock7
 public import LeanPool.PersistentSOS.MomentBlockFull0
+public import LeanPool.PersistentSOS.MomentBlockFull0Data
 public import LeanPool.PersistentSOS.MomentBridge
 public import LeanPool.PersistentSOS.MomentData
 public import LeanPool.PersistentSOS.MomentGeneral
+public import LeanPool.PersistentSOS.MomentNumerator
 public import LeanPool.PersistentSOS.Moments
 public import LeanPool.PersistentSOS.PSD
 public import LeanPool.PersistentSOS.Polynomial

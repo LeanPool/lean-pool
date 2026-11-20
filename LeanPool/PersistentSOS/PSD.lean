@@ -103,12 +103,13 @@ lemma schur_step {n : ℕ} (A : Fin (n + 1) → Fin (n + 1) → ℝ)
     rw [hleft, hright]
     dsimp [y]
     ring
-  have hnonneg := hB y
-  have hsquare := sq_nonneg (A 0 0 * x 0 + v)
-  have hscaled : 0 ≤ A 0 0 * quadraticForm A x := by
-    rw [hfull]
-    nlinarith [mul_nonneg hp.le hnonneg]
-  exact nonneg_of_mul_nonneg_right hscaled ha
+  have hscaled : A 0 0 * quadraticForm A x =
+      p * quadraticForm B y + (A 0 0 * x 0 + v) ^ 2 := by
+    rw [hfull, mul_add, htail]
+    ring
+  apply nonneg_of_mul_nonneg_right _ ha
+  rw [hscaled]
+  exact add_nonneg (mul_nonneg hp.le (hB y)) (sq_nonneg _)
 
 /-- Integer identities suffice for a Schur step over the reals. -/
 lemma integer_schur_step {n : ℕ} (A : Fin (n + 1) → Fin (n + 1) → ℤ)
