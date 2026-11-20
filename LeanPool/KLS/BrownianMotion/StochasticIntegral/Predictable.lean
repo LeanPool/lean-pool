@@ -328,17 +328,6 @@ namespace MeasureTheory.Filtration
 
 variable {Ω ι : Type*} {m : MeasurableSpace Ω} {E : Type*} [TopologicalSpace E] [PartialOrder ι]
 
-/-- A filtration `𝓕` is complete with respect to a measure `μ` if for all `i`, `𝓕 i` contains all
-the `μ`-null sets. -/
-class IsCompleteKLS (𝓕 : Filtration ι m) (μ : Measure Ω := by volume_tac) where
-    /-- `𝓕 ⊥` contains all the null sets. -/
-    measurableSet_of_null ⦃s : Set Ω⦄ (hs : μ s = 0) (t : ι) : MeasurableSet[𝓕 t] s
-
-instance {𝓕 : Filtration ι m} {μ : Measure Ω} [u : IsCompleteKLS 𝓕 μ] {i : ι} :
-    (μ.trim <| 𝓕.le i).IsComplete :=
-  ⟨fun _ hs ↦ IsCompleteKLS.measurableSet_of_null (measure_eq_zero_of_trim_eq_zero (𝓕.le i) hs)
-    i⟩
-
 /-- The class of **predictable rectangles** associated to a filtration `𝓕` is the family of sets
 `(i, j] ×ˢ A` for `i < j` in `ι` and `A ∈ 𝓕 i`, together with `{⊥} ×ˢ A` for `A ∈ 𝓕 ⊥`. -/
 def predictableRectangles [OrderBot ι] (𝓕 : Filtration ι m) :

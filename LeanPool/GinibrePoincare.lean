@@ -6,6 +6,7 @@ Authors: Djalil Chafaï
 
 module
 
+public import LeanPool.GinibrePoincare.Analysis.AlternativeBakryEmeryConvexGibbsLSI
 public import LeanPool.GinibrePoincare.Analysis.AlternativeMatrixPoincare
 public import LeanPool.GinibrePoincare.Analysis.AlternativeSlaterPoincare
 public import LeanPool.GinibrePoincare.Analysis.AlternativeSpectralPoincare
@@ -41,6 +42,7 @@ public import LeanPool.GinibrePoincare.Analysis.PolynomialSectorIncompleteness
 public import LeanPool.GinibrePoincare.Endgame.BochnerKodairaTheoremOneTen
 public import LeanPool.GinibrePoincare.Endgame.FullMainAnalyticProof
 public import LeanPool.GinibrePoincare.Endgame.FullMatrixLift
+public import LeanPool.GinibrePoincare.Endgame.FullNonQuadraticPotential
 public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneNine
 public import LeanPool.GinibrePoincare.Endgame.FullTheoremOneTen
 
@@ -80,7 +82,9 @@ Main declarations: `GinibrePoincare.ginibre_symmetric_weak_poincare`,
   `GinibrePoincare.ginibreBrownianMaximalProcess_global_original_solution`,
   `GinibrePoincare.ginibreBrownian_full_two_radius_independent_CIR_realization`,
   `GinibrePoincare.ginibreBrownian_original_transition_eq_paper_ae`,
-  `GinibrePoincare.ginibreOriginalEquilibrium_two_radius_gamma_product`
+  `GinibrePoincare.ginibreOriginalEquilibrium_two_radius_gamma_product`,
+  `GinibrePoincare.fullNonQuadraticPotentialTheorem`,
+  `GinibrePoincare.bakryEmeryConfigurationGibbs_square_lsi`
 Tags: ginibre-ensemble, poincare-inequality, weak-gradients, hermite-polynomials, equality-cases
 MSC: 60E15, 60B20, 46E35
 -/

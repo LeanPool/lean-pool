@@ -1266,14 +1266,14 @@ lemma stronglyMeasurable_cadlagModifOf (hX : StronglyAdapted 𝓕 X)
   StronglyMeasurable.ite (measurableSet_forall_mem_regularitySetRight fun d ↦ 𝓕.le d _ (hRm d))
     (stronglyMeasurable_rightContModifOf hR hX hRm t) stronglyMeasurable_const
 
-lemma stronglyAdapted_cadlagModifOf [𝓕.IsRightContinuous] [𝓕.IsCompleteKLS μ]
+lemma stronglyAdapted_cadlagModifOf [𝓕.IsRightContinuous] [𝓕.IsComplete μ]
     (hX : StronglyAdapted 𝓕 X) (hRm : ∀ d, MeasurableSet[𝓕 d] (R d))
     (hRae : ∀ᵐ ω ∂μ, ∀ t, ω ∈ regularitySetRight (regularityTimes ι) R t) :
     StronglyAdapted 𝓕 (cadlagModifOf R X) := by
   refine fun i ↦ StronglyMeasurable.ite ?_ (stronglyAdapted_rightContModifOf hR hX hRm i)
     stronglyMeasurable_const
   rw [← MeasurableSet.compl_iff]
-  refine Filtration.IsCompleteKLS.measurableSet_of_null ?_ i (μ := μ)
+  refine Filtration.IsComplete.measurableSet_of_null ?_ i (μ := μ)
   rwa [ae_iff] at hRae
 
 end CadlagModifOf
@@ -1459,14 +1459,14 @@ lemma cadlagModifReal_ae_eq_of_tendstoInMeasure (hX : IsRealQuasimartingale 𝓕
   cadlagModifReal_ae_eq_of_rightContModifReal_ae_eq hX
     (rightContModifReal_ae_eq_of_tendstoInMeasure hX t hXRC)
 
-lemma stronglyAdapted_cadlagModifReal [𝓕.IsRightContinuous] [𝓕.IsCompleteKLS μ]
+lemma stronglyAdapted_cadlagModifReal [𝓕.IsRightContinuous] [𝓕.IsComplete μ]
     (hX : IsRealQuasimartingale 𝓕 X μ) :
     StronglyAdapted 𝓕 (cadlagModifReal X) :=
   stronglyAdapted_cadlagModifOf isRegularityFamily_regularitySet hX.stronglyAdapted
     (measurableSet_regularitySet hX countable_regularityTimes)
     hX.ae_mem_regularitySetRight_regularityTimes
 
-lemma adapted_cadlagModifReal [𝓕.IsRightContinuous] [𝓕.IsCompleteKLS μ]
+lemma adapted_cadlagModifReal [𝓕.IsRightContinuous] [𝓕.IsComplete μ]
     (hX : IsRealQuasimartingale 𝓕 X μ) :
     Adapted 𝓕 (cadlagModifReal X) :=
   fun t ↦ (stronglyAdapted_cadlagModifReal hX t).measurable
