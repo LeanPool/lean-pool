@@ -29,7 +29,7 @@
    "inputRev": "v4.36.0",
    "inherited": true,
    "configFile": "lakefile.lean"},
-  {"url": "https://github.com/lyw-ops/TauCeti",
+  {"url": "https://github.com/TauCetiProject/TauCeti",
    "type": "git",
    "subDir": null,
    "scope": "",

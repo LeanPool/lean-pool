@@ -16,7 +16,7 @@ warningAsError = true
 
 [[require]]
 name = "TauCeti"
-git = "https://github.com/lyw-ops/TauCeti"
+git = "https://github.com/TauCetiProject/TauCeti"
 rev = "0642eae29e0a59ef798d04de325386445906e755"
 
 # Keep Mathlib last so its transitive dependency pins take precedence.
