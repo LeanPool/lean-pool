@@ -68,22 +68,38 @@ theorem det3_shift (A B C u : ℝ³) (s : ℝ) :
 (with linear parts `N₁`, `N₂`) and vanish at `P`, `Q`; the combination
 `g = α f₁ + β f₂` is constant along `u`.  Then the tests
 `det3 (Q - P) (w - P) u` have the sign of `-g w`, normalized by a reference. -/
-theorem det3_pos_of_combo {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
+theorem det3_pos_of_combo_σ {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
     (h₁ : ∀ y z, f₁ y - f₁ z = ⟪N₁, y - z⟫) (h₂ : ∀ y z, f₂ y - f₂ z = ⟪N₂, y - z⟫)
     {P Q u : ℝ³} (h1P : f₁ P = 0) (h1Q : f₁ Q = 0) (h2P : f₂ P = 0) (h2Q : f₂ Q = 0)
-    {α β : ℝ} (hαβ : α * ⟪N₁, u⟫ + β * ⟪N₂, u⟫ = 0) {r w : ℝ³}
-    (hr : 0 < det3 (Q - P) (r - P) u) (hgr : α * f₁ r + β * f₂ r < 0)
-    (hgw : α * f₁ w + β * f₂ w < 0) : 0 < det3 (Q - P) (w - P) u := by
+    {α β : ℝ} (hαβ : α * ⟪N₁, u⟫ + β * ⟪N₂, u⟫ = 0) {r w : ℝ³} {σ : ℝ}
+    (hr : 0 < σ * det3 (Q - P) (r - P) u) (hgr : α * f₁ r + β * f₂ r < 0)
+    (hgw : α * f₁ w + β * f₂ w < 0) : 0 < σ * det3 (Q - P) (w - P) u := by
   set N := α • N₁ + β • N₂
   have hg : ∀ z, ⟪N, z - P⟫ = α * f₁ z + β * f₂ z := by
     intro z
     simp only [N, inner_add_left, real_inner_smul_left, ← h₁, ← h₂, h1P, h2P, sub_zero]
   have hNe : ⟪N, Q - P⟫ = 0 := by rw [hg, h1Q, h2Q]; ring
   have hNu : ⟪N, u⟫ = 0 := by
-    simp only [N, inner_add_left, real_inner_smul_left]; linarith
+    simpa only [N, inner_add_left, real_inner_smul_left] using hαβ
   have key := det3_mul_inner_eq (w := w - P) (w' := r - P) hNe hNu
   rw [hg, hg] at key
-  nlinarith
+  have key' : (σ * det3 (Q - P) (w - P) u) * (α * f₁ r + β * f₂ r) =
+      (σ * det3 (Q - P) (r - P) u) * (α * f₁ w + β * f₂ w) := by
+    rw [mul_assoc, key]; ring
+  have hproduct := mul_neg_of_pos_of_neg hr hgw
+  rw [← key'] at hproduct
+  exact pos_of_mul_neg_left hproduct hgr.le
+
+/-- The determinant sign test for the positive orientation. -/
+theorem det3_pos_of_combo {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
+    (h₁ : ∀ y z, f₁ y - f₁ z = ⟪N₁, y - z⟫) (h₂ : ∀ y z, f₂ y - f₂ z = ⟪N₂, y - z⟫)
+    {P Q u : ℝ³} (h1P : f₁ P = 0) (h1Q : f₁ Q = 0) (h2P : f₂ P = 0) (h2Q : f₂ Q = 0)
+    {α β : ℝ} (hαβ : α * ⟪N₁, u⟫ + β * ⟪N₂, u⟫ = 0) {r w : ℝ³}
+    (hr : 0 < det3 (Q - P) (r - P) u) (hgr : α * f₁ r + β * f₂ r < 0)
+    (hgw : α * f₁ w + β * f₂ w < 0) : 0 < det3 (Q - P) (w - P) u := by
+  simpa only [one_mul] using
+    (det3_pos_of_combo_σ h₁ h₂ h1P h1Q h2P h2Q hαβ (σ := 1)
+      (by simpa only [one_mul] using hr) hgr hgw)
 
 theorem det3_zero_of_combo {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
     (h₁ : ∀ y z, f₁ y - f₁ z = ⟪N₁, y - z⟫) (h₂ : ∀ y z, f₂ y - f₂ z = ⟪N₂, y - z⟫)

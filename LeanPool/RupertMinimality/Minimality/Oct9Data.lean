@@ -65,13 +65,21 @@ noncomputable def FacetFn.congr {V W : Finset ℝ³} {P Q R : ℝ³} (F : FacetF
 `(b, b')`, `(c, c')`. -/
 structure OctFacets (a a' b b' c c' : ℝ³) where
   nodup : [a, a', b, b', c, c'].Nodup
+  /-- Supporting affine function for the face through `a`, `b` and `c`. -/
   abc : FacetFn {a, a', b, b', c, c'} a b c
+  /-- Supporting affine function for the face through `a`, `b` and `c'`. -/
   abc' : FacetFn {a, a', b, b', c, c'} a b c'
+  /-- Supporting affine function for the face through `a`, `b'` and `c`. -/
   ab'c : FacetFn {a, a', b, b', c, c'} a b' c
+  /-- Supporting affine function for the face through `a`, `b'` and `c'`. -/
   ab'c' : FacetFn {a, a', b, b', c, c'} a b' c'
+  /-- Supporting affine function for the face through `a'`, `b` and `c`. -/
   a'bc : FacetFn {a, a', b, b', c, c'} a' b c
+  /-- Supporting affine function for the face through `a'`, `b` and `c'`. -/
   a'bc' : FacetFn {a, a', b, b', c, c'} a' b c'
+  /-- Supporting affine function for the face through `a'`, `b'` and `c`. -/
   a'b'c : FacetFn {a, a', b, b', c, c'} a' b' c
+  /-- Supporting affine function for the face through `a'`, `b'` and `c'`. -/
   a'b'c' : FacetFn {a, a', b, b', c, c'} a' b' c'
 
 theorem IsOctahedron.nonempty_octFacets {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c') :

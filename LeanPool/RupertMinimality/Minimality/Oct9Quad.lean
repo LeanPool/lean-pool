@@ -63,6 +63,34 @@ theorem det3_xy_zero (p x y : ℝ³) : det3 (p - y) (x - y) (y - x) = 0 := by
 theorem det3_xy_zero' (p' x y : ℝ³) : det3 (y - p') (x - p') (y - x) = 0 := by
   simp only [det3_expand, PiLp.sub_apply]; ring
 
+/-- A far edge `PQ` between a lower facet `x Q P` and an upper facet `x' Q P`. -/
+theorem far_edge_pos_σ {V : Finset ℝ³} {x x' y P Q : ℝ³} (G : FacetFn V x Q P)
+    (H : FacetFn V x' Q P) (_ : x ∈ V) (_ : x' ∈ V) (hxx' : x ≠ x') (_ : x ≠ P)
+    (_ : x ≠ Q) (_ : x' ≠ P) (_ : x' ≠ Q) (hGy : G.f y < 0) (hq : H.f x < H.f y)
+    {σ : ℝ} {r w : ℝ³} (hr : r ∈ V) (hrP : r ≠ P) (hrQ : r ≠ Q) (hw : w ∈ V) (hwP : w ≠ P)
+    (hwQ : w ≠ Q) (href : 0 < σ * det3 (Q - P) (r - P) (y - x)) :
+    0 < σ * det3 (Q - P) (w - P) (y - x) := by
+  have key : ∀ z ∈ V, z ≠ P → z ≠ Q →
+      (H.f y - H.f x) * G.f z + (-(G.f y - G.f x)) * H.f z < 0 := by
+    intro z hz hzP hzQ
+    have hα := sub_pos.mpr hq
+    have hβ : 0 < -(G.f y - G.f x) := by
+      rw [G.hP, sub_zero]
+      exact neg_pos.mpr hGy
+    by_cases hzx : z = x
+    · subst hzx
+      simp only [G.hP, mul_zero, zero_add, sub_zero]
+      exact mul_neg_of_pos_of_neg (neg_pos.mpr hGy) (H.neg z hz hxx' hzQ hzP)
+    by_cases hzx' : z = x'
+    · subst hzx'
+      simp only [H.hP, mul_zero, add_zero]
+      exact mul_neg_of_pos_of_neg hα (G.neg z hz (Ne.symm hxx') hzQ hzP)
+    exact add_neg (mul_neg_of_pos_of_neg hα (G.neg z hz hzx hzQ hzP))
+      (mul_neg_of_pos_of_neg hβ (H.neg z hz hzx' hzQ hzP))
+  refine det3_pos_of_combo_σ G.hN H.hN G.hR G.hQ H.hR H.hQ ?_ href (key r hr hrP hrQ)
+    (key w hw hwP hwQ)
+  rw [← G.hN, ← H.hN]; ring
+
 /-- A far edge `PQ` of the edge view along `y - x`, between a lower facet
 `x Q P` and an upper facet `x' Q P`. -/
 theorem far_edge_pos {V : Finset ℝ³} {x x' y P Q : ℝ³} (G : FacetFn V x Q P)
@@ -71,19 +99,9 @@ theorem far_edge_pos {V : Finset ℝ³} {x x' y P Q : ℝ³} (G : FacetFn V x Q 
     {r w : ℝ³} (hr : r ∈ V) (hrP : r ≠ P) (hrQ : r ≠ Q) (hw : w ∈ V) (hwP : w ≠ P)
     (hwQ : w ≠ Q) (href : 0 < det3 (Q - P) (r - P) (y - x)) :
     0 < det3 (Q - P) (w - P) (y - x) := by
-  have key : ∀ z ∈ V, z ≠ P → z ≠ Q →
-      (H.f y - H.f x) * G.f z + (-(G.f y - G.f x)) * H.f z < 0 := by
-    intro z hz hzP hzQ
-    have hα : 0 < H.f y - H.f x := by linarith
-    have hβ : 0 < -(G.f y - G.f x) := by rw [G.hP]; linarith
-    by_cases hzx : z = x
-    · subst hzx; rw [G.hP]; nlinarith [H.neg z hz hxx' hzQ hzP]
-    by_cases hzx' : z = x'
-    · subst hzx'; rw [H.hP]; nlinarith [G.neg z hz (Ne.symm hxx') hzQ hzP]
-    nlinarith [G.neg z hz hzx hzQ hzP, H.neg z hz hzx' hzQ hzP]
-  refine det3_pos_of_combo G.hN H.hN G.hR G.hQ H.hR H.hQ ?_ href (key r hr hrP hrQ)
-    (key w hw hwP hwQ)
-  rw [← G.hN, ← H.hN]; ring
+  simpa only [one_mul] using
+    (far_edge_pos_σ G H hx hx' hxx' hxP hxQ hx'P hx'Q hGy hq (σ := 1)
+      hr hrP hrQ hw hwP hwQ (by simpa only [one_mul] using href))
 
 /-- A vertical facet `x y P` (containing the view `y - x`) gives an edge `y → P`
 of the shadow. -/
@@ -151,12 +169,13 @@ theorem det3_self_left (a b : ℝ³) : det3 a a b = 0 := by
 /-- The convexity of the lower boundary over the edge view (the claim in
 Lemma 9.3): a point of the edge `x y'` lies strictly below the point of the
 segment `p p'` over the crossing of the diagonals of the shadow. -/
-theorem quad_edge_lower {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
-    (_ : 0 < det3 (y' - p) (p' - p) (y - x)) (_ : 0 < det3 (y' - x) (p' - x) (y - x))
-    (_ : 0 < det3 (p - x) (p' - x) (y - x)) (hS₄ : 0 < det3 (p - x) (y' - x) (y - x)) :
-    det3 (y' - p) (p' - p) (y - x) * ⟪x, y - x⟫ + det3 (p - x) (p' - x) (y - x) * ⟪y', y - x⟫ <
-      det3 (y' - x) (p' - x) (y - x) * ⟪p, y - x⟫ + det3 (p - x) (y' - x) (y - x) * ⟪p', y - x⟫ :=
-        by
+theorem quad_edge_lower_σ {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p') {σ : ℝ}
+    (_ : 0 < σ * det3 (y' - p) (p' - p) (y - x)) (_ : 0 < σ * det3 (y' - x) (p' - x) (y - x))
+    (_ : 0 < σ * det3 (p - x) (p' - x) (y - x)) (hS₄ : 0 < σ * det3 (p - x) (y' - x) (y - x)) :
+    σ * (det3 (y' - p) (p' - p) (y - x) * ⟪x, y - x⟫ +
+      det3 (p - x) (p' - x) (y - x) * ⟪y', y - x⟫) <
+    σ * (det3 (y' - x) (p' - x) (y - x) * ⟪p, y - x⟫ +
+      det3 (p - x) (y' - x) (y - x) * ⟪p', y - x⟫) := by
   have hnd := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd
@@ -173,7 +192,7 @@ theorem quad_edge_lower {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
   set L := S₁ • x - S₂ • p + S₃ • y' - S₄ • p'
   set lam := ⟪L, u⟫ / ⟪u, u⟫
   have hL : L = -S₂ • (p - x) + S₃ • (y' - x) - S₄ • (p' - x) := by
-    have : S₁ = S₂ - S₃ + S₄ := by linarith
+    have : S₁ = S₂ - S₃ + S₄ := by linarith only [hsum]
     simp only [L, this]; module
   have hGL : ⟪F.ab'c.N, L⟫ = -S₄ * F.ab'c.f p' := by
     rw [hL, inner_sub_right, inner_add_right, real_inner_smul_right, real_inner_smul_right,
@@ -183,19 +202,36 @@ theorem quad_edge_lower {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
   have hGp' := F.ab'c.neg p' (by simp) (Ne.symm hxp') (Ne.symm hy'p') (Ne.symm hpp')
   have hGy := F.ab'c.neg y (by simp) (Ne.symm hxy) hyy' hyp
   have hGu : ⟪F.ab'c.N, u⟫ = F.ab'c.f y := by rw [← F.ab'c.hN, F.ab'c.hP, sub_zero]
-  have hlam : lam < 0 := by
-    have e : ⟪F.ab'c.N, L⟫ = lam * F.ab'c.f y := by
-      rw [← hGu, ← real_inner_smul_right, ← hpar]
-    rw [hGL] at e
-    nlinarith
+  have e : ⟪F.ab'c.N, L⟫ = lam * F.ab'c.f y := by
+    rw [← hGu, ← real_inner_smul_right, ← hpar]
+  rw [hGL] at e
+  have hlam : σ * lam < 0 := by
+    have h1 : 0 < (σ * S₄) * (-F.ab'c.f p') := mul_pos hS₄ (neg_pos.mpr hGp')
+    have h2 : (σ * lam) * F.ab'c.f y = (σ * S₄) * (-F.ab'c.f p') := by
+      rw [mul_assoc, ← e]
+      ring
+    exact neg_of_mul_pos_left (by rwa [h2]) hGy.le
   have huu : 0 < ⟪u, u⟫ := real_inner_self_pos.mpr hu
-  have hLu : ⟪L, u⟫ < 0 := by
+  have hLu : σ * ⟪L, u⟫ < 0 := by
     have : ⟪L, u⟫ = lam * ⟪u, u⟫ := by
       conv_lhs => rw [hpar]
       rw [real_inner_smul_left]
-    rw [this]; nlinarith
+    rw [this, ← mul_assoc]
+    exact mul_neg_of_neg_of_pos hlam huu
   simp only [L, inner_sub_left, inner_add_left, real_inner_smul_left] at hLu
-  linarith
+  linarith only [hLu]
+
+/-- The lower boundary inequality for the positive orientation. -/
+theorem quad_edge_lower {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hS₁ : 0 < det3 (y' - p) (p' - p) (y - x)) (hS₂ : 0 < det3 (y' - x) (p' - x) (y - x))
+    (hS₃ : 0 < det3 (p - x) (p' - x) (y - x)) (hS₄ : 0 < det3 (p - x) (y' - x) (y - x)) :
+    det3 (y' - p) (p' - p) (y - x) * ⟪x, y - x⟫ + det3 (p - x) (p' - x) (y - x) * ⟪y', y - x⟫ <
+      det3 (y' - x) (p' - x) (y - x) * ⟪p, y - x⟫ +
+        det3 (p - x) (y' - x) (y - x) * ⟪p', y - x⟫ := by
+  simpa only [one_mul] using
+    (quad_edge_lower_σ F (σ := 1) (by simpa only [one_mul] using hS₁)
+      (by simpa only [one_mul] using hS₂) (by simpa only [one_mul] using hS₃)
+      (by simpa only [one_mul] using hS₄))
 
 /-- **Lemma 9.3, oriented.** -/
 theorem isRupert_quad_edge_core {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')

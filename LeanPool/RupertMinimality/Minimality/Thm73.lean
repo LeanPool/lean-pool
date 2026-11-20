@@ -335,9 +335,9 @@ theorem IsCcwPolygon.forces_SS {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} (hp :
   congr 2
   rw [ZMod.natCast_mod, Nat.cast_add, ZMod.natCast_zmod_val]; ring
 
-/-- **Orientation at a forced corner (Step 1).**  Read from a corner `u` with a
-nonzero force, the forces turn left first and then right. -/
-theorem IsCcwPolygon.forces_oriented {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
+/-- Read from corner `u`, the cross-products with its force are nonnegative before the cut
+and nonpositive after it. -/
+theorem IsCcwPolygon.forces_oriented {k : ℕ} {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
     {f : ZMod k → ℝ²} (hf : ∀ i, f i ∈ normalConeAt (convexHull ℝ (Set.range p)) (p i))
     (u : ZMod k) :
     ∃ j, j ≤ k ∧ (∀ s, 0 < s → s < j → 0 ≤ cross2 (f u) (f (u + s))) ∧
@@ -400,7 +400,7 @@ theorem convexHull_ge_of_corners {k : ℕ} {p : ZMod k → ℝ²} {e : ℝ²} {�
 
 /-- The corners maximising a nonzero linear functional lie in one edge
 `{a, a + 1}`. -/
-theorem IsCcwPolygon.max_edge {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
+theorem IsCcwPolygon.max_edge {k : ℕ} {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
     {e : ℝ²} (he : e ≠ 0) (B : ZMod k) (hB : ∀ l, ⟪e, p l⟫ ≤ ⟪e, p B⟫) (S : ZMod k → Prop)
     (hS : ∀ i, S i → ⟪e, p i⟫ = ⟪e, p B⟫) :
     ∃ a : ZMod k, ∀ i, S i → i = a ∨ i = a + 1 := by

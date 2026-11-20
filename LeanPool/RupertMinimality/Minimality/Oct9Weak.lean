@@ -223,27 +223,6 @@ theorem det3_four (N e w u v : ℝ³) :
   simp only [det3_expand, PiLp.inner_apply, Fin.sum_univ_three, RCLike.inner_apply,
     conj_trivial]; ring
 
-/-- `det3_pos_of_combo` with an orientation factor `σ`. -/
-theorem det3_pos_of_combo_σ {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
-    (h₁ : ∀ y z, f₁ y - f₁ z = ⟪N₁, y - z⟫) (h₂ : ∀ y z, f₂ y - f₂ z = ⟪N₂, y - z⟫)
-    {P Q u : ℝ³} (h1P : f₁ P = 0) (h1Q : f₁ Q = 0) (h2P : f₂ P = 0) (h2Q : f₂ Q = 0)
-    {α β : ℝ} (hαβ : α * ⟪N₁, u⟫ + β * ⟪N₂, u⟫ = 0) {r w : ℝ³} {σ : ℝ}
-    (hr : 0 < σ * det3 (Q - P) (r - P) u) (hgr : α * f₁ r + β * f₂ r < 0)
-    (hgw : α * f₁ w + β * f₂ w < 0) : 0 < σ * det3 (Q - P) (w - P) u := by
-  set N := α • N₁ + β • N₂
-  have hg : ∀ z, ⟪N, z - P⟫ = α * f₁ z + β * f₂ z := by
-    intro z
-    simp only [N, inner_add_left, real_inner_smul_left, ← h₁, ← h₂, h1P, h2P, sub_zero]
-  have hNe : ⟪N, Q - P⟫ = 0 := by rw [hg, h1Q, h2Q]; ring
-  have hNu : ⟪N, u⟫ = 0 := by
-    simp only [N, inner_add_left, real_inner_smul_left]; linarith
-  have key := det3_mul_inner_eq (w := w - P) (w' := r - P) hNe hNu
-  rw [hg, hg] at key
-  have key' : (σ * det3 (Q - P) (w - P) u) * (α * f₁ r + β * f₂ r) =
-      (σ * det3 (Q - P) (r - P) u) * (α * f₁ w + β * f₂ w) := by
-    rw [mul_assoc, key]; ring
-  nlinarith
-
 /-- A facet `G` through `P`, `Q`, `R` containing the view direction `u`. -/
 theorem vert_face_pos_σ {V : Finset ℝ³} {P Q R : ℝ³} (G : FacetFn V P Q R) {u : ℝ³}
     (hu : ⟪G.N, u⟫ = 0) {σ : ℝ} {r w : ℝ³}
@@ -252,27 +231,6 @@ theorem vert_face_pos_σ {V : Finset ℝ³} {P Q R : ℝ³} (G : FacetFn V P Q R
     0 < σ * det3 (Q - P) (w - P) u :=
   det3_pos_of_combo_σ G.hN G.hN G.hP G.hQ G.hP G.hQ (α := 1) (β := 0) (by rw [hu]; ring) href
     (by have := G.neg r hr hrP hrQ hrR; linarith) (by have := G.neg w hw hwP hwQ hwR; linarith)
-
-/-- A far edge `PQ` between a lower facet `x Q P` and an upper facet `x' Q P`. -/
-theorem far_edge_pos_σ {V : Finset ℝ³} {x x' y P Q : ℝ³} (G : FacetFn V x Q P)
-    (H : FacetFn V x' Q P) (hx : x ∈ V) (hx' : x' ∈ V) (hxx' : x ≠ x') (hxP : x ≠ P)
-    (hxQ : x ≠ Q) (hx'P : x' ≠ P) (hx'Q : x' ≠ Q) (hGy : G.f y < 0) (hq : H.f x < H.f y)
-    {σ : ℝ} {r w : ℝ³} (hr : r ∈ V) (hrP : r ≠ P) (hrQ : r ≠ Q) (hw : w ∈ V) (hwP : w ≠ P)
-    (hwQ : w ≠ Q) (href : 0 < σ * det3 (Q - P) (r - P) (y - x)) :
-    0 < σ * det3 (Q - P) (w - P) (y - x) := by
-  have key : ∀ z ∈ V, z ≠ P → z ≠ Q →
-      (H.f y - H.f x) * G.f z + (-(G.f y - G.f x)) * H.f z < 0 := by
-    intro z hz hzP hzQ
-    have hα : 0 < H.f y - H.f x := by linarith
-    have hβ : 0 < -(G.f y - G.f x) := by rw [G.hP]; linarith
-    by_cases hzx : z = x
-    · subst hzx; rw [G.hP]; nlinarith [H.neg z hz hxx' hzQ hzP]
-    by_cases hzx' : z = x'
-    · subst hzx'; rw [H.hP]; nlinarith [G.neg z hz (Ne.symm hxx') hzQ hzP]
-    nlinarith [G.neg z hz hzx hzQ hzP, H.neg z hz hzx' hzQ hzP]
-  refine det3_pos_of_combo_σ G.hN H.hN G.hR G.hQ H.hR H.hQ ?_ href (key r hr hrP hrQ)
-    (key w hw hwP hwQ)
-  rw [← G.hN, ← H.hN]; ring
 
 /-- The determinant tests at the edge view of a *weak* quad edge `x → y`
 (the face `x' y' p'` contains `u = y - x`), with orientation `σ`. -/
@@ -719,57 +677,6 @@ theorem isRupert_weak_cycle5b {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
     · exact absurd h h3
     · exact absurd h h2
     · exact absurd h h4
-
-/-- `quad_edge_lower` with an orientation factor `σ`. -/
-theorem quad_edge_lower_σ {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p') {σ : ℝ}
-    (_ : 0 < σ * det3 (y' - p) (p' - p) (y - x)) (_ : 0 < σ * det3 (y' - x) (p' - x) (y - x))
-    (_ : 0 < σ * det3 (p - x) (p' - x) (y - x)) (hS₄ : 0 < σ * det3 (p - x) (y' - x) (y - x)) :
-    σ * (det3 (y' - p) (p' - p) (y - x) * ⟪x, y - x⟫ +
-      det3 (p - x) (p' - x) (y - x) * ⟪y', y - x⟫) <
-    σ * (det3 (y' - x) (p' - x) (y - x) * ⟪p, y - x⟫ +
-      det3 (p - x) (y' - x) (y - x) * ⟪p', y - x⟫) := by
-  have hnd := F.nodup
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
-    not_or, List.nodup_nil, and_true] at hnd
-  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
-    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
-  set u := y - x
-  have hu : u ≠ 0 := sub_ne_zero.mpr (Ne.symm hxy)
-  set S₁ := det3 (y' - p) (p' - p) u
-  set S₂ := det3 (y' - x) (p' - x) u
-  set S₃ := det3 (p - x) (p' - x) u
-  set S₄ := det3 (p - x) (y' - x) u
-  have hpar := four_point_parallel x p y' p' u hu
-  have hsum := four_point_sum x p y' p' u
-  set L := S₁ • x - S₂ • p + S₃ • y' - S₄ • p'
-  set lam := ⟪L, u⟫ / ⟪u, u⟫
-  have hL : L = -S₂ • (p - x) + S₃ • (y' - x) - S₄ • (p' - x) := by
-    have : S₁ = S₂ - S₃ + S₄ := by linarith
-    simp only [L, this]; module
-  have hGL : ⟪F.ab'c.N, L⟫ = -S₄ * F.ab'c.f p' := by
-    rw [hL, inner_sub_right, inner_add_right, real_inner_smul_right, real_inner_smul_right,
-      real_inner_smul_right, ← F.ab'c.hN, ← F.ab'c.hN, ← F.ab'c.hN, F.ab'c.hP, F.ab'c.hQ,
-      F.ab'c.hR]
-    ring
-  have hGp' := F.ab'c.neg p' (by simp) (Ne.symm hxp') (Ne.symm hy'p') (Ne.symm hpp')
-  have hGy := F.ab'c.neg y (by simp) (Ne.symm hxy) hyy' hyp
-  have hGu : ⟪F.ab'c.N, u⟫ = F.ab'c.f y := by rw [← F.ab'c.hN, F.ab'c.hP, sub_zero]
-  have e : ⟪F.ab'c.N, L⟫ = lam * F.ab'c.f y := by
-    rw [← hGu, ← real_inner_smul_right, ← hpar]
-  rw [hGL] at e
-  have hlam : σ * lam < 0 := by
-    have h1 : 0 < (σ * S₄) * (-F.ab'c.f p') := mul_pos hS₄ (by linarith)
-    have h2 : (σ * lam) * F.ab'c.f y = (σ * S₄) * (-F.ab'c.f p') := by
-      rw [mul_assoc, ← e]; ring
-    nlinarith
-  have huu : 0 < ⟪u, u⟫ := real_inner_self_pos.mpr hu
-  have hLu : σ * ⟪L, u⟫ < 0 := by
-    have : ⟪L, u⟫ = lam * ⟪u, u⟫ := by
-      conv_lhs => rw [hpar]
-      rw [real_inner_smul_left]
-    rw [this, ← mul_assoc]; nlinarith
-  simp only [L, inner_sub_left, inner_add_left, real_inner_smul_left] at hLu
-  nlinarith
 
 /-- An open condition on the limit depths holds at all small tilts. -/
 theorem eventually_of_isOpen {k : ℕ} {Q : (ZMod k → ℝ) → Prop} (hQo : IsOpen {z | Q z})
