@@ -64,7 +64,7 @@ theorem exists_hasFiniteRange_norm_sub_lt
   let V : Submodule ℂ H := Submodule.span ℂ t
   let : FiniteDimensional ℂ V :=
     FiniteDimensional.span_of_finite ℂ ht_finite
-  let : CompleteSpace V := FiniteDimensional.complete ℂ V
+  let : CompleteSpace V := FiniteDimensional.completeSpace ℂ V
   let F : E →L[ℂ] H := V.starProjection.comp K
   have hFfinite : F.toLinearMap.HasFiniteRange := by
     have hprojection : V.starProjection.toLinearMap.HasFiniteRange := by

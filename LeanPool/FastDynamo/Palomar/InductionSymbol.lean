@@ -270,7 +270,7 @@ theorem inductionRHS_eq_of_productL2ToHMinus2_eq (u : TransverseRealW1Inf)
     exact_mod_cast (productH2Weight_pos _ _).ne'
   simp only [productL2ToHMinus2_apply, productCoeffCLM_split_eq_mFourierCoeff] at hm
   rw [productPhysicalInductionAction_apply u hv, snocFrequency_split] at hm
-  exact (div_left_inj' hw).1 hm
+  exact (div_left_inj₀ hw).1 hm
 
 /-! ## The eigenmode of the main theorem -/
 

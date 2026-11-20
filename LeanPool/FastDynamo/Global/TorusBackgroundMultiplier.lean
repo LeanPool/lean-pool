@@ -395,7 +395,7 @@ theorem backgroundShiftedValueLInf_coe_ae (n : ℕ) :
     ((P.scaleFamily.summable_cellRatio n).mul_left 3).of_nonneg_of_le
       (fun m ↦ norm_nonneg _) (fun m ↦ P.norm_backgroundShiftedCellValueLInf_le n m)
   have henorm : ∑' m : ℕ, ‖P.backgroundShiftedCellValueLInf n m‖ₑ ≠ ∞ :=
-    tsum_enorm_ne_top_iff_summable_norm.mpr hnorm
+    tsum_eNorm_ne_top_iff_summable_norm.mpr hnorm
   have hcoe := Lp.coeFn_tsum henorm
   have hcell : ∀ᵐ q ∂transverseMeasure, ∀ m : ℕ,
       (P.backgroundShiftedCellValueLInf n m : TransverseTorus → ℂ) q =
@@ -419,7 +419,7 @@ theorem backgroundShiftedDerivLInf_coe_ae (n : ℕ) (j : Fin 2) :
         (fun m ↦ norm_nonneg _)
         (fun m ↦ P.norm_backgroundShiftedCellDerivLInf_le n m j)
   have henorm : ∑' m : ℕ, ‖P.backgroundShiftedCellDerivLInf n m j‖ₑ ≠ ∞ :=
-    tsum_enorm_ne_top_iff_summable_norm.mpr hnorm
+    tsum_eNorm_ne_top_iff_summable_norm.mpr hnorm
   have hcoe := Lp.coeFn_tsum henorm
   have hcell : ∀ᵐ q ∂transverseMeasure, ∀ m : ℕ,
       (P.backgroundShiftedCellDerivLInf n m j : TransverseTorus → ℂ) q =

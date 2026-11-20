@@ -48,11 +48,11 @@ structure SpectralCircle where
 namespace SpectralCircle
 
 /-- The contour used for the Riesz integral. -/
-def boundary (Γ : SpectralCircle) : Set ℂ :=
+noncomputable def boundary (Γ : SpectralCircle) : Set ℂ :=
   Metric.sphere Γ.center Γ.radius
 
 /-- The closed region enclosed by the contour. -/
-def closedRegion (Γ : SpectralCircle) : Set ℂ :=
+noncomputable def closedRegion (Γ : SpectralCircle) : Set ℂ :=
   Metric.closedBall Γ.center Γ.radius
 
 /-- The minimum real part on the closed circular region. -/

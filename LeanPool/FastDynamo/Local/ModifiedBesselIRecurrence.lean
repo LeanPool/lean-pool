@@ -149,7 +149,7 @@ private theorem regularizedHGFun_one_hasDerivAt (x : ℂ) :
   unfold regularizedHGFun
   have hx : ‖x‖ₑ < (regularizedHGFunSeries 0 {(1 : ℂ)}).radius := by
     rw [I0_series_radius]
-    exact enorm_lt_top
+    exact eNorm_lt_top
   have hd := (regularizedHGFunSeries 0 {(1 : ℂ)}).hasFDerivAt_sum hx |>.hasDerivAt
   rw [derivSeries_one_sum_apply] at hd
   exact hd
@@ -195,7 +195,7 @@ private theorem regularizedHGFun_two_hasDerivAt (x : ℂ) :
   unfold regularizedHGFun
   have hx : ‖x‖ₑ < (regularizedHGFunSeries 0 {(2 : ℂ)}).radius := by
     rw [radius_regularizedHGFunSeries_eq_top (by simp)]
-    exact enorm_lt_top
+    exact eNorm_lt_top
   have hd := (regularizedHGFunSeries 0 {(2 : ℂ)}).hasFDerivAt_sum hx |>.hasDerivAt
   rw [derivSeries_two_sum_apply] at hd
   exact hd

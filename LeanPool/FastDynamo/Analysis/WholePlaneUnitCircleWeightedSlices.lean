@@ -409,7 +409,7 @@ theorem complexUnitCircleSphereMeasure_eq_angularMeasure :
     complexUnitCircleSphereMeasure complexUnitCircleAngularMeasure
   have huniv := congrArg (fun mu : Measure Circle ↦ mu Set.univ) hscale
   simp only [complexUnitCircleSphereMeasure_univ,
-    complexUnitCircleAngularMeasure_univ, Measure.smul_apply] at huniv
+    complexUnitCircleAngularMeasure_univ, smul_apply] at huniv
   have hp0 : ENNReal.ofReal (2 * Real.pi) ≠ 0 := by positivity
   have hptop : ENNReal.ofReal (2 * Real.pi) ≠ ⊤ := by finiteness
   have hc_coe :

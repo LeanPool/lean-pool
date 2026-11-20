@@ -322,9 +322,9 @@ theorem idealWeakIdentity_flowCompL2_of_isIdealWeakSolution (htau : 0 ≤ tau) {
   have hlip : LipschitzWith (Real.toNNReal
       (C * flowDerivativeBound h P angularSpeed axialSpeed tau (-σ)))
       fun a : R3 ↦ φ (literalTorusPoint a) := by
-    refine lipschitzWith_of_nnnorm_fderiv_le hdiff fun a ↦ ?_
+    refine lipschitzWith_of_nnNorm_fderiv_le hdiff fun a ↦ ?_
     refine NNReal.coe_le_coe.1 ?_
-    rw [coe_nnnorm, (hfd a).fderiv, Real.coe_toNNReal _ (mul_nonneg hC0 hD0)]
+    rw [coe_nnNorm, (hfd a).fderiv, Real.coe_toNNReal _ (mul_nonneg hC0 hD0)]
     exact (ContinuousLinearMap.opNorm_comp_le _ _).trans (mul_le_mul (hC' _)
       (norm_flowFDeriv_le_of_mem_uIcc h P angularSpeed axialSpeed tau htau right_mem_uIcc _)
       (norm_nonneg _) hC0)

@@ -81,7 +81,7 @@ theorem coordinateLine_hasDerivAt (y : WholePlane) (k : Fin 2) (t : ℝ) :
   have h := (coordinateLineCLM k).hasDerivAt (x := t)
   have h' := h.add_const y
   convert! h' using 1
-  all_goals simp [coordinateLineCLM_apply]
+  simp [coordinateLineCLM_apply]
 
 /-- The complex coordinate derivatives `e₀ = 1` and `e₁ = i` are unimodular. -/
 @[simp] theorem norm_complexCoordinateBasis (j : Fin 2) :
@@ -97,7 +97,7 @@ theorem coordinateLine_apply_hasDerivAt
   have h := ((hasDerivAt_id (x := (0 : ℝ))).mul_const
     (wholePlaneBasis k j)).add_const (y j)
   convert! h using 1
-  all_goals simp [coordinateDelta, wholePlaneBasis]
+  simp [coordinateDelta, wholePlaneBasis]
 
 /-- Complex-valued form of `coordinateLine_apply_hasDerivAt`: the derivative is the Kronecker
 delta viewed in `ℂ`. -/
@@ -118,7 +118,7 @@ theorem complexCoordinate_coordinateLine_hasDerivAt
   have h1 := complex_coordinateLine_apply_hasDerivAt y (1 : Fin 2) k
   have h := h0.add (h1.const_mul I)
   convert! h using 1
-  all_goals fin_cases k <;> simp [coordinateDelta, complexCoordinateBasis]
+  fin_cases k <;> simp [coordinateDelta, complexCoordinateBasis]
 
 /-! ## The radius Hessian -/
 
@@ -602,10 +602,8 @@ theorem radialCompositionPartial_coordinateLine_hasDerivAt
   have hbline := hb''.scomp_of_eq 0 (radius_coordinateLine_hasDerivAt hy k) (by simp)
   have h := hrj.smul hbline
   convert! h using 1
-  all_goals
-    simp [Function.comp_apply, coordinateLine_zero,
-      radialCompositionSecondPartialValue]
-    ring
+  simp [Function.comp_apply, coordinateLine_zero, radialCompositionSecondPartialValue]
+  ring
 
 /-- The Hessian entry of a radial composition is bounded by
 `|b''| + (2/r)|b'|`. -/

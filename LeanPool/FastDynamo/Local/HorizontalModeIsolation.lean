@@ -275,25 +275,14 @@ theorem horizontalPencilForm_apply_eq_zero_of_isEigenpair
     (N : ℝ) (w : WholePlaneC3LInf) (lambda : ℂ) (u : HorizontalFormDomain N w)
     (heig : (horizontalFormOperator N w).IsEigenpair lambda u) :
     horizontalPencilForm N w lambda u.1.1 = 0 := by
-  refine ContinuousLinearMap.ext fun phi => ?_
-  have hrel := horizontalFormDomain_relation N w u phi
-  have hsnd : u.1.2 = -(lambda • wholePlaneH1Embedding C2 u.1.1) := by
-    have h := heig.2
-    change -u.1.2 = lambda • wholePlaneH1Embedding C2 u.1.1 at h
-    linear_combination (norm := module) -h
-  have h1 := horizontalPencilForm_apply N w lambda u.1.1 phi
-  have h2 : inner ℂ (wholePlaneH1Embedding C2 phi) u.1.2 =
-      -(lambda * inner ℂ (wholePlaneH1Embedding C2 phi)
-        (wholePlaneH1Embedding C2 u.1.1)) := by
-    rw [hsnd, inner_neg_right, inner_smul_right]
-  calc horizontalPencilForm N w lambda u.1.1 phi
-      = horizontalWeakForm N w u.1.1 phi +
-          lambda * inner ℂ (wholePlaneH1Embedding C2 phi)
-            (wholePlaneH1Embedding C2 u.1.1) := h1
-    _ = inner ℂ (wholePlaneH1Embedding C2 phi) u.1.2 +
-          lambda * inner ℂ (wholePlaneH1Embedding C2 phi)
-            (wholePlaneH1Embedding C2 u.1.1) := by rw [hrel]
-    _ = 0 := by linear_combination h2
+  refine ContinuousLinearMap.ext fun phi ↦ ?_
+  have he := heig.2
+  change -u.1.2 = lambda • wholePlaneH1Embedding C2 u.1.1 at he
+  have hsum : u.1.2 + lambda • wholePlaneH1Embedding C2 u.1.1 = 0 := by
+    rw [← he, add_neg_cancel]
+  have hpaired := congrArg (inner ℂ (wholePlaneH1Embedding C2 phi)) hsum
+  rw [horizontalPencilForm_apply, horizontalFormDomain_relation N w u phi, zero_apply]
+  simpa only [inner_add_right, inner_smul_right, inner_zero_right] using hpaired
 
 /-- An eigenvalue of `A_w` with positive real part belongs to the horizontal spectrum.  This
 is the converse half of the paper's identification of the spectrum in the open right half

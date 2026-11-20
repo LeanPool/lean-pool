@@ -489,11 +489,11 @@ theorem lipschitzWith_parameterizedFullGlobalEuclideanRealSource
         (globalVelocityLipschitzBound h P angularSpeed axialSpeed tau))
       (parameterizedFullGlobalEuclideanRealSource
         h P angularSpeed axialSpeed tau) := by
-  apply lipschitzWith_of_nnnorm_fderiv_le
+  apply lipschitzWith_of_nnNorm_fderiv_le
     (differentiable_parameterizedFullGlobalEuclideanRealSource
       h P angularSpeed axialSpeed tau htau)
   intro x
-  rw [← NNReal.coe_le_coe, coe_nnnorm,
+  rw [← NNReal.coe_le_coe, coe_nnNorm,
     Real.coe_toNNReal _
       (globalVelocityLipschitzBound_nonneg h P angularSpeed axialSpeed tau htau)]
   exact norm_fderiv_parameterizedFullGlobalEuclideanRealSource_le

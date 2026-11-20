@@ -69,7 +69,7 @@ theorem integral_exp_mul_cos_eq_z_mul_integral_exp_mul_sin_sq (z : ℂ) :
       simpa using (Real.hasDerivAt_cos theta).ofReal_comp
     dsimp [u, u']
     convert (hcos.const_mul z).cexp using 1
-    all_goals ring
+    ring
   have hv : ∀ theta ∈ [[(0 : ℝ), Real.pi]], HasDerivAt v (v' theta) theta := by
     intro theta _
     dsimp [v, v']

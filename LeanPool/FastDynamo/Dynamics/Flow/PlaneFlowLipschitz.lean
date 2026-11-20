@@ -23,7 +23,7 @@ are the cell differentials of `Flow/CellFlowMap.lean` inside a buffer disc, and 
 This module converts that pointwise information into the Lipschitz half of
 `prop:particle-flow`, `eq:linear-flow-lipschitz`.  The route is the one of the paper's proof and
 of `Global/TorusGlobalVelocityRegularity.lean`: a *uniform in the cell index* bound for the
-differential, then `lipschitzWith_of_nnnorm_fderiv_le`.  The paper reads the derivative of the
+differential, then `lipschitzWith_of_nnNorm_fderiv_le`.  The paper reads the derivative of the
 Lipschitz lift almost everywhere; here the flow is differentiable at every point, so no
 mean-value theorem on a merely Lipschitz map and no Rademacher is needed.
 
@@ -188,7 +188,7 @@ theorem coe_flowLipschitzSlopeNN (htau : 0 ≤ tau) :
 theorem coe_nnnorm_mul_flowLipschitzSlopeNN (htau : 0 ≤ tau) (t : ℝ) :
     ((‖t‖₊ * flowLipschitzSlopeNN h P angularSpeed axialSpeed tau : ℝ≥0) : ℝ) =
       |t| * flowLipschitzSlope h P angularSpeed axialSpeed tau := by
-  rw [NNReal.coe_mul, coe_nnnorm, Real.norm_eq_abs,
+  rw [NNReal.coe_mul, coe_nnNorm, Real.norm_eq_abs,
     coe_flowLipschitzSlopeNN h P angularSpeed axialSpeed tau htau]
 
 /-- **The flow's Lipschitz bound as an `ℝ≥0`**: `2 (1 + ‖t‖ · slope)`, the constant every
@@ -356,9 +356,9 @@ translate and its differential obeys the chart-side bound pointwise. -/
 theorem lipschitzWith_planePeriodizedTransverseFlow (htau : 0 ≤ tau) (t : ℝ) :
     LipschitzWith (flowLipschitzBoundNN h P angularSpeed axialSpeed tau t)
       (planePeriodizedTransverseFlow h P angularSpeed t) := by
-  refine lipschitzWith_of_nnnorm_fderiv_le
+  refine lipschitzWith_of_nnNorm_fderiv_le
     (differentiable_planePeriodizedTransverseFlow h P angularSpeed t) fun x => ?_
-  rw [← NNReal.coe_le_coe, coe_nnnorm,
+  rw [← NNReal.coe_le_coe, coe_nnNorm,
     coe_flowLipschitzBoundNN h P angularSpeed axialSpeed tau htau]
   exact norm_fderiv_planePeriodizedTransverseFlow_le h P angularSpeed axialSpeed tau htau t x
 
@@ -367,9 +367,9 @@ chart-side constant `|t| · slope`. -/
 theorem lipschitzWith_planePeriodizedAxialShift (htau : 0 ≤ tau) (t : ℝ) :
     LipschitzWith (‖t‖₊ * flowLipschitzSlopeNN h P angularSpeed axialSpeed tau)
       (planePeriodizedAxialShift h P axialSpeed tau t) := by
-  refine lipschitzWith_of_nnnorm_fderiv_le
+  refine lipschitzWith_of_nnNorm_fderiv_le
     (differentiable_planePeriodizedAxialShift h P axialSpeed tau t) fun x => ?_
-  rw [← NNReal.coe_le_coe, coe_nnnorm,
+  rw [← NNReal.coe_le_coe, coe_nnNorm,
     coe_nnnorm_mul_flowLipschitzSlopeNN h P angularSpeed axialSpeed tau htau]
   exact norm_fderiv_planePeriodizedAxialShift_le h P angularSpeed axialSpeed tau htau t x
 

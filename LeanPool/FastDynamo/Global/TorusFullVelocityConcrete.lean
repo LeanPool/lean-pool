@@ -496,7 +496,7 @@ theorem axialGlobalValueLInf_coe_ae :
     (P.scaleFamily.summable_axialAmplitude tau).of_nonneg_of_le
       (fun n ↦ norm_nonneg _) (fun n ↦ norm_valueLInf_le P htau n)
   have henorm : ∑' n : ℕ, ‖valueLInf P htau n‖ₑ ≠ ∞ :=
-    tsum_enorm_ne_top_iff_summable_norm.mpr hnorm
+    tsum_eNorm_ne_top_iff_summable_norm.mpr hnorm
   have hcoe := Lp.coeFn_tsum henorm
   have hcell : ∀ᵐ q ∂transverseMeasure, ∀ n : ℕ,
       (valueLInf P htau n : TransverseTorus → R3) q =
@@ -522,7 +522,7 @@ theorem axialGlobalDerivativeLInf_coe_ae (j : Fin 2) :
         (fun n ↦ norm_nonneg _)
         (fun n ↦ norm_derivativeLInf_le P htau n j)
   have henorm : ∑' n : ℕ, ‖derivativeLInf P htau n j‖ₑ ≠ ∞ :=
-    tsum_enorm_ne_top_iff_summable_norm.mpr hnorm
+    tsum_eNorm_ne_top_iff_summable_norm.mpr hnorm
   have hcoe := Lp.coeFn_tsum henorm
   have hcell : ∀ᵐ q ∂transverseMeasure, ∀ n : ℕ,
       (derivativeLInf P htau n j : TransverseTorus → R3) q =

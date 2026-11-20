@@ -200,9 +200,9 @@ theorem isIdealWeakSolution_of_charTestField {W : ℝ → L2} {T : ℝ}
     exact hC _
   have hC0 : 0 ≤ C := (norm_nonneg _).trans (hC' 0)
   have hlip : LipschitzWith (Real.toNNReal C) fun a : R3 ↦ φ (literalTorusPoint a) := by
-    refine lipschitzWith_of_nnnorm_fderiv_le hdiff fun a ↦ ?_
+    refine lipschitzWith_of_nnNorm_fderiv_le hdiff fun a ↦ ?_
     refine NNReal.coe_le_coe.1 ?_
-    rw [coe_nnnorm, Real.coe_toNNReal _ hC0]
+    rw [coe_nnNorm, Real.coe_toNNReal _ hC0]
     exact hC' a
   have key := idealWeakIdentity_of_lipschitz_of_charTestField
     (hc.mono (Set.uIcc_subset_Icc hs ht)) (hchar s hs t ht) hdiff hlip hφL hadv

@@ -214,21 +214,21 @@ theorem IsAnalyticSemigroup.growthBound_eq_iSup {X : Type u}
   have : Nontrivial X := ⟨⟨(x₀ : X), 0, hx₀⟩⟩
   have hrad : spectralRadius ℂ (S 1) = ENNReal.ofReal (Real.exp L) := by
     refine tendsto_nhds_unique
-      (spectrum.pow_nnnorm_pow_one_div_tendsto_nhds_spectralRadius (S 1)) ?_
+      (spectrum.pow_nnNorm_pow_one_div_tendsto_nhds_spectralRadius (S 1)) ?_
     have h3 := (ENNReal.continuous_ofReal.tendsto _).comp ((Real.continuous_exp.tendsto L).comp
       (hlim.comp tendsto_natCast_atTop_atTop))
     refine h3.congr' ?_
     filter_upwards [eventually_gt_atTop 0] with n hn
     have hn' : (0 : ℝ) < n := by exact_mod_cast hn
     simp only [Function.comp_apply, Real.toNNReal_natCast, ← S.operator_natCast]
-    rw [← ENNReal.ofReal_coe_nnreal, coe_nnnorm, ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _)
+    rw [← ENNReal.ofReal_coe_nnreal, coe_nnNorm, ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _)
       (by positivity), Real.rpow_def_of_pos (hpos _), mul_comm, one_div]
   obtain ⟨μ₀, hμ₀, hnorm⟩ :=
-    spectrum.exists_nnnorm_eq_spectralRadius_of_nonempty (spectrum.nonempty (S 1))
+    spectrum.exists_nnNorm_eq_spectralRadius_of_nonempty (spectrum.nonempty (S 1))
   rw [hrad] at hnorm
   have hnorm' : ‖μ₀‖ = Real.exp L := by
     have := congrArg ENNReal.toReal hnorm
-    rwa [ENNReal.coe_toReal, coe_nnnorm, ENNReal.toReal_ofReal (Real.exp_pos _).le] at this
+    rwa [ENNReal.coe_toReal, coe_nnNorm, ENNReal.toReal_ofReal (Real.exp_pos _).le] at this
   have hμ0 : μ₀ ≠ 0 := norm_pos_iff.mp (hnorm' ▸ Real.exp_pos _)
   obtain ⟨lam, hlam, hlam_eq⟩ :=
     hS.exists_cexp_eq_of_mem_spectrum hR hc one_pos hμ₀ hμ0

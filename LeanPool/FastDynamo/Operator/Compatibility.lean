@@ -161,7 +161,7 @@ theorem productL2ToHMinus2_injective :
   intro n k i
   have hi := congrArg (fun a : ProductC3HMinus2 ↦ a i k n) h
   simp only [productL2ToHMinus2_apply] at hi
-  exact (div_left_inj' (show (productH2Weight n k : ℂ) ≠ 0 by
+  exact (div_left_inj₀ (show (productH2Weight n k : ℂ) ≠ 0 by
     exact_mod_cast (productH2Weight_pos n k).ne')).mp hi
 
 /-! ## Distributional curl into `H^-2` -/

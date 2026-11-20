@@ -68,6 +68,63 @@ namespace HorizontalMode
 radius `r ≤ Re λ_*/4`); the paper only asserts `g_* > 0`. -/
 def seedGrowthFloorBound : ℝ := 3 / 4 * (448 - (2 * Real.pi) ^ 2)
 
+private theorem exists_circle_graph_bound (center : ℂ) (radius embedding solution : ℝ)
+    (hradius : 0 ≤ radius) (hembedding : 0 ≤ embedding) (hsolution : 0 ≤ solution) :
+    ∃ bound : ℝ, 0 ≤ bound ∧ ∀ z ∈ Metric.sphere center radius,
+      ∀ t : ℝ, 0 ≤ t → t ≤ solution → t + (1 + ‖z‖ * (embedding * t)) ≤ bound := by
+  have hcenter : 0 ≤ ‖center‖ + radius := add_nonneg (norm_nonneg _) hradius
+  refine ⟨solution + (1 + (‖center‖ + radius) * (embedding * solution)), ?_, ?_⟩
+  · exact add_nonneg hsolution
+      (add_nonneg zero_le_one (mul_nonneg hcenter (mul_nonneg hembedding hsolution)))
+  · intro z hz t ht0 ht
+    have hmul := mul_le_mul (norm_le_of_mem_sphere hz)
+      (mul_le_mul_of_nonneg_left ht hembedding) (mul_nonneg hembedding ht0) hcenter
+    exact add_le_add ht (add_le_add_right hmul 1)
+
+private theorem exists_bound_with_projection (N delta : ℝ)
+    (coefficients : WholePlaneVelocityCoefficients) (form : ComplexForm WholePlaneC2H1)
+    (hdelta : delta ≠ 0) (hgradient : coefficients.HasWeakGradient)
+    (hform : ∀ b phi : WholePlaneC2H1,
+      form b phi = horizontalWeakFormDelta N delta coefficients.value b phi)
+    {center : ℂ} {radius : ℝ}
+    (resolvent : HasResolventOn (horizontalAssociatedOperator form) (Metric.sphere center radius))
+    {pairBound graphBound : ℝ}
+    (hpair : ‖horizontalStrongPairMap N delta coefficients form‖ ≤ pairBound)
+    (hpair0 : 0 ≤ pairBound)
+    (hgraph : ∀ z ∈ Metric.sphere center radius, ‖resolvent.inv z‖ ≤ graphBound) :
+    ∃ bound : WholePlaneLocalResolventBound coefficients N delta (Metric.sphere center radius)
+      (‖wholePlaneH2OfPair C2‖ * (pairBound * graphBound)),
+      bound.resolvent.rieszProjection = resolvent.rieszProjection := by
+  refine ⟨horizontalLocalResolventBoundOfBounds N delta coefficients form
+    hdelta hgradient hform resolvent hpair hpair0 hgraph le_rfl, ?_⟩
+  exact horizontalStrongResolvent_rieszProjection N delta coefficients form
+    hdelta hgradient hform resolvent
+
+private theorem exists_smoothed_resolvent_bound
+    {N Omega delta : ℝ} {h : PonomarenkoSmoothingWidth}
+    {w : WholePlaneC3LInf} {lambda : ℂ} {iso : HorizontalIsolation N w lambda}
+    (data : HorizontalNeumannData N delta (horizontalSmoothedModeVelocity N Omega h) w lambda iso)
+    (hdelta : delta ≠ 0) {pairBound graphBound : ℝ}
+    (hpair : ‖horizontalStrongPairMap N delta (smoothedModeCoefficients N Omega h)
+      (horizontalWeakFormDelta N delta (horizontalSmoothedModeVelocity N Omega h))‖ ≤ pairBound)
+    (hpair0 : 0 ≤ pairBound)
+    (hgraph : ∀ z ∈ Metric.sphere lambda iso.radius, ‖data.contourResolvent.inv z‖ ≤ graphBound) :
+    ∃ bound : WholePlaneLocalResolventBound (smoothedModeCoefficients N Omega h) N delta
+      (Metric.sphere lambda iso.radius) (‖wholePlaneH2OfPair C2‖ * (pairBound * graphBound)),
+      bound.resolvent.rieszProjection = data.projection := by
+  let coefficients := smoothedModeCoefficients N Omega h
+  let form := horizontalWeakFormDelta N delta (horizontalSmoothedModeVelocity N Omega h)
+  have hform (b phi : WholePlaneC2H1) :
+      form b phi = horizontalWeakFormDelta N delta coefficients.value b phi :=
+    congrArg (fun v ↦ horizontalWeakFormDelta N delta v b phi)
+      (smoothedModeCoefficients_value N Omega h).symm
+  have hgradient : coefficients.HasWeakGradient :=
+    smoothedModeCoefficients_hasWeakGradient N Omega h
+  let resolvent : HasResolventOn (horizontalAssociatedOperator form)
+      (Metric.sphere lambda iso.radius) := data.contourResolvent
+  exact exists_bound_with_projection N delta coefficients form
+    hdelta hgradient hform resolvent hpair hpair0 hgraph
+
 /-! ## The construction -/
 
 /--
@@ -81,6 +138,7 @@ theorem exists_localSeedC2_two_pi :
       s.parameters.wavenumber = 2 * Real.pi ∧
       seedGrowthFloorBound ≤ s.growthFloor ∧ 0 < s.angularSpeed := by
   obtain ⟨Omega, kappa, hd, -, hfloor⟩ := exists_certifiedInterfaceData_two_pi
+  let iso := modeIsolation hd
   have hweak := horizontalModeWeakIdentity_holds hd
   obtain ⟨Lstar, f, hLstar, hf, hsupp, hwitness⟩ := exists_horizontalSeedWitness hd hweak
   obtain ⟨h0, eta0, _K, _Kdiff, Kres, hh0, heta0, _hK0, _hKd0, hKres0, hmain⟩ :=
@@ -99,31 +157,9 @@ theorem exists_localSeedC2_two_pi :
         lt_of_le_of_lt (min_le_right _ _) (by norm_num)⟩,
       le_trans (min_le_left _ _) (min_le_left _ _),
       le_trans (min_le_left _ _) (min_le_right _ _)⟩
-  obtain ⟨C, hC0, hCle⟩ : ∃ C : ℝ, 0 ≤ C ∧
-      ∀ z : ℂ, z ∈ Metric.sphere (horizontalEigenvalue (2 * Real.pi) kappa)
-          (modeIsolation hd).radius →
-        ∀ t : ℝ, 0 ≤ t → t ≤ Kres →
-          t + (1 + ‖z‖ * (‖wholePlaneH1Embedding C2‖ * t)) ≤ C := by
-    refine ⟨Kres + (1 + (‖horizontalEigenvalue (2 * Real.pi) kappa‖ +
-        (modeIsolation hd).radius) * (‖wholePlaneH1Embedding C2‖ * Kres)), ?_, ?_⟩
-    · have hz0 : (0 : ℝ) ≤ ‖horizontalEigenvalue (2 * Real.pi) kappa‖ +
-          (modeIsolation hd).radius :=
-        add_nonneg (norm_nonneg _) (modeIsolation hd).radius_pos.le
-      have := mul_nonneg hz0 (mul_nonneg hj0 hKres0)
-      linarith
-    · intro z hz t ht0 htK
-      have hzle : ‖z‖ ≤ ‖horizontalEigenvalue (2 * Real.pi) kappa‖ +
-          (modeIsolation hd).radius := norm_le_of_mem_sphere hz
-      have hz0 : (0 : ℝ) ≤ ‖horizontalEigenvalue (2 * Real.pi) kappa‖ +
-          (modeIsolation hd).radius :=
-        add_nonneg (norm_nonneg _) (modeIsolation hd).radius_pos.le
-      have h1' : ‖wholePlaneH1Embedding C2‖ * t ≤ ‖wholePlaneH1Embedding C2‖ * Kres :=
-        mul_le_mul_of_nonneg_left htK hj0
-      have h2' : ‖z‖ * (‖wholePlaneH1Embedding C2‖ * t) ≤
-          (‖horizontalEigenvalue (2 * Real.pi) kappa‖ + (modeIsolation hd).radius) *
-            (‖wholePlaneH1Embedding C2‖ * Kres) :=
-        mul_le_mul hzle h1' (mul_nonneg hj0 ht0) hz0
-      linarith
+  obtain ⟨C, hC0, hCle⟩ := exists_circle_graph_bound
+    (horizontalEigenvalue (2 * Real.pi) kappa) iso.radius
+    ‖wholePlaneH1Embedding C2‖ Kres iso.radius_pos.le hj0 hKres0
   obtain ⟨P, hP0, hPle⟩ : ∃ P : ℝ, 0 ≤ P ∧
       ∀ delta : ℝ, 1 - eta ≤ delta → delta ≤ 1 + eta →
         ‖horizontalStrongPairMap (2 * Real.pi) delta
@@ -136,11 +172,8 @@ theorem exists_localSeedC2_two_pi :
       fun delta hlo hup =>
         norm_horizontalStrongPairMap_le_bound _ _ _ (by linarith) hlo hup⟩
   have hresult : ∀ delta ∈ Set.Icc (1 - eta) (1 + eta),
-      ∃ B : WholePlaneLocalResolventBound
-          (wholePlaneSchwartzVelocityCoefficients
-            (parameterizedSmoothedVelocity hw Omega
-              (jumpAxialSpeed (2 * Real.pi) Omega)))
-          (2 * Real.pi) delta (modeIsolation hd).contour.boundary
+      ∃ B : WholePlaneLocalResolventBound (smoothedModeCoefficients (2 * Real.pi) Omega hw)
+          (2 * Real.pi) delta (Metric.sphere (horizontalEigenvalue (2 * Real.pi) kappa) iso.radius)
           (‖wholePlaneH2OfPair C2‖ * (P * C)),
         1 / 2 < (inner ℂ (B.resolvent.rieszProjection f) f).re := by
     intro delta hdelta
@@ -150,48 +183,27 @@ theorem exists_localSeedC2_two_pi :
     have hne : delta ≠ 0 := ne_of_gt hdpos
     have hKres := (hmain hw delta hhw0 (le_trans habs hetale0)).1
     obtain ⟨nd, -, hndinner⟩ := hthr hw delta hhw1 (le_trans habs hetale1)
-    have hCz : ∀ z ∈ Metric.sphere (horizontalEigenvalue (2 * Real.pi) kappa)
-        (modeIsolation hd).radius, ‖nd.contourResolvent.inv z‖ ≤ C := by
-      intro z hz
-      refine le_trans (HorizontalNeumannData.norm_contourResolvent_inv_le nd hz) ?_
-      exact hCle z hz _ (ContinuousLinearMap.opNorm_nonneg _) (hKres z hz)
-    refine ⟨horizontalLocalResolventBoundOfBounds (2 * Real.pi) delta
-      (smoothedModeCoefficients (2 * Real.pi) Omega hw)
-      (horizontalWeakFormDelta (2 * Real.pi) delta
-        (horizontalSmoothedModeVelocity (2 * Real.pi) Omega hw))
-      hne (smoothedModeCoefficients_hasWeakGradient (2 * Real.pi) Omega hw)
-      (fun _ _ => rfl) nd.contourResolvent (hPle delta hlo hup) hP0 hCz le_rfl, ?_⟩
-    have hgt : (1 : ℝ) / 2 < (inner ℂ (nd.projection f) f).re :=
-      re_inner_gt_half_of_lt_quarter hwitness (hndinner f hf)
-    have hproj : (horizontalLocalResolventBoundOfBounds (2 * Real.pi) delta
-        (smoothedModeCoefficients (2 * Real.pi) Omega hw)
-        (horizontalWeakFormDelta (2 * Real.pi) delta
-          (horizontalSmoothedModeVelocity (2 * Real.pi) Omega hw))
-        hne (smoothedModeCoefficients_hasWeakGradient (2 * Real.pi) Omega hw)
-        (fun _ _ => rfl) nd.contourResolvent (hPle delta hlo hup) hP0 hCz
-        le_rfl).resolvent.rieszProjection = nd.projection :=
-      horizontalStrongResolvent_rieszProjection (2 * Real.pi) delta
-        (smoothedModeCoefficients (2 * Real.pi) Omega hw)
-        (horizontalWeakFormDelta (2 * Real.pi) delta
-          (horizontalSmoothedModeVelocity (2 * Real.pi) Omega hw))
-        hne (smoothedModeCoefficients_hasWeakGradient (2 * Real.pi) Omega hw)
-        (fun _ _ => rfl) nd.contourResolvent
-    calc (1 : ℝ) / 2 < (inner ℂ (nd.projection f) f).re := hgt
-      _ = _ := congrArg
-          (fun T : WholePlaneC2L2 →L[ℂ] WholePlaneC2L2 => (inner ℂ (T f) f).re) hproj.symm
+    obtain ⟨bound, hprojection⟩ := exists_smoothed_resolvent_bound
+      (N := 2 * Real.pi) (Omega := Omega) (h := hw) (iso := iso)
+      nd hne (hPle delta hlo hup) hP0 fun z hz ↦
+        (nd.norm_contourResolvent_inv_le hz).trans
+          (hCle z hz _ (ContinuousLinearMap.opNorm_nonneg _) (hKres z hz))
+    refine ⟨bound, ?_⟩
+    rw [hprojection]
+    exact re_inner_gt_half_of_lt_quarter hwitness (hndinner f hf)
   obtain ⟨s, hk, hN, -, -, hG, -, hOmega, -, -, -, -⟩ :=
     LocalSeedC2.exists_localSeedC2_of_data 1 one_pos (N := 2 * Real.pi) (by norm_num)
       (1 - eta) (1 + eta) (by linarith) (by linarith) (by linarith)
-      (modeIsolation hd).contour (modeIsolation hd).growthFloor_pos hw Omega
+      iso.contour iso.growthFloor_pos hw Omega
       (jumpAxialSpeed (2 * Real.pi) Omega) rfl (‖wholePlaneH2OfPair C2‖ * (P * C))
       (mul_nonneg (ContinuousLinearMap.opNorm_nonneg (wholePlaneH2OfPair C2))
         (mul_nonneg hP0 hC0)) Lstar hLstar f hf hsupp hresult
   refine ⟨s, hk, hN, ?_, ?_⟩
-  · have hgf : s.growthFloor = (modeIsolation hd).contour.growthFloor := by
+  · have hgf : s.growthFloor = iso.contour.growthFloor := by
       change s.parameters.contour.growthFloor = _
       rw [hG]
     rw [hgf]
-    have hge := (modeIsolation hd).growthFloor_ge
+    have hge := iso.growthFloor_ge
     have hre : (448 : ℝ) - (2 * Real.pi) ^ 2 ≤
         (horizontalEigenvalue (2 * Real.pi) kappa).re := hfloor.2.2.2
     simp only [seedGrowthFloorBound]

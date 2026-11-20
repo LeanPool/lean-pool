@@ -370,16 +370,11 @@ theorem norm_stateResolvent_sub_le (nd : HorizontalNeumannData N delta w' w lam 
       ‖wholePlaneH1Embedding C2‖ *
         (nd.invBound * nd.formBound * (1 - nd.invBound * nd.formBound)⁻¹ *
           nd.solutionBound) := by
-  have hmem : z ∈ iso.neumannSet :=
-    iso.neumannOpen_subset_neumannSet (iso.sphere_subset_neumannOpen hz)
-  have h1 : nd.contourResolvent.stateResolvent z - iso.contourResolvent.stateResolvent z =
-      (wholePlaneH1Embedding C2).comp (horizontalDeltaSolution N delta w' w z) -
-        (wholePlaneH1Embedding C2).comp (horizontalFormSolution N w z) := by
-    rw [nd.stateResolvent_eq hz, iso.contour_stateResolvent hz]
-  refine le_trans (le_of_eq (congrArg (fun T : WholePlaneC2L2 →L[ℂ] WholePlaneC2L2 => ‖T‖)
-    h1)) ?_
-  exact norm_horizontalDeltaStateResolvent_sub_le N delta w' w z (nd.size_le hmem) nd.small
-    (nd.solutionBound_le z hmem)
+  have hmem := iso.neumannOpen_subset_neumannSet (iso.sphere_subset_neumannOpen hz)
+  have bound := norm_horizontalDeltaStateResolvent_sub_le N delta w' w z (nd.size_le hmem)
+    nd.small (nd.solutionBound_le z hmem)
+  rw [nd.stateResolvent_eq hz, iso.contour_stateResolvent hz]
+  exact bound
 
 /-- **`‖P_{h,δ} - P⁰‖_{2→2} ≤ r‖j‖ Bη(1-Bη)^{-1}C`**, the explicit form of the display
 `‖P_{h,δ} - P⁰‖_{2→2} ≤ C(h^{1/4} + |δ-1|)` in the proof of `prop:local-seed`: the contour
@@ -424,24 +419,14 @@ theorem norm_projection_sub_le_two (nd : HorizontalNeumannData N delta w' w lam 
     ‖nd.projection - iso.projection‖ ≤
       2 * iso.radius * ‖wholePlaneH1Embedding C2‖ * (nd.invBound * nd.formBound) *
         nd.solutionBound := by
-  have hden : (0 : ℝ) < 1 - nd.invBound * nd.formBound := by linarith
-  have hinvnn : (0 : ℝ) ≤ (1 - nd.invBound * nd.formBound)⁻¹ := le_of_lt (inv_pos.mpr hden)
-  have hmul : (1 - nd.invBound * nd.formBound)⁻¹ * (1 - nd.invBound * nd.formBound) = 1 :=
-    inv_mul_cancel₀ (ne_of_gt hden)
-  have hinvle : (1 - nd.invBound * nd.formBound)⁻¹ ≤ 2 := by
-    nlinarith [hmul, hinvnn, hhalf]
-  have hj0 : (0 : ℝ) ≤ ‖wholePlaneH1Embedding C2‖ :=
-    ContinuousLinearMap.opNorm_nonneg (wholePlaneH1Embedding C2)
-  have e1 : nd.invBound * nd.formBound * (1 - nd.invBound * nd.formBound)⁻¹ *
-      nd.solutionBound ≤ nd.invBound * nd.formBound * 2 * nd.solutionBound :=
-    mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hinvle hc0) hC0
-  have e2 : ‖wholePlaneH1Embedding C2‖ * (nd.invBound * nd.formBound *
-      (1 - nd.invBound * nd.formBound)⁻¹ * nd.solutionBound) ≤
-      ‖wholePlaneH1Embedding C2‖ * (nd.invBound * nd.formBound * 2 * nd.solutionBound) :=
-    mul_le_mul_of_nonneg_left e1 hj0
-  have e3 := mul_le_mul_of_nonneg_left e2 iso.radius_pos.le
-  refine le_trans nd.norm_projection_sub_le ?_
-  linarith [e3]
+  calc
+    ‖nd.projection - iso.projection‖ ≤
+        iso.radius * (2 * ‖wholePlaneH1Embedding C2‖ * (nd.invBound * nd.formBound) *
+          nd.solutionBound) :=
+      HasResolventOn.norm_rieszProjection_sub_le_of_domains iso.radius_pos.le
+        nd.contourResolvent iso.contourResolvent
+        (fun _ hz ↦ nd.norm_stateResolvent_sub_le_two hhalf hc0 hC0 hz)
+    _ = _ := by ring
 
 end HorizontalNeumannData
 

@@ -283,7 +283,7 @@ private theorem eLpNorm_fderiv_cutoffNormSq_le
       ENNReal.ofReal B * eLpNorm f 2 volume ^ 2 := by
     rw [show a = B • fun x => ‖f x‖ ^ 2 by
       funext x; simp [a]]
-    rw [eLpNorm_const_smul, Real.enorm_eq_ofReal hB0]
+    rw [eLpNorm_const_smul, Real.eNorm_eq_ofReal hB0]
     have hsquare : eLpNorm (fun x => ‖f x‖ ^ 2) 1 volume =
         eLpNorm f 2 volume ^ 2 := by
       rw [show (fun x => ‖f x‖ ^ (2 : ℕ)) =

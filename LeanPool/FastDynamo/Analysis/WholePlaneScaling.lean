@@ -83,8 +83,8 @@ theorem wholePlane_density_rpow_half (ell : ℝ) (hell : 0 < ell) :
 /-- For `ℓ > 0` the extended norm of the complex scalar `ℓ` is `ENNReal.ofReal ℓ`. -/
 theorem wholePlane_enorm_real (ell : ℝ) (hell : 0 < ell) :
     ‖(ell : ℂ)‖ₑ = ENNReal.ofReal ell := by
-  simpa only [enorm_eq_nnnorm, Complex.nnnorm_real] using
-    Real.enorm_eq_ofReal hell.le
+  simpa only [eNorm_eq_nnNorm, Complex.nnNorm_real] using
+    Real.eNorm_eq_ofReal hell.le
 
 section Rescale
 
@@ -123,7 +123,7 @@ theorem eLpNorm_wholePlaneNormalizeTarget (ell : ℝ) (hell : 0 < ell)
   rw [eLpNorm_const_smul]
   rw [eLpNorm_smul_measure_of_ne_zero (by positivity : ENNReal.ofReal (ell ^ 2) ≠ 0)]
   rw [wholePlane_density_rpow_half ell hell]
-  rw [enorm_inv (by exact_mod_cast hell.ne')]
+  rw [eNorm_inv (by exact_mod_cast hell.ne')]
   rw [wholePlane_enorm_real ell hell]
   rw [smul_eq_mul]
   rw [← mul_assoc]
