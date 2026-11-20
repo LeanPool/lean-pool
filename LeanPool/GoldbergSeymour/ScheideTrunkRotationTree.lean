@@ -394,10 +394,9 @@ private abbrev helperContinuation1037Conditions.{u_1, u_2} : Prop :=
             have := GoldbergSeymour.TreeSequence.positive T
             have := GoldbergSeymour.NormalGlobalMaximumTriple.height_upper N
             have := Fin.isLt j
-            all_goals
-             first
-             | omega
-             | exact Nat.mod_lt _ (by omega))⟩ :
+            first
+            | omega
+            | exact Nat.mod_lt _ (by omega))⟩ :
          Fin N.height))))
    (_ :
     ∀ (i : Fin (↑j : ℕ)),

@@ -312,7 +312,7 @@ theorem lintegral_window_sq_norm_version_clamp_sub_le
         (‖Xj s ω - X s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P
       ≤ ENNReal.ofReal T * clampMesh P H b T j := by
   have hjoint : Measurable fun q : Ω × ℝ => (‖Xj q.2 q.1 - X q.2 q.1‖₊ : ℝ≥0∞) ^ 2 :=
-    (((hXj.measurable_uncurry.sub hX.measurable_uncurry).nnnorm).coe_nnreal_ennreal).pow_const 2
+    (((hXj.measurable_uncurry.sub hX.measurable_uncurry).nnNorm).coe_nnreal_ennreal).pow_const 2
   rw [MeasureTheory.lintegral_lintegral_swap hjoint.aemeasurable]
   have hIoc : ∫⁻ s in Set.Icc (0 : ℝ) T, (∫⁻ ω, (‖Xj s ω - X s ω‖₊ : ℝ≥0∞) ^ 2 ∂P) ∂volume
       = ∫⁻ s in Set.Ioc (0 : ℝ) T, (∫⁻ ω, (‖Xj s ω - X s ω‖₊ : ℝ≥0∞) ^ 2 ∂P) ∂volume :=
@@ -423,9 +423,9 @@ theorem exists_seq_ae_tendsto_of_tendsto_lintegral {α : Type*} [MeasurableSpace
   rw [MeasureTheory.ae_all_iff]
   intro c
   have hmeasi : ∀ i : ℕ, Measurable fun a : α => (‖u (ms i) c a - v c a‖₊ : ℝ≥0∞) ^ 2 :=
-    fun i => ((((hu (ms i) c).sub (hv c)).nnnorm).coe_nnreal_ennreal).pow_const 2
+    fun i => ((((hu (ms i) c).sub (hv c)).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hsum : ∑' i : ℕ, ∫⁻ a, (‖u (ms i) c a - v c a‖₊ : ℝ≥0∞) ^ 2 ∂μ ≠ ⊤ := by
-    refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum fun i => ?_)
+    refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum fun i => ?_)
       (lt_top_iff_ne_top.mpr (tsum_geometric_inv_two_mul_ne_top (1 : ℝ≥0∞) (by simp))))
     rw [one_mul]
     refine le_trans ?_ (hmslt i).le
@@ -463,11 +463,11 @@ theorem ae_ae_tendsto_version_clamp
     intro i
     have hjoint : Measurable fun q : Ω × ℝ => (‖Xj (ns i) q.2 q.1 - X q.2 q.1‖₊ : ℝ≥0∞) ^ 2 :=
       ((((hXj (ns i)).measurable_uncurry.sub
-        hX.measurable_uncurry).nnnorm).coe_nnreal_ennreal).pow_const 2
+        hX.measurable_uncurry).nnNorm).coe_nnreal_ennreal).pow_const 2
     exact hjoint.lintegral_prod_right'
   have hsum : ∑' i : ℕ, ∫⁻ ω, (∫⁻ s in Set.Icc (0 : ℝ) T,
       (‖Xj (ns i) s ω - X s ω‖₊ : ℝ≥0∞) ^ 2 ∂volume) ∂P ≠ ⊤ := by
-    refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum fun i => ?_)
+    refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum fun i => ?_)
       (lt_top_iff_ne_top.mpr (tsum_geometric_inv_two_mul_ne_top (ENNReal.ofReal T)
         ENNReal.ofReal_ne_top)))
     refine (lintegral_window_sq_norm_version_clamp_sub_le W ℱ' hcoord hX₀ hbm hbq hX
@@ -480,7 +480,7 @@ theorem ae_ae_tendsto_version_clamp
       ((hXj (ns i)).measurable_uncurry.comp (measurable_const.prodMk measurable_id))
     have h2 : Measurable fun s : ℝ => X s ω :=
       (hX.measurable_uncurry.comp (measurable_const.prodMk measurable_id))
-    exact (((h1.sub h2).nnnorm).coe_nnreal_ennreal).pow_const 2
+    exact (((h1.sub h2).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hinner := ae_tendsto_zero_of_lintegral_summable
     (μ := volume.restrict (Set.Icc (0 : ℝ) T)) hmeasω hω
   filter_upwards [hinner] with s hs
@@ -514,10 +514,10 @@ theorem ae_tendsto_version_clamp_at
     intro i
     have h1 : Measurable fun ω : Ω => Xj (ns i) s ω := (hXj (ns i)).measurable s
     have h2 : Measurable fun ω : Ω => X s ω := hX.measurable s
-    exact (((h1.sub h2).nnnorm).coe_nnreal_ennreal).pow_const 2
+    exact (((h1.sub h2).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hsum : ∑' i : ℕ, ∫⁻ ω, (‖Xj (ns i) s ω - X s ω‖₊ : ℝ≥0∞) ^ 2 ∂P ≠ ⊤ := by
     have hgeom := tsum_geometric_inv_two_mul_ne_top (1 : ℝ≥0∞) (by simp)
-    refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum fun i => ?_)
+    refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum fun i => ?_)
       (lt_top_iff_ne_top.mpr hgeom))
     refine (lintegral_sq_norm_version_clamp_sub_le W ℱ' hcoord hX₀ hbm hbq hX
       (hXj (ns i)) hs hsT).trans ?_

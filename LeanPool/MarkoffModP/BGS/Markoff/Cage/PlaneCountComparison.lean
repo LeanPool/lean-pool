@@ -478,7 +478,7 @@ private lemma powerRootCount_le
     Equiv.subtypeEquiv (Equiv.refl K) (by intro x; simp [f, sub_eq_zero])
   rw [Nat.card_congr e]
   exact (rootCount_le_natDegree f hf).trans_eq (by
-    simpa [f] using (natDegree_X_pow_sub_C (R := K) (n := n) (r := 1)))
+    simpa [f] using (natDegree_X_pow_sub_C (R := K) (n := n) (a := 1)))
 
 /-- An embedding of bad pulled pairs into the exceptional plane-point set. -/
 def badOffDiagonalPulledEmbedding

@@ -166,7 +166,7 @@ theorem translatedDyadicBohrUnion_paperIndices_volume_real_ge
 
 /-- The paper's `E_N`, with `L` standing for its logarithm of `A`.
 Keeping `L` explicit separates the measure argument from the later choice of `A`. -/
-def paperTranslatedBohrSet (N : ℕ) (L : ℝ) : Set ℝ :=
+noncomputable def paperTranslatedBohrSet (N : ℕ) (L : ℝ) : Set ℝ :=
   translatedDyadicBohrUnion (paperBohrIndices N)
     (fun k => (N : ℝ) * k + L) N (1 / ((2 : ℝ) ^ 100 * N))
 

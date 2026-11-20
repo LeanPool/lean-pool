@@ -43,14 +43,14 @@ theorem blowupLimitClauses_abs_integral_mul_le {μ : Measure α} {f g : α → �
     (by exact continuous_mul) hf.aestronglyMeasurable hg.aestronglyMeasurable (by
       filter_upwards [] with x
       simp only [one_mul]
-      simp [nnnorm_mul])
+      simp)
   have hH' : eLpNorm (fun x => f x * g x) 1 μ ≤ eLpNorm f 2 μ * eLpNorm g 2 μ := by
     simpa using hH
   rw [← Real.norm_eq_abs, ← ENNReal.toReal_mul]
   refine (norm_integral_le_lintegral_norm _).trans ?_
   refine ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hg.eLpNorm_ne_top) ?_
   refine le_trans (le_of_eq ?_) hH'
-  rw [eLpNorm_one_eq_lintegral_enorm]
+  rw [eLpNorm_one_eq_lintegral_eNorm]
   · simp_rw [ofReal_norm]
   · exact hf.aestronglyMeasurable.mul hg.aestronglyMeasurable
 
@@ -76,13 +76,13 @@ theorem blowupLimitClauses_eLpNorm_le_of_exhaustion {μ : Measure α} {Q : Set �
   have htwo : (2 : ℝ≥0∞) ≠ 0 := by norm_num
   have htwo' : (2 : ℝ≥0∞) ≠ ⊤ := by norm_num
   have hSQsub : ∀ n, S n ⊆ Q := fun n => hSQ ▸ subset_iUnion S n
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal htwo htwo' hGm]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal htwo htwo' hGm]
   rw [← hSQ, setLIntegral_iUnion_of_directed _ hSmono.directed_le]
   simp only [ENNReal.toReal_ofNat]
   have hbound : ∀ n, ∫⁻ x in S n, ‖G x‖ₑ ^ (2 : ℝ) ∂μ ≤ ENNReal.ofReal M ^ (2 : ℝ) := by
     intro n
     have h := hG n
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal htwo htwo'
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal htwo htwo'
       (hGm.mono_measure (Measure.restrict_mono (hSQsub n) le_rfl))] at h
     simp only [ENNReal.toReal_ofNat] at h
     have h2 := ENNReal.rpow_le_rpow h (by norm_num : (0 : ℝ) ≤ 2)
@@ -107,7 +107,7 @@ theorem blowupLimitClauses_tail_tendsto_zero {μ : Measure α} {Q : Set α}
   have hfin : ν univ ≠ ⊤ := by
     rw [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
     have h := hw.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal htwo htwo' hw.aestronglyMeasurable] at h
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal htwo htwo' hw.aestronglyMeasurable] at h
     simp only [ENNReal.toReal_ofNat] at h
     have h' := (ENNReal.rpow_lt_top_iff_of_pos (by norm_num : (0 : ℝ) < 1 / 2)).1 h
     exact h'.ne
@@ -115,7 +115,7 @@ theorem blowupLimitClauses_tail_tendsto_zero {μ : Measure α} {Q : Set α}
       ν ((S n)ᶜ) ^ (1 / 2 : ℝ) := by
     intro n
     rw [eLpNorm_indicator_eq_eLpNorm_restrict (hS n).compl.nullMeasurableSet,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal htwo htwo'
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal htwo htwo'
         (hw.aestronglyMeasurable.mono_measure Measure.restrict_le_self),
       withDensity_apply _ (hS n).compl]
     simp only [ENNReal.toReal_ofNat]

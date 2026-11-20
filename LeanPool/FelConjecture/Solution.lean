@@ -141,7 +141,7 @@ lemma hilbertNumerator_coeff_lt {S : NumericalSemigroup} (G : NumericalSemigroup
   unfold hilbertNumerator
   simp only
   rw [Polynomial.finsetSum_coeff]
-  simp only [Polynomial.coeff_monomial]
+  simp only [Polynomial.coeff_monomial_apply]
   simp_all
 
 lemma hilbertNumerator_coeff_ge {S : NumericalSemigroup} (G : NumericalSemigroupGenerators S) (n :
@@ -152,7 +152,7 @@ lemma hilbertNumerator_coeff_ge {S : NumericalSemigroup} (G : NumericalSemigroup
   simp only [Polynomial.finsetSum_coeff]
   apply Finset.sum_eq_zero
   intro i hi
-  rw [Polynomial.coeff_monomial]
+  rw [Polynomial.coeff_monomial_apply]
   simp only [ite_eq_right_iff]
   intro heq
   exfalso
@@ -815,7 +815,7 @@ lemma natDegree_ge_of_gaps_nonempty {S : NumericalSemigroup} (G : NumericalSemig
   have hge : G.productPolynomial.natDegree + S.gaps.sup id ≤ G.hilbertNumerator.natDegree := by
     apply Polynomial.le_natDegree_of_ne_zero
     unfold NumericalSemigroupGenerators.hilbertNumerator
-    simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial]
+    simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply]
     rw [Finset.sum_eq_single (G.productPolynomial.natDegree + S.gaps.sup id)]
     · simp only [↓reduceIte, ne_eq, sub_eq_zero]
       intro hcontra
@@ -904,8 +904,7 @@ lemma hilbertNumerator_coeff_eq_partial_sum_gaps_empty {S : NumericalSemigroup}
     have h₄ : G.hilbertNumerator.coeff n =
         (∑ k ∈ Finset.range (n + 1), G.productPolynomial.coeff k) -
         ∑ g ∈ S.gaps.filter (· ≤ n), G.productPolynomial.coeff (n - g) := by
-      simp only [NumericalSemigroupGenerators.hilbertNumerator]
-      simp [Polynomial.coeff_monomial, Finset.mem_range, hn]
+      exact NumericalSemigroupGenerators.hilbertNumerator_coeff_lt G n hn
     rw [h₄, h₂ n, sub_zero]
   exact h₃ j hj
 
@@ -1165,7 +1164,7 @@ lemma natDegree_one_sub_X_pow_eq (k : ℕ) (hk : 0 < k) :
     (1 - Polynomial.X ^ k : Polynomial ℤ).natDegree = k := by
   have h₁ : (1 - Polynomial.X ^ k : Polynomial ℤ).natDegree ≤ k := natDegree_one_sub_X_pow_le k
   have h₃ : (1 - Polynomial.X ^ k : Polynomial ℤ).coeff k = -1 := by
-    simp [Polynomial.coeff_sub, Polynomial.coeff_one, Polynomial.coeff_X_pow]
+    simp [Polynomial.coeff_one, Polynomial.coeff_X_pow]
     cases k <;> simp_all
   refine le_antisymm h₁ (Polynomial.le_natDegree_of_ne_zero ?_)
   simp_all
@@ -1184,7 +1183,7 @@ lemma one_sub_X_pow_term_eq_zero (k n j : ℕ) (_hk : 0 < k) (hn : 1 ≤ n)
 lemma one_sub_X_pow_term_at_k (k n : ℕ) (hk : 0 < k) :
     ((1 - Polynomial.X ^ k : Polynomial ℤ).coeff k : ℚ) * (k : ℚ)^n = -((k : ℚ)^n) := by
   have h₁ : (1 - Polynomial.X ^ k : Polynomial ℤ).coeff k = (-1 : ℤ) := by
-    simp [Polynomial.coeff_sub, Polynomial.coeff_one, Polynomial.coeff_X_pow]
+    simp [Polynomial.coeff_one, Polynomial.coeff_X_pow]
     cases k <;> simp_all
   simp_all
 
@@ -1802,8 +1801,7 @@ lemma hilbertNumerator_coeff_at_jstar {S : NumericalSemigroup} (G : NumericalSem
   have hcoeff : G.hilbertNumerator.coeff jstar =
       (∑ k ∈ Finset.range (jstar + 1), G.productPolynomial.coeff k) -
       (∑ g ∈ S.gaps.filter (· ≤ jstar), G.productPolynomial.coeff (jstar - g)) := by
-    simp only [NumericalSemigroupGenerators.hilbertNumerator]
-    simp [Polynomial.coeff_monomial, Finset.mem_range, hjstar_bound]
+    exact NumericalSemigroupGenerators.hilbertNumerator_coeff_lt G jstar hjstar_bound
   have h1 : ∑ k ∈ Finset.range (jstar + 1), G.productPolynomial.coeff k = 0 := by
     have hge : 1 ≤ S.gaps.sup id := by
       obtain ⟨gmax, hgmax_mem, hgmax_eq⟩ := Finset.exists_mem_eq_sup S.gaps hnonempty id

@@ -73,7 +73,7 @@ theorem memLp_gradient_fiber_of_integrated_energy
     hg.aestronglyMeasurable
   have hnorm : MemLp (fun z => ‖g z‖) 2
       ((volume.restrict K).prod (volume.restrict J)) := by
-    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (by norm_num) (by norm_num) hsm.norm]
     simpa [ENNReal.toReal_ofNat] using hfinite'
   exact (memLp_norm_iff hsm).mp hnorm
@@ -105,7 +105,7 @@ theorem norm_toLp_gradient_fiber_le
         unfold g
         rw [norm_toCompactnessGradientFiber_sq u Du z]
   have hroot : eLpNorm g 2 μ ≤ G ^ (1 / 2 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) hf.aestronglyMeasurable]
     calc
       (∫⁻ z, ‖g z‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) =

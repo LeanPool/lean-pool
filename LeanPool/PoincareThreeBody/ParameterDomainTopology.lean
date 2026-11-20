@@ -50,7 +50,9 @@ def parameterCoordinateEquiv : (ℝ × PhaseSpace) ≃ ((ℝ × Plane) × Plane)
 /-- The shear and coordinate splitting as a homeomorphism. -/
 noncomputable def parameterCoordinateHomeomorph :
     (ℝ × PhaseSpace) ≃ₜ ((ℝ × Plane) × Plane) :=
-  Homeomorph.mk parameterCoordinateEquiv (by fun_prop) (by fun_prop)
+  Homeomorph.mk parameterCoordinateEquiv
+    (by dsimp [parameterCoordinateEquiv]; fun_prop)
+    (by dsimp [parameterCoordinateEquiv]; fun_prop)
 
 /-- The two primary positions after straightening the moving coordinates. -/
 def primaryConfigurations : Set Plane := {![0, 0], ![1, 0]}
@@ -158,7 +160,9 @@ def phaseCoordinateEquiv : PhaseSpace ≃ (Plane × Plane) where
 
 /-- Position/momentum splitting as a homeomorphism. -/
 noncomputable def phaseCoordinateHomeomorph : PhaseSpace ≃ₜ (Plane × Plane) :=
-  Homeomorph.mk phaseCoordinateEquiv (by fun_prop) (by fun_prop)
+  Homeomorph.mk phaseCoordinateEquiv
+    (by dsimp [phaseCoordinateEquiv]; fun_prop)
+    (by dsimp [phaseCoordinateEquiv]; fun_prop)
 
 /-- The mass-zero phase domain, excluding both fixed primary positions. -/
 def massZeroCollisionFree : Set PhaseSpace :=

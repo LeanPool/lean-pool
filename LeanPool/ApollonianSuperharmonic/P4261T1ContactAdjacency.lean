@@ -183,7 +183,7 @@ theorem P4261T1ContactAdjacency
          have h₂ := cfg.secondLarge
          omega)
   all_goals
-    try simp only [show (0 : Fin 3).succ = (1 : Fin 4) from rfl,
+    simp only [show (0 : Fin 3).succ = (1 : Fin 4) from rfl,
       show (1 : Fin 3).succ = (2 : Fin 4) from rfl,
       show (2 : Fin 3).succ = (3 : Fin 4) from rfl]
     try simp only [vf.2.2.2.2.2.2.2.1, vf.2.2.2.2.2.2.2.2.1,

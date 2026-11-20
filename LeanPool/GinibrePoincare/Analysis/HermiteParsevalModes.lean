@@ -319,7 +319,7 @@ theorem gaussianHermiteMode_eq_antiDegreeProjection {n : ℕ} (hn : 0 < n)
     | zero => simp
     | add x y hx hy ihx ihy => simp [inner_add_right, ihx, ihy]
     | smul c x hx ih => simp [inner_smul_right, ih]
-  have hz := closure_minimal hspan
+  have hz := closure_minimal (fun x hx ↦ hspan x hx)
     (isClosed_eq (continuous_const.inner continuous_id) continuous_const) hw
   change inner ℂ (g - gaussianHermiteMode hn d g) w = 0 at hz
   simpa only [inner_sub_left] using hz

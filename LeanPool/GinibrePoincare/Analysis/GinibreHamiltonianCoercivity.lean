@@ -63,7 +63,7 @@ theorem ginibreHamiltonian_quadratic_lower_bound {n : ℕ} (hn : 0 < n)
   have hprod : 4*(configurationNormSq z+1) =
       (8*(n : ℝ))*((configurationNormSq z+1)/(2*(n : ℝ))) := by
     field_simp
-   ; ring
+    ring
   have hL : Real.log (4*(configurationNormSq z+1)) ≤
       Real.log (8*(n : ℝ)) + (configurationNormSq z+1)/(2*(n : ℝ))-1 := by
     rw [hprod, Real.log_mul (by positivity) (ne_of_gt hp)]
@@ -79,7 +79,7 @@ theorem ginibreHamiltonian_quadratic_lower_bound {n : ℕ} (hn : 0 < n)
       (n : ℝ)/2*configurationNormSq z + ginibreHamiltonianLowerBoundConstant n := by
     unfold ginibreHamiltonianLowerBoundConstant
     field_simp
-   ; ring
+    ring
   rw [hcalc] at hB
   unfold ginibreHamiltonian
   linarith

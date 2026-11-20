@@ -67,7 +67,7 @@ lemma volume_vec3Ball_scale {a r : ℝ} (ha : 0 < a) :
   have hmap := Real.map_linearMap_volume_pi_eq_smul_volume_pi (f := f) hdet
   have hmeasure := congrArg (fun μ : Measure Vec3 => μ (vec3Ball 0 r)) hmap
   rw [Measure.map_apply (f.continuous_of_finiteDimensional.measurable)
-    (vec3Ball_measurable 0 r), hpre, Measure.smul_apply] at hmeasure
+    (vec3Ball_measurable 0 r), hpre, smul_apply] at hmeasure
   rw [vec3ScaleLinear_det] at hmeasure
   have ha3 : 0 < a ^ 3 := pow_pos ha 3
   simpa [f, abs_of_pos (inv_pos.mpr ha), abs_of_pos ha, inv_pow, ha.ne',

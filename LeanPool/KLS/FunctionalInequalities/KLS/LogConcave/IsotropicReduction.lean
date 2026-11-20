@@ -95,7 +95,7 @@ theorem localSlope_le_of_regular_isotropic_bound {K : NNReal}
     simpa only [ν, hiso.covariance_identity] using hcov
   have hC : Tendsto Cseq atTop (𝓝 K) := by
     apply NNReal.tendsto_coe.mp
-    simpa only [Cseq, NNReal.coe_mul, NNReal.coe_add, NNReal.coe_one, coe_nnnorm] using
+    simpa only [Cseq, NNReal.coe_mul, NNReal.coe_add, NNReal.coe_one, coe_nnNorm] using
       RegularPotential.envelope_coefficient_tendsto K hcov'
   apply KLS.LogConcave.localSlope_constant_le_of_tendsto ν μ hLC Cseq K hweak hC
   intro n

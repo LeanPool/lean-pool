@@ -42,7 +42,7 @@ instance : Fact (Nat.Prime 1291) := ⟨witness_1291_prime⟩
 /-- 2 has order exactly 1290 = 2·3·5·43 in (ℤ/1291)ˣ — certified by Fermat plus the
     four maximal-divisor refusals (kernel bignum arithmetic). -/
 theorem orderOf_two_mod_1291 : orderOf (2 : ZMod 1291) = 1290 := by
-  apply orderOf_eq_of_pow_and_pow_div_prime (by norm_num)
+  apply orderOf_eq_of_pow_and_pow_div_prime
   · have h := ZMod.pow_card_sub_one_eq_one (p := 1291) (a := 2) (by decide)
     simpa using h
   · intro p hp hdvd

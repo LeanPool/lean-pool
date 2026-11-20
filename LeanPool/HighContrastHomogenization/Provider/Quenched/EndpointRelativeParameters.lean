@@ -153,7 +153,7 @@ theorem endpointTolerance_le_generation_decay
     have hm := mul_lt_mul_of_neg_left hidx (by linarith only [heta] : -eta < 0)
     apply le_of_lt
     convert hm using 1
-    all_goals (field_simp; ring)
+    field_simp; ring
   have hp := Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 3) hexp
   dsimp only [endpointTolerance]
   calc

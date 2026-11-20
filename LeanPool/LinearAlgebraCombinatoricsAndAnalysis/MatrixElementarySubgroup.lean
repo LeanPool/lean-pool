@@ -168,7 +168,7 @@ theorem blockUpperUnit_single (i j : n) (a : A) :
   ext : 1
   ext p q
   rcases p with p | p <;> rcases q with q | q <;>
-    simp [fromBlocks, single_apply, one_apply, eq_comm]
+    simp [fromBlocks, single_apply, Matrix.one_apply, eq_comm]
 
 theorem blockLowerUnit_single (i j : n) (a : A) :
     blockLowerUnit (single i j a) =
@@ -176,7 +176,7 @@ theorem blockLowerUnit_single (i j : n) (a : A) :
   ext : 1
   ext p q
   rcases p with p | p <;> rcases q with q | q <;>
-    simp [fromBlocks, single_apply, one_apply, eq_comm]
+    simp [fromBlocks, single_apply, Matrix.one_apply, eq_comm]
 
 @[simp] theorem blockUpperUnit_zero : blockUpperUnit (0 : Matrix n n A) = 1 := by
   ext : 1; simp [← fromBlocks_one]

@@ -116,7 +116,7 @@ theorem projected_gate_mem_flatten_span
       anfTwoProjection (C.gate ⟨k, hk⟩) ∈ S := by
     intro k
     induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
         intro hk
         let j : Fin 8 := ⟨k, hk⟩
         by_cases hdec : IsDecomposableTwo (anfTwoProjection (C.gate j))

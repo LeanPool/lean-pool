@@ -387,7 +387,7 @@ theorem eLpNorm_unscale_gradCoord {a : ℝ} (ha : 0 < a) (hp_top : p ≠ ∞)
       (fun x : Vec d => (a • u.grad (a • x)) i) =
         a • fun x : Vec d => u.grad (a • x) i := rfl
   rw [hfun, MeasureTheory.eLpNorm_const_smul,
-    Real.enorm_eq_ofReal ha.le, eLpNorm_comp_smul_eq ha hp_top hgrad_meas]
+    Real.eNorm_eq_ofReal ha.le, eLpNorm_comp_smul_eq ha hp_top hgrad_meas]
 
 /-- The coordinate gradient `L^p` seminorm under pullback by positive dilation. -/
 theorem gradCoordLpSeminorm_unscale_eq {a : ℝ} (ha : 0 < a) (hp_top : p ≠ ∞)
@@ -568,7 +568,7 @@ theorem eLpNorm_dilate_gradCoord {a : ℝ} (ha : 0 < a) (hp_top : p ≠ ∞)
       (fun x : Vec d => (a⁻¹ • u.grad (T x)) i) =
         a⁻¹ • fun x : Vec d => u.grad (T x) i := rfl
   rw [hfun, MeasureTheory.eLpNorm_const_smul,
-    Real.enorm_eq_ofReal (inv_nonneg.mpr ha.le), ← hmap_eLp, hmap, hpre,
+    Real.eNorm_eq_ofReal (inv_nonneg.mpr ha.le), ← hmap_eLp, hmap, hpre,
     MeasureTheory.eLpNorm_smul_measure_of_ne_top hp_top]
   · simp only [smul_eq_mul, volumeMeasureOn]
   · exact (u.gradMemLp i).aestronglyMeasurable

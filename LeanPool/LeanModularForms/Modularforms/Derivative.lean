@@ -414,7 +414,7 @@ lemma deriv_denom (z : ℂ) :
   simp only [denom]
   rw [deriv_add_const, deriv_const_mul _ differentiableAt_id, deriv_id'', mul_one]; simp only [
     Fin.isValue, Matrix.SpecialLinearGroup.coe_GL_coe_matrix,
-    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    Matrix.SpecialLinearGroup.map_apply_coe, Int.coe_castRingHom,
     Matrix.map_apply, ofReal_intCast]
 
 /-- Derivative of the numerator function: d/dz[az + b] = a. -/
@@ -423,7 +423,7 @@ lemma deriv_num (z : ℂ) :
   simp only [num]
   rw [deriv_add_const, deriv_const_mul _ differentiableAt_id, deriv_id'', mul_one]; simp only [
     Fin.isValue, Matrix.SpecialLinearGroup.coe_GL_coe_matrix,
-    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    Matrix.SpecialLinearGroup.map_apply_coe, Int.coe_castRingHom,
     Matrix.map_apply, ofReal_intCast]
 
 /-- Differentiability of denom. -/
@@ -451,7 +451,7 @@ lemma deriv_moebius (z : ℍ) :
   rw [deriv_fun_div (differentiableAt_num γ z) (differentiableAt_denom γ z) hz,
       deriv_num, deriv_denom]
   simp only [denom_apply, num, Matrix.SpecialLinearGroup.coe_GL_coe_matrix,
-    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    Matrix.SpecialLinearGroup.map_apply_coe, Int.coe_castRingHom,
     Matrix.map_apply, ofReal_intCast] at *
   have hnum_eq : ((γ 0 0 : ℤ) : ℂ) * ((γ 1 0 : ℤ) * z + (γ 1 1 : ℤ)) -
       ((γ 0 0 : ℤ) * z + (γ 0 1 : ℤ)) * (γ 1 0 : ℤ) = 1 := by linear_combination hdet

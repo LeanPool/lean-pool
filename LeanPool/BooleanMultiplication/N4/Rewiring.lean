@@ -56,7 +56,7 @@ theorem wireSpace_updateGate_eq_of_lt {m r : Nat}
     (k : Nat) (hjk : j.val < k) (hkr : k ≤ r) :
     wireSpace (updateGate C j t) k = wireSpace C.gate k := by
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
       obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : k ≠ 0)
       by_cases hnj : n = j.val
       · subst n
@@ -217,7 +217,7 @@ theorem wireSpace_swapAdjacent_eq_of_right_lt {m r : Nat}
     (k : Nat) (hbk : b.val < k) (hkr : k ≤ r) :
     wireSpace (swapAdjacentFun C.gate a b) k = wireSpace C.gate k := by
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
       obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : k ≠ 0)
       by_cases hnb : n = b.val
       · subst n
@@ -403,7 +403,7 @@ theorem exists_move_direct_gate_left {m r : Nat}
       (∀ k : Fin r, k.val < p.val → D.gate k = C.gate k) := by
   generalize hd : j.val - p.val = d
   induction d using Nat.strong_induction_on generalizing C j with
-  | h d ih =>
+  | ind d ih =>
       by_cases hpjeq : p = j
       · subst j
         exact ⟨C, rfl, hgate, hleft, hright, by intros; rfl⟩

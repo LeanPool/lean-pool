@@ -261,7 +261,7 @@ theorem GradientEstimates.exists_spatial_lipschitz_of_fderiv_bound
   have hD' (t : ℝ) (x : Vec 2) : ‖fderiv ℝ (b t) x‖₊ ≤ K := by
     exact_mod_cast hD t x
   have hLip (t : ℝ) : LipschitzWith K (b t) :=
-    lipschitzWith_of_nnnorm_fderiv_le (hsliceDiff t) (hD' t)
+    lipschitzWith_of_nnNorm_fderiv_le (hsliceDiff t) (hD' t)
   refine ⟨L, hL, ?_⟩
   intro t x y
   have h := (hLip t).dist_le_mul x y

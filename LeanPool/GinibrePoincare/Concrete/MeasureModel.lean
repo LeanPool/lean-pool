@@ -153,7 +153,7 @@ theorem ginibreMeasure_univ_of_mass_valid (n : ℕ)
     (h : GinibreMassIsValid n) :
     ginibreMeasure n Set.univ = 1 := by
   rcases h with ⟨hpos, htop⟩
-  simp only [ginibreMeasure, Measure.smul_apply, ginibreNormalizingMass]
+  simp only [ginibreMeasure, smul_apply, ginibreNormalizingMass]
   exact ENNReal.inv_mul_cancel hpos.ne' htop.ne
 
 /-- A positive finite raw mass equips the normalized Ginibre measure with the

@@ -2169,14 +2169,15 @@ theorem affineProfile_smooth {b : ℝ → ℝ}
     (hb : ContDiffOn ℝ ∞ b (Ioo window.left window.right))
     {F : ℝ × ℝ → ℝ} (hF : ContDiffOn ℝ ∞ F (AxisEvaluation.strip window 20))
     (c Λ : ℝ) : ContDiffOn ℝ ∞ (affineProfile b c Λ F) (domain Λ) := by
-  exact (hb.comp contDiff_snd.contDiffOn (fun _ hp => hp.2)).add
+  exact (hb.comp contDiff_snd.contDiffOn (fun _ (hp : _ ∈ domain Λ) => hp.2)).add
     (contDiffOn_const.mul (pullback_smooth hF Λ))
 
 theorem angularProfile_smooth {a : ℝ → ℝ}
     (ha : ContDiffOn ℝ ∞ a (Ioo window.left window.right))
     {Φ : ℝ × ℝ → ℝ} (hΦ : ContDiffOn ℝ ∞ Φ (AxisEvaluation.strip window 20))
     (Λ : ℝ) : ContDiffOn ℝ ∞ (angularProfile a Λ Φ) (domain Λ) := by
-  exact (ha.comp contDiff_snd.contDiffOn (fun _ hp => hp.2)).mul (pullback_smooth hΦ Λ)
+  exact (ha.comp contDiff_snd.contDiffOn (fun _ (hp : _ ∈ domain Λ) => hp.2)).mul
+    (pullback_smooth hΦ Λ)
 
 theorem sliceY_smooth {F : ℝ × ℝ → ℝ}
     (hF : ContDiffOn ℝ ∞ F (AxisEvaluation.strip window 20))

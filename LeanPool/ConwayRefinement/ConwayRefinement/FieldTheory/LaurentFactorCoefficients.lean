@@ -34,9 +34,8 @@ variable {R : Type u} [Semiring R]
 theorem toLaurent_apply_natCast (p : Polynomial R) (n : ℕ) :
     (Polynomial.toLaurent p).coeff (n : ℤ) = p.coeff n := by
   rw [coeff_toLaurent]
-  change (p.toFinsupp.coeff.mapDomain Nat.castEmbedding) (Nat.castEmbedding n) = p.coeff n
+  change (p.coeff.mapDomain Nat.castEmbedding) (Nat.castEmbedding n) = p.coeff n
   rw [Finsupp.mapDomain_apply_of_injective Nat.castEmbedding.injective]
-  rfl
 
 /-- The Laurent image of a polynomial vanishes at negative exponents. -/
 theorem toLaurent_apply_of_neg (p : Polynomial R) {z : ℤ} (hz : z < 0) :

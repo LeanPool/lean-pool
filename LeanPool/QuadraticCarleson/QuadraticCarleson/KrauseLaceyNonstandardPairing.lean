@@ -102,24 +102,24 @@ theorem lintegral_nonstandard_pairing_le_sum_local_averages
       simp_rw [← hind]
       rw [← Finset.sum_mul, ← ENNReal.ofReal_sum_of_nonneg
         (fun I _ ↦ Set.indicator_nonneg (fun _ _ ↦ hC I) x),
-        Real.enorm_of_nonneg (badLengthTailMaximal_nonneg f I₀ k₀ s scale hlam N hN x)]
+        Real.eNorm_of_nonneg (badLengthTailMaximal_nonneg f I₀ k₀ s scale hlam N hN x)]
       exact mul_le_mul_left (ENNReal.ofReal_le_ofReal
         (badLengthTailMaximal_le_massMajorant hf I₀ k₀ s scale N hN x)) _
     _ = ∑ I ∈ N, ENNReal.ofReal (C I) * ∫⁻ x in I.carrier, ‖g x‖ₑ := by
       have hm (I : RealInterval) : AEMeasurable (fun x ↦
           ENNReal.ofReal (C I) * I.carrier.indicator (fun x ↦ ‖g x‖ₑ) x) volume :=
-        aemeasurable_const.mul (hg.aestronglyMeasurable.enorm.indicator I.measurableSet_carrier)
+        aemeasurable_const.mul (hg.aestronglyMeasurable.eNorm.indicator I.measurableSet_carrier)
       rw [lintegral_finsetSum' _ (fun I _ ↦ hm I)]
       apply Finset.sum_congr rfl
       intro I hI
       rw [lintegral_const_mul'' _
-        (hg.aestronglyMeasurable.enorm.indicator I.measurableSet_carrier),
+        (hg.aestronglyMeasurable.eNorm.indicator I.measurableSet_carrier),
         lintegral_indicator I.measurableSet_carrier]
     _ = ∑ I ∈ N, ENNReal.ofReal (8 * positiveDyadicAmplitudeBound *
         intervalBadMass S f I₀ k₀ s scale I * intervalL1Average g I) := by
       apply Finset.sum_congr rfl
       intro I hI
-      rw [← ofReal_integral_norm_eq_lintegral_enorm hg.integrableOn,
+      rw [← ofReal_integral_norm_eq_lintegral_eNorm hg.integrableOn,
         ← ENNReal.ofReal_mul (hC I), ← intervalL1Average_mul_length g I]
       congr 1
       dsimp [C]

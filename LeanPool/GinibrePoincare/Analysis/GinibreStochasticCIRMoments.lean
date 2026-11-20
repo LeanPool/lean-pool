@@ -71,7 +71,7 @@ theorem ginibreNoncentralRadiusLaw_firstMoment (v : ℝ≥0) (m : ℂ) :
   have he (p : ℝ × ℝ) : Complex.normSq (m + ((p.1 : ℂ)+Complex.I*(p.2 : ℂ))) =
       (m.re+p.1)^2+(m.im+p.2)^2 := by
     simp [Complex.normSq_apply]
-   ; ring
+    ring
   simp_rw [he]
   rw [integral_add (hr.integrable_sq.comp_fst ν) (hi.integrable_sq.comp_snd ν)]
   have hf : HasLaw Prod.fst ν (ν.prod ν) := measurePreserving_fst.hasLaw

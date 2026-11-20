@@ -63,6 +63,23 @@ private theorem localized_boundary_subsingleton [Algebra ℚ k]
     (fun z => tangentialBoundaryMap_eventually_zero k n N d hd z)
     (fun r => tangentialBoundaryMap_surjective k n N d r)
 
+private theorem shifted_page_length_target_le_source
+    {R : Type*} [Ring R] (A C : ℕ → Type*)
+    [∀ r, AddCommGroup (A r)] [∀ r, Module R (A r)]
+    [∀ r, AddCommGroup (C r)] [∀ r, Module R (C r)]
+    (hA1 : IsFiniteLength R (A 1)) (hC1 : IsFiniteLength R (C 1))
+    (differential : ∀ r, A (r + 1) →ₗ[R] C (r + 1))
+    (sourceSucc : ∀ r, A ((r + 1) + 1) ≃ₗ[R] LinearMap.ker (differential r))
+    (targetSucc : ∀ r, C ((r + 1) + 1) ≃ₗ[R]
+      C (r + 1) ⧸ LinearMap.range (differential r))
+    (r : ℕ) (hr : Subsingleton (C (r + 1))) :
+    Module.length R (C 1) ≤ Module.length R (A 1) :=
+  @twoTermPage_length_target_le_source R _
+    (fun r => A (r + 1)) (fun r => C (r + 1))
+    (fun _ => inferInstance) (fun _ => inferInstance)
+    (fun _ => inferInstance) (fun _ => inferInstance)
+    hA1 hC1 differential sourceSucc targetSucc r hr
+
 private theorem page_inequality_of_subsingleton
     (r : ℕ) (hr : Subsingleton
       (LocalizedModule S ((complex k n N d).TargetTotal (r + 1)))) : ∀
@@ -73,14 +90,11 @@ private theorem page_inequality_of_subsingleton
     Module.length (Localization S) (LocalizedModule S ((complex k n N d).TargetTotal 1)) ≤
       Module.length (Localization S) (LocalizedModule S ((complex k n N d).SourceTotal 1)) := by
   intro hA0 hC0
-  have h := @twoTermPage_length_target_le_source (Localization S) _
-    (fun r => LocalizedModule S ((complex k n N d).SourceTotal (r + 1)))
-    (fun r => LocalizedModule S ((complex k n N d).TargetTotal (r + 1)))
-    (fun _ => inferInstance) (fun _ => inferInstance)
-    (fun _ => inferInstance) (fun _ => inferInstance)
+  exact shifted_page_length_target_le_source
+    (fun r => LocalizedModule S ((complex k n N d).SourceTotal r))
+    (fun r => LocalizedModule S ((complex k n N d).TargetTotal r))
     hA0 hC0 (fun r => localizedMap S (tangentialDrop k n N d (r + 1)))
     (sourceSuccLocalized k n N d S) (targetSuccLocalized k n N d S) r hr
-  exact h
 
 
 include hd in

@@ -104,7 +104,8 @@ theorem volume_planeProjection_bisector_of_coordinate_zero {M : ℕ}
   exact zero_ne_one hh
 
 /-- Bases excluded in the slicing proof: triple ties and nontransverse planes. -/
-@[expose] def slicingExceptionalSet {M : ℕ} (R : Fin M → Position) (a : Fin 3) : Set Planar :=
+@[expose] noncomputable def slicingExceptionalSet {M : ℕ} (R : Fin M → Position)
+    (a : Fin 3) : Set Planar :=
   (planeProjection a '' voronoiTripleStratum R) ∪
     ⋃ k : Fin M, ⋃ l : {l : Fin M // k ≠ l},
       ⋃ (_ : bisectorNormal R k l.val a = 0),

@@ -823,7 +823,7 @@ theorem P5596T1LeftWeb
       LeftLatticeAdjacent C T₁ T₂ h₁ h₂ → FourNeighborLaplacian g x = 1 := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro C T₁ T₂ h₁ h₂ g x hn hcompat hg₁ hg₂ hx₁ hx₂ hstar hleft
       by_cases hc : C.1.1.1 = 1
       · obtain ⟨z, hz⟩ := CurvatureOneBandCircleClassification C hc

@@ -126,7 +126,7 @@ def _root_.LinearMap.algebraCommutator : A →ₗ[𝕜] A →ₗ[𝕜] A where
   map_add' a₁ a₂ := by
     ext b
     simp only [algebraCommutator'_apply,
-               add_mul, mul_add, sub_eq_add_neg, neg_add_rev, ← add_assoc, add_apply]
+               add_mul, mul_add, sub_eq_add_neg, neg_add_rev, ← add_assoc, LinearMap.add_apply]
     ac_rfl
   map_smul' r a := by
     ext b

@@ -102,7 +102,7 @@ lemma Game.exists_undetermined :
     ext x hp a
     have hsets := congr_fun h x.val
     simp only [hp, ↓reduceDIte] at hsets
-    have hmem := congr_fun hsets a.val
+    have hmem := Set.ext_iff.mp hsets a.val
     constructor
     · intro ha
       exact Subtype.val_injective.mem_set_image.mp

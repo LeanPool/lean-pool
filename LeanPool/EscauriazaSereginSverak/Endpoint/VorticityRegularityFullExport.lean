@@ -196,7 +196,7 @@ theorem vorticityRegularity_full_quantified : ∀ (q M E : ℝ), 5 / 2 < q → 0
       change (vec3Ball x₀ (1 / 2) ×ˢ Ioo (t₀ - 1 / 4) t₀) =ᵐ[volume]
         (vec3Ball x₀ (1 / 2) ×ˢ Ioc (t₀ - (1 / 2 : ℝ) ^ 2) t₀)
       rw [hbottom]
-      exact Measure.set_prod_ae_eq EventuallyEq.rfl Ioo_ae_eq_Ioc
+      exact Measure.set_prod_ae_eq EventuallyEqSet.rfl Ioo_ae_eq_Ioc
     have hrootMeasure : volume.restrict Spara =
         volume.restrict (parabolicCylinder x₀ t₀ (1 / 2 : ℝ)) :=
       Measure.restrict_congr_set hset

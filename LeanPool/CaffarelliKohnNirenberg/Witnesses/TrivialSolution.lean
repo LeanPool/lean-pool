@@ -89,7 +89,7 @@ theorem isSuitableWeakSolutionIntegrable_zero {Ω : Set Vec3} {I : Set ℝ} {q :
       symm
       refine lintegral_congr_ae ?_
       filter_upwards with z
-      rw [show (fun (_ : Fin 3) => (0 : Vec3)) = (0 : Fin 3 → Vec3) from rfl, enorm_zero]
+      rw [show (fun (_ : Fin 3) => (0 : Vec3)) = (0 : Fin 3 → Vec3) from rfl, eNorm_zero]
       simp [ENNReal.zero_rpow_of_pos (by norm_num : 0 < (2 : ℝ))]
     have h_memLp_p : MemLp (fun _ : ParabolicPoint => (0 : ℝ))
         (ENNReal.ofReal (3 / 2 : ℝ)) (volume.restrict (spaceTimeSet Ω' J)) := by

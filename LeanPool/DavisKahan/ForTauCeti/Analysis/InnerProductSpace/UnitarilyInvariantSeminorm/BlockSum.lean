@@ -504,7 +504,7 @@ theorem orthogonalBlockSum_mem_convexHull_twoSidedUnitaryOrbit
     refine ⟨LinearIsometryEquiv.withLpProdCongr 2 U₁ U₂,
       LinearIsometryEquiv.withLpProdCongr 2 V₁ V₂, ?_⟩
     ext x
-    all_goals simp [orthogonalBlockSum, hp₁, hp₂, LinearMap.comp_apply]
+    simp [orthogonalBlockSum, hp₁, hp₂, LinearMap.comp_apply]
   · have hfirst :
         (∑ p : ι × κ, (w p.1 * v p.2) • z p.1) = A := by
       rw [Fintype.sum_prod_type]

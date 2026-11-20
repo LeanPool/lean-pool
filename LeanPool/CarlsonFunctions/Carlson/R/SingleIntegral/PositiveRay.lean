@@ -58,8 +58,8 @@ private lemma hasDerivAt_recip_add_one (s : ℝ) (hs : 0 < s) :
     HasDerivAt (fun x : ℝ => (x + 1)⁻¹) (-((s + 1) ^ 2)⁻¹) s := by
   have hs0 : s + 1 ≠ 0 := by linarith
   convert! ((hasDerivAt_id s).add_const 1 |>.inv hs0) using 1
-  all_goals simp only [id_eq]
-  all_goals ring
+  simp only [id_eq]
+  ring
 
 /-- Complex powers split over a product whose first factor is a positive real number. -/
 private lemma ofReal_mul_cpow {r : ℝ} (hr : 0 < r) {x e : ℂ} (hx : x ≠ 0) :

@@ -351,7 +351,7 @@ theorem origin_tensor_energy_integrable_on_local_box
         rw [Measure.prod_restrict]
         exact (lintegral_mono (fun _ => le_self_add)).trans_lt henergy
       apply memLp_iff.mpr
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num) hum]
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num) hum]
       norm_num only [ENNReal.toReal_ofNat]
       exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hfin.ne
     exact hLp.integrable (by norm_num)
@@ -361,7 +361,7 @@ theorem origin_tensor_energy_integrable_on_local_box
     have hh := hu3.hasFiniteIntegral
     rw [Measure.prod_restrict] at hh
     change (∫⁻ w : Vec3 × ℝ in vec3Ball x ρ ×ˢ J, ‖vec3EuclideanNorm (u w) ^ (3 : ℕ)‖ₑ) < ⊤ at hh
-    simpa only [Real.enorm_eq_ofReal_abs, abs_pow, abs_of_nonneg (vec3EuclideanNorm_nonneg _),
+    simpa only [Real.eNorm_eq_ofReal_abs, abs_pow, abs_of_nonneg (vec3EuclideanNorm_nonneg _),
       ENNReal.ofReal_pow (vec3EuclideanNorm_nonneg _) 3, ENNReal.rpow_ofNat] using hh
   have hJ : volume J < ⊤ := (measure_mono subset_closure).trans_lt hbox.2.2.2.2.1.measure_lt_top
   apply integrable_real_of_power hJ (origin_tensor_energy_time_aemeasurable hum)

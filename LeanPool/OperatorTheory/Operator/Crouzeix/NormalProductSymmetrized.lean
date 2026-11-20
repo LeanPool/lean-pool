@@ -588,7 +588,7 @@ theorem
     spectrum_aeval_subset_closedBall_shift_of_mem_of_forall_symmetrized_bound
       A c hA hK hc hsymm p b hz
   rw [Metric.mem_closedBall, dist_eq_norm] at hzball
-  rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnnorm,
+  rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnNorm,
     Real.coe_toNNReal _ hm]
   exact hzball
 
@@ -738,7 +738,7 @@ theorem
     spectrum_aeval_subset_closedBall_shift_closure_numericalRange_of_forall_symmetrized_bound
       A c hA hsymm p b hz
   rw [Metric.mem_closedBall, dist_eq_norm] at hzball
-  rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnnorm,
+  rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnNorm,
     Real.coe_toNNReal _ hm]
   exact hzball
 

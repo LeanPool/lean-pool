@@ -56,7 +56,7 @@ theorem norm_bellVec : ‖bellVec‖ = 1 := by
         ‖(((ket 0 : PureState 2) + (ket 3 : PureState 2)
           : StateVector 2) i)‖ ^ 2)).trans ?_
       simp +decide [PureState.ket_apply]
-      all_goals norm_num
+      norm_num
     rw [hsum]
   rw [h, inv_mul_cancel₀ (Real.sqrt_ne_zero'.mpr (by norm_num))]
 

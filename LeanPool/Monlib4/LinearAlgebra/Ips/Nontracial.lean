@@ -936,7 +936,7 @@ theorem pi_rmul_toMatrix [hψ : ∀ i, (ψ i).IsFaithfulPosMap] (x : PiMat ℂ k
   by_cases h : ri = li
   · subst li
     simp only [includeBlock_apply, ↓reduceDIte, eq_mp_eq_cast, cast_eq,
-      kroneckerMap_apply, one_apply, boole_mul, Matrix.transpose_apply,
+      kroneckerMap_apply, Matrix.one_apply, boole_mul, Matrix.transpose_apply,
       Module.Dual.IsFaithfulPosMap.basis_apply, Matrix.mul_assoc]
     rw [← Matrix.mul_assoc (PosDef.rpow _ (- (1 / 2))),
       ← Module.Dual.IsFaithfulPosMap.sig_apply (hψ ri) (1 / 2) (x ri)]
@@ -972,7 +972,7 @@ theorem pi_inner_aut_toMatrix
     ext x i
     simp only [LinearMap.coe_comp, LinearMap.coe_single, Function.comp_apply,
       StarAlgEquiv.toLinearMap_apply, Unitary.conjStarAlgAut_apply, Pi.mul_apply, Pi.star_apply,
-      mul_assoc, Module.End.mul_apply, rmul_apply, lmul_apply]
+      mul_assoc, mul_apply_eq_comp, rmul_apply, lmul_apply]
   rw [this, _root_.map_mul, pi_lmul_toMatrix, pi_rmul_toMatrix, ← blockDiagonal'_mul]
   simp_rw [← mul_kronecker_mul, Matrix.mul_one, Matrix.one_mul, Pi.star_apply,
     star_eq_conjTranspose, blockDiagonal'_inj]

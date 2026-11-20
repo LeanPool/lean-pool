@@ -46,7 +46,7 @@ theorem TashTreeSuffixIterate {V E : Type*}
   := by
     intro d
     induction d using Nat.strong_induction_on with
-    | h d smaller =>
+    | ind d smaller =>
         intro coloring j hd hjSuffix hbad hj hlast'
         by_cases hnext : j.val + 1 < T.length
         · let nextIndex : Fin T.length := ⟨j.val + 1, hnext⟩

@@ -55,8 +55,8 @@ def Submodule.topContinuousEquiv {R M : Type*} [Semiring R] [AddCommMonoid M]
     [Module R M] [TopologicalSpace M] :
     (⊤ : Submodule R M) ≃L[R] M where
   toLinearEquiv := topEquiv
-  continuous_toFun := by fun_prop
-  continuous_invFun := by fun_prop
+  continuous_toFun := continuous_subtype_val
+  continuous_invFun := continuous_id.subtype_mk _
 
 theorem ContinuousLinearEquiv.map_nhdsWithin_eq {R M N : Type*} [Semiring R]
     [AddCommMonoid M] [Module R M] [TopologicalSpace M]
@@ -143,7 +143,7 @@ theorem iteratedFDerivWithin_comp_of_eventually
     with ⟨u, ⟨hau, hu⟩, hus, hfu, hgu⟩
   refine .symm <| (hgu.comp hfu (mapsTo_image _ _)).eq_iteratedFDerivWithin_of_uniqueDiffOn le_rfl
     hu (mem_of_mem_nhdsWithin ha hau) |>.trans ?_
-  refine iteratedFDerivWithin_congr_set (hus.eventuallyLE.antisymm ?_) _
+  refine iteratedFDerivWithin_congr_set (hus.eventuallySubset.antisymm ?_) _
   exact eventuallySubset_iff_mem_inf_principal.mpr hau
 
 end ContDiff

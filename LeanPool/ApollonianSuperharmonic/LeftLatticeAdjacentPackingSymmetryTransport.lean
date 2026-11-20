@@ -181,13 +181,13 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
           Bool.false_eq_true] at hvr ⊢
         rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
-        try simp only [real_coord] at hcoord
+        simp only [real_coord] at hcoord
         linarith [hs.1, hcoord]
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, Bool.false_eq_true,
           ↓reduceIte, one_mul, he, Bool.bne_false] at hvr ⊢
         rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
-        try simp only [real_coord] at hcoord
+        simp only [real_coord] at hcoord
         linarith [hs.1, hcoord]
     · have hc : TileCentroid T' - TileCentroid T =
           GaussianRealPoint (-(BandVectors.1 (q i.succ) (q 0))) :=
@@ -204,9 +204,9 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, ↓reduceIte,
           neg_mul, one_mul, Zsqrtd.re_neg, Int.cast_neg, he, Bool.bne_true, Bool.not_false]
           at hvr ⊢
-        try rw [← GaussianInt.intCast_re] at ⊢
+        rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
-        try simp only [real_coord] at hcoord
+        simp only [real_coord] at hcoord
         have hscoord :
             (BandPackingSymmetrySlopeAction g T' p').1 -
                 (BandPackingSymmetrySlopeAction g T p).1 =
@@ -217,9 +217,9 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
         linarith [hscoord, hcoord]
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_re, hn, Bool.false_eq_true,
           ↓reduceIte, one_mul, he, bne_self_eq_false, neg_mul] at hvr ⊢
-        try rw [← GaussianInt.intCast_re] at ⊢
+        rw [← GaussianInt.intCast_re] at ⊢
         have hcoord := hvr
-        try simp only [real_coord] at hcoord
+        simp only [real_coord] at hcoord
         have hscoord :
             (BandPackingSymmetrySlopeAction g T' p').1 -
                 (BandPackingSymmetrySlopeAction g T p).1 =
@@ -245,13 +245,13 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
           Bool.false_eq_true] at hvi ⊢
         rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
-        try simp only [imag_coord] at hcoord
+        simp only [imag_coord] at hcoord
         linarith [hs.2, hcoord]
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, Bool.false_eq_true,
           ↓reduceIte, one_mul, he, Bool.bne_false] at hvi ⊢
         rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
-        try simp only [imag_coord] at hcoord
+        simp only [imag_coord] at hcoord
         linarith [hs.2, hcoord]
     · have hc : TileCentroid T' - TileCentroid T =
           GaussianRealPoint (-(BandVectors.1 (q i.succ) (q 0))) :=
@@ -268,9 +268,9 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, ↓reduceIte,
           neg_mul, one_mul, Zsqrtd.im_neg, Int.cast_neg, he, Bool.bne_true, Bool.not_false]
           at hvi ⊢
-        try rw [← GaussianInt.intCast_im] at ⊢
+        rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
-        try simp only [imag_coord] at hcoord
+        simp only [imag_coord] at hcoord
         have hscoord :
             (BandPackingSymmetrySlopeAction g T' p').2 -
                 (BandPackingSymmetrySlopeAction g T p).2 =
@@ -281,9 +281,9 @@ theorem LeftLatticeAdjacentPackingSymmetryTransport
         linarith [hscoord, hcoord]
       · simp only [Int.reduceNeg, Fin.isValue, GaussianInt.intCast_im, hn, Bool.false_eq_true,
           ↓reduceIte, one_mul, he, bne_self_eq_false, neg_mul] at hvi ⊢
-        try rw [← GaussianInt.intCast_im] at ⊢
+        rw [← GaussianInt.intCast_im] at ⊢
         have hcoord := hvi
-        try simp only [imag_coord] at hcoord
+        simp only [imag_coord] at hcoord
         have hscoord :
             (BandPackingSymmetrySlopeAction g T' p').2 -
                 (BandPackingSymmetrySlopeAction g T p).2 =

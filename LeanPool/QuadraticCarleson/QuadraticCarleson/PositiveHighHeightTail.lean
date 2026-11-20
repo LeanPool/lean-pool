@@ -49,8 +49,8 @@ theorem eLpNorm_tsum_two_le {ι : Type*} [Countable ι]
   apply (ENNReal.rpow_le_rpow_iff (by norm_num1 : (0 : ℝ) < 2)).mp
   rw [ENNReal.rpow_two, ENNReal.rpow_two,
     eLpNorm_two_sq_lintegral _ (Measurable.tsum hF).aestronglyMeasurable]
-  simp only [enorm_eq_self]
-  simp_rw [ENNReal.tsum_eq_iSup_sum, ENNReal.iSup_pow]
+  simp only [eNorm_eq_self]
+  simp_rw [tsum_eq_iSup_sum, ENNReal.iSup_pow]
   rw [lintegral_iSup_directed_of_measurable]
   · apply iSup_le
     intro s
@@ -60,7 +60,7 @@ theorem eLpNorm_tsum_two_le {ι : Type*} [Countable ι]
     have hp := pow_le_pow_left₀ bot_le hs 2
     rw [eLpNorm_two_sq_lintegral _
       (Finset.aestronglyMeasurable_sum s (fun i _ ↦ (hF i).aestronglyMeasurable))] at hp
-    simpa only [Finset.sum_apply, enorm_eq_self] using hp
+    simpa only [Finset.sum_apply, eNorm_eq_self] using hp
   · intro s
     exact (Finset.measurable_fun_sum s (fun i _ ↦ hF i)).pow_const 2
   · intro s t
@@ -132,7 +132,7 @@ theorem highHeightMajorant_eLpNorm_le (B : ℕ) {b : ℝ → ℂ} (hb : MemLp b 
       ENNReal.ofReal (fixedHeightL2DecayConstant *
         (2 : ℝ) ^ (-((B + n + 1 : ℕ) : ℝ) / 10)) * eLpNorm b 2 :=
     paperFixedHeightQuadraticMaximal_eLpNorm_decay (B + n + 1) hb
-  have hs := ENNReal.tsum_le_tsum hp
+  have hs := tsum_le_tsum hp
   rw [ENNReal.tsum_mul_right, tsum_fixedHeightDecay_highHeight] at hs
   exact (eLpNorm_tsum_two_le
     (fun n : ℕ ↦ paperFixedHeightQuadraticMaximal (B + n + 1) b)
@@ -183,7 +183,7 @@ private theorem tailConvolution_bound (lam : ℝ) (h : ℕ) (hlam : lam ≠ 0)
           (2 * fixedHeightRadius lam h hlam) ^ (1 / (2 : ℝ))) := by
   have hc : AEStronglyMeasurable (fixedHeightQuadraticKernel lam h hlam) volume :=
     (continuous_fixedHeightQuadraticKernel lam h hlam).aestronglyMeasurable
-  have hy := enorm_convolution_le (L := ContinuousLinearMap.mul ℂ ℂ)
+  have hy := eNorm_convolution_le (L := ContinuousLinearMap.mul ℂ ℂ)
     (p := 2) (q := 2) hb.aestronglyMeasurable hc x
   have hbound := hy.trans (mul_le_mul' le_rfl (tailKernel_eLpNorm_bound lam h hlam))
   have hfin : ‖ContinuousLinearMap.mul ℂ ℂ‖ₑ * eLpNorm b 2 *
@@ -197,7 +197,7 @@ private theorem tailConvolution_bound (lam : ℝ) (h : ℕ) (hlam : lam ≠ 0)
       (fixedHeightRadius_pos lam h hlam).le) (Real.rpow_nonneg (mul_nonneg (by
         norm_num1) (fixedHeightRadius_pos lam h hlam).le) _)
   simpa only [convolution, ContinuousLinearMap.mul_apply', ENNReal.toReal_mul,
-    toReal_enorm, ENNReal.toReal_ofReal hn] using ht
+    toReal_eNorm, ENNReal.toReal_ofReal hn] using ht
 
 
 private theorem tailRadius_factor (R D : ℝ) (hR : 0 < R) (n : ℕ) :
@@ -282,14 +282,14 @@ theorem measurable_paperHighHeightTail (B : ℕ) {b : ℝ → ℂ} (hb : MemLp b
     apply integral_congr_ae
     filter_upwards [] with t
     exact mul_comm _ _
-  exact hc.enorm.lowerSemicontinuous
+  exact hc.eNorm.lowerSemicontinuous
 
 theorem paperHighHeightTail_le_majorant (B : ℕ) (b : ℝ → ℂ) (x : ℝ) :
     paperHighHeightTail B b x ≤ highHeightMajorant B b x := by
   apply iSup_le
   intro lam
-  apply enorm_tsum_le_tsum_enorm.trans
-  apply ENNReal.tsum_le_tsum
+  apply eNorm_tsum_le_tsum_eNorm.trans
+  apply tsum_le_tsum
   intro n
   exact le_iSup (fun μ : {μ : ℝ // μ ≠ 0} ↦ ‖∫ t, b (x - t) *
     (dyadicPsi (oscillatoryScaleIndex μ.val (B + n + 1) μ.property) t : ℂ) *
@@ -298,9 +298,9 @@ theorem paperHighHeightTail_le_majorant (B : ℕ) (b : ℝ → ℂ) (x : ℝ) :
 theorem paperHighHeightTail_eLpNorm_le (B : ℕ) {b : ℝ → ℂ} (hb : MemLp b 2) :
     eLpNorm (paperHighHeightTail B b) 2 ≤ highHeightTailConstant *
       ENNReal.ofReal ((2 : ℝ) ^ (-(B : ℝ) / 10)) * eLpNorm b 2 := by
-  apply (eLpNorm_mono_enorm (f := paperHighHeightTail B b) (g := highHeightMajorant B b)
+  apply (eLpNorm_mono_eNorm (f := paperHighHeightTail B b) (g := highHeightMajorant B b)
     (measurable_paperHighHeightTail B hb).aestronglyMeasurable
-    (fun x ↦ by simpa only [enorm_eq_self] using paperHighHeightTail_le_majorant B b x)).trans
+    (fun x ↦ by simpa only [eNorm_eq_self] using paperHighHeightTail_le_majorant B b x)).trans
   exact highHeightMajorant_eLpNorm_le B hb
 
 end PositiveHighHeightEstimate

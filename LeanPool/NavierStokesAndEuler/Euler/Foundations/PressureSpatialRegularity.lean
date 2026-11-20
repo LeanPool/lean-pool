@@ -399,7 +399,7 @@ theorem pressure_translation_hasDerivAt (κ : ℝ) (m : Vector3) (a : LiftTangen
     fun x => translatedCoefficientDerivative_bound period a A D hDA x
   have hAdL : ∀ t x, ‖Ad t x - Ad 0 x‖ ≤ (M * ‖a‖₊ ^ 2 : ℝ≥0) * |t| := by
     intro t x
-    simpa only [NNReal.coe_mul, NNReal.coe_pow, coe_nnnorm] using
+    simpa only [NNReal.coe_mul, NNReal.coe_pow, coe_nnNorm] using
       translatedCoefficientDerivative_lipschitz period a A hAs M hDDA t x
   have hsol := liftedPressure_hasDerivAt period κ m At Ad hAt
     (translatedCoefficientDerivative_measurable period a A hAs)

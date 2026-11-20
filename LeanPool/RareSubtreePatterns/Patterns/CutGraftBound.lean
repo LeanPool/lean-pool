@@ -66,7 +66,7 @@ theorem cut_graft_bound_aux (μ : PMF ℕ) (ℓ : ℕ) (E : Set PlaneTree) {I : 
     _ = ∑' A, R.indicator (fun A => A.weight μ * bienayme μ (E ∩ Q (τ A))) A :=
         bienayme_cut_mem μ ℓ R hR (fun A => E ∩ Q (τ A))
     _ ≤ ∑' A, R.indicator (fun A => c * (A.weight μ * bienayme μ (Q (τ A)))) A := by
-        refine ENNReal.tsum_le_tsum fun A => Set.indicator_le_indicator ?_
+        refine tsum_le_tsum fun A => Set.indicator_le_indicator ?_
         calc A.weight μ * bienayme μ (E ∩ Q (τ A))
             ≤ A.weight μ * (c * bienayme μ (Q (τ A))) := mul_le_mul_right (hc _) _
           _ = c * (A.weight μ * bienayme μ (Q (τ A))) := by ring

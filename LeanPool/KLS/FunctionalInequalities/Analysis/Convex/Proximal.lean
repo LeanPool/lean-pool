@@ -441,7 +441,7 @@ theorem moreauEnvelope_regularization (f : E → ℝ) (hf : ConvexOn ℝ univ f)
       norm_sub_le (x - y)
         ((proximalPoint (fun z => ε * f z)) x - (proximalPoint (fun z => ε * f z)) y)
     linarith
-  simp only [hg, dist_eq_norm, ← smul_sub, norm_smul, NNReal.coe_mul, coe_nnnorm,
+  simp only [hg, dist_eq_norm, ← smul_sub, norm_smul, NNReal.coe_mul, coe_nnNorm,
     NNReal.coe_ofNat]
   calc
     _ ≤ ‖ε⁻¹‖ * (2 * ‖x - y‖) := mul_le_mul_of_nonneg_left hr (norm_nonneg _)

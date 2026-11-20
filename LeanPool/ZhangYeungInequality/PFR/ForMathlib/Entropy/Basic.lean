@@ -1090,7 +1090,7 @@ lemma _root_.ProbabilityTheory.condMutualInfo_of_inj'
     {g : T → T'} (hg : Function.Injective g)
     {h : U → U'} (hh : Function.Injective h)
     : I[f ∘ X : g ∘ Y | h ∘ Z; μ] = I[X : Y | Z; μ] := calc
-    _ = I[f ∘ X : g ∘ Y | Z; μ] := by rw [condMutualInfo_of_inj _ _ _ _ hh] <;> try fun_prop
+    _ = I[f ∘ X : g ∘ Y | Z; μ] := by rw [condMutualInfo_of_inj _ _ _ _ hh] <;> fun_prop
     _ = I[X : g ∘ Y | Z; μ] := by
       convert condMutualInfo_of_inj_map hX _ hZ (fun _ ↦ f) (fun _ ↦ hf) <;> try infer_instance
       all_goals first | rfl | fun_prop

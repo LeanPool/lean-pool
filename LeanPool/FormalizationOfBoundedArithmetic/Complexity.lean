@@ -37,7 +37,7 @@ theorem mpr {f : α ≃ β} (h : φ.IsAtomic)
 theorem mp {f : α ≃ β} (h : (φ.relabelEquiv f).IsAtomic)
   : φ.IsAtomic :=
 by
-  cases φ <;> (try cases h) <;> constructor
+  cases φ <;> cases h <;> constructor
 
 end relabelEquiv
 

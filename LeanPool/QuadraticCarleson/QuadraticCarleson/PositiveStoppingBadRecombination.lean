@@ -93,10 +93,10 @@ theorem lintegral_enorm_stoppingLevelBadPart_le {f : ℝ → ℂ}
       2 * magnitudeLevelL1Mass volume fullAmplitude f k := by
   have hp (x : ℝ) := map_disjointLevelAtomSum fullAmplitude f k
     (stoppingCenter (f := f)) stoppingLength centeredStoppingIntervals_pairwiseDisjoint
-      (fun z ↦ ‖z‖ₑ) (by simp only [enorm_zero]) x
+      (fun z ↦ ‖z‖ₑ) (by simp only [eNorm_zero]) x
   simp_rw [stoppingLevelBadPart, hp]
   rw [lintegral_tsum (fun c ↦
-    ((measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).enorm).aemeasurable)]
+    ((measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).eNorm).aemeasurable)]
   have heq (c : stoppingCell f) :
       (∫⁻ x, ‖levelAtom fullAmplitude f k (stoppingCenter c) (stoppingLength c) x‖ₑ) =
       ENNReal.ofReal (∫ x, ‖levelAtom fullAmplitude f k (stoppingCenter c) (stoppingLength c)
@@ -120,13 +120,13 @@ theorem tsum_fullMagnitudeLevelL1Mass {f : ℝ → ℂ} (hf : Measurable f) :
 
 theorem tsum_lintegral_enorm_stoppingLevelBadPart_le {f : ℝ → ℂ} (hf : Measurable f) :
     (∑' k, ∫⁻ x, ‖stoppingLevelBadPart f k x‖ₑ) ≤ 2 * ∫⁻ x, ‖f x‖ₑ := by
-  have hs := ENNReal.tsum_le_tsum (lintegral_enorm_stoppingLevelBadPart_le hf)
+  have hs := tsum_le_tsum (lintegral_enorm_stoppingLevelBadPart_le hf)
   rwa [ENNReal.tsum_mul_left, tsum_fullMagnitudeLevelL1Mass hf] at hs
 
 theorem integrable_stoppingLevelBadPart {f : ℝ → ℂ} (hf : Measurable f)
     (hfi : Integrable f) (k : ℕ) : Integrable (stoppingLevelBadPart f k) := by
   refine ⟨(measurable_stoppingLevelBadPart hf k).aestronglyMeasurable, ?_⟩
-  apply (ENNReal.le_tsum k).trans_lt
+  apply (le_tsum _ k).trans_lt
   exact (tsum_lintegral_enorm_stoppingLevelBadPart_le hf).trans_lt
     (ENNReal.mul_lt_top (by finiteness) hfi.hasFiniteIntegral)
 
@@ -135,9 +135,9 @@ theorem integrable_stoppingBadPart {f : ℝ → ℂ} (hf : Measurable f)
   refine ⟨(measurable_stoppingBadPart hf hfi).aestronglyMeasurable, ?_⟩
   have hp (x : ℝ) : ‖stoppingBadPart f x‖ₑ ≤ ∑' k, ‖stoppingLevelBadPart f k x‖ₑ := by
     rw [← tsum_stoppingLevelBadPart hf hfi x]
-    exact enorm_tsum_le_tsum_enorm
+    exact eNorm_tsum_le_tsum_eNorm
   apply (lintegral_mono hp).trans_lt
-  rw [lintegral_tsum (fun k ↦ (measurable_stoppingLevelBadPart hf k).enorm.aemeasurable)]
+  rw [lintegral_tsum (fun k ↦ (measurable_stoppingLevelBadPart hf k).eNorm.aemeasurable)]
   exact (tsum_lintegral_enorm_stoppingLevelBadPart_le hf).trans_lt
     (ENNReal.mul_lt_top (by finiteness) hfi.hasFiniteIntegral)
 

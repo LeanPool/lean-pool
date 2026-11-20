@@ -79,7 +79,7 @@ theorem IsSmoothBounded.comp_of_deriv_le (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, 
   contDiff := hφ.comp hF.contDiff
   bounded := by
     obtain ⟨C, hC⟩ := hF.bounded
-    have hlip := lipschitzWith_of_nnnorm_deriv_le (hφ.differentiable one_ne_zero) hK
+    have hlip := lipschitzWith_of_nnNorm_deriv_le (hφ.differentiable one_ne_zero) hK
     refine ⟨|φ 0| + K * C, fun x ↦ ?_⟩
     calc |φ (F x)| = |φ (F x) - φ 0 + φ 0| := by ring_nf
       _ ≤ |φ (F x) - φ 0| + |φ 0| := abs_add_le _ _
@@ -103,7 +103,7 @@ omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopolo
   [IsGaussian μ] in
 theorem abs_le_of_deriv_le (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖₊ ≤ K) (x : ℝ) :
     |φ x| ≤ |φ 0| + K * |x| := by
-  have hlip := lipschitzWith_of_nnnorm_deriv_le (hφ.differentiable one_ne_zero) hK
+  have hlip := lipschitzWith_of_nnNorm_deriv_le (hφ.differentiable one_ne_zero) hK
   have h := hlip.dist_le_mul x 0
   rw [Real.dist_eq, Real.dist_eq, sub_zero] at h
   calc |φ x| = |φ x - φ 0 + φ 0| := by rw [sub_add_cancel]
@@ -156,7 +156,7 @@ theorem comp_mem_domD12 (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖�
   obtain ⟨η, hcl⟩ := hF
   have hη : mderivClosure μ F = η := mderivClosure_eq μ hcl
   obtain ⟨Fk, hFk, hDk⟩ := hcl
-  have hlip := lipschitzWith_of_nnnorm_deriv_le (hφ.differentiable one_ne_zero) hK
+  have hlip := lipschitzWith_of_nnNorm_deriv_le (hφ.differentiable one_ne_zero) hK
   -- a subsequence converging almost everywhere
   obtain ⟨ns, hns, hae⟩ := (tendstoInMeasure_of_tendsto_Lp hFk).exists_seq_tendsto_ae
   have hae' : ∀ᵐ x ∂μ, Tendsto (fun i ↦ (Fk (ns i)).1 x) atTop (𝓝 (F x)) := by
@@ -267,7 +267,7 @@ theorem mderivD12_comp (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖�
 
 /-- The arctan truncations `cutoff m` have derivative bounded by `1`. -/
 theorem nnnorm_deriv_cutoff_le (m : ℕ) (x : ℝ) : ‖deriv (cutoff m) x‖₊ ≤ 1 := by
-  rw [← NNReal.coe_le_coe, coe_nnnorm, Real.norm_eq_abs, NNReal.coe_one]
+  rw [← NNReal.coe_le_coe, coe_nnNorm, Real.norm_eq_abs, NNReal.coe_one]
   exact abs_deriv_cutoff_le m x
 
 /-- **Bounded truncations stay in `𝔻₁,₂`**: `cutoff m ∘ F ∈ 𝔻₁,₂` for every `F ∈ 𝔻₁,₂`, with
@@ -530,8 +530,8 @@ theorem IsSmoothBounded.comp_pi {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : Co
   bounded := by
     have hK0 : 0 ≤ K := (norm_nonneg _).trans (hK 0)
     have hlip : LipschitzWith (Real.toNNReal K) f :=
-      lipschitzWith_of_nnnorm_fderiv_le (hf.differentiable one_ne_zero) fun y ↦ by
-        rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal K hK0]; exact hK y
+      lipschitzWith_of_nnNorm_fderiv_le (hf.differentiable one_ne_zero) fun y ↦ by
+        rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal K hK0]; exact hK y
     choose C hC using fun i ↦ (hG i).bounded
     refine ⟨|f 0| + K * ∑ i, C i, fun x ↦ ?_⟩
     have h := hlip.dist_le_mul (fun i ↦ G i x) 0
@@ -581,8 +581,8 @@ theorem abs_sub_le_of_fderiv_le {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : Co
     (hK : ∀ y, ‖fderiv ℝ f y‖ ≤ K) (y z : Fin n → ℝ) : |f y - f z| ≤ K * ‖y - z‖ := by
   have hK0 : 0 ≤ K := (norm_nonneg _).trans (hK 0)
   have hlip : LipschitzWith (Real.toNNReal K) f :=
-    lipschitzWith_of_nnnorm_fderiv_le (hf.differentiable one_ne_zero) fun y ↦ by
-      rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal K hK0]; exact hK y
+    lipschitzWith_of_nnNorm_fderiv_le (hf.differentiable one_ne_zero) fun y ↦ by
+      rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal K hK0]; exact hK y
   have h := hlip.dist_le_mul y z
   rwa [Real.dist_eq, dist_eq_norm, Real.coe_toNNReal K hK0] at h
 
@@ -717,7 +717,7 @@ theorem tendsto_comp_pi_of_tendsto {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf :
     have h := tendsto_finsetSum Finset.univ fun i (_ : i ∈ Finset.univ) ↦
       (Lp.tendsto_Lp_iff_tendsto_eLpNorm' _ _).mp (hconv i)
     simp only [Finset.sum_const_zero] at h
-    simpa using ENNReal.Tendsto.const_mul h (Or.inr enorm_ne_top)
+    simpa using ENNReal.Tendsto.const_mul h (Or.inr eNorm_ne_top)
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim (fun _ ↦ zero_le) hbound
 
 /-- **Multivariate chain rule in `𝔻₁,₂`** (Nualart, Proposition 1.2.3): for `f : ℝⁿ → ℝ` of
@@ -840,7 +840,7 @@ theorem comp_pi_mem_domD12 {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDif
         have h := tendsto_finsetSum Finset.univ fun i (_ : i ∈ Finset.univ) ↦
           (Lp.tendsto_Lp_iff_tendsto_eLpNorm' _ _).mp (hDk' i)
         simp only [Finset.sum_const_zero] at h
-        simpa using ENNReal.Tendsto.const_mul h (Or.inr enorm_ne_top)
+        simpa using ENNReal.Tendsto.const_mul h (Or.inr eNorm_ne_top)
       exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim (fun _ ↦ zero_le)
         hbound
     have := hAM.add hMt
@@ -881,12 +881,12 @@ theorem norm_mderivClosure_comp_pi_le {n : ℕ} {f : (Fin n → ℝ) → ℝ} (h
       _ ≤ ∑ i, ‖K‖ₑ * eLpNorm (⇑(mderivClosure μ (F i))) 2 μ :=
           Finset.sum_le_sum fun i _ ↦ eLpNorm_const_smul_le
   have hfin : ∀ i, ‖K‖ₑ * eLpNorm (⇑(mderivClosure μ (F i))) 2 μ ≠ ∞ := fun i ↦
-    ENNReal.mul_ne_top enorm_ne_top (Lp.eLpNorm_ne_top _)
+    ENNReal.mul_ne_top eNorm_ne_top (Lp.eLpNorm_ne_top _)
   refine (ENNReal.toReal_mono (ENNReal.sum_ne_top.mpr fun i _ ↦ hfin i) hbound).trans
     (le_of_eq ?_)
   rw [ENNReal.toReal_sum (fun i _ ↦ hfin i), Finset.mul_sum]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
-  rw [ENNReal.toReal_mul, toReal_enorm, Real.norm_eq_abs, abs_of_nonneg hK0, Lp.norm_def]
+  rw [ENNReal.toReal_mul, toReal_eNorm, Real.norm_eq_abs, abs_of_nonneg hK0, Lp.norm_def]
 
 /-- `f (F₁, …, Fₙ)` as an element of the submodule `D12 μ`. -/
 noncomputable def D12.compPi {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDiff ℝ 1 f) {K : ℝ}

@@ -73,7 +73,7 @@ theorem indep_comap_of_tendsto_ae (hm : m ≤ mΩ) {X : ℕ → Ω → 𝓧}
   obtain ⟨S, hS, rfl⟩ := hB
   have hA' : MeasurableSet[mΩ] A := hm _ hA
   have : IsFiniteMeasure ((P A) • P.map Y) :=
-    ⟨by simp [Measure.smul_apply]⟩
+    ⟨by simp⟩
   have hbound : ∀ (Z : Ω → 𝓧), Measurable[mΩ] Z → ∀ f : 𝓧 →ᵇ ℝ,
       Integrable (fun ω => f (Z ω)) P := fun Z hZ f =>
     Integrable.of_bound (f.continuous.measurable.comp hZ).aestronglyMeasurable ‖f‖
@@ -102,7 +102,7 @@ theorem indep_comap_of_tendsto_ae (hm : m ≤ mΩ) {X : ℕ → Ω → 𝓧}
   have h1 : ((P.restrict A).map Y) S = P (A ∩ Y ⁻¹' S) := by
     rw [Measure.map_apply hY hS, Measure.restrict_apply (hY hS), Set.inter_comm]
   have h2 : ((P A) • P.map Y) S = P A * P (Y ⁻¹' S) := by
-    rw [Measure.smul_apply, Measure.map_apply hY hS, smul_eq_mul]
+    rw [smul_apply, Measure.map_apply hY hS, smul_eq_mul]
   rw [← h1, hμ, h2]
 
 end LevyStochCalc.Probability

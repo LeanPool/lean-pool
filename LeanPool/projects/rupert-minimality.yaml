@@ -17,8 +17,8 @@ source:
   url: https://github.com/tom7/noperts/blob/dd77d2a7c2d8170300d4afdb887ebffad2550952/minimality.md
   github_repo: tom7/noperts
   commit: dd77d2a7c2d8170300d4afdb887ebffad2550952
-  completion_url: https://github.com/tom7/noperts/commit/fe46e08ef51d99dbe5ea9c8e7c12913897523bac
-  completion_date: '2026-10-10T13:20:40Z'
+  completion_url: https://github.com/tom7/noperts/commit/5dfb2fc96805f02c332bdcc254d6e0228b9cafd6
+  completion_date: '2026-10-10T13:37:35Z'
 license: Apache-2.0
 status: verified
 provenance: AI

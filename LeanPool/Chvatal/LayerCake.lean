@@ -74,7 +74,7 @@ theorem sum_mul_antitone_nonneg_of_lowerSets (c : α → ℝ)
     exact hmain _ ω rfl hω hanti
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro w hn hw hwanti
     let D := Finset.univ.filter (fun x => 0 < w x)
     have hDlower : IsLowerSet (D : Set α) := by

@@ -212,7 +212,7 @@ private theorem tsum_geomWeight_order_le {R : ℕ → ℝ≥0∞} {a b K : ℝ} 
   calc (∑' j : ℕ, ENNReal.ofReal (1 - (3 : ℝ) ^ (-a)) *
         ENNReal.ofReal ((3 : ℝ) ^ (-a * (j : ℝ))) * R j)
       ≤ ∑' j : ℕ, ENNReal.ofReal K * (ENNReal.ofReal (1 - (3 : ℝ) ^ (-b)) *
-          ENNReal.ofReal ((3 : ℝ) ^ (-b * (j : ℝ))) * R j) := ENNReal.tsum_le_tsum hterm
+          ENNReal.ofReal ((3 : ℝ) ^ (-b * (j : ℝ))) * R j) := tsum_le_tsum hterm
     _ = ENNReal.ofReal K * ∑' j : ℕ, ENNReal.ofReal (1 - (3 : ℝ) ^ (-b)) *
           ENNReal.ofReal ((3 : ℝ) ^ (-b * (j : ℝ))) * R j := ENNReal.tsum_mul_left
 

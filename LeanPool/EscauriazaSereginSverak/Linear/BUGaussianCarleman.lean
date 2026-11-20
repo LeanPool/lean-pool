@@ -33,7 +33,7 @@ private theorem buGaussian_memLp_set_l2_finite
     (hf : MemLp f 2 volume) :
     (∫⁻ z in U, ‖f z‖ₑ ^ (2 : ℝ)) < ⊤ := by
   have hrestrict : MemLp f 2 (volume.restrict U) := hf.restrict U
-  have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (p := (2 : ℝ≥0∞)) (μ := volume.restrict U) (by norm_num) (by norm_num)
     hrestrict.aestronglyMeasurable).1 hrestrict
   simpa using hfinite
@@ -59,16 +59,16 @@ private theorem buGaussian_memLp_data_l2_finite
   let T : ParabolicPoint → ℝ≥0∞ := fun z => ‖Dtw z‖ₑ ^ (2 : ℝ)
   have hWm : AEMeasurable W μ :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hw.restrict U).aestronglyMeasurable.enorm)
+      ((hw.restrict U).aestronglyMeasurable.eNorm)
   have hGm : AEMeasurable G μ :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hDw.restrict U).aestronglyMeasurable.enorm)
+      ((hDw.restrict U).aestronglyMeasurable.eNorm)
   have hHm : AEMeasurable H μ :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hD2w.restrict U).aestronglyMeasurable.enorm)
+      ((hD2w.restrict U).aestronglyMeasurable.eNorm)
   have hTm : AEMeasurable T μ :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hDtw.restrict U).aestronglyMeasurable.enorm)
+      ((hDtw.restrict U).aestronglyMeasurable.eNorm)
   let F₁ : ParabolicPoint → ℝ≥0∞ := fun z => W z + G z
   have hF₁m : AEMeasurable F₁ μ := hWm.add hGm
   have hsum₁ : (∫⁻ z, F₁ z ∂μ) < ⊤ := by

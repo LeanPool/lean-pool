@@ -365,7 +365,7 @@ private theorem htable :
     norm_num [UnitTriangularStep, CircleMatrix, BandCircleEuclideanData,
       hraw, I, Zsqrtd.ext_iff, Zsqrtd.re_mul, Zsqrtd.im_mul,
       GaussianInt.toComplex_def, -GaussianInt.intCast_re, -GaussianInt.intCast_im]
-    all_goals repeat' constructor
+    repeat' constructor
     all_goals ring
   · change Row false
       (BandVectors.1 (1, 1 + 2 * z) (1, 1 + 2 * z + 2 * I))
@@ -377,7 +377,7 @@ private theorem htable :
     norm_num [UnitTriangularStep, CircleMatrix, BandCircleEuclideanData,
       hraw, I, Zsqrtd.ext_iff, Zsqrtd.re_mul, Zsqrtd.im_mul,
       GaussianInt.toComplex_def, -GaussianInt.intCast_re, -GaussianInt.intCast_im]
-    all_goals repeat' constructor
+    repeat' constructor
     all_goals ring
   · change Row true
       (BandVectors.1 (1, 1 + 2 * z + 2 * I) (1, 1 + 2 * z))
@@ -389,7 +389,7 @@ private theorem htable :
     norm_num [UnitTriangularStep, CircleMatrix, BandCircleEuclideanData,
       hraw, I, Zsqrtd.ext_iff, Zsqrtd.re_mul, Zsqrtd.im_mul,
       GaussianInt.toComplex_def, -GaussianInt.intCast_re, -GaussianInt.intCast_im]
-    all_goals repeat' constructor
+    repeat' constructor
     all_goals ring
   · change Row false
       (BandVectors.1 (0, 1) (1, 1 + 2 * z + 2 * I))
@@ -401,7 +401,7 @@ private theorem htable :
     norm_num [UnitTriangularStep, CircleMatrix, BandCircleEuclideanData,
       hraw, I, Zsqrtd.ext_iff, Zsqrtd.re_mul, Zsqrtd.im_mul,
       GaussianInt.toComplex_def, -GaussianInt.intCast_re, -GaussianInt.intCast_im]
-    all_goals repeat' constructor
+    repeat' constructor
     all_goals ring
 
 private theorem hjoinAncestor :

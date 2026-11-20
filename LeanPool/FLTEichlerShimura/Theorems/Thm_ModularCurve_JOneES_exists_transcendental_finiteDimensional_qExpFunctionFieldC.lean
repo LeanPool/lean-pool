@@ -991,7 +991,7 @@ theorem exists_transcendental_finiteDimensional (hT : ModularGroup.T ∈ Γ) :
   let p : K₀[X] := ∑ i : Fin (Nat.card (JOneESNorm.Cos Γ) + 1), Polynomial.monomial (i : ℕ) (coef i)
   have hcoeff : ∀ i : Fin (Nat.card (JOneESNorm.Cos Γ) + 1), p.coeff i = coef i := by
     intro i
-    simp only [p, finsetSum_coeff, coeff_monomial]
+    simp only [p, finsetSum_coeff, coeff_monomial, Finsupp.single_apply]
     rw [Finset.sum_eq_single_of_mem i (Finset.mem_univ i)]
     · simp
     · intro j _ hji
@@ -1005,7 +1005,8 @@ theorem exists_transcendental_finiteDimensional (hT : ModularGroup.T ∈ Γ) :
     have hr0 : r ≠ 0 := by
       intro hr
       have := congrArg (fun q : ℚ[X] => q.coeff ib₀.2) hr
-      simp only [r, finsetSum_coeff, coeff_monomial, Polynomial.coeff_zero] at this
+      simp only [r, finsetSum_coeff, coeff_monomial, Finsupp.single_apply,
+        Polynomial.coeff_zero] at this
       rw [Finset.sum_eq_single_of_mem ib₀.2 (Finset.mem_univ _)] at this
       · simp only [↓reduceIte] at this; exact hib₀ this
       · intro j _ hji; rw [ite_eq_right]; exact fun h => hji (Fin.ext h)

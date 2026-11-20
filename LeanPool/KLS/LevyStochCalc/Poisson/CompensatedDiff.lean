@@ -69,7 +69,7 @@ lemma stageIntegral_sub_lintegral_sq {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
         - (master N ℱ φ₂ h_meas₂ h_progMeas₂ h_sq₂ n).2.eval p.2.1 p.2.2 p.1‖₊ : ℝ≥0∞) ^ 2) :=
     (ENNReal.continuous_coe.measurable.comp
       ((master N ℱ φ₁ h_meas₁ h_progMeas₁ h_sq₁ n).2.eval_measurable.sub
-        (master N ℱ φ₂ h_meas₂ h_progMeas₂ h_sq₂ n).2.eval_measurable).nnnorm).pow_const 2
+        (master N ℱ φ₂ h_meas₂ h_progMeas₂ h_sq₂ n).2.eval_measurable).nnNorm).pow_const 2
   have hL : ∫⁻ ω, (‖stageIntegral N ℱ φ₁ h_meas₁ h_progMeas₁ h_sq₁ n t ω
         - stageIntegral N ℱ φ₂ h_meas₂ h_progMeas₂ h_sq₂ n t ω‖₊ : ℝ≥0∞) ^ 2 ∂P
       = ∫⁻ ω, (‖((master N ℱ φ₁ h_meas₁ h_progMeas₁ h_sq₁ n).2.dyadicRefine h₁).integral N t ω
@@ -170,6 +170,6 @@ theorem process_sub_lintegral_sq {t : ℝ} (ht : 0 < t) :
     h_sq₂ ht.le] at hL
   rw [tendsto_nhds_unique hL hR]
   exact lintegral_horizonMeasure t (fun ω s e => (‖φ₁ ω s e - φ₂ ω s e‖₊ : ℝ≥0∞) ^ 2)
-    ((ENNReal.continuous_coe.measurable.comp (h_meas₁.sub h_meas₂).nnnorm).pow_const 2)
+    ((ENNReal.continuous_coe.measurable.comp (h_meas₁.sub h_meas₂).nnNorm).pow_const 2)
 
 end LevyStochCalc.Poisson.Compensated

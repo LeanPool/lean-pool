@@ -860,7 +860,6 @@ theorem coefficient_nativeSupport_of_field
   apply hn
   apply (mem_nativeUnion_iff g K x).mpr
   refine ⟨v, hslot hv, ?_⟩
-  change SlotGeometry.torusEq ((SlotGeometry.cover ^ g.gap) x.2) v
   rw [← coverPower_apply, hcoord x hx]
   exact ht
 

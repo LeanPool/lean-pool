@@ -42,7 +42,7 @@ theorem particleFourierEnergy_eq_currying_fullFourier {N q : ℕ} (i : Fin N) (�
   let w : Position → ℝ≥0∞ := fun x =>
     ENNReal.ofReal ((2 * Real.pi) ^ 2) * (‖x‖₊ : ℝ≥0∞) ^ 2
   have hw : Measurable w :=
-    measurable_const.mul (measurable_id.nnnorm.coe_nnreal_ennreal.pow_const 2)
+    measurable_const.mul (measurable_id.nnNorm.coe_nnreal_ennreal.pow_const 2)
   change (∫⁻ X : Configuration N, w (particlePosition X i) *
     (‖(Lp.fourierTransformₗᵢ (Configuration N) (SpinAmplitudes N q) ψ) X‖₊ : ℝ≥0∞) ^ 2) = _
   calc

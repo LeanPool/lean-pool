@@ -1,0 +1,140 @@
+/-
+Copyright (c) 2026 Yimin Zhong. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Yimin Zhong
+-/
+
+-- Modified for Lean Pool.
+
+module
+
+public import LeanPool.NoncommutativeAMGM.Basic
+public import LeanPool.NoncommutativeAMGM.MatrixOrder
+public import LeanPool.NoncommutativeAMGM.FallingFactorial
+public import LeanPool.NoncommutativeAMGM.ScalarEstimate
+public import LeanPool.NoncommutativeAMGM.Boolean
+public import LeanPool.NoncommutativeAMGM.Extraction
+public import LeanPool.NoncommutativeAMGM.Quadrature
+public import LeanPool.NoncommutativeAMGM.Parseval
+public import LeanPool.NoncommutativeAMGM.Sampling
+public import LeanPool.NoncommutativeAMGM.MixedMoments
+public import LeanPool.NoncommutativeAMGM.SymmetricSums
+public import LeanPool.NoncommutativeAMGM.CoefficientOperator
+public import LeanPool.NoncommutativeAMGM.CoefficientEnergy
+public import LeanPool.NoncommutativeAMGM.SpectralLower
+public import LeanPool.NoncommutativeAMGM.CoefficientSpace
+public import LeanPool.NoncommutativeAMGM.CoefficientTail
+public import LeanPool.NoncommutativeAMGM.HarmonicCoefficients
+public import LeanPool.NoncommutativeAMGM.ParityCoefficients
+public import LeanPool.NoncommutativeAMGM.DifferenceFamily
+public import LeanPool.NoncommutativeAMGM.RemainderSafety
+public import LeanPool.NoncommutativeAMGM.RemainderEnergy
+public import LeanPool.NoncommutativeAMGM.RealRootQuadrature
+public import LeanPool.NoncommutativeAMGM.RootPositivity
+public import LeanPool.NoncommutativeAMGM.UnitCircleLift
+public import LeanPool.NoncommutativeAMGM.HomogeneousSpace
+public import LeanPool.NoncommutativeAMGM.HarmonicRaising
+public import LeanPool.NoncommutativeAMGM.HarmonicExpansion
+public import LeanPool.NoncommutativeAMGM.BooleanDegree
+public import LeanPool.NoncommutativeAMGM.SliceSubstitution
+public import LeanPool.NoncommutativeAMGM.HarmonicIntersection
+public import LeanPool.NoncommutativeAMGM.SliceDifference
+public import LeanPool.NoncommutativeAMGM.HarmonicNorm
+public import LeanPool.NoncommutativeAMGM.SlicePositivity
+public import LeanPool.NoncommutativeAMGM.SliceCoefficientPolynomial
+public import LeanPool.NoncommutativeAMGM.SliceQuadraturePositivity
+public import LeanPool.NoncommutativeAMGM.MatrixSlicePositivity
+public import LeanPool.NoncommutativeAMGM.MatrixGramFactor
+public import LeanPool.NoncommutativeAMGM.BooleanMatrix
+public import LeanPool.NoncommutativeAMGM.BooleanVariance
+public import LeanPool.NoncommutativeAMGM.BooleanMatrixInput
+public import LeanPool.NoncommutativeAMGM.ChebyshevSquares
+public import LeanPool.NoncommutativeAMGM.BooleanMatrixPolynomial
+public import LeanPool.NoncommutativeAMGM.ChebyshevEvenGram
+public import LeanPool.NoncommutativeAMGM.BooleanInputGram
+public import LeanPool.NoncommutativeAMGM.ChebyshevOddGram
+public import LeanPool.NoncommutativeAMGM.ChebyshevQuadrature
+public import LeanPool.NoncommutativeAMGM.ChebyshevRootAverage
+public import LeanPool.NoncommutativeAMGM.RootCoefficientExtraction
+public import LeanPool.NoncommutativeAMGM.OrderedWords
+public import LeanPool.NoncommutativeAMGM.MatrixCoefficientExtraction
+public import LeanPool.NoncommutativeAMGM.RootSliceExtraction
+public import LeanPool.NoncommutativeAMGM.ChebyshevCoefficient
+public import LeanPool.NoncommutativeAMGM.ProductScaling
+public import LeanPool.NoncommutativeAMGM.QuadraticBound
+public import LeanPool.NoncommutativeAMGM.RootEndpoint
+public import LeanPool.NoncommutativeAMGM.ZeroSlice
+public import LeanPool.NoncommutativeAMGM.EndpointChebyshev
+public import LeanPool.NoncommutativeAMGM.StrengthenedLowerBound
+public import LeanPool.NoncommutativeAMGM.ActualCoefficientNorm
+public import LeanPool.NoncommutativeAMGM.CubicBound
+public import LeanPool.NoncommutativeAMGM.IteratedRemainderEnergy
+public import LeanPool.NoncommutativeAMGM.CosineGap
+public import LeanPool.NoncommutativeAMGM.RoundedNodes
+public import LeanPool.NoncommutativeAMGM.CosineRootNodes
+public import LeanPool.NoncommutativeAMGM.CosineGridFold
+public import LeanPool.NoncommutativeAMGM.CosineQuadrature
+public import LeanPool.NoncommutativeAMGM.ChebyshevWeights
+public import LeanPool.NoncommutativeAMGM.OneSlice
+public import LeanPool.NoncommutativeAMGM.SineNodeBounds
+public import LeanPool.NoncommutativeAMGM.ChebyshevImage
+public import LeanPool.NoncommutativeAMGM.CosineSlicePositivity
+public import LeanPool.NoncommutativeAMGM.SineBound
+public import LeanPool.NoncommutativeAMGM.SimplexRecurrence
+public import LeanPool.NoncommutativeAMGM.SimplexVectors
+public import LeanPool.NoncommutativeAMGM.SimplexMatrices
+public import LeanPool.NoncommutativeAMGM.SimplexTransfer
+public import LeanPool.NoncommutativeAMGM.SimplexWords
+public import LeanPool.NoncommutativeAMGM.SimplexSymmetry
+public import LeanPool.NoncommutativeAMGM.SimplexEigenvalue
+public import LeanPool.NoncommutativeAMGM.SimplexCounterexample
+public import LeanPool.NoncommutativeAMGM.InterpolationWeights
+public import LeanPool.NoncommutativeAMGM.RoundedCosineNodes
+public import LeanPool.NoncommutativeAMGM.NodePerturbation
+public import LeanPool.NoncommutativeAMGM.InverseSquareGaps
+public import LeanPool.NoncommutativeAMGM.RoundedWeights
+public import LeanPool.NoncommutativeAMGM.RoundedEndpoint
+public import LeanPool.NoncommutativeAMGM.RoundedWeightSigns
+public import LeanPool.NoncommutativeAMGM.ArccosMargin
+public import LeanPool.NoncommutativeAMGM.CosineNodeMargin
+public import LeanPool.NoncommutativeAMGM.ChebyshevRounding
+public import LeanPool.NoncommutativeAMGM.RoundedVariation
+public import LeanPool.NoncommutativeAMGM.IntegerSlices
+public import LeanPool.NoncommutativeAMGM.ScalarHomogeneousSpace
+public import LeanPool.NoncommutativeAMGM.InterpolationSliceExtraction
+public import LeanPool.NoncommutativeAMGM.BinomialInterpolation
+public import LeanPool.NoncommutativeAMGM.RoundedLowerBound
+public import LeanPool.NoncommutativeAMGM.SimplexThreshold
+
+/-!
+# Noncommutative arithmetic–geometric mean bounds for ordered products
+
+Source: arxiv:2610.04874v1, url:https://github.com/lowrank/noncommutative-amgm-lean/tree/26ecfa508fd375e3d8fae87a4526d0be5efd8b3f
+Authors: Yimin Zhong
+Status: verified
+Main declarations: `NoncommutativeAMGM.withoutReplacementMean_quadratic_bounds`,
+  `NoncommutativeAMGM.withoutReplacementMean_rounded_lower`,
+  `NoncommutativeAMGM.withoutReplacementMean_endpoint_lower`,
+  `NoncommutativeAMGM.withoutReplacementMean_sine_bounds`,
+  `NoncommutativeAMGM.withoutReplacementMean_cubic_bounds`
+Tags: matrix-inequalities, positive-semidefinite, Chebyshev-polynomials, quadrature
+MSC: 15A45, 47A63, 41A55
+-/
+
+/-!
+The upstream formalization and its Palomar packaging are copyright 2026 Yimin Zhong and
+licensed under Apache-2.0. The cited paper and dependencies retain their own licenses.
+Upstream acknowledges Lean and Mathlib in its README and formalization metadata.
+The Pool adapts the proof library for its module, style and trust requirements.
+-/
+
+/-
+Upstream NOTICE
+
+When the noncommutative AM-GM inequality holds — Lean formalization
+Copyright 2026 Yimin Zhong
+
+The formalization and Palomar packaging in this repository are licensed under
+Apache-2.0. The cited mathematical paper and dependencies retain their own
+licences. Lean and Mathlib are acknowledged in formalization.yaml and README.md.
+-/

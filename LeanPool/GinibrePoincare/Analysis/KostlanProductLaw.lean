@@ -112,7 +112,7 @@ theorem kostlanReference_eq_product (n : ℕ) (hn : 0 < n) :
   have href := (kostlanReference_isProbabilityMeasure n hn).measure_univ
   unfold kostlanReference at href ⊢
   rw [he]
-  rw [Measure.smul_apply, smul_eq_mul] at hmass href
+  rw [smul_apply, smul_eq_mul] at hmass href
   simp only [measure_univ] at hmass
   have hν : ν Set.univ ≠ 0 := by
     intro hz

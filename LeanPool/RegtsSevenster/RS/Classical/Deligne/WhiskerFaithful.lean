@@ -69,7 +69,7 @@ theorem eq_zero_of_whiskerRight_eq_zero
     refine evaluation_ne_zero hX ?_
     have := congrArg (fun g => (β_ X (Xᘁ)).inv ≫ g) hz
     simpa [hev'] using this
-  have : Epi ev' := epi_of_nonzero_to_simple hne
+  have : Epi ev' := epi_of_ne_zero_to_simple hne
   have : Epi (P ◁ ev') := by
     have heq : (tensorLeft P).map ev' = P ◁ ev' := rfl
     have : (tensorLeft P).PreservesEpimorphisms :=
@@ -157,7 +157,7 @@ theorem isZero_left_of_tensor_isZero
           rw [← Category.assoc, Iso.inv_hom_id, Category.id_comp],
         h0, Limits.comp_zero]
     have := hs
-    exact epi_of_nonzero_to_simple hne
+    exact epi_of_ne_zero_to_simple hne
   -- Whisker it by `B`: an epi onto `B`, from a zero object.
   have hepi : Epi ((B ◁ ((β_ V (Vᘁ)).hom ≫ ε_ V (Vᘁ))) ≫
       (ρ_ B).hom) := by

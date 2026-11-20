@@ -734,8 +734,7 @@ private lemma rotate_one_volume_preserving
       MeasurePreserving
         (fun z : CSpace d => fun i => f i (z i))
         (volume : Measure (CSpace d)) (volume : Measure (CSpace d)) := by
-    simpa [MeasureTheory.Measure.pi, f] using
-      (MeasureTheory.volume_preserving_pi (f := f) hf)
+    exact MeasureTheory.volume_preserving_pi (f := f) hf
   have hfun :
       (fun z : CSpace d => fun i => f i (z i)) =
         fun z => Function.update z q0 ((ω : ℂ) * z q0) := by

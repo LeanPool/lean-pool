@@ -94,7 +94,7 @@ theorem magnitudeEnergyDensity_bound {n : ℕ} (F : (Fin n → ℝ) → ℝ)
       intro i hi
       have hn : ‖(Pi.single i (1 : ℝ) : Fin n → ℝ)‖ = 1 := by
         simpa using congrArg (fun a : ℝ≥0 => (a : ℝ))
-          (Pi.nnnorm_single (G := fun _ : Fin n => ℝ) (i := i) (1 : ℝ))
+          (Pi.nnNorm_single (G := fun _ : Fin n => ℝ) (i := i) (1 : ℝ))
       have hb : ‖fderiv ℝ F r (Pi.single i 1)‖ ≤ (K : ℝ) := by
         calc
           _ ≤ ‖fderiv ℝ F r‖ * ‖(Pi.single i 1 : Fin n → ℝ)‖ := ContinuousLinearMap.le_opNorm _ _

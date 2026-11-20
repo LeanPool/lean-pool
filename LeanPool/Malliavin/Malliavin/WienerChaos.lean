@@ -80,8 +80,9 @@ recall MeasureTheory.isSeparable_of_sigmaFinite {X : Type u_1}
 
 recall tsum_mem {α : Type u_1} [AddCommMonoid α] [TopologicalSpace α]
     {ι : Type u_4} {S : Type u_6} {s : S} [SetLike S α] [AddSubmonoidClass S α]
-    (h_closed : IsClosed (s : Set α)) {f : ι → α} (h : ∀ i, f i ∈ s) :
-    ∑' i, f i ∈ s
+    (h_closed : IsClosed (s : Set α)) {f : ι → α} (h : ∀ i, f i ∈ s)
+    (L : SummationFilter ι := SummationFilter.unconditional ι) :
+    ∑'[L] i, f i ∈ s
 
 recall Submodule.isClosed_topologicalClosure {R : Type u} {M : Type v} [Semiring R]
     [TopologicalSpace M] [AddCommMonoid M] [Module R M] [ContinuousConstSMul R M]
@@ -381,7 +382,7 @@ private theorem exists_countableProcess_measurableSet_ae_eq
         ∃ t : Set Ω, @MeasurableSet Ω (countableProcessMeasurableSpace B) t ∧ s =ᵐ[P] t
       measurableSet_empty :=
         ⟨∅, @MeasurableSet.empty Ω (countableProcessMeasurableSpace B),
-          Filter.EventuallyEq.rfl⟩
+          Filter.EventuallyEqSet.rfl⟩
       measurableSet_compl := by
         rintro s ⟨t, ht, hst⟩
         exact ⟨tᶜ, ht.compl, hst.compl⟩
@@ -391,9 +392,8 @@ private theorem exists_countableProcess_measurableSet_ae_eq
         refine ⟨⋃ i, g i, @MeasurableSet.iUnion Ω ℕ
           (countableProcessMeasurableSpace B) inferInstance g hgm, ?_⟩
         have hall : ∀ᵐ ω ∂P, ∀ i, ω ∈ f i ↔ ω ∈ g i :=
-          ae_all_iff.mpr fun i ↦ (hfg i).mono fun _ h ↦ h.to_iff
+          ae_all_iff.mpr hfg
         filter_upwards [hall] with ω hω
-        apply propext
         constructor
         · intro hw
           obtain ⟨i, hi⟩ := Set.mem_iUnion.mp hw
@@ -407,8 +407,8 @@ private theorem exists_countableProcess_measurableSet_ae_eq
       exists_countableProcess_measurable_ae_eq (mΩ := mΩ) hB t
     refine ⟨g ⁻¹' u, hg hu, ?_⟩
     filter_upwards [hgt] with ω hω
-    change (B t ω ∈ u) = (g ω ∈ u)
-    exact congrArg (· ∈ u) hω.symm
+    change B t ω ∈ u ↔ g ω ∈ u
+    rw [hω]
   have hprocess : processMeasurableSpace B ≤ mAE :=
     iSup_le fun t ↦ (hcoord t).comap_le
   have hambient : mΩ ≤ mAE := by
@@ -454,7 +454,7 @@ theorem isSeparable_of_isWienerGenerated
     @Measure.MeasureDense.measurable Ω (countableProcessMeasurableSpace B)
       μD A hAdense u hu
   have hsu : (s ∆ u) =ᵐ[P] (t ∆ u) :=
-    hst.symmDiff (Filter.EventuallyEq.rfl : u =ᵐ[P] u)
+    hst.symmDiff (Filter.EventuallyEqSet.rfl : u =ᵐ[P] u)
   have htuD : @MeasurableSet Ω (countableProcessMeasurableSpace B) (t ∆ u) :=
     ht.symmDiff huD
   have htrim : μD (t ∆ u) = P (t ∆ u) := trim_measurableSet_eq hmD htuD

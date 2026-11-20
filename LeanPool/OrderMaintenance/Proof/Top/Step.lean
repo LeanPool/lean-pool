@@ -353,7 +353,7 @@ theorem walkNone_inv {t : TS} {cl : List Nat} {ord : Nat → List Nat} {dr n0 : 
 /-! ### A step of the running job -/
 
 theorem jobLeft_pos (t : TS) (j : Job) : 1 ≤ jobLeft t j := by
-  unfold jobLeft walkLeft; split <;> (try split) <;> (try omega)
+  unfold jobLeft walkLeft; split <;> (try split) <;> omega
 
 theorem copyC_topRel (s : Core) (j : Job) (l : Nat) : TopRel s (copyC s j l) := by
   unfold copyC; dsimp only; split_ifs <;> exact TopRel.of_top s _ _ s.cin s.lpar

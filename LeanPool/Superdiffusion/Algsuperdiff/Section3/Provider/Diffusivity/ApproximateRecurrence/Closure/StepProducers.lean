@@ -175,7 +175,7 @@ theorem cubeAverage_le_of_mem_descendantsAtDepth {Q R : TriadicCube d} {j : ℕ}
   have hR0 : (0 : ℝ) < cubeVolume R := cubeVolume_pos R
   have hmono : ∫ x in cubeSet R, f x ≤ ∫ x in cubeSet Q, f x :=
     setIntegral_mono_set hint (Filter.Eventually.of_forall hf0)
-      (LE.le.eventuallyLE hsub)
+      (LE.le.eventuallySubset hsub)
   have hstep : (cubeVolume R)⁻¹ * ∫ x in cubeSet R, f x ≤
       (cubeVolume R)⁻¹ * ∫ x in cubeSet Q, f x :=
     mul_le_mul_of_nonneg_left hmono (inv_nonneg.2 hR0.le)

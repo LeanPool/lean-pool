@@ -113,7 +113,7 @@ lemma exists_markSimple_adapted_within
     @IsRectSimple.measurable Ω m E _ g hg_rs
   have hFmeas : @Measurable (Ω × E) ℝ≥0∞ (m.prod inferInstance) _
       (fun q => (‖f q - g q‖₊ : ℝ≥0∞) ^ 2) :=
-    (ENNReal.continuous_coe.measurable.comp (h_meas.sub hg_meas).nnnorm).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp (h_meas.sub hg_meas).nnNorm).pow_const 2
   have hpt : ∀ ω e, (‖h ω e - ∑ k, (a k * (A k).indicator (fun _ => (1 : ℝ)) ω)
         * (B k ∩ S).indicator (fun _ => (1 : ℝ)) e‖₊ : ℝ≥0∞) ^ 2
       = S.indicator (fun e' => (‖h ω e' - g (ω, e')‖₊ : ℝ≥0∞) ^ 2) e := by
@@ -300,7 +300,7 @@ lemma exists_markEval_close_dyadic
     exact (((hcim i k).mono (ℱ.le _) le_rfl).comp
       measurable_fst).mul ((measurable_const.indicator (hBim i k)).comp measurable_snd)
   have hjoint : ∀ i, Measurable (fun q : Ω × E => (‖d i q.1 q.2 - mk i q.1 q.2‖₊ : ℝ≥0∞) ^ 2) :=
-    fun i => (ENNReal.continuous_coe.measurable.comp ((hd2 i).sub (hmk2 i)).nnnorm).pow_const 2
+    fun i => (ENNReal.continuous_coe.measurable.comp ((hd2 i).sub (hmk2 i)).nnNorm).pow_const 2
   have hW_meas : ∀ i, Measurable (W i) := fun i => (hjoint i).lintegral_prod_right'
   -- pointwise collapse of the squared difference.
   have hcollapse : ∀ s ω e,
@@ -338,7 +338,7 @@ lemma exists_markEval_close_dyadic
   have hgi_meas : ∀ i ω, Measurable (fun e => (‖d i ω e - mk i ω e‖₊ : ℝ≥0∞) ^ 2) := by
     intro i ω
     exact (ENNReal.continuous_coe.measurable.comp
-      ((hd_meas i ω).sub (hmk_meas i ω)).nnnorm).pow_const 2
+      ((hd_meas i ω).sub (hmk_meas i ω)).nnNorm).pow_const 2
   -- collapse the `e`-integral to `∑ᵢ 𝟙_{Iᵢ}(s)·Wᵢ(ω)`.
   have h_e : ∀ s ω, ∫⁻ e,
       (‖dyadicEvalShifted T φ n s ω e
@@ -501,7 +501,7 @@ lemma exists_markEval_L2_tendsto
   have hφm : ∀ n, Measurable (fun p : Ω × ℝ × E =>
       (‖φ p.1 p.2.1 p.2.2 - dyadicEvalShifted T φ n p.2.1 p.1 p.2.2‖₊ : ℝ≥0∞) ^ 2) := fun n =>
     (ENNReal.continuous_coe.measurable.comp
-      (h_meas.sub (dyadicEvalShifted_measurable_triple φ h_meas n)).nnnorm).pow_const 2
+      (h_meas.sub (dyadicEvalShifted_measurable_triple φ h_meas n)).nnNorm).pow_const 2
   set A : ℕ → ℝ≥0∞ := fun n => ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
     (‖φ ω s e - dyadicEvalShifted T φ n s ω e‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P with hAdef
   have htime : Filter.Tendsto A Filter.atTop (nhds 0) :=

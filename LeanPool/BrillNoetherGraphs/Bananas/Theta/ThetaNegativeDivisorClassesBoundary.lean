@@ -52,7 +52,7 @@ theorem rankDelta_path_pair_neg_of_mem_thetaExceptionalPositions_zero_left
     exact_mod_cast h
   have hkLower' : (j.val : ℤ) ≤ (k.val : ℤ) := by
     convert hkLower using 1
-    all_goals norm_num
+    norm_num
   have hjk : j.val < k.val := by
     have : j.val ≤ k.val := by exact_mod_cast hkLower'
     omega

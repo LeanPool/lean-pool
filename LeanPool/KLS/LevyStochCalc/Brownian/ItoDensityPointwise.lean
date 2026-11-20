@@ -237,7 +237,8 @@ private lemma convergence_set_measurable
       refine Finset.measurable_sum _ ?_
       intro i _
       refine Measurable.ite ?_ ?_ measurable_const
-      · refine MeasurableSet.inter ?_ ?_
+      · rw [Set.ofPred_and]
+        refine MeasurableSet.inter ?_ ?_
         · exact measurable_snd (measurableSet_Ioi
             (a := (dyadicSimplePredictableBrownian hT g h_meas M h_bound n).partition i.castSucc))
         · exact measurable_snd (measurableSet_Iic
@@ -337,7 +338,8 @@ lemma dyadicSimplePredictable_brownian_L2_converges
       refine Finset.measurable_sum _ ?_
       intro i _
       refine Measurable.ite ?_ ?_ measurable_const
-      · refine MeasurableSet.inter ?_ ?_
+      · rw [Set.ofPred_and]
+        refine MeasurableSet.inter ?_ ?_
         · exact measurable_snd (measurableSet_Ioi
             (a := (dyadicSimplePredictableBrownian hT g h_meas M h_bound n).partition i.castSucc))
         · exact measurable_snd (measurableSet_Iic
@@ -347,7 +349,7 @@ lemma dyadicSimplePredictable_brownian_L2_converges
         g p.1 p.2 -
         (dyadicSimplePredictableBrownian hT g h_meas M h_bound n).eval p.2 p.1) :=
       (h_meas.comp (by fun_prop : Measurable (fun (p : Ω × ℝ) => (p.1, p.2)))).sub h_eval_meas
-    exact ((ENNReal.continuous_coe.measurable.comp h_diff.nnnorm)).pow_const 2
+    exact ((ENNReal.continuous_coe.measurable.comp h_diff.nnNorm)).pow_const 2
   -- Bound is integrable (constant on finite measure space).
   have h_bound_integrable : ∫⁻ _ : Ω × ℝ, ENNReal.ofReal (CC ^ 2)
       ∂(P.prod (volume.restrict (Set.Icc (0 : ℝ) T))) ≠ ⊤ := by
@@ -377,7 +379,7 @@ lemma dyadicSimplePredictable_brownian_L2_converges
        (dyadicSimplePredictableBrownian hT g h_meas M h_bound n).eval p.2 p.1‖₊)
         Filter.atTop (nhds 0) := by
       rw [show (0 : ℝ≥0) = ‖(0 : ℝ)‖₊ from by simp]
-      exact (continuous_nnnorm.tendsto _).comp h_diff_zero
+      exact (continuous_nnNorm.tendsto _).comp h_diff_zero
     have h_enorm_zero : Filter.Tendsto
         (fun n => ((‖g p.1 p.2 -
        (dyadicSimplePredictableBrownian hT g h_meas M h_bound n).eval p.2 p.1‖₊

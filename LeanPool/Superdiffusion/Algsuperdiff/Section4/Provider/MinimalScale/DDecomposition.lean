@@ -117,8 +117,8 @@ theorem tsum_sq_le_sq_tsum {iota : Type*} (f : iota → ℝ≥0∞) :
   have hterm : ∀ i, f i ^ 2 ≤ (∑' j, f j) * f i := by
     intro i
     rw [pow_two]
-    exact mul_le_mul_left (ENNReal.le_tsum i) (f i)
-  calc ∑' i, f i ^ 2 ≤ ∑' i, (∑' j, f j) * f i := ENNReal.tsum_le_tsum hterm
+    exact mul_le_mul_left (le_tsum _ i) (f i)
+  calc ∑' i, f i ^ 2 ≤ ∑' i, (∑' j, f j) * f i := tsum_le_tsum hterm
     _ = (∑' j, f j) * ∑' i, f i := ENNReal.tsum_mul_left
     _ = (∑' i, f i) ^ 2 := (pow_two _).symm
 
@@ -320,8 +320,8 @@ theorem anchor_annular_le_sq (M : ABKModel d) (s : {s : ℝ // 0 < s}) (k : ℤ)
       exact ENNReal.ofReal_pow (annularErrorObservable_nonneg M n.1 s _) 2
     rw [mul_pow, ofReal_three_rpow_half_sq]
     exact mul_le_mul_right hsup _
-  refine le_trans (ENNReal.tsum_le_tsum fun j => ENNReal.tsum_le_tsum (hterm j)) ?_
-  refine le_trans (ENNReal.tsum_le_tsum fun j => tsum_sq_le_sq_tsum _) ?_
+  refine le_trans (tsum_le_tsum fun j => tsum_le_tsum (hterm j)) ?_
+  refine le_trans (tsum_le_tsum fun j => tsum_sq_le_sq_tsum _) ?_
   exact tsum_sq_le_sq_tsum _
 
 /-- The anchor's Hessian group is below the square of the quarter-exponent sum. -/
@@ -343,7 +343,7 @@ theorem anchor_hessian_le_sq (M : ABKModel d) (s : {s : ℝ // 0 < s}) (k : ℤ)
                 ⨆ v : ↥(latticeCubeSet d i k),
                   ENNReal.ofReal
                     (shellW2InfNormAt (triadicLatticePoint i v.1) i (omega.1 i))) ^ 2 := by
-  refine le_trans (ENNReal.tsum_le_tsum fun n => ?_) (tsum_sq_le_sq_tsum _)
+  refine le_trans (tsum_le_tsum fun n => ?_) (tsum_sq_le_sq_tsum _)
   rw [mul_pow, ofReal_three_rpow_quarter_sq]
   exact mul_le_mul_right (sum_sq_le_sq_sum _ _) _
 

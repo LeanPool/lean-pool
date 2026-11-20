@@ -320,7 +320,7 @@ private theorem sum_conj_succ_eq_ratC_of_aeval_jq_eq (hζ : IsPrimitiveRoot (ζ 
           (by rw [Polynomial.degree_eq_natDegree hAmonic.ne_zero,
                 Polynomial.degree_eq_natDegree hBmonic.ne_zero, hAdeg, hBdeg])
           hAmonic.ne_zero (by rw [hAmonic.leadingCoeff, hBmonic.leadingCoeff])
-  have hcoeff := congrArg (fun p => Polynomial.coeff p (ℓ - 1)) key
+  have hcoeff := congrArg (fun p => AddMonoidAlgebra.coeff p (ℓ - 1)) key
   have hℓ2 : 2 ≤ ℓ := hℓ.out.two_le
   simp only [Polynomial.coeff_sub, Polynomial.coeff_C,
     ite_eq_right (by omega : ¬(ℓ - 1 = 0))] at hcoeff

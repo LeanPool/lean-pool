@@ -38,7 +38,7 @@ theorem exists_relative_complement_data (S T : Set α)
       natRank M U + natRank M S = natRank M T + natRank M M.E := by
   generalize hn : natRank M M.E - natRank M S = n
   induction n using Nat.strong_induction_on generalizing S T with
-  | h n ih =>
+  | ind n ih =>
     by_cases hSE : S = M.E
     · subst S
       exact ⟨T, hT, Set.Subset.rfl, by simp [Set.union_eq_right.mpr hT.subset_ground], rfl⟩

@@ -80,7 +80,7 @@ lemma measure_le_mul_of_closedBall_le {μ₁ μ₂ : Measure (EuclideanSpace ℝ
           · exact Or.inl ⟨hy, hy'⟩
       _ = ∑' x : t, μ₁ (closedBall x (r x)) := by
           rw [hnull, zero_add, measure_biUnion htc hdisj fun _ _ ↦ measurableSet_closedBall]
-      _ ≤ ∑' x : t, K * μ₂ (closedBall x (r x)) := ENNReal.tsum_le_tsum fun x ↦ (hr x x.2).1
+      _ ≤ ∑' x : t, K * μ₂ (closedBall x (r x)) := tsum_le_tsum fun x ↦ (hr x x.2).1
       _ = K * μ₂ (⋃ x ∈ t, closedBall x (r x)) := by
           rw [ENNReal.tsum_mul_left, measure_biUnion htc hdisj fun _ _ ↦ measurableSet_closedBall]
       _ ≤ K * μ₂ U := by gcongr
@@ -205,7 +205,7 @@ lemma measure_open_eq_zero_of_isTangentMeasure {μ lam : Measure (EuclideanSpace
   have hopen := hb.2 G hG
   have hev : ∀ᶠ k in atTop, (c k • μ.map (blowUpMap a (r k))) G = (fun _ ↦ (0 : ℝ≥0∞)) k := by
     filter_upwards [hr0.eventually (gt_mem_nhds hρ)] with k hk
-    rw [Measure.smul_apply, Measure.map_apply (measurable_blowUpMap a _) hG.measurableSet,
+    rw [smul_apply, Measure.map_apply (measurable_blowUpMap a _) hG.measurableSet,
       smul_eq_mul, measure_eq_zero_of_disjoint_support (V := blowUpMap a (r k) ⁻¹' G)
         (fun y hy hys ↦ hsm (r k) (hr k) hk y hys hy), mul_zero]
   have hlim : liminf (fun k ↦ (c k • μ.map (blowUpMap a (r k))) G) atTop = 0 := by
@@ -690,7 +690,7 @@ lemma exists_isSUniform_of_hyperplane {s : ℝ} {ν : Measure (EuclideanSpace �
     apply hne
     have huniv : ν' univ = ν univ := by
       rw [hν', Measure.map_apply hf_cont.measurable MeasurableSet.univ, preimage_univ]
-    rw [h0, Measure.coe_zero, Pi.zero_apply] at huniv
+    rw [h0, FunLike.coe_zero, Pi.zero_apply] at huniv
     exact Measure.measure_univ_eq_zero.mp huniv.symm
   · intro y hy r hr
     rw [hν'ball]
@@ -757,7 +757,7 @@ lemma eq_smul_volume_of_forall_closedBall {ν : Measure (EuclideanSpace ℝ (Fin
       (fun x _ δ hδ ↦ ⟨δ / 2, ⟨by positivity, by linarith⟩, by
         rw [heq x _ (by positivity), ← mul_assoc, ENNReal.inv_mul_cancel hK0 hKtop, one_mul]⟩)
   refine ⟨K, pos_iff_ne_zero.2 hK0, hKtop, Measure.ext fun S _ ↦ le_antisymm (h1 S) ?_⟩
-  rw [Measure.smul_apply, smul_eq_mul]
+  rw [smul_apply, smul_eq_mul]
   calc K * volume S ≤ K * (K⁻¹ * ν S) := by gcongr; exact h2 S
     _ = ν S := by rw [← mul_assoc, ENNReal.mul_inv_cancel hK0 hKtop, one_mul]
 

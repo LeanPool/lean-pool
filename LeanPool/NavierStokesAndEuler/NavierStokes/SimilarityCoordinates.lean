@@ -271,7 +271,7 @@ theorem inverseMap_smooth_at_image {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
   have hsm := forwardMap_smooth (a := a) hq.ne'
   have hder := forwardMap_hasFDerivAt (a := a) hq.ne' hm
   have horder : (∞ : WithTop ℕ∞) ≠ 0 := by simp
-  have hs := hsm.hasStrictFDerivAt' hder horder
+  have hs := hsm.hasStrictFDerivAt hder horder
   have heq := hs.localInverse_unique (eventually_inverseMap_forwardMap ha ha1 hq hF)
   exact (hsm.to_localInverse hder horder).congr_of_eventuallyEq heq
 
@@ -284,7 +284,7 @@ theorem inverseMap_hasFDerivAt_image {a : ℝ} (ha : 0 < a) (ha1 : a < 1)
   have hsm := forwardMap_smooth (a := a) hq.ne'
   have hder := forwardMap_hasFDerivAt (a := a) hq.ne'
     (scalarSlope_pos ha ha1 hq hF).ne'
-  have hs := hsm.hasStrictFDerivAt' hder (by simp)
+  have hs := hsm.hasStrictFDerivAt hder (by simp)
   exact (hs.to_local_left_inverse
     (eventually_inverseMap_forwardMap ha ha1 hq hF)).hasFDerivAt
 

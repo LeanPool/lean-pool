@@ -209,7 +209,7 @@ theorem d_factorization_eq_div_log' (n p : ℕ) (hp : Nat.Prime p) :
           rw [le_sub_iff_add_le, Real.le_logb_iff_rpow_le] at h
           · have h2 : y + 1 ∉
                 (Finset.image (fun i ↦ i.factorization p) (Finset.Icc 1 (n + 1))) := by
-              by_contra! hy1
+              intro hy1
               suffices y + 1 ≤ y by linarith
               exact Finset.le_max' _ _ hy1
             simp only [Finset.mem_image, Finset.mem_Icc, not_exists, not_and, and_imp] at h2

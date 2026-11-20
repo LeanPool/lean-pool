@@ -119,7 +119,7 @@ private theorem hsuccCov :
           ↓reduceIte, Fin.succ_zero_eq_one, Matrix.cons_val_one, Fin.succ_one_eq_two,
           Matrix.cons_val, Fin.reduceSucc, Fin.mk_one, succ, Fin.reduceFinMk, Fin.zero_eta,
           Prod.mk.injEq, true_and];
-      (try ext) <;> simp [] <;> ring
+      (ext) <;> simp [] <;> ring
   · rw [hs]
     funext i
     fin_cases i <;>
@@ -128,7 +128,7 @@ private theorem hsuccCov :
           Int.cast_mul, Int.cast_ofNat, BandPackingSymmetryReversesOrientation,
           bne_self_eq_false, Bool.false_eq_true, ↓reduceIte, Fin.succ_zero_eq_one,
           Matrix.cons_val_one, Fin.succ_one_eq_two, Matrix.cons_val, Fin.reduceSucc,
-          Fin.mk_one, succ, Fin.reduceFinMk, Fin.zero_eta, Prod.mk.injEq, true_and]; (try ext) <;>
+          Fin.mk_one, succ, Fin.reduceFinMk, Fin.zero_eta, Prod.mk.injEq, true_and]; (ext) <;>
       simp [] <;> ring
 
 private theorem hF0 :

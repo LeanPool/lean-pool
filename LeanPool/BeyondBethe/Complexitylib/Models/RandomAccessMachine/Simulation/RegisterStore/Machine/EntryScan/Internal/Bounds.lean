@@ -37,8 +37,8 @@ private theorem entryMissBits_length_le_sum {n : ℕ}
       bitlen entry.1 + bitlen entry.2 + 1 := by
   unfold entryMissBits
   split_ifs <;>
-    (try simp only [List.length_nil, List.length_replicate,
-      List.length_singleton, bitlen, Nat.size_eq_bits_len]) <;> omega
+    simp only [List.length_nil, List.length_replicate,
+      List.length_singleton, bitlen, Nat.size_eq_bits_len] <;> omega
 
 private theorem entryMissCleanupTime_canonical_le_linear {n : ℕ}
     (tapes : EntryMatchTapes n) (entry : Entry)

@@ -51,7 +51,7 @@ theorem smoothQuadraticHighPass_enorm_le_hilbertTrunc_add_maximal
     rw [heq]
     ring
   rw [hsmooth]
-  exact enorm_sub_le.trans (add_le_add le_rfl
+  exact eNorm_sub_le.trans (add_le_add le_rfl
     (cutoffBoundaryOperator_enorm_le_maximal 0 hρ f hf x))
 
 /-- The two finite-block definitions used by the low comparison and by the

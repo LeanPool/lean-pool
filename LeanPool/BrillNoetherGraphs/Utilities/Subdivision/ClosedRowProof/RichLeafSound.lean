@@ -556,7 +556,7 @@ theorem w4_checked_or_separated_of_w4Checks (w : RichWitness)
         (subForm (w.point a.val e.val j)
           (w.point a.val e.val ((i - 1) + 1)))) = true at hqEntry
     convert hqEntry using 1
-    all_goals simp only [k, show i - 1 + 1 = i by omega]
+    simp only [k, show i - 1 + 1 = i by omega]
   have hr : j - i < k - i := by
     dsimp [k]
     omega

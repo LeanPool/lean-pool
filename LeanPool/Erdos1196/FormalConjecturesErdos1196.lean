@@ -33,7 +33,7 @@ namespace Erdos1196
 /-- Exact local copy of the primitive-set predicate used in the official
 `formal-conjectures` statement of Erdős Problem `#1196`. -/
 def IsPrimitive {M : Type*} [CommMonoid M] (A : Set M) : Prop :=
-  ∀ᵉ (x ∈ A) (y ∈ A), x ∣ y → Associated x y
+  ∀ x ∈ A, ∀ y ∈ A, x ∣ y → Associated x y
 
 private lemma log_pos_nat {n : ℕ} (hn : 2 ≤ n) : 0 < Real.log (n : ℝ) :=
   Real.log_pos (by exact_mod_cast (lt_of_lt_of_le (by decide : 1 < 2) hn))

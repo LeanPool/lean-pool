@@ -562,7 +562,15 @@ theorem eval₂_polynomialOverSecondCoordinate_eq_zero
   have hhom : lhs = rhs := by
     apply MvPolynomial.ringHom_ext
     · intro c
-      simp [lhs, rhs]
+      simp only [lhs, rhs, RingHom.comp_apply, MvPolynomial.eval₂Hom_C,
+        Polynomial.algebraMap_apply]
+      change Polynomial.eval₂
+        (algebraMap (SecondCoordinateSubfield f) (PlaneCurveFunctionField f))
+        (planeCurveFunction f 0) (Polynomial.C (algebraMap K (SecondCoordinateSubfield f) c)) =
+          algebraMap K (PlaneCurveFunctionField f) c
+      rw [Polynomial.eval₂_C]
+      exact (IsScalarTower.algebraMap_apply K (SecondCoordinateSubfield f)
+        (PlaneCurveFunctionField f) c).symm
     · intro i
       fin_cases i <;>
         simp [lhs, rhs, secondCoordinateInSubfield]

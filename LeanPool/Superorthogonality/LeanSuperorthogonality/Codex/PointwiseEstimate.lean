@@ -163,11 +163,11 @@ private lemma lintegral_enorm_mul_count_le (f g : ι → ℂ) :
     (measurable_of_countable _).aemeasurable
   have h := ENNReal.lintegral_mul_le_Lp_mul_Lq
     (μ := (Measure.count : Measure ι)) hpq h0 h1
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (2 : ENNReal) ≠ 0)
       (by norm_num : (2 : ENNReal) ≠ ⊤)
       Measurable.of_discrete.aestronglyMeasurable,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (2 : ENNReal) ≠ 0)
       (by norm_num : (2 : ENNReal) ≠ ⊤)
       Measurable.of_discrete.aestronglyMeasurable]
@@ -179,9 +179,9 @@ private lemma pair_enorm_tsum_le_B_sq {k : ℕ} (hk : 2 ≤ k)
   have hvolume : (volume : Measure ι) = Measure.count := rfl
   calc
     ‖(∑' j, a i j * a i' j)‖ₑ ≤ ∑' j, ‖a i j * a i' j‖ₑ :=
-      enorm_tsum_le_tsum_enorm
+      eNorm_tsum_le_tsum_eNorm
     _ = ∫⁻ j : ι, ‖a i j‖ₑ * ‖a i' j‖ₑ ∂(Measure.count : Measure ι) := by
-      simp only [enorm_mul, lintegral_count]
+      simp only [eNorm_mul, lintegral_count]
     _ ≤ eLpNorm (a i) 2 (Measure.count : Measure ι) *
         eLpNorm (a i') 2 (Measure.count : Measure ι) :=
       lintegral_enorm_mul_count_le (a i) (a i')
@@ -402,7 +402,7 @@ private lemma Q_succ_fiber {k : ℕ} (a : Fin (k + 1) → ι → ℂ)
       indicator (allDistinctSet k)
         (fun g ↦ (∏ i, initFamily a i (g i)) *
           (s (a (Fin.last k)) - ∑ i : Fin k, a (Fin.last k) (g i))) g := by
-  let avoid : Set ι := fun m ↦ ∀ i : Fin k, g i ≠ m
+  let avoid : Set ι := {m | ∀ i : Fin k, g i ≠ m}
   by_cases hg : allDistinct k g
   · have hterm : ∀ m : ι,
         indicator (allDistinctSet (k + 1)) (fun j ↦ ∏ i, a i (j i)) (Fin.snoc g m) =
@@ -662,7 +662,7 @@ omit [Countable ι] in
 private lemma eLpNorm_two_lt_top_of_summable_norm (a : ι → ℂ)
     (ha : Summable (fun j ↦ ‖a j‖)) :
     eLpNorm a 2 < ⊤ := by
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (by norm_num : (2 : ENNReal) ≠ 0) (by norm_num : (2 : ENNReal) ≠ ⊤)
         Measurable.of_discrete.aestronglyMeasurable]
   change (∫⁻ j : ι, ‖a j‖ₑ ^ (2 : ENNReal).toReal
@@ -696,15 +696,15 @@ omit [Countable ι] in
 private lemma enorm_le_one_of_eLpNorm_le_one (a : ι → ℂ)
     (ha : eLpNorm a 2 ≤ 1) (j : ι) :
     ‖a j‖ₑ ≤ 1 := by
-  exact (enorm_le_eLpNorm_count a j (by norm_num : (2 : ENNReal) ≠ 0)).trans ha
+  exact (eNorm_le_eLpNorm_count a j (by norm_num : (2 : ENNReal) ≠ 0)).trans ha
 
 omit [Countable ι] in
 private lemma eLpNorm_mul_le_of_right_enorm_le_one (a b : ι → ℂ)
     (hb : ∀ j, ‖b j‖ₑ ≤ 1) :
     eLpNorm (fun j ↦ a j * b j) 2 ≤ eLpNorm a 2 := by
-  apply eLpNorm_mono_enorm Measurable.of_discrete.aestronglyMeasurable
+  apply eLpNorm_mono_eNorm Measurable.of_discrete.aestronglyMeasurable
   intro j
-  rw [enorm_mul]
+  rw [eNorm_mul]
   exact mul_le_of_le_one_right (show (0 : ENNReal) ≤ ‖a j‖ₑ from bot_le) (hb j)
 
 omit [Countable ι] in
@@ -764,7 +764,7 @@ private lemma A_collisionFamily_le_step_max {k : ℕ} (hk : 2 ≤ k)
   have hcollision_real :
       ‖s (fun j ↦ a (Fin.castSucc i) j * a (Fin.last k) j)‖ ≤ (1 : ℝ) := by
     rw [← show ‖(1 : ℂ)‖ = (1 : ℝ) by norm_num]
-    rw [← enorm_le_iff_norm_le]
+    rw [← eNorm_le_iff_norm_le]
     simpa using collision_sum_enorm_le_one hk a hB i
   unfold A
   rw [← ENNReal.ofReal_one, ← ENNReal.ofReal_max]
@@ -886,7 +886,7 @@ private lemma collision_Q_bound_normalized {k : ℕ} (hk : 2 ≤ k)
           ‖(Q (collisionFamily a i) - P) + P‖ₑ := by
         rw [h]
       _ ≤ ‖Q (collisionFamily a i) - P‖ₑ + ‖P‖ₑ :=
-        enorm_add_le (Q (collisionFamily a i) - P) P
+        eNorm_add_le (Q (collisionFamily a i) - P) P
   calc
     ‖Q (collisionFamily a i)‖ₑ
         ≤ ‖Q (collisionFamily a i) - P‖ₑ + ‖P‖ₑ := htri
@@ -949,7 +949,7 @@ private lemma normalized_step_error_bound {k : ℕ} (hk : 2 ≤ k)
     exact hraw.trans (le_max_right _ _)
   have hinit_term : ‖E * L‖ₑ ≤ pointwiseConstant k * M ^ (k - 1) := by
     calc
-      ‖E * L‖ₑ = ‖E‖ₑ * ‖L‖ₑ := by rw [enorm_mul]
+      ‖E * L‖ₑ = ‖E‖ₑ * ‖L‖ₑ := by rw [eNorm_mul]
       _ ≤ (pointwiseConstant k * M ^ (k - 2)) * M :=
         mul_le_mul' hinit_error hlast
       _ = pointwiseConstant k * M ^ (k - 1) := by
@@ -960,7 +960,7 @@ private lemma normalized_step_error_bound {k : ℕ} (hk : 2 ≤ k)
     calc
       ‖∑ i : Fin k, Q (collisionFamily a i)‖ₑ
           ≤ ∑ i : Fin k, ‖Q (collisionFamily a i)‖ₑ :=
-        enorm_sum_le Finset.univ (fun i : Fin k ↦ Q (collisionFamily a i))
+        eNorm_sum_le Finset.univ (fun i : Fin k ↦ Q (collisionFamily a i))
       _ ≤ ∑ _i : Fin k, (pointwiseConstant k + 1) * M ^ (k - 1) := by
         apply Finset.sum_le_sum
         intro i _hi
@@ -970,7 +970,7 @@ private lemma normalized_step_error_bound {k : ℕ} (hk : 2 ≤ k)
   have htri :
       ‖Q a - ∏ i, s (a i)‖ₑ ≤ ‖E * L‖ₑ + ‖Csum‖ₑ := by
     rw [hmain]
-    simpa [sub_eq_add_neg] using enorm_add_le (E * L) (-Csum)
+    simpa [sub_eq_add_neg] using eNorm_add_le (E * L) (-Csum)
   calc
     ‖Q a - ∏ i, s (a i)‖ₑ ≤ ‖E * L‖ₑ + ‖Csum‖ₑ := htri
     _ ≤ pointwiseConstant k * M ^ (k - 1) +
@@ -1069,7 +1069,7 @@ private lemma B_rescaleFamily_le_one (hk : 2 ≤ k)
     have hc_ne : ((B hk a).toReal : ℂ) ≠ 0 := by
       exact_mod_cast hpos.ne'
     have hc_enorm : ‖(((B hk a).toReal : ℂ)⁻¹)‖ₑ = (B hk a)⁻¹ := by
-      rw [enorm_inv hc_ne]
+      rw [eNorm_inv hc_ne]
       have hbase : ‖((B hk a).toReal : ℂ)‖ₑ = B hk a := by
         calc
           ‖((B hk a).toReal : ℂ)‖ₑ =
@@ -1189,7 +1189,7 @@ private lemma rescale_Q_sub_prod_enorm (hk : 2 ≤ k)
     exact_mod_cast hpos.ne'
   have hc_enorm : ‖c‖ₑ = (B hk a)⁻¹ := by
     dsimp [c]
-    rw [enorm_inv hc_ne]
+    rw [eNorm_inv hc_ne]
     have hbase : ‖((B hk a).toReal : ℂ)‖ₑ = B hk a := by
       calc
         ‖((B hk a).toReal : ℂ)‖ₑ =
@@ -1205,7 +1205,7 @@ private lemma rescale_Q_sub_prod_enorm (hk : 2 ≤ k)
     dsimp [c]
     rw [Q_rescaleFamily hk a, prod_s_rescaleFamily hk a]
     ring
-  rw [hscaled, enorm_mul, enorm_pow, hc_enorm]
+  rw [hscaled, eNorm_mul, eNorm_pow, hc_enorm]
   rw [← mul_assoc]
   have hpow : (B hk a) ^ k * (B hk a)⁻¹ ^ k = 1 := by
     rw [← mul_pow, ENNReal.mul_inv_cancel hB0 hBtop, one_pow]
@@ -1265,9 +1265,9 @@ private lemma pointwise_estimate_of_B_eq_zero (hk : 2 ≤ k)
   have hpoint (i : Fin k) (j : ι) : a i j = 0 := by
     have hnorm : ‖a i j‖ₑ = 0 := by
       exact le_antisymm
-        ((enorm_le_eLpNorm_count (a i) j (by norm_num : (2 : ENNReal) ≠ 0)).trans_eq
+        ((eNorm_le_eLpNorm_count (a i) j (by norm_num : (2 : ENNReal) ≠ 0)).trans_eq
           (hcoord0 i)) bot_le
-    exact enorm_eq_zero.mp hnorm
+    exact eNorm_eq_zero.mp hnorm
   have hQ : Q a = 0 := by
     simp [Q, hpoint, hk0]
   have hs (i : Fin k) : s (a i) = 0 := by

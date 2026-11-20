@@ -52,8 +52,8 @@ integral of its square. -/
 theorem eLpNorm_two_sq_eq_lintegral_sq {α : Type*} [MeasurableSpace α]
     (μ : Measure α) (g : α → ℝ≥0∞) (hg : AEStronglyMeasurable g μ) :
     eLpNorm g 2 μ ^ (2 : ℕ) = ∫⁻ a, g a ^ (2 : ℕ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hg]
-  simp only [ENNReal.toReal_ofNat, enorm_eq_self]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hg]
+  simp only [ENNReal.toReal_ofNat, eNorm_eq_self]
   rw [← ENNReal.rpow_natCast (_ ^ (1 / (2 : ℝ))) 2, ← ENNReal.rpow_mul]
   norm_num
 
@@ -103,12 +103,12 @@ theorem ofReal_abs_integral_le_mul_lintegral {α : Type*} [MeasurableSpace α]
     (hmajorant : ∀ᵐ a ∂μ, ENNReal.ofReal |f a| ≤ C * g a) :
     ENNReal.ofReal |∫ a, f a ∂μ| ≤ C * ∫⁻ a, g a ∂μ := by
   calc ENNReal.ofReal |∫ a, f a ∂μ|
-      = ‖∫ a, f a ∂μ‖ₑ := (Real.enorm_eq_ofReal_abs _).symm
-    _ ≤ ∫⁻ a, ‖f a‖ₑ ∂μ := enorm_integral_le_lintegral_enorm _
+      = ‖∫ a, f a ∂μ‖ₑ := (Real.eNorm_eq_ofReal_abs _).symm
+    _ ≤ ∫⁻ a, ‖f a‖ₑ ∂μ := eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ a, C * g a ∂μ := by
         refine lintegral_mono_ae ?_
         filter_upwards [hmajorant] with a ha
-        rwa [Real.enorm_eq_ofReal_abs]
+        rwa [Real.eNorm_eq_ofReal_abs]
     _ = C * ∫⁻ a, g a ∂μ := lintegral_const_mul' _ _ hC
 
 /-! ## The weak components -/

@@ -55,7 +55,7 @@ theorem sum_classIdealNormCount {n : ℕ} (hn : n ≠ 0) :
     ∑ C : ClassGroup (𝓞 K), classIdealNormCount K C n =
       idealNormCount K n := by
   let : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-    (Ideal.finite_setOfPred_absNorm_eq n).fintype
+    (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
   let : Fintype {I : (Ideal (𝓞 K))⁰ //
       absNorm (I : Ideal (𝓞 K)) = n} :=
     Fintype.ofEquiv _ (idealNormFiberEquivNonzero K hn)
@@ -92,7 +92,7 @@ theorem classIdealNormCount_le_idealNormCount
     (C : ClassGroup (𝓞 K)) (n : ℕ) :
     classIdealNormCount K C n ≤ idealNormCount K n := by
   let : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-    (Ideal.finite_setOfPred_absNorm_eq n).fintype
+    (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
   rw [classIdealNormCount, idealNormCount]
   let f :
       {I : (Ideal (𝓞 K))⁰ //
@@ -134,7 +134,7 @@ private noncomputable instance finite_classIdealNormFiber
       {I : {I : (Ideal (𝓞 K))⁰ // ClassGroup.mk0 I = C} //
         absNorm (I.1 : Ideal (𝓞 K)) = n} := by
   let : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-    (Ideal.finite_setOfPred_absNorm_eq n).fintype
+    (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
   let f :
       {I : (Ideal (𝓞 K))⁰ //
         ClassGroup.mk0 I = C ∧ absNorm (I : Ideal (𝓞 K)) = n} →
@@ -298,7 +298,7 @@ private noncomputable instance finite_principalIdealAboveNormFiber
     Finite {I : PrincipalIdealAbove K J //
       absNorm I.1.1 = n} := by
   let : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-    (Ideal.finite_setOfPred_absNorm_eq n).fintype
+    (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
   let f :
       {I : (Ideal (𝓞 K))⁰ //
         (J : Ideal (𝓞 K)) ∣ I ∧ IsPrincipal (I : Ideal (𝓞 K)) ∧

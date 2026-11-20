@@ -285,13 +285,7 @@ variable [L.DecidableEq] [DecidableEq ξ]
 /-- The has Dec Eq construction in `FFL.FirstOrder.Semiformulaᵢ`. -/
 def hasDecEq {n} : (φ ψ : Semiformulaᵢ L ξ n) → Decidable (φ = ψ)
   | ⊥, ψ => by
-    cases ψ using cases' <;>
-      { simp only [reduceCtorEq];
-        try { exact isFalse not_false
-        };
-        try { exact isTrue trivial
-        }
-      }
+    cases ψ using cases' <;> simp only [reduceCtorEq] <;> infer_instance
   | rel r v, ψ =>
     by
     cases ψ using cases' <;>

@@ -55,7 +55,7 @@ section PointwiseEstimate
 abbrev s (a : ι → ℂ) := ∑' j, a j
 
 /-- Set of  `k` tuples of all distinct indices. -/
-abbrev allDistinctSet (k : ℕ) : Set (Fin k → ι) := fun j ↦ allDistinct k j
+abbrev allDistinctSet (k : ℕ) : Set (Fin k → ι) := {j | allDistinct k j}
 
 variable {k : ℕ}
 

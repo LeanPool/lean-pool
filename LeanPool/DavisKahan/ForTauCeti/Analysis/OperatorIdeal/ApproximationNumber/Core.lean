@@ -742,7 +742,7 @@ theorem exists_orthonormal_kyFanApproximationGauge_sub_le_re_sum_inner
   set T : Finset E := (Finset.range k).biUnion S ∪ Finset.image x Finset.univ with hTdef
   set W : Submodule 𝕜 E := Submodule.span 𝕜 (T : Set E) with hWdef
   have : FiniteDimensional 𝕜 W := FiniteDimensional.span_of_finite 𝕜 T.finite_toSet
-  have : CompleteSpace W := FiniteDimensional.complete 𝕜 W
+  have : CompleteSpace W := FiniteDimensional.completeSpace 𝕜 W
   have hSW : ∀ n < k, Submodule.span 𝕜 ((S n : Set E)) ≤ W := by
     intro n hn
     refine Submodule.span_mono (Finset.coe_subset.mpr ?_)
@@ -781,7 +781,7 @@ theorem exists_orthonormal_kyFanApproximationGauge_sub_le_re_sum_inner
   set T' : Finset F := (T.image K) ∪ Finset.image y Finset.univ with hT'def
   set W' : Submodule 𝕜 F := Submodule.span 𝕜 (T' : Set F) with hW'def
   have : FiniteDimensional 𝕜 W' := FiniteDimensional.span_of_finite 𝕜 T'.finite_toSet
-  have : CompleteSpace W' := FiniteDimensional.complete 𝕜 W'
+  have : CompleteSpace W' := FiniteDimensional.completeSpace 𝕜 W'
   have hyW' : ∀ i, y i ∈ W' := fun i => Submodule.subset_span (by simp [hT'def])
   have hy' : Orthonormal 𝕜 (fun i => (⟨y i, hyW' i⟩ : W')) := by
     rw [orthonormal_iff_ite] at hy ⊢

@@ -76,7 +76,7 @@ theorem setLIntegral_sum_children (μ : PMF ℕ) (h : PlaneTree → ℝ≥0∞) 
     ∫⁻ T in {T | ∀ U ∈ T.children, U ∈ A}, (T.children.map h).sum ∂(bienayme μ) =
       pgfDeriv μ (bienayme μ A) * ∫⁻ U in A, h U ∂(bienayme μ) := by
   rw [setLIntegral_bienayme, setLIntegral_bienayme, pgfDeriv, ← ENNReal.tsum_mul_right,
-    ← equivSigma.symm.tsum_eq, ENNReal.tsum_sigma']
+    ← equivSigma.symm.tsum_eq, tsum_sigma']
   refine tsum_congr fun d => ?_
   set X := ∑' U, weight μ U * A.indicator h U with hX
   set Y := bienayme μ A with hYdef
@@ -110,7 +110,7 @@ theorem setLIntegral_sum_children (μ : PMF ℕ) (h : PlaneTree → ℝ≥0∞) 
       refine mul_eq_zero_of_right _ (Finset.sum_eq_zero fun i _ => ?_)
       exact Finset.prod_eq_zero (Finset.mem_univ l) (by simp [Set.indicator_of_notMem hl])
   simp only [key]
-  rw [ENNReal.tsum_mul_left, Summable.tsum_finsetSum (fun _ _ => ENNReal.summable)]
+  rw [ENNReal.tsum_mul_left, Summable.tsum_finsetSum (fun _ _ => CompleteLattice.summable)]
   have hpi : ∀ i : Fin d, ∑' f : Fin d → PlaneTree, ∏ l : Fin d,
       (weight μ (f l) * A.indicator 1 (f l) * (if l = i then h (f l) else 1)) =
       ∏ l : Fin d, ∑' U, weight μ U * A.indicator 1 U * (if l = i then h U else 1) := fun i =>

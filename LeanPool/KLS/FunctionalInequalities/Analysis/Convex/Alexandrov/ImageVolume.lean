@@ -970,8 +970,7 @@ theorem exists_inverse_subgradient_volume_bounds {u : E → ℝ} {L : NNReal}
   have hTQ : T ⊆ Q := hTG.trans (closedBall_subset_closedBall (le_max_left M 0))
   have hsets : T =ᵐ[ν] (gradient u ⁻¹' G) := by
     filter_upwards [hdiff] with x hx
-    change (∃ p ∈ G, ∀ y, u x + ⟪p, y - x⟫ ≤ u y) = (gradient u x ∈ G)
-    apply propext
+    change (∃ p ∈ G, ∀ y, u x + ⟪p, y - x⟫ ≤ u y) ↔ gradient u x ∈ G
     constructor
     · rintro ⟨p, hpG, hp⟩
       exact (subgradient_eq_gradient hx hp) ▸ hpG

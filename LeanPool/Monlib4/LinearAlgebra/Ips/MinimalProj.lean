@@ -68,7 +68,7 @@ theorem IsIdempotentElem.mem_range_iff {p : E →ₗ[R] E} (hp : IsIdempotentEle
   simp_rw [mem_range]
   refine ⟨fun ⟨y, hy⟩ => ?_, fun h => ⟨x, h⟩⟩
   nth_rw 1 [← hy]
-  rw [← mul_apply, hp.eq, hy]
+  rw [← mul_apply_eq_comp, hp.eq, hy]
 
 variable {U V : Submodule R E} {q : E →ₗ[R] E} (hq : IsIdempotentElem q)
 
@@ -230,7 +230,7 @@ theorem IsIdempotentElem.isCompl_range_ker {V R : Type _} [Semiring R] [AddCommG
     simp only [Submodule.mem_bot, Submodule.mem_inf, LinearMap.mem_ker, LinearMap.mem_range]
     refine ⟨fun h' => ?_, fun h' => ?_⟩
     · rcases h'.2 with ⟨y, hy⟩
-      rw [← hy, ← IsIdempotentElem.eq h, Module.End.mul_apply, hy]
+      rw [← hy, ← IsIdempotentElem.eq h, mul_apply_eq_comp, hy]
       exact h'.1
     · rw [h', map_zero]
       simp only [true_and]
@@ -246,7 +246,7 @@ theorem IsIdempotentElem.isCompl_range_ker {V R : Type _} [Semiring R] [AddCommG
     intro x
     use ⟨x - T x, ?_⟩, ⟨T x, ?_⟩
     · simp only [sub_add_cancel]
-    · rw [LinearMap.mem_ker, map_sub, ← Module.End.mul_apply, IsIdempotentElem.eq h, sub_self]
+    · rw [LinearMap.mem_ker, map_sub, ← mul_apply_eq_comp, IsIdempotentElem.eq h, sub_self]
     · rw [LinearMap.mem_range]; simp only [exists_apply_eq_apply]
 
 theorem IsCompl.of_orthogonal_projection [InnerProductSpace 𝕜 E] {T : E →L[𝕜] E}

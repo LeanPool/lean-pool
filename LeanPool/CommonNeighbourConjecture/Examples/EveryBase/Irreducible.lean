@@ -271,6 +271,7 @@ theorem double_sum_eq_diag_of_symmetric
 
 variable [Finite H] [NeZero (Nat.card H : F2)]
 
+omit [Finite H] in
 theorem exists_equivariant_idempotent_projection
     (U : Subrepresentation
       (Representation.ofDistribMulAction F2 H (DeletedModule Ω))) :

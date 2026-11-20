@@ -467,7 +467,7 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
           smul_add, sub_self, HHeight, ofReal_add, ofReal_div, add_sub_cancel_left, mul_one,
           add_zero]; ring
       · rfl
-      all_goals linarith only [ht_lt, h'₄]
+      linarith only [ht_lt, h'₄]
     exact (fdPolygon_seg4_differentiable.differentiableAt.hasDerivAt.hasDerivWithinAt
       ).congr_of_eventuallyEq heq
       (by simp only [fdPolygon, fdPolygonSeg4]
@@ -479,7 +479,7 @@ lemma fdPolygon_hasDerivWithinAt_Ici (x : ℝ) :
               smul_add, sub_self, HHeight, ofReal_add, ofReal_div, add_sub_cancel_left, mul_one,
               add_zero]; ring
           · rfl
-          all_goals linarith only [h4, h'₄])
+          linarith only [h4, h'₄])
   · push Not at h1 h2 h3 h4
     have heq : fdPolygon =ᶠ[𝓝[Ici x] x] fdPolygonSeg5 := by
       filter_upwards [self_mem_nhdsWithin] with t ht

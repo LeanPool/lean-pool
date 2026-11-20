@@ -240,13 +240,13 @@ variable [CompleteSpace E]
 
 private theorem perronTerm_add (y z : ℕ →ᵇ E) (n : ℕ) :
     perronTerm S (y + z) n = perronTerm S y n + perronTerm S z n := by
-  simp only [perronTerm, BoundedContinuousFunction.add_apply, map_add, Finset.sum_add_distrib]
+  simp only [perronTerm, _root_.add_apply, map_add, Finset.sum_add_distrib]
   rw [(S.summable_unstableInv_pow_apply y n).tsum_add (S.summable_unstableInv_pow_apply z n)]
   abel
 
 private theorem perronTerm_smul (c : ℝ) (y : ℕ →ᵇ E) (n : ℕ) :
     perronTerm S (c • y) n = c • perronTerm S y n := by
-  simp only [perronTerm, BoundedContinuousFunction.smul_apply, map_smul, ← Finset.smul_sum]
+  simp only [perronTerm, _root_.smul_apply, map_smul, ← Finset.smul_sum]
   rw [(S.summable_unstableInv_pow_apply y n).tsum_const_smul c, smul_sub]
 
 /-- The **linear Lyapunov–Perron operator** on bounded sequences:
@@ -315,7 +315,7 @@ Proof: split into the stable component (finite sums) and the unstable one (the s
 theorem stableOrbit_add_perronOp_succ (ξ : E) (y : ℕ →ᵇ E) (n : ℕ) :
     (S.stableOrbit ξ + S.perronOp y) (n + 1) =
       A ((S.stableOrbit ξ + S.perronOp y) n) + y n := by
-  simp only [BoundedContinuousFunction.add_apply, stableOrbit_apply, perronOp_apply,
+  simp only [_root_.add_apply, stableOrbit_apply, perronOp_apply,
     map_add, map_sub, apply_tsum_unstableInv_pow_apply, map_sum]
   rw [Finset.sum_range_succ, Nat.add_sub_cancel, Nat.sub_self, pow_zero, one_apply_eq_self,
     ← mul_apply_eq_comp A (A ^ n), ← pow_succ']
@@ -329,7 +329,7 @@ theorem stableOrbit_add_perronOp_succ (ξ : E) (y : ℕ →ᵇ E) (n : ℕ) :
 /-- The solution `stableOrbit ξ + perronOp y` has stable component `P ξ` at time `0`. -/
 theorem proj_stableOrbit_add_perronOp_zero (ξ : E) (y : ℕ →ᵇ E) :
     S.proj ((S.stableOrbit ξ + S.perronOp y) 0) = S.proj ξ := by
-  rw [BoundedContinuousFunction.add_apply, map_add, proj_perronOp_apply_zero, add_zero,
+  rw [_root_.add_apply, map_add, proj_perronOp_apply_zero, add_zero,
     stableOrbit_apply, pow_zero, one_apply_eq_self, ← mul_apply_eq_comp S.proj S.proj,
     S.proj_mul_proj]
 
@@ -342,14 +342,14 @@ theorem eq_stableOrbit_add_perronOp {z y : ℕ →ᵇ E} (hz : ∀ n, z (n + 1) 
   set w := S.stableOrbit (z 0) + S.perronOp y
   set d := z - w
   have hd : ∀ n, d (n + 1) = A (d n) := fun n ↦ by
-    simp only [d, BoundedContinuousFunction.sub_apply, hz, w,
+    simp only [d, _root_.sub_apply, hz, w,
       S.stableOrbit_add_perronOp_succ, map_sub]
     abel
   have hP : ∀ n, S.proj (d n) = 0 := by
     intro n
     induction n with
     | zero =>
-      simp only [d, BoundedContinuousFunction.sub_apply, map_sub, w,
+      simp only [d, _root_.sub_apply, map_sub, w,
         S.proj_stableOrbit_add_perronOp_zero, sub_self]
     | succ n ih => rw [hd, ← mul_apply_eq_comp, ← S.mul_proj_comm, mul_apply_eq_comp, ih,
         map_zero]
@@ -373,6 +373,6 @@ theorem eq_stableOrbit_add_perronOp {z y : ℕ →ᵇ E} (hz : ∀ n, z (n + 1) 
       S.rate_lt_one).const_mul S.const).mul_const ‖d‖
   ext n
   have : d n = 0 := norm_le_zero_iff.1 (ge_of_tendsto' ht (hle n))
-  rwa [BoundedContinuousFunction.sub_apply, sub_eq_zero] at this
+  rwa [_root_.sub_apply, sub_eq_zero] at this
 
 end ContinuousLinearMap.HyperbolicSplitting

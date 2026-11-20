@@ -80,7 +80,7 @@ variable (ρ : Measure α)
 /-- The squared pointwise modulus of an `L²` vector is almost everywhere measurable. -/
 theorem aemeasurable_enorm_sq (F : Lp ℂ 2 ρ) :
     AEMeasurable (fun x => ‖(F : α → ℂ) x‖ₑ ^ 2) ρ :=
-  ((Lp.aestronglyMeasurable F).aemeasurable.enorm).pow_const 2
+  ((Lp.aestronglyMeasurable F).aemeasurable.eNorm).pow_const 2
 
 /-- **An `L²` vector has finite squared mass.**  This is what makes `|F|² · ρ` a finite measure,
 and hence what lets the identification of the spectral measure be tested on bounded continuous
@@ -88,7 +88,7 @@ functions. -/
 theorem lintegral_enorm_sq_lt_top (F : Lp ℂ 2 ρ) :
     ∫⁻ x, ‖(F : α → ℂ) x‖ₑ ^ 2 ∂ρ < ∞ := by
   have h : eLpNorm (F : α → ℂ) 2 ρ < ∞ := (Lp.eLpNorm_ne_top F).lt_top
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num)
+  rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num)
     (Lp.aestronglyMeasurable F)] at h
   simpa [ENNReal.rpow_natCast] using h
 

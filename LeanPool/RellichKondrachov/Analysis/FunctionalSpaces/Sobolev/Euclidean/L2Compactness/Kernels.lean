@@ -73,7 +73,7 @@ theorem exists_kernel_tsupport_subset_ball_integral_eq_one {δ : ℝ} (hδ : 0 <
   have hIpos :
       0 < ∫ x, f x ∂(volume : Measure E) := by
     simpa using
-      (Continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero (μ := (volume : Measure E))
+      (Continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero (μ := (volume : Measure E))
         hf_cont hf_cs hf_nonneg hf0_ne)
   set I : ℝ := ∫ x, f x ∂(volume : Measure E)
   have hI0 : I ≠ 0 := ne_of_gt hIpos

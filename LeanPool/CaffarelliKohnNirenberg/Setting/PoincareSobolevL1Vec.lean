@@ -324,7 +324,7 @@ theorem poincareSobolevL1_vec3_ball
           ∫ x in euclideanBall x₀ r,
             ‖fderiv ℝ (fun y => (vec3EuclideanNorm (u y)) ^ 2) x‖ ∂volume := by
     convert hPS using 1
-    all_goals simp [g, integralAverage]
+    simp [g, integralAverage]
   have hPS'' :
       (∫ x in euclideanBall x₀ r,
           |(vec3EuclideanNorm (u x)) ^ 2 -

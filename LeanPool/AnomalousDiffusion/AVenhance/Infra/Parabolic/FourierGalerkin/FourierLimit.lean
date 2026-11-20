@@ -122,7 +122,7 @@ theorem complexFourierPartialSumLp_coeFn (N : ℕ) (f : ComplexScalarTorusL2) :
       UnitAddTorus.coeFn_mFourierLp 2 (pairFrequency p)] with x hsmul hmode
     have hmode' : (UnitAddTorus.mFourierLp 2 (pairFrequency p)) x =
         UnitAddTorus.mFourier (pairFrequency p) x := by
-      simpa [UnitAddTorus.mFourierLp, ContinuousMap.coe_coe] using hmode
+      simpa [UnitAddTorus.mFourierLp, ContinuousMap.coe_ofClass] using hmode
     calc
       _ = (fun y => UnitAddTorus.mFourierCoeff f (pairFrequency p) •
         (UnitAddTorus.mFourierLp 2 (pairFrequency p)) y) x := hsmul

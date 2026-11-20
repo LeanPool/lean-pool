@@ -899,7 +899,7 @@ def toEmpty [DecidableEq ξ] {n : ℕ} : (t :
 
 @[simp] lemma emb_toEmpty [DecidableEq ξ] (t : Semiterm L ξ n) (ht : t.freeVariables = ∅) :
     Rew.emb (t.toEmpty ht) = t := by
-  induction t <;> try simp [toEmpty, Rew.func, *]
+  induction t <;> simp [toEmpty, Rew.func, *]
   case fvar => simp at ht
 
 end Semiterm

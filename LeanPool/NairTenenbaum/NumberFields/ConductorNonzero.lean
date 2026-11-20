@@ -58,7 +58,7 @@ theorem exists_nonzero_integer_mem_conductor (θ : 𝓞 K) (B : PowerBasis ℚ K
   exact H
 
 theorem conductor_exponent_ne_zero (θ : 𝓞 K) (B : PowerBasis ℚ K)
-    (hB : B.gen = (θ : K)) : RingOfIntegers.exponent θ ≠ 0 := by
+    (hB : B.gen = (θ : K)) : NumberField.RingOfIntegers.exponent θ ≠ 0 := by
   obtain ⟨d, hd, hmem⟩ := exists_nonzero_integer_mem_conductor θ B hB
   have hdmem : d ∈ Ideal.under ℤ (conductor ℤ θ) := hmem
   have H := Int.ideal_span_absNorm_eq_self (Ideal.under ℤ (conductor ℤ θ))

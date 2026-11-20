@@ -238,7 +238,7 @@ theorem exists_bound_lintegral_ball_rpow (d : ℕ) {D e : ℝ} (hD : 0 < D)
                   ENNReal.ofReal (‖x - y‖ ^ e) ∂volume := by rw [hsing, zero_add]
           _ ≤ ∑' k : ℕ, ∫⁻ y in (Metric.ball x (q ^ k) \ Metric.ball x (q ^ (k + 1))),
                   ENNReal.ofReal (‖x - y‖ ^ e) ∂volume := lintegral_iUnion_le _ _
-          _ ≤ ∑' k : ℕ, ENNReal.ofReal (T k) := ENNReal.tsum_le_tsum hshell
+          _ ≤ ∑' k : ℕ, ENNReal.ofReal (T k) := tsum_le_tsum hshell
           _ = ∑' k : ℕ, ENNReal.ofReal Cgeo * (ENNReal.ofReal ρ) ^ k := by
               refine tsum_congr fun k => ?_
               rw [hTpow k, ENNReal.ofReal_mul hC0, ENNReal.ofReal_pow hρ0.le]

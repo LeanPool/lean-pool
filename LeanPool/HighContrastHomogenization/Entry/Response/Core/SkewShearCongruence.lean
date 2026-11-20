@@ -116,7 +116,7 @@ private theorem smooth_skew_gradient_pairing_zero {d : ℕ} {U : Set (Vec d)}
     exact hxU <| hu_sub <| by
       apply closure_minimal _ isClosed_closure hx
       intro y hy
-      contrapose! hy
+      contrapose hy
       have hyT : y ∉ tsupport u := hy
       simp [ψ, euclideanCoordDeriv,
         fderiv_of_notMem_tsupport (𝕜 := ℝ) hyT]

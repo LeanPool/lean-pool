@@ -653,7 +653,7 @@ lemma between_inv_lel
       (src_of_src h_L h_src)
     have h_xv : ⟨x, v⟩ ∈ invSet β := bpβ.src_iff_right_inv.mp h_src
     have h_ux_β : ⟨u, x⟩ ∉ invSet β := by
-      contrapose! h_ux
+      contrapose h_ux
       exact h_L h_ux
     have x_src : isSrc β x := src_of_inv h_xv
     have x_snk : ¬ isSnk τ x := not_imp_not.mpr bp.snk_iff_left_inv.mp h_ux
@@ -677,7 +677,7 @@ lemma between_inv_lel
     have h_xv : ⟨x, v⟩ ∉ invSet τ := bp.snk_iff_right_ninv.mp
       (snk_of_snk h_L h_snk)
     have h_xv_β : ⟨x, v⟩ ∉ invSet β := by
-      contrapose! h_xv
+      contrapose h_xv
       exact h_L h_xv
     have x_src : ¬ isSrc τ x := not_imp_not.mpr bp.src_iff_right_inv.mp h_xv
     have x_snk : isSnk β x := snk_of_inv h_ux
@@ -1418,7 +1418,7 @@ theorem dprod_le_iff_isolated : α ⋆ β ≤ τ
     rw [α.s'_eq, β.s'_eq, τ.s'_eq] at excess
     omega
   · intro no_excess a b
-    contrapose! no_excess with ne_le
+    contrapose no_excess with ne_le
     dsimp only [AspPerm.dprodValLe] at ne_le; push Not at ne_le
     have ge : α.dprodValGe β a b (τ.s a b + 1) := by
       intro x

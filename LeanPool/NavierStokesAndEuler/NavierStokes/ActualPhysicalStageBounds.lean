@@ -960,7 +960,8 @@ theorem initializedPotential_smooth (upper : ℝ) (B : ℕ)
     ContDiffOn ℝ ∞ (initializedPotential H v upper B WA MA)
       (CutStageEstimates.physicalSublevel F.data.h qbig) :=
   ((TailGaugePotential.finalPotential_smooth H v upper B).mono
-    (fun _ hw => ⟨hw.1, mem_univ _⟩)).add
+    (fun _ (hw : _ ∈ CutStageEstimates.physicalSublevel F.data.h qbig) =>
+      ⟨hw.1, mem_univ _⟩)).add
       (potentialIncrement_smooth WA MA F.data.h_pos F.data.h_lt_half hq)
 
 /-- The only use of the anchored gauge is its proved equality of curls. -/
@@ -1832,7 +1833,8 @@ theorem initialPotential_smooth (upper : ℝ) (B : ℕ)
     ContDiffOn ℝ ∞ (initialPotential H v upper B WA MT MR)
       (CutStageEstimates.physicalSublevel F.data.h qbig) :=
   ((TailGaugePotential.finalPotential_smooth H v upper B).mono
-    (fun _ hw => ⟨hw.1, mem_univ _⟩)).add
+    (fun _ (hw : _ ∈ CutStageEstimates.physicalSublevel F.data.h qbig) =>
+      ⟨hw.1, mem_univ _⟩)).add
       (initialIncrement_smooth WA MT MR F.data.h_pos F.data.h_lt_half hqT hqR)
 
 theorem initialVelocity_decomposition (upper : ℝ) (B : ℕ)

@@ -306,7 +306,7 @@ theorem tsum_atomL1Mass_le_two_mul_global_level_mass
   calc
     (∑' i, ENNReal.ofReal (∫ x, ‖levelAtom A f k (z i) (R i) x‖)) ≤
         ∑' i, 2 * ∫⁻ x in I i, ENNReal.ofReal ‖g x‖ :=
-      ENNReal.tsum_le_tsum hlocal
+      tsum_le_tsum hlocal
     _ = 2 * ∑' i, ∫⁻ x in I i, ENNReal.ofReal ‖g x‖ := ENNReal.tsum_mul_left
     _ = 2 * ∫⁻ x in ⋃ i, I i, ENNReal.ofReal ‖g x‖ := by
       rw [lintegral_iUnion hI hdisj]

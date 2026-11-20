@@ -76,7 +76,6 @@ theorem integrableOn_mvBetaMonomial
         (ae_restrict_iff' (Convexity.StdSimplex.isClosed_coordinateSet ℝ ι).measurableSet).mp
           (ae_zero_lt_of_mem_stdSimplex (ι := ι))
       filter_upwards [hae] with u hu
-      apply propext
       constructor
       · intro hus
         exact ⟨hus, hu hus⟩
@@ -214,7 +213,7 @@ theorem mvBeta_eq_integral {b : ι → ℂ} (hb : b ∈ mvBetaConvergent) :
       ∂stdSimplexMeasure := by
   classical
   induction hn : Fintype.card ι using Nat.strong_induction_on generalizing ι with
-  | h n ih =>
+  | ind n ih =>
       cases isEmpty_or_nonempty ι with
       | inl hι =>
           let _ := hι

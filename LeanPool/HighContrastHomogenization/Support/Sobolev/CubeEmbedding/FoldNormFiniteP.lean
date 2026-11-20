@@ -52,11 +52,11 @@ theorem eLpNorm_foldComp_finiteLp {v : Vec d → ℝ} (p : FiniteLpExponent)
   have hvF : AEStronglyMeasurable (fun x => v (Fold lo hi x))
       (volume.restrict (Box3 lo hi)) :=
     (hv.comp (continuous_Fold lo hi (fun k => (hlt k).le)).measurable).aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_ne_zero p) p.lt_top.ne hvF,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_ne_zero p) p.lt_top.ne
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (finiteLpExponent_ne_zero p) p.lt_top.ne hvF,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (finiteLpExponent_ne_zero p) p.lt_top.ne
       hv.aestronglyMeasurable]
   have hgmeas : Measurable (fun x : Vec d => ‖v x‖ₑ ^ p.exponent.toReal) :=
-    ENNReal.continuous_rpow_const.measurable.comp hv.enorm
+    ENNReal.continuous_rpow_const.measurable.comp hv.eNorm
   have htrans : ∫⁻ x in Box3 lo hi, ‖v (Fold lo hi x)‖ₑ ^ p.exponent.toReal
       = (3 : ℝ≥0∞) ^ d * ∫⁻ x in Box lo hi, ‖v x‖ₑ ^ p.exponent.toReal :=
     lintegral_foldComp (g := fun x => ‖v x‖ₑ ^ p.exponent.toReal) hgmeas lo hi hlt

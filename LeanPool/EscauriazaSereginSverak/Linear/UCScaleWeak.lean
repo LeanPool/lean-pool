@@ -52,7 +52,7 @@ private theorem ucScaleHomeomorph_symm_eq (scale : ℝ) (hscale : 0 < scale)
   all_goals simp [ucScaleHomeomorph, Homeomorph.trans, Homeomorph.prodCongr,
       Homeomorph.smulOfNeZero, Homeomorph.addLeft,
       Equiv.addLeft, Units.smul_def]
-  all_goals ring
+  ring
 
 private theorem ucScaleHomeomorph_symm_contDiff (scale : ℝ)
     (hscale : 0 < scale) (x₀ : Vec3) :
@@ -151,7 +151,7 @@ private theorem uc_integrableOn_of_l2
   have hfinite : IsFiniteMeasure (volume.restrict Q) :=
     ⟨by simpa using hQ⟩
   have hfLp : MemLp f (2 : ℝ≥0∞) (volume.restrict Q) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (μ := volume.restrict Q)
       (by norm_num) (by norm_num) hfmeas).2
     simpa using hL2

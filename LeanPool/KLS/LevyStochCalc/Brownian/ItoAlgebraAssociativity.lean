@@ -77,7 +77,7 @@ private theorem lintegral_sq_sub_le_zero_of_common_approximation
     simpa using ENNReal.Tendsto.const_mul (a := 2) (hf.add hg) (Or.inr (by simp))
   refine ge_of_tendsto hlim (Filter.Eventually.of_forall fun n => ?_)
   have hmeas : AEMeasurable (fun ω => (‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2) P :=
-    (((hm n).nnnorm.coe_nnreal_ennreal).pow_const 2).aemeasurable
+    (((hm n).nnNorm.coe_nnreal_ennreal).pow_const 2).aemeasurable
   calc
     (∫⁻ ω, (‖f ω - g ω‖₊ : ℝ≥0∞) ^ 2 ∂P) ≤
         ∫⁻ ω, 2 * ((‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2 +
@@ -85,7 +85,7 @@ private theorem lintegral_sq_sub_le_zero_of_common_approximation
       refine lintegral_mono fun ω => ?_
       rw [show f ω - g ω = -(a n ω - f ω) + (a n ω - g ω) by ring]
       refine (sq_nnnorm_add_le_two_mul_brownian _ _).trans ?_
-      rw [nnnorm_neg]
+      rw [nnNorm_neg]
     _ = 2 * ((∫⁻ ω, (‖a n ω - f ω‖₊ : ℝ≥0∞) ^ 2 ∂P) +
         ∫⁻ ω, (‖a n ω - g ω‖₊ : ℝ≥0∞) ^ 2 ∂P) := by
       rw [MeasureTheory.lintegral_const_mul' 2 _ (by norm_num),
@@ -162,7 +162,7 @@ theorem stochasticIntegralBrownian_integralAgainst {t : ℝ} (ht : 0 < t) :
       have hrw : (Q n).eval s ω - G.eval s ω * H ω s
           = G.eval s ω * -(H ω s - (masterApprox ℱ H hm hp hq n).eval s ω) := by
         rw [hQeval n s ω]; ring
-      rw [hrw, nnnorm_mul, nnnorm_neg, ENNReal.coe_mul, mul_pow]
+      rw [hrw, nnNorm_mul, nnNorm_neg, ENNReal.coe_mul, mul_pow]
       gcongr
       exact hbd s ω
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds ?_
@@ -261,7 +261,7 @@ theorem stochasticIntegralBrownian_integralAgainst {t : ℝ} (ht : 0 < t) :
       (‖G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω
         - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)
             hmm hmp hmq t ω‖₊ : ℝ≥0∞) ^ 2 :=
-    (((hIAmeas.sub hSIm).nnnorm).coe_nnreal_ennreal).pow_const 2
+    (((hIAmeas.sub hSIm).nnNorm).coe_nnreal_ennreal).pow_const 2
   filter_upwards [(lintegral_eq_zero_iff hmeas).mp hzero] with ω hω
   have h0 : (‖G.integralAgainst (stochasticIntegralBrownian W ℱ hℱ H hm hp hq) t ω
       - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω * H ω s)

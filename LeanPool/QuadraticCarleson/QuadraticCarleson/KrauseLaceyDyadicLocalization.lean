@@ -43,7 +43,7 @@ namespace QuadraticCarleson
 
 /-- The interval `I'` in Krause--Lacey display (3.2): the central third of
 `I`. We retain the project's canonical half-open representative. -/
-def RealInterval.centralThird (I : RealInterval) : Set ℝ :=
+noncomputable def RealInterval.centralThird (I : RealInterval) : Set ℝ :=
   Ioc ((2 * I.left + I.right) / 3) ((I.left + 2 * I.right) / 3)
 
 theorem RealInterval.measurableSet_centralThird (I : RealInterval) :
@@ -241,7 +241,8 @@ theorem krauseLacey_stoppingChildren_length_le_tenth
       rw [← integral_biUnion_finset s
         (fun i _ ↦ (J i).measurableSet_carrier) hdisj hchild_int]
       exact setIntegral_mono_set hf.norm
-        (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x)) hunion_sub.eventuallyLE
+        (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
+        (Filter.Eventually.of_forall fun _ hx ↦ hunion_sub hx)
     have hstrict :
         10 * intervalL1Average f I * (∑ i ∈ s, (J i).length) <
           intervalL1Average f I * I.length := by

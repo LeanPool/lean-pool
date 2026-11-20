@@ -39,7 +39,7 @@ noncomputable def ryMeasure (n : ℕ) : Measure (Fin n → ℝ) :=
 
 instance : IsProbabilityMeasure unifAngle := by
   refine ⟨?_⟩
-  rw [unifAngle, Measure.smul_apply, smul_eq_mul, Measure.restrict_apply_univ, Real.volume_Icc,
+  rw [unifAngle, smul_apply, smul_eq_mul, Measure.restrict_apply_univ, Real.volume_Icc,
     show Real.pi - -Real.pi = 2 * Real.pi from by ring,
     ENNReal.inv_mul_cancel (ENNReal.ofReal_pos.mpr (by positivity)).ne' ENNReal.ofReal_ne_top]
 

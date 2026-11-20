@@ -53,8 +53,8 @@ theorem blowupPressureSlice_mass_eq
       (fun y : Vec3 => ENNReal.ofReal |f y| ^ (3 / 2 : ℝ))
       (Measure.map (CKN.scalingSpace r x₀) volume) := by
     rw [hmap]
-    simpa only [Real.enorm_eq_ofReal_abs, Function.comp_def] using
-      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.enorm)
+    simpa only [Real.eNorm_eq_ofReal_abs, Function.comp_def] using
+      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.eNorm)
   have hscaleMeas : Measurable (CKN.scalingSpace r x₀) := by
     unfold CKN.scalingSpace
     fun_prop
@@ -108,8 +108,8 @@ theorem blowupVelocityScalarSlice_mass_eq
       (fun y : Vec3 => ENNReal.ofReal |f y| ^ (3 : ℝ))
       (Measure.map (CKN.scalingSpace r x₀) volume) := by
     rw [hmap]
-    simpa only [Real.enorm_eq_ofReal_abs, Function.comp_def] using
-      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.enorm)
+    simpa only [Real.eNorm_eq_ofReal_abs, Function.comp_def] using
+      (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.eNorm)
   have hscaleMeas : Measurable (CKN.scalingSpace r x₀) := by
     unfold CKN.scalingSpace
     fun_prop

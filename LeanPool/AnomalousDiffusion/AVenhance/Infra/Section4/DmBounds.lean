@@ -209,7 +209,7 @@ theorem dm_frozenFluxFirst_eLpNorm_le {β : ℝ}
       ENNReal.ofReal C *
         eLpNorm (fun z : ℝ × Vec 2 => AVenhance.spaceGrad (T z.1) z.2) 2
           (volume.restrict AVenhance.timeCube) := by
-    rw [hsmulFun, eLpNorm_const_smul, Real.enorm_of_nonneg hCnn]
+    rw [hsmulFun, eLpNorm_const_smul, Real.eNorm_of_nonneg hCnn]
   rw [hscale] at hmono
   calc
     eLpNorm (dmFrozenFluxFirst I hΦ m κ T) 2
@@ -296,7 +296,7 @@ theorem eLpNorm_mul_right_le_of_abs_bound {α : Type*} [MeasurableSpace α]
       _ = Q * |f x| := by ring
   have hmono := eLpNorm_mono_ae (hf.mul hg)
     (Filter.Eventually.of_forall hpoint) (p := 2)
-  rw [hfun, eLpNorm_const_smul, Real.enorm_of_nonneg hQ] at hmono
+  rw [hfun, eLpNorm_const_smul, Real.eNorm_of_nonneg hQ] at hmono
   calc
     eLpNorm (fun x => f x * g x) 2 μ ≤
       ENNReal.ofReal Q * eLpNorm f 2 μ := hmono

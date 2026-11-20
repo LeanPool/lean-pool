@@ -581,7 +581,7 @@ private theorem measure_iUnion_gt_le₂ [MeasurableSpace Ω] {μ : Measure Ω}
     _ ≤ ∑' i : ℕ, μ (B (k + 1 + i) z) := measure_iUnion_le _
     _ ≤ ∑' i : ℕ,
           ENNReal.ofReal (Real.exp (-(T ^ 2 * (3 : ℝ) ^ (a * ((k : ℝ) + 1))) - i)) :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ ≤ _ := tsum_ofReal_exp_sub_natCast_le₂ _
 
 /-! ### The scalar inequalities of the final union bound -/

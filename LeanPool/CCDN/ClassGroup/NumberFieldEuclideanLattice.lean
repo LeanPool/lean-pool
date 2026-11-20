@@ -199,7 +199,7 @@ lemma euclidean_integerLattice_covolume :
       (mixedEmbedding.fundamentalDomain_integerLattice K)]
   simp only [Measure.real, mixedEmbedding.volume_fundamentalDomain_latticeBasis,
     ENNReal.toReal_mul, ENNReal.toReal_pow, ENNReal.toReal_inv, ENNReal.toReal_ofNat,
-    ENNReal.coe_toReal, Real.coe_sqrt, coe_nnnorm, Int.norm_eq_abs]
+    ENNReal.coe_toReal, Real.coe_sqrt, coe_nnNorm, Int.norm_eq_abs]
 
 end
 end CCDN

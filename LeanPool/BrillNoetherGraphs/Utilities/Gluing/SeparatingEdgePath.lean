@@ -196,7 +196,7 @@ theorem eq_of_chipEquivalent_of_separating_normalized
   have hP : ∀ n, P n := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
         intro a b tau hTau hMeasure
         by_cases hab : a = b
         · exact congrArg rho hab

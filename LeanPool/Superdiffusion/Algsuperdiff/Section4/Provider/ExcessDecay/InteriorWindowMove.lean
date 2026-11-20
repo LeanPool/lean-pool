@@ -107,11 +107,11 @@ theorem normalizedGagliardoESeminormOn_le_of_volume_le {A B : Set (Vec d)} {K : 
       Measure.restrict_mono (Set.prod_mono hAB hAB) le_rfl S
     calc ((volume B)⁻¹ • ((volume.prod volume).restrict (B ×ˢ B))) S
         = (volume B)⁻¹ * ((volume.prod volume).restrict (B ×ˢ B)) S := by
-          simp only [Measure.smul_apply, smul_eq_mul]
+          simp only [smul_apply, smul_eq_mul]
       _ ≤ (K * (volume A)⁻¹) * ((volume.prod volume).restrict (A ×ˢ A)) S :=
           mul_le_mul' hinv hprod
       _ = (K • ((volume A)⁻¹ • ((volume.prod volume).restrict (A ×ˢ A)))) S := by
-          simp only [Measure.smul_apply, smul_eq_mul, mul_assoc]
+          simp only [smul_apply, smul_eq_mul, mul_assoc]
   have hmono : eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2
       (Support.normalizedGagliardoMeasureOn B) ≤
       eLpNorm (Gagliardo.gagliardoKernel s 2 f) 2

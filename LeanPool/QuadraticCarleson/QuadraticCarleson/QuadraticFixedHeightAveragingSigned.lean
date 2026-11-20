@@ -96,7 +96,7 @@ theorem finiteConvolutionMaximal_sub_le {N : ℕ} (κ η : Fin N → ℝ → ℂ
     exact integral_sub (integrable_convolution_row_of_memLp (hcκ i) (hsκ i) hf x)
       (integrable_convolution_row_of_memLp (hcη i) (hsη i) hf x)
   rw [hid]
-  exact enorm_sub_le.trans (add_le_add
+  exact eNorm_sub_le.trans (add_le_add
     (le_iSup (fun i ↦ ‖∫ t, κ i (x - t) * f t‖ₑ) i)
     (le_iSup (fun i ↦ ‖∫ t, η i (x - t) * f t‖ₑ) i))
 

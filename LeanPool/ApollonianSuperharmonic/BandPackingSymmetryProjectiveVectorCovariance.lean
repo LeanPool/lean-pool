@@ -288,7 +288,7 @@ private theorem phaseExists :
           neg_zero, neg1, neg2] at c0 c1 c2 row ⊢
       rw [row]
       simp only [c0, c1, c2]
-      cases d <;> simp <;> ring_nf <;> (try simp only [ii_sq]) <;> ring
+      cases d <;> simp <;> ring_nf <;> (simp only [ii_sq]) <;> ring
   refine ⟨d, ?_⟩
   intro i
   simp only [quarter]

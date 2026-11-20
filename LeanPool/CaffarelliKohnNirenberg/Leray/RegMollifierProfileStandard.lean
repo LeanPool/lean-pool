@@ -63,7 +63,7 @@ theorem standardRegBump_nonneg (x : L2Vec3) : 0 ≤ standardRegBump x :=
 
 theorem standardRegBump_integral_pos :
     0 < ∫ x : L2Vec3, standardRegBump x := by
-  refine Continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero
+  refine Continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero
     standardRegBump_contDiff.continuous standardRegBump_hasCompactSupport
     standardRegBump_nonneg (x := 0) ?_
   apply ne_of_gt

@@ -75,13 +75,13 @@ theorem integrable_conj_normalizedEval_mul (n : ℕ) (hn : 0 < n)
     Integrable (fun z : ℂ =>
       conj (normalizedEval n hn p q z) * normalizedEval n hn r s z)
       (complexCoordinateGaussianProbability n : Measure ℂ) := by
-  apply Integrable.congr'_enorm
+  apply Integrable.congr'_eNorm
     (integrable_normalizedEval_mul n hn p q r s)
   · exact ((Complex.continuous_conj.comp
       (continuous_normalizedEval n hn p q)).mul
         (continuous_normalizedEval n hn r s)).aestronglyMeasurable
   · filter_upwards with z
-    simp [enorm_eq_nnnorm]
+    simp [eNorm_eq_nnNorm]
 
 /-- The squared norm of every normalized one-coordinate Hermite function is
 integrable. -/
@@ -89,13 +89,13 @@ theorem integrable_normSq_normalizedEval (n : ℕ) (hn : 0 < n)
     (p q : ℕ) :
     Integrable (fun z : ℂ => Complex.normSq (normalizedEval n hn p q z))
       (complexCoordinateGaussianProbability n : Measure ℂ) := by
-  apply Integrable.congr'_enorm
+  apply Integrable.congr'_eNorm
     (integrable_conj_normalizedEval_mul n hn p q p q)
   · exact (Complex.continuous_normSq.comp
       (continuous_normalizedEval n hn p q)).aestronglyMeasurable
   · filter_upwards with z
     rw [← Complex.sq_norm]
-    simp [enorm_eq_nnnorm, pow_two]
+    simp [eNorm_eq_nnNorm, pow_two]
 
 /-- Every multivariate normalized Hermite tensor is in `L¹` of the concrete
 Gaussian product measure. -/

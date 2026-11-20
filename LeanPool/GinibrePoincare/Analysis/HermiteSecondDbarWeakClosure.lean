@@ -58,7 +58,7 @@ theorem raiseHermiteIndex_injective {n : ℕ} (k : Fin n) :
   apply (raiseHermiteIndexEquivPositive k).injective
   exact Subtype.ext he
 
-/-- The term indexed by `r` in the Hermite expansion of the `j`-th `∂̄` derivative of `g`:
+/-- The term indexed by `r` in the Hermite expansion of the `j`-th `dbar` derivative of `g`:
 `√(n r.2 j)` times the `r`-th Hermite coefficient of `g`, times the normalized Hermite vector
 at the lowered index `lowerHermiteIndex j r`. -/
 def gaussianHermiteFirstLoweringTerm {n : ℕ} (hn : 0 < n)

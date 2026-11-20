@@ -131,9 +131,10 @@ integrand over the intervening interval. -/
 lemma compensator_sub {s t : ℝ} (hs : 0 ≤ s) (hst : s ≤ t) (ω : Ω) :
     G.compensator t ω - G.compensator s ω
       = ∫ u in Set.Ioc s t, ∫ e, (G.eval u e ω) ^ 2 ∂ν ∂volume := by
+  have hdisjoint : Disjoint (Set.Icc (0 : ℝ) s) (Set.Ioc s t) :=
+    (Set.Iic_disjoint_Ioc (c := t) (le_refl s)).mono Set.Icc_subset_Iic_self subset_rfl
   unfold compensator
-  rw [← Set.Icc_union_Ioc_eq_Icc hs hst, setIntegral_union
-    (Set.disjoint_left.2 fun x hx hx' => not_le.2 hx'.1 hx.2) measurableSet_Ioc
+  rw [← Set.Icc_union_Ioc_eq_Icc hs hst, setIntegral_union hdisjoint measurableSet_Ioc
     (G.integrableOn_integral_eval_sq measure_Icc_lt_top.ne ω)
     (G.integrableOn_integral_eval_sq measure_Ioc_lt_top.ne ω)]
   ring
@@ -160,7 +161,9 @@ lemma integral_integral_eval_sq_swap {S : Set ℝ} (hSfin : volume S ≠ ⊤) (�
   · rw [Set.indicator_of_mem (Set.mem_prod.2 ⟨hq, Set.mem_univ _⟩), Real.norm_eq_abs,
     abs_of_nonneg (sq_nonneg _)]
     nlinarith [hC ω q.2 q.1, abs_nonneg (G.eval q.2 q.1 ω), sq_abs (G.eval q.2 q.1 ω)]
-  · rw [Set.indicator_of_notMem (fun h => hq h.1), G.eval_support ω q.2 q.1 hq]
+  · have hq' : q ∉ (⋃ k, G.B k) ×ˢ (Set.univ : Set ℝ) :=
+      fun h ↦ hq (Set.mem_prod.mp h).1
+    rw [Set.indicator_of_notMem hq', G.eval_support ω q.2 q.1 hq]
     simp
 
 lemma measurable_compensator (t : ℝ) : Measurable (G.compensator t) :=

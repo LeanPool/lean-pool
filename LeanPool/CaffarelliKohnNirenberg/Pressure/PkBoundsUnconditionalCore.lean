@@ -103,7 +103,7 @@ lemma pressure_time_norm_bound
       integral_nonneg_of_ae (Eventually.of_forall (fun x => hFnonneg (x, s)))
     have hconv := ofReal_integral_eq_lintegral_ofReal hFs
       (Eventually.of_forall (fun x => hFnonneg (x, s)))
-    rw [hGdef s, Real.enorm_eq_ofReal (Real.rpow_nonneg hI _)]
+    rw [hGdef s, Real.eNorm_eq_ofReal (Real.rpow_nonneg hI _)]
     rw [← ENNReal.ofReal_rpow_of_nonneg hI (by positivity)]
     rw [← ENNReal.rpow_mul]
     have hpn : p₀ ≠ 0 := ne_of_gt hp
@@ -115,7 +115,7 @@ lemma pressure_time_norm_bound
   calc
     eLpNorm' G p₀ (volume.restrict T) =
         (∫⁻ s in T, ‖G s‖ₑ ^ p₀) ^ (1 / p₀ : ℝ) := by
-      rw [eLpNorm'_eq_lintegral_enorm]
+      rw [eLpNorm'_eq_lintegral_eNorm]
     _ = (∫⁻ s in T, ∫⁻ x in B, ENNReal.ofReal (F (x, s))) ^
         (1 / p₀ : ℝ) := by
       congr 1
@@ -245,7 +245,7 @@ lemma pressure_energy_bound
           ‖vec3EuclideanNorm (u (y, s))‖ₑ ^ (2 : ℝ) := by
         apply lintegral_congr
         intro y
-        rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+        rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
         rw [ENNReal.ofReal_pow (vec3EuclideanNorm_nonneg (u (y, s))) 2]
         norm_num [Real.rpow_natCast]
       _ ≤ _ := by simpa [timeSliceBallEnergy] using hEss'

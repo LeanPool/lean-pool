@@ -89,7 +89,7 @@ theorem heatConv_hasFDerivAt_of_memLp {f : Vec3 → ℝ} (hf : MemLp f 2 volume)
         (B * eLpNorm (fs n - f) 2 volume).toReal := by
     have hfin : B * eLpNorm (fs n - f) 2 volume ≠ ∞ :=
       (ENNReal.mul_lt_top hB (hmem n |>.sub hf).eLpNorm_lt_top).ne
-    rw [← Real.norm_eq_abs, ← toReal_enorm]
+    rw [← Real.norm_eq_abs, ← toReal_eNorm]
     apply ENNReal.toReal_mono hfin
     refine (integral_mul_sub_sub_enorm_le (hD j) hf (hmem n) y).trans ?_
     rw [eLpNorm_sub_comm]
@@ -133,7 +133,7 @@ theorem heatConv_hasFDerivAt_of_memLp {f : Vec3 → ℝ} (hf : MemLp f 2 volume)
     rw [tendsto_iff_edist_tendsto_0]
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbd
       (fun _ => bot_le) fun n => ?_
-    rw [edist_eq_enorm_sub, heatConv_eq_integral, heatConv_eq_integral]
+    rw [eDist_eq_eNorm_sub, heatConv_eq_integral, heatConv_eq_integral]
     exact integral_mul_sub_sub_enorm_le hK (hmem n) hf y
   exact hasFDerivAt_of_tendstoUniformly hunif hderiv hpt x
 
@@ -281,7 +281,7 @@ theorem heatOrbit_div_eq_zero {a : Vec3 → Vec3} (ha : IsInJ a) {t : ℝ} (ht :
     rw [tendsto_iff_edist_tendsto_0]
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbd
       (fun _ => bot_le) fun k => ?_
-    rw [edist_eq_enorm_sub]
+    rw [eDist_eq_eNorm_sub]
     exact integral_mul_sub_sub_enorm_le (hD i) (hmem k i) (hai i) x
   simp only [hzero] at hconv
   rw [show (∑ i : Fin 3, spatialDeriv (fun y => heatOrbit a (y, t) i) i x) =

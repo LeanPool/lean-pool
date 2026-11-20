@@ -99,7 +99,7 @@ variable {G : Type*} [Group G] {K : Type*} [CommRing K] {V : Type*} [AddCommGrou
 theorem coeffCocycles_apply_one {ρ : Representation K G V} {z : G → V} (hz : z ∈ coeffCocycles ρ) :
     z 1 = 0 := by
   have h := hz 1 1
-  rw [mul_one, map_one, Module.End.one_apply] at h
+  rw [mul_one, map_one, one_apply_eq_self] at h
   have : z 1 + z 1 = z 1 + 0 := by rw [add_zero]; exact h.symm
   exact add_left_cancel this
 

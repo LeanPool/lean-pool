@@ -48,7 +48,7 @@ theorem originClause_pressure_clipped_holder
   let W := Ioc (t-r^2) t ∩ Ioc (-R^2) 0
   let J := fun s => ∫⁻ y in vec3Ball x (2*r), ‖P (y,s)‖ₑ ^ (3/2 : ℝ)
   have hJ : AEMeasurable J (volume.restrict W) :=
-    (hm.aemeasurable.enorm.pow_const (3/2 : ℝ)).lintegral_prod_left'
+    (hm.aemeasurable.eNorm.pow_const (3/2 : ℝ)).lintegral_prod_left'
   have h2r : 0 < 2*r := by positivity
   have heq : ∀ᵐ s ∂volume.restrict W,
       (ENNReal.ofReal ((2*r) ^ (-1/2 : ℝ)) *
@@ -56,7 +56,7 @@ theorem originClause_pressure_clipped_holder
           (volume.restrict (vec3Ball x (2*r)))) ^ (6/5 : ℝ) =
       ENNReal.ofReal ((2*r) ^ (-3/5 : ℝ)) * J s ^ (4/5 : ℝ) := by
     filter_upwards [hm.prodMk_right] with s hs
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
     norm_num only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3/2),
       show (1 / (3/2) : ℝ) = 2/3 by norm_num]
     rw [ENNReal.mul_rpow_of_nonneg _ _ (by norm_num : (0 : ℝ) ≤ 6/5),

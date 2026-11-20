@@ -355,7 +355,7 @@ theorem exists_hasEigenvalue_norm_lt {A : E →L[𝕜] E}
   set K : Submodule 𝕜 E := ⨆ m : {mu : 𝕜 | Module.End.HasEigenvalue A.toLinearMap mu ∧
     c ≤ ‖mu‖}, Module.End.eigenspace A.toLinearMap (m : 𝕜) with hKdef
   have : FiniteDimensional 𝕜 K := Submodule.finiteDimensional_iSup _
-  have : CompleteSpace K := (Submodule.closed_of_finiteDimensional K).completeSpace_coe
+  have : CompleteSpace K := (Submodule.isClosed_of_finiteDimensional K).completeSpace_coe
   have hle : (⨆ mu : 𝕜, Module.End.eigenspace A.toLinearMap mu) ≤ K := by
     refine iSup_le fun mu => ?_
     by_cases hev : Module.End.HasEigenvalue A.toLinearMap mu

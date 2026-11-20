@@ -308,7 +308,7 @@ theorem ae_wsumE_ne_top {P : Measure Omega} {T : ℕ → Omega → ℝ} {c a : �
       exact MeasureTheory.lintegral_tsum fun j => (hmeas j).aemeasurable
     rw [hswap, ENNReal.ofReal_tsum_of_nonneg
       (fun j => mul_nonneg (hc j) (ha j)) hsum]
-    exact ENNReal.tsum_le_tsum hlint
+    exact tsum_le_tsum hlint
   have hne : ∫⁻ omega, wsumE T c omega ∂P ≠ (⊤ : ℝ≥0∞) :=
     ne_top_of_le_ne_top ENNReal.ofReal_ne_top hbound
   have hae := MeasureTheory.ae_lt_top

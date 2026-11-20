@@ -272,8 +272,8 @@ theorem fracSeminormSq_le_supported_bounded_lipschitz
       · have hzS₂ : z ∈ S₂ := ⟨hxU, hyA⟩
         rw [Set.indicator_of_mem hzS₂]
         exact le_add_left le_rfl
-      · rw [Set.indicator_of_notMem (fun hzS => hxA hzS.1),
-          Set.indicator_of_notMem (fun hzS => hyA hzS.2)]
+      · rw [Set.indicator_of_notMem (fun (hzS : z ∈ S₁) => hxA hzS.1),
+          Set.indicator_of_notMem (fun (hzS : z ∈ S₂) => hyA hzS.2)]
         dsimp only [K]
         rw [hgzero z.1 hxU hxA, hgzero z.2 hyU hyA, sub_self]
         simp [vecNormSq, vecDot]

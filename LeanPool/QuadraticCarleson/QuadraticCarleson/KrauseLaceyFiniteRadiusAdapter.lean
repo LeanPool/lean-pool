@@ -68,11 +68,11 @@ theorem finiteRadiusQuadraticHilbertMaxNNNorm_add_le
     ‖quadraticHilbertTrunc lam ε.1.1 (L0Infinity.add f g) x‖₊ =
         ‖quadraticHilbertTrunc lam ε.1.1 f x +
           quadraticHilbertTrunc lam ε.1.1 g x‖₊ := by
-      apply congrArg nnnorm
+      apply congrArg nnNorm
       simpa only [quadraticHilbertTruncTestOperator] using
         quadraticHilbertTrunc_add lam ε.1.2 f g x
     _ ≤ ‖quadraticHilbertTrunc lam ε.1.1 f x‖₊ +
-        ‖quadraticHilbertTrunc lam ε.1.1 g x‖₊ := nnnorm_add_le _ _
+        ‖quadraticHilbertTrunc lam ε.1.1 g x‖₊ := nnNorm_add_le _ _
     _ ≤ (s.sup fun δ ↦ ‖quadraticHilbertTrunc lam δ.1.1 f x‖₊) +
         s.sup fun δ ↦ ‖quadraticHilbertTrunc lam δ.1.1 g x‖₊ := add_le_add
       (Finset.le_sup (s := s)
@@ -94,13 +94,13 @@ theorem finiteRadiusQuadraticHilbertMaxNNNorm_smul
         s.sup fun ε ↦ ‖c * quadraticHilbertTrunc lam ε.1.1 f x‖₊ := by
       apply Finset.sup_congr rfl
       intro ε hε
-      apply congrArg nnnorm
+      apply congrArg nnNorm
       simpa only [quadraticHilbertTruncTestOperator] using
         quadraticHilbertTrunc_smul lam ε.1.2 c f x
     _ = s.sup fun ε ↦ ‖c‖₊ * ‖quadraticHilbertTrunc lam ε.1.1 f x‖₊ := by
       congr 1
       funext ε
-      rw [nnnorm_mul]
+      rw [nnNorm_mul]
     _ = ‖c‖₊ * (s.sup fun ε ↦
         ‖quadraticHilbertTrunc lam ε.1.1 f x‖₊) :=
       (NNReal.mul_finset_sup ‖c‖₊ s

@@ -23,7 +23,7 @@ theorem amnr_normalized_abs_L2_le {μ : Measure AmnrSpace} {f : AmnrSpace → �
   have he : (fun z => |f z| / W) = W⁻¹ • (fun z => ‖f z‖) := by
     funext z
     simp only [Pi.smul_apply, smul_eq_mul, Real.norm_eq_abs, div_eq_mul_inv, mul_comm]
-  rw [he, eLpNorm_const_smul, Real.enorm_of_nonneg (inv_nonneg.mpr hW.le),
+  rw [he, eLpNorm_const_smul, Real.eNorm_of_nonneg (inv_nonneg.mpr hW.le),
     eLpNorm_norm f hf]
   refine (mul_le_mul_right hbound _).trans_eq ?_
   rw [← ENNReal.ofReal_mul (inv_nonneg.mpr hW.le)]

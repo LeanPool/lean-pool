@@ -162,7 +162,6 @@ theorem coupled_stampacchia_uniform (hd : 3 ≤ d) :
     have hfg' : ∀ᵐ x ∂volume, x ∈ openCubeSet (originCube d m) → f x = g x :=
       (MeasureTheory.ae_restrict_iff' hUmeas).1 hfg
     filter_upwards [hfg'] with x hx
-    simp only [eq_iff_iff]
     constructor <;> rintro ⟨hxU, hlt⟩ <;> exact ⟨hxU, by rw [hx hxU] at *; assumption⟩
   simp only [vecNormSq_neg] at hlevel'
   have hw1'neg : w₁'.toFun =ᵐ[volume.restrict (openCubeSet (originCube d m))]

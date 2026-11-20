@@ -117,7 +117,7 @@ theorem cornerSet_isDefining (n : ℕ) (hn : 0 < n) :
   have all : ∀ m : ℕ, ∀ r c : Fin n, fillingOrder r c = m → M r c = cyclic n r c := by
     intro m
     induction m using Nat.strong_induction_on with
-    | h m ih =>
+    | ind m ih =>
       intro r c hrc
       apply corner_forcing_step hn M hM ha r c
       intro i j hij

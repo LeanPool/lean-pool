@@ -102,7 +102,9 @@ lemma conic_caratheodory {R M : Type*} [Field R] [LinearOrder R] [IsStrictOrdere
         (∑ k ∈ s, d k • v k = ∑ k, c k • v k)) ∧
       ∀ t : Finset κ, (∃ d : κ → R, (∀ k, 0 ≤ d k) ∧ (∀ k ∉ t, d k = 0) ∧
         (∑ k ∈ t, d k • v k = ∑ k, c k • v k)) → s.card ≤ t.card := by
-    apply_rules [Set.exists_min_image]
+    apply Set.exists_min_image
+      {s : Finset κ | ∃ d : κ → R, (∀ k, 0 ≤ d k) ∧ (∀ k ∉ s, d k = 0) ∧
+        ∑ k ∈ s, d k • v k = ∑ k, c k • v k} Finset.card
     · exact Set.toFinite _
     · exact ⟨Finset.univ, ⟨c, hc, fun k hk => False.elim <| hk <| Finset.mem_univ _, by
         simp⟩⟩

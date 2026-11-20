@@ -44,7 +44,7 @@ lemma bivariateGridPolynomial_coeff {R : Type*} [CommRing R] {d : ℕ}
     (v : BivariateGrid d → R) (i j : Fin d) :
     ((bivariateGridPolynomial R d v).coeff i.val).coeff j.val = v (i,j) := by
   classical
-  simp [bivariateGridPolynomial, coeff_monomial, Fintype.sum_prod_type, Fin.val_inj]
+  simp [bivariateGridPolynomial, Finsupp.single_apply, Fintype.sum_prod_type, Fin.val_inj]
 
 private lemma bivariateGridPolynomial_injective {R : Type*} [CommRing R] (d : ℕ) :
     Function.Injective (bivariateGridPolynomial R d) := by
@@ -63,7 +63,7 @@ lemma bivariateGridPolynomial_degree_lt {R : Type*} [CommRing R] {d : ℕ}
   simp only [bivariateGridPolynomial, LinearMap.coe_mk, AddHom.coe_mk, finsetSum_coeff]
   apply Finset.sum_eq_zero
   intro i _
-  rw [coeff_monomial, ite_eq_right]
+  rw [coeff_monomial_apply, ite_eq_right]
   omega
 
 /-- Decode the two blocks of the unknown coefficient vector. -/

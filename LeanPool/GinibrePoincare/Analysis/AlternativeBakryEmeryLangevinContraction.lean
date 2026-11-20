@@ -71,9 +71,10 @@ theorem bakryEmeryLangevin_synchronous_contraction (W : E → ℝ) (κ : ℝ)
           (bakryEmeryLangevinDrift W (X s + N s) - bakryEmeryLangevinDrift W (Y s + N s)))) s := by
     have he := (((hasDerivAt_id s).const_mul (2 * κ)).exp).mul
       (((hEqX s hs).sub (hEqY s hs)).norm_sq)
-    convert he using 1 <;> dsimp [D] <;> try ring_nf
-    funext x
-    simp only [Pi.mul_apply]
+    convert he using 1 <;> dsimp [D]
+    · funext x
+      simp only [Pi.mul_apply]
+    · ring
   have hmono : AntitoneOn D (Icc 0 T) := by
     apply antitoneOn_of_deriv_nonpos (convex_Icc 0 T) hDc
     · intro s hs

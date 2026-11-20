@@ -330,7 +330,7 @@ lemma extend'_le' : hL.mk.minLength ≤ n := by simpa using extend'_le hL
       ext1
       simp only [extend'_toLift, Lost'.mk_toLift]
       rw [Lift.take_of_length_le]
-      all_goals simpa
+      simpa
     · simpa
   · symm; convert WLLift.liftVal_take_eq_of_tree _ _
     · simp; omega

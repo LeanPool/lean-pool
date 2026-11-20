@@ -236,7 +236,7 @@ theorem scott_theorem_1_1 {X N : Set L} (hX : X.Finite) (hsym : Symmetric X) :
   · rintro ⟨htotal, hseq⟩
     have hcancel := weightedCancellation_of_sequence hsym hseq
     obtain ⟨φ, hstrict, hneutral⟩ :=
-      (finite_strict_separation
+      (finite_strict_separation (A := strictPositive X N)
         (hX.subset fun _ hx ↦ hx.1)).mp hcancel
     refine ⟨φ, fun x hx ↦ ?_⟩
     constructor

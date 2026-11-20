@@ -327,7 +327,7 @@ private lemma timeSliceBallEnergy_const_mul (c : ℝ) (x : Vec3) (r s : ℝ)
   have hpoint : ∀ y : Vec3, ‖c * g (y, s)‖ₑ ^ (2 : ℝ) =
       ENNReal.ofReal (c ^ 2) * ‖g (y, s)‖ₑ ^ (2 : ℝ) := by
     intro y
-    simp only [enorm_mul, Real.enorm_eq_ofReal_abs, ENNReal.rpow_ofNat, mul_pow,
+    simp only [eNorm_mul, Real.eNorm_eq_ofReal_abs, ENNReal.rpow_ofNat, mul_pow,
       ← ENNReal.ofReal_pow (abs_nonneg c), sq_abs]
   calc
     ∫⁻ y in vec3Ball x r, ‖c * g (y, s)‖ₑ ^ (2 : ℝ)

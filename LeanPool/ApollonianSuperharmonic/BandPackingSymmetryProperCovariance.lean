@@ -80,9 +80,11 @@ theorem BandPackingSymmetryProperCovariance (g : BandPackingSymmetry)
       fin_cases k
       all_goals
         apply Prod.ext
-        · simp [Q, S, BandPackingSymmetryQuadrupleAction,
-            BandPackingSymmetryCircleAction, BandPackingSymmetryReversesOrientation, neg1, neg2]
-          all_goals ring
+        · first
+          | rfl
+          | simp [Q, S, BandPackingSymmetryQuadrupleAction,
+              BandPackingSymmetryCircleAction, BandPackingSymmetryReversesOrientation, neg1, neg2]
+            ring
         · apply Zsqrtd.ext <;>
             simp [Q, S, BandPackingSymmetryQuadrupleAction,
               BandPackingSymmetryCircleAction, BandPackingSymmetryReversesOrientation,

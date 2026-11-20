@@ -168,7 +168,7 @@ private theorem equal_feedback_factor_product_mem
         rcases f2_eq_zero_or_one b with rfl | rfl <;>
         simp [add_mul, mul_add, anf_mul_self] <;>
         ring_nf <;>
-        try simp [N3Certificate.two_eq_zero_f2, N3Certificate.three_eq_one_f2]
+        simp [N3Certificate.two_eq_zero_f2, N3Certificate.three_eq_one_f2]
     rw [hproduct]
     apply Submodule.add_mem
     · apply Submodule.smul_mem

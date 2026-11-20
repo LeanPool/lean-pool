@@ -57,12 +57,12 @@ theorem tsum_lintegral_enorm_highPass_lacunaryStoppingLevels_lt_top
         apply lintegral_mono
         intro y
         dsimp only
-        rw [enorm_mul]
+        rw [eNorm_mul]
         exact mul_le_mul' (by
           simpa only [← ofReal_norm] using ENNReal.ofReal_le_ofReal
             (highPassKernel_norm_le lam hlam (x-y))) le_rfl
       _ = _ := lintegral_const_mul' _ _ (by finiteness)
-  have hs := ENNReal.tsum_le_tsum hp
+  have hs := tsum_le_tsum hp
   rw [ENNReal.tsum_mul_left] at hs
   exact hs.trans_lt (ENNReal.mul_lt_top (by finiteness)
     ((tsum_lintegral_enorm_lacunaryStoppingLevels_le hf).trans_lt
@@ -100,16 +100,16 @@ theorem paperLacunaryOscillatoryMaximal_stoppingBadPart_le_low_add_high
   intro m
   rw [paperOscillatoryAction_stoppingBadPart_eq_tsum_lacunaryLevels hf hfi
     (dyadicModulation m) (dyadicModulation_pos m).ne' x]
-  apply enorm_tsum_le_tsum_enorm.trans
+  apply eNorm_tsum_le_tsum_eNorm.trans
   unfold lacunaryLowContribution paperLacunaryHighContribution
-  rw [← ENNReal.tsum_add]
-  apply ENNReal.tsum_le_tsum
+  rw [← tsum_add]
+  apply tsum_le_tsum
   intro k
   simp only [lacunaryStoppingLevelBadPart]
   rw [paperOscillatoryAction_eq_low_add_high
     (integrable_canonicalLevelBadPart hf hfi (lacunaryAmplitude_pos k).le)
     (B k) (dyadicModulation m) (dyadicModulation_pos m).ne' x]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   apply add_le_add
   · rw [← lacunaryLowActionAtLevel_eq_sum_fixedHeights hf hfi (lacunaryAmplitude_pos k).le]
     exact le_iSup (fun m : ℤ ↦
@@ -176,7 +176,7 @@ theorem paperLacunaryOscillatoryMaximal_add_le
   intro m
   rw [paperOscillatoryAction_add_of_integrable (dyadicModulation m)
     (dyadicModulation_pos m).ne' hf hg]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   exact add_le_add
     (le_iSup (fun m : ℤ ↦
       ‖paperOscillatoryAction (dyadicModulation m) (dyadicModulation_pos m).ne' f x‖ₑ) m)

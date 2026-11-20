@@ -38,13 +38,13 @@ closed vertex domains, not the staircase cell set `DiamondCellDomain`.
 -/
 def DiamondVertexDomains (K : DiamondParameter) : Bool -> Set GaussianInt :=
 -- BODY
-  fun interior x =>
+  fun interior => {x |
     if interior then
       Int.natAbs x.re + Int.natAbs (x.im - (K.1 : Int)) <= K.1 - 1
     else
       max (Int.natAbs x.re)
         (max (Int.natAbs (x.im - (K.1 : Int)))
-          (Int.natAbs x.re + Int.natAbs (x.im - (K.1 : Int)) - 1)) <= K.1
+          (Int.natAbs x.re + Int.natAbs (x.im - (K.1 : Int)) - 1)) <= K.1}
 
 end ApollonianSuperharmonic
 

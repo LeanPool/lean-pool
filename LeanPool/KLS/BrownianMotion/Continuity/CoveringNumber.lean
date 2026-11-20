@@ -195,7 +195,7 @@ lemma le_volume_of_isSeparated_of_countable (hC_count : C.Countable)
     rw [Set.mem_iUnion₂] at hx
     obtain ⟨y, hy, hx⟩ := hx
     refine ⟨y, h_subset hy, x - y, ?_, by simp⟩
-    rwa [Metric.mem_closedEBall, edist_zero_right, ← edist_eq_enorm_sub]
+    rwa [Metric.mem_closedEBall, edist_zero_right, ← eDist_eq_eNorm_sub]
 
 open scoped Pointwise in
 lemma le_volume_of_isSeparated (hC : IsSeparated ε C) (h_subset : C ⊆ A) :

@@ -61,9 +61,9 @@ noncomputable def base4 : Finset (ZMod 3)[X] :=
 `a`, `b` and `c` back. -/
 theorem base4Map_injective : Function.Injective base4Map := by
   intro t t' h
-  have h3 := congrArg (fun f => Polynomial.coeff f 3) h
-  have h1 := congrArg (fun f => Polynomial.coeff f 1) h
-  have h0 := congrArg (fun f => Polynomial.coeff f 0) h
+  have h3 := congrArg (fun f => AddMonoidAlgebra.coeff f 3) h
+  have h1 := congrArg (fun f => AddMonoidAlgebra.coeff f 1) h
+  have h0 := congrArg (fun f => AddMonoidAlgebra.coeff f 0) h
   simp only [base4Map, mul_sub, mul_one, coeff_add, coeff_sub, coeff_C_mul, coeff_X_pow,
     coeff_C, coeff_X] at h3 h1 h0
   norm_num at h3 h1 h0

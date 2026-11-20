@@ -103,7 +103,7 @@ theorem eval_unique {M : Type*} [ORingStructure M] [M↓[ℒₒᵣ] ⊧* 𝐏�
     (hz : Semiformula.Evalb (M := M) (z :> v) (FFL.FirstOrder.Arithmetic.code c))
     (hz' : Semiformula.Evalb (M := M) (z' :> v) (FFL.FirstOrder.Arithmetic.code c)) : z = z' :=
   by
-  simp only [Nat.succ_eq_add_one, code, Matrix.zero_cons_succ_eq_self,
+  simp only [Nat.succ_eq_add_one, Arithmetic.code, Matrix.zero_cons_succ_eq_self,
     Semiformula.eval_rew, Matrix.empty_eq, Function.comp_def, Rew.bind_fvar,
     Semiterm.val_bvar] at hz hz'
   exact evalAux_unique hz hz'

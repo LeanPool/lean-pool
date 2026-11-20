@@ -130,7 +130,7 @@ theorem lintegral_window_sum (K : ℕ) {δ : ℝ} (hδ : 0 < δ) (c : ℝ) (g : 
       · rw [show δ * (n + (c + K)) = δ * (n + c + K) by ring]
         exact Set.Ico_disjoint_Ico_same
     simp_rw [hsplit]
-    rw [ENNReal.tsum_add, ih, lintegral_window_tiling hδ]
+    rw [tsum_add, ih, lintegral_window_tiling hδ]
     push_cast; ring
 
 /-- Parseval for fast trigonometric sums on the circle of length `16`:
@@ -191,7 +191,7 @@ theorem random_L2_moment {Ω T : Type*} [MeasurableSpace Ω] [MeasurableSpace T]
       Ca * (∫⁻ w, Z w ^ (2 : ℝ) ∂ν) ^ (1 / 2 : ℝ) := by
   have ha0 : 0 < a := by linarith
   set g : Ω → T → ℝ≥0∞ := fun σ w => ‖F σ w‖ₑ ^ (2 : ℝ)
-  have hg : Measurable (Function.uncurry g) := hF.enorm.pow_const _
+  have hg : Measurable (Function.uncurry g) := hF.eNorm.pow_const _
   have hmink := lintegral_minkowski (μ := P) (ν := ν) (p := a / 2) (by linarith only [ha]) hg
   have hinner : ∀ w, (∫⁻ σ, g σ w ^ (a / 2) ∂P) ^ (1 / (a / 2)) ≤ (Ca * Z w) ^ (2 : ℝ) := by
     intro w
@@ -302,7 +302,7 @@ theorem regular_slot_L3_le_L4 (ε : ℝ≥0∞) (S : Finset ℤ) {g : ℤ × Fas
     refine ⟨?_, Set.mem_univ _⟩
     by_contra h; exact hy (hS y h)
   have hU : latticeCircleMeasure ε U = ε * S.card := by
-    rw [latticeCircleMeasure, Measure.prod_prod, measure_univ, mul_one, Measure.smul_apply,
+    rw [latticeCircleMeasure, Measure.prod_prod, measure_univ, mul_one, smul_apply,
       Measure.count_apply_finset, smul_eq_mul]
   have h := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (μ := (latticeCircleMeasure ε).restrict U)
     (p := 3) (q := 4) (by norm_num) (f := g) hg.aestronglyMeasurable
@@ -317,7 +317,7 @@ theorem regular_slot_L3_le_L4 (ε : ℝ≥0∞) (S : Finset ℤ) {g : ℤ × Fas
 theorem latticeCircle_eLpNorm_four (ε : ℝ≥0∞) {g : ℤ × FastCircle → ℝ≥0∞} (hg : Measurable g) :
     eLpNorm g 4 (latticeCircleMeasure ε) ^ (4 : ℝ) =
       ε * ∑' m : ℤ, ∫⁻ t, g (m, t) ^ (4 : ℝ) ∂fastHaar := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hg.aestronglyMeasurable,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hg.aestronglyMeasurable,
     ← ENNReal.rpow_mul]
   norm_num
   rw [lintegral_latticeCircleMeasure ε (hg.pow_const _)]
@@ -443,7 +443,7 @@ theorem measurable_fastWindow {Ω : Type*} [MeasurableSpace Ω] (s : Finset ℤ)
       ‖fastCircleMultiplied s (A p.1.1 m) c p.1.2 p.2‖ₑ := by
     intro m
     unfold fastCircleMultiplied
-    refine (Finset.measurable_sum _ fun k _ => ?_).enorm
+    refine (Finset.measurable_sum _ fun k _ => ?_).eNorm
     have hc : Continuous fun p : ℝ × FastCircle => ePhase (p.1 * (k : ℝ) ^ 2 / c) * fourier k p.2 :=
       (continuous_ePhase.comp (by fun_prop)).mul ((fourier k).continuous.comp continuous_snd)
     have := ((hA m k).comp (measurable_fst.comp measurable_fst)).mul
@@ -464,7 +464,7 @@ theorem measurable_fastWindow_section {Ω : Type*} (s : Finset ℤ) (A : Ω → 
   unfold fastWindow
   apply measurable_from_prod_countable_right
   intro m
-  exact (continuous_fastCircleMultiplied s (A q.1 m) c q.2).enorm.measurable
+  exact (continuous_fastCircleMultiplied s (A q.1 m) c q.2).eNorm.measurable
 
 theorem fastCircleMultiplied_zero (s : Finset ℤ) (c : ℤ) (γ : ℝ) (t : FastCircle) :
     fastCircleMultiplied s (fun _ => 0) c γ t = 0 := by
@@ -506,8 +506,8 @@ theorem per_cell_deletion_bound (B : Finset (ℤ × ℤ)) {ε M C : ℝ≥0∞} 
     have e : (fun q => eLpNorm (g q j) (p j) (latticeCircleMeasure ε)) = fun q =>
         (∫⁻ y, g q j y ^ (p j).toReal ∂latticeCircleMeasure ε) ^ (1 / (p j).toReal) := by
       funext q
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (hp0 j) (hpt j) (hg q j).aestronglyMeasurable]
-      simp only [enorm_eq_self]
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (hp0 j) (hpt j) (hg q j).aestronglyMeasurable]
+      simp only [eNorm_eq_self]
     rw [e]
     exact (((hgj j).pow_const _).lintegral_prod_right').pow_const _ |>.aemeasurable
   refine (latticeTorus_random_holder B hC1 hB hM hfib (P.prod gammaMeasure) g hg p hp hsum
@@ -516,14 +516,14 @@ theorem per_cell_deletion_bound (B : Finset (ℤ × ℤ)) {ε M C : ℝ≥0∞} 
   -- the zero windows outside the supports
   have hzero : ∀ q y, y.1 ∉ S j → g q j y = 0 := by
     intro q y hy
-    simp only [g, fastWindow, hS j q.1 y.1 hy, fastCircleMultiplied_zero, enorm_zero]
+    simp only [g, fastWindow, hS j q.1 y.1 hy, fastCircleMultiplied_zero, eNorm_zero]
   by_cases hjh : j = h
   · -- the heavy slot
     subst hjh
     simp only [↓reduceIte, p]
     have e1 : ∀ q, eLpNorm (g q j) 1 (latticeCircleMeasure ε) =
         ∫⁻ y, g q j y ∂latticeCircleMeasure ε := fun q => by
-      rw [eLpNorm_one_eq_lintegral_enorm (hg q j).aestronglyMeasurable]; simp
+      rw [eLpNorm_one_eq_lintegral_eNorm (hg q j).aestronglyMeasurable]; simp
     simp_rw [e1]
     have hU : Measurable (Function.uncurry fun q => g q j) := hgj j
     refine (heavy_slot_L4_le ε (P.prod gammaMeasure) (fun q => g q j) hU).trans (le_of_eq ?_)
@@ -868,13 +868,13 @@ theorem roundSampled_form_error {κ : LocalKernelClass} {a r : ℝ} (hr : 0 < r)
   have hform : ‖localProgressionForm r e f‖ₑ ≤ ENNReal.ofReal r⁻¹ ^ 2 *
       ∫⁻ z : ℝ × ℝ, ‖e z‖ₑ * ∏ i, ‖f i (realProgressionCoordinate i z)‖ₑ := by
     unfold localProgressionForm
-    rw [enorm_mul, enorm_pow, ← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs,
+    rw [eNorm_mul, eNorm_pow, ← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos hr]
     gcongr
-    refine (enorm_integral_le_lintegral_enorm _).trans (le_of_eq ?_)
+    refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
     congr 1; funext z
-    rw [enorm_mul]
-    simp only [enorm_eq_nnnorm, nnnorm_prod, ENNReal.ofNNReal_finsetProd]
+    rw [eNorm_mul]
+    simp only [eNorm_eq_nnNorm, nnNorm_prod, ENNReal.ofNNReal_finsetProd]
   refine hform.trans (habs.trans (le_of_eq ?_))
   rw [← ENNReal.ofReal_ofNat 2, ← ENNReal.ofReal_mul (by norm_num)]
   congr 2; ring
@@ -1054,7 +1054,7 @@ theorem mixedENorm_fastIntervalInput_pow {Ω : Type*} [MeasurableSpace Ω] (ν :
         unfold fastIntervalInput
         exact Finset.sum_eq_zero fun n hn => by
           simp only [not_lt.mpr (hex n hn), ↓reduceIte, mul_zero]
-      simp_rw [hg, enorm_zero, ENNReal.zero_rpow_of_pos (by norm_num : (0 : ℝ) < 4),
+      simp_rw [hg, eNorm_zero, ENNReal.zero_rpow_of_pos (by norm_num : (0 : ℝ) < 4),
         lintegral_zero, ENNReal.zero_rpow_of_pos (by positivity : 0 < p / 4)]
       symm
       exact Finset.sum_eq_zero fun n hn =>
@@ -1423,7 +1423,7 @@ theorem measurable_maximalQ {Ω : Type*} [MeasurableSpace Ω] (q : ℝ) {f : ℝ
   simp_rw [uncenteredRealMaximal_eq_rat]
   refine Measurable.iSup fun p => ?_
   have hI : Measurable fun ω : Ω => ∫⁻ y in Set.Icc (p.1 : ℝ) p.2, ‖‖f (y, ω)‖ ^ q‖ₑ :=
-    Measurable.lintegral_prod_left' (((hf.norm.pow_const q)).enorm)
+    Measurable.lintegral_prod_left' (((hf.norm.pow_const q)).eNorm)
   refine Measurable.ite ?_ (measurable_const.mul (hI.comp measurable_snd)) measurable_const
   by_cases h : (p.1 : ℝ) < p.2
   · simp only [h, true_and]
@@ -1448,7 +1448,7 @@ theorem window_sum_le_of_subset {δ : ℝ} (hδ : 0 < δ) (j : Fin 4) (g : ℝ �
         refine Finset.sum_congr rfl fun m hm => setLIntegral_congr_fun measurableSet_Ico
           fun y hy => (Set.indicator_of_mem (hS m hm hy) g).symm
     _ ≤ ∑' m : ℤ, ∫⁻ y in Set.Ico (δ * (m + fastLiftLeft j)) (δ * (m + fastLiftLeft j +
-          fastLiftLen j)), J.indicator g y := ENNReal.sum_le_tsum S
+          fastLiftLen j)), J.indicator g y := sum_le_tsum S
     _ = _ := rfl
 
 theorem volume_offsetPolygon_pos {c : ℝ} (hc : 0 < c) : 0 < volume (offsetPolygon c) := by
@@ -1478,7 +1478,7 @@ theorem random_local_L2 {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [Sigm
   congr 1
   refine lintegral_congr fun σ => ?_
   have hm : Measurable (z σ) := hz.comp measurable_prodMk_left
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hm.aestronglyMeasurable,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm.aestronglyMeasurable,
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -1538,11 +1538,11 @@ theorem err1_bound (P : Measure Ω) [IsProbabilityMeasure P] {C4 : ℝ} (hC4 : 0
     have : (fun σ => eLpNorm (D.inp σ j) 2 (ν I)) = fun σ =>
         (∫⁻ y, ‖D.z j σ y‖ₑ ^ (2 : ℝ) ∂(ν I)) ^ (1 / 2 : ℝ) := by
       funext σ
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
         (hnorm j σ).aestronglyMeasurable]
       norm_num; rfl
     rw [this]
-    exact (((D.z_meas j).enorm.pow_const _).lintegral_prod_right').pow_const _
+    exact (((D.z_meas j).eNorm.pow_const _).lintegral_prod_right').pow_const _
   -- pointwise bound by the error estimate
   have hpt : ∀ σ, ∑ I ∈ D.cells, ENNReal.ofReal (D.len I) * ‖D.err1 I σ‖ₑ ≤
       ∑ I ∈ D.cells, ENNReal.ofReal (D.len I) *
@@ -1712,11 +1712,11 @@ theorem ae_memLp (P : Measure Ω) [IsProbabilityMeasure P] {C4 : ℝ}
         (∫⁻ y, ‖D.z j σ y‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := by
       funext σ
       have hm' : Measurable (D.z j σ) := D.measurable_inp σ j
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
         hm'.aestronglyMeasurable]
       norm_num
     rw [this]
-    exact (((D.z_meas j).enorm.pow_const _).lintegral_prod_right').pow_const _
+    exact (((D.z_meas j).eNorm.pow_const _).lintegral_prod_right').pow_const _
   have hm := hm0.pow_const (4 : ℝ)
   filter_upwards [ae_lt_top hm hlt.ne] with σ hσ
   rw [memLp_iff]
@@ -1778,9 +1778,9 @@ theorem lintegral_latticeSum_le_liminf (P : Measure Ω) [IsProbabilityMeasure P]
   have hlim : ∀ᵐ σ ∂P, ‖D.latticeSum ε σ (slotLift D.δ (D.inp σ))‖ₑ =
       Filter.liminf (fun N => ‖D.latticeSum ε σ (D.partialData N σ)‖ₑ) Filter.atTop := by
     filter_upwards [D.ae_memLp P hmom hfin] with σ hσ
-    exact ((continuous_enorm.tendsto _).comp (D.latticeSum_tendsto ε σ hσ)).liminf_eq.symm
+    exact ((continuous_eNorm.tendsto _).comp (D.latticeSum_tendsto ε σ hσ)).liminf_eq.symm
   rw [lintegral_congr_ae hlim]
-  exact lintegral_liminf_le fun N => (D.measurable_latticeSum_partial ε hε N).enorm
+  exact lintegral_liminf_le fun N => (D.measurable_latticeSum_partial ε hε N).eNorm
 
 end BlockData
 
@@ -1889,7 +1889,7 @@ theorem norm_latticeSum_partial_le (ε : ℤ × ℤ → Ω → ℂ) (σ : Ω) (N
   calc ‖D.latticeSum ε σ (D.partialData N σ)‖ₑ
       = ∫⁻ _γ, ‖D.latticeSum ε σ (D.partialData N σ)‖ₑ ∂gammaMeasure := by
         rw [lintegral_const, measure_univ, mul_one]
-    _ ≤ _ := lintegral_mono fun γ => by rw [hinv γ]; exact enorm_add_le _ _
+    _ ≤ _ := lintegral_mono fun γ => by rw [hinv γ]; exact eNorm_add_le _ _
 
 end BlockData
 
@@ -1936,7 +1936,7 @@ theorem window_moment (P : Measure Ω) [IsProbabilityMeasure P] {C4 : ℝ}
     measurable_slotLift_joint D.z_meas j m
   have h := random_L2_moment P fastHaar (fun σ t => slotLift D.δ (D.inp σ) j m t) hF
     (a := 4) (by norm_num) (Z := fun t => ‖slotLift D.δ D.Zc j m t‖ₑ)
-    (measurable_slotLift D.measurable_Zc j m).enorm (Ca := ENNReal.ofReal C4) ?_
+    (measurable_slotLift D.measurable_Zc j m).eNorm (Ca := ENNReal.ofReal C4) ?_
   · exact h
   intro t
   unfold slotLift fastLift
@@ -2095,7 +2095,7 @@ theorem norm_latticeSum_le_windows (ε : ℤ × ℤ → Ω → ℂ) (hε1 : ∀ 
           ∂latticeTorusMeasure (D.supp I) (ENNReal.ofReal (D.δ / D.len I)) := by
   classical
   unfold latticeSum
-  refine (enorm_sum_le _ _).trans (Finset.sum_le_sum fun I hI => ?_)
+  refine (eNorm_sum_le _ _).trans (Finset.sum_le_sum fun I hI => ?_)
   have hr := D.len_pos I
   have hδ := D.δ_pos
   have hF : Measurable fun x : (ℤ × ℤ) × (FastCircle × FastCircle) => ∏ j : Fin 4,
@@ -2121,12 +2121,12 @@ theorem norm_latticeSum_le_windows (ε : ℤ × ℤ → Ω → ℂ) (hε1 : ∀ 
           (fun σ' => D.cellCoef w I j σ') (fastSlotC j) (σ, γ) (latticeTorusProj j (n, x))
           ∂(fastHaar.prod fastHaar) := by
     intro n hn
-    rw [enorm_mul]
+    rw [eNorm_mul]
     gcongr
     · rw [← ofReal_norm]
       exact ENNReal.ofReal_le_ofReal (admissibleLocalKernel_norm_le (D.admissible I hI) _)
     · unfold fastFormAt
-      refine (enorm_integral_le_lintegral_enorm _).trans (le_of_eq (lintegral_congr fun x => ?_))
+      refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq (lintegral_congr fun x => ?_))
       rw [enorm_prod_four]
       refine Finset.prod_congr rfl fun j _ => ?_
       have hm : latticeCoord j n ∈ D.slow I j := by
@@ -2139,7 +2139,7 @@ theorem norm_latticeSum_le_windows (ε : ℤ × ℤ → Ω → ℂ) (hε1 : ∀ 
           (fun σ' => D.cellCoef w I j σ') (fastSlotC j) (σ, γ) (latticeTorusProj j (n, x))
           ∂(fastHaar.prod fastHaar) := by
     rw [Finset.mul_sum]
-    exact (enorm_sum_le _ _).trans (Finset.sum_le_sum hpt)
+    exact (eNorm_sum_le _ _).trans (Finset.sum_le_sum hpt)
   have h1 : ‖(D.len I : ℂ)‖ₑ = ENNReal.ofReal (D.len I) := by
     rw [← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg hr.le]
   have h2 : ‖ε I σ‖ₑ ≤ 1 := by
@@ -2151,7 +2151,7 @@ theorem norm_latticeSum_le_windows (ε : ℤ × ℤ → Ω → ℂ) (hε1 : ∀ 
     rw [show (D.len I : ℂ)⁻¹ ^ 2 * ((D.δ ^ 2 : ℝ) : ℂ) * 256 =
       (((D.δ / D.len I) ^ 2 * 256 : ℝ) : ℂ) by push_cast; ring, Complex.norm_real,
       Real.norm_of_nonneg (by positivity)]
-  rw [enorm_mul, enorm_mul, enorm_mul, h1, h3]
+  rw [eNorm_mul, eNorm_mul, eNorm_mul, h1, h3]
   have e : ENNReal.ofReal (D.len I) * 1 * (ENNReal.ofReal ((D.δ / D.len I) ^ 2 * 256) *
       ENNReal.ofReal (localKernelSupBound κ)) =
       ENNReal.ofReal (256 * localKernelSupBound κ * D.len I) *
@@ -2754,7 +2754,7 @@ theorem norm_latticeSum_interval (ε : ℤ × ℤ → Ω → ℂ) (hε1 : ∀ I 
               ∂(fastHaar.prod fastHaar) := by
     intro I hI
     have hr := D.len_pos I
-    rw [D.cell_lattice_eq_interval N w γ σ hI, enorm_mul, enorm_mul, enorm_mul]
+    rw [D.cell_lattice_eq_interval N w γ σ hI, eNorm_mul, eNorm_mul, eNorm_mul]
     have h1 : ‖(D.len I : ℂ)‖ₑ = ENNReal.ofReal (D.len I) := by
       rw [← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg hr.le]
     have h2 : ‖ε I σ‖ₑ ≤ 1 := by
@@ -2768,7 +2768,7 @@ theorem norm_latticeSum_interval (ε : ℤ × ℤ → Ω → ℂ) (hε1 : ∀ I 
             ‖D.err2 I (D.gin N w γ σ x)‖ₑ) ∂(fastHaar.prod fastHaar) := by
       refine lintegral_mono fun x => ?_
       rw [D.round_form_eq I hI _ (D.measurable_gin N w γ σ x) (D.memLp_gin N w γ σ x)]
-      exact enorm_sub_le
+      exact eNorm_sub_le
     calc ENNReal.ofReal (D.len I) * ‖ε I σ‖ₑ * (ENNReal.ofReal c *
           ‖∫ x, localProgressionForm (D.len I) (roundSampledKernel D.δ (D.kernel I))
             (D.gin N w γ σ x) ∂(fastHaar.prod fastHaar)‖ₑ)
@@ -2776,13 +2776,13 @@ theorem norm_latticeSum_interval (ε : ℤ × ℤ → Ω → ℂ) (hε1 : ∀ I 
           (‖localProgressionForm (D.len I) (D.kernel I) (D.gin N w γ σ x)‖ₑ +
             ‖D.err2 I (D.gin N w γ σ x)‖ₑ) ∂(fastHaar.prod fastHaar)) := by
           gcongr
-          exact (enorm_integral_le_lintegral_enorm _).trans hint
+          exact (eNorm_integral_le_lintegral_eNorm _).trans hint
       _ = _ := by
           rw [mul_one, mul_left_comm, ← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
           congr 1
           refine lintegral_congr fun x => ?_
           ring
-  refine (enorm_sum_le _ _).trans ((Finset.sum_le_sum hcell).trans ?_)
+  refine (eNorm_sum_le _ _).trans ((Finset.sum_le_sum hcell).trans ?_)
   rw [← Finset.mul_sum]
   gcongr
   refine (sum_lintegral_le_lintegral_sum _ _ _).trans (lintegral_mono fun x => ?_)
@@ -2821,7 +2821,7 @@ theorem multWith_fourth (P : Measure Ω) [IsProbabilityMeasure P] {C4 : ℝ}
     ∫⁻ z, ‖D.multWith N w z.1.2 z.1.1 j m z.2‖ₑ ^ (4 : ℝ)
       ∂((P.prod gammaMeasure).prod fastHaar) ≤
       2 * ‖w j m‖ₑ ^ 4 * (ENNReal.ofReal C4 * D.ewin j m) ^ (4 : ℝ) := by
-  have hm := (D.measurable_multWith_joint N w j m).enorm.pow_const (4 : ℝ)
+  have hm := (D.measurable_multWith_joint N w j m).eNorm.pow_const (4 : ℝ)
   rw [lintegral_prod _ hm.aemeasurable]
   rw [lintegral_prod _ (hm.lintegral_prod_right').aemeasurable]
   have hσ : ∀ σ, ∫⁻ γ, ∫⁻ t, ‖D.multWith N w γ σ j m t‖ₑ ^ (4 : ℝ) ∂fastHaar ∂gammaMeasure ≤
@@ -2975,7 +2975,7 @@ theorem lintegral_intervalInput_sq_le {δ c : ℝ} (hδ : 0 < δ) (hc2 : c ≤ 1
         unfold intervalInput
         exact Finset.sum_eq_zero fun n hn => by
           simp only [not_lt.mpr (hex n hn), ↓reduceIte, mul_zero]
-      rw [hg, enorm_zero, ENNReal.zero_rpow_of_pos (by norm_num)]
+      rw [hg, eNorm_zero, ENNReal.zero_rpow_of_pos (by norm_num)]
       exact zero_le
   calc ∫⁻ y in J, ‖intervalInput δ c T G y‖ₑ ^ (2 : ℝ)
       ≤ ∫⁻ y in J, ∑ m ∈ TJ, (Metric.ball (δ * m) (c * δ)).indicator
@@ -2997,7 +2997,7 @@ theorem eLpNorm_indicator_intervalInput_le {δ c a r : ℝ} (hδ : 0 < δ) (hc2 
           ENNReal.ofReal (2 * (c * δ)) * ‖G m‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := by
   have hm : Measurable (J.indicator (intervalInput δ c T G)) :=
     (measurable_intervalInput δ c T G).indicator hJ
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hm.aestronglyMeasurable]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat]
   gcongr
   unfold normalizedIntervalMeasure
@@ -3153,7 +3153,7 @@ theorem measurable_locMass (N : ℕ) (w : Fin 4 → ℤ → ℂ) (I : ℤ × ℤ
     Measurable (D.locMass N w I j) := by
   unfold locMass
   exact measurable_const.mul (Finset.measurable_sum _ fun m _ => measurable_const.mul
-    ((D.measurable_multWith_joint N w j m).enorm.pow_const _))
+    ((D.measurable_multWith_joint N w j m).eNorm.pow_const _))
 
 /-- Pointwise second sampling error: `‖H_I^{err}(g)‖ ≤ 4 C_κ (δ / r) Π_j X_j^{1/2}`. -/
 theorem err2_pointwise {I : ℤ × ℤ} (hI : I ∈ D.cells) (N : ℕ) (w : Fin 4 → ℤ → ℂ) (γ : ℝ)
@@ -3202,7 +3202,7 @@ theorem locMass_L2 (P : Measure Ω) [IsProbabilityMeasure P] {C4 : ℝ}
   have hδ := D.δ_pos
   have hGm : ∀ m, Measurable fun z : (Ω × ℝ) × FastCircle =>
       ENNReal.ofReal (D.δ / 4) * ‖D.multWith N w z.1.2 z.1.1 j m z.2‖ₑ ^ (2 : ℝ) := fun m =>
-    measurable_const.mul ((D.measurable_multWith_joint N w j m).enorm.pow_const _)
+    measurable_const.mul ((D.measurable_multWith_joint N w j m).eNorm.pow_const _)
   have hsplit : ∀ z, D.locMass N w I j z ^ (2 : ℝ) = ENNReal.ofReal (D.len I)⁻¹ ^ (2 : ℝ) *
       (∑ m ∈ D.TJ I, ENNReal.ofReal (D.δ / 4) *
         ‖D.multWith N w z.1.2 z.1.1 j m z.2‖ₑ ^ (2 : ℝ)) ^ (2 : ℝ) := fun z => by
@@ -3603,7 +3603,7 @@ theorem partial_bound (P : Measure Ω) [IsProbabilityMeasure P] {C4 E2 : ℝ}
     intro I hI
     have hk := (D.admissible I hI).smooth.continuous.measurable
     exact measurable_const.mul (D.measurable_form_gin _
-      (hk.sub (measurable_roundSampledKernel hk D.δ)) N _).enorm
+      (hk.sub (measurable_roundSampledKernel hk D.δ)) N _).eNorm
   have hret : ∀ σ γ, ‖D.latticeSum ε σ (D.multWith N (wRet a keep) γ σ)‖ₑ ≤
       c * ∫⁻ x, (Hp ((σ, γ), x) + Ep ((σ, γ), x)) ∂(fastHaar.prod fastHaar) := by
     intro σ γ
@@ -3619,10 +3619,10 @@ theorem partial_bound (P : Measure Ω) [IsProbabilityMeasure P] {C4 E2 : ℝ}
           ∫⁻ σ, ∫⁻ γ, ‖D.latticeSum ε σ (D.multWith N (wDel a keep) γ σ)‖ₑ ∂gammaMeasure ∂P := by
         have hγ : ∀ σ, Measurable fun γ => ‖D.latticeSum ε σ (D.multWith N (wRet a keep) γ σ)‖ₑ :=
           fun σ => by
-            have h := hRm.enorm.comp (measurable_prodMk_left (x := σ)); exact h
+            have h := hRm.eNorm.comp (measurable_prodMk_left (x := σ)); exact h
         have hσ : Measurable fun σ => ∫⁻ γ, ‖D.latticeSum ε σ (D.multWith N (wRet a keep) γ σ)‖ₑ
             ∂gammaMeasure := by
-          have h := hRm.enorm.lintegral_prod_right' (ν := gammaMeasure); exact h
+          have h := hRm.eNorm.lintegral_prod_right' (ν := gammaMeasure); exact h
         rw [← lintegral_add_left hσ]
         refine lintegral_congr fun σ => ?_
         rw [lintegral_add_left (hγ σ)]
@@ -3757,9 +3757,9 @@ theorem rect_bound (P : Measure Ω) [IsProbabilityMeasure P] {C4 E2 : ℝ} (hC4 
         ‖D.latticeSum ε σ (slotLift D.δ (D.inp σ))‖ₑ := by
     filter_upwards [D.ae_memLp P hmom hfin] with σ hσ
     rw [D.total_eq ε σ hσ]
-    refine (enorm_add_le _ _).trans (add_le_add ((enorm_sum_le _ _).trans
+    refine (eNorm_add_le _ _).trans (add_le_add ((eNorm_sum_le _ _).trans
       (Finset.sum_le_sum fun I _ => ?_)) le_rfl)
-    rw [enorm_mul, enorm_mul]
+    rw [eNorm_mul, eNorm_mul]
     have h1 : ‖(D.len I : ℂ)‖ₑ = ENNReal.ofReal (D.len I) := by
       rw [← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg (D.len_pos I).le]
     have h2 : ‖ε I σ‖ₑ ≤ 1 := by
@@ -3769,7 +3769,7 @@ theorem rect_bound (P : Measure Ω) [IsProbabilityMeasure P] {C4 E2 : ℝ} (hC4 
         ≤ ENNReal.ofReal (D.len I) * 1 * ‖D.err1 I σ‖ₑ := by gcongr
       _ = _ := by rw [mul_one]
   have hmeas : Measurable fun σ => ∑ I ∈ D.cells, ENNReal.ofReal (D.len I) * ‖D.err1 I σ‖ₑ :=
-    Finset.measurable_sum _ fun I hI => measurable_const.mul (D.measurable_err1 hI).enorm
+    Finset.measurable_sum _ fun I hI => measurable_const.mul (D.measurable_err1 hI).eNorm
   calc ∫⁻ σ, ‖D.total ε σ‖ₑ ∂P
       ≤ ∫⁻ σ, (∑ I ∈ D.cells, ENNReal.ofReal (D.len I) * ‖D.err1 I σ‖ₑ +
           ‖D.latticeSum ε σ (slotLift D.δ (D.inp σ))‖ₑ) ∂P := lintegral_mono_ae hsplit
@@ -4308,7 +4308,7 @@ theorem rect_mom (P : Measure Ω) {C4 : ℝ}
   by_cases hy : y ∈ T.mask R j
   · simp only [hy, Set.indicator_of_mem, Pi.one_apply, mul_one, ofReal_norm]
     exact hmom j y
-  · simp only [hy, not_false_eq_true, Set.indicator_of_notMem, mul_zero, enorm_zero]
+  · simp only [hy, not_false_eq_true, Set.indicator_of_notMem, mul_zero, eNorm_zero]
     rw [lintegral_congr fun _ => ENNReal.zero_rpow_of_pos (by norm_num), lintegral_zero,
       ENNReal.zero_rpow_of_pos (by norm_num)]
     exact zero_le
@@ -4769,11 +4769,11 @@ theorem ae_memLp_root (hL : T.LeafBound z) (P : Measure Ω) [IsProbabilityMeasur
     have : (fun σ => eLpNorm (zσ j σ) 2 ν) = fun σ =>
         (∫⁻ y, ‖zσ j σ y‖ₑ ^ (2 : ℝ) ∂ν) ^ (1 / 2 : ℝ) := by
       funext σ
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
         (hm' σ).aestronglyMeasurable]
       norm_num
     rw [this]
-    exact (((hzσ j).enorm.pow_const _).lintegral_prod_right').pow_const _
+    exact (((hzσ j).eNorm.pow_const _).lintegral_prod_right').pow_const _
   filter_upwards [ae_lt_top (hm0.pow_const (4 : ℝ)) hlt.ne] with σ hσ
   rw [memLp_iff, eLpNorm_indicator_eq_eLpNorm_restrict
     (dyadicGridCell_measurable G _ _).nullMeasurableSet]
@@ -4858,9 +4858,9 @@ theorem short_block_core (hL : T.LeafBound z) (P : Measure Ω) [IsProbabilityMea
       ∑ R ∈ V, ‖(D R).total ε σ‖ₑ := by
     filter_upwards [T.ae_memLp_root z hz zσ hzσ hL P hmom] with σ hσ
     rw [T.total_decomp κ cells hcells kernel hker z hz zσ hzσ hm ε σ hσ]
-    exact enorm_sum_le _ _
+    exact eNorm_sum_le _ _
   refine (lintegral_mono_ae hpt).trans ?_
-  rw [lintegral_finsetSum _ fun R _ => ((D R).measurable_total ε hε).enorm]
+  rw [lintegral_finsetSum _ fun R _ => ((D R).measurable_total ε hε).eNorm]
   have hsimp : ∀ R ∈ V, ∫⁻ σ, ‖(D R).total ε σ‖ₑ ∂P ≤
       coreX1 κ C4 * (volume (T.mask R (DepthRect.heavy R)) ^ (1 / 2 : ℝ) *
           volume (T.mask R (DepthRect.desig R)) ^ (1 / 2 : ℝ)) +
@@ -5130,7 +5130,7 @@ theorem short_block_comparison (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (
       have hpt : ∀ y, ‖z' j y‖ₑ ^ 2 = ENNReal.ofReal ((s' j)⁻¹ ^ 2) * ‖z j y‖ₑ ^ 2 := by
         intro y
         simp only [z']
-        rw [Real.enorm_of_nonneg (by positivity), ← ofReal_norm, ← ENNReal.ofReal_pow
+        rw [Real.eNorm_of_nonneg (by positivity), ← ofReal_norm, ← ENNReal.ofReal_pow
           (by positivity), ← ENNReal.ofReal_pow (norm_nonneg _), ← ENNReal.ofReal_mul
           (by positivity)]
         congr 1; field_simp
@@ -5158,7 +5158,7 @@ theorem short_block_comparison (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (
       have e : ∀ σ, ‖zσ' j σ y‖ₑ ^ (4 : ℝ) =
           ENNReal.ofReal (s' j)⁻¹ ^ (4 : ℝ) * ‖zσ j σ y‖ₑ ^ (4 : ℝ) := by
         intro σ; simp only [zσ']
-        rw [enorm_mul, hc, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num), mul_comm]
+        rw [eNorm_mul, hc, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num), mul_comm]
       simp_rw [e]
       rw [lintegral_const_mul' _ _ (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
         ENNReal.ofReal_ne_top), ENNReal.mul_rpow_of_nonneg _ _ (by norm_num), ← ENNReal.rpow_mul,
@@ -5167,7 +5167,7 @@ theorem short_block_comparison (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (
           ≤ ENNReal.ofReal (s' j)⁻¹ * (ENNReal.ofReal C4 * ‖z j y‖ₑ) := by gcongr; exact hmom j y
         _ = ENNReal.ofReal C4 * ‖z' j y‖ₑ := by
             simp only [z']
-            rw [Real.enorm_of_nonneg (by positivity), ← ofReal_norm, div_eq_mul_inv,
+            rw [Real.eNorm_of_nonneg (by positivity), ← ofReal_norm, div_eq_mul_inv,
               ENNReal.ofReal_mul (norm_nonneg _)]
             ring
     have hcore := T.short_block_core κ cells hcells kernel hker z' hz' zσ' hzσ' hL P hC4 hmom' ε
@@ -5205,7 +5205,7 @@ theorem short_block_comparison (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (
           ε I σ * localProgressionForm (dyadicGridLength G I.1) (kernel I)
             (fun j => zσ' j σ)‖ₑ ∂P := by
           refine lintegral_congr fun σ => ?_
-          rw [hscale σ, enorm_mul, ← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg hPs]
+          rw [hscale σ, eNorm_mul, ← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg hPs]
       _ = ENNReal.ofReal (∏ j, s' j) * ∫⁻ σ, ‖∑ I ∈ cells, (dyadicGridLength G I.1 : ℂ) *
           ε I σ * localProgressionForm (dyadicGridLength G I.1) (kernel I)
             (fun j => zσ' j σ)‖ₑ ∂P := lintegral_const_mul' _ _ ENNReal.ofReal_ne_top

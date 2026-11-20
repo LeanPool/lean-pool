@@ -230,7 +230,7 @@ theorem natDegree_norm_eq_finsum_count_aux {a : W.CoordinateRing} (ha : a ≠ 0)
   rw [← finrank_quotient_span_eq_natDegree_norm (CoordinateRing.basis W) ha,
     finrank_quotient_eq_finsum_of_isAlgClosed K hI, hcast]
   refine finsum_congr fun v => ?_
-  rw [← FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.count_coe _ _ hI]
+  rw [← FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.count_coeIdeal _ _ hI]
 
 end WeierstrassCurve.Affine.CoordinateRing
 

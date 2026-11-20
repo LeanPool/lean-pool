@@ -119,7 +119,7 @@ theorem ProjectiveHypersurfaceGrowth.ideal {n e : ℕ} (h : ProjectiveHypersurfa
   have hpd : p.totalDegree = d := by
     rw [principal_filteredHilbertPolynomial_leadingCoeff p hp.ne_zero hpdeg] at hdegree
     have hf : ((n + 2).factorial : ℚ) ≠ 0 := by positivity
-    exact_mod_cast (div_left_inj' hf).mp hdegree
+    exact_mod_cast (div_left_inj₀ hf).mp hdegree
   have hsub : projectiveIdealZeroLocus (Ideal.span {p}) ⊆ projectiveZeroLocus p :=
     fun x hx => projectiveIdealZeroLocus_rep hx p (Ideal.mem_span_singleton_self p)
   calc

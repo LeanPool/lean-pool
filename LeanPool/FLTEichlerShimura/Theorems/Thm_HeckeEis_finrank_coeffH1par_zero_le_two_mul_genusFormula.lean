@@ -165,7 +165,7 @@ theorem toHom_mem (z : ↥(coeffParabolicCocycles (ρ0 N))) :
   intro γ hγ
   rw [toHom_apply]
   obtain ⟨u, hu⟩ := z.2.2 γ hγ
-  rw [LinearMap.sub_apply, Module.End.one_apply, rho0_apply, sub_self] at hu
+  rw [LinearMap.sub_apply, one_apply_eq_self, rho0_apply, sub_self] at hu
   rw [← hu]; rfl
 
 def φ : ↥(coeffParabolicCocycles (ρ0 N)) →ₗ[ℂ] ↥(parabolicHoms ℂ (Gamma0 N) ℂ) where

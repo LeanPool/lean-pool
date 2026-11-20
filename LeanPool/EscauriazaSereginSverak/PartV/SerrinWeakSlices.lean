@@ -40,11 +40,11 @@ theorem serrin_slice_memLp_ae {E : Type} [NormedAddCommGroup E] {T : ℝ}
   have hr : 0 < r := ENNReal.toReal_pos hq0 hqtop
   set ν : Measure (Vec3 × ℝ) := (volume : Measure Vec3).prod (volume.restrict (Ioo 0 T))
   have hfm : AEStronglyMeasurable (fun z : Vec3 × ℝ => f z) ν := hf.aestronglyMeasurable
-  have hgm : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ r) ν := hfm.enorm.pow_const r
+  have hgm : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ r) ν := hfm.eNorm.pow_const r
   have hfin : (∫⁻ z, ‖f z‖ₑ ^ r ∂ν) ≠ ⊤ := by
     have h1 := hf.eLpNorm_lt_top
     have hfm' : AEStronglyMeasurable f ν := hfm
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hq0 hqtop hfm'] at h1
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hq0 hqtop hfm'] at h1
     exact (ENNReal.rpow_lt_top_iff_of_pos (by positivity)).mp h1 |>.ne
   have hGm : AEMeasurable (fun s => ∫⁻ x, ‖f (x, s)‖ₑ ^ r ∂volume)
       (volume.restrict (Ioo 0 T)) := hgm.lintegral_prod_left'
@@ -52,7 +52,7 @@ theorem serrin_slice_memLp_ae {E : Type} [NormedAddCommGroup E] {T : ℝ}
     rw [← lintegral_prod_symm _ hgm]
     exact hfin
   filter_upwards [hfm.prodMk_right, ae_lt_top' hGm hGfin] with s hs hlt
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal hq0 hqtop hs]
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal hq0 hqtop hs]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hlt.ne
 
 /-- A square-integrable weakly differentiable field that is weakly

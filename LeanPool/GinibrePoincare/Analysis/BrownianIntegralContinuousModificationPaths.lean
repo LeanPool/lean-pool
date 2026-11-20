@@ -96,7 +96,6 @@ theorem continuousIntervalPathVersion_probability_cauchy
   apply measure_congr
   filter_upwards [continuousIntervalPathVersion_eq_ae P (F q.2) T (hc q.2),
     continuousIntervalPathVersion_eq_ae P (F q.1) T (hc q.1)] with ω h2 h1
-  apply propext
   constructor
   · rintro ⟨t, ht⟩
     refine ⟨t, t.property,?_⟩

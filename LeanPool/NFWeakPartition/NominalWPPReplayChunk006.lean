@@ -480,16 +480,16 @@ noncomputable def gDvelimdc (ph : Wff) (x : Var) (y : Var) (z : Var) (A : Class)
   have p0001 :=
     @gNfcrd ph x w A
       (by
-        aesop)
+        exact fresh_w_not_A)
       (by
-        aesop)
+        exact fresh_x_ne_w)
       hyp_dvelimdc_3
   have p0002 :=
     @gNfcrd ph z w B
       (by
-        aesop)
+        exact fresh_w_not_B)
       (by
-        aesop)
+        exact fresh_z_ne_w)
       hyp_dvelimdc_4
   have p0003 := @gEleq2 A B (.cv w)
   have p0004_e00_recanon :
@@ -541,9 +541,9 @@ noncomputable def gDvelimdc (ph : Wff) (x : Var) (y : Var) (z : Var) (A : Class)
   have p0007 :=
     @gNfcd (synWa ph (.neg (.all x (.classEq (.cv x) (.cv y))))) x w B
       (by
-        aesop)
+        exact fresh_w_not_B)
       (by
-        aesop)
+        exact fresh_x_ne_w)
       p0000 p0006
   have p0008 := @gEx ph (.neg (.all x (.classEq (.cv x) (.cv y)))) (synWnfc x B) p0007
   exact p0008

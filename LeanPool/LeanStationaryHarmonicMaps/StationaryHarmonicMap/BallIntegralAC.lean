@@ -229,7 +229,7 @@ theorem sum_dist_ballIntegral_le_radialOpenShells_lintegral_toReal {n : ℕ} [Ne
       AEStronglyMeasurable f (μR.restrict (RadialOpenShells (n := n) E)) :=
     hfμ.aestronglyMeasurable.restrict
   simpa [μR, Real.norm_eq_abs] using
-    (integral_norm_eq_lintegral_enorm
+    (integral_norm_eq_lintegral_eNorm
       (μ := μR.restrict (RadialOpenShells (n := n) E))
       (f := f) hmeas)
 

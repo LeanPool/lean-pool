@@ -113,7 +113,7 @@ theorem exists_eta_abs_setIntegral_sub_le [NeZero d] {y : Vec d} {n : ℤ} {a : 
       Real.sqrt (∫ z in cubeSetAt y n, w.toH1Function.toFun z ^ (2 : ℕ) ∂volume) := by
     refine Real.sqrt_le_sqrt ?_
     exact setIntegral_mono_set hUint (Filter.Eventually.of_forall fun z => by positivity)
-      (LE.le.eventuallyLE hB)
+      (LE.le.eventuallySubset hB)
   have hgrad : (∫ x in cubeSetAt y n, ‖w.toH1Function.grad x‖ ^ (2 : ℕ) ∂volume) =
       ∫ x in cubeSetAt y n, ‖u.grad x - u'.grad x‖ ^ (2 : ℕ) ∂volume := by
     refine integral_congr_ae (Filter.Eventually.of_forall fun x => ?_)

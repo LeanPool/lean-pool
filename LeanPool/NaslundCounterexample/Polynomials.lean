@@ -99,11 +99,11 @@ theorem eval_Q (c : ZMod 3) : Q.eval c = 0 := by
 /-- `Q` has no `T^5` term; this is why the parameter `u` does not disturb the top coordinate of
 a lifted polynomial. -/
 theorem coeff_Q_five : Q.coeff 5 = 0 := by
-  rw [Q_eq]; simp [coeff_add, coeff_X_pow]
+  rw [Q_eq]; simp [coeff_X_pow]
 
 /-- The leading coefficient of `Q`, read at `T^6`. -/
 theorem coeff_Q_six : Q.coeff 6 = 1 := by
-  rw [Q_eq]; simp [coeff_add, coeff_X_pow]
+  rw [Q_eq]; simp [coeff_X_pow]
 
 /-! ## The interpolant `V_s` -/
 
@@ -140,7 +140,7 @@ theorem degree_R_le (r : Fin 3 → ZMod 3) : (R r).degree ≤ 2 := by
 
 /-- The coefficients of `R_r` below `T^3` are the entries of `r`. -/
 theorem coeff_R (r : Fin 3 → ZMod 3) (i : Fin 3) : (R r).coeff (i : ℕ) = r i := by
-  fin_cases i <;> simp [R, coeff_add, coeff_C_mul, coeff_X_pow, coeff_C]
+  fin_cases i <;> simp [R, coeff_C_mul, coeff_X_pow, coeff_C]
 
 /-- Distinct coefficient vectors give distinct polynomials. -/
 theorem R_injective : Function.Injective R := by

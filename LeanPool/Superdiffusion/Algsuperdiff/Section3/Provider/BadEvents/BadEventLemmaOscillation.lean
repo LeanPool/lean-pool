@@ -476,7 +476,7 @@ theorem measureReal_le_exp_of_iUnion {Omega : Type*}
     rw [ENNReal.ofReal_tsum_of_nonneg
       (fun w => pow_nonneg (Real.exp_pos _).le _) hsummable]
     refine le_trans (measure_mono hsub) ?_
-    refine le_trans (measure_iUnion_le _) (ENNReal.tsum_le_tsum fun w => ?_)
+    refine le_trans (measure_iUnion_le _) (tsum_le_tsum fun w => ?_)
     have hfin : mu (T w) ≠ ⊤ := measure_ne_top _ _
     rw [← ENNReal.ofReal_toReal hfin]
     exact ENNReal.ofReal_le_ofReal (hgeom w)

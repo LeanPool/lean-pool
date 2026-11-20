@@ -279,7 +279,7 @@ theorem norm_stationaryPacketAction_ge_harmonicPhaseSum_sub_error
     rw [hM_eq]
     convert norm_stationaryKernelMain_eq_harmonicPhaseSum hN hkn
       (x := (k : ℝ) + τ) using 1
-    all_goals ring_nf
+    ring_nf
   have hbasic : ‖M‖ - ‖S‖ ≤ ‖S - M‖ := by
     simpa only [norm_sub_rev] using norm_sub_norm_le M S
   change ‖S‖ ≥ _

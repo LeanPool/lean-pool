@@ -29,7 +29,9 @@ def resonantInteriorPositiveActions (eccentricity : ℝ) :
 /-- Rational Kepler resonances are dense even after imposing the open apoapsis constraint. -/
 theorem resonantInteriorPositiveActions_dense (eccentricity : ℝ) :
     Dense (resonantInteriorPositiveActions eccentricity) := by
-  apply Subtype.dense_iff.mpr
+  refine (Subtype.dense_iff
+    (s := {candidate : PositiveAction | candidate.1 ^ 2 * (1 + eccentricity) < 1})
+    (t := resonantInteriorPositiveActions eccentricity)).mpr ?_
   intro action haction
   have hopen : IsOpen
       {candidate : PositiveAction |

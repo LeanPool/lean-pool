@@ -112,7 +112,7 @@ theorem memLp_top_scalarCutoffGradientField_of_bound_on_cubeSet {d : ℕ}
   have hbound_ae :
       ∀ᵐ x ∂ normalizedCubeMeasure Q, ‖scalarCutoffGradientField η x‖ ≤ Xi := by
     rw [MeasureTheory.ae_iff]
-    rw [normalizedCubeMeasure, MeasureTheory.Measure.smul_apply]
+    rw [normalizedCubeMeasure, smul_apply]
     rw [(MeasureTheory.ae_iff).1 hbound_ae_cube]
     simp
   exact MeasureTheory.memLp_top_of_bound hcont.aestronglyMeasurable Xi hbound_ae

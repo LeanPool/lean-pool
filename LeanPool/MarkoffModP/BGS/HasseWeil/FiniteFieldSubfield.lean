@@ -48,7 +48,7 @@ theorem finiteField_fieldRange_le_of_finrank_dvd
   classical
   let p : Ω[X] := X ^ Fintype.card B - X
   have hcardB : 1 < Fintype.card B := Fintype.one_lt_card
-  have hp0 : p ≠ 0 := FiniteField.X_pow_card_sub_X_ne_zero Ω hcardB
+  have hp0 : p ≠ 0 := Polynomial.X_pow_sub_X_ne_zero hcardB
   have himageRoots : Finset.univ.image g ⊆ p.roots.toFinset := by
     intro y hy
     rw [Finset.mem_image] at hy
@@ -65,7 +65,7 @@ theorem finiteField_fieldRange_le_of_finrank_dvd
       p.roots.toFinset.card ≤ p.roots.card := Multiset.toFinset_card_le _
       _ ≤ p.natDegree := Polynomial.card_roots' p
       _ = Fintype.card B :=
-        FiniteField.X_pow_card_sub_X_natDegree_eq Ω hcardB
+        Polynomial.natDegree_X_pow_sub_X hcardB
   have hrootsEq : p.roots.toFinset = Finset.univ.image g := by
     exact (Finset.eq_of_subset_of_card_le himageRoots
       (by simpa [himageCard] using hrootsCard)).symm

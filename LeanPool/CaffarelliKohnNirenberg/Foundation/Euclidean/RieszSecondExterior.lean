@@ -52,7 +52,8 @@ private lemma thickening_separated {A U : Set Vec3}
     have hcont : Continuous (fun a : Vec3 => vec3EuclideanNorm (x - a)) := by
       unfold vec3EuclideanNorm
       fun_prop
-    exact closure_minimal (hsep x hx) (isClosed_le continuous_const hcont) ha
+    exact closure_minimal (t := {a | δ ≤ vec3EuclideanNorm (x - a)})
+      (hsep x hx) (isClosed_le continuous_const hcont) ha
   have hz' : ‖z‖ ≤ δ / 12 := by
     simpa [Metric.mem_closedBall, dist_zero_right] using hz
   have hza : vec3EuclideanNorm z ≤ δ / 4 := by

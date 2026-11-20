@@ -56,8 +56,8 @@ theorem re_sum_inner_map_le_kyFanApproximationGauge
     FiniteDimensional.span_of_finite 𝕜 (Set.finite_range u)
   have : FiniteDimensional 𝕜 L₂ :=
     FiniteDimensional.span_of_finite 𝕜 (Set.finite_range v)
-  have : CompleteSpace L₁ := FiniteDimensional.complete 𝕜 L₁
-  have : CompleteSpace L₂ := FiniteDimensional.complete 𝕜 L₂
+  have : CompleteSpace L₁ := FiniteDimensional.completeSpace 𝕜 L₁
+  have : CompleteSpace L₂ := FiniteDimensional.completeSpace 𝕜 L₂
   set K' : L₂ →L[𝕜] L₁ :=
     L₁.orthogonalProjectionOnto ∘L K ∘L L₂.subtypeL with hK'def
   -- the corestricted families

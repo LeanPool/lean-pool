@@ -94,7 +94,7 @@ theorem ofReal_mul_indicator_one {s : Set (Fin 2 → ℝ)} (a : ℝ) (z : Fin 2 
 theorem enorm_smeared (N : ℕ) (ε : ℝ) (z : Fin 2 → ℝ) :
     ‖smeared N ε z‖ₑ = ∑ p ∈ atomBox N, (closedBall (atom p) (ε / 2)).indicator
       (fun _ => ENNReal.ofReal (colWeight p.1 / ε ^ 2)) z := by
-  rw [Real.enorm_eq_ofReal (smeared_nonneg N ε z), smeared, ENNReal.ofReal_sum_of_nonneg]
+  rw [Real.eNorm_eq_ofReal (smeared_nonneg N ε z), smeared, ENNReal.ofReal_sum_of_nonneg]
   · simp_rw [ofReal_mul_indicator_one]
   · exact fun _ _ => mul_nonneg (div_nonneg (colWeight_pos _).le (sq_nonneg _))
       (Set.indicator_nonneg (fun _ _ => zero_le_one) _)

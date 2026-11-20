@@ -119,7 +119,7 @@ private theorem lps_four_memLp_sum_lintegral_lt_top
   have hfin (E : Type) [NormedAddCommGroup E]
       (f : ParabolicPoint → E) (hf : MemLp f 2 (volume.restrict S)) :
       (∫⁻ z in S, ‖f z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-    have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hf.aestronglyMeasurable).1 hf
     simpa using h
@@ -130,15 +130,15 @@ private theorem lps_four_memLp_sum_lintegral_lt_top
   have hmA : AEMeasurable (fun z => ‖w z‖ₑ ^ (2 : ℝ))
       (volume.restrict S) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hw.aestronglyMeasurable.enorm
+      hw.aestronglyMeasurable.eNorm
   have hmB : AEMeasurable (fun z => ‖Dw z‖ₑ ^ (2 : ℝ))
       (volume.restrict S) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hDw.aestronglyMeasurable.enorm
+      hDw.aestronglyMeasurable.eNorm
   have hmC : AEMeasurable (fun z => ‖D2w z‖ₑ ^ (2 : ℝ))
       (volume.restrict S) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hD2w.aestronglyMeasurable.enorm
+      hD2w.aestronglyMeasurable.eNorm
   have hAB : (∫⁻ z in S, ‖w z‖ₑ ^ (2 : ℝ) + ‖Dw z‖ₑ ^ (2 : ℝ)) =
       (∫⁻ z in S, ‖w z‖ₑ ^ (2 : ℝ)) +
         (∫⁻ z in S, ‖Dw z‖ₑ ^ (2 : ℝ)) := by

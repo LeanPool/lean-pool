@@ -1567,7 +1567,7 @@ theorem endst20_ps_yGen_ne_negY [CharZero F] :
         + Polynomial.C (4 * W.a₄ + 2 * W.a₁ * W.a₃) * Polynomial.X
         + Polynomial.C (W.a₃ ^ 2 + 4 * W.a₆)) ?_ ?_
   · intro h0
-    have h3 := congrArg (fun q => Polynomial.coeff q 3) h0
+    have h3 := congrArg (fun q => AddMonoidAlgebra.coeff q 3) h0
     simp only [Polynomial.coeff_add, Polynomial.coeff_C_mul, Polynomial.coeff_X_pow,
       Polynomial.coeff_X, Polynomial.coeff_C, Polynomial.coeff_zero] at h3
     norm_num at h3
@@ -1677,7 +1677,7 @@ theorem endst20_ps_transcendental_dupX [IsAlgClosed F] [CharZero F] :
           - Polynomial.C (W.a₁ ^ 2 * W.a₆ + 4 * W.a₂ * W.a₆ - W.a₁ * W.a₃ * W.a₄
               + W.a₂ * W.a₃ ^ 2 - W.a₄ ^ 2))) ?_ ?_
   · intro h0
-    have h4 := congrArg (fun q => Polynomial.coeff q 4) h0
+    have h4 := congrArg (fun q => AddMonoidAlgebra.coeff q 4) h0
     simp only [Polynomial.coeff_sub, Polynomial.coeff_add, Polynomial.coeff_C_mul,
       Polynomial.coeff_X_pow, Polynomial.coeff_X, Polynomial.coeff_C,
       Polynomial.coeff_zero] at h4
@@ -1835,7 +1835,7 @@ theorem es1a6_add_sumX_isAlgebraic_constant_point [IsAlgClosed F]
   have hq0 : (X ^ 2 + C (W.a₁ * c + W.a₃) * X
       - C (c ^ 3 + W.a₂ * c ^ 2 + W.a₄ * c + W.a₆) : F[X]) ≠ 0 := by
     intro hq
-    have h2 := congrArg (fun q => Polynomial.coeff q 2) hq
+    have h2 := congrArg (fun q => AddMonoidAlgebra.coeff q 2) hq
     simp only [Polynomial.coeff_add, Polynomial.coeff_sub, Polynomial.coeff_X_pow,
       Polynomial.coeff_C_mul, Polynomial.coeff_C, Polynomial.coeff_X,
       Polynomial.coeff_zero] at h2
@@ -2914,7 +2914,7 @@ theorem es1a8_addInt_functionField_isAlgebraic_cmp :
       (nonZeroDivisors.ne_zero hb)
   refine ⟨Polynomial.C b * Polynomial.X - Polynomial.C a, ?_, ?_⟩
   · intro hcon
-    have h1 := congrArg (fun q => Polynomial.coeff q 1) hcon
+    have h1 := congrArg (fun q => AddMonoidAlgebra.coeff q 1) hcon
     simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul, Polynomial.coeff_X_one,
       Polynomial.coeff_C, Polynomial.coeff_zero, mul_one] at h1
     norm_num at h1

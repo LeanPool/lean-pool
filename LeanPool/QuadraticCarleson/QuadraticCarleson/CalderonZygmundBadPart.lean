@@ -27,12 +27,12 @@ namespace QuadraticCarleson
 
 /-- The one-dimensional cube of side length `R` centered at `z`, represented
 half-open so disjoint interval families remain literally disjoint. -/
-def centeredInterval (z R : ℝ) : Set ℝ :=
+noncomputable def centeredInterval (z R : ℝ) : Set ℝ :=
   Ico (z - R / 2) (z + R / 2)
 
 /-- The triple of the centered interval, corresponding to `Q*` in dimension
 one in Lemma 6.12. -/
-def tripleCenteredInterval (z R : ℝ) : Set ℝ :=
+noncomputable def tripleCenteredInterval (z R : ℝ) : Set ℝ :=
   Icc (z - 3 * R / 2) (z + 3 * R / 2)
 
 theorem abs_sub_center_le_of_mem_centeredInterval {z R y : ℝ}

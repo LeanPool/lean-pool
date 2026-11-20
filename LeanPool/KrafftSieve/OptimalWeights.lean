@@ -499,10 +499,11 @@ lemma sphere_perp_compact (n : ℕ) : IsCompact (spherePerp n) := by
   rw [Metric.isCompact_iff_isClosed_bounded]
   constructor
   · -- Closed
+    change IsClosed ((kernelQ1Perp n : Set _) ∩ {lambda | dotProduct n lambda lambda = 1})
     apply IsClosed.inter
     · -- kernelQ1Perp is closed
       have : FiniteDimensional ℝ (Idx n → ℝ) := by infer_instance
-      exact (kernelQ1Perp n).complete_of_finiteDimensional.isClosed
+      exact (kernelQ1Perp n).isComplete_of_finiteDimensional.isClosed
     · -- sphere is closed
       apply isClosed_eq
       · -- dotProduct is continuous

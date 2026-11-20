@@ -74,9 +74,9 @@ lemma left_path_image_interval_subset_of_dihomotopy_subset (F : Dihomotopy f g) 
   rw [Path.extend_apply (Dipath.ofDirectedMap f).toPath tI]
   refine ⟨(0, ⟨t, tI⟩), ?_, ?_⟩
   · apply UnitSubrectangle.mem_unitSubrectangle
-    constructor
-    · norm_num
-    · exact div_nonneg (by norm_num) (Nat.cast_nonneg _)
+    · constructor
+      · norm_num
+      · exact div_nonneg (by norm_num) (Nat.cast_nonneg _)
     · convert ht <;> exact Nat.cast_succ _
   · simp
     rfl
@@ -176,12 +176,10 @@ lemma fpv_subrectangle {x y : X} {γ₁ γ₂ : Dipath x y} {F : Dipath.Dihomoto
   rw [this, SplitDihomotopy.fpv_apply] at ht
   change ∃ a, a ∈ UnitSubrectangle _ hj ∧ F a = z
   refine ⟨_, ?_, ht⟩
-  constructor
-  constructor
+  refine ⟨⟨?_, ?_⟩, tI.2⟩
   · rw [Fraction.eq_zero]
     unit_interval
   · exact unitInterval.mul_le_left
-  · exact tI.2
 
 /-- If F is `(n+1) × m`-covered, then the first part of F, split at `T = 1/(n+2)` is `0 x
 m`-covered.
@@ -286,11 +284,7 @@ lemma spv_subrectangle {x y : X} {γ₁ γ₂ : Dipath x y} {F : Dipath.Dihomoto
   rw [this, SplitDihomotopy.spv_apply] at ht
   change ∃ a, a ∈ UnitSubrectangle _ hj ∧ F a = z
   refine ⟨_, ?_, ht⟩
-  constructor
-  constructor
-  · exact spv_aux₁ hi tI.1.1
-  · exact spv_aux₂ hi tI.1.2
-  · exact tI.2
+  exact ⟨⟨spv_aux₁ hi tI.1.1, spv_aux₂ hi tI.1.2⟩, tI.2⟩
 
 /-- If F is `(n + 1) × m`-covered, then the second part of F, split at `T = 1/(n+1)` is `n ×
 m`-covered.

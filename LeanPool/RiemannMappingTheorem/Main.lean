@@ -73,7 +73,7 @@ theorem main [good_domain U] : ∃ f ∈ 𝓘 U, f '' U = ball (0 : ℂ) 1 := by
     specialize hfg (𝓘_subset_𝓙 hg)
     have := norm_pos_iff.1
       ((norm_pos_iff.2 (deriv_ne_zero_of_inj hU hg.1.1 hg.2 hz₀)).trans_le hfg)
-    contrapose! this
+    contrapose this
     obtain ⟨w, hw : EqOn f (fun _ => w) U⟩ := this
     simpa only [deriv_const'] using (hw.eventuallyEq_of_mem (hU.mem_nhds hz₀)).deriv_eq
   have h5 : f ∈ 𝓘 U := ⟨hf.1, hf.2.resolve_right h7⟩

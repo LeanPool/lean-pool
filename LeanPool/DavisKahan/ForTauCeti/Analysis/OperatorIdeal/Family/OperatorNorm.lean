@@ -88,9 +88,9 @@ noncomputable def operatorNormIdealFamily (𝕜 : Type u) [RCLike 𝕜] :
     OperatorIdealFamily.{u, v, w} 𝕜 where
   gauge A := ‖A‖ₑ
   gauge_add_le A B := by
-    simpa [enorm_eq_nnnorm, ← ENNReal.coe_add] using nnnorm_add_le A B
+    simpa [eNorm_eq_nnNorm, ← ENNReal.coe_add] using nnNorm_add_le A B
   gauge_smul c A := by
-    simp [enorm_eq_nnnorm, nnnorm_smul]
+    simp [eNorm_eq_nnNorm, nnNorm_smul]
   enorm_le_gauge _ := le_rfl
   gauge_comp_le L A R := by
     have h : ‖L ∘L A ∘L R‖ ≤ ‖L‖ * ‖A‖ * ‖R‖ :=
@@ -133,7 +133,7 @@ noncomputable def operatorNormIdealFamilyElemEquiv :
   norm_map' A := by
     -- names the application so the norm bound applies to it directly.
     change ‖A.val‖ = ‖A‖
-    rw [OperatorIdealFamily.Elem.norm_def, gauge_operatorNormIdealFamily, toReal_enorm]
+    rw [OperatorIdealFamily.Elem.norm_def, gauge_operatorNormIdealFamily, toReal_eNorm]
 
 /-- The operator-norm ideal is complete, transported along the isometry
 `operatorNormIdealFamilyElemEquiv` from completeness of `E →L[𝕜] F`. -/

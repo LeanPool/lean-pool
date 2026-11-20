@@ -70,7 +70,7 @@ theorem complexMvPolynomial_real_line_crossings_finite_ae (d : ℕ)
   obtain ⟨k, hk⟩ : ∃ k, q.coeff k ≠ 0 := by
     by_contra h
     simp only [not_exists, not_not] at h
-    exact hq (Polynomial.ext fun k => by simpa using h k)
+    exact hq (AddMonoidAlgebra.ext (Finsupp.ext fun k => by simpa using h k))
   filter_upwards [complexMvPolynomial_fin_eval_ne_zero_ae volume d (q.coeff k) hk] with y hy
   have hmap : q.map (MvPolynomial.eval y) ≠ 0 := by
     intro hz

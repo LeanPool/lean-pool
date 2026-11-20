@@ -151,7 +151,7 @@ theorem binaryFreeProductEquiv_inl {α β : Type u} (x : FreeGroup α) :
 
 /-- The image of a free-group element in the free abelian group on its generators. -/
 def abelianizedValue {α : Type u} (x : FreeGroup α) : FreeAbelianGroup α :=
-  Additive.ofMul (Abelianization.of x)
+  Additive.ofMul (Group.Abelianization.of x)
 
 @[simp]
 theorem abelianizedValue_one {α : Type u} :
@@ -162,14 +162,14 @@ theorem abelianizedValue_one {α : Type u} :
 @[simp]
 theorem abelianizedValue_mul {α : Type u} (x y : FreeGroup α) :
     abelianizedValue (x * y) = abelianizedValue x + abelianizedValue y := by
-  change Additive.ofMul (Abelianization.of (x * y)) = _
+  change Additive.ofMul (Group.Abelianization.of (x * y)) = _
   rw [map_mul]
   rfl
 
 @[simp]
 theorem abelianizedValue_inv {α : Type u} (x : FreeGroup α) :
     abelianizedValue x⁻¹ = -abelianizedValue x := by
-  change Additive.ofMul (Abelianization.of x⁻¹) = _
+  change Additive.ofMul (Group.Abelianization.of x⁻¹) = _
   rw [map_inv]
   rfl
 

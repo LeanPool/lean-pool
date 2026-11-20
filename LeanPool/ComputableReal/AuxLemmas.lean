@@ -33,7 +33,7 @@ theorem sup_equiv_of_equivs (ha : a ≈ c) (hb : b ≈ c) : a ⊔ b ≈ c := by
   intro j hj
   replace hi₁ := hi₁ j (Nat.max_le.mp hj).1
   replace hi₂ := hi₂ j (Nat.max_le.mp hj).2
-  dsimp at hi₁ hi₂ ⊢
+  simp only [sub_apply, coe_sup, Pi.sup_apply] at hi₁ hi₂ ⊢
   rw [max_def]
   rw [abs_ite_le] at hi₁ hi₂ ⊢
   split_ifs at hi₁ hi₂ ⊢
@@ -52,7 +52,7 @@ theorem inf_equiv_of_equivs (ha : a ≈ c) (hb : b ≈ c) : a ⊓ b ≈ c := by
   intro j hj
   replace hi₁ := hi₁ j (Nat.max_le.mp hj).1
   replace hi₂ := hi₂ j (Nat.max_le.mp hj).2
-  dsimp at hi₁ hi₂ ⊢
+  simp only [sub_apply, coe_inf, Pi.inf_apply] at hi₁ hi₂ ⊢
   rw [min_def]
   rw [abs_ite_le] at hi₁ hi₂ ⊢
   split_ifs at hi₁ hi₂ ⊢

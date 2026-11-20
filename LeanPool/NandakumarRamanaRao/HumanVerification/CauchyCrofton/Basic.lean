@@ -83,7 +83,7 @@ theorem hPerimeter_scalePos (K : Body) {r : ℝ} (hr : 0 < r) :
     simpa [Set.image_smul] using this.symm
   rw [hPerimeter, hPerimeter, hfront,
     MeasureTheory.Measure.hausdorffMeasure_smul₀ (d := (1 : ℝ)) zero_le_one hr.ne']
-  simp [ENNReal.smul_def, Real.nnnorm_of_nonneg hr.le,
+  simp [ENNReal.smul_def, Real.nnNorm_of_nonneg hr.le,
     ENNReal.ofReal_eq_coe_nnreal hr.le]
 
 /-- Translation invariance of the Hausdorff perimeter. -/

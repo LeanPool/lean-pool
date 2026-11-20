@@ -34,8 +34,8 @@ theorem P4994T6StepChamber (p r : Int × Int)
   simp only [TriangularLatticeAdjacent, sub_zero] at hp hr
   rcases hp with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases hr with rfl | rfl | rfl | rfl | rfl | rfl
-  all_goals try norm_num at hdet
-  all_goals try norm_num [TriangularLatticeAdjacent, Prod.mk_sub_mk] at hpr
+  all_goals norm_num at hdet
+  all_goals norm_num [TriangularLatticeAdjacent, Prod.mk_sub_mk] at hpr
   all_goals first
     | (refine ⟨0, by decide, ?_⟩
        norm_num [P4994T6Chamber, P4994T6Rotation]

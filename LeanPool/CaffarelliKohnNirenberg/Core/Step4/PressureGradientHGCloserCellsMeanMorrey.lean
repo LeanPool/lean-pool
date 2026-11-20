@@ -44,16 +44,16 @@ theorem pressure_source_mean_enorm_bound
     intro y
     have hcomp : |v y i| ≤ ‖v y‖ := by simpa only [Real.norm_eq_abs] using norm_le_pi_norm (v y) i
     have hs : ‖v y‖ ≤ 1 + ‖v y‖ ^ 2 := by nlinarith only [sq_nonneg (‖v y‖ - 1 / 2)]
-    rw [Real.enorm_eq_ofReal_abs, ← ofReal_norm]
+    rw [Real.eNorm_eq_ofReal_abs, ← ofReal_norm]
     rw [ENNReal.rpow_ofNat, ← ENNReal.ofReal_pow (norm_nonneg _),
       ← ENNReal.ofReal_one, ← ENNReal.ofReal_add (by norm_num : (0 : ℝ) ≤ 1) (sq_nonneg _)]
     exact ENNReal.ofReal_le_ofReal (hcomp.trans hs)
-  rw [average_eq, smul_eq_mul, enorm_mul, Real.enorm_eq_ofReal_abs,
+  rw [average_eq, smul_eq_mul, eNorm_mul, Real.eNorm_eq_ofReal_abs,
     abs_of_nonneg (inv_nonneg.mpr measureReal_nonneg), measureReal_def,
     Measure.restrict_apply_univ]
   apply mul_le_mul_right
   calc
-    _ ≤ ∫⁻ y in B, ‖v y i‖ₑ := enorm_integral_le_lintegral_enorm _
+    _ ≤ ∫⁻ y in B, ‖v y i‖ₑ := eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y in B, 1 + ‖v y‖ₑ ^ (2 : ℝ) := lintegral_mono hpoint
     _ = _ := by
       rw [lintegral_add_left measurable_const, lintegral_const,
@@ -80,7 +80,7 @@ theorem pressure_source_mean_ae_bounded_of_sws
   intro i
   have h := (pressure_source_mean_enorm_bound (fun y => u (y, s)) B i).trans
     (mul_le_mul_right (add_le_add_right hs (volume B)) _)
-  rw [Real.enorm_eq_ofReal_abs] at h
+  rw [Real.eNorm_eq_ofReal_abs] at h
   exact (ENNReal.ofReal_le_iff_le_toReal hK.ne).mp h
 
 /-- The centring mean is measurable in time on each suitable-solution box. -/

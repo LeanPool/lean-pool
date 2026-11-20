@@ -81,7 +81,7 @@ theorem ginibreLangevinDrift_re_hamiltonian {n : ℕ} (hn : 0 < n)
   rw [ginibreCoulombInteraction_re]
   have hne : (n : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hn)
   field_simp [hne]
- ; ring
+  ring
 
 theorem ginibreLangevinDrift_im_hamiltonian {n : ℕ} (hn : 0 < n)
     (α : ℝ) (z : Configuration n) (hz : CollisionFree z) (j : Fin n) :
@@ -94,7 +94,7 @@ theorem ginibreLangevinDrift_im_hamiltonian {n : ℕ} (hn : 0 < n)
   rw [ginibreCoulombInteraction_im]
   have hne : (n : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hn)
   field_simp [hne]
- ; ring
+  ring
 
 end
 end GinibrePoincare

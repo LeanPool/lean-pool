@@ -123,8 +123,7 @@ noncomputable def natFreeCat : (ℕᵒᵖ ⥤ C) ≃ ((O : ℕ → C) × (∀ n,
       · simp [Nat.add_sub_sub_of_le, leOfHom h1.unop, leOfHom h2.unop,
           leOfHom (h1 ≫ h2).unop]
       · apply heq_eqToHom
-        all_goals
-          simp [leOfHom (h1 ≫ h2).unop]
+        simp [leOfHom (h1 ≫ h2).unop]
       · congr
         simp [Nat.add_sub_sub_of_le, leOfHom h1.unop, leOfHom h2.unop]
   }
@@ -138,7 +137,7 @@ noncomputable def natFreeCat : (ℕᵒᵖ ⥤ C) ≃ ((O : ℕ → C) × (∀ n,
       · simp [leOfHom h.unop]
       · apply Subsingleton.helim
         congr
-        all_goals simp [leOfHom h.unop]
+        simp [leOfHom h.unop]
     · intro _
       rfl
   right_inv _ := by ext <;> simp

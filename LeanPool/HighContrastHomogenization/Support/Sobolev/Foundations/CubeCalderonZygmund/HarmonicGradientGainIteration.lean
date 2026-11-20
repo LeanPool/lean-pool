@@ -110,7 +110,7 @@ noncomputable def HarmonicEuclideanGradientGain.fromScalar {d : ℕ}
     HarmonicEuclideanGradientGain d r depth := by
   let C : ℝ≥0∞ := ‖(d : ℝ)‖ₑ * (d : ℝ≥0∞) * G.constantValue
   have hCtop : C ≠ ∞ :=
-    ENNReal.mul_ne_top (ENNReal.mul_ne_top enorm_ne_top (ENNReal.natCast_ne_top d))
+    ENNReal.mul_ne_top (ENNReal.mul_ne_top eNorm_ne_top (ENNReal.natCast_ne_top d))
       G.constant_ne_top
   refine ⟨C, hCtop, ?_, ?_⟩
   · intro Q u h
@@ -191,7 +191,7 @@ theorem memLpOn_openCubeSet_of_memLp_normalizedCubeMeasure
     have heq : ENNReal.ofReal (cubeVolume Q) • normalizedCubeMeasure Q = cubeMeasure Q := by
       rw [normalizedCubeMeasure]
       ext s
-      rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.smul_apply]
+      rw [smul_apply, smul_apply]
       change ENNReal.ofReal (cubeVolume Q) *
           (ENNReal.ofReal ((cubeVolume Q)⁻¹) * cubeMeasure Q s) = cubeMeasure Q s
       rw [← mul_assoc, hmul, one_mul]

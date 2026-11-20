@@ -61,7 +61,7 @@ sending the class of $\Phi(a)$ to the class of $a$.
 
 **Relation to Mathlib.** All of this is built on Mathlib's `AdicCompletion`, its evaluation maps
 `eval` and `evalₐ`, and Mathlib's local-ring results for adic completions (`isLocalRing_of_fg`,
-`maximalIdeal_eq_map`, `IsAdicComplete.le_jacobson_bot`); what is added here are the level-$n$
+`maximalIdeal_eq_map`, `IsAdicComplete.le_jacobson`); what is added here are the level-$n$
 kernel identifications, the unit criteria for $1+x$ and $u+x$, the $k$-algebra isomorphisms
 $\widehat{A}/\mathfrak m_{\widehat A}^n \simeq A/\mathfrak m^n$, and their transport along an
 algebra isomorphism of $\widehat A$ with another local algebra.
@@ -115,7 +115,7 @@ theorem isUnit_one_add_of_mem_map (hI : I.FG) {x : AdicCompletion I A}
     (hx : x ∈ I.map (algebraMap A (AdicCompletion I A))) : IsUnit (1 + x) := by
   have : IsAdicComplete (I.map (algebraMap A (AdicCompletion I A))) (AdicCompletion I A) :=
     (IsAdicComplete.map_algebraMap_iff I (AdicCompletion I A)).mpr (isAdicComplete hI)
-  have h := Ideal.mem_jacobson_bot.mp (IsAdicComplete.le_jacobson_bot _ hx) 1
+  have h := Ring.mem_jacobson_iff.mp (IsAdicComplete.le_jacobson _ hx) 1
   rwa [mul_one, add_comm] at h
 
 theorem isUnit_add_of_mem_map (hI : I.FG) {u x : AdicCompletion I A} (hu : IsUnit u)

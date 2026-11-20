@@ -129,7 +129,7 @@ theorem coordinateQuantileTransport_lipschitz (T : I → ℝ → ℝ)
     LipschitzWith L (coordinateQuantileTransport T) := by
   classical
   have hl (i : I) : LipschitzWith L (T i) := by
-    apply lipschitzWith_of_nnnorm_fderiv_le ((hT i).differentiable (by norm_num))
+    apply lipschitzWith_of_nnNorm_fderiv_le ((hT i).differentiable (by norm_num))
     intro x
     apply NNReal.coe_le_coe.mp
     change ‖fderiv ℝ (T i) x‖ ≤ (L : ℝ)

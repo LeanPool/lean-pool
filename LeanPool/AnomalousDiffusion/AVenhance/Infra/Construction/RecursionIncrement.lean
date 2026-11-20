@@ -325,7 +325,7 @@ theorem RecursionIncrement.barNorm_mul_const_Icc_le {f : Vec 2 → ℝ} {n : ℕ
       funext y
       simp [smul_eq_mul]]
     rw [iteratedFDeriv_const_smul_apply' hf.contDiffAt]
-    simp [Real.enorm_of_nonneg hc.1, smul_eq_mul]
+    simp [Real.eNorm_of_nonneg hc.1, smul_eq_mul]
   have hinner :
       (⨆ J : Fin n → Fin 2, ⨆ x : Vec 2,
         ‖iteratedFDeriv ℝ n (fun y : Vec 2 => c * f y) x

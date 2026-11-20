@@ -6,7 +6,8 @@ Authors: Yuma Mizuno
 module
 
 
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 public import Mathlib.RingTheory.Localization.Integer
 public import Mathlib.Tactic
@@ -56,12 +57,10 @@ theorem valuation_div_algebraMap_le_one_of_mem_denominatorPower
   classical
   let m : ℕ :=
     (normalizedFactors (Ideal.span ({denominator} : Set R))).count v.asIdeal
-  have hspan : Ideal.span ({denominator} : Set R) ≠ (⊥ : Ideal R) := by
-    exact Ideal.span_singleton_eq_bot.not.mpr hdenominator
   have hdenominatorValuation :
       v.intValuation denominator = WithZero.exp (-(m : ℤ)) := by
     rw [v.intValuation_eq_exp_neg_multiplicity hdenominator,
-      multiplicity_eq_count_normalizedFactors v.irreducible hspan]
+      multiplicity_eq_count_normalizedFactors v.irreducible]
     simp [m]
   have hnumeratorValuation :
       v.intValuation numerator ≤ WithZero.exp (-(m : ℤ)) := by
@@ -98,12 +97,10 @@ theorem valuation_sub_div_algebraMap_le_of_mem_denominatorPrecisionPower
   classical
   let m : ℕ :=
     (normalizedFactors (Ideal.span ({denominator} : Set R))).count v.asIdeal
-  have hspan : Ideal.span ({denominator} : Set R) ≠ (⊥ : Ideal R) := by
-    exact Ideal.span_singleton_eq_bot.not.mpr hdenominator
   have hdenominatorValuation :
       v.intValuation denominator = WithZero.exp (-(m : ℤ)) := by
     rw [v.intValuation_eq_exp_neg_multiplicity hdenominator,
-      multiplicity_eq_count_normalizedFactors v.irreducible hspan]
+      multiplicity_eq_count_normalizedFactors v.irreducible]
     simp [m]
   have hnumeratorValuation :
       v.intValuation (numerator - target) ≤

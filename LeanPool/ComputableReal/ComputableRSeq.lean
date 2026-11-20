@@ -183,6 +183,7 @@ private theorem val_uniq' {x : ℝ} {lb ub : CauSeq ℚ abs} (hlb : ∀ n, lb n 
         replace hi := hi j hj
         have hl₁ := hlb j
         have hu₂ := hub j
+        simp only [sub_apply] at hi
         rify at hi hl₁ hu₂ hε₁
         rw [abs_ite_le] at hi ⊢
         split_ifs at hi ⊢
@@ -258,8 +259,12 @@ def neg (x : ComputableℝSeq) : ComputableℝSeq :=
   (fun n ↦ -x.lub n)
   (IsCauSeq.neg x.hcu)
   (IsCauSeq.neg x.hcl)
-  (fun n ↦ by simpa [ub] using x.hub n)
-  (fun n ↦ by simpa [lb] using x.hlb n)
+  (fun n ↦ by
+    change ((-(x.ub n) : ℚ) : ℝ) ≤ -x.val
+    simpa only [Rat.cast_neg] using neg_le_neg (x.hub n))
+  (fun n ↦ by
+    change -x.val ≤ ((-(x.lb n) : ℚ) : ℝ)
+    simpa only [Rat.cast_neg] using neg_le_neg (x.hlb n))
   (have := CauSeq.neg_equiv_neg (Setoid.symm x.heq); this)
 /-- Subtraction of computable real sequences. -/
 def sub (x : ComputableℝSeq) (y : ComputableℝSeq) : ComputableℝSeq :=
@@ -463,16 +468,10 @@ theorem val_sub : (x - y).val = x.val - y.val := by
   rw [val_add, val_neg, sub_eq_add_neg]
 
 theorem lb_mul : (x * y).lb = ((x.lb * y.lb) ⊓ (x.ub * y.lb)) ⊓ ((x.lb * y.ub) ⊓ (x.ub * y.ub)) :=
-  by
-  ext
-  rw [← mulLb, ← fst_mul'_eq_mulLb]
-  rfl
+  Subtype.ext fst_mul'_eq_mulLb
 
 theorem ub_mul : (x * y).ub = ((x.lb * y.lb) ⊔ (x.ub * y.lb)) ⊔ ((x.lb * y.ub) ⊔ (x.ub * y.ub)) :=
-  by
-  ext
-  rw [← mulUb, ← snd_mul'_eq_mulUb]
-  rfl
+  Subtype.ext snd_mul'_eq_mulUb
 
 @[simp]
 theorem val_mul : (x * y).val = x.val * y.val := by
@@ -523,10 +522,12 @@ theorem signWitnessTerm_prop (x : ComputableℝSeq) (n : ℕ) (hnz : x.val ≠ 0
     (hub : ¬(x.ub).val n < 0) (hlb : ¬(x.lb).val n > 0) :
     n + Nat.succ 0 ≤ (x.signWitnessTerm hnz).val.1 := by
   push Not at hub hlb
+  change 0 ≤ x.ub n at hub
+  change x.lb n ≤ 0 at hlb
   obtain ⟨⟨k, q⟩, ⟨h₁, h₂, h₃⟩⟩ := x.signWitnessTerm hnz
   by_contra hn
   replace h₃ := h₃ n (by linarith)
-  simp_rw [CauSeq.sub_apply] at h₃
+  simp_rw [_root_.sub_apply] at h₃
   rw [abs_ite_le] at h₂ h₃
   have := x.hlb n
   have := x.hub n
@@ -674,8 +675,8 @@ def lbInv (x : ComputableℝSeq) (hnz : x.val ≠ 0) : CauSeq ℚ abs :=
           let ⟨i, H⟩ := exists_forall_ge_and (exists_forall_ge_and HK (x.ub.cauchy₃ δ0)) Hq
           let ⟨⟨iK, H'⟩, _⟩ := H _ le_rfl
           ⟨i, fun j hj ↦
-            have h₁ := CauSeq.neg_apply x.ub _ ▸ H _ le_rfl
-            have h₁ := CauSeq.neg_apply x.ub _ ▸ H _ hj
+            have h₁ := _root_.neg_apply x.ub _ ▸ H _ le_rfl
+            have h₁ := _root_.neg_apply x.ub _ ▸ H _ hj
             by
               simp only [(by linarith : ¬x.ub i ≥ 0),(by linarith : ¬x.ub j ≥ 0), ite_false]
               exact Hδ (H _ hj).1.1 iK (H' _ hj)⟩⟩
@@ -773,9 +774,9 @@ theorem lbInv_converges {x : ComputableℝSeq} (hnz : x.val ≠ 0) :
         linarith (config := {splitNe := true})
       let ⟨q, q0, ⟨i, H⟩⟩ := pos_neg_ub_of_val hxv
       ⟨i, fun j hj ↦
-        have : ¬x.ub j ≥ 0 := by linarith [CauSeq.neg_apply x.ub _ ▸ H _ hj]
+        have : ¬x.ub j ≥ 0 := by linarith [_root_.neg_apply x.ub _ ▸ H _ hj]
         by
-          rw [CauSeq.sub_apply, show x.lbInv hnz j = if x.ub j ≥ 0 then (x.ub 0)⁻¹
+          rw [_root_.sub_apply, show x.lbInv hnz j = if x.ub j ≥ 0 then (x.ub 0)⁻¹
             else (x.ub j)⁻¹ from congrFun (congrArg Subtype.val (dite_eq_right h)) j]
           simp [this, hε]⟩
 
@@ -799,7 +800,7 @@ theorem ubInv_converges {x : ComputableℝSeq} (hnz : x.val ≠ 0) :
       ⟨i, fun j hj ↦
         have : ¬x.lb j ≤ 0 := by linarith [H _ hj]
         by
-          rw [CauSeq.sub_apply, show x.ubInv hnz j = if x.lb j ≤ 0 then (x.lb 0)⁻¹
+          rw [_root_.sub_apply, show x.ubInv hnz j = if x.lb j ≤ 0 then (x.lb 0)⁻¹
             else (x.lb j)⁻¹ from
               congrFun (congrArg Subtype.val (dite_eq_right (not_not_intro h))) j]
           simp [this, hε]⟩
@@ -930,15 +931,15 @@ theorem mul_comm (x y : ComputableℝSeq) : x * y = y * x := by
 theorem neg_mul (x y : ComputableℝSeq) : -x * y = -(x * y) := by
   ext
   · rw [lb_neg, lb_mul, ub_mul]
-    simp only [lb_neg, ub_neg, CauSeq.coe_inf, CauSeq.coe_mul, CauSeq.coe_neg,
-      Pi.inf_apply, Pi.neg_apply, Pi.mul_apply, CauSeq.neg_apply, CauSeq.coe_sup, Pi.sup_apply,
+    simp only [lb_neg, ub_neg, CauSeq.coe_inf, FunLike.coe_mul, FunLike.coe_neg,
+      Pi.inf_apply, Pi.neg_apply, Pi.mul_apply, _root_.neg_apply, CauSeq.coe_sup, Pi.sup_apply,
         neg_sup]
     nth_rewrite 2 [inf_comm]
     nth_rewrite 3 [inf_comm]
     ring_nf
   · rw [ub_neg, lb_mul, ub_mul]
-    simp only [lb_neg, ub_neg, CauSeq.coe_inf, CauSeq.coe_mul, CauSeq.coe_neg,
-      Pi.inf_apply, Pi.neg_apply, Pi.mul_apply, CauSeq.neg_apply, CauSeq.coe_sup, Pi.sup_apply,
+    simp only [lb_neg, ub_neg, CauSeq.coe_inf, FunLike.coe_mul, FunLike.coe_neg,
+      Pi.inf_apply, Pi.neg_apply, Pi.mul_apply, _root_.neg_apply, CauSeq.coe_sup, Pi.sup_apply,
       neg_inf]
     nth_rewrite 2 [sup_comm]
     nth_rewrite 3 [sup_comm]
@@ -954,14 +955,14 @@ theorem neg_eq_of_add (x y : ComputableℝSeq) (h : x + y = 0) : -x = y := by
     let ⟨h₁, h₂⟩ := ComputableℝSeq.ext_iff.mp h
     specialize h₁ n
     specialize h₂ n
-    simp only [lb_add, ub_add, CauSeq.add_apply, zero_lb, zero_ub, CauSeq.zero_apply,
-      CauSeq.neg_apply] at h₁ h₂ ⊢
+    simp only [lb_add, ub_add, _root_.add_apply, zero_lb, zero_ub, _root_.zero_apply,
+      _root_.neg_apply] at h₁ h₂ ⊢
     have h₃ := x.lb_le_ub n
     have h₄ := y.lb_le_ub n
     linarith (config := {splitNe := true})
   ext
-  · rw [lb_neg, CauSeq.neg_apply, hlb y x (add_comm _ _ ▸ h), CauSeq.neg_apply]
-  · rw [ub_neg, CauSeq.neg_apply, hlb x y h, CauSeq.neg_apply, neg_neg]
+  · rw [lb_neg, _root_.neg_apply, hlb y x (add_comm _ _ ▸ h), _root_.neg_apply]
+  · rw [ub_neg, _root_.neg_apply, hlb x y h, _root_.neg_apply, neg_neg]
 
 /-- Computable sequences have *most* of the properties of a field, including negation, subtraction,
   multiplication, division, IntCast all working as one would expect, with
@@ -1005,17 +1006,17 @@ noncomputable instance instSeqCompSeqClass : CompSeqClass ComputableℝSeq := by
     | rfl
     | ext
       all_goals
-        try simp only [CauSeq.add_apply,
-           CauSeq.zero_apply, CauSeq.neg_apply, lb_add, ub_add, zero_ub, zero_lb, ub_neg,
+        solve
+        | simp only [_root_.add_apply,
+           _root_.zero_apply, _root_.neg_apply, lb_add, ub_add, zero_ub, zero_lb, ub_neg,
            lb_neg, neg_add_rev, neg_neg, zero_add, add_zero]
-        try ring_nf
-        try {
-          rename_i a n
+        | simp only [_root_.add_apply, _root_.zero_apply, lb_add, ub_add, zero_ub, zero_lb]
+          ring_nf
+        | rename_i a n
           simp only [lb_mul, ub_mul, zero_lb, zero_ub, mul_zero, zero_mul, one_lb, one_ub, mul_one,
             one_mul,
-            CauSeq.inf_idem, CauSeq.sup_idem, CauSeq.zero_apply, CauSeq.coe_inf, CauSeq.coe_sup,
+            CauSeq.inf_idem, CauSeq.sup_idem, _root_.zero_apply, CauSeq.coe_inf, CauSeq.coe_sup,
             Pi.sup_apply, Pi.inf_apply, sup_eq_right, inf_eq_left, lb_le_ub a n]
-       }
 
 end semiring
 

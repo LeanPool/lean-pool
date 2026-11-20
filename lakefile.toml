@@ -17,13 +17,13 @@ warningAsError = true
 [[require]]
 name = "TauCeti"
 git = "https://github.com/lyw-ops/TauCeti"
-rev = "4705013d2da8bac010289af92000f4a5b8ffca00"
+rev = "0642eae29e0a59ef798d04de325386445906e755"
 
 # Keep Mathlib last so its transitive dependency pins take precedence.
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.35.0"
+rev = "v4.36.0"
 
 [[lean_lib]]
 name = "LeanPool"

@@ -82,7 +82,7 @@ noncomputable section
 private theorem eLpNorm_two_eq_rpow {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {E : Type*} [NormedAddCommGroup E] (f : α → E) (hf : AEStronglyMeasurable f μ) :
     eLpNorm f 2 μ = (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   norm_num
 
 /-! ## 2. Jensen against a probability measure -/
@@ -104,12 +104,12 @@ theorem enorm_sub_integral_rpow_two_le (μ : Measure α) [IsProbabilityMeasure �
     simp
   have h1 : ‖f x - ∫ y, f y ∂μ‖ₑ ≤ ∫⁻ y, ‖f x - f y‖ₑ ∂μ := by
     rw [← hint]
-    exact enorm_integral_le_lintegral_enorm _
+    exact eNorm_integral_le_lintegral_eNorm _
   have h2 : (∫⁻ y, ‖f x - f y‖ₑ ∂μ)
       ≤ (∫⁻ y, ‖f x - f y‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ)) := by
     have hcmp := eLpNorm_le_eLpNorm_of_exponent_le (μ := μ) (p := 1) (q := 2)
       (f := fun y => f x - f y) (by norm_num)
-    rwa [eLpNorm_one_eq_lintegral_enorm hgm, eLpNorm_two_eq_rpow _ hgm] at hcmp
+    rwa [eLpNorm_one_eq_lintegral_eNorm hgm, eLpNorm_two_eq_rpow _ hgm] at hcmp
   have h4 : ‖f x - ∫ y, f y ∂μ‖ₑ ^ (2 : ℝ)
       ≤ ((∫⁻ y, ‖f x - f y‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / (2 : ℝ))) ^ (2 : ℝ) :=
     ENNReal.rpow_le_rpow (h1.trans h2) (by norm_num)
@@ -128,7 +128,7 @@ theorem eLpNorm_sub_integral_le_eLpNorm_prod (μ : Measure α) [IsProbabilityMea
     eLpNorm_two_eq_rpow (fun z : α × α => f z.1 - f z.2) (hfm.comp_fst.sub hfm.comp_snd)]
   refine ENNReal.rpow_le_rpow ?_ (by norm_num)
   have hmeas : AEMeasurable (fun z : α × α => ‖f z.1 - f z.2‖ₑ ^ (2 : ℝ)) (μ.prod μ) :=
-    ((hfm.comp_fst.sub hfm.comp_snd).enorm).pow_const _
+    ((hfm.comp_fst.sub hfm.comp_snd).eNorm).pow_const _
   rw [lintegral_prod _ hmeas]
   exact lintegral_mono fun x => enorm_sub_integral_rpow_two_le μ hf x
 
@@ -181,7 +181,7 @@ theorem isProbabilityMeasure_normalizedVolumeMeasureOn {W : Set (Vec d)}
     (hWpos : 0 < volume W) (hWtop : volume W ≠ ⊤) :
     IsProbabilityMeasure (normalizedVolumeMeasureOn W) := by
   refine ⟨?_⟩
-  rw [normalizedVolumeMeasureOn_def, Measure.smul_apply, smul_eq_mul,
+  rw [normalizedVolumeMeasureOn_def, smul_apply, smul_eq_mul,
     Measure.restrict_apply_univ]
   exact ENNReal.inv_mul_cancel hWpos.ne' hWtop
 
@@ -263,7 +263,7 @@ theorem eLpNorm_sub_integral_le_normalizedGagliardoESeminormOn
       rw [Pi.smul_apply, norm_smul, Real.norm_eq_abs,
         abs_of_nonneg (Real.rpow_nonneg hD0 _)]
     refine hmono.trans (le_of_eq ?_)
-    rw [eLpNorm_const_smul, Real.enorm_eq_ofReal (Real.rpow_nonneg hD0 _)]
+    rw [eLpNorm_const_smul, Real.eNorm_eq_ofReal (Real.rpow_nonneg hD0 _)]
   -- move 3: the normalization
   have hhalf : ((1 : ℝ≥0∞) / 2).toReal = 1 / 2 := by
     rw [ENNReal.toReal_div]

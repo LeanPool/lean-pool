@@ -61,7 +61,7 @@ theorem bu_affine_l2_comp_interval
   have hfm : AEStronglyMeasurable f (volume.restrict S) :=
     (hfloc.mono_set hSsub).aestronglyMeasurable
   have hFm : AEMeasurable F (volume.restrict S) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.eNorm
   have hmap : Measure.map e volume =
       ENNReal.ofReal (scale⁻¹ ^ 5) • (volume : Measure ParabolicPoint) := by
     rw [heq, buAffinePoint_eq_scalingParabolic]
@@ -101,7 +101,7 @@ theorem bu_affine_l2_smul_interval
   have hpoint (z : ParabolicPoint) :
       ‖c • f (buAffinePoint τ scale z)‖ₑ ^ (2 : ℝ) ≤
         ‖f (buAffinePoint τ scale z)‖ₑ ^ (2 : ℝ) := by
-    rw [enorm_smul, ← ofReal_norm c, Real.norm_eq_abs, abs_of_nonneg hc]
+    rw [eNorm_smul, ← ofReal_norm c, Real.norm_eq_abs, abs_of_nonneg hc]
     rw [ENNReal.rpow_ofNat, mul_pow]
     have hcoef : ENNReal.ofReal c ^ (2 : ℕ) ≤ 1 := by
       exact pow_le_one₀ bot_le (ENNReal.ofReal_le_one.mpr hc1)

@@ -572,7 +572,7 @@ theorem famS_stable (γ : SL(2, ℤ)) : ∀ G ∈ famS M, (G ∘ (γ • ·)) �
   refine ⟨hG.comp (mdifferentiable_sl_smul γ), fun δ hδ τ => ?_, fun γ' => ?_⟩
   · change G (γ • δ • τ) = G (γ • τ)
     have hconj : γ * δ * γ⁻¹ ∈ CongruenceSubgroup.Gamma M :=
-      Subgroup.Normal.conj_mem inferInstance δ hδ γ
+      Subgroup.Normal.conj_mem δ hδ γ
     have := hinv _ hconj (γ • τ)
     rw [← this, ← mul_smul, ← mul_smul]
     congr 1

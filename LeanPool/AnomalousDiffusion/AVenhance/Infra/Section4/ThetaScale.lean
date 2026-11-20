@@ -36,12 +36,12 @@ theorem theta_continuous_norm_le_of_eLpNorm_bound {f : Homogenization.Vec 2 → 
   have hess : eLpNormEssSup f volume ≤ ENNReal.ofReal B := by
     simpa only [eLpNorm_exponent_top hf.aestronglyMeasurable] using hbound
   have hae : ∀ᵐ x ∂volume, ‖f x‖ₑ ≤ ENNReal.ofReal B := by
-    exact (enorm_ae_le_eLpNormEssSup f volume).mono fun x hx => hx.trans hess
+    exact (eNorm_ae_le_eLpNormEssSup f volume).mono fun x hx => hx.trans hess
   have hnot : ∀ᵐ x ∂volume, x ∉ {x | B < ‖f x‖} := by
     filter_upwards [hae] with x hx
     have hreal : ‖f x‖ ≤ B :=
       (ENNReal.ofReal_le_ofReal_iff hB).mp (by
-        simpa [Real.enorm_eq_ofReal_abs] using hx)
+        simpa [Real.eNorm_eq_ofReal_abs] using hx)
     exact not_lt.mpr hreal
   have hzero : volume {x | B < ‖f x‖} = 0 :=
     measure_eq_zero_iff_ae_notMem.mpr hnot

@@ -28,7 +28,7 @@ For every ordered pair of indices, including a nonedge or a repeated
 index, let $S(a,b)=[p(a),p(b)]$ be the closed real segment between
 the positions of `P4715T1Position`.
 -/
-def P4715T1Arc (a b : PeriodicSubtileIndex) : Set (Real × Real) :=
+noncomputable def P4715T1Arc (a b : PeriodicSubtileIndex) : Set (Real × Real) :=
 -- BODY
   segment Real (P4715T1Position a) (P4715T1Position b)
 

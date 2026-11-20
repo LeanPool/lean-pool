@@ -40,7 +40,7 @@ private lemma forcedHeat_square_error_tendsto
   rw [ENNReal.zero_rpow_of_pos (by norm_num)] at h
   refine h.congr fun k => ?_
   simp only [Function.comp_apply]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) (hm k),
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) (hm k),
     ← ENNReal.rpow_mul]
   norm_num
 
@@ -49,10 +49,10 @@ private lemma forcedHeat_square_slice_finite
     {ν : Measure ℝ} [SFinite ν] {g : α × ℝ → ℝ}
     (hg : MemLp g 2 (μ.prod ν)) :
     ∀ᵐ s ∂ν, ∫⁻ x, ‖g (x, s)‖ₑ ^ (2 : ℝ) ∂μ < ∞ := by
-  have hjoint := hg.aestronglyMeasurable.enorm.pow_const (2 : ℝ)
+  have hjoint := hg.aestronglyMeasurable.eNorm.pow_const (2 : ℝ)
   have hfin : ∫⁻ z, ‖g z‖ₑ ^ (2 : ℝ) ∂(μ.prod ν) ≠ ∞ := by
     have h := hg.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hg.aestronglyMeasurable] at h
     intro htop
     rw [ENNReal.toReal_ofNat, htop, ENNReal.top_rpow_of_pos (by norm_num)] at h
@@ -64,7 +64,7 @@ private lemma forcedHeat_weighted_component_pairing_bound
     (i : Fin 3) {v w : Vec3} {a c W : ℝ} (hc : 0 ≤ c) (ha : |a| ≤ c * W) :
     ‖(v i - w i) * a‖ₑ ≤
       ENNReal.ofReal c * (ENNReal.ofReal W * ‖v - w‖ₑ) := by
-  rw [enorm_mul, Real.enorm_eq_ofReal_abs a]
+  rw [eNorm_mul, Real.eNorm_eq_ofReal_abs a]
   have h1 : ‖v i - w i‖ₑ ≤ ‖v - w‖ₑ := by
     rw [← ofReal_norm, ← ofReal_norm]
     exact ENNReal.ofReal_le_ofReal (norm_le_pi_norm (v - w) i)
@@ -146,10 +146,10 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
   have hWm (k : ℕ) : AEMeasurable (fun z : Vec3 × ℝ => ENNReal.ofReal (forcedHeatWeight z.1) *
       ‖kernelResponse (gs k) z - kernelResponse g z‖ₑ) ((volume : Measure Vec3).prod ν) :=
     (ENNReal.measurable_ofReal.comp (forcedHeatWeight_continuous.measurable.comp
-      measurable_fst)).aemeasurable.mul ((hZkc k).aestronglyMeasurable.sub hZm).enorm
+      measurable_fst)).aemeasurable.mul ((hZkc k).aestronglyMeasurable.sub hZm).eNorm
   have hDm (k : ℕ) (i j : Fin 3) : AEMeasurable (fun z : Vec3 × ℝ =>
       ‖DZs k i j z - DZ i j z‖ₑ ^ (2 : ℝ)) ((volume : Measure Vec3).prod ν) :=
-    ((hDZsc k i j).aestronglyMeasurable.sub (hDZm i j)).enorm.pow_const _
+    ((hDZsc k i j).aestronglyMeasurable.sub (hDZm i j)).eNorm.pow_const _
   have hFm (k : ℕ) : AEMeasurable (F k) ((volume : Measure Vec3).prod ν) :=
     (hWm k).add (Finset.aemeasurable_fun_sum _ fun i _ =>
       Finset.aemeasurable_fun_sum _ fun j _ => hDm k i j)
@@ -239,13 +239,13 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
         ‖(kernelResponse (gs (m n0)) (x, s) i - kernelResponse g (x, s) i) *
           fderiv ℝ χ x (CKN.basisVec j)‖ₑ +
         ‖kernelResponse (gs (m n0)) (x, s) i * fderiv ℝ χ x (CKN.basisVec j)‖ₑ := by
-      rw [← enorm_neg ((kernelResponse (gs (m n0)) (x, s) i - kernelResponse g (x, s) i) *
+      rw [← eNorm_neg ((kernelResponse (gs (m n0)) (x, s) i - kernelResponse g (x, s) i) *
         fderiv ℝ χ x (CKN.basisVec j))]
-      refine le_trans (le_of_eq ?_) (enorm_add_le _ _)
+      refine le_trans (le_of_eq ?_) (eNorm_add_le _ _)
       congr 1
       ring
     refine lt_of_le_of_lt (lintegral_mono hsplit) ?_
-    rw [lintegral_add_right' _ (hint_n n0).aestronglyMeasurable.enorm]
+    rw [lintegral_add_right' _ (hint_n n0).aestronglyMeasurable.eNorm]
     refine ENNReal.add_lt_top.2 ⟨?_, (hint_n n0).hasFiniteIntegral⟩
     exact lt_of_le_of_lt (hlint n0) (ENNReal.mul_lt_top ENNReal.ofReal_lt_top
       (lt_trans hn0 ENNReal.one_lt_top))
@@ -258,7 +258,7 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
         (∫ x, kernelResponse g (x, s) i * fderiv ℝ χ x (CKN.basisVec j)) ≤
         ENNReal.ofReal c * ∫⁻ x, ENNReal.ofReal (forcedHeatWeight x) *
           ‖kernelResponse (gs (m n)) (x, s) - kernelResponse g (x, s)‖ₑ := by
-      rw [edist_eq_enorm_sub, ← integral_sub (hint_n n) hint]
+      rw [eDist_eq_eNorm_sub, ← integral_sub (hint_n n) hint]
       have hpt : (fun x => kernelResponse (gs (m n)) (x, s) i * fderiv ℝ χ x (CKN.basisVec j) -
           kernelResponse g (x, s) i * fderiv ℝ χ x (CKN.basisVec j)) =
           fun x => (kernelResponse (gs (m n)) (x, s) i - kernelResponse g (x, s) i) *
@@ -266,7 +266,7 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
         funext x
         ring
       rw [hpt]
-      exact (enorm_integral_le_lintegral_enorm _).trans (hlint n)
+      exact (eNorm_integral_le_lintegral_eNorm _).trans (hlint n)
     have hzero := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal c) hS
       (Or.inr ENNReal.ofReal_ne_top)
     rw [mul_zero] at hzero
@@ -274,7 +274,7 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
       (fun n => bot_le) hbound
   -- the right-hand side converges
   have hDZslice : MemLp (fun x : Vec3 => DZ i j (x, s)) 2 volume := by
-    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       (hmeas (i, j))]
     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) (by simpa using (hfin (i, j)).ne)
   have hRHS : Tendsto (fun n => -∫ x, DZs (m n) i j (x, s) * χ x) atTop
@@ -287,7 +287,7 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
     rw [ENNReal.zero_rpow_of_pos (by norm_num)] at h
     refine h.congr fun n => ?_
     simp only [Function.comp_apply]
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (p := 2)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (p := 2)
       (f := (fun x : Vec3 => DZs (m n) i j (x, s)) - fun x => DZ i j (x, s)) two_ne_zero
       ENNReal.ofNat_ne_top
       ((((hDZsc (m n) i j).comp (continuous_id.prodMk continuous_const)).aestronglyMeasurable).sub

@@ -558,7 +558,7 @@ theorem biorthogonal_finsupp_coefficient
     φ k (a.sum fun i c => c • v i) = a k := by
   classical
   simp [Finsupp.sum, map_sum, map_smul, hbio]
-  all_goals aesop
+  aesop
 
 theorem norm_apply_biorthogonal_finsupp_sum_le
     (U : X →L[ℝ] Y) {v : ℕ → X} {φ : ℕ → StrongDual ℝ X}

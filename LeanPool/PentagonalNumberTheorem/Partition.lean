@@ -93,7 +93,7 @@ theorem mem_kSet_iff {n k : ℤ} :
   obtain hneg | hpos := lt_or_ge n 0
   · trans False
     · simp only [kSet, Finset.mem_Icc, iff_false]
-      by_contra! h
+      intro h
       obtain h' := h.1.trans h.2
       have : (1 + 24 * n).toNat = 0 := by
         simp only [Int.toNat_eq_zero]
@@ -160,7 +160,7 @@ theorem sum_partition (n : ℕ) (hn : n ≠ 0) :
       suffices i.2 ≠ (k * (3 * k - 1) / 2).toNat by
         change (k.negOnePow : ℤ) • (coeff i.2 (X ^ (k * (3 * k - 1) / 2).toNat : ℤ⟦X⟧)) = 0
         simp [coeff_X_pow, this]
-      contrapose! hmem with hi2
+      contrapose hmem with hi2
       simp_rw [Set.mem_image, mem_coe]
       refine ⟨k, mem_kSet_iff.mpr ?_, ?_⟩
       · rw [← hi, hi2]

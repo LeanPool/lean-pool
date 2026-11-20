@@ -38,14 +38,14 @@ theorem blowup_rescaled_velocitySlice_eLpNorm_three_eq
   have hsource : AEStronglyMeasurable
       (fun y => vec3EuclideanNorm (u y)) (volume : Measure Vec3) :=
     continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hu
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 : ℝ≥0∞) ≠ ⊤) hscaled,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 : ℝ≥0∞) ≠ ⊤) hsource]
   norm_num
-  simp only [Real.enorm_eq_ofReal_abs,
+  simp only [Real.eNorm_eq_ofReal_abs,
     abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
   have hm := congrArg (fun a : ℝ≥0∞ => a ^ (1 / 3 : ℝ))
     (blowupVelocitySlice_mass_eq u hu x₀ r hr)
@@ -68,9 +68,9 @@ theorem blowup_rescaled_velocitySlice_local_two_le
     u hu x₀ r hr
   have hnorm : eLpNorm (fun x => r • u (x₀ + r • x)) 2 μ ≤
       eLpNorm (fun x => vec3EuclideanNorm (r • u (x₀ + r • x))) 2 μ := by
-    apply eLpNorm_mono_enorm_ae hscaled.restrict
+    apply eLpNorm_mono_eNorm_ae hscaled.restrict
     filter_upwards [] with x
-    rw [← ofReal_norm, Real.enorm_eq_ofReal_abs,
+    rw [← ofReal_norm, Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
     exact ENNReal.ofReal_le_ofReal (norm_le_vec3EuclideanNorm _)
   have hcompare : eLpNorm

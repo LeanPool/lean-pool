@@ -200,7 +200,7 @@ private lemma exists_integral_traceDual_mul [Finite κ]
       FractionalIdeal.dual A K (1 : FractionalIdeal B⁰ L) := by
     change bK.traceDual i ∈
       (FractionalIdeal.dual A K (1 : FractionalIdeal B⁰ L) : Submodule B L)
-    rw [FractionalIdeal.coe_dual_one]
+    rw [FractionalIdeal.coeToSubmodule_dual_one]
     exact hdual
   have hprod : algebraMap B L d * bK.traceDual i ∈
       (1 : FractionalIdeal B⁰ L) :=

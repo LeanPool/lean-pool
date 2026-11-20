@@ -100,11 +100,9 @@ theorem indep_nullAugmentation {Ω : Type*} [mAmbient : MeasurableSpace Ω]
   apply (indepSet_iff_measure_inter_eq_mul
     (ginibreNullAugmentation_le (mAmbient := mAmbient) P m₁ hm₁ _ hs)
     (ginibreNullAugmentation_le (mAmbient := mAmbient) P m₂ hm₂ _ ht) P).mpr
-  have hsEq : P s = P s₀ := measure_congr (hes.mono (fun _ h => propext h))
-  have htEq : P t = P t₀ := measure_congr (het.mono (fun _ h => propext h))
-  have hiEq : P (s ∩ t) = P (s₀ ∩ t₀) := measure_congr (by
-    filter_upwards [hes, het] with ω hs ht
-    exact propext (and_congr hs ht))
+  have hsEq : P s = P s₀ := measure_congr hes
+  have htEq : P t = P t₀ := measure_congr het
+  have hiEq : P (s ∩ t) = P (s₀ ∩ t₀) := measure_congr (ae_eq_set_inter hes het)
   rw [hsEq, htEq, hiEq]
   exact (hi.indepSet_of_measurableSet hs₀ ht₀).measure_inter_eq_mul
 

@@ -2194,7 +2194,7 @@ theorem isPathConnected_iUnion_of_reflTransGen {X ι : Type*} [TopologicalSpace 
         refine ⟨insert k p, Set.mem_insert_of_mem k hip, Set.mem_insert k p, ?_⟩
         rw [Set.biUnion_insert]
         refine (hs k).union hp ?_
-        exact hjk.mono fun x hx =>
+        exact hjk.mono fun x (hx : x ∈ s j ∩ s k) =>
           ⟨hx.2, Set.mem_iUnion₂.mpr ⟨j, hjp, hx.1⟩⟩
   rw [isPathConnected_iff]
   constructor
@@ -2404,7 +2404,7 @@ theorem isConnected_carrier : IsConnected J.carrier := by
         apply Relation.ReflTransGen.tail ih
         rw [Nat.cast_succ]
         convert hstep (i + (m : ZMod J.n)) using 1
-        all_goals ring_nf
+        ring_nf
   convert hwalk (j - i).val using 1
   rw [ZMod.natCast_zmod_val]
   ring

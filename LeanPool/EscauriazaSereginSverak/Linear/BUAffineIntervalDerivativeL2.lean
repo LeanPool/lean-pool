@@ -87,12 +87,12 @@ theorem bu_affine_derivative_l2_interval
       (fun z => ‖(buAffineDw τ scale Dw) z‖ₑ ^ (2 : ℝ))
       (volume.restrict K) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hscaled.2.1.mono_set hKsub).aestronglyMeasurable.enorm)
+      ((hscaled.2.1.mono_set hKsub).aestronglyMeasurable.eNorm)
   have hmD2 : AEMeasurable
       (fun z => ‖(buAffineD2w τ scale D2w) z‖ₑ ^ (2 : ℝ))
       (volume.restrict K) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hscaled.2.2.1.mono_set hKsub).aestronglyMeasurable.enorm)
+      ((hscaled.2.2.1.mono_set hKsub).aestronglyMeasurable.eNorm)
   have hsum :
       (∫⁻ z in K,
         ‖(buAffineDw τ scale Dw) z‖ₑ ^ (2 : ℝ) +

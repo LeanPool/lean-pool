@@ -254,7 +254,7 @@ private theorem decay_bounds {Ω : Set Vec3} {I : Set ℝ} {q : ℝ}
     apply le_of_eq
     apply lintegral_congr
     intro y
-    rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg (u (y, s)))]
+    rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg (u (y, s)))]
   have hmono := essSup_mono_measure_and_ae
     (μ := volume.restrict (Set.Ioc (z.2 - R ^ 2) z.2))
     (ν := volume.restrict (Set.Ioc (z.2 - (2 * R) ^ 2) z.2))
@@ -661,7 +661,7 @@ private theorem cylinder_velocity_integral_lt_top {Ω : Set Vec3} {I : Set ℝ} 
       ENNReal.ofReal (vec3EuclideanNorm (u (y, s))) ^ (2 : ℝ)) ≤
       timeSliceBallEnergy x (2 * r) s (fun w => vec3EuclideanNorm (u w)) := by
     intro s; apply le_of_eq; apply lintegral_congr; intro y
-    rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg (u (y, s)))]
+    rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg (u (y, s)))]
   have hE : E < ⊤ := lt_of_le_of_lt
     (essSup_mono_measure_and_ae (Measure.restrict_mono_set volume hTsub)
       (Filter.Eventually.of_forall hpoint)) (by simpa [timeSliceEnergyEssSup] using hEtop)

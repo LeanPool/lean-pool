@@ -119,7 +119,7 @@ values, alternating in sign. -/
 theorem ePoly_coeff {t : ℕ → ℂ} {n k : ℕ} (hk : k ≤ n) :
     (ePoly t n).coeff (n - k) = (-1) ^ k * eSeq t k := by
   rw [ePoly, Polynomial.finsetSum_coeff]
-  rw [Finset.sum_congr rfl (fun j hj => Polynomial.coeff_monomial)]
+  rw [Finset.sum_congr rfl (fun j hj => Polynomial.coeff_monomial_apply)]
   rw [Finset.sum_congr rfl (fun j hj => show
       (if n - j = n - k then ((-1 : ℂ)) ^ j * eSeq t j else 0) =
       (if j = k then ((-1 : ℂ)) ^ j * eSeq t j else 0) from

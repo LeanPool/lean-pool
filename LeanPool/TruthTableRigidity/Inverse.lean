@@ -238,7 +238,7 @@ theorem exists_baireMeasurable_extension {π : TTDegree ≃o TTDegree} {D : Set 
     filter_upwards [hD] with X hX
     have h := congrArg (fun s : Set Oracle => X ∈ s) hOD
     simp only [Set.mem_inter_iff, Set.mem_preimage, hX, and_true, eq_iff_iff] at h
-    simp only [Set.mem_preimage, hX, ↓reduceIte, eq_iff_iff]
+    simp only [Set.mem_preimage, hX, ↓reduceIte]
     exact h.symm
   · by_cases hX : X ∈ D
     · simp only [hX, ↓reduceIte]; exact hπ X hX

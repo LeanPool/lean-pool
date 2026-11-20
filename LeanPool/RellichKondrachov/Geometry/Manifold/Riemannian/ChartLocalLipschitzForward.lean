@@ -77,7 +77,7 @@ theorem lipschitzOnWith_extChartAt_ofRiemannianMetric
       SeminormedAddCommGroup (TangentSpace I y →L[ℝ] TangentSpace (𝓘(ℝ, E)) (extChartAt I x y)) :=
     ContinuousLinearMap.toSeminormedAddCommGroup
   -- Start from a local bound on the derivative of `extChartAt I x`.
-  rcases eventually_enorm_mfderiv_extChartAt_lt (I := I) x with ⟨C, C_pos, hC⟩
+  rcases eventually_eNorm_mfderiv_extChartAt_lt (I := I) x with ⟨C, C_pos, hC⟩
   refine ⟨C, C_pos, ?_⟩
   let P : Set M := {y | ‖mfderiv I (𝓘(ℝ, E)) (extChartAt I x) y‖ₑ < C}
   have hP : P ∈ 𝓝 x := by
@@ -211,16 +211,16 @@ theorem lipschitzOnWith_extChartAt_ofRiemannianMetric
         contMDiffOn_iff_contDiffOn.mp hC'
       have hsub :
           ‖γ' 1 - γ' 0‖ₑ ≤ ∫⁻ t in Icc (0 : ℝ) 1, ‖derivWithin γ' (Icc (0 : ℝ) 1) t‖ₑ :=
-        enorm_sub_le_lintegral_derivWithin_Icc_of_contDiffOn_Icc hγ' zero_le_one
+        eNorm_sub_le_lintegral_derivWithin_Icc_of_contDiffOn_Icc hγ' zero_le_one
       have hsub' :
           edist (γ' 0) (γ' 1) ≤ ∫⁻ t in Icc (0 : ℝ) 1,
             ‖mfderivWithin 𝓘(ℝ) (𝓘(ℝ, E)) γ' (Icc (0 : ℝ) 1) t 1‖ₑ := by
         -- Rewrite the left-hand side and convert `derivWithin` to `mfderivWithin`.
         have : edist (γ' 0) (γ' 1) = ‖γ' 1 - γ' 0‖ₑ := by
-          -- `edist_eq_enorm_sub` gives `‖γ' 0 - γ' 1‖ₑ`; rewrite it using symmetry of `enorm`.
+          -- `eDist_eq_eNorm_sub` gives `‖γ' 0 - γ' 1‖ₑ`; rewrite it using symmetry of `enorm`.
           have hsymm : ‖γ' 0 - γ' 1‖ₑ = ‖γ' 1 - γ' 0‖ₑ := by
-            simpa using (enorm_sub_rev (γ' 0) (γ' 1))
-          simp [edist_eq_enorm_sub, hsymm]
+            simpa using (eNorm_sub_rev (γ' 0) (γ' 1))
+          simp [eDist_eq_eNorm_sub, hsymm]
         -- `simp_rw` matches the pattern used in Mathlib’s proof of
         -- `setOf_riemannianEDist_lt_subset_nhds`.
         refine (le_trans (le_of_eq this) ?_)

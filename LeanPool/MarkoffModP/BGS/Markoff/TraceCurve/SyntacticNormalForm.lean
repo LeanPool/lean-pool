@@ -64,7 +64,7 @@ theorem splitTraceEtaKummerPolynomial_natDegree
   let hBaseIrred := splitTraceBaseKummerPolynomial_irreducible sigma hsigma
   let : Fact (Irreducible (splitTraceBaseKummerPolynomial sigma)) := ⟨hBaseIrred⟩
   change (X ^ e - C (splitTraceBaseV sigma)).natDegree = e
-  exact natDegree_X_pow_sub_C
+  exact natDegree_X_pow_sub_C _
 
 theorem splitTraceXiKummerPolynomial_natDegree
     (sigma : K) (hsigma : sigma ≠ 0) (e d : ℕ) (heOdd : Odd e) :
@@ -78,7 +78,7 @@ theorem splitTraceXiKummerPolynomial_natDegree
   let hEtaIrred := splitTraceEtaKummerPolynomial_irreducible' sigma hsigma e heOdd
   let : Fact (Irreducible (splitTraceEtaKummerPolynomial sigma e)) := ⟨hEtaIrred⟩
   change (X ^ d - C (splitTraceXiRadicand sigma e)).natDegree = d
-  exact natDegree_X_pow_sub_C
+  exact natDegree_X_pow_sub_C _
 
 /-- Residual rectangular index of the monomial `xi^i * eta^j`. -/
 def splitTraceMonomialNormalIndex (i j : ℕ) :

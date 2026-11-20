@@ -292,8 +292,8 @@ theorem dyadicGradientScaleBound_zerothOrder_on_interiorBall [NeZero d]
               (1 / 2 : ℝ) ^ (1 - alpha)) * smallContrastUnitBallVolumePrice d) *
               vectorLpSizeOn U p f + C * r := by
         convert hraw using 1
-        all_goals dsimp only [C]
-        all_goals ring
+        dsimp only [C]
+        ring
       _ ≤ ((1 + 2 * delta * (1 / 2 : ℝ) ^ (-(d : ℝ) / 2)) *
             (1 / 2 : ℝ) ^ (1 - alpha)) * A n + B + C * r := by
         exact add_le_add (add_le_add le_rfl hsourceMul) le_rfl
@@ -314,7 +314,7 @@ theorem dyadicGradientScaleBound_zerothOrder_on_interiorBall [NeZero d]
   dsimp only [A, B, C, p] at hn
   rw [smallContrastDyadicRadius_zero] at hn
   convert hn using 1
-  all_goals ring
+  ring
 
 end
 

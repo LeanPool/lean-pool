@@ -372,11 +372,25 @@ lemma w' : xskl X n ≫ l' X n Z = xskr X n ≫ r' X n Z := by
       (cubeBoundary.botTopSidesCover_cover n)
       (cubeBoundary.botTopSidesCover_closed n)) xt_cube
     rw [ContinuousMap.liftCoverClosed_coe' _ _ _ _ _ xt_cube this]
-    change _ = (cubeAttSides X α) ⟨_, _⟩
-    simp only [↓cubeSplitAtLast_inv_down_eq, Homeomorph.apply_symm_apply]
-    change _ = (Limits.pushout.inr (l X n) (r X n)) _
-    congr 2
-    simp only [cubeAtt, TopCat.hom_comp]
+    change (Limits.pushout.inr (l X n) (r X n)) (t, (X.attachCells n).attachMaps α x) =
+      (Limits.pushout.inr (l X n) (r X n)) _
+    apply congrArg (Limits.pushout.inr (l X n) (r X n))
+    let y : ∂𝕀 n := (diskPair.homeoCubePairULift n).hom.left x
+    let boundaryPoint : ∂𝕀 n :=
+      ⟨(Cube.splitAtLast xt_cube.down.val).snd,
+        cubeBoundary.splitAtLast_snd_mem_boundary_of_mem_sides this⟩
+    change (t, (X.attachCells n).attachMaps α x) =
+      ((Cube.splitAtLast xt_cube.down.val).fst, X.cubeAtt α boundaryPoint)
+    have height_eq : (Cube.splitAtLast xt_cube.down.val).fst = t := by
+      change (Cube.splitAtLast (Cube.splitAtLast.symm (t, y.down.val))).fst = t
+      rw [Homeomorph.apply_symm_apply]
+    have boundaryPoint_eq : boundaryPoint = y := by
+      apply ULift.ext
+      apply Subtype.ext
+      change (Cube.splitAtLast (Cube.splitAtLast.symm (t, y.down.val))).snd = y.down.val
+      rw [Homeomorph.apply_symm_apply]
+    rw [height_eq, boundaryPoint_eq]
+    congr 1
     change (X.attachCells n).attachMaps α x =
       (X.attachCells n).attachMaps α
         (((diskPair.homeoCubePairULift n).hom.left ≫

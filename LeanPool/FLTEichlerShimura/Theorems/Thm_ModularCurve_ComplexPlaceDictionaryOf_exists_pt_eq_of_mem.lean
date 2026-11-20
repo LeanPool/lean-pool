@@ -282,7 +282,7 @@ theorem isBoundedUnder_realizeOf_jqModC [hT : Fact (ModularGroup.T ∈ Γ)] (τ 
   exact hbd.mono nhdsWithin_le_nhds
 
 theorem coe_ne_zero {k : ℤ} (h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (hh : h ≠ 0) :
-    (h : ℍ → ℂ) ≠ 0 := fun e => hh ((FunLike.coe_zero_iff h).mp e)
+    (h : ℍ → ℂ) ≠ 0 := fun e => hh ((FunLike.coe_zero_iff (f := h)).mp e)
 
 theorem eventually_ne_zero {k : ℤ} (h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (hh : h ≠ 0)
     (τ : ℍ) : ∀ᶠ z in 𝓝[≠] τ, (h : ℍ → ℂ) z ≠ 0 := by

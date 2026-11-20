@@ -43,7 +43,7 @@ theorem lintegral_highFourierField (h : Lp H 2 (volume : Measure Position))
       lintegral_l2_enorm_sq _
     _ = ‖highFrequencyClass h E‖ₑ ^ 2 := by
       change ‖(Lp.fourierTransformₗᵢ Position H).symm (highFrequencyClass h E)‖ₑ ^ 2 = _
-      rw [LinearIsometryEquiv.enorm_map]
+      rw [LinearIsometryEquiv.eNorm_map]
     _ = ∫⁻ ξ : Position, ‖highFrequencyClass h E ξ‖ₑ ^ 2 :=
       (lintegral_l2_enorm_sq _).symm
     _ = _ := by
@@ -55,7 +55,7 @@ theorem lintegral_highFourierField (h : Lp H 2 (volume : Measure Position))
       by_cases hc : E < fourierKineticMultiplier ξ
       · rw [ite_eq_left hc, Set.indicator_of_mem]
         exact not_le.mpr hc
-      · rw [ite_eq_right hc, Set.indicator_of_notMem, enorm_zero, zero_pow (by decide)]
+      · rw [ite_eq_right hc, Set.indicator_of_notMem, eNorm_zero, zero_pow (by decide)]
         exact not_not.mpr (not_lt.mp hc)
 
 /-- Integrating the strict threshold over real nonnegative energies gives its length. -/
@@ -91,7 +91,7 @@ theorem lintegral_highFourierField_layerCake
     apply Measurable.ite
     · exact measurableSet_lt measurable_fst
         (continuous_fourierKineticMultiplier.measurable.comp measurable_snd)
-    · exact ((Lp.stronglyMeasurable _).enorm.comp measurable_snd).pow_const 2
+    · exact ((Lp.stronglyMeasurable _).eNorm.comp measurable_snd).pow_const 2
     · exact measurable_const
   rw [lintegral_lintegral_swap hm.aemeasurable]
   apply lintegral_congr

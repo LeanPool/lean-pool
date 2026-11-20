@@ -81,7 +81,7 @@ private theorem tendsto_eLpNorm_mul_of_norm_le
           Real.norm_of_nonneg hC]
         exact mul_le_mul_of_nonneg_right (hχ x) (norm_nonneg _))
     refine hmono.trans ?_
-    simpa [Real.enorm_eq_ofReal hC] using
+    simpa [Real.eNorm_eq_ofReal hC] using
       (eLpNorm_const_smul_le (c := C) (f := fun x => F n x - f x) (p := p) (μ := μ))
   have hscaled : Filter.Tendsto
       (fun n => ENNReal.ofReal C * eLpNorm (fun x => F n x - f x) p μ)
@@ -153,7 +153,7 @@ private theorem eLpNorm_mul_le_of_norm_le
         mul_le_mul_of_nonneg_left (hg x) (norm_nonneg _)
       _ = C * ‖f x‖ := mul_comm _ _
   exact hmono.trans (by
-    simpa [Real.enorm_eq_ofReal hC] using
+    simpa [Real.eNorm_eq_ofReal hC] using
       (eLpNorm_const_smul_le (c := C) (f := f) (p := p) (μ := μ)))
 
 private theorem eLpNorm_cutoffGradient_le

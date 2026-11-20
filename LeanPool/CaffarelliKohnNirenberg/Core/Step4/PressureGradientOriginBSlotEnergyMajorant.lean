@@ -50,14 +50,14 @@ theorem ofReal_ball_average_abs_mul_rpow_le_eLpNorm
       ENNReal.ofReal_toReal hWtop]
   have h1 : ENNReal.ofReal (∫ y in vec3Ball x ρ, |g y|) ≤
       ∫⁻ y in vec3Ball x ρ, ‖g y‖ₑ := by
-    have h := enorm_integral_le_lintegral_enorm
+    have h := eNorm_integral_le_lintegral_eNorm
       (μ := volume.restrict (vec3Ball x ρ)) (fun y : Vec3 => |g y|)
-    simp only [Real.enorm_eq_ofReal_abs, abs_abs] at h
+    simp only [Real.eNorm_eq_ofReal_abs, abs_abs] at h
     refine (ENNReal.ofReal_le_ofReal (le_abs_self _)).trans ?_
-    simpa only [← Real.enorm_eq_ofReal_abs] using h
+    simpa only [← Real.eNorm_eq_ofReal_abs] using h
   have h2 : ∫⁻ y in vec3Ball x ρ, ‖g y‖ₑ =
       eLpNorm g 1 (volume.restrict (vec3Ball x ρ)) := by
-    rw [eLpNorm_one_eq_lintegral_enorm hg]
+    rw [eLpNorm_one_eq_lintegral_eNorm hg]
   have h3 : eLpNorm g 1 (volume.restrict (vec3Ball x ρ)) ≤ a' * W ^ (2 / 3 : ℝ) := by
     have h := eLpNorm_le_eLpNorm_mul_rpow_measure_univ
       (μ := volume.restrict (vec3Ball x ρ)) (p := (1 : ℝ≥0∞)) (q := (3 : ℝ≥0∞))

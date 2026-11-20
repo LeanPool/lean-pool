@@ -10,6 +10,7 @@ public import Mathlib.LinearAlgebra.Contraction
 public import Mathlib.LinearAlgebra.TensorProduct.Opposite
 public import Mathlib.Tactic.Continuity
 public import Mathlib.Algebra.Azumaya.Matrix
+public import Mathlib.LinearAlgebra.TensorProduct.Projective
 import Mathlib.Combinatorics.Matroid.Init
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 
@@ -424,7 +425,7 @@ instance (M : Type v) [AddCommGroup M] [Module R M] [FaithfulSMul R M] :
   eq_of_smul_eq_smul {r1 r2} h12 := by
     specialize h12 1
     rw [LinearMap.ext_iff] at h12
-    simp only [LinearMap.smul_apply, Module.End.one_apply] at h12
+    simp only [LinearMap.smul_apply, one_apply_eq_self] at h12
     exact eq_of_smul_eq_smul h12
 
 /-- The matrix algebra as a bundled Azumaya algebra. -/
@@ -531,7 +532,7 @@ lemma comm_square_endend' :
 variable [Nontrivial M]
 
 instance : NeZero (nn R M) := ⟨by
-  by_contra! hn
+  intro hn
   have : Subsingleton (Fin (nn R M) → R) := by
     rw [hn]
     exact Unique.instSubsingleton

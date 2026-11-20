@@ -130,7 +130,7 @@ theorem enorm_dyadicRunMax (M : ℝ → Ω → ℝ) (T : ℝ) (n : ℕ) (ω : Ω
   · refine iSup_le fun k => ?_
     refine ENNReal.coe_le_coe.mpr ?_
     refine NNReal.coe_le_coe.mp ?_
-    rw [hcoe _ (dyadicRunMax_nonneg M T n ω), coe_nnnorm]
+    rw [hcoe _ (dyadicRunMax_nonneg M T n ω), coe_nnNorm]
     exact Finset.le_sup' (f := fun j => ‖M (dyadicTime T n j) ω‖)
       (Finset.mem_range.mpr k.isLt)
 
@@ -154,7 +154,7 @@ theorem measurable_enorm_dyadicRunMax (hM : ∀ t : ℝ, Measurable (M t)) (T : 
     funext fun ω => enorm_dyadicRunMax M T n ω
   rw [heq]
   exact Measurable.iSup fun k =>
-    ENNReal.continuous_coe.measurable.comp (hM (dyadicTime T n (k : ℕ))).nnnorm
+    ENNReal.continuous_coe.measurable.comp (hM (dyadicTime T n (k : ℕ))).nnNorm
 
 /-! ### The supremum over the window -/
 
@@ -241,7 +241,7 @@ theorem iSup_enorm_eq_iSup_dyadicRunMax (hT : 0 ≤ T) {ω : Ω}
       have hconv : Filter.Tendsto
           (fun n => (‖M (dyadicTime T n (dyadicIndex T (t : ℝ) n)) ω‖₊ : ℝ≥0∞))
           Filter.atTop (nhds ((‖M (t : ℝ) ω‖₊ : ℝ≥0∞))) :=
-        (ENNReal.continuous_coe.tendsto _).comp hMs.nnnorm
+        (ENNReal.continuous_coe.tendsto _).comp hMs.nnNorm
       exact le_of_tendsto hconv (Filter.Eventually.of_forall hbd)
   · rw [enorm_dyadicRunMax]
     exact iSup_le fun k =>
@@ -264,13 +264,13 @@ theorem iSup_sq_of_monotone {a : ℕ → ℝ≥0∞} (ha : Monotone a) :
 Mathlib v4.35's `eLpNorm` is `∞` for functions that are not a.e. strongly measurable. -/
 theorem eLpNorm_two_eq {μ : Measure Ω} (f : Ω → ℝ) (hf : AEStronglyMeasurable f μ) :
     eLpNorm f 2 μ = (∫⁻ ω, (‖f ω‖₊ : ℝ≥0∞) ^ 2 ∂μ) ^ ((1 : ℝ) / 2) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat]
   congr 1
   refine lintegral_congr fun ω => ?_
   rw [← ENNReal.rpow_natCast _ 2]
   norm_num
-  simp [enorm_eq_nnnorm]
+  simp [eNorm_eq_nnNorm]
 
 /-- **Doob's `L²` maximal inequality at a dyadic level.** -/
 theorem lintegral_sq_dyadicRunMax_le {μ : Measure Ω} [IsFiniteMeasure μ]
@@ -346,7 +346,7 @@ theorem enorm_dyadicRunMax_add_le (A B : ℝ → Ω → ℝ) (T : ℝ) (n : ℕ)
       ≤ (‖A (dyadicTime T n (k : ℕ)) ω‖₊ : ℝ≥0∞)
         + (‖B (dyadicTime T n (k : ℕ)) ω‖₊ : ℝ≥0∞) := by
     rw [← ENNReal.coe_add]
-    exact ENNReal.coe_le_coe.mpr (nnnorm_add_le _ _)
+    exact ENNReal.coe_le_coe.mpr (nnNorm_add_le _ _)
   exact le_trans hpt (add_le_add
     (le_iSup (fun j : Fin (2 ^ n + 1) => (‖A (dyadicTime T n (j : ℕ)) ω‖₊ : ℝ≥0∞)) k)
     (le_iSup (fun j : Fin (2 ^ n + 1) => (‖B (dyadicTime T n (j : ℕ)) ω‖₊ : ℝ≥0∞)) k))
@@ -406,7 +406,7 @@ theorem enorm_dyadicRunMax_sum_le {ι : Type*} (s : Finset ι) (A : ι → ℝ �
   have hpt : (‖∑ j ∈ s, A j (dyadicTime T n (k : ℕ)) ω‖₊ : ℝ≥0∞)
       ≤ ∑ j ∈ s, (‖A j (dyadicTime T n (k : ℕ)) ω‖₊ : ℝ≥0∞) := by
     rw [← ENNReal.ofNNReal_finsetSum]
-    exact ENNReal.coe_le_coe.mpr (nnnorm_sum_le _ _)
+    exact ENNReal.coe_le_coe.mpr (nnNorm_sum_le _ _)
   refine le_trans hpt (Finset.sum_le_sum fun j _ => ?_)
   rw [enorm_dyadicRunMax]
   exact le_iSup (fun m : Fin (2 ^ n + 1) =>

@@ -124,7 +124,7 @@ theorem quasiMeasurePreserving_rotZ_prod :
     QuasiMeasurePreserving (fun q : ParabolicPoint × ℝ => (rotZ (-q.2) q.1.1, q.1.2))
       ((volume.restrict unitCylinder).prod (volume.restrict (Ioc (0 : ℝ) (2 * Real.pi))))
       (volume.restrict unitCylinder) :=
-  ⟨measurable_rotate_pair, Measure.AbsolutelyContinuous.mk fun s hs hs0 => by
+  ⟨measurable_rotate_pair.aemeasurable, Measure.AbsolutelyContinuous.mk fun s hs hs0 => by
     rw [Measure.map_apply measurable_rotate_pair hs]
     exact rotate_pair_preimage_null hs hs0⟩
 
@@ -199,7 +199,7 @@ private theorem key_bound {p : ParabolicPoint → ℝ} {z : ParabolicPoint}
     congr 1; ring
   have hstep1 : ‖∫ φ in Ioc (0 : ℝ) (2 * Real.pi), p (rotSlice (-φ) z)‖ₑ ≤
       ∫⁻ φ in Ioc (0 : ℝ) (2 * Real.pi), ‖p (rotSlice (-φ) z)‖ₑ :=
-    enorm_integral_le_lintegral_enorm _
+    eNorm_integral_le_lintegral_eNorm _
   have hstep2 := eLpNorm'_le_eLpNorm'_mul_rpow_measure_univ
     (f := fun φ : ℝ => p (rotSlice (-φ) z)) (μ := volume.restrict (Ioc (0 : ℝ) (2 * Real.pi)))
     (p := 1) (q := 3 / 2) (by norm_num) (by norm_num) hz
@@ -207,15 +207,15 @@ private theorem key_bound {p : ParabolicPoint → ℝ} {z : ParabolicPoint}
   have heLp1 : eLpNorm' (fun φ : ℝ => p (rotSlice (-φ) z)) 1
       (volume.restrict (Ioc (0 : ℝ) (2 * Real.pi))) =
       ∫⁻ φ in Ioc (0 : ℝ) (2 * Real.pi), ‖p (rotSlice (-φ) z)‖ₑ := by
-    rw [eLpNorm'_eq_lintegral_enorm]
+    rw [eLpNorm'_eq_lintegral_eNorm]
     norm_num
   rw [heLp1] at hstep2
   have hcomb := hstep1.trans hstep2
   have hangular : ‖angularMeanScalar p z‖ₑ = c⁻¹ *
       ‖∫ φ in Ioc (0 : ℝ) (2 * Real.pi), p (rotSlice (-φ) z)‖ₑ := by
-    rw [angularMeanScalar_eq_integral_Ioc, smul_eq_mul, enorm_mul]
+    rw [angularMeanScalar_eq_integral_Ioc, smul_eq_mul, eNorm_mul]
     congr 1
-    rw [Real.enorm_eq_ofReal (by positivity), hc_def, ENNReal.ofReal_inv_of_pos (by positivity)]
+    rw [Real.eNorm_eq_ofReal (by positivity), hc_def, ENNReal.ofReal_inv_of_pos (by positivity)]
   rw [hangular]
   have hmono : (c⁻¹ * ‖∫ φ in Ioc (0 : ℝ) (2 * Real.pi), p (rotSlice (-φ) z)‖ₑ) ^ (3 / 2 : ℝ) ≤
       (c⁻¹ * (eLpNorm' (fun φ : ℝ => p (rotSlice (-φ) z)) (3 / 2)
@@ -224,7 +224,7 @@ private theorem key_bound {p : ParabolicPoint → ℝ} {z : ParabolicPoint}
   refine hmono.trans_eq ?_
   rw [ENNReal.mul_rpow_of_nonneg _ _ (by norm_num), ENNReal.mul_rpow_of_nonneg _ _ (by norm_num),
     ← ENNReal.rpow_mul]
-  rw [← lintegral_rpow_enorm_eq_rpow_eLpNorm' (f := fun φ : ℝ => p (rotSlice (-φ) z))
+  rw [← lintegral_rpow_eNorm_eq_rpow_eLpNorm' (f := fun φ : ℝ => p (rotSlice (-φ) z))
     (q := 3 / 2) (by norm_num)]
   rw [show (1 : ℝ) / 3 * (3 / 2) = 1 / 2 by norm_num]
   have hfactor : c⁻¹ ^ (3 / 2 : ℝ) * c ^ (1 / 2 : ℝ) = c⁻¹ := by
@@ -276,7 +276,7 @@ theorem lintegral_angularMeanScalar_rpow_lt_top {p : ParabolicPoint → ℝ}
         lintegral_const_mul' c⁻¹ _ hcinvtop
     _ = c⁻¹ * ∫⁻ φ in Ioc (0 : ℝ) (2 * Real.pi),
           ∫⁻ z in unitCylinder, ‖p (rotSlice (-φ) z)‖ₑ ^ (3 / 2 : ℝ) := by
-        rw [lintegral_lintegral_swap (hjoint.enorm.pow_const (3 / 2 : ℝ))]
+        rw [lintegral_lintegral_swap (hjoint.eNorm.pow_const (3 / 2 : ℝ))]
     _ = c⁻¹ * ∫⁻ φ in Ioc (0 : ℝ) (2 * Real.pi), ∫⁻ z in unitCylinder, ‖p z‖ₑ ^ (3 / 2 : ℝ) := by
         congr 1
         apply lintegral_congr
@@ -306,14 +306,14 @@ theorem globalEnergyClass_angularMeanScalar
   have hp : AEStronglyMeasurable p (volume.restrict unitCylinder) := h3.aestronglyMeasurable
   have hK : (∫⁻ z in unitCylinder, ‖p z‖ₑ ^ (3 / 2 : ℝ)) < ⊤ := by
     have := h3.eLpNorm_lt_top
-    rwa [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hp, eLpNorm'_eq_lintegral_enorm,
+    rwa [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hp, eLpNorm'_eq_lintegral_eNorm,
       show (ENNReal.ofReal (3 / 2 : ℝ)).toReal = 3 / 2 by
         rw [ENNReal.toReal_ofReal (by norm_num)],
       ENNReal.rpow_lt_top_iff_of_pos (by norm_num)] at this
   have hmem : MemLp (angularMeanScalar p) (ENNReal.ofReal (3 / 2 : ℝ))
       (volume.restrict unitCylinder) := by
     rw [memLp_iff, eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num)
-        (aestronglyMeasurable_angularMeanScalar hp), eLpNorm'_eq_lintegral_enorm,
+        (aestronglyMeasurable_angularMeanScalar hp), eLpNorm'_eq_lintegral_eNorm,
       show (ENNReal.ofReal (3 / 2 : ℝ)).toReal = 3 / 2 by
         rw [ENNReal.toReal_ofReal (by norm_num)]]
     rw [ENNReal.rpow_lt_top_iff_of_pos (by norm_num : (0:ℝ) < 1 / (3/2 : ℝ))]

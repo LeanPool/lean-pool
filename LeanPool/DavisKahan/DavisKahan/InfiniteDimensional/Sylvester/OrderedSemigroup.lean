@@ -42,7 +42,7 @@ open DavisKahan.Foundation
 open DavisKahan
 
 open MeasureTheory Set Filter
-open scoped InnerProductSpace Topology
+open scoped InnerProductSpace Topology Pointwise
 
 noncomputable section
 

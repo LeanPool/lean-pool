@@ -86,15 +86,22 @@ lemma negMap_measurable : Measurable negMap := by
     Uses Minlos uniqueness from the bochner library.
 -/
 lemma integral_neg_invariance
-  [IsHilbertNuclear OSforGFF.TestFunction] [SeparableSpace OSforGFF.TestFunction]
-  [Nonempty OSforGFF.TestFunction]
-  [IsTopologicalAddGroup OSforGFF.TestFunction] [ContinuousSMul ℝ OSforGFF.TestFunction]
+  (h_nuclear : IsHilbertNuclear OSforGFF.TestFunction)
+  (h_separable : SeparableSpace OSforGFF.TestFunction)
+  (h_nonempty : Nonempty OSforGFF.TestFunction)
+  (h_add : IsTopologicalAddGroup OSforGFF.TestFunction)
+  (h_smul : ContinuousSMul ℝ OSforGFF.TestFunction)
   (C : CovarianceForm) (μ : ProbabilityMeasure FieldConfiguration)
   (h_realCF : ∀ f : OSforGFF.TestFunction,
      ∫ ω, Complex.exp (Complex.I * (ω f)) ∂μ.toMeasure
        = Complex.exp (-(1/2 : ℂ) * (C.Q f f))) :
   ∀ (f : FieldConfiguration → ℂ), Integrable f μ.toMeasure →
     ∫ ω, f ω ∂μ.toMeasure = ∫ ω, f (-ω) ∂μ.toMeasure := by
+  let := h_nuclear
+  let := h_separable
+  let := h_nonempty
+  let := h_add
+  let := h_smul
   intro f hInt
   classical
   -- Step 1: Define the pushforward measure
@@ -162,9 +169,11 @@ lemma integral_neg_invariance
 
 /-- Zero mean from the real Gaussian characteristic functional, via symmetry and L¹. -/
 lemma moment_zero_from_realCF
-  [IsHilbertNuclear OSforGFF.TestFunction] [SeparableSpace OSforGFF.TestFunction]
-  [Nonempty OSforGFF.TestFunction]
-  [IsTopologicalAddGroup OSforGFF.TestFunction] [ContinuousSMul ℝ OSforGFF.TestFunction]
+  (h_nuclear : IsHilbertNuclear OSforGFF.TestFunction)
+  (h_separable : SeparableSpace OSforGFF.TestFunction)
+  (h_nonempty : Nonempty OSforGFF.TestFunction)
+  (h_add : IsTopologicalAddGroup OSforGFF.TestFunction)
+  (h_smul : ContinuousSMul ℝ OSforGFF.TestFunction)
   (C : CovarianceForm) (μ : ProbabilityMeasure FieldConfiguration)
   (h_realCF : ∀ f : OSforGFF.TestFunction,
      ∫ ω, Complex.exp (Complex.I * (ω f)) ∂μ.toMeasure
@@ -174,7 +183,8 @@ lemma moment_zero_from_realCF
   ∫ ω, (ω a : ℂ) ∂μ.toMeasure = 0 := by
   classical
   -- Symmetry: ∫ f(ω) = ∫ f(-ω)
-  have hInv := integral_neg_invariance C μ h_realCF (fun ω => (ω a : ℂ)) hInt1
+  have hInv := integral_neg_invariance h_nuclear h_separable h_nonempty h_add h_smul
+    C μ h_realCF (fun ω => (ω a : ℂ)) hInt1
   -- Flip integrand: ((-ω) a : ℂ) = - (ω a : ℂ)
   have hflip : (fun ω : FieldConfiguration => ((-ω) a : ℂ)) = (fun ω => - (ω a : ℂ)) := by
     funext ω

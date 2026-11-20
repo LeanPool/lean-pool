@@ -142,9 +142,9 @@ theorem S_heckeConj_transferAux
     S ρ a (γ • q) (ρ (heckeConj N ℓ (transferAux (heckeUpper N ℓ) γ q)) v) = ρ γ (S ρ a q v) := by
   have h1 := LinearMap.congr_fun (ha (transferAux (heckeUpper N ℓ) γ q)) v
   rw [LinearMap.comp_apply, LinearMap.comp_apply] at h1
-  rw [S, S, LinearMap.comp_apply, LinearMap.comp_apply, h1, ← Module.End.mul_apply, ← map_mul,
+  rw [S, S, LinearMap.comp_apply, LinearMap.comp_apply, h1, ← mul_apply_eq_comp, ← map_mul,
     coe_transferAux,
-    mul_inv_cancel_left, map_mul, Module.End.mul_apply]
+    mul_inv_cancel_left, map_mul, mul_apply_eq_comp]
 
 variable (γ : Gamma0 N) (x : Gamma0 N ⧸ heckeUpper N ℓ)
 
@@ -187,7 +187,7 @@ theorem sum_range_eq (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj
     have h0 : z (heckeConj N ℓ (piProd γ x 0)) = 0 := by
       rw [piProd, map_one]
       have := (mem_coeffCocycles_iff ρ z).mp hz 1 1
-      rw [mul_one, map_one, Module.End.one_apply] at this
+      rw [mul_one, map_one, one_apply_eq_self] at this
       simpa using this
     simp only [Finset.sum_range_zero, h0, map_zero]
   | succ m ih =>
@@ -197,7 +197,7 @@ theorem sum_range_eq (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj
     symm
     rw [← sub_eq_zero, ← map_sub, Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
     exact ⟨S ρ a (γ ^ m • x) (z (heckeConj N ℓ (piProd γ x m))), by
-      rw [LinearMap.sub_apply, Module.End.one_apply]⟩
+      rw [LinearMap.sub_apply, one_apply_eq_self]⟩
 
 theorem P_mem_range (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj N ℓ u) = ρ (u : Gamma0 N) ∘ₗ a)
     {z : Gamma0 N → V} {m : ℕ} (hx : γ ^ m • x = x)
@@ -210,11 +210,11 @@ theorem P_mem_range (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj 
   have hout : Quotient.out x * ((piProd γ x m : ↥(heckeUpper N ℓ)) : Gamma0 N) = γ ^ m *
     Quotient.out x := by
     rw [coe_piProd, hx, mul_inv_cancel_left]
-  rw [← hw, LinearMap.sub_apply, Module.End.one_apply, map_sub, hx, S, LinearMap.comp_apply,
+  rw [← hw, LinearMap.sub_apply, one_apply_eq_self, map_sub, hx, S, LinearMap.comp_apply,
     LinearMap.comp_apply,
-    h1, ← Module.End.mul_apply, ← map_mul, hout, map_mul, Module.End.mul_apply, map_pow]
+    h1, ← mul_apply_eq_comp, ← map_mul, hout, map_mul, mul_apply_eq_comp, map_pow]
   refine ⟨(∑ i ∈ Finset.range m, (ρ γ) ^ i) (ρ (Quotient.out x) (a w)), ?_⟩
-  rw [← Module.End.mul_apply, mul_geom_sum, LinearMap.sub_apply, Module.End.one_apply]
+  rw [← mul_apply_eq_comp, mul_geom_sum, LinearMap.sub_apply, one_apply_eq_self]
 
 end Orbit
 

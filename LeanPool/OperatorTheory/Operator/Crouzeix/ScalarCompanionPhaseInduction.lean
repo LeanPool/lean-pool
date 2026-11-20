@@ -110,7 +110,7 @@ theorem polynomial_induction_on_boundaryPhaseDividedDifferences
     ∀ p, P p := by
   intro p
   induction hn : p.natDegree using Nat.strong_induction_on generalizing p with
-  | h n ih =>
+  | ind n ih =>
       by_cases hp : p.natDegree = 0
       · exact hzero p hp
       · apply hstep p (Nat.pos_of_ne_zero hp)

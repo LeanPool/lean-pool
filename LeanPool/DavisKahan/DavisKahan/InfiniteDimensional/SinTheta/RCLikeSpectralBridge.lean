@@ -320,14 +320,14 @@ theorem norm_le_of_selfAdjoint_spectrum_subset_closedBall
     {T : E →L[𝕜] E} (hSelf : T.IsSymmetric) {ρ : ℝ} (hρ : 0 ≤ ρ)
     (hspec : spectrum 𝕜 T ⊆ Metric.closedBall 0 ρ) : ‖T‖ ≤ ρ := by
   have hSA : IsSelfAdjoint T := ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mpr hSelf
-  have hrad : spectralRadius 𝕜 T = ‖T‖₊ := ContinuousLinearMap.spectralRadius_eq_nnnorm T hSA
+  have hrad : spectralRadius 𝕜 T = ‖T‖₊ := ContinuousLinearMap.spectralRadius_eq_nnNorm T hSA
   have hbound : spectralRadius 𝕜 T ≤ (ρ.toNNReal : ENNReal) := by
     rw [spectralRadius_eq_of_unital]
     refine iSup₂_le fun z hz => ?_
     have hzρ : ‖z‖ ≤ ρ := by
       simpa [Metric.mem_closedBall, dist_zero_right] using hspec hz
     have : ‖z‖₊ ≤ ρ.toNNReal := by
-      rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal ρ hρ]; exact hzρ
+      rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal ρ hρ]; exact hzρ
     exact_mod_cast this
   rw [hrad] at hbound
   have hnn : ‖T‖₊ ≤ ρ.toNNReal := by exact_mod_cast hbound

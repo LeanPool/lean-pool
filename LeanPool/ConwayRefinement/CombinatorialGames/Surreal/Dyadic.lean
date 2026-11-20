@@ -347,7 +347,7 @@ theorem toIGame_sub_equiv (x y : Dyadic) : ((x - y : Dyadic) : IGame) ≈ x - y 
 theorem toIGame_equiv (x : Dyadic) : (x : IGame) ≈ (x : ℚ) := by
   by_cases h : x.den = 1
   · rw [toIGame_of_den_eq_one h, ← (ratCast_intCast_equiv _).antisymmRel_congr_left,
-      Rat.coe_int_num_of_den_eq_one h]
+      Rat.intCast_num_of_den_eq_one h]
   · have := den_add_self_lt h
     have := (toIGame_add_equiv x x).symm.trans (toIGame_equiv (x + x))
     simp_all [← Surreal.mk_eq_mk, ← two_mul]

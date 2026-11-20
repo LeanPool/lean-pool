@@ -230,7 +230,7 @@ private theorem isOneHoleSurgery_of_connected_subset
     (hAKU : A ⊆ K \ U) {epsilon : ℝ} (hepsilon : 0 < epsilon) :
     IsOneHoleSurgery K U x y epsilon A ∅ := by
   have hAconvexHull : A ⊆ convexHull ℝ K :=
-    hAKU.trans <| (inter_subset_left.trans <| subset_convexHull ℝ K)
+    hAKU.trans <| (sdiff_subset.trans <| subset_convexHull ℝ K)
   have hediam : Metric.ediam A = Metric.ediam K := by
     apply le_antisymm (Metric.ediam_mono hAconvexHull |>.trans_eq (convexHull_ediam K))
     rw [← hxy]
@@ -258,7 +258,7 @@ private theorem isOneHoleSurgery_of_component_union_bridge
   have hconnected : IsConnected (A ∪ bridge) :=
     IsConnected.union ⟨q, hqA, hqbridge⟩ hAconnected hbridgeConnected
   have hsubset : A ∪ bridge ⊆ convexHull ℝ K :=
-    union_subset (hAKU.trans <| inter_subset_left.trans <| subset_convexHull ℝ K) hbridgeHull
+    union_subset (hAKU.trans <| sdiff_subset.trans <| subset_convexHull ℝ K) hbridgeHull
   have hediam : Metric.ediam (A ∪ bridge) = Metric.ediam K := by
     apply le_antisymm (Metric.ediam_mono hsubset |>.trans_eq (convexHull_ediam K))
     rw [← hxy]
@@ -292,8 +292,8 @@ private theorem isOneHoleSurgery_of_two_components
     IsConnected.union ⟨b, Or.inr hbbridge, hbB⟩ hAbridge hBconnected
   have hsubset : (A ∪ bridge) ∪ B ⊆ convexHull ℝ K := by
     exact union_subset (union_subset
-      (hAKU.trans <| inter_subset_left.trans <| subset_convexHull ℝ K) hbridgeHull)
-      (hBKU.trans <| inter_subset_left.trans <| subset_convexHull ℝ K)
+      (hAKU.trans <| sdiff_subset.trans <| subset_convexHull ℝ K) hbridgeHull)
+      (hBKU.trans <| sdiff_subset.trans <| subset_convexHull ℝ K)
   have hediam : Metric.ediam ((A ∪ bridge) ∪ B) = Metric.ediam K := by
     apply le_antisymm (Metric.ediam_mono hsubset |>.trans_eq (convexHull_ediam K))
     rw [← hxy]
@@ -630,7 +630,7 @@ private theorem SurgeryStage.exists_succ
   have hdiam : Metric.ediam (U n) < Metric.ediam S.carrier := by
     calc
       Metric.ediam (U n) ≤ ∑' i, Metric.ediam (U i) :=
-        ENNReal.le_tsum (f := fun i ↦ Metric.ediam (U i)) n
+        le_tsum (fun i ↦ Metric.ediam (U i)) n
       _ < Metric.ediam C := hsum
       _ = Metric.ediam S.carrier := S.ediam_eq.symm
   obtain ⟨D, bridge, hD⟩ := exists_oneHoleSurgery S.isCompact_carrier
@@ -1119,9 +1119,9 @@ theorem exists_continuum_surgery {C : Set (EuclideanSpace ℝ (Fin 2))} (hCcompa
       μH[1] (D ∩ ⋃ i, U i) ≤ μH[1] (⋃ i, P.bridge i) := measure_mono hDholes
       _ ≤ ∑' i, μH[1] (P.bridge i) := measure_iUnion_le _
       _ ≤ ∑' i, (Metric.ediam (U i) + ENNReal.ofReal (eta i)) :=
-        ENNReal.tsum_le_tsum fun i ↦ (P.bridge_measure i).le
+        tsum_le_tsum fun i ↦ (P.bridge_measure i).le
       _ = (∑' i, Metric.ediam (U i)) + ∑' i, ENNReal.ofReal (eta i) :=
-        ENNReal.tsum_add
+        tsum_add
       _ = (∑' i, Metric.ediam (U i)) + ENNReal.ofReal epsilon := by rw [hetaSum]
   have hDdecomp : D ⊆ C ∪ (D ∩ ⋃ i, U i) := by
     intro z hzD

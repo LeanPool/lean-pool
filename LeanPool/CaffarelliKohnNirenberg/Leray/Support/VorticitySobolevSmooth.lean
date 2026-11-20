@@ -40,7 +40,7 @@ theorem vorticitySobolevSmooth_eLpNorm_le {E : Type*} [NormedAddCommGroup E]
     eLpNorm h 2 volume ≤ ENNReal.ofReal (Real.sqrt (∫ y, B y)) := by
   have hB0' : ∀ y, 0 ≤ B y := fun y => (sq_nonneg _).trans (hpt y)
   have hB0 : 0 ≤ᵐ[volume] B := Eventually.of_forall hB0'
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hh]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hh]
   have hlin : ∫⁻ y, ‖h y‖ₑ ^ ((2 : ℝ≥0∞).toReal) ≤ ENNReal.ofReal (∫ y, B y) := by
     rw [ofReal_integral_eq_lintegral_ofReal hB hB0]
     apply lintegral_mono

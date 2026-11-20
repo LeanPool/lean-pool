@@ -154,7 +154,7 @@ noncomputable def retrToBoundaryJar (n : ℕ) :
   let H := Classical.choose hep
   have spec : (f = H ∘ fun x ↦ (x, 0)) ∧ h = H ∘ Prod.map (boundaryIncl n) id :=
     Classical.choose_spec hep
-  let r' : C(I^ Fin (n + 1), ⊔I^(n+1)) := H.comp (toContinuousMap splitAtLastComm)
+  let r' : C(I^ Fin (n + 1), ⊔I^(n+1)) := H.comp (ContinuousMap.ofClass splitAtLastComm)
   exact ⟨r', fun y hy ↦ by
     by_cases hbot : y (Fin.last n) = 0
     · nth_rw 1 [← inclToBot_discardLast_eq_of y hbot]
@@ -230,12 +230,12 @@ example (X Y : Type u) [TopologicalSpace X] [TopologicalSpace Y] (f g : C(X, Y))
 /-- Deformation retraction from the cube to its bottom face -/
 def deformRetrToBot {n : ℕ} : C(I × I^ Fin (n + 1), I^ Fin (n + 1)) :=
   let f₁ : C(I × I^ Fin (n + 1), I × I × I^ Fin n) :=
-    (ContinuousMap.id _).prodMap (toContinuousMap splitAtLast)
+    (ContinuousMap.id _).prodMap (ContinuousMap.ofClass splitAtLast)
   let f₂ : C(I × I × I^ Fin n, I × I^ Fin n) :=
     { toFun := fun ⟨t, ⟨s, y⟩⟩ ↦ ⟨s * t, y⟩
       continuous_toFun := by fun_prop }  -- uses `unitInterval.continuousMul` in `Shapes/Maps.lean`
   let f₃ : C(I × I^ Fin n, I^ Fin (n + 1)) :=
-    toContinuousMap splitAtLast.symm
+    ContinuousMap.ofClass splitAtLast.symm
   f₃.comp <| f₂.comp f₁
 
 /-- If `y` is in the bottom face of the cube,

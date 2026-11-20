@@ -104,7 +104,7 @@ def indRep : Representation ℂ ↥Gt (X0 N → Vn n) where
     apply LinearMap.ext; intro f; funext x
     change ρ n ((g : SL(2, ℤ)) * (h : SL(2, ℤ))) (f (((g : SL(2, ℤ)) * (h : SL(2, ℤ)))⁻¹ • x)) =
       ρ n (g : SL(2, ℤ)) (ρ n (h : SL(2, ℤ)) (f (((h : SL(2, ℤ))⁻¹) • ((g : SL(2, ℤ))⁻¹) • x)))
-    rw [map_mul, Module.End.mul_apply, mul_inv_rev, mul_smul]
+    rw [map_mul, mul_apply_eq_comp, mul_inv_rev, mul_smul]
 
 @[scoped simp] theorem indRep_apply (g : ↥Gt) (f : X0 N → Vn n) (x : X0 N) :
     indRep N n g f x = ρ n (g : SL(2, ℤ)) (f (((g : SL(2, ℤ))⁻¹) • x)) := rfl
@@ -162,8 +162,8 @@ theorem eval_one_eq_of_T_zpow_fixed (m : ℤ) (P : Vn n) (hP : ρ n (ModularGrou
       (Fin 2) ℂ) := by
   have hk : ρ n ((ModularGroup.T ^ m) ^ k) P = P := by
     induction k with
-    | zero => rw [pow_zero, map_one, Module.End.one_apply]
-    | succ k ih => rw [pow_succ, map_mul, Module.End.mul_apply, hP, ih]
+    | zero => rw [pow_zero, map_one, one_apply_eq_self]
+    | succ k ih => rw [pow_succ, map_mul, mul_apply_eq_comp, hP, ih]
   have h := congrArg (fun Q : Vn n => eval ![(1 : ℂ), 0] (Q : MvPolynomial (Fin 2) ℂ)) hk
   rw [binaryFormRepSL_apply_coe, eval_binarySubst, ← zpow_natCast, ← zpow_mul,
     ModularGroup.coe_T_zpow] at h
@@ -287,7 +287,7 @@ theorem coeff_eq_zero_of_T_zpow_fixed {m : ℤ} (hm : m ≠ 0) (P : Vn n)
     have hm' : (m : ℂ) ≠ 0 := Int.cast_ne_zero.mpr hm
     exact_mod_cast mul_left_cancel₀ hm' h
   have hcoeff : q.coeff a = 0 := by
-    have := congrArg (fun p => Polynomial.coeff p a) hconst
+    have := congrArg (fun p => AddMonoidAlgebra.coeff p a) hconst
     simp only [Polynomial.coeff_sub, Polynomial.coeff_C, Polynomial.coeff_zero] at this
     rw [ite_eq_right hd] at this
     simpa using this
@@ -530,13 +530,13 @@ theorem sup_range_eq_top (hn0 : n ≠ 0) :
         rw [map_sub, LinearMap.sub_apply, sub_eq_zero] at h1
         have e1 := BW_inv (N := N) B hBinv g a (W g⁻¹ f')
         have e2 : W g (W g⁻¹ f') = f' := by
-          rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
+          rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self]
         rw [e2] at e1
         rw [map_sub, ← e1, h1, sub_self]
       have h0 : W g⁻¹ f' - f' = 0 := hnd.2 _ key
       rw [sub_eq_zero] at h0
       have h3 := congrArg (W g) h0
-      rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply] at h3
+      rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self] at h3
       exact h3.symm
     have hS : W eS f' = f' := hfix eS le_sup_left
     have hU : W eU f' = f' := hfix eU le_sup_right
@@ -546,8 +546,8 @@ theorem sup_range_eq_top (hn0 : n ≠ 0) :
           ModularGroup.T); group
       have hSinv : W eS⁻¹ f' = f' := by
         conv_lhs => rw [← hS]
-        rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
-      rw [e, map_mul, Module.End.mul_apply, hU, hSinv]
+        rw [← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self]
+      rw [e, map_mul, mul_apply_eq_comp, hU, hSinv]
     apply indRep_invariants hn0
     intro g
     have hg : (g : SL(2, ℤ)) ∈ Subgroup.closure ({ModularGroup.S, ModularGroup.T} : Set SL(2, ℤ)) :=
@@ -562,15 +562,15 @@ theorem sup_range_eq_top (hn0 : n ≠ 0) :
         rcases hx with rfl | rfl
         · exact hS
         · exact hT
-      | one => rw [show (⟨1, Subgroup.mem_top _⟩ : ↥Gt) = 1 from rfl, map_one, Module.End.one_apply]
+      | one => rw [show (⟨1, Subgroup.mem_top _⟩ : ↥Gt) = 1 from rfl, map_one, one_apply_eq_self]
       | mul x y _ _ hx hy =>
         rw [show (⟨x * y, Subgroup.mem_top _⟩ : ↥Gt) = ⟨x, Subgroup.mem_top _⟩ * ⟨y,
           Subgroup.mem_top _⟩ from rfl,
-          map_mul, Module.End.mul_apply, hy, hx]
+          map_mul, mul_apply_eq_comp, hy, hx]
       | inv x _ hx =>
         rw [show (⟨x⁻¹, Subgroup.mem_top _⟩ : ↥Gt) = ⟨x, Subgroup.mem_top _⟩⁻¹ from rfl]
         conv_lhs => rw [← hx]
-        rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply]
+        rw [← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self]
     exact keyc g hg
   have := LinearMap.BilinForm.orthogonal_orthogonal hnd hrefl M
   rw [horth] at this

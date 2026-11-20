@@ -48,17 +48,17 @@ theorem finiteConvolutionMaximal_le_centered {N : ℕ}
   apply iSup_le
   intro i
   calc
-    _ ≤ ∫⁻ t, ‖κ i (x - t) * f t‖ₑ := enorm_integral_le_lintegral_enorm _
+    _ ≤ ∫⁻ t, ‖κ i (x - t) * f t‖ₑ := eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ t, ENNReal.ofReal (2 * L) *
         (selectedAverageKernel r (fun _ ↦ i) x t * ‖f t‖ₑ) := by
       apply lintegral_mono
       intro t
       dsimp only
-      rw [enorm_mul, ← mul_assoc]
+      rw [eNorm_mul, ← mul_assoc]
       exact mul_le_mul' (hpoint i t) le_rfl
     _ = ENNReal.ofReal (2 * L) * centeredAverage (r i) (fun t ↦ ‖f t‖ₑ) x := by
       rw [lintegral_const_mul' _ _ (by finiteness),
-        lintegral_selectedAverageKernel_mul r (fun _ ↦ i) hfm.enorm]
+        lintegral_selectedAverageKernel_mul r (fun _ ↦ i) hfm.eNorm]
     _ ≤ _ := mul_le_mul' le_rfl (le_iSup (fun i ↦ centeredAverage (r i) (fun t ↦ ‖f t‖ₑ) x) i)
 
 theorem finiteConvolutionMaximal_sq_lintegral_le_interval_bound {N : ℕ}
@@ -78,7 +78,7 @@ theorem finiteConvolutionMaximal_sq_lintegral_le_interval_bound {N : ℕ}
       simp_rw [mul_pow]
       exact lintegral_const_mul' _ _ (by finiteness)
     _ ≤ ENNReal.ofReal (2 * L) ^ 2 * (32 * ∫⁻ x, ‖f x‖ₑ ^ 2) :=
-      mul_le_mul' le_rfl (finiteCenteredMaximal_sq_lintegral_le r hr hfm.enorm)
+      mul_le_mul' le_rfl (finiteCenteredMaximal_sq_lintegral_le r hr hfm.eNorm)
     _ = _ := by
       rw [← mul_assoc, ← ENNReal.ofReal_pow (by positivity : 0 ≤ 2 * L),
         ← ENNReal.ofReal_ofNat, ← ENNReal.ofReal_mul (sq_nonneg (2 * L))]

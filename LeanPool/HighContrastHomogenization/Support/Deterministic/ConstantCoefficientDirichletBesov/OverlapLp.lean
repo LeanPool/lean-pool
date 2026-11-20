@@ -138,8 +138,8 @@ theorem overlapCubeLpNorm_one_eq_integral_norm {d : ℕ} {E : Type*}
     (hf : MeasureTheory.AEStronglyMeasurable f (normalizedOverlapCubeMeasure S)) :
     overlapCubeLpNorm S 1 f = ∫ x, ‖f x‖ ∂ normalizedOverlapCubeMeasure S := by
   unfold overlapCubeLpNorm
-  rw [MeasureTheory.eLpNorm_one_eq_lintegral_enorm hf,
-    ← MeasureTheory.integral_norm_eq_lintegral_enorm hf]
+  rw [MeasureTheory.eLpNorm_one_eq_lintegral_eNorm hf,
+    ← MeasureTheory.integral_norm_eq_lintegral_eNorm hf]
 
 theorem overlapCubeLpNorm_mul_le_mul_overlapCubeLpNorm_of_holderConjugate {d : ℕ}
     (S : TriadicCube d) (p q : ℝ≥0∞) (f g : Vec d → ℝ)
@@ -404,7 +404,7 @@ theorem cubeLpNorm_two_sq_eq_lintegral_rpow_enorm_toReal {d : ℕ} {E : Type*}
           norm_num
     _ =
           (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ normalizedCubeMeasure Q).toReal := by
-          rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+          rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
           let A : ℝ≥0∞ := ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ normalizedCubeMeasure Q
           change ((A ^ (1 / (2 : ℝ))) ^ (2 : ℝ)).toReal = A.toReal
           rw [← ENNReal.rpow_mul]
@@ -460,7 +460,7 @@ theorem overlapCubeLpNorm_two_sq_eq_lintegral_rpow_enorm_toReal {d : ℕ} {E : T
           norm_num
     _ =
           (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ normalizedOverlapCubeMeasure S).toReal := by
-          rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+          rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
           let A : ℝ≥0∞ := ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂ normalizedOverlapCubeMeasure S
           change ((A ^ (1 / (2 : ℝ))) ^ (2 : ℝ)).toReal = A.toReal
           rw [← ENNReal.rpow_mul]
@@ -547,7 +547,7 @@ theorem memLp_cubeMeasure_of_memLp_normalizedCubeMeasure {d : ℕ} {E : Type*}
     have heq : ENNReal.ofReal (cubeVolume Q) • normalizedCubeMeasure Q = cubeMeasure Q := by
       rw [normalizedCubeMeasure]
       ext s
-      rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.smul_apply]
+      rw [smul_apply, smul_apply]
       change
         ENNReal.ofReal (cubeVolume Q) *
             (ENNReal.ofReal ((cubeVolume Q)⁻¹) * (cubeMeasure Q) s) =
@@ -623,7 +623,7 @@ theorem memLp_overlapCubeMeasure_of_memLp_normalizedOverlapCubeMeasure {d : ℕ}
           overlapCubeMeasure S := by
       rw [normalizedOverlapCubeMeasure]
       ext s
-      rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.smul_apply]
+      rw [smul_apply, smul_apply]
       change
         ENNReal.ofReal (overlapCubeVolume S) *
             (ENNReal.ofReal ((overlapCubeVolume S)⁻¹) *

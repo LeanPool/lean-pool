@@ -121,7 +121,7 @@ lemma lintegral_sq_eq_eLpNorm_sq_on_prod_brownian
   set μν := μ.prod (volume.restrict (Set.Icc (0 : ℝ) T)) with hμν
   have h_aem_sq : AEMeasurable
       (fun p : Ω × ℝ => (‖h p‖₊ : ℝ≥0∞) ^ 2) μν :=
-    (hh.enorm.pow_const 2).aemeasurable
+    (hh.eNorm.pow_const 2).aemeasurable
   -- Tonelli on the squared integrand.
   have h_Tonelli :
       ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T,

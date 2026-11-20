@@ -56,7 +56,7 @@ theorem tau_sq_mem_span_p_of_p_dvd_d
   -- the constant coefficient is `((d²-d)/4 : ℤ) : ZMod p`.
   have hp_dvd_q : (p : ℤ) ∣ (d ^ 2 - d) / 4 := by
     have hpoly := polyMod_eq_X_sq_of_p_dvd_d hp2 hd hpd
-    have h0 := congr_arg (Polynomial.coeff · 0) hpoly
+    have h0 := congr_arg (AddMonoidAlgebra.coeff · 0) hpoly
     simp only [polyMod_coeff_zero, Polynomial.coeff_X_pow] at h0
     exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp h0
   -- From `tau_minimal_poly`: `τ² = d • τ - ((d²-d)/4) • 1`.
@@ -177,7 +177,7 @@ theorem prime_ramified_iff [Fact p.Prime] (hp2 : p ≠ 2)
     ¬ (Ideal.span {(p : QuadraticOrder d)}).IsRadical ↔ (p : ℤ) ∣ d := by
   refine ⟨?_, span_p_not_isRadical_of_p_dvd_d hp2 hd⟩
   -- Reverse: `¬ IsRadical → p ∣ d`. Contrapositive: `p ∤ d → IsRadical`.
-  contrapose!
+  contrapose
   intro hpd
   -- Step 1: `polyMod d p` is squarefree, hence the ideal `(polyMod d p)`
   -- in `(ZMod p)[X]` is radical.

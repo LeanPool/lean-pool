@@ -54,7 +54,7 @@ theorem enorm_sq_proj_apply (P : ProjValMeasure H) (B : Set ℝ) (hB : Measurabl
     (ξ : H) : ‖P.proj B hB ξ‖ₑ ^ 2 = (P.diag ξ) B := by
   have := P.diag_finite ξ
   have hfin : (P.diag ξ) B ≠ ⊤ := measure_ne_top _ _
-  rw [enorm_eq_nnnorm, ← ENNReal.ofReal_coe_nnreal, coe_nnnorm,
+  rw [eNorm_eq_nnNorm, ← ENNReal.ofReal_coe_nnreal, coe_nnNorm,
     ← ENNReal.ofReal_pow (norm_nonneg _), P.norm_sq_proj_apply B hB ξ,
     ENNReal.ofReal_toReal hfin]
 

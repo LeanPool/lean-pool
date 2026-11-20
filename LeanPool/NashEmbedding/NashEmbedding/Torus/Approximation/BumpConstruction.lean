@@ -107,7 +107,7 @@ lemma deriv_eta_hasCompactSupport (n : ℕ) : HasCompactSupport (deriv (eta n)) 
 
 lemma etaMass_pos (n : ℕ) : 0 < etaMass n := by
   unfold etaMass
-  apply Continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero (x := 0)
+  apply Continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero (x := 0)
   · exact (eta_continuous n).pow 2
   · exact (eta_hasCompactSupport n).comp_left (g := fun x : ℝ => x ^ 2) (by simp)
   · intro t; positivity
@@ -126,7 +126,7 @@ lemma etaDerivMass_pos (n : ℕ) : 0 < etaDerivMass n := by
     rw [eta_zero, eta_eq_zero_of_le (by rw [abs_of_pos (bumpRadius_pos n)])] at h1
     exact one_ne_zero h1
   obtain ⟨t, ht⟩ := hnc
-  apply Continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero (x := t)
+  apply Continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero (x := t)
   · exact (deriv_eta_continuous n).pow 2
   · exact (deriv_eta_hasCompactSupport n).comp_left (g := fun x : ℝ => x ^ 2) (by simp)
   · intro s; positivity

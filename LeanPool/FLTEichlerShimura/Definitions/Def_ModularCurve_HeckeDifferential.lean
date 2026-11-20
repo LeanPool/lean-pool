@@ -98,9 +98,9 @@ def qEulerFun (x : LaurentSeries R) : LaurentSeries R where
 
 theorem support_qEulerFun_subset (x : LaurentSeries R) :
     (qEulerFun R x).support ⊆ x.support := fun n hn => by
-  contrapose! hn
-  simp only [mem_support, ne_eq, not_not] at hn ⊢
-  rw [qEulerFun_coeff, hn, mul_zero]
+  simp only [mem_support, qEulerFun_coeff] at hn ⊢
+  intro hx
+  exact hn (by rw [hx, mul_zero])
 
 theorem algebraMap_laurentSeries_apply_alt (c : R) :
     algebraMap R (LaurentSeries R) c = single 0 c := by

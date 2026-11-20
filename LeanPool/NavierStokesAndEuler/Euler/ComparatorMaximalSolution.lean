@@ -48,7 +48,7 @@ theorem iSup_ofReal_norm_boundedContinuousFunction
     {X V : Type*} [TopologicalSpace X] [NormedAddCommGroup V]
     (f : X →ᵇ V) :
     (⨆ x, ENNReal.ofReal ‖f x‖) = ENNReal.ofReal ‖f‖ := by
-  simpa only [ofReal_norm] using f.enorm_eq_iSup_enorm.symm
+  simpa only [ofReal_norm] using f.eNorm_eq_iSup_eNorm.symm
 
 theorem velocityC1Norm_eq (A : SmoothL2Field Space) :
     Euler.velocityC1Norm A.field =

@@ -7,6 +7,7 @@ module
 
 public import LeanPool.FormalLearningTheory.Basic
 public import Mathlib.Data.Set.Card
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 public import Mathlib.Order.Lattice.Nat
 import Mathlib.Algebra.Order.Module.Field
 import Mathlib.Data.EReal.Inv

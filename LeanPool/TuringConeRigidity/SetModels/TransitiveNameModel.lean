@@ -50,7 +50,7 @@ def names (M p : ZFSet.{u}) : Set (Name (Conditions p)) :=
 def Transitive (M : ZFSet.{u}) : Prop := ∀ x ∈ M, ∀ y ∈ x, y ∈ M
 
 /-- The values of names coded in `M`, interpreted using `G`. -/
-def genericExtension (M p : ZFSet.{u}) (G : Set (Conditions p)) : Set ZFSet.{u} :=
+noncomputable def genericExtension (M p : ZFSet.{u}) (G : Set (Conditions p)) : Set ZFSet.{u} :=
   extension (names M p) G
 
 theorem names_childClosed (M p : ZFSet.{u}) (hM : Transitive M) :

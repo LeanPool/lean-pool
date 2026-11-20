@@ -244,7 +244,8 @@ noncomputable def primitiveFactor (T : ℝ) (B : ProfileHistories.Field) (p : Po
 theorem flatCoefficient_smooth (T : ℝ) {J : Set ℝ} (hJ : IsOpen J) {B : ProfileHistories.Field}
     (hB : ContDiffOn ℝ ∞ B (logDomain J hJ).carrier) :
     ContDiffOn ℝ ∞ (flatCoefficient T B) (J ×ˢ univ) :=
-  (hB.comp (contDiff_snd.prodMk contDiff_fst).contDiffOn (fun _ hp => ⟨hp.2, hp.1⟩)).div
+  (hB.comp (contDiff_snd.prodMk contDiff_fst).contDiffOn
+    (fun _ (hp : _ ∈ J ×ˢ univ) => ⟨hp.2, hp.1⟩)).div
     ((stepDenominator_smooth T).comp contDiff_snd).contDiffOn
     (fun p _ => (stepDenominator_pos T p.2).ne')
 
@@ -550,7 +551,7 @@ theorem familyPrimitiveFactor_smooth {T : ℝ} (hT : 0 < T) {J : Set ℝ} (hJ : 
     ContDiffOn ℝ ∞ (familyPrimitiveFactor T B) ((univ : Set (ℝ × ℝ)) ×ˢ J) := by
   have hb : ContDiffOn ℝ ∞ (familyFlatCoefficient T B) ((univ ×ˢ J) ×ˢ (univ : Set ℝ)) :=
     (hB.comp ((contDiff_fst.fst.prodMk contDiff_snd).prodMk contDiff_fst.snd).contDiffOn
-      (fun _ hp => ⟨mem_univ _, hp.1.2⟩)).div
+      (fun _ (hp : _ ∈ (univ ×ˢ J) ×ˢ (univ : Set ℝ)) => ⟨mem_univ _, hp.1.2⟩)).div
         ((stepDenominator_smooth T).comp contDiff_snd).contDiffOn
         (fun q _ => (stepDenominator_pos T q.2).ne')
   have hf := flatFactor_local (sq_pos_of_pos hT) 0 (isOpen_univ.prod hJ) hb
@@ -617,7 +618,7 @@ theorem logHistory_smooth (X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)
     (hU : ContDiffOn ℝ ∞ U (logDomain J hJ).carrier) (r : HistoryRow)
     (hi : ContDiffOn ℝ ∞ (initial r) J) :
     ContDiffOn ℝ ∞ (logHistory X0 initial f U r) (logDomain J hJ).carrier :=
-  (hi.comp contDiffOn_snd (fun _ hp => hp.2)).add
+  (hi.comp contDiffOn_snd (fun _ (hp : _ ∈ (logDomain J hJ).carrier) => hp.2)).add
     (primitive_smooth (logDomain J hJ) (logDensity_smooth X0 hJ hf hU r))
 
 @[simp] theorem logHistory_initial (X0 : ℝ) (initial : HistoryRow → ℝ → ℝ)

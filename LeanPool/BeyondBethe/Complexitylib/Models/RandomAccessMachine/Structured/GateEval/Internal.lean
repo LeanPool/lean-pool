@@ -959,7 +959,7 @@ private theorem xor_measured {bound value negated : ℕ} {store : Store}
       cases valueBit <;> cases negatedBit <;>
         simp [sum, Basic.exec, Function.update_of_ne, hvalueOutput,
           hnegatedOutput, hvalueEq, hnegatedEq, Input.bitValue]
-      all_goals omega
+      omega
   have htwice : StoreEnvelope bound bound twice := by
     apply hproduct.execBasic (.add scratchReg scratchReg scratchReg)
     · exact hscratch
@@ -968,7 +968,7 @@ private theorem xor_measured {bound value negated : ℕ} {store : Store}
         simp [product, sum, Basic.exec, Function.update_of_ne,
           hvalueOutput, hnegatedOutput, hvalueEq, hnegatedEq,
           Input.bitValue]
-      all_goals omega
+      omega
   have hfinal : StoreEnvelope bound bound
       (Basic.execList (xorOps value negated) store) := by
     change StoreEnvelope bound bound
@@ -1587,7 +1587,7 @@ theorem routine_measured_internal {bound base : ℕ}
   have hprogram : MeasuredRuns program store (routineFinal store) stepCount
       (80 * valueWidth bound) (envelopeSpace bound bound) := by
     convert! hrun using 1
-    all_goals ring
+    ring
   exact ⟨routineFinal store, hprogram, hfinal,
     routineFinal_output hready value0 value1 hvalue0 hvalue1,
     routineFinal_appended hready value0 value1 hvalue0 hvalue1,

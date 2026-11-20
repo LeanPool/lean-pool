@@ -46,7 +46,7 @@ noncomputable def T (x : ℝ) : ℝ :=
   ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, log n
 
 theorem T.le (x : ℝ) (hx : 1 ≤ x) : T x ≤ x * log x - x + 1 + log x := by
-  rw [T, ← Ico_insert_right <| Nat.one_le_iff_ne_zero.mpr (Nat.floor_pos.mpr hx).ne',
+  rw [T, ← insert_right_Ico <| Nat.one_le_iff_ne_zero.mpr (Nat.floor_pos.mpr hx).ne',
     sum_insert right_notMem_Ico]
   have : MonotoneOn log (Set.Icc (1 : ℕ) ⌊x⌋₊) :=
     fun a ha _ _ hab ↦ log_le_log (lt_of_lt_of_le one_pos (by grind)) hab
@@ -78,7 +78,7 @@ theorem T.le (x : ℝ) (hx : 1 ≤ x) : T x ≤ x * log x - x + 1 + log x := by
 
 theorem T.ge (x : ℝ) (hx : 1 ≤ x) : T x ≥ x * log x - x + 1 - log x := by
   have hone_le_floor : 1 ≤ ⌊x⌋₊ := Nat.one_le_iff_ne_zero.mpr (Nat.floor_pos.mpr hx).ne'
-  simp only [T, ← Ico_insert_right hone_le_floor, sum_insert right_notMem_Ico]
+  simp only [T, ← insert_right_Ico hone_le_floor, sum_insert right_notMem_Ico]
   have mono_log : MonotoneOn log (Set.Icc (1 : ℕ) ⌊x⌋₊) := fun a ha _ _ hab ↦
     log_le_log (lt_of_lt_of_le one_pos (by simpa using ha.1)) hab
   have h1 : ∀ n ≥ 1, ∑ i ∈ Ico 1 n, log (i + 1 : ℕ) = log n + ∑ i ∈ Ico 1 n, log i := by

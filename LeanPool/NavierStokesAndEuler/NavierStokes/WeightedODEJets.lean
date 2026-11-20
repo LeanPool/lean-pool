@@ -531,7 +531,7 @@ theorem norm_jet_solution_le (hab : a ≤ b) {U : Set P} (hU : IsOpen U)
       ∀ s : Icc a b, ‖jet u k p s‖ ≤ B₀ * Q ^ n * W s := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro hn k hk hku s
       cases n with
       | zero =>

@@ -60,7 +60,7 @@ theorem basisProj_mul_self [AddCommGroup V] [Module ℂ V] {d : ℕ}
     basisProj b i * basisProj b i = basisProj b i := by
   apply LinearMap.ext
   intro m
-  simp only [Module.End.mul_apply, basisProj_apply, map_smul,
+  simp only [mul_apply_eq_comp, basisProj_apply, map_smul,
     Basis.repr_self, Finsupp.single_eq_same, one_smul]
 
 /-- Distinct basis projections are orthogonal. -/
@@ -69,7 +69,7 @@ theorem basisProj_mul_ne [AddCommGroup V] [Module ℂ V] {d : ℕ}
     (hij : i ≠ j) : basisProj b i * basisProj b j = 0 := by
   apply LinearMap.ext
   intro m
-  simp only [Module.End.mul_apply, basisProj_apply, map_smul,
+  simp only [mul_apply_eq_comp, basisProj_apply, map_smul,
     Basis.repr_self, LinearMap.zero_apply]
   rw [Finsupp.single_eq_of_ne hij, zero_smul, smul_zero]
 
@@ -80,7 +80,7 @@ theorem sum_basisProj [AddCommGroup V] [Module ℂ V] {d : ℕ}
   apply LinearMap.ext
   intro m
   simp only [LinearMap.sum_apply, basisProj_apply,
-    Module.End.one_apply]
+    one_apply_eq_self]
   exact b.sum_repr m
 
 /-- Each basis projection is nonzero. -/
@@ -226,7 +226,7 @@ theorem SchurPackage.exists_block_units (P : SchurPackage.{u})
     obtain ⟨m, hm⟩ := exists_ne (0 : subCarrier S)
     apply hm
     have h2 := LinearMap.congr_fun h1 m
-    rwa [Module.End.one_apply, LinearMap.zero_apply] at h2
+    rwa [one_apply_eq_self, LinearMap.zero_apply] at h2
   -- The kill criterion on the block, through `block_faithful`.
   have hkill : ∀ x : SymGroupAlgebra μ.card,
       nPsi S (P.e μ * x) = 0 → P.e μ * x = 0 := by

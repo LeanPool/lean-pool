@@ -79,7 +79,7 @@ def chartImplicitData (f : E × F → ℝ) (a : E × F)
     ImplicitFunctionData ℝ (E × F) ℝ (E × (fderiv ℝ f a ∘L .inr ℝ E F).ker) where
   leftFun := f
   leftDeriv := fderiv ℝ f a
-  hasStrictFDerivAt_leftFun := hfa.contDiffAt.hasStrictFDerivAt <| mod_cast hk
+  hasStrictFDerivAt_leftFun := hfa.contDiffAt.hasStrictFDerivAt_fderiv <| mod_cast hk
   rightFun := _
   rightDeriv := .prodMap (.id _ _) (Submodule.ClosedComplemented.of_finiteDimensional _).choose
   hasStrictFDerivAt_rightFun := ContinuousLinearMap.hasStrictFDerivAt _
@@ -87,8 +87,9 @@ def chartImplicitData (f : E × F → ℝ) (a : E × F)
   range_leftDeriv := by
     refine IsSimpleOrder.eq_bot_or_eq_top _ |>.resolve_left ?_
     rw [LinearMap.range_eq_bot, ← ContinuousLinearMap.toLinearMap_zero, ContinuousLinearMap.coe_inj]
-    contrapose! hdf
-    rw [hdf, ContinuousLinearMap.zero_comp]
+    intro hzero
+    apply hdf
+    rw [hzero, ContinuousLinearMap.zero_comp]
   range_rightDeriv := by
     have : (Submodule.ClosedComplemented.of_finiteDimensional <|
         (fderiv ℝ f a ∘L .inr ℝ E F).ker).choose.range = ⊤ := by

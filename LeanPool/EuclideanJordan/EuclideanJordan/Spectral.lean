@@ -196,7 +196,7 @@ theorem exists_annihilator_generator [Module.Finite ℝ J] (x : J) :
       rw [Polynomial.finsetSum_coeff, Finset.sum_eq_single i₀]
       · simp only [coeff_monomial_same]
       · intro b _ hb
-        simp only [coeff_monomial, Fin.val_ne_of_ne hb, ↓reduceIte]
+        simp only [coeff_monomial, Finsupp.single_apply, Fin.val_ne_of_ne hb, ↓reduceIte]
       · simp only [Finset.mem_univ, not_true_eq_false, coeff_monomial_same, IsEmpty.forall_iff]
     rw [h, Polynomial.coeff_zero] at hco
     exact hi₀ hco.symm

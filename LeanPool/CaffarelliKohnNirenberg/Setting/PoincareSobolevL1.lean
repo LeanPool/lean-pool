@@ -652,14 +652,14 @@ theorem poincareSobolevL1_unit (g : Vec 3 → ℝ) (hg : ContDiff ℝ 1 g) :
       eLpNorm (fderiv ℝ w) 1 volume =
         ∫⁻ x in O, ENNReal.ofReal ‖fderiv ℝ w x‖ ∂volume := by
     rw [← eLpNorm_restrict_eq_of_support_subset hfw hderiv_support,
-      eLpNorm_one_eq_lintegral_enorm hfw.restrict]
+      eLpNorm_one_eq_lintegral_eNorm hfw.restrict]
     apply lintegral_congr_ae
     filter_upwards [] with x
     rw [← ofReal_norm]
   have hgrad_norm :
       eLpNorm (fderiv ℝ g) 1 (volume.restrict U) =
         ∫⁻ x in U, ENNReal.ofReal ‖fderiv ℝ g x‖ ∂volume := by
-    rw [eLpNorm_one_eq_lintegral_enorm hfg]
+    rw [eLpNorm_one_eq_lintegral_eNorm hfg]
     apply lintegral_congr_ae
     filter_upwards [] with x
     rw [← ofReal_norm]

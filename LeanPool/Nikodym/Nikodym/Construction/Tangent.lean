@@ -357,7 +357,7 @@ variable {n q k : ℕ} {ρ : ℝ}
 theorem prefixSum_eq_prefixSumBelow_add (w : Fin k → R) (i : Fin k) :
     prefixSum n q k w i = prefixSumBelow n q k w i + (D (radix n q k) i : R) * w i := by
   unfold prefixSum prefixSumBelow
-  rw [← Finset.Iio_insert, Finset.sum_insert Finset.notMem_Iio_self, add_comm]
+  rw [← Finset.insert_Iio, Finset.sum_insert Finset.notMem_Iio_self, add_comm]
 
 /-- Blueprint T01c: the prefix sum below `i` is bounded by `ρ i D_{i+1}` on the digit space. -/
 theorem abs_prefixSumBelow_le (S : Scaffold b σ φ K₀ K₁) (hq : 1 ≤ q) (hρ : 0 ≤ ρ)

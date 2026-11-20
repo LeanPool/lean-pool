@@ -60,7 +60,6 @@ private theorem weighted_tail_eq_of_restricted_equality
         sqWeightedMeasure G μ ({x | a < ‖G x‖} ∩ B) := by
     apply measure_congr
     filter_upwards [hFG_weighted] with x hx
-    apply propext
     change (a < ‖F x‖ ∧ x ∈ B) ↔ (a < ‖G x‖ ∧ x ∈ B)
     by_cases hxB : x ∈ B
     · rw [hx hxB]

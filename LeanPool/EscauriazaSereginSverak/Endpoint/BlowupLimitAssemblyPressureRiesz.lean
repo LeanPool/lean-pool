@@ -45,7 +45,7 @@ theorem blowupLimitAssemblyPressure_mass_to_eLpNorm
     {μ : Measure (Vec3 × ℝ)} {f : Vec3 × ℝ → ℝ} (hf : Measurable f) {ε : ℝ≥0∞}
     (hmass : (∫⁻ z, ENNReal.ofReal |f z| ^ (3 / 2 : ℝ) ∂μ) ≤ ε) :
     eLpNorm f (ENNReal.ofReal (3 / 2 : ℝ)) μ ≤ ε ^ (2 / 3 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by simp)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by simp)
     hf.aestronglyMeasurable]
   have htoReal : (ENNReal.ofReal (3 / 2 : ℝ)).toReal = 3 / 2 := by
     rw [ENNReal.toReal_ofReal (by norm_num)]
@@ -54,7 +54,7 @@ theorem blowupLimitAssemblyPressure_mass_to_eLpNorm
       ∫⁻ z, ENNReal.ofReal |f z| ^ (3 / 2 : ℝ) ∂μ := by
     congr 1
     funext z
-    rw [Real.enorm_eq_ofReal_abs]
+    rw [Real.eNorm_eq_ofReal_abs]
   rw [heq]
   have h23 : (1 / (3 / 2 : ℝ)) = 2 / 3 := by norm_num
   rw [h23]

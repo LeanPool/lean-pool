@@ -286,13 +286,11 @@ private theorem IsYZPair.step {L : ℕ} {A B : ℂ[X]} (h : IsYZPair L A B) (v w
   · have h1 : A.coeff m = 0 := h.coeff_A_eq_zero (by omega)
     have h2 : B.coeff (m - 1) = 0 := h.coeff_B_eq_zero (by omega)
     have hm0 : ¬ m = 0 := by omega
-    simp [Polynomial.coeff_sub, Polynomial.coeff_C_mul, coeff_X_mul', h1, h2,
-      hm0]
+    simp [Polynomial.coeff_C_mul, coeff_X_mul', h1, h2, hm0]
   · have h1 : A.coeff m = 0 := h.coeff_A_eq_zero (by omega)
     have h2 : B.coeff (m - 1) = 0 := h.coeff_B_eq_zero (by omega)
     have hm0 : ¬ m = 0 := by omega
-    simp [Polynomial.coeff_add, Polynomial.coeff_C_mul, coeff_X_mul', h1, h2,
-      hm0]
+    simp [Polynomial.coeff_C_mul, coeff_X_mul', h1, h2, hm0]
   · rw [yz_norm_step h.natDegA h.natDegB v w, h.norm, hC]
     ring
 
@@ -769,14 +767,14 @@ private theorem isYZPair_unstep {L : ℕ} {A B : ℂ[X]} (h : IsYZPair (L + 1) A
   have hA'c : ∀ m, L < m → A'.coeff m = 0 := by
     intro m hm
     rcases Nat.lt_or_ge (L + 1) m with hgt | hle
-    · simp [hA'def, Polynomial.coeff_add, Polynomial.coeff_C_mul,
+    · simp [hA'def, Polynomial.coeff_C_mul,
         h.coeff_A_eq_zero hgt, h.coeff_B_eq_zero hgt]
     · have hme : m = L + 1 := by omega
       simp_all
   have hB'c : ∀ m, L < m → B''.divX.coeff m = 0 := by
     intro m hm
     rw [Polynomial.coeff_divX]
-    simp [hB''def, Polynomial.coeff_sub, Polynomial.coeff_C_mul,
+    simp [hB''def, Polynomial.coeff_C_mul,
       h.coeff_A_eq_zero (show L + 1 < m + 1 by omega),
       h.coeff_B_eq_zero (show L + 1 < m + 1 by omega)]
   have hA'nd : A'.natDegree ≤ L :=

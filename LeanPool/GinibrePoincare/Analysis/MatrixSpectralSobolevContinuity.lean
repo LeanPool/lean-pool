@@ -97,7 +97,7 @@ theorem matrix_root_norm_le_bound {n : ℕ} (A : Matrix (Fin n) (Fin n) ℂ)
   have h := hr.le.trans hb
   unfold matrixSpectralRootBound
   have hreal := NNReal.coe_le_coe.mpr h
-  simpa only [NNReal.coe_add, NNReal.coe_sum, NNReal.coe_one, coe_nnnorm] using hreal
+  simpa only [NNReal.coe_add, NNReal.coe_sum, NNReal.coe_one, coe_nnNorm] using hreal
 
 theorem matrixAllEigenvalues_isRoot (n : ℕ) (A : Matrix (Fin n) (Fin n) ℂ) (i : Fin n) :
     A.charpoly.IsRoot (matrixAllEigenvalues n A i) := by

@@ -57,9 +57,10 @@ namespace CircuitComplexity
     there exists a Boolean function whose fan-in-2 AND/OR circuit complexity
     exceeds `2^N / (5N)`. -/
 theorem shannon_size_complexity (N : Nat) [NeZero N] (hN : 6 ≤ N)
-    [CompleteBasis Basis.andOr2] :
+    (complete : CompleteBasis Basis.andOr2) :
     ∃ f : BitString N → Bool,
       Circuit.sizeComplexity Basis.andOr2 f > 2 ^ N / (5 * N) := by
+  let := complete
   obtain ⟨f, hf⟩ := shannon_lower_bound_circuit N hN
   refine ⟨f, ?_⟩
   by_contra hle; push Not at hle

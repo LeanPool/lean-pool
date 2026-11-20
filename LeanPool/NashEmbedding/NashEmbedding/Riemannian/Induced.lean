@@ -126,14 +126,14 @@ theorem inducedForm_trivialization_apply (u : M → E') {x₀ x : M}
 
 omit [FiniteDimensional ℝ E] [FiniteDimensional ℝ E'] in
 /-- **L4.** Smoothness of the induced form as a section of the bundle of bilinear forms on
-  `TM` (via `contMDiffAt_section`, `hom_trivializationAt_apply`, `inCoordinates_apply_eq₂`,
+  `TM` (via `contMDiffAt_section_iff`, `hom_trivializationAt_apply`, `inCoordinates_apply_eq₂`,
   and `contMDiffAt_inTangentCoordinates_mfderiv` / `inTangentCoordinates_mfderiv_eq` from
   `AmbientMetric.lean`). -/
 theorem inducedForm_contMDiff {u : M → E'} (hu : ContMDiff I 𝓘(ℝ, E') ∞ u) :
     ContMDiff I (I.prod 𝓘(ℝ, E →L[ℝ] E →L[ℝ] ℝ)) ∞
       (fun x => TotalSpace.mk' (E →L[ℝ] E →L[ℝ] ℝ) x (inducedFormT (I := I) u x)) := by
   intro x₀
-  rw [contMDiffAt_section]
+  rw [contMDiffAt_section_iff]
   set Lt : M → E →L[ℝ] E' :=
     inTangentCoordinates I 𝓘(ℝ, E') id u (mfderiv I 𝓘(ℝ, E') u) x₀
   have hLtm : ContMDiffAt I 𝓘(ℝ, E →L[ℝ] E') ∞ Lt x₀ :=

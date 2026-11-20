@@ -255,7 +255,7 @@ theorem tsum_tsum_verySmall_le (B c : ℕ) (a : ℤ → ENNReal) :
     ∑' m : ℤ, ∑' j : ℤ,
         ENNReal.ofReal (restrictedVerySmallWeight B c j m) * a j ≤
       ENNReal.ofReal verySmallGeometricConstant * (∑' j : ℤ, a j) := by
-  rw [ENNReal.tsum_comm]
+  rw [tsum_comm]
   calc
     (∑' j : ℤ, ∑' m : ℤ,
         ENNReal.ofReal (restrictedVerySmallWeight B c j m) * a j) =
@@ -266,10 +266,9 @@ theorem tsum_tsum_verySmall_le (B c : ℕ) (a : ℤ → ENNReal) :
       intro j
       rw [ENNReal.tsum_mul_right]
     _ ≤ ∑' j : ℤ, ENNReal.ofReal verySmallGeometricConstant * a j := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro j
-      gcongr
-      exact tsum_ofReal_restrictedVerySmallWeight_le B c j
+      exact mul_le_mul' (tsum_ofReal_restrictedVerySmallWeight_le B c j) le_rfl
     _ = ENNReal.ofReal verySmallGeometricConstant * ∑' j : ℤ, a j := by
       rw [ENNReal.tsum_mul_left]
 

@@ -243,7 +243,7 @@ theorem kernelRowBound {x Y : ℕ} (chain : MarkovLayer x Y) :
   intro m hm
   by_cases hm0 : m = 0
   · subst hm0
-    rw [ENNReal.tsum_eq_zero.2 fun n => by simp [transitionKernel, transitionWeight]]
+    rw [tsum_eq_zero_iff.2 fun n => by simp [transitionKernel, transitionWeight]]
     simp
   · have hmpos : 0 < m := Nat.pos_iff_ne_zero.mpr hm0
     have hm1 : 1 ≤ m := Nat.succ_le_of_lt hmpos
@@ -307,7 +307,7 @@ private lemma survivingArrivalMass_eq_zero_of_lt {x Y : ℕ} (chain : MarkovLaye
       · rw [survivingArrivalMass]
         have hnAc : n ∈ Aᶜ := by simpa using hnA
         rw [Set.indicator_of_mem hnAc]
-        apply (ENNReal.tsum_eq_zero).2
+        apply tsum_eq_zero_iff.2
         intro m
         by_cases hm : x ≤ m
         · simp [transitionKernel_eq_zero_of_lt (m := m) hY hn]
@@ -389,7 +389,7 @@ private lemma tsum_arrivalMass_eq_initial_add_parentSum {x Y : ℕ} (chain : Mar
           if x ≤ m ∧ Y ≤ n / m then
             (∑' k : ℕ, arrivalMass chain k m) * ENNReal.ofReal (transitionWeight Y m (n / m))
           else 0) := by
-  rw [tsum_eq_zero_add' ENNReal.summable]
+  rw [tsum_eq_zero_add' CompleteLattice.summable]
   calc
     arrivalMass chain 0 n + ∑' k : ℕ, arrivalMass chain (k + 1) n
       = initialMass x Y n + ∑' k : ℕ, arrivalMass chain (k + 1) n := by
@@ -411,7 +411,7 @@ private lemma tsum_arrivalMass_eq_initial_add_parentSum {x Y : ℕ} (chain : Mar
                 arrivalMass chain k m * ENNReal.ofReal (transitionWeight Y m (n / m))
               else 0) := by
             congr 1
-            exact Summable.tsum_finsetSum (fun _ _ ↦ ENNReal.summable)
+            exact Summable.tsum_finsetSum (fun _ _ ↦ CompleteLattice.summable)
     _ = initialMass x Y n +
           n.divisors.sum (fun m =>
             if x ≤ m ∧ Y ≤ n / m then
@@ -557,7 +557,7 @@ private theorem tsum_indicator_ofReal_visitProbability_eq_visitMass {x Y : ℕ}
               (tsum_arrivalMass_eq_ofReal_visitProbability chain hx hY hB (hAx hnA)).symm
           · simp [hnA]
     _ = ∑' k : ℕ, ∑' n : ℕ, A.indicator (arrivalMass chain k) n := by
-          rw [ENNReal.tsum_comm]
+          rw [tsum_comm]
     _ = ∑' k : ℕ, firstHitMassAtStep chain A k := by
           apply tsum_congr
           intro k
@@ -606,7 +606,7 @@ end PrimitiveSet
 original total mass. -/
 private lemma tsum_indicator_add_tsum_indicator_compl (A : Set ℕ) (f : ℕ → ENNReal) :
     (∑' n : ℕ, A.indicator f n) + (∑' n : ℕ, Aᶜ.indicator f n) = ∑' n : ℕ, f n := by
-  rw [← ENNReal.tsum_add]
+  rw [← tsum_add]
   exact congrArg (fun g : ℕ → ENNReal => ∑' n : ℕ, g n) (Set.indicator_self_add_compl A f)
 
 /-- The step-0 hit mass together with the step-0 surviving mass is exactly the initial mass. -/
@@ -641,13 +641,14 @@ private lemma firstHitMassAtStep_succ_add_tsum_survivingArrivalMass_le {x Y : �
         (∑' n : ℕ, survivingArrivalMass chain A (k + 1) n) ≤
       ∑' n : ℕ, survivingArrivalMass chain A k n := by
   rw [firstHitMassAtStep_succ_add_tsum_survivingArrivalMass]
-  rw [ENNReal.tsum_comm]
+  rw [tsum_comm]
   simp_rw [ENNReal.tsum_mul_left]
   calc
     ∑' m : ℕ, survivingArrivalMass chain A k m * (∑' n : ℕ, transitionKernel x Y m n)
       ≤ ∑' m : ℕ, survivingArrivalMass chain A k m * 1 := by
-          refine ENNReal.tsum_le_tsum ?_
+          refine tsum_le_tsum ?_
           intro m
+          dsimp only
           by_cases hm : x ≤ m
           · gcongr
             exact hkernel hm

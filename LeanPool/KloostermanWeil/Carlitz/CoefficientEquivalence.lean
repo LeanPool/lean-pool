@@ -57,8 +57,8 @@ theorem coeffVector_right_inv
     natDegree_eq_of_degree_eq_some
       (monicFromCoeffs_degree p n (monicToCoeffVector p n f))
   change g = f.1
-  apply Polynomial.ext
-  intro k
+  apply AddMonoidAlgebra.ext
+  ext k
   by_cases hk : k < n
   · change g.coeff k = f.1.coeff k
     simpa [g, monicToCoeffVector] using

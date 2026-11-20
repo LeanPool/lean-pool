@@ -39,7 +39,7 @@ variable {μ : PMF ℕ}
 theorem cB_ne_top (hc : IsCritical μ) (B : Set ℕ) : cB μ B ≠ ∞ := by
   refine ne_top_of_le_ne_top ENNReal.one_ne_top ?_
   calc cB μ B ≤ ∑' j : ℕ, (j : ℝ≥0∞) * μ j :=
-        ENNReal.tsum_le_tsum fun j => Set.indicator_le_self _ _ j
+        tsum_le_tsum fun j => Set.indicator_le_self _ _ j
     _ = 1 := hc
 
 /-- The real value of the constant `c_B` of `Statements.Main` is `cBReal μ B = ∑_{j ∈ B} j μ_j`

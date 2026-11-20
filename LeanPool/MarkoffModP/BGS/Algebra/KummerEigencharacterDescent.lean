@@ -87,8 +87,8 @@ lemma kummerPowerBasis_eigenvector_eq_rootMonomial
       apply hjk
       apply Fin.ext
       apply hζ.pow_inj
-      · exact lt_of_lt_of_eq j.isLt natDegree_X_pow_sub_C
-      · exact lt_of_lt_of_eq k.isLt natDegree_X_pow_sub_C
+      · exact lt_of_lt_of_eq j.isLt (natDegree_X_pow_sub_C v)
+      · exact lt_of_lt_of_eq k.isLt (natDegree_X_pow_sub_C v)
       · exact hp
     have hcoeff : b.repr z j = 0 := by
       have hmul : (ζ ^ (j : ℕ) - ζ ^ (k : ℕ)) * b.repr z j = 0 := by
@@ -156,7 +156,7 @@ theorem exists_rootMonomial_of_primePower_mem_base
     calc
       s * m < s * q := (Nat.mul_lt_mul_left hspos).2 hm
       _ = e := hfactor.symm
-  have hdeg : (X ^ e - C v).natDegree = e := natDegree_X_pow_sub_C
+  have hdeg : (X ^ e - C v).natDegree = e := (natDegree_X_pow_sub_C v)
   let kfin : Fin (X ^ e - C v).natDegree := ⟨s * m, by simpa [hdeg] using hkmLt⟩
   have hTzFin : T z =
       algebraMap F (AdjoinRoot (X ^ e - C v)) (ζ ^ (kfin : ℕ)) * z := hTz

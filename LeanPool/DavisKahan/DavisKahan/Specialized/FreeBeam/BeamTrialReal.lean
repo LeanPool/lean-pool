@@ -76,7 +76,7 @@ instance : FiniteDimensional ℝ beamTrial := by
   exact FiniteDimensional.span_of_finite ℝ (Set.toFinite _)
 
 /-- A finite-dimensional subspace is complete. -/
-instance : CompleteSpace beamTrial := FiniteDimensional.complete ℝ _
+instance : CompleteSpace beamTrial := FiniteDimensional.completeSpace ℝ _
 
 /-- The affine trial plane is contained in the beam-operator domain. -/
 theorem beamTrial_le_domain {x : BeamL2} (hx : x ∈ beamTrial) :

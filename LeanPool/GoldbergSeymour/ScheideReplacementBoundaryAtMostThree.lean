@@ -426,7 +426,7 @@ private theorem helper_continuation_668.{u_1, u_2} :
                           GoldbergSeymour.ScheideStructuralConfiguration.p_ge_two
                             (ScheideReducedConfiguration.toScheideStructuralConfiguration
                             C)
-                        all_goals omega)
+                        omega)
     ⟩ : Fin C.p) ∈ TreeSequenceVertexSet T \ (insert (C.blockVertex (D.gammaIndex d) (0 : Fin (2 :
         ℕ))) ({C.blockVertex (D.gammaIndex d) (1 : Fin (2 : ℕ))} : Finset V) : Finset V) ∧ (
     ∀ z ∈ TreeSequenceVertexSet T \ (insert (C.blockVertex (D.gammaIndex d) (0 : Fin (2 : ℕ)))

@@ -163,7 +163,7 @@ private lemma rank_geq_trans (G : CFGraph) (D : CFDiv G) (r1 r2 : ℤ) :
       simp only [_root_.map_add] at E_deg h_Ediff_deg ⊢
       linarith
   · -- Show that D - (E + E_diff) is not winnable
-    contrapose! h_E_nonwin
+    contrapose h_E_nonwin
     have E_diff_winnable := winnable_of_effective G E_diff h_Ediff_eff
     have sum_winnable := winnable_add_winnable G _ _ h_E_nonwin E_diff_winnable
     simpa only [sub_eq_add_neg, neg_add_rev, add_comm, add_left_comm, add_neg_cancel_comm_assoc]
@@ -181,7 +181,7 @@ private lemma rank_eq_neg_one_iff_unwinnable (G : CFGraph) (D : CFDiv G) :
   constructor
   · intro h
     rcases h with ⟨_, h_rank⟩
-    contrapose! h_rank
+    contrapose h_rank
     simp only [Int.reduceNeg, neg_add_cancel]
     intro E h_E
     rcases h_E with ⟨h_eff_E, h_deg_E⟩

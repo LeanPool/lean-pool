@@ -81,7 +81,7 @@ variable {d : ℕ}
 elementwise matrix norm carried by the frozen shell field. -/
 def matrixEntryCLM (i l : Fin d) : Mat d →L[ℝ] ℝ :=
   LinearMap.mkContinuous (Matrix.entryLinearMap ℝ ℝ i l) 1 fun A => by
-    simpa using Matrix.norm_entry_le_entrywise_sup_norm A
+    simpa using Matrix.norm_apply_le_norm A
 
 @[simp] theorem matrixEntryCLM_apply (i l : Fin d) (A : Mat d) :
     matrixEntryCLM i l A = A i l :=

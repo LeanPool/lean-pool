@@ -89,7 +89,7 @@ theorem tsum_fractionalChainPhysicalHead_le
   have hhead := tsum_geometric_of_mul_pow_lt_one_le hX hq
   have hsum : (∑' n : ℕ, if P n then ENNReal.ofReal (q ^ n) else 0) ≤
       1 + (ENNReal.ofReal X)⁻¹ * ENNReal.ofReal (q / (q - 1)) :=
-    le_trans (ENNReal.tsum_le_tsum hcut) hhead
+    le_trans (tsum_le_tsum hcut) hhead
   have hInv : (ENNReal.ofReal X)⁻¹ =
       ENNReal.ofReal (L ^ a) * ENNReal.ofReal (r ^ (-a)) := by
     rw [← ENNReal.ofReal_inv_of_pos hX]

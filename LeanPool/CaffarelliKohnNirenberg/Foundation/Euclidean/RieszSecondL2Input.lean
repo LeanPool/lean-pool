@@ -154,19 +154,19 @@ lemma test_hessian_mem (i j : Fin 3) (f : testFunction) :
   have hmeas : AEStronglyMeasurable
       (mixedSecond (pressureNewtonianPotential (f : Vec3 → ℝ)) i j) volume :=
     hH.continuous.aestronglyMeasurable
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num)
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num)
     (by norm_num) hmeas]
   have hbound := riesz_second_l2_bound_global f.contDiff f.hasCompactSupport i j
   have hsource : MemLp (f : Vec3 → ℝ) (2 : ℝ≥0∞) volume :=
     f.continuous.memLp_of_hasCompactSupport f.hasCompactSupport
   have hsource_int : ∫⁻ x, absE (f : Vec3 → ℝ) x ^ (2 : ℝ) < ∞ := by
-    have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hsource
     norm_num at h ⊢
-    simpa [absE, Real.enorm_eq_ofReal_abs] using h
+    simpa [absE, Real.eNorm_eq_ofReal_abs] using h
   have hsource_nat : ∫⁻ x, absE (f : Vec3 → ℝ) x ^ (2 : ℕ) < ∞ := by
     convert hsource_int using 1
-    norm_num [absE, Real.enorm_eq_ofReal_abs]
+    norm_num [absE, Real.eNorm_eq_ofReal_abs]
   have htarget_nat : ∫⁻ x,
       absE (fun y => mixedSecond (pressureNewtonianPotential (f : Vec3 → ℝ)) i j y) x ^ (2 : ℕ) <
         ∞ := by
@@ -175,13 +175,13 @@ lemma test_hessian_mem (i j : Fin 3) (f : testFunction) :
   have htarget_real : ∫⁻ x,
       absE (mixedSecond (pressureNewtonianPotential (f : Vec3 → ℝ)) i j) x ^ (2 : ℝ) < ∞ := by
     convert htarget_nat using 1
-    norm_num [absE, Real.enorm_eq_ofReal_abs]
+    norm_num [absE, Real.eNorm_eq_ofReal_abs]
   have hsqrt : (∫⁻ x,
       absE (mixedSecond (pressureNewtonianPotential (f : Vec3 → ℝ)) i j) x ^ (2 : ℝ)) ^
         (1 / (2 : ℝ)) < ∞ := by
     exact ENNReal.rpow_lt_top_of_nonneg (by positivity) htarget_real.ne
   norm_num at hsqrt ⊢
-  simpa [absE, Real.enorm_eq_ofReal_abs] using hsqrt
+  simpa [absE, Real.eNorm_eq_ofReal_abs] using hsqrt
 
 /-- L² class of a second derivative of the Newtonian potential of a test function. -/
 def testHessian (i j : Fin 3) : testFunction →ₗ[ℝ] rieszSecondL2 where
@@ -228,8 +228,8 @@ private lemma test_hessian_norm_le (i j : Fin 3) (f : testFunction) :
   rw [Lp.norm_toLp, Lp.norm_toLp]
   apply ENNReal.toReal_mono
   · exact (f.continuous.memLp_of_hasCompactSupport f.hasCompactSupport).eLpNorm_ne_top
-  · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
-    · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)]
+  · rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)]
+    · rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)]
       · apply ENNReal.rpow_le_rpow
         · have hbound := riesz_second_l2_bound_global f.contDiff f.hasCompactSupport i j
           have hbound' :
@@ -238,10 +238,10 @@ private lemma test_hessian_norm_le (i j : Fin 3) (f : testFunction) :
                 ∫⁻ x, absE (f : Vec3 → ℝ) x ^ (2 : ℕ) := by
             simpa only [one_pow, ENNReal.ofReal_one, one_mul] using hbound
           convert hbound' using 1
-          · simp only [absE, Real.enorm_eq_ofReal_abs]
+          · simp only [absE, Real.eNorm_eq_ofReal_abs]
             norm_num only [ENNReal.toReal_ofNat]
             simp only [ENNReal.rpow_two]
-          · simp only [absE, Real.enorm_eq_ofReal_abs]
+          · simp only [absE, Real.eNorm_eq_ofReal_abs]
             norm_num only [ENNReal.toReal_ofNat]
             simp only [ENNReal.rpow_two]
         · positivity

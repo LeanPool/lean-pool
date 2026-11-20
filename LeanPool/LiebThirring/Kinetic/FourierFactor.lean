@@ -58,7 +58,7 @@ theorem kineticEnergy_eq_sum_particleFourierEnergy {N q : ℕ} (ψ : State N q) 
   rw [lintegral_finsetSum]
   intro i _
   exact ((measurable_const.mul
-    ((measurable_particlePosition i).nnnorm.coe_nnreal_ennreal.pow_const 2)).mul
+    ((measurable_particlePosition i).nnNorm.coe_nnreal_ennreal.pow_const 2)).mul
     (measurable_state_norm_sq (Lp.fourierTransformₗᵢ _ _ ψ)))
 
 /-- Simultaneous particle permutation packaged as a unitary on `State`. -/

@@ -108,7 +108,7 @@ theorem eq_uniform_interval_of_symmetric_positive_tails
   let ν : Measure ℝ := (ENNReal.ofReal 2)⁻¹ • (volume : Measure ℝ).restrict (Icc (-1) 1)
   have huniv : ν univ = 1 := by
     dsimp [ν]
-    rw [Measure.restrict_apply_univ, Real.volume_Icc]
+    rw [smul_apply, smul_eq_mul, Measure.restrict_apply_univ, Real.volume_Icc]
     norm_num
     exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
   let : IsProbabilityMeasure ν := ⟨huniv⟩
@@ -124,7 +124,7 @@ theorem eq_uniform_interval_of_symmetric_positive_tails
   intro t ht
   rw [h t ht]
   dsimp [ν]
-  rw [Measure.restrict_apply measurableSet_Ioi]
+  rw [smul_apply, smul_eq_mul, Measure.restrict_apply measurableSet_Ioi]
   have hinter : Ioi t ∩ Icc (-1 : ℝ) 1 = Ioc t 1 := by
     ext x
     simp only [mem_inter_iff, mem_Ioi, mem_Icc, mem_Ioc]

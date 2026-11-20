@@ -316,7 +316,7 @@ theorem loadedTruthLemmaProg {Worlds} (MG : ModelGraph Worlds) α :
       case inr δ_notEmpty =>
         have : (δ ++ [∗β]) ∈ P (∗β) ℓ := by
           simp [P]
-          all_goals simp_all
+          simp_all
         have δβSφ_in_X : (⌈⌈δ⌉⌉⌈∗β⌉φ) ∈ X.1 := by
           have := mysat.2 _ this
           simp_all [boxes_append]

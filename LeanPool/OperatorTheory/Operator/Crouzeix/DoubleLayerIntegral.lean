@@ -92,7 +92,7 @@ theorem intervalIntegral_resolvent_doubleLayer_eq_four_pi_smul_one_of_cauchy
     simp only [B, smul_smul]
   have hB : IntervalIntegrable B volume 0 (2 * Real.pi) := by
     rw [hBfun]
-    exact ⟨hint.1.smul_enorm (-I), hint.2.smul_enorm (-I)⟩
+    exact ⟨hint.1.smul_eNorm (-I), hint.2.smul_eNorm (-I)⟩
   have hBint : (∫ t in (0 : ℝ)..(2 * Real.pi), B t) =
       (2 * Real.pi) • (1 : E →L[ℂ] E) := by
     rw [hBfun, intervalIntegral.integral_smul, hCauchy, smul_smul]

@@ -33,7 +33,7 @@ private theorem serrin_enorm_mul_le_half (a b : ℝ) :
   have hreal : |a * b| ≤ (1 / 2 : ℝ) * (a ^ 2 + b ^ 2) := by
     rw [abs_mul]
     nlinarith only [sq_nonneg (|a| - |b|), sq_abs a, sq_abs b]
-  rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
+  rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs,
     ENNReal.ofReal_rpow_of_nonneg (abs_nonneg a) (by norm_num),
     ENNReal.ofReal_rpow_of_nonneg (abs_nonneg b) (by norm_num),
     ← ENNReal.ofReal_add (by positivity) (by positivity),
@@ -60,7 +60,7 @@ theorem serrinMol_bound_ae {T : ℝ} {a : Vec3 → Vec3}
   have hρ2 : (∫⁻ x : Vec3, ‖ρ x‖ₑ ^ (2 : ℝ)) < ⊤ := by
     have hmem : MemLp ρ 2 volume := hρ.memLp_of_hasCompactSupport hρc
     have h := hmem.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hρ.aestronglyMeasurable] at h
     simp only [ENNReal.toReal_ofNat] at h
     exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).mp h
@@ -77,7 +77,7 @@ theorem serrinMol_bound_ae {T : ℝ} {a : Vec3 → Vec3}
     refine (serrin_enorm_mul_le_half _ _).trans ?_
     gcongr
     exact norm_le_pi_norm (u (x, τ)) k |>.trans_eq rfl |> fun h =>
-      enorm_le_iff_norm_le.mpr h
+      eNorm_le_iff_norm_le.mpr h
   have hlint : (∫⁻ x : Vec3, ‖u (x, τ) k * ρ (y - x)‖ₑ) ≤
       ENNReal.ofReal (1 / 2 : ℝ) * (M + R) := by
     calc
@@ -91,7 +91,7 @@ theorem serrinMol_bound_ae {T : ℝ} {a : Vec3 → Vec3}
         rw [lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
         congr 1
         rw [lintegral_add_right']
-        exact ((hρ.comp (continuous_const.sub continuous_id)).aemeasurable.enorm).pow_const _
+        exact ((hρ.comp (continuous_const.sub continuous_id)).aemeasurable.eNorm).pow_const _
       _ ≤ ENNReal.ofReal (1 / 2 : ℝ) * (M + R) := by
         rw [htrans]
         gcongr

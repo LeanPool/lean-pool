@@ -323,7 +323,7 @@ theorem IsLocalRing.of_isAdicComplete_of_isDomain {A : Type*} [CommRing A] [IsDo
     {I : Ideal A} [IsAdicComplete I A] [IsArtinianRing (A ⧸ I)] :
     IsLocalRing A := by
   have hIm (m : Ideal A) (hm : m.IsMaximal) : I ≤ m :=
-    (IsAdicComplete.le_jacobson_bot I).trans (sInf_le ⟨bot_le, hm⟩)
+    (IsAdicComplete.le_jacobson I).trans (Ring.jacobson_le_of_isMaximal m)
   obtain ⟨m₀, hm₀⟩ := Ideal.exists_maximal A
   refine IsLocalRing.of_unique_max_ideal ⟨m₀, hm₀, fun m₁ hm₁ ↦ ?_⟩
   by_contra hne

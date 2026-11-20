@@ -33,7 +33,7 @@ theorem enorm_stoppingScaleLevelBadPart_eq_tsum_atoms
   by_cases hx : x ∈ stoppingBadUnion f
   · obtain ⟨c, hc⟩ := mem_iUnion.mp hx
     rw [stoppingScaleLevelBadPart_eq_atom_of_mem A c hc, tsum_eq_single c]
-    · exact enorm_indicator_eq_indicator_enorm _ _
+    · exact eNorm_indicator_eq_indicator_eNorm _ _
     · intro d hdc
       have hz := levelAtom_eq_zero_of_other_mem (A := A) (f := f) (k := k)
         centeredStoppingIntervals_pairwiseDisjoint hdc
@@ -58,7 +58,7 @@ theorem lintegral_enorm_stoppingScaleLevelBadPart_eq_atomScaleMass
         (fun c ↦ ‖levelAtom A f k (stoppingCenter c) (stoppingLength c) x‖ₑ) c) := by
     by_cases hc : c ∈ dyadicAtomScaleClass stoppingLength j
     · simpa only [indicator_of_mem hc] using
-        (measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).enorm
+        (measurable_levelAtom hf k (stoppingCenter c) (stoppingLength c)).eNorm
     · simp only [indicator_of_notMem hc]
       exact measurable_const
   simp_rw [enorm_stoppingScaleLevelBadPart_eq_tsum_atoms]

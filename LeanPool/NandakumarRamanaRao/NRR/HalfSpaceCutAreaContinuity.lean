@@ -70,7 +70,7 @@ theorem continuous_cutAreaLower_fixedNormal
     ∂volume) := by
     refine continuous_iff_continuousAt.mpr ?_;
     intro c₀; apply_rules [ MeasureTheory.continuousAt_of_dominated, continuousAt_const ];
-    any_goals exact fun _ => 1;
+    on_goal 5 => exact fun _ => 1;
     · exact Filter.Eventually.of_forall fun x => Measurable.aestronglyMeasurable ( by
         exact Measurable.ite ( measurableSet_le ( measurable_const.inner measurable_id' )
           measurable_const ) measurable_const measurable_const );

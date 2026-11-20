@@ -33,7 +33,7 @@ theorem foldedOK_Bset {A : Finset ℕ} {N h : ℕ} (hA : IsTripleFree A) (hh : h
   constructor;
   · exact fun x hx => by unfold Bset at hx; unfold Xset at hx; unfold Yset at hx; aesop;
   · intro x hx y hy hxy;
-    refine ⟨ ?_, ?_ ⟩ <;> contrapose! hxy <;>
+    refine ⟨ ?_, ?_ ⟩ <;> contrapose hxy <;>
       simp_all +decide only [Bset, Xset, Yset, mem_inter, mem_filter, mem_Ico];
     · unfold IsTripleFree at hA; simp_all +decide [ HasTriple ] ;
       grind +ring;
@@ -65,12 +65,12 @@ theorem collisions_subset_Eset {A : Finset ℕ} {N h : ℕ} (hA : IsTripleFree A
     constructor <;> intros <;> simp_all +decide only [Bset, mem_inter];
     · obtain ⟨ ⟨ a, b, ⟨ ⟨ ⟨ ha₁, ha₂ ⟩, hb₁, hb₂ ⟩, hab, hlt ⟩, rfl ⟩,
         c, d, ⟨ ⟨ ⟨ hc₁, hc₂ ⟩, hd₁, hd₂ ⟩, hcd, hlt' ⟩, hcd' ⟩ := hr;
-      contrapose! hA;
+      contrapose hA;
       unfold IsTripleFree;
       simp_all +decide only [Xset, mem_filter, mem_Ico, Yset, and_self, true_and, not_not];
       exact ⟨ a, ha₁.2, b, hb₁.2, h, hh, by omega, by omega, by omega, by ring_nf at *; aesop ⟩;
     · obtain ⟨ a, b, ⟨ ⟨ ⟨ ha₁, ha₂ ⟩, ⟨ hb₁, hb₂ ⟩ ⟩, hab, hlt ⟩, rfl ⟩ := hr.2;
-      contrapose! hA;
+      contrapose hA;
       unfold IsTripleFree;
       simp_all +decide only [Xset, mem_filter, mem_Ico, Yset, and_self, true_and, not_not];
       use a, ha₁.2, b, hb₁.2, h, hh;

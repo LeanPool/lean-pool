@@ -517,7 +517,7 @@ theorem isSolved_of_groundCount_zero {hack : Hackenbush V} {p : Player}
     (hgc : hack.groundCount p = 0) :
     GameForm.IsSolved p hack.toGameForm := by
   induction m : hack.edgeCard using Nat.strong_induction_on generalizing hack p with
-  | h m ih =>
+  | ind m ih =>
     -- IH: for positions with fewer edges and groundCount p = 0, the position is solved.
     have ih_remove : ∀ (e : Sym2 V) (he : e ∈ hack.graph.edgeSet),
         (hack.remove e).groundCount p = 0 →
@@ -557,7 +557,7 @@ theorem not_isSolved_of_groundCount_pos {hack : Hackenbush V} {p : Player}
     (hgc : 1 ≤ hack.groundCount p) :
     ¬GameForm.IsSolved p hack.toGameForm := by
   induction n : hack.edgeCard using Nat.strong_induction_on generalizing hack p with
-  | h n ih =>
+  | ind n ih =>
     intro h_solved
     have hne : hack.graph ≠ ⊥ := by
       intro hbot
@@ -596,7 +596,7 @@ edges.
 theorem hasStride_groundCount (hack : Hackenbush V) (p : Player) :
     GameForm.HasStride p hack.toGameForm (hack.groundCount p) := by
   induction n : hack.edgeCard using Nat.strong_induction_on generalizing hack p with
-  | h n ih =>
+  | ind n ih =>
     have ih_remove : ∀ (e : Sym2 V) (he : e ∈ hack.graph.edgeSet) (q : Player),
         GameForm.HasStride q (hack.remove e).toGameForm
           ((hack.remove e).groundCount q) := by

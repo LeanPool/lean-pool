@@ -351,10 +351,10 @@ theorem exists_closed_class_refinement_at_support_class
         closedClassRestrict S q (E b) = g * h ∧
         closedClassRestrict S q (E c) = e * g ∧
         closedClassRestrict S q (E d) = f * h := by
-  apply exists_integer_part_refinement_of_nonpositive_refinement
-  · exact exists_nonpositive_refinement_at_support_class
-      Z T₀ T₁ hT₀gt a b c d habcd haclasses
-  · exact has_closed_class_normalization_at_support_classes
-      Z hfinite T₀ T₁ hT₀gt hT₁ a b c d habcd haclasses htailfrac
+  exact exists_integer_part_refinement_of_nonpositive_refinement _ _ _ _ _ _
+    (exists_nonpositive_refinement_at_support_class
+      Z T₀ T₁ hT₀gt a b c d habcd haclasses)
+    (has_closed_class_normalization_at_support_classes
+      Z hfinite T₀ T₁ hT₀gt hT₁ a b c d habcd haclasses htailfrac)
 
 end HahnSeries.CardSuppLTTruncationIntegerPart

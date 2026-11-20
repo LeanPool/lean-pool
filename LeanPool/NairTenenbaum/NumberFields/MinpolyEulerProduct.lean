@@ -43,7 +43,7 @@ variable {K : Type*} [Field K] [NumberField K]
 
 theorem minpoly_goodPrimeProduct_le_idealNormDirichlet (θ : 𝓞 K)
     (S : Finset ℕ) (hS : ∀ p ∈ S, p.Prime)
-    (hgood : ∀ p ∈ S, ¬p ∣ RingOfIntegers.exponent θ) {σ : ℝ} (hσ : 1 < σ) :
+    (hgood : ∀ p ∈ S, ¬p ∣ NumberField.RingOfIntegers.exponent θ) {σ : ℝ} (hσ : 1 < σ) :
     (∏ p ∈ S, (1 + (rootCount (minpoly ℤ θ) p : ℝ) * (p : ℝ) ^ (-σ))) ≤
       idealNormDirichlet K σ := by
   classical

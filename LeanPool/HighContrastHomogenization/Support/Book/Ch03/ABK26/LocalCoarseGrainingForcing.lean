@@ -588,7 +588,7 @@ private theorem finite_noteResidualSum_le_scale_mul_disjointPowerEnergy
   let A : ℕ → ℝ≥0∞ := fun j => cubeEuclideanPositiveBesovDisjointDepthPower Q p g j
   have hsum : ∑ j ∈ Finset.range (N + 1), w j * A j ≤ E := by
     dsimp [E, w, A, cubeEuclideanPositiveBesovDisjointPowerEnergy]
-    exact ENNReal.sum_le_tsum _
+    exact sum_le_tsum _
   have hreal : (∑ j ∈ Finset.range (N + 1), w j * A j).toReal ≤ E.toReal :=
     ENNReal.toReal_mono hfin.ne hsum
   have hsum_fin : ∑ j ∈ Finset.range (N + 1), w j * A j < ∞ :=
@@ -1645,7 +1645,7 @@ private theorem descendantsENNAverage_tsum_eq_tsum_descendantsENNAverage
   unfold descendantsENNAverage
   rw [show (∑ R ∈ descendantsAtDepth Q j, (fun R => ∑' n : ℕ, F R n) R) =
       ∑' n : ℕ, ∑ R ∈ descendantsAtDepth Q j, F R n by
-    exact (Summable.tsum_finsetSum (fun R _ => ENNReal.summable)).symm]
+    exact (Summable.tsum_finsetSum (fun R _ => CompleteLattice.summable)).symm]
   rw [← ENNReal.tsum_mul_left]
 
 /-- The disjoint residual power average composes exactly across two
@@ -1969,7 +1969,7 @@ private theorem ENNReal_tsum_nat_add_le (E : ℕ → ℝ≥0∞) (j : ℕ) :
     ∑ l ∈ Finset.range N, E (j + l) ≤ ∑ m ∈ Finset.range (j + N), E m := by
       rw [Finset.sum_range_add]
       exact le_add_of_nonneg_left bot_le
-    _ ≤ ∑' m : ℕ, E m := ENNReal.sum_le_tsum _
+    _ ≤ ∑' m : ℕ, E m := sum_le_tsum _
 
 /-- The triangular double series arising from local descendant energies is
 bounded by the product of its geometric outer tail and its complete parent
@@ -1981,7 +1981,7 @@ private theorem ENNReal_tsum_mul_shifted_tsum_le
   calc
     ∑' j : ℕ, w j * ∑' l : ℕ, E (j + l) ≤
         ∑' j : ℕ, w j * ∑' m : ℕ, E m := by
-          apply ENNReal.tsum_le_tsum
+          apply tsum_le_tsum
           intro j
           exact mul_le_mul_right (ENNReal_tsum_nat_add_le E j) _
     _ = (∑' j : ℕ, w j) * ∑' m : ℕ, E m := ENNReal.tsum_mul_right
@@ -2322,7 +2322,7 @@ private theorem forcing_outer_tsum_le_discount
         exact ENNReal.ofReal_pow hx j
   calc
     ∑' j : ℕ, ENNReal.ofReal (Real.rpow 3 (-beta * r * (j : ℝ))) ≤
-        ∑' j : ℕ, x ^ j := ENNReal.tsum_le_tsum hterm
+        ∑' j : ℕ, x ^ j := tsum_le_tsum hterm
     _ = ENNReal.ofReal (Book.Ch02.geometricDiscount delta r)⁻¹ := by
       rw [ENNReal.tsum_geometric]
       have hdisc : 0 < Book.Ch02.geometricDiscount delta r :=
@@ -2501,7 +2501,7 @@ private theorem localCoarseGrainingForcingLp_le_of_sharp_local
               (Real.rpow 3 (s2.1 * r * ((n : ℝ) - (j : ℝ)))) *
               descendantsAtScaleENNAverage Q (n - (j : ℤ))
                 (fun R => cubeEuclideanPositiveBesovDisjointPowerEnergy R s2 p g)) := by
-              apply ENNReal.tsum_le_tsum
+              apply tsum_le_tsum
               intro j
               exact mul_le_mul_right (hlocal' j) _
       _ = ∑' j : ℕ, A ^ r * S ^ r * w j *

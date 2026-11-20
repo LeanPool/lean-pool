@@ -319,8 +319,9 @@ theorem mdifferentiable_cw {G : ℍ → ℂ} (hG : MDifferentiable 𝓘(ℂ) �
   rw [cw_eq_slash, ModularForm.SL_slash]; exact hG.slash _ _
 
 theorem conj_mem_Gamma (N : ℕ) (α : SL(2, ℤ)) {g : SL(2, ℤ)} (hg : g ∈ CongruenceSubgroup.Gamma N) :
-    α * g * α⁻¹ ∈ CongruenceSubgroup.Gamma N :=
-  Subgroup.Normal.conj_mem (Gamma_normal N) g hg α
+    α * g * α⁻¹ ∈ CongruenceSubgroup.Gamma N := by
+  have := Gamma_normal N
+  exact Subgroup.Normal.conj_mem g hg α
 
 end Invariance
 

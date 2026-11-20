@@ -17,6 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.RingTheory.Int.Basic
+
+public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 
 

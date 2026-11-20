@@ -110,7 +110,7 @@ private lemma setIntegral_const_Icc_zero {T : ℝ} (hT : 0 ≤ T) (c : ℂ) :
 /-- A constant `ℂ`-valued function is integrable on `Icc 0 T`. -/
 private lemma integrableOn_const_Icc_zero (T : ℝ) (c : ℂ) :
     MeasureTheory.IntegrableOn (fun _ : ℝ => c) (Set.Icc 0 T) MeasureTheory.volume := by
-  simp_all only [ne_eq, enorm_ne_top, not_false_eq_true, integrableOn_const_iff, enorm_eq_zero,
+  simp_all only [ne_eq, eNorm_ne_top, not_false_eq_true, integrableOn_const_iff, eNorm_eq_zero,
     volume_Icc, sub_zero, ENNReal.ofReal_lt_top, or_true]
 
 /-- The GFF exponential is integrable with respect to the GFF measure. -/

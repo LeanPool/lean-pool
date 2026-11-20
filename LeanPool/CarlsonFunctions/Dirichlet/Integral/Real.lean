@@ -68,7 +68,7 @@ theorem lintegral_dirichletMonomial_eq_mvRealBeta {b : ι → ℝ}
       ENNReal.ofReal (mvRealBeta b) := by
   classical
   induction hn : Fintype.card ι using Nat.strong_induction_on generalizing ι with
-  | h n ih =>
+  | ind n ih =>
       cases isEmpty_or_nonempty ι with
       | inl hι =>
           let _ := hι

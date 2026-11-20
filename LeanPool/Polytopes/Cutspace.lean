@@ -106,7 +106,7 @@ lemma inter_cutSpace (H_1 H_2 : Set (Halfspace E)) :
 
 
 /-- The pair of halfspaces whose intersection is the hyperplane orthogonal to `x`. -/
-def orthoHyperplane (x : {x : E // x ≠ 0}) : Set (Halfspace E) :=
+noncomputable def orthoHyperplane (x : {x : E // x ≠ 0}) : Set (Halfspace E) :=
   { Halfspace.mk (pointDualLin x) 0,
     Halfspace.mk (pointDualLin ⟨ -x.1, by rw [neg_ne_zero]; exact x.2 ⟩) 0 }
 
@@ -168,7 +168,7 @@ lemma orthoHyperplanes_mem (X : Set {x : E // x ≠ 0}) :
 
 
 /-- A finite set of halfspaces whose cut space is the subspace `p`, built from a basis of `pᗮ`. -/
-def submoduleCut [FiniteDimensional ℝ E] (p : Subspace ℝ E) : Set (Halfspace E) :=
+noncomputable def submoduleCut [FiniteDimensional ℝ E] (p : Subspace ℝ E) : Set (Halfspace E) :=
   ⋃₀ (orthoHyperplane '' (Subtype.val ⁻¹' (Set.range (Subtype.val ∘ Module.finBasis ℝ pᗮ))))
 
 lemma Submodule_cut_finite [FiniteDimensional ℝ E] (p : Subspace ℝ E) :

@@ -48,18 +48,18 @@ theorem tendsto_eLpNorm_zero_of_dominated {V : Type*} [NormedAddCommGroup V]
   simp_rw [heq, eLpNorm']
   have h : Tendsto (fun n => ∫⁻ x, ‖F n x‖ₑ ^ p.toReal ∂μ) atTop (𝓝 (∫⁻ x, (0 : ℝ≥0∞) ∂μ)) := by
     refine tendsto_lintegral_of_dominated_convergence' (fun x => ‖bound x‖ₑ ^ p.toReal)
-      (fun n => ((hF n).enorm.pow_const _)) (fun n => ?_) ?_ ?_
+      (fun n => ((hF n).eNorm.pow_const _)) (fun n => ?_) ?_ ?_
     · filter_upwards [hle n] with x hx
       have : ‖F n x‖ₑ ≤ ‖bound x‖ₑ := by
-        rw [enorm_eq_nnnorm, enorm_eq_nnnorm, ENNReal.coe_le_coe, ← NNReal.coe_le_coe,
-          coe_nnnorm, coe_nnnorm]
+        rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, ENNReal.coe_le_coe, ← NNReal.coe_le_coe,
+          coe_nnNorm, coe_nnNorm]
         exact hx.trans (le_abs_self _)
       exact ENNReal.rpow_le_rpow this hq.le
-    · exact (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top hp0 hp hbound.eLpNorm_lt_top).ne
+    · exact (lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top hp0 hp hbound.eLpNorm_lt_top).ne
     · filter_upwards [hlim] with x hx
       have h0 : Tendsto (fun n => ‖F n x‖ₑ) atTop (𝓝 0) := by
-        have := (continuous_enorm.tendsto (0 : V)).comp hx
-        simp only [Function.comp_def, enorm_zero] at this
+        have := (continuous_eNorm.tendsto (0 : V)).comp hx
+        simp only [Function.comp_def, eNorm_zero] at this
         exact this
       have := (ENNReal.continuous_rpow_const (y := p.toReal)).tendsto 0 |>.comp h0
       simpa [Function.comp_def, ENNReal.zero_rpow_of_pos hq] using this

@@ -262,7 +262,7 @@ private lemma lintegral_rpow_neg_four {y : Vec3} (hy : y ≠ 0) :
   calc ∑' m : ℕ, ∫⁻ x in (vec3Ball (0 : Vec3) ((4/3:ℝ)^(m+1) * R) \ vec3Ball (0 : Vec3) ((4/3:ℝ)^m
     * R)),
             ENNReal.ofReal ((vec3EuclideanNorm x) ^ (-(4:ℝ)))
-      ≤ ∑' m : ℕ, ENNReal.ofReal c * (ENNReal.ofReal (3/4:ℝ))^m := ENNReal.tsum_le_tsum hterm
+      ≤ ∑' m : ℕ, ENNReal.ofReal c * (ENNReal.ofReal (3/4:ℝ))^m := tsum_le_tsum hterm
     _ = ENNReal.ofReal c * ∑' m : ℕ, (ENNReal.ofReal (3/4:ℝ))^m := ENNReal.tsum_mul_left
     _ = ENNReal.ofReal c * ENNReal.ofReal 4 := by
         rw [ENNReal.tsum_geometric, hgeom]

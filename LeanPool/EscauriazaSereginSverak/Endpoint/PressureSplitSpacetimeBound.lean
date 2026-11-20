@@ -145,7 +145,7 @@ private theorem pressureSplit_lp_power_eq_mass
   have h := eLpNorm_nnreal_pow_eq_lintegral
     (p := (3 / 2 : NNReal)) (f := P) (by norm_num) hP.aestronglyMeasurable
   norm_num at h ⊢
-  simpa only [Real.enorm_eq_ofReal_abs] using h
+  simpa only [Real.eNorm_eq_ofReal_abs] using h
 
 /-- The time-integrated interior supremum of the harmonic remainder is
 controlled by the local pressure norm and the critical velocity bound. -/

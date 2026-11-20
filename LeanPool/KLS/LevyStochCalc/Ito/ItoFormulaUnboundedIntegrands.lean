@@ -216,7 +216,7 @@ theorem tendsto_energy_coordDeriv_diff
         (‖(coordDeriv f' p (Y i s ω) - coordDeriv f' p (X s ω)) * G ω s‖₊ : ℝ≥0∞) ^ 2)
       (f := fun _s : ℝ => (0 : ℝ≥0∞))
       (bound := fun s => ENNReal.ofReal (c ^ 2) * (‖G ω s‖₊ : ℝ≥0∞) ^ 2)
-      (fun i => (((Measurable.of_uncurry_left (hjoint i)).nnnorm).coe_nnreal_ennreal).pow_const 2)
+      (fun i => (((Measurable.of_uncurry_left (hjoint i)).nnNorm).coe_nnreal_ennreal).pow_const 2)
       (fun i => Filter.Eventually.of_forall fun s => hbnd i ω s) ?_ ?_
     · simpa using hlim
     · rw [MeasureTheory.lintegral_const_mul' _ _ (by simp : ENNReal.ofReal (c ^ 2) ≠ ⊤)]
@@ -234,7 +234,7 @@ theorem tendsto_energy_coordDeriv_diff
         have hs2 := (hcd.sub hconstX).mul hconstG
         simpa using hs2
       have hcont : Continuous fun x : ℝ => (‖x‖₊ : ℝ≥0∞) ^ 2 := by
-        have h1 : Continuous fun x : ℝ => (‖x‖₊ ^ 2 : ℝ≥0) := continuous_nnnorm.pow 2
+        have h1 : Continuous fun x : ℝ => (‖x‖₊ ^ 2 : ℝ≥0) := continuous_nnNorm.pow 2
         have h2 := ENNReal.continuous_coe.comp h1
         simp only [Function.comp_def, ENNReal.coe_pow] at h2
         exact h2
@@ -385,7 +385,7 @@ theorem tendsto_energy_diffusionIntegrand_clamp
             ENNReal.ofReal (K₁ ^ 2)
               * (‖clampCoeff H (ns i) p k ω s - H p k ω s‖₊ : ℝ≥0∞) ^ 2) :=
           ((((measurable_clampCoeff hm (ns i) p k).sub
-            (hm p k)).nnnorm).coe_nnreal_ennreal).pow_const 2 |>.const_mul _
+            (hm p k)).nnNorm).coe_nnreal_ennreal).pow_const 2 |>.const_mul _
         rw [lintegral_window_add
             (g := fun ω s => 2 * (‖(coordDeriv f' p (Y i s ω) - coordDeriv f' p (X s ω))
                 * H p k ω s‖₊ : ℝ≥0∞) ^ 2)

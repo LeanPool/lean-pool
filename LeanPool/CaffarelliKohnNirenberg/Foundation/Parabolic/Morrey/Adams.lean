@@ -318,7 +318,7 @@ theorem parabolicRieszPotential_near_le
     _ ≤ ∑' n, ((ENNReal.ofReal (2 ^ 5) *
           (ENNReal.ofReal (2 ^ 5) * volume (parabolicCylinder 0 0 1))) *
           (ENNReal.ofReal (((2 : ℝ) ^ (Int.negSucc n : ℝ)) ^ β) *
-            ENNReal.ofReal (R ^ β)) * M z) := ENNReal.tsum_le_tsum hterm
+            ENNReal.ofReal (R ^ β)) * M z) := tsum_le_tsum hterm
     _ = parabolicHedbergNearConstant β * ENNReal.ofReal (R ^ β) * M z := by
       rw [ENNReal.tsum_mul_right]
       have hfun : (fun n : ℕ =>

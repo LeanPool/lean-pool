@@ -37,7 +37,7 @@ theorem regularisedSchwartzMollify_enorm_le
           ((regMollifierKernel ρ ε hε y : ℝ) : ℂ)) 2 volume *
         eLpNorm (ψ : L2Vec3 → ComplexVec3) 2 volume := by
   rw [regularisedSchwartzMollify_apply]
-  exact MeasureTheory.enorm_convolution_le
+  exact MeasureTheory.eNorm_convolution_le
     (L := (ContinuousLinearMap.lsmul ℂ ℂ :
       ℂ →L[ℂ] ComplexVec3 →L[ℂ] ComplexVec3))
     (p := (2 : ℝ≥0∞)) (q := 2)
@@ -62,7 +62,7 @@ theorem regularisedSchwartzMollify_enorm_le_kernel
       apply ContinuousLinearMap.opENorm_le_bound
       intro z
       change ‖c • z‖ₑ ≤ _
-      exact enorm_smul_le
+      exact eNorm_smul_le
     rw [one_mul]
     exact hc
   calc
@@ -99,7 +99,7 @@ theorem regularisedSchwartzMollify_norm_le
     (ENNReal.mul_lt_top (k.memLp 2 volume).eLpNorm_lt_top
       (ψ.memLp 2 volume).eLpNorm_lt_top).ne
   have hReal := ENNReal.toReal_mono hFinite hBound
-  simpa only [toReal_enorm, ENNReal.toReal_mul,
+  simpa only [toReal_eNorm, ENNReal.toReal_mul,
     SchwartzMap.norm_toLp, C, k,
     regularisedComplexMollifierSchwartz_apply] using hReal
 

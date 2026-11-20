@@ -174,7 +174,7 @@ private theorem continuous_matrixEntry (i k : Fin d) :
   refine (LipschitzWith.of_dist_le_mul (α := Mat d) (β := ℝ) (K := 1)
     (f := fun A : Mat d => A i k) fun A B => ?_).continuous
   rw [Real.dist_eq, dist_eq_norm, NNReal.coe_one, one_mul]
-  have h : ‖(A - B) i k‖ ≤ ‖A - B‖ := Matrix.norm_entry_le_entrywise_sup_norm (A - B)
+  have h : ‖(A - B) i k‖ ≤ ‖A - B‖ := Matrix.norm_apply_le_norm (A - B)
   simpa only [Matrix.sub_apply, Real.norm_eq_abs] using h
 
 private theorem continuous_matrixDerivativeEntry (v : Vec d) (i k : Fin d) :

@@ -142,7 +142,7 @@ theorem IsKolmogorovProcess.tsum_measure_unitDyadicGridBadIncrement_threshold_ne
       P (finiteGridBadIncrement X (unitDyadicGrid n) p (dyadicIncrementThreshold γ n))) ≠ ∞ := by
   exact ne_top_of_le_ne_top
     (tsum_coe_dyadicIncrementDecayRatio_ne_top M hX.p_pos hγq)
-    (ENNReal.tsum_le_tsum fun n ↦
+    (tsum_le_tsum fun n ↦
       IsKolmogorovProcess.measure_unitDyadicGridBadIncrement_threshold_le hX hγ n)
 
 /-- Almost surely, all sufficiently fine unit dyadic grids avoid the bad-increment event. -/
@@ -241,7 +241,7 @@ theorem sum_dyadicIncrementThreshold_add_le (γ : ℝ) (n N : ℕ) :
   calc
     ∑ k ∈ Finset.range N, dyadicIncrementThreshold γ (n + k) ≤
         ∑' k : ℕ, dyadicIncrementThreshold γ (n + k) :=
-      ENNReal.sum_le_tsum (Finset.range N)
+      sum_le_tsum (Finset.range N)
     _ = dyadicIncrementThreshold γ n *
         (1 - dyadicIncrementThresholdRatio γ)⁻¹ :=
       tsum_dyadicIncrementThreshold_add γ n

@@ -65,7 +65,7 @@ lemma mem_projectiveClosureIdeal_iff {K : Type*} [Field K] {n : ℕ}
     f ∈ projectiveClosureIdeal I ↔
       ∀ M, affineChart n (homogeneousComponent M f) ∈ I := by
   change projectiveClosureMap I f = 0 ↔ _
-  rw [Polynomial.ext_iff]
+  rw [AddMonoidAlgebra.ext_iff, DFunLike.ext_iff]
   simp only [projectiveClosureMap_coeff, Polynomial.coeff_zero, Ideal.Quotient.eq_zero_iff_mem]
 
 /-- A homogeneous polynomial lies in the projective closure ideal of `I` if and only if its

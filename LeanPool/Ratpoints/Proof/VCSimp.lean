@@ -27,8 +27,9 @@ public meta section
 open Lean.Parser.Tactic in
 /-- `vc_simp [l₁, …]` rewrites, in all the hypotheses and the goal, the encodings of the weakest
 preconditions of the loop contracts into plain propositions: meets and
-propositions of the order (`Lean.Order.meet_prop_eq_and`, `Lean.Order.ofProp_prop_eq`), the measures
-that end the loops (`Std.WP.Variant.evalsTo_ofMeasure`, `Std.WP.Variant.evalsBelow_ofMeasure_nat`,
+propositions of the order (`Lean.Order.meet_prop_eq_and`,
+`Lean.Order.CompleteLattice.ofProp_prop_eq`), the measures that end the loops
+(`Std.WP.Variant.evalsTo_ofMeasure`, `Std.WP.Variant.evalsBelow_ofMeasure_nat`,
 `Std.WP.Assertion.NondetFun.evalsTo_pure`) and the applied invariants of `while` loops
 (`Std.WP.WhileInvariant.mk_apply`), with the further simp lemmas `l₁, …`. It is
 `simp only [these lemmas, l₁, …] at *`. -/
@@ -40,6 +41,6 @@ macro_rules
     let args := args.map (·.getElems) |>.getD #[]
     `(tactic| simp only [Std.WP.Variant.evalsTo_ofMeasure, Std.WP.Variant.evalsBelow_ofMeasure_nat,
       Std.WP.Assertion.NondetFun.evalsTo_pure, Lean.Order.meet_prop_eq_and,
-      Lean.Order.ofProp_prop_eq, Std.WP.WhileInvariant.mk_apply, $args,*] at *)
+      Lean.Order.CompleteLattice.ofProp_prop_eq, Std.WP.WhileInvariant.mk_apply, $args,*] at *)
 
 end

@@ -97,9 +97,9 @@ theorem eLpNorm_bound_of_l2_interpolation
   have hpow' : eLpNorm' (T g) p volume ^ p ≤
       ENNReal.ofReal (rieszSecondInterpolationConstant A₁ A₂ p) *
         eLpNorm' g p volume ^ p := by
-    rw [← lintegral_rpow_enorm_eq_rpow_eLpNorm' hp0,
-      ← lintegral_rpow_enorm_eq_rpow_eLpNorm' hp0]
-    simpa only [absE, Real.enorm_eq_ofReal_abs, rieszSecondInterpolationConstant] using hpow
+    rw [← lintegral_rpow_eNorm_eq_rpow_eLpNorm' hp0,
+      ← lintegral_rpow_eNorm_eq_rpow_eLpNorm' hp0]
+    simpa only [absE, Real.eNorm_eq_ofReal_abs, rieszSecondInterpolationConstant] using hpow
   have hres : eLpNorm' (T g) p volume ≤
       (ENNReal.ofReal (rieszSecondInterpolationConstant A₁ A₂ p)) ^ (1 / p) *
         eLpNorm' g p volume := by

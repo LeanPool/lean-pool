@@ -91,7 +91,7 @@ theorem twoPointMeasure_isProbability {x y : ℝ}
     (hx : x ≤ 1) (hy : 1 ≤ y) (hxy : x < y) :
     IsProbabilityMeasure (twoPointMeasure x y) := by
   constructor
-  simp only [twoPointMeasure, Measure.add_apply, Measure.smul_apply]
+  simp only [twoPointMeasure, add_apply, smul_apply]
   simp only [measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_add (twoPointWeights_nonneg hxy hx hy).1
       (twoPointWeights_nonneg hxy hx hy).2,
@@ -125,8 +125,8 @@ theorem twoPointMeasure_scaled_apply {x y : ℝ}
     ENNReal.ofReal (y - x) * twoPointMeasure x y B =
       ENNReal.ofReal (y - 1) * Measure.dirac x B +
         ENNReal.ofReal (1 - x) * Measure.dirac y B := by
-  rw [twoPointMeasure, Measure.add_apply, Measure.smul_apply,
-    Measure.smul_apply, mul_add]
+  rw [twoPointMeasure, add_apply, smul_apply,
+    smul_apply, mul_add]
   have hw := twoPointWeights_nonneg hxy hx hy
   change
     ENNReal.ofReal (y - x) *
@@ -257,24 +257,19 @@ theorem eq_dirac_one_of_belowMoment_eq_zero
   by_cases h1 : (1 : ℝ) ∈ B
   · have hBae : (B : Set ℝ) =ᵐ[μ] Set.univ := by
       filter_upwards [hone_ae] with x hx
-      apply propext
       constructor
       · intro
         exact Set.mem_univ x
       · intro
-        change B 1 at h1
         rwa [← hx]
     rw [measure_congr hBae, measure_univ]
     simp [Measure.dirac_apply' _ hB, Set.indicator_of_mem h1]
   · have hBae : (B : Set ℝ) =ᵐ[μ] (∅ : Set ℝ) := by
       filter_upwards [hone_ae] with x hx
-      apply propext
       constructor
       · intro hxB
         exfalso
         apply h1
-        change B 1
-        change B x at hxB
         rwa [← hx] at hxB
       · intro hxE
         exact False.elim hxE

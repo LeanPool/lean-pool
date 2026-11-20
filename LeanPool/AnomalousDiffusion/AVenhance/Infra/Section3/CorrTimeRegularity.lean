@@ -267,7 +267,6 @@ theorem corrTime_contDiff_two {β : ℝ} (I : Ingredients β) {m : ℕ}
   have hC2 : ContDiff ℝ ((1 : ℕ∞ω) + 1) (I.corrTime κ m k) := by
     rw [contDiff_succ_iff_deriv]
     exact ⟨hdiff, by norm_num, hderivC1⟩
-  convert hC2 using 1
-  all_goals norm_num
+  exact hC2
 
 end AVenhance.Infra.Section3

@@ -129,7 +129,7 @@ lemma Coalgebra.inner_eq_counit' [RCLike R] [NormedAddCommGroupOfRing A] [InnerP
 lemma Coalgebra.counit_eq_bra_one [RCLike R] [NormedAddCommGroupOfRing A] [InnerProductSpace R A]
   [SMulCommClass R A A] [IsScalarTower R A A] [FiniteDimensional R A] :
   Coalgebra.counit = (bra R (1 : A)).toLinearMap := by
-  have := FiniteDimensional.complete R A
+  have := FiniteDimensional.completeSpace R A
   rw [counit_eq_unit_adjoint, ← algebraMapCLM_adjoint_eq_bra_one]
   rfl
 

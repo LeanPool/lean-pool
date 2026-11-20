@@ -123,7 +123,7 @@ theorem exists_isEllipticFieldOn_extendCoeff {nu : ℝ} (hnu : 0 < nu) (y : Vec 
     refine Cutoff.isEllipticMatrix_of_symmPart_and_entry_bound hnu (hA _) fun i j => ?_
     calc |A ⟨x, hxK⟩ i j| ≤ ‖A ⟨x, hxK⟩‖ := by
           simpa [Real.norm_eq_abs] using
-            Matrix.norm_entry_le_entrywise_sup_norm (A := A ⟨x, hxK⟩) (i := i) (j := j)
+            Matrix.norm_apply_le_norm (A := A ⟨x, hxK⟩) (i := i) (j := j)
       _ ≤ ‖A‖ := A.norm_coe_le_norm _
 
 /-! ## 5. The solution attached to a parameter -/

@@ -175,7 +175,7 @@ theorem eLpNorm_one_frozenBlockInputL0_eq
     (f : L0Infinity) (k B c : ℕ) (τ : ℤ) :
     eLpNorm (frozenBlockInputL0 f k B c τ : ℝ → ℂ) 1 volume =
       frozenBlockInputL1Mass lacunaryAmplitude f k B c τ := by
-  rw [eLpNorm_one_eq_lintegral_enorm
+  rw [eLpNorm_one_eq_lintegral_eNorm
     (frozenBlockInputL0 f k B c τ).measurable_toFun.aestronglyMeasurable]
   exact lintegral_enorm_frozenBlockInputL0_eq f k B c τ
 
@@ -183,7 +183,7 @@ theorem integral_norm_frozenBlockInputL0_eq
     (f : L0Infinity) (k B c : ℕ) (τ : ℤ) :
     (∫ x, ‖frozenBlockInputL0 f k B c τ x‖) =
       (frozenBlockInputL1Mass lacunaryAmplitude f k B c τ).toReal := by
-  rw [integral_norm_eq_lintegral_enorm
+  rw [integral_norm_eq_lintegral_eNorm
     (frozenBlockInputL0 f k B c τ).measurable_toFun.aestronglyMeasurable]
   rfl
 
@@ -191,7 +191,7 @@ theorem ofReal_integral_norm_frozenBlockInputL0_eq
     (f : L0Infinity) (k B c : ℕ) (τ : ℤ) :
     ENNReal.ofReal (∫ x, ‖frozenBlockInputL0 f k B c τ x‖) =
       frozenBlockInputL1Mass lacunaryAmplitude f k B c τ :=
-  ofReal_integral_norm_eq_lintegral_enorm (frozenBlockInputL0 f k B c τ).integrable
+  ofReal_integral_norm_eq_lintegral_eNorm (frozenBlockInputL0 f k B c τ).integrable
 
 theorem frozenBlockInputL1Mass_lt_top
     (f : L0Infinity) (k B c : ℕ) (τ : ℤ) :

@@ -40,7 +40,7 @@ theorem contDiffAt_of_identity
     rw [← heq x]
     exact hG.to_localInverse hL hn
   have hleft : ∀ᶠ z in 𝓝 (Y x), J (G z) = z :=
-    (hG.hasStrictFDerivAt' hL hn).eventually_left_inverse
+    (hG.hasStrictFDerivAt hL hn).eventually_left_inverse
   have he : Y =ᶠ[𝓝 x] J ∘ H := by
     filter_upwards [hY.tendsto.eventually hleft] with y hy
     change Y y = J (H y)

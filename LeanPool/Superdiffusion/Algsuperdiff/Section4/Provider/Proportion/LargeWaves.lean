@@ -194,10 +194,10 @@ theorem eventG1a_lhs_le_rowGE (M : ABKModel d) {sprime : ℝ}
           shellW1InfGradNorm m (omega.1 k.1)))
       ≤ ∑' k : {k : ℤ // m ≤ k},
           ENNReal.ofReal (wt sprime m k.1 * atomG1a M k.1 omega) :=
-        ENNReal.tsum_le_tsum fun k => ENNReal.ofReal_le_ofReal
+        tsum_le_tsum fun k => ENNReal.ofReal_le_ofReal
           (score_le_wt_mul_atomG1a M hsle k.2 omega)
     _ ≤ ∑' k : ℤ, ENNReal.ofReal (wt sprime m k * atomG1a M k omega) :=
-        ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective
+        tsum_comp_le_tsum_of_injective Subtype.val_injective
           (fun k : ℤ => ENNReal.ofReal (wt sprime m k * atomG1a M k omega))
     _ = rowGE (arrayG1a M) sprime m omega := rfl
 

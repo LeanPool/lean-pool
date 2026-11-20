@@ -122,6 +122,8 @@ theorem continuous_mk : Continuous (mk : X → WithRPowDist X α hα₀ hα₁) 
 @[simps! -fullyApplied toEquiv apply symm_apply]
 def homeomorph : WithRPowDist X α hα₀ hα₁ ≃ₜ X where
   toEquiv := WithRPowDist.equiv X α hα₀ hα₁
+  continuous_toFun := continuous_val
+  continuous_invFun := continuous_mk
 
 /-!
 We copy some instances from the underlying space `X` to `WithRPowDist X α hα₀ hα₁`.

@@ -2286,7 +2286,8 @@ theorem particular_full_regular_of_class {E : Type} [NormedAddCommGroup E] [Norm
       (by simpa only [LinearIsometryEquiv.symm_apply_apply] using ho)) n
   constructor
   · have hh := hs.1.comp ActualWaveRegularity.particularChart.symm.contDiff.contDiffOn
-      (fun _ hz => hz)
+      (fun _ (hz : _ ∈ ActualWaveRegularity.nativeDomain ActualWaveRegularity.particularChart
+        ActualPrimary.standardRegion) => hz)
     simp only [Function.comp_def, LinearIsometryEquiv.apply_symm_apply] at hh ⊢
     exact hh
   · intro m z hz he
@@ -2404,7 +2405,8 @@ theorem particular_smooth_of_positive_or_zero {E : Type} [NormedAddCommGroup E] 
           LinearIsometryEquiv.symm_apply_apply] using hx) hr).comp_tendsto
         ActualWaveRegularity.particularChart.continuous.continuousAt
   have hh := hs.comp ActualWaveRegularity.particularChart.symm.contDiff.contDiffOn
-    (fun _ hx => hx)
+    (fun _ (hx : _ ∈ ActualWaveRegularity.nativeDomain ActualWaveRegularity.particularChart
+      ActualPrimary.standardRegion) => hx)
   simp only [Function.comp_def, LinearIsometryEquiv.apply_symm_apply] at hh ⊢
   exact hh
 
@@ -2456,7 +2458,8 @@ theorem particular_normal_smooth (n : ℕ) :
   apply particular_smooth_of_positive_or_zero
   · have hN := (CurlClassBounds.phaseNormal_contDiffOn (positive_geometry (l.2,l.1) n)
         (positive_phase (l.2,l.1) n)).comp
-      ActualWaveRegularity.particularChart.symm.contDiff.contDiffOn (fun _ hx => hx)
+      ActualWaveRegularity.particularChart.symm.contDiff.contDiffOn
+        (fun _ (hx : _ ∈ particularPositive) => hx)
     apply CurlClassBounds.normalCoefficient_contDiffOn
       (hN.congr (fun z hm => he z hm))
       (((particular_full_regular_of_class ha hz n).1).mono (fun _ hx => hx.1))
@@ -2506,8 +2509,10 @@ theorem particular_corrected_smooth (n : ℕ) :
   · have hgeom := particular_geometry_smooth l n
     have hc := CurlClassBounds.cylindricalCurl_contDiffOn particularPositive_open
       (hgeom.1.inv hgeom.2.1) hgeom.2.2.1 hgeom.2.2.2.1 hgeom.2.2.2.2
-      ((particular_normal_smooth l c u b G A j hphase ha hz n).mono (fun _ hx => hx.1))
-    exact ((particular_full_regular_of_class ha hz n).1.mono (fun _ hx => hx.1)).add
+      ((particular_normal_smooth l c u b G A j hphase ha hz n).mono
+        (fun _ (hx : _ ∈ particularPositive) => hx.1))
+    exact ((particular_full_regular_of_class ha hz n).1.mono
+      (fun _ (hx : _ ∈ particularPositive) => hx.1)).add
       ((hc.const_smul Complex.I).const_smul (1 / (particularCopies l c u b G A
           j).background.frequency n))
   · intro z hm hr

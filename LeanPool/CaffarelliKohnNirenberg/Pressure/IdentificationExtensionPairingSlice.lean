@@ -62,7 +62,7 @@ theorem pressureCutoff_slice_data_ae_of_sws
     filter_upwards [] with x
     change ‖f (x, s) i‖ ≤ ‖f (x, s)‖
     rw [Pi.norm_def]
-    simpa only [coe_nnnorm] using
+    simpa only [coe_nnNorm] using
       (NNReal.coe_le_coe.mpr
         (Finset.le_sup (s := (Finset.univ : Finset (Fin 3)))
           (f := fun b => ‖f (x, s) b‖₊) (Finset.mem_univ i)))

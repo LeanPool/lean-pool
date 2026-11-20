@@ -108,12 +108,12 @@ theorem exists_eq_algebraMap_of_frobenius_eq (z : AlgebraicClosure F)
     ∃ x : F, algebraMap F (AlgebraicClosure F) x = z := by
   let P : F[X] := X ^ Fintype.card F - X
   have hP0 : P ≠ 0 := by
-    exact FiniteField.X_pow_card_sub_X_ne_zero F Fintype.one_lt_card
+    exact Polynomial.X_pow_sub_X_ne_zero Fintype.one_lt_card
   have hsplit : P.Splits := by
     rw [Polynomial.splits_iff_card_roots]
     dsimp [P]
     rw [FiniteField.roots_X_pow_card_sub_X, ← Finset.card_def, Finset.card_univ,
-      FiniteField.X_pow_card_sub_X_natDegree_eq F Fintype.one_lt_card]
+      Polynomial.natDegree_X_pow_sub_X Fintype.one_lt_card]
   have hzroot : (P.map (algebraMap F (AlgebraicClosure F))).IsRoot z := by
     rw [Polynomial.IsRoot.def]
     rw [Polynomial.eval_map]

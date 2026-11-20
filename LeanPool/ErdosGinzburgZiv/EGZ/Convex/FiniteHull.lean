@@ -167,7 +167,7 @@ theorem extremePoints_convexHull_range {d n : ℕ}
   have hy' : y ∈ convexHull ℝ (generators : Set (RealCoord d)) := by
     simpa [hgenerators] using hy
   have hyle : f y ≤ f (points i) :=
-    convexHull_min hle_gen
+    convexHull_min (fun y hy ↦ hle_gen y hy)
       (convex_halfSpace_le f.toLinearMap.isLinear (f (points i))) hy'
   refine ⟨hyle, fun hrev ↦ ?_⟩
   have hmem : y ∈

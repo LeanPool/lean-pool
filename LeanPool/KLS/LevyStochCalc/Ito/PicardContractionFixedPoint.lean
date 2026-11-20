@@ -262,7 +262,7 @@ theorem ae_eq_zero_of_bieleckiNorm_eq_zero {β T : ℝ} {Z : ℝ → Ω → (Fin
     · exact absurd hneg (by norm_num)
   have hmeas : AEMeasurable (fun ω => ∑ i, (‖Z t ω i‖₊ : ℝ≥0∞) ^ 2) P :=
     (Finset.measurable_sum _ fun i _ =>
-      (ENNReal.continuous_coe.measurable.comp (hZs t i).nnnorm).pow_const 2).aemeasurable
+      (ENNReal.continuous_coe.measurable.comp (hZs t i).nnNorm).pow_const 2).aemeasurable
   filter_upwards [(lintegral_eq_zero_iff' hmeas).mp hint] with ω hω i
   have hle : (‖Z t ω i‖₊ : ℝ≥0∞) ^ 2 = 0 :=
     le_antisymm (le_of_le_of_eq (Finset.single_le_sum

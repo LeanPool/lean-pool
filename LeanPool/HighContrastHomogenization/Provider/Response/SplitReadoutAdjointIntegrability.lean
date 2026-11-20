@@ -44,7 +44,7 @@ private theorem integrable_of_enorm_le_finite_mul_root
     have h := eLpNorm_le_mul_eLpNorm_of_ae_le_mul' (μ := μ)
       (f := Z) (g := root) (c := C.toNNReal) (p := (2 : ℝ≥0∞)) hZ
       (_root_.Filter.Eventually.of_forall fun a ↦ by
-        simpa only [Real.enorm_eq_ofReal_abs, enorm_eq_self,
+        simpa only [Real.eNorm_eq_ofReal_abs, eNorm_eq_self,
           ENNReal.coe_toNNReal hC] using hbound a)
     simpa only [ENNReal.smul_def, ENNReal.coe_toNNReal hC] using h
   have hlt : C * eLpNorm root 2 μ < ⊤ :=

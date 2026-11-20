@@ -477,7 +477,7 @@ punctured disk (`Schoenflies.localSectors_eq_of_subsingleton`). -/
 Defined as a set of sets rather than as an indexed family, because the two degenerate
 configurations have no natural index — the index in the generic case is a consecutive pair of
 local directions, and there is no such pair when there are fewer than two of them. -/
-def localSectors (S : Set Plane) (x : Plane) (r : ℝ) : Set (Set Plane) :=
+noncomputable def localSectors (S : Set Plane) (x : Plane) (r : ℝ) : Set (Set Plane) :=
   (fun z => connectedComponentIn (ball x r \ S) z) '' (ball x r \ S)
 
 theorem mem_localSectors (hz : z ∈ ball x r \ S) :
@@ -866,7 +866,8 @@ theorem polygonal_side_accessibility_target [G.Finite] (h : IsDrawing G drawing)
     PolyAccessible F x := by
   have hFK : Disjoint F (pointSet G drawing) := by
     obtain ⟨-, z, hz⟩ := hcell F hF
-    exact Set.disjoint_left.2 fun w hw => (connectedComponentIn_subset _ _ (hz ▸ hw)).2
+    exact Set.disjoint_left.2 fun w hw =>
+      (connectedComponentIn_subset (Q \ pointSet G drawing) z (hz ▸ hw)).2
   exact polygonal_side_accessibility h hpoly isCompact_empty (union_empty _).symm
     (cellsAbsorb_of_isComponent_in hQ hQK hcell) hF hFK hx (notMem_empty x)
 

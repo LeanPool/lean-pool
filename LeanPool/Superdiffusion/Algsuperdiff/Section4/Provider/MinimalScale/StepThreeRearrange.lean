@@ -48,7 +48,7 @@ inequality (the honest coefficient is `Σ_{p ≥ q−1} 3^{−αp}`, which is at
 
 Every sum here is formed in `ℝ≥0∞`, exactly as the anchor
 `annular_decomposition` forms the `D₃` term.  In `ℝ≥0∞` the depth swap needs no
-summability hypothesis at all: `ENNReal.tsum_comm` and
+summability hypothesis at all: `tsum_comm` and
 `ENNReal.tsum_le_of_sum_range_le` are unconditional.  Only the very last step —
 reading the bound in `ℝ` — needs the
 majorant to be finite, and that holds almost surely by the per-layer first
@@ -264,8 +264,8 @@ theorem hessInnerE_le_swap (M : ABKModel d) {alpha : ℝ} (halpha : 0 < alpha) (
     simp only [Finset.mem_range] at hq
     rw [ite_eq_left hq]
   -- Step B: swap the two series and bound the total coefficient of each layer
-  rw [hA, ENNReal.tsum_comm, wsumE, ← ENNReal.tsum_mul_left]
-  refine ENNReal.tsum_le_tsum fun q => ?_
+  rw [hA, tsum_comm, wsumE, ← ENNReal.tsum_mul_left]
+  refine tsum_le_tsum fun q => ?_
   have hpull : ∑' p : ℕ,
         (if q < p + 2 then
             ENNReal.ofReal (stepThreeWeight alpha p) *
@@ -307,7 +307,7 @@ private theorem tsum_split_window (M : ABKModel d) (alpha : ℝ) {n k : ℤ} (hn
     ENNReal.ofReal (stepThreeWeight alpha q * hessDown M k q omega) with hfdef
   set Nk : ℕ := (k - n).toNat + 1 with hNk
   have hsplit : (∑ q ∈ Finset.range Nk, f q) + ∑' r : ℕ, f (r + Nk) = ∑' q : ℕ, f q :=
-    (ENNReal.summable (f := fun r => f (r + Nk))).sum_add_tsum_nat_add'
+    (CompleteLattice.summable (f := fun r => f (r + Nk))).sum_add_tsum_nat_add'
   rw [← hsplit]
   refine congrArg₂ (· + ·) ?_ ?_
   · -- the in-window layers, reindexed by `i = k − q`
@@ -415,7 +415,7 @@ theorem sum_hessInnerE_le (M : ABKModel d) {alpha : ℝ} (halpha : 0 < alpha) (n
         mul_nonneg (stepThreeWt_pos alpha (k - i)).le (scoreG1b_nonneg M k i omega))]
   · -- the below-window channel, after the finite/infinite swap
     rw [wsumE, (Summable.tsum_finsetSum (fun _ (_ : _ ∈ Finset.Icc n m) =>
-      ENNReal.summable)).symm]
+      CompleteLattice.summable)).symm]
     refine tsum_congr fun r => ?_
     have hterm : ∀ k ∈ Finset.Icc n m,
         ENNReal.ofReal (stepThreeWeight alpha ((k - n).toNat + 1 + r) *

@@ -3941,11 +3941,11 @@ theorem eVariationOn_le_lintegral_enorm_derivWithin {f : ℝ → F} {a b : ℝ}
   rintro ⟨n, u, hu, hus⟩
   have hsegment : ∀ i, edist (f (u (i + 1))) (f (u i)) ≤ L (u i) (u (i + 1)) := by
     intro i
-    have hlocal := enorm_sub_le_lintegral_derivWithin_Icc_of_contDiffOn_Icc
+    have hlocal := eNorm_sub_le_lintegral_derivWithin_Icc_of_contDiffOn_Icc
       (hf.mono (Icc_subset_Icc (hus i).1 (hus (i + 1)).2)) (hu (Nat.le_succ i))
     calc
       edist (f (u (i + 1))) (f (u i)) = ‖f (u (i + 1)) - f (u i)‖ₑ := by
-        rw [edist_eq_enorm_sub, enorm_sub_rev]
+        rw [eDist_eq_eNorm_sub, eNorm_sub_rev]
       _ ≤ ∫⁻ t in Icc (u i) (u (i + 1)),
           ‖derivWithin f (Icc (u i) (u (i + 1))) t‖ₑ := hlocal
       _ = L (u i) (u (i + 1)) := by
@@ -3998,7 +3998,7 @@ theorem lintegral_enorm_derivWithin_le_eVariationOn {f : ℝ → F} {a b : ℝ}
     (isCompact_Icc.image_of_continuousOn hD_cont).isBounded.exists_pos_norm_le
   let K : ℝ≥0 := ⟨C, hCpos.le⟩
   have hK : LipschitzOnWith K f (Icc a b) := by
-    apply (convex_Icc a b).lipschitzOnWith_of_nnnorm_derivWithin_le
+    apply (convex_Icc a b).lipschitzOnWith_of_nnNorm_derivWithin_le
       hf.differentiableOn_one
     intro t ht
     exact_mod_cast hC _ (mem_image_of_mem _ ht)
@@ -6149,9 +6149,9 @@ private theorem integrable_windingKernel_prod {a b : ℝ} (x : ContinuousBVPaths
         ≤ ENNReal.ofReal (4 * Real.pi * R) := by
     intro t
     obtain ⟨hint, -, hnorm, -⟩ := windingKernel_disk_integral R hR (x.val t) (hxR t)
-    rw [← ofReal_integral_norm_eq_lintegral_enorm hint]
+    rw [← ofReal_integral_norm_eq_lintegral_eNorm hint]
     exact ENNReal.ofReal_le_ofReal hnorm
-  rw [HasFiniteIntegral, lintegral_prod_symm _ hmeas.enorm.aemeasurable]
+  rw [HasFiniteIntegral, lintegral_prod_symm _ hmeas.eNorm.aemeasurable]
   calc
     (∫⁻ t, ∫⁻ p, ‖windingKernel (x.val t) p‖ₑ
         ∂(volume.restrict (Metric.ball (0 : Point) R)) ∂ν)
@@ -7030,15 +7030,9 @@ theorem jordan_counterclockwise_of_supporting_segment
       hzqLift.curveWinding_eq, hy₁qLift.curveWinding_eq]
     rw [hz1, hz0]
     simp only [Function.comp_apply]
-    simp only [add_sub_add_left_eq_sub, cyclicComplement, mul_one, Function.concatUnitIntervals_two,
-      Set.Icc.mk_one, Function.comp_apply, Set.Icc.convexComb_one,
-      Complex.orthonormalBasisOneI_repr_symm_apply, Fin.isValue, map_add, map_sub,
-        Complex.conj_ofReal, map_mul, Complex.conj_I,
-      mul_neg, mul_zero, Function.concatUnitIntervals_zero, Set.Icc.mk_zero,
-      Set.Icc.convexComb_zero, y, doubleParam]
-    simp only [Complex.orthonormalBasisOneI_repr_symm_apply, Fin.isValue, map_add, map_sub,
-      Complex.conj_ofReal, map_mul, Complex.conj_I,
-      mul_neg] at hcorr_t hcorr_s
+    rw [show y (doubleParam ⟨1, by norm_num⟩) = x s from hy₁1,
+      show y (doubleParam ⟨0, by norm_num⟩) = x t from hy₁0]
+    simp only [add_sub_add_left_eq_sub]
     rw [hneg_frame_sm, hneg_frame_tm, harg_tm, harg_sm, hcorr_t, hcorr_s]
     field_simp [Real.pi_ne_zero]
     ring
@@ -8077,7 +8071,7 @@ theorem segmentArea_jordan_and_frame (p q : Point) :
     have hd1 := congrArg (fun x : Point => x 1) hd
     simp only [normalVector, frame, Fin.isValue, PiLp.sub_apply, tangentVector, PiLp.smul_apply,
       Matrix.cons_val_zero, smul_eq_mul, mul_neg, Matrix.cons_val_one, Matrix.cons_val_fin_one,
-      ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj'] at hp hq hd0 hd1 ⊢
+      ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj₀] at hp hq hd0 hd1 ⊢
     rw [PiLp.inner_apply, Fin.sum_univ_two, Real.inner_apply, Real.inner_apply] at hp hq
     simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
       Matrix.cons_val_fin_one] at hp hq

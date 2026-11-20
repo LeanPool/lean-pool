@@ -162,7 +162,7 @@ theorem lps_strong_solution_div_free {t₀ T : ℝ} {u : ParabolicPoint → Vec3
   have hm : AEMeasurable (fun z => ‖f z‖ₑ)
       ((volume : Measure Vec3).prod (volume.restrict (Ioo t₀ T))) := by
     rw [← lps_measure_slab_eq_prod]
-    exact hmeas.enorm
+    exact hmeas.eNorm
   rw [lps_measure_slab_eq_prod]
   have hlint : ∫⁻ z, ‖f z‖ₑ ∂((volume : Measure Vec3).prod (volume.restrict (Ioo t₀ T))) = 0 := by
     rw [lintegral_prod_symm _ hm]

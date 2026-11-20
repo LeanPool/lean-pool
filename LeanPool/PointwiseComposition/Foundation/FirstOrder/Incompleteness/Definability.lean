@@ -808,7 +808,7 @@ open FFL.FirstOrder.Theory
 
 /-! ## `𝐏𝐀⁻` is `Δ₁` -/
 
-noncomputable instance PeanoMinus.delta1 : (𝐏𝐀⁻ : ArithmeticTheory).Δ₁ :=
+noncomputable instance PeanoMinus.delta1 : Theory.Δ₁ 𝐏𝐀⁻ :=
   Theory.Δ₁.ofFinite _ PeanoMinus.finite
 
 /-! ## Typed decomposition of `succInd` -/
@@ -1162,8 +1162,9 @@ theorem inductionR_quote_iff {S : ℕ → Prop} {C : ArithmeticSemiproposition 1
     · exact (hS ψ).mpr hψ
     · exact hs
 
-/-- The induction schema `InductionScheme ℒₒᵣ Set.univ` is `Δ₁`, via the recognizer `chUniv`. -/
-noncomputable instance InductionScheme.delta1Univ : (InductionScheme ℒₒᵣ Set.univ).Δ₁
+/-- The full induction schema is `Δ₁`, via the recognizer `chUniv`. -/
+noncomputable instance InductionScheme.delta1Univ :
+    (InductionScheme ℒₒᵣ (fun _ ↦ True)).Δ₁
     where
   ch := chUniv
   mem_iff
@@ -1172,7 +1173,7 @@ noncomputable instance InductionScheme.delta1Univ : (InductionScheme ℒₒᵣ S
     have h : (ℕ ⊧/![(⌜φ⌝ : ℕ)] chUniv.val) ↔ InductionR (fun _ ↦ True) (⌜φ⌝ : ℕ) := by simp
     rw [h]
     exact
-      (inductionR_quote_iff (C := Set.univ) (fun _ ↦ Iff.rfl) φ).trans
+      (inductionR_quote_iff (C := fun _ ↦ True) (fun _ ↦ Iff.rfl) φ).trans
         (mem_inductionScheme_iff φ).symm
   isDelta1 :=
     HierarchySymbol.Semiformula.ProvablyProperOn.ofProperOn.{0} _ fun V _ _ ↦ by
@@ -1295,12 +1296,12 @@ noncomputable instance InductionScheme.delta1Sigma1 :
 
 /-! ## `𝐏𝐀` and `𝐈Σ₁` are recursively enumerable -/
 
-lemma inductionScheme_re_univ : REPred (· ∈ InductionScheme ℒₒᵣ Set.univ) :=
+lemma inductionScheme_re_univ : REPred (· ∈ InductionScheme ℒₒᵣ (fun _ ↦ True)) :=
   by
   have hR : REPred (InductionR fun _ : ℕ ↦ True) := rePred_iff_sigma1.mpr (by definability)
   refine REPred.of_eq (REPred.comp Computable.encode hR) <| fun σ ↦ ?_;
   simpa [Semiformula.quote_eq_encode] using
-    (inductionR_quote_iff (S := fun _ : ℕ ↦ True) (C := Set.univ) (fun _ ↦ Iff.rfl) σ).trans
+    (inductionR_quote_iff (S := fun _ : ℕ ↦ True) (C := fun _ ↦ True) (fun _ ↦ Iff.rfl) σ).trans
       (mem_inductionScheme_iff σ).symm
 
 lemma inductionScheme_re_sigma1 : REPred (· ∈ InductionScheme ℒₒᵣ (Arithmetic.Hierarchy Σ 1)) :=
@@ -1312,7 +1313,7 @@ lemma inductionScheme_re_sigma1 : REPred (· ∈ InductionScheme ℒₒᵣ (Arit
   simpa [Semiformula.quote_eq_encode] using
     (inductionR_quote_iff isSigma1_iff_hierarchy σ).trans (mem_inductionScheme_iff σ).symm
 
-instance : (InductionScheme ℒₒᵣ Set.univ).RE :=
+instance : (InductionScheme ℒₒᵣ (fun _ ↦ True)).RE :=
   ⟨inductionScheme_re_univ⟩
 
 instance : (InductionScheme ℒₒᵣ (Arithmetic.Hierarchy Σ 1)).RE :=

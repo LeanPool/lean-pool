@@ -61,7 +61,6 @@ theorem isBigO_congr_ae {Ψ : ℝ → ℝ} {X Y : Ω → ℝ} {A : ℝ}
     have hset :
         absTailEvent X (A * t) =ᵐ[μ] absTailEvent Y (A * t) := by
       filter_upwards [hXY] with ω hω
-      apply propext
       change A * t < |X ω| ↔ A * t < |Y ω|
       rw [hω]
     have hmeasure :
@@ -75,7 +74,6 @@ theorem isBigO_congr_ae {Ψ : ℝ → ℝ} {X Y : Ω → ℝ} {A : ℝ}
     have hset :
         absTailEvent Y (A * t) =ᵐ[μ] absTailEvent X (A * t) := by
       filter_upwards [hXY] with ω hω
-      apply propext
       change A * t < |Y ω| ↔ A * t < |X ω|
       rw [hω]
     have hmeasure :

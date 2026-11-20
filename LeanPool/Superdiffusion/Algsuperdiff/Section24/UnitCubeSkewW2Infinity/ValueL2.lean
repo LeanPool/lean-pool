@@ -74,7 +74,7 @@ private theorem sum_abs_entries_le_sq_mul_norm (A : Mat d) :
   calc (∑ i : Fin d, ∑ j : Fin d, |A i j|)
       ≤ ∑ _i : Fin d, ∑ _j : Fin d, ‖A‖ := by
         gcongr with i _ j _
-        simpa [Real.norm_eq_abs] using Matrix.norm_entry_le_entrywise_sup_norm A
+        simpa [Real.norm_eq_abs] using Matrix.norm_apply_le_norm A
     _ = (d : ℝ) ^ 2 * ‖A‖ := by
         simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
         ring

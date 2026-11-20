@@ -661,7 +661,7 @@ theorem tendsto_eLpNorm_sub_zero_one_sub_mul_convexApproxSmoothing_of_memLpOn
               change MeasureTheory.eLpNorm ((-ε n) • convexApproxSmoothing ρ u x0 r (ε n)) p μ =
                 ENNReal.ofReal |ε n| *
                   MeasureTheory.eLpNorm (convexApproxSmoothing ρ u x0 r (ε n)) p μ
-              simpa [Real.enorm_eq_ofReal_abs] using
+              simpa [Real.eNorm_eq_ofReal_abs] using
                 (MeasureTheory.eLpNorm_const_smul (-ε n)
                   (convexApproxSmoothing ρ u x0 r (ε n)) p μ)
       _ ≤ ENNReal.ofReal |ε n| * B := by

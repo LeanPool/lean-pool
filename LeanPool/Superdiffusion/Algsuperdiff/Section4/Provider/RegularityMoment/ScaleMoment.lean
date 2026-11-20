@@ -132,7 +132,7 @@ theorem lintegral_homMinimalScaleFactor_le_trunc {Omega : Type*} [MeasurableSpac
         mu {w : Omega | ((N0 + 1 + N : ℕ) : ℕ∞) ≤ X w}) ≤
         ENNReal.ofReal (B * rho ^ (N0 + 1)) * ∑' _N : ℕ, ENNReal.ofReal rho ^ _N := by
       rw [← ENNReal.tsum_mul_left]
-      exact ENNReal.tsum_le_tsum hterm
+      exact tsum_le_tsum hterm
     refine hbound.trans ?_
     have hgeom := tsum_ofReal_geometric_le_two (rho := rho) hratio
     refine (mul_le_mul_right hgeom _).trans (le_of_eq ?_)

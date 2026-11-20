@@ -140,7 +140,7 @@ private lemma caccioppoli_centered_hcenter_hEbound_4 :
           ∫⁻ x in B, ‖vec3EuclideanNorm (u (x, s))‖ₑ ^ (2 : ℝ) := by
         apply lintegral_congr
         intro x
-        rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
+        rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
           ENNReal.ofReal_rpow_of_nonneg (vec3EuclideanNorm_nonneg _)
             (by norm_num)]
         norm_num [Real.rpow_natCast]

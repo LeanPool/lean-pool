@@ -69,7 +69,7 @@ theorem regUniformSpatialField_eLpNorm_sq_eq_ofReal (f : Vec3 → Vec3)
     have hy := congrArg (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin 3 => ℝ)).symm hx
     simpa only [PiLp.coe_symm_continuousLinearEquiv,
       PiLp.coe_continuousLinearEquiv, WithLp.toLp_ofLp] using hy
-  rw [eLpNorm_congr_ae hrep, ← Lp.enorm_def, ← ofReal_norm,
+  rw [eLpNorm_congr_ae hrep, ← Lp.eNorm_def, ← ofReal_norm,
     ← ENNReal.ofReal_pow (norm_nonneg _)]
 
 /-- The energy equality (R5) of `thm:regularised` on `[0, T]` from the

@@ -117,13 +117,13 @@ theorem lps_strong_solution_l6_bound {t₀ T : ℝ} {u : ParabolicPoint → Vec3
       _ = ENNReal.ofReal (Real.sqrt 3) * eLpNorm (fun x : Vec3 => u (x,t)) 6 volume := by
           have := eLpNorm_const_smul (p := (6 : ℝ≥0∞)) (μ := volume) (Real.sqrt 3)
             (fun x : Vec3 => ‖u (x,t)‖)
-          simp only [Real.enorm_eq_ofReal_abs, abs_of_nonneg (Real.sqrt_nonneg 3)] at this
+          simp only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (Real.sqrt_nonneg 3)] at this
           rw [eLpNorm_norm _ hw2.aestronglyMeasurable] at this
           exact this
       _ ≤ ENNReal.ofReal (Real.sqrt 3) * (6 * gagliardoNirenbergSobolevConstant *
           eLpNorm (fun x : Vec3 => Du (x,t)) 2 volume) := by gcongr
       _ ≤ Cs := by dsimp only [Cs]; gcongr
-  have hform := eLpNorm_eq_lintegral_rpow_enorm_toReal (p := (6 : ℝ≥0∞)) (μ := volume)
+  have hform := eLpNorm_eq_lintegral_rpow_eNorm_toReal (p := (6 : ℝ≥0∞)) (μ := volume)
     (by norm_num) (by norm_num) hmeas
   rw [show (6 : ℝ≥0∞).toReal = 6 by norm_num] at hform
   have hint : (∫⁻ x : Vec3, ‖vec3EuclideanNorm (u (x,t))‖ₑ ^ (6 : ℝ)) =
@@ -133,7 +133,7 @@ theorem lps_strong_solution_l6_bound {t₀ T : ℝ} {u : ParabolicPoint → Vec3
   calc (∫⁻ x : Vec3, ENNReal.ofReal (vec3EuclideanNorm (u (x,t))) ^ (6 : ℝ))
       = ∫⁻ x : Vec3, ‖vec3EuclideanNorm (u (x,t))‖ₑ ^ (6 : ℝ) := by
         refine lintegral_congr fun x => ?_
-        rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
+        rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
     _ = _ := hint
     _ ≤ Cs ^ (6 : ℝ) := ENNReal.rpow_le_rpow hEuc (by norm_num)
 

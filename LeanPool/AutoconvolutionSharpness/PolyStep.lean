@@ -29,7 +29,7 @@ theorem convCoeff_eq_ofFn_sq (d : ℕ) (p : Fin (d + 1) → ℝ) (k : ℕ) :
   classical
   simp only [convCoeff, pow_two, Polynomial.ofFn_eq_sum_monomial,
     Finset.sum_mul, Finset.mul_sum, Polynomial.finsetSum_coeff,
-    Polynomial.monomial_mul_monomial, Polynomial.coeff_monomial]
+    Polynomial.monomial_mul_monomial, Polynomial.coeff_monomial_apply]
   apply Finset.sum_congr rfl
   intro i _
   apply Finset.sum_congr rfl

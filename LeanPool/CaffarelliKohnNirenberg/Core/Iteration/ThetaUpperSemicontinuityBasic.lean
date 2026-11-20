@@ -149,7 +149,7 @@ private lemma cylinder_integral_tendsto
         change MeasurePreserving (fun w : Vec3 × ℝ => (w.1 - z.1, w.2 - z.2))
           (volume.prod volume) (volume.prod volume)
         convert hprod using 1
-        all_goals rfl
+        rfl
       exact hmp))
     (by
       have hprod := (measurePreserving_sub_right (volume : Measure Vec3) z₀.1).prod
@@ -159,7 +159,7 @@ private lemma cylinder_integral_tendsto
         change MeasurePreserving (fun w : Vec3 × ℝ => (w.1 - z₀.1, w.2 - z₀.2))
           (volume.prod volume) (volume.prod volume)
         convert hprod using 1
-        all_goals rfl
+        rfl
       exact hmp)
     hS.nullMeasurableSet hStop
   have hsm : Tendsto (fun z => volume (symmDiff (s z) (s z₀)))
@@ -207,7 +207,7 @@ lemma time_slice_energy_eq_ofReal
     unfold timeSliceBallEnergy
     apply lintegral_congr
     intro y
-    rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
+    rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
       ← Real.rpow_natCast,
       ENNReal.ofReal_rpow_of_nonneg (vec3EuclideanNorm_nonneg _)
         (by norm_num : (0 : ℝ) ≤ 2)]

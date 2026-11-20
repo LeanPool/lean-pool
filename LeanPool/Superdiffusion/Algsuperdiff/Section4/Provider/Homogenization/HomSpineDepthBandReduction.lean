@@ -140,7 +140,7 @@ theorem enorm_cubeEuclideanWspKernel_rpow_le_tsum (Q : TriadicCube d) (s : Fract
         exact sub_self _
       rw [hsub]
       simp
-    rw [hzero, enorm_zero, ENNReal.zero_rpow_of_pos hr]
+    rw [hzero, eNorm_zero, ENNReal.zero_rpow_of_pos hr]
     exact zero_le
   · have hne : x ≠ y := fun hxy => hgxy (by rw [hxy])
     have hdpos : 0 < dist x y := dist_pos.mpr hne
@@ -158,7 +158,7 @@ theorem enorm_cubeEuclideanWspKernel_rpow_le_tsum (Q : TriadicCube d) (s : Fract
     have hcpos : 0 < c := by
       rw [hc]
       exact mul_pos (by positivity) hL
-    refine le_trans ?_ (ENNReal.le_tsum k)
+    refine le_trans ?_ (le_tsum _ k)
     simp only [bandIntegrand, Set.indicator_of_mem hmem]
     /- the kernel, bounded on the ba -/
     have hkerbd : ‖cubeEuclideanWspKernel s q g (x, y)‖ ≤
@@ -184,9 +184,9 @@ theorem enorm_cubeEuclideanWspKernel_rpow_le_tsum (Q : TriadicCube d) (s : Fract
       rw [he]
       field_simp
     have hNx : ENNReal.ofReal (euclideanNorm (g x)) ^ r = ‖euclideanNorm (g x)‖ₑ ^ r := by
-      rw [Real.enorm_eq_ofReal (euclideanNorm_nonneg _)]
+      rw [Real.eNorm_eq_ofReal (euclideanNorm_nonneg _)]
     have hNy : ENNReal.ofReal (euclideanNorm (g y)) ^ r = ‖euclideanNorm (g y)‖ₑ ^ r := by
-      rw [Real.enorm_eq_ofReal (euclideanNorm_nonneg _)]
+      rw [Real.eNorm_eq_ofReal (euclideanNorm_nonneg _)]
     calc ‖cubeEuclideanWspKernel s q g (x, y)‖ₑ ^ r
         = ENNReal.ofReal ‖cubeEuclideanWspKernel s q g (x, y)‖ ^ r := by
           rw [ofReal_norm]
@@ -332,7 +332,7 @@ theorem lintegral_lintegral_enorm_cubeEuclideanWspKernel_rpow_le (Q : TriadicCub
           ((2 : ℝ≥0∞) ^ q.exponent.toReal * 2 *
             ∫⁻ x, ‖euclideanNorm (gridDualDepthTest Q j v x)‖ₑ ^ q.exponent.toReal
               ∂(cubeMeasure Q)) := by
-        refine ENNReal.tsum_le_tsum fun k => ?_
+        refine tsum_le_tsum fun k => ?_
         refine le_trans (lintegral_lintegral_bandIntegrand_le Q s q j v k) (le_of_eq ?_)
         ring
     _ = (∑' k : ℕ, ENNReal.ofReal (bandTerm (s.1 * q.exponent.toReal) (cubeScaleFactor Q)
@@ -374,7 +374,7 @@ theorem cubeEuclideanWspESeminorm_gridDualDepthTest_rpow_le (Q : TriadicCube d)
   have hmeasW : Measurable (fun z : Vec d × Vec d =>
       ‖cubeEuclideanWspKernel s q (gridDualDepthTest Q j v) z‖ₑ ^ q.exponent.toReal) :=
     ((measurable_cubeEuclideanWspKernel s q
-      (measurable_gridDualDepthTest Q j v)).enorm).pow_const _
+      (measurable_gridDualDepthTest Q j v)).eNorm).pow_const _
   have h0 : cubeEuclideanWspESeminorm Q s q (gridDualDepthTest Q j v) ^ q.exponent.toReal =
       ENNReal.ofReal ((cubeVolume Q)⁻¹) *
         ∫⁻ x, ∫⁻ y, ‖cubeEuclideanWspKernel s q (gridDualDepthTest Q j v) (x, y)‖ₑ ^

@@ -158,7 +158,7 @@ lemma deriv_ne_zero_of_inj_aux {g : ℂ → ℂ} (hU : IsOpen U) (hg : Different
     have e2 : deriv (fun z => g z + ε) z ≠ 0 := by
       simpa using h14 z (ball_subset_closedBall hz) e1
     refine crucial hU h20 hz (h18 ε) hgz e2 (fun w hw hwz => ?_)
-    contrapose! hwz
+    contrapose hwz
     exact hi (h20 hw) ((ball_subset_closedBall.trans h20) hz)
       (add_right_cancel (hwz.trans hgz.symm))
   have h10 : Tendsto (fun ε => cindex z₀ r (fun z => g z + ε)) (𝓝[≠] 0) (𝓝 (cindex z₀ r g)) :=

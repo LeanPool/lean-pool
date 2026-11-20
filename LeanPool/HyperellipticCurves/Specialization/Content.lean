@@ -8,7 +8,8 @@ module
 -- Import paths adapted for Lean Pool; local option overrides removed.
 
 public import Mathlib.Algebra.Order.GroupWithZero.Finset
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 
 import LeanPool.HyperellipticCurves.ForMathlib.GroupWithZero
 

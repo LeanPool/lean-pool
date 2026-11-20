@@ -235,12 +235,12 @@ theorem exists_lipschitzOnWith_of_hausdorffMeasure_pos {K : ℝ≥0} {f : ℝ �
       fun A ↦ by
         split_ifs with h
         · exact one_ne_zero
-        · exact div_ne_zero (nnnorm_ne_zero_iff.mpr h) two_ne_zero
+        · exact div_ne_zero (nnNorm_ne_zero_iff.mpr h) two_ne_zero
   -- some piece carries positive measure
   obtain ⟨n, hn⟩ : ∃ n, 0 < μH[1] (f '' (B₁ ∩ t n)) := by
     by_contra h
     have hsum : ∑' n, μH[1] (f '' (B₁ ∩ t n)) = 0 :=
-      ENNReal.tsum_eq_zero.mpr fun n ↦
+      tsum_eq_zero_iff.mpr fun n ↦
         nonpos_iff_eq_zero.mp (not_lt.mp (not_exists.mp h n))
     have hle : μH[1] (f '' B₁) ≤ ∑' n, μH[1] (f '' (B₁ ∩ t n)) :=
       calc μH[1] (f '' B₁) ≤ μH[1] (f '' ⋃ n, B₁ ∩ t n) := by
@@ -258,6 +258,6 @@ theorem exists_lipschitzOnWith_of_hausdorffMeasure_pos {K : ℝ≥0} {f : ℝ �
   have hAne : A n ≠ 0 := by rw [hAy]; exact hy.2
   have happ := happrox n
   simp only [hAne, ↓reduceIte] at happ
-  exact exists_lipschitzOnWith_of_piece hf (fun s hs ↦ hs.1.1.1) hAne happ hn
+  exact exists_lipschitzOnWith_of_piece hf (P := B₁ ∩ t n) (fun s hs ↦ hs.1.1.1) hAne happ hn
 
 end LeanPool.Besicovitch.Example

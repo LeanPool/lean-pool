@@ -1356,7 +1356,7 @@ theorem cmpMaskM_cum (cat : Fin 4 → List (CatCol bf.Vtx)) (mbs : ∀ l, bf.Mai
   have h2 : (D.getD k (true, 0, none)).2.2 = some m := by rw [hm]
   unfold cmpMaskM cumMaskT
   congr 1
-  all_goals funext c'; rw [h2]; rfl
+  funext c'; rw [h2]; rfl
 
 /-- The layers of slot `v` with cumulative descriptors are the averaged cumulative projections of
 the main tree of its slot. -/
@@ -1580,7 +1580,7 @@ theorem cmpMaskM_ball (cat : Fin 4 → List (CatCol bf.Vtx)) (mbs : ∀ l, bf.Ma
   have h2 : (D.getD k (true, 0, none)).2.2 = none := by rw [hm]
   unfold cmpMaskM ballMaskT
   congr 1
-  all_goals funext c'; rw [h2]; rfl
+  funext c'; rw [h2]; rfl
 
 namespace SideLeafM
 variable (T : fp.SideLeafM)

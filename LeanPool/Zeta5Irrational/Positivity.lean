@@ -85,7 +85,7 @@ lemma integrand_eq_sum (K : ℕ) (P : ℚ[X]) {y : ℝ} (hy : 0 < y) :
     Finset.sum_mul, Finset.sum_mul]
   congr 1
   · refine Finset.sum_congr rfl fun e _ => ?_
-    try simp only [Rat.smul_def, ← pow_mul]
+    simp only [Rat.smul_def, ← pow_mul]
     ring
   · refine Finset.sum_congr rfl fun j _ => ?_
     ring

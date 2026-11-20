@@ -63,14 +63,14 @@ theorem lps_finite_branch_of_memLp_five
   have hlinFinite :
       (∫⁻ z : ParabolicPoint,
         ‖vec3EuclideanNorm (u z)‖ₑ ^ (5 : ℝ) ∂ν) < ⊤ := by
-    have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := ENNReal.ofReal (5 : ℝ)) (by norm_num) ENNReal.ofReal_ne_top hnormsm).mp
         hnormFinite
     rw [hpow] at hfinite
     exact hfinite
   have hpowMeas : AEMeasurable
       (fun z : ParabolicPoint => ‖vec3EuclideanNorm (u z)‖ₑ ^ (5 : ℝ)) ν :=
-    hnormsm.enorm.pow_const _
+    hnormsm.eNorm.pow_const _
   have htonelli :
       (∫⁻ z : ParabolicPoint,
         ‖vec3EuclideanNorm (u z)‖ₑ ^ (5 : ℝ) ∂ν) =
@@ -82,7 +82,7 @@ theorem lps_finite_branch_of_memLp_five
   have hnormEq (z : ParabolicPoint) :
       ‖vec3EuclideanNorm (u z)‖ₑ =
         ENNReal.ofReal (vec3EuclideanNorm (u z)) :=
-    Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)
+    Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)
   rw [hexp]
   simp_rw [ENNReal.rpow_one]
   have htargetEq :

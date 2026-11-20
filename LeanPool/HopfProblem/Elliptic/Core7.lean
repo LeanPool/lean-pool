@@ -326,8 +326,8 @@ private theorem Elliptic.HigherHomology.markedLinearPower {M : Type*} [AddCommGr
     (e : M ≃ₗ[ℤ] FibreLattice) (f : M →ₗ[ℤ] M) (A : FibreMatrix) (h : ∀ a, e (f a) = A *ᵥ e a)
     (k : ℕ) (a : M) : e ((f ^ k) a) = A ^ k *ᵥ e a := by
   induction k generalizing a with
-  | zero => simp only [pow_zero, Module.End.one_apply, Matrix.one_mulVec]
-  | succ k ih => rw [pow_succ, Module.End.mul_apply, ih, h, pow_succ, Matrix.mulVec_mulVec]
+  | zero => simp only [pow_zero, one_apply_eq_self, Matrix.one_mulVec]
+  | succ k ih => rw [pow_succ, mul_apply_eq_comp, ih, h, pow_succ, Matrix.mulVec_mulVec]
 
 private def Elliptic.HigherHomology.fibreHomologyNorm (j : Elliptic.Kind) (n : ℕ) :
     SingularMayerVietoris.SingularHomology (PeriodTorusHigherHomology.ProductTorus 3) n →ₗ[ℤ]

@@ -155,7 +155,7 @@ theorem mesoWindowFourthEnergy_le_ratio_mul_originCubeFourthEnergy
         vecNormSq (u x) ^ 2 ∂volume ≤
       ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ 2 ∂volume :=
     setIntegral_mono_set hfour
-      (Filter.Eventually.of_forall fun _ => sq_nonneg _) hsub.eventuallyLE
+      (Filter.Eventually.of_forall fun _ => sq_nonneg _) hsub.eventuallySubset
   have hcancel : (volume (openCubeSet (originCube d K))).toReal *
       originCubeFourthEnergy K u =
         ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ 2 ∂volume := by

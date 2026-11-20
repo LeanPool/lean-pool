@@ -1345,7 +1345,7 @@ theorem lintegral_enorm_sq_eq_eLpNorm_sq {F : Type*} [NormedAddCommGroup F]
     (∫⁻ x, ‖f x‖ₑ ^ (2 : ℕ)) = eLpNorm f 2 volume ^ (2 : ℕ) := by
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hf]
   simpa only [ENNReal.toReal_ofNat, ENNReal.rpow_two] using
-    (lintegral_rpow_enorm_eq_rpow_eLpNorm' (f := f) (μ := volume) (q := (2 : ℝ)) (by norm_num))
+    (lintegral_rpow_eNorm_eq_rpow_eLpNorm' (f := f) (μ := volume) (q := (2 : ℝ)) (by norm_num))
 
 open scoped Classical in
 /-- The fixed-function L2 version of blueprint `lem:cuts`: total squared

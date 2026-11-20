@@ -145,7 +145,7 @@ theorem bakryBrownianDyadic_eventually_bounded :
     rw [← ENNReal.ofReal_tsum_of_nonneg (fun n => by positivity) hS]
     exact ENNReal.ofReal_ne_top
   have hBad : (∑' n, bakryBrownianDyadicMeasure (bakryBrownianDyadicBadLevel n)) ≠ ∞ :=
-    ne_top_of_le_ne_top hFinite (ENNReal.tsum_le_tsum bakryBrownianDyadicBadLevel_bound)
+    ne_top_of_le_ne_top hFinite (tsum_le_tsum bakryBrownianDyadicBadLevel_bound)
   filter_upwards [ae_eventually_notMem hBad] with ω hω
   filter_upwards [hω] with n hn
   intro k
@@ -221,8 +221,8 @@ theorem bakryBrownianDyadicPath_endpoints (ω : BakryBrownianDyadicSample) :
     · rw [tsum_eq_zero_of_not_summable hS]
       rfl
   constructor
-  · simp [bakryBrownianDyadicPath, bakryBrownianDyadicLinearPath, he _ ht0]
-  · simp [bakryBrownianDyadicPath, bakryBrownianDyadicLinearPath, he _ ht1]
+  · simpa [bakryBrownianDyadicPath, bakryBrownianDyadicLinearPath] using he 0 ht0
+  · simpa [bakryBrownianDyadicPath, bakryBrownianDyadicLinearPath] using he 1 ht1
 
 end
 end GinibrePoincare

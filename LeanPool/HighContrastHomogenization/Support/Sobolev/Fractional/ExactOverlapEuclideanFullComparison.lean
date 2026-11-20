@@ -110,9 +110,9 @@ theorem centeredCubeExactOverlapEuclideanRootMeanENorm_le_normalizedEuclideanLpE
       rw [exactOverlapEuclideanRootMeanENorm_eq_ofReal_euclideanNorm, hmean,
         euclideanNorm_eq_norm_ofVec, HilbertVec.ofVec_toVec, ofReal_norm]
     _ ≤ ∫⁻ x, ‖HilbertVec.ofVec (F x)‖ₑ ∂μ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ = eLpNorm (fun x => HilbertVec.ofVec (F x)) 1 μ := by
-      rw [eLpNorm_one_eq_lintegral_enorm hmem.aestronglyMeasurable]
+      rw [eLpNorm_one_eq_lintegral_eNorm hmem.aestronglyMeasurable]
     _ ≤ eLpNorm (fun x => HilbertVec.ofVec (F x)) 2 μ :=
       eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
     _ = (centeredCubeDomain d m).normalizedEuclideanLpENorm 2 F := by

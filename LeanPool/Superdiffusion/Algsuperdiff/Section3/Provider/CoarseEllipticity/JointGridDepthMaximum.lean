@@ -256,7 +256,7 @@ theorem measureReal_gradedFiniteAllRowsEvent_le
         (∑' k : ℕ, Real.exp (-(2 * ((k : ℝ) + 1) * t))) := by
     unfold gradedFiniteAllRowsEvent
     rw [ENNReal.ofReal_tsum_of_nonneg (fun k => (Real.exp_pos _).le) hsummable]
-    exact (measure_iUnion_le _).trans (ENNReal.tsum_le_tsum fun k => by
+    exact (measure_iUnion_le _).trans (tsum_le_tsum fun k => by
       rw [← ENNReal.ofReal_toReal (measure_ne_top mu _)]
       exact ENNReal.ofReal_le_ofReal (hrow k))
   calc
@@ -360,7 +360,7 @@ theorem ae_gradedFiniteEnvelopeENNReal_ne_top
     have hmajor_ne_top :
         (∑' n : ℕ, ENNReal.ofReal (Real.exp (-((n : ℝ) + 1)))) ≠ ⊤ :=
       summable_exp_neg_natCast_add_one.tsum_ofReal_ne_top
-    exact ne_top_of_le_ne_top hmajor_ne_top (ENNReal.tsum_le_tsum hEennreal)
+    exact ne_top_of_le_ne_top hmajor_ne_top (tsum_le_tsum hEennreal)
   filter_upwards [ae_eventually_notMem hsum_ne_top] with omega homega
   intro htop
   obtain ⟨N, hN⟩ := Filter.eventually_atTop.1 homega

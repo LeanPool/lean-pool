@@ -285,7 +285,7 @@ private def _root_.ModularCurve.LevelN.CuspVanish.T (q : ℂ) :
 p2m_export "ModularCurve.LevelN.CuspVanish" "T"
 omit [NeZero N] in
 theorem cf_eq_T (P : ℍ → ℂ) {q : ℂ} (hq : q ≠ 0) : cf N P q = P (T N q) := by
-  rw [cf, UpperHalfPlane.cuspFunction, Periodic.cuspFunction_eq_of_nonzero _ _ hq]
+  rw [cf, UpperHalfPlane.cuspFunction, Periodic.cuspFunction_eq_of_ne_zero _ _ hq]
   rfl
 
 theorem cf_qParam {P : ℍ → ℂ} (hP : P ∈ ring N) (τ : ℍ) : cf N P (𝕢 N τ) = P τ :=
@@ -506,10 +506,13 @@ theorem realq_add (k l : K) :
     (den_ne_zero N K l)
   have hk := algebraMap_ne_zero N K (den_ne_zero N K k)
   have hl := algebraMap_ne_zero N K (den_ne_zero N K l)
+  have hadd (a b : ring N) : algebraMap (ring N) K (a + b) =
+      algebraMap (ring N) K a + algebraMap (ring N) K b :=
+    (algebraMap (ring N) K).map_add' a b
   have h : algebraMap (ring N) K (num N K k * den N K l + num N K l * den N K k) /
       algebraMap (ring N) K (den N K k * den N K l) = k + l := by
     conv_rhs => rw [← num_div_den N K k, ← num_div_den N K l]
-    rw [map_add, map_mul, map_mul, map_mul]
+    rw [hadd, map_mul, map_mul, map_mul]
     field_simp
   filter_upwards [realq_eventuallyEq N K δ (a := num N K k * den N K l + num N K l * den N K k)
     (b := den N K k * den N K l) hb h,
@@ -610,7 +613,7 @@ theorem cf_G_zero : cf N G 0 = 1 := by
   rw [cf, UpperHalfPlane.cuspFunction_apply_zero (hN N) (analyticAt_cf_G N) (periodic_G N)]
   have : Tendsto G atImInfty (𝓝 1) := by
     have h__ := (tendsto_E4_atImInfty).pow 3
-    try simp only [one_pow] at h__
+    simp only [one_pow] at h__
     exact h__
   exact this.limUnder_eq
 

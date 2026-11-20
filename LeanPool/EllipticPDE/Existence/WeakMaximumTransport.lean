@@ -498,9 +498,9 @@ theorem exists_measure_truncSupport_ge_of_sobolev (hΩb : Bornology.IsBounded Ω
   have hNfin : eLpNorm ((V : H1amb Ω) 0) q μ ≠ ⊤ := (memLp_of_mem_H01 hsob).eLpNorm_ne_top
   have hN : N ≤ (C : ℝ) * ∑ i : Fin d, ‖(V : H1amb Ω) i.succ‖ := by
     have := ENNReal.toReal_mono (ENNReal.mul_ne_top ENNReal.coe_ne_top
-      (ENNReal.sum_ne_top.mpr fun i _ => by rw [enorm_eq_nnnorm]; exact ENNReal.coe_ne_top)) hsob
+      (ENNReal.sum_ne_top.mpr fun i _ => by rw [eNorm_eq_nnNorm]; exact ENNReal.coe_ne_top)) hsob
     rwa [ENNReal.toReal_mul, ENNReal.coe_toReal, ENNReal.toReal_sum
-      (fun i _ => by rw [enorm_eq_nnnorm]; exact ENNReal.coe_ne_top)] at this
+      (fun i _ => by rw [eNorm_eq_nnNorm]; exact ENNReal.coe_ne_top)] at this
   -- the gradient norm
   set S : ℝ := Real.sqrt (∑ i : Fin d, ‖(V : H1amb Ω) i.succ‖ ^ 2) with hSdef
   have hS0 : 0 ≤ S := Real.sqrt_nonneg _

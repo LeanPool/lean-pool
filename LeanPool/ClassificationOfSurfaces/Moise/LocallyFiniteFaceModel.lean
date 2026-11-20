@@ -29,7 +29,7 @@ namespace LocallyFiniteTriangleComplex
 variable {S : Type*} [TopologicalSpace S] (K : LocallyFiniteTriangleComplex S)
 
 /-- The closed standard triangle used as the source model for every locally finite face. -/
-abbrev standardFaceRegion : Set Plane := standardTrianglePlaneComplex.support
+noncomputable abbrev standardFaceRegion : Set Plane := standardTrianglePlaneComplex.support
 
 /-- The frontier of the standard source triangle, as a subtype. -/
 abbrev StandardFaceBoundary :=

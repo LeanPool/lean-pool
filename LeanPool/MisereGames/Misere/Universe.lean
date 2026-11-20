@@ -267,11 +267,12 @@ private theorem exists_directed_upper_of_finite {ι : Sort*} [Nonempty ι] (A : 
     (h_directed : Directed (r := (· ≤ ·)) A)
     {S : Set G} (hS : S.Finite) (h_mem : ∀ g ∈ S, ∃ i, A i g) :
     ∃ i, ∀ g ∈ S, A i g := by
+  have h_directed_sets : Directed (· ⊆ ·) (fun i => {g | A i g}) := h_directed
   obtain ⟨T, ⟨i, rfl⟩, hST⟩ :=
-    h_directed.directedOn_range.exists_mem_subset_of_finite_of_subset_sUnion
-      (Set.range_nonempty A) hS (fun g hg => by
+    h_directed_sets.directedOn_range.exists_mem_subset_of_finite_of_subset_sUnion
+      (Set.range_nonempty _) hS (fun g hg => by
         obtain ⟨i, hi⟩ := h_mem g hg
-        exact Set.mem_sUnion_of_mem hi (Set.mem_range_self i))
+        exact Set.mem_sUnion_of_mem (t := {g | A i g}) hi (Set.mem_range_self i))
   exact ⟨i, hST⟩
 
 end Universe

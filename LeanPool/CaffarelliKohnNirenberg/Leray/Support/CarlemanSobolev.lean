@@ -34,7 +34,7 @@ private theorem memLp_of_setLIntegral_enorm_sq_lt_top
     (hfin : ∫⁻ x in s, ‖f x‖ₑ ^ (2 : ℝ) ∂μ < ⊤) :
     MemLp f (2 : ℝ≥0∞) (μ.restrict s) := by
   have hfmeas : AEStronglyMeasurable f (μ.restrict s) := hf.aestronglyMeasurable
-  apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (p := (2 : ℝ≥0∞)) (μ := μ.restrict s) (by norm_num) (by norm_num) hfmeas).2
   simpa using hfin
 

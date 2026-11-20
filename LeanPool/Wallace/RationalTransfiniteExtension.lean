@@ -91,7 +91,7 @@ abbrev globalCharacter {I : Type u} [LinearOrder I] [WellFoundedLT I]
 theorem globalCharacter_eq_local_restriction {I : Type u} [LinearOrder I] [WellFoundedLT I]
     (E : Data I) (D : Set I) (character : (D →₀ ℚ) →+ UnitAddCircle)
     (x : I →₀ ℚ) (hx : ∀ i ∈ x.support, i ∈ D) :
-    globalCharacter E D character x = character (Finsupp.subtypeDomain D x) :=
+    globalCharacter E D character x = character (Finsupp.subtypeDomain (· ∈ D) x) :=
   CoefficientTransfiniteExtension.globalCharacter_eq_local_restriction
     rationalCoordinateExtension E D character x hx
 

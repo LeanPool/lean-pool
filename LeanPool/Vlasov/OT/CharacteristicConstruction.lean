@@ -1197,7 +1197,7 @@ theorem exists_vlasov_characteristicFlow_local
       have h_force_bound : ‖convolveFunctionMeasure gradW (ρ t) x.1‖ ≤ (M : ℝ) :=
         hbound t h_t_Icc x.1 h_x1_ball
       have h_Lpl_eq : (L_pl : ℝ) = ‖z₀.2‖ + (a : ℝ) + (M : ℝ) := by
-        simp [hL_pl_def, NNReal.coe_add, coe_nnnorm]
+        simp [hL_pl_def, NNReal.coe_add]
       calc ‖vlasovVectorField gradW ρ t x‖
           ≤ max ‖x.2‖ ‖convolveFunctionMeasure gradW (ρ t) x.1‖ := h_norm_field
         _ ≤ (L_pl : ℝ) := by
@@ -1858,7 +1858,7 @@ private lemma charFlowTight_window_forceBound
           exact add_le_add h_x_local hp
   have h_V_max_coe : (V_max : ℝ) = ‖z₀.2‖ + (a : ℝ) / 2 + (M : ℝ) * T := by
     have h_V_def : (V_max : ℝ) = ‖z₀.2‖ + (a : ℝ) / 2 + (M : ℝ) * (T.toNNReal : ℝ) := by
-      simp [hV_max_def, NNReal.coe_add, coe_nnnorm, NNReal.coe_mul, NNReal.coe_div]
+      simp [hV_max_def, NNReal.coe_add, NNReal.coe_mul, NNReal.coe_div]
     rw [h_V_def, Real.coe_toNNReal _ hT]
   have h_V_max_nn : (0 : ℝ) ≤ (V_max : ℝ) := V_max.coe_nonneg
   have h_R_expand : 2 * (a : ℝ) + (V_max : ℝ) * T ≤ R := by
@@ -2064,7 +2064,7 @@ private lemma charFlowTight_window_step
   have hM_nn : (0 : ℝ) ≤ (M : ℝ) := M.coe_nonneg
   have h_V_max_coe : (V_max : ℝ) = ‖z₀.2‖ + (a : ℝ) / 2 + (M : ℝ) * T := by
     have h_V_def : (V_max : ℝ) = ‖z₀.2‖ + (a : ℝ) / 2 + (M : ℝ) * (T.toNNReal : ℝ) := by
-      simp [hV_max_def, NNReal.coe_add, coe_nnnorm, NNReal.coe_mul, NNReal.coe_div]
+      simp [hV_max_def, NNReal.coe_add, NNReal.coe_mul, NNReal.coe_div]
     rw [h_V_def, Real.coe_toNNReal _ hT]
   have h_vel_Vmax : ‖(γ_k c).2‖ ≤ (V_max : ℝ) := by
     rw [h_V_max_coe]
@@ -2486,7 +2486,7 @@ theorem exists_vlasov_characteristicFlow_twoWindow
       have h_force_bound : ‖convolveFunctionMeasure gradW (ρ t) x.1‖ ≤ (M : ℝ) :=
         hbound t h_t_Icc x.1 h_x1_ball
       have h_Lpl_eq : (L_pl : ℝ) = ‖z₀.2‖ + (a : ℝ) + (M : ℝ) := by
-        simp [hL_pl_def, NNReal.coe_add, coe_nnnorm]
+        simp [hL_pl_def, NNReal.coe_add]
       calc ‖vlasovVectorField gradW ρ t x‖
           ≤ max ‖x.2‖ ‖convolveFunctionMeasure gradW (ρ t) x.1‖ := h_norm_field
         _ ≤ (L_pl : ℝ) := by

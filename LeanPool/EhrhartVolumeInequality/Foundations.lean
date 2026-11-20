@@ -5817,7 +5817,7 @@ private theorem integrable_exp_neg_mul_norm_all {n : ℕ} {a : ℝ}
   | zero =>
       rw [MeasureTheory.Measure.volume_pi_eq_dirac
         (0 : Space 0)]
-      exact MeasureTheory.integrable_dirac (by simp only [Matrix.zero_empty, neg_mul, enorm_lt_top])
+      exact MeasureTheory.integrable_dirac (by simp only [Matrix.zero_empty, neg_mul, eNorm_lt_top])
   | succ n =>
       exact MonomialIntegrability.integrable_exp_neg_mul_norm
         (Nat.zero_lt_succ n) ha
@@ -7546,7 +7546,7 @@ private theorem normalizedTargetBodyMeasure_univ {n : ℕ}
     (K : CenteredBody n) :
     normalizedTargetBodyMeasure K Set.univ = 1 := by
   unfold normalizedTargetBodyMeasure
-  rw [Measure.smul_apply, Measure.restrict_apply_univ]
+  rw [smul_apply, Measure.restrict_apply_univ]
   exact ENNReal.inv_mul_cancel
     (centeredBody_volume_ne_zero_top K).1
     (centeredBody_volume_ne_zero_top K).2

@@ -459,7 +459,7 @@ theorem span_traceDual_basisOfFractionalIdeal
           FractionalIdeal (𝓞 K)⁰ K) :
         Submodule (𝓞 K) K).restrictScalars ℤ := by
   rw [coe_traceDualIdealUnit,
-    FractionalIdeal.coe_dual (A := ℤ) (K := ℚ)
+    FractionalIdeal.coeToSubmodule_dual (A := ℤ) (K := ℚ)
       (Units.ne_zero I)]
   symm
   apply Submodule.traceDual_span_of_basis ℤ

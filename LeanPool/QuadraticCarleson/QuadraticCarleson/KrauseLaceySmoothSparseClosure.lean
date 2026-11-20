@@ -67,7 +67,7 @@ private theorem locallyIntegrable_finiteRadiusSmoothHighPassMaxTestOperator
     induction s using Finset.induction_on with
     | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ε s hε ih =>
-        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
+        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnNorm]
         exact (hmeas ε).norm.max ih
   rw [locallyIntegrable_iff]
   intro K hK

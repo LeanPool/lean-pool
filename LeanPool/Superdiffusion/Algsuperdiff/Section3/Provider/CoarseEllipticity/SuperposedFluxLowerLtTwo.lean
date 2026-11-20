@@ -354,7 +354,7 @@ theorem superposedFlux_lower_branchPayload_lt_two [NeZero d]
                     (-(Clow⁻¹ * ((E : ℝ)⁻¹) ^ 2 * M.gamma⁻¹))) := by
   have habsorb : 8 * (2 * superposedFluxSharpDetConst d) ≤ Clow := by
     convert hdet using 1
-    all_goals ring
+    ring
   refine coarse_ellipticity_lower_branchPayload_lt_two_of_finiteQPresplit d
     (Clow := Clow) (Cprof := 2 * superposedFluxSharpDetConst d)
     (mul_nonneg (by norm_num) (superposedFluxSharpDetConst_pos hd).le) habsorb ?_

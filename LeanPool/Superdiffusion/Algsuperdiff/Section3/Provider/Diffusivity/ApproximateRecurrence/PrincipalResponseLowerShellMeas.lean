@@ -289,7 +289,7 @@ private theorem measurable_lowerShellLocalCompletion_extend {beta : Type*}
   intro s hs
   obtain ⟨t, ht, hvt⟩ := MeasurableSpace.measurableSet_comap.1 (hf hs)
   obtain ⟨t0, ht0, htt0⟩ := ht
-  refine ⟨t0, ht0, Filter.EventuallyEq.trans ?_ htt0⟩
+  refine ⟨t0, ht0, Filter.EventuallyEqSet.trans ?_ htt0⟩
   filter_upwards [ae_lowerTailGood M] with omega homega
   have hext : Function.extend (Subtype.val : CutoffSample d → ShellSeq d) f e omega =
       f ⟨omega, homega⟩ :=
@@ -297,7 +297,6 @@ private theorem measurable_lowerShellLocalCompletion_extend {beta : Type*}
   have hval : ((⟨omega, homega⟩ : CutoffSample d) ∈ f ⁻¹' s) ↔ omega ∈ t := by
     rw [← hvt]
     exact Iff.rfl
-  refine propext ?_
   rw [Set.mem_preimage, hext]
   exact hval
 

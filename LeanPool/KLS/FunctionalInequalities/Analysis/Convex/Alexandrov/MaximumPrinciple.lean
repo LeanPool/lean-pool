@@ -842,7 +842,7 @@ private lemma alexandrov_maximum_principle_core
     have hclosed :
         IsClosed {y : E | u x₀ + ⟪q, y - x₀⟫ ≤ 0} :=
       isClosed_Iic.preimage hcont
-    exact closure_minimal hΩbound hclosed hx
+    exact closure_minimal (fun y hy ↦ hΩbound y hy) hclosed hx
   have hHullA : convexHull ℝ (closedBall (0 : E) r ∪ {q}) ⊆ A :=
     convexHull_min (union_subset hballA (singleton_subset_iff.mpr hqA))
       alexandrov_affine_set_convex

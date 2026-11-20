@@ -82,7 +82,7 @@ theorem integrable_plane_inverse_fourth_flux (n b c : Position) (hn : ‖n‖ = 
     4)).aestronglyMeasurable, ?_⟩
   change (∫⁻ y, ‖planeHeight n b c / ‖y - c‖ ^ 4‖ₑ ∂planeMeasure F) < ⊤
   have hnonneg (y : Position) : 0 ≤ planeHeight n b c / ‖y - c‖ ^ 4 := by positivity
-  simp_rw [Real.enorm_eq_ofReal (hnonneg _)]
+  simp_rw [Real.eNorm_eq_ofReal (hnonneg _)]
   rw [lintegral_plane_inverse_fourth_flux n b c hn F ha]
   exact ENNReal.ofReal_lt_top
 

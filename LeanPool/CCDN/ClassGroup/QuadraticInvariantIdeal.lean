@@ -44,7 +44,7 @@ theorem fractionalIdealUnitAction_principal (σ : R ≃+* R) (b : Kˣ) :
 theorem classGroup_mk_principal (b : Kˣ) :
     ClassGroup.mk K (toPrincipalIdeal R K b) = 1 := by
   apply ClassGroup.mk_eq_one_iff.mpr
-  rw [coe_toPrincipalIdeal, FractionalIdeal.coe_spanSingleton]
+  rw [coe_toPrincipalIdeal, FractionalIdeal.coeToSubmodule_spanSingleton]
   exact ⟨⟨(b : K), rfl⟩⟩
 
 end

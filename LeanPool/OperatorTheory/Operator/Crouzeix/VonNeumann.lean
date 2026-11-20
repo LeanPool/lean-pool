@@ -103,11 +103,11 @@ theorem norm_aeval_le_polynomialSupNorm_closedBall_of_mem_unitary {A : Type*} [C
     obtain ⟨z, hz, rfl⟩ := hk
     have hz1 : z ∈ Metric.closedBall (0 : ℂ) 1 :=
       Metric.sphere_subset_closedBall (spectrum.subset_circle_of_unitary hU hz)
-    rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ hM0]
+    rw [ENNReal.coe_le_coe, ← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ hM0]
     exact norm_eval_le_polynomialSupNorm p
       (bddAbove_norm_eval_image_of_isCompact p (isCompact_closedBall (0 : ℂ) 1)) hz1
-  rw [IsStarNormal.spectralRadius_eq_nnnorm (aeval U p), ENNReal.coe_le_coe,
-    ← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ hM0] at hbound
+  rw [IsStarNormal.spectralRadius_eq_nnNorm (aeval U p), ENNReal.coe_le_coe,
+    ← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ hM0] at hbound
   exact hbound
 
 /-! ### Compression through a power dilation -/

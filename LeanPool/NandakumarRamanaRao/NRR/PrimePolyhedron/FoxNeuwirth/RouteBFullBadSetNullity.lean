@@ -354,7 +354,7 @@ theorem volume_selectedFiber_eq_zero
 end MixedFaceCase
 
 /-- The complete bad set in canonical split coordinates. -/
-def splitMixedFaceBadSetCanonical
+noncomputable def splitMixedFaceBadSetCanonical
     (base : Assignment hp C) (κ : MixedFaceCase hp C) :
     Set ((κ.SelectedVectorParameter hp C → Real) ×
       (κ.RemainingMovableParameter hp C → Real)) :=

@@ -521,8 +521,8 @@ theorem gaoIndex_approximation
       exact Or.inl (Or.inl rfl)
     · exact Or.inr (Or.inr (hηchainLT r q hgt))
   have hvalLUB : IsLUB ((fun η' : GaoIndex ξ ↦ η'.1) '' Z) ζ.1 := by
-    have hmap := (Ordinal.isNormal_add_right base).map_isLUB
-      (singletonCNFBelow_isLUB γ hγ) hQne
+    have hmap := (Ordinal.isNormal_add_right base).leftOrdContinuous hQne
+      (singletonCNFBelow_isLUB γ hγ)
     rw [hζeq]
     have hsets : ((fun η' : GaoIndex ξ ↦ η'.1) '' Z) =
         (fun q : Ordinal.{u} ↦ base + q) '' Q := by

@@ -41,17 +41,17 @@ theorem lerayHopfLimit_joint_lintegral_finite
     (hu : MemLp u (2 : ℝ≥0∞) μ) (hD : MemLp D (2 : ℝ≥0∞) μ) :
     (∫⁻ x, ‖u x‖ₑ ^ (2 : ℝ) + ‖D x‖ₑ ^ (2 : ℝ) ∂μ) < ⊤ := by
   have huInt : (∫⁻ x, ‖u x‖ₑ ^ (2 : ℝ) ∂μ) < ⊤ := by
-    have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hu.eLpNorm_lt_top
     norm_num at h ⊢
     exact h
   have hDInt : (∫⁻ x, ‖D x‖ₑ ^ (2 : ℝ) ∂μ) < ⊤ := by
-    have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hD.eLpNorm_lt_top
     norm_num at h ⊢
     exact h
   have humeas : AEMeasurable (fun x => ‖u x‖ₑ ^ (2 : ℝ)) μ :=
-    hu.aestronglyMeasurable.enorm.pow_const (2 : ℝ)
+    hu.aestronglyMeasurable.eNorm.pow_const (2 : ℝ)
   rw [lintegral_add_left' humeas]
   exact ENNReal.add_lt_top.mpr ⟨huInt, hDInt⟩
 

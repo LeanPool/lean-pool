@@ -383,21 +383,21 @@ theorem fourierMultiplyScalarL2_tendsto_zero_of_tendsto_ae
   have hB : MeasureTheory.Integrable B (volume : Measure CKN.Foundation.Parabolic.L2Vec3) := by
     rw [← MeasureTheory.memLp_one_iff_integrable]
     simpa [B, ENNReal.toReal_ofNat] using
-      hf.enorm_rpow (by norm_num) (by norm_num)
+      hf.eNorm_rpow (by norm_num) (by norm_num)
   have hfinite : (∫⁻ ξ, B ξ ∂(volume : Measure CKN.Foundation.Parabolic.L2Vec3)) ≠ ∞ := by
-    have h := (MeasureTheory.hasFiniteIntegral_iff_enorm).mp hB.hasFiniteIntegral
-    exact ne_of_lt (by simpa [B, enorm_eq_self] using h)
+    have h := (MeasureTheory.hasFiniteIntegral_iff_eNorm).mp hB.hasFiniteIntegral
+    exact ne_of_lt (by simpa [B, eNorm_eq_self] using h)
   have hmeas (n : ℕ) : AEMeasurable (F n)
       (volume : Measure CKN.Foundation.Parabolic.L2Vec3) := by
     have hu : AEStronglyMeasurable (u n)
         (volume : Measure CKN.Foundation.Parabolic.L2Vec3) :=
       (MeasureTheory.Lp.memLp (fourierMultiplyScalarL2 (g n) (hg n) f)).aestronglyMeasurable
     change AEMeasurable (fun ξ => ‖u n ξ‖ₑ ^ (2 : ℝ)) _
-    exact (ENNReal.continuous_rpow_const.comp_aestronglyMeasurable hu.enorm.aestronglyMeasurable)
+    exact (ENNReal.continuous_rpow_const.comp_aestronglyMeasurable hu.eNorm.aestronglyMeasurable)
       |>.aemeasurable
   have hdom (n : ℕ) : F n ≤ᵐ[volume] B := by
     filter_upwards [fourierMultiplyScalarL2_norm_le_ae (hg n) (hbound n) f] with ξ hξ
-    exact ENNReal.rpow_le_rpow (enorm_le_iff_norm_le.mpr hξ) (by norm_num)
+    exact ENNReal.rpow_le_rpow (eNorm_le_iff_norm_le.mpr hξ) (by norm_num)
   have hseq := fourierMultiplierSequence_tendsto_ae hg hpoint f
   have hlimit : ∀ᵐ ξ ∂(volume : Measure CKN.Foundation.Parabolic.L2Vec3),
       Tendsto (fun n => F n ξ) atTop (𝓝 0) := by
@@ -405,7 +405,7 @@ theorem fourierMultiplyScalarL2_tendsto_zero_of_tendsto_ae
     have hnorm : Tendsto (fun n => ‖u n ξ‖ₑ) atTop (𝓝 0) := by
       change Tendsto ((fun z : ℂ => ‖z‖ₑ) ∘
         (fun n => fourierMultiplyScalarL2 (g n) (hg n) f ξ)) atTop (𝓝 0)
-      simpa using (continuous_enorm.tendsto (0 : ℂ)).comp hξ
+      simpa using (continuous_eNorm.tendsto (0 : ℂ)).comp hξ
     have hpow :=
       (ENNReal.continuous_rpow_const (y := (2 : ℝ))).tendsto (0 : ℝ≥0∞)
     have hpow' := hpow.comp hnorm
@@ -429,7 +429,7 @@ theorem fourierMultiplyScalarL2_tendsto_zero_of_tendsto_ae
         (volume : Measure CKN.Foundation.Parabolic.L2Vec3) =
         (∫⁻ ξ, F n ξ ∂(volume : Measure CKN.Foundation.Parabolic.L2Vec3)) ^
           (1 / 2 : ℝ) := by
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ∞)
       ((MeasureTheory.Lp.memLp (fourierMultiplyScalarL2 (g n) (hg n) f)).aestronglyMeasurable)]
     congr 1

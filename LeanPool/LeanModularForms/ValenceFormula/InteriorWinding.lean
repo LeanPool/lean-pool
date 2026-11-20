@@ -400,7 +400,8 @@ theorem gWN_fdBoundary_H_eq_neg_one_of_strictInterior
       have hc_base : ContinuousOn (deriv (fdBoundaryH H)) (Ioo p₁ p₂) :=
         fun t ht => (fdBoundary_H_deriv_continuousAt_off_fullPartition H t
           (hsub ht) (hfree t ht)).continuousWithinAt
-      exact (hc_base.comp continuousOn_fst (fun r hr => hr.1)).congr (fun r hr => by
+      exact (hc_base.comp (s := Ioo p₁ p₂ ×ˢ Icc (0 : ℝ) 1) continuousOn_fst
+        (fun r hr => hr.1)).congr (fun r hr => by
         have ht_not_part : r.1 ∉ fdBoundaryHPartition := by
           simp only [fdBoundaryFullPartition, fdBoundaryHPartition,
             Finset.mem_insert, Finset.mem_singleton] at hfree ⊢

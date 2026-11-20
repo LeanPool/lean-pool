@@ -56,9 +56,9 @@ def bot : PrefixSet n := ⟨∅, by simp⟩
 
 /-- The tree `f(a 0, …, a (n - 1))`. -/
 def node (a : Fin n → PrefixSet n) : PrefixSet n where
-  carrier w := match w with
+  carrier := {w | match w with
     | [] => True
-    | i :: v => v ∈ (a i).carrier
+    | i :: v => v ∈ (a i).carrier}
   prefix_closed := by
     intro u v h
     cases u with

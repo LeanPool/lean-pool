@@ -1086,7 +1086,7 @@ theorem toField_surjective : Function.Surjective D.toField := by
   have : Module.Free (levelField N) D.field := Module.Free.of_divisionRing _ _
   have : FiniteDimensional (levelField N) D.field :=
     Module.finite_of_finrank_pos (by rw [finrank_levelField_field]; exact one_pos)
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' (1 : D.field) one_ne_zero).mp
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' (1 : D.field) one_ne_zero).mp
     D.finrank_levelField_field x
   refine ⟨c, ?_⟩
   rw [← hc, Algebra.smul_def, mul_one]

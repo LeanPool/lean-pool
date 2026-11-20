@@ -47,7 +47,6 @@ theorem lintegral_rpow_eq_lintegral_meas_ofReal_lt_mul {α : Type*} [MeasurableS
       · have ht0 : 0 ≤ t := ht.le
         simp [hzero, ht0]
       · have hpos : 0 < (f z).toReal := ENNReal.toReal_pos hzero hz.ne
-        apply propext
         constructor
         · intro h
           rw [← ENNReal.ofReal_toReal hz.ne, ENNReal.ofReal_lt_ofReal_iff hpos]

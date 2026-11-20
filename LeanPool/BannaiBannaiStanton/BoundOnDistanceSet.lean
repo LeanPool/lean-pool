@@ -1004,7 +1004,7 @@ theorem bannai_bannai_stanton_bound {d s : ℕ} (S : Set (EuclideanSpace ℝ (Fi
       apply Finset.prod_pos
       intro r hr
       rw [sq_pos_iff]
-      contrapose! hr
+      contrapose hr
       simp [hr, D, Set.Finite.mem_toFinset, distanceSet]
     apply Finset.sum_pos'
     · ring_nf

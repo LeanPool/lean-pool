@@ -38,7 +38,7 @@ theorem determinant_hasDerivAt (F M : ℝ → Matrix (Fin 3) (Fin 3) ℝ) (t : �
   have h' := (h.add (((hF 0 2).mul (hF 1 0)).mul (hF 2 1))).sub
     (((hF 0 2).mul (hF 1 1)).mul (hF 2 0))
   have hd := h'.congr_deriv (g' := (M t).trace * (F t).det) (by
-    simp only [Pi.mul_apply, mul_apply, Fin.sum_univ_three, trace, diag, det_fin_three]
+    simp only [Pi.mul_apply, Matrix.mul_apply, Fin.sum_univ_three, trace, diag, det_fin_three]
     ring)
   convert hd using 1
   funext s

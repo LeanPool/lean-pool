@@ -37,7 +37,7 @@ def Name.Child : Name P → Name P → Prop
   | σ, .mk _ child _ => ∃ i, child i = σ
 
 /-- The set of values of all names in `M` under the condition family `G`. -/
-def extension (M : Set (Name P)) (G : Set P) : Set ZFSet.{u} := Name.val G '' M
+noncomputable def extension (M : Set (Name P)) (G : Set P) : Set ZFSet.{u} := Name.val G '' M
 
 /-- The name family contains every immediate child of each of its members. -/
 def ChildClosed (M : Set (Name P)) : Prop :=

@@ -44,9 +44,9 @@ theorem exists_sum_conj_eq_one {V : Type*} [AddCommGroup V]
   refine ⟨d, fun j => φ.smulRight (b j), fun j => (b.coord j).smulRight v, ?_⟩
   -- Show ∑ j, U j * A * W j = 1
   ext y
-  simp only [LinearMap.sum_apply, Module.End.mul_apply,
+  simp only [LinearMap.sum_apply, mul_apply_eq_comp,
     LinearMap.smulRight_apply,
-    Basis.coord_apply, Module.End.one_apply, map_smul, hφ, smul_smul, mul_one]
+    Basis.coord_apply, one_apply_eq_self, map_smul, hφ, smul_smul, mul_one]
   exact b.sum_repr y
 
 end RS

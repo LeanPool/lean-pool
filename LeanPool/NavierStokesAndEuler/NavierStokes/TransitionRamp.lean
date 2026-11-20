@@ -67,7 +67,8 @@ theorem integrate_smooth {J : Set ℝ} (hJ : IsOpen J) {initial : ℝ → ℝ}
     (hi : ContDiffOn ℝ ∞ initial J)
     (hs : ContDiffOn ℝ ∞ slope (logDomain J hJ).carrier) :
     ContDiffOn ℝ ∞ (integrate initial slope) (logDomain J hJ).carrier :=
-  (hi.comp contDiffOn_snd (fun _ hp => hp.2)).add (primitive_smooth (logDomain J hJ) hs)
+  (hi.comp contDiffOn_snd (fun _ (hp : _ ∈ (logDomain J hJ).carrier) => hp.2)).add
+    (primitive_smooth (logDomain J hJ) hs)
 
 theorem integrate_hasDerivAt {J : Set ℝ} (hJ : IsOpen J) (initial : ℝ → ℝ)
     {slope : ProfileHistories.Field}

@@ -248,7 +248,7 @@ theorem aemeasurable_truncatedMoment {α : Type*} {d : ℕ}
     {F : α → HilbertVec d} (hF : AEStronglyMeasurable F μ) :
     AEMeasurable (truncatedMoment q n F) μ := by
   apply AEMeasurable.indicator₀
-  · exact (hF.enorm.pow_const q)
+  · exact (hF.eNorm.pow_const q)
   · exact nullMeasurableSet_norm_le hF n
 
 /-- At each point, increasing the truncation level increases the truncated

@@ -68,9 +68,19 @@ noncomputable def sphereFunctional : Poly →ₗ[ℝ] ℝ := momentLinearMap mom
       c * (momentNumerator (exponentKey d) : ℝ) / 1000000000 :=
   momentLinearMap_monomial _ _ _
 
+private theorem basisPair_covers_ordered : ∀ i j : Fin 15, i ≤ j → ∃ b : MomentIndex,
+    basisPair b.1 b.2 = (i, j) ∨ basisPair b.1 b.2 = (j, i) := by
+  intro i
+  fin_cases i <;> decide +kernel
+
 theorem basisPair_covers : ∀ i j : Fin 15, ∃ b : MomentIndex,
     basisPair b.1 b.2 = (i, j) ∨ basisPair b.1 b.2 = (j, i) := by
-  decide +kernel
+  as_aux_lemma =>
+    intro i j
+    rcases le_total i j with hij | hji
+    · exact basisPair_covers_ordered i j hij
+    · obtain ⟨b, hb⟩ := basisPair_covers_ordered j i hji
+      exact ⟨b, hb.symm⟩
 
 @[simp] theorem variableExponent_zero : variableExponent 0 = 0 := by
   simp [variableExponent]

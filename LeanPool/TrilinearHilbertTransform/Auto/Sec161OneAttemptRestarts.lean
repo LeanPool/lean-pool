@@ -2449,7 +2449,7 @@ theorem attempt_param_bounds {Y : ℝ} (hY : 1 ≤ Y) (hH : A.H ≤ Real.exp Y)
     have! hL1 : 1 ≤ A.famLc := by unfold famLc; omega
     have! h1 : 2 ^ Nat.clog 2 A.famLc < 2 * A.famLc := by
       rcases Nat.lt_or_ge 1 A.famLc with h | h
-      · have! h0 := Nat.pow_pred_clog_lt_self one_lt_two h
+      · have! h0 := Nat.pow_pred_clog_lt_self 2 h
         rw [Nat.pred_eq_sub_one] at h0
         have! hc : 1 ≤ Nat.clog 2 A.famLc := Nat.clog_pos one_lt_two h
         have e : 2 ^ Nat.clog 2 A.famLc = 2 * 2 ^ (Nat.clog 2 A.famLc - 1) := by

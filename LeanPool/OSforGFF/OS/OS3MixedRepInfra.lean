@@ -931,7 +931,7 @@ theorem integrable_dominate_G (C : ℝ) (m : ℝ) [Fact (0 < m)] :
           -- ‖G₀ p‖₊ = (G₀ p).toNNReal since G₀ p ≥ 0
           -- and ENNReal.ofReal (G₀ p) = (G₀ p).toNNReal
           have h_nn := hG₀_nn p
-          simp only [Real.nnnorm_of_nonneg h_nn, ENNReal.ofReal_eq_coe_nnreal h_nn]
+          simp only [Real.nnNorm_of_nonneg h_nn, ENNReal.ofReal_eq_coe_nnreal h_nn]
     _ < ⊤ := h_lintegral_finite
 
 /-- spatialPart is continuous (projection followed by continuous linear equiv). -/

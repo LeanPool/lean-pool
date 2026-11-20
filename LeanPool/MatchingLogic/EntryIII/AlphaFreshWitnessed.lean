@@ -95,7 +95,8 @@ theorem fvBlocked_has_alpha_fresh_witness :
       simp [p', Pattern.and, Pattern.nt]
     · simp [p', Pattern.complexity]
   · simp [p', Pattern.allVars]
-  · change true ∈ witnessCollapseModel.denote witnessCollapseRho _
+  · change true ∈ witnessCollapseModel.denote witnessCollapseRho
+      (.imp (.ex 1 p') (Pattern.captureAvoidingSubst 1 1 p'))
     simp [p', Pattern.captureAvoidingSubst, Pattern.avoidBinder,
       Pattern.and, Pattern.nt, witnessCollapseRho]
 

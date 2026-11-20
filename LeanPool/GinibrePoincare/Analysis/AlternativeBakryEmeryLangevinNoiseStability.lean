@@ -63,7 +63,7 @@ theorem bakryEmeryLangevinDrift_closedBall_lipschitz (W : E → ℝ)
     (hb.continuous_fderiv (by norm_num)).norm
   obtain ⟨C, hC⟩ := (isCompact_closedBall (0 : E) R).exists_bound_of_continuousOn hd.continuousOn
   let K : ℝ≥0 := ⟨max C 0, le_max_right _ _⟩
-  refine ⟨K, Convex.lipschitzOnWith_of_nnnorm_fderiv_le
+  refine ⟨K, Convex.lipschitzOnWith_of_nnNorm_fderiv_le
     (fun x _ => (hb.differentiable (by norm_num)) x) ?_ (convex_closedBall 0 R)⟩
   intro x hx
   have hh := hC x hx

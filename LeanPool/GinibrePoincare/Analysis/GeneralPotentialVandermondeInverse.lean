@@ -69,7 +69,7 @@ theorem potentialInverseVandermonde_lintegral (n : ℕ) (hn : 0 < n)
   let d := fun z => ‖m z‖ₑ ^ (2 : ℝ)
   have hd : Measurable d :=
     (ENNReal.continuous_rpow_const.comp (potentialVandermondeMultiplier_continuous n
-        hV).enorm).measurable
+        hV).eNorm).measurable
   have ht : ∀ᵐ z ∂configurationVolume n, d z < ⊤ := by
     apply Filter.Eventually.of_forall
     intro z
@@ -82,7 +82,7 @@ theorem potentialInverseVandermonde_lintegral (n : ℕ) (hn : 0 < n)
   apply lintegral_congr_ae
   filter_upwards [potentialVandermondeMultiplier_ne_zero_ae n hn hV hfin] with z hz
   change ‖m z‖ₑ ^ (2 : ℝ) * ‖(m z)⁻¹ * v z‖ₑ ^ (2 : ℝ) = ‖v z‖ₑ ^ (2 : ℝ)
-  rw [← ENNReal.mul_rpow_of_nonneg _ _ (by norm_num), ← enorm_mul]
+  rw [← ENNReal.mul_rpow_of_nonneg _ _ (by norm_num), ← eNorm_mul]
   rw [← mul_assoc, mul_inv_cancel₀ hz, one_mul]
 
 theorem potentialInverseVandermonde_memLp (n : ℕ) (hn : 0 < n)
@@ -95,12 +95,12 @@ theorem potentialInverseVandermonde_memLp (n : ℕ) (hn : 0 < n)
       ((Lp.aestronglyMeasurable v).mono_ac
         (potentialMeasure_absolutelyContinuous_configurationVolume n V))
   rw [memLp_iff, eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hf,
-    eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm]
   norm_num only [ENNReal.toReal_ofNat]
   rw [potentialInverseVandermonde_lintegral n hn hV hfin v]
   have hv := (Lp.memLp v).eLpNorm_lt_top
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable v),
-    eLpNorm'_eq_lintegral_enorm] at hv
+    eLpNorm'_eq_lintegral_eNorm] at hv
   exact hv
 
 theorem potentialVandermondeL2_surjective (n : ℕ) (hn : 0 < n)

@@ -358,10 +358,10 @@ theorem deriv_kappaProfile_mem_Icc (kap : ℝ) (hkap : 0 < kap) (t : ℝ) :
 theorem lipschitzWith_kappaProfile (kap : ℝ) (hkap : 0 < kap) :
     LipschitzWith 1 (kappaProfile kap) := by
   rw [← lipschitzOnWith_univ]
-  refine convex_univ.lipschitzOnWith_of_nnnorm_deriv_le
+  refine convex_univ.lipschitzOnWith_of_nnNorm_deriv_le
     (fun x _ => (hasDerivAt_kappaProfile kap hkap x).differentiableAt) ?_
   intro x _
-  rw [← NNReal.coe_le_coe, coe_nnnorm, Real.norm_eq_abs,
+  rw [← NNReal.coe_le_coe, coe_nnNorm, Real.norm_eq_abs,
     abs_of_nonneg (deriv_kappaProfile_mem_Icc kap hkap x).1]
   simpa using (deriv_kappaProfile_mem_Icc kap hkap x).2
 

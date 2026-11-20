@@ -54,7 +54,7 @@ private theorem finite_idealSetIntNorm_fiber
     (J : (Ideal (𝓞 K))⁰) (n : ℕ) :
     Finite {a : idealSet K J // idealSetIntNorm K J a = n} := by
   let : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-    (Ideal.finite_setOfPred_absNorm_eq n).fintype
+    (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
   let f :
       {I : (Ideal (𝓞 K))⁰ //
         (J : Ideal (𝓞 K)) ∣ I ∧ IsPrincipal (I : Ideal (𝓞 K)) ∧
@@ -100,7 +100,7 @@ theorem principalIdealNormCount_le_idealNormCount
     (J : (Ideal (𝓞 K))⁰) (n : ℕ) :
     principalIdealNormCount K J n ≤ idealNormCount K n := by
   let : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-    (Ideal.finite_setOfPred_absNorm_eq n).fintype
+    (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
   rw [principalIdealNormCount, idealNormCount]
   let f :
       {I : (Ideal (𝓞 K))⁰ //

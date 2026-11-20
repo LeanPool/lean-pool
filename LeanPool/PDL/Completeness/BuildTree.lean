@@ -398,10 +398,7 @@ instance instDecidableIsOpenLeaf {H X} {bt : BuildTree H X} {m : Match bt} : Dec
   m.isOpenLeaf := by
   unfold Match.isOpenLeaf
   rcases m.btAt with ⟨_, _, bt⟩
-  cases bt <;>
-  all_goals
-    try exact instDecidableTrue
-    try exact instDecidableFalse
+  cases bt <;> infer_instance
 
 /-- Whether the subtree reached by a match is a free-repeat leaf. -/
 def Match.isFreeRepeat {H X} {bt : BuildTree H X} (m : Match bt) : Prop :=
@@ -411,10 +408,7 @@ instance instMatchDecidableIsFreeRepeat {H X} {bt : BuildTree H X} {m : Match bt
     Decidable m.isFreeRepeat := by
   unfold Match.isFreeRepeat
   rcases m.btAt with ⟨_, _, bt⟩
-  cases bt <;> simp_all only []
-  all_goals
-    try exact instDecidableTrue
-    try exact instDecidableFalse
+  cases bt <;> infer_instance
 
 lemma Match.isFreeRepeat_iff {H X} {bt : BuildTree H X} {m : Match bt} :
     m.isFreeRepeat ↔ (btAt m).2.2.isFreeRepeat := by

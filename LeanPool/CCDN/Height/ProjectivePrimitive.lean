@@ -31,7 +31,7 @@ theorem exists_primitive_projective_rep {n : ℕ} (x : ProjectivePoint n) :
     simpa only [Algebra.smul_def, algebraMap_int_eq, Int.coe_castRingHom] using hu i
   have hu0 : u ≠ 0 := by
     intro h
-    apply x.rep_nonzero
+    apply x.rep_ne_zero
     funext i
     have hi := huQ i
     simp only [h, Pi.zero_apply, Int.cast_zero] at hi
@@ -62,7 +62,7 @@ theorem exists_primitive_projective_rep {n : ℕ} (x : ProjectivePoint n) :
     rw [hi]
     field_simp
   calc
-    _ = Projectivization.mk ℚ x.rep x.rep_nonzero := by
+    _ = Projectivization.mk ℚ x.rep x.rep_ne_zero := by
       rw [Projectivization.mk_eq_mk_iff']
       exact ⟨_, he.symm⟩
     _ = x := x.mk_rep

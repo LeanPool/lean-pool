@@ -42,7 +42,7 @@ noncomputable def simplexUniformMeasure (ι : Type*) [Fintype ι] :
 noncomputable instance simplexUniformMeasure.isProbabilityMeasure :
     IsProbabilityMeasure (simplexUniformMeasure ι) := by
   refine ⟨?_⟩
-  simp only [simplexUniformMeasure, Measure.coe_smul, Pi.smul_apply,
+  simp only [simplexUniformMeasure, FunLike.coe_smul, Pi.smul_apply,
     smul_eq_mul, simplexRestrictedVolume, Measure.restrict_apply_univ]
   exact ENNReal.inv_mul_cancel
     (ne_of_gt (volume_fullSimplex_pos (ι := ι)))
@@ -51,7 +51,7 @@ noncomputable instance simplexUniformMeasure.isProbabilityMeasure :
 theorem simplexUniformMeasure_apply {s : Set (ι → ℝ)} (hs : MeasurableSet s) :
     simplexUniformMeasure ι s =
       (volume (fullSimplex ι))⁻¹ * volume (s ∩ fullSimplex ι) := by
-  simp only [simplexUniformMeasure, Measure.coe_smul, Pi.smul_apply,
+  simp only [simplexUniformMeasure, FunLike.coe_smul, Pi.smul_apply,
     smul_eq_mul, simplexRestrictedVolume, Measure.restrict_apply hs]
 
 /-- The simplex form of the Dirichlet statistic `Kₙ` in (2.1). -/

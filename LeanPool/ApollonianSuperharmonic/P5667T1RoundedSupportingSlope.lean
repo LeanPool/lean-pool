@@ -127,7 +127,7 @@ theorem P5667T1RoundedSupportingSlope
       norm_num [Int.cast_sub, Int.cast_mul] at hconv ⊢
       simp only [GaussianInt.toComplex_def] at hconv hfloor ⊢
       norm_num at hconv hfloor ⊢
-      try ring_nf at hconv hfloor ⊢
+      ring_nf at hconv hfloor ⊢
       have hab :
           |((p.re : Real) - (Matrix.mulVec A vx) 0) * ((x.re : Real) - y.re)| +
           |((p.im : Real) - (Matrix.mulVec A vx) 1) * ((x.im : Real) - y.im)| ≤

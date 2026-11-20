@@ -96,7 +96,7 @@ theorem flow_cocycle (r s t : ℝ) (x : E) :
 
 theorem flow_lipschitz_time (s : ℝ) (x : E) :
     LipschitzWith V.speedBound (fun t => V.flow s t x) := by
-  apply lipschitzWith_of_nnnorm_deriv_le
+  apply lipschitzWith_of_nnNorm_deriv_le
     (fun t => (V.flow_hasDerivAt s t x).differentiableAt)
   intro t
   rw [(V.flow_hasDerivAt s t x).deriv]

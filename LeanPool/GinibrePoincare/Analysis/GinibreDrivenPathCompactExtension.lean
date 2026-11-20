@@ -72,7 +72,7 @@ theorem ginibreDrivenPath_compact_continuous_extension (n : ℕ) (α : ℝ)
     rw [hEq u ⟨hu.1.le, hu.2⟩]
     abel
   have hLip : LipschitzOnWith L (fun u => X u-N u) (Ioo 0 T) :=
-    (convex_Ioo (0 : ℝ) T).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+    (convex_Ioo (0 : ℝ) T).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
       (fun t ht => (hDeriv t ht).hasDerivWithinAt)
       (fun t ht => by exact_mod_cast hC (X t) (hXK t ⟨ht.1.le, ht.2⟩))
   obtain ⟨Y, hY, heY⟩ := hLip.extend_finite_dimension

@@ -81,7 +81,7 @@ theorem integrableOn_inverse_fourth_outside_ball (c : Position) (a : ℝ) (ha : 
     4)).aestronglyMeasurable, ?_⟩
   change (∫⁻ x in (ball c a)ᶜ, ‖1 / ‖x - c‖ ^ 4‖ₑ) < ⊤
   have hn (x : Position) : 0 ≤ 1 / ‖x - c‖ ^ 4 := by positivity
-  simp_rw [Real.enorm_eq_ofReal (hn _)]
+  simp_rw [Real.eNorm_eq_ofReal (hn _)]
   rw [lintegral_inverse_fourth_outside_ball c a ha]
   exact ENNReal.ofReal_lt_top
 

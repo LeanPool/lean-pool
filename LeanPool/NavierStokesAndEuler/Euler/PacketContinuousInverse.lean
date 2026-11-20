@@ -54,7 +54,7 @@ theorem continuous_iteratedFDeriv_of_fderiv_eq_comp
   have hYs (t : K) : ContDiff ℝ ∞ (Y t) :=
     contDiff_of_fderiv_eq_comp (Y t) (A t) (hYdiff t) (hA t) (hDY t)
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero =>
       exact (continuousMultilinearCurryFin0 ℝ E F).symm.continuous.comp hY

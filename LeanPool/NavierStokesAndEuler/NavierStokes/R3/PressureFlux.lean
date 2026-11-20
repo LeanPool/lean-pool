@@ -704,7 +704,7 @@ theorem continuousOn_time_weight {E : Type*} [NormedAddCommGroup E] [NormedSpace
     {T : ℝ} {a : ℝ → ℝ} {f : SpaceTime → E}
     (ha : ContinuousOn a (Icc 0 T)) (hf : ContinuousOn f (slab 0 T)) :
     ContinuousOn (fun z : SpaceTime => a z.1 • f z) (slab 0 T) :=
-  (ha.comp continuous_fst.continuousOn (fun _ hz => hz.1)).smul hf
+  (ha.comp continuous_fst.continuousOn (fun _ (hz : _ ∈ slab 0 T) => hz.1)).smul hf
 
 /-- Each time slice at a fixed spatial point is integrable, including at the
 endpoints of the closed time interval. -/
@@ -2583,7 +2583,7 @@ theorem norm_holder_pair_le {f : Space → ℝ} {g : Space → ℂ}
       eLpNorm_le_eLpNorm_mul_eLpNorm
         (fun a b : ℂ => a * b) 1 continuous_mul
         hfc.aestronglyMeasurable hg.aestronglyMeasurable
-        (Eventually.of_forall fun x => by simp [nnnorm_mul])
+        (Eventually.of_forall fun x => by simp [nnNorm_mul])
   have ht := ENNReal.toReal_mono (ENNReal.mul_ne_top hfc.eLpNorm_ne_top hg.eLpNorm_ne_top) he
   change comparisonLpNorm 1 (fun x => (f x : ℂ) * g x) ≤
     (eLpNorm (fun x => (f x : ℂ)) (6 / 5) volume * eLpNorm g 6 volume).toReal at ht

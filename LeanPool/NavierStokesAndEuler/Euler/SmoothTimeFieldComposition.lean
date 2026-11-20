@@ -120,7 +120,7 @@ theorem jet_lipschitz (A : SmoothTimeField K E V) (n : ℕ) (t : K) :
   have he : (A.jet n t : E → E [×n]→L[ℝ] V) =
       iteratedFDeriv ℝ n (A.field t : E → V) := funext (A.jet_eq n t)
   rw [he]
-  apply lipschitzWith_of_nnnorm_fderiv_le
+  apply lipschitzWith_of_nnNorm_fderiv_le
     (((A.smooth t).iteratedFDeriv_right (m := ∞) (by simp)).differentiable (by simp))
   intro x
   change ‖fderiv ℝ (iteratedFDeriv ℝ n (A.field t : E → V)) x‖ ≤ ‖A.jet (n+1)‖
@@ -180,9 +180,10 @@ theorem multilinearValue_norm (L : ContinuousMultilinearMap ℝ V W)
   BoundedContinuousFunction.norm_ofNormedAddCommGroup_le _
     (mul_nonneg (norm_nonneg _) (Finset.prod_nonneg (fun _ _ => norm_nonneg _))) _
 
-/-- Multilinear algebra as an element of `MultilinearMap ℝ (fun i => α →ᵇ V i) (α →ᵇ W)`. -/
+/-- Multilinear algebra as an element of
+`MultilinearMap (RingHom.id ℝ) (fun i => α →ᵇ V i) (α →ᵇ W)`. -/
 def multilinearAlgebra (L : ContinuousMultilinearMap ℝ V W) :
-    MultilinearMap ℝ (fun i => α →ᵇ V i) (α →ᵇ W) := by
+    MultilinearMap (RingHom.id ℝ) (fun i => α →ᵇ V i) (α →ᵇ W) := by
   classical
   refine MultilinearMap.mk' (multilinearValue L) ?_ ?_
   · intro f i a b
@@ -195,7 +196,7 @@ def multilinearAlgebra (L : ContinuousMultilinearMap ℝ V W) :
       by_cases hj : j = i
       · subst j; simp
       · simp [hj]
-    simp only [BoundedContinuousFunction.add_apply, multilinearValue_apply, he]
+    simp only [_root_.add_apply, multilinearValue_apply, he]
     exact L.map_update_add _ _ _ _
   · intro f i r a
     apply BoundedContinuousFunction.ext
@@ -207,7 +208,7 @@ def multilinearAlgebra (L : ContinuousMultilinearMap ℝ V W) :
       by_cases hj : j = i
       · subst j; simp
       · simp [hj]
-    simp only [BoundedContinuousFunction.smul_apply, multilinearValue_apply, he]
+    simp only [_root_.smul_apply, multilinearValue_apply, he]
     exact L.map_update_smul _ _ _ _
 
 /-- Multilinear map, given by `(multilinearAlgebra L).mkContinuous ‖L‖ (multilinearValue_norm
@@ -265,7 +266,7 @@ local instance instSmoothTimeFieldComposition4 (n : ℕ) : NormedSpace ℝ (E �
 
 theorem field_lipschitz (A : SmoothTimeField K E V) (t : K) :
     LipschitzWith ‖A.jet 1‖₊ (A.field t) := by
-  apply lipschitzWith_of_nnnorm_fderiv_le ((A.smooth t).differentiable (by simp))
+  apply lipschitzWith_of_nnNorm_fderiv_le ((A.smooth t).differentiable (by simp))
   intro x
   change ‖fderiv ℝ (A.field t : E → V) x‖ ≤ ‖A.jet 1‖
   rw [← norm_iteratedFDeriv_one, ← A.jet_eq]
@@ -348,7 +349,7 @@ def compDisplacement (A : SmoothTimeField K E V) (D : SmoothTimeField K E E) :
       contDiff_id.add (D.smooth t)
     rw [iteratedFDeriv_comp (i := n) (f := fun y : E => y+D.field t y)
       (g := (A.field t : E → V)) (A.smooth t).contDiffAt hinner.contDiffAt (by simp)]
-    simp only [ContinuousMap.sum_apply, BoundedContinuousFunction.sum_apply,
+    simp only [ContinuousMap.sum_apply, _root_.sum_apply,
       FormalMultilinearSeries.taylorComp, FormalMultilinearSeries.compAlongOrderedFinpartition]
     apply Finset.sum_congr rfl
     intro c _

@@ -85,7 +85,7 @@ private theorem succ_le_finiteERBound (κ : Cardinal.{0}) : ∀ n : ℕ, Order.s
 /-- `ℶ_{o+1} = 2 ^ ℶ_o`, with the successor index written additively. -/
 private lemma beth_add_one (o : Ordinal.{0}) :
     Cardinal.beth (o + 1) = 2 ^ Cardinal.beth o := by
-  rw [← Order.succ_eq_add_one, Cardinal.beth_succ]
+  rw [Cardinal.beth_add_one]
 
 /-- `(ℶ_o)⁺ ≤ ℶ_{o+1}`: one beth step absorbs a cardinal successor (Cantor). -/
 private lemma succ_beth_le (o : Ordinal.{0}) :

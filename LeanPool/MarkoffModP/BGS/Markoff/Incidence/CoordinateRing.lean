@@ -110,7 +110,7 @@ lemma adjoinSquareRoot_sq {R : Type*} [CommRing R] (f : R) :
 lemma adjoinSquarePolynomial_irreducible_of_not_isSquare
     {F : Type*} [Field F] {f : F} (hf : ¬ IsSquare f) :
     Irreducible (adjoinSquarePolynomial f) := by
-  apply X_pow_sub_C_irreducible_of_prime Nat.prime_two
+  apply irreducible_X_pow_sub_C_of_prime Nat.prime_two
   intro z hz
   apply hf
   exact ⟨z, by simpa [pow_two] using hz.symm⟩

@@ -109,7 +109,7 @@ lemma stageLp_cauchySeq (t : ℝ) :
     · exact hbound hmn hm
     · have := hbound hnm hn
       refine lt_of_eq_of_lt (lintegral_congr fun ω => ?_) this
-      rw [← nnnorm_neg, neg_sub]
+      rw [← nnNorm_neg, neg_sub]
   have h := (ENNReal.rpow_lt_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp hsq
   refine lt_of_eq_of_lt ?_ h
   rfl
@@ -242,7 +242,7 @@ include h_meas in
 lemma measurable_markSq : Measurable (Function.uncurry (markSq (ν := ν) φ)) := by
   have h : Measurable (fun r : (Ω × ℝ) × E => (‖φ r.1.1 r.1.2 r.2‖₊ : ℝ≥0∞) ^ 2) :=
     (ENNReal.continuous_coe.measurable.comp (h_meas.comp (by fun_prop :
-      Measurable fun r : (Ω × ℝ) × E => ((r.1.1, r.1.2, r.2) : Ω × ℝ × E))).nnnorm).pow_const 2
+      Measurable fun r : (Ω × ℝ) × E => ((r.1.1, r.1.2, r.2) : Ω × ℝ × E))).nnNorm).pow_const 2
   exact h.lintegral_prod_right'
 
 /-- The horizon integral `∫⁻_Ω ∫⁻_{[0,t]} ∫⁻_E ‖φ‖²`. -/
@@ -271,12 +271,13 @@ lemma horizonInt_add {s r : ℝ} (hs : 0 ≤ s) (hsr : s ≤ r) :
     horizonInt (P := P) (ν := ν) φ r
       = horizonInt (P := P) (ν := ν) φ s
         + ∫⁻ ω, ∫⁻ u in Set.Ioc s r, markSq (ν := ν) φ ω u ∂volume ∂P := by
+  have hdisjoint : Disjoint (Set.Icc (0 : ℝ) s) (Set.Ioc s r) :=
+    (Set.Iic_disjoint_Ioc (c := r) (le_refl s)).mono Set.Icc_subset_Iic_self subset_rfl
   have hinner : ∀ ω, ∫⁻ u in Set.Icc (0 : ℝ) r, markSq (ν := ν) φ ω u ∂volume
       = ∫⁻ u in Set.Icc (0 : ℝ) s, markSq (ν := ν) φ ω u ∂volume
         + ∫⁻ u in Set.Ioc s r, markSq (ν := ν) φ ω u ∂volume := by
     intro ω
-    rw [← Set.Icc_union_Ioc_eq_Icc hs hsr, lintegral_union measurableSet_Ioc
-      (Set.disjoint_left.mpr (fun x hx1 hx2 => absurd hx2.1 (not_lt.mpr hx1.2)))]
+    rw [← Set.Icc_union_Ioc_eq_Icc hs hsr, lintegral_union measurableSet_Ioc hdisjoint]
   rw [horizonInt, horizonInt, lintegral_congr hinner]
   exact lintegral_add_left' ((measurable_markSq φ h_meas).lintegral_prod_right'
     (ν := volume.restrict (Set.Icc (0 : ℝ) s))).aemeasurable _
@@ -322,7 +323,7 @@ theorem process_lintegral_sq {t : ℝ} (ht : 0 ≤ t) :
   have hgₙm : ∀ n, Measurable (gₙ n) := fun n =>
     (master N ℱ φ h_meas h_progMeas h_sq_int_global n).2.eval_measurable.comp hswap
   have hφsq : Measurable (fun p : Ω × ℝ × E => (‖φ p.1 p.2.1 p.2.2‖₊ : ℝ≥0∞) ^ 2) :=
-    (ENNReal.continuous_coe.measurable.comp h_meas.nnnorm).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp h_meas.nnNorm).pow_const 2
   -- the triple integrals as integrals for `μt`
   have hlift : ∀ (f : Ω → ℝ → E → ℝ≥0∞), Measurable (fun p : Ω × ℝ × E => f p.1 p.2.1 p.2.2) →
       ∫⁻ ω, ∫⁻ e, ∫⁻ s in Set.Icc (0 : ℝ) t, f ω s e ∂volume ∂ν ∂P
@@ -337,7 +338,7 @@ theorem process_lintegral_sq {t : ℝ} (ht : 0 ≤ t) :
     exact hlift (fun ω s e =>
       (‖(master N ℱ φ h_meas h_progMeas h_sq_int_global n).2.eval s e ω‖₊ : ℝ≥0∞) ^ 2)
       ((ENNReal.continuous_coe.measurable.comp
-        (master N ℱ φ h_meas h_progMeas h_sq_int_global n).2.eval_measurable.nnnorm).pow_const 2)
+        (master N ℱ φ h_meas h_progMeas h_sq_int_global n).2.eval_measurable.nnNorm).pow_const 2)
   -- 2. `gₙ → g` in `L²(μt)`
   have h2 : Tendsto (fun n => eLpNorm (gₙ n - g) 2 μt) atTop (𝓝 0) := by
     have hsq : Tendsto (fun n => eLpNorm (gₙ n - g) 2 μt ^ (2 : ℝ)) atTop (𝓝 0) := by
@@ -351,7 +352,7 @@ theorem process_lintegral_sq {t : ℝ} (ht : 0 ≤ t) :
         have hdm : Measurable (fun p : Ω × ℝ × E =>
             (‖G.eval p.2.1 p.2.2 p.1 - φ p.1 p.2.1 p.2.2‖₊ : ℝ≥0∞) ^ 2) :=
           (ENNReal.continuous_coe.measurable.comp
-            (G.eval_measurable.sub h_meas).nnnorm).pow_const 2
+            (G.eval_measurable.sub h_meas).nnNorm).pow_const 2
         rw [LevyStochCalc.Brownian.Ito.eLpNorm_sq_eq_lintegral_nnnorm_sq _
             ((hgₙm n).sub hgm).aestronglyMeasurable,
           show (fun q => (‖(gₙ n - g) q‖₊ : ℝ≥0∞) ^ 2)
@@ -365,7 +366,7 @@ theorem process_lintegral_sq {t : ℝ} (ht : 0 ≤ t) :
               refine lintegral_congr fun ω => ?_
               rw [lintegral_swap_es (fun ω s e => (‖G.eval s e ω - φ ω s e‖₊ : ℝ≥0∞) ^ 2) hdm ω]
               refine lintegral_congr fun s => lintegral_congr fun e => ?_
-              rw [← nnnorm_neg, neg_sub]
+              rw [← nnNorm_neg, neg_sub]
           _ ≤ stageErr φ P n G := lintegral_mono fun ω =>
               lintegral_mono_set (Set.Icc_subset_Icc_right (hN₀.trans (stageHorizon_mono hn)))
       have hinv : Tendsto (fun n : ℕ => ((n : ℝ≥0∞) + 1)⁻¹) atTop (𝓝 0) := by

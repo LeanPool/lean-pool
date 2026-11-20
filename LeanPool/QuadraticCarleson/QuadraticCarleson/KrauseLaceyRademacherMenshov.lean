@@ -332,7 +332,7 @@ theorem eLpNorm_finitePrefixMaximal_sq_le_log2
       ENNReal.ofReal ((Nat.log2 N + 1 : ℝ) ^ 2 * B) := by
   have heq : eLpNorm (finitePrefixMaximal N v) 2 μ ^ 2 =
       ∫⁻ x, ‖finitePrefixMaximal N v x‖ₑ ^ 2 ∂μ := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
       (aemeasurable_finitePrefixMaximal N v).aestronglyMeasurable]
     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
     rw [← ENNReal.rpow_mul_natCast]

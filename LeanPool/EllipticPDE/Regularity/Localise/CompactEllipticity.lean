@@ -67,7 +67,7 @@ theorem exists_uniform_elliptic_of_continuousOn {X : Type*} [TopologicalSpace X]
   set F : X × (Fin d → ℝ) → ℝ := fun p => ∑ i, ∑ j, a p.1 i j * p.2 i * p.2 j with hF
   have hFc : ContinuousOn F (K ×ˢ S) := by
     refine continuousOn_finsetSum _ fun i _ => continuousOn_finsetSum _ fun j _ => ?_
-    exact (((ha i j).comp continuousOn_fst (fun p hp => hp.1)).mul
+    exact (((ha i j).comp (continuousOn_fst (s := K ×ˢ S)) (fun p hp => hp.1)).mul
       ((continuous_apply i).comp continuous_snd).continuousOn).mul
       ((continuous_apply j).comp continuous_snd).continuousOn
   have scale : ∀ m : ℝ, 0 < m → (∀ x ∈ K, ∀ η ∈ S, m ≤ F (x, η)) →

@@ -177,7 +177,7 @@ theorem memLp_of_truncatedMoment_bound
     (htrunc : ∀ n : ℕ, ∫⁻ x, truncatedMoment q n F x ∂μ ≤ A) :
     MemLp F (ENNReal.ofReal q) μ := by
   rw [memLp_iff]
-  apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (ENNReal.ofReal_pos.mpr hq |>.ne') ENNReal.ofReal_ne_top hF).mpr
   rw [ENNReal.toReal_ofReal hq.le]
   have hmoment := lintegral_enorm_rpow_le_of_truncatedMoment hF htrunc
@@ -191,7 +191,7 @@ theorem eLpNorm_le_rpow_of_truncatedMoment
     (hq : 0 < q) (hF : AEStronglyMeasurable F μ)
     (htrunc : ∀ n : ℕ, ∫⁻ x, truncatedMoment q n F x ∂μ ≤ A) :
     eLpNorm F (ENNReal.ofReal q) μ ≤ A ^ q⁻¹ := by
-  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ENNReal.ofReal_pos.mpr hq |>.ne') ENNReal.ofReal_ne_top hF,
     ENNReal.toReal_ofReal hq.le, one_div]
   exact ENNReal.rpow_le_rpow
@@ -222,9 +222,9 @@ theorem abs_integral_vecDot_le_eLpNorm_toReal_mul
   have hfLp : MemLp f 1 μ := by
     simpa only [f, HilbertVec.inner_def] using hfLp'
   have hnorm : ENNReal.ofReal |∫ x, f x ∂μ| ≤ eLpNorm f 1 μ := by
-    simpa only [Real.enorm_eq_ofReal_abs] using
-      (enorm_integral_le_lintegral_enorm (μ := μ) f).trans_eq
-        (eLpNorm_one_eq_lintegral_enorm hfLp.aestronglyMeasurable).symm
+    simpa only [Real.eNorm_eq_ofReal_abs] using
+      (eNorm_integral_le_lintegral_eNorm (μ := μ) f).trans_eq
+        (eLpNorm_one_eq_lintegral_eNorm hfLp.aestronglyMeasurable).symm
   have hholder : eLpNorm f 1 μ ≤
       eLpNorm (fun x => HilbertVec.ofVec (F x)) p μ *
         eLpNorm (fun x => HilbertVec.ofVec (G x)) r μ := by
@@ -438,7 +438,7 @@ theorem eLpNorm_hilbertRadialTruncation_rpow_conjugate_eq_truncatedMoment
     (eLpNorm (hilbertRadialTruncation q.exponent.toReal n F)
       q.conjugate.exponent μ) ^ q.conjugate.exponent.toReal =
       ∫⁻ x, truncatedMoment q.exponent.toReal n F x ∂μ := by
-  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ne_of_gt (zero_lt_one.trans q.conjugate.one_lt)) q.conjugate.lt_top.ne
     (aestronglyMeasurable_hilbertRadialTruncation hF),
     ← ENNReal.rpow_mul]
@@ -594,7 +594,7 @@ theorem eLpNorm_le_of_truncated_cross_bound
       J = (J ^ q⁻¹) ^ q := by
         rw [← ENNReal.rpow_mul, inv_mul_cancel₀ hq0, ENNReal.rpow_one]
       _ ≤ B ^ q := ENNReal.rpow_le_rpow hroot (by linarith)
-  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ENNReal.ofReal_pos.mpr (by linarith : 0 < q) |>.ne') ENNReal.ofReal_ne_top hF,
     ENNReal.toReal_ofReal (by linarith : 0 ≤ q)]
   have hmoment : (∫⁻ x, ‖F x‖ₑ ^ q ∂μ) ≤ A ^ q := by
@@ -617,7 +617,7 @@ theorem truncatedMoment_ne_top_of_memLp
     (hq : 0 < q) (hF : MemLp F (ENNReal.ofReal q) μ) (n : ℕ) :
     (∫⁻ x, truncatedMoment q n F x ∂μ) ≠ ∞ := by
   apply ne_top_of_le_ne_top
-    ((MeasureTheory.lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    ((MeasureTheory.lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (ENNReal.ofReal_pos.mpr hq |>.ne') ENNReal.ofReal_ne_top
       hF.eLpNorm_lt_top).ne)
   rw [ENNReal.toReal_ofReal hq.le]

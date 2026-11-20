@@ -572,7 +572,7 @@ theorem flow_spatialDn_snorm_positive
             ENNReal.ofReal (flowHalfBinomialCoeff (n - 1) / (2 * R_f)) := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
         intro hn hnN t ht0 htT
         by_cases hn1 : n = 1
         · subst n

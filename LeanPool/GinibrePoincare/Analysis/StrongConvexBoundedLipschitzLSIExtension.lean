@@ -154,7 +154,7 @@ theorem boundedLipschitz_lsi_of_C1
         nlinarith [sq_abs (F n x), abs_nonneg (F n x)]))
     (Eventually.of_forall hFlim) hmass (henergy.const_mul c)
     (fun n => hcore (F n) (hF n) K
-      (lipschitzWith_of_nnnorm_fderiv_le ((hF n).differentiable one_ne_zero)
+      (lipschitzWith_of_nnNorm_fderiv_le ((hF n).differentiable one_ne_zero)
         (fun x => by exact_mod_cast hDb n x)) C (hFb n))).2
 
 end

@@ -103,13 +103,13 @@ theorem exists_thick_exchange_weight {p r t N B W : ℕ} [Fact p.Prime]
             ξ (Coord.last r t (point (encode q x.1))))) ≤ η := by
       convert (hn (.inl q)).le using 1
       simp only [value, map_sub]
-      all_goals rfl
+      rfl
     have hsum (q : S) : finiteProb (fun x : (P q).Sample X ↦
         ¬ HasBoundedRepresentative p W ((P q).sampleSum
           (fun z a ↦ ξ (Coord.last r t (point (encode z a)))) x)) ≤ η := by
       convert (hn (.inr q)).le using 1
       simp only [value, ExchangePattern.sampleSum, map_sum, map_zsmul]
-      all_goals rfl
+      rfl
     obtain ⟨ψ, hψ, hprob⟩ := relative_concentration S X (fun q x ↦ point (encode q x))
       hlabel D Q hQ hsize hN hNp ξ hξ hη.le hsmall hpair hsum
     exact hthick ψ hψ ((isThinAlong_pushWeight_of_finiteProb

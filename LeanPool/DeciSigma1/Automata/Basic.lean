@@ -112,7 +112,7 @@ theorem short_safe_path [Fintype S] (M : Semiautomaton α S) (G : S → Prop) (q
     ∃ v, v.length < Fintype.card S ∧ M.PathSafe G q v ∧
       runFrom M.step q v = runFrom M.step q w := by
   induction hw : w.length using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn : w.length < Fintype.card S
     · exact ⟨w, hn, h, rfl⟩
     · let A : DFA α S := ⟨M.step, q, Set.univ⟩

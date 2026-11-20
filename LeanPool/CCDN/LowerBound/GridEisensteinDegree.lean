@@ -59,7 +59,7 @@ private lemma gridEisensteinPolynomial_constantCoeff {K : Type*} [Field K]
   rw [gridEisensteinPolynomial_coeff]
   simp only [coeff_X_pow, ne_of_lt hd, ite_false, zero_sub, ite_true]
   rw [mul_neg, mul_assoc, ← C_mul, inv_mul_cancel₀ h0, C_1, mul_one]
-  rfl
+  rw [sub_eq_add_neg]
 
 private lemma gridEisensteinPolynomial_highCoeff {K : Type*} [Field K]
     (V : K[X]) (k : ℕ) (hm : V.Monic) (h0 : V.coeff 0 ≠ 0)

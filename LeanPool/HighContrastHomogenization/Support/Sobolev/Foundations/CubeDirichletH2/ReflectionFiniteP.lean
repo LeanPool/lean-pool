@@ -301,11 +301,11 @@ theorem eLpNorm_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorField
           (MeasureTheory.volume.restrict (openCubeSet Q)) := by
   by_cases hG : MeasureTheory.AEStronglyMeasurable (fun x => HilbertVec.ofVec (G x))
       (MeasureTheory.volume.restrict (openCubeSet Q))
-  · rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+  · rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (finiteLpExponent_ne_zero p) p.lt_top.ne
         (aestronglyMeasurable_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorField
           Q hG),
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (finiteLpExponent_ne_zero p) p.lt_top.ne hG,
       lintegral_cubeFaceReflectionBlockSet_cubeDirichletOddReflectionVectorField]
     rw [ENNReal.mul_rpow_of_nonneg _ _
@@ -534,11 +534,11 @@ theorem eLpNorm_cubeFaceReflectionCellCube_cubeDirichletOddReflectionVectorField
         (MeasureTheory.volume.restrict (openCubeSet Q)) := by
   by_cases hG : MeasureTheory.AEStronglyMeasurable (fun x => HilbertVec.ofVec (G x))
       (MeasureTheory.volume.restrict (openCubeSet Q))
-  · rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+  · rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (finiteLpExponent_ne_zero p) p.lt_top.ne
         (aestronglyMeasurable_hilbertVec_ofVec_cubeDirichletOddReflectionVectorField_cell
           Q choice G hG),
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (finiteLpExponent_ne_zero p) p.lt_top.ne hG,
       lintegral_cubeFaceReflectionCellCube_cubeDirichletOddReflectionVectorField]
   · rw [MeasureTheory.eLpNorm_of_not_aestronglyMeasurable hG,

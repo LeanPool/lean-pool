@@ -24,7 +24,7 @@ universe u v
 section OrdinalConstruction
 
 /-- Coordinate indices in the compact ordinal construction. -/
-abbrev GaoIndex (ξ : Ordinal.{u}) := Set.Iic (Ordinal.omega0 ^ ξ + 1)
+noncomputable abbrev GaoIndex (ξ : Ordinal.{u}) := Set.Iic (Ordinal.omega0 ^ ξ + 1)
 
 /-- The closed subspace of the Cantor cube used in the proof of
 `thm:solid-iterations`. -/

@@ -58,7 +58,7 @@ open scoped Classical in
 /-- A fundamental unit for shift used in the Odlyzko-bound argument. -/
 def fundamentalUnitForShift
     (z : {w : InfinitePlace K // w ≠ w₀} → ℤ) : (𝓞 K)ˣ :=
-  ∏ i, fundSystem K (equivFinRank.symm i) ^ z i
+  ∏ i, fundSystem K ((Units.equivFinRank K).symm i) ^ z i
 
 theorem expMapBasis_add_unitCoordinateShift
     (x : realSpace K) (z : {w : InfinitePlace K // w ≠ w₀} → ℤ) :
@@ -75,10 +75,10 @@ theorem expMapBasis_add_unitCoordinateShift
       (x + unitCoordinateShift z) i = x i + (z i : ℝ) := by
     simp [unitCoordinateShift, i.prop]
   have hrpow (i : {w : InfinitePlace K // w ≠ w₀}) :
-      w (fundSystem K (equivFinRank.symm i)) ^
+      w (fundSystem K ((Units.equivFinRank K).symm i)) ^
           (x i + (z i : ℝ)) =
-        w (fundSystem K (equivFinRank.symm i)) ^ x i *
-          w (fundSystem K (equivFinRank.symm i)) ^ z i := by
+        w (fundSystem K ((Units.equivFinRank K).symm i)) ^ x i *
+          w (fundSystem K ((Units.equivFinRank K).symm i)) ^ z i := by
     rw [Real.rpow_add_intCast]
     simp
   rw [hradial]
@@ -86,7 +86,7 @@ theorem expMapBasis_add_unitCoordinateShift
   rw [Finset.prod_mul_distrib]
   have hunit :
       w (fundamentalUnitForShift z) =
-        ∏ i, w (fundSystem K (equivFinRank.symm i)) ^ z i := by
+        ∏ i, w (fundSystem K ((Units.equivFinRank K).symm i)) ^ z i := by
     rw [fundamentalUnitForShift, Units.coe_prod, map_prod, map_prod]
     apply Finset.prod_congr rfl
     intro i _

@@ -191,7 +191,7 @@ omit [NeZero N] in
 theorem heckeModuleBar_C_smul (a : ℤ) (x : JZero N) :
     (letI := heckeModuleBar N; (MvPolynomial.C a : HeckeAlg) • x) = a • x := by
   by_cases h : HeckeOperatorsCommuteBar N
-  · rw [heckeModuleBar_smul_def h, heckeEvalBar_C, Module.End.intCast_apply]
+  · rw [heckeModuleBar_smul_def h, heckeEvalBar_C, intCast_apply_eq_smul]
   · rw [heckeModuleBar_smul_of_not h, MvPolynomial.constantCoeff_C]
 
 end TheModule

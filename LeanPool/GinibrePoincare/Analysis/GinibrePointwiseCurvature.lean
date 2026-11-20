@@ -100,7 +100,7 @@ theorem ginibreHamiltonian_pointwise_curvature_unbounded_below {n : ℕ}
   have hx : Function.Injective x := by
     intro i k h
     apply Fin.ext
-    have he : (i.val : ℝ) = (k.val : ℝ) := (div_left_inj' hL0).mp h
+    have he : (i.val : ℝ) = (k.val : ℝ) := (div_left_inj₀ hL0).mp h
     exact_mod_cast he
   let j : Fin n := ⟨0, by omega⟩
   let k : Fin n := ⟨1, by omega⟩

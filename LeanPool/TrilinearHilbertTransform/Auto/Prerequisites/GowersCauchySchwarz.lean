@@ -1178,7 +1178,7 @@ theorem l2CubeAverage_update_eq {G : Type*} [AddCommGroup G] [MeasurableSpace G]
 noncomputable def l2CubeMultilinear {G : Type*} [AddCommGroup G] [MeasurableSpace G]
     [MeasurableAdd₂ G] [MeasurableNeg G] (μ : Measure G) [IsProbabilityMeasure μ]
     [μ.IsAddLeftInvariant] [μ.IsNegInvariant] :
-    MultilinearMap ℝ (fun _ : Fin 3 → Bool => Lp ℂ 2 μ) ℂ :=
+    MultilinearMap (RingHom.id ℝ) (fun _ : Fin 3 → Bool => Lp ℂ 2 μ) ℂ :=
   MultilinearMap.mk' (l2CubeAverage μ) (by
     intro f ω u v
     rw [l2CubeAverage_update_eq μ f ω (u + v)
@@ -2116,7 +2116,7 @@ theorem circle_pi_volume_eq (T : ℝ) [Fact (0 < T)] (d : ℕ) :
         Measure.pi (fun _ : Fin d => (AddCircle.haarAddCircle : Measure (AddCircle T))) := by
   apply Measure.pi_eq
   intro s _
-  simp only [Measure.smul_apply, Measure.pi_pi, smul_eq_mul,
+  simp only [smul_apply, Measure.pi_pi, smul_eq_mul,
     AddCircle.volume_eq_smul_haarAddCircle, Finset.prod_mul_distrib, Finset.prod_const,
     Finset.card_univ, Fintype.card_fin]
 

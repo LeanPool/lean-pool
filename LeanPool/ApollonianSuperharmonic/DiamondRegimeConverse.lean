@@ -118,7 +118,7 @@ theorem DiamondRegimeConverse (q : Fin 4 → CircleCoordinates)
             funext j
             fin_cases j <;> apply Prod.ext
             all_goals simp [rot, S]
-            all_goals ring
+            ring
           change Q (.shift (-z)) (rot 2 (S x)) = D _
           rw [source]
           exact P4840T6ShiftRoot z
@@ -132,7 +132,7 @@ theorem DiamondRegimeConverse (q : Fin 4 → CircleCoordinates)
             funext j
             fin_cases j <;> apply Prod.ext
             all_goals simp [rot, S]
-            all_goals ring
+            ring
           change Q (.comp (.shift (z + 1 + ⟨0, 1⟩)) .negate)
             (rot 0 (S x)) = D _
           rw [source]

@@ -406,7 +406,7 @@ theorem exists_infVred (huτ : uτ.Monic) (hvτ : vτ.natDegree < uτ.natDegree)
       map_constantCoeff_infU hf huτ hvτ hdeg hdvdτ, modByMonic_self huτ]
   obtain ⟨V', hV'⟩ : (C PowerSeries.X : (O⟦X⟧)[X]) ∣ infV hf uτ vτ %ₘ infU hf uτ vτ := by
     refine (C_dvd_iff_dvd_coeff _ _).mpr fun i ↦ PowerSeries.X_dvd_iff.mpr ?_
-    simpa [coeff_map] using congrArg (fun p ↦ Polynomial.coeff p i) hmod0
+    simpa [coeff_map] using congrArg (fun p ↦ AddMonoidAlgebra.coeff p i) hmod0
   refine ⟨-V', by rw [hV']; ring, ?_, ?_⟩
   · rw [degree_neg]
     rcases eq_or_ne V' 0 with rfl | hne

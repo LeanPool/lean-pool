@@ -76,7 +76,7 @@ private lemma unitArc_log_ratio_tendsto (s : ℂ)
       (-(exp (↑(Real.pi * (1 + (t₀ + δ)) / 6) * I) - s))))
     (𝓝[>] 0) (𝓝 0) := by
   have h_ev : ∀ᶠ δ in nhdsWithin (0 : ℝ) (Ioi 0), 0 < δ ∧ δ < 6 := by
-    apply inter_mem self_mem_nhdsWithin
+    apply Filter.Eventually.and self_mem_nhdsWithin
     exact nhdsWithin_le_nhds (Iio_mem_nhds (by norm_num : (0 : ℝ) < 6))
   have h_log_exp : Tendsto (fun δ : ℝ => Complex.log (cexp (↑(-(Real.pi * δ / 6)) * I)))
       (nhdsWithin 0 (Ioi 0)) (nhds 0) := by
@@ -109,7 +109,7 @@ private lemma unitArc_log_diff_tendsto (s : ℂ)
         (-(exp (↑(Real.pi * (1 + (t₀ + δ)) / 6) * I) - s))) := by
     have h_ev : ∀ᶠ δ in nhdsWithin (0 : ℝ) (Ioi 0),
         0 < δ ∧ δ < min (t₀ - 1) (3 - t₀) := by
-      apply inter_mem self_mem_nhdsWithin
+      apply Filter.Eventually.and self_mem_nhdsWithin
       exact nhdsWithin_le_nhds
         (Iio_mem_nhds (lt_min (by linarith [ht₀_Ioo.1]) (by linarith [ht₀_Ioo.2])))
     apply h_ev.mono; intro δ ⟨hδ_pos, hδ_small⟩

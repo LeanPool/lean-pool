@@ -1066,19 +1066,18 @@ theorem boundedFold_restore_step
   compactMachineStepTac [boundedDependentRecordFoldMachine,
       boundedFoldRestoreConfiguration, boundedFoldPhaseConfiguration,
       boundedFoldStacks, Turing.initList]
-  all_goals
-    congr 2
-    funext stack
-    cases stack with
-    | inl stack =>
-        by_cases heq : stack = computer.tm.k₀
-        · subst stack
-          simp only [Function.update, ↓reduceDIte, boundedFoldStacks, cast_eq,
-            reduceCtorEq]
-        · simp only [Function.update, Sum.inl.injEq, heq, ↓reduceDIte, reduceCtorEq,
-            boundedFoldStacks]
-    | inr stack =>
-        cases stack <;> simp [boundedFoldStacks, Function.update]
+  congr 2
+  funext stack
+  cases stack with
+  | inl stack =>
+      by_cases heq : stack = computer.tm.k₀
+      · subst stack
+        simp only [Function.update, ↓reduceDIte, boundedFoldStacks, cast_eq,
+          reduceCtorEq]
+      · simp only [Function.update, Sum.inl.injEq, heq, ↓reduceDIte, reduceCtorEq,
+          boundedFoldStacks]
+  | inr stack =>
+      cases stack <;> simp [boundedFoldStacks, Function.update]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem boundedFold_restore_finish

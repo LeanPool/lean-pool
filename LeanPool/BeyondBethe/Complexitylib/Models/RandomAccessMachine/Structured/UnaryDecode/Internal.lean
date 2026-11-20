@@ -434,7 +434,7 @@ private theorem true_body_measured {rest : List Bool}
       rw [continued_high store _ (by simp [inputBase]; omega)]
       have hinput := hinv.input_eq (offset + 1)
       convert! hinput using 1
-      all_goals simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+      simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
 
 private theorem decodeAuxOption_eq_map (bits : List Bool) (acc : ℕ) :
     CircuitCode.NatCode.decodeAuxOption bits acc =
@@ -602,7 +602,7 @@ private theorem loop_measured {remaining : List Bool}
                     (resourceSpace inputLength) := by
                   rw [mainLoop]
                   convert! hrun using 1
-                  all_goals omega
+                  omega
                 apply MeasuredRuns.weakenCost hrun'
                 calc
                   _ = (64 * (rest.length + 1) + 35) * width inputLength := by ring
@@ -620,7 +620,7 @@ private theorem loop_measured {remaining : List Bool}
                     (resourceSpace inputLength) := by
                   rw [mainLoop]
                   convert! hrun using 1
-                  all_goals omega
+                  omega
                 apply MeasuredRuns.weakenCost hrun'
                 calc
                   _ = (64 * (rest.length + 1) + 35) * width inputLength := by ring
@@ -723,15 +723,15 @@ theorem program_measured_internal (bits : List Bool) :
         rw [hdecode] at hprogram
         simp only at hprogram
         convert! hprogram using 1
-        all_goals simp [stepCount, hdecode]
-        all_goals omega
+        simp [stepCount, hdecode]
+        omega
     | some result =>
         rcases result with ⟨value, suffix⟩
         rw [hdecode] at hprogram
         simp only at hprogram
         convert! hprogram using 1
-        all_goals simp [stepCount, hdecode]
-        all_goals omega
+        simp [stepCount, hdecode]
+        omega
   obtain ⟨cost, space, hexec, hcost, hspace⟩ := hprogram'
   have hspace' : space ≤ spaceBound bits.length := by
     rw [← envelopeSpace_eq_spaceBound]

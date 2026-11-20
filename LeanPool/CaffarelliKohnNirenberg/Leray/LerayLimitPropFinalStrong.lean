@@ -246,7 +246,7 @@ private theorem lerayLimitFinal_eLpNorm_le_sqrt
         rw [← vec3EuclideanNorm_eq_l2]
         exact norm_le_vec3EuclideanNorm _
     _ = _ := by
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hG]
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hG]
         simp only [ENNReal.toReal_ofNat]
 
 /-- Strong `L²` convergence on the slab `ℝ³ × (0,T)` in `prop:leray-limit`.
@@ -331,7 +331,7 @@ theorem lerayLimit_slab_strongL2_of_local_and_tails
       (hFcmeas n).aestronglyMeasurable) ?_
     let Φ : Vec3 × ℝ → ℝ≥0∞ := fun z => ‖(WithLp.toLp 2 (Fc n z) : L2Vec3)‖ₑ ^ (2 : ℝ)
     have hΦ : Measurable Φ :=
-      ((PiLp.continuous_toLp 2 _).measurable.comp (hFcmeas n)).enorm.pow_const _
+      ((PiLp.continuous_toLp 2 _).measurable.comp (hFcmeas n)).eNorm.pow_const _
     have hle : (∫⁻ z, ‖(WithLp.toLp 2 (Fc n z) : L2Vec3)‖ₑ ^ (2 : ℝ) ∂μ) ≤
         ENNReal.ofReal T * A ^ (2 : ℕ) := by
       change (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T), Φ z) ≤ _
@@ -428,7 +428,7 @@ theorem lerayLimit_slab_strongL2_of_local_and_tails
     funext z
     by_cases hz : z ∈ (K m)ᶜ
     · simp only [Set.indicator_of_mem hz]
-    · simp only [Set.indicator_of_notMem hz, WithLp.toLp_zero, enorm_zero]
+    · simp only [Set.indicator_of_notMem hz, WithLp.toLp_zero, eNorm_zero]
       exact ENNReal.zero_rpow_of_pos (by norm_num)
   have hFtail : ∀ ε : ℝ≥0∞, 0 < ε → ∀ᶠ m : ℕ in atTop,
       ∀ n, eLpNorm ((K m)ᶜ.indicator (Fc n)) 2
@@ -443,7 +443,7 @@ theorem lerayLimit_slab_strongL2_of_local_and_tails
     refine lerayLimitFinal_complement_lintegral_le T (R m) (δ m) (hδpos m).le
       _ ?_ (S m) (A ^ (2 : ℕ)) (fun t ht => hFctail m n t ht)
       (fun t ht => hFcslice n t ht)
-    exact ((PiLp.continuous_toLp 2 _).measurable.comp (hFcmeas n)).enorm.pow_const _
+    exact ((PiLp.continuous_toLp 2 _).measurable.comp (hFcmeas n)).eNorm.pow_const _
   have huTail : ∀ ε : ℝ≥0∞, 0 < ε → ∀ᶠ m : ℕ in atTop,
       eLpNorm ((K m)ᶜ.indicator u) 2
         ((volume : Measure ParabolicPoint).restrict
@@ -465,7 +465,7 @@ theorem lerayLimit_slab_strongL2_of_local_and_tails
     refine ENNReal.rpow_le_rpow ?_ (by norm_num)
     refine lerayLimitFinal_complement_lintegral_le T (R m) (δ m) (hδpos m).le
       _ ?_ (S m) (A ^ (2 : ℕ)) (fun t ht => hStailV m t ht) (fun t ht => hvslice t ht)
-    exact ((PiLp.continuous_toLp 2 _).measurable.comp hv).enorm.pow_const _
+    exact ((PiLp.continuous_toLp 2 _).measurable.comp hv).eNorm.pow_const _
   -- the whole-slab strong convergence
   have hL2c : Tendsto (fun n => eLpNorm (Fc n - u) 2 μ) atTop (𝓝 0) :=
     lerayLimit_eLpNorm_tendsto_of_local_and_uniform_tails Fc u K hKmeas hlocal hFtail huTail

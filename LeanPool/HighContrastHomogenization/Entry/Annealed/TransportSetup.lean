@@ -533,7 +533,7 @@ private theorem transport_all_rows {ι : Type*} (w : ι → ℝ) (r : ι → ℤ
     have hp : (3 : ℝ) ^ ((j : ℝ) - cap) * (3 : ℝ) ^ ((cap : ℝ) - j) = 1 := by
       rw [← Real.rpow_add (by norm_num : (0 : ℝ) < 3), sub_add_sub_cancel, sub_self, Real.rpow_zero]
     calc
-      _ ≤ T := Summable.tsum_subtype_le w (fun i => r i = cap) hw0 hw
+      _ ≤ T := Summable.tsum_subtype_le w {i | r i = cap} hw0 hw
       _ = (T * (3 : ℝ) ^ ((j : ℝ) - cap)) * (3 : ℝ) ^ ((cap : ℝ) - j) := by rw [mul_assoc, hp,
         mul_one]
       _ ≤ _ := mul_le_mul_of_nonneg_right (le_add_of_nonneg_left hC) (by positivity)
@@ -635,7 +635,7 @@ theorem transport_series_three_parts {d : ℕ} {ι : Type*} (F : ι → FullBloc
   let lo : Set ι := {i | r i < J}
   let hi : Set ι := loᶜ
   let row := fun t : ℤ => ∑' i : {i : hi // r i = t}, F i.1
-  have hgroup := (hF.subtype hi).hasSum.tsum_fiberwise (fun i : hi => r i)
+  have hgroup := (hF.subtype (· ∈ hi)).hasSum.tsum_fiberwise (fun i : hi => r i)
   have hgroupEq : (∑' t, row t) = ∑' i : hi, F i := hgroup.tsum_eq
   have hzero (t : ℤ) (ht : t ∉ Finset.Icc J cap) : row t = 0 := by
     apply (tsum_congr fun i => ?_).trans tsum_zero

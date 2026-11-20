@@ -110,7 +110,7 @@ private theorem eLpNorm_top_const_mul {U : Set (Vec d)} {t : ℝ} (ht : 0 ≤ t)
       ENNReal.ofReal t * eLpNorm f ⊤ (volume.restrict U) := by
   have h : (fun x => t * f x) = t • f := rfl
   rw [h, eLpNorm_const_smul]
-  simp [ENNReal.ofReal, Real.enorm_eq_ofReal ht]
+  simp [ENNReal.ofReal, Real.eNorm_eq_ofReal ht]
 
 /-- **The localized error bounds every pair of solutions, normalized or not.**
 

@@ -81,9 +81,7 @@ namespace BettiPrincipal
 open MulAction Function ModularCurve.Period
 
 theorem S_sq : ModularGroup.S * ModularGroup.S = (-1 : SL(2, ℤ)) := by
-  apply Subtype.ext
-  rw [Matrix.SpecialLinearGroup.coe_mul]
-  simpa using ModularGroup.S_mul_S_eq
+  exact ModularGroup.S_mul_S_eq
 
 theorem S_pow_four : ModularGroup.S ^ 4 = (1 : SL(2, ℤ)) := by
   rw [show (4 : ℕ) = 2 * 2 from rfl, pow_mul, sq ModularGroup.S, S_sq, neg_one_sq]

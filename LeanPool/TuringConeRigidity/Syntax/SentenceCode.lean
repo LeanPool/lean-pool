@@ -88,7 +88,7 @@ def Closed (C : ℕ → Prop) : Prop := ∀ c, C c → Step C c
 theorem Closed.valid {C : ℕ → Prop} (h : Closed C) (c : ℕ) (hc : C c) :
     ∃ p : SentenceForm, c = Encodable.encode p := by
   induction c using Nat.strong_induction_on with
-  | h c ih =>
+  | ind c ih =>
     rcases h c hc with he|hm|ha|hn|hx
     · obtain ⟨i,j,rfl⟩ := he; exact ⟨.equal i j,(encode_equal i j).symm⟩
     · obtain ⟨i,j,rfl⟩ := hm; exact ⟨.member i j,(encode_member i j).symm⟩

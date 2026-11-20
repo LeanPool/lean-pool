@@ -314,7 +314,7 @@ theorem infinity_factorDegree_span (a : inftyValuationSubring k) (ha : a ≠ 0) 
     exact (Valuation.Integers.isUnit_iff_valuation_eq_one
       (Valuation.valuationSubring.integers v)).mp u.isUnit
   have haval : v (a : k⟮X⟯) = WithZero.exp (RatFunc.intDegree (a : k⟮X⟯)) := by
-    rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero]
+    rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_ne_zero]
     simpa using ha
   have hvrepr := congrArg v hau
   have hexp : WithZero.exp (RatFunc.intDegree (a : k⟮X⟯)) =

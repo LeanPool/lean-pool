@@ -27,7 +27,7 @@ the spectral radius satisfies r(T) = ‖T‖.
 
 The statement is formulated over ℂ (rather than ℝ) because:
 1. The C⋆-algebra structure on `E →L[ℂ] E` is available in Mathlib, giving
-   `IsSelfAdjoint.spectralRadius_eq_nnnorm` directly.
+   `IsSelfAdjoint.spectralRadius_eq_nnNorm` directly.
 2. Over ℝ, `E →L[ℝ] E` lacks a `CStarAlgebra` instance (which requires
    `NormedAlgebra ℂ`), and the Gelfand formula for the spectral radius
    is only proved for complex Banach algebras in Mathlib.
@@ -54,7 +54,7 @@ open MeasureTheory
 the spectral radius equals the operator norm: r(T) = ‖T‖.
 
 This is a direct consequence of the general C⋆-algebra result
-`IsSelfAdjoint.spectralRadius_eq_nnnorm`, since `E →L[ℂ] E` is
+`IsSelfAdjoint.spectralRadius_eq_nnNorm`, since `E →L[ℂ] E` is
 a C⋆-algebra when `E` is a complex Hilbert space.
 
 The `IsPositivityPreserving` hypothesis used elsewhere in the Jentzsch
@@ -63,6 +63,6 @@ theorem spectralRadius_eq_nnnorm_of_selfAdjoint {Ω : Type*} [MeasureSpace Ω]
     (T : Lp ℂ 2 (volume : Measure Ω) →L[ℂ] Lp ℂ 2 (volume : Measure Ω))
     (hsa : IsSelfAdjoint T) :
     spectralRadius ℂ T = ‖T‖₊ :=
-  hsa.spectralRadius_eq_nnnorm
+  hsa.spectralRadius_eq_nnNorm
 
 end

@@ -145,7 +145,7 @@ private lemma lintegral_ofReal_rpow_eq_enorm_rpow {μ : Measure ℝ}
       ∫⁻ s, ‖g s‖ₑ ^ p ∂μ := by
   apply MeasureTheory.lintegral_congr_ae
   filter_upwards [hgn] with s hs
-  rw [Real.enorm_eq_ofReal hs]
+  rw [Real.eNorm_eq_ofReal hs]
 
 /-- Hölder's inequality on a short backward interval, in the two forms used
 in the pressure estimates. -/
@@ -195,7 +195,7 @@ theorem time_holder {t₀ r ρ : ℝ} (hr : 0 < r) (hrr : r ≤ ρ / 2)
           show 2 / (3 * (4 / 3 : ℝ)) = (1 / 2 : ℝ) by norm_num,
           show 4 / (3 * 4 : ℝ) = (1 / 3 : ℝ) by norm_num]
         rw [hnorm₂]
-        simp only [eLpNorm'_eq_lintegral_enorm]
+        simp only [eLpNorm'_eq_lintegral_eNorm]
         exact mul_comm _ _
   · calc
       (∫⁻ s in Ioc (t₀ - r ^ 2) t₀,
@@ -205,7 +205,7 @@ theorem time_holder {t₀ r ρ : ℝ} (hr : 0 < r) (hrr : r ≤ ρ / 2)
       _ = eLpNorm' g (3 / 2 : ℝ)
           (volume.restrict (Ioc (t₀ - ρ ^ 2) t₀)) := by
         rw [hnorm₃₂]
-        simp only [eLpNorm'_eq_lintegral_enorm]
+        simp only [eLpNorm'_eq_lintegral_eNorm]
         congr 1
         ring_nf
 
@@ -262,7 +262,7 @@ theorem time_holder_q {t₀ r ρ q : ℝ} (hr : 0 < r) (hrr : r ≤ ρ / 2)
           field_simp [hqpos.ne', hden]
           ring_nf
         rw [haexp, hroot, hradius, hnormq]
-        simp only [eLpNorm'_eq_lintegral_enorm]
+        simp only [eLpNorm'_eq_lintegral_eNorm]
         exact mul_comm _ _
 
 end CKN

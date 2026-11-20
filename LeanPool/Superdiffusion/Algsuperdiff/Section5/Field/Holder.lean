@@ -204,7 +204,7 @@ private theorem abs_entry_sub_le_of_mem_openOriginCube_two (ell : ℤ)
     (hy : y ∈ openCubeSet (originCube d ell)) (i k : Fin d) :
     |j x i k - j y i k| ≤ (d : ℝ) * localCubeDerivNorm ell j * ‖x - y‖ := by
   refine le_trans ?_ (norm_sub_le_of_mem_openOriginCube ell j hx hy)
-  have h := Matrix.norm_entry_le_entrywise_sup_norm (j x - j y) (i := i) (j := k)
+  have h := Matrix.norm_apply_le_norm (j x - j y) (i := i) (j := k)
   simpa only [Matrix.sub_apply, Real.norm_eq_abs] using h
 
 private theorem localCubeDerivNorm_le_sharpGradientGauge
@@ -825,7 +825,7 @@ theorem matrixOperatorNorm_streamField_sub_le_small (M : ABKModel d)
                 (holderUpperSum_nonneg M)))
         have hstep := mul_le_mul_of_nonneg_left habsorb hcoef
         convert hstep using 1
-        all_goals ring
+        ring
   have hmatrix := (matrixOperatorNorm_le_sum_abs_entries_holder
     (streamField omega x - streamField omega y)).trans
       (sum_abs_entries_le_of_forall_holder _ hentry)
@@ -849,7 +849,7 @@ theorem matrixOperatorNorm_streamField_sub_le_small (M : ABKModel d)
   exact hmatrix'.trans (by
     unfold S at hmono
     convert hmono using 1
-    all_goals ring)
+    ring)
 
 
 end

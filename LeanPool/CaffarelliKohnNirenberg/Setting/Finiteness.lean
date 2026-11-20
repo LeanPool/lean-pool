@@ -73,7 +73,7 @@ private lemma isCompact_vec3EuclideanClosedBall (x : Vec3) (r : ℝ) :
     exact (norm_sub_le_vec3EuclideanNorm x y).trans hy
   exact (isCompact_closedBall x r).of_isClosed_subset hclosed hsub
 
-/-- On any seminormed additive group the `enorm` of the norm raised to the
+/-- On any seminormed additive group the `eNorm` of the norm raised to the
 second power is the `ofReal` of the squared norm. -/
 private lemma enorm_norm_pow_two {E : Type*} [SeminormedAddGroup E] (v : E) :
     ‖v‖ₑ ^ (2 : ℝ) = ENNReal.ofReal (‖v‖ ^ 2) := by
@@ -159,7 +159,7 @@ private lemma ofReal_spatialGradientSq_le (u : ParabolicPoint → Vec3)
             ((norm_le_pi_norm (Du z i) j).trans (norm_le_pi_norm (Du z) i)) 2
       _ = 9 * ‖Du z‖ ^ 2 := by
           simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
-          try ring
+          ring
   calc ENNReal.ofReal (spatialGradientSq u Du z)
       ≤ ENNReal.ofReal (9 * ‖Du z‖ ^ 2) := ENNReal.ofReal_le_ofReal hsq
     _ = 9 * ‖Du z‖ₑ ^ (2 : ℝ) := by
@@ -288,7 +288,7 @@ theorem sws_timeSliceEnergyEssSup_lt_top
         = ∫⁻ y in vec3Ball z.1 r,
             ENNReal.ofReal (vec3EuclideanNorm (u (y, s))) ^ (2 : ℝ) :=
           lintegral_congr (fun y => by
-            rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)])
+            rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)])
       _ ≤ ∫⁻ y in vec3Ball z.1 r, 3 * ‖u (y, s)‖ₑ ^ (2 : ℝ) :=
           lintegral_mono (fun y => ofReal_vec3EuclideanNorm_pow_two_le (u (y, s)))
       _ = 3 * ∫⁻ y in vec3Ball z.1 r, ‖u (y, s)‖ₑ ^ (2 : ℝ) :=
@@ -350,12 +350,12 @@ theorem sws_pressure_integral_lt_top
   have hI : IsOpen I := h.2.1
   obtain ⟨Ω', J, hbox, hcyl⟩ := exists_localBox_of_closure_subset hΩ hI hr hsub
   obtain ⟨-, -, hp_mem, -⟩ := sws_local_box_data h hbox
-  have hlt := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have hlt := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (p := ENNReal.ofReal (3 / 2 : ℝ))
     (ne_of_gt (ENNReal.ofReal_pos.mpr (by norm_num)))
     ENNReal.ofReal_ne_top hp_mem.eLpNorm_lt_top
   have hbox_int : (∫⁻ w in spaceTimeSet Ω' J, ENNReal.ofReal |p w| ^ (3 / 2 : ℝ)) < ⊤ := by
-    simpa [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3 / 2), Real.enorm_eq_ofReal_abs]
+    simpa [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3 / 2), Real.eNorm_eq_ofReal_abs]
       using hlt
   exact lt_of_le_of_lt (lintegral_mono_set hcyl) hbox_int
 
@@ -372,7 +372,7 @@ theorem sws_force_integral_lt_top
   have hq : 0 < q := lt_trans (by norm_num : (0 : ℝ) < 5 / 2) h.2.2.2.1
   obtain ⟨Ω', J, hbox, hcyl⟩ := exists_localBox_of_closure_subset hΩ hI hr hsub
   obtain ⟨-, -, -, hf_mem⟩ := sws_local_box_data h hbox
-  have hlt := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have hlt := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (p := ENNReal.ofReal q)
     (ne_of_gt (ENNReal.ofReal_pos.mpr hq)) ENNReal.ofReal_ne_top hf_mem.eLpNorm_lt_top
   have hbox_int : (∫⁻ w in spaceTimeSet Ω' J, ‖f w‖ₑ ^ q) < ⊤ := by

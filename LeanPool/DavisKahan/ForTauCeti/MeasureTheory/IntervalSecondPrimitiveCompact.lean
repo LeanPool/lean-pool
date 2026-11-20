@@ -84,7 +84,7 @@ theorem integral_norm_coeFn_le (W : Lp 𝕜 2 unitIocMeasure) :
   have hmeas := (Lp.memLp W).aestronglyMeasurable
   have h1 : ∫ t, ‖W t‖ ∂unitIocMeasure
       = (eLpNorm (W : ℝ → 𝕜) 1 unitIocMeasure).toReal := by
-    rw [integral_norm_eq_lintegral_enorm hmeas, eLpNorm_one_eq_lintegral_enorm hmeas]
+    rw [integral_norm_eq_lintegral_eNorm hmeas, eLpNorm_one_eq_lintegral_eNorm hmeas]
   have h2 : eLpNorm (W : ℝ → 𝕜) 1 unitIocMeasure
       ≤ eLpNorm (W : ℝ → 𝕜) 2 unitIocMeasure :=
     eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)

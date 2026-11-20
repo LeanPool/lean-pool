@@ -59,7 +59,7 @@ theorem dbar_weighted_raw_raise (n : ℕ) (hn : 0 < n) (p q : ℕ) (z : ℂ) :
   have hn' : (n : ℂ) ≠ 0 := by exact_mod_cast hn.ne'
   push_cast
   field_simp
- ; ring
+  ring
 
 /-- Literal actual Gaussian derivative, with all smoothness derived internally. -/
 theorem iterate_wirtinger_rodrigues_raw (n : ℕ) (hn : 0 < n) (p q : ℕ) :

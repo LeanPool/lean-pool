@@ -123,7 +123,7 @@ theorem integrand_le (n : ℕ) (hn : 0 < n) (y : Fin (37 * n) → ℝ) (hy : ∀
     have := (pow_left_inj₀ (div_pos (hy i) hK).le (div_pos (hy j) hK).le two_ne_zero).mp hij
     exact
       hinj
-        ((div_left_inj' hK.ne').mp this)
+        ((div_left_inj₀ hK.ne').mp this)
           -- positivity of both sides
   have hdet : (Matrix.vandermonde fun j => y j ^ 2).det ≠ 0 := by
     rw [Matrix.det_vandermonde_ne_zero_iff]

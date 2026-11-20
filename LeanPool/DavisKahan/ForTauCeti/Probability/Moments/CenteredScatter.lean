@@ -128,7 +128,7 @@ theorem finiteMean_append {n : ℕ} (z : Fin n → E) (y : E) :
     push_cast
     match_scalars
     all_goals field_simp
-    all_goals ring
+    ring
 
 /-- **Exact add-one centered-scatter identity**:
 `S(z ++ [y]) = S(z) + n/(n+1) • ((y - mean z) ⊗ (y - mean z))`. -/

@@ -83,8 +83,7 @@ theorem norm_sub_fourierTruncation_le (f : AnalyticPhaseFunction n G ρ)
     ((∑' k, fourierTermOnStrip (f.fourierCoeff p) σ k) -
       ∑ k ∈ fourierModes n N, fourierTermOnStrip (f.fourierCoeff p) σ k) ⟨q, hq⟩
   apply le_trans _ hb
-  rw [BoundedContinuousFunction.sub_apply, f.tsum_fourierTerms_apply hp hσρ,
-    BoundedContinuousFunction.sum_apply] at he
+  rw [sub_apply, f.tsum_fourierTerms_apply hp hσρ, sum_apply] at he
   exact he
 
 /-- The difference between a phase function and its finite Fourier truncation. -/

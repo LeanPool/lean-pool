@@ -125,7 +125,7 @@ theorem preliminary_divisor_sum_pow_ten_le
         have h447 : 2 ^ 447 * 2 = 2 ^ 448 := by
           exact power_succ_447 2
         calc
-          2 ^ 9 * 2 ^ 447 * 2 = 2 ^ 9 * (2 ^ 447 * 2) := by ac_rfl
+          2 ^ 9 * 2 ^ 447 * 2 = 2 ^ 9 * (2 ^ 447 * 2) := Nat.mul_assoc _ _ _
           _ = 2 ^ 9 * 2 ^ 448 := by rw [h447]
           _ = 2 ^ (9 + 448) := (pow_add 2 9 448).symm
           _ = 2 ^ 457 := power_nine_plus_four_four_eight 2
@@ -165,7 +165,7 @@ private theorem preliminary_middle_coefficient_le_cutoff_pow_four :
       _ ≤ (48 ^ 3 + 1) ^ 40 :=
         Nat.pow_le_pow_right (by positivity) (by norm_num)
   calc
-    48 ^ 60 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 48 ^ 60 := by ac_rfl
+    48 ^ 60 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 48 ^ 60 := Nat.mul_comm _ _
     _ ≤ 2 ^ 7332 * (48 ^ 3 + 1) ^ 40 := Nat.mul_le_mul htwo hbase
     _ = (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
       rw [mul_pow, ← pow_mul, ← pow_mul]
@@ -182,7 +182,7 @@ private theorem preliminary_endgame_coefficient_le_cutoff_pow_four :
       _ ≤ (48 ^ 3 + 1) ^ 40 :=
         Nat.pow_le_pow_right (by positivity) (by norm_num)
   calc
-    68 ^ 30 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 68 ^ 30 := by ac_rfl
+    68 ^ 30 * (2 ^ 457) ^ 6 = (2 ^ 457) ^ 6 * 68 ^ 30 := Nat.mul_comm _ _
     _ ≤ 2 ^ 7332 * (48 ^ 3 + 1) ^ 40 := Nat.mul_le_mul htwo hbase
     _ = (2 ^ 1833 * (48 ^ 3 + 1) ^ 10) ^ 4 := by
       rw [mul_pow, ← pow_mul, ← pow_mul]
@@ -220,7 +220,7 @@ private theorem preliminary_lowOrder_coefficient_eq_cutoff_sq :
     rw [show (20 : ℕ) = 10 * 2 by norm_num, pow_mul]
   calc
     2 ^ 10 * (48 ^ 3 + 1) ^ 20 * (2 ^ 457) ^ 8 =
-        (2 ^ 10 * (2 ^ 457) ^ 8) * (48 ^ 3 + 1) ^ 20 := by ac_rfl
+        (2 ^ 10 * (2 ^ 457) ^ 8) * (48 ^ 3 + 1) ^ 20 := Nat.mul_right_comm _ _ _
     _ = 2 ^ 3666 * (48 ^ 3 + 1) ^ 20 := by rw [htwo]
     _ = (2 ^ 1833) ^ 2 * ((48 ^ 3 + 1) ^ 10) ^ 2 := by
       rw [htwo', hbase]

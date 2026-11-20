@@ -104,7 +104,7 @@ theorem norm_sub_le (h : Blackwell β T) (v w : S →ᵇ ℝ) : ‖T v - T w‖ 
   have h₁ : T v x ≤ T w x + β * ‖v - w‖ := by simpa using h.apply_le_add_const v w x
   have h₂ : T w x ≤ T v x + β * ‖w - v‖ := by simpa using h.apply_le_add_const w v x
   rw [norm_sub_rev w v] at h₂
-  rw [BoundedContinuousFunction.sub_apply, Real.norm_eq_abs, abs_le]
+  rw [sub_apply, Real.norm_eq_abs, abs_le]
   constructor <;> linarith
 
 theorem lipschitzWith (h : Blackwell β T) : LipschitzWith β T :=
@@ -164,7 +164,7 @@ theorem affine (f : S →ᵇ ℝ) (β : ℝ≥0) :
     intro v c _
     refine le_of_eq ?_
     ext x
-    simp only [coe_add, coe_smul, const_apply, Pi.add_apply, smul_eq_mul]
+    simp only [add_apply, smul_apply, const_apply, smul_eq_mul]
     ring
 
 end Blackwell

@@ -132,7 +132,7 @@ def boundaryStrips (d : ℕ) (j : ℤ) (t : ℝ) : Set (Vec d) :=
 
 /-- One coordinate strip of `□_j` of width `t`, as a product set. -/
 @[expose]
-public def coordStrip (d : ℕ) (j : ℤ) (t : ℝ) (i : Fin d) : Set (Vec d) :=
+public noncomputable def coordStrip (d : ℕ) (j : ℤ) (t : ℝ) (i : Fin d) : Set (Vec d) :=
   Set.pi Set.univ (Function.update
     (fun _ : Fin d => Set.Ioo (-(1 / 2 : ℝ) * (3 : ℝ) ^ j) ((1 / 2 : ℝ) * (3 : ℝ) ^ j)) i
     (Set.Icc (-(1 / 2 : ℝ) * (3 : ℝ) ^ j) (-(1 / 2 : ℝ) * (3 : ℝ) ^ j + t) ∪

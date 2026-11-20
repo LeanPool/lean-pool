@@ -125,7 +125,7 @@ def F' : Iio (succ κ).ord → Club Ϟ := fun δ ↦ ⟨⋂ α : Iio δ, F α,
 /-- The intersection of all clubs `F α` for `α < succ κ`. -/
 def E : Club Ϟ := ⟨⋂ α : Iio (succ κ).ord, F α, by
   apply IsClub.iInter_lift aleph0_lt_cof_Ϟ fun i ↦ (F i).2
-  rw [Cardinal.mk_Iio_ordinal, Cardinal.lift_lift, Cardinal.lift_lt, card_ord]
+  rw [Ordinal.cardinalMk_Iio, Cardinal.lift_lift, Cardinal.lift_lt, card_ord]
   exact hcof⟩
 
 /-- Since `E` is a club and `S` is stationary, there is some `α ∈ S ∩ E'`; this is one

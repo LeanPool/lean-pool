@@ -188,7 +188,7 @@ theorem quasiMeasurePreserving_ballChart (x₀ : Vec d) {r : ℝ} (hr : 0 < r) :
     QuasiMeasurePreserving (ballChart (d := d) x₀ r)
       (volume.restrict (smallContrastUnitBall d))
       (volume.restrict (euclideanBall x₀ r)) := by
-  refine ⟨(measurableEmbedding_ballChart (d := d) x₀ hr).measurable, ?_⟩
+  refine ⟨(measurableEmbedding_ballChart (d := d) x₀ hr).measurable.aemeasurable, ?_⟩
   rw [map_ballChart_volume_restrict x₀ hr]
   exact Measure.smul_absolutelyContinuous
 
@@ -198,7 +198,7 @@ theorem quasiMeasurePreserving_ballChartInv (x₀ : Vec d) {r : ℝ} (hr : 0 < r
     QuasiMeasurePreserving (ballChartInv (d := d) x₀ r)
       (volume.restrict (euclideanBall x₀ r))
       (volume.restrict (smallContrastUnitBall d)) := by
-  refine ⟨(continuous_ballChartInv (d := d) x₀ r).measurable, ?_⟩
+  refine ⟨(continuous_ballChartInv (d := d) x₀ r).measurable.aemeasurable, ?_⟩
   rw [map_ballChartInv_volume_restrict x₀ hr]
   exact Measure.smul_absolutelyContinuous
 
@@ -427,7 +427,7 @@ theorem scalarLInfSizeOn_ballScalarSource (x₀ : Vec d) {r : ℝ} (hr : 0 < r)
   unfold scalarLInfSizeOn
   rw [hfun, eLpNorm_const_smul,
     eLpNorm_comp_ballChart x₀ hr (fun y => g y) ⊤, hexp,
-    ENNReal.rpow_zero, one_mul, Real.enorm_eq_ofReal hr.le, ENNReal.toReal_mul,
+    ENNReal.rpow_zero, one_mul, Real.eNorm_eq_ofReal hr.le, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal hr.le]
 
 /-- The transported scalar source is bounded when the original one is. -/

@@ -99,7 +99,7 @@ def finiteExtensionDivisorDegreeHom :
 /-- A cyclic generator of the image of divisor degree in the integers. -/
 noncomputable def finiteExtensionDivisorDegreeGenerator : ℤ :=
   Classical.choose
-    ((AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top
+    ((AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq
       (finiteExtensionDivisorDegreeHom K L).range).mp inferInstance)
 
 /-- The positive generator of the image of divisor degree.  Equivalently,
@@ -118,7 +118,7 @@ private theorem finiteExtensionDivisorDegreeHom_range_eq_zmultiples :
       AddSubgroup.closure {a} := by
     rw [← AddSubgroup.zmultiples_eq_closure]
     exact (Classical.choose_spec
-      ((AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top
+      ((AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq
         (finiteExtensionDivisorDegreeHom K L).range).mp inferInstance)).symm
   calc
     (finiteExtensionDivisorDegreeHom K L).range =

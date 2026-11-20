@@ -1633,7 +1633,7 @@ private theorem existence :
   classical
   intro positiveNonempty n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro C hc
     by_cases hone : n = 1
     · exact unitExists C (PrototileConstruction.hcurvAt165 n C hc hone)

@@ -172,7 +172,7 @@ theorem contMDiffAt_section_iff_analyticAt_coeffInFun
     ContMDiffAt 𝓘(ℂ) (𝓘(ℂ).prod 𝓘(ℂ, ℂ →L[ℂ] ℂ)) ω
         (fun p => Bundle.TotalSpace.mk' (ℂ →L[ℂ] ℂ) p (σ p)) x ↔
       AnalyticAt ℂ (coeffInFun (chartAt ℂ x) σ) (chartAt ℂ x x) := by
-  rw [Bundle.contMDiffAt_section, contMDiffAt_iff_analyticAt_comp_chartAt,
+  rw [Bundle.contMDiffAt_section_iff, contMDiffAt_iff_analyticAt_comp_chartAt,
     analyticAt_clm_iff_apply_one]
   refine analyticAt_congr ?_
   filter_upwards [(chartAt ℂ x).open_target.mem_nhds (mem_chart_target ℂ x)] with z hz

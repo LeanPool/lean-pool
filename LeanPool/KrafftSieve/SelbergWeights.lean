@@ -207,7 +207,7 @@ lemma sieve_equivalence (n : ℕ) (hn : n ≥ 1) (x : ℕ) (hx : x ∈ evalInter
       · interval_cases p <;> norm_num at * <;> omega
     apply And.intro
     · apply prime_of_no_prime_factors_lt
-      any_goals exact 6 * n + 5
+      on_goal 4 => exact 6 * n + 5
       · have h_pos : x ≥ 1 := Nat.pos_of_ne_zero (by
           rintro rfl
           have h_range : 2 * n ≤ 6 * n ^ 2 := by nlinarith
@@ -239,7 +239,7 @@ lemma sieve_equivalence (n : ℕ) (hn : n ≥ 1) (x : ℕ) (hx : x ∈ evalInter
           nlinarith [Nat.sub_add_cancel h_range]
         exact absurd hx h_not
     · apply prime_of_no_prime_factors_lt
-      any_goals exact 6 * n + 5
+      on_goal 4 => exact 6 * n + 5
       · have h_pos : x > 0 := Nat.pos_of_ne_zero (by
           rintro rfl
           have h_range : 2 * n ≤ 6 * n ^ 2 := by nlinarith

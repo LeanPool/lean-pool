@@ -319,8 +319,8 @@ theorem memLp_prod_of_uniform_slicewise_bound (μ : Measure Ω) [SFinite μ]
         (by simp : (2 : ℝ≥0∞) ≠ 0) (by simp : (2 : ℝ≥0∞) ≠ ⊤)
       simp_all only [ENNReal.toReal_ofNat, Real.rpow_ofNat]
     · -- Integral of slices is constant, hence integrable on bounded [0,T]
-      simp_all only [norm_pow, norm_norm, ne_eq, enorm_ne_top, not_false_eq_true,
-        integrable_const_enorm]
+      simp_all only [norm_pow, norm_norm, ne_eq, eNorm_ne_top, not_false_eq_true,
+        integrable_const_eNorm]
   -- Now use the integrability to get MemLp 2
   rwa [memLp_two_iff_integrable_sq_norm h_meas]
 
@@ -514,7 +514,7 @@ theorem double_integral_polynomial_decay_bound_proved (α : ℝ) (hα : α > 1) 
             (by
               filter_upwards with t
               exact h_nonneg t)
-            Ioc_subset_Icc_self.eventuallyLE
+            (Filter.Eventually.of_forall fun _ hx ↦ Ioc_subset_Icc_self hx)
       _ ≤ ∫ t, g t :=
           setIntegral_le_integral h_integrable
             (by
@@ -536,8 +536,8 @@ theorem double_integral_polynomial_decay_bound_proved (α : ℝ) (hα : α > 1) 
     ≤ ∫ s in Icc 0 T, (∫ t, g t) := by
         apply integral_mono_of_nonneg
         · filter_upwards with s; exact integral_nonneg (fun u => h_nonneg _)
-        · simp_all only [gt_iff_lt, ne_eq, enorm_ne_top, not_false_eq_true,
-            integrable_const_enorm]
+        · simp_all only [gt_iff_lt, ne_eq, eNorm_ne_top, not_false_eq_true,
+            integrable_const_eNorm]
         · filter_upwards with s; exact h_inner s
     _ = (∫ t, g t) * T := by
         rw [setIntegral_const, Measure.real, Real.volume_Icc, sub_zero,
@@ -875,13 +875,13 @@ private lemma memLp_two_lintegral_nnnorm_sq {α ε : Type*} [MeasurableSpace α]
     [NormedAddCommGroup ε] {f : α → ε} {μ : Measure α} (hf : MemLp f 2 μ) :
     ∫⁻ x, ↑‖f x‖₊ ^ (2 : ℕ) ∂μ < ⊤ := by
   have h := hf.eLpNorm_lt_top
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num : (2 : ℝ≥0∞) ≠ 0)
     (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hf.aestronglyMeasurable] at h
   simp only [toReal_ofNat] at h
   rw [rpow_lt_top_iff_of_pos (by positivity : (0:ℝ) < 1/2)] at h
   refine lt_of_eq_of_lt ?_ h
   congr 1; ext x
-  rw [enorm_eq_nnnorm, ← rpow_natCast (↑‖f x‖₊) 2]
+  rw [eNorm_eq_nnNorm, ← rpow_natCast (↑‖f x‖₊) 2]
   norm_cast
 
 /-- Term-by-term finiteness used in `L2_process_covariance_fubini_integrable` (factor out the
@@ -969,29 +969,29 @@ theorem _root_.OSforGFF.L2_process_covariance_fubini_integrable {Ω : Type*} [Me
   have h2 : StronglyMeasurable (fun x : Ω × (ℝ × ℝ) => A x.2.2 x.1 - c) :=
     hF_sm.comp_measurable hm_u
   refine ⟨(h1.mul h2.star).aestronglyMeasurable, ?_⟩
-  simp only [HasFiniteIntegral, enorm]
+  simp only [HasFiniteIntegral]
   have h_bound : ∀ x : Ω × (ℝ × ℝ),
       (↑‖(A x.2.1 x.1 - c) * starRingEnd ℂ (A x.2.2 x.1 - c)‖₊ : ℝ≥0∞) ≤
       ↑‖A x.2.1 x.1 - c‖₊ ^ 2 + ↑‖A x.2.2 x.1 - c‖₊ ^ 2 := by
     intro x
-    rw [nnnorm_mul, coe_mul, show ‖starRingEnd ℂ (A x.2.2 x.1 - c)‖₊ = ‖A x.2.2 x.1 - c‖₊
-      from nnnorm_star _]
+    rw [nnNorm_mul, coe_mul, show ‖starRingEnd ℂ (A x.2.2 x.1 - c)‖₊ = ‖A x.2.2 x.1 - c‖₊
+      from nnNorm_star _]
     exact ennreal_mul_le_add_sq _ _
   have hm1 : Measurable (fun x : Ω × (ℝ × ℝ) => (↑‖A x.2.1 x.1 - c‖₊ : ℝ≥0∞) ^ 2) :=
-    (h1.measurable.nnnorm.coe_nnreal_ennreal).pow_const _
+    (h1.measurable.nnNorm.coe_nnreal_ennreal).pow_const _
   have hm2 : Measurable (fun x : Ω × (ℝ × ℝ) => (↑‖A x.2.2 x.1 - c‖₊ : ℝ≥0∞) ^ 2) :=
-    (h2.measurable.nnnorm.coe_nnreal_ennreal).pow_const _
+    (h2.measurable.nnNorm.coe_nnreal_ennreal).pow_const _
   have hν_fin : ν Set.univ < ⊤ := by
     rw [Measure.restrict_apply_univ]; exact measure_Icc_lt_top
   have hF_meas : Measurable (fun z : ℝ × Ω => (↑‖A z.1 z.2 - c‖₊ : ℝ≥0∞) ^ 2) :=
-    (hF_sm.measurable.nnnorm.coe_nnreal_ennreal).pow_const _
+    (hF_sm.measurable.nnNorm.coe_nnreal_ennreal).pow_const _
   have h_lint_base : ∫⁻ z : ℝ × Ω, ↑‖uncurry A z - c‖₊ ^ (2 : ℕ) ∂(ν.prod μ) < ⊤ :=
     memLp_two_lintegral_nnnorm_sq (h_L2.sub (memLp_const c))
   have h_both_finite : ν Set.univ * ∫⁻ z : ℝ × Ω, ↑‖A z.1 z.2 - c‖₊ ^ 2 ∂(ν.prod μ) < ⊤ :=
     mul_lt_top hν_fin h_lint_base
   have : SFinite ν := inferInstance
   have hg_meas : ∀ ω, Measurable (fun s : ℝ => (↑‖A s ω - c‖₊ : ℝ≥0∞) ^ 2) := fun ω =>
-    ((h_cont_s ω).sub continuous_const).measurable.nnnorm.coe_nnreal_ennreal.pow_const _
+    ((h_cont_s ω).sub continuous_const).measurable.nnNorm.coe_nnreal_ennreal.pow_const _
   have hF_meas_swap : Measurable (fun p : Ω × ℝ => (↑‖A p.2 p.1 - c‖₊ : ℝ≥0∞) ^ 2) := by fun_prop
   calc ∫⁻ x, ↑‖(A x.2.1 x.1 - c) * starRingEnd ℂ (A x.2.2 x.1 - c)‖₊
         ∂(μ.prod (ν.prod ν))

@@ -175,7 +175,7 @@ theorem solution
   have hk1 : 1 ≤ k - 1 := by omega
   have hkk : k - 1 + 1 = k := by omega
   have hk3 : (3 : ℤ) ≤ (k : ℤ) := by exact_mod_cast hk
-  have hkeven : Even (-(k : ℤ)) := (Int.even_coe_nat k |>.mpr hk2).neg
+  have hkeven : Even (-(k : ℤ)) := (Int.even_natCast k |>.mpr hk2).neg
   let f : (Fin 2 → ℤ) → ℂ := fun v => EisensteinSeries.eisSummand k v z
   have hfsum : Summable fun v => ‖f v‖ := EisensteinSeries.summable_norm_eisSummand hk3 z
   let S : Set (Fin 2 → ℤ) := {v | ((v 0 : ℤ) : ZMod N) = a}

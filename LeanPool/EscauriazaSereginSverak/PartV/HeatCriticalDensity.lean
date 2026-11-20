@@ -78,24 +78,24 @@ theorem heatConv_integrable_enorm_le {p q : ℝ} (hpq : p.HolderConjugate q)
         eLpNorm f (ENNReal.ofReal p) volume := by
     have h := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume : Measure Vec3) hpq.symm
       (f := fun y => ‖heatKernel y t‖ₑ) (g := fun y => ‖f (x - y)‖ₑ)
-      hK.aestronglyMeasurable.enorm hfx.enorm
+      hK.aestronglyMeasurable.eNorm hfx.eNorm
     rw [← hfxNorm,
       eLpNorm_eq_eLpNorm' (by simpa using hqpos) ENNReal.ofReal_ne_top hK.aestronglyMeasurable,
       eLpNorm_eq_eLpNorm' (by simpa using hp) ENNReal.ofReal_ne_top hfx,
-      eLpNorm'_eq_lintegral_enorm, eLpNorm'_eq_lintegral_enorm,
+      eLpNorm'_eq_lintegral_eNorm, eLpNorm'_eq_lintegral_eNorm,
       ENNReal.toReal_ofReal hqpos.le, ENNReal.toReal_ofReal hp.le]
     refine le_trans (le_of_eq ?_) h
     apply lintegral_congr
     intro y
-    simp [enorm_mul]
+    simp [eNorm_mul]
   have hprodMeas : AEStronglyMeasurable (fun y : Vec3 => heatKernel y t * f (x - y)) volume :=
     hK.aestronglyMeasurable.mul hfx
   have hfin : eLpNorm (fun y : Vec3 => heatKernel y t) (ENNReal.ofReal q) volume *
       eLpNorm f (ENNReal.ofReal p) volume < ∞ :=
     ENNReal.mul_lt_top hK.eLpNorm_lt_top hf.eLpNorm_lt_top
-  refine ⟨⟨hprodMeas, hasFiniteIntegral_iff_enorm.2 (hholder.trans_lt hfin)⟩, ?_⟩
+  refine ⟨⟨hprodMeas, hasFiniteIntegral_iff_eNorm.2 (hholder.trans_lt hfin)⟩, ?_⟩
   rw [heatConv_eq_integral]
-  exact (enorm_integral_le_lintegral_enorm _).trans hholder
+  exact (eNorm_integral_le_lintegral_eNorm _).trans hholder
 
 /-- The Gaussian convolution is linear on `Lᵖ` data and Lipschitz for the
 `Lᵖ` norm at each point of positive time. -/
@@ -120,7 +120,7 @@ theorem heatConv_sub_enorm_le {p q : ℝ} (hpq : p.HolderConjugate q)
 theorem vec3_exists_enorm_eq_component (v : Vec3) : ∃ k : Fin 3, ‖v‖ₑ = ‖v k‖ₑ := by
   obtain ⟨k, -, hk⟩ := Finset.exists_mem_eq_sup Finset.univ Finset.univ_nonempty
     (fun i => ‖v i‖₊)
-  exact ⟨k, by rw [enorm_eq_nnnorm, enorm_eq_nnnorm, Pi.nnnorm_def, hk]⟩
+  exact ⟨k, by rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, Pi.nnNorm_def, hk]⟩
 
 /-- The heat orbit is Lipschitz in the datum for the `Lᵖ` norm, pointwise at
 every positive time. -/

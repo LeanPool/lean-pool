@@ -3039,7 +3039,8 @@ private theorem Smale.FlowConstruction.exists_manifoldLocalFlow {E M : Type*} [N
   have hpU : p ∈ U := ⟨mem_chart_source E p, Metric.mem_ball_self hr⟩
   let F : M × ℝ → M := fun q => e.symm (α (e q.1, q.2))
   have hc : ContinuousOn (fun q : M × ℝ => (e q.1, q.2)) (U ×ˢ Set.Ioo (-ε) ε) :=
-    (e.continuousOn.comp continuous_fst.continuousOn (fun _ hq => hq.1.1)).prodMk
+    (e.continuousOn.comp (s := U ×ˢ Set.Ioo (-ε) ε) continuous_fst.continuousOn
+      (fun _ hq => hq.1.1)).prodMk
       continuous_snd.continuousOn
   have hd :
     Set.MapsTo (fun q : M × ℝ => (e q.1, q.2)) (U ×ˢ Set.Ioo (-ε) ε)
@@ -3517,8 +3518,8 @@ private theorem
       x ∈ Φ.source ∧ Φ.source ⊆ U ∧ (∀ y, (Φ y).1 = f y) ∧ Φ x = (f x, 0) := by
   let L := fderiv ℝ f x
   have hs : HasStrictFDerivAt f L x :=
-    (hf.contDiffAt (hU.mem_nhds hx)).hasStrictFDerivAt (by simp only [ne_eq, WithTop.coe_eq_zero,
-      ENat.top_ne_zero, not_false_eq_true])
+    (hf.contDiffAt (hU.mem_nhds hx)).hasStrictFDerivAt_fderiv (by
+      simp only [ne_eq, WithTop.coe_eq_zero, ENat.top_ne_zero, not_false_eq_true])
   have hr : L.range = ⊤ := LinearMap.range_eq_top.mpr (surjective_of_ne_zero hreg)
   have hk : L.ker.ClosedComplemented := L.ker_closedComplemented_of_finiteDimensional_range
   let φ := hs.implicitFunctionDataOfComplemented f L hr hk
@@ -3633,7 +3634,8 @@ private def Smale.RegularLevel.sliceChart {M D : Type*} [TopologicalSpace M] [To
     continuous_snd.comp_continuousOn
       (e.continuousOn.comp continuous_subtype_val.continuousOn (fun _ hx => hx))
   continuousOn_invFun := by
-    apply Topology.IsInducing.subtypeVal.continuousOn_iff.mpr
+    apply ((Topology.IsInducing.subtypeVal (t := {x : M | f x = b})).continuousOn_iff
+      (f := sliceInverse e he base)).mpr
     apply
       (e.symm.continuousOn.comp (continuous_const.prodMk continuous_id).continuousOn
           (fun _ hv => hv)).congr
@@ -3778,7 +3780,8 @@ private theorem Smale.RegularLevel.contMDiffAt_iff_inclusion {E M : Type*} [Norm
     exact (Smale.RegularLevel.contMDiff_inclusion hf hreg).contMDiffAt.comp x hg
   · intro hg
     apply contMDiffAt_iff_target.mpr
-    refine ⟨Topology.IsInducing.subtypeVal.continuousAt_iff.mpr hg.continuousAt, ?_⟩
+    refine ⟨((Topology.IsInducing.subtypeVal (t := {x : M | f x = b})).continuousAt_iff
+      (f := g)).mpr hg.continuousAt, ?_⟩
     let Φ := heightChart hf hreg (g x)
     have hΦ : ContMDiffAt 𝓘(ℝ, E) 𝓘(ℝ, ℝ × Model E) ∞ Φ (g x) :=
       Φ.contMDiffOn_toFun.contMDiffAt
@@ -5003,6 +5006,8 @@ private def
       (d.oldPiece ⁻¹' d.OldComplement) :=
   (Smale.PuncturedHandle.oldPuncturedDomain E F).trans
     (Homeomorph.setCongr
+      (s := {p : Smale.PuncturedHandle.UnitSphere E × Smale.PuncturedHandle.UnitBall F |
+        (p.2 : F) ≠ 0}) (t := d.oldPiece ⁻¹' d.OldComplement)
       (by
         ext p
         exact (not_congr (d.oldPiece_mem_core_iff p)).symm))
@@ -5015,6 +5020,8 @@ private def
       (d.newPiece ⁻¹' d.NewComplement) :=
   (Smale.PuncturedHandle.newPuncturedDomain E F).trans
     (Homeomorph.setCongr
+      (s := {p : Smale.PuncturedHandle.UnitBall E × Smale.PuncturedHandle.UnitSphere F |
+        (p.1 : E) ≠ 0}) (t := d.newPiece ⁻¹' d.NewComplement)
       (by
         ext p
         exact (not_congr (d.newPiece_mem_belt_iff p)).symm))
@@ -5213,7 +5220,7 @@ private theorem
 private theorem
     Smale.AttachmentBoundaryData.sphereToBall_closed {N : Type*} [NormedAddCommGroup N] :
     Topology.IsClosedEmbedding (Smale.PuncturedHandle.sphereToBall (E := N)) :=
-  Smale.ClosedCover.isClosedEmbedding_codRestrict
+  Smale.ClosedCover.isClosedEmbedding_codRestrict (s := {x : N | ‖x‖ ≤ 1})
     Metric.isClosed_sphere.isClosedEmbedding_subtypeVal
     (fun u => (mem_sphere_zero_iff_norm.mp u.property).le)
 
@@ -5221,7 +5228,7 @@ private theorem Smale.AttachmentBoundaryData.oldPiece_closed {N P M : Type*} [No
     [NormedAddCommGroup P] [TopologicalSpace M] {f : M → ℝ} {a : ℝ}
     (d : Smale.AttachmentBoundaryData N P M f a) : Topology.IsClosedEmbedding d.oldPiece := by
   exact
-    Smale.ClosedCover.isClosedEmbedding_codRestrict
+    Smale.ClosedCover.isClosedEmbedding_codRestrict (s := {x : M | f x = a})
       (d.handle_closed.comp (sphereToBall_closed.prodMap Topology.IsClosedEmbedding.id))
       (fun z => (d.lower_face _).mpr (mem_sphere_zero_iff_norm.mp z.1.property))
 
@@ -5276,7 +5283,10 @@ private theorem Smale.AttachmentBoundaryData.new_cover {N P M : Type*} [NormedAd
       by_contra hn
       have hlt : f x < a := lt_of_not_ge hn
       have hi : (x : M) ∈ interior d.region :=
-        interior_maximal (fun y (hy : f y < a) => Or.inl hy.le)
+        interior_maximal (t := {y | f y < a}) (by
+          intro y hy
+          change f y ≤ a ∨ y ∈ Set.range d.handle
+          exact Or.inl hy.le)
           (isOpen_lt d.height_continuous continuous_const) hlt
       exact x.property.2 hi
     exact Or.inl ⟨⟨x, heq, x.property⟩, rfl⟩

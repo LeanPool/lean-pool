@@ -698,11 +698,11 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core) (v : Fin 8) :
       zero_ne_one, ite_self, add_zero, markR, contribForm, heightLB, one_ne_zero,
       tailContribution_same, zero_add, lbCoeff, Fin.mk_one, hT3, headContribution_same,
       zeroChip, add_left_inj, Fin.reduceFinMk, hH3, hT8, hH8]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try (simp_all only [Fin.isValue, ↓reduceIte, add_zero,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals (simp_all only [Fin.isValue, ↓reduceIte, add_zero,
     not_lt, nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false,
-    add_right_inj, not_le, tsub_lt_self_iff]))
+    add_right_inj, not_le, tsub_lt_self_iff])
   all_goals omega
 
 theorem lbCoeff_nonneg {d : DegSpec 8 12} (hL : d.length 2 ≤ d.length 3) (v : Fin 8) :
@@ -809,9 +809,9 @@ theorem rbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core)
       zero_ne_one, ite_self, add_zero, markR, contribForm, heightRB, tailContribution_same,
       headContribution_same, rbCoeff, Fin.mk_one, zero_add, one_ne_zero, hT3, zeroChip,
       Fin.reduceFinMk, hH3, hT8, tsub_pos_iff_lt, add_left_inj, hH8]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, ↓reduceIte])
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, ↓reduceIte]
 
 theorem rbCoeff_nonneg {d : DegSpec 8 12} (hR : d.length 6 ≤ d.length 8) (v : Fin 8) :
     0 ≤ rbCoeff d v := by
@@ -955,13 +955,13 @@ theorem t3Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core)
       contribForm, heightT3, tailContribution_same, headContribution_same, t3Coeff, Fin.mk_one,
       zero_add, zero_sub, Int.reduceNeg, one_ne_zero, hT3, zeroChip, Fin.reduceFinMk,
       positiveChip, add_left_inj, sub_zero, hH3, hT8, hH8, tsub_lt_self_iff]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
     not_false_eq_true, Int.reduceNeg, add_neg_cancel, zero_add, ↓reduceIte, sub_self,
     zero_le, add_zero, sub_zero, nonpos_iff_eq_zero, not_lt, tsub_self,
     not_true_eq_false, tsub_zero, Nat.sub_eq_zero_of_le, zero_ne_one,
-    Int.reduceAdd, not_le, tsub_lt_self_iff])
+    Int.reduceAdd, not_le, tsub_lt_self_iff]
   all_goals (first | ring | omega)
 
 theorem t3Coeff_nonneg {d : DegSpec 8 12} (hL : d.length 2 ≤ d.length 3)
@@ -1145,13 +1145,13 @@ theorem t4Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row05Core)
       contribForm, heightT4, tailContribution_same, headContribution_same, t4Coeff, Fin.mk_one,
       zero_add, zero_sub, Int.reduceNeg, one_ne_zero, hT3, zeroChip, Fin.reduceFinMk,
       positiveChip, add_left_inj, sub_zero, hH3, hT8, hH8, tsub_lt_self_iff]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
     not_false_eq_true, Int.reduceNeg, add_neg_cancel, zero_add, ↓reduceIte, sub_self,
     zero_le, add_zero, sub_zero, nonpos_iff_eq_zero, not_lt, tsub_self,
     not_true_eq_false, tsub_zero, Nat.sub_eq_zero_of_le, zero_ne_one,
-    Int.reduceAdd, not_le, tsub_lt_self_iff])
+    Int.reduceAdd, not_le, tsub_lt_self_iff]
   all_goals (first | ring | omega)
 
 theorem pairLow_comm (d : DegSpec 8 12) : pairLow d = min (armB d) (armA d) := by

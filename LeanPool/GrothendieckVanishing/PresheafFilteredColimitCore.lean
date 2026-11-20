@@ -147,6 +147,9 @@ noncomputable def sheafHFilteredColimitSuccIota
   hc'.desc (sheafHFilteredColimitSuccIotaCocone Y')
 
 theorem sheafH_filtered_colimit_succ_iota_fac
+    {X : TopCat.{u}} {J' : Type u} [SmallCategory J']
+    (Y' : J' ⥤ TopCat.Sheaf AddCommGrpCat.{u} X)
+    [Zero (TopCat.Sheaf AddCommGrpCat.{u} X)]
     (c' : Cocone Y') (hc' : IsColimit c') (j : J') :
     c'.ι.app j ≫ sheafHFilteredColimitSuccIota Y' c' hc' =
       (sheafHFilteredColimitSuccEta Y').app j ≫
@@ -190,7 +193,9 @@ noncomputable def sheafHFilteredColimitSuccQuotient :
         (Y'.map f) ((sheafHFilteredColimitSuccInj Y').map f)
         ((sheafHFilteredColimitSuccEta Y').naturality f).symm
     map_id := fun j ↦ by aesop_cat
-    map_comp := fun {j j' j''} f g ↦ by ext; simp [cokernel.map, Functor.map_comp] }
+    map_comp := fun {j j' j''} f g ↦ by
+      apply (cancel_epi (cokernel.π ((sheafHFilteredColimitSuccEta Y').app j))).mp
+      simp [cokernel.map, Functor.map_comp, Category.assoc] }
 
 attribute [local implicit_reducible] sheafHFilteredColimitSuccQuotient
 

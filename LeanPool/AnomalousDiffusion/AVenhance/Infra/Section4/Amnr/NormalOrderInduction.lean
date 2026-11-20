@@ -40,7 +40,7 @@ theorem amnr_normal_order_family_abs_le_of_canonical_bounds
         amnrNormalOrderConstant N Cb q * amnrNormalFieldAmplitude F Cb H a * amnrWeight S H w := by
     intro q
     induction q using Nat.strong_induction_on with
-    | h q ih =>
+    | ind q ih =>
       intro hq
       cases q with
       | zero =>
@@ -65,7 +65,7 @@ theorem amnr_normal_order_family_abs_le_of_canonical_bounds
               amnrNormalFieldAmplitude F Cb H a * amnrWeight S H w * R ^ r := by
           intro r
           induction r using Nat.strong_induction_on with
-          | h r hir =>
+          | ind r hir =>
             intro a w hInv hw hc
             rcases amnrWord_mixed_or_adjacent w with hm | ⟨u, i, v, heq⟩
             · obtain ⟨α, n, heq⟩ := IsAmnrMixedWord.normalForm hm

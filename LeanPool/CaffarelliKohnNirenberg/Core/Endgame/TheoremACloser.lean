@@ -583,7 +583,7 @@ theorem theoremA_clipped_growth_of_carrier_morrey {κ R₁ : ℝ} {Dp : Paraboli
   rw [cylinderPowerIntegral_carrier_eq (by norm_num) hQm,
     parabolicCylinder_inter_origin_eq_prod] at hbound
   convert hbound using 1
-  simp only [Real.enorm_eq_ofReal_abs]
+  simp only [Real.eNorm_eq_ofReal_abs]
   rfl
 
 section FullSumAssembly

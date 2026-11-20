@@ -57,8 +57,8 @@ theorem filteredCoordinateSpace_finrank_eq_standard_card {K σ : Type*} [Field K
     apply sub_eq_zero.mp
     apply Ideal.eq_zero_of_mem_restrictSupport_standardExponents I MonomialOrder.degLex
     · apply Submodule.sub_mem
-      · exact restrictSupport_mono K (fun _ ha => ha.1) f.property
-      · exact restrictSupport_mono K (fun _ ha => ha.1) g.property
+      · exact restrictSupport_mono K (fun _ => And.left) f.property
+      · exact restrictSupport_mono K (fun _ => And.left) g.property
     · apply Ideal.Quotient.eq_zero_iff_mem.mp
       change (Ideal.Quotient.mkₐ K I) (f.val - g.val) = 0
       rw [map_sub, sub_eq_zero]

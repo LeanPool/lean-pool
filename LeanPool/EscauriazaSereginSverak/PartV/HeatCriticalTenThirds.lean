@@ -131,7 +131,7 @@ theorem eLpNorm_ofReal_le_of_lintegral_le {α E : Type*} [MeasurableSpace α]
     (h : ∫⁻ x, ‖f x‖ₑ ^ p ∂μ ≤ K * Y ^ p) :
     eLpNorm f (ENNReal.ofReal p) μ ≤ K ^ (1 / p) * Y := by
   rw [eLpNorm_eq_eLpNorm' (by simpa using hp) ENNReal.ofReal_ne_top hf,
-    eLpNorm'_eq_lintegral_enorm, ENNReal.toReal_ofReal hp.le]
+    eLpNorm'_eq_lintegral_eNorm, ENNReal.toReal_ofReal hp.le]
   calc
     (∫⁻ x, ‖f x‖ₑ ^ p ∂μ) ^ (1 / p) ≤ (K * Y ^ p) ^ (1 / p) :=
       ENNReal.rpow_le_rpow h (by positivity)
@@ -176,7 +176,7 @@ theorem heatComponent_tenThirds_slice {b : Vec3 → Vec3}
   have hL : ∫⁻ x : Vec3, ‖heatConvVec3 t b x i‖ₑ ^ (10 / 3 : ℝ) =
       eLpNorm H.toFun (ENNReal.ofReal (10 / 3 : ℝ)) volume ^ (10 / 3 : ℝ) := by
     rw [eLpNorm_eq_eLpNorm' (by norm_num) ENNReal.ofReal_ne_top hmeas,
-      eLpNorm'_eq_lintegral_enorm, ENNReal.toReal_ofReal (by norm_num),
+      eLpNorm'_eq_lintegral_eNorm, ENNReal.toReal_ofReal (by norm_num),
       ← ENNReal.rpow_mul]
     norm_num
     rfl
@@ -218,7 +218,7 @@ theorem lintegral_enorm_rpow_eq_eLpNorm_rpow {α E : Type*} [MeasurableSpace α]
     (hf : AEStronglyMeasurable f μ) :
     ∫⁻ x, ‖f x‖ₑ ^ p ∂μ = eLpNorm f (ENNReal.ofReal p) μ ^ p := by
   rw [eLpNorm_eq_eLpNorm' (by simpa using hp) ENNReal.ofReal_ne_top hf,
-    eLpNorm'_eq_lintegral_enorm, ENNReal.toReal_ofReal hp.le, ← ENNReal.rpow_mul,
+    eLpNorm'_eq_lintegral_eNorm, ENNReal.toReal_ofReal hp.le, ← ENNReal.rpow_mul,
     one_div_mul_cancel hp.ne', ENNReal.rpow_one]
 
 private theorem enorm_rpow_le_sum_component (v : Vec3) (r : ℝ) :
@@ -226,7 +226,7 @@ private theorem enorm_rpow_le_sum_component (v : Vec3) (r : ℝ) :
   obtain ⟨k, -, hk⟩ := Finset.exists_mem_eq_sup Finset.univ Finset.univ_nonempty
     (fun i => ‖v i‖₊)
   have hv : ‖v‖ₑ = ‖v k‖ₑ := by
-    rw [enorm_eq_nnnorm, enorm_eq_nnnorm, Pi.nnnorm_def, hk]
+    rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, Pi.nnNorm_def, hk]
   rw [hv]
   exact Finset.single_le_sum (f := fun i => ‖v i‖ₑ ^ r)
     (fun i _ => bot_le) (Finset.mem_univ k)
@@ -287,7 +287,7 @@ theorem heatOrbit_tenThirds_lintegral_smooth {b : Vec3 → Vec3}
   have hm := heatOrbit_aestronglyMeasurable_smooth hb hbc τ
   have hcomp (i : Fin 3) : AEMeasurable
       (fun z => ‖heatOrbit b z i‖ₑ ^ (10 / 3 : ℝ)) (volume.restrict Q) :=
-    ((continuous_apply i).comp_aestronglyMeasurable hm).aemeasurable.enorm.pow_const _
+    ((continuous_apply i).comp_aestronglyMeasurable hm).aemeasurable.eNorm.pow_const _
   have hsqInt {t : ℝ} (ht : 0 < t) (k : Fin 3) :
       Integrable (fun x => (heatConvVec3 t b x k) ^ 2) volume := by
     have hmem : MemLp (fun x => heatConvVec3 t b x k) 2 volume :=

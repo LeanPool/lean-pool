@@ -105,8 +105,8 @@ theorem hasStrictFDerivAt_acceleration_zero {C : E → Coeff} {p : E}
     (hC : ContDiffAt ℝ 1 C p) (σ : ℝ) :
     HasStrictFDerivAt (𝕜 := ℝ) (fun z : Phase ↦ -σ • K (C z.1) z.2 z.2) 0 (p, 0) := by
   have hc (i : Fin 4) := (hasStrictFDerivAt_apply (𝕜 := ℝ) i (C p)).comp (p, (0 : E))
-    ((hC.hasStrictFDerivAt one_ne_zero).comp (p, (0 : E)) (hasStrictFDerivAt_fst (𝕜 := ℝ) (p :=
-        (p, (0 : E)))))
+    ((hC.hasStrictFDerivAt_fderiv one_ne_zero).comp (p, (0 : E))
+      (hasStrictFDerivAt_fst (𝕜 := ℝ) (p := (p, (0 : E)))))
   have hu (j : Fin 2) := (PiLp.hasStrictFDerivAt_apply (𝕜 := ℝ) 2 (0 : E) j).comp
     (p, (0 : E)) (hasStrictFDerivAt_snd (𝕜 := ℝ) (p := (p, (0 : E))))
   have hterm (i : Fin 4) (j k : Fin 2) :

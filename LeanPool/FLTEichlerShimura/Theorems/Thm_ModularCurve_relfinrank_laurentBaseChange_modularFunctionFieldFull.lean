@@ -269,9 +269,9 @@ theorem linearIndependent_pow_mul (ht : t ∈ F₀) (htr : Transcendental ℚ t)
   · simpa using hco
   · intro q _ hqp
     by_cases h2 : q.2 = p.2
-    · rw [ite_eq_left h2, coeff_monomial, ite_eq_right]
+    · rw [ite_eq_left h2, coeff_monomial, Finsupp.single_eq_of_ne]
       intro h1
-      exact hqp (Prod.ext h1 h2)
+      exact hqp (Prod.ext h1.symm h2)
     · rw [ite_eq_right h2, coeff_zero]
   · intro hpS
     exact absurd hp hpS

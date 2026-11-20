@@ -217,8 +217,10 @@ theorem goodLambdaCombinedEnergy_eq_tail_transfer
           simpa only [ite_eq_right hyA', ite_eq_right hyC'] using
             (combined_sq_le_tail_split (a := ‖f y‖) (b := ‖g y‖) hε hlevel
               (norm_nonneg _) (norm_nonneg _))
-    · rw [Set.indicator_of_notMem hyB, Set.indicator_of_notMem (fun h => hyB h.2),
-        Set.indicator_of_notMem (fun h => hyB h.2), Set.indicator_of_notMem hyB]
+    · rw [Set.indicator_of_notMem hyB,
+        Set.indicator_of_notMem (fun (h : y ∈ A ∩ B) => hyB h.2),
+        Set.indicator_of_notMem (fun (h : y ∈ C ∩ B) => hyB h.2),
+        Set.indicator_of_notMem hyB]
       positivity
   have hfTail : Integrable ((A ∩ B).indicator (fun y => ‖f y‖ ^ (2 : ℕ))) volume :=
     hfi.integrableOn.integrable_indicator₀ hAB

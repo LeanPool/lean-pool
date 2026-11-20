@@ -88,7 +88,7 @@ theorem drivenVolterra_noise_gronwall_identity (L : ℝ≥0) (δ t : ℝ) :
   · simp [gronwallBound, hL]
   · rw [gronwallBound_of_K_ne_0 hL]
     field_simp
-   ; ring
+    ring
 
 theorem drivenVolterra_lipschitz_stability_exp (b : E → E) (L : ℝ≥0) (hb : LipschitzWith L b)
     (x : E) (N M X Y : ℝ → E) (hX : Continuous X) (hY : Continuous Y)

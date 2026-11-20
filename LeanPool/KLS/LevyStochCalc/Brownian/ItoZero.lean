@@ -70,7 +70,7 @@ theorem stochasticIntegralBrownian_ae_zero
     have hmeas : AEMeasurable (fun ω => (‖stochasticIntegralBrownian W ℱ hℱ
         (fun _ _ => (0 : ℝ)) hm hp hq t ω‖₊ : ℝ≥0∞) ^ 2) P :=
       ((((stochasticIntegralBrownian_stronglyAdapted W ℱ hℱ _ hm hp hq t).mono
-        (ℱ.le t)).measurable.nnnorm.coe_nnreal_ennreal).pow_const 2).aemeasurable
+        (ℱ.le t)).measurable.nnNorm.coe_nnreal_ennreal).pow_const 2).aemeasurable
     have hzero := (MeasureTheory.lintegral_eq_zero_iff' hmeas).mp hiso
     filter_upwards [hzero] with ω hω
     have : (‖stochasticIntegralBrownian W ℱ hℱ (fun _ _ => (0 : ℝ)) hm hp hq t ω‖₊ : ℝ≥0∞) = 0 := by

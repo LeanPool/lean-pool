@@ -66,7 +66,7 @@ variable {E : Type*} [NormedAddCommGroup E] [MeasurableSpace E] [BorelSpace E]
 lower integral. This includes real laws and needs no Hilbert or finite-dimensional structure. -/
 theorem memLp_id_two_iff_lintegral_enorm_rpow_lt_top (ν : Measure E) :
     MemLp (id : E → E) 2 ν ↔ ∫⁻ x, ‖x‖ₑ ^ (2 : ℝ) ∂ν < ⊤ := by
-  have h := eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (f := (id : E → E)) (μ := ν)
+  have h := eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (f := (id : E → E)) (μ := ν)
     (p := 2) two_ne_zero ENNReal.ofNat_ne_top aestronglyMeasurable_id
   simp only [id_eq, ENNReal.toReal_ofNat] at h
   rw [memLp_iff]

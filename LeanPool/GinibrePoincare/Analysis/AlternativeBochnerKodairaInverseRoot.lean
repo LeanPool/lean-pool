@@ -69,9 +69,9 @@ theorem bkFinite_inverse_first_energy (n : ℕ) (hn : 0 < n)
   have hp : (positiveAntiCoefficients c).support ⊆ c.support := by
     intro pq hpq
     rw [Finsupp.mem_support_iff] at hpq ⊢
-    contrapose! hpq
-    simp only [positiveAntiCoefficients, Finsupp.filter_apply]
-    split_ifs <;> first | exact hpq | rfl
+    intro hzero
+    apply hpq
+    simp [positiveAntiCoefficients, Finsupp.filter_apply, hzero]
   unfold finiteDbarEnergy
   rw [Finsupp.sum_of_support_subset _ hs _ (by simp),
     Finsupp.sum_of_support_subset _ hp _ (by simp)]

@@ -41,14 +41,14 @@ theorem bounded_ball_kernel_enorm_le_maximal
       ENNReal.ofReal (4 * C) * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by
   have hden : ENNReal.ofReal (2 * ρ) ≠ 0 := ENNReal.ofReal_ne_zero_iff.mpr (by positivity)
   calc
-    _ ≤ ∫⁻ y, ‖K (x - y) * f y‖ₑ := enorm_integral_le_lintegral_enorm _
+    _ ≤ ∫⁻ y, ‖K (x - y) * f y‖ₑ := eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y in closedBall x ρ, ENNReal.ofReal (C / ρ) * ‖f y‖ₑ := by
       rw [← lintegral_indicator measurableSet_closedBall]
       apply lintegral_mono
       intro y
       dsimp only
       by_cases hy : y ∈ closedBall x ρ
-      · rw [indicator_of_mem hy, enorm_mul]
+      · rw [indicator_of_mem hy, eNorm_mul]
         apply mul_le_mul' ?_ le_rfl
         simpa only [← ofReal_norm] using ENNReal.ofReal_le_ofReal (hb (x - y))
       · rw [indicator_of_notMem hy]
@@ -160,14 +160,14 @@ theorem quadraticHilbertTrunc_enorm_le_oscillatory
   rw [quadraticHilbertTrunc_eq_oscillatory_reduction lam ε hlam hε hερ f x]
   change ‖O + E + A - D + S‖ₑ ≤ ‖O‖ₑ + 2 * H + maximalErrorConstant * M
   calc
-    _ ≤ ‖O + E + A - D‖ₑ + ‖S‖ₑ := enorm_add_le _ _
-    _ ≤ (‖O + E + A‖ₑ + ‖D‖ₑ) + ‖S‖ₑ := add_le_add enorm_sub_le le_rfl
+    _ ≤ ‖O + E + A - D‖ₑ + ‖S‖ₑ := eNorm_add_le _ _
+    _ ≤ (‖O + E + A‖ₑ + ‖D‖ₑ) + ‖S‖ₑ := add_le_add eNorm_sub_le le_rfl
     _ ≤ ((‖O + E‖ₑ + ‖A‖ₑ) + ‖D‖ₑ) + ‖S‖ₑ := by
       gcongr
-      exact enorm_add_le _ _
+      exact eNorm_add_le _ _
     _ ≤ (((‖O‖ₑ + ‖E‖ₑ) + ‖A‖ₑ) + ‖D‖ₑ) + ‖S‖ₑ := by
       gcongr
-      exact enorm_add_le _ _
+      exact eNorm_add_le _ _
     _ ≤ (((‖O‖ₑ + 8 * M) + H) + H) + ENNReal.ofReal (8 * Real.pi) * M := by gcongr
     _ = _ := by unfold maximalErrorConstant; ring
 

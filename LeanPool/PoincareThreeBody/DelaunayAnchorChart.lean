@@ -657,7 +657,7 @@ theorem map_delaunayAnchorChart_nhds :
   rw [← delaunayAnchorChart_anchor]
   have hsmooth : ContDiffAt ℝ 1 delaunayAnchorChart delaunayAnchorParameters :=
     analyticAt_delaunayAnchorChart.contDiffAt
-  apply (hsmooth.hasStrictFDerivAt (by norm_num)).map_nhds_eq_of_surj
+  apply (hsmooth.hasStrictFDerivAt_fderiv (by norm_num)).map_nhds_eq_of_surj
   exact LinearMap.range_eq_top.mpr surjective_fderiv_delaunayAnchorChart
 
 /-- Every sufficiently nearby phase point has a chart preimage in any prescribed parameter

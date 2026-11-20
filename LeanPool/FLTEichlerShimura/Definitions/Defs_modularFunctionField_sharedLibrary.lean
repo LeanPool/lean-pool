@@ -948,7 +948,7 @@ private theorem slot_factorization : ∀ (M : ℕ) [NeZero M] (ζ : Kˣ),
     IsPrimitiveRoot (ζ : K) M → LevelData k M → SlotFactorization ι M ζ := by
   intro M
   induction M using Nat.strong_induction_on with
-  | h M IH =>
+  | ind M IH =>
     intro _ ζ hζ hall
     exact factorization_of_slot_roots ι ζ hζ hall
       (isRoot_slot_of_induction ι ζ hζ hall IH)

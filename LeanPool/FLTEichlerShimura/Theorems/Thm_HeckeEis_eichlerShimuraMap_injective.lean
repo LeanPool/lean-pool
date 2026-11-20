@@ -209,7 +209,7 @@ theorem solution (N : ℕ) [NeZero N] (n : ℕ) :
     fun δ => hEI₁.slash δ
   have hRR : ∀ (δ : SL(2, ℤ)) (τ : ℍ), R δ (Gδ δ τ) = F₁ (δ • τ) := fun δ τ => by
     simp only [hGδ]
-    rw [← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one, Module.End.one_apply]
+    rw [← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one, one_apply_eq_self]
   have hslash : ∀ (δ : SL(2, ℤ)) (τ : ℍ), (P ∣[-(n : ℤ)] δ) τ
       = MvPolynomial.eval ![(1 : ℂ), -(τ : ℂ)] ((Gδ δ τ : ↥(BinaryForm ℂ n)) : MvPolynomial (Fin 2)
         ℂ) := by
@@ -225,8 +225,8 @@ theorem solution (N : ℕ) [NeZero N] (n : ℕ) :
     funext τ
     rw [hslash γ τ, hP]
     simp only [hGδ]
-    rw [hEq γ hγ τ, ← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one,
-      Module.End.one_apply]
+    rw [hEq γ hγ τ, ← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one,
+      one_apply_eq_self]
   have hhol : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) P := mdifferentiable_eval hEI₁
   have hNpos : (0 : ℤ) < (N : ℤ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
   have hbdd : ∀ δ : SL(2, ℤ), IsBoundedAtImInfty (P ∣[-(n : ℤ)] δ) := by
@@ -254,7 +254,7 @@ theorem solution (N : ℕ) [NeZero N] (n : ℕ) :
         congr 1
         group
       rw [hpt] at h1
-      rw [h1, ← Module.End.mul_apply, ← map_mul, ← Module.End.mul_apply, ← map_mul]
+      rw [h1, ← mul_apply_eq_comp, ← map_mul, ← mul_apply_eq_comp, ← map_mul]
       congr 2
       group
     exact (hGδEI δ).isBoundedAtImInfty_eval hNpos hgper hghol hgbdd hT

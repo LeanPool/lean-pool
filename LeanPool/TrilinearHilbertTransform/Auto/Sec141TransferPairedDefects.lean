@@ -151,7 +151,7 @@ section TransferStep
 variable {E : Type*} [AddCommGroup E] [Module ℂ E]
 
 /-- A four-linear form as a bilinear form in two distinct slots, the other slots fixed. -/
-def bilinTwo (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {a c : Fin 4}
+def bilinTwo (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {a c : Fin 4}
     (hac : a ≠ c) (x : Fin 4 → E) : E →ₗ[ℂ] E →ₗ[ℂ] ℂ :=
   LinearMap.mk₂ ℂ (fun u v => Λ (Function.update (Function.update x a u) c v))
     (fun u u' v => by
@@ -163,14 +163,15 @@ def bilinTwo (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {a c : Fin 4}
     (fun u v v' => Λ.map_update_add (Function.update x a u) c v v')
     (fun t u v => Λ.map_update_smul (Function.update x a u) c t v)
 
-theorem bilinTwo_apply (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {a c : Fin 4}
+theorem bilinTwo_apply (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {a c : Fin 4}
     (hac : a ≠ c) (x : Fin 4 → E) (u v : E) :
     bilinTwo Λ hac x u v = Λ (Function.update (Function.update x a u) c v) := rfl
 
 /-- Blueprint `eq:transfer` (line 2252) for a four-linear form: transferring the averaged filter
 of the complement slot `c` to the helper average on the side slot `a` changes the form by the band
 sum `Σ_{p,q} ((p - q)/P) H(A_p^a x_a, A_q^c x_c)`. -/
-theorem transfer_step (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {a c : Fin 4} (hac : a ≠ c)
+theorem transfer_step
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {a c : Fin 4} (hac : a ≠ c)
     (x : Fin 4 → E) (Qa Qc : ℕ → E →ₗ[ℂ] E) {P : ℕ} (hP : 0 < P)
     (ha0 : Qa 0 = 0) (hc0 : Qc 0 = 0) (haP : Qa (P + 1) = LinearMap.id)
     (hcP : Qc (P + 1) = LinearMap.id) :
@@ -228,7 +229,7 @@ noncomputable def chainSide (P : ℕ) : List (TransferStep E) → E → E
   | st :: rest, x => chainSide P rest (filterAvg P st.2.1 x)
 
 /-- The band defects of all transfer steps. -/
-noncomputable def chainDefect (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P : ℕ)
+noncomputable def chainDefect (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) (P : ℕ)
     (a c d : Fin 4) (x : Fin 4 → E) (yc yd : E) : List (TransferStep E) → E → ℂ
   | [], _ => 0
   | st :: rest, xa =>
@@ -244,7 +245,8 @@ noncomputable def chainDefect (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ)
 B_d)`"): transferring the averaged filters of the two complement slots one at a time, each to a
 helper average on the side slot, the form of the side and the two complement chains is the form of
 the transferred side and the two bases plus the band defects of the steps. -/
-theorem transfer_chain (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {P : ℕ} (hP : 0 < P)
+theorem transfer_chain
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {P : ℕ} (hP : 0 < P)
     {a c d : Fin 4} (hac : a ≠ c) (had : a ≠ d) (hcd : c ≠ d) (x : Fin 4 → E) (yc yd : E) :
     ∀ (steps : List (TransferStep E)), (∀ st ∈ steps, st.2.1 0 = 0 ∧ st.2.2 0 = 0 ∧
         st.2.1 (P + 1) = LinearMap.id ∧ st.2.2 (P + 1) = LinearMap.id) → ∀ xa : E,
@@ -355,7 +357,7 @@ section ChainExpansion
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- A multilinear form is additive over a list sum in one slot. -/
-theorem multilinear_update_list_sum (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ)
+theorem multilinear_update_list_sum (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ)
     (x : Fin 4 → E) (c : Fin 4) (L : List E) :
     Λ (Function.update x c L.sum) = (L.map fun v => Λ (Function.update x c v)).sum := by
   induction L with
@@ -378,7 +380,8 @@ theorem apply_layerOp_eq (B : E →L[ℂ] E) (C : ℕ → E →L[ℂ] E) (ls : L
   simp [map_smul]
 
 /-- A multilinear form is biadditive over list sums in two distinct slots. -/
-theorem multilinear_update_two_sums (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {c d : Fin 4}
+theorem multilinear_update_two_sums
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {c d : Fin 4}
     (hcd : c ≠ d) (x : Fin 4 → E) {α β : Type*} (Lc : List α) (Ld : List β) (f : α → E)
     (g : β → E) :
     Λ (Function.update (Function.update x c (Lc.map f).sum) d (Ld.map g).sum) =
@@ -396,7 +399,7 @@ theorem multilinear_update_two_sums (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E
 positive average; there are only `2^{O(log L)}` products"): the form with whole layered outputs
 `B_c(ℬ_c y_c)`, `B_d(ℬ_d y_d)` in two slots is the signed sum, over the pairs of positive chains of
 the two histories, of the forms with the chain outputs. -/
-theorem form_layer_chains (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {c d : Fin 4}
+theorem form_layer_chains (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {c d : Fin 4}
     (hcd : c ≠ d) (x : Fin 4 → E) (Bc Bd : E →L[ℂ] E) (Cc Cd : ℕ → E →L[ℂ] E)
     (lc ld : List (ℕ × Bool)) (yc yd : E) :
     Λ (Function.update (Function.update x c (Bc (layerOp Cc lc yc))) d
@@ -408,8 +411,8 @@ theorem form_layer_chains (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {c 
     multilinear_update_two_sums Λ hcd]
   refine congrArg List.sum (List.map_congr_left fun t' _ => ?_)
   refine congrArg List.sum (List.map_congr_left fun t _ => ?_)
-  rw [Λ.map_update_smul, Function.update_comm hcd, Λ.map_update_smul, Function.update_comm hcd,
-    smul_eq_mul, smul_eq_mul]
+  rw [Λ.map_update_smul, RingHom.id_apply, Function.update_comm hcd, Λ.map_update_smul,
+    RingHom.id_apply, Function.update_comm hcd, smul_eq_mul, smul_eq_mul]
   ring
 
 end ChainExpansion
@@ -518,7 +521,8 @@ theorem filterAvg_padFam {P : ℕ} (Q : Fin P → E →L[ℂ] E) (x : E) :
 steps given by pad projections of complement filters (slot `c` or `d`) and helper projections on
 the identical masks (side slot `a`), the form of the side and the two averaged complement chains
 equals the form of the transferred side and the two bases plus the band defects. -/
-theorem pad_transfer_chain (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {P : ℕ} (hP : 0 < P)
+theorem pad_transfer_chain
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {P : ℕ} (hP : 0 < P)
     {a c d : Fin 4} (hac : a ≠ c) (had : a ≠ d) (hcd : c ≠ d) (x : Fin 4 → E) (yc yd : E)
     (steps : List (Bool × (Fin P → E →L[ℂ] E) × (Fin P → E →L[ℂ] E))) (xa : E) :
     Λ (Function.update (Function.update (Function.update x c
@@ -542,7 +546,8 @@ variable {E : Type*} [AddCommGroup E] [Module ℂ E]
 each correction has an additional basic side `U`"): with `Y = B + U` in two slots, the
 transferred main term is the form of the full pair minus the three corrections containing a
 basic side. -/
-theorem restore_two (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {c d : Fin 4} (hcd : c ≠ d)
+theorem restore_two
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {c d : Fin 4} (hcd : c ≠ d)
     (x : Fin 4 → E) (Bc Bd Uc Ud : E) :
     Λ (Function.update (Function.update x c Bc) d Bd) =
       Λ (Function.update (Function.update x c (Bc + Uc)) d (Bd + Ud)) -
@@ -900,7 +905,7 @@ theorem cellForm_pairs_le {G : RealDyadicGrid} {I : ℤ × ℤ} {κ : LocalKerne
     rw [← hXu, Function.update_eq_self]
   rw [hXe, Λ.map_update_sum, mul_assoc, Finset.sum_mul, Finset.mul_sum]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun m hm => ?_)
-  rw [Λ.map_update_smul, smul_eq_mul, norm_mul]
+  rw [Λ.map_update_smul, RingHom.id_apply, smul_eq_mul, norm_mul]
   have h := cellForm_pair_le hwI hut hua hub hta htb hab F' c' col Y hcol (Ys m) (hsep m hm)
     (Function.update X u (src m)) (by rw [Function.update_self]; exact hsrc m hm)
     (by rw [Function.update_of_ne hut.symm]; exact hXt) hSa hSb
@@ -957,7 +962,7 @@ theorem CellPass.form_band_le {c₀ : ℕ} {H : ℝ} {tagOf : Tg → ChartTag} {
     rw [← hXu, Function.update_eq_self]
   rw [hXe, Λ.map_update_sum, Finset.sum_mul]
   refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun m hm => ?_)
-  rw [Λ.map_update_smul, smul_eq_mul, norm_mul]
+  rw [Λ.map_update_smul, RingHom.id_apply, smul_eq_mul, norm_mul]
   refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
   obtain ⟨A, hA, hAθ, hAM, hAq, hAe⟩ := hsrc m hm
   set Y := Function.update X u (src m)
@@ -1571,7 +1576,7 @@ variable {E : Type*} [AddCommGroup E] [Module ℂ E]
 
 /-- The band defects of the transfer steps restricted to the band pairs `(p, q)` selected by
 `sel` (the near pairs `|p - q| ≤ 2` or the far pairs). -/
-noncomputable def chainDefectSel (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P : ℕ)
+noncomputable def chainDefectSel (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) (P : ℕ)
     (a c d : Fin 4) (x : Fin 4 → E) (yc yd : E) (sel : ℕ → ℕ → Prop) [DecidableRel sel] :
     List (TransferStep E) → E → ℂ
   | [], _ => 0
@@ -1592,7 +1597,8 @@ variable {E : Type*} [AddCommGroup E] [Module ℂ E]
 /-- If every selected band term of every step (with the side value of the earlier steps) is at
 most `B`, the selected defects are at most `#steps (P + 1)² B` (the transfer coefficients
 `(p - q) / P` have modulus at most one). -/
-theorem chainDefectSel_le (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {P : ℕ} (hP : 0 < P)
+theorem chainDefectSel_le
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {P : ℕ} (hP : 0 < P)
     (a c d : Fin 4) (x : Fin 4 → E) (yc yd : E) (sel : ℕ → ℕ → Prop) [DecidableRel sel]
     {B : ℝ} (hB0 : 0 ≤ B) :
     ∀ (steps : List (TransferStep E)) (xa : E),
@@ -2679,7 +2685,7 @@ variable {E : Type*} [AddCommGroup E] [Module ℂ E]
 
 /-- Blueprint line 2252 ("only `|p - q| ≤ 2` must be retained"): the band defects split into the
 band pairs selected by `sel` and the remaining ones. -/
-theorem chainDefect_split (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P : ℕ)
+theorem chainDefect_split (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) (P : ℕ)
     (a c d : Fin 4) (x : Fin 4 → E) (yc yd : E) (sel : ℕ → ℕ → Prop) [DecidableRel sel] :
     ∀ (steps : List (TransferStep E)) (xa : E),
       chainDefect Λ P a c d x yc yd steps xa =

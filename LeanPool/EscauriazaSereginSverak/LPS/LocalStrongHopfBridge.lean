@@ -101,15 +101,15 @@ theorem lps_strong_solution_is_leray_hopf
   · -- joint square integrability
     have h1 : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 (T - t₀)),
         ‖u (z.1, t₀ + z.2)‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      have := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
+      have := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
         (by norm_num) (by norm_num) hU2
       simpa using this
     have h2 : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 (T - t₀)),
         ‖(fun i => Du (z.1, t₀ + z.2) i : Fin 3 → Vec3)‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      have := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
+      have := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
         (by norm_num) (by norm_num) hDU2
       simpa using this
-    rw [lintegral_add_left' (hU2.aestronglyMeasurable.enorm.pow_const _)]
+    rw [lintegral_add_left' (hU2.aestronglyMeasurable.eNorm.pow_const _)]
     exact ENNReal.add_lt_top.2 ⟨h1, h2⟩
   · -- weak gradients
     rw [ae_restrict_iff' measurableSet_Ioo]

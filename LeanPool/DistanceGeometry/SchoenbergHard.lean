@@ -109,7 +109,7 @@ private theorem scatter_conjTranspose_mul_self (ι : {r : Fin n // p r} ↪ Fin 
     (scatter ι)ᴴ * scatter ι = diagonal (fun r => if p r then (1 : ℝ) else 0) := by
   classical
   ext r r'
-  rw [mul_apply]
+  rw [Matrix.mul_apply]
   simp only [conjTranspose_apply, scatter, star_trivial, diagonal_apply]
   by_cases hr : p r
   · by_cases hr' : p r'
@@ -213,7 +213,7 @@ theorem schoenberg_hard
         (WithLp.toLp 2 (Mᵀ b) : EuclideanSpace ℝ (Fin k))⟫ = G a b := by
     intro a b
     -- `⟪col a, col b⟫ = ∑ t, M t a * M t b = (Mᴴ * M) a b = G a b`
-    rw [← hM, mul_apply]
+    rw [← hM, Matrix.mul_apply]
     simp only [PiLp.inner_apply, transpose_apply, conjTranspose_apply, star_trivial]
     refine Finset.sum_congr rfl (fun t _ => ?_)
     calc (inner ℝ (M t a) (M t b) : ℝ) = (starRingEnd ℝ) (M t a) * M t b :=

@@ -72,7 +72,7 @@ theorem potentialPartition_weightedMonomial_memLp (n : ℕ) (hn : 0 < n) {V : Po
     MemLp (fun z : ℂ => z ^ i.val * planarPotentialHalfWeight n V z) 2 volume := by
   have hmass := (rawPotentialKostlanCoordinateLaw_mass_valid n hn hV hr hfin i).2
   rw [rawPotentialKostlanCoordinateLaw_eq_volume n i.val hn hV,
-    Measure.smul_apply, smul_eq_mul] at hmass
+    smul_apply, smul_eq_mul] at hmass
   have hc : ENNReal.ofReal ((n : ℝ) / Real.pi) ≠ 0 :=
     (ENNReal.ofReal_pos.mpr (by positivity)).ne'
   have hpoly : ((potentialPolynomialVolume i.val).withDensity

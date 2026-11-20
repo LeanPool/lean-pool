@@ -198,7 +198,7 @@ theorem clairaut_fderiv {n : ℕ} (g : (Fin n → ℝ) → ℝ) (x : Fin n → �
     (i j : Fin n) (hg : ContDiff ℝ 2 g) :
     fderiv ℝ (fun y => fderiv ℝ g y (Pi.single j 1)) x (Pi.single i 1) =
     fderiv ℝ (fun y => fderiv ℝ g y (Pi.single i 1)) x (Pi.single j 1) := by
-  have hsymm := (hg.contDiffAt (x := x)).isSymmSndFDerivAt (by norm_num [minSmoothness])
+  have hsymm := (hg.contDiffAt (x := x)).isSymmSndFDerivAt (by simp)
   have hd : DifferentiableAt ℝ (fderiv ℝ g) x :=
     ((hg.contDiffAt (x := x)).fderiv_right (le_refl _)).differentiableAt one_ne_zero
   have key : ∀ v w, fderiv ℝ (fun y => fderiv ℝ g y v) x w = fderiv ℝ (fderiv ℝ g) x w v := by
@@ -256,7 +256,7 @@ theorem torus_hSpatialPos (g : Torus3 → ℝ) (hg_pos : ∀ x, 0 < g x)
     0 < ∫ x, g x := by
   have h1 : Integrable g :=
     hg_cont.integrable_of_hasCompactSupport (HasCompactSupport.of_compactSpace g)
-  exact integral_pos_of_integrable_nonneg_nonzero hg_cont h1
+  exact integral_pos_of_integrable_nonneg_ne_zero hg_cont h1
     (fun x => le_of_lt (hg_pos x)) (ne_of_gt (hg_pos default))
 
 /-- hSpatialNonnegZero: nonneg function with zero integral is zero. -/

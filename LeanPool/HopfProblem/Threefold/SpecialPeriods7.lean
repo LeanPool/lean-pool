@@ -1922,12 +1922,14 @@ private def
   contMDiffOn_toFun := by
     rw [modelWithCornersSelf_prod]
     exact
-      (e.contMDiffOn_toFun.comp contMDiff_fst.contMDiffOn (fun _ hx => hx.1)).prodMk
+      (e.contMDiffOn_toFun.comp (s := e.source ×ˢ Set.univ) contMDiff_fst.contMDiffOn
+        (fun _ hx => hx.1)).prodMk
         contMDiff_snd.contMDiffOn
   contMDiffOn_invFun := by
     rw [modelWithCornersSelf_prod]
     exact
-      (e.contMDiffOn_invFun.comp contMDiff_fst.contMDiffOn (fun _ hx => hx.1)).prodMk
+      (e.contMDiffOn_invFun.comp (s := e.target ×ˢ Set.univ) contMDiff_fst.contMDiffOn
+        (fun _ hx => hx.1)).prodMk
         contMDiff_snd.contMDiffOn
 
 attribute [local instance] SpecialPeriods.EllipticFilling.coveringChartedSpace

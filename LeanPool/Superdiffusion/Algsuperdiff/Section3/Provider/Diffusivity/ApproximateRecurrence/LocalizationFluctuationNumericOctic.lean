@@ -317,7 +317,7 @@ theorem volumeAverage_vecNormSq_pow_four_le_ratio_mul {K : ℤ} {R : TriadicCube
   have hmono : ∫ x in openCubeSet R, vecNormSq (u x) ^ (4 : ℕ) ∂volume ≤
       ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ (4 : ℕ) ∂volume :=
     setIntegral_mono_set height
-      (Filter.Eventually.of_forall fun _ => by positivity) hsub.eventuallyLE
+      (Filter.Eventually.of_forall fun _ => by positivity) hsub.eventuallySubset
   have hcancel : (volume (openCubeSet (originCube d K))).toReal *
       volumeAverage (openCubeSet (originCube d K)) (fun x => vecNormSq (u x) ^ (4 : ℕ)) =
         ∫ x in openCubeSet (originCube d K), vecNormSq (u x) ^ (4 : ℕ) ∂volume := by

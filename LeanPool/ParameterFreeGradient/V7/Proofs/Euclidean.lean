@@ -187,7 +187,7 @@ private theorem theta_eq_stage9 (data : OGMGData d n)
   have hpos : ∀ i, 1 ≤ i → i ≤ n →
       data.theta i = O3.stage9Theta n i := by
     intro i hi hin
-    refine Nat.decreasingInduction' (P := fun j =>
+    refine Nat.decreasingInduction' (motive := fun j =>
       data.theta j = O3.stage9Theta n j) (m := i) (n := n) ?_ hin hend
     intro k hkn hik ih
     have hk1 : 1 ≤ k := le_trans hi hik

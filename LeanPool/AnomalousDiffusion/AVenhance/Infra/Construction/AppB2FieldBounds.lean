@@ -46,7 +46,7 @@ theorem AppB2FieldBounds.derivativeSup_postCLM_le
   calc
     partialSup n (fun x => L (f x)) I ≤ partialSup n f I := by
       unfold partialSup
-      apply eLpNormEssSup_mono_enorm_ae
+      apply eLpNormEssSup_mono_eNorm_ae
       filter_upwards with x
       rw [hpartial I x]
       have hnorm : ‖L (orderedPartial n f x I)‖ ≤
@@ -57,7 +57,7 @@ theorem AppB2FieldBounds.derivativeSup_postCLM_le
           _ ≤ 1 * ‖orderedPartial n f x I‖ :=
             mul_le_mul_of_nonneg_right hL (norm_nonneg _)
           _ = ‖orderedPartial n f x I‖ := by ring
-      simpa [Real.enorm_eq_ofReal_abs] using ENNReal.ofReal_le_ofReal hnorm
+      simpa [Real.eNorm_eq_ofReal_abs] using ENNReal.ofReal_le_ofReal hnorm
     _ ≤ derivativeSup n f := le_iSup_of_le I le_rfl
 
 /-- Embed a scalar into the first coordinate of the stream vector. -/

@@ -228,7 +228,7 @@ omit [MeasurableSpace Omega] in
 /-- **Every single term is below the series** — unconditionally, in `ℝ≥0∞`. -/
 theorem le_wsumE (T : ℕ → Omega → ℝ) (c : ℕ → ℝ) (omega : Omega) (j : ℕ) :
     ENNReal.ofReal (c j * T j omega) ≤ wsumE T c omega :=
-  ENNReal.le_tsum (f := fun j => ENNReal.ofReal (c j * T j omega)) j
+  le_tsum (fun j => ENNReal.ofReal (c j * T j omega)) j
 
 /-- The partial sums of the weighted series. -/
 def wpartial (T : ℕ → Omega → ℝ) (c : ℕ → ℝ) (N : ℕ) (omega : Omega) : ℝ :=

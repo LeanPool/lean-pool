@@ -106,7 +106,7 @@ lemma memLp_phi_horizon {t : ℝ} (ht : 0 < t) :
   refine (ENNReal.rpow_lt_top_iff_of_pos (by norm_num : (0 : ℝ) < 2)).1 ?_
   rw [LevyStochCalc.Brownian.Ito.eLpNorm_sq_eq_lintegral_nnnorm_sq _ h_meas.aestronglyMeasurable,
     lintegral_horizonMeasure t (fun ω s e => (‖φ ω s e‖₊ : ℝ≥0∞) ^ 2)
-      ((ENNReal.continuous_coe.measurable.comp h_meas.nnnorm).pow_const 2)]
+      ((ENNReal.continuous_coe.measurable.comp h_meas.nnNorm).pow_const 2)]
   exact h_sq_int_global t ht
 
 include h_meas h_sq_int_global in
@@ -145,7 +145,7 @@ lemma stageEval_tendsto (t : ℝ) :
       set G := (master N ℱ φ h_meas h_progMeas h_sq_int_global n).2 with hG
       have hdm : Measurable (fun p : Ω × ℝ × E =>
           (‖φ p.1 p.2.1 p.2.2 - G.eval p.2.1 p.2.2 p.1‖₊ : ℝ≥0∞) ^ 2) :=
-        (ENNReal.continuous_coe.measurable.comp (h_meas.sub G.eval_measurable).nnnorm).pow_const 2
+        (ENNReal.continuous_coe.measurable.comp (h_meas.sub G.eval_measurable).nnNorm).pow_const 2
       calc eLpNorm (stageEval N ℱ φ h_meas h_progMeas h_sq_int_global n
             - fun p : Ω × ℝ × E => φ p.1 p.2.1 p.2.2) 2 (horizonMeasure ν P t) ^ (2 : ℝ)
           = ∫⁻ p, (‖(stageEval N ℱ φ h_meas h_progMeas h_sq_int_global n
@@ -159,7 +159,7 @@ lemma stageEval_tendsto (t : ℝ) :
             rw [← lintegral_horizonMeasure t
               (fun ω s e => (‖φ ω s e - G.eval s e ω‖₊ : ℝ≥0∞) ^ 2) hdm]
             refine lintegral_congr fun q => ?_
-            rw [Pi.sub_apply, ← nnnorm_neg, neg_sub]
+            rw [Pi.sub_apply, ← nnNorm_neg, neg_sub]
             rfl
         _ ≤ stageErr φ P n G := lintegral_mono fun ω =>
             lintegral_mono_set (Set.Icc_subset_Icc_right (hN₀.trans (stageHorizon_mono hn)))
@@ -188,7 +188,7 @@ lemma memLp_stageEval (n : ℕ) {t : ℝ} (ht : 0 ≤ t) :
   unfold stageEval
   set G := (master N ℱ φ h_meas h_progMeas h_sq_int_global n).2 with hG
   have hm : Measurable (fun p : Ω × ℝ × E => (‖G.eval p.2.1 p.2.2 p.1‖₊ : ℝ≥0∞) ^ 2) :=
-    (ENNReal.continuous_coe.measurable.comp G.eval_measurable.nnnorm).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp G.eval_measurable.nnNorm).pow_const 2
   rw [lintegral_horizonMeasure t (fun ω s e => (‖G.eval s e ω‖₊ : ℝ≥0∞) ^ 2) hm]
   have h1 := G.lintegral_integral_sq_at N hℱ (master_adapted N ℱ φ h_meas h_progMeas
     h_sq_int_global n)
@@ -241,14 +241,14 @@ lemma stage_compensator_tendsto_L1 (t : ℝ) :
       have hd : Integrable (fun p : Ω × ℝ × E =>
           (stageEval N ℱ φ h_meas h_progMeas h_sq_int_global n p) ^ 2 - (φ p.1 p.2.1 p.2.2) ^ 2)
           (horizonMeasure ν P t) := hGsq.sub hgsq
-      rw [eLpNorm_one_eq_lintegral_enorm
+      rw [eLpNorm_one_eq_lintegral_eNorm
           (f := fun ω => (master N ℱ φ h_meas h_progMeas h_sq_int_global n).2.compensator t ω
             - compensator ν φ t ω)
           (((master N ℱ φ h_meas h_progMeas h_sq_int_global n).2.integrable_compensator
             t).aestronglyMeasurable.sub
             (integrable_compensator φ h_meas h_sq_int_global t).aestronglyMeasurable),
-        eLpNorm_one_eq_lintegral_enorm hd.aestronglyMeasurable,
-        lintegral_prod _ hd.aestronglyMeasurable.enorm]
+        eLpNorm_one_eq_lintegral_eNorm hd.aestronglyMeasurable,
+        lintegral_prod _ hd.aestronglyMeasurable.eNorm]
       refine lintegral_mono_ae ?_
       filter_upwards [hGsq.prod_right_ae, hgsq.prod_right_ae] with ω hGω hgω
       have hcomb : (master N ℱ φ h_meas h_progMeas h_sq_int_global n).2.compensator t ω
@@ -258,7 +258,7 @@ lemma stage_compensator_tendsto_L1 (t : ℝ) :
         rw [integral_sub hGω hgω, integral_prod _ hGω, integral_prod _ hgω]
         rfl
       rw [hcomb]
-      exact enorm_integral_le_lintegral_enorm _
+      exact eNorm_integral_le_lintegral_eNorm _
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hjoint
       (Eventually.of_forall fun n => bot_le) (Eventually.of_forall hmarg)
 
@@ -319,7 +319,7 @@ lemma compensator_right_tendsto_L1 (s : ℝ) :
     filter_upwards [self_mem_nhdsWithin] with r hr
     have hsr : s ≤ r := hr.le
     have hint := (memLp_phi_horizon φ h_meas h_sq_int_global (hs.trans_lt hr)).integrable_sq
-    rw [eLpNorm_one_eq_lintegral_enorm
+    rw [eLpNorm_one_eq_lintegral_eNorm
       (f := fun ω => compensator ν φ r ω - compensator ν φ s ω)
       ((integrable_compensator φ h_meas h_sq_int_global r).aestronglyMeasurable.sub
         (integrable_compensator φ h_meas h_sq_int_global s).aestronglyMeasurable)]
@@ -335,12 +335,13 @@ lemma compensator_right_tendsto_L1 (s : ℝ) :
       hu.mono_measure (Measure.restrict_mono hsub le_rfl)
     have hsplit : compensator ν φ r ω - compensator ν φ s ω
         = ∫ u in Set.Ioc s r, ∫ e, (φ ω u e) ^ 2 ∂ν ∂volume := by
+      have hdisjoint : Disjoint (Set.Icc (0 : ℝ) s) (Set.Ioc s r) :=
+        (Set.Iic_disjoint_Ioc (c := r) (le_refl s)).mono Set.Icc_subset_Iic_self subset_rfl
       unfold compensator
-      rw [← Set.Icc_union_Ioc_eq_Icc hs hsr, setIntegral_union
-        (Set.disjoint_left.2 fun x hx hx' => not_le.2 hx'.1 hx.2) measurableSet_Ioc hus huc]
+      rw [← Set.Icc_union_Ioc_eq_Icc hs hsr, setIntegral_union hdisjoint measurableSet_Ioc hus huc]
       ring
     have hnn : ∀ u, 0 ≤ ∫ e, (φ ω u e) ^ 2 ∂ν := fun u => integral_nonneg fun _ => sq_nonneg _
-    rw [hsplit, Real.enorm_eq_ofReal (integral_nonneg fun u => hnn u),
+    rw [hsplit, Real.eNorm_eq_ofReal (integral_nonneg fun u => hnn u),
       ofReal_integral_eq_lintegral_ofReal huc (Eventually.of_forall hnn)]
     refine lintegral_congr_ae ?_
     have hae : ∀ᵐ u ∂(volume.restrict (Set.Ioc s r)), Integrable (fun e => (φ ω u e) ^ 2) ν :=

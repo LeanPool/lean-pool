@@ -165,7 +165,7 @@ theorem InnerAut.toMatrix [hφ : φ.IsFaithfulPosMap] (U : unitaryGroup n ℂ) :
       modAut,
       Module.Dual.IsFaithfulPosMap.inner_coord', Module.Dual.IsFaithfulPosMap.basis_repr_apply,
       Module.Dual.IsFaithfulPosMap.inner_coord']
-    simp only [mul_apply, single, mul_ite, ite_mul,
+    simp only [Matrix.mul_apply, single, mul_ite, ite_mul,
       MulZeroClass.mul_zero, MulZeroClass.zero_mul, one_mul, Finset.sum_ite_irrel,
       Finset.sum_ite_eq, Finset.sum_const_zero, Finset.mem_univ,
       ite_true, ite_and, kroneckerMap, of_apply, conj_apply, sig_apply, star_sum,

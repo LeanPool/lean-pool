@@ -109,7 +109,7 @@ private theorem integral_norm_rpow_one_sub_dim_ball {R : ℝ} (hR : 0 < R) :
           ite_false, mul_zero]
     rw [MeasureTheory.setIntegral_congr_fun measurableSet_Ioi hsupp]
     rw [MeasureTheory.integral_indicator measurableSet_Ioo]
-    simp [Measure.restrict_restrict, Set.inter_comm, Set.inter_eq_left.mpr Set.Ioo_subset_Ioi_self,
+    simp [Measure.restrict_restrict, Set.inter_eq_left.mpr Set.Ioo_subset_Ioi_self,
       smul_eq_mul, mul_one,
       Measure.real, Real.volume_Ioo, ENNReal.toReal_ofReal hR_nonneg]
   rw [hconv, hrad, h1d, hfin]
@@ -242,7 +242,7 @@ theorem integral_rieszKernel_ball_le
                   ≤ ∫ y in Metric.ball x (2 * R), rieszKernel x y ∂MeasureTheory.volume := by
                       apply MeasureTheory.setIntegral_mono_set hinteg
                       · exact Filter.Eventually.of_forall (fun y => rieszKernel_nonneg x y)
-                      · exact hBsub.eventuallyLE
+                      · exact (Filter.Eventually.of_forall hBsub)
               _ = ∫ z in Metric.ball (0 : Vec d) (2 * R), ‖z‖ ^ (1 - (d : ℝ))
                 ∂MeasureTheory.volume :=
                     htrans
@@ -300,7 +300,7 @@ theorem IsBoundedDomain.integral_rieszKernel_le
         ≤ ∫ y in Metric.ball (0 : Vec d) (2 * C), rieszKernel x y ∂MeasureTheory.volume := by
             exact MeasureTheory.setIntegral_mono_set hIntBall
               (Filter.Eventually.of_forall (fun y => rieszKernel_nonneg x y))
-              hsub.eventuallyLE
+              (Filter.Eventually.of_forall hsub)
     _ ≤ (d : ℝ) * (MeasureTheory.volume (Metric.ball (0 : Vec d) 1)).toReal * (2 * (2 * C)) := by
           exact integral_rieszKernel_ball_le (d := d) (by linarith [hCpos] : 0 < 2 * C) x hxBall
     _ = (d : ℝ) * (MeasureTheory.volume (Metric.ball (0 : Vec d) 1)).toReal *

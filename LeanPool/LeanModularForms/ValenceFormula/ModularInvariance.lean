@@ -280,7 +280,7 @@ theorem modularForm_finitely_many_zeros_in_fdBox (hf : f ≠ 0) {M : ℝ} (hM : 
   obtain ⟨z₀, hz₀K, hz₀_acc⟩ :=
     hZ_inf.exists_accPt_of_subset_isCompact hBdd.isCompact_closure
       ((sep_subset _ _).trans subset_closure)
-  have hz₀_im : (1 : ℝ)/2 ≤ z₀.im := closure_minimal (fun z hz => le_of_lt hz.2.2.1)
+  have hz₀_im : (1 : ℝ)/2 ≤ z₀.im := closure_minimal (s := fdBox M) (fun z hz => le_of_lt hz.2.2.1)
     (isClosed_le continuous_const Complex.continuous_im) hz₀K
   have hz₀_pos : 0 < z₀.im := by linarith only [hz₀_im]
   have h_freq : ∃ᶠ y in 𝓝[≠] z₀, modularFormCompOfComplex f y = 0 :=
@@ -289,7 +289,7 @@ theorem modularForm_finitely_many_zeros_in_fdBox (hf : f ≠ 0) {M : ℝ} (hM : 
   have h_analOn : AnalyticOnNhd ℂ (modularFormCompOfComplex f) U :=
     fun z hz => (UpperHalfPlane.mdifferentiable_iff.mp f.holo').analyticAt
       (UpperHalfPlane.isOpen_upperHalfPlaneSet.mem_nhds hz)
-  have h_preconn : IsPreconnected U := (Complex.isConnected_of_upperHalfPlane (r := 0)
+  have h_preconn : IsPreconnected U := (Complex.isConnected_of_upperHalfPlane (r := 0) (s := U)
       (fun z (hz : 0 < z.im) => hz) (fun z (hz : 0 < z.im) => le_of_lt hz)).isPreconnected
   apply hf; ext z
   simpa only [FunLike.coe_zero, Pi.zero_apply, modularFormCompOfComplex,

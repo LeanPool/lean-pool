@@ -89,9 +89,9 @@ theorem isNonexplosive_iff_map_coordinate_nat_delta
         (by simpa only [Set.mem_preimage, Set.mem_singleton_iff] using homega)
   · rw [isNonexplosive_iff_coordinate_nat_ne_delta]
     intro hdeltaMass n x
+    change ∀ᵐ omega ∂kappa x,
+      omega ∉ LifetimePath.coordinate (n : NNReal) ⁻¹' {Cemetery.delta}
     apply measure_eq_zero_iff_ae_notMem.mp
-    change kappa x
-      (LifetimePath.coordinate (n : NNReal) ⁻¹' {Cemetery.delta}) = 0
     rw [← ProbabilityTheory.Kernel.map_apply' _
       (LifetimePath.measurable_coordinate (n : NNReal)) x hdelta]
     exact hdeltaMass n x

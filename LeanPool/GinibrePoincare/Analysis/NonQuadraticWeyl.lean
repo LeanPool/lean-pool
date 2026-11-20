@@ -70,7 +70,7 @@ theorem planarRadialSmoothingBase_compact : HasCompactSupport planarRadialSmooth
 theorem planarRadialSmoothingBase_integral_pos :
     0 < ∫ z, planarRadialSmoothingBase z := by
   apply
-      planarRadialSmoothingBase_contDiff.continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero
+      planarRadialSmoothingBase_contDiff.continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero
     planarRadialSmoothingBase_compact
   · exact fun z => smoothTransition.nonneg _
   · exact (show planarRadialSmoothingBase 0 ≠ 0 by

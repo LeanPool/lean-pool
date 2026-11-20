@@ -97,7 +97,7 @@ theorem opNorm_le_hilbertSchmidtNorm
     ‖A‖ ≤ A.hilbertSchmidtNorm := by
   have hterm : ENNReal.ofReal (‖A‖ ^ 2) ≤ approximationNumberEnergy A := by
     unfold approximationNumberEnergy
-    simpa only [approximationSingularValue_zero] using (ENNReal.le_tsum (f := fun n : ℕ =>
+    simpa only [approximationSingularValue_zero] using (le_tsum (f := fun n : ℕ =>
       ENNReal.ofReal ((approximationSingularValue n A) ^ 2)) 0)
   have hreal : ‖A‖ ^ 2 ≤ (approximationNumberEnergy A).toReal := by
     have := ENNReal.toReal_mono hA hterm

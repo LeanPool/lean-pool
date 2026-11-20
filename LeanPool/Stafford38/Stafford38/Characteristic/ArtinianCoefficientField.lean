@@ -80,9 +80,8 @@ local notation "κ" => IsLocalRing.ResidueField R
 
 /-- The maximal ideal of a commutative Artinian local ring is nilpotent. -/
 lemma maximalIdeal_isNilpotent : IsNilpotent 𝔪 := by
-  rw [← IsLocalRing.jacobson_eq_maximalIdeal (⊥ : Ideal R)]
-  · exact IsArtinianRing.isNilpotent_jacobson_bot
-  · exact bot_ne_top
+  rw [← IsLocalRing.ringJacobson_eq_maximalIdeal R]
+  exact IsArtinianRing.isNilpotent_jacobson R
 
 /-- An equal-characteristic-zero Artinian local algebra contains a coefficient
 field: the residue map has a section as an algebra homomorphism over the base

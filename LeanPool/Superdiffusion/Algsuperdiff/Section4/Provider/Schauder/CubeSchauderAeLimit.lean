@@ -319,7 +319,7 @@ theorem abs_windowSlope_sub_grad_le (hd : d ≠ 0) {m j : ℤ} {x : Vec d}
       ≤ ∫ y in Metric.closedBall x ((3 : ℝ) ^ j / 2),
         |gradIndicator m u i y - gradIndicator m u i x| ∂volume :=
     setIntegral_mono_set hballint (Eventually.of_forall fun y => abs_nonneg _)
-      (LE.le.eventuallyLE (truncatedWindow_subset_closedBall x m j))
+      (LE.le.eventuallySubset (truncatedWindow_subset_closedBall x m j))
   have havg : ∫ y in Metric.closedBall x ((3 : ℝ) ^ j / 2),
         |gradIndicator m u i y - gradIndicator m u i x| ∂volume
       = ((3 : ℝ) ^ j) ^ d

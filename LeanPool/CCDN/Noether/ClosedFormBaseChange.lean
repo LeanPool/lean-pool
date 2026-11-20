@@ -47,7 +47,8 @@ lemma bivariateMap_coefficientDerivative {R S : Type*} [CommRing R] [CommRing S]
     (φ : R →+* S) (f : R[X][X]) :
     bivariateMap φ ((bivariateCoefficientDerivative R) f) =
       (bivariateCoefficientDerivative S) (bivariateMap φ f) := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply DFunLike.ext
   intro i
   simp [bivariateMap, Polynomial.derivative_map]
 
@@ -116,9 +117,9 @@ lemma bivariateGridPolynomial_coeff_zero {R : Type*} [CommRing R] (d : ℕ)
   simp only [bivariateGridPolynomial, LinearMap.coe_mk, AddHom.coe_mk, finsetSum_coeff]
   apply Finset.sum_eq_zero
   intro k _
-  simp only [coeff_monomial]
+  simp only [coeff_monomial_apply]
   split_ifs with he
-  · rw [coeff_monomial, ite_eq_right]
+  · rw [coeff_monomial_apply, ite_eq_right]
     have hk := k.1.isLt
     have hl := k.2.isLt
     omega

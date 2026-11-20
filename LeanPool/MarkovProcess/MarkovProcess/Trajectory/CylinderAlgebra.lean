@@ -78,7 +78,7 @@ theorem IsBoundedCylinder.add {G H : ContinuousPath alpha → ℝ} (hG : IsBound
     g.compContinuous (finsetRestrict (alpha := alpha) Finset.subset_union_left) +
       h.compContinuous (finsetRestrict (alpha := alpha) Finset.subset_union_right),
     fun omega ↦ ?_⟩
-  simp only [BoundedContinuousFunction.add_apply,
+  simp only [add_apply,
     BoundedContinuousFunction.compContinuous_apply, finsetRestrict_finsetEvaluation]
   rw [hg, hh]
 
@@ -90,7 +90,7 @@ theorem IsBoundedCylinder.mul {G H : ContinuousPath alpha → ℝ} (hG : IsBound
     g.compContinuous (finsetRestrict (alpha := alpha) Finset.subset_union_left) *
       h.compContinuous (finsetRestrict (alpha := alpha) Finset.subset_union_right),
     fun omega ↦ ?_⟩
-  simp only [BoundedContinuousFunction.mul_apply,
+  simp only [mul_apply,
     BoundedContinuousFunction.compContinuous_apply, finsetRestrict_finsetEvaluation]
   rw [hg, hh]
 

@@ -675,7 +675,7 @@ theorem forward_eq_backward_iff {R : ℝ → ℝ} {r : ℝ} (hr : 0 < r)
   rw [Set.Ioi_sdiff_Ioi] at he
   unfold forwardStress backwardStress
   rw [intervalIntegral.integral_of_le hr.le]
-  rw [div_left_inj' (pow_ne_zero 2 hr.ne')]
+  rw [div_left_inj₀ (pow_ne_zero 2 hr.ne')]
   constructor <;> intro h <;> linarith only [he, h]
 
 /-- Time denominator, given by `SimilarityProfile.q h (t, (0, z)) * CoordinateAlgebra.L h

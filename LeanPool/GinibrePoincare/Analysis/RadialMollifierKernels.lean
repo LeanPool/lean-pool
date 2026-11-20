@@ -72,7 +72,7 @@ theorem radialMollifierBase_integrable (n m : ℕ) : Integrable (radialMollifier
     (radialMollifierBase_compact n m)
 
 theorem radialMollifierBase_mass_pos (n m : ℕ) : 0 < ∫ z, radialMollifierBase n m z := by
-  apply integral_pos_of_integrable_nonneg_nonzero (x := 0)
+  apply integral_pos_of_integrable_nonneg_ne_zero (x := 0)
     (radialMollifierBase_smooth n m).continuous (radialMollifierBase_integrable n m)
     (radialMollifierBase_nonneg n m)
   have hb : sobolevCutoffBump (0 : ℝ) = 1 := sobolevCutoffBump.one_of_mem_closedBall (by

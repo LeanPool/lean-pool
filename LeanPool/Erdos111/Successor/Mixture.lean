@@ -133,7 +133,7 @@ theorem exists_mixture {r : ℕ} (Λ : Measure (V → Bool)) [IsProbabilityMeasu
   let μ : Measure (V → Bool) := ∑ ψ, ENNReal.ofReal (p ψ) • Λ.map (Ψ ψ)
   have hμ : ∀ s, MeasurableSet s → μ s = ∑ ψ, ENNReal.ofReal (p ψ) * Λ (Ψ ψ ⁻¹' s) := by
     intro s hs
-    simp [μ, Measure.finsetSum_apply, Measure.map_apply (hΨ _) hs]
+    simp [μ, Measure.map_apply (hΨ _) hs]
   have hp : ∑ ψ, ENNReal.ofReal (p ψ) = 1 := by
     rw [← ENNReal.ofReal_sum_of_nonneg fun ψ _ => hp0 ψ, hp1, ENNReal.ofReal_one]
   refine ⟨μ, ⟨by simp [hμ _ MeasurableSet.univ, hp]⟩, fun J hJ => ?_, fun i => ?_⟩

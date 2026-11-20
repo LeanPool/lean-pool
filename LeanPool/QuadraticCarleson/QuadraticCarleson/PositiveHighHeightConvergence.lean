@@ -36,7 +36,7 @@ theorem ae_highHeightMajorant_lt_top (B : ℕ) {b : ℝ → ℂ} (hb : MemLp b 2
   have hnorm := (memLp_highHeightMajorant B hb).eLpNorm_lt_top
   have hsq : (∫⁻ x, highHeightMajorant B b x ^ 2) < ∞ := by
     simpa only [eLpNorm_two_sq_lintegral _
-      (measurable_highHeightMajorant B hb).aestronglyMeasurable, enorm_eq_self] using
+      (measurable_highHeightMajorant B hb).aestronglyMeasurable, eNorm_eq_self] using
         ENNReal.pow_lt_top (n := 2) hnorm
   have ha := ae_lt_top ((measurable_highHeightMajorant B hb).pow_const 2) hsq.ne
   filter_upwards [ha] with x hx
@@ -51,10 +51,10 @@ theorem ae_summable_norm_highHeightIntegrals (B : ℕ) {b : ℝ → ℂ} (hb : M
           phase (lam.val * t ^ 2)‖) := by
   filter_upwards [ae_highHeightMajorant_lt_top B hb] with x hx
   intro lam
-  apply tsum_enorm_ne_top_iff_summable_norm.mp
+  apply tsum_eNorm_ne_top_iff_summable_norm.mp
   apply ne_of_lt
   apply lt_of_le_of_lt ?_ hx
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro n
   exact le_iSup (fun μ : {μ : ℝ // μ ≠ 0} ↦ ‖∫ t, b (x - t) *
     (dyadicPsi (oscillatoryScaleIndex μ.val (B + n + 1) μ.property) t : ℂ) *

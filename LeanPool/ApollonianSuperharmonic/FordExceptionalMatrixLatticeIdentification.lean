@@ -51,7 +51,7 @@ theorem FordExceptionalMatrixLatticeIdentification (P : FordFareyParameter)
     all_goals change _ = (1 / ((P.q : ℝ) ^ 2)) * _
     all_goals simp [hmatrix, hC, FordCircleCoordinate]
     all_goals field_simp
-    all_goals ring
+    ring
   · apply le_antisymm
     · intro u hu
       change ∀ i : Fin 2, ∃ n : ℤ, Matrix.mulVec (CircleMatrix C)

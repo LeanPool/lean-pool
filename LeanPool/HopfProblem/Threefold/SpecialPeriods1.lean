@@ -530,7 +530,7 @@ private theorem SpecialPeriods.CuspFamily.cuspIntegralMatrix_add (k l : ℤ) :
     cuspIntegralMatrix (k + l) = cuspIntegralMatrix k * cuspIntegralMatrix l := by
   ext i j
   fin_cases i <;> fin_cases j <;> simp [cuspIntegralMatrix, Matrix.mul_apply, Fin.sum_univ_four]
-  all_goals ring
+  ring
 
 private def SpecialPeriods.CuspFamily.cuspRealEquiv (k : ℤ) : RealPlane₄ ≃ₗ[ℝ] RealPlane₄
     where

@@ -65,7 +65,7 @@ variable {ι : Type*} [Fintype ι]
 
 /-- A standard Hartogs figure: a thin full cylinder together with an outer annular cylinder in the
 last coordinate. The intended parameters satisfy `0 < r < 1` and `0 < s < 1`. -/
-@[expose] def hartogsFigure (r s : ℝ) : Set ((ι → ℂ) × ℂ) :=
+@[expose] noncomputable def hartogsFigure (r s : ℝ) : Set ((ι → ℂ) × ℂ) :=
   (ball 0 r ×ˢ ball 0 1) ∪ (ball 0 1 ×ˢ (ball 0 1 \ closedBall 0 s))
 
 /-- The standard Hartogs figure has rotational symmetry in its fiber coordinate, including for

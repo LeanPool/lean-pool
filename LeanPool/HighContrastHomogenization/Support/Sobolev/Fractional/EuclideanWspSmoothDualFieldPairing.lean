@@ -62,7 +62,7 @@ private theorem enorm_cubeEuclideanWspGraphPointOfField {d : ℕ}
           F.euclideanMemLp.toLp (fun x => HilbertVec.ofVec (F.toField x))
       | true => show CubeEuclideanWspGraphComponent Q p true from
         F.euclideanMemWsp.toLp (cubeEuclideanWspKernel s p F.toField))‖ₑ = _
-  rw [enorm_eq_nnnorm, PiLp.nnnorm_eq_sum p.lt_top.ne]
+  rw [eNorm_eq_nnNorm, PiLp.nnNorm_eq_sum p.lt_top.ne]
   rw [one_div, ENNReal.coe_rpow_of_nonneg _ (inv_nonneg.mpr ENNReal.toReal_nonneg),
     ENNReal.ofNNReal_finsetSum]
   simp_rw [ENNReal.coe_rpow_of_nonneg _ ENNReal.toReal_nonneg]
@@ -72,7 +72,7 @@ private theorem enorm_cubeEuclideanWspGraphPointOfField {d : ℕ}
       ‖cubeEuclideanWspGraphFieldScale Q s •
         F.euclideanMemLp.toLp (fun x => HilbertVec.ofVec (F.toField x))‖ₑ ^
           p.exponent.toReal) ^ p.exponent.toReal⁻¹ = _
-  rw [enorm_smul, Lp.enorm_toLp F.euclideanMemWsp, Lp.enorm_toLp F.euclideanMemLp]
+  rw [eNorm_smul, Lp.eNorm_toLp F.euclideanMemWsp, Lp.eNorm_toLp F.euclideanMemLp]
   have hlp : eLpNorm (fun x => HilbertVec.ofVec (F.toField x)) p.exponent
       (normalizedCubeMeasure Q) =
       (cubeBoundedMeasurableDomain Q).normalizedEuclideanLpENorm
@@ -93,7 +93,7 @@ private theorem enorm_cubeEuclideanWspGraphPointOfField {d : ℕ}
   have hweight : ‖cubeEuclideanWspGraphFieldScale Q s‖ₑ ^ p.exponent.toReal =
       cubeEuclideanWspScalePowerWeight Q s p := by
     unfold cubeEuclideanWspGraphFieldScale cubeEuclideanWspScalePowerWeight
-    rw [Real.enorm_eq_ofReal (Real.rpow_nonneg hscale.le _),
+    rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg hscale.le _),
       ← ENNReal.ofReal_rpow_of_pos hscale]
     rw [← ENNReal.rpow_mul]
   rw [ENNReal.mul_rpow_of_nonneg _ _ ENNReal.toReal_nonneg, hweight]
@@ -261,7 +261,7 @@ private theorem ennreal_abs_smoothPairing_le_negativeDual_mul_full {d : ℕ}
         ‖E (CubeEuclideanWspSmoothTest.graphToCompleted h)‖ₑ := by
       rw [show E = CubeEuclideanWspSmoothTest.completedPairingExtension F hD by rfl,
         CubeEuclideanWspSmoothTest.completedPairingExtension_apply_graphToCompleted F hD h]
-      exact (Real.enorm_eq_ofReal_abs _).symm
+      exact (Real.eNorm_eq_ofReal_abs _).symm
     _ ≤ ‖E‖ₑ * ‖CubeEuclideanWspSmoothTest.graphToCompleted h‖ₑ :=
       E.le_opENorm _
     _ = cubeEuclideanNegativeWspSmoothDualENorm Q s p F *
@@ -351,7 +351,7 @@ private theorem smooth_fullENorm_le_full_add_error {d : ℕ}
       rw [← hsplit]
     _ ≤ ‖cubeEuclideanWspGraphPointOfField K‖ₑ +
         ‖cubeEuclideanWspGraphPointOfField G.toCubeEuclideanWspField‖ₑ :=
-      enorm_add_le _ _
+      eNorm_add_le _ _
     _ = cubeEuclideanWspFullENorm Q s p K.toField +
         cubeEuclideanWspFullENorm Q s p G.toField := by
       rw [enorm_cubeEuclideanWspGraphPointOfField,

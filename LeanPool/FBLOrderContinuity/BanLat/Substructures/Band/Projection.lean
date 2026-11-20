@@ -917,7 +917,8 @@ private lemma exists_decomposition_of_isLUB_pos {B : Band X}
   obtain ⟨sp, hsp⟩ := hLUB x hx_nn
   have hzero_in_S : (0 : X) ∈ (B : Set X) ∩ Set.Icc 0 x :=
     ⟨B.toOrderIdeal.toSubmodule.zero_mem, le_refl 0, hx_nn⟩
-  have hsp_mem : sp ∈ B := B.sSup_mem (fun y hy => hy.1) ⟨0, hzero_in_S⟩ hsp
+  have hsp_mem : sp ∈ B :=
+    B.sSup_mem (S := (B : Set X) ∩ Set.Icc 0 x) (fun _ hy => hy.1) ⟨0, hzero_in_S⟩ hsp
   have hsp_nn : 0 ≤ sp := hsp.1 hzero_in_S
   have hsp_le : sp ≤ x := hsp.2 (fun y hy => hy.2.2)
   refine ⟨sp, x - sp, hsp_mem, ?_, by abel⟩

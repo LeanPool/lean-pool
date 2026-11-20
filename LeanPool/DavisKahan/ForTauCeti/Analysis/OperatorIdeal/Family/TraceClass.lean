@@ -144,7 +144,7 @@ omit [CompleteSpace E] [CompleteSpace F] in
 /-- **The nuclear norm dominates the operator norm**, being its zeroth term. -/
 theorem enorm_le_nuclearENorm (T : E →L[𝕜] F) : ‖T‖ₑ ≤ T.nuclearENorm := by
   rw [← ofReal_norm, ← T.approximationNumber_index_zero]
-  exact ENNReal.le_tsum (f := fun n => ENNReal.ofReal (T.approximationNumber n)) 0
+  exact le_tsum (f := fun n => ENNReal.ofReal (T.approximationNumber n)) 0
 
 /-- **Adjoint invariance**, immediate from invariance of the approximation
 numbers.  This is the field that makes the trace-class family *symmetric*. -/
@@ -160,7 +160,7 @@ theorem nuclearENorm_comp_le {G H : Type v}
     (L ∘L T ∘L R).nuclearENorm ≤ ‖L‖ₑ * T.nuclearENorm * ‖R‖ₑ := by
   calc (L ∘L T ∘L R).nuclearENorm
       ≤ ∑' n : ℕ, ENNReal.ofReal (‖L‖ * T.approximationNumber n * ‖R‖) :=
-        ENNReal.tsum_le_tsum fun n =>
+        tsum_le_tsum fun n =>
           ENNReal.ofReal_le_ofReal (approximationNumber_comp_comp_le L T R n)
     _ = ‖L‖ₑ * T.nuclearENorm * ‖R‖ₑ := by
         simp only [ENNReal.ofReal_mul (mul_nonneg (norm_nonneg L) (T.approximationNumber_nonneg _)),

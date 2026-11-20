@@ -52,7 +52,7 @@ theorem analyticOnNhd_regDirichletIntegral_kernel
   have hK : IsCompact K := Convexity.StdSimplex.isCompact_coordinateSet ℝ ι
   have hc := continuousOn_complexSimplexKernel hH.continuousOn hW
   have hD : ContinuousOn (fun p : (κ → ℂ) × (ι → ℝ) => D p.1 p.2) (U ×ˢ K) := by
-    exact (hH.fderiv.continuousOn.comp (by fun_prop)
+    exact (hH.fderiv.continuousOn.comp (s := U ×ˢ K) (by fun_prop)
       (fun p hp => hW p.1 hp.1 p.2 hp.2)).clm_comp continuousOn_const
   have hd : Integrable (regDirichletDensity b) μ := by
     change IntegrableOn (fun u => regDirichletDensity b u) K stdSimplexMeasure

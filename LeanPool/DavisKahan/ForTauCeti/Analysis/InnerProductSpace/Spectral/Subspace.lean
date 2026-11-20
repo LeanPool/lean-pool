@@ -257,7 +257,7 @@ attribute [local instance 100] ContinuousLinearMap.realAlgebra
 No symmetry is needed for this equality: a noninvertible square linear map has a kernel. -/
 theorem real_spectrum_toContinuousLinearMap_eq (A : E →ₗ[𝕜] E) :
     spectrum ℝ A.toContinuousLinearMap = restrictedPointSpectrum A ⊤ := by
-  have := FiniteDimensional.complete 𝕜 E
+  have := FiniteDimensional.completeSpace 𝕜 E
   ext r
   let S : E →L[𝕜] E := algebraMap ℝ (E →L[𝕜] E) r - A.toContinuousLinearMap
   have hc : algebraMap ℝ (E →L[𝕜] E) r =
@@ -294,7 +294,7 @@ theorem upperFormBound_of_pointSpectrumIn {A : E →ₗ[𝕜] E} (hA : A.IsSymme
     {U : Submodule 𝕜 E} (hU : IsInvariant A U) {c : ℝ}
     (hSpec : PointSpectrumIn A U (Set.Iic c)) :
     ∀ x ∈ U, RCLike.re ⟪A x, x⟫_𝕜 ≤ c * ‖x‖ ^ 2 := by
-  have := FiniteDimensional.complete 𝕜 U
+  have := FiniteDimensional.completeSpace 𝕜 U
   have hsym : IsSelfAdjoint (A.restrict hU).toContinuousLinearMap :=
     ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mpr (hA.restrict_invariant hU)
   have hspec : spectrum ℝ (A.restrict hU).toContinuousLinearMap ⊆ Set.Iic c := by
@@ -308,7 +308,7 @@ theorem lowerFormBound_of_pointSpectrumIn {A : E →ₗ[𝕜] E} (hA : A.IsSymme
     {U : Submodule 𝕜 E} (hU : IsInvariant A U) {c : ℝ}
     (hSpec : PointSpectrumIn A U (Set.Ici c)) :
     ∀ x ∈ U, c * ‖x‖ ^ 2 ≤ RCLike.re ⟪A x, x⟫_𝕜 := by
-  have := FiniteDimensional.complete 𝕜 U
+  have := FiniteDimensional.completeSpace 𝕜 U
   have hsym : IsSelfAdjoint (A.restrict hU).toContinuousLinearMap :=
     ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mpr (hA.restrict_invariant hU)
   have hspec : spectrum ℝ (A.restrict hU).toContinuousLinearMap ⊆ Set.Ici c := by

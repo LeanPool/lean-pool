@@ -264,7 +264,7 @@ theorem PVM.ofReal_norm_sq_integral (E_pvm : PVM E)
     apply tendsto_lintegral_of_dominated_convergence
       (fun _ => ENNReal.ofReal (C ^ 2))
     · intro n
-      exact ((s n).measurable.nnnorm.pow_const 2).coe_nnreal_ennreal
+      exact ((s n).measurable.nnNorm.pow_const 2).coe_nnreal_ennreal
     · intro n
       apply ae_of_all
       intro t
@@ -285,9 +285,9 @@ theorem PVM.ofReal_norm_sq_integral (E_pvm : PVM E)
       convert hreal using 1
       · ext n
         rw [ENNReal.ofReal_pow (norm_nonneg _) 2, ofReal_norm,
-          enorm_eq_nnnorm]
+          eNorm_eq_nnNorm]
       · rw [ENNReal.ofReal_pow (norm_nonneg _) 2, ofReal_norm,
-          enorm_eq_nnnorm]
+          eNorm_eq_nnNorm]
   apply tendsto_nhds_unique hleft
   convert hright using 1
   ext n
@@ -350,7 +350,7 @@ theorem PVM.scalarMeasure_smul (E_pvm : PVM E) (c : ℂ) (x : E) :
   intro S hS
   rw [E_pvm.scalarMeasure_apply (c • x) S hS,
     E_pvm.scalarContent_smul c x S hS,
-    ENNReal.ofReal_mul (sq_nonneg ‖c‖), Measure.smul_apply, smul_eq_mul,
+    ENNReal.ofReal_mul (sq_nonneg ‖c‖), smul_apply, smul_eq_mul,
     E_pvm.scalarMeasure_apply x S hS]
 
 /-- The scalar measure of a sum is dominated by twice the sum of the scalar measures. -/
@@ -359,8 +359,8 @@ theorem PVM.scalarMeasure_add_le (E_pvm : PVM E) (x y : E) :
       (2 : ENNReal) • (E_pvm.scalarMeasure x + E_pvm.scalarMeasure y) := by
   apply Measure.le_iff.2
   intro S hS
-  rw [E_pvm.scalarMeasure_apply (x + y) S hS, Measure.smul_apply,
-    smul_eq_mul, Measure.add_apply, E_pvm.scalarMeasure_apply x S hS,
+  rw [E_pvm.scalarMeasure_apply (x + y) S hS, smul_apply,
+    smul_eq_mul, add_apply, E_pvm.scalarMeasure_apply x S hS,
     E_pvm.scalarMeasure_apply y S hS]
   calc
     ENNReal.ofReal (E_pvm.scalarContent (x + y) S) ≤
@@ -474,14 +474,14 @@ private theorem PVM.norm_spectralTruncation_sub_le (f : ℝ → ℂ)
 private theorem PVM.spectralTruncation_error_measurable (f : ℝ → ℂ)
     (hf : Measurable f) (n : ℕ) :
     Measurable (fun t => (↑(‖f t - PVM.spectralTruncation f n t‖₊ ^ 2) : ENNReal)) := by
-  exact ((hf.sub (PVM.spectralTruncation_measurable f hf n)).nnnorm.pow_const 2).coe_nnreal_ennreal
+  exact ((hf.sub (PVM.spectralTruncation_measurable f hf n)).nnNorm.pow_const 2).coe_nnreal_ennreal
 
 /-- Squared truncation error is bounded by the original squared norm. -/
 private theorem PVM.spectralTruncation_error_le (f : ℝ → ℂ) (n : ℕ) (t : ℝ) :
     (↑(‖f t - PVM.spectralTruncation f n t‖₊ ^ 2) : ENNReal) ≤
       ↑(‖f t‖₊ ^ 2) := by
   by_cases h : ‖f t‖ ≤ n
-  · rw [PVM.spectralTruncation, ite_eq_left h, sub_self, nnnorm_zero,
+  · rw [PVM.spectralTruncation, ite_eq_left h, sub_self, nnNorm_zero,
       zero_pow (by omega)]
     exact bot_le
   · rw [PVM.spectralTruncation, ite_eq_right h, sub_zero]
@@ -493,7 +493,7 @@ private theorem PVM.spectralTruncation_error_tendsto_zero (f : ℝ → ℂ) (t :
       Filter.atTop (nhds 0) := by
   obtain ⟨N, hN⟩ := exists_nat_ge ‖f t‖
   refine tendsto_atTop_of_eventually_const (i₀ := N) fun n hn => ?_
-  rw [PVM.spectralTruncation, ite_eq_left, sub_self, nnnorm_zero,
+  rw [PVM.spectralTruncation, ite_eq_left, sub_self, nnNorm_zero,
     zero_pow (by omega), ENNReal.coe_zero]
   exact hN.trans (Nat.cast_le.2 hn)
 
@@ -529,7 +529,7 @@ private theorem PVM.spectralTruncation_sub_le_error (f : ℝ → ℂ) {n m : ℕ
     rw [ite_eq_left hn, ite_eq_left hm]
   · by_cases hm : ‖f t‖ ≤ m
     · rw [ite_eq_right hn, ite_eq_left hm]
-    · rw [ite_eq_right hn, ite_eq_right hm, sub_self, nnnorm_zero, zero_pow (by omega)]
+    · rw [ite_eq_right hn, ite_eq_right hm, sub_self, nnNorm_zero, zero_pow (by omega)]
       exact bot_le
 
 /-- Differences of bounded truncation integrals satisfy the pointwise `L²` identity. -/
@@ -677,9 +677,9 @@ theorem PVM.inner_coordinate_unboundedIntegral_self (E_pvm : PVM E)
       (E_pvm.scalarMeasure (x : E)) := by
     constructor
     · fun_prop
-    · rw [hasFiniteIntegral_iff_enorm]
-      simpa only [Real.enorm_of_nonneg (sq_nonneg _),
-        ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm, enorm_eq_nnnorm]
+    · rw [hasFiniteIntegral_iff_eNorm]
+      simpa only [Real.eNorm_of_nonneg (sq_nonneg _),
+        ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm, eNorm_eq_nnNorm]
         using hxL2
   have hmemLp : MemLp coord 2 (E_pvm.scalarMeasure (x : E)) :=
     (memLp_two_iff_integrable_sq_norm hcoord.aestronglyMeasurable).2 hsq
@@ -770,7 +770,7 @@ theorem PVM.ofReal_norm_sq_integral_sub_unboundedIntegral (E_pvm : PVM E)
     exact ENNReal.tendsto_ofReal ((tendsto_const_nhds.sub htrunc).norm.pow 2)
   have hgSq_meas : Measurable
       (fun r => (↑(‖g r‖₊ ^ 2) : ENNReal)) :=
-    ((hg.nnnorm.pow_const 2).coe_nnreal_ennreal)
+    ((hg.nnNorm.pow_const 2).coe_nnreal_ennreal)
   let bound : ℝ → ENNReal := fun r =>
     2 * (ENNReal.ofReal (C ^ 2) + (↑(‖g r‖₊ ^ 2) : ENNReal))
   have hbound_meas : Measurable bound := by
@@ -796,7 +796,7 @@ theorem PVM.ofReal_norm_sq_integral_sub_unboundedIntegral (E_pvm : PVM E)
         rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 2),
           ENNReal.ofReal_add (sq_nonneg C) (sq_nonneg ‖g r‖),
           ENNReal.ofReal_pow (norm_nonneg (g r)) 2, ofReal_norm,
-          enorm_eq_nnnorm, ENNReal.coe_pow]
+          eNorm_eq_nnNorm, ENNReal.coe_pow]
         norm_num
   have hbound_finite : (∫⁻ r, bound r ∂(E_pvm.scalarMeasure (x : E))) ≠ ⊤ := by
     have hconst :
@@ -827,7 +827,7 @@ theorem PVM.ofReal_norm_sq_integral_sub_unboundedIntegral (E_pvm : PVM E)
         ∂(E_pvm.scalarMeasure (x : E)))) := by
     apply tendsto_lintegral_of_dominated_convergence bound
     · intro n
-      exact ((hf.sub (hgn_meas n)).nnnorm.pow_const 2).coe_nnreal_ennreal
+      exact ((hf.sub (hgn_meas n)).nnNorm.pow_const 2).coe_nnreal_ennreal
     · intro n
       exact ae_of_all _ (hpoint_bound n)
     · exact hbound_finite
@@ -840,9 +840,9 @@ theorem PVM.ofReal_norm_sq_integral_sub_unboundedIntegral (E_pvm : PVM E)
       convert hreal using 1
       · ext n
         rw [ENNReal.ofReal_pow (norm_nonneg _) 2, ofReal_norm,
-          enorm_eq_nnnorm, ENNReal.coe_pow]
+          eNorm_eq_nnNorm, ENNReal.coe_pow]
       · rw [ENNReal.ofReal_pow (norm_nonneg _) 2, ofReal_norm,
-          enorm_eq_nnnorm, ENNReal.coe_pow]
+          eNorm_eq_nnNorm, ENNReal.coe_pow]
   apply tendsto_nhds_unique hleft
   convert hright using 1
   · ext n
@@ -951,7 +951,7 @@ theorem PVM.scalarMeasure_integral (E_pvm : PVM E)
   · rw [Set.indicator_of_mem hr, complexIndicator,
       Set.indicator_of_mem hr, one_mul, ENNReal.coe_pow]
   · rw [Set.indicator_of_notMem hr, complexIndicator,
-      Set.indicator_of_notMem hr, zero_mul, nnnorm_zero]
+      Set.indicator_of_notMem hr, zero_mul, nnNorm_zero]
     norm_num
 
 /-- A bounded spectral integral lies in the domain of an unbounded spectral integral when
@@ -967,10 +967,10 @@ theorem PVM.integral_mem_domain_unboundedIntegral
   rw [E_pvm.scalarMeasure_integral f hf hbdd x]
   let density : ℝ → ENNReal := fun r => (↑(‖f r‖₊ ^ 2) : ENNReal)
   have hdensity : Measurable density :=
-    ((hf.nnnorm.pow_const 2).coe_nnreal_ennreal)
+    ((hf.nnNorm.pow_const 2).coe_nnreal_ennreal)
   have hgSq : Measurable (fun r : ℝ =>
       (↑(‖g r‖₊ ^ 2) : ENNReal)) :=
-    ((hg.nnnorm.pow_const 2).coe_nnreal_ennreal)
+    ((hg.nnNorm.pow_const 2).coe_nnreal_ennreal)
   change (∫⁻ t : ℝ, (↑(‖g t‖₊ ^ 2) : ENNReal)
     ∂(E_pvm.scalarMeasure x).withDensity density) < ⊤
   rw [lintegral_withDensity_eq_lintegral_mul _ hdensity hgSq]
@@ -978,7 +978,7 @@ theorem PVM.integral_mem_domain_unboundedIntegral
       (fun r : ℝ => (↑(‖g r * f r‖₊ ^ 2) : ENNReal)) := by
     funext r
     unfold density
-    rw [← ENNReal.coe_mul, nnnorm_mul, mul_pow, mul_comm]
+    rw [← ENNReal.coe_mul, nnNorm_mul, mul_pow, mul_comm]
   change (∫⁻ r : ℝ, density r * (↑(‖g r‖₊ ^ 2) : ENNReal)
     ∂E_pvm.scalarMeasure x) < ⊤
   rw [hfun]
@@ -1042,7 +1042,7 @@ private theorem boundedTruncation_mul_sub_error_measurable
     Measurable (fun r =>
       (↑(‖PVM.spectralTruncation g n r * f r - g r * f r‖₊ ^ 2) : ENNReal)) := by
   have hnorm := ((((PVM.spectralTruncation_measurable g hg n).mul hf).sub
-    (hg.mul hf)).nnnorm.pow_const 2)
+    (hg.mul hf)).nnNorm.pow_const 2)
   exact hnorm.coe_nnreal_ennreal
 
 private theorem boundedTruncation_mul_sub_error_le
@@ -1050,10 +1050,10 @@ private theorem boundedTruncation_mul_sub_error_le
     (↑(‖PVM.spectralTruncation g n r * f r - g r * f r‖₊ ^ 2) : ENNReal) ≤
       (↑(‖g r * f r‖₊ ^ 2) : ENNReal) := by
   by_cases hr : ‖g r‖ ≤ n
-  · rw [PVM.spectralTruncation, ite_eq_left hr, sub_self, nnnorm_zero,
+  · rw [PVM.spectralTruncation, ite_eq_left hr, sub_self, nnNorm_zero,
       zero_pow (by omega)]
     exact bot_le
-  · rw [PVM.spectralTruncation, ite_eq_right hr, zero_mul, zero_sub, nnnorm_neg]
+  · rw [PVM.spectralTruncation, ite_eq_right hr, zero_mul, zero_sub, nnNorm_neg]
 
 private theorem boundedTruncation_mul_sub_error_tendsto_zero
     (g f : ℝ → ℂ) (r : ℝ) :
@@ -1063,7 +1063,7 @@ private theorem boundedTruncation_mul_sub_error_tendsto_zero
       Filter.atTop (nhds 0) := by
   obtain ⟨N, hN⟩ := exists_nat_ge ‖g r‖
   refine tendsto_atTop_of_eventually_const (i₀ := N) fun n hn => ?_
-  rw [PVM.spectralTruncation, ite_eq_left, sub_self, nnnorm_zero,
+  rw [PVM.spectralTruncation, ite_eq_left, sub_self, nnNorm_zero,
     zero_pow (by omega), ENNReal.coe_zero]
   exact hN.trans (Nat.cast_le.2 hn)
 

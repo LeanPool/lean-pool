@@ -188,7 +188,7 @@ lemma triple_ofReal_integral_eq_lintegral
     (Filter.Eventually.of_forall (fun s => sq_nonneg _))]
   refine lintegral_congr (fun s => ?_)
   rw [show ((h ω s e) ^ 2) = ‖h ω s e‖ ^ 2 from by rw [Real.norm_eq_abs, sq_abs],
-    ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm, enorm_eq_nnnorm]
+    ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm, eNorm_eq_nnNorm]
 
 omit [MeasurableSpace Ω] [MeasurableSpace E] in
 /-- The mark-step eval is uniformly bounded (finite sum of bounded-coeff × indicators). -/
@@ -378,7 +378,7 @@ lemma eulerStepIntegral_cauchy_le
     rw [MeasureTheory.lintegral_lintegral_swap]
     exact ((ENNReal.continuous_coe.measurable.comp
       (((hh_meas.comp (by fun_prop : Measurable fun q : E × ℝ =>
-        ((ω, q.2, q.1) : Ω × ℝ × E)))).nnnorm)).pow_const 2).aemeasurable
+        ((ω, q.2, q.1) : Ω × ℝ × E)))).nnNorm)).pow_const 2).aemeasurable
   simp_rw [hswap]
   -- pointwise `2(a²+b²)` triangle against `φ`.
   calc ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e, (‖ea ω s e - eb ω s e‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P
@@ -389,7 +389,7 @@ lemma eulerStepIntegral_cauchy_le
         have h := sq_nnnorm_add_le_two_mul (ea ω s e - φ ω s e) (φ ω s e - eb ω s e)
         rw [show ea ω s e - φ ω s e + (φ ω s e - eb ω s e) = ea ω s e - eb ω s e from by ring,
           show (‖ea ω s e - φ ω s e‖₊ : ℝ≥0∞) = ‖φ ω s e - ea ω s e‖₊ from by
-            rw [show φ ω s e - ea ω s e = -(ea ω s e - φ ω s e) from by ring, nnnorm_neg],
+            rw [show φ ω s e - ea ω s e = -(ea ω s e - φ ω s e) from by ring, nnNorm_neg],
           mul_add] at h
         exact h
       _ = 2 * (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
@@ -399,7 +399,7 @@ lemma eulerStepIntegral_cauchy_le
         rw [lintegral_triple_add
           ((ENNReal.continuous_coe.measurable.comp
             ((h_meas.sub (markEval_measurable (dyadicPartition T a) Bia cia hBiam
-              hciam)).nnnorm)).pow_const 2 |>.const_mul 2),
+              hciam)).nnNorm)).pow_const 2 |>.const_mul 2),
           lintegral_triple_const_mul 2 (by norm_num) _, lintegral_triple_const_mul 2 (by norm_num)
             _]
 
@@ -476,7 +476,7 @@ theorem compensated_eulerSum_L2_limit
             (hcia m) (hcia n)
         · rw [show (fun ω => (‖I m ω - I n ω‖₊ : ℝ≥0∞) ^ 2)
                 = (fun ω => (‖I n ω - I m ω‖₊ : ℝ≥0∞) ^ 2) from funext (fun ω => by
-              rw [show I m ω - I n ω = -(I n ω - I m ω) from by ring, nnnorm_neg]),
+              rw [show I m ω - I n ω = -(I n ω - I m ω) from by ring, nnNorm_neg]),
             add_comm (2 * Aφ m)]
           exact eulerStepIntegral_cauchy_le N ℱ hℱ hT φ h_meas hS hSfin hnm (Bi n) (Bi m) (ci n)
             (ci m)

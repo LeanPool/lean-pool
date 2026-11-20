@@ -583,7 +583,7 @@ theorem tendsto_prepared
     (C : ConcreteCodeBlocks N hN M x R a) :
     Tendsto
       (fun n ↦ R.limitCharacter
-        (Finsupp.subtypeDomain (closure N hN M x) (prepared N hN M a.1 n)))
+        (Finsupp.subtypeDomain (· ∈ closure N hN M x) (prepared N hN M a.1 n)))
       (ultrafilter N hN a.1)
       (nhds (R.limitCharacter (Finsupp.single ⟨codeIndex a.1, a.2⟩ 1))) := by
   apply FusionRun.PreparedCodeBlocks.tendsto_prepared C N hN
@@ -616,7 +616,7 @@ structure LocalRunCertificate
   run : FusionRun (closure N hN M x.1 →₀ ℤ)
   self_ne_zero :
     run.limitCharacter
-      (Finsupp.subtypeDomain (closure N hN M x.1) x.1) ≠ 0
+      (Finsupp.subtypeDomain (· ∈ closure N hN M x.1) x.1) ≠ 0
   /-- A retained-block certificate for every locally relevant code. -/
   codeBlocks : ∀ a : RelevantCode N hN M x.1,
     ConcreteCodeBlocks N hN M x.1 run a

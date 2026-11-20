@@ -461,9 +461,9 @@ private theorem raw_rieszSecond_memLp_of_duality
     lt_of_le_of_lt hglobal ENNReal.ofReal_lt_top
   have hfinite' :
       ∫⁻ x, ‖u x‖ₑ ^ (ENNReal.ofReal p).toReal ∂volume < ∞ := by
-    simpa only [absE, Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp0.le] using hfinite
+    simpa only [absE, Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp0.le] using hfinite
   have hmem : MemLp u (ENNReal.ofReal p) volume := by
-    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (ENNReal.ofReal_ne_zero_iff.mpr hp0) ENNReal.ofReal_ne_top hu.aestronglyMeasurable]
     exact ENNReal.rpow_lt_top_of_nonneg
       (one_div_nonneg.mpr ENNReal.toReal_nonneg) hfinite'.ne
@@ -471,12 +471,12 @@ private theorem raw_rieszSecond_memLp_of_duality
     rw [← ENNReal.ofReal_rpow_of_nonneg hBnonneg hp0.le, ← ENNReal.rpow_mul]
     rw [mul_one_div_cancel hp0.ne', ENNReal.rpow_one]
   have hnorm : eLpNorm u (ENNReal.ofReal p) volume ≤ ENNReal.ofReal B := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (ENNReal.ofReal_ne_zero_iff.mpr hp0) ENNReal.ofReal_ne_top hu.aestronglyMeasurable]
     calc
       (∫⁻ x, ‖u x‖ₑ ^ (ENNReal.ofReal p).toReal ∂volume) ^ (1 / (ENNReal.ofReal p).toReal) ≤
           (ENNReal.ofReal (B ^ p)) ^ (1 / p) := by
-        simpa [absE, Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp0.le] using
+        simpa [absE, Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal hp0.le] using
           ENNReal.rpow_le_rpow hglobal
             (one_div_nonneg.mpr (ENNReal.toReal_nonneg : 0 ≤ (ENNReal.ofReal p).toReal))
       _ = ENNReal.ofReal B := hroot

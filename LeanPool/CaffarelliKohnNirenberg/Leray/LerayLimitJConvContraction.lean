@@ -209,16 +209,16 @@ theorem lerayLimit_regUniformMollifiedVelocity_spaceTime_eLpNorm_le
         (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) := by
   have hJ := lerayLimit_regUniformMollifiedVelocity_stronglyMeasurable ρ ε hε hv
   have h3 : (3 : ℝ≥0∞).toReal = 3 := by norm_num
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hJ.aestronglyMeasurable.restrict,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hv.aestronglyMeasurable.restrict, h3]
   apply ENNReal.rpow_le_rpow _ (by norm_num)
   have hJm : Measurable (fun z : ParabolicPoint =>
       ‖regUniformMollifiedVelocity ρ ε hε v z‖ₑ ^ (3 : ℝ)) :=
-    hJ.measurable.enorm.pow_const _
+    hJ.measurable.eNorm.pow_const _
   have hvm : Measurable (fun z : ParabolicPoint => ‖v z‖ₑ ^ (3 : ℝ)) :=
-    hv.enorm.pow_const _
+    hv.eNorm.pow_const _
   change (∫⁻ z in (Set.univ : Set Vec3) ×ˢ Ioo 0 T,
       ‖regUniformMollifiedVelocity ρ ε hε v z‖ₑ ^ (3 : ℝ)
         ∂(volume : Measure ParabolicPoint)) ≤
@@ -237,9 +237,9 @@ theorem lerayLimit_regUniformMollifiedVelocity_spaceTime_eLpNorm_le
       (measurable_prodMk_right (m := (inferInstance : MeasurableSpace Vec3)))
   have hle := lerayLimit_regUniformMollifiedVelocity_slice_eLpNorm_le ρ ε hε v t
     hslice.aestronglyMeasurable (p := 3) (by norm_num) (by norm_num)
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hJslice.aestronglyMeasurable,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hslice.aestronglyMeasurable, h3] at hle
   exact (ENNReal.rpow_le_rpow_iff (by norm_num : (0 : ℝ) < 1 / 3)).mp hle
 

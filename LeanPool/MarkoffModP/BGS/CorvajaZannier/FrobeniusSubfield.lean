@@ -128,7 +128,7 @@ theorem finrank_frobeniusSubfield_eq_char
     rw [← hbz]
     exact b.property
   have hirr : Irreducible (Polynomial.X ^ p - Polynomial.C zp) :=
-    X_pow_sub_C_irreducible_of_prime (Fact.out : p.Prime) hnoRoot
+    irreducible_X_pow_sub_C_of_prime (Fact.out : p.Prime) hnoRoot
   have hmonic : (Polynomial.X ^ p - Polynomial.C zp).Monic :=
     Polynomial.monic_X_pow_sub_C zp (Fact.out : p.Prime).ne_zero
   have hroot : Polynomial.aeval z (Polynomial.X ^ p - Polynomial.C zp) = 0 := by
@@ -179,7 +179,7 @@ theorem exists_derivation_with_exact_frobenius_constants
     rw [← hbz]
     exact b.property
   have hirr : Irreducible (Polynomial.X ^ p - Polynomial.C zp) :=
-    X_pow_sub_C_irreducible_of_prime (Fact.out : p.Prime) hnoRoot
+    irreducible_X_pow_sub_C_of_prime (Fact.out : p.Prime) hnoRoot
   have hmonic : (Polynomial.X ^ p - Polynomial.C zp).Monic :=
     Polynomial.monic_X_pow_sub_C zp (Fact.out : p.Prime).ne_zero
   have hroot : Polynomial.aeval z (Polynomial.X ^ p - Polynomial.C zp) = 0 := by

@@ -64,7 +64,7 @@ theorem restrict_absolutelyContinuous (h : LocallyDominatesOn ν m Ω) {K : Set 
   obtain ⟨C, hC⟩ := h K hK hKΩ
   refine Measure.AbsolutelyContinuous.mk fun s _ hs ↦ ?_
   have := Measure.le_iff'.mp hC s
-  rw [Measure.smul_apply, hs, smul_zero] at this
+  rw [smul_apply, hs, smul_zero] at this
   exact le_antisymm this bot_le
 
 /-- `ν`-null sets inside a compact subset of `Ω` are `m`-null. -/
@@ -73,7 +73,7 @@ theorem measure_inter_eq_zero (h : LocallyDominatesOn ν m Ω) {K : Set V} (hK :
     m (s ∩ K) = 0 := by
   obtain ⟨C, hC⟩ := h K hK hKΩ
   have h1 := Measure.le_iff'.mp hC s
-  rw [Measure.smul_apply, Measure.restrict_apply' hK.measurableSet,
+  rw [smul_apply, Measure.restrict_apply' hK.measurableSet,
     Measure.restrict_apply' hK.measurableSet] at h1
   have h2 : (ν : Measure V) (s ∩ K) = 0 := measure_mono_null Set.inter_subset_left hs
   rw [h2, smul_zero] at h1

@@ -74,7 +74,7 @@ lemma coeffs_fromBlocks (A : Matrix n n' R) (B : Matrix n m R) (C : Matrix m' n'
 lemma coeffs_zero [Zero R] [Nonempty n] [Nonempty m] : (0 : Matrix n m R).coeffs = {0} := by
   classical
   ext a
-  simp only [coeffs, zero_apply, Set.mem_image2, Set.mem_univ, true_and, exists_const,
+  simp only [coeffs, Matrix.zero_apply, Set.mem_image2, Set.mem_univ, true_and, exists_const,
     Set.mem_singleton_iff]
   tauto
 
@@ -118,7 +118,7 @@ omit [Fintype n] in
 @[simp]
 lemma map_transvection (i j : n) (c : R) : (transvection i j c).map f = transvection i j (f c) := by
   ext a b
-  simp only [map_apply, transvection, add_apply, map_add, Matrix.single_apply]
+  simp only [map_apply, transvection, Matrix.add_apply, map_add, Matrix.single_apply]
   split_ifs <;> (by_cases hab : a = b <;> simp [Matrix.one_apply, hab])
 
 lemma map_listProd : (L : List (Matrix n n R)) →

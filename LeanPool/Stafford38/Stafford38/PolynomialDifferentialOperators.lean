@@ -98,25 +98,25 @@ theorem differentialGenerator_commutator (i j : Fin n ⊕ Fin n) :
   | inl i =>
       cases j with
       | inl j => simp [Stafford.commutator, differentialGenerator, coordinateEnd,
-          Module.End.mul_apply, Matrix.J, mul_comm, mul_assoc, mul_left_comm]
+          mul_apply_eq_comp, Matrix.J, mul_comm, mul_assoc, mul_left_comm]
       | inr j =>
           by_cases h : i = j
           · subst j
             simp [Stafford.commutator, differentialGenerator, coordinateEnd, momentumEnd,
-              Module.End.mul_apply, Matrix.J]
+              mul_apply_eq_comp, Matrix.J]
           · simp [Stafford.commutator, differentialGenerator, coordinateEnd, momentumEnd,
-              Module.End.mul_apply, Matrix.J, h]
+              mul_apply_eq_comp, Matrix.J, h]
   | inr i =>
       cases j with
       | inl j =>
           by_cases h : i = j
           · subst j
             simp [Stafford.commutator, differentialGenerator, coordinateEnd, momentumEnd,
-              Module.End.mul_apply, Matrix.J]
+              mul_apply_eq_comp, Matrix.J]
           · simp [Stafford.commutator, differentialGenerator, coordinateEnd, momentumEnd,
-              Module.End.mul_apply, Matrix.J, h]
+              mul_apply_eq_comp, Matrix.J, h]
       | inr j =>
-          simp [Stafford.commutator, differentialGenerator, momentumEnd, Module.End.mul_apply,
+          simp [Stafford.commutator, differentialGenerator, momentumEnd, mul_apply_eq_comp,
             Matrix.J, pderiv_comm k n i j]
 
 /-- The polynomial action, valued in genuine finite-order differential operators. -/

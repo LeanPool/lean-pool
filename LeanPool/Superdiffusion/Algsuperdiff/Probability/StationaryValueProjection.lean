@@ -207,7 +207,7 @@ private theorem matrixOperatorNorm_le_sq_mul_entrywiseNorm (A : Mat d) :
       Book.Ch02.matrixFrobeniusNorm_le_sum_abs_entries A
     _ ≤ ∑ _i : Fin d, ∑ _k : Fin d, ‖A‖ := by
       gcongr with i k
-      simpa [Real.norm_eq_abs] using Matrix.norm_entry_le_entrywise_sup_norm A
+      simpa [Real.norm_eq_abs] using Matrix.norm_apply_le_norm A
     _ = (d : ℝ) ^ 2 * ‖A‖ := by
       simp [pow_two]
       ring

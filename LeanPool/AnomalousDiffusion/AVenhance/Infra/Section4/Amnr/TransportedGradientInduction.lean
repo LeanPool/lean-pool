@@ -45,7 +45,7 @@ theorem amnr_material_gradient_mixed_abs_le_of_lower_gradient_bounds
         R ^ n * F * S ^ (α.length + 1) * H ^ (n + j) := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro hn α j hbudget i
       cases n with
       | zero =>

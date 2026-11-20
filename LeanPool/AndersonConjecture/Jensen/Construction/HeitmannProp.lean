@@ -88,9 +88,9 @@ lemma map_maxIdeal_eq_of_surj_closed
       ∀ (c : ↥R), (c : T) ∈ Ideal.map R.subtype I → c ∈ I) :
     Ideal.map R.subtype (IsLocalRing.maximalIdeal ↥R) = IsLocalRing.maximalIdeal T := by
   apply le_antisymm (map_maxIdeal_le_of_closed R h_closed)
-  apply Submodule.le_of_le_smul_of_le_jacobson_bot
+  apply Submodule.le_of_le_smul_of_le_jacobson
   · exact IsNoetherian.noetherian _
-  · rw [IsLocalRing.jacobson_eq_maximalIdeal _ bot_ne_top]
+  · rw [IsLocalRing.ringJacobson_eq_maximalIdeal]
   · intro m hm
     obtain ⟨r, hr⟩ := h_surj (Ideal.Quotient.mk (IsLocalRing.maximalIdeal T ^ 2) m)
     have hdiff : (r : T) - m ∈ IsLocalRing.maximalIdeal T ^ 2 :=

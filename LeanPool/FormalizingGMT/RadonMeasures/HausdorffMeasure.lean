@@ -130,16 +130,16 @@ lemma hausdorffContent_le_hausdorffContentInfty {X : Type*} [EMetricSpace X] {s 
     exact Set.mem_iUnion.mpr ⟨i, hxi, hx⟩
   have hdiam' : ∀ i, Metric.ediam (t' i) ≤ δ := by
     intro i
-    exact le_trans (Metric.ediam_mono (by simp [ht', Set.inter_subset_right])) hE
+    exact le_trans (Metric.ediam_mono (by simp [ht'])) hE
   refine le_trans (iInf₂_le t' hcov') ?_
   refine le_trans (iInf_le _ hdiam') ?_
-  refine ENNReal.tsum_le_tsum fun i => ?_
+  refine tsum_le_tsum fun i => ?_
   apply iSup_le
   intro hti
-  have hti' : (t i).Nonempty := hti.mono (by simp [ht', Set.inter_subset_left])
+  have hti' : (t i).Nonempty := hti.mono (by simp [ht'])
   refine le_iSup_of_le hti' ?_
   exact ENNReal.rpow_le_rpow
-    (Metric.ediam_mono (by simp [ht', Set.inter_subset_left])) hs
+    (Metric.ediam_mono (by simp [ht'])) hs
 
 /-- **Stabilisation of the Hausdorff content.** If `E` has `ediam E ≤ δ` and `s ≥ 0`, then its
 `δ`-restricted Hausdorff content equals its unrestricted Hausdorff content. The hypothesis

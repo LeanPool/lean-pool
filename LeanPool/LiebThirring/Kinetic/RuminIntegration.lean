@@ -47,7 +47,7 @@ theorem rumin_bound_of_lowMomentumBound (q : ℕ) (hq : 1 ≤ q) {N : ℕ}
           ‖highFourierField (densityField i ψ) E x‖ₑ ^ 2 := by
     apply MeasureTheory.lintegral_lintegral_swap
     exact ((stronglyMeasurable_highFourierField_canonical
-      (densityField i ψ)).enorm.pow_const 2).aemeasurable
+      (densityField i ψ)).eNorm.pow_const 2).aemeasurable
   rw [kineticEnergy_eq_densityField_layerCake_Ioi i ψ hanti, hswap]
   have hρmeas : Measurable (fun x : Position =>
       density ψ x ^ ((5 : ℝ) / 3)) :=

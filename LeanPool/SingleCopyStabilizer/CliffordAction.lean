@@ -34,7 +34,7 @@ theorem paritySign_add (a b : ZMod 2) :
   rcases bit_eq_zero_or_one a with rfl | rfl <;>
     rcases bit_eq_zero_or_one b with rfl | rfl <;>
     norm_num [paritySign, CharTwo.add_self_eq_zero]
-  all_goals decide
+  decide
 
 theorem paritySign_mul_self (a : ZMod 2) : paritySign a * paritySign a = 1 := by
   rcases bit_eq_zero_or_one a with rfl | rfl <;> norm_num [paritySign, CharTwo.add_self_eq_zero]

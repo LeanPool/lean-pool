@@ -285,7 +285,8 @@ theorem sobolev_mul_seq {s : ℝ}
             Real.sqrt_sq (by positivity), Real.sqrt_sq (weight_nonneg _ _)]
         convert mul_le_mul_of_nonneg_right h_peetre_step ( norm_nonneg ( b i * a ( m - i ) ) )
             using 1
-        all_goals ((norm_num; ring))
+        norm_num
+        ring
       by_cases h : Summable ( fun i => b i * a ( m - i ) ) <;> simp_all +decide only [ge_iff_le];
       · refine le_trans ( mul_le_mul_of_nonneg_left ( norm_tsum_le_tsum_norm ?_ ) (
           Real.sqrt_nonneg _ ) ) ?_;
