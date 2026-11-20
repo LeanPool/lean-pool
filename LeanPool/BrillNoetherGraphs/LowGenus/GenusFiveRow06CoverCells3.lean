@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow06CoverBase
+import LeanPool.BrillNoetherGraphs.LowGenus.IndexedCellReplay
 
 /-! **Independent generated check.** This module provides an additional generated proof of row 06
 and is not imported by the main `LowGenus` root.
@@ -47,12 +48,17 @@ def cell291 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell291_check_indexed : cell291.certificate.checkClosedRows 4
+private theorem cell291_check_hints : cell291.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
      = true := by
   decide +kernel
+
+private theorem cell291_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell291_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell291_check_hints
 
 theorem cell291_check :
     cell291.certificate.checkClosed 4 = true := by
@@ -81,12 +87,17 @@ def cell292 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell292_check_indexed : cell292.certificate.checkClosedRows 4
+private theorem cell292_check_hints : cell292.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 18, 19, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell292_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell292_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell292_check_hints
 
 theorem cell292_check :
     cell292.certificate.checkClosed 4 = true := by
@@ -116,12 +127,17 @@ def cell293 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell293_check_indexed : cell293.certificate.checkClosedRows 4
+private theorem cell293_check_hints : cell293.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell293_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell293_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell293_check_hints
 
 theorem cell293_check :
     cell293.certificate.checkClosed 4 = true := by
@@ -151,12 +167,17 @@ def cell294 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell294_check_indexed : cell294.certificate.checkClosedRows 4
+private theorem cell294_check_hints : cell294.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell294_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell294_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell294_check_hints
 
 theorem cell294_check :
     cell294.certificate.checkClosed 4 = true := by
@@ -186,12 +207,17 @@ def cell295 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell295_check_indexed : cell295.certificate.checkClosedRows 4
+private theorem cell295_check_hints : cell295.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
      = true := by
   decide +kernel
+
+private theorem cell295_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell295_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell295_check_hints
 
 theorem cell295_check :
     cell295.certificate.checkClosed 4 = true := by
@@ -219,11 +245,16 @@ def cell296 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell296_check_indexed : cell296.certificate.checkClosedRows 4
+private theorem cell296_check_hints : cell296.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 17, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 18]] = true := by
   decide +kernel
+
+private theorem cell296_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell296_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell296_check_hints
 
 theorem cell296_check :
     cell296.certificate.checkClosed 4 = true := by
@@ -252,12 +283,17 @@ def cell297 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell297_check_indexed : cell297.certificate.checkClosedRows 4
+private theorem cell297_check_hints : cell297.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell297_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell297_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell297_check_hints
 
 theorem cell297_check :
     cell297.certificate.checkClosed 4 = true := by
@@ -286,12 +322,17 @@ def cell298 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell298_check_indexed : cell298.certificate.checkClosedRows 4
+private theorem cell298_check_hints : cell298.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell298_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell298_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell298_check_hints
 
 theorem cell298_check :
     cell298.certificate.checkClosed 4 = true := by
@@ -320,12 +361,17 @@ def cell299 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell299_check_indexed : cell299.certificate.checkClosedRows 4
+private theorem cell299_check_hints : cell299.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 18, 19, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell299_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell299_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell299_check_hints
 
 theorem cell299_check :
     cell299.certificate.checkClosed 4 = true := by
@@ -354,12 +400,17 @@ def cell300 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell300_check_indexed : cell300.certificate.checkClosedRows 4
+private theorem cell300_check_hints : cell300.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell300_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell300_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell300_check_hints
 
 theorem cell300_check :
     cell300.certificate.checkClosed 4 = true := by
@@ -389,12 +440,17 @@ def cell301 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell301_check_indexed : cell301.certificate.checkClosedRows 4
+private theorem cell301_check_hints : cell301.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell301_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell301_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell301_check_hints
 
 theorem cell301_check :
     cell301.certificate.checkClosed 4 = true := by
@@ -424,12 +480,17 @@ def cell302 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell302_check_indexed : cell302.certificate.checkClosedRows 4
+private theorem cell302_check_hints : cell302.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell302_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell302_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell302_check_hints
 
 theorem cell302_check :
     cell302.certificate.checkClosed 4 = true := by
@@ -459,12 +520,17 @@ def cell303 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell303_check_indexed : cell303.certificate.checkClosedRows 4
+private theorem cell303_check_hints : cell303.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell303_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell303_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell303_check_hints
 
 theorem cell303_check :
     cell303.certificate.checkClosed 4 = true := by
@@ -493,12 +559,17 @@ def cell304 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell304_check_indexed : cell304.certificate.checkClosedRows 4
+private theorem cell304_check_hints : cell304.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell304_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell304_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell304_check_hints
 
 theorem cell304_check :
     cell304.certificate.checkClosed 4 = true := by
@@ -528,12 +599,17 @@ def cell305 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell305_check_indexed : cell305.certificate.checkClosedRows 4
+private theorem cell305_check_hints : cell305.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell305_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell305_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell305_check_hints
 
 theorem cell305_check :
     cell305.certificate.checkClosed 4 = true := by
@@ -563,12 +639,17 @@ def cell306 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell306_check_indexed : cell306.certificate.checkClosedRows 4
+private theorem cell306_check_hints : cell306.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell306_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell306_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell306_check_hints
 
 theorem cell306_check :
     cell306.certificate.checkClosed 4 = true := by
@@ -598,12 +679,17 @@ def cell307 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell307_check_indexed : cell307.certificate.checkClosedRows 4
+private theorem cell307_check_hints : cell307.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell307_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell307_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell307_check_hints
 
 theorem cell307_check :
     cell307.certificate.checkClosed 4 = true := by
@@ -632,12 +718,17 @@ def cell308 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -2, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell308_check_indexed : cell308.certificate.checkClosedRows 4
+private theorem cell308_check_hints : cell308.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell308_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell308_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell308_check_hints
 
 theorem cell308_check :
     cell308.certificate.checkClosed 4 = true := by
@@ -667,12 +758,17 @@ def cell309 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell309_check_indexed : cell309.certificate.checkClosedRows 4
+private theorem cell309_check_hints : cell309.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell309_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell309_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell309_check_hints
 
 theorem cell309_check :
     cell309.certificate.checkClosed 4 = true := by
@@ -702,12 +798,17 @@ def cell310 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell310_check_indexed : cell310.certificate.checkClosedRows 4
+private theorem cell310_check_hints : cell310.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell310_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell310_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell310_check_hints
 
 theorem cell310_check :
     cell310.certificate.checkClosed 4 = true := by
@@ -737,12 +838,17 @@ def cell311 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell311_check_indexed : cell311.certificate.checkClosedRows 4
+private theorem cell311_check_hints : cell311.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell311_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell311_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell311_check_hints
 
 theorem cell311_check :
     cell311.certificate.checkClosed 4 = true := by
@@ -771,11 +877,16 @@ def cell312 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell312_check_indexed : cell312.certificate.checkClosedRows 4
+private theorem cell312_check_hints : cell312.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 18, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 19]] = true := by
   decide +kernel
+
+private theorem cell312_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell312_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell312_check_hints
 
 theorem cell312_check :
     cell312.certificate.checkClosed 4 = true := by
@@ -803,11 +914,16 @@ def cell313 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell313_check_indexed : cell313.certificate.checkClosedRows 4
+private theorem cell313_check_hints : cell313.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 17, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 18]] = true := by
   decide +kernel
+
+private theorem cell313_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell313_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell313_check_hints
 
 theorem cell313_check :
     cell313.certificate.checkClosed 4 = true := by
@@ -836,12 +952,17 @@ def cell314 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell314_check_indexed : cell314.certificate.checkClosedRows 4
+private theorem cell314_check_hints : cell314.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell314_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell314_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell314_check_hints
 
 theorem cell314_check :
     cell314.certificate.checkClosed 4 = true := by
@@ -870,12 +991,17 @@ def cell315 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell315_check_indexed : cell315.certificate.checkClosedRows 4
+private theorem cell315_check_hints : cell315.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell315_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell315_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell315_check_hints
 
 theorem cell315_check :
     cell315.certificate.checkClosed 4 = true := by
@@ -904,11 +1030,16 @@ def cell316 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell316_check_indexed : cell316.certificate.checkClosedRows 4
+private theorem cell316_check_hints : cell316.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
      0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]] = true := by
   decide +kernel
+
+private theorem cell316_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell316_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell316_check_hints
 
 theorem cell316_check :
     cell316.certificate.checkClosed 4 = true := by
@@ -938,12 +1069,17 @@ def cell317 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell317_check_indexed : cell317.certificate.checkClosedRows 4
+private theorem cell317_check_hints : cell317.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 6, 19, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
      = true := by
   decide +kernel
+
+private theorem cell317_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell317_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell317_check_hints
 
 theorem cell317_check :
     cell317.certificate.checkClosed 4 = true := by
@@ -972,12 +1108,17 @@ def cell318 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell318_check_indexed : cell318.certificate.checkClosedRows 4
+private theorem cell318_check_hints : cell318.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell318_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell318_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell318_check_hints
 
 theorem cell318_check :
     cell318.certificate.checkClosed 4 = true := by
@@ -1007,12 +1148,17 @@ def cell319 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell319_check_indexed : cell319.certificate.checkClosedRows 4
+private theorem cell319_check_hints : cell319.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell319_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell319_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell319_check_hints
 
 theorem cell319_check :
     cell319.certificate.checkClosed 4 = true := by
@@ -1042,12 +1188,17 @@ def cell320 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell320_check_indexed : cell320.certificate.checkClosedRows 4
+private theorem cell320_check_hints : cell320.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell320_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell320_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell320_check_hints
 
 theorem cell320_check :
     cell320.certificate.checkClosed 4 = true := by
@@ -1077,12 +1228,17 @@ def cell321 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell321_check_indexed : cell321.certificate.checkClosedRows 4
+private theorem cell321_check_hints : cell321.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
      = true := by
   decide +kernel
+
+private theorem cell321_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell321_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell321_check_hints
 
 theorem cell321_check :
     cell321.certificate.checkClosed 4 = true := by
@@ -1112,12 +1268,17 @@ def cell322 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell322_check_indexed : cell322.certificate.checkClosedRows 4
+private theorem cell322_check_hints : cell322.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 6, 19, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
      = true := by
   decide +kernel
+
+private theorem cell322_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell322_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell322_check_hints
 
 theorem cell322_check :
     cell322.certificate.checkClosed 4 = true := by
@@ -1146,12 +1307,17 @@ def cell323 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell323_check_indexed : cell323.certificate.checkClosedRows 4
+private theorem cell323_check_hints : cell323.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 6, 18, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell323_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell323_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell323_check_hints
 
 theorem cell323_check :
     cell323.certificate.checkClosed 4 = true := by
@@ -1181,12 +1347,17 @@ def cell324 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell324_check_indexed : cell324.certificate.checkClosedRows 4
+private theorem cell324_check_hints : cell324.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell324_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell324_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell324_check_hints
 
 theorem cell324_check :
     cell324.certificate.checkClosed 4 = true := by
@@ -1216,12 +1387,17 @@ def cell325 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell325_check_indexed : cell325.certificate.checkClosedRows 4
+private theorem cell325_check_hints : cell325.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell325_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell325_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell325_check_hints
 
 theorem cell325_check :
     cell325.certificate.checkClosed 4 = true := by
@@ -1251,12 +1427,17 @@ def cell326 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell326_check_indexed : cell326.certificate.checkClosedRows 4
+private theorem cell326_check_hints : cell326.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
      = true := by
   decide +kernel
+
+private theorem cell326_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell326_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell326_check_hints
 
 theorem cell326_check :
     cell326.certificate.checkClosed 4 = true := by
@@ -1286,12 +1467,17 @@ def cell327 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell327_check_indexed : cell327.certificate.checkClosedRows 4
+private theorem cell327_check_hints : cell327.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
      = true := by
   decide +kernel
+
+private theorem cell327_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell327_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell327_check_hints
 
 theorem cell327_check :
     cell327.certificate.checkClosed 4 = true := by
@@ -1320,12 +1506,17 @@ def cell328 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell328_check_indexed : cell328.certificate.checkClosedRows 4
+private theorem cell328_check_hints : cell328.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 9], [0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 18, 19, 18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell328_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell328_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell328_check_hints
 
 theorem cell328_check :
     cell328.certificate.checkClosed 4 = true := by
@@ -1355,12 +1546,17 @@ def cell329 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell329_check_indexed : cell329.certificate.checkClosedRows 4
+private theorem cell329_check_hints : cell329.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell329_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell329_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell329_check_hints
 
 theorem cell329_check :
     cell329.certificate.checkClosed 4 = true := by
@@ -1390,12 +1586,17 @@ def cell330 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell330_check_indexed : cell330.certificate.checkClosedRows 4
+private theorem cell330_check_hints : cell330.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9],
      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell330_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell330_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell330_check_hints
 
 theorem cell330_check :
     cell330.certificate.checkClosed 4 = true := by
@@ -1425,12 +1626,17 @@ def cell331 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell331_check_indexed : cell331.certificate.checkClosedRows 4
+private theorem cell331_check_hints : cell331.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 9], [0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
      = true := by
   decide +kernel
+
+private theorem cell331_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell331_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell331_check_hints
 
 theorem cell331_check :
     cell331.certificate.checkClosed 4 = true := by
@@ -1460,12 +1666,17 @@ def cell332 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell332_check_indexed : cell332.certificate.checkClosedRows 4
+private theorem cell332_check_hints : cell332.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 19,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 20, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
      = true := by
   decide +kernel
+
+private theorem cell332_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell332_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell332_check_hints
 
 theorem cell332_check :
     cell332.certificate.checkClosed 4 = true := by
@@ -1494,12 +1705,17 @@ def cell333 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell333_check_indexed : cell333.certificate.checkClosedRows 4
+private theorem cell333_check_hints : cell333.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell333_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell333_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell333_check_hints
 
 theorem cell333_check :
     cell333.certificate.checkClosed 4 = true := by
@@ -1529,12 +1745,17 @@ def cell334 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell334_check_indexed : cell334.certificate.checkClosedRows 4
+private theorem cell334_check_hints : cell334.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell334_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell334_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell334_check_hints
 
 theorem cell334_check :
     cell334.certificate.checkClosed 4 = true := by
@@ -1564,12 +1785,17 @@ def cell335 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell335_check_indexed : cell335.certificate.checkClosedRows 4
+private theorem cell335_check_hints : cell335.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell335_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell335_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell335_check_hints
 
 theorem cell335_check :
     cell335.certificate.checkClosed 4 = true := by
@@ -1599,12 +1825,17 @@ def cell336 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell336_check_indexed : cell336.certificate.checkClosedRows 4
+private theorem cell336_check_hints : cell336.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
      = true := by
   decide +kernel
+
+private theorem cell336_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell336_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell336_check_hints
 
 theorem cell336_check :
     cell336.certificate.checkClosed 4 = true := by
@@ -1635,12 +1866,17 @@ def cell337 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell337_check_indexed : cell337.certificate.checkClosedRows 4
+private theorem cell337_check_hints : cell337.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 19,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 23]] = true := by
   decide +kernel
+
+private theorem cell337_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell337_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell337_check_hints
 
 theorem cell337_check :
     cell337.certificate.checkClosed 4 = true := by
@@ -1670,12 +1906,17 @@ def cell338 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell338_check_indexed : cell338.certificate.checkClosedRows 4
+private theorem cell338_check_hints : cell338.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell338_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell338_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell338_check_hints
 
 theorem cell338_check :
     cell338.certificate.checkClosed 4 = true := by
@@ -1706,12 +1947,17 @@ def cell339 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell339_check_indexed : cell339.certificate.checkClosedRows 4
+private theorem cell339_check_hints : cell339.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell339_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell339_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell339_check_hints
 
 theorem cell339_check :
     cell339.certificate.checkClosed 4 = true := by
@@ -1742,12 +1988,17 @@ def cell340 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell340_check_indexed : cell340.certificate.checkClosedRows 4
+private theorem cell340_check_hints : cell340.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell340_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell340_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell340_check_hints
 
 theorem cell340_check :
     cell340.certificate.checkClosed 4 = true := by
@@ -1778,12 +2029,17 @@ def cell341 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell341_check_indexed : cell341.certificate.checkClosedRows 4
+private theorem cell341_check_hints : cell341.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell341_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell341_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell341_check_hints
 
 theorem cell341_check :
     cell341.certificate.checkClosed 4 = true := by
@@ -1814,12 +2070,17 @@ def cell342 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell342_check_indexed : cell342.certificate.checkClosedRows 4
+private theorem cell342_check_hints : cell342.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 19,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 23]] = true := by
   decide +kernel
+
+private theorem cell342_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell342_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell342_check_hints
 
 theorem cell342_check :
     cell342.certificate.checkClosed 4 = true := by
@@ -1849,12 +2110,17 @@ def cell343 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell343_check_indexed : cell343.certificate.checkClosedRows 4
+private theorem cell343_check_hints : cell343.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell343_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell343_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell343_check_hints
 
 theorem cell343_check :
     cell343.certificate.checkClosed 4 = true := by
@@ -1885,12 +2151,17 @@ def cell344 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell344_check_indexed : cell344.certificate.checkClosedRows 4
+private theorem cell344_check_hints : cell344.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell344_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell344_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell344_check_hints
 
 theorem cell344_check :
     cell344.certificate.checkClosed 4 = true := by
@@ -1921,12 +2192,17 @@ def cell345 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell345_check_indexed : cell345.certificate.checkClosedRows 4
+private theorem cell345_check_hints : cell345.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell345_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell345_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell345_check_hints
 
 theorem cell345_check :
     cell345.certificate.checkClosed 4 = true := by
@@ -1957,12 +2233,17 @@ def cell346 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell346_check_indexed : cell346.certificate.checkClosedRows 4
+private theorem cell346_check_hints : cell346.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell346_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell346_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell346_check_hints
 
 theorem cell346_check :
     cell346.certificate.checkClosed 4 = true := by
@@ -1992,12 +2273,17 @@ def cell347 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell347_check_indexed : cell347.certificate.checkClosedRows 4
+private theorem cell347_check_hints : cell347.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell347_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell347_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell347_check_hints
 
 theorem cell347_check :
     cell347.certificate.checkClosed 4 = true := by
@@ -2028,12 +2314,17 @@ def cell348 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell348_check_indexed : cell348.certificate.checkClosedRows 4
+private theorem cell348_check_hints : cell348.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell348_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell348_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell348_check_hints
 
 theorem cell348_check :
     cell348.certificate.checkClosed 4 = true := by
@@ -2064,12 +2355,17 @@ def cell349 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell349_check_indexed : cell349.certificate.checkClosedRows 4
+private theorem cell349_check_hints : cell349.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell349_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell349_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell349_check_hints
 
 theorem cell349_check :
     cell349.certificate.checkClosed 4 = true := by
@@ -2100,12 +2396,17 @@ def cell350 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell350_check_indexed : cell350.certificate.checkClosedRows 4
+private theorem cell350_check_hints : cell350.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell350_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell350_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell350_check_hints
 
 theorem cell350_check :
     cell350.certificate.checkClosed 4 = true := by
@@ -2135,12 +2436,17 @@ def cell351 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell351_check_indexed : cell351.certificate.checkClosedRows 4
+private theorem cell351_check_hints : cell351.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 19,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 20, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
      = true := by
   decide +kernel
+
+private theorem cell351_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell351_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell351_check_hints
 
 theorem cell351_check :
     cell351.certificate.checkClosed 4 = true := by
@@ -2169,12 +2475,17 @@ def cell352 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell352_check_indexed : cell352.certificate.checkClosedRows 4
+private theorem cell352_check_hints : cell352.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell352_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell352_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell352_check_hints
 
 theorem cell352_check :
     cell352.certificate.checkClosed 4 = true := by
@@ -2204,12 +2515,17 @@ def cell353 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell353_check_indexed : cell353.certificate.checkClosedRows 4
+private theorem cell353_check_hints : cell353.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell353_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell353_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell353_check_hints
 
 theorem cell353_check :
     cell353.certificate.checkClosed 4 = true := by
@@ -2239,12 +2555,17 @@ def cell354 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell354_check_indexed : cell354.certificate.checkClosedRows 4
+private theorem cell354_check_hints : cell354.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
      22]] = true := by
   decide +kernel
+
+private theorem cell354_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell354_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell354_check_hints
 
 theorem cell354_check :
     cell354.certificate.checkClosed 4 = true := by
@@ -2274,12 +2595,17 @@ def cell355 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell355_check_indexed : cell355.certificate.checkClosedRows 4
+private theorem cell355_check_hints : cell355.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
      = true := by
   decide +kernel
+
+private theorem cell355_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell355_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell355_check_hints
 
 theorem cell355_check :
     cell355.certificate.checkClosed 4 = true := by
@@ -2310,12 +2636,17 @@ def cell356 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell356_check_indexed : cell356.certificate.checkClosedRows 4
+private theorem cell356_check_hints : cell356.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 19,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 23]] = true := by
   decide +kernel
+
+private theorem cell356_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell356_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell356_check_hints
 
 theorem cell356_check :
     cell356.certificate.checkClosed 4 = true := by
@@ -2345,12 +2676,17 @@ def cell357 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell357_check_indexed : cell357.certificate.checkClosedRows 4
+private theorem cell357_check_hints : cell357.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell357_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell357_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell357_check_hints
 
 theorem cell357_check :
     cell357.certificate.checkClosed 4 = true := by
@@ -2381,12 +2717,17 @@ def cell358 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell358_check_indexed : cell358.certificate.checkClosedRows 4
+private theorem cell358_check_hints : cell358.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell358_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell358_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell358_check_hints
 
 theorem cell358_check :
     cell358.certificate.checkClosed 4 = true := by
@@ -2417,12 +2758,17 @@ def cell359 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell359_check_indexed : cell359.certificate.checkClosedRows 4
+private theorem cell359_check_hints : cell359.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell359_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell359_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell359_check_hints
 
 theorem cell359_check :
     cell359.certificate.checkClosed 4 = true := by
@@ -2453,12 +2799,17 @@ def cell360 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell360_check_indexed : cell360.certificate.checkClosedRows 4
+private theorem cell360_check_hints : cell360.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell360_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell360_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell360_check_hints
 
 theorem cell360_check :
     cell360.certificate.checkClosed 4 = true := by
@@ -2489,12 +2840,17 @@ def cell361 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell361_check_indexed : cell361.certificate.checkClosedRows 4
+private theorem cell361_check_hints : cell361.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 19,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 23]] = true := by
   decide +kernel
+
+private theorem cell361_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell361_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell361_check_hints
 
 theorem cell361_check :
     cell361.certificate.checkClosed 4 = true := by
@@ -2524,12 +2880,17 @@ def cell362 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell362_check_indexed : cell362.certificate.checkClosedRows 4
+private theorem cell362_check_hints : cell362.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell362_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell362_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell362_check_hints
 
 theorem cell362_check :
     cell362.certificate.checkClosed 4 = true := by
@@ -2560,12 +2921,17 @@ def cell363 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell363_check_indexed : cell363.certificate.checkClosedRows 4
+private theorem cell363_check_hints : cell363.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell363_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell363_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell363_check_hints
 
 theorem cell363_check :
     cell363.certificate.checkClosed 4 = true := by
@@ -2596,12 +2962,17 @@ def cell364 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell364_check_indexed : cell364.certificate.checkClosedRows 4
+private theorem cell364_check_hints : cell364.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell364_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell364_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell364_check_hints
 
 theorem cell364_check :
     cell364.certificate.checkClosed 4 = true := by
@@ -2632,12 +3003,17 @@ def cell365 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell365_check_indexed : cell365.certificate.checkClosedRows 4
+private theorem cell365_check_hints : cell365.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell365_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell365_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell365_check_hints
 
 theorem cell365_check :
     cell365.certificate.checkClosed 4 = true := by
@@ -2668,12 +3044,17 @@ def cell366 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell366_check_indexed : cell366.certificate.checkClosedRows 4
+private theorem cell366_check_hints : cell366.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0, 19,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 21, 22, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 23]] = true := by
   decide +kernel
+
+private theorem cell366_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell366_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell366_check_hints
 
 theorem cell366_check :
     cell366.certificate.checkClosed 4 = true := by
@@ -2703,12 +3084,17 @@ def cell367 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell367_check_indexed : cell367.certificate.checkClosedRows 4
+private theorem cell367_check_hints : cell367.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0, 0, 0, 18,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell367_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell367_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell367_check_hints
 
 theorem cell367_check :
     cell367.certificate.checkClosed 4 = true := by
@@ -2739,12 +3125,17 @@ def cell368 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell368_check_indexed : cell368.certificate.checkClosedRows 4
+private theorem cell368_check_hints : cell368.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell368_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell368_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell368_check_hints
 
 theorem cell368_check :
     cell368.certificate.checkClosed 4 = true := by
@@ -2775,12 +3166,17 @@ def cell369 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell369_check_indexed : cell369.certificate.checkClosedRows 4
+private theorem cell369_check_hints : cell369.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0,
      0, 0, 20, 11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell369_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell369_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell369_check_hints
 
 theorem cell369_check :
     cell369.certificate.checkClosed 4 = true := by
@@ -2811,12 +3207,17 @@ def cell370 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell370_check_indexed : cell370.certificate.checkClosedRows 4
+private theorem cell370_check_hints : cell370.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 0, 0, 0, 0, 20,
      11], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell370_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell370_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell370_check_hints
 
 theorem cell370_check :
     cell370.certificate.checkClosed 4 = true := by
@@ -2846,12 +3247,17 @@ def cell371 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 1], aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell371_check_indexed : cell371.certificate.checkClosedRows 4
+private theorem cell371_check_hints : cell371.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 19,
      18], [0, 0, 0, 0, 0, 0, 0, 0, 20, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 21]]
      = true := by
   decide +kernel
+
+private theorem cell371_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell371_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell371_check_hints
 
 theorem cell371_check :
     cell371.certificate.checkClosed 4 = true := by
@@ -2880,12 +3286,17 @@ def cell372 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -2, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell372_check_indexed : cell372.certificate.checkClosedRows 4
+private theorem cell372_check_hints : cell372.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 19, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 20]]
      = true := by
   decide +kernel
+
+private theorem cell372_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell372_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell372_check_hints
 
 theorem cell372_check :
     cell372.certificate.checkClosed 4 = true := by
@@ -2915,12 +3326,17 @@ def cell373 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -2, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell373_check_indexed : cell373.certificate.checkClosedRows 4
+private theorem cell373_check_hints : cell373.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      5, 22]] = true := by
   decide +kernel
+
+private theorem cell373_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell373_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell373_check_hints
 
 theorem cell373_check :
     cell373.certificate.checkClosed 4 = true := by
@@ -2950,12 +3366,17 @@ def cell374 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -2, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell374_check_indexed : cell374.certificate.checkClosedRows 4
+private theorem cell374_check_hints : cell374.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      5, 22]] = true := by
   decide +kernel
+
+private theorem cell374_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell374_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell374_check_hints
 
 theorem cell374_check :
     cell374.certificate.checkClosed 4 = true := by
@@ -2985,12 +3406,17 @@ def cell375 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -2, 0, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 2, 0, 1],
       aff [0, 0, 0, 0, 0, 2, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell375_check_indexed : cell375.certificate.checkClosedRows 4
+private theorem cell375_check_hints : cell375.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 20,
      19], [0, 0, 0, 0, 0, 0, 0, 0, 21, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 22]]
      = true := by
   decide +kernel
+
+private theorem cell375_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell375_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell375_check_hints
 
 theorem cell375_check :
     cell375.certificate.checkClosed 4 = true := by
@@ -3021,12 +3447,17 @@ def cell376 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell376_check_indexed : cell376.certificate.checkClosedRows 4
+private theorem cell376_check_hints : cell376.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 16, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 19,
      18], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 6, 21, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 23]] = true := by
   decide +kernel
+
+private theorem cell376_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell376_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell376_check_hints
 
 theorem cell376_check :
     cell376.certificate.checkClosed 4 = true := by
@@ -3056,12 +3487,17 @@ def cell377 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell377_check_indexed : cell377.certificate.checkClosedRows 4
+private theorem cell377_check_hints : cell377.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell377_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell377_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell377_check_hints
 
 theorem cell377_check :
     cell377.certificate.checkClosed 4 = true := by
@@ -3092,12 +3528,17 @@ def cell378 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell378_check_indexed : cell378.certificate.checkClosedRows 4
+private theorem cell378_check_hints : cell378.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell378_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell378_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell378_check_hints
 
 theorem cell378_check :
     cell378.certificate.checkClosed 4 = true := by
@@ -3128,12 +3569,17 @@ def cell379 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell379_check_indexed : cell379.certificate.checkClosedRows 4
+private theorem cell379_check_hints : cell379.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell379_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell379_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell379_check_hints
 
 theorem cell379_check :
     cell379.certificate.checkClosed 4 = true := by
@@ -3164,12 +3610,17 @@ def cell380 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell380_check_indexed : cell380.certificate.checkClosedRows 4
+private theorem cell380_check_hints : cell380.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [14, 15, 16, 15], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 19, 20,
      19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell380_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell380_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell380_check_hints
 
 theorem cell380_check :
     cell380.certificate.checkClosed 4 = true := by
@@ -3199,12 +3650,17 @@ def cell381 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell381_check_indexed : cell381.certificate.checkClosedRows 4
+private theorem cell381_check_hints : cell381.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 6, 20, 21], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell381_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell381_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell381_check_hints
 
 theorem cell381_check :
     cell381.certificate.checkClosed 4 = true := by
@@ -3234,12 +3690,17 @@ def cell382 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell382_check_indexed : cell382.certificate.checkClosedRows 4
+private theorem cell382_check_hints : cell382.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 15, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 18,
      17], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 20, 21, 20], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 5, 22]] = true := by
   decide +kernel
+
+private theorem cell382_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell382_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell382_check_hints
 
 theorem cell382_check :
     cell382.certificate.checkClosed 4 = true := by
@@ -3270,12 +3731,17 @@ def cell383 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell383_check_indexed : cell383.certificate.checkClosedRows 4
+private theorem cell383_check_hints : cell383.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell383_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell383_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell383_check_hints
 
 theorem cell383_check :
     cell383.certificate.checkClosed 4 = true := by
@@ -3306,12 +3772,17 @@ def cell384 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell384_check_indexed : cell384.certificate.checkClosedRows 4
+private theorem cell384_check_hints : cell384.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell384_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell384_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell384_check_hints
 
 theorem cell384_check :
     cell384.certificate.checkClosed 4 = true := by
@@ -3342,12 +3813,17 @@ def cell385 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, -2, -1, 0, 2, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell385_check_indexed : cell385.certificate.checkClosedRows 4
+private theorem cell385_check_hints : cell385.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 6, 22, 23], [0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell385_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell385_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell385_check_hints
 
 theorem cell385_check :
     cell385.certificate.checkClosed 4 = true := by
@@ -3378,12 +3854,17 @@ def cell386 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 2, 1, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -2, 0, 0, 1, 0, 0, 0, 0],
       aff [0, 0, 0, 0, 0, 2, 0, 1, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0]] }
 
-private theorem cell386_check_indexed : cell386.certificate.checkClosedRows 4
+private theorem cell386_check_hints : cell386.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 14, 1, 0, 0, 15, 16], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 0, 0, 17, 10], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
      18, 19, 20, 19], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 22], [0, 0, 0, 0, 0, 0, 0, 0, 0,
      0, 0, 0, 0, 0, 5, 24]] = true := by
   decide +kernel
+
+private theorem cell386_check_indexed :
+    type_of% (CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell386_check_hints) := by
+  as_aux_lemma =>
+    exact CertificateData.checkClosedRows_of_checkClosedRowsAtHints cell386_check_hints
 
 theorem cell386_check :
     cell386.certificate.checkClosed 4 = true := by

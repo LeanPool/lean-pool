@@ -6,7 +6,7 @@ Authors: Nathan Pflueger
 module
 
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow03FixedCoverData
-public import LeanPool.BrillNoetherGraphs.LowGenus.CompactCellTreeLookup
+public import LeanPool.BrillNoetherGraphs.LowGenus.PairedCoverReplay
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
 
 /-! # Kernel replay batch 4 for the independent row-03 cover
@@ -110,15 +110,20 @@ theorem cell107_check_indexed : cell107.certificate.checkClosedRows 4
      19, 20]] = true := by
   decide +kernel
 
-theorem treePart0_check_chunked :
-    treePart0.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart0_check_paired :
+    treePart0.checkPaired splitForms farkasReceiptLookup cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, -1, 0,
       1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       0, -1, 0, 1, 0, 0, 0]]) = true := by
   decide +kernel
 
-theorem treePart1_check_chunked :
-    treePart1.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart0_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart0_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart0_check_paired
+
+theorem treePart1_check_paired :
+    treePart1.checkPaired splitForms farkasReceiptLookup cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, -1,
       0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -127,8 +132,13 @@ theorem treePart1_check_chunked :
       := by
   decide +kernel
 
-theorem treePart2_check_chunked :
-    treePart2.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart1_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart1_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart1_check_paired
+
+theorem treePart2_check_paired :
+    treePart2.checkPaired splitForms farkasReceiptLookup cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, -1,
       0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -137,8 +147,13 @@ theorem treePart2_check_chunked :
       0, 0, 0, -1])]) = true := by
   decide +kernel
 
-theorem treePart3_check_chunked :
-    treePart3.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart2_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart2_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart2_check_paired
+
+theorem treePart3_check_paired :
+    treePart3.checkPaired splitForms farkasReceiptLookup cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, -1,
       0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -147,8 +162,13 @@ theorem treePart3_check_chunked :
       1, 0, 0, 0, 0, 0, 0, 0, 0]]) = true := by
   decide +kernel
 
-theorem treePart4_check_chunked :
-    treePart4.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart3_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart3_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart3_check_paired
+
+theorem treePart4_check_paired :
+    treePart4.checkPaired splitForms farkasReceiptLookup cells
       ((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, -1,
       0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -157,8 +177,13 @@ theorem treePart4_check_chunked :
       [AffineForm.violation (aff [0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0])]) = true := by
   decide +kernel
 
-theorem treePart5_check_chunked :
-    treePart5.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart4_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart4_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart4_check_paired
+
+theorem treePart5_check_paired :
+    treePart5.checkPaired splitForms farkasReceiptLookup cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       -1, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -167,8 +192,13 @@ theorem treePart5_check_chunked :
       -1, 0, 0, 0, 0]]) ++ [aff [0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]) = true := by
   decide +kernel
 
-theorem treePart6_check_chunked :
-    treePart6.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart5_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart5_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart5_check_paired
+
+theorem treePart6_check_paired :
+    treePart6.checkPaired splitForms farkasReceiptLookup cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       -1, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -178,8 +208,13 @@ theorem treePart6_check_chunked :
       [aff [0, 0, -1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) = true := by
   decide +kernel
 
-theorem treePart7_check_chunked :
-    treePart7.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart6_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart6_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart6_check_paired
+
+theorem treePart7_check_paired :
+    treePart7.checkPaired splitForms farkasReceiptLookup cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       -1, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -189,8 +224,13 @@ theorem treePart7_check_chunked :
       [AffineForm.violation (aff [0, 0, -1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0])]) = true := by
   decide +kernel
 
-theorem treePart8_check_chunked :
-    treePart8.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart7_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart7_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart7_check_paired
+
+theorem treePart8_check_paired :
+    treePart8.checkPaired splitForms farkasReceiptLookup cells
       (((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       -1, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -200,8 +240,13 @@ theorem treePart8_check_chunked :
       true := by
   decide +kernel
 
-theorem treePart9_check_chunked :
-    treePart9.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart8_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart8_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart8_check_paired
+
+theorem treePart9_check_paired :
+    treePart9.checkPaired splitForms farkasReceiptLookup cells
       (((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       -1, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -212,8 +257,13 @@ theorem treePart9_check_chunked :
       0, 0, 0, 0, 0, 0, 0, 0, 1]]) = true := by
   decide +kernel
 
-theorem treePart10_check_chunked :
-    treePart10.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart9_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart9_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart9_check_paired
+
+theorem treePart10_check_paired :
+    treePart10.checkPaired splitForms farkasReceiptLookup cells
       (((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       -1, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -224,8 +274,13 @@ theorem treePart10_check_chunked :
       [AffineForm.violation (aff [0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1])]) = true := by
   decide +kernel
 
-theorem treePart11_check_chunked :
-    treePart11.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart10_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart10_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart10_check_paired
+
+theorem treePart11_check_paired :
+    treePart11.checkPaired splitForms farkasReceiptLookup cells
       ((((((((((base ++ [aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0,
       -1, 0, 1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0]]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0])]) ++ [aff [0, 0, 0, 0, 0,
@@ -235,6 +290,11 @@ theorem treePart11_check_chunked :
       0, 0, 0, 0, 0, 0])]) ++ [AffineForm.violation (aff [0, 0, -1, 0, 0, 0, 0, 1, 0, -1, 0, 0,
       0])]) = true := by
   decide +kernel
+
+theorem treePart11_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart11_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart11_check_paired
 
 end ReplayChecks4
 

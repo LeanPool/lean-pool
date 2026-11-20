@@ -39,7 +39,7 @@ public import LeanPool.GinibrePoincare.Analysis.GeneralPotentialQuotientNonnegat
 public import LeanPool.GinibrePoincare.Analysis.GeneralPotentialQuotientVariance
 
 /-!
-# General potential sharp Poincare
+# Poincaré inequality for general potentials
 
 Part of the nonquadratic potentials development of the
 Ginibre Poincaré formalization.
@@ -53,7 +53,7 @@ open MeasureTheory
 namespace GinibrePoincare
 noncomputable section
 
-/-- Sharp nonquadratic Poincaré inequality for every symmetric compact C¹
+/-- Nonquadratic Poincaré inequality for every symmetric compactly supported C¹
 observable, derived from the actual weighted projection and phase geometry. -/
 theorem rhoSubharmonic_potential_compact_poincare {d : ℕ} (hn : 0 < d + 1)
     {V : Potential} (hV : ContDiff ℝ 2 V) (hrot : IsRotationalPotential V)

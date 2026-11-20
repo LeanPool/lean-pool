@@ -338,10 +338,12 @@ public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFourRow098Closed
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFourRowsClosed
 public import LeanPool.BrillNoetherGraphs.LowGenus.GuardingSet
 public import LeanPool.BrillNoetherGraphs.LowGenus.Highlights
+public import LeanPool.BrillNoetherGraphs.LowGenus.IndexedCellReplay
 public import LeanPool.BrillNoetherGraphs.LowGenus.Infrastructure
 public import LeanPool.BrillNoetherGraphs.LowGenus.Infrastructure.CoreRelabelingClosed
 public import LeanPool.BrillNoetherGraphs.LowGenus.Infrastructure.TrivalentExpansionClosed
 public import LeanPool.BrillNoetherGraphs.LowGenus.LowGenusExistence
+public import LeanPool.BrillNoetherGraphs.LowGenus.PairedCoverReplay
 public import LeanPool.BrillNoetherGraphs.Research
 public import LeanPool.BrillNoetherGraphs.Research.GenusFiveSpecializationAudit
 public import LeanPool.BrillNoetherGraphs.TreewidthGonality

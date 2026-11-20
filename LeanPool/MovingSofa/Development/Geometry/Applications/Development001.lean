@@ -19,6 +19,8 @@ public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development00
 
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development002
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development001
+import LeanPool.MovingSofa.Development.Geometry.Foundations.CapAreaCertificate
+import LeanPool.MovingSofa.Development.Geometry.Foundations.NicheAreaCertificate
 
 
 
@@ -3475,7 +3477,7 @@ contacts `A (t)` and `C (t)` at the grid angles attain the cap support at the st
 increasing normals `t` and `t + π / 2` of `[0, π)`, so `supportContact_fan_area` bounds the
 cap area below by half the shoelace sum of the fan over the anchor.  The certificate
 encloses that sum (`capDoubledZ_sound`), and its kernel-checked numeric conclusion
-`GerverAreaCert.capOK_true` turns the enclosure into `28609 / 10000 ≤ |K₀|`.
+`GerverAreaCert.cap_bound_checked` turns the enclosure into `28609 / 10000 ≤ |K₀|`.
 -/
 
 /-! ### Elementary geometry of the outer cap -/
@@ -3773,6 +3775,19 @@ theorem capDoubledZ_sound :
     (SI.contains_mul (SI.contains_sub ha1 hL1) (SI.contains_sub hb2 hL2))
     (SI.contains_mul (SI.contains_sub ha2 hL2) (SI.contains_sub hb1 hL1))
 
+private theorem cap_area_bound_of_certificate {endpoint : ℤ} {fanArea area : ℝ}
+    (hlo : (endpoint : ℝ) ≤ (M : ℝ) * fanArea)
+    (hfan : (1 / 2 : ℝ) * fanArea ≤ area)
+    (hcert : 2 * 28609 * M ≤ 10000 * endpoint) :
+    (28609 : ℝ) / 10000 ≤ area := by
+  have hcast : (2 * 28609 * (M : ℝ)) ≤ 10000 * (endpoint : ℝ) := by
+    exact_mod_cast hcert
+  have hscaled := mul_le_mul_of_nonneg_left hlo (by norm_num : (0 : ℝ) ≤ 10000)
+  have hcompare : (2 * 28609) * (M : ℝ) ≤ (10000 * fanArea) * (M : ℝ) :=
+    hcast.trans (by simpa only [mul_assoc, mul_comm (M : ℝ) fanArea] using hscaled)
+  have hbound := le_of_mul_le_mul_right hcompare SI.Mpos
+  linarith only [hbound, hfan]
+
 /-- The cap area lower bound. -/
 theorem gerverOuterCap_area_certified_lower_bound :
     (28609 : ℝ) / 10000 ≤ ClassicalResults.area gerverOuterCap := by
@@ -3803,26 +3818,7 @@ theorem gerverOuterCap_area_certified_lower_bound :
     rw [hcount]
     exact Fin.sum_univ_eq_sum_range (fun i => planeCrossProduct
       (gerverFanPoint i - gerverFanAnchor) (gerverFanPoint (i + 1) - gerverFanAnchor)) 639] at hfan
-  -- The kernel-checked numeric inequality.  The fan sum and the certificate endpoint are
-  -- abstracted into local variables first, and the arithmetic tactics are used in their
-  -- `only` form, so that no tactic ever tries to evaluate the 639-term fold.
-  obtain ⟨S, hS⟩ : ∃ S : ℝ, (∑ i ∈ Finset.range (fanCount - 1),
-      planeCrossProduct (gerverFanPoint i - gerverFanAnchor)
-        (gerverFanPoint (i + 1) - gerverFanAnchor)) = S := ⟨_, rfl⟩
-  obtain ⟨z, hz⟩ : ∃ z : ℤ, capDoubledZ.lo = z := ⟨_, rfl⟩
-  obtain ⟨hlo, -⟩ := capDoubledZ_sound
-  rw [hS] at hfan
-  rw [hS, hz] at hlo
-  have hOK : 2 * 28609 * M ≤ 10000 * capDoubledZ.lo := by
-    have h := capOK_true
-    unfold capOK at h
-    exact of_decide_eq_true h
-  rw [hz] at hOK
-  have hOK' : (2 * 28609 * (M : ℝ)) ≤ 10000 * (z : ℝ) := by exact_mod_cast hOK
-  have hM : (0 : ℝ) < (M : ℝ) := SI.Mpos
-  have hkey : 2 * 28609 ≤ 10000 * S := by nlinarith only [hlo, hOK', hM]
-  refine le_trans ?_ hfan
-  linarith only [hkey]
+  exact cap_area_bound_of_certificate capDoubledZ_sound.1 hfan cap_bound_checked
 
 end MovingSofa
 
@@ -3847,7 +3843,7 @@ roof (`gerver_niche_vertical_fills`).  Each piece is traversed with monotone hor
 coordinate, so subdividing the seven monotone roof stretches at the grid angles covers the
 niche by `7 * NN` coordinate rectangles whose widths and heights the certificate encloses
 (`gerverNicheRect_covers`).  The kernel-checked numeric conclusion
-`GerverAreaCert.nicheOK_true` bounds the total rectangle area, hence `|N₀| ≤ 3301 / 5000`.
+`GerverAreaCert.niche_bound_checked` bounds the total rectangle area, hence `|N₀| ≤ 3301 / 5000`.
 -/
 
 @[expose] public section
@@ -4249,18 +4245,20 @@ theorem volume_gerverNicheRect (r j : ℕ) :
     ring
   · ring
 
+private theorem niche_area_bound_of_certificate (certificateSum : ℤ)
+    (hcert : 5000 * certificateSum ≤ 3301 * M * M) :
+    (certificateSum : ℝ) / ((M : ℝ) * (M : ℝ)) ≤ (3301 : ℝ) / 5000 := by
+  rw [div_le_div_iff₀ (mul_pos SI.Mpos SI.Mpos) (by norm_num)]
+  have hcast : (5000 : ℝ) * (certificateSum : ℝ) ≤ 3301 * (M : ℝ) * (M : ℝ) := by
+    exact_mod_cast hcert
+  simpa only [mul_comm (certificateSum : ℝ) 5000, mul_assoc (3301 : ℝ)] using hcast
+
 /-- The certificate bounds the total rectangle volume. -/
 theorem gerverNicheRect_volume_sum_le :
     ∑ r ∈ Finset.range 7, ∑ j ∈ Finset.range NN, volume (gerverNicheRect r j) ≤
       ENNReal.ofReal ((3301 : ℝ) / 5000) := by
   have hM := SI.Mpos
   have hQ : (0 : ℝ) < (M : ℝ) * (M : ℝ) := mul_pos hM hM
-  -- `unfold` rather than a type ascription: matching `nicheOK` against `decide _` by
-  -- unification would force the elaborator to evaluate the whole certificate.
-  have hcert : 5000 * nicheSumZ ≤ 3301 * M * M := by
-    have h := nicheOK_true
-    unfold nicheOK at h
-    exact of_decide_eq_true h
   have harea : ∀ r j : ℕ,
       rectAreaZ r j = max 0 (rectHiZ r j - rectLoZ r j) * max 0 (rectHZ r j) := by
     intro r j
@@ -4314,11 +4312,8 @@ theorem gerverNicheRect_volume_sum_le :
           (rectAreaZ r j : ℝ) / ((M : ℝ) * (M : ℝ))) :=
         (ENNReal.ofReal_sum_of_nonneg fun r _ => Finset.sum_nonneg fun j _ => hnn r j).symm
     _ ≤ ENNReal.ofReal ((3301 : ℝ) / 5000) := by
-        refine ENNReal.ofReal_le_ofReal ?_
-        rw [hsum, div_le_div_iff₀ hQ (by norm_num)]
-        have hR : (5000 : ℝ) * (nicheSumZ : ℝ) ≤ 3301 * (M : ℝ) * (M : ℝ) := by
-          exact_mod_cast hcert
-        linarith
+        rw [hsum]
+        exact ENNReal.ofReal_le_ofReal (niche_area_bound_of_certificate _ niche_bound_checked)
 
 /-- The niche volume bound. -/
 theorem gerver_niche_volume_le :

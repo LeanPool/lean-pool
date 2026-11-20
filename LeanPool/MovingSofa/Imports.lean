@@ -10,6 +10,8 @@ public import LeanPool.MovingSofa
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development001
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development002
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development003
+public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs
+public import LeanPool.MovingSofa.Development.Geometry.Foundations.CapAreaCertificate
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development001
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development002
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development003
@@ -18,6 +20,7 @@ public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development00
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development006
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development007
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development008
+public import LeanPool.MovingSofa.Development.Geometry.Foundations.NicheAreaCertificate
 public import LeanPool.MovingSofa.Development.IntervalArithmetic.Foundations.Development001
 public import LeanPool.MovingSofa.Development.IntervalArithmetic.Foundations.Development002
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle001

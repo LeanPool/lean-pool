@@ -58,7 +58,7 @@ noncomputable section
 def potentialRadiusProduct (n : ℕ) (V : Potential) : Measure (Fin n → ℝ) :=
   Measure.pi (fun i : Fin n => (potentialSquaredRadiusLaw n i.val V).map Real.sqrt)
 
-/-- Sharp LSI for the actual n-fold non-quadratic radius product, derived by
+/-- Logarithmic Sobolev inequality for the n-fold nonquadratic radius product, derived by
 coordinate quantile transports from the actual finite Gaussian product. -/
 theorem rhoConvex_radiusProduct_lsi (n : ℕ) (hn : 0 < n)
     (ρ : ℝ) (hρ : 0 < ρ) {V : Potential} (hV : ContDiff ℝ 2 V)
