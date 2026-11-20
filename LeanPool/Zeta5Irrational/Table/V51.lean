@@ -6,6 +6,7 @@ Authors: Moritz Firsching
 
 module
 
+import LeanPool.Zeta5Irrational.Table.RationalLogCertificate
 import LeanPool.Zeta5Irrational.Table.RationalSeries
 import LeanPool.Zeta5Irrational.Table.LowerCertificate
 
@@ -27,6 +28,8 @@ import Mathlib.Tactic.NormNum.Pow
 open Finset
 
 namespace Zeta5Irrational
+
+open scoped LogarithmCertificates
 
 lemma V_613 :
     ((5372493143715501039287 / 10000000000000000000000 : ℝ) -
@@ -50,20 +53,13 @@ lemma V_613 :
   have hU2 :
     Real.log (22941380886697 / 32000000000000 : ℝ) ≤
       (-(332793597066236323861 / 1000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show
-          (22941380886697 / 32000000000000 : ℝ) = (22941380886697 / 16000000000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (22941380886697 / 16000000000000 : ℚ))
-             (U := (360353583233763676139 / 1000000000000000000000 : ℚ))
-             9 (by decide +kernel)) :
-          Real.log (22941380886697 / 16000000000000 : ℝ) ≤
-            (360353583233763676139 / 1000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (22941380886697 / 32000000000000 : ℚ))
+        (r' := (22941380886697 / 16000000000000 : ℚ))
+        (U := (-(332793597066236323861 / 1000000000000000000000 : ℚ)))
+        (U' := (360353583233763676139 / 1000000000000000000000 : ℚ))
+        1 9 (by decide +kernel) (by constructor <;> norm_num)
   have hau998 :
     Real.arctan (2811273243981337 / 7693880129715234 : ℝ) ≤
       (1751598472914581166259 / 5000000000000000000000 : ℝ) :=
@@ -147,19 +143,13 @@ lemma V_614 :
   have hU2 :
     Real.log (11496650040163 / 16000000000000 : ℝ) ≤
       (-(1652665149511791927237 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (11496650040163 / 16000000000000 : ℝ) = (11496650040163 / 8000000000000 : ℝ) / 2 ^ 1
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (11496650040163 / 8000000000000 : ℚ))
-             (U := (1813070751988208072763 / 5000000000000000000000 : ℚ))
-             9 (by decide +kernel)) :
-          Real.log (11496650040163 / 8000000000000 : ℝ) ≤
-            (1813070751988208072763 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (11496650040163 / 16000000000000 : ℚ))
+        (r' := (11496650040163 / 8000000000000 : ℚ))
+        (U := (-(1652665149511791927237 / 5000000000000000000000 : ℚ)))
+        (U' := (1813070751988208072763 / 5000000000000000000000 : ℚ))
+        1 9 (by decide +kernel) (by constructor <;> norm_num)
   have hau1000 :
     Real.arctan (4221716557012644 / 11543920131523205 : ℝ) ≤
       (876501105435104276007 / 2500000000000000000000 : ℝ) :=
@@ -243,19 +233,13 @@ lemma V_615 :
   have hU2 :
     Real.log (90223197139 / 125000000000 : ℝ) ≤
       (-(815067921368615468109 / 2500000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (90223197139 / 125000000000 : ℝ) = (90223197139 / 62500000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (90223197139 / 62500000000 : ℚ))
-             (U := (917800029381384531891 / 2500000000000000000000 : ℚ))
-             9 (by decide +kernel)) :
-          Real.log (90223197139 / 62500000000 : ℝ) ≤
-            (917800029381384531891 / 2500000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (90223197139 / 125000000000 : ℚ))
+        (r' := (90223197139 / 62500000000 : ℚ))
+        (U := (-(815067921368615468109 / 2500000000000000000000 : ℚ)))
+        (U' := (917800029381384531891 / 2500000000000000000000 : ℚ))
+        1 9 (by decide +kernel) (by constructor <;> norm_num)
   have hau1002 :
     Real.arctan (8462627116398313 / 23100231208310790 : ℝ) ≤
       (1755800926009630248063 / 5000000000000000000000 : ℝ) :=
@@ -339,19 +323,13 @@ lemma V_616 :
   have hU2 :
     Real.log (11579045952349 / 16000000000000 : ℝ) ≤
       (-(808479101909136909281 / 2500000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (11579045952349 / 16000000000000 : ℝ) = (11579045952349 / 8000000000000 : ℝ) / 2 ^ 1
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (11579045952349 / 8000000000000 : ℚ))
-             (U := (924388848840863090719 / 2500000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (11579045952349 / 8000000000000 : ℝ) ≤
-            (924388848840863090719 / 2500000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (11579045952349 / 16000000000000 : ℚ))
+        (r' := (11579045952349 / 8000000000000 : ℚ))
+        (U := (-(808479101909136909281 / 2500000000000000000000 : ℚ)))
+        (U' := (924388848840863090719 / 2500000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1004 :
     Real.arctan (8473873801407552 / 23107499273399989 : ℝ) ≤
       (3514876734834164438587 / 10000000000000000000000 : ℝ) :=
@@ -435,19 +413,13 @@ lemma V_617 :
   have hU2 :
     Real.log (4637713724651 / 6400000000000 : ℝ) ≤
       (-(3220764770559494080803 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (4637713724651 / 6400000000000 : ℝ) = (4637713724651 / 3200000000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (4637713724651 / 3200000000000 : ℚ))
-             (U := (3710707032440505919197 / 10000000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (4637713724651 / 3200000000000 : ℝ) ≤
-            (3710707032440505919197 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (4637713724651 / 6400000000000 : ℚ))
+        (r' := (4637713724651 / 3200000000000 : ℚ))
+        (U := (-(3220764770559494080803 / 10000000000000000000000 : ℚ)))
+        (U' := (3710707032440505919197 / 10000000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1006 :
     Real.arctan (8479491550067840 / 23111131795069099 : ℝ) ≤
       (3516511187288392257217 / 10000000000000000000000 : ℝ) :=
@@ -531,19 +503,13 @@ lemma V_618 :
   have hU2 :
     Real.log (5804761335453 / 8000000000000 : ℝ) ≤
       (-(1603815203661389908143 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (5804761335453 / 8000000000000 : ℝ) = (5804761335453 / 4000000000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (5804761335453 / 4000000000000 : ℚ))
-             (U := (1861920697838610091857 / 5000000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (5804761335453 / 4000000000000 : ℝ) ≤
-            (1861920697838610091857 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (5804761335453 / 8000000000000 : ℚ))
+        (r' := (5804761335453 / 4000000000000 : ℚ))
+        (U := (-(1603815203661389908143 / 5000000000000000000000 : ℚ)))
+        (U' := (1861920697838610091857 / 5000000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1008 :
     Real.arctan (8485105579376283 / 23114763310603912 : ℝ) ≤
       (439767956615355164713 / 1250000000000000000000 : ℝ) :=
@@ -627,20 +593,13 @@ lemma V_619 :
   have hU2 :
     Real.log (23249522060369 / 32000000000000 : ℝ) ≤
       (-(3194513272609733674267 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show
-          (23249522060369 / 32000000000000 : ℝ) = (23249522060369 / 16000000000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (23249522060369 / 16000000000000 : ℚ))
-             (U := (3736958530390266325733 / 10000000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (23249522060369 / 16000000000000 : ℝ) ≤
-            (3736958530390266325733 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (23249522060369 / 32000000000000 : ℚ))
+        (r' := (23249522060369 / 16000000000000 : ℚ))
+        (U := (-(3194513272609733674267 / 10000000000000000000000 : ℚ)))
+        (U' := (3736958530390266325733 / 10000000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1010 :
     Real.arctan (8490715896710545 / 23118393820840001 : ℝ) ≤
       (3519774136081336267697 / 10000000000000000000000 : ℝ) :=
@@ -723,19 +682,13 @@ lemma V_620 :
   have hU2 :
     Real.log (11639999389463 / 16000000000000 : ℝ) ≤
       (-(3181413321281778418051 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (11639999389463 / 16000000000000 : ℝ) = (11639999389463 / 8000000000000 : ℝ) / 2 ^ 1
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (11639999389463 / 8000000000000 : ℚ))
-             (U := (3750058481718221581949 / 10000000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (11639999389463 / 8000000000000 : ℝ) ≤
-            (3750058481718221581949 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (11639999389463 / 16000000000000 : ℚ))
+        (r' := (11639999389463 / 8000000000000 : ℚ))
+        (U := (-(3181413321281778418051 / 10000000000000000000000 : ℚ)))
+        (U' := (3750058481718221581949 / 10000000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1012 :
     Real.arctan (4248161254711966 / 11561011663305891 : ℝ) ≤
       (176070132054670847363 / 500000000000000000000 : ℝ) :=
@@ -818,20 +771,13 @@ lemma V_621 :
   have hU2 :
     Real.log (23310475497483 / 32000000000000 : ℝ) ≤
       (-(3168330508377498755171 / 10000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show
-          (23310475497483 / 32000000000000 : ℝ) = (23310475497483 / 16000000000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (23310475497483 / 16000000000000 : ℚ))
-             (U := (3763141294622501244829 / 10000000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (23310475497483 / 16000000000000 : ℝ) ≤
-            (3763141294622501244829 / 10000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (23310475497483 / 32000000000000 : ℚ))
+        (r' := (23310475497483 / 16000000000000 : ℚ))
+        (U := (-(3168330508377498755171 / 10000000000000000000000 : ℚ)))
+        (U' := (3763141294622501244829 / 10000000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1014 :
     Real.arctan (1062740678105688 / 2890706478594065 : ℝ) ≤
       (220189323267150120757 / 625000000000000000000 : ℝ) :=
@@ -915,19 +861,13 @@ lemma V_622 :
   have hU2 :
     Real.log (583523805401 / 800000000000 : ℝ) ≤
       (-(126210591564468617503 / 400000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (583523805401 / 800000000000 : ℝ) = (583523805401 / 400000000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (583523805401 / 400000000000 : ℚ))
-             (U := (151048280555531382497 / 400000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (583523805401 / 400000000000 : ℝ) ≤
-            (151048280555531382497 / 400000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (583523805401 / 800000000000 : ℚ))
+        (r' := (583523805401 / 400000000000 : ℚ))
+        (U := (-(126210591564468617503 / 400000000000000000000 : ℚ)))
+        (U' := (151048280555531382497 / 400000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1016 :
     Real.arctan (8507524650280187 / 23129279328094325 : ℝ) ≤
       (3524653733925453359381 / 10000000000000000000000 : ℝ) :=
@@ -1011,20 +951,13 @@ lemma V_623 :
   have hU2 :
     Real.log (23371428934597 / 32000000000000 : ℝ) ≤
       (-(314221611887456540269 / 1000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show
-          (23371428934597 / 32000000000000 : ℝ) = (23371428934597 / 16000000000000 : ℝ) / 2 ^ 1 by
-          norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (23371428934597 / 16000000000000 : ℚ))
-             (U := (378925568412543459731 / 1000000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (23371428934597 / 16000000000000 : ℝ) ≤
-            (378925568412543459731 / 1000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (23371428934597 / 32000000000000 : ℚ))
+        (r' := (23371428934597 / 16000000000000 : ℚ))
+        (U := (-(314221611887456540269 / 1000000000000000000000 : ℚ)))
+        (U' := (378925568412543459731 / 1000000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1018 :
     Real.arctan (8513120193008886 / 23132905825468163 : ℝ) ≤
       (3526276330333639916337 / 10000000000000000000000 : ℝ) :=
@@ -1108,19 +1041,13 @@ lemma V_624 :
   have hU2 :
     Real.log (11700952826577 / 16000000000000 : ℝ) ≤
       (-(1564592226615293954067 / 5000000000000000000000 : ℝ)) := by
-    have h :=
-      log_le_of_split_neg 1
-        (show (11700952826577 / 16000000000000 : ℝ) = (11700952826577 / 8000000000000 : ℝ) / 2 ^ 1
-          by norm_num)
-        (by norm_num)
-        ((by
-           simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using log_le_of_ge_one_rat
-             (r := (11700952826577 / 8000000000000 : ℚ))
-             (U := (1901143674884706045933 / 5000000000000000000000 : ℚ))
-             10 (by decide +kernel)) :
-          Real.log (11700952826577 / 8000000000000 : ℝ) ≤
-            (1901143674884706045933 / 5000000000000000000000 : ℝ))
-    linarith only [h, Real.log_two_gt_d9]
+    simpa only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg] using
+      log_le_of_split_neg_rational
+        (r := (11700952826577 / 16000000000000 : ℚ))
+        (r' := (11700952826577 / 8000000000000 : ℚ))
+        (U := (-(1564592226615293954067 / 5000000000000000000000 : ℚ)))
+        (U' := (1901143674884706045933 / 5000000000000000000000 : ℚ))
+        1 10 (by decide +kernel) (by constructor <;> norm_num)
   have hau1020 :
     Real.arctan (8518712060288590 / 23136531321703847 : ℝ) ≤
       (1763948482885999733877 / 5000000000000000000000 : ℝ) :=
