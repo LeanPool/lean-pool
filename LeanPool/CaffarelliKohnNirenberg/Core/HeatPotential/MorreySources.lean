@@ -246,7 +246,7 @@ theorem heatPotential_near_shell_geometric_sum
     ∑' n : ℕ, A n ≤ C * (1 - q)⁻¹ := by
   calc
     ∑' n : ℕ, A n ≤ ∑' n : ℕ, C * q ^ n :=
-      ENNReal.tsum_le_tsum hA
+      tsum_le_tsum hA
     _ = C * ∑' n : ℕ, q ^ n := ENNReal.tsum_mul_left
     _ = C * (1 - q)⁻¹ := by rw [ENNReal.tsum_geometric q]
 

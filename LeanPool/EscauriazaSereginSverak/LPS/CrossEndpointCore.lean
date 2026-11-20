@@ -57,12 +57,12 @@ theorem lps_slab_integral_tendsto_of_slice_domination
     exact (hF n).sub hG.aestronglyMeasurable
   have hΦmeas (n : ℕ) : AEMeasurable
       (fun t : ℝ => ∫⁻ x : Vec3, ‖F n (x,t) - G (x,t)‖ₑ) μt :=
-    (hDiffMeas n).enorm.lintegral_prod_left'
+    (hDiffMeas n).eNorm.lintegral_prod_left'
   have hTonelli (n : ℕ) :
       (∫⁻ z : ParabolicPoint, ‖F n z - G z‖ₑ ∂μ) =
         ∫⁻ t : ℝ, (∫⁻ x : Vec3, ‖F n (x,t) - G (x,t)‖ₑ) ∂μt := by
     rw [hμ]
-    exact lintegral_prod_symm _ (hDiffMeas n).enorm
+    exact lintegral_prod_symm _ (hDiffMeas n).eNorm
   have hDCT : Tendsto (fun n => ∫⁻ t : ℝ,
       (∫⁻ x : Vec3, ‖F n (x,t) - G (x,t)‖ₑ) ∂μt) atTop
       (𝓝 (∫⁻ t : ℝ, (0 : ℝ≥0∞) ∂μt)) :=

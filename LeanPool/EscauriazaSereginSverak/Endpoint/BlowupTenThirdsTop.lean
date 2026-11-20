@@ -60,7 +60,7 @@ theorem blowup_eLpNorm_bound_to_time_zero
     rw [show μ = volume.restrict s by rfl,
       Measure.restrict_restrict (hφmeas n), inter_eq_left.mpr (hφsub n)]
   let g : ParabolicPoint → ℝ≥0∞ := fun z => ‖f z‖ₑ ^ (p : ℝ)
-  have hgmeas : AEMeasurable g μ := hf.enorm.pow_const _
+  have hgmeas : AEMeasurable g μ := hf.eNorm.pow_const _
   have hlin (n : ℕ) : (∫⁻ z in φ n, g z ∂μ) ≤ K := by
     rw [hμeq]
     simpa only [g, eLpNorm_nnreal_pow_eq_lintegral hp

@@ -184,13 +184,13 @@ theorem tendsto_eLpNorm_one_add_mul_inwardMollification_sub_zero
     simpa [c] using (tendsto_const_nhds : Filter.Tendsto
       (fun _ : ℕ => (1 : ℝ)) Filter.atTop (nhds 1)).add hε
   have hcnorm : Filter.Tendsto (fun n => ‖c n‖ₑ) Filter.atTop (nhds 1) := by
-    simpa using! (continuous_enorm.tendsto (1 : ℝ)).comp hc
+    simpa using! (continuous_eNorm.tendsto (1 : ℝ)).comp hc
   have hdiffnorm : Filter.Tendsto (fun n => ‖c n - 1‖ₑ)
       Filter.atTop (nhds 0) := by
     have hreal : Filter.Tendsto (fun n => c n - 1) Filter.atTop (nhds 0) := by
       simpa using hc.sub (tendsto_const_nhds : Filter.Tendsto
         (fun _ : ℕ => (1 : ℝ)) Filter.atTop (nhds 1))
-    simpa using! (continuous_enorm.tendsto (0 : ℝ)).comp hreal
+    simpa using! (continuous_eNorm.tendsto (0 : ℝ)).comp hreal
   have hfirst : Filter.Tendsto
       (fun n => eLpNorm
         (c n • (inwardMollification ρ g x0 r (ε n) - g)) p volume)

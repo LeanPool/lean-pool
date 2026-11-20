@@ -229,7 +229,7 @@ theorem abs_expect_sub_le_norm (v w : (ℝ × Z) →ᵇ ℝ) (p : (ℝ × Z) × 
   have h : P.toExtended.expect v p - P.toExtended.expect w p
       = P.toExtended.expect (v - w) p := by
     simp only [ExtendedStochasticProgram.expect, ← Finset.sum_sub_distrib,
-      BoundedContinuousFunction.coe_sub, Pi.sub_apply, mul_sub]
+      FunLike.coe_sub, Pi.sub_apply, mul_sub]
   rw [h]
   exact P.toExtended.abs_expect_le _ _
 

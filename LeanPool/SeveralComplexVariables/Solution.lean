@@ -307,7 +307,8 @@ def IsLogarithmicallyConvex (U : Set (ι → ℂ)) : Prop :=
   Convex ℝ {x : ι → ℝ | (fun i => (Real.exp (x i) : ℂ)) ∈ U}
 
 /-- The convergence domain of a power series: the interior of its set of absolute convergence. -/
-def convergenceDomain {G : Type*} [NormedAddCommGroup G] (c : MvPowerSeries ι G) : Set (ι → ℂ) :=
+noncomputable def convergenceDomain {G : Type*} [NormedAddCommGroup G]
+    (c : MvPowerSeries ι G) : Set (ι → ℂ) :=
   interior {z | Summable fun m : ι →₀ ℕ => ‖c m‖ * ∏ i, ‖z i‖ ^ m i}
 
 omit [Fintype ι] in
@@ -337,7 +338,7 @@ theorem isLogarithmicallyConvex_iff_geometric [Finite ι] {U : Set (ι → ℂ)}
     refine hc'.isReinhardt hu fun i => ?_
     have hi := congrArg NNReal.toReal (congrFun hue i)
     simp only [SeveralComplexVariables.geometricCombination, NNReal.coe_mul, NNReal.coe_rpow,
-      coe_nnnorm] at hi
+      coe_nnNorm] at hi
     rw [hv i, hi]
   · rintro h _ ⟨z, hz, rfl⟩ _ ⟨w, hw, rfl⟩ a b ha hb hab
     let u : ι → ℂ := fun i => ((‖z i‖ ^ a * ‖w i‖ ^ b : ℝ) : ℂ)
@@ -345,7 +346,7 @@ theorem isLogarithmicallyConvex_iff_geometric [Finite ι] {U : Set (ι → ℂ)}
     have hu : u ∈ U := h z hz w hw a b ha hb hab u fun i => by
       simp only [u, Complex.norm_real, Real.norm_of_nonneg (hnn i)]
     refine ⟨u, hu, funext fun i => NNReal.eq ?_⟩
-    simp only [u, SeveralComplexVariables.geometricCombination, coe_nnnorm, Complex.norm_real,
+    simp only [u, SeveralComplexVariables.geometricCombination, coe_nnNorm, Complex.norm_real,
       Real.norm_of_nonneg (hnn i), NNReal.coe_mul, NNReal.coe_rpow]
 
 /-- **19. Convergence domains of power series** are complete Reinhardt and logarithmically convex,

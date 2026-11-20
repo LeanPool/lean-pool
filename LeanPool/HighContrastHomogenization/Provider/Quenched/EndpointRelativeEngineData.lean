@@ -1346,20 +1346,20 @@ private theorem endpoint_threshold_and_polynomial_costs (d : ℕ)
       (3 : ℝ) ^ (2 * mu * ((N0 : ℝ) - (nstar : ℝ) -
         badTailOffset theta Cblk qfb b)) * ((3 : ℝ) ^ (mu / 2) - 1) := by
     convert hgainFix using 1
-    all_goals simp only [N0, badTailOffset, Nat.cast_add, Nat.cast_zero]
-    all_goals ring_nf
+    simp only [N0, badTailOffset, Nat.cast_add, Nat.cast_zero]
+    ring_nf
   have hthresholdAbs : 2 * Real.log 4 ≤ frGaugeConst d *
       (3 : ℝ) ^ (2 * mu * ((N0 : ℝ) - (nstar : ℝ) -
         badTailOffset theta Cblk qfb b)) := by
     convert habsFix using 1
-    all_goals simp only [N0, badTailOffset, Nat.cast_add, Nat.cast_zero]
-    all_goals ring_nf
+    simp only [N0, badTailOffset, Nat.cast_add, Nat.cast_zero]
+    ring_nf
   have hnormalizerRel : (3 : ℝ) ^ (2 * mu *
       ((nstar : ℝ) + badTailOffset theta Cblk qfb b - (N0 : ℝ))) ≤
       frGaugeConst d / 2 * Bconst ^ (2 * mu) := by
     convert hrelFix using 1
-    all_goals simp only [N0, badTailOffset, Nat.cast_add, Nat.cast_zero, zero_add]
-    all_goals ring_nf
+    simp only [N0, badTailOffset, Nat.cast_add, Nat.cast_zero, zero_add]
+    ring_nf
   have hN0eq : N0 = Ccoeff * q + Nfix := by
     dsimp only [N0, nstar, qfb, b, q0, Ccoeff, L]
     ring

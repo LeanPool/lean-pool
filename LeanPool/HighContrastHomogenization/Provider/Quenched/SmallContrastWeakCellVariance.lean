@@ -63,12 +63,12 @@ theorem eLpNorm_two_real_sq {P : Measure (CoeffSpace d)}
       ∫⁻ a, ENNReal.ofReal (f a ^ 2) ∂P := by
   have h1 : ∀ a, ‖f a‖ₑ ^ (2 : ℝ) = ENNReal.ofReal (f a ^ 2) := by
     intro a
-    rw [Real.enorm_eq_ofReal (hf a),
+    rw [Real.eNorm_eq_ofReal (hf a),
       ENNReal.ofReal_rpow_of_nonneg (hf a) (by norm_num : (0 : ℝ) ≤ 2)]
     congr 1
     rw [← Real.rpow_natCast (f a) 2]
     norm_num
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hfm]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hfm]
   simp only [ENNReal.toReal_ofNat]
   rw [lintegral_congr h1, ← ENNReal.rpow_natCast _ 2, ← ENNReal.rpow_mul]
   norm_num
@@ -470,7 +470,7 @@ theorem eLpNorm_diagonalWeakCellDefect_le
       simp at huniv
     rw [eLpNorm_const _ (by norm_num) hP0]
     simp only [measure_univ, ENNReal.one_rpow, mul_one]
-    rw [Real.enorm_eq_ofReal hB0]
+    rw [Real.eNorm_eq_ofReal hB0]
   have hpart3 : eLpNorm C 2 P = scaleVariance P q F t := by
     simp only [hC]
     rfl
@@ -526,7 +526,7 @@ theorem eLpNorm_diagonalWeakCellSum_le_variance
     funext a
     simp [smul_eq_mul]
   rw [hsmul, eLpNorm_const_smul]
-  rw [Real.enorm_eq_ofReal hw0]
+  rw [Real.eNorm_eq_ofReal hw0]
   refine mul_le_mul' le_rfl ?_
   exact eLpNorm_diagonalWeakCellDefect_le hstat hgrid
     (by omega) hFsym hFpd

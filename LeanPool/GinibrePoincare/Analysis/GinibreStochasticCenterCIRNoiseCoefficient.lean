@@ -69,8 +69,7 @@ theorem ginibreCenterCIR_noise_amplitude_square {n : ℕ} (hn : 0 < n)
   have hs : (Real.sqrt (2*α/(n : ℝ)^2))^2=2*α/(n : ℝ)^2 :=
     Real.sq_sqrt (div_nonneg (by positivity) (sq_nonneg _))
   rw [mul_pow, mul_pow, hs, ginibreRepeatedCenterEuclidean_norm_sq]
-  field_simp
- ; ring
+  field_simp; ring
 
 theorem ginibreCenterCIR_noise_amplitude {n : ℕ} (hn : 0 < n)
     (α : ℝ) (hα : 0 ≤ α) (z : Configuration n) :

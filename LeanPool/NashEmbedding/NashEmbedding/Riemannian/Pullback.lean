@@ -202,7 +202,7 @@ theorem pullbackForm_contMDiff {f : M → N}
     ContMDiff I (I.prod 𝓘(ℝ, E →L[ℝ] E →L[ℝ] ℝ)) ∞
       (fun x => TotalSpace.mk' (E →L[ℝ] E →L[ℝ] ℝ) x (pullbackFormT (I := I) (J := J) f h x)) := by
   intro x₀
-  rw [contMDiffAt_section]
+  rw [contMDiffAt_section_iff]
   set Lt : M → E →L[ℝ] F := inTangentCoordinates I J id f (mfderiv I J f) x₀
   have hLtm : ContMDiffAt I 𝓘(ℝ, E →L[ℝ] F) ∞ Lt x₀ :=
     (hf x₀).mfderiv_const (m := ∞) (n := ∞) (by simp)

@@ -63,7 +63,7 @@ theorem hasExtendedWeakL1Bound_blockSupremum
     _ = ∑' τ, ENNReal.ofReal a * μ {x | ENNReal.ofReal a < F τ x} :=
       (ENNReal.tsum_mul_left).symm
     _ ≤ ∑' τ, ENNReal.ofReal (A τ) :=
-      ENNReal.tsum_le_tsum fun τ ↦ (hweak τ).2 a ha
+      tsum_le_tsum fun τ ↦ (hweak τ).2 a ha
     _ = ENNReal.ofReal (∑' τ, A τ) :=
       (ENNReal.ofReal_tsum_of_nonneg (fun τ ↦ (hweak τ).1) hA).symm
 
@@ -218,7 +218,7 @@ theorem tsum_levelSet_eq_iUnion_partialCap {X : Type*}
     obtain ⟨M, hM⟩ := mem_iUnion.mp hN
     have hbound : partialCap F N M x ≤ ∑' k, F k x :=
       (Finset.sum_le_sum (fun k _ ↦ min_le_right (M : ℝ≥0∞) (F k x))).trans
-        (ENNReal.sum_le_tsum (Finset.range N))
+        (sum_le_tsum (Finset.range N))
     exact hM.trans_le hbound
 
 /-- Countable Kalton summation for the genuine extended-real sum. This
@@ -343,7 +343,7 @@ theorem summability_of_paperBlockBudget_ne_top
   have hrow (k : ℕ) : Summable (A k) := by
     have hterm : ENNReal.ofReal (paperLog 1 ((k : ℝ) + 2)) *
         (∑' τ, ENNReal.ofReal (A k τ)) ≠ ∞ :=
-      ENNReal.ne_top_of_tsum_ne_top hbudget k
+      ne_top_of_tsum_ne_top hbudget k
     have hrowfin : (∑' τ, ENNReal.ofReal (A k τ)) ≠ ∞ := by
       apply ne_top_of_le_ne_top hterm
       calc

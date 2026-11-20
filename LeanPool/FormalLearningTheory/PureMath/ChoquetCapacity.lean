@@ -7,6 +7,7 @@ module
 
 public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Measure.RegularityCompacts
+import all Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
 # Choquet Capacity Theory

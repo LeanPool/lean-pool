@@ -303,7 +303,7 @@ theorem lintegral_ball_dist_rpow_neg_le {x : Vec d} {R beta : ℝ} (hR : 0 < R)
             ENNReal.ofReal (dist x y ^ (-beta)) ∂volume :=
           lintegral_iUnion_le _ _
       _ ≤ ∑' i : ℕ, ENNReal.ofReal (annulusTerm d R beta i) :=
-          ENNReal.tsum_le_tsum fun i => lintegral_triadicAnnulus_le hR hbeta.le i
+          tsum_le_tsum fun i => lintegral_triadicAnnulus_le hR hbeta.le i
   refine hsum.trans ?_
   rw [hgeom]
   have hone : (1 : ℝ≥0∞) - ENNReal.ofReal (annulusRatio d beta) =

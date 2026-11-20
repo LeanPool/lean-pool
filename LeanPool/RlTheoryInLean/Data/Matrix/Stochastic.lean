@@ -29,7 +29,7 @@ variable {S : Type u} [Fintype S]
 /-- The finite-dimensional `L¹` space of real-valued functions on `S`. -/
 abbrev l1Space (S : Type u) := WithLp 1 (S → ℝ)
 
-local notation "‖"x"‖₁" => (nnnorm (E := l1Space S) x)
+local notation "‖"x"‖₁" => (nnNorm (E := l1Space S) x)
 local notation "d₁("x","y")" => edist (α := l1Space S) x y
 
 /-- A nonnegative vector whose entries sum to one. -/
@@ -74,7 +74,7 @@ lemma l1_norm_eq_sum (f : l1Space S) : ‖f‖ = ∑ s, |f.ofLp s| := by
 lemma l1_norm_eq_one (x : l1Space S) [StochasticVec x.ofLp]
   : ‖x‖₊ = 1 := by
   apply NNReal.eq
-  simp only [coe_nnnorm, NNReal.coe_one, l1_norm_eq_sum]
+  simp only [coe_nnNorm, NNReal.coe_one, l1_norm_eq_sum]
   have hx := (inferInstance : StochasticVec x.ofLp)
   rw [←hx.rowsum]
   apply sum_congr rfl
@@ -88,7 +88,7 @@ private lemma stochasticVec_l1_distance_le_two
   rw [WithLp.toLp_sub]
   calc
     ‖WithLp.toLp 1 x - WithLp.toLp 1 y‖₊
-      ≤ ‖WithLp.toLp 1 x‖₊ + ‖WithLp.toLp 1 y‖₊ := nnnorm_sub_le _ _
+      ≤ ‖WithLp.toLp 1 x‖₊ + ‖WithLp.toLp 1 y‖₊ := nnNorm_sub_le _ _
     _ = 1 + 1 := by rw [l1_norm_eq_one, l1_norm_eq_one]
     _ = 2 := by norm_num
 
@@ -339,7 +339,7 @@ theorem smat_nonexpansive_in_l1 (Q : Matrix S S ℝ) [RowStochastic Q] :
     funext j
     simp [Matrix.vecMul, sub_eq_add_neg, sub_eq_add_neg, sum_add_distrib, add_mul, dotProduct]
   have hnorm : (‖WithLp.toLp 1 (x ᵥ* Q - y ᵥ* Q)‖₊ : ℝ) = ∑ j, |∑ i, (x i - y i) * Q i j| := by
-    rw [coe_nnnorm]
+    rw [coe_nnNorm]
     have h1 := l1_norm_eq_sum (WithLp.toLp 1 (x ᵥ* Q - y ᵥ* Q))
     simp only [Pi.sub_apply] at h1
     convert h1 using 2 with j
@@ -348,7 +348,7 @@ theorem smat_nonexpansive_in_l1 (Q : Matrix S S ℝ) [RowStochastic Q] :
     simp at this
     exact this.symm
   have hnorm2 : (‖WithLp.toLp 1 (x - y)‖₊ : ℝ) = ∑ i, |x i - y i| := by
-    rw [coe_nnnorm]
+    rw [coe_nnNorm]
     have := l1_norm_eq_sum (WithLp.toLp 1 (x - y))
     simp only [Pi.sub_apply] at this
     exact this
@@ -482,9 +482,9 @@ theorem smat_contraction_in_simplex
             have h : WithLp.toLp 1 (x.val.ofLp ᵥ* P - y.val.ofLp ᵥ* P)
               = (1 - ε) • WithLp.toLp 1 (x.val.ofLp ᵥ* Q - y.val.ofLp ᵥ* Q) := by
               simp only [diff_eq, ← WithLp.toLp_smul]
-            rw [h, nnnorm_smul]
+            rw [h, nnNorm_smul]
             have hK : ‖(1 - ε : ℝ)‖₊ = K := by
-              apply NNReal.eq; rw [coe_nnnorm, Real.norm_eq_abs, abs_of_nonneg hε0]; rfl
+              apply NNReal.eq; rw [coe_nnNorm, Real.norm_eq_abs, abs_of_nonneg hε0]; rfl
             rw [hK]
             have hLipQ := @smat_nonexpansive_in_l1 S _ Q hQ x.val.ofLp y.val.ofLp
             exact mul_le_mul_right hLipQ K
@@ -493,10 +493,10 @@ theorem smat_contraction_in_simplex
         _ = edist (WithLp.toLp 1 (x.val.ofLp ᵥ* P)) (WithLp.toLp 1 (y.val.ofLp ᵥ* P)) := rfl
         _ = ‖WithLp.toLp 1 (x.val.ofLp ᵥ* P - y.val.ofLp ᵥ* P)‖₊ := by
             rw [edist_nndist]
-            simp only [nndist_eq_nnnorm, ← WithLp.toLp_sub]
+            simp only [nnDist_eq_nnNorm, ← WithLp.toLp_sub]
         _ ≤ K * ‖x.val - y.val‖₊ := by exact_mod_cast hxynorm
         _ = K * edist x.val y.val := by
-            simp [edist_nndist, nndist_eq_nnnorm]
+            simp [edist_nndist, nnDist_eq_nnNorm]
         _ = K * edist x y := by rfl
       case hKlt1 =>
         unfold K

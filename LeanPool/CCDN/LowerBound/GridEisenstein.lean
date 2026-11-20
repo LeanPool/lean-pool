@@ -111,7 +111,7 @@ private lemma gridEisensteinPolynomial_simple {K : Type*} [Field K]
     rw [gridEisensteinPolynomial_coeff]
     simp only [coeff_X_pow, ne_of_lt hd, ite_false, zero_sub, ite_true]
     rw [mul_neg, mul_assoc, ← C_mul, inv_mul_cancel₀ h0, C_1, mul_one]
-    rfl
+    rw [sub_eq_add_neg]
   rw [hc]
   simp only [gridEisensteinCorrection, mul_add, coeff_add, coeff_sub, coeff_C,
     one_ne_zero, ite_false, zero_sub]

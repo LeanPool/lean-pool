@@ -138,15 +138,15 @@ theorem lps_leray_hopf_concat {T s s' : ℝ} {a : Vec3 → Vec3} {u : ParabolicP
   · -- joint square integrability
     have h1 : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 s'),
         ‖lpsCat s u W z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      have := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
+      have := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
         (by norm_num) (by norm_num) hVu
       simpa using this
     have h2 : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 s'),
         ‖lpsCat s Du DW z‖ₑ ^ (2 : ℝ)) < ⊤ := by
-      have := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
+      have := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top (p := (2 : ℝ≥0∞))
         (by norm_num) (by norm_num) hVDu
       simpa using this
-    rw [lintegral_add_left' (hVu.aestronglyMeasurable.enorm.pow_const _)]
+    rw [lintegral_add_left' (hVu.aestronglyMeasurable.eNorm.pow_const _)]
     exact ENNReal.add_lt_top.2 ⟨h1, h2⟩
   · -- weak gradients
     refine lps_ae_restrict_Ioo_union hs0.le hss'.le (P := fun t => ∀ i : Fin 3,

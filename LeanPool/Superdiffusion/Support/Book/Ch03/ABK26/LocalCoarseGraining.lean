@@ -895,7 +895,7 @@ private theorem localCoarseGraining_outer_power_bound
             (K ^ r * (2 : ℝ≥0∞) ^ (r - 1) *
               (descendantsAtScaleENNAverage Q (n - (j : ℤ)) (fun R => (E j R) ^ r) +
                 descendantsAtScaleENNAverage Q (n - (j : ℤ)) (fun R => (F j R) ^ r))) := by
-          apply ENNReal.tsum_le_tsum
+          apply tsum_le_tsum
           intro j
           exact mul_le_mul_right (hlevel j) _
     _ = K ^ r * (2 : ℝ≥0∞) ^ (r - 1) *
@@ -918,7 +918,7 @@ private theorem localCoarseGraining_outer_power_bound
             funext j
             ring
           rw [hdistrib]
-          rw [ENNReal.tsum_mul_left, ENNReal.tsum_add]
+          rw [ENNReal.tsum_mul_left, tsum_add]
     _ = K ^ r * (2 : ℝ≥0∞) ^ (r - 1) *
           (A ^ r * (weightedLocalSymmetricEnergyLp Q n hn a u s1 s p) ^ r +
             B ^ r * (localCoarseGrainingForcingLp Q n s1 s p g) ^ r) := by

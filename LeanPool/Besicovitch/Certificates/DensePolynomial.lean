@@ -318,6 +318,7 @@ theorem abs_eval_sub_le_derivFirst (p : DenseBivariatePolynomial) {x₁ x₂ y :
   let : AddCommGroup ℝ := Real.normedAddCommGroup.toAddCommGroup
   let : Module ℝ ℝ := NormedField.toNormedSpace.toModule
   have h := (convex_Icc (-1 : ℝ) 1).norm_image_sub_le_of_norm_hasDerivWithin_le
+    (s := Set.Icc (-1 : ℝ) 1)
     (f := fun u ↦ eval p u y) (f' := fun u ↦ eval (derivFirst p) u y)
     (fun u _ ↦ (hasDerivAt_eval_first p u y).hasDerivWithinAt)
     (fun u hu ↦ abs_eval_le_coefficientL1Norm (derivFirst p)
@@ -332,6 +333,7 @@ theorem abs_eval_sub_le_derivSecond (p : DenseBivariatePolynomial) {x y₁ y₂ 
   let : AddCommGroup ℝ := Real.normedAddCommGroup.toAddCommGroup
   let : Module ℝ ℝ := NormedField.toNormedSpace.toModule
   have h := (convex_Icc (-1 : ℝ) 1).norm_image_sub_le_of_norm_hasDerivWithin_le
+    (s := Set.Icc (-1 : ℝ) 1)
     (f := fun v ↦ eval p x v) (f' := fun v ↦ eval (derivSecond p) x v)
     (fun v _ ↦ (hasDerivAt_eval_second p x v).hasDerivWithinAt)
     (fun v hv ↦ abs_eval_le_coefficientL1Norm (derivSecond p) hx

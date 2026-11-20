@@ -90,7 +90,7 @@ namespace PolygonalFamily
 variable {ι : Type*} [Fintype ι] (J : ι → PolygonalCircle)
 
 /-- The union of the finitely many closed polygonal disks. -/
-def closedRegion : Set Plane :=
+noncomputable def closedRegion : Set Plane :=
   ⋃ i, (J i).closedRegion
 
 omit [Fintype ι] in
@@ -152,7 +152,7 @@ theorem arrangementMesh_isMonochromatic (i : ι) (k : ZMod (J i).n) :
     (edgeLines J) (edgeLine_mem_edgeLines J i k)
 
 /-- Carrier of one maximal chamber of the common arrangement. -/
-def arrangementTriangleCarrier (t : Finset (arrangementMesh J).Vertex) : Set Plane :=
+noncomputable def arrangementTriangleCarrier (t : Finset (arrangementMesh J).Vertex) : Set Plane :=
   convexHull ℝ ((arrangementMesh J).position '' (t : Set _))
 
 theorem convex_arrangementTriangleCarrier
@@ -331,7 +331,7 @@ theorem closedRegionMesh_support :
 /-! ## Synchronized submeshes of one family arrangement -/
 
 /-- The union of a selected subfamily of polygonal closed disks. -/
-def selectedClosedRegion (p : ι → Prop) : Set Plane :=
+noncomputable def selectedClosedRegion (p : ι → Prop) : Set Plane :=
   ⋃ i, ⋃ (_ : p i), (J i).closedRegion
 
 /-- An arrangement chamber belongs to the selected submesh when its interior lies on the

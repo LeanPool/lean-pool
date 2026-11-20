@@ -83,7 +83,8 @@ theorem isCompact_𝓑 (hU : IsOpen U) (hQ : ∀ K ∈ compacts U, IsCompact (Q 
       ∃ L, IsCompact L ∧ ∀ i : 𝓑 U Q, i.1 x ∈ L :=
     ⟨Q K, hQ K hK, fun f => f.2.2 K hK _hx⟩
   rw [isCompact_iff_compactSpace]
-  refine ArzelaAscoli.compactSpace_of_isClosedEmbedding (fun K hK => hK.2) ?_ l1 l2
+  refine ArzelaAscoli.compactSpace_of_isClosedEmbedding (𝔖 := compacts U)
+    (fun K hK => hK.2) ?_ l1 l2
   refine ⟨⟨by tauto, fun f g => Subtype.ext⟩, ?_⟩
   convert isClosed_𝓑 hU hQ using 1
   ext f

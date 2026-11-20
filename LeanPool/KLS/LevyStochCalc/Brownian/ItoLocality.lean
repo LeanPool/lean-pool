@@ -439,7 +439,7 @@ theorem stochasticIntegralBrownian_stopped_eq_of_le
           - Probability.stopped τ H ω s‖₊ : ℝ≥0∞) ^ 2)
         (f := fun _ : ℝ => (0 : ℝ≥0∞))
         (bound := fun s => (‖H ω s‖₊ : ℝ≥0∞) ^ 2)
-        (fun n => ((((hmG n).sub hmS).comp measurable_prodMk_left).nnnorm.coe_nnreal_ennreal
+        (fun n => ((((hmG n).sub hmS).comp measurable_prodMk_left).nnNorm.coe_nnreal_ennreal
           ).pow_const 2)
         (fun n => Filter.Eventually.of_forall fun s => hptw n ω s) hfin.ne hlims
       simpa using hconv
@@ -468,7 +468,7 @@ theorem stochasticIntegralBrownian_stopped_eq_of_le
       (ℱ.le t)).measurable
   have hDmeas : Measurable D := by
     refine Measurable.indicator ?_ hAmeas
-    exact ((((hSImeas hmS hpS hqS).sub (hSImeas hm hp hq)).nnnorm).coe_nnreal_ennreal).pow_const 2
+    exact ((((hSImeas hmS hpS hqS).sub (hSImeas hm hp hq)).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hDle : ∀ n : ℕ, n ≠ 0 → ∫⁻ ω, D ω ∂P
       ≤ ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
         (‖Probability.stopped (gridStop τ t n) H ω s

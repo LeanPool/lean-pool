@@ -71,7 +71,7 @@ theorem offsetTailMaximalOn_union_le
     ‖offsetLocalizedActionOn S L scale f ell s x +
         offsetLocalizedActionOn S E scale f ell s x‖ₑ ≤
         ‖offsetLocalizedActionOn S L scale f ell s x‖ₑ +
-          ‖offsetLocalizedActionOn S E scale f ell s x‖ₑ := enorm_add_le _ _
+          ‖offsetLocalizedActionOn S E scale f ell s x‖ₑ := eNorm_add_le _ _
     _ ≤ offsetTailMaximalOn S L scale f ell₀ s x +
           offsetTailMaximalOn S E scale f ell₀ s x := by
       exact add_le_add

@@ -59,7 +59,7 @@ theorem lps_finite_branch_slice_memLp_ae
     continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hu
   let F : ParabolicPoint → ℝ≥0∞ := fun z =>
     ‖vec3EuclideanNorm (u z)‖ₑ ^ s
-  have hF : AEMeasurable F ν := hscalar.enorm.pow_const _
+  have hF : AEMeasurable F ν := hscalar.eNorm.pow_const _
   have hG : AEMeasurable (fun t : ℝ => ∫⁻ x : Vec3, F (x, t) ∂volume)
       (volume.restrict (Ioo 0 T)) := by
     exact hF.lintegral_prod_left'
@@ -75,7 +75,7 @@ theorem lps_finite_branch_slice_memLp_ae
         ∂(volume.restrict (Ioo 0 T))) < ⊤ := by
     have hFraw (z : ParabolicPoint) :
         ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ s = F z := by
-      rw [← Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+      rw [← Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
     have hEq :
         (∫⁻ t in Ioo 0 T,
           (∫⁻ x : Vec3, F (x, t) ∂volume) ^ ((2 * s / (s - 3)) / s)) =
@@ -116,7 +116,7 @@ theorem lps_finite_branch_slice_memLp_ae
       ‖vec3EuclideanNorm (u (x, t))‖ₑ ^ s ∂volume) < ⊤ := by
     exact lt_of_le_of_lt (le_of_eq (lintegral_congr_ae hcongr)) hfin
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hmeas]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hmeas]
   rw [show (ENNReal.ofReal s).toReal = s from
     ENNReal.toReal_ofReal (le_of_lt (lt_trans (by norm_num) hs))]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hlin.ne
@@ -142,7 +142,7 @@ theorem lps_finite_branch_time_moment_integrable
     continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hu
   let F : ParabolicPoint → ℝ≥0∞ := fun z =>
     ‖vec3EuclideanNorm (u z)‖ₑ ^ s
-  have hF : AEMeasurable F ν := hscalar.enorm.pow_const _
+  have hF : AEMeasurable F ν := hscalar.eNorm.pow_const _
   have hG : AEMeasurable (fun t : ℝ => ∫⁻ x : Vec3, F (x, t) ∂volume)
       (volume.restrict (Ioo 0 T)) := hF.lintegral_prod_left'
   have hexp : 0 < (2 * s / (s - 3)) / s := by
@@ -154,7 +154,7 @@ theorem lps_finite_branch_time_moment_integrable
       (volume.restrict (Ioo 0 T)) := hG.pow_const _
   have hFraw (z : ParabolicPoint) :
       ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ s = F z := by
-    rw [← Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+    rw [← Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
   have hEq :
       (∫⁻ t in Ioo 0 T,
         (∫⁻ x : Vec3, F (x, t) ∂volume) ^ ((2 * s / (s - 3)) / s)) =
@@ -186,7 +186,7 @@ theorem lps_finite_branch_time_moment_integrable
   have hsreal : (ENNReal.ofReal s).toReal = s :=
     ENNReal.toReal_ofReal (le_of_lt (lt_trans (by norm_num) hs))
   symm
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hs0 hstop ht, hsreal]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hs0 hstop ht, hsreal]
   have hroot : 0 ≤ (∫⁻ x : Vec3,
       ‖vec3EuclideanNorm (u (x, t))‖ₑ ^ s ∂volume).toReal := ENNReal.toReal_nonneg
   calc

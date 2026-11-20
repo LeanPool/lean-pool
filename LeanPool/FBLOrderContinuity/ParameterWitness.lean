@@ -130,8 +130,8 @@ private theorem infinity_compact_majorant [CompleteSpace E] (v : FVL E) :
   let M := Submodule.span ℝ A
   let : FiniteDimensional ℝ M := FiniteDimensional.span_of_finite (K := ℝ) hA
   obtain ⟨w, hw⟩ := hgen M Submodule.subset_span
-  have hi := (poe_one_iff_isometry Exponent.infinity M M.closed_of_finiteDimensional).mp
-    (poe_infinity_one M M.closed_of_finiteDimensional)
+  have hi := (poe_one_iff_isometry Exponent.infinity M M.isClosed_of_finiteDimensional).mp
+    (poe_infinity_one M M.isClosed_of_finiteDimensional)
   have hwNorm : ‖w‖ = ‖ofFVL Exponent.infinity v‖ :=
     (hi.norm_map_of_map_zero (map_zero (induced Exponent.infinity M.subtypeL).toContinuousLinearMap)
       w).symm.trans (congrArg norm hw)

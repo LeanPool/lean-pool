@@ -378,7 +378,7 @@ noncomputable def tStarStar (r : ℕ) (μᵣ : ℝ) (n : ℕ) : ℝ :=
 
 /-- The two-point set `J_n`: `{m_n - 1, m_n}` if `θ_n ≤ 1/2`, otherwise `{m_n, m_n + 1}`,
 where `m_n = ⌊x⌋` and `θ_n = {x}` for the centering `x`. -/
-def twoPointSet (x : ℝ) : Set ℤ :=
+noncomputable def twoPointSet (x : ℝ) : Set ℤ :=
   if Int.fract x ≤ 1 / 2 then {⌊x⌋ - 1, ⌊x⌋} else {⌊x⌋, ⌊x⌋ + 1}
 
 /-- Localization on `J_n` along all admissible sizes, and on `m_n` along every nontrivial

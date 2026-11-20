@@ -52,7 +52,7 @@ noncomputable abbrev domIncl : X ⟶ MapCyl f := Cyl.i₁ X ≫ inr f
 noncomputable alias codIncl := inl
 
 /-- The top surface of the mapping cylinder -/
-abbrev top : Set (MapCyl f) := Set.range (domIncl f)
+noncomputable abbrev top : Set (MapCyl f) := Set.range (domIncl f)
 
 
 
@@ -80,7 +80,7 @@ the mapping cylinder of `f`. -/
 noncomputable def domHomeoTop : X ≃ₜ top f := (isEmbedding_domIncl f).toHomeomorph
 
 /-- `domInclToTop` -/
-noncomputable def domInclToTop : C(X, top f) := toContinuousMap (domHomeoTop f)
+noncomputable def domInclToTop : C(X, top f) := ContinuousMap.ofClass (domHomeoTop f)
 /-- `domInclFromTop` -/
 def domInclFromTop : C(top f, MapCyl f) := ⟨Subtype.val, continuous_subtype_val⟩
 

@@ -28,7 +28,7 @@ def derivW {n : ℕ} (i j : Fin n) : Derivation ℂ (MvPolynomial (Fin n) ℂ)
 theorem expectation_normalizedW_mul {n : ℕ} (i j : Fin n)
     (P : MvPolynomial (Fin n) ℂ) :
     expectation (normalizedW i j * P) = expectation (derivZ i j P) := by
-  simp only [normalizedW, derivZ, Derivation.smul_apply, Derivation.sub_apply,
+  simp only [normalizedW, derivZ, smul_apply, sub_apply,
     expectation_smul, expectation_sub]
   rw [mul_assoc, sub_mul, mul_assoc, expectation_C_mul, expectation_sub,
     expectation_C_mul, expectation_X_mul, expectation_X_mul]
@@ -36,7 +36,7 @@ theorem expectation_normalizedW_mul {n : ℕ} (i j : Fin n)
 theorem expectation_normalizedZ_mul {n : ℕ} (i j : Fin n)
     (P : MvPolynomial (Fin n) ℂ) :
     expectation (normalizedZ i j * P) = expectation (derivW i j P) := by
-  simp only [normalizedZ, derivW, Derivation.smul_apply, Derivation.add_apply,
+  simp only [normalizedZ, derivW, smul_apply, add_apply,
     expectation_smul, expectation_add]
   rw [mul_assoc, add_mul, mul_assoc, expectation_C_mul, expectation_add,
     expectation_C_mul, expectation_X_mul, expectation_X_mul]
@@ -47,7 +47,7 @@ theorem expectation_normalizedZ_mul {n : ℕ} (i j : Fin n)
     smul_eq_C_mul]
   ring_nf
   simp only [← map_pow, Complex.I_sq, map_neg, map_one, mul_neg, mul_one,
-    add_neg_cancel, or_true]
+    add_neg_cancel]
 
 @[simp] theorem derivZ_normalizedZ {n : ℕ} {i j : Fin n} (hij : i ≠ j) :
     derivZ i j (normalizedZ i j) = 1 := by

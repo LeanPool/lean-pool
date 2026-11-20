@@ -63,13 +63,13 @@ theorem tendsto_weighted_tails_zero {a : ℕ → ℝ}
         ∑ k ∈ Finset.range N, (k : ℝ) * a k)
       atTop (𝓝 0) := by
   convert tendsto_const_nhds.sub (tendsto_weighted_partialSums ha) using 1
-  all_goals simp
+  simp
 
 theorem tendsto_summable_tails_zero {a : ℕ → ℝ} (ha : Summable a) :
     Tendsto (fun N ↦ (∑' k, a k) - ∑ k ∈ Finset.range N, a k)
       atTop (𝓝 0) := by
   convert tendsto_const_nhds.sub ha.hasSum.tendsto_sum_nat using 1
-  all_goals simp
+  simp
 
 theorem tendsto_gaussianHermiteMode_partialSums {n : ℕ} (hn : 0 < n)
     (g : Lp ℂ 2 (complexGaussianMeasure n)) :

@@ -154,8 +154,8 @@ theorem IsTest.comp (hac : (ν : Measure V) ≪ m) {Φ : ℝ → ℝ} {K : ℝ}
   have hK0 : (0 : ℝ) ≤ K := le_trans (abs_nonneg _) (hK 0)
   have hΦd : Differentiable ℝ Φ := hΦ.differentiable one_ne_zero
   have hΦlip : LipschitzWith (Real.toNNReal K) Φ := by
-    refine lipschitzWith_of_nnnorm_deriv_le hΦd fun t => ?_
-    rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ hK0, Real.norm_eq_abs]
+    refine lipschitzWith_of_nnNorm_deriv_le hΦd fun t => ?_
+    rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ hK0, Real.norm_eq_abs]
     exact hK t
   obtain ⟨L, hL⟩ := h.1
   refine ⟨⟨Real.toNNReal K * L, hΦlip.comp hL⟩, ?_, ?_⟩

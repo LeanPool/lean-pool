@@ -31,7 +31,7 @@ theorem summable_monic_rootPrimePower {Q : ℤ[X]} (hQ : Q.Monic) {σ : ℝ} (h�
     (Real.rpow_nonneg (Nat.cast_nonneg _) _)
 
 theorem exists_minpoly_rootPrimePowerSum_lower_bound (θ : 𝓞 K)
-    (hD : RingOfIntegers.exponent θ ≠ 0) :
+    (hD : NumberField.RingOfIntegers.exponent θ ≠ 0) :
     ∃ C b : ℝ, 1 < b ∧ ∀ σ : ℝ, 1 < σ → σ < b →
       -Real.log (σ - 1) - C ≤ rootPrimePowerSum (minpoly ℤ θ) σ := by
   obtain ⟨c, b, hc, hb, H⟩ := exists_idealNormDirichlet_pole_lower_bound K

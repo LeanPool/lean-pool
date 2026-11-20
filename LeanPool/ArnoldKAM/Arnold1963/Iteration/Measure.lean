@@ -53,7 +53,7 @@ theorem limit_loss_le {n : ℕ} (G : ℕ → Set (ComplexSpace n)) (b : ℕ → 
   calc
     _ ≤ ∑' s, realVolume (G s \ G (s + 1)) :=
       (measure_mono (μ := realLebesgue n) hc).trans (measure_iUnion_le _)
-    _ ≤ ∑' s, b s * realVolume (G 0) := ENNReal.tsum_le_tsum hstep
+    _ ≤ ∑' s, b s * realVolume (G 0) := tsum_le_tsum hstep
     _ = _ := ENNReal.tsum_mul_right
 
 theorem limit_positive_of_budget {n : ℕ} (G : ℕ → Set (ComplexSpace n))

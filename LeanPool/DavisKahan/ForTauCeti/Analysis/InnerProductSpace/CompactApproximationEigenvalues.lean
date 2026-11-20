@@ -321,7 +321,7 @@ theorem norm_comp_subtypeL_orthogonal_le (hAc : IsCompactOperator A)
   have hAcl : IsCompactOperator A.toLinearMap := hAc
   have hSc : IsCompactOperator S := hAcl.restrict' hinvL
   have hnorm : ‖S‖ ≤ (cn : ℝ) := by
-    have hsr : spectralRadius 𝕜 S = ‖S‖₊ := S.spectralRadius_eq_nnnorm hSsa
+    have hsr : spectralRadius 𝕜 S = ‖S‖₊ := S.spectralRadius_eq_nnNorm hSsa
     have hle : (‖S‖₊ : ℝ≥0∞) ≤ (cn : ℝ≥0∞) := by
       rw [← hsr]
       simp only [spectralRadius_eq_of_unital]
@@ -362,7 +362,7 @@ theorem approximationNumber_le_of_eigenSpan_cover (hAc : IsCompactOperator A)
     A.approximationNumber n ≤ c := by
   set W : Submodule 𝕜 E := eigenSpan A S with hWdef
   have hinv : ∀ v ∈ W, A v ∈ W := eigenSpan_invariant A S
-  have : CompleteSpace (W : Submodule 𝕜 E) := FiniteDimensional.complete 𝕜 W
+  have : CompleteSpace (W : Submodule 𝕜 E) := FiniteDimensional.completeSpace 𝕜 W
   have hbd : ∀ (ν : 𝕜) (v : E), v ∈ Wᗮ → v ≠ 0 → A v = ν • v → ‖ν‖ ≤ c := by
     intro ν v hvmem hv0 hveq
     have hvE : v ∈ eigenspace A.toLinearMap ν := Module.End.mem_eigenspace_iff.mpr hveq

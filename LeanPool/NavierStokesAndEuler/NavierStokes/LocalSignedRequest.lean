@@ -2349,7 +2349,9 @@ theorem chartKernel_unweighted {coord : ℝ} (U : SlowRegion coord)
       (fun _ => MeanRankUpdate.chartKernel coord g) := by
   apply unweighted_of_finiteJetBounds
   · exact MeanRankUpdate.chartKernel_contDiffOn U.coord_pos U.coord_lt_one
-      (fun x hx => U.time_pos x.2.1 hx.1) hg
+      (fun x (hx : x ∈
+        (movingStripData U a b cL cR ha hcL hcR ε L hε hεone hL).domain) =>
+          U.time_pos x.2.1 hx.1) hg
   · intro m
     obtain ⟨C, _, hC⟩ := MeanRankUpdate.chartKernel_finiteJetBounds U.coord_pos U.coord_lt_one
       U.qlo_pos (fun x (hx : x ∈ (movingStripData U a b cL cR ha hcL hcR ε L hε hεone hL).domain) =>

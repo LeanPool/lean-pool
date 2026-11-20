@@ -286,7 +286,8 @@ through each action. -/
 theorem hasDenseClassicalPoincareSet_of_nondegeneracy
     (hnondegenerate : ClassicalDisturbingNondegeneracy) :
     HasDenseClassicalPoincareSet := by
-  apply Subtype.dense_iff.mpr
+  refine (Subtype.dense_iff (s := InteriorProgradeEllipticActions)
+    (t := classicalPoincareSet)).mpr ?_
   intro action haction
   let eccentricity := eccentricityFromActions action
   have heccentricity : 0 < eccentricity :=
@@ -351,7 +352,8 @@ Poincaré set dense in the two-dimensional interior action region. -/
 theorem hasDenseClassicalPoincareSet_of_dense_resonant_eccentricities
     (hdense : HasDenseNondegenerateResonantEccentricities) :
     HasDenseClassicalPoincareSet := by
-  apply Subtype.dense_iff.mpr
+  refine (Subtype.dense_iff (s := InteriorProgradeEllipticActions)
+    (t := classicalPoincareSet)).mpr ?_
   intro action haction
   let eccentricity := eccentricityFromActions action
   have heccentricity : 0 < eccentricity :=

@@ -34,7 +34,7 @@ private theorem exists_short_closed_walk {V : Type*} [Fintype V] (G : SimpleGrap
     ∃ v, ∃ p : G.Walk v v, (∀ w, w ∈ p.support) ∧
       p.length ≤ 2 * (Fintype.card V - 1) := by
   classical
-  induction hn : Fintype.card V using Nat.strong_induction_on generalizing V with | h n ih => ?_
+  induction hn : Fintype.card V using Nat.strong_induction_on generalizing V with | ind n ih => ?_
   by_cases hcard : Fintype.card V = 1
   · let v : V := Classical.choice hG.nonempty
     refine ⟨v, .nil, ?_, by simp⟩

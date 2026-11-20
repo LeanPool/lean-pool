@@ -29,7 +29,7 @@ Let $H$ be the real convex hull of the positions
 of the six indices in `P4715T1BoundaryCycle`, using
 `P4715T1Position`.
 -/
-def P4715T1Hexagon : Set (Real × Real) :=
+noncomputable def P4715T1Hexagon : Set (Real × Real) :=
 -- BODY
   convexHull Real (Set.range (P4715T1Position ∘ P4715T1BoundaryCycle))
 

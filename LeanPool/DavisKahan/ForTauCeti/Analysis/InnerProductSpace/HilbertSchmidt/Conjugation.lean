@@ -102,7 +102,7 @@ theorem hilbertSchmidtEnergy_isometry_comp (T : F →L[𝕜] E) (b : HilbertBasi
   simp only [ContinuousLinearMap.hilbertSchmidtEnergy_def]
   refine tsum_congr fun i => ?_
   have hnn : ‖U (T (b i))‖₊ = ‖T (b i)‖₊ := NNReal.coe_injective (hU _)
-  rw [ContinuousLinearMap.comp_apply, enorm_eq_nnnorm, enorm_eq_nnnorm, hnn]
+  rw [ContinuousLinearMap.comp_apply, eNorm_eq_nnNorm, eNorm_eq_nnNorm, hnn]
 
 /-- Composing on the **right** with a map whose adjoint is norm-preserving
 leaves the energy alone.  The proof passes to the adjoint, where the
@@ -130,7 +130,7 @@ theorem energy_ofLp (b : HilbertBasis ι 𝕜 F) (f : lp (fun _ : ι => E) 2) :
   rw [ContinuousLinearMap.hilbertSchmidtEnergy_def, norm_sq_eq_tsum_norm_column_sq b f,
     ENNReal.ofReal_tsum_of_nonneg (fun i => by positivity) hsum]
   refine tsum_congr fun i => ?_
-  rw [enorm_eq_nnnorm, ← ENNReal.ofReal_coe_nnreal, coe_nnnorm,
+  rw [eNorm_eq_nnNorm, ← ENNReal.ofReal_coe_nnreal, coe_nnNorm,
     ← ENNReal.ofReal_pow (by positivity)]
 
 /-- **Conjugating by isometries is an `ℓ²` isometry.**  This is the unitarity of

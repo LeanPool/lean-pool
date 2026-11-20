@@ -170,7 +170,7 @@ theorem HessianJointC1.flowHessianCoordinate_contDiffOn_one_of_le
     have hHstrict : HasStrictFDerivAt H
         (flowThirdSpatialDerivative X t x s) x := by
       have hHAt : ContDiffAt ℝ 1 H x := hH.contDiffAt
-      have hstrict := hHAt.hasStrictFDerivAt (by norm_num)
+      have hstrict := hHAt.hasStrictFDerivAt_fderiv (by norm_num)
       simpa [flowThirdSpatialDerivative] using hstrict
     have hstrict₁ := hHstrict.clm_apply (hasStrictFDerivAt_const h x)
     have hstrict₂ := hstrict₁.clm_apply (hasStrictFDerivAt_const k x)

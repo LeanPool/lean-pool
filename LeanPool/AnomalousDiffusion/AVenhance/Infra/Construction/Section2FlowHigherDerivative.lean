@@ -61,7 +61,7 @@ theorem Section2FlowHigherDerivative.continuous_norm_le_of_ae_le_vecVolume
     filter_upwards [h] with y hy
     intro hyU
     have hle : ENNReal.ofReal ‖f y‖ ≤ ENNReal.ofReal B := by
-      simpa [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs] using hy
+      simpa [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs] using hy
     exact (not_lt_of_ge ((ENNReal.ofReal_le_ofReal_iff hB).mp hle)) hyU
   have hUzero : (FaaDiBruno.vecVolume 2) U = 0 := by
     simpa [ae_iff] using hnotU
@@ -78,7 +78,7 @@ theorem Section2FlowHigherDerivative.continuousVector_norm_le_of_ae_le
     filter_upwards [h] with x hx
     have hnorm : ‖f x i‖ ≤ ‖f x‖ := norm_le_pi_norm (f x) i
     have hcomponent : ‖f x i‖ₑ ≤ ‖f x‖ₑ := by
-      simpa [Real.enorm_eq_ofReal_abs] using ENNReal.ofReal_le_ofReal hnorm
+      simpa [Real.eNorm_eq_ofReal_abs] using ENNReal.ofReal_le_ofReal hnorm
     exact hcomponent.trans hx
   intro x
   rw [pi_norm_le_iff_of_nonempty]

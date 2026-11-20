@@ -48,6 +48,7 @@ variable {k : ℤ} (f : ModularForm (Gamma 1) k) (hf : f ≠ 0)
 /-! ### fdBox properties -/
 
 lemma fdBox_isOpen (M : ℝ) : IsOpen (fdBox M) := by
+  simp only [fdBox, Set.ofPred_and]
   refine IsOpen.inter ?_ (IsOpen.inter ?_ (IsOpen.inter ?_ ?_))
   · exact isOpen_lt continuous_const Complex.continuous_re
   · exact isOpen_lt Complex.continuous_re continuous_const
@@ -116,7 +117,7 @@ private lemma modform_not_locally_zero (s : ℍ) :
     fun w hw => (UpperHalfPlane.mdifferentiable_iff.mp f.holo').analyticAt
       (UpperHalfPlane.isOpen_upperHalfPlaneSet.mem_nhds hw)
   have h_preconn : IsPreconnected {w : ℂ | 0 < w.im} :=
-    (Complex.isConnected_of_upperHalfPlane (r := 0)
+    (Complex.isConnected_of_upperHalfPlane (r := 0) (s := {w : ℂ | 0 < w.im})
       (fun w (hw : 0 < w.im) => hw) (fun w (hw : 0 < w.im) => le_of_lt hw)).isPreconnected
   have h_zero_on := h_analOn.eqOn_zero_of_preconnected_of_frequently_eq_zero
     h_preconn s.im_pos (h_top.filter_mono nhdsWithin_le_nhds).frequently

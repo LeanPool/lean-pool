@@ -121,10 +121,10 @@ theorem lps_slice_relative_bound_infty
         (eLpNorm (fun x : Vec3 =>
           vec3EuclideanNorm (u x) * ‖w x‖ * ‖Dw x‖) 1 volume).toReal := by
     rw [integral_eq_lintegral_of_nonneg_ae (Eventually.of_forall hnonneg) hprodMeas,
-      eLpNorm_one_eq_lintegral_enorm hprodMeas]
+      eLpNorm_one_eq_lintegral_eNorm hprodMeas]
     congr 1
     refine lintegral_congr fun x => ?_
-    rw [Real.enorm_eq_ofReal (hnonneg x)]
+    rw [Real.eNorm_eq_ofReal (hnonneg x)]
   have hfin :
       eLpNorm (fun x : Vec3 => vec3EuclideanNorm (u x)) ∞ volume *
         eLpNorm w 2 volume * eLpNorm Dw 2 volume ≠ ⊤ := by

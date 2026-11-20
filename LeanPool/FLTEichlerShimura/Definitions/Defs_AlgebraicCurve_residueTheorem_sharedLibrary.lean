@@ -222,7 +222,7 @@ theorem exists_sub_algebraMap_intDegree_neg {x : RatFunc K}
   rcases eq_or_ne x 0 with rfl | hx0
   · exact ⟨0, Or.inl (by simp)⟩
   have hdeg : x.intDegree ≤ 0 := by
-    rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero K hx0,
+    rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_ne_zero K hx0,
       show (1 : ℤᵐ⁰) = exp 0 from rfl, exp_le_exp] at hx
     exact hx
   have hnum0 : x.num ≠ 0 := RatFunc.num_ne_zero hx0
@@ -286,7 +286,7 @@ theorem ord_placeInfty_eq_zero_of_intDegree_eq_zero {f : RatFunc K} (hf : f ≠ 
     (h : f.intDegree = 0) : (placeInfty K).ord f = 0 := by
   rw [(placeInfty K).ord_eq_zero_iff_adicValuation_eq_one hf,
     ← (inftyValuation_isEquiv_adicValuation K).eq_one_iff_eq_one,
-    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero K hf, h]
+    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_ne_zero K hf, h]
   rfl
 
 public theorem ord_placeInfty_eq_intDegree_mul {f : RatFunc K} (hf : f ≠ 0) :
@@ -429,7 +429,7 @@ theorem ord_placeInfty {f : RatFunc K} (hf : f ≠ 0) :
     exact (exp_neg (1 : ℤ)).symm
   rw [(placeInfty K).ord_eq_neg_log_of_valuationSubring_eq (RatFunc.inftyValuation K) rfl hπ
       hf,
-    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero K hf, log_exp]
+    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_ne_zero K hf, log_exp]
 
 theorem ord_placeInfty_algebraMap {q : K[X]} (hq : q ≠ 0) :
     (placeInfty K).ord (algebraMap K[X] (RatFunc K) q) = -(q.natDegree : ℤ) := by

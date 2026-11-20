@@ -40,11 +40,11 @@ algebra norm.) -/
 private lemma eventually_entry_bound {d : ℕ} (M : Matrix (Fin d) (Fin d) ℂ)
     (hM : ∀ z ∈ spectrum ℂ M, ‖z‖ < 1) :
     ∃ r : ℝ, 0 < r ∧ r < 1 ∧ ∀ᶠ n : ℕ in atTop, ∀ i j : Fin d, ‖(M ^ n) i j‖ ≤ r ^ n := by
-  have : CompleteSpace (Matrix (Fin d) (Fin d) ℂ) := FiniteDimensional.complete ℂ _
+  have : CompleteSpace (Matrix (Fin d) (Fin d) ℂ) := FiniteDimensional.completeSpace ℂ _
   have hrad : spectralRadius ℂ M < 1 := by
     rcases (spectrum ℂ M).eq_empty_or_nonempty with h | h
     · simp [spectralRadius_eq_of_unital, h]
-    · obtain ⟨z, hz, hzr⟩ := spectrum.exists_nnnorm_eq_spectralRadius_of_nonempty h
+    · obtain ⟨z, hz, hzr⟩ := spectrum.exists_nnNorm_eq_spectralRadius_of_nonempty h
       rw [← hzr]
       have hz1 : ‖z‖ < 1 := hM z hz
       exact_mod_cast hz1

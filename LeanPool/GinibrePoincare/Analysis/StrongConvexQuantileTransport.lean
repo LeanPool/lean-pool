@@ -108,7 +108,7 @@ theorem scalar_hasDerivAt_lipschitz (T D : ℝ → ℝ) (c : ℝ) (hc : 0 ≤ c)
     (hD : ∀ x, HasDerivAt T (D x) x)
     (hb : ∀ x, 0 ≤ D x ∧ D x ≤ c) :
     LipschitzWith (Real.toNNReal c) T := by
-  apply lipschitzWith_of_nnnorm_fderiv_le (fun x => (hD x).differentiableAt)
+  apply lipschitzWith_of_nnNorm_fderiv_le (fun x => (hD x).differentiableAt)
   intro x
   apply NNReal.coe_le_coe.mp
   change ‖fderiv ℝ T x‖ ≤ (Real.toNNReal c : ℝ)

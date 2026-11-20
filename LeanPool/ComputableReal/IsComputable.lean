@@ -213,6 +213,8 @@ theorem Real_mk_of_TendstoLocallyUniformly' (fImpl : ℕ → ℚ → ℚ) (f : �
   simp only [hi, ge_iff_le, sup_le_iff] at hj
   specialize hδ₁ _ (hi₁ j (by linarith))
   specialize hi₄ j (by linarith)
+  change |f (x j) - f (Real.mk ⟨x, hx⟩)| < ε / 2 at hδ₁
+  change |(x j : ℝ) - Real.mk ⟨x, hx⟩| < ε_nhd / 2 at hi₄
   specialize hi₃ j (by linarith) (x j) (by
     constructor
     · linarith [sub_le_of_abs_sub_le_left hi₄.le]

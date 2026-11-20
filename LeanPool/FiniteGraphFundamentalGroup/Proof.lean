@@ -158,7 +158,7 @@ lemma arborescence_card [Fintype V] [∀ a b : V, Fintype (a ⟶ b)]
 
 lemma no_reverse_edges (T : WideSubquiver (Symmetrify V)) [Arborescence T]
     {a b : V} (e : @Quiver.Hom V _ a b)
-    (h₁ : T a b (Sum.inl e)) (h₂ : T b a (Sum.inr e)) : False := by
+    (h₁ : Sum.inl e ∈ T a b) (h₂ : Sum.inr e ∈ T b a) : False := by
   let A : Arborescence T := inferInstance
   let p : Path (root T) a := (A.uniquePath a).default
   let q : Path (root T) b := (A.uniquePath b).default
@@ -186,8 +186,8 @@ def symEdgeForget (T : WideSubquiver (Symmetrify V))
 def symEdgeForgetInv (T : WideSubquiver (Symmetrify V))
     (e : Quiver.Total (wideSubquiverSymmetrify T)) : Quiver.Total T := by
   rcases e with ⟨a, b, ⟨f, hf⟩⟩
-  change T a b (Sum.inl f) ∨ T b a (Sum.inr f) at hf
-  by_cases h : T a b (Sum.inl f)
+  change Sum.inl f ∈ T a b ∨ Sum.inr f ∈ T b a at hf
+  by_cases h : Sum.inl f ∈ T a b
   · exact ⟨a, b, ⟨Sum.inl f, h⟩⟩
   · exact ⟨b, a, ⟨Sum.inr f, hf.resolve_left h⟩⟩
 
@@ -200,7 +200,7 @@ lemma symEdgeForgetInv_forget (T : WideSubquiver (Symmetrify V)) [Arborescence T
       simp only [symEdgeForget, symEdgeForgetInv]
       exact dite_eq_left hf
   | inr f =>
-      have hn : ¬T b a (Sum.inl f) := fun h => no_reverse_edges T f h hf
+      have hn : Sum.inl f ∉ T b a := fun h => no_reverse_edges T f h hf
       simp only [symEdgeForget, symEdgeForgetInv]
       exact dite_eq_right hn
 
@@ -209,8 +209,8 @@ lemma symEdgeForget_forgetInv (T : WideSubquiver (Symmetrify V))
     symEdgeForget T (symEdgeForgetInv T e) = e := by
   rcases e with ⟨a, b, ⟨f, hf⟩⟩
   change V at a b
-  change T a b (Sum.inl f) ∨ T b a (Sum.inr f) at hf
-  by_cases h : T a b (Sum.inl f)
+  change Sum.inl f ∈ T a b ∨ Sum.inr f ∈ T b a at hf
+  by_cases h : Sum.inl f ∈ T a b
   · have hinv : symEdgeForgetInv T ⟨a, b, ⟨f, hf⟩⟩ =
         ⟨a, b, ⟨Sum.inl f, h⟩⟩ := by
       simp only [symEdgeForgetInv]

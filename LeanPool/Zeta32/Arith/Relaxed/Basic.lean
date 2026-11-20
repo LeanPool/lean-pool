@@ -23,7 +23,7 @@ lemma padicValRat_finset_prod {p : ℕ} [Fact p.Prime] {ι : Type*}
 lemma padicValRat_factorial_one_level {p m : ℕ} [Fact p.Prime]
     (hm : m < p ^ 2) :
     padicValRat p (m.factorial : ℚ) = (m / p : ℤ) := by
-  rw [padicValRat.of_nat, padicValNat_factorial
+  rw [padicValRat.of_nat, multiplicity_factorial
     (Nat.log_lt_of_lt_pow' (by norm_num) hm)]
   simp
 

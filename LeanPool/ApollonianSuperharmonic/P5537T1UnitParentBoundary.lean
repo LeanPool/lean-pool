@@ -79,7 +79,6 @@ theorem P5537T1UnitParentBoundary (K : DiamondParameter) (hk : 1 < K.1) :
         norm_num at hs ⊢
         have hm : (-(2*(K.1:Int)))%2 = 0 := by omega
         have hm' : (1-2*(K.1:Int))%2 = 1 := by omega
-        try
         nlinarith only [hs]
     · refine ⟨-((K.1:Int)*((K.1:Int)+1)/2), ?_⟩
       intro x hx hd
@@ -103,7 +102,7 @@ theorem P5537T1UnitParentBoundary (K : DiamondParameter) (hk : 1 < K.1) :
         norm_num at hs ⊢
         have hm : (-(K.1:Int)-(K.1:Int))%2 = 0 := by omega
         have hm' : (-(K.1:Int)-((K.1:Int)+1))%2 = 1 := by omega
-        try simp only [hm, hm'] at hs
+        simp only [hm, hm'] at hs
         nlinarith only [hs, ht']
     · refine ⟨1, ?_⟩
       intro x hx hd
@@ -168,7 +167,7 @@ theorem P5537T1UnitParentBoundary (K : DiamondParameter) (hk : 1 < K.1) :
         norm_num at hs ⊢
         have hm : (-(K.1:Int)-(K.1:Int))%2 = 0 := by omega
         have hm' : (-(K.1:Int)-((K.1:Int)-1))%2 = 1 := by omega
-        try simp only [hm, hm'] at hs
+        simp only [hm, hm'] at hs
         nlinarith only [hs, ht]
     · refine ⟨0, ?_⟩
       intro x hx hd
@@ -228,7 +227,6 @@ theorem P5537T1UnitParentBoundary (K : DiamondParameter) (hk : 1 < K.1) :
         norm_num at hs ⊢
         have hm : (-(2*(K.1:Int)))%2 = 0 := by omega
         have hm' : (-1-2*(K.1:Int))%2 = 1 := by omega
-        try
         nlinarith only [hs]
   · change (2 : Nat) < 2 at hi
     omega

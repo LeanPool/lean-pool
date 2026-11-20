@@ -68,7 +68,7 @@ lemma rootMultiplicity_npow (T : ℤ[X]) (a : ℂ) (p : ℕ) (hT : T ≠ 0) :
   have hpow : ((T.map (algebraMap ℤ ℂ))^p) ≠ 0 := pow_ne_zero _ hmap
   rw [rootMultiplicity_eq_multiplicity, ite_eq_right hpow,
     rootMultiplicity_eq_multiplicity, ite_eq_right hmap]
-  exact (finiteMultiplicity_X_sub_C a hmap).multiplicity_pow (prime_X_sub_C a)
+  exact multiplicity_pow (prime_X_sub_C a)
 
 /-- If `T ≠ 0`, then `multₐ(Fₚ) = p - 1 + p * multₐ(T)` if `a = 0` and `p * multₐ(T)` otherwise. -/
 lemma rootMultiplicity_Fp (T : ℤ[X]) (p : ℕ) (a : ℂ) (hT : T ≠ 0) :

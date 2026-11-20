@@ -50,8 +50,8 @@ private theorem source_mass_le_norm
     exact hy (hzero y hn)
   have hint := integrable_of_memLp_ofReal_of_support (by norm_num : (1 : ℝ) ≤ 6 / 5) hG hzero
   have hnorm : ENNReal.ofReal (∫ y, |G y|) = eLpNorm G 1 volume := by
-    rw [eLpNorm_one_eq_lintegral_enorm hG.aestronglyMeasurable]
-    simpa only [Real.norm_eq_abs] using ofReal_integral_norm_eq_lintegral_enorm hint
+    rw [eLpNorm_one_eq_lintegral_eNorm hG.aestronglyMeasurable]
+    simpa only [Real.norm_eq_abs] using ofReal_integral_norm_eq_lintegral_eNorm hint
   rw [hnorm, ← eLpNorm_restrict_eq_of_support_subset hG.aestronglyMeasurable hsupp]
   have hh := eLpNorm_le_eLpNorm_mul_rpow_measure_univ
     (μ := volume.restrict (closedBall (0 : Vec3) R))
@@ -208,7 +208,7 @@ private theorem cutoff_scalar_data
       (g := fun y => C * B.indicator g y) (p := p)
   rw [show (fun y => C * B.indicator g y) = C • B.indicator g from rfl,
     eLpNorm_const_smul, eLpNorm_indicator_eq_eLpNorm_restrict hB.nullMeasurableSet] at hh
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hC] using hh
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hC] using hh
 
 /-- The harmonic force-growth constant is bounded by its norm envelope
 whenever the three force components belong to the local source space. -/

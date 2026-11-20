@@ -78,7 +78,7 @@ theorem gueOrderedMeasure_square_lsi {n : ℕ} (hn : 0 < n)
   obtain ⟨M, hM⟩ := hf.continuous_fderiv one_ne_zero
     |>.bounded_above_of_compact_support (hs.fderiv ℝ)
   let K : ℝ≥0 := ⟨max M 0, le_max_right _ _⟩
-  have hLip : LipschitzWith K f := lipschitzWith_of_nnnorm_fderiv_le
+  have hLip : LipschitzWith K f := lipschitzWith_of_nnNorm_fderiv_le
     (hf.differentiable (by norm_num)) (fun x => by
       change ‖fderiv ℝ f x‖≤max M 0
       exact (hM x).trans (le_max_left _ _))

@@ -686,7 +686,7 @@ private theorem PeriodTorusHigherHomology.productTorusTopClass_three :
 attribute [local instance] PeriodTorusHigherHomology.integerLinearMapModule in
 private def PeriodTorusHigherHomologyPontryagin.multilinearOfBilinear {M N : Type*} [AddCommGroup M]
     [Module ℤ M] [AddCommGroup N] [Module ℤ N] (β : M →ₗ[ℤ] M →ₗ[ℤ] N) :
-    MultilinearMap ℤ (fun _ : Fin 2 => M) N
+    MultilinearMap (RingHom.id ℤ) (fun _ : Fin 2 => M) N
     where
   toFun v := β (v 0) (v 1)
   map_update_add' {hDecEq} v i x
@@ -725,7 +725,7 @@ attribute [local instance] PeriodTorusHigherHomology.integerLinearMapModule in
 private def
     PeriodTorusHigherHomologyPontryagin.multilinearOfTrilinear {M N : Type*} [AddCommGroup M]
     [Module ℤ M] [AddCommGroup N] [Module ℤ N] (g : M →ₗ[ℤ] M →ₗ[ℤ] M →ₗ[ℤ] N) :
-    MultilinearMap ℤ (fun _ : Fin 3 => M) N
+    MultilinearMap (RingHom.id ℤ) (fun _ : Fin 3 => M) N
     where
   toFun v := g (v 0) (v 1) (v 2)
   map_update_add' {hDecEq} v i x

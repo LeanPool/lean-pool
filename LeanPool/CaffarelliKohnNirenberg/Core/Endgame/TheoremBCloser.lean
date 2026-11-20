@@ -247,10 +247,10 @@ private theorem integrable_of_power_finite
     (hfin : (∫⁻ w in S, ENNReal.ofReal |g w| ^ (6 / 5 : ℝ)) < ⊤) :
     Integrable g (volume.restrict S) := by
   have hmem : MemLp g (ENNReal.ofReal (6/5 : ℝ)) (volume.restrict S) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num)
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num)
       ENNReal.ofReal_ne_top hg.aestronglyMeasurable).mpr
     simpa only [ENNReal.toReal_ofReal (by norm_num : (0:ℝ) ≤ 6/5),
-      Real.enorm_eq_ofReal_abs] using hfin
+      Real.eNorm_eq_ofReal_abs] using hfin
   exact hmem.integrable (by norm_num)
 
 /-- A finite small-cell slice majorant supplies the full pressure-gradient

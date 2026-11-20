@@ -131,7 +131,7 @@ private lemma volume_vec3ClosedBall_scale {a r : ℝ} (ha : 0 < a) :
   have hmap := Real.map_linearMap_volume_pi_eq_smul_volume_pi (f := f) hdet
   have hmeasure := congrArg (fun μ : Measure Vec3 => μ (vec3ClosedBall 0 r)) hmap
   rw [Measure.map_apply (f.continuous_of_finiteDimensional.measurable)
-    (vec3ClosedBall_measurable 0 r), hpre, Measure.smul_apply] at hmeasure
+    (vec3ClosedBall_measurable 0 r), hpre, smul_apply] at hmeasure
   rw [vec3ScaleLinear_det] at hmeasure
   have ha3 : 0 < a ^ 3 := pow_pos ha 3
   simpa [f, abs_of_pos (inv_pos.mpr ha), abs_of_pos ha, inv_pow, ha.ne',
@@ -700,8 +700,8 @@ theorem parabolicBallRepresentative_holder_at_scale
       apply (div_le_iff₀ (by positivity : 0 < (2 : ℝ) ^ (k + 1))).2
       have h := (div_le_iff₀ (mul_pos (by norm_num) hρpos)).mp hjhi'
       convert h using 1
-      all_goals rw [pow_succ]
-      all_goals ring
+      rw [pow_succ]
+      ring
     have houterρ : 2 * r ≤ 8 * ρ := by linarith only [hinnerρ]
     have hpow_outer : (2 * r) ^ α ≤ (8 * ρ) ^ α := by
       exact Real.rpow_le_rpow (by positivity) houterρ (le_of_lt hα)

@@ -177,13 +177,13 @@ theorem lqSchattenSize_rpow_eq {P : Measure (CoeffSpace d)} {Q : ℝ} (hQ : 0 < 
   have hp0 : (ENNReal.ofReal Q) ≠ 0 := by
     simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
     exact hQ
-  rw [lqSchattenSize, eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top hAm,
+  rw [lqSchattenSize, eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 ENNReal.ofReal_ne_top hAm,
     ENNReal.toReal_ofReal hQ.le, ← ENNReal.rpow_mul, one_div,
     inv_mul_cancel₀ (ne_of_gt hQ), ENNReal.rpow_one]
   refine lintegral_congr fun a => ?_
   have h0 : (0 : ℝ) ≤ schattenSize Q (A a) F :=
     Recurrence.zero_le_schattenNorm (isSymmetricBlockMat_normalizedBlock (hA a)) Q
-  rw [Real.enorm_eq_ofReal h0]
+  rw [Real.eNorm_eq_ofReal h0]
 
 /-! ## The scalar size of a filling sum -/
 
@@ -269,7 +269,7 @@ theorem lqSchattenSize_le_of_smul_le {P : Measure (CoeffSpace d)}
       ≤ eLpNorm (K • fun b => schattenSize Q (W b) Ej) (ENNReal.ofReal Q) P :=
         eLpNorm_mono hWm hptwise
     _ = ‖K‖ₑ * lqSchattenSize P Q W Ej := eLpNorm_const_smul K _ _ _
-    _ = ENNReal.ofReal K * lqSchattenSize P Q W Ej := by rw [Real.enorm_eq_ofReal hK0]
+    _ = ENNReal.ofReal K * lqSchattenSize P Q W Ej := by rw [Real.eNorm_eq_ofReal hK0]
 
 /-- **The bridge normalization exchange.**  The lower bridge clause
 `(1-η_x)E_t^q ≤ E_n^{q'}` of `p.two.grid.transport` transports the

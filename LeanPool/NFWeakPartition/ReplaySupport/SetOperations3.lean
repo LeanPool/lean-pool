@@ -2433,17 +2433,17 @@ noncomputable def gNinexg (A : Class) (B : Class) (V : Class) (W : Class) :
   have p0004 :=
     NFChoice.DirectNominalPrf.Nominal.NFLiteralBaseFour.axNin x y z w
       (by
-        aesop)
+        grind only)
       (by
-        aesop)
+        grind only)
       (by
-        aesop)
+        grind only)
       (by
-        aesop)
+        grind only)
       (by
-        aesop)
+        grind only)
       (by
-        aesop)
+        grind only)
   have p0005 :=
     @gIsset z (synCnin (.cv x) (.cv y))
       (by
@@ -2453,7 +2453,7 @@ noncomputable def gNinexg (A : Class) (B : Class) (V : Class) (W : Class) :
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnin,
               NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
   have p0006 :=
     @gDfcleq w (.cv z) (synCnin (.cv x) (.cv y))
       (by
@@ -2462,7 +2462,7 @@ noncomputable def gNinexg (A : Class) (B : Class) (V : Class) (W : Class) :
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       (by
         (simp (config :=
               {
@@ -2470,7 +2470,7 @@ noncomputable def gNinexg (A : Class) (B : Class) (V : Class) (W : Class) :
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnin,
               NFChoice.Compiler.CoreFVSimp.fv_class_cv, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
   have p0007 := @gVex w
   have p0008 := @gElnin (.cv w) (.cv x) (.cv y) p0007
   have p0009_e00_recanon :
@@ -2567,11 +2567,11 @@ noncomputable def gNinexg (A : Class) (B : Class) (V : Class) (W : Class) :
       (.classMem (synCnin A (.cv y)) (synCvv)) (.classMem (synCnin A B) (synCvv)) x y
       A B V W
       (by
-        aesop)
+        grind only)
       (by
-        aesop)
+        grind only)
       (by
-        aesop)
+        grind only)
       (by
         (simp (config :=
               {
@@ -2580,7 +2580,7 @@ noncomputable def gNinexg (A : Class) (B : Class) (V : Class) (W : Class) :
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnin,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv,
               Finset.mem_union] at ⊢;
-            aesop))
+            grind only [Finset.notMem_empty]))
       (by
         (simp (config :=
               {
@@ -2590,7 +2590,7 @@ noncomputable def gNinexg (A : Class) (B : Class) (V : Class) (W : Class) :
               NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only [Finset.notMem_empty]))
       p0001 p0003 p0014
   exact p0015
 
@@ -3259,13 +3259,13 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       (by
         (simp (config :=
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw] at ⊢;
-            aesop))
+            grind only))
       (by
         (simp (config :=
               {
@@ -3276,7 +3276,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       p0015
   have p0017 :=
     @gSyl2anc (synWa (synWss (.cv z) (synCun A (synCsn X))) (.classMem X (.cv z)))
@@ -3313,7 +3313,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
   have p0023 :=
     @gElsn x X
       (by
-        aesop)
+        grind only)
   have p0024 :=
     @gOrbi2i (.classMem (.cv x) (synCsn X)) (.classEq (.cv x) X) (.classMem (.cv x) A)
       p0023
@@ -3404,9 +3404,9 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       (by
-        aesop)
+        grind only)
       (by
         (simp (config :=
               {
@@ -3419,7 +3419,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               NFChoice.Compiler.CoreFVSimp.fv_wff_neg,
               NFChoice.Compiler.CoreFVSimp.fv_wff_classMem, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       p0039_e00_recanon
   have p0040 :=
     @gEx (synWss (.cv z) (synCun A (synCsn X))) (.neg (.classMem X (.cv z)))
@@ -3461,7 +3461,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn, Finset.mem_union,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       p0050
   have p0052 :=
     @gJaoi (synWss (.cv z) A) (synWss (.cv z) (synCun A (synCsn X)))
@@ -3498,7 +3498,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               {
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_wff_objEq] at ⊢;
-            aesop))
+            grind only [Finset.mem_insert, Finset.mem_singleton]))
       p0058_e00_recanon
   have p0059_e01_recanon :
     Nominal.NPrf
@@ -3524,7 +3524,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
                 failIfUnchanged :=
                   false }) only [NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       (by
         (simp (config :=
               {
@@ -3536,7 +3536,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn, Finset.mem_union,
               Finset.mem_erase, Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       p0006 p0059_e01_recanon
   have p0060 :=
     @gOrbi12i (.classMem (.cv z) (synCpw A)) (synWss (.cv z) A)
@@ -3573,7 +3573,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn,
               Finset.mem_union] at ⊢;
-            aesop))
+            grind only))
       (by
         (simp (config :=
               {
@@ -3586,7 +3586,7 @@ noncomputable def gPwadjoin (A : Class) (X : Class) (a : Var) (b : Var)
               NFChoice.Compiler.CoreFVSimp.fv_class_cv,
               NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn, Finset.mem_union,
               Finset.mem_erase, Finset.mem_singleton] at ⊢;
-            aesop))
+            grind only))
       p0062
   exact p0063
 

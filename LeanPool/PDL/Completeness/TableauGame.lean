@@ -309,7 +309,7 @@ lemma theMoves_iff {H X} {p : ProverPos H X ⊕ BuilderPos H X} {next : GamePos}
         cases ξ <;> simpa using h
     all_goals
       simp at *
-      try grind
+    all_goals grind
   · unfold theMoves
     rintro (⟨_, _, p_def, hyp⟩ | ⟨_, _, p_def, hyp⟩ | ⟨_, _, lt, p_def, hyp⟩) <;> subst p_def
     · rcases hyp with ⟨L, R, (⟨X_def, hyp⟩ | _ | _) ⟩
@@ -474,7 +474,7 @@ lemma mem_theMoves_of_move {pos next} :
     simp_all only [true_and, exists_const, not_false_eq_true, Sum.inl.injEq, reduceCtorEq,
       false_and, not_true_eq_false, IsEmpty.exists_iff, exists_false, or_self, or_false]
     use X.1, X.2.1
-    rcases X with ⟨L,R,_|χ⟩ <;> cases r <;> try subst_eqs
+    rcases X with ⟨L,R,_|χ⟩ <;> cases r <;> subst_eqs
     case none.loadL δs δ ψ notBox in_L =>
       simp_all only [true_and]
       left; left
@@ -814,7 +814,7 @@ noncomputable def Sequent.allSubseteqFL (Y : Sequent) :
       simp only [Finset.mem_powerset, Sequent.L_eq, Sequent.O_eq] at this
       exact this
     · simp only [Olf.L]
-      rcases XO with ⟨none|⟨(nχ|_)⟩, XO_in⟩ <;> try simp_all only [Finset.empty_subset,
+      rcases XO with ⟨none|⟨(nχ|_)⟩, XO_in⟩ <;> simp_all only [Finset.empty_subset,
         Finset.singleton_subset_iff]
       simp only [Finset.singleton_union, Finset.insert_union, Finset.mem_insert, reduceCtorEq,
         Finset.mem_union, Finset.mem_sup, Finset.mem_image, List.mem_toFinset, Function.comp_apply,
@@ -832,7 +832,7 @@ noncomputable def Sequent.allSubseteqFL (Y : Sequent) :
       simp only [Finset.mem_powerset, R_eq, O_eq] at this
       exact this
     · simp only [Olf.R]
-      rcases XO with ⟨none|⟨(nχ|_)⟩, XO_in⟩ <;> try simp_all only [Finset.empty_subset,
+      rcases XO with ⟨none|⟨(nχ|_)⟩, XO_in⟩ <;> simp_all only [Finset.empty_subset,
         Finset.singleton_subset_iff]
       simp only [Finset.singleton_union, Finset.insert_union, Finset.mem_insert, reduceCtorEq,
         Finset.mem_union, Finset.mem_sup, Finset.mem_image, List.mem_toFinset, Function.comp_apply,

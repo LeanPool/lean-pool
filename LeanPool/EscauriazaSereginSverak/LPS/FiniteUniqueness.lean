@@ -73,7 +73,7 @@ theorem lps_zero_relative_distance_implies_ae_eq
   have hum := serrin_aesm_prod hWeakU.meas_u
   have hdiff : AEMeasurable (fun z : Vec3 × ℝ => ‖v z - u z‖ₑ)
       ((volume : Measure Vec3).prod (volume.restrict (Ioo 0 T))) :=
-    (hvm.sub hum).enorm
+    (hvm.sub hum).eNorm
   have hlin :
       (∫⁻ z : Vec3 × ℝ, ‖v z - u z‖ₑ ∂
         ((volume : Measure Vec3).prod (volume.restrict (Ioo 0 T)))) = 0 := by
@@ -87,7 +87,7 @@ theorem lps_zero_relative_distance_implies_ae_eq
   rw [serrin_slab_measure_eq]
   filter_upwards [hAE] with z hz
   have hnorm : ‖v z - u z‖ₑ = 0 := hz
-  rw [enorm_eq_zero, sub_eq_zero] at hnorm
+  rw [eNorm_eq_zero, sub_eq_zero] at hnorm
   exact hnorm
 
 /-- Weak–strong uniqueness for the finite branch of the Serrin condition.

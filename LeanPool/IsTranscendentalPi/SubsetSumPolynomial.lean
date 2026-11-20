@@ -301,7 +301,8 @@ lemma monicRescaleOf_scaleRoots
     (hmonic : T'.Monic) (hd : T'.natDegree = d)
     (hT : T.map (algebraMap ℤ ℚ) = C (c : ℚ) * T') :
     (monicRescaleOf T d c).map (algebraMap ℤ ℚ) = T'.scaleRoots (c : ℚ) :=
-  Polynomial.ext fun k => coeff_monicRescaleOf_scaleRoots T T' d c hmonic hd hT k
+  AddMonoidAlgebra.ext <| Finsupp.ext fun k =>
+    coeff_monicRescaleOf_scaleRoots T T' d c hmonic hd hT k
 
 /-- If `T = c T'` with `T'` monic of degree `d` and roots `a₀, …, a_{d-1}`,
 then `Xᵈ + ∑ₖ₌₀ᵈ⁻¹ cᵈ⁻¹⁻ᵏ Tₖ Xᵏ` is the monic polynomial whose roots are `c a₀, …, c a_{d-1}`. -/
@@ -384,7 +385,7 @@ lemma aroots_of_T
       have hcC : (c : ℂ) ≠ 0 := by exact_mod_cast hc
       rw [Polynomial.aroots_def, Polynomial.aroots_def, hmapC, Algebra.algebraMap_self,
         Polynomial.map_id]
-      exact Polynomial.roots_smul_nonzero (Polynomial.map (algebraMap ℚ ℂ) T') hcC
+      exact Polynomial.roots_smul_of_ne_zero (Polynomial.map (algebraMap ℚ ℂ) T') hcC
     _ = T'.aroots ℂ := by simp [Polynomial.aroots_def]
     _ = _ := aroots_of_T' T' d n r a hT' ha
 

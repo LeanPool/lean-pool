@@ -101,7 +101,7 @@ theorem square_norm_scaled {f : Space → E} (h2 : MemLp f 2 volume) (h6 : MemLp
     exact square_domination a ‖f x‖ ha (norm_nonneg _)
   apply hp.trans
   have hn := lpNorm_add_le hA (g := a⁻¹ • (fun x => ‖f x‖^3)) (by norm_num : (1 : ℝ≥0∞) ≤ 2)
-  simpa only [lpNorm_const_smul,coe_nnnorm,Real.norm_eq_abs,abs_of_pos ha,
+  simpa only [lpNorm_const_smul,coe_nnNorm,Real.norm_eq_abs,abs_of_pos ha,
     abs_of_pos (inv_pos.mpr ha),lpNorm_norm h2.aestronglyMeasurable,cube_norm h6] using hn
 
 theorem square_norm_le_two {f : Space → E} (h2 : MemLp f 2 volume) (h6 : MemLp f 6 volume)

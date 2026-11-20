@@ -334,7 +334,7 @@ lemma injective_lift_term_at :
     simp only [liftTermAt] at h
     have hk := preterm.var.inj h
     split_ifs at hk with h₁ h₂
-    all_goals (try exact congrArg preterm.var (by omega))
+    all_goals exact congrArg preterm.var (by omega)
   | _, _, _, preterm.var _, preterm.func _, h => by simp [liftTermAt] at h
   | _, _, _, preterm.var _, preterm.app _ _, h => by simp [liftTermAt] at h
   | _, _, _, preterm.func _, preterm.var _, h => by simp [liftTermAt] at h

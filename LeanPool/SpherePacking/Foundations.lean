@@ -131,7 +131,7 @@ private theorem plusPolynomial_imaginary (ε u : ℝ) :
     plusPolynomial ε (Complex.I * (u : ℂ)) =
       (((ε / 4) + (1 - u) ^ 2 * (1 + u) : ℝ) : ℂ) := by
   push_cast
-  try dsimp only [plusPolynomial]
+  dsimp only [plusPolynomial]
   ring_nf
   simp only [Complex.I_sq, neg_mul, one_mul, Complex.I_pow_four]; push_cast; rfl
 
@@ -139,7 +139,7 @@ private theorem minusPolynomial_imaginary (ε u : ℝ) :
     minusPolynomial ε (Complex.I * (u : ℂ)) =
       (((ε / 4) + (1 - u) * (1 + u) ^ 2 : ℝ) : ℂ) := by
   push_cast
-  try dsimp only [minusPolynomial]
+  dsimp only [minusPolynomial]
   ring_nf
   simp only [Complex.I_sq, neg_mul, one_mul, sub_neg_eq_add, Complex.I_pow_four]; push_cast; rfl
 
@@ -230,7 +230,7 @@ private theorem integer_gamma_product (k : ℕ) {y : ℝ} (hy : y ≠ 0) :
   have hz : ∀ j : ℕ, z + (j : ℂ) ≠ 0 := by
     intro j hj
     have him := congrArg Complex.im hj
-    try dsimp only [z] at him
+    dsimp only [z] at him
     norm_num at him
     exact hy (by exact him)
   simpa only [add_comm] using! gamma_add_nat_eq_product z hz k
@@ -245,7 +245,7 @@ private theorem half_integer_gamma_product (k : ℕ) (y : ℝ) :
   have hz : ∀ j : ℕ, z + (j : ℂ) ≠ 0 := by
     intro j hj
     have hre := congrArg Complex.re hj
-    try dsimp only [z] at hre
+    dsimp only [z] at hre
     norm_num at hre
     linarith only [hre]
   simpa only [z, add_comm, add_left_comm, add_assoc] using!
@@ -281,7 +281,7 @@ private theorem fourierInv_apply_zero {d : ℕ} (f : TestFunction d) :
 private theorem admissible_zero_pos {d : ℕ} (f : Admissible d) :
     0 < (f.function (0 : Euclidean d)).re := by
   have hpositive : 0 < ∫ x : Euclidean d, ((𝓕 f.function) x).re := by
-    exact integral_pos_of_integrable_nonneg_nonzero
+    exact integral_pos_of_integrable_nonneg_ne_zero
       (Complex.continuous_re.comp (𝓕 f.function).continuous)
       (𝓕 f.function).integrable.re
       f.fourier_nonneg f.fourier_zero_pos.ne'
@@ -891,13 +891,13 @@ private theorem analytic_eq_zero_of_imaginary_ray
     let z : ℂ := (u : ℂ) * Complex.I
     refine ⟨z, ⟨?_, ?_⟩, ?_⟩
     · apply hvanish u
-      try dsimp only [u, t₀]
+      dsimp only [u, t₀]
       linarith only [hε]
     · intro hz
       have hu : u = t₀ := by
         have him := congrArg Complex.im hz
         simpa [z, z₀] using! him
-      try dsimp only [u] at hu
+      dsimp only [u] at hu
       linarith only [hε, hu]
     · dsimp [z₀, z, u]
       rw [dist_eq_norm, ← sub_mul, ← Complex.ofReal_sub, norm_mul,
@@ -1334,7 +1334,7 @@ private theorem gaussianMellinParameter_integrable
   apply (integrable_norm_iff hmeas).mp
   apply hreal.congr_fun _ measurableSet_Ioi
   intro a ha
-  try dsimp
+  dsimp
   rw [norm_mul,
     Complex.norm_cpow_eq_rpow_re_of_pos ha,
     Complex.norm_exp]
@@ -1355,7 +1355,7 @@ private theorem gaussianMellinParameter_norm_integral
           a ^ (b.re - 1) * Real.exp (-(r * a)) := by
       apply setIntegral_congr_fun measurableSet_Ioi
       intro a ha
-      try dsimp
+      dsimp
       rw [norm_mul,
         Complex.norm_cpow_eq_rpow_re_of_pos ha,
         Complex.norm_exp]
@@ -1608,7 +1608,7 @@ private theorem mellin_gaussianMellinPairingProfile {d : ℕ}
           ∫ x : Euclidean d, gaussianMellinMixture f b x a := by
       apply setIntegral_congr_fun measurableSet_Ioi
       intro a _
-      try dsimp
+      dsimp
       unfold gaussianMellinPairingProfile
       rw [← integral_const_mul]
       apply integral_congr_ae
@@ -1814,22 +1814,22 @@ private theorem fourier_riesz_pairing_strip {d : ℕ}
             f x * (‖x‖ : ℂ) ^ (-s))) := by
   let b : ℂ := ((d : ℂ) - s) / 2
   have hb : 0 < b.re := by
-    try dsimp only [b]
+    dsimp only [b]
     norm_num
     exact hsd
   have hbd : 2 * b.re < (d : ℝ) := by
-    try dsimp only [b]
+    dsimp only [b]
     norm_num
     linear_combination hs
   have hleft : -(2 * b) = s - (d : ℂ) := by
-    try dsimp only [b]
+    dsimp only [b]
     ring
   have hdual : (d : ℂ) / 2 - b = s / 2 := by
-    try dsimp only [b]
+    dsimp only [b]
     ring
   have hpi :
       2 * b - (d : ℂ) / 2 = (d : ℂ) / 2 - s := by
-    try dsimp only [b]
+    dsimp only [b]
     ring
   have hright : -(2 * (s / 2)) = -s := by
     ring
@@ -1920,11 +1920,11 @@ private theorem radialMellinMultiplier {d : ℕ}
   let q : ℂ := (d : ℂ) / 2
   let s : ℂ := q - Complex.I * (t : ℂ)
   have hs : 0 < s.re := by
-    try dsimp only [s, q]
+    dsimp only [s, q]
     norm_num
     exact Nat.cast_pos.mpr hd
   have hsd : s.re < (d : ℝ) := by
-    try dsimp only [s, q]
+    dsimp only [s, q]
     norm_num
     exact Nat.cast_pos.mpr hd
   have hphase :
@@ -1934,7 +1934,7 @@ private theorem radialMellinMultiplier {d : ℕ}
             (Real.log Real.pi : ℂ)) := by
     have hexponent :
         (d : ℂ) / 2 - s = Complex.I * (t : ℂ) := by
-      try dsimp only [s, q]
+      dsimp only [s, q]
       apply sub_sub_cancel
     rw [hexponent,
       Complex.cpow_def_of_ne_zero
@@ -1944,7 +1944,7 @@ private theorem radialMellinMultiplier {d : ℕ}
     apply mul_comm
   have hcomplement :
       (d : ℂ) - s = q + Complex.I * (t : ℂ) := by
-    try dsimp only [s, q]
+    dsimp only [s, q]
     ring
   have h := radial_fourier_mellin_strip hd f hf s hs hsd
   rw [hphase, hcomplement] at h
@@ -2380,7 +2380,7 @@ private theorem mellinShellPhase_ofReal (ε t : ℝ) :
               (Real.cos (a * t) - 1)) : ℂ) := by
               apply intervalIntegral.integral_congr
               intro a _
-              try dsimp
+              dsimp
               rw [show (a : ℂ) * (t : ℂ) =
                 ((a * t : ℝ) : ℂ) by
                   push_cast
@@ -2400,7 +2400,7 @@ private theorem mellinShellPhase_ofReal (ε t : ℝ) :
               (Real.cos (a * t) - 1)) : ℂ) := by
               apply intervalIntegral.integral_congr
               intro a _
-              try dsimp
+              dsimp
               rw [show (a : ℂ) * (t : ℂ) =
                 ((a * t : ℝ) : ℂ) by
                   push_cast
@@ -2427,7 +2427,7 @@ private theorem mellinShellPhase_imaginary (ε u : ℝ) :
               (Real.cosh (a * u) - 1)) : ℂ) := by
               apply intervalIntegral.integral_congr
               intro a _
-              try dsimp
+              dsimp
               rw [show (a : ℂ) * (Complex.I * (u : ℂ)) =
                 ((a * u : ℝ) : ℂ) * Complex.I by
                   push_cast
@@ -2447,7 +2447,7 @@ private theorem mellinShellPhase_imaginary (ε u : ℝ) :
               (Real.cosh (a * u) - 1)) : ℂ) := by
               apply intervalIntegral.integral_congr
               intro a _
-              try dsimp
+              dsimp
               rw [show (a : ℂ) * (Complex.I * (u : ℂ)) =
                 ((a * u : ℝ) : ℂ) * Complex.I by
                   push_cast
@@ -2523,7 +2523,7 @@ private theorem shortShellOscillatoryIntegral_continuous {ε : ℝ}
   let F : ℝ → ℝ → ℝ := fun t a =>
     w a * (Real.cos (a * t) - 1)
   have hF : Continuous (Function.uncurry F) := by
-    try dsimp only [F, Function.uncurry]
+    dsimp only [F, Function.uncurry]
     exact (hw.comp continuous_snd).mul (by fun_prop)
   have hparam : Continuous (fun t : ℝ =>
       ∫ a in Set.Icc (ε ^ 3) (10 * Real.log (1 / ε)), F t a) :=
@@ -2537,7 +2537,7 @@ private theorem shortShellOscillatoryIntegral_continuous {ε : ℝ}
       ← integral_Icc_eq_integral_Ioc]
     apply setIntegral_congr_fun measurableSet_Icc
     intro a ha
-    try dsimp only [F, w]
+    dsimp only [F, w]
     rw [max_eq_left ha.1]
   exact hparam.congr (fun t => (hident t).symm)
 
@@ -2696,7 +2696,7 @@ private theorem mellinShellPhase_differentiable {ε : ℝ}
     apply intervalIntegral.integral_congr
     intro a ha
     rw [uIcc_of_le horder] at ha
-    try dsimp only [w]
+    dsimp only [w]
     rw [max_eq_left ha.1]
   have hshort : Differentiable ℂ (fun z : ℂ =>
       ∫ a in (ε ^ 3)..(10 * Real.log (1 / ε)),
@@ -2797,7 +2797,7 @@ private theorem saddleVerticalGamma_continuous {ℓ : ℝ} (hℓ : 0 < ℓ) :
   intro t
   let z : ℂ := ((ℓ : ℂ) - Complex.I * (t : ℂ)) / 2
   have hz : 0 < z.re := by
-    try dsimp only [z]
+    dsimp only [z]
     simpa only [Complex.div_ofNat_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, zero_mul,
       Complex.I_im, Complex.ofReal_im, mul_zero, sub_self, sub_zero, Nat.ofNat_pos,
@@ -4878,7 +4878,7 @@ private theorem norm_complexGamma_le_realGamma {z : ℂ} (hz : 0 < z.re) :
           Real.exp (-x) * x ^ (z.re - 1) := by
             apply setIntegral_congr_fun measurableSet_Ioi
             intro x hx
-            try dsimp
+            dsimp
             rw [norm_mul,
               Complex.norm_of_nonneg (Real.exp_pos (-x)).le,
               Complex.norm_cpow_eq_rpow_re_of_pos hx]
@@ -4973,10 +4973,10 @@ private theorem saddleGamma_shiftedLine_polynomial_bound
   let z : ℂ :=
     ((a : ℂ) + (t : ℂ) * Complex.I) / 2
   have hre : z.re = a / 2 := by
-    try dsimp only [z]
+    dsimp only [z]
     norm_num [Complex.mul_re, Complex.mul_im]
   have him : z.im = t / 2 := by
-    try dsimp only [z]
+    dsimp only [z]
     norm_num [Complex.mul_re, Complex.mul_im]
   have htzero : t ≠ 0 := by
     intro hzero
@@ -5774,7 +5774,7 @@ private theorem saddleEnvelope_vertical_polynomial_bound {ε ℓ : ℝ}
         Real.exp (2 * |ℓ| * saddleShellTotalVariation ε) := by
   let z : ℂ := ((ℓ : ℂ) - Complex.I * (t : ℂ)) / 2
   have hz : 0 < z.re := by
-    try dsimp only [z]
+    dsimp only [z]
     simpa only [Complex.div_ofNat_re, Complex.sub_re, Complex.ofReal_re, Complex.mul_re,
       Complex.I_re, zero_mul,
       Complex.I_im, Complex.ofReal_im, mul_zero, sub_self, sub_zero, Nat.ofNat_pos,
@@ -5814,7 +5814,7 @@ private theorem saddleEnvelope_vertical_polynomial_bound {ε ℓ : ℝ}
             mellinShellPhase ε ((t : ℂ) / (ℓ : ℂ)))‖ := by
             unfold saddleEnvelope
             rw [norm_mul, norm_mul, hunit]
-            try dsimp only [z]
+            dsimp only [z]
             ring
     _ ≤ ((2 : ℝ) ^ k * Real.Gamma (ℓ / 2 + k)) *
           Real.exp (2 * |ℓ| * saddleShellTotalVariation ε) := by
@@ -6729,7 +6729,7 @@ private theorem plusSaddleFiniteRapidContourIntegrand_horizontalStrip_bound
   let z : ℂ := (a : ℂ) + (t : ℂ) * Complex.I
   have hz : z ∈ saddleFinitePoleHalfPlane N := by
     change -(2 * ((N : ℝ) + 1)) < z.re
-    try dsimp [z]
+    dsimp [z]
     simpa only [Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im,
       Complex.I_im,
       mul_one, sub_self, add_zero] using! hhalf.trans_le ha.1
@@ -6804,7 +6804,7 @@ private theorem minusSaddleFiniteRapidContourIntegrand_horizontalStrip_bound
   let z : ℂ := (a : ℂ) + (t : ℂ) * Complex.I
   have hz : z ∈ saddleFinitePoleHalfPlane N := by
     change -(2 * ((N : ℝ) + 1)) < z.re
-    try dsimp [z]
+    dsimp [z]
     simpa only [Complex.mul_re, Complex.ofReal_re, Complex.I_re, mul_zero, Complex.ofReal_im,
       Complex.I_im,
       mul_one, sub_self, add_zero] using! hhalf.trans_le ha.1

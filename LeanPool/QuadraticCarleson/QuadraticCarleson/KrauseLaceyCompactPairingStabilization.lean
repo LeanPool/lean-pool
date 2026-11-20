@@ -247,7 +247,7 @@ theorem hasSparseOnePBound_smoothHighPass_of_uniform_finiteMax
   change ‖smoothQuadraticHighPass lam ((2 : ℝ) ^ (j - 3)) f x‖ ≤ _
   rw [hN lam x hx N le_rfl]
   simpa only [finiteFullDyadicTailMaxOperator, Complex.norm_real, Real.norm_eq_abs,
-    abs_of_nonneg (NNReal.coe_nonneg _), coe_nnnorm] using
+    abs_of_nonneg (NNReal.coe_nonneg _), coe_nnNorm] using
     (show (‖finiteFullDyadicTail lam j N f x‖₊ : ℝ) ≤
       (finiteFullDyadicTailMaxNNNorm lam j N f x : ℝ) from
         NNReal.coe_le_coe.mpr (nnnorm_finiteFullDyadicTail_le_max lam j f x le_rfl))
@@ -265,7 +265,7 @@ theorem hasSparseOnePBound_absolute_smoothHighPass_of_uniform_finiteMax
     abs_of_nonneg (norm_nonneg _), smoothQuadraticHighPassTestOperator]
   rw [hN lam x hx N le_rfl]
   simpa only [finiteFullDyadicTailMaxOperator, Complex.norm_real, Real.norm_eq_abs,
-    abs_of_nonneg (NNReal.coe_nonneg _), coe_nnnorm] using
+    abs_of_nonneg (NNReal.coe_nonneg _), coe_nnNorm] using
     (show (‖finiteFullDyadicTail lam j N f x‖₊ : ℝ) ≤
       (finiteFullDyadicTailMaxNNNorm lam j N f x : ℝ) from
         NNReal.coe_le_coe.mpr (nnnorm_finiteFullDyadicTail_le_max lam j f x le_rfl))

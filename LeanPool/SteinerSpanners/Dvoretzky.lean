@@ -925,7 +925,7 @@ private lemma maurey_pisier_mgf {d : ℕ} {f : EuclideanSpace ℝ (Fin d) → �
   have hpi_pos : 0 < π := Real.pi_pos
   have : IsProbabilityMeasure ν := by
     refine ⟨?_⟩
-    simp only [ν, Measure.smul_apply, Measure.restrict_apply_univ, smul_eq_mul, Real.volume_Icc,
+    simp only [ν, smul_apply, Measure.restrict_apply_univ, smul_eq_mul, Real.volume_Icc,
       sub_zero, ← ENNReal.ofReal_mul (by positivity : 0 ≤ 2 / π)]
     have : (2 / π) * (π / 2) = 1 := by field_simp [hpi_pos.ne']
     rw [this, ENNReal.ofReal_one]

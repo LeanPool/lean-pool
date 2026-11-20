@@ -162,11 +162,11 @@ lemma first_fourier (hf : ∀ (σ' : ℝ), 1 < σ' → Summable (nterm f σ'))
       · refine fun _ ↦ AEMeasurable.aestronglyMeasurable ?_
         have := hsupp.aemeasurable
         fun_prop
-      · simp only [enorm_mul]
+      · simp only [eNorm_mul]
         simp_rw [lintegral_const_mul'' _ (first_fourier_aux1 hsupp.aemeasurable _)]
         calc
           _ = (∑' (i : ℕ), ‖term f σ' i‖ₑ) * ∫⁻ (a : ℝ), ‖ψ a‖ₑ ∂volume := by
-            simp [ENNReal.tsum_mul_right, enorm_eq_nnnorm]
+            simp [ENNReal.tsum_mul_right, eNorm_eq_nnNorm]
           _ ≠ ⊤ := ENNReal.mul_ne_top (hf_coe1 hf hσ)
             (ne_top_of_lt hsupp.2)
     _ = _ := by
@@ -206,7 +206,7 @@ lemma second_fourier_integrable_aux1 (hcont : Measurable ψ) (hsupp : Integrable
   · let f1 : ℝ → ENNReal := fun a1 ↦ ‖cexp (-(↑a1 * (↑σ' - 1)))‖ₑ
     let f2 : ℝ → ENNReal := fun a2 ↦ ‖ψ a2‖ₑ
     suffices ∫⁻ (a : ℝ × ℝ), f1 a.1 * f2 a.2 ∂ν < ⊤ by
-      simpa [hasFiniteIntegral_iff_enorm, enorm_eq_nnnorm, Function.uncurry]
+      simpa [hasFiniteIntegral_iff_eNorm, eNorm_eq_nnNorm, Function.uncurry]
     refine (lintegral_prod_mul ?_ ?_).trans_lt ?_ <;> try fun_prop
     exact ENNReal.mul_lt_top (second_fourier_integrable_aux1a hσ).2 hsupp.2
 
@@ -1182,7 +1182,7 @@ lemma hh'_nonpos {a x : ℝ} (ha : a ∈ Ioo (-1) 1) : hh' a x ≤ 0 := by
 lemma hh_antitone {a : ℝ} (ha : a ∈ Ioo (-1) 1) : AntitoneOn (hh a) (Ioi 0) := by
   have l1 x (hx : x ∈ interior (Ioi 0)) :
       HasDerivWithinAt (hh a) (hh' a x) (interior (Ioi 0)) x := by
-    have : x ≠ 0 := by contrapose! hx; simp [hx]
+    have : x ≠ 0 := ne_of_gt (mem_Ioi.mp (interior_subset hx))
     exact (hh_deriv a this).hasDerivWithinAt
   apply antitoneOn_of_hasDerivWithinAt_nonpos (convex_Ioi _) (hh_continuous _) l1
     (fun x _ => hh'_nonpos ha)

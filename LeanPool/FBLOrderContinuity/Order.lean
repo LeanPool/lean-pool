@@ -100,6 +100,7 @@ theorem orderContinuous_sigmaOrderContinuous {X : Type u} {Y : Type v}
   exact ⟨fun _ _ h => hc.1 (show (ULift.up _ : ULift.{u} ℕ) ≤ ULift.up _ from h),
     (ULift.down_surjective.range_comp (fun n => S (x n))) ▸ hc.2⟩
 
+open scoped Pointwise in
 /-- Proposition 2.2 (`prop:csp-operator`): for a positive linear map whose domain has
 the countable supremum property, preservation of decreasing order-null sequences is
 equivalent to order continuity for arbitrary directed nets. -/
@@ -1391,7 +1392,7 @@ private theorem dual_adjust_annihilate (M : Submodule ℝ E) [FiniteDimensional 
     (hu : ε < Metric.infDist u (M : Set E)) :
     ∃ ψ : Dual E, (∀ x ∈ M, ψ x = φ x) ∧ ψ u = 0 ∧
       ‖ψ‖ ≤ ‖φ‖ + ‖φ‖ * ‖u‖ / ε := by
-  have : IsClosed (M : Set E) := M.closed_of_finiteDimensional
+  have : IsClosed (M : Set E) := M.isClosed_of_finiteDimensional
   let d := ‖M.mkQ u‖
   have hd : ε < d := by
     have heq : d = Metric.infDist u (M : Set E) :=

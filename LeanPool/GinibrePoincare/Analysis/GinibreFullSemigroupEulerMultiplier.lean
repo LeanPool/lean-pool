@@ -102,8 +102,7 @@ theorem backwardEulerResolventMultiplier_graph_identity {c r : ℝ}
       backwardEulerResolventMultiplier c r := by
   unfold backwardEulerResolventMultiplier
   have hd := (backwardEulerResolventMultiplier_den_pos hc hr).ne'
-  field_simp
- ; ring
+  field_simp; ring
 
 /-- Continuous dyadic backward Euler approximations including spectral zero. -/
 def resolventEulerMultiplier (t : ℝ) (j : ℕ) (r : ℝ) : ℝ :=

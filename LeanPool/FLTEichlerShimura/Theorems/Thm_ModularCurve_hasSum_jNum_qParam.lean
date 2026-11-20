@@ -131,7 +131,7 @@ private lemma cuspFunction_eqOn {f : ℍ → ℂ} {g : ℂ → ℂ} (hg : Contin
   have hne : ∀ q : ℂ, ‖q‖ < 1 → q ≠ 0 → cuspFunction 1 f q = g q := by
     intro q hq hq0
     have him := Function.Periodic.im_invQParam_pos_of_norm_lt_one Real.zero_lt_one hq hq0
-    rw [cuspFunction, Function.Periodic.cuspFunction_eq_of_nonzero _ _ hq0, Function.comp_apply,
+    rw [cuspFunction, Function.Periodic.cuspFunction_eq_of_ne_zero _ _ hq0, Function.comp_apply,
       hfg, ofComplex_apply_of_im_pos him, Function.Periodic.qParam_right_inv one_ne_zero hq0]
   intro q hq
   rw [Metric.mem_ball, dist_zero_right] at hq

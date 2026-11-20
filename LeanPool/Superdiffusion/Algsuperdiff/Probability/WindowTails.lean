@@ -134,7 +134,7 @@ theorem measureReal_le_tsum_of_subset [MeasurableSpace Ω] {P : Measure Ω}
     calc P S ≤ P (⋃ i, T i) := measure_mono hsub
       _ ≤ ∑' i, P (T i) := measure_iUnion_le _
       _ ≤ ∑' i, ENNReal.ofReal (b i) := by
-          refine ENNReal.tsum_le_tsum fun i => ?_
+          refine tsum_le_tsum fun i => ?_
           have hrw : P (T i) = ENNReal.ofReal (P.real (T i)) := by
             rw [measureReal_def, ENNReal.ofReal_toReal (measure_ne_top P (T i))]
           rw [hrw]

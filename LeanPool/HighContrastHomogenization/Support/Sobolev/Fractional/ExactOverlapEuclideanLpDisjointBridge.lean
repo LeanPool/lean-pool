@@ -180,7 +180,7 @@ theorem cubeEuclideanPositiveBesovDisjointPowerEnergy_le_overlap {d : ℕ}
         ∑' j : ℕ, (3 ^ d : ℝ≥0∞) *
           (weight j * (cubeEuclideanPositiveBesovOverlapDepthENorm Q p F j) ^
             p.exponent.toReal) := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro j
       calc
         weight j * cubeEuclideanPositiveBesovDisjointDepthPower Q p F j ≤

@@ -73,13 +73,13 @@ def closureInclusion (x : ContinuumRationalGroup) :
     (closure N hN M x →₀ ℚ) →+ ContinuumRationalGroup := by
   classical
   exact Finsupp.embDomain.addMonoidHom
-    (.subtype (closure N hN M x : ContinuumIndex → Prop))
+    (.subtype (· ∈ closure N hN M x))
 
 theorem closureInclusion_apply (x : ContinuumRationalGroup)
     (z : closure N hN M x →₀ ℚ) :
     closureInclusion N hN M x z =
       Finsupp.embDomain
-        (.subtype (closure N hN M x : ContinuumIndex → Prop)) z := by
+        (.subtype (· ∈ closure N hN M x)) z := by
   classical
   rfl
 
@@ -88,18 +88,18 @@ theorem closureInclusion_injective (x : ContinuumRationalGroup) :
   classical
   intro y z h
   apply Finsupp.embDomain_injective
-    (.subtype (closure N hN M x : ContinuumIndex → Prop))
+    (.subtype (· ∈ closure N hN M x))
   change Finsupp.embDomain
-    (.subtype (closure N hN M x : ContinuumIndex → Prop)) y =
+    (.subtype (· ∈ closure N hN M x)) y =
       Finsupp.embDomain
-        (.subtype (closure N hN M x : ContinuumIndex → Prop)) z at h
+        (.subtype (· ∈ closure N hN M x)) z at h
   exact h
 
 /-- The prepared difference restricted to the local coordinate closure. -/
 def localDifference (x : ContinuumRationalGroup)
     (a : RelevantCode N hN M x) (n : ℕ) : closure N hN M x →₀ ℚ := by
   classical
-  exact Finsupp.subtypeDomain (closure N hN M x)
+  exact Finsupp.subtypeDomain (· ∈ closure N hN M x)
     (prepared N hN M a.1 n - codeBasisVector a.1)
 
 private theorem difference_support_subset_closure
@@ -126,17 +126,17 @@ theorem closureInclusion_localDifference
     closureInclusion N hN M x (localDifference N hN M x a n) =
       prepared N hN M a.1 n - codeBasisVector a.1 := by
   classical
-  let : DecidablePred (closure N hN M x : ContinuumIndex → Prop) :=
+  let : DecidablePred (· ∈ closure N hN M x) :=
     fun _ ↦ Classical.propDecidable _
   rw [closureInclusion_apply]
   change Finsupp.embDomain
-    (.subtype (closure N hN M x : ContinuumIndex → Prop))
-      (Finsupp.subtypeDomain (closure N hN M x)
+    (.subtype (· ∈ closure N hN M x))
+      (Finsupp.subtypeDomain (· ∈ closure N hN M x)
         (prepared N hN M a.1 n - codeBasisVector a.1)) = _
   exact
     (Finsupp.extendDomain_eq_embDomain_subtype
-      (P := (closure N hN M x : ContinuumIndex → Prop))
-      (Finsupp.subtypeDomain (closure N hN M x)
+      (P := (· ∈ closure N hN M x))
+      (Finsupp.subtypeDomain (· ∈ closure N hN M x)
         (prepared N hN M a.1 n - codeBasisVector a.1))).symm.trans
       (Finsupp.extendDomain_subtypeDomain
         (prepared N hN M a.1 n - codeBasisVector a.1)

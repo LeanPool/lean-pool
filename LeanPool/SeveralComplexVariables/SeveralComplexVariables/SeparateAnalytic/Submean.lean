@@ -49,7 +49,7 @@ theorem log_norm_le_circleAverage {f : ℂ → ℂ} {c : ℂ} {R : ℝ}
     (hR : 0 < R) (hf : AnalyticOnNhd ℂ f (closedBall c R)) (hc : f c ≠ 0) :
     Real.log ‖f c‖ ≤ Real.circleAverage (fun z => Real.log ‖f z‖) c R := by
   have hf' : AnalyticOnNhd ℂ f (closedBall c |R|) := by simpa [abs_of_pos hR] using hf
-  rw [hf'.circleAverage_log_norm hR.ne' hc]
+  rw [hf'.circleAverage_log_norm hc]
   apply le_add_of_nonneg_left
   apply finsum_nonneg
   intro z
@@ -106,13 +106,14 @@ theorem norm_rpow_le_circleAverage_scalar {f : ℂ → ℂ} {c : ℂ} {R p : ℝ
   have htan : CircleIntegrable
       (fun z => ‖f c‖ ^ p * (1 + p * (Real.log ‖f z‖ - Real.log ‖f c‖))) c R := by
     exact ((circleIntegrable_const 1 c R).add
-      ((hlog.sub (circleIntegrable_const _ c R)).const_smul (a := p))).const_smul
+      ((hlog.sub (circleIntegrable_const _ c R)).const_fun_smul (a := p))).const_fun_smul
+        (a := ‖f c‖ ^ p)
   have hbound := circleAverage_le_of_eventually_le hR.ne' htan hpow
     (hne.mono fun z hz => rpow_log_tangent_le hn (norm_pos_iff.mpr hz) p)
   have hsub : CircleIntegrable (fun z => Real.log ‖f z‖ - Real.log ‖f c‖) c R :=
     hlog.sub (circleIntegrable_const _ c R)
   have hmul : CircleIntegrable (fun z => p • (Real.log ‖f z‖ - Real.log ‖f c‖)) c R :=
-    hsub.const_smul
+    hsub.const_fun_smul (a := p)
   have hmean : Real.circleAverage
       (fun z => ‖f c‖ ^ p * (1 + p * (Real.log ‖f z‖ - Real.log ‖f c‖))) c R =
       ‖f c‖ ^ p * (1 + p *

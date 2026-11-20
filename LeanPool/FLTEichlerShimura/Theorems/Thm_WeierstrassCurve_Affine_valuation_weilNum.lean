@@ -223,7 +223,7 @@ theorem fibIdeal_isPrincipal {n : ℕ} (hn : (n : K) ≠ 0) {T : (W⁄K).Point}
       rw [zpow_one, CoordinateRing.XYIdeal'_eq, placeIdeal_of_ne_zero W K i.2]
       rfl
     have key' := key
-    rw [hcoe, FractionalIdeal.coe_coeIdeal] at key'
+    rw [hcoe, FractionalIdeal.coeToSubmodule_coeIdeal] at key'
     exact (IsLocalization.coeSubmodule_isPrincipal _ le_rfl).mp key'
   · have hpt : ∀ i : {P : (W⁄K).Point // P ≠ 0},
         Point.some i.1.xc i.1.yc (Point.nonsingular_xc_yc i.2) = i.1 := fun i =>

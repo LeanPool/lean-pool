@@ -140,7 +140,7 @@ theorem lintegral_sq_picardStep_diffusion_le
     _ = (d : ℝ≥0∞) * ∑ j : Fin d, ∫⁻ ω, (‖M j ω‖₊ : ℝ≥0∞) ^ 2 ∂P := by
         rw [MeasureTheory.lintegral_const_mul' _ _ (by simp : (d : ℝ≥0∞) ≠ ⊤),
           MeasureTheory.lintegral_finsetSum]
-        exact fun j _ => ((hM_meas j).nnnorm.coe_nnreal_ennreal).pow_const 2
+        exact fun j _ => ((hM_meas j).nnNorm.coe_nnreal_ennreal).pow_const 2
     _ = (d : ℝ≥0∞) * ∑ j : Fin d, ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t,
           (‖coeffs.σ s (X s ω) i j‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
         refine congrArg _ (Finset.sum_congr rfl fun j _ => ?_)
@@ -172,7 +172,7 @@ theorem lintegral_sq_picardStep_jump_eq {ν : MeasureTheory.Measure E}
 
 /-- The extended norm of a square. -/
 theorem enorm_sq_eq (x : ℝ) : ‖x ^ 2‖ₑ = (‖x‖₊ : ℝ≥0∞) ^ 2 := by
-  rw [← ENNReal.coe_pow, ← nnnorm_pow]
+  rw [← ENNReal.coe_pow, ← nnNorm_pow]
   rfl
 
 omit [MeasurableSpace E] [MeasureTheory.IsProbabilityMeasure P] in
@@ -182,7 +182,7 @@ theorem memLp_two_of_lintegral_sq_lt_top {f : ℝ → ℝ} (hf : Measurable f) {
     MeasureTheory.MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) b)) := by
   refine (MeasureTheory.memLp_two_iff_integrable_sq hf.aestronglyMeasurable).mpr ?_
   refine ⟨(hf.pow_const 2).aestronglyMeasurable, ?_⟩
-  rw [MeasureTheory.hasFiniteIntegral_iff_enorm]
+  rw [MeasureTheory.hasFiniteIntegral_iff_eNorm]
   exact lt_of_le_of_lt (le_of_eq (lintegral_congr fun s => enorm_sq_eq (f s))) hfin
 
 omit [MeasurableSpace E] [MeasureTheory.IsProbabilityMeasure P] in
@@ -208,7 +208,7 @@ theorem lintegral_sq_setIntegral_le {f : Ω → ℝ → ℝ}
         exact ENNReal.ofReal_lt_top⟩
   have hinner_meas : Measurable fun ω : Ω =>
       ∫⁻ s in Set.Icc (0 : ℝ) t, (‖f ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume :=
-    (hf.nnnorm.coe_nnreal_ennreal.pow_const 2).lintegral_prod_right'
+    (hf.nnNorm.coe_nnreal_ennreal.pow_const 2).lintegral_prod_right'
   have hae : ∀ᵐ ω ∂P, ∫⁻ s in Set.Icc (0 : ℝ) t,
       (‖f ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume < ⊤ :=
     MeasureTheory.ae_lt_top hinner_meas hfin.ne
@@ -235,7 +235,7 @@ theorem lintegral_sq_setIntegral_le {f : Ω → ℝ → ℝ}
         ((hslice.norm.pow_const 2).aestronglyMeasurable)]
       congr 1
       refine lintegral_congr fun s => ?_
-      rw [← sq_coe_nnnorm_real ‖f ω s‖, nnnorm_norm]
+      rw [← sq_coe_nnnorm_real ‖f ω s‖, nnNorm_norm]
     have hbound : (∫ s in Set.Icc (0 : ℝ) t, f ω s) ^ 2
         ≤ t * (∫⁻ s in Set.Icc (0 : ℝ) t, (‖f ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume).toReal := by
       have hnn : 0 ≤ ∫ s in Set.Icc (0 : ℝ) t, ‖f ω s‖ :=
@@ -446,17 +446,17 @@ theorem lintegral_sq_picardStep_le
   have hdr : ∀ i : Fin n, Measurable fun ω =>
       (‖picardStepDrift coeffs X x₀ t ω i‖₊ : ℝ≥0∞) ^ 2 := fun i =>
     (((measurable_picardStep_drift coeffs X x₀ i (h_μ_meas i)
-      t).nnnorm).coe_nnreal_ennreal).pow_const 2
+      t).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hdf : ∀ i : Fin n, Measurable fun ω =>
       (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq t ω i‖₊
         : ℝ≥0∞) ^ 2 := fun i =>
     (((measurable_picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas h_σ_progMeas h_σ_sq i
-      t).nnnorm).coe_nnreal_ennreal).pow_const 2
+      t).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hjp : ∀ i : Fin n, Measurable fun ω =>
       (‖picardStepJump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq t ω i‖₊
         : ℝ≥0∞) ^ 2 := fun i =>
     (((measurable_picardStep_jump N ℱ hℱN coeffs X h_γ_meas h_γ_progMeas h_γ_sq i
-      t).nnnorm).coe_nnreal_ennreal).pow_const 2
+      t).nnNorm).coe_nnreal_ennreal).pow_const 2
   -- pointwise three-term split
   have hpt : ∀ ω : Ω, ∑ i, (‖picardStep W N ℱ hℱW hℱN coeffs X x₀ h_σ_meas h_σ_progMeas
         h_σ_sq h_γ_meas h_γ_progMeas h_γ_sq t ω i‖₊ : ℝ≥0∞) ^ 2

@@ -14,7 +14,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 public import Mathlib.RingTheory.RamificationInertia.Inertia
 
 import Mathlib.RingTheory.Valuation.Discrete.RankOne
@@ -211,7 +212,7 @@ lemma exists_adicValued_mul_sub_le {a b : A} {γ : WithZero (Multiplicative ℤ)
       (ENat.natCast_le_natCast.mpr hle)
   have hb : b ∈ v.asIdeal ^ multiplicity v.asIdeal (Ideal.span {a}) := by
     rwa [← intValuation_le_pow_iff_mem, ← intValuation_eq_coe_neg_multiplicity _ hnz]
-  rw [← Ideal.irreducible_pow_sup_of_ge hnb (irreducible v) n hm] at hb
+  rw [← Ideal.irreducible_pow_sup_of_ge (irreducible v) n hm] at hb
   obtain ⟨x, hx, z, hz, hxz⟩ := Submodule.mem_sup.mp hb
   obtain ⟨y, hy⟩ := Ideal.mem_span_singleton'.mp hz
   use y

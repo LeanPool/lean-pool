@@ -248,7 +248,7 @@ theorem driftIntegral_bound_of_L2_or_not {α : Type*} [MeasurableSpace α] {μ :
   by_cases hf : Integrable f μ
   · exact driftIntegral_bound_of_L2 f g u B hB hpoint hg hu hf
   · have hzero : ∫ x, f x ∂μ = 0 := by
-      simp [MeasureTheory.integral, hf]
+      exact integral_undef hf
     rw [hzero, abs_zero]
     have hgint : 0 ≤ ∫ x, ‖g x‖ ^ (2 : ℝ) ∂μ :=
       integral_nonneg_of_ae (ae_of_all _ fun x => by positivity)

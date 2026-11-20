@@ -112,7 +112,7 @@ theorem ennreal_tsum_annFam_eq (m : ℤ) (h : ℤ → ℤ → ℝ) :
       = ∑' j : {j : ℤ // j ≤ m}, ∑' n : {n : ℤ // n ≤ j.1 - 1},
           ENNReal.ofReal (h j.1 n.1) := by
   classical
-  rw [ENNReal.tsum_prod' (f := fun p : ℤ × ℤ => ENNReal.ofReal (annFam m h p))]
+  rw [tsum_prod' (f := fun p : ℤ × ℤ => ENNReal.ofReal (annFam m h p))]
   have hinner : ∀ j : ℤ,
       (∑' n : ℤ, ENNReal.ofReal (annFam m h (j, n)))
         = if j ≤ m then (∑' n : {n : ℤ // n ≤ j - 1}, ENNReal.ofReal (h j n.1))
@@ -226,11 +226,11 @@ private theorem ofReal_shellQuarter_tsum_le (M : ABKModel d) (m : ℤ) (s : ℝ)
       ≤ ∑' v : ℕ, ENNReal.ofReal ((3 : ℝ) ^ (-(1 / 4 : ℝ) * s
             * ((m - (m - (v : ℤ)) : ℤ) : ℝ)))
           * ∑ k ∈ Finset.Icc (m - (v : ℤ) - 1) m,
-              shellBlockLatticeAtom M m omega k ^ 2 := ENNReal.tsum_le_tsum hterm
+              shellBlockLatticeAtom M m omega k ^ 2 := tsum_le_tsum hterm
     _ ≤ ∑' n : {n : ℤ // n ≤ m},
           ENNReal.ofReal ((3 : ℝ) ^ (-(1 / 4 : ℝ) * s * ((m - n.1 : ℤ) : ℝ)))
             * ∑ k ∈ Finset.Icc (n.1 - 1) m, shellBlockLatticeAtom M m omega k ^ 2 :=
-        ENNReal.tsum_comp_le_tsum_of_injective hinj (fun n : {n : ℤ // n ≤ m} =>
+        tsum_comp_le_tsum_of_injective hinj (fun n : {n : ℤ // n ≤ m} =>
           ENNReal.ofReal ((3 : ℝ) ^ (-(1 / 4 : ℝ) * s * ((m - n.1 : ℤ) : ℝ)))
             * ∑ k ∈ Finset.Icc (n.1 - 1) m, shellBlockLatticeAtom M m omega k ^ 2)
 

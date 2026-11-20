@@ -663,11 +663,11 @@ theorem regularizedPotentialCurlComponentLp_error_tendsto
         (regularizedWeightMultiplier_memLp (regularizationScale n))
         (𝓕 (weakFieldFourierComponent ha.1 i)))
         (2 : ℝ≥0∞) (volume : Measure L2Vec3) := by
-    rw [← Lp.enorm_def,
+    rw [← Lp.eNorm_def,
       regularizedCurlComponentLp_error_eq_negative_weightedInverseFourier ha
         (regularizationScale n) (regularizationScale_pos n) i,
-      enorm_neg, ← Lp.enorm_def]
-    exact (MeasureTheory.Lp.fourierTransformₗᵢ L2Vec3 ℂ).symm.enorm_map _
+      eNorm_neg, ← Lp.eNorm_def]
+    exact (MeasureTheory.Lp.fourierTransformₗᵢ L2Vec3 ℂ).symm.eNorm_map _
   exact hmul.congr' (Filter.Eventually.of_forall fun n => (hnorm n).symm)
 
 

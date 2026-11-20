@@ -271,9 +271,8 @@ theorem ForBinaryWorkLoopSpaceSpec.prefix_withinAuxSpace_internal
           have hcanonical' : (forBinaryWorkTM driverIdx body).reachesIn t
               (spec.scanCfg value) d := by
             convert hcanonical using 1
-            all_goals
-              dsimp only [prefixTime] at htailEq ⊢
-              omega
+            dsimp only [prefixTime] at htailEq ⊢
+            omega
           have hc :=
             (forBinaryWorkTM driverIdx body).reachesIn_right_unique
               hreach hcanonical'

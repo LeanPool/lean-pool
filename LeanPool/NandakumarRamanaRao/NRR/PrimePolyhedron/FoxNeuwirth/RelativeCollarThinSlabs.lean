@@ -111,7 +111,7 @@ theorem slabPoint_injective
             have hm0 : (m : Real) ≠ 0 := ne_of_gt hmR
             change ((r.1 : Real) + xt.1) / (m : Real) =
               ((r.1 : Real) + yt.1) / (m : Real) at h
-            have hadd := (div_left_inj' hm0).mp h
+            have hadd := (div_left_inj₀ hm0).mp h
             linarith
           have htime : xt = yt := Subtype.ext htimeVal
           subst hspatial

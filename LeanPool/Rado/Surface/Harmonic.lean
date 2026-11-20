@@ -34,7 +34,7 @@ variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) 1 X]
 
 /-- The image of `s` in the chart `e`. -/
-def chartImage (e : OpenPartialHomeomorph X ℂ) (s : Set X) : Set ℂ :=
+noncomputable def chartImage (e : OpenPartialHomeomorph X ℂ) (s : Set X) : Set ℂ :=
   e '' (s ∩ e.source)
 
 omit [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) 1 X] in

@@ -250,7 +250,7 @@ example :
 
 /-- An example program of type `Code`, used to demonstrate referring to a named
 `Code` value inside a Hoare triple. -/
-def code : Code :=
+def exampleCode : Code :=
     mriscx
       first:  li x 0, 2
               li x 1, 0
@@ -258,13 +258,13 @@ def code : Code :=
     end
 
 example :
-    code
+    exampleCode
     ⦃¬⸨terminated⸩⦄
     "first" ↦ ⟨{3} | ({n:UInt64 | n = "first"} ∪ {n:UInt64 | n > 3})⟩
     ⦃(x[0] = 2 ∧ x[1] = 0 ∧ x[2] = 0x123) ∧ ¬⸨terminated⸩⦄
   := by
   -- Identifier needs to be unfolded
-  unfold code
+  unfold exampleCode
   sapplySSeq
                   R := ⦃(x[0] = 2 ∧ x[1] = 0 ) ∧ ¬⸨terminated⸩⦄,
                   L_W := {2},
@@ -287,12 +287,12 @@ example :
 Usage of autoSeq
 -/
 example :
-    code
+    exampleCode
     ⦃¬⸨terminated⸩⦄
     "first" ↦ ⟨{3} | ({n:UInt64 | n = "first"} ∪ {n:UInt64 | n > 3})⟩
     ⦃(x[0] = 2 ∧ x[1] = 0 ∧ x[2] = 0x123) ∧ ¬⸨terminated⸩⦄
   := by
-  unfold code
+  unfold exampleCode
   -- use tactic `autoSeq` which automatically applies S_SEQ and calcs missing values
   autoSeq
   · autoSeq

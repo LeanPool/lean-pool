@@ -217,20 +217,20 @@ private lemma conditional_self_rdist_le {G Ω : Type u} [MeasurableFinGroup G]
       apply condRuzsaDist_le' <;> fun_prop
     _ = d[X (i, j) # X (i, j)] +
         (H[rowTail X i j] - H[rowTail X i (j + firstIndex hm) | X (i, j)]) / 2 := by
-      congr
-      rw [mutualInfo_comm]
-      convert mutualInfo_eq_entropy_sub_condEntropy .. using 2 <;> try infer_instance
-      all_goals try fun_prop
-      rw [← condEntropy_add_left] <;> try fun_prop
-      congr
-      convert Finset.add_sum_erase (a := j) .. using 3
-      · rfl
-      · obtain ⟨j, hj'⟩ := j
+      rw [mutualInfo_eq_entropy_sub_condEntropy' (hX i j) (by fun_prop)]
+      congr 3
+      rw [← condEntropy_add_left (X := rowTail X i (j + firstIndex hm)) (by fun_prop) (hX i j)]
+      have hErase : (Finset.Ici j).erase j = Finset.Ici (j + firstIndex hm) := by
+        rw [Finset.Ici_erase]
+        obtain ⟨j, hj'⟩ := j
         ext ⟨k, hk⟩
-        simp [finalIndex, firstIndex] at hj ⊢
+        simp [finalIndex] at hj
         have : (j + 1) % m = j + 1 := Nat.mod_eq_of_lt (by omega)
-        simp [← Fin.val_fin_le, Fin.val_add, this]
-      simp
+        simp [firstIndex, Fin.lt_def, Fin.le_def, Fin.val_add, this]
+      have hSum := Finset.add_sum_erase (Finset.Ici j) (fun k ↦ X (i, k))
+        (Finset.mem_Ici.mpr le_rfl)
+      rw [hErase] at hSum
+      exact congrArg (fun Y ↦ H[Y | X (i, j)]) hSum.symm
     _ = _ := by
       congr
       apply ProbabilityTheory.IndepFun.condEntropy_eq_entropy <;> try fun_prop
@@ -359,7 +359,7 @@ lemma mutual_information_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureSp
       _ = D[fun i ω ↦ X (e i) ω; fun x ↦ hΩ] := by
         apply multiDist_copy _ _ _ _ _
         intro i; exact IdentDistrib.comp (u := fun x ↦ x i) he (measurable_pi_apply i)
-      _ = _ := by convert multiDist_of_perm (fun _ ↦ hΩ) _ _ e <;> try infer_instance
+      _ = _ := multiDist_of_perm (fun _ ↦ hΩ) (fun _ ↦ inferInstance) X e
   have h2 {j : Fin p.m} (hj: j ∈ Finset.Iio last)
   : A j ≤ p.η * ∑ i, d[ X' (i, j) # X' (i, j) | S i j ] := by
     obtain ⟨e, he⟩ := hperm j
@@ -478,8 +478,8 @@ lemma mutual_information_le {G Ωₒ : Type u} [MeasurableFinGroup G] [MeasureSp
       apply IdentDistrib.rdist_congr <;> exact .comp (u := fun x ↦ x i) he (measurable_pi_apply i)
     _ = _ := by simp; abel
   have h10 : I₀/p.η ≤ 2 * p.m * ∑ i, d[X i # X i] + p.m * k := by linarith only [h7, h9]
-  have h11 : ∑ i, d[X i # X i] ≤ 2 * p.m * k := by
-    convert multidist_ruzsa_II hm _ _ _ hX _ <;> try infer_instance
+  have h11 : ∑ i, d[X i # X i] ≤ 2 * p.m * k :=
+    multidist_ruzsa_II hm (fun _ ↦ hΩ) (fun _ ↦ inferInstance) X hX (fun _ ↦ inferInstance)
   calc
     _ ≤ p.η * (2 * p.m * ∑ i, d[X i # X i] + p.m * k) := by rwa [←div_le_iff₀' (by positivity)]
     _ ≤ p.η * (2 * p.m * (2 * p.m * k) + p.m * k) := by gcongr

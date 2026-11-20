@@ -76,7 +76,7 @@ theorem correspondenceBrownian_stopped_noise_independent
   intro C D hC hD
   have hh := correspondenceBrownian_stopping_fresh_noise n B P hB hind α τ hτ (Y ⁻¹' D) (hY hD)
   have hh' := congrArg (fun μ : Measure (GinibreContinuousNoise n) => μ C) hh
-  rw [Measure.map_apply hN hC, Measure.restrict_apply (hN hC), Measure.smul_apply,
+  rw [Measure.map_apply hN hC, Measure.restrict_apply (hN hC), _root_.smul_apply,
     ← hLaw, Measure.map_apply hN hC] at hh'
   simpa only [N, smul_eq_mul, mul_comm] using hh'
 

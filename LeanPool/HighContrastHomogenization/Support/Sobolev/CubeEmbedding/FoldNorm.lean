@@ -161,7 +161,7 @@ theorem map_foldR_restrict (lo hi : ℝ) (h : lo < hi) :
     have hpre : (fun t => 2 * lo - t) ⁻¹' Set.Ioo lo hi = Set.Ioo (2 * lo - hi) lo := by
       rw [preimage_reflect_Ioo]
       congr
-      all_goals ring
+      ring
     calc (volume.restrict (Set.Ioo (2 * lo - hi) lo)).map (fun t => 2 * lo - t)
         = (volume.restrict ((fun t => 2 * lo - t) ⁻¹' Set.Ioo lo hi)).map (fun t => 2 * lo - t)
           := by
@@ -174,7 +174,7 @@ theorem map_foldR_restrict (lo hi : ℝ) (h : lo < hi) :
     have hpre : (fun t => 2 * hi - t) ⁻¹' Set.Ioo lo hi = Set.Ioo hi (2 * hi - lo) := by
       rw [preimage_reflect_Ioo]
       congr
-      all_goals ring
+      ring
     calc (volume.restrict (Set.Ioo hi (2 * hi - lo))).map (fun t => 2 * hi - t)
         = (volume.restrict ((fun t => 2 * hi - t) ⁻¹' Set.Ioo lo hi)).map (fun t => 2 * hi - t)
           := by
@@ -197,8 +197,8 @@ theorem pi_smul_const {ι : Type*} [Fintype ι] {α : ι → Type*}
     {c : ℝ≥0∞} [∀ i, SigmaFinite (c • ρ i)] :
     Measure.pi (fun i => c • ρ i) = c ^ (Fintype.card ι) • Measure.pi ρ := by
   refine Measure.pi_eq fun s hs => ?_
-  rw [Measure.smul_apply, smul_eq_mul, Measure.pi_pi]
-  simp only [Measure.smul_apply, smul_eq_mul, Finset.prod_mul_distrib, Finset.prod_const,
+  rw [smul_apply, smul_eq_mul, Measure.pi_pi]
+  simp only [smul_apply, smul_eq_mul, Finset.prod_mul_distrib, Finset.prod_const,
     Finset.card_univ]
 
 /-- **`d`-dimensional fold pushforward.**  The coordinatewise fold pushes the
@@ -212,7 +212,7 @@ theorem map_Fold_restrict (lo hi : Vec d) (hlt : ∀ k, lo k < hi k) :
   have hσ3 : ∀ k : Fin d, SigmaFinite ((3 : ℝ≥0∞) • volume.restrict (Set.Ioo (lo k) (hi k))) :=
     fun k => by
       have : IsFiniteMeasure ((3 : ℝ≥0∞) • volume.restrict (Set.Ioo (lo k) (hi k))) :=
-        ⟨by rw [Measure.smul_apply, smul_eq_mul, Measure.restrict_apply_univ, Real.volume_Ioo]
+        ⟨by rw [smul_apply, smul_eq_mul, Measure.restrict_apply_univ, Real.volume_Ioo]
             exact ENNReal.mul_lt_top (by simp) ENNReal.ofReal_lt_top⟩
       infer_instance
   have hσmap : ∀ k : Fin d, SigmaFinite
@@ -259,12 +259,12 @@ theorem eLpNorm_foldComp {v : Vec d → ℝ} (hv : Measurable v)
       = ((3 : ℝ≥0∞) ^ d) ^ ((1 : ℝ) / 2) * eLpNorm v 2 (volume.restrict (Box lo hi)) := by
   have hvF : AEStronglyMeasurable (fun x => v (Fold lo hi x)) (volume.restrict (Box3 lo hi)) :=
     (hv.comp (continuous_Fold lo hi (fun k => (hlt k).le)).measurable).aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hvF,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hv.aestronglyMeasurable]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hvF,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hv.aestronglyMeasurable]
   have hpt : (2 : ℝ≥0∞).toReal = 2 := by norm_num
   rw [hpt]
   have hgmeas : Measurable (fun x : Vec d => ‖v x‖ₑ ^ (2 : ℝ)) :=
-    (ENNReal.continuous_rpow_const).measurable.comp hv.enorm
+    (ENNReal.continuous_rpow_const).measurable.comp hv.eNorm
   have htrans : ∫⁻ x in Box3 lo hi, ‖v (Fold lo hi x)‖ₑ ^ (2 : ℝ)
       = (3 : ℝ≥0∞) ^ d * ∫⁻ x in Box lo hi, ‖v x‖ₑ ^ (2 : ℝ) :=
     lintegral_foldComp (g := fun x => ‖v x‖ₑ ^ (2 : ℝ)) hgmeas lo hi hlt

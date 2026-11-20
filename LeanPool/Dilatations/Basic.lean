@@ -783,9 +783,8 @@ lemma H_map_fraction
       (uniqueFactor Z F hfaith hsieve p.1 p.2.1 p.2.2.1 p.2.2.2)
     unfold mapGenerator
     simp
-  all_goals
-    dsimp only [H, generatorImage, Paths.lift]
-    rw [Equiv.symm_apply_apply]
+  dsimp only [H, generatorImage, Paths.lift]
+  rw [Equiv.symm_apply_apply]
 
 /-- `GeneratedToLocalization` sends a `fraction` generator to `fractionInLocalization`. -/
 lemma GeneratedToLocalization_map_fraction

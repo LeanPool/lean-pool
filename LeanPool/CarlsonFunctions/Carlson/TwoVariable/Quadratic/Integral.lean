@@ -127,7 +127,7 @@ private lemma rIntegral_firstQuadratic_near_one (t β w : ℂ)
       (n.factorial : ℂ) * v) hsingle
     rw [show -t + (1 : ℂ) / 2 = 1 / 2 - t by ring]
     convert! hrw.symm using 1 <;> field_simp
-    all_goals ring
+    ring
   have hs : HasSum R (rIntegral (2 * t) β β (1 - w) (1 + w)) := by
     simpa only [Function.comp_def, heq] using he
   exact hs.unique hr
@@ -258,7 +258,7 @@ private lemma rIntegral_secondQuadratic_near_one (t β : ℂ)
           ← carlsonRPolynomialNumerator₂_swap, numerator₂_zero_right]
       rw [show -t + 1 - (β + 1 / 2) = 1 / 2 - β - t by ring, pow_mul]
       linear_combination -(ascPochhammer ℂ n).eval (-t) / (n.factorial : ℂ) * hp
-    all_goals simp only [rIntegral, carlsonRIntegral, sum_pair]
+    simp only [rIntegral, carlsonRIntegral, sum_pair]
   rw [← hrows.tsum_eq, tsum_quadraticSeries_eq (-t) (β + 1 / 2) w hc' hs]
   exact hright.tsum_eq
 

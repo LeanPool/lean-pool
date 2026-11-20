@@ -297,12 +297,12 @@ theorem boosted_positive_rest_is_energy_eigenstate
       Real.cosh (rapidity / 2) ^ 2 +
         Real.sinh (rapidity / 2) ^ 2 := by
     convert Real.cosh_two_mul (rapidity / 2) using 1
-    all_goals ring_nf
+    ring_nf
   have hs : Real.sinh rapidity =
       2 * Real.sinh (rapidity / 2) *
         Real.cosh (rapidity / 2) := by
     convert Real.sinh_two_mul (rapidity / 2) using 1
-    all_goals ring_nf
+    ring_nf
   have hh := Real.cosh_sq_sub_sinh_sq (rapidity / 2)
   have hhalf : rapidity * (1 / 2 : ℝ) = rapidity / 2 := by
     ring
@@ -418,7 +418,7 @@ theorem boosted_positive_rest_density
       Real.cosh (rapidity / 2) ^ 2 +
         Real.sinh (rapidity / 2) ^ 2 := by
     convert Real.cosh_two_mul (rapidity / 2) using 1
-    all_goals ring_nf
+    ring_nf
   fin_cases axis <;> fin_cases spin <;>
     simp [cell4Density, standardC19RapidityBoost,
       positiveRestSpinState, cell4Basis0, cell4Basis1,
@@ -439,7 +439,7 @@ theorem boosted_positive_rest_current
       2 * Real.sinh (rapidity / 2) *
         Real.cosh (rapidity / 2) := by
     convert Real.sinh_two_mul (rapidity / 2) using 1
-    all_goals ring_nf
+    ring_nf
   fin_cases axis <;> fin_cases spin <;>
     simp [standardC19DiracCurrent, cell4RealPair,
       scalarRealPair, standardC19VelocityOperator,

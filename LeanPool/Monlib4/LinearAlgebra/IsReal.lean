@@ -166,6 +166,7 @@ end Sec
 variable {𝕜 E : Type _} [RCLike 𝕜] [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
   [StarAddMonoid E] [StarModule 𝕜 E]
 
+open scoped Pointwise in
 theorem LinearMap.real.spectrum [FiniteDimensional 𝕜 E]
     (φ : E →ₗ[𝕜] E) :
     spectrum 𝕜 φ.real = star (spectrum 𝕜 φ) := by
@@ -224,9 +225,7 @@ theorem LinearMap.isRealOne {E K : Type _} [Semiring K] [AddCommMonoid E] [Modul
 lemma LinearMap.isRealZero
     {E F K : Type*} [Semiring K] [AddCommMonoid E] [AddCommMonoid F]
     [Module K E] [Module K F] [Star E] [StarAddMonoid F] :
-    LinearMap.IsReal (0 : E →ₗ[K] F) := by
-  intro
-  simp only [zero_apply, star_zero]
+    LinearMap.IsReal (0 : E →ₗ[K] F) := fun _ => (star_zero F).symm
 
 theorem LinearMap.real_one {E K : Type _} [Semiring K] [InvolutiveStar K]
     [AddCommMonoid E] [StarAddMonoid E] [Module K E] [StarModule K E] :

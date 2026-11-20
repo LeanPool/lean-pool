@@ -448,7 +448,7 @@ private lemma absolutelyContinuousOnInterval_of_contDiff {φ : ℝ → ℝ}
     intro x hx
     rw [← Real.toNNReal_coe (r := ‖deriv φ x‖₊)]
     exact Real.toNNReal_le_toNNReal (hC x hx)
-  exact ((convex_uIcc a b).lipschitzOnWith_of_nnnorm_deriv_le
+  exact ((convex_uIcc a b).lipschitzOnWith_of_nnNorm_deriv_le
     (fun x _ => hdiff.differentiableAt) hCbound).absolutelyContinuousOnInterval
 
 /-- For a real-valued `L²` function, the square of the `eLpNorm` equals `ENNReal.ofReal` of the
@@ -458,11 +458,11 @@ private lemma eLpNorm_two_sq_eq_ofReal_integral_sq {f : ℝ → ℝ} {μ : Measu
     eLpNorm f 2 μ ^ 2 = ENNReal.ofReal (∫ x, (f x) ^ 2 ∂μ) := by
   have hstep : ∀ x, ‖f x‖ₑ ^ (2 : ℝ) = ENNReal.ofReal ((f x) ^ 2) := by
     intro x
-    rw [Real.enorm_eq_ofReal_abs,
+    rw [Real.eNorm_eq_ofReal_abs,
       ENNReal.ofReal_rpow_of_nonneg (abs_nonneg (f x)) (by norm_num : (0 : ℝ) ≤ (2 : ℝ))]
     congr 1
     rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) from by norm_num, Real.rpow_natCast, sq_abs]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (p := 2) (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (p := 2) (by norm_num) (by norm_num)
       hf.aestronglyMeasurable,
     show (2 : ℝ≥0∞).toReal = 2 from by norm_num]
   simp_rw [hstep]

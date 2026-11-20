@@ -125,7 +125,7 @@ theorem exists_powerSeries_strict_projectiveOrderGap
   obtain ⟨a, r, b, u₀, ur, u₁, ha, hr, hb, hab,
       hq₀_factor, hratio_factor, hu₁, hq₁_factor⟩ :=
     exists_uniformizer_strict_orderGap
-      (PowerSeries.X : PowerSeries k) PowerSeries.X_irreducible
+      (PowerSeries.X : PowerSeries k) PowerSeries.irreducible_X
       q₀ ratio q₁ hq₀_ne hratio_ne hq₀_mem hratio_mem hq₁
   have hu₀_const : PowerSeries.constantCoeff (u₀ : PowerSeries k) ≠ 0 := by
     exact (PowerSeries.isUnit_iff_constantCoeff.mp u₀.isUnit).ne_zero

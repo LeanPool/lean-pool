@@ -19,10 +19,8 @@ finite sums, used to differentiate the exponential factors in Niven's argument.
 
 @[expose] public section
 
-open Polynomial
 open Complex
 
-open scoped Polynomial
 open scoped BigOperators
 
 noncomputable section

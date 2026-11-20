@@ -75,7 +75,8 @@ theorem shiftedLegendre_eq_sum (n : ℕ) : shiftedLegendre n = ∑ k ∈ Finset.
   congr 1
   nth_rewrite 3 [mul_comm]
   congr 1
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply DFunLike.ext
   intro m
   simp only [coeff_mul_C, coeff_natCast_ite, Nat.cast_ite, CharP.cast_eq_zero, ite_mul,
     zero_mul]

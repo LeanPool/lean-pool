@@ -116,8 +116,8 @@ theorem reaches_one :
       ((dProfile length hLength hBC hYsmall).startPosition 5)))
     (eff_one_chip ((Spec length hLength).pathVertex 8
       ((dProfile length hLength hBC hYsmall).startPosition 8))) using 2
-  all_goals simp only [threeChipDivisor, mem_Eff]
-  all_goals abel_nf
+  simp only [threeChipDivisor, mem_Eff]
+  abel_nf
 
 /-- Raw sparse endpoint expansion of the shared Case-3 `e/f` profile. -/
 private theorem efProfile_sparse :
@@ -260,8 +260,8 @@ theorem reaches_two :
     (eff_one_chip ((Spec length hLength).coreVertex 3))
     (eff_one_chip ((Spec length hLength).pathVertex 5
       ((efProfile length hLength hBC hYsmall).startPosition 5))) using 2
-  all_goals simp only [threeChipDivisor, mem_Eff]
-  all_goals abel_nf
+  simp only [threeChipDivisor, mem_Eff]
+  abel_nf
 
 include hBC in
 /-- The same profile reaches `f=3`. -/
@@ -277,8 +277,8 @@ theorem reaches_three :
     (eff_one_chip ((Spec length hLength).coreVertex 2))
     (eff_one_chip ((Spec length hLength).pathVertex 5
       ((efProfile length hLength hBC hYsmall).startPosition 5))) using 2
-  all_goals simp only [threeChipDivisor, mem_Eff]
-  all_goals abel_nf
+  simp only [threeChipDivisor, mem_Eff]
+  abel_nf
 
 include hNorm hBC hYsmall in
 /-- The short Core-095 chamber proves the genus-four degree-three pencil. -/

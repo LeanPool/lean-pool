@@ -789,7 +789,7 @@ private theorem Degree.FlowTimeChange.exists_normalized_whole_level_cylinder {E 
   have hh := native_local_height_translation hg G hG hU hIU hspeed p.1 p.2 (hi ▸ hc) hend
   rw [hi, he] at hh
   rw [hformula]
-  exact (div_left_inj' hr.ne').mp hh
+  exact (div_left_inj₀ hr.ne').mp hh
 
 private theorem
     Degree.FlowSuspension.nativeSuspensionField_height {Z N : Type*} [NormedAddCommGroup Z]
@@ -2025,7 +2025,7 @@ private theorem Degree.FlowTimeChange.exists_arbitrary_gap_flow_cylinder {E M : 
     have hh :=
       native_local_height_translation hg G hG hH hIH hspeed (ι (Q z.1)) z.2 (hi ▸ hc) hend
     rw [hi, he] at hh
-    have hhf : f (G z.2 (ι (Q z.1))) = c - r * z.2 := (div_left_inj' hr.ne').mp hh
+    have hhf : f (G z.2 (ι (Q z.1))) = c - r * z.2 := (div_left_inj₀ hr.ne').mp hh
     rw [hmap, hAmap]
     exact hhf
 

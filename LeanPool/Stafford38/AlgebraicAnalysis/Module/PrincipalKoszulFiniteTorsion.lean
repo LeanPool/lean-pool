@@ -49,13 +49,13 @@ theorem isNoetherian_kernel_power (f : Module.End R E)
     let := ih
     have hle : f.ker ≤ (f ^ (n + 1)).ker := by
       intro z hz
-      rw [LinearMap.mem_ker, pow_succ, Module.End.mul_apply,
+      rw [LinearMap.mem_ker, pow_succ, mul_apply_eq_comp,
         LinearMap.mem_ker.mp hz, map_zero]
     let i : f.ker →ₗ[R] (f ^ (n + 1)).ker := Submodule.inclusion hle
     let g : (f ^ (n + 1)).ker →ₗ[R] (f ^ n).ker := f.restrict (by
       intro z hz
       rw [LinearMap.mem_ker] at hz ⊢
-      simpa [pow_succ, Module.End.mul_apply] using hz)
+      simpa [pow_succ, mul_apply_eq_comp] using hz)
     have hexact : i.range = g.ker := by
       ext z
       constructor
@@ -102,9 +102,9 @@ theorem length_cokernel_gt_kernel_of_stable_power_and_nonzero
     ext z
     rw [Submodule.mem_comap]
     change (f ^ n) (f z) = 0 ↔ (f ^ n) z = 0
-    rw [← Module.End.mul_apply, (Commute.self_pow f n).eq.symm,
-      Module.End.mul_apply]
-    simpa [Module.End.pow_apply, Function.iterate_succ_apply'] using
+    rw [← mul_apply_eq_comp, (Commute.self_pow f n).eq.symm,
+      mul_apply_eq_comp]
+    simpa [pow_apply_eq_iterate, Function.iterate_succ_apply'] using
       congrArg (fun K : Submodule R E ↦ z ∈ K) hstable.symm
   let : Nontrivial (E ⧸ (T ⊔ f.range)) := hnonzero
   have hpositive : 0 < Module.length R (E ⧸ (T ⊔ f.range)) :=

@@ -67,7 +67,7 @@ theorem coupling_prefix {a e : ℕ → ℝ} {η : ℝ} (N : ℕ)
     ∀ n ≤ N, (1/2 ≤ a n ∧ a n ≤ 2) ∧ |a n-1| ≤ 2*∑ i ∈ range n, e i := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro hn
     cases n with
     | zero => simp only [hzero,sub_self,abs_zero,sum_range_zero,mul_zero]; norm_num
@@ -94,7 +94,7 @@ theorem coupling_and_tilt_prefix {a β x e : ℕ → ℝ} {η : ℝ} (N : ℕ)
       |a n-1| ≤ 2*∑ i ∈ range n, e i := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro hn
     cases n with
     | zero =>

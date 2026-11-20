@@ -168,7 +168,7 @@ private theorem multiplication_algebraMap_in_action
         simp [weylEnd]]
       rw [hX, ha]
       ext z
-      simp [multiplication_apply, Module.End.mul_apply, map_mul, mul_assoc]
+      simp [multiplication_apply, mul_apply_eq_comp, map_mul, mul_assoc]
       ring
 
 /-- A common denominator on the left clears every intrinsic differential
@@ -183,7 +183,7 @@ theorem actual_differential_left_denominator_clearing
   · rintro Q ⟨a, rfl⟩
     refine ⟨1, a, ?_⟩
     ext z
-    simp [multiplication_apply, Module.End.mul_apply]
+    simp [multiplication_apply, mul_apply_eq_comp]
   · refine ⟨1, 0, ?_⟩
     ext z
     simp [ weylEnd]
@@ -203,7 +203,7 @@ theorem actual_differential_left_denominator_clearing
       simp [weylEnd]
     rw [hact_add, hact_mul, hact_mul, hpt, hps, ← ha, ← hb]
     ext z
-    simp [multiplication_apply, Module.End.mul_apply, map_mul]
+    simp [multiplication_apply, mul_apply_eq_comp, map_mul]
     ring
   · intro c Q hQ hcQ
     obtain ⟨s, a, ha⟩ := hcQ
@@ -217,7 +217,7 @@ theorem actual_differential_left_denominator_clearing
       simp [weylEnd]
     rw [hact_mul, hpr, ← ha]
     ext z
-    simp only [Module.End.mul_apply, multiplication_apply, LinearMap.smul_apply,
+    simp only [mul_apply_eq_comp, multiplication_apply, LinearMap.smul_apply,
       Algebra.smul_def, Submonoid.coe_mul, map_mul]
     change algebraMap (MvPolynomial (Fin n) k) B (u : MvPolynomial (Fin n) k) *
         algebraMap (MvPolynomial (Fin n) k) B (s : MvPolynomial (Fin n) k) *

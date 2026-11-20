@@ -190,7 +190,7 @@ private lemma indeg_eq_sum_flow {G : CFGraph} (O : CFOrientation G) (v : G.V) :
         intro x hx
         simp only [Prod.mk.injEq, ite_eq_right_iff, one_ne_zero, imp_false, not_and]
         intro _
-        contrapose! h_ev_eq_v
+        contrapose h_ev_eq_v
         rw [h_ev_eq_v]
       -- refine Finset.sum_eq_zero ?_
       rw [this]
@@ -313,7 +313,7 @@ private lemma subset_source (G : CFGraph) (O : CFOrientation G) (S : Finset G.V)
               -- Show the new first link is a directed edge
               · have := h_u.2
                 dsimp only [flow, ne_eq] at this
-                contrapose! this with h_no_edge
+                contrapose this with h_no_edge
                 simp only [count_eq_zero]
                 exact h_no_edge
               -- Now show the rest of the path is valid
@@ -771,7 +771,7 @@ lemma ordiv_unwinnable (G : CFGraph) (O : CFOrientation G) :
   · exact h_v_in_S'
   · intro w h_flow_w_v
     specialize h_flow w
-    by_contra!
+    by_contra
     have : w ∈ S' := by
       simp only [Finset.mem_filter, mem_univ, true_and, S']
       exact this
@@ -1090,7 +1090,7 @@ private lemma burn_unique_source {G : CFGraph} {q : G.V}
     apply c.non_negative w
   let ineq := lt_of_le_of_lt this ineq
   apply ne_of_lt at ineq
-  contrapose! ineq
+  contrapose ineq
   rw [Nat.cast_sum]
   simp only [Finset.sum_eq_zero_iff, mem_univ, forall_const] at ineq
   simp only [ineq, CharP.cast_eq_zero, sum_const_zero]

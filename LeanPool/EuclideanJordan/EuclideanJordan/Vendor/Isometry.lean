@@ -43,14 +43,14 @@ theorem Matrix.submatrix_one_isometry [Finite d] {e : d₂ → d} {f : d₃ → 
       0 := by
     -- By definition of the identity matrix, the entry (i, j) in the submatrix is 1 if e i =
     -- f j and 0 otherwise.
-    simp only [submatrix, one_apply, of_apply, implies_true]
+    simp only [submatrix, Matrix.one_apply, of_apply, implies_true]
   ext i j
   -- Since $e$ is injective and $f$ is bijective, the product $A * Aᴴ$ will have 1s on the
   -- diagonal and 0s elsewhere, which is the identity matrix.
   change ∑ k, (Matrix.conjTranspose (Matrix.submatrix (1 : Matrix d d R) e f)) i k *
     (Matrix.submatrix (1 : Matrix d d R) e f) k j = if i = j then 1 else 0
   simp_all only [Multiset.bijective_iff_map_univ_eq_univ, submatrix_apply, conjTranspose_apply,
-      one_apply]
+      Matrix.one_apply]
   symm; split <;> symm
   next h =>
     subst h
@@ -143,7 +143,8 @@ theorem Matrix.reindex_eq_conj (A : Matrix d d R) (e : d ≃ d₂) : reindex e e
     (reindex (α := R) e (.refl d) 1) * A * (reindex (α := R) (.refl d) e 1) := by
   ext i j
   simp only [Matrix.mul_apply, Matrix.reindex]
-  simp only [Equiv.coe_fn_mk, submatrix_apply, Equiv.refl_symm, Equiv.coe_refl, one_apply, id_eq,
+  simp only [Equiv.coe_fn_mk, submatrix_apply, Equiv.refl_symm, Equiv.coe_refl,
+    Matrix.one_apply, id_eq,
     ite_mul, one_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, mul_ite, mul_one,
     mul_zero, Finset.sum_ite_eq']
 
@@ -151,7 +152,7 @@ theorem Matrix.reindex_eq_conj_unitaryGroup' (A : Matrix d d R) (e : Equiv.Perm 
     (⟨_, e⁻¹.permMatrix_mem_unitaryGroup⟩ : unitaryGroup d R) * A * (⟨_,
         e.permMatrix_mem_unitaryGroup⟩ : unitaryGroup d R) := by
   ext i j;
-  simp only [reindex_apply, submatrix_apply, mul_apply, PEquiv.toMatrix_apply,
+  simp only [reindex_apply, submatrix_apply, Matrix.mul_apply, PEquiv.toMatrix_apply,
     Equiv.toPEquiv_apply, Equiv.Perm.coe_inv, Option.mem_def, Option.some.injEq, ite_mul, one_mul,
     zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte, mul_ite, mul_one, mul_zero]
   rw [Finset.sum_eq_single ( e.symm j )] <;> aesop
@@ -271,8 +272,9 @@ theorem Matrix.cfc_conj_isometry (f : ℝ → ℝ) {u : Matrix d₂ d 𝕜}
   rw [cfc_apply_of_not_predicate, cfc_apply_of_not_predicate]
   · simp only [Matrix.mul_zero, Matrix.zero_mul]
   · exact hA
-  · contrapose! hA
-    convert isHermitian_conjTranspose_mul_mul u hA
+  · intro hConj
+    apply hA
+    convert isHermitian_conjTranspose_mul_mul u hConj
     have hu₃ : uᴴ * u = 1 := by simpa [Isometry] using hu₁
     simp only [Matrix.mul_assoc, hu₃]
     simp only [mul_one, ← Matrix.mul_assoc, hu₃, one_mul]
@@ -307,7 +309,7 @@ theorem Matrix.commute_euclideanLin (hAB : Commute A B) :
   rw [commute_iff_eq] at hAB ⊢
   ext v i
   convert congr(($hAB).mulVec (WithLp.ofLp v) i) using 0
-  simp only [Module.End.mul_apply, ← Matrix.mulVec_mulVec];
+  simp only [mul_apply_eq_comp, ← Matrix.mulVec_mulVec];
   simp only [ofLp_toLpLin, toLin'_apply, mulVec_mulVec]
 
 section commute_module
@@ -588,7 +590,7 @@ theorem star_shared_mul_A_mul_IsDiag : IsDiag
     mul_assoc, Pi.smul_apply, Algebra.smul_mul_assoc] at this
   simp only [mul_assoc]
   convert this using 1;
-  · simp only [mul_apply, star_apply, RCLike.star_def, mul_comm, Finset.sum_mul, mul_assoc]
+  · simp only [Matrix.mul_apply, star_apply, RCLike.star_def, mul_comm, Finset.sum_mul, mul_assoc]
     congr! 3;
   · have := ( sharedEigenbasis hA hB hAB ).orthonormal;
     rw [ orthonormal_iff_ite ] at this;
@@ -625,11 +627,11 @@ theorem star_shared_mul_B_mul_IsDiag : IsDiag
     have := mul_eq_one_comm.mp ( show ( Matrix.sharedEigenvectorUnitary hA hB hAB : Matrix d d 𝕜
         ) * ( Matrix.sharedEigenvectorUnitary hA hB hAB : Matrix d d 𝕜 )ᴴ = 1 from ?_ );
     · convert! congr_fun ( congr_fun this j ) i using 1;
-      simp only [Pi.single_apply, one_apply];
+      simp only [Pi.single_apply, Matrix.one_apply];
     · exact Matrix.mem_unitaryGroup_iff.mp ( Matrix.sharedEigenvectorUnitary hA hB hAB ).2;
   simp_all only [mulVec_mulVec, funext_iff, mulVec, Pi.smul_apply, conjTranspose_apply,
     RCLike.star_def, star_apply, diag_apply];
-  simp_all only [dotProduct, mul_apply, conjTranspose_apply, RCLike.star_def, star_apply];
+  simp_all only [dotProduct, Matrix.mul_apply, conjTranspose_apply, RCLike.star_def, star_apply];
   by_cases hij : i = j
   · simp only [hij, Pi.single_eq_same];
     simp only [mulVec, dotProduct];

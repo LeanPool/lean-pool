@@ -9,6 +9,7 @@ module
 import LeanPool.ConwayRefinement.ConwayRefinement.Blueprint
 public import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.AlgebraicIndependence.Polynomiality
 public import LeanPool.ConwayRefinement.ConwayRefinement.Algebra.GradedRing.Extension
+public import Mathlib.Algebra.MvPolynomial.Division
 public import Mathlib.RingTheory.Polynomial.UniqueFactorization
 
 import LeanPool.ConwayRefinement.ConwayRefinement.HahnSeries.OrdinalValue.PrincipalSubringFraction
@@ -58,24 +59,6 @@ theorem decomposableAt_wpow_eq_bot (γ : NatOrdinal.{o}) : decomposableAt 𝒜 (
   exact (NatOrdinal.add_lt_wpow hi' hj').ne hij
 
 end OrdinalGraded
-
-namespace MvPolynomial
-
-variable {σ : Type*} {R : Type*} [CommRing R] [IsDomain R]
-
-/-- A variable is prime in a polynomial ring over a domain: separating it, the ring is
-`R[X_j : j ≠ i][X_i]`, where `X_i` is prime. -/
-theorem prime_X (i : σ) : Prime (X i : MvPolynomial σ R) := by
-  classical
-  let e : MvPolynomial σ R ≃ₐ[R] Polynomial (MvPolynomial {j // j ≠ i} R) :=
-    (renameEquiv R (Equiv.optionSubtypeNe i).symm).trans (optionEquivLeft R {j // j ≠ i})
-  have he : e (X i) = Polynomial.X := by
-    simp only [e, AlgEquiv.trans_apply, renameEquiv_apply, rename_X,
-      Equiv.optionSubtypeNe_symm_self, optionEquivLeft_X_none]
-  rw [← MulEquiv.prime_iff e, he]
-  exact Polynomial.prime_X
-
-end MvPolynomial
 
 namespace Berarducci
 
@@ -216,7 +199,7 @@ theorem prime_of_mem_principalGrading_wpow {γ : NatOrdinal} {y : PrincipalSubri
   have hX : algEquivOfIsMinimalSystem hmin (X (e ())) = y := by
     rw [algEquivOfIsMinimalSystem_apply, aeval_X, hx']
   rw [← hX]
-  exact (MulEquiv.prime_iff (algEquivOfIsMinimalSystem hmin)).mpr (MvPolynomial.prime_X _)
+  exact (MulEquiv.prime_iff (algEquivOfIsMinimalSystem hmin)).mpr MvPolynomial.prime_X
 
 /-- Every nonzero element of `P_{ω^γ}` is irreducible in `P̂`. -/
 theorem irreducible_of_mem_principalGrading_wpow {γ : NatOrdinal} {y : PrincipalSubring K}

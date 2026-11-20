@@ -130,7 +130,7 @@ lemma delta_eq_E4E6_const : ∃ (c : ℂ), (c • Delta) = DeltaE4E6Aux := by
     rw [LinearEquiv.rank_eq (CuspFormsIsoModforms 12),
       show (12 - 12 : ℤ) = 0 from by norm_num]
     exact rank_modularForm_gammaOne ModularForm.levelOne_weight_zero_rank_one
-  apply (finrank_eq_one_iff_of_nonzero' Delta Delta_ne_zero).mp hr DeltaE4E6Aux
+  apply (finrank_eq_one_iff_of_ne_zero' Delta Delta_ne_zero).mp hr DeltaE4E6Aux
 
 lemma cuspform_weight_lt_12_zero (k : ℤ) (hk : k < 12) : Module.rank ℂ (CuspForm Γ(1) k) = 0 := by
   rw [LinearEquiv.rank_eq (CuspFormsIsoModforms k)]
@@ -428,7 +428,7 @@ lemma floor_lem1 (k a : ℚ) (ha : 0 < a) (hak : a ≤ k) :
 lemma dim_modforms_lvl_one (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
     Module.rank ℂ (ModularForm (CongruenceSubgroup.Gamma 1) (k)) = if 12 ∣ ((k) : ℤ) - 2 then
     Nat.floor ((k : ℚ)/ 12) else Nat.floor ((k : ℚ) / 12) + 1 := by
-  induction k using Nat.strong_induction_on with | h k ihn =>
+  induction k using Nat.strong_induction_on with | ind k ihn =>
   rw [dim_modforms_eq_one_add_dim_cuspforms (k) (by omega) hk2 ,
     LinearEquiv.rank_eq (CuspFormsIsoModforms (((k)) : ℤ))]
   by_cases HK : (3 : ℤ) ≤ (((k : ℤ) - 12))
@@ -470,32 +470,32 @@ lemma dim_modforms_lvl_one (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-8 : ℤ) < 0 by norm_num)))) using 1
-      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num
     -- k = 6: weight k - 12 = -6
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-6 : ℤ) < 0 by norm_num)))) using 1
-      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num
     -- k = 8: weight k - 12 = -4
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-4 : ℤ) < 0 by norm_num)))) using 1
-      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num
     -- k = 10: weight k - 12 = -2
     · convert (congrArg (1 + ·) (rank_modularForm_gammaOne
         (ModularForm.levelOne_neg_weight_rank_zero
           (show (-2 : ℤ) < 0 by norm_num)))) using 1
-      all_goals (rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num)
+      rw [Nat.floor_eq_zero.mpr (by norm_num)]; norm_num
     -- k = 12: weight k - 12 = 0
     · convert (congrArg (1 + ·)
         (rank_modularForm_gammaOne ModularForm.levelOne_weight_zero_rank_one)) using 1
-      all_goals norm_num [show ⌊(12 : ℚ) / 12⌋₊ = 1 from by norm_num]
+      norm_num [show ⌊(12 : ℚ) / 12⌋₊ = 1 from by norm_num]
     -- k = 14: weight k - 12 = 2
     · have hfloor : ⌊(14 : ℚ) / 12⌋₊ = 1 := by
         rw [Nat.floor_eq_iff] <;> norm_num
       convert (congrArg (1 + ·) dim_weight_two) using 1
-      all_goals simp only [hfloor, Nat.cast_one]
-      all_goals norm_num
+      simp only [hfloor, Nat.cast_one]
+      norm_num
 
 lemma ModularForm.dimension_level_one_floor (k : ℕ) (hk : 3 ≤ (k : ℤ)) (hk2 : Even k) :
     Module.rank ℂ (ModularForm (CongruenceSubgroup.Gamma 1) (k)) = if 12 ∣ ((k) : ℤ) - 2 then

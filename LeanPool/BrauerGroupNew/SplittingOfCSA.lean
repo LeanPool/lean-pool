@@ -211,7 +211,7 @@ lemma deg_sq_eq_dim (A : CSA k) : (deg k k_bar A) ^ 2 = Module.finrank k A :=
 
 instance deg_pos (A : CSA k) : NeZero (deg k k_bar A) := by
   constructor
-  by_contra! h
+  intro h
   apply_fun (·^2) at h
   rw [deg_sq_eq_dim k k_bar A, pow_two, mul_zero] at h
   have := Module.finrank_pos_iff (R := k) (M := A)|>.2 inferInstance

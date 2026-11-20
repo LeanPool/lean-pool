@@ -36,7 +36,7 @@ namespace ESS
 theorem memLp_two_iff_lintegral_enorm_sq {α E : Type*} [MeasurableSpace α]
     [NormedAddCommGroup E] {μ : Measure α} {f : α → E} (hf : AEStronglyMeasurable f μ) :
     MemLp f 2 μ ↔ ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ < ⊤ := by
-  have h := eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (μ := μ) (p := 2) two_ne_zero
+  have h := eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (μ := μ) (p := 2) two_ne_zero
     ENNReal.ofNat_ne_top hf
   rw [ENNReal.toReal_ofNat] at h
   rw [memLp_iff]
@@ -81,7 +81,7 @@ theorem forcedHeat_rough_memLp_two {τ : ℝ} (hτ : 0 < τ)
   obtain ⟨K, hK, hslice⟩ := forcedHeat_rough_slice_energy hτ hG52 hG2 hGsupp
   have hm := h5.aestronglyMeasurable
   rw [memLp_two_iff_lintegral_enorm_sq hm,
-    lintegral_spaceTimeSet_univ_eq (hm.enorm.pow_const _)]
+    lintegral_spaceTimeSet_univ_eq (hm.eNorm.pow_const _)]
   calc
     ∫⁻ t in Ioo 0 τ, ∫⁻ x, ‖forcedHeat G (x, t)‖ₑ ^ (2 : ℝ) ≤ ∫⁻ _ in Ioo 0 τ, K :=
       lintegral_mono_ae (hslice.mono fun t ht => ht.2)

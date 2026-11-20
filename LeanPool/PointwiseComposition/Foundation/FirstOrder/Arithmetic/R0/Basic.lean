@@ -27,14 +27,14 @@ namespace FirstOrder
 namespace Arithmetic
 
 /-- Data and laws for 𝐑₀ in `𝐑₀`. -/
-inductive R0 : ArithmeticTheory
+inductive R0 : ArithmeticSentence → Prop
   | equal : ∀ φ ∈ 𝐄𝐐 ℒₒᵣ, R0 φ
   | Ω₁ (n m : ℕ) : R0 “↑n + ↑m = ↑(n + m)”
   | Ω₂ (n m : ℕ) : R0 “↑n * ↑m = ↑(n * m)”
   | Ω₃ (n : ℕ) : R0 “∀ x, x < ↑n ↔ ⋁ i < n, x = ↑i”
 
 /-- The «term𝐑₀» construction in `FFL.FirstOrder.Arithmetic`. -/
-notation "𝐑₀" => R0
+notation "𝐑₀" => Set.ofPred R0
 
 namespace R0
 

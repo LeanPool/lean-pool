@@ -158,7 +158,7 @@ theorem tsum_block_comm (w g : ℤ → ℝ≥0∞) (m : ℤ) :
     · have hz : ∀ k : ℤ, (if n ≤ m ∧ n - 1 ≤ k ∧ k ≤ m then w n * g k else 0)
           = (0 : ℝ≥0∞) := fun k => ite_eq_right (fun hc => hn hc.1)
       rw [ite_eq_right hn, tsum_congr hz, tsum_zero]
-  rw [tsum_congr hstep, ENNReal.tsum_comm]
+  rw [tsum_congr hstep, tsum_comm]
   refine tsum_congr fun k => ?_
   by_cases hk : k ≤ m
   · rw [ite_eq_left hk, ← ENNReal.tsum_mul_right]
@@ -248,7 +248,7 @@ theorem tsum_partialWeight_le {s : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (m k : ℤ
             rfl
     · rw [ite_eq_right hn]
       exact zero_le
-  refine le_trans (ENNReal.tsum_le_tsum hterm) ?_
+  refine le_trans (tsum_le_tsum hterm) ?_
   rw [ENNReal.tsum_mul_right]
   refine mul_le_mul' ?_ le_rfl
   have hsum : Summable fun n : ℤ => Real.rpow (3 : ℝ) (s / 2) * wt (s / 4) k n :=

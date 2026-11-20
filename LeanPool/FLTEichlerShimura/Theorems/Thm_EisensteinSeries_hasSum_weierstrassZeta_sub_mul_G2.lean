@@ -498,7 +498,7 @@ lemma summable_crow_neg (z : ℂ) : Summable fun n : ℕ => crow τ z (-n) := by
   rw [e1] at hb1
   calc _ ≤ 2 * π * (Real.exp (-2 * π * z.im) * ρ ^ n) / (1 - ρ) + 2 * π * ρ ^ n / (1 - ρ) :=
         add_le_add hb2 hb1
-    _ = A * ρ ^ n := by rw [hA, hK]; field_simp; try ring_nf
+    _ = A * ρ ^ n := by rw [hA, hK]; field_simp; ring_nf
 
 lemma summable_crow (z : ℂ) : Summable (crow τ z) :=
   summable_int_iff_summable_nat_and_neg.mpr ⟨summable_crow_nat τ z, summable_crow_neg τ z⟩

@@ -232,7 +232,7 @@ theorem eventG0_score_le_YcalRowE (M : ABKModel d) (Ccg : ℝ) (m : ℤ)
     intro n hn
     rw [ite_eq_left (Finset.mem_Icc.1 hn).2]
   rw [Finset.sum_congr rfl hrw]
-  exact ENNReal.sum_le_tsum _
+  exact sum_le_tsum _
 
 /-- **The consumption of the display.**  Off `𝒢₀(m)` the `𝒴` row sum exceeds the
 threshold `1` of the good event.  This is the deterministic half of the

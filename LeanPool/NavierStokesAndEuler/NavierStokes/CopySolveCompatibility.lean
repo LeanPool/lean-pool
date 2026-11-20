@@ -423,7 +423,8 @@ theorem timeData_coefficient_continuousOn (d : LinearData P V E) (τ rate : ℝ)
     ContinuousOn (timeData d τ rate).coefficient (U ×ˢ univ) := by
   have hmap : Continuous (fun z : P × Plane => (z.1, nativeTimeMap τ rate z.2)) :=
     continuous_fst.prodMk ((nativeTimeMap_continuous τ rate).comp continuous_snd)
-  exact (hA.comp hmap.continuousOn (fun z hz => ⟨hz.1, mem_univ _⟩)).const_smul rate
+  exact (hA.comp hmap.continuousOn
+    (fun z (hz : z ∈ U ×ˢ univ) => ⟨hz.1, mem_univ _⟩)).const_smul rate
 
 omit [NormedSpace ℝ P] in
 theorem timeData_forcingMap_continuousOn (d : LinearData P V E) (τ rate : ℝ) {U : Set P}
@@ -431,7 +432,8 @@ theorem timeData_forcingMap_continuousOn (d : LinearData P V E) (τ rate : ℝ) 
     ContinuousOn (timeData d τ rate).forcingMap (U ×ˢ univ) := by
   have hmap : Continuous (fun z : P × Plane => (z.1, nativeTimeMap τ rate z.2)) :=
     continuous_fst.prodMk ((nativeTimeMap_continuous τ rate).comp continuous_snd)
-  exact (hB.comp hmap.continuousOn (fun z hz => ⟨hz.1, mem_univ _⟩)).const_smul rate
+  exact (hB.comp hmap.continuousOn
+    (fun z (hz : z ∈ U ×ˢ univ) => ⟨hz.1, mem_univ _⟩)).const_smul rate
 
 variable [CompleteSpace E] {a b : ℝ}
 

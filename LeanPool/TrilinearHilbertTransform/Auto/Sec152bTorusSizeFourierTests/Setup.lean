@@ -50,7 +50,7 @@ theorem eLpNorm_two_toReal_le_add {X : Type*} [MeasurableSpace X] {μ : Measure 
     rw [e]
     refine (eLpNorm_add_le (by norm_num)).trans ?_
     rw [eLpNorm_norm, eLpNorm_const _ (by norm_num) (IsProbabilityMeasure.ne_zero μ), measure_univ,
-      ENNReal.one_rpow, mul_one, Real.enorm_eq_ofReal hc]
+      ENNReal.one_rpow, mul_one, Real.eNorm_eq_ofReal hc]
     exact hg
   have hfin : eLpNorm g 2 μ ≠ ⊤ := hgL.eLpNorm_ne_top
   calc (eLpNorm f 2 μ).toReal ≤ (eLpNorm g 2 μ + ENNReal.ofReal c).toReal :=

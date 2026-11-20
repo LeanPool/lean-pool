@@ -54,7 +54,7 @@ private theorem normalizedWhitneyRowEnergy_mono
       normalizedWhitneyRowEnergy system Y := by
   unfold normalizedWhitneyRowEnergy rawWhitneyRowEnergy
   apply mul_le_mul_right
-  exact ENNReal.tsum_le_tsum fun i =>
+  exact tsum_le_tsum fun i =>
     mul_le_mul_right (hXY i) (volume (system.cell i))
 
 end

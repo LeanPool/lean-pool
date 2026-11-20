@@ -79,7 +79,7 @@ private abbrev helperHmissingX6300Conditions.{u_1, u_2} : Prop :=
              (ett.series.data.tree
               (⟨ETTFirstAppearanceIndex ett v hvFinal - (1 : ℕ), by omega⟩ :
                 Fin ett.rounds).succ.castSucc)
-           all_goals omega)
+           omega)
     ) (Fin.last seed.length);
     ∀ (hterminalInTjVal : (↑terminalInTj : ℕ) = seed.length) (huPositionPositive : (1 : ℕ) ≤
         (↑uPosition : ℕ)) (huPositionBound : (↑uPosition : ℕ) ≤ TjPrime.length)

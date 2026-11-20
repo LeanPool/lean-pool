@@ -160,7 +160,7 @@ theorem hm_vector_time_slice_l2_data_of_spacetime_eLpNorm
       _ = ENNReal.ofReal (Real.sqrt 2) *
           eLpNorm (fun z : ℝ × Vec 2 => V z.1 z.2) 2 μ := by
         rw [eLpNorm_norm _ (by simpa only [μ] using hVmeas)]
-        rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (Real.sqrt_nonneg 2)]
+        rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (Real.sqrt_nonneg 2)]
       _ ≤ ENNReal.ofReal (Real.sqrt 2) * ENNReal.ofReal Q :=
         mul_le_mul_of_nonneg_left hVbound (by positivity)
       _ = ENNReal.ofReal (Real.sqrt 2 * Q) := by

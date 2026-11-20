@@ -235,7 +235,7 @@ theorem embLE_succ {n m : ℕ} (h1 : n ≤ m) (h2 : n ≤ m + 1) (x : D n) :
 theorem embLE_succ_left {n m : ℕ} (h1 : n ≤ m) (h2 : n + 1 ≤ m) (x : D n) :
     embLE D P h2 ((P n).incl x) = embLE D P h1 x := by
   simp only [embLE]
-  exact Nat.leRecOn_succ_left x h1 h2
+  exact Nat.leRecOn_succ_left x h2
 
 theorem embLE_mono {n m : ℕ} (h : n ≤ m) {x y : D n} (hxy : x ≤ y) :
     embLE D P h x ≤ embLE D P h y := by
@@ -250,7 +250,7 @@ theorem embLE_mono {n m : ℕ} (h : n ≤ m) {x y : D n} (hxy : x ≤ y) :
 /-- Descend the tower of projections: for `m ≤ n`, `projLE h = j_m ∘ … ∘ j_{n-1} :
 D_n → Dₘ`. -/
 def projLE {m n : ℕ} (h : m ≤ n) (x : D n) : D m :=
-  Nat.leRecOn (C := fun k => D k → D m) h
+  Nat.leRecOn (motive := fun k => D k → D m) h
     (fun {k} (g : D k → D m) (w : D (k + 1)) => g ((P k).retr w)) id x
 
 theorem projLE_self {m : ℕ} (h : m ≤ m) (x : D m) : projLE D P h x = x := by
@@ -259,7 +259,7 @@ theorem projLE_self {m : ℕ} (h : m ≤ m) (x : D m) : projLE D P h x = x := by
 theorem projLE_succ {m n : ℕ} (h1 : m ≤ n) (h2 : m ≤ n + 1) (z : D (n + 1)) :
     projLE D P h2 z = projLE D P h1 ((P n).retr z) := by
   simp only [projLE]
-  rw [Nat.leRecOn_succ (C := fun k => D k → D m) h1]
+  rw [Nat.leRecOn_succ (motive := fun k => D k → D m) h1]
 
 theorem projLE_mono {m n : ℕ} (h : m ≤ n) {x y : D n} (hxy : x ≤ y) :
     projLE D P h x ≤ projLE D P h y := by

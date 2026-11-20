@@ -107,7 +107,7 @@ theorem enorm_convolution_le_maximal_of_supported_kernel
       ‖K (x - y) * f y‖ₑ ≤
         (closedBall x r).indicator (fun z ↦ (A / d) * ‖f z‖ₑ) y := by
     by_cases hy : y ∈ closedBall x r
-    · rw [indicator_of_mem hy, enorm_mul]
+    · rw [indicator_of_mem hy, eNorm_mul]
       exact mul_le_mul' (by exact hKnorm (x - y)) le_rfl
     · rw [indicator_of_notMem hy]
       have hzero : K (x - y) = 0 := by
@@ -115,16 +115,16 @@ theorem enorm_convolution_le_maximal_of_supported_kernel
         have hb := hKsupport hne
         apply hy
         simpa only [mem_closedBall, Real.dist_eq, abs_sub_comm, sub_zero] using hb
-      simp only [hzero, zero_mul, enorm_zero, Std.le_refl]
+      simp only [hzero, zero_mul, eNorm_zero, Std.le_refl]
   calc
     ‖∫ y, K (x - y) * f y‖ₑ ≤ ∫⁻ y, ‖K (x - y) * f y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y, (closedBall x r).indicator
         (fun z ↦ (A / d) * ‖f z‖ₑ) y := lintegral_mono hpoint
     _ = (A / d) * ∫⁻ y in closedBall x r, ‖f y‖ₑ := by
       rw [lintegral_indicator measurableSet_closedBall]
       exact lintegral_const_mul'' (A / d)
-        (hf.enorm.aemeasurable.restrict)
+        (hf.eNorm.aemeasurable.restrict)
     _ = A * centeredAverage r (fun y ↦ ‖f y‖ₑ) x := by
       simp only [centeredAverage]
       rw [show ENNReal.ofReal (2 * r) = d from rfl]
@@ -171,7 +171,7 @@ theorem finitePieceTailMax_le_total_add_maximal
   intro n hn
   have hnN : n ≤ N := by
     simpa only [Finset.mem_range] using Nat.lt_succ_iff.mp (Finset.mem_range.mp hn)
-  exact enorm_sub_le.trans
+  exact eNorm_sub_le.trans
     (add_le_add le_rfl (hprefix n hnN x))
 
 /-- Almost-everywhere tail domination from almost-everywhere prefix control.
@@ -196,7 +196,7 @@ theorem finitePieceTailMax_le_total_add_maximal_ae
   filter_upwards [hall] with x hx
   apply Finset.sup_le
   intro n hn
-  exact enorm_sub_le.trans (add_le_add le_rfl (hx n hn))
+  exact eNorm_sub_le.trans (add_le_add le_rfl (hx n hn))
 
 theorem measurable_finitePieceTotal {N : ℕ} {u : ℕ → ℝ → ℂ}
     (hu : ∀ j < N, Measurable (u j)) :
@@ -227,7 +227,7 @@ theorem measurable_finitePieceTailMax {N : ℕ} {u : ℕ → ℝ → ℂ}
   | empty => simp only [Finset.sup_empty, bot_eq_zero', measurable_const]
   | @insert n s hn ih =>
       simp only [Finset.sup_insert]
-      exact (measurable_finitePieceTail hu n).enorm.max ih
+      exact (measurable_finitePieceTail hu n).eNorm.max ih
 
 /-- Almost-everywhere measurable version of
 `measurable_finitePieceTailMax`, suitable for pieces represented in `L²`. -/
@@ -253,7 +253,7 @@ theorem aemeasurable_finitePieceTailMax {N : ℕ} {u : ℕ → ℝ → ℂ}
   | empty => simp only [Finset.sup_empty, bot_eq_zero', aemeasurable_const]
   | @insert n s hn ih =>
       simp only [Finset.sup_insert]
-      exact (htail n).enorm.max ih
+      exact (htail n).eNorm.max ih
 
 private theorem ennreal_add_sq_le_four_sum_sq (a b : ℝ≥0∞) :
     (a + b) ^ 2 ≤ 4 * (a ^ 2 + b ^ 2) := by
@@ -286,7 +286,7 @@ theorem finitePieceTailMax_sq_lintegral_le
   let F : ℝ → ℝ≥0∞ := fun x ↦ ‖finitePieceTotal N u x‖ₑ
   let M : ℝ → ℝ≥0∞ := centeredHardyLittlewoodMaximal F
   have hF : Measurable F :=
-    (measurable_finitePieceTotal fun j _ ↦ hu j).enorm
+    (measurable_finitePieceTotal fun j _ ↦ hu j).eNorm
   have hpoint (x : ℝ) :
       finitePieceTailMax N u x ^ 2 ≤
         4 * (F x ^ 2 + (A * M x) ^ 2) := by
@@ -320,7 +320,7 @@ theorem finitePieceTailMax_sq_lintegral_le_ae
   let F : ℝ → ℝ≥0∞ := fun x ↦ ‖finitePieceTotal N u x‖ₑ
   let M : ℝ → ℝ≥0∞ := centeredHardyLittlewoodMaximal F
   have hF : Measurable F :=
-    (measurable_finitePieceTotal fun j _ ↦ hu j).enorm
+    (measurable_finitePieceTotal fun j _ ↦ hu j).eNorm
   have hpoint : ∀ᵐ x : ℝ ∂volume,
       finitePieceTailMax N u x ^ 2 ≤
         4 * (F x ^ 2 + (A * M x) ^ 2) := by
@@ -459,7 +459,7 @@ theorem eLpNorm_finitePieceTotal_sq_eq_sum
   calc
     eLpNorm (finitePieceTotal N u) 2 volume ^ 2 =
         ‖(memLp_finitePieceTotal hu).toLp (finitePieceTotal N u)‖ₑ ^ 2 := by
-      rw [Lp.enorm_toLp]
+      rw [Lp.eNorm_toLp]
     _ = ENNReal.ofReal
         (‖(memLp_finitePieceTotal hu).toLp (finitePieceTotal N u)‖ ^ 2) := by
       rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm]
@@ -470,7 +470,7 @@ theorem eLpNorm_finitePieceTotal_sq_eq_sum
     _ = ∑ j ∈ Finset.range N, eLpNorm (u j) 2 volume ^ 2 := by
       apply Finset.sum_congr rfl
       intro j _
-      rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm, Lp.enorm_toLp]
+      rw [ENNReal.ofReal_pow (norm_nonneg _), ofReal_norm, Lp.eNorm_toLp]
 
 theorem finitePieceTotal_sq_lintegral_eq_sum
     {N : ℕ} {u : ℕ → ℝ → ℂ}

@@ -29,8 +29,7 @@ abbrev SL3 := Matrix.SpecialLinearGroup (Fin 3) R
 
 /-- Countability of the polynomial ring. Paper: §4. -/
 noncomputable instance : Countable R := by
-  exact Countable.of_equiv (ℕ →₀ F)
-    (AddMonoidAlgebra.coeffEquiv.symm.trans (Polynomial.toFinsuppIso F).toEquiv.symm)
+  exact Countable.of_equiv (ℕ →₀ F) AddMonoidAlgebra.coeffEquiv.symm
 
 /-- Countability of the matrix carrier. Paper: §4. -/
 noncomputable instance : Countable (Matrix (Fin 3) (Fin 3) R) := by

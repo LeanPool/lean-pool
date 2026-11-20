@@ -162,7 +162,7 @@ theorem ae_tsum_ne_top {g : ℕ → Ω → ℝ≥0∞} (hgm : ∀ k, AEMeasurabl
     ∀ᵐ ω ∂P, ∑' k, g k ω ≠ ⊤ := by
   have hsum : ∫⁻ ω, ∑' k, g k ω ∂P ≤ ∑' k, c k := by
     rw [lintegral_tsum hgm]
-    exact ENNReal.tsum_le_tsum hb
+    exact tsum_le_tsum hb
   exact (ae_lt_top' (AEMeasurable.tsum hgm)
     (ne_top_of_le_ne_top hc hsum)).mono fun _ h => h.ne
 
@@ -172,7 +172,7 @@ theorem measurable_sq_slice {Z : ℝ → Ω → (Fin n → ℝ)} (hZ : Measurabl
     (t : ℝ) : Measurable fun ω => ∑ i, (‖Z t ω i‖₊ : ℝ≥0∞) ^ 2 := by
   have hs : Measurable fun ω => Z t ω := Measurable.of_uncurry_left hZ
   exact Finset.measurable_sum _ fun i _ =>
-    (ENNReal.continuous_coe.measurable.comp (((measurable_pi_apply i).comp hs).nnnorm)).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp (((measurable_pi_apply i).comp hs).nnNorm)).pow_const 2
 
 /-- A single coordinate is dominated by the Euclidean norm of the whole vector. -/
 theorem coe_nnnorm_le_rpow_sum {a : Fin n → ℝ} (i : Fin n) :
@@ -217,7 +217,7 @@ theorem ae_summable_steps (β T : ℝ) {X : ℕ → ℝ → Ω → (Fin n → �
   filter_upwards [hae] with ω hω i
   have hle : ∑' k, ((‖X (k + 1) t ω i - X k t ω i‖₊ : ℝ≥0) : ℝ≥0∞)
       ≤ ∑' k, (∑ j, (‖X (k + 1) t ω j - X k t ω j‖₊ : ℝ≥0∞) ^ 2) ^ ((1 : ℝ) / 2) :=
-    ENNReal.tsum_le_tsum fun k =>
+    tsum_le_tsum fun k =>
       coe_nnnorm_le_rpow_sum (a := fun j => X (k + 1) t ω j - X k t ω j) i
   exact NNReal.summable_coe.mpr
     (ENNReal.tsum_coe_ne_top_iff_summable.mp (ne_top_of_le_ne_top hω hle))
@@ -251,7 +251,7 @@ theorem ae_tendsto_bieleckiLimit (β T : ℝ) {X : ℕ → ℝ → Ω → (Fin n
 theorem sum_Ico_le_tsum_shift {c : ℕ → ℝ≥0∞} (k m : ℕ) :
     ∑ j ∈ Finset.Ico k m, c j ≤ ∑' j, c (k + j) := by
   rw [Finset.sum_Ico_eq_sum_range]
-  exact ENNReal.sum_le_tsum _
+  exact sum_le_tsum _
 
 /-- At every time of the window the weighted `L²` distance to the limit is bounded by the tail of
 the step bounds. -/
@@ -273,7 +273,7 @@ theorem lintegral_sq_sub_bieleckiLimit_rpow_le (β T : ℝ) {X : ℕ → ℝ →
     refine tendsto_finsetSum _ fun i _ => ?_
     have hnn : Filter.Tendsto (fun m => (‖X k t ω i - X m t ω i‖₊ : ℝ≥0) ^ 2) Filter.atTop
         (nhds ((‖X k t ω i - bieleckiLimit X t ω i‖₊ : ℝ≥0) ^ 2)) :=
-      (Filter.Tendsto.const_sub (X k t ω i) (hω i)).nnnorm.pow 2
+      (Filter.Tendsto.const_sub (X k t ω i) (hω i)).nnNorm.pow 2
     simpa only [Function.comp_def, ENNReal.coe_pow] using
       (ENNReal.continuous_coe.tendsto _).comp hnn
   have hfatou : ∫⁻ ω, ∑ i, (‖X k t ω i - bieleckiLimit X t ω i‖₊ : ℝ≥0∞) ^ 2 ∂P
@@ -292,7 +292,7 @@ theorem lintegral_sq_sub_bieleckiLimit_rpow_le (β T : ℝ) {X : ℕ → ℝ →
         = fun ω => ∑ i, (‖X m t ω i - X k t ω i‖₊ : ℝ≥0∞) ^ 2 := by
       funext ω
       exact Finset.sum_congr rfl fun i _ => by
-        rw [show X k t ω i - X m t ω i = -(X m t ω i - X k t ω i) by ring, nnnorm_neg]
+        rw [show X k t ω i - X m t ω i = -(X m t ω i - X k t ω i) by ring, nnNorm_neg]
     have hb : bieleckiNorm (P := P) β T (fun t ω i => X m t ω i - X k t ω i)
         ≤ ∑' j, c (k + j) :=
       (bieleckiNorm_sub_le_sum_Ico (P := P) β T hmeas hstep k m hm).trans

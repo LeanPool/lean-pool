@@ -5,7 +5,7 @@ Authors: Dan Abramov
 -/
 module
 
-public import Mathlib.Algebra.GroupWithZero.Associated
+public import Mathlib.Algebra.Order.GroupWithZero.Associated
 
 /-!
 # Maximal divisors along a multiplicative map

@@ -120,7 +120,7 @@ theorem aestronglyMeasurable_of_continuousOn_offAxis {E : Type*} [NormedAddCommG
       refine measure_mono_null (fun z hz => ?_) volume_zoomLiftAxis_eq_zero
       have hz' : ¬ 0 < zoomLiftRadius z.1 := hz
       exact le_antisymm (not_lt.mp hz') (zoomLiftRadius_nonneg z.1)
-    have := (ae_eq_univ.mpr hnull).inter (ae_eq_refl K)
+    have := (ae_eq_univ.mpr hnull).inter (s' := K) .rfl
     simpa [inter_comm] using this
   rwa [Measure.restrict_congr_set hset] at h1
 

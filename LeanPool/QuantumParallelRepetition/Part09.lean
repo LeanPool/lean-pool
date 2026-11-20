@@ -764,14 +764,14 @@ theorem unconditionalMatchedVerifierEffect_tensor_complement
     rw [← Matrix.add_kronecker, sub_add_cancel, Matrix.one_kronecker_one]
 
 theorem unconditionalMatchedVerifierEffect_tensor_posSemidef
-    {s t : Type*} [Finite s] [Finite t] [DecidableEq t]
+    {s t : Type*} [DecidableEq t]
     (effect : Matrix s s ℂ)
     (positive : effect.PosSemidef) :
     (effect ⊗ₖ (1 : Matrix t t ℂ)).PosSemidef :=
   positive.kronecker Matrix.PosSemidef.one
 
 theorem unconditionalMatchedVerifierEffect_tensor_complement_posSemidef
-    {s t : Type*} [Finite s] [Finite t] [DecidableEq s] [DecidableEq t]
+    {s t : Type*} [DecidableEq s] [DecidableEq t]
     (effect : Matrix s s ℂ)
     (complement : (1 - effect).PosSemidef) :
     ((1 : Matrix (s × t) (s × t) ℂ) -

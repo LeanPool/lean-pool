@@ -65,7 +65,7 @@ theorem amnr_tIterates_material_gradient_induction {β : ℝ}
   have hRn : 0 ≤ R := le_trans (by norm_num) hR
   intro r
   induction r using Nat.strong_induction_on with
-  | h r ih =>
+  | ind r ih =>
     intro i hi p α hbudget
     cases r with
     | zero =>

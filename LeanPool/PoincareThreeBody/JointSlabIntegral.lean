@@ -85,7 +85,7 @@ theorem nnnorm_jointBallFiberSeries_le_coefficientBound
   calc
     ‖jointBallFiberSeries jointSeries centerTime time degree‖₊ ≤
         ‖jointSeries.changeOrigin shift degree‖₊ * ‖parameterInclusion‖₊ ^ degree := by
-      exact FormalMultilinearSeries.nnnorm_compContinuousLinearMap_le
+      exact FormalMultilinearSeries.nnNorm_compContinuousLinearMap_le
         (jointSeries.changeOrigin shift) parameterInclusion degree
     _ = ‖jointSeries.changeOrigin shift degree‖₊ := by
       rw [show ‖parameterInclusion‖₊ = 1 by
@@ -95,7 +95,7 @@ theorem nnnorm_jointBallFiberSeries_le_coefficientBound
     _ ≤ ∑' index : Σ order : ℕ,
           {subset : Finset (Fin (degree + order)) // subset.card = order},
         ‖jointSeries (degree + index.1)‖₊ * ‖shift‖₊ ^ index.1 :=
-      jointSeries.nnnorm_changeOrigin_le degree hshiftRadius
+      jointSeries.nnNorm_changeOrigin_le degree hshiftRadius
     _ ≤ jointBallFiberCoefficientBound jointSeries timeBound degree := by
       unfold jointBallFiberCoefficientBound
       apply Summable.tsum_le_tsum (fun index ↦ by gcongr)

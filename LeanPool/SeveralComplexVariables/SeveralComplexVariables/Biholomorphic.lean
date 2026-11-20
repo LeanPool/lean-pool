@@ -146,8 +146,8 @@ theorem exists_biholomorphic_of_isInvertible_fderiv {U : Set E} (hU : IsOpen U)
     (hinv : (fderiv ℂ f a).IsInvertible) :
     ∃ e : OpenPartialHomeomorph E F, IsBiholomorphic e ∧ a ∈ e.source ∧
       e.source ⊆ U ∧ (e : E → F) = f := by
-  let := FiniteDimensional.complete ℂ E
-  let := FiniteDimensional.complete ℂ F
+  let := FiniteDimensional.completeSpace ℂ E
+  let := FiniteDimensional.completeSpace ℂ F
   obtain ⟨L, hL⟩ := hinv
   have hfa := hf.analyticOnNhd_of_finiteDimensional hU a ha
   have hc : ContDiffAt ℂ ω f a := hfa.contDiffAt

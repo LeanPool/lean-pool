@@ -182,7 +182,7 @@ private theorem suffixCoefficient_13_0_8 (θ : ℝ) :
   rw [suffix_coeff_step θ 13 3
     coefficientSeed (bitIndex 0 8) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_14_0_8 θ)
+  exact (suffixCoefficient_14_0_8 θ)
 
 private theorem suffixCoefficient_12_0_8 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 12) coefficientSeed).ofLp
@@ -190,7 +190,7 @@ private theorem suffixCoefficient_12_0_8 (θ : ℝ) :
   rw [suffix_coeff_step θ 12 2
     coefficientSeed (bitIndex 0 8) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_13_0_8 θ)
+  exact (suffixCoefficient_13_0_8 θ)
 
 private theorem suffixCoefficient_11_12_8 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 11) coefficientSeed).ofLp
@@ -208,7 +208,7 @@ private theorem suffixCoefficient_11_12_8 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 1) * herm (bitIndex 12 8))).phase
         - (herm (partner (generator 1) (bitIndex 12 8))).phase = 2 by decide]
-    all_goals exact iPow_two
+    exact iPow_two
   rw [hp, hs, h_12_12_8, (suffixCoefficient_12_0_8 θ)]
   ring
 
@@ -218,7 +218,7 @@ private theorem suffixCoefficient_10_12_8 (θ : ℝ) :
   rw [suffix_coeff_step θ 10 0
     coefficientSeed (bitIndex 12 8) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_11_12_8 θ)
+  exact (suffixCoefficient_11_12_8 θ)
 
 private theorem suffixCoefficient_9_12_8 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 9) coefficientSeed).ofLp
@@ -226,7 +226,7 @@ private theorem suffixCoefficient_9_12_8 (θ : ℝ) :
   rw [suffix_coeff_step θ 9 6
     coefficientSeed (bitIndex 12 8) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_10_12_8 θ)
+  exact (suffixCoefficient_10_12_8 θ)
 
 private theorem suffixCoefficient_8_20_8 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 8) coefficientSeed).ofLp
@@ -244,7 +244,7 @@ private theorem suffixCoefficient_8_20_8 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 5) * herm (bitIndex 20 8))).phase
         - (herm (partner (generator 5) (bitIndex 20 8))).phase = 0 by decide]
-    all_goals exact iPow_zero
+    exact iPow_zero
   rw [hp, hs, h_9_20_8, (suffixCoefficient_9_12_8 θ)]
   ring
 
@@ -264,7 +264,7 @@ private theorem suffixCoefficient_8_12_8 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 5) * herm (bitIndex 12 8))).phase
         - (herm (partner (generator 5) (bitIndex 12 8))).phase = 2 by decide]
-    all_goals exact iPow_two
+    exact iPow_two
   rw [hp, hs, (suffixCoefficient_9_12_8 θ), h_9_20_8]
   ring
 
@@ -284,7 +284,7 @@ private theorem suffixCoefficient_7_22_12 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 4) * herm (bitIndex 22 12))).phase
         - (herm (partner (generator 4) (bitIndex 22 12))).phase = 0 by decide]
-    all_goals exact iPow_zero
+    exact iPow_zero
   rw [hp, hs, h_8_22_12, (suffixCoefficient_8_20_8 θ)]
   ring
 
@@ -304,7 +304,7 @@ private theorem suffixCoefficient_7_20_8 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 4) * herm (bitIndex 20 8))).phase
         - (herm (partner (generator 4) (bitIndex 20 8))).phase = 2 by decide]
-    all_goals exact iPow_two
+    exact iPow_two
   rw [hp, hs, (suffixCoefficient_8_20_8 θ), h_8_22_12]
   ring
 
@@ -324,7 +324,7 @@ private theorem suffixCoefficient_7_14_12 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 4) * herm (bitIndex 14 12))).phase
         - (herm (partner (generator 4) (bitIndex 14 12))).phase = 2 by decide]
-    all_goals exact iPow_two
+    exact iPow_two
   rw [hp, hs, h_8_14_12, (suffixCoefficient_8_12_8 θ)]
   ring
 
@@ -344,7 +344,7 @@ private theorem suffixCoefficient_7_12_8 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 4) * herm (bitIndex 12 8))).phase
         - (herm (partner (generator 4) (bitIndex 12 8))).phase = 0 by decide]
-    all_goals exact iPow_zero
+    exact iPow_zero
   rw [hp, hs, (suffixCoefficient_8_12_8 θ), h_8_14_12]
   ring
 
@@ -354,7 +354,7 @@ private theorem suffixCoefficient_6_22_12 (θ : ℝ) :
   rw [suffix_coeff_step θ 6 6
     coefficientSeed (bitIndex 22 12) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_7_22_12 θ)
+  exact (suffixCoefficient_7_22_12 θ)
 
 private theorem suffixCoefficient_6_20_8 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 6) coefficientSeed).ofLp
@@ -362,7 +362,7 @@ private theorem suffixCoefficient_6_20_8 (θ : ℝ) :
   rw [suffix_coeff_step θ 6 6
     coefficientSeed (bitIndex 20 8) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_7_20_8 θ)
+  exact (suffixCoefficient_7_20_8 θ)
 
 private theorem suffixCoefficient_6_14_12 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 6) coefficientSeed).ofLp
@@ -370,7 +370,7 @@ private theorem suffixCoefficient_6_14_12 (θ : ℝ) :
   rw [suffix_coeff_step θ 6 6
     coefficientSeed (bitIndex 14 12) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_7_14_12 θ)
+  exact (suffixCoefficient_7_14_12 θ)
 
 private theorem suffixCoefficient_6_12_8 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 6) coefficientSeed).ofLp
@@ -378,7 +378,7 @@ private theorem suffixCoefficient_6_12_8 (θ : ℝ) :
   rw [suffix_coeff_step θ 6 6
     coefficientSeed (bitIndex 12 8) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_7_12_8 θ)
+  exact (suffixCoefficient_7_12_8 θ)
 
 private theorem suffixCoefficient_5_22_12 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 5) coefficientSeed).ofLp
@@ -391,7 +391,7 @@ private theorem suffixCoefficient_5_22_12 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 5) * herm (bitIndex 22 12))).phase
         - (herm (partner (generator 5) (bitIndex 22 12))).phase = 2 by decide]
-    all_goals exact iPow_two
+    exact iPow_two
   rw [hp, hs, (suffixCoefficient_6_22_12 θ), (suffixCoefficient_6_14_12 θ)]
   ring
 
@@ -406,7 +406,7 @@ private theorem suffixCoefficient_5_20_8 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 5) * herm (bitIndex 20 8))).phase
         - (herm (partner (generator 5) (bitIndex 20 8))).phase = 0 by decide]
-    all_goals exact iPow_zero
+    exact iPow_zero
   rw [hp, hs, (suffixCoefficient_6_20_8 θ), (suffixCoefficient_6_12_8 θ)]
   ring
 
@@ -421,7 +421,7 @@ private theorem suffixCoefficient_4_22_12 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 4) * herm (bitIndex 22 12))).phase
         - (herm (partner (generator 4) (bitIndex 22 12))).phase = 0 by decide]
-    all_goals exact iPow_zero
+    exact iPow_zero
   rw [hp, hs, (suffixCoefficient_5_22_12 θ), (suffixCoefficient_5_20_8 θ)]
   ring
 
@@ -431,7 +431,7 @@ private theorem suffixCoefficient_3_22_12 (θ : ℝ) :
   rw [suffix_coeff_step θ 3 3
     coefficientSeed (bitIndex 22 12) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_4_22_12 θ)
+  exact (suffixCoefficient_4_22_12 θ)
 
 private theorem suffixCoefficient_2_54_28 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 2) coefficientSeed).ofLp
@@ -449,7 +449,7 @@ private theorem suffixCoefficient_2_54_28 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 2) * herm (bitIndex 54 28))).phase
         - (herm (partner (generator 2) (bitIndex 54 28))).phase = 2 by decide]
-    all_goals exact iPow_two
+    exact iPow_two
   rw [hp, hs, h_3_54_28, (suffixCoefficient_3_22_12 θ)]
   ring
 
@@ -459,7 +459,7 @@ private theorem suffixCoefficient_1_54_28 (θ : ℝ) :
   rw [suffix_coeff_step θ 1 1
     coefficientSeed (bitIndex 54 28) (by rfl),
     ite_eq_left (by decide)]
-  all_goals exact (suffixCoefficient_2_54_28 θ)
+  exact (suffixCoefficient_2_54_28 θ)
 
 private theorem suffixCoefficient_0_55_30 (θ : ℝ) :
     (layerAct ((pf2Rotations θ).drop 0) coefficientSeed).ofLp
@@ -477,7 +477,7 @@ private theorem suffixCoefficient_0_55_30 (θ : ℝ) :
     rw [partnerSign, show
       (phaseMul 1 ((generator 0) * herm (bitIndex 55 30))).phase
         - (herm (partner (generator 0) (bitIndex 55 30))).phase = 0 by decide]
-    all_goals exact iPow_zero
+    exact iPow_zero
   rw [hp, hs, h_1_55_30, (suffixCoefficient_1_54_28 θ)]
   ring
 

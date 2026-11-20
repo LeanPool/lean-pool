@@ -233,15 +233,15 @@ theorem bienayme_trunc_gen_eq (μ : PMF ℕ) (k : ℕ) (S : PlaneTree) (ts : Lis
 theorem bienayme_eq_tsum_inter_fiber {α : Type*} (μ : PMF ℕ) (f : PlaneTree → α)
     (E : Set PlaneTree) : bienayme μ E = ∑' a, bienayme μ (E ∩ f ⁻¹' {a}) := by
   simp_rw [bienayme_apply]
-  rw [ENNReal.tsum_comm]
+  rw [tsum_comm]
   refine tsum_congr fun T => ?_
   rw [tsum_eq_single (f T)]
   · by_cases hT : T ∈ E
     · rw [Set.indicator_of_mem hT,
         Set.indicator_of_mem (show T ∈ E ∩ f ⁻¹' {f T} from ⟨hT, rfl⟩)]
-    · rw [Set.indicator_of_notMem hT, Set.indicator_of_notMem fun h => hT h.1]
+    · rw [Set.indicator_of_notMem hT, Set.indicator_of_notMem fun h => hT (And.left h)]
   · intro a ha
-    exact Set.indicator_of_notMem (fun h => ha h.2.symm) _
+    exact Set.indicator_of_notMem (fun h => ha (And.right h).symm) _
 
 /-- **Branching property at generation `k`** (source lines 3070–3083): for a critical `μ` with
 `μ_1 ≠ 1`, every event `{𝒯^{≤k} ∈ 𝒮}` determined by the first `k` generations, and every list
@@ -303,7 +303,7 @@ theorem bienayme_trunc_mem_gen_eq {μ : PMF ℕ} (hc : IsCritical μ) (h1 : μ 1
     · rw [ite_eq_left h', Set.indicator_of_mem (show ts' ∈ {ts' : List PlaneTree |
         ts'.length = ts.length ∧ ∀ U ∈ ts', U ∈ (Set.univ : Set PlaneTree)} from
         ⟨h', fun _ _ => trivial⟩)]
-    · rw [ite_eq_right h', Set.indicator_of_notMem (fun h => h' h.1)]
+    · rw [ite_eq_right h', Set.indicator_of_notMem (fun h => h' (And.left h))]
   have hinner : ∀ S, ∑' ts', (if ts'.length = ts.length then F S ts' else 0) =
       𝒮.indicator (fun S => if trunc k S = S ∧ ts.length = genCount k S then
         skelWeight μ k S else 0) S := by
@@ -320,7 +320,7 @@ theorem bienayme_trunc_mem_gen_eq {μ : PMF ℕ} (hc : IsCritical μ) (h1 : μ 1
         · rw [ite_eq_left h', ite_eq_left h', ite_eq_left ⟨hgood.1, h'.trans hgood.2⟩]
         · rw [ite_eq_right h', ite_eq_right h', mul_zero]
       · rw [ite_eq_right hgood]
-        refine ENNReal.tsum_eq_zero.mpr fun ts' => ?_
+        refine tsum_eq_zero_iff.mpr fun ts' => ?_
         split_ifs with h' h''
         · exact absurd ⟨h''.1, h'.symm.trans h''.2⟩ hgood
         · rfl
@@ -333,7 +333,7 @@ theorem bienayme_trunc_mem_gen_eq {μ : PMF ℕ} (hc : IsCritical μ) (h1 : μ 1
     intro ts'
     split_ifs <;> simp
   simp only [hite]
-  rw [ENNReal.tsum_comm, ← ENNReal.tsum_mul_right]
+  rw [tsum_comm, ← ENNReal.tsum_mul_right]
   refine tsum_congr fun S => ?_
   rw [hinner S]
   by_cases hS : S ∈ 𝒮

@@ -279,7 +279,7 @@ theorem exists_isIdempotentElem_ker_rho [𝔭.IsMaximal] [Finite (A ⧸ 𝔭)]
   obtain ⟨c, hcJ, hmkc⟩ := Ideal.exists_mem_mk_eq_of_sup_eq_top hcopR γ
   -- its defect lies in the extension of `𝔭·J`, whose adic topology is the `p`-adic one
   have hdefect : c ^ 2 - c ∈ extIdeal p (𝔭 * J) := by
-    rw [extIdeal_mul, Ideal.mul_eq_inf_of_coprime hcopR]
+    rw [extIdeal_mul, Ideal.mul_eq_inf_of_isCoprime (Ideal.isCoprime_iff_sup_eq.mpr hcopR)]
     refine Submodule.mem_inf.mpr ⟨?_, ?_⟩
     · rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, map_pow, hmkc, sq, hγ.eq, sub_self]
     · exact Ideal.sub_mem _ (Ideal.pow_mem_of_mem _ hcJ 2 two_pos) hcJ

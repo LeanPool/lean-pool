@@ -323,7 +323,7 @@ private theorem integrableOn_gauge_mul_of_velocity_bound
       (volume.restrict (spaceTimeSet Ω' J))) :
     IntegrableOn (fun z : Vec3 × ℝ => c z.2 * g z) (spaceTimeSet Ω' J) volume := by
   refine ⟨hmeasCG, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   set B : ℝ≥0∞ := volume Ω' +
     essSup (fun s => ∫⁻ x in Ω', ‖u (x, s)‖ₑ ^ (2 : ℝ)) (volume.restrict J) with hB
   have hBtop : B ≠ ∞ := by
@@ -342,7 +342,7 @@ private theorem integrableOn_gauge_mul_of_velocity_bound
   calc (∫⁻ z in spaceTimeSet Ω' J, ‖c z.2 * g z‖ₑ)
       = ∫⁻ z in spaceTimeSet Ω' J, ‖c z.2‖ₑ * ‖g z‖ₑ := by
         refine lintegral_congr fun z => ?_
-        rw [enorm_mul]
+        rw [eNorm_mul]
     _ ≤ ∫⁻ z in spaceTimeSet Ω' J, ‖c z.2‖ₑ * (ENNReal.ofReal K * ‖u z‖ₑ) := by
         refine lintegral_mono fun z => ?_
         exact mul_le_mul' le_rfl (hbound z)
@@ -459,7 +459,7 @@ private theorem integrableOn_gauge_mul_of_bounded
       (volume.restrict (spaceTimeSet Ω' J))) :
     IntegrableOn (fun z : Vec3 × ℝ => c z.2 * g z) (spaceTimeSet Ω' J) volume := by
   refine ⟨hmeasCG, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   have hprodmeas' : AEMeasurable
       (fun z : Vec3 × ℝ => ‖c z.2‖ₑ * ENNReal.ofReal K)
       (((volume : Measure Vec3).restrict Ω').prod (volume.restrict J)) := by
@@ -468,7 +468,7 @@ private theorem integrableOn_gauge_mul_of_bounded
   calc (∫⁻ z in spaceTimeSet Ω' J, ‖c z.2 * g z‖ₑ)
       = ∫⁻ z in spaceTimeSet Ω' J, ‖c z.2‖ₑ * ‖g z‖ₑ := by
         refine lintegral_congr fun z => ?_
-        rw [enorm_mul]
+        rw [eNorm_mul]
     _ ≤ ∫⁻ z in spaceTimeSet Ω' J, ‖c z.2‖ₑ * ENNReal.ofReal K := by
         refine lintegral_mono fun z => ?_
         exact mul_le_mul' le_rfl (hbound z)
@@ -500,7 +500,7 @@ private theorem lintegral_enorm_gauge_lt_top {J : Set ℝ} {c : ℝ → ℝ}
     (hc : MemLp c (ENNReal.ofReal (3 / 2 : ℝ)) (volume.restrict J)) :
     (∫⁻ t in J, ‖c t‖ₑ) < ∞ := by
   have hpow : (∫⁻ t in J, ‖c t‖ₑ ^ ((ENNReal.ofReal (3 / 2 : ℝ)).toReal)) < ∞ :=
-    lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top (by
+    lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top (by
       simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
       norm_num) (by finiteness) hc
   have htoReal : (ENNReal.ofReal (3 / 2 : ℝ)).toReal = (3 / 2 : ℝ) := by
@@ -547,7 +547,7 @@ theorem gauge_divergence_pairing
   have hDbdd : ∀ z : Vec3 × ℝ, ‖D z‖ₑ ≤ ENNReal.ofReal (max K 0) := by
     intro z
     by_cases hz : z ∈ tsupport φ
-    · rw [Real.enorm_eq_ofReal_abs]
+    · rw [Real.eNorm_eq_ofReal_abs]
       exact ENNReal.ofReal_le_ofReal ((hK z hz).trans (le_max_left _ _))
     · rw [hDzero z hz]
       simp
@@ -562,7 +562,7 @@ theorem gauge_divergence_pairing
   have hIntBox : IntegrableOn (fun z : Vec3 × ℝ => c z.2 * D z)
       (spaceTimeSet Ω' J) volume :=
     integrableOn_gauge_mul_of_bounded (localBox_volume_lt_top hbox) hcJ hDbdd
-      hcbox.aestronglyMeasurable.enorm hmeasCG
+      hcbox.aestronglyMeasurable.eNorm hmeasCG
   have hsupp : Function.support (fun z : Vec3 × ℝ => c z.2 * D z) ⊆
       spaceTimeSet Ω' J := by
     intro z hz
@@ -647,12 +647,12 @@ theorem gauge_velocity_pairing
               rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
               simp only [nsmul_eq_mul, Nat.cast_ofNat]
               ring
-      calc ‖g z‖ₑ = ENNReal.ofReal |g z| := Real.enorm_eq_ofReal_abs _
+      calc ‖g z‖ₑ = ENNReal.ofReal |g z| := Real.eNorm_eq_ofReal_abs _
         _ ≤ ENNReal.ofReal (3 * K * ‖u z‖) := ENNReal.ofReal_le_ofReal habs
         _ = ENNReal.ofReal (3 * K) * ENNReal.ofReal ‖u z‖ := by
             rw [← ENNReal.ofReal_mul (by positivity)]
         _ = ENNReal.ofReal (3 * K) * ‖u z‖ₑ := by
-            rw [← Real.enorm_eq_ofReal (norm_nonneg _), enorm_norm]
+            rw [← Real.eNorm_eq_ofReal (norm_nonneg _), eNorm_norm]
     · rw [hgzero z hz]
       simp
   obtain ⟨Ω', J, hbox, hsub⟩ := caccioppoli_localBox_of_compact_subset hΩ hI hIord
@@ -675,7 +675,7 @@ theorem gauge_velocity_pairing
   have hIntBox : IntegrableOn (fun z : Vec3 × ℝ => c z.2 * g z)
       (spaceTimeSet Ω' J) volume :=
     integrableOn_gauge_mul_of_velocity_bound (localBox_volume_lt_top hbox) hcJ
-      (hessSup Ω' J hbox) hgbdd hcbox.aestronglyMeasurable.enorm hu.enorm hmeasCG
+      (hessSup Ω' J hbox) hgbdd hcbox.aestronglyMeasurable.eNorm hu.eNorm hmeasCG
   have hsupp : Function.support (fun z : Vec3 × ℝ => c z.2 * g z) ⊆
       spaceTimeSet Ω' J := by
     intro z hz

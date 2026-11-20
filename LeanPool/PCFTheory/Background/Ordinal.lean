@@ -164,7 +164,7 @@ theorem not_exists_ssubset_chain_lift {α : Type u} {S : Set α} {ℓ : Ordinal.
     have hle : Cardinal.lift.{u, v + 1} #(↑(Iio ℓ)) ≤ Cardinal.lift.{v + 1, u} #↑S :=
       lift_mk_le'.mpr ⟨g⟩
     have hnlt := hle.not_gt
-    rw [Cardinal.mk_Iio_ordinal, Cardinal.lift_lift] at hnlt
+    rw [Ordinal.cardinalMk_Iio, Cardinal.lift_lift] at hnlt
     apply hnlt
     have aux1 : Cardinal.lift.{v + 1, u} #↑S = Cardinal.lift.{v + 1} (Cardinal.lift.{v, u} #↑S) :=
       (Cardinal.lift_lift _).symm

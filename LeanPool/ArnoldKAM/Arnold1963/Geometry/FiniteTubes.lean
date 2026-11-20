@@ -106,7 +106,10 @@ theorem TypeD.finiteTube_erosion_layer {n : ℕ} {ι : Type*} {Ω : Set (Complex
     _ ≤ realVolume ((erosion Ω (r + d₁) \ erosion Ω (r + d₂)) ∪ ⋃ i ∈ s, L i) :=
       realVolume_mono hsub
     _ ≤ realVolume (erosion Ω (r + d₁) \ erosion Ω (r + d₂)) +
-        realVolume (⋃ i ∈ s, L i) := measure_union_le _ _
+        realVolume (⋃ i ∈ s, L i) := by
+      unfold realVolume realSlice
+      rw [preimage_union]
+      exact measure_union_le (μ := realLebesgue n) _ _
     _ ≤ ENNReal.ofReal (D * δ) * realVolume Ω +
         ∑ i ∈ s, ENNReal.ofReal (2 * D * n * δ) * realVolume Ω := by
       apply add_le_add

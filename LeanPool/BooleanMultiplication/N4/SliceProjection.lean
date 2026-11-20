@@ -520,7 +520,7 @@ theorem booleanContraction_sliceInfinity_sliceInfinityQuadratic
   funext i j
   fin_cases i <;> fin_cases j <;>
     simp [booleanContraction, sliceInfinityQuadratic, vectorWedge, placeA, placeB]
-  all_goals ring_nf
+  ring_nf
 
 theorem booleanContraction_zero (q : TwoForm) :
     booleanContraction 0 q = 0 := by

@@ -2446,8 +2446,8 @@ instance {a : α} [IdFree a] [Cancelable a] : Cancelable (some a) := by
 
 instance {ma : Option α} [∀ a : α, IdFree a] [∀ a : α, Cancelable a] : Cancelable ma := by
   rcases ma with ⟨_|_⟩
-  constructor
-  · simp [op]
+  · constructor
+    simp [op]
   · infer_instance
 
 theorem validN_of_incN_validN {n} {a b : α} (Hv : ✓{n} a) (Hinc : some b ≼{n} some a) :

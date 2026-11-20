@@ -109,7 +109,7 @@ def gaussianHermiteInverseSquareRootCoefficients {n : ℕ} (hn : 0 < n)
       exact mul_le_of_le_one_left (norm_nonneg _)
         (hermiteInverseSquareRootWeight_le_one n _))⟩
 
-/-- Genuine Gaussian `L²` synthesis of `N_n⁻¹ᐟ²` on positive modes. -/
+/-- Genuine Gaussian `L²` synthesis of `N_n^(-1/2)` on positive modes. -/
 def gaussianHermiteInverseSquareRoot {n : ℕ} (hn : 0 < n)
     (g : Lp ℂ 2 (complexGaussianMeasure n)) : Lp ℂ 2 (complexGaussianMeasure n) :=
   (gaussianHermiteHilbertBasis n hn).repr.symm

@@ -75,7 +75,7 @@ theorem measurable_sq_slice_time {Z : ℝ → Ω → (Fin n → ℝ)}
   Finset.measurable_sum _ fun i _ =>
     (ENNReal.continuous_coe.measurable.comp
       (((measurable_pi_apply i).comp
-        (hZm.comp (measurable_id.prodMk measurable_const))).nnnorm)).pow_const 2
+        (hZm.comp (measurable_id.prodMk measurable_const))).nnNorm)).pow_const 2
 
 /-- The squared norms of a path map are jointly measurable. -/
 theorem measurable_uncurry_sq {Z : ℝ → Ω → (Fin n → ℝ)}
@@ -84,7 +84,7 @@ theorem measurable_uncurry_sq {Z : ℝ → Ω → (Fin n → ℝ)}
   Finset.measurable_sum _ fun i _ =>
     (ENNReal.continuous_coe.measurable.comp
       (((measurable_pi_apply i).comp
-        (hZm.comp (measurable_snd.prodMk measurable_fst))).nnnorm)).pow_const 2
+        (hZm.comp (measurable_snd.prodMk measurable_fst))).nnNorm)).pow_const 2
 
 /-- The energy of a path map over a window is measurable in the sample point. -/
 theorem measurable_lintegral_sq {Z : ℝ → Ω → (Fin n → ℝ)}
@@ -377,7 +377,7 @@ theorem bieleckiNorm_inner_aemeasurable_of_slice {Y : ℝ → Ω → (Fin n → 
     (h : ∀ (t : ℝ) (i : Fin n), Measurable fun ω => Y t ω i) (t : ℝ) :
     AEMeasurable (fun ω => (∑ i, (‖Y t ω i‖₊ : ℝ≥0∞) ^ 2) ^ ((1 : ℝ) / 2)) P :=
   ((Finset.measurable_sum _ fun i _ =>
-    (ENNReal.continuous_coe.measurable.comp (h t i).nnnorm).pow_const 2).pow_const
+    (ENNReal.continuous_coe.measurable.comp (h t i).nnNorm).pow_const 2).pow_const
       ((1 : ℝ) / 2)).aemeasurable
 
 omit [ℱ'.IsRightContinuous] in
@@ -390,7 +390,7 @@ theorem bieleckiNorm_sub_comm (β T : ℝ) (A B : ℝ → Ω → (Fin n → ℝ)
   refine iSup_congr fun t => iSup_congr fun _ => ?_
   congr 2
   refine lintegral_congr fun ω => Finset.sum_congr rfl fun i _ => ?_
-  simp only [show A t ω i - B t ω i = -(B t ω i - A t ω i) from by ring, nnnorm_neg]
+  simp only [show A t ω i - B t ω i = -(B t ω i - A t ω i) from by ring, nnNorm_neg]
 
 omit [ℱ'.IsRightContinuous] in
 omit [IsProbabilityMeasure P] in

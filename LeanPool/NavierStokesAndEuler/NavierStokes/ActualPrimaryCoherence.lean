@@ -2134,7 +2134,9 @@ theorem cartesianVelocity_divergence (j : Fin 2) (L : Label B N0) {t : ℝ}
     ProblemStatement.spatialDivergence (cartesianVelocity j L) t x = 0 := by
   have ha : ContDiffOn ℝ 2 (cartesianPotential j L) ((Iio 1) ×ˢ (univ : Set
       ProblemStatement.Space)) :=
-    ((cartesianPotential_smooth j L).mono (fun _ hx => hx.1)).of_le (WithTop.coe_le_coe.mpr le_top)
+    ((cartesianPotential_smooth j L).mono
+      (fun _ (hx : _ ∈ (Iio 1) ×ˢ (univ : Set ProblemStatement.Space)) => hx.1)).of_le
+        (WithTop.coe_le_coe.mpr le_top)
   exact SpatialCurl.spatialDivergence_spatialCurl_on ha ht x
 
 end NavierStokes.ActualPrimaryCoherence

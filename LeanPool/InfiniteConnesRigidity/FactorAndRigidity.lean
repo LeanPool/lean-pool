@@ -4780,7 +4780,7 @@ private instance paperDividedSquareDistribMulAction : DistribMulAction K B where
   smul k b := kDividedSquareLinear k b
   one_smul b := by
     change kDividedSquareLinear 1 b = b
-    simp only [map_one, LinearEquiv.coe_one, id_eq]
+    simp only [map_one, FunLike.coe_one_eq_id, id_eq]
   mul_smul k l b := by
     change kDividedSquareLinear (k * l) b =
       kDividedSquareLinear k (kDividedSquareLinear l b)

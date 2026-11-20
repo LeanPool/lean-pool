@@ -1614,7 +1614,7 @@ lemma ne_fst_of_isLeftVertex {p q : ℕ} {μ : Shuffle (p + 1) q} {r : Index ((p
         -- Since $r$ is a left vertex, we have $(μ.1 r).1 < (μ.1 (r + 1)).1$.
         have h_left_vertex : (μ.1 r).1.val < (μ.1 (Fin.mk (r.val + 1) (by
         linarith [ Fin.is_lt r, Fin.is_lt k ]))).1.val := by
-          all_goals generalize_proofs at *;
+          generalize_proofs at *;
           have := h.2 ⟨ r.val, by linarith ⟩; aesop;
         generalize_proofs at *;
         exact ne_of_gt ( lt_of_lt_of_le h_left_vertex ( μ.1.monotone ( Nat.succ_le_of_lt h_k_gt_r )
@@ -2292,7 +2292,7 @@ private lemma swapDiagonalStepsFun_local_bounds {p q : ℕ}
             ⟨(μ.1 ⟨r.val - 1, by
           omega⟩).2.val, by
           grind only []⟩) := by
-          all_goals generalize_proofs at *;
+          generalize_proofs at *;
           have h_step : μ.1 (Fin.succ ⟨r.val - 1, by
             omega⟩) = (⟨(μ.1 ⟨r.val - 1, by
             omega⟩).1.val + 1, by

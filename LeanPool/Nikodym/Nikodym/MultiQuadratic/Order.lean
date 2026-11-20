@@ -150,8 +150,7 @@ theorem mono_mul_mono (r : Fin m → ℕ) (S T : Finset (Fin m)) :
   rw [← prod_union_inter (s₁ := S) (s₂ := T)]
   have hunion : S ∪ T = S ∆ T ∪ S ∩ T := by
     ext x
-    simp [mem_symmDiff]
-    tauto
+    simp
   have hdisj : Disjoint (S ∆ T) (S ∩ T) := by
     refine disjoint_left.2 fun x hx hxi ↦ ?_
     simp [mem_symmDiff] at hx
@@ -184,8 +183,7 @@ theorem sgn_mul_sgn (ε : Fin m → ℤˣ) (S T : Finset (Fin m)) :
   rw [← prod_union_inter (s₁ := S) (s₂ := T)]
   have hunion : S ∪ T = S ∆ T ∪ S ∩ T := by
     ext x
-    simp [mem_symmDiff]
-    tauto
+    simp
   have hdisj : Disjoint (S ∆ T) (S ∩ T) := by
     refine disjoint_left.2 fun x hx hxi ↦ ?_
     simp [mem_symmDiff] at hx

@@ -446,7 +446,7 @@ theorem TileOdometerExists (C : BandCircle) :
         BandPrototile C.1.1 T ∧ TileOdometer C.1.1 T h := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro C hn
       by_cases hc : C.1.1.1 = 1
       · obtain ⟨z, hz⟩ := CurvatureOneBandCircleClassification C hc

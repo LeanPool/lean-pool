@@ -70,7 +70,7 @@ theorem cubeMeasure_apply_univ_eq {d : ℕ} (Q : TriadicCube d) :
 
 @[simp] theorem normalizedCubeMeasure_apply_univ {d : ℕ} (Q : TriadicCube d) :
     normalizedCubeMeasure Q Set.univ = 1 := by
-  rw [normalizedCubeMeasure, MeasureTheory.Measure.smul_apply, cubeMeasure_apply_univ_eq Q]
+  rw [normalizedCubeMeasure, smul_apply, cubeMeasure_apply_univ_eq Q]
   rw [ENNReal.ofReal_inv_of_pos (cubeVolume_pos Q)]
   have hvol : ENNReal.ofReal (cubeVolume Q) ≠ 0 :=
     ENNReal.ofReal_ne_zero_iff.2 (cubeVolume_pos Q)
@@ -190,8 +190,8 @@ theorem cubeLpNorm_one_eq_integral_norm {d : ℕ} {E : Type*} [NormedAddCommGrou
     (hf : MeasureTheory.AEStronglyMeasurable f (normalizedCubeMeasure Q)) :
     cubeLpNorm Q 1 f = ∫ x, ‖f x‖ ∂ normalizedCubeMeasure Q := by
   unfold cubeLpNorm
-  rw [MeasureTheory.eLpNorm_one_eq_lintegral_enorm hf,
-    ← MeasureTheory.integral_norm_eq_lintegral_enorm hf]
+  rw [MeasureTheory.eLpNorm_one_eq_lintegral_eNorm hf,
+    ← MeasureTheory.integral_norm_eq_lintegral_eNorm hf]
 
 theorem cubeLpNorm_rpow_eq_cubeAverage_norm_rpow {d : ℕ} {E : Type*}
     [NormedAddCommGroup E] (Q : TriadicCube d) (p : ℝ≥0∞) (f : Vec d → E)
@@ -212,7 +212,7 @@ theorem cubeLpNorm_rpow_eq_cubeAverage_norm_rpow {d : ℕ} {E : Type*}
         = ((MeasureTheory.eLpNorm f p (normalizedCubeMeasure Q)) ^ p.toReal).toReal := by
             rw [cubeLpNorm, ← ENNReal.toReal_rpow]
     _ = (∫⁻ x, ‖f x‖ₑ ^ p.toReal ∂ normalizedCubeMeasure Q).toReal := by
-          rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpTop
+          rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpTop
             hf.aestronglyMeasurable]
           let A : ℝ≥0∞ := ∫⁻ x, ‖f x‖ₑ ^ p.toReal ∂ normalizedCubeMeasure Q
           change ((A ^ (1 / p.toReal)) ^ p.toReal).toReal = A.toReal

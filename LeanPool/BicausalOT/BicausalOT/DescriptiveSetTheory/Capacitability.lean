@@ -387,8 +387,7 @@ theorem MeasureTheory.AnalyticSet.measure_eq_iSup_isCompact
   refine le_antisymm ?_
     (iSup_le fun K => iSup_le fun _ => iSup_le fun hK => measure_mono hK)
   refine le_of_forall_lt fun c hc => ?_
-  rw [AnalyticSet] at hA
-  rcases hA with rfl | ⟨π, hπ_cont, hπ_range⟩
+  rcases hA.eq_empty_or_exists_range with rfl | ⟨π, hπ_cont, hπ_range⟩
   · simp at hc
   subst hπ_range
   obtain ⟨c', hcc', hc'A⟩ := exists_between hc
@@ -570,8 +569,7 @@ theorem MeasureTheory.AnalyticSet.kernel_section_gt
     {A : Set (X × Y)} (hA : AnalyticSet A)
     (κ : Kernel X Y) [IsFiniteKernel κ] (c : ℝ≥0∞) :
     AnalyticSet {x | c < κ x (Prod.mk x ⁻¹' A)} := by
-  rw [AnalyticSet] at hA
-  rcases hA with rfl | ⟨π, hπ_cont, hπ_range⟩
+  rcases hA.eq_empty_or_exists_range with rfl | ⟨π, hπ_cont, hπ_range⟩
   · have hempty : {x : X | c < κ x (Prod.mk x ⁻¹' (∅ : Set (X × Y)))} = ∅ := by
       ext x; simp
     rw [hempty]; exact analyticSet_empty

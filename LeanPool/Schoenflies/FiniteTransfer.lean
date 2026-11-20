@@ -772,7 +772,8 @@ theorem exists_injective_pinned_avoiding [Infinite γ]
       ∀ x ∈ s, x ≠ a → x ≠ b → name x ∉ used := by
   classical
   let inner := {x : α // x ∈ s ∧ x ≠ a ∧ x ≠ b}
-  let _ : Finite inner := Set.finite_coe_iff.mpr (hs.subset fun x hx => hx.1)
+  let _ : Finite inner := Set.finite_coe_iff.mpr
+    (hs.subset (t := {x | x ∈ s ∧ x ≠ a ∧ x ≠ b}) fun x hx => hx.1)
   obtain ⟨fresh, hfresh, havoid⟩ := exists_injective_avoiding used hused inner
   let name : α → γ := fun x =>
     if hxa : x = a then u else if hxb : x = b then v

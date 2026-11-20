@@ -132,13 +132,13 @@ theorem localizedTailMaximal_pairing_le_monitorGood_add_children
       have hgood : Measurable (fun x ↦ localizedTailMaximal ell₀ scale
           (goodCollection S f monitor I) f x * ‖g x‖ₑ) :=
         (measurable_localizedTailMaximal ell₀ scale
-          (goodCollection S f monitor I) hf).mul hg.enorm
+          (goodCollection S f monitor I) hf).mul hg.eNorm
       rw [lintegral_add_left hgood]
       congr 1
       apply lintegral_finsetSum
       intro K hK
       exact (measurable_localizedTailMaximal ell₀ scale
-        (childCollection S K) hf).mul hg.enorm
+        (childCollection S K) hf).mul hg.eNorm
 
 /-- One complete stopping step using `‖g‖^p` for selection and the original
 `g` for the bilinear pairing. -/

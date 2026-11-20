@@ -2128,7 +2128,7 @@ theorem exactPaddedVector_norm
     rfl
   · rintro ⟨a, b⟩ outside
     rcases a with a | (a | a) <;> rcases b with b | (b | b) <;>
-      try simp only [exactPaddedVector, norm_zero, ne_eq, OfNat.ofNat_ne_zero,
+      simp only [exactPaddedVector, norm_zero, ne_eq, OfNat.ofNat_ne_zero,
         not_false_eq_true, zero_pow]
     exact False.elim (outside ⟨(a, b), rfl⟩)
 

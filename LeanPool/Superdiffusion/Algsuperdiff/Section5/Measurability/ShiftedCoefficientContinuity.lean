@@ -355,7 +355,7 @@ theorem continuous_shiftedFieldResolvent (hnu : 0 < nu) (halpha : 0 < alpha)
           |(A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩) i j| := by rw [Matrix.sub_apply]
       _ ≤ ‖A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩‖ := by
         simpa [Real.norm_eq_abs] using
-          Matrix.norm_entry_le_entrywise_sup_norm
+          Matrix.norm_apply_le_norm
             (A := A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩) (i := i) (j := j)
       _ = ‖(A.1 - A0.1) ⟨x, hxK⟩‖ := by rfl
       _ ≤ ‖A.1 - A0.1‖ := (A.1 - A0.1).norm_coe_le_norm _
@@ -442,7 +442,7 @@ theorem continuous_shiftedFieldSetIntegral (hnu : 0 < nu) (halpha : 0 < alpha)
     rw [← sqrt_integral_sq_eq_norm_scalarL2 F]
     refine Real.sqrt_le_sqrt ?_
     exact setIntegral_mono_set hFU (Filter.Eventually.of_forall fun z => sq_nonneg (F z))
-      (LE.le.eventuallyLE hBsub)
+      (LE.le.eventuallySubset hBsub)
   have hsplit : shiftedFieldSetIntegral hnu halpha hU hUsub f B A -
       shiftedFieldSetIntegral hnu halpha hU hUsub f B A0 = ∫ z in B, F z ∂volume := by
     let _ : IsFiniteMeasure (volume.restrict B) :=

@@ -131,7 +131,7 @@ lemma finiteDivisorClass_principal (u : Kˣ) :
   refine (ClassGroup.mk_eq_one_iff).2 ⟨⟨(u : K), ?_⟩⟩
   change (I : Submodule (ringOfIntegers k K) K) =
     Submodule.span (ringOfIntegers k K) {(u : K)}
-  rw [← FractionalIdeal.coe_spanSingleton
+  rw [← FractionalIdeal.coeToSubmodule_spanSingleton
     (R := ringOfIntegers k K) (S := (ringOfIntegers k K)⁰)]
   rfl
 

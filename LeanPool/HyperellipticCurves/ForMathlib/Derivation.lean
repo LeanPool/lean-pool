@@ -46,7 +46,7 @@ theorem coeff_dotDer (p : A[X]) (i : ℕ) : (d.dotDer p).coeff i = d (p.coeff i)
 @[simp]
 theorem dotDer_monomial (n : ℕ) (a : A) : d.dotDer (monomial n a) = monomial n (d a) := by
   ext i
-  simp [coeff_monomial, apply_ite d]
+  simp [coeff_monomial, Finsupp.single_apply, apply_ite d]
 
 @[simp]
 theorem dotDer_C (a : A) : d.dotDer (C a) = C (d a) := by simp [← monomial_zero_left]
@@ -71,7 +71,7 @@ theorem dotDer_sq (p : A[X]) : d.dotDer (p ^ 2) = 2 * p * d.dotDer p := by
 
 /-- A polynomial whose coefficients are `d`-constant is killed by `dotDer`. -/
 theorem dotDer_eq_zero_of_coeff {p : A[X]} (hp : ∀ i, d (p.coeff i) = 0) : d.dotDer p = 0 :=
-  Polynomial.ext fun i ↦ by rw [coeff_dotDer, hp i, coeff_zero]
+  AddMonoidAlgebra.ext <| DFunLike.ext _ _ fun i ↦ by rw [coeff_dotDer, hp i, coeff_zero]
 
 /-- A polynomial congruent, modulo a `d`-constant `B`, to a `d`-constant polynomial has a
 `B`-divisible coefficientwise derivative. -/

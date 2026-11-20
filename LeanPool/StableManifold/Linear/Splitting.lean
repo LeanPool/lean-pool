@@ -236,7 +236,7 @@ private lemma map_mem_ker_aeval (A : E →L[ℝ] E) (q : ℝ[X]) {v : E}
   have h := congrArg (aeval (A : E →ₗ[ℝ] E)) (mul_comm q X)
   rw [aeval_mul, aeval_mul, aeval_X] at h
   have h' := LinearMap.congr_fun h v
-  rw [Module.End.mul_apply, Module.End.mul_apply, LinearMap.mem_ker.1 hv, map_zero] at h'
+  rw [mul_apply_eq_comp, mul_apply_eq_comp, LinearMap.mem_ker.1 hv, map_zero] at h'
   exact h'
 
 /-- A polynomial in the restriction of `f` to an invariant subspace is the restriction of the
@@ -247,7 +247,7 @@ private lemma coe_aeval_restrict_apply {F : Type*} [AddCommGroup F] [Module ℝ 
   induction q using Polynomial.induction_on' with
   | add p₁ p₂ h₁ h₂ => simp [h₁, h₂]
   | monomial n a =>
-    simp only [aeval_monomial, Module.End.mul_apply, Module.algebraMap_end_apply,
+    simp only [aeval_monomial, mul_apply_eq_comp, Module.algebraMap_end_apply,
       Submodule.coe_smul, Module.End.pow_restrict n h, LinearMap.restrict_apply]
 
 /-- The restriction of `A` to an invariant subspace contained in `ker q(A)` is annihilated by
@@ -301,7 +301,7 @@ theorem ker_aeval_le_unstableSubspace (A : E →L[ℝ] E) {q : ℝ[X]}
     intro x hx
     have h1 := LinearMap.congr_fun hAk x
     rw [← divX_mul_X_add q, aeval_add, aeval_mul, aeval_X, aeval_C, LinearMap.add_apply,
-      Module.End.mul_apply, hx, map_zero, zero_add, Module.algebraMap_end_apply,
+      mul_apply_eq_comp, hx, map_zero, zero_add, Module.algebraMap_end_apply,
       LinearMap.zero_apply] at h1
     exact (smul_eq_zero.1 h1).resolve_left hc
   -- so it is a continuous linear equivalence `T`, and `T⁻¹` is annihilated by `q.reverse`

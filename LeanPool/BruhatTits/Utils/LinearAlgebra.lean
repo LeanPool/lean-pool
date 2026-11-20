@@ -51,7 +51,7 @@ lemma Submodule.exists_generator_of_finrank_eq_one (p : Submodule R M)
   obtain ⟨v, hvmem, hv⟩ := this
   refine ⟨v, hv, ?_⟩
   have : (⟨v, hvmem⟩ : p) ≠ 0 := by simpa
-  rw [finrank_eq_one_iff_of_nonzero (K := R) _ this] at h
+  rw [finrank_eq_one_iff_of_ne_zero (K := R) _ this] at h
   apply le_antisymm
   · simp_all
   · intro x hx

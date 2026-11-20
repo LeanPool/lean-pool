@@ -1284,7 +1284,7 @@ private theorem canonicalBodyOutput_accepted_extract
       clauses.length = binaryStackValue binary := by
   induction fuel using Nat.strong_induction_on
       generalizing input binary with
-  | h fuel ih =>
+  | ind fuel ih =>
       by_cases hempty : input = []
       · subst input
         have hzero : binaryStackValue binary = 0 := by

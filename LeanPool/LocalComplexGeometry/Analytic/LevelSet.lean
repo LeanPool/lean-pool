@@ -121,11 +121,11 @@ theorem holomorphic_regularLevelSet_parametrization
   let A : ComplexEuclidean n →L[ℂ] ComplexEuclidean m := fderiv ℂ F a
   let K : Submodule ℂ (ComplexEuclidean n) :=
     LinearMap.ker A.toLinearMap
-  let : CompleteSpace K := FiniteDimensional.complete ℂ K
+  let : CompleteSpace K := FiniteDimensional.completeSpace ℂ K
   obtain ⟨L, hKL⟩ := Submodule.exists_isCompl K
   have hKLtop : Submodule.IsTopCompl K L :=
     Submodule.IsCompl.isTopCompl_of_isClosed_of_finiteDimensional hKL
-      K.closed_of_finiteDimensional
+      K.isClosed_of_finiteDimensional
   let kproj : ComplexEuclidean n →L[ℂ] K :=
     K.projectionOntoL L hKLtop
   have hkerCompl : IsCompl (LinearMap.ker A.toLinearMap)

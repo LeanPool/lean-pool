@@ -148,7 +148,7 @@ theorem locallyDominatesOn : Probability.LocallyDominatesOn ν m D.Ω := by
   have hC'pos : 0 < C' := lt_of_lt_of_le one_pos (le_max_right _ _)
   refine ⟨C'.toNNReal, Measure.le_iff.mpr fun s hs ↦ ?_⟩
   have hsK : MeasurableSet (s ∩ K) := hs.inter hK.measurableSet
-  rw [Measure.restrict_apply hs, Measure.smul_apply, Measure.restrict_apply hs,
+  rw [Measure.restrict_apply hs, smul_apply, Measure.restrict_apply hs,
     D.measure_eq hsK (Set.inter_subset_right.trans hKΩ), smul_eq_mul, ←
     lintegral_const_mul' _ _ ENNReal.coe_ne_top]
   have hbound :
@@ -316,7 +316,7 @@ theorem lipschitzRelaxation_le_relaxation (x : Lp ℝ 2 (ν : Measure V)) :
   have h3 : Tendsto (fun j ↦ (((‖lipschitzOperator ν m D (p j)‖₊ ^ 2 : ℝ≥0)) : ENNReal)) atTop
       (𝓝 (((‖(Test.memLp_gradient ν f).toLp (gradient f.toFun)‖₊ ^ 2 : ℝ≥0)) : ENNReal)) := by
     apply ENNReal.tendsto_coe.mpr
-    exact ((continuous_nnnorm.tendsto _).comp h2).pow 2
+    exact ((continuous_nnNorm.tendsto _).comp h2).pow 2
   rw [h3.liminf_eq]
   exact (Test.energy_eq_nnnorm_sq ν f).symm
 

@@ -2224,193 +2224,192 @@ theorem P4158T1EdgeSectorSelection :
       reverseTiles hs reverseHs hf hr hRm hRp hcontain hcontain' hedges PP htiles tileAt chart x
       hxr hxl hxu
 -- BODY
-  all_goals
-    classical
-    have regular_index := EdgeSectorGeometry.regular_index Ci base PP htiles
-    have vertical_edge_cells := EdgeSectorGeometry.vertical_edge_cells
-        (EdgeSectorGeometry.pair_eq_iff)
-    have translated_ford_bounds := EdgeSectorGeometry.translated_ford_bounds
-    have translated_ford_cell := EdgeSectorGeometry.translated_ford_cell
-    have ford_disjoint_re := EdgeSectorGeometry.ford_disjoint_re translated_ford_bounds
-    have ford_disjoint_im := EdgeSectorGeometry.ford_disjoint_im translated_ford_bounds
-    have q₁pos := hrpos
-    have lower_lt_q := EdgeSectorGeometry.lower_lt_q P i hsmall
-    let z : GaussianInt :=
-      if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
-      then x else x - ⟨0, 1⟩
-    have z_low (hlow : (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) :
-        z = x := EdgeSectorGeometry.z_low P i u x hlow
-    have z_other := EdgeSectorGeometry.z_other P i u x
-    have z_incident := EdgeSectorGeometry.z_incident P i u x z_low z_other
-    have hz_re := EdgeSectorGeometry.hz_re P i u x hxr z_low z_other
-    have hz_low := EdgeSectorGeometry.hz_low P i u x hxl z_low z_other
-    have hz_high := EdgeSectorGeometry.hz_high P i u x hxu lower_lt_q z_low z_other
-    obtain ⟨U, V, g, k, hUint, hVint, hUz, hVk, hAg, hAk, hEdgeU, hEdgeV⟩ :=
-      hedges z hz_re hz_low hz_high
-    have hUmem : U ∈ tiles := (List.of_mem_zip hUz).1
-    have hVmem : V ∈ reverseTiles := (List.of_mem_zip hVk).1
-    obtain ⟨a, ha⟩ := regular_index U (hf.2.2.2.2.1 U hUmem)
-    obtain ⟨b, hb⟩ := regular_index V (hr.2.2.2.2.1 V hVmem)
-    have hUa : PP.tile a = U := ha
-    have hVb : PP.tile b = V := hb
-    have U_in_T : U.cells ⊆ T.cells := hcontain U g hUz hAg
-    have V_in_T' : V.cells ⊆ T'.cells := hcontain' V k hVk hAk
-    have U_edge : {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile a) := EdgeSectorGeometry.U_edge P Ci
-        i u PP x U hEdgeU a hUa
-    have V_edge : {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile b) := EdgeSectorGeometry.V_edge P Ci
-        i u PP x V hEdgeV b hVb
-    have T_bounds := EdgeSectorGeometry.T_bounds P T u hc translated_ford_bounds
-    have T'_bounds := EdgeSectorGeometry.T'_bounds P i T' u hc' translated_ford_bounds
-    have indexed_edge := EdgeSectorGeometry.indexed_edge P C0 Ci i T T' h h' u hdis orientation
-        base Rminus Rplus tiles reverseTiles hs reverseHs hf hr hcontain hcontain' hedges PP
-        regular_index vertical_edge_cells
-    have forward_support := EdgeSectorGeometry.forward_support P Ci i hsmall T u PP x
-        vertical_edge_cells hz_re U a hUa U_in_T U_edge T_bounds
-    have reverse_support := EdgeSectorGeometry.reverse_support P Ci i hsmall T' u PP x
-        vertical_edge_cells hz_re V b hVb V_in_T' V_edge T'_bounds
-    obtain ⟨cf, hcf, hcfSide⟩ := forward_support
-    obtain ⟨cb, hcb, hcbSide⟩ := reverse_support
-    have hab := EdgeSectorGeometry.hab Ci T T' hdis PP U V a b hUa hVb U_in_T V_in_T' cf hcf
-    have hAzip : (PP.tile a, g) ∈ tiles.zip hs := by simpa [hUa] using hUz
-    have hBzip : (PP.tile b, k) ∈ reverseTiles.zip reverseHs := by
-      simpa [hVb] using hVk
-    have hAanc : AncestorOdometer Ci.1.1 C0.1.1 (PP.tile a) T g h := by
-      simpa [hUa] using hAg
-    have hBanc : AncestorOdometer Ci.1.1 C0.1.1 (PP.tile b) T' k h' := by
-      simpa [hVb] using hAk
-    have lowerBoundary (hlow : (x-u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) :
-      ∃ (a b : TilingLattice Ci) (g k
-      : PartialOdometer),
-      a ≠ b ∧ (PP.tile a, g) ∈ tiles.zip hs ∧
-      (PP.tile b, k) ∈ reverseTiles.zip reverseHs ∧
-      AncestorOdometer Ci.1.1 C0.1.1 (PP.tile a) T g h ∧
-      AncestorOdometer Ci.1.1 C0.1.1 (PP.tile b) T' k h' ∧
-      (∃ z, (z = x ∨ z = x - ⟨0, 1⟩) ∧
-      {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile a) ∧
-      {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile b)) ∧
-      ((x ∈ (PP.tile a).cells ∧ x - 1 - ⟨0, 1⟩ ∈ (PP.tile b).cells) ∨
-      (x - 1 ∈ (PP.tile a).cells ∧ x - ⟨0, 1⟩ ∈ (PP.tile b).cells) ∨
-      (x - 1 - ⟨0, 1⟩ ∈ (PP.tile a).cells ∧ x ∈ (PP.tile b).cells) ∨
-      (x - ⟨0, 1⟩ ∈ (PP.tile a).cells ∧ x - 1 ∈ (PP.tile b).cells)) :=
-          EdgeSectorBoundary.lowerBoundary P C0 Ci i hsmall hrpos T T' h h' u hc hc' hdis
-          orientation base Rminus Rplus tiles reverseTiles hs reverseHs hf hr hRm hRp PP
-          tileAt chart x hxr hxl regular_index translated_ford_cell ford_disjoint_re
-          ford_disjoint_im q₁pos lower_lt_q z_low z_other z_incident hz_re hz_low hz_high U V g k
-              a b hUa hVb U_in_T V_in_T' U_edge V_edge T'_bounds cf hcf
-          hcfSide cb hcb hcbSide hab hAzip hBzip hAanc hBanc hlow
-    by_cases hlow : (x-u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
-    · exact lowerBoundary hlow
-    · by_cases htop : (x-u).im = P.q
-      · rcases hsmall with ⟨hi, hlt⟩ | ⟨hi, hlt⟩
-        · subst i
-          have hxre' : x.re - u.re = P.q := by
-            simpa [Zsqrtd.re_sub] using hxr
-          have hxim' : x.im - u.im = P.q := by
-            simpa [Zsqrtd.im_sub] using htop
-          have hxre'' : x.re = u.re + P.q := by omega
-          have hxim'' : x.im = u.im + P.q := by omega
-          have hx := EdgeSectorGeometry.hxAt909 P u x hxre'' hxim''
-          have hq1cast : ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1 := by
-            exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q₁)
-          have hqsum : (P.q₁ : Int) + P.q₂ = P.q := by
-            exact_mod_cast P.sum_q.symm
-          let n : GaussianInt := x - 1
-          have hnc : n = (u + ⟨(P.q₂ : Int), (P.q : Int)⟩) +
-              ⟨((P.q₁ - 1 : Nat) : Int), 0⟩ := EdgeSectorGeometry.hncAt920 P u x hxre'' hxim''
-                  hq1cast hqsum
-          have hRmem : Rplus ∈ tiles := List.mem_of_getLast? hf.2.2.1
-          obtain ⟨e, he⟩ := regular_index Rplus
-            (hf.2.2.2.2.1 Rplus hRmem)
-          have hEtrans := translated_ford_cell P.q₁ (P.q₁ - 1) 0
-            (u + ⟨(P.q₂ : Int), (P.q : Int)⟩) (by omega) (by omega)
-          have hEcell : n ∈ Rplus.cells := by rw [hRp, hnc]; exact hEtrans
-          have hEidx : n ∈ (PP.tile e).cells := by simpa [he] using hEcell
-          have hdisET := EdgeSectorGeometry.hdisETAt940 P T u hc Rplus ford_disjoint_im hRp
-          have hdisET' := EdgeSectorGeometry.hdisET'At944 P T' u Rplus ford_disjoint_re hc'
-              hRp hqsum
-          have hrootCell := translated_ford_cell P.q 0 P.q₂
-            (u + ⟨(P.q : Int), (P.q₁ : Int)⟩) (by omega) (EdgeSectorGeometry.hq2lt P hrpos
-                hq1cast)
-          have hxT' := EdgeSectorGeometry.hxT' P T' u x hc' (EdgeSectorGeometry.hxroot P u x hx
-              hqsum) hrootCell
-          obtain ⟨t, ht, htuniq⟩ := PeriodicTileIndexedMultiplicityOne PP x
-          have ht_ne_e := EdgeSectorGeometry.ht_ne_eAt974 Ci T' Rplus PP x e he hdisET' hxT' t ht
-          have ht_ne_a := EdgeSectorGeometry.ht_ne_aAt979 C0 Ci T T' h hdis tiles hs hcontain PP
-              x g a hAzip hAanc hxT' t ht
-          have he_ne_a := EdgeSectorGeometry.he_ne_aAt984 Ci T Rplus PP x U a hUa U_in_T e
-              hEcell hEidx hdisET
-          have he_ne_b := EdgeSectorGeometry.he_ne_bAt993 Ci T' Rplus PP x V b hVb V_in_T'
-              e hEcell hEidx hdisET'
-          have hxa := EdgeSectorGeometry.hxaAt1002 P Ci u PP x U a hUa cf hcf z_other hcfSide hlow
-          have hxb : x - ⟨0,1⟩ ∈ (PP.tile b).cells := EdgeSectorGeometry.hxbAt1009 P Ci u PP x V
-              b hVb cb hcb z_other hcbSide hlow
-          have hfour := AffineTriangularNoFourfoldCellOwners PP tileAt chart x
-            t e a b ht hEidx hxa hxb
-          have hrepeat : b = t := EdgeSectorGeometry.hrepeatAt1016 Ci a b hab e t ht_ne_e ht_ne_a
-              he_ne_a he_ne_b hfour
-          refine ⟨a, b, g, k, hab, hAzip, hBzip, hAanc, hBanc,
-            ⟨z, z_incident, U_edge, V_edge⟩, ?_⟩
-          have hbx : x ∈ (PP.tile b).cells := by simpa [hrepeat] using ht
-          exact Or.inr (Or.inr (Or.inl ⟨hxa, hbx⟩))
-        · subst i
-          have hxre' : x.re - u.re = 0 := by
-            simpa [Zsqrtd.re_sub] using hxr
-          have hxim' : x.im - u.im = P.q := by
-            simpa [Zsqrtd.im_sub] using htop
-          have hxre'' : x.re = u.re := by omega
-          have hxim'' : x.im = u.im + P.q := by omega
-          have hx := EdgeSectorGeometry.hxAt1035 P u x hxre' hxim''
-          have hqsum : (P.q₁ : Int) + P.q₂ = P.q := by
-            exact_mod_cast P.sum_q.symm
-          have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by
-            exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q)
-          have hq1cast := EdgeSectorGeometry.hq1castAt1045 P hrpos hqsum hqcast
-          let m : GaussianInt := x - 1
-          have hmc := EdgeSectorGeometry.hmcAt1049 P u x hxre'' hxim'' hqsum hqcast
-          have hRmem : Rminus ∈ tiles := List.mem_of_head? hf.2.1
-          obtain ⟨e, he⟩ := regular_index Rminus
-            (hf.2.2.2.2.1 Rminus hRmem)
-          have hRm1 := EdgeSectorGeometry.hRm1 P u Rminus hRm
-          have hc'1 := EdgeSectorGeometry.hc'1 P T' u hc'
-          have hEtrans := translated_ford_cell P.q₂ 0 0
-            (u + ⟨0, (P.q : Int)⟩) P.q₂_pos P.q₂_pos
-          have hEcell : x ∈ Rminus.cells := EdgeSectorGeometry.hEcellAt1075 P u Rminus x hx hRm1
-              hEtrans
-          have hEidx : x ∈ (PP.tile e).cells := by simpa [he] using hEcell
-          have hdisET := EdgeSectorGeometry.hdisETAt1079 P T u hc Rminus ford_disjoint_im hRm1
-          have hdisET' := EdgeSectorGeometry.hdisET'At1085 P T' u Rminus ford_disjoint_re
-              hRm1 hc'1
-          have httrans := translated_ford_cell P.q (P.q - 1) P.q₁
-            (u + ⟨-(P.q : Int), (P.q₂ : Int)⟩) (by omega) (P.q₁_lt)
-          have hmT' := EdgeSectorGeometry.hmT' P T' u x hmc hc'1 httrans
-          obtain ⟨t, ht, htuniq⟩ := PeriodicTileIndexedMultiplicityOne PP m
-          have ht_ne_e := EdgeSectorGeometry.ht_ne_eAt1103 Ci T' Rminus PP x e he hdisET' hmT' t ht
-          have ht_ne_a := EdgeSectorGeometry.ht_ne_aAt1108 C0 Ci T T' h hdis tiles hs hcontain PP
-              x g a hAzip hAanc hmT' t ht
-          have he_ne_a := EdgeSectorGeometry.he_ne_aAt1113 P C0 Ci T h u Rminus tiles hs hcontain
-              PP x U g a hUa cf hcf hAzip hAanc z_other hcfSide hlow e he hdisET
-          have he_ne_b := EdgeSectorGeometry.he_ne_bAt1125 P C0 Ci T' h' u Rminus reverseTiles
-              reverseHs hcontain' PP x V k b hVb cb hcb hBzip hBanc z_other hcbSide hlow e he
-              hdisET'
-          have hxa := EdgeSectorGeometry.hxaAt1138 P Ci u PP x U a hUa cf hcf z_other hcfSide hlow
-          have hxb : x - 1 - ⟨0,1⟩ ∈ (PP.tile b).cells := EdgeSectorGeometry.hxbAt1142 P Ci u PP
-              x V b hVb cb hcb z_other hcbSide hlow
-          have hfour := AffineTriangularNoFourfoldCellOwners PP tileAt chart x
-            e t b a hEidx ht hxb hxa
-          have hrepeat : b = t := EdgeSectorGeometry.hrepeatAt1149 Ci a b hab e t ht_ne_e ht_ne_a
-              he_ne_a he_ne_b hfour
-          refine ⟨a, b, g, k, hab, hAzip, hBzip, hAanc, hBanc,
-            ⟨z, z_incident, U_edge, V_edge⟩, ?_⟩
-          have hbx : x - 1 ∈ (PP.tile b).cells := by simpa [hrepeat] using ht
-          exact Or.inr (Or.inr (Or.inr ⟨hxa, hbx⟩))
-      · apply (EdgeSectorGeometry.internal_solution P C0 Ci i hsmall T T' h h' u hc'
-          tiles reverseTiles hs reverseHs hcontain hcontain' PP tileAt chart x hxr
-          hxl vertical_edge_cells lower_lt_q z_low z_other z_incident hz_re hz_low hz_high U V g
-          k a b hUa hVb T_bounds T'_bounds indexed_edge
-          (EdgeSectorGeometry.cross_ne C0 Ci T T' h h' hdis tiles reverseTiles hs reverseHs
-          hcontain hcontain' PP) cf hcf hcfSide cb hcb hcbSide hab hAzip hBzip hAanc hBanc)
-        · omega
-        · omega
+  classical
+  have regular_index := EdgeSectorGeometry.regular_index Ci base PP htiles
+  have vertical_edge_cells := EdgeSectorGeometry.vertical_edge_cells
+      (EdgeSectorGeometry.pair_eq_iff)
+  have translated_ford_bounds := EdgeSectorGeometry.translated_ford_bounds
+  have translated_ford_cell := EdgeSectorGeometry.translated_ford_cell
+  have ford_disjoint_re := EdgeSectorGeometry.ford_disjoint_re translated_ford_bounds
+  have ford_disjoint_im := EdgeSectorGeometry.ford_disjoint_im translated_ford_bounds
+  have q₁pos := hrpos
+  have lower_lt_q := EdgeSectorGeometry.lower_lt_q P i hsmall
+  let z : GaussianInt :=
+    if (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
+    then x else x - ⟨0, 1⟩
+  have z_low (hlow : (x - u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) :
+      z = x := EdgeSectorGeometry.z_low P i u x hlow
+  have z_other := EdgeSectorGeometry.z_other P i u x
+  have z_incident := EdgeSectorGeometry.z_incident P i u x z_low z_other
+  have hz_re := EdgeSectorGeometry.hz_re P i u x hxr z_low z_other
+  have hz_low := EdgeSectorGeometry.hz_low P i u x hxl z_low z_other
+  have hz_high := EdgeSectorGeometry.hz_high P i u x hxu lower_lt_q z_low z_other
+  obtain ⟨U, V, g, k, hUint, hVint, hUz, hVk, hAg, hAk, hEdgeU, hEdgeV⟩ :=
+    hedges z hz_re hz_low hz_high
+  have hUmem : U ∈ tiles := (List.of_mem_zip hUz).1
+  have hVmem : V ∈ reverseTiles := (List.of_mem_zip hVk).1
+  obtain ⟨a, ha⟩ := regular_index U (hf.2.2.2.2.1 U hUmem)
+  obtain ⟨b, hb⟩ := regular_index V (hr.2.2.2.2.1 V hVmem)
+  have hUa : PP.tile a = U := ha
+  have hVb : PP.tile b = V := hb
+  have U_in_T : U.cells ⊆ T.cells := hcontain U g hUz hAg
+  have V_in_T' : V.cells ⊆ T'.cells := hcontain' V k hVk hAk
+  have U_edge : {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile a) := EdgeSectorGeometry.U_edge P Ci
+      i u PP x U hEdgeU a hUa
+  have V_edge : {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile b) := EdgeSectorGeometry.V_edge P Ci
+      i u PP x V hEdgeV b hVb
+  have T_bounds := EdgeSectorGeometry.T_bounds P T u hc translated_ford_bounds
+  have T'_bounds := EdgeSectorGeometry.T'_bounds P i T' u hc' translated_ford_bounds
+  have indexed_edge := EdgeSectorGeometry.indexed_edge P C0 Ci i T T' h h' u hdis orientation
+      base Rminus Rplus tiles reverseTiles hs reverseHs hf hr hcontain hcontain' hedges PP
+      regular_index vertical_edge_cells
+  have forward_support := EdgeSectorGeometry.forward_support P Ci i hsmall T u PP x
+      vertical_edge_cells hz_re U a hUa U_in_T U_edge T_bounds
+  have reverse_support := EdgeSectorGeometry.reverse_support P Ci i hsmall T' u PP x
+      vertical_edge_cells hz_re V b hVb V_in_T' V_edge T'_bounds
+  obtain ⟨cf, hcf, hcfSide⟩ := forward_support
+  obtain ⟨cb, hcb, hcbSide⟩ := reverse_support
+  have hab := EdgeSectorGeometry.hab Ci T T' hdis PP U V a b hUa hVb U_in_T V_in_T' cf hcf
+  have hAzip : (PP.tile a, g) ∈ tiles.zip hs := by simpa [hUa] using hUz
+  have hBzip : (PP.tile b, k) ∈ reverseTiles.zip reverseHs := by
+    simpa [hVb] using hVk
+  have hAanc : AncestorOdometer Ci.1.1 C0.1.1 (PP.tile a) T g h := by
+    simpa [hUa] using hAg
+  have hBanc : AncestorOdometer Ci.1.1 C0.1.1 (PP.tile b) T' k h' := by
+    simpa [hVb] using hAk
+  have lowerBoundary (hlow : (x-u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)) :
+    ∃ (a b : TilingLattice Ci) (g k
+    : PartialOdometer),
+    a ≠ b ∧ (PP.tile a, g) ∈ tiles.zip hs ∧
+    (PP.tile b, k) ∈ reverseTiles.zip reverseHs ∧
+    AncestorOdometer Ci.1.1 C0.1.1 (PP.tile a) T g h ∧
+    AncestorOdometer Ci.1.1 C0.1.1 (PP.tile b) T' k h' ∧
+    (∃ z, (z = x ∨ z = x - ⟨0, 1⟩) ∧
+    {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile a) ∧
+    {z, z + ⟨0, 1⟩} ∈ FootprintEdges (PP.tile b)) ∧
+    ((x ∈ (PP.tile a).cells ∧ x - 1 - ⟨0, 1⟩ ∈ (PP.tile b).cells) ∨
+    (x - 1 ∈ (PP.tile a).cells ∧ x - ⟨0, 1⟩ ∈ (PP.tile b).cells) ∨
+    (x - 1 - ⟨0, 1⟩ ∈ (PP.tile a).cells ∧ x ∈ (PP.tile b).cells) ∨
+    (x - ⟨0, 1⟩ ∈ (PP.tile a).cells ∧ x - 1 ∈ (PP.tile b).cells)) :=
+        EdgeSectorBoundary.lowerBoundary P C0 Ci i hsmall hrpos T T' h h' u hc hc' hdis
+        orientation base Rminus Rplus tiles reverseTiles hs reverseHs hf hr hRm hRp PP
+        tileAt chart x hxr hxl regular_index translated_ford_cell ford_disjoint_re
+        ford_disjoint_im q₁pos lower_lt_q z_low z_other z_incident hz_re hz_low hz_high U V g k
+            a b hUa hVb U_in_T V_in_T' U_edge V_edge T'_bounds cf hcf
+        hcfSide cb hcb hcbSide hab hAzip hBzip hAanc hBanc hlow
+  by_cases hlow : (x-u).im = (if i = 0 then (P.q₁ : Int) else P.q₂)
+  · exact lowerBoundary hlow
+  · by_cases htop : (x-u).im = P.q
+    · rcases hsmall with ⟨hi, hlt⟩ | ⟨hi, hlt⟩
+      · subst i
+        have hxre' : x.re - u.re = P.q := by
+          simpa [Zsqrtd.re_sub] using hxr
+        have hxim' : x.im - u.im = P.q := by
+          simpa [Zsqrtd.im_sub] using htop
+        have hxre'' : x.re = u.re + P.q := by omega
+        have hxim'' : x.im = u.im + P.q := by omega
+        have hx := EdgeSectorGeometry.hxAt909 P u x hxre'' hxim''
+        have hq1cast : ((P.q₁ - 1 : Nat) : Int) = (P.q₁ : Int) - 1 := by
+          exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q₁)
+        have hqsum : (P.q₁ : Int) + P.q₂ = P.q := by
+          exact_mod_cast P.sum_q.symm
+        let n : GaussianInt := x - 1
+        have hnc : n = (u + ⟨(P.q₂ : Int), (P.q : Int)⟩) +
+            ⟨((P.q₁ - 1 : Nat) : Int), 0⟩ := EdgeSectorGeometry.hncAt920 P u x hxre'' hxim''
+                hq1cast hqsum
+        have hRmem : Rplus ∈ tiles := List.mem_of_getLast? hf.2.2.1
+        obtain ⟨e, he⟩ := regular_index Rplus
+          (hf.2.2.2.2.1 Rplus hRmem)
+        have hEtrans := translated_ford_cell P.q₁ (P.q₁ - 1) 0
+          (u + ⟨(P.q₂ : Int), (P.q : Int)⟩) (by omega) (by omega)
+        have hEcell : n ∈ Rplus.cells := by rw [hRp, hnc]; exact hEtrans
+        have hEidx : n ∈ (PP.tile e).cells := by simpa [he] using hEcell
+        have hdisET := EdgeSectorGeometry.hdisETAt940 P T u hc Rplus ford_disjoint_im hRp
+        have hdisET' := EdgeSectorGeometry.hdisET'At944 P T' u Rplus ford_disjoint_re hc'
+            hRp hqsum
+        have hrootCell := translated_ford_cell P.q 0 P.q₂
+          (u + ⟨(P.q : Int), (P.q₁ : Int)⟩) (by omega) (EdgeSectorGeometry.hq2lt P hrpos
+              hq1cast)
+        have hxT' := EdgeSectorGeometry.hxT' P T' u x hc' (EdgeSectorGeometry.hxroot P u x hx
+            hqsum) hrootCell
+        obtain ⟨t, ht, htuniq⟩ := PeriodicTileIndexedMultiplicityOne PP x
+        have ht_ne_e := EdgeSectorGeometry.ht_ne_eAt974 Ci T' Rplus PP x e he hdisET' hxT' t ht
+        have ht_ne_a := EdgeSectorGeometry.ht_ne_aAt979 C0 Ci T T' h hdis tiles hs hcontain PP
+            x g a hAzip hAanc hxT' t ht
+        have he_ne_a := EdgeSectorGeometry.he_ne_aAt984 Ci T Rplus PP x U a hUa U_in_T e
+            hEcell hEidx hdisET
+        have he_ne_b := EdgeSectorGeometry.he_ne_bAt993 Ci T' Rplus PP x V b hVb V_in_T'
+            e hEcell hEidx hdisET'
+        have hxa := EdgeSectorGeometry.hxaAt1002 P Ci u PP x U a hUa cf hcf z_other hcfSide hlow
+        have hxb : x - ⟨0,1⟩ ∈ (PP.tile b).cells := EdgeSectorGeometry.hxbAt1009 P Ci u PP x V
+            b hVb cb hcb z_other hcbSide hlow
+        have hfour := AffineTriangularNoFourfoldCellOwners PP tileAt chart x
+          t e a b ht hEidx hxa hxb
+        have hrepeat : b = t := EdgeSectorGeometry.hrepeatAt1016 Ci a b hab e t ht_ne_e ht_ne_a
+            he_ne_a he_ne_b hfour
+        refine ⟨a, b, g, k, hab, hAzip, hBzip, hAanc, hBanc,
+          ⟨z, z_incident, U_edge, V_edge⟩, ?_⟩
+        have hbx : x ∈ (PP.tile b).cells := by simpa [hrepeat] using ht
+        exact Or.inr (Or.inr (Or.inl ⟨hxa, hbx⟩))
+      · subst i
+        have hxre' : x.re - u.re = 0 := by
+          simpa [Zsqrtd.re_sub] using hxr
+        have hxim' : x.im - u.im = P.q := by
+          simpa [Zsqrtd.im_sub] using htop
+        have hxre'' : x.re = u.re := by omega
+        have hxim'' : x.im = u.im + P.q := by omega
+        have hx := EdgeSectorGeometry.hxAt1035 P u x hxre' hxim''
+        have hqsum : (P.q₁ : Int) + P.q₂ = P.q := by
+          exact_mod_cast P.sum_q.symm
+        have hqcast : ((P.q - 1 : Nat) : Int) = (P.q : Int) - 1 := by
+          exact_mod_cast Nat.cast_sub (by omega : 1 ≤ P.q)
+        have hq1cast := EdgeSectorGeometry.hq1castAt1045 P hrpos hqsum hqcast
+        let m : GaussianInt := x - 1
+        have hmc := EdgeSectorGeometry.hmcAt1049 P u x hxre'' hxim'' hqsum hqcast
+        have hRmem : Rminus ∈ tiles := List.mem_of_head? hf.2.1
+        obtain ⟨e, he⟩ := regular_index Rminus
+          (hf.2.2.2.2.1 Rminus hRmem)
+        have hRm1 := EdgeSectorGeometry.hRm1 P u Rminus hRm
+        have hc'1 := EdgeSectorGeometry.hc'1 P T' u hc'
+        have hEtrans := translated_ford_cell P.q₂ 0 0
+          (u + ⟨0, (P.q : Int)⟩) P.q₂_pos P.q₂_pos
+        have hEcell : x ∈ Rminus.cells := EdgeSectorGeometry.hEcellAt1075 P u Rminus x hx hRm1
+            hEtrans
+        have hEidx : x ∈ (PP.tile e).cells := by simpa [he] using hEcell
+        have hdisET := EdgeSectorGeometry.hdisETAt1079 P T u hc Rminus ford_disjoint_im hRm1
+        have hdisET' := EdgeSectorGeometry.hdisET'At1085 P T' u Rminus ford_disjoint_re
+            hRm1 hc'1
+        have httrans := translated_ford_cell P.q (P.q - 1) P.q₁
+          (u + ⟨-(P.q : Int), (P.q₂ : Int)⟩) (by omega) (P.q₁_lt)
+        have hmT' := EdgeSectorGeometry.hmT' P T' u x hmc hc'1 httrans
+        obtain ⟨t, ht, htuniq⟩ := PeriodicTileIndexedMultiplicityOne PP m
+        have ht_ne_e := EdgeSectorGeometry.ht_ne_eAt1103 Ci T' Rminus PP x e he hdisET' hmT' t ht
+        have ht_ne_a := EdgeSectorGeometry.ht_ne_aAt1108 C0 Ci T T' h hdis tiles hs hcontain PP
+            x g a hAzip hAanc hmT' t ht
+        have he_ne_a := EdgeSectorGeometry.he_ne_aAt1113 P C0 Ci T h u Rminus tiles hs hcontain
+            PP x U g a hUa cf hcf hAzip hAanc z_other hcfSide hlow e he hdisET
+        have he_ne_b := EdgeSectorGeometry.he_ne_bAt1125 P C0 Ci T' h' u Rminus reverseTiles
+            reverseHs hcontain' PP x V k b hVb cb hcb hBzip hBanc z_other hcbSide hlow e he
+            hdisET'
+        have hxa := EdgeSectorGeometry.hxaAt1138 P Ci u PP x U a hUa cf hcf z_other hcfSide hlow
+        have hxb : x - 1 - ⟨0,1⟩ ∈ (PP.tile b).cells := EdgeSectorGeometry.hxbAt1142 P Ci u PP
+            x V b hVb cb hcb z_other hcbSide hlow
+        have hfour := AffineTriangularNoFourfoldCellOwners PP tileAt chart x
+          e t b a hEidx ht hxb hxa
+        have hrepeat : b = t := EdgeSectorGeometry.hrepeatAt1149 Ci a b hab e t ht_ne_e ht_ne_a
+            he_ne_a he_ne_b hfour
+        refine ⟨a, b, g, k, hab, hAzip, hBzip, hAanc, hBanc,
+          ⟨z, z_incident, U_edge, V_edge⟩, ?_⟩
+        have hbx : x - 1 ∈ (PP.tile b).cells := by simpa [hrepeat] using ht
+        exact Or.inr (Or.inr (Or.inr ⟨hxa, hbx⟩))
+    · apply (EdgeSectorGeometry.internal_solution P C0 Ci i hsmall T T' h h' u hc'
+        tiles reverseTiles hs reverseHs hcontain hcontain' PP tileAt chart x hxr
+        hxl vertical_edge_cells lower_lt_q z_low z_other z_incident hz_re hz_low hz_high U V g
+        k a b hUa hVb T_bounds T'_bounds indexed_edge
+        (EdgeSectorGeometry.cross_ne C0 Ci T T' h h' hdis tiles reverseTiles hs reverseHs
+        hcontain hcontain' PP) cf hcf hcfSide cb hcb hcbSide hab hAzip hBzip hAanc hBanc)
+      · omega
+      · omega
 
 end ApollonianSuperharmonic
 

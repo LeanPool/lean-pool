@@ -229,7 +229,7 @@ theorem deletionRule_kernel_irreducible
   intro x y
   induction hdef : inventoryDeficit x y using
       Nat.strong_induction_on generalizing x with
-  | h n ih =>
+  | ind n ih =>
       by_cases hxy : x = y
       · subst y
         exact R.kernel.reaches_refl x
@@ -281,7 +281,7 @@ theorem coherent_eq_sum_leafBlock
     {d : ℕ} (hdL : d ≤ L) (v : DyadicNode d) :
     q.value d v = ∑ w ∈ leafBlock hdL v, q.value L w := by
   induction hgap : L - d using Nat.strong_induction_on generalizing d with
-  | h k ih =>
+  | ind k ih =>
       by_cases hd : d = L
       · subst d
         rw [leafBlock_self]

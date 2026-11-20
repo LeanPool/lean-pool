@@ -253,7 +253,7 @@ lemma kc_ae_increment_bound
   have hsummable_real : Summable (fun n => (M : ℝ) * ρ ^ n) :=
     (summable_geometric_of_lt_one hρ0.le hρ1).mul_left _
   have htsum_ne : (∑' n, P (A n)) ≠ ⊤ := by
-    refine ne_top_of_le_ne_top ?_ (ENNReal.tsum_le_tsum hAle)
+    refine ne_top_of_le_ne_top ?_ (tsum_le_tsum hAle)
     rw [← ENNReal.ofReal_tsum_of_nonneg (fun n => by positivity) hsummable_real]
     exact ENNReal.ofReal_ne_top
   have hlimsup : P (Filter.limsup A Filter.atTop) = 0 :=

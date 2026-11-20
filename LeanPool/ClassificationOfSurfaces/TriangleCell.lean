@@ -34,11 +34,11 @@ namespace TriangleCell
 local instance : Fact (0 < (3 : ℝ)) := ⟨by norm_num⟩
 
 /-- The closed standard triangle, viewed as a topological subspace. -/
-abbrev StandardTriangle :=
+noncomputable abbrev StandardTriangle :=
   Moise.standardTrianglePlaneComplex.support
 
 /-- The frontier of the standard triangle. -/
-abbrev StandardTriangleBoundary :=
+noncomputable abbrev StandardTriangleBoundary :=
   frontier Moise.standardTrianglePlaneComplex.support
 
 /-- Traverse the three affine sides of the standard triangle during the interval `[0, 3]`. -/

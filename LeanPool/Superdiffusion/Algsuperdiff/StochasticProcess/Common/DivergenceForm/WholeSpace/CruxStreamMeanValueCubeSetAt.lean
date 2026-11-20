@@ -209,9 +209,7 @@ theorem discountedExitAverage_eq_sub_add_cubeSetAt_stream
       (R.toContractiveResolvent.resolvent_identity ⟨lam, hlam⟩ mu) g
     have hz := congrArg (fun f : C₀(Vec d, ℝ) => f z) h
     simp only [sub_apply, smul_apply,
-      ContinuousLinearMap.coe_comp, Function.comp_apply,
-      ZeroAtInftyContinuousMap.coe_sub, ZeroAtInftyContinuousMap.coe_smul,
-      Pi.sub_apply, Pi.smul_apply, smul_eq_mul] at hz
+      ContinuousLinearMap.coe_comp, Function.comp_apply, smul_eq_mul] at hz
     linarith only [hz]
   set p1 : OnePoint (Vec d) → ℝ := onePointRealExtension (fun z => psi z) with hp1def
   set p2 : OnePoint (Vec d) → ℝ := onePointRealExtension

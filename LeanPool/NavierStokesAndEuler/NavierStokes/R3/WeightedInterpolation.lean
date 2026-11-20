@@ -82,7 +82,7 @@ theorem eLpNorm_le_rpow_mul
         (fun x y : ℝ => x * y) 1
         (hf.norm.aemeasurable.pow_const a).aestronglyMeasurable
         (hg.norm.aemeasurable.pow_const b).aestronglyMeasurable
-        (Filter.Eventually.of_forall fun x => by simp only [nnnorm_mul, one_mul, Std.le_refl])
+        (Filter.Eventually.of_forall fun x => by simp only [nnNorm_mul, one_mul, Std.le_refl])
         ⟨by simpa only [one_div] using hab.symm, hr.trans hra, div_pos hq hb⟩
     _ = eLpNorm' f p.toReal volume ^ a * eLpNorm' g q.toReal volume ^ b := by
       rw [eLpNorm'_norm_rpow _ _ _ ha, eLpNorm'_norm_rpow _ _ _ hb,

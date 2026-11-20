@@ -373,7 +373,8 @@ theorem cartesianCylinder_smooth : ContDiff ℝ ∞ cartesianCylinder :=
 theorem velocityComponents_smooth {u : ProblemStatement.VelocityField}
     (hu : ContDiffOn ℝ ∞ u BaseResidual.past) :
     ContDiffOn ℝ ∞ (CylindricalResidual.velocityComponents u) BaseResidual.past := by
-  have hc := hu.comp cartesianCylinder_smooth.contDiffOn (fun _ hx => hx)
+  have hc := hu.comp cartesianCylinder_smooth.contDiffOn
+    (fun _ (hx : _ ∈ BaseResidual.past) => hx)
   have hangle : ContDiff ℝ ∞ (fun x : SpaceTime => -(x.2 1)) :=
     ((AxisymmetricFields.projection 1).contDiff.comp contDiff_snd).neg
   exact (CylindricalResidual.contDiff_frame.comp hangle).contDiffOn.clm_apply hc
@@ -586,8 +587,9 @@ theorem pressureAtScale_smooth {Q : ℝ} (hQ : 0 < Q) :
 theorem errorAtScale_smooth {Q : ℝ} (hQ : 0 < Q) (i : Fin 3) :
     ContDiffOn ℝ ∞ (fun x => errorAtScale H v upper B Q x i) timeDomain := by
   have he := (FinalSlowBase.error_smooth H v upper B).comp
-    (physicalPoint_smooth F.data.h Q).contDiffOn (fun _ hx => ⟨physicalPoint_time (h := F.data.h)
-        hQ hx, Set.mem_univ _⟩)
+    (physicalPoint_smooth F.data.h Q).contDiffOn
+      (fun _ (hx : _ ∈ timeDomain) =>
+        ⟨physicalPoint_time (h := F.data.h) hQ hx, Set.mem_univ _⟩)
   have hr := (CylindricalResidual.contDiff_frame.comp contDiff_snd.neg).contDiffOn.clm_apply he
   exact contDiffOn_const.mul ((AxisymmetricFields.projection i).contDiff.comp_contDiffOn hr)
 
@@ -841,7 +843,8 @@ theorem velocityAtScale_smooth {Q : ℝ} (hQ : 0 < Q) (i : Fin 3) :
     ContDiffOn ℝ ∞ (fun x => velocityAtScale H v upper B Q x i) timeDomain := by
   have hu := (FinalSlowBase.velocity_smooth H v upper B).comp
     (physicalPoint_smooth F.data.h Q).contDiffOn
-      (fun _ hx => ⟨physicalPoint_time (h := F.data.h) hQ hx, Set.mem_univ _⟩)
+      (fun _ (hx : _ ∈ timeDomain) =>
+        ⟨physicalPoint_time (h := F.data.h) hQ hx, Set.mem_univ _⟩)
   have hr := (CylindricalResidual.contDiff_frame.comp contDiff_snd.neg).contDiffOn.clm_apply hu
   exact contDiffOn_const.mul ((AxisymmetricFields.projection i).contDiff.comp_contDiffOn hr)
 

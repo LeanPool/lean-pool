@@ -65,8 +65,8 @@ private lemma rationalAffineLine_eq_projective_rep {n : ℕ}
     (hp : Projectivization.mk ℚ v hv = p) :
     rationalAffineLine a v = rationalAffineLine a p.rep := by
   have he : Projectivization.mk ℚ v hv =
-      Projectivization.mk ℚ p.rep p.rep_nonzero := hp.trans p.mk_rep.symm
-  obtain ⟨c, hc⟩ := (Projectivization.mk_eq_mk_iff ℚ v p.rep hv p.rep_nonzero).mp he
+      Projectivization.mk ℚ p.rep p.rep_ne_zero := hp.trans p.mk_rep.symm
+  obtain ⟨c, hc⟩ := (Projectivization.mk_eq_mk_iff ℚ v p.rep hv p.rep_ne_zero).mp he
   have heq : v = (c : ℚ) • p.rep := hc.symm
   rw [heq]
   exact rationalAffineLine_smul_direction a p.rep c.ne_zero

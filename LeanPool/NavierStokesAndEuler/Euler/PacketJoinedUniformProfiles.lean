@@ -216,7 +216,7 @@ theorem joinedSource_profile_budgets (p : ℕ) : 1 ≤ p →
     ProfileBudget (joinedSourceProfileWitness P M D hTime τ hτ hτT B primary hprimary p) S L.R p :=
         by
   induction p using Nat.strong_induction_on with
-  | h p ih =>
+  | ind p ih =>
     intro hp
     by_cases hp1 : p = 1
     · subst p

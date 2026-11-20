@@ -149,6 +149,7 @@ def leftRegularRepresentation (G : Type u) [Group G] :
     change f ((g * h)⁻¹ * k) = f (h⁻¹ * (g⁻¹ * k))
     simp [mul_assoc]
 
+open scoped Pointwise in
 /-- Bicommutant presentation of the von Neumann closure boundary. Paper: §3. -/
 def vonNeumannClosure
     {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

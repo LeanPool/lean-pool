@@ -541,7 +541,7 @@ lemma simpleIntegral_memLp_compensated
       unfold SimplePredictable.timeRect
       exact MeasurableSet.prod measurableSet_Ioc (φ.A_measurable i)
     exact ENNReal.measurable_toReal.comp h_meas_NB
-  · rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  · rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
         (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by simp : (2 : ℝ≥0∞) ≠ ⊤) hmeas]
     have h_two_toReal : (2 : ℝ≥0∞).toReal = 2 := by simp
     rw [h_two_toReal]

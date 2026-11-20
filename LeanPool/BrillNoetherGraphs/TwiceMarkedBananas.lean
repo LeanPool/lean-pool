@@ -127,19 +127,19 @@ theorem bnExists_toLib (G : CFGraph) (r d : ℤ) :
     BNExists G r d ↔ Utilities.BNExists (toLib G) r d := by
   unfold BNExists Utilities.BNExists
   simp only [rank_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem brillNoetherGeneral_toLib (G : CFGraph) :
     BrillNoetherGeneral G ↔ Bananas.BrillNoetherGeneral (toLib G) := by
   unfold BrillNoetherGeneral Bananas.BrillNoetherGeneral
   simp only [bnExists_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem rankSupport_toLib (G : CFGraph) (D : CFDiv G) :
     rankSupport G D = Bananas.rankSupport (toLib G) D := by
   unfold rankSupport Bananas.rankSupport
   simp only [rank_toLib]
-  all_goals rfl
+  rfl
 
 /-! ### Twice-marked graphs -/
 
@@ -153,13 +153,13 @@ theorem rankDelta_toLib (M : TwiceMarked) (D : CFDiv M.graph) :
     rankDelta M D = Bananas.rankDelta (toLibTM M) D := by
   unfold rankDelta Bananas.rankDelta
   simp only [rank_toLib]
-  all_goals rfl
+  rfl
 
 theorem submodular_toLib (M : TwiceMarked) (D : CFDiv M.graph) :
     Submodular M D ↔ Bananas.Submodular (toLibTM M) D := by
   unfold Submodular Bananas.Submodular
   simp only [rankDelta_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem allSubmodular_toLib (M : TwiceMarked) :
     AllSubmodular M ↔ Bananas.AllSubmodular (toLibTM M) := by
@@ -172,19 +172,19 @@ theorem isTransmissionPermutation_toLib (M : TwiceMarked) (D : CFDiv M.graph)
       Bananas.IsTransmissionPermutation (toLibTM M) D τ := by
   unfold IsTransmissionPermutation Bananas.IsTransmissionPermutation
   simp only [rankDelta_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem kGeneralTransmission_toLib (M : TwiceMarked) (k : ℕ) :
     KGeneralTransmission M k ↔ Bananas.KGeneralTransmission (toLibTM M) k := by
   unfold KGeneralTransmission Bananas.KGeneralTransmission
   simp only [allSubmodular_toLib, isTransmissionPermutation_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem nonRecurrent_toLib (M : TwiceMarked) (k : ℕ) :
     NonRecurrent M k ↔ Bananas.NonRecurrent (toLibTM M) k := by
   unfold NonRecurrent Bananas.NonRecurrent
   simp only [rank_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem canonicalMarkedSupportsPairwiseDisjoint_toLib (M : TwiceMarked) (k : ℕ) :
     CanonicalMarkedSupportsPairwiseDisjoint M k ↔
@@ -192,7 +192,7 @@ theorem canonicalMarkedSupportsPairwiseDisjoint_toLib (M : TwiceMarked) (k : ℕ
   unfold CanonicalMarkedSupportsPairwiseDisjoint
     Bananas.CanonicalMarkedSupportsPairwiseDisjoint
   simp only [rankSupport_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem effectiveDegreeOneTwistResidues_toLib (M : TwiceMarked) (D : CFDiv M.graph)
     (k : ℕ) :
@@ -200,7 +200,7 @@ theorem effectiveDegreeOneTwistResidues_toLib (M : TwiceMarked) (D : CFDiv M.gra
       Bananas.effectiveDegreeOneTwistResidues (toLibTM M) D k := by
   unfold effectiveDegreeOneTwistResidues Bananas.effectiveDegreeOneTwistResidues
   simp only [rank_toLib]
-  all_goals rfl
+  rfl
 
 theorem invTauCorrection_toLib (M : TwiceMarked) (D : CFDiv M.graph) :
     invTauCorrection M D = Bananas.invTauCorrection (toLibTM M) D := rfl
@@ -209,13 +209,13 @@ theorem sectionFiveRankDropSum_toLib (M : TwiceMarked) (D : CFDiv M.graph) (k : 
     sectionFiveRankDropSum M D k = Bananas.sectionFiveRankDropSum (toLibTM M) D k := by
   unfold sectionFiveRankDropSum Bananas.sectionFiveRankDropSum
   simp only [rank_toLib]
-  all_goals rfl
+  rfl
 
 theorem hasInversionLowerBound_toLib (M : TwiceMarked) (k q : ℕ) :
     HasInversionLowerBound M k q ↔ Bananas.HasInversionLowerBound (toLibTM M) k q := by
   unfold HasInversionLowerBound Bananas.HasInversionLowerBound
   simp only [isTransmissionPermutation_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 /-! ### Graph isomorphisms -/
 
@@ -315,14 +315,14 @@ theorem poleOrder_toLib (G : CFGraph) (v : G.V) (D : CFDiv G) (i : ℕ) :
     poleOrder G v D i = Bananas.poleOrder (toLib G) v D i := by
   unfold poleOrder Bananas.poleOrder poleOrderSet Bananas.poleOrderSet
   simp only [rank_toLib]
-  all_goals rfl
+  rfl
 
 theorem weierstrassPart_toLib (G : CFGraph) (v : G.V) (D : CFDiv G) (i : ℕ) :
     weierstrassPart G v D i = Bananas.weierstrassPart (toLib G) v D i := by
   unfold weierstrassPart Bananas.weierstrassPart weierstrassPartInt
     Bananas.weierstrassPartInt
   simp only [poleOrder_toLib]
-  all_goals rfl
+  rfl
 
 theorem graph_connected_toLib (G : CFGraph) :
     graphConnected G ↔ _root_.graphConnected (toLib G) := Iff.rfl
@@ -335,21 +335,21 @@ theorem weierstrassSize_toLib {G : CFGraph} (hconn : graphConnected G) (v : G.V)
     ((graph_connected_toLib G).mp hconn) v D).symm
   unfold weierstrassSize
   simp only [weierstrassPart_toLib]
-  all_goals rfl
+  rfl
 
 theorem onceMarkedCensusContains_toLib (G : CFGraph) (v : G.V) (lambda : YoungDiagram) :
     OnceMarkedCensusContains G v lambda ↔
       Utilities.OnceMarkedCensusContains (toLib G) v lambda := by
   unfold OnceMarkedCensusContains Utilities.OnceMarkedCensusContains
   simp only [rank_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem onceMarkedBrillNoetherGeneral_toLib (G : CFGraph) (v : G.V) :
     OnceMarkedBrillNoetherGeneral G v ↔
       Bananas.OnceMarkedBrillNoetherGeneral (toLib G) v := by
   unfold OnceMarkedBrillNoetherGeneral Bananas.OnceMarkedBrillNoetherGeneral
   simp only [onceMarkedCensusContains_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 /-- Once-marked generality at the right mark of a chain, in library form. -/
 theorem onceMarkedBrillNoetherGeneral_chain_toLib (M : MarkedGraph) (L : List MarkedGraph) :
@@ -395,7 +395,7 @@ theorem isSemibreak_toLib {g : ℕ} (B : Banana g) (E : CFDiv B.graph) :
     IsSemibreak B E ↔ Bananas.IsSemibreak (toLibBanana B) E := by
   unfold IsSemibreak Bananas.IsSemibreak
   simp only [semibreakDivisor_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem thetaKGeneralCoordinates_toLib {k : ℕ} (B : Banana 2) (alpha beta : Fin 3)
     (i : B.PathPosition alpha) (j : B.PathPosition beta) :
@@ -403,7 +403,7 @@ theorem thetaKGeneralCoordinates_toLib {k : ℕ} (B : Banana 2) (alpha beta : Fi
       Bananas.ThetaKGeneralCoordinates (k := k) (toLibBanana B) alpha beta i j := by
   unfold ThetaKGeneralCoordinates Bananas.ThetaKGeneralCoordinates
   simp only [nonRecurrent_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 theorem bridgelessGenusTwoKGeneralCharacterization_toLib (G : CFGraph.{0}) (u v : G.V)
     (k : ℕ) :
@@ -1146,7 +1146,7 @@ theorem _root_.Bananas.TwiceMarkedBananas.s3_thm3_4
       Set.Nonempty (thetaExceptionalPositions B alpha i j) := by
   refine Iff.trans ?_ (Bananas.theta_nonSubmodular_iff_same_strand (toLibBanana B) alpha i j hij)
   simp only [rankDelta_toLib]
-  all_goals exact Iff.rfl
+  exact Iff.rfl
 
 /-- **Lemma 3.5** (`lem-SameStrand`). Section 3.
 

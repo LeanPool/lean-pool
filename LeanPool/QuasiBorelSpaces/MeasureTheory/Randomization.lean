@@ -37,7 +37,7 @@ lemma measurable_normalize (r) : Measurable (normalize (r := r)) := by
 lemma injective_normalize (r) : Function.Injective (normalize (r := r)) := by
   intro i₁ i₂ hi
   simp only [normalize, Subtype.mk.injEq] at hi
-  rw [div_left_inj'] at hi
+  rw [div_left_inj₀] at hi
   · ext
     exact hi
   · grind
@@ -181,7 +181,7 @@ lemma measurable_detf
   simp only
   wlog! hμ : μ ≠ 0
   · subst hμ
-    simp only [coe_zero, Pi.ofNat_apply, ENNReal.toReal_zero, ENNReal.inv_zero, smul_zero]
+    have : IsEmpty (Set.Ico (0 : ℝ) ((0 : Measure A) Set.univ).toReal) := by simp
     apply measurable_of_empty
   have : NeZero μ := ⟨hμ⟩
   apply measurable_det <;> fun_prop
@@ -196,7 +196,7 @@ lemma eq_detf_volume
       simp_all
     have : (volume : Measure (Set.Ico (0 : ℝ) ((0 : Measure A) Set.univ).toReal)) = 0 := by
       ext s _
-      simp only [Measure.coe_zero, Pi.zero_apply]
+      simp only [FunLike.coe_zero, Pi.zero_apply]
       rw [show s = ∅ from Set.eq_empty_of_isEmpty s]
       simp only [measure_empty]
     rw [this]

@@ -199,7 +199,7 @@ theorem exists_overlapCubeVector_normalized_poincare_constant {d : ℕ} [NeZero 
     ENNReal.sum_ne_top.2 fun i _ => (hRcoord_mem i).eLpNorm_ne_top
   have hrightR_top :
       ‖(d : ℝ)‖ₑ * ∑ i : Fin d, eLpNorm (fun x => R x i) q.exponent μ ≠ ∞ :=
-    ENNReal.mul_ne_top enorm_ne_top hsumR_top
+    ENNReal.mul_ne_top eNorm_ne_top hsumR_top
   have hvecENN :
       eLpNorm (fun x => HilbertVec.ofVec (R x)) q.exponent μ ≤
         ‖(d : ℝ)‖ₑ * ∑ i : Fin d, eLpNorm (fun x => R x i) q.exponent μ :=

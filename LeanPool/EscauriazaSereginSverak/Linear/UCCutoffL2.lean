@@ -204,22 +204,22 @@ theorem ucGaussianCutoff_l2_data
     intro z
     exact le_add_left le_rfl
   have hvm : MemLp v 2 (volume.restrict (ucCylinder ρ)) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweak.1.aestronglyMeasurable).2
     simpa [ucCylinder] using hvfin
   have hDwm : MemLp Dw 2 (volume.restrict (ucCylinder ρ)) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweak.2.1.aestronglyMeasurable).2
     simpa [ucCylinder] using hDwfin
   have hD2m : MemLp D2w 2 (volume.restrict (ucCylinder ρ)) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweak.2.2.1.aestronglyMeasurable).2
     simpa [ucCylinder] using hD2fin
   have hDtm : MemLp Dtw 2 (volume.restrict (ucCylinder ρ)) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num)
       hweak.2.2.2.1.aestronglyMeasurable).2
     simpa [ucCylinder] using hDtfin

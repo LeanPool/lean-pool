@@ -273,7 +273,7 @@ theorem exists_unique_short_geodesic {C : E → Coeff} {p : E}
   let F : Phase → E := fun z => -σ • K (C z.1) z.2 z.2
   have hFp : F (p, 0) = 0 := by apply vec_ext <;> simp [F, K]
   obtain ⟨S, hS, hLip⟩ := (hasStrictFDerivAt_acceleration_zero hC
-      σ).exists_lipschitzOnWith_of_nnnorm_lt (1 / 4 : ℝ≥0) (by norm_num)
+      σ).exists_lipschitzOnWith_of_nnNorm_lt (1 / 4 : ℝ≥0) (by norm_num)
   obtain ⟨ε, hε, hεS⟩ := Metric.mem_nhds_iff.mp hS
   let r := min (ε / 2) η
   have hr : 0 < r := lt_min (by positivity) hη

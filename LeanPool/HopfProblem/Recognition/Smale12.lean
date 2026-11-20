@@ -1578,7 +1578,7 @@ private theorem Smale.ManifoldMorse.SurgeryWindows.upper_homology_subsingleton_o
       Subsingleton
         (SingularMayerVietoris.SingularHomology { x : M // f x ≤ S.lower (S.point ⟨i, hi⟩) } k)
   have hlow : P (j.val + 1) := by
-    apply Nat.decreasingInduction' (P := P) (m := j.val + 1) (n := S.count - 1)
+    apply Nat.decreasingInduction' (motive := P) (m := j.val + 1) (n := S.count - 1)
     · intro i hi hji ih hi'
       have hs : i + 1 < S.count := by omega
       let :

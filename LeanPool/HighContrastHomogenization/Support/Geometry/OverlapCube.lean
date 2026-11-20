@@ -62,6 +62,7 @@ def openCubeSet {d : ℕ} (S : TriadicCube d) : Set (Vec d) :=
 theorem measurableSet_coord_halfOpenStrip {d : ℕ}
     (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a ≤ x i ∧ x i < b} := by
+  change MeasurableSet ({x : Vec d | a ≤ x i} ∩ {x : Vec d | x i < b})
   refine MeasurableSet.inter ?_ ?_
   · exact (isClosed_le continuous_const (continuous_apply i)).measurableSet
   · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet
@@ -69,6 +70,7 @@ theorem measurableSet_coord_halfOpenStrip {d : ℕ}
 theorem measurableSet_coord_openStrip {d : ℕ}
     (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a < x i ∧ x i < b} := by
+  change MeasurableSet ({x : Vec d | a < x i} ∩ {x : Vec d | x i < b})
   refine MeasurableSet.inter ?_ ?_
   · exact (isOpen_lt continuous_const (continuous_apply i)).measurableSet
   · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet
@@ -370,7 +372,7 @@ theorem cubeMeasure_apply_univ_eq {d : ℕ} (S : TriadicCube d) :
 
 @[simp] theorem normalizedCubeMeasure_apply_univ {d : ℕ} (S : TriadicCube d) :
     normalizedCubeMeasure S Set.univ = 1 := by
-  rw [normalizedCubeMeasure, MeasureTheory.Measure.smul_apply,
+  rw [normalizedCubeMeasure, smul_apply,
     cubeMeasure_apply_univ_eq S]
   rw [ENNReal.ofReal_inv_of_pos (cubeVolume_pos S)]
   have hvol : ENNReal.ofReal (cubeVolume S) ≠ 0 :=

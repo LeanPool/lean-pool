@@ -44,9 +44,9 @@ lemma ae_norm_le (u : Lp U ∞ μ) : ∀ᵐ t ∂μ, ‖u t‖ ≤ ‖u‖ := by
   have hfinite : eLpNormEssSup (⇑u) μ ≠ ∞ := by
     rw [← htop]
     exact Lp.eLpNorm_ne_top u
-  filter_upwards [enorm_ae_le_eLpNormEssSup (⇑u) μ] with t ht
+  filter_upwards [eNorm_ae_le_eLpNormEssSup (⇑u) μ] with t ht
   have ht' := ENNReal.toReal_mono hfinite ht
-  simpa only [Lp.norm_def, htop, toReal_enorm] using ht'
+  simpa only [Lp.norm_def, htop, toReal_eNorm] using ht'
 
 end ALCS
 

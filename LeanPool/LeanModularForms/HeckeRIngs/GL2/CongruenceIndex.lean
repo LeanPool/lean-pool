@@ -35,7 +35,7 @@ namespace HeckeRing.GL2
 private lemma ZMod_inv_mul_cancel (p : ℕ) (hp : Nat.Prime p) (a : ℤ)
     (h : (a : ZMod p) ≠ 0) : (a : ZMod p)⁻¹ * (a : ZMod p) = 1 := by
   have : NeZero p := ⟨hp.ne_zero⟩
-  apply ZMod.coe_int_inv_mul_eq_one
+  apply ZMod.intCast_inv_mul_eq_one
   rw [isCoprime_comm, Int.isCoprime_iff_gcd_eq_one]
   change Nat.Coprime p a.natAbs
   rw [hp.coprime_iff_not_dvd]

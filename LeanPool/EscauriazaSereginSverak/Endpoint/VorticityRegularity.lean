@@ -39,13 +39,13 @@ theorem vorticity_restrict_cylinder_half (x₀ : Vec3) (t₀ : ℝ) :
   have hQS : (vec3Ball x₀ (1 / 2) ×ˢ Ioc (t₀ - (1 / 2) ^ 2) t₀ : Set (Vec3 × ℝ)) =ᵐ[volume]
       (vec3Ball x₀ (1 / 2) ×ˢ Ioo (t₀ - 1 / 4) t₀ : Set (Vec3 × ℝ)) := by
     rw [e]
-    exact Measure.set_prod_ae_eq EventuallyEq.rfl Ioo_ae_eq_Ioc.symm
+    exact Measure.set_prod_ae_eq EventuallyEqSet.rfl Ioo_ae_eq_Ioc.symm
   exact Measure.restrict_congr_set hQS
 
 /-- The finiteness of the integral of the squared norm of a square-integrable field. -/
 theorem vorticity_lintegral_sq_lt_top {α E : Type*} [MeasurableSpace α] [NormedAddCommGroup E]
     {μ : Measure α} {f : α → E} (hf : MemLp f 2 μ) : ∫⁻ a, ‖f a‖ₑ ^ (2 : ℝ) ∂μ < ⊤ := by
-  simpa using lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top two_ne_zero
+  simpa using lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top two_ne_zero
     ENNReal.ofNat_ne_top hf.eLpNorm_lt_top
 
 /-- The finiteness of the sum of the squared norms of four square-integrable fields. -/
@@ -56,9 +56,9 @@ theorem vorticity_lintegral_four_lt_top {α E₁ E₂ E₃ E₄ : Type*} [Measur
     (h₄ : MemLp f₄ 2 μ) :
     (∫⁻ a, ‖f₁ a‖ₑ ^ (2 : ℝ) + ‖f₂ a‖ₑ ^ (2 : ℝ) + ‖f₃ a‖ₑ ^ (2 : ℝ) + ‖f₄ a‖ₑ ^ (2 : ℝ) ∂μ) <
       ⊤ := by
-  rw [lintegral_add_right' _ (h₄.aestronglyMeasurable.enorm.pow_const (2 : ℝ)),
-    lintegral_add_right' _ (h₃.aestronglyMeasurable.enorm.pow_const (2 : ℝ)),
-    lintegral_add_right' _ (h₂.aestronglyMeasurable.enorm.pow_const (2 : ℝ))]
+  rw [lintegral_add_right' _ (h₄.aestronglyMeasurable.eNorm.pow_const (2 : ℝ)),
+    lintegral_add_right' _ (h₃.aestronglyMeasurable.eNorm.pow_const (2 : ℝ)),
+    lintegral_add_right' _ (h₂.aestronglyMeasurable.eNorm.pow_const (2 : ℝ))]
   exact ENNReal.add_lt_top.2 ⟨ENNReal.add_lt_top.2 ⟨ENNReal.add_lt_top.2
     ⟨vorticity_lintegral_sq_lt_top h₁, vorticity_lintegral_sq_lt_top h₂⟩,
     vorticity_lintegral_sq_lt_top h₃⟩, vorticity_lintegral_sq_lt_top h₄⟩

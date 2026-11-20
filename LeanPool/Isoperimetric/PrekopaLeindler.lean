@@ -627,8 +627,8 @@ theorem prekopa_leindler
     : ENNReal.ofReal ((1 - θ) ^ ((d + 1) * (1 - θ)) * θ ^ ((d + 1) * θ))⁻¹
       * (∫⁻ x, f x) ^ (1 - θ) * (∫⁻ x, g x) ^ θ ≤ ∫⁻ x, h x := by
   induction d using Nat.case_strong_induction_on with
-  | hz => simpa using (prekopa_leindler_1d_fin1 hθfgh)
-  | hi d hd =>
+  | zero => simpa using (prekopa_leindler_1d_fin1 hθfgh)
+  | succ d hd =>
   -- The goal is to prove the result for Fin (d + 2) → ℝ.
   let ⟨hθ0, hθ1, hf_measurable, hg_measurable, hh_measurable, hfgh⟩ := hθfgh
   -- The inductive hypotheses for Fin 1 → ℝ and Fin (d + 1) → ℝ

@@ -58,7 +58,7 @@ theorem measurable_enorm_gridDualDepthTest (Q : TriadicCube d) (j : ℕ)
     have hh : Measurable (fun x : Vec d => HilbertVec.ofVec (gridDualDepthTest Q j v x)) :=
       (HilbertVec.ofVecL d).continuous.measurable.comp hg
     simpa only [euclideanNorm_eq_norm_ofVec] using hh.norm
-  exact hn.enorm.pow_const r
+  exact hn.eNorm.pow_const r
 
 /-! ## 2. The `x`-half -/
 

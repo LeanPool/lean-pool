@@ -471,7 +471,7 @@ theorem ofReal_doubledMu_le_tsum_of_dissection
     _ ≤ (∑' i, ENNReal.ofReal
             (((volume (S i : Set (Vec d))).toReal / (volume (Q : Set (Vec d))).toReal) *
               Book.Ch02.doubledMu (S i) (aS i) (Fc i, Gc i))) + (ε : ℝ≥0∞) :=
-        add_le_add (ENNReal.sum_le_tsum J) le_rfl
+        add_le_add (sum_le_tsum J) le_rfl
 
 /-! ## The countable-carrier provider statement -/
 

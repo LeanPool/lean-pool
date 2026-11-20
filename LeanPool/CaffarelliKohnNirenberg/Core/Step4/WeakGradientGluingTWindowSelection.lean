@@ -45,7 +45,7 @@ theorem memLp_product_indicator_slices
     exact (hs hsj).indicator hB.nullMeasurableSet
   · have heq : (fun y => (B ×ˢ J).indicator F (y, s)) = fun _ => 0 := by
       funext y
-      exact Set.indicator_of_notMem (fun h => hsj h.2) F
+      exact Set.indicator_of_notMem (fun h : (y, s) ∈ B ×ˢ J => hsj h.2) F
     rw [heq]
     exact MemLp.zero
 
@@ -65,7 +65,8 @@ theorem exists_measurable_riesz_extension_field_on_window (j i : Fin 3)
   apply exists_measurable_riesz_extension_field_of_aemeasurable j i hF
     (CKN.Foundation.Parabolic.isCompact_closure_vec3Ball hr)
   · intro y s hy
-    exact Set.indicator_of_notMem (fun h => hy (subset_closure h.1)) F
+    exact Set.indicator_of_notMem
+      (fun h : (y, s) ∈ vec3Ball x r ×ˢ J => hy (subset_closure h.1)) F
   · exact memLp_product_indicator_slices (isOpen_vec3Ball _ _).measurableSet hJ hFs
 
 end CKN.Core.Step4

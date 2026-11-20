@@ -75,8 +75,8 @@ theorem P4261T1EdgeExterior
     | AE01 m n | AF m n | BC m n | BDm1m1 m n | BD m n | BE m n
     | BF0m1 m n | CDm10 m n | CEm10 m n | CF m n | DE m n | DF10 m n =>
       constructor <;> intro hf hs hn <;>
-        simp_all [P4261T1ExteriorIndices, PeriodicSubtileIndex.mk.injEq]
-      all_goals omega
+        simp_all [P4261T1ExteriorIndices, PeriodicSubtileIndex.mk.injEq,
+          add_eq_zero_iff_eq_neg, sub_eq_zero]
   exact (ledger a b hinc).1 rfl rfl ha
 
 end ApollonianSuperharmonic

@@ -654,7 +654,7 @@ theorem pressureP7_bound
       eLpNorm' (fun x : Vec3 => f (x, s)) q (volume.restrict Bρ) ≤
         ENNReal.ofReal (G s) := by
     filter_upwards [hHs] with s hs
-    rw [eLpNorm'_eq_lintegral_enorm]
+    rw [eLpNorm'_eq_lintegral_eNorm]
     have hpow : (∫⁻ x in Bρ, ‖f (x, s)‖ₑ ^ q) ^ (1 / q : ℝ) =
         ENNReal.ofReal (G s) := by
       rw [show (∫⁻ x in Bρ, ‖f (x, s)‖ₑ ^ q) = H s by rfl]

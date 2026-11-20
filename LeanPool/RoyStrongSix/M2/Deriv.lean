@@ -49,7 +49,7 @@ theorem Dw_apply (w : LieG K d0 d1) (P : B) :
     Dw w P = ∑ k, w.1 k • pderiv (Sum.inl k) P +
       ∑ j, w.2 j • (X (Sum.inr (Sum.inl j)) * pderiv (Sum.inr (Sum.inl j)) P -
         X (Sum.inr (Sum.inr j)) * pderiv (Sum.inr (Sum.inr j)) P) := by
-  simp [Dw, Derivation.coe_sub]
+  simp [Dw]
 
 omit [CharZero K] in
 theorem Dw_X (w : LieG K d0 d1) (k : Fin d0) : Dw w (X (Sum.inl k)) = C (w.1 k) := by
@@ -84,7 +84,7 @@ theorem Dw_comm (w w' : LieG K d0 d1) (P : B) : Dw w (Dw w' P) = Dw w' (Dw w P) 
   have h : ⁅Dw w, Dw w'⁆ = 0 := by
     apply MvPolynomial.derivation_ext
     intro v
-    rw [Derivation.commutator_apply, Derivation.zero_apply]
+    rw [Derivation.commutator_apply, zero_apply]
     rcases v with k | j | j
     · rw [Dw_X, Dw_X, Dw_C, Dw_C, sub_self]
     · rw [Dw_Y, Dw_Y, Derivation.map_smul, Derivation.map_smul, Dw_Y, Dw_Y, smul_smul, smul_smul,
@@ -93,7 +93,7 @@ theorem Dw_comm (w w' : LieG K d0 d1) (P : B) : Dw w (Dw w' P) = Dw w' (Dw w P) 
         Derivation.map_smul, Dw_Z, Dw_Z, smul_neg, smul_neg, smul_smul, smul_smul, mul_comm,
           sub_self]
   have := congrArg (fun D : Derivation K B B => D P) h
-  simp only [Derivation.commutator_apply, Derivation.zero_apply] at this
+  simp only [Derivation.commutator_apply, zero_apply] at this
   exact sub_eq_zero.mp this
 
 /-! ### Block degrees -/

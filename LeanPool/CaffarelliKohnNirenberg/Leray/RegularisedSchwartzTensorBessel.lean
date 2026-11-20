@@ -152,7 +152,7 @@ theorem regularisedSchwartzTensorBilinear_bessel_even_norm_le
         gcongr
       _ = ENNReal.ofReal ((L * V) *
           (B * ‖regularisedBesselOfSchwartz ((2 * k : ℕ) : ℝ) f‖)) := by
-        rw [Real.enorm_eq_ofReal (mul_nonneg hL hV),
+        rw [Real.eNorm_eq_ofReal (mul_nonneg hL hV),
           ENNReal.ofReal_mul (mul_nonneg hL hV)]
   have hNorm := regularisedTensor_schwartz_bessel_even_norm_eq k T
   change ‖(T.memSobolev (s := ((2 * k : ℕ) : ℝ)) (p := 2)).toBesselPotentialSpace‖ ≤

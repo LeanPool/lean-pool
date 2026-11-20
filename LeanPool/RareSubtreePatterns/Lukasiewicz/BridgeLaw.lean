@@ -53,7 +53,7 @@ theorem stepPMF_apply (μ : PMF ℕ) (a : ℤ) :
     · rw [ite_eq_left (by omega)]
     · intro k hk
       rw [ite_eq_right (by omega)]
-  · refine ENNReal.tsum_eq_zero.mpr fun k => ?_
+  · refine tsum_eq_zero_iff.mpr fun k => ?_
     rw [ite_eq_right (by omega)]
 
 /-- The law of `(X_1, …, X_n)`: `n` independent steps with law `stepPMF μ`. -/
@@ -116,7 +116,7 @@ theorem tsum_walkWeight_mul_toVec {n : ℕ} (μ : PMF ℕ) {A : Set (List ℤ)}
       apply Subtype.ext
       change x = List.ofFn ω
       rw [← he, ofFn_toVec (hA x hx).1]
-  · refine ENNReal.tsum_eq_zero.mpr fun ⟨x, hx⟩ => ?_
+  · refine tsum_eq_zero_iff.mpr fun ⟨x, hx⟩ => ?_
     rw [ite_eq_right, mul_zero]
     intro he
     apply h
@@ -154,7 +154,7 @@ theorem walkVecLaw_eq_tsum {n : ℕ} (μ : PMF ℕ) {A : Set (List ℤ)} {B : Se
     · rw [Set.indicator_of_mem hB, Set.inter_eq_right.mpr (Set.singleton_subset_iff.mpr hB)]
     · rw [Set.indicator_of_notMem hB, Set.inter_singleton_eq_empty.mpr hB, measure_empty]
   simp_rw [h1, walkVecLaw_inter_singleton μ hA hAB]
-  rw [ENNReal.tsum_comm]
+  rw [tsum_comm]
   refine tsum_congr fun x => ?_
   rw [ENNReal.tsum_mul_left]
   simp
@@ -285,7 +285,7 @@ theorem map_shift_conditioned (μ : PMF ℕ) {n : ℕ} (hn : n ≠ 0) :
     walkVecLaw_sum_eq_neg_one,
     ← tsum_sum_weight_mul_rotate_walkWeight μ n (fun x => if toVec n x = ω then 1 else 0),
     ENNReal.mul_inv (Or.inl (by exact_mod_cast hn)) (Or.inl (ENNReal.natCast_ne_top n)),
-    ENNReal.tsum_prod']
+    tsum_prod']
   have h1 : ∀ T : PlaneTree, ∑' i : Fin n, (Set.indicator
       ((fun p : PlaneTree × Fin n => toVec n (p.1.dfsSeq.rotate p.2)) ⁻¹' {ω})
       (fun p => ((conditioned μ n).prod (uniformIndex n)) {p}) (T, i)) =

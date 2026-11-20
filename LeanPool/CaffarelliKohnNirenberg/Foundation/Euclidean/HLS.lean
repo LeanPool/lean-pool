@@ -272,7 +272,7 @@ theorem rieszPotentialOne_hls_of_zero_or_good
     calc
       (∫⁻ z, rieszPotentialOne f z ^ (15 : ℝ)) ^ (1 / 15 : ℝ) =
           eLpNorm' (fun z => rieszPotentialOne f z) (15 : ℝ) volume := by
-        rw [eLpNorm'_eq_lintegral_enorm]
+        rw [eLpNorm'_eq_lintegral_eNorm]
         congr 1
       _ = 0 := hnorm
       _ ≤ hlsRieszConstant * I ^ (2 / 5 : ℝ) := by simp [hI0]

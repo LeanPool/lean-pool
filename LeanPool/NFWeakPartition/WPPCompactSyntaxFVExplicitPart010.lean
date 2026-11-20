@@ -135,14 +135,13 @@ theorem fv_syn_cwppstopstep (F : Class) (C : Class) :
   by
   ext u
   simp [synCwppstopstep, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chwcards,
-    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppstopact];
-  aesop
+    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppstopact]
 
 theorem fv_syn_cwppfreceq (F : Class) (G : Class) (I : Class) :
     (synCwppfreceq F G I).fv = (F.fv) ∪ (G.fv) ∪ (I.fv) :=
   by
   ext u
-  simp [synCwppfreceq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec]; aesop
+  simp [synCwppfreceq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec]
 
 theorem fv_syn_cwppfrecprefixeq (F : Class) (G : Class) (I : Class) (k : Var) :
     (synCwppfrecprefixeq F G I k).fv =

@@ -65,7 +65,7 @@ theorem classicalGalerkinRealSmoothLift_initial
     φ hφ κ hκ F hF hFper θ₀ hθ₀ hθ₀per t₀
   have hL2' : ContinuousMap.toLp 2 (volume : Measure Torus) ℂ L =
       classicalRealToComplexTorusCLM U₀ := by
-    simpa [L, U, U₀, t₀, hinit] using hL2
+    exact hL2.trans (congrArg classicalRealToComplexTorusCLM hinit)
   have hRlp : (Complex.reCLM.compLpL (2 : ENNReal) (volume : Measure Torus))
       (ContinuousMap.toLp 2 (volume : Measure Torus) ℂ L) =
       ContinuousMap.toLp 2 (volume : Measure Torus) ℝ R := by

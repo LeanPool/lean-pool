@@ -281,7 +281,7 @@ lemma parallel_curl_free_affine (g : (Fin 3 → ℝ) → (Fin 3 → ℝ))
           rw [zero_smul, add_zero] at hcomp
           exact hcomp
         simpa [div_eq_inv_mul] using h_lim.tendsto_slope_zero_right
-      exact Submodule.closed_of_finiteDimensional _
+      exact Submodule.isClosed_of_finiteDimensional _
         |> fun h => h.mem_of_tendsto h_lim <|
           Filter.eventually_of_mem self_mem_nhdsWithin
             fun t ht => Submodule.smul_mem _ _ <|
@@ -341,7 +341,7 @@ lemma parallel_curl_free_affine (g : (Fin 3 → ℝ) → (Fin 3 → ℝ))
         · simp only [fderiv_fun_const, Pi.zero_apply, ContinuousLinearMap.comp_zero, zero_add,
             ContinuousLinearMap.flip_apply]
           apply_rules [ContDiffAt.isSymmSndFDerivAt]
-          exacts [hg_smooth.contDiffAt, by norm_num [minSmoothness]]
+          exacts [hg_smooth.contDiffAt, by simp]
         · exact h_diff_fderiv.differentiable one_ne_zero v
         · exact differentiableAt_const _
         · exact h_diff_fderiv.differentiable one_ne_zero v

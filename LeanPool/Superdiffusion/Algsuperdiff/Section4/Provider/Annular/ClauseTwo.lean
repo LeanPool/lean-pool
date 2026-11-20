@@ -155,7 +155,7 @@ theorem ofReal_mul_clauseOneTermOne_le_of_eventG2 (M : ABKModel d) (m : ℤ)
       ≤ ENNReal.ofReal (ep ^ 2) := by
   refine le_trans (mul_le_mul_right ?_ _)
     ((Support.mem_eventG2_iff M m s ep omega).mp homega)
-  refine ENNReal.tsum_le_tsum fun j => ENNReal.tsum_le_tsum fun n => ?_
+  refine tsum_le_tsum fun j => tsum_le_tsum fun n => ?_
   refine mul_le_mul_left (ENNReal.ofReal_le_ofReal ?_) _
   refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
   have hq : (0 : ℝ) ≤ ((m - n.1 : ℤ) : ℝ) := by
@@ -186,7 +186,7 @@ theorem clauseOneTermFour_le_of_eventG1 (M : ABKModel d) (m : ℤ)
     (homega : omega ∈ Support.eventG1 M m (s : ℝ) T) :
     clauseOneTermFour M m s omega ≤ ENNReal.ofReal (T ^ 2) := by
   refine le_trans ?_ homega.2
-  refine ENNReal.tsum_le_tsum fun n => ?_
+  refine tsum_le_tsum fun n => ?_
   refine mul_le_mul_left (ENNReal.ofReal_le_ofReal ?_) _
   refine Real.rpow_le_rpow_of_exponent_le (by norm_num) ?_
   have hq : (0 : ℝ) ≤ ((m - n.1 : ℤ) : ℝ) := by

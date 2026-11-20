@@ -95,7 +95,7 @@ theorem slowFactor_mul_eLpNorm_le {f g : Vec 2 → ℝ}
       Real.norm_eq_abs, abs_of_nonneg hB]
     exact mul_le_mul_of_nonneg_right (hb x) (abs_nonneg _)
   have hh := eLpNorm_mono_ae (hf.mul hg).aestronglyMeasurable hn (p := p)
-  rw [eLpNorm_const_smul, Real.enorm_of_nonneg hB] at hh
+  rw [eLpNorm_const_smul, Real.eNorm_of_nonneg hB] at hh
   exact hh
 
 theorem slowFactor_listSum_eLpNorm_le (L : List (Vec 2 → ℝ))

@@ -250,7 +250,7 @@ law: it is measurable and preserves the law exactly. -/
 theorem quasiMeasurePreserving_negateCutoffSample (M : ABKModel d) :
     QuasiMeasurePreserving (Cutoff.negateCutoffSample (d := d))
       (Cutoff.cutoffSampleLaw M).toMeasure (Cutoff.cutoffSampleLaw M).toMeasure := by
-  refine ⟨Cutoff.measurable_negateCutoffSample, ?_⟩
+  refine ⟨Cutoff.measurable_negateCutoffSample.aemeasurable, ?_⟩
   rw [Cutoff.map_negateCutoffSample_cutoffSampleLaw]
 
 /-- **The `L`-free majorant is a.e. measurable.**  Its two legs are the display

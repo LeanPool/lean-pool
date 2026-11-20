@@ -61,7 +61,7 @@ private theorem enorm_ofVec_sq_eq_sum_enorm_sq {d : ℕ} (v : Vec d) :
   rw [ENNReal.ofReal_sum_of_nonneg (fun i _ => sq_nonneg (v i))]
   apply Finset.sum_congr rfl
   intro i _
-  rw [Real.enorm_eq_ofReal_abs,
+  rw [Real.eNorm_eq_ofReal_abs,
     ← ENNReal.ofReal_pow (abs_nonneg (v i)), sq_abs]
 
 private theorem eLpNorm_two_sq {d : ℕ} {E : Type*} [NormedAddCommGroup E]
@@ -69,7 +69,7 @@ private theorem eLpNorm_two_sq {d : ℕ} {E : Type*} [NormedAddCommGroup E]
     (eLpNorm f (2 : ℝ≥0∞) μ) ^ (2 : ℕ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℕ) ∂μ := by
   rw [← ENNReal.rpow_natCast]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   rw [← ENNReal.rpow_mul]
   norm_num
 
@@ -92,7 +92,7 @@ private theorem eLpNorm_hilbertVec_two_eq_coordinateENorm {d : ℕ}
       _ = ∑ i : Fin d, ∫⁻ x, ‖F x i‖ₑ ^ (2 : ℕ) ∂μ := by
         rw [lintegral_finsetSum']
         intro i _
-        exact (hF.eval_piLp i).aestronglyMeasurable.enorm.pow_const (2 : ℕ)
+        exact (hF.eval_piLp i).aestronglyMeasurable.eNorm.pow_const (2 : ℕ)
       _ = ∑ i : Fin d, (eLpNorm (fun x => F x i) (2 : ℝ≥0∞) μ) ^ 2 := by
         apply Finset.sum_congr rfl
         intro i _
@@ -174,7 +174,7 @@ private theorem exactOverlapRootWeight_mul_localOscillation_le_finiteSeminorm
     _ ≤ (∑' j : ℕ, (exactOverlapDepthTerm Q s.1 2 u hu j) ^ (2 : ℝ)) ^
         ((2 : ℝ)⁻¹) := by
       apply ENNReal.rpow_le_rpow
-        (ENNReal.le_tsum (f := fun j => (exactOverlapDepthTerm Q s.1 2 u hu j) ^ (2 : ℝ)) 0)
+        (le_tsum (f := fun j => (exactOverlapDepthTerm Q s.1 2 u hu j) ^ (2 : ℝ)) 0)
       norm_num
 
 private theorem exactOverlapLocalOscillation_middleChildCube_two {d : ℕ}

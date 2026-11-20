@@ -112,7 +112,7 @@ theorem exists_listEdgeColoring_complete
     · change _ < #((range n).image (fun k : ℕ => (k : ℚ)))
       rw [card_image_of_injective _ Nat.cast_injective, card_range]
       exact expo_canonicalPerm_inr_lt f u
-  obtain ⟨x, hxS, hx⟩ := combinatorial_nullstellensatz_exists_eval_nonzero (graphPoly f)
+  obtain ⟨x, hxS, hx⟩ := combinatorial_nullstellensatz_exists_eval_ne_zero (graphPoly f)
     (expo f (canonicalPerm f)) (coeff_graphPoly_certificate_ne_zero f)
     (totalDegree_graphPoly f) S hS
   -- every star receives distinct values

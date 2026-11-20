@@ -99,9 +99,9 @@ private theorem pressureSplit_source_velocity_slice_bound
       calc
         _ ≤ eLpNorm (fun x : Vec3 => Real.sqrt 3 *
               ‖pressureSplitVelocityExtension u (x,s)‖) 3 volume := by
-          apply eLpNorm_mono_enorm_ae hEuMeas
+          apply eLpNorm_mono_eNorm_ae hEuMeas
           filter_upwards [] with x
-          rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
+          rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs,
             abs_of_nonneg (vec3EuclideanNorm_nonneg _), abs_of_nonneg
               (mul_nonneg (Real.sqrt_nonneg _) (norm_nonneg _))]
           exact ENNReal.ofReal_le_ofReal (hpoint x)
@@ -115,7 +115,7 @@ private theorem pressureSplit_source_velocity_slice_bound
               funext x
               simp only [Pi.smul_apply, smul_eq_mul]]
           rw [eLpNorm_const_smul]
-          rw [Real.enorm_eq_ofReal (Real.sqrt_nonneg 3)]
+          rw [Real.eNorm_eq_ofReal (Real.sqrt_nonneg 3)]
     have hnorm : eLpNorm (fun x : Vec3 =>
         ‖pressureSplitVelocityExtension u (x,s)‖) 3 volume =
           eLpNorm (fun x : Vec3 => pressureSplitVelocityExtension u (x,s))

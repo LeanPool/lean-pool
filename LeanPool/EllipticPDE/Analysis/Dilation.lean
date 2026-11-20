@@ -50,12 +50,12 @@ theorem eLpNorm_comp_smul {f : EuclideanSpace ℝ (Fin d) → ℝ} (hf : Measura
     eLpNorm (fun x => f (r • x)) p volume
       = ENNReal.ofReal |(r ^ d)⁻¹| ^ (1 / p.toReal) * eLpNorm f p volume := by
   have hmeas : Measurable fun y : EuclideanSpace ℝ (Fin d) => ‖f y‖ₑ ^ p.toReal :=
-    (hf.enorm.pow_const _)
+    (hf.eNorm.pow_const _)
   have hfr : AEStronglyMeasurable (fun x => f (r • x)) volume := by
     simpa only [Function.comp_def] using
       (hf.comp (measurable_const_smul r)).aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hfr,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hf.aestronglyMeasurable,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hfr,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hf.aestronglyMeasurable,
     show (∫⁻ x, ‖f (r • x)‖ₑ ^ p.toReal ∂(volume : Measure (EuclideanSpace ℝ (Fin d))))
         = ∫⁻ y, ‖f y‖ₑ ^ p.toReal ∂(Measure.map (r • ·) volume) from
       (lintegral_map hmeas (measurable_const_smul r)).symm,

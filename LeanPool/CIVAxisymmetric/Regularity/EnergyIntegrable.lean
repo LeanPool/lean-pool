@@ -86,9 +86,9 @@ theorem lintegral_pressure_lt_top (u : ParabolicPoint → Vec3) (Du : ParabolicP
   have hlt := hmem.eLpNorm_lt_top
   have hne0 : (ENNReal.ofReal (3 / 2 : ℝ)) ≠ 0 := (ENNReal.ofReal_pos.mpr (by norm_num)).ne'
   have hnetop : (ENNReal.ofReal (3 / 2 : ℝ)) ≠ ⊤ := ENNReal.ofReal_ne_top
-  have hres := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top hne0 hnetop hlt
+  have hres := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top hne0 hnetop hlt
   rw [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3 / 2)] at hres
-  simpa only [Real.enorm_eq_ofReal_abs] using hres
+  simpa only [Real.eNorm_eq_ofReal_abs] using hres
 
 /-- The force integrand of Theorem A is finite over `Q`: `ForceC2Bounded` gives a pointwise
 bound on `Q`, which integrates over the finite-measure cylinder. -/
@@ -282,7 +282,7 @@ private theorem exists_alpha_bound_on_exhaustion
               ENNReal.ofReal (vec3EuclideanNorm (u (y, s))) ^ (2 : ℝ) := by
             unfold timeSliceBallEnergy
             refine lintegral_congr (fun y => ?_)
-            rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
+            rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
         _ ≤ ∫⁻ y in vec3Ball (0 : Vec3) (r n), 3 * ‖u (y, s)‖ₑ ^ (2 : ℝ) :=
             lintegral_mono (fun y => ofReal_vec3EuclideanNorm_sq_le (u (y, s)))
         _ = 3 * ∫⁻ y in vec3Ball (0 : Vec3) (r n), ‖u (y, s)‖ₑ ^ (2 : ℝ) :=
@@ -393,7 +393,7 @@ theorem lintegral_cube_lt_top (q : ℝ) (u : ParabolicPoint → Vec3)
   have hconv : ∀ w : ParabolicPoint, ‖(vec3EuclideanNorm (u w)) ^ (3 : ℕ)‖ₑ =
       ENNReal.ofReal (vec3EuclideanNorm (u w)) ^ (3 : ℝ) := by
     intro w
-    rw [Real.enorm_eq_ofReal_abs,
+    rw [Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (pow_nonneg (vec3EuclideanNorm_nonneg (u w)) 3),
       hconv2 _ (vec3EuclideanNorm_nonneg _)]
   have hCdata : ∀ n, AEMeasurable
@@ -405,7 +405,7 @@ theorem lintegral_cube_lt_top (q : ℝ) (u : ParabolicPoint → Vec3)
     obtain ⟨Ω', J, hbox, hcyl⟩ :=
       exists_localBox_of_closure_subset hsol.1 hsol.2.1 (hrpos n) (hclosure n)
     have hint := (origin_velocity_cube_integrable_on_local_box hsolI hbox).mono_set hcyl
-    have hfi := hasFiniteIntegral_iff_enorm.mp hint.hasFiniteIntegral
+    have hfi := hasFiniteIntegral_iff_eNorm.mp hint.hasFiniteIntegral
     have heq : (fun w => ‖(vec3EuclideanNorm (u w)) ^ (3 : ℕ)‖ₑ) =
         (fun w => ENNReal.ofReal (vec3EuclideanNorm (u w)) ^ (3 : ℝ)) := funext hconv
     rw [heq] at hfi

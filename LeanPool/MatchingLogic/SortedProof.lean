@@ -291,16 +291,11 @@ theorem Γ3_not_derives_φ3 (hS : MSoundness S3 Var) (x y : Var) (hxy : x ≠ y)
     rw [htotal]
     trivial
   have hfalse' :
-      ((∀ f : Fin 1 → Bool,
-          f 0 = false → ∃ g : Fin 1 → Bool, g 0 = false) ∧
-          (∀ f : Fin 1 → Bool, f 0 = false → f 0 = true) ∧
-            ∀ f : Fin 1 → Bool,
-              f 0 = true → f 0 = false → ∃ g : Fin 1 → Bool, g 0 = false) ∧
-        (∀ f : Fin 1 → Bool,
-          f 0 = true → f 0 = false → ∃ g : Fin 1 → Bool, g 0 = false) ∧
-          ∀ f : Fin 1 → Bool, f 0 = true := by
+      ((∀ f : Fin 1 → Bool, f 0 = false → f 0 = true) ∨
+        ∃ f : Fin 1 → Bool, f 0 = false) ∧
+      ∀ f : Fin 1 → Bool, f 0 = false → f 0 = true := by
     simpa [mdenote, MModel.app, mupdate, M, hxy] using hfalse
-  have hcontra := hfalse'.2.2 (fun _ => false)
+  have hcontra := hfalse'.2 (fun _ => false) rfl
   exact Bool.noConfusion hcontra
 
 /-- **Corollary 31**, at the Proposition 30 data.

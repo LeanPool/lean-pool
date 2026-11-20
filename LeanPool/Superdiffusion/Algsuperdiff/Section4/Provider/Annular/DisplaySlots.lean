@@ -208,9 +208,9 @@ theorem ofReal_shellSingleSum_le_clauseOneTermFour (M : ABKModel d) (m : ℤ)
         ofReal_tsum_le fun v =>
           mul_nonneg (Real.rpow_nonneg (by norm_num) _) (sq_nonneg _)
     _ ≤ ∑' v : ℕ, clauseOneTermFourSlot M m s omega ⟨m - (v : ℤ), by omega⟩ :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ ≤ ∑' n : {n : ℤ // n ≤ m}, clauseOneTermFourSlot M m s omega n :=
-        ENNReal.tsum_comp_le_tsum_of_injective hinj _
+        tsum_comp_le_tsum_of_injective hinj _
     _ = clauseOneTermFour M m s omega := (clauseOneTermFour_eq_tsum M m s omega).symm
 
 /-! ## Part E -- the shell family at the honest lattice carrier -/

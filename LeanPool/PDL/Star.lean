@@ -116,7 +116,7 @@ theorem ReflTransGen.from_finitelyManySteps (r : α → α → Prop) {n : ℕ} :
       · intro i
         specialize steprel i.succ
         induction i
-        all_goals aesop (rule_sets := [-default])
+        aesop (rule_sets := [-default])
 
 /-- `ReflTransGen r a b` is equivalent to `∃ x₀ ... xₙ, a = x₀ ∧ r x₀ x₁ ∧ ... ∧ r xₙ = b` -/
 theorem ReflTransGen.iff_finitelyManySteps (r : α → α → Prop) (x z : α) :

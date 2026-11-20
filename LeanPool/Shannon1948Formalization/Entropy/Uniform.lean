@@ -277,7 +277,7 @@ lemma A_monotone
   have hApos : Apos H (Nat.succPNat n) ≤ Apos H (Nat.succPNat m) :=
     hH.uniformMonotone.monotone hnm'
   convert hApos using 1 <;>
-    (try simp only [A, Apos, uniformFin, uniformPNat, one_div, Nat.succPNat_coe,
+    (simp only [A, Apos, uniformFin, uniformPNat, one_div, Nat.succPNat_coe,
         Nat.cast_succ]) <;>
     rfl
 

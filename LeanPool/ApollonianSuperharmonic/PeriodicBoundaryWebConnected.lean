@@ -42,7 +42,7 @@ private theorem gridWalk :
         List.IsChain FourNeighborAdjacent p := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
         intro a b hab
         by_cases hre : a.re < b.re
         · let c := a + 1

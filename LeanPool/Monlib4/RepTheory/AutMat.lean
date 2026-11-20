@@ -526,7 +526,7 @@ theorem Matrix.commutes_with_all_iff {R n : Type _} [CommSemiring R] [Fintype n]
     have : x = diagonal x.diag := by
       ext k l
       specialize h (single l k 1)
-      simp_rw [← Matrix.ext_iff, mul_apply, single, of_apply, boole_mul, mul_boole, ite_and,
+      simp_rw [← Matrix.ext_iff, Matrix.mul_apply, single, of_apply, boole_mul, mul_boole, ite_and,
         Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ,
         ite_true] at h
       specialize h k k
@@ -536,7 +536,7 @@ theorem Matrix.commutes_with_all_iff {R n : Type _} [CommSemiring R] [Fintype n]
     have this1 : ∀ k l : n, x k k = x l l := by
       intro k l
       specialize h (single k l 1)
-      simp_rw [← Matrix.ext_iff, mul_apply, single, of_apply, boole_mul, mul_boole, ite_and,
+      simp_rw [← Matrix.ext_iff, Matrix.mul_apply, single, of_apply, boole_mul, mul_boole, ite_and,
         Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ,
         ite_true] at h
       specialize h k l
@@ -544,7 +544,7 @@ theorem Matrix.commutes_with_all_iff {R n : Type _} [CommSemiring R] [Fintype n]
       exact h.symm
     use x i i
     ext k l
-    simp_rw [Matrix.smul_apply, one_apply, smul_ite, smul_zero, smul_eq_mul, mul_one]
+    simp_rw [Matrix.smul_apply, Matrix.one_apply, smul_ite, smul_zero, smul_eq_mul, mul_one]
     nth_rw 1 [this]
     simp_rw [diagonal, diag, of_apply, this1 i k]
   · simp_all
@@ -623,7 +623,7 @@ theorem Algebra.autInner_eq_autInner_iff [DecidableEq n] (x y : Matrix n n 𝕜)
 theorem Matrix.one_ne_zero_iff {𝕜 n : Type*} [DecidableEq n]
     [Zero 𝕜] [One 𝕜] [NeZero (1 : 𝕜)] :
     (1 : Matrix n n 𝕜) ≠ (0 : Matrix n n 𝕜) ↔ Nonempty n := by
-  simp_rw [ne_eq, ← Matrix.ext_iff, one_apply, zero_apply, not_forall]
+  simp_rw [ne_eq, ← Matrix.ext_iff, Matrix.one_apply, Matrix.zero_apply, not_forall]
   simp_all only [ite_eq_right_iff, one_ne_zero, imp_false, Decidable.not_not, exists_eq',
     exists_const_iff, and_true]
 

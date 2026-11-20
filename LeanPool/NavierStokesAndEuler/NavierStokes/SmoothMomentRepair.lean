@@ -100,7 +100,7 @@ theorem exists_local_analytic_solver [CompleteSpace E]
   have hinv0 : inv (base B A) = base B A := by
     simpa only [forward_base] using hF.localInverse_apply_image hDF (by simp)
   have hinv : ∀ᶠ z in 𝓝 (base B A), forward (inv z) = z := by
-    have h := HasStrictFDerivAt.eventually_right_inverse (hF.hasStrictFDerivAt' hDF (by simp))
+    have h := HasStrictFDerivAt.eventually_right_inverse (hF.hasStrictFDerivAt hDF (by simp))
     change ∀ᶠ z in 𝓝 (forward (base B A)), forward (inv z) = z at h
     simpa only [forward_base] using h
   have hsm := hcont.eventually (by simp)

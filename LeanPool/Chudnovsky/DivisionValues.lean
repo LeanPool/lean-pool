@@ -2965,9 +2965,9 @@ private lemma isIntegral_of_cubic_root {x : ℂ}
     IsIntegral (Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ)) x := by
   let R := Algebra.adjoin ℤ ({L.g₂ / 4, L.g₃ / 4} : Set ℂ)
   let a : R := ⟨L.g₂ / 4, Algebra.subset_adjoin (by simp only [Set.mem_insert_iff,
-    Set.mem_singleton_iff, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj', true_or])⟩
+    Set.mem_singleton_iff, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj₀, true_or])⟩
   let b : R := ⟨L.g₃ / 4, Algebra.subset_adjoin (by simp only [Set.mem_insert_iff, ne_eq,
-    OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj', Set.mem_singleton_iff, or_true])⟩
+    OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj₀, Set.mem_singleton_iff, or_true])⟩
   refine ⟨Polynomial.X ^ 3 - (Polynomial.C a * Polynomial.X + Polynomial.C b), ?_, ?_⟩
   · exact Polynomial.monic_X_pow_sub
       (Polynomial.degree_linear_le.trans_lt (by norm_num1))

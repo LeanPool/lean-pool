@@ -107,6 +107,7 @@ end
 theorem absTailIndicator_measurable {X : Ω → ℝ} {r : ℝ}
     (hX : Measurable X) :
     Measurable (absTailIndicator X r) := by
+  change Measurable (Set.piecewise {ω | r < |X ω|} X (fun _ => 0))
   refine hX.piecewise ?_ measurable_const
   exact measurableSet_lt measurable_const (continuous_abs.measurable.comp hX)
 

@@ -122,8 +122,8 @@ theorem volume_mul_norm_le_Lp_norm (U : TopologicalSpace.Opens (ι → ℂ))
         abs_of_nonneg (show 0 ≤ volume.real (closedBall c r) from ENNReal.toReal_nonneg)]
     _ ≤ ∫ z in closedBall c r, ‖f z‖ := norm_integral_le_integral_norm _
     _ = (eLpNorm f 1 μ).toReal := by
-      rw [eLpNorm_one_eq_lintegral_enorm hmeas]
-      exact integral_norm_eq_lintegral_enorm hmeas
+      rw [eLpNorm_one_eq_lintegral_eNorm hmeas]
+      exact integral_norm_eq_lintegral_eNorm hmeas
     _ ≤ ‖u‖ * volume.real (closedBall c r) ^ (1 - 1 / p.toReal) := hreal
 
 /-- **Local Lp estimate ([Jakóbczak–Jarnicki][JakobczakJarnicki2021] 1.4.20).** On each compact

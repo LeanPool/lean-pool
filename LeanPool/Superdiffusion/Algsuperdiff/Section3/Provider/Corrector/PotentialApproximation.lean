@@ -282,7 +282,8 @@ theorem norm_sq_localGradApprox_sub_le (Q : TriadicCube d) (L : ℕ)
   · have hone : (approxCutoff Q L).toFun x = 1 := (approxCutoff Q L).eq_one_on_inner x hmem
     have hind : (cubeSet Q \ scaledClosedCubeSet Q (cutoffInnerRatio L)).indicator
         (fun y => ‖realize p ω y‖ ^ 2) x = 0 :=
-      Set.indicator_of_notMem (fun h => h.2 hmem) _
+      Set.indicator_of_notMem (s := cubeSet Q \ scaledClosedCubeSet Q (cutoffInnerRatio L))
+        (fun h => h.2 hmem) _
     have hle : ‖HilbertVec.ofVec (localGradApprox Q L φ p ω x) - realize p ω x‖
         ≤ ‖realize φ ω x‖ * gradBound Q L := by
       rw [hdec, hone]

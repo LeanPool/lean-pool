@@ -182,7 +182,7 @@ theorem disconEval' {W M} {w : W} :
       List.length XS = N → (evaluate M w (discon XS) ↔ ∃ Y ∈ XS, ∀ f ∈ Y, evaluate M w f) := by
   intro N
   induction N using Nat.strong_induction_on
-  case h n IH =>
+  case ind n IH =>
     intro XS def_n
     subst def_n
     rcases XS with _ | ⟨X,XS⟩

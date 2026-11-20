@@ -162,7 +162,7 @@ theorem tsum_volume_czSet_le_lintegral_norm {f : ℝ → ℂ} (hf : Integrable f
   calc
     (∑' i : czIndex hf, volume (czSet hf i)) ≤
         ∑' i : czIndex hf, ∫⁻ x in czSet hf i, ENNReal.ofReal ‖f x‖ :=
-      ENNReal.tsum_le_tsum hlocal
+      tsum_le_tsum hlocal
     _ = ∫⁻ x in czBadUnion hf, ENNReal.ofReal ‖f x‖ := by
       rw [czBadUnion, lintegral_iUnion (measurableSet_czSet hf) (czSet_pairwiseDisjoint hf)]
     _ ≤ ∫⁻ x, ENNReal.ofReal ‖f x‖ := by

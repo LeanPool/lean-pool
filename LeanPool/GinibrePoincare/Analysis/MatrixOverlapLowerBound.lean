@@ -139,7 +139,7 @@ theorem realGradientNormSq_eq_wirtinger {n : ℕ}
     simp [coordinateDirection, Pi.single_apply]
   simp [realDifferentialWirtinger, Complex.normSq_apply,
     realCoordinateDirection, imaginaryCoordinateDirection, hd]
- ; ring
+  ring
 
 /-- Ordinary spectral gradient energy is bounded by four times actual
 matrix overlap energy at every simple-spectrum matrix. -/

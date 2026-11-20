@@ -494,7 +494,7 @@ theorem collision_card_le_tight (Λ : ℕ) (n₁ n₂ : Noun)
   · -- lengths differ: distinguished by the first component X^{λ}
     refine ⟨X ^ n₁.leaves - X ^ n₂.leaves, ?_, ?_, ?_⟩
     · intro h
-      have hcoeff := congrArg (fun q => Polynomial.coeff q n₁.leaves) h
+      have hcoeff := congrArg (fun q => AddMonoidAlgebra.coeff q n₁.leaves) h
       simp only [coeff_sub, coeff_X_pow, coeff_zero, ite_eq_right hlam, sub_zero] at hcoeff
       exact one_ne_zero hcoeff
     · refine le_trans (natDegree_sub_le _ _) ?_

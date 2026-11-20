@@ -30,8 +30,8 @@ theorem isUnit_comm (K E : Type _) [DivisionRing K] [AddCommGroup E] [Module K E
     apply @invertibleMul _ _ _ _ ?_ ?_
     rw [mul_assoc, mul_eq_one_comm, mul_assoc] at hz2
     rw [← mul_assoc] at hz1
-  any_goals apply Invertible.mk (z * x) hz1 hz2
-  any_goals apply Invertible.mk (z * y) hz1 hz2
+  on_goal 1 => apply Invertible.mk (z * x) hz1 hz2
+  on_goal 2 => apply Invertible.mk (z * y) hz1 hz2
   all_goals
     rw [mul_eq_one_comm, mul_assoc] at hz1
     rw [mul_assoc, mul_eq_one_comm] at hz2

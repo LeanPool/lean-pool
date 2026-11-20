@@ -62,8 +62,8 @@ theorem exists_subseq_tendstoUniformlyOn_c1 (K : Set (ℝ × ℝ)) (hK : IsCompa
       ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∃ Vlim : (ℝ × ℝ) → ℝ,
         TendstoUniformlyOn (fun n => V (φ n)) Vlim atTop K := by
     have hLip : ∀ n, LipschitzOnWith (Real.toNNReal L) (V n) K :=
-      fun n => Convex.lipschitzOnWith_of_nnnorm_fderiv_le (fun x _ => (hd1 n).1 x)
-        (fun x hx => (Real.le_toNNReal_iff_coe_le hL).mpr (by rw [coe_nnnorm]; exact hDV n x hx))
+      fun n => Convex.lipschitzOnWith_of_nnNorm_fderiv_le (fun x _ => (hd1 n).1 x)
+        (fun x hx => (Real.le_toNNReal_iff_coe_le hL).mpr (by rw [coe_nnNorm]; exact hDV n x hx))
         hKconv
     have hLipK : ∀ n, LipschitzWith (Real.toNNReal L) (K.domRestrict (V n)) :=
       fun n => (hLip n).to_restrict
@@ -106,9 +106,9 @@ theorem exists_subseq_tendstoUniformlyOn_c1 (K : Set (ℝ × ℝ)) (hK : IsCompa
       ∃ ψ : ℕ → ℕ, StrictMono ψ ∧ ∃ DVlim : (ℝ × ℝ) → ((ℝ × ℝ) →L[ℝ] ℝ),
         TendstoUniformlyOn (fun n => fderiv ℝ (V (φ (ψ n)))) DVlim atTop K := by
     have hDLip : ∀ n, LipschitzOnWith (Real.toNNReal L) (fderiv ℝ (V (φ n))) K :=
-      fun n => Convex.lipschitzOnWith_of_nnnorm_fderiv_le (fun x _ => hd2 (φ n) x)
+      fun n => Convex.lipschitzOnWith_of_nnNorm_fderiv_le (fun x _ => hd2 (φ n) x)
         (fun x hx => (Real.le_toNNReal_iff_coe_le hL).mpr
-          (by rw [coe_nnnorm]; exact hD2V (φ n) x hx))
+          (by rw [coe_nnNorm]; exact hD2V (φ n) x hx))
         hKconv
     have hDLipK : ∀ n, LipschitzWith (Real.toNNReal L) (K.domRestrict (fderiv ℝ (V (φ n)))) :=
       fun n => (hDLip n).to_restrict

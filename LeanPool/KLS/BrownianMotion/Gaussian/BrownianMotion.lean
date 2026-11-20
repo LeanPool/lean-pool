@@ -195,7 +195,7 @@ lemma IsPreBrownianReal.isAEKolmogorovProcess {n : ℕ} (hn : 0 < n) (h : IsPreB
   let Y t ω := (h.aemeasurable t).mk (X t) ω
   have hXY t := (h.aemeasurable t).ae_eq_mk
   have hY := h.congr hXY
-  refine ⟨Y, ?_, ?_⟩
+  refine ⟨Y, ?_, hXY⟩
   constructor
   · intro s t
     rw [← BorelSpace.measurable_eq]
@@ -203,7 +203,6 @@ lemma IsPreBrownianReal.isAEKolmogorovProcess {n : ℕ} (hn : 0 < n) (h : IsPreB
   rotate_left
   · positivity
   · positivity
-  · exact fun t ↦ (h.aemeasurable t).ae_eq_mk
   refine fun s t ↦ Eq.le ?_
   norm_cast
   simp_rw [edist_dist, Real.dist_eq]

@@ -150,7 +150,8 @@ theorem componentProjectiveClosureIdeal_colon_zeroCoordinate
   rw [map_mul, componentProjectiveConeMap_X_zero]
   constructor
   · intro h
-    apply Polynomial.ext
+    apply AddMonoidAlgebra.ext
+    apply Finsupp.ext
     intro n
     have hn := congrArg
       (fun q : Polynomial (ComponentFractionField P) ↦ q.coeff (n + 1)) h

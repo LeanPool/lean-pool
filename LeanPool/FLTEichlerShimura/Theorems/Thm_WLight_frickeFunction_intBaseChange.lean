@@ -232,7 +232,7 @@ theorem mem_closure_iff_exists_adjoin {T : Set (ℍ → ℂ)} (hT : T ⊆ holSub
     | add x y _ _ hx hy =>
       obtain ⟨a, ha, rfl⟩ := hx
       obtain ⟨b, hb, rfl⟩ := hy
-      exact ⟨a + b, Subalgebra.add_mem _ ha hb, map_add ι a b⟩
+      exact ⟨a + b, Subalgebra.add_mem _ ha hb, ι.map_add' a b⟩
     | neg x _ hx =>
       obtain ⟨a, ha, rfl⟩ := hx
       exact ⟨-a, Subalgebra.neg_mem _ ha, map_neg ι a⟩
@@ -914,7 +914,7 @@ theorem transcendental_closureS (hg : GenMD jf fricke)
       exact (mul_eq_zero.mp this.symm).resolve_right hW0
     exact_mod_cast hc0
   apply hp0
-  refine Polynomial.ext fun i => ?_
+  refine AddMonoidAlgebra.ext (Finsupp.ext fun i => ?_)
   rw [Polynomial.coeff_zero]
   by_cases hi : i < d
   · exact hcoef ⟨i, hi⟩
@@ -1320,11 +1320,11 @@ theorem holRep (h6 : R6h2Shape) {z : KK} (hz : z ∈ RS hg K) :
     rw [Finset.sum_mul, Finset.sum_range_succ, h2, show P.coeff D = 1 from hPm.coeff_natDegree,
       one_mul, hkey D le_rfl, Nat.sub_self, pow_zero, mul_one, add_comm] at h1
     exact h1
+  have hιadd (a b : ↥holSub) : ι (a + b) = ι a + ι b := ι.map_add' a b
   have hrelH : uH ^ D + ∑ k ∈ Finset.range D, cH k * wH ^ (D - k) * uH ^ k = 0 := by
     apply ι_injective
-    rw [map_zero ι, ← hrelK, map_add ι (uH ^ D) (∑ k ∈ Finset.range D, cH k * wH ^ (D - k) * uH ^
-      k),
-      map_pow ι, map_sum ι]
+    rw [map_zero ι, ← hrelK, hιadd (uH ^ D)
+      (∑ k ∈ Finset.range D, cH k * wH ^ (D - k) * uH ^ k), map_pow ι, map_sum ι]
     refine congrArg _ (Finset.sum_congr rfl fun k _ => ?_)
     rw [map_mul ι, map_mul ι, map_pow ι, map_pow ι]
   have hrelF : (uH : ℍ → ℂ) ^ D +
@@ -1343,7 +1343,7 @@ theorem holRep (h6 : R6h2Shape) {z : KK} (hz : z ∈ RS hg K) :
       have := hPz
       rwa [Polynomial.eval_eq_sum_range, Finset.sum_range_succ,
         show P.coeff D = 1 from hPm.coeff_natDegree, one_mul, ← hιG] at this
-    rw [map_zero ι, map_add ι ((⟨Gf, hGf⟩ : ↥holSub) ^ D)
+    rw [map_zero ι, hιadd ((⟨Gf, hGf⟩ : ↥holSub) ^ D)
       (∑ k ∈ Finset.range D, cH k * ⟨Gf, hGf⟩ ^ k), map_pow ι, map_sum ι, add_comm, ← h1]
     congr 1
     refine Finset.sum_congr rfl fun k _ => ?_

@@ -72,7 +72,7 @@ theorem cubeAmbientHilbertWspESeminorm_eq_lintegral {d : ℕ}
       (∫⁻ z, ‖cubeAmbientHilbertWspKernel s p F z‖ₑ ^ p.exponent.toReal
         ∂Gagliardo.gagliardoCubeMeasure Q) ^ (1 / p.exponent.toReal) := by
   unfold cubeAmbientHilbertWspESeminorm
-  exact eLpNorm_eq_lintegral_rpow_enorm_toReal
+  exact eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ne_of_gt (lt_trans zero_lt_one p.one_lt)) p.lt_top.ne hF
 
 /-- The scalar coordinates of the intermediate vector kernel are precisely
@@ -340,7 +340,7 @@ private theorem scalar_gagliardoKernel_enorm_rpow_measurable {d : ℕ}
     Measurable (fun z =>
       ‖Gagliardo.gagliardoKernel s.1 p.exponent (fun x => F x i) z‖ₑ ^
         p.exponent.toReal) :=
-  (scalar_gagliardoKernel_measurable s p F hF i).enorm.pow measurable_const
+  (scalar_gagliardoKernel_measurable s p F hF i).eNorm.pow measurable_const
 
 private theorem scalar_cubeGagliardoESeminorm_rpow_eq_lintegral {d : ℕ}
     (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent)
@@ -531,7 +531,7 @@ theorem cubeCoordinateGagliardoComparisonConstant_lt_top
     cubeCoordinateGagliardoComparisonConstant d p < ∞ := by
   unfold cubeCoordinateGagliardoComparisonConstant
   exact ENNReal.mul_lt_top
-    (ENNReal.rpow_lt_top_of_nonneg ENNReal.toReal_nonneg enorm_ne_top)
+    (ENNReal.rpow_lt_top_of_nonneg ENNReal.toReal_nonneg eNorm_ne_top)
     (ENNReal.rpow_lt_top_of_nonneg
       (sub_nonneg.mpr (by
         rw [← ENNReal.toReal_one]

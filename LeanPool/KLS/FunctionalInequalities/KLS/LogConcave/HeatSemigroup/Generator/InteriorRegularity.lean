@@ -79,7 +79,7 @@ private theorem eLpNorm_le_of_norm_le {E F : Type*} [NormedAddCommGroup E] [Norm
     eLpNorm f 2 μ ≤ ENNReal.ofReal C * eLpNorm g 2 μ := by
   refine (eLpNorm_mono_real hf h).trans ?_
   have : (fun x => C * ‖g x‖) = C • fun x => ‖g x‖ := rfl
-  rw [this, eLpNorm_const_smul, Real.enorm_of_nonneg hC]
+  rw [this, eLpNorm_const_smul, Real.eNorm_of_nonneg hC]
   gcongr
   by_cases hg : AEStronglyMeasurable g μ
   · rw [eLpNorm_norm g hg]
@@ -413,8 +413,8 @@ private theorem eLpNorm_tilted_le (hνU : (ν : Measure V) = m.tilted (-U)) {E :
   by_cases hfm : AEStronglyMeasurable f m
   · have hfν : AEStronglyMeasurable f (ν : Measure V) :=
       hfm.mono_ac (hνU ▸ tilted_absolutelyContinuous m (-U))
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hfν,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hfm]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hfν,
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hfm]
     simp only [ENNReal.toReal_ofNat]
     rw [lintegral_eq_tiltedDensity m hνU, ← ENNReal.mul_rpow_of_nonneg _ _ (by norm_num),
       ← lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
@@ -448,8 +448,8 @@ private theorem eLpNorm_le_tilted_of_sq_le [NeZero m] (hνU : (ν : Measure V) =
     (u : Lp ℝ 2 (ν : Measure V)) (hF : AEStronglyMeasurable F m)
     (h : ∀ x, ‖F x‖ ^ 2 ≤ C * tiltedDensity m U x * ‖u x‖ ^ 2) :
     eLpNorm F 2 m ≤ ENNReal.ofReal C ^ (1 / 2 : ℝ) * eLpNorm u 2 (ν : Measure V) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hF,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hF,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
       (Lp.aestronglyMeasurable u)]
   simp only [ENNReal.toReal_ofNat]
   rw [lintegral_eq_tiltedDensity m hνU, ← ENNReal.mul_rpow_of_nonneg _ _ (by norm_num),
@@ -572,7 +572,7 @@ private theorem isTest_of_contDiff_one {g : V → ℝ} (hg : ContDiff ℝ 1 g)
     (hgc : HasCompactSupport g) : IsTest ν (ContinuousLinearMap.id ℝ V) g := by
   refine ⟨?_, ?_, ?_⟩
   · obtain ⟨M, hM0, hM⟩ := Energy.Euclidean.exists_bound_fderiv_of_hasCompactSupport hg hgc
-    refine ⟨⟨M, hM0⟩, lipschitzWith_of_nnnorm_fderiv_le (hg.differentiable one_ne_zero)
+    refine ⟨⟨M, hM0⟩, lipschitzWith_of_nnNorm_fderiv_le (hg.differentiable one_ne_zero)
       fun x => ?_⟩
     change ‖fderiv ℝ g x‖ ≤ M
     exact hM x

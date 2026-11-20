@@ -395,7 +395,7 @@ private theorem eLpNorm_mul_left_le_of_nnnorm_bound
   refine eLpNorm_le_nnreal_smul_eLpNorm_of_ae_le_mul (hf.mul hg) ?_ p
   filter_upwards [hC] with x hx
   calc
-    ‖f x * g x‖₊ = ‖f x‖₊ * ‖g x‖₊ := nnnorm_mul _ _
+    ‖f x * g x‖₊ = ‖f x‖₊ * ‖g x‖₊ := nnNorm_mul _ _
     _ ≤ C * ‖g x‖₊ := by gcongr
 
 /-- Multiplication by a bounded measurable scalar preserves `L²` membership. -/
@@ -403,10 +403,10 @@ theorem memLp_mul_left_of_nnnorm_bound
     {X : Type*} [MeasurableSpace X] {μ : Measure X} {f g : X → ℝ}
     {C : NNReal} (hf : AEStronglyMeasurable f μ) (hg : MemLp g 2 μ)
     (hC : ∀ᵐ x ∂μ, ‖f x‖₊ ≤ C) : MemLp (fun x => f x * g x) 2 μ := by
-  apply hg.of_nnnorm_le_mul (c := C) (hf.mul hg.aestronglyMeasurable)
+  apply hg.of_nnNorm_le_mul (c := C) (hf.mul hg.aestronglyMeasurable)
   filter_upwards [hC] with x hx
   calc
-    ‖f x * g x‖₊ = ‖f x‖₊ * ‖g x‖₊ := nnnorm_mul _ _
+    ‖f x * g x‖₊ = ‖f x‖₊ * ‖g x‖₊ := nnNorm_mul _ _
     _ ≤ C * ‖g x‖₊ := by gcongr
 
 /-- Multiplication by a bounded measurable scalar preserves strong `L²` convergence.

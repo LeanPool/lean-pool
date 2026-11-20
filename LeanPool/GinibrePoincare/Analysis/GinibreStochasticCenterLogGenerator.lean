@@ -62,8 +62,7 @@ theorem ginibre_fderiv_centerSquared (n : ℕ) (z v : Configuration n) :
       z)).mul (I.hasFDerivAt (x := z)))).fderiv
   change (fderiv ℝ (⇑R*⇑R+⇑I*⇑I) z) v = _
   rw [hd]
-  simp [R, I, add_apply, smul_apply]
- ; ring
+  simp [R, I, add_apply, smul_apply]; ring
 
 theorem ginibre_centerSquared_gradient_normSq (n : ℕ) (z : Configuration n) :
     realGradientNormSq (ginibreCenterSquared n) z = 4*(n : ℝ)*ginibreCenterSquared n z := by
@@ -75,8 +74,7 @@ theorem ginibre_centerSquared_gradient_normSq (n : ℕ) (z : Configuration n) :
       := by
     simp [imaginaryCoordinateDirection, coordinateDirection, coordinateSum]
   simp_rw [hr, hi]
-  simp [ginibreCenterSquared, Complex.normSq_apply]
- ; ring
+  simp [ginibreCenterSquared, Complex.normSq_apply]; ring
 
 theorem ginibre_deriv_deriv_log {r : ℝ} (hr : 0 < r) :
     deriv (deriv Real.log) r = -(r^2)⁻¹ := by
@@ -98,7 +96,6 @@ theorem ginibreRealPaperSpeedGenerator_log_centerSquared {n : ℕ} (hn : 2 ≤ n
     ginibre_deriv_deriv_log hpos, ginibreRealPaperSpeedGenerator_centerSquared hn α z hz,
     ginibre_centerSquared_gradient_normSq]
   have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast (show n ≠ 0 by omega)
-  field_simp
- ; ring
+  field_simp; ring
 end
 end GinibrePoincare

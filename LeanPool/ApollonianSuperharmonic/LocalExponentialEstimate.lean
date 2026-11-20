@@ -73,7 +73,7 @@ theorem LocalExponentialEstimate
       w z <= (4 : Real) ^ n * w 0 + M * (((4 : Real) ^ n - 1) / 3) := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro z hz
       by_cases hn : n = 0
       · have hz0 : z.re = 0 := by omega

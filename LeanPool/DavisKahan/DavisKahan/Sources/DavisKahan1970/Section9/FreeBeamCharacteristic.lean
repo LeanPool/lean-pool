@@ -64,7 +64,7 @@ def modeD3 (beta a b c d x : ℝ) : ℝ :=
 /-- Closed form of the fourth derivative. -/
 def modeD4 (beta a b c d x : ℝ) : ℝ := beta ^ 4 * mode beta a b c d x
 
--- `try rfl` closes some conversion goals; `all_goals ring` handles the rest.
+-- `try rfl` closes some conversion goals; `ring` handles the remaining goal.
 /-- The displayed first derivative is correct. -/
 theorem hasDerivAt_mode (beta a b c d x : ℝ) :
     HasDerivAt (mode beta a b c d) (modeD1 beta a b c d x) x := by
@@ -79,9 +79,9 @@ theorem hasDerivAt_mode (beta a b c d x : ℝ) :
       (((Real.hasDerivAt_sinh (beta * x)).comp x
           ((hasDerivAt_const x beta).mul (hasDerivAt_id x))).const_mul d)
     using 1 <;> (try rfl)
-  all_goals ring
+  ring
 
--- `try rfl` closes some conversion goals; `all_goals ring` handles the rest.
+-- `try rfl` closes some conversion goals; `ring` handles the remaining goal.
 /-- The displayed second derivative is the derivative of `modeD1`. -/
 theorem hasDerivAt_modeD1 (beta a b c d x : ℝ) :
     HasDerivAt (modeD1 beta a b c d) (modeD2 beta a b c d x) x := by
@@ -96,7 +96,7 @@ theorem hasDerivAt_modeD1 (beta a b c d x : ℝ) :
       (((Real.hasDerivAt_cosh (beta * x)).comp x
           ((hasDerivAt_const x beta).mul (hasDerivAt_id x))).const_mul d)).const_mul beta
     using 1 <;> (try rfl)
-  all_goals ring
+  ring
 
 /-- The displayed third derivative is the derivative of `modeD2`. -/
 theorem hasDerivAt_modeD2 (beta a b c d x : ℝ) :

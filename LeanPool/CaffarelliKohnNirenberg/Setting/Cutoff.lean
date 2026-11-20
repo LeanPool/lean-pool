@@ -124,7 +124,7 @@ private theorem cutoff_map_inner {ρ : ℝ} (hρ : 0 < ρ) (x₀ x : Vec3) :
   rw [vec3_norm_eq_native, cutoff_norm_map, abs_inv, abs_of_pos hρ]
   convert (inv_norm_lt_iff (ρ := ρ) (a := 13 / 20)
     (n := vecEuclideanNorm (x - x₀)) hρ).symm using 1
-  all_goals ring_nf
+  ring_nf
 
 private theorem cutoff_map_outer {ρ : ℝ} (hρ : 0 < ρ) (x₀ x : Vec3) :
     ρ⁻¹ • (x - x₀) ∈ euclideanBall (0 : Vec3) (3 / 4) ↔
@@ -134,7 +134,7 @@ private theorem cutoff_map_outer {ρ : ℝ} (hρ : 0 < ρ) (x₀ x : Vec3) :
   rw [vec3_norm_eq_native, cutoff_norm_map, abs_inv, abs_of_pos hρ]
   convert inv_norm_lt_iff (ρ := ρ) (a := 3 / 4)
     (n := vecEuclideanNorm (x - x₀)) hρ using 1
-  all_goals ring_nf
+  ring_nf
 
 private theorem cutoff_map_affine_smooth {ρ : ℝ} (_ : 0 < ρ) (x₀ : Vec3) :
     ContDiff ℝ (⊤ : ℕ∞) (fun x : Vec3 => ρ⁻¹ • (x - x₀)) := by

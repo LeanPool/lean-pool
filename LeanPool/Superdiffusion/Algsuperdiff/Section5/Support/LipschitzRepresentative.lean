@@ -186,10 +186,10 @@ theorem exists_lipschitzWith_representative_of_hasWeakGradientOn
           (unitConvexApproxScale (m + 1))) :=
       contDiff_convexApproxSmoothRepresentative hV.isOpen.measurableSet hrho one_le_two hu hr
         (heps0 m)
-    refine Convex.lipschitzOnWith_of_nnnorm_fderiv_le
+    refine Convex.lipschitzOnWith_of_nnNorm_fderiv_le
       (fun x _ => (hsmoothu.differentiable (by simp)).differentiableAt) ?_ hV.convex
     intro x hx
-    rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ (by positivity)]
+    rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ (by positivity)]
     refine opNorm_le_of_apply_basisVec_le hK fun i => ?_
     have haeq :
         (fun z => fderiv ℝ (convexApproxSmoothRepresentative V (unitConvexApproxKernel (d := d))

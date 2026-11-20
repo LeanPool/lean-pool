@@ -80,7 +80,7 @@ theorem sqWeightedMeasure_tail_descendant_eq_closedBall
         (stoppingComparisonParentSide r depth) depth)
       (axisCubeConcentricDepthSide (stoppingComparisonParentSide r depth) depth) =ᵐ[
         sqWeightedMeasure f volume] Metric.closedBall x (5 * r) :=
-    hsq_ac.ae_eq hae
+    hsq_ac.ae_le hae
   let child : Set (Vec d) := axisCube
     (axisCubeConcentricDepthCorner (stoppingComparisonParentCorner x r depth)
       (stoppingComparisonParentSide r depth) depth)

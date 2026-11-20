@@ -420,7 +420,7 @@ theorem eLpNorm_hilbertify_le_dimension_mul_vec
         eLpNorm F p (normalizedCubeMeasure Q) := by
       rw [show (fun x ↦ (d : ℝ) • F x) = (d : ℝ) • F by rfl,
         eLpNorm_const_smul]
-      rw [Real.enorm_eq_ofReal]
+      rw [Real.eNorm_eq_ofReal]
       norm_num
 
 end CubeCalderonZygmund

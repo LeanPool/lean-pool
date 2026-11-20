@@ -45,7 +45,7 @@ cube. -/
 theorem aestronglyMeasurable_timeCube_of_contDiffOn_Ioi {G : ℝ × Vec 2 → Vec 2}
     (hG : ContinuousOn G (Set.Ioi (0 : ℝ) ×ˢ Set.univ)) :
     AEStronglyMeasurable G (volume.restrict timeCube) :=
-  (hG.mono (fun _ hz => ⟨hz.1.1, Set.mem_univ _⟩)).aestronglyMeasurable
+  (hG.mono (t := timeCube) (fun _ hz => ⟨hz.1.1, Set.mem_univ _⟩)).aestronglyMeasurable
     (μ := volume) amnr_timeCube_isOpen.measurableSet
 
 /-- **Open-time `HTilde_m` gradient bound for the actual iterates** (16)-(18).  The AMNR

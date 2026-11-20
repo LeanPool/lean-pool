@@ -82,7 +82,7 @@ def Dinv (x : ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
 lemma D_mul_Dinv (x : ℝ) : D x * Dinv x = 1 := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [D, Dinv, fromThreeCols, b, mul_apply, Fin.sum_univ_three, one_apply]
+    simp [D, Dinv, fromThreeCols, b, Matrix.mul_apply, Fin.sum_univ_three]
 
 lemma D_inv (x : ℝ) : (D x)⁻¹ = Dinv x :=
   inv_eq_right_inv (D_mul_Dinv x)
@@ -179,7 +179,7 @@ def W (x : ℝ) : Matrix (Fin k) (Fin k) ℝ :=
 lemma vCols_mul_qcRows (x : ℝ) :
     vCols t * qcRows t q x = ∑ i, q i • vecMulVec (v (t i)) (cVec (t i) x) := by
   ext a b
-  simp only [mul_apply, vCols, qcRows, Matrix.sum_apply, Matrix.smul_apply, vecMulVec_apply,
+  simp only [Matrix.mul_apply, vCols, qcRows, Matrix.sum_apply, Matrix.smul_apply, vecMulVec_apply,
     smul_eq_mul]
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   ring
@@ -189,14 +189,14 @@ lemma qcRows_mul_invD_vCols (x : ℝ) :
   rw [Matrix.mul_assoc]
   ext i j
   have hv (s : Fin 3) : ((D x)⁻¹ * vCols t) s j = ((D x)⁻¹ *ᵥ v (t j)) s := by
-    simp [mul_apply, vCols, mulVec, dotProduct]
+    simp [Matrix.mul_apply, vCols, mulVec, dotProduct]
   have hR : (diagonal q * W t x) i j = q i * W t x i j := by
-    simp only [mul_apply, diagonal_apply]
+    simp only [Matrix.mul_apply, diagonal_apply]
     rw [Fintype.sum_eq_single i]
     · simp
     · intro k hk
       simp [Ne.symm hk]
-  rw [hR, mul_apply]
+  rw [hR, Matrix.mul_apply]
   simp only [qcRows, hv, W, dotProduct]
   simp [mul_assoc, Finset.mul_sum]
 
@@ -330,7 +330,7 @@ lemma IsTotallyNonneg.mul_diagonal {ι κ : Type*} [LinearOrder ι] [LinearOrder
   have hmat : (A * diagonal d).submatrix I J =
       A.submatrix I J * diagonal (d ∘ J) := by
     ext a b
-    simp [submatrix_apply, mul_apply, diagonal_apply]
+    simp [submatrix_apply, Matrix.mul_apply, diagonal_apply]
   rw [hmat, det_mul, det_diagonal]
   exact mul_nonneg (hA r I J hI hJ) (Finset.prod_nonneg fun _ _ ↦ hd _)
 
@@ -352,7 +352,7 @@ lemma sqRows_eq_scale :
     sqRows t =
       convexRowMatrix (fun s : ℝ ↦ s ^ 2) t * diagonal (![(1 : ℝ), 2, 1]) := by
   ext i j
-  simp only [sqRows, convexRowMatrix, mul_apply, diagonal_apply, Fin.sum_univ_three]
+  simp only [sqRows, convexRowMatrix, Matrix.mul_apply, diagonal_apply, Fin.sum_univ_three]
   fin_cases j <;> simp [row3, cons_val_zero, cons_val_one, cons_val_two, vecHead, vecTail, mul_comm]
 
 lemma isTotallyNonneg_sqRows (htmono : Monotone t) (htpos : ∀ i, 0 < t i) :
@@ -369,7 +369,7 @@ lemma isTotallyNonneg_sqRows (htmono : Monotone t) (htpos : ∀ i, 0 < t i) :
 lemma W_eq_mul_transpose (x : ℝ) :
     W t x = fKernelRows t x * (sqRows t)ᵀ := by
   ext i j
-  simp only [W_apply, fKernelRows, sqRows, convexRowMatrix, mul_apply, transpose_apply,
+  simp only [W_apply, fKernelRows, sqRows, convexRowMatrix, Matrix.mul_apply, transpose_apply,
     Fin.sum_univ_three, row3_zero, row3_one, row3_two]
   simp [cons_val_zero, cons_val_one, cons_val_two, vecHead, vecTail]
   ring
@@ -393,7 +393,7 @@ lemma det_one_add_diagonal_mul {n : Type*} [Fintype n] [DecidableEq n]
       (fun i ↦ (1 + diagonal d * M) i) =
         (fun i ↦ d i • M i) + fun i ↦ (1 : Matrix n n ℝ) i := by
     ext i j
-    simp only [Matrix.add_apply, Matrix.one_apply, mul_apply]
+    simp only [Matrix.add_apply, Matrix.one_apply, Matrix.mul_apply]
     have hsum : ∑ x, diagonal d i x * M x j = d i * M i j := by
       rw [Fintype.sum_eq_single i]
       · simp

@@ -213,7 +213,7 @@ theorem tsum_lintegral_paperLowBadAtomMaximal_levelAtom_le
           (levelAtom A f k (z i) (R i)) (z i) (R i) x) ≤
         ∑' i : ι, ENNReal.ofReal C *
           ENNReal.ofReal (∫ y, ‖levelAtom A f k (z i) (R i) y‖) := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro i
       exact lintegral_paperLowBadAtomMaximal_levelAtom_le B hf hAk (z i) (R i) (hR i)
     _ = ENNReal.ofReal C *

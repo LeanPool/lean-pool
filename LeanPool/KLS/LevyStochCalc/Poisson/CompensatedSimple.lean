@@ -312,7 +312,7 @@ lemma SimplePredictable.lintegral_eval_sq_outer
       Measurable (fun ω : Ω => (‖φ.ξ i ω‖₊ : ℝ≥0∞) ^ 2) := by
     intro i
     refine Measurable.pow_const ?_ 2
-    exact ENNReal.continuous_coe.measurable.comp (φ.ξ_measurable i).nnnorm
+    exact ENNReal.continuous_coe.measurable.comp (φ.ξ_measurable i).nnNorm
   rw [MeasureTheory.lintegral_finsetSum]
   · refine Finset.sum_congr rfl (fun i _ => ?_)
     rw [MeasureTheory.lintegral_mul_const _ (h_sq_meas i)]

@@ -117,7 +117,7 @@ private theorem poly_toList_eq_zero_of_size_eq_zero {a : Array ℤ} (h : a.size 
 private theorem poly_toList_eq_C_mul_sub_C_mul_X_pow_mul {t a b : Array ℤ} {w v : ℤ} {e : ℕ}
     (h : ∀ i, t[i]! = w * a[i]! - v * if e ≤ i then b[i - e]! else 0) :
     poly t.toList = C (w : ℚ) * poly a.toList - C (v : ℚ) * X ^ e * poly b.toList :=
-  Polynomial.ext fun i ↦ by
+  AddMonoidAlgebra.ext <| Finsupp.ext fun i ↦ by
     rw [coeff_poly_toList, h, coeff_sub, coeff_C_mul, mul_assoc, coeff_C_mul, coeff_X_pow_mul',
       coeff_poly_toList, coeff_poly_toList]
     split_ifs <;> simp
@@ -166,7 +166,7 @@ private theorem exists_poly_fullReduce {s : Array ℤ} (hs : s.back! ≠ 0) (t :
 -- `g` times the normalized remainder is `-t`, for the gcd `g` of the entries of `-t`.
 private theorem mul_poly_normalize (t : Array ℤ) :
     C ((content (t.map Neg.neg) : ℤ) : ℚ) * poly (normalize t).toList = -poly t.toList :=
-  Polynomial.ext fun i ↦ by
+  AddMonoidAlgebra.ext <| Finsupp.ext fun i ↦ by
     rw [coeff_C_mul, coeff_poly_toList, coeff_neg, coeff_poly_toList, ← Int.cast_mul,
       mul_getElem!_normalize, Int.cast_neg]
 
@@ -186,7 +186,7 @@ private theorem not_isCoprime_of_fullReduce_eq_empty {s t : Array ℤ} (hs : s.b
 
 theorem IsChain.poly_toList_getElem!_zero {c : List ℤ} {d : ℕ} {ch : Array (Array ℤ)}
     (h : IsChain c d ch) : poly ch[0]!.toList = poly (c.take (d + 1)) :=
-  Polynomial.ext fun i ↦ by
+  AddMonoidAlgebra.ext <| Finsupp.ext fun i ↦ by
     rw [coeff_poly_toList, h.getElem!_zero, coeff_poly, List.getD_eq_getElem?_getD,
       List.getElem?_take]
     split_ifs with hi
@@ -196,7 +196,7 @@ theorem IsChain.poly_toList_getElem!_zero {c : List ℤ} {d : ℕ} {ch : Array (
 
 theorem IsChain.poly_toList_getElem!_one {c : List ℤ} {d : ℕ} {ch : Array (Array ℤ)}
     (h : IsChain c d ch) : poly ch[1]!.toList = derivative (poly ch[0]!.toList) :=
-  Polynomial.ext fun n ↦ by
+  AddMonoidAlgebra.ext <| Finsupp.ext fun n ↦ by
     rw [coeff_derivative, coeff_poly_toList, coeff_poly_toList, h.getElem!_zero, h.getElem!_one]
     by_cases hn : n < d
     · rw [Array.getElem!_map_range _ hn, Array.getElem!_map_range _ (by lia)]

@@ -283,7 +283,7 @@ theorem blackwell : Blackwell D.discount D.bellman where
       (c := D.bellmanFn v s + (D.discount : ℝ) * c) fun a ha => ?_) (le_of_eq hgoal.symm)
     have hsplit : D.objectiveE (v + const S c) s a
         = D.objectiveE v s a + ((D.discount * c : ℝ) : EReal) := by
-      simp only [objectiveE, coe_add, const_apply, Pi.add_apply]
+      simp only [objectiveE, FunLike.coe_add, const_apply, Pi.add_apply]
       rw [show (D.discount : ℝ) * (v (D.transition (s, a)) + c)
           = D.discount * v (D.transition (s, a)) + D.discount * c by ring,
         EReal.coe_add, add_assoc]

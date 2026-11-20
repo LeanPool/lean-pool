@@ -176,10 +176,8 @@ lemma covered_partwise_of_covered_by_intervals {hX : X₀ ∪ X₁ = Set.univ} (
           (SplitDipath.SecondPart γ _).extend '' Set.Icc (↑i/(↑(n+1))) ((↑i+1)/(↑(n+1))) ⊆ X₀ ∨
           (SplitDipath.SecondPart γ _).extend '' Set.Icc (↑i/(↑(n+1))) ((↑i+1)/(↑(n+1))) ⊆ X₁ by
         convert hsuff <;> exact (Nat.cast_succ n).symm
-      rw [SplitProperties.secondPart_range_interval_coe γ _ _]
+      rw [SplitProperties.secondPart_range_interval_coe γ hi (Nat.succ_pos n)]
       convert h <;> exact (Nat.cast_succ i).symm
-      · exact hi
-      · exact Nat.succ_pos n
 
 
 /-- A dipath γ that satisfies `coveredPartwise _ γ n` can be covered with n+1 intervals.

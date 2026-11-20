@@ -50,8 +50,8 @@ theorem prodPowerIntegral_eq_lintegral_slices
       ((volume.restrict E).prod (volume.restrict F)) := by
     have h1 : AEMeasurable (fun w : ParabolicPoint => ‖g w‖ₑ ^ P)
         ((volume.restrict E).prod (volume.restrict F)) :=
-      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hmeas'.enorm
-    simpa only [Real.enorm_eq_ofReal_abs] using h1
+      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hmeas'.eNorm
+    simpa only [Real.eNorm_eq_ofReal_abs] using h1
   exact CKN.Foundation.Parabolic.Integration.prod_lintegral_swap_cyl hFm
 
 /-- An almost-everywhere bound on the spatial `L^P` norms of the slices bounds
@@ -75,14 +75,14 @@ theorem prodPowerIntegral_le_of_slice_eLpNorm
         (ne_of_lt (lt_of_le_of_lt hs (lt_top_iff_ne_top.mpr hM)))
     have heq : eLpNorm (fun y => g (y, s)) (ENNReal.ofReal P) (volume.restrict E) =
         (∫⁻ y, ‖g (y, s)‖ₑ ^ P ∂(volume.restrict E)) ^ (1 / P) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (ENNReal.ofReal_ne_zero_iff.mpr hP) ENNReal.ofReal_ne_top hf,
         ENNReal.toReal_ofReal hP.le]
     have hstep : (∫⁻ y in E, ENNReal.ofReal |g (y, s)| ^ P) =
         (eLpNorm (fun y => g (y, s)) (ENNReal.ofReal P) (volume.restrict E)) ^ P := by
       rw [heq, one_div, ← ENNReal.rpow_mul]
       rw [inv_mul_cancel₀ hP.ne', ENNReal.rpow_one]
-      simp only [Real.enorm_eq_ofReal_abs]
+      simp only [Real.eNorm_eq_ofReal_abs]
     rw [hstep]
     exact ENNReal.rpow_le_rpow hs hP.le
 

@@ -197,15 +197,16 @@ theorem iteratedFermatQuot_eq_mul_sum {p : ℕ} (hp : p ≠ 0) {x : ℤ} {j k : 
 /-- The `p`-adic valuation of `m!` is at most `m - p + 1`.
 
 This is Legendre's bound `(p-1) v_p(m!) < m` of
-`sub_one_mul_padicValNat_factorial_lt_of_ne_zero`: peeling one copy of `v_p(m!)` off the
+`sub_one_mul_multiplicity_factorial_lt_of_ne_zero`: peeling one copy of `v_p(m!)` off the
 left-hand side leaves `(p-2) v_p(m!)`, which is at least `p - 2` as soon as `v_p(m!) ≥ 1`. -/
 private theorem padicValNat_factorial_le_succ_sub {p : ℕ} (hp : p.Prime) (hp3 : 3 ≤ p)
     (m : ℕ) : padicValNat p m.factorial ≤ m - p + 1 := by
   have : Fact p.Prime := ⟨hp⟩
+  rw [Nat.padicValNat_def]
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · simp
-  have h := sub_one_mul_padicValNat_factorial_lt_of_ne_zero p (n := m) (by omega)
-  set t := padicValNat p m.factorial with ht
+  have h := sub_one_mul_multiplicity_factorial_lt_of_ne_zero p (n := m) (by omega)
+  set t := multiplicity p m.factorial with ht
   rcases Nat.eq_zero_or_pos t with h0 | h0
   · omega
   have h2 : (p - 2) * 1 ≤ (p - 2) * t := Nat.mul_le_mul_left _ h0
@@ -219,11 +220,12 @@ argument with two copies of `v_p(m!)` gains the extra unit. -/
 private theorem padicValNat_factorial_le_sub {p : ℕ} (hp : p.Prime) (hp3 : 3 ≤ p) {m : ℕ}
     (hm : m ≠ p) : padicValNat p m.factorial ≤ m - p := by
   have : Fact p.Prime := ⟨hp⟩
+  rw [Nat.padicValNat_def]
   rcases lt_or_gt_of_ne hm with hlt | hgt
-  · rw [padicValNat.eq_zero_of_not_dvd (by rw [hp.dvd_factorial]; omega)]
+  · rw [multiplicity_eq_zero_of_not_dvd (by rw [hp.dvd_factorial]; omega)]
     omega
-  have h := sub_one_mul_padicValNat_factorial_lt_of_ne_zero p (n := m) (by omega)
-  set t := padicValNat p m.factorial with ht
+  have h := sub_one_mul_multiplicity_factorial_lt_of_ne_zero p (n := m) (by omega)
+  set t := multiplicity p m.factorial with ht
   rcases Nat.lt_or_ge t 2 with h0 | h0
   · interval_cases t <;> omega
   have h2 : (p - 2) * 2 ≤ (p - 2) * t := Nat.mul_le_mul_left _ h0
@@ -240,7 +242,7 @@ private theorem padicValNat_factorial_add_le {p : ℕ} (hp : p.Prime) (hp3 : 3 �
     rw [← Nat.add_mul]; congr 1; omega
   have hle : m - j ≤ (m - j) * (k + 1) := Nat.le_mul_of_pos_right _ (by omega)
   rcases Nat.lt_or_ge m p with hmp | hmp
-  · rw [padicValNat.eq_zero_of_not_dvd (by rw [hp.dvd_factorial]; omega)]
+  · rw [Nat.padicValNat_def, multiplicity_eq_zero_of_not_dvd (by rw [hp.dvd_factorial]; omega)]
     omega
   · have := padicValNat_factorial_le_succ_sub hp hp3 m
     omega
@@ -296,13 +298,14 @@ private theorem pow_dvd_intCollapsedCoeff_mul_pow {p : ℕ} (hp : p.Prime) {j m 
   have hfact : Fact p.Prime := ⟨hp⟩
   have hp' : Prime ((p : ℤ)) := Nat.prime_iff_prime_int.mp hp
   have hpz : ((p : ℤ)) ≠ 0 := Int.natCast_ne_zero.mpr hp.ne_zero
-  set t := padicValNat p m.factorial with ht
-  obtain ⟨s, hs⟩ := pow_padicValNat_dvd (p := p) (n := m.factorial)
+  rw [Nat.padicValNat_def] at hD
+  set t := multiplicity p m.factorial with ht
+  obtain ⟨s, hs⟩ := pow_multiplicity_dvd p m.factorial
   have hps : ¬ p ∣ s := by
     intro hd
     obtain ⟨c, hc⟩ := hd
     have hdvd : p ^ (t + 1) ∣ m.factorial := ⟨c, by rw [hs, hc, pow_succ]; ring⟩
-    have := (padicValNat_dvd_iff_le m.factorial_ne_zero).mp hdvd
+    have := (multiplicity_dvd_iff_le m.factorial_ne_zero).mp hdvd
     omega
   have hsZ : ((m.factorial : ℕ) : ℤ) = (p : ℤ) ^ t * (s : ℤ) := by rw [hs]; push_cast; ring
   obtain ⟨a, ha⟩ := exists_intCast_eq_factorial_mul_pow_mul_collapsedCoeff hp.two_le j m

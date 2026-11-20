@@ -508,12 +508,12 @@ theorem exists_almost_stationary_modulus (hrlo : 0 < 1 + rlo) (hle : rlo ≤ rhi
   have hnorm : ‖A.markovOp h - B.markovOp h‖ ≤ ε :=
     (BoundedContinuousFunction.norm_le hε.le).mpr fun s => by
       rw [Real.norm_eq_abs]
-      simpa only [BoundedContinuousFunction.coe_sub, Pi.sub_apply] using hptwise s
+      simpa only [FunLike.coe_sub, Pi.sub_apply] using hptwise s
   -- so the integrals are close
   have hsub : ∫ s, (A.markovOp h - B.markovOp h) s ∂(ν : Measure P.State)
       = ∫ s, A.markovOp h s ∂(ν : Measure P.State)
         - ∫ s, B.markovOp h s ∂(ν : Measure P.State) := by
-    simpa only [BoundedContinuousFunction.coe_sub, Pi.sub_apply] using
+    simpa only [FunLike.coe_sub, Pi.sub_apply] using
       integral_sub ((A.markovOp h).integrable _) ((B.markovOp h).integrable _)
   rw [← hsub]
   exact le_trans (A.abs_integral_le _ _) hnorm

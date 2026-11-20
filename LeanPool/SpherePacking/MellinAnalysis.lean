@@ -46,7 +46,7 @@ private theorem saddleCauchyPole_symmetric_intervalIntegral_tendsto_pos
       (fun T : ℝ => 2 * Real.arctan (T / a))
       Filter.atTop (𝓝 Real.pi) := by
     convert (tendsto_const_nhds.mul hatan) using 1
-    all_goals ring_nf
+    ring_nf
   have hcomplex : Tendsto
       (fun T : ℝ =>
         ((2 * Real.arctan (T / a) : ℝ) : ℂ))
@@ -77,7 +77,7 @@ private theorem saddleCauchyPole_symmetric_intervalIntegral_tendsto_neg
       (fun T : ℝ => 2 * Real.arctan (T / a))
       Filter.atTop (𝓝 (-Real.pi)) := by
     convert (tendsto_const_nhds.mul hatan) using 1
-    all_goals ring_nf
+    ring_nf
   have hcomplex : Tendsto
       (fun T : ℝ =>
         ((2 * Real.arctan (T / a) : ℝ) : ℂ))
@@ -143,7 +143,7 @@ private theorem saddleGaussianPoleRepresentative_eq_inv_add_slope
   rw [saddleGaussianPoleSlope_eq_of_ne hz]
   unfold saddleGaussianPoleRepresentative
   field_simp [hz]
-  all_goals (symm; apply add_sub_cancel)
+  (symm; apply add_sub_cancel)
 
 private theorem saddleGaussianPoleShiftedSlope_differentiable
     (n : ℕ) :
@@ -213,7 +213,7 @@ private theorem saddleGaussianPoleShiftedSlope_horizontalIntegral_tendsto_zero
   let z : ℂ := (a : ℂ) + (t : ℂ) * Complex.I
   let q : ℂ := z + ((2 * n : ℕ) : ℂ)
   have hden : |t| ≤ ‖q‖ := by
-    try dsimp only [q, z]
+    dsimp only [q, z]
     simpa only [Nat.cast_mul, Nat.cast_ofNat, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
         Complex.re_ofNat,
@@ -591,7 +591,7 @@ private theorem saddleGaussianPoleWeightedRepresentative_eq_pole_add_correction
         saddleMellinInversePowerPoleSlope r n z
   rw [hdiv]
   field_simp [hz]
-  all_goals ring
+  ring
 
 private theorem saddleGaussianPole_shiftedLine_ne_zero
     (n : ℕ) {a : ℝ}
@@ -665,7 +665,7 @@ private theorem saddleGaussianPoleWeightedCorrection_horizontalStrip_bound
   let z : ℂ := (a : ℂ) + (t : ℂ) * Complex.I
   let q : ℂ := z + ((2 * n : ℕ) : ℂ)
   have hden : |t| ≤ ‖q‖ := by
-    try dsimp only [q, z]
+    dsimp only [q, z]
     simpa only [Nat.cast_mul, Nat.cast_ofNat, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
         Complex.re_ofNat,
@@ -2110,7 +2110,7 @@ private theorem sinh_le_mul_cosh {a : ℝ} (ha : 0 ≤ a) :
   let f : ℝ → ℝ := fun x => x * Real.cosh x - Real.sinh x
   have hderiv (x : ℝ) :
       HasDerivAt f (x * Real.sinh x) x := by
-    try dsimp only [f]
+    dsimp only [f]
     convert! ((hasDerivAt_id x).mul
       (Real.hasDerivAt_cosh x)).sub
       (Real.hasDerivAt_sinh x) using 1;
@@ -2126,7 +2126,7 @@ private theorem sinh_le_mul_cosh {a : ℝ} (ha : 0 ≤ a) :
     exact mul_nonneg hx.le (Real.sinh_nonneg_iff.mpr hx.le)
   have h := hmono (show (0 : ℝ) ∈ Set.Ici 0 by simp only [Set.mem_Ici, Std.le_refl])
     (show a ∈ Set.Ici 0 from ha) ha
-  try dsimp only [f] at h
+  dsimp only [f] at h
   norm_num at h
   exact h
 
@@ -2518,7 +2518,7 @@ private theorem radialL1Mass_pos {d : ℕ} (g : TestFunction d)
     ext x
     simpa only [zero_apply] using! h x
   unfold radialL1Mass
-  exact integral_pos_of_integrable_nonneg_nonzero
+  exact integral_pos_of_integrable_nonneg_ne_zero
     g.continuous.norm g.integrable.norm (fun _ => norm_nonneg _)
     (norm_ne_zero_iff.mpr hx)
 
@@ -2535,7 +2535,7 @@ private theorem integral_scaled_exp_change_Ioi {E : Type*}
       exact mul_pos hR (Real.exp_pos v)
     · intro hr
       refine ⟨Real.log (r / R), Set.mem_univ _, ?_⟩
-      try dsimp only [F]
+      dsimp only [F]
       rw [Real.exp_log (div_pos hr hR)]
       field_simp
   have hderiv :
@@ -2566,7 +2566,7 @@ private theorem integrable_scaled_exp_change_Ioi {E : Type*}
       exact mul_pos hR (Real.exp_pos v)
     · intro hr
       refine ⟨Real.log (r / R), Set.mem_univ _, ?_⟩
-      try dsimp only [F]
+      dsimp only [F]
       rw [Real.exp_log (div_pos hr hR)]
       field_simp
   have hderiv :
@@ -2938,8 +2938,7 @@ private theorem radialProfile_quadratic_bound {d : ℕ}
   obtain ⟨C, hC⟩ :=
     exists_taylor_mean_remainder_bound
       (f := radialProfile hd f)
-      (a := (0 : ℝ)) (b := (1 : ℝ)) (n := 1)
-      zero_le_one hsmooth
+      (a := (0 : ℝ)) (b := (1 : ℝ)) (n := 1) hsmooth
   refine ⟨C, ?_⟩
   intro r hr hrone
   have hderivWithin :
@@ -3148,7 +3147,7 @@ private theorem norm_schwartz_imaginaryRiesz_integral_le_L1 {d : ℕ}
         (schwartz_imaginaryRiesz_integrable hd f t).norm
         f.integrable.norm
       intro x
-      try dsimp
+      dsimp
       rw [norm_mul]
       calc
         ‖f x‖ *
@@ -3177,13 +3176,13 @@ private theorem normalizedRadialMellinStrip_top_norm_le_one {d : ℕ}
     radialSurfaceArea_pos hd
   have hmellin :
       (d : ℂ) / 2 - Complex.I * z = s := by
-    try dsimp only [z, s]
+    dsimp only [z, s]
     push_cast
     simp only [mul_add, ← mul_assoc, Complex.I_mul_I, neg_mul, one_mul]; ring
   have hphase :
       ((((d : ℂ) / 2 + Complex.I * z) *
         (Real.log R : ℂ))).re = 0 := by
-    try dsimp only [z]
+    dsimp only [z]
     push_cast
     norm_num
   have hpolar :
@@ -3192,7 +3191,7 @@ private theorem normalizedRadialMellinStrip_top_norm_le_one {d : ℕ}
         radialSurfaceArea d • mellin (radialProfile hd f) s := by
     have hexponent : s - (d : ℂ) =
         -(Complex.I * (y : ℂ)) := by
-      try dsimp only [s]
+      dsimp only [s]
       ring
     simpa only [hexponent] using!
       integral_radialProfile_cpow hd f hf s
@@ -3275,7 +3274,7 @@ private theorem radial_fourier_mellin_regularized_closed {d : ℕ}
         ((d : ℂ) - w) hre).continuousAt.comp
         hinner).continuousWithinAt
   have hL : ContinuousOn L T := by
-    try dsimp only [L]
+    dsimp only [L]
     exact hhat.mul
       (hinv.comp (continuous_id.div_const (2 : ℂ))).continuousOn
   have hpi :
@@ -3284,7 +3283,7 @@ private theorem radial_fourier_mellin_regularized_closed {d : ℕ}
     exact (continuous_const.sub continuous_id).const_cpow
       (Or.inl (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero))
   have hG : ContinuousOn G T := by
-    try dsimp only [G]
+    dsimp only [G]
     exact hpi.continuousOn.mul
       (hprimal.mul
         (hinv.comp
@@ -3301,7 +3300,7 @@ private theorem radial_fourier_mellin_regularized_closed {d : ℕ}
       apply Complex.Gamma_ne_zero_of_re_pos
       norm_num
       exact hw.2
-    try dsimp only [L, G]
+    dsimp only [L, G]
     rw [radial_fourier_mellin_strip hd f hf w hw.1 hw.2]
     field_simp
   have hUT : U ⊆ T := by
@@ -3309,7 +3308,7 @@ private theorem radial_fourier_mellin_regularized_closed {d : ℕ}
     exact ⟨hw.1.le, hw.2.le⟩
   have hdreal : (0 : ℝ) < (d : ℝ) := Nat.cast_pos.mpr hd
   have hTU : T ⊆ closure U := by
-    try dsimp only [T, U]
+    dsimp only [T, U]
     rw [Complex.closure_preimage_re,
       closure_Ioo (ne_of_lt hdreal)]
   exact heq.of_subset_closure hL hG hUT hTU ⟨hs, hsd⟩
@@ -3333,22 +3332,22 @@ private theorem radial_fourier_mellin_antifourier_boundary {d : ℕ}
     rw [hanti]
     simpa only [neg_apply, neg_eq_zero, neg_zero] using! congrArg Neg.neg hzero
   have hs : 0 ≤ s.re := by
-    try dsimp only [s]
+    dsimp only [s]
     norm_num
   have hsd : s.re ≤ (d : ℝ) := by
-    try dsimp only [s]
+    dsimp only [s]
     norm_num
   have hnum : Complex.Gamma (s / 2) ≠ 0 := by
     apply Complex.Gamma_ne_zero
     intro n hn
     have him := congrArg Complex.im hn
-    try dsimp only [s] at him
+    dsimp only [s] at him
     norm_num at him
     apply hy
     exact him
   have hden : Complex.Gamma (((d : ℂ) - s) / 2) ≠ 0 := by
     apply Complex.Gamma_ne_zero_of_re_pos
-    try dsimp only [s]
+    dsimp only [s]
     norm_num
     exact Nat.cast_pos.mpr hd
   have heq := radial_fourier_mellin_regularized_closed
@@ -3435,13 +3434,13 @@ private theorem normalizedRadialMellinStrip_top_norm_eq {d : ℕ}
   have hmellin :
       (d : ℂ) / 2 - Complex.I * z =
         (d : ℂ) - Complex.I * (y : ℂ) := by
-    try dsimp only [z]
+    dsimp only [z]
     push_cast
     simp only [mul_add, ← mul_assoc, Complex.I_mul_I, neg_mul, one_mul]; ring
   have hphase :
       ((((d : ℂ) / 2 + Complex.I * z) *
         (Real.log R : ℂ))).re = 0 := by
-    try dsimp only [z]
+    dsimp only [z]
     push_cast
     norm_num
   change ‖normalizedRadialMellinStrip hd f R z‖ = _
@@ -3470,7 +3469,7 @@ private theorem normalizedRadialMellinStrip_bottom_norm_eq {d : ℕ}
   have hmellin :
       (d : ℂ) / 2 - Complex.I * z =
         -(Complex.I * (y : ℂ)) := by
-    try dsimp only [z]
+    dsimp only [z]
     push_cast
     simp only [mul_sub, ← mul_assoc, Complex.I_mul_I, neg_mul, one_mul, sub_neg_eq_add,
       sub_add_cancel_right]
@@ -3478,7 +3477,7 @@ private theorem normalizedRadialMellinStrip_bottom_norm_eq {d : ℕ}
       ((((d : ℂ) / 2 + Complex.I * z) *
         (Real.log R : ℂ))).re =
           (d : ℝ) * Real.log R := by
-    try dsimp only [z]
+    dsimp only [z]
     push_cast
     norm_num
   change ‖normalizedRadialMellinStrip hd f R z‖ = _
@@ -3914,7 +3913,7 @@ private theorem normalizedRadialMellinStrip_shifted_eq_fourier {d : ℕ}
       Complex.cpow_def_of_ne_zero hRcomplex,
       ← Complex.ofReal_log hR.le]
     congr 1
-    try dsimp only [s]
+    dsimp only [s]
     push_cast
     ring
   have hscale :
@@ -3928,7 +3927,7 @@ private theorem normalizedRadialMellinStrip_shifted_eq_fourier {d : ℕ}
     rw [mellin_comp_mul_left
       (radialProfile hd f) s hR]
     simp only [smul_eq_mul]
-    try dsimp only [c]
+    dsimp only [c]
     push_cast
     have hc := hpower
     push_cast at hc
@@ -3940,7 +3939,7 @@ private theorem normalizedRadialMellinStrip_shifted_eq_fourier {d : ℕ}
       (d : ℂ) / 2 - Complex.I *
         ((t : ℂ) + Complex.I *
           ((((d : ℝ) / 2 - a : ℝ) : ℂ))) = s := by
-    try dsimp only [s]
+    dsimp only [s]
     push_cast
     simp only [mul_add, ← mul_assoc, Complex.I_mul_I, neg_mul, one_mul, neg_sub]; ring
   have hphase :
@@ -4446,19 +4445,19 @@ private theorem normalizedRadialMellinStrip_shifted_fourier_inversion
   let c : ℂ :=
     ((radialSurfaceArea d / radialL1Mass f * R ^ d : ℝ) : ℂ)
   have hW : Integrable W := by
-    try dsimp only [W]
+    dsimp only [W]
     apply normalizedRadialLogProfile_weighted_integrable
       hd f hf hreal hzero hR
     linear_combination ha
   have hFW : Integrable (𝓕 W : ℝ → ℂ) := by
-    try dsimp only [W]
+    dsimp only [W]
     exact normalizedRadialLogProfile_weighted_fourier_integrable
       hd f hreal hR ha
   have hweight :
       W = (fun u : ℝ =>
         c * schwartzExponentialTilt g κ R u) := by
     funext u
-    try dsimp only [W]
+    dsimp only [W]
     rw [normalizedRadialLogProfile_weighted_ofReal
       hd f hreal R a u]
     simp only [Complex.ofReal_mul, Complex.ofReal_div, Complex.ofReal_pow, Complex.ofReal_exp,
@@ -4491,7 +4490,7 @@ private theorem normalizedRadialMellinStrip_shifted_fourier_inversion
   have hcancel :
       (Real.exp (a * v) : ℂ) * W v =
         (normalizedRadialLogProfile hd f R v : ℂ) := by
-    try dsimp only [W]
+    dsimp only [W]
     rw [← mul_assoc, ← Complex.ofReal_mul,
       ← Real.exp_add]
     have hsum : a * v + -a * v = 0 := by ring
@@ -4606,7 +4605,7 @@ private theorem stripPoissonPrimitive_hasDerivAt {σ : ℝ}
       (((Real.hasDerivAt_exp (Real.pi * T / 2)).comp T
         ((hasDerivAt_id T).const_mul Real.pi |>.div_const 2)).sub_const
         (Real.cos (stripAngle σ))).div_const (Real.sin (stripAngle σ)) using 1
-    all_goals simp only [mul_comm, mul_one]
+    simp only [mul_comm, mul_one]
   convert!
     ((Real.hasDerivAt_arctan _).comp T hderiv).div_const Real.pi
       using 1
@@ -4714,7 +4713,7 @@ private theorem stripPoissonKernel_integrable {σ : ℝ}
     (hbelow : -1 < σ) (habove : σ < 1) :
     Integrable (stripPoissonKernel σ) := by
   rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
+    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi eNorm_ne_top]
   have hright := stripPoissonKernel_integrableOn_Ioi hbelow habove
   refine ⟨?_, hright⟩
   have hreflected :
@@ -4843,7 +4842,7 @@ private theorem stripPoissonPrimitive_centered_neg
   rw [intervalIntegral_stripPoissonKernel hbelow habove,
     intervalIntegral_stripPoissonKernel hbelow habove] at hneg
   convert hneg.symm using 1
-  all_goals ring_nf
+  ring_nf
 
 private theorem stripPoissonPrimitive_centered_le
     {σ : ℝ} (hbelow : -1 < σ) (habove : σ < 1)
@@ -4858,13 +4857,13 @@ private theorem stripPoissonPrimitive_centered_le
   by_cases hs : 0 ≤ s
   · convert hanti (show (0 : ℝ) ∈ Ici 0 by simp only [mem_Ici, Std.le_refl])
       (show s ∈ Ici 0 from hs) hs using 1
-    all_goals ring_nf
+    ring_nf
   · have hsneg : 0 ≤ -s := by linarith only [hs]
     rw [← stripPoissonPrimitive_centered_neg
       hbelow habove r s]
     convert hanti (show (0 : ℝ) ∈ Ici 0 by simp only [mem_Ici, Std.le_refl])
       (show -s ∈ Ici 0 from hsneg) hsneg using 1
-    all_goals ring_nf
+    ring_nf
 
 private theorem stripPoissonKernel_centered_interval_max
     {σ : ℝ} (hbelow : -1 < σ) (habove : σ < 1)
@@ -5604,7 +5603,7 @@ private theorem strip_exp_abs_integrable {a : ℝ} (ha : 0 < a) :
       (integrableOn_exp_mul_Ioi (neg_lt_zero.mpr ha) 0).congr_fun
         ?_ measurableSet_Ioi
     intro y hy
-    try dsimp
+    dsimp
     rw [abs_of_pos (mem_Ioi.mp hy)]
   have hreflected :
       IntegrableOn
@@ -5618,7 +5617,7 @@ private theorem strip_exp_abs_integrable {a : ℝ} (ha : 0 < a) :
     ((Measure.measurePreserving_neg (volume : Measure ℝ)).integrableOn_comp_preimage
       (Homeomorph.neg ℝ).measurableEmbedding).mp hreflected
   rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
+    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi eNorm_ne_top]
   exact ⟨hleft, hright⟩
 
 private theorem strip_abs_log_le_add_rpow {x : ℝ} (hx : 0 < x) :
@@ -5713,7 +5712,7 @@ theorem strip_exp_abs_log_abs_integrable {a : ℝ} (ha : 0 < a) :
     refine (strip_exp_abs_log_integrableOn_Ioi ha).congr_fun ?_
       measurableSet_Ioi
     intro x hx
-    try dsimp
+    dsimp
     rw [abs_of_pos (mem_Ioi.mp hx)]
   have hleft :
       IntegrableOn
@@ -5723,11 +5722,11 @@ theorem strip_exp_abs_log_abs_integrable {a : ℝ} (ha : 0 < a) :
     refine (strip_exp_abs_log_integrableOn_Iio ha).congr_fun ?_
       measurableSet_Iio
     intro x hx
-    try dsimp
+    dsimp
     rw [abs_of_neg (mem_Iio.mp hx)]
     simp only [Real.log_neg_eq_log, mul_neg, neg_mul, neg_neg]
   rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
+    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi eNorm_ne_top]
   exact ⟨hleft, hright⟩
 
 private theorem stripRegularizedHolomorphicPoissonKernel_re
@@ -6149,7 +6148,7 @@ private theorem stripPoisson_integral_changeVariables
         have hargument : (s - (s - ℓ * T)) / ℓ = T := by
           field_simp [hℓ.ne']
           apply sub_sub_cancel
-        try dsimp only [G]
+        dsimp only [G]
         rw [hargument]
         ring
       _ = ℓ⁻¹ *
@@ -6442,7 +6441,7 @@ private theorem lower_exp_log_sqrtFactor_integrable
     refine (lower_exp_log_sqrtFactor_integrableOn_Ioi ha hc).congr_fun ?_
       measurableSet_Ioi
     intro y hy
-    try dsimp
+    dsimp
     rw [abs_of_pos (mem_Ioi.mp hy)]
   have hreflected :
       IntegrableOn
@@ -6461,7 +6460,7 @@ private theorem lower_exp_log_sqrtFactor_integrable
     ((Measure.measurePreserving_neg (volume : Measure ℝ)).integrableOn_comp_preimage
       (Homeomorph.neg ℝ).measurableEmbedding).mp hreflected
   rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
+    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi eNorm_ne_top]
   exact ⟨hleft, hright⟩
 
 private theorem lowerGammaBoundaryLog_integer_exp_integrable
@@ -6670,7 +6669,7 @@ private theorem lowerStripGammaOuter_integrable_of_exp_integrable
         simp only [mul_neg, neg_mul, neg_neg]
         apply mul_assoc
   rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
+    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi eNorm_ne_top]
   exact ⟨hleft, hright⟩
 
 private theorem norm_halfIntegerGammaFactor (j : ℕ) (y : ℝ) :
@@ -6693,7 +6692,7 @@ private theorem norm_gamma_half_add_imaginary_sq (x : ℝ) :
       Real.pi / Real.cosh (Real.pi * x) := by
   let z : ℂ := (1 / 2 : ℂ) + Complex.I * (x : ℂ)
   have harg : 1 - z = starRingEnd ℂ z := by
-    try dsimp only [z]
+    dsimp only [z]
     simp only [map_add, map_div₀, Complex.conj_ofReal,
       Complex.conj_I, Complex.conj_ofNat, map_mul, map_one]
     ring
@@ -6703,7 +6702,7 @@ private theorem norm_gamma_half_add_imaginary_sq (x : ℝ) :
     have hinput :
         (Real.pi : ℂ) * z =
           (Real.pi / 2 : ℝ) + (Real.pi * x : ℝ) * Complex.I := by
-      try dsimp only [z]
+      dsimp only [z]
       push_cast
       ring
     have hsinhalf :
@@ -6737,14 +6736,14 @@ private theorem norm_gamma_imaginary_sq {x : ℝ} (hx : x ≠ 0) :
       Real.pi / (x * Real.sinh (Real.pi * x)) := by
   let z : ℂ := Complex.I * (x : ℂ)
   have hz : -z ≠ 0 := by
-    try dsimp only [z]
+    dsimp only [z]
     exact neg_ne_zero.mpr
       (mul_ne_zero Complex.I_ne_zero (Complex.ofReal_ne_zero.mpr hx))
   have hrec :
       Complex.Gamma (1 - z) = (-z) * Complex.Gamma (-z) := by
     convert Complex.Gamma_add_one (-z) hz using 1; ring_nf
   have hconjarg : -z = starRingEnd ℂ z := by
-    try dsimp only [z]
+    dsimp only [z]
     simp only [map_mul, Complex.conj_I, Complex.conj_ofReal]
     ring
   have hconj :
@@ -6757,7 +6756,7 @@ private theorem norm_gamma_imaginary_sq {x : ℝ} (hx : x ≠ 0) :
     have hinput :
         (Real.pi : ℂ) * z =
           ((Real.pi * x : ℝ) : ℂ) * Complex.I := by
-      try dsimp only [z]
+      dsimp only [z]
       push_cast
       ring
     rw [hinput, Complex.sin_mul_I, ← Complex.ofReal_sinh]
@@ -6788,7 +6787,7 @@ private theorem norm_gamma_imaginary_sq {x : ℝ} (hx : x ≠ 0) :
           (Complex.Gamma z *
             (-z * starRingEnd ℂ (Complex.Gamma z))) *
               ((Real.sinh (Real.pi * x) : ℂ) * Complex.I) := by
-        try dsimp only [z]
+        dsimp only [z]
         rw [Complex.ofReal_mul]
         ring_nf
         simp only [Complex.ofReal_sinh, Complex.ofReal_mul, Complex.I_sq, neg_mul, one_mul, neg_neg]
@@ -7278,7 +7277,7 @@ private theorem lower_exp_log_coth_div_integrable
     refine (lower_exp_log_coth_div_integrableOn_Ioi ha).congr_fun
       ?_ measurableSet_Ioi
     intro y hy
-    try dsimp
+    dsimp
     rw [abs_of_pos (mem_Ioi.mp hy)]
   have hreflected :
       IntegrableOn
@@ -7299,7 +7298,7 @@ private theorem lower_exp_log_coth_div_integrable
     ((Measure.measurePreserving_neg (volume : Measure ℝ)).integrableOn_comp_preimage
       (Homeomorph.neg ℝ).measurableEmbedding).mp hreflected
   rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
+    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi eNorm_ne_top]
   exact ⟨hleft, hright⟩
 
 private theorem gamma_log_coth_ratio {x : ℝ} (hx : x ≠ 0) :

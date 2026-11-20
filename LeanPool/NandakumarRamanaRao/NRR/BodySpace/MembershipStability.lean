@@ -244,8 +244,8 @@ theorem eventually_mem_iff_of_not_mem_frontier
   · have := NRR.ConvexSubbody.eventually_mem_of_mem_interior hC ( show x ∈ interior ( C₀.body :
       Set Plane ) from ?_ );
     · filter_upwards [ this ] with a ha using iff_of_true ha hx';
-    · contrapose! hx;
-      exact ⟨ subset_closure hx', hx ⟩;
+    · by_contra hxi
+      exact hx ⟨subset_closure hx', hxi⟩
   · filter_upwards [ NRR.ConvexSubbody.eventually_not_mem_of_not_mem hC hx' ] with a ha using
       iff_of_false ha hx'
 

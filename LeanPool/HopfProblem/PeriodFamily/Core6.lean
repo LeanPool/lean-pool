@@ -2886,8 +2886,8 @@ private theorem PeriodFamily.Boundary.EllipticCapKernelWang.marked_endomorphism_
     (f : Module.End ℤ M) (A : Matrix (Fin r) (Fin r) ℤ) (hf : ∀ a, e (f a) = A *ᵥ e a) (k : ℕ)
     (a : M) : e ((f ^ k) a) = A ^ k *ᵥ e a := by
   induction k with
-  | zero => simp only [pow_zero, Module.End.one_apply, Matrix.one_mulVec]
-  | succ k ih => rw [pow_succ', Module.End.mul_apply, hf, ih, Matrix.mulVec_mulVec, ← pow_succ']
+  | zero => simp only [pow_zero, one_apply_eq_self, Matrix.one_mulVec]
+  | succ k ih => rw [pow_succ', mul_apply_eq_comp, hf, ih, Matrix.mulVec_mulVec, ← pow_succ']
 
 private theorem PeriodFamily.Boundary.EllipticCapKernelWang.originalAffine_pow_h1_coordinates
     (j : Elliptic.Kind) (k : ℕ) (a : SingularMayerVietoris.SingularHomology RealTorus₄ 1) :
@@ -5206,9 +5206,9 @@ private theorem PeriodFamily.Boundary.EllipticCapKernelWang.originalAffine_pow_h
       (LocalSystemMatrices.exteriorCube j.matrix) ^ k *ᵥ
         PeriodFamily.FlatTorus.singularH3Coordinates a := by
   induction k with
-  | zero => simp only [pow_zero, Module.End.one_apply, Matrix.one_mulVec]
+  | zero => simp only [pow_zero, one_apply_eq_self, Matrix.one_mulVec]
   | succ k ih =>
-    rw [pow_succ', Module.End.mul_apply, originalAffine_h3_coordinates, ih, Matrix.mulVec_mulVec,
+    rw [pow_succ', mul_apply_eq_comp, originalAffine_h3_coordinates, ih, Matrix.mulVec_mulVec,
       ← pow_succ']
 
 private theorem PeriodFamily.Boundary.EllipticCapKernelWang.originalAffineNorm_h3_coordinates

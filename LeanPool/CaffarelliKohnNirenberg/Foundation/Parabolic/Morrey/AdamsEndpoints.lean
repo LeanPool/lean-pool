@@ -119,7 +119,7 @@ theorem parabolicHedbergNearConstant_pos {β : ℝ} :
   have hsum : ENNReal.ofReal
       (((2 : ℝ) ^ (Int.negSucc 0 : ℝ)) ^ β) ≤
       ∑' n : ℕ, ENNReal.ofReal (((2 : ℝ) ^ (Int.negSucc n : ℝ)) ^ β) :=
-    ENNReal.le_tsum (f := fun n : ℕ =>
+    le_tsum (fun n : ℕ =>
       ENNReal.ofReal (((2 : ℝ) ^ (Int.negSucc n : ℝ)) ^ β)) 0
   exact ENNReal.mul_pos hfactor.ne' (lt_of_lt_of_le hterm hsum).ne'
 

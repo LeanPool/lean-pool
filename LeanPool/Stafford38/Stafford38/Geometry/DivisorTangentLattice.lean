@@ -297,9 +297,9 @@ theorem parameterIdeal_smul_W_le (hinj : Function.Injective (algebraMap V F)) :
 theorem parameterIdeal_smul_W_le_scaledLattice
     (hinj : Function.Injective (algebraMap V F)) :
     D.parameterIdeal • D.W ≤ D.scaledLattice :=
-  Submodule.le_of_le_smul_of_le_jacobson_bot
+  Submodule.le_of_le_smul_of_le_jacobson
     (Submodule.FG.smul D.parameterIdeal_fg D.W_fg)
-    D.parameterIdeal_le_jacobson
+    (by simpa only [Ideal.jacobson_bot] using D.parameterIdeal_le_jacobson)
     (D.parameterIdeal_smul_W_le hinj)
 
 /-- Step (iv): the scaled differential of the selected coordinate `Q₁`

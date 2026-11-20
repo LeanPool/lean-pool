@@ -102,7 +102,7 @@ theorem projective_curve_count {n d : ℕ}
   by_cases hS : (projectivePoints (projectiveIdealZeroLocus I) B).Nonempty
   · obtain ⟨x, hx⟩ := hS
     have hxI := (mem_projectivePoints.mp hx).2
-    obtain ⟨j, hj⟩ := Function.ne_iff.mp x.rep_nonzero
+    obtain ⟨j, hj⟩ := Function.ne_iff.mp x.rep_ne_zero
     change x.rep j ≠ 0 at hj
     let e := Equiv.swap (0 : Fin (n + 1)) j
     let J := projectivePermutedIdeal I e

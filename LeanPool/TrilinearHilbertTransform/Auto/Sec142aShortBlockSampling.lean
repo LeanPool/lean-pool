@@ -468,13 +468,13 @@ theorem latticeSampled_form_error {κ : LocalKernelClass} {a r : ℝ} (hr : 0 < 
   have hform : ‖localProgressionForm r e f‖ₑ ≤ ENNReal.ofReal r⁻¹ ^ 2 *
       ∫⁻ z : ℝ × ℝ, ‖e z‖ₑ * ∏ i, ‖f i (realProgressionCoordinate i z)‖ₑ := by
     unfold localProgressionForm
-    rw [enorm_mul, enorm_pow, ← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs,
+    rw [eNorm_mul, eNorm_pow, ← ofReal_norm, norm_inv, Complex.norm_real, Real.norm_eq_abs,
       abs_of_pos hr]
     gcongr
-    refine (enorm_integral_le_lintegral_enorm _).trans (le_of_eq ?_)
+    refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
     congr 1; funext z
-    rw [enorm_mul]
-    simp only [enorm_eq_nnnorm, nnnorm_prod, ENNReal.ofNNReal_finsetProd]
+    rw [eNorm_mul]
+    simp only [eNorm_eq_nnNorm, nnNorm_prod, ENNReal.ofNNReal_finsetProd]
   refine hform.trans (habs.trans (le_of_eq ?_))
   rw [← ENNReal.ofReal_ofNat 2, ← ENNReal.ofReal_mul (by norm_num)]
   congr 2; ring
@@ -1063,7 +1063,7 @@ theorem lintegral_latticeCircleMeasure (ε : ℝ≥0∞) {f : ℤ × FastCircle 
 theorem latticeTorus_empty (B : Finset (ℤ × ℤ)) {ε C : ℝ≥0∞} (hB : ε ^ 2 * B.card ≤ C) :
     latticeTorusMeasure B ε Set.univ ≤ C := by
   rw [latticeTorusMeasure, ← Set.univ_prod_univ, Measure.prod_prod]
-  simp only [Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
+  simp only [FunLike.coe_sum, Finset.sum_apply, smul_apply,
     Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul, mul_one, measure_univ,
     Finset.sum_const, nsmul_eq_mul]
   rw [mul_comm]; exact hB
@@ -1098,7 +1098,7 @@ theorem latticeTorus_single (B : Finset (ℤ × ℤ)) {ε M C : ℝ≥0∞} (hM 
       _ ≤ ∑ m ∈ B.image (latticeCoord i), M * F m :=
           Finset.sum_le_sum fun m _ => by gcongr; exact hfib i m
       _ = M * ∑ m ∈ B.image (latticeCoord i), F m := by rw [Finset.mul_sum]
-      _ ≤ M * ∑' m, F m := by gcongr; exact ENNReal.sum_le_tsum _
+      _ ≤ M * ∑' m, F m := by gcongr; exact sum_le_tsum _
   refine hfw.trans ?_
   calc ε ^ 2 * (M * ∑' m, F m) = (ε * M) * (ε * ∑' m, F m) := by ring
     _ ≤ C * (ε * ∑' m, F m) := by gcongr
@@ -1130,9 +1130,9 @@ theorem latticeTorus_pair (B : Finset (ℤ × ℤ)) {ε C : ℝ≥0∞} (hC1 : 1
     calc ∑ n ∈ B, F (latticeCoord i n) * G (latticeCoord j n) =
           ∑ p ∈ B.image K, F p.1 * G p.2 := by
           rw [Finset.sum_image fun x _ y _ e => hK e]
-      _ ≤ ∑' p : ℤ × ℤ, F p.1 * G p.2 := ENNReal.sum_le_tsum _
+      _ ≤ ∑' p : ℤ × ℤ, F p.1 * G p.2 := sum_le_tsum _
       _ = (∑' m, F m) * ∑' m, G m := by
-          rw [ENNReal.tsum_prod']
+          rw [tsum_prod']
           simp_rw [ENNReal.tsum_mul_left]
           exact ENNReal.tsum_mul_right
   calc ∑ n ∈ B, ε ^ 2 * (F (latticeCoord i n) * G (latticeCoord j n))
@@ -1162,7 +1162,7 @@ noncomputable def gammaMeasure : Measure ℝ :=
 
 instance : IsProbabilityMeasure gammaMeasure := by
   constructor
-  rw [gammaMeasure, Measure.smul_apply, Measure.restrict_apply_univ, Real.volume_Ioc,
+  rw [gammaMeasure, smul_apply, Measure.restrict_apply_univ, Real.volume_Ioc,
     smul_eq_mul, ← ENNReal.ofReal_mul (by norm_num)]
   norm_num
 
@@ -1391,7 +1391,7 @@ theorem enorm_prod_four (f : Fin 4 → ℂ) : ‖∏ j, f j‖ₑ = ∏ j, ‖f 
 
 theorem eLpNorm_two_eq {g : FastCircle → ℂ} (hg : AEStronglyMeasurable g fastHaar) :
     eLpNorm g 2 fastHaar = (∫⁻ t, ‖g t‖ₑ ^ (2 : ℝ) ∂fastHaar) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hg]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hg]
   norm_num
 
 /-- `∫∫ Π_j |g_j(w_j)| ≤ Π_j ‖g_j‖₂` for complex slot functions. -/
@@ -1399,14 +1399,14 @@ theorem lintegral_fast_form_le (g : Fin 4 → FastCircle → ℂ) (hg : ∀ j, M
     ∫⁻ x, ∏ j : Fin 4, ‖g j (fastCoord j x)‖ₑ ∂(fastHaar.prod fastHaar) ≤
       ∏ j : Fin 4, eLpNorm (g j) 2 fastHaar := by
   simp_rw [fun j => eLpNorm_two_eq (hg j).aestronglyMeasurable]
-  exact fast_form_L2_le (fun j t => ‖g j t‖ₑ) fun j => (hg j).enorm
+  exact fast_form_L2_le (fun j t => ‖g j t‖ₑ) fun j => (hg j).eNorm
 
 theorem fast_form_integrable (g : Fin 4 → FastCircle → ℂ) (hg : ∀ j, Measurable (g j))
     (hL : ∀ j, MemLp (g j) 2 fastHaar) :
     Integrable (fun x => ∏ j : Fin 4, g j (fastCoord j x)) (fastHaar.prod fastHaar) := by
   refine ⟨(Finset.measurable_prod _ fun j _ =>
     (hg j).comp (continuous_fastCoord _).measurable).aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   simp_rw [enorm_prod_four]
   exact (lintegral_fast_form_le g hg).trans_lt
     (ENNReal.prod_lt_top fun j _ => (hL j).eLpNorm_lt_top)
@@ -1415,7 +1415,7 @@ theorem norm_fast_form_le (g : Fin 4 → FastCircle → ℂ) (hg : ∀ j, Measur
     (hL : ∀ j, MemLp (g j) 2 fastHaar) :
     ‖∫ x, ∏ j : Fin 4, g j (fastCoord j x) ∂(fastHaar.prod fastHaar)‖ ≤
       ∏ j : Fin 4, (eLpNorm (g j) 2 fastHaar).toReal := by
-  have h1 := enorm_integral_le_lintegral_enorm (μ := fastHaar.prod fastHaar)
+  have h1 := eNorm_integral_le_lintegral_eNorm (μ := fastHaar.prod fastHaar)
     (fun x => ∏ j : Fin 4, g j (fastCoord j x))
   simp_rw [enorm_prod_four] at h1
   have h2 := h1.trans (lintegral_fast_form_le g hg)
@@ -1423,7 +1423,7 @@ theorem norm_fast_form_le (g : Fin 4 → FastCircle → ℂ) (hg : ∀ j, Measur
     (ENNReal.prod_lt_top fun j _ => (hL j).eLpNorm_lt_top).ne
   rw [← ENNReal.toReal_prod]
   have := ENNReal.toReal_mono hfin h2
-  rwa [toReal_enorm] at this
+  rwa [toReal_eNorm] at this
 
 theorem fast_prod_four (f : Fin 4 → FastCircle → ℂ) (x : FastCircle × FastCircle) :
     ∏ j : Fin 4, f j (fastCoord j x) =
@@ -1539,7 +1539,7 @@ theorem progression_integrable {w : ℝ × ℝ → ℂ} {a r W : ℝ} (hr : 0 < 
     hwm.mul (Finset.measurable_prod _ fun j _ =>
       (hf j).comp (continuous_realProgressionCoordinate j).measurable)
   refine ⟨hm.aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   have hb := localProgression_absoluteNormBound hr w hwm hw (W := ENNReal.ofReal W)
     (fun z => by rw [← ofReal_norm]; exact ENNReal.ofReal_le_ofReal (hW z)) f hf
     (fun _ => 2) (fun _ => by norm_num) (by norm_num)
@@ -1555,7 +1555,7 @@ theorem progression_integrable {w : ℝ × ℝ → ℂ} {a r W : ℝ} (hr : 0 < 
     rw [hc, ENNReal.mul_top hR] at hb
     exact absurd (hb.trans_lt hfin) (lt_irrefl _)
   refine lt_of_le_of_lt (le_of_eq (lintegral_congr fun z => ?_)) h2
-  rw [enorm_mul, enorm_prod_four]
+  rw [eNorm_mul, enorm_prod_four]
 
 /-- Blueprint lines 2302-2307: the form with the lattice-sampled kernel is
 `r⁻² δ² 256 Σ_n w(δ n₀, δ(n₁ - n₀)) Φ_n(F)`, the sum over the finitely many slow pairs where
@@ -1603,7 +1603,7 @@ theorem lintegral_fastLift_enorm (j : Fin 4) (φ : ℝ → ℂ) (hφ : Measurabl
   have hv : (volume : Measure FastCircle) = ENNReal.ofReal 16 • fastHaar :=
     AddCircle.volume_eq_smul_haarAddCircle
   have hm : Measurable fun t => ‖fastLift j φ t‖ₑ ^ p :=
-    (measurable_fastLift j hφ).enorm.pow_const _
+    (measurable_fastLift j hφ).eNorm.pow_const _
   have hpre := AddCircle.lintegral_preimage (16 : ℝ) (fastLiftLeft j)
     (fun t => ‖fastLift j φ t‖ₑ ^ p)
   rw [hv, lintegral_smul_measure, ENNReal.ofReal_ofNat, smul_eq_mul] at hpre
@@ -1622,7 +1622,7 @@ theorem lintegral_fastLift_enorm (j : Fin 4) (φ : ℝ → ℂ) (hφ : Measurabl
   · rw [Set.indicator_of_mem hx, fastLift_coe φ hx]
     by_cases hxL : x < fastLiftLeft j + fastLiftLen j
     · rw [ite_eq_left hxL, Set.indicator_of_mem (Set.mem_Ico.mpr ⟨hx.1, hxL⟩)]
-    · rw [ite_eq_right hxL, Set.indicator_of_notMem (fun h => hxL (Set.mem_Ico.mp h).2), enorm_zero,
+    · rw [ite_eq_right hxL, Set.indicator_of_notMem (fun h => hxL (Set.mem_Ico.mp h).2), eNorm_zero,
         ENNReal.zero_rpow_of_pos hp]
   · have hx' : x ∉ Set.Ico (fastLiftLeft j) (fastLiftLeft j + fastLiftLen j) := fun h =>
       hx (Set.mem_Ico.mpr ⟨(Set.mem_Ico.mp h).1, by linarith [(Set.mem_Ico.mp h).2]⟩)
@@ -1648,7 +1648,7 @@ theorem lintegral_slotLift (δ : ℝ) (hδ : 0 < δ) (f : Fin 4 → ℝ → ℂ)
       map_add_right_eq_self, Real.map_volume_mul_left hδ.ne',
       abs_of_pos (inv_pos.mpr hδ)]
   set T := Set.Ico (δ * (m + fastLiftLeft j)) (δ * (m + fastLiftLeft j + fastLiftLen j))
-  have hg : Measurable fun y => ‖f j y‖ₑ ^ p := (hf j).enorm.pow_const _
+  have hg : Measurable fun y => ‖f j y‖ₑ ^ p := (hf j).eNorm.pow_const _
   have hind : (Set.Ico (fastLiftLeft j) (fastLiftLeft j + fastLiftLen j)).indicator
       (fun x => ‖f j (δ * (m + x))‖ₑ ^ p) = fun x => T.indicator (fun y => ‖f j y‖ₑ ^ p) (φ x) := by
     funext x
@@ -1816,7 +1816,7 @@ theorem memLp_slotLift {δ : ℝ} (hδ : 0 < δ) {f : Fin 4 → ℝ → ℂ} (hf
   refine ENNReal.rpow_lt_top_of_nonneg (by norm_num) (ENNReal.mul_ne_top (by simp [hδ]) ?_)
   refine ((setLIntegral_le_lintegral _ _).trans_lt ?_).ne
   have h := (hL j).eLpNorm_lt_top
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     (hf j).aestronglyMeasurable] at h
   simp only [ENNReal.toReal_ofNat] at h
   exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num : (0 : ℝ) < 1 / 2)).mp h

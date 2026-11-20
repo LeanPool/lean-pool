@@ -77,7 +77,6 @@ theorem classicalClassicalSol_of_consistent_horizon_family
         (Icc (0 : ℝ) (M : ℝ) ×ˢ univ) := by
       filter_upwards [hnear] with q hq
       simp only [Set.mem_prod, Set.mem_Ici, Set.mem_Icc, Set.mem_univ]
-      apply propext
       constructor
       · intro hq0
         exact ⟨⟨hq0.1, le_of_lt hq⟩, trivial⟩

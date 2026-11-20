@@ -554,7 +554,6 @@ private theorem gaussian_initial_trace_strip_error
       Wmax hWmax.le hInitialPoint
   have hInitAE : Sinit =ᵐ[volume] SinitOpen := by
     filter_upwards [buGaussian_ae_time_ne (1 / 6 + ε)] with z hne
-    apply propext
     change (z.1 ∈ B ∧ z.2 ∈ Icc (1 / 6 + ε) (1 / 6 + 2 * ε)) ↔
       (z.1 ∈ B ∧ z.2 ∈ Ioc (1 / 6 + ε) (1 / 6 + 2 * ε))
     constructor

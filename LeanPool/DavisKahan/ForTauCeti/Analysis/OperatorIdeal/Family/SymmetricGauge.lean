@@ -181,7 +181,7 @@ theorem extend_approxSeq_comp_le {G H : Type*}
     _ = ((‖L‖₊ * ‖R‖₊ : ℝ≥0) : ℝ≥0∞) * Φ.extend (approxSeq A) :=
         Φ.extend_smul (‖L‖₊ * ‖R‖₊) (approxSeq A)
     _ = ‖L‖ₑ * Φ.extend (approxSeq A) * ‖R‖ₑ := by
-        simp only [enorm_eq_nnnorm, ENNReal.coe_mul]
+        simp only [eNorm_eq_nnNorm, ENNReal.coe_mul]
         ring
 
 end Laws

@@ -52,7 +52,7 @@ theorem coordinateCommutator_comm (i j : Fin n) :
   intro P
   apply LinearMap.ext
   intro f
-  simp [coordinateCommutator, commutator_apply, Module.End.mul_apply,
+  simp [coordinateCommutator, commutator_apply, mul_apply_eq_comp,
     mul_add,  sub_eq_add_neg, mul_assoc, mul_comm, mul_left_comm]
   abel
 
@@ -106,7 +106,7 @@ theorem iteratedCoordinateCommutator_order_lower (l : List (Fin n)) {m : ℕ}
   induction l generalizing m with
   | nil => simpa using hP
   | cons i l ih =>
-      rw [iteratedCoordinateCommutator_cons, Module.End.mul_apply]
+      rw [iteratedCoordinateCommutator_cons, mul_apply_eq_comp]
       apply coordinateCommutator_order_lower k n i
       apply ih (m := m + 1)
       simpa [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using hP
@@ -121,7 +121,7 @@ theorem iteratedCoordinateCommutator_eq_zero_of_length_gt {m : ℕ}
   | nil => simp at hl
   | cons i l ih =>
       simp only [List.length_cons] at hl
-      rw [iteratedCoordinateCommutator_cons, Module.End.mul_apply]
+      rw [iteratedCoordinateCommutator_cons, mul_apply_eq_comp]
       by_cases htail : m < l.length
       · rw [ih P hP htail]
         exact map_zero _

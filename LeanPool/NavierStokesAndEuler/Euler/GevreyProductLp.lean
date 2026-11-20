@@ -88,7 +88,7 @@ theorem clm_apply_memLp_and_bound
     have he : H j = a j • (fun x => ‖iteratedFDeriv ℝ (n-j) g (σ x)‖) := rfl
     rw [he,eLpNorm_const_smul,
       eLpNorm_norm _ (hLp (n-j) (Nat.sub_le n j)).aestronglyMeasurable,
-      ENNReal.toReal_mul,toReal_enorm,Real.norm_of_nonneg (ha j)]
+      ENNReal.toReal_mul,toReal_eNorm,Real.norm_of_nonneg (ha j)]
   simp_rw [hHnorm]
   calc
     _ ≤ ∑ j ∈ Finset.range (n+1), a j*(C*majorant R e (n-j)) :=

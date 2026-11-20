@@ -49,8 +49,8 @@ theorem ratFuncFinitePlace_degree_le_finite
   have hr : finitePlaceNormalizedPrime p.1 =
       finitePlaceNormalizedPrime q.1 := by
     apply Subtype.ext
-    apply Polynomial.ext
-    intro m
+    apply AddMonoidAlgebra.ext
+    ext m
     by_cases hm : m ≤ n
     · exact congrFun hpq ⟨m, Nat.lt_succ_iff.mpr hm⟩
     · have hnm : n < m := Nat.lt_of_not_ge hm

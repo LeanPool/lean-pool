@@ -44,7 +44,7 @@ noncomputable def gridEmb (d N : ℕ) : (Fin d → ℤ) →+ (Fin d → ℝ) whe
 lemma gridEmb_injective {d N : ℕ} (hN : 0 < N) : Function.Injective (gridEmb d N) := by
   intro g g' h
   ext k
-  exact_mod_cast (div_left_inj' (Nat.cast_ne_zero.2 hN.ne')).1 (congrFun h k)
+  exact_mod_cast (div_left_inj₀ (Nat.cast_ne_zero.2 hN.ne')).1 (congrFun h k)
 
 @[simp] lemma gridF_neg (N : ℕ) (j : ℤ) : gridF N (-j) = gridF N j := by simp [gridF]
 

@@ -135,8 +135,7 @@ theorem eventually_eval_eq_zero_of_genericMinpolyDivisibilityLiftCertificate
     rw [Polynomial.natDegree_C]
     exact Nat.zero_le M
   have herror : C.error.map π = 0 := by
-    apply Polynomial.ext
-    intro j
+    ext j
     rw [Polynomial.coeff_map, Polynomial.coeff_zero]
     exact Ideal.Quotient.eq_zero_iff_mem.mpr (C.error_coeff_mem j)
   have hmap : L.map π = T.map π := by
@@ -220,8 +219,7 @@ theorem eventually_remainder_eval_eq_denominator_mul_of_genericRemainderModMinpo
     rw [Polynomial.natDegree_C]
     exact Nat.zero_le M
   have herror : C.error.map π = 0 := by
-    apply Polynomial.ext
-    intro j
+    ext j
     rw [Polynomial.coeff_map, Polynomial.coeff_zero]
     exact Ideal.Quotient.eq_zero_iff_mem.mpr (C.error_coeff_mem j)
   have hmap : L.map π = T.map π := by

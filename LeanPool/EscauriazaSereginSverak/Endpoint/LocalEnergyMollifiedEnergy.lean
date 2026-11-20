@@ -75,9 +75,9 @@ theorem localEnergy_tendsto_eLpNorm_mul_sub
   have hmul (a b : α → ℝ) (ha : AEStronglyMeasurable a μ)
     (hb : AEStronglyMeasurable b μ) :
       eLpNorm (fun x => a x * b x) r μ ≤ eLpNorm a p μ * eLpNorm b q μ := by
-    simpa using (eLpNorm_le_eLpNorm_mul_eLpNorm_of_enorm
+    simpa using (eLpNorm_le_eLpNorm_mul_eLpNorm_of_eNorm
       (b := fun x y : ℝ => x * y) (c := (1 : ℝ≥0∞))
-      (by fun_prop) ha hb (by filter_upwards with x; simp [enorm_mul]))
+      (by fun_prop) ha hb (by filter_upwards with x; simp [eNorm_mul]))
   have hsum : ∀ n,
       eLpNorm (fun x => fn n x * gn n x - f x * g x) r μ ≤
         eLpNorm (fun x => fn n x - f x) p μ * eLpNorm (gn n) q μ +

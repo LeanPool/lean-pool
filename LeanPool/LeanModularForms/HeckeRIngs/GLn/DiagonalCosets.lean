@@ -397,9 +397,9 @@ private lemma gcd_2x2_mul (a b : ℤ) :
   have hbez : s * a + t * b = g := by linarith only [Int.gcd_eq_gcd_ab a b]
   have h1 : !![s, t; -q, p] * (!![a, (0 : ℤ); 0, b] : Matrix (Fin 2) (Fin 2) ℤ) =
       !![s * a, t * b; -(q * a), p * b] := by
-    ext i j; fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_two]
+    ext i j; fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
   rw [h1]; ext i j; fin_cases i <;> fin_cases j <;>
-    simp only [Fin.zero_eta, Fin.isValue, mul_apply, of_apply, cons_val', cons_val_fin_one,
+    simp only [Fin.zero_eta, Fin.isValue, Matrix.mul_apply, of_apply, cons_val', cons_val_fin_one,
       cons_val_zero, Fin.sum_univ_two, mul_one, cons_val_one, Fin.mk_one, mul_neg, neg_mul, neg_neg]
   · linarith only [hbez]
   · have key : -(s * a * (t * q)) + t * b * (1 - t * q) =
@@ -546,8 +546,8 @@ private lemma dvd_diag_of_SL_transform (m : ℕ) (d d' : Fin m → ℤ) (c : ℤ
     (L R : Matrix (Fin m) (Fin m) ℤ) (heq : L * Matrix.diagonal d * R = Matrix.diagonal d') :
     ∀ i, c ∣ d' i := by
   intro i; rw [show d' i = (Matrix.diagonal d') i i from by simp only [
-    diagonal_apply_eq], ← heq, mul_apply]
-  apply Finset.dvd_sum; intro k _; rw [mul_apply]; apply dvd_mul_of_dvd_left
+    diagonal_apply_eq], ← heq, Matrix.mul_apply]
+  apply Finset.dvd_sum; intro k _; rw [Matrix.mul_apply]; apply dvd_mul_of_dvd_left
   apply Finset.dvd_sum; intro l _; simp only [diagonal_apply]; split_ifs with h
   · subst h; exact dvd_mul_of_dvd_right (hc l) _
   · simp only [mul_zero, dvd_zero]
@@ -852,10 +852,10 @@ private lemma partialProd_eq_of_SLnZ_equiv {a b : Fin n → ℕ} (ha : ∀ i, 0 
     simp only [diagMat_val n d hd_pos, diagMat_val n c hc_pos, Matrix.diagonal_apply,
       Units.val_mul, Matrix.mul_apply,
       show ∀ i j, (↑(mapGL ℚ P) : Matrix _ _ ℚ) i j = ↑(P.val i j) from fun i j => by
-        simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+        simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
           Int.coe_castRingHom, map_apply],
       show ∀ i j, (↑(mapGL ℚ Q) : Matrix _ _ ℚ) i j = ↑(Q.val i j) from fun i j => by
-        simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+        simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
           Int.coe_castRingHom, map_apply] ] at h
     simp only [Matrix.diagonal_apply, Matrix.mul_apply]; exact_mod_cast h
   have he_inj : Function.Injective e := fun i j h => Fin.ext (Fin.mk.inj h)

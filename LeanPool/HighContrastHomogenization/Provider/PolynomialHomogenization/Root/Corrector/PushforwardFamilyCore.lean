@@ -82,7 +82,7 @@ theorem quasiMeasurePreserving_matVecMul_gaugeRootInv [NeZero d] {abar : Mat d}
     (hS : (symmPart abar).PosDef) :
     MeasureTheory.QuasiMeasurePreserving (matVecMul (gaugeRoot abar)⁻¹)
       (volume : Measure (Vec d)) volume := by
-  refine ⟨(continuous_matVecMul _).measurable, ?_⟩
+  refine ⟨(continuous_matVecMul _).measurable.aemeasurable, ?_⟩
   have hmap := Real.map_matrix_volume_pi_eq_smul_volume_pi
     (M := (gaugeRoot abar)⁻¹) (isUnit_det_gaugeRoot_inv hS).ne_zero
   change Measure.map (Matrix.toLin' (gaugeRoot abar)⁻¹) volume ≪ volume

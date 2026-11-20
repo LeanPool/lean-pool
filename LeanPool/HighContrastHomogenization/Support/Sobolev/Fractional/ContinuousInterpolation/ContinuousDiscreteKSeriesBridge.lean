@@ -224,7 +224,7 @@ theorem extendedDiscreteKFunctionalEnergy_le_mul_triadicContinuousKSampleEnergy
       cubeKPartial_le_mul_finite_triadicContinuousKSampleSum s F N
     _ ≤ ENNReal.ofReal (continuousDiscreteKBridgeConstant d ^ 2) *
         triadicContinuousKSampleEnergy s F :=
-      mul_le_mul_right (ENNReal.sum_le_tsum _) _
+      mul_le_mul_right (sum_le_tsum _) _
 
 /-- Finiteness of the extended discrete energy transfers to the continuous
 triadic sampled energy. -/
@@ -252,7 +252,7 @@ theorem triadicContinuousKShiftedSampleEnergy_le_triadicContinuousKSampleEnergy
     {d : ℕ} (s : FractionalOrder) (F : UnitCubeEuclideanL2Field d) :
     triadicContinuousKShiftedSampleEnergy s F ≤ triadicContinuousKSampleEnergy s F := by
   unfold triadicContinuousKShiftedSampleEnergy triadicContinuousKSampleEnergy
-  exact ENNReal.tsum_comp_le_tsum_of_injective Nat.succ_injective _
+  exact tsum_comp_le_tsum_of_injective Nat.succ_injective _
 
 end
 

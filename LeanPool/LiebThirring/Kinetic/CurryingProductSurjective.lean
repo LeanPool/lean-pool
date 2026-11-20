@@ -43,8 +43,8 @@ theorem l2CurryLinearIsometry_surjective : Function.Surjective
       exact ((Lp.stronglyMeasurable h).comp_measurable measurable_snd).indicator
         (hA.prod MeasurableSet.univ)
     have hmass : (∫⁻ z, ‖F z‖ₑ ^ 2 ∂(μ.prod ν)) = μ A * ‖h‖ₑ ^ 2 := by
-      rw [lintegral_prod _ (hFsm.enorm.pow_const 2).aemeasurable]
-      simp only [F, Set.indicator_apply, apply_ite, enorm_zero]
+      rw [lintegral_prod _ (hFsm.eNorm.pow_const 2).aemeasurable]
+      simp only [F, Set.indicator_apply, apply_ite, eNorm_zero]
       simp only [Set.mem_prod, Set.mem_univ, and_true]
       rw [show (fun x => ∫⁻ y, (if x ∈ A then ‖h y‖ₑ else 0) ^ 2 ∂ν) =
           A.indicator (fun _ => ‖h‖ₑ ^ 2) by
@@ -56,7 +56,7 @@ theorem l2CurryLinearIsometry_surjective : Function.Surjective
       rw [lintegral_indicator hA, setLIntegral_const]
       exact mul_comm _ _
     have hFLp : MemLp F 2 (μ.prod ν) := by
-      apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+      apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
         (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
         hFsm.aestronglyMeasurable).mpr
       simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two, hmass]

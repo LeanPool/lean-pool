@@ -130,7 +130,7 @@ theorem binRep_of_values {P : ℚ[X]} {d : ℕ} (hd : P.natDegree ≤ d) {β : �
 
 lemma VG_inv_24 : VG p ((24 : ℚ)⁻¹) (-(padicValNat p 24 : ℚ)) := by
   apply VG.inv (by norm_num)
-  rw [show (24 : ℚ) = ((24 : ℕ) : ℚ) by norm_num, padicValRat.of_nat]
+  rw [show (24 : ℚ) = ((24 : ℕ) : ℚ) by norm_num, padicValRat.of_nat, Nat.padicValNat_def]
   exact le_refl _
 
 /-- **(3.9)**: `v_p(τ(P)) ≥ β - 4 ⌊log_p (d+1)⌋ - v_p(24)` if `deg P ≤ d` and

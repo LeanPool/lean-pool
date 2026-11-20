@@ -190,13 +190,13 @@ theorem eLpNorm_belowStartSup_le (Q : ℝ)
       (PortableHistory.blockSize_nonneg hE hF hFpd)) (Real.rpow_pos_of_pos (by norm_num) _).le
   have hmono : eLpNorm (belowStartSup rho (roundedGrid jStar nu) jStar t Z F)
       (ENNReal.ofReal Q) P ≤ eLpNorm (c • Y) (ENNReal.ofReal Q) P := by
-    refine eLpNorm_mono_enorm_ae hS ?_
+    refine eLpNorm_mono_eNorm_ae hS ?_
     filter_upwards [ae_belowStartSup_le_mul hCd hg hE hEpd hY hnu hq hF hFpd hrho t hZ]
       with a ha
     have hnn : (0 : ℝ) ≤ c * Y a := mul_nonneg hc0 (le_trans zero_le_one (hY.one_le a))
     change belowStartSup rho (roundedGrid jStar nu) jStar t Z F a ≤ ‖c * Y a‖ₑ
-    rwa [Real.enorm_eq_ofReal hnn]
-  rwa [eLpNorm_const_smul, Real.enorm_eq_ofReal hc0] at hmono
+    rwa [Real.eNorm_eq_ofReal hnn]
+  rwa [eLpNorm_const_smul, Real.eNorm_eq_ofReal hc0] at hmono
 
 include hCd hg hE hEpd hY hnu hq hF hFpd hrho hZ in
 /-- **The source-tail form of the below-start bound.** -/

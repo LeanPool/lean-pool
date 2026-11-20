@@ -690,10 +690,7 @@ theorem substitution_theorem {t : ℕ}
     calc
       (Finset.univ : Finset (Fin t)).sum cap =
           (((Finset.univ : Finset (Fin t)) \ T) ∪ T).sum cap := by
-            simpa using
-              (congrArg (fun S : Finset (Fin t) => S.sum cap)
-                (by simp : ((Finset.univ : Finset (Fin t)) \ T) ∪ T
-                  = (Finset.univ : Finset (Fin t)))).symm
+            simp
       _ = (((Finset.univ : Finset (Fin t)) \ T).sum cap) + T.sum cap :=
         Finset.sum_union (s₁ := ((Finset.univ : Finset (Fin t)) \ T)) (s₂ := T)
           Finset.sdiff_disjoint

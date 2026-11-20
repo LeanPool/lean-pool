@@ -30,7 +30,7 @@ Euclidean disk with center $w/c$ and radius $1/c$. The total expression
 `P4828T1Disk` uses the same formula at other curvatures; no
 geometric circle interpretation is assigned to those cases.
 -/
-def P4828T1Disk (C : CircleCoordinates) : Set Complex :=
+noncomputable def P4828T1Disk (C : CircleCoordinates) : Set Complex :=
 -- BODY
   Metric.ball ((C.2 : Complex) / (C.1 : Real)) (1 / (C.1 : Real))
 

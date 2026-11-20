@@ -140,7 +140,7 @@ lemma exists_add_bdry_eq_smul_virasoroCocycle :
         ring
     intro k
     induction k using Nat.strong_induction_on with
-    | h j hj =>
+    | ind j hj =>
       by_cases j_small : j ∈ ({0, 1, 2} : Finset ℕ)
       · fin_cases j_small
         · -- k = 0 case is true for any cocycle by skew-symmetry

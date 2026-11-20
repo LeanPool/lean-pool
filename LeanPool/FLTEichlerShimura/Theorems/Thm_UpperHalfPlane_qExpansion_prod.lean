@@ -82,7 +82,7 @@ theorem solution {h : ℝ} {ι : Type*} (s : Finset ι) {F : ι → ℍ → ℂ}
       rcases eq_or_ne q 0 with rfl | hq
       · simp only [cuspFunction, Periodic.cuspFunction, Pi.one_comp, update_self, Pi.one_apply]
         exact Filter.Tendsto.limUnder_eq tendsto_const_nhds
-      · simp [cuspFunction, Periodic.cuspFunction_eq_of_nonzero h _ hq]
+      · simp [cuspFunction, Periodic.cuspFunction_eq_of_ne_zero h _ hq]
     refine ⟨by simpa using qExpansion_one h, ?_⟩
     rw [Finset.prod_empty, h1]
     exact analyticAt_const

@@ -145,8 +145,8 @@ theorem piece_random_bound (κ : LocalKernelClass) {q : ℝ} (hq2 : 2 < q) (hq3 
     refine Finset.sum_congr rfl fun ω _ => ?_
     ring
   have hX : ‖(Fintype.card Ω : ℂ)⁻¹ * ∑ ω, X ω‖ ≤ (∫⁻ ω, ‖X ω‖ₑ ∂(unifMeasure Ω)).toReal := by
-    rw [lintegral_unifMeasure, ENNReal.toReal_mul, ENNReal.toReal_sum (fun _ _ => enorm_ne_top)]
-    simp_rw [toReal_enorm]
+    rw [lintegral_unifMeasure, ENNReal.toReal_mul, ENNReal.toReal_sum (fun _ _ => eNorm_ne_top)]
+    simp_rw [toReal_eNorm]
     rw [norm_mul]
     refine mul_le_mul (le_of_eq (by simp)) (norm_sum_le _ _) (norm_nonneg _) (by positivity)
   rw [← havg]
@@ -311,7 +311,8 @@ variable {E : Type*} [AddCommGroup E] [Module ℂ E]
 /-! ### Expanding the two varying sides over positions (blueprint lines 2400-2404, 2423) -/
 
 /-- A multilinear form is biadditive over finite sums in two distinct slots. -/
-theorem multilinear_update_two_finsum (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {a b : Fin 4}
+theorem multilinear_update_two_finsum
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {a b : Fin 4}
     (hab : a ≠ b) (x : Fin 4 → E) {α β : Type*} (sa : Finset α) (sb : Finset β) (f : α → E)
     (g : β → E) :
     Λ (Function.update (Function.update x a (∑ i ∈ sa, f i)) b (∑ j ∈ sb, g j)) =

@@ -33,7 +33,8 @@ def birthday (x : Surreal.{u}) : NatOrdinal.{u} :=
 theorem birthday_eq_iGameBirthday (x : Surreal) :
     ∃ (y : IGame) (_ : Numeric y), mk y = x ∧ y.birthday = birthday x := by
   simp_rw [exists_and_right]
-  refine csInf_mem (image_nonempty.2 ?_)
+  refine csInf_mem (s := IGame.birthday '' {c | ∃ _ : Numeric c, mk c = x})
+    (image_nonempty.2 ?_)
   exact ⟨_, _, x.out_eq⟩
 
 theorem birthday_mk_le (x : IGame) [Numeric x] : birthday (mk x) ≤ x.birthday :=

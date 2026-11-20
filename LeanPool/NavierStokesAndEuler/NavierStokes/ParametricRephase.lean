@@ -128,7 +128,7 @@ theorem inverseMap_contDiffAt_of_phase (d : E → CircleDensity) (z : E × ℝ)
     contDiffAt_fst.prodMk hphase
   obtain ⟨L, hL⟩ := forwardMap_hasFDerivAt_equiv d a (hphase.differentiableAt (by simp))
   have hone : (∞ : WithTop ℕ∞) ≠ 0 := by simp
-  have hs := hforward.hasStrictFDerivAt' hL hone
+  have hs := hforward.hasStrictFDerivAt hL hone
   have heq : inverseMap d =ᶠ[𝓝 (forwardMap d a)] hforward.localInverse hL hone :=
     hs.localInverse_unique (Eventually.of_forall (inverseMap_forwardMap d))
   have hinv : ContDiffAt ℝ ∞ (inverseMap d) (forwardMap d a) :=

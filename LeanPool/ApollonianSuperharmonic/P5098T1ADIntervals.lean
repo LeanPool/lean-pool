@@ -30,7 +30,7 @@ theorem P5098T1ADIntervals (r s m k : Int) (hs : 2 ≤ s) (hrs : s < r)
         (-s < r + (r + s) * k ∧ r + (r + s) * k < r))) :
     m = 0 ∧ k = 0 := by
 -- BODY
-  try simp only [neg_mul] at h
+  simp only [neg_mul] at h
   have hw := P5098T1PeriodWindow (r + s) s m k (by omega) (by omega)
     (by omega) (by omega)
   obtain ⟨⟨hk0, hk1⟩, hm0, hm1⟩ := hw

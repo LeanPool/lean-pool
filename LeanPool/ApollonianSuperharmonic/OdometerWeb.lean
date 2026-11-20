@@ -198,7 +198,7 @@ theorem OdometerWeb :
   have main : ∀ n, R n ∧ S n := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       constructor
       · intro C T U h k g x hn hcompat hg kg hx kx hstar hright
         have horiginal := hright

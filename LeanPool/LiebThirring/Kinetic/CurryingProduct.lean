@@ -84,15 +84,15 @@ theorem existsUnique_l2_curry (f : α × β → E) (hf : StronglyMeasurable f)
         rw [dite_eq_left hx, ← lintegral_l2_enorm_sq]
         exact lintegral_congr_ae (hx.coeFn_toLp.mono
           (fun _ hy => congrArg (fun u : E => ‖u‖ₑ ^ 2) hy))
-      _ = _ := (lintegral_prod _ (hf.enorm.pow_const 2).aemeasurable).symm
+      _ = _ := (lintegral_prod _ (hf.eNorm.pow_const 2).aemeasurable).symm
   have hgLp : MemLp g 2 μ := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
       hg.aestronglyMeasurable).mpr
     simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
     rw [hmass]
     simpa only [ENNReal.toReal_ofNat, ENNReal.rpow_two] using
-      lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+      lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
         (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ⊤) hLp
   have hc : ∀ᵐ x ∂μ, ∀ᵐ y ∂ν, (hgLp.toLp g) x y = f (x, y) := by
     filter_upwards [hgLp.coeFn_toLp, hax] with x hx hxLp

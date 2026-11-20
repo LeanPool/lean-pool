@@ -358,7 +358,7 @@ theorem indexedDedekindLocalWronskian_det_changeParameter
     induction i.1 with
     | zero => simp
     | succ r ih =>
-        rw [Function.iterate_succ_apply', pow_succ', Module.End.mul_apply, ih]
+        rw [Function.iterate_succ_apply', pow_succ', mul_apply_eq_comp, ih]
         rfl
   have hreindexE : Matrix.reindex e e
       (indexedDedekindLocalWronskian E ε f) =
@@ -371,7 +371,7 @@ theorem indexedDedekindLocalWronskian_det_changeParameter
     induction i.1 with
     | zero => simp
     | succ r ih =>
-        rw [Function.iterate_succ_apply', pow_succ', Module.End.mul_apply, ih]
+        rw [Function.iterate_succ_apply', pow_succ', mul_apply_eq_comp, ih]
         rfl
   calc
     (indexedDedekindLocalWronskian D ε f).det =
@@ -441,7 +441,7 @@ theorem dedekindLocalWronskian_eq_derivationWronskian
   induction i.1 with
   | zero => simp
   | succ r ih =>
-      rw [Function.iterate_succ_apply', pow_succ', Module.End.mul_apply, ih]
+      rw [Function.iterate_succ_apply', pow_succ', mul_apply_eq_comp, ih]
       rfl
 
 /-- Change of parameter for the direct Dedekind-local Wronskian.  In

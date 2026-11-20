@@ -86,7 +86,7 @@ theorem integrable_sq_normalizedSourceScale
   have hmeas : Measurable (normalizedSourceScale S sK) :=
     Measurable.max measurable_const (hdag.source_measurable.mul_const _)
   refine ⟨(hmeas.pow_const 2).aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   have hlint := lintegral_normalizedSourceScale_pow_le hdag hsK 2
     (by norm_num)
   have htwo : ∀ a, normalizedSourceScale S sK a ^ ((2 : ℕ) : ℝ) =
@@ -95,7 +95,7 @@ theorem integrable_sq_normalizedSourceScale
   rw [lintegral_congr fun a => congrArg ENNReal.ofReal (htwo a)] at hlint
   refine lt_of_le_of_lt (le_trans (lintegral_mono fun a => ?_) hlint)
     ENNReal.ofReal_lt_top
-  rw [Real.enorm_eq_ofReal (sq_nonneg _)]
+  rw [Real.eNorm_eq_ofReal (sq_nonneg _)]
 
 
 private theorem adapted_cell_pathwise_source_envelope

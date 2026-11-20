@@ -34,8 +34,8 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
   [FiniteDimensional 𝕜 F]
 
-local instance : CompleteSpace E := FiniteDimensional.complete 𝕜 E
-local instance : CompleteSpace F := FiniteDimensional.complete 𝕜 F
+local instance : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
+local instance : CompleteSpace F := FiniteDimensional.completeSpace 𝕜 F
 
 /-- In finite dimension, the spectral source modulus and the bounded CFC source modulus are
 the same operator. -/

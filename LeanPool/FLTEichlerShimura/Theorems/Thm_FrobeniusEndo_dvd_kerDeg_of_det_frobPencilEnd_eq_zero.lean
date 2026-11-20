@@ -83,7 +83,7 @@ variable {R : Type*} {S : Type*} {K : Type*} [CommRing R] [CommRing S] [Field K]
 lemma coe_frobPencilEnd_apply (m n : ℤ) (x : Submodule.torsionBy ℤ (W⁄K).Point p) :
     ((frobPencilEnd W σ p m n x : Submodule.torsionBy ℤ (W⁄K).Point p) : (W⁄K).Point)
       = linePencil (frobEnd W σ) m n x := by
-  simp only [LinearMap.sub_apply, LinearMap.smul_apply, Module.End.one_apply, linePencil_apply,
+  simp only [LinearMap.sub_apply, LinearMap.smul_apply, one_apply_eq_self, linePencil_apply,
     frobEnd_apply, Int.cast_smul_eq_zsmul, Submodule.coe_sub, Submodule.coe_smul_of_tower]
   rfl
 

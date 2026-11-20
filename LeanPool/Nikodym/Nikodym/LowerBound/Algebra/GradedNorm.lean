@@ -172,7 +172,7 @@ theorem isHomogeneous_of_forall_scaleEquiv_eq [Infinite K] {F : MvPolynomial σ 
     exact mul_right_cancel₀ hα this
   set p : Polynomial K := Polynomial.X ^ α.degree - Polynomial.X ^ e with hp
   have hp0 : p ≠ 0 := fun h0 ↦ by
-    have := congrArg (Polynomial.coeff · α.degree) h0
+    have := congrArg (AddMonoidAlgebra.coeff · α.degree) h0
     simp only [hp, Polynomial.coeff_sub, Polynomial.coeff_X_pow, ite_true, Polynomial.coeff_zero,
       ite_eq_right hne, sub_zero] at this
     exact one_ne_zero this

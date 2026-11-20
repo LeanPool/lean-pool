@@ -171,7 +171,7 @@ theorem cocycle_mem_coeffCocycles (hF : IsEquivariantPrimitiveWith ρ F) :
   intro γ δ
   have h := hF.apply_smul (γ * δ) I
   rw [Subgroup.coe_mul, mul_smul, hF.apply_smul γ, hF.apply_smul δ, map_add, map_mul,
-    Module.End.mul_apply] at h
+    mul_apply_eq_comp] at h
   have := congrArg (fun v => v - ρ γ (ρ δ (F I))) h
   simp only [add_sub_cancel_right] at this
   rw [← this]

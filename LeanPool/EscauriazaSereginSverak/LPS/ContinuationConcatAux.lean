@@ -90,7 +90,7 @@ measurable is square integrable. -/
 theorem lps_memLp_two_of_lintegral_lt_top {E : Type} [NormedAddCommGroup E]
     {μ : Measure ParabolicPoint} {f : ParabolicPoint → E} (hf : AEStronglyMeasurable f μ)
     (h : (∫⁻ z, ‖f z‖ₑ ^ (2 : ℝ) ∂μ) < ⊤) : MemLp f 2 μ := by
-  have := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (p := (2 : ℝ≥0∞)) (by norm_num)
+  have := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (p := (2 : ℝ≥0∞)) (by norm_num)
     (by norm_num) hf).mpr (by simpa using h)
   exact this
 

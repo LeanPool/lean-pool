@@ -24,7 +24,7 @@ theorem path_theorem_induction {α : Type*} (M : Matroid α) [M.Finite]
     ∃ p : TuttePath M, p.origin = X ∧ p.terminus = Y ∧ p.On F ∧ p.Off Γ := by
   generalize hn : natRank M M.E - natRank M F = n
   induction n using Nat.strong_induction_on generalizing F X Y with
-  | h n ih =>
+  | ind n ih =>
     by_cases hXY : X = Y
     · subst Y; exact exists_singleton_path hX hFX hXoff
     have hXr := hyperplane_natRank hX

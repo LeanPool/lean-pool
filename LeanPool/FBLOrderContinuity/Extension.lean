@@ -297,13 +297,13 @@ theorem poe_sufficiency [CompleteSpace E] (p : Exponent) (hp : p.IsFinite)
   have hclosed : IsClosed {θ : Dual M | ε ≤ f i (θ + φ₀.comp M.subtypeL)} :=
     isClosed_le continuous_const
       ((free_function_norm_continuous p (f i)).comp (continuous_id.add continuous_const))
-  have hbound : ∀ θ ∈ (fun φ : Dual E => φ.comp M.subtypeL) '' {φ | support K φ < 1},
-      ε ≤ f i (θ + φ₀.comp M.subtypeL) := by
+  have hbound : ((fun φ : Dual E => φ.comp M.subtypeL) '' {φ | support K φ < 1}) ⊆
+      {θ : Dual M | ε ≤ f i (θ + φ₀.comp M.subtypeL)} := by
     rintro _ ⟨φ, hφ, rfl⟩
     have hh := hpatch _ (Set.mem_range_self i) (φ + φ₀)
       (by simpa only [Set.mem_ofPred_eq, add_sub_cancel_right] using hφ)
     change ε ≤ f i ((φ + φ₀).comp M.subtypeL) at hh
-    simpa only [ContinuousLinearMap.add_comp] using hh
+    simpa only [Set.mem_ofPred_eq, ContinuousLinearMap.add_comp] using hh
   have hh : ε ≤ f i ((ψ - φ₀.comp M.subtypeL) + φ₀.comp M.subtypeL) :=
     (closure_minimal hbound hclosed) hmem
   simpa only [sub_add_cancel] using hh

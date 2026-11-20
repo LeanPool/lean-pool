@@ -229,7 +229,6 @@ theorem isAccPt_iSup_of_between {δ : Ordinal.{u}} (C : Set Ordinal) (δLim : Is
     use ⟨1, one_lt_of_isSuccLimit δLim⟩
     refine lt_of_le_of_lt (bot_le (a := s ⟨0, δLim.bot_lt⟩)) ?_
     convert sInc ⟨0, δLim.bot_lt⟩
-    apply Subtype.ext
     rw [coe_succ_Iio δLim.isSuccPrelimit]
     exact (zero_add (1 : Ordinal)).symm
   intro p hp
@@ -327,7 +326,7 @@ theorem iInter_Iio {Ϟ o : Ordinal.{u}} {p : Iio o} {f : Iio p → Set Ordinal}
   by_cases h : 0 < p.1
   · have : Nonempty (Iio p) := ⟨⟨0, h.trans p.2⟩, h⟩
     apply IsClub.iInter_lift hϞ hf
-    · rwa [mk_Iio_subtype, Cardinal.mk_Iio_ordinal, Cardinal.lift_lift, Cardinal.lift_lt]
+    · rwa [mk_Iio_subtype, Ordinal.cardinalMk_Iio, Cardinal.lift_lift, Cardinal.lift_lt]
   · have hp0 : p.1 = 0 := (eq_zero_or_pos p.1).resolve_right h
     have : IsEmpty (Iio p) := isEmpty_iff.mpr fun ⟨x, h'⟩ ↦ by
       have h'' : x.1 < p.1 := h'

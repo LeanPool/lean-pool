@@ -94,7 +94,7 @@ theorem WeakBridge.normSq_memLpToLp_eq_integral {α : Type*} [MeasurableSpace α
   let q : ℝ≥0∞ := ∫⁻ x, ‖g x‖ₑ ^ (2 : ℝ) ∂μ
   have hformula : eLpNorm g 2 μ = q ^ (1 / 2 : ℝ) := by
     dsimp [q]
-    simpa using eLpNorm_eq_lintegral_rpow_enorm_toReal (p := (2 : ℝ≥0∞))
+    simpa using eLpNorm_eq_lintegral_rpow_eNorm_toReal (p := (2 : ℝ≥0∞))
       (by norm_num) (by norm_num) hg.aestronglyMeasurable
   have hnorm : ‖hg.toLp g‖ = q.toReal ^ (1 / 2 : ℝ) := by
     rw [Lp.norm_toLp, hformula, ENNReal.toReal_rpow]
@@ -115,7 +115,7 @@ theorem WeakBridge.normSq_memLpToLp_eq_integral {α : Type*} [MeasurableSpace α
         congr 1
         apply lintegral_congr_ae
         filter_upwards with x
-        simp [enorm]
+        simp [eNorm]
   · exact ENNReal.toReal_nonneg
 
 /-- The torus norm of the cell transfer is exactly its cell

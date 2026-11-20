@@ -94,7 +94,7 @@ private lemma density_ne_zero {w : ℂ} (hw : w ∈ Set.range (UpperHalfPlane.co
   obtain ⟨τ, rfl⟩ := hw
   have him : (τ : ℂ).im ≠ 0 := ne_of_gt τ.2
   simp only [ne_eq, ENNReal.coe_eq_zero, pow_eq_zero_iff, OfNat.ofNat_ne_zero,
-    not_false_eq_true, div_eq_zero_iff, one_ne_zero, nnnorm_eq_zero, false_or]
+    not_false_eq_true, div_eq_zero_iff, one_ne_zero, nnNorm_eq_zero, false_or]
   exact him
 
 instance : Measure.IsOpenPosMeasure (volume : Measure ℍ) := by

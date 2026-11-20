@@ -581,7 +581,7 @@ theorem coeffMap_iota_algebraMap (c : ℚbar) :
 theorem coeffMap_iota_mem {x : LaurentSeries ℚbar} (hx : x ∈ laurentBaseChange ℚbar F₀) :
     coeffMap (iota : ℚbar →+* ℂ) x ∈ laurentBaseChange ℂ F₀ := by
   rw [mem_laurentBaseChange_iff] at hx
-  refine Subfield.closure_induction (p := fun x _ => coeffMap (iota : ℚbar →+* ℂ) x ∈
+  refine Subfield.closure_induction (motive := fun x _ => coeffMap (iota : ℚbar →+* ℂ) x ∈
       laurentBaseChange ℂ F₀) ?_ (by simp) ?_ ?_ ?_ ?_ hx
   · rintro x (⟨c, rfl⟩ | ⟨y, hy, rfl⟩)
     · rw [coeffMap_iota_algebraMap]

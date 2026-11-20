@@ -170,7 +170,8 @@ private theorem deGiorgi_truncatedLevelEnergyBound :
           m₀ + k < w₁.toFun x} from ⟨hxU, hx⟩)]
     · rw [Set.indicator_of_notMem
           (show x ∉ {y | m₀ + k < w₁.toFun y} from hx),
-        Set.indicator_of_notMem (fun h => hx h.2)]
+        Set.indicator_of_notMem (s := {x | x ∈ axisCube z L ∧ m₀ + k < w₁.toFun x})
+          (fun h => hx h.2)]
       rfl
   have hcongr2 :
       (∑ i : Fin 2, (eLpNorm (fun x => gk.grad x i) 2
@@ -191,7 +192,8 @@ private theorem deGiorgi_truncatedLevelEnergyBound :
           m₀ + k < w₂.toFun x} from ⟨hxU, hx⟩)]
     · rw [Set.indicator_of_notMem
           (show x ∉ {y | m₀ + k < w₂.toFun y} from hx),
-        Set.indicator_of_notMem (fun h => hx h.2)]
+        Set.indicator_of_notMem (s := {x | x ∈ axisCube z L ∧ m₀ + k < w₂.toFun x})
+          (fun h => hx h.2)]
       rfl
   rw [hcongr1, hcongr2] at hs
   calc
@@ -325,8 +327,10 @@ theorem deGiorgi_levelRecursion_two :
     (by norm_num) (hfin_four fk) hε hsub1
   have hcheb2 := real_chebyshev_level (p := (4 : ℝ≥0∞)) (by norm_num)
     (by norm_num) (hfin_four gk) hε hsub2
-  rw [hμvol _ (fun x hx => hx.1)] at hcheb1
-  rw [hμvol _ (fun x hx => hx.1)] at hcheb2
+  rw [hμvol {x | x ∈ axisCube z L ∧ m₀ + l < w₁.toFun x}
+    (fun _ hx => hx.1)] at hcheb1
+  rw [hμvol {x | x ∈ axisCube z L ∧ m₀ + l < w₂.toFun x}
+    (fun _ hx => hx.1)] at hcheb2
   have hkey := sq_level_recursion_of_le (ε := l - k) (r := (1 / 4 : ℝ))
     (a := (volume
       {x | x ∈ axisCube z L ∧ m₀ + l < w₁.toFun x}).toReal)

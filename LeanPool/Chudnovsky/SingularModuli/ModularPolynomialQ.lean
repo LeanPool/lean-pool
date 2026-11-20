@@ -600,7 +600,7 @@ lemma cuspFunction_one_eq : cuspFunction 1 (1 : ℍ → ℂ) = 1 := by
   · simpa only [cuspFunction, Function.Periodic.cuspFunction, Pi.one_comp, Function.update_self,
     Pi.one_apply]
       using! tendsto_const_nhds.limUnder_eq
-  · simp only [cuspFunction, Pi.one_comp, Function.Periodic.cuspFunction_eq_of_nonzero 1 _ hw,
+  · simp only [cuspFunction, Pi.one_comp, Function.Periodic.cuspFunction_eq_of_ne_zero 1 _ hw,
     Pi.one_apply]
 
 /-- Powers preserve cusp-analyticity, and the `q`-expansion of a power is the power of the

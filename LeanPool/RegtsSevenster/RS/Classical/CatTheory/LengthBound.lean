@@ -136,7 +136,7 @@ private lemma card_le_finrank_end [Category.{v} C]
   have hne : ∀ i, p i ≠ 0 := by
     intro i hzero
     have := hS i
-    apply id_nonzero (S i)
+    apply id_ne_zero (S i)
     have hcalc : (biproduct.ι S i ≫ e.inv) ≫ p i ≫
         (e.hom ≫ biproduct.π S i) = 𝟙 (S i) := by
       simp [hp]

@@ -137,10 +137,10 @@ theorem heatTrace_bound {ι : Type*} [Fintype ι] [DecidableEq ι]
       (fun _ _ => zero_le) (Finset.mem_univ v)
   calc ‖((1 / s : ℝ) : ℂ) * ∫ q : Fin 2 → ℝ, Hd.baseTrace 3 (planePt q) s‖ₑ
       = ENNReal.ofReal (1 / s) * ‖∫ q : Fin 2 → ℝ, Hd.baseTrace 3 (planePt q) s‖ₑ := by
-        rw [enorm_mul, ← ofReal_norm (((1 / s : ℝ) : ℂ)), Complex.norm_real,
+        rw [eNorm_mul, ← ofReal_norm (((1 / s : ℝ) : ℂ)), Complex.norm_real,
           Real.norm_eq_abs, abs_of_pos (by positivity)]
     _ ≤ ENNReal.ofReal (1 / s) * ∫⁻ q : Fin 2 → ℝ, ‖Hd.baseTrace 3 (planePt q) s‖ₑ :=
-        mul_le_mul' le_rfl (enorm_integral_le_lintegral_enorm _)
+        mul_le_mul' le_rfl (eNorm_integral_le_lintegral_eNorm _)
     _ ≤ ENNReal.ofReal (1 / s) * ∫⁻ q : Fin 2 → ℝ, ENNReal.ofReal (5 / 3 * constD) *
         ∑ v, ENNReal.ofReal (constA ^ 2 * s) * ∫⁻ d, ENNReal.ofReal (gaussian (1 / 10 * s) d) *
           Φ v (Function.update (planePt q) v (planePt q v + d)) :=
@@ -190,7 +190,7 @@ lemma gridGaussianForm_eq {ι : Type*} [Fintype ι] [DecidableEq ι]
     intro i j k
     apply Integrable.const_mul
     exact (((continuousOn_kernIntegrand 3 _).mono
-      (fun s hs => ha.trans_le hs.1)).integrableOn_Icc.mono_set
+      ((Set.Icc_subset_Ioi_iff hab).mpr ha)).integrableOn_Icc.mono_set
         Set.Ioc_subset_Icc_self).ofReal
   have hpt : ∀ s ∈ Set.Ioc a b,
       ((1 / s : ℝ) : ℂ) * (∫ q : Fin 2 → ℝ, Hd.baseTrace 3 (planePt q) s) =
@@ -251,7 +251,7 @@ theorem gridGaussianForm_cubic_bound {ι : Type*} [Fintype ι]
   have hb : ENNReal.ofReal ‖gridGaussianForm Hd a b‖ ≤
       ENNReal.ofReal c * ∑ _v : Fin 3, ENNReal.ofReal B := by
     rw [ofReal_norm, gridGaussianForm_eq Hd hh ha0 hab]
-    refine (enorm_integral_le_lintegral_enorm _).trans ?_
+    refine (eNorm_integral_le_lintegral_eNorm _).trans ?_
     calc
       ∫⁻ s in Set.Ioc a b,
           ‖((1 / s : ℝ) : ℂ) * ∫ q : Fin 2 → ℝ, Hd.baseTrace 3 (planePt q) s‖ₑ ≤

@@ -125,7 +125,7 @@ theorem not_map_residue_eq_zero_of_contentVal {p₀ q₀ : O[X]}
       refine ((IsDiscreteValuationRing.maximalIdeal O).valuation_lt_one_iff_mem
         (r₀.coeff i)).mpr ?_
       have hcoeff0 : residue O (r₀.coeff i) = 0 := by
-        have := congrArg (fun s ↦ Polynomial.coeff s i) hr
+        have := congrArg (fun s ↦ AddMonoidAlgebra.coeff s i) hr
         simpa [coeff_map] using this
       exact (residue_eq_zero_iff _).mp hcoeff0
   have := sup_lt_iff.mpr ⟨hlt p₀ hp, hlt q₀ hq⟩

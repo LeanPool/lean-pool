@@ -77,7 +77,7 @@ theorem correspondencePolynomial_lipschitz_norm_eq (g : ℂ → ℂ)
   have hdn : 0≤sSup (range (fun z => ‖fderiv ℝ g z‖)) :=
     (norm_nonneg _).trans (le_csSup hbd (mem_range_self (0 : ℂ)))
   have hLd : LipschitzWith ⟨sSup (range (fun z => ‖fderiv ℝ g z‖)), hdn⟩ g :=
-    lipschitzWith_of_nnnorm_fderiv_le (hg.differentiable (by norm_num)) (fun z => by
+    lipschitzWith_of_nnNorm_fderiv_le (hg.differentiable (by norm_num)) (fun z => by
       exact_mod_cast le_csSup hbd (mem_range_self z))
   have hLq : LipschitzWith ⟨sSup (correspondenceDifferenceQuotients g), hqn⟩ g := by
     apply LipschitzWith.of_dist_le_mul

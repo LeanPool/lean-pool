@@ -192,14 +192,14 @@ theorem movingCutoffEnergyCorrectionEntry_eq_spatial_mode_sum {β : ℝ}
           MovingFluxEnergyComplete.movingEnergyCoordinate,
         MovingFluxEnergyComplete.movingEnergyModeTerm, movingEnergyModeCoefficient, Matrix.single,
         Matrix.smul_apply, h1]
-    all_goals ring
+    ring
   · rw [movingEnergyGramMean_vertical I hm κ k.1 t h3]
     fin_cases i <;>
       simp [MovingFluxEnergyComplete.movingEnergyCoordinateActive,
           MovingFluxEnergyComplete.movingEnergyCoordinate,
         MovingFluxEnergyComplete.movingEnergyModeTerm, movingEnergyModeCoefficient, Matrix.single,
         Matrix.smul_apply, h3]
-    all_goals ring
+    ring
 
 /-- The moving energy after the double-sum orthogonality reduction. Its
 molecular part is `κ I`; its modewise correction is diagonal. -/

@@ -75,7 +75,7 @@ theorem kernel_integrable_ae_slab {τ : ℝ} (hτ : 0 < τ) (j : Fin 3) {H : Vec
       ((volume : Measure (Vec3 × ℝ)).prod volume) :=
     (((heatKernelSpaceDerivative_vecTime_measurable j).comp measurable_snd).aestronglyMeasurable.mul
       (hH.aestronglyMeasurable.comp_quasiMeasurePreserving
-        (quasiMeasurePreserving_sub_of_right_invariant volume volume))).enorm
+        (quasiMeasurePreserving_sub_of_right_invariant volume volume))).eNorm
   have hmeas : AEMeasurable (fun z : Vec3 × ℝ => ENNReal.ofReal (forcedHeatWeight z.1) *
       ∫⁻ p, ‖heatKernelSpaceDerivative p.1 p.2 j * H (z - p)‖ₑ)
       (volume.restrict ((univ : Set Vec3) ×ˢ Ioo 0 τ)) :=
@@ -104,7 +104,7 @@ theorem kernel_weighted_aemeasurable (j : Fin 3) {H : Vec3 × ℝ → ℝ}
       ((volume : Measure (Vec3 × ℝ)).prod volume) :=
     (((heatKernelSpaceDerivative_vecTime_measurable j).comp measurable_snd).aestronglyMeasurable.mul
       (hH.comp_quasiMeasurePreserving
-        (quasiMeasurePreserving_sub_of_right_invariant volume volume))).enorm
+        (quasiMeasurePreserving_sub_of_right_invariant volume volume))).eNorm
   exact (((ENNReal.measurable_ofReal.comp (forcedHeatWeight_continuous.measurable.comp
       measurable_fst)).aemeasurable.mul hjoint.lintegral_prod_right')).mono_ac hμ
 
@@ -161,16 +161,16 @@ theorem kernelResponse_weighted_tendsto {τ : ℝ} (hτ : 0 < τ)
         integrable_finsetSum _ fun j _ => hz i j
       simp only [kernelResponse]
       rw [← integral_sub hA hB]
-      refine (enorm_integral_le_lintegral_enorm _).trans ?_
+      refine (eNorm_integral_le_lintegral_eNorm _).trans ?_
       rw [← lintegral_finsetSum' (f := fun j (p : Vec3 × ℝ) =>
         ‖heatKernelSpaceDerivative p.1 p.2 j * H n i j (z - p)‖ₑ) _ fun j _ =>
         ((heatKernelSpaceDerivative_vecTime_measurable j).aestronglyMeasurable.mul
           ((hHm n i j).comp_quasiMeasurePreserving
             ((volume : Measure (Vec3 × ℝ)).measurePreserving_sub_left
-              z).quasiMeasurePreserving)).enorm]
+              z).quasiMeasurePreserving)).eNorm]
       refine lintegral_mono fun p => ?_
       rw [← Finset.sum_sub_distrib]
-      refine (enorm_sum_le _ _).trans (le_of_eq ?_)
+      refine (eNorm_sum_le _ _).trans (le_of_eq ?_)
       apply Finset.sum_congr rfl
       intro j _
       congr 1
@@ -253,11 +253,11 @@ theorem kernelResponse_ae_subseq {τ : ℝ} (hτ : 0 < τ)
         ((hZ _ fun i j => (hgn n i j).continuous.aestronglyMeasurable).sub
           (hZ _ fun i j => (hg2 i j).aestronglyMeasurable))).sub
         aestronglyMeasurable_const).restrict
-    rw [eLpNorm_one_eq_lintegral_enorm hfm]
+    rw [eLpNorm_one_eq_lintegral_eNorm hfm]
     apply lintegral_congr
     intro z
     simp only [f, Pi.sub_apply, sub_zero]
-    rw [enorm_smul, Real.enorm_eq_ofReal (forcedHeatWeight_pos z.1).le]
+    rw [eNorm_smul, Real.eNorm_eq_ofReal (forcedHeatWeight_pos z.1).le]
   obtain ⟨ns, hns, hae⟩ := (tendstoInMeasure_of_tendsto_eLpNorm one_ne_zero
     hf).exists_seq_tendsto_ae
   refine ⟨ns, hns, ?_⟩

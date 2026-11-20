@@ -70,14 +70,14 @@ theorem enorm_convolution_sq_le {f : V → E} (hf : AEStronglyMeasurable f m) (x
   set b : V → ℝ≥0∞ := fun t => ‖f (x - t)‖ₑ with hb_def
   have ha : Measurable a := ENNReal.measurable_ofReal.comp φ.continuous_normed.measurable
   have hb : AEMeasurable b m :=
-    hf.enorm.comp_quasiMeasurePreserving
+    hf.eNorm.comp_quasiMeasurePreserving
       (Measure.measurePreserving_sub_left m x).quasiMeasurePreserving
   have h1 : ‖(φ.normed m ⋆[ContinuousLinearMap.lsmul ℝ ℝ, m] f) x‖ₑ ≤ ∫⁻ t, a t * b t ∂m := by
     rw [convolution_def]
-    refine (enorm_integral_le_lintegral_enorm _).trans (le_of_eq ?_)
+    refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
     refine lintegral_congr fun t => ?_
-    simp only [ContinuousLinearMap.lsmul_apply, enorm_smul,
-      Real.enorm_of_nonneg (φ.nonneg_normed t), ha_def, hb_def]
+    simp only [ContinuousLinearMap.lsmul_apply, eNorm_smul,
+      Real.eNorm_of_nonneg (φ.nonneg_normed t), ha_def, hb_def]
   have hint : ∫⁻ t, a t ∂m = 1 := by
     rw [ha_def, ←
       ofReal_integral_eq_lintegral_ofReal φ.integrable_normed
@@ -118,7 +118,7 @@ theorem lintegral_enorm_convolution_sq_le {f : V → E} (hf : AEStronglyMeasurab
   have hmeas : AEMeasurable (fun p : V × V => ENNReal.ofReal (φ.normed m p.2) *
       ‖f (p.1 - p.2)‖ₑ ^ 2) (m.prod m) := by
     refine (ha.comp measurable_snd).aemeasurable.mul ?_
-    exact (hf.enorm.comp_quasiMeasurePreserving
+    exact (hf.eNorm.comp_quasiMeasurePreserving
       (quasiMeasurePreserving_sub_of_right_invariant m m)).pow_const _
   have hint : ∫⁻ t, ENNReal.ofReal (φ.normed m t) ∂m = 1 := by
     rw [← ofReal_integral_eq_lintegral_ofReal φ.integrable_normed
@@ -141,8 +141,8 @@ theorem eLpNorm_convolution_le {f : V → E} (hf : AEStronglyMeasurable f m) :
     eLpNorm (φ.normed m ⋆[ContinuousLinearMap.lsmul ℝ ℝ, m] f) 2 m ≤ eLpNorm f 2 m := by
   have hconv : AEStronglyMeasurable (φ.normed m ⋆[ContinuousLinearMap.lsmul ℝ ℝ, m] f) m :=
     φ.continuous_normed.aestronglyMeasurable.convolution (L := ContinuousLinearMap.lsmul ℝ ℝ) hf
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hconv,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hconv,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top hf]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   exact ENNReal.rpow_le_rpow (lintegral_enorm_convolution_sq_le φ hf) (by norm_num)
 

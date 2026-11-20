@@ -362,7 +362,7 @@ theorem exists_sep_masSubfield' : ∃ (a : D), IsMax (SubField.botAdjoin K D a) 
   have ass : Subring.center ↥CL ≠ ⊤ := by
     rw [eq2] at h
     symm
-    contrapose! h
+    contrapose h
     apply Subalgebra.toSubring_injective
     convert congr(Subring.map CL.val.toRingHom $h)
     all_goals first
@@ -375,7 +375,7 @@ theorem exists_sep_masSubfield' : ∃ (a : D), IsMax (SubField.botAdjoin K D a) 
     (Subalgebra.centralizer K (A := D) L) _ inst3 ass
   obtain ⟨L, hLsep⟩ := L
   have ha1_aux : a.1 ∉ L := by
-    by_contra! haa
+    by_contra haa
     have : a ∈ Subring.center (centralizer K L) := by
       rw [Subring.mem_center_iff]
       intro ⟨b, hb⟩
@@ -384,7 +384,7 @@ theorem exists_sep_masSubfield' : ∃ (a : D), IsMax (SubField.botAdjoin K D a) 
       simp [hb a.1 haa]
     tauto
   have cond3 : L ≠ SubField.adjoin K D L a.1 a.2 := by
-    by_contra! eq
+    by_contra eq
     obtain eq' := (SetLike.ext_iff.1 eq) a.1 |>.2 (Algebra.subset_adjoin <| by simp)
     tauto
   simp_all only

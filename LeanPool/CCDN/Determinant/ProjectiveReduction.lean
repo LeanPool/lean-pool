@@ -43,12 +43,12 @@ def primitiveProjectiveReduction {n p : ℕ} [Fact p.Prime]
 
 /-- A coordinate index at which the chosen representative of a point of `ℙⁿ(𝔽_p)` is nonzero. -/
 def projectiveResiduePivot {n p : ℕ} [Fact p.Prime] (r : ProjectiveResidueSpace n p) :
-    Fin (n + 1) := Classical.choose (Function.ne_iff.mp r.rep_nonzero)
+    Fin (n + 1) := Classical.choose (Function.ne_iff.mp r.rep_ne_zero)
 
 /-- The representative of `r` is nonzero at the coordinate `projectiveResiduePivot r`. -/
 lemma projectiveResiduePivot_ne_zero {n p : ℕ} [Fact p.Prime]
     (r : ProjectiveResidueSpace n p) : r.rep (projectiveResiduePivot r) ≠ 0 :=
-  Classical.choose_spec (Function.ne_iff.mp r.rep_nonzero)
+  Classical.choose_spec (Function.ne_iff.mp r.rep_ne_zero)
 
 /-- Integer lifts of the affine coordinates of a point `r` of `ℙⁿ(𝔽_p)` in the chart where its pivot
 coordinate `projectiveResiduePivot r` is moved to the front and set to `1`. -/
@@ -97,8 +97,8 @@ theorem projectiveResidueChart_injective_of_pivot_eq {n p : ℕ} [Fact p.Prime]
     simpa only [smul_smul, mul_inv_cancel₀ (projectiveResiduePivot_ne_zero r), one_smul,
       div_eq_mul_inv] using hh.symm
   calc
-    r = Projectivization.mk (ZMod p) r.rep r.rep_nonzero := r.mk_rep.symm
-    _ = Projectivization.mk (ZMod p) t.rep t.rep_nonzero := by
+    r = Projectivization.mk (ZMod p) r.rep r.rep_ne_zero := r.mk_rep.symm
+    _ = Projectivization.mk (ZMod p) t.rep t.rep_ne_zero := by
       rw [Projectivization.mk_eq_mk_iff']
       exact ⟨_, hs⟩
     _ = t := t.mk_rep
@@ -112,7 +112,7 @@ theorem primitiveProjectiveReduction_chart {n p : ℕ} [Fact p.Prime]
       ∀ j : Fin n, (p : ℤ) ∣ z (Equiv.swap 0 (projectiveResiduePivot r) j.succ) -
         projectiveResidueChartLift r j * z (projectiveResiduePivot r) := by
   have he' : Projectivization.mk (ZMod p) (fun i => (z i : ZMod p))
-      (primitive_mod_ne_zero z hz) = Projectivization.mk (ZMod p) r.rep r.rep_nonzero :=
+      (primitive_mod_ne_zero z hz) = Projectivization.mk (ZMod p) r.rep r.rep_ne_zero :=
     he.trans r.mk_rep.symm
   obtain ⟨u, hu⟩ := (Projectivization.mk_eq_mk_iff _ _ _ _ _).mp he'
   have hcoord (j : Fin (n + 1)) : (z j : ZMod p) = (u : ZMod p) * r.rep j :=

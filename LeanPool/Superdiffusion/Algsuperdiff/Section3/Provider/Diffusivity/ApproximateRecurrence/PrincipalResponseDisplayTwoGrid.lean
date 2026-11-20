@@ -209,12 +209,12 @@ theorem memLp_normalizedCubeMeasure_of_mem_descendantsAtDepth {E : Type*}
     Measure.restrict_mono hsub le_rfl s
   calc normalizedCubeMeasure R s
       = ENNReal.ofReal ((cubeVolume R)⁻¹) * (volume.restrict (cubeSet R)) s := by
-        rw [normalizedCubeMeasure, cubeMeasure, Measure.smul_apply, smul_eq_mul]
+        rw [normalizedCubeMeasure, cubeMeasure, smul_apply, smul_eq_mul]
     _ ≤ ENNReal.ofReal ((cubeVolume R)⁻¹) * (volume.restrict (cubeSet Q)) s := by
         gcongr
     _ = (c • normalizedCubeMeasure Q) s := by
-        rw [Measure.smul_apply, smul_eq_mul, normalizedCubeMeasure, cubeMeasure,
-          Measure.smul_apply, smul_eq_mul, ← mul_assoc, hscale]
+        rw [smul_apply, smul_eq_mul, normalizedCubeMeasure, cubeMeasure,
+          smul_apply, smul_eq_mul, ← mul_assoc, hscale]
 
 /-! ## `MemLp` of the Euclidean length -/
 

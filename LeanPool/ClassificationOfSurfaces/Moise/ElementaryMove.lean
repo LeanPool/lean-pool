@@ -537,7 +537,7 @@ theorem diamondSlackLL_apply (x y : ℝ) :
 
 @[simp] theorem diamondSlackUR_eq (p : Plane) :
     diamondSlackUR p = 2 - 2 * p 0 - p 1 := by
-  simp only [diamondSlackUR, AffineMap.coe_sub, AffineMap.coe_const, AffineMap.coe_smul,
+  simp only [diamondSlackUR, FunLike.coe_sub, AffineMap.coe_const, FunLike.coe_smul,
     nsmul_eq_mul,
     Nat.cast_ofNat, Pi.sub_apply, Function.const_apply, Pi.mul_apply,
     Pi.ofNat_apply, cartesianX_apply, Fin.isValue,
@@ -624,7 +624,7 @@ theorem diamondPatch_eq_inDiamond : diamondPatch = {p | InDiamond p} := by
         ring
       · ext i
         fin_cases i <;> simp [w, planePoint]
-        all_goals ring
+        ring
     · right
       rw [diamondRightRegion]
       have hx' : 0 ≤ p 0 := le_of_not_ge hx
@@ -638,7 +638,7 @@ theorem diamondPatch_eq_inDiamond : diamondPatch = {p | InDiamond p} := by
         ring
       · ext i
         fin_cases i <;> simp [w, planePoint]
-        all_goals ring
+        ring
 
 /-- Points satisfying all four diamond inequalities strictly form an open subset of the patch. -/
 def StrictlyInDiamond : Set Plane :=

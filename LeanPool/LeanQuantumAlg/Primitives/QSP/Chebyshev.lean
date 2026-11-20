@@ -222,13 +222,12 @@ private theorem IsQSPPair.step {d : ℕ} {P Q : ℂ[X]} (h : IsQSPPair d P Q) (�
     have h3 : Q.coeff (m - 2) = 0 := h.coeff_Q_eq_zero (by omega)
     have hm0 : ¬ m = 0 := by omega
     have hm2 : ¬ m < 2 := by omega
-    simp [Polynomial.coeff_C_mul, Polynomial.coeff_sub, sub_mul, one_mul,
+    simp [Polynomial.coeff_C_mul, sub_mul, one_mul,
       coeff_X_mul', coeff_X_sq_mul, h1, h2, h3, hm0, hm2]
   · have h1 : P.coeff m = 0 := h.coeff_P_eq_zero (by omega)
     have h2 : Q.coeff (m - 1) = 0 := h.coeff_Q_eq_zero (by omega)
     have hm0 : ¬ m = 0 := by omega
-    simp [Polynomial.coeff_C_mul, Polynomial.coeff_add, coeff_X_mul', h1, h2,
-      hm0]
+    simp [Polynomial.coeff_C_mul, coeff_X_mul', h1, h2, hm0]
   · exact ((h.parP.X_mul).sub (h.parQ.one_sub_X_sq_mul.congr (by omega))).C_mul _
   · exact ((h.parP.congr (by omega)).add (h.parQ.X_mul)).C_mul _
   · exact qsp_norm_step P Q _ _ (conj_exp_I φ) (exp_I_mul_exp_neg_I φ) h.norm

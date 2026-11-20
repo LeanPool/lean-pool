@@ -35,12 +35,12 @@ theorem tsum_lintegral_enorm_highPass_stoppingLevels_lt_top
         apply lintegral_mono
         intro y
         dsimp only
-        rw [enorm_mul]
+        rw [eNorm_mul]
         exact mul_le_mul' (by
           simpa only [← ofReal_norm] using ENNReal.ofReal_le_ofReal
             (highPassKernel_norm_le lam hlam (x-y))) le_rfl
       _ = _ := lintegral_const_mul' _ _ (by finiteness)
-  have hs := ENNReal.tsum_le_tsum hp
+  have hs := tsum_le_tsum hp
   rw [ENNReal.tsum_mul_left] at hs
   exact hs.trans_lt (ENNReal.mul_lt_top (by finiteness)
     ((tsum_lintegral_enorm_stoppingLevelBadPart_le hf).trans_lt
@@ -87,14 +87,15 @@ theorem paperOscillatoryMaximal_stoppingBadPart_le_low_add_high
   apply iSup_le
   intro lam
   rw [paperOscillatoryAction_stoppingBadPart_eq_tsum hf hfi lam.1 lam.2 x]
-  apply enorm_tsum_le_tsum_enorm.trans
+  apply eNorm_tsum_le_tsum_eNorm.trans
   unfold paperFullLowHeightContribution paperHighContribution
-  rw [← ENNReal.tsum_add]
-  apply ENNReal.tsum_le_tsum
+  rw [← tsum_add]
+  apply tsum_le_tsum
   intro k
+  dsimp only
   rw [paperOscillatoryAction_eq_low_add_high (integrable_stoppingLevelBadPart hf hfi k)
     (fullHighCutoff k) lam.1 lam.2 x]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   apply add_le_add
   · exact le_iSup (fun μ : {μ : ℝ // μ ≠ 0} ↦
       ‖∑ r ∈ Finset.range (fullHighCutoff k+1), ∫ t, stoppingLevelBadPart f k (x-t) *

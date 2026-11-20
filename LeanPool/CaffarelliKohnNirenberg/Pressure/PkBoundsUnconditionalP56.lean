@@ -98,7 +98,7 @@ private lemma pressureP56_bound_hGpow_1 :
       positivity)
   rw [show G s = (∫ x in Bρ, (F (x, s)) ^ (3 / 2 : ℝ)) ^
       (2 / 3 : ℝ) by rfl]
-  rw [Real.enorm_eq_ofReal (Real.rpow_nonneg hI _),
+  rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg hI _),
     ← ENNReal.ofReal_rpow_of_nonneg hI (by norm_num),
     ← ENNReal.rpow_mul]
   norm_num
@@ -130,7 +130,7 @@ private lemma pressureP56_bound_hGnorm_2 :
   intro p z ρ hρ Bρ Tρ F G hswap hlinBT hGpow hδ
   calc
     _ = (∫⁻ s in Tρ, ‖G s‖ₑ ^ (3 / 2 : ℝ)) ^ (2 / 3 : ℝ) := by
-      rw [eLpNorm'_eq_lintegral_enorm]
+      rw [eLpNorm'_eq_lintegral_eNorm]
       congr 1
       norm_num
     _ = (∫⁻ s in Tρ, ∫⁻ x in Bρ,
@@ -326,7 +326,7 @@ private lemma pressureP56_bound_hP5_4 :
   change w ∈ vec3Ball z.1 r ×ˢ Ioc (z.2 - r ^ 2) z.2 at hwm
   have habs := hw w.1 hwm.1
   have hGpos : 0 ≤ G w.2 := by dsimp [G]; positivity
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hGpos,
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hGpos,
     ENNReal.ofReal_mul hK] using ENNReal.ofReal_le_ofReal habs
 
 private lemma pressureP56_bound_hP6_5 :
@@ -375,7 +375,7 @@ private lemma pressureP56_bound_hP6_5 :
   change w ∈ vec3Ball z.1 r ×ˢ Ioc (z.2 - r ^ 2) z.2 at hwm
   have habs := hw w.1 hwm.1
   have hGpos : 0 ≤ G w.2 := by dsimp [G]; positivity
-  simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hGpos,
+  simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hGpos,
     ENNReal.ofReal_mul hK] using ENNReal.ofReal_le_ofReal habs
 
 private lemma pressureP56_bound_hscale_6 :
@@ -557,7 +557,7 @@ theorem pressureP56_bound
         congr 1
         apply lintegral_congr
         intro s
-        rw [Real.enorm_eq_ofReal (by
+        rw [Real.eNorm_eq_ofReal (by
           dsimp [G]
           positivity)]
       _ ≤ eLpNorm' G (3 / 2 : ℝ) (volume.restrict Tρ) := hholder.2

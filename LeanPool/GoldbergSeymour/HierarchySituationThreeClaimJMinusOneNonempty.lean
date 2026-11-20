@@ -975,7 +975,7 @@ private abbrev helperContinuation4396Conditions.{u_1, u_2} : Prop :=
             dsimp only [GoldbergSeymour.HierarchyFullTailLength,
              GoldbergSeymour.HierarchyFullTailPrefix, GoldbergSeymour.TreeSequencePrefix] at *
             dsimp only [B, GoldbergSeymour.TreeSequencePrefix] at *
-            all_goals omega)
+            omega)
     ⟩ : Fin (B.length + (1 : ℕ)));
     ∀ (ha : alpha ∈ MissingColors G P.coloring (B.vertex ja)) (haOutside : alpha ∉
         TreeMissingColors P.coloring A) (haGood : alpha ∉ Gamma P ∪ Extra P) (hiEq : i = j - (1 :

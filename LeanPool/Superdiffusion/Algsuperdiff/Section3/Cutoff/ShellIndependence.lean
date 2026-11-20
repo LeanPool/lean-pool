@@ -147,7 +147,7 @@ theorem indep_lowerShellLocalCompletion_shellIndexSigma_of_disjoint
   intro s t hs ht
   obtain ⟨s', hs'meas, hss'⟩ := hs
   have h1 : M.P.toMeasure (s ∩ t) = M.P.toMeasure (s' ∩ t) :=
-    measure_congr (hss'.inter EventuallyEq.rfl)
+    measure_congr (hss'.inter EventuallyEqSet.rfl)
   have h2 : M.P.toMeasure s = M.P.toMeasure s' := measure_congr hss'
   rw [h1, h2]
   exact (Indep_iff _ _ M.P.toMeasure).1 h s' t hs'meas ht

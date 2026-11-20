@@ -202,7 +202,7 @@ lemma exists_spp {i : V} (h : PPow2 i) : ∃ m < 2 * i, SPPow2 m ∧ LenBit i m 
 protected lemma sq {i : V} (ppi : PPow2 i) : PPow2 (i ^ 2) := by
   rcases ppi.exists_spp with ⟨m, hm, sppm, hi⟩
   have sppm' : SPPow2 (m + i ^ 2) :=
-    ⟨by rw [LenBit.add_pow2] <;> try simp [ppi.pow2, sppm.not_lenbit_one, sppm.one_lt hi],
+    ⟨by rw [LenBit.add_pow2] <;> simp [ppi.pow2, sppm.not_lenbit_one, sppm.one_lt hi],
      by
         rw [LenBit.add_pow2]
         · exact sppm.lenbit_two

@@ -113,7 +113,7 @@ lemma exists_flat_vector_weighted {V : Submodule 𝕜 (Fin m → 𝕜)} {k : ℕ
     ext x; simp only [hBdef, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter, SetLike.mem_coe]
   have hBclosed : IsClosed B := by
     rw [hBeq]
-    refine V.closed_of_finiteDimensional.inter (isClosed_iInter fun i => ?_)
+    refine V.isClosed_of_finiteDimensional.inter (isClosed_iInter fun i => ?_)
     exact isClosed_le ((continuous_apply i).norm) continuous_const
   have hBbdd : Bornology.IsBounded B := by
     refine (Metric.isBounded_closedBall (x := (0 : Fin m → 𝕜)) (r := ⨆ i, w i)).subset ?_

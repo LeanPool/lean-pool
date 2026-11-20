@@ -384,7 +384,7 @@ private theorem eventually_valueLpSeminorm_convexApproxSmoothH1W1p_le
         congr 1
         rw [eLpNorm_const' (integralAverage U v.toFun)
           (ne_of_gt (zero_lt_one.trans p.one_lt)) p.lt_top.ne, ENNReal.toReal_mul]
-        simp [Real.enorm_eq_ofReal_abs, M]
+        simp [Real.eNorm_eq_ofReal_abs, M]
   have hsubbound : v.subAverageLpSeminorm ≤ C * G :=
     hsub.trans (mul_le_mul_of_nonneg_left (by simpa [v] using hnGrad) hC)
   have havgbound : |integralAverage U v.toFun| ≤ A := by

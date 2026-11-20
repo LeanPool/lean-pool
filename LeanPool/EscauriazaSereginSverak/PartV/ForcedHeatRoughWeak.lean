@@ -40,26 +40,26 @@ theorem tendsto_integral_mul_of_eLpNorm_two {α : Type*} [MeasurableSpace α] {�
       eLpNorm (f n - F) 2 μ * eLpNorm ψ 2 μ := by
     have hi1 : Integrable (fun a => f n a * ψ a) μ := (hf n).integrable_mul hψ
     have hi2 : Integrable (fun a => F a * ψ a) μ := hF.integrable_mul hψ
-    rw [edist_eq_enorm_sub, ← integral_sub hi1 hi2]
+    rw [eDist_eq_eNorm_sub, ← integral_sub hi1 hi2]
     have hpt : (fun a => f n a * ψ a - F a * ψ a) = fun a => (f n - F) a * ψ a := by
       funext a
       simp only [Pi.sub_apply]
       ring
     rw [hpt]
-    refine (enorm_integral_le_lintegral_enorm _).trans ?_
+    refine (eNorm_integral_le_lintegral_eNorm _).trans ?_
     have hconj : (2 : ℝ).HolderConjugate 2 :=
       (Real.holderConjugate_iff_eq_conjExponent (by norm_num)).2 (by norm_num)
     have h := ENNReal.lintegral_mul_le_Lp_mul_Lq μ hconj
-      ((hf n).aestronglyMeasurable.sub hF.aestronglyMeasurable).enorm
-      hψ.aestronglyMeasurable.enorm
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      ((hf n).aestronglyMeasurable.sub hF.aestronglyMeasurable).eNorm
+      hψ.aestronglyMeasurable.eNorm
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
         ((hf n).aestronglyMeasurable.sub hF.aestronglyMeasurable),
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hψ.aestronglyMeasurable]
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hψ.aestronglyMeasurable]
     simp only [ENNReal.toReal_ofNat]
     refine le_of_eq_of_le ?_ h
     congr 1
     funext a
-    rw [enorm_mul]
+    rw [eNorm_mul]
     rfl
   have hzero : Tendsto (fun n => eLpNorm (f n - F) 2 μ * eLpNorm ψ 2 μ) atTop (𝓝 0) := by
     have h := ENNReal.Tendsto.mul_const hlim (Or.inr hψ.eLpNorm_lt_top.ne)
@@ -127,7 +127,7 @@ theorem kernelResponse_integral_tendsto {τ : ℝ} (hτ : 0 < τ)
       ‖(kernelResponse (gn n) z i - kernelResponse g z i) * ψ z‖ₑ ≤
         ENNReal.ofReal c * (ENNReal.ofReal (forcedHeatWeight z.1) *
           ‖kernelResponse (gn n) z - kernelResponse g z‖ₑ) := by
-    rw [enorm_mul, Real.enorm_eq_ofReal_abs (ψ z)]
+    rw [eNorm_mul, Real.eNorm_eq_ofReal_abs (ψ z)]
     have h1 : ‖kernelResponse (gn n) z i - kernelResponse g z i‖ₑ ≤
         ‖kernelResponse (gn n) z - kernelResponse g z‖ₑ := by
       rw [← ofReal_norm, ← ofReal_norm]
@@ -155,12 +155,12 @@ theorem kernelResponse_integral_tendsto {τ : ℝ} (hτ : 0 < τ)
     have hsplit (z : Vec3 × ℝ) : ‖kernelResponse g z i * ψ z‖ₑ ≤
         ‖(kernelResponse (gn n0) z i - kernelResponse g z i) * ψ z‖ₑ +
           ‖kernelResponse (gn n0) z i * ψ z‖ₑ := by
-      rw [← enorm_neg ((kernelResponse (gn n0) z i - kernelResponse g z i) * ψ z)]
-      refine le_trans (le_of_eq ?_) (enorm_add_le _ _)
+      rw [← eNorm_neg ((kernelResponse (gn n0) z i - kernelResponse g z i) * ψ z)]
+      refine le_trans (le_of_eq ?_) (eNorm_add_le _ _)
       congr 1
       ring
     refine lt_of_le_of_lt (lintegral_mono hsplit) ?_
-    rw [lintegral_add_right' _ (hint_n n0).aestronglyMeasurable.enorm]
+    rw [lintegral_add_right' _ (hint_n n0).aestronglyMeasurable.eNorm]
     refine ENNReal.add_lt_top.2 ⟨?_, (hint_n n0).hasFiniteIntegral⟩
     exact lt_of_le_of_lt (hlint n0) (ENNReal.mul_lt_top ENNReal.ofReal_lt_top
       (lt_trans hn0 ENNReal.one_lt_top))
@@ -170,13 +170,13 @@ theorem kernelResponse_integral_tendsto {τ : ℝ} (hτ : 0 < τ)
       (∫ z, kernelResponse g z i * ψ z ∂μ) ≤ ENNReal.ofReal c * ∫⁻ z,
         ENNReal.ofReal (forcedHeatWeight z.1) *
           ‖kernelResponse (gn n) z - kernelResponse g z‖ₑ ∂μ := by
-    rw [edist_eq_enorm_sub, ← integral_sub (hint_n n) hint]
+    rw [eDist_eq_eNorm_sub, ← integral_sub (hint_n n) hint]
     have hpt : (fun z => kernelResponse (gn n) z i * ψ z - kernelResponse g z i * ψ z) =
         fun z => (kernelResponse (gn n) z i - kernelResponse g z i) * ψ z := by
       funext z
       ring
     rw [hpt]
-    exact (enorm_integral_le_lintegral_enorm _).trans (hlint n)
+    exact (eNorm_integral_le_lintegral_eNorm _).trans (hlint n)
   have hzero := ENNReal.Tendsto.const_mul (a := ENNReal.ofReal c) hW
     (Or.inr ENNReal.ofReal_ne_top)
   rw [mul_zero] at hzero

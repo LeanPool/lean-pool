@@ -636,9 +636,12 @@ attribute [local instance] SpecialPeriods.triangleOrbitChartedSpace
 private theorem SpecialPeriods.BetaTorsor.Data.overlapDifference_holomorphic
     (D : SpecialPeriods.BetaTorsor.Data) (i j : SpecialPeriods.MuTorsor.Cover.Index) :
     ContMDiffOn 𝓘(ℂ) 𝓘(ℂ) ω (D.overlapDifference i j)
-      (SpecialPeriods.BetaTorsor.overlapDomain i j) :=
-  ((D.localSection_holomorphic i).mono (fun _ hz => hz.1)).sub
-    ((D.localSection_holomorphic j).mono (fun _ hz => hz.2))
+      (SpecialPeriods.BetaTorsor.overlapDomain i j) := by
+  refine ((D.localSection_holomorphic i).mono ?_).sub ((D.localSection_holomorphic j).mono ?_)
+  · intro z hz
+    exact hz.1
+  · intro z hz
+    exact hz.2
 
 attribute [local instance] SpecialPeriods.triangleOrbitChartedSpace
     SpecialPeriods.triangleCompactifiedChartedSpace in
@@ -4066,7 +4069,8 @@ private def RiemannMapping.normalizedClass (U : Set ℂ) (x₀ : ℂ) : Set (Fun
 private theorem
     RiemannMapping.normalizedClass_compact_closure {U : Set ℂ} (hUo : IsOpen U) (x₀ : ℂ) :
     IsCompact (closure (normalizedClass U x₀)) := by
-  apply isCompact_closure_of_bounded_holomorphic hUo (fun f hf => hf.2.2.1)
+  apply isCompact_closure_of_bounded_holomorphic (s := normalizedClass U x₀) hUo
+    (fun _ hf => hf.2.2.1)
   exact ⟨1, fun f hf z hz => (mem_ball_zero_iff.mp (hf.1 hz)).le⟩
 
 end Mathoverflow1973

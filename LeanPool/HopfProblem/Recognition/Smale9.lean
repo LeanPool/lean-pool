@@ -567,6 +567,8 @@ private def Smale.EmbeddedCellAttachment.diskHomeomorph {N X : Type*} [NormedAdd
     [TopologicalSpace X] (D : Smale.EmbeddedCellAttachment N X) :
     { z : Smale.MorseHandle.UnitDisk N // ‖(z : N)‖ < 1 } ≃ₜ D.diskPatch :=
   (Homeomorph.setCongr
+        (s := {z : Smale.MorseHandle.UnitDisk N | ‖(z : N)‖ < 1})
+        (t := D.cell ⁻¹' D.diskPatch)
         (by
           ext z
           exact (D.cell_mem_diskPatch_iff z).symm)).trans
@@ -577,6 +579,8 @@ private def Smale.EmbeddedCellAttachment.overlapHomeomorph {N X : Type*} [Normed
     { z : Smale.MorseHandle.UnitDisk N // 1 / 2 < ‖(z : N)‖ ∧ ‖(z : N)‖ < 1 } ≃ₜ
       ↥(D.oldNeighborhood ∩ D.diskPatch) :=
   (Homeomorph.setCongr
+        (s := {z : Smale.MorseHandle.UnitDisk N | 1 / 2 < ‖(z : N)‖ ∧ ‖(z : N)‖ < 1})
+        (t := D.cell ⁻¹' (D.oldNeighborhood ∩ D.diskPatch))
         (by
           ext z
           exact
@@ -692,7 +696,10 @@ private def
     Smale.EmbeddedCellAttachment.outerParameterHomeomorph {N X : Type*} [NormedAddCommGroup N]
     [TopologicalSpace X] (D : Smale.EmbeddedCellAttachment N X) :
     Smale.OuterDisk.Space N ≃ₜ (D.cell ⁻¹' D.oldNeighborhood) :=
-  Homeomorph.setCongr (by ext z; exact (D.cell_mem_oldNeighborhood_iff z).symm)
+  Homeomorph.setCongr
+    (s := {z : Smale.MorseHandle.UnitDisk N | 1 / 2 < ‖(z : N)‖})
+    (t := D.cell ⁻¹' D.oldNeighborhood)
+    (by ext z; exact (D.cell_mem_oldNeighborhood_iff z).symm)
 
 private def Smale.EmbeddedCellAttachment.outerInclusion {N X : Type*} [NormedAddCommGroup N]
     [TopologicalSpace X] (D : Smale.EmbeddedCellAttachment N X) :
@@ -1088,7 +1095,7 @@ private def
     [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M] {f : M → ℝ} {p : M}
     (d : Smale.ManifoldMorse.MorseSurgeryData E f p) :
     C(Metric.sphere (0 : d.chart.NegativeCoordinates) 1, { y : M // f y ≤ f p - d.radius ^ 2 }) :=
-  (⟨Set.inclusion (fun _ hx => hx.le), continuous_inclusion _⟩ :
+  (⟨fun x => ⟨x.val, x.property.le⟩, continuous_subtype_val.subtype_mk _⟩ :
         C(d.LowerLevel, { y : M // f y ≤ f p - d.radius ^ 2 })).comp
     d.surgery.attachingSphere
 
@@ -1110,7 +1117,7 @@ private def Smale.ManifoldMorse.MorseSurgeryData.realizedLowerInclusion {E M : T
     {p : M} (d : Smale.ManifoldMorse.MorseSurgeryData E f p) :
     C({ y : M // f y ≤ f p - d.radius ^ 2 }, { y : M // f y ≤ f p + d.radius ^ 2 }) :=
   ⟨fun x => d.attachmentHomeomorph ⟨x.val, Or.inl x.property⟩,
-    d.attachmentHomeomorph.continuous.comp (continuous_inclusion (fun _ hx => Or.inl hx))⟩
+    d.attachmentHomeomorph.continuous.comp (continuous_subtype_val.subtype_mk _)⟩
 
 private theorem
     AdaptedWindows.forward_limit_below_regular_level {E M : Type*} [NormedAddCommGroup E]
@@ -1271,7 +1278,8 @@ private theorem
     exact (Smale.RegularLevel.contMDiff_inclusion hf hreg).contMDiffAt.comp_contMDiffWithinAt x hg
   · intro hg
     apply contMDiffWithinAt_iff_target.mpr
-    refine ⟨Topology.IsInducing.subtypeVal.continuousWithinAt_iff.mpr hg.continuousWithinAt, ?_⟩
+    refine ⟨((Topology.IsInducing.subtypeVal (t := {x : M | f x = b})).continuousWithinAt_iff
+      (f := g)).mpr hg.continuousWithinAt, ?_⟩
     let Φ := heightChart hf hreg (g x)
     have hΦ : ContMDiffAt 𝓘(ℝ, E) 𝓘(ℝ, ℝ × Model E) ∞ Φ (g x) :=
       Φ.contMDiffOn_toFun.contMDiffAt

@@ -242,7 +242,8 @@ private theorem exists_monic_of_coefficients (D : ℕ → PowerSeries K) {m : �
   classical
   set P : Polynomial (PowerSeries K) := ∑ i ∈ Finset.range (m + 1), Polynomial.monomial i (D i)
   have hPcoeff (j) : P.coeff j = if j ≤ m then D j else 0 := by
-    simp [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Finset.sum_ite_eq']
+    simp only [P, Polynomial.finsetSum_coeff, Polynomial.coeff_monomial_apply,
+      Finset.sum_ite_eq', Finset.mem_range, Nat.lt_succ_iff]
   have hnd : P.natDegree = m :=
     le_antisymm (Polynomial.natDegree_le_iff_coeff_eq_zero.2 fun N hN => by
         rw [hPcoeff, ite_eq_right (Nat.not_le_of_lt hN)])
@@ -340,7 +341,8 @@ variable {K : Type*} [Field K]
 private theorem eq_power_of_lower_coefficients_zero {F : Type*} [Field F]
     {p : F[X]} {m : ℕ} (hp : p.Monic) (hm : p.natDegree = m)
     (hall : ∀ i < m, p.coeff i = 0) : p = X ^ m := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro i
   rcases lt_trichotomy i m with hi | rfl | hi
   · simp [hall i hi, Polynomial.coeff_X_pow, hi.ne]

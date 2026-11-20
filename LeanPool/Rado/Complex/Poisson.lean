@@ -238,7 +238,7 @@ theorem schwarzIntegral_differentiableOn (hR : 0 < R) (hf : ContinuousOn f (sphe
         have h2 : (z - c) - (w - c) = z - w := sub_sub_sub_cancel_right z w c
         simp only [herglotzRieszKernel_def, h2]
         field_simp
-        try ring
+        ring
     _ = Real.circleAverage (fun z ↦ (2 : ℂ) * ((z - c) / (z - w) * ((f z : ℝ) : ℂ))) c R
         - Real.circleAverage (fun z ↦ ((f z : ℝ) : ℂ)) c R :=
         Real.circleAverage_fun_sub hA2_int hgint

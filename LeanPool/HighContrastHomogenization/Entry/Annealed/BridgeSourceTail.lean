@@ -112,7 +112,7 @@ theorem bridge_fine_weighted_sum {ι : Type*}
     (summable_geometric_of_lt_one hρ.1 hρ.2).mul_left D
   have hsumrows : Summable (fun n => ∑' i : F n, f i) :=
     Summable.of_nonneg_of_le (fun n => tsum_nonneg (fun i => hf0 i)) (fun n => (hrows n).2) hg
-  have hsum : Summable f := (summable_partition hf0
+  have hsum : Summable f := (summable_partition (s := fun n => {i | deficit i = n}) hf0
     (fun i => ⟨deficit i, rfl, fun _ hn => hn.symm⟩)).2
       ⟨fun n => (hrows n).1, hsumrows⟩
   refine ⟨hsum, ?_⟩

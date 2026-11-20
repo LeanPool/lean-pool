@@ -117,7 +117,7 @@ theorem exists_summableApproximateKernelSequence_of_finiteDimensional_ker
     intro hZfin
     let : FiniteDimensional ℝ Z := hZfin
     have : FiniteDimensional ℝ (T.comp S).toLinearMap.range := inferInstance
-    exact hTSrange (T.comp S).toLinearMap.range.closed_of_finiteDimensional
+    exact hTSrange (T.comp S).toLinearMap.range.isClosed_of_finiteDimensional
   have hnanti : ¬ ∃ K, AntilipschitzWith K (T.comp S) := by
     intro hanti
     exact hTSrange

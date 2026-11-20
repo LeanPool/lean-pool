@@ -97,7 +97,7 @@ theorem normalized_adaptedWeakSeminorm_good_le [NeZero d]
   have hsplit : (∑' j : ℕ, f j) =
       (∑ j ∈ Finset.range (H + 1), f j) +
         ∑' j : ℕ, f (j + (H + 1)) := by
-    have hsumm : Summable fun j : ℕ => f (j + (H + 1)) := ENNReal.summable
+    have hsumm : Summable fun j : ℕ => f (j + (H + 1)) := CompleteLattice.summable
     exact (hsumm.sum_add_tsum_nat_add' (k := H + 1)).symm
   rw [ofReal_rpow_mul_adaptedWeakSeminorm]
   change (∑' j : ℕ, f j) ≤ ENNReal.ofReal (Rrecent + Rold)
@@ -186,7 +186,7 @@ theorem normalized_adaptedWeakSeminorm_good_at_level_le [NeZero d]
   have hsplit : (∑' j : ℕ, f j) =
       (∑ j ∈ Finset.range (H + 1), f j) +
         ∑' j : ℕ, f (j + (H + 1)) := by
-    have hsumm : Summable fun j : ℕ => f (j + (H + 1)) := ENNReal.summable
+    have hsumm : Summable fun j : ℕ => f (j + (H + 1)) := CompleteLattice.summable
     exact (hsumm.sum_add_tsum_nat_add' (k := H + 1)).symm
   rw [ofReal_rpow_mul_adaptedWeakSeminorm]
   change (∑' j : ℕ, f j) ≤ ENNReal.ofReal (Rrecent + Rold)

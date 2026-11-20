@@ -39,7 +39,7 @@ theorem P3511T1SourceConstruction :
         IsPathConnected (P3544T1RayParity q) := by
     intro m
     induction m using Nat.strong_induction_on with
-    | h m ih =>
+    | ind m ih =>
       intro q
       have hclosure := (P3544T1LocalParity q).1
       cases m with

@@ -319,9 +319,12 @@ theorem superposedCompetitor_decomp_clauses_badFamily [NeZero d] {m : ℤ} {hn :
             whitneyNeighborhood m hn (badFamily M m hn omega) →
           superposedCompetitorCellSlope m hn (badFamily M m hn omega) p
             (T : KuhnCell d) = p) :=
-  ⟨fun T => (superposedCompetitorSlope_eq_cellSlope hmono (fun _ hQ => hQ.1) hwin p T.2).1,
-    fun T => (superposedCompetitorSlope_eq_cellSlope hmono (fun _ hQ => hQ.1) hwin p T.2).2.1,
-    fun T => (superposedCompetitorSlope_eq_cellSlope hmono (fun _ hQ => hQ.1) hwin p T.2).2.2⟩
+  ⟨fun T => (superposedCompetitorSlope_eq_cellSlope (I := badFamily M m hn omega)
+      hmono (fun _ hQ => hQ.1) hwin p T.2).1,
+    fun T => (superposedCompetitorSlope_eq_cellSlope (I := badFamily M m hn omega)
+      hmono (fun _ hQ => hQ.1) hwin p T.2).2.1,
+    fun T => (superposedCompetitorSlope_eq_cellSlope (I := badFamily M m hn omega)
+      hmono (fun _ hQ => hQ.1) hwin p T.2).2.2⟩
 
 /-! ## The window binder is a theorem, not an assumption -/
 

@@ -263,7 +263,7 @@ theorem enorm_cutoffIntegral_le (g : 𝓢(ℝ, ℂ)) (x N : ℝ) :
     exact le_iSup (fun N' => ‖∫ w, fhat (schwartzToR1 g) w *
       Complex.exp (Complex.I * (⟪toR1 x, w⟫_ℝ : ℂ)) * mHalf (w - N')‖ₑ) (toR1 (2 * π * N))
   have hpos : (0 : ℝ) < 2 * π := by positivity
-  rw [enorm_mul, show ‖(2 * π : ℂ)‖ₑ = ENNReal.ofReal (2 * π) by
+  rw [eNorm_mul, show ‖(2 * π : ℂ)‖ₑ = ENNReal.ofReal (2 * π) by
     rw [← ofReal_norm]; congr 1; simp [abs_of_pos Real.pi_pos]] at hle
   calc ‖cutoffIntegral g x N‖ₑ = (ENNReal.ofReal (2 * π))⁻¹ *
         (ENNReal.ofReal (2 * π) * ‖cutoffIntegral g x N‖ₑ) := by
@@ -286,7 +286,7 @@ theorem enorm_partialFourierIntegral_le (g : 𝓢(ℝ, ℂ)) {R : ℝ} (hR : 0 �
     simp only [Set.indicator_apply, Set.mem_Ioc, Set.mem_Ioi]
     by_cases h1 : -R < ξ <;> by_cases h2 : R < ξ <;> simp [h1, h2]; linarith
   rw [e, integral_sub (hi.indicator measurableSet_Ioi) (hi.indicator measurableSet_Ioi)]
-  refine (enorm_sub_le).trans ?_
+  refine (eNorm_sub_le).trans ?_
   have h1 := enorm_cutoffIntegral_le g x (-R)
   have h2 := enorm_cutoffIntegral_le g x R
   unfold cutoffIntegral at h1 h2
@@ -388,12 +388,12 @@ theorem partialFourierIntegral_sub {f g : ℝ → ℂ} (hf : MemLp f 2 volume) (
 /-- Cauchy–Schwarz for the pairing. -/
 theorem enorm_integral_mul_le {u v : ℝ → ℂ} (hu : MemLp u 2 volume) (hv : MemLp v 2 volume) :
     ‖∫ y, u y * v y‖ₑ ≤ eLpNorm u 2 volume * eLpNorm v 2 volume := by
-  refine (enorm_integral_le_lintegral_enorm _).trans ?_
-  simp_rw [enorm_mul]
+  refine (eNorm_integral_le_lintegral_eNorm _).trans ?_
+  simp_rw [eNorm_mul]
   have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
-    hu.aestronglyMeasurable.enorm hv.aestronglyMeasurable.enorm
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hu.aestronglyMeasurable,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hv.aestronglyMeasurable]
+    hu.aestronglyMeasurable.eNorm hv.aestronglyMeasurable.eNorm
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hu.aestronglyMeasurable,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hv.aestronglyMeasurable]
   simpa using h
 
 /-- `S_R f(x)` depends continuously on `f ∈ L²`. -/
@@ -468,7 +468,7 @@ theorem partialFourier_weak :
       rw [← ofReal_norm, ← ENNReal.ofReal_toReal hK, ← ENNReal.ofReal_mul (by positivity),
         ENNReal.ofReal_le_ofReal_iff (by positivity)] at h2
       exact h2
-    have hev := ((continuous_enorm.tendsto _).comp hconv).eventually (lt_mem_nhds hx)
+    have hev := ((continuous_eNorm.tendsto _).comp hconv).eventually (lt_mem_nhds hx)
     obtain ⟨k, hk⟩ := Filter.eventually_atTop.mp hev
     exact Set.mem_iUnion.mpr ⟨k, Set.mem_iInter₂.mpr fun j hj => ⟨R, hR, hk j hj⟩⟩
   have hmono : Monotone fun k => ⋂ j ∈ Set.Ici k, B j := fun k l hkl =>
@@ -538,7 +538,7 @@ theorem volume_bad_eq_zero {f : ℝ → ℂ} (hf : MemLp f 2 volume) {ε : ℝ} 
         _ < ε := by linarith
     have hnorm : (eLpNorm h 2 volume).toReal ≤ δ := ENNReal.toReal_le_of_le_ofReal hδ.le hg
     have b1 := hW h hh (ε / 3) (by positivity)
-    have b2 := meas_ge_le_mul_pow_eLpNorm_enorm volume (p := 2) (by norm_num) (by norm_num)
+    have b2 := meas_ge_le_mul_pow_eLpNorm_eNorm volume (p := 2) (by norm_num) (by norm_num)
       (f := h) (ε := ENNReal.ofReal (ε / 3)) (by simp [hε]) (by simp)
     refine (measure_mono hsub).trans ((measure_union_le _ _).trans ?_)
     have b2' : volume {x | ENNReal.ofReal (ε / 3) ≤ ‖h x‖ₑ} ≤ ENNReal.ofReal ((3 / ε) ^ 2 * δ ^

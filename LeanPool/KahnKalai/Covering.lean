@@ -600,7 +600,7 @@ lemma covering_aux (ℓ : ℕ) :
         (((generate H).filter
             (fun S => S.card = coveringLevel p (Fintype.card α) ℓ)).card : ℝ) := by
   induction ℓ using Nat.strong_induction_on with
-  | h ℓ ih =>
+  | ind ℓ ih =>
     intro α _ _ H p hℓN hp0 hp1 hb hf
     by_cases hempty : ∅ ∈ H
     · exact covering_of_empty_mem hempty

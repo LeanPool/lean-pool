@@ -229,7 +229,7 @@ theorem PoissonRandomMeasure.exists_of_sigmaFinite
   let ρ : ι → Measure (ℝ × E) := fun p => (Λ (A p.1))⁻¹ • Λ.restrict (A p.1)
   have : ∀ p, IsProbabilityMeasure (ρ p) := fun p => ⟨by
     change ((Λ (A p.1))⁻¹ • Λ.restrict (A p.1)) Set.univ = 1
-    rw [Measure.smul_apply, Measure.restrict_apply MeasurableSet.univ, Set.univ_inter,
+    rw [smul_apply, Measure.restrict_apply MeasurableSet.univ, Set.univ_inter,
       smul_eq_mul, ENNReal.inv_mul_cancel p.2 (hA_fin p.1)]⟩
   -- the superposition has intensity `Λ`
   have hcell : ∀ p : ι, (r p : ℝ≥0∞) • ρ p = Λ.restrict (A p.1) := by

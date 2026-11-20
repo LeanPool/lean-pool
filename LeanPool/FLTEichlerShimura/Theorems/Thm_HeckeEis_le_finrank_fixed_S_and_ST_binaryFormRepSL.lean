@@ -250,7 +250,7 @@ theorem le_finrank_ker (n : ℕ) (g : SL(2, ℤ)) (c₁ c₂ μ₁ μ₂ : ℂ) 
   have := finite_binaryForm n
   let e : Fin B → ↥(LinearMap.ker (binaryFormRepSL ℂ n g - 1)) := fun t =>
     ⟨⟨bvec c₁ c₂ n (a t), bvec_mem c₁ c₂ n (a t) (hle t)⟩, by
-      rw [LinearMap.mem_ker, LinearMap.sub_apply, Module.End.one_apply, sub_eq_zero]
+      rw [LinearMap.mem_ker, LinearMap.sub_apply, one_apply_eq_self, sub_eq_zero]
       apply Subtype.ext
       rw [binaryFormRepSL_apply_coe]
       change binarySubst ℂ (g : Matrix (Fin 2) (Fin 2) ℤ) (bvec c₁ c₂ n (a t)) = bvec c₁ c₂ n (a t)

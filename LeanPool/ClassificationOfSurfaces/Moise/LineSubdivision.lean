@@ -246,7 +246,7 @@ theorem convexHull_inter_of_affine_separation (s t u : Finset Plane)
     rw [← htzero]
     apply Finset.filter_congr
     intro x hx
-    simp only [AffineMap.coe_neg, Pi.neg_apply, neg_eq_zero, g]
+    simp only [FunLike.coe_neg, Pi.neg_apply, neg_eq_zero, g]
   have hsface := convexHull_inter_affine_zero_of_nonneg s f hs
   rw [hszero] at hsface
   have htface := convexHull_inter_affine_zero_of_nonneg t g hg
@@ -475,7 +475,7 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
       · intro x hx
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
-          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, AffineMap.coe_neg,
+          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, FunLike.coe_neg,
             Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero, zero_sub, neg_neg,
             Matrix.cons_val, sub_self, neg_zero, Std.le_refl, zero_add, neg_sub, sub_nonneg] <;>
           (try field_simp) <;> nlinarith
@@ -483,15 +483,15 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
           simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_one,
-            Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, tsub_le_iff_right,
             zero_add, Matrix.cons_val, mul_one, sub_self, neg_zero, Std.le_refl] <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
       · intro x hx
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, Fin.reduceEq,
             Finset.mem_singleton, or_self, or_false, referenceSplitPosition, Matrix.cons_val_zero,
-            AffineMap.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
+            FunLike.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
             zero_sub, neg_neg, one_ne_zero, not_false_eq_true, Finset.inter_insert_of_notMem,
             or_true, Finset.inter_singleton_of_mem, iff_false, Fin.mk_one, Fin.reduceFinMk,
             Matrix.cons_val, sub_self, neg_zero, zero_add, neg_sub] at hx ⊢ <;>
@@ -500,12 +500,12 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, zero_ne_one, Fin.reduceEq,
             Finset.mem_singleton, or_self, Fin.mk_one, or_false, referenceSplitPosition,
-            Matrix.cons_val_one, Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_one, Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, one_ne_zero,
             not_false_eq_true, Finset.inter_insert_of_notMem, or_true,
             Finset.inter_singleton_of_mem, iff_false, Fin.reduceFinMk, Matrix.cons_val, mul_one,
             zero_add, sub_self, neg_zero] at hx ⊢ <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
     · apply convexHull_image_inter_of_affine_separation _
         (referenceSplitPosition_injective ha0 ha1 hb0 hb1) _ _ (-referenceOuterAffine a b)
       · intro x hx
@@ -515,11 +515,11 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
       · intro x hx
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
-          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val, AffineMap.coe_neg,
+          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val, FunLike.coe_neg,
             Pi.neg_apply, referenceOuterAffine_planePoint, mul_zero, mul_one, zero_add, neg_sub,
             tsub_le_iff_right, ne_eq, ha0.ne', not_false_eq_true, inv_mul_cancel₀, add_zero,
             sub_self, neg_zero, Std.le_refl, hb0.ne'];
-          (try field_simp); nlinarith
+          field_simp; nlinarith
       · intro x hx
         fin_cases x <;> simp [referenceSplitPosition, referenceOuterAffine_planePoint,
           ha0.ne', hb0.ne'] at hx ⊢
@@ -532,7 +532,7 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
       · intro x hx
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
-          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, AffineMap.coe_neg,
+          simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_zero, FunLike.coe_neg,
             Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero, zero_sub, neg_neg,
             Matrix.cons_val, sub_self, neg_zero, Std.le_refl, zero_add, neg_sub, sub_nonneg] <;>
           (try field_simp) <;> nlinarith
@@ -540,15 +540,15 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         simp only [Finset.mem_insert, Finset.mem_singleton] at hx
         rcases hx with rfl | rfl | rfl <;>
           simp only [referenceSplitPosition, Fin.isValue, Matrix.cons_val_one,
-            Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, tsub_le_iff_right,
             zero_add, Matrix.cons_val, mul_one, sub_self, neg_zero, Std.le_refl] <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
       · intro x hx
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, Fin.reduceEq,
             Finset.mem_singleton, or_self, or_false, referenceSplitPosition, Matrix.cons_val_zero,
-            AffineMap.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
+            FunLike.coe_neg, Pi.neg_apply, referenceVertexAffine_planePoint, mul_zero, add_zero,
             zero_sub, neg_neg, one_ne_zero, not_false_eq_true, Finset.inter_insert_of_notMem,
             or_true, Finset.inter_singleton_of_mem, iff_false, Fin.mk_one, Fin.reduceFinMk,
             Matrix.cons_val, sub_self, neg_zero, zero_add, neg_sub] at hx ⊢ <;>
@@ -557,12 +557,12 @@ noncomputable def referenceSplitMesh (a b : ℝ) (ha0 : 0 < a) (ha1 : a < 1)
         fin_cases x <;>
           simp only [Fin.isValue, Fin.zero_eta, Finset.mem_insert, zero_ne_one, Fin.reduceEq,
             Finset.mem_singleton, or_self, Fin.mk_one, or_false, referenceSplitPosition,
-            Matrix.cons_val_one, Matrix.cons_val_zero, AffineMap.coe_neg, Pi.neg_apply,
+            Matrix.cons_val_one, Matrix.cons_val_zero, FunLike.coe_neg, Pi.neg_apply,
             referenceVertexAffine_planePoint, mul_zero, add_zero, neg_sub, one_ne_zero,
             not_false_eq_true, Finset.inter_insert_of_notMem, or_true,
             Finset.inter_singleton_of_mem, iff_false, Fin.reduceFinMk, Matrix.cons_val, mul_one,
             zero_add, sub_self, neg_zero] at hx ⊢ <;>
-          (try field_simp) <;> nlinarith
+          field_simp <;> nlinarith
     · simp
     · apply convexHull_image_inter_of_affine_separation _
         (referenceSplitPosition_injective ha0 ha1 hb0 hb1) _ _ (referenceDiagonalAffine a)
@@ -1076,7 +1076,7 @@ theorem neg (f : Plane →ᵃ[ℝ] ℝ) (p q : Plane) :
     affineCutPoint (-f) p q = affineCutPoint f p q := by
   unfold affineCutPoint
   congr 1
-  simp only [AffineMap.coe_neg, Pi.neg_apply]
+  simp only [FunLike.coe_neg, Pi.neg_apply]
   by_cases h : f p - f q = 0
   · have hpq : f p = f q := sub_eq_zero.mp h
     rw [hpq]
@@ -1254,7 +1254,7 @@ theorem crossingPairs_neg : M.crossingPairs (-f) = M.crossingPairs f := by
   unfold crossingPairs
   apply Finset.filter_congr
   intro uv huv
-  simp only [AffineMap.coe_neg, Pi.neg_apply]
+  simp only [FunLike.coe_neg, Pi.neg_apply]
   ring_nf
 
 theorem refinementPoints_neg : M.refinementPoints (-f) = M.refinementPoints f := by
@@ -1458,23 +1458,23 @@ theorem strictNegativeLocalMesh_support (t : M.Triangle)
     (M.strictNegativeLocalMesh f t h0 h1 h2).toPlaneComplex.support =
       convexHull ℝ (M.position '' (t.1 : Set M.Vertex)) := by
   rw [show M.strictNegativeLocalMesh f t h0 h1 h2 =
-      (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+    _ = (M.strictLocalMesh (-f) t (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
       Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-      AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
+      FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (M.position '' (t.1 : Set M.Vertex)) :=
-      M.strictLocalMesh_support (-f) t (by simpa only [Fin.isValue, AffineMap.coe_neg,
-        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      M.strictLocalMesh_support (-f) t (by simpa only [Fin.isValue, FunLike.coe_neg,
+        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
 
 /-! The same strict model for an arbitrary ordering of three vertices. -/
 
@@ -1589,23 +1589,23 @@ theorem strictNegativeMeshFor_support (v : Fin 3 → M.Vertex)
     (M.strictNegativeMeshFor f v hv h0 h1 h2).toPlaneComplex.support =
       convexHull ℝ (Set.range (M.position ∘ v)) := by
   rw [show M.strictNegativeMeshFor f v hv h0 h1 h2 =
-      (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+    _ = (M.strictMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
       Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-      AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
+      FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (Set.range (M.position ∘ v)) :=
-      M.strictMeshFor_support (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg,
-        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      M.strictMeshFor_support (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg,
+        Pi.neg_apply, Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff]) (by simpa only [Fin.isValue,
-        AffineMap.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
+        FunLike.coe_neg, Pi.neg_apply, Left.neg_neg_iff])
 
 /-! The two-triangle model when vertex `2` lies on the cutting line. -/
 
@@ -1739,19 +1739,19 @@ theorem edgeNegativeMeshFor_support (v : Fin 3 → M.Vertex)
     (M.edgeNegativeMeshFor f v hv h0 h1).toPlaneComplex.support =
       convexHull ℝ (Set.range (M.position ∘ v)) := by
   rw [show M.edgeNegativeMeshFor f v hv h0 h1 =
-      (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff])).reindex
         ((↑) : M.RefinedVertex f → Plane) Subtype.val_injective
         (M.refinedVertexNegEquiv f).toEmbedding (fun _ => rfl) by rfl]
   calc
-    _ = (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-      Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+    _ = (M.edgeMeshFor (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+      Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
       Pi.neg_apply, Left.neg_neg_iff])).toPlaneComplex.support := by
       apply TriangleMesh.reindex_support
     _ = convexHull ℝ (Set.range (M.position ∘ v)) :=
-      M.edgeMeshFor_support (-f) v hv (by simpa only [Fin.isValue, AffineMap.coe_neg, Pi.neg_apply,
-        Left.neg_pos_iff]) (by simpa only [Fin.isValue, AffineMap.coe_neg,
+      M.edgeMeshFor_support (-f) v hv (by simpa only [Fin.isValue, FunLike.coe_neg, Pi.neg_apply,
+        Left.neg_pos_iff]) (by simpa only [Fin.isValue, FunLike.coe_neg,
         Pi.neg_apply, Left.neg_neg_iff])
 
 /-! ## Choosing the local model from the signs -/
@@ -1896,10 +1896,10 @@ theorem IsMonochromatic.of_neg {N : TriangleMesh}
   rcases hN s hs with h | h
   · right
     intro v hv
-    simpa only [AffineMap.coe_neg, Pi.neg_apply, Left.nonneg_neg_iff] using h v hv
+    simpa only [FunLike.coe_neg, Pi.neg_apply, Left.nonneg_neg_iff] using h v hv
   · left
     intro v hv
-    simpa only [AffineMap.coe_neg, Pi.neg_apply, Left.neg_nonpos_iff] using h v hv
+    simpa only [FunLike.coe_neg, Pi.neg_apply, Left.neg_nonpos_iff] using h v hv
 
 theorem IsMonochromatic.reindex {N : TriangleMesh} {V' : Type} [Fintype V']
     [DecidableEq V'] (position' : V' → Plane) (hposition_injective : Function.Injective position')
@@ -2133,13 +2133,13 @@ theorem strictNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change f ((M.strictMeshFor (-f) v hv (by simpa) (by simpa) (by simpa)).position y) ≤ 0
-    simpa only [strictMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [strictMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonneg] using hm y hy
   · left
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change 0 ≤ f ((M.strictMeshFor (-f) v hv (by simpa) (by simpa) (by simpa)).position y)
-    simpa only [strictMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [strictMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonpos] using hm y hy
 
 theorem edgeNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
@@ -2159,13 +2159,13 @@ theorem edgeNegativeMeshFor_monochromatic (v : Fin 3 → M.Vertex)
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change f ((M.edgeMeshFor (-f) v hv (by simpa) (by simpa)).position y) ≤ 0
-    simpa only [edgeMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [edgeMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonneg] using hm y hy
   · left
     intro x hx
     obtain ⟨y, hy, rfl⟩ := Finset.mem_map.mp hx
     change 0 ≤ f ((M.edgeMeshFor (-f) v hv (by simpa) (by simpa)).position y)
-    simpa only [edgeMeshFor, TriangleMesh.reindex, AffineMap.coe_neg, Pi.neg_apply,
+    simpa only [edgeMeshFor, TriangleMesh.reindex, FunLike.coe_neg, Pi.neg_apply,
       neg_nonpos] using hm y hy
 
 theorem strictPattern_monochromatic_positive (z : Fin 5 → M.RefinedVertex f)

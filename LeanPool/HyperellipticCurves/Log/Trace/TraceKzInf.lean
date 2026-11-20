@@ -150,7 +150,7 @@ theorem two_mul_y_mul_traceDiff_infU_map (hf : f.Monic) (huτ : uτ.Monic)
     isAddCerts_ofPair (hf.map χ) hFdeg hcurve hu₂ (huτ.natDegree_map χ) hd₂
       (by linear_combination hs)
   -- the reduced output is the mapped closed datum, by uniqueness of reduced representatives
-  obtain ⟨hu2m, hd2m, hlt2⟩ := cantorStage₂_monic_dvd_degree_lt hu₁ hd₁ hu₂ hd₂ hAdd
+  obtain ⟨hu2m, hd2m, hlt2⟩ := cantorStage₂_monic_dvd_degree_lt (D := Dinf) hu₁ hd₁ hu₂ hd₂ hAdd
   have hUm : (infU hf uτ vτ).Monic := infU_monic hf huτ hvτn hfdeg hdvdτ
   have hgKz : 2 * n < (f.map χ).natDegree := by rw [hFdeg]; lia
   have hclP := mk0_cantorStage₂ (D := Dinf) hu₁ hd₁ hu₂ hd₂ hAdd

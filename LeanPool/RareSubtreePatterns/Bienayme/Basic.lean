@@ -69,7 +69,7 @@ theorem tsum_pi_fin_prod {α : Type*} : ∀ (k : ℕ) (g : Fin k → α → ℝ�
   | k + 1, g => by
     rw [← (Fin.consEquiv fun _ : Fin (k + 1) => α).tsum_eq]
     simp only [Fin.consEquiv, Equiv.coe_fn_mk, Fin.prod_univ_succ, Fin.cons_zero, Fin.cons_succ]
-    rw [ENNReal.tsum_prod']
+    rw [tsum_prod']
     simp only [ENNReal.tsum_mul_left]
     rw [tsum_pi_fin_prod k (fun i => g i.succ), ENNReal.tsum_mul_right]
 
@@ -113,7 +113,7 @@ trees. -/
 theorem bienayme_apply_eq_tsum_sigma (s : Set PlaneTree) :
     bienayme μ s =
       ∑' k, ∑' f : Fin k → PlaneTree, s.indicator (weight μ) (node (List.ofFn f)) := by
-  rw [bienayme_apply, ← equivSigma.symm.tsum_eq, ENNReal.tsum_sigma']
+  rw [bienayme_apply, ← equivSigma.symm.tsum_eq, tsum_sigma']
   rfl
 
 /-- For a fixed root degree `k`, summing the weight of `node [T_0, …, T_{k-1}]` over the
@@ -156,7 +156,7 @@ theorem bienayme_eq_tsum_of_mem_iff (s : Set PlaneTree) (D : Set ℕ)
     · rw [Set.indicator_of_notMem (fun h => hf ((hs k f).1 h).2),
         Set.indicator_of_notMem (show f ∉ {f : Fin k → PlaneTree | ∀ i, f i ∈ A k i} from hf)]
   · rw [Set.indicator_of_notMem hk]
-    exact ENNReal.tsum_eq_zero.2 fun f => Set.indicator_of_notMem (fun h => hk ((hs k f).1 h).1) _
+    exact tsum_eq_zero_iff.2 fun f => Set.indicator_of_notMem (fun h => hk ((hs k f).1 h).1) _
 
 /-! ### Branching property -/
 
@@ -244,7 +244,7 @@ theorem tsum_forest_list (k : ℕ) (A : Set PlaneTree) :
         {ts : List PlaneTree | ts.length = k ∧ ∀ U ∈ ts, U ∈ A}.indicator
           (fun ts => (ts.map (weight μ)).prod) ts =
       bienayme μ A ^ k := by
-  rw [← List.equivSigmaTuple.symm.tsum_eq, ENNReal.tsum_sigma', tsum_eq_single k]
+  rw [← List.equivSigmaTuple.symm.tsum_eq, tsum_sigma', tsum_eq_single k]
   · rw [← Fin.prod_const, ← tsum_forest_fin]
     refine tsum_congr fun f => ?_
     simp only [List.equivSigmaTuple_symm_apply]
@@ -261,7 +261,7 @@ theorem tsum_forest_list (k : ℕ) (A : Set PlaneTree) :
       · rintro ⟨-, h⟩
         exact hf fun i => h _ (List.mem_ofFn.2 ⟨i, rfl⟩)
   · intro j hj
-    refine ENNReal.tsum_eq_zero.2 fun f => Set.indicator_of_notMem ?_ _
+    refine tsum_eq_zero_iff.2 fun f => Set.indicator_of_notMem ?_ _
     rintro ⟨h, -⟩
     simp only [List.equivSigmaTuple_symm_apply, List.length_ofFn] at h
     exact hj h
@@ -292,7 +292,7 @@ theorem bienayme_vertexCount_succ (n : ℕ) :
 theorem tsum_forestSizeWeight (k : ℕ) :
     ∑' n, forestSizeWeight μ k n = bienayme μ Set.univ ^ k := by
   simp only [forestSizeWeight]
-  rw [ENNReal.tsum_comm, ← Fin.prod_const, ← tsum_forest_fin]
+  rw [tsum_comm, ← Fin.prod_const, ← tsum_forest_fin]
   refine tsum_congr fun f => ?_
   rw [tsum_eq_single (∑ i, (f i).vertexCount) fun n hn => ite_eq_right (Ne.symm hn)]
   simp
@@ -341,7 +341,7 @@ theorem bienayme_heightLE_le_one : ∀ h, bienayme μ (heightLE h) ≤ 1
   | h + 1 => by
     rw [heightLE, bienayme_forall_children_mem]
     calc ∑' k, μ k * bienayme μ (heightLE h) ^ k ≤ ∑' k, μ k :=
-          ENNReal.tsum_le_tsum fun k =>
+          tsum_le_tsum fun k =>
             mul_le_of_le_one_right' (pow_le_one₀ zero_le (bienayme_heightLE_le_one h))
       _ = 1 := μ.tsum_coe
 

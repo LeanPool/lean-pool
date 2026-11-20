@@ -594,7 +594,7 @@ theorem exists_separating_normalization (G : CFGraph.{u})
   have hP : ∀ n, P n := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
         intro rho hCard
         by_cases hNormalized :
             ∀ {x y : G.V}, (cut : SeparatingEdgeCut G x y) → rho x = rho y

@@ -107,7 +107,7 @@ theorem lintegral_lintegral_sq_le_bieleckiNorm_sq {β : ℝ} (hβ : 0 < β) (T :
   · have hjoint : Measurable (Function.uncurry fun (ω : Ω) (s : ℝ) =>
         ∑ i, (‖Z s ω i‖₊ : ℝ≥0∞) ^ 2) :=
       Finset.measurable_sum _ fun i _ =>
-        ((((measurable_pi_apply i).comp hZ)).nnnorm.coe_nnreal_ennreal).pow_const 2
+        ((((measurable_pi_apply i).comp hZ)).nnNorm.coe_nnreal_ennreal).pow_const 2
     rw [MeasureTheory.lintegral_lintegral_swap (μ := P)
       (ν := volume.restrict (Set.Icc (0 : ℝ) t))
       (f := fun (ω : Ω) (s : ℝ) => ∑ i, (‖Z s ω i‖₊ : ℝ≥0∞) ^ 2) hjoint.aemeasurable]
@@ -128,11 +128,11 @@ no integrability hypothesis: when the integrand is not integrable the Bochner in
 theorem ofReal_setIntegral_le_lintegral {f : ℝ → ℝ} (hf : ∀ x, 0 ≤ f x) (s : Set ℝ) :
     ENNReal.ofReal (∫ x in s, f x ∂volume) ≤ ∫⁻ x in s, ENNReal.ofReal (f x) ∂volume := by
   have h1 : ENNReal.ofReal (∫ x in s, f x ∂volume) ≤ ‖∫ x in s, f x ∂volume‖ₑ := by
-    rw [Real.enorm_eq_ofReal_abs]
+    rw [Real.eNorm_eq_ofReal_abs]
     exact ENNReal.ofReal_le_ofReal (le_abs_self _)
-  refine h1.trans ((MeasureTheory.enorm_integral_le_lintegral_enorm _).trans (le_of_eq ?_))
+  refine h1.trans ((MeasureTheory.eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_))
   refine lintegral_congr fun x => ?_
-  rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (hf x)]
+  rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hf x)]
 
 omit [MeasurableSpace Ω] [MeasurableSpace E] [MeasureTheory.IsProbabilityMeasure P] in
 /-- The window energy in the supremum norm is below the window energy in coordinates. -/
@@ -272,7 +272,7 @@ theorem ae_drift_diff_sq_bound
       (‖(‖X s ω - Y s ω‖ : ℝ)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P < ⊤ := by
     intro b hb
     refine lt_of_le_of_lt (le_of_eq ?_) (hXYsq b hb)
-    exact lintegral_congr fun ω => lintegral_congr fun s => by rw [nnnorm_norm]
+    exact lintegral_congr fun ω => lintegral_congr fun s => by rw [nnNorm_norm]
   filter_upwards [MeasureTheory.ae_all_iff.mpr fun i : Fin n =>
       ae_integrableOn_of_lintegral_sq (hμX i) (hμXsq i),
     MeasureTheory.ae_all_iff.mpr fun i : Fin n =>
@@ -364,7 +364,7 @@ theorem diffusion_diff_lintegral_sq_bound
         : ℝ≥0∞) ^ 2 := fun i =>
     ((((measurable_picardStep_diffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X i
       t).sub (measurable_picardStep_diffusion W ℱ hℱW coeffs Y h_σ_meas_Y h_σ_progMeas_Y
-        h_σ_sq_Y i t)).nnnorm).coe_nnreal_ennreal).pow_const 2
+        h_σ_sq_Y i t)).nnNorm).coe_nnreal_ennreal).pow_const 2
   rw [MeasureTheory.lintegral_finsetSum _ fun i _ => hmeas i]
   calc ∑ i : Fin n, ∫⁻ ω,
         (‖picardStepDiffusion W ℱ hℱW coeffs X h_σ_meas_X h_σ_progMeas_X h_σ_sq_X t ω i
@@ -448,7 +448,7 @@ theorem jump_diff_lintegral_sq_bound {ν : MeasureTheory.Measure E}
     fun i =>
       ((((measurable_picardStep_jump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq i t).sub
         (measurable_picardStep_jump N ℱ hℱN coeffs Y hY_meas hY_progMeas hY_sq i
-          t)).nnnorm).coe_nnreal_ennreal).pow_const 2
+          t)).nnNorm).coe_nnreal_ennreal).pow_const 2
   rw [MeasureTheory.lintegral_finsetSum _ fun i _ => hmeas i]
   calc ∑ i : Fin n, ∫⁻ ω,
         (‖picardStepJump N ℱ hℱN coeffs X hX_meas hX_progMeas hX_sq t ω i

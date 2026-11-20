@@ -109,7 +109,7 @@ private theorem eLpNorm_rpow_eq_lintegral_enorm {α E : Type*}
     (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f q.exponent μ) ^ q.exponent.toReal =
       ∫⁻ x, ‖f x‖ₑ ^ q.exponent.toReal ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (zero_lt_one.trans q.one_lt).ne' q.lt_top.ne hf, ← ENNReal.rpow_mul]
   have hq : q.exponent.toReal ≠ 0 :=
     ENNReal.toReal_pos (zero_lt_one.trans q.one_lt).ne' q.lt_top.ne |>.ne'

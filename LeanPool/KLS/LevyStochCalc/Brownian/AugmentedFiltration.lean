@@ -41,7 +41,7 @@ theorem indep_aug {Ω : Type*} {mΩ m 𝒩 : MeasurableSpace Ω} (μ : @Measure 
   have hae : A =ᵐ[μ] B := MeasureTheory.measure_symmDiff_eq_zero_iff.mp hAB
   have h1 : μ A = μ B := MeasureTheory.measure_congr hae
   have h2 : μ (A ∩ C) = μ (B ∩ C) :=
-    MeasureTheory.measure_congr (hae.inter (Filter.EventuallyEq.refl _ _))
+    MeasureTheory.measure_congr (hae.inter (Filter.EventuallyEqSet.refl _ _))
   rw [h1, h2]
   exact h B C hB hC
 

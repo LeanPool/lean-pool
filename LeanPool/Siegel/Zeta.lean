@@ -29,7 +29,7 @@ lemma J_ofReal (g : ℝ → ℝ) (β : ℝ) :
   have ht' : (0 : ℝ) ≤ t := le_of_lt (lt_trans one_pos ht)
   rw [ofReal_mul, ofReal_cpow ht']
   push_cast
-  try ring
+  rfl
 
 /-- `fract`, as a complex function. -/
 noncomputable abbrev fr (t : ℝ) : ℂ := ((Int.fract t : ℝ) : ℂ)
@@ -105,7 +105,9 @@ lemma Hz_real {β : ℝ} (hβ : 0 < β) : ∃ x : ℝ, Hz β = x ∧ x ≤ 1 := 
   refine ⟨1 - β * ∫ t in Ioi (1 : ℝ), Int.fract t * t ^ (-(β + 1)), ?_, ?_⟩
   · rw [Hz]
     have : J fr β = J (fun t => ((Int.fract t : ℝ) : ℂ)) β := rfl
-    rw [this, hJ]; push_cast; try ring
+    rw [this, hJ]
+    push_cast
+    rfl
   · have : 0 ≤ ∫ t in Ioi (1 : ℝ), Int.fract t * t ^ (-(β + 1)) := by
       refine setIntegral_nonneg measurableSet_Ioi fun t ht => ?_
       exact mul_nonneg (Int.fract_nonneg t) (Real.rpow_nonneg (by linarith [mem_Ioi.mp ht]) _)

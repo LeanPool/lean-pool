@@ -46,9 +46,9 @@ theorem blowup_component_slice_two_essSup_le_of_three
   have hcompLe :
       eLpNorm (fun x : Vec3 => v (x,t) i) 2 μ ≤
         eLpNorm (fun x : Vec3 => vec3EuclideanNorm (v (x,t))) 2 μ := by
-    apply eLpNorm_mono_enorm_ae hcomp.restrict
+    apply eLpNorm_mono_eNorm_ae hcomp.restrict
     filter_upwards [] with x
-    rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
+    rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
     exact ENNReal.ofReal_le_ofReal
       (abs_apply_le_vec3EuclideanNorm (v (x,t)) i)

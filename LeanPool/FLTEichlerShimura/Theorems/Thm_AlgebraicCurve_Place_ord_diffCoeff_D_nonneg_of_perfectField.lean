@@ -17,6 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.Perfect
+
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Differentials
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_isSeparable_adjoin_of_ord_eq_one

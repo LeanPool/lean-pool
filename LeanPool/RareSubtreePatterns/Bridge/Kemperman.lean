@@ -321,7 +321,7 @@ theorem walkVecLaw_firstPassageAt (μ : PMF ℕ) (ℓ q : ℕ) :
 theorem ae_walkVecLaw_neg_one_le (μ : PMF ℕ) (n : ℕ) :
     ∀ᵐ ω ∂walkVecLaw μ n, ∀ i, -1 ≤ ω i := by
   rw [ae_iff, ← Measure.tsum_indicator_apply_singleton _ _ (Set.to_countable _).measurableSet]
-  refine ENNReal.tsum_eq_zero.mpr fun ω => ?_
+  refine tsum_eq_zero_iff.mpr fun ω => ?_
   by_cases h : ω ∈ {ω : Fin n → ℤ | ¬∀ i, -1 ≤ ω i}
   · rw [Set.indicator_of_mem h, walkVecLaw_singleton]
     simp only [Set.mem_ofPred_eq, not_forall, not_le] at h
@@ -368,7 +368,7 @@ theorem natCast_mul_forestSizeWeight (μ : PMF ℕ) {ℓ : ℕ} (hℓ : 1 ≤ �
 
 /-- `P(|𝒢_ℓ| = q) ≤ 1`. -/
 theorem forestSizeWeight_le_one (μ : PMF ℕ) (ℓ q : ℕ) : forestSizeWeight μ ℓ q ≤ 1 :=
-  (ENNReal.le_tsum q).trans ((tsum_forestSizeWeight μ ℓ).le.trans
+  (le_tsum (forestSizeWeight μ ℓ) q).trans ((tsum_forestSizeWeight μ ℓ).le.trans
     (pow_le_one₀ zero_le (bienayme_univ_le_one μ)))
 
 theorem forestSizeWeight_ne_top (μ : PMF ℕ) (ℓ q : ℕ) : forestSizeWeight μ ℓ q ≠ ∞ :=

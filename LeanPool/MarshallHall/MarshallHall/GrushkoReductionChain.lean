@@ -212,7 +212,7 @@ theorem separated_generators_of_hasReducedNullFold
           Subgroup.closure (Set.range (separatedMap ∘ s)) = ⊤ := by
     intro k
     induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
         intro V hFV qV hV hHom n M hcard hfree hgen hconn hEuler
         by_cases hone : Fintype.card V = 1
         · exact exists_separated_generators_of_euler_bound M hfree hgen

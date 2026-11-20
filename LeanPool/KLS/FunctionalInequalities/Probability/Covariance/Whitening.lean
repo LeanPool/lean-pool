@@ -57,7 +57,7 @@ theorem exists_whitening_of_isSymmetric (T : V →L[ℝ] V)
     (hT : T.toLinearMap.IsSymmetric) (hpos : ∀ v, v ≠ 0 → 0 < inner ℝ (T v) v) :
     ∃ W : V ≃L[ℝ] V, (W : V →L[ℝ] V).adjoint = W ∧
       ∀ u v, inner ℝ (T (W u)) (W v) = inner ℝ u v := by
-  have : CompleteSpace V := FiniteDimensional.complete ℝ V
+  have : CompleteSpace V := FiniteDimensional.completeSpace ℝ V
   set e := hT.eigenvectorBasis rfl with he
   set lam := hT.eigenvalues rfl with hlam
   have hTe : ∀ i, T (e i) = lam i • e i := fun i ↦ hT.apply_eigenvectorBasis rfl i

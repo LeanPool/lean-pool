@@ -101,7 +101,7 @@ theorem heckeMatrix_mul_of_eq (g : SL(2, ℤ)) (j j' : ℕ) (e : ℤ)
   fin_cases i <;> fin_cases j <;>
     simp only [Fin.zero_eta, Fin.isValue, ne_eq, hp, not_false_eq_true,
       val_heckeMatrix, algebraMap_int_eq,
-      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
+      Int.coe_castRingHom, Matrix.mul_apply, Matrix.of_apply,
       Matrix.cons_val', Matrix.cons_val_fin_one, Matrix.cons_val_zero, Matrix.map_apply,
       Fin.sum_univ_two, one_mul, Matrix.cons_val_one, Int.cast_add, Int.cast_mul,
       Int.cast_natCast, mul_one, mul_zero, add_zero, Fin.mk_one, zero_mul, zero_add, Int.cast_sub]

@@ -39,7 +39,7 @@ namespace FVLv
 variable (E : Type u) [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- The closed unit ball of the norm dual, equipped with the weak-star topology. -/
-def dualUnitBall : Set (WeakDual ℝ E) :=
+noncomputable def dualUnitBall : Set (WeakDual ℝ E) :=
   WeakDual.toStrongDual ⁻¹' Metric.closedBall (0 : StrongDual ℝ E) 1
 
 /-- The dual unit ball is compact for the weak-star topology. -/

@@ -326,8 +326,8 @@ theorem boundZ1_mem_NZ1 {P : Fin T.n → Opens X}
   apply BoundedContinuousFunction.ext
   intro z
   simp only [Submodule.coe_add, Submodule.coe_sub, ZeroMemClass.coe_zero,
-    BoundedContinuousFunction.coe_add, BoundedContinuousFunction.coe_sub, Pi.add_apply,
-    Pi.sub_apply, BoundedContinuousFunction.coe_zero, Pi.zero_apply, restrictCLM_apply_coe]
+    FunLike.coe_add, FunLike.coe_sub, Pi.add_apply,
+    Pi.sub_apply, FunLike.coe_zero, Pi.zero_apply, restrictCLM_apply_coe]
   rw [boundZ1_apply_eq_evalAt, boundZ1_apply_eq_evalAt, boundZ1_apply_eq_evalAt]
   have hzP : (z : X) ∈ (P a ⊓ P b ⊓ P c : Opens X) := z.2
   have hza : (z : X) ∈ P a := hzP.1.1
@@ -448,8 +448,8 @@ theorem tradePi_surjective (T : ShrinkChain X) : Function.Surjective (tradePi T)
     apply Subtype.ext
     apply BoundedContinuousFunction.ext
     intro z
-    simp only [Submodule.coe_add, Submodule.coe_sub, BoundedContinuousFunction.coe_add,
-      BoundedContinuousFunction.coe_sub, Pi.add_apply, Pi.sub_apply, restrictCLM_apply_coe]
+    simp only [Submodule.coe_add, Submodule.coe_sub, FunLike.coe_add,
+      FunLike.coe_sub, Pi.add_apply, Pi.sub_apply, restrictCLM_apply_coe]
     change (boundZ1 T T.closure_U_subset F (α, β) : ↥((T.U α ⊓ T.U β : Opens X) : Set X) →ᵇ ℂ)
       _ = _
     rw [boundZ1_apply_eq_evalAt]

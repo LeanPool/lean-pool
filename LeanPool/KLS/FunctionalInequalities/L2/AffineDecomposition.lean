@@ -138,12 +138,12 @@ theorem eLpNorm_le_eLpNorm_of_integral_sq_le {α : Type*} [MeasurableSpace α] {
     have htwo : (0 : ℝ) ≤ 2 := by norm_num
     have hpoint_u (x : α) :
         ‖u x‖ₑ ^ (2 : ℝ) = ENNReal.ofReal (u x ^ 2) := by
-      rw [Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs]
       rw [ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) htwo]
       simp [sq_abs]
     have hpoint_v (x : α) :
         ‖v x‖ₑ ^ (2 : ℝ) = ENNReal.ofReal (v x ^ 2) := by
-      rw [Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs]
       rw [ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) htwo]
       simp [sq_abs]
     have hu_lint :
@@ -167,14 +167,14 @@ theorem eLpNorm_le_eLpNorm_of_integral_sq_le {α : Type*} [MeasurableSpace α] {
     have hu_norm :
         eLpNorm u 2 μ =
           (ENNReal.ofReal (∫ x, u x ^ 2 ∂μ)) ^ (1 / (2 : ℝ)) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
         hu.aestronglyMeasurable]
       simp only [ENNReal.toReal_ofNat]
       rw [hu_lint]
     have hv_norm :
         eLpNorm v 2 μ =
           (ENNReal.ofReal (∫ x, v x ^ 2 ∂μ)) ^ (1 / (2 : ℝ)) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal two_ne_zero ENNReal.ofNat_ne_top
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal two_ne_zero ENNReal.ofNat_ne_top
         hv.aestronglyMeasurable]
       simp only [ENNReal.toReal_ofNat]
       rw [hv_lint]

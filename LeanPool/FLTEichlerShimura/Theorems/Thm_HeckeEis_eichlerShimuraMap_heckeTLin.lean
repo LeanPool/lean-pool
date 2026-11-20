@@ -740,9 +740,9 @@ theorem cosetOp_heckeConj_apply (γ : Gamma0 N) (q : Gamma0 N ⧸ heckeUpper N �
     (HeckeEis.binaryFormAlphaAdj_comp_binaryFormRepSL_heckeConj ℂ n N ℓ (transferAux (heckeUpper N
       ℓ) γ (γ⁻¹ • q))) v
   rw [LinearMap.comp_apply, LinearMap.comp_apply] at h1
-  rw [cosetOp, cosetOp, LinearMap.comp_apply, LinearMap.comp_apply, h1, ← Module.End.mul_apply, ←
+  rw [cosetOp, cosetOp, LinearMap.comp_apply, LinearMap.comp_apply, h1, ← mul_apply_eq_comp, ←
     map_mul,
-    coe_transferAux_inv_smul, mul_inv_cancel_left, map_mul, Module.End.mul_apply]
+    coe_transferAux_inv_smul, mul_inv_cancel_left, map_mul, mul_apply_eq_comp]
 
 theorem cosetOp_apply_smul {F : ℍ → ↥(BinaryForm ℂ n)}
     (hF : IsEquivariantPrimitiveWith ((binaryFormRepSL ℂ n).comp (Gamma0 N).subtype) F)
@@ -862,7 +862,7 @@ theorem coe_heckeCosetRep (q : Gamma0 N ⧸ heckeUpper N ℓ) :
       ℤ ℝ) := by
   rw [heckeCosetRep_def, Units.val_mul, alphaGL_coe, gammaToGL_apply,
     Matrix.SpecialLinearGroup.mapGL_coe_matrix,
-    Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, cosetMat, ← map_int_mul']
+    Matrix.SpecialLinearGroup.map_apply_coe, cosetMat, ← map_int_mul']
 
 omit [NeZero ℓ] in
 theorem adjugate_cosetMat (q : Gamma0 N ⧸ heckeUpper N ℓ) :

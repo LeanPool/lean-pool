@@ -44,10 +44,10 @@ lemma ωScottContinuous_mk
   refine ⟨?_, fun c ↦ ?_⟩
   · simp only [monotone_prodMk_iff, hf.monotone, hg.monotone, and_self]
   · ext : 1
-    · simp only [Prod.ωSup_fst]
+    · simp only [Prod.fst_ωSup]
       rw [hf.map_ωSup]
       rfl
-    · simp only [Prod.ωSup_snd]
+    · simp only [Prod.snd_ωSup]
       rw [hg.map_ωSup]
       rfl
 

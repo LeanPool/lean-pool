@@ -159,7 +159,7 @@ theorem card_largeFaceSequence_le_paper {α : Type*} [Fintype α] {d N : ℕ}
     intro i
     rw [hfaceMass, htotal]
     have hPi := hfinal.trans (WeightedIncidence.mass_mono w hw
-      (fun _ ha ↦ hlast i ha))
+      (Set.preimage_mono (f := q) (hlast i)))
     change ε * WeightedIncidence.mass w (q ⁻¹' (P 0).carrier) ≤
       WeightedIncidence.mass w (q ⁻¹' (P i).carrier) at hPi
     have hmul := mul_le_mul_of_nonneg_left hPi hε.le

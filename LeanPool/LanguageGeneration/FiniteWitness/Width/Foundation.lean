@@ -54,7 +54,7 @@ theorem valid_iff_positive_separates (H : Set (Set α)) (T : Set α → Finset �
     intro S hS hfin
     have heq : ⋂₀ active H T S = activeCore H T S := by ext; simp [activeCore]
     have hf : (⋂₀ active H T S).Finite := heq.symm ▸ hfin
-    obtain ⟨L, hL, K, hK, x, hx, hn⟩ := hs _ (fun _ h => h.1) hS hf
+    obtain ⟨L, hL, K, hK, x, hx, hn⟩ := hs (active H T S) (fun _ h => h.1) hS hf
     exact hn (hK.2.2 (hL.2.1 hx))
 
 theorem Valid.hasFiniteWitnesses {H : Set (Set α)} {T : Set α → Finset α}

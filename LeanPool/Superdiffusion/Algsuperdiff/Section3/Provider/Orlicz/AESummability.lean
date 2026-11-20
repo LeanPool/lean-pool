@@ -82,20 +82,13 @@ theorem ae_summable_of_isBigOWith_gammaSigma
   have henorm_meas : ∀ n,
       AEMeasurable (fun omega => ‖X n omega‖ₑ) mu := by
     intro n
-    exact (hX_integrable n).1.enorm
+    exact (hX_integrable n).1.eNorm
   have hlintegral_sum :
       (∑' n, ∫⁻ omega, ‖X n omega‖ₑ ∂mu) ≠ (⊤ : ENNReal) := by
     have hlintegral_eq (n : ℕ) :
         ∫⁻ omega, ‖X n omega‖ₑ ∂mu =
           ‖∫ omega, ‖X n omega‖ ∂mu‖ₑ := by
-      dsimp [enorm]
-      rw [lintegral_coe_eq_integral _ (hX_integrable n).norm]
-      rw [ENNReal.coe_nnreal_eq]
-      congr 1
-      rw [coe_nnnorm, Real.norm_eq_abs,
-        abs_of_nonneg (integral_nonneg fun omega => by
-          simp [abs_nonneg (X n omega)])]
-      rfl
+      exact (eNorm_integral_norm_eq_lintegral_eNorm (hX_integrable n)).symm
     rw [funext hlintegral_eq]
     exact ENNReal.tsum_coe_ne_top_iff_summable.2
       (NNReal.summable_coe.1 hintegral_summable.abs)
@@ -110,8 +103,8 @@ theorem ae_summable_of_isBigOWith_gammaSigma
     have hnnreal :
         Summable fun n => ((‖X n omega‖₊ : NNReal) : ℝ) := by
       rw [← ENNReal.tsum_coe_ne_top_iff_summable_coe]
-      simpa only [enorm_eq_nnnorm] using homega.ne
-    simpa only [coe_nnnorm] using hnnreal
+      simpa only [eNorm_eq_nnNorm] using homega.ne
+    simpa only [coe_nnNorm] using hnnreal
   have hnorm_eq : (fun n => ‖X n omega‖) = fun n => X n omega := by
     funext n
     exact Real.norm_of_nonneg (hX_nonneg n omega)

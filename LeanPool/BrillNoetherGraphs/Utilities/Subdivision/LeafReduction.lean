@@ -255,7 +255,7 @@ theorem bnExists_rank_one_of_leafless
   have recurse : ∀ bound, statement bound := by
     intro bound
     induction bound using Nat.strong_induction_on with
-    | h bound inductionHypothesis =>
+    | ind bound inductionHypothesis =>
         intro H hCard hConnected hTargetGenus
         by_cases hLeaf : ∃ leaf : H.V, vertexDegree H leaf = 1
         · obtain ⟨leaf, hDegree⟩ := hLeaf

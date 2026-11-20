@@ -181,9 +181,9 @@ theorem matchedPair_zeroSet (z : HCPolySupport.Vec d) {L : ℝ}
   have hvolReal : (MeasureTheory.volume (axisCube z L)).toReal ≤
       (MeasureTheory.volume Sf).toReal + (MeasureTheory.volume Sg).toReal := by
     have hSflt : MeasureTheory.volume Sf ≠ ⊤ :=
-      (lt_of_le_of_lt (measure_mono (fun x hx => hx.1)) hUlt).ne
+      (lt_of_le_of_lt (measure_mono (show Sf ⊆ axisCube z L from fun _ hx => hx.1)) hUlt).ne
     have hSglt : MeasureTheory.volume Sg ≠ ⊤ :=
-      (lt_of_le_of_lt (measure_mono (fun x hx => hx.1)) hUlt).ne
+      (lt_of_le_of_lt (measure_mono (show Sg ⊆ axisCube z L from fun _ hx => hx.1)) hUlt).ne
     calc (MeasureTheory.volume (axisCube z L)).toReal
         ≤ (MeasureTheory.volume Sf + MeasureTheory.volume Sg).toReal :=
           ENNReal.toReal_mono (ENNReal.add_ne_top.2 ⟨hSflt, hSglt⟩) hvolLe

@@ -100,7 +100,7 @@ theorem cfc_real_cos_eq_cosSeries {a : A} (ha : IsSelfAdjoint a := by cfc_tac) :
   have hcont := cfcHom_continuous (R := ℝ) (A := A)
     (p := IsSelfAdjoint) (a := a) ha
   have hid : (cfcHom (R := ℝ) (p := IsSelfAdjoint) ha) idC = a := by
-    simpa [idC] using (cfcHom_id (R := ℝ) (p := IsSelfAdjoint) ha)
+    simp [idC]
   have hmap := map_cosSeries (𝕜 := ℝ)
     (cfcHom (R := ℝ) (p := IsSelfAdjoint) ha).toAlgHom hcont idC
   calc
@@ -125,7 +125,7 @@ theorem cfc_real_sin_eq_sinSeries {a : A} (ha : IsSelfAdjoint a := by cfc_tac) :
   have hcont := cfcHom_continuous (R := ℝ) (A := A)
     (p := IsSelfAdjoint) (a := a) ha
   have hid : (cfcHom (R := ℝ) (p := IsSelfAdjoint) ha) idC = a := by
-    simpa [idC] using (cfcHom_id (R := ℝ) (p := IsSelfAdjoint) ha)
+    simp [idC]
   have hmap := map_sinSeries (𝕜 := ℝ)
     (cfcHom (R := ℝ) (p := IsSelfAdjoint) ha).toAlgHom hcont idC
   calc

@@ -84,7 +84,7 @@ theorem hasGeometricallyConvexModuli_powerSeriesAbsConvergenceSet (c : MvPowerSe
     ∏ i, ‖(geometricCombination a b (fun i => ‖z i‖₊) (fun i => ‖w i‖₊) i : ℂ)‖ ^ m i)
   apply ((hz.mul_left a).add (hw.mul_left b)).of_nonneg_of_le (fun _ => by positivity)
   intro m
-  simpa only [Complex.norm_of_nonneg (NNReal.coe_nonneg _), coe_nnnorm] using
+  simpa only [Complex.norm_of_nonneg (NNReal.coe_nonneg _), coe_nnNorm] using
     geometric_monomial_le ‖c m‖₊ (fun i => ‖z i‖₊) (fun i => ‖w i‖₊) m ha hb hab
 
 /-- The convergence domain satisfies the zero-inclusive logarithmic convexity property. -/

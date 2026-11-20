@@ -524,7 +524,7 @@ theorem isClosedChain_subdivide (h : IsClosedChain L) (points : List Plane) :
 /-! ### What a list of edges occupies -/
 
 theorem mem_cover {P : Piece} (hP : P ∈ L) (hz : z ∈ P.seg) : z ∈ cover L :=
-  Set.mem_biUnion hP hz
+  Set.mem_iUnion₂_of_mem hP hz
 
 theorem isCompact_cover (L : List Piece) : IsCompact (cover L) := by
   induction L with

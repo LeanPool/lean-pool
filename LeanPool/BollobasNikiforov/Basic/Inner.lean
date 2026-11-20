@@ -67,7 +67,7 @@ require symmetry of either argument; in particular it yields the
 Frobenius–Hadamard formula for a symmetric first factor. -/
 lemma inner_eq_sum (B C : Matrix n n ℝ) :
     inner B C = ∑ i, ∑ j, B i j * C i j := by
-  simp only [inner, trace, diag, mul_apply, transpose_apply]
+  simp only [inner, trace, diag, Matrix.mul_apply, transpose_apply]
   rw [Finset.sum_comm]
 
 /-- The squared Frobenius norm is the sum of squares of entries. -/
@@ -163,7 +163,7 @@ lemma mul_diagonal_mul_transpose_apply [Fintype n] [DecidableEq n]
     (U : Matrix n n ℝ) (d : n → ℝ) (a b : n) :
     (U * diagonal d * Uᵀ) a b = ∑ k, d k * U a k * U b k := by
   calc (U * diagonal d * Uᵀ) a b
-      = ∑ k, (U * diagonal d) a k * Uᵀ k b := by rw [mul_apply]
+      = ∑ k, (U * diagonal d) a k * Uᵀ k b := by rw [Matrix.mul_apply]
     _ = ∑ k, (U a k * d k) * U b k := by simp [mul_diagonal, transpose_apply]
     _ = ∑ k, d k * U a k * U b k :=
         Finset.sum_congr rfl fun _ _ => by ring

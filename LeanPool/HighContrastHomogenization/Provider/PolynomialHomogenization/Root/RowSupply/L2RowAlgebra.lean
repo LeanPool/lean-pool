@@ -63,7 +63,7 @@ theorem normalizedWhitneyRowEnergy_mono
       normalizedWhitneyRowEnergy system Y := by
   unfold normalizedWhitneyRowEnergy rawWhitneyRowEnergy
   exact mul_le_mul_right
-    (ENNReal.tsum_le_tsum fun i =>
+    (tsum_le_tsum fun i =>
       mul_le_mul_right (hXY i) (volume (system.cell i))) _
 
 /-- Normalized rows are homogeneous. -/

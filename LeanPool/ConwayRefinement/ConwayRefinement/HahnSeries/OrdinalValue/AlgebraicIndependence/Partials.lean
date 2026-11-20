@@ -77,8 +77,8 @@ theorem contributesToPartialDerivativeAt_iff (v' v : ι) :
 omit hx hinj hσ in
 theorem finite_setOf_contributesToPartialDerivativeAt (v' : ι) :
     Finite {v // S.ContributesToPartialDerivativeAt v' v} :=
-  (S.F.vars.finite_toSet.subset fun v
-    (hv : S.ContributesToPartialDerivativeAt v' v) ↦ hv.1).to_subtype
+  (S.F.vars.finite_toSet.subset (t := {v | S.ContributesToPartialDerivativeAt v' v})
+    fun _ hv ↦ hv.1).to_subtype
 
 /-- **The partial derivative when the low-degree part precedes `λ₀`.** If
 `S.LowDegreePartAlgebraicLE v'`, then

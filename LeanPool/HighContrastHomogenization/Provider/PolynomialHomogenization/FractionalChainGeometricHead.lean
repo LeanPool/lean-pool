@@ -69,7 +69,7 @@ theorem tsum_geometric_of_mul_pow_lt_one_le
   change (∑' k : ℕ, g k) ≤ ENNReal.ofReal (q / (q - 1) * 1) at hhead
   rw [mul_one] at hhead
   change (∑' n : ℕ, f n) ≤ _
-  rw [tsum_eq_zero_add' ENNReal.summable]
+  rw [tsum_eq_zero_add' CompleteLattice.summable]
   calc
     f 0 + ∑' k : ℕ, f (k + 1) ≤
         1 + ∑' k : ℕ, (ENNReal.ofReal X)⁻¹ * g k := by
@@ -77,7 +77,7 @@ theorem tsum_geometric_of_mul_pow_lt_one_le
         by_cases h0 : X * q ^ 0 < 1
         · simp only [f, ite_eq_left h0, pow_zero, ENNReal.ofReal_one, le_rfl]
         · simp only [f, ite_eq_right h0, zero_le])
-        (ENNReal.tsum_le_tsum htail)
+        (tsum_le_tsum htail)
     _ = 1 + (ENNReal.ofReal X)⁻¹ * ∑' k : ℕ, g k := by
       rw [ENNReal.tsum_mul_left]
     _ ≤ 1 + (ENNReal.ofReal X)⁻¹ *

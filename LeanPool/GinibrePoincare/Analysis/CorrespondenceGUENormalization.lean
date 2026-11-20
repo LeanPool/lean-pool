@@ -69,7 +69,7 @@ theorem gueDoubledOrderedDensity_witness_pos (n : ℕ) :
 
 theorem gueDoubledOrdered_partition_pos {n : ℕ} (hn : 0 < n) :
     0 < ∫ x, gueDoubledOrderedDensity n x := by
-  exact integral_pos_of_integrable_nonneg_nonzero
+  exact integral_pos_of_integrable_nonneg_ne_zero
     (gueDoubledOrderedDensity_continuous n) (gueDoubledOrderedDensity_integrable hn)
     (gueDoubledOrderedDensity_nonneg n)
     (ne_of_gt (gueDoubledOrderedDensity_witness_pos n))
@@ -84,7 +84,7 @@ theorem gueDoubledOrderedMeasure_probability {n : ℕ} (hn : 0 < n) :
     IsProbabilityMeasure (gueDoubledOrderedMeasure n) := by
   constructor
   unfold gueDoubledOrderedMeasure
-  rw [Measure.smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
+  rw [_root_.smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
     ← ofReal_integral_eq_lintegral_ofReal (gueDoubledOrderedDensity_integrable hn)
       (Eventually.of_forall (gueDoubledOrderedDensity_nonneg n))]
   exact ENNReal.inv_mul_cancel

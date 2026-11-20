@@ -93,9 +93,9 @@ theorem ofReal_norm_volumeAverageVec_le_eLpNorm_two {W : Set (Vec d)}
     (Regularity.integral_normalizedVolumeMeasureOn_eq_volumeAverageVec hf).symm
   rw [hav, ofReal_norm]
   calc ‖∫ y, f y ∂(normalizedVolumeMeasureOn W)‖ₑ
-      ≤ ∫⁻ y, ‖f y‖ₑ ∂(normalizedVolumeMeasureOn W) := enorm_integral_le_lintegral_enorm _
+      ≤ ∫⁻ y, ‖f y‖ₑ ∂(normalizedVolumeMeasureOn W) := eNorm_integral_le_lintegral_eNorm _
     _ = eLpNorm f 1 (normalizedVolumeMeasureOn W) :=
-        (eLpNorm_one_eq_lintegral_enorm hint.aestronglyMeasurable).symm
+        (eLpNorm_one_eq_lintegral_eNorm hint.aestronglyMeasurable).symm
     _ ≤ eLpNorm f 2 (normalizedVolumeMeasureOn W) :=
         eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
 

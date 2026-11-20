@@ -194,7 +194,9 @@ theorem KuhnCell.openCarrier_subset_carrier (T : KuhnCell d) :
     · exact le_rfl
     · exact (hx.2 i j hij).le
   · intro i j hij heq
-    exact absurd heq (ne_of_lt (hx.2 i j hij))
+    rcases eq_or_lt_of_le hij with rfl | hij
+    · exact le_rfl
+    · exact absurd heq (ne_of_lt (hx.2 i j hij))
 
 /-- The closed simplex: the closed support cube together with the weak
 `order`-monotonicity of the local coordinates. -/

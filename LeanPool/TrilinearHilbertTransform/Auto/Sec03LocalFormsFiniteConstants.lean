@@ -364,7 +364,7 @@ noncomputable def normalizedIntervalMeasure (a r : ℝ) : Measure ℝ :=
 theorem normalizedIntervalMeasure_probability (a : ℝ) {r : ℝ} (hr : 0 < r) :
     IsProbabilityMeasure (normalizedIntervalMeasure a r) := by
   constructor
-  simp only [normalizedIntervalMeasure, Measure.smul_apply, Measure.restrict_apply_univ,
+  simp only [normalizedIntervalMeasure, smul_apply, Measure.restrict_apply_univ,
     Real.volume_Icc, add_sub_cancel_left, smul_eq_mul]
   rw [← ENNReal.ofReal_mul (inv_nonneg.mpr hr.le), inv_mul_cancel₀ hr.ne', ENNReal.ofReal_one]
 
@@ -579,7 +579,7 @@ theorem quasiMeasurePreserving_of_positive_bound {X Y : Type*}
     (hbound : ∀ f : Y → ℝ≥0∞, Measurable f →
       (∫⁻ x, f (P x) ∂μ) ≤ C * ∫⁻ y, f y ∂ν) :
     QuasiMeasurePreserving P μ ν := by
-  refine ⟨hP, Measure.absolutelyContinuous_of_le_smul (c := C) ?_⟩
+  refine ⟨hP.aemeasurable, Measure.absolutelyContinuous_of_le_smul (c := C) ?_⟩
   apply Measure.le_iff.mpr
   intro s hs
   have hm : Measurable (s.indicator (fun _ : Y => (1 : ℝ≥0∞))) :=
@@ -587,7 +587,7 @@ theorem quasiMeasurePreserving_of_positive_bound {X Y : Type*}
   have h := hbound _ hm
   rw [← lintegral_map hm hP] at h
   simpa only [lintegral_indicator hs, lintegral_one, Measure.restrict_apply_univ,
-    Measure.smul_apply, smul_eq_mul] using h
+    smul_apply, smul_eq_mul] using h
 
 /-- The finite moment used for positive interpolation; an infinity slot
 contributes the constant one and is bounded by its essential supremum. -/
@@ -616,7 +616,7 @@ theorem interpolationMoment_ae_bound [MeasurableSpace Y] (ν : Measure Y)
   by_cases htop : p = ∞
   · subst p
     simpa [interpolationMoment, interpolationInfinityFactor] using
-      (enorm_ae_le_eLpNormEssSup f ν).mono (fun y hy =>
+      (eNorm_ae_le_eLpNormEssSup f ν).mono (fun y hy =>
         hy.trans (eLpNormEssSup_le_eLpNorm_top))
   · have hpzero : p ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one hp)
     have hreal : p.toReal ≠ 0 := (ENNReal.toReal_pos hpzero htop).ne'
@@ -632,7 +632,7 @@ theorem interpolationMoment_norm_identity [MeasurableSpace Y] (ν : Measure Y)
   by_cases htop : p = ∞
   · simp [interpolationMoment, interpolationInfinityFactor, htop]
   · have hpzero : p ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one hp)
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hpzero htop hf.aestronglyMeasurable]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hpzero htop hf.aestronglyMeasurable]
     simp [interpolationMoment, interpolationInfinityFactor, htop, one_div]
 
 /-- The full `Lp` version of positive rank-two interpolation, including
@@ -815,11 +815,11 @@ theorem localProgression_absoluteNormBound {a r : ℝ} (hr : 0 < r)
   have hs : HasLocalProgressionSupport a r (fun z => ‖w z‖ₑ) := by
     intro z hz
     exact hsupport z (fun h => hz (by simp [h]))
-  have h := localProgression_absoluteBound hr (fun z => ‖w z‖ₑ) hw.enorm hs hW
-    (fun i x => ‖f i x‖ₑ) (fun i => (hf i).enorm) p hp hsum
+  have h := localProgression_absoluteBound hr (fun z => ‖w z‖ₑ) hw.eNorm hs hW
+    (fun i x => ‖f i x‖ₑ) (fun i => (hf i).eNorm) p hp hsum
   have hn (i) : eLpNorm (fun x => ‖f i x‖ₑ) (p i) (normalizedIntervalMeasure a r) =
       eLpNorm (f i) (p i) (normalizedIntervalMeasure a r) :=
-    eLpNorm_enorm (f i) (hf i).aestronglyMeasurable
+    eLpNorm_eNorm (f i) (hf i).aestronglyMeasurable
   simpa only [hn] using h
 
 /-- The complex local form is controlled by the positive local estimate.
@@ -841,11 +841,11 @@ theorem localProgressionForm_enorm_le {a r : ℝ} (hr : 0 < r)
     simp only [← ofReal_norm, norm_mul, norm_prod,
       ENNReal.ofReal_mul (norm_nonneg _),
       ENNReal.ofReal_prod_of_nonneg (fun _ _ => norm_nonneg _)]
-  rw [localProgressionForm, enorm_mul, hc]
+  rw [localProgressionForm, eNorm_mul, hc]
   calc
     _ ≤ ENNReal.ofReal r⁻¹ ^ 2 *
         ∫⁻ z : ℝ × ℝ, ‖w z * ∏ i, f i (realProgressionCoordinate i z)‖ₑ :=
-      mul_le_mul_right (enorm_integral_le_lintegral_enorm _) _
+      mul_le_mul_right (eNorm_integral_le_lintegral_eNorm _) _
     _ = ENNReal.ofReal r⁻¹ ^ 2 *
         ∫⁻ z : ℝ × ℝ, ‖w z‖ₑ * ∏ i, ‖f i (realProgressionCoordinate i z)‖ₑ := by
       simp_rw [hn]
@@ -957,13 +957,13 @@ theorem finiteDepthNumerator_nonneg {κ : LocalKernelClass} {q : ℝ} {N : ℕ}
 theorem localLpNorm_le_scalarMaximalQ {a r x q : ℝ} (hr : 0 < r) (hq : 0 < q)
     (hx : x ∈ Set.Icc a (a + r)) (f : ℝ → ℂ) (hf : Measurable f) :
     eLpNorm f (ENNReal.ofReal q) (normalizedIntervalMeasure a r) ≤ scalarMaximalQ q f x := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ne_of_gt (ENNReal.ofReal_pos.mpr hq)) ENNReal.ofReal_ne_top hf.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofReal hq.le, normalizedIntervalMeasure, lintegral_smul_measure,
     smul_eq_mul, scalarMaximalQ, maximalQ]
   apply ENNReal.rpow_le_rpow _ (one_div_nonneg.mpr hq.le)
   have hgn (y : ℝ) : ‖‖f y‖ ^ q‖ₑ = ‖f y‖ₑ ^ q := by
-    rw [Real.enorm_eq_ofReal (Real.rpow_nonneg (norm_nonneg _) _),
+    rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg (norm_nonneg _) _),
       ← ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) hq.le, ofReal_norm]
   change ENNReal.ofReal r⁻¹ * (∫⁻ y in Set.Icc a (a + r), ‖f y‖ₑ ^ q) ≤
     uncenteredRealMaximal (fun y => ‖f y‖ ^ q) x

@@ -31,7 +31,7 @@ theorem iSup_Iio_lt_ord {δ : Ordinal.{u}} {ℓ : Ordinal.{v}} {f : Iio ℓ → 
     (hf : ∀ i, f i < δ) (hcard : Cardinal.lift.{u} ℓ.card < Cardinal.lift.{v} δ.cof) :
     iSup f < δ := by
   refine iSup_lt_ord_lift' ?_ hf
-  · rw [Cardinal.mk_Iio_ordinal, Cardinal.lift_lift]
+  · rw [Ordinal.cardinalMk_Iio, Cardinal.lift_lift]
     have aux1 : Cardinal.lift.{max (v + 1) u, v} ℓ.card =
       Cardinal.lift.{v + 1} (Cardinal.lift.{u, v} ℓ.card) := (Cardinal.lift_lift _).symm
     have aux2 : Cardinal.lift.{v + 1, u} δ.cof =

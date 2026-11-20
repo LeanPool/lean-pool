@@ -302,7 +302,7 @@ theorem norm_iteratedFDeriv_of_fderiv_eq_comp
     linarith only
   change ‖iteratedFDeriv ℝ (n+1) Y x‖ ≤ C * L^n * (n.factorial : ℝ)^2
   induction n using Nat.strong_induction_on generalizing x with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn : n = 0
     · subst n
       change ‖iteratedFDeriv ℝ 1 Y x‖ ≤ C * L^0 * (Nat.factorial 0 : ℝ)^2

@@ -285,8 +285,8 @@ theorem weakMaximum_moment_package_at
     have h1 : eLpNorm M (ENNReal.ofReal 4) P ≤
         eLpNorm (fun a => W a + ENNReal.ofReal (R / 2))
           (ENNReal.ofReal 4) P := by
-      refine eLpNorm_mono_enorm hMmeas.aestronglyMeasurable fun a => ?_
-      simp only [enorm_eq_self]
+      refine eLpNorm_mono_eNorm hMmeas.aestronglyMeasurable fun a => ?_
+      simp only [eNorm_eq_self]
       exact hpoint a
     refine le_trans h1 ?_
     refine le_trans (eLpNorm_add_le (by

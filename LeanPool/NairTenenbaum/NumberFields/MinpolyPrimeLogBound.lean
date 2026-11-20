@@ -28,7 +28,7 @@ variable {K : Type*} [Field K] [NumberField K]
 
 theorem minpoly_goodPrimeSum_le_log_idealNormDirichlet (θ : 𝓞 K)
     (S : Finset ℕ) (hS : ∀ p ∈ S, p.Prime)
-    (hgood : ∀ p ∈ S, ¬p ∣ RingOfIntegers.exponent θ) {σ : ℝ} (hσ : 1 < σ) :
+    (hgood : ∀ p ∈ S, ¬p ∣ NumberField.RingOfIntegers.exponent θ) {σ : ℝ} (hσ : 1 < σ) :
     (∑ p ∈ S, (rootCount (minpoly ℤ θ) p : ℝ) * (p : ℝ) ^ (-σ)) ≤
       Real.log (idealNormDirichlet K σ) +
       ((minpoly ℤ θ).natDegree : ℝ) ^ 2 * ∑' n : ℕ, (n : ℝ) ^ (-2 : ℝ) := by
@@ -59,24 +59,25 @@ theorem minpoly_primeSum_le_log_idealNormDirichlet (θ : 𝓞 K) (B : PowerBasis
     (∑ p ∈ S, (rootCount (minpoly ℤ θ) p : ℝ) * (p : ℝ) ^ (-σ)) ≤
       Real.log (idealNormDirichlet K σ) +
       ((minpoly ℤ θ).natDegree : ℝ) ^ 2 * ∑' n : ℕ, (n : ℝ) ^ (-2 : ℝ) +
-      (minpoly ℤ θ).natDegree * (RingOfIntegers.exponent θ).primeFactors.card := by
+      (minpoly ℤ θ).natDegree * (NumberField.RingOfIntegers.exponent θ).primeFactors.card := by
   classical
-  have hbad : S.filter (fun p => p ∣ RingOfIntegers.exponent θ) ⊆
-      (RingOfIntegers.exponent θ).primeFactors := by
+  have hbad : S.filter (fun p => p ∣ NumberField.RingOfIntegers.exponent θ) ⊆
+      (NumberField.RingOfIntegers.exponent θ).primeFactors := by
     intro p hp
     exact Nat.mem_primeFactors.mpr ⟨hS p (mem_filter.mp hp).1,
       (mem_filter.mp hp).2, conductor_exponent_ne_zero θ B hB⟩
   have Hbad := (monic_primeRoot_sum_le_degree_mul_card (minpoly.monic θ.isIntegral)
-    (S.filter (fun p => p ∣ RingOfIntegers.exponent θ))
+    (S.filter (fun p => p ∣ NumberField.RingOfIntegers.exponent θ))
     (fun p hp => hS p (mem_filter.mp hp).1) hσ.le).trans
-      (mul_le_mul_of_nonneg_left (show ((S.filter (fun p => p ∣ RingOfIntegers.exponent θ)).card :
-          ℝ) ≤
-        ((RingOfIntegers.exponent θ).primeFactors.card : ℝ) by
+      (mul_le_mul_of_nonneg_left (show
+        ((S.filter (fun p => p ∣ NumberField.RingOfIntegers.exponent θ)).card : ℝ) ≤
+        ((NumberField.RingOfIntegers.exponent θ).primeFactors.card : ℝ) by
           exact_mod_cast card_le_card hbad) (Nat.cast_nonneg _))
   have Hgood := minpoly_goodPrimeSum_le_log_idealNormDirichlet θ
-    (S.filter (fun p => ¬p ∣ RingOfIntegers.exponent θ))
+    (S.filter (fun p => ¬p ∣ NumberField.RingOfIntegers.exponent θ))
     (fun p hp => hS p (mem_filter.mp hp).1) (fun _ hp => (mem_filter.mp hp).2) hσ
-  have Hsplit := sum_filter_add_sum_filter_not S (fun p => p ∣ RingOfIntegers.exponent θ)
+  have Hsplit := sum_filter_add_sum_filter_not S
+    (fun p => p ∣ NumberField.RingOfIntegers.exponent θ)
     (fun p => (rootCount (minpoly ℤ θ) p : ℝ) * (p : ℝ) ^ (-σ))
   linarith
 
@@ -88,7 +89,7 @@ theorem exists_minpoly_primeSum_log_bound (θ : 𝓞 K) (B : PowerBasis ℚ K)
           C - Real.log (σ - 1) := by
   obtain ⟨C, b, hC, hb, hbound⟩ := exists_idealNormDirichlet_pole_bound K
   let E : ℝ := ((minpoly ℤ θ).natDegree : ℝ) ^ 2 * ∑' n : ℕ, (n : ℝ) ^ (-2 : ℝ) +
-    (minpoly ℤ θ).natDegree * (RingOfIntegers.exponent θ).primeFactors.card
+    (minpoly ℤ θ).natDegree * (NumberField.RingOfIntegers.exponent θ).primeFactors.card
   refine ⟨max 0 (Real.log C + E), b, le_max_left _ _, hb, fun σ hσ hσb S hS => ?_⟩
   have hpos : 0 < idealNormDirichlet K σ := by
     have H := minpoly_goodPrimeProduct_le_idealNormDirichlet θ ∅ (by simp) (by simp) hσ

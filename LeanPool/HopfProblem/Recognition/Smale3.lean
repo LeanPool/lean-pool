@@ -520,8 +520,8 @@ private theorem
         NoExotic.ProjectionBundle.toCoordinates e.normalProjection e.normalModelEquiv z.1 v.1 v.2)
       z := by
     have h :=
-      (Bundle.contMDiffAt_totalSpace (IB := 𝓘(ℝ, E)) (IM := (𝓘(ℝ, E)).prod 𝓘(ℝ, e.NormalModel))
-            (n := ∞) (f := id) (x₀ := z)).mp
+      (Bundle.contMDiffAt_totalSpace_iff (IB := 𝓘(ℝ, E))
+            (IM := (𝓘(ℝ, E)).prod 𝓘(ℝ, e.NormalModel)) (n := ∞) (f := id) (x₀ := z)).mp
         contMDiffAt_id
     exact h.2
   have hf :=
@@ -1704,7 +1704,7 @@ private theorem Smale.DiskFraming.contDiffOn_displacement {D Z F : Type*} [Norme
     [NormedSpace ℝ F] {H : D → F} {A : D → Z →L[ℝ] F} {V : Set D} (hH : ContDiff ℝ ∞ H)
     (hA : ContDiffOn ℝ ∞ A V) : ContDiffOn ℝ ∞ (displacement H A) (V ×ˢ Set.univ) :=
   (hH.comp contDiff_fst).contDiffOn.add
-    ((hA.comp contDiffOn_fst (fun _ hp => hp.1)).clm_apply contDiffOn_snd)
+    ((hA.comp (s := V ×ˢ Set.univ) contDiffOn_fst (fun _ hp => hp.1)).clm_apply contDiffOn_snd)
 
 private theorem
     Smale.DiskFraming.hasFDerivAt_displacement_zero {D Z F : Type*} [NormedAddCommGroup D]
@@ -2197,7 +2197,7 @@ private theorem Smale.SmallPerturbation.lipschitzWith_smul_const {E : Type*} [No
     _ ≤ ((k : ℝ) * Dist.dist x y) * ‖a‖ :=
       (mul_le_mul_of_nonneg_right (hβ.dist_le_mul x y) (norm_nonneg a))
     _ = (k * ‖a‖₊ : ℝ≥0) * Dist.dist x y := by
-      simp only [NNReal.coe_mul, coe_nnnorm]
+      simp only [NNReal.coe_mul, coe_nnNorm]
       ring
 
 private def
@@ -4110,12 +4110,14 @@ private def MorseCancel.scalarProductChart {V : Type*} [NormedAddCommGroup V] [N
   open_target := Φ.open_target.prod isOpen_univ
   contMDiffOn_toFun := by
     have h : ContDiffOn ℝ ∞ (fun p : ℝ × V => (Φ p.1, p.2)) (Φ.source ×ˢ Set.univ) :=
-      (Φ.contMDiffOn_toFun.contDiffOn.comp contDiff_fst.contDiffOn (fun _ hp => hp.1)).prodMk
+      (Φ.contMDiffOn_toFun.contDiffOn.comp (s := Φ.source ×ˢ Set.univ)
+        contDiff_fst.contDiffOn (fun _ hp => hp.1)).prodMk
         contDiff_snd.contDiffOn
     exact h.contMDiffOn
   contMDiffOn_invFun := by
     have h : ContDiffOn ℝ ∞ (fun p : ℝ × V => (Φ.symm p.1, p.2)) (Φ.target ×ˢ Set.univ) :=
-      (Φ.contMDiffOn_invFun.contDiffOn.comp contDiff_fst.contDiffOn (fun _ hp => hp.1)).prodMk
+      (Φ.contMDiffOn_invFun.contDiffOn.comp (s := Φ.target ×ˢ Set.univ)
+        contDiff_fst.contDiffOn (fun _ hp => hp.1)).prodMk
         contDiff_snd.contDiffOn
     exact h.contMDiffOn
 

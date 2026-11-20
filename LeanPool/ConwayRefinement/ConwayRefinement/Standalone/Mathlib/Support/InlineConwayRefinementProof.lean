@@ -21,6 +21,8 @@ import Mathlib.Tactic.NormNum.OfScientific
 
 public noncomputable section
 
+open scoped Pointwise
+
 namespace ConwayRefinement.Standalone.InlineConwayRefinement
 
 universe u

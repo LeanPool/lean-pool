@@ -1113,8 +1113,7 @@ def genericRemainderModMinpolyLiftCertificate {d : ℕ}
     rw [← Polynomial.coeff_map, hEmap, Polynomial.coeff_zero]
   · intro hbmem
     have hBmap : B.map π = 0 := by
-      apply Polynomial.ext
-      intro k
+      ext k
       rw [Polynomial.coeff_map, Polynomial.coeff_zero]
       apply Ideal.Quotient.eq_zero_iff_mem.mpr
       by_cases hk : k < c.polynomial.natDegree

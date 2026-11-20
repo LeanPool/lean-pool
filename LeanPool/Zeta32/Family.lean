@@ -90,8 +90,8 @@ theorem primitiveQ_proportional (r : ℚ) (n : ℕ) :
   have hb0 : b ≠ 0 := nonZeroDivisors.ne_zero hb
   have hbQ : (b : ℚ) ≠ 0 := by exact_mod_cast hb0
   refine ⟨(b : ℚ)/(R.content : ℚ), div_ne_zero hbQ hcontQ, ?_⟩
-  apply Polynomial.ext
-  intro k
+  apply AddMonoidAlgebra.ext
+  ext k
   have hfac := congrArg (fun f : ℤ[X] => (f.map (algebraMap ℤ ℚ)).coeff k)
     R.eq_C_content_mul_primPart
   have hco : (b : ℚ) * (Q r n).coeff k = (R.content : ℚ) * (R.primPart.coeff k : ℚ) := by

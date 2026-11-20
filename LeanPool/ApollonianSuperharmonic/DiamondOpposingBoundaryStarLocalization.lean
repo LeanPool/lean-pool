@@ -1139,9 +1139,8 @@ private theorem hqprev0 :
         push_cast
         ring
       · apply Zsqrtd.ext
-        all_goals
-          dsimp [qprev, Kprev, q, DiamondRecursiveQuadruple]
-          all_goals rw [hKcast]
+        all_goals dsimp [qprev, Kprev, q, DiamondRecursiveQuadruple]
+        rw [hKcast]
     _ = Ci.1.1 := hCi
 
 private theorem hrootcent :

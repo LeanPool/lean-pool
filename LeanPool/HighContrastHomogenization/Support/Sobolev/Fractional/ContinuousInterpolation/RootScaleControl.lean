@@ -131,7 +131,7 @@ theorem triadicContinuousKSampleEnergy_eq_root_add_shifted {d : ℕ}
       triadicContinuousKSampleTerm s F 0 +
         triadicContinuousKShiftedSampleEnergy s F := by
   unfold triadicContinuousKSampleEnergy triadicContinuousKShiftedSampleEnergy
-  exact tsum_eq_zero_add' ENNReal.summable
+  exact tsum_eq_zero_add' CompleteLattice.summable
 
 /-- The full sampled energy is bounded by the normalized Euclidean `L²` square plus the shifted
 sampled energy. -/

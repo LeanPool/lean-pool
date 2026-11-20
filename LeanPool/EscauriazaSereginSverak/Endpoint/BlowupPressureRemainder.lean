@@ -78,7 +78,7 @@ theorem blowupPressureExtension_ae_sup_bound
     have hBound : ENNReal.ofReal |p₂ (x,t)| ≤ eLpNorm
         (fun y : Vec3 => p₂ (y,t)) ⊤ (volume.restrict B) := by
       rw [hSupEq]
-      simpa only [Real.enorm_eq_ofReal_abs] using hx
+      simpa only [Real.eNorm_eq_ofReal_abs] using hx
     change ENNReal.ofReal |p₂ (x,t)| ≤
       (J.indicator (fun s => eLpNorm (fun y : Vec3 => p₂ (y,s)) ⊤
         (volume.restrict B))) t
@@ -211,11 +211,11 @@ theorem blowupHarmonicPressure_extension_eLpNorm_tendsto_zero
         (volume.restrict (parabolicCylinder 0 0 S)) :=
       (blowupRescaledPressure_aestronglyMeasurable f hfm
         x₀ t₀ (r k) (hr k)).restrict
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 / 2 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 / 2 : ℝ≥0∞) ≠ ⊤) hsm]
     norm_num
-    simp only [Real.enorm_eq_ofReal_abs]
+    simp only [Real.eNorm_eq_ofReal_abs]
   have hpow : Tendsto (fun k =>
       (∫⁻ z in parabolicCylinder 0 0 S,
         ENNReal.ofReal |parabolicRescalePressure x₀ t₀ (r k) f z| ^

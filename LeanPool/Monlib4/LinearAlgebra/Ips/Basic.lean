@@ -123,7 +123,7 @@ theorem LinearMap.adjoint_smul {K E₁ E₂ : Type _} [RCLike K] [NormedAddCommG
     adjoint (a • φ) = starRingEnd K a • adjoint φ := by
   have :=
     @ContinuousLinearMap.adjoint_smul K E₁ E₂ _ _ _ _ _
-      (FiniteDimensional.complete K E₁) (FiniteDimensional.complete K E₂)
+      (FiniteDimensional.completeSpace K E₁) (FiniteDimensional.completeSpace K E₂)
       (toContinuousLinearMap φ) a
   simp_rw [← LinearMap.adjoint_toContinuousLinearMap] at this
   rw [LinearMap.adjoint_eq_toCLM_adjoint, _root_.map_smul, this]

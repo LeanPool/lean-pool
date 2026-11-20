@@ -42,7 +42,7 @@ theorem ae_memLp_slice_of_memLp_product_vec3
   have hG : Measurable G := by
     exact (PiLp.continuous_ofLp 2 _).measurable.comp hg₀Meas
   have hfinite : (∫⁻ z : Vec3 × ℝ, ‖g₀ z‖ₑ ^ (2 : ℝ) ∂ρ) < ⊤ := by
-    exact (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    exact (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (by norm_num) (by norm_num) hg₀.aestronglyMeasurable).mp
         hg₀.eLpNorm_lt_top
   have hiter : (∫⁻ t in J, ∫⁻ x in K,

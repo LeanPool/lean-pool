@@ -596,7 +596,8 @@ theorem badFamily_vecNormSq_superposedCompetitorCellSlope_sub_le_layerEnvelope [
       superposedGradConst d ^ 2 *
         (3 : ℝ) ^ (2 * (b * ((k : ℝ) + (whitneyScale M m E b k₀ omega k : ℝ)))) *
         vecNormSq p :=
-  vecNormSq_superposedCompetitorCellSlope_sub_le_layerEnvelope hb0 hb hk₀
+  vecNormSq_superposedCompetitorCellSlope_sub_le_layerEnvelope
+    (S := badFamily M m (whitneyScale M m E b k₀ omega) omega) hb0 hb hk₀
     (fun _ hh _ hu => Percolation.badClusterDiam_lt_of_hsep_le hne hh hu)
     (fun _ hQ => hQ.1) (fun _ hQ => hQ.2) p hRlay hT
 

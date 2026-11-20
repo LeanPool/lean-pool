@@ -318,7 +318,7 @@ theorem bumpMomentMatrix_det_ne_zero {n : ℕ} (a l u : Fin n → ℝ)
     simp only [mul_one] at heq
     rw [setIntegral_eq_integral_of_forall_compl_eq_zero (hout j)] at heq
     obtain ⟨t, ht⟩ := hnonzero j
-    have hpos : 0 < ∫ t, β j t := (hcont j).integral_pos_of_hasCompactSupport_nonneg_nonzero
+    have hpos : 0 < ∫ t, β j t := (hcont j).integral_pos_of_hasCompactSupport_nonneg_ne_zero
       (hcompact j) (hnonneg j) ht
     linarith only [heq, hpos]
   have hmatrix : bumpMomentMatrix a β = intervalMomentMatrix a l u μ := by

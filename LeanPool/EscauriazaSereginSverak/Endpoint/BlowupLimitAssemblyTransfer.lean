@@ -118,7 +118,7 @@ theorem blowupLimitAssembly_memLp_gradient_of_energy
         ENNReal.ofReal (spatialGradientSq u Du (x, t)) := by
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict,
       lintegral_prod_symm _ hSGS.aemeasurable]
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     hDu.aestronglyMeasurable]
   apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
   apply ne_of_lt

@@ -72,7 +72,6 @@ theorem fv_wff_biimp (p q : Wff) : (Wff.biimp p q).fv = p.fv ∪ q.fv :=
   by
   ext u
   simp [Wff.biimp, Wff.conj, Wff.neg, Wff.fv]
-  tauto
 
 @[simp]
 theorem fv_wff_ex (x : Var) (p : Wff) : (Wff.ex x p).fv = p.fv.erase x :=

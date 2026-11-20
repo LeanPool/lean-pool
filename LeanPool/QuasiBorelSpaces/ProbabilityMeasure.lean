@@ -310,16 +310,7 @@ lemma separatesPoints_iff_unit_injective
       rw [isHom_def]
       intro φ hφ
       simp only [isHom_ofMeasurableSpace] at ⊢ hφ
-      apply MeasurableSet.mem
-      have hms : MeasurableSet (φ ⁻¹' ({k x} : Set _)) := by
-        apply hφ
-        apply measurableSet_eq
-      have hset : {r | k x = φ r} = φ ⁻¹' {k x} := by
-        ext r
-        simp only [Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_singleton_iff, eq_comm]
-      change MeasurableSet ({r | k x = φ r} : Set ℝ)
-      rw [hset]
-      exact hms
+      exact hφ.const_eq (k x)
     · rfl
 
 /-! ### `bind` -/

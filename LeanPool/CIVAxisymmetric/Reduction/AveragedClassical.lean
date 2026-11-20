@@ -614,7 +614,7 @@ private theorem apply_rotZ_neg_basisVec (ψ : ℝ) (Φ : Vec3 →L[ℝ] ℝ) (i 
   fin_cases i <;>
     simp [h0, h1, h2, map_add, map_smul, smul_eq_mul, rotZ_apply_zero, rotZ_apply_one,
       rotZ_apply_two]
-  all_goals ring
+  ring
 
 /-- The pressure gradient term of the rotated system is the rotation of the pressure
 gradient of the original system at the rotated point. -/

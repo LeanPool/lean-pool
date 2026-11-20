@@ -316,10 +316,10 @@ theorem weightedSplitTraceAffineCoordinateProduct_ne_zero_of_irreducible
     exact Ideal.Quotient.eq_zero_iff_mem.mp hzero
   rw [Ideal.mem_span_singleton] at hmul
   rcases h.prime.dvd_mul.mp hmul with hx | hy
-  · have ha := h.prime.associated_of_dvd (MvPolynomial.X_prime (i := (0 : Fin 2))) hx
+  · have ha := h.prime.associated_of_dvd (MvPolynomial.prime_X (i := (0 : Fin 2))) hx
     have hamap := ha.map (MvPolynomial.eval ![0, 1])
     simp [eval_splitTraceCoverPolynomial, hd.ne'] at hamap
-  · have ha := h.prime.associated_of_dvd (MvPolynomial.X_prime (i := (1 : Fin 2))) hy
+  · have ha := h.prime.associated_of_dvd (MvPolynomial.prime_X (i := (1 : Fin 2))) hy
     have hamap := ha.map (MvPolynomial.eval ![1, 0])
     simp [eval_splitTraceCoverPolynomial, he.ne', hbeta] at hamap
 

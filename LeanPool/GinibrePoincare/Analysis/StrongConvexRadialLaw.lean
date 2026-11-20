@@ -190,7 +190,7 @@ theorem radialConfinementProbabilityDensity_square_map (n k : ℕ) (V : Potentia
   let R := rawRadialConfinementLaw n k (fun r : ℝ => V (r : ℂ))
   have hS := rawPotentialSquaredRadiusLaw_eq_square_map n k V hV
   have hmass : rawPotentialSquaredRadiusLaw n k V univ = 2 * R univ := by
-    rw [hS, Measure.smul_apply, smul_eq_mul, Measure.map_apply (by fun_prop) MeasurableSet.univ]
+    rw [hS, smul_apply, smul_eq_mul, Measure.map_apply (by fun_prop) MeasurableSet.univ]
     simp only [preimage_univ]
     rfl
   rw [radialConfinementProbabilityDensity_eq_normalizedLaw n k (fun r : ℝ => V (r : ℂ))

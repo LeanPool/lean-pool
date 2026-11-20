@@ -327,7 +327,7 @@ theorem lintegral_upperTailIndicator_le_of_isBigOWith
     rw [MeasureTheory.lintegral_union (μ := volume)
       (f := fun s : ℝ => ENNReal.ofReal (μ.real (upperTailEvent Y s)))
       measurableSet_Ioi
-      (Set.disjoint_left.2 fun s hs hIoi => hs.2.not_gt hIoi)]
+      (Set.disjoint_left.2 fun s (hs : s ∈ Set.Ioc 0 c) hIoi => hs.2.not_gt hIoi)]
   calc
     ∫⁻ ω, ENNReal.ofReal (upperTailIndicator X (a * t) ω) ∂μ
       = ∫⁻ ω, ENNReal.ofReal (Y ω) ∂μ := by simp [Y, c]

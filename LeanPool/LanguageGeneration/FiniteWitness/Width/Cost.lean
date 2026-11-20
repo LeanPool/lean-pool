@@ -6,6 +6,7 @@ Authors: Xiaoyu Li, Andi Han, Jiaojiao Jiang, Junbin Gao
 module
 
 public import LeanPool.LanguageGeneration.FiniteWitness.Width.Value
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 public import Mathlib.Order.Lattice.Nat
 
 /-!

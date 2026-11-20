@@ -511,7 +511,8 @@ private theorem TwoOpenTransition.continuousOn_coordChange {X G : Type*} [Topolo
         (D.continuousOn_transition.comp continuous_fst.continuousOn (fun _ hp => hp.1))
   · exact
       continuous_snd.continuousOn.mul
-        (D.continuousOn_transition.comp continuous_fst.continuousOn
+        (D.continuousOn_transition.comp
+            (s := (D.baseSet true ∩ D.baseSet false) ×ˢ Set.univ) continuous_fst.continuousOn
             (fun _ hp => ⟨hp.1.2, hp.1.1⟩)).inv
   · exact continuous_snd.continuousOn
 

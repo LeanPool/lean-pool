@@ -95,7 +95,7 @@ theorem regMollifyVector_component_eLpNorm_le_sum
     eLpNorm (fun x : Vec3 =>
         (WithLp.ofLp (regMollifyVector ρ ε hε f (WithLp.toLp 2 x))) i) p volume ≤
       eLpNorm (fun x : Vec3 => regMollifyVector ρ ε hε f (WithLp.toLp 2 x)) p volume := by
-        apply eLpNorm_mono_enorm_ae hcomponent
+        apply eLpNorm_mono_eNorm_ae hcomponent
         filter_upwards [] with x
         rw [← ofReal_norm, ← ofReal_norm]
         let v := regMollifyVector ρ ε hε f (WithLp.toLp 2 x)

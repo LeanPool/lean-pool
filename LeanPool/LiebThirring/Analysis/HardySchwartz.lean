@@ -34,7 +34,7 @@ theorem lintegral_coulomb_sq_schwartz_le (c : Position) (f : 𝓢(Position, E)) 
     exact ((ENNReal.continuous_ofReal.measurable.comp
       ((continuous_norm.comp (continuous_id.sub continuous_const)).pow 2 |>.add
         continuous_const).measurable).inv).mul
-      ((ENNReal.continuous_coe.measurable.comp f.continuous.nnnorm.measurable).pow_const 2)
+      ((ENNReal.continuous_coe.measurable.comp f.continuous.nnNorm.measurable).pow_const 2)
   have ht (x : Position) : Tendsto (fun ε : ℝ => F ε x) (𝓝[>] 0)
       (𝓝 (coulombKernel x c ^ 2 * (‖f x‖₊ : ℝ≥0∞) ^ 2)) := by
     have hh : Tendsto (fun ε : ℝ => ENNReal.ofReal (‖x - c‖ ^ 2 + ε ^ 2))
@@ -116,7 +116,7 @@ theorem schwartz_dirichlet_eq_fourier (f : 𝓢(Position, H)) :
   · intro i _
     exact (measurable_const.mul (ENNReal.continuous_ofReal.measurable.comp
       (((continuous_id.inner continuous_const).pow 2).measurable))).mul
-      ((ENNReal.continuous_coe.measurable.comp (𝓕 f).continuous.nnnorm.measurable).pow_const 2)
+      ((ENNReal.continuous_coe.measurable.comp (𝓕 f).continuous.nnNorm.measurable).pow_const 2)
 
 /-- Schwartz Hardy with the exact Mathlib Fourier normalization. -/
 theorem lintegral_coulomb_sq_schwartz_fourier_le (c : Position) (f : 𝓢(Position, H)) :
@@ -141,7 +141,7 @@ theorem lintegral_coulomb_schwartz_fourier_le (c : Position) (f : 𝓢(Position,
         ∫⁻ x, coulombKernel x c ^ 2 * (‖f x‖₊ : ℝ≥0∞) ^ 2 := by
       simp only [add_mul, one_mul]
       apply lintegral_add_left
-      exact (ENNReal.continuous_coe.measurable.comp f.continuous.nnnorm.measurable).pow_const 2
+      exact (ENNReal.continuous_coe.measurable.comp f.continuous.nnNorm.measurable).pow_const 2
     _ ≤ _ := add_le_add le_rfl (lintegral_coulomb_sq_schwartz_fourier_le c f)
 
 end LiebThirring

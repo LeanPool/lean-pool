@@ -4291,8 +4291,7 @@ def InterleavedOccurrenceForm.negativeInsideSignedIso {n : ℕ}
       Dyck.reverseEdgeRelabeling_word b form.remainder
         form.b_not_mem_remainder]
     convert List.IsRotated.refl _ using 1
-    all_goals
-      simp only [List.nil_append, List.cons_append, List.append_assoc]
+    simp only [List.nil_append, List.cons_append, List.append_assoc]
 
 /-- A certified interleaved pair produces an adjacent handle block through the existing
 three-Dyck normalization chain.  If the inner occurrence of `b` is negative, the chain begins by

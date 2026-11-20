@@ -66,13 +66,11 @@ lemma firstPart_image (γ : Dipath x₀ x₁) (T a b : I) (h_ab : a ≤ b) :
   · rintro ⟨t, t_a_b, ht⟩
     rw [first_part_apply] at ht
     use T * t
-    constructor
-    constructor
+    refine ⟨⟨?_, ?_⟩, ht⟩
     · exact Subtype.coe_le_coe.mp <| mul_le_mul_of_nonneg_left (Subtype.coe_le_coe.mpr t_a_b.1)
         T.2.1
     · exact Subtype.coe_le_coe.mp <| mul_le_mul_of_nonneg_left (Subtype.coe_le_coe.mpr t_a_b.2)
         T.2.1
-    · exact ht
   · rintro ⟨t, t_Ta_Tb, ht⟩
     by_cases h : T = 0
     · exact ⟨a, ⟨le_rfl, h_ab⟩, by simp_all⟩

@@ -102,14 +102,14 @@ theorem integrable_normalizedSourceScale
   have hmeas : Measurable (normalizedSourceScale S sK) :=
     Measurable.max measurable_const (hdag.source_measurable.mul_const _)
   refine ⟨hmeas.aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
+  rw [hasFiniteIntegral_iff_eNorm]
   have hlint := lintegral_normalizedSourceScale_pow_le hdag hsK 1 le_rfl
   have hone : ∀ a, normalizedSourceScale S sK a ^ ((1 : ℕ) : ℝ) =
       normalizedSourceScale S sK a := fun a => by norm_num
   rw [lintegral_congr fun a => congrArg ENNReal.ofReal (hone a)] at hlint
   refine lt_of_le_of_lt (le_trans (lintegral_mono fun a => ?_) hlint)
     ENNReal.ofReal_lt_top
-  rw [Real.enorm_eq_ofReal
+  rw [Real.eNorm_eq_ofReal
     (le_trans zero_le_one (one_le_normalizedSourceScale S sK a))]
 
 /-- **The annealed scaled envelope**: every annealed aligned cell contained

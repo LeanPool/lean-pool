@@ -99,7 +99,7 @@ theorem invariant_under'_iff_linear_proj_comp_self_comp_linear_proj_eq :
 /-- Both `U` and `V` are invariant under `T` iff `T` commutes with `pᵤ`. -/
 theorem isCompl_invariantUnder_iff_linear_proj_and_self_commute :
     U.InvariantUnder T ∧ V.InvariantUnder T ↔ Commute (U.subtype ∘ₗ pᵤ) T := by
-  simp_rw [Commute, SemiconjBy, LinearMap.ext_iff, Module.End.mul_apply, LinearMap.comp_apply,
+  simp_rw [Commute, SemiconjBy, LinearMap.ext_iff, mul_apply_eq_comp, LinearMap.comp_apply,
     U.subtype_apply]
   constructor
   · rintro ⟨h1, h2⟩ x
@@ -148,7 +148,7 @@ theorem invariantUnder_inv_iff_U_subset_image [Invertible T] :
   · intro h x hx
     simp only [Set.mem_image, SetLike.mem_coe]
     use (⅟ T) x
-    rw [← LinearMap.comp_apply, ← Module.End.mul_eq_comp, mul_invOf_self, Module.End.one_apply,
+    rw [← LinearMap.comp_apply, ← Module.End.mul_eq_comp, mul_invOf_self, one_apply_eq_self,
       eq_self_iff_true, and_true]
     exact h hx
   · intro h x hx

@@ -255,10 +255,12 @@ def PreWonPos (u : List A) := LosingCondition H.liftShort.val (by simp) ∧
     rw [hS]; symm; apply cast_subtree (by simp [List.take_take, h]) rfl
 attribute [simp_lengths] take_toPreLift
 lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by
-  ext1; apply PreLift.take_of_length_le <;> omega; rfl
+  ext1
+  · exact H.toPreLift.take_of_length_le (h := by omega) h'
+  · rfl
 @[simp] lemma take_rfl : H.take (H.x.val.length (α := no_index _)) H.hlvl = H :=
   H.take_of_length_le le_rfl
-@[simp] lemma take_trans hm hn : (H.take m hm).take n hn = H.take (min m n) (by simp [*]) := by
+@[simp] lemma take_trans hm hn : (H.take m hm).take n hn = H.take (min m n) (by omega) := by
   ext1
   · simp
   · rfl
@@ -394,7 +396,7 @@ lemma take_of_length_le {h} (h' : H.x.val.length ≤ n) : H.take n h = H := by
   ext1; apply Lift.take_of_length_le <;> omega
 @[simp] lemma take_rfl : H.take (H.x.val.length (α := no_index _)) H.hlvl = H :=
   H.take_of_length_le le_rfl
-@[simp] lemma take_trans hm hn : (H.take m hm).take n hn = H.take (min m n) (by simp [*]) := by
+@[simp] lemma take_trans hm hn : (H.take m hm).take n hn = H.take (min m n) (by omega) := by
   ext1; simp
 
 attribute [local implicit_reducible] upA oldAsTrees gameAsTrees in

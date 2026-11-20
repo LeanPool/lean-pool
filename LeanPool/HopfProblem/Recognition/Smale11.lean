@@ -2378,7 +2378,9 @@ private theorem Smale.DiskOnePointCollapse.not_mem_boundary_iff {N : Type*} [Nor
 
 private def Smale.DiskOnePointCollapse.interiorHomeomorph {N : Type*} [NormedAddCommGroup N]
     [NormedSpace ℝ N] : ↥(boundary (N := N))ᶜ ≃ₜ N :=
-  (Homeomorph.setCongr (by ext z; exact not_mem_boundary_iff z)).trans
+  (Homeomorph.setCongr (s := (boundary (N := N))ᶜ)
+    (t := {z : Smale.MorseHandle.UnitDisk N | ‖(z : N)‖ < 1})
+    (by ext z; exact not_mem_boundary_iff z)).trans
     (Smale.DiskAnnulus.openDiskHomeomorph.trans Homeomorph.unitBall.symm)
 
 private def
@@ -3051,7 +3053,8 @@ private theorem Smale.ManifoldMorse.MorseSurgeryData.upperCollapse_old {E M : Ty
         (d.attachmentHomeomorph (Smale.ClosedHandleCore.oldInclusion _ d.handleMap x)) =
       (OnePoint.infty)
   rw [d.upperCollapse_realization]
-  exact Smale.ClosedHandleCore.collapseMap_old _ d.handleMap _ _ _ x
+  exact Smale.ClosedHandleCore.collapseMap_old {y : M | f y ≤ f p - d.radius ^ 2}
+    d.handleMap _ _ _ x
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem Smale.ManifoldMorse.MorseSurgeryData.upperCollapse_handle {E M : Type*}
@@ -3071,7 +3074,8 @@ private def
     [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M] [T2Space M] {f : M → ℝ} {p : M}
     (d : Smale.ManifoldMorse.MorseSurgeryData E f p) (hf : Continuous f) :
     C(d.UpperLevel, OnePoint d.chart.NegativeCoordinates) :=
-  (d.upperCollapseMap hf).comp ⟨Set.inclusion (fun _ hx => hx.le), continuous_inclusion _⟩
+  (d.upperCollapseMap hf).comp
+    ⟨fun x => ⟨x.val, x.property.le⟩, continuous_subtype_val.subtype_mk _⟩
 
 attribute [local instance 100] Classical.propDecidable in
 private theorem Smale.ManifoldMorse.MorseSurgeryData.levelCollapse_realized {E M : Type*}
@@ -3440,7 +3444,7 @@ private def Smale.ChartPuncturedBall.puncturedHomeomorph {E M : Type*} [NormedAd
     [TopologicalSpace M] (c : OpenPartialHomeomorph E M) (R : ℝ) (hR : 0 < R)
     (hs : Metric.closedBall (0 : E) R ⊆ c.source) :
     Smale.PuncturedBall.Space E R ≃ₜ puncturedSet c R :=
-  c.homeomorphOfImageSubsetSource
+  c.homeomorphOfImageSubsetSource (s := {x : E | x ≠ 0 ∧ ‖x‖ < R})
     (fun _ hx => ball_subset_source c R hs (mem_ball_zero_iff.mpr hx.2))
     (image_puncturedBall c R hR hs)
 
@@ -4507,7 +4511,7 @@ private def
     [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M] {f : M → ℝ} {p : M}
     (d : Smale.ManifoldMorse.MorseSurgeryData E f p) :
     C(d.UpperLevel, { y : M // f y ≤ f p + d.radius ^ 2 }) :=
-  ⟨Set.inclusion (fun _ hx => hx.le), continuous_inclusion _⟩
+  ⟨fun x => ⟨x.val, x.property.le⟩, continuous_subtype_val.subtype_mk _⟩
 
 private def Smale.ManifoldMorse.MorseSurgeryData.bandSublevelHomeomorph {E M : Type}
     [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace M] [ChartedSpace E M] {f : M → ℝ}

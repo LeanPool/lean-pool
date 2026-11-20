@@ -434,7 +434,7 @@ private theorem w1Infinity_cubeUnitCube_subConstShell_le [NeZero d]
       intro x hx
       have hstep : |g x i j - g (((3 : ℝ) ^ R.scale) • y + cubeBasePoint R) i j| ≤
           ‖g x - g (((3 : ℝ) ^ R.scale) • y + cubeBasePoint R)‖ := by
-        have hsup := Matrix.norm_entry_le_entrywise_sup_norm
+        have hsup := Matrix.norm_apply_le_norm
           (A := g x - g (((3 : ℝ) ^ R.scale) • y + cubeBasePoint R)) (i := i) (j := j)
         simpa [Real.norm_eq_abs] using hsup
       exact hstep.trans (hlip x hx _ hx₀)

@@ -154,7 +154,7 @@ theorem continuous_enorm_quadraticHilbertTruncation_positiveRadii
     (lam : ℝ) {f : ℝ → ℂ} (hf : Integrable f) (x : ℝ) :
     Continuous (fun ε : {ε : ℝ // 0 < ε} ↦
       ‖quadraticHilbertTrunc lam ε.1 f x‖ₑ) :=
-  (continuous_quadraticHilbertTruncation_positiveRadii lam hf x).enorm
+  (continuous_quadraticHilbertTruncation_positiveRadii lam hf x).eNorm
 
 /-- A fixed countable dense family of positive truncation radii. -/
 def densePositiveRadii : Set {ε : ℝ // 0 < ε} :=
@@ -196,7 +196,7 @@ theorem measurable_countableQuadraticHilbertMaximalTruncation
   let _ := countable_densePositiveRadii.toEncodable
   apply Measurable.iSup
   intro ε
-  exact (measurable_quadraticHilbertTrunc lam ε.1.1 hf).enorm
+  exact (measurable_quadraticHilbertTrunc lam ε.1.1 hf).eNorm
 
 /-- The genuine supremum over every positive real truncation radius is
 measurable for any measurable integrable input. -/

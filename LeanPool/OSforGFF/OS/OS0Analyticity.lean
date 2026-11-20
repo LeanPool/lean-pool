@@ -207,19 +207,19 @@ lemma gff_exp_abs_pairing_memLp (f : OSforGFF.TestFunction) (p : ENNReal) (hp : 
     simp_all only [ne_eq, distributionPairingCLM, ContinuousLinearMap.coe_mk', LinearMap.coe_mk,
       AddHom.coe_mk, muGFF, Function.comp_apply, Pi.mul_apply, Real.norm_eq_abs, Real.abs_exp,
       Filter.eventually_true]
-  rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp_pos hp h_aesm]
+  rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top hp_pos hp h_aesm]
   -- ‖exp(|x|)‖ₑ^p = exp(p|x|), reducing finiteness to h_exp_p_integrable.
   have h_eq : ∀ ω : FieldConfiguration,
       (‖Real.exp |ω f|‖ₑ : ENNReal) ^ p.toReal = ENNReal.ofReal (Real.exp (p.toReal * |ω f|)) := by
     intro ω
-    rw [Real.enorm_eq_ofReal (Real.exp_pos _).le,
+    rw [Real.eNorm_eq_ofReal (Real.exp_pos _).le,
       ENNReal.ofReal_rpow_of_nonneg (Real.exp_pos _).le ENNReal.toReal_nonneg, ← Real.exp_mul]
     ring_nf
   simp_rw [h_eq]
   have h_fin := h_exp_p_integrable.hasFiniteIntegral
   rw [HasFiniteIntegral] at h_fin
   convert h_fin using 1
-  exact lintegral_congr fun ω => by rw [Real.enorm_eq_ofReal (Real.exp_pos _).le]
+  exact lintegral_congr fun ω => by rw [Real.eNorm_eq_ofReal (Real.exp_pos _).le]
 
 /-- Integrability of exp(|ω f|) under the GFF measure.
     This is the L¹ special case of gff_exp_abs_pairing_memLp.

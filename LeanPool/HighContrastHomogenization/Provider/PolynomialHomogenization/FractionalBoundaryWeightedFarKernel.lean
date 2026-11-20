@@ -254,7 +254,7 @@ theorem exists_bound_lintegral_far_fractionalBoundaryKernel
     _ ≤ ∑' k, ∫⁻ y in shell k,
           ENNReal.ofReal (euclideanDist x y ^ (s - (d : ℝ))) *
             euclideanBoundaryWeight U p y ∂volume := lintegral_iUnion_le _ _
-    _ ≤ ∑' k, M * ENNReal.ofReal (T k) := ENNReal.tsum_le_tsum hshell
+    _ ≤ ∑' k, M * ENNReal.ofReal (T k) := tsum_le_tsum hshell
     _ = ∑' k, (M * ENNReal.ofReal A *
           ENNReal.ofReal (delta ^ (s - p))) *
         (ENNReal.ofReal ratio) ^ k := by

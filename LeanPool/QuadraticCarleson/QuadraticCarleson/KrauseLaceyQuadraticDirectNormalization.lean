@@ -109,7 +109,7 @@ theorem localizedTailMaximal_smul
           ‖c‖ₑ * ‖localizedTailAction scale S f ell.1 x‖ₑ := by
       apply iSup_congr
       intro ell
-      rw [localizedTailAction_smul c scale S f ell.1 x, enorm_mul]
+      rw [localizedTailAction_smul c scale S f ell.1 x, eNorm_mul]
     _ = ‖c‖ₑ * ⨆ ell : {ell : ℤ // ell₀ ≤ ell},
           ‖localizedTailAction scale S f ell.1 x‖ₑ :=
       (ENNReal.mul_iSup _ _).symm

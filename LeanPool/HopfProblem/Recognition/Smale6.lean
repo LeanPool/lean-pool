@@ -3843,8 +3843,8 @@ private theorem Smale.TransverseCoordinates.contDiffOn_sumMap {D Z A : Type*} [N
     [NormedSpace ℝ D] [NormedAddCommGroup Z] [NormedSpace ℝ Z] [NormedAddCommGroup A]
     [NormedSpace ℝ A] {f : D → A} {g : Z → A} {U : Set D} {V : Set Z} (hf : ContDiffOn ℝ ∞ f U)
     (hg : ContDiffOn ℝ ∞ g V) : ContDiffOn ℝ ∞ (sumMap f g) (U ×ˢ V) :=
-  ((hf.comp contDiff_fst.contDiffOn (fun _ hx => hx.1)).add
-        (hg.comp contDiff_snd.contDiffOn (fun _ hx => hx.2))).sub
+  ((hf.comp (s := U ×ˢ V) contDiff_fst.contDiffOn (fun _ hx => hx.1)).add
+        (hg.comp (s := U ×ˢ V) contDiff_snd.contDiffOn (fun _ hx => hx.2))).sub
     contDiffOn_const
 
 private theorem

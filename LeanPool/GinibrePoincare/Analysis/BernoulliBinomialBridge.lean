@@ -114,8 +114,8 @@ theorem bernoulliCubeAverage_eq_rademacherSum_integral (n : ℕ) (F : ℝ →ᵇ
       simp [bernoulliCubeSum, rademacherSum, Fintype.card_unique]
   | succ n ih =>
       rw [rademacherSum_integral_succ, ← ih, bernoulliCubeAverage_succ]
-      simp only [bernoulliCubeSum, bernoulliAverageStep, BoundedContinuousFunction.smul_apply,
-        BoundedContinuousFunction.add_apply, BoundedContinuousFunction.compContinuous_apply,
+      simp only [bernoulliCubeSum, bernoulliAverageStep, smul_apply, add_apply,
+        BoundedContinuousFunction.compContinuous_apply,
         ContinuousMap.coe_mk, smul_eq_mul, Bool.false_eq_true, ite_true, ite_false]
       unfold bernoulliCubeAverage
       simp only [sub_eq_add_neg]

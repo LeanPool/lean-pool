@@ -87,11 +87,11 @@ private theorem exactOverlapRootMean_enorm_le_normalizedEuclideanLp
       unfold exactOverlapRootMean
       change ENNReal.ofReal |∫ x, F.toField x i ∂μ| =
         ‖∫ x, F.toField x i ∂μ‖ₑ
-      exact (Real.enorm_eq_ofReal_abs _).symm
+      exact (Real.eNorm_eq_ofReal_abs _).symm
     _ ≤ ∫⁻ x, ‖F.toField x i‖ₑ ∂μ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ = eLpNorm (fun x => F.toField x i) 1 μ := by
-      rw [eLpNorm_one_eq_lintegral_enorm hcoord_meas]
+      rw [eLpNorm_one_eq_lintegral_eNorm hcoord_meas]
     _ ≤ eLpNorm (fun x => F.toField x i) p.exponent μ :=
       eLpNorm_le_eLpNorm_of_exponent_le p.one_lt.le
     _ ≤ eLpNorm (fun x => HilbertVec.ofVec (F.toField x)) p.exponent μ :=

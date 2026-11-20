@@ -225,7 +225,8 @@ theorem TendstoLocallyUniformlyOn.analyticOnNhd_of_finiteDimensional
     (hf : ∀ᶠ n in l, AnalyticOnNhd ℂ (f n) U) (hU : IsOpen U) :
     AnalyticOnNhd ℂ g U := by
   let e := (Module.finBasis ℂ E).equivFunL
-  have hc := hlim.comp e.symm (fun _ hx => hx) e.symm.continuous.continuousOn
+  have hc := hlim.comp (t := e.symm ⁻¹' U) e.symm (fun _ hx => hx)
+    e.symm.continuous.continuousOn
   have ha := hc.analyticOnNhd_pi (hf.mono fun n hn =>
     hn.comp (e.symm.toContinuousLinearMap.analyticOnNhd _) (fun _ hx => hx))
     (hU.preimage e.symm.continuous)
@@ -242,7 +243,8 @@ theorem TendstoLocallyUniformlyOn.fderiv_of_finiteDimensional
     (hf : ∀ᶠ n in l, AnalyticOnNhd ℂ (f n) U) (hU : IsOpen U) :
     TendstoLocallyUniformlyOn (fun n => fderiv ℂ (f n)) (fderiv ℂ g) l U := by
   let e := (Module.finBasis ℂ E).equivFunL
-  have hc := hlim.comp e.symm (fun _ hx => hx) e.symm.continuous.continuousOn
+  have hc := hlim.comp (t := e.symm ⁻¹' U) e.symm (fun _ hx => hx)
+    e.symm.continuous.continuousOn
   have hd := hc.fderiv_pi (hf.mono fun n hn =>
     hn.comp (e.symm.toContinuousLinearMap.analyticOnNhd _) (fun _ hx => hx))
     (hU.preimage e.symm.continuous)

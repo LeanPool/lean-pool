@@ -122,7 +122,7 @@ theorem lerayLimit_regUniformMollifiedVelocity_tendsto_of_compact
       rw [eLpNorm_indicator_const hSmeas.nullMeasurableSet
         (by norm_num) (by norm_num)]
     _ ≤ e := by
-      rw [Real.enorm_eq_ofReal hη.le]
+      rw [Real.eNorm_eq_ofReal hη.le]
       have hAeq : A = ENNReal.ofReal A.toReal := (ENNReal.ofReal_toReal hA.ne).symm
       rw [hAeq, ← ENNReal.ofReal_mul hη.le, ← ENNReal.ofReal_toReal hetop]
       apply ENNReal.ofReal_le_ofReal

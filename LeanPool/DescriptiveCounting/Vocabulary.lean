@@ -90,7 +90,8 @@ def prefixed (p n : Name) : Name :=
 /-- A docstring node carrying the given text, for a declaration the user does
 not name. -/
 def mkDoc (s : String) : TSyntax `Lean.Parser.Command.docComment :=
-  ⟨mkNode ``Lean.Parser.Command.docComment #[mkAtom "/--", mkAtom (s ++ " -/")]⟩
+  ⟨mkNode ``Lean.Parser.Command.docComment #[mkAtom "/--",
+    mkNode `Lean.Parser.Command.commentBody #[mkAtom s, mkAtom "-/"]]⟩
 
 /-- The user's docstring, or a generic one when there is none. -/
 def docOr (d? : Option Syntax) (fallback : String) :

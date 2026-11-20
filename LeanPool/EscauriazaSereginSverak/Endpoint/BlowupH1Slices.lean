@@ -29,7 +29,7 @@ theorem blowup_memLp_two_of_energy
     (hv : AEStronglyMeasurable v (volume.restrict S))
     (hfinite : (∫⁻ z in S, ‖v z‖ₑ ^ (2 : ℝ)) < ⊤) :
     MemLp v 2 (volume.restrict S) := by
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (by norm_num : (2 : ℝ≥0∞) ≠ 0)
     (by finiteness : (2 : ℝ≥0∞) ≠ ⊤) hv]
   simp only [ENNReal.toReal_ofNat]

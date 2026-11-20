@@ -773,7 +773,7 @@ private theorem hdispR :
   rw [hq3mul]
   fin_cases s <;> simp [vR, uL, t,
     even0, even2, notEven1, notEven3, hq2, hq3] <;>
-    try simp [hq2act]
+    simp [hq2act]
 
 private theorem hdispL :
     (by
@@ -816,7 +816,7 @@ private theorem hdispL :
   rw [hq3mul]
   fin_cases s <;> simp [vL, uR, t,
     even0, even2, notEven1, notEven3, hq2, hq3] <;>
-    try simp [hq2act]
+    simp [hq2act]
 
 private theorem hstep :
     (by

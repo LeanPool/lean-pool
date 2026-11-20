@@ -185,7 +185,7 @@ theorem p1_lower_from_source {p : Point} (hp : p ∈ D.carrier) (hX : 0 < p.1)
       change 0 ≤ 2 * s * P.f (s, p.2)
       exact mul_nonneg (mul_nonneg (by norm_num) hs.1) (hf s hs).le
     calc
-      _ = (2 * s * P.f p) * q := by (try simp only [id_eq]); ring
+      _ = (2 * s * P.f p) * q := by simp only [id_eq]; ring
       _ ≤ P.H (s, p.2) * q := by
         apply mul_le_mul_of_nonneg_right _ hq
         exact mul_le_mul_of_nonneg_left hm (mul_nonneg (by norm_num) hs.1)

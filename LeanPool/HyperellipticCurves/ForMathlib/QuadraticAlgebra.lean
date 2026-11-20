@@ -20,7 +20,7 @@ Everything in this file is stated for general `QuadraticAlgebra R a b` and is in
 for eventual upstreaming to Mathlib:
 
 * `re`/`im`/`star` of `algebraMap` over a general base `S`, and `star` as an `S`-algebra
-  automorphism (`QuadraticAlgebra.starAlgEquiv`);
+  automorphism (`QuadraticAlgebra.starAlgEquivOfAlgebra`);
 * `ω²` and `star ω` (`QuadraticAlgebra.omega_sq`, `QuadraticAlgebra.star_omega`);
 * functoriality in the coefficient ring with a prescribed target (`QuadraticAlgebra.mapRingHomTo`);
 * the field-theoretic norm and trace of `QuadraticAlgebra R a b` over `R`
@@ -68,16 +68,16 @@ theorem star_algebraMap (s : S) :
 
 /-- `star` as an `S`-algebra automorphism of `QuadraticAlgebra R a b`,
 for any base `S` of the coefficient ring `R`. -/
-def starAlgEquiv : QuadraticAlgebra R a b ≃ₐ[S] QuadraticAlgebra R a b :=
+def starAlgEquivOfAlgebra : QuadraticAlgebra R a b ≃ₐ[S] QuadraticAlgebra R a b :=
   AlgEquiv.ofRingEquiv (f := starRingAut) star_algebraMap
 
 @[simp]
-theorem starAlgEquiv_apply (z : QuadraticAlgebra R a b) :
-    (starAlgEquiv (S := S)) z = star z := rfl
+theorem starAlgEquivOfAlgebra_apply (z : QuadraticAlgebra R a b) :
+    (starAlgEquivOfAlgebra (S := S)) z = star z := rfl
 
 @[simp]
 theorem starAlgEquiv_symm :
-    (starAlgEquiv (S := S) (R := R) (a := a) (b := b)).symm = starAlgEquiv := rfl
+    (starAlgEquivOfAlgebra (S := S) (R := R) (a := a) (b := b)).symm = starAlgEquivOfAlgebra := rfl
 
 /-- The defining equation of the generator: `ω² = a + b·ω`. -/
 theorem omega_sq : (ω : QuadraticAlgebra R a b) ^ 2 = algebraMap R _ a + b • ω := by

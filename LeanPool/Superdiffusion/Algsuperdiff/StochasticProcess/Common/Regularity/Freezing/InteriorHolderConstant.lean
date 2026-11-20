@@ -63,7 +63,7 @@ private theorem scalarLInfSizeOn_const_mul (W : Set (Vec d)) (c : ℝ)
   have heq : (fun x ↦ c * g x) = c • g := by
     funext x
     simp only [Pi.smul_apply, smul_eq_mul]
-  rw [heq, eLpNorm_const_smul, ENNReal.toReal_mul, Real.enorm_eq_ofReal_abs,
+  rw [heq, eLpNorm_const_smul, ENNReal.toReal_mul, Real.eNorm_eq_ofReal_abs,
     ENNReal.toReal_ofReal (abs_nonneg c)]
 
 open scoped Classical in

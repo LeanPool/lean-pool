@@ -64,8 +64,8 @@ lemma isometry_stochasticIntegralBrownian {T : ℝ} (hT : 0 < T) :
   have htend : Filter.Tendsto (fun n => masterLp W ℱ hℱ H h_meas h_progMeas h_sq_int_global T n)
       Filter.atTop (nhds Flp) :=
     (masterLp_cauchySeq W ℱ hℱ H h_meas h_progMeas h_sq_int_global (le_of_lt hT)).tendsto_limUnder
-  have hn := (htend.enorm).ennrpow_const 2
-  simp only [MeasureTheory.Lp.enorm_def] at hn
+  have hn := (htend.eNorm).ennrpow_const 2
+  simp only [MeasureTheory.Lp.eNorm_def] at hn
   -- limit `eLpNorm ↑↑Flp ^ 2 = ∫⁻‖F T‖²`
   have hlim : MeasureTheory.eLpNorm (↑↑Flp : Ω → ℝ) 2 P ^ (2 : ℝ)
       = ∫⁻ ω, (‖stochasticIntegralBrownian W ℱ hℱ H h_meas h_progMeas
@@ -158,17 +158,18 @@ lemma horizon_lintegral_add {s r : ℝ} (hs : 0 ≤ s) (hsr : s ≤ r) :
     ∫⁻ ω, ∫⁻ u in Set.Icc (0 : ℝ) r, (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P
       = (∫⁻ ω, ∫⁻ u in Set.Icc (0 : ℝ) s, (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P)
         + ∫⁻ ω, ∫⁻ u in Set.Ioc s r, (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
+  have hdisjoint : Disjoint (Set.Icc (0 : ℝ) s) (Set.Ioc s r) :=
+    (Set.Iic_disjoint_Ioc (c := r) (le_refl s)).mono Set.Icc_subset_Iic_self subset_rfl
   have hinner : ∀ ω, ∫⁻ u in Set.Icc (0 : ℝ) r, (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume
       = ∫⁻ u in Set.Icc (0 : ℝ) s, (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume
         + ∫⁻ u in Set.Ioc s r, (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume := by
     intro ω
     rw [← Set.Icc_union_Ioc_eq_Icc hs hsr,
-        MeasureTheory.lintegral_union measurableSet_Ioc
-          (Set.disjoint_left.mpr (fun x hx1 hx2 => absurd hx2.1 (not_lt.mpr hx1.2)))]
+        MeasureTheory.lintegral_union measurableSet_Ioc hdisjoint]
   rw [MeasureTheory.lintegral_congr hinner]
   exact MeasureTheory.lintegral_add_left'
     ((Measurable.lintegral_prod_right' (ν := volume.restrict (Set.Icc (0 : ℝ) s))
-      (((h_meas.nnnorm).coe_nnreal_ennreal).pow_const 2)).aemeasurable) _
+      (((h_meas.nnNorm).coe_nnreal_ennreal).pow_const 2)).aemeasurable) _
 
 include h_meas h_sq_int_global in
 /-- Right-continuity of the horizon integral `r ↦ ∫⁻∫⁻_{[0,r]}‖H‖²` at `s ≥ 0`. -/
@@ -180,7 +181,7 @@ lemma horizon_lintegral_right_tendsto {s : ℝ} (hs : 0 ≤ s) :
   have hz : Filter.Tendsto (fun r => ∫⁻ ω, ∫⁻ u in Set.Ioc s r,
         (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P) (nhdsWithin s (Set.Ioi s)) (nhds 0) :=
     tendsto_setLIntegral_Ioc_prod_zero (fun ω u => (‖H ω u‖₊ : ℝ≥0∞) ^ 2)
-      ((h_meas.nnnorm.coe_nnreal_ennreal).pow_const 2) hs (lt_add_one s)
+      ((h_meas.nnNorm.coe_nnreal_ennreal).pow_const 2) hs (lt_add_one s)
       (h_sq_int_global (s + 1) (by linarith)).ne
   have ht := (tendsto_const_nhds (x := ∫⁻ ω, ∫⁻ u in Set.Icc (0 : ℝ) s,
     (‖H ω u‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P)).add hz
@@ -299,7 +300,7 @@ i.e. `(ω, u) ↦ H ω u` is square-integrable over the product. -/
 lemma compensatorH_memLp_prod {t : ℝ} (ht : 0 < t) :
     MeasureTheory.MemLp (fun p : Ω × ℝ => H p.1 p.2) 2
       (P.prod (volume.restrict (Set.Icc (0 : ℝ) t))) := by
-  rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (f := fun p : Ω × ℝ => H p.1 p.2) (by norm_num : (2 : ℝ≥0∞) ≠ 0)
     (by simp : (2 : ℝ≥0∞) ≠ ⊤) h_meas.aestronglyMeasurable,
     show (2 : ℝ≥0∞).toReal = 2 from by simp]
@@ -307,7 +308,7 @@ lemma compensatorH_memLp_prod {t : ℝ} (ht : 0 < t) :
         ∂(P.prod (volume.restrict (Set.Icc (0 : ℝ) t)))
       = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t, (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
     rw [MeasureTheory.lintegral_prod _
-      ((((h_meas.nnnorm).coe_nnreal_ennreal).pow_const 2).aemeasurable.congr
+      ((((h_meas.nnNorm).coe_nnreal_ennreal).pow_const 2).aemeasurable.congr
         (Filter.Eventually.of_forall (fun p => by
           rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) from by norm_num, ENNReal.rpow_natCast]; rfl)))]
     refine lintegral_congr (fun ω => ?_)
@@ -366,7 +367,7 @@ lemma masterApprox_compensator_tendsto_L1 {t : ℝ} (ht : 0 ≤ t) :
       intro f hf
       rw [eLpNorm_sq_eq_lintegral_nnnorm_sq f hf.aestronglyMeasurable,
           MeasureTheory.lintegral_prod _
-            (((hf.nnnorm.coe_nnreal_ennreal).pow_const 2).aemeasurable)]
+            (((hf.nnNorm.coe_nnreal_ennreal).pow_const 2).aemeasurable)]
     have hfin2 : ∀ (f : Ω × ℝ → ℝ), Measurable f →
         (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) t, (‖f (ω, s)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P ≠ ⊤) →
         MeasureTheory.eLpNorm f 2 (P.prod ν) < ⊤ :=
@@ -386,7 +387,7 @@ lemma masterApprox_compensator_tendsto_L1 {t : ℝ} (ht : 0 ≤ t) :
         simp only [Pi.sub_apply, hGp, hHp]
         rw [show (masterApprox ℱ H h_meas h_progMeas h_sq_int_global n).eval s ω - H ω s
               = -(H ω s - (masterApprox ℱ H h_meas h_progMeas h_sq_int_global n).eval s ω)
-            from by ring, nnnorm_neg]
+            from by ring, nnNorm_neg]
       have h2 : Filter.Tendsto (fun n => MeasureTheory.eLpNorm (Gp n - Hp) 2 (P.prod ν) ^ (2 : ℝ))
           Filter.atTop (nhds 0) := by
         simp_rw [hsq]
@@ -423,9 +424,9 @@ lemma masterApprox_compensator_tendsto_L1 {t : ℝ} (ht : 0 ≤ t) :
             ((masterApprox ℱ H h_meas h_progMeas h_sq_int_global n).eval u ω) ^ 2 ∂volume)
             - ∫ u in Set.Icc (0 : ℝ) t, (H ω u) ^ 2 ∂volume) P :=
         (hGsq_int.integral_prod_left.sub hHsq_int.integral_prod_left).aestronglyMeasurable
-      rw [MeasureTheory.eLpNorm_one_eq_lintegral_enorm hmarg_aesm,
-        MeasureTheory.eLpNorm_one_eq_lintegral_enorm hdsq_int.aestronglyMeasurable,
-        MeasureTheory.lintegral_prod _ hdsq_int.aestronglyMeasurable.enorm]
+      rw [MeasureTheory.eLpNorm_one_eq_lintegral_eNorm hmarg_aesm,
+        MeasureTheory.eLpNorm_one_eq_lintegral_eNorm hdsq_int.aestronglyMeasurable,
+        MeasureTheory.lintegral_prod _ hdsq_int.aestronglyMeasurable.eNorm]
       refine MeasureTheory.lintegral_mono_ae ?_
       filter_upwards [hGsq_int.prod_right_ae, hHsq_int.prod_right_ae] with ω hGω hHω
       have hcomb : (∫ u in Set.Icc (0 : ℝ) t,
@@ -434,7 +435,7 @@ lemma masterApprox_compensator_tendsto_L1 {t : ℝ} (ht : 0 ≤ t) :
           = ∫ u, dsq (ω, u) ∂ν := by
         rw [hdsq]; exact (MeasureTheory.integral_sub hGω hHω).symm
       rw [hcomb]
-      exact MeasureTheory.enorm_integral_le_lintegral_enorm _
+      exact MeasureTheory.eNorm_integral_le_lintegral_eNorm _
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hjoint
       (Filter.Eventually.of_forall (fun n => bot_le)) (Filter.Eventually.of_forall hmarg)
   · refine Filter.Tendsto.congr' ?_ tendsto_const_nhds

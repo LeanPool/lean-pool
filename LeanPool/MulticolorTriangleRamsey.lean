@@ -358,7 +358,8 @@ noncomputable def triangleRamseyNumber (k : ℕ) : ℕ :=
 
 theorem triangleRamseyNumber_forces (k : ℕ) :
     ForcesMonochromaticTriangle (triangleRamseyNumber k) k := by
-  exact Nat.sInf_mem (exists_forcesMonochromaticTriangle k)
+  exact Nat.sInf_mem (s := {n : ℕ | ForcesMonochromaticTriangle n k})
+    (exists_forcesMonochromaticTriangle k)
 
 theorem triangleRamseyNumber_succ_le (k : ℕ) :
     triangleRamseyNumber (k + 1) ≤

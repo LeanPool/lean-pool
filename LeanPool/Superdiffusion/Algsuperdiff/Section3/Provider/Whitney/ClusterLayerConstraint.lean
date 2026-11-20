@@ -702,7 +702,8 @@ theorem badFamily_whitneyNeighborhood_finite_and_mem_leastLayer_or_succ
             (leastWhitneyLayer m (whitneyScale M m E b k₀ omega)
               (whitneyNeighborhood m (whitneyScale M m E b k₀ omega)
                 (badComponent (badFamily M m (whitneyScale M m E b k₀ omega) omega) Q₀)) + 1) :=
-  whitneyNeighborhood_finite_and_mem_leastLayer_or_succ hb0 hb hk₀
+  whitneyNeighborhood_finite_and_mem_leastLayer_or_succ
+    (S := badFamily M m (whitneyScale M m E b k₀ omega) omega) hb0 hb hk₀
     (fun _ hh _ hu => Percolation.badClusterDiam_lt_of_hsep_le hne hh hu)
     (fun _ hQ => hQ.1) (fun _ hQ => hQ.2) hQ₀
 

@@ -268,9 +268,9 @@ private theorem conjugateSuccessor (base p : Fin 4 → CircleCoordinates)
         Zsqrtd.re_sub, Zsqrtd.re_add, Zsqrtd.re_mul, Zsqrtd.re_ofNat, Nat.cast_ofNat,
         Zsqrtd.im_ofNat, mul_zero, zero_mul, add_zero, Zsqrtd.im_sub, Zsqrtd.im_add,
         Zsqrtd.im_mul, neg_sub, Matrix.vecCons_inj, Prod.mk.injEq, sub_left_inj, and_true, pp];
-    try { constructor
-          · ring
-          · ext <;> simp [] <;> ring }
+    (constructor
+     · ring
+     · ext <;> simp [] <;> ring)
 
 end RetainedBoundaryProof
 

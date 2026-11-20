@@ -63,17 +63,14 @@ end IsHermitian
 
 theorem conj_mul {α m n p : Type _} [Fintype n] [CommSemiring α] [StarRing α] (x : Matrix m n α)
     (y : Matrix n p α) : (x * y)ᴴᵀ = xᴴᵀ * yᴴᵀ := by
-  ext
-  simp_rw [conj_apply, mul_apply, star_sum, StarMul.star_mul, conj_apply, mul_comm]
+  simp only [conj, conjTranspose_mul, transpose_mul]
 
 theorem conj_one {α n : Type _} [DecidableEq n] [Semiring α] [StarRing α] :
     (1 : Matrix n n α)ᴴᵀ = 1 := by
-  ext
-  simp_rw [conj_apply, one_apply, star_ite, star_one, star_zero]
+  simp only [conj, conjTranspose_one, transpose_one]
 
 theorem conj_zero {α n₁ n₂ : Type _} [AddMonoid α] [StarAddMonoid α] :
   (0 : Matrix n₁ n₂ α)ᴴᵀ = 0 := by
-  ext
-  simp_rw [conj_apply, zero_apply, star_zero]
+  simp only [conj, conjTranspose_zero, transpose_zero]
 
 end Matrix

@@ -385,7 +385,7 @@ lemma Tableau.flip_flip {Hist X} {tab : Tableau Hist X} :
     · exact eq_of_heq (by assumption)
     · apply eqRec_heq_iff.mpr
       rfl
-    all_goals rfl
+    rfl
   case pdl r next IH =>
     nth_rewrite 1 [Tableau.flip]
     nth_rewrite 1 [Tableau.flip]
@@ -509,7 +509,7 @@ theorem PathIn.flip_flip {Hist X} {tab : Tableau Hist X} (p : PathIn tab) :
       rw! (castMode := .all) [Sequent.flip_flip]
       apply heq_of_eq; congr 1
     all_goals (try exact proof_irrel_heq _ _)
-    all_goals (try (simp))
+    simp
 /-- Undo `PathIn.flip`: flipping twice is the identity (up to the cast). -/
 def PathIn.unflip {X} {tab : Tableau .nil X} (p : PathIn tab.flip) : PathIn tab :=
   PathIn_type_flip_flip ▸ p.flip

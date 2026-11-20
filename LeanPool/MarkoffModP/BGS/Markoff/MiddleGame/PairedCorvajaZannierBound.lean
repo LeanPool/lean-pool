@@ -44,7 +44,7 @@ private lemma sixtyFour_rpow_one_third_eq_four :
   rw [show (64 : ℝ) = 4 ^ (3 : ℕ) by norm_num]
   convert Real.pow_rpow_inv_natCast (by norm_num : (0 : ℝ) ≤ 4)
     (by norm_num : (3 : ℕ) ≠ 0) using 1
-  all_goals norm_num
+  norm_num
 
 /-- At bidegree `(2,2)` and the unconditional Euler bound `8`, the
 source-faithful Corvaja--Zannier right-hand side is exactly twice the paired

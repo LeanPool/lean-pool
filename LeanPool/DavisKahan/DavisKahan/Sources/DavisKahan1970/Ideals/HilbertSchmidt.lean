@@ -198,8 +198,9 @@ theorem approximationNumberEnergy_comp_le
         approximationNumberEnergy A := by
   unfold approximationNumberEnergy
   rw [← ENNReal.tsum_mul_left]
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro n
+  dsimp only
   have hsing := approximationSingularValue_comp_le n L A R
   have hnonneg : 0 ≤ approximationSingularValue n (L ∘L A ∘L R) :=
     approximationSingularValue_nonneg _ _

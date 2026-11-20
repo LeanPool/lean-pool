@@ -199,9 +199,9 @@ theorem eq_zero_of_anticommutator_nonpos {A K : H →L[ℂ] H}
     intro hz
     exact_mod_cast hzero z hz
   have hnn : ‖K‖₊ = 0 := by
-    have := (K.spectralRadius_eq_nnnorm hKsa).symm.trans hrad
+    have := (K.spectralRadius_eq_nnNorm hKsa).symm.trans hrad
     exact_mod_cast this
-  exact nnnorm_eq_zero.mp hnn
+  exact nnNorm_eq_zero.mp hnn
 
 /-- The anticommutator of two self-adjoint operators is self-adjoint. -/
 theorem anticommutator_isSelfAdjoint (S T : H →L[ℂ] H)

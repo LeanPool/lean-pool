@@ -466,9 +466,9 @@ above the carrier of `x`. -/
 def cellNbhd (R : S.Realization) (x : Plane) : Set Plane :=
   (⋃ τ ∈ {τ | τ ∈ S.cells ∧ x ∉ closure (R.cell τ)}, closure (R.cell τ))ᶜ
 
-theorem isOpen_cellNbhd (R : S.Realization) (x : Plane) : IsOpen (R.cellNbhd x) :=
-  ((S.finite_cells.subset fun _ hτ => hτ.1).isClosed_biUnion
-    fun _ _ => isClosed_closure).isOpen_compl
+theorem isOpen_cellNbhd (R : S.Realization) (x : Plane) : IsOpen (R.cellNbhd x) := by
+  refine (Set.Finite.isClosed_biUnion ?_ (fun _ _ => isClosed_closure)).isOpen_compl
+  exact S.finite_cells.subset fun _ hτ => hτ.1
 
 theorem mem_cellNbhd_self (R : S.Realization) (x : Plane) : x ∈ R.cellNbhd x := by
   intro hx

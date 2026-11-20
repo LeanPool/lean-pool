@@ -119,7 +119,7 @@ theorem lps_lh_slice_bound {T s : ℝ} {a : Vec3 → Vec3} {u : ParabolicPoint �
   filter_upwards [lps_slice_memLp_two_ae_slab hu2s, hae] with t hm hb
   refine ⟨hm, ?_⟩
   refine ENNReal.toReal_mono (ENNReal.rpow_ne_top_of_nonneg (by norm_num) hKtop.ne) ?_
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hm.aestronglyMeasurable]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_le_rpow hb (by norm_num)
 

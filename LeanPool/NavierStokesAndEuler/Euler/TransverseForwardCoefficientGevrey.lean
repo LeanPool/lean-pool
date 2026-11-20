@@ -211,7 +211,7 @@ theorem frameLeftInversePath_bound (n : ℕ) (x : P) :
     (inversePath_coefficient_bound T Q c hc hQ hQr Rc C₀ Ri hRc hC₀ hRi hbQ) hbAdj n x
   simp only [Nat.add_zero] at h
   convert h using 1
-  all_goals rfl
+  rfl
 
 include hQr hQ₁r hRc hC₀ hC₁ hRi hbQ hbQ₁ in
 /-- The ordinary generator in (12) has actual shift-zero coefficient bounds. -/
@@ -259,6 +259,6 @@ theorem projected_forcing_bound (f : P → C(Icc (0 : ℝ) T, E)) (hf : ContDiff
   have he : 3*(3*Ri*C₀)*D = 9*Ri*C₀*D := by ring
   simp only [Nat.zero_add, he] at h
   convert h using 1
-  all_goals rfl
+  rfl
 
 end EulerTransverseForwardCoefficientGevrey

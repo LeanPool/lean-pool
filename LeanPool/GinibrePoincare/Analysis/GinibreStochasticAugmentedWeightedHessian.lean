@@ -105,7 +105,7 @@ theorem ginibreBrownianAugmentedWeightedHessian_tendstoInProbability {Ω ι : Ty
     · convert! ginibreBrownianAugmentedMixedError_tendstoInProbability B P hB hind i j hij t
         (fun n l => A i j (ginibreUniformBrownianTime t n l))
         (fun n l => (hA _ _ _).measurable) C (fun n l ω => hbound _ _ _ ω) using 1
-      all_goals simp [L, hij]
+      simp [L, hij]
   have h := itoTendstoInMeasure_finset_sum P Finset.univ W L hWm hW
   convert! h using 1
   ext ω

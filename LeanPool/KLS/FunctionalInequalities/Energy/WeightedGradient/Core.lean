@@ -58,7 +58,7 @@ omit [CompleteSpace V] in
 theorem lipschitzWith_of_contDiff_hasCompactSupport {g : V → ℝ} (hg : ContDiff ℝ ∞ g)
     (hs : HasCompactSupport g) : ∃ K : NNReal, LipschitzWith K g := by
   obtain ⟨M, hM0, hM⟩ := exists_bound_fderiv_of_hasCompactSupport (hg.of_le (mod_cast le_top)) hs
-  refine ⟨⟨M, hM0⟩, lipschitzWith_of_nnnorm_fderiv_le (hg.differentiable (by simp)) fun x ↦ ?_⟩
+  refine ⟨⟨M, hM0⟩, lipschitzWith_of_nnNorm_fderiv_le (hg.differentiable (by simp)) fun x ↦ ?_⟩
   change ‖fderiv ℝ g x‖ ≤ M
   exact hM x
 

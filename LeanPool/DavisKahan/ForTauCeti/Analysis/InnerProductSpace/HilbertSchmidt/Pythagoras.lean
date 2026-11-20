@@ -30,7 +30,7 @@ these two identities.
 Neither needs the family to consist of projections, or to be countable, or to be
 summable in any operator topology: the only hypothesis is the pointwise norm
 split, which is what makes both proofs short.  The left one is termwise
-Pythagoras in the codomain composed with `ENNReal.tsum_comm`; the right one is
+Pythagoras in the codomain composed with `tsum_comm`; the right one is
 the left one applied to the adjoint, since the energy is adjoint-invariant and
 `(Z ∘ Q)⋆ = Q⋆ ∘ Z⋆`.  Working in `ℝ≥0∞` keeps both free of summability side
 conditions.
@@ -69,7 +69,7 @@ theorem tsum_energy_isometryFamily_comp (b : HilbertBasis ι 𝕜 F) (Z : F →L
     (P : ι' → (E →L[𝕜] E)) (hP : ∀ v : E, ∑' i, ‖P i v‖ₑ ^ 2 = ‖v‖ₑ ^ 2) :
     ∑' i, ((P i).comp Z).hilbertSchmidtEnergy b = Z.hilbertSchmidtEnergy b := by
   simp only [ContinuousLinearMap.hilbertSchmidtEnergy_def, ContinuousLinearMap.comp_apply]
-  rw [ENNReal.tsum_comm]
+  rw [tsum_comm]
   exact tsum_congr fun k => hP (Z (b k))
 
 /-- **Splitting the energy on the right.**  The same statement about the

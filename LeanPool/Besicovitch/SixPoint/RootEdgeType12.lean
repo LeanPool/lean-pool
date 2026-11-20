@@ -441,19 +441,19 @@ theorem rootEdge_type12_expanded_lt {E : Type*} [NormedAddCommGroup E]
         -((5 * barC - 1) / 4) / barC * ‖w₁‖ ^ 2 -
           (5 * barC - 1) / 4 * (barC - 1) / barC := by
     convert hfirstRadial using 1
-    all_goals ring
+    ring
   have hsecondRadial' :
       -(1 + 5 * barC) / 4 * ‖w₂‖ ≤
         -((5 * barC + 1) / 4) / barC * ‖w₂‖ ^ 2 -
           (5 * barC + 1) / 4 * (barC - 1) / barC := by
     convert hsecondRadial using 1
-    all_goals ring
+    ring
   have hredRadial' :
       (1 - 2 * barC) * ‖p₂‖ ≤
         -(2 * barC - 1) / barC * ‖p₂‖ ^ 2 -
           (2 * barC - 1) * (barC - 1) / barC := by
     convert hredRadial using 1
-    all_goals ring
+    ring
   have hpreUpper :
       ‖e - p₁ - w₁‖ + 3 / 2 * ‖e - p₂ - w₂‖ + ‖e - w₁‖ +
           (2 - 3 * barC) / 2 * ‖p₁ - p₂‖ +

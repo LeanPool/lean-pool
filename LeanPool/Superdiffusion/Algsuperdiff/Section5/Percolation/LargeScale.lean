@@ -228,7 +228,7 @@ private theorem measureReal_largeScaleOccurrenceEvent_le
     rw [show largeScaleOccurrenceEvent B Γ = ⋃ L, E L by rfl]
     rw [← hsum.tsum_eq, ENNReal.ofReal_tsum_of_nonneg
       (fun L => mul_nonneg hK0 (Real.rpow_nonneg (by norm_num) _)) hsum.summable]
-    refine (measure_iUnion_le _).trans (ENNReal.tsum_le_tsum fun L => ?_)
+    refine (measure_iUnion_le _).trans (tsum_le_tsum fun L => ?_)
     rw [← ENNReal.ofReal_toReal (measure_ne_top P (E L))]
     exact ENNReal.ofReal_le_ofReal (hterm L)
   calc
@@ -562,7 +562,7 @@ theorem measureReal_weightedCubeEvent_le_fixedPath
     rw [heq]
     convert mul_le_mul_of_nonneg_right hcoef
       (mul_nonneg hlam.le hnpos.le) using 1
-    all_goals ring
+    ring
   have hmeanRaw := expectedWeightedCubeMassOn_small_le
     P B a T hBtail ha.le hTthreshold Γ hΓ
   have hmeanRewrite :

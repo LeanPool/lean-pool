@@ -33,7 +33,7 @@ theorem finite_strict_separation {A B : Set L} (hA : A.Finite) :
   constructor
   · intro hdisj
     let M : Submodule ℝ L := Submodule.span ℝ B
-    have hMclosed : IsClosed (M : Set L) := M.closed_of_finiteDimensional
+    have hMclosed : IsClosed (M : Set L) := M.isClosed_of_finiteDimensional
     obtain ⟨f, u, v, hfA, huv, hfM⟩ :=
       geometric_hahn_banach_compact_closed (convex_convexHull ℝ A)
         (hA.isCompact_convexHull ℝ) M.convex hMclosed hdisj

@@ -366,7 +366,7 @@ theorem vertex_notMem_edge (hi : i ≤ n + 1) (hj : j ≤ n) (h1 : i ≠ j) (h2 
     · exact h2 (A.vertex_inj h)
 
 /-- The trimmed core of edge `i`: the points at distance at least `lam` from both endpoints. -/
-def trimmed (A : PolyArc n) (i : ℕ) (lam : ℝ) : Set Plane :=
+noncomputable def trimmed (A : PolyArc n) (i : ℕ) (lam : ℝ) : Set Plane :=
   A.pt i '' Set.Icc lam (A.len i - lam)
 
 theorem pt_mem_trimmed {lam : ℝ} (hc : c ∈ Set.Icc lam (A.len i - lam)) :
@@ -507,47 +507,47 @@ theorem lam_lt_R : S.lam < S.R := by have := S.lam_pos; linarith only [S.two_lam
 /-! ### The four families of blocks -/
 
 /-- The left block of edge `i`. -/
-def blockL (i : ℕ) : Set Plane :=
+noncomputable def blockL (i : ℕ) : Set Plane :=
   strip (A.vertex i) (A.tang i) S.lam (A.len i - S.lam) 0 S.rho
 
 /-- The right block of edge `i`. -/
-def blockR (i : ℕ) : Set Plane :=
+noncomputable def blockR (i : ℕ) : Set Plane :=
   strip (A.vertex i) (A.tang i) S.lam (A.len i - S.lam) (-S.rho) 0
 
 /-- The full tube of edge `i`: the trimmed edge thickened by `rho` on both sides. -/
-def tube (i : ℕ) : Set Plane :=
+noncomputable def tube (i : ℕ) : Set Plane :=
   strip (A.vertex i) (A.tang i) S.lam (A.len i - S.lam) (-S.rho) S.rho
 
 /-- The left sector at the interior vertex `vertex (i + 1)`. -/
-def sectorL (i : ℕ) : Set Plane :=
+noncomputable def sectorL (i : ℕ) : Set Plane :=
   cone (A.vertex (i + 1)) (arcCCW (A.tang (i + 1)) (A.back i)) S.R
 
 /-- The right sector at the interior vertex `vertex (i + 1)`. -/
-def sectorR (i : ℕ) : Set Plane :=
+noncomputable def sectorR (i : ℕ) : Set Plane :=
   cone (A.vertex (i + 1)) (arcCCW (A.back i) (A.tang (i + 1))) S.R
 
 /-- The `k`-th link of the left chain: the block of edge `0` to start with, and thereafter the
 sector at `vertex k` glued to the block of edge `k`. Consecutive links overlap in the block of
 the earlier edge, which is what makes the union connected. -/
-def chainL (T : ArcStrip A D K) : ℕ → Set Plane
+noncomputable def chainL (T : ArcStrip A D K) : ℕ → Set Plane
   | 0 => T.blockL 0
   | (k + 1) => T.sectorL k ∪ T.blockL (k + 1)
 
 /-- The `k`-th link of the right chain. -/
-def chainR (T : ArcStrip A D K) : ℕ → Set Plane
+noncomputable def chainR (T : ArcStrip A D K) : ℕ → Set Plane
   | 0 => T.blockR 0
   | (k + 1) => T.sectorR k ∪ T.blockR (k + 1)
 
 /-- The left track of the collar. -/
-def sideL : Set Plane := ⋃ k, ⋃ (_ : k ≤ n), S.chainL k
+noncomputable def sideL : Set Plane := ⋃ k, ⋃ (_ : k ≤ n), S.chainL k
 
 /-- The right track of the collar. -/
-def sideR : Set Plane := ⋃ k, ⋃ (_ : k ≤ n), S.chainR k
+noncomputable def sideR : Set Plane := ⋃ k, ⋃ (_ : k ≤ n), S.chainR k
 
 /-- The collar: the union of the edge tubes and the balls about the interior vertices. Unlike
 the closed case it is *not* a neighbourhood of the whole arc — it stops short of the two
 endpoints — and it is manifestly open. -/
-def nbhd : Set Plane :=
+noncomputable def nbhd : Set Plane :=
   (⋃ i, ⋃ (_ : i ≤ n), S.tube i) ∪ (⋃ i, ⋃ (_ : i < n), ball (A.vertex (i + 1)) S.R)
 
 theorem mem_blockL_iff : x ∈ S.blockL i ↔
@@ -1400,7 +1400,7 @@ theorem subset_closure_sideR : K ⊆ closure S.sideR := by
 exported, not existentially packaged: `nbhd`, `sideL` and `sideR` are definitions with an API
 of their own, and `Schoenflies.ArcStrip.sideL_disjoint_sideR` and
 `Schoenflies.ArcStrip.isOpen_sideL` are two clauses of Lemma 1.8 (b) that the record drops. -/
-def collar : ArcCollar D A.carrier K where
+noncomputable def collar : ArcCollar D A.carrier K where
   nbhd := S.nbhd
   left := S.sideL
   right := S.sideR

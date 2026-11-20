@@ -252,7 +252,7 @@ lemma x2_is_real (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
   let hx2 := hx
   have x2_is_central : x.1^2 ∈ Subalgebra.center ℝ D := by
       have x2_commutes_K := x2_comm_k _ _ _ hx
-      by_contra! hxx
+      by_contra hxx
       have xink := xsq_ink _ _ _ hx hDD
       have indep' := indep' _ _ _ hx hDD hxx
       let IsBasis := IsBasis _ _ _ hx hDD hxx
@@ -328,7 +328,7 @@ lemma x_is_in_V (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x.1 = k.val z)
   let hx' := hx hDD
   have hx := real_sq_in_R_or_V _ hx'
   have : x.1 ∉ (algebraMap ℝ D).range := by
-    by_contra! hxx
+    by_contra hxx
     obtain ⟨r, hr⟩ := hxx
     have xcomm : ∀ (y : k), x.1⁻¹ * k.val y * x.1 = k.val y := by
       intro y
@@ -405,7 +405,7 @@ lemma jij_eq_negi (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
   rw [← hx, ← Complex.I, Complex.conj_I, ← mul_assoc, ← Subalgebra.coe_mul, mul_comm,
     Subalgebra.coe_mul, mul_assoc, mul_inv_cancel₀, mul_one, map_neg, Subalgebra.coe_neg]
   simp only [map_inv₀, ne_eq, ZeroMemClass.coe_eq_zero, inv_eq_zero, map_eq_zero]
-  by_contra! zero
+  by_contra zero
   apply_fun (·)^2 at zero
   rw [Pi.pow_apply, Real.sq_sqrt (le_of_lt (r_pos _ _ _ hx1 hDD)), Pi.pow_apply,
     pow_two 0, zero_mul] at zero
@@ -423,7 +423,7 @@ lemma k_sq_eq_negone (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
   nth_rw 1 [← @inv_mul_cancel₀ _ _ j (by
     simp only [j_eq, map_inv₀, ne_eq, mul_eq_zero, inv_eq_zero, map_eq_zero,
       Units.ne_zero, or_false]
-    by_contra! heq
+    by_contra heq
     apply_fun (·)^2 at heq
     rw [Pi.pow_apply, Real.sq_sqrt (le_of_lt (r_pos _ _ _ hx hDD)), Pi.pow_apply,
       pow_two 0, zero_mul] at heq
@@ -508,7 +508,7 @@ lemma linindep1ij (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
   · simp only [map_inv₀, Matrix.range_cons, Matrix.range_empty,
       Set.union_empty, Set.union_singleton]
     rw [Submodule.mem_span_pair]
-    by_contra! h
+    by_contra h
     obtain ⟨a, b, hab⟩ := h
     rw [show (1 : D) = (1 : k) from rfl, ← Subalgebra.coe_smul, ← Subalgebra.coe_smul,
         ← _root_.map_one e.symm, ← map_smul e.symm, ← map_smul e.symm, ← Subalgebra.coe_add,
@@ -521,7 +521,7 @@ lemma linindep1ij (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
     apply_fun ((algebraMap ℝ D) (Real.sqrt (x_corre_R _ _ _ hx hDD).choose) * · ) at hab
     rw [← mul_assoc, mul_inv_cancel₀ (by
       simp_all only [ne_eq, map_eq_zero]
-      by_contra! eqzero
+      by_contra eqzero
       rw [Real.sqrt_eq_zero (le_of_lt (r_pos _ _ _ hx hDD))] at eqzero
       have := r_pos _ _ _ hx
       simp_all only [Real.sqrt_zero, map_zero, zero_mul, inv_zero, mul_zero, lt_self_iff_false]),
@@ -547,7 +547,7 @@ lemma linindepijk (x : Dˣ) (hx : ∀ z, x.1⁻¹ * f k e z * x = k.val z)
     LinearIndependent ℝ (basisijk k e x hx hDD) := by
   rw [linearIndependent_finCons]
   refine ⟨linindep1ij _ _ _ hx hDD, ?_⟩
-  by_contra! h
+  by_contra h
   simp only [Fin.range_cons, Matrix.range_cons, Matrix.range_empty, Set.union_empty,
     Set.union_singleton, Submodule.mem_span_insert] at h
   simp_rw [Submodule.mem_span_singleton] at h

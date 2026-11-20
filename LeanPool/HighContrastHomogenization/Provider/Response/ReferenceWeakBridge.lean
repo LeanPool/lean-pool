@@ -272,7 +272,7 @@ private theorem ofReal_partialSeminorm_slot_le_normalized
     _ = ∑ j ∈ Finset.range (N + 1), ENNReal.ofReal (b j) :=
       ENNReal.ofReal_sum_of_nonneg (fun j _ ↦ hb0 j)
     _ ≤ ∑' j : ℕ, ENNReal.ofReal (b j) :=
-      ENNReal.sum_le_tsum (Finset.range (N + 1))
+      sum_le_tsum (Finset.range (N + 1))
     _ = ENNReal.ofReal ((3 : ℝ) ^ (-(s * (t : ℝ)))) *
         adaptedWeakSeminorm (1 : Mat d) t s F := by
       simpa [b] using

@@ -337,7 +337,7 @@ lemma colorTwo_ne_of_dist_eq_one {p q : Coeff} (h : dist p.toR2 q.toR2 = 1) :
     linarith
   have hcoeff := unit_norm_coefficients (p := p.sub q) (by
     convert hunit using 1
-    all_goals ring)
+    ring)
   rw [hcoeff.1, hcoeff.2] at hdiv
   norm_num at hdiv
 
@@ -365,7 +365,7 @@ lemma color_ne_of_dist_eq_one {p q : Coeff} (h : dist p.toR2 q.toR2 = 1) :
     linarith
   have hcoeff := unit_norm_coefficients (p := p.sub q) (by
     convert hunit using 1
-    all_goals ring)
+    ring)
   rw [hcoeff.1, hcoeff.2] at hdiv
   norm_num at hdiv
 

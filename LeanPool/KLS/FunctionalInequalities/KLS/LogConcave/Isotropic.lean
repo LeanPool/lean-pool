@@ -284,7 +284,7 @@ theorem localSlope_le_mul_intrinsicCovariance {μ : ProbabilityMeasure E} (hμ :
   have hle := Poincare.L2Energy.constant_le_mul_of_energy_le_mul hholds hcmp
   rw [hlit]
   refine hle.trans (le_of_eq ?_)
-  rw [ENNReal.coe_mul, mul_comm, ← coe_nnnorm, ENNReal.ofReal_coe_nnreal]
+  rw [ENNReal.coe_mul, mul_comm, ← coe_nnNorm, ENNReal.ofReal_coe_nnreal]
   congr 2
   exact NNReal.eq (Covariance.opNorm_operator_intrinsic μ hμ.memLp_id_two)
 

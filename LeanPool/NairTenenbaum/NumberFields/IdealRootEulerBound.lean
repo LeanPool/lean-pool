@@ -22,14 +22,14 @@ variable {K : Type*} [Field K] [NumberField K]
 
 /-- The finite set of integral ideals with a specified absolute norm. -/
 noncomputable def idealsOfNorm (n : ℕ) : Finset (Ideal (𝓞 K)) :=
-  (Ideal.finite_setOfPred_absNorm_eq n).toFinset
+  (Ring.HasFiniteQuotients.finite_absNorm_eq n).toFinset
 
 @[simp] theorem mem_idealsOfNorm (I : Ideal (𝓞 K)) (n : ℕ) :
     I ∈ idealsOfNorm n ↔ Ideal.absNorm I = n := Set.Finite.mem_toFinset _
 
 theorem card_idealsOfNorm (n : ℕ) : (idealsOfNorm (K := K) n).card = idealNormCount K n := by
   change _ = Set.ncard {I : Ideal (𝓞 K) | Ideal.absNorm I = n}
-  exact (Set.ncard_eq_toFinset_card _ (Ideal.finite_setOfPred_absNorm_eq n)).symm
+  exact (Set.ncard_eq_toFinset_card _ (Ring.HasFiniteQuotients.finite_absNorm_eq n)).symm
 
 theorem idealNormCount_sum_eq (T : Finset ℕ) (w : ℕ → ℝ) :
     (∑ n ∈ T, (idealNormCount K n : ℝ) * w n) =
@@ -52,10 +52,10 @@ theorem idealNormCount_sum_eq (T : Finset ℕ) (w : ℕ → ℝ) :
 
 /-- The local error in comparing root and ideal Euler factors. -/
 noncomputable def idealRootEulerError (θ : 𝓞 K) : ℝ :=
-  (Module.finrank ℚ K : ℝ) * ((RingOfIntegers.exponent θ).primeFactors.card +
+  (Module.finrank ℚ K : ℝ) * ((NumberField.RingOfIntegers.exponent θ).primeFactors.card +
     3 * ∑' n : ℕ, (n : ℝ) ^ (-2 : ℝ))
 
-theorem finite_idealNorm_sum_le_root_exp (θ : 𝓞 K) (hD : RingOfIntegers.exponent θ ≠ 0)
+theorem finite_idealNorm_sum_le_root_exp (θ : 𝓞 K) (hD : NumberField.RingOfIntegers.exponent θ ≠ 0)
     (T : Finset (Ideal (𝓞 K))) (hT : ∀ I ∈ T, I ≠ ⊥) {σ : ℝ} (hσ : 1 ≤ σ)
     (hs : Summable (fun p : Nat.Primes => (rootCount (minpoly ℤ θ) p.1 : ℝ) * (p.1 : ℝ) ^ (-σ))) :
     (∑ I ∈ T, (Ideal.absNorm I : ℝ) ^ (-σ)) ≤
@@ -78,7 +78,7 @@ theorem finite_idealNorm_sum_le_root_exp (θ : 𝓞 K) (hD : RingOfIntegers.expo
       obtain ⟨P, hP, rfl⟩ := mem_image.mp hp
       exact rationalPrimeBelow_prime (hS P hP))
 
-theorem idealNormDirichlet_le_root_exp (θ : 𝓞 K) (hD : RingOfIntegers.exponent θ ≠ 0)
+theorem idealNormDirichlet_le_root_exp (θ : 𝓞 K) (hD : NumberField.RingOfIntegers.exponent θ ≠ 0)
     {σ : ℝ} (hσ : 1 < σ)
     (hs : Summable (fun p : Nat.Primes => (rootCount (minpoly ℤ θ) p.1 : ℝ) * (p.1 : ℝ) ^ (-σ))) :
     idealNormDirichlet K σ ≤ Real.exp (rootPrimePowerSum (minpoly ℤ θ) σ + idealRootEulerError θ)

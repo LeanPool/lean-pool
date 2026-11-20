@@ -23,6 +23,5 @@ variable {ι α β M : Type*} {mα : MeasurableSpace α} {mβ : MeasurableSpace 
 public
 lemma Finset.measurable_prod'' {f : ι → α → β → M} {g : α → β} {s : Finset ι}
     (hf : ∀ i ∈ s, Measurable ↿(f i)) (hg : Measurable g) :
-    Measurable fun a ↦ (∏ i ∈ s, f i a) (g a) := by
-  simp only [prod_apply]
-  fun_prop (disch := assumption)
+    Measurable fun a ↦ (∏ i ∈ s, f i a) (g a) :=
+  Finset.measurable_prod_apply hf hg

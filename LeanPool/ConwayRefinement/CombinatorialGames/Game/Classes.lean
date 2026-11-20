@@ -444,7 +444,7 @@ protected theorem subposition {x : IGame} [Short x] (h : Subposition y x) : Shor
 theorem finite_setOf_subposition (x : IGame) [Short x] : {y | Subposition y x}.Finite := by
   induction x using IGame.moveRecOn generalizing ‹x.Short› with | ind x ih
   convert Set.finite_iUnion fun p => (finite_moves p x).biUnion fun y hy ↦
-    (@ih p y hy (.of_mem_moves hy)).insert y
+    (@ih p y hy (.of_mem_moves hy)).insert y using 1
   ext
   rw [Set.mem_ofPred, subposition_iff_exists]
   simp [wsubposition_iff_eq_or_subposition]

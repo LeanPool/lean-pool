@@ -361,7 +361,7 @@ lemma hDist_embed0_embed0 {n : ℕ} (x y : Cube n) :
     hDist (embed0 x) (embed0 y) = hDist x y := by
   unfold hDist
   convert Finset.card_image_of_injective _ (Fin.castSucc_injective n) using 2; ext
-  simp +decide only [symmDiff, Finset.sup_eq_union', Finset.mem_union, Finset.mem_sdiff,
+  simp +decide only [symmDiff, Finset.mem_union, Finset.mem_sdiff,
     Finset.mem_image]
   unfold embed0; aesop
 
@@ -532,7 +532,7 @@ lemma card_initSeg_union {n a b : ℕ} (ha : a ≤ 2 ^ n) (hb : b ≤ 2 ^ n) :
     simp_all +decide only [initSeg_nested, Finset.union_eq_right.mpr, sup_of_le_right,
       sup_of_le_left]
   · rw [card_simplicialInitSeg, min_eq_left hb]
-  · rw [Finset.union_eq_left.mpr (initSeg_nested ‹_›), card_simplicialInitSeg]; aesop
+  · rw [card_simplicialInitSeg, min_eq_left ha]
 
 /-
 ==========================================
@@ -559,7 +559,7 @@ gShift stays inside the closed radius-1 Hamming ball.
 lemma hDist_gShift_le {n : ℕ} (v : Cube n) : hDist (gShift v) v ≤ 1 := by
   unfold hDist gShift
   split_ifs
-  · simp_all +decide only [symmDiff, Finset.sup_eq_union']
+  · simp_all +decide only [symmDiff]
     simp +decide only [Finset.min'_mem, Finset.sdiff_erase, sdiff_self,
       Finset.bot_eq_empty, insert_empty_eq, Finset.union_singleton, Finset.mem_sdiff,
       Finset.mem_erase, ne_eq, not_true_eq_false, and_true, and_self,
@@ -605,7 +605,7 @@ lemma gShift_le_ball {n : ℕ} {u v : Cube n} (h : hDist u v ≤ 1) :
             (pow_le_pow_right₀ (by decide) (Finset.min'_le _ _ hc.2) ) _
     · simp_all +decide only [simplicialLe]
       unfold gShift
-      grind +suggestions
+      grind [Finset.min'_mem]
   · simp_all +decide only [Nat.lt_one_iff, zero_le]
     simp_all +decide only [hDist, Finset.card_eq_zero, Finset.symmDiff_eq_empty]
     unfold gShift
@@ -679,8 +679,14 @@ lemma cubeToNat_gShift_erase_max {n : ℕ} {x : Cube n} (hx : x.Nonempty) (h2 : 
   · rw [cubeToNat_erase]
     focus congr! 1
     · congr! 1
-      unfold gShift
-      grind +suggestions
+      have hmin_mem : x.min' hx ∈ x.erase (x.max' hx) :=
+        Finset.mem_erase.mpr
+          ⟨ne_of_lt (Finset.min'_lt_max'_of_card x h2), Finset.min'_mem _ hx⟩
+      have hne : (x.erase (x.max' hx)).Nonempty := ⟨_, hmin_mem⟩
+      have hmin : (x.erase (x.max' hx)).min' hne = x.min' hx := by
+        apply le_antisymm (Finset.min'_le _ _ hmin_mem)
+        exact Finset.min'_le _ _ (Finset.mem_of_mem_erase (Finset.min'_mem _ _))
+      simp only [gShift, dite_eq_left hx, dite_eq_left hne, hmin, Finset.erase_right_comm]
     · assumption
   · exfalso
     have h_shift : gShift x = x.erase (x.min' hx) := dite_eq_left hx
@@ -706,7 +712,7 @@ lemma cubeToNat_gShift_mono {n : ℕ} :
   -- We proceed by induction on $m$.
   intro m
   induction m using Nat.strong_induction_on with
-  | h m ih =>
+  | ind m ih =>
   intro s t hs ht h
   by_cases hm : m ≤ 1
   · interval_cases m <;>
@@ -724,7 +730,7 @@ lemma cubeToNat_gShift_mono {n : ℕ} :
     · -- The peeled form of `gShift s` contains the top term `2 ^ (Ms : ℕ)`.
       have h_cubeToNat_gShift_s : cubeToNat (gShift s) ≥ 2 ^ (Ms : ℕ) := by
         rw [cubeToNat_gShift_erase_max]
-        any_goals exact Finset.card_pos.mp (by linarith)
+        on_goal 2 => exact Finset.card_pos.mp (by linarith)
         · exact le_add_of_nonneg_of_le (Nat.zero_le _) (by
             rw [show Finset.max' s (Finset.card_pos.mp (by linarith) ) = Ms from
               le_antisymm (hMs.2 _ (Finset.max'_mem _ _) )

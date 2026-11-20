@@ -38,7 +38,7 @@ over the larger set. -/
 theorem vorticity_setIntegral_le_of_subset {S T : Set (Vec3 × ℝ)} (hST : S ⊆ T)
     {g : Vec3 × ℝ → ℝ} (hg : IntegrableOn g T) (h0 : ∀ z, 0 ≤ g z) {K : ℝ}
     (hK : ∫ z in T, g z ≤ K) : ∫ z in S, g z ≤ K :=
-  (setIntegral_mono_set hg (Eventually.of_forall fun z => h0 z) hST.eventuallyLE).trans hK
+  (setIntegral_mono_set hg (Eventually.of_forall fun z => h0 z) hST.eventuallySubset).trans hK
 
 /-- An integral bound from a pointwise bound by a combination of two integrable densities. -/
 theorem vorticity_integral_le_combo {μ : Measure (Vec3 × ℝ)} {f g₁ g₂ : Vec3 × ℝ → ℝ}

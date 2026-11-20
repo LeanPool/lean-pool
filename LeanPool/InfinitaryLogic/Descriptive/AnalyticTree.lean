@@ -42,15 +42,21 @@ theorem exists_tree_of_analyticSet {B : Set (StructureSpace L)}
     ∃ T : (n : ℕ) → Set ((Fin n → Bool) × (Fin n → ℕ)),
       ∀ c, c ∈ B ↔ ∃ g : ℕ → ℕ,
         ∀ n, ((fun i : Fin n => queryCode c i), (fun i : Fin n => g i)) ∈ T n := by
-  rw [MeasureTheory.AnalyticSet] at hB
-  rcases hB with rfl | ⟨f, hf, rfl⟩
+  obtain ⟨β, _, _, f, hf, rfl⟩ :=
+    MeasureTheory.analyticSet_iff_exists_polishSpace_range.mp hB
+  cases isEmpty_or_nonempty β
   · -- the empty set: the branchless tree
+    rw [Set.range_eq_empty]
     refine ⟨fun _ => ∅, fun c => ?_⟩
     constructor
     · rintro ⟨⟩
     · rintro ⟨g, hg⟩
       exact hg 0
   · -- B = range f: the tree of length-n prefixes of graph points of queryCode ∘ f
+    obtain ⟨q, hq, hsurj⟩ := PolishSpace.exists_nat_nat_continuous_surjective β
+    rw [← hsurj.range_comp f]
+    have hf := hf.comp hq
+    generalize f ∘ q = f at hf ⊢
     refine ⟨fun n => Set.range (fun y : ℕ → ℕ =>
       ((fun i : Fin n => queryCode (f y) i), (fun i : Fin n => y i))), fun c => ?_⟩
     constructor

@@ -85,7 +85,7 @@ theorem universalFixedSourceStatement_of_canonicalSupportVanishing
     have hd'eq : d' = a * e d := by
       simp [d', a, e, normalizedSymplecticImage, Algebra.smul_def,
         standardSymplecticAlgEquivOfInverse]
-      all_goals rfl
+      rfl
     have ha_comm : ∀ z : PresentedWeyl k (n + 1), a * z = z * a := by
       intro z
       exact Algebra.commutes c⁻¹ z

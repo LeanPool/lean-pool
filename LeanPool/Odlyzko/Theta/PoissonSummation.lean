@@ -1054,7 +1054,7 @@ theorem addHaar_ofZLatticeBasis_eq_inv_covolume_smul_volume
       (Real.toNNReal (ZLattice.covolume L))⁻¹ • volume := by
   classical
   rw [Basis.addHaar_eq_iff]
-  rw [Measure.smul_apply,
+  rw [smul_apply,
     volume_parallelepiped_ofZLatticeBasis L b]
   have hc : Real.toNNReal (ZLattice.covolume L) ≠ 0 := by
     rw [ne_eq, Real.toNNReal_eq_zero]

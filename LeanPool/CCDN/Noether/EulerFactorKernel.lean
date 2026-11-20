@@ -61,8 +61,8 @@ private lemma bivariateEuler_defect_degree {R : Type*} [CommRing R]
         (d : R) • f) ≤ d - 1 := by
   rw [bivariateTotalDegree_le_iff]
   intro i j hij
-  rw [coeff_sub, coeff_sub, bivariateEuler_gradient_coeff, coeff_smul, coeff_smul,
-    smul_eq_mul] at hij
+  rw [coeff_sub, coeff_sub, bivariateEuler_gradient_coeff, AddMonoidAlgebra.coeff_smul_apply,
+    AddMonoidAlgebra.coeff_smul_apply, smul_eq_mul] at hij
   have hc : (f.coeff i).coeff j ≠ 0 := by
     intro hz
     simp only [hz, mul_zero, sub_self, ne_eq, not_true_eq_false] at hij

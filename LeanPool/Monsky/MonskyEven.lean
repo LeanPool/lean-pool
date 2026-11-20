@@ -351,7 +351,7 @@ lemma zig_zag_covers_square {n : ℕ} (hn : n ≠ 0)
                 translateVector, Tside, scaleVector, Δ₀', hx₁];
               field_simp [hn]
               ring_nf
-              try linarith [hx 0]
+              linarith [hx 0]
             )
           · rw [translateTriangle_det, scaleTriangle_det, mul_ne_zero_iff_right]
             · simp only [one_div, ne_eq, inv_eq_zero, Nat.cast_eq_zero, hn, not_false_eq_true]

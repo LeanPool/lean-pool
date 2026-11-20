@@ -138,7 +138,7 @@ theorem finite_staircase_representation
   let := Fintype.ofFinite A
   classical
   induction hcard : Fintype.card A using Nat.strong_induction_on generalizing A with
-  | h n ih =>
+  | ind n ih =>
     by_cases hA : IsEmpty A
     · let := hA
       exact ⟨fun x ↦ isEmptyElim x, by simp, by simp⟩

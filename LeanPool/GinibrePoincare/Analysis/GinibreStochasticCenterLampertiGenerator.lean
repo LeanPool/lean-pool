@@ -90,7 +90,6 @@ theorem ginibreRealPaperSpeedGenerator_squareRootCenter {n : ℕ} (hn : 2 ≤ n)
   have hsq := Real.sq_sqrt hρ.le
   generalize he : Real.sqrt (ginibreCenterSquared n z)=r at hs hsq ⊢
   rw [← hsq]
-  field_simp
- ; ring
+  field_simp; ring
 end
 end GinibrePoincare

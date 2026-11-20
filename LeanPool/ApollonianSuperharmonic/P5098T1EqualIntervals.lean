@@ -31,7 +31,7 @@ theorem P5098T1EqualIntervals (r s d m k : Int) (hs : 2 ≤ s) (hrs : s < r)
         (-d < (r + s) * k ∧ (r + s) * k < d))) :
     m = 0 ∧ k = 0 := by
 -- BODY
-  try simp only [neg_mul] at h
+  simp only [neg_mul] at h
   have hw := P5098T1PeriodWindow (r + s) s m k (by omega) (by omega)
     (by rcases hd with rfl | rfl <;> omega)
     (by rcases hd with rfl | rfl <;> omega)

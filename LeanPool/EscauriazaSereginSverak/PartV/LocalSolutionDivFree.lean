@@ -69,7 +69,7 @@ theorem forcedHeat_weighted_slice_lintegral_lt_top {τ : ℝ} (hτ : 0 < τ)
         ‖heatKernelSpaceDerivative q.2.1 q.2.2 j * G i j (q.1 - q.2 : Vec3 × ℝ)‖ₑ) :=
       (((heatKernelSpaceDerivative_vecTime_measurable j).comp measurable_snd).mul
         ((hGm i j).comp (show Measurable (fun q : (Vec3 × ℝ) × (Vec3 × ℝ) =>
-          (q.1 - q.2 : Vec3 × ℝ)) from measurable_fst.sub measurable_snd))).enorm
+          (q.1 - q.2 : Vec3 × ℝ)) from measurable_fst.sub measurable_snd))).eNorm
     exact (ENNReal.measurable_ofReal.comp (forcedHeatWeight_continuous.measurable.comp
       measurable_fst)).mul hjoint.lintegral_prod_right'
   have hmeas : volume.restrict ((univ : Set Vec3) ×ˢ Ioo 0 τ) =

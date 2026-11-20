@@ -64,7 +64,7 @@ theorem isMeasurableGradientPair_affinePullback {L : Mat d}
       (fun y ↦ matVecMul (matTranspose L) (Du (matVecMul L y))) := by
   have hq : MeasureTheory.QuasiMeasurePreserving (matVecMul L)
       (volume.restrict (matImage L⁻¹ U)) (volume.restrict U) := by
-    refine ⟨(continuous_matVecMul L).measurable, ?_⟩
+    refine ⟨(continuous_matVecMul L).measurable.aemeasurable, ?_⟩
     rw [map_restrict_volume_affinePullback hL hU]
     exact Measure.AbsolutelyContinuous.rfl.smul_left _
   refine ⟨hpair.1.comp_quasiMeasurePreserving hq, fun i ↦ ?_⟩

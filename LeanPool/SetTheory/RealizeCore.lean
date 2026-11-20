@@ -6,7 +6,12 @@ Authors: Shuhao Song
 module
 
 public import Mathlib.Lean.Expr.Basic
+public import Mathlib.Lean.Name
 public import Mathlib.ModelTheory.ElementaryMaps
+public import Lean.AddDecl
+public import Lean.Elab.SyntheticMVars
+public import Lean.Meta.Closure
+public import Lean.Meta.Tactic.Simp.Main
 import LeanPool.SetTheory.SimpAttr
 import Mathlib.Tactic.FinCases
 

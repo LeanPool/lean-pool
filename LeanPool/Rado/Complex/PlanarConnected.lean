@@ -130,11 +130,11 @@ private lemma isPathConnected_annulus {c : ℂ} {r R : ℝ} (hr : 0 ≤ r) (hrR 
 
 /-! ### The pieces of the cover and their inclusion in the configuration set -/
 
-private def configTop : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | 1 < z.im}
-private def configBottom : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | z.im < -1}
-private def configLeft : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | z.re < -5}
-private def configRight : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | 5 < z.re}
-private def configMiddle : Set ℂ :=
+private noncomputable def configTop : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | 1 < z.im}
+private noncomputable def configBottom : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | z.im < -1}
+private noncomputable def configLeft : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | z.re < -5}
+private noncomputable def configRight : Set ℂ := ball (0 : ℂ) 8 ∩ {z : ℂ | 5 < z.re}
+private noncomputable def configMiddle : Set ℂ :=
   ball (0 : ℂ) 8 ∩ ({z : ℂ | -3 < z.re} ∩ {z : ℂ | z.re < 3})
 private def configRightAnnulus : Set ℂ :=
   {z : ℂ | 1 < dist z (4 : ℂ) ∧ dist z (4 : ℂ) < 3}
@@ -142,11 +142,11 @@ private def configLeftAnnulus : Set ℂ :=
   {z : ℂ | 1 < dist z (-4 : ℂ) ∧ dist z (-4 : ℂ) < 3}
 
 /-- The finite family of pieces in the configuration cover. -/
-private def configPieces : Set (Set ℂ) :=
+private noncomputable def configPieces : Set (Set ℂ) :=
   {configMiddle, configTop, configBottom, configRightAnnulus,
     configLeftAnnulus, configRight, configLeft}
 
-private def configCover : Set ℂ := ⋃₀ configPieces
+private noncomputable def configCover : Set ℂ := ⋃₀ configPieces
 
 private lemma subset_configCover {s : Set ℂ} (hs : s ∈ configPieces) : s ⊆ configCover :=
   fun _ hz ↦ mem_sUnion_of_mem hz hs

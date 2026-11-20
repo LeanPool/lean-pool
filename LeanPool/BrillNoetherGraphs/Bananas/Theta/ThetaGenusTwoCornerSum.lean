@@ -1054,7 +1054,7 @@ theorem sum_rankPlusOne_degreeOne_eq_effectiveResidues_ncard
       rw [← Finset.sum_filter]
       apply Finset.sum_congr
       · ext b
-        simp []
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and, hS.mem_toFinset]
       intro b _
       simp []
     _ = (S.ncard : ℤ) := by

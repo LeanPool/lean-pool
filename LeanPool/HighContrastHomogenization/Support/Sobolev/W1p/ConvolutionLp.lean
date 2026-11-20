@@ -186,8 +186,8 @@ theorem young_convolution_nonneg_integral_one
       refine Measurable.stronglyMeasurable ?_
       simpa [Function.uncurry_def] using hprod
     exact (hint.integral_prod_right (ν := volume)).aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp_ne_zero hp' hconv_ae]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp_ne_zero hp' hg_meas.aestronglyMeasurable]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp_ne_zero hp' hconv_ae]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp_ne_zero hp' hg_meas.aestronglyMeasurable]
   apply ENNReal.rpow_le_rpow _ (by positivity : 0 ≤ 1 / p.toReal)
   have hfubini :=
     fubini_translation_key (d := d) (fun t => ENNReal.ofReal (ρ t)) g p.toReal
@@ -201,7 +201,7 @@ theorem young_convolution_nonneg_integral_one
     intro x
     rw [convolution_def]
     simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul]
-    rw [Real.enorm_eq_ofReal_abs]
+    rw [Real.eNorm_eq_ofReal_abs]
     have heq_int : ∫ t, ρ t * g (x - t) = ∫ t, g (x - t) ∂μ := by
       symm
       exact integral_withDensity_ofReal_eq_integral_mul hρ_nonneg hρ_meas.aemeasurable
@@ -290,7 +290,7 @@ theorem young_convolution_nonneg_integral_one
     _ = ∫⁻ x, ‖g x‖ₑ ^ p.toReal ∂volume := by
           congr 1
           ext x
-          rw [Real.enorm_eq_ofReal_abs]
+          rw [Real.eNorm_eq_ofReal_abs]
 
 /-- `AEMeasurable` version of `young_convolution_nonneg_integral_one`, obtained by
 passing to a measurable representative of the input function. -/

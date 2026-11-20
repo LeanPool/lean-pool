@@ -67,7 +67,7 @@ def roundnearest (s : Bool) (q : ℚ) :=
 
 lemma round_near_int_of_nonneg {q : ℚ} (h : 0 ≤ q) : 0 ≤ roundNearInt q := by
   rw [roundNearInt]
-  split_ifs <;> (try exact Int.floor_nonneg.mpr h) <;> (try exact Int.ceil_nonneg h)
+  split_ifs <;> (try exact Int.floor_nonneg.mpr h) <;> exact Int.ceil_nonneg h
 
 lemma round_near_int_of_pos {q : ℚ} (h : 0 < q) : 0 ≤ roundNearInt q :=
   round_near_int_of_nonneg h.le
@@ -97,7 +97,7 @@ lemma round_near_le_round_near {q1 q2 : ℚ} (h : q1 ≤ q2) :
   by_cases h' : ⌈q1⌉ ≤ ⌊q2⌋
   · split_ifs <;>
       (try exact Int.floor_le_floor h) <;> (try exact Int.ceil_le_ceil h) <;>
-      (try exact floor_le_ceil) <;> (try exact h')
+      (try exact floor_le_ceil) <;> exact h'
   have floorq1_le : ⌊q2⌋ ≤ ⌊q1⌋ := by
     simp only [not_le] at h'
     apply Int.lt_add_one_iff.mp
@@ -293,12 +293,12 @@ lemma round_near_eq_iff (q : ℚ) (z : ℤ) :
     split_ifs with h'
     · exact this
     · apply Icc_of_Ioo this
-      · contrapose! h'
+      · contrapose h'
         rw [h']
         convert round_of_add_half (roundNearInt q - 1) using 3
         push_cast
         linarith
-      contrapose! h'
+      contrapose h'
       rw [h']
       exact round_of_add_half (roundNearInt q)
   intro h

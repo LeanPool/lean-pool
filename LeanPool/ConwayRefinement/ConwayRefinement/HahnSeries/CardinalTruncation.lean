@@ -52,7 +52,7 @@ abbrev CardSuppLTField := ↥(cardSuppLTSubfield G R κ)
 /-- The `κ`-bounded nonpositive Hahn series whose coefficient at zero belongs to `Z`. -/
 def cardSuppLTTruncationIntegerPart (Z : Subring R) : Subring (CardSuppLTField (G := G) (R := R)
     (κ := κ)) where
-  carrier x := (x : R⟦G⟧).support ⊆ Set.Iic 0 ∧ (x : R⟦G⟧).coeff 0 ∈ Z
+  carrier := {x | (x : R⟦G⟧).support ⊆ Set.Iic 0 ∧ (x : R⟦G⟧).coeff 0 ∈ Z}
   zero_mem' := by
     constructor
     · simp

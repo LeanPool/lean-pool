@@ -152,7 +152,7 @@ lemma BrauerOverR (A : CSA.{0, 0} ℝ) :
           conv_lhs => rw [← _root_.map_mul e'.symm, mul_comm, map_mul]
       rw [this]
       exact IsConcreteLE.lt_iff_le_and_exists.2 ⟨fun _ _ ↦ ⟨⟩, ⟨e'.symm Complex.I, ⟨⟨⟩, by
-        by_contra! mem
+        by_contra mem
         change ∃(_ : _), _ = _ at mem
         obtain ⟨r, eq⟩ := mem
         simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe] at eq
@@ -180,7 +180,7 @@ abbrev toC2 : Additive (BrauerGroup ℝ) →+ ZMod 2 where
       else
         simp [h]
         have : ¬ IsBrauerEquivalent B (BrauerGroup.oneIn') := by
-          by_contra!
+          by_contra this
           have := hAB.trans this
           tauto
         simpa using this
@@ -211,7 +211,7 @@ abbrev toC2 : Additive (BrauerGroup ℝ) →+ ZMod 2 where
         (eqv_tensor_eqv A oneIn' B B hA (IsBrauerEquivalent.refl B)).trans <|
           IsBrauerEquivalent.iso_to_eqv _ _ (Algebra.TensorProduct.lid ℝ B)
       -- rw [this]
-      by_contra! hBB
+      by_contra hBB
       have := this.symm.trans hBB
       tauto
     else
@@ -220,7 +220,7 @@ abbrev toC2 : Additive (BrauerGroup ℝ) →+ ZMod 2 where
     have : IsBrauerEquivalent (mul A B) A :=
       (eqv_tensor_eqv A A B oneIn' (IsBrauerEquivalent.refl A) hB).trans <|
         IsBrauerEquivalent.iso_to_eqv _ _ (Algebra.TensorProduct.rid ℝ ℝ A)
-    by_contra! hAA
+    by_contra hAA
     have := this.symm.trans hAA
     tauto
     else

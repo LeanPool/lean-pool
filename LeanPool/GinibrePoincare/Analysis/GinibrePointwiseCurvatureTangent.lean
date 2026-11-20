@@ -176,7 +176,7 @@ theorem ginibre_recentered_pointwise_curvature_unbounded_below {n : ℕ}
     intro i k h
     apply Fin.ext
     have he : (i.val : ℝ)/L = (k.val : ℝ)/L := by dsimp [x] at h; linarith
-    exact_mod_cast (div_left_inj' hL0).mp he
+    exact_mod_cast (div_left_inj₀ hL0).mp he
   let j : Fin n := ⟨0, by omega⟩
   let k : Fin n := ⟨1, by omega⟩
   have hjk : j ≠ k := by intro h; have := congrArg Fin.val h; simp [j, k] at this

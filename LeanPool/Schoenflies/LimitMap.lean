@@ -387,10 +387,10 @@ def region' : Set Plane := L.dom' \ L.bdry'
 
 /-- `St_{Γ'_n}(σ'_n(x))`, written `T_n(x)` in the blueprint: the closed target star of the cell
 corresponding to the source carrier of `x`. -/
-def tgtStar (n : ℕ) (x : Plane) : Set Plane := (L.tgt n).star ((L.src n).carrier x)
+noncomputable def tgtStar (n : ℕ) (x : Plane) : Set Plane := (L.tgt n).star ((L.src n).carrier x)
 
 /-- `St_{Γ_n}(x)`, the closed source star of the source carrier of `x`. -/
-def srcStar (n : ℕ) (x : Plane) : Set Plane := (L.src n).star ((L.src n).carrier x)
+noncomputable def srcStar (n : ℕ) (x : Plane) : Set Plane := (L.src n).star ((L.src n).carrier x)
 
 variable {L}
 
@@ -675,7 +675,7 @@ of their intersection is already a preimage of `y`. -/
 
 /-- `St_{Γ_n}(car_{Γ'_n}(y))`: the source star of the target carrier of `y`. This is the set the
 blueprint calls `K`, read at every stage instead of at one. -/
-def preStar (L : LimitTower γ) (n : ℕ) (y : Plane) : Set Plane :=
+noncomputable def preStar (L : LimitTower γ) (n : ℕ) (y : Plane) : Set Plane :=
   (L.src n).star ((L.tgt n).carrier y)
 
 theorem preStar_succ_subset (hy : y ∈ L.dom') (n : ℕ) :

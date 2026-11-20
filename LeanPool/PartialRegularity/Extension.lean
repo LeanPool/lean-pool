@@ -114,8 +114,9 @@ lemma card_A_k_bound (α : ℝ) (X : ℕ) (k : ℕ) (hk : 1 ≤ k) :
       ArithmeticFunction.cardDistinctFactors (bernoulli (2 * k)).num.natAbs := by
   have hle := Set.ncard_le_ncard (A_k_subset_primeFactors α X k hk) (Finset.finite_toSet _)
   rw [Set.ncard_coe_finset] at hle
-  rw [ArithmeticFunction.cardDistinctFactors_apply, ← List.card_toFinset
-      (bernoulli (2 * k)).num.natAbs.primeFactorsList, ← Nat.primeFactors.eq_1]
+  rw [ArithmeticFunction.cardDistinctFactors_eq_length_dedup_primeFactorsList,
+      ← List.card_toFinset (bernoulli (2 * k)).num.natAbs.primeFactorsList,
+      ← Nat.primeFactors.eq_1]
   exact Nat.cast_le.mpr hle
 
 lemma sorted_primes_get_ge (l : List ℕ) (hsort : l.SortedLT) (hge2 : ∀ x ∈ l, 2 ≤ x)

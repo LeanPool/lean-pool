@@ -324,7 +324,7 @@ theorem tendsto_setIntegral_mul_convolution_of_measurable
             ring
     refine hstep.trans ?_
     rw [eLpNorm_const_smul]
-    exact mul_le_mul_of_nonneg_right (le_of_eq (Real.enorm_eq_ofReal hC0)) (by simp)
+    exact mul_le_mul_of_nonneg_right (le_of_eq (Real.eNorm_eq_ofReal hC0)) (by simp)
   have hGLp : ∀ n, MemLp (Gn n) 2 (volume : Measure (EuclideanSpace ℝ (Fin d))) := by
     intro n
     exact lt_of_le_of_lt (hGvol n)

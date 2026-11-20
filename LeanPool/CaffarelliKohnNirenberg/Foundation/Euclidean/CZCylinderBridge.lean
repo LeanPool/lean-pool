@@ -53,7 +53,7 @@ theorem eLpNorm'_cylinder_le_of_ae_slice_bound
     rw [hμ]
     exact hP
   have hF : AEMeasurable (fun z : Vec3 × ℝ => ‖P z‖ₑ ^ q) (μx.prod μt) :=
-    hPprod.enorm.pow_const q
+    hPprod.eNorm.pow_const q
   have hswap : (∫⁻ z, ‖P z‖ₑ ^ q ∂(μx.prod μt)) =
       ∫⁻ s, ∫⁻ x, ‖P (x, s)‖ₑ ^ q ∂μx ∂μt := by
     calc
@@ -80,7 +80,7 @@ theorem eLpNorm'_cylinder_le_of_ae_slice_bound
     calc
       (∫⁻ x, ‖P (x, s)‖ₑ ^ q ∂μx) =
           eLpNorm' (fun x : Vec3 => P (x, s)) q μx ^ q :=
-        lintegral_rpow_enorm_eq_rpow_eLpNorm' hq
+        lintegral_rpow_eNorm_eq_rpow_eLpNorm' hq
       _ ≤ eLpNorm' (fun x : Vec3 => P (x, s)) q volume ^ q :=
         ENNReal.rpow_le_rpow hsBall hq.le
       _ = eLpNorm (fun x : Vec3 => P (x, s))
@@ -95,7 +95,7 @@ theorem eLpNorm'_cylinder_le_of_ae_slice_bound
         eLpNorm' P q (μx.prod μt) := by
       exact congrArg (fun m : Measure (Vec3 × ℝ) => eLpNorm' P q m) hμ.symm
     _ = (∫⁻ z, ‖P z‖ₑ ^ q ∂(μx.prod μt)) ^ (1 / q : ℝ) := by
-      rw [eLpNorm'_eq_lintegral_enorm]
+      rw [eLpNorm'_eq_lintegral_eNorm]
     _ ≤ (∫⁻ s, B s ^ q ∂μt) ^ (1 / q : ℝ) :=
       ENNReal.rpow_le_rpow htotal (by positivity)
     _ = (∫⁻ s in Ioc (t - r ^ 2) t, B s ^ q) ^ (1 / q : ℝ) := by
@@ -144,7 +144,7 @@ private lemma utensor_slice_scale_bound_hscale_1 :
       have hGs : 0 ≤ G s := by
         dsimp [G]
         exact Real.rpow_nonneg (abs_nonneg _) _
-      rw [Real.enorm_eq_ofReal hGs]
+      rw [Real.eNorm_eq_ofReal hGs]
       calc
         ENNReal.ofReal (C * U s) ≤ ENNReal.ofReal (C * (A * G s)) :=
           ENNReal.ofReal_le_ofReal hCU
@@ -367,7 +367,7 @@ theorem utensor_slice_scale_bound
         congr 1
         apply lintegral_congr
         intro s
-        rw [Real.enorm_eq_ofReal (by positivity : 0 ≤ G s)]
+        rw [Real.eNorm_eq_ofReal (by positivity : 0 ≤ G s)]
       _ ≤ ENNReal.ofReal r ^ (1 / 3 : ℝ) *
           eLpNorm' G 2 (volume.restrict Tρ) := hholder.1
       _ ≤ _ := by

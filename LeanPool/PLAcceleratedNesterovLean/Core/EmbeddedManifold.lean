@@ -369,7 +369,7 @@ private theorem smooth_embedding_local_graph {d n : ℕ}
   -- Step 7: Apply C² inverse function theorem to h
   have h_two_ne_zero : (2 : WithTop ℕ∞) ≠ 0 := by norm_num
   have hh_strict : HasStrictFDerivAt h (Dh_equiv : ManifoldModel n →L[ℝ] ↥V) a :=
-    hh_smooth.hasStrictFDerivAt' hh_fderiv_equiv h_two_ne_zero
+    hh_smooth.hasStrictFDerivAt hh_fderiv_equiv h_two_ne_zero
   set ψ : ↥V → ManifoldModel n := hh_strict.localInverse h Dh_equiv a with hψ_def
   have hψ_zero : ψ 0 = a := by
     have := hh_strict.localInverse_apply_image; rwa [hh_a] at this

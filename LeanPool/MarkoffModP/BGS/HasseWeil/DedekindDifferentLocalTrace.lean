@@ -8,7 +8,8 @@ module
 
 public import Mathlib.RingTheory.DedekindDomain.Different
 public import Mathlib.RingTheory.DedekindDomain.Factorization
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 
 /-!
 # Local traces and the different
@@ -59,7 +60,7 @@ theorem le_iff_count_ge {I J : FractionalIdeal R⁰ K} (hI : I ≠ 0) (hJ : J �
 theorem count_coeIdeal_eq_multiplicity (I : Ideal R) (hI : I ≠ ⊥)
     (v : HeightOneSpectrum R) :
     count K v (I : FractionalIdeal R⁰ K) = (multiplicity v.asIdeal I : ℤ) := by
-  rw [count_coe K v hI,
+  rw [count_coeIdeal K v hI,
     Ideal.count_associates_factors_eq hI v.isPrime v.ne_bot,
     HeightOneSpectrum.count_normalizedFactors_eq_multiplicity hI]
 

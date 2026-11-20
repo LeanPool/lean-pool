@@ -62,7 +62,7 @@ theorem ideal_factor_count_le_primePowerNorm {I P : Ideal (𝓞 K)} {p k : ℕ}
 theorem idealNormCount_prime_pow_le {p k : ℕ} (hp : p.Prime) :
     idealNormCount K (p ^ k) ≤ (k + 1) ^ Module.finrank ℚ K := by
   classical
-  let T : Finset (Ideal (𝓞 K)) := (finite_setOfPred_absNorm_eq (p ^ k)).toFinset
+  let T : Finset (Ideal (𝓞 K)) := (Ring.HasFiniteQuotients.finite_absNorm_eq (p ^ k)).toFinset
   have hT (I : Ideal (𝓞 K)) : I ∈ T ↔ absNorm I = p ^ k := by simp [T]
   let S := T.biUnion (fun I => (normalizedFactors I).toFinset)
   have hS (P : Ideal (𝓞 K)) (hP : P ∈ S) : Prime P ∧ rationalPrimeBelow P = p := by

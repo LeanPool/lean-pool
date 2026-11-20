@@ -204,9 +204,9 @@ theorem holomorphic_constant_rank
   obtain ⟨Q, hRQ⟩ := Submodule.exists_isCompl R
   have hRQtop : Submodule.IsTopCompl R Q :=
     Submodule.IsCompl.isTopCompl_of_isClosed_of_finiteDimensional hRQ
-      R.closed_of_finiteDimensional
-  let : CompleteSpace R := FiniteDimensional.complete ℂ R
-  let : CompleteSpace Q := FiniteDimensional.complete ℂ Q
+      R.isClosed_of_finiteDimensional
+  let : CompleteSpace R := FiniteDimensional.completeSpace ℂ R
+  let : CompleteSpace Q := FiniteDimensional.completeSpace ℂ Q
   let pR : ComplexEuclidean (r + m') →L[ℂ] R :=
     R.projectionOntoL Q hRQtop
   let pQ : ComplexEuclidean (r + m') →L[ℂ] Q :=
@@ -235,11 +235,11 @@ theorem holomorphic_constant_rank
     simpa only [g', pR, R] using rangeProjection_comp_surjective A Q hRQtop
   let K : Submodule ℂ (ComplexEuclidean (r + n')) :=
     LinearMap.ker g'.toLinearMap
-  let : CompleteSpace K := FiniteDimensional.complete ℂ K
+  let : CompleteSpace K := FiniteDimensional.completeSpace ℂ K
   obtain ⟨L, hKL⟩ := Submodule.exists_isCompl K
   have hKLtop : Submodule.IsTopCompl K L :=
     Submodule.IsCompl.isTopCompl_of_isClosed_of_finiteDimensional hKL
-      K.closed_of_finiteDimensional
+      K.isClosed_of_finiteDimensional
   let kproj : ComplexEuclidean (r + n') →L[ℂ] K :=
     K.projectionOntoL L hKLtop
   have hkerCompl : IsCompl (LinearMap.ker g'.toLinearMap)

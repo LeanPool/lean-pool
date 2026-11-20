@@ -145,7 +145,7 @@ theorem schwartz_finite_cospan (u v : E →L[ℂ] F) (hu : Surjective u) (hv : I
   have hσS : σ ∈ S := by
     have hpartial : ∀ m, (∑ k ∈ Finset.range m, s (fk k)) ∈ S :=
       fun m => S.sum_mem (fun k _ => hsS (fk k))
-    exact (S.closed_of_finiteDimensional).mem_of_tendsto
+    exact (S.isClosed_of_finiteDimensional).mem_of_tendsto
       hsum_s.hasSum.tendsto_sum_nat (Filter.Eventually.of_forall hpartial)
   have htel : ∀ m : ℕ,
       (∑ k ∈ Finset.range m, ((u (e (fk k)) - v (e (fk k))) + s (fk k))) = f₀ - fk m := by

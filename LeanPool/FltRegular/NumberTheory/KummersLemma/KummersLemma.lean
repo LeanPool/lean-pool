@@ -37,7 +37,7 @@ omit [IsCyclotomicExtension {p} ℚ K] in
 theorem exists_pow_eq_of_zeta_sub_one_pow_dvd_sub_one {u : (𝓞 K)ˣ}
     (hcong : (hζ.toInteger - 1 : 𝓞 K) ^ p ∣ (u : 𝓞 K) - 1) : ∃ v : K, v ^ p = u := by
   by_contra! hu
-  have hirr := X_pow_sub_C_irreducible_of_prime hpri.out hu
+  have hirr := irreducible_X_pow_sub_C_of_prime hpri.out hu
   have := Fact.mk hirr
   let L := AdjoinRoot (X ^ p - C (u : K))
   have := isSplittingField_AdjoinRoot_X_pow_sub_C

@@ -34,7 +34,7 @@ private theorem exists_unit_zpow_ne_one (n : ℤ) (hn : n ≠ 0) :
   let q : Polynomial F := Polynomial.X ^ m - 1
   have hm : m ≠ 0 := Int.natAbs_ne_zero.mpr hn
   have hqDegree : q.natDegree = m := by
-    simpa [q] using (Polynomial.natDegree_X_pow_sub_C (R := F) (n := m) (r := 1))
+    simpa [q] using (Polynomial.natDegree_X_pow_sub_C (R := F) (n := m) (a := 1))
   have hq : q ≠ 0 := by
     intro hzero
     have : q.natDegree = 0 := by simp [hzero]

@@ -46,7 +46,7 @@ private theorem descendantsENNAverage_tsum_eq_tsum_descendantsENNAverage
   unfold descendantsENNAverage
   rw [show (∑ R ∈ descendantsAtDepth Q j, (fun R => ∑' n : ℕ, F R n) R) =
       ∑' n : ℕ, ∑ R ∈ descendantsAtDepth Q j, F R n by
-    exact (Summable.tsum_finsetSum (fun R _ => ENNReal.summable)).symm]
+    exact (Summable.tsum_finsetSum (fun R _ => CompleteLattice.summable)).symm]
   rw [← ENNReal.tsum_mul_left]
 
 private theorem physicalScaleDepth_add {d : ℕ} (Q : TriadicCube d)
@@ -67,7 +67,7 @@ private theorem descendantsAtScaleENNAverage_tsum_eq_tsum_descendantsAtScaleENNA
   unfold descendantsAtScaleENNAverage
   rw [show (∑ R ∈ descendantsAtScale Q k, (fun R => ∑' j : ℕ, F R j) R) =
       ∑' j : ℕ, ∑ R ∈ descendantsAtScale Q k, F R j by
-    exact (Summable.tsum_finsetSum (fun R _ => ENNReal.summable)).symm]
+    exact (Summable.tsum_finsetSum (fun R _ => CompleteLattice.summable)).symm]
   rw [← ENNReal.tsum_mul_left]
 
 private theorem descendantsAtScaleENNAverage_mul_left {d : ℕ}

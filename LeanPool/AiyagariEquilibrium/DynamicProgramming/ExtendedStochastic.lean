@@ -216,7 +216,7 @@ theorem expect_add_const (v : S →ᵇ ℝ) (c : ℝ) (p : S × A) :
     D.expect (v + const S c) p = D.expect v p + c := by
   have hterm : ∀ z : Z, D.prob z p * (v + const S c) (D.transition z p)
       = D.prob z p * v (D.transition z p) + D.prob z p * c := fun z => by
-    simp only [coe_add, const_apply, Pi.add_apply]; ring
+    simp only [FunLike.coe_add, const_apply, Pi.add_apply]; ring
   simp only [expect]
   rw [Finset.sum_congr rfl fun z _ => hterm z, Finset.sum_add_distrib, ← Finset.sum_mul,
     D.prob_sum, one_mul]

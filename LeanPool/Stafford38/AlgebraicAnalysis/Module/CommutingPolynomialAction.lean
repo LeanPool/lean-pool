@@ -88,7 +88,7 @@ theorem commutingPolynomialAction_intertwines {σ : Type w}
   | mul_X p i hp =>
       apply LinearMap.ext
       intro x
-      simp only [map_mul, LinearMap.comp_apply, Module.End.mul_apply,
+      simp only [map_mul, LinearMap.comp_apply, mul_apply_eq_comp,
         commutingPolynomialAction_apply_X]
       calc
         f ((commutingPolynomialAction v hv p) (v i x)) =

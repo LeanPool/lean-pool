@@ -245,7 +245,7 @@ theorem code_eq_of_square_difference (t : ℕ) {p p' : Parameters} {z : (ZMod 3)
     (hz : liftMap (t + t) p' - liftMap (t + t) p = z ^ 2) : p.1 = p'.1 := by
   have hzdeg := square_difference_root_degree t hb hb' hz
   have htop : p'.1 3 - p.1 3 = z.coeff (t + 3) ^ 2 := by
-    have hc := congrArg (fun f => Polynomial.coeff f (t + t + 6)) hz
+    have hc := congrArg (fun f => AddMonoidAlgebra.coeff f (t + t + 6)) hz
     simp only [coeff_sub, coeff_liftMap_top _ hb, coeff_liftMap_top _ hb'] at hc
     rw [show t + t + 6 = 2 * (t + 3) from by omega,
       Polynomial.coeff_pow_of_natDegree_le hzdeg] at hc

@@ -1010,11 +1010,11 @@ theorem abs_integral_ThetaT_mul_le (hG : D.GBound) (w : TestFun d) :
     ((mem_nonleaf_iff D.hd).mp ((D.mem_setF hR hRs hFR).mp ((D.mem_setT hR hRs hFR).mp hT).1).1).1
   have h2 : ∑ T ∈ D.setT hR hRs hFR, ‖α T‖ₑ ≤ ∑' T : R.tree, ‖α T‖ₑ := by
     rw [← Finset.sum_subtype_of_mem (fun T => ‖α T‖ₑ) hsub]
-    exact ENNReal.sum_le_tsum _
+    exact sum_le_tsum _
   have h3 := ENNReal.toReal_mono hfin (h2.trans h271)
-  rw [ENNReal.toReal_sum (fun T _ => enorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
+  rw [ENNReal.toReal_sum (fun T _ => eNorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (mul_nonneg D.C271_nonneg hC₀)] at h3
-  simp only [toReal_enorm, Real.norm_eq_abs] at h3
+  simp only [toReal_eNorm, Real.norm_eq_abs] at h3
   -- assemble
   have e𝔥 : truncate R (D.prunedH hR hRs hFR : (Fin d → ℝ) → ℝ) = D.prunedH hR hRs hFR :=
     congrArg Subtype.val (TestFun.truncateₗ_of_supportedOn (D.prunedH_supported hR hRs hFR))
@@ -2205,11 +2205,11 @@ theorem abs_integral_ThetaGT_mul_le (w : TestFun d) :
     ((mem_nonleaf_iff D.hd).mp ((D.mem_setFG hR hRs hFR).mp ((D.mem_setTG hR hRs hFR).mp hT).1).1).1
   have h2 : ∑ T ∈ D.setTG hR hRs hFR, ‖α T‖ₑ ≤ ∑' T : R.tree, ‖α T‖ₑ := by
     rw [← Finset.sum_subtype_of_mem (fun T => ‖α T‖ₑ) hsub]
-    exact ENNReal.sum_le_tsum _
+    exact sum_le_tsum _
   have h3 := ENNReal.toReal_mono hfin (h2.trans h271)
-  rw [ENNReal.toReal_sum (fun T _ => enorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
+  rw [ENNReal.toReal_sum (fun T _ => eNorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (mul_nonneg D.C271q_nonneg hC₀)] at h3
-  simp only [toReal_enorm, Real.norm_eq_abs] at h3
+  simp only [toReal_eNorm, Real.norm_eq_abs] at h3
   have e𝔤 : truncate R (D.ghat R : (Fin d → ℝ) → ℝ) = D.ghat R :=
     congrArg Subtype.val (TestFun.truncateₗ_of_supportedOn (D.ghat_supported R))
   have hw : lpNorm (truncate R (w : (Fin d → ℝ) → ℝ)) D.q' ≤ lpNorm (w : (Fin d → ℝ) → ℝ) D.q' :=
@@ -3605,7 +3605,7 @@ theorem sum_setT2_le (hG : D.GBound) (hrq : 1 / D.r + 1 / D.q ≤ 1) :
     D.subset_R_of_mem_setF2 hR hRs hFR ((D.mem_setT2 hR hRs hFR).mp hT).1
   have h2 : ∑ T ∈ D.setT2 hR hRs hFR, ‖α T‖ₑ ≤ ∑' T : R.tree, ‖α T‖ₑ := by
     rw [← Finset.sum_subtype_of_mem (fun T => ‖α T‖ₑ) hsub]
-    exact ENNReal.sum_le_tsum _
+    exact sum_le_tsum _
   -- the truncations
   have e𝔥 : truncate R (D.prunedH hR hRs hFR : (Fin d → ℝ) → ℝ) = D.prunedH hR hRs hFR :=
     congrArg Subtype.val (TestFun.truncateₗ_of_supportedOn (D.prunedH_supported hR hRs hFR))
@@ -3637,9 +3637,9 @@ theorem sum_setT2_le (hG : D.GBound) (hrq : 1 / D.r + 1 / D.q ≤ 1) :
         ENNReal.mul_ne_top ENNReal.ofReal_ne_top
           (ENNReal.mul_ne_top (ENNReal.mul_ne_top hE₁ hE₂) hE₃)
       have h3 := ENNReal.toReal_mono hfin (h2.trans h272)
-      rw [ENNReal.toReal_sum (fun T _ => enorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
+      rw [ENNReal.toReal_sum (fun T _ => eNorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
         ENNReal.toReal_mul, ENNReal.toReal_ofReal (mul_nonneg (D.C272_nonneg hrq) hC₀)] at h3
-      simp only [toReal_enorm, Real.norm_eq_abs] at h3
+      simp only [toReal_eNorm, Real.norm_eq_abs] at h3
       have eind : truncate R ((TestFun.ind R : TestFun d) : (Fin d → ℝ) → ℝ) = TestFun.ind R :=
         congrArg Subtype.val (TestFun.truncateₗ_ind R)
       have hind : lpNorm ((TestFun.ind R : TestFun d) : (Fin d → ℝ) → ℝ) s' =
@@ -3676,9 +3676,9 @@ theorem sum_setT2_le (hG : D.GBound) (hrq : 1 / D.r + 1 / D.q ≤ 1) :
             eLpNorm (truncate R (D.ghat R : (Fin d → ℝ) → ℝ)) (ENNReal.ofReal D.q) volume) ≠ ⊤ :=
         ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.mul_ne_top hE₁ hE₂)
       have h3 := ENNReal.toReal_mono hfin (h2.trans h272)
-      rw [ENNReal.toReal_sum (fun T _ => enorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
+      rw [ENNReal.toReal_sum (fun T _ => eNorm_ne_top), ENNReal.toReal_mul, ENNReal.toReal_mul,
         ENNReal.toReal_ofReal (mul_nonneg (D.C272_nonneg hrq) hC₀)] at h3
-      simp only [toReal_enorm, Real.norm_eq_abs] at h3
+      simp only [toReal_eNorm, Real.norm_eq_abs] at h3
       have hexp : (1 : ℝ) - 1 / D.r - 1 / D.q = 0 := by linarith only [hrq, hlt]
       rw [hexp, Real.rpow_zero, mul_one]
       calc ∑ T ∈ D.setT2 hR hRs hFR, |α T|
@@ -4830,7 +4830,7 @@ theorem form_update_coarsen {T : PerfectCZForm d n} {s : ℤ} (hs : KernelScale 
   conv_rhs => rw [← Function.update_eq_self j f, hdec]
   rw [coarsen, MultilinearMap.map_update_sum, MultilinearMap.map_update_sum]
   refine Finset.sum_congr rfl fun L hL => ?_
-  rw [MultilinearMap.map_update_smul, smul_eq_mul]
+  rw [MultilinearMap.map_update_smul, RingHom.id_apply, smul_eq_mul]
   have hLm : L.m ≤ s := by
     rw [StoppingData.m_of_mem_level hL]
     exact hPN

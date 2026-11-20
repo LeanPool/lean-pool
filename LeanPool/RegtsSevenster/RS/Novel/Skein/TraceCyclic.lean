@@ -40,14 +40,14 @@ theorem transposeEquiv_symm (n p : ℕ) :
   · rw [show x = (⟨x.val, x.isLt⟩ : Fin (p + n)) from Fin.ext rfl,
       transposeEquiv_symm_low n p x.val hx,
       transposeEquiv_low p n x.val hx]
-    all_goals omega
+    omega
   · have hj : x.val - p < n := by have := x.isLt; omega
     rw [show x = (⟨p + (x.val - p), by have := x.isLt; omega⟩ :
         Fin (p + n)) from Fin.ext
           (by change x.val = p + (x.val - p); omega),
       transposeEquiv_symm_high n p (x.val - p) hj,
       transposeEquiv_high p n (x.val - p) hj]
-    all_goals omega
+    omega
 
 /-- The closure respects fragment equivalence in both slots. -/
 noncomputable def pairCloseCongr {t : ℕ}

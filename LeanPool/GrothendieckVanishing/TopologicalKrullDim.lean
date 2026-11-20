@@ -155,7 +155,6 @@ theorem height_add_one_le_topologicalKrullDim_of_isClosed_of_ne_univ
     exact_mod_cast height_add_one_le h_lt_top
   refine le_trans ?_ (h_height_add_one.trans ?_)
   · gcongr
-    exact_mod_cast h_height_le
   · simpa [T] using (height_le_topologicalKrullDim T : _)
 
 end IrreducibleCloseds

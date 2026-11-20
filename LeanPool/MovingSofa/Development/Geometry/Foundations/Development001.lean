@@ -3620,7 +3620,7 @@ theorem tendsto_apply_of_null_frontier
     simpa using hlim
   · have hn := μ.tendsto_normalize_of_tendsto hμ hzero
     have hs' : μ.normalize (frontier s) = 0 := by
-      rw [μ.normalize_eq_of_nonzero hzero, hs, mul_zero]
+      rw [μ.normalize_eq_of_ne_zero hzero, hs, mul_zero]
     have hset := ProbabilityMeasure.tendsto_measure_of_null_frontier_of_tendsto hn hs'
     simpa only [← self_eq_mass_mul_normalize] using hμ.mass.mul hset
 
@@ -3842,7 +3842,7 @@ theorem frontier_image_Ioc_subset {a b : ℝ} (hab : a < b) :
     simp
 
 /-- Half-open real intervals have measurable angular images. -/
-theorem measurableSet_image_Ioc [MeasurableSpace Angle] [BorelSpace Angle] (a b : ℝ) :
+theorem measurableSet_image_Ioc {m : MeasurableSpace Angle} [BorelSpace Angle] (a b : ℝ) :
     MeasurableSet ((fun t : ℝ ↦ (t : Angle)) '' Ioc a b) := by
   by_cases hab : a < b
   · rw [image_Ioc_eq_image_Ioo_union hab]
@@ -3850,7 +3850,7 @@ theorem measurableSet_image_Ioc [MeasurableSpace Angle] [BorelSpace Angle] (a b 
   · simp [Ioc_eq_empty_of_le (le_of_not_gt hab)]
 
 /-- A Borel subset of a real interval of at most one turn has a Borel angular image. -/
-theorem measurableSet_image_of_subset_Ioc [MeasurableSpace Angle] [BorelSpace Angle]
+theorem measurableSet_image_of_subset_Ioc {m : MeasurableSpace Angle} [BorelSpace Angle]
     {a b : ℝ} (hab : b ≤ a + 2 * Real.pi) {E : Set ℝ} (hE : MeasurableSet E)
     (hEab : E ⊆ Ioc a b) :
     MeasurableSet ((fun t : ℝ ↦ (t : Angle)) '' E) :=
@@ -3881,7 +3881,7 @@ theorem disjoint_image_Ioo_singleton {a b : ℝ} (h : b ≤ a + 2 * Real.pi) :
   exact ht.2.ne htb
 
 /-- Passing from an open arc to a half-open arc restores exactly its terminal atom. -/
-theorem integral_image_Ioc [MeasurableSpace Angle] [BorelSpace Angle]
+theorem integral_image_Ioc {m : MeasurableSpace Angle} [BorelSpace Angle]
     (μ : MeasureTheory.FiniteMeasure Angle) (f : Angle →ᵇ ℝ)
     {a b : ℝ} (hab : a < b) (hturn : b ≤ a + 2 * Real.pi) :
     (∫ x in (fun t : ℝ ↦ (t : Angle)) '' Ioc a b, f x ∂(μ : MeasureTheory.Measure Angle)) =
@@ -3896,7 +3896,7 @@ theorem integral_image_Ioc [MeasurableSpace Angle] [BorelSpace Angle]
 
 /-- Weak convergence with fixed endpoint atoms preserves integrals on half-open angular arcs. -/
 theorem tendsto_integral_image_Ioc_of_fixed_endpoint_atoms
-    [MeasurableSpace Angle] [BorelSpace Angle]
+    {m : MeasurableSpace Angle} [BorelSpace Angle]
     {ι : Type*} {F : Filter ι} {μs : ι → FiniteMeasure Angle} {μ : FiniteMeasure Angle}
     {a b : ℝ} (hab : a < b) (hturn : b ≤ a + 2 * Real.pi)
     (hμ : Tendsto μs F (𝓝 μ))
@@ -3929,7 +3929,7 @@ theorem tendsto_integral_image_Ioc_of_fixed_endpoint_atoms
 
 /-- A continuous function of a direction is integrable for every finite angular measure, the
 circle of directions being compact. -/
-theorem integrable_of_continuous [MeasurableSpace Angle] [BorelSpace Angle] {E : Type*}
+theorem integrable_of_continuous {m : MeasurableSpace Angle} [BorelSpace Angle] {E : Type*}
     [NormedAddCommGroup E] {μ : Measure Angle} [IsFiniteMeasure μ] {f : Angle → E}
     (hf : Continuous f) : Integrable f μ := by
   have : Fact (0 < 2 * Real.pi) := ⟨mul_pos (by norm_num) Real.pi_pos⟩
@@ -3941,7 +3941,7 @@ theorem integrable_of_continuous [MeasurableSpace Angle] [BorelSpace Angle] {E :
 /-- On a real window of at most one turn, the pushforward of a weighted measure along the
 angular projection gives the angular image of a measurable subset the integral of the weight
 over that subset. -/
-theorem map_coe_withDensity_image_eq_setLIntegral [MeasurableSpace Angle] [BorelSpace Angle]
+theorem map_coe_withDensity_image_eq_setLIntegral {m : MeasurableSpace Angle} [BorelSpace Angle]
     {ν : Measure ℝ} {w : ℝ → ENNReal} {S T : Set ℝ} {a b : ℝ}
     (hturn : b ≤ a + 2 * Real.pi) (hS : S ⊆ Ioc a b) (hT : MeasurableSet T) (hTS : T ⊆ S) :
     Measure.map (fun t : ℝ ↦ (t : Angle)) ((ν.restrict S).withDensity w)
@@ -3960,7 +3960,7 @@ theorem map_coe_withDensity_image_eq_setLIntegral [MeasurableSpace Angle] [Borel
 
 /-- Two angular measures that agree on the angular image of every measurable subset of a real
 window agree after restriction to that window's angular image. -/
-theorem measure_restrict_image_congr [MeasurableSpace Angle] [BorelSpace Angle]
+theorem measure_restrict_image_congr {m : MeasurableSpace Angle} [BorelSpace Angle]
     {μ ν : Measure Angle} {J : Set ℝ} (hJ : MeasurableSet J)
     (h : ∀ T, MeasurableSet T → T ⊆ J →
       μ ((fun t : ℝ ↦ (t : Angle)) '' T) = ν ((fun t : ℝ ↦ (t : Angle)) '' T)) :
@@ -3974,7 +3974,7 @@ theorem measure_restrict_image_congr [MeasurableSpace Angle] [BorelSpace Angle]
 
 /-- Two angular measures reading extended-real weights on a real window agree after restriction
 to its angular image as soon as the weights agree almost everywhere on the window. -/
-theorem measure_restrict_image_congr_of_ae_eq [MeasurableSpace Angle] [BorelSpace Angle]
+theorem measure_restrict_image_congr_of_ae_eq {m : MeasurableSpace Angle} [BorelSpace Angle]
     {μ ν : Measure Angle} {ρ : Measure ℝ} {w w' : ℝ → ENNReal} {J : Set ℝ}
     (hJ : MeasurableSet J)
     (hμ : ∀ T, MeasurableSet T → T ⊆ J →
@@ -3991,7 +3991,7 @@ theorem measure_restrict_image_congr_of_ae_eq [MeasurableSpace Angle] [BorelSpac
 /-- An angular measure reading a real density on a window agrees, after restriction to the
 window's angular image, with a sum of two angular measures whose densities add up to it almost
 everywhere. -/
-theorem measure_restrict_image_congr_add [MeasurableSpace Angle] [BorelSpace Angle]
+theorem measure_restrict_image_congr_add {m : MeasurableSpace Angle} [BorelSpace Angle]
     {μ ν₁ ν₂ : Measure Angle} {ρ : Measure ℝ} {f g h : ℝ → ℝ} {J : Set ℝ}
     (hJ : MeasurableSet J)
     (hμ : ∀ T, MeasurableSet T → T ⊆ J →
@@ -4014,7 +4014,7 @@ theorem measure_restrict_image_congr_add [MeasurableSpace Angle] [BorelSpace Ang
   have hfT : AEMeasurable (fun t ↦ ENNReal.ofReal (f t)) (ρ.restrict T) :=
     ENNReal.measurable_ofReal.comp_aemeasurable
       (hf.mono_measure (Measure.restrict_mono hTJ le_rfl))
-  rw [hμ T hT hTJ, Measure.add_apply, hν₁ T hT hTJ, hν₂ T hT hTJ, lintegral_congr_ae hsplit,
+  rw [hμ T hT hTJ, add_apply, hν₁ T hT hTJ, hν₂ T hT hTJ, lintegral_congr_ae hsplit,
     lintegral_add_left' hfT]
 
 end Real.Angle
@@ -5394,7 +5394,7 @@ theorem Submodule.span_singleton_ne_top (h : 1 < Module.finrank ℝ E) (v : E) :
     rw [Submodule.span_zero_singleton]
     exact bot_ne_top
   · intro htop
-    have hfin : Module.finrank ℝ E = 1 := (finrank_eq_one_iff_of_nonzero v hv).2 htop
+    have hfin : Module.finrank ℝ E = 1 := (finrank_eq_one_iff_of_ne_zero v hv).2 htop
     omega
 
 variable [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
@@ -8897,7 +8897,7 @@ theorem hasDerivAt_tangentVector (t : ℝ) :
 /-- The angular unit-normal parametrization is one-Lipschitz. -/
 theorem lipschitzWith_normalVector_real :
     LipschitzWith 1 (fun t : ℝ ↦ normalVector (t : Real.Angle)) := by
-  apply lipschitzWith_of_nnnorm_deriv_le
+  apply lipschitzWith_of_nnNorm_deriv_le
     (fun t ↦ (hasDerivAt_normalVector t).differentiableAt)
   intro t
   rw [(hasDerivAt_normalVector t).deriv]
@@ -8907,7 +8907,7 @@ theorem lipschitzWith_normalVector_real :
 /-- The angular unit-tangent parametrization is one-Lipschitz. -/
 theorem lipschitzWith_tangentVector_real :
     LipschitzWith 1 (fun t : ℝ ↦ tangentVector (t : Real.Angle)) := by
-  apply lipschitzWith_of_nnnorm_deriv_le
+  apply lipschitzWith_of_nnNorm_deriv_le
     (fun t ↦ (hasDerivAt_tangentVector t).differentiableAt)
   intro t
   rw [(hasDerivAt_tangentVector t).deriv]

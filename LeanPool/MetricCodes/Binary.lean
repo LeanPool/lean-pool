@@ -6130,7 +6130,7 @@ theorem clebschCoefficient_cross_degree_mul
             (MetricCodes.Boolean.harmonicCoefficient N q (t + 1)) := by
     intro s
     induction s using Nat.strong_induction_on with
-    | h s ih =>
+    | ind s ih =>
         intro hs
         cases s with
         | zero =>

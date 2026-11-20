@@ -145,7 +145,7 @@ theorem lps_mixed_cross_density_limits_endpoint
         refine lintegral_congr_ae ?_
         filter_upwards [hsum.1] with τ h
         rw [ENNReal.ofReal_one] at h ⊢
-        rw [eLpNorm_one_eq_lintegral_enorm h.aestronglyMeasurable]
+        rw [eLpNorm_one_eq_lintegral_eNorm h.aestronglyMeasurable]
     exact lps_cross_density_limit_of_pairing ht.2.le
       (fun k => Eventually.of_forall fun n => (hPair k).2.1 n)
       (fun k => (hPair k).2.2) (fun k => (hPair k).1)

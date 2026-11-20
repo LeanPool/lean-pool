@@ -64,7 +64,7 @@ theorem setIntegral_sq_le_exp_mul_weighted {U B : Set (Vec d)} (hBU : B ⊆ U)
       _ = Real.exp c * (w y ^ 2 * theta y) := by ring
   have h2 : (∫ y in B, Real.exp c * (w y ^ 2 * theta y) ∂volume) ≤
       ∫ y in U, Real.exp c * (w y ^ 2 * theta y) ∂volume := by
-    refine setIntegral_mono_set (hint.const_mul _) ?_ (LE.le.eventuallyLE hBU)
+    refine setIntegral_mono_set (hint.const_mul _) ?_ (LE.le.eventuallySubset hBU)
     exact Filter.Eventually.of_forall fun y =>
       mul_nonneg (Real.exp_pos c).le
         (mul_nonneg (sq_nonneg _) (hthetaNonneg y))

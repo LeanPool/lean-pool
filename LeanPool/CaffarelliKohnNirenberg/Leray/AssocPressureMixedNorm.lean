@@ -34,7 +34,7 @@ theorem associatedPressure_memLp_two_of_lintegral_lt_top
     (hfin : (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) < ⊤) :
     MemLp f 2 μ := by
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hfin.ne
 
@@ -261,7 +261,7 @@ private theorem associatedPressure_memLp_three_of_lintegral_lt_top
     (hfin : (∫⁻ x, ‖f x‖ₑ ^ (3 : ℝ) ∂μ) < ⊤) :
     MemLp f (ENNReal.ofReal (3 : ℝ)) μ := by
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3)]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hfin.ne
@@ -320,7 +320,7 @@ private theorem associatedPressureVelocity_slice_l3_bound
   have hnmem := associatedPressure_memLp_three_of_lintegral_lt_top hnmeas hIntTop
   have hPower : eLpNorm n (ENNReal.ofReal (3 : ℝ)) volume ^ (3 : ℝ) =
       ∫⁻ x : Vec3, ‖n x‖ₑ ^ (3 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (by norm_num) ENNReal.ofReal_ne_top hnmeas,
       ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3),
       ← ENNReal.rpow_mul, one_div,
@@ -737,7 +737,7 @@ private theorem associatedPressure_rieszPressure_l3_mixed_bound
       rw [eLpNorm_eq_eLpNorm'
         (by norm_num) ENNReal.ofReal_ne_top hP3mem.aestronglyMeasurable,
         ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3 / 2)]
-      exact lintegral_rpow_enorm_eq_rpow_eLpNorm'
+      exact lintegral_rpow_eNorm_eq_rpow_eLpNorm'
         (f := P3) (μ := volume) (q := (3 / 2 : ℝ)) (by norm_num)
     have hP5toP3 :
         (fun x : Vec3 => rieszPressureSpaceTime (5 / 3 : ℝ) (by norm_num)

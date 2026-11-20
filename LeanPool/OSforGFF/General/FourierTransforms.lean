@@ -53,7 +53,7 @@ The 1D result follows from Fourier inversion:
 @[expose] public section
 
 open MeasureTheory Complex Real
-open scoped BigOperators FourierTransform
+open scoped BigOperators FourierTransform Pointwise
 
 noncomputable section
 

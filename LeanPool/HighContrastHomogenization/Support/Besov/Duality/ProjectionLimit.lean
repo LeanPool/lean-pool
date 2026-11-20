@@ -264,10 +264,10 @@ theorem normalizedCubeMeasure_descendant_eq_smul_restrict {d : ℕ}
       exact hx.1
     · intro hx
       exact ⟨hx, hsubset hx.2⟩
-  rw [normalizedCubeMeasure, MeasureTheory.Measure.smul_apply]
+  rw [normalizedCubeMeasure, smul_apply]
   rw [cubeMeasure, MeasureTheory.Measure.restrict_apply hs]
-  rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.restrict_apply hs]
-  rw [normalizedCubeMeasure, MeasureTheory.Measure.smul_apply]
+  rw [smul_apply, MeasureTheory.Measure.restrict_apply hs]
+  rw [normalizedCubeMeasure, smul_apply]
   change ENNReal.ofReal ((cubeVolume R)⁻¹) * MeasureTheory.volume (s ∩ cubeSet R) =
     ENNReal.ofReal (cubeVolume Q / cubeVolume R) *
       (ENNReal.ofReal ((cubeVolume Q)⁻¹) * cubeMeasure Q (s ∩ cubeSet R))

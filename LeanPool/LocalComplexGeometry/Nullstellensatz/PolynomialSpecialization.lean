@@ -59,8 +59,7 @@ theorem eventually_polynomial_map_eval_eq_of_map_germ_eq {n : ℕ}
         ∀ k ∈ S, p.coeff k z = q.coeff k z :=
     S.eventually_all.2 fun k hk ↦ hevent k
   filter_upwards [hall] with z hz
-  apply Polynomial.ext
-  intro k
+  ext k
   simp only [Polynomial.coeff_map]
   by_cases hk : k ∈ S
   · exact hz k hk

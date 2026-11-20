@@ -6,6 +6,7 @@ Authors: Dan Abramov
 module
 
 public import Mathlib.Algebra.GCDMonoid.Basic
+public import Mathlib.Algebra.Order.GroupWithZero.Associated
 public import Mathlib.Algebra.Algebra.Defs
 public import Mathlib.LinearAlgebra.TensorProduct.Map
 

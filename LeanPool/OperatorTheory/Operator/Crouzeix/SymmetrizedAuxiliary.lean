@@ -88,11 +88,11 @@ theorem aeval_add_star_crouzeixPolynomialAuxiliaryOperator_eq_doubleLayerIntegra
   have hfB : IntervalIntegrable (fun t => f t • B t)
       volume 0 (2 * Real.pi) := by
     rw [hfBfun]
-    exact ⟨hpContour.1.smul_enorm (-I), hpContour.2.smul_enorm (-I)⟩
+    exact ⟨hpContour.1.smul_eNorm (-I), hpContour.2.smul_eNorm (-I)⟩
   have hstarfB : IntervalIntegrable (fun t => star (f t) • B t)
       volume 0 (2 * Real.pi) := by
     rw [hstarfBfun]
-    exact ⟨hstarContour.1.smul_enorm (-I), hstarContour.2.smul_enorm (-I)⟩
+    exact ⟨hstarContour.1.smul_eNorm (-I), hstarContour.2.smul_eNorm (-I)⟩
   have hsymm := ContinuousLinearMap.intervalIntegral_smul_add_adjoint
     B f hfB hstarfB
   have hP : (∫ t in (0 : ℝ)..(2 * Real.pi), f t • B t) =

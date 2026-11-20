@@ -141,7 +141,7 @@ open scoped BoundedContinuousFunction ContDiff
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]
 
 local instance tensorFiniteDimensional (n : ℕ) : FiniteDimensional ℝ (Space [×n]→L[ℝ] V) := by
-  let J : (Space [×n]→L[ℝ] V) →ₗ[ℝ] MultilinearMap ℝ (fun _ : Fin n => Space) V :=
+  let J : (Space [×n]→L[ℝ] V) →ₗ[ℝ] MultilinearMap (RingHom.id ℝ) (fun _ : Fin n => Space) V :=
     ContinuousMultilinearMap.toMultilinearMapLinear
   exact FiniteDimensional.of_injective J ContinuousMultilinearMap.toMultilinearMap_injective
 

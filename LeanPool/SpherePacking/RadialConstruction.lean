@@ -127,14 +127,14 @@ private theorem lowerGammaBoundaryLog_pole_decomposition
   have hs : s ≠ 0 := by
     intro h
     have him := congrArg Complex.im h
-    try dsimp only [s] at him
+    dsimp only [s] at him
     norm_num at him
     exact hy (by exact him)
   have hgammas : Complex.Gamma s ≠ 0 := by
     apply Complex.Gamma_ne_zero
     intro m hm
     have him := congrArg Complex.im hm
-    try dsimp only [s] at him
+    dsimp only [s] at him
     norm_num at him
     exact hy (by exact him)
   have hnorm :
@@ -154,7 +154,7 @@ private theorem lowerGammaBoundaryLog_pole_decomposition
       (norm_ne_zero_iff.mpr hgammas), hs_norm]
     (symm; apply add_sub_cancel_left)
   have harg : s + 1 = 1 - Complex.I * (y : ℂ) / 2 := by
-    try dsimp only [s]
+    dsimp only [s]
     ring
   unfold lowerGammaBoundaryLog
   change
@@ -538,7 +538,7 @@ private theorem stripRegularizedOuter_integrable_of_exp_integrable
         simp only [mul_neg, neg_mul, neg_neg]
         apply mul_assoc
   rw [← integrableOn_univ, ← @Iio_union_Ici _ _ (0 : ℝ),
-    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi enorm_ne_top]
+    integrableOn_union, integrableOn_Ici_iff_integrableOn_Ioi eNorm_ne_top]
   exact ⟨hleft, hright⟩
 
 private noncomputable def stripRegularizedOuter (ℓ : ℝ) (b : ℝ → ℝ) (z : ℂ) : ℂ :=
@@ -812,7 +812,7 @@ private theorem stripPoissonKernel_tendsto_zero_bottom_of_ne
         (continuousAt_const.sub
           (Real.continuous_cos.comp hangle).continuousAt)) hden)
   convert hcontinuous.tendsto using 1
-  all_goals simp only [stripPoissonKernel, stripAngle, add_neg_cancel, mul_zero, zero_div,
+  simp only [stripPoissonKernel, stripAngle, add_neg_cancel, mul_zero, zero_div,
     Real.sin_zero, Real.cos_zero]
 
 private theorem stripPoissonKernel_le_center_of_lower_of_abs_ge
@@ -832,7 +832,7 @@ private theorem stripPoissonKernel_le_center_of_lower_of_abs_ge
     exact Real.one_lt_cosh.mpr hδarg
   have hCpos : 0 < C := lt_trans (by norm_num) hC
   have hc : 0 < c := by
-    try dsimp only [c]
+    dsimp only [c]
     have hrecip : C⁻¹ < 1 := (inv_lt_one₀ hCpos).mpr hC
     linear_combination hrecip
   have hA : 0 < A := Real.cosh_pos _
@@ -856,7 +856,7 @@ private theorem stripPoissonKernel_le_center_of_lower_of_abs_ge
   have hsin : 0 < Real.sin (stripAngle σ) :=
     Real.sin_pos_of_pos_of_lt_pi hangle.1 hangle.2
   have hcompare : c * A ≤ A - Real.cos (stripAngle σ) := by
-    try dsimp only [c]
+    dsimp only [c]
     rw [sub_mul, one_mul, inv_mul_eq_div]
     linear_combination hratio + hcoslt
   have hcA : 0 < 4 * (c * A) := by positivity
@@ -874,7 +874,7 @@ private theorem stripPoissonKernel_le_center_of_lower_of_abs_ge
           stripPoissonKernel 0 T := by
       simp only [stripPoissonKernel, stripAngle]
       norm_num
-      try dsimp only [A, C, c]
+      dsimp only [A, C, c]
       field_simp [hc.ne', hA.ne']
 
 private theorem stripPoissonKernel_le_center_of_lower
@@ -987,7 +987,7 @@ private theorem lowerGammaBoundaryCapped_central_poisson_shift_integrable
   let z : ℂ := (s : ℂ) +
     Complex.I * ((0 * ℓ : ℝ) : ℂ)
   have hz : z ∈ Complex.im ⁻¹' Ioo (-ℓ) ℓ := by
-    try dsimp only [z]
+    dsimp only [z]
     simp only [Set.mem_preimage, Set.mem_Ioo,
       Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.I_re, Complex.I_im, Complex.ofReal_re,
@@ -1011,7 +1011,7 @@ private theorem lowerGammaBoundaryCapped_central_poisson_shift_integrable
               (s - ℓ * T) : ℂ)).re
   rw [Complex.mul_re, Complex.ofReal_re,
     Complex.ofReal_im, mul_zero, sub_zero]
-  try dsimp only [z]
+  dsimp only [z]
   rw [stripRegularizedHolomorphicPoissonKernel_re
     hℓ (by norm_num : (-1 : ℝ) < 0)
     (by norm_num : (0 : ℝ) < 1)]
@@ -1231,7 +1231,7 @@ private theorem horizontalStrip_norm_extension_majorization
     have hwaff : |(aff w).im| ≤ q * r := by
       rw [← Real.closedBall_eq_Icc,
         Metric.mem_closedBall, Real.dist_eq] at hw
-      try dsimp only [aff]
+      dsimp only [aff]
       rw [Complex.im_ofReal_mul, Complex.sub_im,
         Complex.mul_I_im, Complex.ofReal_re,
         abs_mul, abs_of_pos hq]
@@ -1293,7 +1293,7 @@ private theorem horizontalStrip_norm_extension_majorization
       closure U ⊆
         Complex.im ⁻¹' Icc (m - r) (m + r) := by
     intro w hw
-    try dsimp only [U] at hw
+    dsimp only [U] at hw
     rw [Complex.closure_reProdIm,
       closure_Ioo (neg_lt_self hRpos).ne,
       closure_Ioo hwidth.ne] at hw
@@ -1301,20 +1301,20 @@ private theorem horizontalStrip_norm_extension_majorization
   let Next : ℂ → ℝ :=
     fun w => ‖damp ε w‖ * N w
   have hNext : ContinuousOn Next (closure U) := by
-    try dsimp only [Next]
+    dsimp only [Next]
     exact hdamp.continuous.norm.continuousOn.mul
       (hN.mono hclosure)
   have hNextinterior :
       ∀ w ∈ U,
         Next w = ‖damp ε w • f w‖ := by
     intro w hw
-    try dsimp only [Next]
+    dsimp only [Next]
     rw [hinterior w hw.2]
     exact (norm_mul _ _).symm
   have hNextfrontier :
       ∀ w ∈ frontier U, Next w ≤ C := by
     intro w hw
-    try dsimp only [U] at hw
+    dsimp only [U] at hw
     rw [Complex.frontier_reProdIm,
       closure_Ioo (neg_lt_self hRpos).ne,
       frontier_Ioo hwidth,
@@ -1342,7 +1342,7 @@ private theorem horizontalStrip_norm_extension_majorization
         eq_endpoints_or_mem_Ioo_of_mem_Icc hvert.2
       rw [← or_assoc] at him'
       have himinterior := him'.resolve_left him
-      try dsimp only [Next]
+      dsimp only [Next]
       rw [hinterior w himinterior]
       simpa only [ge_iff_le, smul_eq_mul, Complex.norm_mul] using!
         hR w
@@ -2594,13 +2594,13 @@ private theorem lowerGammaBoundaryCapped_bottom_poisson_joint_tendsto
   have hb : Continuous b :=
     lowerGammaBoundaryCapped_continuous hℓ R D
   have hb₀ : Continuous b₀ := by
-    try dsimp [b₀]
+    dsimp [b₀]
     exact Continuous.fun_sub hb continuous_const
   obtain ⟨A, hA, hbound⟩ :=
     lowerGammaBoundaryCapped_dimension_abs_le_linear hd R D
   let A₀ : ℝ := A + |b s|
   have hA₀ : 0 ≤ A₀ := by
-    try dsimp [A₀]
+    dsimp [A₀]
     positivity
   have hbound₀ : ∀ y : ℝ,
       |b₀ y| ≤ A₀ * (1 + |y|) := by
@@ -2610,7 +2610,7 @@ private theorem lowerGammaBoundaryCapped_bottom_poisson_joint_tendsto
       exact hbound y
     have hy : 0 ≤ |y| := abs_nonneg y
     have hbs : 0 ≤ |b s| := abs_nonneg _
-    try dsimp [b₀, A₀]
+    dsimp [b₀, A₀]
     linarith only [mul_nonneg hbs hy, htriangle, hbmain, hy, hbs]
   have hcentral : ∀ t : ℝ,
       Integrable (fun T : ℝ =>
@@ -2629,7 +2629,7 @@ private theorem lowerGammaBoundaryCapped_bottom_poisson_joint_tendsto
       (hkcentral.mul_const (b s))
     convert! hsub using 1
     ext T
-    try dsimp [b₀]
+    dsimp [b₀]
     ring
   have hzero := harmonic_bottom_joint_tendsto_zero_of_zero
     hℓ hb₀ hA₀ hbound₀ hcentral₀ s
@@ -2687,7 +2687,7 @@ private theorem lowerGammaBoundaryCapped_bottom_poisson_joint_tendsto
            stripPoissonKernel (z.im / ℓ) T * b s) := by
           congr 1
           funext T
-          try dsimp [b₀]
+          dsimp [b₀]
           ring
       _ = (∫ T : ℝ,
           stripPoissonKernel (z.im / ℓ) T *
@@ -3303,7 +3303,7 @@ private theorem antiFourierWitness_capped_poisson_majorization_of_real_extension
   have hf : DifferentiableOn ℂ f U := by
     exact houter.neg.cexp.mul hZdifferentiable
   have hclosure : closure U = S := by
-    try dsimp [U, S]
+    dsimp [U, S]
     rw [Complex.closure_preimage_im,
       closure_Ioo (ne_of_lt hwidth)]
   have hZcontinuous : ContinuousOn Z S := by
@@ -3312,7 +3312,7 @@ private theorem antiFourierWitness_capped_poisson_majorization_of_real_extension
         hd w).continuousOn
     simpa [Z, U, hclosure, ℓ] using! hcont
   have hN : ContinuousOn N S := by
-    try dsimp [N]
+    dsimp [N]
     exact hE.neg.rexp.mul hZcontinuous.norm
   have hnonnegative : ∀ z : ℂ,
       z.im ∈ Icc (-ℓ) ℓ → 0 ≤ N z := by
@@ -3323,7 +3323,7 @@ private theorem antiFourierWitness_capped_poisson_majorization_of_real_extension
       z.im ∈ Ioo (-ℓ) ℓ → N z = ‖f z‖ := by
     intro z hz
     have hreal := hEinterior z hz
-    try dsimp [N, f, W, Z]
+    dsimp [N, f, W, Z]
     rw [hreal, norm_mul, Complex.norm_exp,
       Complex.neg_re]
   have hbottom : ∀ z : ℂ,
@@ -3341,7 +3341,7 @@ private theorem antiFourierWitness_capped_poisson_majorization_of_real_extension
       rw [← hrepr]
       simpa [Z, ℓ] using! hcap z.re
     have hboundary := hEbottom z hz
-    try dsimp [N]
+    dsimp [N]
     rw [hboundary]
     calc
       Real.exp
@@ -3370,19 +3370,19 @@ private theorem antiFourierWitness_capped_poisson_majorization_of_real_extension
       rw [← hrepr]
       exact antiFourierWitness_normalizedMellinStrip_top_norm_le_one
         hd w z.re
-    try dsimp [N]
+    dsimp [N]
     rw [hEtop z hz]
     simpa only [neg_zero, Real.exp_zero, one_mul, ge_iff_le] using! hzbound
   let z : ℂ := (s : ℂ) +
     Complex.I * (((σ * ℓ : ℝ) : ℂ))
   have hzbelow : -ℓ ≤ z.im := by
-    try dsimp [z]
+    dsimp [z]
     simp only [Complex.ofReal_im,
       Complex.mul_im, Complex.I_re, Complex.ofReal_re,
       zero_mul, Complex.I_im, one_mul, zero_add]
     linear_combination (mul_pos (show 0 < 1 + σ by linarith) hℓ)
   have hzabove : z.im ≤ ℓ := by
-    try dsimp [z]
+    dsimp [z]
     simp only [Complex.ofReal_im,
       Complex.mul_im, Complex.I_re, Complex.ofReal_re,
       zero_mul, Complex.I_im, one_mul, zero_add]
@@ -3395,7 +3395,7 @@ private theorem antiFourierWitness_capped_poisson_majorization_of_real_extension
         hd w D)
       hzbelow hzabove
   have hzinterior : z.im ∈ Ioo (-ℓ) ℓ := by
-    try dsimp [z]
+    dsimp [z]
     simp only [Set.mem_Ioo,
       Complex.ofReal_im, Complex.mul_im, Complex.I_re,
       Complex.ofReal_re, zero_mul, Complex.I_im,
@@ -4344,7 +4344,7 @@ private theorem lowerStripPoissonMajorant_scaled_convolution
       unfold lowerStripPoissonMajorant
       apply integral_congr_ae
       filter_upwards [] with T
-      try dsimp only [f]
+      dsimp only [f]
       have harg : s / ℓ - (s / ℓ - T) = T := by
         apply sub_sub_cancel
       rw [harg]
@@ -5380,10 +5380,10 @@ private theorem lowerStripPoissonMajorant_core_tail_split
     lowerGammaBoundaryLog ℓ (c * Real.sqrt d) (ℓ * Y)
   let p : ℝ → ℝ := lowerGammaScaledPositivePart d c
   have hP : 0 < P := by
-    try dsimp only [P]
+    dsimp only [P]
     positivity
   have hA : A = 2 * P := by
-    try dsimp only [A, P]
+    dsimp only [A, P]
     ring
   have hb_integrable : Integrable
       (fun T : ℝ => stripPoissonKernel σ T * b (S - T)) := by
@@ -5392,7 +5392,7 @@ private theorem lowerStripPoissonMajorant_core_tail_split
     have hcomp := hbase.comp_sub_left S
     convert hcomp using 1
     ext T
-    try dsimp only [b, ℓ]
+    dsimp only [b, ℓ]
     congr 1; ring_nf
   have hp_integrable : Integrable
       (fun T : ℝ => stripPoissonKernel σ T * p (S - T)) := by
@@ -5402,7 +5402,7 @@ private theorem lowerStripPoissonMajorant_core_tail_split
     have hcomp := hbase.comp_sub_left S
     convert hcomp using 1
     ext T
-    try dsimp only [p]
+    dsimp only [p]
     congr 1; ring_nf
   have hcore_integrable : Integrable
       (fun T : ℝ =>
@@ -5446,10 +5446,10 @@ private theorem lowerStripPoissonMajorant_core_tail_split
     intro T
     have hkernel := (stripPoissonKernel_pos hbelow hσone T).le
     have hpnonneg : 0 ≤ p (S - T) := by
-      try dsimp only [p, lowerGammaScaledPositivePart]
+      dsimp only [p, lowerGammaScaledPositivePart]
       exact le_max_right _ _
     have hb_le_p : b (S - T) ≤ p (S - T) := by
-      try dsimp only [b, p, ℓ, lowerGammaScaledPositivePart]
+      dsimp only [b, p, ℓ, lowerGammaScaledPositivePart]
       exact le_max_left _ _
     by_cases hT : T ∈ Icc (-1 : ℝ) 1
     · simp only [Set.indicator_of_mem hT]
@@ -5505,7 +5505,7 @@ private theorem lowerStripPoissonMajorant_core_tail_split
             lowerGammaScaledPositivePart d c Y := by
         apply integral_congr_ae
         filter_upwards [] with Y
-        try dsimp only [f, p]
+        dsimp only [f, p]
         congr 1
         ring_nf
   have hrepresentation :
@@ -5527,7 +5527,7 @@ private theorem lowerStripPoissonMajorant_core_tail_split
         ∫ Y : ℝ, f (S - Y) := by
           apply integral_congr_ae
           filter_upwards [] with Y
-          try dsimp only [f, b, ℓ]
+          dsimp only [f, b, ℓ]
           congr 1
           ring_nf
       _ = ∫ T : ℝ, f T :=
@@ -5584,7 +5584,7 @@ private theorem lowerStripPoissonMajorant_dimension_neg
           apply hT
           apply (eq_div_iff hℓ.ne').2
           linear_combination hzero
-        try dsimp only [f]
+        dsimp only [f]
         rw [stripPoissonKernel_neg]
         have harg :
             -s - ((d : ℝ) / 2) * T =
@@ -5619,15 +5619,15 @@ private theorem exists_lowerStripPoissonMajorant_positive_logarithmic_tail
   let a : ℝ := Real.pi / 2
   let β : ℝ := stripBottomMass σ * a * C
   have hA : 0 < A := by
-    try dsimp only [A]
+    dsimp only [A]
     positivity
   have hm : 0 < m :=
     stripPoissonCoreMass_pos hbelow hσone
   have hκ : 0 < κ := by
-    try dsimp only [κ]
+    dsimp only [κ]
     positivity
   have ha : 0 < a := by
-    try dsimp only [a]
+    dsimp only [a]
     exact Real.pi_div_two_pos
   have hscale : Tendsto
       (fun S : ℝ => S * a) atTop atTop :=
@@ -5668,7 +5668,7 @@ private theorem exists_lowerStripPoissonMajorant_positive_logarithmic_tail
     Filter.eventually_atTop.1 (hsmall.and hbounded)
   let B : ℝ := max 1 B₀
   have hB : 0 < B := by
-    try dsimp only [B]
+    dsimp only [B]
     linear_combination (le_max_left (1 : ℝ) B₀)
   refine ⟨A, B, κ, hA, hB, hκ, ?_⟩
   intro d hd S hSB
@@ -5704,7 +5704,7 @@ private theorem exists_lowerStripPoissonMajorant_positive_logarithmic_tail
             (C * ((d : ℝ) / 2)) := hpositive_tail
       _ = (β * Real.exp (-a * (S - C))) *
           ((d : ℝ) / 2) := by
-        try dsimp only [β, a]
+        dsimp only [β, a]
         ac_rfl
   have hlogtwo : (1 / 2 : ℝ) ≤ Real.log 2 := by
     have h := Real.one_sub_inv_le_log_of_pos
@@ -5735,7 +5735,7 @@ private theorem exists_lowerStripPoissonMajorant_positive_logarithmic_tail
       linear_combination hpositive_bound
     _ ≤ -κ * ((d : ℝ) / 2) * Real.log (S / A) := by
       rw [hflip]
-      try dsimp only [κ]
+      dsimp only [κ]
       have hinner : 0 ≤ m * Real.log (S / A) / 2 - β * Real.exp (-a * (S - C)) := by
         linarith only [hsmallS, mul_nonneg hm.le (sub_nonneg.mpr hlogratio)]
       linear_combination (mul_nonneg hℓ.le hinner)
@@ -5815,22 +5815,22 @@ private theorem exists_lowerStripPoissonMajorant_integrable_majorant
   let C : ℝ := max ((1 + T) ^ 2) (4 * A ^ 2)
   let γ : ℝ := γ₀ / 2
   have hT : 1 ≤ T := by
-    try dsimp only [T]
+    dsimp only [T]
     exact le_trans (le_max_right A 1)
       (le_max_right B (max A 1))
   have hTA : A ≤ T := by
-    try dsimp only [T]
+    dsimp only [T]
     exact le_trans (le_max_left A 1)
       (le_max_right B (max A 1))
   have hTB : B ≤ T := by
-    try dsimp only [T]
+    dsimp only [T]
     exact le_max_left B (max A 1)
   have hC : 0 < C := by
-    try dsimp only [C]
+    dsimp only [C]
     have hsq : 0 < (1 + T) ^ 2 := sq_pos_of_pos (by linear_combination hσpos + hσone + hT)
     exact lt_of_lt_of_le hsq (le_max_left _ _)
   have hγ : 0 < γ := by
-    try dsimp only [γ]
+    dsimp only [γ]
     positivity
   have hscale : Tendsto
       (fun d : ℕ => (d : ℝ) / 2) atTop atTop := by
@@ -5866,7 +5866,7 @@ private theorem exists_lowerStripPoissonMajorant_integrable_majorant
           (c * Real.sqrt d) σ (((d : ℝ) / 2) * S) ≤
             -γ * ((d : ℝ) / 2) -
               2 * Real.log (|S| / A) := by
-      try dsimp only [γ]
+      dsimp only [γ]
       linarith only [hnegative, hfrequency, mul_nonneg (sub_nonneg.mpr hκscale) hlog]
     have hpow :
         Real.exp (-(2 : ℝ) * Real.log (|S| / A)) =
@@ -5941,7 +5941,7 @@ private theorem exists_lowerStripPoissonMajorant_integrable_majorant
           Real.exp (-γ * ((d : ℝ) / 2)) := by
       apply Real.exp_le_exp.mpr
       have h := hcen (((d : ℝ) / 2) * S)
-      try dsimp only [γ]
+      dsimp only [γ]
       linarith only [mul_nonneg hγ₀.le hℓ.le, h]
     calc
       Real.exp
@@ -5987,7 +5987,7 @@ private theorem antiFourierWitness_interiorMellinL1_le_of_integrable_majorant
         ((d : ℝ) / 2) * Real.exp (-γ * ((d : ℝ) / 2)) := by
   let ℓ : ℝ := (d : ℝ) / 2
   have hℓ : 0 < ℓ := by
-    try dsimp only [ℓ]
+    dsimp only [ℓ]
     positivity
   let Z : ℝ → ℂ := fun s =>
     normalizedRadialMellinStrip hd w.function R
@@ -5998,7 +5998,7 @@ private theorem antiFourierWitness_interiorMellinL1_le_of_integrable_majorant
     have hinner : 0 < (1 - σ) * ℓ :=
       mul_pos (sub_pos.mpr hσabove) hℓ
     apply (mul_lt_mul_iff_right₀ hinner).mp
-    try dsimp only [ℓ] at hplus hinner ⊢
+    dsimp only [ℓ] at hplus hinner ⊢
     linear_combination (mul_pos hplus hinner)
   have hZ : Integrable Z := by
     have h :=
@@ -6006,7 +6006,7 @@ private theorem antiFourierWitness_interiorMellinL1_le_of_integrable_majorant
         hd hR w ha
     convert h using 1
     ext s
-    try dsimp only [Z, ℓ] at *
+    dsimp only [Z, ℓ] at *
     congr 2
     push_cast
     ring
@@ -6067,7 +6067,7 @@ private theorem antiFourierWitness_interiorMellinL1_le_of_integrable_majorant
         mul_le_mul_of_nonneg_left hbound hℓ.le
     _ = (C * lowerInverseQuadraticMass) * ℓ *
         Real.exp (-γ * ℓ) := by
-      try dsimp only [E]
+      dsimp only [E]
       ring
 
 private theorem lowerStripCappedPoisson_tendsto
@@ -6105,7 +6105,7 @@ private theorem lowerStripCappedPoisson_tendsto
         ∫ T : ℝ, f (s / ((d : ℝ) / 2) - T) := by
           apply integral_congr_ae
           filter_upwards [] with T
-          try dsimp only [f]
+          dsimp only [f]
           have hkernel :
               s / ((d : ℝ) / 2) -
                 (s / ((d : ℝ) / 2) - T) = T := by
@@ -6232,7 +6232,7 @@ private theorem uniformAntiFourierSignRadius_of_poisson_majorization
         apply (div_le_div_iff_of_pos_right hden).2
         exact mul_le_mul_of_nonneg_left hL1 hpi
       _ = K * Real.exp (-γ * ((d : ℝ) / 2)) := by
-        try dsimp only [K, Q, J]
+        dsimp only [K, Q, J]
         field_simp [hsigmapos.ne', hℓ.ne']
   exact no_antiFourierWitness_of_interiorMellinL1_lt_half
     hdpos hR hσbelow hσone w
@@ -6913,7 +6913,7 @@ private theorem radialFlatBump_radial (d : ℕ) : IsRadial (radialFlatBump d) :=
 private theorem integral_radialFlatBumpReal_pos (d : ℕ) :
     0 < ∫ x : Euclidean d, radialFlatBumpReal d x := by
   let : MeasureSpace (Euclidean d) := inferInstance
-  apply integral_pos_of_integrable_nonneg_nonzero
+  apply integral_pos_of_integrable_nonneg_ne_zero
     (show Continuous (radialFlatBumpReal d) by
       unfold radialFlatBumpReal
       fun_prop)

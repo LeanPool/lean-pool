@@ -217,10 +217,10 @@ theorem rieszSecondL2MeasurableOperator_l2_bound {i j : Fin 3}
     (rieszSecondL2MeasurableOperator_measurable hL2 u).aestronglyMeasurable
   have hUae : AEStronglyMeasurable (u : Vec3 → ℝ) volume :=
     Lp.aestronglyMeasurable u
-  have hTpow := lintegral_rpow_enorm_eq_rpow_eLpNorm'
+  have hTpow := lintegral_rpow_eNorm_eq_rpow_eLpNorm'
     (f := rieszSecondL2MeasurableOperator hL2 u) (μ := volume)
     (q := (2 : ℝ)) (by norm_num)
-  have hUpow := lintegral_rpow_enorm_eq_rpow_eLpNorm'
+  have hUpow := lintegral_rpow_eNorm_eq_rpow_eLpNorm'
     (f := (u : Vec3 → ℝ)) (μ := volume)
     (q := (2 : ℝ)) (by norm_num)
   have hTeq := eLpNorm_eq_eLpNorm' (p := (2 : ℝ≥0∞))
@@ -240,7 +240,7 @@ theorem rieszSecondL2MeasurableOperator_l2_bound {i j : Fin 3}
         (eLpNorm' (rieszSecondL2MeasurableOperator hL2 u) (2 : ℝ) volume) ^
           (2 : ℕ) := by
       norm_num at hTpow
-      simpa only [absE, Real.enorm_eq_ofReal_abs] using hTpow
+      simpa only [absE, Real.eNorm_eq_ofReal_abs] using hTpow
     _ = (eLpNorm (rieszSecondL2MeasurableOperator hL2 u)
         (2 : ℝ≥0∞) volume) ^ (2 : ℕ) := by rw [hTeq'.symm]
     _ ≤ (eLpNorm (u : Vec3 → ℝ) (2 : ℝ≥0∞) volume) ^ (2 : ℕ) := by
@@ -249,7 +249,7 @@ theorem rieszSecondL2MeasurableOperator_l2_bound {i j : Fin 3}
       rw [hUeq']
     _ = ∫⁻ x, absE (u : Vec3 → ℝ) x ^ (2 : ℕ) := by
       norm_num at hUpow
-      simpa only [absE, Real.enorm_eq_ofReal_abs] using hUpow.symm
+      simpa only [absE, Real.eNorm_eq_ofReal_abs] using hUpow.symm
 
 theorem rieszSecondL2MeasurableOperator_smooth_global_bound {i j : Fin 3}
     (hL2 : RieszSecondL2Input i j) {F : Vec3 → ℝ}
@@ -281,7 +281,7 @@ theorem rieszSecondL2MeasurableOperator_smooth_global_bound {i j : Fin 3}
     filter_upwards [hfun] with x hx
     simp only [absE, hx]
   rw [lintegral_congr_ae hfun']
-  simpa only [absE, Real.enorm_eq_ofReal_abs, sq_abs, one_pow,
+  simpa only [absE, Real.eNorm_eq_ofReal_abs, sq_abs, one_pow,
     ENNReal.ofReal_one, one_mul] using
     (riesz_second_l2_bound_global hF hFc i j)
 

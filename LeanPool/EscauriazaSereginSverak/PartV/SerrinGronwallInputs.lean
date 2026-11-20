@@ -38,11 +38,11 @@ theorem serrin_slice_norm5_integrable {T : ℝ} {u : ParabolicPoint → Vec3}
   set ν : Measure (Vec3 × ℝ) := (volume : Measure Vec3).prod (volume.restrict (Ioo 0 T))
   have hr : (ENNReal.ofReal 5).toReal = 5 := by simp
   have hfm : AEStronglyMeasurable (fun z : Vec3 × ℝ => u z) ν := hu5.aestronglyMeasurable
-  have hgm : AEMeasurable (fun z : Vec3 × ℝ => ‖u z‖ₑ ^ (5 : ℝ)) ν := hfm.enorm.pow_const _
+  have hgm : AEMeasurable (fun z : Vec3 × ℝ => ‖u z‖ₑ ^ (5 : ℝ)) ν := hfm.eNorm.pow_const _
   have hfin : (∫⁻ z, ‖u z‖ₑ ^ (5 : ℝ) ∂ν) ≠ ⊤ := by
     have h1 := hu5.eLpNorm_lt_top
     have hfm' : AEStronglyMeasurable u ν := hfm
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simp) (by simp) hfm', hr] at h1
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by simp) (by simp) hfm', hr] at h1
     exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).mp h1 |>.ne
   have hGm : AEMeasurable (fun τ => ∫⁻ x, ‖u (x, τ)‖ₑ ^ (5 : ℝ) ∂volume)
       (volume.restrict (Ioo 0 T)) := hgm.lintegral_prod_left'
@@ -52,7 +52,7 @@ theorem serrin_slice_norm5_integrable {T : ℝ} {u : ParabolicPoint → Vec3}
   have hint := integrable_toReal_of_lintegral_ne_top hGm hGfin
   refine hint.congr ?_
   filter_upwards [hfm.prodMk_right] with τ hτ
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simp) (by simp) hτ, hr,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by simp) (by simp) hτ, hr,
     ← ENNReal.toReal_rpow, ← Real.rpow_natCast, ← Real.rpow_mul ENNReal.toReal_nonneg]
   norm_num
 

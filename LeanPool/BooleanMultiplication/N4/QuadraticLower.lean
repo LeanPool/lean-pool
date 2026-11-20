@@ -379,7 +379,7 @@ theorem add_mem_of_codim_one {V : Type*} [AddCommGroup V] [Module F₂ V]
     have hm : yQ ∈ S := (Submodule.Quotient.mk_eq_zero S).mp hz
     exact hyT hm
   obtain ⟨a, ha⟩ :=
-    (finrank_eq_one_iff_of_nonzero' xbar hxbar).mp hquot ybar
+    (finrank_eq_one_iff_of_ne_zero' xbar hxbar).mp hquot ybar
   have ha0 : a ≠ 0 := by
     intro haz
     apply hybar

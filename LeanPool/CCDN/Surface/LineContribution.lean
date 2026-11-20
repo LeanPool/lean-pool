@@ -85,7 +85,7 @@ private theorem surface_line_contribution_of_parallel_bound :
     simpa only [p, dite_eq_left hL] using (hdir L hL).choose_spec
   have hfib (q : ProjectivePoint 2) (_hq : q ∈ t.image p) :
       ((t.filter (fun L => p L = q)).card : ℝ) ≤ (f.totalDegree : ℝ) ^ 2 := by
-    have hc := hparallel q.rep q.rep_nonzero (t.filter (fun L => p L = q))
+    have hc := hparallel q.rep q.rep_ne_zero (t.filter (fun L => p L = q))
       (fun L hL => (Finset.mem_filter.mp (Finset.mem_filter.mp hL).1).1) (by
         intro L hL
         obtain ⟨hLt, he⟩ := Finset.mem_filter.mp hL

@@ -130,7 +130,8 @@ theorem isUnit_one_add_of_mem_map [Finite G] {m : Λ}
     rw [Ideal.smul_top_eq_map]
     exact Ideal.mul_mem_right _ _ hm
   have htop : (⊤ : Submodule 𝒪 Λ) ≤ LinearMap.range μ :=
-    Submodule.le_of_le_smul_of_le_jacobson_bot Module.Finite.fg_top (maximalIdeal_le_jacobson _) hle
+    Submodule.le_of_le_smul_of_le_jacobson Module.Finite.fg_top
+      (by rw [IsLocalRing.ringJacobson_eq_maximalIdeal]) hle
   obtain ⟨y, hy⟩ : (1 : Λ) ∈ LinearMap.range μ := htop Submodule.mem_top
   exact IsUnit.of_mul_eq_one y hy
 

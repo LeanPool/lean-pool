@@ -152,8 +152,7 @@ theorem finiteExtensionInfinityPlace_constantResidue_surjective
   let p := (ratFuncInfinityPlace K).asIdeal
   let hLocalAlg :=
     Localization.AtPrime.algebraOfLiesOver p P.1
-  have : IsScalarTower (RatFuncInfinityIntegers K) (Localization.AtPrime p)
-      (Localization.AtPrime P.1) := inferInstance
+  have := Localization.AtPrime.instIsScalarTower p P.1
   let : Algebra.QuasiFiniteAt (RatFuncInfinityIntegers K) P.1 :=
     inferInstance
   let : Module.Finite p.ResidueField P.1.ResidueField := inferInstance

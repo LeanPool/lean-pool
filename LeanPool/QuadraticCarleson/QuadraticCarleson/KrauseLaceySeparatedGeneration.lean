@@ -44,7 +44,7 @@ theorem sum_intervalLength_le_of_disjoint
     rw [← integral_biUnion_finset S (fun J _ ↦ J.measurableSet_carrier) hdisj
       (fun J _ ↦ integrableOn_const (by simp))]
     exact setIntegral_mono_set hI (Filter.Eventually.of_forall fun _ ↦ zero_le_one)
-      hunion.eventuallyLE
+      (Filter.Eventually.of_forall fun _ hx ↦ hunion hx)
   have hvol (J : RealInterval) : volume.real J.carrier = J.length :=
     J.volume_carrier_toReal
   simpa only [setIntegral_const, hvol, smul_eq_mul, mul_one] using hsum

@@ -187,7 +187,7 @@ def domain : Set (ℝ × ℝ) := Ioi 0 ×ˢ univ
 
 theorem logarithmic_coordinates_contDiffOn :
     ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => (Real.log p.1, p.2)) domain := by
-  exact (contDiffOn_fst.log (fun p hp => ne_of_gt hp.1)).prodMk contDiffOn_snd
+  exact (contDiffOn_fst.log (fun p (hp : p ∈ domain) => ne_of_gt hp.1)).prodMk contDiffOn_snd
 
 namespace Profile
 
@@ -199,7 +199,7 @@ theorem U_contDiffOn (F : Profile) : ContDiffOn ℝ ∞ F.U domain :=
 
 theorem H_contDiffOn (F : Profile) : ContDiffOn ℝ ∞ F.H domain := by
   exact ((contDiffOn_const.mul contDiffOn_fst).sqrt
-    (fun p hp => ne_of_gt (mul_pos (by norm_num) hp.1))).mul F.E_contDiffOn
+    (fun p (hp : p ∈ domain) => ne_of_gt (mul_pos (by norm_num) hp.1))).mul F.E_contDiffOn
 
 theorem pressureChange_zero (F : Profile) (eta : ℝ) {y : ℝ}
     (hy : y ∉ Ioo (F.data.releaseStart - 4) F.data.releaseStart) :

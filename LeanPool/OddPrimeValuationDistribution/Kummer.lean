@@ -31,10 +31,10 @@ theorem sub_one_mul_padicValNat_centralBinom
     (p : ℕ) [Fact p.Prime] (n : ℕ) :
     (p - 1) * padicValNat p (Nat.centralBinom n) =
       2 * (Nat.digits p n).sum - (Nat.digits p (2 * n)).sum := by
-  rw [Nat.centralBinom_eq_two_mul_choose]
+  rw [Nat.centralBinom_eq_two_mul_choose, Nat.padicValNat_def]
   have hn : n ≤ 2 * n := Nat.le_mul_of_pos_left n (by decide)
   have hkummer :=
-    sub_one_mul_padicValNat_choose_eq_sub_sum_digits
+    sub_one_mul_multiplicity_choose_eq_sub_sum_digits
       (p := p) (k := n) (n := 2 * n) hn
   have hsub : 2 * n - n = n := by omega
   rw [hsub] at hkummer

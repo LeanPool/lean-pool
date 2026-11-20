@@ -709,7 +709,8 @@ theorem integral_Ioc_one_L_tail_le_two_mul_M_of_isBigO_of_log_constraint
     simpa [Real.norm_of_nonneg hf_nonneg] using ht
   have hmono_set :
       ∫ t in Set.Ioc 1 L, g t ∂volume ≤ ∫ t in Set.Ioi 1, g t ∂volume := by
-    exact setIntegral_mono_set hg_Ioi hg_nonneg_Ioi Set.Ioc_subset_Ioi_self.eventuallyLE
+    exact setIntegral_mono_set hg_Ioi hg_nonneg_Ioi
+      (Filter.Eventually.of_forall Set.Ioc_subset_Ioi_self)
   have hI3 := integral_Ioi_rpow_of_lt (a := (-3 : ℝ)) (by norm_num) zero_lt_one
   have hI2 := integral_Ioi_rpow_of_lt (a := (-2 : ℝ)) (by norm_num) zero_lt_one
   calc

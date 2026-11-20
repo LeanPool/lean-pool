@@ -345,7 +345,8 @@ omit hp in
 /-- p^(ulmLength)·G = 0. -/
 lemma at_ulmLength (hred : IsPReduced p G) :
     ulmSubgroup p (ulmLength p (G := G)) (G := G) = ⊥ :=
-  csInf_mem (exists_zero (p := p) (G := G) hred)
+  csInf_mem (s := {α : Ordinal.{0} | ulmSubgroup p α (G := G) = ⊥})
+    (exists_zero (p := p) (G := G) hred)
 
 /-- Ulm invariants vanish above the Ulm length. -/
 lemma inv_zero_of_ge (hred : IsPReduced p G)

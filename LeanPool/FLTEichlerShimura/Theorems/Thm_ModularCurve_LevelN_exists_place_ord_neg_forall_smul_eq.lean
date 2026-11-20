@@ -234,7 +234,7 @@ theorem cuspFunction_comp_T_inv_eventuallyEq_nhdsNE (hh : 0 < h) (hG : Good h G)
   filter_upwards [self_mem_nhdsWithin, mem_nhdsWithin_of_mem_nhds hball] with q hq hq1
   have hq0 : q ≠ 0 := hq
   rw [Metric.mem_ball, dist_zero_right] at hq1
-  rw [cuspFunction, Periodic.cuspFunction_eq_of_nonzero _ _ hq0]
+  rw [cuspFunction, Periodic.cuspFunction_eq_of_ne_zero _ _ hq0]
   set z := Periodic.invQParam h q with hz
   have hzim : 0 < z.im := Periodic.im_invQParam_pos_of_norm_lt_one hh hq1 hq0
   simp only [Function.comp_apply, ofComplex_apply_of_im_pos hzim]

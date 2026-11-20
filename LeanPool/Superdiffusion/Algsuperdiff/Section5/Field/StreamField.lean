@@ -126,7 +126,7 @@ theorem abs_entry_sub_le_of_mem_openOriginCube (ell : ℤ) (j : ShellField d)
     {x : Vec d} (hx : x ∈ openCubeSet (originCube d ell)) (i k : Fin d) :
     |j x i k - j 0 i k| ≤ (d : ℝ) * localCubeDerivNorm ell j * ‖x‖ := by
   refine le_trans ?_ (norm_sub_zero_le_of_mem_openOriginCube ell j hx)
-  have h := Matrix.norm_entry_le_entrywise_sup_norm (j x - j 0) (i := i) (j := k)
+  have h := Matrix.norm_apply_le_norm (j x - j 0) (i := i) (j := k)
   simpa only [Matrix.sub_apply, Real.norm_eq_abs] using h
 
 /-! ## 3. Summability of the two halves on the carrier -/

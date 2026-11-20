@@ -291,7 +291,7 @@ theorem Mero.holoRepr_smul (c : ℂ) (f : ℳ X) (x : X) :
   have hrep : MeroGermOn.mk (c • f.holoRepr)
       ((MeroGermOn.meromorphicOnX_holoRepr isOpen_univ f).smul c) = c • f := by
     rw [← MeroGermOn.mk_smul, MeroGermOn.mk_holoRepr isOpen_univ f]
-    all_goals exact MeroGermOn.meromorphicOnX_holoRepr isOpen_univ _
+    exact MeroGermOn.meromorphicOnX_holoRepr isOpen_univ _
   exact MeroGermOn.holoRepr_eventuallyEq_nhdsNE isOpen_univ (mem_univ x) (c • f) hrep
 
 theorem Mero.holoRepr_inv (f : ℳ X) (x : X) :
@@ -299,7 +299,7 @@ theorem Mero.holoRepr_inv (f : ℳ X) (x : X) :
   have hrep : MeroGermOn.mk (f.holoRepr)⁻¹
       (MeroGermOn.meromorphicOnX_holoRepr isOpen_univ f).inv = f⁻¹ := by
     rw [← MeroGermOn.mk_inv, MeroGermOn.mk_holoRepr isOpen_univ f]
-    all_goals exact MeroGermOn.meromorphicOnX_holoRepr isOpen_univ _
+    exact MeroGermOn.meromorphicOnX_holoRepr isOpen_univ _
   exact MeroGermOn.holoRepr_eventuallyEq_nhdsNE isOpen_univ (mem_univ x) f⁻¹ hrep
 
 theorem Mero.holoRepr_zero (x : X) :

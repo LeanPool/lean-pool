@@ -52,9 +52,9 @@ theorem P4953T1LiteralHulls (L : ℝ) (q : Fin 4 → CircleCoordinates)
       if j = 0 then q 0 else q ((j + c).succ) := by
     fin_cases c <;> fin_cases j <;> rfl
   fin_cases l <;> fin_cases a <;> fin_cases b
-  all_goals try (norm_num at hal)
-  all_goals try (norm_num at hbl)
-  all_goals try (norm_num at hab)
+  all_goals norm_num at hal
+  all_goals norm_num at hbl
+  all_goals norm_num at hab
   all_goals dsimp at hl ha hb
   all_goals
     refine ⟨?_, ?_, ?_, ?_, hs⟩

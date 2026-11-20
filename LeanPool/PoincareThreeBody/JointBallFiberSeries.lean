@@ -76,7 +76,7 @@ theorem hasFPowerSeriesOnBall_fiber_of_joint_ball
     (u := parameterInclusion) (x := centerParameter)
   have hradius : (fiberRadius : ENNReal) ≤
       ((jointRadius : ENNReal) - ‖shift‖₊) / ‖parameterInclusion‖ₑ := by
-    rw [enorm_eq_nnnorm, show ‖parameterInclusion‖₊ = 1 by
+    rw [eNorm_eq_nnNorm, show ‖parameterInclusion‖₊ = 1 by
       ext
       exact norm_parameterInclusion]
     simp only [ENNReal.coe_one, div_one]

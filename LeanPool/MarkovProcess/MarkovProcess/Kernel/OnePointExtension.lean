@@ -185,7 +185,7 @@ omit [LocallyCompactSpace X] [SecondCountableTopology X] in
     onePointRemainder (g + h) = onePointRemainder g + onePointRemainder h := by
   apply ZeroAtInftyContinuousMap.ext
   intro x
-  simp only [onePointRemainder_apply, ZeroAtInftyContinuousMap.add_apply]
+  simp only [onePointRemainder_apply, add_apply]
   ring
 
 omit [LocallyCompactSpace X] [SecondCountableTopology X] in
@@ -194,7 +194,7 @@ omit [LocallyCompactSpace X] [SecondCountableTopology X] in
     onePointRemainder (c • g) = c • onePointRemainder g := by
   apply ZeroAtInftyContinuousMap.ext
   intro x
-  simp only [onePointRemainder_apply, ZeroAtInftyContinuousMap.smul_apply, smul_eq_mul]
+  simp only [onePointRemainder_apply, smul_apply, smul_eq_mul]
   ring
 
 private noncomputable def onePointRemainderLinearMap :
@@ -311,20 +311,20 @@ noncomputable def onePointSemigroupLinearMap (t : NNReal) :
     apply ZeroAtInftyContinuousMap.ext
     intro z
     induction z using OnePoint.rec with
-    | infty => simp only [onePointSemigroupAction_infty, ZeroAtInftyContinuousMap.add_apply]
+    | infty => simp only [onePointSemigroupAction_infty, add_apply]
     | coe x =>
       simp only [onePointSemigroupAction, onePointAssemble_coe, onePointRemainder_add,
-        ZeroAtInftyContinuousMap.add_apply, map_add]
+        add_apply, map_add]
       abel
   map_smul' c g := by
     apply ZeroAtInftyContinuousMap.ext
     intro z
     induction z using OnePoint.rec with
-    | infty => simp only [onePointSemigroupAction_infty, ZeroAtInftyContinuousMap.smul_apply,
+    | infty => simp only [onePointSemigroupAction_infty, smul_apply,
         RingHom.id_apply]
     | coe x =>
       simp only [onePointSemigroupAction, onePointAssemble_coe, onePointRemainder_smul,
-        ZeroAtInftyContinuousMap.smul_apply, map_smul, RingHom.id_apply, smul_eq_mul]
+        smul_apply, map_smul, RingHom.id_apply, smul_eq_mul]
       ring
 
 /-- The contraction on the compactified function space induced at time `t`. -/
@@ -343,15 +343,15 @@ private noncomputable def onePointEmbedLinearMap : C₀(X, ℝ) →ₗ[ℝ] C₀
     apply ZeroAtInftyContinuousMap.ext
     intro z
     induction z using OnePoint.rec with
-    | infty => simp only [onePointAssemble_infty, ZeroAtInftyContinuousMap.add_apply, add_zero]
-    | coe x => simp only [onePointAssemble_coe, ZeroAtInftyContinuousMap.add_apply, add_zero]
+    | infty => simp only [onePointAssemble_infty, add_apply, add_zero]
+    | coe x => simp only [onePointAssemble_coe, add_apply, add_zero]
   map_smul' c f := by
     apply ZeroAtInftyContinuousMap.ext
     intro z
     induction z using OnePoint.rec with
-    | infty => simp only [onePointAssemble_infty, ZeroAtInftyContinuousMap.smul_apply,
+    | infty => simp only [onePointAssemble_infty, smul_apply,
         smul_zero, RingHom.id_apply]
-    | coe x => simp only [onePointAssemble_coe, ZeroAtInftyContinuousMap.smul_apply,
+    | coe x => simp only [onePointAssemble_coe, smul_apply,
         add_zero, smul_eq_mul, RingHom.id_apply]
 
 omit [MeasurableSpace X] [BorelSpace X] [LocallyCompactSpace X] [SecondCountableTopology X] in
@@ -387,11 +387,11 @@ private theorem onePointSemigroupAction_eq (t : NNReal) (g : C₀(OnePoint X, �
   induction z using OnePoint.rec with
   | infty =>
       simp only [onePointSemigroupAction_infty, onePointEmbed_apply,
-        ZeroAtInftyContinuousMap.add_apply, onePointAssemble_infty, zero_add]
+        add_apply, onePointAssemble_infty, zero_add]
   | coe x =>
       simp only [onePointSemigroupAction, onePointAssemble_coe,
-        onePointEmbed_apply, ZeroAtInftyContinuousMap.add_apply,
-        ZeroAtInftyContinuousMap.zero_apply]
+        onePointEmbed_apply, add_apply,
+        zero_apply]
       ring
 
 /-- The generated semigroup on the one-point compactification. -/
@@ -564,7 +564,7 @@ omit [MeasurableSpace X] [BorelSpace X] [LocallyCompactSpace X] [SecondCountable
   induction z using OnePoint.rec with
   | infty => exact onePointAssemble_infty 0 c
   | coe x => simp only [onePointConstant, onePointAssemble_coe,
-      ZeroAtInftyContinuousMap.zero_apply, zero_add]
+      zero_apply, zero_add]
 
 /-- The compactified semigroup fixes the constants. -/
 theorem onePointSemigroup_constant (t : NNReal) (c : ℝ) :

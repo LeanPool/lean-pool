@@ -278,7 +278,7 @@ by_cases hAC : A = C
       rwa [← rep_comp_2, ← independent_iff, independent_pair_iff_ne]
     have inter_ne :
         span K ({A.rep, C.rep} : Set V) ⊓ span K ({B.rep, D.rep} : Set V) ≠ ⊥ :=
-      l3_inter_ne_bot A.rep B.rep C.rep D.rep P.rep PABcol PCDcol P.rep_nonzero
+      l3_inter_ne_bot A.rep B.rep C.rep D.rep P.rep PABcol PCDcol P.rep_ne_zero
         ac_indep bd_indep
     obtain ⟨q, q_mem, q_ne⟩ := Submodule.exists_mem_ne_zero_of_ne_bot inter_ne
     rw [Submodule.mem_inf] at q_mem

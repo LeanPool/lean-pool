@@ -57,7 +57,7 @@ lemma norm_natCast_eq (p : ℕ) [Fact p.Prime] {D : ℕ} (hD : D ≠ 0) :
     ‖(D : ℚ_[p])‖ = (p : ℝ) ^ (-(padicValNat p D : ℤ)) := by
   have hD' : (D : ℚ_[p]) ≠ 0 := by
     exact_mod_cast hD
-  rw [Padic.norm_eq_zpow_neg_valuation hD', Padic.valuation_natCast]
+  rw [Padic.norm_eq_zpow_neg_valuation hD', Padic.valuation_natCast, Nat.padicValNat_def]
 
 -- Theorem (per-place estimate): if `D * x - n = p ^ (m + v) * w` with `(n : ℚ) = D * c`,
 -- `‖D‖ = p ^ (-v)` and `‖w‖ ≤ 1`, then `‖x - c‖ ≤ p ^ (-m)`.

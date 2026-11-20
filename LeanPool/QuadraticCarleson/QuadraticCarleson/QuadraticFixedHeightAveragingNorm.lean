@@ -73,7 +73,7 @@ theorem fixedHeightL2DecayConstant_sq_ge :
 theorem eLpNorm_two_sq_lintegral {ε : Type*} [ENorm ε] [TopologicalSpace ε]
     (f : ℝ → ε) (hf : AEStronglyMeasurable f volume) :
     eLpNorm f 2 ^ 2 = ∫⁻ x, ‖f x‖ₑ ^ 2 := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel) hf]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   rw [← ENNReal.rpow_mul_natCast]
   norm_num
@@ -90,7 +90,7 @@ theorem paperFixedHeightQuadraticMaximal_eLpNorm_decay
     eLpNorm_two_sq_lintegral (paperFixedHeightQuadraticMaximal height f)
       (measurable_paperFixedHeightQuadraticMaximal height hf).aestronglyMeasurable,
     eLpNorm_two_sq_lintegral f hf.aestronglyMeasurable]
-  simp only [enorm_eq_self]
+  simp only [eNorm_eq_self]
   rw [← ENNReal.ofReal_pow (by positivity [fixedHeightL2DecayConstant_pos])]
   apply (paperFixedHeightQuadraticMaximal_sq_lintegral_rpow_decay height hf).trans
   apply mul_le_mul' ?_ le_rfl

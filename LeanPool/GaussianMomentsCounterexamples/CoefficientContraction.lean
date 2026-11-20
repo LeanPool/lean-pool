@@ -33,6 +33,6 @@ theorem expectation_coefficient_contraction {n : ℕ} {i j : Fin n} (hij : i ≠
     rw [h, expectation_C_mul, expectation_pair hij, Polynomial.coeff_monomial]
     by_cases hab : a = b
     · subst b; simp [mul_comm]
-    · simp [hab, Ne.symm hab]
+    · simp [hab]
 
 end GaussianMomentsCounterexamples

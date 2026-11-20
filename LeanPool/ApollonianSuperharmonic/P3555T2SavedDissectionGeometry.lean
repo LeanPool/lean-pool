@@ -383,17 +383,12 @@ private theorem hendpoint_intersection :
           · simp [hxa, hxb, haT, hbT] at hx
     rw [hSform] at hzS ⊢
     rw [hTform] at hzT ⊢
-    simp only [haS, ↓reduceIte, hbS, Set.image_empty, convexHull_empty,
-        Set.mem_empty_iff_false, Set.image_insert_eq, Set.image_singleton, convexHull_pair,
-        haT, hbT, Set.inter_self, convexHull_singleton, Set.mem_singleton_iff,
-        Set.mem_insert_iff, or_true, Set.inter_singleton_of_mem, true_or,
-        Set.singleton_inter_of_mem] at hzS hzT ⊢
-    all_goals
-      first
-      | exact hzS
-      | exact hzT
-      | exact False.elim (hqa_ne_hqb (hzS.symm.trans hzT))
-      | exact False.elim (hqa_ne_hqb (hzT.symm.trans hzS))
+    clear hSform hTform
+    simp_all only [ne_self_iff_false, ↓reduceIte, Set.image_empty, convexHull_empty,
+      Set.mem_empty_iff_false, Set.image_insert_eq, Set.image_singleton, convexHull_pair,
+      Set.inter_self, convexHull_singleton, Set.mem_singleton_iff,
+      Set.mem_insert_iff, or_true, Set.inter_singleton_of_mem, true_or,
+      Set.singleton_inter_of_mem]
 
 private theorem hcrossInter :
     ∀ (n : Nat), ∀ (q : Fin (n + 3) → Real × Real), ∀ (a : Fin (n + (3 : ℕ))), ∀ (b : Fin (n + (3

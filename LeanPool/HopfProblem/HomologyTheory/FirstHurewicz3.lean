@@ -44,7 +44,7 @@ private theorem SphereHomology.unitSphere_piTwo_subsingleton (n : ℕ) (x : Unit
   exact (SecondHurewicz.SimplyConnected.hurewiczPi2Equiv x).injective.subsingleton
 
 private abbrev FirstHurewicz.AbelianPi1 (X : Type*) [TopologicalSpace X] (b : X) :=
-  Additive (Abelianization (FundamentalGroup X b))
+  Additive (Group.Abelianization (FundamentalGroup X b))
 
 private def FirstHurewicz.loopQuotient {X : Type*} [TopologicalSpace X] {b : X} (p : Path b b) :
     FundamentalGroup X b :=
@@ -52,13 +52,13 @@ private def FirstHurewicz.loopQuotient {X : Type*} [TopologicalSpace X] {b : X} 
 
 private def FirstHurewicz.loopClass {X : Type*} [TopologicalSpace X] {b : X} (p : Path b b) :
     AbelianPi1 X b :=
-  Additive.ofMul (Abelianization.of (loopQuotient p))
+  Additive.ofMul (Group.Abelianization.of (loopQuotient p))
 
 private theorem FirstHurewicz.loopClass_surjective {X : Type*} [TopologicalSpace X] {b : X} :
     Function.Surjective (loopClass (b := b)) := by
   intro a
   obtain ⟨g, hg⟩ := Quotient.exists_rep a.toMul
-  change Abelianization.of g = a.toMul at hg
+  change Group.Abelianization.of g = a.toMul at hg
   obtain ⟨p, hp⟩ := Path.Homotopic.Quotient.mk_surjective g.toPath
   have hp' : loopQuotient p = g := CategoryTheory.End.ext hp
   refine ⟨p, ?_⟩
@@ -76,7 +76,7 @@ private theorem
 
 private theorem FirstHurewicz.loopClass_homotopic {X : Type*} [TopologicalSpace X] {b : X}
     {p q : Path b b} (h : p.Homotopic q) : loopClass p = loopClass q :=
-  congrArg (fun g : FundamentalGroup X b => Additive.ofMul (Abelianization.of g))
+  congrArg (fun g : FundamentalGroup X b => Additive.ofMul (Group.Abelianization.of g))
     (congrArg FundamentalGroup.fromPath (Path.Homotopic.Quotient.eq.mpr h))
 
 private theorem
@@ -107,7 +107,7 @@ private def FirstHurewicz.basedLoopClass {X : Type*} [TopologicalSpace X] {b x y
 
 private theorem FirstHurewicz.basedLoopClass_eq {X : Type*} [TopologicalSpace X] {b x y : X}
     (r : ∀ x : X, Path b x) (p : Path x y) :
-    basedLoopClass r p = Additive.ofMul (Abelianization.of (basedLoopQuotient r p)) :=
+    basedLoopClass r p = Additive.ofMul (Group.Abelianization.of (basedLoopQuotient r p)) :=
   rfl
 
 private theorem FirstHurewicz.basedLoop_homotopic {X : Type*} [TopologicalSpace X] {b x y : X}
@@ -268,11 +268,11 @@ private def FirstHurewicz.hurewiczPi1 {X : Type} [TopologicalSpace X] (b : X) :
 private def FirstHurewicz.hurewiczMap {X : Type} [TopologicalSpace X] (b : X) :
     AbelianPi1 X b →ₗ[ℤ] SingularH1 X
     where
-  toFun := (Abelianization.lift (hurewiczPi1 b)).toAdditiveLeft
-  map_add' := (Abelianization.lift (hurewiczPi1 b)).toAdditiveLeft.map_add
+  toFun := (Group.Abelianization.lift (hurewiczPi1 b)).toAdditiveLeft
+  map_add' := (Group.Abelianization.lift (hurewiczPi1 b)).toAdditiveLeft.map_add
   map_smul' n
     a := by
-    simpa using map_intCast_smul (Abelianization.lift (hurewiczPi1 b)).toAdditiveLeft ℤ ℤ n a
+    simpa using map_intCast_smul (Group.Abelianization.lift (hurewiczPi1 b)).toAdditiveLeft ℤ ℤ n a
 
 @[simp]
 private theorem FirstHurewicz.hurewiczMap_loopClass {X : Type} [TopologicalSpace X] (b : X)
@@ -380,7 +380,6 @@ private def FirstHurewicz.inverseHurewiczMap {X : Type} [TopologicalSpace X] {b 
     (r : ∀ x : X, Path b x) : SingularH1 X →ₗ[ℤ] AbelianPi1 X b :=
   homologyDescOfChain X (edgeLoopCochain r) (edgeLoopCochain_boundaryTwo r)
 
-@[simp]
 private theorem FirstHurewicz.inverseHurewiczMap_cycleClass {X : Type} [TopologicalSpace X] {b : X}
     (r : ∀ x : X, Path b x) (c : Cycles1 X) :
     inverseHurewiczMap r (cycleClass X c) = edgeLoopCochain r c.1 :=
@@ -478,15 +477,16 @@ private theorem FirstHurewicz.loopHomologyClass_surjective {X : Type} [Topologic
 private def FirstHurewicz.abelianPi1EquivOfPi1 {X : Type} [TopologicalSpace X] (b : X) {A : Type*}
     [AddCommGroup A] [Module ℤ A] (e : FundamentalGroup X b ≃* Multiplicative A) :
     AbelianPi1 X b ≃ₗ[ℤ] A :=
-  (e.abelianizationCongr.trans
-      (Abelianization.equivOfComm (H := Multiplicative A)).symm).toAdditiveLeft.toIntLinearEquiv
+  let abelianEquiv := e.abelianizationCongr.trans
+    (Group.Abelianization.equivOfComm (H := Multiplicative A)).symm
+  abelianEquiv.toAdditiveLeft.toIntLinearEquiv
 
 @[simp]
 private theorem
     FirstHurewicz.abelianPi1EquivOfPi1_of {X : Type} [TopologicalSpace X] (b : X) {A : Type*}
     [AddCommGroup A] [Module ℤ A] (e : FundamentalGroup X b ≃* Multiplicative A)
     (g : FundamentalGroup X b) :
-    abelianPi1EquivOfPi1 b e (Additive.ofMul (Abelianization.of g)) = (e g).toAdd :=
+    abelianPi1EquivOfPi1 b e (Additive.ofMul (Group.Abelianization.of g)) = (e g).toAdd :=
   rfl
 
 private def FirstHurewicz.singularH1EquivOfPi1 {X : Type} [TopologicalSpace X] (b : X) {A : Type*}
@@ -502,7 +502,7 @@ private theorem FirstHurewicz.singularH1EquivOfPi1_hurewiczFunction {X : Type} [
   change
     abelianPi1EquivOfPi1 b e
         ((firstHurewiczEquiv b).symm
-          (firstHurewiczEquiv b (Additive.ofMul (Abelianization.of g)))) =
+          (firstHurewiczEquiv b (Additive.ofMul (Group.Abelianization.of g)))) =
       _
   rw [LinearEquiv.symm_apply_apply, abelianPi1EquivOfPi1_of]
 
@@ -524,7 +524,6 @@ private theorem FirstHurewicz.inducedChain_pathChain {X Y : Type} [TopologicalSp
     inducedChain f 1 (pathChain p) = pathChain (p.map f.continuous) := by
   simp only [pathChain, inducedChain_simplex, pathSimplex_map]
 
-@[simp]
 private theorem FirstHurewicz.inducedCycles_loopCycle {X Y : Type} [TopologicalSpace X]
     [TopologicalSpace Y] (f : C(X, Y)) (b : X) (p : Path b b) :
     inducedCycles f (loopCycle p) = loopCycle (p.map f.continuous) := by

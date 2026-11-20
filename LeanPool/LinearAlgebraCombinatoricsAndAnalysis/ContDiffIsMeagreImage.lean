@@ -89,7 +89,7 @@ theorem ContDiffOn.exists_mem_nhds_isMeagre_image (hf : ContDiffOn ℝ 1 f A) (h
   set L := (fderiv ℝ f x).toContinuousLinearEquivOfDetNeZero hreg
   have hstrict : HasStrictFDerivAt f (L : E →L[ℝ] E) x := by
     rw [ContinuousLinearMap.coe_toContinuousLinearEquivOfDetNeZero]
-    exact (hf.contDiffAt (hA.mem_nhds hx)).hasStrictFDerivAt one_ne_zero
+    exact (hf.contDiffAt (hA.mem_nhds hx)).hasStrictFDerivAt_fderiv one_ne_zero
   set e := hstrict.toOpenPartialHomeomorph f
   refine ⟨e.source, e.open_source.mem_nhds hstrict.mem_toOpenPartialHomeomorph_source,
     fun B hB => ?_⟩

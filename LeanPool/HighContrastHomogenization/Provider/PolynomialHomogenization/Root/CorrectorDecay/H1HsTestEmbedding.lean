@@ -138,7 +138,7 @@ private theorem eLpNorm_two_sq_eq_lintegral_enorm
     {α E : Type*} [MeasurableSpace α] [ENorm E] [TopologicalSpace E]
     (mu : Measure α) (F : α → E) (hF : AEStronglyMeasurable F mu) :
     eLpNorm F 2 mu ^ (2 : ℕ) = ∫⁻ x, ‖F x‖ₑ ^ (2 : ℝ) ∂mu := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hF]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hF]
   norm_num only [ENNReal.toReal_ofNat]
   rw [← ENNReal.rpow_natCast (_ ^ (1 / (2 : ℝ))) 2,
     ← ENNReal.rpow_mul]
@@ -238,7 +238,7 @@ private theorem ofReal_pulledGradientNorm_eq
         (physicalGradientMagnitude psi ∘ centeredCubeDilation (d := d) n))
       2 (unitCenteredCubeDomain d).normalizedVolume = _
   rw [eLpNorm_const_smul]
-  rw [Real.enorm_eq_ofReal (centeredCubeScale_pos n).le]
+  rw [Real.eNorm_eq_ofReal (centeredCubeScale_pos n).le]
   congr 1
   rw [show unitCenteredCubeDomain d = centeredCubeDomain d 0 by rfl]
   exact eLpNorm_comp_measurePreserving
@@ -268,7 +268,7 @@ private theorem physicalGradient_eLpNorm_sq
       intro x
       change ‖matrixFrobeniusMagnitude
         (physicalGradientMatrix psi x)‖ₑ ^ (2 : ℝ) = _
-      rw [Real.enorm_eq_ofReal
+      rw [Real.eNorm_eq_ofReal
         (matrixFrobeniusMagnitude_nonneg
           (physicalGradientMatrix psi x))]
       rw [ENNReal.rpow_two, ← ENNReal.ofReal_pow

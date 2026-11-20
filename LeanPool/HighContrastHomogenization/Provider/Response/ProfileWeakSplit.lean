@@ -223,7 +223,7 @@ private theorem normalized_primal_weak_split
         ENNReal.ofReal ((3 : ℝ) ^ (-((1 / 2 : ℝ) * (j : ℝ))) *
           blockAvsumL2 (alignedIndex q (t - (j : ℤ)) t)
             (fun z ↦ blockCellAverage (adaptedCellAt q (t - (j : ℤ)) z)
-              constField))) := ENNReal.tsum_le_tsum hterm
+              constField))) := tsum_le_tsum hterm
     _ = (∑' j : ℕ, ENNReal.ofReal
           ((3 : ℝ) ^ (-((1 / 2 : ℝ) * (j : ℝ))) *
             blockAvsumL2 (alignedIndex q (t - (j : ℤ)) t)
@@ -232,7 +232,7 @@ private theorem normalized_primal_weak_split
           ((3 : ℝ) ^ (-((1 / 2 : ℝ) * (j : ℝ))) *
             blockAvsumL2 (alignedIndex q (t - (j : ℤ)) t)
               (fun z ↦ blockCellAverage (adaptedCellAt q (t - (j : ℤ)) z)
-                constField)) := ENNReal.tsum_add
+                constField)) := tsum_add
     _ = ENNReal.ofReal ((3 : ℝ) ^ (-((1 / 2 : ℝ) * (t : ℝ)))) *
           adaptedWeakSeminorm q t (1 / 2) raw +
         ENNReal.ofReal ((3 : ℝ) ^ (-((1 / 2 : ℝ) * (t : ℝ)))) *

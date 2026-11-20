@@ -130,7 +130,7 @@ theorem integral_grad_coord_h10_eq_zero {U : Set (Vec d)}
     have h := eLpNorm_le_eLpNorm_mul_rpow_measure_univ
       (p := (1 : ENNReal)) (q := (2 : ENNReal)) (μ := volume.restrict U)
       (f := fun y => F n y - f y) (by norm_num) (hmeas n)
-    rwa [eLpNorm_one_eq_lintegral_enorm (hmeas n)] at h
+    rwa [eLpNorm_one_eq_lintegral_eNorm (hmeas n)] at h
   have hgrad := φ.tendsto_approx_grad i
   have hmul : Tendsto (fun n =>
       eLpNorm (fun y => F n y - f y) 2 (volume.restrict U) * cst) atTop (𝓝 0) := by

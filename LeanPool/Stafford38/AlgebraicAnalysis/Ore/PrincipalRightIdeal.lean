@@ -35,7 +35,8 @@ variable {B : Type*} [DivisionRing B]
 
 lemma rightMul_C_left (D : OreDivisionDerivation B) (c : B) (p : Polynomial B) :
     OreDivision.rightMul D (Polynomial.C c) p = Polynomial.C c * p := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro n
   rw [OreDivision.rightMul, Polynomial.coeff_sum]
   rw [Polynomial.sum_def]
@@ -90,10 +91,10 @@ theorem minimal_monic_member_commutes_coefficients
       rw [normalForm_mul]
       exact I.mul_mem_left _ _ hpI
     change normalForm D
-      (OreDivision.rightMul D p (Polynomial.C b) +
-        -OreDivision.rightMul D (Polynomial.C b) p) ∈ I
-    rw [normalForm_add, normalForm_neg]
-    exact I.sub_mem hright hleft
+      (OreDivision.rightMul D p (Polynomial.C b) -
+        OreDivision.rightMul D (Polynomial.C b) p) ∈ I
+    rw [sub_eq_add_neg, normalForm_add, normalForm_neg]
+    simpa only [sub_eq_add_neg] using I.sub_mem hright hleft
   have hqdeg : q.degree ≤ (p.natDegree : WithBot ℕ) := by
     apply le_trans (degree_sub_le _ _)
     apply max_le
@@ -102,7 +103,8 @@ theorem minimal_monic_member_commutes_coefficients
     · have h := OreDivision.rightMul_degree_le D (Polynomial.C b) p
       simpa using h
   have hqcoef : q.coeff p.natDegree = 0 := by
-    dsimp [q]
+    change (OreDivision.rightMul D p (Polynomial.C b) -
+      OreDivision.rightMul D (Polynomial.C b) p).coeff p.natDegree = 0
     rw [Polynomial.coeff_sub, rightMul_coeff_C_top D p b hp.ne_zero,
       rightMul_C_left]
     rw [Polynomial.coeff_C_mul]

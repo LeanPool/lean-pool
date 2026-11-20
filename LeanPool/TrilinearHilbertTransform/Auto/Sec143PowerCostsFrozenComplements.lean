@@ -286,7 +286,7 @@ open Classical in
 `‖Σ_G Λ(pattern)‖ ≤ C B u √u` with `u = Σ_{G,l} ‖S_{G,l}‖² / |I|` (blueprint `eq:three-sides`,
 Cauchy-Schwarz in the groups). -/
 theorem three_side_pattern_cell (Gd : RealDyadicGrid) {γ : Type*} (I : ℤ × ℤ) (Gs : Finset γ)
-    (Λ : MultilinearMap ℂ (fun _ : Fin 4 => W) ℂ) {C Bs : ℝ} (hC : 0 ≤ C)
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => W) ℂ) {C Bs : ℝ} (hC : 0 ≤ C)
     (hΛ : ∀ x : Fin 4 → W, ‖Λ x‖ ≤ C * ∏ l, (‖x l‖ / Real.sqrt (dyadicGridLength Gd I.1)))
     (a s e : γ → Fin 4 → W)
     (hsize : ∀ G ∈ Gs, ∀ l, ‖a G l‖ ≤ Bs * Real.sqrt (dyadicGridLength Gd I.1) ∧
@@ -469,7 +469,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- The selected band defect of one step `st`, with the later steps `rest` and the helper input
 `xa` of the step. -/
-noncomputable def defTerm (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P : ℕ)
+noncomputable def defTerm (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) (P : ℕ)
     (a c d : Fin 4) (x : Fin 4 → E) (yc yd : E) (sel : ℕ → ℕ → Prop) [DecidableRel sel]
     (st : TransferStep E) (rest : List (TransferStep E)) (xa : E) : ℂ :=
   ∑ p ∈ Finset.range (P + 1), ∑ q ∈ (Finset.range (P + 1)).filter (sel p),
@@ -481,7 +481,7 @@ noncomputable def defTerm (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P 
 
 /-- The selected band defects are the sum over the steps of their defects at the helper prefix
 of the earlier steps. -/
-theorem chainDefectSel_eq_sum (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P : ℕ)
+theorem chainDefectSel_eq_sum (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) (P : ℕ)
     (a c d : Fin 4) (x : Fin 4 → E) (yc yd : E) (sel : ℕ → ℕ → Prop) [DecidableRel sel] :
     ∀ (steps : List (TransferStep E)) (xa : E),
       chainDefectSel Λ P a c d x yc yd sel steps xa =
@@ -515,7 +515,7 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- A selected band defect of cell steps on restricted global inputs is the defect of the global
 steps, for a form that sees only the restrictions. -/
-theorem defTerm_intertwine (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {P : ℕ}
+theorem defTerm_intertwine (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {P : ℕ}
     (r : E →L[ℂ] E) (hr2 : ∀ y, r (r y) = r y)
     (hloc : ∀ x y : Fin 4 → E, (∀ l, r (x l) = r (y l)) → Λ x = Λ y)
     {a c d : Fin 4} (sel : ℕ → ℕ → Prop)
@@ -638,7 +638,8 @@ variable {E : Type*} [AddCommGroup E] [Module ℂ E]
 
 /-- Blueprint lines 2388-2393 (freezing both complements and splitting the unbounded frozen one):
 `Λ(Y, F) = Λ(Y_b, F_b) + Λ(Y - Y_b, F) + Λ(Y, F - F_b) - Λ(Y - Y_b, F - F_b)` in two slots. -/
-theorem freeze_four (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) {e f : Fin 4} (hef : e ≠ f)
+theorem freeze_four
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) {e f : Fin 4} (hef : e ≠ f)
     (x : Fin 4 → E) (Yc Yb Fc Fb : E) :
     Λ (Function.update (Function.update x e Yc) f Fc) =
       Λ (Function.update (Function.update x e Yb) f Fb) +
@@ -681,7 +682,8 @@ section DefectRange
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
 
 /-- `chainDefectSel_eq_sum` with the steps indexed by `range` and `getD`. -/
-theorem chainDefectSel_eq_sum_range (Λ : MultilinearMap ℂ (fun _ : Fin 4 => E) ℂ) (P : ℕ)
+theorem chainDefectSel_eq_sum_range
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => E) ℂ) (P : ℕ)
     (a c d : Fin 4) (x : Fin 4 → E) (yc yd : E) (sel : ℕ → ℕ → Prop) [DecidableRel sel]
     (steps : List (TransferStep E)) (xa : E) (dflt : TransferStep E) :
     chainDefectSel Λ P a c d x yc yd sel steps xa =

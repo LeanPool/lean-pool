@@ -126,7 +126,7 @@ theorem tendsto_keySum {q : ℂ} (hq : ‖q‖ < 1) :
     simpa using h_dom_conv
   convert h_m_zero.add h_sum_zero using 2 <;> norm_num [keySum]
   rw [Summable.tsum_eq_add_tsum_ite]
-  any_goals exact Nat.zero
+  on_goal 3 => exact Nat.zero
   · norm_num [qPochhammer]
   · exact summable_keySummand hq _
 
@@ -239,7 +239,7 @@ theorem keySum_eq_one_div_qPochhammerInf_self {q : ℂ} (hq : ‖q‖ < 1) (k : 
             ‖q‖ ^ (k + n + 1) * ‖keySum q (k + n + 1) - keySum q (k + n + 2)‖ := by
           rw [keySum_sub_keySum_succ hq (k + n), norm_mul, norm_pow, norm_sub_rev]
         convert le_trans ih (mul_le_mul_of_nonneg_left h_induction_step <| by positivity) using 1
-        all_goals ring_nf
+        ring_nf
         rw [show (2 + n * 3 + n * k * 2 + n ^ 2 + k * 2) / 2 =
           n + k + (n + n * k * 2 + n ^ 2) / 2 + 1 from
             Nat.div_eq_of_eq_mul_left zero_lt_two <| by

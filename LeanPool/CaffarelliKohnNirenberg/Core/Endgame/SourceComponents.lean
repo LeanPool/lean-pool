@@ -38,13 +38,13 @@ theorem morrey_norm_add_le {P τ : ℝ} (hP : 1 ≤ P)
   have hgμ : AEStronglyMeasurable g μ := hg.aestronglyMeasurable.restrict
   have hsum := eLpNorm_add_le (μ := μ) (f := f) (g := g) (p := ENNReal.ofReal P)
     (by simpa only [ENNReal.ofReal_one] using ENNReal.ofReal_le_ofReal hP)
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hPne ENNReal.ofReal_ne_top (hfμ.add hgμ),
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hPne ENNReal.ofReal_ne_top hfμ,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hPne ENNReal.ofReal_ne_top hgμ] at hsum
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hPne ENNReal.ofReal_ne_top (hfμ.add hgμ),
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hPne ENNReal.ofReal_ne_top hfμ,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hPne ENNReal.ofReal_ne_top hgμ] at hsum
   have hsum' : cylinderPowerIntegral P (fun w => f w + g w) z r.1 ^ (1 / P) ≤
       cylinderPowerIntegral P f z r.1 ^ (1 / P) +
         cylinderPowerIntegral P g z r.1 ^ (1 / P) := by
-    simpa only [ENNReal.toReal_ofReal hP0.le, Real.enorm_eq_ofReal_abs,
+    simpa only [ENNReal.toReal_ofReal hP0.le, Real.eNorm_eq_ofReal_abs,
       Pi.add_apply, one_div, μ, cylinderPowerIntegral] using hsum
   have hcell : morreyCell P τ (fun w => f w + g w) z r.1 ≤
       morreyCell P τ f z r.1 + morreyCell P τ g z r.1 := by

@@ -112,7 +112,7 @@ theorem rieszPressureSpaceTime_sub_eLpNorm_le (r : ℝ) (hr : 1 < r)
       (CKN.Leray.rieszPressureSpaceTimeClass r hr T)
       (CKN.Leray.rieszPressureSpaceTimeClass r hr T')] with z h1 h2 h3
     rw [h3, Pi.sub_apply, Pi.sub_apply, h1, h2]
-  rw [eLpNorm_congr_ae hae, ← Lp.enorm_def, ← ofReal_norm]
+  rw [eLpNorm_congr_ae hae, ← Lp.eNorm_def, ← ofReal_norm]
   have hTsub (i j : Fin 3) : T i j - T' i j = ((hF i j).sub (hF' i j)).toLp (F i j - F' i j) :=
     ((hF i j).toLp_sub (hF' i j)).symm
   have hnorm := CKN.Leray.rieszPressureSpaceTimeClass_norm_le r hr (fun i j => T i j - T' i j)

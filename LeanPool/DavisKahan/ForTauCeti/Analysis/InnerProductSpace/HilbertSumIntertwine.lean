@@ -107,7 +107,7 @@ theorem star_linearIsometryEquiv_trans_symm_of_isHilbertSum {V : ∀ i, G i →�
   have hx : x ∈ closure ((⨆ i, LinearMap.range (V i).toLinearMap : Submodule ℂ E) : Set E) := by
     have := (topologicalClosure_iSup_range_of_isHilbertSum hV) (Submodule.mem_top (x := x))
     rwa [← Submodule.topologicalClosure_coe]
-  exact closure_minimal hmem hclosed hx
+  exact closure_minimal (fun z hz => hmem z hz) hclosed hx
 
 /-- **The canonical unitary between two Hilbert sums intertwines two summand-wise operators.**
 

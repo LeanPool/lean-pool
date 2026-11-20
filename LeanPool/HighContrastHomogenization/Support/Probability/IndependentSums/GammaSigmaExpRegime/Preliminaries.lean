@@ -523,15 +523,15 @@ lemma ae_summable_norm_gammaExpSeriesTerm
       hσ hM hl hl_small hXmom
   have hF_meas : ∀ n : ℕ, AEMeasurable (fun ω => ‖F n ω‖ₑ) μ := by
     intro n
-    exact (hF_int n).1.enorm
+    exact (hF_int n).1.eNorm
   have hlin :
       (∑' n : ℕ, ∫⁻ ω : Ω, ‖F n ω‖ₑ ∂μ) ≠ (⊤ : ENNReal) := by
     have haux (n : ℕ) : ∫⁻ ω : Ω, ‖F n ω‖ₑ ∂μ = ‖∫ ω, ‖F n ω‖ ∂μ‖ₑ := by
-      dsimp [enorm]
+      dsimp [eNorm]
       rw [MeasureTheory.lintegral_coe_eq_integral _ (hF_int n).norm]
       rw [ENNReal.coe_nnreal_eq]
       congr 1
-      rw [coe_nnnorm, Real.norm_eq_abs,
+      rw [coe_nnNorm, Real.norm_eq_abs,
         abs_of_nonneg (integral_nonneg fun ω => by simp [abs_nonneg (F n ω)])]
       rfl
     rw [funext haux]
@@ -543,7 +543,7 @@ lemma ae_summable_norm_gammaExpSeriesTerm
   intro ω hω
   have hωsum : Summable (fun n : ℕ => ((‖F n ω‖₊ : NNReal) : ℝ)) := by
     rw [← ENNReal.tsum_coe_ne_top_iff_summable_coe]
-    simpa [enorm_eq_nnnorm] using hω.ne
+    simpa [eNorm_eq_nnNorm] using hω.ne
   simpa [F] using hωsum
 
 lemma integrable_tsum_norm_gammaExpSeriesTerm
@@ -585,22 +585,22 @@ lemma integrable_tsum_norm_gammaExpSeriesTerm
     apply AEMeasurable.coe_nnreal_real
     apply AEMeasurable.tsum
     intro n
-    exact (hF_int n).1.nnnorm.aemeasurable
+    exact (hF_int n).1.nnNorm.aemeasurable
   · rw [hG_real]
     rw [MeasureTheory.hasFiniteIntegral_iff_ofNNReal]
     have hF_meas : ∀ n : ℕ, AEMeasurable (fun ω => ‖F n ω‖ₑ) μ := by
       intro n
-      exact (hF_int n).1.enorm
+      exact (hF_int n).1.eNorm
     have hlin :
         ∫⁻ ω : Ω, ∑' n : ℕ, ‖F n ω‖ₑ ∂μ < ⊤ := by
       have htop :
           (∑' n : ℕ, ∫⁻ ω : Ω, ‖F n ω‖ₑ ∂μ) ≠ (⊤ : ENNReal) := by
         have haux (n : ℕ) : ∫⁻ ω : Ω, ‖F n ω‖ₑ ∂μ = ‖∫ ω, ‖F n ω‖ ∂μ‖ₑ := by
-          dsimp [enorm]
+          dsimp [eNorm]
           rw [MeasureTheory.lintegral_coe_eq_integral _ (hF_int n).norm]
           rw [ENNReal.coe_nnreal_eq]
           congr 1
-          rw [coe_nnnorm, Real.norm_eq_abs,
+          rw [coe_nnNorm, Real.norm_eq_abs,
             abs_of_nonneg (integral_nonneg fun ω => by simp [abs_nonneg (F n ω)])]
           rfl
         rw [funext haux]
@@ -620,7 +620,7 @@ lemma integrable_tsum_norm_gammaExpSeriesTerm
         _ = ∑' n : ℕ, ((‖F n ω‖₊ : NNReal) : ENNReal) := by
               simpa using (ENNReal.coe_tsum hωnn)
         _ = ∑' n : ℕ, ‖F n ω‖ₑ := by
-              simp [enorm_eq_nnnorm]
+              simp [eNorm_eq_nnNorm]
     rw [lintegral_congr_ae hG_enn_ae]
     exact hlin
 

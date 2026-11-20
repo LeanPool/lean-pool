@@ -51,7 +51,7 @@ def Matrix.centerEquivBase (n : ℕ) (hn : 0 < n) (R : Type*) [Ring R] :
     Subring.center (M[Fin n, R]) ≃+* (Subring.center R) where
   toFun A := ⟨(A.1 ⟨0, by omega⟩ ⟨0, by omega⟩), by
     obtain ⟨a, ha⟩ := (Matrix.mem_center_iff R n A.1).1 A.2
-    rw [ha, smul_apply, one_apply_eq]
+    rw [ha, Matrix.smul_apply, one_apply_eq]
     change (a : R) * (1 : R) ∈ Subring.center R
     exact Subring.mul_mem _ a.2 (Subring.one_mem _)⟩
   invFun a := ⟨a • 1, Subring.mem_center_iff.2 fun A ↦ Matrix.ext <| by simp⟩
@@ -60,11 +60,11 @@ def Matrix.centerEquivBase (n : ℕ) (hn : 0 < n) (R : Type*) [Ring R] :
     then subst hn; exact fun _ ↦ Subsingleton.elim _ _
     else
     rintro ⟨A, hA⟩; obtain ⟨⟨α, hα⟩, rfl⟩ := Matrix.mem_center_iff _ _ _ |>.1 hA
-    simp only [smul_apply, one_apply_eq, Subtype.mk.injEq]
+    simp only [Matrix.smul_apply, one_apply_eq, Subtype.mk.injEq]
     change (α • (1 : R)) • (1 : Matrix (Fin n) (Fin n) R) = α • (1 : _)
     simp only [smul_eq_mul, mul_one]
   right_inv := by
-    intro ⟨r, hr⟩; simp only [smul_apply, one_apply_eq, Subtype.mk.injEq]
+    intro ⟨r, hr⟩; simp only [Matrix.smul_apply, one_apply_eq, Subtype.mk.injEq]
     change r • (1 : R) = _
     simp only [smul_eq_mul, mul_one]
   map_mul' := by
@@ -73,7 +73,8 @@ def Matrix.centerEquivBase (n : ℕ) (hn : 0 < n) (R : Type*) [Ring R] :
     obtain ⟨a, rfl⟩ := hA
     simp_all
   map_add' := by
-    simp_all
+    intro x y
+    exact Subtype.ext rfl
 
 end RingEquiv
 
@@ -85,6 +86,9 @@ variable (R A : Type u) [CommSemiring R] [Ring A] [Algebra R A]
 def Matrix.centerAlgEquiv (n : ℕ) (hn : 0 < n) :
     Subalgebra.center R M[Fin n, A] ≃ₐ[R] Subalgebra.center R A := {
   __ := Matrix.centerEquivBase n hn A
-  commutes' := fun _ ↦ rfl }
+  commutes' := by
+    intro r
+    apply Subtype.ext
+    simp [Matrix.centerEquivBase, Matrix.algebraMap_matrix_apply] }
 
 end AlgEquiv

@@ -61,7 +61,7 @@ theorem exists_equitable_of_energy_descent
       ProperOn E colour' ∧ IsEquitable E colour' := by
   classical
   induction henergy : energy E colour using Nat.strong_induction_on generalizing colour with
-  | h n ih =>
+  | ind n ih =>
       by_cases hEq : IsEquitable E colour
       · exact ⟨colour, hproper, hEq⟩
       · obtain ⟨colour', hproper', hdrop⟩ := step colour hproper hEq

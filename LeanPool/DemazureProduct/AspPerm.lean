@@ -1224,7 +1224,7 @@ lemma Delta_eq (a b : ℤ) : τ.s.Δ a b = if τ b = a then 1 else 0 := by
   by_cases h' : τ b = a
   · simp only [h', le_refl, ↓reduceIte]
   have h' : ¬ (τ b ≤ a) := by
-    contrapose! h'
+    contrapose h'
     push Not at h
     exact le_antisymm h' h
   simpa [h, h']

@@ -887,7 +887,7 @@ private theorem helper_htree_1031.{u_1, u_2} :
               have :=
                 GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement
                   (GoldbergSeymour.HierarchyReplacementPresentation.corresponding P)
-              all_goals omega)
+              omega)
     )) corr.replacementSeries; (
     ∀ {a b : ℕ} (h : a = b) (s : TashkinovSeries G k a e0 corr.replacementInput) (i : Fin (b + (2
         : ℕ))), (cast (congrArg (fun (r : ℕ) ↦ TashkinovSeries G k r e0 corr.replacementInput) h)
@@ -904,7 +904,7 @@ private theorem helper_htree_1031.{u_1, u_2} :
             have :=
               GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement
                 (GoldbergSeymour.HierarchyReplacementPresentation.corresponding P)
-            all_goals omega)
+            omega)
     ) (⟨m.rounds - (1 : ℕ),
     have hp : (1 : ℕ) ≤ m.rounds := m.roundsPositive; Decidable.byContradiction fun (a : ¬m.rounds
         - (1 : ℕ) < m.rounds) ↦
@@ -960,7 +960,7 @@ private theorem helper_htreeFinal_1056.{u_1, u_2} :
             have :=
               GoldbergSeymour.CorrespondingExtendedTashkinovTree.rungAgreement
                 (GoldbergSeymour.HierarchyReplacementPresentation.corresponding P)
-            all_goals omega)
+            omega)
     ) (⟨m.rounds - (1 : ℕ),
     have hp : (1 : ℕ) ≤ m.rounds := m.roundsPositive; Decidable.byContradiction fun (a : ¬m.rounds
         - (1 : ℕ) < m.rounds) ↦

@@ -28,7 +28,7 @@ uniformly in `t` by `‖W t x - x‖ ≤ 2 ‖x‖`, and the finite part is a fi
 of continuous functions vanishing at `t = 0`.
 
 It is carried out in `ℝ≥0∞` rather than in `ℝ` on purpose: there the sum splits
-unconditionally (`ENNReal.sum_add_tsum_compl`) and the tail estimate
+unconditionally (`sum_add_tsum_compl`) and the tail estimate
 (`ENNReal.tendsto_tsum_compl_atTop_zero`) needs no summability side condition,
 so no part of the bookkeeping is spent on convergence hypotheses.
 
@@ -63,9 +63,9 @@ omit [CompleteSpace E] [CompleteSpace F] in
 theorem enorm_sub_sq_le (W : E →L[𝕜] E) (hW : ∀ x : E, ‖W x‖ = ‖x‖) (x : E) :
     ‖W x - x‖ₑ ^ 2 ≤ 4 * ‖x‖ₑ ^ 2 := by
   have hle : ‖W x - x‖ₑ ≤ 2 * ‖x‖ₑ := by
-    refine le_trans enorm_sub_le ?_
+    refine le_trans eNorm_sub_le ?_
     have : ‖W x‖ₑ = ‖x‖ₑ := by
-      rw [enorm_eq_nnnorm, enorm_eq_nnnorm]
+      rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm]
       exact congrArg _ (NNReal.coe_injective (hW x))
     rw [this, two_mul]
   calc ‖W x - x‖ₑ ^ 2 ≤ (2 * ‖x‖ₑ) ^ 2 := by gcongr
@@ -100,7 +100,7 @@ theorem tendsto_energy_sub_comp (b : HilbertBasis ι 𝕜 F) (S : F →L[𝕜] E
     intro t
     calc ∑' i : ↥((s : Set ι))ᶜ, ‖W t (S (b i)) - S (b i)‖ₑ ^ 2
         ≤ ∑' i : ↥((s : Set ι))ᶜ, 4 * ‖S (b i)‖ₑ ^ 2 :=
-          ENNReal.tsum_le_tsum fun i => enorm_sub_sq_le (W t) (hiso t) _
+          tsum_le_tsum fun i => enorm_sub_sq_le (W t) (hiso t) _
       _ = 4 * ∑' i : ↥((s : Set ι))ᶜ, ‖S (b i)‖ₑ ^ 2 := ENNReal.tsum_mul_left
       _ ≤ 4 * δ := by gcongr; exact hs.le
   -- The finite part is a finite sum of continuous functions vanishing at `0`.
@@ -111,7 +111,7 @@ theorem tendsto_energy_sub_comp (b : HilbertBasis ι 𝕜 F) (S : F →L[𝕜] E
       have heq : ∀ t : ℝ, ‖W t (S (b i)) - S (b i)‖ₑ ^ 2
           = ENNReal.ofReal (‖W t (S (b i)) - S (b i)‖ ^ 2) := by
         intro t
-        rw [enorm_eq_nnnorm, ← ENNReal.ofReal_coe_nnreal, coe_nnnorm,
+        rw [eNorm_eq_nnNorm, ← ENNReal.ofReal_coe_nnreal, coe_nnNorm,
           ← ENNReal.ofReal_pow (norm_nonneg _)]
       simp_rw [heq]
       have hc : Continuous fun t : ℝ => ENNReal.ofReal (‖W t (S (b i)) - S (b i)‖ ^ 2) :=
@@ -123,7 +123,7 @@ theorem tendsto_energy_sub_comp (b : HilbertBasis ι 𝕜 F) (S : F →L[𝕜] E
   calc ∑' i, ‖W t (S (b i)) - S (b i)‖ₑ ^ 2
       = ∑ i ∈ s, ‖W t (S (b i)) - S (b i)‖ₑ ^ 2
         + ∑' i : ↥((s : Set ι))ᶜ, ‖W t (S (b i)) - S (b i)‖ₑ ^ 2 :=
-        (ENNReal.sum_add_tsum_compl s _).symm
+        (sum_add_tsum_compl s _).symm
     _ ≤ δ + 4 * δ := add_le_add ht (htail t)
     _ = 5 * δ := by ring
     _ = ε := by rw [hδdef, ENNReal.mul_div_cancel' (by norm_num) (by norm_num)]
@@ -172,7 +172,7 @@ theorem energy_sub_comp_ne_top (b : HilbertBasis ι 𝕜 F) (S : F →L[𝕜] E)
     (hW : ∀ x : E, ‖W x‖ = ‖x‖) (hS : S.hilbertSchmidtEnergy b ≠ ⊤) :
     (W.comp S - S).hilbertSchmidtEnergy b ≠ ⊤ := by
   rw [energy_sub_comp_eq]
-  refine ne_top_of_le_ne_top ?_ (ENNReal.tsum_le_tsum fun i => enorm_sub_sq_le W hW (S (b i)))
+  refine ne_top_of_le_ne_top ?_ (tsum_le_tsum fun i => enorm_sub_sq_le W hW (S (b i)))
   rw [ENNReal.tsum_mul_left]
   refine ENNReal.mul_ne_top (by norm_num) ?_
   rw [← ContinuousLinearMap.hilbertSchmidtEnergy_def]

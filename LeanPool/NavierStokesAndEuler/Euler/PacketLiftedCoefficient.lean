@@ -107,7 +107,7 @@ private theorem tupleBounded_apply {ι : Type*} [Fintype ι]
     tupleBounded (X := X) (V := V) (ι := ι) u x i = u i x := by
   classical
   simp only [tupleBounded, sum_apply, ContinuousLinearMap.comp_apply,
-      ContinuousLinearMap.proj_apply, BoundedContinuousFunction.coe_sum, Finset.sum_apply,
+      ContinuousLinearMap.proj_apply, Finset.sum_apply,
       ContinuousLinearMap.compLeftContinuousBounded_apply, ContinuousLinearMap.single_apply,
       Finset.sum_pi_single, Finset.mem_univ, ↓reduceIte]
 
@@ -176,7 +176,7 @@ def tensorPathLinear (n : ℕ) :
     apply ContinuousMultilinearMap.ext
     intro v
     simp only [tensorPath_apply, add_apply, ContinuousMap.add_apply,
-      BoundedContinuousFunction.add_apply]
+      _root_.add_apply]
   map_smul' c A := by
     apply ContinuousMap.ext
     intro t
@@ -185,7 +185,7 @@ def tensorPathLinear (n : ℕ) :
     apply ContinuousMultilinearMap.ext
     intro v
     simp only [tensorPath_apply, smul_apply, ContinuousMap.smul_apply,
-      BoundedContinuousFunction.smul_apply, RingHom.id_apply]
+      _root_.smul_apply, RingHom.id_apply]
 
 /-- Tensor path map, bundling `toLinearMap`, `cont`. -/
 def tensorPathMap (n : ℕ) :

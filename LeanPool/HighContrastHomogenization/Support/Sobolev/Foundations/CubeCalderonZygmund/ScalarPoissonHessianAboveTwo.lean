@@ -112,7 +112,7 @@ private theorem lintegral_divided_moment_ne_top
       simpa only [← ofReal_norm,
         ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _)
           ENNReal.toReal_nonneg] using
-        (MeasureTheory.lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+        (MeasureTheory.lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
           (ne_of_gt (zero_lt_one.trans q.one_lt)) q.lt_top.ne
           hf.eLpNorm_lt_top).ne)
 
@@ -122,7 +122,7 @@ private theorem eLpNorm_rpow_eq_lintegral_ofReal_norm_rpow
     (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f q.exponent μ) ^ q.exponent.toReal =
       ∫⁻ x, ENNReal.ofReal (‖f x‖ ^ q.exponent.toReal) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ne_of_gt (zero_lt_one.trans q.one_lt)) q.lt_top.ne hf,
     ← ENNReal.rpow_mul]
   have hq0 : q.exponent.toReal ≠ 0 :=

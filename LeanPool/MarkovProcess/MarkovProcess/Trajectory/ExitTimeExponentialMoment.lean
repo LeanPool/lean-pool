@@ -191,7 +191,7 @@ private theorem exponentialWeight_le_add_tsum (lam : ℝ) (hlam : 0 ≤ lam) (t0
       calc
         (⊤ : ℝ≥0∞) = ∑' _k : ℕ, (1 : ℝ≥0∞) :=
           (ENNReal.tsum_const_eq_top_of_ne_zero one_ne_zero).symm
-        _ ≤ _ := ENNReal.tsum_le_tsum hterm
+        _ ≤ _ := tsum_le_tsum hterm
     rw [htop, add_top]
     exact le_top
   · push Not at hall
@@ -216,7 +216,7 @@ private theorem exponentialWeight_le_add_tsum (lam : ℝ) (hlam : 0 ≤ lam) (t0
           exact not_le.mp this
         refine le_add_left ?_
         refine le_trans (le_of_eq ?_)
-          (ENNReal.le_tsum (f := fun k : ℕ ↦
+          (le_tsum (fun k : ℕ ↦
             {u : ℝ≥0∞ | (((k + 1) • t0 : NNReal) : ℝ≥0∞) < u}.indicator
               (fun _ ↦ a ^ (k + 2)) tau) j)
         have hmem : tau ∈ {u : ℝ≥0∞ | (((j + 1) • t0 : NNReal) : ℝ≥0∞) < u} := hlt
@@ -289,7 +289,7 @@ theorem IsConservative.lintegral_exponentialStoppingWeight_exitTime_le
     _ = a + ∑' k : ℕ, ∫⁻ omega, (B k).indicator (fun _ ↦ a ^ (k + 2)) omega ∂Q := by
       rw [lintegral_tsum fun k ↦ (measurable_const.indicator (hBmeas k)).aemeasurable]
     _ ≤ a + ∑' k : ℕ, a ^ (k + 2) * q ^ (k + 1) :=
-      add_le_add le_rfl (ENNReal.tsum_le_tsum hlayer)
+      add_le_add le_rfl (tsum_le_tsum hlayer)
     _ = a + a * ((a * q) * (1 - a * q)⁻¹) := by rw [hsum]
     _ = a * (1 - q * a)⁻¹ := hfinal
 

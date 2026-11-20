@@ -65,7 +65,7 @@ theorem FiniteFamily.value_succ (F : FiniteFamily period hT A) (C : ComparisonDa
 theorem FiniteFamily.value_base (F : FiniteFamily period hT A) (C : ComparisonData period hT A)
     (q : ℕ) (hq : 6 ≤ q) (t : Icc (0 : ℝ) T) :
     value period (F.solution q hq t) = value period (F.solution 6 le_rfl t) := by
-  exact Nat.le_induction (P := fun n hn => value period (F.solution n hn t) =
+  exact Nat.le_induction (motive := fun n hn => value period (F.solution n hn t) =
       value period (F.solution 6 le_rfl t)) rfl
     (fun n hn ih => (F.value_succ period C n hn t).trans ih) q hq
 

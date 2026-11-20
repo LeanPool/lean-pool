@@ -82,7 +82,7 @@ lemma sobolevNormSqDistrib_triangle (s : ℝ) (a b c : TrigPolyDual n)
       refine Summable.of_nonneg_of_le ( fun m => mul_nonneg ( weight_nonneg _ _ ) ( sq_nonneg _
           ) ) ( fun m => mul_le_mul_of_nonneg_left ( h_ineq m ) ( weight_nonneg _ _ ) ) ?_;
       convert hab.mul_left 2 |> Summable.add <| hbc.mul_left 2 using 2
-      all_goals (ring)
+      ring
     · exact Summable.add ( hab.mul_left _ ) ( hbc.mul_left _ );
   · exact hab.mul_left 2;
   · exact hbc.mul_left 2
@@ -105,7 +105,7 @@ lemma MemSobolevDistrib.sub {s : ℝ} {a b : TrigPolyDual n}
       have h_bound : ‖fourierCoeffDistrib (a - b) m‖ ≤ ‖fourierCoeffDistrib a m‖ +
           ‖fourierCoeffDistrib b m‖ := by
         convert norm_sub_le ( fourierCoeffDistrib a m ) ( fourierCoeffDistrib b m ) using 2
-        all_goals rfl
+        rfl
       apply le_trans (pow_le_pow_left₀ (norm_nonneg _) h_bound 2)
       linarith [sq_nonneg (‖fourierCoeffDistrib a m‖ - ‖fourierCoeffDistrib b m‖)]
     nlinarith [ show 0 ≤ weight n s m by exact le_of_lt ( weight_pos s m ) ]

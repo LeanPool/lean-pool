@@ -391,10 +391,10 @@ theorem LimitFieldRegularity.streamVel_increment_spatial_lipschitz
   have hL (i : Fin 2) : LipschitzWith
       (2 * (2 ^ 16 * epsilon β I.Λ m ^ (β - 2))).toNNReal
       (fun z : Vec 2 => fderiv ℝ f z (basisVec i)) := by
-    apply lipschitzWith_of_nnnorm_fderiv_le (hcomp i)
+    apply lipschitzWith_of_nnNorm_fderiv_le (hcomp i)
     intro z
     apply NNReal.coe_le_coe.mp
-    rw [coe_nnnorm, Real.coe_toNNReal _ hcoef]
+    rw [coe_nnNorm, Real.coe_toNNReal _ hcoef]
     exact hcoord i z
   have hvel (z : Vec 2) :
       streamVel (Φ m) t z - streamVel (Φ (m - 1)) t z =

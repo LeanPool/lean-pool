@@ -109,7 +109,7 @@ lemma ae_mem_support (μ : Measure S) [FiniteSupport μ] : ∀ᵐ x ∂μ, x ∈
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · simp only [Measure.finiteSupport, ne_eq, Finset.mem_filter] at h
     exact h.2
-  · contrapose! h
+  · contrapose h
     exact measure_mono_null (by simpa using h) (measure_compl_support μ)
 
 instance finiteSupport_zero : FiniteSupport (0 : Measure S) where
@@ -313,7 +313,9 @@ lemma _root_.ProbabilityTheory.measureEntropy_univ_smul
     simp [hμ_fin]
   cases eq_zero_or_neZero μ with
   | inl hμ => simp [hμ]
-  | inr hμ => simp [measureEntropy]
+  | inr hμ =>
+    simp [measureEntropy,
+      inv_mul_cancel₀ (show (μ univ).toReal ≠ 0 from measureReal_univ_ne_zero)]
 
 lemma _root_.ProbabilityTheory.measureEntropy_nonneg (μ : Measure S) : 0 ≤ Hm[μ] := by
   by_cases hμ_fin : IsFiniteMeasure μ
@@ -650,7 +652,7 @@ lemma _root_.ProbabilityTheory.measureMutualInfo_nonneg_aux
   have hE' : μ (E1 ×ˢ E2 : Finset (S × U))ᶜ = 0 := by
     refine measure_mono_null ?_ hE
     intro ⟨s, u⟩
-    contrapose!
+    contrapose
     intro h
     simp only [mem_compl_iff, SetLike.mem_coe, mem_support, ne_eq, Decidable.not_not,
       Finset.coe_product, mem_prod, not_and, Classical.not_imp] at h ⊢
@@ -701,7 +703,7 @@ lemma _root_.ProbabilityTheory.measureMutualInfo_nonneg_aux
       constructor
       · refine measure_mono_null ?_ hE
         rintro ⟨s, u⟩ ⟨rfl, h2⟩
-        contrapose! h2
+        contrapose h2
         simp only [mem_compl_iff, SetLike.mem_coe, mem_support, ne_eq, Decidable.not_not,
           Finset.mem_image, Prod.exists, exists_eq_right, iUnion_exists, mem_iUnion,
           mem_singleton_iff, Prod.mk.injEq, true_and, exists_prop, exists_and_right,
@@ -718,7 +720,7 @@ lemma _root_.ProbabilityTheory.measureMutualInfo_nonneg_aux
       constructor
       · refine measure_mono_null ?_ hE
         rintro ⟨s, u⟩ ⟨rfl, h2⟩
-        contrapose! h2
+        contrapose h2
         simp only [mem_compl_iff, SetLike.mem_coe, mem_support, ne_eq, Decidable.not_not,
           Finset.mem_image, Prod.exists, exists_and_right, exists_eq_right, iUnion_exists,
           mem_iUnion, mem_singleton_iff, Prod.mk.injEq, and_true, exists_prop, exists_eq_right', E1,

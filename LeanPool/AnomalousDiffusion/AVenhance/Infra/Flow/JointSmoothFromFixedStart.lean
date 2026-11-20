@@ -160,7 +160,7 @@ theorem JointSmoothFromFixedStart.flowGraphBackward_contDiff_infty
     have hevent : JointSmoothFromFixedStart.flowGraphBackward X =ᶠ[𝓝
         (JointSmoothFromFixedStart.flowGraphForward X p)]
         (hforward.contDiffAt (x := p)).localInverse hF' (by simp) := by
-      have hFstrict := (hforward.contDiffAt (x := p)).hasStrictFDerivAt' hF' (by simp)
+      have hFstrict := (hforward.contDiffAt (x := p)).hasStrictFDerivAt hF' (by simp)
       have hu := hFstrict.localInverse_unique
         (g := JointSmoothFromFixedStart.flowGraphBackward X) (Filter.Eventually.of_forall
             hinverses.1)

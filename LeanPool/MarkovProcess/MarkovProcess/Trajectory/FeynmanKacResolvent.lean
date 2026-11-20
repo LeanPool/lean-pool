@@ -574,7 +574,6 @@ theorem IsFellerKernelSemigroup.kernelResolvent_eq_feynmanKacResolvent_add
   have hH : Measurable H := (hW.comp measurable_add).mul hB
   have hsets (t : ℝ) : Ioc (0 : ℝ) t =ᶠ[ae volume] Ioo (0 : ℝ) t := by
     filter_upwards [volume.ae_ne t] with s hst
-    apply propext
     constructor
     · intro hs
       exact ⟨hs.1, hs.2.lt_of_ne hst⟩

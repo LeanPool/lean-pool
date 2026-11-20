@@ -920,7 +920,7 @@ Frobenius pairing is the trace pairing against the transpose.
 theorem matrixInner_eq_trace_transpose_mul
     {n : Type*} [Fintype n] [DecidableEq n]
     (A G : Matrix n n ℝ) :
-    letI := Matrix.toMatrixInnerProductSpace
+    letI := Matrix.toMatrixInnerProductSpace n
       (1 : Matrix n n ℝ) Matrix.PosSemidef.one
     inner ℝ A G = (A.transpose * G).trace := by
   change (G * (1 : Matrix n n ℝ) * star A).trace = (A.transpose * G).trace
@@ -935,7 +935,7 @@ quadratic form.
 theorem matrixInner_realRankOne_eq_realQuadraticForm
     {n : Type*} [Fintype n] [DecidableEq n]
     (A : Matrix n n ℝ) (q : n → ℝ) :
-    letI := Matrix.toMatrixInnerProductSpace
+    letI := Matrix.toMatrixInnerProductSpace n
       (1 : Matrix n n ℝ) Matrix.PosSemidef.one
     inner ℝ A (realRankOne q) = realQuadraticForm A q := by
   change (realRankOne q * (1 : Matrix n n ℝ) * star A).trace =

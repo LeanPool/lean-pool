@@ -248,7 +248,7 @@ private theorem mk_isoSetoid_subtype_le_aleph_one (φ : L.Sentenceω)
             Cardinal.lift.{1, v} #↑(fibers i) := hbound
     _ ≤ Cardinal.aleph 1 * Cardinal.aleph 1 := by
         apply mul_le_mul'
-        · rw [Cardinal.mk_Iio_ordinal, Cardinal.lift_lift, Ordinal.card_omega,
+        · rw [Ordinal.cardinalMk_Iio, Cardinal.lift_lift, Ordinal.card_omega,
             Cardinal.lift_aleph, Ordinal.lift_one]
         · have : Nonempty (Set.Iio (Ordinal.omega 1 : Ordinal.{0})) :=
             ⟨⟨0, Ordinal.omega_pos 1⟩⟩

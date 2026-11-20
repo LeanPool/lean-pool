@@ -125,7 +125,7 @@ theorem value_determinant_branch_one (d e : ℕ) :
       j ∈ Set.range (Sum.inr : Fin e → Index e) ∧ k ∈ Set.range fz := by
     intro i j k h
     rcases j with j | j <;> rcases k with k | k
-    any_goals simp [branch] at h
+    all_goals simp [branch] at h
     exact ⟨⟨i, rfl⟩, ⟨j, rfl⟩, ⟨Fin.cast (by omega) k, by simp [fz]⟩⟩
   have hv := χ.value_eq_pullback_of_support (branch K d e 1) id Sum.inr fz
     Function.injective_id Sum.inr_injective hfz hs

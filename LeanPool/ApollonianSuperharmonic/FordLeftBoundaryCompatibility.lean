@@ -432,9 +432,8 @@ private theorem haRe :
       linarith [sr, sr']
     have transformedDifference := hsreFord
     rw [slopeDifference] at transformedDifference
-    try
     norm_num at transformedDifference ⊢
-    try simp only [← GaussianInt.intCast_re] at transformedDifference
+    simp only [← GaussianInt.intCast_re] at transformedDifference
     exact_mod_cast transformedDifference
 
 private theorem haIm :
@@ -478,9 +477,8 @@ private theorem haIm :
       linarith [si, si']
     have transformedDifference := hsimFord
     rw [slopeDifference] at transformedDifference
-    try
     norm_num at transformedDifference ⊢
-    try simp only [← GaussianInt.intCast_im] at transformedDifference
+    simp only [← GaussianInt.intCast_im] at transformedDifference
     exact_mod_cast transformedDifference
 
 private theorem hcoc :

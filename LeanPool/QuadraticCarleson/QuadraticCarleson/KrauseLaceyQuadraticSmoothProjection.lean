@@ -711,13 +711,13 @@ theorem enorm_scaledLowPassKernel_convolution_le_maximal
   calc
     ‖∫ y, scaledLowPassKernel k (x - y) * f y‖ₑ ≤
         ∫⁻ y, ‖scaledLowPassKernel k (x - y) * f y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y, (ENNReal.ofReal baseLowPassKernelDecayConstant *
           ENNReal.ofReal (cotlarPoissonKernel r (x - y))) * ‖f y‖ₑ := by
       apply lintegral_mono
       intro y
       dsimp only
-      rw [enorm_mul]
+      rw [eNorm_mul]
       apply mul_le_mul'
       · rw [← ofReal_norm]
         calc
@@ -739,7 +739,7 @@ theorem enorm_scaledLowPassKernel_convolution_le_maximal
     _ ≤ ENNReal.ofReal baseLowPassKernelDecayConstant *
         (20 * centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x) := by
       apply mul_le_mul' le_rfl
-      exact lintegral_ofReal_cotlarPoissonKernel_mul_le_maximal hr hf.enorm x
+      exact lintegral_ofReal_cotlarPoissonKernel_mul_le_maximal hr hf.eNorm x
     _ = (20 * ENNReal.ofReal baseLowPassKernelDecayConstant) *
         centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ) x := by ac_rfl
 
@@ -774,16 +774,16 @@ theorem memLp_two_centeredHardyLittlewoodMaximal_enorm
     MemLp (centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ)) 2 volume := by
   let M : ℝ → ℝ≥0∞ :=
     centeredHardyLittlewoodMaximal (fun y ↦ ‖f y‖ₑ)
-  have hm := (measurable_centeredHardyLittlewoodMaximal hfmeas.enorm)
+  have hm := (measurable_centeredHardyLittlewoodMaximal hfmeas.eNorm)
   have hinput : (∫⁻ x, ‖f x‖ₑ ^ 2) < (⊤ : ℝ≥0∞) := by
     rw [← eLpNorm_two_sq_lintegral _ hf₂.aestronglyMeasurable]
     exact ENNReal.pow_lt_top hf₂.eLpNorm_lt_top
   have hM : (∫⁻ x, M x ^ 2) < (⊤ : ℝ≥0∞) :=
-    (centeredHardyLittlewoodMaximal_sq_lintegral_le hfmeas.enorm).trans_lt
+    (centeredHardyLittlewoodMaximal_sq_lintegral_le hfmeas.eNorm).trans_lt
       (ENNReal.mul_lt_top (by decide +kernel) hinput)
   have hp : eLpNorm M 2 volume ^ 2 < (⊤ : ℝ≥0∞) := by
     rw [eLpNorm_two_sq_lintegral M hm.aestronglyMeasurable]
-    simpa only [enorm_eq_self] using hM
+    simpa only [eNorm_eq_self] using hM
   exact (ENNReal.pow_lt_top_iff.mp hp).resolve_right (by decide +kernel)
 
 theorem memLp_two_lowPassKernelConvolution
@@ -793,7 +793,7 @@ theorem memLp_two_lowPassKernelConvolution
   let A : ℝ≥0∞ := 20 * ENNReal.ofReal baseLowPassKernelDecayConstant
   have hAtop : A ≠ (⊤ : ℝ≥0∞) := by
     exact ENNReal.mul_ne_top (by decide +kernel) ENNReal.ofReal_ne_top
-  apply (memLp_two_centeredHardyLittlewoodMaximal_enorm hfmeas hf₂).of_enorm_le_mul
+  apply (memLp_two_centeredHardyLittlewoodMaximal_enorm hfmeas hf₂).of_eNorm_le_mul
     (c := A.toNNReal)
     (integrable_lowPassKernelConvolution k hf).aestronglyMeasurable
   filter_upwards with x

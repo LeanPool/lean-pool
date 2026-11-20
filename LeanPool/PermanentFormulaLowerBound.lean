@@ -1059,7 +1059,7 @@ private theorem algebraicIndependent_of_jacobianMinor_det_ne_zero
       p.totalDegree = n → MvPolynomial.aeval g p = 0 → p = 0 := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro p hdegree hrelation
       have hpartials : ∀ i : ι, MvPolynomial.pderiv i p = 0 := by
         intro i
@@ -3226,8 +3226,8 @@ private theorem matchingPolynomial_coeff_binaryDegree {F : Type*} [CommRing F]
     ac_rfl
   · have h_empty : P = ∅ := Finset.not_nonempty_iff_eq_empty.mp hP
     subst P
-    simp only [matchingPolynomial_empty, matchingBinaryDegree_empty, Polynomial.coeff_one_zero,
-      Finset.card_empty,
+    simp only [matchingPolynomial_empty, matchingBinaryDegree_empty,
+      AddMonoidAlgebra.coeff_one_zero, Finset.card_empty,
       pow_zero, Nat.factorial_zero, Nat.cast_one, mul_one]
 
 private theorem matchingPolynomial_coeff_binaryDegree_ne_zero
@@ -5493,8 +5493,7 @@ private theorem four_mul_clog_two_lt_self {n : ℕ} (hn : 32 ≤ n) :
   · omega
   · have hsix : 6 ≤ Nat.clog 2 n := by omega
     have hpow : 2 ^ (Nat.clog 2 n - 1) < n := by
-      simpa only [Nat.pred_eq_sub_one] using (Nat.pow_pred_clog_lt_self (b := 2) (by norm_num)
-        (x := n) (by omega))
+      simpa only [Nat.pred_eq_sub_one] using (Nat.pow_pred_clog_lt_self 2 (x := n) (by omega))
     exact (four_mul_le_two_pow_pred (Nat.clog 2 n) hsix).trans_lt hpow
 
 private theorem matching_block_size_le_half {n : ℕ} (hn : 32 ≤ n) :
@@ -5517,7 +5516,7 @@ private theorem clog_two_cast_le_two_mul_logb {n : ℕ} (hn : 2 ≤ n) :
   have hclog : 0 < Nat.clog 2 n :=
     Nat.clog_pos (by norm_num) (by omega)
   have hpow : 2 ^ (Nat.clog 2 n).pred < n :=
-    Nat.pow_pred_clog_lt_self (by norm_num) (by omega)
+    Nat.pow_pred_clog_lt_self 2 (by omega)
   have hpow_real :
       (2 : ℝ) ^ (Nat.clog 2 n).pred < (n : ℝ) := by
     exact_mod_cast hpow

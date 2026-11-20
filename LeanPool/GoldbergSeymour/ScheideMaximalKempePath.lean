@@ -516,7 +516,7 @@ theorem ScheideMaximalKempePath {V E : Type*}
     match z with
     | Sum.inl v => v ∈ X
     | Sum.inr e => ∀ v, Incident G v e → v ∈ X
-  let HG := (⊤ : H.Subgraph).induce Good
+  let HG := (⊤ : H.Subgraph).induce {z | Good z}
   have hGoodClosed : ∀ z ∈ HG.verts, ∀ w, H.Adj z w → HG.Adj z w := by
     intro z hz w hzw
     have hzGood : Good z := by
