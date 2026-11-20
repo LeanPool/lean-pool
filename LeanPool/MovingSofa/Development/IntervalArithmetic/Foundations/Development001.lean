@@ -3157,9 +3157,18 @@ private theorem mulFast_hi (I J : IntervalRat) : (mulFast I J).hi = (mul I J).hi
             (by nlinarith [I.le, J.le])
         · rfl
 
-/-- `mulFast` preserves the containment property of `mul`.
-    This is retained as documentation and a future audited optimization hook;
-    production certificate checking currently uses `mul` directly. -/
+/-- Sign-based multiplication computes the same interval as the four-product formula. -/
+theorem mulFast_eq_mul (I J : IntervalRat) : mulFast I J = mul I J := by
+  have equalOfEndpoints {left right : IntervalRat}
+      (lower : left.lo = right.lo) (upper : left.hi = right.hi) : left = right := by
+    cases left
+    cases right
+    cases lower
+    cases upper
+    rfl
+  exact equalOfEndpoints (mulFast_lo I J) (mulFast_hi I J)
+
+/-- `mulFast` preserves the containment property of `mul`. -/
 theorem mem_mulFast {x y : ℝ} {I J : IntervalRat} (hx : x ∈ I) (hy : y ∈ J) :
     x * y ∈ mulFast I J := by
   simp only [mem_def]

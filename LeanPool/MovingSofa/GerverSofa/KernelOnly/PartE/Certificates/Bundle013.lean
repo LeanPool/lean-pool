@@ -5,6 +5,8 @@ Authors: Dawid Trela
 -/
 module
 
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
+
 import LeanPool.MovingSofa.KernelCertificate
 import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.CachedIntervals
 
@@ -15,6 +17,9 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 * `GerverSofa.KernelOnly.PartE.Certificates.Batch018`.
 * `GerverSofa.KernelOnly.PartE.Certificates.Batch044`.
 -/
+
+-- Use the faster exact decision procedure only within this certificate module.
+attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejected
 
 @[expose] public section
 
