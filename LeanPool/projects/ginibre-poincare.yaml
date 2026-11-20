@@ -25,7 +25,12 @@ summary: Proves the sharp Poincaré inequality for symmetric observables in the 
   of the transition semigroup with the analytic generator evolution. For nonquadratic
   rotation-invariant potentials (Theorem 1.14), proves the symmetric Poincaré inequality under a
   Laplacian lower bound and the radial log-Sobolev inequality under strong convexity, including an
-  internal proof of the strongly convex Bakry–Émery log-Sobolev inequality.
+  internal proof of the strongly convex Bakry–Émery log-Sobolev inequality. Finally proves the
+  literal pointwise Γ₂ form of Theorem 1.9 and its curvature reformulation, the spectral support of
+  the generator, unstopped CIR equations, the strong Markov property and ergodicity of the dynamics,
+  the ordinary-H¹ form domain, the Gaussian number-operator spectrum, and the auxiliary
+  Brascamp–Lieb, GUE, local Dolbeault, weighted entire-space, Gram–Schmidt and analyticity
+  assertions.
 branch: probability theory
 entry_module: LeanPool.GinibrePoincare
 authors:
@@ -81,6 +86,20 @@ main_declarations:
 - GinibrePoincare.ginibreOriginalEquilibrium_two_radius_gamma_product
 - GinibrePoincare.fullNonQuadraticPotentialTheorem
 - GinibrePoincare.bakryEmeryConfigurationGibbs_square_lsi
+- GinibrePoincare.fullTheoremOneNinePointwiseGamma
+- GinibrePoincare.correspondence_poincare_iff_integrated_pointwise_curvature
+- GinibrePoincare.spectral_ginibre_full_generator_spectrum_support
+- GinibrePoincare.correspondence_ginibre_global_independent_CIR_equations
+- GinibrePoincare.correspondence_ginibre_continuous_strongMarkov
+- GinibrePoincare.correspondenceOperatorEvolution_ergodic
+- GinibrePoincare.correspondenceFriedrichsSquareRoot_domain_ordinary_H1
+- GinibrePoincare.correspondenceOperatorNumber_spectrum_iff
+- GinibrePoincare.correspondenceBrascampLieb_weak_probability_variance
+- GinibrePoincare.gueFull_C1_H1_inequalities
+- GinibrePoincare.localDolbeault_locallyL2
+- GinibrePoincare.positiveWeightEntire_tendstoLocallyUniformly
+- GinibrePoincare.gaussian_tensor_mixed_monomial_gramSchmidt
+- GinibrePoincare.gaussianGapEqualitySpace_real_analytic_representative
 main_results:
 - declaration: GinibrePoincare.ginibre_symmetric_weak_poincare
   informal: For n > 0, symmetric Ginibre L² values and their ordinary distributional L² gradients
@@ -281,6 +300,76 @@ main_results:
     invariance used in the proof are constructed internally.
   source_ref: Strongly convex Bakry–Émery log-Sobolev inequality cited in the proof of
     Theorem 1.14 of arXiv:2608.19358v2, proved internally.
+- declaration: GinibrePoincare.fullTheoremOneNinePointwiseGamma
+  informal: For n > 0 and every smooth compactly supported symmetric observable f of the Theorem
+    1.9 core, with weak gradient g, E − 2Var = 2‖r‖² + 4·(Hermite tail), and the integral of
+    the literal pointwise carré du champ itéré Γ₂(f) minus 2E equals ‖Lf + 2(f − mean f)‖² +
+    4‖r‖² + 8·(Hermite tail), where r is the holomorphic remainder.
+  source_ref: Theorem 1.9 of arXiv:2608.19358v2 with the literal pointwise Γ₂ integral.
+- declaration: GinibrePoincare.correspondence_poincare_iff_integrated_pointwise_curvature
+  informal: For n > 0, the sharp symmetric weak-H¹ inequality Var ≤ E/2 holds if and only if
+    2E(f) ≤ ∫Γ₂(f) for every observable f of the smooth compact symmetric core.
+  source_ref: Integrated curvature reformulation of Theorem 1.1, arXiv:2608.19358v2.
+- declaration: GinibrePoincare.spectral_ginibre_full_generator_spectrum_support
+  informal: For n > 0, the spectrum of the full complex symmetric Ginibre generator (failure of
+    a bounded two-sided resolvent on its graph domain) is contained in {0} ∪ (−∞, −2].
+  source_ref: Spectral gap of the generator, Section 3 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.correspondence_ginibre_global_independent_CIR_equations
+  informal: For n ≥ 2, α > 0 and a collision-free start, there are two independent standard
+    Brownian motions such that, for all times and without stopping, the center radius and the
+    pairwise radius of the original process satisfy the CIR equations with drifts
+    (4α/n)(1 − ·) and (4α/n)(κₙ − ·). The martingale parts are limits in probability of left
+    Riemann sums against these drivers.
+  source_ref: Theorem 1.3 of arXiv:2608.19358v2 (unstopped CIR equations).
+- declaration: GinibrePoincare.correspondence_ginibre_continuous_strongMarkov
+  informal: For n > 0, α ≥ 0 and a collision-free start, the original process has continuous
+    paths, and for every finite stopping time τ, τ-measurable Y and t ≥ 0, the joint law of
+    (Y, X_{τ+t}) is obtained by running the dynamics for time t from X_τ with an independent
+    copy of the noise.
+  source_ref: Strong Markov property of the original dynamics, arXiv:2608.19358v2, Section 1.
+- declaration: GinibrePoincare.correspondenceOperatorEvolution_ergodic
+  informal: For n > 0, the semigroup of the unrestricted complex Ginibre generator converges
+    strongly in L² to the mean of every observable as time tends to infinity.
+  source_ref: Ergodicity of the Ginibre dynamics, arXiv:2608.19358v2, Section 1.
+- declaration: GinibrePoincare.correspondenceFriedrichsSquareRoot_domain_ordinary_H1
+  informal: For n > 0, let A be the unrestricted Ginibre generator. The domain of the
+    positive self-adjoint square root of the nonnegative Friedrichs operator −A consists
+    exactly of the complex L² functions whose real and imaginary parts have ordinary
+    distributional L² gradients.
+  source_ref: Closed Dirichlet form and Friedrichs extension in arXiv:2608.19358v2, Section 1.
+- declaration: GinibrePoincare.correspondenceOperatorNumber_spectrum_iff
+  informal: For n > 0, a complex number lies in the spectrum of the maximal Gaussian number
+    operator exactly when it equals n·k for some k ∈ ℕ.
+  source_ref: Section 6 spectral calculus of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.correspondenceBrascampLieb_weak_probability_variance
+  informal: For a C² potential W with Gibbs probability density e^{−W} and positive-definite
+    Hessian everywhere, every L² function with an ordinary weak gradient of finite
+    inverse-Hessian energy satisfies Var ≤ E[⟨∇u, (∇²W)⁻¹∇u⟩].
+  source_ref: Brascamp–Lieb inequality cited in arXiv:2608.19358v2, proved for ordinary weak
+    gradients.
+- declaration: GinibrePoincare.gueFull_C1_H1_inequalities
+  informal: For n > 0 and a permutation-symmetric C¹ function on ℝⁿ with value and gradient in
+    L² of the GUE eigenvalue law, f² log f² is integrable, Ent(f²) ≤ (2/n)E|∇f|² and
+    Var(f) ≤ (1/n)E|∇f|².
+  source_ref: Real GUE comparison discussed in arXiv:2608.19358v2.
+- declaration: GinibrePoincare.localDolbeault_locallyL2
+  informal: On an open set of ℂⁿ, every distributionally dbar-closed (0,1)-form with locally L²
+    coefficients is locally the distributional dbar of an L² function.
+  source_ref: Local Dolbeault exactness used in Section 2 of arXiv:2608.19358v2.
+- declaration: GinibrePoincare.positiveWeightEntire_tendstoLocallyUniformly
+  informal: For a measurable weight bounded below by a positive constant on each compact set,
+    entire representatives of L²-convergent elements of the weighted entire space converge
+    locally uniformly.
+  source_ref: Remark 2.5 of arXiv:2608.19358v2 for general positive weights.
+- declaration: GinibrePoincare.gaussian_tensor_mixed_monomial_gramSchmidt
+  informal: For n > 0, Gram–Schmidt orthonormalization of the mixed monomials, in degree order,
+    in the complex Gaussian L² space produces exactly the normalized multivariate complex Hermite
+    polynomials.
+  source_ref: Appendix B of arXiv:2608.19358v2 (Gram–Schmidt construction).
+- declaration: GinibrePoincare.gaussianGapEqualitySpace_real_analytic_representative
+  informal: For n > 0, every element of the equality space of the Gaussian dbar gap has a real
+    analytic representative.
+  source_ref: Remark 2.3 of arXiv:2608.19358v2.
 tags:
 - ginibre-ensemble
 - poincare-inequality
