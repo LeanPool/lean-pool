@@ -84,7 +84,7 @@ theorem eigenpair_mem_graphOperatorSpectrum (L : H →ₗ.[ℂ] H) (zeta : ℂ)
   intro hzeta
   obtain ⟨R, _, hleft⟩ := (hasBoundedGraphResolvent_iff L zeta).mp hzeta
   have h := hleft u (zeta • u) hg
-  rw [sub_self, map_zero] at h
+  rw [sub_self, _root_.map_zero] at h
   exact hu h.symm
 
 end GinibrePoincare
