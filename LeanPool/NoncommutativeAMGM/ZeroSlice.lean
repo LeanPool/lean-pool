@@ -16,6 +16,7 @@ open Polynomial Matrix
 open scoped BigOperators
 
 
+/-- Send the empty monomial to one and all nonconstant monomials to zero. -/
 noncomputable def booleanZeroMonoid (n : ℕ) : BooleanMonomial n →* ℝ where
   toFun S := if S = 1 then 1 else 0
   map_one' := by simp

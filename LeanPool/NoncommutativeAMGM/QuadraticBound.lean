@@ -8,6 +8,7 @@ module
 
 public import LeanPool.NoncommutativeAMGM.ChebyshevCoefficient
 public import LeanPool.NoncommutativeAMGM.ProductScaling
+public import LeanPool.NoncommutativeAMGM.CosineRootNodes
 
 /-! # The quadratic-threshold noncommutative AM-GM bound -/
 
@@ -50,13 +51,6 @@ theorem booleanMatrixImage_sub {n : ℕ} {ι κ : Type*}
   intro i j
   exact map_sub L (A i j) (B i j)
 
-/-- The phase of angle `π / m` has `m`th power `-1`. -/
-theorem exists_unit_phase_pow_eq_neg_one {m : ℕ} (hm : 0 < m) : ∃ ξ : ℂ, ξ ^ m = -1 := by
-  refine ⟨Complex.exp ((Real.pi : ℂ) * Complex.I / m), ?_⟩
-  have hmcomplex : (m : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hm.ne'
-  rw [← Complex.exp_nat_mul, ← mul_div_assoc, mul_div_cancel_left₀ _ hmcomplex,
-    Complex.exp_pi_mul_I]
-
 /-- Theorem 1.2 for arbitrary real PSD input matrices with sum bounded by `nI`. -/
 theorem withoutReplacementMean_quadratic_bounds {n m dim : ℕ}
     (hm : 1 ≤ m) (hmn : m ≤ n) (hnd : 2 * ((m + 1) / 2) ^ 2 ≤ n)
@@ -72,7 +66,8 @@ theorem withoutReplacementMean_quadratic_bounds {n m dim : ℕ}
   obtain ⟨hE, hmean⟩ := admissible_normalized hn A hA
   let ζ : ℂ := Complex.exp (2 * Real.pi * Complex.I / (m : ℂ))
   have hζ : IsPrimitiveRoot ζ m := Complex.isPrimitiveRoot_exp m (by omega)
-  obtain ⟨ξ, hξ⟩ := exists_unit_phase_pow_eq_neg_one (by omega : 0 < m)
+  let ξ := cosineHalfRoot m
+  have hξ : ξ ^ m = -1 := cosineHalfRoot_pow (by omega)
   have hp := rootSlice_chebyshev_posSemidef E hE hmean hn hm2 hnd hζ
     (show (1 : ℂ) ^ m = ((1 : ℝ) : ℂ) by simp) (Or.inl rfl)
   have hnq := rootSlice_chebyshev_posSemidef E hE hmean hn hm2 hnd hζ

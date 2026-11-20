@@ -22,6 +22,7 @@ namespace NoncommutativeAMGM
 open Polynomial
 open scoped BigOperators
 
+/-- The linear quotient determined by the coefficients at degrees `m` and `m + 1`. -/
 noncomputable def rootLinearQuotient (p : Polynomial ℝ) (m : ℕ) : Polynomial ℝ :=
   monomial 0 (p.coeff m) + monomial 1 (p.coeff (m + 1))
 
@@ -30,6 +31,7 @@ theorem rootLinearQuotient_coeff (p : Polynomial ℝ) (m i : ℕ) :
       (if i = 0 then p.coeff m else 0) + (if i = 1 then p.coeff (m + 1) else 0) := by
   simp [rootLinearQuotient, coeff_monomial, coeff_C, eq_comm]
 
+/-- Subtract the linear quotient times `X ^ m - C η` to remove the high terms. -/
 noncomputable def rootRemainderCandidate (p : Polynomial ℝ) (m : ℕ) (η : ℝ) : Polynomial ℝ :=
   p - rootLinearQuotient p m * (X ^ m - C η)
 

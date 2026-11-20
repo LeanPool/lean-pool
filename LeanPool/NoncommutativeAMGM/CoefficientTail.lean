@@ -21,6 +21,7 @@ namespace NoncommutativeAMGM
 open Polynomial Module
 open scoped RealInnerProductSpace
 
+/-- The shifted power of degree `L - 1 - i` in the bounded-degree space. -/
 noncomputable def descendingPowerVector (L j : ℕ) (i : Fin (L - j)) : CoefficientSpace L :=
   ⟨(X - 1) ^ (L - 1 - i.val), by
     change shiftedPowerSequence (L - 1 - i.val) ∈ Polynomial.degreeLT ℝ L
@@ -39,9 +40,11 @@ theorem descendingPowerVector_independent (L j : ℕ) :
   have hb := b.isLt
   omega
 
+/-- The span of the shifted powers with degrees from `j` to `L - 1`. -/
 noncomputable def coefficientTail (L j : ℕ) : Submodule ℝ (CoefficientSpace L) :=
   Submodule.span ℝ (Set.range (descendingPowerVector L j))
 
+/-- The shifted-power basis of the tail, ordered by descending degree. -/
 noncomputable def coefficientTailBasis (L j : ℕ) :
     Basis (Fin (L - j)) ℝ (coefficientTail L j) :=
   Basis.span (descendingPowerVector_independent L j)
@@ -50,9 +53,11 @@ theorem coefficientTailBasis_val (L j : ℕ) (i : Fin (L - j)) :
     (coefficientTailBasis L j i : CoefficientSpace L) = descendingPowerVector L j i := by
   exact Basis.coe_span_apply (descendingPowerVector_independent L j) i
 
+/-- The diagonal entry of the restricted operator in the shifted-power basis. -/
 noncomputable def tailEigenvalue (L : ℕ) (i : ℕ) : ℝ :=
   ((L - 1 - i : ℕ) : ℝ) * (((L - 1 - i : ℕ) : ℝ) + 1)
 
+/-- The magnitude of the coefficient of the preceding basis vector. -/
 noncomputable def tailOffDiagonal (L : ℕ) (i : ℕ) : ℝ :=
   (((L - 1 - i : ℕ) : ℝ) + 1) * ((L : ℝ) - (L - 1 - i : ℕ) - 1)
 
@@ -97,6 +102,7 @@ theorem boundedCoefficientOperator_preserves_tail (L j : ℕ) (p : CoefficientSp
   | add p q _ _ hp hq => simpa using (coefficientTail L j).add_mem hp hq
   | smul r p _ hp => simpa using (coefficientTail L j).smul_mem r hp
 
+/-- The bounded coefficient operator restricted to the invariant tail subspace. -/
 noncomputable def coefficientTailOperator (L j : ℕ) :
     coefficientTail L j →ₗ[ℝ] coefficientTail L j :=
   (boundedCoefficientOperator L).restrict (boundedCoefficientOperator_preserves_tail L j)

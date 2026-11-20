@@ -14,9 +14,11 @@ public import LeanPool.NoncommutativeAMGM.ChebyshevRootAverage
 @[expose] public section
 namespace NoncommutativeAMGM
 
+/-- The unit complex number of angle `2π / m` used for the even-indexed cosine nodes. -/
 noncomputable def cosineRoot (m : ℕ) : ℂ :=
   Complex.exp (((2 * Real.pi / m : ℝ) : ℂ) * Complex.I)
 
+/-- The unit complex number of angle `π / m` used to shift to the odd-indexed nodes. -/
 noncomputable def cosineHalfRoot (m : ℕ) : ℂ :=
   Complex.exp (((Real.pi / m : ℝ) : ℂ) * Complex.I)
 

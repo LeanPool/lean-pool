@@ -32,6 +32,7 @@ noncomputable instance (L : ℕ) : AddCommGroup (CoefficientSpace L) :=
 noncomputable instance (L : ℕ) : Module ℝ (CoefficientSpace L) :=
   inferInstanceAs (Module ℝ (Polynomial.degreeLT ℝ L))
 
+/-- Read a polynomial of degree below `L` as its `L` Euclidean coefficients. -/
 noncomputable def coefficientSpaceEquiv (L : ℕ) :
     CoefficientSpace L ≃ₗ[ℝ] EuclideanSpace ℝ (Fin L) :=
   (Polynomial.degreeLTEquiv ℝ L).trans (EuclideanSpace.equiv (Fin L) ℝ).toLinearEquiv.symm

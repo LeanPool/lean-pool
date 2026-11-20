@@ -29,7 +29,8 @@ theorem withoutReplacementMean_endpoint_lower {n m dim : ℕ}
   obtain ⟨hE, hmean⟩ := admissible_normalized hn A hA
   let ζ : ℂ := Complex.exp (2 * Real.pi * Complex.I / (m : ℂ))
   have hζ : IsPrimitiveRoot ζ m := Complex.isPrimitiveRoot_exp m (by omega)
-  obtain ⟨ξ, hξ⟩ := exists_unit_phase_pow_eq_neg_one (by omega : 0 < m)
+  let ξ := cosineHalfRoot m
+  have hξ : ξ ^ m = -1 := cosineHalfRoot_pow (by omega)
   have hp := rootSlice_chebyshev_plus_endpoint E hE hmean hn hm2 hnd hζ
   have hnq := (rootSlice_chebyshev_posSemidef E hE hmean hn hm2 hnd hζ
     (show ξ ^ m = ((-1 : ℝ) : ℂ) by simpa using hξ) (Or.inr rfl)).1

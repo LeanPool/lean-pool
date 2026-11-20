@@ -33,6 +33,7 @@ theorem chebyshevAffine_coeff_one : chebyshevAffine.coeff 1 = -2 := by
 theorem chebyshevAffine_leadingCoeff : chebyshevAffine.leadingCoeff = -2 := by
   rw [← coeff_natDegree, chebyshevAffine_natDegree, chebyshevAffine_coeff_one]
 
+/-- The Chebyshev polynomial of degree `m` after substituting `1 - 2X`. -/
 noncomputable def shiftedChebyshev (m : ℕ) : Polynomial ℝ :=
   (T ℝ (m : ℤ)).comp chebyshevAffine
 
