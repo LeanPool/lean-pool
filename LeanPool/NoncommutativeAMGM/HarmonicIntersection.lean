@@ -100,7 +100,7 @@ theorem intersection_weighted_sum {n : ℕ} (j : ℕ) (c : Finset (Fin n) → �
         ∑ R ∈ S.powerset, if S ∩ T = R then c T * φ R else 0 := by
       apply Finset.sum_congr rfl
       intro T _
-      simp [Finset.inter_subset_left]
+      simp only [Finset.sum_ite_eq, Finset.mem_powerset, Finset.inter_subset_left, ite_true]
     _ = _ := by
       rw [Finset.sum_comm]
       apply Finset.sum_congr rfl

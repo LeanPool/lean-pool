@@ -70,7 +70,12 @@ theorem normalization_eq_inv_card {n m : ℕ} (hmn : m ≤ n) :
   classical
   simp only [distinctProductSum, List.ofFn_succ, List.ofFn_zero, List.prod_cons,
     List.prod_nil, mul_one]
-  exact Fintype.sum_equiv Equiv.uniqueEmbeddingEquivResult _ _ (fun _ ↦ rfl)
+  let indexEquiv : (Fin 1 ↪ Fin n) ≃ Fin n :=
+    { toFun := fun f ↦ f 0
+      invFun := fun i ↦ ⟨fun _ ↦ i, fun _ _ _ ↦ Subsingleton.elim _ _⟩
+      left_inv := fun f ↦ DFunLike.ext _ _ fun j ↦ congrArg f (Subsingleton.elim 0 j)
+      right_inv := fun _ ↦ rfl }
+  exact Fintype.sum_equiv indexEquiv _ _ (fun _ ↦ rfl)
 
 /-- The average of empty products is the identity. -/
 @[simp] theorem withoutReplacementMean_zero {R : Type*} [Semiring R] [Algebra ℝ R]

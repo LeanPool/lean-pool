@@ -85,8 +85,9 @@ theorem simplexVector_dot {n : ℕ} (hn : 1 < n) (i j : Fin n) :
     simplexCentered_dot (by omega)]
   simp only [smul_eq_mul]
   rw [← mul_assoc, ← pow_two, hs]
-  split_ifs <;> field_simp
-  all_goals ring
+  split_ifs
+  · field_simp
+  · rw [zero_sub, mul_neg, div_eq_mul_inv, mul_right_comm, mul_inv_cancel₀ hn0, one_mul]
 
 /-- The simplex vectors give the tight frame on the orthogonal complement of the axis. -/
 theorem simplexVector_frame {n : ℕ} (hn : 1 < n) :

@@ -50,7 +50,8 @@ theorem realCoefficientInner_add_left (p q r : Polynomial ℝ) :
 
 theorem realCoefficientInner_add_right (p q r : Polynomial ℝ) :
     realCoefficientInner p (q + r) = realCoefficientInner p q + realCoefficientInner p r := by
-  simp [realCoefficientInner, coeff_add, mul_add]
+  rw [realCoefficientInner_comm p (q + r), realCoefficientInner_add_left,
+    realCoefficientInner_comm q p, realCoefficientInner_comm r p]
 
 theorem realCoefficientInner_smul_left (a : ℝ) (p q : Polynomial ℝ) :
     realCoefficientInner (a • p) q = a * realCoefficientInner p q := by
@@ -104,16 +105,16 @@ noncomputable def weightedEuler (L : ℕ) : Polynomial ℝ →ₗ[ℝ] Polynomia
 
 theorem weightedEuler_coeff (L : ℕ) (p : Polynomial ℝ) (i : ℕ) :
     (weightedEuler L p).coeff i = (i : ℝ) * ((L : ℝ) - i) * p.coeff i := by
-  simp only [weightedEuler, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply,
-    coeff_sub, coeff_smul, smul_eq_mul, coefficientEuler_coeff]
+  simp only [weightedEuler, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_eq_comp,
+    LinearMap.comp_apply, smul_eq_C_mul, coeff_sub, coeff_C_mul, coefficientEuler_coeff]
   ring
 
 theorem weightedEuler_divX (L : ℕ) (p : Polynomial ℝ) :
     (weightedEuler L p).divX = (L : ℝ) • p.derivative - (X * p.derivative).derivative := by
   have heq : weightedEuler L p =
       X * ((L : ℝ) • p.derivative - (X * p.derivative).derivative) := by
-    simp only [weightedEuler, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_apply,
-      coefficientEuler, LinearMap.coe_mk, AddHom.coe_mk]
+    simp only [weightedEuler, LinearMap.sub_apply, LinearMap.smul_apply, Module.End.mul_eq_comp,
+      LinearMap.comp_apply, coefficientEuler, LinearMap.coe_mk, AddHom.coe_mk]
     simp [mul_sub]
   rw [heq]
   ext i
@@ -125,7 +126,7 @@ theorem coefficientOperator_eq_weighted (L : ℕ) (p : Polynomial ℝ) :
       (weightedEuler L ((X - 1) * p)).divX - weightedEuler L ((X - 1) * p) := by
   rw [weightedEuler_divX]
   simp only [coefficientOperator, LinearMap.sub_apply, LinearMap.add_apply,
-    Module.End.mul_apply, LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply,
+    Module.End.mul_eq_comp, LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply,
     multiplyShift, shiftedEuler, coefficientEuler, weightedEuler, LinearMap.coe_mk, AddHom.coe_mk]
   simp only [derivative_mul, derivative_sub, derivative_X, derivative_one, sub_zero,
     derivative_add, one_mul]

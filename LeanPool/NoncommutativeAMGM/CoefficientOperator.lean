@@ -62,7 +62,7 @@ theorem coefficientOperator_power (L l : ℕ) :
       ((l : ℝ) * ((l : ℝ) + 1)) • (X - 1 : Polynomial ℝ) ^ l -
         (((l : ℝ) + 1) * ((L : ℝ) - l - 1)) • (X - 1 : Polynomial ℝ) ^ (l + 1) := by
   simp only [coefficientOperator, LinearMap.sub_apply, LinearMap.add_apply,
-    Module.End.mul_apply, LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply,
+    Module.End.mul_eq_comp, LinearMap.comp_apply, LinearMap.smul_apply, LinearMap.id_apply,
     shiftedEuler_power, map_smul, multiplyShift, LinearMap.coe_mk, AddHom.coe_mk]
   simp only [mul_sub, mul_add, mul_smul_comm, ← pow_succ', smul_smul]
   module
