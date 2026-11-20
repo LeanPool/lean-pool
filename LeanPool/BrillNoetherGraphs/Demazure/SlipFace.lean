@@ -1302,7 +1302,7 @@ private lemma bend_set_witness_helper (s t : SlipFace) (a b l : ℤ) (hl : t l b
   by_cases h : t (l-1) b = t l b
   · use l
   have hl' : t (l-1) b ≠ t ((l-1)+1) b := by
-    contrapose! h with hl'
+    contrapose h with hl'
     rw [hl']
     simp only [sub_add_cancel]
   obtain ⟨m, ⟨teq, tneq, sumle⟩⟩ := bend_set_witness_helper s t a b (l-1) hl'
@@ -1394,7 +1394,7 @@ private lemma bend_set_witness_lres_helper (s t : SlipFace) (a b l : ℤ)
   by_cases h : t (l-1) b = t l b
   · use l, h, hl
   have hl' : t (l-1) b ≠ t ((l-1)+1) b := by
-    contrapose! h with hl'
+    contrapose h with hl'
     rw [hl']
     simp only [sub_add_cancel]
   obtain ⟨m, hm_left, hm_right, hm_le⟩ :=

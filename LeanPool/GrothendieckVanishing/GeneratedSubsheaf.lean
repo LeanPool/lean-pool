@@ -62,6 +62,10 @@ abbrev sheafOfIsSheaf {X : TopCat.{u}}
   change CategoryTheory.Sheaf (Opens.grothendieckTopology X) AddCommGrpCat.{u}
   exact ⟨F, by simpa only [TopCat.Presheaf.IsSheaf] using hF⟩
 
+instance hasColimitsTopCatSheaf {X : TopCat.{u}} :
+    HasColimits (TopCat.Sheaf AddCommGrpCat.{u} X) :=
+  CategoryTheory.Sheaf.instHasColimitsOfSize
+
 local instance hasImagesTopCatSheaf {X : TopCat.{u}} :
     HasImages (TopCat.Sheaf AddCommGrpCat.{u} X) := by
   change HasImages
@@ -145,7 +149,8 @@ noncomputable def finsetImageInclGen {X : TopCat.{u}}
         factorThruImage (TopCat.Presheaf.finsetGeneratorMap hF S')
       fac := by
           rw [Category.assoc, Limits.image.fac]
-          ext ⟨σ, hσ⟩
+          apply Sigma.hom_ext
+          rintro ⟨σ, hσ⟩
           simp only [finsetCoproductInclGen, TopCat.Presheaf.finsetGeneratorMap,
             TopCat.Sheaf.familyMap, Sigma.ι_comp_desc_assoc]
           exact (Sigma.ι_comp_desc _ _).trans
@@ -168,7 +173,8 @@ theorem finsetImageInclGen_comp_ι {X : TopCat.{u}}
           factorThruImage (TopCat.Presheaf.finsetGeneratorMap hF S')
         fac := by
             rw [Category.assoc, Limits.image.fac]
-            ext ⟨σ, hσ⟩
+            apply Sigma.hom_ext
+            rintro ⟨σ, hσ⟩
             simp only [finsetCoproductInclGen, TopCat.Presheaf.finsetGeneratorMap,
               TopCat.Sheaf.familyMap, Sigma.ι_comp_desc_assoc]
             exact (Sigma.ι_comp_desc _ _).trans

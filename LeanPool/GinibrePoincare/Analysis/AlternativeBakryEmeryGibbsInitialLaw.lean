@@ -125,7 +125,7 @@ theorem bakryEmeryGibbsCoordinateRawMeasure_mass {n : ℕ} (hn : 0 < n)
     (bakryEmeryGibbsCoordinateRawMeasure_assembly hn W hW.continuous)
   rw [Measure.map_apply (ginibreHamiltonianOUCoordinateAssembly n).continuous.measurable
       MeasurableSet.univ,
-    preimage_univ, Measure.smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
+    preimage_univ, smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
     ← ofReal_integral_eq_lintegral_ofReal hi (ae_of_all _ (fun z => Real.exp_nonneg _))] at hm
   exact hm
 
@@ -174,7 +174,7 @@ theorem bakryEmeryGibbsCoordinateInitialMeasure_probability {n : ℕ} (hn : 0 < 
   obtain ⟨hp, ht⟩ := bakryEmeryGibbsCoordinateRawMeasure_mass_valid hn W hW κ hκ hc
   constructor
   unfold bakryEmeryGibbsCoordinateInitialMeasure
-  rw [Measure.smul_apply]
+  rw [smul_apply]
   exact ENNReal.inv_mul_cancel hp.ne' ht
 
 end

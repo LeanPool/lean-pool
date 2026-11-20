@@ -219,7 +219,8 @@ theorem E_contDiffOn (F : Profile) (XR : ℝ) (hXR : 0 < XR) {c : ℝ → Coeff}
   have hr := (TerminalCompensation.correction_family_contDiffOn compensationPatch hc).comp
     (contDiffOn_snd.prodMk (contDiffOn_fst.div_const (patchRadius F XR)))
     (fun p (hp : p ∈ domain) => ⟨hp.2, mem_univ _⟩)
-  exact ((heatE_contDiffOn F XR hXR).mono (fun _ hp => ⟨hp.1, mem_univ _⟩)).add
+  exact ((heatE_contDiffOn F XR hXR).mono
+    (fun _ (hp : _ ∈ domain) => ⟨hp.1, mem_univ _⟩)).add
     (((OutgoingDilation.shapedPatchAmplitude_contDiff F).comp_contDiffOn contDiffOn_snd).mul hr)
 
 theorem U_contDiffOn (F : Profile) (XR : ℝ) (hXR : 0 < XR) : ContDiffOn ℝ ∞ (U F XR) domain :=
@@ -228,7 +229,8 @@ theorem U_contDiffOn (F : Profile) (XR : ℝ) (hXR : 0 < XR) : ContDiffOn ℝ �
 theorem H_contDiffOn (F : Profile) (XR : ℝ) (hXR : 0 < XR) {c : ℝ → Coeff}
     (hc : ContDiffOn ℝ ∞ c parameterDomain) : ContDiffOn ℝ ∞ (H F XR c) domain :=
   ((contDiffOn_const.mul contDiffOn_fst).sqrt
-    (fun _ hp => ne_of_gt (mul_pos (by norm_num) hp.1))).mul (E_contDiffOn F XR hXR hc)
+    (fun _ (hp : _ ∈ domain) => ne_of_gt (mul_pos (by norm_num) hp.1))).mul
+      (E_contDiffOn F XR hXR hc)
 
 theorem E_eq_physical (F : Profile) (XR : ℝ) (c : ℝ → Coeff) (eta X : ℝ)
     (heta : eta ∈ HeatedOutgoing.parameterDomain) (hX : 0 < X) :
@@ -636,7 +638,8 @@ theorem Pi_log_contDiffOn : ContDiffOn ℝ ∞
   have hi := HeatedOutgoing.anchoredPrimitive_contDiff _ hf (Real.log (patchRadius F XR))
   have hc : ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => ((w.coefficients p.2, p.2), p.1))
       (univ ×ˢ parameterDomain) :=
-    ((w.coefficients_contDiffOn.comp contDiffOn_snd (fun _ hp => hp.2)).prodMk
+    ((w.coefficients_contDiffOn.comp contDiffOn_snd
+      (fun _ (hp : _ ∈ univ ×ˢ parameterDomain) => hp.2)).prodMk
         contDiffOn_snd).prodMk contDiffOn_fst
   have hb : ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => OutgoingDilation.Pi F XR (patchRadius F XR, p.2))
       (univ ×ˢ parameterDomain) :=
@@ -649,7 +652,7 @@ theorem Pi_log_contDiffOn : ContDiffOn ℝ ∞
 
 theorem Pi_contDiffOn : ContDiffOn ℝ ∞ (Pi F XR w.coefficients) domain := by
   have hl : ContDiffOn ℝ ∞ (fun p : ℝ × ℝ => (Real.log p.1, p.2)) domain :=
-    (contDiffOn_fst.log (fun _ hp => ne_of_gt hp.1)).prodMk contDiffOn_snd
+    (contDiffOn_fst.log (fun _ (hp : _ ∈ domain) => ne_of_gt hp.1)).prodMk contDiffOn_snd
   apply (w.Pi_log_contDiffOn.comp hl (fun _ hp => ⟨mem_univ _, hp.2⟩)).congr
   intro p hp
   dsimp only [Function.comp_def]

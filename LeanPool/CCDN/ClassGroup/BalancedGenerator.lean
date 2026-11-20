@@ -94,7 +94,7 @@ private lemma inverse_ideal_minkowskiBound_toReal (I : (Ideal (𝓞 K))⁰) :
     (Rat.cast_nonneg.mpr (FractionalIdeal.absNorm_nonneg _))]
   simp only [Units.val_inv_eq_inv_val, map_inv₀, FractionalIdeal.coe_mk0,
     FractionalIdeal.coeIdeal_absNorm, Rat.cast_inv, Rat.cast_natCast,
-    Real.coe_sqrt, coe_nnnorm, Int.norm_eq_abs]
+    Real.coe_sqrt, coe_nnNorm, Int.norm_eq_abs]
   ring
 
 private lemma square_generator_radius_product (I : Ideal (𝓞 K)) {α : 𝓞 K}

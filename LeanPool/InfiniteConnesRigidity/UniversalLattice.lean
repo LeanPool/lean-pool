@@ -272,6 +272,7 @@ def leftRegularRepresentation (G : Type u) [Group G] :
     change f ((g * h)⁻¹ * k) = f (h⁻¹ * (g⁻¹ * k))
     simp [mul_assoc]
 
+open scoped Pointwise in
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 @[expose]
 public
@@ -1071,8 +1072,7 @@ abbrev IntegralPolynomial := Polynomial ℤ
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
 instance : Countable IntegralPolynomial :=
-  ((AddMonoidAlgebra.coeffEquiv (R := ℤ) (M := ℕ)).injective.comp
-    Polynomial.toFinsupp_injective).countable
+  (AddMonoidAlgebra.coeffEquiv (R := ℤ) (M := ℕ)).injective.countable
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -1081,8 +1081,7 @@ abbrev BinaryPolynomial := R
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
 instance : Countable BinaryPolynomial :=
-  ((AddMonoidAlgebra.coeffEquiv (R := F) (M := ℕ)).injective.comp
-    Polynomial.toFinsupp_injective).countable
+  (AddMonoidAlgebra.coeffEquiv (R := F) (M := ℕ)).injective.countable
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -1697,7 +1696,7 @@ private theorem finiteGeneratedCoset_infinite_of_not_fg
     Subgroup.finiteIndex_iff_finite_quotient.mpr inferInstance
   exact hG
     (fg_of_finiteIndex_subgroup (Subgroup.closure (F : Set G))
-      (Group.closure_finset_fg F))
+      inferInstance)
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
@@ -3682,7 +3681,7 @@ private theorem dvr_one_add_uniformizer_mul_ne_zero
     (1 + Polynomial.C π * q : Polynomial A) ≠ 0 := by
   intro hzero
   have hconstant := congrArg (fun p : Polynomial A => p.coeff 0) hzero
-  simp only [Polynomial.coeff_add, Polynomial.coeff_one_zero, Polynomial.mul_coeff_zero,
+  simp only [Polynomial.coeff_add, AddMonoidAlgebra.coeff_one_zero, Polynomial.mul_coeff_zero,
     Polynomial.coeff_C_zero, Polynomial.coeff_zero] at hconstant
   have hdiv : π ∣ (1 : A) := by
     refine ⟨-(q.coeff 0), ?_⟩
@@ -3901,8 +3900,8 @@ private theorem dvr_polynomial_map_uniformizer_zero_iff
       (A ⧸ Ideal.span ({π} : Set A)) => p.coeff n) h
     simpa only [coeff_map, coeff_zero, dvr_uniformizer_quotient_eq_zero_iff_dvd hπ] using hn
   · intro h
-    apply Polynomial.ext
-    intro n
+    apply AddMonoidAlgebra.ext
+    ext n : 1
     simp only [coeff_map, coeff_zero, dvr_uniformizer_quotient_eq_zero_iff_dvd hπ, h n]
 
 omit [IsDomain A] [IsDiscreteValuationRing A] in
@@ -7498,7 +7497,7 @@ private theorem valuation_primitive_ascent_terminates
   have hall : ∀ n : ℕ, P n := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro f m hmeasure hsmall hunitm
       by_cases hdvd : f.leadingCoeff ∣ g.leadingCoeff
       · exact ⟨f, m, hsmall, hunitm, hdvd,
@@ -8201,7 +8200,7 @@ private theorem valuation_mennicke_outer_induction
                 elementaryThreeSubgroup (Polynomial A) := by
       intro n
       induction n using Nat.strong_induction_on with
-      | h n ih =>
+      | ind n ih =>
         intro f g p q hgdegree hdet hg₀
         by_cases hn : n = 0
         · have hgzero : g.natDegree = 0 := hgdegree.trans hn

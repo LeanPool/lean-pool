@@ -84,7 +84,7 @@ theorem uniformProbabilityCauchy_exists_subsequence
     omega
   refine ⟨s, hs,?_⟩
   apply ne_top_of_le_ne_top hpsum
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro n
   exact (ha n (s n) (s (n+1)) (hsa n) ((hsa n).trans (hs.monotone (Nat.le_succ n)))).le
 

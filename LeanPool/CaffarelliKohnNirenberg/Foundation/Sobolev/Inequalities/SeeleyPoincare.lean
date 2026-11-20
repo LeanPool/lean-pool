@@ -150,7 +150,7 @@ theorem euclideanClosedBall_one_ae_eq_euclideanBall :
     euclideanClosedBall (0 : Vec 3) 1 =ᵐ[volume] euclideanBall (0 : Vec 3) 1 := by
   rw [ae_eq_set]
   constructor
-  · apply measure_mono_null
+  · apply measure_mono_null (t := {x : Vec 3 | vecEuclideanNorm x = 1})
       (fun x hx => by
         have hle := (mem_euclideanClosedBall_iff_vecEuclideanNorm_le
           (by norm_num)).mp hx.1

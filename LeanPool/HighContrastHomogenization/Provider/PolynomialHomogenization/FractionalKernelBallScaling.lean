@@ -198,7 +198,7 @@ theorem exists_bound_lintegral_ball_rpow_scaled (d : ℕ) {e : ℝ}
             ENNReal.ofReal (‖x - y‖ ^ e) ∂volume := by rw [hsing, zero_add]
       _ ≤ ∑' k, ∫⁻ y in shell k,
             ENNReal.ofReal (‖x - y‖ ^ e) ∂volume := lintegral_iUnion_le _ _
-      _ ≤ ∑' k, ENNReal.ofReal (T k) := ENNReal.tsum_le_tsum hshell
+      _ ≤ ∑' k, ENNReal.ofReal (T k) := tsum_le_tsum hshell
       _ = ∑' k, (ENNReal.ofReal Cbase *
             ENNReal.ofReal (r ^ (e + (d : ℝ)))) *
           (ENNReal.ofReal ratio) ^ k := by

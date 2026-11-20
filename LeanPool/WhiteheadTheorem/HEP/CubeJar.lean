@@ -179,7 +179,7 @@ lemma backFlrCover_closed (n : ℕ) : ∀ k, IsClosed (backFlrCover n k) := by
 
 /-- `backIsoCube` -/
 def backIsoCube (n : ℕ) : back n ≃ₜ (I^ Fin (n + 1)) where
-  toFun := fun ⟨⟨⟨y, _⟩, t⟩, hy⟩ ↦ Cube.splitAtLast.symm ⟨t, (Cube.splitAtLast y).snd⟩
+  toFun := fun x ↦ Cube.splitAtLast.symm ⟨x.val.snd, (Cube.splitAtLast x.val.fst.down.val).snd⟩
   invFun := fun y ↦
     let y' := Cube.splitAtLast.symm ⟨1, (Cube.splitAtLast y).snd⟩
     haveI : y' (Fin.last n) = 1 := by unfold y'; rw [Cube.splitAtLast_symm_apply_last]
@@ -271,7 +271,7 @@ lemma botSidesCoverMapVec_compatible
       (botSidesCoverMapVec f h j) ⟨y, hyj⟩ =
       (botSidesCoverMapVec f h k) ⟨y, hyk⟩ := by
   intro j k y hyj hyk
-  fin_cases j <;> (fin_cases k <;> (try simp only [Fin.zero_eta, Fin.mk_one]))  -- j = k
+  fin_cases j <;> (fin_cases k <;> simp only [Fin.zero_eta, Fin.mk_one])  -- j = k
   · apply botSidesCoverMapVec_compatible_01 _ _ fh
   · exact (botSidesCoverMapVec_compatible_01 _ _ fh ..).symm
 
@@ -299,7 +299,7 @@ noncomputable def backMap
 
 /-- `flrMap` -/
 def flrMap : C(flr n, Y) where
-  toFun := fun ⟨⟨⟨y, _⟩, t⟩, hy⟩ ↦ h ⟨⟨y, hy⟩, t⟩
+  toFun := fun x ↦ h ⟨⟨x.val.fst.down.val, x.property⟩, x.val.snd⟩
   continuous_toFun := by fun_prop
 
 /-- `backFlrCoverMapVec` -/
@@ -380,7 +380,7 @@ lemma backFlrCover_mapVec_compatible
       (backFlrCoverMapVec f h fh j) ⟨y, hyj⟩ =
       (backFlrCoverMapVec f h fh k) ⟨y, hyk⟩ := by
   intro j k y hyj hyk
-  fin_cases j <;> (fin_cases k <;> (try simp only [Fin.zero_eta, Fin.mk_one]))  -- j = k
+  fin_cases j <;> (fin_cases k <;> simp only [Fin.zero_eta, Fin.mk_one])  -- j = k
   · apply backFlrCover_mapVec_compatible_01 _ _ fh
   · exact (backFlrCover_mapVec_compatible_01 _ _ fh ..).symm
 

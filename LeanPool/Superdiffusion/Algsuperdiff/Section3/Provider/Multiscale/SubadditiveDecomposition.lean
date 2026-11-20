@@ -440,8 +440,8 @@ theorem sum_of_a_decomp {m : ℤ} {hn : ℕ → ℕ}
                   (Fc T, Gc T)) *
               notBadIndicator M m hn omega (T : KuhnCell d) *
               collarIndicator M m hn omega (T : KuhnCell d))) :=
-        ENNReal.tsum_le_tsum hterm
-    _ = _ := ENNReal.tsum_add
+        tsum_le_tsum hterm
+    _ = _ := tsum_add
 
 end
 

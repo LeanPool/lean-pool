@@ -38,9 +38,9 @@ def mvBetaSimplex (n : ℕ) : Set (Fin n → ℝ) :=
 /-- The solid standard simplex is a measurable set. -/
 theorem measurableSet_mvBetaSimplex (n : ℕ) : MeasurableSet (mvBetaSimplex n) := by
   apply IsClosed.measurableSet
+  change IsClosed ({x : Fin n → ℝ | ∀ i, 0 ≤ x i} ∩ {x | ∑ i, x i ≤ 1})
   apply IsClosed.inter
-  · change IsClosed ({x : Fin n → ℝ | ∀ i, 0 ≤ x i} : Set (Fin n → ℝ))
-    rw [show {x : Fin n → ℝ | ∀ i, 0 ≤ x i} = ⋂ i, {x | 0 ≤ x i} by ext x; simp]
+  · rw [show {x : Fin n → ℝ | ∀ i, 0 ≤ x i} = ⋂ i, {x | 0 ≤ x i} by ext x; simp]
     exact isClosed_iInter fun i => isClosed_le continuous_const (continuous_apply i)
   · exact isClosed_le (continuous_finsetSum _ fun i _ => continuous_apply i) continuous_const
 
@@ -338,10 +338,7 @@ private theorem mvBetaIntegral_eq_mvBeta_aux {n : ℕ} {b₀ : ℂ} {b : Fin n �
           have hcoord0 : ∀ᵐ (y : Fin n → ℝ), ∀ i : Fin n, y i ≠ 0 := by
             have h := measure_iUnion_null fun i : Fin n =>
               Measure.volume_setOf_eval_eq i (0 : ℝ)
-            rw [ae_iff]
-            convert h
-            ext y
-            simp
+            simpa only [ae_iff, not_forall, ne_eq, not_not, Set.ofPred_exists] using h
           have hEq :
               (fun y => ∫ t, ‖(piFinSnoc (fun _ : Fin (n + 1) ↦ ℝ) ⁻¹' mvBetaSimplex (n +
                 1)).indicator

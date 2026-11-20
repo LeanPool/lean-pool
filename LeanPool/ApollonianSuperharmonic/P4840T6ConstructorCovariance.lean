@@ -41,7 +41,7 @@ theorem P4840T6ConstructorCovariance (g : BandPackingSymmetry)
     fin_cases j <;> apply Prod.ext
     all_goals simp [BandPackingSymmetryQuadrupleAction, BandPackingSymmetryCircleAction,
       BandPackingSymmetryReversesOrientation]
-    all_goals ring
+    ring
 
 end ApollonianSuperharmonic
 

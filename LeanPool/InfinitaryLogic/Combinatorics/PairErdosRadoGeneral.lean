@@ -288,10 +288,9 @@ noncomputable def ehmrChosen (cR : (Fin 2 ↪o Source κ) → C)
       Classical.arbitrary (Source κ)
 termination_by β
 decreasing_by
-  all_goals
-    have : IsWellOrder β.ToType (· < ·) := isWellOrder_lt
-    have hh := Ordinal.typein_lt_type (· < · : β.ToType → β.ToType → Prop) x
-    rwa [Ordinal.type_toType] at hh
+  have : IsWellOrder β.ToType (· < ·) := isWellOrder_lt
+  have hh := Ordinal.typein_lt_type (· < · : β.ToType → β.ToType → Prop) x
+  rwa [Ordinal.type_toType] at hh
 
 /-- The reps along a node: the chosen rep of the restriction to each position. -/
 noncomputable def ehmrRep (cR : (Fin 2 ↪o Source κ) → C) {β : Ordinal.{0}}
@@ -303,7 +302,8 @@ noncomputable def ehmrRep (cR : (Fin 2 ↪o Source κ) → C) {β : Ordinal.{0}}
       rwa [Ordinal.type_toType] at hh)))
 
 /-- `S(h)` as a set, via `ehmrRep`. -/
-def ehmrS (cR : (Fin 2 ↪o Source κ) → C) {β : Ordinal.{0}} (h : EHMRNodeAt C β) :
+noncomputable def ehmrS (cR : (Fin 2 ↪o Source κ) → C) {β : Ordinal.{0}}
+    (h : EHMRNodeAt C β) :
     Set (Source κ) := ehmrFiber cR (ehmrRep cR h) h
 
 /-- A node is **live** iff its successor set is nonempty. -/
@@ -408,9 +408,8 @@ noncomputable def yRep (cR : (Fin 2 ↪o Source κ) → C) (y : Source κ)
     else Classical.arbitrary C)
 termination_by γ
 decreasing_by
-  all_goals
-    have : IsWellOrder γ.ToType (· < ·) := isWellOrder_lt
-    exact lt_of_lt_of_eq (Ordinal.typein_lt_type _ _) (Ordinal.type_toType γ)
+  have : IsWellOrder γ.ToType (· < ·) := isWellOrder_lt
+  exact lt_of_lt_of_eq (Ordinal.typein_lt_type _ _) (Ordinal.type_toType γ)
 
 /-- The canonical `y`-path node of length `β` (a *plain* def over `yRep`): at position
 `x` it records the pair-color of `y` against `yRep (typein x)` (junk once that rep is

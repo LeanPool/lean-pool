@@ -313,6 +313,8 @@ private theorem actualInfinityPlaceResidueField_finite
       Localization.localRingHom_to_map]
   let : Algebra.QuasiFiniteAt (RatFuncInfinityIntegers K) P.1 :=
     inferInstance
+  let : Algebra p.ResidueField P.1.ResidueField := IsLocalRing.ResidueField.instAlgebra
+  let : Module p.ResidueField P.1.ResidueField := Algebra.toModule
   let : Module.Finite p.ResidueField P.1.ResidueField :=
     Algebra.instFiniteResidueFieldOfQuasiFiniteAt p P.1
   exact Module.finite_of_finite p.ResidueField

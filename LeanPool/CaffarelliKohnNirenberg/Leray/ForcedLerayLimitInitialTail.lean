@@ -79,7 +79,7 @@ theorem forcedLerayLimit_initialTail_lintegral (ρ : RegMollifierProfile) (ε : 
   have hkEm : Measurable kE := ENNReal.measurable_ofReal.comp hkm
   let A : Vec3 → ℝ≥0∞ := fun z => ∑ i : Fin 3, ‖a z i‖ₑ ^ (2 : ℝ)
   have hAi : ∀ i : Fin 3, AEMeasurable (fun z : Vec3 => ‖a z i‖ₑ ^ (2 : ℝ)) volume := fun i =>
-    ((ha.eval i).aestronglyMeasurable.aemeasurable.enorm).pow_const _
+    ((ha.eval i).aestronglyMeasurable.aemeasurable.eNorm).pow_const _
   have hAm : AEMeasurable A volume := Finset.aemeasurable_fun_sum _ fun i _ => hAi i
   let ext : ℝ → Set Vec3 := fun r => {x : Vec3 | r < vec3EuclideanNorm x}
   have hext : ∀ r, MeasurableSet (ext r) := fun r =>
@@ -92,16 +92,16 @@ theorem forcedLerayLimit_initialTail_lintegral (ρ : RegMollifierProfile) (ε : 
     intro x i
     have hshift : AEMeasurable (fun y : Vec3 => ‖a (x - y) i‖ₑ) volume :=
       ((ha.eval i).aestronglyMeasurable.aemeasurable.comp_quasiMeasurePreserving
-        (quasiMeasurePreserving_sub_left_of_right_invariant volume x)).enorm
+        (quasiMeasurePreserving_sub_left_of_right_invariant volume x)).eNorm
     have heq := forcedTransport_component_eq (ρ := ρ) hε ha x i
     rw [convolution_def] at heq
     have h1 : ‖regUniformMollifiedInitial ρ ε hε a x i‖ₑ ≤
         ∫⁻ y, kE y * ‖a (x - y) i‖ₑ := by
       rw [heq]
-      refine (enorm_integral_le_lintegral_enorm _).trans (le_of_eq ?_)
+      refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
       refine lintegral_congr fun y => ?_
-      simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul, enorm_mul]
-      rw [Real.enorm_eq_ofReal (hnn y)]
+      simp only [ContinuousLinearMap.lsmul_apply, smul_eq_mul, eNorm_mul]
+      rw [Real.eNorm_eq_ofReal (hnn y)]
     have hsplit : (fun y => kE y * ‖a (x - y) i‖ₑ) =
         (fun y => kE y ^ (1 / 2 : ℝ)) * fun y => kE y ^ (1 / 2 : ℝ) * ‖a (x - y) i‖ₑ := by
       funext y
@@ -138,7 +138,7 @@ theorem forcedLerayLimit_initialTail_lintegral (ρ : RegMollifierProfile) (ε : 
     have hmi : ∀ i : Fin 3, AEMeasurable (fun y => kE y * ‖a (x - y) i‖ₑ ^ (2 : ℝ)) volume :=
       fun i => hkEm.aemeasurable.mul
         ((((ha.eval i).aestronglyMeasurable.aemeasurable.comp_quasiMeasurePreserving
-        (quasiMeasurePreserving_sub_left_of_right_invariant volume x)).enorm).pow_const _)
+        (quasiMeasurePreserving_sub_left_of_right_invariant volume x)).eNorm).pow_const _)
     calc ∑ i : Fin 3, ‖regUniformMollifiedInitial ρ ε hε a x i‖ₑ ^ (2 : ℝ)
         ≤ ∑ i : Fin 3, ∫⁻ y, kE y * ‖a (x - y) i‖ₑ ^ (2 : ℝ) :=
           Finset.sum_le_sum fun i _ => hcomp x i
@@ -203,7 +203,7 @@ private theorem forcedInitialTail_integral_eq {S : Set Vec3} {g : Vec3 → Vec3}
   rw [vec3EuclideanNorm, Real.sq_sqrt (Finset.sum_nonneg fun i _ => sq_nonneg _),
     ENNReal.ofReal_sum_of_nonneg fun i _ => sq_nonneg _]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num),
+  rw [Real.eNorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num),
     show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.rpow_natCast, sq_abs]
 
 /-- `eq:forced-initial-tail`: for `0 < ε ≤ 1` and every `R`,
@@ -220,9 +220,9 @@ theorem forcedLerayLimit_initialTail (ρ : RegMollifierProfile) (ε : ℝ) (hε 
   refine ENNReal.toReal_mono ?_ (forcedLerayLimit_initialTail_lintegral ρ ε hε hε1 a ha R)
   refine ne_top_of_le_ne_top ?_ (setLIntegral_le_lintegral _ _)
   rw [lintegral_finsetSum' _ fun i _ =>
-    ((ha.eval i).aestronglyMeasurable.aemeasurable.enorm).pow_const _]
+    ((ha.eval i).aestronglyMeasurable.aemeasurable.eNorm).pow_const _]
   refine ENNReal.sum_ne_top.2 fun i _ => ?_
-  rw [lintegral_rpow_enorm_eq_rpow_eLpNorm' (by norm_num : (0 : ℝ) < 2)]
+  rw [lintegral_rpow_eNorm_eq_rpow_eLpNorm' (by norm_num : (0 : ℝ) < 2)]
   have h := (ha.eval i).eLpNorm_ne_top
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (ha.eval i).aestronglyMeasurable,
     ENNReal.toReal_ofNat] at h

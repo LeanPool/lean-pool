@@ -141,7 +141,7 @@ private theorem enorm_cubeEuclideanWspKernel_rpow_le {A : Set (Vec d)}
   rcases eq_or_ne z.1 z.2 with heq | hne
   · have hzero : cubeEuclideanWspKernel s' q phi z = 0 := by
       simp [cubeEuclideanWspKernel_apply, heq]
-    rw [hzero, enorm_zero, ENNReal.zero_rpow_of_pos hrpos]
+    rw [hzero, eNorm_zero, ENNReal.zero_rpow_of_pos hrpos]
     exact zero_le
   have ht : 0 < dist z.1 z.2 := dist_pos.mpr hne
   have hE : dist z.1 z.2 ≤ euclideanDist z.1 z.2 := dist_le_euclideanDist z.1 z.2
@@ -253,8 +253,10 @@ private theorem aestronglyMeasurable_cubeEuclideanWspKernel_of_holder {Q : Triad
   have hvec : ContinuousOn (fun z : Vec d × Vec d => HilbertVec.ofVec (phi z.1 - phi z.2))
       (openCubeSet Q ×ˢ openCubeSet Q) :=
     (HilbertVec.ofVecL d).continuous.comp_continuousOn
-      ((hcont.comp continuous_fst.continuousOn fun _ hz => hz.1).sub
-        (hcont.comp continuous_snd.continuousOn fun _ hz => hz.2))
+      ((hcont.comp continuous_fst.continuousOn
+        (fun z (hz : z ∈ openCubeSet Q ×ˢ openCubeSet Q) => hz.1)).sub
+        (hcont.comp continuous_snd.continuousOn
+          (fun z (hz : z ∈ openCubeSet Q ×ˢ openCubeSet Q) => hz.2)))
   exact hscal.smul (hvec.aestronglyMeasurable (hset.prod hset))
 
 /-- **`[φ]_{W^{s′,q}(□)} ≤ d · K · C_rad(d,β)^{1/q} · L^{α-s′}`.**
@@ -302,7 +304,7 @@ theorem cubeEuclideanWspESeminorm_le_of_holder {Q : TriadicCube d}
       Measure.prod_smul_left, Measure.prod_restrict, volume_openCubeSet_eq_volume_cubeSet]
   have hkermeas : Measurable fun z : Vec d × Vec d =>
       ‖z.1 - z.2‖ₑ ^ (-cgGagliardoBeta d alpha s'.1 q.exponent.toReal) :=
-    ENNReal.continuous_rpow_const.measurable.comp (measurable_fst.sub measurable_snd).enorm
+    ENNReal.continuous_rpow_const.measurable.comp (measurable_fst.sub measurable_snd).eNorm
   have hcnn : (0 : ℝ) ≤ Regularity.radialKernelConst d
       (cgGagliardoBeta d alpha s'.1 q.exponent.toReal) *
       (cubeScaleFactor Q ^ d *

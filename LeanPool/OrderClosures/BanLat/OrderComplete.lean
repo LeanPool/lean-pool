@@ -25,6 +25,7 @@ the Archimedean property.
 @[expose] public section
 
 open Set
+open scoped Pointwise
 
 universe u
 

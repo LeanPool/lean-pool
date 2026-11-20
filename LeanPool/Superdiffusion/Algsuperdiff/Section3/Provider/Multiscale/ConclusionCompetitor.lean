@@ -261,7 +261,7 @@ theorem sum_of_a_decomp_cutoff [NeZero d] {m : ℤ} {hn : ℕ → ℕ}
     (fun T => hbadF (T : KuhnCell d) T.2) (fun T => hbadG (T : KuhnCell d) T.2)
     (fun T => hoffF (T : KuhnCell d) T.2) (fun T => hoffG (T : KuhnCell d) T.2)
   refine hmain.trans (le_of_eq ?_)
-  rw [ENNReal.tsum_add]
+  rw [tsum_add]
   refine congrArg₂ (· + ·) (tsum_congr fun T => ?_) (tsum_congr fun T => ?_)
   · exact congrArg ENNReal.ofReal (by simp only [goodCellForm]; ring)
   · exact congrArg ENNReal.ofReal (by simp only [collarCellForm]; ring)

@@ -102,7 +102,7 @@ theorem norm_oneParticleCurrying_fourier_ae {N q : ℕ} (i : Fin N) (ψ : State 
     i).toContinuousLinearEquiv.toContinuousLinearMap.coeFn_compLp
     (𝓕 (oneParticleCurrying i ψ))] with ξ hξ
   rw [hξ]
-  exact (restFourierLinearIsometryEquiv i).nnnorm_map _
+  exact (restFourierLinearIsometryEquiv i).nnNorm_map _
 
 /-- The particle energy equals the partial Fourier kinetic integral, including infinite energy. -/
 theorem particleFourierEnergy_eq_partialFourier {N q : ℕ} (i : Fin N) (ψ : State N q) :

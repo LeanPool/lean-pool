@@ -179,7 +179,7 @@ lemma hasDerivAt_F1 {y : ℝ} (hy : 0 < y) : HasDerivAt F1 (F2 y) y := by
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq hd (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply]
+  simp only [Pi.pow_apply]
   field_simp
   ring
 
@@ -192,7 +192,7 @@ lemma hasDerivAt_F2 {y : ℝ} (hy : 0 < y) : HasDerivAt F2 (F3 y) y := by
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq hd (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply, Pi.mul_apply]
+  simp only [Pi.pow_apply, Pi.mul_apply]
   field_simp
   ring
 
@@ -206,7 +206,7 @@ lemma hasDerivAt_F3 {y : ℝ} (hy : 0 < y) : HasDerivAt F3 (F4 y) y := by
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq hd (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply, Pi.mul_apply, Pi.add_apply]
+  simp only [Pi.pow_apply, Pi.mul_apply, Pi.add_apply]
   field_simp
   ring
 
@@ -282,7 +282,7 @@ lemma hasDerivAt_g1 {a : ℝ} (ha : 0 < a) (y : ℝ) : HasDerivAt (g1 a) (g2 a y
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq hd (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply, Pi.mul_apply]
+  simp only [Pi.pow_apply, Pi.mul_apply]
   field_simp
   ring
 
@@ -297,7 +297,7 @@ lemma hasDerivAt_g2 {a : ℝ} (ha : 0 < a) (y : ℝ) : HasDerivAt (g2 a) (g3 a y
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq hd (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply, Pi.mul_apply, Pi.add_apply]
+  simp only [Pi.pow_apply, Pi.mul_apply, Pi.add_apply]
   field_simp
   ring
 
@@ -313,7 +313,7 @@ lemma hasDerivAt_g3 {a : ℝ} (ha : 0 < a) (y : ℝ) : HasDerivAt (g3 a) (g4 a y
   refine
     HasDerivAt.congr_deriv
       (HasDerivAt.congr_of_eventuallyEq hd (Filter.Eventually.of_forall fun _ => rfl)) ?_
-  try simp only [Pi.pow_apply, Pi.mul_apply, Pi.add_apply]
+  simp only [Pi.pow_apply, Pi.mul_apply, Pi.add_apply]
   field_simp
   ring
 

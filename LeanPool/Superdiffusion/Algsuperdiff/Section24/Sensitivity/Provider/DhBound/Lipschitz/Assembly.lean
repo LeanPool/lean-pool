@@ -135,10 +135,10 @@ theorem lipschitzOnWith_convexApproxSmoothRepresentative
           norm_clm_le_sum_basisVec_apply _
       _ ≤ ∑ _i : Fin d, B := Finset.sum_le_sum fun i _ => hstep i
       _ = (d : ℝ) * B := by simp [Finset.sum_const, nsmul_eq_mul]
-  refine Convex.lipschitzOnWith_of_nnnorm_fderiv_le
+  refine Convex.lipschitzOnWith_of_nnNorm_fderiv_le
     (fun x _ => (hsmooth.differentiable (by simp)).differentiableAt) ?_ hU.convex
   intro x hx
-  rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal _ hdB]
+  rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal _ hdB]
   exact hbound x hx
 
 /-! ## Step 3: from a uniformly Lipschitz `L²`-approximating sequence -/

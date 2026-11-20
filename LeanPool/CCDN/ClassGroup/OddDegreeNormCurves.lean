@@ -47,7 +47,7 @@ lemma odd_degree_double_cover_irreducible {F : Type*} [Field F]
   apply (Polynomial.Monic.irreducible_iff_irreducible_map_fraction_map
     (K := RatFunc F) (monic_X_pow_sub_C p (by decide : (2 : ℕ) ≠ 0))).mpr
   simp only [Polynomial.map_sub, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_C]
-  exact X_pow_sub_C_irreducible_of_prime Nat.prime_two
+  exact irreducible_X_pow_sub_C_of_prime Nat.prime_two
     (odd_degree_polynomial_not_square_ratFunc p hp)
 
 /-- For a polynomial `p` of degree at least `2`, the double-cover polynomial `Y ^ 2 - p` has total
@@ -71,7 +71,7 @@ lemma double_cover_bivariateTotalDegree {R : Type*} [CommRing R]
       · subst i
         have hj : p.coeff j ≠ 0 := by simpa using hij
         simpa using le_natDegree_of_ne_zero hj
-      · simp [coeff_sub, coeff_X_pow, coeff_C, hi, hi0] at hij
+      · simp [coeff_X_pow, coeff_C, hi, hi0] at hij
   · have hp0 : p ≠ 0 := by intro h; simp [h] at hp
     have h := bivariateTotalDegree_coeff_le (X ^ 2 - C p : R[X][X]) 0 p.natDegree
       (by simpa using neg_ne_zero.mpr (leadingCoeff_ne_zero.mpr hp0))

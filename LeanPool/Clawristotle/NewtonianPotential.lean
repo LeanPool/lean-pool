@@ -133,7 +133,7 @@ lemma inv_norm_lintegral_bounded (R : ℝ) (hR : 0 < R) (k : ℕ) :
       z ∈ Metric.closedBall 0 (2^(-k : ℝ) * R) \
         Metric.closedBall 0 (2^(-k-1 : ℝ) * R) →
       ‖z‖⁻¹ ≤ (2^(-k-1 : ℝ) * R)⁻¹ := by
-    simp +zetaDelta only [rpow_neg_natCast, zpow_neg, zpow_natCast, Set.mem_sdiff,
+    simp +zetaDelta only [rpow_neg_natCast, _root_.zpow_neg, zpow_natCast, Set.mem_sdiff,
       Metric.mem_closedBall, dist_zero_right, not_le, _root_.mul_inv_rev, and_imp] at *
     intro z hz₁ hz₂
     rw [ ← mul_inv ]
@@ -157,7 +157,7 @@ lemma inv_norm_lintegral_bounded (R : ℝ) (hR : 0 < R) (k : ℕ) :
         ENNReal.ofReal_le_ofReal <|
           h_bounded z hz)
   refine le_trans h_const_bound ?_
-  simp +zetaDelta only [rpow_neg_natCast, zpow_neg, zpow_natCast, _root_.mul_inv_rev,
+  simp +zetaDelta only [rpow_neg_natCast, _root_.zpow_neg, zpow_natCast, _root_.mul_inv_rev,
     lintegral_const, MeasurableSet.univ, Measure.restrict_apply, Set.univ_inter] at *
   rw [ ENNReal.ofReal_mul (by positivity) ]
   rw [ ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_mul (by positivity) ]
@@ -241,7 +241,7 @@ lemma inv_norm_local_integrable (R : ℝ) (hR : 0 < R) :
       have h_bounded := inv_norm_lintegral_bounded R hR
       have h_volume := inv_norm_ball_volume R hR
       have h_series := inv_norm_summable_series R hR
-      refine lt_of_le_of_lt h_integrable <| lt_of_le_of_lt (ENNReal.tsum_le_tsum h_bounded) ?_
+      refine lt_of_le_of_lt h_integrable <| lt_of_le_of_lt (tsum_le_tsum h_bounded) ?_
       rw [ ← ENNReal.ofReal_tsum_of_nonneg ] <;> norm_num [ h_volume ]
       · exact fun k => by positivity
       · refine (h_series.mul_right

@@ -490,8 +490,8 @@ private theorem binarySuccTM_carry_run
               houtput
           refine ⟨c', ?_, hhalt, hinput', hwork', ?_, hcell0', houtput'⟩
           · convert! TM.reachesIn.step hstep hreach using 1
-            all_goals simp [BinarySucc.steps, Nat.add_assoc]
-            all_goals omega
+            simp [BinarySucc.steps, Nat.add_assoc]
+            omega
           · simpa [BinarySucc.ripple, List.replicate_add,
               List.append_assoc] using hstring
 

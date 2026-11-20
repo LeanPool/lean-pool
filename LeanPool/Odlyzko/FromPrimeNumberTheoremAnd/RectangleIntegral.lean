@@ -242,11 +242,13 @@ private lemma integral_const_div_re_add_self
   have hpoint {y : ℝ} :
       A / (x + y * I) = A / I / (y + (-x : ℂ) * I) := by
     have h₁ : (x : ℂ) + y * I ≠ 0 := by
-      contrapose! hx
-      simpa using congrArg re hx
+      intro h
+      apply hx
+      simpa using congrArg re h
     have h₂ : (y : ℂ) + (-x : ℂ) * I ≠ 0 := by
-      contrapose! hx
-      simpa using congrArg im hx
+      intro h
+      apply hx
+      simpa using congrArg im h
     have hden : -(I * (x : ℂ)) + (y : ℂ) ≠ 0 := by grind
     ring_nf
     field_simp [h₁, h₂, hden]

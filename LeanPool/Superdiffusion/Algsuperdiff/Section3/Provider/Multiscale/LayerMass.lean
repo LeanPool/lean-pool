@@ -449,7 +449,7 @@ theorem tsum_simplexPartition_eq_tsum_layer {m : ℤ} {hn : ℕ → ℕ}
             Set (KuhnCell d))), f T := (tsum_subtype _ _).symm
     _ = ∑' (n : ℕ) (T : ↥((layerCells (d := d) m hn n : Finset (KuhnCell d)) :
             Set (KuhnCell d))), f T :=
-          ENNReal.tsum_biUnion (pairwiseDisjoint_layerCells hmono)
+          tsum_iUnion (pairwiseDisjoint_layerCells hmono)
     _ = ∑' n : ℕ, ∑ T ∈ layerCells (d := d) m hn n, f T :=
           tsum_congr fun n => Finset.tsum_subtype' _ _
     _ = ∑' n : ℕ, ∑ Q ∈ whitneyLayer (d := d) m hn n,
@@ -470,7 +470,7 @@ theorem toReal_tsum_simplexPartition_le_tsum {m : ℤ} {hn : ℕ → ℕ}
   refine ENNReal.toReal_le_of_le_ofReal (tsum_nonneg hg0) ?_
   rw [tsum_simplexPartition_eq_tsum_layer hmono f,
     ENNReal.ofReal_tsum_of_nonneg hg0 hgsum]
-  exact ENNReal.tsum_le_tsum hlayer
+  exact tsum_le_tsum hlayer
 
 
 /-- **The Step-3 composition in `[0,∞]`** --- the `ofReal` twin of
@@ -496,7 +496,7 @@ theorem tsum_simplexPartition_le_ofReal_payload {m : ℤ} {hn : ℕ → ℕ}
   calc ∑' n : ℕ, ∑ Q ∈ whitneyLayer (d := d) m hn n,
         ∑ T ∈ whitneySimplexCells m hn n Q, f T
       ≤ ∑' n : ℕ, ENNReal.ofReal (layerContrib b γ hs k₀ Ktot Ccol Mass Bad n) :=
-        ENNReal.tsum_le_tsum hlayer
+        tsum_le_tsum hlayer
     _ = ENNReal.ofReal (∑' n : ℕ, layerContrib b γ hs k₀ Ktot Ccol Mass Bad n) :=
         (ENNReal.ofReal_tsum_of_nonneg
           (fun n => layerContrib_nonneg hK hC hMass0 hBad0 n)

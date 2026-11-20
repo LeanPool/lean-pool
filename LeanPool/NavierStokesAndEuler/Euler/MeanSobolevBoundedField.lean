@@ -133,7 +133,7 @@ def finiteField (A : EulerLpTranslation.SmoothL2Field V) : Space →ᵇ V :=
 
 @[simp] theorem finiteField_apply (A : EulerLpTranslation.SmoothL2Field V) (x : Space) :
     finiteField A x = A.field x := by
-  simp only [finiteField, BoundedContinuousFunction.sum_apply]
+  simp only [finiteField, _root_.sum_apply]
   change (∑ i : Fin (Module.finrank ℝ V), coordinateVector i (scalarField (mapField (coordinate i)
       A) x)) = _
   simp only [scalarField_apply, mapField_field]

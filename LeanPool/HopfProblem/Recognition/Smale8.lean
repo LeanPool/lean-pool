@@ -3315,8 +3315,10 @@ private theorem Smale.RankThreeWhitneyModel.contDiffOn_correctedSheetMap {F : Ty
     ContDiffOn ℝ ∞ (correctedSheetMap G Rlo Rhi h) (correctionDomain U Dlo Dhi) :=
   ((hG.mono Set.inter_subset_left).add
         ((Smale.SheetCorrection.contDiffOn_centeredCorrection hRlo hGlo).comp
+          (s := correctionDomain U Dlo Dhi)
           lowerSheetCoordinates.contDiff.contDiffOn (fun _ hp => hp.2.1))).add
     ((Smale.SheetCorrection.contDiffOn_centeredCorrection hRhi hGhi).comp
+      (s := correctionDomain U Dlo Dhi)
       upperSheetCoordinates.contDiff.contDiffOn (fun _ hp => hp.2.2))
 
 private theorem Smale.RankThreeWhitneyModel.hasFDerivAt_correctedSheetMap_zero {F : Type*}

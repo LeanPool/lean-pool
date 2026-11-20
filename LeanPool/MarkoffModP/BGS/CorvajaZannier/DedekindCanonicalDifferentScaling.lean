@@ -190,7 +190,7 @@ theorem exists_infinity_different_localGenerator_scaling_certificate
     have hsL : algebraMap S L s ≠ 0 := by
       rw [IsScalarTower.algebraMap_apply S T L]
       simpa using (IsFractionRing.injective T L).ne hsT
-    rw [hDX, Derivation.smul_apply, Algebra.smul_def]
+    rw [hDX, smul_apply, Algebra.smul_def]
     calc
       (-(algebraMap T L δ) / (algebraMap S L s) ^ 2) *
           (-(algebraMap S L s) ^ 2 * Es (algebraMap T L t)) =

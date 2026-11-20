@@ -129,7 +129,7 @@ lemma lintegral_sq_eq_eLpNorm_sq_on_prod
   set μν := μ.prod ν with hμν
   have h_aem_sq : AEMeasurable
       (fun p : α × β => (‖h p‖₊ : ℝ≥0∞) ^ 2) μν :=
-    (hh.enorm.pow_const 2).aemeasurable
+    (hh.eNorm.pow_const 2).aemeasurable
   -- Tonelli on the squared integrand.
   have h_Tonelli :
       ∫⁻ x, ∫⁻ y, (‖h (x, y)‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂μ
@@ -165,7 +165,7 @@ lemma lintegral_sq_eq_eLpNorm_sq_on_triple_prod
   set μνη := μ.prod (ν.prod η) with hμνη
   have h_aem_sq : AEMeasurable
       (fun p : α × β × γ => (‖h p‖₊ : ℝ≥0∞) ^ 2) μνη :=
-    (hh.enorm.pow_const 2).aemeasurable
+    (hh.eNorm.pow_const 2).aemeasurable
   -- Two iterated Tonellis: outer (μ over ν.prod η), inner (ν.prod η = ν over η).
   have h_outer :
       ∫⁻ p, (‖h p‖₊ : ℝ≥0∞) ^ 2 ∂μνη
@@ -174,7 +174,7 @@ lemma lintegral_sq_eq_eLpNorm_sq_on_triple_prod
   have h_aem_sq_inner : ∀ x : α, AEMeasurable
       (fun q : β × γ => (‖h (x, q)‖₊ : ℝ≥0∞) ^ 2) (ν.prod η) := fun x => by
     have hh_x : Measurable (fun q : β × γ => h (x, q)) := hh.comp (by fun_prop)
-    exact (hh_x.enorm.pow_const 2).aemeasurable
+    exact (hh_x.eNorm.pow_const 2).aemeasurable
   have h_inner_each : ∀ x : α,
       ∫⁻ q, (‖h (x, q)‖₊ : ℝ≥0∞) ^ 2 ∂(ν.prod η)
         = ∫⁻ y, ∫⁻ z, (‖h (x, y, z)‖₊ : ℝ≥0∞) ^ 2 ∂η ∂ν := fun x =>

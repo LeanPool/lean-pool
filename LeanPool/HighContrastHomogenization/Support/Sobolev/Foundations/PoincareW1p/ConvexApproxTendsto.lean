@@ -451,7 +451,7 @@ theorem tendsto_convexApproxSmoothW1p_subAverageLpSeminorm_ofReal
           (fun n => ‖integralAverage U u.toFun - integralAverage U (ψ n).toFun‖ₑ)
           Filter.atTop (nhds 0) := by
       have hnorm := havgdiff.norm
-      simpa [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs] using ENNReal.tendsto_ofReal hnorm
+      simpa [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs] using ENNReal.tendsto_ofReal hnorm
     have hscaled :
         Filter.Tendsto
           (fun n =>

@@ -139,7 +139,7 @@ theorem map_residue_eq' {P : Polynomial (MvPowerSeries σ O)} {q : O[X]}
     (h : P.map (MvPowerSeries.constantCoeff : MvPowerSeries σ O →+* O) = q) :
     P.map (residue (MvPowerSeries σ O))
       = (q.map (MvPowerSeries.C : O →+* MvPowerSeries σ O)).map (residue (MvPowerSeries σ O)) :=
-  Polynomial.ext fun k ↦ by
+  AddMonoidAlgebra.ext <| DFunLike.ext _ _ fun k ↦ by
     simp only [Polynomial.coeff_map]
     refine residue_eq_of_constantCoeff_sub_mem' ?_
     rw [MvPowerSeries.constantCoeff_C, ← h, Polynomial.coeff_map, sub_self]

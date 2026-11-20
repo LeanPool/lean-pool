@@ -200,7 +200,7 @@ theorem principalDivisorA_tK_at_infinite
         (UniqueFactorizationMonoid.normalizedFactors (Ideal.map (algebraMap A S) p)).count
           v.asIdeal := by
     rw [FractionalIdeal.principalDivisor_apply, toMul_ofMul, Units.val_mk0, hspan,
-      FractionalIdeal.count_coe (K := K) v (Ideal.span_singleton_eq_bot.not.mpr htS),
+      FractionalIdeal.count_coeIdeal (K := K) v (Ideal.span_singleton_eq_bot.not.mpr htS),
       ← map_maximalIdeal_infty k]
     rw [Ideal.count_associates_factors_eq hmap v.isPrime v.ne_bot]
   rw [hcount, ← IsDedekindDomain.ramificationIdx'_eq_normalizedFactors_count hmap v.isPrime

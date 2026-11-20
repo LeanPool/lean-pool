@@ -118,7 +118,7 @@ theorem radialKernelAux_continuous : Continuous (radialKernelAux d) :=
 /-- **Strictly positive mass.**  The un-normalized kernel has a strictly positive integral (it is a
 nonnegative continuous compactly-supported function, positive at the origin). -/
 theorem radialKernelAux_integral_pos : 0 < ∫ x, radialKernelAux d x ∂volume :=
-  (radialKernelAux_continuous d).integral_pos_of_hasCompactSupport_nonneg_nonzero
+  (radialKernelAux_continuous d).integral_pos_of_hasCompactSupport_nonneg_ne_zero
     (radialKernelAux_hasCompactSupport d) (radialKernelAux_nonneg d)
     (x := 0) (by simp)
 

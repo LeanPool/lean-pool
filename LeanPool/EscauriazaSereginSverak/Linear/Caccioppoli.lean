@@ -422,7 +422,7 @@ theorem caccioppoli
     exact hdata.2.1
   have hWnorm : MemLp (fun q => vec3EuclideanNorm (W q)) 2
       (volume : Measure (Vec3 × ℝ)) := by
-    apply hWdata.norm.of_nnnorm_le_mul
+    apply hWdata.norm.of_nnNorm_le_mul
       (continuous_vec3EuclideanNorm.comp_aestronglyMeasurable hWdata.aestronglyMeasurable)
     · filter_upwards [] with q
       have hsqrt : Real.sqrt 3 ≤ 2 := (Real.sqrt_le_iff).2 ⟨by norm_num, by norm_num⟩
@@ -433,7 +433,7 @@ theorem caccioppoli
           _ ≤ 2 * ‖W q‖ := mul_le_mul_of_nonneg_right hsqrt (norm_nonneg _)
       have hreal' : (‖vec3EuclideanNorm (W q)‖₊ : ℝ) ≤
           2 * (‖‖W q‖‖₊ : ℝ) := by
-        simpa only [coe_nnnorm, Real.norm_eq_abs,
+        simpa only [coe_nnNorm, Real.norm_eq_abs,
           abs_of_nonneg (vec3EuclideanNorm_nonneg _),
           abs_of_nonneg (norm_nonneg _)] using hreal
       exact_mod_cast hreal'

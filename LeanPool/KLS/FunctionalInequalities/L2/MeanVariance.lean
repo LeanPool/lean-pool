@@ -183,7 +183,7 @@ theorem continuous_center (μ : ProbabilityMeasure α) : Continuous (center μ) 
 
 /-- Variance is continuous in `L²`, including at constant functions. -/
 theorem continuous_variance (μ : ProbabilityMeasure α) : Continuous (variance μ) :=
-  (continuous_center μ).nnnorm.pow 2
+  (continuous_center μ).nnNorm.pow 2
 
 /-- Coercing the `NNReal` variance to `ℝ` gives the squared norm of the centered part. -/
 @[simp, norm_cast]
@@ -250,7 +250,7 @@ theorem variance_eq_zero_iff (μ : ProbabilityMeasure α) (f : Lp ℝ 2 (μ : Me
 /-- Scaling an `L²` element scales its variance by the squared nonnegative norm of the scalar. -/
 theorem variance_smul (μ : ProbabilityMeasure α) (c : ℝ) (f : Lp ℝ 2 (μ : Measure α)) :
     variance μ (c • f) = ‖c‖₊ ^ 2 * variance μ f := by
-  rw [variance, center_smul, nnnorm_smul, mul_pow]
+  rw [variance, center_smul, nnNorm_smul, mul_pow]
   rfl
 
 /-- Every L2 element on a subsingleton probability space is a constant element. -/

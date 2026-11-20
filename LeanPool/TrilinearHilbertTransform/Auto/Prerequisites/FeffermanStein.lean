@@ -367,7 +367,7 @@ theorem distributionFunction_ofReal (g : β → F) {t : ℝ} (ht : 0 ≤ t) :
 theorem eLpNorm_ofReal_rpow_eq_lintegral {f : α → E} (hf : AEStronglyMeasurable f μ) {p : ℝ}
     (hp : 0 < p) :
     eLpNorm f (ENNReal.ofReal p) μ ^ p = ∫⁻ x, ‖f x‖ₑ ^ p ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simpa using hp) ENNReal.ofReal_ne_top hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by simpa using hp) ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal hp.le, ← ENNReal.rpow_mul, one_div, inv_mul_cancel₀ hp.ne',
     ENNReal.rpow_one]
 
@@ -375,7 +375,7 @@ theorem eLpNorm_ofReal_rpow_eq_lintegral {f : α → E} (hf : AEStronglyMeasurab
 theorem eLpNorm_ofReal_eq_lintegral_rpow_enorm {f : α → E} (hf : AEStronglyMeasurable f μ) {p : ℝ}
     (hp : 0 < p) :
     eLpNorm f (ENNReal.ofReal p) μ = (∫⁻ x, ‖f x‖ₑ ^ p ∂μ) ^ (1 / p) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simpa using hp) ENNReal.ofReal_ne_top hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by simpa using hp) ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal hp.le]
 
 end Defs
@@ -691,8 +691,8 @@ omit [OpensMeasurableSpace X] in
 theorem hlBallAverage_add_le {f g : X → E} (hf : AEStronglyMeasurable f μ) (x : X) (r : ℝ) :
     hlBallAverage μ (f + g) x r ≤ hlBallAverage μ f x r + hlBallAverage μ g x r := by
   unfold hlBallAverage
-  rw [← mul_add, ← lintegral_add_left' hf.restrict.enorm]
-  exact mul_le_mul_right (lintegral_mono fun y => enorm_add_le _ _) _
+  rw [← mul_add, ← lintegral_add_left' hf.restrict.eNorm]
+  exact mul_le_mul_right (lintegral_mono fun y => eNorm_add_le _ _) _
 
 omit [OpensMeasurableSpace X] in
 /-- Subadditivity of the maximal function: `M (f + g) ≤ M f + M g` for a.e. strongly measurable
@@ -797,7 +797,7 @@ theorem measurable_hlMaximal (hfin : ∀ (x : X) (r : ℝ), μ (closedBall x r) 
   have : hlMaximal μ (hf.mk f) = fun x => ⨆ q : ℚ, hlBallAverage μ (hf.mk f) x q :=
     funext fun x => hlMaximal_eq_iSup_rat hfin _ x
   rw [this]
-  exact Measurable.iSup fun q => measurable_hlBallAverage hf.stronglyMeasurable_mk.enorm _
+  exact Measurable.iSup fun q => measurable_hlBallAverage hf.stronglyMeasurable_mk.eNorm _
 
 end Measurability
 
@@ -849,7 +849,7 @@ def hlMaximalTrunc (μ : Measure X) (N : ℕ) (f : X → E) (x : X) : ℝ :=
 omit [OpensMeasurableSpace X] in
 theorem enorm_hlMaximalTrunc (N : ℕ) (f : X → E) (x : X) :
     ‖hlMaximalTrunc μ N f x‖ₑ = min (hlMaximal μ f x) N := by
-  rw [hlMaximalTrunc, Real.enorm_eq_ofReal ENNReal.toReal_nonneg, ENNReal.ofReal_toReal]
+  rw [hlMaximalTrunc, Real.eNorm_eq_ofReal ENNReal.toReal_nonneg, ENNReal.ofReal_toReal]
   exact ne_top_of_le_ne_top (ENNReal.natCast_ne_top N) (min_le_right _ _)
 
 /-- `min (a + b) c ≤ min a c + min b c` in `ℝ≥0∞`. -/
@@ -893,7 +893,7 @@ theorem lintegral_hlMaximal_rpow_le_of_weak [SFinite μ] {C : ℝ≥0} {p : ℝ}
     have hTA : HasWeakTypeOn (hlMaximalTrunc μ N) D 1 C μ μ := by
       intro g hg t _
       unfold distributionFunction
-      rw [ENNReal.rpow_one, ENNReal.ofReal_one, eLpNorm_one_eq_lintegral_enorm hg]
+      rw [ENNReal.rpow_one, ENNReal.ofReal_one, eLpNorm_one_eq_lintegral_eNorm hg]
       calc μ {x | t < ‖hlMaximalTrunc μ N g x‖ₑ} ≤ μ {x | t < hlMaximal μ g x} := by
             refine measure_mono fun x hx => ?_
             have hx' : t < ‖hlMaximalTrunc μ N g x‖ₑ := hx
@@ -957,11 +957,11 @@ theorem eLpNorm_hlMaximal_le_of_weak [SFinite μ] {C : ℝ≥0} {p : ℝ} (hp : 
     eLpNorm (hlMaximal μ f) (ENNReal.ofReal p) μ ≤
       hlMaximalConst C p * eLpNorm f (ENNReal.ofReal p) μ := by
   have hp0 : 0 < p := by linarith
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simpa using hp0) ENNReal.ofReal_ne_top
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by simpa using hp0) ENNReal.ofReal_ne_top
       hM.aestronglyMeasurable, ENNReal.toReal_ofReal hp0.le,
     eLpNorm_ofReal_eq_lintegral_rpow_enorm hf hp0, hlMaximalConst,
     ← ENNReal.mul_rpow_of_nonneg _ _ (by positivity)]
-  simp only [enorm_eq_self]
+  simp only [eNorm_eq_self]
   exact ENNReal.rpow_le_rpow (lintegral_hlMaximal_rpow_le_of_weak hp hweak hf hM)
     (by positivity)
 
@@ -1171,8 +1171,8 @@ theorem fs_weighted_rpow {q : ℝ} (hq : 1 < q) {w : EuclideanSpace ℝ (Fin n) 
       intro g hg t ht
       have hg' : AEStronglyMeasurable g volume := hg
       unfold distributionFunction
-      rw [ENNReal.rpow_one, ENNReal.ofReal_one, eLpNorm_one_eq_lintegral_enorm (hg'.mono_ac hμac),
-        lintegral_withDensity_eq_lintegral_mul₀ hMw.aemeasurable hg'.enorm]
+      rw [ENNReal.rpow_one, ENNReal.ofReal_one, eLpNorm_one_eq_lintegral_eNorm (hg'.mono_ac hμac),
+        lintegral_withDensity_eq_lintegral_mul₀ hMw.aemeasurable hg'.eNorm]
       calc ν {x | t < ‖hlMaximalTrunc volume N g x‖ₑ} ≤ ν {x | t < hlMaximal volume g x} := by
             refine measure_mono fun x hx => ?_
             have hx' : t < ‖hlMaximalTrunc volume N g x‖ₑ := hx
@@ -1225,9 +1225,9 @@ theorem fs_weighted_rpow {q : ℝ} (hq : 1 < q) {w : EuclideanSpace ℝ (Fin n) 
       (ae_of_all _ fun x N N' h => ENNReal.rpow_le_rpow
         (min_le_min_left _ (Nat.cast_le.2 h)) (by linarith))]
     exact iSup_le key
-  rw [lintegral_withDensity_eq_lintegral_mul₀ hw.enorm
+  rw [lintegral_withDensity_eq_lintegral_mul₀ hw.eNorm
       ((fs_measurable_maximal hf).pow_const _).aemeasurable,
-    lintegral_withDensity_eq_lintegral_mul₀ hMw.aemeasurable (hf.enorm.pow_const _)] at hsup
+    lintegral_withDensity_eq_lintegral_mul₀ hMw.aemeasurable (hf.eNorm.pow_const _)] at hsup
   simpa only [Pi.mul_apply, ENNReal.rpow_two] using hsup
 
 end Weighted
@@ -1293,7 +1293,7 @@ theorem fs_lintegral_of_weighted {n : ℕ} {r : ℝ} (hr : 1 < r) (A : ℝ≥0�
     (hGm.min measurable_const).indicator measurableSet_closedBall
   set! wN : ℕ → EuclideanSpace ℝ (Fin n) → ℝ := fun N x => (GN N x ^ (r - 1)).toReal
   have hwN : ∀ N x, ‖wN N x‖ₑ = GN N x ^ (r - 1) := fun N x => by
-    rw [Real.enorm_eq_ofReal ENNReal.toReal_nonneg, ENNReal.ofReal_toReal
+    rw [Real.eNorm_eq_ofReal ENNReal.toReal_nonneg, ENNReal.ofReal_toReal
       (ENNReal.rpow_ne_top_of_nonneg (by linarith) (hGN_ne_top N x))]
   have hwNm : ∀ N, Measurable (wN N) := fun N => ((hGNm N).pow_const _).ennreal_toReal
   have key : ∀ N : ℕ, ∫⁻ x, GN N x ^ r ≤ fsDualConst n r A * ∫⁻ x, H x ^ r := by
@@ -1401,7 +1401,7 @@ theorem measurable_mixedMaximal {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
   have hi : Measurable (fun p : EuclideanSpace ℝ (Fin n) × Ω =>
       ∫⁻ y in closedBall p.1 (q : ℝ), ‖f (y, p.2)‖ₑ) := by
     have h := ((hf.comp (measurable_snd.prodMk
-      (measurable_snd.comp measurable_fst))).enorm.indicator hS)
+      (measurable_snd.comp measurable_fst))).eNorm.indicator hS)
         |>.lintegral_prod_right' (ν := volume)
     convert h using 1
     funext p
@@ -1428,7 +1428,7 @@ theorem fs_mixed_weighted {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
           intro x
           exact (lintegral_const_mul _ ((hM.comp measurable_prodMk_left).pow_const s)).symm
     _ = ∫⁻ ω, (∫⁻ x, ‖w x‖ₑ * mixedMaximal f (x, ω) ^ s) ∂ν :=
-      lintegral_lintegral_swap (((hw.comp measurable_fst).enorm.mul (hM.pow_const s)).aemeasurable)
+      lintegral_lintegral_swap (((hw.comp measurable_fst).eNorm.mul (hM.pow_const s)).aemeasurable)
     _ ≤ ∫⁻ ω, (fsKwPow n s * ∫⁻ x, hlMaximal volume w x * ‖f (x, ω)‖ₑ ^ s) ∂ν := by
       apply lintegral_mono
       intro ω
@@ -1437,17 +1437,17 @@ theorem fs_mixed_weighted {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
     _ = fsKwPow n s * ∫⁻ ω, (∫⁻ x, hlMaximal volume w x * ‖f (x, ω)‖ₑ ^ s) ∂ν :=
       lintegral_const_mul _
         ((hMw.comp measurable_snd).mul
-          ((hf.comp measurable_swap).enorm.pow_const s)).lintegral_prod_right'
+          ((hf.comp measurable_swap).eNorm.pow_const s)).lintegral_prod_right'
     _ = fsKwPow n s * ∫⁻ x, ∫⁻ ω, hlMaximal volume w x * ‖f (x, ω)‖ₑ ^ s ∂ν := by
       congr 1
       exact lintegral_lintegral_swap
         (((hMw.comp measurable_snd).mul
-          ((hf.comp measurable_swap).enorm.pow_const s)).aemeasurable)
+          ((hf.comp measurable_swap).eNorm.pow_const s)).aemeasurable)
     _ = fsKwPow n s * ∫⁻ x, hlMaximal volume w x * ∫⁻ ω, ‖f (x, ω)‖ₑ ^ s ∂ν := by
       congr 1
       apply lintegral_congr
       intro x
-      exact lintegral_const_mul _ ((hf.comp measurable_prodMk_left).enorm.pow_const s)
+      exact lintegral_const_mul _ ((hf.comp measurable_prodMk_left).eNorm.pow_const s)
 
 /-- The vector maximal inequality when the outer exponent exceeds the inner exponent,
 valid on any sigma-finite inner measure space with a constant independent of that space. -/
@@ -1461,7 +1461,7 @@ theorem fs_mixed_lintegral_of_lt {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
   apply fs_lintegral_of_weighted ((lt_div_iff₀ (by linarith : 0 < s)).mpr (by simpa))
     (fsKwPow n s) _ _
     ((measurable_mixedMaximal hf).pow_const s).lintegral_prod_right'
-    (hf.enorm.pow_const s).lintegral_prod_right'.aemeasurable
+    (hf.eNorm.pow_const s).lintegral_prod_right'.aemeasurable
   exact fun w hw => fs_mixed_weighted ν hs hf w hw
 
 /-- Iterated extended `L^p(L^s)` norm of a nonnegative function. -/
@@ -1587,7 +1587,7 @@ theorem mixedENorm_le_of_finite_test {X Ω : Type*}
   have hw : Measurable w := (measurable_mixedDualWeight ν p s hu).ennreal_toReal
   have hn : (fun z => ‖w z‖ₑ) = mixedDualWeight ν p s u := by
     funext z
-    exact (Real.enorm_eq_ofReal ENNReal.toReal_nonneg).trans
+    exact (Real.eNorm_eq_ofReal ENNReal.toReal_nonneg).trans
       (ENNReal.ofReal_toReal (mixedDualWeight_ne_top ν hs.lt u hut hBt z))
   have h := htest w hw
   simp only [congrFun hn] at h
@@ -1746,7 +1746,7 @@ theorem fs_pair_weighted {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
   have hMw := measurable_mixedMaximal hw
   calc (∫⁻ x, ∫⁻ ω, mixedMaximal f (x, ω) ^ a * ‖w (x, ω)‖ₑ ∂ν)
       = ∫⁻ ω, (∫⁻ x, mixedMaximal f (x, ω) ^ a * ‖w (x, ω)‖ₑ) ∂ν :=
-        lintegral_lintegral_swap (((hMf.pow_const a).mul hw.enorm).aemeasurable)
+        lintegral_lintegral_swap (((hMf.pow_const a).mul hw.eNorm).aemeasurable)
     _ ≤ ∫⁻ ω, (fsKwPow n a *
         ∫⁻ x, ‖f (x, ω)‖ₑ ^ a * mixedMaximal w (x, ω)) ∂ν := by
       apply lintegral_mono
@@ -1761,7 +1761,7 @@ theorem fs_pair_weighted {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
     _ = fsKwPow n a * ∫⁻ x, ∫⁻ ω, ‖f (x, ω)‖ₑ ^ a * mixedMaximal w (x, ω) ∂ν := by
       congr 1
       exact lintegral_lintegral_swap
-        ((((hf.enorm.pow_const a).mul hMw).comp measurable_swap).aemeasurable)
+        ((((hf.eNorm.pow_const a).mul hMw).comp measurable_swap).aemeasurable)
 
 lemma fs_conjExponent_lt {r t : ℝ} (hr : 1 < r) (hrt : r < t) :
     Real.conjExponent t < Real.conjExponent r := by
@@ -1808,7 +1808,7 @@ theorem fs_mixedENorm_of_gt {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
     apply mixedENorm_le_of_test ν hrq htq _ ((measurable_mixedMaximal hf).pow_const a)
     intro w hw
     have hhold := mixed_holder volume ν hrq htq (fun z => ‖f z‖ₑ ^ a) (mixedMaximal w)
-      (hf.enorm.pow_const a) (measurable_mixedMaximal hw)
+      (hf.eNorm.pow_const a) (measurable_mixedMaximal hw)
     have hMw := fs_mixedENorm_of_lt ν htq.symm.lt (fs_conjExponent_lt hr hrt) hw
     calc (∫⁻ x, ∫⁻ ω, mixedMaximal f (x, ω) ^ a * ‖w (x, ω)‖ₑ ∂ν)
         ≤ fsKwPow n a * ∫⁻ x, ∫⁻ ω, ‖f (x, ω)‖ₑ ^ a * mixedMaximal w (x, ω) ∂ν :=
@@ -1838,7 +1838,7 @@ theorem fs_mixedENorm_same {n : ℕ} {Ω E : Type*} [MeasurableSpace Ω]
       fsKwPow n p ^ (1 / p) * mixedENorm volume ν p p (fun z => ‖f z‖ₑ) := by
   have hp0 : 0 < p := by linarith
   have h := fs_mixed_weighted ν hp hf (fun _ => 1) measurable_const
-  simp only [enorm_one, one_mul] at h
+  simp only [eNorm_one, one_mul] at h
   have hm (x : EuclideanSpace ℝ (Fin n)) :
       hlMaximal volume (fun _ : EuclideanSpace ℝ (Fin n) => (1 : ℝ)) x ≤ 1 :=
     hlMaximal_le_of_ae_enorm_le (ae_of_all _ fun _ => by simp) x

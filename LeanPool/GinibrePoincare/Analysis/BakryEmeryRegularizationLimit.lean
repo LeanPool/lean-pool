@@ -80,7 +80,7 @@ theorem bakryEmeryNormalizedGibbs_probability (μ : Measure E) [NeZero μ]
   constructor
   have hpos := integral_exp_pos hI
   unfold bakryEmeryNormalizedGibbs
-  rw [Measure.smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
+  rw [smul_apply, withDensity_apply _ MeasurableSet.univ, setLIntegral_univ,
     ← ofReal_integral_eq_lintegral_ofReal hI (Eventually.of_forall (fun x => Real.exp_nonneg _))]
   exact ENNReal.inv_mul_cancel (ENNReal.ofReal_ne_zero_iff.mpr hpos) ENNReal.ofReal_ne_top
 

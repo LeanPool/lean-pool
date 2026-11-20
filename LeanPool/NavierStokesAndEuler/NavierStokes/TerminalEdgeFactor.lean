@@ -223,7 +223,7 @@ theorem integrableOn_Ioi_of_eventually_zero {f : ℝ → ℝ} {r : ℝ} (hr : 0 
     IntegrableOn f (Ioi r) := by
   obtain ⟨b, hb⟩ := Filter.eventually_atTop.1 hz
   have hi : IntegrableOn f (Icc r (max r b)) :=
-    (hf.mono (fun u hu => hr.trans_le hu.1)).integrableOn_Icc
+    (hf.mono (fun u (hu : u ∈ Icc r (max r b)) => hr.trans_le hu.1)).integrableOn_Icc
   apply (hi.integrable_indicator measurableSet_Icc).integrableOn.congr
   filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
   by_cases hmax : u ≤ max r b

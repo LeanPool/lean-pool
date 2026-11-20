@@ -171,7 +171,7 @@ theorem lps_kernel_limit_curve (hab : a < b)
       intro g h gl hg hgl hlim
       refine squeeze_zero (fun n => integral_nonneg fun z => sq_nonneg _) (fun n => ?_) hlim
       exact setIntegral_mono_set ((hg n).sub hgl).integrable_sq
-        (Eventually.of_forall fun z => sq_nonneg _) hsub.eventuallyLE
+        (Eventually.of_forall fun z => sq_nonneg _) hsub.eventuallySubset
     have h1 : Tendsto (fun n => ‖C n ⟨t, ht⟩‖ ^ 2 - ‖C n ⟨s, hs⟩‖ ^ 2) atTop
         (𝓝 (‖L ⟨t, ht⟩‖ ^ 2 - ‖L ⟨s, hs⟩‖ ^ 2)) :=
       ((hL _).norm.pow 2).sub ((hL _).norm.pow 2)

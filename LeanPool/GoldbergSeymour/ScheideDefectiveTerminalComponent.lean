@@ -603,7 +603,7 @@ private theorem helper_continuation_826.{u_1, u_2} :
             | omega
             | ( have := GoldbergSeymour.TreeSequence.positive T
                 have := C.p_ge_two
-                all_goals omega)
+                omega)
     ⟩ : Fin C.p);
     let gamma : Fin k := C.gamma (D.gammaIndex d);
     let phi1 : PartialEdgeColoring E k := OutsideTreeColorSwap T phi D.alpha0 gamma;
@@ -613,7 +613,7 @@ private theorem helper_continuation_826.{u_1, u_2} :
                 | omega
                 | ( have := GoldbergSeymour.TreeSequence.positive T
                     have := C.p_ge_two
-                    all_goals omega)
+                    omega)
     ⟩ : Fin C.p))) (Sum.inl (D.initialZ d)) := D.initialPath d;
     let i : Fin ((D.initialPath d).length + (1 : ℕ)) := D.v0Index d;
     let _ : SimpleGraph (V ⊕ E) := TwoColorIncidenceGraph G phi D.alpha0 (↑d : Fin k);

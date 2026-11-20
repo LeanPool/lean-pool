@@ -312,7 +312,7 @@ Hilbert codomain.  The codomain is compressed onto the range of `A ⊕ B`, which
 finite-dimensional and changes no approximation number. -/
 theorem kyFanGauge_add_le_of_finiteDimensional_source (k : ℕ) (A B : V →L[𝕜] G) :
     (A + B).kyFanGauge k ≤ A.kyFanGauge k + B.kyFanGauge k := by
-  let : CompleteSpace V := FiniteDimensional.complete 𝕜 V
+  let : CompleteSpace V := FiniteDimensional.completeSpace 𝕜 V
   let C : V × V →L[𝕜] G :=
     A ∘L ContinuousLinearMap.fst 𝕜 V V + B ∘L ContinuousLinearMap.snd 𝕜 V V
   let W : Submodule 𝕜 G := C.range
@@ -321,7 +321,7 @@ theorem kyFanGauge_add_le_of_finiteDimensional_source (k : ℕ) (A B : V →L[�
     intro y
     rcases y.property with ⟨x, hx⟩
     exact ⟨x, Subtype.ext hx⟩
-  let : CompleteSpace W := FiniteDimensional.complete 𝕜 W
+  let : CompleteSpace W := FiniteDimensional.completeSpace 𝕜 W
   let : W.HasOrthogonalProjection := Submodule.HasOrthogonalProjection.ofCompleteSpace W
   have hA : ∀ x, A x ∈ W := fun x => ⟨(x, 0), by simp [C]⟩
   have hB : ∀ x, B x ∈ W := fun x => ⟨(0, x), by simp [C]⟩
@@ -388,7 +388,7 @@ theorem kyFanGauge_add_le_of_exists_finiteRestriction {S T : E →L[𝕜] F}
   let w : β → E := fun p => v p.1.1 p.2
   let V : Submodule 𝕜 E := Submodule.span 𝕜 (Set.range w)
   let : FiniteDimensional 𝕜 V := Module.Finite.span_of_finite 𝕜 (Set.finite_range w)
-  let : CompleteSpace V := FiniteDimensional.complete 𝕜 V
+  let : CompleteSpace V := FiniteDimensional.completeSpace 𝕜 V
   let SV : V →L[𝕜] F := S ∘L V.subtypeL
   let TV : V →L[𝕜] F := T ∘L V.subtypeL
   have hsumRestrict : (S + T) ∘L V.subtypeL = SV + TV := by

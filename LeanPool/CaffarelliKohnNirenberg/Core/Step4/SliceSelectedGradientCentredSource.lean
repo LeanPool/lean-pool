@@ -75,7 +75,7 @@ private theorem centred_eLpNorm_mul_bounded
     _ ≤ ‖C‖ₑ * eLpNorm g p μ :=
       eLpNorm_const_smul_le (c := C) (f := g) (p := p) (μ := μ)
     _ = ENNReal.ofReal C * eLpNorm g p μ := by
-      rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg hC]
+      rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hC]
 
 /-- Quantitative form of the centred correction estimate. -/
 theorem sourceMorreyCutoffVCentred_slice_bound_of_uncentred

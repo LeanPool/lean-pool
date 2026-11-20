@@ -42,7 +42,7 @@ private theorem eLpNorm_rpow_eq_lintegral_enorm {α E : Type*}
     (hf : AEStronglyMeasurable f μ) :
     (eLpNorm f q.exponent μ) ^ q.exponent.toReal =
       ∫⁻ x, ‖f x‖ₑ ^ q.exponent.toReal ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_ne_zero q) q.lt_top.ne hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (finiteLpExponent_ne_zero q) q.lt_top.ne hf,
     ← ENNReal.rpow_mul]
   have hq : q.exponent.toReal ≠ 0 :=
     ENNReal.toReal_pos (finiteLpExponent_ne_zero q) q.lt_top.ne |>.ne'
@@ -61,7 +61,7 @@ private theorem aemeasurable_jacobian_enorm_rpow_parent {d : ℕ}
       (aemeasurable_smul_measure_iff
         (μ := volume.restrict (cubeSet Q))
         (f := fun x => HilbertMat.ofMat (V.jacobian x)) hcoeff).1 hnorm
-  exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hjacobian.enorm
+  exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hjacobian.eNorm
 
 private theorem aemeasurable_jacobian_enorm_rpow_overlap {d : ℕ}
     {Q S : TriadicCube d} {j : ℕ} (q : FiniteLpExponent)

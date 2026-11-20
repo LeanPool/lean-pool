@@ -85,7 +85,7 @@ theorem coxeterE8_pow_thirty : coxeterE8 ^ 30 = 1 := by
 `30/2 = 15`, `30/3 = 10`, `30/5 = 6` are not the identity (kernel computations), so no
 proper divisor of `30` kills it. -/
 theorem orderOf_coxeterE8 : orderOf coxeterE8 = 30 := by
-  refine orderOf_eq_of_pow_and_pow_div_prime (by norm_num) coxeterE8_pow_thirty ?_
+  refine orderOf_eq_of_pow_and_pow_div_prime coxeterE8_pow_thirty ?_
   intro p hp hdvd
   have h2p : 2 ≤ p := hp.two_le
   have hle : p ≤ 30 := Nat.le_of_dvd (by norm_num) hdvd

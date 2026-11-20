@@ -60,7 +60,7 @@ theorem gueOrderedMeasure_poincare_compactC1 {n : ℕ} (hn : 0 < n)
   obtain ⟨M, hM⟩ := hf.continuous_fderiv one_ne_zero
     |>.bounded_above_of_compact_support (hs.fderiv ℝ)
   let K : ℝ≥0 := ⟨max M 0, le_max_right _ _⟩
-  have hLip : LipschitzWith K f := lipschitzWith_of_nnnorm_fderiv_le
+  have hLip : LipschitzWith K f := lipschitzWith_of_nnNorm_fderiv_le
     (hf.differentiable (by norm_num)) (fun x => by
       change ‖fderiv ℝ f x‖≤max M 0
       exact (hM x).trans (le_max_left _ _))
@@ -74,8 +74,8 @@ theorem gueOrderedMeasure_poincare_compactC1 {n : ℕ} (hn : 0 < n)
       have hdt (x) : fderiv ℝ (fun x => 1+t*f x) x = t • fderiv ℝ f x := by
         rw [fderiv_const_add, fderiv_const_mul (hf.differentiable (by norm_num) x)]
       have hLipT : LipschitzWith (‖t‖₊*K) (fun x => 1+t*f x) :=
-        lipschitzWith_of_nnnorm_fderiv_le (hft.differentiable (by norm_num)) (fun x => by
-          rw [hdt, nnnorm_smul]
+        lipschitzWith_of_nnNorm_fderiv_le (hft.differentiable (by norm_num)) (fun x => by
+          rw [hdt, nnNorm_smul]
           apply mul_le_mul_of_nonneg_left _ (by positivity)
           change ‖fderiv ℝ f x‖≤max M 0
           exact (hM x).trans (le_max_left _ _))

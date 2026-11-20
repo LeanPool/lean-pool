@@ -4708,7 +4708,7 @@ lemma iteratedDerivWithin_Icc_interior_eq {f : ℝ → ℝ} {a b : ℝ} {x : ℝ
   congr 1
   have heq : (Set.Icc a b : Set ℝ) =ᶠ[𝓝 x] (Set.univ : Set ℝ) := by
     filter_upwards [h_nhds] with y hy
-    exact propext ⟨fun _ => trivial, fun _ => hy⟩
+    exact ⟨fun _ => trivial, fun _ => hy⟩
   rw [iteratedFDerivWithin_congr_set heq n, iteratedFDerivWithin_univ]
 
 /-- At the left endpoint of [c, x], iteratedDerivWithin equals iteratedDeriv for ContDiff functions.

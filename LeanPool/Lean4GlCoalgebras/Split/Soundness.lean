@@ -555,27 +555,7 @@ lemma chain_model_prop {𝕏 : Proof}
     -- Splitting directly after this would recompute the recursive chain.
     rcases chain prop w_prop n with ⟨x_ih, w_ih, w_ih_prop⟩
     simp only [evaluateSSeq, Lean.Elab.WF.paramLet]
-    split <;> intro box <;> try grind [RuleApp.isBox]
-    case h_16 Δ φ in_Δ r_def =>
-      simp only [RuleApp.isBox, r_def] at box ⊢
-      split
-      · exact (Classical.not_imp.1 (Classical.choose_spec
-          (not_forall.1 (fun z ↦
-            (not_exists.1 w_ih_prop) (Sum.inl (□ φ)) ⟨(r_def ▸ in_Δ), z⟩)))).1
-      all_goals
-        exfalso
-        have step := 𝕏.step x_ih
-        simp_all
-    case h_17 Δ φ in_Δ r_def =>
-      simp only [RuleApp.isBox, r_def] at box ⊢
-      split
-      · exact (Classical.not_imp.1 (Classical.choose_spec
-          (not_forall.1 (fun z ↦
-            (not_exists.1 w_ih_prop) (Sum.inr (□ φ)) ⟨(r_def ▸ in_Δ), z⟩)))).1
-      all_goals
-        exfalso
-        have step := 𝕏.step x_ih
-        simp_all
+    split <;> intro box <;> grind [RuleApp.isBox]
 
 /-- The right projection of `chain` eventually progresses. -/
 lemma has_children_of_chain_model {𝕏 : Proof}

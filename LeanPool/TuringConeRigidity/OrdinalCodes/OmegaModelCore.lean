@@ -62,7 +62,7 @@ def InCore (x : α) : Prop := ∃ n, S.mem x (S.level n)
 
 theorem num_accessible (n : ℕ) : Acc S.mem (S.num n) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     constructor
     intro x hx
     obtain ⟨k,hk,rfl⟩ := (S.num_mem x n).mp hx

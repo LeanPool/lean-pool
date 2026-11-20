@@ -125,7 +125,7 @@ theorem bu_short_extended_local_quadratic_l2
   have hAEM : AEMeasurable (fun z => ‖v z‖ₑ ^ (2 : ℝ))
       (volume.restrict S) := by
     exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      (hweak'.1.mono_set hS |>.aestronglyMeasurable.enorm)
+      (hweak'.1.mono_set hS |>.aestronglyMeasurable.eNorm)
   have hsplit := lintegral_add_left' hAEM
     (μ := volume.restrict S) (f := fun z => ‖v z‖ₑ ^ (2 : ℝ))
     (g := fun z => ‖Dv z‖ₑ ^ (2 : ℝ) +

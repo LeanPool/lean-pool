@@ -74,7 +74,7 @@ theorem buGaussian_initial_trace_strip_tendsto_zero
   have hDtmeas : AEStronglyMeasurable Dtv (volume.restrict K) :=
     hweak.2.2.2.1.aestronglyMeasurable
   have hDtLpK : MemLp Dtv 2 (volume.restrict K) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (μ := volume.restrict K)
       (by norm_num) (by norm_num) hDtmeas).2
     simpa [K] using hDtfin

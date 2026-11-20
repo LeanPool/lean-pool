@@ -32,7 +32,7 @@ variable {K : IntrinsicTwoComplex} {h : K.realization → Plane}
   {D : K.VertexDiskControl h} {C : K.CentralTubeControl hcont hinj D}
 
 /-- The closed standard triangle used as the source model for every intrinsic face. -/
-abbrev standardFaceRegion : Set Plane := standardTrianglePlaneComplex.support
+noncomputable abbrev standardFaceRegion : Set Plane := standardTrianglePlaneComplex.support
 
 /-- Its polygonal frontier, as a subtype. -/
 abbrev StandardFaceBoundary :=

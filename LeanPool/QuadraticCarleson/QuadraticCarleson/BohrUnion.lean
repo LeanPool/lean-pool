@@ -106,7 +106,7 @@ theorem sum_measure_sq_div_sum_inter_le_union {α ι : Type*} [MeasurableSpace �
   · apply (div_le_iff₀ hQpos).mpr
     exact sum_measure_sq_le_union_mul_sum_inter μ s E hE hfin
 
-private def bohrCell (n j : ℕ) (c : ℝ) : Set ℝ :=
+private noncomputable def bohrCell (n j : ℕ) (c : ℝ) : Set ℝ :=
   Ico (((n : ℝ) + j) / (4 * n)) (((n : ℝ) + j + c) / (4 * n))
 
 private theorem bohrCell_subset {n j : ℕ} {c : ℝ}

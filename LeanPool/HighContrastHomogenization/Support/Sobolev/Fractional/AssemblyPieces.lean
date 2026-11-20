@@ -26,7 +26,7 @@ Three small bridges used by the final estimate:
 * `MemWsp`-side restriction: global `L^p` membership on the parent cube
   restricts to every enlarged center cube (with the normalization change
   absorbed into a finite scalar);
-* the kernel identification: the `p`-th enorm power of the Gagliardo kernel
+* the kernel identification: the `p`-th eNorm power of the Gagliardo kernel
   is exactly the distance power times the difference power (U4);
 * the lintegral of the Gagliardo product measure as a normalized plain
   product integral.
@@ -66,7 +66,7 @@ theorem memLp_overlap_of_memLp {Q : TriadicCube d} {p : ℝ≥0∞}
         mul_inv_cancel₀ hvolQ.ne', ENNReal.ofReal_one, mul_one]
     rw [hcancel]
     refine Measure.le_iff'.2 fun A => ?_
-    simp only [Measure.smul_apply, smul_eq_mul]
+    simp only [smul_apply, smul_eq_mul]
     refine mul_le_mul_right ?_ _
     have hres : ScalarOverlap.cubeMeasure S ≤ HCPolySupport.cubeMeasure Q := by
       rw [ScalarOverlap.cubeMeasure, HCPolySupport.cubeMeasure]
@@ -77,7 +77,7 @@ theorem memLp_overlap_of_memLp {Q : TriadicCube d} {p : ℝ≥0∞}
     ENNReal.mul_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top
   exact ((hu.smul_measure hfin).mono_measure hdom)
 
-/-- U4 (kernel identification): pointwise, the `p`-th enorm power of the
+/-- U4 (kernel identification): pointwise, the `p`-th eNorm power of the
 Gagliardo kernel splits into the distance power times the difference power.
 Both sides vanish on the diagonal, so no case split is needed downstream. -/
 theorem enorm_gagliardoKernel_rpow (s : ℝ) {p : ℝ≥0∞} (hp0 : p ≠ 0)
@@ -88,13 +88,13 @@ theorem enorm_gagliardoKernel_rpow (s : ℝ) {p : ℝ≥0∞} (hp0 : p ≠ 0)
   have hpr : (0 : ℝ) < p.toReal := ENNReal.toReal_pos hp0 hpt
   have hdist : (0 : ℝ) ≤ dist z.1 z.2 := dist_nonneg
   rw [gagliardoKernel_apply]
-  rw [enorm_smul]
+  rw [eNorm_smul]
   rw [ENNReal.mul_rpow_of_nonneg _ _ hpr.le]
   congr 1
   -- scalar factor: ‖dist ^ (-kernelExponent)‖ₑ ^ pr = ofReal (dist ^ (-(s pr + d)))
   have hker : -kernelExponent d s p * p.toReal = -(s * p.toReal + d) := by
     rw [kernelExponent, neg_mul, add_mul, div_mul_cancel₀ _ hpr.ne']
-  rw [Real.enorm_eq_ofReal_abs,
+  rw [Real.eNorm_eq_ofReal_abs,
     abs_of_nonneg (Real.rpow_nonneg hdist _),
     ENNReal.ofReal_rpow_of_nonneg (Real.rpow_nonneg hdist _) hpr.le,
     ← Real.rpow_mul hdist, hker]

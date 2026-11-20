@@ -266,13 +266,13 @@ theorem lintegral_eLpNorm_real_slice_sq {μt : Measure ℝ} [SFinite μt] {F : V
   have hsq (x : ℝ≥0∞) : (x ^ (1 / (2 : ℝ))) ^ (2 : ℝ) = x := by
     rw [← ENNReal.rpow_mul]
     norm_num
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     hF.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, hsq]
-  rw [lintegral_prod_symm' _ (hF.measurable.enorm.pow_const _)]
+  rw [lintegral_prod_symm' _ (hF.measurable.eNorm.pow_const _)]
   apply lintegral_congr
   intro t
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) (hslice t)]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) (hslice t)]
   simp only [ENNReal.toReal_ofNat, hsq]
 
 /-- The quadratic pressure field of a continuous velocity curve is square

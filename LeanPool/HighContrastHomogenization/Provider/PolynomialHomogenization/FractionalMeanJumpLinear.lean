@@ -41,7 +41,7 @@ private theorem normalizedJumpMeasure_isProbability {E : Set (Vec d)}
     (hEpos : 0 < volume E) (hEtop : volume E ≠ ⊤) :
     IsProbabilityMeasure (normalizedJumpMeasure E) := by
   refine ⟨?_⟩
-  rw [normalizedJumpMeasure, Measure.smul_apply, Measure.restrict_apply_univ,
+  rw [normalizedJumpMeasure, smul_apply, Measure.restrict_apply_univ,
     smul_eq_mul]
   exact ENNReal.inv_mul_cancel hEpos.ne' hEtop
 
@@ -119,7 +119,7 @@ theorem edist_volumeAverageVec_le_crossDistanceAverage
     calc
       ‖∫ x, GH x - ∫ y, GH y ∂μF ∂μE‖ₑ ≤
           ∫⁻ x, ‖GH x - ∫ y, GH y ∂μF‖ₑ ∂μE :=
-        enorm_integral_le_lintegral_enorm _
+        eNorm_integral_le_lintegral_eNorm _
       _ ≤ ∫⁻ x, ∫⁻ y, ‖GH x - GH y‖ₑ ∂μF ∂μE := by
         apply lintegral_mono
         intro x
@@ -131,13 +131,13 @@ theorem edist_volumeAverageVec_le_crossDistanceAverage
         change ‖GH x - ∫ y, GH y ∂μF‖ₑ ≤
           ∫⁻ y, ‖GH x - GH y‖ₑ ∂μF
         rw [hinnerRewrite]
-        exact enorm_integral_le_lintegral_enorm _
+        exact eNorm_integral_le_lintegral_eNorm _
   rw [hmeansE, hmeansF] at houter
   calc
     edist (HilbertVec.ofVec (volumeAverageVec E G))
         (HilbertVec.ofVec (volumeAverageVec F G)) ≤
         ∫⁻ x, ∫⁻ y, ‖GH x - GH y‖ₑ ∂μF ∂μE := by
-      simpa only [edist_eq_enorm_sub] using houter
+      simpa only [eDist_eq_eNorm_sub] using houter
     _ =
         ∫⁻ x, ∫⁻ y,
           ENNReal.ofReal (euclideanDist (G x) (G y)) ∂μF ∂μE := by

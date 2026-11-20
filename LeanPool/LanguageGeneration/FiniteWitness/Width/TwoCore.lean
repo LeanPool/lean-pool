@@ -27,9 +27,9 @@ def HasRight (L : Set Point) : Prop := ∀ n, Sum.inr n ∈ L
 def family : Set (Set Point) := {L | HasLeft L ∨ HasRight L}
 
 /-- A full left copy together with an arbitrary subset of the right copy. -/
-def leftTarget (D : Set ℕ) : Set Point := Sum.elim (fun _ => True) (fun n => n ∈ D)
+def leftTarget (D : Set ℕ) : Set Point := {p | Sum.elim (fun _ => True) (fun n => n ∈ D) p}
 /-- A full right copy together with an arbitrary subset of the left copy. -/
-def rightTarget (E : Set ℕ) : Set Point := Sum.elim (fun n => n ∈ E) (fun _ => True)
+def rightTarget (E : Set ℕ) : Set Point := {p | Sum.elim (fun n => n ∈ E) (fun _ => True) p}
 
 @[simp] theorem inl_left (D : Set ℕ) (n : ℕ) : Sum.inl n ∈ leftTarget D := trivial
 @[simp] theorem inr_right (E : Set ℕ) (n : ℕ) : Sum.inr n ∈ rightTarget E := trivial

@@ -379,7 +379,7 @@ private theorem binaryRippleAddScanTM_suffix_reachesIn {n : ℕ}
       c'.output = out₀ := by
   induction hlength : lhs.length + rhs.length using Nat.strong_induction_on
       generalizing lhs rhs carry emitted inp₀ work₀ out₀ with
-  | h total ih =>
+  | ind total ih =>
     cases lhs with
     | nil =>
       exact binaryRippleAddScanTM_suffix_empty_left lhsIdx rhsIdx resultIdx

@@ -97,7 +97,7 @@ private theorem tendsto_dyadicChainBound {gamma : ℝ} (hgamma : 0 < gamma) :
 
 /-- The event that some adjacent increment of the level-`n` subdivision of `[0, T]` reaches the
 level's Kolmogorov--Chentsov threshold. -/
-private def badLevel (T : ℝ≥0) (p gamma : ℝ) (n : ℕ) : Set (ContinuousPath alpha) :=
+private noncomputable def badLevel (T : ℝ≥0) (p gamma : ℝ) (n : ℕ) : Set (ContinuousPath alpha) :=
   finiteGridBadIncrement (fun (t : ℝ≥0) (omega : ContinuousPath alpha) ↦ omega t)
     (fun i : Fin (2 ^ n + 1) ↦ dyadicTime T n (i : ℕ)) p (dyadicIncrementThreshold gamma n)
 
@@ -270,7 +270,7 @@ theorem ContinuousPath.exists_measure_compl_modulusSet_le {p q : ℝ} {M : ℝ�
         _ ≤ ∑' k : ℕ, mu (badLevel T p gamma (N + k)) := measure_iUnion_le _
         _ ≤ ∑' k : ℕ, (T : ℝ≥0∞) ^ q *
               ((M * dyadicIncrementDecayRatio p q gamma ^ (N + k) : ℝ≥0) : ℝ≥0∞) :=
-            ENNReal.tsum_le_tsum fun k ↦ measure_badLevel_le hX hgamma T (N + k)
+            tsum_le_tsum fun k ↦ measure_badLevel_le hX hgamma T (N + k)
         _ = (T : ℝ≥0∞) ^ q *
               ∑' k : ℕ, ((M * dyadicIncrementDecayRatio p q gamma ^ (N + k) : ℝ≥0) : ℝ≥0∞) :=
             ENNReal.tsum_mul_left

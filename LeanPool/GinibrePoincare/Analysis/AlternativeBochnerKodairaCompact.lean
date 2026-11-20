@@ -54,11 +54,11 @@ structure BKCompactTest (n : ℕ) where
 
 instance {n : ℕ} : CoeFun (BKCompactTest n) (fun _ => Configuration n → ℂ) := ⟨BKCompactTest.toFun⟩
 
-/-- The coordinate derivative `∂̄_j f` of a compact smooth test, again a compact smooth test. -/
+/-- The coordinate derivative `dbar_j f` of a compact smooth test, again a compact smooth test. -/
 def BKCompactTest.dbar {n : ℕ} (f : BKCompactTest n) (j : Fin n) : BKCompactTest n :=
   ⟨dbarComponent f j, bkDbar_contDiff f.smooth j, hasCompactSupport_dbarComponent f.compact j⟩
 
-/-- The Gaussian adjoint `gaussianDbarAdjointTest j f` of `∂̄_j` applied to a compact smooth
+/-- The Gaussian adjoint `gaussianDbarAdjointTest j f` of `dbar_j` applied to a compact smooth
 test, again a compact smooth test. -/
 def BKCompactTest.adjoint {n : ℕ} (f : BKCompactTest n) (j : Fin n) : BKCompactTest n :=
   ⟨gaussianDbarAdjointTest j f, bkAdjoint_contDiff f.smooth j, bkAdjoint_compact f.compact j⟩

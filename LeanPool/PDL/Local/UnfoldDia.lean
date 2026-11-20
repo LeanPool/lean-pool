@@ -267,14 +267,14 @@ theorem Dset_goes_down_prog (α : Program) {Fs δ} (in_D : (Fs, δ) ∈ Dset α)
       cases β
       all_goals
         simp_all [Dset, lengthOfProgram, Program.isAtomic, Program.isStar]
-        try linarith
+      all_goals linarith
     · simp_all only [ite_false, List.mem_singleton, Prod.mk.injEq, List.mem_append]
       rcases in_δ with bla | γ_eq_β
       · have IHα := Dset_goes_down_prog α Fs'_in bla
         cases α
         all_goals
           simp_all [Dset, lengthOfProgram, Program.isAtomic, Program.isStar]
-          try linarith
+        all_goals linarith
       · subst γ_eq_β
         linarith
   case union α β =>

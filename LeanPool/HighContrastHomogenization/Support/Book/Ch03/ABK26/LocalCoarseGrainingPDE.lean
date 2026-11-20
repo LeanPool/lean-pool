@@ -269,11 +269,11 @@ theorem localSymmetricEnergyENorm_ne_top {d : ℕ}
   have hnorm_ne_top :
       ∫⁻ x, ‖coefficientEnergyDensity a.toCoeffField u.grad x‖ₑ
         ∂normalizedCubeMeasure R ≠ ⊤ := by
-    exact ne_of_lt (MeasureTheory.hasFiniteIntegral_iff_enorm.mp
+    exact ne_of_lt (MeasureTheory.hasFiniteIntegral_iff_eNorm.mp
       (integrable_coefficientEnergyDensity_normalizedCubeMeasure R a u).hasFiniteIntegral)
   exact ne_top_of_le_ne_top
     hnorm_ne_top
-    (MeasureTheory.lintegral_ofReal_le_lintegral_enorm _)
+    (MeasureTheory.lintegral_ofReal_le_lintegral_eNorm _)
 
 end
 

@@ -223,7 +223,7 @@ theorem kickAnnMax_le_of_mem_eventG2 (M : ABKModel d) (s : {s : ℝ // 0 < s}) {
     have h1 : annularWeight (s : ℝ) (k - i) * errorAnnSup M s j i omega
         ≤ ∑' n : {n : ℤ // n ≤ j - 1},
             annularWeight (s : ℝ) (k - n.1) * errorAnnSup M s j n.1 omega :=
-      ENNReal.le_tsum (f := fun n : {n : ℤ // n ≤ j - 1} =>
+      le_tsum (fun n : {n : ℤ // n ≤ j - 1} =>
           annularWeight (s : ℝ) (k - n.1) * errorAnnSup M s j n.1 omega)
         (⟨i, hij⟩ : {n : ℤ // n ≤ j - 1})
     have h2 : (∑' n : {n : ℤ // n ≤ j - 1},
@@ -231,7 +231,7 @@ theorem kickAnnMax_le_of_mem_eventG2 (M : ABKModel d) (s : {s : ℝ // 0 < s}) {
         = annularWeight (s : ℝ) (k - j) * XcalE M s j omega :=
       inner_eq_annularWeight_mul_XcalE M s k j omega
     have h3 : annularWeight (s : ℝ) (k - j) * XcalE M s j omega ≤ XrowE M s k omega :=
-      ENNReal.le_tsum (f := fun j' : {j : ℤ // j ≤ k} =>
+      le_tsum (fun j' : {j : ℤ // j ≤ k} =>
           annularWeight (s : ℝ) (k - j'.1) * XcalE M s j'.1 omega)
         (⟨j, hjk⟩ : {j : ℤ // j ≤ k})
     rw [h2] at h1
@@ -338,7 +338,7 @@ theorem annularKickE_le_of_mem_eventG2 (M : ABKModel d) (s : {s : ℝ // 0 < s})
   have hEle : annularKickE M s j omega
       ≤ ∑' p : ℕ, ENNReal.ofReal (A * weightThird (3 * ((s : ℝ) / 8)) (p + 1)) := by
     rw [annularKickE_eq_wsumE, wsumE]
-    exact ENNReal.tsum_le_tsum fun p => ENNReal.ofReal_le_ofReal (hterm p)
+    exact tsum_le_tsum fun p => ENNReal.ofReal_le_ofReal (hterm p)
   have hEq : (∑' p : ℕ, ENNReal.ofReal (A * weightThird (3 * ((s : ℝ) / 8)) (p + 1)))
       = ENNReal.ofReal (∑' p : ℕ, A * weightThird (3 * ((s : ℝ) / 8)) (p + 1)) :=
     (ENNReal.ofReal_tsum_of_nonneg

@@ -2218,7 +2218,7 @@ private theorem SpecialPeriods.equalDiagonalTriangular_pow_succ_mo1973_15916 {R 
     rw [pow_succ, ih, Matrix.mul_fin_two]
     ext i j
     fin_cases i <;> fin_cases j <;> simp [pow_succ, Nat.cast_add, Nat.cast_one]
-    all_goals ring
+    ring
 
 private theorem SpecialPeriods.integerTriangular_pow_upper_right_dvd_mo1973_15917 (a b : ℤ)
     (n : ℕ) : (n : ℤ) ∣ ((!![a, b; 0, a] : Matrix (Fin 2) (Fin 2) ℤ) ^ n) 0 1 := by
@@ -2311,7 +2311,8 @@ private theorem SpecialPeriods.Triangle.shimizuTranslation_injective :
 
 private theorem
     SpecialPeriods.Triangle.shimizuTranslation_continuous : Continuous shimizuTranslation := by
-  apply Topology.IsInducing.subtypeVal.continuous_iff.mpr
+  apply (Topology.IsEmbedding.subtypeVal.isInducing.continuous_iff
+    (f := shimizuTranslation)).mpr
   change Continuous (fun t : ℝ => (!![1, t; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ))
   apply continuous_matrix
   intro i j
@@ -2368,7 +2369,7 @@ private theorem SpecialPeriods.Triangle.translationSubgroup_cyclic (Γ : Subgrou
   have hc : IsAddCyclic (translationSubgroup Γ) :=
     AddSubgroup.isAddCyclic_iff_discreteTopology.mpr inferInstance
   obtain ⟨t, ht⟩ :=
-    (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top (translationSubgroup Γ)).mp hc
+    (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq (translationSubgroup Γ)).mp hc
   exact ⟨t, ht.symm⟩
 
 private theorem SpecialPeriods.Triangle.width_mem_translationSubgroup_matrixGroup :
@@ -5585,8 +5586,8 @@ private theorem SpecialPeriods.Triangle.cayleyCoordinate_hasStrictDerivAt_center
     have hd' : HasStrictDerivAt (fun z : ℂ => z - starRingEnd ℂ (a : ℂ)) 1 (a : ℂ) :=
       (hasStrictDerivAt_id (a : ℂ)).sub_const (starRingEnd ℂ (a : ℂ))
     convert hn.div hd' hd using 1
-    all_goals
-      (field_simp; ring)
+    field_simp
+    ring
   apply h.congr_of_eventuallyEq
   filter_upwards [UpperHalfPlane.eventuallyEq_coe_comp_ofComplex a.im_pos] with z hz
   change (UpperHalfPlane.ofComplex z : ℂ) = z at hz

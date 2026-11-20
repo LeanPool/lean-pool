@@ -41,7 +41,7 @@ theorem pdlRuleSat (r : PdlRule X Y) (satX : satisfiable X) : satisfiable Y := b
     simp only [Sequent.toFinset, Option.map_some, Sum.elim_inl, negUnload, unload_boxes,
       LoadFormula.unload, Option.toFinset_some,  Finset.union_singleton,
        Finset.mem_insert, Finset.mem_union, Finset.mem_erase, ne_eq] at φ_in
-    rcases φ_in with φ_def | ⟨φ_neq, bla⟩ | bla <;>
+    rcases φ_in with φ_def | ⟨φ_neq, bla⟩ | bla
     all_goals
       apply w_; simp [Sequent.toFinset]; grind only []
   case loadR =>
@@ -323,7 +323,7 @@ lemma not_edge_and_heart {X} {tab : Tableau .nil X} {a b : PathIn tab} : ¬ (a �
           rw [help] at con
           have := congrArg (fun X : Sequent => X.2.2) con
           simp only [Option.some.injEq, Sum.inl.injEq, NegLoadFormula.neg.injEq] at this
-          try cases this
+          cases this
       case modR LX' RX' n ξ X_def Y_def =>  -- same as modL
         subst Y_def
         rw [X_def] at con
@@ -344,7 +344,7 @@ lemma not_edge_and_heart {X} {tab : Tableau .nil X} {a b : PathIn tab} : ¬ (a �
           rw [help] at con
           have := congrArg (fun X : Sequent => X.2.2) con
           simp only [Option.some.injEq, Sum.inr.injEq, NegLoadFormula.neg.injEq] at this
-          try cases this
+          cases this
   exact node_ne node_eq
 
 /-- An ordinary tableau edge or an edge to a repeat's companion. -/
@@ -1416,12 +1416,8 @@ theorem loadedDiamondPaths (α : Program) (αs : List Program) {X : Sequent}
               rw [Program.isAtomic_iff] at this
               rcases this with ⟨b, β_def⟩
               subst α_def β_def
-              have := lengthOfProgram_gt_zero
               simp only [lengthOfProgram]
-              try rw [add_assoc]
-              try simp only [lt_add_iff_pos_right]
-              simp [this]
-              try omega
+              grind only [lengthOfProgram_gt_zero]
             have ⟨s, s1_s, s_cons⟩ :=
               loadedDiamondPaths β βs tab root_free s1 v_s1 φ anf_in_s1 v_seq_w w_nφ
             exact loadedDiamondResult_prepend

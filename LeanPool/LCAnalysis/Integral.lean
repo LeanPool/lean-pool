@@ -184,8 +184,7 @@ theorem hasDirDerivAt_weakIntegral {f : E × ℝ → F} {U : Set E} {T : Set ℝ
       (by fun_prop : Continuous fun z : ℝ × ℝ ↦ ((x, z.2), z.1)).tendsto' _ _ rfl
     filter_upwards [hmap.eventually hev] with z hz hz0
     have := hz hz0
-    change W _
-    simpa only [Prod.smul_mk, Prod.mk_add_mk, smul_zero, add_zero] using this
+    simpa only [Set.mem_eq_mem, Prod.smul_mk, Prod.mk_add_mk, smul_zero, add_zero] using this
   have htube := isCompact_Icc.eventually_forall_of_forall_eventually
     (P := fun s t ↦ s ≠ 0 → s⁻¹ • (f (x + s • h, t) - f (x, t)) - D (x, t) h ∈ W) hloc
   have hxU : ∀ᶠ s : ℝ in 𝓝 0, x + s • h ∈ U := by

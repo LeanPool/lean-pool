@@ -284,13 +284,13 @@ instance (R : Rounding) : ValidRounder (roundFunction R) := by
   <;> infer_instance
 
 /-- Round a rational to a representation using the rounding mode in scope. -/
-def roundRep [R : Rounding] (q : ℚ) : FloatRep C := roundf (roundFunction R) q
+def roundRep (R : Rounding) (q : ℚ) : FloatRep C := roundf (roundFunction R) q
 
-lemma round_rep_coe [R : Rounding] (f : FloatRep C) (h : f.validM) :
-  roundRep (coeQ f) = f := roundf_coe (roundFunction R) f h
+lemma round_rep_coe {R : Rounding} (f : FloatRep C) (h : f.validM) :
+  roundRep R (coeQ f) = f := roundf_coe (roundFunction R) f h
 
-lemma round_valid_m [R : Rounding] (q : ℚ) (q_nezero : q ≠ 0) :
-  (roundRep q : FloatRep C).validM := roundf_valid (roundFunction R) q q_nezero
+lemma round_valid_m {R : Rounding} (q : ℚ) (q_nezero : q ≠ 0) :
+  (roundRep R q : FloatRep C).validM := roundf_valid (roundFunction R) q q_nezero
 
 lemma roundf_min_abs_e (r : IntRounder) [rh : ValidRounder r] {q : ℚ} (h : q ≠ 0) :
   Int.log 2 |q| ≤ (roundf r |q| : FloatRep C).e := by
@@ -330,8 +330,8 @@ lemma round_min_e (r : IntRounder) [rh : ValidRounder r] {q : ℚ} (h : q ≠ 0)
     exact neg_ne_zero.mpr h
   linarith
 
-lemma round_min_e' [R : Rounding] (q : ℚ) (h : q ≠ 0) :
-  Int.log 2 |q| ≤ (roundRep q : FloatRep C).e :=
+lemma round_min_e' {R : Rounding} (q : ℚ) (h : q ≠ 0) :
+  Int.log 2 |q| ≤ (roundRep R q : FloatRep C).e :=
   round_min_e (roundFunction R) h
 
 lemma convert_rep_strict_mono (q : ℚ) :
@@ -520,8 +520,8 @@ lemma roundf_in_range (r : IntRounder) [rh : ValidRounder r] {q : ℚ} (q_nezero
   (roundf r q : FloatRep C).e ≤ C.emax :=
   round_max_e r q_nezero C.emax h
 
-lemma round_rep_in_range [R : Rounding] {q : ℚ} (q_nezero : q ≠ 0) (h : |q| ≤ maxFloatQ C) :
-  (roundRep q : FloatRep C).e ≤ C.emax :=
+lemma round_rep_in_range {R : Rounding} {q : ℚ} (q_nezero : q ≠ 0) (h : |q| ≤ maxFloatQ C) :
+  (roundRep R q : FloatRep C).e ≤ C.emax :=
   round_max_e (roundFunction R) q_nezero C.emax h
 
 

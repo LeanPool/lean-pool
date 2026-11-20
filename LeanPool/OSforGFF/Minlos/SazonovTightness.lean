@@ -185,7 +185,7 @@ lemma gaussDensity_integrable' (σ : ℝ) (hσ : 0 < σ) :
 omit [SecondCountableTopology V] in
 lemma gaussDensity_integral_pos' (σ : ℝ) (hσ : 0 < σ) :
     0 < ∫ x : V, gaussDensity σ x := by
-  apply integral_pos_of_integrable_nonneg_nonzero (x := 0)
+  apply integral_pos_of_integrable_nonneg_ne_zero (x := 0)
     (gaussDensity_continuous' σ) (gaussDensity_integrable' σ hσ)
     (fun x => gaussDensity_nonneg' σ x)
     (ne_of_gt (Real.exp_pos _))
@@ -317,8 +317,8 @@ theorem fubini_gaussian_charFun
         mul_one, forall_const, Std.le_refl, eventually_true]
     · simp_all only [ne_eq, ofReal_div, ofReal_mul, ofReal_pow, ofReal_ofNat, ofReal_exp, one_div,
         mul_inv_rev, neg_mul, ofReal_neg, ofReal_inv, Complex.norm_mul, norm_exp_ofReal_mul_I,
-        mul_one, forall_const, uncurry_apply_pair, enorm_ne_top, not_false_eq_true,
-        integrable_const_enorm]
+        mul_one, forall_const, uncurry_apply_pair, eNorm_ne_top, not_false_eq_true,
+        integrable_const_eNorm]
   have fubini := integral_integral_swap hprod
   have lhs_eq : ∫ y, (∫ x, (gaussDensity σ x : ℂ) * cexp (↑⟪y, x⟫_ℝ * I)) ∂μ.toMeasure =
       ↑C * ∫ y, cexp (-(σ ^ 2 * ‖y‖ ^ 2 / 2 : ℝ)) ∂μ.toMeasure := by

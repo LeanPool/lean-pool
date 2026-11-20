@@ -118,7 +118,7 @@ private lemma lintegral_ofReal_rpow_lt_top {α : Type*} [MeasurableSpace α] {μ
   have hp0 : ENNReal.ofReal p ≠ 0 := by
     rw [Ne, ENNReal.ofReal_eq_zero, not_le]
     exact hp
-  have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp0 ENNReal.ofReal_ne_top
+  have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top hp0 ENNReal.ofReal_ne_top
     hg.aestronglyMeasurable).mp hg.eLpNorm_lt_top
   rw [ENNReal.toReal_ofReal hp.le] at h
   have heq : ∫⁻ y, ‖g y‖ₑ ^ p ∂μ = ∫⁻ y, ENNReal.ofReal (g y) ^ p ∂μ := by

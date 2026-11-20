@@ -199,7 +199,7 @@ lemma chartMeasure_restrict_le_hausdorff (i : dR.d.ι) :
           ((dR.C i : ℝ≥0∞) ^ (Module.finrank ℝ E : ℝ)) * μE (t ∩ S) := by
       simpa [hμM, μE] using hleHaus
     -- Convert the inequality to the restricted-measure form.
-    simpa [Measure.restrict_apply, ht_meas, Measure.smul_apply, hChart] using hle'
+    simpa [Measure.restrict_apply, ht_meas, smul_apply, hChart] using hle'
   -- Conclude for `A` via monotonicity and `toMeasurable`.
   have hright_A :
       ((dR.C i : ℝ≥0∞) ^ (Module.finrank ℝ E : ℝ)) • (μE.restrict S) t =
@@ -358,7 +358,7 @@ lemma hausdorff_restrict_le_chartMeasure (i : dR.d.ι) :
   have hmain_t :
       (μE.restrict S) t ≤ ((dR.Cfwd i : ℝ≥0∞) ^ (Module.finrank ℝ E : ℝ)) • (chartMeasure.restrict
         S) t := by
-    simpa [Measure.restrict_apply, ht_meas, Measure.smul_apply, hS_meas, hle'] using hle'
+    simpa [Measure.restrict_apply, ht_meas, smul_apply, hS_meas, hle'] using hle'
   have hright_A :
       ((dR.Cfwd i : ℝ≥0∞) ^ (Module.finrank ℝ E : ℝ)) • (chartMeasure.restrict S) t =
         ((dR.Cfwd i : ℝ≥0∞) ^ (Module.finrank ℝ E : ℝ)) • (chartMeasure.restrict S) A := by

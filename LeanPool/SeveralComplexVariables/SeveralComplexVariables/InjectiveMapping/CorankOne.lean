@@ -69,7 +69,7 @@ theorem isInvertible_fderiv_of_injOn_of_invertible_partial
     (hpart : ((fderiv ℂ (fun z => (f z).2) (a, b)).comp
       (ContinuousLinearMap.inr ℂ ℂ P)).IsInvertible) :
     (fderiv ℂ f (a, b)).IsInvertible := by
-  let := FiniteDimensional.complete ℂ P
+  let := FiniteDimensional.completeSpace ℂ P
   have hfs : DifferentiableOn ℂ (fun z => (f z).2) D := hf.snd
   obtain ⟨U, V, g, hU, ha, hV, hb, hUV, hg, hm, hga, _, heq⟩ :=
     exists_holomorphic_implicit_mapping hD hfs hab hpart

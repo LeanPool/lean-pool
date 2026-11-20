@@ -173,7 +173,7 @@ noncomputable def dtraceQC (y : ℂ) : ℂ := 5 * y ^ 4 + 4 * y ^ 3 - 15 * y ^ 2
 lemma tracePoly_derivative_eval (w : ℂ) : (derivative tracePoly).eval w = dtraceQC w := by
   unfold tracePoly dtraceQC
   simp
-  try ring
+  ring
 
 /-- **THE SALEM TRACE ROOT IS SIMPLE**: `q'(y₅) = ∏_{i<5}(y₅ − yᵢ) ≠ 0`. -/
 lemma dtrace_y5_ne_zero : dtraceQC (y5 : ℂ) ≠ 0 := by
@@ -227,7 +227,7 @@ lemma LC_derivative_eval (z : ℂ) :
       10 * z ^ 9 + 9 * z ^ 8 - 7 * z ^ 6 - 6 * z ^ 5 - 5 * z ^ 4 - 4 * z ^ 3 - 3 * z ^ 2 + 1 := by
   rw [LC_poly]
   simp [derivative_add, derivative_sub, derivative_X, derivative_one]
-  try ring
+  ring
 
 /-- **THE DERIVATIVE–TRACE IDENTITY**: differentiating `L(z) = z⁵ q(z + 1/z)` and
     clearing denominators: `z²·L'(z) = 5z⁶·q(y) + (z⁷ − z⁵)·q'(y)` at `y = z + 1/z`. -/

@@ -68,10 +68,10 @@ theorem ae_ne_top_of_eLpNorm_le_ofReal
     exact hQ
   have hnormTop : eLpNorm M (ENNReal.ofReal Q) P < ⊤ :=
     hnorm.trans_lt ENNReal.ofReal_lt_top
-  have hlinRaw := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have hlinRaw := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     hp0 ENNReal.ofReal_ne_top hnormTop
   have hlin : (∫⁻ a, M a ^ Q ∂P) < ⊤ := by
-    simpa only [ENNReal.toReal_ofReal hQ.le, enorm_eq_self] using hlinRaw
+    simpa only [ENNReal.toReal_ofReal hQ.le, eNorm_eq_self] using hlinRaw
   filter_upwards [ae_lt_top' (hM.pow_const Q) hlin.ne] with a ha
   exact ((ENNReal.rpow_lt_top_iff_of_pos hQ).mp ha).ne
 
@@ -141,13 +141,13 @@ theorem profileBadEnergy_le_of_complete_maximum
       eLpNorm (fun a => ENNReal.ofReal C * bad.indicator M a) 2 P := by
     have hmeasBad : AEStronglyMeasurable (bad.indicator fun a =>
         M a ^ (1 / 2 : ℝ) * ENNReal.ofReal (energy a)) P := hmeas
-    apply eLpNorm_mono_enorm_ae hmeasBad
+    apply eLpNorm_mono_eNorm_ae hmeasBad
     filter_upwards [hfinite] with a ha
     by_cases habad : a ∈ bad
-    · simp only [Set.indicator_of_mem habad, enorm_eq_self]
+    · simp only [Set.indicator_of_mem habad, eNorm_eq_self]
       exact rpow_half_mul_ofReal_le_of_le_sqrt_toReal ha hC
         (henergy a ha habad)
-    · simp only [Set.indicator_of_notMem habad, mul_zero, enorm_zero]
+    · simp only [Set.indicator_of_notMem habad, mul_zero, eNorm_zero]
       exact le_rfl
   have hmaximum := eLpNorm_indicator_gt_one_le_profileBadMajorant
     P hQ hh hbeta hM hW hpoint hnorm hmoment
@@ -180,16 +180,16 @@ theorem profileGoodEnergy_le_of_pointwise
           eLpNorm (fun _ : CoeffSpace d => ENNReal.ofReal C) 2 P := by
         have hmeasGood : AEStronglyMeasurable (good.indicator fun a =>
             ENNReal.ofReal (energy a)) P := hmeas
-        apply eLpNorm_mono_enorm hmeasGood
+        apply eLpNorm_mono_eNorm hmeasGood
         intro a
         by_cases hgood : a ∈ good
-        · simp only [Set.indicator_of_mem hgood, enorm_eq_self]
+        · simp only [Set.indicator_of_mem hgood, eNorm_eq_self]
           exact ENNReal.ofReal_le_ofReal (henergy a hgood)
-        · simp only [Set.indicator_of_notMem hgood, enorm_zero]
+        · simp only [Set.indicator_of_notMem hgood, eNorm_zero]
           exact zero_le
       _ = ENNReal.ofReal C := by
         rw [eLpNorm_const _ (by norm_num) (IsProbabilityMeasure.ne_zero P),
-          measure_univ, ENNReal.one_rpow, mul_one, enorm_eq_self]
+          measure_univ, ENNReal.one_rpow, mul_one, eNorm_eq_self]
   have hfac0 : 0 ≤ (3 : ℝ) ^ (-alpha * (H : ℝ)) :=
     Real.rpow_nonneg (by norm_num) _
   calc
@@ -225,16 +225,16 @@ theorem profileGoodEnergyAt_le_of_pointwise
           eLpNorm (fun _ : CoeffSpace d => ENNReal.ofReal C) 2 P := by
         have hmeasGood : AEStronglyMeasurable (good.indicator fun a =>
             ENNReal.ofReal (energy a)) P := hmeas
-        apply eLpNorm_mono_enorm hmeasGood
+        apply eLpNorm_mono_eNorm hmeasGood
         intro a
         by_cases hgood : a ∈ good
-        · simp only [Set.indicator_of_mem hgood, enorm_eq_self]
+        · simp only [Set.indicator_of_mem hgood, eNorm_eq_self]
           exact ENNReal.ofReal_le_ofReal (henergy a hgood)
-        · simp only [Set.indicator_of_notMem hgood, enorm_zero]
+        · simp only [Set.indicator_of_notMem hgood, eNorm_zero]
           exact zero_le
       _ = ENNReal.ofReal C := by
         rw [eLpNorm_const _ (by norm_num) (IsProbabilityMeasure.ne_zero P),
-          measure_univ, ENNReal.one_rpow, mul_one, enorm_eq_self]
+          measure_univ, ENNReal.one_rpow, mul_one, eNorm_eq_self]
   have hfac0 : 0 ≤ (3 : ℝ) ^ (-alpha * (H : ℝ)) :=
     Real.rpow_nonneg (by norm_num) _
   calc

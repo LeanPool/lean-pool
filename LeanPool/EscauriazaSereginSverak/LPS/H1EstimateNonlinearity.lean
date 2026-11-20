@@ -495,11 +495,11 @@ theorem lps_h1_infinite_nonlinear_pairing_bound
     memLp_one_iff_integrable.mp hGL
   have hMnonneg : 0 ≤ M := ENNReal.toReal_nonneg
   have hUaebound : ∀ᵐ x ∂volume, U x ≤ M := by
-    have hEss := enorm_ae_le_eLpNormEssSup U volume
+    have hEss := eNorm_ae_le_eLpNormEssSup U volume
     rw [← eLpNorm_exponent_top hUmeas] at hEss
     filter_upwards [hEss] with x hx
     have hUeq : ‖U x‖ₑ = ENNReal.ofReal (U x) :=
-      Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)
+      Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)
     have hle : ENNReal.ofReal (U x) ≤ eLpNorm U ⊤ volume := by
       simpa only [hUeq] using hx
     have hreal := ENNReal.toReal_mono huInf.eLpNorm_ne_top hle

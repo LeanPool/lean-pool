@@ -6983,7 +6983,7 @@ theorem fullRootExteriorPolynomialAction_contraction_commute
   apply LinearMap.ext
   intro f
   funext S
-  simp only [Module.End.mul_apply,
+  simp only [mul_apply_eq_comp,
     fullRootExteriorPolynomialAction_apply,
     actualExteriorRootContraction_apply]
   split_ifs <;> simp
@@ -6997,7 +6997,7 @@ theorem fullRootExteriorPolynomialAction_creation_commute
   apply LinearMap.ext
   intro f
   funext S
-  simp only [Module.End.mul_apply,
+  simp only [mul_apply_eq_comp,
     fullRootExteriorPolynomialAction_apply,
     actualExteriorRootCreation_apply]
   split_ifs <;> simp
@@ -7015,7 +7015,7 @@ theorem fullRootExteriorPolynomialAction_commutator
   apply LinearMap.ext
   intro f
   funext S
-  simp only [LinearMap.sub_apply, Module.End.mul_apply]
+  simp only [LinearMap.sub_apply, mul_apply_eq_comp]
   change
     positiveRootOperator n α (positiveRootOperator n β (f S)) -
       positiveRootOperator n β (positiveRootOperator n α (f S)) =
@@ -7039,7 +7039,7 @@ theorem actualExteriorRootContraction_mul_self_zero
   apply LinearMap.ext
   intro f
   funext S
-  simp only [Module.End.mul_apply]
+  simp only [mul_apply_eq_comp]
   by_cases h : α ∈ S <;>
     simp [actualExteriorRootContraction_apply, h]
 
@@ -7476,14 +7476,14 @@ theorem rootActionCoboundary_zeroExtension
     simp only [fullRootExteriorActionCoboundary,
       LinearMap.sum_apply, Finset.sum_apply,
       fullRootExteriorUpperPolynomialAction_apply,
-      Module.End.mul_apply]
+      mul_apply_eq_comp]
   · rw [rootPolynomialChainZeroExtension_of_card_ne _ S hcard]
     unfold fullRootExteriorActionCoboundary
     rw [LinearMap.sum_apply, Finset.sum_apply]
     apply Eq.symm
     apply Finset.sum_eq_zero
     intro α _
-    simp only [Module.End.mul_apply,
+    simp only [mul_apply_eq_comp,
       fullRootExteriorUpperPolynomialAction_apply,
       actualExteriorRootCreation_apply]
     by_cases hα : α ∈ S
@@ -7751,7 +7751,7 @@ theorem fullRootExteriorAction_zeroExtension_apply
   classical
   rw [rootActionBoundary_eq_exteriorContraction_zeroExtension]
   simp only [fullRootExteriorAction, fullRootExteriorActionAtom, LinearMap.coe_sum,
-    Finset.sum_apply, Module.End.mul_apply, fullRootExteriorPolynomialAction_apply,
+    Finset.sum_apply, mul_apply_eq_comp, fullRootExteriorPolynomialAction_apply,
     actualExteriorRootContraction_apply, rootPolynomialChainZeroExtension_apply, smul_dite,
     smul_zero, positiveRootOperator_apply, polarization_apply]
 

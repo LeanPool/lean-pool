@@ -94,8 +94,9 @@ theorem bounded_antichain_finite (n : ℕ) (A : Set (Condition ι))
 
 theorem antichain_countable (A : Set (Condition ι)) (hA : Antichain A) :
     A.Countable := by
-  have h (n : ℕ) : {p ∈ A | (support p).card ≤ n}.Countable :=
-    (bounded_antichain_finite n _ (hA.mono (fun _ h => h.1)) (fun _ h => h.2)).countable
+  have h (n : ℕ) : {p ∈ A | (support p).card ≤ n}.Countable := by
+    have hsubset : {p ∈ A | (support p).card ≤ n} ⊆ A := fun _ hp => hp.1
+    exact (bounded_antichain_finite n _ (hA.mono hsubset) (fun _ hp => hp.2)).countable
   apply (Set.countable_iUnion h).mono
   intro p hp
   exact Set.mem_iUnion.mpr ⟨(support p).card,hp,le_rfl⟩

@@ -115,7 +115,6 @@ theorem cubeFaceReflectionBlockSet_originCube_ae_eq_openCubeSet_succ
       openCubeSet (originCube d (m + 1)) := by
   have hnoFaces := ae_forall_ne_originCube_reflection_faces d m
   filter_upwards [hnoFaces] with x hxnoFaces
-  apply propext
   constructor
   · intro hxBlock
     exact cubeFaceReflectionBlockSet_originCube_subset_openCubeSet_succ d m hxBlock

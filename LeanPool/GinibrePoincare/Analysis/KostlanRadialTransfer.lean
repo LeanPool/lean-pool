@@ -139,7 +139,7 @@ theorem kostlanReference_isProbabilityMeasure (n : ℕ) (hn : 0 < n) :
   have hc : 0 ≤ (ginibreNormalizingMass n).toReal⁻¹ * (n.factorial : ℝ) := by positivity
   constructor
   unfold kostlanReference
-  rw [Measure.smul_apply, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ,
+  rw [smul_apply, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ,
     ← ofReal_integral_eq_lintegral_ofReal (integrable_kostlanWeight n)
       (Filter.Eventually.of_forall (kostlanWeight_nonneg n)), smul_eq_mul, ← ENNReal.ofReal_mul hc,
           ← he]

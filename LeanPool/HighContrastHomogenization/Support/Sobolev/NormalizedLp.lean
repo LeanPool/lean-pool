@@ -148,7 +148,7 @@ theorem normalizedLpENorm_top_eq_essSup {d : ℕ} (U : BoundedMeasurableDomain d
     U.normalizedLpENorm ∞ f =
       essSup (fun x => ‖f x‖ₑ) U.normalizedVolume := by
   simp [normalizedLpENorm, MeasureTheory.eLpNorm_exponent_top hf,
-    MeasureTheory.eLpNormEssSup_eq_essSup_enorm]
+    MeasureTheory.eLpNormEssSup_eq_essSup_eNorm]
 
 /-- The explicit Euclidean extended `L^p` value of a vector-valued function.
 This does not change the global norm instance on `Vec d`. -/
@@ -211,7 +211,7 @@ theorem normalizedEuclideanLpENorm_top_eq_essSup {d n : ℕ}
         U.normalizedVolume := by
   rw [normalizedEuclideanLpENorm, U.normalizedLpENorm_top_eq_essSup _ hf]
   congr with x
-  exact Real.enorm_eq_ofReal (euclideanNorm_nonneg _)
+  exact Real.eNorm_eq_ofReal (euclideanNorm_nonneg _)
 
 end BoundedMeasurableDomain
 

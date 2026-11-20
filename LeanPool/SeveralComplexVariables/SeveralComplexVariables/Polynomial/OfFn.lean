@@ -55,7 +55,7 @@ theorem Monic.eq_X_pow_add_ofFn {p : R[X]} (hp : p.Monic) :
 /-- Adding the leading monomial leaves every prescribed lower coefficient unchanged. -/
 theorem coeff_X_pow_add_ofFn_of_lt {n i : ℕ} (v : Fin n → R) (hi : i < n) :
     (X ^ n + ofFn n v).coeff i = v ⟨i, hi⟩ := by
-  simp [coeff_add, coeff_X_pow, hi.ne, ofFn_coeff_eq_val_of_lt v hi]
+  simp [coeff_X_pow, hi.ne, ofFn_coeff_eq_val_of_lt v hi]
 
 /-- Over a nontrivial semiring, adding `X ^ n` to a polynomial with `n` prescribed lower
 coefficients gives natural degree `n`. -/

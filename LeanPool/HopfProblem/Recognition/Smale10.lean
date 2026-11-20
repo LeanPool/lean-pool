@@ -3240,7 +3240,7 @@ private theorem MorseCancel.ordered_upper_pathConnected_of_later_transfers {E M 
             PathConnectedSpace { x : M // f x ≤ S.upper (S.point i) } := by
     intro k
     induction k using Nat.strong_induction_on with
-    | h k ih =>
+    | ind k ih =>
       intro i hki hindices
       have hpos : 0 < S.count := (Nat.zero_le i.val).trans_lt i.isLt
       by_cases hlast : i.val = S.count - 1

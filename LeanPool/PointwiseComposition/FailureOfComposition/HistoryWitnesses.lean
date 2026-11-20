@@ -108,7 +108,7 @@ theorem eval_rfind_iff {n : ℕ} (c : Code (n + 1)) (y : M) (v : Fin n → M) :
   by
   have bridge {k : ℕ} (a : Code k) (v : Fin (k + 1) → M) :
     Semiformula.Evalb v (code a) ↔ Semiformula.Evalf v (codeAux a) := by
-    simp [code, Semiformula.eval_rew, Matrix.empty_eq, Function.comp_def]
+    simp [Arithmetic.code, Semiformula.eval_rew, Matrix.empty_eq, Function.comp_def]
   simp only [bridge]
   simp [codeAux, Semiformula.eval_rew, Function.comp_def, Matrix.empty_eq, Matrix.comp_vecCons']
 

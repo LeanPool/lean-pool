@@ -429,7 +429,7 @@ theorem enorm_offsetLocalizedActionOn_le_sum_seven_tailMax_of_residue_decomposit
         directResidueOutput S A scale f r s n x‖ₑ ≤
       ∑ r : Fin 7, ‖∑ n ∈ (Finset.range N).filter
         (fun n ↦ (q : ℤ) ≤ residueScale r n),
-        directResidueOutput S A scale f r s n x‖ₑ := enorm_sum_le _ _
+        directResidueOutput S A scale f r s n x‖ₑ := eNorm_sum_le _ _
     _ ≤ ∑ r : Fin 7, finitePieceTailMax N
         (directResidueOutput S A scale f r s) x := by
           apply Finset.sum_le_sum

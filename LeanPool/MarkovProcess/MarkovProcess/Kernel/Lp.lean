@@ -75,13 +75,13 @@ theorem ae_integrable_kernel_top {μ : Measure α} {κ : Kernel α α}
     ENNReal.coe_toNNReal hCtop
   have hFiberEq : ∀ᵐ x ∂μ, f =ᵐ[κ x] (Lp.aestronglyMeasurable f).mk f :=
     ae_ae_kernel_of_comp_le hκμ (Lp.aestronglyMeasurable f).ae_eq_mk
-  have hBound := ae_ae_kernel_of_comp_le hκμ (enorm_ae_le_eLpNormEssSup f μ)
+  have hBound := ae_ae_kernel_of_comp_le hκμ (eNorm_ae_le_eLpNormEssSup f μ)
   let : IsFiniteKernel κ := hκ.isFiniteKernel
   filter_upwards [hFiberEq, hBound] with x hxEq hxBound
   have hxAS : AEStronglyMeasurable f (κ x) :=
     (Lp.aestronglyMeasurable f).stronglyMeasurable_mk.aestronglyMeasurable.congr hxEq.symm
   apply MemLp.integrable (q := ∞) le_top
-  apply memLp_top_of_bound_enorm hxAS (eLpNormEssSup f μ).toNNReal
+  apply memLp_top_of_bound_eNorm hxAS (eLpNormEssSup f μ).toNNReal
   simpa only [hCcoe] using hxBound
 
 private theorem kernelIntegral_add_ae {μ : Measure α} {κ : Kernel α α}

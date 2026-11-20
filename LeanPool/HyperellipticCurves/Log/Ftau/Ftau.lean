@@ -61,8 +61,9 @@ theorem rename_comp_C {σ σ' : Type*} (e : σ → σ') [Filter.TendstoCofinite 
 /-- Power series with zero constant coefficient lie in the Jacobson radical: adding `1` to
 any multiple of one gives a unit. -/
 theorem ker_constantCoeff_le_jacobson {σ : Type*} :
-    RingHom.ker (MvPowerSeries.constantCoeff : MvPowerSeries σ O →+* O) ≤ Ideal.jacobson ⊥ :=
-  fun g hg ↦ Ideal.mem_jacobson_bot.mpr fun y ↦
+    RingHom.ker (MvPowerSeries.constantCoeff : MvPowerSeries σ O →+* O) ≤ Ideal.jacobson ⊥ := by
+  rw [Ideal.jacobson_bot]
+  exact fun g hg ↦ Ring.mem_jacobson_iff.mpr fun y ↦
     MvPowerSeries.isUnit_iff_constantCoeff.mpr (by simp [RingHom.mem_ker.mp hg])
 
 variable [Nontrivial O]

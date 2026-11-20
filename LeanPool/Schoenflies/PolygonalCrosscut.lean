@@ -97,7 +97,8 @@ functions of the data. -/
 /-- The region of `ℝ² ∖ C` that does **not** contain `y`: everything off `C` except the
 component of `y`. For a separating curve this really is the other region
 (`IsSeparating.isRegionPair_farRegion`); no hypothesis is needed to define it. -/
-def farRegion (C : Set Plane) (y : Plane) : Set Plane := Cᶜ \ connectedComponentIn Cᶜ y
+noncomputable def farRegion (C : Set Plane) (y : Plane) : Set Plane :=
+  Cᶜ \ connectedComponentIn Cᶜ y
 
 theorem mem_farRegion_iff : x ∈ farRegion C y ↔ x ∉ C ∧ x ∉ connectedComponentIn Cᶜ y := Iff.rfl
 

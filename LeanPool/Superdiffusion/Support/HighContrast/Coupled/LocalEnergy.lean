@@ -440,7 +440,7 @@ theorem local_block_energy_uniform {a : CoeffField d} {Θ : ℝ}
     integrableOn_energyIntegrand hEllO hη hIcc
   have hcedle : (∫ x in C, ced x) ≤ ∫ x in U, energyIntegrand a v vstar P η x := by
     rw [hcedC]
-    exact setIntegral_mono_set hie hEnonneg (LE.le.eventuallyLE hCU)
+    exact setIntegral_mono_set hie hEnonneg (LE.le.eventuallySubset hCU)
   have hT1 :=
     centered_local_block_energy_num (m := m) (c := c) hEllO hWeak hTrace hKv hKvs hη hIcc hGη
   have hEeq : (∫ x in U, (η x) ^ 2

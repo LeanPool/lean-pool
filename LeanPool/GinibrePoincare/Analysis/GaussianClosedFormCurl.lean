@@ -185,7 +185,7 @@ theorem gaussianClosedFormPotential_weakDbar {n : ℕ} (hn : 0 < n)
 
 /-- Remark 2.4: arbitrary actual weakly closed Gaussian square-integrable
 (0,1)-forms admit a solution with the paper's sharp `1/n` bound. The equation
-is the ordinary Lebesgue distributional `∂̄` equation, not a spectral proxy. -/
+is the ordinary Lebesgue distributional `dbar` equation, not a spectral proxy. -/
 theorem gaussianClosedFormSolvability {n : ℕ} (hn : 0 < n)
     (α : Fin n → Lp ℂ 2 (complexGaussianMeasure n))
     (hα : IsGaussianWeakClosedForm n α) :

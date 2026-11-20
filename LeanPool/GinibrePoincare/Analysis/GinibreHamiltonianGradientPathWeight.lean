@@ -116,7 +116,7 @@ theorem ginibreHamiltonian_gradientAction_coefficient {n : ℕ} (hn : 0 < n)
   rw [ginibreHamiltonian_laplacian z hz]
   have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hn)
   field_simp [hnR]
- ; ring
+  ring
 
 theorem ginibreHamiltonianGradientPathWeight_le_endpoint (n : ℕ) (α T : ℝ)
     (hα : 0 ≤ α) (hT : 0 ≤ T) (x : ℝ → Configuration n) :

@@ -447,8 +447,8 @@ theorem norm_eq_one_of_notMem_smallPrimes {ι : Type*} [Fintype ι] {w : ι → 
   have hq : (((w i : ℚ)) : ℚ_[p]) ≠ 0 := by exact_mod_cast hw i
   have hv : Padic.valuation (((w i : ℚ)) : ℚ_[p]) = 0 := by
     rw [Padic.valuation_ratCast, padicValRat_def]
-    rw [show padicValInt (p : ℕ) (w i).num = padicValNat (p : ℕ) (w i).num.natAbs from rfl,
-      padicValNat.eq_zero_of_not_dvd hnum, padicValNat.eq_zero_of_not_dvd hden]
+    rw [padicValInt,
+      multiplicity_eq_zero_of_not_dvd hnum, multiplicity_eq_zero_of_not_dvd hden]
     norm_num
   rw [Padic.norm_eq_zpow_neg_valuation hq, hv, neg_zero, zpow_zero]
 
@@ -783,7 +783,7 @@ theorem diagonal_hm_ge_four (h4 : RankFourDiagonalHM) :
       (weightedSumSquares ℚ w).Isotropic := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     intro hk w hw hfin hreal
     rcases eq_or_lt_of_le hk with hk4 | hk5
     · subst hk4

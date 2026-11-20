@@ -57,7 +57,7 @@ theorem hilbert_dimension_lt_ambient_of_degree_gt_one
   have hf : (Fintype.card σ).factorial ≠ 0 := Nat.factorial_ne_zero _
   have hfq : ((Fintype.card σ).factorial : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr hf
   have heq : (1 : ℚ) = d := by
-    apply (div_left_inj' hfq).mp
+    apply (div_left_inj₀ hfq).mp
     simpa only [one_div] using hdegree
   have heqn : d = 1 := by exact_mod_cast heq.symm
   omega

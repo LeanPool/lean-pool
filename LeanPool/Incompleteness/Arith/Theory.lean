@@ -49,7 +49,7 @@ end «lp_section_1»
 namespace Theory
 
 /-- Imported declaration from the Incompleteness formalization. -/
-inductive CobhamR0' : Theory ℒₒᵣ
+inductive CobhamR0' : SyntacticFormula ℒₒᵣ → Prop
   | eq_refl : CobhamR0' “∀ x, x = x”
   | replace (φ : SyntacticSemiformula ℒₒᵣ 1) : CobhamR0' “∀ x y, x = y → !φ x → !φ y”
   | Ω₁ (n m : ℕ)  : CobhamR0' “↑n + ↑m = ↑(n + m)”
@@ -58,7 +58,7 @@ inductive CobhamR0' : Theory ℒₒᵣ
   | Ω₄ (n : ℕ) : CobhamR0' “∀ x, x < ↑n ↔ ⋁ i < n, x = ↑i”
 
 /-- Imported declaration from the Incompleteness formalization. -/
-notation "𝐑₀'" => CobhamR0'
+notation "𝐑₀'" => Set.ofPred CobhamR0'
 
 /-- Imported declaration from the Incompleteness formalization. -/
 abbrev addCobhamR0' (T : Theory ℒₒᵣ) : Theory ℒₒᵣ := T + 𝐑₀'
@@ -512,7 +512,8 @@ end Theory
 
 open Theory.CobhamR0'
 
-instance _root_.LO.Arith.Formalized.Theory.CobhamR0'Delta1Definable : 𝐑₀'.Delta1Definable :=
+instance _root_.LO.Arith.Formalized.Theory.CobhamR0'Delta1Definable :
+    FirstOrder.Theory.Delta1Definable 𝐑₀' :=
   (eqRefl.add <| replace.add <| Ω₁.add <| Ω₂.add <| Ω₃.add Ω₄).ofEq <| by
     ext φ; constructor
     · rintro (hφ | hφ | hφ | hφ | hφ | hφ)
@@ -531,10 +532,12 @@ instance _root_.LO.Arith.Formalized.Theory.CobhamR0'Delta1Definable : 𝐑₀'.D
       case Ω₄ n => right; right; right; right; right; exact ⟨n, by simp⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
-abbrev _root_.LO.Arith.Formalized.Theory.CobhamR0' : ⌜ℒₒᵣ⌝[V].Theory := 𝐑₀'.codeIn V
+abbrev _root_.LO.Arith.Formalized.Theory.CobhamR0' : ⌜ℒₒᵣ⌝[V].Theory :=
+  FirstOrder.Theory.codeIn (T := 𝐑₀') (V := V)
 
 /-- Imported declaration from the Incompleteness formalization. -/
-abbrev _root_.LO.Arith.Formalized.TTheory.CobhamR0' : ⌜ℒₒᵣ⌝[V].TTheory := 𝐑₀'.tCodeIn V
+abbrev _root_.LO.Arith.Formalized.TTheory.CobhamR0' : ⌜ℒₒᵣ⌝[V].TTheory :=
+  FirstOrder.Theory.tCodeIn (T := 𝐑₀') (V := V)
 
 /-- Imported declaration from the Incompleteness formalization. -/
 notation "⌜𝐑₀'⌝" => TTheory.CobhamR0'
@@ -699,7 +702,8 @@ abbrev _root_.LO.FirstOrder.Theory.AddR₀TTheory : ⌜ℒₒᵣ⌝[V].TTheory :
 
 variable {T}
 
-@[simp] lemma R₀'_subset_AddR₀ : ⌜𝐑₀'⌝[V] ⊆ T.AddR₀TTheory := Set.subset_union_right
+@[simp] lemma R₀'_subset_AddR₀ : ⌜𝐑₀'⌝[V] ⊆ T.AddR₀TTheory :=
+  FirstOrder.Theory.Delta1Definable.add_subset_right _ _
 
 @[simp] lemma theory_subset_AddR₀ : T.tCodeIn V ⊆ T.AddR₀TTheory :=
   FirstOrder.Theory.Delta1Definable.add_subset_left _ _

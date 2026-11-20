@@ -91,7 +91,7 @@ theorem _root_.Derivation.finset_sum_apply {ι : Type*} (s : Finset ι)
   classical
   induction s using Finset.induction_on with
   | empty => simp
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, Derivation.add_apply, ih]
+  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, _root_.add_apply, ih]
 
 /-- `∂_g F = ∑_{i ∈ S} g_i ∂F/∂X_i` for every finite set `S` of variables containing those of
 `F`. -/
@@ -101,13 +101,13 @@ theorem mkDerivation_eq_sum (g : σ → MvPolynomial σ R) {p : MvPolynomial σ 
   have h : mkDerivation R g p = (∑ i ∈ S, g i • pderiv i) p := by
     refine derivation_eq_of_forall_mem_vars fun i hi ↦ ?_
     rw [mkDerivation_X, Derivation.finset_sum_apply, Finset.sum_eq_single i]
-    · rw [Derivation.smul_apply, pderiv_X_self, smul_eq_mul, mul_one]
+    · rw [_root_.smul_apply, pderiv_X_self, smul_eq_mul, mul_one]
     · intro j _ hji
-      rw [Derivation.smul_apply, pderiv_X_of_ne hji.symm, smul_zero]
+      rw [_root_.smul_apply, pderiv_X_of_ne hji.symm, smul_zero]
     · intro hiS
       exact absurd (hS i hi) hiS
   rw [h, Derivation.finset_sum_apply]
-  exact Finset.sum_congr rfl fun i _ ↦ by rw [Derivation.smul_apply, smul_eq_mul]
+  exact Finset.sum_congr rfl fun i _ ↦ by rw [_root_.smul_apply, smul_eq_mul]
 
 /-- `∂/∂X_j ∘ ∂_g = ∂_{∂_j g} + ∂_g ∘ ∂/∂X_j`. -/
 theorem pderiv_mkDerivation (g : σ → MvPolynomial σ R) (j : σ) (p : MvPolynomial σ R) :

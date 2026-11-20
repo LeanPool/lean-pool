@@ -211,7 +211,7 @@ theorem lintegral_YcalE_le (M : ABKModel d) (Ccg : ℝ) {sigma sprime A : ℝ} {
   calc ∑' j : ℕ, ∫⁻ omega, ENNReal.ofReal (weightThird sprime j *
           annMax M Ccg n (n - (j : ℤ)) omega) ∂(Cutoff.cutoffSampleLaw M).toMeasure
       ≤ ∑' j : ℕ, ENNReal.ofReal (weightThird sprime j *
-          (gammaMomentConst sigma * a j)) := ENNReal.tsum_le_tsum hterm
+          (gammaMomentConst sigma * a j)) := tsum_le_tsum hterm
     _ = ENNReal.ofReal (∑' j : ℕ, weightThird sprime j * (gammaMomentConst sigma * a j)) :=
         (ENNReal.ofReal_tsum_of_nonneg
           (fun j => mul_nonneg (weightThird_pos j).le
@@ -298,7 +298,7 @@ theorem lintegral_YcalRowTwoE_le (M : ABKModel d) (Ccg : ℝ) {sigma sprime K : 
   calc ∑' j : ℤ, ∫⁻ omega, ENNReal.ofReal (wt sprime m j * Ycal M Ccg sprime j omega)
           ∂(Cutoff.cutoffSampleLaw M).toMeasure
       ≤ ∑' j : ℤ, ENNReal.ofReal (wt sprime m j * (gammaMomentConst sigma * K)) :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ = ENNReal.ofReal (∑' j : ℤ, wt sprime m j * (gammaMomentConst sigma * K)) :=
         (ENNReal.ofReal_tsum_of_nonneg
           (fun j => mul_nonneg (wt_nonneg sprime m j) hcst) hsum').symm
@@ -388,7 +388,7 @@ full-measure set where the score fields are finite. -/
 theorem YcalRowE_le_YcalRowTwoE (M : ABKModel d) (Ccg sprime : ℝ) (m : ℤ)
     {omega : Cutoff.CutoffSample d} (hfin : ∀ n : ℤ, YcalE M Ccg sprime n omega ≠ ⊤) :
     YcalRowE M Ccg sprime m omega ≤ YcalRowTwoE M Ccg sprime m omega := by
-  refine ENNReal.tsum_le_tsum fun n => ?_
+  refine tsum_le_tsum fun n => ?_
   by_cases hn : n ≤ m
   · rw [ite_eq_left hn, weightThird_eq_wt hn,
       show YcalE M Ccg sprime n omega = ENNReal.ofReal (Ycal M Ccg sprime n omega) from

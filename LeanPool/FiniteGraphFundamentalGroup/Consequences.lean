@@ -189,15 +189,15 @@ theorem graphFundamentalGroup_subsingleton_iff_cycleRank_zero
 noncomputable def graphFundamentalGroupAbelianizationEquiv
     {V : Type u} [Quiver.{u} V] [Fintype V] [FiniteQuiver V]
     [WeaklyConnected V] (root : V) :
-    Abelianization (graphFundamentalGroup root) ≃*
-      Abelianization (FreeGroup (Fin (cycleRank (V := V)))) :=
+    Group.Abelianization (graphFundamentalGroup root) ≃*
+      Group.Abelianization (FreeGroup (Fin (cycleRank (V := V)))) :=
   (graphFundamentalGroupEquiv root).abelianizationCongr
 
 /-- The additive free-abelian form of the same consequence. -/
 noncomputable def graphFundamentalGroupFreeAbelianizationEquiv
     {V : Type u} [Quiver.{u} V] [Fintype V] [FiniteQuiver V]
     [WeaklyConnected V] (root : V) :
-    Additive (Abelianization (graphFundamentalGroup root)) ≃+
+    Additive (Group.Abelianization (graphFundamentalGroup root)) ≃+
       FreeAbelianGroup (Fin (cycleRank (V := V))) :=
   MulEquiv.toAdditive (graphFundamentalGroupAbelianizationEquiv root)
 

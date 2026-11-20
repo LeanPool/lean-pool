@@ -79,7 +79,7 @@ def orderReesMonomial (N : ℕ) (z : orderPiece k n N) :
     OrderReesRing (n := n) k :=
   ⟨Polynomial.monomial N (z : PresentedWeyl k n), by
     intro M
-    rw [Polynomial.coeff_monomial]
+    rw [Polynomial.coeff_monomial_apply]
     split_ifs with h
     · subst M
       exact z.property
@@ -165,7 +165,7 @@ theorem exists_parameter_mul_eq_monomial_iff_mem_lower
         (N + 1) =
       (Polynomial.monomial (N + 1) (z : PresentedWeyl k n)).coeff
         (N + 1) at hc
-    rw [Polynomial.coeff_X_mul, Polynomial.coeff_monomial, ite_eq_left rfl] at hc
+    rw [Polynomial.coeff_X_mul, Polynomial.coeff_monomial_apply, ite_eq_left rfl] at hc
     rw [← hc]
     exact r.property N
   · intro hz

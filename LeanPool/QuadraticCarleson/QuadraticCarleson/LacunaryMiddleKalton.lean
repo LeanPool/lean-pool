@@ -140,7 +140,7 @@ theorem ofReal_frozenBlockLogWeakConstant
       ENNReal.ofReal (C * paperLog 1 (B k : ℝ) ^ 2) *
         frozenBlockInputL1Mass lacunaryAmplitude f k (B k) c τ := by
   rw [frozenBlockLogWeakConstant, ENNReal.ofReal_mul (mul_nonneg hC (sq_nonneg _)),
-    ofReal_integral_norm_eq_lintegral_enorm
+    ofReal_integral_norm_eq_lintegral_eNorm
       (integrable_frozenBlockInput hf hfi (lacunaryAmplitude_pos k).le (B k) c τ)]
   rfl
 

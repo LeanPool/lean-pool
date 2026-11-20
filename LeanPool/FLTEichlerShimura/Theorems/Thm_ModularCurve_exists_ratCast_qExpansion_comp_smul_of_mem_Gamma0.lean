@@ -533,14 +533,15 @@ theorem conj_mem_Gamma1 {γ g : SL(2, ℤ)} (hγ : γ ∈ Gamma0 N) (hg : g ∈ 
   have : (Gamma1' N).Normal := by
     change ((Gamma0Map N).ker).Normal
     infer_instance
-  have hconj : γ₀ * A₀ * γ₀⁻¹ ∈ Gamma1' N := Subgroup.Normal.conj_mem inferInstance A₀ hA1 γ₀
+  have hconj : γ₀ * A₀ * γ₀⁻¹ ∈ Gamma1' N := Subgroup.Normal.conj_mem A₀ hA1 γ₀
   rw [Gamma1_to_Gamma0_mem] at hconj
   rw [Gamma1_mem]
   exact hconj
 
 theorem conj_mem_Gamma (α : SL(2, ℤ)) {g : SL(2, ℤ)} (hg : g ∈ CongruenceSubgroup.Gamma N) :
-    α * g * α⁻¹ ∈ CongruenceSubgroup.Gamma N :=
-  Subgroup.Normal.conj_mem (Gamma_normal N) g hg α
+    α * g * α⁻¹ ∈ CongruenceSubgroup.Gamma N := by
+  have := Gamma_normal N
+  exact Subgroup.Normal.conj_mem g hg α
 
 theorem Gamma_le_Gamma1 : CongruenceSubgroup.Gamma N ≤ Gamma1 N := by
   intro g hg

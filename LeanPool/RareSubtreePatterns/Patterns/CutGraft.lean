@@ -401,7 +401,7 @@ theorem bienayme_cut_mem (μ : PMF ℕ) (ℓ : ℕ) (R : Set MarkedTree) (hR : R
     intro T hT
     have hTG : T ∈ G := Set.support_indicator_subset hT
     exact ⟨(⟨cut ℓ T, cut_pos hTG.1⟩, fringeAt T ℓ), graft_cut hTG.1⟩
-  rw [bienayme_apply, ← hg.tsum_eq hsupp, ENNReal.tsum_prod']
+  rw [bienayme_apply, ← hg.tsum_eq hsupp, tsum_prod']
   have key : ∀ A : {A : MarkedTree // A.pos = ℓ}, ∑' S, G.indicator (weight μ) (g (A, S)) =
       R.indicator (fun A => A.weight μ * bienayme μ (F A)) A.1 := by
     rintro ⟨A, hA⟩
@@ -424,7 +424,7 @@ theorem bienayme_cut_mem (μ : PMF ℕ) (ℓ : ℕ) (R : Set MarkedTree) (hR : R
       · rw [Set.indicator_of_notMem (fun h => hS ((hmem S).1 h).2), Set.indicator_of_notMem hS,
           mul_zero]
     · rw [Set.indicator_of_notMem hAR]
-      exact ENNReal.tsum_eq_zero.2 fun S =>
+      exact tsum_eq_zero_iff.2 fun S =>
         Set.indicator_of_notMem (fun h => hAR ((hmem S).1 h).1) _
   simp only [key]
   refine tsum_subtype_eq_of_support_subset (s := {A : MarkedTree | A.pos = ℓ}) ?_

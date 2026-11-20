@@ -494,9 +494,9 @@ private lemma finite_max_stays_below {n : ℕ} (hn : 0 < n)
               rcases exists_lt_of_csInf_lt ( show { t : ℝ | 0 ≤ t ∧ ∃ i, g i t > C }.Nonempty from
                 ⟨ t, ht, by push Not at h_contra; tauto ⟩ ) ( lt_add_of_pos_right s ε_pos )
                 with ⟨ t, ht₁, ht₂ ⟩
+              have hs_le_t : s ≤ t := csInf_le ⟨ 0, fun t ht => ht.1 ⟩ ht₁
               exact ⟨ t, ht₁.1, ht₁.2.choose, ht₁.2.choose_spec, abs_lt.mpr
-                ⟨ by linarith [ ht₂, csInf_le ⟨ 0, fun t ht => ht.1 ⟩ ht₁ ],
-                  by linarith [ ht₂, csInf_le ⟨ 0, fun t ht => ht.1 ⟩ ht₁ ] ⟩ ⟩;
+                ⟨ by linarith [ ht₂, hs_le_t ], by linarith [ ht₂, hs_le_t ] ⟩ ⟩;
           exact ⟨ fun n => Classical.choose ( hs_eq_C ( 1 / ( n + 1 ) ) ( by positivity ) ),
             fun n => ⟨ Classical.choose_spec ( hs_eq_C ( 1 / ( n + 1 ) ) ( by positivity ) ) |>.1,
               Classical.choose_spec ( hs_eq_C ( 1 / ( n + 1 ) ) ( by positivity ) ) |>.2.choose,

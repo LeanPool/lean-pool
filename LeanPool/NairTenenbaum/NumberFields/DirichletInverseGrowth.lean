@@ -21,7 +21,8 @@ open Finset ArithmeticFunction
 theorem arithmeticFunction_mul_prime_pow (f g : ArithmeticFunction ℝ)
     {p : ℕ} (hp : p.Prime) (k : ℕ) :
     (f * g) (p ^ k) = ∑ j ∈ range (k + 1), f (p ^ j) * g (p ^ (k - j)) := by
-  rw [mul_apply, Nat.sum_divisorsAntidiagonal (fun d e => f d * g e), Nat.sum_divisors_prime_pow hp]
+  rw [ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun d e => f d * g e),
+    Nat.sum_divisors_prime_pow hp]
   apply sum_congr rfl
   intro j hj
   rw [Nat.pow_div (by have := mem_range.mp hj; omega) hp.pos]
@@ -34,7 +35,7 @@ theorem inverse_prime_pow_exponential_bound {f g : ArithmeticFunction ℝ}
     have H := congrArg (fun a : ArithmeticFunction ℝ => a 1) hfg
     simpa only [mul_apply_one, hf1, one_mul, one_one] using H
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     by_cases hk : k = 0
     · simp [hk, hg1]
     have hpk : p ^ k ≠ 1 := by

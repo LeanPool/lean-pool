@@ -101,7 +101,7 @@ theorem nivat_rational (c : Configuration ℚ) (hc : FiniteRange c)
       ∀ (m n : ℕ), m * n = N → 0 < m → 0 < n →
         complexity c (rectangle m n) ≤ m * n → Periodic c := by
     induction N using Nat.strong_induction_on with
-    | h N ih =>
+    | ind N ih =>
       intro c hc m n harea hm hn hlow
       by_cases hp : Periodic c
       · exact hp

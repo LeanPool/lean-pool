@@ -31,7 +31,7 @@ theorem fv_syn_ctcnn : (synCtcnn).fv = (∅ : Finset Var) :=
 theorem fv_syn_cpwpull (F : Class) (R : Class) : (synCpwpull F R).fv = (F.fv) ∪ (R.fv) :=
   by
   ext u
-  simp [synCpwpull]; aesop
+  simp [synCpwpull]
 
 theorem fv_syn_clnpwkerfn : (synClnpwkerfn).fv = (∅ : Finset Var) :=
   by

@@ -205,8 +205,8 @@ theorem vectorGraphMap_estimates (ι : H →ₗᵢ[ℝ] V) (κ : K →ₗᵢ[ℝ
               * (ENNReal.ofReal (LinearMap.normDet ((graphMapLinear ι κ (A n) : H →ₗ[ℝ] V)))
                 * μ (u n)) := by rw [mul_assoc]
         _ ≤ ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * (∫⁻ y in u n, J y ∂μ + ε * μ (u n)) := by gcongr
-    simpa only [ENNReal.tsum_mul_left, ENNReal.tsum_add, ← hsplitint, ← hsplitmeas]
-      using ENNReal.tsum_le_tsum hterm
+    simpa only [ENNReal.tsum_mul_left, tsum_add, ← hsplitint, ← hsplitmeas]
+      using tsum_le_tsum hterm
   · rw [hsplitint]
     have hterm : ∀ n, ∫⁻ y in u n, J y ∂μ
         ≤ ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' (u n)) + ε * μ (u n) := by
@@ -224,9 +224,9 @@ theorem vectorGraphMap_estimates (ι : H →ₗᵢ[ℝ] V) (κ : K →ₗᵢ[ℝ
         _ ≤ ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' (u n)) + ε * μ (u n) := by gcongr
     calc ∑' n, ∫⁻ y in u n, J y ∂μ
         ≤ ∑' n, (((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' (u n)) + ε * μ (u n)) :=
-          ENNReal.tsum_le_tsum hterm
+          tsum_le_tsum hterm
       _ = ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * (∑' n, μH[k] (Ψ '' (u n))) + ε * ∑' n, μ (u n) := by
-          rw [ENNReal.tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left]
+          rw [tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left]
       _ = ((1 + ε : ℝ≥0) : ℝ≥0∞) ^ k * μH[k] (Ψ '' s) + ε * μ s := by
           rw [← hsplitμ, ← hsplitmeas]
 
@@ -348,7 +348,7 @@ theorem hausdorffNormalized_image_vectorGraphMap (ι : H →ₗᵢ[ℝ] V) (κ :
     rw [← ENNReal.ofReal_mul (by positivity)]
     rw [show KLS.unitBallVolume k / 2 ^ k * (2 ^ k / KLS.unitBallVolume k) = 1 by field_simp]
     exact ENNReal.ofReal_one
-  rw [KLS.hausdorffNormalized, Measure.smul_apply, smul_eq_mul,
+  rw [KLS.hausdorffNormalized, smul_apply, smul_eq_mul,
     hausdorffMeasure_image_vectorGraphMap ι κ hperp hγ hs]
   rw [hausdorffMeasure_finrank_eq_smul_volume H]
   rw [Measure.restrict_smul, lintegral_smul_measure, smul_eq_mul, ← hk, ← mul_assoc, hcancel,

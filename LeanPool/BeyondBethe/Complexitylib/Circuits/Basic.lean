@@ -12,6 +12,7 @@ public import Mathlib.Tactic.SetLike
 public import Mathlib.Util.CompileInductive
 public import Mathlib.Order.Lattice.Nat
 public import Mathlib.Order.CompleteLattice.Basic
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 
 /-! # Boolean Circuit Complexity
 

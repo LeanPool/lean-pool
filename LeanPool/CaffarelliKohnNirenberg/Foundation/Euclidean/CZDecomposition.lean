@@ -206,14 +206,14 @@ private theorem dyadicAbsAverage_lt_of_l1
 private theorem dyadicL1Norm_ne_top {F : Vec3 → ℝ} (hF : Integrable F) :
     dyadicL1Norm F ≠ ∞ := by
   rw [dyadicL1Norm]
-  have h := ofReal_integral_norm_eq_lintegral_enorm hF
+  have h := ofReal_integral_norm_eq_lintegral_eNorm hF
   have h' : (∫⁻ x, ENNReal.ofReal |F x|) =
       ENNReal.ofReal (∫ x, ‖F x‖) := by
     calc
       (∫⁻ x, ENNReal.ofReal |F x|) = ∫⁻ x, ‖F x‖ₑ := by
         apply lintegral_congr
         intro x
-        rw [enorm_eq_nnnorm, ENNReal.coe_nnreal_eq]
+        rw [eNorm_eq_nnNorm, ENNReal.coe_nnreal_eq]
         simp [Real.norm_eq_abs]
       _ = ENNReal.ofReal (∫ x, ‖F x‖) := h.symm
   rw [h']
@@ -422,7 +422,7 @@ private theorem dyadicMaximal_volume_sum_le
                   rw [ENNReal.tsum_mul_left]
     _ ≤ ∑' Q : {Q // Q ∈ D},
         ∫⁻ x in dyadicCubeSet Q.1, ENNReal.ofReal |F x| :=
-      ENNReal.tsum_le_tsum (fun Q => hcondition Q)
+      tsum_le_tsum (fun Q => hcondition Q)
     _ ≤ dyadicL1Norm F := hsum_integral
 
 private theorem dyadicCube_subset_closedBall_center (k : ℤ) (a : DyadicCorner) :

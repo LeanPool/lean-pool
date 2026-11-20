@@ -40,7 +40,7 @@ theorem theta_analytic_bound_of_energy_recursion
     ∀ n, E n ≤ 2 * B * (n.factorial : ℝ) * L ^ n := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       cases n with
       | zero =>
           simpa using hE0.trans (by nlinarith [hB])

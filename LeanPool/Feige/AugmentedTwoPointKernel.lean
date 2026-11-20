@@ -80,7 +80,7 @@ theorem augmentedTwoPointKernel_support
       simp
   | inr p =>
       rw [augmentedTwoPointKernel_pair, twoPointMeasure]
-      simp only [Measure.add_apply, Measure.smul_apply,
+      simp only [add_apply, smul_apply,
         Measure.dirac_apply' _
           (measurableSet_insert.mpr (measurableSet_singleton _)).compl]
       simp
@@ -95,8 +95,8 @@ noncomputable def augmentedLatentMeasure (μ : Measure ℝ) (M : ℝ) :
 theorem augmentedLatentMeasure_apply_atom
     (μ : Measure ℝ) (M : ℝ) :
     augmentedLatentMeasure μ M (Set.range Sum.inl) = μ {1} := by
-  rw [augmentedLatentMeasure, Measure.add_apply,
-    Measure.smul_apply, Measure.map_apply measurable_inr measurableSet_range_inl]
+  rw [augmentedLatentMeasure, add_apply,
+    smul_apply, Measure.map_apply measurable_inr measurableSet_range_inl]
   simp
 
 /-- Binding the augmented latent law against its conditional kernel gives

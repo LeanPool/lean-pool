@@ -104,7 +104,7 @@ theorem lintegral_lintegral_sq_stop_le {n : ℕ} {P : MeasureTheory.Measure Ω}
       (Y.stop.measurable_path.comp (measurable_snd.prodMk measurable_fst))
   have hjoint : Measurable (Function.uncurry fun (ω : Ω) (s : ℝ) =>
       ∑ i, (‖Y.stop.X s ω i‖₊ : ℝ≥0∞) ^ 2) :=
-    Finset.measurable_sum _ fun i _ => ((hXi i).nnnorm.coe_nnreal_ennreal).pow_const 2
+    Finset.measurable_sum _ fun i _ => ((hXi i).nnNorm.coe_nnreal_ennreal).pow_const 2
   rw [MeasureTheory.lintegral_lintegral_swap (μ := P)
     (ν := volume.restrict (Set.Icc (0 : ℝ) T'))
     (f := fun (ω : Ω) (s : ℝ) => ∑ i, (‖Y.stop.X s ω i‖₊ : ℝ≥0∞) ^ 2) hjoint.aemeasurable]
@@ -163,14 +163,14 @@ theorem lintegral_sq_sigma_lt_top_of_energy {n d : ℕ} {P : MeasureTheory.Measu
     have : Measurable fun s : ℝ => coeffs.σ s 0 i j :=
       ((measurable_pi_apply j).comp ((measurable_pi_apply i).comp
         (hReg.2.1.comp (measurable_id.prodMk measurable_const))))
-    exact (this.nnnorm.coe_nnreal_ennreal).pow_const 2
+    exact (this.nnNorm.coe_nnreal_ennreal).pow_const 2
   have hXi : ∀ i' : Fin n, Measurable fun p : Ω × ℝ => Z p.2 p.1 i' := fun i' =>
     (measurable_pi_apply i').comp
       (hZm.comp (measurable_snd.prodMk measurable_fst))
   have hBjoint : Measurable (Function.uncurry fun (ω : Ω) (s : ℝ) =>
       ENNReal.ofReal (2 * L ^ 2) * ∑ i', (‖Z s ω i'‖₊ : ℝ≥0∞) ^ 2) :=
     (Finset.measurable_sum _ fun i' _ =>
-      ((hXi i').nnnorm.coe_nnreal_ennreal).pow_const 2).const_mul _
+      ((hXi i').nnNorm.coe_nnreal_ennreal).pow_const 2).const_mul _
   -- split the sum
   have hinner : ∀ ω : Ω, ∫⁻ s in Set.Icc (0 : ℝ) T',
         (2 * (‖coeffs.σ s 0 i j‖₊ : ℝ≥0∞) ^ 2
@@ -241,7 +241,7 @@ theorem lintegral_sq_gamma_le {n d : ℕ} {ν : MeasureTheory.Measure E}
   have hγ0 : Measurable fun e : E => (‖coeffs.γ s 0 e‖₊ : ℝ≥0∞) ^ 2 := by
     have : Measurable fun e : E => coeffs.γ s 0 e :=
       hReg.2.2.1.comp (measurable_const.prodMk (measurable_const.prodMk measurable_id))
-    exact (this.nnnorm.coe_nnreal_ennreal).pow_const 2
+    exact (this.nnNorm.coe_nnreal_ennreal).pow_const 2
   -- pointwise: split off the value at the state `0`
   have hpt : ∀ e : E, (‖coeffs.γ s x e i‖₊ : ℝ≥0∞) ^ 2
       ≤ 2 * (‖coeffs.γ s 0 e‖₊ : ℝ≥0∞) ^ 2
@@ -315,7 +315,7 @@ theorem lintegral_sq_gamma_lt_top_of_energy {n d : ℕ} {P : MeasureTheory.Measu
     have hj : Measurable fun p : ℝ × E => (‖coeffs.γ p.1 0 p.2‖₊ : ℝ≥0∞) ^ 2 := by
       have : Measurable fun p : ℝ × E => coeffs.γ p.1 0 p.2 :=
         hReg.2.2.1.comp (measurable_fst.prodMk (measurable_const.prodMk measurable_snd))
-      exact (this.nnnorm.coe_nnreal_ennreal).pow_const 2
+      exact (this.nnNorm.coe_nnreal_ennreal).pow_const 2
     exact hj.lintegral_prod_right'
   refine lt_of_le_of_lt (lintegral_mono fun ω => lintegral_mono fun s =>
     lintegral_sq_gamma_le coeffs hReg hLip s (Z s ω) i) ?_
@@ -503,7 +503,7 @@ theorem lintegral_sq_mu_lt_top_of_energy {n d : ℕ} {P : MeasureTheory.Measure 
   have hμ0 : Measurable fun s : ℝ => (‖coeffs.μ s 0‖₊ : ℝ≥0∞) ^ 2 := by
     have : Measurable fun s : ℝ => coeffs.μ s 0 :=
       hReg.1.comp (measurable_id.prodMk measurable_const)
-    exact (this.nnnorm.coe_nnreal_ennreal).pow_const 2
+    exact (this.nnNorm.coe_nnreal_ennreal).pow_const 2
   have hinner : ∀ ω : Ω, ∫⁻ s in Set.Icc (0 : ℝ) T',
         (2 * (‖coeffs.μ s 0‖₊ : ℝ≥0∞) ^ 2
           + ENNReal.ofReal (2 * L ^ 2) * ∑ i', (‖Z s ω i'‖₊ : ℝ≥0∞) ^ 2) ∂volume

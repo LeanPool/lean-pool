@@ -39,9 +39,9 @@ theorem intervalMaximalAverage_rpow_lintegral_le
   have hq : 1 < r / p := (lt_div_iff₀ hp).2 (by simpa only [one_mul] using hpr)
   have hq0 : 0 < r / p := zero_lt_one.trans hq
   have hh : Measurable h :=
-    ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.enorm
+    ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.eNorm
   have hhfinite (y : ℝ) : h y ≠ ∞ :=
-    ENNReal.rpow_ne_top_of_nonneg hp.le enorm_ne_top
+    ENNReal.rpow_ne_top_of_nonneg hp.le eNorm_ne_top
   have hpoint (x : ℝ) : intervalMaximalAverage p f x ^ r ≤
       (4 : ℝ≥0∞) ^ (r / p) * M x ^ (r / p) := by
     have hbase := intervalMaximalAverage_le_centeredHardyLittlewoodMaximal_rpow
@@ -83,7 +83,7 @@ theorem measurable_intervalAverageMajorant (p : ℝ) (f : L0Infinity) :
     Measurable (intervalAverageMajorant p f) := by
   apply ENNReal.continuous_rpow_const.measurable.comp
   exact measurable_const.mul (measurable_centeredHardyLittlewoodMaximal
-    (ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.enorm))
+    (ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.eNorm))
 
 theorem intervalMaximalAverage_le_intervalAverageMajorant
     {p : ℝ} (hp : 0 < p) (f : L0Infinity) (x : ℝ) :
@@ -101,9 +101,9 @@ theorem intervalAverageMajorant_rpow_lintegral_le
   let M : ℝ → ℝ≥0∞ := centeredHardyLittlewoodMaximal h
   have hq : 1 < r / p := (lt_div_iff₀ hp).2 (by simpa only [one_mul] using hpr)
   have hh : Measurable h :=
-    ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.enorm
+    ENNReal.continuous_rpow_const.measurable.comp f.measurable_toFun.eNorm
   have hhfinite (y : ℝ) : h y ≠ ∞ :=
-    ENNReal.rpow_ne_top_of_nonneg hp.le enorm_ne_top
+    ENNReal.rpow_ne_top_of_nonneg hp.le eNorm_ne_top
   have hpoint (x : ℝ) : intervalAverageMajorant p f x ^ r =
       (4 : ℝ≥0∞) ^ (r / p) * M x ^ (r / p) := by
     rw [intervalAverageMajorant, ← ENNReal.rpow_mul]

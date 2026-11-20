@@ -266,7 +266,7 @@ private theorem enorm_graphFieldComponent {d : ℕ} {Q : TriadicCube d}
   have hLp : ‖graphFieldComponent h‖ₑ =
       eLpNorm (fun x => HilbertVec.ofVec (h.toField x)) p.exponent
         (normalizedCubeMeasure Q) :=
-    Lp.enorm_toLp h.toCubeEuclideanWspField.euclideanMemLp
+    Lp.eNorm_toLp h.toCubeEuclideanWspField.euclideanMemLp
   rw [hLp]
   unfold BoundedMeasurableDomain.normalizedEuclideanLpENorm
   unfold BoundedMeasurableDomain.normalizedLpENorm
@@ -278,7 +278,7 @@ private theorem enorm_graphKernelComponent {d : ℕ} {Q : TriadicCube d}
     {s : FractionalOrder} {p : FiniteLpExponent}
     (h : CubeEuclideanWspSmoothTest Q s p) :
     ‖graphKernelComponent h‖ₑ = cubeEuclideanWspESeminorm Q s p h.toField := by
-  exact Lp.enorm_toLp h.toCubeEuclideanWspField.euclideanMemWsp
+  exact Lp.eNorm_toLp h.toCubeEuclideanWspField.euclideanMemWsp
 
 private theorem enorm_graphFieldScale_rpow_eq_wspScalePowerWeight {d : ℕ}
     (Q : TriadicCube d) (s : FractionalOrder) (p : FiniteLpExponent) :
@@ -288,7 +288,7 @@ private theorem enorm_graphFieldScale_rpow_eq_wspScalePowerWeight {d : ℕ}
     simpa [cubeScaleFactor] using
       (zpow_pos (show (0 : ℝ) < 3 by norm_num) Q.scale)
   unfold cubeEuclideanWspGraphFieldScale cubeEuclideanWspScalePowerWeight
-  rw [Real.enorm_eq_ofReal (Real.rpow_nonneg hscale.le _),
+  rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg hscale.le _),
     ← ENNReal.ofReal_rpow_of_pos hscale]
   rw [← ENNReal.rpow_mul]
 
@@ -300,7 +300,7 @@ theorem graph_enorm_eq_cubeEuclideanWspFullENorm {d : ℕ} {Q : TriadicCube d}
     ‖graph h‖ₑ = cubeEuclideanWspFullENorm Q s p h.toField := by
   let : Fact (1 ≤ p.exponent) := ⟨p.one_lt.le⟩
   change ‖graphPoint h‖ₑ = cubeEuclideanWspFullENorm Q s p h.toField
-  rw [enorm_eq_nnnorm, PiLp.nnnorm_eq_sum p.lt_top.ne]
+  rw [eNorm_eq_nnNorm, PiLp.nnNorm_eq_sum p.lt_top.ne]
   rw [one_div, ENNReal.coe_rpow_of_nonneg _ (inv_nonneg.mpr ENNReal.toReal_nonneg),
     ENNReal.ofNNReal_finsetSum]
   simp_rw [ENNReal.coe_rpow_of_nonneg _ ENNReal.toReal_nonneg]
@@ -308,7 +308,7 @@ theorem graph_enorm_eq_cubeEuclideanWspFullENorm {d : ℕ} {Q : TriadicCube d}
   change (‖graphKernelComponent h‖ₑ ^ p.exponent.toReal +
       ‖cubeEuclideanWspGraphFieldScale Q s • graphFieldComponent h‖ₑ ^ p.exponent.toReal) ^
         (p.exponent.toReal)⁻¹ = cubeEuclideanWspFullENorm Q s p h.toField
-  rw [enorm_smul, enorm_graphKernelComponent, enorm_graphFieldComponent,
+  rw [eNorm_smul, enorm_graphKernelComponent, enorm_graphFieldComponent,
     ENNReal.mul_rpow_of_nonneg _ _ ENNReal.toReal_nonneg,
     enorm_graphFieldScale_rpow_eq_wspScalePowerWeight]
   unfold cubeEuclideanWspFullENorm

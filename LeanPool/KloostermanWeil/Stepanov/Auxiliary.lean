@@ -376,7 +376,7 @@ theorem stepanovAuxiliary_ne_zero
       v.1 ⟨i, hi⟩ = 0 ∧ v.2 ⟨i, hi⟩ = 0 := by
     intro i
     induction i using Nat.strong_induction_on with
-    | h i ih =>
+    | ind i ih =>
       intro hi
       let ii : Fin J := ⟨i, hi⟩
       have hprev : ∀ j : Fin J, (j : ℕ) < ii →

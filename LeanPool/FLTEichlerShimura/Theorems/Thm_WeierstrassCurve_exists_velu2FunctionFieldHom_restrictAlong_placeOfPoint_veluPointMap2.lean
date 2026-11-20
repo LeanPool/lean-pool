@@ -18,6 +18,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.Algebra.CharP.Algebra
+
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Correspondence
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_VeluPointMap2

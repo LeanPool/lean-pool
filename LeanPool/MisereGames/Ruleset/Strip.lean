@@ -465,7 +465,7 @@ instance : (graph R).IsWellFounded where
     refine WellFounded.intro ?_
     intro s
     induction n : weight s using Nat.strong_induction_on generalizing s with
-    | h n ih =>
+    | ind n ih =>
       refine ⟨?_, fun s' hs' => ?_⟩
       refine ih _ ?_ _ rfl
       obtain ⟨p, hp⟩ := hs'
@@ -483,7 +483,7 @@ theorem moves_toGameForm (p : Player) (s : R) :
 theorem toGameForm_zero_iff (g : R) :
     (Strip.toGameForm g = 0) ↔ (∀ n, board g n = .none) := by
   rw [ ← not_iff_not ]
-  constructor <;> intro h <;> contrapose! h <;>
+  constructor <;> intro h <;> contrapose h <;>
     simp_all +decide only [board_def, GameForm.ext_iff, moves_toGameForm, Form.moves_zero,
       Set.image_eq_empty, Player.forall]
   · unfold Strip.moves; aesop
@@ -722,7 +722,7 @@ theorem isSolved_of_stride_zero {p : Player} {s : R}
     (hs : stride s p = 0) :
     GameForm.IsSolved p (Strip.toGameForm s) := by
   induction n : weight s using Nat.strong_induction_on generalizing s with
-  | h n ih =>
+  | ind n ih =>
     by_cases h_empty : ∀ n, board s n = .none
     · rw [← toGameForm_zero_iff] at h_empty
       rw [h_empty]

@@ -212,8 +212,7 @@ private theorem lerayLimit_piecewise_compact_slice_bound
     (le_rfl : (fun x : Vec3 => ENNReal.ofReal
       (vec3EuclideanNorm (Ubar n (x, t))) ^ (2 : ℝ)) ≤ fun x =>
         ENNReal.ofReal (vec3EuclideanNorm (Ubar n (x, t))) ^ (2 : ℝ))
-  simpa only [MeasureTheory.lintegral, Measure.restrict_apply_univ] using
-    hrestrict.trans hglobal
+  exact hrestrict.trans hglobal
 
 private theorem lerayLimit_piecewise_compact_gradient_bound
     (Ubar : ℕ → ParabolicPoint → Vec3)

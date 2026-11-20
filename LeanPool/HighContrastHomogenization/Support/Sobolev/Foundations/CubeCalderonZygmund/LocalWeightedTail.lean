@@ -130,12 +130,12 @@ theorem sqWeightedMeasure_tail_le_comparison {α E : Type*} [MeasurableSpace α]
               ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_mul (by positivity),
               ENNReal.ofReal_mul (by positivity)]
             norm_num [c, V, D]
-      · rw [Set.indicator_of_notMem (fun h => hxT h.1)]
+      · rw [Set.indicator_of_notMem (fun (h : x ∈ T ∩ B) => hxT h.1)]
         positivity
     · rw [Set.indicator_of_notMem hxB]
       by_cases hxT : x ∈ T
-      · rw [Set.indicator_of_notMem (fun h => hxB h.2)]
-      · rw [Set.indicator_of_notMem (fun h => hxB h.2)]
+      · rw [Set.indicator_of_notMem (fun (h : x ∈ T ∩ B) => hxB h.2)]
+      · rw [Set.indicator_of_notMem (fun (h : x ∈ T ∩ B) => hxB h.2)]
   rw [sqWeightedMeasure_apply₀ f hTB]
   calc
     ∫⁻ x in T ∩ B, ENNReal.ofReal (‖f x‖ ^ (2 : ℕ)) ∂μ =

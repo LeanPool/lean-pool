@@ -3088,7 +3088,7 @@ private theorem polarInterval_holomorphic_circle_mean
       (a := (0 : ℝ)) (b := 2 * Real.pi)
       (fun θ : ℝ => f (circleMap c r θ)) (-Real.pi)
     convert h using 1
-    all_goals ring_nf
+    ring_nf
   have hnormalized :
       (2 * Real.pi : ℝ)⁻¹ •
           (∫ θ : ℝ in -Real.pi..Real.pi,
@@ -3201,7 +3201,7 @@ private def productRadialKernelMass (n : ℕ) : ℝ :=
 private theorem productRadialKernelMass_pos (n : ℕ) :
     0 < productRadialKernelMass n := by
   unfold productRadialKernelMass
-  apply (contDiff_productRadialKernel n).continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero
+  apply (contDiff_productRadialKernel n).continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero
     (hasCompactSupport_productRadialKernel n)
     (fun w => productRadialKernel_nonneg w)
     (x := (0 : TorusCharacters.LogSpace n))

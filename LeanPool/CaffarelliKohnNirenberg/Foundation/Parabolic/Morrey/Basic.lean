@@ -214,7 +214,7 @@ private lemma morreyCell_le_globalLpNorm {p q : ℝ} (hp : 0 < p) (hpq : p < q)
     _ = V₁ ^ (1 / p - 1 / q) * eLpNorm' f q volume := by
       change V₁ ^ (1 / p - 1 / q) *
           (∫⁻ w, ENNReal.ofReal |f w| ^ q) ^ (1 / q) = _
-      simp only [eLpNorm', Real.enorm_eq_ofReal_abs]
+      simp only [eLpNorm', Real.eNorm_eq_ofReal_abs]
 
 theorem morreyNorm_le_eLpNorm' {p q : ℝ} (hp : 1 ≤ p) (hpq : p ≤ q)
     {f : ParabolicPoint → ℝ} (hf : AEMeasurable f volume) :
@@ -237,7 +237,7 @@ theorem morreyNorm_le_eLpNorm' {p q : ℝ} (hp : 1 ≤ p) (hpq : p ≤ q)
       (cylinderPowerIntegral p f z r.1) ^ (1 / p) ≤
           (∫⁻ w, ENNReal.ofReal |f w| ^ p) ^ (1 / p) := hroot
       _ = eLpNorm' f p volume := by
-        simp only [eLpNorm', Real.enorm_eq_ofReal_abs]
+        simp only [eLpNorm', Real.eNorm_eq_ofReal_abs]
   · exact morreyCell_le_globalLpNorm hp0 hpq hf z r.2
 
 private lemma morreyCell_lower_p {p' p q : ℝ} (hp' : 0 < p') (hpp : p' < p)

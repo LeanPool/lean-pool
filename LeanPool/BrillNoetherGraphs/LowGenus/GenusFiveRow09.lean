@@ -524,8 +524,8 @@ theorem outerCoeff_eq (d : DegSpec 8 12) (v : Fin 8) :
         zeroChip, add_right_inj, Fin.mk_one, zero_sub, Int.reduceNeg, tailContribution_same,
         headContribution_same, positiveChip, add_left_inj, Fin.reduceFinMk]
   all_goals (try ring1)
-  all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals split_ifs
+  all_goals simp_all
   all_goals omega
 
 theorem outerCoeff_nonneg (d : DegSpec 8 12) (v : Fin 8) :
@@ -612,8 +612,8 @@ theorem innerCoeff_eq (d : DegSpec 8 12) (v : Fin 8) :
         zeroChip, add_right_inj, Fin.mk_one, zero_sub, Int.reduceNeg, tailContribution_same,
         headContribution_same, positiveChip, add_left_inj, Fin.reduceFinMk]
   all_goals (try ring1)
-  all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals split_ifs
+  all_goals simp_all
   all_goals omega
 
 theorem innerCoeff_nonneg (d : DegSpec 8 12) (v : Fin 8) :
@@ -687,8 +687,8 @@ theorem t4Coeff_eq (d : DegSpec 8 12) (v : Fin 8) :
         Fin.mk_one, zero_sub, Int.reduceNeg, one_ne_zero, zero_add, positiveChip, add_left_inj,
         Fin.reduceFinMk, sub_zero, zeroChip, lend, add_right_inj]
   all_goals (try ring1)
-  all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals split_ifs
+  all_goals simp_all
   all_goals omega
 
 theorem t4Coeff_nonneg (d : DegSpec 8 12) (v : Fin 8) : 0 ≤ t4Coeff d v := by
@@ -867,8 +867,8 @@ theorem t5Coeff_eq (d : DegSpec 8 12) (v : Fin 8) :
         Fin.mk_one, zero_sub, Int.reduceNeg, one_ne_zero, zero_add, positiveChip, add_left_inj,
         Fin.reduceFinMk, sub_zero, zeroChip, lend, add_right_inj]
   all_goals (try ring1)
-  all_goals (try split_ifs)
-  all_goals (try simp_all)
+  all_goals split_ifs
+  all_goals simp_all
   all_goals omega
 
 theorem t5Coeff_nonneg (d : DegSpec 8 12) (v : Fin 8) : 0 ≤ t5Coeff d v := by

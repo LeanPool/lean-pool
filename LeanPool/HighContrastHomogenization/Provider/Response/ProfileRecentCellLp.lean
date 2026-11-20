@@ -64,9 +64,9 @@ theorem eLpNorm_profileCenteredMaximum_eq
   have hp0 : ENNReal.ofReal Q ≠ 0 := by
     rw [ne_eq, ENNReal.ofReal_eq_zero, not_le]
     exact hQ
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 ENNReal.ofReal_ne_top hmeas,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 ENNReal.ofReal_ne_top hmeas,
     ENNReal.toReal_ofReal hQ.le, one_div]
-  simp only [enorm_eq_self]
+  simp only [eNorm_eq_self]
   rfl
 
 /-- On a probability space the centered maximum has `L²` seminorm at most
@@ -98,7 +98,7 @@ theorem eLpNorm_ofReal_mul_le {X : CoeffSpace d → ℝ≥0∞}
   apply eLpNorm_le_mul_eLpNorm_of_ae_le_mul'' p
     (hX.aemeasurable.const_mul (ENNReal.ofReal c)).aestronglyMeasurable
   filter_upwards [] with x
-  simp only [enorm_eq_self]
+  simp only [eNorm_eq_self]
   exact le_rfl
 
 end

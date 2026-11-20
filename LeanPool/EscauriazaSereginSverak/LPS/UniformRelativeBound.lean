@@ -559,10 +559,10 @@ private theorem lps_integral_triple_le {p q : ℝ} (hp : 0 < p) (hq : 0 < q)
         (eLpNorm (fun x : Vec3 =>
           vec3EuclideanNorm (u x) * ‖w x‖ * ‖Dw x‖) 1 volume).toReal := by
       rw [integral_eq_lintegral_of_nonneg_ae (Eventually.of_forall hnonneg) hmeas,
-        eLpNorm_one_eq_lintegral_enorm hmeas]
+        eLpNorm_one_eq_lintegral_eNorm hmeas]
       congr 1
       refine lintegral_congr fun x => ?_
-      rw [Real.enorm_eq_ofReal (hnonneg x)]
+      rw [Real.eNorm_eq_ofReal (hnonneg x)]
     _ ≤ (eLpNorm (fun x => vec3EuclideanNorm (u x)) (ENNReal.ofReal p) volume *
         eLpNorm w (ENNReal.ofReal q) volume *
         eLpNorm Dw 2 volume).toReal := ENNReal.toReal_mono hfin hprodBound

@@ -211,7 +211,7 @@ private theorem compatibility :
   classical
   intro compatibility_symm layout make_adj n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro D A B a b hn ha
     by_cases hu : D.1.1.1 = 1
     · obtain ⟨p, r, hp, hr, h0, h1⟩ := P4261T2AdjacentMatrixSlope D A B a b ha

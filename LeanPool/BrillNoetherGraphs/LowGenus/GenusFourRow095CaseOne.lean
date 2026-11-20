@@ -345,8 +345,8 @@ theorem reaches_two (hNorm : length 0 ≤ length 5) (hBC : C length ≤ B length
   convert (Eff (Spec length hLength).graph).add_mem
     (eff_one_chip (q length hLength hNorm))
       (eff_one_chip ((Spec length hLength).coreVertex 3)) using 2
-  all_goals simp only [threeChipDivisor, mem_Eff]
-  all_goals abel_nf
+  simp only [threeChipDivisor, mem_Eff]
+  abel_nf
 
 /-- The same second profile reaches `f=3`. -/
 theorem reaches_three (hNorm : length 0 ≤ length 5) (hBC : C length ≤ B length) :
@@ -359,8 +359,8 @@ theorem reaches_three (hNorm : length 0 ≤ length 5) (hBC : C length ≤ B leng
   convert (Eff (Spec length hLength).graph).add_mem
     (eff_one_chip (q length hLength hNorm))
       (eff_one_chip ((Spec length hLength).coreVertex 2)) using 2
-  all_goals simp only [threeChipDivisor, mem_Eff]
-  all_goals abel_nf
+  simp only [threeChipDivisor, mem_Eff]
+  abel_nf
 
 /-- The first Core-095 chamber proves the genus-four degree-three pencil. -/
 theorem bnExists_one_three (hNorm : length 0 ≤ length 5) (hBC : C length ≤ B length) :

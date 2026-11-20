@@ -65,12 +65,12 @@ theorem lintegral_sq_bounded_mul_lt_top
   have hgle : ∀ (ω : Ω) (s : ℝ), (‖g ω s‖₊ : ℝ≥0∞) ≤ (Real.toNNReal Kg : ℝ≥0∞) := by
     intro ω s
     refine ENNReal.coe_le_coe.mpr ?_
-    rw [← NNReal.coe_le_coe, Real.coe_toNNReal Kg hKg0, coe_nnnorm, Real.norm_eq_abs]
+    rw [← NNReal.coe_le_coe, Real.coe_toNNReal Kg hKg0, coe_nnNorm, Real.norm_eq_abs]
     exact hKg ω s
   have hpt : ∀ (ω : Ω) (s : ℝ), (‖g ω s * H ω s‖₊ : ℝ≥0∞) ^ 2
       ≤ (Real.toNNReal Kg : ℝ≥0∞) ^ 2 * (‖H ω s‖₊ : ℝ≥0∞) ^ 2 := by
     intro ω s
-    rw [nnnorm_mul, ENNReal.coe_mul, mul_pow]
+    rw [nnNorm_mul, ENNReal.coe_mul, mul_pow]
     gcongr
     exact ENNReal.coe_le_coe.mp (hgle ω s)
   calc ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, (‖g ω s * H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P
@@ -132,7 +132,7 @@ theorem IsItoVersion.lintegral_sq_frozen_sub_le
   have hjoint : Measurable (Function.uncurry fun ω s =>
       (‖(SimplePredictable.ofUnifGrid hT hm0 ξ hbdd hmeas).eval s ω
         - φ (X s ω)‖₊ : ℝ≥0∞) ^ 2) :=
-    (hsub.nnnorm.coe_nnreal_ennreal).pow_const 2
+    (hsub.nnNorm.coe_nnreal_ennreal).pow_const 2
   have hmeasCell : ∀ i : ℕ, Measurable fun ω : Ω =>
       ∫⁻ s in Set.Ioc (unifGrid T m i) (unifGrid T m (i + 1)),
         (‖(SimplePredictable.ofUnifGrid hT hm0 ξ hbdd hmeas).eval s ω

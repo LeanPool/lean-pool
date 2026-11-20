@@ -34,7 +34,7 @@ noncomputable def μ4 (i : Fin 4) : Measure Rand :=
   if i = i then (volume : Measure Rand) else (volume : Measure Rand)
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
-abbrev E : Set (Samples 4) := ClassicalAlgorithm.pEvent recursive3ParamAlg
+noncomputable abbrev E : Set (Samples 4) := ClassicalAlgorithm.pEvent recursive3ParamAlg
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 noncomputable def pInd : Samples 4 → ℝ≥0∞ :=

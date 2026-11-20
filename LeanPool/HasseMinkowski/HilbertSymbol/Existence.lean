@@ -241,7 +241,7 @@ theorem not_two_dvd_A (hε : ∀ i : I, ∀ p : Primes, ep i p = 1 ∨ ep i p = 
 theorem padicValNat_A_of_mem_T (hε : ∀ i : I, ∀ p : Primes, ep i p = 1 ∨ ep i p = -1)
     (h1 : ∀ i : I, ∀ᶠ p : Primes in cofinite, ep i p = 1) {p : Primes}
     (hp : p ∈ T hε h1) : padicValNat (p : ℕ) (A hε h1) = 1 := by
-  rw [← Nat.factorization_def (A hε h1) p.2, A]
+  rw [Nat.padicValNat_def, ← Nat.factorization_def (A hε h1) p.2, A]
   rw [Nat.factorization_prod_apply (g := fun t : Primes => (t : ℕ)) (S := T hε h1)
     (fun t _ => t.2.ne_zero)]
   have hterm : ∀ t ∈ T hε h1,
@@ -249,7 +249,7 @@ theorem padicValNat_A_of_mem_T (hε : ∀ i : I, ∀ p : Primes, ep i p = 1 ∨ 
     intro t _
     by_cases htp : t = p
     · rw [ite_eq_left htp, htp, Nat.factorization_def _ p.2]
-      exact padicValNat_self
+      exact Nat.Prime.multiplicity_self
     · rw [ite_eq_right htp, Nat.factorization_eq_zero_of_not_dvd]
       intro hdvd
       exact htp (Subtype.ext ((Nat.prime_dvd_prime_iff_eq p.2 t.2).mp hdvd)).symm
@@ -475,8 +475,9 @@ theorem hilbertSym_A_mul_ell_eq_of_mem_T (ha : ∀ i, a i ≠ 0)
     exact mul_ne_zero (by exact_mod_cast A_ne_zero hε h1) (by exact_mod_cast hℓ.ne_zero)
   have hvx : Padic.valuation ((A hε h1 * ℓ : ℕ) : ℚ_[p]) = 1 := by
     rw [Padic.valuation_natCast,
-      padicValNat.mul (A_ne_zero hε h1) hℓ.ne_zero, padicValNat_A_of_mem_T hε h1 hpT,
-      padicValNat.eq_zero_of_not_dvd hpℓ, add_zero]
+      Nat.multiplicity_mul (A_ne_zero hε h1) hℓ.ne_zero, ← Nat.padicValNat_def,
+      padicValNat_A_of_mem_T hε h1 hpT,
+      multiplicity_eq_zero_of_not_dvd hpℓ, add_zero]
     norm_num
   have hxpar : hilbertSym (a i : ℚ_[p]) ((A hε h1 * ℓ : ℕ) : ℚ_[p])
       = (quadraticChar (ZMod (p : ℕ)))
@@ -521,9 +522,9 @@ theorem hilbertSym_A_mul_ell_eq_one_of_notMem (ha : ∀ i, a i ≠ 0)
     push_cast
     exact mul_ne_zero (by exact_mod_cast A_ne_zero hε h1) (by exact_mod_cast hℓ.ne_zero)
   have hvx : Padic.valuation ((A hε h1 * ℓ : ℕ) : ℚ_[p]) = 0 := by
-    rw [Padic.valuation_natCast, padicValNat.mul (A_ne_zero hε h1) hℓ.ne_zero,
-      padicValNat.eq_zero_of_not_dvd (not_dvd_A_of_notMem_T hε h1 hpT),
-      padicValNat.eq_zero_of_not_dvd (prime_not_dvd_of_ne hℓ hpℓ), add_zero]
+    rw [Padic.valuation_natCast, Nat.multiplicity_mul (A_ne_zero hε h1) hℓ.ne_zero,
+      multiplicity_eq_zero_of_not_dvd (not_dvd_A_of_notMem_T hε h1 hpT),
+      multiplicity_eq_zero_of_not_dvd (prime_not_dvd_of_ne hℓ hpℓ), add_zero]
     norm_num
   rw [hilbertSym_val_zero_eq_parity hp2 hai hva hx0, hvx,
     ite_eq_left (show Even (0 : ℤ) from ⟨0, by norm_num⟩)]

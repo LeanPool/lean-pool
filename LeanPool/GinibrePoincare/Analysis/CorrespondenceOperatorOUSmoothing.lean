@@ -198,7 +198,10 @@ theorem correspondenceOperator_OU_endpoint_absolutelyContinuous_volume {Ω : Typ
     rw [complexGaussianDensityIdentification n hn]
     exact withDensity_absolutelyContinuous _ _
   rw [(correspondenceOperator_OU_configuration_hasLaw hn α hα B P hB hind z t ht).map_eq]
-  exact (hgauss.map hq.measurable).trans hq.absolutelyContinuous
+  have hF : Measurable F := by
+    dsimp only [F]
+    fun_prop
+  exact (hgauss.map hF).trans hq.absolutelyContinuous
 
 /-- Every strictly positive-time actual original Ginibre transition from a
 collision-free deterministic state has a Lebesgue density. -/

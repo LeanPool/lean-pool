@@ -329,6 +329,7 @@ private theorem rationalRestart_map_restrict_eq_cutPullback
   rw [Kernel.prodMkLeft_apply', Kernel.prodMkLeft_apply']
   apply Filter.EventuallyEqSet.measure_eq
   filter_upwards [hzero (ContinuousPath.densePastTerminal S history)] with path hpath
+  apply Iff.of_eq
   apply congrArg (fun z ↦ z ∈ A)
   funext i
   rcases i with ⟨i, hi⟩

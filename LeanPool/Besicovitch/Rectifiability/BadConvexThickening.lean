@@ -39,11 +39,11 @@ theorem measure_iUnion_diameterThickening_le {mu : Measure (EuclideanSpace ℝ (
       measure_iUnion_le _
     _ ≤ ∑' V : chosen,
         Metric.ediam (diameterThickening p (V : Set (EuclideanSpace ℝ (Fin 2)))) :=
-      ENNReal.tsum_le_tsum fun V ↦
+      tsum_le_tsum fun V ↦
         hmu _ (isOpen_diameterThickening p (V : Set (EuclideanSpace ℝ (Fin 2)))).measurableSet
     _ ≤ ∑' V : chosen,
         ENNReal.ofReal (2 * p + 1) * Metric.ediam (V : Set (EuclideanSpace ℝ (Fin 2))) :=
-      ENNReal.tsum_le_tsum fun V ↦
+      tsum_le_tsum fun V ↦
         ediam_diameterThickening_le hp (isBounded_of_mem_badConvexSets halpha
           (hchosen V.property))
     _ = ENNReal.ofReal (2 * p + 1) *
@@ -66,7 +66,7 @@ theorem measure_iUnion_sevenDiameterThickening_lt {mu : Measure (EuclideanSpace 
           ∑' V : chosen, Metric.ediam (V : Set (EuclideanSpace ℝ (Fin 2))) := by
       convert measure_iUnion_diameterThickening_le hmu halpha
         (by norm_num : (0 : ℝ) ≤ 7) hchosen hcountable using 1
-      all_goals norm_num
+      norm_num
     _ < ENNReal.ofReal 15 * (ENNReal.ofReal (1 / 15) * mu F) :=
       ENNReal.mul_lt_mul_right (by norm_num) ENNReal.ofReal_ne_top hsum
     _ = mu F := by

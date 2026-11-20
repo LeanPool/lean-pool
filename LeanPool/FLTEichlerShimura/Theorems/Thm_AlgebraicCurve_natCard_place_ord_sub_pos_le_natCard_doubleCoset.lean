@@ -17,6 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+
+public import Mathlib.FieldTheory.Galois.Basic
+
 public import Mathlib.GroupTheory.DoubleCoset
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_BaseChangeGalois
 

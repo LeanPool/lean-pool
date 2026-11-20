@@ -3106,7 +3106,7 @@ private theorem superposedFluxUpperPerDescendant_comparisonBounds4 :
           (hrarePerLaneScalePos) (hUexpRaw)
   have hEnvelope (omega : Cutoff.CutoffSample d) :=
     Finset.sum_le_sum fun j (_hj : j ∈ (Finset.univ : Finset (Fin d))) =>
-      ENNReal.tsum_le_tsum fun n =>
+      tsum_le_tsum fun n =>
         named_layer_ennreal_bound M m (E : ℝ) R j n omega
   exact ⟨hcollarWaveENNRealEq, waveBounded, waveRare, hwaveENNRealDom, hordinaryLaneNonneg,
     hUoneNonneg, hUoneMeasurable, hUone, hrareLaneNonneg, hUexpNonneg, hUexpMeasurable, hUexp,
@@ -3318,7 +3318,7 @@ theorem superposedFlux_upper_per_descendant_split
                                     (hcollarWaveRaw)
   let K : ℝ := 12 *
     upperAfterBandRareTriangleConst
-  simp only [ENNReal.tsum_add, Finset.sum_add_distrib] at hEnvelope
+  simp only [tsum_add, Finset.sum_add_distrib] at hEnvelope
   have hblockCoeff : (12 : ℝ) ≤
       12 + 12 * HCPolySupport.IndependentSums.gammaTriangleConst 1 :=
     le_add_of_nonneg_right (mul_nonneg (by norm_num)

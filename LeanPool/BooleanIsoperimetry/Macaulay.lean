@@ -416,8 +416,14 @@ lemma harper_bc_min_q_zero_core (n : ℕ) {a b p : ℕ}
         Finset.range_one, Finset.sum_singleton, Nat.choose_zero_right, zero_tsub,
         add_zero, Order.add_one_le_iff] at hpq ⊢;
       rcases a with ( _ | _ | a ) <;> rcases b with ( _ | _ | b ) <;> simp +arith +decide at *;
-    · rw [ eq_comm ] at ht; simp_all +arith +decide [ binomPrefix ];
-      grind +suggestions
+    · rw [eq_comm] at ht
+      simp +arith +decide only [binomPrefix, ↓reduceIte, Nat.add_one_sub_one,
+        Nat.add_eq_zero_iff, Finset.sum_eq_zero_iff, Finset.mem_range, min_eq_zero] at ht
+      have hzero : n.choose 0 = 0 := by
+        rcases r with _ | r
+        · exact ht.1.2
+        · exact ht.1.1 0 (Nat.zero_lt_succ _)
+      simp at hzero
 
 lemma harper_bc_min_q_zero (n : ℕ)
     (_ih : ∀ m, m < n → ∀ x y, x ≤ 2 ^ m → y ≤ 2 ^ m →

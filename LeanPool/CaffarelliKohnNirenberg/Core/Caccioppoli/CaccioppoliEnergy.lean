@@ -152,7 +152,7 @@ theorem caccioppoli_lower_from_slice_bounds
         funext t
         apply lintegral_congr
         intro x
-        rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
+        rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
           ENNReal.ofReal_rpow_of_nonneg (vec3EuclideanNorm_nonneg _)
             (by norm_num)]
         norm_num [Real.rpow_natCast]

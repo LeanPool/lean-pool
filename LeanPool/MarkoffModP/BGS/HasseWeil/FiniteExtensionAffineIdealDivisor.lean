@@ -197,7 +197,7 @@ theorem multiplicity_effectiveDivisorIdeal
   have hcount := FractionalIdeal.count_finsuppProd
     (FractionRing R) v DInt
   rw [hcast, ← hcoe,
-    FractionalIdeal.count_coe (FractionRing R) v
+    FractionalIdeal.count_coeIdeal (FractionRing R) v
       (effectiveDivisorIdeal_ne_bot D)] at hcount
   rw [Ideal.count_associates_factors_eq
       (effectiveDivisorIdeal_ne_bot D) v.isPrime v.ne_bot,

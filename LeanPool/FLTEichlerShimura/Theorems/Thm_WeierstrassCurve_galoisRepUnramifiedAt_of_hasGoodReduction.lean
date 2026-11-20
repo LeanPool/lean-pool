@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.Normal.Closure
+
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
 public import LeanPool.FLTEichlerShimura.Definitions.Def_FLTPrelim_Ramification
 

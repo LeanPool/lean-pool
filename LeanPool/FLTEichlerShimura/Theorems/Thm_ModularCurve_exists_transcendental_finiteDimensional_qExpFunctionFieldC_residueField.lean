@@ -666,9 +666,13 @@ theorem exists_resHom_eq {z : LaurentSeries kk} (hz : z ∈ qExpFunctionFieldC k
     { carrier := Set.range (resHom A Γ)
       mul_mem' := by rintro _ _ ⟨f, rfl⟩ ⟨g, rfl⟩; exact ⟨f * g, map_mul _ _ _⟩
       one_mem' := ⟨1, map_one _⟩
-      add_mem' := by rintro _ _ ⟨f, rfl⟩ ⟨g, rfl⟩; exact ⟨f + g, map_add _ _ _⟩
+      add_mem' := by
+        rintro _ _ ⟨f, rfl⟩ ⟨g, rfl⟩
+        exact ⟨f + g, (resHom A Γ).map_add' f g⟩
       zero_mem' := ⟨0, map_zero _⟩
-      neg_mem' := by rintro _ ⟨f, rfl⟩; exact ⟨-f, map_neg _ _⟩
+      neg_mem' := by
+        rintro _ ⟨f, rfl⟩
+        exact ⟨-f, map_neg (resHom A Γ).toAddMonoidHom f⟩
       inv_mem' := by
         rintro _ ⟨f, rfl⟩
         by_cases h0 : resHom A Γ f = 0
@@ -933,7 +937,7 @@ theorem isAlgebraic_of_sum_aeval_mul_pow_eq_zero {x t : F} (ht : Transcendental 
     obtain ⟨m, hm⟩ : ∃ m, (c i₁).coeff m ≠ 0 := by
       by_contra h
       push Not at h
-      exact hc (Polynomial.ext fun m => by simpa using h m)
+      exact hc (AddMonoidAlgebra.ext (Finsupp.ext fun m => by simpa using h m))
     have hcoeff := congrArg (fun p : Kt[X] => ((p.coeff m : Kt) : F)) hq
     simp only [q, finsetSum_coeff, coeff_C_mul, coeff_map, coeff_zero,
       ZeroMemClass.coe_zero] at hcoeff

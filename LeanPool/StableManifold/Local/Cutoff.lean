@@ -48,7 +48,7 @@ is a globally small Lipschitz perturbation of its linear part, to which the glob
   - Lipschitz: for `‖x‖ ≤ r`, `Dφ x = ρ (δ⁻¹ • x) • Dψ x + c'.smulRight (ψ x)` with
     `c' = Dρ (δ⁻¹ • x) ∘ (δ⁻¹ • id)` (`HasFDerivAt.smul`, `HasFDerivAt.comp`), so
     `‖Dφ x‖ ≤ η' + (M / δ) (η' · 2 δ) = η' (2 M + 1) = η`; for `‖x‖ > r`, `Dφ x = 0`. Then
-    `lipschitzWith_of_nnnorm_fderiv_le`.
+    `lipschitzWith_of_nnNorm_fderiv_le`.
 -/
 
 @[expose] public section
@@ -114,7 +114,7 @@ with `g 0 = 0` and derivative `A` at `0`. For every `η > 0` there are `δ > 0` 
 
 Proof: `φ x = ρ (δ⁻¹ • x) • (g x - A x)` with the cut-off `ρ` of `exists_cutoff` and `δ` small
 (`exists_norm_fderiv_le_of_hasFDerivAt_zero`); its derivative has norm `≤ η` everywhere, so it is
-`η`-Lipschitz (`lipschitzWith_of_nnnorm_fderiv_le`). -/
+`η`-Lipschitz (`lipschitzWith_of_nnNorm_fderiv_le`). -/
 theorem exists_contDiff_lipschitzWith_eqOn_ball {g : E → E} {A : E →L[ℝ] E} {W : Set E}
     {n : ℕ∞} (hn : 1 ≤ n) (hW : W ∈ 𝓝 0) (hg : ContDiffOn ℝ n g W) (hg0 : g 0 = 0)
     (hA : HasFDerivAt g A 0) {η : ℝ≥0} (hη : 0 < η) :
@@ -164,8 +164,8 @@ theorem exists_contDiff_lipschitzWith_eqOn_ball {g : E → E} {A : E →L[ℝ] E
   refine ⟨δ, hδ, φ, hφC, ?_, by simp [φ, hψ0],
     hdψ.congr_of_eventuallyEq (eventually_of_mem (ball_mem_nhds 0 hδ) hφψ), fun x hx ↦ ?_⟩
   · -- the derivative of `φ` has norm `≤ η` everywhere
-    refine lipschitzWith_of_nnnorm_fderiv_le (hφC.differentiable hn0) fun x ↦ ?_
-    rw [← NNReal.coe_le_coe, coe_nnnorm]
+    refine lipschitzWith_of_nnNorm_fderiv_le (hφC.differentiable hn0) fun x ↦ ?_
+    rw [← NNReal.coe_le_coe, coe_nnNorm]
     rcases le_or_gt ‖x‖ r with hx | hx
     · have hψx : HasFDerivAt ψ (fderiv ℝ ψ x) x :=
         (((hψ.mono interior_subset).contDiffAt (hxW x hx)).differentiableAt hn0).hasFDerivAt

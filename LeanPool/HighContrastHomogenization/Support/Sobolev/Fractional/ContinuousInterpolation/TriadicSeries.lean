@@ -216,7 +216,7 @@ theorem triadicContinuousKLowerSeriesComparison {d : ℕ}
       ∫⁻ t in Set.Ioo (0 : ℝ) 1, continuousKSeminormIntegrand s.1 F t := by
   rw [continuousKSeminorm_lintegral_eq_tsum_triadicIntervals]
   rw [triadicContinuousKShiftedSampleEnergy, ← ENNReal.tsum_mul_left]
-  exact ENNReal.tsum_le_tsum (triadicContinuousKLower_interval_bound s F)
+  exact tsum_le_tsum (triadicContinuousKLower_interval_bound s F)
 
 /-- The continuum `K` energy is controlled by the canonical triadic sampled
 energy with an explicit base-three constant. -/
@@ -226,7 +226,7 @@ theorem triadicContinuousKUpperSeriesComparison {d : ℕ}
       triadicContinuousKUpperSeriesConstant s * triadicContinuousKSampleEnergy s F := by
   rw [continuousKSeminorm_lintegral_eq_tsum_triadicIntervals]
   rw [triadicContinuousKSampleEnergy, ← ENNReal.tsum_mul_left]
-  exact ENNReal.tsum_le_tsum (triadicContinuousKUpper_interval_bound s F)
+  exact tsum_le_tsum (triadicContinuousKUpper_interval_bound s F)
 
 /-- Square-root form of the shifted lower series comparison. -/
 theorem triadicContinuousKLowerSeriesComparison_rpow {d : ℕ}

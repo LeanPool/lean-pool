@@ -277,7 +277,7 @@ theorem gevreyBump_integrable : Integrable gevreyBump :=
     gevreyBump_hasCompactSupport
 
 theorem gevreyBumpIntegral_pos : 0 < gevreyBumpIntegral := by
-  exact integral_pos_of_integrable_nonneg_nonzero
+  exact integral_pos_of_integrable_nonneg_ne_zero
     (gevreyBump_contDiff (n := 0)).continuous gevreyBump_integrable
     gevreyBump_nonneg (ne_of_gt (gevreyBump_pos (x := 1 / 2) (by constructor <;> norm_num)))
 

@@ -87,7 +87,7 @@ theorem nonnegativeRadialHalfSpace_ae_eq_positive :
         positiveRadialHalfSpace (K := K) := by
   rw [MeasureTheory.volume_pi]
   filter_upwards [Measure.ae_eval_ne (fun _ ↦ volume) w₀ 0] with y hy
-  simp only [nonnegativeRadialHalfSpace, positiveRadialHalfSpace, Set.mem_ofPred_eq, eq_iff_iff]
+  simp only [nonnegativeRadialHalfSpace, positiveRadialHalfSpace, Set.mem_ofPred_eq]
   constructor
   · intro h
     exact lt_of_le_of_ne h hy.symm

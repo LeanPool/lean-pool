@@ -200,7 +200,7 @@ private theorem constant_variance_majorant_two_norm
         simp at h)]
     rw [measure_univ]
     simp only [ENNReal.one_rpow, mul_one]
-    rw [Real.enorm_eq_ofReal (mul_nonneg hα0 hK0)]
+    rw [Real.eNorm_eq_ofReal (mul_nonneg hα0 hK0)]
   exact hconstpiece
 
 private theorem subdivision_variance_majorant_two_norm
@@ -254,7 +254,7 @@ private theorem subdivision_variance_majorant_two_norm
       rw [Pi.smul_apply, smul_eq_mul]
     rw [heq, eLpNorm_const_smul]
     congr 1
-    rw [Real.enorm_eq_ofReal (mul_nonneg hα0 hc10)]
+    rw [Real.eNorm_eq_ofReal (mul_nonneg hα0 hc10)]
   exact hsmulpiece
 
 private theorem subdivision_block_size_two_norm_le_schatten

@@ -284,7 +284,7 @@ private theorem HigherHurewicz.interior_flatSimplexSet (n : ℕ) :
     constructor
     · intro i
       have hi : v ∈ interior ((fun w : Fin n → ℝ => w i) ⁻¹' Set.Ici 0) :=
-        interior_mono (fun w hw => hw.1 i) hv
+        interior_mono (s := flatSimplexSet n) (fun _ hw => hw.1 i) hv
       have h := (isOpenMap_eval i).interior_preimage_subset_preimage_interior hi
       simpa only [Set.mem_preimage, interior_Ici, Set.mem_Ioi] using h
     · cases n with
@@ -292,7 +292,7 @@ private theorem HigherHurewicz.interior_flatSimplexSet (n : ℕ) :
       | succ
         n =>
         have hs : v ∈ interior (flatCoordinateSum_mo1973_5884 (n + 1) ⁻¹' Set.Iic 1) :=
-          interior_mono (fun w hw => hw.2) hv
+          interior_mono (s := flatSimplexSet (n + 1)) (fun _ hw => hw.2) hv
         have h :=
           ((flatCoordinateSum_mo1973_5884 (n + 1)).isOpenMap_of_ne_zero
                 (flatCoordinateSum_succ_ne_zero_mo1973_5885

@@ -58,7 +58,8 @@ theorem window_riesz_field_morrey_lt_top
     (memLp_product_indicator_slices (isOpen_vec3Ball _ _).measurableSet hJ hFs)
     (L := L) ?_ hT hident hFnorm
   intro y s hy
-  exact Set.indicator_of_notMem (fun h => (not_le.mpr hy) (hL y (subset_closure h.1))) F
+  exact Set.indicator_of_notMem
+    (fun h : (y, s) ∈ vec3Ball x r ×ˢ J => (not_le.mpr hy) (hL y (subset_closure h.1))) F
 
 end CKN.Core.Step4
 end

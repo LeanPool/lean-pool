@@ -137,9 +137,9 @@ private theorem eLpNorm_bound_of_absE_power_bound
     eLpNorm_eq_eLpNorm' hpne hptop hga]
   have hpow : eLpNorm' (T g) p volume ^ p ≤
       ENNReal.ofReal C * eLpNorm' g p volume ^ p := by
-    rw [← lintegral_rpow_enorm_eq_rpow_eLpNorm' hp,
-      ← lintegral_rpow_enorm_eq_rpow_eLpNorm' hp]
-    simpa only [absE, Real.enorm_eq_ofReal_abs] using hbound
+    rw [← lintegral_rpow_eNorm_eq_rpow_eLpNorm' hp,
+      ← lintegral_rpow_eNorm_eq_rpow_eLpNorm' hp]
+    simpa only [absE, Real.eNorm_eq_ofReal_abs] using hbound
   have hnorm : eLpNorm' (T g) p volume ≤
       (ENNReal.ofReal C) ^ (1 / p) * eLpNorm' g p volume := by
     calc

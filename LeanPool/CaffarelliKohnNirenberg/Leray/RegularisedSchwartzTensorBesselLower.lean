@@ -156,7 +156,7 @@ theorem regularisedSchwartz_iteratedFDeriv_eLpNorm_le_bessel
       gcongr with w
       exact hEach w
     _ = ENNReal.ofReal (N * ∑ w, C w * V) := by
-      rw [Real.enorm_eq_ofReal hN, ENNReal.ofReal_mul hN,
+      rw [Real.eNorm_eq_ofReal hN, ENNReal.ofReal_mul hN,
         ENNReal.ofReal_sum_of_nonneg (fun w _ => mul_nonneg (hC w) hV)]
     _ = ENNReal.ofReal ((N * ∑ w, C w) * V) := by
       rw [mul_assoc, Finset.sum_mul]

@@ -50,7 +50,7 @@ theorem Isotropic.exists_inverseSqrt_equiv_isotropic_standardized (μ : Probabil
         KLS.Isotropic
           (Probability.mapContinuousLinearEquiv
             (Probability.translateLaw (compactPosterior μ hc c Q) (-posteriorMean μ c Q)) W) := by
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   let ν : ProbabilityMeasure E := compactPosterior μ hc c Q
   let A : E →L[ℝ] E := Covariance.operator (ν : Measure E)
   let σ : E →L[ℝ] E := inverseSqrt A

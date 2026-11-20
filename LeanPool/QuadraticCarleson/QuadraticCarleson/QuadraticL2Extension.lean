@@ -74,7 +74,7 @@ theorem sq_lintegral_bound_of_integrable (K : FiniteRangeKernel) (A : ℝ≥0∞
     rw [liminf_congr (hevent t), liminf_const]
   have hfatou := lintegral_liminf_le
     (μ := (volume : Measure ℝ)) (u := (atTop : Filter ℕ))
-    (fun n ↦ (K.measurable_applyIntegral (hm n)).enorm.pow_const 2)
+    (fun n ↦ (K.measurable_applyIntegral (hm n)).eNorm.pow_const 2)
   simp only [hlim] at hfatou
   exact hfatou.trans (liminf_le_of_frequently_le'
     (Filter.Eventually.of_forall henergy).frequently)

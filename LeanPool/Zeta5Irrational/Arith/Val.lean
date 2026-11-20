@@ -139,11 +139,7 @@ lemma inv_nat [hp : Fact p.Prime] {j n : ℕ} (hj : 1 ≤ j) (hjn : j ≤ n) :
     VG p ((j : ℚ)⁻¹) (-(Nat.log p n : ℚ)) := by
   apply inv (by exact_mod_cast (by omega : j ≠ 0))
   rw [padicValRat.of_nat]
-  have h1 : padicValNat p j ≤ Nat.log p j := by
-    rcases Nat.eq_zero_or_pos (padicValNat p j) with h | h
-    · rw [h]; exact Nat.zero_le _
-    · have hdvd : p ^ padicValNat p j ∣ j := pow_padicValNat_dvd
-      exact Nat.le_log_of_pow_le hp.out.one_lt (Nat.le_of_dvd (by omega) hdvd)
+  have h1 : multiplicity p j ≤ Nat.log p j := multiplicity_le_nat_log j
   have h2 : Nat.log p j ≤ Nat.log p n := Nat.log_mono_right hjn
   exact_mod_cast h1.trans h2
 

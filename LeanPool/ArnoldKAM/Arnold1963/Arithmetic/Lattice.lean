@@ -143,7 +143,7 @@ theorem card_latticeShell_le (n m : ℕ) (hn : 0 < n) (hm : 0 < m) :
       omega
     have hsplit : Finset.Icc (-(m : ℤ)) (m : ℤ) =
         insert (-(m : ℤ)) (insert (m : ℤ) (Finset.Ioo (-(m : ℤ)) (m : ℤ))) := by
-      rw [Finset.Ioo_insert_right (by omega), Finset.Ioc_insert_left (by omega)]
+      rw [Finset.insert_right_Ioo (by omega), Finset.insert_left_Ioc (by omega)]
     have hcount : (Finset.Ioo (-(m : ℤ)) (m : ℤ)).card = 2 * m - 1 := by
       rw [Int.card_Ioo]
       omega

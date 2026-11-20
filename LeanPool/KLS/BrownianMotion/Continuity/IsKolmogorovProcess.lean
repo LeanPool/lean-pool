@@ -402,7 +402,7 @@ lemma lintegral_sup_rpow_edist_le_of_minimal_cover_two (hp : 1 ≤ p)
   gcongr _ * ?_
   calc (∑ i ∈ Finset.range (k - m), ((2⁻¹ : ℝ≥0∞) ^ ((q - d) / p)) ^ i) ^ p
     _ ≤ (∑' (i : ℕ), ((2⁻¹ : ℝ≥0∞) ^ ((q - d) / p)) ^ i) ^ p :=
-          by gcongr; apply ENNReal.sum_le_tsum
+          by gcongr; apply sum_le_tsum
     _ = ((1 - (2⁻¹ ^ ((q - d) / p)))⁻¹) ^ p := by congr 1; apply ENNReal.tsum_geometric _
     _ ≤ 2 ^ (q - d) * (2 ^ ((q - d) / p) - 1) ^ (-p) := ?_
   rw [← neg_one_mul p, ENNReal.rpow_mul, ← ENNReal.rpow_inv_rpow (y := p) (by bound) (2 ^ (q - d))]
@@ -521,7 +521,7 @@ lemma lintegral_sup_rpow_edist_le_of_minimal_cover_two_of_le_one (hp : p ≤ 1)
   simp_rw [mul_assoc]
   gcongr _ * (_ * ?_)
   calc ∑ i ∈ Finset.range (k - m), ((2⁻¹ : ℝ≥0∞) ^ (q - d)) ^ i
-    _ ≤ ∑' (i : ℕ), ((2⁻¹ : ℝ≥0∞) ^ (q - d)) ^ i := ENNReal.sum_le_tsum _
+    _ ≤ ∑' (i : ℕ), ((2⁻¹ : ℝ≥0∞) ^ (q - d)) ^ i := sum_le_tsum _
     _ = (1 - (2⁻¹ ^ (q - d)))⁻¹ := ENNReal.tsum_geometric _
     _ = (2⁻¹ ^ (q - d) * 2 ^ (q - d) - 2⁻¹ ^ (q - d))⁻¹ := by
       congr

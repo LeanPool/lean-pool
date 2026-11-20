@@ -138,7 +138,7 @@ theorem lintegral_rowGE_le (M : ABKModel d)
   calc ∑' j : ℤ, ∫⁻ omega, ENNReal.ofReal (wt sprime m j * G m j omega)
           ∂(Cutoff.cutoffSampleLaw M).toMeasure
       ≤ ∑' j : ℤ, ENNReal.ofReal (wt sprime m j * (gammaMomentConst sigma * K)) :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ = ENNReal.ofReal (∑' j : ℤ, wt sprime m j * (gammaMomentConst sigma * K)) :=
         (ENNReal.ofReal_tsum_of_nonneg
           (fun j => mul_nonneg (wt_nonneg sprime m j) hcst) hsum').symm

@@ -68,7 +68,7 @@ def gordonCondition21 (datum : Thue.StandingDatum) :
   gcd_q := by simp
   exactOrder := by
     intro i
-    change orderOf (Abelianization.of
+    change orderOf (Group.Abelianization.of
       (PresentedGroup.of (0 : Fin 3) : (presentationOf datum).Group)) = 1
     rw [d_eq_one_in_abelianization datum]
     simp

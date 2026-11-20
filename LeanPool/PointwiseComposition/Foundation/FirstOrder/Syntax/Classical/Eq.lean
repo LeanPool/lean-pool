@@ -76,7 +76,7 @@ abbrev Eq.relExt {k} (r : L.Rel k) : Sentence L :=
 variable (L)
 
 /-- Data and laws for 𝐄𝐐 in `𝐄𝐐`. -/
-inductive eqAxiom : Theory L
+inductive eqAxiom : Sentence L → Prop
   | refl : eqAxiom (Eq.refl L)
   | symm : eqAxiom (Eq.symm L)
   | trans : eqAxiom (Eq.trans L)
@@ -84,7 +84,7 @@ inductive eqAxiom : Theory L
   | relExt {k} (r : L.Rel k) : eqAxiom (Eq.relExt r)
 
 /-- The «term𝐄𝐐» construction in `FFL.FirstOrder.Theory`. -/
-notation "𝐄𝐐" => eqAxiom
+notation "𝐄𝐐 " L:max => Set.ofPred (eqAxiom L)
 
 variable {L}
 

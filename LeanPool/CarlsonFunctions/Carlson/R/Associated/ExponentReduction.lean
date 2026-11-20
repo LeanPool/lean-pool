@@ -100,7 +100,7 @@ theorem exists_polynomial_carlsonAssociated_exponent_reduction
       exact (eq_neg_of_add_eq_zero_right heq) ▸ Q.neg_mem hmem
     have hdown (m : ℕ) : F (t - m) ∈ Q := by
       induction m using Nat.strong_induction_on with
-      | h m ih =>
+      | ind m ih =>
         by_cases hm : m < Fintype.card ι
         · exact hbase m hm
         have he : t - (m : ℂ) = -(-t + (m - Fintype.card ι : ℕ)) - Fintype.card ι := by
@@ -123,7 +123,7 @@ theorem exists_polynomial_carlsonAssociated_exponent_reduction
           exact ih _ (by omega)
     have hup (m : ℕ) : F (t + m) ∈ Q := by
       induction m using Nat.strong_induction_on with
-      | h m ih =>
+      | ind m ih =>
         cases m with
         | zero => simpa using hdown 0
         | succ m =>

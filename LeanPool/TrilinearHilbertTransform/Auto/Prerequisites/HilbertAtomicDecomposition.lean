@@ -297,8 +297,8 @@ theorem probabilityL2_atomic_closure {X : Type*} [MeasurableSpace X]
 theorem probabilityL2L1Norm_le_norm {X : Type*} [MeasurableSpace X]
     (μ : Measure X) [IsProbabilityMeasure μ] (f : Lp ℂ 2 μ) :
     probabilityL2L1Norm μ f ≤ ‖f‖ := by
-  rw [probabilityL2L1Norm, integral_norm_eq_lintegral_enorm (Lp.aestronglyMeasurable f),
-    ← eLpNorm_one_eq_lintegral_enorm (Lp.aestronglyMeasurable f), Lp.norm_def]
+  rw [probabilityL2L1Norm, integral_norm_eq_lintegral_eNorm (Lp.aestronglyMeasurable f),
+    ← eLpNorm_one_eq_lintegral_eNorm (Lp.aestronglyMeasurable f), Lp.norm_def]
   exact ENNReal.toReal_mono (Lp.memLp f).ne_top
     (eLpNorm_le_eLpNorm_of_exponent_le (by norm_num : (1 : ENNReal) ≤ 2))
 theorem complexAtomicHull_finite {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]

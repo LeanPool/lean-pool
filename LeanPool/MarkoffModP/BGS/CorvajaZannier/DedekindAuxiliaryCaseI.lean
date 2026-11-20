@@ -231,7 +231,7 @@ theorem exists_det_one_dedekindColumnMatrix_negativeOrdersPairwiseDistinct
         (indexedDedekindLocalColumnCombination f A i) := by
   induction hN : dedekindPoleWeight v f using Nat.strong_induction_on
       generalizing f with
-  | h N ih =>
+  | ind N ih =>
       by_cases hdistinct : NegativeFinitePlaceOrdersPairwiseDistinct v f
       · refine ⟨(1 : Matrix (Fin k) (Fin k) C), Matrix.det_one, ?_, ?_⟩
         · simpa [indexedDedekindLocalColumnCombination_one]

@@ -206,7 +206,7 @@ theorem norm_lineDeriv_le_of_lipschitzWith {g : Vec 5 → ℝ} {Λ : ℝ≥0} (h
     have := hg.dist_le_mul (x + t • v) (x + s • v)
     rw [dist_eq_norm, dist_eq_norm, add_sub_add_left_eq_sub, ← sub_smul,
       norm_smul, Real.norm_eq_abs] at this
-    rw [dist_eq_norm, Real.norm_eq_abs, NNReal.coe_mul, coe_nnnorm]
+    rw [dist_eq_norm, Real.norm_eq_abs, NNReal.coe_mul, coe_nnNorm]
     calc |g (x + t • v) - g (x + s • v)| ≤ Λ * (|t - s| * ‖v‖) := by
           rwa [Real.norm_eq_abs] at this
       _ = Λ * ‖v‖ * |t - s| := by ring

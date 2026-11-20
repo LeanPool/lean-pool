@@ -220,7 +220,7 @@ private theorem helper_branch_185.{u_1, u_2} :
     exact (Sum.inl.inj h) ▸ hwuT
   rcases hu_end with hus | hut <;> rcases hv_end with hvs | hvt <;>
     rcases hwu_end with hws | hwt <;>
-    all_goals aesop
+    aesop
 
 theorem ScheideAbsorbingElementary {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]

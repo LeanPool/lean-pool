@@ -111,7 +111,7 @@ theorem exists_radial_kernel {r : ℝ} (hr : 0 < r) :
   have hcont : Continuous h :=
     (expNegInvGlue.contDiff (n := 0)).continuous.comp (by fun_prop)
   have hpos : 0 < ∫ y, h y ∂μ :=
-    hcont.integral_pos_of_hasCompactSupport_nonneg_nonzero hhc
+    hcont.integral_pos_of_hasCompactSupport_nonneg_ne_zero hhc
       (fun y ↦ expNegInvGlue.nonneg _) (x := 0) (by
         simp only [hh, norm_zero]
         exact (expNegInvGlue.pos_of_pos (by nlinarith only [hr])).ne')

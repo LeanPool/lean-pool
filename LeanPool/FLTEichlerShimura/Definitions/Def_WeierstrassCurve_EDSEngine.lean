@@ -573,7 +573,7 @@ lemma zero' [IsReduced R] : W 0 = 0 := by
   simp_rw [add_zero, sub_self, mul_assoc, ← pow_succ'] at this
   exact IsReduced.eq_zero _ ⟨_, this⟩
 include ell in
-lemma zero (m : ℤ) (mem : W (2 * m) ∈ R⁰) : W 0 = 0 := by
+lemma zero_eichlerShimura (m : ℤ) (mem : W (2 * m) ∈ R⁰) : W 0 = 0 := by
   have := ell.rel₃ m m (2 * m)
   rw [add_comm, sub_self, sub_self, ← two_mul, mul_comm (W _)] at this
   exact (mem_nonZeroDivisors_iff.mp mem).2 _
@@ -588,7 +588,7 @@ lemma sub_add_neg_sub_mul_eq_zero (m n r : ℤ) :
 variable (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
 
 include ell one two in
-lemma neg (m : ℤ) : W (-m) = - W m := by
+lemma neg_eichlerShimura (m : ℤ) : W (-m) = - W m := by
   rw [eq_neg_iff_add_eq_zero]
   obtain ⟨m, rfl|rfl⟩ := m.even_or_odd'
   on_goal 1 => apply (mem_nonZeroDivisors_iff.mp two).2
@@ -598,7 +598,7 @@ lemma neg (m : ℤ) : W (-m) = - W m := by
   · convert sub_add_neg_sub_mul_eq_zero ell (-m) (m + 1) 1 using 2; ring_nf
 include ell one two in
 protected lemma rel₄ {a b c d : ℤ} (same : HaveSameParity₄ a b c d) : rel₄ W a b c d = 0 :=
-  rel₄_of_oddRec_evenRec (ell.neg one two) (ell.zero 1 two) one two
+  rel₄_of_oddRec_evenRec (ell.neg_eichlerShimura one two) (ell.zero_eichlerShimura 1 two) one two
     (fun _ _ ↦ ell.oddRec _) (fun _ _ ↦ ell.evenRec _) same
 include ell one two in
 protected lemma net (p q r s : ℤ) : net W p q r s = 0 := by
@@ -798,28 +798,30 @@ private lemma normEDS_of_mem_nonZeroDivisors (hb : b ∈ R⁰) : IsEllipticSeque
       simp only [EvenRec, normEDS_one, normEDS_two, one_pow, mul_one]
       rw [normEDS_even]; ring)
 
-protected lemma IsEllipticSequence.normEDS : IsEllipticSequence (normEDS b c d) := by
+protected lemma IsEllipticSequence.normEDS_eichlerShimura :
+    IsEllipticSequence (_root_.normEDS b c d) := by
   rw [normEDS_eq_aeval]
   exact (normEDS_of_mem_nonZeroDivisors <| mem_nonZeroDivisors_of_ne_zero <| X_ne_zero _).comp _
 
 include ellW ellU in
-protected lemma IsEllipticSequence.ext (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+protected lemma IsEllipticSequence.ext_eichlerShimura (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     (h1 : W 1 = U 1) (h2 : W 2 = U 2) (h3 : W 3 = U 3) (h4 : W 4 = U 4) : W = U := by
   funext n
   induction n using Int.negInduction with
   | nat n =>
     refine normEDSRec ?_ h1 h2 h3 h4 (fun m h₁ h₂ h₃ h₄ h₅ ↦ ?_) (fun m h₁ h₂ h₃ h₄ ↦ ?_) n
-    · rw [Nat.cast_zero, ellW.zero 1 two, ellU.zero 1 (h2 ▸ two)]
+    · rw [Nat.cast_zero, ellW.zero_eichlerShimura 1 two, ellU.zero_eichlerShimura 1 (h2 ▸ two)]
     · erw [← mul_cancel_right_mem_nonZeroDivisors (mul_mem two <| pow_mem one 2), ← mul_assoc,
         ← mul_assoc, Nat.cast_mul, Nat.cast_add, ellW.evenRec, h1, h2, ellU.evenRec]
       convert congr($h₃ * ($h₂ ^ 2 * $h₅ - $h₁ * $h₄ ^ 2)) <;> omega
     · rw [← mul_cancel_right_mem_nonZeroDivisors (pow_mem one 3)]
       erw [Nat.cast_add, Nat.cast_mul, Nat.cast_add, ellW.oddRec, h1, ellU.oddRec]
       convert congr($h₄ * $h₂ ^ 3 - $h₁ * $h₃ ^ 3) <;> omega
-  | neg ih n => rw [ellW.neg one two, ellU.neg (h1 ▸ one) (h2 ▸ two), ih]
+  | neg ih n =>
+    rw [ellW.neg_eichlerShimura one two, ellU.neg_eichlerShimura (h1 ▸ one) (h2 ▸ two), ih]
 
-lemma normEDS_two_three_two : normEDS 2 3 2 = id := by
-  apply IsEllipticSequence.normEDS.ext IsEllipticSequence.id <;>
+lemma normEDS_two_three_two_eichlerShimura : normEDS 2 3 2 = id := by
+  apply IsEllipticSequence.normEDS_eichlerShimura.ext_eichlerShimura IsEllipticSequence.id <;>
     simp only [normEDS_one, normEDS_two, normEDS_three, normEDS_four]
   exacts [mem_nonZeroDivisors_of_ne_zero one_ne_zero,
     mem_nonZeroDivisors_of_ne_zero two_ne_zero, rfl, rfl, rfl, rfl]
@@ -828,14 +830,14 @@ lemma compl₂EDS_two_three_two (n : ℤ) : compl₂EDS (2 : ℤ) 3 2 n = 2 := b
   obtain rfl | hn := eq_or_ne n 0
   · exact compl₂EDS_zero ..
   · have := normEDS_mul_compl₂EDS (2 : ℤ) 3 2 n
-    rwa [normEDS_two_three_two, id_eq, id_eq, mul_comm,
+    rwa [normEDS_two_three_two_eichlerShimura, id_eq, id_eq, mul_comm,
       mul_cancel_right_mem_nonZeroDivisors (mem_nonZeroDivisors_of_ne_zero hn)] at this
 
 lemma universalNormEDS_ne_zero {n : ℤ} (hn : n ≠ 0) : universalNormEDS n ≠ 0 := by
   intro h
   refine hn ?_
   apply_fun aeval (Param.rec (2 : ℤ) 3 2) at h
-  simpa [universalNormEDS, map_normEDS_fl, normEDS_two_three_two] using h
+  simpa [universalNormEDS, map_normEDS_fl, normEDS_two_three_two_eichlerShimura] using h
 
 lemma universalNormEDS_mem_nonZeroDivisors {n : ℤ} (hn : n ≠ 0) :
     universalNormEDS n ∈ (MvPolynomial Param ℤ)⁰ :=
@@ -847,16 +849,17 @@ variable (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
   (dvd₁₂ : W 1 ∣ W 2) (dvd₁₃ : W 1 ∣ W 3) (dvd₂₄ : W 2 ∣ W 4)
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
-theorem IsEllipticSequence.eq_normEDS_of_dvd : ∃ b c d, W = (W 1 * normEDS b c d ·) := by
+theorem IsEllipticSequence.eq_normEDS_of_dvd : ∃ b c d, W = (W 1 * _root_.normEDS b c d ·) := by
   obtain ⟨b, h₁₂⟩ := dvd₁₂
   obtain ⟨c, h₁₃⟩ := dvd₁₃
   obtain ⟨d, h₂₄⟩ := dvd₂₄
-  exact ⟨b, c, d, ellW.ext (IsEllipticSequence.normEDS.smul _) one two (by simp) (by simp [h₁₂])
+  exact ⟨b, c, d, ellW.ext_eichlerShimura (IsEllipticSequence.normEDS_eichlerShimura.smul _)
+    one two (by simp) (by simp [h₁₂])
     (by simp [h₁₃]) (by rw [h₂₄, h₁₂, normEDS_four]; ring)⟩
 
 include one two in
 theorem IsEllipticDvdSequence.eq_normEDS (h : IsEllipticDvdSequence W) :
-    ∃ b c d, W = (W 1 * normEDS b c d ·) :=
+    ∃ b c d, W = (W 1 * _root_.normEDS b c d ·) :=
   h.1.eq_normEDS_of_dvd one two (h.2 _ _ ⟨2, rfl⟩) (h.2 _ _ ⟨3, rfl⟩) (h.2 _ _ ⟨2, rfl⟩)
 
 section Complement
@@ -871,7 +874,7 @@ lemma IsEllipticSequence.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (mem : W 
   | nat n =>
     refine n.strong_induction_on fun n ih ↦ ?_
     obtain _ | n := n
-    · simp [EllSequence.compl, ellW.zero 1 two]
+    · simp [EllSequence.compl, ellW.zero_eichlerShimura 1 two]
     obtain _ | n := n
     · simp [EllSequence.compl, compl']
     rw [EllSequence.compl, Int.sign_eq_one_of_pos (by omega),
@@ -890,21 +893,22 @@ lemma IsEllipticSequence.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (mem : W 
     convert this using 1
     · ring_nf
     rw [Nat.cast_mul]; ring_nf
-  | neg hn n => rw [neg_mul, ellW.neg one two, compl_neg, mul_neg, hn]
+  | neg hn n => rw [neg_mul, ellW.neg_eichlerShimura one two, compl_neg, mul_neg, hn]
 
-lemma normEDS_mul_complEDS (m n : ℤ) :
+lemma normEDS_mul_complEDS_eichlerShimura (m n : ℤ) :
     normEDS b c d m * EllSequence.complEDS b c d m n = normEDS b c d (n * m) := by
   obtain rfl|hm := eq_or_ne m 0
   · simp
   rw [normEDS_eq_aeval, universalNormEDS, complEDS_eq_aeval, ← map_mul]; congr 1
   have := @universalNormEDS_mem_nonZeroDivisors
-  exact IsEllipticSequence.normEDS.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors (this one_ne_zero)
+  exact IsEllipticSequence.normEDS_eichlerShimura.mul_compl_eq_apply_mul_of_mem_nonZeroDivisors
+    (this one_ne_zero)
     (this two_ne_zero) _ _ (fun _ ↦ by simp) (fun _ ↦ normEDS_mul_compl₂EDS _ _ _ _) _ _ (this hm)
 
 lemma normEDS_mul_complEDS_div (hm : m ≠ 0) (n : ℤ) (dvd : m ∣ n) :
     normEDS b c d m * EllSequence.complEDS b c d m (n / m) = normEDS b c d n := by
   obtain ⟨n, rfl⟩ := dvd
-  rw [Int.mul_ediv_cancel_left _ hm, normEDS_mul_complEDS, mul_comm]
+  rw [Int.mul_ediv_cancel_left _ hm, normEDS_mul_complEDS_eichlerShimura, mul_comm]
 
 namespace EllSequence
 
@@ -997,18 +1001,19 @@ end EllSequence
 
 end Complement
 
-protected theorem IsDvdSequence.normEDS : IsDvdSequence (normEDS b c d) := by
+protected theorem IsDvdSequence.normEDS_eichlerShimura : IsDvdSequence (_root_.normEDS b c d) := by
   rintro m _ ⟨n, rfl⟩
-  rw [mul_comm m, ← normEDS_mul_complEDS]
+  rw [mul_comm m, ← normEDS_mul_complEDS_eichlerShimura]
   exact dvd_mul_right _ _
 
-protected theorem IsEllipticDvdSequence.normEDS : IsEllipticDvdSequence (normEDS b c d) :=
-  ⟨IsEllipticSequence.normEDS, IsDvdSequence.normEDS⟩
+protected theorem IsEllipticDvdSequence.normEDS_eichlerShimura :
+    IsEllipticDvdSequence (_root_.normEDS b c d) :=
+  ⟨IsEllipticSequence.normEDS_eichlerShimura, IsDvdSequence.normEDS_eichlerShimura⟩
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
 lemma IsEllipticSequence.isDivSequence_of_dvd : IsDvdSequence W := by
   obtain ⟨b, c, d, h⟩ := ellW.eq_normEDS_of_dvd one two dvd₁₂ dvd₁₃ dvd₂₄
-  rw [h]; exact IsDvdSequence.smul (W 1) IsDvdSequence.normEDS
+  rw [h]; exact IsDvdSequence.smul (W 1) IsDvdSequence.normEDS_eichlerShimura
 
 include ellW one two dvd₁₂ dvd₁₃ dvd₂₄ in
 lemma IsEllipticSequence.isEllDivSequence_of_dvd : IsEllipticDvdSequence W :=
@@ -1020,7 +1025,7 @@ section
 
 lemma net_normEDS (p q r s : ℤ) : net (normEDS b c d) p q r s = 0 := by
   rw [normEDS_eq_aeval, ← Function.comp_def, ← map_net,
-    universalNormEDS, IsEllipticSequence.normEDS.net, map_zero] <;>
+    universalNormEDS, IsEllipticSequence.normEDS_eichlerShimura.net, map_zero] <;>
     apply mem_nonZeroDivisors_of_ne_zero <;>
     simp only [normEDS_one, normEDS_two] <;>
     first
@@ -1115,7 +1120,7 @@ protected abbrev Ring : Type := curve.CoordinateRing
 /-- The fraction field of the universal curve's coordinate ring. -/
 protected abbrev Field : Type := FractionRing Univ.Ring
 
-instance : CommRing Poly := Polynomial.commRing
+instance : CommRing Poly := inferInstance
 
 lemma Poly.two_ne_zero : (2 : Poly) ≠ 0 :=
   Polynomial.C_ne_zero.mpr <| Polynomial.C_ne_zero.mpr fun h ↦ two_ne_zero' (α := ℤ) <|
@@ -1239,7 +1244,7 @@ lemma ringEval_comp_mk : (ringEval eqn).comp (AdjoinRoot.mk _) = polyEval W x y 
   RingHom.ext (ringEval_mk eqn)
 
 lemma polyEval_comp_eq_specialize : (polyEval W x y).comp (algebraMap _ _) = W.specialize := by
-  ext <;> simp [polyEval]
+  ext <;> simp [polyEval, Polynomial.single_eq_monomial]
 
 lemma ringEval_comp_eq_specialize : (ringEval eqn).comp (algebraMap _ _) = W.specialize := by
   rw [algebraMap_ring_eq_comp, ← RingHom.comp_assoc, ringEval_comp_mk, polyEval_comp_eq_specialize]
@@ -1398,7 +1403,7 @@ lemma cusp_preΨ₄ : cusp.preΨ₄ = 2 * X ^ 6 := by simp [cusp, preΨ₄, b₂
 
 lemma polyEval_cusp_ψ : polyEval cusp 1 1 (curve.ψ n) = n := by
   rw [ψ, map_normEDS, ← evalEval_ψ₂, ← evalEval_Ψ₃, ← evalEval_preΨ₄, cusp_ψ₂, cusp_Ψ₃, cusp_preΨ₄]
-  simp [evalEval, normEDS_two_three_two]
+  simp [evalEval]
 
 lemma polyEval_cusp_φ : polyEval cusp 1 1 (curve.φ n) = 1 := by
   simp_rw [φ, map_sub, map_mul, map_pow, polyEval_cusp_ψ, polyEval]
@@ -1422,7 +1427,7 @@ lemma ψᵤ_eq_normEDS :
   ext; rw [← map_normEDS]; rfl
 
 lemma isEllSequence_ψᵤ : IsEllipticSequence ψᵤ := by
-  rw [ψᵤ_eq_normEDS]; exact IsEllipticSequence.normEDS
+  rw [ψᵤ_eq_normEDS]; exact IsEllipticSequence.normEDS_eichlerShimura
 lemma net_ψᵤ (p q r s) : EllSequence.net ψᵤ p q r s = 0 := by rw [ψᵤ_eq_normEDS]; apply net_normEDS
 
 lemma ψᵤ_ne_zero (h0 : n ≠ 0) : ψᵤ n ≠ 0 := fun h ↦ by
@@ -1522,7 +1527,7 @@ def slopeOne : Univ.Field :=
 lemma slopeOne_eq_neg_div : slopeOne = -polyToField curve.polynomialX / ψᵤ 2 := by
   rw [slopeOne, Affine.slope_of_Y_ne rfl smulY_one_ne_negY, smulY_one_sub_negY, Affine.polynomialX]
   congr
-  simp [algebraMap_field_eq_comp, Polynomial.algebraMap_apply, map_ofNat]
+  simp [algebraMap_field_eq_comp, Polynomial.single_eq_monomial, map_ofNat]
 
 private lemma addX_smul_one_smul_one_aux {F} [Field F] {a₁ a₂ x dx dy : F} (h0 : dy ≠ 0) :
     (-dx / dy) ^ 2 + a₁ * (-dx / dy) - a₂ - x - x - x =
@@ -1732,7 +1737,8 @@ lemma dblXYZ_smulRing : dblXYZ curveRing (smulRing n) = smulRing (2 * n) :=
     simp_rw [← map_dblXYZ]; exact dblXYZ_smulField
 
 lemma addZ_smulPoly : addZ (smulPoly m) (smulPoly n) = curve.ψ (n + m) * curve.ψ (n - m) := by
-  have hES : IsEllipticSequence (WeierstrassCurve.ψ curve) := IsEllipticSequence.normEDS
+  have hES : IsEllipticSequence (WeierstrassCurve.ψ curve) :=
+    IsEllipticSequence.normEDS_eichlerShimura
   simp_rw [addZ, smulPoly, φ]; convert (hES.rel₃ n m 1).symm using 1
   · simp only [fin3_def_ext]; ring
   · rw [ψ_one]; ring

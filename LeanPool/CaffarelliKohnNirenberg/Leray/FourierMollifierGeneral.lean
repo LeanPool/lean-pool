@@ -230,7 +230,7 @@ theorem regMollifyVector_pointwise_enorm_le
   calc
     _ ≤ ‖scalarVectorAction‖ₑ *
         eLpNorm (regMollifierKernel ρ ε hε) 2 volume * eLpNorm f 2 volume := by
-          exact MeasureTheory.enorm_convolution_le
+          exact MeasureTheory.eNorm_convolution_le
             (L := scalarVectorAction)
             (p := (2 : ℝ≥0∞)) (q := 2)
             (regMollifierKernel_memLp_two ρ ε hε).aestronglyMeasurable
@@ -243,7 +243,7 @@ theorem regMollifyVector_pointwise_enorm_le
           apply ContinuousLinearMap.opENorm_le_bound
           intro x
           change ‖c • x‖ₑ ≤ _
-          exact enorm_smul_le
+          exact eNorm_smul_le
         calc
           ‖scalarVectorAction c‖ₑ ≤ ‖c‖ₑ := hc
           _ = 1 * ‖c‖ₑ := by simp)
@@ -293,7 +293,7 @@ theorem regMollifyVector_eLpNorm_top_le
     eLpNorm (regMollifyVector ρ ε hε f) ∞ volume ≤
       ENNReal.ofReal (ε ^ (-(3 / 2 : ℝ))) * eLpNorm ρ.rho 2 volume * eLpNorm f 2 volume := by
   rw [eLpNorm_exponent_top (regMollifyVector_aestronglyMeasurable ρ ε hε hf)]
-  exact eLpNormEssSup_le_of_ae_enorm_bound
+  exact eLpNormEssSup_le_of_ae_eNorm_bound
     (Filter.Eventually.of_forall fun x =>
       regMollifyVector_pointwise_enorm_le_scaled ρ ε hε hf x)
 

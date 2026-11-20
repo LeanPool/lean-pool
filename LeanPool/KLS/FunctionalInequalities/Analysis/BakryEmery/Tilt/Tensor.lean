@@ -207,7 +207,7 @@ theorem tiltAverage_neg_weightedLaplacianVec {V : E → ℝ} (hV : ContDiff ℝ 
     {f : E → F} (hf : f.HasTemperateGrowth) (z : E) :
     tiltAverage (m.tilted (-V)) (fun x => -weightedLaplacianVec V f x) z =
       tiltAverage (m.tilted (-V)) (fderiv ℝ f) z z := by
-  let : CompleteSpace F := FiniteDimensional.complete ℝ F
+  let : CompleteSpace F := FiniteDimensional.completeSpace ℝ F
   let μ : Measure E := m.tilted (-V)
   have hdf := hasTemperateGrowth_fderiv hf
   have hDi := integrable_expTilt_of_hasTemperateGrowth m hexp hdf z
@@ -272,7 +272,7 @@ theorem taylorTensor_neg_weightedLaplacianVec {V : E → ℝ} (hV : ContDiff ℝ
     {f : E → F} (hf : f.HasTemperateGrowth) (d : ℕ) :
     taylorTensor (m.tilted (-V)) (fun x => -weightedLaplacianVec V f x) (d + 1) =
       symmetrizeML (taylorTensor (m.tilted (-V)) (fderiv ℝ f) d).uncurryRight := by
-  let : CompleteSpace F := FiniteDimensional.complete ℝ F
+  let : CompleteSpace F := FiniteDimensional.completeSpace ℝ F
   let μ : Measure E := m.tilted (-V)
   have hdf := hasTemperateGrowth_fderiv hf
   have hD := tensorTaylor_smooth_average m hexp hdf

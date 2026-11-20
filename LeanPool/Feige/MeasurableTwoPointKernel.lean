@@ -29,7 +29,7 @@ noncomputable section
 support points. -/
 theorem measurable_twoPointMeasure_apply {B : Set ℝ} (hB : MeasurableSet B) :
     Measurable (fun p : ℝ × ℝ ↦ twoPointMeasure p.1 p.2 B) := by
-  simp only [twoPointMeasure, Measure.add_apply, Measure.smul_apply,
+  simp only [twoPointMeasure, add_apply, smul_apply,
     Measure.dirac_apply' _ hB]
   unfold twoPointLowerWeight twoPointUpperWeight
   fun_prop
@@ -67,7 +67,7 @@ theorem twoPointKernel_nonnegative_support (p : TwoPointParams)
     (hx : 0 ≤ p.1.1) :
     twoPointKernel p (Iio 0) = 0 := by
   rw [twoPointKernel_apply, twoPointMeasure]
-  simp only [Measure.add_apply, Measure.smul_apply,
+  simp only [add_apply, smul_apply,
     Measure.dirac_apply' _ measurableSet_Iio]
   have hy : 0 ≤ p.1.2 := le_trans (by norm_num) p.2.2.1
   simp [not_lt_of_ge hx, not_lt_of_ge hy]
@@ -349,8 +349,8 @@ theorem mass_below_add_above
     μ (Iio 1) + μ (Ioi 1) = 1 - μ {1} := by
   have hparts := congrArg (fun ν : Measure ℝ ↦ ν Set.univ)
     (restrict_below_add_atom_add_above μ)
-  simp only [Measure.add_apply, Measure.restrict_apply MeasurableSet.univ,
-    Set.univ_inter, Measure.smul_apply, measure_univ,
+  simp only [add_apply, Measure.restrict_apply MeasurableSet.univ,
+    Set.univ_inter, smul_apply, measure_univ,
     Measure.dirac_apply' _ MeasurableSet.univ, Set.indicator_of_mem
       (Set.mem_univ (1 : ℝ)), Pi.one_apply, smul_eq_mul, mul_one] at hparts
   apply ENNReal.eq_sub_of_add_eq' (by simp)
@@ -420,7 +420,7 @@ theorem fullKernelMixture_isProbability
     (hM : 0 < belowMoment μ) :
     IsProbabilityMeasure (fullKernelMixture μ (belowMoment μ)) := by
   constructor
-  rw [fullKernelMixture, Measure.add_apply, Measure.smul_apply,
+  rw [fullKernelMixture, add_apply, smul_apply,
     Measure.dirac_apply' _ MeasurableSet.univ,
     Set.indicator_of_mem (Set.mem_univ (1 : ℝ)), Pi.one_apply,
     smul_eq_mul, mul_one,
@@ -587,9 +587,9 @@ theorem fullKernelMixture_eq_expanded
     (hμ : Integrable (fun x : ℝ ↦ x) μ) (M : ℝ) :
     fullKernelMixture μ M = expandedTwoPointMixture μ M := by
   ext B hB
-  rw [fullKernelMixture, expandedTwoPointMixture, Measure.add_apply,
-    Measure.add_apply, nondegenerateKernelMixture_apply_expanded hμ M hB]
-  simp only [Measure.smul_apply, Measure.add_apply, smul_eq_mul]
+  rw [fullKernelMixture, expandedTwoPointMixture, add_apply,
+    add_apply, nondegenerateKernelMixture_apply_expanded hμ M hB]
+  simp only [smul_apply, add_apply, smul_eq_mul]
 
 /-- For a mean-one probability law with a nonzero lower moment, sampling the
 latent pair and then the corresponding two-point law reconstructs the

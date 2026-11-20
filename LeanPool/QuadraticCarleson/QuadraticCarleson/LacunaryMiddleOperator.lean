@@ -177,7 +177,7 @@ theorem measurable_frozenBlockMaxEnorm
     Measurable (frozenBlockMaxEnorm A f k B c τ) := by
   have hterm (m : ℤ) : Measurable fun x : ℝ ↦
       ‖frozenBlockLowAction A f k B c τ m x‖ₑ :=
-    (measurable_frozenBlockLowAction hf k B c τ m).enorm
+    (measurable_frozenBlockLowAction hf k B c τ m).eNorm
   have hsup (s : Finset ℤ) : Measurable fun x : ℝ ↦
       s.sup fun m ↦ ‖frozenBlockLowAction A f k B c τ m x‖ₑ := by
     induction s using Finset.induction_on with
@@ -358,7 +358,7 @@ theorem enorm_frozenBlockErrorLowAction_le_verySmall
       (stoppingCenter (f := f)) stoppingLength) :
     ‖frozenBlockErrorLowAction A f k B c τ m x‖ₑ ≤
       verySmallLowContributionAtLevel A f k B c x := by
-  rw [frozenBlockErrorLowAction_eq_neg_sum hf hfi hAk B c τ m x, enorm_neg]
+  rw [frozenBlockErrorLowAction_eq_neg_sum hf hfi hAk B c τ m x, eNorm_neg]
   let D : Finset ℤ := R B c τ \ S B c m
   let u : ℤ → ℂ := fun j ↦
     ∫ y, paperLowCZKernel
@@ -373,19 +373,19 @@ theorem enorm_frozenBlockErrorLowAction_le_verySmall
     · have hz : u j = 0 := by
         exact canonicalScaleLowAction_eq_zero_of_tooLarge
           hf hfi hAk hlarge hx
-      rw [hz, enorm_zero]
+      rw [hz, eNorm_zero]
       exact bot_le
   calc
-    ‖∑ j ∈ D, u j‖ₑ ≤ ∑ j ∈ D, ‖u j‖ₑ := enorm_sum_le _ _
+    ‖∑ j ∈ D, u j‖ₑ ≤ ∑ j ∈ D, ‖u j‖ₑ := eNorm_sum_le _ _
     _ ≤ ∑ j ∈ D,
         restrictedCanonicalScaleLowActionEnorm A f k B c m j x :=
       Finset.sum_le_sum hterm
     _ ≤ ∑' j : ℤ,
         restrictedCanonicalScaleLowActionEnorm A f k B c m j x :=
-      ENNReal.summable.sum_le_tsum D (fun _ _ ↦ bot_le)
+      CompleteLattice.summable.sum_le_tsum D (fun _ _ ↦ bot_le)
     _ ≤ ∑' m' : ℤ, ∑' j : ℤ,
         restrictedCanonicalScaleLowActionEnorm A f k B c m' j x :=
-      ENNReal.le_tsum (f := fun m' ↦ ∑' j : ℤ,
+      le_tsum (fun m' ↦ ∑' j : ℤ,
         restrictedCanonicalScaleLowActionEnorm A f k B c m' j x) m
     _ = verySmallLowContributionAtLevel A f k B c x := rfl
 
@@ -409,12 +409,12 @@ theorem frozenBlockInputL1Mass_le_scale_sum
           ‖stoppingScaleLevelBadPart A f j k x‖ₑ := by
       apply lintegral_mono
       intro x
-      exact enorm_sum_le _ _
+      exact eNorm_sum_le _ _
     _ = ∑ j ∈ R B c τ,
         ∫⁻ x, ‖stoppingScaleLevelBadPart A f j k x‖ₑ := by
       rw [lintegral_finsetSum]
       intro j _
-      exact (measurable_stoppingScaleLevelBadPart hf j k).enorm
+      exact (measurable_stoppingScaleLevelBadPart hf j k).eNorm
 
 /-- Frozen block mass retained on one of the paper's sparse residue classes. -/
 def sparseFrozenBlockInputL1Mass
@@ -443,7 +443,7 @@ theorem tsum_sparseFrozenBlockInputL1Mass_le_levelMass
   calc
     (∑' τ : ℤ, sparseFrozenBlockInputL1Mass A f k B c ρ τ) ≤
         ∑' τ : ℤ, sparseBlockMass B c ρ a τ :=
-      ENNReal.tsum_le_tsum hterm
+      tsum_le_tsum hterm
     _ ≤ ∑' j : ℤ, a j := tsum_sparseBlockMass_le B c hB hc ρ a
     _ = ∫⁻ x, ‖canonicalLevelBadPart A f k x‖ₑ := by
       exact tsum_lintegral_enorm_stoppingScaleLevelBadPart hf k

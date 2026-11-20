@@ -134,7 +134,7 @@ theorem IsRegularAnalyticSetAt.exists_equations [FiniteDimensional ℂ E]
     ∃ (V : Set E) (f : E → (Fin q → ℂ)), IsOpen V ∧ a ∈ V ∧
       AnalyticOnNhd ℂ f V ∧ (∀ z ∈ V, z ∈ A ↔ f z = 0) ∧
       Function.Surjective (fderiv ℂ f a) := by
-  let := FiniteDimensional.complete ℂ E
+  let := FiniteDimensional.completeSpace ℂ E
   obtain ⟨_, e, L, he, ha, hL, hEq⟩ := h
   refine ⟨e.source, L ∘ e, e.open_source, ha, ?_, hEq, ?_⟩
   · intro z hz
@@ -231,7 +231,7 @@ theorem IsRegularAnalyticSetAt.of_zeroSet_subset [FiniteDimensional ℂ E]
     (hU : IsOpen U) (haU : a ∈ U) {f : E → ℂ} (hf : AnalyticOnNhd ℂ f U)
     (hfa : f a = 0) (hsub : ∀ z ∈ U, f z = 0 → z ∈ A) :
     IsRegularAnalyticSetAt (U ∩ f ⁻¹' {0}) a 1 := by
-  let := FiniteDimensional.complete ℂ E
+  let := FiniteDimensional.completeSpace ℂ E
   obtain ⟨haA, e, L, he, hae, hL, hEq⟩ := hA
   let l : E →L[ℂ] ℂ := (ContinuousLinearMap.proj (0 : Fin 1)).comp L
   have hl (z : E) : l z = 0 ↔ L z = 0 := by

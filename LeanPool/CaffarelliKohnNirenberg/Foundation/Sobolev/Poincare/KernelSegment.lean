@@ -185,7 +185,7 @@ theorem setIntegral_segmentBlend_mul_norm_sub_le_inv_pow_mul_setIntegral_inter_c
         ∫ u in U ∩ Metric.closedBall x (a * R), φ u * ‖u - x‖ ∂MeasureTheory.volume := by
     exact MeasureTheory.setIntegral_mono_set htarget_int
       (Filter.Eventually.of_forall (fun u => mul_nonneg (hφ_nonneg u) (norm_nonneg _)))
-      hsub_ball.eventuallyLE
+      (Filter.Eventually.of_forall hsub_ball)
   have hcoeff_nonneg : 0 ≤ ((1 - t) ^ (d + 1 : ℕ))⁻¹ := by
     positivity
   calc

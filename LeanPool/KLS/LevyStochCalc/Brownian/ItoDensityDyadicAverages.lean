@@ -78,7 +78,7 @@ private lemma truncation_dominated_brownian (x : ℝ) (M : ℕ) :
         linarith
   have h_nn : ‖x - max (-(M : ℝ)) (min (M : ℝ) x)‖₊ ≤ ‖x‖₊ := by
     rw [← NNReal.coe_le_coe]
-    simp only [coe_nnnorm, Real.norm_eq_abs]
+    simp only [coe_nnNorm, Real.norm_eq_abs]
     exact h_abs
   exact pow_le_pow_left' (ENNReal.coe_le_coe.mpr h_nn) 2
 
@@ -108,7 +108,7 @@ lemma truncation_L2_converges_brownian
       have h_sub : Measurable (fun (p : Ω × ℝ) =>
           H p.1 p.2 - max (-(M : ℝ)) (min (M : ℝ) (H p.1 p.2))) :=
         h_meas.sub (h_clip.comp h_meas)
-      exact (ENNReal.continuous_coe.measurable.comp h_sub.nnnorm).pow_const 2
+      exact (ENNReal.continuous_coe.measurable.comp h_sub.nnNorm).pow_const 2
     refine Measurable.aemeasurable ?_
     exact Measurable.lintegral_prod_right' (ν := volume.restrict (Set.Icc (0:ℝ) T)) h_F_joint
   · -- Bound: F_M ω ≤ G ω everywhere.
@@ -122,7 +122,7 @@ lemma truncation_L2_converges_brownian
       have h_bound_h : Measurable (fun ω =>
           ∫⁻ s in Set.Icc (0 : ℝ) T, (‖H ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume) :=
         Measurable.lintegral_prod_right' (ν := volume.restrict (Set.Icc (0:ℝ) T))
-          ((ENNReal.continuous_coe.measurable.comp h_meas.nnnorm).pow_const 2)
+          ((ENNReal.continuous_coe.measurable.comp h_meas.nnNorm).pow_const 2)
       exact MeasureTheory.ae_lt_top h_bound_h h_sq_int.ne
     filter_upwards [h_finite_inner] with ω h_ω_finite
     -- For this ω, apply DCT on the s-integral.
@@ -136,7 +136,7 @@ lemma truncation_L2_converges_brownian
       have h_meas_slice : Measurable (fun s : ℝ => H ω s) :=
         h_meas.comp (by fun_prop : Measurable (fun s : ℝ => (ω, s)))
       exact (ENNReal.continuous_coe.measurable.comp
-        (h_meas_slice.sub (h_clip.comp h_meas_slice)).nnnorm).pow_const 2
+        (h_meas_slice.sub (h_clip.comp h_meas_slice)).nnNorm).pow_const 2
     · intro M
       refine Filter.Eventually.of_forall (fun s => ?_)
       exact truncation_dominated_brownian _ _

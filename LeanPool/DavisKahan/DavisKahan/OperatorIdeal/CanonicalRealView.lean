@@ -146,7 +146,7 @@ theorem gaugeReal_add_le {A B : E →L[𝕜] F} (hA : N.Mem A) (hB : N.Mem B) :
 theorem gaugeReal_smul (c : 𝕜) {A : E →L[𝕜] F} (_hA : N.Mem A) :
     N.gaugeReal (c • A) = ‖c‖ * N.gaugeReal A := by
   rw [gaugeReal_eq_toReal, gaugeReal_eq_toReal,
-    N.toOperatorIdealFamily.gauge_smul, ENNReal.toReal_mul, toReal_enorm]
+    N.toOperatorIdealFamily.gauge_smul, ENNReal.toReal_mul, toReal_eNorm]
 
 /-- The real gauge is adjoint-invariant. -/
 theorem gaugeReal_adjoint {A : E →L[𝕜] F} (_hA : N.Mem A) :
@@ -161,12 +161,12 @@ theorem gaugeReal_comp_le (L : F →L[𝕜] G) (R : H →L[𝕜] E) {A : E →L[
   have hfin : ‖L‖ₑ * N.toOperatorIdealFamily.gauge A * ‖R‖ₑ ≠ ∞ :=
     ENNReal.mul_ne_top (ENNReal.mul_ne_top (by simp) hA) (by simp)
   refine (ENNReal.toReal_mono hfin hbound).trans_eq ?_
-  rw [ENNReal.toReal_mul, ENNReal.toReal_mul, toReal_enorm, toReal_enorm]
+  rw [ENNReal.toReal_mul, ENNReal.toReal_mul, toReal_eNorm, toReal_eNorm]
 
 /-- The operator norm is dominated by the real gauge on members. -/
 theorem opNorm_le_gaugeReal {A : E →L[𝕜] F} (hA : N.Mem A) : ‖A‖ ≤ N.gaugeReal A := by
   have h := ENNReal.toReal_mono hA (N.toOperatorIdealFamily.enorm_le_gauge A)
-  rwa [toReal_enorm] at h
+  rwa [toReal_eNorm] at h
 
 /-- The ideal is complete in its own gauge.  `M` rather than `N` for the
 threshold index, since `N` is the family here. -/
@@ -426,12 +426,12 @@ theorem mem_operatorNormFamily (A : E →L[𝕜] F) :
     (operatorNormFamily.{u, v} 𝕜).Mem A := by
   change (operatorNormFamily.{u, v} 𝕜).toOperatorIdealFamily.gauge A ≠ ∞
   rw [gauge_operatorNormFamily]
-  exact enorm_ne_top
+  exact eNorm_ne_top
 
 /-- The real gauge of the operator-norm family is the operator norm. -/
 @[simp] theorem gaugeReal_operatorNormFamily (A : E →L[𝕜] F) :
     (operatorNormFamily.{u, v} 𝕜).gaugeReal A = ‖A‖ := by
-  rw [gaugeReal_eq_toReal, gauge_operatorNormFamily, toReal_enorm]
+  rw [gaugeReal_eq_toReal, gauge_operatorNormFamily, toReal_eNorm]
 
 end SymmetricOperatorIdealFamily
 

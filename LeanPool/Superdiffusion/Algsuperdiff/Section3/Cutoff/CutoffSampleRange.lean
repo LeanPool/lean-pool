@@ -80,7 +80,7 @@ theorem indep_cutoffSampleLocalSigma_of_indep_completion (M : ABKModel d) (m : �
     measure_preimage_cutoffSampleLaw M hs0borel,
     measure_preimage_cutoffSampleLaw M ht0borel]
   exact (Indep_iff _ _ M.P.toMeasure).mp h s0 t0
-    ⟨s0, hs0, Filter.EventuallyEq.rfl⟩ ⟨t0, ht0, Filter.EventuallyEq.rfl⟩
+    ⟨s0, hs0, Filter.EventuallyEqSet.rfl⟩ ⟨t0, ht0, Filter.EventuallyEqSet.rfl⟩
 
 end
 

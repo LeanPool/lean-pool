@@ -655,7 +655,7 @@ omit [ValuationRing ↥R] [IsFractionRing (↥R) K] in
 lemma conj_cartanDiag_zero_zero {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) K) (f : Fin 2 → ℤ) :
     MulAut.conj (cartanDiag ϖ hϖ f) g 0 0 = g 0 0 := by
   rw [cartanDiag, Matrix.GL.conj_diagonal_apply]
-  simp only [Fin.isValue, zpow_neg, Units.inv_mk]
+  simp only [Fin.isValue, _root_.zpow_neg, Units.inv_mk]
   rw [mul_inv_cancel₀]
   · simp
   · exact zpow_ne_zero _ (coe_uniformizer_ne_zero hϖ)
@@ -664,7 +664,7 @@ omit [ValuationRing ↥R] [IsFractionRing (↥R) K] in
 lemma conj_cartanDiag_one_one {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) K) (f : Fin 2 → ℤ) :
     MulAut.conj (cartanDiag ϖ hϖ f) g 1 1 = g 1 1 := by
   rw [cartanDiag, Matrix.GL.conj_diagonal_apply]
-  simp only [Fin.isValue, zpow_neg, Units.inv_mk]
+  simp only [Fin.isValue, _root_.zpow_neg, Units.inv_mk]
   rw [mul_inv_cancel₀]
   · simp
   · exact zpow_ne_zero _ (coe_uniformizer_ne_zero hϖ)
@@ -673,7 +673,7 @@ omit [ValuationRing ↥R] [IsFractionRing (↥R) K] in
 lemma conj_cartanDiag_one_zero {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) K) (f : Fin 2 → ℤ) :
     MulAut.conj (cartanDiag ϖ hϖ f) g 1 0 = ϖ.val ^ (f 1 - f 0) * g 1 0 := by
   rw [cartanDiag, Matrix.GL.conj_diagonal_apply]
-  simp only [Fin.isValue, zpow_neg, Units.inv_mk, mul_eq_mul_right_iff]
+  simp only [Fin.isValue, _root_.zpow_neg, Units.inv_mk, mul_eq_mul_right_iff]
   rw [zpow_sub₀ (coe_uniformizer_ne_zero hϖ)]
   ring_nf
   simp_all
@@ -682,7 +682,7 @@ omit [ValuationRing ↥R] [IsFractionRing (↥R) K] in
 lemma conj_cartanDiag_zero_one {ϖ : R} (hϖ : Irreducible ϖ) (g : GL (Fin 2) K) (f : Fin 2 → ℤ) :
     MulAut.conj (cartanDiag ϖ hϖ f) g 0 1 = ϖ.val ^ (f 0 - f 1) * g 0 1 := by
   rw [cartanDiag, Matrix.GL.conj_diagonal_apply]
-  simp only [Fin.isValue, zpow_neg, Units.inv_mk, mul_eq_mul_right_iff]
+  simp only [Fin.isValue, _root_.zpow_neg, Units.inv_mk, mul_eq_mul_right_iff]
   rw [zpow_sub₀ (coe_uniformizer_ne_zero hϖ)]
   ring_nf
   simp_all

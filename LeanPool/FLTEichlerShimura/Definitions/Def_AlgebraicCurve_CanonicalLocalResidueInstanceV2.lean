@@ -14,6 +14,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.PrimitiveElement
+
+public import Mathlib.RingTheory.Trace.Basic
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_IsCurveOver
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue

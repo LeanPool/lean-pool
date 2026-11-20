@@ -408,7 +408,6 @@ private lemma setIntegral_radialStrip_eq_intervalIntegral (j : ℕ) (f : ℝ →
   set strip : Set ℝ := Set.Ioi (0 : ℝ) ∩ Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ)) with hstrip
   have hIoiIco_ae : strip =ᵐ[volume] Set.Ico (j : ℝ) (((j + 1 : ℕ) : ℝ)) := by
     filter_upwards [Ioi_ae_eq_Ici (a := (0 : ℝ)) (μ := volume)] with x hx
-    apply propext
     constructor
     · intro h
       exact h.2
@@ -553,8 +552,10 @@ private lemma annulusIntegralSq_finiteHermiteSum_eq_radial
           circleL2Sq (finiteCirclePoly k r a)) := by
   let F : ℂ → ℝ := fun z => ‖finiteHermiteSum k a z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)
   have hannulus_meas : MeasurableSet (annulus j) := by
-    refine (measurableSet_le measurable_const measurable_norm).inter ?_
-    exact measurableSet_lt measurable_norm measurable_const
+    change MeasurableSet ({z : ℂ | (j : ℝ) ≤ ‖z‖} ∩
+      {z : ℂ | ‖z‖ < ((j + 1 : ℕ) : ℝ)})
+    exact MeasurableSet.inter (measurableSet_le measurable_const measurable_norm)
+      (measurableSet_lt measurable_norm measurable_const)
   unfold HermitekLEAN.annulusIntegralSq HermiteLEAN.annulusIntegralSq
   rw [show (∫ z in annulus j, F z ∂(volume : Measure ℂ)) =
       ∫ z : ℂ, Set.indicator (annulus j) F z ∂(volume : Measure ℂ) by
@@ -963,8 +964,10 @@ private theorem annulusIntegralSq_phi0_eq
       2 * ∫ r in (j : ℝ)..(((j + 1 : ℕ) : ℝ)), phi0AnnulusIntegrand k (‖g 0‖ ^ 2) r := by
   let F : ℂ → ℝ := fun z => ‖phi0 k z‖ ^ 2 * Real.exp (-‖z‖ ^ 2)
   have hannulus_meas : MeasurableSet (annulus j) := by
-    refine (measurableSet_le measurable_const measurable_norm).inter ?_
-    exact measurableSet_lt measurable_norm measurable_const
+    change MeasurableSet ({z : ℂ | (j : ℝ) ≤ ‖z‖} ∩
+      {z : ℂ | ‖z‖ < ((j + 1 : ℕ) : ℝ)})
+    exact MeasurableSet.inter (measurableSet_le measurable_const measurable_norm)
+      (measurableSet_lt measurable_norm measurable_const)
   unfold HermitekLEAN.annulusIntegralSq HermiteLEAN.annulusIntegralSq
   rw [show (∫ z in annulus j, F z ∂(volume : Measure ℂ)) =
       ∫ z : ℂ, Set.indicator (annulus j) F z ∂(volume : Measure ℂ) by

@@ -164,7 +164,7 @@ open scoped Matrix
 theorem single_hMul_trace {R n p : Type _} [Semiring R] [Fintype p] [DecidableEq p]
     [Fintype n] [DecidableEq n] (i : n) (j : p) (x : Matrix p n R) :
     Matrix.trace (single i j (1 : R) * x) = x j i := by
-  simp_rw [Matrix.trace, Matrix.diag, mul_apply, single, of_apply, boole_mul, ite_and,
+  simp_rw [Matrix.trace, Matrix.diag, Matrix.mul_apply, single, of_apply, boole_mul, ite_and,
     Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 theorem ext_iff_trace {R n p : Type _} [Fintype n] [Fintype p]
@@ -231,7 +231,7 @@ theorem smul {k : Type _} [DecidableEq k] {s : k → Type _}
 instance Smul {k : Type _} [DecidableEq k] {s : k → Type _} :
     SMul R (BlockDiagonals R k s)
     where smul a x :=
-    ⟨a • (x : Matrix (Σ i, s i) (Σ i, s i) R), Matrix.IsBlockDiagonal.smul (Subtype.mem x) a⟩
+    ⟨a • (x : Matrix (Σ i, s i) (Σ i, s i) R), Matrix.IsBlockDiagonal.smul x.property a⟩
 
 theorem coe_smul {k : Type _} [DecidableEq k] {s : k → Type _}
     (a : R) (x : (BlockDiagonals R k s)) :

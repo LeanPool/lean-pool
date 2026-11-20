@@ -445,12 +445,12 @@ theorem lbCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightLB, one_ne_zero,
       tailContribution_same, zero_add, lbCoeff, Fin.mk_one, hT4, headContribution_same,
       zeroChip, add_left_inj, Fin.reduceFinMk, hH4]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
-    nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, ↓reduceIte, add_zero, not_lt,
+    nonpos_iff_eq_zero, headContribution_same, lt_self_iff_false, add_right_inj, not_le]
+  all_goals split_ifs
+  all_goals omega
 
 theorem lbCoeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
     (v : Fin 8) : 0 ≤ lbCoeff d v := by
@@ -564,13 +564,13 @@ theorem t2Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       heightT2, tailContribution_same, headContribution_same, t2Coeff, Fin.mk_one, zero_add,
       zero_sub, Int.reduceNeg, one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, sub_zero,
       add_right_inj, positiveChip, add_left_inj, hH4]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
     not_false_eq_true, Int.reduceNeg, add_neg_cancel, zero_add, ↓reduceIte, sub_self, zero_le,
     add_zero, sub_zero, nonpos_iff_eq_zero, not_lt, tsub_self, Int.reduceAdd, not_true_eq_false,
-    tsub_zero, Nat.sub_eq_zero_of_le, not_le, OfNat.one_ne_ofNat, zero_ne_one])
-  all_goals (try omega)
+    tsub_zero, Nat.sub_eq_zero_of_le, not_le, OfNat.one_ne_ofNat, zero_ne_one]
+  all_goals omega
 
 theorem t2Coeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
     (v : Fin 8) : 0 ≤ t2Coeff d v := by
@@ -728,13 +728,13 @@ theorem t4Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       heightT4, tailContribution_same, headContribution_same, t4Coeff, Fin.mk_one, zero_add,
       zero_sub, Int.reduceNeg, one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, sub_zero,
       add_right_inj, positiveChip, add_left_inj, hH4]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, Std.le_refl, zero_tsub, lt_self_iff_false,
     not_false_eq_true, Int.reduceNeg, add_neg_cancel, zero_add, ↓reduceIte, sub_self, zero_le,
     add_zero, sub_zero, nonpos_iff_eq_zero, not_lt, tsub_self, Int.reduceAdd, not_true_eq_false,
-    tsub_zero, Nat.sub_eq_zero_of_le, not_le, OfNat.one_ne_ofNat, zero_ne_one])
-  all_goals (try omega)
+    tsub_zero, Nat.sub_eq_zero_of_le, not_le, OfNat.one_ne_ofNat, zero_ne_one]
+  all_goals omega
 
 theorem t4Coeff_nonneg {d : DegSpec 8 12} (hB : d.length 3 ≤ d.length 4)
     (v : Fin 8) : 0 ≤ t4Coeff d v := by
@@ -877,11 +877,11 @@ theorem rb7Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       zero_ne_one, ite_self, add_zero, contribForm, heightRB7, tailContribution_same,
       headContribution_same, rb7Coeff, Fin.mk_one, zero_add, one_ne_zero, hT4, zeroChip,
       Fin.reduceFinMk, hH4]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, ↓reduceIte, not_le]
+  split_ifs
+  all_goals omega
 
 theorem rb7Coeff_nonneg {d : DegSpec 8 12} (_hB : d.length 3 ≤ d.length 4)
     (_hD : d.length 7 ≤ d.length 2) (v : Fin 8) : 0 ≤ rb7Coeff d v := by
@@ -973,12 +973,12 @@ theorem rb6Coeff_eq {d : DegSpec 8 12} (hCore : d.core = row08Core)
       heightRB6, tailContribution_same, headContribution_same, rb6Coeff, Fin.mk_one, zero_add,
       one_ne_zero, hT4, zeroChip, Fin.reduceFinMk, zero_sub, Int.reduceNeg, positiveChip,
       add_left_inj, hH4, mul_ite, mul_zero, mul_one, sub_zero]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, zero_le, ↓reduceIte, nonpos_iff_eq_zero,
-    Int.reduceNeg, add_neg_cancel, add_zero, not_le, neg_mul, one_mul, zero_mul])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, zero_le, ↓reduceIte, nonpos_iff_eq_zero,
+    Int.reduceNeg, add_neg_cancel, add_zero, not_le, neg_mul, one_mul, zero_mul]
+  split_ifs
+  all_goals omega
 
 theorem near_le_far (d : DegSpec 8 12) : nearSeven d ≤ farSix d := by
   unfold nearSeven farSix

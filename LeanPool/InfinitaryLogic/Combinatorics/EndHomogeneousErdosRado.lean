@@ -279,10 +279,9 @@ noncomputable def nodeChosen (G : (Fin (n + 2) ↪o Source lam) → C)
       Classical.arbitrary (Source lam)
 termination_by β
 decreasing_by
-  all_goals
-    have : IsWellOrder β.ToType (· < ·) := isWellOrder_lt
-    have hh := Ordinal.typein_lt_type (· < · : β.ToType → β.ToType → Prop) x
-    rwa [Ordinal.type_toType] at hh
+  have : IsWellOrder β.ToType (· < ·) := isWellOrder_lt
+  have hh := Ordinal.typein_lt_type (· < · : β.ToType → β.ToType → Prop) x
+  rwa [Ordinal.type_toType] at hh
 
 /-- The reps along a node: the chosen rep of the restriction to each position. -/
 noncomputable def nodeRep (G : (Fin (n + 2) ↪o Source lam) → C) {β : Ordinal.{0}}
@@ -294,7 +293,8 @@ noncomputable def nodeRep (G : (Fin (n + 2) ↪o Source lam) → C) {β : Ordina
       rwa [Ordinal.type_toType] at hh)))
 
 /-- `S(h)` as a set, via `nodeRep`. -/
-def nodeS (G : (Fin (n + 2) ↪o Source lam) → C) {β : Ordinal.{0}} (h : NodeAt C n β) :
+noncomputable def nodeS (G : (Fin (n + 2) ↪o Source lam) → C) {β : Ordinal.{0}}
+    (h : NodeAt C n β) :
     Set (Source lam) := nodeFiber G (nodeRep G h) h
 
 /-- A node is **live** iff its successor set is nonempty. -/
@@ -392,9 +392,8 @@ noncomputable def yRep (G : (Fin (n + 2) ↪o Source lam) → C) (y : Source lam
     colorAbove G y (fun k => yRep G y (Ordinal.typein (· < ·) (τ k))))
 termination_by γ
 decreasing_by
-  all_goals
-    have : IsWellOrder γ.ToType (· < ·) := isWellOrder_lt
-    exact lt_of_lt_of_eq (Ordinal.typein_lt_type _ _) (Ordinal.type_toType γ)
+  have : IsWellOrder γ.ToType (· < ·) := isWellOrder_lt
+  exact lt_of_lt_of_eq (Ordinal.typein_lt_type _ _) (Ordinal.type_toType γ)
 
 /-- The canonical `y`-path node of length `β` (a *plain* def over `yRep`). -/
 noncomputable def yNode (G : (Fin (n + 2) ↪o Source lam) → C) (y : Source lam)

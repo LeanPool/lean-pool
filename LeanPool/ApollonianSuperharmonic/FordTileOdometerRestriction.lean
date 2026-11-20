@@ -604,7 +604,7 @@ theorem FordTileOdometerRestriction (P : FordFareyParameter) :
   have main (n : Nat) : ∀ R : FordFareyParameter, R.q = n →
       TileOdometer (FordCircleCoordinate R.p R.q) (FordTile R.q) (H R) := by
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro R hn
       subst n
       by_cases hu : R.q = 1

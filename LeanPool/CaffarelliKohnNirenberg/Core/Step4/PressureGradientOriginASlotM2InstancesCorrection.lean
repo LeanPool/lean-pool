@@ -175,6 +175,7 @@ private lemma originASlot_M2_correction_mass_instances_hNraw_1 :
     hdataS₃ hcS₃ Kη
     hKηnn hdηb hηsupp hdηsupp X Mfree Mc hGmeas hwbound hcbound hubound hdbound hAbound j
   refine originASlot_correction_morreyNorm_le (x₀ := z.1) (z₀ := z) (R := ρ)
+    (S := S) (S₃ := S₃) (Sρ := Sρ)
     hτ hq hKηnn hρ hρ1
     (mollifiedBallCutoff_nonneg z.1 hρ) (mollifiedBallCutoff_le_one z.1 hρ) hdηb
     hηsupp hdηsupp (fun w hw => hw.1) (fun w hw hc' => show w ∈ S₃ from ⟨hc', hw.2⟩) hS₃sub hS₃sub j

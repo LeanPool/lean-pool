@@ -249,7 +249,7 @@ lemma neg_pow_not_mem_subring (n : ℕ) (hn : n > 0) : ϖ.val ^ (- n : ℤ) ∉ 
       · have : (ϖ.val ^ n)⁻¹ ∉ R := by
           apply ih
           exact Nat.zero_lt_of_ne_zero hnz
-        contrapose! this
+        contrapose this
         have : ϖ.val * ϖ.val⁻¹ * (ϖ.val ^ n)⁻¹ = (ϖ.val ^ n)⁻¹ := by field_simp
         rw [← this, mul_assoc]
         apply Subring.mul_mem

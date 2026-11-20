@@ -260,7 +260,7 @@ theorem segment_decomposition {A : Set ℝ²} {X : Finset ℝ²} {S : Segment}
     = toBasicSegments C ∪ (toBasicSegments (reverseChain C)) := by
   generalize Scard : (Finset.filter (fun p ↦ p ∈ openHull S) X).card = n
   induction n using Nat.strong_induction_on generalizing S with
-  | h N hm =>
+  | ind N hm =>
   have hSboundary := boundary_seg (segmentSet_vertex_distinct (avoidingSegmentSet_sub hS))
   by_cases hN : N = 0
   · use @Chain.basic (S 0) (S 1)
@@ -1552,12 +1552,12 @@ lemma rainbowTriangle_purpleSum {Δ : Finset Triangle}
           refine ⟨hT, ?_⟩
           unfold Tside
           fin_cases i
-          all_goals try (simp only [Fin.isValue, true_or, or_true])
+          all_goals simp only [Fin.isValue, true_or, or_true]
         · use T
           refine ⟨hT, ?_⟩
           unfold Tside
           fin_cases i
-          all_goals try (simp only [Fin.isValue, true_or, or_true])
+          all_goals simp only [Fin.isValue, true_or, or_true]
       · exact (nondegen_triangle_imp_nondegen_side i (non_degen T hT))
     · unfold triangulationAvoidingSet
       simp only [Set.disjoint_iUnion_right]
@@ -1607,7 +1607,7 @@ lemma rainbowTriangle_purpleSum {Δ : Finset Triangle}
       exact hs (congrFun h_contra.symm 0)
     unfold Tside
     fin_cases i <;> fin_cases j <;> simp only [Fin.isValue, not_true_eq_false]
-    all_goals try (
+    all_goals (
       simp_all only [ne_eq, coe_univ, Fin.zero_eta, Set.mem_univ, not_true_eq_false]
     )
     all_goals try (rw [not_false_eq_true]; trivial)

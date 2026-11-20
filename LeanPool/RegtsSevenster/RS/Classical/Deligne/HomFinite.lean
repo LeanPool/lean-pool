@@ -310,7 +310,7 @@ private theorem homFinite_core
         rw [Module.finrank_zero_of_subsingleton]⟩
     · have := hnt
       obtain ⟨φ, hφ⟩ := exists_ne (0 : 𝟙_ A ⟶ Z)
-      have : Mono φ := mono_of_nonzero_from_simple hφ
+      have : Mono φ := mono_of_ne_zero_from_simple hφ
       refine absurd ?_ (h (Fin.cons ⊥ fun _ : Fin 1 => Subobject.mk φ))
       rw [Fin.strictMono_iff_lt_succ]
       intro i
@@ -328,7 +328,7 @@ private theorem homFinite_core
         rw [Module.finrank_zero_of_subsingleton]; exact Nat.zero_le _⟩
     · have := hnt
       obtain ⟨φ, hφ⟩ := exists_ne (0 : 𝟙_ A ⟶ Z)
-      have : Mono φ := mono_of_nonzero_from_simple hφ
+      have : Mono φ := mono_of_ne_zero_from_simple hφ
       obtain ⟨hfinQ, hrkQ⟩ := ih (cokernel φ) (lengthLE_cokernel φ hφ h)
       have := hfinQ
       set L : (𝟙_ A ⟶ Z) →ₗ[ℂ] (𝟙_ A ⟶ cokernel φ) :=

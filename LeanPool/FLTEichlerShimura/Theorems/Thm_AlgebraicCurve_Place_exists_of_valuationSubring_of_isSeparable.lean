@@ -17,6 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
+
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Algebra
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
 import Mathlib.RingTheory.Henselian

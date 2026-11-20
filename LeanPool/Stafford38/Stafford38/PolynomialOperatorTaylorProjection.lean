@@ -50,7 +50,7 @@ private theorem coordinateCommutator_mul (i : Fin n) (P Q : Operator k n) :
   apply LinearMap.ext
   intro f
   simp [coordinateCommutator, Stafford38.DifferentialOperators.commutator_apply,
-    Module.End.mul_apply]
+    mul_apply_eq_comp]
 
 omit [CharZero k] in
 theorem coordinateCommutator_momentum (i : Fin n) :
@@ -169,7 +169,7 @@ private theorem rightMomentum_pow_apply (i : Fin n) (j : ℕ) (P : Operator k n)
   induction j with
   | zero => simp [rightMomentum]
   | succ j ih =>
-      rw [pow_succ', Module.End.mul_apply, ih]
+      rw [pow_succ', mul_apply_eq_comp, ih]
       simp [rightMomentum, pow_succ, mul_assoc]
 
 omit [CharZero k] in
@@ -183,7 +183,7 @@ private theorem projectorMapG_apply_eq_projection (i : Fin n) (m : ℕ)
   intro j hj
   change ((-1 : k) ^ j / (j.factorial : k)) •
       ((rightMomentum k n i ^ j * coordinateCommutator k n i ^ j) P) = _
-  rw [Module.End.mul_apply, rightMomentum_pow_apply]
+  rw [mul_apply_eq_comp, rightMomentum_pow_apply]
 
 /-- Finite Taylor reconstruction for the actual polynomial operator.  Every
 power of the partial derivative occurs as a right factor. -/
@@ -199,7 +199,7 @@ theorem reconstruction (i : Fin n) (m : ℕ) (P : Operator k n)
   apply Finset.sum_congr rfl
   intro a ha
   congr 1
-  rw [Module.End.mul_apply, Module.End.mul_apply, rightMomentum_pow_apply,
+  rw [mul_apply_eq_comp, mul_apply_eq_comp, rightMomentum_pow_apply,
     projectorMapG_apply_eq_projection]
 
 end

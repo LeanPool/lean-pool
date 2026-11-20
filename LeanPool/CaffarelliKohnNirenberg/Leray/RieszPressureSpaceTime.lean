@@ -56,10 +56,10 @@ theorem eLpNorm_spaceTime_pow_eq_integral_slice (r : ℝ) (hr : 0 < r)
       ((volume : Measure Vec3).prod (volume : Measure ℝ)) := by
     rw [← Measure.volume_eq_prod]
     exact hF
-  have hprod := hFprod.enorm.pow_const r
+  have hprod := hFprod.eNorm.pow_const r
   have hSlices := hFprod.prodMk_right
   rw [eLpNorm_eq_eLpNorm' hr0 hrtop hF, ENNReal.toReal_ofReal hr.le,
-    ← lintegral_rpow_enorm_eq_rpow_eLpNorm' hr]
+    ← lintegral_rpow_eNorm_eq_rpow_eLpNorm' hr]
   calc
     (∫⁻ z, ‖F z‖ₑ ^ r ∂((volume : Measure Vec3).prod (volume : Measure ℝ))) =
         ∫⁻ x, ∫⁻ t, ‖F (x, t)‖ₑ ^ r ∂(volume : Measure ℝ)
@@ -72,7 +72,7 @@ theorem eLpNorm_spaceTime_pow_eq_integral_slice (r : ℝ) (hr : 0 < r)
           (volume : Measure Vec3) ^ r ∂(volume : Measure ℝ) := by
       apply lintegral_congr_ae
       filter_upwards [hSlices] with t ht
-      exact (lintegral_rpow_enorm_eq_rpow_eLpNorm'
+      exact (lintegral_rpow_eNorm_eq_rpow_eLpNorm'
         (f := fun x : Vec3 => F (x, t)) hr)
     _ = ∫⁻ t, eLpNorm (fun x : Vec3 => F (x, t)) (ENNReal.ofReal r)
           (volume : Measure Vec3) ^ r ∂(volume : Measure ℝ) := by
@@ -159,9 +159,9 @@ theorem exists_rieszPressure_component_memLp_bound_of_compact
     rw [← Measure.volume_eq_prod]
     exact hPm.aestronglyMeasurable
   have hFpowersMeas : Measurable (fun z : Vec3 × ℝ => ‖F z‖ₑ ^ r) :=
-    hF.measurable.enorm.pow_const r
+    hF.measurable.eNorm.pow_const r
   have hPpowersMeas : Measurable (fun z : Vec3 × ℝ => ‖P z‖ₑ ^ r) :=
-    hPm.enorm.pow_const r
+    hPm.eNorm.pow_const r
   let IF : ℝ → ℝ≥0∞ := fun t =>
     ∫⁻ x : Vec3, ‖F (x, t)‖ₑ ^ r ∂(volume : Measure Vec3)
   let IP : ℝ → ℝ≥0∞ := fun t =>
@@ -183,7 +183,7 @@ theorem exists_rieszPressure_component_memLp_bound_of_compact
     rw [eLpNorm_eq_eLpNorm'
       (by exact (ENNReal.ofReal_pos.mpr (lt_trans zero_lt_one hr)).ne')
       ENNReal.ofReal_ne_top ht, ENNReal.toReal_ofReal (le_trans zero_le_one hr.le)]
-    exact (lintegral_rpow_enorm_eq_rpow_eLpNorm'
+    exact (lintegral_rpow_eNorm_eq_rpow_eLpNorm'
       (f := fun x : Vec3 => F (x, t)) (lt_trans zero_lt_one hr)).symm
   have hPsliceIntegral :
       (fun t => eLpNorm (fun x : Vec3 => P (x, t)) (ENNReal.ofReal r)
@@ -192,7 +192,7 @@ theorem exists_rieszPressure_component_memLp_bound_of_compact
     rw [eLpNorm_eq_eLpNorm'
       (by exact (ENNReal.ofReal_pos.mpr (lt_trans zero_lt_one hr)).ne')
       ENNReal.ofReal_ne_top ht, ENNReal.toReal_ofReal (le_trans zero_le_one hr.le)]
-    exact (lintegral_rpow_enorm_eq_rpow_eLpNorm'
+    exact (lintegral_rpow_eNorm_eq_rpow_eLpNorm'
       (f := fun x : Vec3 => P (x, t)) (lt_trans zero_lt_one hr)).symm
   have hFubiniF := eLpNorm_spaceTime_pow_eq_integral_slice r (lt_trans zero_lt_one hr)
     hF.aestronglyMeasurable

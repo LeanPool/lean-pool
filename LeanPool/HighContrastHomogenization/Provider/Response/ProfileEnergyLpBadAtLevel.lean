@@ -73,13 +73,13 @@ theorem profileBadEnergyAt_le_of_complete_maximum
       eLpNorm (fun a => ENNReal.ofReal C * bad.indicator M a) 2 P := by
     have hmeasBad : AEStronglyMeasurable (bad.indicator fun a =>
         M a ^ (1 / 2 : ℝ) * ENNReal.ofReal (energy a)) P := hmeas
-    apply eLpNorm_mono_enorm_ae hmeasBad
+    apply eLpNorm_mono_eNorm_ae hmeasBad
     filter_upwards [hfinite] with a ha
     by_cases habad : a ∈ bad
-    · simp only [Set.indicator_of_mem habad, enorm_eq_self]
+    · simp only [Set.indicator_of_mem habad, eNorm_eq_self]
       exact rpow_half_mul_ofReal_le_of_le_sqrt_toReal ha hC
         (henergy a ha habad)
-    · simp only [Set.indicator_of_notMem habad, mul_zero, enorm_zero]
+    · simp only [Set.indicator_of_notMem habad, mul_zero, eNorm_zero]
       exact le_rfl
   have hmaximum := eLpNorm_indicator_gt_level_le_profileBadMajorantAt
     (lev := lev) P hQ hh hbeta hM hW hpoint hnorm hmoment

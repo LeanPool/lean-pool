@@ -41,14 +41,14 @@ theorem origin_time_slice_norm_power_eq
       (volume.restrict E).prod (volume.restrict J) := by
     rw [volume_eq_prod, ← Measure.prod_restrict]
   rw [hprod] at hg ⊢
-  rw [lintegral_prod_symm _ (by simpa only [Real.enorm_eq_ofReal_abs] using hg.enorm.pow_const P)]
+  rw [lintegral_prod_symm _ (by simpa only [Real.eNorm_eq_ofReal_abs] using hg.eNorm.pow_const P)]
   apply lintegral_congr_ae
   filter_upwards [hg.aestronglyMeasurable.prodMk_right] with s hs
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ENNReal.ofReal_pos.mpr hP).ne' ENNReal.ofReal_ne_top hs,
     ENNReal.toReal_ofReal hP.le, ← ENNReal.rpow_mul,
     one_div_mul_cancel hP.ne', ENNReal.rpow_one]
-  simp only [Real.enorm_eq_ofReal_abs]
+  simp only [Real.eNorm_eq_ofReal_abs]
 
 /-- Spatial slice norms are measurable on the chosen time window whenever
 the scalar field is measurable on the product box. -/
@@ -62,10 +62,10 @@ theorem origin_time_slice_norm_aemeasurable
       (volume.restrict E).prod (volume.restrict J) := by
     rw [volume_eq_prod, ← Measure.prod_restrict]
   rw [hprod] at hg
-  have hm := ((hg.enorm.pow_const P).lintegral_prod_left').pow_const (1 / P)
+  have hm := ((hg.eNorm.pow_const P).lintegral_prod_left').pow_const (1 / P)
   apply hm.congr
   filter_upwards [hg.aestronglyMeasurable.prodMk_right] with s hs
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ENNReal.ofReal_pos.mpr hP).ne' ENNReal.ofReal_ne_top hs,
     ENNReal.toReal_ofReal hP.le]
 

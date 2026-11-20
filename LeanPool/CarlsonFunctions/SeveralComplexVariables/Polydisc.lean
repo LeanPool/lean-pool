@@ -28,15 +28,15 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E
 
 /-- The closed polydisc of equal radii. For `0 ≤ R` this coincides with the closed ball for the
 sup-norm. -/
-def closedPolydisc {ι : Type*} (c : ι → ℂ) (R : ℝ) : Set (ι → ℂ) :=
+noncomputable def closedPolydisc {ι : Type*} (c : ι → ℂ) (R : ℝ) : Set (ι → ℂ) :=
   Set.pi univ fun i => closedBall (c i) R
 
 /-- An open polydisc with a separate radius in each coordinate. -/
-def polydiscWithRadii {ι : Type*} (c : ι → ℂ) (r : ι → ℝ) : Set (ι → ℂ) :=
+noncomputable def polydiscWithRadii {ι : Type*} (c : ι → ℂ) (r : ι → ℝ) : Set (ι → ℂ) :=
   Set.pi univ fun i => ball (c i) (r i)
 
 /-- A closed polydisc with a separate radius in each coordinate. -/
-def closedPolydiscWithRadii {ι : Type*} (c : ι → ℂ) (r : ι → ℝ) : Set (ι → ℂ) :=
+noncomputable def closedPolydiscWithRadii {ι : Type*} (c : ι → ℂ) (r : ι → ℝ) : Set (ι → ℂ) :=
   Set.pi univ fun i => closedBall (c i) (r i)
 
 /-- Membership in a polydisc is a coordinatewise strict distance bound. -/

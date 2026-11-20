@@ -217,7 +217,7 @@ lemma prod_bound_aux {a y : ℝ} (ha : 0 < a) (hy : 0 < y) {G Fv c d : ℝ} {m e
       gcongr
     _ = 4 * y ^ e * (1 + 2 * Real.pi * y) ^ 5 / (a ^ 2 * qe y) := by
       field_simp
-      try ring
+      ring
 
 lemma abs_g0F4_le {a : ℝ} (ha : 0 < a) {y : ℝ} (hy : 0 < y) :
     |g0 a y * F4 y| ≤ 4 * y ^ 0 * (1 + 2 * Real.pi * y) ^ 5 / (a ^ 2 * qe y) :=

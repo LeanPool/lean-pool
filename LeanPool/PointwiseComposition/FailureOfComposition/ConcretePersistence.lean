@@ -62,7 +62,7 @@ theorem evalnCertificateFormula_natCode_persist {M : Type*} [ORingStructure M] [
             (evalnCertificateFormula : ArithmeticSemisentence 4) :=
   by
   induction q using Nat.strong_induction_on with
-  | h q ih =>
+  | ind q ih =>
     by_cases hsmall : partrecCodeTag q < 4
     · exact
         ConcreteWitnessGraphs.evalnCertificateFormula_natCode_persist_of_lt_four q

@@ -158,7 +158,7 @@ theorem coarseBlock_adaptedCellTranslate_le_blockScale [NeZero d]
     sum_weight_mul_le (mul_nonneg (Real.rpow_nonneg (by positivity) g) hE0)
       (cell_le hZ hMsub ha X) (Transport.sum_relative_volume_row_le_one hq hone (hZ nn))
   have hins : Finset.Icc J' nn = insert nn (Finset.Ico J' nn) :=
-    (Finset.Ico_insert_right hJ'n).symm
+    (Finset.insert_right_Ico hJ'n).symm
   have hnotmem : nn ∉ Finset.Ico J' nn := by simp
   rw [hins, Finset.sum_insert hnotmem]
   have htail := sum_crude_below_le hg0 hg1 hM hS0 nn nn J'

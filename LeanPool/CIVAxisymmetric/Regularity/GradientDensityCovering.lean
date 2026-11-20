@@ -54,7 +54,7 @@ private lemma ediam_vec3Ball_le (x : Vec3) (r : ℝ) :
       _ < r + r := add_lt_add hyx hy'x
       _ = 2 * r := by ring
   have hnorm : ‖y - y'‖ ≤ 2 * r := (norm_le_vec3EuclideanNorm (y - y')).trans hyy'.le
-  rw [edist_eq_enorm_sub, ← ofReal_norm]
+  rw [eDist_eq_eNorm_sub, ← ofReal_norm]
   exact ENNReal.ofReal_le_ofReal hnorm
 
 private theorem vec3Ball_subset_unitBall_of_radius_lt_margin {x : Vec3} {r : ℝ}
@@ -92,7 +92,7 @@ private theorem countable_of_positive_disjoint_integrals {ι : Type*}
     (hfin : (∫⁻ w in E, F w) < ⊤) : Countable ι := by
   classical
   have hsum_le : (∑' i, g i) ≤ ∫⁻ w in E, F w := by
-    rw [ENNReal.tsum_eq_iSup_sum]
+    rw [tsum_eq_iSup_sum]
     refine iSup_le fun s => ?_
     have hd : Set.PairwiseDisjoint (↑s : Set ι) A := fun i _ j _ hij => hdisj hij
     calc (∑ i ∈ s, g i) ≤ ∑ i ∈ s, ∫⁻ w in A i, F w :=
@@ -311,7 +311,7 @@ theorem hausdorffMeasure_one_null_of_gradient_density
     calc (∑' i : index n, Metric.ediam (enlarged n i) ^ (1 : ℝ))
         = ∑' i : index n, Metric.ediam (enlarged n i) := by simp only [ENNReal.rpow_one]
       _ ≤ ∑' i : index n, K * (∫⁻ w in ball n i.1, F w) :=
-          ENNReal.tsum_le_tsum (fun i => diameter_integral_le n i)
+          tsum_le_tsum (fun i => diameter_integral_le n i)
       _ = K * ∑' i : index n, ∫⁻ w in ball n i.1, F w := ENNReal.tsum_mul_left
       _ ≤ K * I n := mul_le_mul_of_nonneg_left (sum_integral_le n) bot_le
   -- the covering radius bound tends to `0`

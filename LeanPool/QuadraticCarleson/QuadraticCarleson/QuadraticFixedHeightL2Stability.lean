@@ -60,7 +60,7 @@ theorem paperFixedHeightQuadraticMaximal_add_le (height : ℕ)
   simp only [Pi.add_apply, mul_add]
   rw [integral_add (integrable_fixedHeightQuadraticKernel_row height _ _ hf x)
     (integrable_fixedHeightQuadraticKernel_row height _ _ hg x)]
-  exact (enorm_add_le _ _).trans (add_le_add
+  exact (eNorm_add_le _ _).trans (add_le_add
     (le_iSup (fun lam : {lam : ℝ // lam ≠ 0} ↦
       ‖∫ t, fixedHeightQuadraticKernel lam.val height lam.property (x - t) * f t‖ₑ) lam)
     (le_iSup (fun lam : {lam : ℝ // lam ≠ 0} ↦
@@ -71,7 +71,7 @@ theorem paperFixedHeightQuadraticMaximal_neg (height : ℕ) (f : ℝ → ℂ) :
       paperFixedHeightQuadraticMaximal height f := by
   funext x
   simp only [paperFixedHeightQuadraticMaximal_eq_real, realFixedHeightQuadraticMaximal,
-    Pi.neg_apply, mul_neg, integral_neg, enorm_neg]
+    Pi.neg_apply, mul_neg, integral_neg, eNorm_neg]
 
 /-- Exact complex scalar homogeneity of the unrestricted real supremum. -/
 theorem paperFixedHeightQuadraticMaximal_const_mul (height : ℕ)
@@ -87,7 +87,7 @@ theorem paperFixedHeightQuadraticMaximal_const_mul (height : ℕ)
         fixedHeightQuadraticKernel lam.val height lam.property (x - t) * f t := by
     simp_rw [mul_left_comm _ c]
     exact integral_const_mul c _
-  rw [hi, enorm_mul]
+  rw [hi, eNorm_mul]
 
 theorem paperFixedHeightQuadraticMaximal_le_add_sub (height : ℕ)
     {f g : ℝ → ℂ} (hf : MemLp f 2) (hg : MemLp g 2) (x : ℝ) :
@@ -104,7 +104,7 @@ theorem ae_paperFixedHeightQuadraticMaximal_lt_top (height : ℕ)
   have hsq : (∫⁻ x, paperFixedHeightQuadraticMaximal height f x ^ 2) < ∞ := by
     simpa only [eLpNorm_two_sq_lintegral _
       (measurable_paperFixedHeightQuadraticMaximal height hf).aestronglyMeasurable,
-        enorm_eq_self] using
+        eNorm_eq_self] using
       ENNReal.pow_lt_top (n := 2) hnorm
   have ha := ae_lt_top
     ((measurable_paperFixedHeightQuadraticMaximal height hf).pow_const 2) hsq.ne
@@ -125,10 +125,10 @@ theorem measurable_paperFixedHeightQuadraticMaximalReal (height : ℕ)
 theorem memLp_paperFixedHeightQuadraticMaximalReal (height : ℕ)
     {f : ℝ → ℂ} (hf : MemLp f 2) :
     MemLp (paperFixedHeightQuadraticMaximalReal height f) 2 := by
-  apply (memLp_paperFixedHeightQuadraticMaximal height hf).of_le_enorm
+  apply (memLp_paperFixedHeightQuadraticMaximal height hf).of_le_eNorm
     (measurable_paperFixedHeightQuadraticMaximalReal height hf).aestronglyMeasurable
   filter_upwards [] with x
-  simp only [paperFixedHeightQuadraticMaximalReal, enorm_eq_self, Real.enorm_eq_ofReal_abs,
+  simp only [paperFixedHeightQuadraticMaximalReal, eNorm_eq_self, Real.eNorm_eq_ofReal_abs,
     abs_of_nonneg ENNReal.toReal_nonneg]
   exact ENNReal.ofReal_toReal_le
 
@@ -136,11 +136,11 @@ theorem paperFixedHeightQuadraticMaximalReal_eLpNorm_eq (height : ℕ)
     {f : ℝ → ℂ} (hf : MemLp f 2) :
     eLpNorm (paperFixedHeightQuadraticMaximalReal height f) 2 =
       eLpNorm (paperFixedHeightQuadraticMaximal height f) 2 := by
-  apply eLpNorm_congr_enorm_ae
+  apply eLpNorm_congr_eNorm_ae
     (measurable_paperFixedHeightQuadraticMaximalReal height hf).aestronglyMeasurable
     (measurable_paperFixedHeightQuadraticMaximal height hf).aestronglyMeasurable
   filter_upwards [ae_paperFixedHeightQuadraticMaximal_lt_top height hf] with x hx
-  exact Real.enorm_toReal hx.ne
+  exact Real.eNorm_toReal hx.ne
 
 /-- The familiar pointwise difference bound holds on a common conull set;
 no continuity is claimed across modulation-scale jumps. -/
@@ -177,12 +177,12 @@ theorem paperFixedHeightQuadraticMaximalReal_sub_eLpNorm_decay (height : ℕ)
   have hbound := paperFixedHeightQuadraticMaximal_eLpNorm_decay height
     (f := f - g) (hf.sub hg)
   apply le_trans _ hbound
-  apply eLpNorm_mono_enorm_ae
+  apply eLpNorm_mono_eNorm_ae
     ((measurable_paperFixedHeightQuadraticMaximalReal height hf).aestronglyMeasurable.sub
       (measurable_paperFixedHeightQuadraticMaximalReal height hg).aestronglyMeasurable)
   filter_upwards [ae_abs_paperFixedHeightQuadraticMaximalReal_sub_le height hf hg]
     with x hx
-  simp only [Pi.sub_apply, Real.enorm_eq_ofReal_abs, enorm_eq_self]
+  simp only [Pi.sub_apply, Real.eNorm_eq_ofReal_abs, eNorm_eq_self]
   exact (ENNReal.ofReal_le_ofReal hx).trans ENNReal.ofReal_toReal_le
 
 /-- The actual maximal operator on equivalence classes of L² functions. -/
@@ -214,7 +214,7 @@ theorem paperFixedHeightQuadraticMaximalLp_enorm_decay (height : ℕ)
     ‖paperFixedHeightQuadraticMaximalLp height f‖ₑ ≤
       ENNReal.ofReal (fixedHeightL2DecayConstant *
         (2 : ℝ) ^ (-(height : ℝ) / 10)) * ‖f‖ₑ := by
-  rw [paperFixedHeightQuadraticMaximalLp, Lp.enorm_toLp, Lp.enorm_def,
+  rw [paperFixedHeightQuadraticMaximalLp, Lp.eNorm_toLp, Lp.eNorm_def,
     paperFixedHeightQuadraticMaximalReal_eLpNorm_eq height (Lp.memLp f)]
   exact paperFixedHeightQuadraticMaximal_eLpNorm_decay height (Lp.memLp f)
 

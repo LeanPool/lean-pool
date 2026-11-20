@@ -211,7 +211,8 @@ theorem _root_.Moreira2001.Atlas.isBigO_main_inr
     (hfk : ∀ᶠ y in 𝓝[s] (ψ x), ContDiffMoreiraHolderAt k α f y)
     (hf₀ : f =ᶠ[𝓝[s] (ψ x)] 0) :
     (fun y ↦ f (ψ (x.1, y))) =O[𝓝 x.2] (fun y ↦ ‖y - x.2‖ ^ (k + α : ℝ)) := by
-  set e : G ≃L[ℝ] ULift.{v} G := .symm ⟨ULift.moduleEquiv, by fun_prop, by fun_prop⟩
+  set e : G ≃L[ℝ] ULift.{v} G :=
+    .symm ⟨ULift.moduleEquiv, continuous_uliftDown, continuous_uliftUp⟩
   set g : E × F → ULift.{v} G := e ∘ f
   have hgk : ∀ᶠ y in 𝓝[s] (ψ x), ContDiffMoreiraHolderAt k α g y :=
     hfk.mono fun _ ↦ e.contDiffMoreiraHolderAt_left_comp.mpr

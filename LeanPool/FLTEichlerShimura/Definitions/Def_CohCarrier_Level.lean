@@ -161,9 +161,8 @@ def Gamma0Upper (ℓ : ℕ) : Subgroup SL(2, ℤ) where
   inv_mem' := by
     intro a ha
     simp only [Set.mem_ofPred_eq] at *
-    rw [SL2_inv_expl a]
-    simp only [cons_val_zero, cons_val_one, Int.cast_neg, neg_eq_zero] at *
-    exact ha
+    rw [SL2_inv_expl]
+    simpa using ha
 
 @[simp]
 theorem mem_Gamma0Upper {ℓ : ℕ} {A : SL(2, ℤ)} : A ∈ Gamma0Upper ℓ ↔ (A 0 1 : ZMod ℓ) = 0 :=
@@ -460,7 +459,7 @@ theorem LevelLE.conjLowerMat_mem [NeZero d] (h : LevelLE M M' H H' d) (γ : ↥(
   refine ⟨h0, ?_⟩
   have hred := h.red _ hγH
   convert hred using 1
-  all_goals (ext; simp [gamma0Units, Gamma0Map, conjLowerMat, ZMod.unitsMap])
+  ext; simp [gamma0Units, Gamma0Map, conjLowerMat, ZMod.unitsMap]
 
 variable (M M' H H' d)
 

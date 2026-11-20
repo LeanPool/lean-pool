@@ -53,14 +53,14 @@ noncomputable section
 
 /-- Complex `L²` of the Gaussian reference measure. -/
 abbrev BKGaussianL2 (n : ℕ) := Lp ℂ 2 (complexGaussianMeasure n)
-/-- Jets in Gaussian `L²`: a value, its number-operator image, its first `∂̄` derivatives and
-its second `∂̄` derivatives. -/
+/-- Jets in Gaussian `L²`: a value, its number-operator image, its first `dbar` derivatives and
+its second `dbar` derivatives. -/
 abbrev BKGaussianJet (n : ℕ) :=
   BKGaussianL2 n × BKGaussianL2 n × (Fin n → BKGaussianL2 n) ×
     (Fin n → Fin n → BKGaussianL2 n)
 
 /-- The jet of a compact smooth test `f`: the `L²` classes of `f`, of its Gaussian number
-operator image, of `∂̄_j f`, and of `∂̄_k ∂̄_j f`. -/
+operator image, of `dbar_j f`, and of `dbar_k (dbar_j f)`. -/
 def bkCompactJet {n : ℕ} (f : BKCompactTest n) : BKGaussianJet n :=
   (f.l2, bkCompactNumberL2 f, (fun j => (f.dbar j).l2),
     fun j k => ((f.dbar j).dbar k).l2)

@@ -126,7 +126,8 @@ theorem P4783T1PatchCoverage :
         a*z.1+b*z.2 ≤ r := by
       as_aux_lemma =>
       rw [hhex] at hz
-      apply convexHull_min hv (convex_halfSpace_le (f := fun w : Real × Real =>
+      apply convexHull_min (t := {w : Real × Real | a*w.1+b*w.2 ≤ r}) hv
+        (convex_halfSpace_le (f := fun w : Real × Real =>
         a*w.1+b*w.2) ?_ r) hz
       constructor
       · intro p q; simp; ring

@@ -112,7 +112,7 @@ theorem projectedBranchPolynomial_coeff {ζ : K} {M L n : ℕ} {g h u v : ℤ}
   · have hd : totalDegree g h u v = n ↔ totalWeight g h u v = (n : ℤ) := by
       have hcast := totalDegree_cast_of_phase_eq_zero hp
       omega
-    simp only [hp, ↓reduceIte, Polynomial.coeff_monomial, hd, true_and]
+    simp only [hp, ↓reduceIte, Polynomial.coeff_monomial_apply, hd, true_and]
   · simp [hp]
 
 /-- Each projected branch has no polynomial coefficient above `(M - 1)^2`. -/
@@ -141,7 +141,7 @@ theorem projectedBranchPolynomial_coeff_zero {ζ : K} {M L : ℕ} {g h u v : ℤ
   unfold projectedBranchPolynomial
   rw [fiveMFourierCoefficient_eq_ite hM hL hLM hζ hg hh hu hv]
   by_cases hp : phase g h u v = 0
-  · simp only [hp, ↓reduceIte, Polynomial.coeff_monomial,
+  · simp only [hp, ↓reduceIte, Polynomial.coeff_monomial_apply,
       totalDegree_eq_zero_iff_of_phase_eq_zero hp]
   · have hlabels : ¬ (g = h ∧ u = v) := by
       rintro ⟨rfl, rfl⟩

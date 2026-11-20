@@ -5,7 +5,8 @@ Authors: Guanghao Li
 -/
 module
 
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 public import Mathlib.Order.Int.ConditionallyCompleteOrder
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 

@@ -463,8 +463,8 @@ theorem bananaCoefficient_eq
       rev, ConfigurationThreeChain.reverse, add_left_inj, sub_zero, zero_add,
       Fin.mk_one, zeroChip, shiftWeight, fwd, ConfigurationThreeChain.forward,
       Fin.reduceFinMk, add_right_inj]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
   all_goals ring
 
 

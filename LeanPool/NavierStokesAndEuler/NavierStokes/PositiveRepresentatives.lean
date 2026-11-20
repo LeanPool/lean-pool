@@ -183,7 +183,7 @@ theorem stableTarget_open (a : ℝ) : IsOpen (stableTarget a) := by
   rintro _ ⟨p, hp, rfl⟩
   have hsm := forwardMap_smooth (a := a) hp.1.ne'
   have hder := forwardMap_hasFDerivAt (a := a) hp.1.ne' hp.2.ne'
-  have hs := hsm.hasStrictFDerivAt' hder (by simp)
+  have hs := hsm.hasStrictFDerivAt hder (by simp)
   rw [← hs.map_nhds_eq_of_equiv]
   change forwardMap a ⁻¹' stableTarget a ∈ 𝓝 p
   filter_upwards [(stableSource_open a).mem_nhds hp] with x hx
@@ -194,7 +194,7 @@ theorem stableInverse_smoothAt {a : ℝ} (ha : 0 ≤ a) (ha1 : a ≤ 1)
   rcases hp with ⟨q, hq, rfl⟩
   have hsm := forwardMap_smooth (a := a) hq.1.ne'
   have hder := forwardMap_hasFDerivAt (a := a) hq.1.ne' hq.2.ne'
-  have hs := hsm.hasStrictFDerivAt' hder (by simp)
+  have hs := hsm.hasStrictFDerivAt hder (by simp)
   have hinv : ∀ᶠ x in 𝓝 q, stableInverse a (forwardMap a x) = x := by
     filter_upwards [(stableSource_open a).mem_nhds hq] with x hx
     exact stableInverse_forwardMap ha ha1 hx

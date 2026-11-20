@@ -33,7 +33,7 @@ theorem numericalRadius_eq_norm_of_isStarNormal
   · let _ : Nontrivial E := hE
     apply le_antisymm (numericalRadius_le_norm A)
     have h := spectralRadius_toReal_le_numericalRadius A
-    rw [IsStarNormal.spectralRadius_eq_nnnorm A] at h
+    rw [IsStarNormal.spectralRadius_eq_nnNorm A] at h
     simpa using h
   · let _ : Subsingleton E := not_nontrivial_iff_subsingleton.mp hE
     have hA : A = 0 := Subsingleton.elim _ _

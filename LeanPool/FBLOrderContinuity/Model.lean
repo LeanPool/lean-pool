@@ -116,7 +116,7 @@ theorem scalarPSum_eq_piLp_norm (p : Exponent) {n : ℕ} (a : Fin n → ℝ) :
     scalarPSum p a = ‖WithLp.toLp p.1 a‖ := by
   by_cases h : p.1 = ⊤
   · rw [scalarPSum, ite_eq_left h, h]
-    exact congrArg (fun r : ℝ≥0 => (r : ℝ)) (PiLp.nnnorm_toLp a).symm
+    exact congrArg (fun r : ℝ≥0 => (r : ℝ)) (PiLp.nnNorm_toLp a).symm
   · have hp : 0 < p.1.toReal := ENNReal.toReal_pos_iff.mpr
       ⟨lt_of_lt_of_le zero_lt_one p.2, lt_top_iff_ne_top.mpr h⟩
     simp [scalarPSum, h, PiLp.norm_eq_sum hp]
@@ -3090,9 +3090,9 @@ private theorem positive_dual_diagonal_bound (p : Exponent) (hp : p.IsFinite) {C
     continuous_finsetSum _ (fun i _ => (continuous_apply i).rpow_const
       (fun _ => Or.inr (by positivity)))
   have hbound : ∀ a ∈ K, ∑ i, (a i) ^ (1 / p.1.toReal) ≤ ‖∑ i, ψ i‖ * C := by
-    apply closure_minimal
-    · exact fun a ha => positive_dual_convexHull_pSum_le p hp hC ψ hψ ha
-    · exact isClosed_le hg continuous_const
+    change K ⊆ {a | ∑ i, (a i) ^ (1 / p.1.toReal) ≤ ‖∑ i, ψ i‖ * C}
+    exact closure_minimal (fun _ ha => positive_dual_convexHull_pSum_le p hp hC ψ hψ ha)
+      (isClosed_le hg continuous_const)
   obtain ⟨a, ha, hw⟩ := exists_positive_diagonal_weights (one_div_pos.mpr hp0) hδ
     K hK hne (convex_convexHull ℝ A).closure (fun a ha i => (hKsub ha).1 i)
   refine ⟨a, (hKsub ha).1, hbound a ha, ?_⟩

@@ -53,9 +53,11 @@ private def CanonicalProduct.prodLine {E F M N : Type*} [NormedAddCommGroup E] [
   open_source := e.open_source.prod isOpen_univ
   open_target := e.open_target.prod isOpen_univ
   contMDiffOn_toFun :=
-    (e.contMDiffOn_toFun.comp contMDiffOn_fst (fun _ h => h.1)).prodMk contMDiffOn_snd
+    (e.contMDiffOn_toFun.comp (s := e.source ×ˢ Set.univ) contMDiffOn_fst
+      (fun _ h => h.1)).prodMk contMDiffOn_snd
   contMDiffOn_invFun :=
-    (e.contMDiffOn_invFun.comp contMDiffOn_fst (fun _ h => h.1)).prodMk contMDiffOn_snd
+    (e.contMDiffOn_invFun.comp (s := e.target ×ˢ Set.univ) contMDiffOn_fst
+      (fun _ h => h.1)).prodMk contMDiffOn_snd
 
 private theorem
     CanonicalProduct.isLocalDiffeomorphAt_prodLine {E F M N : Type*} [NormedAddCommGroup E]

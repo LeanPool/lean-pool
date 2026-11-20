@@ -99,7 +99,7 @@ private theorem forcedIn_le {m n : ℕ} (hmn : m ≤ n) {x : A} (h : ForcedIn m 
 private noncomputable def dep (x : A) : ℕ := sInf {n | ForcedIn n x}
 
 private theorem forcedIn_dep {x : A} (h : Forced x) : ForcedIn (dep x) x :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := {n | ForcedIn n x}) h
 
 private theorem dep_le {n : ℕ} {x : A} (h : ForcedIn n x) : dep x ≤ n :=
   Nat.sInf_le h

@@ -201,7 +201,7 @@ theorem gradInnerE_le_wsumE (M : ABKModel d) (k : ℤ) (omega : Cutoff.CutoffSam
     gradInnerE M k omega ≤
       wsumE (fun p => atomG1a M (k + (p : ℤ))) (gradWeight M) omega := by
   rw [gradInnerE_eq_wsumE, wsumE, wsumE]
-  refine ENNReal.tsum_le_tsum fun p => ENNReal.ofReal_le_ofReal ?_
+  refine tsum_le_tsum fun p => ENNReal.ofReal_le_ofReal ?_
   have hkl : k ≤ k + (p : ℤ) := by omega
   have hcast : ((k + (p : ℤ) - k : ℤ) : ℝ) = (p : ℝ) := by push_cast; ring
   have hbase := gradCross_le M hkl omega

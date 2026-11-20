@@ -112,7 +112,7 @@ theorem gap_constant_slice_le_convolution
       refine Measurable.indicator ?_ (vec3Ball_measurable _ _)
       have hz : Measurable (fun z : Vec3 => g (z, w.2)) :=
         hg.comp (measurable_id.prodMk measurable_const)
-      simpa only [Real.enorm_eq_ofReal_abs] using hz.enorm
+      simpa only [Real.eNorm_eq_ofReal_abs] using hz.eNorm
     have hshift : (∫⁻ y, H (w.1 - y)) = ∫⁻ z, H z :=
       (Measure.measurePreserving_sub_left (volume : Measure Vec3) w.1).lintegral_comp hHmeas
     have hlow : ∀ y : Vec3, V⁻¹ * H (w.1 - y) ≤
@@ -207,7 +207,7 @@ theorem gap_constant_slice_morreyNorm_le_ae
         (measurable_const.add (measurable_snd.comp measurable_snd))
     have hcomp : Measurable (fun yz : Vec3 × ParabolicPoint =>
         ENNReal.ofReal |g (parabolicTranslate (-yz.1) 0 yz.2)|) := by
-      simpa only [Real.enorm_eq_ofReal_abs, Function.comp_def] using (hg.comp hmap).enorm
+      simpa only [Real.eNorm_eq_ofReal_abs, Function.comp_def] using (hg.comp hmap).eNorm
     exact ((gapMeanKernel_measurable ρ).comp measurable_fst).mul hcomp
   have hfinit : morreyENorm 3 τ (fun v => ENNReal.ofReal |g v|) ≠ ∞ := by
     rw [morreyENorm_ofReal_abs]

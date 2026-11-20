@@ -163,7 +163,7 @@ theorem normalizedCubeMeasure_cubeSet_of_mem_descendantsAtDepth {Q R : TriadicCu
     have hRpos : (0 : ℝ) < cubeVolume R := cubeVolume_pos R
     field_simp
   change (ENNReal.ofReal ((cubeVolume Q)⁻¹) • cubeMeasure Q) (cubeSet R) = _
-  rw [Measure.smul_apply, smul_eq_mul, cubeMeasure,
+  rw [smul_apply, smul_eq_mul, cubeMeasure,
     Measure.restrict_apply (measurableSet_cubeSet R),
     Set.inter_eq_self_of_subset_left hsub, hvolR,
     ← ENNReal.ofReal_mul (le_of_lt (inv_pos.mpr hQpos)), hratio,
@@ -194,7 +194,7 @@ theorem enorm_euclideanNorm_gridDualDepthTest_rpow (Q : TriadicCube d) (j : ℕ)
     have hzero : gridDualDepthTest Q j v x = 0 := by
       rw [gridDualDepthTest]
       exact Finset.sum_eq_zero fun R hR => Set.indicator_of_notMem (hx R hR) _
-    rw [hzero, euclideanNorm_zero, enorm_zero, ENNReal.zero_rpow_of_pos hr]
+    rw [hzero, euclideanNorm_zero, eNorm_zero, ENNReal.zero_rpow_of_pos hr]
     exact (Finset.sum_eq_zero fun R hR => Set.indicator_of_notMem (hx R hR) _).symm
 
 /-- The normalized `L^r` mass of a depth slice is the `ℓ^r` average of its cell
@@ -234,7 +234,7 @@ theorem normalizedEuclideanLpENorm_gridDualDepthTest (Q : TriadicCube d) (j : �
       (normalizedCubeMeasure Q) := by
     simp only [euclideanNorm_eq_norm_ofVec]
     exact ((HilbertVec.ofVecL d).continuous.measurable.comp hmeas).norm.aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (ne_of_gt (lt_trans zero_lt_one q.one_lt)) q.lt_top.ne
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (ne_of_gt (lt_trans zero_lt_one q.one_lt)) q.lt_top.ne
       hnorm,
     lintegral_enorm_euclideanNorm_gridDualDepthTest_rpow Q j v (finiteLpExponent_toReal_pos q)]
 
@@ -258,7 +258,7 @@ theorem enorm_euclideanNorm_gridDualTestCoeff_le (Q : TriadicCube d) (s t : ℝ)
             ‖cubeAverageVec R Fv‖ ^ (t - 1)) * 1 :=
           mul_le_mul_of_nonneg_left (euclideanNorm_vecSupDual_le_one _) hc0
       _ = _ := mul_one _
-  rw [Real.enorm_eq_ofReal (euclideanNorm_nonneg _)]
+  rw [Real.eNorm_eq_ofReal (euclideanNorm_nonneg _)]
   exact ENNReal.ofReal_le_ofReal hle
 
 /-! ## 3. The flat half of the single-depth full norm, at CONSTANT ONE

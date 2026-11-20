@@ -42,7 +42,7 @@ theorem lintegral_slice_eLpNorm_lt_top_of_memLp
     exact hF.aestronglyMeasurable
   have hpower : (∫⁻ z, ‖F z‖ₑ ^ a
       ∂((volume.restrict B).prod (volume.restrict J))) < ∞ := by
-    have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (ENNReal.ofReal_pos.mpr ha0).ne' ENNReal.ofReal_ne_top hF.eLpNorm_lt_top
     rw [ENNReal.toReal_ofReal ha0.le] at h
     change (∫⁻ z : Vec3 × ℝ, ‖F z‖ₑ ^ a
@@ -51,13 +51,13 @@ theorem lintegral_slice_eLpNorm_lt_top_of_memLp
     exact h
   have htime : (∫⁻ t in J, ∫⁻ x in B, ‖F (x, t)‖ₑ ^ a) < ∞ := by
     rw [← lintegral_prod_symm (fun z => ‖F z‖ₑ ^ a)
-      (hFm.enorm.pow_const a)]
+      (hFm.eNorm.pow_const a)]
     exact hpower
   have hle : (∫⁻ t in J, eLpNorm (fun x => F (x, t)) (ENNReal.ofReal a)
       (volume.restrict B)) ≤ ∫⁻ t in J, 1 + ∫⁻ x in B, ‖F (x, t)‖ₑ ^ a := by
     apply lintegral_mono_ae
     filter_upwards [hFm.prodMk_right] with t ht
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (ENNReal.ofReal_pos.mpr ha0).ne' ENNReal.ofReal_ne_top ht,
       ENNReal.toReal_ofReal ha0.le]
     let b := ∫⁻ x in B, ‖F (x, t)‖ₑ ^ a

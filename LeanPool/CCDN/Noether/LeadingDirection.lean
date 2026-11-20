@@ -30,7 +30,7 @@ lemma leadingDirectionPolynomial_coeff {R : Type*} [CommRing R]
     (leadingDirectionPolynomial f d).coeff j =
       if j ≤ d then (f.coeff (d - j)).coeff j else 0 := by
   classical
-  simp [leadingDirectionPolynomial, coeff_monomial]
+  simp [leadingDirectionPolynomial, Finsupp.single_apply]
 
 private lemma leadingDirectionPolynomial_natDegree_le {R : Type*} [CommRing R]
     (f : R[X][X]) (d : ℕ) : (leadingDirectionPolynomial f d).natDegree ≤ d := by

@@ -306,7 +306,7 @@ private theorem lattice_dilate_tail_norm_le (a : (Fin n → ℤ) → ℂ)
     intro k
     by_cases hk : ∃ j, |k j - m j| ≥ M;
     · rw [ tsum_eq_sum ];
-      any_goals exact { fun j => ( k j - m j ) / M };
+      on_goal 3 => exact { fun j => ( k j - m j ) / M };
       · simp +decide [ hk ];
         grind;
       · simp +contextual only [Finset.mem_singleton, funext_iff, not_forall, mul_ite, mul_one,

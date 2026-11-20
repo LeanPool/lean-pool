@@ -1020,7 +1020,7 @@ private theorem crossSpatial :
     _ = (1 / 2 : Real) • GaussianRealPoint
         ((I : GaussianInt) * (w + I * w)) := by
       dsimp [spatial, GaussianRealPoint, I]
-      ext <;> simp [] <;> all_goals ring
+      ext <;> simp [] <;> ring
 
 private theorem crossSlope :
     (by

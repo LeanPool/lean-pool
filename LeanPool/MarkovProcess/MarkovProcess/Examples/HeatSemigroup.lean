@@ -439,7 +439,7 @@ section Moments
 theorem lintegral_enorm_pow_gaussianReal_lt_top :
     ∫⁻ z, ‖z‖ₑ ^ (4 : ℕ) ∂(gaussianReal 0 1) < ⊤ := by
   have hmem : MemLp id ((4 : ℝ≥0) : ℝ≥0∞) (gaussianReal 0 1) := memLp_id_gaussianReal 4
-  have hfin := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have hfin := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (p := ((4 : ℝ≥0) : ℝ≥0∞)) (f := (id : ℝ → ℝ)) (by simp) (by simp) hmem.eLpNorm_lt_top
   have hp : (((4 : ℝ≥0) : ℝ≥0∞)).toReal = (4 : ℝ) := by simp
   rw [hp] at hfin
@@ -456,7 +456,7 @@ theorem coe_gaussianFourthMoment :
 
 private theorem enorm_sqrt_sq (h : NNReal) :
     ‖Real.sqrt (h : ℝ)‖ₑ ^ (2 : ℕ) = (h : ℝ≥0∞) := by
-  rw [← enorm_pow, Real.sq_sqrt h.coe_nonneg, Real.enorm_of_nonneg h.coe_nonneg,
+  rw [← eNorm_pow, Real.sq_sqrt h.coe_nonneg, Real.eNorm_of_nonneg h.coe_nonneg,
     ENNReal.ofReal_coe_nnreal]
 
 /-- **The heat semigroup satisfies the Kolmogorov moment criterion** with exponents `p = 4` and
@@ -472,7 +472,7 @@ theorem hasKolmogorovMoments_heatSemigroup :
   have hint : ∀ z : ℝ, edist (y + Real.sqrt (h : ℝ) * z) y ^ (4 : ℝ) =
       ‖Real.sqrt (h : ℝ)‖ₑ ^ (4 : ℕ) * ‖z‖ₑ ^ (4 : ℕ) := by
     intro z
-    rw [ENNReal.rpow_ofNat, edist_eq_enorm_sub, add_sub_cancel_left, enorm_mul, mul_pow]
+    rw [ENNReal.rpow_ofNat, eDist_eq_eNorm_sub, add_sub_cancel_left, eNorm_mul, mul_pow]
   simp_rw [hint]
   rw [lintegral_const_mul _ (by fun_prop), coe_gaussianFourthMoment, ENNReal.rpow_ofNat,
     show (4 : ℕ) = 2 * 2 from rfl, pow_mul, enorm_sqrt_sq]

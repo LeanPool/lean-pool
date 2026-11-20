@@ -136,7 +136,7 @@ private theorem orderRees_eq_sum_monomials
         ⟨(a : Polynomial (PresentedWeyl k n)).coeff r, a.property r⟩ := by
   apply Subtype.ext
   ext N
-  simp [orderReesMonomial, Polynomial.coeff_monomial]
+  simp [orderReesMonomial, Finsupp.single_apply]
 
 private theorem commutator_finset_sum
     {R S : Type*} (U : Finset R) (V : Finset S)

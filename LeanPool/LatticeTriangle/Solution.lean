@@ -3811,12 +3811,13 @@ lemma exists_padic_valuation
   by_cases hk : k_val = 0
   · simp_all
   · have := Fact.mk hp
-    have h1 : 1 ≤ padicValNat p k_val := one_le_padicValNat_of_dvd hk hk_dvd_p
-    have h2 : padicValNat p k_val < α := by
+    have h1 : 1 ≤ multiplicity p k_val := one_le_multiplicity_of_dvd hk hk_dvd_p
+    have h2 : multiplicity p k_val < α := by
       by_contra h_ge
       push Not at h_ge
-      exact hk_nd ((Nat.pow_dvd_pow p h_ge).trans pow_padicValNat_dvd)
-    exact ⟨padicValNat p k_val, h1, h2, pow_padicValNat_dvd, pow_succ_padicValNat_not_dvd hk⟩
+      exact hk_nd ((Nat.pow_dvd_pow p h_ge).trans (pow_multiplicity_dvd p k_val))
+    exact ⟨multiplicity p k_val, h1, h2, pow_multiplicity_dvd p k_val,
+      pow_succ_multiplicity_not_dvd hk⟩
 
 lemma general_case_bound
     (d : ℕ) [NeZero d] (p : ℕ) (hp : Nat.Prime p) (α : ℕ) (hα : 1 ≤ α)
@@ -3997,7 +3998,7 @@ lemma neg_inv_isUnit
     IsUnit (-(q : ZMod d)⁻¹) := by
   apply IsUnit.neg
   apply ZMod.isUnit_inv
-  rw [ZMod.coe_int_isUnit_iff_isCoprime]
+  rw [ZMod.isUnit_intCast_iff_isCoprime]
   rw [Int.isCoprime_iff_gcd_eq_one]
   rwa [Int.gcd_comm]
 
@@ -4035,7 +4036,7 @@ lemma b_bounds
 
 lemma q_isUnit_of_gcd (d : ℕ) (q : ℤ) (hq : Int.gcd q (d : ℤ) = 1) :
     IsUnit (q : ZMod d) := by
-  rw [ZMod.coe_int_isUnit_iff_isCoprime]
+  rw [ZMod.isUnit_intCast_iff_isCoprime]
   exact (Int.isCoprime_iff_gcd_eq_one.mpr hq).symm
 
 lemma neg_inv_eq_inv_neg (d : ℕ) (q : ℤ) (hq : Int.gcd q (d : ℤ) = 1) :

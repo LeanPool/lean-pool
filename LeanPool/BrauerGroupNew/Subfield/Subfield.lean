@@ -148,7 +148,7 @@ lemma cor_two_3to1 (A : Type u) [Ring A] [Algebra K A] (L : SubField K A) :
     Subalgebra.centralizer K L = L.1 := by
   intro H
   refine le_antisymm ?_ ?_
-  · by_contra! hL'
+  · by_contra hL'
     have := Subalgebra.le_centralizer_self.2 L.2
     have Llt := lt_of_le_not_ge this hL'
     have exist_ele : ∃ a ∈ Subalgebra.centralizer K L.1, a ∉ L.1 :=

@@ -127,7 +127,7 @@ theorem gaussianVolumeClosedForm_hermiteCurl {n : ℕ} (hn : 0 < n)
 
 /-- Literal closed-form solvability of Remark 2.4: every square-integrable
 ordinary distributionally closed (0,1)-form has a Gaussian L² potential with
-`∂̄u=α` in ordinary volume distributions and the sharp `1/n` norm bound. -/
+`dbar u = α` in ordinary volume distributions and the sharp `1/n` norm bound. -/
 theorem gaussianVolumeClosedFormSolvability {n : ℕ} (hn : 0 < n)
     (α : Fin n → Lp ℂ 2 (complexGaussianMeasure n))
     (hα : IsGaussianVolumeClosedForm n α) :

@@ -89,7 +89,7 @@ private theorem sqrt_setIntegral_mono {U B : Set (Vec d)} (hBU : B ⊆ U)
       Real.sqrt (∫ z in U, f z ^ (2 : ℕ) ∂volume) := by
   refine Real.sqrt_le_sqrt ?_
   exact setIntegral_mono_set hUint (Filter.Eventually.of_forall fun z => by positivity)
-    (LE.le.eventuallyLE hBU)
+    (LE.le.eventuallySubset hBU)
 
 /-! ## 2. The parameter integral is continuous -/
 
@@ -146,7 +146,7 @@ theorem continuous_fieldSetIntegral (M : ABKModel d) (y : Vec d) (n : ℤ)
       ContinuousMap.instSeminormedAddCommGroup
     calc |(A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩) i j| ≤ ‖A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩‖ := by
           simpa [Real.norm_eq_abs] using
-            Matrix.norm_entry_le_entrywise_sup_norm
+            Matrix.norm_apply_le_norm
               (A := A.1 ⟨x, hxK⟩ - A0.1 ⟨x, hxK⟩) (i := i) (j := j)
       _ = ‖(A.1 - A0.1) ⟨x, hxK⟩‖ := by rfl
       _ ≤ ‖A.1 - A0.1‖ := (A.1 - A0.1).norm_coe_le_norm _

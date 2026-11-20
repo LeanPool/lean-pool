@@ -29,13 +29,13 @@ used as the tower field of the final global construction. -/
 noncomputable def canonicalOrderAdherenceTower
     {X : Type v} [AddCommGroup X] [Lattice X]
      (A : Set X) : OrderAdherenceTower A where
-  stage η := transfiniteIterate orderAdherence η A
-  stage_zero := transfiniteIterate_bot _ _
-  stage_succ η := transfiniteIterate_succ _ _ _ (by
+  stage η := supTransfiniteIterate orderAdherence η A
+  stage_zero := supTransfiniteIterate_bot _ _
+  stage_succ η := supTransfiniteIterate_succ_of_not_isMax _ _ (by
     rw [not_isMax_iff]
     exact ⟨η + 1, lt_add_one η⟩)
   stage_limit η hη := by
-    rw [transfiniteIterate_limit _ _ _ hη]
+    rw [supTransfiniteIterate_limit _ _ hη]
     ext x
     simp
 
@@ -46,7 +46,7 @@ abbrev GaoSuccessorGenerator (β : Ordinal.{u}) :=
 
 /-- Indices for all Gao components below the successor cardinal of `κ`; used
 as the coordinate type of the global product. -/
-abbrev GaoComponentIndex (κ : Cardinal.{u}) :=
+noncomputable abbrev GaoComponentIndex (κ : Cardinal.{u}) :=
   Set.Iio (Cardinal.ord (Order.succ κ))
 
 /-- The continuous-function lattice attached to one Gao ordinal component. -/
@@ -110,7 +110,7 @@ theorem mk_gaoSuccessorGenerator_le
         rw [← Order.succ_eq_add_one, Order.lt_succ_iff]
         exact ζ.2⟩,
       fun _ _ h ↦ Subtype.ext (congrArg (fun z : Set.Iio bound ↦ z.1) h)⟩
-  have hβcard : β.card ≤ κ := Cardinal.card_le_iff.mpr hβ
+  have hβcard : β.card ≤ κ := Ordinal.card_le_iff.mpr hβ
   have hpowcard : (Ordinal.omega0 ^ β).card ≤ κ := by
     refine (Ordinal.card_opow_le Ordinal.omega0 β).trans ?_
     rw [Ordinal.card_omega0]
@@ -127,7 +127,7 @@ theorem mk_gaoSuccessorGenerator_le
     Cardinal.mk (GaoSuccessorGenerator β) ≤ Cardinal.mk (GaoIndex β) :=
       Cardinal.mk_subtype_le _
     _ ≤ Cardinal.mk (Set.Iio bound) := Cardinal.mk_le_of_injective e.injective
-    _ = Cardinal.lift.{u + 1, u} bound.card := Cardinal.mk_Iio_ordinal bound
+    _ = Cardinal.lift.{u + 1, u} bound.card := Ordinal.cardinalMk_Iio bound
     _ ≤ Cardinal.lift.{u + 1, u} κ := Cardinal.lift_le.mpr hboundcard
 
 /-- Embeds a successor-stage generator into the corresponding continuous-

@@ -572,10 +572,10 @@ theorem tsum_enorm_XiR_terms_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {
     (hr : r ≠ 0) (N w : Rn n) :
     ∑' ku : ℤ × (Fin n → ℤ), ‖((⟨ku.1, 0, ku.2⟩ : Tile n).semi α r).indicator
       (fun _ => (1 : ℂ)) N * PhiP α ⟨ku.1, 0, ku.2⟩ w ^ 2‖ₑ ≤ 4 := by
-  rw [ENNReal.tsum_prod']
-  refine le_trans (ENNReal.tsum_le_tsum fun k => ENNReal.tsum_le_tsum fun u => ?_)
+  rw [tsum_prod']
+  refine le_trans (tsum_le_tsum fun k => tsum_le_tsum fun u => ?_)
     (tsum_ind_suppBox_le α hα hr N w)
-  rw [enorm_mul]
+  rw [eNorm_mul]
   gcongr
   · by_cases hN : N ∈ (⟨k, 0, u⟩ : Tile n).semi α r
     · simp [Set.indicator_of_mem hN]
@@ -598,7 +598,7 @@ theorem summable_XiR_terms (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : F
       (fun _ => (1 : ℂ)) N * PhiP α ⟨ku.1, 0, ku.2⟩ w ^ 2‖ₑ ≠ ⊤ :=
     ne_top_of_le_ne_top (by norm_num) h
   have := ENNReal.summable_toReal hfin
-  exact Summable.of_norm (by simpa [toReal_enorm] using this)
+  exact Summable.of_norm (by simpa [toReal_eNorm] using this)
 
 theorem norm_XiR_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin n → Fin 2} (hr : r ≠ 0)
     (ζ η : Rn n) (s : ℝ) : ‖XiR α r ζ η s‖ ≤ 4 := by
@@ -609,12 +609,12 @@ theorem norm_XiR_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin n �
   calc ‖XiR α r ζ η s‖ ≤ ∑' ku : ℤ × (Fin n → ℤ), ‖((⟨ku.1, 0, ku.2⟩ : Tile n).semi α r).indicator
         (fun _ => (1 : ℂ)) (dil α ((2 : ℝ) ^ (-s)) η) *
           PhiP α ⟨ku.1, 0, ku.2⟩ (dil α ((2 : ℝ) ^ (-s)) (ζ + η)) ^ 2‖ :=
-        norm_tsum_le_tsum_norm (by simpa [toReal_enorm] using hsn)
+        norm_tsum_le_tsum_norm (by simpa [toReal_eNorm] using hsn)
     _ = (∑' ku : ℤ × (Fin n → ℤ), ‖((⟨ku.1, 0, ku.2⟩ : Tile n).semi α r).indicator
         (fun _ => (1 : ℂ)) (dil α ((2 : ℝ) ^ (-s)) η) *
           PhiP α ⟨ku.1, 0, ku.2⟩ (dil α ((2 : ℝ) ^ (-s)) (ζ + η)) ^ 2‖ₑ).toReal := by
-        rw [ENNReal.tsum_toReal_eq (fun _ => enorm_ne_top)]
-        simp [toReal_enorm]
+        rw [ENNReal.tsum_toReal_eq (fun _ => eNorm_ne_top)]
+        simp [toReal_eNorm]
     _ ≤ (4 : ℝ≥0∞).toReal := ENNReal.toReal_mono (by norm_num) h
     _ = 4 := by norm_num
 
@@ -849,7 +849,7 @@ theorem avgIntegrand_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin 
   have hsumint : ∑' ku, ∫⁻ ζ, ‖F ku ζ‖ₑ ≠ ⊤ := by
     have hle : ∑' ku, ∫⁻ ζ, ‖F ku ζ‖ₑ ≤ ∫⁻ ζ, 4 * ‖fhat f ζ * m ζ *
         Complex.exp (Complex.I * (⟪x, ζ⟫_ℝ : ℂ))‖ₑ := by
-      rw [← lintegral_tsum fun ku => (hFmeas ku).enorm]
+      rw [← lintegral_tsum fun ku => (hFmeas ku).eNorm]
       refine lintegral_mono fun ζ => ?_
       have hb := tsum_enorm_XiR_terms_le α hα hr (dil α t⁻¹ η) (dil α t⁻¹ (ζ + η))
       set c := ‖fhat f ζ * m ζ * Complex.exp (Complex.I * (⟪x, ζ⟫_ℝ : ℂ))‖ₑ
@@ -858,7 +858,7 @@ theorem avgIntegrand_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin 
           PhiP α ⟨ku.1, 0, ku.2⟩ (dil α t⁻¹ (ζ + η)) ^ 2‖ₑ with hw
       have hF : ∀ ku, ‖F ku ζ‖ₑ = w ku * c := by
         intro ku
-        simp only [F, hw, c, enorm_mul]
+        simp only [F, hw, c, eNorm_mul]
         ring
       calc ∑' ku, ‖F ku ζ‖ₑ = ∑' ku, w ku * c := tsum_congr hF
         _ = (∑' ku, w ku) * c := ENNReal.tsum_mul_right
@@ -1028,7 +1028,7 @@ theorem enorm_XiR_term (α : Fin n → ℕ) (r : Fin n → Fin 2) (ζ η : Rn n)
         PhiP α ⟨k, 0, u⟩ (dil α ((2 : ℝ) ^ (-s)) (ζ + η)) ^ 2‖ₑ =
       (boxQ r).indicator (fun _ => (1 : ℝ≥0∞)) (dil α ((2 : ℝ) ^ ((k : ℝ) - s)) η - latticePt u) *
         chiE (dil α ((2 : ℝ) ^ ((k : ℝ) - s)) (ζ + η) - latticePt u) := by
-  rw [PhiP_eq_phiR, dil_dil_zpow_rpow, enorm_mul]
+  rw [PhiP_eq_phiR, dil_dil_zpow_rpow, eNorm_mul]
   congr 1
   · by_cases hN : dil α ((2 : ℝ) ^ (-s)) η ∈ (⟨k, 0, u⟩ : Tile n).semi α r
     · have hQ := (mem_semi_iff_boxQ α k u r _).mp hN
@@ -1045,7 +1045,7 @@ theorem XiE_le_four (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin n �
     (ζ η : Rn n) (s : ℝ) : XiE α r ζ η s ≤ 4 := by
   have h := tsum_enorm_XiR_terms_le α hα hr (dil α ((2 : ℝ) ^ (-s)) η)
     (dil α ((2 : ℝ) ^ (-s)) (ζ + η))
-  rw [ENNReal.tsum_prod'] at h
+  rw [tsum_prod'] at h
   simp_rw [enorm_XiR_term α r ζ η s] at h
   exact h
 
@@ -1060,7 +1060,7 @@ theorem XiR_eq_toReal (α : Fin n → ℕ) (r : Fin n → Fin 2)
           (dil α ((2 : ℝ) ^ ((ku.1 : ℝ) - s)) η - latticePt ku.2) *
         chiE (dil α ((2 : ℝ) ^ ((ku.1 : ℝ) - s)) (ζ + η) - latticePt ku.2)).toReal : ℂ) := by
     intro ku
-    rw [← enorm_XiR_term α r ζ η s ku.1 ku.2, toReal_enorm]
+    rw [← enorm_XiR_term α r ζ η s ku.1 ku.2, toReal_eNorm]
     -- the term is a nonnegative real
     rw [PhiP_eq_phiR]
     by_cases hN : dil α ((2 : ℝ) ^ (-s)) η ∈ (⟨ku.1, 0, ku.2⟩ : Tile n).semi α r
@@ -1078,7 +1078,7 @@ theorem XiR_eq_toReal (α : Fin n → ℕ) (r : Fin n → Fin 2)
   unfold XiR
   rw [tsum_congr hreal, ← Complex.ofReal_tsum, ← ENNReal.tsum_toReal_eq hfin, XiE]
   congr 2
-  rw [ENNReal.tsum_prod']
+  rw [tsum_prod']
   rfl
 
 /-- The lattice count `#{u ∈ ℤⁿ : ρ(p + u) ≤ T}`. -/
@@ -1210,7 +1210,7 @@ theorem mem_ballA_add_iff (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {T : �
         rw [rhoNN_le_iff]
         intro i
         rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ hT]
-        simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, PiLp.add_apply, latticePt_apply]
+        simp only [NNReal.coe_rpow, coe_nnNorm, Real.norm_eq_abs, PiLp.add_apply, latticePt_apply]
         have hαi : (0 : ℝ) < α i := by have := hα i; positivity
         calc |p i + u i| ^ ((α i : ℝ)⁻¹) ≤ (T ^ α i) ^ ((α i : ℝ)⁻¹) :=
               Real.rpow_le_rpow (abs_nonneg _) (h i) (by positivity)
@@ -2175,7 +2175,7 @@ theorem locallyIntegrable_indicator_neg (r : Fin n → Fin 2) :
   have hfin : volume (Neg.neg ⁻¹' (boxQ r : Set (Rn n))) < ⊤ := by
     rw [Measure.measure_preimage_neg]
     exact (isCompact_boxQ r).measure_lt_top
-  exact ((integrableOn_const hfin.ne enorm_ne_top).integrable_indicator hset).locallyIntegrable
+  exact ((integrableOn_const hfin.ne eNorm_ne_top).integrable_indicator hset).locallyIntegrable
 
 theorem continuous_gQ (r : Fin n → Fin 2) : Continuous (gQ r : Rn n → ℝ) := by
   rw [gQ_eq_convolution]
@@ -2861,12 +2861,12 @@ theorem enorm_avgR_le (α : Fin n → ℕ) (r : Fin n → Fin 2) (m : Rn n → �
       ∫⁻ η in ballA α R, ∫⁻ y in ballA α R, ∫⁻ s in Set.Ioc (0 : ℝ) 1,
         ‖avgIntegrand α r m f x η y s‖ₑ := by
   unfold avgR
-  rw [enorm_mul, ← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+  rw [eNorm_mul, ← ofReal_norm, Complex.norm_real, Real.norm_of_nonneg (by positivity)]
   gcongr
-  refine (enorm_integral_le_lintegral_enorm _).trans (lintegral_mono fun η => ?_)
-  refine (enorm_integral_le_lintegral_enorm _).trans (lintegral_mono fun y => ?_)
+  refine (eNorm_integral_le_lintegral_eNorm _).trans (lintegral_mono fun η => ?_)
+  refine (eNorm_integral_le_lintegral_eNorm _).trans (lintegral_mono fun y => ?_)
   rw [intervalIntegral.integral_of_le zero_le_one]
-  exact enorm_integral_le_lintegral_enorm _
+  exact eNorm_integral_le_lintegral_eNorm _
 
 /-- Shifting the modulation into the frequency parameter: the integrand for `M_{-N} f` at `η + N`
 has the same modulus as the conjugated model operator at frequency `δ_{2^{-s}}(η + N)` applied to
@@ -3012,7 +3012,7 @@ theorem conj_modelOp_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 <
       have hN' := hgood N hN
       rw [← hg, modelOp_eq_modelOpHO α r m hN']
       simp only [transl, dilOp, sub_neg_eq_add, inv_inv]
-      rw [enorm_mul, ← ofReal_norm, ← ofReal_norm, Complex.norm_real,
+      rw [eNorm_mul, ← ofReal_norm, ← ofReal_norm, Complex.norm_real,
         Real.norm_of_nonneg (by positivity), ← ENNReal.ofReal_mul (by positivity)]
       congr 2
       rw [Real.inv_rpow ht.le, ← Real.rpow_neg ht.le]
@@ -3186,7 +3186,7 @@ theorem lintegral_sup_avgR_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn
       have h := measurable_avgIntegrand α hα hr hm' (schwartzModul (-N) f)
       rw [coe_schwartzModul] at h
       exact (h.comp (measurable_fst.prodMk ((measurable_snd.fst.add_const N).prodMk
-        measurable_snd.snd))).enorm
+        measurable_snd.snd))).eNorm
     have e : (fun p : Rn n × Rn n × Rn n × ℝ => G p.1 p.2.1 p.2.2.1 p.2.2.2) =
         F.sup' hF (fun N p => ‖avgIntegrand α r m (modul (-N) f) p.1 (p.2.1 + N) p.2.2.1
           p.2.2.2‖ₑ) := by
@@ -3348,8 +3348,8 @@ theorem lintegral_sup_theta_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (h
     have e : avgRHO α r m (modul (-N) f) x = avgR α r m (modul (-N) f) x :=
       funext fun R => (avgR_eq_avgRHO α hα r m _ x R).symm
     rw [e] at h
-    have h' := (continuous_enorm.tendsto _).comp (h.comp hR)
-    rw [enorm_mul, enorm_twoPi_inv] at h'
+    have h' := (continuous_eNorm.tendsto _).comp (h.comp hR)
+    rw [eNorm_mul, enorm_twoPi_inv] at h'
     exact h'
   -- pointwise: `κ ‖I N x‖ₑ ≤ liminf g`
   have hpt : ∀ x, F.sup (fun N => ‖I N x‖ₑ) ≤ κ⁻¹ * Filter.liminf (fun k => g k x) Filter.atTop
@@ -3373,7 +3373,7 @@ theorem lintegral_sup_theta_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (h
       have h := measurable_avgR α hα hr hm' (schwartzModul (-N) f) (R := (k : ℝ) + 1)
         (by positivity)
       rw [coe_schwartzModul] at h
-      exact h.enorm
+      exact h.eNorm
     have e : g k = F.sup' hF (fun N x => ‖avgR α r m (modul (-N) f) x ((k : ℝ) + 1)‖ₑ) := by
       funext x
       simp only [g]
@@ -3456,7 +3456,7 @@ theorem enorm_carlesonIntegrand_eq (M : Rn n → ℂ) (f : Rn n → ℂ) (x N : 
       mul_add, Complex.exp_add]
     ring
   simp_rw [e]
-  rw [integral_const_mul, enorm_mul, ← ofReal_norm (Complex.exp _), mul_comm Complex.I,
+  rw [integral_const_mul, eNorm_mul, ← ofReal_norm (Complex.exp _), mul_comm Complex.I,
     Complex.norm_exp_ofReal_mul_I, ENNReal.ofReal_one, one_mul]
 
 /-- The Carleson integrand is continuous in the frequency `N`, for a bounded multiplier continuous
@@ -3555,12 +3555,12 @@ theorem carleson_theta_weak (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn :
     have e : (fun N => g N x) = fun N => ‖∫ ξ, fhat f ξ * Complex.exp (Complex.I * (⟪x, ξ⟫_ℝ : ℂ)) *
         M (ξ - N)‖ₑ := funext fun N => (enorm_carlesonIntegrand_eq M f x N).symm
     rw [e]
-    exact continuous_enorm.comp (continuous_carlesonIntegrand hn hMb hMc f x)
+    exact continuous_eNorm.comp (continuous_carlesonIntegrand hn hMb hMc f x)
   have hgx : ∀ N, Measurable (g N) := by
     intro N
     have h := continuous_fourierMult hMb hMm (schwartzModul (-N) f)
     rw [coe_schwartzModul] at h
-    exact (continuous_enorm.comp h).measurable
+    exact (continuous_eNorm.comp h).measurable
   obtain ⟨D, hDc, hDd⟩ := TopologicalSpace.exists_countable_dense (Rn n)
   have hDne : D.Nonempty := hDd.nonempty
   obtain ⟨e, he⟩ := hDc.exists_eq_range hDne
@@ -3665,7 +3665,7 @@ theorem rho_refl (α : Fin n → ℕ) (s : Fin n → Bool) (x : Rn n) : rho α (
   congr 2
   funext i
   simp only [refl_apply]
-  split_ifs <;> simp [nnnorm_neg]
+  split_ifs <;> simp [nnNorm_neg]
 
 theorem exists_refl_nonpos (ξ : Rn n) : ∃ s : Fin n → Bool, ∀ i, refl s ξ i ≤ 0 := by
   refine ⟨fun i => decide (0 < ξ i), fun i => ?_⟩
@@ -3953,7 +3953,7 @@ theorem carleson_le_sum (hn : 0 < n) {ι : Type*} (s : Finset ι) (P : ι → Rn
     filter_upwards [ae_ne_point hn N] with ξ hξ
     rw [hsum _ (sub_ne_zero.mpr hξ), Finset.mul_sum]
   rw [e]
-  refine (enorm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
+  refine (eNorm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
   exact le_iSup (fun N => ‖∫ ξ, fhat f ξ * Complex.exp (Complex.I * (⟪x, ξ⟫_ℝ : ℂ)) *
     P i (ξ - N)‖ₑ) N
 
@@ -4167,7 +4167,7 @@ theorem rho_smul_ge (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {c : ℝ} (hc
   have hαj : (0 : ℝ) < α j := by have := hα j; positivity
   have h1 := coord_rpow_le_rhoNN α (c • x) j
   have h2 : ((‖(c • x) j‖₊ ^ ((α j : ℝ)⁻¹) : ℝ≥0) : ℝ) = c ^ ((α j : ℝ)⁻¹) * rho α x := by
-    rw [NNReal.coe_rpow, coe_nnnorm, PiLp.smul_apply, smul_eq_mul, Real.norm_eq_abs, abs_mul,
+    rw [NNReal.coe_rpow, coe_nnNorm, PiLp.smul_apply, smul_eq_mul, Real.norm_eq_abs, abs_mul,
       abs_of_pos hc, Real.mul_rpow hc.le (abs_nonneg _), hj, ← Real.rpow_natCast,
       ← Real.rpow_mul (rho_nonneg α x), mul_inv_cancel₀ hαj.ne', Real.rpow_one]
   have h3 : c ≤ c ^ ((α j : ℝ)⁻¹) := by
@@ -4247,7 +4247,7 @@ theorem carlesonOperator_le (m : ℝ^n → ℂ) (f : ℝ^n → ℂ) (x : ℝ^n) 
   simp_rw [hG] at hsub
   have hle : ‖∫ ξ, F ξ‖ₑ ≤ ‖∫ ζ, fhat f ζ * Complex.exp (Complex.I * (⟪x, ζ⟫_ℝ : ℂ)) *
       m ((2 * π)⁻¹ • (ζ - (2 * π) • N))‖ₑ := by
-    rw [hsub, enorm_smul]
+    rw [hsub, eNorm_smul]
     refine le_trans (le_of_eq ?_) (le_mul_of_one_le_left bot_le ?_)
     · rfl
     · rw [← ofReal_norm, Real.norm_eq_abs, abs_of_pos (by positivity)]

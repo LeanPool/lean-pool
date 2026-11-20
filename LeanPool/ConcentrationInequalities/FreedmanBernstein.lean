@@ -63,13 +63,13 @@ lemma memLp_exp_mul (h : Kernel.HasSubgammaMGF X V c κ ν) (t : ℝ) (p : ℝ�
     MemLp (fun ω ↦ exp (t * X ω)) p (κ ∘ₘ ν) := by
   by_cases hp0 : p = 0
   · simpa [hp0] using (h.integrable_exp_mul t).1
-  rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (mod_cast hp0) (by simp)
+  rw [memLp_iff, eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (mod_cast hp0) (by simp)
     (h.integrable_exp_mul t).1]
   simp only [ENNReal.coe_toReal]
   have hi := (h.integrable_exp_mul (p * t)).2
   rw [hasFiniteIntegral_def] at hi
   convert hi using 3 with ω
-  rw [enorm_eq_ofReal (by positivity), enorm_eq_ofReal (by positivity),
+  rw [eNorm_eq_ofReal (by positivity), eNorm_eq_ofReal (by positivity),
     ENNReal.ofReal_rpow_of_nonneg (by positivity), ← exp_mul, mul_comm, ← mul_assoc]
   positivity
 

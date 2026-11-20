@@ -42,7 +42,7 @@ theorem uc_squared_norm_integrable_on_subset
   have hwmeas : AEStronglyMeasurable w (volume.restrict S) :=
     hweak.aestronglyMeasurable
   have hwLp : MemLp w (2 : ℝ≥0∞) (volume.restrict S) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (μ := volume.restrict S)
       (by norm_num) (by norm_num) hwmeas).2
     simpa using hL2

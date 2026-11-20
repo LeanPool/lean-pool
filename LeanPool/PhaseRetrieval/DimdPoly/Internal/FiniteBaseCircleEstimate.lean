@@ -1999,14 +1999,14 @@ private theorem carrierIocImage_union_mu_real_eq_card_inv_nat
       ∀ k ∈ K,
         MeasureTheory.IntegrableOn (fun _ : Circle => (1 : ℝ))
           (carrierIocImage k) μCircle := by
-    simp_all only [enorm_one, ne_eq, ENNReal.one_ne_top, not_false_eq_true,
+    simp_all only [eNorm_one, ne_eq, ENNReal.one_ne_top, not_false_eq_true,
       MeasureTheory.integrableOn_const_iff, one_ne_zero, MeasureTheory.measure_lt_top, or_true,
       implies_true]
   have hsum := carrierIocImage_setIntegral_biUnion_finset_wip
     (N := N) K (fun _ : Circle => (1 : ℝ)) hf
   have hleft :
       (∫ x in U, (1 : ℝ) ∂ μCircle) = μCircle.real U := by
-    simp_all only [enorm_one, ne_eq, ENNReal.one_ne_top, not_false_eq_true,
+    simp_all only [eNorm_one, ne_eq, ENNReal.one_ne_top, not_false_eq_true,
       MeasureTheory.integrableOn_const_iff, one_ne_zero, MeasureTheory.measure_lt_top, or_true,
       implies_true, MeasureTheory.integral_const, MeasurableSet.univ,
       MeasureTheory.measureReal_restrict_apply, Set.univ_inter, smul_eq_mul, mul_one]
@@ -2017,7 +2017,7 @@ private theorem carrierIocImage_union_mu_real_eq_card_inv_nat
     intro k hk
     rw [MeasureTheory.setIntegral_const]
     simp [carrierIocImage_mu_real_eq_inv_nat k]
-  simp_all only [enorm_one, ne_eq, ENNReal.one_ne_top, not_false_eq_true,
+  simp_all only [eNorm_one, ne_eq, ENNReal.one_ne_top, not_false_eq_true,
     MeasureTheory.integrableOn_const_iff, one_ne_zero, MeasureTheory.measure_lt_top, or_true,
     implies_true, MeasureTheory.integral_const, MeasurableSet.univ,
     MeasureTheory.measureReal_restrict_apply, Set.univ_inter, smul_eq_mul, mul_one,
@@ -2279,8 +2279,8 @@ private theorem carrierAverage_sub_mean_integral_zero
   rw [MeasureTheory.integral_sub hf.restrict hconst, MeasureTheory.integral_const]
   simp only [hmu, carrierAverage, s]
   simp_all only [ne_eq, Nat.cast_eq_zero, MeasurableSet.univ,
-    MeasureTheory.measureReal_restrict_apply, Set.univ_inter, enorm_ne_top, not_false_eq_true,
-    MeasureTheory.integrable_const_enorm, Complex.real_smul, Complex.ofReal_inv,
+    MeasureTheory.measureReal_restrict_apply, Set.univ_inter, eNorm_ne_top, not_false_eq_true,
+    MeasureTheory.integrable_const_eNorm, Complex.real_smul, Complex.ofReal_inv,
     Complex.ofReal_natCast, inv_mul_cancel_left₀, sub_self]
 
 private theorem setIntegral_bias_variance_of_mean_zero
@@ -2303,7 +2303,7 @@ private theorem setIntegral_bias_variance_of_mean_zero
       ∫ x in s, @inner ℝ ℂ _ c (f x - c) ∂ μ = 0 := by
     have key : ∀ x, @inner ℝ ℂ _ c (f x - c) =
         (innerSL ℝ c) (f x - c) := by
-      simp_all only [ne_eq, enorm_ne_top, not_false_eq_true, MeasureTheory.integrable_const_enorm,
+      simp_all only [ne_eq, eNorm_ne_top, not_false_eq_true, MeasureTheory.integrable_const_eNorm,
         Complex.inner, Complex.mul_re, Complex.sub_re, Complex.conj_re, Complex.sub_im,
         Complex.conj_im, mul_neg, sub_neg_eq_add, coe_innerSL_apply, implies_true]
     simp_rw [key]
@@ -2319,7 +2319,7 @@ private theorem setIntegral_bias_variance_of_mean_zero
       ∫ x in s, (‖f x‖ ^ 2 - ‖f x - c‖ ^ 2) ∂ μ =
         ∫ x in s,
           (2 * @inner ℝ ℂ _ c (f x - c) + ‖c‖ ^ 2) ∂ μ := by
-    simp_all only [ne_eq, enorm_ne_top, not_false_eq_true, MeasureTheory.integrable_const_enorm,
+    simp_all only [ne_eq, eNorm_ne_top, not_false_eq_true, MeasureTheory.integrable_const_eNorm,
       Complex.inner, Complex.mul_re, Complex.sub_re, Complex.conj_re, Complex.sub_im,
       Complex.conj_im, mul_neg, sub_neg_eq_add]
   have hsplit :
@@ -2331,7 +2331,7 @@ private theorem setIntegral_bias_variance_of_mean_zero
         (fun x => @inner ℝ ℂ _ c (f x - c)) μ := by
     have key : ∀ x, @inner ℝ ℂ _ c (f x - c) =
         (innerSL ℝ c) (f x - c) := by
-      simp_all only [ne_eq, enorm_ne_top, not_false_eq_true, MeasureTheory.integrable_const_enorm,
+      simp_all only [ne_eq, eNorm_ne_top, not_false_eq_true, MeasureTheory.integrable_const_eNorm,
         Complex.inner, Complex.mul_re, Complex.sub_re, Complex.conj_re, Complex.sub_im,
         Complex.conj_im, mul_neg, sub_neg_eq_add, coe_innerSL_apply, implies_true]
     rw [show (fun x => @inner ℝ ℂ _ c (f x - c)) =

@@ -138,7 +138,7 @@ theorem exists_one_sided_integral_constant_on_cylinder
       lintegral_mono_set hcover
     _ ≤ ∑' z : s, ∫⁻ w in parabolicCylinder z.1.1 z.1.2 (ρ₀ / 2), F w :=
       lintegral_iUnion_le _ _
-    _ ≤ ∑' _z : s, B := ENNReal.tsum_le_tsum fun z => hB z.1 (hscenters z.1 z.2)
+    _ ≤ ∑' _z : s, B := tsum_le_tsum fun z => hB z.1 (hscenters z.1 z.2)
     _ = (s.card : ℝ≥0∞) * B := by simp only [tsum_fintype, Finset.sum_const,
       Finset.card_univ, Fintype.card_coe, nsmul_eq_mul]
 

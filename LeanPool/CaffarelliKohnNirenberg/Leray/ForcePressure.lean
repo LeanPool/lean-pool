@@ -72,7 +72,7 @@ theorem forcePressureSliceOfField_eLpNorm_le (F : Vec3 × ℝ → Vec3) (t : ℝ
   · rw [forcePressureSliceOfField, dite_eq_left h]
     set v := realVectorL2OfCoordinateFunction (fun x : Vec3 => F (x, t)) h
     have hg : eLpNorm (forcePressureGradientL2 v) 2 volume ≤ 2 * eLpNorm v 2 volume := by
-      rw [← Lp.enorm_def, ← Lp.enorm_def, ← ofReal_norm, ← ofReal_norm]
+      rw [← Lp.eNorm_def, ← Lp.eNorm_def, ← ofReal_norm, ← ofReal_norm]
       calc
         ENNReal.ofReal ‖forcePressureGradientL2 v‖ ≤ ENNReal.ofReal (2 * ‖v‖) :=
           ENNReal.ofReal_le_ofReal (forcePressureGradientL2_norm_le v)
@@ -125,13 +125,13 @@ theorem lintegral_eLpNorm_slice_sq_eq {μt : Measure ℝ} [SFinite μt]
   have hsq (x : ℝ≥0∞) : (x ^ (1 / (2 : ℝ))) ^ (2 : ℝ) = x := by
     rw [← ENNReal.rpow_mul]
     norm_num
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     hF.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, hsq]
-  rw [lintegral_prod_symm' _ (hF.measurable.enorm.pow_const _)]
+  rw [lintegral_prod_symm' _ (hF.measurable.eNorm.pow_const _)]
   apply lintegral_congr
   intro t
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) (hslice t)]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) (hslice t)]
   simp only [ENNReal.toReal_ofNat, hsq]
 
 private theorem forcePressure_exists_modification {f : ParabolicPoint → Vec3}

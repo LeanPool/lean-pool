@@ -14,6 +14,10 @@ AlgebraicCurve.Place.ord_diffCoeff_D_nonneg_of_isSeparable (submission
 
 module
 
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+
+public import Mathlib.FieldTheory.Perfect
+
 public import Mathlib.RingTheory.Kaehler.Basic
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorClassGroup
 
@@ -445,7 +449,7 @@ theorem exists_regular_derivative_ratFunc {K : Type*} [Field K] [PerfectField K]
       (IsLocalRing.maximalIdeal u.toValuationSubring)
         = IsLocalRing.maximalIdeal v.toValuationSubring := by
     apply le_antisymm
-    · exact ((IsLocalRing.local_hom_TFAE
+    · exact ((IsLocalRing.local_hom_tfae
         (algebraMap u.toValuationSubring v.toValuationSubring)).out 1 3).mp instLH
     · intro z hz
       rcases eq_or_ne z 0 with rfl | hz0

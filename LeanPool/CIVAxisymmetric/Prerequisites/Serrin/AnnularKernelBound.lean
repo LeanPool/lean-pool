@@ -596,7 +596,7 @@ private theorem exists_kernel_iteratedFDeriv_bound :
   have hn' : n = 0 ∨ n = 1 ∨ n = 2 := by omega
   fin_cases l <;> rcases hn' with rfl | rfl | rfl <;>
     first
-    | exact (hc00 z hz).trans (mul_le_mul_of_nonneg_right (by simp [le_max_iff])
+    | exact (hc00 z hz).trans (mul_le_mul_of_nonneg_right (by simp)
         (inv_nonneg.mpr (pow_nonneg (vec3EuclideanNorm_nonneg z) _)))
     | exact (hc01 z hz).trans (mul_le_mul_of_nonneg_right (by simp [le_max_iff])
         (inv_nonneg.mpr (pow_nonneg (vec3EuclideanNorm_nonneg z) _)))
@@ -628,7 +628,7 @@ private theorem exists_cutoff_iteratedFDeriv_bound :
   rcases hn' with rfl | rfl | rfl | rfl <;>
     first
     | exact (hCf 0 x ρ hρ y).trans
-        (div_le_div_of_nonneg_right (by simp [le_max_iff]) (pow_nonneg hρ.le _))
+        (div_le_div_of_nonneg_right (by simp) (pow_nonneg hρ.le _))
     | exact (hCf 1 x ρ hρ y).trans
         (div_le_div_of_nonneg_right (by simp [le_max_iff]) (pow_nonneg hρ.le _))
     | exact (hCf 2 x ρ hρ y).trans

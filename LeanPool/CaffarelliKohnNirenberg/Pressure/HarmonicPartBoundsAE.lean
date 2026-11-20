@@ -250,7 +250,7 @@ private lemma pressure_utensor_integral_le_two_energy
         (∫ y, (‖F y‖ : ℝ) ^ (2 : ℕ) ∂μ) ^ (1 / 2 : ℝ) *
           (∫ y, (‖G y‖ : ℝ) ^ (2 : ℕ) ∂μ) ^ (1 / 2 : ℝ) := by
     convert hholder using 1
-    all_goals norm_num [Real.rpow_natCast]
+    norm_num [Real.rpow_natCast]
   have hprodle := @pressure_utensor_integral_le_two_energy_hprodle_2 μ F G hFnonneg hGle hholder'
   have hUnorm : ∀ y, pressureUTensorNorm u c s y = gu y * gv y := by
     intro y
@@ -354,7 +354,7 @@ private lemma harmonic_pressure_integral_le_lpNorm
   have hvol : (μ Set.univ).toReal ^ (1 / 3 : ℝ) =
       (Real.pi * 4 / 3) ^ (1 / 3 : ℝ) * r := by
     rw [show μ Set.univ = volume (vec3Ball x₀ r) by
-      simp [μ, Measure.restrict_apply MeasurableSet.univ, univ_inter],
+      simp [μ, Measure.restrict_apply MeasurableSet.univ],
       pressure_volume_ball (x₀ := x₀) hr,
       ENNReal.toReal_ofReal (by positivity)]
     rw [Real.mul_rpow (by positivity) (by positivity)]

@@ -63,8 +63,7 @@ theorem ginibre_log_shift_derivatives {ε r : ℝ} (h : 0 < r + ε) :
     deriv (fun x => Real.log (x+ε)) r = (r+ε)⁻¹ ∧
       deriv (deriv (fun x => Real.log (x+ε))) r = -((r+ε)^2)⁻¹ := by
   have hd (x : ℝ) (hx : x+ε ≠ 0) : HasDerivAt (fun y => Real.log (y+ε)) (x+ε)⁻¹ x := by
-    convert (Real.hasDerivAt_log hx).comp x ((hasDerivAt_id x).add_const ε) using 1 <;> try simp
-    all_goals rfl
+    exact (Real.hasDerivAt_log hx).comp_add_const x ε
   refine ⟨(hd r h.ne').deriv,?_⟩
   have he : deriv (fun x => Real.log (x+ε)) =ᶠ[nhds r] (fun x => (x+ε)⁻¹) := by
     filter_upwards [((continuous_id.add continuous_const).continuousAt.eventually_ne h.ne')] with x
@@ -107,8 +106,7 @@ theorem ginibreRealPaperSpeedGenerator_centerLogBarrier {n : ℕ} (hn : 2 ≤ n)
   change -(r+ε)⁻¹*((4*α/(n : ℝ))*(1-r)) +
     (α/(n : ℝ)^2)*((r+ε)^2)⁻¹*(4*(n : ℝ)*r) = _
   change _ = (4*α/(n : ℝ))*(r/(r+ε)-ε/(r+ε)^2)
-  field_simp
- ; ring
+  field_simp; ring
 
 theorem ginibreRealPaperSpeedGenerator_centerLogBarrier_le {n : ℕ} (hn : 2 ≤ n)
     (α : ℝ≥0) {ε : ℝ} (hε : 0 < ε) (z : Configuration n) (hz : CollisionFree z) :

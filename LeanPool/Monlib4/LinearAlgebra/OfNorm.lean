@@ -138,7 +138,7 @@ theorem innerDef_i_smul_left (x y : X) : (innerDef ((I : 𝕜) • x) y : 𝕜) 
   simp only [innerDef, ← mul_assoc, mul_comm (-I : 𝕜) 4⁻¹]
   simp only [mul_assoc]
   congr 1
-  rw [smul_smul, I_mul_I_of_nonzero hI, neg_one_smul, neg_sub_left, norm_neg]
+  rw [smul_smul, I_mul_I_of_ne_zero hI, neg_one_smul, neg_sub_left, norm_neg]
   simp only [mul_add, mul_sub]
   simp_rw [← mul_assoc, hI', one_mul, neg_mul]
   rw [sub_neg_eq_add]
@@ -168,7 +168,7 @@ theorem im_innerDef_symm (x y : X) : im (innerDef x y : 𝕜) = -im (innerDef y 
     have h₁ : ∀ a : X, ‖a‖ = ‖(I : 𝕜) • a‖ := fun a => by
       rw [norm_smul, norm_I_of_ne_zero h, one_mul]
     rw [h₁ (y + (I : 𝕜) • x), h₁ (y - (I : 𝕜) • x)]
-    simp only [smul_add, smul_sub, smul_smul, I_mul_I_of_nonzero h, neg_one_smul]
+    simp only [smul_add, smul_sub, smul_smul, I_mul_I_of_ne_zero h, neg_one_smul]
     simp_rw [sub_eq_add_neg, neg_neg]
 
 theorem innerDef_conj (x y : X) : conj (innerDef x y : 𝕜) = innerDef y x := by
@@ -591,16 +591,11 @@ theorem mem_extremePoints_of_closedBall_iff_norm_eq_one
                 simp_rw [norm_smul, norm_ofReal, abs_of_pos hα₁]
                 rw [abs_of_pos]; simp_rw [sub_pos, hα₂]
             _ < β * 1 + (1 - β) * 1 := by
-                try
-                { apply add_lt_add_of_lt_of_le
-                  apply mul_lt_mul' le_rfl Hyy (norm_nonneg _) hα₁
-                  apply mul_le_mul_of_nonneg_left hz
-                  simp_rw [sub_nonneg, le_of_lt hα₂] }
-                try
-                { apply add_lt_add_of_le_of_lt
-                  exact mul_le_mul le_rfl hy (norm_nonneg y) (le_of_lt hα₁)
-                  apply mul_lt_mul' le_rfl Hyy (norm_nonneg _)
-                  simp only [sub_pos, hα₂] }
+                first
+                | exact add_lt_add_of_lt_of_le (mul_lt_mul_of_pos_left Hyy hα₁)
+                    (mul_le_mul_of_nonneg_left hz (sub_nonneg.mpr hα₂.le))
+                | exact add_lt_add_of_le_of_lt (mul_le_mul_of_nonneg_left hy hα₁.le)
+                    (mul_lt_mul_of_pos_left Hyy (sub_pos.mpr hα₂))
             _ = 1 := by ring_nf
         simp only [lt_irrefl] at this
 

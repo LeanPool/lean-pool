@@ -132,7 +132,7 @@ private theorem blowupLimitClauses_transportIntegral_bound
     exact (ENNReal.rpow_two _).symm
   let μ := volume.restrict (spaceTimeSet C (Ioc s t))
   have heucL2 : MemLp (fun z => vec3EuclideanNorm (f z)) 2 μ := by
-    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       heuc_m.aestronglyMeasurable]
     apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
     apply ne_of_lt
@@ -142,7 +142,7 @@ private theorem blowupLimitClauses_transportIntegral_bound
             ENNReal.ofReal (vec3EuclideanNorm (f z)) ^ (2 : ℝ) := by
         apply lintegral_congr
         intro z
-        rw [ENNReal.toReal_ofNat, Real.enorm_of_nonneg (vec3EuclideanNorm_nonneg _)]
+        rw [ENNReal.toReal_ofNat, Real.eNorm_of_nonneg (vec3EuclideanNorm_nonneg _)]
       _ ≤ ENNReal.ofReal S * ENNReal.ofReal (t - s) := hfE
       _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top ENNReal.ofReal_lt_top
   have hsq : Integrable (fun z => vec3EuclideanNorm (f z) ^ 2) μ := heucL2.integrable_sq
@@ -206,15 +206,15 @@ private theorem blowupLimitClauses_pairingIntegral_bound
       _ = ∑ i : Fin 3, ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ := by
         apply Finset.sum_congr rfl
         intro i _
-        rw [ENNReal.ofReal_mul (vec3EuclideanNorm_nonneg _), Real.enorm_eq_ofReal_abs]
+        rw [ENNReal.ofReal_mul (vec3EuclideanNorm_nonneg _), Real.eNorm_eq_ofReal_abs]
   have hmeasTerm : ∀ i, Measurable (fun z : ParabolicPoint =>
       ENNReal.ofReal (vec3EuclideanNorm (f z)) * ‖ψ i z.1‖ₑ) := fun i =>
     (ENNReal.measurable_ofReal.comp heuc_m).mul
-      ((hψc i).measurable.comp measurable_fst).enorm
+      ((hψc i).measurable.comp measurable_fst).eNorm
   have hlap : ∀ i, (∫⁻ x in C, ‖ψ i x‖ₑ ^ (2 : ℝ)) ^ (1 / 2 : ℝ) ≤ ENNReal.ofReal Lw := by
     intro i
     have h := hlapw i
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       (hψc i).aestronglyMeasurable] at h
     simp only [ENNReal.toReal_ofNat] at h
     refine le_trans (ENNReal.rpow_le_rpow ?_ (by norm_num)) h
@@ -236,7 +236,7 @@ private theorem blowupLimitClauses_pairingIntegral_bound
             (ENNReal.measurable_ofReal.comp
               (CKN.Foundation.Parabolic.continuous_vec3EuclideanNorm.measurable.comp
                 hfs)).aemeasurable
-            ((hψc i).measurable.enorm.aemeasurable)
+            ((hψc i).measurable.eNorm.aemeasurable)
           refine le_trans (le_of_eq ?_) (hH.trans (mul_le_mul' ?_ (hlap i)))
           · rfl
           · exact ENNReal.rpow_le_rpow (hslice τ) (by norm_num)
@@ -311,8 +311,8 @@ private theorem blowupLimitClauses_pressureIntegral_bound
     gcongr
     exact (eLpNorm_mono_measure _ hμle).trans hPbound
   have hint : ∫ z, ‖P z‖ ∂μ = (eLpNorm P 1 μ).toReal := by
-    rw [integral_norm_eq_lintegral_enorm hP1.aestronglyMeasurable,
-      eLpNorm_one_eq_lintegral_enorm hP1.aestronglyMeasurable]
+    rw [integral_norm_eq_lintegral_eNorm hP1.aestronglyMeasurable,
+      eLpNorm_one_eq_lintegral_eNorm hP1.aestronglyMeasurable]
   have hfin : ENNReal.ofReal B * (volume C * ENNReal.ofReal (t - s)) ^
       (1 / 3 : ℝ) ≠ ⊤ :=
     ENNReal.mul_ne_top ENNReal.ofReal_ne_top (ENNReal.rpow_ne_top_of_nonneg (by norm_num)
@@ -425,7 +425,7 @@ theorem blowupLimitClauses_modulus_of_formula
     -- the square integrability of the slices on the slab
     have hfE := blowupLimitClauses_slice_energy_le (C := C) (s := s) (t := t) hf hslice
     have hfL2 : MemLp f 2 μ := by
-      rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+      rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
         hf.aestronglyMeasurable]
       apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
       apply ne_of_lt
@@ -489,10 +489,10 @@ theorem blowupLimitClauses_modulus_of_formula
       apply integral_congr_ae
       -- slices of the gradient are square integrable at almost every time
       have hDm : Measurable (fun z : ParabolicPoint => ‖Df z‖ₑ ^ (2 : ℝ)) :=
-        (hDf.enorm).pow_const _
+        (hDf.eNorm).pow_const _
       have hDfin : (∫⁻ z in Q, ‖Df z‖ₑ ^ (2 : ℝ)) < ⊤ := by
         have h := hDfμ.eLpNorm_lt_top
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
           hDfμ.aestronglyMeasurable] at h
         simp only [ENNReal.toReal_ofNat] at h
         exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num : (0 : ℝ) < 1 / 2)).1 h
@@ -508,7 +508,7 @@ theorem blowupLimitClauses_modulus_of_formula
       have hfs : Measurable (fun x : Vec3 => f (x, τ)) := hf.comp measurable_prodMk_right
       have hDfs : Measurable (fun x : Vec3 => Df (x, τ)) := hDf.comp measurable_prodMk_right
       have hg2 : MemLp (fun x => f (x, τ)) 2 (volume.restrict C) := by
-        rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
           hfs.aestronglyMeasurable]
         apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
         apply ne_of_lt
@@ -522,7 +522,7 @@ theorem blowupLimitClauses_modulus_of_formula
           _ ≤ ENNReal.ofReal S := hslice τ
           _ < ⊤ := ENNReal.ofReal_lt_top
       have hDg2 : MemLp (fun x => Df (x, τ)) 2 (volume.restrict C) := by
-        rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+        rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
           hDfs.aestronglyMeasurable]
         apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
         simp only [ENNReal.toReal_ofNat]

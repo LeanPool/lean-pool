@@ -138,7 +138,7 @@ include hz
 omit hneg in
 theorem z_one : z 1 = 0 := by
   have h := hz 1 1
-  rw [mul_one, map_one, Module.End.one_apply] at h
+  rw [mul_one, map_one, one_apply_eq_self] at h
   simpa using h
 
 omit hneg in
@@ -160,7 +160,7 @@ theorem z_eS_rel : z eS + W eS (z eS) = 0 := by
 theorem z_eU_rel : z eU + W eU (z eU) + W eU (W eU (z eU)) = 0 := by
   have h2 := hz eU eU
   have h3 := hz (eU * eU) eU
-  rw [eU_mul_eU_mul_eU, z_eN hneg hz, h2, map_mul, Module.End.mul_apply] at h3
+  rw [eU_mul_eU_mul_eU, z_eN hneg hz, h2, map_mul, mul_apply_eq_comp] at h3
   exact h3.symm
 
 theorem z_eT : z eT = W eS (z eU - z eS) := by
@@ -206,7 +206,7 @@ theorem finrank_ker_add_of_sq_eq_one (s : Module.End ℂ V) (hs : s * s = 1) :
     intro v hv
     rw [Submodule.mem_inf, LinearMap.mem_ker, LinearMap.mem_ker, LinearMap.add_apply,
       LinearMap.sub_apply,
-      Module.End.one_apply] at hv
+      one_apply_eq_self] at hv
     rw [Submodule.mem_bot]
     have : (2 : ℂ) • v = 0 := by
       rw [two_smul]
@@ -222,13 +222,13 @@ theorem finrank_ker_add_of_sq_eq_one (s : Module.End ℂ V) (hs : s * s = 1) :
         inv_mul_cancel₀ two_ne_zero, one_smul]
     rw [hv]
     refine Submodule.add_mem_sup (Submodule.smul_mem _ _ ?_) (Submodule.smul_mem _ _ ?_)
-    · rw [LinearMap.mem_ker, LinearMap.add_apply, Module.End.one_apply, map_sub]
+    · rw [LinearMap.mem_ker, LinearMap.add_apply, one_apply_eq_self, map_sub]
       have := LinearMap.congr_fun hs v
-      rw [Module.End.mul_apply, Module.End.one_apply] at this
+      rw [mul_apply_eq_comp, one_apply_eq_self] at this
       rw [this]; abel
-    · rw [LinearMap.mem_ker, LinearMap.sub_apply, Module.End.one_apply, map_add]
+    · rw [LinearMap.mem_ker, LinearMap.sub_apply, one_apply_eq_self, map_add]
       have := LinearMap.congr_fun hs v
-      rw [Module.End.mul_apply, Module.End.one_apply] at this
+      rw [mul_apply_eq_comp, one_apply_eq_self] at this
       rw [this]; abel
   have h := Submodule.finrank_sup_add_finrank_inf_eq (LinearMap.ker (s + 1)) (LinearMap.ker (s - 1))
   rw [hinf, hsup, finrank_bot, add_zero, finrank_top] at h
@@ -239,14 +239,14 @@ theorem finrank_ker_add_of_cube_eq_one (u : Module.End ℂ V) (hu : u * u * u = 
       Module.finrank ℂ V := by
   have hu3 : ∀ v, u (u (u v)) = v := fun v => by
     have := LinearMap.congr_fun hu v
-    simpa [Module.End.mul_apply] using this
+    simpa [mul_apply_eq_comp] using this
   have hinf : LinearMap.ker (1 + u + u * u) ⊓ LinearMap.ker (u - 1) = ⊥ := by
     rw [eq_bot_iff]
     intro v hv
     rw [Submodule.mem_inf, LinearMap.mem_ker, LinearMap.mem_ker, LinearMap.sub_apply,
-      Module.End.one_apply, sub_eq_zero] at hv
+      one_apply_eq_self, sub_eq_zero] at hv
     obtain ⟨h1, h2⟩ := hv
-    rw [LinearMap.add_apply, LinearMap.add_apply, Module.End.one_apply, Module.End.mul_apply, h2,
+    rw [LinearMap.add_apply, LinearMap.add_apply, one_apply_eq_self, mul_apply_eq_comp, h2,
       h2] at h1
     rw [Submodule.mem_bot]
     have : (3 : ℂ) • v = 0 := by
@@ -261,11 +261,11 @@ theorem finrank_ker_add_of_cube_eq_one (u : Module.End ℂ V) (hu : u * u * u = 
         smul_smul, inv_mul_cancel₀ three_ne_zero, one_smul]
     rw [hv]
     refine Submodule.add_mem_sup (Submodule.smul_mem _ _ ?_) (Submodule.smul_mem _ _ ?_)
-    · rw [LinearMap.mem_ker, LinearMap.add_apply, LinearMap.add_apply, Module.End.one_apply,
-        Module.End.mul_apply]
+    · rw [LinearMap.mem_ker, LinearMap.add_apply, LinearMap.add_apply, one_apply_eq_self,
+        mul_apply_eq_comp]
       simp only [map_sub, map_add, hu3]
       abel
-    · rw [LinearMap.mem_ker, LinearMap.sub_apply, Module.End.one_apply]
+    · rw [LinearMap.mem_ker, LinearMap.sub_apply, one_apply_eq_self]
       simp only [map_add, hu3]
       abel
   have h :=
@@ -312,11 +312,11 @@ theorem E_mem_K (z : ↥(coeffParabolicCocycles W)) : E W z ∈ K W := by
   have hz := z.2.1
   refine Submodule.mem_inf.mpr ⟨Submodule.mem_prod.mpr ⟨?_, ?_⟩, LinearMap.mem_ker.mpr ?_⟩
   · change (z : ↥Gt → V) eS ∈ LinearMap.ker (W eS + 1)
-    rw [LinearMap.mem_ker, LinearMap.add_apply, Module.End.one_apply, add_comm]
+    rw [LinearMap.mem_ker, LinearMap.add_apply, one_apply_eq_self, add_comm]
     exact z_eS_rel hneg hz
   · change (z : ↥Gt → V) eU ∈ LinearMap.ker (1 + W eU + W eU * W eU)
-    rw [LinearMap.mem_ker, LinearMap.add_apply, LinearMap.add_apply, Module.End.one_apply,
-      Module.End.mul_apply]
+    rw [LinearMap.mem_ker, LinearMap.add_apply, LinearMap.add_apply, one_apply_eq_self,
+      mul_apply_eq_comp]
     exact z_eU_rel hneg hz
   · change Submodule.mkQ _ ((z : ↥Gt → V) eU - (z : ↥Gt → V) eS) = 0
     rw [Submodule.mkQ_apply, Submodule.Quotient.mk_eq_zero]
@@ -324,7 +324,7 @@ theorem E_mem_K (z : ↥(coeffParabolicCocycles W)) : E W z ∈ K W := by
     refine ⟨W eS ((z : ↥Gt → V) eU - (z : ↥Gt → V) eS), ⟨v, ?_⟩, ?_⟩
     · rw [hv]; exact z_eT hneg hz
     · change W eS (W eS ((z : ↥Gt → V) eU - (z : ↥Gt → V) eS)) = _
-      rw [← Module.End.mul_apply, ← map_mul, eS_mul_eS, hneg, LinearMap.id_apply]
+      rw [← mul_apply_eq_comp, ← map_mul, eS_mul_eS, hneg, LinearMap.id_apply]
 
 omit hinv in
 theorem finrank_K_add :
@@ -344,14 +344,14 @@ theorem finrank_K_add :
     refine ⟨⟨(a - W eS a, W eU b - b), Submodule.mem_prod.mpr ⟨?_, ?_⟩⟩, ?_⟩
     · change a - W eS a ∈ A
       have h2 : W eS (W eS a) = a := by
-        rw [← Module.End.mul_apply, ← map_mul, eS_mul_eS, hneg, LinearMap.id_apply]
-      rw [hA, LinearMap.mem_ker, LinearMap.add_apply, Module.End.one_apply, map_sub, h2]; abel
+        rw [← mul_apply_eq_comp, ← map_mul, eS_mul_eS, hneg, LinearMap.id_apply]
+      rw [hA, LinearMap.mem_ker, LinearMap.add_apply, one_apply_eq_self, map_sub, h2]; abel
     · change W eU b - b ∈ B
       have h3 : W eU (W eU (W eU b)) = b := by
-        rw [← Module.End.mul_apply, ← Module.End.mul_apply, ← map_mul, ← map_mul, eU_mul_eU_mul_eU,
+        rw [← mul_apply_eq_comp, ← mul_apply_eq_comp, ← map_mul, ← map_mul, eU_mul_eU_mul_eU,
           hneg, LinearMap.id_apply]
-      rw [hB, LinearMap.mem_ker, LinearMap.add_apply, LinearMap.add_apply, Module.End.one_apply,
-        Module.End.mul_apply]
+      rw [hB, LinearMap.mem_ker, LinearMap.add_apply, LinearMap.add_apply, one_apply_eq_self,
+        mul_apply_eq_comp]
       simp only [map_sub, h3]; abel
     · change Submodule.mkQ R₁ ((W eU b - b) - (a - W eS a)) = Submodule.mkQ R₁ v
       congr 1; rw [hv]; abel
@@ -373,7 +373,7 @@ theorem finrank_K_add :
       have hSinv : Function.Injective (W eS) := by
         intro x y h
         have := congrArg (W eS) h
-        rwa [← Module.End.mul_apply, ← map_mul, eS_mul_eS, hneg, ← Module.End.mul_apply, ← map_mul,
+        rwa [← mul_apply_eq_comp, ← map_mul, eS_mul_eS, hneg, ← mul_apply_eq_comp, ← map_mul,
           eS_mul_eS, hneg] at this
       exact LinearEquiv.finrank_eq (Submodule.equivMapOfInjective _ hSinv _).symm
     have h3 := LinearMap.finrank_range_add_finrank_ker (W eT - 1)

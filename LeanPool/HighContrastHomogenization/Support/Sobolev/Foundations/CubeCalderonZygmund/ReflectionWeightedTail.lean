@@ -69,10 +69,10 @@ private theorem lintegral_sqNorm_tail_inter_openCubeSet_eq
               rw [Set.indicator_of_mem hxTQ,
                 Set.indicator_of_mem hxQ,
                 ite_eq_left (by simpa [T] using hxT)]
-            · rw [Set.indicator_of_notMem (fun h => hxT h.1),
+            · rw [Set.indicator_of_notMem (fun (h : x ∈ T ∩ openCubeSet Q) => hxT h.1),
                 Set.indicator_of_mem hxQ,
                 ite_eq_right (by simpa [T] using hxT)]
-          · rw [Set.indicator_of_notMem (fun h => hxQ h.2),
+          · rw [Set.indicator_of_notMem (fun (h : x ∈ T ∩ openCubeSet Q) => hxQ h.2),
               Set.indicator_of_notMem hxQ]
     _ = ∫⁻ x in openCubeSet Q,
         (if a < ‖F x‖ then ENNReal.ofReal (‖F x‖ ^ (2 : ℕ)) else 0)

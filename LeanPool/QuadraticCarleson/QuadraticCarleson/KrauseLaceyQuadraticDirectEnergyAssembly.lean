@@ -103,7 +103,7 @@ theorem integral_centralThird_norm_smallestScaleInput_le
     _ ≤ ∫ x in I.carrier, ‖f x‖ :=
       setIntegral_mono_set f.integrable_finiteSparseProof.norm.integrableOn
         (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
-        I.centralThird_subset_carrier.eventuallyLE
+        (Filter.Eventually.of_forall fun _ hx ↦ I.centralThird_subset_carrier hx)
 
 /-- A unit window sees at most three interval lengths of one scale. -/
 theorem localUnitMass_smallestScaleInput_le

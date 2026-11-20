@@ -32,8 +32,8 @@ theorem blowup_single_eLpNorm_eq
   have hsingle : AEStronglyMeasurable (fun z => (Pi.single i (f z) : Vec3)) μ :=
     hcont.comp_aestronglyMeasurable hf
   have henorm (z : α) : ‖(Pi.single i (f z) : Vec3)‖ₑ = ‖f z‖ₑ :=
-    Pi.enorm_single (G := fun _ : Fin 3 => ℝ) (f z)
-  exact eLpNorm_congr_enorm_ae (p := p) (μ := μ)
+    Pi.eNorm_single (G := fun _ : Fin 3 => ℝ) (f z)
+  exact eLpNorm_congr_eNorm_ae (p := p) (μ := μ)
     (f := fun z => (Pi.single i (f z) : Vec3)) (g := f)
     hsingle hf (Filter.Eventually.of_forall henorm)
 

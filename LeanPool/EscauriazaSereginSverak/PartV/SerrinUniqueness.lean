@@ -120,7 +120,7 @@ theorem serrin_weak_strong_uniqueness {T : ℝ} {a : Vec3 → Vec3}
   have hum := serrin_aesm_prod hU.meas_u
   have hdm : AEMeasurable (fun z : Vec3 × ℝ => ‖v z - u z‖ₑ)
       ((volume : Measure Vec3).prod (volume.restrict (Ioo 0 T))) :=
-    (hvm.sub hum).enorm
+    (hvm.sub hum).eNorm
   have hlint : (∫⁻ z, ‖v z - u z‖ₑ ∂((volume : Measure Vec3).prod
       (volume.restrict (Ioo 0 T)))) = 0 := by
     rw [lintegral_prod_symm _ hdm]
@@ -133,7 +133,7 @@ theorem serrin_weak_strong_uniqueness {T : ℝ} {a : Vec3 → Vec3}
   rw [serrin_slab_measure_eq]
   filter_upwards [hae] with z hz
   have : ‖v z - u z‖ₑ = 0 := hz
-  rw [enorm_eq_zero, sub_eq_zero] at this
+  rw [eNorm_eq_zero, sub_eq_zero] at this
   exact this
 
 end ESS

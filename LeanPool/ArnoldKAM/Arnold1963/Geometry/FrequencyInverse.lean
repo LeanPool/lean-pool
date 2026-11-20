@@ -55,7 +55,7 @@ include d
 
 theorem lipschitz_ball {x : ComplexSpace n} {r : ℝ≥0} (hx : x ∈ erosion V r) :
     LipschitzOnWith κ a (closedBall x r) :=
-  (convex_closedBall x (r : ℝ)).lipschitzOnWith_of_nnnorm_fderiv_le
+  (convex_closedBall x (r : ℝ)).lipschitzOnWith_of_nnNorm_fderiv_le
     (fun y hy => (d.analytic y (hx hy)).differentiableAt) (fun y hy => d.derivative y (hx hy))
 
 theorem shift_injOn : InjOn (frequencyShift a) (frequencyInverseSource V β) := by

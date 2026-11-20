@@ -239,7 +239,7 @@ lemma bounded_locallyIntegrable
   intro x
   refine ⟨Set.Ioo (x - 1) (x + 1), isOpen_Ioo.mem_nhds (by simp), ?_⟩
   refine ⟨h_meas.aestronglyMeasurable, ?_⟩
-  refine MeasureTheory.HasFiniteIntegral.restrict_of_bounded_enorm
+  refine MeasureTheory.HasFiniteIntegral.restrict_of_bounded_eNorm
     (C := ENNReal.ofReal M) ?_ ?_ ?_
   · simp
   · rw [Real.volume_Ioo]; exact ENNReal.ofReal_ne_top

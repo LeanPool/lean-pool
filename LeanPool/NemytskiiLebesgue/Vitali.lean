@@ -99,7 +99,7 @@ theorem integralLpNorm_nemytskii_rpow_le_of_growth
       have h1q : 1 ≤ q.toReal := ENNReal.toReal_mono hq h1q
       apply ENNReal.mul_ne_top <;> exact (ENNReal.rpow_ne_top_of_nonneg (by linarith [h1q]) (by
         simp))
-    · apply AEMeasurable.const_mul (haq.nnnorm.coe_nnreal_ennreal.pow_const _)
+    · apply AEMeasurable.const_mul (haq.nnNorm.coe_nnreal_ennreal.pow_const _)
   convert integral_bound using 1
   · rw [integralLpNorm_eq_lintegral_rpow_enorm_toReal]
     · rewrite [←ENNReal.rpow_mul, one_div_mul_cancel (ne_of_gt (ENNReal.toReal_pos

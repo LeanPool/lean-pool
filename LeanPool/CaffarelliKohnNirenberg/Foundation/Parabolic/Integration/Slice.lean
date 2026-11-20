@@ -125,7 +125,7 @@ theorem setLaverage_norm_sub_setAverage_rpow_le {α E : Type*} [MeasurableSpace 
   have hA : AEMeasurable A (μ.restrict s) := by
     unfold A
     apply (ENNReal.continuous_rpow_const (y := p)).measurable.comp_aemeasurable
-    exact hsub.aestronglyMeasurable.enorm
+    exact hsub.aestronglyMeasurable.eNorm
   have hJ : ‖m - c‖ ^ p ≤ ⨍ x in s, ‖f x - c‖ ^ p ∂μ := by
     have h := setAverage_norm_rpow_le hp hsPos hsTop hsub hfp
     have hsubavg : ⨍ x in s, f x - c ∂μ =
@@ -165,7 +165,7 @@ theorem setLaverage_norm_sub_setAverage_rpow_le {α E : Type*} [MeasurableSpace 
     calc
       ‖f x - m‖ₑ ^ p ≤ (‖f x - c‖ₑ + ‖c - m‖ₑ) ^ p := by
         rw [show f x - m = (f x - c) + (c - m) by abel]
-        exact ENNReal.rpow_le_rpow (enorm_add_le _ _)
+        exact ENNReal.rpow_le_rpow (eNorm_add_le _ _)
           (zero_le_one.trans hp)
       _ ≤ (2 : ℝ≥0∞) ^ (p - 1) * (A x + B ^ p) := by
         simpa [A, B] using

@@ -89,7 +89,7 @@ theorem realFormSwapCurrying_weighted_norm_sq
       exact lintegral_congr_ae (hy.mono fun x hx => congrArg (fun a : E => w x * ‖a‖ₑ ^ 2) hx)
     _ = ∫⁻ x : Position, ∫⁻ y, w x * ‖f (x, y)‖ₑ ^ 2 ∂ν := by
       exact (lintegral_lintegral_swap
-        ((hw.comp measurable_fst).mul ((Lp.stronglyMeasurable f).enorm.pow_const
+        ((hw.comp measurable_fst).mul ((Lp.stronglyMeasurable f).eNorm.pow_const
           2)).aemeasurable).symm
     _ = ∫⁻ x : Position, w x * ‖u x‖ₑ ^ 2 := by
       apply lintegral_congr_ae
@@ -97,7 +97,7 @@ theorem realFormSwapCurrying_weighted_norm_sq
       rw [lintegral_const_mul (w x)
         (f := fun y => ‖f (x, y)‖ₑ ^ 2)
         (((Lp.stronglyMeasurable f).comp_measurable
-          (measurable_prodMk_left (x := x))).enorm.pow_const 2),
+          (measurable_prodMk_left (x := x))).eNorm.pow_const 2),
         ← lintegral_l2_enorm_sq (u x)]
       congr 1
       exact lintegral_congr_ae (hx.mono fun y hy => congrArg (fun a : E => ‖a‖ₑ ^ 2) hy.symm)
@@ -120,12 +120,12 @@ private theorem memLp_realFormTensor (f : Lp ℂ 2 (volume : Measure Position))
   have hm : StronglyMeasurable (fun z : Position × α => f z.1 • v z.2) :=
     ((Lp.stronglyMeasurable f).comp_measurable measurable_fst).smul
       ((Lp.stronglyMeasurable v).comp_measurable measurable_snd)
-  apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ⊤)
     hm.aestronglyMeasurable).mpr
-  simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two, enorm_smul, mul_pow]
-  rw [lintegral_prod_mul ((Lp.stronglyMeasurable f).enorm.pow_const 2).aemeasurable
-    ((Lp.stronglyMeasurable v).enorm.pow_const 2).aemeasurable,
+  simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two, eNorm_smul, mul_pow]
+  rw [lintegral_prod_mul ((Lp.stronglyMeasurable f).eNorm.pow_const 2).aemeasurable
+    ((Lp.stronglyMeasurable v).eNorm.pow_const 2).aemeasurable,
     lintegral_l2_enorm_sq, lintegral_l2_enorm_sq]
   exact ENNReal.mul_lt_top (ENNReal.pow_lt_top ENNReal.coe_lt_top)
     (ENNReal.pow_lt_top ENNReal.coe_lt_top)
@@ -259,7 +259,7 @@ theorem realFormTargetIsometry_weighted_norm_sq
   apply lintegral_congr_ae
   filter_upwards [A.toContinuousLinearEquiv.toContinuousLinearMap.coeFn_compLp u] with x hx
   rw [hx]
-  exact congrArg (fun a : ℝ≥0 => w x * (a : ℝ≥0∞) ^ 2) (A.nnnorm_map (u x))
+  exact congrArg (fun a : ℝ≥0 => w x * (a : ℝ≥0∞) ^ 2) (A.nnNorm_map (u x))
 
 end LiebThirring.Assembly
 end

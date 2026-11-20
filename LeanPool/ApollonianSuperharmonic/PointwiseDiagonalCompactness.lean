@@ -315,12 +315,13 @@ private theorem enumerate_surj :
     (by
       classical
       exact
-        ∀ [this : Encodable GaussianInt],
+        ∀ {this : Encodable GaussianInt},
         let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
+          (@Encodable.decode GaussianInt this n).getD 0
         ∀ x : GaussianInt, ∃ n, enumerate n = x ) := by
   classical
   intro this enumerate x
+  let : Encodable GaussianInt := this
   refine ⟨Encodable.encode x, ?_⟩
   simp [enumerate, Encodable.encodek]
 
@@ -414,9 +415,9 @@ private theorem seq_nested :
     (by
       classical
       exact
-        ∀ (u : ℕ → IntegerLatticeFunction), ∀ [this : Encodable GaussianInt],
+        ∀ (u : ℕ → IntegerLatticeFunction), ∀ {this : Encodable GaussianInt},
         let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
+          (@Encodable.decode GaussianInt this n).getD 0
         ∀ (refineFiber : ∀ x : GaussianInt, ∀ s : Set Nat, s.Infinite → ∃ t : Set Nat, t ⊆ s ∧
             t.Infinite ∧ ∃ z : Int, ∀ k ∈ t, u k x = z),
         let next (n : Nat) (s : Set Nat) (hs : s.Infinite) : Set Nat :=
@@ -438,9 +439,9 @@ private theorem phi_spec :
     (by
       classical
       exact
-        ∀ (u : ℕ → IntegerLatticeFunction), ∀ [this : Encodable GaussianInt],
+        ∀ (u : ℕ → IntegerLatticeFunction), ∀ {this : Encodable GaussianInt},
         let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
+          (@Encodable.decode GaussianInt this n).getD 0
         ∀ (refineFiber : ∀ x : GaussianInt, ∀ s : Set Nat, s.Infinite → ∃ t : Set Nat, t ⊆ s ∧
             t.Infinite ∧ ∃ z : Int, ∀ k ∈ t, u k x = z),
         let next (n : Nat) (s : Set Nat) (hs : s.Infinite) : Set Nat :=
@@ -466,9 +467,9 @@ private theorem phi_mono :
     (by
       classical
       exact
-        ∀ (u : ℕ → IntegerLatticeFunction), ∀ [this : Encodable GaussianInt],
+        ∀ (u : ℕ → IntegerLatticeFunction), ∀ {this : Encodable GaussianInt},
         let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
+          (@Encodable.decode GaussianInt this n).getD 0
         ∀ (refineFiber : ∀ x : GaussianInt, ∀ s : Set Nat, s.Infinite → ∃ t : Set Nat, t ⊆ s ∧
             t.Infinite ∧ ∃ z : Int, ∀ k ∈ t, u k x = z),
         let next (n : Nat) (s : Set Nat) (hs : s.Infinite) : Set Nat :=
@@ -518,9 +519,9 @@ private theorem fiber_spec :
     (by
       classical
       exact
-        ∀ (u : ℕ → IntegerLatticeFunction), ∀ [this : Encodable GaussianInt],
+        ∀ (u : ℕ → IntegerLatticeFunction), ∀ {this : Encodable GaussianInt},
         let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
+          (@Encodable.decode GaussianInt this n).getD 0
         ∀ (enumerate_surj : ∀ x : GaussianInt, ∃ n, enumerate n = x), ∀ (refineFiber : ∀ x :
             GaussianInt, ∀ s : Set Nat, s.Infinite → ∃ t : Set Nat, t ⊆ s ∧ t.Infinite ∧ ∃ z :
             Int, ∀ k ∈ t, u k x = z),
@@ -543,9 +544,9 @@ private theorem eventual_eq :
     (by
       classical
       exact
-        ∀ (u : ℕ → IntegerLatticeFunction), ∀ [this : Encodable GaussianInt],
+        ∀ (u : ℕ → IntegerLatticeFunction), ∀ {this : Encodable GaussianInt},
         let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
+          (@Encodable.decode GaussianInt this n).getD 0
         ∀ (enumerate_surj : ∀ x : GaussianInt, ∃ n, enumerate n = x), ∀ (refineFiber : ∀ x :
             GaussianInt, ∀ s : Set Nat, s.Infinite → ∃ t : Set Nat, t ⊆ s ∧ t.Infinite ∧ ∃ z :
             Int, ∀ k ∈ t, u k x = z),
@@ -590,10 +591,10 @@ private theorem hlim :
       classical
       exact
         ∀ (A : Matrix (Fin (2 : ℕ)) (Fin (2 : ℕ)) ℝ), ∀ (B : ℕ → Matrix (Fin (2 : ℕ)) (Fin (2 :
-            ℕ)) ℝ), ∀ (b : ℕ → Fin (2 : ℕ) → ℝ), ∀ (u : ℕ → IntegerLatticeFunction), ∀ [this :
-            Encodable GaussianInt],
+            ℕ)) ℝ), ∀ (b : ℕ → Fin (2 : ℕ) → ℝ), ∀ (u : ℕ → IntegerLatticeFunction),
+        ∀ {this : Encodable GaussianInt},
         let enumerate : Nat → GaussianInt := fun n =>
-          (Encodable.decode n).getD 0
+          (@Encodable.decode GaussianInt this n).getD 0
         ∀ (refineFiber : ∀ x : GaussianInt, ∀ s : Set Nat, s.Infinite → ∃ t : Set Nat, t ⊆ s ∧
             t.Infinite ∧ ∃ z : Int, ∀ k ∈ t, u k x = z),
         let next (n : Nat) (s : Set Nat) (hs : s.Infinite) : Set Nat :=

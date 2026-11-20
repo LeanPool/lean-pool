@@ -58,8 +58,8 @@ theorem oneStoppingBallTailControl_apply
         ENNReal.ofReal ((eps⁻¹) ^ (2 : ℕ)) *
           sqWeightedMeasure g volume
             ({x | eps * level / 2 < ‖g x‖} ∩ B) := by
-  rw [oneStoppingBallTailControl, Measure.add_apply,
-    Measure.restrict_apply hB, Measure.smul_apply, Measure.restrict_apply hB]
+  rw [oneStoppingBallTailControl, add_apply,
+    Measure.restrict_apply hB, smul_apply, Measure.restrict_apply hB]
   simp only [smul_eq_mul, Set.inter_comm]
 
 /-- The ambient-set specialization of `oneStoppingBallTailControl_apply`. -/

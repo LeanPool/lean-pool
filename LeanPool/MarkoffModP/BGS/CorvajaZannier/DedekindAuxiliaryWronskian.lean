@@ -136,7 +136,7 @@ theorem indexedDedekindLocalColumnCombination_caseIIIColumnMatrix
       simp only [Fin.val_succ, pow_succ]
       convert dedekind_caseIII_geometricSeries_column_identity
         u v rho h (i : ℕ) hrho using 1
-      all_goals ring
+      ring
   | inr rs =>
       rw [indexedDedekindLocalColumnCombination, Fintype.sum_sum_type]
       simp [caseIIIColumnMatrix, dedekindLocalAuxiliaryFamily,

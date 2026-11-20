@@ -355,7 +355,8 @@ private lemma continuousOn_zpow_comp_gamma
     (hA : A ⊆ Icc γ.a γ.b)
     (h_avoid : ∀ t ∈ A, γ.toFun t - s ≠ 0) :
     ContinuousOn (fun t => (fun z => (z - s) ^ (-(m : ℤ))) (γ.toFun t)) A :=
-  (ContinuousOn.zpow₀ (continuousOn_id.sub continuousOn_const) (-(m : ℤ))
+  (ContinuousOn.zpow₀ (s := {z : ℂ | z - s ≠ 0})
+    (continuousOn_id.sub continuousOn_const) (-(m : ℤ))
     (fun _ hz => Or.inl hz)).comp (γ.toPiecewiseC1Curve.continuous_toFun.mono hA) h_avoid
 
 /-- Helper 2b: `(z-s)^{-m} ∘ γ · γ'` is AEStronglyMeasurable on the "single far" set. -/

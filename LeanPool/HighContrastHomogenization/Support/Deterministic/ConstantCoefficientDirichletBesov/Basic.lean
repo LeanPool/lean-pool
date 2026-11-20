@@ -64,7 +64,7 @@ theorem memVectorL2_openCubeSet_of_memLp_normalizedCubeMeasure {d : ℕ}
     have heq : ENNReal.ofReal (cubeVolume Q) • normalizedCubeMeasure Q = cubeMeasure Q := by
       rw [normalizedCubeMeasure]
       ext s
-      rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.smul_apply]
+      rw [smul_apply, smul_apply]
       change
         ENNReal.ofReal (cubeVolume Q) *
             (ENNReal.ofReal ((cubeVolume Q)⁻¹) * (cubeMeasure Q) s) =
@@ -313,7 +313,7 @@ theorem cubeLpNorm_two_sq_le_cubeAverage_vecNormSq {d : ℕ}
       have heq : ENNReal.ofReal (cubeVolume Q) • normalizedCubeMeasure Q = cubeMeasure Q := by
         rw [normalizedCubeMeasure]
         ext s
-        rw [MeasureTheory.Measure.smul_apply, MeasureTheory.Measure.smul_apply]
+        rw [smul_apply, smul_apply]
         change
           ENNReal.ofReal (cubeVolume Q) *
               (ENNReal.ofReal ((cubeVolume Q)⁻¹) * (cubeMeasure Q) s) =

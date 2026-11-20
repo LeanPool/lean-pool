@@ -59,7 +59,6 @@ variable {X : Sequent} {tab : Tableau .nil X}
 lemma IsPartInterpolant.flip : isPartInterpolant X θ → isPartInterpolant X.flip (~θ) := by
   rintro ⟨voc, l_ip, r_ip⟩
   refine ⟨?_, ?_, ?_⟩ <;> simp_all [HasSat.satisfiable]
-  grind
 
 /-- Transport an interpolant to the flipped tableau. -/
 def PartInterpolant.flipPath {p : PathIn tab}

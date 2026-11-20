@@ -843,7 +843,7 @@ theorem affineIndependent_adaptiveFanVertexSource_val (hU : IsOpen U)
   · exact K.adaptiveFanVertexSource_val_injective U hU f
 
 /-- The standard simplex parametrizing one adaptive fan face. -/
-abbrev adaptiveFanSimplex (hU : IsOpen U) (f : K.AdaptiveFanFace U hU) :=
+noncomputable abbrev adaptiveFanSimplex (hU : IsOpen U) (f : K.AdaptiveFanFace U hU) :=
   stdSimplex ℝ {p // p ∈ K.adaptiveFanFaceVertices U hU f}
 
 /-- The coordinate-valued source-point map used for injectivity. -/
@@ -2659,7 +2659,7 @@ def adaptiveFanFace (hU : IsOpen U) (t : K.AdaptiveFace U)
   ⟨t, i, a⟩
 
 /-- The simplex parametrizing a resolved fan face. -/
-abbrev adaptiveFanFaceSimplex (hU : IsOpen U) (t : K.AdaptiveFace U)
+noncomputable abbrev adaptiveFanFaceSimplex (hU : IsOpen U) (t : K.AdaptiveFace U)
     (i : ZMod 3) (a : K.AdaptiveEdgeInterval U hU t i) :=
   stdSimplex ℝ {p // p ∈ K.adaptiveFanFaceVertices U hU
     (K.adaptiveFanFace U hU t i a)}

@@ -39,7 +39,8 @@ variable {n : ℕ}
 
 /-- **Restricted power cell** as a set: the intersection of the body `K` with the power cell of
 site `i`. Kept at the set level (no bundling, no nondegeneracy hypothesis). -/
-def bodyCellSet (K : Geometry.ConvexBody Plane) (s : Fin n → Plane) (w : Fin n → ℝ) (i : Fin n) :
+noncomputable def bodyCellSet (K : Geometry.ConvexBody Plane) (s : Fin n → Plane)
+    (w : Fin n → ℝ) (i : Fin n) :
     Set Plane :=
   (K : Set Plane) ∩ cell s w i
 

@@ -200,7 +200,7 @@ theorem tsum_integral_norm_paperLowCZKernel_levelAtom_le
             levelAtom A f k (z i) (R i) y‖)) ≤
         ∑' i : ι, ENNReal.ofReal C * ENNReal.ofReal
           (∫ y, ‖levelAtom A f k (z i) (R i) y‖) :=
-      ENNReal.tsum_le_tsum hlocal
+      tsum_le_tsum hlocal
     _ = ENNReal.ofReal C *
         ∑' i : ι, ENNReal.ofReal
           (∫ y, ‖levelAtom A f k (z i) (R i) y‖) := ENNReal.tsum_mul_left

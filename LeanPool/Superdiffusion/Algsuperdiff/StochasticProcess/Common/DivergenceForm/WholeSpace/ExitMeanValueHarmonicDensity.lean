@@ -111,8 +111,8 @@ theorem c0PosPart_nonneg (g : C₀(Vec d, ℝ)) (x : Vec d) : 0 ≤ c0PosPart g 
 theorem c0PosPart_sub_c0PosPart_neg (g : C₀(Vec d, ℝ)) :
     c0PosPart g - c0PosPart (-g) = g := by
   refine ZeroAtInftyContinuousMap.ext fun x ↦ ?_
-  rw [ZeroAtInftyContinuousMap.coe_sub, Pi.sub_apply, c0PosPart_apply, c0PosPart_apply,
-    ZeroAtInftyContinuousMap.coe_neg, Pi.neg_apply]
+  rw [FunLike.coe_sub, Pi.sub_apply, c0PosPart_apply, c0PosPart_apply,
+    FunLike.coe_neg, Pi.neg_apply]
   rcases le_total 0 (g x) with hx | hx
   · rw [max_eq_left hx, max_eq_right (by linarith only [hx] : -g x ≤ (0 : ℝ)), sub_zero]
   · rw [max_eq_right hx, max_eq_left (by linarith only [hx] : (0 : ℝ) ≤ -g x), zero_sub, neg_neg]
@@ -144,12 +144,12 @@ theorem exists_nonneg_c0_resolvent_approx (R : PositiveC0ContractiveResolvent (V
       R.toContractiveResolvent.operator mu (c0PosPart (-g)) y =
       R.toContractiveResolvent.operator mu g y := by
     have hval := congrArg (fun f : C₀(Vec d, ℝ) ↦ f y) hsplit
-    simpa only [ZeroAtInftyContinuousMap.coe_sub, Pi.sub_apply] using hval
+    simpa only [FunLike.coe_sub, Pi.sub_apply] using hval
   rw [hsplit']
   have hnorm : |R.toContractiveResolvent.operator mu g y - F y| ≤
       ‖R.toContractiveResolvent.operator mu g - F‖ := by
     have h := abs_apply_le_norm_zeroAtInfty (R.toContractiveResolvent.operator mu g - F) y
-    rwa [ZeroAtInftyContinuousMap.coe_sub, Pi.sub_apply] at h
+    rwa [FunLike.coe_sub, Pi.sub_apply] at h
   refine hnorm.trans ?_
   rw [← dist_eq_norm, dist_comm]
   exact hdist.le

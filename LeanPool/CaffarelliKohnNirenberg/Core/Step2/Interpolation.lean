@@ -343,7 +343,7 @@ private lemma gamma_le_gagliardo_hpoint_4 :
       rw [← hcomp i]
       exact (H i).memL2.aestronglyMeasurable
     change eLpNorm (fun y => u (y, s) i) 2 (volume.restrict B) ≤ A s
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := (2 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top hstrong]
     norm_num
     apply ENNReal.rpow_le_rpow
@@ -373,7 +373,7 @@ private lemma gamma_le_gagliardo_hpoint_4 :
       exact (MemLp.eval hs.1.2 i).aestronglyMeasurable.mono_measure
         (Measure.restrict_mono_set volume hball)
     change eLpNorm (fun y => Du (y, s) i) 2 (volume.restrict B) ≤ G s
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := (2 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top hstrong]
     norm_num
     apply ENNReal.rpow_le_rpow
@@ -878,7 +878,7 @@ private lemma gamma_le_gagliardo_hEeq_3 :
   rw [hballEq]
   apply lintegral_congr
   intro y
-  rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+  rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
 
 private lemma gamma_le_gagliardo_hV_4 :
     ∀ {z : ParabolicPoint} {r : ℝ},

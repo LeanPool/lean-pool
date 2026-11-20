@@ -127,7 +127,7 @@ theorem measure_norm_operator_gt_le_twoInfinity_tail
     change t / 2 ≤ ‖T hi x‖
     linarith only [hx, htri, hsum]
   have hmarkov := mul_meas_ge_le_lintegral₀
-    ((hTmeas hi hhi).enorm.pow_const (2 : ℕ)) (ENNReal.ofReal ((t / 2) ^ 2))
+    ((hTmeas hi hhi).eNorm.pow_const (2 : ℕ)) (ENNReal.ofReal ((t / 2) ^ 2))
   have hsets : {x | ENNReal.ofReal ((t / 2) ^ 2) ≤ ‖T hi x‖ₑ ^ (2 : ℕ)} =
       {x | t / 2 ≤ ‖T hi x‖} := by
     ext x
@@ -167,7 +167,7 @@ theorem twoInfinity_high_tail_layercake
   let w : α → ℝ≥0∞ := fun x ↦ ‖f x‖ₑ ^ (2 : ℕ)
   let ν : Measure α := μ.withDensity w
   let F : α → ℝ := fun x ↦ (2 * MTop) * ‖f x‖
-  have hw : Measurable w := hf.enorm.pow_const _
+  have hw : Measurable w := hf.eNorm.pow_const _
   have hF : Measurable F := hf.norm.measurable.const_mul _
   have hFnonneg : ∀ x, 0 ≤ F x := fun x ↦ mul_nonneg (by positivity) (norm_nonneg _)
   have htail (t : ℝ) (ht : 0 < t) :

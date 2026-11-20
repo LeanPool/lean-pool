@@ -40,8 +40,8 @@ lemma getI_map_range [Inhabited α] (f : ℕ → α) (h : i < n) :
   simpa [h] using List.getI_eq_getElem ((List.range n).map f) (n := i) (by simpa using h)
 
 /-- The subset Set construction in `List`. -/
-def subsetSet (l : List α) (s : Set α) [DecidablePred s] : Bool :=
-  l.foldr (fun a ih => s a && ih) true
+def subsetSet (l : List α) (s : Set α) [DecidablePred (· ∈ s)] : Bool :=
+  l.foldr (fun a ih => (a ∈ s) && ih) true
 
 /-- The upper construction in `List`. -/
 def upper : List ℕ → ℕ

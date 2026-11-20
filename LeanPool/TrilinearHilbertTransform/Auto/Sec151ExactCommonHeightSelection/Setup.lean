@@ -132,7 +132,8 @@ complements by their whole current `Z` arguments; corrections have at least thre
 pattern `σ` without errors, the form of its pieces equals the form with the core slots restored
 to `Z_l = A_l + S_l + E_l` minus the correction patterns, each of which contains an error or has
 more sides than `σ`. -/
-theorem form_restore_cores (Λ : MultilinearMap ℂ (fun _ : Fin 4 => V) ℂ) (a s e : Fin 4 → V)
+theorem form_restore_cores
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => V) ℂ) (a s e : Fin 4 → V)
     (σ : Fin 4 → Fin 3) (hσ : ∀ l, σ l ≠ 2) :
     Λ (patternPiece a s e σ) = Λ (fun l => if σ l = 0 then a l + s l + e l else s l) -
       ∑ τ ∈ Finset.univ.filter (fun τ : Fin 4 → Fin 3 => τ ≠ σ ∧ ∀ l, σ l = 1 → τ l = 1),
@@ -453,7 +454,7 @@ variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℂ W]
 open Classical in
 /-- A pattern containing an error slot: its form is at most the size cap cubed times the
 normalized error size of that slot. -/
-theorem pattern_error_le (Λ : MultilinearMap ℂ (fun _ : Fin 4 => W) ℂ) {C r Bs : ℝ}
+theorem pattern_error_le (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => W) ℂ) {C r Bs : ℝ}
     (hC : 0 ≤ C) (hr : 0 < r)
     (hΛ : ∀ x : Fin 4 → W, ‖Λ x‖ ≤ C * ∏ l, (‖x l‖ / Real.sqrt r))
     (a s e : Fin 4 → W) (hsize : ∀ l, ‖a l‖ ≤ Bs * Real.sqrt r ∧ ‖s l‖ ≤ Bs * Real.sqrt r ∧
@@ -491,7 +492,7 @@ open Classical in
 `O(e^{-k}|R|)`"): the error patterns of all cells and groups are bounded, after Cauchy-Schwarz
 over the cells and groups, by `324 C B³ (Σ_I |I| #G_I)^{1/2} (Σ_{I,G,l} ‖E‖²)^{1/2}`. -/
 theorem error_patterns_le {ι γ : Type*} (S : Finset ι) (len : ι → ℝ) (hlen : ∀ I ∈ S, 0 < len I)
-    (Gs : ι → Finset γ) (Λ : ι → MultilinearMap ℂ (fun _ : Fin 4 => W) ℂ) {C Bs : ℝ}
+    (Gs : ι → Finset γ) (Λ : ι → MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => W) ℂ) {C Bs : ℝ}
     (hC : 0 ≤ C) (hBs : 0 ≤ Bs)
     (hΛ : ∀ I ∈ S, ∀ x : Fin 4 → W, ‖Λ I x‖ ≤ C * ∏ l, (‖x l‖ / Real.sqrt (len I)))
     (a s e : ι → γ → Fin 4 → W)
@@ -582,7 +583,8 @@ open Classical in
 their whole current `Z` arguments; corrections have at least three sides"): at one cell the
 two-core two-side patterns differ from the restored ones by at most `81` times the error and the
 three-side pattern sums. -/
-theorem two_two_cell_le {γ : Type*} (Gs : Finset γ) (Λ : MultilinearMap ℂ (fun _ : Fin 4 => W) ℂ)
+theorem two_two_cell_le {γ : Type*} (Gs : Finset γ)
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => W) ℂ)
     (a s e : γ → Fin 4 → W) :
     ‖∑ σ ∈ Finset.univ.filter (fun σ : Fin 4 → Fin 3 => (∀ l, σ l ≠ 2) ∧
         patternCount σ 0 = 2 ∧ patternCount σ 1 = 2),
@@ -772,7 +774,8 @@ open Classical in
 /-- Blueprint lines 2463-2467 (the finite multilinear expansion of the core slots): if each core
 slot of a pattern is the sum of its component subtotals, the pattern form is the sum over the
 component tuples of the forms of the tuple values. -/
-theorem pattern_comp_expand (Λ : MultilinearMap ℂ (fun _ : Fin 4 => V) ℂ) (σ : Fin 4 → Fin 3)
+theorem pattern_comp_expand
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => V) ℂ) (σ : Fin 4 → Fin 3)
     {κ : Fin 4 → Type*} (Ks : ∀ l, Finset (κ l)) (sub : ∀ l, κ l → V) (a s e : Fin 4 → V)
     (ha : ∀ l, σ l = 0 → a l = ∑ K ∈ Ks l, sub l K) :
     Λ (patternPiece a s e σ) =
@@ -1070,7 +1073,8 @@ open Classical in
 /-- Blueprint lines 2469-2470 ("group the selected modes at the final successful components"):
 the sum of a 4-linear form over a product of finite sets equals the sum over the tuples of
 classes of the forms of the class subtotals. -/
-theorem multilinear_regroup (Λ : MultilinearMap ℂ (fun _ : Fin 4 => V) ℂ) {κ ι : Fin 4 → Type*}
+theorem multilinear_regroup
+    (Λ : MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => V) ℂ) {κ ι : Fin 4 → Type*}
     [∀ l, DecidableEq (ι l)] (M : ∀ l, Finset (κ l)) (cls : ∀ l, κ l → ι l) (g : ∀ l, κ l → V) :
     ∑ r ∈ Fintype.piFinset M, Λ (fun l => g l (r l)) =
       ∑ p ∈ Fintype.piFinset (fun l => (M l).image (cls l)),

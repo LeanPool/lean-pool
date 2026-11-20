@@ -62,7 +62,7 @@ theorem lipschitzWith_const_smul_real {g : V → ℝ} {K : NNReal} (hK : Lipschi
     LipschitzWith (‖c‖₊ * K) (c • g) := by
   refine LipschitzWith.of_dist_le_mul fun x y ↦ ?_
   simp only [Pi.smul_apply, smul_eq_mul, Real.dist_eq, ← mul_sub, abs_mul, NNReal.coe_mul,
-    coe_nnnorm, Real.norm_eq_abs, mul_assoc]
+    coe_nnNorm, Real.norm_eq_abs, mul_assoc]
   gcongr
   simpa [Real.dist_eq] using hK.dist_le_mul x y
 

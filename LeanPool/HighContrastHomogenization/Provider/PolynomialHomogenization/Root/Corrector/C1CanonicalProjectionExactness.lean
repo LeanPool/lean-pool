@@ -229,7 +229,7 @@ theorem finiteCorrectorWeightedProjection_eq_exactMinimizer_of_target
       (originCube d (q : ℤ)) a)
   let hclosed : IsClosed (LinearMap.range T : Set H) := by
     let _ : FiniteDimensional ℝ (LinearMap.range T) := T.finiteDimensional_range
-    exact (LinearMap.range T).closed_of_finiteDimensional
+    exact (LinearMap.range T).isClosed_of_finiteDimensional
   let B := AHarmonicGradientHilbert.symmCoeffBilin
     (PotentialSolenoidalL2Data.ofSubmoduleClosures (localGradientCube d q)) hEll
   let hB := AHarmonicGradientHilbert.isCoercive_symmCoeffBilin

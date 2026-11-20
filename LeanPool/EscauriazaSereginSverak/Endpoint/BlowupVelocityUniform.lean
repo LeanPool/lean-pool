@@ -78,11 +78,11 @@ theorem blowupRescaledVelocity_eventually_bounded_pastBox
       (∫⁻ z : Vec3 × ℝ, ENNReal.ofReal (g (z.1,z.2)) ^ (3 : ℝ)
         ∂μfull) ^ (1 / 3 : ℝ) := by
     change eLpNorm (fun z : Vec3 × ℝ => g (z.1,z.2)) 3 μfull = _
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 : ℝ≥0∞) ≠ ⊤) hgm]
     norm_num
-    simp only [Real.enorm_eq_ofReal_abs, g,
+    simp only [Real.eNorm_eq_ofReal_abs, g,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
   calc
     eLpNorm g 3 (volume.restrict C) ≤ eLpNorm g 3 μfull :=

@@ -100,7 +100,7 @@ theorem norm_rellichEmbL_sub_le (hΩm : MeasurableSet Ω) (hΩb : IsBounded Ω) 
   have hcoe := coeFn_rellichEmbL_sub hΩm hΩb hd hq U V
   -- The `L²` end is the distance of the images under `embL2`.
   have h2 : eLpNorm (W 0) 2 (volume.restrict Ω) = ‖embL2 Ω U - embL2 Ω V‖ₑ := by
-    rw [← Lp.enorm_def, embL2_apply, embL2_apply]
+    rw [← Lp.eNorm_def, embL2_apply, embL2_apply]
     rfl
   -- The critical end is bounded on the ball.
   have hM : eLpNorm (W 0) p' (volume.restrict Ω)

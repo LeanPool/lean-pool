@@ -121,8 +121,8 @@ theorem pressure_gradient_integrable_on_of_slice_bound
         K t * (volume.restrict B) Set.univ ^ (1 / (1 : ℝ) - 1 / p.toReal) := by
       simpa only [ENNReal.toReal_one] using hnorm'
     have hto := (ENNReal.toReal_le_toReal hmem1.eLpNorm_lt_top.ne hright).2 hnorm''
-    rw [integral_norm_eq_lintegral_enorm hmem.aestronglyMeasurable,
-      ← eLpNorm_one_eq_lintegral_enorm hmem.aestronglyMeasurable]
+    rw [integral_norm_eq_lintegral_eNorm hmem.aestronglyMeasurable,
+      ← eLpNorm_one_eq_lintegral_eNorm hmem.aestronglyMeasurable]
     simpa [C, ENNReal.toReal_mul, mul_comm] using hto
 
 theorem pressure_gradient_integrable_on_of_selected_bounds

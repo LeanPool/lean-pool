@@ -42,7 +42,7 @@ private theorem memLp_two_of_sq_lintegral_lt_top
     {μ : Measure α} {f : α → E}
     (hf : AEStronglyMeasurable f μ)
     (hfin : (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) < ⊤) : MemLp f 2 μ := by
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (by norm_num) (by norm_num) hf]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hfin.ne
@@ -192,7 +192,7 @@ private theorem pressure_memLp_three_halves_of_mixed_bound
         ((volume.prod volume).restrict (Ω' ×ˢ J))
       simpa only [Measure.prod_restrict] using hP
     exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hPprod.enorm
+      hPprod.eNorm
   have hGbound : ∀ᵐ t ∂volume.restrict J, G t ≤ M := by
     have hae := ae_le_essSup (μ := volume.restrict (Ioo 0 T)) (f := G)
     have hJae := ae_restrict_of_ae_restrict_of_subset hJ hae
@@ -220,7 +220,7 @@ private theorem pressure_memLp_three_halves_of_mixed_bound
   have hPq : AEStronglyMeasurable p (volume.restrict Q) := hP
   have hFlin : (∫⁻ z in Q, ‖p z‖ₑ ^ (3 / 2 : ℝ)) < ⊤ := by
     simpa only [F] using hQfinite
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (by norm_num) (by norm_num) hPq]
   rw [ENNReal.toReal_ofReal (by norm_num : 0 ≤ (3 / 2 : ℝ))]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hFlin.ne
@@ -549,7 +549,7 @@ private theorem rescaled_velocity_pointwise
       ENNReal.ofReal (r ^ 2) *
         (‖u (CKN.scalingParabolic r z₀ z)‖ₑ ^ (2 : ℝ)) := by
   change ‖r • u (CKN.scalingParabolic r z₀ z)‖ₑ ^ (2 : ℝ) = _
-  rw [enorm_smul, ← ofReal_norm r, Real.norm_eq_abs, abs_of_pos hr]
+  rw [eNorm_smul, ← ofReal_norm r, Real.norm_eq_abs, abs_of_pos hr]
   rw [ENNReal.mul_rpow_of_nonneg, ENNReal.ofReal_rpow_of_nonneg hr.le (by norm_num)]
   · norm_num
   · positivity
@@ -566,7 +566,7 @@ private theorem rescaled_energy_pointwise
           (‖Du (CKN.scalingParabolic r z₀ z)‖ₑ ^ (2 : ℝ)) := by
   change ‖r • u (CKN.scalingParabolic r z₀ z)‖ₑ ^ (2 : ℝ) +
       ‖r ^ 2 • Du (CKN.scalingParabolic r z₀ z)‖ₑ ^ (2 : ℝ) = _
-  rw [enorm_smul, enorm_smul]
+  rw [eNorm_smul, eNorm_smul]
   rw [← ofReal_norm r, ← ofReal_norm (r ^ 2)]
   rw [Real.norm_eq_abs, abs_of_pos hr]
   rw [Real.norm_eq_abs, abs_of_pos (sq_pos_of_pos hr)]
@@ -647,9 +647,9 @@ private theorem rescale_local_energy_lintegral_finite
   let U : ParabolicPoint → ℝ≥0∞ := fun z => ‖u z‖ₑ ^ (2 : ℝ)
   let D : ParabolicPoint → ℝ≥0∞ := fun z => ‖Du z‖ₑ ^ (2 : ℝ)
   have hU : AEMeasurable U (volume.restrict (spaceTimeSet Ωf Jf)) := by
-    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hu.enorm
+    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hu.eNorm
   have hD : AEMeasurable D (volume.restrict (spaceTimeSet Ωf Jf)) := by
-    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDu.enorm
+    exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDu.eNorm
   have hUcomp := aemeasurable_comp_scaling r hr z₀
     hforward.1.measurableSet hforward.2.2.2.1.measurableSet hU
   have hDcomp := aemeasurable_comp_scaling r hr z₀
@@ -745,7 +745,7 @@ private theorem rescale_local_velocity_l2_essSup_finite
     ∫⁻ x in Ω', ‖CKN.rescaleVelocity r z₀ u (x, s)‖ₑ ^ (2 : ℝ)
   have hU : AEMeasurable U (volume.restrict (spaceTimeSet Ωf Jf)) := by
     exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      hu.enorm
+      hu.eNorm
   have hUprod : AEMeasurable U ((volume.restrict Ωf).prod (volume.restrict Jf)) := by
     rw [Measure.prod_restrict]
     exact hU

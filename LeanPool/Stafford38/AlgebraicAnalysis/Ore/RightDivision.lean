@@ -79,7 +79,7 @@ lemma push_coeff (b : B) (i n : ℕ) :
     (OreDivision.push D b i).coeff n =
       ∑ k ∈ Finset.range (i + 1),
         if i - k = n then Nat.choose i k • (D^[k]) b else 0 := by
-  simp [push,  Polynomial.coeff_monomial]
+  simp [push, Finsupp.single_apply]
 
 lemma push_degree_le (b : B) (i : ℕ) : (OreDivision.push D b i).degree ≤ (i : WithBot ℕ) := by
   rw [Polynomial.degree_le_iff_coeff_zero]
@@ -137,7 +137,7 @@ lemma rightMulMonomial_coeff (p : Polynomial B) (b : B) (j n : ℕ) :
         if i - k + j = n then
           p.coeff i * (Nat.choose i k • (D^[k]) b) else 0 := by
   simp [rightMulMonomial, rightTerm,
-    Polynomial.coeff_monomial, Polynomial.sum_def]
+    Finsupp.single_apply, Polynomial.sum_def]
 
 lemma rightTerm_zero (i : ℕ) (b : B) (j : ℕ) : rightTerm D i 0 b j = 0 := by
   simp [rightTerm]
@@ -185,7 +185,8 @@ lemma iterate_zero (n : ℕ) : (D^[n]) 0 = 0 := by
 lemma rightMulMonomial_add_right (p : Polynomial B) (b₁ b₂ : B) (j : ℕ) :
     rightMulMonomial D p (b₁ + b₂) j =
       rightMulMonomial D p b₁ j + rightMulMonomial D p b₂ j := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro n
   rw [rightMulMonomial_coeff, Polynomial.coeff_add,
     rightMulMonomial_coeff, rightMulMonomial_coeff]
@@ -201,7 +202,8 @@ lemma rightMulMonomial_add_right (p : Polynomial B) (b₁ b₂ : B) (j : ℕ) :
 
 lemma rightMulMonomial_zero_right (p : Polynomial B) (j : ℕ) :
     rightMulMonomial D p 0 j = 0 := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro n
   rw [rightMulMonomial_coeff]
   apply Finset.sum_eq_zero
@@ -268,7 +270,7 @@ lemma rightMulMonomial_coeff_top (p : Polynomial B) (hp : p ≠ 0)
       p.leadingCoeff * b := by
   rw [rightMulMonomial_coeff]
   have htop : p.natDegree ∈ p.support :=
-    Polynomial.natDegree_mem_support_of_nonzero hp
+    Polynomial.natDegree_mem_support_of_ne_zero hp
   rw [Finset.sum_eq_single p.natDegree (by
     intro i hi hne
     apply Finset.sum_eq_zero
@@ -313,7 +315,7 @@ lemma rightMul_coeff_top [Nontrivial B] (d q : Polynomial B)
   rw [rightMul, Polynomial.coeff_sum]
   rw [Polynomial.sum_def]
   have hqtop : q.natDegree ∈ q.support :=
-    Polynomial.natDegree_mem_support_of_nonzero hq
+    Polynomial.natDegree_mem_support_of_ne_zero hq
   rw [Finset.sum_eq_single q.natDegree (by
     intro j hj hne
     have hj_le : j ≤ q.natDegree := Polynomial.le_natDegree_of_mem_supp j hj
@@ -1106,7 +1108,7 @@ lemma commutatorNormal_coeff_top [Nontrivial B] (q : Polynomial B) (j : ℕ)
       simp [hji, hneq, Polynomial.coeff_monomial]
     · simp [hji]) (by
       intro hnot
-      exact (hnot (Polynomial.natDegree_mem_support_of_nonzero hq0)).elim)]
+      exact (hnot (Polynomial.natDegree_mem_support_of_ne_zero hq0)).elim)]
   simp [hjn,  hq.leadingCoeff]
 
 theorem commutator_iterate_eval_eq_eval_normal

@@ -219,7 +219,7 @@ theorem intrinsic_operator_inner_self_pos (μ : ProbabilityMeasure E)
   set H : AffineSubspace ℝ (affineSupport μ).direction :=
     AffineSubspace.mk' ((c / ‖v‖ ^ 2) • v) (Submodule.span ℝ { v })ᗮ
   have hHclosed : IsClosed (H : Set (affineSupport μ).direction) :=
-    H.closed_of_finiteDimensional
+    H.isClosed_of_finiteDimensional
   have hmem : ∀ᵐ u ∂(ν : Measure (affineSupport μ).direction), u ∈ H := by
     filter_upwards [hae] with u hu
     have hu' : inner ℝ v u = c := hu

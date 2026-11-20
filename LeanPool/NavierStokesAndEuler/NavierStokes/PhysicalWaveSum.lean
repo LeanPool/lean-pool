@@ -340,7 +340,7 @@ theorem labelRegion_card_le {D : ℝ} {z : ℝ × Position} (hq : 0 < z.1)
     (s : Finset Label) (hs : ∀ L ∈ s, 1 ≤ L.1 ∧ z ∈ labelRegion D L) : s.card ≤ 2250 := by
   classical
   have hi : Set.InjOn SlotColoring.colorData (s : Set Label) :=
-    (labelRegion_color_injective hq).mono hs
+    (labelRegion_color_injective hq).mono (fun L hL => hs L hL)
   have hc := Finset.card_le_card_of_injOn (t := Finset.univ) SlotColoring.colorData
     (fun L _ => Finset.mem_univ _) hi
   simpa only [Finset.card_univ, SlotColoring.palette_card] using hc

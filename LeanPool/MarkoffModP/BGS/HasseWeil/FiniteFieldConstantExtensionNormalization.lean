@@ -174,10 +174,16 @@ theorem finiteFieldConstantExtensionIntegralClosureAlgEquiv_tmul
         (s ⊗ₜ[C] a) : integralClosure S[X] (S ⊗[C] N)) :
       S ⊗[C] N) =
       s ⊗ₜ[C] (a : N) := by
-  simp [finiteFieldConstantExtensionIntegralClosureAlgEquiv,
-    finiteFieldPolynomialIntegralClosureBaseChangeAlgEquiv,
-    polynomialIntegralClosureBaseChangeAlgEquiv,
-    TensorProduct.toIntegralClosure]
+  simp only [finiteFieldConstantExtensionIntegralClosureAlgEquiv,
+    AlgEquiv.symm_toRingEquiv, RingEquiv.symm_mk, AlgEquiv.toEquiv_eq_coe,
+    AlgEquiv.symm_toEquiv_eq_symm, finiteFieldPolynomialIntegralClosureBaseChangeAlgEquiv,
+    polynomialIntegralClosureBaseChangeAlgEquiv, TensorProduct.toIntegralClosure,
+    RingEquiv.toEquiv_eq_coe, AlgEquiv.coe_mk, EquivLike.coe_coe, RingEquiv.coe_trans,
+    RingEquiv.coe_mk, AlgEquiv.ofBijective_toEquiv, Function.comp_apply,
+    polynomialTensorCancel_symm_tmul, AlgEquiv.coe_mapIntegralClosure,
+    polynomialTensorCancelOverCoefficientPolynomial_apply]
+  change polynomialTensorCancel C S N (Polynomial.C s ⊗ₜ[C[X]] (a : N)) = _
+  simp
 
 /-- The normalization comparison with its constant-algebra structures erased.
 This is the stable interface for constructions that only need the underlying

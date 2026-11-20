@@ -62,7 +62,7 @@ omit [Fintype n] [DecidableEq n] in
 lemma mul_transpose_eq_sum_vecMulVec {r : Type*} [Fintype r] (A : Matrix n r ℝ) :
     A * Aᵀ = ∑ a, vecMulVec (A.col a) (A.col a) := by
   ext i j
-  simp [mul_apply, transpose_apply, Matrix.sum_apply, vecMulVec_apply, col_apply]
+  simp [Matrix.mul_apply, transpose_apply, Matrix.sum_apply, vecMulVec_apply, col_apply]
 
 omit [Fintype n] [DecidableEq n] in
 lemma isCompletelyPositive_iff_exists_mul_transpose {C : Matrix n n ℝ} :
@@ -121,6 +121,6 @@ lemma IsCompletelyPositive.submatrix {ι : Type*} {C : Matrix n n ℝ}
   refine isCompletelyPositive_iff_exists_mul_transpose.2
     ⟨r, A.submatrix e id, fun i j ↦ hA (e i) j, ?_⟩
   ext i j
-  simp [mul_apply, submatrix_apply, transpose_apply]
+  simp [Matrix.mul_apply, submatrix_apply, transpose_apply]
 
 end BollobasNikiforov

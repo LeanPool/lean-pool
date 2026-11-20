@@ -55,7 +55,7 @@ theorem amnr_material_spatial_commutator {b : AmnrSpace → Vec 2}
   have hdir : DifferentiableAt ℝ (amnrDirection b none) z := htc.prodMk hb
   have hconst : DifferentiableAt ℝ (amnrDirection b (some i)) z := differentiableAt_const _
   have hh := VectorField.fderiv_apply_lieBracket hf (by norm_num)
-    hconst hdir
+    hdir hconst
   have hd : fderiv ℝ (amnrDirection b none) z =
       (0 : AmnrSpace →L[ℝ] ℝ).prod (fderiv ℝ b z) := by
     change fderiv ℝ (fun y => ((1 : ℝ), b y)) z = _

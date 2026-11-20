@@ -53,7 +53,7 @@ variable {M : Type*} [ORingStructure M]
 /-- `code` differs from `codeAux` by a renaming that evaluation absorbs. -/
 private theorem evalb_iff_evalf {k : ℕ} (c : Code k) (z : M) (w : Fin k → M) :
     Semiformula.Evalb (z :> w) (code c) ↔ Semiformula.Evalf (M := M) (z :> w) (codeAux c) := by
-  simp [code, Semiformula.eval_rew, Matrix.empty_eq, Function.comp_def]
+  simp [Arithmetic.code, Semiformula.eval_rew, Matrix.empty_eq, Function.comp_def]
 
 /-- Evaluation of a search for a zero: the body vanishes at the found value,
 and below it the body is somewhere nonzero. -/

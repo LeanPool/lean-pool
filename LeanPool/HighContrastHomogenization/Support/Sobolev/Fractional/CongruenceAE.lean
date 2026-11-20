@@ -56,7 +56,7 @@ theorem ae_normalizedCubeMeasure_iff {Q : TriadicCube d} {prop : Vec d → Prop}
   constructor
   · intro hp
     rw [normalizedCubeMeasure, Filter.eventually_iff, mem_ae_iff,
-      Measure.smul_apply, smul_eq_mul, mul_eq_zero] at hp
+      smul_apply, smul_eq_mul, mul_eq_zero] at hp
     rw [Filter.eventually_iff, mem_ae_iff]
     exact hp.resolve_left hc0
   · intro hp

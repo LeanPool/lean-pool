@@ -43,9 +43,10 @@ theorem sub_one_mul_padicValNat_centralBinom (p : ℕ) [hp : Fact p.Prime] (n : 
   have hkummer :
       (p - 1) * padicValNat p ((2 * n).choose n) =
         (Nat.digits p n).sum + (Nat.digits p (2 * n - n)).sum -
-          (Nat.digits p (2 * n)).sum :=
-    sub_one_mul_padicValNat_choose_eq_sub_sum_digits (p := p) (k := n)
-      (n := 2 * n) hk
+          (Nat.digits p (2 * n)).sum := by
+    simpa only [padicValNat_def] using
+      sub_one_mul_multiplicity_choose_eq_sub_sum_digits (p := p) (k := n)
+        (n := 2 * n) hk
   have h2n : 2 * n - n = n := by omega
   rw [h2n] at hkummer
   rw [hkummer]
@@ -69,7 +70,8 @@ theorem pow_dvd_centralBinom_of_digit_excess
   have hpos : 0 < p - 1 := hp1
   have hval : m ≤ padicValNat p (Nat.centralBinom n) :=
     Nat.le_of_mul_le_mul_left h hpos
-  exact dvd_trans (pow_dvd_pow p hval) pow_padicValNat_dvd
+  rw [padicValNat_def] at hval
+  exact dvd_trans (pow_dvd_pow p hval) (pow_multiplicity_dvd p _)
 
 /-- The ternary specialization of the central-binomial digit-excess formula. -/
 theorem two_mul_padicValNat_three_centralBinom (n : ℕ) :

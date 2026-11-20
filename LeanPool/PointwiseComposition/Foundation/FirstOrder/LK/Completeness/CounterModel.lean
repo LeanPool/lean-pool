@@ -308,7 +308,7 @@ lemma satisfiable_iff_consistent :
 /-- Completeness theorem (II) -/
 theorem Proof.complete : T ⊨[Tarski.Struc.{max u w} L] φ → T ⊢ φ :=
   by
-  contrapose!
+  contrapose
   intro h
   have : Consistent (insert (∼φ) T) := unprovable_iff_consistent_adjoin.mp h
   have : Semantics.Satisfiable (Tarski.Struc.{max u w} L) (insert (∼φ) T) :=

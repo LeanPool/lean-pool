@@ -72,7 +72,7 @@ lemma eventually_smul_measure_closedBall_le
   have heq : ∀ i, (c i • μ.map (blowUpMap a (r i))) (closedBall 0 S)
       = c i * μ (closedBall a (r i * S)) := by
     intro i
-    rw [Measure.smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr i)]
+    rw [smul_apply, smul_eq_mul, map_blowUp_apply_closedBall μ a (hr i)]
   have hfin : ν (closedBall 0 S) ≠ ∞ := (regular_measure_closedBall_lt_top hν 0 S).ne
   have hlt : limsup (fun i ↦ c i * μ (closedBall a (r i * S))) atTop
       < ν (closedBall 0 S) + 1 := by
@@ -207,7 +207,7 @@ lemma tendsto_integral_sub_restrict
           + ∫ x, f x ∂D := by
       rw [hdec, integral_add_measure hintG hintD]
     have hDK : D (closedBall 0 t) = c i * μ (closedBall a (r i * t) \ B) := by
-      rw [hD, Measure.smul_apply, smul_eq_mul,
+      rw [hD, smul_apply, smul_eq_mul,
         Measure.map_apply hmeas measurableSet_closedBall,
         blowUpMap_preimage_closedBall a (hr i), Measure.restrict_apply measurableSet_closedBall,
         ← Set.sdiff_eq]
@@ -284,8 +284,8 @@ theorem isTangentMeasure_restrict_iff
       have hrt : 0 < r i * t := mul_pos (hr i) ht
       calc c i * μ (closedBall a (2 * (r i * t)))
           ≤ c i * μ (ball a (4 * (r i * t))) := by
-            gcongr
-            exact closedBall_subset_ball (by linarith)
+            exact mul_le_mul_right (measure_mono (closedBall_subset_ball
+              (show 2 * (r i * t) < 4 * (r i * t) by linarith))) (c i)
         _ ≤ c i * (2 * μ (ball a (4 * (r i * t)) ∩ B)) := by gcongr
         _ = 2 * (c i * μ (ball a (4 * (r i * t)) ∩ B)) := by ring
         _ ≤ 2 * (c i * (μ.restrict B) (closedBall a (r i * (4 * t)))) := by

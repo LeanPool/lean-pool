@@ -27,7 +27,7 @@ abbrev ProjectivePoint (n : ℕ) := Projectivization ℚ (Fin (n + 1) → ℚ)
 height of the point. -/
 lemma projective_rep_height {n : ℕ} (x : ProjectivePoint n) :
     Height.mulHeight x.rep = x.mulHeight := by
-  rw [← Projectivization.mulHeight_mk x.rep_nonzero, x.mk_rep]
+  rw [← Projectivization.mulHeight_mk x.rep_ne_zero, x.mk_rep]
 
 /-- Every coordinate ratio has height bounded by the projective height. -/
 private lemma projective_coordinate_ratio_height {n : ℕ} (x : ProjectivePoint n)
@@ -52,7 +52,7 @@ theorem projective_height_finite (n : ℕ) (B : ℝ) :
     hv.preimage Subtype.val_injective.injOn
   apply (hs.image (Projectivization.mk' ℚ)).subset
   intro x hx
-  obtain ⟨i, hi⟩ := Function.ne_iff.mp x.rep_nonzero
+  obtain ⟨i, hi⟩ := Function.ne_iff.mp x.rep_ne_zero
   change x.rep i ≠ 0 at hi
   let v : Fin (n + 1) → ℚ := fun j => x.rep j / x.rep i
   have hv0 : v ≠ 0 := by

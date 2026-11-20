@@ -225,7 +225,7 @@ private theorem exists_separated_coarsening {U : ℕ → Set (EuclideanSpace ℝ
     ∃ Q : Finpartition s, P ≤ Q ∧ GoodPartition U Q ∧ SeparatedPartition U Q := by
   classical
   induction hn : P.parts.card using Nat.strong_induction_on generalizing P with
-  | h n ih =>
+  | ind n ih =>
       by_cases hsep : SeparatedPartition U P
       · exact ⟨P, le_rfl, hP, hsep⟩
       · simp only [SeparatedPartition] at hsep
@@ -509,7 +509,7 @@ private theorem ediam_mergedHole_le_fiber {U : ℕ → Set (EuclideanSpace ℝ (
       have heqholes := mergedHole_eq_of_stage_part_eq hUopen hjn hin heqpart
       simp only [heqholes, ite_eq_left]
     _ ≤ ∑' j, if mergedHole U hUopen j = mergedHole U hUopen i
-        then Metric.ediam (U j) else 0 := ENNReal.sum_le_tsum _
+        then Metric.ediam (U j) else 0 := sum_le_tsum _
 
 private theorem tsum_range_ediam_le
     (W : ℕ → Set (EuclideanSpace ℝ (Fin 2))) (d : ℕ → ℝ≥0∞)
@@ -519,12 +519,12 @@ private theorem tsum_range_ediam_le
   calc
     _ ≤ ∑' V : Set.range W,
         ∑' j, if W j = (V : Set (EuclideanSpace ℝ (Fin 2))) then d j else 0 := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       rintro ⟨V, i, rfl⟩
       exact hW i
     _ = ∑' j, ∑' V : Set.range W,
         if W j = (V : Set (EuclideanSpace ℝ (Fin 2))) then d j else 0 :=
-      ENNReal.tsum_comm
+      tsum_comm
     _ = ∑' j, d j := by
       congr 1
       funext j
@@ -569,8 +569,9 @@ theorem exists_pairwiseDisjoint_convex_hole_cover (U : ℕ → Set (EuclideanSpa
           ∑' j, if mergedHole U hUopen j = mergedHole U hUopen i
             then Metric.ediam (U j) else 0 := ediam_mergedHole_le_fiber hUopen i
       _ ≤ ∑' j, Metric.ediam (U j) := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro j
+        dsimp only
         split_ifs <;> simp
   have hcover : (⋃ i, U i) ⊆ ⋃ V : W, (V : Set (EuclideanSpace ℝ (Fin 2))) := by
     intro x hx

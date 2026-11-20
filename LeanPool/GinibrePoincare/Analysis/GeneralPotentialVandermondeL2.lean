@@ -64,7 +64,7 @@ private theorem potentialVandermonde_lintegral {n : ℕ}
   have hd : Measurable d := by
     unfold d potentialVandermondeMultiplier
     exact (ENNReal.continuous_rpow_const.comp
-      (potentialVandermondeMultiplier_continuous n hV).enorm).measurable
+      (potentialVandermondeMultiplier_continuous n hV).eNorm).measurable
   have hdtop : ∀ᵐ z ∂configurationVolume n, d z < ⊤ :=
     Filter.Eventually.of_forall fun z ↦ by
       unfold d
@@ -76,7 +76,7 @@ private theorem potentialVandermonde_lintegral {n : ℕ}
       apply lintegral_congr
       intro z
       unfold d
-      rw [enorm_mul, ENNReal.mul_rpow_of_nonneg]
+      rw [eNorm_mul, ENNReal.mul_rpow_of_nonneg]
       positivity
     _ = ∫⁻ z, ‖u z‖ₑ ^ (2 : ℝ)
         ∂(configurationVolume n).withDensity d := by
@@ -101,12 +101,12 @@ theorem potentialVandermonde_memLp {n : ℕ}
       ((Lp.aestronglyMeasurable u).mono_ac hac)
   rw [memLp_iff]
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hf,
-    eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm]
   norm_num only [ENNReal.toReal_ofNat]
   rw [potentialVandermonde_lintegral hn hV hfin u]
   have hu := (Lp.memLp u).eLpNorm_lt_top
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable u),
-    eLpNorm'_eq_lintegral_enorm] at hu
+    eLpNorm'_eq_lintegral_eNorm] at hu
   exact hu
 
 theorem potentialVandermonde_norm {n : ℕ}
@@ -120,7 +120,7 @@ theorem potentialVandermonde_norm {n : ℕ}
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (potentialVandermonde_memLp hn hV hfin
       u).aestronglyMeasurable,
     eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable u),
-    eLpNorm'_eq_lintegral_enorm, eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm, eLpNorm'_eq_lintegral_eNorm]
   norm_num only [ENNReal.toReal_ofNat]
   rw [potentialVandermonde_lintegral hn hV hfin u]
 

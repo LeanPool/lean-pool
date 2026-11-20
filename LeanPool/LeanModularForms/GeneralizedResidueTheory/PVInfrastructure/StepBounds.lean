@@ -581,7 +581,9 @@ lemma cutoff_integrand_intervalIntegrable
   rw [intervalIntegrable_iff]
   apply MeasureTheory.IntegrableOn.of_bound
   · exact measure_Ioc_lt_top
-  · apply AEStronglyMeasurable.indicator
+  · change AEStronglyMeasurable
+      ({t | ε < ‖γ t - γ t₀‖}.indicator (fun t => (γ t - γ t₀)⁻¹ * deriv γ t)) _
+    apply AEStronglyMeasurable.indicator
     · apply Measurable.aestronglyMeasurable
       exact ((hγ_meas.sub_const (γ t₀)).inv.mul
         (measurable_deriv γ))

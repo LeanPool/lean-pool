@@ -481,7 +481,7 @@ theorem ExtensionBaseClaimMissingColors {V E : Type*}
         v ∈ TreeSequenceVertexSet (ett.series.data.tree b.succ.castSucc) := by
       intro n
       induction n using Nat.strong_induction_on with
-      | h n ih =>
+      | ind n ih =>
         intro a b hgap hab v hv
         by_cases heq : a.val = b.val
         · have heq' : a = b := Fin.ext heq

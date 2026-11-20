@@ -66,14 +66,14 @@ theorem arithmeticConstantJet_isMultiplicative {f : ArithmeticFunction ℝ} (hf 
 
 theorem arithmeticLogJet_mul_fst (f g : ArithmeticFunction ℝ) (n : ℕ) :
     ((arithmeticLogJet f * arithmeticConstantJet g) n).fst = (f * g) n := by
-  simp only [mul_apply, TrivSqZeroExt.fst_sum]
+  simp only [ArithmeticFunction.mul_apply, TrivSqZeroExt.fst_sum]
   apply sum_congr rfl
   intro de _
   rfl
 
 theorem arithmeticLogJet_mul_snd (f g : ArithmeticFunction ℝ) (n : ℕ) :
     ((arithmeticLogJet f * arithmeticConstantJet g) n).snd = arithmeticLogDerivative f g n := by
-  simp only [arithmeticLogDerivative, mul_apply, TrivSqZeroExt.snd_sum]
+  simp only [arithmeticLogDerivative, ArithmeticFunction.mul_apply, TrivSqZeroExt.snd_sum]
   apply sum_congr rfl
   intro de _
   change f de.1 * 0 + (f de.1 * Real.log (de.1 : ℝ)) * g de.2 =

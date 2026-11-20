@@ -280,8 +280,8 @@ theorem Ctil_coprime_s : Nat.Coprime (Cpoly t / 9) s := by
   have hCtil_dvd : Ctil ∣ Cpoly t := by
     exact Nat.div_dvd_of_dvd <| L3a _ _ t hcong ht
   have hCtil_not_dvd : ¬ s ∣ Ctil := by
-    have := hCt s t₀ t hC ht; ( contrapose! this; );
-    exact dvd_trans this hCtil_dvd
+    intro h
+    exact hCt s t₀ t hC ht (dvd_trans h hCtil_dvd)
   have hCtil_coprime : Nat.Coprime s Ctil := by
     exact hs.coprime_iff_not_dvd.mpr hCtil_not_dvd
   exact hCtil_coprime.symm

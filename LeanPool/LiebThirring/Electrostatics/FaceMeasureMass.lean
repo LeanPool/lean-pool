@@ -60,7 +60,7 @@ theorem card_nuclearPair (M : ℕ) : Fintype.card (NuclearPair M) = M.choose 2 :
 theorem voronoiFaceMeasure_mass_le (R : Fin M → Position) (hR : Function.Injective R)
     {Z : ℝ} (hZ : 0 ≤ Z) :
     voronoiFaceMeasure R hR Z univ ≤ (M.choose 2 : ℝ≥0∞) * ENNReal.ofReal Z := by
-  rw [voronoiFaceMeasure, Measure.finsetSum_apply]
+  rw [voronoiFaceMeasure, sum_apply]
   calc
     _ ≤ ∑ _p : NuclearPair M, ENNReal.ofReal Z :=
       Finset.sum_le_sum fun p _ => nuclearFaceMeasure_mass_le R hR hZ _ _ _

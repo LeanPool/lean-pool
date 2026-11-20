@@ -113,7 +113,7 @@ theorem weighted_bump_sq_integrable (s : ℝ) (j : Fin 2) :
     ((bump_contDiff j).continuous.pow 2)).integrable_of_hasCompactSupport hc.mul_left
 
 theorem moment_pos (s : ℝ) : 0 < moment s := by
-  apply Continuous.integral_pos_of_hasCompactSupport_nonneg_nonzero
+  apply Continuous.integral_pos_of_hasCompactSupport_nonneg_ne_zero
     ((Real.continuous_exp.comp (continuous_const.mul continuous_id)).mul
         template_contDiff.continuous)
     template_hasCompactSupport.mul_left
@@ -1249,7 +1249,7 @@ theorem exists_smooth_solver_on_ball [FiniteDimensional ℝ E] [CompleteSpace E]
         (eventually_lt_nhds (by simpa only [hinv0] using hinterior d hd))
     have hinveq : ∀ᶠ x in 𝓝 d, quadraticMap B A (inv x) = x := by
       have h := HasStrictFDerivAt.eventually_right_inverse (f' := D)
-        (hq.hasStrictFDerivAt' hderiv (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
+        (hq.hasStrictFDerivAt hderiv (WithTop.coe_ne_zero.2 ENat.top_ne_zero))
       change ∀ᶠ x in 𝓝 (quadraticMap B A (g d)), quadraticMap B A (inv x) = x at h
       simpa only [hqd] using h
     have hgeq : g =ᶠ[𝓝 d] inv := by

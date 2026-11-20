@@ -80,7 +80,7 @@ theorem alpha_le_of_globalEnergyClass (henergy : GlobalEnergyClass u Du p) {x : 
         = ∫⁻ y in vec3Ball x r, ENNReal.ofReal (vec3EuclideanNorm (u (y, τ))) ^ (2 : ℝ) := by
           unfold timeSliceBallEnergy
           refine lintegral_congr (fun y => ?_)
-          rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
+          rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
       _ ≤ ∫⁻ y in vec3Ball x r, 3 * ‖u (y, τ)‖ₑ ^ (2 : ℝ) :=
           lintegral_mono (fun y => vec3EuclideanNorm_sq_le_three_mul_enorm_sq (u (y, τ)))
       _ = 3 * ∫⁻ y in vec3Ball x r, ‖u (y, τ)‖ₑ ^ (2 : ℝ) :=

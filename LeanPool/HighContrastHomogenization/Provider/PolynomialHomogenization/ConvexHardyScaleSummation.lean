@@ -121,7 +121,7 @@ theorem tsum_cutoff_geometric_head_le
     (∑' k : ℕ, if X * q ^ (k + 1) ≤ C then
         ENNReal.ofReal (X * q ^ (k + 1)) else 0) ≤
       ENNReal.ofReal (q / (q - 1) * C) := by
-  rw [ENNReal.tsum_eq_iSup_sum]
+  rw [tsum_eq_iSup_sum]
   refine iSup_le fun S => ?_
   let T : Finset ℕ := S.filter fun k => X * q ^ (k + 1) ≤ C
   have hTerm0 : ∀ k ∈ S,

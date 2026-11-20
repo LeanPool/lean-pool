@@ -79,7 +79,7 @@ theorem exists_ae_abs_le_of_memLp_top {U : Set (EuclideanSpace ℝ (Fin d))}
   filter_upwards [ae_le_eLpNormEssSup (f := g) (μ := volume.restrict U)] with x hx
   rw [← eLpNorm_exponent_top hg.aestronglyMeasurable] at hx
   have h := ENNReal.toReal_mono hg.eLpNorm_ne_top hx
-  rwa [Real.enorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg _)] at h
+  rwa [Real.eNorm_eq_ofReal_abs, ENNReal.toReal_ofReal (abs_nonneg _)] at h
 
 /-- **Transfer of the local chain to plain functions on `U`.** Let `Op` agree with `a, b, c` on an
 open `W ⊆ U` (everywhere for `a`, almost everywhere for `b` and `c`) and satisfy the order-`k`

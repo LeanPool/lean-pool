@@ -252,7 +252,7 @@ theorem log_modeStar_le_aux (D dB : ℕ) {H δc N k E : ℝ} (hk : 0 ≤ k) (hE 
             mul_le_mul h6 hmax (by linarith) (Real.exp_pos _).le
     calc t3 ≤ B * (Real.exp (2 * dB + 2) * Real.exp (LB + E + 2)) :=
           mul_le_mul_of_nonneg_left hin (by linarith)
-      _ = Real.exp (LB + (2 * dB + 2) + (LB + E + 2)) := by simp only [hB, Real.exp_add]; try ring
+      _ = Real.exp (LB + (2 * dB + 2) + (LB + E + 2)) := by simp only [hB, Real.exp_add]; ring
       _ ≤ Real.exp T0 := Real.exp_le_exp.mpr (by linarith)
   have hT4 : t4 ≤ Real.exp T0 := by
     have hc2 : A.colBudget ^ 2 ≤ Real.exp (2 * E) := by

@@ -48,8 +48,9 @@ theorem analyticOnNhd_integral_mul_compact_kernelCarlson
       (fun p hp => hW p.1 hp.1 p.2 hp.2)
   have hD : ContinuousOn (fun p : E × α => D p.1 p.2) (U ×ˢ K) :=
     (hH.fderiv.continuousOn.comp
-      (continuousOn_fst.prodMk (hγ.comp continuousOn_snd (fun _ hp => hp.2)))
-      (fun p hp => hW p.1 hp.1 p.2 hp.2)).clm_comp continuousOn_const
+      (continuousOn_fst.prodMk (hγ.comp continuousOn_snd
+        (fun _ (hp : _ ∈ U ×ˢ K) => hp.2)))
+      (fun p (hp : p ∈ U ×ˢ K) => hW p.1 hp.1 p.2 hp.2)).clm_comp continuousOn_const
   have hslice {x : E} (hx : x ∈ U) : ContinuousOn (fun t => H (x, γ t)) K :=
     hc.comp (continuous_const.prodMk continuous_id).continuousOn (fun t ht => ⟨hx, ht⟩)
   apply DifferentiableOn.analyticOnNhd_finiteDimensionalCarlson _ hU

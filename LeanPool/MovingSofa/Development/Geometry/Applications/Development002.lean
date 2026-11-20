@@ -3096,7 +3096,7 @@ private theorem armDensityMeasure_eq_ofReal_integral (C : RightAngleCapSpace) {S
         by_contra hne
         exact hx2 ⟨lt_of_le_of_ne hxIco.1 (Ne.symm hne), hxIco.2.le⟩
       simp [this]
-    refine (Filter.EventuallyEq.symm ?_)
+    refine (Filter.EventuallyEqSet.symm ?_)
     refine (ae_eq_set.mpr ⟨?_, ?_⟩)
     · exact measure_mono_null hsub (measure_singleton 0)
     · simp [Set.sdiff_eq_empty.2 Set.inter_subset_left]
@@ -3995,7 +3995,7 @@ private theorem exists_arcDensity_of_domination (μ₀ : Measure Real.Angle) [Is
       μ E ≤ ENNReal.ofReal (∫ t in E, f t) := by
     intro E hE hEsub
     have hES : E ∩ S =ᵐ[volume] E := by
-      have h := Filter.EventuallyEqSet.inter (Filter.EventuallyEq.refl _ E) hSae
+      have h := Filter.EventuallyEqSet.inter (Filter.EventuallyEqSet.refl _ E) hSae
       rwa [inter_eq_left.mpr hEsub] at h
     rw [hμ_apply E hE]
     exact (hdom _ (hE.inter hS) inter_subset_right).trans
@@ -4084,7 +4084,7 @@ theorem exists_capDensity_right_le_magicDensity (K : RightAngleCapSpace)
       μ E ≤ ENNReal.ofReal (∫ t in E, magicDensity (tangentArmLengths K t).2.1) := by
     intro E hE hEsub
     have hES : E ∩ Ico (0 : ℝ) (Real.pi / 2) =ᵐ[volume] E := by
-      have h := Filter.EventuallyEqSet.inter (Filter.EventuallyEq.refl _ E)
+      have h := Filter.EventuallyEqSet.inter (Filter.EventuallyEqSet.refl _ E)
         (Ico_ae_eq_Icc (μ := volume) (a := (0 : ℝ)) (b := Real.pi / 2))
       rwa [inter_eq_left.mpr hEsub] at h
     rw [hμ_apply E hE]
@@ -6711,7 +6711,7 @@ theorem specialCapArea_equivalent_upper_arcs :
     (surfaceAreaMeasure_face_union L.val.val).1
   simp only [realCombination, key]
   rw [specialCap_isConvexDomain.1 t K L, surfaceAreaMeasure_convexBodyCombination,
-    Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+    add_apply, smul_apply, smul_apply, smul_eq_mul, smul_eq_mul,
     ENNReal.toReal_add (ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top _ _))
       (ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top _ _)),
     ENNReal.toReal_mul, ENNReal.toReal_mul,

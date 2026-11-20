@@ -88,7 +88,7 @@ theorem eLpNorm_indicator_compl_euclideanBall_tendsto_zero
       rw [CKN.mem_euclideanBall_iff_vecEuclideanNorm_lt hmpos]
       exact hx.trans_le (by exact_mod_cast hnm)
   have hmeas (n : ℕ) : AEMeasurable (tailIntegral n) volume := by
-    apply (hf.aestronglyMeasurable.enorm.pow_const 2).indicator
+    apply (hf.aestronglyMeasurable.eNorm.pow_const 2).indicator
     exact (CKN.measurableSet_euclideanBall 0 (n : ℝ)).compl
   have hanti : ∀ᵐ x ∂(volume : Measure CKN.Foundation.Parabolic.Vec3),
       Antitone fun n => tailIntegral n x := by
@@ -114,7 +114,7 @@ theorem eLpNorm_indicator_compl_euclideanBall_tendsto_zero
     filter_upwards [hEventually] with n hn
     simp [tailIntegral, hn]
   have htotal : ∫⁻ x : CKN.Foundation.Parabolic.Vec3, ‖f x‖ₑ ^ (2 : ℝ) ∂volume < ∞ := by
-    have h := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    have h := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hf.aestronglyMeasurable).mp
         hf.eLpNorm_lt_top
     simpa using h
@@ -139,7 +139,7 @@ theorem eLpNorm_indicator_compl_euclideanBall_tendsto_zero
           ((CKN.euclideanBall (0 : CKN.Foundation.Parabolic.Vec3) (n : ℝ))ᶜ.indicator f)
           (2 : ℝ≥0∞) volume =
         (∫⁻ x : CKN.Foundation.Parabolic.Vec3, tailIntegral n x ∂volume) ^ (1 / 2 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (p := (2 : ℝ≥0∞))
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (p := (2 : ℝ≥0∞))
       (by norm_num) (by norm_num)
       (hf.aestronglyMeasurable.indicator (CKN.measurableSet_euclideanBall 0 (n : ℝ)).compl)]
     congr 1

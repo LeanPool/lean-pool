@@ -1355,7 +1355,7 @@ theorem exists_subobject_of_mono_biprod [Category.{v} E] [Abelian E]
     exact Or.inl ⟨isoBiprodOfRetraction _ 0 hr
       ≪≫ (isoZeroBiprod hKz).symm⟩
   · have : IsIso (kernel.ι (f ≫ biprod.snd) ≫ f ≫ biprod.fst) :=
-      isIso_of_mono_of_nonzero hu
+      isIso_of_mono_of_ne_zero hu
     have hr : kernel.ι (f ≫ biprod.snd)
         ≫ ((f ≫ biprod.fst)
           ≫ inv (kernel.ι (f ≫ biprod.snd) ≫ f ≫ biprod.fst))
@@ -1403,7 +1403,7 @@ theorem exists_quotient_of_epi_biprod [Category.{v} E] [Abelian E]
     exact Or.inl ⟨isoBiprodOfSection _ 0 hs
       ≪≫ (isoBiprodZero hCz).symm⟩
   · have : IsIso (biprod.inl ≫ f ≫ cokernel.π (biprod.inr ≫ f)) :=
-      isIso_of_epi_of_nonzero hu
+      isIso_of_epi_of_ne_zero hu
     have hs : (inv (biprod.inl ≫ f ≫ cokernel.π (biprod.inr ≫ f))
           ≫ (biprod.inl ≫ f))
         ≫ cokernel.π (biprod.inr ≫ f)

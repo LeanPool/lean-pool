@@ -34,7 +34,7 @@ theorem P5442T1LaplacianBound (P : FordFareyParameter) :
       ∀ x, FourNeighborLaplacian (FordOdometer P) x ≤ 1 := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro P hn x
       obtain ⟨hp, hw, _, ho⟩ := P5442T1WebGeometry P
       let t : Int → Int → GaussianInt := fun m n =>

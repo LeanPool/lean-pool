@@ -575,7 +575,7 @@ lemma pair_defined : Sg0-Function₂ (fun a b : V ↦ ⟪a, b⟫) via pairDef :=
 instance pair_definable : Sg0-Function₂ (pair : V → V → V) := pair_defined.to_definable
 
 instance : Bounded₂ (pair : V → V → V) :=
-  ⟨‘x y. (y * y + x) + (x * x + x + y)’, by intro v; simp [pair]; split_ifs <;> try simp [*]⟩
+  ⟨‘x y. (y * y + x) + (x * x + x + y)’, by intro v; simp [pair]; split_ifs <;> simp [*]⟩
 
 /-- Imported declaration from the Incompleteness formalization. -/
 def unpair (a : V) : V × V := if a - √a * √a < √a then (a - √a * √a, √a) else (√a, a - √a * √a - √a)

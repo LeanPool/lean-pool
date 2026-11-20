@@ -101,7 +101,7 @@ private theorem blowupLimit_restrict_closed_interval_le_open
       volume.restrict (D ×ˢ Ioo c d) := by
   have htime : Icc c d =ᵐ[volume] Ioo c d := Ioo_ae_eq_Icc.symm
   have hrect : C ×ˢ Icc c d =ᵐ[volume] C ×ˢ Ioo c d :=
-    Measure.set_prod_ae_eq (ae_eq_refl C) htime
+    Measure.set_prod_ae_eq Filter.EventuallyEqSet.rfl htime
   have hsub : C ×ˢ Icc a b ⊆ C ×ˢ Icc c d :=
     Set.prod_mono Subset.rfl hI
   calc

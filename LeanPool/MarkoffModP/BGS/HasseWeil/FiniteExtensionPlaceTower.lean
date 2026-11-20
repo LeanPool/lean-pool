@@ -233,6 +233,18 @@ local instance infinityPlaceTowerIntegralClosureAlgebra :
       (RatFuncInfinityIntegralClosure K L) :=
   (infinityIntegralClosureMap K M L).toAlgebra
 
+/-- The intermediate infinity integral closure acts by multiplication via
+`infinityIntegralClosureMap`. -/
+local instance infinityPlaceTowerIntegralClosureSMul :
+    SMul (RatFuncInfinityIntegralClosure K M) (RatFuncInfinityIntegralClosure K L) :=
+  Algebra.toSMul
+
+/-- The module structure on the top infinity integral closure induced by
+`infinityIntegralClosureMap`. -/
+local instance infinityPlaceTowerIntegralClosureModule :
+    Module (RatFuncInfinityIntegralClosure K M) (RatFuncInfinityIntegralClosure K L) :=
+  Algebra.toModule
+
 local instance infinityPlaceTowerIntermediateIntegral :
     Algebra.IsIntegral (RatFuncInfinityIntegers K)
       (RatFuncInfinityIntegralClosure K M) :=
@@ -857,6 +869,11 @@ noncomputable def infinityIntegralClosureGalAction :
     (RatFuncInfinityIntegralClosure K M) M L
     (RatFuncInfinityIntegralClosure K L)
 
+/-- The scalar action of `Gal(L/M)` on the infinity integral closure of `L`. -/
+local instance infinityIntegralClosureGalSMul :
+    SMul Gal(L/M) (RatFuncInfinityIntegralClosure K L) :=
+  (infinityIntegralClosureGalAction K M L).toMulAction.toSMul
+
 omit [DecidableEq K] [Algebra.IsSeparable (RatFunc K) M] [FiniteDimensional (RatFunc K) L]
   [Algebra.IsSeparable (RatFunc K) L] in
 /-- The relative Galois action fixes the intermediate infinity integral
@@ -1236,8 +1253,7 @@ private theorem infinityPlaceResidueField_finite [Finite K]
     simpa [p] using Ideal.primesOver.liesOver
       (ratFuncInfinityPlace K).asIdeal P
   let := Localization.AtPrime.algebraOfLiesOver p P.1
-  have : IsScalarTower (RatFuncInfinityIntegers K) (Localization.AtPrime p)
-      (Localization.AtPrime P.1) := inferInstance
+  have := Localization.AtPrime.instIsScalarTower p P.1
   let : Algebra.QuasiFiniteAt (RatFuncInfinityIntegers K) P.1 := inferInstance
   let : Module.Finite p.ResidueField P.1.ResidueField := inferInstance
   exact Module.finite_of_finite p.ResidueField

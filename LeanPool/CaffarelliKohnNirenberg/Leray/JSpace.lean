@@ -300,7 +300,7 @@ theorem smoothL2Potential_curl_memJ {A : Vec3 → Vec3}
       (abs_of_nonneg (by positivity : 0 ≤ (64 : ℝ) / r k)).symm)
   have hcoef : Tendsto (fun k : ℕ => ‖((64 : ℝ) / r k)‖ₑ)
       atTop (nhds 0) := by
-    simpa only [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_zero] using
+    simpa only [Real.eNorm_eq_ofReal_abs, ENNReal.ofReal_zero] using
       ENNReal.tendsto_ofReal hcoefAbs
   have hcorrection : Tendsto
       (fun k : ℕ => ‖((64 : ℝ) / r k)‖ₑ * eLpNorm A (2 : ℝ≥0∞) volume)

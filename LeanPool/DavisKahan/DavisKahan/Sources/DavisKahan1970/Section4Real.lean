@@ -658,7 +658,7 @@ theorem tsum_displacementAngleSineSq_ge_of_mem_real
     {ι : Type*} (b : ι → E) (hb : ∀ i, b i ∈ U) (hbnorm : ∀ i, ‖b i‖ = 1) :
     ∑' i, ENNReal.ofReal (1 - ‖TauCeti.DavisKahan.canonicalAbsoluteValueR U V (b i)‖ ^ 2) ≤
       ∑' i, ENNReal.ofReal (displacementAngleSineSqR W (b i)) :=
-  ENNReal.tsum_le_tsum fun i =>
+  tsum_le_tsum fun i =>
     ENNReal.ofReal_le_ofReal
       (displacementAngleSineSq_ge_real U V W hWunitary hWmap (hb i) (hbnorm i))
 

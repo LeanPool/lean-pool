@@ -38,17 +38,17 @@ lemma tendsto_zero_of_regular_addContent (hR : IsSetRing R) (m : AddContent ℝ�
     fun n ↦ h_reg (s n) (hs n) (δ n) (mod_cast (hδ_pos n))
   choose t ht_mem_C ht_subset ht using h_reg'
   rw [Filter.eventually_atTop]
-  have ht_empty : ⋂ n, t n = ∅ := Set.subset_eq_empty (Set.iInter_mono ht_subset) hs_Inter
+  have ht_empty : ⋂ n, t n = ∅ := Set.eq_empty_of_subset (Set.iInter_mono ht_subset) hs_Inter
   let S := hC.support ht_mem_C ht_empty
   have hS := hC.iInter_eq_empty ht_mem_C ht_empty
   have hS_nonempty : Finset.Nonempty (Finset.Iic S) := by simp
   let N := Finset.max' (Finset.Iic S) hS_nonempty
   have ht_empty' : ∀ n, N ≤ n → ⋂ i ≤ n, t i = ∅ := by
     intro n hn
-    refine Set.subset_eq_empty ?_ hS
+    refine Set.eq_empty_of_subset ?_ hS
     simp only [Set.subset_iInter_iff]
     intro i hi
-    refine Set.biInter_subset_of_mem ?_
+    refine Set.biInter_subset_of_mem (s := {i | i ≤ n}) ?_
     exact (Finset.le_max' (Finset.Iic S) i (by simpa using hi)).trans hn
   refine ⟨N, fun n hn ↦ ?_⟩
   calc m (s n) = m (⋂ i ≤ n, s i) := by
@@ -65,13 +65,13 @@ lemma tendsto_zero_of_regular_addContent (hR : IsSetRing R) (m : AddContent ℝ�
           by_cases hin : i ≤ n
           · simp only [hin, Set.iInter_true, Set.iUnion_true]
             refine Set.sdiff_subset_sdiff ?_ subset_rfl
-            exact Set.biInter_subset_of_mem hin
+            exact Set.biInter_subset_of_mem (s := {i | i ≤ n}) hin
           · simp_all
     _ = m (⋃ i ∈ Finset.range (n + 1), (s i \ t i)) := by simp only [Finset.mem_range_succ_iff]
     _ ≤ ∑ i ∈ Finset.range (n + 1), m (s i \ t i) :=
         addContent_biUnion_le hR (fun i _ ↦ hR.sdiff_mem (hs i) (hCR (ht_mem_C i)))
     _ ≤ ∑ i ∈ Finset.range (n + 1), (δ i : ℝ≥0∞) := Finset.sum_le_sum (fun i _ ↦ ht i)
-    _ ≤ ∑' i, (δ i : ℝ≥0∞) := ENNReal.sum_le_tsum _
+    _ ≤ ∑' i, (δ i : ℝ≥0∞) := sum_le_tsum _
     _ ≤ ε := hδ_sum.le
 
 lemma addContent_iUnion_eq_sum_of_regular (hR : IsSetRing R) (m : AddContent ℝ≥0∞ R)

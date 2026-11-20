@@ -401,7 +401,7 @@ theorem MultiplicityDatum.ae_norm_le_bound {𝕜 : Type*} [RCLike 𝕜]
   rw [ae_iff]
   have hmeas : MeasurableSet {p : ℂ × ℕ | ¬ ‖p.1‖ ≤ D.bound} :=
     (measurableSet_le (measurable_norm.comp measurable_fst) measurable_const).compl
-  rw [MultiplicityDatum.measure, sliceSum_apply _ hmeas, ENNReal.tsum_eq_zero]
+  rw [MultiplicityDatum.measure, sliceSum_apply _ hmeas, tsum_eq_zero_iff]
   intro k
   have hfib : {z : ℂ | (z, k) ∈ {p : ℂ × ℕ | ¬ ‖p.1‖ ≤ D.bound}} = {z : ℂ | D.bound < ‖z‖} := by
     refine Set.ext fun z => ?_

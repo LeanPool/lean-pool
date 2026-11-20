@@ -294,7 +294,7 @@ theorem phase_contDiff (g : Geometry) (w : ClockWindow) {A B : P → ℝ}
 theorem phase_contDiffOn (g : Geometry) (w : ClockWindow) {A B : P → ℝ} {U : Set P}
     (hA : ContDiffOn ℝ ∞ A U) (hB : ContDiffOn ℝ ∞ B U) :
     ContDiffOn ℝ ∞ (phase g w.cutoff A B) (U ×ˢ univ) :=
-  (hA.comp contDiffOn_fst (fun _ hx => hx.1)).sub
+  (hA.comp contDiffOn_fst (fun _ (hx : _ ∈ U ×ˢ univ) => hx.1)).sub
     (((periodicClock_contDiff g w).comp_contDiffOn contDiffOn_snd).mul
       (hB.comp contDiffOn_fst (fun _ hx => hx.1)))
 
@@ -753,7 +753,7 @@ theorem transportPhase_contDiffOn {Φ : P × Plane → ℝ} {φ : Q → P} {U : 
     (hmap : MapsTo φ V U) (gap : ℕ) (K Kr : ℝ) :
     ContDiffOn ℝ ∞ (transportPhase Φ φ gap K Kr) (V ×ˢ univ) :=
   contDiffOn_const.mul (hΦ.comp
-    ((hφ.comp contDiffOn_fst (fun _ hx => hx.1)).prodMk
+    ((hφ.comp contDiffOn_fst (fun _ (hx : _ ∈ V ×ˢ univ) => hx.1)).prodMk
       ((coverPower gap).contDiff.comp_contDiffOn contDiffOn_snd))
     (fun _ hx => ⟨hmap hx.1, mem_univ _⟩))
 

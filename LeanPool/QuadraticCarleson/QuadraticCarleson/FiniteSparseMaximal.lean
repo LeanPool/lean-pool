@@ -241,7 +241,7 @@ theorem sparseForm_le_lintegral_intervalMaximalAverage {p η : ℝ}
         ENNReal.ofReal
           (I.1.length * localAverage 1 f I.1 * localAverage p g I.1) ≤
       ∑' I : {I : RealInterval // I ∈ S},
-        ENNReal.ofReal η⁻¹ * ∫⁻ x in E I, M x := ENNReal.tsum_le_tsum hterm
+        ENNReal.ofReal η⁻¹ * ∫⁻ x in E I, M x := tsum_le_tsum hterm
     _ = ENNReal.ofReal η⁻¹ * ∫⁻ x in ⋃ I, E I, M x := by
       rw [ENNReal.tsum_mul_left, lintegral_iUnion (fun I ↦ hEmeas I) hEdisj]
     _ ≤ ENNReal.ofReal η⁻¹ * ∫⁻ x, M x :=

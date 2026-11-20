@@ -292,13 +292,13 @@ theorem eventG1b_lhs_le_rowGE (M : ABKModel d) {s : ℝ} (hs0 : 0 < s) (hs1 : s 
                 ENNReal.ofReal
                   (shellW2InfNormAt (Support.triadicLatticePoint k v.1) k
                     (omega.1 k))) ^ 2) ≤ ∑' n : {n : ℤ // n ≤ m}, F n.1 := by
-    refine ENNReal.tsum_le_tsum fun n => ?_
+    refine tsum_le_tsum fun n => ?_
     rw [hF]
     simp only [ite_eq_left n.2, hw, hg, gwG1b]
     refine mul_le_mul' le_rfl (Finset.sum_le_sum fun k hk => ?_)
     exact eventG1b_inner_le M (Finset.mem_Icc.1 hk).2 omega
   have hstep2 : (∑' n : {n : ℤ // n ≤ m}, F n.1) ≤ ∑' n : ℤ, F n :=
-    ENNReal.tsum_comp_le_tsum_of_injective Subtype.val_injective _
+    tsum_comp_le_tsum_of_injective Subtype.val_injective _
   have hstep3 : (∑' n : ℤ, F n) =
       ∑' k : ℤ,
         (if k ≤ m then (∑' n : ℤ, (if n ≤ min (k + 1) m then w n else 0)) * g k
@@ -329,7 +329,7 @@ theorem eventG1b_lhs_le_rowGE (M : ABKModel d) {s : ℝ} (hs0 : 0 < s) (hs1 : s 
             else 0) := hstep3
     _ ≤ ∑' k : ℤ, ENNReal.ofReal (g1bConst s) *
           ENNReal.ofReal (wt (s / 8) m k * arrayG1b M s m k omega) :=
-        ENNReal.tsum_le_tsum hstep4
+        tsum_le_tsum hstep4
     _ = ENNReal.ofReal (g1bConst s) * rowGE (arrayG1b M s) (s / 8) m omega :=
         ENNReal.tsum_mul_left
 

@@ -250,7 +250,7 @@ theorem stopping_lintegral_le {Ω : Type*} [MeasurableSpace Ω]
   have hdom (a : Ω) : ENNReal.ofReal (b ^ ell a) ≤ 1 + ∑' r, F r a := by
     rcases hn : ell a with _ | n
     · simp
-    · have ht := ENNReal.le_tsum (f := fun r => F r a) n
+    · have ht := le_tsum (f := fun r => F r a) n
       have hmem : a ∈ {a | n < ell a} := by simp [hn]
       simpa only [F, indicator_of_mem hmem, hn] using ht.trans (le_add_self :
         (∑' r, F r a) ≤ 1 + ∑' r, F r a)
@@ -273,7 +273,7 @@ theorem stopping_lintegral_le {Ω : Type*} [MeasurableSpace Ω]
       rw [lintegral_add_left measurable_const, lintegral_tsum (fun r => (hF r).aemeasurable)]
       simp
     _ ≤ 1 + ∑' r, ENNReal.ofReal (b * A * (b * q) ^ r) :=
-      add_le_add le_rfl (ENNReal.tsum_le_tsum hterm)
+      add_le_add le_rfl (tsum_le_tsum hterm)
     _ = _ := by
       rw [← ENNReal.ofReal_tsum_of_nonneg (fun r => by positivity) hs,
         tsum_mul_left, tsum_geometric_of_lt_one (mul_nonneg hb hq) hbq,

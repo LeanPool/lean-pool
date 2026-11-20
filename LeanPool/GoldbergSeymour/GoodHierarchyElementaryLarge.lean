@@ -790,7 +790,7 @@ theorem GoodHierarchyElementaryLarge {V E : Type*}
   classical
   induction hq : H.dividerCount using Nat.strong_induction_on
       generalizing input T phi ett base H hgood with
-  | h q ih =>
+  | ind q ih =>
       exact @helper_branch_281 V E inferInstance inferInstance inferInstance inferInstance G k e0
           q ih input T phi ett hMP base H hgood hlower hcurrent hlarge hq
 end GoldbergSeymour

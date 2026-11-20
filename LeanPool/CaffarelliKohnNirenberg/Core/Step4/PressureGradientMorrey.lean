@@ -143,10 +143,10 @@ theorem routeA_morreyNorm_add_le
     (f := f) (g := g) (p := ENNReal.ofReal (3 : ℝ)) (by norm_num)
   have hfμ : AEStronglyMeasurable f μ := hf.aestronglyMeasurable.restrict
   have hgμ : AEStronglyMeasurable g μ := hg.aestronglyMeasurable.restrict
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     (hfμ.add hgμ),
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hfμ,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hgμ] at hsum
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hfμ,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hgμ] at hsum
   have hsum' :
       (cylinderPowerIntegral 3 (fun z => f z + g z) z r.1) ^
           (1 / (3 : ℝ)) ≤
@@ -155,7 +155,7 @@ theorem routeA_morreyNorm_add_le
     simp only [Pi.add_apply, ENNReal.ofReal_ofNat, ENNReal.toReal_ofNat, ENNReal.rpow_ofNat,
       one_div,
     cylinderPowerIntegral, μ] at hsum ⊢
-    simp_rw [Real.enorm_eq_ofReal_abs] at hsum
+    simp_rw [Real.eNorm_eq_ofReal_abs] at hsum
     exact hsum
   have hcell : morreyCell 3 25 (fun z => f z + g z) z r.1 ≤
       morreyCell 3 25 f z r.1 + morreyCell 3 25 g z r.1 := by

@@ -45,7 +45,7 @@ theorem lipschitzWith_hilbertVecMomentTrunc (p n : ℕ) :
     (lipschitzWith_one_norm.min_const _).max_const _
   have hpow : LipschitzOnWith ((p : NNReal) * (n : NNReal) ^ (p - 1))
       (fun t : ℝ => t ^ p) (Set.Icc 0 (n : ℝ)) := by
-    apply (convex_Icc (0 : ℝ) n).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+    apply (convex_Icc (0 : ℝ) n).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
       (fun t _ => (hasDerivAt_pow p t).hasDerivWithinAt)
     intro t ht
     change ‖(p : ℝ) * t ^ (p - 1)‖ ≤

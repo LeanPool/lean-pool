@@ -315,7 +315,7 @@ the sides of `⊔I^(n+1)`, i.e.,
 the closure of the complement of the top and bottom faces of `∂I^(n+1)`. -/
 def inclToBoundaryJarSides {n : ℕ} : C((∂I^n) × I, ⊔I^(n+1)) where
   toFun := fun yt ↦
-    ⟨ (toContinuousMap splitAtLastComm.symm |>.comp <|
+    ⟨ (ContinuousMap.ofClass splitAtLastComm.symm |>.comp <|
         ContinuousMap.prodMap (boundaryIncl n) (ContinuousMap.id _)) yt,
     by
       obtain ⟨⟨y, ⟨i, hyi⟩⟩, t⟩ := yt
@@ -328,7 +328,7 @@ def inclToBoundaryJarSides {n : ℕ} : C((∂I^n) × I, ⊔I^(n+1)) where
         simpa [Fin.castSucc_ne_last, Fin.castSucc_lt_last]  ⟩
   continuous_toFun := by
     refine Continuous.subtype_mk ?_ _
-    simp only [ContinuousMap.coe_comp, ContinuousMap.coe_coe, Homeomorph.comp_continuous_iff]
+    simp only [ContinuousMap.coe_comp, ContinuousMap.coe_ofClass, Homeomorph.comp_continuous_iff]
     apply ContinuousMapClass.map_continuous
 
 /-- The inclusion `(y, t) ↦ (y₀, y₁, …, yₙ₋₁, t)` to the sides of
@@ -381,7 +381,7 @@ lemma cubeBoundaryIncl_apply_down_eq {n : ℕ} (y : I^Fin n) (hy : y ∈ ∂I^n)
 /-- `cubeSplitAtLast` -/
 def cubeSplitAtLast {n : ℕ} : 𝕀 (n + 1) ≅ TopCat.of (I × 𝕀 n) where
   hom := ofHom ⟨fun ⟨y⟩ ↦ ⟨(Cube.splitAtLast y).fst, ⟨(Cube.splitAtLast y).snd⟩⟩, by fun_prop⟩
-  inv := ofHom ⟨fun ⟨t, ⟨y⟩⟩ ↦ ⟨Cube.splitAtLast.symm ⟨t, y⟩⟩, by fun_prop⟩
+  inv := ofHom ⟨fun x ↦ ⟨Cube.splitAtLast.symm ⟨x.1, x.2.down⟩⟩, by fun_prop⟩
   hom_inv_id := by
     ext ⟨y⟩
     change ULift.up (Cube.splitAtLast.symm (Cube.splitAtLast y)) = ULift.up y

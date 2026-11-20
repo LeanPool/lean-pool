@@ -106,7 +106,7 @@ theorem ae_memLp_two_of_lintegral_sq {f : Ω → ℝ → ℝ}
       ∫⁻ s in Set.Icc (0 : ℝ) ((n : ℝ) + 1), (‖f ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume < ⊤ := by
     intro n
     refine MeasureTheory.ae_lt_top ?_ (hfin ((n : ℝ) + 1) (by positivity)).ne
-    exact (hf.nnnorm.coe_nnreal_ennreal.pow_const 2).lintegral_prod_right'
+    exact (hf.nnNorm.coe_nnreal_ennreal.pow_const 2).lintegral_prod_right'
   filter_upwards [MeasureTheory.ae_all_iff.mpr hstep] with ω hω b
   obtain ⟨n, hn⟩ := exists_nat_ge b
   have hsub : Set.Icc (0 : ℝ) b ⊆ Set.Icc (0 : ℝ) ((n : ℝ) + 1) :=

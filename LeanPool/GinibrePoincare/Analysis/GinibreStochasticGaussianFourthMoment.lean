@@ -55,8 +55,9 @@ theorem ginibreGaussian_centered_fourthMoment (v : ℝ≥0) :
   rw [← hMom]
   let g := fun t : ℝ => Real.exp ((v : ℝ)*t^2/2)
   have hExp (t : ℝ) : HasDerivAt g ((v : ℝ)*t*g t) t := by
-    convert! ((((hasDerivAt_id t).pow 2).const_mul (v : ℝ)).div_const 2).exp using 1; dsimp [g]
-       ; ring
+    convert! ((((hasDerivAt_id t).pow 2).const_mul (v : ℝ)).div_const 2).exp using 1
+    dsimp [g]
+    ring
   have h1 : deriv g = fun t => (v : ℝ)*t*g t := funext (fun t => (hExp t).deriv)
   have h2 : deriv (fun t => (v : ℝ)*t*g t) = fun t => ((v : ℝ)+(v : ℝ)^2*t^2)*g t := by
     funext t

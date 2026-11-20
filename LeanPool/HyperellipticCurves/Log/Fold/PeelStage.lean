@@ -169,8 +169,8 @@ theorem prod_coeff_C_add_X (u : R) (σ : Fin g → Fin 2) :
     ∏ m, (C u + X).coeff (σ m : ℕ) = u ^ (g - shiftSum σ) := by
   have h1 (m : Fin g) : (C u + X).coeff (σ m : ℕ) = u ^ (1 - (σ m : ℕ)) := by
     rcases eq_or_ne (σ m) 0 with h | h
-    · simp [h, coeff_add]
-    · simp [Fin.eq_one_of_ne_zero _ h, coeff_add]
+    · simp [h]
+    · simp [Fin.eq_one_of_ne_zero _ h]
   rw [Finset.prod_congr rfl fun m _ ↦ h1 m, Finset.prod_pow_eq_pow_sum]
   congr 1
   rw [Finset.sum_tsub_distrib _ fun m _ ↦ by have := (σ m).isLt; lia, shiftSum,

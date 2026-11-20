@@ -696,7 +696,7 @@ theorem exists_scalarIdentityGoodTailIntrinsicSlopeThreshold
     have hepsZero : Filter.Tendsto epsilon Filter.atTop (nhds 0) :=
       hepsilon.tendsto_atTop_zero
     convert (tendsto_const_nhds.mul hepsZero).mul tendsto_const_nhds using 1
-    all_goals simp
+    simp
   have hsuccessive : ∀ q k,
       ‖x q (k + 1) - x q k‖ ≤
         (Cstep * euclideanNorm e) * epsilon (q + k) := by
@@ -758,7 +758,7 @@ theorem exists_scalarIdentityGoodTailIntrinsicSlopeThreshold
     rw [hm0]
     rw [hm0, hmSucc] at hbound
     convert hbound using 1
-    all_goals ring
+    ring
   have hshift : Filter.Tendsto L Filter.atTop (nhds 0) :=
     tendsto_zero_of_summable_successive_norm_le_of_diagonal_tendsto
       x L epsilon (Cstep * euclideanNorm e) hepsilon hrow hdiag hsuccessive

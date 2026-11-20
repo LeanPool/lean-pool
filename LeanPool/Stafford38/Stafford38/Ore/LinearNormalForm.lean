@@ -39,8 +39,7 @@ noncomputable section
 def polynomialFinsuppLinearEquiv
     {k R : Type*} [CommSemiring k] [Semiring R] [Algebra k R] :
     Polynomial R ≃ₗ[k] (ℕ →₀ R) :=
-  { (Polynomial.toFinsuppIso R).toAddEquiv.trans
-      (AddMonoidAlgebra.coeffLinearEquiv k).toAddEquiv with
+  { (AddMonoidAlgebra.coeffLinearEquiv k).toAddEquiv with
     map_smul' := by
       intro c p
       rfl }
@@ -61,8 +60,12 @@ theorem polynomialMapRangeLinearEquiv_C
     [Algebra k R] [Algebra k S] (e : R ≃ₗ[k] S) (r : R) :
     polynomialMapRangeLinearEquiv e (Polynomial.C r) =
       Polynomial.C (e r) := by
-  apply (Polynomial.toFinsuppIso S).injective
-  simp [polynomialMapRangeLinearEquiv, polynomialFinsuppLinearEquiv]
+  apply AddMonoidAlgebra.coeff_injective
+  apply Finsupp.ext
+  intro n
+  by_cases hn : n = 0 <;>
+    simp [polynomialMapRangeLinearEquiv, polynomialFinsuppLinearEquiv,
+      Polynomial.coeff_C, hn]
 
 @[simp]
 theorem polynomialMapRangeLinearEquiv_monomial
@@ -70,7 +73,7 @@ theorem polynomialMapRangeLinearEquiv_monomial
     [Algebra k R] [Algebra k S] (e : R ≃ₗ[k] S) (n : ℕ) (r : R) :
     polynomialMapRangeLinearEquiv e (Polynomial.monomial n r) =
       Polynomial.monomial n (e r) := by
-  apply (Polynomial.toFinsuppIso S).injective
+  apply AddMonoidAlgebra.coeff_injective
   simp [polynomialMapRangeLinearEquiv, polynomialFinsuppLinearEquiv]
 
 @[simp]
@@ -79,8 +82,14 @@ theorem polynomialMapRangeLinearEquiv_X
     [Algebra k R] [Algebra k S] (e : R ≃ₗ[k] S)
     (h1 : e 1 = 1) :
     polynomialMapRangeLinearEquiv e Polynomial.X = Polynomial.X := by
-  apply (Polynomial.toFinsuppIso S).injective
-  simp [polynomialMapRangeLinearEquiv, polynomialFinsuppLinearEquiv, h1]
+  apply AddMonoidAlgebra.coeff_injective
+  apply Finsupp.ext
+  intro n
+  by_cases hn : 1 = n
+  · simp [polynomialMapRangeLinearEquiv, polynomialFinsuppLinearEquiv,
+      Polynomial.coeff_X, hn, h1]
+  · simp [polynomialMapRangeLinearEquiv, polynomialFinsuppLinearEquiv,
+      Polynomial.coeff_X, hn]
 
 @[simp]
 theorem polynomialMapRangeLinearEquiv_one

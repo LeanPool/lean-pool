@@ -269,7 +269,7 @@ fails for the wrong right-hand side `∑ᵢ cost D bᵢ`, which is a genuine tot
 statement; see the module docstring.)
 
 Second, taking the sums in `ℝ≥0∞` makes them unconditionally defined: divergence
-is a value, not a failure, and `ENNReal.tsum_le_tsum` turns the termwise bound
+is a value, not a failure, and `tsum_le_tsum` turns the termwise bound
 into the infinite one with no hypothesis at all. -/
 
 /-- Proposition 4.2 over an arbitrary finite subfamily of unit vectors of `U`.
@@ -305,7 +305,7 @@ theorem tsum_displacementAngleSineSq_ge_of_mem_complex
     ∑' i, ENNReal.ofReal (1 - ‖ContinuousLinearMap.modulus
         (spectraCanonicalIntertwiner U V) (b i)‖ ^ 2) ≤
       ∑' i, ENNReal.ofReal (displacementAngleSineSq W (b i)) :=
-  ENNReal.tsum_le_tsum fun i =>
+  tsum_le_tsum fun i =>
     ENNReal.ofReal_le_ofReal
       (displacementAngleSineSq_ge_complex U V W hWunitary hWmap (hb i) (hbnorm i))
 

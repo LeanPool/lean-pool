@@ -27,7 +27,7 @@ exactly when the energy is finite.
 Taking values in `ℝ≥0∞` rather than `ℝ` is what makes this development
 hypothesis-free.  Every sum converges in `ℝ≥0∞`, so the energy is defined for *every*
 bounded operator with no summability side condition, and — this is the point — the
-Fubini exchange `ENNReal.tsum_comm` used in `hilbertSchmidtEnergy_adjoint` needs no
+Fubini exchange `tsum_comm` used in `hilbertSchmidtEnergy_adjoint` needs no
 integrability hypothesis either.  The same convention is used for the gauge of
 `TauCeti.OperatorIdealFamily`, whose Hilbert--Schmidt instance this file is groundwork
 for.
@@ -98,7 +98,7 @@ theorem tsum_enorm_inner_sq (b : HilbertBasis ι 𝕜 E) (v : E) :
     rw [← NNReal.hasSum_coe]
     push_cast
     exact b.hasSum_norm_inner_sq v
-  simp only [enorm_eq_nnnorm, ← ENNReal.coe_pow]
+  simp only [eNorm_eq_nnNorm, ← ENNReal.coe_pow]
   rw [← ENNReal.coe_tsum hnn.summable, hnn.tsum_eq]
 
 end HilbertBasis
@@ -118,7 +118,7 @@ theorem hilbertSchmidtEnergy_def (T : E →L[𝕜] F) (b : HilbertBasis ι 𝕜 
 /-- The energy is the supremum of its finite partial sums. -/
 theorem hilbertSchmidtEnergy_eq_iSup_sum (T : E →L[𝕜] F) (b : HilbertBasis ι 𝕜 E) :
     T.hilbertSchmidtEnergy b = ⨆ s : Finset ι, ∑ i ∈ s, ‖T (b i)‖ₑ ^ 2 :=
-  ENNReal.tsum_eq_iSup_sum
+  tsum_eq_iSup_sum
 
 /-- The zero operator has zero energy. -/
 @[simp] theorem hilbertSchmidtEnergy_zero (b : HilbertBasis ι 𝕜 E) :
@@ -134,7 +134,7 @@ theorem hilbertSchmidtEnergy_eq_iSup_sum (T : E →L[𝕜] F) (b : HilbertBasis 
 `‖c‖²`, not `‖c‖`. -/
 theorem hilbertSchmidtEnergy_smul (c : 𝕜) (T : E →L[𝕜] F) (b : HilbertBasis ι 𝕜 E) :
     (c • T).hilbertSchmidtEnergy b = ‖c‖ₑ ^ 2 * T.hilbertSchmidtEnergy b := by
-  simp only [hilbertSchmidtEnergy, smul_apply, enorm_smul, mul_pow]
+  simp only [hilbertSchmidtEnergy, smul_apply, eNorm_smul, mul_pow]
   exact ENNReal.tsum_mul_left
 
 /-- Expanding each column of `T` in a Hilbert basis of the codomain turns the energy into a
@@ -158,10 +158,10 @@ theorem hilbertSchmidtEnergy_adjoint (T : E →L[𝕜] F) (b : HilbertBasis ι �
   have hentry : ∀ i j, ‖⟪c j, T (b i)⟫_𝕜‖ₑ = ‖⟪b i, T.adjoint (c j)⟫_𝕜‖ₑ := by
     intro i j
     rw [← ContinuousLinearMap.adjoint_inner_left, ← inner_conj_symm (b i) (T.adjoint (c j)),
-      enorm_eq_nnnorm, enorm_eq_nnnorm, RCLike.nnnorm_conj]
+      eNorm_eq_nnNorm, eNorm_eq_nnNorm, RCLike.nnNorm_conj]
   calc T.hilbertSchmidtEnergy b
       = ∑' i, ∑' j, ‖⟪c j, T (b i)⟫_𝕜‖ₑ ^ 2 := T.hilbertSchmidtEnergy_eq_tsum_tsum b c
-    _ = ∑' j, ∑' i, ‖⟪c j, T (b i)⟫_𝕜‖ₑ ^ 2 := ENNReal.tsum_comm
+    _ = ∑' j, ∑' i, ‖⟪c j, T (b i)⟫_𝕜‖ₑ ^ 2 := tsum_comm
     _ = ∑' j, ∑' i, ‖⟪b i, T.adjoint (c j)⟫_𝕜‖ₑ ^ 2 :=
         tsum_congr fun j => tsum_congr fun i => by rw [hentry i j]
     _ = T.adjoint.hilbertSchmidtEnergy c :=
@@ -189,17 +189,17 @@ theorem enorm_apply_sq_le_hilbertSchmidtEnergy_mul (T : E →L[𝕜] F) (b : Hil
     intro j
     rw [← ContinuousLinearMap.adjoint_inner_left, ← mul_pow]
     gcongr
-    simpa only [enorm_eq_nnnorm, ← ENNReal.coe_mul, ENNReal.coe_le_coe] using
-      nnnorm_inner_le_nnnorm (𝕜 := 𝕜) (T.adjoint (c j)) x
+    simpa only [eNorm_eq_nnNorm, ← ENNReal.coe_mul, ENNReal.coe_le_coe] using
+      nnNorm_inner_le_nnNorm (𝕜 := 𝕜) (T.adjoint (c j)) x
   calc ‖T x‖ₑ ^ 2 = ∑' j, ‖⟪c j, T x⟫_𝕜‖ₑ ^ 2 := (c.tsum_enorm_inner_sq (T x)).symm
-    _ ≤ ∑' j, ‖T.adjoint (c j)‖ₑ ^ 2 * ‖x‖ₑ ^ 2 := ENNReal.tsum_le_tsum hcs
+    _ ≤ ∑' j, ‖T.adjoint (c j)‖ₑ ^ 2 * ‖x‖ₑ ^ 2 := tsum_le_tsum hcs
     _ = T.adjoint.hilbertSchmidtEnergy c * ‖x‖ₑ ^ 2 := ENNReal.tsum_mul_right
     _ = T.hilbertSchmidtEnergy b * ‖x‖ₑ ^ 2 := by rw [← T.hilbertSchmidtEnergy_adjoint b c]
 
 /-- Taking adjoints preserves the extended operator norm.  Mathlib has this for the real
 norm (`ContinuousLinearMap.adjoint` is a `LinearIsometryEquiv`) but not for `‖·‖ₑ`. -/
 theorem enorm_adjoint (T : E →L[𝕜] F) : ‖T.adjoint‖ₑ = ‖T‖ₑ := by
-  simp only [enorm_eq_nnnorm]
+  simp only [eNorm_eq_nnNorm]
   norm_cast
   rw [← NNReal.coe_inj]
   simp
@@ -212,7 +212,7 @@ theorem hilbertSchmidtEnergy_comp_left_le (A : F →L[𝕜] G) (T : E →L[𝕜]
     (A ∘L T).hilbertSchmidtEnergy b ≤ ‖A‖ₑ ^ 2 * T.hilbertSchmidtEnergy b := by
   calc (A ∘L T).hilbertSchmidtEnergy b = ∑' i, ‖A (T (b i))‖ₑ ^ 2 := (rfl)
     _ ≤ ∑' i, ‖A‖ₑ ^ 2 * ‖T (b i)‖ₑ ^ 2 :=
-        ENNReal.tsum_le_tsum fun i => by rw [← mul_pow]; gcongr; exact A.le_opENorm _
+        tsum_le_tsum fun i => by rw [← mul_pow]; gcongr; exact A.le_opENorm _
     _ = ‖A‖ₑ ^ 2 * T.hilbertSchmidtEnergy b := ENNReal.tsum_mul_left
 
 /-- **Right ideal property.**  Precomposing with a bounded operator contracts the energy by

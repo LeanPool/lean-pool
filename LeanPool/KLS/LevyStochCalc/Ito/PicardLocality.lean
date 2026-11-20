@@ -120,14 +120,14 @@ theorem itoIntegral_congr_ae
           : ℝ≥0∞) ^ 2 :=
     (((measurable_itoIntegral_slice Wj ℱ hℱ H₁ hm₁ hp₁ hs₁ t).sub
       (measurable_itoIntegral_slice Wj ℱ hℱ H₂ hm₂ hp₂ hs₂
-        t)).nnnorm.coe_nnreal_ennreal).pow_const 2
+        t)).nnNorm.coe_nnreal_ennreal).pow_const 2
   filter_upwards [(lintegral_eq_zero_iff hmeas).mp hiso] with ω hω
   have : (‖LevyStochCalc.Brownian.Ito.stochasticIntegral Wj ℱ hℱ H₁ hm₁ hp₁ hs₁ t ω
       - LevyStochCalc.Brownian.Ito.stochasticIntegral Wj ℱ hℱ H₂ hm₂ hp₂ hs₂ t ω‖₊ : ℝ≥0∞) = 0 := by
     simpa using hω
   have hn : ‖LevyStochCalc.Brownian.Ito.stochasticIntegral Wj ℱ hℱ H₁ hm₁ hp₁ hs₁ t ω
       - LevyStochCalc.Brownian.Ito.stochasticIntegral Wj ℱ hℱ H₂ hm₂ hp₂ hs₂ t ω‖ = 0 := by
-    simpa [← ENNReal.coe_eq_zero, ← coe_nnnorm] using this
+    simpa [← ENNReal.coe_eq_zero, ← coe_nnNorm] using this
   exact sub_eq_zero.mp (norm_eq_zero.mp hn)
 
 /-- Integrands agreeing a.e. on `[0, t]` have a.e. equal compensated-Poisson integrals at `t`. -/
@@ -158,7 +158,7 @@ theorem compensatedIntegral_congr_ae {ν : Measure E} [SigmaFinite ν]
           : ℝ≥0∞) ^ 2 :=
     (((measurable_compensatedIntegral_slice N ℱ hℱN φ₁ hm₁ hp₁ hs₁ t).sub
       (measurable_compensatedIntegral_slice N ℱ hℱN φ₂ hm₂ hp₂ hs₂
-        t)).nnnorm.coe_nnreal_ennreal).pow_const 2
+        t)).nnNorm.coe_nnreal_ennreal).pow_const 2
   filter_upwards [(lintegral_eq_zero_iff hmeas).mp hiso] with ω hω
   have hz : (‖LevyStochCalc.Poisson.Compensated.stochasticIntegral N ℱ hℱN φ₁ hm₁ hp₁ hs₁ t ω
       - LevyStochCalc.Poisson.Compensated.stochasticIntegral N ℱ hℱN φ₂ hm₂ hp₂ hs₂ t ω‖₊
@@ -166,7 +166,7 @@ theorem compensatedIntegral_congr_ae {ν : Measure E} [SigmaFinite ν]
     simpa using hω
   have hn : ‖LevyStochCalc.Poisson.Compensated.stochasticIntegral N ℱ hℱN φ₁ hm₁ hp₁ hs₁ t ω
       - LevyStochCalc.Poisson.Compensated.stochasticIntegral N ℱ hℱN φ₂ hm₂ hp₂ hs₂ t ω‖ = 0 := by
-    simpa [← ENNReal.coe_eq_zero, ← coe_nnnorm] using hz
+    simpa [← ENNReal.coe_eq_zero, ← coe_nnNorm] using hz
   exact sub_eq_zero.mp (norm_eq_zero.mp hn)
 
 /-! ### Locality of the Picard step -/

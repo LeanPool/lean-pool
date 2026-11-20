@@ -75,14 +75,14 @@ open ModularCurve.Period
 
 variable (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex]
 
-abbrev A : Type := Additive (Abelianization ↥Γ)
+abbrev A : Type := Additive (Group.Abelianization ↥Γ)
 
 scoped instance : AddGroup.FG (A Γ) := by
-  have : Group.FG (Abelianization ↥Γ) :=
-    Group.fg_of_surjective (f := Abelianization.of) (QuotientGroup.mk_surjective)
+  have : Group.FG (Group.Abelianization ↥Γ) :=
+    Group.fg_of_surjective (f := Group.Abelianization.of) (QuotientGroup.mk_surjective)
   infer_instance
 
-def cls (γ : ↥Γ) : A Γ := Additive.ofMul (Abelianization.of γ)
+def cls (γ : ↥Γ) : A Γ := Additive.ofMul (Group.Abelianization.of γ)
 
 omit [Γ.FiniteIndex] in
 theorem cls_mul (γ δ : ↥Γ) : cls Γ (γ * δ) = cls Γ γ + cls Γ δ := by
@@ -122,7 +122,7 @@ theorem π_surjective : Function.Surjective (π Γ) := by
   intro q
   induction q using QuotientAddGroup.induction_on with
   | H a =>
-    obtain ⟨x, rfl⟩ : ∃ x : Abelianization ↥Γ, Additive.ofMul x = a := ⟨Additive.toMul a, rfl⟩
+    obtain ⟨x, rfl⟩ : ∃ x : Group.Abelianization ↥Γ, Additive.ofMul x = a := ⟨Additive.toMul a, rfl⟩
     obtain ⟨γ, rfl⟩ := QuotientGroup.mk_surjective x
     exact ⟨γ, rfl⟩
 
@@ -131,11 +131,11 @@ section Factor
 variable {Γ} {R : Type*} [AddCommGroup R]
 
 def liftA (φ : Additive ↥Γ →+ R) : A Γ →+ R :=
-  MonoidHom.toAdditiveLeft (Abelianization.lift (AddMonoidHom.toMultiplicativeRight φ))
+  MonoidHom.toAdditiveLeft (Group.Abelianization.lift (AddMonoidHom.toMultiplicativeRight φ))
 
 omit [Γ.FiniteIndex] in
 theorem liftA_cls (φ : Additive ↥Γ →+ R) (γ : ↥Γ) : liftA φ (cls Γ γ) = φ (Additive.ofMul γ) := by
-  simp [liftA, cls, Abelianization.lift_apply_of]
+  simp [liftA, cls, Group.Abelianization.lift_apply_of]
 
 omit [Γ.FiniteIndex] in
 theorem P_le_ker (φ : Additive ↥Γ →+ R) (hφ : IsParabolicHom Γ φ) : P Γ ≤ (liftA φ).ker := by

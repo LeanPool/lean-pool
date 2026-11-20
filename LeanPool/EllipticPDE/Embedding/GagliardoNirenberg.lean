@@ -472,7 +472,7 @@ theorem exists_eLpNorm_sobolevConj_le (hd : 0 < d) (c : EuclideanSpace ℝ (Fin 
       rw [show (fun x => M * B.indicator v x) = M • (B.indicator v) from rfl,
         eLpNorm_const_smul, eLpNorm_indicator_eq_eLpNorm_restrict hBm.nullMeasurableSet]
       congr 1
-      rw [Real.enorm_eq_ofReal hM0]
+      rw [Real.eNorm_eq_ofReal hM0]
     exact (eLpNorm_add_le hp1).trans (add_le_add h1 h2)
   have hGLp : ∀ k, MemLp (G k) p volume := by
     intro k

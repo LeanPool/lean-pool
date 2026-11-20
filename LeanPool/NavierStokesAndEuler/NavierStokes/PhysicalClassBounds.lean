@@ -147,7 +147,7 @@ theorem jets_bound_global_of_support {f : D → E} {U : Set D} {B : ℝ}
     ∀ x, ‖iteratedFDeriv ℝ m f x‖ ≤ B := by
   intro x
   by_cases hx : x ∈ closure U
-  · exact (closure_minimal hb (isClosed_le
+  · exact (closure_minimal (fun x hx => hb x hx) (isClosed_le
       (hf.continuous_iteratedFDeriv (nat_le_infty m)).norm continuous_const)) hx
   · rw [PhysicalWaveSum.jet_zero_off_tsupport f m (fun ht => hx (hs ht)), norm_zero]
     exact hB

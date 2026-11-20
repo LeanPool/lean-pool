@@ -38,7 +38,7 @@ theorem paperLacunaryOscillatoryMaximal_const_mul
     paperLacunaryOscillatoryMaximal (fun y ↦ c * f y) x =
       ‖c‖ₑ * paperLacunaryOscillatoryMaximal f x := by
   unfold paperLacunaryOscillatoryMaximal
-  simp_rw [paperOscillatoryAction_const_mul _ _ hf, enorm_mul]
+  simp_rw [paperOscillatoryAction_const_mul _ _ hf, eNorm_mul]
   exact (ENNReal.mul_iSup _ _).symm
 
 theorem paperLacunaryOscillatoryMaximal_normalizedInput

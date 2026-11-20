@@ -90,10 +90,10 @@ theorem neighborStar :
         ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]
       · subst b
         right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; try ring
+        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; ring
       · subst b
         right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; try ring
+        ext <;> simp [BandPackingSymmetryVectorAction, GaussianQuarterTurn]; ring
   | conjugate =>
       intro a b hb
       rcases hb with hb | hb | hb | hb | hb
@@ -101,10 +101,10 @@ theorem neighborStar :
         simp [BandPackingSymmetryVectorAction]
       · subst b
         right; right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; try ring
+        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; ring
       · subst b
         right; left
-        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; try ring
+        ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]; ring
       · subst b
         right; right; right; left
         ext <;> simp [BandPackingSymmetryVectorAction, GaussianReflection]

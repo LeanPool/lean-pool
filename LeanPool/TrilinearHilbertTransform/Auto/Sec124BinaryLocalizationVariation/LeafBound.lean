@@ -538,7 +538,7 @@ variable {κ : LocalKernelClass} {c₀ : ℕ} {A : ActiveSetup κ c₀} {bf : A.
 
 /-- The cell form of an attempt on the main columns (zero off the active cells). -/
 noncomputable def Λc (I : ℤ × ℤ) :
-    MultilinearMap ℂ (fun _ : Fin 4 => ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) ℂ :=
+    MultilinearMap (RingHom.id ℂ) (fun _ : Fin 4 => ColumnL2 (bf.Lab ⊕ Fin fp.Mc)) ℂ :=
   if h : I ∈ A.cells then
     cellForm (dyadicGridLength_pos A.G I.1) (A.adm I h) (bf.Lab ⊕ Fin fp.Mc) else 0
 

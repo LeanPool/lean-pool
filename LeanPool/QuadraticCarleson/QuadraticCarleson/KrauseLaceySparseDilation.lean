@@ -510,7 +510,7 @@ theorem locallyIntegrable_finiteSmoothMaxOperator
     induction s using Finset.induction_on with
     | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ρ s hρ ih =>
-        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
+        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnNorm]
         exact (hmeas ρ).norm.max ih
   rw [locallyIntegrable_iff]
   intro K hK
@@ -531,7 +531,7 @@ theorem locallyIntegrable_finiteSmoothMaxOperator
         exact Finset.single_le_sum
           (f := fun δ : PositiveSmoothRadius ↦ ‖smoothQuadraticHighPass lam δ.1 f x‖₊)
           (fun δ _ ↦ zero_le) hρ
-      simpa only [NNReal.coe_sum, coe_nnnorm] using NNReal.coe_le_coe.mpr hs
+      simpa only [NNReal.coe_sum, coe_nnNorm] using NNReal.coe_le_coe.mpr hs
     _ ≤ C := by
       apply Finset.sum_le_sum
       intro ρ hρ

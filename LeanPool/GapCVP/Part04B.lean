@@ -1278,8 +1278,8 @@ theorem polynomialRowMarker_coefficient_zero_step
   polynomialRowMarkerStepOnly;
     simp only [Fin.isValue, hstage', ↓reduceDIte, Fin.coe_ofNat_eq_mod, Nat.zero_mod,
       polynomialRowMarkerPushBits_stepAux, TM2.stepAux, List.reverse_replicate, Matrix.cons_val];
-    try { congr 2; funext stack; fin_cases stack <;>
-      simp [Function.update] }
+    congr 2; funext stack; fin_cases stack <;>
+      simp [Function.update]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_coefficient_succ_step
@@ -1304,8 +1304,8 @@ theorem polynomialRowMarker_coefficient_succ_step
   polynomialRowMarkerStepTac;
     simp only [Fin.isValue, hstage', ↓reduceDIte, polynomialRowMarkerPushBits_stepAux, TM2.stepAux,
       List.reverse_replicate, Matrix.cons_val];
-    try { congr 2; funext stack; fin_cases stack <;>
-      simp [Function.update] }
+    congr 2; funext stack; fin_cases stack <;>
+      simp [Function.update]
 
 /-- Internal support shared across GapCVP continuation modules. -/
 theorem polynomialRowMarker_payload_step

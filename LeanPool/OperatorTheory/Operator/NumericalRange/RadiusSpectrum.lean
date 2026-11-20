@@ -175,7 +175,7 @@ theorem spectralRadius_le_numericalRadius (A : E →L[ℂ] E) :
     spectralRadius ℂ A ≤ ENNReal.ofReal (numericalRadius A) := by
   rw [spectralRadius_eq_of_unital]
   refine iSup₂_le fun z hz => ?_
-  rw [← enorm_eq_nnnorm, ← ofReal_norm]
+  rw [← eNorm_eq_nnNorm, ← ofReal_norm]
   exact ENNReal.ofReal_le_ofReal
     (norm_le_numericalRadius_of_mem_spectrum A hz)
 

@@ -142,7 +142,7 @@ theorem coordinateSlope_h1 (ξ : U) :
       m hm hRange K hK hH hsmall _ (affineTrial_tangent T hT Q Q₁ hd m hm) ξ t).2
   have hcont : AbsolutelyContinuousOnInterval v 0 T := by
     have hl : LipschitzOnWith ‖g‖₊ v (Icc (0 : ℝ) T) := by
-      apply (convex_Icc (0 : ℝ) T).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+      apply (convex_Icc (0 : ℝ) T).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
         (f' := extendPath T hT g)
       · intro t ht
         simpa only [extendPath, projIcc_of_mem hT ht] using hdv ⟨t, ht⟩

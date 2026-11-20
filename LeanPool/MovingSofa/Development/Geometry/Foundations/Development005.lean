@@ -6216,7 +6216,7 @@ theorem reflectedAngle_mem_capNormals {ω : ℝ} (a : Real.Angle)
                 rw [Real.Angle.coe_add, Real.Angle.coe_two_pi, add_zero]
           _ = (((3 * Real.pi / 2 : ℝ) : Real.Angle)) := by congr 1; ring
       convert hperiod using 1
-      all_goals ring_nf
+      ring_nf
     · left
       rw [reflectedAngle_coe]
       have hperiod :
@@ -6228,7 +6228,7 @@ theorem reflectedAngle_mem_capNormals {ω : ℝ} (a : Real.Angle)
                 rw [Real.Angle.coe_add, Real.Angle.coe_two_pi, add_zero]
           _ = (((ω + Real.pi : ℝ) : Real.Angle)) := by congr 1; ring
       convert hperiod using 1
-      all_goals ring_nf
+      ring_nf
 
 /-- Reflect a half-plane presentation when its allowed normals are transported. -/
 theorem HasHalfPlaneRepresentation.reflectedBody {ω : ℝ}
@@ -6306,7 +6306,7 @@ theorem reflectedAngle_at_omega_add_pi (ω : ℝ) :
             rw [Real.Angle.coe_add, Real.Angle.coe_two_pi, add_zero]
       _ = (((3 * Real.pi / 2 : ℝ) : Real.Angle)) := by congr 1; ring
   convert hperiod using 1
-  all_goals ring_nf
+  ring_nf
 
 /-- Reflection exchanges the two lower cap normals. -/
 theorem reflectedAngle_at_three_pi_div_two (ω : ℝ) :
@@ -6322,7 +6322,7 @@ theorem reflectedAngle_at_three_pi_div_two (ω : ℝ) :
             rw [Real.Angle.coe_add, Real.Angle.coe_two_pi, add_zero]
       _ = (((ω + Real.pi : ℝ) : Real.Angle)) := by congr 1; ring
   convert hperiod using 1
-  all_goals ring_nf
+  ring_nf
 
 /-- Reflection preserves the normalized cap conditions. -/
 theorem reflectedBody_isCap {ω : ℝ} (K : CapSpace ω) :

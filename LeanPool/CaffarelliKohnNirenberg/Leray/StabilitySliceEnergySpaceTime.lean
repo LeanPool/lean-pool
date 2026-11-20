@@ -41,7 +41,7 @@ theorem stability_essSup_slice_energy_lt_top_spaceTime
   have hslice (n : ℕ) :
       ∀ᵐ t ∂ν, AEMeasurable (fun x => ‖F n (x, t)‖ₑ ^ (2 : ℝ)) μ := by
     filter_upwards [(hF n).prodMk_right] with t ht
-    exact ht.enorm.pow_const (2 : ℝ)
+    exact ht.eNorm.pow_const (2 : ℝ)
   exact stability_essSup_slice_energy_lt_top μ ν
     (fun n z => F n (z.2, z.1)) (fun z => G (z.2, z.1))
     hswap hslice M hM hbound

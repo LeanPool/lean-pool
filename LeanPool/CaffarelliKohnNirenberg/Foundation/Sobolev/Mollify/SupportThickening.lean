@@ -88,13 +88,11 @@ theorem thickening_separated {A U : Set Vec3} {δ : ℝ}
   rcases Set.mem_add.mp hy with ⟨z, hz, a, ha, rfl⟩
   have hcl : ∀ a ∈ closure A, δ ≤ vec3EuclideanNorm (x - a) := by
     intro a ha
-    apply closure_minimal (hsep x hx)
-    on_goal 1 =>
-      have hcont : Continuous (fun a : Vec3 => vec3EuclideanNorm (x - a)) := by
-        unfold vec3EuclideanNorm
-        fun_prop
-    on_goal 1 => exact isClosed_le continuous_const hcont
-    exact ha
+    have hcont : Continuous (fun a : Vec3 => vec3EuclideanNorm (x - a)) := by
+      unfold vec3EuclideanNorm
+      fun_prop
+    exact closure_minimal (t := {a | δ ≤ vec3EuclideanNorm (x - a)})
+      (hsep x hx) (isClosed_le continuous_const hcont) ha
   have hz' : ‖z‖ ≤ δ / 12 := by
     simpa [Metric.mem_closedBall, dist_zero_right] using hz
   have hδ0 : 0 ≤ δ := by

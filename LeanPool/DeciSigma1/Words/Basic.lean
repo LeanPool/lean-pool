@@ -103,7 +103,7 @@ theorem streamPeriod_mod {ξ : ℕ → α} {p : ℕ} (h : StreamPeriod ξ p) (n 
   by_cases hp : p = 0
   · simp [hp]
   · induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       by_cases hn : n < p
       · simp [Nat.mod_eq_of_lt hn]
       · have hle : p ≤ n := by omega

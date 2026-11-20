@@ -35,7 +35,7 @@ theorem amnr_partial_norm_le_of_barNorm (f : Vec 2 → ℝ) (n : ℕ)
       ENNReal.ofReal_mul hc.le, ENNReal.ofReal_pow (show 0 ≤ R⁻¹ from by positivity),
       ENNReal.ofReal_inv_of_pos hR]
     apply mul_le_mul_right
-    simpa only [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs] using
+    simpa only [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs] using
       (le_iSup_of_le J (le_iSup_of_le x le_rfl) :
         ‖iteratedFDeriv ℝ n f x (fun j => basisVec (J j))‖ₑ ≤
           ⨆ K : Fin n → Fin 2, ⨆ y : Vec 2,

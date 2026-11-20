@@ -426,7 +426,7 @@ theorem rieszPotentialOne_near_le
       lintegral_union (MeasurableSet.iUnion hs) hzdisj
     _ = ∑' n, ∫⁻ w in s n, g w := by rw [hzero_int, zero_add, hsum]
     _ ≤ ∑' n, nearTerm n * ENNReal.ofReal R * M z :=
-      ENNReal.tsum_le_tsum hterm
+      tsum_le_tsum hterm
     _ = hedbergNearConstant * ENNReal.ofReal R * M z := by
       rw [ENNReal.tsum_mul_right, ENNReal.tsum_mul_right]
       rfl
@@ -662,7 +662,7 @@ theorem rieszPotentialOne_far_le
         ∑' n, ∫⁻ w in farShell R n z,
           rieszKernelOne z w * ENNReal.ofReal |f w| := hsum
     _ ≤ ∑' n, farTerm n * (ENNReal.ofReal R) ^ (-(1 / 5 : ℝ)) * B :=
-      ENNReal.tsum_le_tsum hterm
+      tsum_le_tsum hterm
     _ = hedbergFarConstant * (ENNReal.ofReal R) ^ (-(1 / 5 : ℝ)) * B := by
       rw [ENNReal.tsum_mul_right, ENNReal.tsum_mul_right]
       rfl

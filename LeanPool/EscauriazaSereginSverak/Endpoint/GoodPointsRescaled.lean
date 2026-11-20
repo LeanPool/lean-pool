@@ -106,7 +106,7 @@ private theorem goodPointRescaleQuasiMeasurePreserving_symm
       (volume.restrict
         ((goodPointRescaleHomeomorph x₀ t₀ r hr).symm ⁻¹' N))
       (volume.restrict N) := by
-  refine ⟨(goodPointRescaleHomeomorph x₀ t₀ r hr).symm.measurable, ?_⟩
+  refine ⟨(goodPointRescaleHomeomorph x₀ t₀ r hr).symm.measurable.aemeasurable, ?_⟩
   have hmap := Measure.restrict_map
     (μ := (volume : Measure ParabolicPoint))
     (goodPointRescaleHomeomorph x₀ t₀ r hr).symm.measurable hN

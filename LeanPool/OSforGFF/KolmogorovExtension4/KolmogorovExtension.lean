@@ -90,7 +90,7 @@ theorem projectiveFamilyContent_sigma_additive_of_innerRegular (hP : IsProjectiv
     (h_disj : Pairwise (Function.onFun Disjoint f)) :
     projectiveFamilyContent hP (⋃ i, f i) = ∑' i, projectiveFamilyContent hP (f i) :=
   addContent_iUnion_eq_sum_of_regular isSetRing_measurableCylinders (projectiveFamilyContent hP)
-    (fun _ _ ↦ projectiveFamilyContent_ne_top hP) isCompactSystem_closedCompactCylinders
+    (fun _ _ ↦ projectiveFamilyContent_ne_top hP) _root_.isCompactSystem_closedCompactCylinders
     (fun _ ↦ mem_measurableCylinders_of_mem_closedCompactCylinders)
     (fun _ ↦ innerRegular_projectiveFamilyContent hP hP_inner) hf hf_Union h_disj
 

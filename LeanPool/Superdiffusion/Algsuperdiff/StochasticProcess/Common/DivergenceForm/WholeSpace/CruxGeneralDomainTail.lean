@@ -120,7 +120,7 @@ theorem wholeSpacePenalizationPotential_ae_eq_penalizationPotential
   classical
   by_cases hyV : y ∈ V
   · rw [wholeSpacePenalizationPotential_eq_zero n hyV, penalizationPotential,
-      Set.indicator_of_notMem (fun hy ↦ hy.2 hyV)]
+      Set.indicator_of_notMem (s := U \ V) (fun hy ↦ hy.2 hyV)]
   · have hyc : y ∈ Vᶜ := hyV
     rw [wholeSpacePenalizationPotential, Set.indicator_of_mem hyc,
       penalizationPotential,

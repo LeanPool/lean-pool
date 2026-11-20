@@ -300,7 +300,7 @@ theorem prod_factors_sum_pow_compMult (M : ℕ) (hM : M ≠ 0)
     rw [Finset.mem_filter, Nat.mem_divisors,
       ← Nat.factorization_le_iff_dvd hd.ne_zero (hi_ne_zero a ha),
       ←Nat.factorization_le_iff_dvd (hi_ne_zero a ha) (pow_ne_zero _ hd.ne_zero)]
-    constructor; constructor
+    refine ⟨⟨?_, ?_⟩, ?_⟩
     · rw [Finsupp.le_iff]; intro p _
       rw [hfact_i a ha]
       by_cases hp : p ∈ d.primeFactors

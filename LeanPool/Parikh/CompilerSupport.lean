@@ -46,7 +46,8 @@ theorem equalAt_correct (H : ℕ) (t u : ParseTree T N)
   induction H generalizing t u with
   | zero =>
     cases t <;> cases u <;> simp [equalAt]
-    all_goals rw [height.eq_3] at ht; omega
+    rw [height.eq_3] at ht
+    omega
   | succ H ih =>
     have hlist : ∀ cs ds : List (ParseTree T N),
         (∀ c ∈ cs, c.height ≤ H) → (∀ d ∈ ds, d.height ≤ H) →

@@ -124,7 +124,7 @@ theorem exists_section_biprod [Category.{vE} E] [Abelian E]
     rw [Category.assoc]
     exact hs₀
   · have : IsIso (biprod.inl ≫ f ≫ cokernel.π (biprod.inr ≫ f)) :=
-      isIso_of_epi_of_nonzero hu
+      isIso_of_epi_of_ne_zero hu
     have hs : (inv (biprod.inl ≫ f ≫ cokernel.π (biprod.inr ≫ f))
           ≫ (biprod.inl ≫ f)) ≫ cokernel.π (biprod.inr ≫ f) =
         𝟙 (cokernel (biprod.inr ≫ f)) := by
@@ -451,7 +451,7 @@ theorem simple_freeMod_oddLine
       ((congrArg (fun t => inv g ≫ t) h0).trans Limits.comp_zero)
   · intro h0
     have : IsIso (lineToRegular 𝔹 L g) :=
-      isIso_of_mono_of_nonzero
+      isIso_of_mono_of_ne_zero
         (fun h => h0 ((lineToRegular_eq_zero_iff 𝔹 L g).1 h))
     have : IsIso ((g.hom ▷ L.obj) ≫ (L.rot 𝔹).hom) :=
       (isIso_iff_hom 𝔹 (lineToRegular 𝔹 L g)).1 inferInstance

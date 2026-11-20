@@ -496,7 +496,7 @@ lemma sediment (v w : Valley) {A : ℤ}
     have ge : w.M ≥ v.M := by
       contrapose! eq_val with wM_lt_vM
       have := ne_of_lt <| (w.M_spec v.M).2 wM_lt_vM
-      contrapose! this; rw [this]
+      contrapose this; rw [this]
     have eq : v.M = w.M := le_antisymm ge le; clear le ge
     suffices w.min = v.min by exact And.intro this eq
     rw [← w.f_M, ← eq, high v.M h, v.f_M]
@@ -620,7 +620,7 @@ private lemma submodular_of_basepoint_preserved (s : SlipFace) (a b : ℤ) :
     · have h1 : d1 ≥ 1 := by
         have : d1 ≥ 0 := by linarith [(s.b_step (a+1) b).1]
         apply lt_of_le_of_ne this
-        contrapose! h1
+        contrapose h1
         rw [← h1]
       have h2 : d2 ≤ 1 := by linarith [s.b_step a b]
       exact le_trans h2 h1

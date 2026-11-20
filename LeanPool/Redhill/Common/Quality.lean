@@ -66,7 +66,7 @@ lemma quality_ge_of_liminf (f : ℕ → Fin n → ℤ) (s : Set ℕ)
     convert infs.sdiff (Set.finite_lt_nat N₀) using 1
     ext
     simp [and_comm]
-  refine key.image (injs.mono fun _ m ↦ m.2) |>.mono fun a ma ↦ ?_
+  refine key.image (injs.mono fun _ m ↦ And.right m) |>.mono fun a ma ↦ ?_
   obtain ⟨i, li, rfl⟩ := ma
   exact ⟨ms _ li.2, hN₀ _ li.1⟩
 

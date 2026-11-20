@@ -98,7 +98,7 @@ lemma simpleIntegral_diagonal
       rw [show (‖ξ ω * ΔW ω‖₊ : ℝ≥0∞)
           = ((‖ξ ω * ΔW ω‖₊ : ℝ≥0) : ℝ≥0∞) from rfl]
       rw [show (‖ξ ω * ΔW ω‖₊ : ℝ≥0)
-          = ‖ξ ω‖₊ * ‖ΔW ω‖₊ from nnnorm_mul _ _]
+          = ‖ξ ω‖₊ * ‖ΔW ω‖₊ from nnNorm_mul _ _]
       push_cast; rfl]
     ring
   -- Step 4: Apply lintegral_mul for IndepFun.

@@ -132,7 +132,7 @@ lemma doublePolarDual_self {X : Set E}
   apply subset_antisymm
   · -- 1.
     intro x hx
-    contrapose! hx
+    contrapose hx
     rw [mem_polarDual]
     push Not
     rcases geometric_hahn_banach_point_closed hXcv hXcl hx with ⟨ f, α, h, hX ⟩

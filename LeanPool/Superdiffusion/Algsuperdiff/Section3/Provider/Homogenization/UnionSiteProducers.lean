@@ -202,7 +202,7 @@ theorem measurable_cutoffSampleLocalSigma_of_ae_eq {alpha : Type*}
     Measurable[cutoffSampleLocalSigma M m U] g := by
   intro S hS
   exact measurableSet_cutoffSampleLocalSigma_of_ae_eq M m U (hf hS)
-    (hfg.fun_comp (· ∈ S))
+    (hfg.preimage S)
 
 /-- **Every entry of the coarse block matrix of the actual cutoff on a cube is
 integral-local.**  The four block-entry formulas of CoarseGraining express each

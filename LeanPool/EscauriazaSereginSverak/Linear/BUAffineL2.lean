@@ -114,7 +114,7 @@ theorem bu_affine_l2_comp
   have hfm : AEStronglyMeasurable f (volume.restrict S) :=
     (hfloc.mono_set hSsub).aestronglyMeasurable
   have hFm : AEMeasurable F (volume.restrict S) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hfm.eNorm
   have hmap : Measure.map e volume =
       ENNReal.ofReal (scale⁻¹ ^ 5) • (volume : Measure ParabolicPoint) := by
     rw [heq, buAffinePoint_eq_scalingParabolic]
@@ -154,7 +154,7 @@ theorem bu_affine_l2_smul
   have hpoint (z : ParabolicPoint) :
       ‖c • f (buAffinePoint τ scale z)‖ₑ ^ (2 : ℝ) ≤
         ‖f (buAffinePoint τ scale z)‖ₑ ^ (2 : ℝ) := by
-    rw [enorm_smul, ← ofReal_norm c, Real.norm_eq_abs, abs_of_nonneg hc]
+    rw [eNorm_smul, ← ofReal_norm c, Real.norm_eq_abs, abs_of_nonneg hc]
     rw [ENNReal.rpow_ofNat, mul_pow]
     have hcoef : ENNReal.ofReal c ^ (2 : ℕ) ≤ 1 := by
       exact pow_le_one₀ bot_le (ENNReal.ofReal_le_one.mpr hc1)
@@ -234,12 +234,12 @@ theorem bu_affine_derivative_l2
       (fun z => ‖(buAffineDw τ scale Dw) z‖ₑ ^ (2 : ℝ))
       (volume.restrict K) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hscaled.2.1.mono_set hKsub).aestronglyMeasurable.enorm)
+      ((hscaled.2.1.mono_set hKsub).aestronglyMeasurable.eNorm)
   have hmD2 : AEMeasurable
       (fun z => ‖(buAffineD2w τ scale D2w) z‖ₑ ^ (2 : ℝ))
       (volume.restrict K) :=
     ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      ((hscaled.2.2.1.mono_set hKsub).aestronglyMeasurable.enorm)
+      ((hscaled.2.2.1.mono_set hKsub).aestronglyMeasurable.eNorm)
   have hsum :
       (∫⁻ z in K,
         ‖(buAffineDw τ scale Dw) z‖ₑ ^ (2 : ℝ) +

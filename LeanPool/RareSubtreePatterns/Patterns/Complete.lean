@@ -291,7 +291,7 @@ theorem leafHeight_eq_maxCompleteHeight {κ : ℕ} (hκ : 1 ≤ κ) {T : PlaneTr
 theorem ae_rootDegree_mem_support (μ : PMF ℕ) :
     ∀ᵐ T ∂bienayme μ, ∀ V ∈ T.fringeTrees, V.rootDegree ∈ μ.support := by
   rw [ae_iff, bienayme_apply]
-  refine ENNReal.tsum_eq_zero.2 fun T => ?_
+  refine tsum_eq_zero_iff.2 fun T => ?_
   by_cases hT : T ∈ {T : PlaneTree | ¬∀ V ∈ T.fringeTrees, V.rootDegree ∈ μ.support}
   · rw [Set.indicator_of_mem hT]
     simp only [Set.mem_ofPred_eq, not_forall] at hT
@@ -324,7 +324,7 @@ theorem bienayme_le_rootLeafHeight_eq_embeds {μ : PMF ℕ} (hc : IsCritical μ)
   have hκ := LeafHeight.one_le_kappa hc hne
   refine measure_congr ?_
   filter_upwards [ae_rootDegree_mem_support μ] with T hT
-  exact propext (le_rootLeafHeight_iff_embeds hκ (fun V hV => by simpa using hsupp (hT V hV)) k)
+  exact le_rootLeafHeight_iff_embeds hκ (fun V hV => by simpa using hsupp (hT V hV)) k
 
 /-- If `c = 0`: `π_k = 𝐏(λ_∅(𝒯) ≥ k) = μ_κ^{(κ^k-1)/(κ-1)}` (source line 3283). -/
 theorem bienayme_le_rootLeafHeight_of_cConst_eq_zero {μ : PMF ℕ} (hc : IsCritical μ)

@@ -110,7 +110,7 @@ noncomputable def alphaValues (m μ : ℕ) {s : ℕ} (ξ : Nat.Partition s) : Li
 lemma polyP_constantCoeff (R : Type*) [CommRing R] (n : ℕ) :
     (polyP R n).coeff 0 = 1 := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     match n with
     | 0 | 1 => simp [polyP]
     | n + 2 =>
@@ -228,7 +228,7 @@ theorem polyP_coeff (R : Type*) [CommRing R] (n j : ℕ) :
     (polyP R n).coeff j = (-1 : R) ^ j * (Nat.choose (n - j) j : ℕ) := by
   revert j
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     match n with
     | 0 | 1 => exact polyP_coeff_base R _ (by omega)
     | m + 2 =>

@@ -34,7 +34,7 @@ namespace CKN.Leray
 `ENNReal.ofReal M`. -/
 private theorem forcedLerayLimit_enorm_le_ofReal {x M : ℝ} (h : |x| ≤ M) :
     ‖x‖ₑ ≤ ENNReal.ofReal M := by
-  rw [Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs]
   exact ENNReal.ofReal_le_ofReal h
 
 /-- Hölder's inequality `∫ φ ψ ≤ ‖φ‖_p ‖ψ‖_q` for extended nonnegative
@@ -52,7 +52,7 @@ private theorem forcedLerayLimit_lintegral_enorm_le {S : Set ParabolicPoint} {p 
     (hpq : p.HolderConjugate q) {g : ParabolicPoint → ℝ}
     (hg : AEMeasurable g (volume.restrict S)) :
     ∫⁻ z in S, ‖g z‖ₑ ≤ (∫⁻ z in S, ‖g z‖ₑ ^ p) ^ (1 / p) * volume S ^ (1 / q) := by
-  have h := forcedLerayLimit_lintegral_mul_le hpq hg.enorm
+  have h := forcedLerayLimit_lintegral_mul_le hpq hg.eNorm
     (aemeasurable_const (b := (1 : ℝ≥0∞)))
   simp only [mul_one, ENNReal.one_rpow, setLIntegral_const, one_mul] at h
   convert h using 2
@@ -92,38 +92,38 @@ theorem forcedLerayLimit_flux_lintegral_le {S : Set ParabolicPoint}
   let g2 : ParabolicPoint → ℝ≥0∞ := fun z => ∑ i : Fin 3, ∑ j : Fin 3, ‖D z i j‖ₑ
   let g3 : ParabolicPoint → ℝ≥0∞ := fun z => ∑ i : Fin 3, ‖f z i‖ₑ
   have hg1 : AEMeasurable g1 μ := Finset.aemeasurable_fun_sum _ fun i _ =>
-    Finset.aemeasurable_fun_sum _ fun j _ => (hJj j).enorm.mul (hUi i).enorm
+    Finset.aemeasurable_fun_sum _ fun j _ => (hJj j).eNorm.mul (hUi i).eNorm
   have hg2 : AEMeasurable g2 μ := Finset.aemeasurable_fun_sum _ fun i _ =>
-    Finset.aemeasurable_fun_sum _ fun j _ => (hDij i j).enorm
-  have hg3 : AEMeasurable g3 μ := Finset.aemeasurable_fun_sum _ fun i _ => (hfi i).enorm
+    Finset.aemeasurable_fun_sum _ fun j _ => (hDij i j).eNorm
+  have hg3 : AEMeasurable g3 μ := Finset.aemeasurable_fun_sum _ fun i _ => (hfi i).eNorm
   have hpoint : ∀ z, ‖forcedHopfPairingFlux J U f D wc z +
       P z * ∑ i : Fin 3, spatialDeriv (wc i) i z.1‖ₑ ≤
       ENNReal.ofReal M1 * g1 z + ENNReal.ofReal M1 * g2 z + ENNReal.ofReal M0 * g3 z +
         ENNReal.ofReal M2 * ‖P z‖ₑ := by
     intro z
     unfold forcedHopfPairingFlux
-    refine (enorm_add_le _ _).trans (add_le_add ?_ ?_)
-    · refine (enorm_add_le _ _).trans (add_le_add ((enorm_sub_le).trans (add_le_add ?_ ?_)) ?_)
-      · refine (enorm_sum_le _ _).trans ?_
+    refine (eNorm_add_le _ _).trans (add_le_add ?_ ?_)
+    · refine (eNorm_add_le _ _).trans (add_le_add ((eNorm_sub_le).trans (add_le_add ?_ ?_)) ?_)
+      · refine (eNorm_sum_le _ _).trans ?_
         rw [Finset.mul_sum]
-        refine Finset.sum_le_sum fun i _ => (enorm_sum_le _ _).trans ?_
-        rw [Finset.mul_sum]
-        refine Finset.sum_le_sum fun j _ => ?_
-        rw [enorm_mul, enorm_mul, mul_comm (ENNReal.ofReal M1)]
-        exact mul_le_mul' le_rfl (forcedLerayLimit_enorm_le_ofReal (hM1 i j z.1))
-      · refine (enorm_sum_le _ _).trans ?_
-        rw [Finset.mul_sum]
-        refine Finset.sum_le_sum fun i _ => (enorm_sum_le _ _).trans ?_
+        refine Finset.sum_le_sum fun i _ => (eNorm_sum_le _ _).trans ?_
         rw [Finset.mul_sum]
         refine Finset.sum_le_sum fun j _ => ?_
-        rw [enorm_mul, mul_comm (ENNReal.ofReal M1)]
+        rw [eNorm_mul, eNorm_mul, mul_comm (ENNReal.ofReal M1)]
         exact mul_le_mul' le_rfl (forcedLerayLimit_enorm_le_ofReal (hM1 i j z.1))
-      · refine (enorm_sum_le _ _).trans ?_
+      · refine (eNorm_sum_le _ _).trans ?_
+        rw [Finset.mul_sum]
+        refine Finset.sum_le_sum fun i _ => (eNorm_sum_le _ _).trans ?_
+        rw [Finset.mul_sum]
+        refine Finset.sum_le_sum fun j _ => ?_
+        rw [eNorm_mul, mul_comm (ENNReal.ofReal M1)]
+        exact mul_le_mul' le_rfl (forcedLerayLimit_enorm_le_ofReal (hM1 i j z.1))
+      · refine (eNorm_sum_le _ _).trans ?_
         rw [Finset.mul_sum]
         refine Finset.sum_le_sum fun i _ => ?_
-        rw [enorm_mul, mul_comm (ENNReal.ofReal M0)]
+        rw [eNorm_mul, mul_comm (ENNReal.ofReal M0)]
         exact mul_le_mul' le_rfl (forcedLerayLimit_enorm_le_ofReal (hM0 i z.1))
-    · rw [enorm_mul, mul_comm (ENNReal.ofReal M2)]
+    · rw [eNorm_mul, mul_comm (ENNReal.ofReal M2)]
       exact mul_le_mul' le_rfl (forcedLerayLimit_enorm_le_ofReal (hM2 z.1))
   refine (lintegral_mono hpoint).trans ?_
   have hA : AEMeasurable (fun z => ENNReal.ofReal M1 * g1 z + ENNReal.ofReal M1 * g2 z +
@@ -138,21 +138,21 @@ theorem forcedLerayLimit_flux_lintegral_le {S : Set ParabolicPoint}
     lintegral_const_mul' _ _ ENNReal.ofReal_ne_top]
   simp only [g1, g2, g3]
   have hJU (i j : Fin 3) : AEMeasurable (fun z => ‖J z j‖ₑ * ‖U z i‖ₑ) μ :=
-    (hJj j).enorm.mul (hUi i).enorm
+    (hJj j).eNorm.mul (hUi i).eNorm
   refine add_le_add (add_le_add (add_le_add (mul_le_mul' le_rfl ?_) (mul_le_mul' le_rfl ?_))
     (mul_le_mul' le_rfl ?_)) (mul_le_mul' le_rfl ?_)
   · rw [lintegral_finsetSum' _ fun i _ => Finset.aemeasurable_fun_sum _ fun j _ => hJU i j]
     refine Finset.sum_le_sum fun i _ => ?_
     rw [lintegral_finsetSum' _ fun j _ => hJU i j]
     refine Finset.sum_le_sum fun j _ => ?_
-    exact forcedLerayLimit_lintegral_mul_le h22 (hJj j).enorm (hUi i).enorm
+    exact forcedLerayLimit_lintegral_mul_le h22 (hJj j).eNorm (hUi i).eNorm
   · rw [lintegral_finsetSum' _ fun i _ => Finset.aemeasurable_fun_sum _ fun j _ =>
-      (hDij i j).enorm]
+      (hDij i j).eNorm]
     refine Finset.sum_le_sum fun i _ => ?_
-    rw [lintegral_finsetSum' _ fun j _ => (hDij i j).enorm]
+    rw [lintegral_finsetSum' _ fun j _ => (hDij i j).eNorm]
     refine Finset.sum_le_sum fun j _ => ?_
     exact forcedLerayLimit_lintegral_enorm_le h22 (hDij i j)
-  · rw [lintegral_finsetSum' _ fun i _ => (hfi i).enorm]
+  · rw [lintegral_finsetSum' _ fun i _ => (hfi i).eNorm]
     refine Finset.sum_le_sum fun i _ => ?_
     exact forcedLerayLimit_lintegral_enorm_le h22 (hfi i)
   · exact forcedLerayLimit_lintegral_enorm_le h323 hP

@@ -1076,7 +1076,7 @@ private lemma localized_divergence_tested_htimeProd_10 :
   intro φ ψ hφd hψi φp ψp i z
   have h := timePartial_mul_full hφd (hψi i) z
   convert h using 1
-  all_goals rfl
+  rfl
 
 private lemma localized_divergence_tested_hspaceProd_11 :
     ∀ {φ : Vec3 × ℝ → ℝ} {ψ : Vec3 × ℝ → Vec3},
@@ -1092,7 +1092,7 @@ private lemma localized_divergence_tested_hspaceProd_11 :
   intro φ ψ hφd hψi φp ψp i j z
   have h := spatialPartial_mul_full hφd (hψi i) j z
   convert h using 1
-  all_goals rfl
+  rfl
 
 private lemma localized_divergence_tested_hF_12 :
     ∀ {u : ParabolicPoint → Vec3} {Du : ParabolicPoint → Fin (3 : ℕ) → Vec3}

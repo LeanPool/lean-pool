@@ -48,7 +48,7 @@ theorem lintegral_pow_six_le_of_eq_on_ball {C : ℝ} (hC : 0 < C)
   have h_eq_lintegral : (∫⁻ x in vec3Ball (0 : Vec3) ρ, ENNReal.ofReal |u x| ^ (6 : ℝ)) =
       (∫⁻ x in vec3Ball (0 : Vec3) ρ, ‖g x‖ₑ ^ (6 : ℝ)) := by
     refine setLIntegral_congr_fun h_measBall fun x hx => ?_
-    rw [Real.enorm_eq_ofReal_abs, heq x hx]
+    rw [Real.eNorm_eq_ofReal_abs, heq x hx]
   have h_int_ball_le_total : (∫⁻ x in vec3Ball (0 : Vec3) ρ, ‖g x‖ₑ ^ (6 : ℝ)) ≤
       (∫⁻ x, ‖g x‖ₑ ^ (6 : ℝ)) :=
     setLIntegral_le_lintegral _ _
@@ -62,7 +62,7 @@ theorem lintegral_pow_six_le_of_eq_on_ball {C : ℝ} (hC : 0 < C)
       ≤ (∫⁻ x, ‖g x‖ₑ ^ (6 : ℝ)) ^ (1 / 6 : ℝ) :=
     ENNReal.rpow_le_rpow h_int_ball_le_total (by norm_num : (0 : ℝ) ≤ 1/6)
   have h_total_eq_sobolev : (∫⁻ x, ‖g x‖ₑ ^ (6 : ℝ)) ^ (1 / 6 : ℝ) = eLpNorm g 6 := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num : (6 : ℝ≥0∞) ≠ 0)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num : (6 : ℝ≥0∞) ≠ 0)
       (by norm_num : (6 : ℝ≥0∞) ≠ ∞) h_ae_g]
     norm_num
   exact h_eq_on_ball_pow.trans_le (h_ball_le_total.trans (h_total_eq_sobolev ▸ h_sobolev))

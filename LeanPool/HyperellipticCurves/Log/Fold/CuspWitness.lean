@@ -153,7 +153,7 @@ theorem eq_of_det_momentMatrix_ne_zero (h2 : (2 : F) ≠ 0) {A A' dm : F[X]}
   have hz := det_smul_eq_cramer_of_mulVec hsub
   rw [map_zero, smul_eq_zero] at hz
   have hzero := hz.resolve_left hdet
-  refine Polynomial.ext fun n ↦ ?_
+  refine AddMonoidAlgebra.ext <| DFunLike.ext _ _ fun n ↦ ?_
   rcases lt_trichotomy n g with hn | rfl | hn
   · simpa [sub_eq_zero] using congrFun hzero ⟨n, hn⟩
   · rw [← hAdeg, hA.coeff_natDegree, hAdeg, ← hA'deg, hA'.coeff_natDegree]

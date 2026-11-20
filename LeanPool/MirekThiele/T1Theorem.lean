@@ -516,7 +516,7 @@ theorem form_tupQ_smul (T : PerfectCZForm d n) {b : Fin n → (Fin d → ℝ) �
     (hb : ∀ j, b j ∈ LocTestFun d) (Q : DyadicCube d) (k : Fin n) (c : ℝ) (x : TestFun d) :
     T.form (tupQ hb Q k (c • x)) = c * T.form (tupQ hb Q k x) := by
   unfold tupQ
-  rw [MultilinearMap.map_update_smul, smul_eq_mul]
+  rw [MultilinearMap.map_update_smul, RingHom.id_apply, smul_eq_mul]
 
 /-- **The local bound of the global/local reduction** (p. 38, [1]): for `g` supported on `Q`,
 `|Λ(b_1 𝟙_Q, …, g, …, b_n 𝟙_Q)| ≤ B (3 C_a + 1 + C_a B) |Q|^{1-1/p} ‖g‖_p`, where `C_a` is the
@@ -723,7 +723,7 @@ theorem GlobalTbHypotheses.testing_globalFamily {T : PerfectCZForm d n} {b : Fin
         LocTestFun.coe_trunc]
       exact truncate_smul_truncate_of_subset hsub _ _
   have hform : T.form f = (∏ j, cf j) * T.form (tupQ hb.loc Q₀ k g) := by
-    rw [hf_eq, MultilinearMap.map_smul_univ, smul_eq_mul]
+    simp only [hf_eq, MultilinearMap.map_smul_univ, RingHom.id_apply, smul_eq_mul]
   have hprod : prodNorm p f = (∏ j, |cf j|) * prodNorm p (tupQ hb.loc Q₀ k g) := by
     rw [hf_eq]
     unfold prodNorm
@@ -909,12 +909,12 @@ theorem globalTbHypotheses_one {n : ℕ} {B : ℝ} (hB : 1 ≤ B) :
             eLpNormEssSup_le_of_ae_bound (ae_of_all _ fun x => by simp)
         _ ≤ ENNReal.ofReal B := ENNReal.ofReal_le_ofReal hB
     · exact aestronglyMeasurable_const
-  · change |(0 : MultilinearMap ℝ (fun _ : Fin n => TestFun d) ℝ) f| ≤ B * Q.vol
+  · change |(0 : MultilinearMap (RingHom.id ℝ) (fun _ : Fin n => TestFun d) ℝ) f| ≤ B * Q.vol
     rw [zero_apply, abs_zero]
     exact mul_nonneg (by linarith) Q.vol_pos.le
   · obtain ⟨M, hM⟩ := TestFunProd.exists_abs_lt_pow hK
     rw [← form_update_box_eq_integral (PerfectCZForm.zero d n) hloc hrep hM j₀ g]
-    change |(0 : MultilinearMap ℝ (fun _ : Fin n => TestFun d) ℝ) _| ≤ _
+    change |(0 : MultilinearMap (RingHom.id ℝ) (fun _ : Fin n => TestFun d) ℝ) _| ≤ _
     rw [zero_apply, abs_zero]
     exact mul_nonneg (by linarith) (integral_nonneg fun _ => Real.sqrt_nonneg _)
 
@@ -1684,7 +1684,7 @@ theorem volume_sqrt_sqFun_gt_le_trunc (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ
     refine (volume_sqrt_sqFun_gt_le hd Q N big ht2).trans (le_of_eq ?_)
     have e1 : ENNReal.ofReal (∫ x, |(big : (Fin d → ℝ) → ℝ) x|) =
         ∫⁻ x, ‖(big : (Fin d → ℝ) → ℝ) x‖ₑ := by
-      have := ofReal_integral_norm_eq_lintegral_enorm hbig_int
+      have := ofReal_integral_norm_eq_lintegral_eNorm hbig_int
       simpa only [Real.norm_eq_abs] using this
     rw [show (4 * 2 ^ d + 1) * (∫ x, |(big : (Fin d → ℝ) → ℝ) x|) / (t / 2) =
         (2 * (4 * 2 ^ d + 1) / t) * ∫ x, |(big : (Fin d → ℝ) → ℝ) x| by
@@ -1693,7 +1693,7 @@ theorem volume_sqrt_sqFun_gt_le_trunc (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ
     congr 1
     refine lintegral_congr fun x => ?_
     rw [hbig]
-    exact enorm_indicator_eq_indicator_enorm _ x
+    exact eNorm_indicator_eq_indicator_eNorm _ x
   -- the small part: Markov and the strong type `(2,2)`
   have hsm_int : Integrable (fun x => (small : (Fin d → ℝ) → ℝ) x ^ 2) volume :=
     ((TestFun.memLp small.2 2).integrable_mul (TestFun.memLp small.2 2)).congr
@@ -1732,7 +1732,7 @@ theorem volume_sqrt_sqFun_gt_le_trunc (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ
             rw [hsmall]
             by_cases hx : x ∈ {x | t < |(h : (Fin d → ℝ) → ℝ) x|}ᶜ
             · simp only [Set.indicator_of_mem hx]
-              rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
+              rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
             · simp only [Set.indicator_of_notMem hx]
               simp
     calc volume {x | t / 2 < Real.sqrt ((sqFun Q N small : (Fin d → ℝ) → ℝ) x)}
@@ -1802,7 +1802,7 @@ private theorem lintegral_weighted_tail (h : (Fin d → ℝ) → ℝ) (hhm : Mea
             {x | q.1 < |(h : (Fin d → ℝ) → ℝ) x|}.indicator
               (fun x => ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ) q.2 := by
           simp only [Set.indicator_apply, Set.mem_ofPred_eq]
-          exact Measurable.ite hset (hhm.comp measurable_snd).enorm measurable_const
+          exact Measurable.ite hset (hhm.comp measurable_snd).eNorm measurable_const
         exact h1.mul h2
     _ = ∫⁻ x, ENNReal.ofReal (2 * A / (p - 1)) * ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ ^ p := by
         refine lintegral_congr fun x => ?_
@@ -1827,7 +1827,7 @@ private theorem lintegral_weighted_tail (h : (Fin d → ℝ) → ℝ) (hhm : Mea
           show Set.Iio b ∩ Set.Ioi 0 = Set.Ioo 0 b by
             ext t
             simp [and_comm],
-          lintegral_mul_const' _ _ enorm_ne_top]
+          lintegral_mul_const' _ _ eNorm_ne_top]
         have hint : IntegrableOn (fun t : ℝ => 2 * A * t ^ (p - 2)) (Set.Ioo 0 b) volume := by
           have := (intervalIntegral.intervalIntegrable_rpow' (a := 0) (b := b)
             (by linarith only [hp1] : (-1 : ℝ) < p - 2)).const_mul (2 * A)
@@ -1844,7 +1844,7 @@ private theorem lintegral_weighted_tail (h : (Fin d → ℝ) → ℝ) (hhm : Mea
                 (p - 2))))),
           ← integral_Ioc_eq_integral_Ioo, ← intervalIntegral.integral_of_le hb,
           intervalIntegral.integral_const_mul, integral_rpow (Or.inl (by linarith only [hp1])),
-          Real.zero_rpow (by linarith only [hp1]), sub_zero, Real.enorm_eq_ofReal_abs, ← hb_def,
+          Real.zero_rpow (by linarith only [hp1]), sub_zero, Real.eNorm_eq_ofReal_abs, ← hb_def,
           ← ENNReal.ofReal_mul hK1, ENNReal.ofReal_rpow_of_nonneg hb hp0.le,
           ← ENNReal.ofReal_mul hK2]
         congr 1
@@ -1957,7 +1957,7 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
               {x | q.1 < |(h : (Fin d → ℝ) → ℝ) x|}ᶜ.indicator
                 (fun x => ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ ^ 2) q.2 := by
             simp only [Set.indicator_apply, Set.mem_compl_iff, Set.mem_ofPred_eq, not_lt]
-            exact Measurable.ite hset ((hhm.comp measurable_snd).enorm.pow_const 2)
+            exact Measurable.ite hset ((hhm.comp measurable_snd).eNorm.pow_const 2)
               measurable_const
           exact h1.mul h2
       _ = ∫⁻ x, ENNReal.ofReal (4 / (2 - p)) * ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ ^ p := by
@@ -1981,10 +1981,10 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
             · simp [Set.indicator_of_notMem ht]
           rw [hfun, lintegral_indicator measurableSet_Ici, Measure.restrict_restrict
             measurableSet_Ici,
-            lintegral_mul_const' _ _ (ENNReal.pow_ne_top enorm_ne_top)]
+            lintegral_mul_const' _ _ (ENNReal.pow_ne_top eNorm_ne_top)]
           by_cases hb0 : b = 0
           · have hx0 : ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ = 0 := by
-              rw [Real.enorm_eq_ofReal_abs, ← hb_def, hb0, ENNReal.ofReal_zero]
+              rw [Real.eNorm_eq_ofReal_abs, ← hb_def, hb0, ENNReal.ofReal_zero]
             rw [hx0, zero_pow two_ne_zero, mul_zero, ENNReal.zero_rpow_of_pos hp0, mul_zero]
           · have hbpos : 0 < b := lt_of_le_of_ne hb (Ne.symm hb0)
             rw [Set.inter_eq_left.mpr (Set.Ici_subset_Ioi.mpr hbpos),
@@ -2001,7 +2001,7 @@ theorem lintegral_sqrt_sqFun_rpow_le (hd : d ≠ 0) {Q : DyadicCube d} {N : ℕ}
                   have : 0 < t := hbpos.trans ht
                   exact (le_of_lt (mul_pos (by norm_num) (Real.rpow_pos_of_pos this (p - 3))))),
               integral_const_mul, integral_Ioi_rpow_of_lt (by linarith only [hp2]) hbpos, e,
-              Real.enorm_eq_ofReal_abs, ← hb_def, ← ENNReal.ofReal_pow hb,
+              Real.eNorm_eq_ofReal_abs, ← hb_def, ← ENNReal.ofReal_pow hb,
               ENNReal.ofReal_rpow_of_nonneg hb hp0.le, ← ENNReal.ofReal_mul hK1,
               ← ENNReal.ofReal_mul hK2]
             congr 1
@@ -2107,7 +2107,7 @@ theorem atomBound_of_lt_two (hd : d ≠ 0) {p : ℝ} (hp1 : 1 < p) (hp2 : p < 2)
       have e2 : ∀ x, ENNReal.ofReal (|(h : (Fin d → ℝ) → ℝ) x| ^ p) =
           ‖(h : (Fin d → ℝ) → ℝ) x‖ₑ ^ p := by
         intro x
-        rw [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hp0.le]
+        rw [Real.eNorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hp0.le]
       simp only [e1, e2]
       exact lintegral_sqrt_sqFun_rpow_le hd hs hres hp1 hp2
     have := TestFun.lpNorm_le_rpow_of_integral_le S hp0 hint1
@@ -2349,7 +2349,8 @@ theorem abs_form_le_of_constOn_children {T : PerfectCZForm d n} {p : HolderTuple
         T.form (fun j => TestFun.ind (Q.child (r j))) := by
     conv_lhs => rw [hf]
     rw [MultilinearMap.map_sum]
-    exact Finset.sum_congr rfl fun r _ => by rw [MultilinearMap.map_smul_univ, smul_eq_mul]
+    exact Finset.sum_congr rfl fun r _ => by
+      simp only [MultilinearMap.map_smul_univ, RingHom.id_apply, smul_eq_mul]
   -- the volume of the indicator tuple
   have hprodV : ∀ r : Fin n → (Fin d → Bool),
       prodNorm p (fun j => TestFun.ind (Q.child (r j))) = V := by
@@ -2539,7 +2540,8 @@ theorem form_update_mdiff_eq (T : PerfectCZForm d n) (R Q : DyadicCube d) (N : �
       blockTuple Q f S j := by
     funext j
     by_cases hjS : j ∈ S <;> simp [hm', blockTuple, hjS]
-  rw [h1, h2, MultilinearMap.map_smul_univ, smul_eq_mul, prod_ite_one_mem]
+  rw [h1, h2, MultilinearMap.map_smul_univ]
+  simp only [RingHom.id_apply, smul_eq_mul, prod_ite_one_mem]
 
 /-- **The scale-by-scale expansion**:
 `Λ(E_{N+1} f) − Λ(E_N f) = ∑_{Q ∈ level N R} ∑_{∅ ≠ S} ∏_{j ∉ S} [f_j]_Q · Λ(Δ_Q f_j (j ∈ S), 𝟙_Q (j
@@ -2594,7 +2596,7 @@ theorem enorm_le_sizeP {p : ℝ} (hp : 0 < p) (F : DyadicCube d → ℝ) (T : Dy
                 ← ENNReal.ofReal_mul (inv_nonneg.mpr T.vol_pos.le), inv_mul_cancel₀ T.vol_pos.ne',
                 ENNReal.ofReal_one, one_mul]
           _ ≤ _ := mul_le_mul' le_rfl
-              (ENNReal.le_tsum (f := fun Q : T.tree => ‖F Q‖ₑ ^ p * ENNReal.ofReal (Q : DyadicCube
+              (le_tsum (f := fun Q : T.tree => ‖F Q‖ₑ ^ p * ENNReal.ofReal (Q : DyadicCube
                 d).vol)
                 (⟨T, hT⟩ : T.tree))
 
@@ -2623,7 +2625,7 @@ theorem outerLpNorm_sizeInf_le_sizeP {p q : ℝ} (hp : 0 < p) (hq : 0 < q) (F : 
 theorem sizeInf_mul_le (F G : DyadicCube d → ℝ) (T : DyadicCube d) :
     sizeInf (F * G) T ≤ sizeInf F T * sizeInf G T := by
   refine iSup_le fun Q => ?_
-  rw [Pi.mul_apply, enorm_mul]
+  rw [Pi.mul_apply, eNorm_mul]
   exact mul_le_mul' (le_iSup (fun Q : T.tree => ‖F Q‖ₑ) Q) (le_iSup (fun Q : T.tree => ‖G Q‖ₑ) Q)
 
 /-- **Hölder's inequality in `L^·(S_∞)` for finitely many factors**: if
@@ -2984,11 +2986,11 @@ theorem sum_block_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ}
             mul_nonneg (mul_nonneg hK₁ Q.vol_pos.le) (hFnn Q)]
           refine Finset.sum_congr rfl fun Q _ => ?_
           rw [mul_assoc, ENNReal.ofReal_mul hK₁, mul_comm Q.vol, ENNReal.ofReal_mul (hFnn Q),
-            Real.enorm_eq_ofReal_abs, abs_of_nonneg (hFnn Q)]
+            Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hFnn Q)]
       _ ≤ ENNReal.ofReal (B * 2 ^ (d * n) * 2 ^ (d * n)) *
             ∑' Q : DyadicCube d, ‖F Q‖ₑ * ENNReal.ofReal Q.vol := by
           rw [← Finset.mul_sum]
-          exact mul_le_mul' le_rfl (ENNReal.sum_le_tsum _)
+          exact mul_le_mul' le_rfl (sum_le_tsum _)
       _ ≤ _ := mul_le_mul' le_rfl (tsum_enorm_mul_vol_le F)
   -- monotonicity of the sizes and the Carleson bounds
   have hKfin : ∀ j, K j ≠ ⊤ := fun j =>
@@ -3152,7 +3154,8 @@ theorem form_oneTuple_smul_sum (T : PerfectCZForm d n) (Q : DyadicCube d) (j : F
       ∑ ε : Fin d → Bool, a ε * coefChild T j Q ε := by
   unfold coefChild oneTuple
   rw [MultilinearMap.map_update_sum]
-  exact Finset.sum_congr rfl fun ε _ => by rw [MultilinearMap.map_update_smul, smul_eq_mul]
+  exact Finset.sum_congr rfl fun ε _ => by
+    rw [MultilinearMap.map_update_smul, RingHom.id_apply, smul_eq_mul]
 
 /-- **The coefficients are intrinsic**: `Λ(𝟙_P, …, φ, …, 𝟙_P) = Λ(𝟙_Q, …, φ, …, 𝟙_Q)` for `Q ⊆ P`
 and
@@ -4189,7 +4192,7 @@ theorem outerLinfNorm_carl_le (hd : d ≠ 0) {T : PerfectCZForm d n} {p : Holder
         by_contra hlt
         have hlt' : s < Q.m := not_le.mp hlt
         exact hQ ((StoppingData.mem_nonleaf_iff hd).mpr ⟨hQP, by omega⟩)
-      rw [carl_eq_zero_of_le hs j hQm, enorm_zero, ENNReal.zero_rpow_of_pos two_pos, zero_mul]
+      rw [carl_eq_zero_of_le hs j hQm, eNorm_zero, ENNReal.zero_rpow_of_pos two_pos, zero_mul]
     · rw [Set.indicator_of_notMem hQP]
   have hsum : ∑' Q : P.tree, ‖carl T j Q‖ₑ ^ (2 : ℝ) * ENNReal.ofReal (Q : DyadicCube d).vol ≤
       ENNReal.ofReal (jnC d * B ^ 2 * P.vol) := by
@@ -4200,7 +4203,7 @@ theorem outerLinfNorm_carl_le (hd : d ≠ 0) {T : PerfectCZForm d n} {p : Holder
         = ∑ Q ∈ StoppingData.nonleaf N P, ENNReal.ofReal (carl T j Q ^ 2 * Q.vol) := by
           refine Finset.sum_congr rfl fun Q hQ => ?_
           rw [Set.indicator_of_mem (subset_of_mem_nonleaf hQ : Q ∈ P.tree),
-            Real.enorm_eq_ofReal_abs, abs_of_nonneg (carl_nonneg T j Q),
+            Real.eNorm_eq_ofReal_abs, abs_of_nonneg (carl_nonneg T j Q),
             ENNReal.ofReal_rpow_of_nonneg (carl_nonneg T j Q) two_pos.le, Real.rpow_two,
             ← ENNReal.ofReal_mul (sq_nonneg _)]
       _ = ENNReal.ofReal (∑ Q ∈ StoppingData.nonleaf N P, carl T j Q ^ 2 * Q.vol) :=
@@ -4278,9 +4281,9 @@ theorem sum_para_le (hd : d ≠ 0) {p : HolderTuple n} {B : ℝ} (hB : 1 ≤ B) 
       _ = ∑ Q ∈ StoppingData.nonleaf N R, ‖F Q‖ₑ * ENNReal.ofReal Q.vol := by
           rw [ENNReal.ofReal_sum_of_nonneg fun Q _ => mul_nonneg Q.vol_pos.le (hFnn Q)]
           refine Finset.sum_congr rfl fun Q _ => ?_
-          rw [mul_comm, ENNReal.ofReal_mul (hFnn Q), Real.enorm_eq_ofReal_abs,
+          rw [mul_comm, ENNReal.ofReal_mul (hFnn Q), Real.eNorm_eq_ofReal_abs,
             abs_of_nonneg (hFnn Q)]
-      _ ≤ ∑' Q : DyadicCube d, ‖F Q‖ₑ * ENNReal.ofReal Q.vol := ENNReal.sum_le_tsum _
+      _ ≤ ∑' Q : DyadicCube d, ‖F Q‖ₑ * ENNReal.ofReal Q.vol := sum_le_tsum _
       _ ≤ _ := tsum_enorm_mul_vol_le F
   -- monotonicity of the sizes and the Carleson bounds
   have hS₂ : ∀ F G : DyadicCube d → ℝ, ∀ T, (∀ Q, ‖F Q‖ₑ ≤ ‖G Q‖ₑ) → sizeP 2 F T ≤ sizeP 2 G T :=
@@ -4524,7 +4527,8 @@ theorem form_eq_avg_mul_of_vanishes (T : PerfectCZForm d n) (m : Fin n → TestF
     · rw [Function.update_of_ne hii'.symm]
       exact hv
   conv_lhs => rw [hsplit]
-  rw [MultilinearMap.map_update_add, MultilinearMap.map_update_smul, smul_eq_mul, h0, zero_add]
+  rw [MultilinearMap.map_update_add, MultilinearMap.map_update_smul, RingHom.id_apply,
+    smul_eq_mul, h0, zero_add]
 
 /-- **The off-diagonal factorization**: if every slot `j` has a slot `j'` whose cube `R_{j'}` is
 disjoint from `R_j`, then `Λ(g) = ∏_j [g_j]_{R_j} · Λ(𝟙_{R_1}, …, 𝟙_{R_n})` for `g_j` supported on

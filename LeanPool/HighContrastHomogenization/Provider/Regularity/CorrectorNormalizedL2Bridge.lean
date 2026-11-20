@@ -46,7 +46,7 @@ private theorem eLpNorm_two_eq_rpow_normalizedL2
     (f : A → ℝ) (mu : Measure A) (hf : AEStronglyMeasurable f mu) :
     eLpNorm f 2 mu =
       (∫⁻ x, ENNReal.ofReal (f x ^ 2) ∂mu) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   congr 1
   apply lintegral_congr
   intro x

@@ -497,7 +497,7 @@ theorem exists_powerBasis_infinity_different_scaling_certificate
     have hsL : algebraMap S L s ≠ 0 := by
       rw [IsScalarTower.algebraMap_apply S K L]
       exact (map_ne_zero (algebraMap K L)).2 hsK
-    rw [hDX, Derivation.smul_apply, Algebra.smul_def]
+    rw [hDX, smul_apply, Algebra.smul_def]
     calc
       (-(algebraMap T L δ) / (algebraMap S L s) ^ 2) *
           (-(algebraMap S L s) ^ 2 * Es (algebraMap T L t)) =

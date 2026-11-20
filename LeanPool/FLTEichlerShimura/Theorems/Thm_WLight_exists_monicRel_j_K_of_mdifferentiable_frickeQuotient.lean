@@ -325,7 +325,7 @@ lemma exists_qParam_pow_le [NeZero N] {Q : ℍ → ℂ} (hhol : MDifferentiable 
     rw [Filter.Eventually, atImInfty_mem] at h1
     obtain ⟨A, hA⟩ := h1
     exact eq_zero_of_forall_im_ge hhol hA
-  · obtain ⟨r, u, hu, hu0, hfe⟩ := hg.exists_eventuallyEq_pow_smul_nonzero_iff.mpr h0
+  · obtain ⟨r, u, hu, hu0, hfe⟩ := hg.exists_eventuallyEq_pow_smul_ne_zero_iff.mpr h0
     have hpos : 0 < ‖u 0‖ / 2 := by positivity
     have hu_lb : ∀ᶠ z in 𝓝 (0 : ℂ), ‖u 0‖ / 2 ≤ ‖u z‖ := by
       have ht : Tendsto (fun z => ‖u z‖) (𝓝 0) (𝓝 ‖u 0‖) := hu.continuousAt.norm

@@ -136,7 +136,7 @@ private theorem eLpNorm_two_sq_eq_lintegral_enorm
     {α E : Type*} [MeasurableSpace α] [ENorm E] [TopologicalSpace E]
     (μ : Measure α) (F : α → E) (hF : AEStronglyMeasurable F μ) :
     eLpNorm F 2 μ ^ (2 : ℕ) = ∫⁻ x, ‖F x‖ₑ ^ (2 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hF]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hF]
   norm_num only [ENNReal.toReal_ofNat]
   rw [← ENNReal.rpow_natCast (_ ^ (1 / (2 : ℝ))) 2,
     ← ENNReal.rpow_mul]
@@ -169,7 +169,7 @@ private theorem tendsto_h1NormSqOnUnweighted_of_tendsto_eLpNorm_two
       simpa only [ENNReal.rpow_two] using hpow
     convert hpow' using 1
     funext n
-    rw [eLpNorm_one_eq_lintegral_enorm (hf n)]
+    rw [eLpNorm_one_eq_lintegral_eNorm (hf n)]
     congr 2
     funext x
     rw [← ofReal_norm]

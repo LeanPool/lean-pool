@@ -59,7 +59,7 @@ theorem lintegral_enorm_rpow_le_linf_mul_sq
 private theorem eLpNorm_two_sq_lintegral_source {E : Type*} [ENorm E] [TopologicalSpace E]
     (F : ℝ → E) (hF : AEStronglyMeasurable F volume) :
     eLpNorm F 2 volume ^ 2 = ∫⁻ x, ‖F x‖ₑ ^ (2 : ℕ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num) hF]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by norm_num) hF]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   rw [← ENNReal.rpow_mul_natCast]
   norm_num
@@ -92,7 +92,7 @@ theorem energyStandardFixedPhysicalSourceAction_sq_lintegral_le
     (aestronglyMeasurable_sourceAction S f hf I₀ k₀ scale _ N)]
   rw [eLpNorm_congr_ae
     (energyStandardFixedPhysicalSourceLp_ae_eq S f hf I₀ k₀ scale R N).symm]
-  rw [← MeasureTheory.Lp.enorm_def]
+  rw [← MeasureTheory.Lp.eNorm_def]
   rw [← ofReal_norm, ← ENNReal.ofReal_pow (norm_nonneg _) 2]
   exact ENNReal.ofReal_le_ofReal
     (norm_energyStandardFixedPhysicalSourceLp_sq_le
@@ -149,7 +149,7 @@ theorem eLpNorm_energyStandardFixedPhysicalSourceAction_le
   have hqne : ENNReal.ofReal q ≠ 0 := by
     simp only [ne_eq, ENNReal.ofReal_eq_zero]
     exact not_le.mpr hq0
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hqne ENNReal.ofReal_ne_top
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hqne ENNReal.ofReal_ne_top
       (aestronglyMeasurable_sourceAction S f hf I₀ k₀ scale _ N),
     ENNReal.toReal_ofReal hq0.le]
   exact ENNReal.rpow_le_rpow
@@ -180,7 +180,7 @@ theorem energyStandardFixedPhysicalSourceAction_sq_lintegral_le_j_mul
     (aestronglyMeasurable_sourceAction S f hf I₀ k₀ scale _ N)]
   rw [eLpNorm_congr_ae (energyStandardFixedPhysicalSourceLp_ae_eq S f hf I₀ k₀ scale
     (standardSourceGaps k₀ j) N).symm]
-  rw [← MeasureTheory.Lp.enorm_def]
+  rw [← MeasureTheory.Lp.eNorm_def]
   rw [← ofReal_norm, ← ENNReal.ofReal_pow (norm_nonneg _) 2]
   exact ENNReal.ofReal_le_ofReal
     (norm_energyStandardFixedPhysicalSourceLp_sq_le_j_mul
@@ -242,7 +242,7 @@ theorem eLpNorm_energyStandardFixedPhysicalSourceAction_le_j_mul
   have hqne : ENNReal.ofReal q ≠ 0 := by
     simp only [ne_eq, ENNReal.ofReal_eq_zero]
     exact not_le.mpr hq0
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hqne ENNReal.ofReal_ne_top
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hqne ENNReal.ofReal_ne_top
       (aestronglyMeasurable_sourceAction S f hf I₀ k₀ scale _ N),
     ENNReal.toReal_ofReal hq0.le]
   exact ENNReal.rpow_le_rpow

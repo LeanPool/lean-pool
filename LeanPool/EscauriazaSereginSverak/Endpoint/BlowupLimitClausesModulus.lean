@@ -141,7 +141,7 @@ private theorem blowupLimitClauses_gradient_memLp_on_window
     (hDf : Measurable Df) (hDfae : Df =ᵐ[volume] Dtrue)
     (hfin : (∫⁻ z in Q, ‖spatialGradientSq f Dtrue z‖ₑ) < ⊤) :
     MemLp Df 2 (volume.restrict Q) := by
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
     hDf.aestronglyMeasurable]
   apply ENNReal.rpow_lt_top_of_nonneg (by norm_num)
   apply ne_of_lt
@@ -150,7 +150,7 @@ private theorem blowupLimitClauses_gradient_memLp_on_window
       ∫⁻ z in Q, ‖spatialGradientSq f Dtrue z‖ₑ := by
       apply lintegral_mono_ae
       filter_upwards [ae_restrict_of_ae hDfae] with z hz
-      rw [ENNReal.toReal_ofNat, hz, Real.enorm_of_nonneg (by
+      rw [ENNReal.toReal_ofNat, hz, Real.eNorm_of_nonneg (by
         unfold spatialGradientSq
         positivity), ← ofReal_norm,
         ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) (by norm_num)]

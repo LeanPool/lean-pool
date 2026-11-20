@@ -158,14 +158,14 @@ theorem volume_image_eq_zero_of_lipschitzOnWith {E : Type*} [NormedAddCommGroup 
   have hsH : (μH[(Module.finrank ℝ E : ℝ)] : Measure E) s = 0 := by
     rw [Measure.isAddLeftInvariant_eq_smul (μH[(Module.finrank ℝ E : ℝ)] : Measure E)
         (volume : Measure E),
-      Measure.smul_apply, hs, smul_zero]
+      smul_apply, hs, smul_zero]
   have himageH : (μH[(Module.finrank ℝ E : ℝ)] : Measure E) (f '' s) = 0 := by
     have h := hf.hausdorffMeasure_image_le (Nat.cast_nonneg (Module.finrank ℝ E))
     rw [hsH, mul_zero] at h
     exact le_antisymm h bot_le
   rw [Measure.isAddLeftInvariant_eq_smul (volume : Measure E)
       (μH[(Module.finrank ℝ E : ℝ)] : Measure E),
-    Measure.smul_apply, himageH, smul_zero]
+    smul_apply, himageH, smul_zero]
 
 end FunctionalInequalities.Analysis
 

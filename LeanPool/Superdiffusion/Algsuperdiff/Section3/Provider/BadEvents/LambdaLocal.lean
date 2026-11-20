@@ -702,18 +702,18 @@ theorem measurableSet_badLoc_cutoffSampleLocal (M : ABKModel d) (Q : TriadicCube
       =ᵐ[(cutoffSampleLaw M).toMeasure] A := by
     filter_upwards [cubeLowerEllipticityInv_ae_eq_literal M Q Q.scale (1 / 4) hs
       exponentTwo] with omega homega
-    exact congrArg
+    exact eq_iff_iff.mp (congrArg
       (fun x : ℝ => 10 * ((Algsuperdiff.Section3.Annealed.sigmaBar M Q.scale : ℝ))⁻¹ < x)
-      homega
+      homega)
   have haeB : {omega : CutoffSample d |
       10 * ((Algsuperdiff.Section3.Annealed.sigmaBar M Q.scale : ℝ)) <
         cubeUpperEllipticity M Q Q.scale (1 / 4) hs exponentTwo omega}
       =ᵐ[(cutoffSampleLaw M).toMeasure] B := by
     filter_upwards [cubeUpperEllipticity_ae_eq_literal M Q Q.scale (1 / 4) hs
       exponentTwo] with omega homega
-    exact congrArg
+    exact eq_iff_iff.mp (congrArg
       (fun x : ℝ => 10 * ((Algsuperdiff.Section3.Annealed.sigmaBar M Q.scale : ℝ)) < x)
-      homega
+      homega)
   exact measurableSet_cutoffSampleLocalSigma_of_ae_eq M Q.scale U (hA.union hB)
     (haeA.union haeB)
 

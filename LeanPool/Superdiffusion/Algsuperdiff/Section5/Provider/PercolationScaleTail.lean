@@ -168,7 +168,7 @@ theorem measure_iUnion_shift_le (P : Measure Omega) (E : ℕ → Set Omega) {A :
   have hsummable := summable_exp_mul_three_pow hupos
   calc P (⋃ i : ℕ, E (j + i)) ≤ ∑' i : ℕ, P (E (j + i)) := measure_iUnion_le _
     _ ≤ ∑' i : ℕ, ENNReal.ofReal (Real.exp (-(A * 3 ^ j * 3 ^ i))) := by
-        refine ENNReal.tsum_le_tsum fun i => ?_
+        refine tsum_le_tsum fun i => ?_
         have hk := hE (j + i)
         rwa [mul_three_pow_add (A := A) j i] at hk
     _ = ENNReal.ofReal (∑' i : ℕ, Real.exp (-(A * 3 ^ j * 3 ^ i))) :=
@@ -183,7 +183,7 @@ theorem tsum_measure_ne_top (P : Measure Omega) (E : ℕ → Set Omega) {A : ℝ
   have hle : (∑' k : ℕ, P (E k)) ≤
       ENNReal.ofReal (∑' k : ℕ, Real.exp (-(A * 3 ^ k))) := by
     rw [ENNReal.ofReal_tsum_of_nonneg (fun i => (Real.exp_pos _).le) hsummable]
-    exact ENNReal.tsum_le_tsum hE
+    exact tsum_le_tsum hE
   exact ne_top_of_le_ne_top ENNReal.ofReal_ne_top hle
 
 /-- **Almost surely the events stop occurring.**  This is the first

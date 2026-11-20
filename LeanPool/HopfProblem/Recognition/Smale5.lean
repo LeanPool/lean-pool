@@ -374,7 +374,7 @@ private theorem
   have hnear : ∀ᶠ x in 𝓝 (0 : P), x ∈ U := hU.mem_nhds hzero
   obtain ⟨ρ, hρ, hball⟩ := Metric.nhds_basis_closedBall.mem_iff.mp (hnear.and hsmall)
   refine ⟨ρ, hρ, fun x hx => (hball hx).1, ?_⟩
-  apply (convex_closedBall (0 : P) ρ).lipschitzOnWith_of_nnnorm_fderiv_le (𝕜 := ℝ)
+  apply (convex_closedBall (0 : P) ρ).lipschitzOnWith_of_nnNorm_fderiv_le (𝕜 := ℝ)
   · intro x hx
     exact (hu.contDiffAt (hU.mem_nhds (hball hx).1)).differentiableAt (by simp)
   · intro x hx
@@ -444,9 +444,9 @@ private theorem Smale.SmallPerturbation.exists_lipschitz_supported_germ {P E : T
     exact hx (hwzero x hnot)
   have hwlip : LipschitzWith (a + (k * ‖ρ⁻¹‖₊) * (a * r)) w :=
     lipschitzWith_cutoff_smul hlocal hbound hβρlip hβρbound hβρzero
-  have hnn : ‖ρ‖₊ = r := Real.nnnorm_of_nonneg hρ.le
+  have hnn : ‖ρ‖₊ = r := Real.nnNorm_of_nonneg hρ.le
   have hcoeff : a + (k * ‖ρ⁻¹‖₊) * (a * r) = κ := by
-    rw [nnnorm_inv, hnn]
+    rw [nnNorm_inv, hnn]
     calc
       a + (k * r⁻¹) * (a * r) = a + (k * a) * (r⁻¹ * r) := by ring
       _ = a + k * a := by rw [inv_mul_cancel₀ hr.ne', mul_one]

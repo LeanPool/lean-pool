@@ -45,7 +45,7 @@ support it — `spectralProjection_eq_zero_of_forall_mem_resolventSet` and
   `(· - c)⁻¹ '' spectrum A` — elementary algebra with domain bookkeeping;
 * the spectral gap therefore bounds `spectrum R` by `s⁻¹`;
 * and for a **self-adjoint** element the norm *is* the spectral radius, which is
-  Mathlib's `IsSelfAdjoint.spectralRadius_eq_nnnorm`.
+  Mathlib's `IsSelfAdjoint.spectralRadius_eq_nnNorm`.
 
 The replacement lives in `ForTauCeti/Analysis/InnerProductSpace/LinearPMap/`
 (`Resolvent.lean`, `ResolventBound.lean`, and `SelfAdjointResolvent.lean`)

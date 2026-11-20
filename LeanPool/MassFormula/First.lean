@@ -2724,14 +2724,14 @@ theorem countable_sigma (n : ℕ) (hn : 0 < n) : (sigma K n).Countable := by
                   exact_mod_cast hOge L b hbO
                 · rw [Set.indicator_of_notMem hbO]
                   exact zero_le
-            _ ≤ ∑' L : sigma K n, (rootCount L.1 b : ℝ≥0∞) := ENNReal.sum_le_tsum s
+            _ ≤ ∑' L : sigma K n, (rootCount L.1 b : ℝ≥0∞) := sum_le_tsum s
             _ = (n : ℝ≥0∞) := hb
       _ = (n : ℝ≥0∞) * muCoeff K n (eisensteinSet K n) := setLIntegral_const _ _
   -- a family of positive masses with bounded finite subsums has countable index
   have htsum : ∑' L : ↥(sigma K n), muCoeff K n (O L) ≠ ⊤ := by
     refine ne_top_of_le_ne_top (ENNReal.mul_ne_top (ENNReal.natCast_ne_top n)
       (ne_top_of_le_ne_top ENNReal.one_ne_top hEone)) ?_
-    rw [ENNReal.tsum_eq_iSup_sum]
+    rw [tsum_eq_iSup_sum]
     exact iSup_le hsum
   have hcnt : Countable ↥(sigma K n) := by
     have hcov : (Set.univ : Set ↥(sigma K n)) ⊆

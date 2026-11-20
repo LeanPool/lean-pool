@@ -39,7 +39,7 @@ private theorem homogeneous_affine_cone_card {K : Type*} [Field K] [Fintype K] {
       by
         intro h
         have hv : (ru.2 : K) • ru.1.val.rep = 0 := congrArg Subtype.val h
-        exact ru.1.val.rep_nonzero ((smul_eq_zero.mp hv).resolve_left ru.2.ne_zero)⟩
+        exact ru.1.val.rep_ne_zero ((smul_eq_zero.mp hv).resolve_left ru.2.ne_zero)⟩
   have hg : Function.Bijective g := by
     constructor
     · rintro ⟨r, u⟩ ⟨t, w⟩ h
@@ -53,7 +53,7 @@ private theorem homogeneous_affine_cone_card {K : Type*} [Field K] [Fintype K] {
         simpa only [smul_smul, inv_mul_cancel₀ u.ne_zero, one_smul] using hh
       subst t
       have huw : u = w := by
-        obtain ⟨j, hj⟩ := Function.ne_iff.mp r.val.rep_nonzero
+        obtain ⟨j, hj⟩ := Function.ne_iff.mp r.val.rep_ne_zero
         apply Units.ext
         exact mul_right_cancel₀ hj (congrFun hv j)
       subst w

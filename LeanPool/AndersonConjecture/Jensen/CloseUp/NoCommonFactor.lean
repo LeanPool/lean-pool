@@ -288,10 +288,8 @@ private theorem no_common_avoidance_bound (R : NSubring T) (t : T)
       (C.Countable ∧ (D ∪ D_mod).Countable) := by
   by_cases hR_le : Cardinal.mk R.carrier ≤ Cardinal.aleph0
   · have : Countable R.carrier := Cardinal.mk_le_aleph0_iff.mp hR_le
-    have : Countable (Polynomial R.carrier) := by
-      let : Countable (AddMonoidAlgebra R.carrier ℕ) :=
-        Countable.of_equiv _ AddMonoidAlgebra.coeffEquiv.symm
-      exact Polynomial.toFinsupp_injective.countable
+    have : Countable (Polynomial R.carrier) :=
+      Countable.of_equiv _ AddMonoidAlgebra.coeffEquiv.symm
     right
     have hCmain_countable : C_main.Countable := by
       rw [hC_main]
@@ -378,7 +376,7 @@ private theorem no_common_modular_transcendence
   have hf_bar_ne : f.map ((Ideal.Quotient.mk P).comp R.carrier.subtype) ≠ 0 := by
     intro h_eq
     apply h_neg
-    have h := congr_arg (fun p => Polynomial.coeff p i) h_eq
+    have h := congr_arg (fun p => AddMonoidAlgebra.coeff p i) h_eq
     simp only [Polynomial.coeff_map, Polynomial.coeff_zero] at h
     exact Ideal.mem_comap.mpr (Ideal.Quotient.eq_zero_iff_mem.mp h)
   have hP_in_C_main : P ∈ C_main := by

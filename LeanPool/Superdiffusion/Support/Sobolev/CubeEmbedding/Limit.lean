@@ -376,7 +376,7 @@ theorem cubeSobolevEmbedding {d : ℕ} (hd : 3 ≤ d) :
             mul_le_mul_of_nonneg_left (by rw [Real.norm_eq_abs]; exact hχ_deriv x i) (norm_nonneg _)
         _ = 32 / L * ‖Eu.toFun x‖ := by ring
     · congr 1
-      rw [Real.enorm_eq_ofReal (by positivity)]
+      rw [Real.eNorm_eq_ofReal (by positivity)]
   have hwgrad_bound : ∀ i, eLpNorm (fun x => w.grad x i) 2 (volume.restrict (Box3 z hi))
       ≤ Cd * eLpNorm (fun x => u.grad x i) 2 (volume.restrict (Box z hi))
         + ENNReal.ofReal (32 / L) * (Cd * eLpNorm u.toFun 2 (volume.restrict (Box z hi))) := by

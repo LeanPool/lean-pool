@@ -731,12 +731,10 @@ theorem richDivisor_winnable_sub_smul (core : ExplicitPotential.Core n p)
               rwa [← hRep]
             rw [ite_eq_right hclass, ite_eq_right hclassH]
             omega
-        · by_cases ht : d.rep (d.core.tail e) = d.rep c.val
-          all_goals
+        · by_cases ht : d.rep (d.core.tail e) = d.rep c.val <;>
             by_cases hh : d.rep (d.core.head e) = d.rep c.val
-            all_goals
-              simp [tail, head, hz, headMassAdj, ht, hh]
-            all_goals omega
+          all_goals simp [tail, head, hz, headMassAdj, ht, hh]
+          omega
       have hEndpointSum :
           (∑ e : Fin p,
             ((if d.rep (d.core.tail e) = d.rep c.val then tail e else 0) +

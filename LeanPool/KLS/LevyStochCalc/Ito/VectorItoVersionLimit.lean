@@ -278,7 +278,7 @@ private theorem tendsto_uniformly_dyadic_version
   have hsum0 : Summable fun i : ℕ => (S m i ω).toReal := ENNReal.summable_toReal (hω m)
   have hsum1 : Summable fun i : ℕ => (S m (i + m) ω).toReal :=
     (summable_nat_add_iff m).mpr hsum0
-  have hne : ∀ i : ℕ, S m i ω ≠ ⊤ := ENNReal.ne_top_of_tsum_ne_top (hω m)
+  have hne : ∀ i : ℕ, S m i ω ≠ ⊤ := ne_top_of_tsum_ne_top (hω m)
   have hbnd : ∀ (i : ℕ) (x : ℝ), x ∈ Set.Iic ((m : ℝ) + 1) →
       ‖Xj (ms (i + 1 + m)) (max x 0) ω - Xj (ms (i + m)) (max x 0) ω‖
         ≤ (S m (i + m) ω).toReal := by
@@ -451,7 +451,7 @@ theorem exists_isVectorItoVersion_of_unbounded
     rw [← iSup_enorm_eq_iSup_dyadicRunMax
       (M := fun t ω => ‖Xj (ms (i + 1)) t ω - Xj (ms i) t ω‖) (T := (m : ℝ) + 1) (ω := ω)
       (by positivity) hcad]
-    exact iSup_congr fun t => by rw [nnnorm_norm]
+    exact iSup_congr fun t => by rw [nnNorm_norm]
   -- the geometric decay of the window energies
   have hSsq : ∀ m i : ℕ, m ≤ i →
       ∫⁻ ω, (S m i ω) ^ 2 ∂P ≤ 64 * (n : ℝ≥0∞) ^ 2 * ((2 : ℝ≥0∞)⁻¹) ^ (2 * i) :=
@@ -480,7 +480,7 @@ theorem exists_isVectorItoVersion_of_unbounded
   have htsum : ∀ m : ℕ, ∑' i : ℕ, ∫⁻ ω, S m i ω ∂P ≠ ⊤ := by
     intro m
     have hC : (1 + 64 * (n : ℝ≥0∞) ^ 2) ≠ ⊤ := by finiteness
-    refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum fun i => ?_)
+    refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum fun i => ?_)
       (lt_top_iff_ne_top.mpr (tsum_geometric_inv_two_mul_ne_top _ hC)))
     by_cases hmi : m ≤ i
     · exact hSint m i hmi
@@ -581,11 +581,11 @@ theorem exists_isVectorItoVersion_of_unbounded
       have h1 : Measurable fun ω => Xj (ms (i + ⌈t⌉₊)) t ω := (hXj (ms (i + ⌈t⌉₊))).measurable t
       have h2 : Measurable (vectorItoProcess W ℱ hcoord H hHm hHp hHs X₀ bdrift t) :=
         measurable_vectorItoProcess W ℱ hcoord H hHm hHp hHs hX₀' hbm t
-      exact (((h1.sub h2).nnnorm).coe_nnreal_ennreal).pow_const 2
+      exact (((h1.sub h2).nnNorm).coe_nnreal_ennreal).pow_const 2
     have hsum : ∑' i : ℕ, ∫⁻ ω, (‖Xj (ms (i + ⌈t⌉₊)) t ω
         - vectorItoProcess W ℱ hcoord H hHm hHp hHs X₀ bdrift t ω‖₊ : ℝ≥0∞) ^ 2 ∂P ≠ ⊤ := by
       have hgeom := tsum_geometric_inv_two_mul_ne_top (1 : ℝ≥0∞) (by simp)
-      refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum hbound) ?_)
+      refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum hbound) ?_)
       refine lt_of_le_of_lt (le_of_eq ?_) (lt_top_iff_ne_top.mpr hgeom)
       exact tsum_congr fun i => (one_mul _).symm
     filter_upwards [ae_tendsto_zero_of_lintegral_summable (μ := P) hmeas hsum, hae]

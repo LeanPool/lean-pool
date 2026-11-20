@@ -102,7 +102,7 @@ theorem bridgeLaw_ofSeq_mem (μ : PMF ℕ) (n : ℕ) (s : Set PlaneTree) :
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · rw [bridgeLaw_eq_zero_of_not_admissible μ (not_admissible_zero μ), uniformFringeLaw,
       conditioned_eq_zero_of_not_admissible (not_admissible_zero μ), Measure.zero_prod,
-      Measure.map_zero, Measure.coe_zero, Pi.zero_apply, Measure.coe_zero, Pi.zero_apply]
+      Measure.map_zero, FunLike.coe_zero, Pi.zero_apply, FunLike.coe_zero, Pi.zero_apply]
   rw [← map_shift_conditioned μ hn.ne', uniformFringeLaw_eq_map,
     Measure.map_apply (measurable_of_countable _) (Set.to_countable _).measurableSet,
     Measure.map_apply (measurable_of_countable _) MeasurableSet.of_discrete]

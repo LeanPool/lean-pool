@@ -77,15 +77,15 @@ private theorem pairing_integrand_integrable {τ : ℝ} (hτ : 0 < τ) {t : ℝ}
     by_cases hpos : 0 < t - q.2
     · rw [indicator_of_mem]
       exact ⟨hpos, by linarith only [hq2.1, ht.2]⟩
-    · rw [indicator_of_notMem (fun h => hpos h.1),
+    · rw [indicator_of_notMem (fun h : t - q.2 ∈ Ioo 0 τ => hpos h.1),
         Real.sqrt_eq_zero'.2 (le_of_not_gt hpos), inv_zero]
   have hbound (q : Vec3 × ℝ) :
       ∫⁻ x : Vec3, ‖ψ x i * heatKernelSpaceDerivative (x - q.1) (t - q.2) j * g q‖ₑ ≤
         ‖g q * (b q.2 * (1 + ‖q.1‖) ^ (-3 : ℝ))‖ₑ := by
-    simp_rw [enorm_mul (ψ _ i * _) (g q)]
-    rw [lintegral_mul_const' _ _ enorm_ne_top]
+    simp_rw [eNorm_mul (ψ _ i * _) (g q)]
+    rw [lintegral_mul_const' _ _ eNorm_ne_top]
     by_cases hq : g q = 0
-    · rw [hq, enorm_zero, mul_zero]
+    · rw [hq, eNorm_zero, mul_zero]
       exact zero_le
     calc
       (∫⁻ x : Vec3, ‖ψ x i * heatKernelSpaceDerivative (x - q.1) (t - q.2) j‖ₑ) * ‖g q‖ₑ ≤
@@ -97,8 +97,8 @@ private theorem pairing_integrand_integrable {τ : ℝ} (hτ : 0 < τ) {t : ℝ}
         have hnn : 0 ≤ b q.2 * (1 + ‖q.1‖) ^ (-3 : ℝ) := by
           simp only [hbdef]
           positivity
-        rw [enorm_mul, mul_comm, hkey q hq, Real.enorm_eq_ofReal hnn]
-  refine lt_of_eq_of_lt (lintegral_prod_symm _ hmeas.enorm) ?_
+        rw [eNorm_mul, mul_comm, hkey q hq, Real.eNorm_eq_ofReal hnn]
+  refine lt_of_eq_of_lt (lintegral_prod_symm _ hmeas.eNorm) ?_
   calc
     ∫⁻ q : Vec3 × ℝ, ∫⁻ x : Vec3,
         ‖ψ x i * heatKernelSpaceDerivative (x - q.1) (t - q.2) j * g q‖ₑ ≤

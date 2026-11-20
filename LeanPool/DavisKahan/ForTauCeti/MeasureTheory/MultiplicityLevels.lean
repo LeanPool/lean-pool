@@ -103,14 +103,14 @@ noncomputable def dominatingMeasure (μ : ℕ → Measure X) : Measure X :=
 theorem dominatingMeasure_apply (μ : ℕ → Measure X) {s : Set X} (hs : MeasurableSet s) :
     dominatingMeasure μ s = ∑' n, domWeight μ n * μ n s := by
   rw [dominatingMeasure, Measure.sum_apply _ hs]
-  exact tsum_congr fun n => Measure.smul_apply _ _ _
+  exact tsum_congr fun n => _root_.smul_apply _ _ _
 
 /-- **The dominating measure is finite**, by comparison with a geometric series. -/
 instance isFiniteMeasure_dominatingMeasure (μ : ℕ → Measure X) [∀ n, IsFiniteMeasure (μ n)] :
     IsFiniteMeasure (dominatingMeasure μ) := by
   refine ⟨?_⟩
   rw [dominatingMeasure_apply _ MeasurableSet.univ]
-  refine lt_of_le_of_lt (ENNReal.tsum_le_tsum (domWeight_mul_le μ)) ?_
+  refine lt_of_le_of_lt (tsum_le_tsum (domWeight_mul_le μ)) ?_
   rw [ENNReal.tsum_geometric_two]
   exact ENNReal.ofNat_lt_top
 
@@ -119,7 +119,7 @@ weight is nonzero and a countable sum in `ℝ≥0∞` vanishes only when every t
 theorem absolutelyContinuous_dominatingMeasure (μ : ℕ → Measure X) [∀ n, IsFiniteMeasure (μ n)]
     (n : ℕ) : μ n ≪ dominatingMeasure μ := by
   refine Measure.AbsolutelyContinuous.mk fun s hs h0 => ?_
-  rw [dominatingMeasure_apply _ hs, ENNReal.tsum_eq_zero] at h0
+  rw [dominatingMeasure_apply _ hs, tsum_eq_zero_iff] at h0
   exact (mul_eq_zero.mp (h0 n)).resolve_left (domWeight_ne_zero μ n)
 
 /-- **Every member of a countable family of finite measures is, up to measure class, a
@@ -400,7 +400,7 @@ theorem ae_mem_sliceSum_restrict (ρ : Measure X) {A : ℕ → Set X}
   have hNmeas : MeasurableSet {p : X × ℕ | ¬ p.1 ∈ A p.2} := by
     rw [hN]
     exact MeasurableSet.iUnion fun n => (hA n).compl.prod (measurableSet_singleton n)
-  rw [sliceSum_apply _ hNmeas, ENNReal.tsum_eq_zero]
+  rw [sliceSum_apply _ hNmeas, tsum_eq_zero_iff]
   intro n
   have hfib : {x : X | (x, n) ∈ {p : X × ℕ | ¬ p.1 ∈ A p.2}} = (A n)ᶜ := rfl
   rw [hfib, Measure.restrict_apply (hA n).compl, Set.compl_inter_self, measure_empty]
@@ -464,7 +464,7 @@ theorem map_rankMap_sliceSum (ρ : Measure X) {S : ℕ → Set X} (hS : ∀ n, M
       (pairwise_disjoint_levelPiece_index S k hnn').mono Set.inter_subset_left
         Set.inter_subset_left
     rw [Measure.restrict_apply (hfib k), hunion, measure_iUnion hdisj fun n => hPmeas n k]
-  rw [hL, hR, ENNReal.tsum_comm]
+  rw [hL, hR, tsum_comm]
 
 /-- **Multiplicity normal form.**  A countable family of finite measures presents the same
 multiplication operator as the level-set family of one finite measure, with the level sets
@@ -497,10 +497,10 @@ theorem exists_multiplicityLevels (μ : ℕ → Measure X) [∀ n, IsFiniteMeasu
   refine ⟨dominatingMeasure μ, levelSet S, inferInstance,
     fun k => measurableSet_levelSet hSmeas k, antitone_levelSet S, ?_, ?_, ?_⟩
   · intro N hN hzero
-    rw [dominatingMeasure_apply _ hN, ENNReal.tsum_eq_zero]
+    rw [dominatingMeasure_apply _ hN, tsum_eq_zero_iff]
     exact fun n => by rw [hzero n, mul_zero]
   · rw [dominatingMeasure_apply _ (measurableSet_levelSet hSmeas 0).compl,
-      ENNReal.tsum_eq_zero]
+      tsum_eq_zero_iff]
     intro n
     have hzero : μ n (levelSet S 0)ᶜ = 0 := by
       refine (hSequiv n).1 ?_

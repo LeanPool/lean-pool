@@ -392,7 +392,7 @@ private theorem helper_continuation_639.{u_1, u_2} :
                   | omega
                   | ( have := GoldbergSeymour.TreeSequence.positive T
                       have := C.p_ge_two
-                      all_goals omega)
+                      omega)
     ⟩ : Fin C.p))) (_ : phi2 g1 = some (↑d : Fin k)) (_ : phi2 g2 = some D.alpha0) (_ : phi2 g3 =
         some (↑d : Fin k)) (S : TreeSequence G e0) (_ : S.length + (2 : ℕ) = T.length) (_ :
         TashkinovOrder G = (TreeSequenceVertexSet T).card ∧ (3 : ℕ) ≤ (TreeSequenceVertexSet
@@ -408,7 +408,7 @@ private theorem helper_continuation_639.{u_1, u_2} :
                 | omega
                 | ( have := GoldbergSeymour.TreeSequence.positive T
                     have := C.p_ge_two
-                    all_goals omega)
+                    omega)
     ⟩ : Fin C.p) ∈ TreeSequenceVertexSet S) (_ : u1 ∉ TreeSequenceVertexSet S) (_ : u2 ∉
         TreeSequenceVertexSet S), False := by
   classical

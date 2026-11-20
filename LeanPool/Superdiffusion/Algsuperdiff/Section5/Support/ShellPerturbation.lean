@@ -271,7 +271,7 @@ private theorem shellW1InfGradNorm_sum_le_of_mem_largeScaleEventBase
   have hmem' : ∑' k : {k : ℤ // n ≤ k},
       ENNReal.ofReal (Real.rpow 3 ((2 - M.gamma) * (n : ℝ)) *
         Section4.Support.shellW1InfGradNorm n (omega.1 k.1)) ≤ ENNReal.ofReal theta := hmem
-  have hsub := ENNReal.sum_le_tsum (f := fun k : {k : ℤ // n ≤ k} =>
+  have hsub := sum_le_tsum (f := fun k : {k : ℤ // n ≤ k} =>
       ENNReal.ofReal (Real.rpow 3 ((2 - M.gamma) * (n : ℝ)) *
         Section4.Support.shellW1InfGradNorm n (omega.1 k.1)))
     (s.subtype (fun k => n ≤ k))

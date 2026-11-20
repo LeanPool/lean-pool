@@ -237,8 +237,8 @@ theorem squareExtensionClosedPoint_asIdeal_ne_bot_of_partialY
   let g : Polynomial K :=
     Polynomial.X ^ (Nat.card K) ^ 2 - Polynomial.X
   have hg0 : g ≠ 0 := by
-    exact FiniteField.X_pow_card_pow_sub_X_ne_zero K (by omega)
-      Finite.one_lt_card
+    exact Polynomial.X_pow_sub_X_ne_zero
+      (Nat.one_lt_pow (by omega) Finite.one_lt_card)
   apply hg0
   apply (transcendental_iff.mp hx) g
   simpa [g, r, planeCurveFunction] using congrArg

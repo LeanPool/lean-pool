@@ -52,7 +52,7 @@ theorem lps_mixed_two_moment_of_memLp_two
   have hQfinite : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T),
       ‖f z‖ₑ ^ (2 : ℝ)) < ⊤ := by
     have h := hf.eLpNorm_lt_top
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       hf.aestronglyMeasurable] at h
     rw [show (2 : ℝ≥0∞).toReal = 2 by norm_num] at h
     exact (ENNReal.rpow_lt_top_iff_of_pos (by norm_num)).mp h
@@ -64,12 +64,12 @@ theorem lps_mixed_two_moment_of_memLp_two
     rw [← serrin_slab_measure_eq T]
     exact hf.aestronglyMeasurable
   have hpower : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ (2 : ℝ)) ν :=
-    hfν.enorm.pow_const _
+    hfν.eNorm.pow_const _
   have hsliceFormula : (fun t : ℝ => eLpNorm (fun x : Vec3 => f (x,t)) 2 volume ^
       (2 : ℝ)) =ᵐ[μt] fun t =>
       ∫⁻ x : Vec3, ‖f (x,t)‖ₑ ^ (2 : ℝ) ∂volume := by
     filter_upwards [hslice] with t ht
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       ht.aestronglyMeasurable]
     rw [show (2 : ℝ≥0∞).toReal = 2 by norm_num]
     rw [← ENNReal.rpow_mul]
@@ -133,7 +133,7 @@ theorem lps_vector_mixed_moment_of_raw
         volume.restrict (Ioo 0 T)] (fun t =>
       (∫⁻ x : Vec3, ‖F (x,t)‖ₑ ^ q ∂volume) ^ (p / q)) := by
     filter_upwards [hSlice] with t ht
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (ENNReal.ofReal_pos.mpr hq).ne' ENNReal.ofReal_ne_top ht.aestronglyMeasurable,
       ENNReal.toReal_ofReal hq.le]
     rw [← ENNReal.rpow_mul]
@@ -161,7 +161,7 @@ theorem lps_vector_mixed_slice_memLp_of_raw
       ((volume : Measure Vec3).prod (volume.restrict (Ioo 0 T)))
     rw [← serrin_slab_measure_eq T]
     exact hF
-  have hRmeas : AEMeasurable R μt := (hFν.enorm.pow_const q).lintegral_prod_left'
+  have hRmeas : AEMeasurable R μt := (hFν.eNorm.pow_const q).lintegral_prod_left'
   have hRmoment : (∫⁻ t : ℝ, R t ^ (p / q) ∂μt) < ⊤ := by
     simpa [R, μt] using hRaw
   have hpq : 0 < p / q := div_pos hp hq
@@ -176,7 +176,7 @@ theorem lps_vector_mixed_slice_memLp_of_raw
     exact hF.prodMk_right
   filter_upwards [hRAE, hFsliceMeas] with t ht hFm
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (ENNReal.ofReal_pos.mpr hq).ne' ENNReal.ofReal_ne_top hFm,
     show (ENNReal.ofReal q).toReal = q from ENNReal.toReal_ofReal hq.le]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) ht.ne
@@ -232,7 +232,7 @@ theorem lps_mixed_product_moment
     exact hg
   have hNf : AEMeasurable NF μt := by
     have hpw : AEMeasurable (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ px) ν :=
-      hfν.enorm.pow_const _
+      hfν.eNorm.pow_const _
     have hsl := hpw.lintegral_prod_left'
     have hformula : NF =ᵐ[μt] fun t =>
         (∫⁻ x : Vec3, ‖f (x,t)‖ₑ ^ px ∂volume) ^ (1 / px) := by
@@ -241,7 +241,7 @@ theorem lps_mixed_product_moment
     exact (hsl.pow_const (1 / px)).congr hformula.symm
   have hNg : AEMeasurable NG μt := by
     have hpg : AEMeasurable (fun z : Vec3 × ℝ => ‖g z‖ₑ ^ qx) ν :=
-      hgν.enorm.pow_const _
+      hgν.eNorm.pow_const _
     have hsl := hpg.lintegral_prod_left'
     have hformula : NG =ᵐ[μt] fun t =>
         (∫⁻ x : Vec3, ‖g (x,t)‖ₑ ^ qx ∂volume) ^ (1 / qx) := by
@@ -251,7 +251,7 @@ theorem lps_mixed_product_moment
   have hPmeas : AEMeasurable NP μt := by
     have hprod : AEStronglyMeasurable (fun z : Vec3 × ℝ => f z * g z) ν := hfν.mul hgν
     have hpow : AEMeasurable (fun z : Vec3 × ℝ => ‖f z * g z‖ₑ ^ rx) ν :=
-      hprod.enorm.pow_const _
+      hprod.eNorm.pow_const _
     have hsl := hpow.lintegral_prod_left'
     have hformula : NP =ᵐ[μt] fun t =>
         (∫⁻ x : Vec3, ‖f (x,t) * g (x,t)‖ₑ ^ rx ∂volume) ^ (1 / rx) := by

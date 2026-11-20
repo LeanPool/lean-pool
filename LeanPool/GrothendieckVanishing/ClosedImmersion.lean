@@ -327,6 +327,13 @@ instance closedIncl_pushforward_preservesEpis
     exact epi_pushforward_map_closedIncl_of_locallySurjective
       (hs := hs) (F := F.obj) (G := G.obj) F.property G.property f.hom hf_loc
 
+instance closedIncl_pushforward_isRightAdjoint
+    {X : TopCat.{u}} {s : Set X} (hs : IsClosed s) :
+    (TopCat.Sheaf.pushforward AddCommGrpCat.{u}
+      (TopCat.closedIncl hs)).IsRightAdjoint :=
+  (TopCat.Sheaf.pullbackPushforwardAdjunction AddCommGrpCat.{u}
+    (TopCat.closedIncl hs)).isRightAdjoint
+
 instance closedIncl_pushforward_preservesMonos
     {X : TopCat.{u}} {s : Set X} (hs : IsClosed s) :
     (TopCat.Sheaf.pushforward AddCommGrpCat.{u}

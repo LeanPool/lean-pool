@@ -69,8 +69,7 @@ theorem ginibreCIR_noise_amplitude_square {n : ℕ} (hn : 0 < n)
   rw [mul_pow, mul_pow, mul_pow, hs, ginibre_configurationEuclidean_norm_sq,
     pairwiseRadius_eq_radialObservable]
   unfold radialObservable recenteredSqNorm
-  field_simp
- ; ring
+  field_simp; ring
 
 theorem ginibreCIR_noise_amplitude {n : ℕ} (hn : 0 < n)
     (α : ℝ) (hα : 0 ≤ α) (z : Configuration n) :

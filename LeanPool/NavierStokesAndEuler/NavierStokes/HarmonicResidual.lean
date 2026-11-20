@@ -952,7 +952,7 @@ structure Frame.Regular (g : Frame D) (U : Set D) : Prop where
 
 theorem liftDirection_smooth {U : Set D} {V : D → D} (hV : ContDiffOn ℝ ∞ V U) :
     ContDiffOn ℝ ∞ (liftDirection V) (liftDomain U) :=
-  (hV.comp contDiffOn_fst (fun _ hp => hp.1)).prodMk contDiffOn_const
+  (hV.comp contDiffOn_fst (fun _ (hp : _ ∈ liftDomain U) => hp.1)).prodMk contDiffOn_const
 
 theorem smooth_rotate {U : Set D} {a : VectorCoefficients D}
     (ha : ∀ i, SmoothCoefficients U (a i)) : ∀ i, SmoothCoefficients U (rotate a i) := by

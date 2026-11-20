@@ -258,7 +258,7 @@ theorem lps_velocity_memLp_four_of_uniform_h1_slices
     have hpower : eLpNorm (fun x : Vec3 => u (x, t))
         (ENNReal.ofReal (4 : ℝ)) volume ^ (4 : ℝ) =
         ∫⁻ x : Vec3, ‖u (x, t)‖ₑ ^ (4 : ℝ) ∂volume := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (by norm_num) ENNReal.ofReal_ne_top hsliceMeas,
         ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 4),
         ← ENNReal.rpow_mul, one_div,
@@ -293,7 +293,7 @@ theorem lps_velocity_memLp_four_of_uniform_h1_slices
   have hphysical' : MemLp u' (ENNReal.ofReal (4 : ℝ))
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) := by
     rw [memLp_iff,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (by norm_num) ENNReal.ofReal_ne_top
         (hu'm.aestronglyMeasurable)]
     have hfinite' : (∫⁻ z in spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T),

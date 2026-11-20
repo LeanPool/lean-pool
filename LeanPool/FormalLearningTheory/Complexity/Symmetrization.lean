@@ -66,7 +66,7 @@ private theorem subgaussian_sum_tail {X : Type u} [MeasurableSpace X]
     have h_param : (‖(a + 1) - a‖₊ / 2) ^ 2 = ((1 : NNReal) / 2) ^ 2 := by
       congr 1
       rw [show (a + 1) - a = (1 : ℝ) from by ring]
-      simp [nnnorm_one]
+      simp
     rw [← h_param]
     exact ProbabilityTheory.hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero
       h_g_meas.aemeasurable (Filter.Eventually.of_forall h_g_bound) h_int_g
@@ -510,7 +510,7 @@ theorem per_hypothesis_gap_bound {X : Type u} [MeasurableSpace X]
         have h_g_subG : ProbabilityTheory.HasSubgaussianMGF g (1 : NNReal) ν := by
           have h_param : (‖(1:ℝ) - (-1:ℝ)‖₊ / 2) ^ 2 = (1 : NNReal) := by
             have h2 : (1:ℝ) - (-1:ℝ) = 2 := by ring
-            rw [h2, Real.nnnorm_of_nonneg (by norm_num : (0:ℝ) ≤ 2)]
+            rw [h2, Real.nnNorm_of_nonneg (by norm_num : (0:ℝ) ≤ 2)]
             ext
             simp
           rw [← h_param]

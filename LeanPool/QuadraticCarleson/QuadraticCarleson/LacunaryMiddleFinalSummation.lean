@@ -81,7 +81,7 @@ theorem tsum_frozenBlockInputL1Mass_eq_sum_residues
       ∑ ρ : SparseResidue, ∑' τ : ℤ,
         sparseFrozenBlockInputL1Mass A f k B c (ρ.val : ℤ) τ := by
   simp_rw [← sum_sparseFrozenBlockInputL1Mass_eq A f k B c]
-  exact Summable.tsum_finsetSum (fun _ _ ↦ ENNReal.summable)
+  exact Summable.tsum_finsetSum (fun _ _ ↦ CompleteLattice.summable)
 
 /-- Factor two from subtracting atom averages, times the exact residue count. -/
 noncomputable def frozenMassPackingConstant : ℝ≥0∞ := 2 * (sparseModulus.toNat : ℝ≥0∞)
@@ -121,7 +121,7 @@ theorem frozenLogSquaredMassBudget_le_levelMass
           magnitudeLevelL1Mass volume lacunaryAmplitude f k := by
   unfold frozenLogSquaredMassBudget
   rw [← ENNReal.tsum_mul_left]
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro k
   have h := mul_le_mul' (le_refl (ENNReal.ofReal
     (paperLog 1 ((k : ℝ) + 2) * paperLog 1 (B k : ℝ) ^ 2)))

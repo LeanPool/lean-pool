@@ -464,11 +464,7 @@ private lemma hakimi_step {n : ℕ}
     rcases hp with rfl | rfl
     · rfl
     · congr 1
-      by_cases h₁ : (a, b) = (v, w) <;> by_cases h₂ : (a, b) = (w, v) <;>
-        · simp only [Prod.mk.injEq] at h₁ h₂ ⊢
-          simp only [h₁, and_self, or_true, ↓reduceIte, true_or, h₂, or_self, ite_eq_right_iff,
-            one_ne_zero, imp_false, not_or, not_and]
-          all_goals tauto
+      simp only [Prod.mk.injEq, and_comm, or_comm]
   -- the target in-degree at `b` is positive, since `{b}` is not tight
   have hdb : 1 ≤ d b := by
     have h := hstrict {b} (Finset.mem_singleton_self b) (by simpa using hab)

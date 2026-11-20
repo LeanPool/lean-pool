@@ -468,7 +468,8 @@ theorem forcingAlong_continuousOn (k : Frequency)
     (hB : ContinuousOn d.forcingMap (U ×ˢ univ))
     (hf : ContinuousOn d.source (U ×ˢ univ)) :
     ContinuousOn (d.forcingAlong g k) ((U ×ˢ univ) ×ˢ univ) :=
-  (hB.comp (g.nativeArgument_contDiff k).continuous.continuousOn
+  (hB.comp ((g.nativeArgument_contDiff k).continuous.continuousOn
+      (s := ((U ×ˢ univ) ×ˢ univ)))
     (fun _ hw => ⟨hw.1.1, mem_univ _⟩)).clm_apply
     (hf.comp (g.pathArgument_contDiff k).continuous.continuousOn
       (fun _ hw => ⟨hw.1.1, mem_univ _⟩))
@@ -483,7 +484,7 @@ theorem forcingAlong_contDiffOn (k : Frequency)
     (hB : ContDiffOn ℝ ∞ d.forcingMap (U ×ˢ univ))
     (hf : ContDiffOn ℝ ∞ d.source (U ×ˢ univ)) :
     ContDiffOn ℝ ∞ (d.forcingAlong g k) ((U ×ˢ univ) ×ˢ univ) :=
-  (hB.comp (g.nativeArgument_contDiff k).contDiffOn
+  (hB.comp ((g.nativeArgument_contDiff k).contDiffOn (s := ((U ×ˢ univ) ×ˢ univ)))
     (fun _ hw => ⟨hw.1.1, mem_univ _⟩)).clm_apply
     (hf.comp (g.pathArgument_contDiff k).contDiffOn
       (fun _ hw => ⟨hw.1.1, mem_univ _⟩))

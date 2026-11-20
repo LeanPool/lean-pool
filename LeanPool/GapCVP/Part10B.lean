@@ -3994,7 +3994,8 @@ open scoped BigOperators
 theorem wordPolynomial_zeroWord (degree : ℕ) :
     EffectiveBinaryField.wordPolynomial (zeroWord degree) = 0 := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro index
   by_cases hindex : index < degree
   · let bit : Fin degree := ⟨index, hindex⟩
@@ -4012,7 +4013,8 @@ private theorem wordPolynomial_oneWord
     (degree : ℕ) (hdegree : 0 < degree) :
     EffectiveBinaryField.wordPolynomial (oneWord degree) = 1 := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro index
   by_cases hindex : index < degree
   · let bit : Fin degree := ⟨index, hindex⟩
@@ -4266,7 +4268,8 @@ private theorem wordPolynomial_truncateWord {e : ℕ}
       e ≤ index.val → word index = false) :
     wordPolynomial (truncateWord word) = wordPolynomial word := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro k
   by_cases hk : k < e
   · let low : Fin e := ⟨k, hk⟩

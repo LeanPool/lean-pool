@@ -590,7 +590,7 @@ protected lemma operator (o : Semiterm.Operator L k) (v : Fin k → Semiterm L �
     ω (o.operator v) = o.operator (fun i => ω (v i)) := by
   simp only [Semiterm.Operator.operator, ←comp_app]
   congr 1
-  ext <;> simp only [comp_app, emb_bvar, substs_bvar]; try contradiction
+  ext <;> simp only [comp_app, emb_bvar, substs_bvar]; contradiction
 
 protected lemma operator' (o : Semiterm.Operator L k) (v : Fin k → Semiterm L ξ₁ n₁) :
     ω (o.operator v) = o.operator (ω ∘ v) := ω.operator o v

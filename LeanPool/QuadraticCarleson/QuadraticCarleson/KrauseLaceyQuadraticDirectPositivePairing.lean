@@ -86,7 +86,7 @@ theorem enorm_offsetLocalizedActionOn_le_sum_enorm_piece
           (offsetGroupedInput S scale f I s) x‖ₑ ≤
         ∑ I ∈ A.filter (fun I ↦ (2 : ℝ) ^ ell ≤ I.length),
           ‖krauseLaceyLocalizedPiece 1 (scale I) I
-            (offsetGroupedInput S scale f I s) x‖ₑ := enorm_sum_le _ _
+            (offsetGroupedInput S scale f I s) x‖ₑ := eNorm_sum_le _ _
     _ ≤ ∑ I ∈ A, ‖krauseLaceyLocalizedPiece 1 (scale I) I
           (offsetGroupedInput S scale f I s) x‖ₑ := by
       apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
@@ -175,7 +175,7 @@ theorem offsetTailMaximalOn_le_massMajorant_of_scale
           (offsetGroupedInput S scale f I s) x‖ₑ ≤
         ∑ I ∈ A.filter (fun I ↦ (2 : ℝ) ^ ell ≤ I.length),
           ‖krauseLaceyLocalizedPiece 1 (scale I) I
-            (offsetGroupedInput S scale f I s) x‖ₑ := enorm_sum_le _ _
+            (offsetGroupedInput S scale f I s) x‖ₑ := eNorm_sum_le _ _
     _ ≤ ∑ I ∈ A.filter (fun I ↦ (2 : ℝ) ^ ell ≤ I.length),
         ENNReal.ofReal (I.carrier.indicator (fun _ ↦
           (8 * positiveDyadicAmplitudeBound / I.length) *
@@ -190,7 +190,7 @@ theorem offsetTailMaximalOn_le_massMajorant_of_scale
       · rw [Set.indicator_of_notMem hx,
           krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I _
             (hscale I (Finset.mem_filter.mp hI).1) hx]
-        simp only [enorm_zero, ENNReal.ofReal_zero, Std.le_refl]
+        simp only [eNorm_zero, ENNReal.ofReal_zero, Std.le_refl]
     _ ≤ ∑ I ∈ A, ENNReal.ofReal (I.carrier.indicator (fun _ ↦
         (8 * positiveDyadicAmplitudeBound / I.length) *
           ∫ t, ‖offsetGroupedInput S scale f I s t‖) x) := by
@@ -246,18 +246,18 @@ theorem lintegral_offsetTailMaximalOn_pairing_le_sum_local_averages
           ENNReal.ofReal (C I) * I.carrier.indicator (fun y ↦ ‖h y‖ₑ) x)
           volume :=
         aemeasurable_const.mul
-          (hh.aestronglyMeasurable.enorm.indicator I.measurableSet_carrier)
+          (hh.aestronglyMeasurable.eNorm.indicator I.measurableSet_carrier)
       rw [lintegral_finsetSum' _ (fun I _ ↦ hm I)]
       apply Finset.sum_congr rfl
       intro I hI
       rw [lintegral_const_mul'' _
-        (hh.aestronglyMeasurable.enorm.indicator I.measurableSet_carrier),
+        (hh.aestronglyMeasurable.eNorm.indicator I.measurableSet_carrier),
         lintegral_indicator I.measurableSet_carrier]
     _ = ∑ I ∈ A, ENNReal.ofReal (8 * positiveDyadicAmplitudeBound *
         (∫ t, ‖offsetGroupedInput S scale f I s t‖) * intervalL1Average h I) := by
       apply Finset.sum_congr rfl
       intro I hI
-      rw [← ofReal_integral_norm_eq_lintegral_enorm hh.integrableOn,
+      rw [← ofReal_integral_norm_eq_lintegral_eNorm hh.integrableOn,
         ← ENNReal.ofReal_mul (hC I), ← intervalL1Average_mul_length h I]
       congr 1
       dsimp [C]
@@ -303,8 +303,8 @@ theorem lintegral_sum_enorm_piece_mul
       apply lintegral_finsetSum'
       intro I hI
       exact (integrable_krauseLaceyLocalizedPiece (scale I) I
-        (integrable_offsetGroupedInput S scale f I s)).aestronglyMeasurable.enorm.mul
-          hh.enorm.aemeasurable
+        (integrable_offsetGroupedInput S scale f I s)).aestronglyMeasurable.eNorm.mul
+          hh.eNorm.aemeasurable
 
 /-- The exact positive structural pairing inequality. The hypothesis is
 the elementary per-piece kernel-size/Tonelli estimate; its conclusion has

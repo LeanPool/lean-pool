@@ -96,7 +96,7 @@ theorem lintegral_sq_norm_vectorItoProcess_sub_le
         - vectorItoProcess W ℱ hcoord H₁ hm₁ hp₁ hq₁ X₀ b₁ t ω p‖₊ : ℝ≥0∞) ^ 2 := by
     intro p
     exact ((((measurable_pi_apply p).comp hXm₂).sub
-      ((measurable_pi_apply p).comp hXm₁)).nnnorm.coe_nnreal_ennreal).pow_const 2
+      ((measurable_pi_apply p).comp hXm₁)).nnNorm.coe_nnreal_ennreal).pow_const 2
   -- reduce to the coordinates
   have hred : ∫⁻ ω, (‖vectorItoProcess W ℱ hcoord H₂ hm₂ hp₂ hq₂ X₀ b₂ t ω
         - vectorItoProcess W ℱ hcoord H₁ hm₁ hp₁ hq₁ X₀ b₁ t ω‖₊ : ℝ≥0∞) ^ 2 ∂P
@@ -122,12 +122,12 @@ theorem lintegral_sq_norm_vectorItoProcess_sub_le
       (‖(∫ s in Set.Icc (0 : ℝ) t, b₂ p ω s ∂volume)
         - ∫ s in Set.Icc (0 : ℝ) t, b₁ p ω s ∂volume‖₊ : ℝ≥0∞) ^ 2 :=
     ((((measurable_setIntegral (hbm₂ p) _).sub
-      (measurable_setIntegral (hbm₁ p) _)).nnnorm).coe_nnreal_ennreal).pow_const 2
+      (measurable_setIntegral (hbm₁ p) _)).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hDmm : Measurable fun ω : Ω =>
       (‖vectorItoMartingale W ℱ hcoord H₂ hm₂ hp₂ hq₂ p t ω
         - vectorItoMartingale W ℱ hcoord H₁ hm₁ hp₁ hq₁ p t ω‖₊ : ℝ≥0∞) ^ 2 :=
     ((((measurable_vectorItoMartingale W ℱ hcoord H₂ hm₂ hp₂ hq₂ p t).sub
-      (measurable_vectorItoMartingale W ℱ hcoord H₁ hm₁ hp₁ hq₁ p t)).nnnorm
+      (measurable_vectorItoMartingale W ℱ hcoord H₁ hm₁ hp₁ hq₁ p t)).nnNorm
         ).coe_nnreal_ennreal).pow_const 2
   have hsum : ∫⁻ ω, (‖vectorItoProcess W ℱ hcoord H₂ hm₂ hp₂ hq₂ X₀ b₂ t ω p
         - vectorItoProcess W ℱ hcoord H₁ hm₁ hp₁ hq₁ X₀ b₁ t ω p‖₊ : ℝ≥0∞) ^ 2 ∂P
@@ -183,7 +183,7 @@ theorem lintegral_sq_norm_vectorItoProcess_sub_le
           - coordItoIntegral W ℱ hcoord H₁ hm₁ hp₁ hq₁ p k t ω‖₊ : ℝ≥0∞) ^ 2 := by
       intro k
       exact ((((measurable_coordItoIntegral W ℱ hcoord H₂ hm₂ hp₂ hq₂ p k t).sub
-        (measurable_coordItoIntegral W ℱ hcoord H₁ hm₁ hp₁ hq₁ p k t)).nnnorm
+        (measurable_coordItoIntegral W ℱ hcoord H₁ hm₁ hp₁ hq₁ p k t)).nnNorm
           ).coe_nnreal_ennreal).pow_const 2
     have hstep : ∫⁻ ω, (‖vectorItoMartingale W ℱ hcoord H₂ hm₂ hp₂ hq₂ p t ω
           - vectorItoMartingale W ℱ hcoord H₁ hm₁ hp₁ hq₁ p t ω‖₊ : ℝ≥0∞) ^ 2 ∂P

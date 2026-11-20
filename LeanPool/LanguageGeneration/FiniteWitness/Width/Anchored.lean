@@ -22,11 +22,11 @@ abbrev Point := ℕ ⊕ ℕ
 
 /-- A full left copy, all right anchors except one, and an arbitrary right tail. -/
 def leftTarget {k : ℕ} (i : Fin k) (D : Set ℕ) : Set Point :=
-  Sum.elim (fun _ => True) (fun n => if n < k then n ≠ i.val else n - k ∈ D)
+  {p | Sum.elim (fun _ => True) (fun n => if n < k then n ≠ i.val else n - k ∈ D) p}
 
 /-- A full right copy, all left anchors except one, and an arbitrary left tail. -/
 def rightTarget {k : ℕ} (j : Fin k) (E : Set ℕ) : Set Point :=
-  Sum.elim (fun n => if n < k then n ≠ j.val else n - k ∈ E) (fun _ => True)
+  {p | Sum.elim (fun n => if n < k then n ≠ j.val else n - k ∈ E) (fun _ => True) p}
 
 /-- The union of the left and right anchored target families with k anchors. -/
 def family (k : ℕ) : Set (Set Point) :=

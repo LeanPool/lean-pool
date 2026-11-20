@@ -181,8 +181,8 @@ theorem flt_catalan_aux
   · generalize eq_d : a.natDegree = d
     induction d using Nat.case_strong_induction_on
       generalizing a b c ha hb hc hab heq with
-    | hz => rfl
-    | hi d ih_d =>
+    | zero => rfl
+    | succ d ih_d =>
       have hderiv : derivative a = 0 ∧ derivative b = 0 ∧ derivative c = 0 := by
         apply Polynomial.flt_catalan_deriv hp hq hr hineq _ _ _ ha hb hc _ hu hv hw <;> assumption
       rcases hderiv with ⟨ad, bd, cd⟩
@@ -220,11 +220,11 @@ theorem flt_catalan
   have hbc : IsCoprime b c := by apply rot_coprime heq hab <;> assumption
   have hca : IsCoprime c a := by apply rot_coprime (rot3_add.symm.trans heq) hbc <;> assumption
   refine ⟨?_, ?_, ?_⟩
-  · apply Polynomial.flt_catalan_aux _ _ _ _ _ _ _ _ _ _ _ _ _ _ heq <;> try assumption
+  · apply Polynomial.flt_catalan_aux _ _ _ _ _ _ _ _ _ _ _ _ _ _ heq <;> assumption
   · rw [rot3_add] at heq hineq; rw [mul3_add] at hineq
-    apply Polynomial.flt_catalan_aux _ _ _ _ _ _ _ _ _ _ _ _ _ _ heq <;> try assumption
+    apply Polynomial.flt_catalan_aux _ _ _ _ _ _ _ _ _ _ _ _ _ _ heq <;> assumption
   · rw [← rot3_add] at heq hineq; rw [← mul3_add] at hineq
-    apply Polynomial.flt_catalan_aux _ _ _ _ _ _ _ _ _ _ _ _ _ _ heq <;> try assumption
+    apply Polynomial.flt_catalan_aux _ _ _ _ _ _ _ _ _ _ _ _ _ _ heq <;> assumption
 
 /- FLT is special case of nonsolvability of Fermat-Catalan equation.
 Take p = q = r = n and u = v = 1, w = -1.

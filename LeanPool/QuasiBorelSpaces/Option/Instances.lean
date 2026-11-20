@@ -25,12 +25,11 @@ instance instPreorderLeanPool [Preorder A] : Preorder (Option A) where
   le_refl x := by cases x <;> simp only [Option.le_none, Option.some_le_some, le_refl]
   le_trans x y z h₁ h₂ := by
     cases x <;> cases y <;> cases z <;>
-    · simp only [Option.none_le, Option.le_none, reduceCtorEq, Option.some_le_some] at h₁ h₂
-      try simp only [Option.some_le_some, Option.none_le, Option.le_none]
-      try apply le_trans h₁ h₂
+      simp_all only [Option.none_le, Option.le_none, reduceCtorEq, Option.some_le_some]
+    exact le_trans h₁ h₂
   lt_iff_le_not_ge x y := by
     cases x <;> cases y <;>
-    · try simp only [
+    · simp only [
         Option.none_lt, Option.isSome_some, Option.none_le,
         Option.le_none, reduceCtorEq, not_false_eq_true, and_self,
         Option.not_lt_none, Option.le_none, not_true_eq_false, and_false,

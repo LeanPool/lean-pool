@@ -56,7 +56,7 @@ theorem measurable_lacunaryMiddleLowContribution
     {f : ℝ → ℂ} (hf : Measurable f) (B : ℕ → ℕ) (c : ℕ) :
     Measurable (lacunaryMiddleLowContribution f B c) :=
   Measurable.tsum fun k ↦ Measurable.iSup fun m ↦
-    (measurable_middleRangeLowAction hf k (B k) c m).enorm
+    (measurable_middleRangeLowAction hf k (B k) c m).eNorm
 
 /-- The actual middle action is bounded by the frozen main term plus the
 genuine very-small error majorant, uniformly over all modulation blocks. -/
@@ -71,7 +71,7 @@ theorem middleLowContributionAtLevel_le_frozen_add_verySmall
   intro m
   obtain ⟨τ, hm, _⟩ := exists_unique_mem_Q B m hB
   rw [middleRangeLowAction_eq_frozenBlockLowAction_add_error A hf hfi hAk B c hm x]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   apply add_le_add
   · exact (frozenBlockLowAction_enorm_le_max A f k B c hm x).trans
       (le_iSup (fun τ : ℤ ↦ frozenBlockMaxEnorm A f k B c τ x) τ)
@@ -84,8 +84,8 @@ theorem lacunaryMiddleLowContribution_le_frozen_add_verySmall
     lacunaryMiddleLowContribution f B c x ≤
       lacunaryFrozenMainOutput f B c x + lacunaryVerySmallLowContribution f B c x := by
   unfold lacunaryMiddleLowContribution lacunaryFrozenMainOutput lacunaryVerySmallLowContribution
-  rw [← ENNReal.tsum_add]
-  exact ENNReal.tsum_le_tsum fun k ↦
+  rw [← tsum_add]
+  exact tsum_le_tsum fun k ↦
     middleLowContributionAtLevel_le_frozen_add_verySmall hf hfi
       (lacunaryAmplitude_pos k).le (hB k) hx
 
@@ -114,7 +114,7 @@ theorem measurable_lacunaryLowContribution
     {f : ℝ → ℂ} (hf : Measurable f) (B : ℕ → ℕ) :
     Measurable (lacunaryLowContribution f B) :=
   Measurable.tsum fun k ↦ Measurable.iSup fun m ↦
-    (measurable_lacunaryLowActionAtLevel hf k (B k) m).enorm
+    (measurable_lacunaryLowActionAtLevel hf k (B k) m).eNorm
 
 theorem summable_canonicalScaleLowActions
     {A : ℕ → ℝ} {f : ℝ → ℂ} (hf : Measurable f) (hfi : Integrable f)
@@ -131,11 +131,11 @@ theorem summable_canonicalScaleLowActions
     (Filter.Eventually.of_forall fun y ↦
       paperLowOscillatoryKernel_norm_le_global (dyadicModulation_pos m).ne' B (x-y))
   have hsum : (∑' j : ℤ, ‖∫ y, K y * stoppingScaleLevelBadPart A f j k y‖ₑ) < ∞ := by
-    apply (ENNReal.tsum_le_tsum (fun j ↦ enorm_integral_le_lintegral_enorm
+    apply (tsum_le_tsum (fun j ↦ eNorm_integral_le_lintegral_eNorm
       (fun y ↦ K y * stoppingScaleLevelBadPart A f j k y))).trans_lt
     rw [tsum_lintegral_enorm_kernel_mul_scale hf hK k]
     exact hKi.hasFiniteIntegral
-  exact (tsum_enorm_ne_top_iff_summable_norm.mp hsum.ne).of_norm
+  exact (tsum_eNorm_ne_top_iff_summable_norm.mp hsum.ne).of_norm
 
 theorem middleRangeLowAction_eq_sum_scaleActions
     {A : ℕ → ℝ} {f : ℝ → ℂ} (hf : Measurable f) (hfi : Integrable f)
@@ -177,9 +177,9 @@ theorem lacunaryLowActionAtLevel_enorm_le_middle_add_verySmall
     rw [integral_paperLowCZKernel_canonicalLevelBadPart_eq_tsum_scale hf hfi hAk]
     exact hs.sum_add_tsum_compl.symm
   rw [heq]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   apply add_le_add le_rfl
-  apply enorm_tsum_le_tsum_enorm.trans
+  apply eNorm_tsum_le_tsum_eNorm.trans
   have hterm (j : ↑(S B c m : Set ℤ)ᶜ) :
       ‖u j‖ₑ ≤ restrictedCanonicalScaleLowActionEnorm A f k B c m j x := by
     have hj : (j : ℤ) ∉ S B c m := j.2
@@ -188,17 +188,17 @@ theorem lacunaryLowActionAtLevel_enorm_le_middle_add_verySmall
         canonicalScaleLowActionEnorm, u, le_refl]
     · have hz : u j = 0 := canonicalScaleLowAction_eq_zero_of_tooLarge
         hf hfi hAk hjlarge hx
-      rw [hz, enorm_zero]
+      rw [hz, eNorm_zero]
       exact bot_le
   calc
     _ ≤ ∑' j : ↑(S B c m : Set ℤ)ᶜ,
         restrictedCanonicalScaleLowActionEnorm A f k B c m j x :=
-      ENNReal.tsum_le_tsum hterm
+      tsum_le_tsum hterm
     _ ≤ ∑' j : ℤ, restrictedCanonicalScaleLowActionEnorm A f k B c m j x :=
-      ENNReal.summable.tsum_le_tsum_of_inj (↑) Subtype.val_injective
-        (fun _ _ ↦ bot_le) (fun _ ↦ le_rfl) ENNReal.summable
+      CompleteLattice.summable.tsum_le_tsum_of_inj (↑) Subtype.val_injective
+        (fun _ _ ↦ bot_le) (fun _ ↦ le_rfl) CompleteLattice.summable
     _ ≤ verySmallLowContributionAtLevel A f k B c x :=
-      ENNReal.le_tsum (f := fun m' ↦ ∑' j : ℤ,
+      le_tsum (fun m' ↦ ∑' j : ℤ,
         restrictedCanonicalScaleLowActionEnorm A f k B c m' j x) m
 
 theorem lacunaryLowContribution_le_middle_add_verySmall
@@ -208,8 +208,8 @@ theorem lacunaryLowContribution_le_middle_add_verySmall
     lacunaryLowContribution f B x ≤
       lacunaryMiddleLowContribution f B c x + lacunaryVerySmallLowContribution f B c x := by
   unfold lacunaryLowContribution lacunaryMiddleLowContribution lacunaryVerySmallLowContribution
-  rw [← ENNReal.tsum_add]
-  apply ENNReal.tsum_le_tsum
+  rw [← tsum_add]
+  apply tsum_le_tsum
   intro k
   apply iSup_le
   intro m

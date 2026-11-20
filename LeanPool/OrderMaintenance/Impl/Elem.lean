@@ -52,10 +52,10 @@ theorem linkElemS_agree (κ : Caps) (σ : Core) (L : Loc) {x lab hh : Nat} (hx :
   have hxC : x < κ.tbl .E := by omega
   by_cases hn0 : (σ.E.getX x).next = 0 <;> by_cases ht : σ.tail = x <;>
     by_cases hlast : (σ.Gs.getX (σ.E.getX x).grp).last = x
-  all_goals (try have hnlt : (σ.E.getX x).next < σ.E.size := by omega)
-  all_goals (try have hnC : (σ.E.getX x).next < κ.tbl .E := by omega)
-  all_goals (try have hnx' : (σ.E.getX x).next < σ.E.size + 1 := by omega)
-  all_goals (try have hnle : (σ.E.getX x).next ≤ σ.E.size := by omega)
+  all_goals have hnlt : (σ.E.getX x).next < σ.E.size := by omega
+  all_goals have hnC : (σ.E.getX x).next < κ.tbl .E := by omega
+  all_goals have hnx' : (σ.E.getX x).next < σ.E.size + 1 := by omega
+  all_goals have hnle : (σ.E.getX x).next ≤ σ.E.size := by omega
   all_goals simp only [linkElemS, Stm.weF, Exp.ofNat_def, Exp.sc, Stm.wsc, Stm.wgF, Exp.gF,
       Exp.add_def, evalF, Res.bind, Tbl.size, hE, ↓reduceIte, Tbl.push, ht, pushCost,
       Res.addCost, Exp.ev, Machine.State.upd, String.reduceEq, hg, Fld.set,
@@ -72,8 +72,9 @@ theorem linkElemS_agree (κ : Caps) (σ : Core) (L : Loc) {x lab hh : Nat} (hx :
       beq_iff_eq, not_true_eq_false, not_false_eq_true, ite_true, ite_false]
   all_goals
     congr 1
-  all_goals (try (apply Array.modify_congr_getX; simp only [GF.set, Function.comp_apply, hlast,
-      ↓reduceIte]))
+  all_goals
+    apply Array.modify_congr_getX
+    simp only [GF.set, Function.comp_apply, hlast, ↓reduceIte]
 
 /-- The label of the new element, guarded. -/
 def insertElemPre : Stm := cm{

@@ -132,10 +132,10 @@ theorem normalized_weak_bound {f : ℝ → ℂ} (hf : Measurable f) (hfi : Integ
         ring
   have hA : volume A ≤ 32 * (ENNReal.ofReal Real.pi ^ 2 * (5 * I)) :=
     (volume_maximal_gt_one_le_sq
-      (measurable_measurableStoppingGoodHilbertRepresentative hfi).enorm).trans
+      (measurable_measurableStoppingGoodHilbertRepresentative hfi).eNorm).trans
       (mul_le_mul' le_rfl (lintegral_sq_enorm_goodHilbert_le hfi))
   have hB : volume B ≤ 32 * (5 * I) :=
-    (volume_maximal_gt_one_le_sq (measurable_stoppingGoodPart_of_measurable hf).enorm).trans
+    (volume_maximal_gt_one_le_sq (measurable_stoppingGoodPart_of_measurable hf).eNorm).trans
       (mul_le_mul' le_rfl (lintegral_sq_enorm_stoppingGoodPart_le hfi))
   have hD : volume D ≤ 96 * I + 2 * (ENNReal.ofReal (32 / 3) * I + 128 * I) := by
     calc
@@ -176,7 +176,7 @@ theorem ordinaryHilbertMaximal_weak_bound {f : ℝ → ℂ}
     exact ENNReal.mul_lt_mul_iff_right (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top
   rw [hset] at hn
   have hmass : (∫⁻ y, ‖(c : ℂ) * f y‖ₑ) = ENNReal.ofReal c * ∫⁻ y, ‖f y‖ₑ := by
-    simp only [enorm_mul, hcnorm]
+    simp only [eNorm_mul, hcnorm]
     exact lintegral_const_mul' _ _ ENNReal.ofReal_ne_top
   rw [hmass] at hn
   calc

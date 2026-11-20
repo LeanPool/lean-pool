@@ -157,7 +157,7 @@ theorem inftyValuation_eq_exp_neg_ratFuncInfinityOrder
     RatFunc.inftyValuation K f =
       exp (-ratFuncInfinityOrder f) := by
   rw [RatFunc.inftyValuation_apply]
-  rw [RatFunc.inftyValuation_of_nonzero (F := K) hf]
+  rw [RatFunc.inftyValuation_of_ne_zero (F := K) hf]
   simp only [ratFuncInfinityOrder, neg_neg]
 
 theorem ratFuncFinitePlaceDegreeSum_eq_intDegree

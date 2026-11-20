@@ -36,7 +36,7 @@ open Set Topology Metric Manifold Filter
 namespace Rado
 
 /-- The maximal C¹ (equivalently, holomorphic) atlas of a Riemann surface. -/
-abbrev riemannAtlas (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X] :
+noncomputable abbrev riemannAtlas (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X] :
     Set (OpenPartialHomeomorph X ℂ) :=
   IsManifold.maximalAtlas (modelWithCornersSelf ℂ ℂ) 1 X
 

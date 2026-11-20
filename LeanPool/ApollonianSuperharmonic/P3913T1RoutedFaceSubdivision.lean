@@ -1251,7 +1251,7 @@ private theorem pair_inter :
   all_goals
     ext x
     simp only [v, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
-    all_goals grind
+    grind
 
 private theorem arc_inter_singleton :
     (by

@@ -182,7 +182,7 @@ theorem tsum_bridge_mul_ofSeq (μ : PMF ℕ) (n : ℕ) (G : PlaneTree → ℝ≥
     ∑' x : bridgeSet n, walkWeight μ x.1 * (ofSeq x.1).elim 0 G =
       ∑' T : PlaneTree, if T.vertexCount ≤ n then
         weight μ T * G T * walkMass μ (n - T.vertexCount) 0 else 0 := by
-  rw [← (appendEquiv n).tsum_eq, ENNReal.tsum_sigma']
+  rw [← (appendEquiv n).tsum_eq, tsum_sigma']
   have h1 : ∀ p : Σ T : {T : PlaneTree // T.vertexCount ≤ n},
       levelSet (n - T.1.vertexCount) 0,
       walkWeight μ (appendEquiv n p).1 * (ofSeq (appendEquiv n p).1).elim 0 G =

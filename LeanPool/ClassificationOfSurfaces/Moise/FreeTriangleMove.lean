@@ -45,7 +45,7 @@ noncomputable def transportedThinKiteHomeomorph (e : Plane ≃ᵃ[ℝ] Plane)
     ((thinKiteAmbientHomeomorph δ hδ).trans (affineEquivHomeomorph e))
 
 /-- The `transportedThinKitePatch` declaration. -/
-def transportedThinKitePatch (e : Plane ≃ᵃ[ℝ] Plane) (δ : ℝ) : Set Plane :=
+noncomputable def transportedThinKitePatch (e : Plane ≃ᵃ[ℝ] Plane) (δ : ℝ) : Set Plane :=
   e '' thinKitePatch δ
 
 theorem transportedThinKiteHomeomorph_eqOn_compl (e : Plane ≃ᵃ[ℝ] Plane)

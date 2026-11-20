@@ -34,7 +34,8 @@ theorem pressureJet_spatial_derivative (p : ScalarField) (t : ℝ) (x : Space) (
   intro v
   rw [ContinuousLinearMap.comp_apply, pressureJet_space]
   have he := congrArg (fun A : Space →L[ℝ] ℝ => A v) hd.fderiv
-  simpa only [Function.comp_def, comp_apply, prod_apply, id_apply, zero_apply] using he.symm
+  simpa only [Function.comp_def, comp_apply, ContinuousLinearMap.prod_apply, id_apply, zero_apply]
+    using he.symm
 
 theorem slowPressure_pressureJet (FInv : Space →L[ℝ] Space)
     (p : ScalarField) (t : ℝ) (x : Space) (θ : ℝ)

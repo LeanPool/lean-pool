@@ -191,7 +191,7 @@ theorem summable_norm_massPartialTerm_restrict
     {x : ParameterPhase} (hx : x ∈ Metric.eball (0 : ParameterPhase) p.derivSeries.radius) :
     Summable (fun n ↦ ‖massPartialTermUnit p x n‖) := by
   have hradius : ENNReal.ofNNReal ‖x‖₊ < p.derivSeries.radius := by
-    simpa only [Metric.mem_eball, edist_zero_right, enorm_eq_nnnorm] using hx
+    simpa only [Metric.mem_eball, edist_zero_right, eNorm_eq_nnNorm] using hx
   have hs : Summable (fun n : ℕ ↦ ‖p.derivSeries n‖ * ‖x‖ ^ n) := by
     simpa using p.derivSeries.summable_norm_mul_pow hradius
   exact hs.of_nonneg_of_le
@@ -251,7 +251,7 @@ theorem HasFPowerSeriesOnBall.tsum_massPartialTerm_eq_massDerivative
   have hy : massScale t x ∈ Metric.eball (0 : ParameterPhase) r := by
     rw [Metric.mem_eball, edist_zero_right] at hx ⊢
     exact lt_of_le_of_lt (by
-      simpa only [enorm_eq_nnnorm, ENNReal.coe_le_coe] using (show ‖massScale t x‖₊ ≤ ‖x‖₊ by
+      simpa only [eNorm_eq_nnNorm, ENNReal.coe_le_coe] using (show ‖massScale t x‖₊ ≤ ‖x‖₊ by
         exact_mod_cast hnorm)) hx
   have hsum := (hp.fderiv.hasSum hy).mapL
     (ContinuousLinearMap.apply ℝ ℝ massDirection)
@@ -362,9 +362,9 @@ theorem HasFPowerSeriesOnBall.mass_mul_parameterizedMassIntegral
           gcongr
           exact norm_massScale_le_one ht
         _ = ‖x‖ := one_mul _
-    rw [Metric.mem_eball, edist_eq_enorm_sub] at hx ⊢
+    rw [Metric.mem_eball, eDist_eq_eNorm_sub] at hx ⊢
     apply lt_of_le_of_lt _ hx
-    simpa only [add_sub_cancel_left, sub_zero, enorm_eq_nnnorm, ENNReal.coe_le_coe] using
+    simpa only [add_sub_cancel_left, sub_zero, eNorm_eq_nnNorm, ENNReal.coe_le_coe] using
       (show ‖massScale t x‖₊ ≤ ‖x‖₊ by exact_mod_cast hnorm)
   have hcurve : Continuous (fun t : ℝ ↦ (0, baseState) + massScale t x) := by
     exact continuous_const.add (continuous_massScale.clm_apply continuous_const)
@@ -432,7 +432,7 @@ theorem analyticAt_uncurry_domainMassNormalizedCandidate_mass_zero
   have hball : ∀ᶠ z in nhds (0, state),
       z - (0, state) ∈ Metric.eball (0 : ParameterPhase) r := by
     filter_upwards [Metric.eball_mem_nhds (0, state) hp.r_pos] with z hz
-    rw [Metric.mem_eball, edist_eq_enorm_sub] at hz ⊢
+    rw [Metric.mem_eball, eDist_eq_eNorm_sub] at hz ⊢
     simpa only [sub_zero] using hz
   have hfirst : ∀ᶠ z in nhds ((0 : ℝ), state),
       firstPrimaryDistanceSq 0 z.2 ≠ 0 := by

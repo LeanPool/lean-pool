@@ -178,8 +178,10 @@ theorem _root_.ConvexOn.subharmonicOn {u : ℂ → ℝ} {W : Set ℂ} (hW : IsOp
     simp only [Complex.real_smul]
     push_cast
     ring
-  have hi₁ : CircleIntegrable (fun t => (1 / 2 : ℝ) • u t) a r := hint.const_smul
-  have hi₂ : CircleIntegrable (fun t => (1 / 2 : ℝ) • u (2 * a - t)) a r := hint'.const_smul
+  have hi₁ : CircleIntegrable (fun t => (1 / 2 : ℝ) • u t) a r :=
+    hint.const_fun_smul (a := (1 / 2 : ℝ))
+  have hi₂ : CircleIntegrable (fun t => (1 / 2 : ℝ) • u (2 * a - t)) a r :=
+    hint'.const_fun_smul (a := (1 / 2 : ℝ))
   have hle := circleAverage_mono (circleIntegrable_const (u a) a r) (hi₁.add hi₂)
     (fun t ht => hmid t (by simpa [abs_of_pos hr] using ht))
   rw [circleAverage_const, circleAverage_add hi₁ hi₂, circleAverage_fun_smul,

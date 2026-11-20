@@ -256,7 +256,7 @@ theorem measurable_offsetTailMaximalOn
     apply Finset.measurable_fun_sum
     intro I hI
     exact measurable_localizedPiece (scale I) I (hinput I)
-  exact Measurable.iSup fun ell ↦ (haction ell.1).enorm
+  exact Measurable.iSup fun ell ↦ (haction ell.1).eNorm
 
 @[simp] theorem offsetLocalizedActionOn_self
     (S : Finset RealInterval) (scale : RealInterval → ℤ) (f : ℝ → ℂ)
@@ -631,7 +631,7 @@ theorem localizedTailMaximal_le_sum_offsetTailMaximal
   intro ell
   rw [localizedTailAction_eq_sum_nonnegativeOffsetLocalizedAction
     scale f ell.1 hlam hscale x]
-  apply (enorm_sum_le _ _).trans
+  apply (eNorm_sum_le _ _).trans
   apply Finset.sum_le_sum
   intro s hs
   exact le_iSup (fun q : {q : ℤ // ell₀ ≤ q} ↦

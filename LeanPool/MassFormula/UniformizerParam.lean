@@ -500,7 +500,7 @@ private lemma dvd_of_eval_map_eq_zero (hn : 0 < n) (b : Module.Basis (Fin n) R A
     rw [← eval_map_eq_sum hSdeg, hSroot, map_zero] at h2
     intro i
     exact (congrFun h2 i).symm
-  refine Polynomial.ext fun i => ?_
+  refine AddMonoidAlgebra.ext (Finsupp.ext fun i => ?_)
   rw [Polynomial.coeff_zero]
   rcases Nat.lt_or_ge i n with hi | hi
   · exact hcoeff ⟨i, hi⟩

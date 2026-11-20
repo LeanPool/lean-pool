@@ -40,7 +40,7 @@ theorem iterate_material_matrix_contraction_square_integrable
     apply continuousOn_finsetSum Finset.univ
     intro k _
     have hd := (hH j k).continuousOn_fderivWithin hS (by norm_num)
-    exact ((hQ j k).comp continuousOn_fst (fun _ hz => hz.1)).mul
+    exact ((hQ j k).comp (s := S) continuousOn_fst (fun _ hz => hz.1)).mul
       (hd.clm_apply (continuousOn_const.prodMk hb))
   have hi := iterate_timeCube_integrable_of_continuousOn (hc.pow 2)
   change IntegrableOn (fun z : AmnrSpace => (∑ j : Fin 2, ∑ k : Fin 2,

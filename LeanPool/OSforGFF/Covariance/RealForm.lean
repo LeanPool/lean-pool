@@ -347,7 +347,7 @@ lemma embeddingMap_norm_sq (m : ℝ) [Fact (0 < m)] (f : OSforGFF.TestFunction) 
               _ = ∫⁻ (k : SpaceTime), (‖sqrtPropagatorMap m f k‖₊ : ENNReal) ^ 2 := by
                 refine lintegral_congr_ae ?_
                 filter_upwards with k
-                simp only [enorm]
+                simp only [eNorm]
                 norm_cast
     _ = ∫ k, ‖sqrtPropagatorMap m f k‖ ^ 2 := by
             have h_ae_meas := h_integrable.aestronglyMeasurable
@@ -359,8 +359,8 @@ lemma embeddingMap_norm_sq (m : ℝ) [Fact (0 < m)] (f : OSforGFF.TestFunction) 
             filter_upwards with k
             rw [ENNReal.ofReal_pow (norm_nonneg _)]
             simp only [pow_two]
-            conv_rhs => arg 1; rw [← coe_nnnorm, ENNReal.ofReal_coe_nnreal]
-            conv_rhs => arg 2; rw [← coe_nnnorm, ENNReal.ofReal_coe_nnreal]
+            conv_rhs => arg 1; rw [← coe_nnNorm, ENNReal.ofReal_coe_nnreal]
+            conv_rhs => arg 2; rw [← coe_nnNorm, ENNReal.ofReal_coe_nnreal]
 
 /-- ℝ-linear view of the Lp multiplication CLM (avoiding `restrictScalars`). -/
 noncomputable def momentumWeightSqrtMathlibMulCLMReal (m : ℝ) [Fact (0 < m)] :

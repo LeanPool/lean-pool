@@ -133,7 +133,7 @@ theorem operator_translation_hasDerivAt (A : SmoothCoefficient period) (a : Lift
     (L := A.secondBound * ‖a‖₊ ^ 2)
   · exact translatedCoefficient_hasDerivAt period a A.coefficient A.smooth
   · intro t x
-    simpa only [NNReal.coe_mul, NNReal.coe_pow, coe_nnnorm] using
+    simpa only [NNReal.coe_mul, NNReal.coe_pow, coe_nnNorm] using
       translatedCoefficientDerivative_lipschitz period a A.coefficient A.smooth
         A.secondBound A.norm_second t x
 

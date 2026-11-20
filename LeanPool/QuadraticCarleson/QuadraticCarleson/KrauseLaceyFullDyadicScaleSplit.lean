@@ -74,7 +74,7 @@ theorem coe_finiteFullDyadicSuffixMaxNNNorm_le_split
       (finiteFullDyadicSuffixMaxNNNorm lam j L f x : ℝ≥0∞) +
         (finiteFullDyadicSuffixMaxNNNorm lam (j + (L : ℤ)) (N - L) f x : ℝ≥0∞) := by
   unfold finiteFullDyadicSuffixMaxNNNorm
-  simp only [ENNReal.coe_finset_sup, ← enorm_eq_nnnorm]
+  simp only [ENNReal.coe_finset_sup, ← eNorm_eq_nnNorm]
   apply Finset.sup_le
   intro m hm
   have hmN : m ≤ N := Nat.le_of_lt_succ (Finset.mem_range.mp hm)
@@ -91,7 +91,7 @@ theorem coe_finiteFullDyadicSuffixMaxNNNorm_le_split
         ‖finiteFullDyadicTail lam (j + (L : ℤ) + (r : ℤ))
           (N - L - r) f x‖ₑ)
         (Finset.mem_range.mpr (Nat.zero_lt_succ (N - L)))
-    apply (enorm_add_le _ _).trans
+    apply (eNorm_add_le _ _).trans
     exact add_le_add hlow (by simpa using hhigh)
   · have hLm : L ≤ m := Nat.le_of_lt (Nat.lt_of_not_ge hmL)
     have hscale : j + (m : ℤ) = j + (L : ℤ) + ((m - L : ℕ) : ℤ) := by omega

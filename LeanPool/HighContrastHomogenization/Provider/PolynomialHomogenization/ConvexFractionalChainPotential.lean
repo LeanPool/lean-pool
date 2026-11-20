@@ -111,7 +111,7 @@ theorem tsum_scaleWeight_mul_chainAmplitude_le_rieszPotential
     intro y hy
     by_contra hyU
     apply hy
-    apply ENNReal.tsum_eq_zero.mpr
+    apply tsum_eq_zero_iff.mpr
     intro n
     rw [Set.indicator_of_notMem]
     exact fun hyn => hyU

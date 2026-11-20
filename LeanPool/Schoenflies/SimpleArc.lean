@@ -270,12 +270,14 @@ theorem overlayGraph_reaches (hnd : ∀ P ∈ pieces, P.Nondeg)
   set T : Set Plane :=
     ⋃ P ∈ {P | P ∈ overlayPieces pieces points ∧
       ¬ (overlayGraph pieces points).Reaches a P.1}, P.seg with hT
-  have hSclosed : IsClosed S :=
-    ((Set.Finite.subset (overlayPieces pieces points).finite_toSet
-      fun _ hP => hP.1).isCompact_biUnion fun P _ => isCompact_segment P.1 P.2).isClosed
-  have hTclosed : IsClosed T :=
-    ((Set.Finite.subset (overlayPieces pieces points).finite_toSet
-      fun _ hP => hP.1).isCompact_biUnion fun P _ => isCompact_segment P.1 P.2).isClosed
+  have hSclosed : IsClosed S := by
+    refine (Set.Finite.isCompact_biUnion ?_ ?_).isClosed
+    · exact (overlayPieces pieces points).finite_toSet.subset fun _ hP => hP.1
+    · exact fun P _ => isCompact_segment P.1 P.2
+  have hTclosed : IsClosed T := by
+    refine (Set.Finite.isCompact_biUnion ?_ ?_).isClosed
+    · exact (overlayPieces pieces points).finite_toSet.subset fun _ hP => hP.1
+    · exact fun P _ => isCompact_segment P.1 P.2
   -- The two classes carry the whole union between them.
   have hunion : ∀ z ∈ cover pieces, z ∈ S ∨ z ∈ T := by
     intro z hz
@@ -473,7 +475,7 @@ theorem exists_simple_poly_of_biUnion {L : List (List Plane)}
     obtain ⟨vs, hvs, hz⟩ := hzU
     refine mem_biUnion hvs ⟨hz, fun hmem => hzC ?_⟩
     rw [hflat]
-    exact mem_biUnion hvs hmem
+    exact mem_iUnion₂_of_mem hvs hmem
   have hclosed : IsClosed (cover (L.flatMap segsOf)) :=
     Set.Finite.isClosed_biUnion (L.flatMap segsOf).finite_toSet fun P _ =>
       (isCompact_segment P.1 P.2).isClosed

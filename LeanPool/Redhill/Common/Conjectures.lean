@@ -66,7 +66,7 @@ lemma nConjecture_3_iff_ABC : NConjecture 3 ↔ ABCConjecture := by
     obtain ⟨⟨q, nq, nqc, sq⟩, sqc, -⟩ := ma
     rw [← sum_add_sum_compl q, sq, zero_add] at sqc
     have cacq : #q + #qᶜ = 3 := by simp
-    all_goals grind [card_eq_one]
+    grind [card_eq_one]
   have sE : E ⊆ {a | ∀ i, a i ∈ Set.Icc (-1) 1} := fun a ma ↦ by
     obtain ⟨i₀, hi₀⟩ := r₀ ma
     obtain ⟨-, sa, ga⟩ := ma

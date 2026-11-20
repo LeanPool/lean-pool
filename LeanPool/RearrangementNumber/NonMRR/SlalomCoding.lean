@@ -184,7 +184,7 @@ theorem slalom_cover_to_strong_coincidence (r : ℕ → ℕ) (hr : ∀ n, 0 < r 
   refine ⟨(fun φ : Slalom r => slalomCoincidenceResponse φ.val) '' Φ,
     Cardinal.mk_image_le, ?_⟩
   intro W hW c
-  let w : ℕ ↪ ℕ := (hW.natEmbedding W).trans (Function.Embedding.subtype W)
+  let w : ℕ ↪ ℕ := (hW.natEmbedding W).trans (Function.Embedding.subtype (· ∈ W))
   have hw (i : ℕ) : w i ∈ W := (hW.natEmbedding W i).property
   let e : ℕ → ℕ := fun n => Encodable.encode (finiteGraph w c (graphSize r n))
   obtain ⟨φ, hφ, hcatch⟩ := hΦ e

@@ -118,7 +118,7 @@ theorem amnrJacobianJet_norm_le_of_fixed_equation {E F : Type*}
   have hC : 0 ≤ C := (norm_nonneg (iteratedFDeriv ℝ 0 A (Q x))).trans (hprimitive 0 (Nat.zero_le N))
   have hJ : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ Q) := hQ.fderiv_right (m := (⊤ : ℕ∞)) (by simp)
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero =>
       rw [norm_iteratedFDeriv_zero, amnrJacobianJetConstant]

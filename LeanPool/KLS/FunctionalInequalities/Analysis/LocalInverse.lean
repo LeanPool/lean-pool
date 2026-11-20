@@ -76,7 +76,7 @@ theorem contDiffOn_invFun_of_injective_of_hasFDerivAt_equiv
     (A : E → E ≃L[ℝ] F) (hA : ∀ x, HasFDerivAt f (A x : E →L[ℝ] F) x) :
     ContDiffOn ℝ k (invFun f) (range f) := by
   rintro y ⟨a, rfl⟩
-  have hs := hf.contDiffAt.hasStrictFDerivAt' (hA a) hk
+  have hs := hf.contDiffAt.hasStrictFDerivAt (hA a) hk
   have he := hs.localInverse_unique (Eventually.of_forall (leftInverse_invFun hi))
   exact ((hf.contDiffAt.to_localInverse (hA a) hk).congr_of_eventuallyEq he).contDiffWithinAt
 
@@ -98,7 +98,7 @@ theorem hasFDerivAt_invFun_of_injective {f : E → F} {a : E}
     (hA : HasFDerivAt f (A : E →L[ℝ] F) a) :
     HasFDerivAt (invFun f) (A.symm : F →L[ℝ] E) (f a) := by
   exact
-    ((hf.hasStrictFDerivAt' hA (by norm_num)).to_local_left_inverse
+    ((hf.hasStrictFDerivAt hA (by norm_num)).to_local_left_inverse
         (Eventually.of_forall (leftInverse_invFun hi))).hasFDerivAt
 
 end InverseDerivative

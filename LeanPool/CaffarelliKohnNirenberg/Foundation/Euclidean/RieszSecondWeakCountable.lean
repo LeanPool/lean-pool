@@ -288,7 +288,7 @@ private lemma bad_partial_eLpNorm_tendsto_zero_countable
   have hpow : ∀ n, (∫⁻ x, ENNReal.ofReal |S n x - H x| ^ (2 : ℝ)) =
       (eLpNorm (S n - H) (2 : ℝ≥0∞) volume) ^ (2 : ℝ) := by
     intro n
-    have hp := lintegral_rpow_enorm_eq_rpow_eLpNorm'
+    have hp := lintegral_rpow_eNorm_eq_rpow_eLpNorm'
       (f := S n - H) (μ := volume) (q := (2 : ℝ)) (by norm_num)
     have hmeas' := (hS n).aestronglyMeasurable.sub hH.aestronglyMeasurable
     have heq := eLpNorm_eq_eLpNorm' (p := (2 : ℝ≥0∞))
@@ -296,7 +296,7 @@ private lemma bad_partial_eLpNorm_tendsto_zero_countable
     have heq' : eLpNorm (S n - H) (2 : ℝ≥0∞) volume =
         eLpNorm' (S n - H) (2 : ℝ) volume := by
       simpa only [show ENNReal.toReal (2 : ℝ≥0∞) = (2 : ℝ) by norm_num] using heq
-    simpa only [Pi.sub_apply, absE, Real.enorm_eq_ofReal_abs, heq'] using hp
+    simpa only [Pi.sub_apply, absE, Real.eNorm_eq_ofReal_abs, heq'] using hp
   have hroot : Tendsto (fun n =>
       ((∫⁻ x, ENNReal.ofReal |S n x - H x| ^ (2 : ℝ)) : ℝ≥0∞) ^
         (1 / (2 : ℝ))) atTop (𝓝 0) := by
@@ -431,7 +431,7 @@ private lemma rieszSecond_countable_bad_additivity_infinite_hsumstar_1 :
         ∑' Q : {Q // Q ∈ D.cubes}, C_H *
           ∫⁻ x in dyadicCubeSet Q.1,
             ENNReal.ofReal |dyadicBadPart F Q.1 x| := by
-      apply ENNReal.tsum_le_tsum
+      apply tsum_le_tsum
       intro Q
       exact hbridge Q
     _ = C_H * (∑' Q : {Q // Q ∈ D.cubes},
@@ -607,7 +607,7 @@ theorem rieszSecond_countable_bad_additivity_infinite
           ∑' Q : {Q // Q ∈ D.cubes},
             ∫⁻ x in (rieszSecondCubeStar Q.1)ᶜ,
               ENNReal.ofReal |Tbad Q x| := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro Q
         have hsub : Uᶜ ⊆ (rieszSecondCubeStar Q.1)ᶜ := by
           intro x hx hxQ

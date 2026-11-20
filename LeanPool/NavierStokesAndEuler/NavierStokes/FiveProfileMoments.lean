@@ -605,7 +605,7 @@ theorem normalized_physical_debt (A G : ℝ) (hA : A ≠ 0) (c : Coeff) :
     fin_cases i <;> simp only [normalizedDebt, physicalDebt, Fin.isValue, Matrix.cons_val_zero,
         Matrix.cons_val, Matrix.cons_val_one, add_sub_cancel_right, Fin.zero_eta, Fin.mk_one,
         Fin.reduceFinMk] <;> field_simp
-    all_goals ring
+    ring
 
 /-- Physical equiv, constructed using `LinearEquiv.toContinuousLinearEquiv`. -/
 noncomputable def physicalEquiv (A G : ℝ) (hA : A ≠ 0) : Coeff ≃L[ℝ] Debt :=
@@ -922,20 +922,21 @@ theorem correction_family_contDiffOn {n : ℕ} (P : Patch) {S : Set ℝ} {c : �
     ContDiffOn ℝ ∞ (fun z : ℝ × ℝ => correction P (c z.1) z.2) (S ×ˢ univ) := by
   apply ContDiffOn.sum
   intro j _
-  exact ((contDiffOn_pi.mp hc j).comp contDiffOn_fst (fun z hz => hz.1)).mul
+  exact ((contDiffOn_pi.mp hc j).comp contDiffOn_fst
+    (fun z (hz : z ∈ S ×ˢ univ) => hz.1)).mul
     ((bump_contDiff P j).comp contDiff_snd).contDiffOn
 
 theorem physicalU_family_contDiffOn (P : Patch) {S : Set ℝ} {A G : ℝ → ℝ} {c : ℝ → Coeff}
     (hA : ContDiffOn ℝ ∞ A S) (hG : ContDiffOn ℝ ∞ G S) (hc : ContDiffOn ℝ ∞ c S) :
     ContDiffOn ℝ ∞ (fun z : ℝ × ℝ => physicalU P (A z.1) (G z.1) (c z.1) z.2) (S ×ˢ univ) :=
-  (hG.comp contDiffOn_fst (fun _ hz => hz.1)).add
-    ((hA.comp contDiffOn_fst (fun _ hz => hz.1)).mul
+  (hG.comp contDiffOn_fst (fun _ (hz : _ ∈ S ×ˢ univ) => hz.1)).add
+    ((hA.comp contDiffOn_fst (fun _ (hz : _ ∈ S ×ˢ univ) => hz.1)).mul
       (correction_family_contDiffOn (c := fun p => (c p).1) P.leftHalf hc.fst))
 
 theorem physicalE_family_contDiffOn (P : Patch) (b : ℝ) {S : Set ℝ} {A : ℝ → ℝ} {c : ℝ → Coeff}
     (hA : ContDiffOn ℝ ∞ A S) (hc : ContDiffOn ℝ ∞ c S) :
     ContDiffOn ℝ ∞ (fun z : ℝ × ℝ => physicalE P b (A z.1) (c z.1) z.2) (S ×ˢ Ioi 0) := by
-  apply (hA.comp contDiffOn_fst (fun z hz => hz.1)).mul
+  apply (hA.comp contDiffOn_fst (fun z (hz : z ∈ S ×ˢ Ioi 0) => hz.1)).mul
   apply ContDiffOn.add
   · exact contDiffOn_snd.rpow_const_of_ne (fun z hz => ne_of_gt hz.2)
   · exact (correction_family_contDiffOn P.rightHalf hc.snd).mono (fun z hz => ⟨hz.1, mem_univ _⟩)

@@ -110,10 +110,10 @@ private theorem setupValue_transition (spec : Spec) (state : ℕ)
     all_goals omega
   have hdiv : (transitionAddress state bit - transitionBase) / 2 = state := by
     cases bit <;> simp [transitionAddress, Input.bitValue, transitionBase]
-    all_goals omega
+    omega
   have hbit : decide ((transitionAddress state bit - transitionBase) % 2 = 1) = bit := by
     cases bit <;> simp [transitionAddress, Input.bitValue, transitionBase]
-    all_goals omega
+    omega
   unfold setupValue
   split_ifs with hs hp ho ht htr ha
   · simp [transitionAddress, Input.bitValue, stateReg, transitionBase] at hs
@@ -571,7 +571,7 @@ private theorem iterated_state {spec : Spec} {bit : Bool} {rest : List Bool}
       spec.step state bit := by
     rw [addressed_high store _ (by
       cases bit <;> simp [transitionAddress, transitionBase, Input.bitValue]
-      all_goals omega)]
+      omega)]
     exact hinv.transition_eq state hinv.state_lt bit
   simp [iterated, advanced, transitioned, Basic.exec, lengthReg, pointerReg,
     stateReg, haddress, htable]
@@ -636,7 +636,7 @@ private theorem iterated_inv {spec : Spec} {bit : Bool} {rest : List Bool}
       omega)]
     have hinput := hinv.input_eq (offset + 1)
     convert! hinput using 1
-    all_goals simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+    simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
 
 private def loopAdvance (spec : Spec) (state : ℕ × ℕ) (bit : Bool) : ℕ × ℕ :=
   (spec.step state.1 bit, state.2 + 1)
@@ -752,7 +752,7 @@ private theorem finalize_measured {spec : Spec} {inputLength state : ℕ}
     · change indexed (indexed addressReg) ≤ inputLength + inputBase spec
       rw [haddress, htable]
       cases spec.accept state <;> simp [Input.bitValue, inputBase, transitionBase]
-      all_goals omega
+      omega
   have hfirst := MeasuredRuns.basicEnvelope
     (.add addressReg stateReg acceptBaseReg) store hinv.store_bound hindexed
   have hsecond := MeasuredRuns.basicEnvelope (.load lengthReg addressReg)

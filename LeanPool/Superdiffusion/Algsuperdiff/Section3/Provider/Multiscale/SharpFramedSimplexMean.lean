@@ -196,7 +196,7 @@ theorem probe_responseJ_simplexDomain_normalized_flux_le_framed_ae
   have hprod : si⁻¹ * sj⁻¹ ≤ 4 * K := by
     dsimp only [si, sj, K]
     convert hprod₀ using 1
-    all_goals ring
+    ring
   have hcore := normalized_flux_framed_core
     (J := Ch02.responseJ (simplexDomain T)
       (simplexCoeffOn (coefficientCutoffTriadicCoeffFamily M L omega) T)
@@ -205,7 +205,7 @@ theorem probe_responseJ_simplexDomain_normalized_flux_le_framed_ae
     (sigmaBar_le_four_mul_sigmaBar M hS hji hi) hprod hbase
   dsimp only [S, W, Cb, K, w] at hcore
   convert hcore using 1
-  all_goals ring
+  ring
 
 /-- The preceding framed response estimate after replacing the increment
 supremum by its simplex mean and oscillation threshold.  Only the random

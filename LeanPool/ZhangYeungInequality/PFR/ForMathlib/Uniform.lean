@@ -60,13 +60,13 @@ lemma exists_isUniform [MeasurableSpace S] [MeasurableSingletonClass S]
     (Finset.card H : ℝ≥0∞)⁻¹ • ∑ i, .dirac i, ?_,
     measurable_subtype_coe, ⟨?_, ?_⟩, fun x ↦ x.2, ?_⟩
   · constructor
-    simp only [Finset.univ_eq_attach, Measure.smul_apply, Measure.coe_finsetSum, Finset.sum_apply,
+    simp only [Finset.univ_eq_attach, smul_apply, FunLike.coe_sum, Finset.sum_apply,
       measure_univ, Finset.sum_const, Finset.card_attach, nsmul_eq_mul, mul_one, smul_eq_mul]
     rw [ENNReal.inv_mul_cancel]
     · simpa using h.ne_empty
     · simp
   · intro x hx y hy
-    simp only [Finset.univ_eq_attach, Measure.smul_apply, Measure.coe_finsetSum,
+    simp only [Finset.univ_eq_attach, smul_apply, FunLike.coe_sum,
       Finset.sum_apply, Measure.dirac_apply, smul_eq_mul]
     rw [Finset.sum_eq_single ⟨x, hx⟩, Finset.sum_eq_single ⟨y, hy⟩]
     · simp
@@ -258,7 +258,7 @@ lemma _root_.ProbabilityTheory.IsUniform.restrict
     {H : Set S} (h : IsUniform H X μ) (hX : Measurable X) (H' : Set S) :
     IsUniform (H' ∩ H) X (μ[|X ⁻¹' H']) where
   eq_of_mem := fun x hx y hy ↦ by
-    simp only [cond, Measure.smul_apply, smul_eq_mul]
+    simp only [cond, smul_apply, smul_eq_mul]
     rw [μ.restrict_eq_self (preimage_mono (singleton_subset_iff.mpr hx.1)),
       μ.restrict_eq_self (preimage_mono (singleton_subset_iff.mpr hy.1)), h.eq_of_mem hx.2 hy.2]
   measure_preimage_compl := by
@@ -267,11 +267,11 @@ lemma _root_.ProbabilityTheory.IsUniform.restrict
       _ ≤ (μ[|X ⁻¹' H']) (X ⁻¹' H'ᶜ) + (μ[|X ⁻¹' H']) (X ⁻¹' Hᶜ) :=
         measure_union_le _ _
       _ = (μ[|X ⁻¹' H']) (X ⁻¹' H'ᶜ) + 0 := congrArg _ <| by
-        simp only [cond, Measure.smul_apply, smul_eq_mul]
+        simp only [cond, smul_apply, smul_eq_mul]
         convert mul_zero _
         exact eq_bot_mono (Measure.restrict_apply_le _ _) h.measure_preimage_compl
       _ = 0 := by
-        simp only [cond, Measure.smul_apply, smul_eq_mul]
+        simp only [cond, smul_apply, smul_eq_mul]
         rw [add_zero, Set.preimage_compl, Measure.restrict_apply <|
           MeasurableSet.compl (measurableSet_preimage hX .of_discrete),
           compl_inter_self, measure_empty, mul_zero]

@@ -60,7 +60,7 @@ private theorem slice_three_halves_time
   obtain ⟨hsm, hse⟩ := glued_slice_norm_power_integral (by norm_num : (0 : ℝ) < 3 / 2) hm
   refine ⟨hsm, ?_, hm.prodMk_right⟩
   rw [hse]
-  have hn := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have hn := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (by norm_num : ENNReal.ofReal (3 / 2 : ℝ) ≠ 0) ENNReal.ofReal_ne_top hF.eLpNorm_lt_top
   change (∫⁻ w : Vec3 × ℝ in B ×ˢ J, ‖F w‖ₑ ^ (ENNReal.ofReal (3 / 2 : ℝ)).toReal) < ⊤ at hn
   simpa only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3 / 2)] using hn
@@ -71,9 +71,9 @@ private theorem spatial_integral_le_slice_norm
     ENNReal.ofReal (∫ x in B, g x) ≤
       volume B ^ (1 / 3 : ℝ) * eLpNorm g (ENNReal.ofReal (3 / 2 : ℝ)) (volume.restrict B) := by
   have hi : ENNReal.ofReal (∫ x in B, g x) ≤ eLpNorm g 1 (volume.restrict B) := by
-    rw [eLpNorm_one_eq_lintegral_enorm hg]
-    have he := enorm_integral_le_lintegral_enorm (μ := volume.restrict B) g
-    rw [Real.enorm_eq_ofReal_abs] at he
+    rw [eLpNorm_one_eq_lintegral_eNorm hg]
+    have he := eNorm_integral_le_lintegral_eNorm (μ := volume.restrict B) g
+    rw [Real.eNorm_eq_ofReal_abs] at he
     exact (ENNReal.ofReal_le_ofReal (le_abs_self _)).trans he
   have hp := eLpNorm_le_eLpNorm_mul_rpow_measure_univ
     (by norm_num : (1 : ℝ≥0∞) ≤ ENNReal.ofReal (3 / 2 : ℝ)) hg
@@ -194,13 +194,13 @@ theorem fixed_remainder_temporal_majorant_of_sws
       nlinarith only [ht]
     have hb' := hb.trans (mul_le_mul_of_nonneg_right (le_abs_self Cf)
       (integral_nonneg (fun _ => vec3EuclideanNorm_nonneg _)))
-    rw [Real.enorm_eq_ofReal_abs]
+    rw [Real.eNorm_eq_ofReal_abs]
     apply (ENNReal.ofReal_le_ofReal hb').trans
     rw [ENNReal.ofReal_mul (abs_nonneg _)]
     exact (mul_le_mul' le_rfl (spatial_integral_le_slice_norm hFmeas)).trans_eq (mul_assoc _ _
       _).symm
   change ‖classicalGradient (h + v) x i‖ₑ ≤ H s + W s
   rw [hgrad]
-  exact (enorm_add_le _ _).trans (add_le_add hhb hvb)
+  exact (eNorm_add_le _ _).trans (add_le_add hhb hvb)
 
 end CKN.Core.Step4

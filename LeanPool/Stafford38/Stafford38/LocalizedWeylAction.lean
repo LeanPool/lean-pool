@@ -91,16 +91,16 @@ theorem differentialGenerator_commutator (i j : Fin n ⊕ Fin n) :
   | inl i =>
       cases j with
       | inl j => simp [Stafford.commutator, differentialGenerator,
-          coordinateEnd, Module.End.mul_apply, Matrix.J, mul_comm,
+          coordinateEnd, mul_apply_eq_comp, Matrix.J, mul_comm,
           mul_left_comm]
       | inr j =>
           by_cases h : i = j
           · subst j
             simp [Stafford.commutator, differentialGenerator, coordinateEnd,
-              momentumEnd, Module.End.mul_apply, Matrix.J,
+              momentumEnd, mul_apply_eq_comp, Matrix.J,
               localizedPderiv_apply_algebraMap_X]
           · simp [Stafford.commutator, differentialGenerator, coordinateEnd,
-              momentumEnd, Module.End.mul_apply, Matrix.J, h,
+              momentumEnd, mul_apply_eq_comp, Matrix.J, h,
               Ne.symm h, localizedPderiv_apply_algebraMap_X]
   | inr i =>
       cases j with
@@ -108,7 +108,7 @@ theorem differentialGenerator_commutator (i j : Fin n ⊕ Fin n) :
           by_cases h : i = j
           · subst j
             simp [Stafford.commutator, differentialGenerator, coordinateEnd,
-              momentumEnd, Module.End.mul_apply, Matrix.J,
+              momentumEnd, mul_apply_eq_comp, Matrix.J,
               localizedPderiv_apply_algebraMap_X]
           · simp [Stafford.commutator, differentialGenerator, coordinateEnd,
               momentumEnd, differentialGenerator, coordinateEnd,
@@ -117,7 +117,7 @@ theorem differentialGenerator_commutator (i j : Fin n ⊕ Fin n) :
           have hc := localizedPderiv_comm S B i j
           have hcf := LinearMap.congr_fun hc f
           simpa [Stafford.commutator, differentialGenerator, momentumEnd,
-            Module.End.mul_apply, Matrix.J] using (sub_eq_zero.mpr hcf)
+            mul_apply_eq_comp, Matrix.J] using (sub_eq_zero.mpr hcf)
 
 /-- The algebra map realizing the presented Weyl algebra as differential operators on a
 localization. -/

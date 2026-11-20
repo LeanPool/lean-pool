@@ -328,9 +328,7 @@ lemma enumerateFVar_idxOfFVar [DecidableEq ξ] [Inhabited ξ] {t : Semiterm L ξ
 
 lemma mem_fvarList_iff_hasFreeVariable [DecidableEq ξ] {t : Semiterm L ξ n} :
     x ∈ t.fvarList ↔ t.HasFreeVariable x := by
-  induction t <;>
-    { simp [fvarList, *]; try tauto
-    }
+  induction t <;> simp [fvarList, eq_comm, *]
 
 end idxOfFVar
 

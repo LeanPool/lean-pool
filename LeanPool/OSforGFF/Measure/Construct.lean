@@ -395,6 +395,7 @@ theorem gaussianFreeField_free_centered (m : ℝ) [Fact (0 < m)] :
   -- Step 3: Apply moment_zero_from_realCF to get ∫ (ω φ : ℂ) = 0
   have h_complex_zero : ∫ ω, (ω φ : ℂ) ∂(gaussianFreeFieldFree m).toMeasure = 0 :=
     MinlosAnalytic.moment_zero_from_realCF
+      inferInstance inferInstance inferInstance inferInstance inferInstance
       (freeCovarianceForm m) (gaussianFreeFieldFree m) h_realCF φ hInt
   -- Step 4: Convert from complex to real integral via integral_ofReal
   rw [show (∫ ω, (ω φ : ℂ) ∂(gaussianFreeFieldFree m).toMeasure) =

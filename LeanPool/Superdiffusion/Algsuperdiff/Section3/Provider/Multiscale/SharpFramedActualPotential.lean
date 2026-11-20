@@ -452,7 +452,7 @@ theorem probe_ofReal_abs_potentialCoordinate_le_tsum_framedMeanLayers_ae
         (fun T : KuhnCell d =>
           F T +
             G T)
-    _ ≤ _ := ENNReal.tsum_le_tsum hlayer
+    _ ≤ _ := tsum_le_tsum hlayer
 
 end
 

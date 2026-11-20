@@ -1058,9 +1058,9 @@ theorem aestronglyMeasurable_gammaSeqIntegralError
   · rw [aestronglyMeasurable_indicator_iff measurableSet_Ioi]
     exact
       ((continuousOn_id.rpow_const
-          (fun x hx ↦ Or.inl hx.ne')).add
+          (fun x (hx : x ∈ Ioi (0 : ℝ)) ↦ Or.inl hx.ne')).add
         (continuousOn_id.rpow_const
-          (fun x hx ↦ Or.inl hx.ne'))).aestronglyMeasurable
+          (fun x (hx : x ∈ Ioi (0 : ℝ)) ↦ Or.inl hx.ne'))).aestronglyMeasurable
         measurableSet_Ioi
 
 theorem integrable_gammaSeqIntegralError

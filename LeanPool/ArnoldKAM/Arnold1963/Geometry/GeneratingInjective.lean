@@ -66,7 +66,7 @@ theorem generating_injOn (hr : 0 < r) (hS : AnalyticOnNhd ℂ S V)
     · exact hε
     · exact hk
     · intro x hx
-      apply (convex_closedBall x (r / 2 : ℝ≥0)).lipschitzOnWith_of_nnnorm_fderiv_le (𝕜 := ℂ)
+      apply (convex_closedBall x (r / 2 : ℝ≥0)).lipschitzOnWith_of_nnNorm_fderiv_le (𝕜 := ℂ)
       · intro z hz
         have ha := hS z (erosion_subset _ _ (hbuffer hx hz))
         cases b

@@ -45,9 +45,9 @@ theorem stability_flux_product_tendsto
       (hb : AEStronglyMeasurable b μ) :
       eLpNorm (fun x => a x * b x) 1 μ ≤
         eLpNorm a (3 / 2 : ℝ≥0∞) μ * eLpNorm b 3 μ := by
-    simpa using (eLpNorm_le_eLpNorm_mul_eLpNorm_of_enorm
+    simpa using (eLpNorm_le_eLpNorm_mul_eLpNorm_of_eNorm
       (b := fun x y : ℝ => x * y) (c := (1 : ℝ≥0∞))
-      (by fun_prop) ha hb (by filter_upwards with x; simp [enorm_mul]))
+      (by fun_prop) ha hb (by filter_upwards with x; simp [eNorm_mul]))
   have hsum (n : ℕ) :
       eLpNorm (fun x => F n x * G n x - f x * g x) 1 μ ≤
       eLpNorm (F n - f) (3 / 2 : ℝ≥0∞) μ * eLpNorm (G n) 3 μ +

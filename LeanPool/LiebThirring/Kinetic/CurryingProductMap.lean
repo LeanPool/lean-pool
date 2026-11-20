@@ -52,10 +52,10 @@ theorem l2Curry_norm (f : Lp E 2 (μ.prod ν)) : ‖l2Curry f‖ = ‖f‖ := by
         exact lintegral_congr_ae (hx.mono
           (fun _ hy => congrArg (fun u : E => ‖u‖ₑ ^ 2) hy))
       _ = ∫⁻ z, ‖f z‖ₑ ^ 2 ∂(μ.prod ν) :=
-        (lintegral_prod _ ((Lp.stronglyMeasurable f).enorm.pow_const 2).aemeasurable).symm
+        (lintegral_prod _ ((Lp.stronglyMeasurable f).eNorm.pow_const 2).aemeasurable).symm
       _ = _ := lintegral_l2_enorm_sq _
   have hnormsq : ‖l2Curry f‖ ^ 2 = ‖f‖ ^ 2 := by
-    simpa only [ENNReal.toReal_pow, enorm_eq_nnnorm, ENNReal.coe_toReal, coe_nnnorm]
+    simpa only [ENNReal.toReal_pow, eNorm_eq_nnNorm, ENNReal.coe_toReal, coe_nnNorm]
       using congrArg ENNReal.toReal hsq
   exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hnormsq
 

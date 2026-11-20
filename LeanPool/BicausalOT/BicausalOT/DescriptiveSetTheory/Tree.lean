@@ -314,8 +314,7 @@ theorem jankov_von_neumann
     (P : Set (X × Y)) (hP : AnalyticSet P) (hne : P.Nonempty) :
     ∃ (φ : X → Y), AnalyticallyMeasurable φ ∧
       ∀ x ∈ Prod.fst '' P, (x, φ x) ∈ P := by
-  rw [AnalyticSet] at hP
-  rcases hP with rfl | ⟨π, hπ_cont, hπ_range⟩
+  rcases hP.eq_empty_or_exists_range with rfl | ⟨π, hπ_cont, hπ_range⟩
   · exact absurd hne (by simp)
   -- F = {(x, z) ∈ X × ℕᴺ | fst(π(z)) = x} is closed
   let F : Set (X × (ℕ → ℕ)) := { p | Prod.fst (π p.2) = p.1 }

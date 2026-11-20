@@ -32,10 +32,10 @@ theorem amnr_previous_velocity_lipschitz_of_A3 {β C : ℝ} (I : AVenhance.Ingre
   have hs : ContDiff ℝ (⊤ : ℕ∞) (AVenhance.streamVel (Φ (m - 1)) t) :=
     hb.smooth.comp (contDiff_const.prodMk contDiff_id)
   have hlip : LipschitzWith L.toNNReal (AVenhance.streamVel (Φ (m - 1)) t) := by
-    apply lipschitzWith_of_nnnorm_fderiv_le (hs.differentiable (by simp))
+    apply lipschitzWith_of_nnNorm_fderiv_le (hs.differentiable (by simp))
     intro x
     apply NNReal.coe_le_coe.mp
-    rw [coe_nnnorm, Real.coe_toNNReal L hL, ← jointSpatialFDeriv_eq_slice hb]
+    rw [coe_nnNorm, Real.coe_toNNReal L hL, ← jointSpatialFDeriv_eq_slice hb]
     exact amnr_previous_velocityJacobian_norm_le_of_A3 I hΦ hreg hm t x
   simpa only [dist_eq_norm, Real.coe_toNNReal L hL] using hlip.dist_le_mul x y
 

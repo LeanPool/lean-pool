@@ -277,7 +277,7 @@ theorem caccioppoli_I4_space_time_bound
             (volume (parabolicCylinder x₀ t₀ ρ)) ^
               (1 / (q / (q - 1)) - 1 / 3 : ℝ) := by
         rw [← hmeasure]
-        simpa only [eLpNorm'_eq_lintegral_enorm, enorm_eq_self] using hcompare
+        simpa only [eLpNorm'_eq_lintegral_eNorm, eNorm_eq_self] using hcompare
       calc
         _ ≤ ENNReal.ofReal (2000 / r) *
             (∫⁻ w in parabolicCylinder x₀ t₀ ρ,

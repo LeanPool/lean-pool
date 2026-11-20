@@ -155,13 +155,13 @@ instance (k) : DecidableEq (oRing.Func k) := fun a b =>
   by
     rcases a <;> rcases b <;> simp only [reduceCtorEq] <;>
       try {exact instDecidableTrue} <;>
-      try {exact instDecidableFalse}
+      exact instDecidableFalse
 
 instance (k) : DecidableEq (oRing.Rel k) := fun a b =>
   by
     rcases a <;> rcases b <;> simp only [reduceCtorEq] <;>
       try {exact instDecidableTrue} <;>
-      try {exact instDecidableFalse}
+      exact instDecidableFalse
 
 instance (k) : Encodable (oRing.Func k) where
   encode := fun x =>

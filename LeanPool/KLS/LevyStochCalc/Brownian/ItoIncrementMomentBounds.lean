@@ -138,7 +138,7 @@ theorem lintegral_stochasticIntegralBrownian_pow_four_le_Ioc
     refine lintegral_mono fun ω => lintegral_mono fun s => ?_
     have hle : ‖(Q n).eval s ω - F ω s‖₊ ≤ ‖F ω s - (G0 n).eval s ω‖₊ := by
       rw [← NNReal.coe_le_coe]
-      simp only [coe_nnnorm, Real.norm_eq_abs]
+      simp only [coe_nnNorm, Real.norm_eq_abs]
       have hstep : |(Q n).eval s ω - F ω s|
           ≤ |((G0 n).truncate C).eval s ω - F ω s| := by
         rw [hQeval n s ω]
@@ -202,7 +202,7 @@ theorem lintegral_stochasticIntegralBrownian_pow_four_le_Ioc
         = fun x : ℝ => ((‖x‖₊ ^ 4 : ℝ≥0) : ℝ≥0∞) := by
       funext x; rw [ENNReal.coe_pow]
     rw [hfun]
-    exact ENNReal.continuous_coe.comp (continuous_nnnorm.pow 4)
+    exact ENNReal.continuous_coe.comp (continuous_nnNorm.pow 4)
   have hfatou : ∫⁻ ω,
       (‖stochasticIntegralBrownian W ℱ hℱ F hm hp hq b ω‖₊ : ℝ≥0∞) ^ 4 ∂P
       ≤ Filter.liminf (fun k => ∫⁻ ω,
@@ -379,8 +379,8 @@ theorem integrable_of_lintegral_nnnorm_lt_top {P : Measure Ω} {f : Ω → ℝ}
     (hf : MeasureTheory.AEStronglyMeasurable f P)
     (h : ∫⁻ ω, (‖f ω‖₊ : ℝ≥0∞) ∂P < ⊤) : MeasureTheory.Integrable f P := by
   refine ⟨hf, ?_⟩
-  rw [MeasureTheory.hasFiniteIntegral_iff_enorm]
-  simpa only [enorm_eq_nnnorm] using h
+  rw [MeasureTheory.hasFiniteIntegral_iff_eNorm]
+  simpa only [eNorm_eq_nnNorm] using h
 
 /-- A pointwise-nonnegative integrand is bounded through its `lintegral`. -/
 theorem integral_le_of_lintegral_ofReal_le {P : Measure Ω} {f : Ω → ℝ}
@@ -445,7 +445,7 @@ theorem integral_sub_pow_four_le {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
         = (‖stochasticIntegralBrownian W ℱ hℱ H hm hp hq b ω
           - stochasticIntegralBrownian W ℱ hℱ H hm hp hq a ω‖₊ : ℝ≥0∞) ^ 4 := by
       intro ω
-      rw [nnnorm_pow, ENNReal.coe_pow]
+      rw [nnNorm_pow, ENNReal.coe_pow]
     simp_rw [hrw]
     exact lt_of_le_of_lt hbound (by simp)
   have hKnn : (0 : ℝ) ≤ (6 + gaussianFourthMoment) * C ^ 4 * (b - a) ^ 2 :=
@@ -490,7 +490,7 @@ theorem integral_sub_sq_le {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
         = (‖stochasticIntegralBrownian W ℱ hℱ H hm hp hq b ω
           - stochasticIntegralBrownian W ℱ hℱ H hm hp hq a ω‖₊ : ℝ≥0∞) ^ 2 := by
       intro ω
-      rw [nnnorm_pow, ENNReal.coe_pow]
+      rw [nnNorm_pow, ENNReal.coe_pow]
     simp_rw [hrw]
     exact lt_of_le_of_lt hbound (by simp)
   refine ⟨hint, integral_le_of_lintegral_ofReal_le hint hnn (by positivity) ?_⟩

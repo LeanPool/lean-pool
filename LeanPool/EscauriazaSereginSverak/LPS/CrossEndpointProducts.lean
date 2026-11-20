@@ -53,12 +53,12 @@ theorem lps_slice_eLpNorm_two_aemeasurable {T : ℝ} {B : ParabolicPoint → ℝ
       (volume.restrict (Ioo 0 T)) := by
   have hpow : AEMeasurable (fun z : Vec3 × ℝ => ‖B z‖ₑ ^ (2 : ℝ))
       ((volume : Measure Vec3).prod (volume.restrict (Ioo 0 T))) :=
-    (serrin_aesm_prod hB).enorm.pow_const _
+    (serrin_aesm_prod hB).eNorm.pow_const _
   have hlin := hpow.lintegral_prod_left'
   have hroot := hlin.pow_const (1 / (2 : ℝ))
   refine hroot.congr ?_
   filter_upwards [lps_slice_aesm hB] with t ht
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) ht]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) ht]
   norm_num
 
 /-- An `L∞_t L²_x` factor times a space-time `L²` factor lies in `L²_t L¹_x`. -/
@@ -88,8 +88,8 @@ theorem lps_endpoint_product_l2_l1 {T : ℝ} {A B : ParabolicPoint → ℝ} {K :
     refine ⟨hmem', ?_⟩
     have hnorm : eLpNorm (fun x : Vec3 => A (x,τ) * B (x,τ)) (ENNReal.ofReal 1) volume =
         ∫⁻ x : Vec3, ‖A (x,τ)‖ₑ * ‖B (x,τ)‖ₑ := by
-      rw [ENNReal.ofReal_one, eLpNorm_one_eq_lintegral_enorm hmem.aestronglyMeasurable]
-      simp [enorm_mul]
+      rw [ENNReal.ofReal_one, eLpNorm_one_eq_lintegral_eNorm hmem.aestronglyMeasurable]
+      simp [eNorm_mul]
     rw [hnorm]
     calc _ ≤ eLpNorm (fun x : Vec3 => A (x,τ)) 2 volume *
           eLpNorm (fun x : Vec3 => B (x,τ)) 2 volume :=
@@ -144,7 +144,7 @@ theorem lps_endpoint_product_linf_l2 {T : ℝ} {A B : ParabolicPoint → ℝ} {�
     have hle : eLpNorm (fun x : Vec3 => A (x,τ) * B (x,τ)) 2 volume ≤
         eLpNorm ((β τ) • (fun x : Vec3 => B (x,τ))) 2 volume :=
       eLpNorm_mono_ae (hAτ.mul hBτ.aestronglyMeasurable) hbound
-    rw [eLpNorm_const_smul, Real.enorm_eq_ofReal_abs, abs_of_nonneg hβ0] at hle
+    rw [eLpNorm_const_smul, Real.eNorm_eq_ofReal_abs, abs_of_nonneg hβ0] at hle
     simpa using hle
   refine ⟨by filter_upwards [hkey] with τ h using h.1, ?_⟩
   simp only [ENNReal.rpow_one]

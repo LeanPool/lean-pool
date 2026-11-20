@@ -38,13 +38,13 @@ private theorem eLpNorm_cube_eq_lintegral_abs_cube_interp
     (hf : AEStronglyMeasurable f (volume.restrict s)) :
     eLpNorm f (3 : ℝ≥0∞) (volume.restrict s) ^ (3 : ℕ) =
       ∫⁻ x in s, ENNReal.ofReal |f x| ^ (3 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := (3 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top hf,
     ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
   norm_num
   apply lintegral_congr
   intro x
-  rw [Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs]
 
 private theorem eLpNorm_component_le_sum_interp {ι : Type*} [Fintype ι]
     {f : ι → ℝ≥0∞} (i : ι) :
@@ -120,7 +120,7 @@ theorem vector_interpolation_ball_l3_fixed
                 ∫⁻ x in B, ENNReal.ofReal |u x i| ^ (3 : ℝ) := by
               apply lintegral_congr
               intro x
-              rw [Real.enorm_eq_ofReal_abs,
+              rw [Real.eNorm_eq_ofReal_abs,
                 ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num)]
             _ = eLpNorm (fun x => u x i) (3 : ℝ≥0∞)
                   (volume.restrict B) ^ (3 : ℕ) := by

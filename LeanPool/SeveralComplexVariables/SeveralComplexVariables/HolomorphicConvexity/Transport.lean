@@ -64,8 +64,8 @@ variable [FiniteDimensional ℂ E] [FiniteDimensional ℂ F]
 theorem IsBiholomorphic.image_holomorphicHull {e : OpenPartialHomeomorph E F}
     (he : IsBiholomorphic e) {K : Set E} (hK : K ⊆ e.source) :
     e '' holomorphicHull e.source K = holomorphicHull e.target (e '' K) := by
-  let := FiniteDimensional.complete ℂ E
-  let := FiniteDimensional.complete ℂ F
+  let := FiniteDimensional.completeSpace ℂ E
+  let := FiniteDimensional.completeSpace ℂ F
   have hf := he.1.analyticOnNhd_of_finiteDimensional e.open_source
   have hg := he.2.analyticOnNhd_of_finiteDimensional e.open_target
   have hback : e.symm '' (e '' K) = K := by
@@ -88,8 +88,8 @@ theorem IsBiholomorphic.isHolomorphicallyConvex_source {e : OpenPartialHomeomorp
     (he : IsBiholomorphic e) (hV : IsHolomorphicallyConvex e.target) :
     IsHolomorphicallyConvex e.source := by
   intro K hK hKU
-  let := FiniteDimensional.complete ℂ E
-  let := FiniteDimensional.complete ℂ F
+  let := FiniteDimensional.completeSpace ℂ E
+  let := FiniteDimensional.completeSpace ℂ F
   have hf := he.1.analyticOnNhd_of_finiteDimensional e.open_source
   have hg := he.2.analyticOnNhd_of_finiteDimensional e.open_target
   have himage : e '' K ⊆ e.target := by

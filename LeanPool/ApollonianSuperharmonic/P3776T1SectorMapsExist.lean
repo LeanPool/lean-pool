@@ -84,6 +84,8 @@ private theorem sectorChamber_closed :
     ∀ i j k : Fin 3, IsClosed (sectorChamber i j k) := by
   classical
   intro SectorSimplex sectorChamber i j k
+  change IsClosed ({s : SectorSimplex | s.1 j ≤ s.1 i} ∩
+    {s : SectorSimplex | s.1 k ≤ s.1 j})
   apply IsClosed.inter
   · exact isClosed_le ((continuous_apply j).comp continuous_subtype_val)
       ((continuous_apply i).comp continuous_subtype_val)

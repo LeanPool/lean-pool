@@ -399,7 +399,7 @@ noncomputable def TestFunProd (d n : ℕ) : Submodule ℝ ((Fin n → Fin d → 
 /-- A perfect `n`-linear Calderón–Zygmund form on `ℝ^d`. -/
 structure PerfectCZForm (d n : ℕ) where
   /-- the `n`-linear form `Λ` on dyadic test functions -/
-  form : MultilinearMap ℝ (fun _ : Fin n => TestFun d) ℝ
+  form : MultilinearMap (RingHom.id ℝ) (fun _ : Fin n => TestFun d) ℝ
   /-- (i) dyadic decay (1.1): for every Hölder tuple, if all `f_j` are supported on `P` and two
   of them on different children of `P`, then `|Λ(f)| ≤ ∏ ‖f_j‖_{p_j}`. -/
   decay : ∀ (p : HolderTuple n) (P : DyadicCube d) (f : Fin n → TestFun d),
@@ -1154,7 +1154,7 @@ theorem abs_setIntegral_le_rpow_mul_lpNorm {f : (Fin d → ℝ) → ℝ} {p : �
   calc |∫ x in s, f x| = |∫ x, s.indicator f x| := by rw [integral_indicator hs]
     _ ≤ ∫ x, |s.indicator f x| := abs_integral_le_integral_abs
     _ = (eLpNorm (s.indicator f) 1 volume).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm hind, ← integral_norm_eq_lintegral_enorm hind]
+        rw [eLpNorm_one_eq_lintegral_eNorm hind, ← integral_norm_eq_lintegral_eNorm hind]
         simp only [Real.norm_eq_abs]
     _ ≤ (eLpNorm f (ENNReal.ofReal p) volume * volume s ^ (1 - 1 / p)).toReal :=
         ENNReal.toReal_mono (ENNReal.mul_ne_top hf.eLpNorm_ne_top hfin') h1
@@ -1476,7 +1476,7 @@ theorem volume_biUnion_le_of_chebyshev {Q : DyadicCube d} {Ps : Set (DyadicCube 
         measure_biUnion Ps.to_countable hdisj fun P _ => P.measurableSet_toSet
     _ ≤ ∑' P : Ps, ∑ j ∈ J, (a / ∫⁻ x in Q.toSet, F j x) *
           ∫⁻ x in (P : DyadicCube d).toSet, F j x := by
-        refine ENNReal.tsum_le_tsum fun P => ?_
+        refine tsum_le_tsum fun P => ?_
         obtain ⟨j, hj, hPj⟩ := h P P.2
         calc volume (P : DyadicCube d).toSet
             = volume (P : DyadicCube d).toSet * (∫⁻ x in Q.toSet, F j x) /
@@ -1492,7 +1492,7 @@ theorem volume_biUnion_le_of_chebyshev {Q : DyadicCube d} {Ps : Set (DyadicCube 
                 ∫⁻ x in (P : DyadicCube d).toSet, F j x) (fun _ _ => zero_le) hj
     _ = ∑ j ∈ J, (a / ∫⁻ x in Q.toSet, F j x) *
           ∑' P : Ps, ∫⁻ x in (P : DyadicCube d).toSet, F j x := by
-        rw [Summable.tsum_finsetSum fun _ _ => ENNReal.summable]
+        rw [Summable.tsum_finsetSum fun _ _ => CompleteLattice.summable]
         exact Finset.sum_congr rfl fun j _ => ENNReal.tsum_mul_left
     _ = ∑ j ∈ J, (a / ∫⁻ x in Q.toSet, F j x) * ∫⁻ x in ⋃ P ∈ Ps, P.toSet, F j x := by
         rw [hU]
@@ -1680,7 +1680,7 @@ theorem volume_biUnion_le_of_overlap {Ps₄ Ps₅ : Set (DyadicCube d)}
             rfl
       _ = ∑' R : S, (φ R).parent.toSet.indicator 1 x := (tsum_fintype _).symm
       _ ≤ ∑' P' : Ps₄, (P' : DyadicCube d).parent.toSet.indicator 1 x :=
-          ENNReal.tsum_comp_le_tsum_of_injective hψ
+          tsum_comp_le_tsum_of_injective hψ
             fun P' : Ps₄ => (P' : DyadicCube d).parent.toSet.indicator 1 x
   calc ENNReal.ofReal M * volume (⋃ P ∈ Ps₅, P.toSet)
       = ∫⁻ x in ⋃ P ∈ Ps₅, P.toSet, ENNReal.ofReal M := (setLIntegral_const _ _).symm
@@ -1814,7 +1814,7 @@ theorem TestFun.truncateₗ_of_supportedOn {P : DyadicCube d} {g : TestFun d}
 theorem lpNorm_const_smul (c : ℝ) (g : (Fin d → ℝ) → ℝ) (p : ℝ) :
     lpNorm (c • g) p = |c| * lpNorm g p := by
   unfold lpNorm
-  rw [eLpNorm_const_smul, ENNReal.toReal_mul, toReal_enorm, Real.norm_eq_abs]
+  rw [eLpNorm_const_smul, ENNReal.toReal_mul, toReal_eNorm, Real.norm_eq_abs]
 
 variable {n : ℕ}
 
@@ -1993,7 +1993,7 @@ theorem volume_biUnion_le_of_P3 {Q : DyadicCube d} {Ps : Set (DyadicCube d)} (hP
     exact exists_normalized_rho (slotForm T a g P) hs h0 hpos hL
   choose ρ' hρ' using hchoice
   -- reduction to finite subfamilies
-  rw [volume_biUnion_eq_tsum hdisj, ENNReal.tsum_eq_iSup_sum]
+  rw [volume_biUnion_eq_tsum hdisj, tsum_eq_iSup_sum]
   refine iSup_le fun s => ?_
   rw [← ENNReal.ofReal_sum_of_nonneg (f := fun P : Ps => (P : DyadicCube d).vol)
     fun P _ => (P : DyadicCube d).vol_pos.le]
@@ -2626,7 +2626,7 @@ theorem twoSlotForm_smul_right (T : PerfectCZForm d n) (a b : Fin n) (g : Fin n 
     (P : DyadicCube d) (ρ : TestFun d) (c : ℝ) (ρ' : TestFun d) :
     twoSlotForm T a b g P ρ (c • ρ') = c * twoSlotForm T a b g P ρ ρ' := by
   unfold twoSlotForm
-  rw [LinearMap.map_smul, MultilinearMap.map_update_smul, smul_eq_mul]
+  rw [LinearMap.map_smul, MultilinearMap.map_update_smul, RingHom.id_apply, smul_eq_mul]
 
 theorem twoSlotForm_add_right (T : PerfectCZForm d n) (a b : Fin n) (g : Fin n → TestFun d)
     (P : DyadicCube d) (ρ ρ₁ ρ₂ : TestFun d) :
@@ -3034,7 +3034,7 @@ theorem TestFun.setLIntegral_enorm_rpow_ne_top (f : TestFun d) {p : ℝ} (hp : 0
   have h : ∫⁻ x, ‖(f : (Fin d → ℝ) → ℝ) x‖ₑ ^ p =
       eLpNorm (f : (Fin d → ℝ) → ℝ) (ENNReal.ofReal p) volume ^ p := by
     rw [eLpNorm_eq_eLpNorm' (ENNReal.ofReal_pos.mpr hp).ne' ENNReal.ofReal_ne_top
-      hmem.aestronglyMeasurable, eLpNorm'_eq_lintegral_enorm, ENNReal.toReal_ofReal hp.le,
+      hmem.aestronglyMeasurable, eLpNorm'_eq_lintegral_eNorm, ENNReal.toReal_ofReal hp.le,
       one_div, ENNReal.rpow_inv_rpow hp.ne']
   refine ne_top_of_le_ne_top ?_ (setLIntegral_le_lintegral s _)
   rw [h]
@@ -3108,7 +3108,7 @@ theorem TestFun.setIntegral_rpow_le_of_avg_le (f : TestFun d) {q : ℝ} (hq : 0 
   have heq : ∀ s : Set (Fin d → ℝ), ∫⁻ x in s, ENNReal.ofReal (|(f : (Fin d → ℝ) → ℝ) x| ^ q) =
       ∫⁻ x in s, ‖(f : (Fin d → ℝ) → ℝ) x‖ₑ ^ q := fun s =>
     lintegral_congr fun x => by
-      rw [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hq.le]
+      rw [Real.eNorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hq.le]
   rw [integral_eq_lintegral_of_nonneg_ae (Filter.Eventually.of_forall fun x => by positivity)
     (hmeas S.toSet), integral_eq_lintegral_of_nonneg_ae
     (Filter.Eventually.of_forall fun x => by positivity) (hmeas Q.toSet), heq, heq]
@@ -3406,7 +3406,7 @@ theorem setLIntegral_eq (j : Fin n) :
   have hp : 0 < D.p.p j := by linarith [D.p.one_lt j]
   rw [eLpNorm_eq_eLpNorm' (ENNReal.ofReal_pos.mpr hp).ne' ENNReal.ofReal_ne_top
       (TestFun.memLp (D.g j).2 1).aestronglyMeasurable,
-    eLpNorm'_eq_lintegral_enorm, ENNReal.toReal_ofReal hp.le, one_div,
+    eLpNorm'_eq_lintegral_eNorm, ENNReal.toReal_ofReal hp.le, one_div,
     ENNReal.rpow_inv_rpow hp.ne']
   have hsupp : Function.support (fun x => ‖(D.g j : (Fin d → ℝ) → ℝ) x‖ₑ ^ D.p.p j) ⊆
       D.Q.toSet := by
@@ -4352,7 +4352,7 @@ theorem integral_u_rpow_le {P : DyadicCube d} (hP : D.Good P) :
   have heq : ∫⁻ x in P.toSet, ENNReal.ofReal (|(D.u : (Fin d → ℝ) → ℝ) x| ^ D.q) =
       ∫⁻ x in P.toSet, ‖(D.u : (Fin d → ℝ) → ℝ) x‖ₑ ^ D.q :=
     lintegral_congr fun x => by
-      rw [Real.enorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hq0.le]
+      rw [Real.eNorm_eq_ofReal_abs, ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hq0.le]
   rw [heq]
   apply ENNReal.toReal_le_of_le_ofReal (mul_nonneg hC0 P.vol_pos.le)
   have h := D.bound_2_9' D.hd hP

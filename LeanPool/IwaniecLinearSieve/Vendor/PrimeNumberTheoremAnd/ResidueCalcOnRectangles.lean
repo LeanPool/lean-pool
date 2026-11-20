@@ -365,21 +365,17 @@ lemma RectanglePullToNhdOfPole' {z₀ z₁ z₂ z₃ p : ℂ}
     · simp_all
     · simpa using ⟨by linarith, by linarith, by linarith, by linarith⟩
   have hbot' : z₁.im ∈ [[z₀.im, z₃.im]] := by
-    rw [Set.uIcc_of_le]
-    constructor
-    all_goals assumption
+    rw [Set.uIcc_of_le (by assumption)]
+    constructor <;> assumption
   have htop' : z₂.im ∈ [[z₁.im, z₃.im]] := by
-    rw [Set.uIcc_of_le]
-    constructor
-    all_goals assumption
+    rw [Set.uIcc_of_le (by assumption)]
+    constructor <;> assumption
   have hleft' : z₁.re ∈ [[z₀.re, z₃.re]] := by
-    rw [Set.uIcc_of_le]
-    constructor
-    all_goals assumption
+    rw [Set.uIcc_of_le (by assumption)]
+    constructor <;> assumption
   have hright' : z₂.re ∈ [[z₁.re, z₃.re]] := by
-    rw [Set.uIcc_of_le]
-    constructor
-    all_goals assumption
+    rw [Set.uIcc_of_le (by assumption)]
+    constructor <;> assumption
   have hbot'' : Rectangle (↑z₀.re + ↑z₀.im * I) (↑z₃.re + ↑z₁.im * I) ⊆
     Rectangle z₀ z₃ \ {p} := by
     apply rectangle_subset_punctured_rect <;> simp_all
@@ -548,10 +544,10 @@ lemma integral_const_div_re_add_self (hx : x ≠ 0) :
     A / I * I * (arctan (y₂ / -x) - arctan (y₁ / -x)) := by
   have l1 {y : ℝ} : A / (x + y * I) = A / I / (y + ↑(-x) * I) := by
     have e1 : x + y * I ≠ 0 := by
-      contrapose! hx
+      contrapose hx
       simpa using congr_arg re hx
     have e2 : y + I * ↑(-x) ≠ 0 := by
-      contrapose! hx
+      contrapose hx
       simpa using congr_arg im hx
     field_simp [*]
     push_cast

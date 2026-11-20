@@ -62,14 +62,15 @@ theorem continuous_of_isClosed_graph_of_compact
   exact hproj.isClosed
 
 /-- **Uniqueness closes the graph.** If a closed relation `R` contains the graph of `f`
-(`hf : ∀ d, R (d, f d)`) and selects each value uniquely (`huniq : ∀ d y, R (d, y) → y = f d`), then
+(`hf : ∀ d, (d, f d) ∈ R`) and selects each value uniquely
+(`huniq : ∀ d y, (d, y) ∈ R → y = f d`), then
 the graph `{z | z.2 = f z.1}` is closed, being equal to `R`. -/
 theorem isClosed_graph_of_isClosed_relation_of_unique
     {D Y : Type*} [TopologicalSpace D] [TopologicalSpace Y]
     (R : Set (D × Y)) (hR : IsClosed R)
     (f : D → Y)
-    (hf : ∀ d, R (d, f d))
-    (huniq : ∀ d y, R (d, y) → y = f d) :
+    (hf : ∀ d, (d, f d) ∈ R)
+    (huniq : ∀ d y, (d, y) ∈ R → y = f d) :
     IsClosed {z : D × Y | z.2 = f z.1} := by
   have hset : {z : D × Y | z.2 = f z.1} = R := by
     ext z

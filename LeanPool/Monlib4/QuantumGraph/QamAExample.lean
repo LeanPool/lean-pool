@@ -105,7 +105,7 @@ theorem StarAlgEquiv.symm_comp_self {R U V : Type _} [CommSemiring R] [Semiring 
     [Algebra R U] [Algebra R V] [Star U] [Star V] {f : U ≃⋆ₐ[R] V} :
     f.symm.toAlgEquiv.toLinearMap.comp f.toAlgEquiv.toLinearMap = 1 := by
   simp only [LinearMap.ext_iff, LinearMap.comp_apply, AlgEquiv.toLinearMap_apply,
-    StarAlgEquiv.coe_toAlgEquiv, StarAlgEquiv.symm_apply_apply, Module.End.one_apply,
+    StarAlgEquiv.coe_toAlgEquiv, StarAlgEquiv.symm_apply_apply, one_apply_eq_self,
       forall_true_iff]
 
 theorem Qam.iso_preserves_ir_reflexive {φ : Module.Dual ℂ ℍ}
@@ -333,14 +333,14 @@ theorem qamA.finTwoIso (x y : { x : Matrix (Fin 2) (Fin 2) ℂ // x ≠ 0 })
       rw [HX, hx₁, neg_zero, ← Matrix.ext_iff]
       simp_all
     rw [Matrix.diagonal_eq_zero_iff, Matrix.IsAlmostHermitian.eigenvalues_eq_zero_iff] at this
-    exact (Subtype.mem x) this
+    exact x.property this
   have hy₁ : Hy.eigenvalues 1 ≠ 0 := by
     intro hy₁
     have : diagonal Hy.eigenvalues = 0 := by
       rw [HY, hy₁, neg_zero, ← Matrix.ext_iff]
       simp_all
     rw [Matrix.diagonal_eq_zero_iff, Matrix.IsAlmostHermitian.eigenvalues_eq_zero_iff] at this
-    exact (Subtype.mem y) this
+    exact y.property this
   use Units.mk0 (Hx.eigenvalues 1 * (Hy.eigenvalues 1)⁻¹) (mul_ne_zero hx₁ (inv_ne_zero hy₁))
   use Hx.eigenvectorUnitary * star Hy.eigenvectorUnitary
   -- (⟨Hy.eigenvectorMatrix, Hy.eigenvectorMatrix_mem_unitaryGroup⟩ : unitaryGroup (Fin 2) ℂ)

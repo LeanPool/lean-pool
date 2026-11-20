@@ -996,10 +996,10 @@ lemma functor_comp_left_dipath {x y : X₁} (γ : Dipath x y) : F_hom ((dπₘ j
     (eqToHom (functor_comp_left_object hX X₁_open X₂_open h_comm y).symm)
      := by
   rw [subtype_path_class_eq_map]
-  change Fh_aux (γ.map (DirectedSubtypeInclusion X₁)) = _
-  have h₁ : range (γ.map (DirectedSubtypeInclusion X₁)) ⊆ X₁ :=
+  change Fh_aux (γ.map (DirectedSubtypeInclusion (· ∈ X₁))) = _
+  have h₁ : range (γ.map (DirectedSubtypeInclusion (· ∈ X₁))) ⊆ X₁ :=
     range_dipath_map_inclusion γ
-  have h₂ : coveredPartwise hX (γ.map (DirectedSubtypeInclusion X₁)) 0 := Or.inl h₁
+  have h₂ : coveredPartwise hX (γ.map (DirectedSubtypeInclusion (· ∈ X₁))) 0 := Or.inl h₁
   rw [functorOnHomAux_apply hX X₁_open X₂_open h_comm h₂,
     functorOnHomOfCoveredPartwise_apply_0, functorOnHomOfCovered_apply_left' hX h_comm h₁,
     FunctorOnHomOfCoveredAux₁, subtypeDipath_of_included_dipath_eq]
@@ -1025,10 +1025,10 @@ lemma functor_comp_right_dipath {x y : X₂} (γ : Dipath x y) :
     (eqToHom (functor_comp_right_object hX X₁_open X₂_open h_comm y).symm)
      := by
   rw [subtype_path_class_eq_map]
-  change Fh_aux (γ.map (DirectedSubtypeInclusion X₂)) = _
-  have h₁ : range (γ.map (DirectedSubtypeInclusion X₂)) ⊆ X₂ :=
+  change Fh_aux (γ.map (DirectedSubtypeInclusion (· ∈ X₂))) = _
+  have h₁ : range (γ.map (DirectedSubtypeInclusion (· ∈ X₂))) ⊆ X₂ :=
     range_dipath_map_inclusion γ
-  have h₂ : coveredPartwise hX (γ.map (DirectedSubtypeInclusion X₂)) 0 := Or.inr h₁
+  have h₂ : coveredPartwise hX (γ.map (DirectedSubtypeInclusion (· ∈ X₂))) 0 := Or.inr h₁
   rw [functorOnHomAux_apply hX X₁_open X₂_open h_comm h₂,
     functorOnHomOfCoveredPartwise_apply_0, functorOnHomOfCovered_apply_right' hX h_comm h₁,
     FunctorOnHomOfCoveredAux₂, subtypeDipath_of_included_dipath_eq]
@@ -1147,11 +1147,11 @@ theorem directed_van_kampen (X₁_open : IsOpen X₁) (X₂_open : IsOpen X₂)
     congrArg CategoryTheory.Cat.Hom.toFunctor h_comm
   use (PushoutFunctor.Functor hX X₁_open X₂_open h_comm').toCatHom
   constructor
-  constructor
-  · apply CategoryTheory.Cat.Hom.ext
-    exact PushoutFunctor.functor_comp_left hX X₁_open X₂_open h_comm'
-  · apply CategoryTheory.Cat.Hom.ext
-    exact PushoutFunctor.functor_comp_right hX X₁_open X₂_open h_comm'
+  · constructor
+    · apply CategoryTheory.Cat.Hom.ext
+      exact PushoutFunctor.functor_comp_left hX X₁_open X₂_open h_comm'
+    · apply CategoryTheory.Cat.Hom.ext
+      exact PushoutFunctor.functor_comp_right hX X₁_open X₂_open h_comm'
   · rintro F' ⟨h₁, h₂⟩
     apply CategoryTheory.Cat.Hom.ext
     exact PushoutFunctor.functor_uniq hX X₁_open X₂_open h_comm' F'.toFunctor

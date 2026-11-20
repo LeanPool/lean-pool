@@ -74,7 +74,7 @@ private lemma truncation_dominated (x : ℝ) (M : ℕ) :
         rw [show x - -(M : ℝ) = x + M from by ring]
         rw [abs_of_nonpos (by linarith : x + (M : ℝ) ≤ 0), abs_of_neg hx]; linarith
   have h_nn : ‖x - max (-(M : ℝ)) (min (M : ℝ) x)‖₊ ≤ ‖x‖₊ := by
-    rw [← NNReal.coe_le_coe]; simp only [coe_nnnorm, Real.norm_eq_abs]; exact h_abs
+    rw [← NNReal.coe_le_coe]; simp only [coe_nnNorm, Real.norm_eq_abs]; exact h_abs
   exact pow_le_pow_left' (ENNReal.coe_le_coe.mpr h_nn) 2
 
 -- maxHeartbeats: nested triple-lintegral dominated-convergence budget.
@@ -100,9 +100,9 @@ lemma truncation_L2_converges
     intro M
     have h_clip : Measurable (fun x : ℝ => max (-(M : ℝ)) (min (M : ℝ) x)) := by fun_prop
     exact (ENNReal.continuous_coe.measurable.comp
-      (h_meas.sub (h_clip.comp h_meas)).nnnorm).pow_const 2
+      (h_meas.sub (h_clip.comp h_meas)).nnNorm).pow_const 2
   have hGmeas : Measurable (fun p : Ω × ℝ × E => G p.1 p.2.1 p.2.2) :=
-    (ENNReal.continuous_coe.measurable.comp h_meas.nnnorm).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp h_meas.nnNorm).pow_const 2
   -- `(ω, s) ↦ ∫⁻_E (·) ∂ν` is measurable for `F M` and `G` (reassociate `Ω×ℝ×E`).
   have hFstepA : ∀ M : ℕ, Measurable (fun q : Ω × ℝ => ∫⁻ e, F M q.1 q.2 e ∂ν) := fun M =>
     ((hFmeas M).comp (by fun_prop :
@@ -193,9 +193,9 @@ lemma mark_truncation_L2_converges
         · rw [Set.indicator_of_notMem he, Set.indicator_of_notMem (by exact he)]
       rw [this]
       exact h_meas.indicator ((measurable_snd.comp measurable_snd) (hS_meas N))
-    exact (ENNReal.continuous_coe.measurable.comp (h_meas.sub hind).nnnorm).pow_const 2
+    exact (ENNReal.continuous_coe.measurable.comp (h_meas.sub hind).nnNorm).pow_const 2
   have hGmeas : Measurable (fun p : Ω × ℝ × E => G p.1 p.2.1 p.2.2) :=
-    (ENNReal.continuous_coe.measurable.comp h_meas.nnnorm).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp h_meas.nnNorm).pow_const 2
   have hGstepA : Measurable (fun q : Ω × ℝ => ∫⁻ e, G q.1 q.2 e ∂ν) :=
     (hGmeas.comp (by fun_prop :
       Measurable fun q : (Ω × ℝ) × E => ((q.1.1, q.1.2, q.2) : Ω × ℝ × E))).lintegral_prod_right'

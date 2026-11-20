@@ -38,13 +38,13 @@ variable (F K : Type*) [Field F] [Field K] [Algebra F K]
 
 /-- The relative norm `N_{K/F}` restricted to unit groups of rings of integers. -/
 def relativeUnitNorm : (𝓞 K)ˣ →* (𝓞 F)ˣ :=
-  Units.map (RingOfIntegers.norm F)
+  Units.map (NumberField.RingOfIntegers.norm F)
 
 private theorem relativeUnitNorm_extended (u : (𝓞 F)ˣ) :
     relativeUnitNorm F K (Units.map (algebraMap (𝓞 F) (𝓞 K)).toMonoidHom u) =
       u ^ Module.finrank F K := by
   apply Units.ext
-  exact RingOfIntegers.norm_algebraMap F u
+  exact NumberField.RingOfIntegers.norm_algebraMap F u
 
 /-- The unit-norm obstruction group: the units of `𝓞 F` modulo the relative norms of units of
 `𝓞 K`. -/

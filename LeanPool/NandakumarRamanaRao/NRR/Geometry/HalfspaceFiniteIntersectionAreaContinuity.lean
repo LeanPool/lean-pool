@@ -72,7 +72,7 @@ variable {ι : Type*}
 
 /-- The intersection of a convex body `K` with the finitely many closed lower halfspaces with
 normals `u i` and offsets `c i`. Kept purely as a `Set Plane`. -/
-def finiteHalfspaceIntersection
+noncomputable def finiteHalfspaceIntersection
     (K : ConvexBody Plane) (u : ι → Plane) (c : ι → ℝ) : Set Plane :=
   (K : Set Plane) ∩ ⋂ i, Geometry.lowerClosedHalfspace (u i) (c i)
 

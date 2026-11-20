@@ -2683,7 +2683,7 @@ theorem kwF4R1V384a_completionLinearCombination_surjective
       (WithZero (Multiplicative ℤ))
   rw [← Set.range_eq_univ, ← LinearMap.coe_range,
     ← (LinearMap.range (kwFfgcCompletionLinearCombination E w' b))
-        |>.closed_of_finiteDimensional.closure_eq]
+        |>.isClosed_of_finiteDimensional.closure_eq]
   exact (kw_ffgc_denseRange_completionLinearCombination E w' b).closure_range
 
 theorem kwF4R1V384a_semilocalComponent_surjective (v : Place K E) (w' : v.fiber F) :

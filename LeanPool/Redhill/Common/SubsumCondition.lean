@@ -96,7 +96,7 @@ lemma StrongSSC.injective (h : StrongSSC a) : a.Injective := fun i j e ↦ by
   contrapose! h
   refine ⟨fun k ↦ if k = i then pos else if k = j then neg else zero, ?_, fun c ↦ ?_⟩
   · simp only [apply_ite SignType.cast, ite_mul]
-    rw [← Fintype.sum_subset (s := {i, j}) (fun k hk ↦ by contrapose! hk; simp_all), sum_pair h]
+    rw [← Fintype.sum_subset (s := {i, j}) (fun k hk ↦ by contrapose hk; simp_all), sum_pair h]
     simp [h.symm, e]
   · simp_rw [mem_univ, true_and]
     match c with
@@ -225,7 +225,7 @@ theorem pair_of_sum_natAbs_lt (hi : ∑ k ∈ {i, j}ᶜ, (a k).natAbs < (a i).na
   suffices ∀ (b₁ b₂ : SignType),
       b₁ ≠ b₂ → ∑ k ∈ {i, j}ᶜ, (a k).natAbs < (b₁ * a i + b₂ * a j).natAbs by
     apply this
-    contrapose! ncb
+    contrapose ncb
     simp_all
   intro b₁ b₂ hb
   cases b₁ <;> cases b₂ <;> simp at hb
@@ -255,7 +255,7 @@ theorem strongSSC_tupReduce (p : IsSubsumBlock a s) (hk : k = n - #s)
   · obtain rfl | hn := eq_or_ne c₀ c
     · obtain ⟨i, -, hi⟩ := hc c₀
       have key : i ∈ sᶜ := by
-        contrapose! hi
+        contrapose hi
         exact hc₀ _ (notMem_compl.mp hi)
       rw [← image_complRank_univ (hk := hk), mem_image_univ_iff_mem_range, Set.mem_range] at key
       obtain ⟨j, rfl⟩ := key

@@ -50,7 +50,7 @@ lemma Lbp_eq (Q : ℚ[X]) : Lbp Q = Lb Q + Q.coeff 1 := by
   induction Q using Polynomial.induction_on' with
   | add P Q hP hQ => rw [Lbp_add, Lb_add, coeff_add, hP, hQ]; ring
   | monomial n a =>
-    rw [Lbp_monomial, Lb_monomial, coeff_monomial]
+    rw [Lbp_monomial, Lb_monomial, coeff_monomial_apply]
     by_cases hn : n = 1
     · subst hn; rw [bernoulli'_one, bernoulli_one]; simp; ring
     · rw [ite_eq_right hn, bernoulli_eq_bernoulli'_of_ne_one hn]; ring

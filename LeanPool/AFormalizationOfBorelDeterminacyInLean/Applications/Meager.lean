@@ -79,7 +79,7 @@ lemma somewhereDense_iff : ¬ IsNowhereDense A ↔ ∃ U, U.Nonempty ∧ IsOpen 
   simp_rw [Subtype.dense_iff, Subtype.image_preimage_coe]; constructor
   · intro h
     use interior (closure A), Set.notMem_singleton_empty.mp h, isOpen_interior
-    apply subset_trans _ isOpen_interior.inter_closure; simp [Eq.subset, interior_subset]
+    apply subset_trans _ isOpen_interior.inter_closure; simp [interior_subset]
   · intro ⟨U, hUd, hUo, hUs⟩; simp_rw [IsNowhereDense, ← Set.nonempty_iff_ne_empty]
     use hUd.choose; rw [mem_interior]
     use U, subset_trans hUs (closure_mono Set.inter_subset_right), hUo, hUd.choose_spec

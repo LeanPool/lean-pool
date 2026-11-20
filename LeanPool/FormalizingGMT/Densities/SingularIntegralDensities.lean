@@ -99,7 +99,7 @@ lemma ae_integralDensityLimsup_eq_zero
       Tendsto (fun r => μ (closedBall x r) / ENNReal.ofReal (r ^ s))
         (𝓝[>] (0 : ℝ)) (𝓝 0)) :
     ∀ᵐ x ∂μ, integralDensityLimsup μ f s x = 0 := by
-  have := @VitaliFamily.ae_tendsto_lintegral_enorm_sub_div X
+  have := @VitaliFamily.ae_tendsto_lintegral_eNorm_sub_div X
   specialize this ( doublingVitaliFamily μ ) hf
   have h_le : ∀ᵐ x ∂μ, ∀ᶠ r in 𝓝[>] (0 : ℝ),
       (∫⁻ y in closedBall x r, ‖f y‖ₑ ∂μ) ≤
@@ -119,7 +119,7 @@ lemma ae_integralDensityLimsup_eq_zero
         ∫⁻ y in closedBall x r, (‖f y - f x‖ₑ + ‖f x‖ₑ) ∂μ := by
       apply MeasureTheory.lintegral_mono_ae
       filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_closedBall] with y hy using by
-        simpa using enorm_add_le (f y - f x) (f x)
+        simpa using eNorm_add_le (f y - f x) (f x)
     rw [MeasureTheory.lintegral_add_right'] at h_le
     · have hconst : (∫⁻ _y in closedBall x r, ‖f x‖ₑ ∂μ) =
           ‖f x‖ₑ * μ (closedBall x r) := by simp
@@ -411,7 +411,7 @@ lemma hausdorff_measure_zero_of_ball_integral_bound
             ε / ((C + 1) * (n + 1)) := by
         rw [ ← ENNReal.tsum_mul_left ]
         exact lt_of_le_of_lt
-          (ENNReal.tsum_le_tsum fun i => le_of_lt (hrad i (hu_sub i.2) |>.2.2.2))
+          (tsum_le_tsum fun i => le_of_lt (hrad i (hu_sub i.2) |>.2.2.2))
           (lt_of_le_of_lt h_sum_le_integral hU_int)
       contrapose! h_sum_le_integral
       simpa only [div_eq_mul_inv, one_div, one_mul,
@@ -423,7 +423,7 @@ lemma hausdorff_measure_zero_of_ball_integral_bound
         ∑' i : u, Metric.ediam (closedBall (i : X) (4 * rad i)) ^ s
           ≤ C * ∑' i : u, ENNReal.ofReal (rad i ^ s) := by
       rw [← ENNReal.tsum_mul_left]
-      exact ENNReal.tsum_le_tsum fun i =>
+      exact tsum_le_tsum fun i =>
         ediam_four_ball_rpow_le (show (0 : ℝ) < rad i from (hrad i (hu_sub i.2)).1) hs
     refine le_trans h_sum_le_integral ?_
     refine le_trans (mul_le_mul_right (le_of_lt ‹_›) _) ?_

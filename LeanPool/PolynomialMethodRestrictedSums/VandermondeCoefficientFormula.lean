@@ -98,14 +98,14 @@ lemma det_fallingFactorial_eq_det_vandermonde (c : Fin (k + 1) → ℕ) :
       -- For each $j$, we can express $(falling\_factorial (c i) j)$ as a linear combination of $c
       -- i^l$ for $l \leq j$.
       have h_comb : ∀ i j, fallingFactorial (c i) j = ∑ l ∈ Finset.range (j + 1),
-          (Polynomial.coeff
+          (AddMonoidAlgebra.coeff
               (Polynomial.C 1 * (∏ m ∈ Finset.range j, (Polynomial.X - Polynomial.C (m : ℚ))))
               l) * (c i : ℚ) ^ l := by
         intro i j
         have h_poly :
             (∏ m ∈ Finset.range j, (Polynomial.X - Polynomial.C (m : ℚ))) =
               ∑ l ∈ Finset.range (j + 1),
-                Polynomial.C ((Polynomial.coeff
+                Polynomial.C ((AddMonoidAlgebra.coeff
                     (∏ m ∈ Finset.range j, (Polynomial.X - Polynomial.C (m : ℚ))) l) : ℚ) *
                   Polynomial.X ^ l := by
           nth_rw 1 [Polynomial.as_sum_range_C_mul_X_pow (∏ m ∈ Finset.range j,
@@ -144,8 +144,8 @@ lemma det_fallingFactorial_eq_det_vandermonde (c : Fin (k + 1) → ℕ) :
               h_poly
       -- Let $M$ be the matrix whose $(i, j)$-th entry is the coefficient of $c_i^l$ in the
       -- expansion of $(falling\_factorial (c i) j)$.
-      use Matrix.of (fun i j => Polynomial.coeff (Polynomial.C 1 * (∏ m ∈ Finset.range j,
-          (Polynomial.X - Polynomial.C (m : ℚ)))) i)
+      use Matrix.of (fun i j => AddMonoidAlgebra.coeff (Polynomial.C 1 * (∏ m ∈ Finset.range j,
+          (Polynomial.X - Polynomial.C (m : ℚ)))) (i : ℕ))
       -- aesop used to split the conjunction and simplify Polynomial.C 1 * _; do this explicitly
       simp only [Polynomial.C_1, one_mul] at h_comb ⊢
       refine ⟨?_, ?_, ?_⟩

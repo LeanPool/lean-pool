@@ -251,7 +251,7 @@ def repPos {Γ Δ : Sequent} {strat : Strategy coalgebraGame Prover} (g : proof_
     have := (history_length_in_cone strat g.1 g.2.1).2 g.2.2
     unfold instMinNat min minOfLe
     simp [g.2.2]
-    split <;> try grind⟩
+    split <;> grind⟩
 
 /-- Rewinding the game one step changes the player. -/
 lemma rewind_turn_one_step {g n h1 h2} :
@@ -534,7 +534,7 @@ lemma rep_next_cor (Γ : Sequent) {Δ : Sequent} {strat : Strategy coalgebraGame
   convert
     (rewind_history_correspondence Γ g.1 strat
       (Fin.find _ (List.mem_iff_get.1 rep)).1 _ _ _ _ g.2.1).1 _ <;>
-    (try simp_all; try grind)
+    (simp_all; try grind)
   · have length := history_length_in_cone strat g.1 g.2.1
     simp only [g.2.2, reduceCtorEq, ite_false] at *
     have := Fin.find_spec (List.mem_iff_get.1 rep)

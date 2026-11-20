@@ -94,6 +94,6 @@ theorem compositionJetTerm_eLpNorm_le {d n : ℕ} {f : Vec d → ℂ}
     _ = _ := by
       change eLpNorm (B • (fun x => spatialJet c.length f j (X x))) p μ = _
       rw [eLpNorm_const_smul]
-      simp only [Real.enorm_eq_ofReal_abs, abs_of_nonneg hB, B]
+      simp only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hB, B]
 
 end AVenhance.Infra.Ergodic

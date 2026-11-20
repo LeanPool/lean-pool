@@ -125,7 +125,7 @@ theorem angleCorrection_derivative {p : ComplexSpace n} (hp : p ∈ h.limitDomai
 
 theorem angleCorrection_lipschitz {p : ComplexSpace n} (hp : p ∈ h.limitDomain b) :
     LipschitzOnWith (1 / 2) (h.angleCorrection b p) (angleStrip n (ρ₀ / 6)) :=
-  (convex_angleStrip n (ρ₀ / 6)).lipschitzOnWith_of_nnnorm_fderiv_le
+  (convex_angleStrip n (ρ₀ / 6)).lipschitzOnWith_of_nnNorm_fderiv_le
     (fun q hq => (h.angleCorrection_analytic b hp q (thinAngleStrip_subset b hq)).differentiableAt)
     (fun q hq => by exact_mod_cast (h.angleCorrection_derivative b hp hq).le)
 

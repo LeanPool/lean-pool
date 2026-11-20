@@ -34,8 +34,9 @@ theorem HasExtendedWeakL1Bound.mono_output
     HasExtendedWeakL1Bound mu A F := by
   refine ⟨h.1, ?_⟩
   intro a ha
-  exact (mul_le_mul' le_rfl (measure_mono fun x hx ↦ hx.trans_le (hFG x))).trans
-    (h.2 a ha)
+  have hsub : {x | ENNReal.ofReal a < F x} ⊆ {x | ENNReal.ofReal a < G x} :=
+    fun x hx ↦ hx.trans_le (hFG x)
+  exact (mul_le_mul' le_rfl (measure_mono hsub)).trans (h.2 a ha)
 
 theorem HasExtendedWeakL1Bound.mono_constant
     {X : Type*} [MeasurableSpace X] {mu : Measure X}

@@ -249,7 +249,7 @@ private theorem vorticityRegularity_energyDensity_integral_bound
   calc
     _ ≤ ∫ z in S, A z + 7 * B z + 7 * D z := integral_mono_ae hEint hRintS hpoint
     _ ≤ ∫ z in T, A z + 7 * B z + 7 * D z :=
-      setIntegral_mono_set hRint (Eventually.of_forall hnonneg) hST.eventuallyLE
+      setIntegral_mono_set hRint (Eventually.of_forall hnonneg) hST.eventuallySubset
     _ = (∫ z in T, A z) + 7 * (∫ z in T, B z) + 7 * (∫ z in T, D z) := hsplit
     _ ≤ 3 * |Kw| + 63 * |K1| + 189 * |K2| := by
       have hBscaled := mul_le_mul_of_nonneg_left hBabs (by norm_num : (0 : ℝ) ≤ 7)

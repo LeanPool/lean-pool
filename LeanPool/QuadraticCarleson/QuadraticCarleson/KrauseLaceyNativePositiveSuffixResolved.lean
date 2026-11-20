@@ -89,7 +89,7 @@ private theorem sparse_suffix_of_forest_bounds {A p : ℝ}
     have hof : ENNReal.ofReal ‖operatorPairing T f g‖ ≤
         ∫⁻ x, ‖T f x * star (g x)‖ₑ := by
       exact (ENNReal.ofReal_le_ofReal hnorm).trans_eq
-        (ofReal_integral_norm_eq_lintegral_enorm hi)
+        (ofReal_integral_norm_eq_lintegral_eNorm hi)
     have hthree : (∫⁻ x, ‖T f x * star (g x)‖ₑ) ≤
         ∑ shift : Fin 3,
           ∫⁻ x, localizedTailMaximal (j + 2)
@@ -99,7 +99,7 @@ private theorem sparse_suffix_of_forest_bounds {A p : ℝ}
             ∫⁻ x, ‖T f x‖ₑ * ‖g x‖ₑ := by
           congr 1
           funext x
-          simp only [enorm_mul]
+          simp only [eNorm_mul]
           rw [show ‖star (g x)‖ₑ = ‖g x‖ₑ by simp [← ofReal_norm]]
         _ ≤ ∫⁻ x, (∑ shift : Fin 3,
               localizedTailMaximal (j + 2)
@@ -114,7 +114,7 @@ private theorem sparse_suffix_of_forest_bounds {A p : ℝ}
           intro shift hshift
           exact (measurable_localizedTailMaximal (j + 2)
             (finiteShiftGridScale topScale shift) (branch shift)
-            f.measurable_toFun).mul g.measurable_toFun.enorm
+            f.measurable_toFun).mul g.measurable_toFun.eNorm
     have hsum : (∑ shift : Fin 3,
           ∫⁻ x, localizedTailMaximal (j + 2)
             (finiteShiftGridScale topScale shift) (branch shift) f x * ‖g x‖ₑ) ≤

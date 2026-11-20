@@ -14,6 +14,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Lie.OfAssociative
 

@@ -323,7 +323,7 @@ theorem volumeAverage_vecNormSq_streamForcing_le {l : ℤ}
   have hmono : ∫ x in openCubeSet R, vecNormSq (sf x) ∂volume ≤
       ∫ x in openCubeSet Q, vecNormSq (sf x) ∂volume :=
     setIntegral_mono_set hintQ (Filter.Eventually.of_forall fun _ => vecNormSq_nonneg _)
-      hsub.eventuallyLE
+      hsub.eventuallySubset
   have hQint : ∫ x in openCubeSet Q, vecNormSq (sf x) ∂volume =
       cubeVolume Q * cubeAverage Q (fun x => vecNormSq (sf x)) := by
     rw [← volumeAverage_openCubeSet_eq_cubeAverage_fold]

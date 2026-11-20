@@ -406,6 +406,8 @@ private theorem strictSides (A B C p : Complex)
       dsimp [wA]
       exact Continuous.sub (continuous_const.sub hcontB) hcontC
     have hopen : IsOpen U := by
+      change IsOpen ({x : Complex | 0 < wA x} ∩
+        ({x : Complex | 0 < wB x} ∩ {x : Complex | 0 < wC x}))
       apply (isOpen_lt continuous_const hcontA).inter
       apply (isOpen_lt continuous_const hcontB).inter
       exact isOpen_lt continuous_const hcontC

@@ -59,7 +59,7 @@ theorem posSemidefOne_smul_rpow {𝕜 : Type*} [RCLike 𝕜]
     Real.mul_rpow (NNReal.coe_nonneg _) _]
   all_goals
     simp_rw [dotProduct, Pi.star_apply, transpose_apply, ← conjTranspose_apply,
-      ← mul_apply, IsHermitian.eigenvectorMatrix_conjTranspose_mul, one_apply_eq,
+      ← Matrix.mul_apply, IsHermitian.eigenvectorMatrix_conjTranspose_mul, one_apply_eq,
       RCLike.one_re]
   · simp only [mul_one, Real.one_rpow]
   · simp only [zero_le_one]

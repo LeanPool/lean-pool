@@ -216,10 +216,10 @@ theorem derivativeSup_le_operatorDerivativeSup {d n : ℕ} {F : Type*}
     derivativeSup n f ≤ operatorDerivativeSup n f := by
   unfold derivativeSup operatorDerivativeSup
   refine iSup_le fun I ↦ ?_
-  apply eLpNormEssSup_mono_enorm_ae
+  apply eLpNormEssSup_mono_eNorm_ae
   filter_upwards with x
   have h := ENNReal.ofReal_le_ofReal (orderedPartial_norm_le_operatorDerivative f x I)
-  simpa [Real.enorm_eq_ofReal_abs] using h
+  simpa [Real.eNorm_eq_ofReal_abs] using h
 
 theorem operatorDerivative_ae_le_derivativeSup {d n : ℕ} [Nonempty (Fin d)]
     {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] (f : Vec d → F) :
@@ -234,7 +234,7 @@ theorem operatorDerivative_ae_le_derivativeSup {d n : ℕ} [Nonempty (Fin d)]
       le_iSup_of_le I le_rfl
     have hae : ∀ᵐ x ∂μ,
         ‖orderedPartial n f x I‖ₑ ≤ partialSup n f I := by
-      simpa [partialSup, eLpNormEssSup_eq_essSup_enorm] using
+      simpa [partialSup, eLpNormEssSup_eq_essSup_eNorm] using
         (ae_le_essSup
           (f := fun x : Vec d ↦ ‖orderedPartial n f x I‖ₑ) (μ := μ))
     exact hae.mono fun x hx ↦ hx.trans hI
@@ -248,7 +248,7 @@ theorem operatorDerivative_ae_le_derivativeSup {d n : ℕ} [Nonempty (Fin d)]
           ‖T (fun j ↦ coordinateVectorOne d (I j))‖ ≤ (derivativeSup n f).toReal := by
         intro I
         have hbound : ENNReal.ofReal ‖orderedPartial n f x I‖ ≤ derivativeSup n f := by
-          simpa [Real.enorm_eq_ofReal_abs] using hx I
+          simpa [Real.eNorm_eq_ofReal_abs] using hx I
         rw [ENNReal.ofReal_le_iff_le_toReal htop] at hbound
         simpa [T, orderedPartial] using hbound
       have hsup : coordinateEvaluationSup T ≤ (derivativeSup n f).toReal := by

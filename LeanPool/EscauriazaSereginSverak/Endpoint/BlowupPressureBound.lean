@@ -47,13 +47,13 @@ theorem blowup_rescaled_pressureSlice_eLpNorm_threeHalves_eq
       (volume : Measure Vec3) := by
     simpa only [Function.comp_def, CKN.scalingSpace] using
       hcomp.const_mul (r ^ 2)
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 / 2 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 / 2 : ℝ≥0∞) ≠ ⊤) hscaled,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 / 2 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 / 2 : ℝ≥0∞) ≠ ⊤) hf]
-  simp only [Real.enorm_eq_ofReal_abs]
+  simp only [Real.eNorm_eq_ofReal_abs]
   have hm := congrArg (fun a : ℝ≥0∞ => a ^ (2 / 3 : ℝ))
     (blowupPressureSlice_mass_eq f hf x₀ r hr)
   convert hm using 1 <;> norm_num

@@ -81,7 +81,7 @@ theorem solution {K : Type*} [Field K] (v : Place K (RatFunc K))
   rw [v.ord_eq_neg_log_of_valuationSubring_eq (RatFunc.inftyValuation K)
       (AlgebraicCurve.RationalFunctionField.toValuationSubring_eq_of_forall_ne_ofHeightOneSpectrum
         v hv).symm hπ hf,
-    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero K hf, log_exp]
+    RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_ne_zero K hf, log_exp]
 
 end S_OVERLONG_d34bfdc7
 end P2MW

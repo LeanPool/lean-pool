@@ -114,7 +114,7 @@ theorem tendsto_integral_mul_of_tendsto_lintegral_enorm_zero {m : ℕ}
     have hbound3 : ∫ z in K, |fn n z| * C = C * ∫ z in K, |fn n z| := by
       rw [integral_mul_const, mul_comm]
     have hbound4 : ∫ z in K, |fn n z| = (∫⁻ z in K, ‖fn n z‖ₑ).toReal := by
-      have := integral_norm_eq_lintegral_enorm (μ := volume.restrict K) hfnm
+      have := integral_norm_eq_lintegral_eNorm (μ := volume.restrict K) hfnm
       simpa [Real.norm_eq_abs] using this
     calc |∫ z in K, fn n z * gn n z| = ‖∫ z in K, fn n z * gn n z‖ := (Real.norm_eq_abs _).symm
       _ ≤ ∫ z in K, ‖fn n z * gn n z‖ := hbound1

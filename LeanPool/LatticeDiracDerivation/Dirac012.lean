@@ -164,7 +164,7 @@ theorem centered_time_remainder_bound
     (by nlinarith)
   unfold centeredTimeRemainder centeredTimeNumerator
   convert h using 1
-  all_goals ring
+  ring
 
 /-! Residual of a continuum Dirac frequency when inserted into the actual
 centered-time, exact-C19 scalar recurrence. -/

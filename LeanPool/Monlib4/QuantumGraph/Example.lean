@@ -109,8 +109,8 @@ lemma Qam.Nontracial.CompleteGraph.adjoint_eq {E₁ E₂ : Type _} [NormedAddCom
     [FiniteDimensional ℂ E₁] [FiniteDimensional ℂ E₂] :
   LinearMap.adjoint (Qam.completeGraph E₁ E₂) = Qam.completeGraph E₂ E₁ :=
 by
-  let := FiniteDimensional.complete ℂ E₁
-  let := FiniteDimensional.complete ℂ E₂
+  let := FiniteDimensional.completeSpace ℂ E₁
+  let := FiniteDimensional.completeSpace ℂ E₂
   rw [completeGraph_eq, ContinuousLinearMap.linearMap_adjoint, rankOne_adjoint]
   rfl
 

@@ -50,7 +50,7 @@ def IsPositive' (T : E →ₗ[𝕜] E) : Prop :=
 
 theorem IsPositive'Zero : (0 : E →ₗ[𝕜] E).IsPositive' := by
   refine ⟨IsSymmetric.zero, fun x => ?_⟩
-  simp_rw [zero_apply, inner_zero_right, le_rfl]
+  simp_rw [LinearMap.zero_apply, inner_zero_right, le_rfl]
 
 theorem IsPositive'One : (1 : E →ₗ[𝕜] E).IsPositive' :=
   ⟨IsSymmetric.id, fun _ => inner_self_nonneg'⟩
@@ -59,7 +59,7 @@ theorem _root_.LinearMap.IsPositive'.add {S T : E →ₗ[𝕜] E}
     (hS : S.IsPositive') (hT : T.IsPositive') :
     (S + T).IsPositive' := by
   refine ⟨IsSymmetric.add hS.1 hT.1, fun x => ?_⟩
-  rw [add_apply, inner_add_right]
+  rw [LinearMap.add_apply, inner_add_right]
   exact add_nonneg (hS.2 _) (hT.2 _)
 
 theorem _root_.LinearMap.IsPositive'.inner_nonneg_left {T : E →ₗ[𝕜] E}
@@ -104,9 +104,9 @@ theorem linear_proj_IsPositive'_iff {U V : Submodule 𝕜 E} (hUV : IsCompl U V)
     exact inner_self_nonneg'
 
 theorem _root_.ContinuousLinearMap.IsPositive.toLinearMap' [FiniteDimensional 𝕜 E] (T : E →L[𝕜] E) :
-  letI : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  letI : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   T.IsPositive ↔ T.toLinearMap.IsPositive' := by
-  let : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  let : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   simp_rw [LinearMap.IsPositive', ContinuousLinearMap.coe_coe, ContinuousLinearMap.IsPositive,
     ← ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric,
     ContinuousLinearMap.reApplyInnerSelf_apply T, and_congr_right_iff, ← @zero_le_real 𝕜]
@@ -118,7 +118,7 @@ theorem _root_.ContinuousLinearMap.IsPositive.toLinearMap' [FiniteDimensional �
 lemma isPositive'_iff_isPositive
   [FiniteDimensional 𝕜 E] (T : E →ₗ[𝕜] E) :
   T.IsPositive' ↔ T.IsPositive := by
-  let : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  let : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   rw [← T.isPositive_toContinuousLinearMap_iff, ContinuousLinearMap.IsPositive.toLinearMap']
   rfl
 
@@ -268,7 +268,7 @@ theorem _root_.LinearMap.isPositive'_iff_isSymmetric_and_nonneg_spectrum :
     fun h => ⟨h.1, ?_⟩⟩
   intro x
   rw [← sqrt_sq_eq_self_of_isSymmetric_and_nonneg_spectrum T h.1 h.2, pow_two,
-    Module.End.mul_apply, ← adjoint_inner_left,
+    mul_apply_eq_comp, ← adjoint_inner_left,
     isSelfAdjoint_iff'.mp
       ((isSymmetric_iff_isSelfAdjoint _).mp (IsSymmetric.sqrtIsPositive' T h.1).1)]
   exact inner_self_nonneg'
@@ -290,7 +290,7 @@ theorem _root_.LinearMap.isPositive'_iff_exists_adjoint_hMul_self :
     rcases h with ⟨S, rfl⟩
     refine ⟨isSymmetric_adjoint_mul_self S, ?_⟩
     intro x
-    simp_rw [Module.End.mul_apply, adjoint_inner_right]
+    simp_rw [mul_apply_eq_comp, adjoint_inner_right]
     exact inner_self_nonneg'
 
 section Complex
@@ -347,12 +347,12 @@ theorem _root_.LinearMap.norm_of_sqrt_adjoint_mul_self_eq (T : E →ₗ[𝕜] E)
     adjoint_inner_left,
     isSelfAdjoint_iff'.mp
       ((isSymmetric_iff_isSelfAdjoint _).mp (sqrtAdjointSelfIsPositive' T).1),
-    ← mul_eq_comp, ← mul_apply, ← pow_two, mul_eq_comp]
+    ← mul_eq_comp, ← mul_apply_eq_comp, ← pow_two, mul_eq_comp]
   congr
   apply sqrt_sq_eq_self_of_isSymmetric_and_nonneg_spectrum
   apply IsPositive'.nonneg_spectrum _ ⟨isSymmetric_adjoint_mul_self T, _⟩
   intro x
-  simp_rw [mul_apply, adjoint_inner_right]
+  simp_rw [mul_apply_eq_comp, adjoint_inner_right]
   exact inner_self_nonneg'
 
 theorem _root_.LinearMap.invertibleIff_inner_map_self_pos
@@ -360,13 +360,13 @@ theorem _root_.LinearMap.invertibleIff_inner_map_self_pos
   constructor
   · intro h v hv
     rcases (isPositive'_iff_exists_adjoint_hMul_self T).mp hT with ⟨S, hS⟩
-    rw [hS, mul_apply, adjoint_inner_left, inner_self_eq_norm_sq_to_K]
+    rw [hS, mul_apply_eq_comp, adjoint_inner_left, inner_self_eq_norm_sq_to_K]
     suffices S v ≠ 0 by
       simp_all
     by_contra hSv
     rw [LinearMap.ext_iff] at hS
     specialize hS v
-    rw [mul_apply, hSv, map_zero] at hS
+    rw [mul_apply_eq_comp, hSv, map_zero] at hS
     apply hv
     apply_fun T
     · simp_all
@@ -398,7 +398,7 @@ theorem _root_.LinearMap.invertiblePos (T : E →ₗ[𝕜] E) [hTi : Invertible 
     by_cases b : ⅟ T x = 0
     · rw [b, inner_zero_right]
     · specialize this _ b
-      rw [← mul_apply, mul_invOf_self, one_apply] at this
+      rw [← mul_apply_eq_comp, mul_invOf_self, one_apply_eq_self] at this
       exact le_of_lt this
 
 theorem _root_.LinearMap.IsSymmetric.rePow_eq_rankOne {𝕜 E : Type _} [RCLike 𝕜]
@@ -425,8 +425,8 @@ theorem _root_.LinearMap.isPositive'_and_invertible_pos_eigenvalues
   have fs : Function.Bijective ⇑T := by
     rw [Function.bijective_iff_has_inverse]
     use⇑(⅟ T)
-    simp_rw [Function.RightInverse, Function.LeftInverse, ← Module.End.mul_apply, invOf_mul_self,
-      mul_invOf_self, one_apply, and_self_iff, forall_const]
+    simp_rw [Function.RightInverse, Function.LeftInverse, ← mul_apply_eq_comp, invOf_mul_self,
+      mul_invOf_self, one_apply_eq_self, and_self_iff, forall_const]
   obtain ⟨v, hv, gh⟩ :=
     Module.End.has_eigenvector_iff_hasEigenvalue.mpr
       (@LinearMap.IsSymmetric.hasEigenvalue_eigenvalues 𝕜 _ E _ _ T _ _ hT.1 rfl i)
@@ -441,13 +441,13 @@ theorem _root_.LinearMap.isPositive'_and_invertible_pos_eigenvalues
 noncomputable def _root_.LinearMap.IsPositive'.rePowIsInvertible (hT : T.IsPositive') [Invertible T]
     (r : ℝ) : Invertible (T.rePow hT.1 r) := by
   apply Invertible.mk (T.rePow hT.1 (-r)) <;> ext1 <;>
-      simp_rw [Module.End.mul_apply, LinearMap.rePow_apply, inner_sum, inner_smul_right,
+      simp_rw [mul_apply_eq_comp, LinearMap.rePow_apply, inner_sum, inner_smul_right,
         orthonormal_iff_ite.mp (hT.1.eigenvectorBasis rfl).orthonormal, mul_boole, mul_ite,
         MulZeroClass.mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, smul_smul,
         ← mul_assoc,
         ← RCLike.ofReal_mul, ←
         Real.rpow_add (LinearMap.isPositive'_and_invertible_pos_eigenvalues _ hT _),
-        Module.End.one_apply] <;>
+        one_apply_eq_self] <;>
     simp only [add_neg_cancel, neg_add_cancel, Real.rpow_zero, RCLike.ofReal_one, one_mul, ←
       OrthonormalBasis.repr_apply_apply, OrthonormalBasis.sum_repr]
 
@@ -532,7 +532,7 @@ theorem LinearMap.IsSymmetric.rePowIsPositive'OfIsPositive' {𝕜 E : Type _} [R
     [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] [FiniteDimensional 𝕜 E]
     {T : E →ₗ[𝕜] E} (hT : T.IsPositive') (r : ℝ) :
     (T.rePow hT.1 r).IsPositive' := by
-  have := FiniteDimensional.complete 𝕜 E
+  have := FiniteDimensional.completeSpace 𝕜 E
   simp_rw [LinearMap.IsSymmetric.rePow_eq_rankOne, ContinuousLinearMap.toLinearMap_sum]
   apply LinearMap.IsPositive'.sum
   intro i

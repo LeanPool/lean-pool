@@ -60,7 +60,7 @@ open scoped Topology ComplexConjugate
 namespace GinibrePoincare
 noncomputable section
 
-/-- Distributional `∂̄`-closedness, expressed using the actual Gaussian
+/-- Distributional `dbar`-closedness, expressed using the actual Gaussian
 formal adjoint. Components need not have square-integrable derivatives. -/
 def IsGaussianWeakClosedForm (n : ℕ)
     (α : Fin n → Lp ℂ 2 (complexGaussianMeasure n)) : Prop :=

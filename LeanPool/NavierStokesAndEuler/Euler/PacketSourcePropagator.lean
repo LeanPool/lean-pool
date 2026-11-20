@@ -126,7 +126,7 @@ theorem physical_hasDerivWithinAt (s t : Icc (0 : ℝ) D.T) (x : Space) (v : U) 
     have hp := (D.frame_derivative t t.property x).clm_apply (coordinate_hasDerivWithinAt D s t x v)
     simp only [extendPath,projIcc_of_mem D.T_pos.le t.property] at hp
     convert hp using 1
-    all_goals rfl
+    rfl
   have hnormal : D.normal.field t x ≠ 0 := by
     intro hz
     have hn := D.normal_lower t x

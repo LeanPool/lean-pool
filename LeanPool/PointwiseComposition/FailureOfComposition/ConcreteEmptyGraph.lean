@@ -103,7 +103,7 @@ theorem concreteEmpty_no_computation [M↓[ℒₒᵣ] ⊧* 𝐏𝐀] [M↓[ℒ�
       exact (ne_of_gt hp) (hx'.2.symm.trans hx0)
   intro s
   refine
-    InductionScheme.succ_induction (C := Set.univ) (P := fun s : M =>
+    InductionScheme.succ_induction (C := fun _ ↦ True) (P := fun s : M =>
       ∀ u y : M,
         ¬Semiformula.Evalb ![s, (concreteEmptyIndex : M), u, y]
             (evalnCertificateFormula : ArithmeticSemisentence 4))

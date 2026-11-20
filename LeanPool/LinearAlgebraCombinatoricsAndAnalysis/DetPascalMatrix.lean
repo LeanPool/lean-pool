@@ -40,7 +40,7 @@ theorem choose_mul_transpose_choose (n : ℕ) :
     (of fun i j : Fin n ↦ (i : ℕ).choose j) * (of fun i j : Fin n ↦ (i : ℕ).choose j)ᵀ =
       of fun i j : Fin n ↦ (i + j : ℕ).choose i := by
   ext i j
-  simp only [mul_apply, of_apply, transpose_apply]
+  simp only [Matrix.mul_apply, of_apply, transpose_apply]
   rw [Fin.sum_univ_eq_sum_range (fun k ↦ (i : ℕ).choose k * (j : ℕ).choose k),
     ← sum_subset (range_mono i.isLt) fun k _ hk ↦ by
       simp [Nat.choose_eq_zero_of_lt (not_lt.mp (mem_range.not.mp hk))],

@@ -48,7 +48,7 @@ variable (N : ℕ → ℕ) (hN : ∀ l, 0 < N l) (M : ℕ → ℕ)
 def HasLocalSeparatingCharacters : Prop :=
   ∀ x : {x : ContinuumFreeGroup // x ≠ 0},
     ∃ χD : (closure N hN M x.1 →₀ ℤ) →+ UnitAddCircle,
-      χD (Finsupp.subtypeDomain (closure N hN M x.1) x.1) ≠ 0 ∧
+      χD (Finsupp.subtypeDomain (· ∈ closure N hN M x.1) x.1) ≠ 0 ∧
         LocallyAdmissible (transfiniteData N hN M) (closure N hN M x.1) χD
 
 variable (H : HasLocalSeparatingCharacters N hN M)
@@ -60,7 +60,7 @@ def localCharacter (x : {x : ContinuumFreeGroup // x ≠ 0}) :
 
 theorem localCharacter_self_ne_zero (x : {x : ContinuumFreeGroup // x ≠ 0}) :
     localCharacter N hN M H x
-      (Finsupp.subtypeDomain (closure N hN M x.1) x.1) ≠ 0 :=
+      (Finsupp.subtypeDomain (· ∈ closure N hN M x.1) x.1) ≠ 0 :=
   (Classical.choose_spec (H x)).1
 
 theorem localCharacter_admissible (x : {x : ContinuumFreeGroup // x ≠ 0}) :

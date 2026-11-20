@@ -1191,6 +1191,14 @@ local instance infinitySplittingInfinityBaseNTower :
     IsScalarTower (RatFuncInfinityIntegers C) (RatFunc C) N :=
   IsScalarTower.of_algebraMap_eq' rfl
 
+/-- The action of `Gal(L/N)` on the infinity integral closure of `L` used in the
+constant-field quotient action. -/
+local instance infinitySplittingIntegralClosureGalSMul
+    (L : Type*) [Field L] [Algebra (RatFunc C) L] [Algebra N L]
+    [IsScalarTower (RatFunc C) N L] [IsGalois N L] :
+    SMul Gal(L/N) (RatFuncInfinityIntegralClosure C L) :=
+  (infinityIntegralClosureGalAction C N L).toMulAction.toSMul
+
 omit [Fintype C] [DecidableEq C] [DecidableEq S] [DecidableEq (RatFunc S)]
   [Algebra.IsSeparable (RatFunc C) N] in
 /-- Galois action on the infinity normalization restricts to the expected

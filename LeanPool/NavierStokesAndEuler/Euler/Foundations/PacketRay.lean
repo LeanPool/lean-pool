@@ -658,7 +658,7 @@ theorem scaled_velocity_entry_identity
       and_self, Fin.ext_iff, Fin.coe_ofNat_eq_mod, Nat.mod_succ, Nat.one_mod, OfNat.ofNat_ne_one,
       Nat.zero_mod, OfNat.ofNat_ne_zero, and_false] <;>
     field_simp
-  all_goals ring
+  ring
 
 theorem normalized_velocity_entry_error
     {ε H α κ β e : ℝ} {B E : Fin 3 → Fin 3 → ℝ}

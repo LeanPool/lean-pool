@@ -126,17 +126,17 @@ theorem QuantumSet.Psi_symm_transpose_kroneckerToTensor_toMatrix_rankOne
   ext1
   simp only [LinearMap.sum_apply, ContinuousLinearMap.coe_coe,
     rankOne_apply, inner_smul_left, QuantumSet.modAut_isSymmetric,
-    Module.End.mul_apply, rmul_adjoint, rmul_apply, lmul_apply,
+    mul_apply_eq_comp, rmul_adjoint, rmul_apply, lmul_apply,
     OrthonormalBasis.repr_apply_apply, inner_single_left,
     Module.Dual.IsFaithfulPosMap.inner_coord_onb (hφ := hφ)]
   simp_rw [starRingEnd_apply, smul_smul, mul_assoc,
     ← mul_comm _ ((modAut (-(1/2)) (_ : Matrix n n ℂ) * φ.matrix) _ _),
     ]
   rw [Finset.sum_sum_comm_sum]
-  simp only [← Finset.sum_smul, ← Finset.mul_sum, ← mul_apply]
+  simp only [← Finset.sum_smul, ← Finset.mul_sum, ← Matrix.mul_apply]
   rw [Matrix.k (φ := φ)]
   simp_rw [mul_comm (star _), ← conjTranspose_apply]
-  simp_rw [← mul_apply]
+  simp_rw [← Matrix.mul_apply]
   simp_rw [← smul_single']
   rw [← matrix_eq_sum_single]
   simp_rw [modAut, sig_apply, star_eq_conjTranspose, conjTranspose_mul,
@@ -333,7 +333,7 @@ theorem QuantumSet.Psi_apply_matrix_one {n : Type*} [DecidableEq n] [Fintype n]
   simp only [Matrix.sum_apply, kroneckerMap_apply, vecMulVec_apply,
     Pi.star_apply, OrthonormalBasis.repr_apply_apply, transpose_apply,
     Module.Dual.IsFaithfulPosMap.orthonormalBasis_apply]
-  simp only [mul_apply]
+  simp only [Matrix.mul_apply]
   simp only [single_eq, boole_mul]
   simp_rw [ite_and, Finset.sum_ite_irrel, Finset.sum_const_zero,
     Finset.sum_ite_eq, Finset.mem_univ, ite_true, ite_mul, zero_mul,
@@ -602,7 +602,7 @@ theorem QuantumGraph.Real.reflexive_matrix_numOfEdges_eq_one_iff_eq_trivialGraph
       IsUnit.mul_inv_cancel_right]
   · rintro rfl
     rw [QuantumGraph.NumOfEdges_eq, Qam.trivialGraph_eq,
-      LinearMap.smul_apply, inner_smul_right, Module.End.one_apply]
+      LinearMap.smul_apply, inner_smul_right, one_apply_eq_self]
     have : φ = Matrix.traceLinearMap n ℂ ℂ := by
       rw [← hc]; exact Eq.symm counit_eq_dual
     simp only [QuantumSetDeltaForm.delta, this,

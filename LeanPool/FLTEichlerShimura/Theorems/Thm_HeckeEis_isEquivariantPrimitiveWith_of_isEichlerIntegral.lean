@@ -90,8 +90,8 @@ theorem SolMain.p1b
   obtain ⟨v, hv⟩ := hslash.exists_sub_eq_const hF
   refine ⟨binaryFormRepSL ℂ n (γ : SL(2, ℤ)) v, fun τ => ?_⟩
   change F ((γ : SL(2, ℤ)) • τ) - binaryFormRepSL ℂ n (γ : SL(2, ℤ)) (F τ) = _
-  rw [← hv τ, map_sub, ← Module.End.mul_apply, ← map_mul, mul_inv_cancel, map_one,
-    Module.End.one_apply]
+  rw [← hv τ, map_sub, ← mul_apply_eq_comp, ← map_mul, mul_inv_cancel, map_one,
+    one_apply_eq_self]
 
 end HeckeEis
 

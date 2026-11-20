@@ -45,7 +45,7 @@ def smoothSupportClosedEnvelope (h : ℝ → ℝ) : Set ℂ :=
   {z | ∀ theta, polytopeDirectionalValue z theta ≤ h theta}
 
 /-- Open carrier associated with a support function. -/
-def smoothSupportOpenEnvelope (h : ℝ → ℝ) : Set ℂ :=
+noncomputable def smoothSupportOpenEnvelope (h : ℝ → ℝ) : Set ℂ :=
   interior (smoothSupportClosedEnvelope h)
 
 /-- The support envelope as an explicit intersection of halfspaces. -/

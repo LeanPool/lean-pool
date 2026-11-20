@@ -548,7 +548,8 @@ theorem exactConstantExtensionPresentedInfinityPlace_ramificationIdx_eq_one
   let : Module.IsTorsionFree R2 CC :=
     (Module.isTorsionFree_iff_algebraMap_injective).2 hTargetInjective
   let : Module.IsTorsionFree R2 B :=
-    Function.Injective.moduleIsTorsionFree e.symm e.symm.injective (map_smul e.symm.toLinearEquiv)
+    Function.Injective.moduleIsTorsionFree e.symm e.symm.injective
+      (fun r x => e.symm.toLinearMap.map_smul' r x)
   let w := exactConstantExtensionUpstairsInfinityPlace C S N hExact q.1 q.2
   let QI : Ideal CC := Ideal.comap eRing.toRingHom w.1
   have hQIPrime : QI.IsPrime := Ideal.comap_isPrime (f := eRing.toRingHom) (K := w.1)

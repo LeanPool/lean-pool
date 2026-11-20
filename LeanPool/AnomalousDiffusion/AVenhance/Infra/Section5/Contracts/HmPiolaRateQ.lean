@@ -227,7 +227,7 @@ theorem hmPiolaQ_eLpNorm_rate_onA7 (β Ccut : ℝ) :
   have hscale (c : ℝ) (hc : 0 ≤ c) (f : ℝ × Vec 2 → ℝ) :
       eLpNorm (fun z => c * f z) 2 μ = ENNReal.ofReal c * eLpNorm f 2 μ := by
     have hfun : (fun z => c * f z) = c • f := by funext z; simp
-    rw [hfun, eLpNorm_const_smul, Real.enorm_of_nonneg hc]
+    rw [hfun, eLpNorm_const_smul, Real.eNorm_of_nonneg hc]
   have hQnorm : eLpNorm Q 2 μ ≤ ENNReal.ofReal
       (16 * Bword + (2 ^ 20 / epsilon β I.Λ (m - 1)) * Bzero) := by
     exact @HmSourceRatesGradient.hessian_gradient_majorant_eLpNorm_le β D hD I κ M θ₀ m T

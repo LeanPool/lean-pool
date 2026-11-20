@@ -26,8 +26,10 @@ below uses these facts together with `units_pm_one`, `theta_irreducible`,
 
 namespace RamanujanNagell
 
-open Polynomial QuadraticAlgebra Algebra Nat
+open QuadraticAlgebra Algebra Nat
   UniqueFactorizationMonoid
+
+open scoped QuadraticAlgebra
 
 private lemma alpha_sq : (2 * θ - 1 : R) ^ 2 = -7 := by
   have h_theta_sq : θ ^ 2 = θ - 2 := theta_sq
@@ -495,10 +497,11 @@ private lemma seven_pow_gt_two_mul_add_one (j : ℕ) (hj : j ≥ 1) :
 
 private lemma j_gt_padicValNat_two_mul_add_one (j : ℕ) (hj : j ≥ 1) :
     j > padicValNat 7 (2 * j + 1) := by
-  set m := padicValNat 7 (2 * j + 1)
+  rw [padicValNat_def]
+  set m := multiplicity 7 (2 * j + 1)
   by_contra h_le
   push Not at h_le
-  have h_dvd : 7 ^ m ∣ (2 * j + 1) := pow_padicValNat_dvd
+  have h_dvd : 7 ^ m ∣ (2 * j + 1) := pow_multiplicity_dvd 7 _
   have h_le2 : 7 ^ m ≤ 2 * j + 1 := Nat.le_of_dvd (by omega) h_dvd
   have h_le3 : 7 ^ j ≤ 7 ^ m := Nat.pow_le_pow_right (by norm_num) h_le
   exact absurd (Nat.lt_of_lt_of_le (seven_pow_gt_two_mul_add_one j hj) (le_refl _))
@@ -519,15 +522,15 @@ private lemma higher_term_nat_dvd (d l j : ℕ) (hd : d > 0) (hj : j ≥ 1)
     rw [hds] at h; exact h
   have h_dvd_prod : 7 ^ l ∣ C * k := by
     rw [← h_absorb]; exact dvd_trans h_div (dvd_mul_right d _)
-  have h_val_prod : l ≤ padicValNat 7 (C * k) :=
-    (padicValNat_dvd_iff_le (mul_ne_zero hC_ne hk_ne)).mp h_dvd_prod
-  have h_val_mul : padicValNat 7 (C * k) = padicValNat 7 C + padicValNat 7 k :=
-    padicValNat.mul hC_ne hk_ne
-  have h_j_gt : j > padicValNat 7 k := by
-    rw [hk_def]; exact j_gt_padicValNat_two_mul_add_one j hj
-  have h_val_pow : padicValNat 7 (C * 7 ^ j) = padicValNat 7 C + j := by
-    rw [padicValNat.mul hC_ne (by positivity), padicValNat.prime_pow]
-  exact (padicValNat_dvd_iff_le (mul_ne_zero hC_ne (by positivity))).mpr (by omega)
+  have h_val_prod : l ≤ multiplicity 7 (C * k) :=
+    (multiplicity_dvd_iff_le (mul_ne_zero hC_ne hk_ne)).mp h_dvd_prod
+  have h_val_mul : multiplicity 7 (C * k) = multiplicity 7 C + multiplicity 7 k :=
+    Nat.multiplicity_mul hC_ne hk_ne
+  have h_j_gt : j > multiplicity 7 k := by
+    simpa only [hk_def, padicValNat_def] using j_gt_padicValNat_two_mul_add_one j hj
+  have h_val_pow : multiplicity 7 (C * 7 ^ j) = multiplicity 7 C + j := by
+    rw [Nat.multiplicity_mul hC_ne (by positivity), Nat.multiplicity_prime_pow]
+  exact (multiplicity_dvd_iff_le (mul_ne_zero hC_ne (by positivity))).mpr (by omega)
 
 lemma lemma_A_binomial_valuation (d l : ℕ) (hd : d > 0)
     (h_div : (7 : ℤ) ^ l ∣ ↑d) (h_ndiv : ¬ (7 : ℤ) ^ (l + 1) ∣ ↑d) :
@@ -586,24 +589,24 @@ private lemma higher_even_term_nat_dvd (d l j : ℕ) (hd : d > 0) (hj : j ≥ 1)
     rw [hds] at h; exact h
   have h_dvd_prod : 7 ^ l ∣ C * k := by
     rw [← h_absorb]; exact dvd_trans h_div (dvd_mul_right d _)
-  have h_val_prod : l ≤ padicValNat 7 (C * k) :=
-    (padicValNat_dvd_iff_le (mul_ne_zero hC_ne hk_ne)).mp h_dvd_prod
-  have h_val_mul : padicValNat 7 (C * k) = padicValNat 7 C + padicValNat 7 k :=
-    padicValNat.mul hC_ne hk_ne
-  have h_j_gt : j > padicValNat 7 k := by
+  have h_val_prod : l ≤ multiplicity 7 (C * k) :=
+    (multiplicity_dvd_iff_le (mul_ne_zero hC_ne hk_ne)).mp h_dvd_prod
+  have h_val_mul : multiplicity 7 (C * k) = multiplicity 7 C + multiplicity 7 k :=
+    Nat.multiplicity_mul hC_ne hk_ne
+  have h_j_gt : j > multiplicity 7 k := by
     rw [hk_def]
-    set m := padicValNat 7 (2 * (j + 1))
+    set m := multiplicity 7 (2 * (j + 1))
     by_contra h_le
     push Not at h_le
-    have h_dvd : 7 ^ m ∣ (2 * (j + 1)) := pow_padicValNat_dvd
+    have h_dvd : 7 ^ m ∣ (2 * (j + 1)) := pow_multiplicity_dvd 7 _
     have h_le2 : 7 ^ m ≤ 2 * (j + 1) := Nat.le_of_dvd (by omega) h_dvd
     have h_le3 : 7 ^ j ≤ 7 ^ m := Nat.pow_le_pow_right (by norm_num) h_le
     have h_gt : 7 ^ j > 2 * j + 1 := seven_pow_gt_two_mul_add_one j hj
     have h_eq : 7 ^ j = 2 * (j + 1) := by omega
     exact absurd (h_eq ▸ even_two_mul (j + 1)) (Nat.not_even_iff_odd.mpr (Odd.pow (by decide)))
-  have h_val_pow : padicValNat 7 (C * 7 ^ j) = padicValNat 7 C + j := by
-    rw [padicValNat.mul hC_ne (by positivity), padicValNat.prime_pow]
-  exact (padicValNat_dvd_iff_le (mul_ne_zero hC_ne (by positivity))).mpr (by omega)
+  have h_val_pow : multiplicity 7 (C * 7 ^ j) = multiplicity 7 C + j := by
+    rw [Nat.multiplicity_mul hC_ne (by positivity), Nat.multiplicity_prime_pow]
+  exact (multiplicity_dvd_iff_le (mul_ne_zero hC_ne (by positivity))).mpr (by omega)
 
 lemma even_binomial_valuation (d l : ℕ) (hd : d > 0)
     (h_div : (7 : ℤ) ^ l ∣ ↑d) (h_ndiv : ¬ (7 : ℤ) ^ (l + 1) ∣ ↑d)
@@ -734,7 +737,7 @@ lemma traceSeq_not_dvd_seven (n : ℕ) : ¬((7 : ℤ) ∣ traceSeq n) := by
   · rw [h2] at h; simp [traceSeq] at h
 
 lemma nat_even_iff_not_odd (n : ℕ) : Even n ↔ ¬ Odd n := by
-  exact Iff.symm not_odd_iff_even
+  exact Iff.symm Nat.not_odd_iff_even
 
 /-- The key algebraic identity behind `at_most_one_m_per_class`, proved in `R` and
     lifted back to `ℤ` via injectivity of `ℤ → R`: if `P = θ ^ m + θ' ^ m`,
@@ -855,14 +858,14 @@ lemma at_most_one_m_per_class (m₁ m₂ : ℕ)
     rw [hd_def]
     exact (Nat.modEq_iff_dvd' h_lt.le).mp h_cong
   have h_7_dvd : (7 : ℕ) ∣ d := Nat.dvd_trans (by norm_num : 7 ∣ 42) h_42_dvd
-  set l := padicValNat 7 d with hl_def
+  set l := multiplicity 7 d with hl_def
   have : Fact (Nat.Prime 7) := ⟨by decide⟩
-  have hl_pos : l ≥ 1 := one_le_padicValNat_of_dvd (by omega) h_7_dvd
-  have h_div : (7 : ℤ) ^ l ∣ ↑d := by exact_mod_cast pow_padicValNat_dvd
+  have hl_pos : l ≥ 1 := one_le_multiplicity_of_dvd (by omega) h_7_dvd
+  have h_div : (7 : ℤ) ^ l ∣ ↑d := by exact_mod_cast pow_multiplicity_dvd 7 d
   have h_ndiv : ¬ (7 : ℤ) ^ (l + 1) ∣ ↑d := by
     intro h_contra
     have h_nat : 7 ^ (l + 1) ∣ d := by exact_mod_cast h_contra
-    have := (padicValNat_dvd_iff_le (by omega : d ≠ 0)).mp h_nat
+    have := (multiplicity_dvd_iff_le (by omega : d ≠ 0)).mp h_nat
     omega
   have h_eq : θ ^ m₁ - θ' ^ m₁ = θ ^ m₂ - θ' ^ m₂ :=
     h₁_theta.symm.trans h₂_theta
@@ -887,7 +890,7 @@ lemma at_most_one_m_per_class (m₁ m₂ : ℕ)
       rw [one_pow, show (8 : ℤ) = 2 ^ 3 from by norm_num, ← pow_mul, ← hd3]
     rw [h_rewrite]
     have h_l_dvd_n : 7 ^ l ∣ n := by
-      have h_dvd_d : 7 ^ l ∣ d := pow_padicValNat_dvd
+      have h_dvd_d : 7 ^ l ∣ d := pow_multiplicity_dvd 7 d
       rw [hd3] at h_dvd_d
       exact ((Nat.Coprime.pow_right l (by decide : Nat.Coprime 3 7)).symm.dvd_mul_left).mp h_dvd_d
     apply pow_dvd_of_le_emultiplicity

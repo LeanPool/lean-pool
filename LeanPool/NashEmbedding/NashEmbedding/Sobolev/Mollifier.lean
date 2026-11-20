@@ -74,10 +74,10 @@ lemma mollifier_exists :
       -- Use `ContDiffBump` to construct a smooth bump function on ℝⁿ.
       obtain ⟨b, hb⟩ : ∃ b : ContDiffBump (0 : (Fin n) → ℝ), b.rOut < Real.pi := by
         refine ⟨ ?_, ?_ ⟩;
-        constructor;
-        · exact one_half_pos
-        · exact show (1 / 2 : ℝ) < 1 by norm_num
-        linarith [ Real.pi_gt_three ];
+        · constructor
+          · exact one_half_pos
+          · exact show (1 / 2 : ℝ) < 1 by norm_num
+        · linarith [ Real.pi_gt_three ];
       refine ⟨ fun x => b x, ?_, ?_, ?_, ?_, ?_ ⟩;
       · exact ContDiffBump.contDiff b;
       · exact b.hasCompactSupport;

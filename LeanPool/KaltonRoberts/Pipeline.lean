@@ -499,7 +499,7 @@ lemma spine_case2
     M ≤ ↑C₂ := by
   -- Apply hmix to the augmented collection to get the deficit.
   obtain ⟨C_def, hC_def⟩ := hmix cert.augPosCollection cert.negMass (by
-  grind +suggestions) (by
+  exact cert.negMass_nonneg) (by
   linarith) (by
   exact fun i => DualCertificate.augPosCollection_itemFreq cert i |> le_of_eq) (cert.negMass * (1 -
     g Finset.univ)) (by

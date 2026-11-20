@@ -94,7 +94,7 @@ theorem exists_subseq_slice_tendsto {ν : Measure ℝ} [SFinite ν]
     exact hm n
   have hsum : ∫⁻ s, ∑' n, F n s ∂ν ≠ ∞ := by
     rw [lintegral_tsum hFm]
-    refine ne_top_of_le_ne_top ?_ (ENNReal.tsum_le_tsum hFint)
+    refine ne_top_of_le_ne_top ?_ (tsum_le_tsum hFint)
     rw [ENNReal.tsum_geometric]
     refine ENNReal.inv_ne_top.2 (tsub_pos_of_lt ?_).ne'
     exact ENNReal.inv_lt_one.2 (by norm_num)

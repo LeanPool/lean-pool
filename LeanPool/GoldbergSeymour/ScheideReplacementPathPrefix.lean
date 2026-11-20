@@ -116,7 +116,7 @@ private theorem ScheideReplacementPathPrefix_hconf_251.{u_1, u_2} :
   classical
   intro V E _ _ _ _ G k e0 phi T C D R alpha L d hgraph VT y0 hy0VT hnoDeparture n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro hn x hx
     by_cases hn0 : n = 0
     · subst n

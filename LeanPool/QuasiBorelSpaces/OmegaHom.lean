@@ -183,10 +183,10 @@ lemma ωScottContinuous_eval : ωScottContinuous (fun p : (X →ω𝒒 Y) × X �
   rw [ωScottContinuous_iff_monotone_map_ωSup]
   refine ⟨fun x y ⟨h₁, h₂⟩ ↦ ?_, fun c ↦ ?_⟩
   · exact (h₁ _).trans (y.1.monotone_coe h₂)
-  · simp only [Prod.ωSup_fst, Prod.ωSup_snd, ωSup_coe]
+  · simp only [Prod.fst_ωSup, Prod.snd_ωSup, ωSup_coe]
     apply le_antisymm
     · simp only [
-        ωSup, ωSup_le_iff, Chain.coe_map, Pi.evalOrderHom_coe,
+        ωSup_le_iff, Chain.coe_map, Pi.evalOrderHom_coe,
         Function.comp_apply, Function.eval, OrderHom.fst_coe]
       intro i
       change (c i).1 (ωSup (c.map OrderHom.snd)) ≤ _

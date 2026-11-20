@@ -133,7 +133,7 @@ private theorem spectralEvolution_norm (E_pvm : PVM E) (t : ℝ) (x : E) :
         ENNReal.ofReal (‖x‖ ^ 2) := by
     change (∫⁻ r, ‖stonePhase t r‖ₑ ^ 2 ∂(E_pvm.scalarMeasure x)) = _
     have henorm (r : ℝ) : ‖stonePhase t r‖ₑ = 1 := by
-      rw [enorm_eq_nnnorm]
+      rw [eNorm_eq_nnNorm]
       exact congrArg (fun z : NNReal => (z : ENNReal))
         (Subtype.ext (stonePhase_norm t r))
     simp_rw [henorm, one_pow]
@@ -209,7 +209,7 @@ private theorem phaseDifference_lintegral_tendsto_zero
     (f := fun _ => 0) (fun _ => (4 : ENNReal))
     (Filter.Eventually.of_forall fun t =>
       ((((stonePhase_measurable t).sub
-        (stonePhase_measurable s)).nnnorm.pow_const 2).coe_nnreal_ennreal))
+        (stonePhase_measurable s)).nnNorm.pow_const 2).coe_nnreal_ennreal))
     (Filter.Eventually.of_forall fun t => ae_of_all _ fun r => by
       change ‖stonePhase t r - stonePhase s r‖ₑ ^ 2 ≤ (4 : ENNReal)
       calc
@@ -231,14 +231,14 @@ private theorem phaseDifference_lintegral_tendsto_zero
             (fun t : ℝ => stonePhase t r - stonePhase s r) :=
           (stonePhase_continuous_left r).sub continuous_const
         have hnnorm : Continuous
-            (fun t : ℝ => ‖stonePhase t r - stonePhase s r‖₊) := hdiff.nnnorm
+            (fun t : ℝ => ‖stonePhase t r - stonePhase s r‖₊) := hdiff.nnNorm
         exact ENNReal.continuous_coe.comp (hnnorm.pow 2)
       have htend : Tendsto
           (fun t : ℝ => (↑(‖stonePhase t r - stonePhase s r‖₊ ^ 2) : ENNReal))
           (nhds s)
           (nhds (↑(‖stonePhase s r - stonePhase s r‖₊ ^ 2) : ENNReal)) :=
         hcont.continuousAt
-      simpa only [sub_self, nnnorm_zero,
+      simpa only [sub_self, nnNorm_zero,
         zero_pow (by norm_num : (2 : ℕ) ≠ 0), ENNReal.coe_zero]
         using htend)
   simpa only [lintegral_zero] using h
@@ -384,7 +384,7 @@ private theorem quotientDifference_lintegral_tendsto_zero
       (nhdsWithin 0 {0}ᶜ) (nhds 0) := by
   have hcoordMeas : Measurable
       (fun r : ℝ => (↑(‖(r : ℂ)‖₊ ^ 2) : ENNReal)) :=
-    ((Complex.continuous_ofReal.measurable.nnnorm.pow_const 2).coe_nnreal_ennreal)
+    ((Complex.continuous_ofReal.measurable.nnNorm.pow_const 2).coe_nnreal_ennreal)
   have h := tendsto_lintegral_filter_of_dominated_convergence
     (μ := E_pvm.scalarMeasure (x : E))
     (l := nhdsWithin 0 {0}ᶜ)
@@ -393,7 +393,7 @@ private theorem quotientDifference_lintegral_tendsto_zero
     (fun r => 4 * (↑(‖(r : ℂ)‖₊ ^ 2) : ENNReal))
     (Filter.Eventually.of_forall fun t =>
       (((stoneQuotient_measurable t).sub
-        Complex.continuous_ofReal.measurable).nnnorm.pow_const 2).coe_nnreal_ennreal)
+        Complex.continuous_ofReal.measurable).nnNorm.pow_const 2).coe_nnreal_ennreal)
     (by
       filter_upwards [self_mem_nhdsWithin] with t ht
       apply ae_of_all
@@ -416,8 +416,8 @@ private theorem quotientDifference_lintegral_tendsto_zero
           ((sq_le_sq₀ (norm_nonneg _) (mul_nonneg (by norm_num) (norm_nonneg _))).2 hnorm)
         _ = 4 * (↑(‖(r : ℂ)‖₊ ^ 2) : ENNReal) := by
           rw [mul_pow, ENNReal.ofReal_mul (sq_nonneg (2 : ℝ)),
-            ENNReal.ofReal_pow (norm_nonneg r) 2, Complex.nnnorm_real,
-            ENNReal.coe_pow, ← enorm_eq_nnnorm, ← ofReal_norm]
+            ENNReal.ofReal_pow (norm_nonneg r) 2, Complex.nnNorm_real,
+            ENNReal.coe_pow, ← eNorm_eq_nnNorm, ← ofReal_norm]
           norm_num)
     (by
       rw [lintegral_const_mul 4 hcoordMeas]
@@ -430,7 +430,7 @@ private theorem quotientDifference_lintegral_tendsto_zero
       convert hreal using 1
       · funext t
         rw [ENNReal.ofReal_pow (norm_nonneg _) 2, ofReal_norm,
-          enorm_eq_nnnorm, ENNReal.coe_pow]
+          eNorm_eq_nnNorm, ENNReal.coe_pow]
       · rw [sub_self, norm_zero, zero_pow (by norm_num : (2 : ℕ) ≠ 0),
           ENNReal.ofReal_zero])
   simpa only [lintegral_zero] using h
@@ -555,10 +555,10 @@ private theorem phaseGenerator_coordinate_integrable (E_pvm : PVM E)
     convert hreal using 1
     · funext n
       rw [ENNReal.ofReal_pow (norm_nonneg _) 2, ofReal_norm,
-        enorm_eq_nnnorm, ENNReal.coe_pow]
+        eNorm_eq_nnNorm, ENNReal.coe_pow]
       rfl
     · rw [ENNReal.ofReal_pow (norm_nonneg _) 2, ofReal_norm,
-        enorm_eq_nnnorm, ENNReal.coe_pow]
+        eNorm_eq_nnNorm, ENNReal.coe_pow]
   calc
     ∫⁻ r, ‖(r : ℂ)‖₊ ^ 2 ∂(E_pvm.scalarMeasure (x : E)) =
         ∫⁻ r, liminf (fun n => (↑(‖q n r‖₊ ^ 2) : ENNReal)) atTop
@@ -572,7 +572,7 @@ private theorem phaseGenerator_coordinate_integrable (E_pvm : PVM E)
       apply lintegral_liminf_le
       intro n
       exact Measurable.coe_nnreal_ennreal
-        ((stoneQuotient_measurable (quotientTime n)).nnnorm.pow_const 2)
+        ((stoneQuotient_measurable (quotientTime n)).nnNorm.pow_const 2)
     _ = L := hintegrals.liminf_eq
     _ < ⊤ := ENNReal.ofReal_lt_top
 

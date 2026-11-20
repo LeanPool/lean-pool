@@ -65,7 +65,7 @@ theorem exists_reachable_odd (H : SimpleGraph V) [DecidableRel H.Adj] {u : V}
   have hrest : Even (∑ v ∈ Q.erase u, H.degree v) := by
     refine Finset.sum_induction _ Even (fun _ _ => Even.add) ⟨0, rfl⟩ fun v hv => ?_
     obtain ⟨hvu, hv⟩ := mem_erase.1 hv
-    exact Nat.not_odd_iff_even.1 (hne v hvu (mem_filter.1 hv).2)
+    exact hne v hvu (mem_filter.1 hv).2
   have := (Nat.even_add.1 heven).1 hrest
   exact (Nat.not_even_iff_odd.2 hu) this
 variable {G : SimpleGraph V} [DecidableRel G.Adj] {k : ℕ}

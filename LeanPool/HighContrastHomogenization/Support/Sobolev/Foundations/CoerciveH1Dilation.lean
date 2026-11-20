@@ -621,7 +621,7 @@ noncomputable def unscale {a : ℝ} (ha : 0 < a)
         ENNReal.ofReal a * C * MeasureTheory.eLpNorm g 2
           (MeasureTheory.volume.restrict V)
       rw [MeasureTheory.eLpNorm_const_smul]
-      rw [Real.enorm_eq_ofReal ha.le]
+      rw [Real.eNorm_eq_ofReal ha.le]
       rw [← hmap_eLp, hmap]
       rw [MeasureTheory.eLpNorm_smul_measure_of_ne_zero]
       · simp [C, V, smul_eq_mul, mul_assoc]
@@ -745,7 +745,7 @@ theorem norm_gradCoordToScalarL2_unscale_eq {a : ℝ} (ha : 0 < a)
         a • fun x : Vec d => u.grad (T x) i := rfl
   rw [hfun]
   rw [MeasureTheory.eLpNorm_const_smul]
-  rw [Real.enorm_eq_ofReal (le_of_lt ha)]
+  rw [Real.eNorm_eq_ofReal (le_of_lt ha)]
   rw [← hmap_eLp, hmap]
   rw [MeasureTheory.eLpNorm_smul_measure_of_ne_zero]
   · change
@@ -893,7 +893,7 @@ theorem gradientL2Norm_unscale_eq {a : ℝ} (ha : 0 < a)
         a • fun x : Vec d => u.toH1Function.grad (T x) := rfl
   rw [hfun]
   rw [MeasureTheory.eLpNorm_const_smul]
-  rw [Real.enorm_eq_ofReal (le_of_lt ha)]
+  rw [Real.eNorm_eq_ofReal (le_of_lt ha)]
   rw [← hmap_eLp, hmap]
   rw [MeasureTheory.eLpNorm_smul_measure_of_ne_zero]
   · change

@@ -26,6 +26,7 @@ noncomputable section
 open ValuationSubring
 open Algebra
 open Polynomial
+open AddMonoidAlgebra (erase coeff)
 
 -- multiplying a polynomial by 2 commutes with deleting a power
 -- Could generalize outside of 2
@@ -45,7 +46,7 @@ lemma mul_del_commute {R : Type} [CommRing R] (p : Polynomial R) (n : ℕ) :
 -- Deleting the highest order term of a polynomial of degree at most n
 -- leads to a polynomial of degree less than n
 lemma erase_degree_leq_n (R : Type) [CommRing R] (p : Polynomial R) (n : ℕ) (h1 : n > 0)
-(h2 : p.natDegree ≤ n) : (p.erase n).natDegree < n := by
+(h2 : p.natDegree ≤ n) : natDegree (p.erase n) < n := by
   rw[le_iff_lt_or_eq] at h2
   rcases h2 with lt | eq
   · -- If the degree of p is less than n the nth coefficient is 0
@@ -53,11 +54,10 @@ lemma erase_degree_leq_n (R : Type) [CommRing R] (p : Polynomial R) (n : ℕ) (h
       intro n_in_support
       have := eq_natDegree_of_le_mem_support (Nat.le_of_succ_le lt) n_in_support
       omega
-    have equal1 : (erase n p).toFinsupp = p.toFinsupp := by
-      rw [toFinsupp_erase]
+    have equal1 : erase n p = p := by
       apply AddMonoidAlgebra.coeff_injective
       exact Finsupp.erase_of_notMem_support n_not_in_support
-    rwa [toFinsupp_inj.mp equal1]
+    rwa [equal1]
   · -- If the degree is n
     rcases eraseLead_natDegree_lt_or_eraseLead_eq_zero p with lt2 | zero
     · rw[← eq]
@@ -72,17 +72,17 @@ lemma pow_mul_inv_pow_of_le {α : ℝ} (hα : α ≠ 0) {n x : ℕ} (h : x ≤ n
 /-- The degree of `q1.erase n` is either `< n` or `0`, given `q1.natDegree ≤ n`. -/
 lemma erase_natDegree_lt_or_zero {B : Subring ℝ} {q1 : Polynomial B} {n : ℕ}
     (deg1 : q1.natDegree ≤ n) :
-    (q1.erase n).natDegree < n ∨ (q1.erase n).natDegree = 0 := by
+    natDegree (q1.erase n) < n ∨ natDegree (q1.erase n) = 0 := by
   rw [le_iff_lt_or_eq] at deg1
   rcases deg1 with lt | eq
   · left
-    calc (erase n q1).natDegree
+    calc natDegree (erase n q1)
         ≤ q1.natDegree := natDegree_le_natDegree (degree_erase_le q1 n)
       _ < n            := lt
   · rw [← eq]
     by_cases gt_or_eq : q1.natDegree > 0
     · left
-      calc (q1.erase q1.natDegree).natDegree
+      calc natDegree (q1.erase q1.natDegree)
           ≤ q1.natDegree - 1 := eraseLead_natDegree_le q1
         _ < q1.natDegree     := Nat.sub_one_lt_of_lt gt_or_eq
     · right
@@ -177,7 +177,8 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     ring
   have coeff_erase_neq_zero : coeff (q1.erase n) 0 = (coeff q) n := by
     -- the constant term of q' is the n-th coefficient of q
-    rw[erase_ne q1 zero_lt_n.symm, Polynomial.finsetSum_coeff, Finset.sum_range_succ,
+    rw[AddMonoidAlgebra.coeff_erase, Finsupp.erase_ne zero_lt_n.symm,
+                Polynomial.finsetSum_coeff, Finset.sum_range_succ,
                 Nat.sub_self, coeff_monomial_same 0 (q.coeff n), add_eq_right]
     apply Finset.sum_eq_zero
     intro x in_Finset
@@ -200,7 +201,7 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     calc ((monomial (n - x)) (q.coeff x)).natDegree
         ≤ n - x  := natDegree_monomial_le (q.coeff x)
       _ ≤ n      := Nat.sub_le n x
-  have deg2 : (q1.erase n).natDegree < n ∨ (q1.erase n).natDegree = 0 :=
+  have deg2 : natDegree (q1.erase n) < n ∨ natDegree (q1.erase n) = 0 :=
     erase_natDegree_lt_or_zero deg1
   have deg3 : (monomial (m-n) 1 * q1.erase n).natDegree < m := by
     rcases deg2 with lt | eq
@@ -236,10 +237,10 @@ lemma lower_degree (B : Subring ℝ) (α : ℝ) (m n : ℕ) (H : α ∉ B ∧ α
     · rw[natDegree_add_C, natDegree_C_mul] -- the case (1-2v₀) ≠ 0
       · exact m_eq_degree_p.le
       · simp_all
-  have deg5 : (((C (1 - 2*v₀)) * p + (C v₀)).erase m).natDegree < m :=
+  have deg5 : natDegree (((C (1 - 2*v₀)) * p + (C v₀)).erase m) < m :=
     erase_degree_leq_n B _ m (Nat.zero_lt_of_ne_zero zero_lt_m) deg4
   -- Here we define a new polynomial which here we call pq (this is not the product of the two)
-  let pq := ((C (1 - 2*v₀)) * p + (C v₀)).erase m +
+  let pq : Polynomial B := ((C (1 - 2*v₀)) * p + (C v₀)).erase m +
   C 2 * C (p.coeff m) * (monomial (m-n) 1) * q1.erase n
   have this11 (p : Polynomial B) : 2 * (aeval α) p = (aeval α) (2 * p) :=
     Eq.symm (Real.ext_cauchy (congrArg Real.cauchy (constant_in_poly (↑2) p)))
@@ -500,7 +501,9 @@ lemma sUnion_is_ub : ∀ c ⊆ S, IsChain (· ≤ ·) c → ∃ ub ∈ S, ∀ z 
       rw[Set.mem_sUnion] at half_in
       rcases half_in with ⟨t, h, g⟩
       rcases h with ⟨ringt, H2, H3⟩
-      have half_not_in_t : 1/2 ∉ t := Eq.mpr_not (congrFun H3 (1 / 2)) (subset H2)
+      have half_not_in_t : 1/2 ∉ t := by
+        rw [H3]
+        exact subset H2
       tauto
     -- So ub ∈ S
     refine ⟨ub, ub_carrier_non_half, ?_⟩ -- here we tell lean to use the ub we constructed

@@ -53,7 +53,7 @@ theorem existsUnique_generating_root (hr : 0 < r)
       simpa using (fderiv ℂ (pGradient S) (P, q)).le_opNorm (0, v)
     · exact norm_fderiv_pGradient_le hr hS hM (hp q hq)
   have hLip : LipschitzOnWith κ a (closedBall Q r) :=
-    (convex_closedBall Q (r : ℝ)).lipschitzOnWith_of_nnnorm_fderiv_le
+    (convex_closedBall Q (r : ℝ)).lipschitzOnWith_of_nnNorm_fderiv_le
       (fun q hq => (hA q hq).differentiableAt) (fun q hq => hd q hq)
   have hb : NormBoundOn a (closedBall Q r) (M / r) := by
     refine ⟨div_nonneg hM.nonneg r.coe_nonneg, ?_⟩

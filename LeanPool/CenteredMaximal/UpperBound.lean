@@ -86,7 +86,7 @@ private theorem mul_tsum_volume_le_lintegral {f : (Fin d → ℝ) → ℝ} {α :
     α * ∑' b : u, volume (closedBall (b : Fin d → ℝ) (ρ b)) ≤ ∫⁻ x, ‖f x‖ₑ :=
   calc α * ∑' b : u, volume (closedBall (b : Fin d → ℝ) (ρ b))
       ≤ ∑' b : u, ∫⁻ y in closedBall (b : Fin d → ℝ) (ρ b), ‖f y‖ₑ :=
-        ENNReal.tsum_mul_left.symm.trans_le (ENNReal.tsum_le_tsum fun b ↦ hρ b b.2)
+        ENNReal.tsum_mul_left.symm.trans_le (tsum_le_tsum fun b ↦ hρ b b.2)
     _ = ∫⁻ y in ⋃ b ∈ u, closedBall b (ρ b), ‖f y‖ₑ :=
         (lintegral_biUnion hu (fun _ _ ↦ measurableSet_closedBall) hdisj _).symm
     _ ≤ ∫⁻ x, ‖f x‖ₑ := setLIntegral_le_lintegral _ _
@@ -108,7 +108,7 @@ theorem mul_volume_le_of_one_lt (hd : 0 < d) {f : (Fin d → ℝ) → ℝ} (hf :
   -- meets some `Q_b` with `ρ x ≤ τ ρ b`
   obtain ⟨u, huE, hdisj, hcov⟩ := Vitali.exists_disjoint_subfamily_covering_enlargement
     (fun x ↦ closedBall x (ρ x)) E ρ τ hτ (fun x hx ↦ (hρ₀ x hx).le) _
-    (fun x hx ↦ radius_le_of_mul_volume_lt hd hα hαt (hasFiniteIntegral_iff_enorm.1 hf.2).ne
+    (fun x hx ↦ radius_le_of_mul_volume_lt hd hα hαt (hasFiniteIntegral_iff_eNorm.1 hf.2).ne
       (hρ₀ x hx) ((hρ x hx).trans_le (setLIntegral_le_lintegral _ _)))
     fun x hx ↦ ⟨x, mem_closedBall_self (hρ₀ x hx).le⟩
   have hu : u.Countable := hdisj.countable_of_nonempty_interior fun x hx ↦

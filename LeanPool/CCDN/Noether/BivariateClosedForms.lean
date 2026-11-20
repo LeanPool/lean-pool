@@ -40,7 +40,7 @@ lemma bivariateCoefficientDerivative_monomial {R : Type*} [CommRing R] (m n : â„
     (bivariateCoefficientDerivative R) (monomial m (monomial n a)) =
       monomial m (monomial (n - 1) (a * n)) := by
   ext i
-  simp only [coeff_bivariateCoefficientDerivative, coeff_monomial]
+  simp only [coeff_bivariateCoefficientDerivative, coeff_monomial_apply]
   split_ifs <;> simp [derivative_monomial]
 
 /-- Differentiate a bivariate monomial in the outer variable. -/

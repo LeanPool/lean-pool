@@ -163,13 +163,13 @@ lemma Xconfig_apply (s t : Fin k → ℝ) (ρ x : Fin p → ℝ) (a b : ConfigId
 lemma Xconfig_eq_mul_transpose (s t : Fin k → ℝ) (ρ x : Fin p → ℝ) :
     Xconfig s t ρ x = configMat s t ρ x * (configMat s t ρ x)ᵀ := by
   ext a b
-  simp [Xconfig, configMat, mul_apply, transpose_apply, dotProduct]
+  simp [Xconfig, configMat, Matrix.mul_apply, transpose_apply, dotProduct]
 
 lemma Xconfig_isSymm (s t : Fin k → ℝ) (ρ x : Fin p → ℝ) :
     (Xconfig s t ρ x).IsSymm := by
   rw [Xconfig_eq_mul_transpose]
   ext a b
-  simp [mul_apply, transpose_apply, mul_comm]
+  simp [Matrix.mul_apply, transpose_apply, mul_comm]
 
 lemma Xconfig_posSemidef (s t : Fin k → ℝ) (ρ x : Fin p → ℝ) :
     (Xconfig s t ρ x).PosSemidef := by

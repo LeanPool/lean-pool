@@ -105,7 +105,7 @@ theorem measurable_finiteAnnularComparisonMaxOperator
     induction s using Finset.induction_on with
     | empty => simp only [Finset.sup_empty, bot_eq_zero', NNReal.coe_zero, measurable_const]
     | @insert ρ s hρ ih =>
-        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnnorm]
+        simp only [Finset.sup_insert, NNReal.coe_max, coe_nnNorm]
         exact ((hmeas _).sub (hmeas _)).norm.max ih
   exact Complex.measurable_ofReal.comp hmax
 
@@ -165,7 +165,7 @@ private theorem enorm_le_add_enorm_sub (z w : ℂ) :
     ‖z‖ₑ ≤ ‖w‖ₑ + ‖z - w‖ₑ := by
   calc
     ‖z‖ₑ = ‖w + (z - w)‖ₑ := by rw [add_comm, sub_add_cancel]
-    _ ≤ _ := enorm_add_le _ _
+    _ ≤ _ := eNorm_add_le _ _
 
 /-- The finite arbitrary-radius smooth maximum is controlled by its actual
 adjacent dyadic maximum plus the actual annular-difference maximum. -/

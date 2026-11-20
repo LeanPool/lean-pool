@@ -58,7 +58,7 @@ private theorem order_map_residue_of_rootMultiplicity
     have hnz : (p.map (PowerSeries.constantCoeff (R := K))) ≠ 0 := (hp.map _).ne_zero
     rw [← hk, Polynomial.rootMultiplicity_eq_natTrailingDegree', PowerSeries.order_eq_nat]
     refine ⟨?_, fun i hi ↦ by simpa using Polynomial.coeff_eq_zero_of_lt_natTrailingDegree hi⟩
-    simpa [Polynomial.trailingCoeff] using Polynomial.trailingCoeff_nonzero_iff_nonzero.mpr hnz
+    simpa [Polynomial.trailingCoeff] using Polynomial.trailingCoeff_ne_zero.mpr hnz
   have hmap : (φ.map e.toRingHom).order = φ.order := by
     have h : (φ.map e.toRingHom).map e.symm.toRingHom = φ := by ext n; simp
     refine le_antisymm ?_ (PowerSeries.le_order_map _)

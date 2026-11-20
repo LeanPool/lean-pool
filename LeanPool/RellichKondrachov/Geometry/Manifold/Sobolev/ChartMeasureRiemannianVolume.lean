@@ -281,7 +281,7 @@ lemma volume_restrict_le_chartMeasure (i : dR.d.ι) :
       mul_le_mul_right hA
         (((volume : Measure E) (Metric.closedBall (0 : E) 1)) /
           ((μH[(Module.finrank ℝ E : ℝ)] : Measure E) (Metric.closedBall (0 : E) 1)))
-    simpa [Measure.smul_apply, smul_smul, mul_assoc, mul_left_comm, mul_comm] using this
+    simpa [smul_apply, smul_smul, mul_assoc, mul_left_comm, mul_comm] using this
   -- Conclude by rewriting the left-hand side as `volume.restrict S`.
   simpa [S, hVolS'] using (le_trans (le_of_eq hVolS') this)
 

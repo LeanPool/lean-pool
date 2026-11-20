@@ -65,7 +65,7 @@ lemma and_iff {φ ψ : Semiformula L ξ n} :
   ⟨by
     generalize hr : φ ⋏ ψ = r
     intro H
-    induction H <;> try simp only [reduceCtorEq, Semiformula.and_inj, FirstOrder.ball,
+    induction H <;> simp only [reduceCtorEq, Semiformula.and_inj, FirstOrder.ball,
       Matrix.vecCons_empty_eq_singleton, FirstOrder.bexs] at hr
     case and =>
       rcases hr with ⟨rfl, rfl⟩
@@ -78,7 +78,7 @@ lemma or_iff {φ ψ : Semiformula L ξ n} :
   ⟨by
     generalize hr : φ ⋎ ψ = r
     intro H
-    induction H <;> try simp only [reduceCtorEq, Semiformula.or_inj, FirstOrder.ball,
+    induction H <;> simp only [reduceCtorEq, Semiformula.or_inj, FirstOrder.ball,
       Matrix.vecCons_empty_eq_singleton, FirstOrder.bexs] at hr
     case or =>
       rcases hr with ⟨rfl, rfl⟩
@@ -97,7 +97,7 @@ lemma zero_eq_alt {φ : Semiformula L ξ n} : Hierarchy Γ 0 φ → Hierarchy Γ
   generalize hz : 0 = z
   rw [eq_comm] at hz
   intro h
-  induction h <;> try simp only [verum, falsum, rel, nrel, and_iff, or_iff,
+  induction h <;> simp only [verum, falsum, rel, nrel, and_iff, or_iff,
     Matrix.vecCons_empty_eq_singleton, Nat.add_eq_zero_iff, one_ne_zero, and_false,
     and_self] at hz ⊢
   case and _ _ ihp ihq => exact ⟨ihp hz, ihq hz⟩
@@ -197,7 +197,7 @@ end
 
 lemma neg {φ : Semiformula L ξ n} : Hierarchy Γ s φ → Hierarchy Γ.alt s (∼φ) :=
   by
-  intro h; induction h <;> try simp only [LogicalNeutral.DeMorgan.verum, falsum,
+  intro h; induction h <;> simp only [LogicalNeutral.DeMorgan.verum, falsum,
     LogicalNeutral.DeMorgan.falsum, verum, Semiformula.neg_rel, nrel, Semiformula.neg_nrel, rel,
     LogicalConnective.DeMorgan.and, or_iff, and_self, *, LogicalConnective.DeMorgan.or, and_iff,
     Matrix.vecCons_empty_eq_singleton, Semiformula.neg_ball, Semiformula.neg_bexs,
@@ -226,7 +226,7 @@ lemma ball_iff {Γ s n} {φ : Semiformula L ξ (n + 1)} {t : Semiterm L ξ (n + 
   ⟨by
     generalize hq : (∀¹[“x. x < !!t”] φ) = ψ
     intro H
-    induction H <;> try simp only [FirstOrder.ball, Matrix.vecCons_empty_eq_singleton,
+    induction H <;> simp only [FirstOrder.ball, Matrix.vecCons_empty_eq_singleton,
       reduceCtorEq, Semiformula.all_inj, Semiformula.imp_inj,
       Semiformula.Operator.LT.lt_inj, true_and, FirstOrder.bexs] at hq
     case ball φ t pt hp ih =>
@@ -250,7 +250,7 @@ lemma bexs_iff {Γ s n} {φ : Semiformula L ξ (n + 1)} {t : Semiterm L ξ (n + 
   ⟨by
     generalize hq : (∃¹[“x. x < !!t”] φ) = ψ
     intro H
-    induction H <;> try simp only [FirstOrder.bexs, Matrix.vecCons_empty_eq_singleton,
+    induction H <;> simp only [FirstOrder.bexs, Matrix.vecCons_empty_eq_singleton,
       reduceCtorEq, FirstOrder.ball, Semiformula.exs_inj, Semiformula.and_inj,
       Semiformula.Operator.LT.lt_inj, true_and] at hq
     case bexs φ t pt hp ih =>
@@ -291,7 +291,7 @@ lemma pi_of_pi_all {φ : Semiformula L ξ (n + 1)} : Hierarchy Π s (∀¹ φ) �
   generalize hr : ∀¹ φ = r
   generalize hb : (Π : Polarity) = Γ
   intro H
-  cases H <;> try simp only [reduceCtorEq, FirstOrder.ball,
+  cases H <;> simp only [reduceCtorEq, FirstOrder.ball,
     Matrix.vecCons_empty_eq_singleton, Semiformula.all_inj, FirstOrder.bexs] at hr
   case ball => rcases hr with rfl; simpa
   case all => rcases hr with rfl; simpa
@@ -314,7 +314,7 @@ lemma sigma_of_sigma_ex {φ : Semiformula L ξ (n + 1)} :
   generalize hr : ∃¹ φ = r
   generalize hb : (Σ : Polarity) = Γ
   intro H
-  cases H <;> try simp only [reduceCtorEq, FirstOrder.ball,
+  cases H <;> simp only [reduceCtorEq, FirstOrder.ball,
     Matrix.vecCons_empty_eq_singleton, FirstOrder.bexs, Semiformula.exs_inj] at hr
   case bexs => rcases hr with rfl; simpa
   case exs => rcases hr with rfl; simpa
@@ -334,7 +334,7 @@ lemma exsItr_iff {φ : Semiformula L ξ (n + k)} :
 lemma rew (ω : Rew L ξ₁ n₁ ξ₂ n₂) {φ : Semiformula L ξ₁ n₁} :
     Hierarchy Γ s φ → Hierarchy Γ s (ω ▹ φ) :=
   by
-  intro h; induction h generalizing n₂ <;> try simp only [LogicalConnective.HomClass.map_top,
+  intro h; induction h generalizing n₂ <;> simp only [LogicalConnective.HomClass.map_top,
     verum, LogicalConnective.HomClass.map_bot, falsum, Semiformula.rew_rel_eq_comp, rel,
     Semiformula.rew_nrel_eq_comp, nrel, LogicalConnective.HomClass.map_and, and_iff, and_self, *,
     LogicalConnective.HomClass.map_or, or_iff, Matrix.vecCons_empty_eq_singleton,
@@ -353,8 +353,7 @@ lemma rew_iff {ω : Rew L ξ₁ n₁ ξ₂ n₂} {φ : Semiformula L ξ₁ n₁}
   · generalize eq : ω ▹ φ = ψ
     intro hq
     induction hq generalizing φ n₁ <;>
-      try
-        simp only [Semiformula.eq_top_iff, Semiformula.eq_bot_iff, Semiformula.eq_rel_iff,
+      simp only [Semiformula.eq_top_iff, Semiformula.eq_bot_iff, Semiformula.eq_rel_iff,
           Semiformula.eq_nrel_iff, Semiformula.eq_and_iff, exists_and_left,
           Semiformula.eq_or_iff, Matrix.vecCons_empty_eq_singleton, Semiformula.eq_ball_iff,
           Semiformula.eq_bexs_iff, Semiformula.eq_exs_iff, Semiformula.eq_all_iff] at eq
