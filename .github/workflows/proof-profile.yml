@@ -112,6 +112,7 @@ jobs:
       profile_files: ${{ steps.files.outputs.profile_files }}
       compare: ${{ steps.files.outputs.compare }}
       compare_note: ${{ steps.files.outputs.compare_note }}
+      skip_note: ${{ steps.files.outputs.skip_note }}
       merge_base: ${{ steps.files.outputs.merge_base }}
       head_build_modules: ${{ steps.files.outputs.head_build_modules }}
       measure_matrix: ${{ steps.shards.outputs.matrix }}
@@ -179,6 +180,22 @@ jobs:
                      | grep '\.lean$' \
                      | tr '\n' ' ' || true)
           files="${added}${modified}"
+          # Each list reaches later steps as one environment variable, and
+          # Linux refuses to start a process when a single variable exceeds
+          # 128 KiB. A version migration changes thousands of files: its plan
+          # failed with "Argument list too long" and its job outputs exceeded
+          # GitHub's 1 MiB. Such a diff is also more than one run can
+          # measure, so say so in the report instead of failing.
+          skip_note=""
+          file_list_limit=100000
+          if [ "$(printf '%s' "$files" | wc -c)" -gt "$file_list_limit" ]; then
+            # shellcheck disable=SC2086 # word-split the file list on purpose
+            file_count=$(printf '%s\n' $files | wc -l)
+            skip_note="This PR adds or modifies $file_count Lean files under \`LeanPool/\`, more than one profile run can measure. No compile-cost measurements were taken."
+            added=""
+            modified=""
+            files=""
+          fi
           merge_base=$(git merge-base "$BASE_SHA" HEAD)
           # A base→head comparison is only meaningful when the merge base
           # compiles with the same toolchain and dependencies as the head,
@@ -223,10 +240,13 @@ jobs:
             echo "profile_files=$profile_files"
             echo "compare=$compare"
             echo "compare_note=$compare_note"
+            echo "skip_note=$skip_note"
             echo "merge_base=$merge_base"
             echo "head_build_modules=$head_build_modules"
           } >> "$GITHUB_OUTPUT"
-          if [ -z "$files" ]; then
+          if [ -n "$skip_note" ]; then
+            echo "$skip_note"
+          elif [ -z "$files" ]; then
             echo "No new or modified Lean files in this diff; report will explain that."
           else
             echo "Will profile: $files"
@@ -572,14 +592,20 @@ jobs:
 
       - name: Report no files to profile
         if: needs.plan.outputs.files == ''
+        env:
+          SKIP_NOTE: ${{ needs.plan.outputs.skip_note }}
         run: |
-          cat > proof-profile.md <<'EOF'
-          ## Proof profile (new / modified Lean files)
-
-          No added or modified Lean files under `LeanPool/` in this PR. No compile-cost measurements are needed.
-
-          _Advisory only — never blocks merge._
-          EOF
+          {
+            echo '## Proof profile (new / modified Lean files)'
+            echo
+            if [ -n "${SKIP_NOTE:-}" ]; then
+              echo "$SKIP_NOTE"
+            else
+              echo "No added or modified Lean files under \`LeanPool/\` in this PR. No compile-cost measurements are needed."
+            fi
+            echo
+            echo '_Advisory only — never blocks merge._'
+          } > proof-profile.md
           cat proof-profile.md >> "$GITHUB_STEP_SUMMARY"
 
       # Same-repo PR runs, `/profile` comments, and dispatches post directly.
