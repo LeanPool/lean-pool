@@ -96,12 +96,15 @@ public import LeanPool.GinibrePoincare.Endgame.CorrespondenceEndpoints
 
 The concrete paper results are exported on their stated domains:
 
-For a mathematical reading order, use `HUMAN_READABILITY.md` and its four
-topic guides. To consume large conclusions without positional projections,
+For a mathematical reading order, use the pinned [upstream reading guide][reading-guide]
+and its four topic guides. To consume large conclusions without positional projections,
 use `fullTheoremOneNine_named`, `fullTheoremOneTen_named`,
 `fullMatrixLift_named`, `correspondenceOperatorNumber_has_bochner_data`, and
 `ginibreBrownianMaximalProcess_CIR_realization_named`. Their result records
 give named access to the same proved identities and domain facts.
+
+[reading-guide]:
+  <https://github.com/djalilchafai/ginibre-poincare/blob/a1b2ba84e7dad8ba11b5c49a18b986a762a00a41/HUMAN_READABILITY.md>
 
 * `fullTheoremOneNine`: both exact deficits on the full real generator graph,
   with sharp equality classification on the entire symmetric weak domain.
@@ -114,7 +117,7 @@ give named access to the same proved identities and domain facts.
   the actual Gaussian matrix law and its genuine finite overlap energy.
 * `correspondenceMatrix_theorem_1_13`: the matrix H¹ hypothesis internally
   identifies the weak derivative and proves finite overlap energy.
-* `fullNonQuadraticPotentialTheorem`: sharp symmetric Poincaré under the
+* `fullNonQuadraticPotentialTheorem`: symmetric Poincaré under the
   actual Laplacian bound, and radial log-Sobolev under actual strong convexity.
 * `ginibreBrownian_full_two_radius_independent_CIR_realization`: the original
   singular Brownian process, two independent drivers and both localized CIR
@@ -126,7 +129,8 @@ give named access to the same proved identities and domain facts.
 * `correspondenceOperatorEvolution_ergodic`: strong L² ergodicity without a
   symmetry restriction on the observable.
 * `correspondenceFriedrichsSquareRoot_domain_ordinary_H1`: the positive
-  self-adjoint square root of the unrestricted generator has the ordinary weak-H¹ domain.
+  self-adjoint square root of the nonnegative Friedrichs operator `−A` has the ordinary
+  weak-H¹ domain, where `A` is the unrestricted generator.
 * `correspondenceOperatorNumber_spectrum_iff`: the exact spectrum of the
   maximal Gaussian number operator, using actual bounded two-sided inverses.
 * `correspondenceOperatorNumber_ginibre_shifted_root_deficit`: the literal

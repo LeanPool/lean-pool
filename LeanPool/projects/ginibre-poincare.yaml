@@ -332,9 +332,10 @@ main_results:
     strongly in L² to the mean of every observable as time tends to infinity.
   source_ref: Ergodicity of the Ginibre dynamics, arXiv:2608.19358v2, Section 1.
 - declaration: GinibrePoincare.correspondenceFriedrichsSquareRoot_domain_ordinary_H1
-  informal: For n > 0, the domain of the positive self-adjoint square root of the unrestricted
-    generator consists exactly of the complex L² functions whose real and imaginary parts have
-    ordinary distributional L² gradients.
+  informal: For n > 0, let A be the unrestricted Ginibre generator. The domain of the
+    positive self-adjoint square root of the nonnegative Friedrichs operator −A consists
+    exactly of the complex L² functions whose real and imaginary parts have ordinary
+    distributional L² gradients.
   source_ref: Closed Dirichlet form and Friedrichs extension in arXiv:2608.19358v2, Section 1.
 - declaration: GinibrePoincare.correspondenceOperatorNumber_spectrum_iff
   informal: For n > 0, a complex number lies in the spectrum of the maximal Gaussian number
