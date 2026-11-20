@@ -6,7 +6,7 @@ Authors: Nathan Pflueger
 module
 
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow03FixedCoverData
-public import LeanPool.BrillNoetherGraphs.LowGenus.CompactCellTreeLookup
+public import LeanPool.BrillNoetherGraphs.LowGenus.PairedCoverReplay
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
 
 /-! # Kernel replay batch 10 for the independent row-03 cover
@@ -26,8 +26,8 @@ open GenusFiveCoreAtlas GenusFiveClosedCover Configurations
 
 namespace ReplayChecks10
 
-theorem treePart132_check_chunked :
-    treePart132.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart132_check_paired :
+    treePart132.checkPaired splitForms farkasReceiptLookup cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, -1])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0])]) ++
@@ -36,8 +36,13 @@ theorem treePart132_check_chunked :
       0, 0, 0, 0, -1, 0, 0, 0, 1]]) = true := by
   decide +kernel
 
-theorem treePart133_check_chunked :
-    treePart133.checkLookup splitForms farkasReceiptLookup cells
+theorem treePart132_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart132_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart132_check_paired
+
+theorem treePart133_check_paired :
+    treePart133.checkPaired splitForms farkasReceiptLookup cells
       ((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, -1])]) ++
       [AffineForm.violation (aff [0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0])]) ++
@@ -45,6 +50,11 @@ theorem treePart133_check_chunked :
       [AffineForm.violation (aff [0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0])]) ++
       [AffineForm.violation (aff [0, 0, 0, -1, 0, 0, 0, 0, -1, 0, 0, 0, 1])]) = true := by
   decide +kernel
+
+theorem treePart133_check_chunked :
+    type_of% (CompactCellTree.checkLookup_of_checkPaired treePart133_check_paired) := by
+  as_aux_lemma =>
+    exact CompactCellTree.checkLookup_of_checkPaired treePart133_check_paired
 
 end ReplayChecks10
 
