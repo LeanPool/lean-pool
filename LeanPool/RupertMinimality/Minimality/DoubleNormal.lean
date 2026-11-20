@@ -271,16 +271,16 @@ private theorem shear_inner_neg_of_squash_tangent {F : Set ℝ²}
     (hzaff : ∀ θ : ℝ, z ((1 - θ) • a + θ • b) = (1 - θ) • z a + θ • z b) :
     ∀ p ∈ F, ∀ n : ℝ², ‖n‖ = 1 → (∀ q ∈ F, ⟪n, q - p⟫ ≤ 0) →
       ⟪n, w p⟫ = 0 → ⟪n, z p⟫ < 0 := by
-  set ŵ := rot90 u with hŵ
+  set wPerp := rot90 u with hwPerp
   have hu2 : 0 < ‖u‖ ^ 2 := by positivity
   intro p hp n hn1 hN hf
   have hn0 : n ≠ 0 := by rintro rfl; simp at hn1
   have hdec := norm_sq_smul_eq u n
-  have hinner : ∀ x, ‖u‖ ^ 2 * ⟪n, x⟫ = ⟪u, n⟫ * ⟪u, x⟫ + ⟪ŵ, n⟫ * ⟪ŵ, x⟫ := by
+  have hinner : ∀ x, ‖u‖ ^ 2 * ⟪n, x⟫ = ⟪u, n⟫ * ⟪u, x⟫ + ⟪wPerp, n⟫ * ⟪wPerp, x⟫ := by
     intro x
     rw [← real_inner_smul_left, hdec, inner_add_left, real_inner_smul_left,
       real_inner_smul_left]
-  by_cases hy : ⟪ŵ, n⟫ = 0
+  by_cases hy : ⟪wPerp, n⟫ = 0
   · have hx : ⟪u, n⟫ ≠ 0 := by
       intro hx
       apply hn0
@@ -312,13 +312,13 @@ private theorem shear_inner_neg_of_squash_tangent {F : Set ℝ²}
       have h2 := hσb p hp hpb
       exact hfin (by rw [hz']; exact mul_neg_of_pos_of_neg hpos h2)
   · -- `p` lies on the chord `[a, b]`
-    have hwy : ⟪ŵ, w p⟫ = 0 := by
+    have hwy : ⟪wPerp, w p⟫ = 0 := by
       have := hinner (w p)
       rw [hf, hwx] at this
       simp only [mul_zero, zero_add] at this
       exact (mul_eq_zero.mp this.symm).resolve_left hy
     have hw0 : w p = 0 := eq_of_inner_eq_of_inner_rot90_eq hu (by rw [hwx, inner_zero_right])
-      (by rw [← hŵ, hwy, inner_zero_right])
+      (by rw [← hwPerp, hwy, inner_zero_right])
     obtain ⟨hθ0, hθ1⟩ := hθ p hp
     have hpw := hchord p
     generalize (⟪u, p⟫ - ⟪u, a⟫) / L = θ at hθ0 hθ1 hpw
@@ -433,15 +433,15 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     ∃ (M : ℝ² →ₗ[ℝ] ℝ²) (b : ℝ²), ⟪u, M u⟫ = 0 ∧
       ∀ p ∈ W, IsInwardAt (convexHull ℝ (W : Set ℝ²)) p (M p + b) := by
   set F := convexHull ℝ (W : Set ℝ²) with hFdef
-  set ŵ := rot90 u with hŵ
+  set wPerp := rot90 u with hwPerp
   have hFc : IsCompact F := W.finite_toSet.isCompact_convexHull ℝ
   have hFconv : Convex ℝ F := convex_convexHull ℝ (W : Set ℝ²)
   obtain ⟨c, hc⟩ := hW
   have hcF : c ∈ F := interior_subset hc
   have huu : ⟪u, u⟫ = ‖u‖ ^ 2 := real_inner_self_eq_norm_sq u
-  have huw : ⟪u, ŵ⟫ = 0 := inner_rot90_right_self u
-  have hwu : ⟪ŵ, u⟫ = 0 := inner_rot90_left_self u
-  have hww : ⟪ŵ, ŵ⟫ = ‖u‖ ^ 2 := inner_rot90_rot90 u
+  have huw : ⟪u, wPerp⟫ = 0 := inner_rot90_right_self u
+  have hwu : ⟪wPerp, u⟫ = 0 := inner_rot90_left_self u
+  have hww : ⟪wPerp, wPerp⟫ = ‖u‖ ^ 2 := inner_rot90_rot90 u
   -- every direction towards the interior point `c` is inward
   have hinw : ∀ p ∈ F, ∀ μ > (0 : ℝ), IsInwardAt F p (μ • (c - p)) := by
     intro p hp μ hμ
@@ -470,7 +470,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     rw [one_smul, inner_sub_right] at this; linarith
   set L := ⟪u, b⟫ - ⟪u, a⟫ with hL
   have hLpos : 0 < L := by linarith
-  -- the two extreme faces and their `ŵ`-ranges
+  -- the two extreme faces and their ranges along `wPerp`
   set FA := F ∩ {p | ⟪u, p⟫ = ⟪u, a⟫}
   set FB := F ∩ {p | ⟪u, p⟫ = ⟪u, b⟫}
   have hFAc : IsCompact FA := hFc.inter_right (isClosed_eq hcont continuous_const)
@@ -480,9 +480,9 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
   have hFBv : Convex ℝ FB := hFconv.inter (convex_hyperplane
     (innerₛₗ ℝ u).isLinear _)
   obtain ⟨κ, y₀, hκA, hκB⟩ := exists_strict_separation_real
-    (hFAc.image (innerₛₗ ℝ ŵ).continuous_of_finiteDimensional)
-    (hFBc.image (innerₛₗ ℝ ŵ).continuous_of_finiteDimensional)
-    (hFAv.linear_image (innerₛₗ ℝ ŵ)) (hFBv.linear_image (innerₛₗ ℝ ŵ))
+    (hFAc.image (innerₛₗ ℝ wPerp).continuous_of_finiteDimensional)
+    (hFBc.image (innerₛₗ ℝ wPerp).continuous_of_finiteDimensional)
+    (hFAv.linear_image (innerₛₗ ℝ wPerp)) (hFBv.linear_image (innerₛₗ ℝ wPerp))
     ⟨_, ⟨a, ⟨haF, rfl⟩, rfl⟩⟩ ⟨_, ⟨b, ⟨hbF, rfl⟩, rfl⟩⟩ (by
       rw [Set.disjoint_left]
       rintro _ ⟨a', ⟨ha'F, ha'⟩, rfl⟩ ⟨b', ⟨hb'F, hb'⟩, hy⟩
@@ -491,7 +491,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
       have hba : b' - a' = (L / ‖u‖ ^ 2) • u := by
         apply eq_of_inner_eq_of_inner_rot90_eq hu
         · rw [inner_sub_right, inner_smul_right, huu, ha', hb']; field_simp; exact hL.symm
-        · rw [inner_sub_right, inner_smul_right, hy, ← hŵ, hwu]; ring
+        · rw [inner_sub_right, inner_smul_right, hy, ← hwPerp, hwu]; ring
       have hc0 : 0 ≤ L / ‖u‖ ^ 2 := by positivity
       refine ⟨a', ha'F, b', hb'F, fun h => by rw [h] at ha'; linarith,
         ⟨L / ‖u‖ ^ 2, hba⟩, fun q hq => ?_, fun q hq => ?_⟩
@@ -502,7 +502,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
         have := mul_nonneg hc0 (show 0 ≤ ⟪u, q⟫ - ⟪u, a'⟫ by linarith [hmin' q hq])
         linarith)
   -- the construction
-  set σ : ℝ² → ℝ := fun p => κ * (y₀ - ⟪ŵ, p⟫) with hσ
+  set σ : ℝ² → ℝ := fun p => κ * (y₀ - ⟪wPerp, p⟫) with hσ
   have hσa : ∀ p ∈ F, ⟪u, p⟫ = ⟪u, a⟫ → 0 < σ p := fun p hp hpa =>
     hκA _ ⟨p, ⟨hp, hpa⟩, rfl⟩
   have hσb : ∀ p ∈ F, ⟪u, p⟫ = ⟪u, b⟫ → σ p < 0 := fun p hp hpb =>
@@ -517,11 +517,11 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
   have hab2 : 0 < ‖b - a‖ ^ 2 := by
     have : b - a ≠ 0 := sub_ne_zero.mpr hab.symm
     positivity
-  set k := (⟪ŵ, db⟫ - ⟪ŵ, da⟫) / ‖b - a‖ ^ 2
+  set k := (⟪wPerp, db⟫ - ⟪wPerp, da⟫) / ‖b - a‖ ^ 2
   -- squash `w` and shear `z`
   set w : ℝ² → ℝ² := fun p => a + ((⟪u, p⟫ - ⟪u, a⟫) / L) • (b - a) - p with hw
   set z : ℝ² → ℝ² := fun p => (σ p / ‖u‖ ^ 2) • u +
-    ((⟪ŵ, da⟫ + k * ⟪b - a, p - a⟫) / ‖u‖ ^ 2) • ŵ with hz
+    ((⟪wPerp, da⟫ + k * ⟪b - a, p - a⟫) / ‖u‖ ^ 2) • wPerp with hz
   have hcaL : ⟪u, c⟫ - ⟪u, a⟫ ≠ 0 := by linarith
   have hcbL : ⟪u, c⟫ - ⟪u, b⟫ ≠ 0 := by linarith
   have hbaN : ‖b - a‖ ≠ 0 := norm_ne_zero_iff.mpr (sub_ne_zero.mpr hab.symm)
@@ -531,7 +531,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
       simp only [da, real_inner_smul_right, inner_sub_right, hμa]
       field_simp
       ring
-    · simp only [hz, ← hŵ, inner_add_right, real_inner_smul_right, hwu, hww, sub_self,
+    · simp only [hz, ← hwPerp, inner_add_right, real_inner_smul_right, hwu, hww, sub_self,
         inner_zero_right]
       field_simp
       ring
@@ -541,7 +541,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
       simp only [db, real_inner_smul_right, inner_sub_right, hμb]
       field_simp
       ring
-    · simp only [hz, ← hŵ, inner_add_right, real_inner_smul_right, hwu, hww,
+    · simp only [hz, ← hwPerp, inner_add_right, real_inner_smul_right, hwu, hww,
         real_inner_self_eq_norm_sq]
       simp only [k, ← inner_sub_right]
       field_simp
@@ -573,7 +573,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     simp only [hz, inner_add_right, real_inner_smul_right, huu, huw]
     field_simp
     ring
-  have hzw : ∀ p, ⟪ŵ, z p⟫ = ⟪ŵ, da⟫ + k * ⟪b - a, p - a⟫ := by
+  have hzw : ∀ p, ⟪wPerp, z p⟫ = ⟪wPerp, da⟫ + k * ⟪b - a, p - a⟫ := by
     intro p
     simp only [hz, inner_add_right, real_inner_smul_right, hwu, hww]
     field_simp
@@ -582,7 +582,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     intro θ
     apply eq_of_inner_eq_of_inner_rot90_eq hu
     · simp only [inner_add_right, real_inner_smul_right, hzu, hσ]; ring
-    · simp only [← hŵ, inner_add_right, real_inner_smul_right, hzw, inner_sub_right]; ring
+    · simp only [← hwPerp, inner_add_right, real_inner_smul_right, hzw, inner_sub_right]; ring
   have hdefect := shear_inner_neg_of_squash_tangent hu haF hbF hmin' hmax' hinw
     hσa hσb hμa0 hμb0 hza hzb hwx hzu hθ hchord hzaff
   have hwc : Continuous w := by simp only [hw]; fun_prop
@@ -591,10 +591,10 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     hwc hzc hwF hdefect
   -- the linear part and the constant
   set M : ℝ² →ₗ[ℝ] ℝ² := (1 / L) • (innerₛₗ ℝ u).smulRight (b - a) - LinearMap.id +
-    δ • ((-κ / ‖u‖ ^ 2) • (innerₛₗ ℝ ŵ).smulRight u +
-      (k / ‖u‖ ^ 2) • (innerₛₗ ℝ (b - a)).smulRight ŵ) with hMdef
+    δ • ((-κ / ‖u‖ ^ 2) • (innerₛₗ ℝ wPerp).smulRight u +
+      (k / ‖u‖ ^ 2) • (innerₛₗ ℝ (b - a)).smulRight wPerp) with hMdef
   have hM : ∀ p, M p = (⟪u, p⟫ / L) • (b - a) - p +
-      δ • ((-κ * ⟪ŵ, p⟫ / ‖u‖ ^ 2) • u + (k * ⟪b - a, p⟫ / ‖u‖ ^ 2) • ŵ) := by
+      δ • ((-κ * ⟪wPerp, p⟫ / ‖u‖ ^ 2) • u + (k * ⟪b - a, p⟫ / ‖u‖ ^ 2) • wPerp) := by
     intro p
     simp only [hMdef, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
       LinearMap.smulRight_apply, innerₛₗ_apply_apply, LinearMap.id_apply]
