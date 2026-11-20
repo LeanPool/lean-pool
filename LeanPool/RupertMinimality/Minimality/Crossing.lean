@@ -59,7 +59,7 @@ theorem isRupert_of_crossing (V W : Finset ℝ³) (hWV : W ⊆ V) (N : ℝ³) (c
   have hGz : ∀ w ∈ W, (G w) 2 = 0 := by
     intro w hw
     rw [hG, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, hez2, hz, hWN w hw, hk]
-    try ring
+    ring
   -- reduce to the rigidly moved solid
   apply isRupert_of_isRupert_image_rotation R hR
   apply isRupert_of_isRupert_image_add (k • ez)

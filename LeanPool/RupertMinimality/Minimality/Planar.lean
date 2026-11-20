@@ -281,7 +281,7 @@ theorem isRupert_of_coplanar_of_not_collinear (V : Finset ℝ³) (hpl : Coplanar
     Finset.mem_image.mpr ⟨_, Finset.mem_image.mpr ⟨v, hv, rfl⟩, rfl⟩
   refine ⟨projXy (c + Q.toEuclideanLin v), ?_, ?_⟩
   · rw [Finset.coe_image]; exact ⟨_, hmem, rfl⟩
-  · simp only [G, AffineMap.coe_add, Pi.add_apply, LinearMap.coe_toAffineMap,
+  · simp only [G, FunLike.coe_add, Pi.add_apply, LinearMap.coe_toAffineMap,
       LinearMap.coe_comp, Function.comp_apply, AffineMap.const_apply]
     rw [liftL_proj_xy (hz' _ hmem), map_add, add_comm (_ + _), neg_add_cancel_left]
     simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, hQtQ]
