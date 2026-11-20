@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yimin Zhong
 -/
 
+-- Modified for Lean Pool.
+
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
@@ -124,4 +126,15 @@ The upstream formalization and its Palomar packaging are copyright 2026 Yimin Zh
 licensed under Apache-2.0. The cited paper and dependencies retain their own licenses.
 Upstream acknowledges Lean and Mathlib in its README and formalization metadata.
 The Pool adapts the proof library for its module, style and trust requirements.
+-/
+
+/-
+Upstream NOTICE
+
+When the noncommutative AM-GM inequality holds — Lean formalization
+Copyright 2026 Yimin Zhong
+
+The formalization and Palomar packaging in this repository are licensed under
+Apache-2.0. The cited mathematical paper and dependencies retain their own
+licences. Lean and Mathlib are acknowledged in formalization.yaml and README.md.
 -/
