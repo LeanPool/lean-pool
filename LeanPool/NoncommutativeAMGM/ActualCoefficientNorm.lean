@@ -29,19 +29,6 @@ theorem powerTail_dvd {L j : ℕ} (p : Polynomial ℝ) (hp : p ∈ powerTail L j
     rw [Algebra.smul_def]
     exact dvd_mul_of_dvd_right hp _
 
-theorem powerTail_natDegree_lt {L j : ℕ} (hL : 0 < L) (p : Polynomial ℝ)
-    (hp : p ∈ powerTail L j) : p.natDegree < L := by
-  have hp0 : p ∈ powerTail L 0 := by
-    apply Submodule.span_mono (s := {q : Polynomial ℝ |
-      ∃ l : ℕ, j ≤ l ∧ l < L ∧ q = (X - 1) ^ l}) (t := {q : Polynomial ℝ |
-      ∃ l : ℕ, 0 ≤ l ∧ l < L ∧ q = (X - 1) ^ l}) ?_ hp
-    rintro q ⟨l, _, hlL, rfl⟩
-    exact ⟨l, by omega, hlL, rfl⟩
-  rw [powerTail_zero_eq_degreeLT] at hp0
-  by_cases hpz : p = 0
-  · simpa [hpz] using hL
-  · exact (natDegree_lt_iff_degree_lt hpz).mpr (mem_degreeLT.mp hp0)
-
 /-- The vanishing condition survives reduction to the polynomial's actual degree. -/
 theorem powerTail_actual_degree {L j : ℕ} (p : Polynomial ℝ) (hp : p ∈ powerTail L j)
     (hpz : p ≠ 0) : p ∈ powerTail (p.natDegree + 1) j := by

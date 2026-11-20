@@ -79,7 +79,7 @@ theorem chebyshevWeight_eq_product {m j : ℕ} (hm : 0 < m) (hj : j ≤ m) :
     chebyshevWeight m j = chebyshevWeight m j * D / D := by rw [mul_div_cancel_right₀ _ hD]
     _ = _ := by rw [he, one_div]
 
-/-- The nodal-product weights are exactly the endpoint/interior closed forms in equation (22). -/
+/-- The nodal-product weights are exactly the endpoint/interior closed forms in equation (17). -/
 theorem chebyshev_interpolation_weights {m j : ℕ} (hm : 0 < m) (hj : j ≤ m) :
     ((2 : ℝ) ^ (m - 1))⁻¹ /
       (∏ l ∈ (Finset.range (m + 1)).erase j, (chebyshevNode m j - chebyshevNode m l)) =

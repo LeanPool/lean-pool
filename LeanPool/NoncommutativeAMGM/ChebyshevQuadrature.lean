@@ -8,7 +8,8 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.ChebyshevOddGram
+public import LeanPool.NoncommutativeAMGM.ChebyshevImage
+public import LeanPool.NoncommutativeAMGM.MatrixSlicePositivity
 
 /-! # Positivity of the actual Chebyshev matrix root quadratures -/
 
@@ -28,36 +29,10 @@ theorem rootSlice_chebyshev_posSemidef {ξ ζ : ℂ} {η : ℝ} {n m dim : ℕ}
       (1 - aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))).PosSemidef ∧
     (booleanMatrixImage (rootSliceLinearMap n m ξ ζ)
       (1 + aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))).PosSemidef := by
-  let δ := (m + 1) / 2
-  have hδpos : 1 ≤ δ := by dsimp [δ]; omega
-  have hdn : 2 * δ ≤ n := by change 2 * δ ^ 2 ≤ n at hnd; nlinarith
-  have hdm : 2 * δ ≤ m + 1 := by dsimp [δ]; omega
-  have happly {κ : Type} [Fintype κ] (F : Matrix (Fin dim) κ (BooleanPolynomial n))
-      (hF : ∀ i a, BooleanDegreeLE (F i a) δ) :
-      (booleanMatrixImage (rootSliceLinearMap n m ξ ζ) (booleanGram F)).PosSemidef :=
-    rootSlice_gram_posSemidef F hn hm hζ hξ hη hF hdn hdm hnd
-  let r := m / 2
-  by_cases heven : m % 2 = 0
-  · have hmr : m = 2 * r := by dsimp [r]; omega
-    have hδ : δ = r := by dsimp [δ]; omega
-    have hmi : (m : ℤ) = 2 * (r : ℤ) := by exact_mod_cast hmr
-    have hr : 1 ≤ r := by omega
-    rw [hmi]
-    obtain ⟨F, hF, hFm⟩ := chebyshev_even_minus_gram E hE hmean r hr
-    obtain ⟨G, hG, hGp⟩ := chebyshev_even_plus_gram E hE r
-    rw [hFm, hGp]
-    constructor
-    · exact happly F (by simpa only [hδ] using hF)
-    · exact happly G (by simpa only [hδ] using hG)
-  · have hmr : m = 2 * r + 1 := by dsimp [r]; omega
-    have hδ : δ = r + 1 := by dsimp [δ]; omega
-    have hmi : (m : ℤ) = 2 * (r : ℤ) + 1 := by exact_mod_cast hmr
-    rw [hmi]
-    obtain ⟨F, hF, hFm⟩ := chebyshev_odd_minus_gram E hE r
-    obtain ⟨G, hG, hGp⟩ := chebyshev_odd_plus_gram E hE hmean r
-    rw [hFm, hGp]
-    constructor
-    · exact happly F (by simpa only [hδ] using hF)
-    · exact happly G (by simpa only [hδ] using hG)
+  apply chebyshevImage_posSemidef (by omega) E hE hmean
+  intro f hf
+  change 0 ≤ rootSliceFunctional n m ξ ζ (f ^ 2)
+  exact rootSliceFunctional_square_nonneg f hn hm hζ hξ hη hf
+    (by nlinarith) (by omega) hnd
 
 end NoncommutativeAMGM

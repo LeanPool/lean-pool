@@ -9,6 +9,8 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Data.Matrix.Mul
 
 /-! # Concrete regular-simplex vectors for the counterexample family -/
 

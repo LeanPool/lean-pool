@@ -29,7 +29,6 @@ theorem sevenSimplexMatrices_admissible : Admissible sevenSimplexMatrices := by
   refine ⟨hPSD, ?_⟩
   change LoewnerLE (∑ i, simplexMatrix 7 _ _ i) _
   rw [hsum]
-  exact loewner_refl _
 
 /-- Its exact axis eigenvalue is `-(49/48)³ < -1`. -/
 theorem sevenSimplexMatrices_eigenvector :

@@ -9,6 +9,9 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
+public import Mathlib.Algebra.Polynomial.Derivative
+public import Mathlib.Tactic.Module
+public import Mathlib.Algebra.Polynomial.AlgebraMap
 
 /-!
 # The triangular operator in Lemma 3.10

@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
+public import Mathlib.Analysis.InnerProductSpace.Spectrum
 
 /-!
 # A lower bound for a symmetric operator with triangular matrix

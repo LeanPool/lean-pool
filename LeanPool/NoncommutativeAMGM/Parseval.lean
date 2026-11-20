@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Quadrature
+public import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-!
 # Root orthogonality and coefficient norms
@@ -134,6 +135,18 @@ theorem root_remainder_eval {m : ℕ} {ξ ζ η : ℂ} (hζ : IsPrimitiveRoot ζ
   apply Polynomial.eval₂_modByMonic_eq_self_of_root (f := RingHom.id ℂ)
   simp [root_node_pow hζ hξ k]
 
+private theorem root_remainder_natDegree_lt {m : ℕ} (hm : 0 < m) (η : ℂ)
+    (p : Polynomial ℂ) : (p %ₘ (Polynomial.X ^ m - Polynomial.C η)).natDegree < m := by
+  have hq : (Polynomial.X ^ m - Polynomial.C η : Polynomial ℂ) ≠ 1 := by
+    intro heq
+    have hdeg := congrArg Polynomial.natDegree heq
+    rw [Polynomial.natDegree_X_pow_sub_C, Polynomial.natDegree_one] at hdeg
+    omega
+  have hdeg := Polynomial.natDegree_modByMonic_lt p
+    (Polynomial.monic_X_pow_sub_C η hm.ne') hq
+  rw [Polynomial.natDegree_X_pow_sub_C] at hdeg
+  exact hdeg
+
 /-- The remainder coefficient-norm identity in Lemma 3.9, before its `4⁻ʲ` rescaling.
 No degree assumption on the original polynomial is needed. -/
 theorem root_remainder_parseval {m : ℕ} (hm : 0 < m) {ξ ζ η : ℂ}
@@ -143,14 +156,7 @@ theorem root_remainder_parseval {m : ℕ} (hm : 0 < m) {ξ ζ η : ℂ}
       ∑ i : Fin m,
         conj ((p %ₘ (Polynomial.X ^ m - Polynomial.C η)).coeff i.val) *
           (p %ₘ (Polynomial.X ^ m - Polynomial.C η)).coeff i.val := by
-  have hq : (Polynomial.X ^ m - Polynomial.C η : Polynomial ℂ) ≠ 1 := by
-    intro heq
-    have hdeg := congrArg Polynomial.natDegree heq
-    rw [Polynomial.natDegree_X_pow_sub_C, Polynomial.natDegree_one] at hdeg
-    omega
-  have hdeg := Polynomial.natDegree_modByMonic_lt p
-    (Polynomial.monic_X_pow_sub_C η hm.ne') hq
-  rw [Polynomial.natDegree_X_pow_sub_C] at hdeg
+  have hdeg := root_remainder_natDegree_lt hm η p
   have haverage : rootPolynomialSquareAverage m ξ ζ p =
       rootPolynomialSquareAverage m ξ ζ (p %ₘ (Polynomial.X ^ m - Polynomial.C η)) := by
     simp only [rootPolynomialSquareAverage]
@@ -172,14 +178,7 @@ theorem root_remainder_coefficientNormSq {m : ℕ} (hm : 0 < m) {ξ ζ η : ℂ}
     (p : Polynomial ℂ) :
     rootPolynomialSquareAverage m ξ ζ p =
       (coefficientNormSq (p %ₘ (Polynomial.X ^ m - Polynomial.C η)) : ℂ) := by
-  have hq : (Polynomial.X ^ m - Polynomial.C η : Polynomial ℂ) ≠ 1 := by
-    intro heq
-    have hdeg := congrArg Polynomial.natDegree heq
-    rw [Polynomial.natDegree_X_pow_sub_C, Polynomial.natDegree_one] at hdeg
-    omega
-  have hdeg := Polynomial.natDegree_modByMonic_lt p
-    (Polynomial.monic_X_pow_sub_C η hm.ne') hq
-  rw [Polynomial.natDegree_X_pow_sub_C] at hdeg
+  have hdeg := root_remainder_natDegree_lt hm η p
   rw [root_remainder_parseval hm hζ hξ hη p, coefficientNormSq_eq_fin_sum _ hdeg]
   push_cast
   simp only [Complex.conj_mul']

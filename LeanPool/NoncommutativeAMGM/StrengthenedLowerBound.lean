@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.EndpointChebyshev
+public import LeanPool.NoncommutativeAMGM.QuadraticBound
 
 /-! # A strict lower bound from the retained endpoint, and Theorem 1.1 -/
 
@@ -25,7 +26,7 @@ theorem withoutReplacementMean_endpoint_lower {n m dim : ℕ}
   have hn : 0 < n := by omega
   by_cases hm1 : m = 1
   · subst m
-    simpa [LoewnerLE] using mean_one_posSemidef hn A hA.1
+    simpa [Matrix.nonneg_iff_posSemidef] using mean_one_posSemidef hn A hA.1
   have hm2 : 2 ≤ m := by omega
   let E : Fin n → Matrix (Fin dim) (Fin dim) ℝ := fun a ↦ (n : ℝ)⁻¹ • A a
   obtain ⟨hE, hmean⟩ := admissible_normalized hn A hA
@@ -57,7 +58,7 @@ theorem withoutReplacementMean_endpoint_lower {n m dim : ℕ}
       _ = 1 + (1 / 2 : ℝ) • (P - N) - (1 / (m : ℝ)) • 1 := by module
       _ = _ := by rw [hdifference, smul_smul]; module
   rw [he] at hpos
-  simpa only [LoewnerLE, neg_smul, sub_neg_eq_add] using hpos
+  simpa only [Matrix.le_iff, neg_smul, sub_neg_eq_add] using hpos
 
 /-- Theorem 1.1 with the paper's stated `4m²` threshold and `1/(2m)` saving. -/
 theorem withoutReplacementMean_strengthened_lower {n m dim : ℕ}

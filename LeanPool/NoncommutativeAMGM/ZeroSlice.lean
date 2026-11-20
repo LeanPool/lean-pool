@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.RootEndpoint
+public import LeanPool.NoncommutativeAMGM.BooleanMatrixPolynomial
 
 /-! # The integer zero slice as the actual Boolean vertex evaluation -/
 

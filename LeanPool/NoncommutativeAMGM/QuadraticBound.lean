@@ -11,6 +11,8 @@ module
 public import LeanPool.NoncommutativeAMGM.ChebyshevCoefficient
 public import LeanPool.NoncommutativeAMGM.ProductScaling
 public import LeanPool.NoncommutativeAMGM.CosineRootNodes
+public import LeanPool.NoncommutativeAMGM.ChebyshevQuadrature
+public import Mathlib.Tactic.Module
 
 /-! # The quadratic-threshold noncommutative AM-GM bound -/
 
@@ -29,29 +31,6 @@ theorem rootSliceLinearMap_one (n : ℕ) {m : ℕ} (hm : 0 < m) (ξ ζ : ℂ) :
   simp_rw [hs]
   simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
   exact inv_mul_cancel₀ (by exact_mod_cast hm.ne')
-
-theorem booleanMatrixImage_one {n : ℕ} {ι : Type*} [DecidableEq ι]
-    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (hL : L 1 = 1) :
-    booleanMatrixImage L (1 : Matrix ι ι (BooleanPolynomial n)) = 1 := by
-  apply Matrix.ext
-  intro i j
-  change L ((1 : Matrix ι ι (BooleanPolynomial n)) i j) = (1 : Matrix ι ι ℝ) i j
-  simp only [Matrix.one_apply]
-  split_ifs <;> simp [hL]
-
-theorem booleanMatrixImage_add {n : ℕ} {ι κ : Type*}
-    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
-    booleanMatrixImage L (A + B) = booleanMatrixImage L A + booleanMatrixImage L B := by
-  apply Matrix.ext
-  intro i j
-  exact map_add L (A i j) (B i j)
-
-theorem booleanMatrixImage_sub {n : ℕ} {ι κ : Type*}
-    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
-    booleanMatrixImage L (A - B) = booleanMatrixImage L A - booleanMatrixImage L B := by
-  apply Matrix.ext
-  intro i j
-  exact map_sub L (A i j) (B i j)
 
 /-- The difference of the even and odd root-slice images recovers twice the product mean. -/
 theorem cosineRootSlice_mean_difference {n m : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -88,7 +67,7 @@ theorem loewner_bounds_of_two_sided_difference {ι : Type*} [DecidableEq ι]
   rw [helo] at hlow
   rw [heup] at hupp
   constructor
-  · simpa only [LoewnerLE, sub_neg_eq_add, add_comm] using hlow
+  · simpa only [Matrix.le_iff, sub_neg_eq_add, add_comm] using hlow
   · exact hupp
 
 /-- Theorem 1.2 for arbitrary real PSD input matrices with sum bounded by `nI`. -/

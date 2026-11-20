@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.HarmonicCoefficients
+public import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 
 /-! # Harmonic coefficient sums with selected and excluded indices -/
 

@@ -105,4 +105,27 @@ theorem rootSlice_gram_posSemidef {ξ ζ : ℂ} {η : ℝ} {n m d : ℕ}
   intro f hf
   exact rootSliceFunctional_square_nonneg f hn hm hζ hξ hη hf hdn hdm hnd
 
+theorem booleanMatrixImage_one {n : ℕ} {ι : Type*} [DecidableEq ι]
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (hL : L 1 = 1) :
+    booleanMatrixImage L (1 : Matrix ι ι (BooleanPolynomial n)) = 1 := by
+  apply Matrix.ext
+  intro i j
+  change L ((1 : Matrix ι ι (BooleanPolynomial n)) i j) = (1 : Matrix ι ι ℝ) i j
+  simp only [Matrix.one_apply]
+  split_ifs <;> simp [hL]
+
+theorem booleanMatrixImage_add {n : ℕ} {ι κ : Type*}
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
+    booleanMatrixImage L (A + B) = booleanMatrixImage L A + booleanMatrixImage L B := by
+  apply Matrix.ext
+  intro i j
+  exact map_add L (A i j) (B i j)
+
+theorem booleanMatrixImage_sub {n : ℕ} {ι κ : Type*}
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
+    booleanMatrixImage L (A - B) = booleanMatrixImage L A - booleanMatrixImage L B := by
+  apply Matrix.ext
+  intro i j
+  exact map_sub L (A i j) (B i j)
+
 end NoncommutativeAMGM

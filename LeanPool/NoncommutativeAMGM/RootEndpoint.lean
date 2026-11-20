@@ -8,7 +8,7 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.QuadraticBound
+public import LeanPool.NoncommutativeAMGM.MatrixSlicePositivity
 
 /-! # Retaining the zero-slice endpoint in the positive root-grid quadrature -/
 

@@ -138,20 +138,6 @@ theorem harmonicSliceReplacement_difference {n : ℕ}
         homogeneousPolynomial (h r k) := by rw [sub_mul, smul_mul_assoc, one_mul]
     _ = _ := by rw [booleanFalling_substitution]; ring
 
-/-- Constructive slice-second-moment preservation for the full harmonic expansion. -/
-theorem exists_harmonic_slice_replacement {n d : ℕ} (s : ℝ) (f : BooleanPolynomial n)
-    (hn : 0 < n) (hd : 2 * d ≤ n) (hf : BooleanDegreeLE f d) :
-    ∃ h : (r k : ℕ) → HomogeneousSpace n k,
-      (∀ r k, k ≤ r → HarmonicCoefficients k (homogeneousCoefficient (h r k))) ∧
-      sliceFunctional n s (f ^ 2) =
-        sliceFunctional n s ((harmonicSliceReplacement h d s) ^ 2) := by
-  obtain ⟨h, hhar, he⟩ := boolean_harmonic_expansion f hf
-  refine ⟨h, hhar, ?_⟩
-  apply slice_square_eq_of_substitution s f _ (harmonicSliceQuotient h d s) hn hd hf
-    (harmonicSliceReplacement_degree h d s) (harmonicSliceQuotient_degree h d s)
-  conv_lhs => rw [he]
-  exact harmonicSliceReplacement_difference h d s
-
 /-- A single family of harmonic vectors works simultaneously for every real slice parameter. -/
 theorem exists_uniform_harmonic_slice_replacement {n d : ℕ} (f : BooleanPolynomial n)
     (hn : 0 < n) (hd : 2 * d ≤ n) (hf : BooleanDegreeLE f d) :
@@ -166,5 +152,15 @@ theorem exists_uniform_harmonic_slice_replacement {n d : ℕ} (f : BooleanPolyno
     (harmonicSliceReplacement_degree h d s) (harmonicSliceQuotient_degree h d s)
   conv_lhs => rw [he]
   exact harmonicSliceReplacement_difference h d s
+
+/-- Constructive slice-second-moment preservation for the full harmonic expansion. -/
+theorem exists_harmonic_slice_replacement {n d : ℕ} (s : ℝ) (f : BooleanPolynomial n)
+    (hn : 0 < n) (hd : 2 * d ≤ n) (hf : BooleanDegreeLE f d) :
+    ∃ h : (r k : ℕ) → HomogeneousSpace n k,
+      (∀ r k, k ≤ r → HarmonicCoefficients k (homogeneousCoefficient (h r k))) ∧
+      sliceFunctional n s (f ^ 2) =
+        sliceFunctional n s ((harmonicSliceReplacement h d s) ^ 2) := by
+  obtain ⟨h, hhar, hs⟩ := exists_uniform_harmonic_slice_replacement f hn hd hf
+  exact ⟨h, hhar, hs s⟩
 
 end NoncommutativeAMGM

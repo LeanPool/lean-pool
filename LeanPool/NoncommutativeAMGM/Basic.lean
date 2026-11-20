@@ -8,28 +8,13 @@ Authors: Yimin Zhong
 
 module
 
-public import Mathlib.Algebra.MonoidAlgebra.Basic
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
-public import Mathlib.Analysis.Matrix.Order
-public import Mathlib.Analysis.Matrix.PosDef
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
+public import Mathlib.Algebra.Algebra.Defs
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.CardEmbedding
-public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
-public import Mathlib.RingTheory.Polynomial.Chebyshev
-public import Mathlib.RingTheory.RootsOfUnity.Complex
-public import Mathlib.Tactic.Abel
-public import Mathlib.Tactic.Choose
 public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.GCongr
-public import Mathlib.Tactic.IntervalCases
 public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.Module
-public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Positivity
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.SplitIfs
-public import Mathlib.Tactic.Tauto
 
 /-!
 # Noncommutative arithmetic-geometric means
@@ -50,7 +35,7 @@ noncomputable def distinctProductSum {R : Type*} [Semiring R] (n m : ℕ)
   ∑ f : Fin m ↪ Fin n, (List.ofFn fun j ↦ A (f j)).prod
 
 /-- Normalized without-replacement product average, equation (5). -/
-noncomputable def withoutReplacementMean {R : Type*} [Ring R] [Algebra ℝ R]
+noncomputable def withoutReplacementMean {R : Type*} [Semiring R] [Algebra ℝ R]
     (n m : ℕ) (A : Fin n → R) : R :=
   (((n - m).factorial : ℝ) / (n.factorial : ℝ)) • distinctProductSum n m A
 
@@ -88,19 +73,19 @@ theorem normalization_eq_inv_card {n m : ℕ} (hmn : m ≤ n) :
   exact Fintype.sum_equiv Equiv.uniqueEmbeddingEquivResult _ _ (fun _ ↦ rfl)
 
 /-- The average of empty products is the identity. -/
-@[simp] theorem withoutReplacementMean_zero {R : Type*} [Ring R] [Algebra ℝ R]
+@[simp] theorem withoutReplacementMean_zero {R : Type*} [Semiring R] [Algebra ℝ R]
     (n : ℕ) (A : Fin n → R) : withoutReplacementMean n 0 A = 1 := by
   simp [withoutReplacementMean, show (n.factorial : ℝ) ≠ 0 by positivity]
 
 /-- The length-one average is the arithmetic mean. -/
-theorem withoutReplacementMean_one {R : Type*} [Ring R] [Algebra ℝ R]
+theorem withoutReplacementMean_one {R : Type*} [Semiring R] [Algebra ℝ R]
     {n : ℕ} (hn : 0 < n) (A : Fin n → R) :
     withoutReplacementMean n 1 A = (n : ℝ)⁻¹ • ∑ i, A i := by
   rw [withoutReplacementMean, normalization_eq_inv_card hn,
     distinctProductSum_one, card_distinct_tuples, Nat.descFactorial_one]
 
 /-- The constant-identity family attains the upper bound for every allowed length. -/
-theorem withoutReplacementMean_identity {R : Type*} [Ring R] [Algebra ℝ R]
+theorem withoutReplacementMean_identity {R : Type*} [Semiring R] [Algebra ℝ R]
     {n m : ℕ} (hmn : m ≤ n) : withoutReplacementMean n m (fun _ ↦ (1 : R)) = 1 := by
   classical
   have hd : (Fintype.card (Fin m ↪ Fin n) : ℝ) ≠ 0 := by

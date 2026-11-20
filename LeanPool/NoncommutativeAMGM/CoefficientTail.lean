@@ -222,17 +222,7 @@ theorem coefficient_norm_step_padded {L j : ℕ} (hjL : j < L) (p : Polynomial �
     (hp : p ∈ powerTail L j) :
     ((j : ℝ) * ((j : ℝ) + 1)) * realCoefficientInner p p ≤
       ((L : ℝ) ^ 2 / 4) * interiorCoefficientNormSq L ((X - 1) * p) := by
-  have hp0 : p ∈ powerTail L 0 := by
-    apply Submodule.span_mono (s := {q : Polynomial ℝ |
-      ∃ l : ℕ, j ≤ l ∧ l < L ∧ q = (X - 1) ^ l}) (t := {q : Polynomial ℝ |
-      ∃ l : ℕ, 0 ≤ l ∧ l < L ∧ q = (X - 1) ^ l}) ?_ hp
-    rintro q ⟨l, _, hlL, rfl⟩
-    exact ⟨l, by omega, hlL, rfl⟩
-  rw [powerTail_zero_eq_degreeLT] at hp0
-  have hdeg : p.natDegree < L := by
-    by_cases hpz : p = 0
-    · simpa [hpz] using (show 0 < L by omega)
-    · exact (natDegree_lt_iff_degree_lt hpz).mpr (mem_degreeLT.mp hp0)
-  exact (coefficientOperator_inner_lower hjL p hp).trans (coefficientOperator_energy_le L p hdeg)
+  exact (coefficientOperator_inner_lower hjL p hp).trans
+    (coefficientOperator_energy_le L p (powerTail_natDegree_lt (by omega) p hp))
 
 end NoncommutativeAMGM

@@ -18,7 +18,7 @@ namespace NoncommutativeAMGM
 /-- The unrounded slice coordinate at a Chebyshev extremum. -/
 noncomputable def idealSliceNode (n m j : ℕ) : ℝ := (n : ℝ) / 2 * (1 - chebyshevNode m j)
 
-/-- Nearest-integer rounding, with the convention from equation (23). -/
+/-- Nearest-integer rounding, with the convention from equation (19). -/
 noncomputable def roundedSliceNode (n m j : ℕ) : ℕ := ⌊(1 / 2 : ℝ) + idealSliceNode n m j⌋₊
 
 theorem idealSliceNode_nonneg (n m j : ℕ) : 0 ≤ idealSliceNode n m j :=

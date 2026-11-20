@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.MixedMoments
+public import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 
 /-! # The alternating coefficient in the harmonic slice norm -/
 

@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
+public import Mathlib.RingTheory.Polynomial.Chebyshev
 
 /-! # Chebyshev polynomial identities for the Boolean matrix sums of squares -/
 

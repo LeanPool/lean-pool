@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.RootSliceExtraction
+public import Mathlib.RingTheory.Polynomial.Chebyshev
 
 /-! # The leading Boolean coefficient of the actual Chebyshev matrix polynomial -/
 

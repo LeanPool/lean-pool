@@ -10,6 +10,7 @@ module
 
 public import LeanPool.NoncommutativeAMGM.CosineGap
 public import LeanPool.NoncommutativeAMGM.ChebyshevRootAverage
+public import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-! # Explicit complex root nodes and their Chebyshev cosine coordinates -/
 

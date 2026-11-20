@@ -9,6 +9,8 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.CoefficientOperator
+public import Mathlib.Algebra.Polynomial.Inductions
+public import Mathlib.Tactic.ComputeDegree
 
 /-!
 # Coefficient inner products and the weighted Euler operator

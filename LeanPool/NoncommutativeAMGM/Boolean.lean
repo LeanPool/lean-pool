@@ -9,6 +9,8 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.FallingFactorial
+public import Mathlib.Algebra.MonoidAlgebra.Basic
+public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
 /-!
 # Square-free Boolean polynomials and the interpolated slice functional

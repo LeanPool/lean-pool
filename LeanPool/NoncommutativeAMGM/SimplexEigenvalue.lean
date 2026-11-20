@@ -81,7 +81,7 @@ theorem simplexMean_integral_phase_eigenvector {n m ℓ : ℕ} (hn : 3 ≤ n) (h
     ring
   rw [ha, hb, simplexRecurrence_integral_phase _ θ hm hθ hphase]
 
-/-- Equation (4), with the paper's angle `ℓπ/(m-1)`; valid for every interior phase. -/
+/-- Equation (7), with the paper's angle `ℓπ/(m-1)`; valid for every interior phase. -/
 theorem simplexMean_angle_eigenvector {n m ℓ : ℕ} (hn : 3 ≤ n) (hmn : m ≤ n)
     (hℓ : 0 < ℓ) (hℓm : ℓ + 1 < m) :
     let θ := (ℓ : ℝ) * Real.pi / ((m : ℝ) - 1)

@@ -54,7 +54,7 @@ theorem roundedWeight_abs_le_exp_sum {n m j : ℕ} (hm : 0 < m)
     interpolationWeight_chebyshev hm hj, abs_mul, abs_inv, Finset.abs_prod]
   exact mul_le_mul_of_nonneg_left hi (abs_nonneg _)
 
-/-- Equation (25): the uniform exponential upper bound for every rounded weight. -/
+/-- Equation (21): the uniform exponential upper bound for every rounded weight. -/
 theorem roundedWeight_abs_le {n m j : ℕ} (hm : 0 < m)
     (hn : 4 * m ^ 2 ≤ n) (hj : j ≤ m) :
     |roundedWeight n m j| ≤ |chebyshevWeight m j| *

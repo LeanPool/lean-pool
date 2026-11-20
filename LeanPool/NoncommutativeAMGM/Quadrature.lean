@@ -9,6 +9,8 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
+public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import Mathlib.Analysis.Complex.Basic
 
 /-!
 # Root quadrature for Laurent coefficients

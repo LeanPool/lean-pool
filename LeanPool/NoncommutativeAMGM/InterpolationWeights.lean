@@ -19,7 +19,7 @@ namespace NoncommutativeAMGM
 open Polynomial
 open scoped BigOperators
 
-/-- The normalized nodal-product weights from equation (21). -/
+/-- The normalized nodal-product weights from equation (15). -/
 noncomputable def interpolationWeight (m : ℕ) (t : ℕ → ℝ) (j : ℕ) : ℝ :=
   ((2 : ℝ) ^ (m - 1))⁻¹ /
     (∏ l ∈ (Finset.range (m + 1)).erase j, (t j - t l))

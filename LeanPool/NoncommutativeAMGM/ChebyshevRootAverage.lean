@@ -8,7 +8,10 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.ChebyshevQuadrature
+public import LeanPool.NoncommutativeAMGM.Quadrature
+public import Mathlib.RingTheory.Polynomial.Chebyshev
+public import LeanPool.NoncommutativeAMGM.Parseval
+public import LeanPool.NoncommutativeAMGM.RealRootQuadrature
 
 /-! # Real Chebyshev moments of the root-node quadratures -/
 

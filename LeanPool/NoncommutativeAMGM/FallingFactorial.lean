@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
+public import Mathlib.RingTheory.Polynomial.Pochhammer
 
 /-!
 # Falling factorials and the scalar factorization in Lemma 3.8

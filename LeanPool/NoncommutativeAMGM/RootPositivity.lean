@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.RealRootQuadrature
+public import Mathlib.RingTheory.Polynomial.Vieta
 
 /-!
 # Positivity of the weighted root quadratures

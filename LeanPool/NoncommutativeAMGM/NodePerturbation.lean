@@ -26,7 +26,7 @@ theorem node_gap_perturbation {x y t u ε : ℝ}
     _ ≤ |t - x| + |u - y| := abs_sub _ _
     _ ≤ _ := by linarith
 
-/-- Relative gap stability, in the form used in equation (24). -/
+/-- Relative gap stability, in the form used in equation (20). -/
 theorem node_gap_ratio_lower {x y t u ε : ℝ} (hxy : x ≠ y)
     (ht : |t - x| ≤ ε) (hu : |u - y| ≤ ε) :
     1 - 2 * ε / |x - y| ≤ |(t - u) / (x - y)| := by
@@ -62,7 +62,7 @@ theorem chebyshevNode_ne {m j l : ℕ} (hm : 0 < m) (hj : j ≤ m) (hl : l ≤ m
   have h := hpos.trans_le (chebyshevNode_abs_gap hm hj hl)
   exact sub_ne_zero.mp (abs_pos.mp h)
 
-/-- Equation (24): a rounded gap loses at most `m²/(n|j-l|²)` relatively. -/
+/-- Equation (20): a rounded gap loses at most `m²/(n|j-l|²)` relatively. -/
 theorem roundedCosineNode_gap_ratio {n m j l : ℕ} (hn : 0 < n) (hm : 0 < m)
     (hj : j ≤ m) (hl : l ≤ m) (hjl : j ≠ l) :
     1 - (m : ℝ) ^ 2 / ((n : ℝ) * ((j : ℝ) - l) ^ 2) ≤
@@ -127,7 +127,7 @@ theorem roundedCosineNode_loss_le_quarter {n m j l : ℕ} (hm : 0 < m)
   apply (div_le_iff₀ (mul_pos hn' (by linarith))).mpr
   nlinarith [mul_le_mul_of_nonneg_left hs hn'.le]
 
-/-- The exponential gap-ratio lower bound immediately following equation (24). -/
+/-- The exponential gap-ratio lower bound immediately following equation (20). -/
 theorem roundedCosineNode_gap_ratio_exp {n m j l : ℕ} (hm : 0 < m)
     (hn : 4 * m ^ 2 ≤ n) (hj : j ≤ m) (hl : l ≤ m) (hjl : j ≠ l) :
     Real.exp (-(2 * (m : ℝ) ^ 2 / ((n : ℝ) * ((j : ℝ) - l) ^ 2))) ≤

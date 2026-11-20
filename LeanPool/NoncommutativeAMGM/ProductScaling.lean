@@ -35,12 +35,12 @@ theorem distinctProductSum_smul {R : Type*} [Semiring R] [Algebra ℝ R]
   intro f _
   exact orderedWord_smul A a m f
 
-theorem withoutReplacementMean_eq_inv_falling {R : Type*} [Ring R] [Algebra ℝ R]
+theorem withoutReplacementMean_eq_inv_falling {R : Type*} [Semiring R] [Algebra ℝ R]
     {n m : ℕ} (hmn : m ≤ n) (A : Fin n → R) :
     withoutReplacementMean n m A = (falling (n : ℝ) m)⁻¹ • distinctProductSum n m A := by
   rw [withoutReplacementMean, normalization_eq_inv_card hmn, card_distinct_tuples, falling_natCast]
 
-theorem normalized_distinctProductSum {R : Type*} [Ring R] [Algebra ℝ R]
+theorem normalized_distinctProductSum {R : Type*} [Semiring R] [Algebra ℝ R]
     {n m : ℕ} (hn : 0 < n) (hmn : m ≤ n) (A : Fin n → R) :
     ((n : ℝ) ^ m / falling n m) •
       distinctProductSum n m (fun i ↦ (n : ℝ)⁻¹ • A i) = withoutReplacementMean n m A := by
@@ -62,6 +62,6 @@ theorem admissible_normalized {n d : ℕ} (hn : 0 < n)
   · intro i
     exact (hA.1 i).smul (by positivity)
   · have h := loewner_smul hA.2 (show 0 ≤ (n : ℝ)⁻¹ by positivity)
-    simpa only [LoewnerLE, ← Finset.smul_sum, smul_smul, inv_mul_cancel₀ hn0, one_smul] using h
+    simpa only [Matrix.le_iff, ← Finset.smul_sum, smul_smul, inv_mul_cancel₀ hn0, one_smul] using h
 
 end NoncommutativeAMGM

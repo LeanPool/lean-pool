@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.ScalarEstimate
+public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 
 /-!
 # Elementary symmetric sums

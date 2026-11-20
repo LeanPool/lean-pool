@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.Basic
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 /-!
 # The scalar recurrence in Appendix A
@@ -66,7 +67,8 @@ theorem simplexRecurrence_sine (q θ : ℝ) (hθ : Real.sin θ ≠ 0) (k : ℕ) 
     field_simp
     ring
 
-/-- At an integral phase, the sine solution is the signed power in equation (4). -/
+/-- At an integral phase, the sine solution gives the signed power in Appendix A's derivation
+of equation (7). -/
 theorem simplexRecurrence_integral_phase (q θ : ℝ) {m ℓ : ℕ}
     (hm : 1 ≤ m) (hθ : Real.sin θ ≠ 0)
     (hphase : ((m - 1 : ℕ) : ℝ) * θ = (ℓ : ℝ) * Real.pi) :

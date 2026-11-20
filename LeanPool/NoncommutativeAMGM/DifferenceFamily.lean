@@ -103,7 +103,8 @@ theorem interiorCoefficientNormSq_nonneg (L : ℕ) (p : Polynomial ℝ) :
   intro i _
   split_ifs <;> positivity
 
-/-- The parity-combined norm estimate in equation (39), before the `4⁻ʲ` rescaling. -/
+/-- The padded version of the parity-combined estimate (39), before the `4⁻ʲ` rescaling.
+The seminorm trims at the ambient degree and can retain coefficients when the degree drops. -/
 theorem differenceFamily_norm_step {R : Polynomial ℝ} {h j : ℕ}
     (hR : R.natDegree ≤ 2 * h) :
     ((j : ℝ) * ((j : ℝ) + 1)) * realCoefficientInner (differenceFamily R j)

@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.SimplexTransfer
+public import Mathlib.Tactic.Module
 
 /-! # Distinct-index products of the concrete simplex matrices -/
 

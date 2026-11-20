@@ -11,6 +11,7 @@ module
 public import LeanPool.NoncommutativeAMGM.CoefficientEnergy
 public import LeanPool.NoncommutativeAMGM.SpectralLower
 public import Mathlib.RingTheory.Polynomial.DegreeLT
+public import Mathlib.Algebra.Polynomial.Sequence
 
 /-!
 # Finite-dimensional coefficient Hilbert spaces
@@ -111,5 +112,18 @@ theorem boundedCoefficientOperator_symmetric {L : ℕ} (hL : 0 < L) :
   intro p q
   rw [coefficientSpace_inner hL, coefficientSpace_inner hL]
   exact coefficientOperator_symmetric L _ _
+
+theorem powerTail_natDegree_lt {L j : ℕ} (hL : 0 < L) (p : Polynomial ℝ)
+    (hp : p ∈ powerTail L j) : p.natDegree < L := by
+  have hp0 : p ∈ powerTail L 0 := by
+    apply Submodule.span_mono (s := {q : Polynomial ℝ |
+      ∃ l : ℕ, j ≤ l ∧ l < L ∧ q = (X - 1) ^ l}) (t := {q : Polynomial ℝ |
+      ∃ l : ℕ, 0 ≤ l ∧ l < L ∧ q = (X - 1) ^ l}) ?_ hp
+    rintro q ⟨l, _, hlL, rfl⟩
+    exact ⟨l, by omega, hlL, rfl⟩
+  rw [powerTail_zero_eq_degreeLT] at hp0
+  by_cases hpz : p = 0
+  · simpa [hpz] using hL
+  · exact (natDegree_lt_iff_degree_lt hpz).mpr (mem_degreeLT.mp hp0)
 
 end NoncommutativeAMGM

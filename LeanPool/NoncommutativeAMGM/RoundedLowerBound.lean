@@ -13,6 +13,7 @@ public import LeanPool.NoncommutativeAMGM.IntegerSlices
 public import LeanPool.NoncommutativeAMGM.RoundedVariation
 public import LeanPool.NoncommutativeAMGM.ChebyshevImage
 public import LeanPool.NoncommutativeAMGM.QuadraticBound
+public import Mathlib.Tactic.Module
 
 /-! # Theorem 1.1 by the paper's original rounded-node proof -/
 
@@ -53,7 +54,7 @@ theorem signed_matrix_endpoint_lower {J ι : Type*} [Fintype J]
   have he' : ((∑ j, a j • M j) + ((∑ j, |a j|) - 2 * a j₀) • (1 : Matrix ι ι ℝ)) +
       (b - ((∑ j, |a j|) - 2 * a j₀)) • 1 = (∑ j, a j • M j) + b • 1 := by module
   rw [he'] at h
-  simpa only [LoewnerLE, neg_smul, sub_neg_eq_add] using h
+  simpa only [Matrix.le_iff, neg_smul, sub_neg_eq_add] using h
 
 /-- Section 2's rounded-node proof, using the actual integer slices and weights. -/
 theorem withoutReplacementMean_rounded_lower {n m dim : ℕ}
