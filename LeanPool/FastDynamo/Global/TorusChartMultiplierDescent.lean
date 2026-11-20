@@ -54,56 +54,6 @@ open WholePlaneAESupport
 
 /-! ## Quotient-safe multiplication through the chart -/
 
-/-- Scalar multiplication commutes with chart descent when the two scalar
-coefficients agree on the support of the whole-plane input. -/
-theorem scalarVectorMulTransverse_wholePlaneToTorusL2_eq
-    {s : Set WholePlane} {aT : TransverseScalarLInf}
-    {aW : WholePlaneScalarLInf} {f : WholePlaneC3L2}
-    (ha : ∀ᵐ q ∂transverseMeasure,
-      torusWholePlaneRepresentative q ∈ s →
-        (aT : TransverseTorus → ℂ) q =
-          (aW : WholePlane → ℂ) (torusWholePlaneRepresentative q))
-    (hf : IsAEL2SupportedIn s f) :
-    scalarVectorMulTransverse aT (wholePlaneToTorusL2 f) =
-      wholePlaneToTorusL2
-        (scalarVectorMulL2 (E := C3) volume aW f) := by
-  apply Lp.ext
-  have hfRestrict :
-      ∀ᵐ x ∂volume.restrict wholePlaneFundamentalBox,
-        x ∉ s → (f : WholePlane → C3) x = 0 :=
-    hf.filter_mono (ae_mono Measure.restrict_le_self)
-  have hfChart :=
-    measurePreserving_torusWholePlaneRepresentative.quasiMeasurePreserving.ae
-      hfRestrict
-  have hmulW := scalarVectorMulL2_coe_ae
-    (E := C3) volume aW f
-  have hmulWRestrict :
-      ((scalarVectorMulL2 (E := C3) volume aW f : WholePlane → C3))
-        =ᵐ[volume.restrict wholePlaneFundamentalBox]
-          fun x ↦ (aW : WholePlane → ℂ) x • (f : WholePlane → C3) x :=
-    hmulW.filter_mono (ae_mono Measure.restrict_le_self)
-  have hmulWChart :=
-    measurePreserving_torusWholePlaneRepresentative.quasiMeasurePreserving.ae_eq_comp
-      hmulWRestrict
-  filter_upwards [scalarVectorMulTransverse_coe_ae aT
-      (wholePlaneToTorusL2 f),
-    wholePlaneToTorusL2_coe_ae f,
-    wholePlaneToTorusL2_coe_ae
-      (scalarVectorMulL2 (E := C3) volume aW f),
-    ha, hfChart, hmulWChart] with q hleft hfq hright hagree hsupport hmul
-  rw [hleft, hfq, hright]
-  rw [show
-    (scalarVectorMulL2 (E := C3) volume aW f : WholePlane → C3)
-        (torusWholePlaneRepresentative q) =
-      (aW : WholePlane → ℂ) (torusWholePlaneRepresentative q) •
-        (f : WholePlane → C3) (torusWholePlaneRepresentative q) by
-    simpa only [Function.comp_apply] using hmul]
-  by_cases hqs : torusWholePlaneRepresentative q ∈ s
-  · rw [hagree hqs]
-  · rw [show (f : WholePlane → C3) (torusWholePlaneRepresentative q) = 0 by
-      simpa only [Function.comp_apply] using hsupport hqs]
-    simp
-
 /-- Vector-times-coordinate multiplication commutes with chart descent under
 the analogous vector-coefficient agreement. -/
 theorem vectorScalarMulTransverse_wholePlaneToTorusL2_eq
@@ -251,6 +201,23 @@ theorem scalarVectorMulTransverse_wholePlaneToTorusL2_eq_add_const
   · rw [show (f : WholePlane → C3) (torusWholePlaneRepresentative q) = 0 by
       simpa only [Function.comp_apply] using hsupport hqs]
     simp
+
+/-- Scalar multiplication commutes with chart descent when the two scalar
+coefficients agree on the support of the whole-plane input. -/
+theorem scalarVectorMulTransverse_wholePlaneToTorusL2_eq
+    {s : Set WholePlane} {aT : TransverseScalarLInf}
+    {aW : WholePlaneScalarLInf} {f : WholePlaneC3L2}
+    (ha : ∀ᵐ q ∂transverseMeasure,
+      torusWholePlaneRepresentative q ∈ s →
+        (aT : TransverseTorus → ℂ) q =
+          (aW : WholePlane → ℂ) (torusWholePlaneRepresentative q))
+    (hf : IsAEL2SupportedIn s f) :
+    scalarVectorMulTransverse aT (wholePlaneToTorusL2 f) =
+      wholePlaneToTorusL2
+        (scalarVectorMulL2 (E := C3) volume aW f) := by
+  simpa only [add_zero, zero_smul] using
+    scalarVectorMulTransverse_wholePlaneToTorusL2_eq_add_const 0
+      (by simpa only [add_zero] using ha) hf
 
 /-! ## Diffusion through the chart -/
 

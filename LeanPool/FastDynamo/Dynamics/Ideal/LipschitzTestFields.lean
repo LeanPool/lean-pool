@@ -310,6 +310,61 @@ theorem IdealWeakIdentity.of_tendsto {v : Torus 3 → R3} {W : ℝ → LiteralC3
   filter_upwards [h] with k hk
   exact (idealWeakIdentity_iff hW _ _).1 hk
 
+/-- Extend the weak identity from finite trigonometric test fields and their exact advections
+to Lipschitz test fields whose lifts are differentiable everywhere. -/
+theorem idealWeakIdentity_of_lipschitz_of_trig
+    {u : Torus 3 → R3} {W : ℝ → LiteralC3L2} {s t : ℝ}
+    (M : Fin 3 → LiteralC3L2 →L[ℂ] LiteralC3L2)
+    (hM : ∀ (j : Fin 3) (X : LiteralC3L2), (M j X : Torus 3 → C3) =ᵐ[volume]
+      fun x ↦ ((u x j : ℝ) : ℂ) • (X : Torus 3 → C3) x)
+    (hc : ContinuousOn W (Set.uIcc s t))
+    {φ : Torus 3 → C3} (hdiff : Differentiable ℝ fun a : R3 ↦ φ (literalTorusPoint a))
+    {K : ℝ≥0} (hlip : LipschitzWith K fun a : R3 ↦ φ (literalTorusPoint a))
+    (hφ : MemLp φ 2 volume) (hadv : MemLp (literalAdvection u φ) 2 volume)
+    (htrig : ∀ (F : Finset (Fin 3 → ℤ)) (c : (Fin 3 → ℤ) → Fin 3 → ℂ),
+      IdealWeakIdentity u W s t
+        (ContinuousMap.toLp 2 (volume : Measure (Torus 3)) ℂ (literalTrigField F c))
+        (∑ j : Fin 3, M j (ContinuousMap.toLp 2 (volume : Measure (Torus 3)) ℂ
+          (literalTrigField F fun m i ↦ 2 * Real.pi * Complex.I * (m j : ℂ) * c m i)))) :
+    IdealWeakIdentity u W s t (hφ.toLp φ) (hadv.toLp _) := by
+  have hD : ∀ j : Fin 3, MemLp (fun x ↦ fderiv ℝ (fun a : R3 ↦ φ (literalTorusPoint a))
+      (literalIocRepresentative x) (EuclideanSpace.single j 1)) 2 (volume : Measure (Torus 3)) := by
+    intro j
+    refine MemLp.of_bound ((measurable_fderiv_apply_const ℝ _ _).comp
+      measurable_literalIocRepresentative).aestronglyMeasurable K
+      (Eventually.of_forall fun x ↦ ?_)
+    refine ((ContinuousLinearMap.le_opNorm _ _).trans ?_)
+    have hn : ‖(EuclideanSpace.single j (1 : ℝ) : R3)‖ = 1 := by simp
+    rw [hn, mul_one]
+    exact norm_fderiv_le_of_lipschitz ℝ hlip
+  set D : Fin 3 → LiteralC3L2 := fun j ↦ (hD j).toLp _
+  set Φ := hφ.toLp φ
+  have hcoeff : ∀ j : Fin 3, (fun m i ↦ 2 * Real.pi * Complex.I * (m j : ℂ) *
+      literalFourierCoeff Φ m i) = literalFourierCoeff (D j) := fun j ↦ by
+    funext m i
+    exact (literalFourierCoeff_fderiv hdiff hlip hφ j (hD j) m i).symm
+  have hlimit : ∑ j : Fin 3, M j (D j) = hadv.toLp _ := by
+    refine Lp.ext ?_
+    filter_upwards [literalC3L2_coeFn_sum fun j ↦ M j (D j), ae_all_iff.2 fun j ↦ hM j (D j),
+      ae_all_iff.2 fun j ↦ (show (D j : Torus 3 → C3) =ᵐ[volume] _ from (hD j).coeFn_toLp),
+      hadv.coeFn_toLp] with x h1 h2 h3 h4
+    rw [h1, h4]
+    simp_rw [h2, h3]
+    conv_rhs => rw [literalAdvection, ← (EuclideanSpace.basisFun (Fin 3) ℝ).sum_repr (u x)]
+    rw [map_sum]
+    refine Finset.sum_congr rfl fun j _ ↦ ?_
+    rw [map_smul, EuclideanSpace.basisFun_apply, EuclideanSpace.basisFun_repr,
+      RCLike.real_smul_eq_coe_smul (K := ℂ)]
+    rfl
+  rw [← hlimit]
+  refine IdealWeakIdentity.of_tendsto hc (tendsto_toLp_literalTrigField Φ)
+    (tendsto_finsetSum _ fun j _ ↦ ((M j).continuous.tendsto _).comp
+      (tendsto_toLp_literalTrigField (D j)))
+    (Eventually.of_forall fun F ↦ ?_)
+  have h := htrig F (literalFourierCoeff Φ)
+  simp only [hcoeff] at h
+  exact h
+
 /-! ## The weak identity at the velocity of the paper -/
 
 namespace ScaleFamily.TorusCellPlacement
@@ -411,67 +466,33 @@ theorem IsIdealWeakSolution.weakIdentity_of_lipschitz (htau : 0 ≤ tau) {T : �
       (hΛ j).coeFn_toLp] with x h1 h2
     rw [h1, h2]
     rfl
-  -- the partial derivatives of `φ`
-  have hD : ∀ j : Fin 3, MemLp (fun x ↦ fderiv ℝ (fun a : R3 ↦ φ (literalTorusPoint a))
-      (literalIocRepresentative x) (EuclideanSpace.single j 1)) 2 (volume : Measure (Torus 3)) := by
-    intro j
-    refine MemLp.of_bound ((measurable_fderiv_apply_const ℝ _ _).comp
-      measurable_literalIocRepresentative).aestronglyMeasurable K
-      (Eventually.of_forall fun x ↦ ?_)
-    refine ((ContinuousLinearMap.le_opNorm _ _).trans ?_)
-    have hn : ‖(EuclideanSpace.single j (1 : ℝ) : R3)‖ = 1 := by simp
-    rw [hn, mul_one]
-    exact norm_fderiv_le_of_lipschitz ℝ hlip
-  set D : Fin 3 → LiteralC3L2 := fun j ↦ (hD j).toLp _
-  -- the approximants and their advections
-  set Φ := hφ.toLp φ
-  set A : Finset (Fin 3 → ℤ) → LiteralC3L2 := fun F ↦ ∑ j : Fin 3, M j
+  refine idealWeakIdentity_of_lipschitz_of_trig M hM
+    (hW.continuousOn.mono (Set.uIcc_subset_Icc hs ht)) hdiff hlip hφ hadv ?_
+  intro F c
+  let derivativeCoefficients (j : Fin 3) (m : Fin 3 → ℤ) (i : Fin 3) :=
+    2 * Real.pi * Complex.I * (m j : ℂ) * c m i
+  let A : LiteralC3L2 := ∑ j : Fin 3, M j
     (ContinuousMap.toLp 2 (volume : Measure (Torus 3)) ℂ
-      (literalTrigField F (literalFourierCoeff (D j))))
-  have hcoeff : ∀ j : Fin 3, (fun m i ↦ 2 * Real.pi * Complex.I * (m j : ℂ) *
-      literalFourierCoeff Φ m i) = literalFourierCoeff (D j) := fun j ↦ by
-    funext m i
-    exact (literalFourierCoeff_fderiv hdiff hlip hφ j (hD j) m i).symm
-  have hadvF : ∀ F : Finset (Fin 3 → ℤ),
-      literalAdvection u (literalTrigField F (literalFourierCoeff Φ)) =ᵐ[volume]
-        (A F : Torus 3 → C3) := by
-    intro F
+      (literalTrigField F (derivativeCoefficients j)))
+  have hadvF : literalAdvection u (literalTrigField F c) =ᵐ[volume]
+      (A : Torus 3 → C3) := by
     filter_upwards [literalC3L2_coeFn_sum fun j ↦ M j (ContinuousMap.toLp 2
-        (volume : Measure (Torus 3)) ℂ (literalTrigField F (literalFourierCoeff (D j)))),
+        (volume : Measure (Torus 3)) ℂ (literalTrigField F (derivativeCoefficients j))),
       ae_all_iff.2 fun j ↦ hM j (ContinuousMap.toLp 2 (volume : Measure (Torus 3)) ℂ
-        (literalTrigField F (literalFourierCoeff (D j)))),
+        (literalTrigField F (derivativeCoefficients j))),
       ae_all_iff.2 fun j ↦ ContinuousMap.coeFn_toLp (p := 2) (𝕜 := ℂ)
-        (volume : Measure (Torus 3)) (literalTrigField F (literalFourierCoeff (D j)))]
+        (volume : Measure (Torus 3)) (literalTrigField F (derivativeCoefficients j))]
       with x h1 h2 h3
     rw [h1, literalAdvection_literalTrigField]
-    simp_rw [h2, h3, hcoeff]
-  have hlimit : ∑ j : Fin 3, M j (D j) = hadv.toLp _ := by
-    refine Lp.ext ?_
-    filter_upwards [literalC3L2_coeFn_sum fun j ↦ M j (D j), ae_all_iff.2 fun j ↦ hM j (D j),
-      ae_all_iff.2 fun j ↦ (show (D j : Torus 3 → C3) =ᵐ[volume] _ from (hD j).coeFn_toLp),
-      hadv.coeFn_toLp] with x h1 h2 h3 h4
-    rw [h1, h4]
-    simp_rw [h2, h3]
-    conv_rhs => rw [literalAdvection, ← (EuclideanSpace.basisFun (Fin 3) ℝ).sum_repr (u x)]
-    rw [map_sum]
-    refine Finset.sum_congr rfl fun j _ ↦ ?_
-    rw [map_smul, EuclideanSpace.basisFun_apply, EuclideanSpace.basisFun_repr,
-      RCLike.real_smul_eq_coe_smul (K := ℂ)]
-    rfl
-  rw [← hlimit]
-  refine IdealWeakIdentity.of_tendsto (hW.continuousOn.mono (Set.uIcc_subset_Icc hs ht))
-    (tendsto_toLp_literalTrigField Φ)
-    (tendsto_finsetSum _ fun j _ ↦ ((M j).continuous.tendsto _).comp
-      (tendsto_toLp_literalTrigField (D j)))
-    (Eventually.of_forall fun F ↦ ?_)
-  have hmemF : MemLp (literalTrigField F (literalFourierCoeff Φ)) 2 volume :=
+    simp_rw [h2, h3, derivativeCoefficients]
+  have hmemF : MemLp (literalTrigField F c) 2 volume :=
     (Lp.memLp _).ae_eq (ContinuousMap.coeFn_toLp (p := 2) (𝕜 := ℂ)
       (volume : Measure (Torus 3)) _)
-  have hmemA : MemLp (literalAdvection u (literalTrigField F (literalFourierCoeff Φ))) 2 volume :=
-    (Lp.memLp (A F)).ae_eq (hadvF F).symm
+  have hmemA : MemLp (literalAdvection u (literalTrigField F c)) 2 volume :=
+    (Lp.memLp A).ae_eq hadvF.symm
   have hF := idealWeakIdentity_of_isIdealTestField h P angularSpeed axialSpeed tau htau hW
     (isIdealTestField_literalTrigField _ _) hmemF hmemA hs ht
-  rw [memLp_toLp_literalTrigField, MemLp.toLp_congr hmemA (Lp.memLp _) (hadvF F),
+  rw [memLp_toLp_literalTrigField, MemLp.toLp_congr hmemA (Lp.memLp _) hadvF,
     Lp.toLp_coeFn] at hF
   exact hF
 

@@ -178,7 +178,7 @@ theorem norm_commutator_le_of_bounds
     (hgrad : Real.sqrt (ε * transverseGradientEnergy g) ≤ b) :
     ‖commutator chi u ε K g‖ ≤
       commutatorErrorConstant C₁ C₂ * b * (Real.sqrt ε / R + ε / R ^ 2) := by
-  have hbase := norm_commutator_apply_le_explicitScale chi u ε R C₁ C₂ hR K hvanish
+  have hbase := norm_commutator_apply_le_explicitScale chi u ε R C₁ C₂ K hvanish
     hgradient hlaplacian g
   have hcs := sum_norm_deriv_le_sqrt_gradientEnergy (ι := Fin 2) g
   have hE : 0 ≤ transverseGradientEnergy g := transverseGradientEnergy_nonneg g

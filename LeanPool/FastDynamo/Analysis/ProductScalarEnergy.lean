@@ -195,36 +195,15 @@ private lemma norm_productH1FirstDerivFourierMultiplier_le_one
       (∑ i, (n i : ℝ) ^ 2) + (k : ℝ) ^ 2) :
     ‖((2 * Real.pi : ℂ) * Complex.I * (r : ℂ)) /
         (productH1Weight n k : ℂ)‖ ≤ 1 := by
-  let x : ℝ := 2 * Real.pi * |(r : ℝ)|
-  have hx : 0 ≤ x := by
-    dsimp [x]
-    positivity
-  have hx_sq : x ^ 2 ≤ productFrequencyEnergy n k := by
-    dsimp [x, productFrequencyEnergy]
-    have hfac : 0 ≤ (2 * Real.pi) ^ 2 := sq_nonneg _
-    have hm := mul_le_mul_of_nonneg_left hr hfac
-    calc
-      (2 * Real.pi * |(r : ℝ)|) ^ 2 =
-          (2 * Real.pi) ^ 2 * (r : ℝ) ^ 2 := by
-        rw [mul_pow, sq_abs]
-      _ ≤ (2 * Real.pi) ^ 2 *
-          ((∑ i, (n i : ℝ) ^ 2) + (k : ℝ) ^ 2) := hm
+  let x := ‖(2 * Real.pi : ℂ) * Complex.I * (r : ℂ)‖
+  have hx_sq : x ^ 2 ≤ productFrequencyEnergy n k :=
+    norm_productDerivativeSymbol_sq_le_frequencyEnergy n k r hr
   have hx_weight : x ≤ productH1Weight n k := by
     apply Real.le_sqrt_of_sq_le
     rw [productH2Weight_eq_one_add_energy]
-    linarith
+    linarith only [hx_sq]
   rw [norm_div, Complex.norm_real, Real.norm_eq_abs,
     abs_of_pos (productH1Weight_pos n k)]
-  have hnum :
-      ‖(2 * Real.pi : ℂ) * Complex.I * (r : ℂ)‖ = x := by
-    calc
-      ‖(2 * Real.pi : ℂ) * Complex.I * (r : ℂ)‖ =
-          ‖(2 * Real.pi : ℂ)‖ * ‖Complex.I‖ * ‖(r : ℂ)‖ := by
-        rw [norm_mul, norm_mul]
-      _ = 2 * Real.pi * |(r : ℝ)| := by
-        simp [abs_of_pos Real.pi_pos]
-      _ = x := rfl
-  rw [hnum]
   exact (div_le_one (productH1Weight_pos n k)).2 hx_weight
 
 /-- The transverse first-derivative multiplier `2πi nⱼ / √(1 + 4π²(|n|² + k²))` has modulus at

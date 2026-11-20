@@ -36,12 +36,9 @@ open scoped ENNReal
 /-! ## Axial Leibniz rule for transverse coefficients -/
 
 /-- Axial weak derivative in flat product-frequency coordinates. -/
-def HasProductScalarFlatAxialDerivative
-    (f df : ProductScalarL2) : Prop :=
-  ∀ m : FlatTorus3Frequency,
-    productScalarFourierAnalysisFlat df m =
-      (2 * Real.pi * Complex.I * (m (Fin.last 2) : ℂ)) *
-        productScalarFourierAnalysisFlat f m
+abbrev HasProductScalarFlatAxialDerivative (f df : ProductScalarL2) :
+    Prop :=
+  HasProductScalarFlatDerivative (Fin.last 2) f df
 
 /-- Flat Fourier coefficient of a scalar axial lift. -/
 theorem productScalarFourierAnalysisFlat_scalarAxialLift
@@ -90,45 +87,21 @@ theorem HasProductScalarFlatAxialDerivative.add
     {f g df dg : ProductScalarL2}
     (hf : HasProductScalarFlatAxialDerivative f df)
     (hg : HasProductScalarFlatAxialDerivative g dg) :
-    HasProductScalarFlatAxialDerivative (f + g) (df + dg) := by
-  intro m
-  have hdfmap : productScalarFourierAnalysisFlat (df + dg) m =
-      productScalarFourierAnalysisFlat df m +
-        productScalarFourierAnalysisFlat dg m := by
-    exact congrArg (fun x : FlatTorus3ScalarFourierL2 => x m)
-      (map_add productScalarFourierAnalysisFlat df dg)
-  have hfmap : productScalarFourierAnalysisFlat (f + g) m =
-      productScalarFourierAnalysisFlat f m +
-        productScalarFourierAnalysisFlat g m := by
-    exact congrArg (fun x : FlatTorus3ScalarFourierL2 => x m)
-      (map_add productScalarFourierAnalysisFlat f g)
-  rw [hdfmap, hfmap, hf m, hg m]
-  ring
+    HasProductScalarFlatAxialDerivative (f + g) (df + dg) :=
+  HasProductScalarFlatDerivative.add hf hg
 
 /-- The flat axial weak-derivative relation is homogeneous: scaling a field by `c` scales
 its axial derivative by `c`. -/
 theorem HasProductScalarFlatAxialDerivative.smul
     {f df : ProductScalarL2}
     (hf : HasProductScalarFlatAxialDerivative f df) (c : ℂ) :
-    HasProductScalarFlatAxialDerivative (c • f) (c • df) := by
-  intro m
-  have hdfmap : productScalarFourierAnalysisFlat (c • df) m =
-      c * productScalarFourierAnalysisFlat df m := by
-    exact congrArg (fun x : FlatTorus3ScalarFourierL2 => x m)
-      (map_smul productScalarFourierAnalysisFlat c df)
-  have hfmap : productScalarFourierAnalysisFlat (c • f) m =
-      c * productScalarFourierAnalysisFlat f m := by
-    exact congrArg (fun x : FlatTorus3ScalarFourierL2 => x m)
-      (map_smul productScalarFourierAnalysisFlat c f)
-  rw [hdfmap, hfmap, hf m]
-  ring
+    HasProductScalarFlatAxialDerivative (c • f) (c • df) :=
+  HasProductScalarFlatDerivative.smul hf c
 
 /-- Axial differentiation of a finite flat trigonometric polynomial. -/
-def productFlatTrigPolynomialAxialDeriv :
+abbrev productFlatTrigPolynomialAxialDeriv :
     ProductFlatTrigPolynomial →ₗ[ℂ] ProductFlatTrigPolynomial :=
-  Finsupp.linearCombination ℂ fun m =>
-    (2 * Real.pi * Complex.I * (m (Fin.last 2) : ℂ)) •
-      Finsupp.single m 1
+  productFlatTrigPolynomialDeriv (Fin.last 2)
 
 /-- Axial differentiation multiplies a one-term trigonometric polynomial at flat frequency
 `m` by the symbol `2π i m_{2}`, the last slot being the axial one. -/
@@ -136,8 +109,8 @@ def productFlatTrigPolynomialAxialDeriv :
     (m : FlatTorus3Frequency) (c : ℂ) :
     productFlatTrigPolynomialAxialDeriv (Finsupp.single m c) =
       c • ((2 * Real.pi * Complex.I * (m (Fin.last 2) : ℂ)) •
-        Finsupp.single m 1) := by
-  exact Finsupp.linearCombination_single ℂ c m
+        Finsupp.single m 1) :=
+  productFlatTrigPolynomialDeriv_single (Fin.last 2) m c
 
 /-- Multiplication by a transverse coefficient commutes with the axial weak
 derivative on one product Fourier basis vector. -/
@@ -173,7 +146,7 @@ theorem hasProductFlatAxialDeriv_scalarMul_trig
         (productFlatTrigPolynomialToL2
           (productFlatTrigPolynomialAxialDeriv p))) := by
   induction p using Finsupp.induction_linear with
-  | zero => simp [HasProductScalarFlatAxialDerivative]
+  | zero => simp [HasProductScalarFlatAxialDerivative, HasProductScalarFlatDerivative]
   | add p q hp hq =>
       have h := hp.add hq
       convert h using 1 <;> simp only [map_add]
@@ -193,37 +166,16 @@ theorem HasProductScalarFlatAxialDerivative.closed_of_tendsto
       (fseq r) (dfseq r))
     (hf : Filter.Tendsto fseq l (nhds f))
     (hdf : Filter.Tendsto dfseq l (nhds df)) :
-    HasProductScalarFlatAxialDerivative f df := by
-  intro m
-  have hleft : Filter.Tendsto
-      (fun r => productFlatScalarCoeffCLM m (dfseq r)) l
-      (nhds (productFlatScalarCoeffCLM m df)) :=
-    ((productFlatScalarCoeffCLM m).continuous.tendsto df).comp hdf
-  have hright : Filter.Tendsto
-      (fun r => (2 * Real.pi * Complex.I * (m (Fin.last 2) : ℂ)) *
-        productFlatScalarCoeffCLM m (fseq r)) l
-      (nhds ((2 * Real.pi * Complex.I * (m (Fin.last 2) : ℂ)) *
-        productFlatScalarCoeffCLM m f)) :=
-    tendsto_const_nhds.mul
-      (((productFlatScalarCoeffCLM m).continuous.tendsto f).comp hf)
-  apply tendsto_nhds_unique hleft
-  exact hright.congr' (Filter.Eventually.of_forall fun r => (hseq r m).symm)
+    HasProductScalarFlatAxialDerivative f df :=
+  HasProductScalarFlatDerivative.closed_of_tendsto hseq hf hdf
 
 /-- Fourier integration by parts for the axial weak derivative. -/
 theorem HasProductScalarFlatAxialDerivative.integrationByParts
     {f df g dg : ProductScalarL2}
     (hf : HasProductScalarFlatAxialDerivative f df)
     (hg : HasProductScalarFlatAxialDerivative g dg) :
-    inner ℂ f dg = -inner ℂ df g := by
-  rw [← productScalarFourierAnalysisFlat.inner_map_map f dg,
-    ← productScalarFourierAnalysisFlat.inner_map_map df g,
-    lp.inner_eq_tsum, lp.inner_eq_tsum, ← tsum_neg]
-  apply tsum_congr
-  intro m
-  rw [hg m, hf m]
-  simp only [RCLike.inner_apply, map_mul, map_ofNat,
-    Complex.conj_ofReal, Complex.conj_I, map_intCast]
-  ring
+    inner ℂ f dg = -inner ℂ df g :=
+  HasProductScalarFlatDerivative.integrationByParts hf hg
 
 /-- Axially differentiating a Fourier partial sum of `f` gives the corresponding Fourier
 partial sum of its axial weak derivative `df`, over the same finite frequency set. -/
@@ -233,19 +185,8 @@ theorem productFlatTrigAxialDerivative_fourierPartial
     (s : Finset FlatTorus3Frequency) :
     productFlatTrigPolynomialAxialDeriv
         (productFlatFourierPartial f s) =
-      productFlatFourierPartial df s := by
-  rw [productFlatFourierPartial, map_sum]
-  apply Finset.sum_congr rfl
-  intro m hm
-  rw [productFlatTrigPolynomialAxialDeriv_single, h m]
-  ext q
-  by_cases hqm : q = m
-  · subst q
-    rw [Finsupp.smul_apply, Finsupp.smul_apply,
-      Finsupp.single_eq_same, Finsupp.single_eq_same]
-    simp only [smul_eq_mul]
-    ring
-  · simp [hqm]
+      productFlatFourierPartial df s :=
+  productFlatTrigPolynomialDeriv_fourierPartial h s
 
 /-- The axial derivatives of the finite Fourier partial sums of `f` converge in product
 `L²`, along the unconditional summation filter, to the axial weak derivative `df`. -/
@@ -258,10 +199,8 @@ theorem productFlatFourierPartial_axialDeriv_tendsto
           (productFlatTrigPolynomialAxialDeriv
             (productFlatFourierPartial f s)))
       (SummationFilter.unconditional FlatTorus3Frequency).filter
-      (nhds df) := by
-  convert productFlatFourierPartial_tendsto df using 1
-  funext s
-  rw [productFlatTrigAxialDerivative_fourierPartial h s]
+      (nhds df) :=
+  productFlatFourierPartial_directionalDeriv_tendsto h
 
 /-- Full axial weak Leibniz rule: an `x₃`-independent coefficient commutes
 with the axial weak derivative. -/

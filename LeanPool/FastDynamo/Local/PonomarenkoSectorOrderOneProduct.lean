@@ -87,7 +87,7 @@ theorem norm_ponomarenkoOrderOneProduct_mul_sub_half_le_three_div_re_sq
     have hint :=
       ModifiedBessel.norm_integral_I1SecondOrderGaussianRemainderKernel_le_halfLine hz
     have hrealG : ModifiedBessel.realGaussianHalfLine a = H := by
-      simpa [a, H] using realGaussianHalfLine_eq_ponomarenkoMajorant hz
+      simpa [a, H] using realGaussianHalfLine_eq_ponomarenkoMajorant (z := z)
     change ‖z * ∫ x : ℝ in Ioi 0,
       ModifiedBessel.I1SecondOrderGaussianRemainderKernel z x‖ ≤ RI
     rw [norm_mul]
@@ -108,7 +108,7 @@ theorem norm_ponomarenkoOrderOneProduct_mul_sub_half_le_three_div_re_sq
     have hint :=
       ModifiedBessel.norm_integral_K1FirstOrderGaussianRemainderKernel_le_halfLine hz
     have hrealG : ModifiedBessel.realGaussianHalfLine a = H := by
-      simpa [a, H] using realGaussianHalfLine_eq_ponomarenkoMajorant hz
+      simpa [a, H] using realGaussianHalfLine_eq_ponomarenkoMajorant (z := z)
     simpa [rK, RK, ponomarenkoK1SecondOrderRemainder, a, hrealG] using hint
   have hc : ‖c‖ ≤ 3 / (8 * a) := by
     have hzNormPos : 0 < ‖z‖ := by

@@ -16,9 +16,10 @@ public import LeanPool.FastDynamo.Global.TorusGlobalSpectralTransfer
 /-!
 # `prop:global-spectral-transfer` at the constructed velocity
 
-The statement of `prop:global-spectral-transfer` and its proof at the end of §7.2.
+The growth-floor eigenpair consequence of Proposition 7.1 (`prop:global-spectral-transfer`)
+at the concrete velocity, using the construction at the end of §7.2.
 
-`Global/TorusGlobalSpectralTransfer.lean` proves the proposition for an arbitrary bundled cell
+`Global/TorusGlobalSpectralTransfer.lean` proves the eigenpair consequence for a bundled cell
 datum `TorusSelectedContourIdentity.SelectedCellData` together with the two numerical thresholds
 and the seed witness.  This module produces that datum at
 
@@ -229,8 +230,8 @@ def matchingCellShiftedContourResolvent (hbase : s.parameters.kStar ≤ Theta.ba
 /-! ## The transfer -/
 
 include hpos in
-/-- **`prop:global-spectral-transfer` at the constructed velocity** (including the eigenvalue
-bound `Re lambda ≥ g_*`), at an arbitrary matching cell of an arbitrary admissible
+/-- **The growth-floor eigenpair consequence of Proposition 7.1** at the constructed
+velocity, at an arbitrary matching cell of an arbitrary admissible
 diffusivity: the reduced induction operator in the cell's axial sector `K_n` has an eigenpair
 whose eigenvalue has real part at least the seed's growth floor `g_*`, whose amplitude is an
 `H²(T²; ℂ³)` field with vanishing fixed-sector divergence, and whose axial lift is a
@@ -267,7 +268,7 @@ namespace HorizontalMode
 
 open GlobalSeedInterface
 
-/-- **`prop:global-spectral-transfer` at the concrete chain and an arbitrary matching cell.**
+/-- **The growth-floor eigenpair consequence of Proposition 7.1 at any matching cell.**
 For every `0 < eps` and every cell of the chain's scale family matched to `eps`, the reduced
 induction operator at the constructed velocity has a growing eigenpair in that cell's axial
 sector, with the seed's growth floor `g_*` as the uniform rate. -/

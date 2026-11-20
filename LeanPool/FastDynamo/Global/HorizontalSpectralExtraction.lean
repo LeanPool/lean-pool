@@ -141,7 +141,7 @@ theorem isCompactOperator_rieszProjection_horizontalInduction
     (fun _z ↦ (0 : TransverseC2L2 →L[ℂ] TransverseC2L2)) continuousOn_const
   · intro z hz
     simpa using
-      isCompactOperator_horizontalInduction_stateResolvent u epsilon K h z hz
+      isCompactOperator_horizontalInduction_stateResolvent u epsilon K h z
   · unfold circleIntegral
     simp
 

@@ -14,8 +14,10 @@ public import LeanPool.FastDynamo.Global.GlobalParameterChoice
 /-!
 # The two-component local seed record `prop:local-seed`
 
-This module states the conclusion of `prop:local-seed` of the paper as one record.  The
-proposition produces the data
+This record gives an `L²`-witness variant of Proposition 2.2 (`prop:local-seed`).
+Its witness is supported in a disk almost everywhere and its width parameter belongs to
+`(0,1)`. The paper requires a smooth compactly supported witness and a width in `(0,1/2)`.
+The data are
 
 `(N, v, I, Γ, 𝒢, g_*, f_*, L_*)`
 
@@ -55,8 +57,8 @@ resolvent clause and the witness clause.
   `Local/HorizontalSeedUniformResolvent.lean` shows it coincides with the Riesz projection of
   the form operator, which is where `Local/HorizontalRieszPerturbation.lean` proves the
   quantitative statement.
-* `f_*` is an `L²` field with compact support, not a `C_c^∞` function; see the deviation note
-  in the module docstring of `Local/HorizontalSeedWitness.lean`.  Nothing downstream uses more.
+* The spectral-witness construction in `Local/HorizontalSeedWitness.lean` supplies the
+  almost-everywhere support certificate needed by the downstream proofs.
 -/
 
 @[expose] public section
@@ -71,7 +73,8 @@ open scoped SchwartzMap
 /-! ## The record -/
 
 /--
-**The two-component local seed** of `prop:local-seed`.
+**The two-component `L²`-witness variant** of Proposition 2.2 (`prop:local-seed`).
+The width is in `(0,1)`, and the `L²` witness vanishes outside the support disk almost everywhere.
 
 The scalar prefix `parameters` supplies `N = 2π k_*`, the diffusivity interval
 `I = [δ₋, δ₊]` with `0 < δ₋ < 1 < δ₊`, the contour `Γ` with closed interior `𝒢`, and the

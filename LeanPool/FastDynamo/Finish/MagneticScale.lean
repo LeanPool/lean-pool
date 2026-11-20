@@ -473,7 +473,7 @@ theorem magneticLength_sq_lower_of_energy
 /-- Square-root form of `magneticLength_sq_lower_of_energy`. -/
 theorem magneticLength_lower_of_energy
     {epsilon M fieldNorm gradientNorm : ℝ}
-    (_hepsilon : 0 ≤ epsilon) (hM : 0 < M)
+    (hM : 0 < M)
     (hfield : 0 ≤ fieldNorm) (hgradient : 0 < gradientNorm)
     (henergy : epsilon * gradientNorm ^ 2 ≤ M * fieldNorm ^ 2) :
     Real.sqrt (epsilon / M) ≤ fieldNorm / gradientNorm := by
@@ -487,12 +487,12 @@ theorem magneticLength_lower_of_energy
 the eigenvalue energy estimate has been supplied. -/
 theorem complexAxialMagneticLength_lower_of_energy
     (K : ℤ) (hK : K ≠ 0) {b : TransverseC3H2} (hb : b ≠ 0)
-    {epsilon M : ℝ} (hepsilon : 0 ≤ epsilon) (hM : 0 < M)
+    {epsilon M : ℝ} (hM : 0 < M)
     (henergy :
       epsilon * ‖productGradientFromH2 (axialLiftH2 K b)‖ ^ 2 ≤
         M * ‖productH2Embedding (axialLiftH2 K b)‖ ^ 2) :
     Real.sqrt (epsilon / M) ≤ complexAxialMagneticLength K b := by
-  exact magneticLength_lower_of_energy hepsilon hM (norm_nonneg _)
+  exact magneticLength_lower_of_energy hM (norm_nonneg _)
     (norm_productGradientFromH2_axialLiftH2_pos K hK hb) henergy
 
 end
@@ -634,7 +634,7 @@ theorem complexAxialMagneticLength_lower
   have hStretching :=
     norm_transverseStretchingCoefficient_pos_of_reducedEigenpair
       u hu epsilon hEpsilon K hK eigenvalue hEigenvalue b hb hEigen
-  exact complexAxialMagneticLength_lower_of_energy K hK hb hEpsilon.le
+  exact complexAxialMagneticLength_lower_of_energy K hK hb
     hStretching hEnergy
 
 end ReducedInductionMagneticScale

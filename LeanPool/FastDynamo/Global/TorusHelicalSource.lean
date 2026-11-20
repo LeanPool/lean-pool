@@ -134,6 +134,20 @@ theorem supportRadius_le_norm_helicalCellCoordinate_of_not_mem
   rw [← div_eq_inv_mul]
   exact (le_div_iff₀ hell).2 hnorm
 
+/-- The placed helical source vanishes beyond the profile radius. -/
+theorem parameterizedHelicalCellSource_eq_zero_of_supportRadius_le
+    (h : PonomarenkoSmoothingWidth)
+    (P : TorusCellPlacement (r := r) (1 + (h : ℝ)))
+    (angularSpeed axialSpeed : ℝ) (n : ℕ) {x : ℝ × ℝ}
+    (hy : 1 + (h : ℝ) ≤ ‖helicalCellCoordinate h P n x‖) :
+    parameterizedHelicalCellSource h P angularSpeed axialSpeed n x = 0 := by
+  simp only [parameterizedHelicalCellSource, Pi.smul_apply,
+    Function.comp_apply]
+  rw [
+    parameterizedSmoothedVelocity_eq_zero_of_radius_le_norm h angularSpeed
+      axialSpeed hy,
+    smul_zero]
+
 /-- The rescaled local source is supported in the local core disc selected
 by the placement certificate. -/
 theorem parameterizedHelicalCellSource_eq_zero_of_not_mem_localCoreDisk
@@ -141,14 +155,9 @@ theorem parameterizedHelicalCellSource_eq_zero_of_not_mem_localCoreDisk
     (P : TorusCellPlacement (r := r) (1 + (h : ℝ)))
     (angularSpeed axialSpeed : ℝ) (n : ℕ) {x : ℝ × ℝ}
     (hx : x ∉ P.scaleFamily.localCoreDisk (1 + (h : ℝ)) n) :
-    parameterizedHelicalCellSource h P angularSpeed axialSpeed n x = 0 := by
-  simp only [parameterizedHelicalCellSource, Pi.smul_apply,
-    Function.comp_apply]
-  rw [
-    parameterizedSmoothedVelocity_eq_zero_of_radius_le_norm h angularSpeed
-      axialSpeed
-      (supportRadius_le_norm_helicalCellCoordinate_of_not_mem h P n hx),
-    smul_zero]
+    parameterizedHelicalCellSource h P angularSpeed axialSpeed n x = 0 :=
+  parameterizedHelicalCellSource_eq_zero_of_supportRadius_le h P angularSpeed axialSpeed n
+    (supportRadius_le_norm_helicalCellCoordinate_of_not_mem h P n hx)
 
 /-! ## Pointwise reality and transverse divergence -/
 
@@ -234,17 +243,15 @@ theorem parameterizedHelicalCellSourceDeriv_transverseDivergence
     (parameterizedRadialProfile h) angularSpeed axialSpeed
       (helicalCellCoordinate h P n x)
 
-/-- The first derivatives have the same local-core support as the source;
-this uses the compact support of both the radial value and its slope. -/
-theorem parameterizedHelicalCellSourceDeriv_eq_zero_of_not_mem_localCoreDisk
+/-- The placed first derivative vanishes beyond the profile radius. -/
+theorem parameterizedHelicalCellSourceDeriv_eq_zero_of_supportRadius_le
     (h : PonomarenkoSmoothingWidth)
     (P : TorusCellPlacement (r := r) (1 + (h : ℝ)))
     (angularSpeed axialSpeed : ℝ) (n : ℕ) (j : Fin 2) {x : ℝ × ℝ}
-    (hx : x ∉ P.scaleFamily.localCoreDisk (1 + (h : ℝ)) n) :
+    (hy : 1 + (h : ℝ) ≤ ‖helicalCellCoordinate h P n x‖) :
     parameterizedHelicalCellSourceDeriv h P angularSpeed axialSpeed n j x = 0 := by
   let y := helicalCellCoordinate h P n x
-  have hy : 1 + (h : ℝ) ≤ ‖y‖ :=
-    supportRadius_le_norm_helicalCellCoordinate_of_not_mem h P n hx
+  change 1 + (h : ℝ) ≤ ‖y‖ at hy
   apply PiLp.ext
   intro i
   change ((∂_{wholePlaneBasis j}
@@ -268,6 +275,17 @@ theorem parameterizedHelicalCellSourceDeriv_eq_zero_of_not_mem_localCoreDisk
         angularSpeed axialSpeed)) y 2) = 0
     rw [lineDeriv_squaredRadiusHelicalVelocity_apply_two]
     simp [parameterizedRadialProfile_slope_zero h hy]
+
+/-- The first derivatives have the same local-core support as the source;
+this uses the compact support of both the radial value and its slope. -/
+theorem parameterizedHelicalCellSourceDeriv_eq_zero_of_not_mem_localCoreDisk
+    (h : PonomarenkoSmoothingWidth)
+    (P : TorusCellPlacement (r := r) (1 + (h : ℝ)))
+    (angularSpeed axialSpeed : ℝ) (n : ℕ) (j : Fin 2) {x : ℝ × ℝ}
+    (hx : x ∉ P.scaleFamily.localCoreDisk (1 + (h : ℝ)) n) :
+    parameterizedHelicalCellSourceDeriv h P angularSpeed axialSpeed n j x = 0 :=
+  parameterizedHelicalCellSourceDeriv_eq_zero_of_supportRadius_le h P angularSpeed axialSpeed n j
+    (supportRadius_le_norm_helicalCellCoordinate_of_not_mem h P n hx)
 
 /-! ## Classical differentiation in the Euclidean chart -/
 

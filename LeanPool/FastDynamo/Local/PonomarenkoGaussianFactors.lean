@@ -103,10 +103,10 @@ lemma ponomarenkoHalfGaussianMajorant_sq {z : ℂ} (hz : 0 < z.re) :
   · positivity
 
 /-- The real half-line Gaussian at `Re z` is exactly the majorant used here. -/
-lemma realGaussianHalfLine_eq_ponomarenkoMajorant {z : ℂ} (hz : 0 < z.re) :
+lemma realGaussianHalfLine_eq_ponomarenkoMajorant {z : ℂ} :
     ModifiedBessel.realGaussianHalfLine z.re =
       ponomarenkoHalfGaussianMajorant z := by
-  rw [ModifiedBessel.realGaussianHalfLine_eq_sqrt hz]
+  rw [ModifiedBessel.realGaussianHalfLine_eq_sqrt]
   rfl
 
 /-- The squared modulus of the half-line Gaussian integral is `π/(2‖z‖)`. -/

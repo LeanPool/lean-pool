@@ -48,9 +48,9 @@ the assertions of Remarks 1.4–1.7.  The release surface is:
   and `mainReducedTarget_holds`.
 * `FastDynamo.MainTheoremStrengthened`: the stronger form the proof delivers,
   `main_theorem_strengthened` — explicit witnesses `mainVelocity`, `mainEps0`,
-  `mainGrowthFloor` with `γ₀ = g_* ≥ (3/4)(448 − 4π²) ≥ 288`, Proposition 7.1 at
-  every admissible cell, the normalised velocity, the qualitative regularity of the
-  velocity's chart-side and periodised representatives, the magnetic clauses on the
+  `mainGrowthFloor` with `γ₀ = g_* ≥ (3/4)(448 − 4π²) ≥ 288`, the growth-floor eigenpair
+  consequence of Proposition 7.1 at every admissible cell, the normalised velocity, the
+  regularity of its chart-side and periodised representatives, the magnetic clauses on the
   literal `Torus 3`, the growth-rate clause `γ(u, ε) ≥ γ₀` for `0 < ε ≤ ε₀`, and
   `eq:main-thm-growth` for the semigroup orbit of the real datum and for every solution of the
   curl-form equation with that datum, at the triple of the spectral clauses.
@@ -92,7 +92,8 @@ The proof is assembled from the following layers (see `docs/MODULE_MAP.md`):
   holomorphy of resolvents, the compact embedding `H² ↪ L²` of the product torus, the reduced,
   auxiliary and physical induction operators, the horizontal two-component operator of
   `lem:torus-sector-basic`, and the whole-plane local operator.
-* `Local/*`: the two-component local seed (`prop:local-seed`): modified Bessel functions,
+* `Local/*`: the two-component `L²`-witness variant of the local seed in Proposition 2.2
+  (`prop:local-seed`): modified Bessel functions,
   the Ponomarenko dispersion function and its certified root on a segment, the piecewise
   Cartesian mode of `lem:jump-horizontal-mode` and its regularity, the horizontal form
   operator with its resolvent, its spectrum in the right half-plane (isolated eigenvalues)

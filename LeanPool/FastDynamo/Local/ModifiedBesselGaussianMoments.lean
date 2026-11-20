@@ -244,7 +244,7 @@ theorem integral_realGaussianSecondMoment_eq_halfLine_div
       ring
 
 /-- Closed form of the real half-Gaussian. -/
-theorem realGaussianHalfLine_eq_sqrt {a : ℝ} (_ha : 0 < a) :
+theorem realGaussianHalfLine_eq_sqrt {a : ℝ} :
     realGaussianHalfLine a = Real.sqrt (Real.pi / (a / 2)) / 2 := by
   unfold realGaussianHalfLine
   have h := integral_gaussian_Ioi (a / 2)

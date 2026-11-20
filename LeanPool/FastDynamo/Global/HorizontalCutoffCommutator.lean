@@ -280,7 +280,7 @@ their explicit scale bounds `‖∂_jχ‖_∞ ≤ C₁/R` and `‖Δχ‖_∞ �
 `lem:parametrix-error`. -/
 theorem norm_commutator_apply_le_explicitScale
     (chi : HorizontalSecondOrderCutoff) (u : TransverseRealW1Inf)
-    (epsilon R C₁ C₂ : ℝ) (_hR : 0 < R) (K : ℤ)
+    (epsilon R C₁ C₂ : ℝ) (K : ℤ)
     (hvanish : VelocityVanishesOnGradient chi u)
     (hgradient : ∀ j, ‖chi.gradient j‖ ≤ C₁ / R)
     (hlaplacian : ‖chi.laplacian‖ ≤ 2 * C₂ / R ^ 2)

@@ -310,9 +310,9 @@ Frequency formula for the third component of the distributional curl:
 /-! ## Cross product with the real velocity -/
 
 /-- Scalar multiplication `LInf(C) x L2(C) -> L2(C)` on the product torus. -/
-def productScalarMul :
+abbrev productScalarMul :
     ProductScalarLInf →L[ℂ] ProductScalarL2 →L[ℂ] ProductScalarL2 :=
-  scalarVectorMulL2 (E := ℂ) productMeasure
+  scalarMulProduct
 
 /-- One pulled-back scalar component of the real velocity. -/
 def productVelocityCoord (u : TransverseRealW1Inf) (i : Fin 3) :
@@ -322,7 +322,7 @@ def productVelocityCoord (u : TransverseRealW1Inf) (i : Fin 3) :
 /-- One coordinate product `u_i B_j`. -/
 def productVelocityTimesCoord (u : TransverseRealW1Inf)
     (i j : Fin 3) : ProductC3L2 →L[ℂ] ProductScalarL2 :=
-  (productScalarMul (productVelocityCoord u i)).comp (productCoordL2 j)
+  (scalarMulProduct (productVelocityCoord u i)).comp (productCoordL2 j)
 
 /-- Zeroth scalar coordinate of the product-torus cross product `u × B`. -/
 def productCrossWithVelocityCoord0 (u : TransverseRealW1Inf) :

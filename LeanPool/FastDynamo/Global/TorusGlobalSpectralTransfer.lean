@@ -13,7 +13,9 @@ public import LeanPool.FastDynamo.Global.TorusGlobalRieszNonzero
 /-!
 # `prop:global-spectral-transfer` on a selected cell
 
-The statement and the proof of `prop:global-spectral-transfer` in the paper.  Combining
+The growth-floor eigenpair consequence of Proposition 7.1 (`prop:global-spectral-transfer`).
+The paper establishes inclusion of the shifted contour in the resolvent set, a nonzero Riesz
+projection and an eigenvalue inside the contour with real part at least `g_*`. Combining
 
 * `lem:global-contour-resolvent` — `Γ_τ ⊂ ρ(A_{ε,K_n})`
   (`TorusGlobalRieszNonzero.cellContourResolvent`), and
@@ -23,9 +25,8 @@ The statement and the proof of `prop:global-spectral-transfer` in the paper.  Co
 with `lem:torus-sector-basic` (the resolvent is compact, so the spectrum inside `Γ_τ` consists of
 isolated eigenvalues of finite algebraic multiplicity) gives an eigenvalue of `A_{ε,K_n}` inside
 `Γ_τ`.  Translation by `-iτ` preserves real parts, so every eigenvalue in this region has real
-part at least `g_*`.  The proposition only asserts that such an eigenvalue exists (the paper
-names it `λ_ε = α_ε + iω_ε` in the proof of `thm:main`), and the Lean keeps the existential
-form.
+part at least `g_*`. The eigenpair declarations below expose the real-part bound and the
+corresponding eigenfunction. The two named lemmas supply the resolvent and projection facts.
 
 The finish bridge `lem:axial-recovery` turns the two-component eigenpair into a three-component
 eigenpair of `reducedInductionOperator` with `fixedSectorDivergence K b = 0`, i.e. into the
@@ -60,7 +61,7 @@ variable {v : WholePlaneVelocityCoefficients} {s : WholePlaneExactScalingParamet
   {u ubg : TransverseRealW1Inf} {p : WholePlane} {R deltaUpper bound Lstar : ℝ}
   {Gamma : SpectralCircle}
 
-/-- **`prop:global-spectral-transfer`, two-component form**: the horizontal torus operator of
+/-- **Two-component eigenpair consequence of Proposition 7.1**: the horizontal torus operator of
 the selected cell has an eigenvalue
 of real part at least the growth floor `g_*` of the seed contour, with an `H²(T²; ℂ²)`
 eigenfunction.
@@ -91,9 +92,9 @@ theorem exists_growing_horizontalInduction_eigenpair_cell
   refine ⟨lam, hfun, ?_, heigen⟩
   rwa [backgroundShiftedContour_growthFloor] at hfloor
 
-/-- **`prop:global-spectral-transfer`, three-component form**: the same eigenvalue carries an
-eigenfunction of the reduced induction operator with vanishing fixed-sector divergence, through
-the finish bridge `lem:axial-recovery` of `FastDynamo/Finish/AxialRecovery.lean`. -/
+/-- **Three-component lift of the eigenpair consequence of Proposition 7.1**. The same
+eigenvalue carries an eigenfunction of the reduced induction operator with vanishing fixed-sector
+divergence through the axial-recovery bridge in `FastDynamo/Finish/AxialRecovery.lean`. -/
 theorem exists_growing_reducedInduction_eigenpair_cell
     (C : SelectedCellData v s u ubg p R deltaUpper bound Gamma)
     (hdiv : IsTransverseDivergenceFree u) (heps : 0 < s.epsilon) (hK : s.K ≠ 0)

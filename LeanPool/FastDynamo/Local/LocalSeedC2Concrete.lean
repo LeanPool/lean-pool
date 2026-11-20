@@ -15,9 +15,11 @@ public import LeanPool.FastDynamo.Local.HorizontalModeEigenpair
 /-!
 # The concrete local seed at `N = 2π`
 
-This module inhabits `LocalSeedC2` at `k_* = 1`, i.e. at the paper's axial wavenumber
-`N = 2π` (the record admits `N = 2πk_*`; the paper only uses the axial mode `e^{2πix₃}`), and
-so proves `prop:local-seed`.
+This module constructs the `LocalSeedC2` variant of Proposition 2.2 (`prop:local-seed`) at
+`k_* = 1`, the paper's axial wavenumber `N = 2π`. The witness is an `L²` field supported in
+a disk almost everywhere. The record allows widths in `(0,1)`, and this construction chooses
+a width at most `1/2`. The paper requires a smooth compactly supported witness and a strictly
+smaller width.
 
 The ingredients, in the order of the proof of `prop:local-seed`:
 
@@ -69,10 +71,10 @@ def seedGrowthFloorBound : ℝ := 3 / 4 * (448 - (2 * Real.pi) ^ 2)
 /-! ## The construction -/
 
 /--
-**The concrete local seed at `N = 2π`** (`prop:local-seed`).
+**The concrete `L²`-witness variant of Proposition 2.2** (`prop:local-seed`).
 
-All four clauses of the proposition hold at `k_* = 1`, with the growth floor
-`g_* ≥ (3/4)(448 - 4π²)`.
+At `k_* = 1`, the variant has a witness with almost-everywhere disk support, a width parameter
+of type `PonomarenkoSmoothingWidth`, and the growth floor `g_* ≥ (3/4)(448 - 4π²)`.
 -/
 theorem exists_localSeedC2_two_pi :
     ∃ s : LocalSeedC2, s.parameters.kStar = 1 ∧

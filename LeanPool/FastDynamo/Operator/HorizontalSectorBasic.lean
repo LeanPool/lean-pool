@@ -378,10 +378,10 @@ transverse `H² → L²` embedding is compact.
 theorem isCompactOperator_horizontalInduction_stateResolvent
     (u : TransverseRealW1Inf) (ε : ℝ) (K : ℤ)
     {S : Set ℂ} (h : HasResolventOn (horizontalInductionOperator u ε K) S)
-    (z : ℂ) (hz : z ∈ S) :
+    (z : ℂ) :
     IsCompactOperator (h.stateResolvent z) :=
   isCompactOperator_transverseGraphOperator_stateResolvent
-    (horizontalInductionOperator u ε K) rfl h z hz
+    (horizontalInductionOperator u ε K) rfl h z
 
 /-- At one of the concrete positive-real resolvent points, the state resolvent of `A_{ε,K}` is
 compact.  This is the input of the Fredholm bridge. -/
@@ -394,7 +394,7 @@ theorem exists_positiveReal_compactStateResolvent_horizontalInductionOperator
     exists_positiveReal_hasResolventOn_horizontalInductionOperator u ε K hε
   rcases ht with ⟨h⟩
   exact ⟨t, h, isCompactOperator_horizontalInduction_stateResolvent
-    u ε K h ((Real.exp t : ℝ) : ℂ) (by simp)⟩
+    u ε K h ((Real.exp t : ℝ) : ℂ)⟩
 
 /-! ## Clause (vi): Fredholm of index zero at every `z ∈ ℂ` -/
 
@@ -493,8 +493,8 @@ theorem horizontalInductionOperator_basic
   hasNonemptyResolvent := horizontalInductionOperator_hasNonemptyResolvent u ε K hε
   norm_domain_le := fun _S h z hz b ↦
     norm_transverseC2H2_le_horizontalInduction_graph_of_hasResolventOn u ε K h z hz b
-  isCompactOperator_stateResolvent := fun _S h z hz ↦
-    isCompactOperator_horizontalInduction_stateResolvent u ε K h z hz
+  isCompactOperator_stateResolvent := fun _S h z _ ↦
+    isCompactOperator_horizontalInduction_stateResolvent u ε K h z
   pencilFredholmIndexZero := fun S ↦
     pencilFredholmIndexZeroOn_horizontalInductionOperator u ε K hε S
 

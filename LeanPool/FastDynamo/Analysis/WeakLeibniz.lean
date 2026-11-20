@@ -261,14 +261,20 @@ theorem hasProductDeriv_scalarMul_monomial
 
 /-! ## Flat-frequency finite Fourier approximation -/
 
-/-- The same transverse derivative relation in the ordinary flat frequency
-coordinates used by Mathlib's Hilbert basis. -/
-def HasProductScalarFlatTransverseDerivative (j : Fin 2)
+/-- The weak first derivative in one flat product-torus coordinate. -/
+def HasProductScalarFlatDerivative (j : Fin 3)
     (f df : ProductScalarL2) : Prop :=
   ∀ m : FlatTorus3Frequency,
     productScalarFourierAnalysisFlat df m =
-      (2 * Real.pi * Complex.I * (m j.castSucc : ℂ)) *
+      (2 * Real.pi * Complex.I * (m j : ℂ)) *
         productScalarFourierAnalysisFlat f m
+
+/-- The same transverse derivative relation in the ordinary flat frequency
+coordinates used by Mathlib's Hilbert basis. -/
+abbrev HasProductScalarFlatTransverseDerivative (j : Fin 2)
+    (f df : ProductScalarL2) :
+    Prop :=
+  HasProductScalarFlatDerivative j.castSucc f df
 
 /-- The transverse weak-derivative relation stated in nested (transverse frequency, axial
 index) coordinates is equivalent to the same relation stated in Mathlib's flat
@@ -299,12 +305,17 @@ def productFlatTrigPolynomialToL2 :
     ProductFlatTrigPolynomial →ₗ[ℂ] ProductScalarL2 :=
   Finsupp.linearCombination ℂ productScalarFourierBasisFlat
 
-/-- Transverse differentiation of a finite product-torus trigonometric
-polynomial. -/
-def productFlatTrigPolynomialTransverseDeriv (j : Fin 2) :
+/-- Differentiate a finite trigonometric polynomial in one coordinate. -/
+def productFlatTrigPolynomialDeriv (j : Fin 3) :
     ProductFlatTrigPolynomial →ₗ[ℂ] ProductFlatTrigPolynomial :=
   Finsupp.linearCombination ℂ fun m =>
-    (2 * Real.pi * Complex.I * (m j.castSucc : ℂ)) • Finsupp.single m 1
+    (2 * Real.pi * Complex.I * (m j : ℂ)) • Finsupp.single m 1
+
+/-- Transverse differentiation of a finite product-torus trigonometric
+polynomial. -/
+abbrev productFlatTrigPolynomialTransverseDeriv (j : Fin 2) :
+    ProductFlatTrigPolynomial →ₗ[ℂ] ProductFlatTrigPolynomial :=
+  productFlatTrigPolynomialDeriv j.castSucc
 
 /-- Synthesis of a one-term trigonometric polynomial is the scalar multiple
 `c • productScalarFourierBasisFlat m` of the corresponding basis vector. -/
@@ -314,14 +325,22 @@ def productFlatTrigPolynomialTransverseDeriv (j : Fin 2) :
       c • productScalarFourierBasisFlat m := by
   exact Finsupp.linearCombination_single ℂ c m
 
+/-- Directional differentiation multiplies a monomial by its symbol. -/
+theorem productFlatTrigPolynomialDeriv_single
+    (j : Fin 3) (m : FlatTorus3Frequency) (c : ℂ) :
+    productFlatTrigPolynomialDeriv j (Finsupp.single m c) =
+      c • ((2 * Real.pi * Complex.I * (m j : ℂ)) •
+        Finsupp.single m 1) := by
+  exact Finsupp.linearCombination_single ℂ c m
+
 /-- Transverse differentiation multiplies a one-term trigonometric polynomial at flat
 frequency `m` by the symbol `2π i m_{j}`, where `j.castSucc` picks the transverse slot. -/
 @[simp] theorem productFlatTrigPolynomialTransverseDeriv_single
     (j : Fin 2) (m : FlatTorus3Frequency) (c : ℂ) :
     productFlatTrigPolynomialTransverseDeriv j (Finsupp.single m c) =
       c • ((2 * Real.pi * Complex.I * (m j.castSucc : ℂ)) •
-        Finsupp.single m 1) := by
-  exact Finsupp.linearCombination_single ℂ c m
+        Finsupp.single m 1) :=
+  productFlatTrigPolynomialDeriv_single j.castSucc m c
 
 /-- The flat product Fourier basis vector at `m` is the product monomial whose transverse
 frequency is `Fin.init m` and whose axial index is `m (Fin.last 2)`. -/
@@ -337,13 +356,12 @@ lemma productScalarFourierBasisFlat_eq_productMonomial
     _ = productMonomialL2 (Fin.init m) (m (Fin.last 2)) :=
       productScalarFourierBasisFlat_snoc _ _
 
-/-- The flat transverse weak-derivative relation is additive: if `df` and `dg` are the
-`j`-th derivatives of `f` and `g`, then `df + dg` is the `j`-th derivative of `f + g`. -/
-theorem HasProductScalarFlatTransverseDerivative.add
-    {j : Fin 2} {f g df dg : ProductScalarL2}
-    (hf : HasProductScalarFlatTransverseDerivative j f df)
-    (hg : HasProductScalarFlatTransverseDerivative j g dg) :
-    HasProductScalarFlatTransverseDerivative j (f + g) (df + dg) := by
+/-- The flat coordinate weak derivative respects addition. -/
+theorem HasProductScalarFlatDerivative.add
+    {j : Fin 3} {f g df dg : ProductScalarL2}
+    (hf : HasProductScalarFlatDerivative j f df)
+    (hg : HasProductScalarFlatDerivative j g dg) :
+    HasProductScalarFlatDerivative j (f + g) (df + dg) := by
   intro m
   have hdfmap : productScalarFourierAnalysisFlat (df + dg) m =
       productScalarFourierAnalysisFlat df m +
@@ -359,13 +377,21 @@ theorem HasProductScalarFlatTransverseDerivative.add
   rw [hf m, hg m]
   ring
 
-/-- The flat transverse weak-derivative relation is homogeneous: scaling a field by `c`
-scales its `j`-th derivative by `c`. -/
-theorem HasProductScalarFlatTransverseDerivative.smul
-    {j : Fin 2} {f df : ProductScalarL2}
+/-- The flat transverse weak-derivative relation is additive: if `df` and `dg` are the
+`j`-th derivatives of `f` and `g`, then `df + dg` is the `j`-th derivative of `f + g`. -/
+theorem HasProductScalarFlatTransverseDerivative.add
+    {j : Fin 2} {f g df dg : ProductScalarL2}
     (hf : HasProductScalarFlatTransverseDerivative j f df)
+    (hg : HasProductScalarFlatTransverseDerivative j g dg) :
+    HasProductScalarFlatTransverseDerivative j (f + g) (df + dg) :=
+  HasProductScalarFlatDerivative.add hf hg
+
+/-- The flat coordinate weak derivative respects scalar multiplication. -/
+theorem HasProductScalarFlatDerivative.smul
+    {j : Fin 3} {f df : ProductScalarL2}
+    (hf : HasProductScalarFlatDerivative j f df)
     (c : ℂ) :
-    HasProductScalarFlatTransverseDerivative j (c • f) (c • df) := by
+    HasProductScalarFlatDerivative j (c • f) (c • df) := by
   intro m
   have hdfmap : productScalarFourierAnalysisFlat (c • df) m =
       c * productScalarFourierAnalysisFlat df m := by
@@ -378,6 +404,15 @@ theorem HasProductScalarFlatTransverseDerivative.smul
   rw [hdfmap, hfmap]
   rw [hf m]
   ring
+
+/-- The flat transverse weak-derivative relation is homogeneous: scaling a field by `c`
+scales its `j`-th derivative by `c`. -/
+theorem HasProductScalarFlatTransverseDerivative.smul
+    {j : Fin 2} {f df : ProductScalarL2}
+    (hf : HasProductScalarFlatTransverseDerivative j f df)
+    (c : ℂ) :
+    HasProductScalarFlatTransverseDerivative j (c • f) (c • df) :=
+  HasProductScalarFlatDerivative.smul hf c
 
 /-- Flat-coordinate product Leibniz rule for one Fourier basis vector. -/
 theorem hasProductFlatDeriv_scalarMul_basis
@@ -413,7 +448,7 @@ theorem hasProductFlatDeriv_scalarMul_trig
           (productFlatTrigPolynomialToL2
             (productFlatTrigPolynomialTransverseDeriv j p))) := by
   induction p using Finsupp.induction_linear with
-  | zero => simp [HasProductScalarFlatTransverseDerivative]
+  | zero => simp [HasProductScalarFlatTransverseDerivative, HasProductScalarFlatDerivative]
   | add p q hp hq =>
       have h := hp.add hq
       convert h using 1
@@ -442,6 +477,30 @@ coefficient of a product-torus `L²` field. -/
       productScalarFourierAnalysisFlat f m :=
   rfl
 
+/-- The graph of the flat coordinate weak derivative is closed. -/
+theorem HasProductScalarFlatDerivative.closed_of_tendsto
+    {ι : Type*} {l : Filter ι} [l.NeBot] {j : Fin 3}
+    {f df : ProductScalarL2} {fseq dfseq : ι → ProductScalarL2}
+    (hseq : ∀ r, HasProductScalarFlatDerivative j
+      (fseq r) (dfseq r))
+    (hf : Filter.Tendsto fseq l (nhds f))
+    (hdf : Filter.Tendsto dfseq l (nhds df)) :
+    HasProductScalarFlatDerivative j f df := by
+  intro m
+  have hleft : Filter.Tendsto
+      (fun r => productFlatScalarCoeffCLM m (dfseq r)) l
+      (nhds (productFlatScalarCoeffCLM m df)) :=
+    ((productFlatScalarCoeffCLM m).continuous.tendsto df).comp hdf
+  have hright : Filter.Tendsto
+      (fun r => (2 * Real.pi * Complex.I * (m j : ℂ)) *
+        productFlatScalarCoeffCLM m (fseq r)) l
+      (nhds ((2 * Real.pi * Complex.I * (m j : ℂ)) *
+        productFlatScalarCoeffCLM m f)) :=
+    tendsto_const_nhds.mul
+      (((productFlatScalarCoeffCLM m).continuous.tendsto f).comp hf)
+  apply tendsto_nhds_unique hleft
+  exact hright.congr' (Filter.Eventually.of_forall fun r => (hseq r m).symm)
+
 /-- The flat-coordinate weak derivative graph is closed in `L² × L²`, for
 convergence along an arbitrary filter. -/
 theorem HasProductScalarFlatTransverseDerivative.closed_of_tendsto
@@ -451,28 +510,14 @@ theorem HasProductScalarFlatTransverseDerivative.closed_of_tendsto
       (fseq r) (dfseq r))
     (hf : Filter.Tendsto fseq l (nhds f))
     (hdf : Filter.Tendsto dfseq l (nhds df)) :
-    HasProductScalarFlatTransverseDerivative j f df := by
-  intro m
-  have hleft : Filter.Tendsto
-      (fun r => productFlatScalarCoeffCLM m (dfseq r)) l
-      (nhds (productFlatScalarCoeffCLM m df)) :=
-    ((productFlatScalarCoeffCLM m).continuous.tendsto df).comp hdf
-  have hright : Filter.Tendsto
-      (fun r => (2 * Real.pi * Complex.I * (m j.castSucc : ℂ)) *
-        productFlatScalarCoeffCLM m (fseq r)) l
-      (nhds ((2 * Real.pi * Complex.I * (m j.castSucc : ℂ)) *
-        productFlatScalarCoeffCLM m f)) :=
-    tendsto_const_nhds.mul
-      (((productFlatScalarCoeffCLM m).continuous.tendsto f).comp hf)
-  apply tendsto_nhds_unique hleft
-  exact hright.congr' (Filter.Eventually.of_forall fun r => (hseq r m).symm)
+    HasProductScalarFlatTransverseDerivative j f df :=
+  HasProductScalarFlatDerivative.closed_of_tendsto hseq hf hdf
 
-/-- Fourier integration by parts for arbitrary physical `L²` fields whose
-transverse weak derivatives also lie in `L²`. -/
-theorem HasProductScalarFlatTransverseDerivative.integrationByParts
-    {j : Fin 2} {f df g dg : ProductScalarL2}
-    (hf : HasProductScalarFlatTransverseDerivative j f df)
-    (hg : HasProductScalarFlatTransverseDerivative j g dg) :
+/-- Integration by parts for one flat coordinate weak derivative. -/
+theorem HasProductScalarFlatDerivative.integrationByParts
+    {j : Fin 3} {f df g dg : ProductScalarL2}
+    (hf : HasProductScalarFlatDerivative j f df)
+    (hg : HasProductScalarFlatDerivative j g dg) :
     inner ℂ f dg = -inner ℂ df g := by
   rw [← productScalarFourierAnalysisFlat.inner_map_map f dg,
     ← productScalarFourierAnalysisFlat.inner_map_map df g,
@@ -484,6 +529,15 @@ theorem HasProductScalarFlatTransverseDerivative.integrationByParts
   simp only [RCLike.inner_apply, map_mul, map_ofNat,
     Complex.conj_ofReal, Complex.conj_I, map_intCast]
   ring
+
+/-- Fourier integration by parts for arbitrary physical `L²` fields whose
+transverse weak derivatives also lie in `L²`. -/
+theorem HasProductScalarFlatTransverseDerivative.integrationByParts
+    {j : Fin 2} {f df g dg : ProductScalarL2}
+    (hf : HasProductScalarFlatTransverseDerivative j f df)
+    (hg : HasProductScalarFlatTransverseDerivative j g dg) :
+    inner ℂ f dg = -inner ℂ df g :=
+  HasProductScalarFlatDerivative.integrationByParts hf hg
 
 /-- The finite Fourier partial sum whose coefficients are those of `f` on
 the supplied finite frequency set. -/
@@ -530,6 +584,27 @@ theorem productFlatFourierPartial_tendsto (f : ProductScalarL2) :
   intro m hm
   rw [productScalarFourierBasisFlat_repr_apply]
 
+/-- Directional differentiation commutes with finite Fourier truncation. -/
+theorem productFlatTrigPolynomialDeriv_fourierPartial
+    {j : Fin 3} {f df : ProductScalarL2}
+    (h : HasProductScalarFlatDerivative j f df)
+    (s : Finset FlatTorus3Frequency) :
+    productFlatTrigPolynomialDeriv j
+        (productFlatFourierPartial f s) =
+      productFlatFourierPartial df s := by
+  rw [productFlatFourierPartial, map_sum]
+  apply Finset.sum_congr rfl
+  intro m hm
+  rw [productFlatTrigPolynomialDeriv_single, h m]
+  ext q
+  by_cases hqm : q = m
+  · subst q
+    rw [Finsupp.smul_apply, Finsupp.smul_apply,
+      Finsupp.single_eq_same, Finsupp.single_eq_same]
+    simp only [smul_eq_mul]
+    ring
+  · simp [hqm]
+
 /-- Differentiating a Fourier partial sum of `f` in the transverse direction `j` gives the
 corresponding Fourier partial sum of its weak derivative `df`, over the same finite
 frequency set. -/
@@ -539,19 +614,23 @@ theorem productFlatTrigDerivative_fourierPartial
     (s : Finset FlatTorus3Frequency) :
     productFlatTrigPolynomialTransverseDeriv j
         (productFlatFourierPartial f s) =
-      productFlatFourierPartial df s := by
-  rw [productFlatFourierPartial, map_sum]
-  apply Finset.sum_congr rfl
-  intro m hm
-  rw [productFlatTrigPolynomialTransverseDeriv_single, h m]
-  ext q
-  by_cases hqm : q = m
-  · subst q
-    rw [Finsupp.smul_apply, Finsupp.smul_apply,
-      Finsupp.single_eq_same, Finsupp.single_eq_same]
-    simp only [smul_eq_mul]
-    ring
-  · simp [hqm]
+      productFlatFourierPartial df s :=
+  productFlatTrigPolynomialDeriv_fourierPartial h s
+
+/-- The directional derivatives of Fourier partial sums converge to the weak derivative. -/
+theorem productFlatFourierPartial_directionalDeriv_tendsto
+    {j : Fin 3} {f df : ProductScalarL2}
+    (h : HasProductScalarFlatDerivative j f df) :
+    Filter.Tendsto
+      (fun s : Finset FlatTorus3Frequency =>
+        productFlatTrigPolynomialToL2
+          (productFlatTrigPolynomialDeriv j
+            (productFlatFourierPartial f s)))
+      (SummationFilter.unconditional FlatTorus3Frequency).filter
+      (nhds df) := by
+  convert productFlatFourierPartial_tendsto df using 1
+  funext s
+  rw [productFlatTrigPolynomialDeriv_fourierPartial h s]
 
 /-- The derivatives of the finite Fourier partial sums converge to the weak
 derivative in product `L²`. -/
@@ -564,10 +643,8 @@ theorem productFlatFourierPartial_deriv_tendsto
           (productFlatTrigPolynomialTransverseDeriv j
             (productFlatFourierPartial f s)))
       (SummationFilter.unconditional FlatTorus3Frequency).filter
-      (nhds df) := by
-  convert productFlatFourierPartial_tendsto df using 1
-  funext s
-  rw [productFlatTrigDerivative_fourierPartial h s]
+      (nhds df) :=
+  productFlatFourierPartial_directionalDeriv_tendsto h
 
 /-- Full weak Leibniz rule on the product torus for an arbitrary scalar field
 with one `L²` transverse weak derivative. -/

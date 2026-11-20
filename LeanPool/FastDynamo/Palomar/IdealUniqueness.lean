@@ -162,50 +162,10 @@ theorem idealWeakIdentity_of_lipschitz_of_charTestField {W : ℝ → L2} {s t : 
     {K : ℝ≥0} (hlip : LipschitzWith K fun a : R3 ↦ φ (literalTorusPoint a))
     (hφ : MemLp φ 2 volume) (hadv : MemLp (literalAdvection mainLiteralVelocity φ) 2 volume) :
     IdealWeakIdentity mainLiteralVelocity W s t (hφ.toLp φ) (hadv.toLp _) := by
-  set u := mainLiteralVelocity
-  set M : Fin 3 → L2 →L[ℂ] L2 := fun j ↦ literalComponentMul mainLiteralVelocity
-    lipschitzWith_mainLiteralVelocity.continuous j
-  have hM : ∀ (j : Fin 3) (X : L2), (M j X : T3 → C3) =ᵐ[volume]
-      fun x ↦ ((u x j : ℝ) : ℂ) • (X : T3 → C3) x := fun j X ↦
-    literalComponentMul_coe_ae _ _ j X
-  -- the partial derivatives of `φ`
-  have hD : ∀ j : Fin 3, MemLp (fun x ↦ fderiv ℝ (fun a : R3 ↦ φ (literalTorusPoint a))
-      (literalIocRepresentative x) (EuclideanSpace.single j 1)) 2 (volume : Measure T3) := by
-    intro j
-    refine MemLp.of_bound ((measurable_fderiv_apply_const ℝ _ _).comp
-      measurable_literalIocRepresentative).aestronglyMeasurable K
-      (Eventually.of_forall fun x ↦ ?_)
-    refine ((ContinuousLinearMap.le_opNorm _ _).trans ?_)
-    have hn : ‖(EuclideanSpace.single j (1 : ℝ) : R3)‖ = 1 := by simp
-    rw [hn, mul_one]
-    exact norm_fderiv_le_of_lipschitz ℝ hlip
-  set D : Fin 3 → L2 := fun j ↦ (hD j).toLp _
-  set Φ := hφ.toLp φ
-  have hcoeff : ∀ j : Fin 3, (fun m i ↦ 2 * Real.pi * Complex.I * (m j : ℂ) *
-      literalFourierCoeff Φ m i) = literalFourierCoeff (D j) := fun j ↦ by
-    funext m i
-    exact (literalFourierCoeff_fderiv hdiff hlip hφ j (hD j) m i).symm
-  have hlimit : ∑ j : Fin 3, M j (D j) = hadv.toLp _ := by
-    refine Lp.ext ?_
-    filter_upwards [literalC3L2_coeFn_sum fun j ↦ M j (D j), ae_all_iff.2 fun j ↦ hM j (D j),
-      ae_all_iff.2 fun j ↦ (show (D j : T3 → C3) =ᵐ[volume] _ from (hD j).coeFn_toLp),
-      hadv.coeFn_toLp] with x h1 h2 h3 h4
-    rw [h1, h4]
-    simp_rw [h2, h3]
-    conv_rhs => rw [literalAdvection, ← (EuclideanSpace.basisFun (Fin 3) ℝ).sum_repr (u x)]
-    rw [map_sum]
-    refine Finset.sum_congr rfl fun j _ ↦ ?_
-    rw [map_smul, EuclideanSpace.basisFun_apply, EuclideanSpace.basisFun_repr,
-      RCLike.real_smul_eq_coe_smul (K := ℂ)]
-    rfl
-  rw [← hlimit]
-  refine IdealWeakIdentity.of_tendsto hc (tendsto_toLp_literalTrigField Φ)
-    (tendsto_finsetSum _ fun j _ ↦ ((M j).continuous.tendsto _).comp
-      (tendsto_toLp_literalTrigField (D j)))
-    (Eventually.of_forall fun F ↦ ?_)
-  have h := idealWeakIdentity_literalTrigField_of_charTestField hc hchar F (literalFourierCoeff Φ)
-  simp only [hcoeff] at h
-  exact h
+  exact idealWeakIdentity_of_lipschitz_of_trig
+    (fun j ↦ literalComponentMul mainLiteralVelocity lipschitzWith_mainLiteralVelocity.continuous j)
+    (fun j X ↦ literalComponentMul_coe_ae _ _ j X) hc hdiff hlip hφ hadv
+    (idealWeakIdentity_literalTrigField_of_charTestField hc hchar)
 
 /-- **The library's weak form from the character identities.**  A field `W` continuous on
 `[−T, T]` that satisfies the weak identity with every character test pair at all times of

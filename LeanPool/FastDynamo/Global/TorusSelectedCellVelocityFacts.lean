@@ -180,10 +180,9 @@ theorem parameterizedHelicalCellSource_eq_zero_of_le_pairEuclideanDist
     {x : ℝ × ℝ}
     (hx : (1 + (h : ℝ)) * P.scaleFamily.ell n ≤
       pairEuclideanDist x (P.scaleFamily.cellCenter n)) :
-    parameterizedHelicalCellSource h P angularSpeed axialSpeed n x = 0 := by
-  simp only [parameterizedHelicalCellSource, Pi.smul_apply, Function.comp_apply]
-  rw [parameterizedSmoothedVelocity_eq_zero_of_radius_le_norm h angularSpeed axialSpeed
-    (supportRadius_le_norm_helicalCellCoordinate h P n hx), smul_zero]
+    parameterizedHelicalCellSource h P angularSpeed axialSpeed n x = 0 :=
+  parameterizedHelicalCellSource_eq_zero_of_supportRadius_le h P angularSpeed axialSpeed n
+    (supportRadius_le_norm_helicalCellCoordinate h P n hx)
 
 /-- The same Euclidean support statement for the two stored first derivatives of the placed
 local copy. -/
@@ -192,33 +191,9 @@ theorem parameterizedHelicalCellSourceDeriv_eq_zero_of_le_pairEuclideanDist
     (j : Fin 2) {x : ℝ × ℝ}
     (hx : (1 + (h : ℝ)) * P.scaleFamily.ell n ≤
       pairEuclideanDist x (P.scaleFamily.cellCenter n)) :
-    parameterizedHelicalCellSourceDeriv h P angularSpeed axialSpeed n j x = 0 := by
-  have hy : 1 + (h : ℝ) ≤ ‖helicalCellCoordinate h P n x‖ :=
-    supportRadius_le_norm_helicalCellCoordinate h P n hx
-  set y := helicalCellCoordinate h P n x with hydef
-  apply PiLp.ext
-  intro i
-  change ((∂_{wholePlaneBasis j}
-    (squaredRadiusHelicalVelocity (parameterizedRadialProfile h)
-      angularSpeed axialSpeed)) y i) = 0
-  fin_cases i
-  · change ((∂_{wholePlaneBasis j}
-      (squaredRadiusHelicalVelocity (parameterizedRadialProfile h)
-        angularSpeed axialSpeed)) y 0) = 0
-    rw [lineDeriv_squaredRadiusHelicalVelocity_apply_zero]
-    simp [parameterizedRadialProfile_value_zero h hy,
-      parameterizedRadialProfile_slope_zero h hy]
-  · change ((∂_{wholePlaneBasis j}
-      (squaredRadiusHelicalVelocity (parameterizedRadialProfile h)
-        angularSpeed axialSpeed)) y 1) = 0
-    rw [lineDeriv_squaredRadiusHelicalVelocity_apply_one]
-    simp [parameterizedRadialProfile_value_zero h hy,
-      parameterizedRadialProfile_slope_zero h hy]
-  · change ((∂_{wholePlaneBasis j}
-      (squaredRadiusHelicalVelocity (parameterizedRadialProfile h)
-        angularSpeed axialSpeed)) y 2) = 0
-    rw [lineDeriv_squaredRadiusHelicalVelocity_apply_two]
-    simp [parameterizedRadialProfile_slope_zero h hy]
+    parameterizedHelicalCellSourceDeriv h P angularSpeed axialSpeed n j x = 0 :=
+  parameterizedHelicalCellSourceDeriv_eq_zero_of_supportRadius_le h P angularSpeed axialSpeed n j
+    (supportRadius_le_norm_helicalCellCoordinate h P n hx)
 
 /-! ## The torus representatives of one placed cell -/
 

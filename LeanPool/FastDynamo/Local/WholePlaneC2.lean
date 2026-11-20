@@ -62,16 +62,6 @@ abbrev WholePlaneC2LInf := WholePlaneLInf C2
 /-- Two-component complex `L⁴(ℝ²; ℂ²)`. -/
 abbrev WholePlaneC2L4 := Lp C2 4 (volume : Measure WholePlane)
 
-/-- The weak `H¹(ℝ²; ℂ²)` graph is a Hilbert space; this is `wholePlaneH1CompleteSpace` at
-the two-component fibre. -/
-instance wholePlaneC2H1CompleteSpace : CompleteSpace WholePlaneC2H1 :=
-  wholePlaneH1CompleteSpace C2
-
-/-- The weak `H²(ℝ²; ℂ²)` graph is a Hilbert space; this is `wholePlaneH2CompleteSpace` at
-the two-component fibre. -/
-instance wholePlaneC2H2CompleteSpace : CompleteSpace WholePlaneC2H2 :=
-  wholePlaneH2CompleteSpace C2
-
 /-- The squared whole-plane `H¹` graph norm is the sum of the squared `L²` norms of the field
 and of its two weak coordinate derivatives.  The `H¹` jet is an `ℓ²` product, so this is the
 definition unfolded; it is stated once here because every quantitative estimate below uses it. -/

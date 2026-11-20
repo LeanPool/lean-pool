@@ -124,7 +124,7 @@ theorem exists_unitCutoff_fderiv_bound :
 dilate `expandingCutoff n` as well, uniformly in `n`: the chain rule contributes the factor
 `(n + 1)⁻¹ ≤ 1`. -/
 private theorem norm_fderiv_expandingCutoff_le
-    (B : ℝ) (_hB0 : 0 ≤ B) (hB : ∀ x : WholePlane,
+    (B : ℝ) (hB : ∀ x : WholePlane,
       ‖fderiv ℝ (unitCutoff : WholePlane → ℝ) x‖ ≤ B)
     (n : ℕ) (x : WholePlane) :
     ‖fderiv ℝ (expandingCutoff n : WholePlane → ℝ) x‖ ≤ B := by
@@ -209,7 +209,7 @@ private theorem norm_fderiv_normSq_le
 `‖D(χₙ‖f‖²)(x)‖ ≤ B‖f x‖² + 2‖f x‖ · ‖Df(x)‖`, uniformly in the truncation index `n`. -/
 private theorem norm_fderiv_cutoffNormSq_le
     {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F]
-    (B : ℝ) (hB0 : 0 ≤ B) (hB : ∀ x : WholePlane,
+    (B : ℝ) (hB : ∀ x : WholePlane,
       ‖fderiv ℝ (unitCutoff : WholePlane → ℝ) x‖ ≤ B)
     (n : ℕ) (f : SchwartzMap WholePlane F) (x : WholePlane) :
     ‖fderiv ℝ (cutoffNormSq n f) x‖ ≤
@@ -245,7 +245,7 @@ private theorem norm_fderiv_cutoffNormSq_le
         · exact norm_nonneg _
         · norm_num
       · exact mul_le_mul_of_nonneg_left
-          (norm_fderiv_expandingCutoff_le B hB0 hB n x) (sq_nonneg _)
+          (norm_fderiv_expandingCutoff_le B hB n x) (sq_nonneg _)
     _ = B * ‖f x‖ ^ 2 + 2 * ‖f x‖ *
           ‖fderiv ℝ (f : WholePlane → F) x‖ := by ring
 
@@ -278,7 +278,7 @@ private theorem eLpNorm_fderiv_cutoffNormSq_le
     apply eLpNorm_mono_real
       ((cutoffNormSq_contDiff n f).continuous_fderiv (by simp)).aestronglyMeasurable
     intro x
-    exact norm_fderiv_cutoffNormSq_le B hB0 hB n f x
+    exact norm_fderiv_cutoffNormSq_le B hB n f x
   have ha_bound : eLpNorm a 1 volume ≤
       ENNReal.ofReal B * eLpNorm f 2 volume ^ 2 := by
     rw [show a = B • fun x => ‖f x‖ ^ 2 by

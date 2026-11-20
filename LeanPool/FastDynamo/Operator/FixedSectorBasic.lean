@@ -196,7 +196,7 @@ every point certified to lie in the supplied resolvent set. -/
 theorem isCompactOperator_stateResolvent_of_embedding
     {S : Set ℂ} (A : DomainOperator X D)
     (hcompact : IsCompactOperator A.embedding)
-    (h : HasResolventOn A S) (z : ℂ) (_hz : z ∈ S) :
+    (h : HasResolventOn A S) (z : ℂ) :
     IsCompactOperator (h.stateResolvent z) := by
   exact hcompact.comp_clm (h.inv z)
 
@@ -566,9 +566,9 @@ by the Rellich embedding `isCompactOperator_transverseVecH2Embedding`. -/
 theorem isCompactOperator_transverseGraphOperator_stateResolvent
     (A : DomainOperator (TransverseVecL2 ι) (TransverseVecH2 ι))
     (hemb : A.embedding = transverseH2Embedding)
-    {S : Set ℂ} (h : HasResolventOn A S) (z : ℂ) (hz : z ∈ S) :
+    {S : Set ℂ} (h : HasResolventOn A S) (z : ℂ) :
     IsCompactOperator (h.stateResolvent z) := by
-  refine DomainOperator.isCompactOperator_stateResolvent_of_embedding A ?_ h z hz
+  refine DomainOperator.isCompactOperator_stateResolvent_of_embedding A ?_ h z
   rw [hemb]
   exact isCompactOperator_transverseVecH2Embedding ι
 
