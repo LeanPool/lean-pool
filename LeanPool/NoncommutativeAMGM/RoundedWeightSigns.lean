@@ -53,13 +53,8 @@ theorem roundedWeight_sign {n m j : ℕ} (hm : 0 < m)
     have hl' := Finset.mem_erase.mp hl
     exact roundedCosineNode_gap_ratio_pos hm hn hj
       (by have := Finset.mem_range.mp hl'.2; omega) hl'.1.symm
-  have hc (l : ℕ) (hl : l ∈ s) : chebyshevNode m j - chebyshevNode m l ≠ 0 := by
-    have hl' := Finset.mem_erase.mp hl
-    exact sub_ne_zero.mpr (chebyshevNode_ne hm hj
-      (by have := Finset.mem_range.mp hl'.2; omega) hl'.1.symm)
-  have he : roundedWeight n m j = chebyshevWeight m j * (∏ l ∈ s, ratio l)⁻¹ := by
-    rw [roundedWeight, interpolationWeight_perturbation _ (chebyshevNode m) hc,
-      interpolationWeight_chebyshev hm hj]
+  have he : roundedWeight n m j = chebyshevWeight m j * (∏ l ∈ s, ratio l)⁻¹ :=
+    roundedWeight_eq_chebyshevWeight_mul_inv_prod hm hj
   rw [he, abs_mul, abs_of_pos (inv_pos.mpr hp)]
   calc
     _ = (chebyshevWeight m j * (-1 : ℝ) ^ j) * (∏ l ∈ s, ratio l)⁻¹ := by ring

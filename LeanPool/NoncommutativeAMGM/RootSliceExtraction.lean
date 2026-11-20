@@ -8,7 +8,8 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.MatrixCoefficientExtraction
+public import LeanPool.NoncommutativeAMGM.RootCoefficientExtraction
+public import LeanPool.NoncommutativeAMGM.Extraction
 
 /-! # Exact normalization of leading Boolean-layer extraction by signed root grids -/
 

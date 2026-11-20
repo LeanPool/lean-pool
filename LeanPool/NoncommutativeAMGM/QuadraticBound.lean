@@ -32,6 +32,13 @@ theorem rootSliceLinearMap_one (n : ℕ) {m : ℕ} (hm : 0 < m) (ξ ζ : ℂ) :
   simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one]
   exact inv_mul_cancel₀ (by exact_mod_cast hm.ne')
 
+/-- Root-slice quadrature preserves the identity matrix for positive quadrature order. -/
+theorem rootSliceLinearMap_matrixImage_one {n m : ℕ} {ι : Type*} [DecidableEq ι]
+    (hm : 0 < m) (ξ ζ : ℂ) :
+    booleanMatrixImage (rootSliceLinearMap n m ξ ζ)
+      (1 : Matrix ι ι (BooleanPolynomial n)) = 1 :=
+  booleanMatrixImage_one _ (rootSliceLinearMap_one n hm ξ ζ)
+
 /-- The difference of the even and odd root-slice images recovers twice the product mean. -/
 theorem cosineRootSlice_mean_difference {n m : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : Fin n → Matrix ι ι ℝ) (hn : 0 < n) (hm : 0 < m) (hmn : m ≤ n) :
@@ -70,6 +77,26 @@ theorem loewner_bounds_of_two_sided_difference {ι : Type*} [DecidableEq ι]
   · simpa only [Matrix.le_iff, sub_neg_eq_add, add_comm] using hlow
   · exact hupp
 
+/-- Reconstruct the mean bounds from the two positive pairs of root-slice matrix images. -/
+theorem cosineRootSlice_mean_bounds_of_posSemidef {n m : ℕ} {ι : Type*}
+    [Fintype ι] [DecidableEq ι] (A : Fin n → Matrix ι ι ℝ)
+    (hn : 0 < n) (hm : 0 < m) (hmn : m ≤ n) :
+    let Q := aeval (booleanChebyshevArgument (fun a ↦ (n : ℝ)⁻¹ • A a)) (T ℝ (m : ℤ))
+    (booleanMatrixImage (rootSliceLinearMap n m 1 (cosineRoot m)) (1 - Q)).PosSemidef ∧
+      (booleanMatrixImage (rootSliceLinearMap n m 1 (cosineRoot m)) (1 + Q)).PosSemidef →
+    (booleanMatrixImage (rootSliceLinearMap n m (cosineHalfRoot m) (cosineRoot m))
+      (1 - Q)).PosSemidef ∧
+      (booleanMatrixImage (rootSliceLinearMap n m (cosineHalfRoot m) (cosineRoot m))
+        (1 + Q)).PosSemidef →
+    LoewnerLE (-1) (withoutReplacementMean n m A) ∧ LoewnerLE (withoutReplacementMean n m A) 1 := by
+  intro Q hp hnq
+  have hdifference : booleanMatrixImage (rootSliceLinearMap n m 1 (cosineRoot m)) Q -
+      booleanMatrixImage (rootSliceLinearMap n m (cosineHalfRoot m) (cosineRoot m)) Q =
+      (2 : ℝ) • withoutReplacementMean n m A := cosineRootSlice_mean_difference A hn hm hmn
+  simp only [booleanMatrixImage_add, booleanMatrixImage_sub,
+    rootSliceLinearMap_matrixImage_one hm] at hp hnq
+  exact loewner_bounds_of_two_sided_difference hp hnq hdifference
+
 /-- Theorem 1.2 for arbitrary real PSD input matrices with sum bounded by `nI`. -/
 theorem withoutReplacementMean_quadratic_bounds {n m dim : ℕ}
     (hm : 1 ≤ m) (hmn : m ≤ n) (hnd : 2 * ((m + 1) / 2) ^ 2 ≤ n)
@@ -91,20 +118,7 @@ theorem withoutReplacementMean_quadratic_bounds {n m dim : ℕ}
     (show (1 : ℂ) ^ m = ((1 : ℝ) : ℂ) by simp) (Or.inl rfl)
   have hnq := rootSlice_chebyshev_posSemidef E hE hmean hn hm2 hnd hζ
     (show ξ ^ m = ((-1 : ℝ) : ℂ) by simpa using hξ) (Or.inr rfl)
-  let P := booleanMatrixImage (rootSliceLinearMap n m 1 ζ)
-    (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))
-  let N := booleanMatrixImage (rootSliceLinearMap n m ξ ζ)
-    (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))
-  have hdifference : P - N = (2 : ℝ) • withoutReplacementMean n m A :=
-    cosineRootSlice_mean_difference A hn (by omega) hmn
-  have hPone := booleanMatrixImage_one (ι := Fin dim) (rootSliceLinearMap n m 1 ζ)
-    (rootSliceLinearMap_one n (by omega) 1 ζ)
-  have hNone := booleanMatrixImage_one (ι := Fin dim) (rootSliceLinearMap n m ξ ζ)
-    (rootSliceLinearMap_one n (by omega) ξ ζ)
-  simp only [booleanMatrixImage_add, booleanMatrixImage_sub, hPone, hNone] at hp hnq
-  change (1 - P).PosSemidef ∧ (1 + P).PosSemidef at hp
-  change (1 - N).PosSemidef ∧ (1 + N).PosSemidef at hnq
-  exact loewner_bounds_of_two_sided_difference hp hnq hdifference
+  exact cosineRootSlice_mean_bounds_of_posSemidef A hn (by omega) hmn hp hnq
 
 /-- The requested quadratic-bound proposition is established without auxiliary hypotheses. -/
 theorem quadraticBoundTarget : QuadraticBoundTarget := by

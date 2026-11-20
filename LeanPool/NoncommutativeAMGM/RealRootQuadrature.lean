@@ -10,6 +10,7 @@ module
 
 public import LeanPool.NoncommutativeAMGM.RemainderEnergy
 public import LeanPool.NoncommutativeAMGM.Parseval
+public import LeanPool.NoncommutativeAMGM.Boolean
 
 /-!
 # Real averages over the root nodes
@@ -30,6 +31,22 @@ noncomputable def complexify (p : Polynomial ℝ) : Polynomial ℂ := p.map Comp
 /-- Real-valued averaging on the nodes `ξζʲ`, `0 ≤ j < m`. -/
 noncomputable def rootRealAverage (m : ℕ) (ξ ζ : ℂ) (f : ℂ → ℝ) : ℝ :=
   (m : ℝ)⁻¹ * ∑ j ∈ Finset.range m, f (ξ * ζ ^ j)
+
+/-- The root-grid quadrature applied to the interpolated slice functional. -/
+noncomputable def rootSliceFunctional (n m : ℕ) (ξ ζ : ℂ)
+    (f : BooleanPolynomial n) : ℝ :=
+  rootRealAverage m ξ ζ (fun z ↦ sliceFunctional n ((n : ℝ) / 2 * (1 - z.re)) f)
+
+/-- The root-grid slice quadrature, bundled as a real linear functional. -/
+noncomputable def rootSliceLinearMap (n m : ℕ) (ξ ζ : ℂ) : BooleanPolynomial n →ₗ[ℝ] ℝ where
+  toFun := rootSliceFunctional n m ξ ζ
+  map_add' f g := by
+    simp only [rootSliceFunctional, rootRealAverage, map_add, Finset.sum_add_distrib]
+    ring
+  map_smul' a f := by
+    simp only [rootSliceFunctional, rootRealAverage, map_smul, smul_eq_mul, RingHom.id_apply]
+    rw [← Finset.mul_sum]
+    ring
 
 theorem rootRealAverage_mul (m : ℕ) (ξ ζ : ℂ) (a : ℝ) (f : ℂ → ℝ) :
     rootRealAverage m ξ ζ (fun z ↦ a * f z) = a * rootRealAverage m ξ ζ f := by

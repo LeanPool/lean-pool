@@ -92,4 +92,19 @@ theorem booleanChebyshevArgument_transpose {n : ℕ} {ι : Type*} [DecidableEq �
   simp only [booleanChebyshevArgument, Matrix.transpose_sub, Matrix.transpose_one,
     Matrix.transpose_smul, booleanLinearMatrix_transpose E hE]
 
+/-- A scaled product of a polynomial in a degree-one symmetric matrix with a rectangular
+factor has the expected entry degree and Gram matrix. -/
+theorem booleanGram_aeval_smul_mul {n r s : ℕ} {ι κ : Type*}
+    [Fintype ι] [DecidableEq ι] [Fintype κ]
+    (X : Matrix ι ι (BooleanPolynomial n)) (hXt : X.transpose = X)
+    (hX : ∀ i j, BooleanDegreeLE (X i j) 1)
+    (p : Polynomial ℝ) (hp : p.natDegree ≤ r) (a : ℝ) (ha : 0 ≤ a)
+    (G : Matrix ι κ (BooleanPolynomial n)) (hG : ∀ i j, BooleanDegreeLE (G i j) s) :
+    (∀ i j, BooleanDegreeLE ((Real.sqrt a • (aeval X p * G)) i j) (r + s)) ∧
+      booleanGram (Real.sqrt a • (aeval X p * G)) = a • (aeval X p * booleanGram G * aeval X p) :=
+  ⟨fun i j ↦ booleanDegreeLE_smul _ (booleanMatrix_mul_degree _ _
+    (fun u v ↦ booleanDegreeLE_mono (booleanMatrix_aeval_degree X hX p u v) hp) hG i j), by
+    rw [booleanGram_smul, Real.mul_self_sqrt ha, booleanGram_mul,
+      booleanMatrix_aeval_transpose X hXt p]⟩
+
 end NoncommutativeAMGM

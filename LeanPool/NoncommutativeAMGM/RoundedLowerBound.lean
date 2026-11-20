@@ -12,7 +12,7 @@ public import LeanPool.NoncommutativeAMGM.InterpolationSliceExtraction
 public import LeanPool.NoncommutativeAMGM.IntegerSlices
 public import LeanPool.NoncommutativeAMGM.RoundedVariation
 public import LeanPool.NoncommutativeAMGM.ChebyshevImage
-public import LeanPool.NoncommutativeAMGM.QuadraticBound
+public import LeanPool.NoncommutativeAMGM.ZeroSlice
 public import Mathlib.Tactic.Module
 
 /-! # Theorem 1.1 by the paper's original rounded-node proof -/

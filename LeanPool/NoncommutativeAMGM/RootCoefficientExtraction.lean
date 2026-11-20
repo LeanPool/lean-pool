@@ -84,4 +84,17 @@ theorem rootPolynomialAverage_difference {m : ℕ} (hm : 0 < m) {ξplus ξminus 
     c * p.coeff m = 0 at hz
   exact sub_eq_zero.mp hz
 
+/-- The slice coordinate at a real cosine parameter. -/
+noncomputable def sliceCoordinatePolynomial (n : ℕ) : Polynomial ℝ :=
+  C ((n : ℝ) / 2) * (1 - X)
+
+theorem sliceCoordinatePolynomial_eval (n : ℕ) (t : ℝ) :
+    (sliceCoordinatePolynomial n).eval t = (n : ℝ) / 2 * (1 - t) := by
+  simp [sliceCoordinatePolynomial]
+
+theorem sliceCoordinatePolynomial_natDegree (n : ℕ) :
+    (sliceCoordinatePolynomial n).natDegree ≤ 1 := by
+  apply (natDegree_mul_le (p := C ((n : ℝ) / 2)) (q := 1 - X)).trans
+  simpa using natDegree_sub_le (1 : Polynomial ℝ) X
+
 end NoncommutativeAMGM

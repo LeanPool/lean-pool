@@ -67,30 +67,24 @@ theorem interpolationSlice_extracts {n m : ℕ} (hn : 0 < n) (t : ℕ → ℝ)
       ((-(n : ℝ) / 2) ^ m / ((2 : ℝ) ^ (m - 1) * falling n m)) *
         layerCoefficientSum n m f := by
   classical
-  have hmono (S : Finset (Fin n)) (a : ℝ) (hS : S.card ≤ m) :
-      interpolationSliceMap n m t (booleanMonomial S a) =
-        ((-(n : ℝ) / 2) ^ m / ((2 : ℝ) ^ (m - 1) * falling n m)) *
-          layerCoefficientSum n m (booleanMonomial S a) := by
-    simp only [interpolationSliceMap, LinearMap.sum_apply, LinearMap.smul_apply,
-      sliceFunctional_monomial, smul_eq_mul]
-    have he : (∑ j ∈ Finset.range (m + 1), interpolationWeight m t j *
-        (a * sliceMoment n ((n : ℝ) / 2 * (1 - t j)) S.card)) =
-        a * (∑ j ∈ Finset.range (m + 1), interpolationWeight m t j *
-          sliceMoment n ((n : ℝ) / 2 * (1 - t j)) S.card) := by
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro j _
-      ring
-    rw [he, interpolationSlice_moments hn hS t ht, layerCoefficientSum_monomial]
-    split_ifs <;> ring
-  have he : f = ∑ S ∈ f.coeff.support, booleanMonomial S.toFinset (f.coeff S) :=
-    (MonoidAlgebra.sum_coeff_single f).symm
-  conv_lhs => rw [he]
-  conv_rhs => rw [he]
-  rw [map_sum, map_sum, Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro S hS
-  exact hmono S (f.coeff S) (hf S (Finsupp.mem_support_iff.mp hS))
+  let weights := fun j : Fin (m + 1) ↦ interpolationWeight m t j
+  let nodes := fun j : Fin (m + 1) ↦ (n : ℝ) / 2 * (1 - t j)
+  have hmem : ∀ r ≤ m,
+      (∑ j, weights j * sliceMoment n (nodes j) r) =
+        if r = m then ((-(n : ℝ) / 2) ^ m / ((2 : ℝ) ^ (m - 1) * falling n m)) else 0 := by
+    intro r hr
+    dsimp only [weights, nodes]
+    rw [Fin.sum_univ_eq_sum_range
+      (fun j : ℕ ↦ interpolationWeight m t j * sliceMoment n ((n : ℝ) / 2 * (1 - t j)) r)
+      (m + 1)]
+    exact interpolationSlice_moments hn hr t ht
+  have he : interpolationSliceMap n m t = sliceQuadrature n weights nodes := by
+    simp only [interpolationSliceMap, sliceQuadrature, weights, nodes]
+    rw [Fin.sum_univ_eq_sum_range
+      (fun j : ℕ ↦ interpolationWeight m t j • sliceFunctional n ((n : ℝ) / 2 * (1 - t j)))
+      (m + 1)]
+  rw [he]
+  exact sliceQuadrature_extracts weights nodes _ hmem f hf
 
 /-- Lemma 3.1 for the constructed general interpolation rule and the actual matrix polynomial. -/
 theorem interpolationSlice_chebyshev {n m : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -99,37 +93,13 @@ theorem interpolationSlice_chebyshev {n m : ℕ} {ι : Type*} [Fintype ι] [Deci
     booleanMatrixImage (interpolationSliceMap n m t)
       (aeval (booleanChebyshevArgument E) (Chebyshev.T ℝ (m : ℤ))) =
         ((n : ℝ) ^ m / falling n m) • distinctProductSum n m E := by
-  apply Matrix.ext
-  intro i j
-  have hdeg : BooleanDegreeLE
-      ((aeval (booleanChebyshevArgument E) (Chebyshev.T ℝ (m : ℤ))) i j) m := by
-    simpa only [Chebyshev.natDegree_T, Int.natAbs_natCast] using
-      booleanMatrix_aeval_degree (booleanChebyshevArgument E) (booleanChebyshevArgument_degree E)
-        (Chebyshev.T ℝ (m : ℤ)) i j
-  have he := interpolationSlice_extracts hn t ht _ hdeg
-  have htop := congrArg (fun M : Matrix ι ι ℝ ↦ M i j) (chebyshev_matrix_top E m)
-  change interpolationSliceMap n m t
-    ((aeval (booleanChebyshevArgument E) (Chebyshev.T ℝ (m : ℤ))) i j) = _
-  rw [he]
-  change layerCoefficientSum n m
-    ((aeval (booleanChebyshevArgument E) (Chebyshev.T ℝ (m : ℤ))) i j) =
-      ((2 : ℝ) ^ (m - 1) * (-2 : ℝ) ^ m) * distinctProductSum n m E i j at htop
-  rw [htop]
-  change _ = ((n : ℝ) ^ m / falling n m) * distinctProductSum n m E i j
-  have hp : (-(n : ℝ) / 2) ^ m * (-2 : ℝ) ^ m = (n : ℝ) ^ m := by
-    rw [← mul_pow]
-    congr 1
-    ring
-  have htwo : (2 : ℝ) ^ (m - 1) ≠ 0 := by positivity
-  have hc : ((-(n : ℝ) / 2) ^ m / ((2 : ℝ) ^ (m - 1) * falling n m)) *
-      ((2 : ℝ) ^ (m - 1) * (-2 : ℝ) ^ m) = (n : ℝ) ^ m / falling n m := by
-    calc
-      _ = ((-(n : ℝ) / 2) ^ m * (-2 : ℝ) ^ m) / falling n m := by field_simp
-      _ = _ := by rw [hp]
-  calc
-    _ = (((-(n : ℝ) / 2) ^ m / ((2 : ℝ) ^ (m - 1) * falling n m)) *
-      ((2 : ℝ) ^ (m - 1) * (-2 : ℝ) ^ m)) * distinctProductSum n m E i j := by ring
-    _ = _ := by rw [hc]
+  have h := booleanMatrixImage_chebyshev_of_extracts E (interpolationSliceMap n m t) 1
+    (fun f hdegree ↦ by
+      rw [interpolationSlice_extracts hn t ht f hdegree]
+      congr 1
+      simp only [div_eq_mul_inv, _root_.mul_inv_rev, one_mul]
+      ring)
+  simpa only [one_mul] using h
 
 /-- The normalized interpolation map evaluates to the actual without-replacement mean. -/
 theorem interpolationSlice_withoutReplacementMean {n m : ℕ} {ι : Type*}

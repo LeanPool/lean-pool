@@ -9,6 +9,8 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.ChebyshevOddGram
+public import LeanPool.NoncommutativeAMGM.ChebyshevEvenGram
+public import LeanPool.NoncommutativeAMGM.MatrixSlicePositivity
 
 /-! # Chebyshev matrix positivity for any degree-bounded positive Boolean functional -/
 

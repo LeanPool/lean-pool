@@ -145,7 +145,8 @@ theorem roundedErrorMass_lt {n m : ℕ} (hm : 0 < m) (hn : 4 * m ^ 2 ≤ n) :
     simpa only [div_eq_mul_inv, mul_inv_rev, mul_assoc, mul_comm, mul_left_comm] using h
   exact (roundedErrorMass_le_uniform hm hn).trans_lt hbound
 
-/-- The final rounded interpolation-weight saving in Lemma 2.3. -/
+/-- The rounded interpolation-weight saving at the end of the proof of Lemma 2.3,
+using the corrected weights in arXiv:2610.04874v2. -/
 theorem roundedWeight_variation_saving {n m : ℕ} (hm : 0 < m) (hn : 4 * m ^ 2 ≤ n) :
     (∑ j ∈ Finset.range (m + 1), |roundedWeight n m j|) - 2 * roundedWeight n m 0 ≤
       1 - 1 / (2 * (m : ℝ)) := by

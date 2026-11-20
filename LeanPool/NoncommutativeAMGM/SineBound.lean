@@ -37,20 +37,6 @@ theorem withoutReplacementMean_sine_bounds {n m dim : ℕ}
   have hnq := chebyshevImage_posSemidef hm E hE hmean
     (rootSliceLinearMap n m (cosineHalfRoot m) (cosineRoot m))
     (fun f hf ↦ (cosineRootSlice_square_nonneg hmpos hn hdn hsin f hf).2)
-  let P := booleanMatrixImage (rootSliceLinearMap n m 1 (cosineRoot m))
-    (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))
-  let N := booleanMatrixImage (rootSliceLinearMap n m (cosineHalfRoot m) (cosineRoot m))
-    (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))
-  have hdifference : P - N = (2 : ℝ) • withoutReplacementMean n m A :=
-    cosineRootSlice_mean_difference A hn hmpos hmn
-  have hPone := booleanMatrixImage_one (ι := Fin dim) (rootSliceLinearMap n m 1 (cosineRoot m))
-    (rootSliceLinearMap_one n hmpos 1 (cosineRoot m))
-  have hNone := booleanMatrixImage_one (ι := Fin dim)
-    (rootSliceLinearMap n m (cosineHalfRoot m) (cosineRoot m))
-    (rootSliceLinearMap_one n hmpos (cosineHalfRoot m) (cosineRoot m))
-  simp only [booleanMatrixImage_add, booleanMatrixImage_sub, hPone, hNone] at hp hnq
-  change (1 - P).PosSemidef ∧ (1 + P).PosSemidef at hp
-  change (1 - N).PosSemidef ∧ (1 + N).PosSemidef at hnq
-  exact loewner_bounds_of_two_sided_difference hp hnq hdifference
+  exact cosineRootSlice_mean_bounds_of_posSemidef A hn hmpos hmn hp hnq
 
 end NoncommutativeAMGM

@@ -9,6 +9,7 @@ Authors: Yimin Zhong
 module
 
 public import LeanPool.NoncommutativeAMGM.RootSliceExtraction
+public import LeanPool.NoncommutativeAMGM.MatrixCoefficientExtraction
 public import Mathlib.RingTheory.Polynomial.Chebyshev
 
 /-! # The leading Boolean coefficient of the actual Chebyshev matrix polynomial -/
@@ -68,6 +69,39 @@ theorem chebyshev_matrix_top {n : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι
   rw [← shiftedChebyshev_aeval, booleanMatrix_aeval_top E _ (by
     rw [shiftedChebyshev_natDegree]), shiftedChebyshev_coeff]
 
+/-- Lift a normalized scalar coefficient extraction rule to the Chebyshev matrix polynomial. -/
+theorem booleanMatrixImage_chebyshev_of_extracts {n m : ℕ} {ι : Type*}
+    [Fintype ι] [DecidableEq ι] (E : Fin n → Matrix ι ι ℝ)
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (scale : ℝ)
+    (hL : ∀ f : BooleanPolynomial n, BooleanDegreeLE f m →
+      L f = ((scale / (2 : ℝ) ^ (m - 1)) * (-(n : ℝ) / 2) ^ m / falling n m) *
+        layerCoefficientSum n m f) :
+    booleanMatrixImage L (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) =
+      (scale * (n : ℝ) ^ m / falling n m) • distinctProductSum n m E := by
+  apply Matrix.ext
+  intro i j
+  let F := aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))
+  have hdeg : BooleanDegreeLE (F i j) m := by
+    simpa only [F, natDegree_T, Int.natAbs_natCast] using
+      booleanMatrix_aeval_degree (booleanChebyshevArgument E) (booleanChebyshevArgument_degree E)
+        (T ℝ (m : ℤ)) i j
+  have htop := congrArg (fun M : Matrix ι ι ℝ ↦ M i j) (chebyshev_matrix_top E m)
+  change layerCoefficientSum n m (F i j) =
+    ((2 : ℝ) ^ (m - 1) * (-2 : ℝ) ^ m) * distinctProductSum n m E i j at htop
+  change L (F i j) = (scale * (n : ℝ) ^ m / falling n m) * distinctProductSum n m E i j
+  rw [hL _ hdeg, htop]
+  have hp : (-(n : ℝ) / 2) ^ m * (-2 : ℝ) ^ m = (n : ℝ) ^ m := by
+    rw [← mul_pow]
+    congr 1
+    ring
+  have htwo : (2 : ℝ) ^ (m - 1) ≠ 0 := pow_ne_zero _ (by norm_num)
+  have hc : (scale / (2 : ℝ) ^ (m - 1)) * (-(n : ℝ) / 2) ^ m *
+      ((2 : ℝ) ^ (m - 1) * (-2 : ℝ) ^ m) = scale * (n : ℝ) ^ m := by
+    calc
+      _ = scale * ((-(n : ℝ) / 2) ^ m * (-2 : ℝ) ^ m) := by field_simp
+      _ = _ := by rw [hp]
+  linear_combination (distinctProductSum n m E i j / falling n m) * hc
+
 /-- The two actual matrix quadratures differ by the normalized ordered product sum. -/
 theorem rootSlice_chebyshev_difference {n m : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
     (E : Fin n → Matrix ι ι ℝ) (hn : 0 < n) (hm : 0 < m) {ξplus ξminus ζ : ℂ}
@@ -77,32 +111,9 @@ theorem rootSlice_chebyshev_difference {n m : ℕ} {ι : Type*} [Fintype ι] [De
       booleanMatrixImage (rootSliceLinearMap n m ξminus ζ)
         (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) =
       (2 * (n : ℝ) ^ m / falling n m) • distinctProductSum n m E := by
-  apply Matrix.ext
-  intro i j
-  have hdeg : BooleanDegreeLE
-      ((aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) i j) m := by
-    simpa only [natDegree_T, Int.natAbs_natCast] using
-      booleanMatrix_aeval_degree (booleanChebyshevArgument E) (booleanChebyshevArgument_degree E)
-        (T ℝ (m : ℤ)) i j
-  have he := rootSliceLinearMap_difference hn hm hζ hξplus hξminus
-    ((aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) i j) hdeg
-  have ht := congrArg (fun M : Matrix ι ι ℝ ↦ M i j) (chebyshev_matrix_top E m)
-  change layerCoefficientSum n m ((aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) i j) =
-    ((2 : ℝ) ^ (m - 1) * (-2 : ℝ) ^ m) * distinctProductSum n m E i j at ht
-  change rootSliceLinearMap n m ξplus ζ ((aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) i j) -
-    rootSliceLinearMap n m ξminus ζ ((aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) i j) =
-      (2 * (n : ℝ) ^ m / falling n m) * distinctProductSum n m E i j
-  rw [he, ht]
-  have hp : (-(n : ℝ) / 2) ^ m * (-2 : ℝ) ^ m = (n : ℝ) ^ m := by
-    rw [← mul_pow]
-    congr 1
-    ring
-  have htwo : (2 : ℝ) ^ (m - 1) ≠ 0 := pow_ne_zero _ (by norm_num)
-  have hc : (2 / (2 : ℝ) ^ (m - 1)) * (-(n : ℝ) / 2) ^ m *
-      ((2 : ℝ) ^ (m - 1) * (-2 : ℝ) ^ m) = 2 * (n : ℝ) ^ m := by
-    calc
-      _ = 2 * ((-(n : ℝ) / 2) ^ m * (-2 : ℝ) ^ m) := by field_simp
-      _ = _ := by rw [hp]
-  linear_combination (distinctProductSum n m E i j / falling n m) * hc
+  let L := rootSliceLinearMap n m ξplus ζ - rootSliceLinearMap n m ξminus ζ
+  change booleanMatrixImage L (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ))) = _
+  exact booleanMatrixImage_chebyshev_of_extracts E L 2
+    (fun f hdegree ↦ rootSliceLinearMap_difference hn hm hζ hξplus hξminus f hdegree)
 
 end NoncommutativeAMGM

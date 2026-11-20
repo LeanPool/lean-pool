@@ -8,7 +8,7 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.OneSlice
+public import LeanPool.NoncommutativeAMGM.Boolean
 
 /-! # Integer slices as uniform averages over actual Boolean vertices -/
 
@@ -16,37 +16,6 @@ public import LeanPool.NoncommutativeAMGM.OneSlice
 
 namespace NoncommutativeAMGM
 open scoped BigOperators
-
-/-- The subset indicator, elaborated in the concrete finite-set type. -/
-noncomputable def booleanVertexIndicator {n : ℕ} (S T : Finset (Fin n)) : ℝ :=
-  if S ⊆ T then 1 else 0
-
-/-- Evaluate a square-free monomial at the vertex whose one-coordinates form `T`. -/
-noncomputable def booleanVertexMonoid {n : ℕ} (T : Finset (Fin n)) :
-    BooleanMonomial n →* ℝ where
-  toFun S := booleanVertexIndicator S T
-  map_one' := by
-    change (if (∅ : Finset (Fin n)) ⊆ T then (1 : ℝ) else 0) = 1
-    simp
-  map_mul' S U := by
-    classical
-    let s : Finset (Fin n) := S
-    let u : Finset (Fin n) := U
-    change (if s ∪ u ⊆ T then (1 : ℝ) else 0) =
-      (if s ⊆ T then 1 else 0) * (if u ⊆ T then 1 else 0)
-    by_cases hs : s ⊆ T <;> by_cases hu : u ⊆ T <;> simp [Finset.union_subset_iff, hs, hu]
-
-/-- Evaluation at an arbitrary Boolean vertex. -/
-noncomputable def booleanVertexEval {n : ℕ} (T : Finset (Fin n)) :
-    BooleanPolynomial n →ₐ[ℝ] ℝ :=
-  MonoidAlgebra.lift ℝ ℝ (BooleanMonomial n) (booleanVertexMonoid T)
-
-theorem booleanVertexEval_monomial {n : ℕ} (T S : Finset (Fin n)) (a : ℝ) :
-    booleanVertexEval T (booleanMonomial S a) = if S ⊆ T then a else 0 := by
-  classical
-  rw [booleanVertexEval, booleanMonomial, MonoidAlgebra.lift_single]
-  change a * (if S ⊆ T then 1 else 0) = _
-  split_ifs <;> simp
 
 /-- The uniform average over all vertices of Hamming weight `k`. -/
 noncomputable def integerSliceAverage (n k : ℕ) : BooleanPolynomial n →ₗ[ℝ] ℝ :=

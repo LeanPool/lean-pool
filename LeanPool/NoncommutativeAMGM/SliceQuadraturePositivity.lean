@@ -10,6 +10,7 @@ module
 
 public import LeanPool.NoncommutativeAMGM.SliceCoefficientPolynomial
 public import LeanPool.NoncommutativeAMGM.UnitCircleLift
+public import LeanPool.NoncommutativeAMGM.RootCoefficientExtraction
 
 /-! # Positivity of the root-node averages of interpolated slice squares -/
 
@@ -29,19 +30,6 @@ theorem betaProduct_eq_prod (n : ℝ) (k : ℕ) (hk : 1 ≤ k) (u : ℝ) :
   rw [Nat.sub_add_cancel hk] at he
   rw [he, beta_zero, sub_zero]
   ring
-
-/-- The slice coordinate at a real cosine parameter. -/
-noncomputable def sliceCoordinatePolynomial (n : ℕ) : Polynomial ℝ :=
-  C ((n : ℝ) / 2) * (1 - X)
-
-theorem sliceCoordinatePolynomial_eval (n : ℕ) (t : ℝ) :
-    (sliceCoordinatePolynomial n).eval t = (n : ℝ) / 2 * (1 - t) := by
-  simp [sliceCoordinatePolynomial]
-
-theorem sliceCoordinatePolynomial_natDegree (n : ℕ) :
-    (sliceCoordinatePolynomial n).natDegree ≤ 1 := by
-  apply (natDegree_mul_le (p := C ((n : ℝ) / 2)) (q := 1 - X)).trans
-  simpa using natDegree_sub_le (1 : Polynomial ℝ) X
 
 /-- The weighted average of a single coefficient square after the slice-coordinate change. -/
 theorem root_slice_weighted_polynomial_nonneg {ξ ζ : ℂ} {η : ℝ}
@@ -92,11 +80,6 @@ theorem root_slice_weighted_polynomial_nonneg {ξ ζ : ℂ} {η : ℝ}
       ring
     rw [heq]
     exact mul_nonneg (slice_prefactor_nonneg n k) hpos
-
-/-- The root-grid quadrature applied to the interpolated slice functional. -/
-noncomputable def rootSliceFunctional (n m : ℕ) (ξ ζ : ℂ)
-    (f : BooleanPolynomial n) : ℝ :=
-  rootRealAverage m ξ ζ (fun z ↦ sliceFunctional n ((n : ℝ) / 2 * (1 - z.re)) f)
 
 /-- Positivity of the actual root-grid slice quadrature on Boolean squares.
 This combines the full harmonic norm formula with the quadratic weighted estimate. -/

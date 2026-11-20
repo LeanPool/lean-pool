@@ -8,36 +8,15 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.SliceQuadraturePositivity
 public import LeanPool.NoncommutativeAMGM.MatrixOrder
+public import LeanPool.NoncommutativeAMGM.BooleanMatrix
 
-/-! # Applying the positive slice quadrature to matrix sums of squares -/
+/-! # Matrix sums of squares under a scalar linear functional -/
 
 @[expose] public section
 namespace NoncommutativeAMGM
 open scoped BigOperators
 open Matrix
-
-/-- The root-grid slice quadrature, bundled as a real linear functional. -/
-noncomputable def rootSliceLinearMap (n m : ℕ) (ξ ζ : ℂ) : BooleanPolynomial n →ₗ[ℝ] ℝ where
-  toFun := rootSliceFunctional n m ξ ζ
-  map_add' f g := by
-    simp only [rootSliceFunctional, rootRealAverage, map_add, Finset.sum_add_distrib]
-    ring
-  map_smul' a f := by
-    simp only [rootSliceFunctional, rootRealAverage, map_smul, smul_eq_mul, RingHom.id_apply]
-    rw [← Finset.mul_sum]
-    ring
-
-/-- Apply a scalar Boolean linear functional to every entry of a matrix. -/
-noncomputable def booleanMatrixImage {n : ℕ} {ι κ : Type*}
-    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (M : Matrix ι κ (BooleanPolynomial n)) :
-    Matrix ι κ ℝ := fun i j ↦ L (M i j)
-
-/-- A rectangular Boolean matrix times its transpose. -/
-noncomputable def booleanGram {n : ℕ} {ι κ : Type*} [Fintype κ]
-    (F : Matrix ι κ (BooleanPolynomial n)) : Matrix ι ι (BooleanPolynomial n) :=
-  fun i j ↦ ∑ a, F i a * F j a
 
 theorem linear_square_sum {n : ℕ} {ι : Type*} [Fintype ι]
     (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (x : ι → ℝ) (f : ι → BooleanPolynomial n) :
@@ -92,40 +71,5 @@ theorem booleanMatrixImage_gram_posSemidef {n d : ℕ} {ι κ : Type*} [Finite �
     apply booleanDegreeLE_sum
     intro i _
     exact booleanDegreeLE_smul (x i) (hF i a)
-
-/-- The quadratic-threshold quadrature maps each actual Boolean matrix Gram sum to a PSD matrix. -/
-theorem rootSlice_gram_posSemidef {ξ ζ : ℂ} {η : ℝ} {n m d : ℕ}
-    {ι κ : Type*} [Finite ι] [Fintype κ]
-    (F : Matrix ι κ (BooleanPolynomial n)) (hn : 0 < n) (hm : 2 ≤ m)
-    (hζ : IsPrimitiveRoot ζ m) (hξ : ξ ^ m = (η : ℂ)) (hη : η = 1 ∨ η = -1)
-    (hF : ∀ i a, BooleanDegreeLE (F i a) d) (hdn : 2 * d ≤ n)
-    (hdm : 2 * d ≤ m + 1) (hnd : 2 * d ^ 2 ≤ n) :
-    (booleanMatrixImage (rootSliceLinearMap n m ξ ζ) (booleanGram F)).PosSemidef := by
-  apply booleanMatrixImage_gram_posSemidef _ _ F hF
-  intro f hf
-  exact rootSliceFunctional_square_nonneg f hn hm hζ hξ hη hf hdn hdm hnd
-
-theorem booleanMatrixImage_one {n : ℕ} {ι : Type*} [DecidableEq ι]
-    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (hL : L 1 = 1) :
-    booleanMatrixImage L (1 : Matrix ι ι (BooleanPolynomial n)) = 1 := by
-  apply Matrix.ext
-  intro i j
-  change L ((1 : Matrix ι ι (BooleanPolynomial n)) i j) = (1 : Matrix ι ι ℝ) i j
-  simp only [Matrix.one_apply]
-  split_ifs <;> simp [hL]
-
-theorem booleanMatrixImage_add {n : ℕ} {ι κ : Type*}
-    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
-    booleanMatrixImage L (A + B) = booleanMatrixImage L A + booleanMatrixImage L B := by
-  apply Matrix.ext
-  intro i j
-  exact map_add L (A i j) (B i j)
-
-theorem booleanMatrixImage_sub {n : ℕ} {ι κ : Type*}
-    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
-    booleanMatrixImage L (A - B) = booleanMatrixImage L A - booleanMatrixImage L B := by
-  apply Matrix.ext
-  intro i j
-  exact map_sub L (A i j) (B i j)
 
 end NoncommutativeAMGM

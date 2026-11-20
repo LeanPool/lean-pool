@@ -8,7 +8,7 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.ChebyshevEvenGram
+public import LeanPool.NoncommutativeAMGM.BooleanMatrixPolynomial
 public import Mathlib.Data.Matrix.ColumnRowPartitioned
 
 /-! # Degree-one Gram factors of the input and its complement -/

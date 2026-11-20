@@ -43,12 +43,9 @@ theorem withoutReplacementMean_endpoint_lower {n m dim : ℕ}
     (aeval (booleanChebyshevArgument E) (T ℝ (m : ℤ)))
   have hdifference : P - N = (2 : ℝ) • withoutReplacementMean n m A :=
     cosineRootSlice_mean_difference A hn (by omega) hmn
-  have hPone := booleanMatrixImage_one (ι := Fin dim) (rootSliceLinearMap n m 1 ζ)
-    (rootSliceLinearMap_one n (by omega) 1 ζ)
-  have hNone := booleanMatrixImage_one (ι := Fin dim) (rootSliceLinearMap n m ξ ζ)
-    (rootSliceLinearMap_one n (by omega) ξ ζ)
-  simp only [booleanMatrixImage_add, hPone] at hp
-  simp only [booleanMatrixImage_sub, hNone] at hnq
+  have hmpos : 0 < m := by omega
+  simp only [booleanMatrixImage_add, rootSliceLinearMap_matrixImage_one hmpos] at hp
+  simp only [booleanMatrixImage_sub, rootSliceLinearMap_matrixImage_one hmpos] at hnq
   change ((1 + P) - (2 / (m : ℝ)) • 1).PosSemidef at hp
   change (1 - N).PosSemidef at hnq
   have hpos := (hp.add hnq).smul (show (0 : ℝ) ≤ 1 / 2 by norm_num)

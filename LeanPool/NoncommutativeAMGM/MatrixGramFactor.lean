@@ -8,7 +8,7 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.MatrixSlicePositivity
+public import LeanPool.NoncommutativeAMGM.MatrixOrder
 
 /-! # Real Gram factorizations and rectangular contractions -/
 

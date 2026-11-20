@@ -88,13 +88,8 @@ theorem roundedWeight_zero_lower {n m : ℕ} (hm : 0 < m) (hn : 4 * m ^ 2 ≤ n)
   have hi : Real.exp (-(∑ l ∈ s, cost l)) ≤ (∏ l ∈ s, ratio l)⁻¹ := by
     have h := one_div_le_one_div_of_le hp hprod
     simpa only [one_div, Real.exp_neg] using h
-  have hc (l : ℕ) (hl : l ∈ s) : chebyshevNode m 0 - chebyshevNode m l ≠ 0 := by
-    have hl' := Finset.mem_erase.mp hl
-    exact sub_ne_zero.mpr (chebyshevNode_ne hm (Nat.zero_le m)
-      (by have := Finset.mem_range.mp hl'.2; omega) hl'.1.symm)
   have he : roundedWeight n m 0 = chebyshevWeight m 0 * (∏ l ∈ s, ratio l)⁻¹ := by
-    rw [roundedWeight, interpolationWeight_perturbation _ (chebyshevNode m) hc,
-      interpolationWeight_chebyshev hm (Nat.zero_le m)]
+    rw [roundedWeight_eq_chebyshevWeight_mul_inv_prod hm (Nat.zero_le m)]
     simp only [roundedCosineNode_zero, chebyshevNode, Nat.cast_zero, zero_mul,
       zero_div, Real.cos_zero]
     rfl

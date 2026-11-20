@@ -52,8 +52,12 @@ noncomputable def chebyshevPlusFactor (r : ℕ) : Polynomial ℝ :=
 noncomputable def chebyshevMinusFactor (r : ℕ) : Polynomial ℝ :=
   U ℝ (r : ℤ) + U ℝ ((r : ℤ) - 1)
 
-theorem chebyshev_odd_minus (r : ℕ) :
-    1 - T ℝ (2 * (r : ℤ) + 1) = (1 - X) * chebyshevMinusFactor r ^ 2 := by
+private theorem chebyshev_odd_recurrence (r : ℕ) :
+    2 * (U ℝ (r : ℤ) - X * U ℝ ((r : ℤ) - 1)) *
+        (X * U ℝ (r : ℤ) - U ℝ ((r : ℤ) - 1)) =
+      T ℝ (2 * (r : ℤ) + 1) + X ∧
+    (U ℝ (r : ℤ) - X * U ℝ ((r : ℤ) - 1)) ^ 2 +
+      (1 - X ^ 2) * U ℝ ((r : ℤ) - 1) ^ 2 = 1 := by
   have hmul := T_mul_T ℝ (r : ℤ) ((r : ℤ) + 1)
   have hpell := chebyshev_pell r
   have ht := T_eq_X_mul_U_sub_U ℝ ((r : ℤ) - 1)
@@ -67,24 +71,17 @@ theorem chebyshev_odd_minus (r : ℕ) :
   have hsub : (r : ℤ) - ((r : ℤ) + 1) = -1 := by omega
   rw [hsum, hsub] at hmul
   simp only [T_neg_one] at hmul
+  exact ⟨hmul, hpell⟩
+
+theorem chebyshev_odd_minus (r : ℕ) :
+    1 - T ℝ (2 * (r : ℤ) + 1) = (1 - X) * chebyshevMinusFactor r ^ 2 := by
+  obtain ⟨hmul, hpell⟩ := chebyshev_odd_recurrence r
   unfold chebyshevMinusFactor
   linear_combination hmul - (1 + X) * hpell
 
 theorem chebyshev_odd_plus (r : ℕ) :
     1 + T ℝ (2 * (r : ℤ) + 1) = (1 + X) * chebyshevPlusFactor r ^ 2 := by
-  have hmul := T_mul_T ℝ (r : ℤ) ((r : ℤ) + 1)
-  have hpell := chebyshev_pell r
-  have ht := T_eq_X_mul_U_sub_U ℝ ((r : ℤ) - 1)
-  have he : (r : ℤ) - 1 + 2 = (r : ℤ) + 1 := by omega
-  have he' : (r : ℤ) - 1 + 1 = (r : ℤ) := by omega
-  rw [he, he'] at ht
-  have ht0 := T_eq_U_sub_X_mul_U ℝ (r : ℤ)
-  rw [ht0] at hpell hmul
-  rw [ht] at hmul
-  have hsum : (r : ℤ) + ((r : ℤ) + 1) = 2 * (r : ℤ) + 1 := by omega
-  have hsub : (r : ℤ) - ((r : ℤ) + 1) = -1 := by omega
-  rw [hsum, hsub] at hmul
-  simp only [T_neg_one] at hmul
+  obtain ⟨hmul, hpell⟩ := chebyshev_odd_recurrence r
   unfold chebyshevPlusFactor
   linear_combination -hmul - (1 - X) * hpell
 

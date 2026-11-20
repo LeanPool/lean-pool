@@ -20,27 +20,16 @@ open scoped BigOperators
 
 
 /-- Send the empty monomial to one and all nonconstant monomials to zero. -/
-noncomputable def booleanZeroMonoid (n : ℕ) : BooleanMonomial n →* ℝ where
-  toFun S := if S = 1 then 1 else 0
-  map_one' := by simp
-  map_mul' S T := by
-    classical
-    let s : Finset (Fin n) := S
-    let t : Finset (Fin n) := T
-    change (if s ∪ t = ∅ then (1 : ℝ) else 0) =
-      (if s = ∅ then 1 else 0) * (if t = ∅ then 1 else 0)
-    by_cases hs : s = ∅ <;> by_cases ht : t = ∅ <;> simp [Finset.union_eq_empty, hs, ht]
+noncomputable def booleanZeroMonoid (n : ℕ) : BooleanMonomial n →* ℝ :=
+  booleanVertexMonoid ∅
 
 /-- Evaluation of all Boolean variables at zero. -/
 noncomputable def booleanZeroEval (n : ℕ) : BooleanPolynomial n →ₐ[ℝ] ℝ :=
-  MonoidAlgebra.lift ℝ ℝ (BooleanMonomial n) (booleanZeroMonoid n)
+  booleanVertexEval ∅
 
 theorem booleanZeroEval_monomial {n : ℕ} (S : Finset (Fin n)) (a : ℝ) :
     booleanZeroEval n (booleanMonomial S a) = if S = ∅ then a else 0 := by
-  classical
-  rw [booleanZeroEval, booleanMonomial, MonoidAlgebra.lift_single]
-  change a * (if S = ∅ then 1 else 0) = _
-  split_ifs <;> simp
+  simp only [booleanZeroEval, booleanVertexEval_monomial, Finset.subset_empty]
 
 theorem sliceFunctional_zero_monomial {n : ℕ} (S : Finset (Fin n)) (a : ℝ) :
     sliceFunctional n 0 (booleanMonomial S a) = if S = ∅ then a else 0 := by

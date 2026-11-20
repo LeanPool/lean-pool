@@ -17,13 +17,11 @@ namespace NoncommutativeAMGM
 
 /-- Evaluation of all Boolean variables at one. -/
 noncomputable def booleanOneEval (n : ℕ) : BooleanPolynomial n →ₐ[ℝ] ℝ :=
-  MonoidAlgebra.lift ℝ ℝ (BooleanMonomial n) (1 : BooleanMonomial n →* ℝ)
+  booleanVertexEval Finset.univ
 
 theorem booleanOneEval_monomial {n : ℕ} (S : Finset (Fin n)) (a : ℝ) :
     booleanOneEval n (booleanMonomial S a) = a := by
-  rw [booleanOneEval, booleanMonomial, MonoidAlgebra.lift_single]
-  change a * (1 : ℝ) = a
-  exact mul_one a
+  rw [booleanOneEval, booleanVertexEval_monomial, ite_eq_left (Finset.subset_univ S)]
 
 theorem sliceFunctional_full_monomial {n : ℕ} (S : Finset (Fin n)) (a : ℝ) :
     sliceFunctional n (n : ℝ) (booleanMonomial S a) = a := by

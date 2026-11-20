@@ -8,7 +8,8 @@ Authors: Yimin Zhong
 
 module
 
-public import LeanPool.NoncommutativeAMGM.MatrixSlicePositivity
+public import LeanPool.NoncommutativeAMGM.BooleanDegree
+public import Mathlib.Data.Matrix.Basic
 
 /-! # Degree arithmetic and constant matrices over the Boolean algebra -/
 
@@ -77,5 +78,50 @@ theorem booleanSelectionMatrix_degree (n d : ℕ) (i j : Fin n × Fin d) :
   split_ifs
   · exact booleanDegreeLE_monomial _ _ (by simp)
   · exact booleanDegreeLE_zero _ _
+
+/-- Apply a scalar Boolean linear functional to every entry of a matrix. -/
+noncomputable def booleanMatrixImage {n : ℕ} {ι κ : Type*}
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (M : Matrix ι κ (BooleanPolynomial n)) :
+    Matrix ι κ ℝ := fun i j ↦ L (M i j)
+
+/-- A rectangular Boolean matrix times its transpose. -/
+noncomputable def booleanGram {n : ℕ} {ι κ : Type*} [Fintype κ]
+    (F : Matrix ι κ (BooleanPolynomial n)) : Matrix ι ι (BooleanPolynomial n) :=
+  fun i j ↦ ∑ a, F i a * F j a
+
+theorem booleanMatrixImage_one {n : ℕ} {ι : Type*} [DecidableEq ι]
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (hL : L 1 = 1) :
+    booleanMatrixImage L (1 : Matrix ι ι (BooleanPolynomial n)) = 1 := by
+  apply Matrix.ext
+  intro i j
+  change L ((1 : Matrix ι ι (BooleanPolynomial n)) i j) = (1 : Matrix ι ι ℝ) i j
+  simp only [Matrix.one_apply]
+  split_ifs <;> simp [hL]
+
+theorem booleanMatrixImage_add {n : ℕ} {ι κ : Type*}
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
+    booleanMatrixImage L (A + B) = booleanMatrixImage L A + booleanMatrixImage L B := by
+  apply Matrix.ext
+  intro i j
+  exact map_add L (A i j) (B i j)
+
+theorem booleanMatrixImage_sub {n : ℕ} {ι κ : Type*}
+    (L : BooleanPolynomial n →ₗ[ℝ] ℝ) (A B : Matrix ι κ (BooleanPolynomial n)) :
+    booleanMatrixImage L (A - B) = booleanMatrixImage L A - booleanMatrixImage L B := by
+  apply Matrix.ext
+  intro i j
+  exact map_sub L (A i j) (B i j)
+
+theorem booleanGram_smul {n : ℕ} {ι κ : Type*} [Fintype κ]
+    (a : ℝ) (F : Matrix ι κ (BooleanPolynomial n)) :
+    booleanGram (a • F) = (a * a) • booleanGram F := by
+  change (a • F) * (a • F).transpose = (a * a) • (F * F.transpose)
+  rw [Matrix.transpose_smul, Matrix.smul_mul, Matrix.mul_smul, smul_smul]
+
+theorem booleanGram_mul {n : ℕ} {ι κ μ : Type*} [Fintype κ] [Fintype μ]
+    (U : Matrix ι κ (BooleanPolynomial n)) (F : Matrix κ μ (BooleanPolynomial n)) :
+    booleanGram (U * F) = U * booleanGram F * U.transpose := by
+  change (U * F) * (U * F).transpose = U * (F * F.transpose) * U.transpose
+  simp only [Matrix.transpose_mul, Matrix.mul_assoc]
 
 end NoncommutativeAMGM
