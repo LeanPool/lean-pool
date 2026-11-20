@@ -21,9 +21,8 @@ The interface below is generic in the fibre type `ι`: the value, the two first 
 the Laplacian live in quotient-level `L∞`, the multiplier is a bounded map of the transverse
 `H²` graph at the fibre `ι`, and the two Leibniz rules relate them.  Neither a commutator
 identity nor a norm estimate is part of the structure, and no cell, radius or spectral
-parameter occurs; it is the fibre-generic form of
-`FastDynamo.PeriodicSecondOrderCutoffs.PeriodicSecondOrderCutoff`, whose fibre is
-hard-wired to `ℂ³`, whereas the paper works at `ℂ²`.
+parameter occurs. `FastDynamo.PeriodicSecondOrderCutoffs.PeriodicSecondOrderCutoff`
+specializes this interface to `ℂ³`. The paper uses the `ℂ²` fibre.
 
 The declarations live in the namespace `ParametrixCutoffs`, shared with
 `Global/ParametrixCutoffs.lean`.

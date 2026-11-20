@@ -9,6 +9,7 @@ Authors: Lukas Niebel
 module
 
 public import LeanPool.FastDynamo.Global.ParametrixExplicitCutoffDerivatives
+public import LeanPool.FastDynamo.Analysis.TransverseVecCutoffMultiplier
 public import LeanPool.FastDynamo.Analysis.TransverseVecMultiplierAlgebra
 public import LeanPool.FastDynamo.Analysis.TransverseVecMultipliers
 public import LeanPool.FastDynamo.Global.LocalizedSummandAlgebra
@@ -49,29 +50,7 @@ map and its first- and second-order product rules.
 
 The value, gradient, and Laplacian live in quotient-level `L∞`.  No
 commutator identity or norm estimate is included in this structure. -/
-structure PeriodicSecondOrderCutoff where
-  /-- Quotient-level scalar value of the cutoff. -/
-  value : TransverseScalarLInf
-  /-- The two quotient-level first derivatives of the cutoff. -/
-  gradient : Fin 2 → TransverseScalarLInf
-  /-- Quotient-level transverse Laplacian of the cutoff. -/
-  laplacian : TransverseScalarLInf
-  /-- Bounded multiplication by the cutoff on the transverse `H²` graph. -/
-  domainMul : TransverseC3H2 →L[ℂ] TransverseC3H2
-  embedding_domainMul : ∀ b,
-    transverseH2Embedding (domainMul b) =
-      scalarVectorMulTransverse value (transverseH2Embedding b)
-  deriv_domainMul : ∀ j b,
-    transverseDerivFromH2 j (domainMul b) =
-      scalarVectorMulTransverse (gradient j) (transverseH2Embedding b) +
-        scalarVectorMulTransverse value (transverseDerivFromH2 j b)
-  laplacian_domainMul : ∀ b,
-    transverseLaplacianFromH2 (domainMul b) =
-      scalarVectorMulTransverse value (transverseLaplacianFromH2 b) +
-        (2 : ℂ) • (∑ j : Fin 2,
-          scalarVectorMulTransverse (gradient j)
-            (transverseDerivFromH2 j b)) +
-        scalarVectorMulTransverse laplacian (transverseH2Embedding b)
+abbrev PeriodicSecondOrderCutoff := ParametrixCutoffs.TransverseVecSecondOrderCutoff (Fin 3)
 
 end PeriodicSecondOrderCutoffs
 

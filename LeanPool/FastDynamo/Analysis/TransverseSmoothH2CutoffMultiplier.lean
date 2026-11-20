@@ -929,7 +929,7 @@ def summableFourierPeriodicSecondOrderCutoff
         ContinuousLinearMap.apply_apply] at h
       rw [← sub_eq_add_neg] at h
       exact h
-    simpa using sub_eq_zero.mp h'
+    exact sub_eq_zero.mp h'
   deriv_domainMul := by
     intro j b
     have h := derivativeDefect_completed_eq_zero ha j b
@@ -950,7 +950,7 @@ def summableFourierPeriodicSecondOrderCutoff
         ContinuousLinearMap.apply_apply] at h
       rw [← sub_eq_add_neg] at h
       exact h
-    simpa using sub_eq_zero.mp h'
+    exact sub_eq_zero.mp h'
   laplacian_domainMul := by
     intro b
     have h := laplacianDefect_completed_eq_zero ha b
@@ -975,7 +975,7 @@ def summableFourierPeriodicSecondOrderCutoff
         ContinuousLinearMap.apply_apply, sum_apply] at h
       rw [← sub_eq_add_neg] at h
       exact h
-    simpa using sub_eq_zero.mp h'
+    exact sub_eq_zero.mp h'
 
 end TransverseSmoothH2CutoffMultiplier
 

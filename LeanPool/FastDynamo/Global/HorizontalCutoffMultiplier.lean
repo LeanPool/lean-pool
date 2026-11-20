@@ -106,7 +106,9 @@ theorem embedding_conjugate (b : TransverseC2H2) :
   have h1 : transverseH2Embedding (conjugate chi b) =
       horizontalProjL2
         (transverseH2Embedding (chi.domainMul (verticalZeroExtendH2 b))) := rfl
-  have h2 := chi.embedding_domainMul (verticalZeroExtendH2 b)
+  have h2 : transverseH2Embedding (chi.domainMul (verticalZeroExtendH2 b)) =
+      scalarVectorMulTransverse chi.value (transverseH2Embedding (verticalZeroExtendH2 b)) :=
+    chi.embedding_domainMul (verticalZeroExtendH2 b)
   rw [h1, h2, horizontalProjL2_scalarVectorMulTransverse,
     transverseH2Embedding_verticalZeroExtendH2, horizontalProjL2_verticalZeroExtendL2]
 
@@ -121,7 +123,10 @@ theorem deriv_conjugate (j : Fin 2) (b : TransverseC2H2) :
         (transverseDerivFromH2 j (chi.domainMul (verticalZeroExtendH2 b))) :=
     (horizontalProjL2_transverseDerivFromH2 j
       (chi.domainMul (verticalZeroExtendH2 b))).symm
-  have h2 := chi.deriv_domainMul j (verticalZeroExtendH2 b)
+  have h2 : transverseDerivFromH2 j (chi.domainMul (verticalZeroExtendH2 b)) =
+      scalarVectorMulTransverse (chi.gradient j) (transverseH2Embedding (verticalZeroExtendH2 b)) +
+        scalarVectorMulTransverse chi.value (transverseDerivFromH2 j (verticalZeroExtendH2 b)) :=
+    chi.deriv_domainMul j (verticalZeroExtendH2 b)
   have h3 : horizontalProjL2 (scalarVectorMulTransverse (chi.gradient j)
       (transverseH2Embedding (verticalZeroExtendH2 b))) =
       scalarVectorMulTransverseVec (Fin 2) (chi.gradient j)
@@ -150,7 +155,13 @@ theorem laplacian_conjugate (b : TransverseC2H2) :
         (transverseLaplacianFromH2 (chi.domainMul (verticalZeroExtendH2 b))) :=
     (horizontalProjL2_transverseLaplacianFromH2
       (chi.domainMul (verticalZeroExtendH2 b))).symm
-  have h2 := chi.laplacian_domainMul (verticalZeroExtendH2 b)
+  have h2 : transverseLaplacianFromH2 (chi.domainMul (verticalZeroExtendH2 b)) =
+      scalarVectorMulTransverse chi.value
+          (transverseLaplacianFromH2 (verticalZeroExtendH2 b)) +
+        (2 : ℂ) • (∑ j : Fin 2, scalarVectorMulTransverse (chi.gradient j)
+          (transverseDerivFromH2 j (verticalZeroExtendH2 b))) +
+        scalarVectorMulTransverse chi.laplacian (transverseH2Embedding (verticalZeroExtendH2 b)) :=
+    chi.laplacian_domainMul (verticalZeroExtendH2 b)
   have h3 : horizontalProjL2 (scalarVectorMulTransverse chi.value
       (transverseLaplacianFromH2 (verticalZeroExtendH2 b))) =
       scalarVectorMulTransverseVec (Fin 2) chi.value
