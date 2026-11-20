@@ -105,9 +105,11 @@ For a mathematical reading order, follow these modules, each under the
 2. Theorems 1.2 and 1.3, equilibrium coordinates, dynamics and CIR:
    `Analysis.EquilibriumFactorization`, `Analysis.DynamicalFactorization`, and
    `Analysis.CorrespondenceDynamicsGlobalCIR`.
-3. Theorem 1.4 and Corollary 1.5, polynomial sector and spectrum:
-   `Analysis.PolynomialEigenfunctions`, `Analysis.PolynomialGeneratorSpectrum`,
-   and `Analysis.CorrespondenceOperatorNumberSpectrum`.
+3. Theorem 1.4 and Corollary 1.5, polynomial sector and generator spectrum:
+   `Analysis.PolynomialEigenfunctionGenerator` for the eigenvalue equation and
+   `Analysis.GinibreOneParticleSpectrum` for spectrum containment in every positive
+   dimension. The spectrum of the Gaussian number operator, a separate result,
+   is in `Analysis.CorrespondenceOperatorNumberSpectrum`.
 4. Lemma 1.7 and Remark 1.8, curvature unbounded below and constant mean
    curvature: `Analysis.GinibrePointwiseCurvature`.
 5. Theorems 1.9 and 1.10, exact deficits: `Endgame.FullTheoremOneNine`,
