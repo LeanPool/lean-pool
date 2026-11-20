@@ -96,8 +96,34 @@ public import LeanPool.GinibrePoincare.Endgame.CorrespondenceEndpoints
 
 The concrete paper results are exported on their stated domains:
 
-For a mathematical reading order, use `HUMAN_READABILITY.md` and its four
-topic guides. To consume large conclusions without positional projections,
+For a mathematical reading order, follow these modules, each under the
+`LeanPool.GinibrePoincare` prefix:
+
+1. Theorem 1.1, sharp inequality and equality cases:
+   `Endgame.FullMainAnalyticProof`, then `Analysis.GaussianDbarEqualitySpace`
+   and `Analysis.GaussianEntireHilbertIdentification`.
+2. Theorems 1.2 and 1.3, equilibrium coordinates, dynamics and CIR:
+   `Analysis.EquilibriumFactorization`, `Analysis.DynamicalFactorization`, and
+   `Analysis.CorrespondenceDynamicsGlobalCIR`.
+3. Theorem 1.4 and Corollary 1.5, polynomial sector and spectrum:
+   `Analysis.PolynomialEigenfunctions`, `Analysis.PolynomialGeneratorSpectrum`,
+   and `Analysis.CorrespondenceOperatorNumberSpectrum`.
+4. Lemmas 1.7 and 1.8, pointwise curvature and collision capacity:
+   `Analysis.GinibrePointwiseCurvature` and `Analysis.GinibreCollisionCapacity`.
+5. Theorems 1.9 and 1.10, exact deficits: `Endgame.FullTheoremOneNine`,
+   `Endgame.FullTheoremOneNinePointwiseGamma`, and `Endgame.FullTheoremOneTen`.
+6. Theorems 1.12 to 1.14, radial LSI, matrix lift and general potentials:
+   `Analysis.LogSobolevInequality`, `Endgame.FullMatrixLift`, and
+   `Endgame.FullNonQuadraticPotential`.
+7. Section 2 and Appendices A and B, domains, cores and dbar foundations:
+   `Analysis.GaussianDbarCompactCore`, `Analysis.CorrespondenceCollisionCutoff`,
+   and `Analysis.CorrespondenceAuxiliaryHermiteLeading`.
+
+The upstream guide at the imported commit gives longer routes, under the
+upstream module names:
+https://github.com/djalilchafai/ginibre-poincare/blob/a1b2ba84e7dad8ba11b5c49a18b986a762a00a41/HUMAN_READABILITY.md
+
+To consume large conclusions without positional projections,
 use `fullTheoremOneNine_named`, `fullTheoremOneTen_named`,
 `fullMatrixLift_named`, `correspondenceOperatorNumber_has_bochner_data`, and
 `ginibreBrownianMaximalProcess_CIR_realization_named`. Their result records
