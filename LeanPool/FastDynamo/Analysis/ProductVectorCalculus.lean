@@ -86,14 +86,34 @@ theorem productScalarCoeffCLM_productDivergenceFromH2
   · rw [productScalarCoeffCLM_coord,
       productCoeffCLM_productAxialDerivFromH2]
 
+/-- The distributional divergence symbol at one frequency as a continuous linear functional. -/
+def productFrequencyDivergenceCLM (n : TransverseFrequency) (k : ℤ) :
+    ProductC3L2 →L[ℂ] ℂ :=
+  (∑ j : Fin 2,
+    (2 * Real.pi * Complex.I * (n j : ℂ)) • productCoeffCLM n k j.castSucc) +
+  (2 * Real.pi * Complex.I * (k : ℂ)) • productCoeffCLM n k (2 : Fin 3)
+
+/-- The distributional divergence coefficient of an arbitrary product `L²`
+vector field.  It is defined frequency by frequency and need not itself be an
+`L²` coefficient array. -/
+def productFrequencyDivergenceCoeff (n : TransverseFrequency) (k : ℤ)
+    (V : ProductC3L2) : ℂ :=
+  productFrequencyDivergenceCLM n k V
+
+/-- The value of the divergence symbol in terms of the field coefficients. -/
+theorem productFrequencyDivergenceCoeff_apply (n : TransverseFrequency) (k : ℤ)
+    (V : ProductC3L2) :
+    productFrequencyDivergenceCoeff n k V =
+  (∑ j : Fin 2,
+        (2 * Real.pi * Complex.I * (n j : ℂ)) *
+          productCoeffCLM n k j.castSucc V) +
+      (2 * Real.pi * Complex.I * (k : ℂ)) *
+        productCoeffCLM n k (2 : Fin 3) V := by
+  simp [productFrequencyDivergenceCoeff, productFrequencyDivergenceCLM]
+
 /-- Coefficientwise distributional solenoidality for a product `L²` field. -/
 def IsProductSolenoidal (V : ProductC3L2) : Prop :=
-  ∀ n k,
-    (∑ j : Fin 2,
-      (2 * Real.pi * Complex.I * (n j : ℂ)) *
-        productCoeffCLM n k j.castSucc V) +
-    (2 * Real.pi * Complex.I * (k : ℂ)) *
-      productCoeffCLM n k (2 : Fin 3) V = 0
+  ∀ n k, productFrequencyDivergenceCoeff n k V = 0
 
 /-- For an `H²` field, vanishing of the synthesized `L²` divergence is
 equivalent to coefficientwise distributional solenoidality. -/
@@ -105,13 +125,15 @@ theorem productDivergenceFromH2_eq_zero_iff (B : ProductC3H2) :
     have hc := congrArg (productScalarCoeffCLM n k) h
     rw [map_zero,
       productScalarCoeffCLM_productDivergenceFromH2] at hc
+    rw [productFrequencyDivergenceCoeff_apply]
     exact hc
   · intro h
     apply productScalarL2_ext_coeff
     intro n k
     change productScalarCoeffCLM n k (productDivergenceFromH2 B) =
       productScalarCoeffCLM n k 0
-    rw [productScalarCoeffCLM_productDivergenceFromH2, h n k]
+    rw [productScalarCoeffCLM_productDivergenceFromH2,
+      ← productFrequencyDivergenceCoeff_apply, h n k]
     exact (productScalarCoeffCLM n k).map_zero.symm
 
 /-! ## Fixed axial sectors -/
@@ -149,24 +171,13 @@ theorem productDivergenceFromH2_axialLiftH2
 
 /-! ## Distributional divergence and the Laplacian -/
 
-/-- The distributional divergence coefficient of an arbitrary product `L²`
-vector field.  It is defined frequency by frequency and need not itself be an
-`L²` coefficient array. -/
-def productFrequencyDivergenceCoeff (n : TransverseFrequency) (k : ℤ)
-    (V : ProductC3L2) : ℂ :=
-  (∑ j : Fin 2,
-    (2 * Real.pi * Complex.I * (n j : ℂ)) *
-      productCoeffCLM n k j.castSucc V) +
-  (2 * Real.pi * Complex.I * (k : ℂ)) *
-    productCoeffCLM n k (2 : Fin 3) V
-
 /-- Distributional divergence commutes with the Fourier Laplacian. -/
 theorem productFrequencyDivergenceCoeff_laplacian
     (B : ProductC3H2) (n : TransverseFrequency) (k : ℤ) :
     productFrequencyDivergenceCoeff n k (productLaplacianFromH2 B) =
       -(productFrequencyEnergy n k : ℂ) *
         productFrequencyDivergenceCoeff n k (productH2Embedding B) := by
-  unfold productFrequencyDivergenceCoeff
+  simp only [productFrequencyDivergenceCoeff_apply]
   simp_rw [productCoeffCLM_productLaplacianFromH2]
   simp only [Fin.sum_univ_two]
   ring

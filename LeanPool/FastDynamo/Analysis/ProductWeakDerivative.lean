@@ -345,6 +345,55 @@ theorem productCoeffCLM_productC3OfCoordsL2_synthesis
   exact congrArg (fun x : ProductScalarFourierL2 => x k n)
     (productScalarFourierAnalysisNested_synthesis (a i))
 
+/-- Fourier analysis of one scalar coordinate of a product vector field. -/
+def productCoordFourierAnalysis (i : Fin 3) :
+    ProductC3L2 →L[ℂ] ProductScalarFourierL2 :=
+  productScalarFourierAnalysisNested.toContinuousLinearEquiv.toContinuousLinearMap.comp
+    (productCoordL2 i)
+
+/-- Fourier analysis of the `i`-th coordinate of a product `L²` vector field returns, at axial
+frequency `k` and transverse frequency `n`, the vector Fourier coefficient
+`productCoeffCLM n k i V`. -/
+@[simp] theorem productCoordFourierAnalysis_apply
+    (i : Fin 3) (V : ProductC3L2) (k : ℤ)
+    (n : TransverseFrequency) :
+    productCoordFourierAnalysis i V k n = productCoeffCLM n k i V := by
+  change productScalarFourierAnalysisNested (productCoordL2 i V) k n = _
+  exact productScalarFourierAnalysisNested_coord_eq_productCoeffCLM V i k n
+
+/-- Fourier analysis of all three coordinates of a product `L2` field. -/
+def productC3FourierAnalysis :
+    ProductC3L2 →L[ℂ] WeightedProductC3Coeffs :=
+  (PiLp.continuousLinearEquiv 2 ℂ
+      (fun _ : Fin 3 ↦ ProductScalarFourierL2)).symm.toContinuousLinearMap.comp
+    (ContinuousLinearMap.pi productCoordFourierAnalysis)
+
+/--
+The coordinatewise product Fourier analysis returns exactly the coefficient functionals
+`productCoeffCLM n k i`.
+-/
+@[simp] theorem productC3FourierAnalysis_apply
+    (V : ProductC3L2) (i : Fin 3) (k : ℤ)
+    (n : TransverseFrequency) :
+    productC3FourierAnalysis V i k n = productCoeffCLM n k i V :=
+  productCoordFourierAnalysis_apply i V k n
+
+/-- Coordinatewise complete nested Fourier synthesis of a product `C3`
+coefficient family. -/
+def productC3FourierSynthesis :
+    WeightedProductC3Coeffs →L[ℂ] ProductC3L2 :=
+  productC3OfCoordsL2.comp
+    (mapWeightedProductCoords productScalarFourierSynthesisNested)
+
+/-- Synthesizing a three-component nested coefficient family produces a field whose vector
+Fourier coefficients are exactly the entries of that family. -/
+@[simp] theorem productCoeffCLM_productC3FourierSynthesis
+    (a : WeightedProductC3Coeffs) (n : TransverseFrequency)
+    (k : ℤ) (i : Fin 3) :
+    productCoeffCLM n k i (productC3FourierSynthesis a) =
+      a i k n :=
+  productCoeffCLM_productC3OfCoordsL2_synthesis a n k i
+
 /-- The `j`-th all-frequency transverse weak derivative as a bounded map. -/
 def productTransverseDerivFromH2 (j : Fin 2) :
     ProductC3H2 →L[ℂ] ProductC3L2 :=

@@ -95,7 +95,7 @@ theorem productDivergenceH1_coeff
     productH2WeightedCoeffs_apply,
     productH2WeightedCoeffs_apply,
     productH2WeightedCoeffs_apply]
-  unfold productFrequencyDivergenceCoeff
+  rw [productFrequencyDivergenceCoeff_apply]
   simp only [Fin.sum_univ_two]
   have h0 : (0 : Fin 2).castSucc = (0 : Fin 3) := rfl
   have h1 : (1 : Fin 2).castSucc = (1 : Fin 3) := rfl
@@ -128,29 +128,13 @@ theorem productScalarH1Embedding_productDivergenceH1
     productScalarFourierAnalysisNested_eq_inner]
   change _ = productScalarCoeffCLM n k (productDivergenceFromH2 B)
   rw [productScalarCoeffCLM_productDivergenceFromH2]
-  unfold productFrequencyDivergenceCoeff
+  rw [productFrequencyDivergenceCoeff_apply]
   rw [productH1ValueFourierMultiplier]
   have hw : (productH1Weight n k : ℂ) ≠ 0 := by
     exact_mod_cast (productH1Weight_pos n k).ne'
   field_simp [hw]
 
 /-! ## Weak divergence `L²(C³) → H⁻¹` -/
-
-/-- Fourier analysis of one scalar coordinate of a product vector field. -/
-def productCoordFourierAnalysis (i : Fin 3) :
-    ProductC3L2 →L[ℂ] ProductScalarFourierL2 :=
-  productScalarFourierAnalysisNested.toContinuousLinearEquiv.toContinuousLinearMap.comp
-    (productCoordL2 i)
-
-/-- Fourier analysis of the `i`-th coordinate of a product `L²` vector field returns, at axial
-frequency `k` and transverse frequency `n`, the vector Fourier coefficient
-`productCoeffCLM n k i V`. -/
-@[simp] theorem productCoordFourierAnalysis_apply
-    (i : Fin 3) (V : ProductC3L2) (k : ℤ)
-    (n : TransverseFrequency) :
-    productCoordFourierAnalysis i V k n = productCoeffCLM n k i V := by
-  change productScalarFourierAnalysisNested (productCoordL2 i V) k n = _
-  exact productScalarFourierAnalysisNested_coord_eq_productCoeffCLM V i k n
 
 /-- The Riesz coefficient array representing distributional divergence in
 the scalar `H⁻¹` anti-dual. -/
@@ -187,7 +171,7 @@ theorem productWeakDivergenceCoeffMap_apply
   rw [productH1TransverseDerivFourierMultiplier,
     productH1TransverseDerivFourierMultiplier,
     productH1AxialDerivFourierMultiplier]
-  unfold productFrequencyDivergenceCoeff
+  rw [productFrequencyDivergenceCoeff_apply]
   simp only [Fin.sum_univ_two]
   have h0 : (0 : Fin 2).castSucc = (0 : Fin 3) := rfl
   have h1 : (1 : Fin 2).castSucc = (1 : Fin 3) := rfl

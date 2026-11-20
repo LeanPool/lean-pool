@@ -36,7 +36,9 @@ main_results:
 - declaration: FastDynamo.main_theorem_strengthened
   informal: The construction supplies explicit velocity regularity, spectral and solution witnesses.
 - declaration: FastDynamo.tendstoUniformlyOn_resistiveEvolution_mainIdealGroup
-  informal: For each fixed datum, the resistive evolution approaches the ideal group uniformly on bounded time intervals.
+  informal: >-
+    For each fixed divergence-free L² datum, as positive diffusivity tends to zero, the resistive
+    evolution converges in L² to the ideal group uniformly on bounded intervals of nonnegative time.
 tags:
 - kinematic-dynamo
 - induction-equation

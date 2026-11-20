@@ -112,26 +112,6 @@ weight `productH2Weight n k`.
   change (productH2Weight n k : ℂ)⁻¹ * a k n = _
   rw [inv_mul_eq_div]
 
-/-- Fourier analysis of all three coordinates of a product `L2` field. -/
-def productC3FourierAnalysis :
-    ProductC3L2 →L[ℂ] WeightedProductC3Coeffs :=
-  (PiLp.continuousLinearEquiv 2 ℂ
-      (fun _ : Fin 3 ↦ ProductScalarFourierL2)).symm.toContinuousLinearMap.comp
-    (ContinuousLinearMap.pi fun i ↦
-      productScalarFourierAnalysisNested.toContinuousLinearEquiv.toContinuousLinearMap.comp
-        (productCoordL2 i))
-
-/--
-The coordinatewise product Fourier analysis returns exactly the coefficient functionals
-`productCoeffCLM n k i`.
--/
-@[simp] theorem productC3FourierAnalysis_apply
-    (V : ProductC3L2) (i : Fin 3) (k : ℤ)
-    (n : TransverseFrequency) :
-    productC3FourierAnalysis V i k n = productCoeffCLM n k i V := by
-  change productScalarFourierAnalysisNested (productCoordL2 i V) k n = _
-  exact productScalarFourierAnalysisNested_coord_eq_productCoeffCLM V i k n
-
 /-- Apply a scalar coefficient map to all three coordinate arrays. -/
 def mapWeightedProductCoeff
     (T : ProductScalarFourierL2 →L[ℂ] ProductScalarFourierL2) :

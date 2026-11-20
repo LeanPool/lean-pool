@@ -494,50 +494,10 @@ theorem integral_euclideanMonomial_mul_backgroundCellDerivCoord
         euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x) =
       (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
         ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x := by
-  let multiplier : ℂ := 2 * Real.pi * Complex.I * ((-frequency) j : ℂ)
-  have hsource := P.integrable_backgroundCellSourceCoord hρ m
-  have hderiv := P.integrable_backgroundCellDerivCoord hρ m j
-  have hmonomial := euclideanMonomial_memLp_top (-frequency)
-  have hmono_source : Integrable (fun x : Fin 2 → ℝ ↦
-      euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x) :=
-    hsource.mul_of_top_right hmonomial
-  have hmono_deriv : Integrable (fun x : Fin 2 → ℝ ↦
-      euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x) :=
-    hderiv.mul_of_top_right hmonomial
-  have hderivMono : MemLp
-      (fun x : Fin 2 → ℝ ↦ multiplier * euclideanMonomial (-frequency) x) ∞ :=
-    hmonomial.const_mul multiplier
-  have hderivMono_source : Integrable (fun x : Fin 2 → ℝ ↦
-      (multiplier * euclideanMonomial (-frequency) x) *
-        P.backgroundCellSourceCoord ρ m x) :=
-    hsource.mul_of_top_right hderivMono
-  have hibp :=
-    integral_bilinear_hasLineDerivAt_right_eq_neg_left_of_integrable
-      (E := Fin 2 → ℝ) (F := ℂ) (G := ℂ) (W := ℂ)
-      (B := ContinuousLinearMap.mul ℝ ℂ)
-      hderivMono_source hmono_deriv hmono_source
-      (fun x _ ↦ by
-        simpa [multiplier] using euclideanMonomial_hasLineDerivAt (-frequency) j x)
-      (fun x _ ↦ P.backgroundCellSourceCoord_hasLineDerivAt hρ m j x)
-  change (∫ x : Fin 2 → ℝ,
-      euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x) = _ at hibp
-  calc
-    (∫ x : Fin 2 → ℝ,
-        euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x) =
-        -∫ x : Fin 2 → ℝ,
-          (multiplier * euclideanMonomial (-frequency) x) *
-            P.backgroundCellSourceCoord ρ m x := hibp
-    _ = -multiplier * ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x := by
-      rw [← integral_neg, ← integral_const_mul]
-      apply integral_congr_ae
-      filter_upwards with x
-      ring
-    _ = (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
-          ∫ x : Fin 2 → ℝ,
-            euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x := by
-      simp [multiplier]
+          euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x :=
+  integral_euclideanMonomial_mul_lineDerivative frequency j
+    (P.integrable_backgroundCellSourceCoord hρ m) (P.integrable_backgroundCellDerivCoord hρ m j)
+    (P.backgroundCellSourceCoord_hasLineDerivAt hρ m j)
 
 /-! ## Transfer through the quotient fundamental domain -/
 
@@ -562,47 +522,11 @@ theorem torusIntegral_mFourier_mul_backgroundCellSource_eq_euclidean
         UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorus ρ m q
           ∂transverseMeasure) =
       ∫ x : Fin 2 → ℝ,
-        euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x := by
-  calc
-    (∫ q : TransverseTorus,
-        UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorus ρ m q
-          ∂transverseMeasure) =
-        ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          UnitAddTorus.mFourier (-frequency) (fun k ↦ (x k : UnitAddCircle)) *
-            P.backgroundCellTorus ρ m (fun k ↦ (x k : UnitAddCircle)) := by
-      rw [show transverseMeasure = torusHaarMeasure (Fin 2) from
-        volume_unitAddTorus_eq_haar]
-      have hpre := UnitAddTorus.integral_preimage
-        (f := fun q : TransverseTorus ↦
-          UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorus ρ m q)
-        (fun _ : Fin 2 ↦ (0 : ℝ))
-      change (∫ q : TransverseTorus,
-          UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorus ρ m q
-            ∂torusHaarMeasure (Fin 2)) = _ at hpre
-      simpa [iocFundamentalBox] using hpre
-    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x := by
-      apply integral_congr_ae
-      filter_upwards [ae_restrict_mem measurableSet_iocFundamentalBox] with x hx
-      have hx0 : (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (0 : Fin 2)
-      have hx1 : (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (1 : Fin 2)
-      have hq : (fun k ↦ (x k : UnitAddCircle)) =
-          transverseTorusPoint (finTwoToPair x) := by
-        funext k
-        fin_cases k <;> simp
-      rw [hq, P.backgroundCellTorus_transverseTorusPoint_eq_euclidean_of_mem_Ioc
-        ρ m hx0 hx1, euclideanMonomial_eq_mFourier]
-      rfl
-    _ = ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x := by
-      apply setIntegral_eq_integral_of_forall_compl_eq_zero
-      intro x hx
-      have hzero : P.backgroundCellSourceCoord ρ m x = 0 := by
-        by_contra hne
-        exact hx (P.support_backgroundCellSourceCoord_subset_iocFundamentalBox ρ m hne)
-      rw [hzero, mul_zero]
+        euclideanMonomial (-frequency) x * P.backgroundCellSourceCoord ρ m x :=
+  torusIntegral_mFourier_mul_eq_euclidean frequency
+    (P.support_backgroundCellSourceCoord_subset_iocFundamentalBox ρ m)
+    (fun _ hx0 hx1 ↦ P.backgroundCellTorus_transverseTorusPoint_eq_euclidean_of_mem_Ioc
+      ρ m hx0 hx1)
 
 /-- Transfer of the derivative pairing from the torus to the plane. -/
 theorem torusIntegral_mFourier_mul_backgroundCellDeriv_eq_euclidean
@@ -611,47 +535,11 @@ theorem torusIntegral_mFourier_mul_backgroundCellDeriv_eq_euclidean
         UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorusDeriv ρ m j q
           ∂transverseMeasure) =
       ∫ x : Fin 2 → ℝ,
-        euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x := by
-  calc
-    (∫ q : TransverseTorus,
-        UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorusDeriv ρ m j q
-          ∂transverseMeasure) =
-        ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          UnitAddTorus.mFourier (-frequency) (fun k ↦ (x k : UnitAddCircle)) *
-            P.backgroundCellTorusDeriv ρ m j (fun k ↦ (x k : UnitAddCircle)) := by
-      rw [show transverseMeasure = torusHaarMeasure (Fin 2) from
-        volume_unitAddTorus_eq_haar]
-      have hpre := UnitAddTorus.integral_preimage
-        (f := fun q : TransverseTorus ↦
-          UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorusDeriv ρ m j q)
-        (fun _ : Fin 2 ↦ (0 : ℝ))
-      change (∫ q : TransverseTorus,
-          UnitAddTorus.mFourier (-frequency) q * P.backgroundCellTorusDeriv ρ m j q
-            ∂torusHaarMeasure (Fin 2)) = _ at hpre
-      simpa [iocFundamentalBox] using hpre
-    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x := by
-      apply integral_congr_ae
-      filter_upwards [ae_restrict_mem measurableSet_iocFundamentalBox] with x hx
-      have hx0 : (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (0 : Fin 2)
-      have hx1 : (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (1 : Fin 2)
-      have hq : (fun k ↦ (x k : UnitAddCircle)) =
-          transverseTorusPoint (finTwoToPair x) := by
-        funext k
-        fin_cases k <;> simp
-      rw [hq, P.backgroundCellTorusDeriv_transverseTorusPoint_eq_euclidean_of_mem_Ioc
-        ρ m j hx0 hx1, euclideanMonomial_eq_mFourier]
-      rfl
-    _ = ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x := by
-      apply setIntegral_eq_integral_of_forall_compl_eq_zero
-      intro x hx
-      have hzero : P.backgroundCellDerivCoord ρ m j x = 0 := by
-        by_contra hne
-        exact hx (P.support_backgroundCellDerivCoord_subset_iocFundamentalBox ρ m j hne)
-      rw [hzero, mul_zero]
+        euclideanMonomial (-frequency) x * P.backgroundCellDerivCoord ρ m j x :=
+  torusIntegral_mFourier_mul_eq_euclidean frequency
+    (P.support_backgroundCellDerivCoord_subset_iocFundamentalBox ρ m j)
+    (fun _ hx0 hx1 ↦ P.backgroundCellTorusDeriv_transverseTorusPoint_eq_euclidean_of_mem_Ioc
+      ρ m j hx0 hx1)
 
 /-! ## The bundled `L∞` classes and the weak derivative -/
 

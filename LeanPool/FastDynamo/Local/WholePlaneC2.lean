@@ -184,7 +184,7 @@ theorem wholePlaneC2L2_ext_coord {f g : WholePlaneC2L2}
 /-- Extract the `i`-th coordinate of a `C2`-valued tempered distribution. -/
 def wholePlaneC2CoordTempered (i : Fin 2) :
     TemperedDistribution WholePlane C2 →L[ℂ] TemperedDistribution WholePlane ℂ :=
-  PointwiseConvergenceCLM.postcomp (SchwartzMap WholePlane ℂ) (EuclideanSpace.proj i)
+  WholePlaneHorizontalFibre.fibreTempered (EuclideanSpace.proj i)
 
 /-- Coordinate extraction is applied after testing. -/
 @[simp] theorem wholePlaneC2CoordTempered_apply_apply (i : Fin 2)
@@ -195,32 +195,14 @@ def wholePlaneC2CoordTempered (i : Fin 2) :
 /-- Coordinate extraction commutes with distributional line differentiation. -/
 theorem wholePlaneC2CoordTempered_lineDeriv (i : Fin 2) (e : WholePlane)
     (T : TemperedDistribution WholePlane C2) :
-    wholePlaneC2CoordTempered i (∂_{e} T) = ∂_{e} (wholePlaneC2CoordTempered i T) := by
-  ext f
-  rfl
+    wholePlaneC2CoordTempered i (∂_{e} T) = ∂_{e} (wholePlaneC2CoordTempered i T) :=
+  WholePlaneHorizontalFibre.fibreTempered_lineDeriv (EuclideanSpace.proj i) e T
 
 /-- Coordinate extraction commutes with the canonical `L² → tempered distribution` map. -/
 theorem wholePlaneC2CoordTempered_l2 (i : Fin 2) (b : WholePlaneC2L2) :
     wholePlaneC2CoordTempered i (wholePlaneL2ToTempered C2 b) =
-      wholePlaneL2ToTempered ℂ (wholePlaneC2CoordL2 i b) := by
-  ext f
-  simp only [wholePlaneC2CoordTempered_apply_apply, wholePlaneL2ToTempered_apply,
-    MeasureTheory.Lp.toTemperedDistribution_apply]
-  have hint : Integrable (fun x : WholePlane ↦ f x • (b x : C2)) volume :=
-    memLp_one_iff_integrable.mp <|
-      (ContinuousLinearMap.lsmul ℂ ℂ : ℂ →L[ℂ] C2 →L[ℂ] C2).memLp_of_bilin
-        1 (f.memLp 2 volume) (Lp.memLp b)
-  calc
-    (EuclideanSpace.proj i) (∫ x : WholePlane, f x • (b x : C2) ∂volume) =
-        ∫ x : WholePlane, (EuclideanSpace.proj i) (f x • (b x : C2)) ∂volume :=
-      ((EuclideanSpace.proj i).integral_comp_comm hint).symm
-    _ = ∫ x : WholePlane, f x • ((wholePlaneC2CoordL2 i b : WholePlane → ℂ) x) ∂volume := by
-      apply integral_congr_ae
-      filter_upwards [(EuclideanSpace.proj (𝕜 := ℂ) i).coeFn_compLpL
-        (p := 2) (μ := (volume : Measure WholePlane)) b] with x hx
-      rw [show (wholePlaneC2CoordL2 i b : WholePlane → ℂ) x =
-        (EuclideanSpace.proj (𝕜 := ℂ) i) ((b : WholePlane → C2) x) from hx]
-      simp
+      wholePlaneL2ToTempered ℂ (wholePlaneC2CoordL2 i b) :=
+  WholePlaneHorizontalFibre.fibreTempered_l2 (EuclideanSpace.proj i) b
 
 /-- Continuous ambient scalar jet obtained by extracting one coordinate of a two-component
 weak `H¹` jet. -/

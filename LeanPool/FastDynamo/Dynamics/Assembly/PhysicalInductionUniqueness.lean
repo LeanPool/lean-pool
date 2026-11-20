@@ -139,12 +139,13 @@ theorem productDivergenceFromH2_eq_zero_of_isForwardStrongSolution (u : Transver
     intro s _
     simpa [scalarOperator] using hasDerivWithinAt_const s (Set.Ici (0 : ℝ)) (0 : ℂ)
   have hw0' : φ (productL2ToHMinus2 (productH2Embedding (w 0))) = 0 := by
-    rw [productHMinus2DivergenceFunctional_productL2ToHMinus2,
-      productSolenoidalFunctional_apply, hw0 n k, zero_div]
+    rw [productHMinus2DivergenceFunctional_productL2ToHMinus2]
+    change productFrequencyDivergenceCoeff n k (productH2Embedding (w 0)) /
+      (productH2Weight n k : ℂ) = 0
+    rw [hw0 n k, zero_div]
   have h := scalarOperator_forwardStrongSolutionsUnique lam _ _ hsol hzero hw0' t ht
   change φ (productL2ToHMinus2 (productH2Embedding (w t))) = 0 at h
-  rw [productHMinus2DivergenceFunctional_productL2ToHMinus2, div_eq_zero_iff,
-    productSolenoidalFunctional_apply] at h
+  rw [productHMinus2DivergenceFunctional_productL2ToHMinus2, div_eq_zero_iff] at h
   exact h.resolve_right (by exact_mod_cast (productH2Weight_pos n k).ne')
 
 /-! ## Uniqueness -/

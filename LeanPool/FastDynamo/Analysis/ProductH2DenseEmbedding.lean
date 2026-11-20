@@ -146,41 +146,27 @@ theorem tendsto_productScalarFourierTruncation
 
 /-! ## Vector product Fourier analysis, synthesis, and truncation -/
 
-/-- Coordinatewise complete nested Fourier analysis of a physical product
-`C3` field. -/
-def productC3L2FourierAnalysisForDensity :
+/-- Coordinatewise nested Fourier analysis for the density construction. -/
+abbrev productC3L2FourierAnalysisForDensity :
     ProductC3L2 →L[ℂ] WeightedProductC3Coeffs :=
-  (PiLp.continuousLinearEquiv 2 ℂ
-      (fun _ : Fin 3 ↦ ProductScalarFourierL2)).symm.toContinuousLinearMap.comp
-    (ContinuousLinearMap.pi fun i ↦
-      productScalarFourierAnalysisNested.toContinuousLinearEquiv.toContinuousLinearMap.comp
-        (productCoordL2 i))
+  productC3FourierAnalysis
 
-/-- Coordinatewise nested Fourier analysis of a physical field returns its vector Fourier
-coefficients: the `(i, k, n)` entry is `productCoeffCLM n k i V`. -/
-@[simp] theorem productC3L2FourierAnalysisForDensity_apply
-    (V : ProductC3L2) (i : Fin 3) (k : ℤ)
-    (n : TransverseFrequency) :
-    productC3L2FourierAnalysisForDensity V i k n =
-      productCoeffCLM n k i V := by
-  change productScalarFourierAnalysisNested (productCoordL2 i V) k n = _
-  exact productScalarFourierAnalysisNested_coord_eq_productCoeffCLM V i k n
-
-/-- Coordinatewise complete nested Fourier synthesis of a product `C3`
-coefficient family. -/
-def productC3L2FourierSynthesisForDensity :
+/-- Coordinatewise nested Fourier synthesis for the density construction. -/
+abbrev productC3L2FourierSynthesisForDensity :
     WeightedProductC3Coeffs →L[ℂ] ProductC3L2 :=
-  productC3OfCoordsL2.comp
-    (mapWeightedProductCoords productScalarFourierSynthesisNested)
+  productC3FourierSynthesis
 
-/-- Synthesizing a three-component nested coefficient family produces a field whose vector
-Fourier coefficients are exactly the entries of that family. -/
-@[simp] theorem productCoeffCLM_productC3L2FourierSynthesisForDensity
-    (a : WeightedProductC3Coeffs) (n : TransverseFrequency)
-    (k : ℤ) (i : Fin 3) :
-    productCoeffCLM n k i (productC3L2FourierSynthesisForDensity a) =
-      a i k n := by
-  exact productCoeffCLM_productC3OfCoordsL2_synthesis a n k i
+/-- Analysis in the density construction gives the original Fourier coefficients. -/
+theorem productC3L2FourierAnalysisForDensity_apply
+    (V : ProductC3L2) (i : Fin 3) (k : ℤ) (n : TransverseFrequency) :
+    productC3L2FourierAnalysisForDensity V i k n = productCoeffCLM n k i V :=
+  productC3FourierAnalysis_apply V i k n
+
+/-- Synthesis in the density construction recovers the given Fourier coefficients. -/
+theorem productCoeffCLM_productC3L2FourierSynthesisForDensity
+    (a : WeightedProductC3Coeffs) (n : TransverseFrequency) (k : ℤ) (i : Fin 3) :
+    productCoeffCLM n k i (productC3L2FourierSynthesisForDensity a) = a i k n :=
+  productCoeffCLM_productC3FourierSynthesis a n k i
 
 /-- Product Fourier synthesis is a left inverse to coordinatewise analysis. -/
 @[simp] theorem productC3L2FourierSynthesisForDensity_analysis

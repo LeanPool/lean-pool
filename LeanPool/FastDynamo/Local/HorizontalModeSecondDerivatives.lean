@@ -440,11 +440,15 @@ theorem horizontalInteriorLaplacian_continuous (kappa : ℂ) :
   exact continuous_finsetSum _ fun j _ ↦
     horizontalInteriorSecondPartialDerivative_continuous kappa j j
 
-/-- Off the polar axis, the first Cartesian component of the regular interior branch satisfies
-`Δ_⊥ b₁ = κ² b₁`. -/
-theorem horizontalInteriorLaplacian_apply_zero_eq
-    {kappa : ℂ} (hkappa : kappa ≠ 0) {y : WholePlane} (hy : y ≠ 0) :
-    horizontalInteriorLaplacian kappa y 0 = kappa ^ 2 * horizontalInteriorField kappa y 0 := by
+/-- Each linear combination of the two interior modes obeys the same Helmholtz equation. -/
+private theorem horizontalInteriorModes_laplacian
+    {kappa : ℂ} (hkappa : kappa ≠ 0) {y : WholePlane} (hy : y ≠ 0)
+    (c d : ℂ) :
+    scalarCartesianLaplacian
+        (fun x ↦ c * radialMode (horizontalMinusInsideReal kappa) x +
+          d * phaseSqRadialMode (horizontalPlusInsideReal kappa) x) y =
+      kappa ^ 2 * (c * horizontalMinusInsideReal kappa ‖y‖ +
+        d * (exteriorPhase y ^ 2 * horizontalPlusInsideReal kappa ‖y‖)) := by
   have hrne : ‖y‖ ≠ 0 := norm_ne_zero_iff.mpr hy
   have hmC2 : ContDiffAt ℝ 2 (radialMode (horizontalMinusInsideReal kappa)) y :=
     radialMode_contDiffAt_two hy (minusInside_analyticAt kappa ((‖y‖ : ℝ) : ℂ))
@@ -463,6 +467,14 @@ theorem horizontalInteriorLaplacian_apply_zero_eq
       (fun _ _ ↦ horizontalPlusInsideReal_hasDerivAt_self kappa _)
       (fun _ _ ↦ horizontalPlusInsideReal_deriv_hasDerivAt_self kappa _) hy,
       horizontalPlusInsideReal_polar hkappa hrne]
+  rw [scalarCartesianLaplacian_linearCombination hmC2 hpC2, hmLap, hpLap]
+  ring
+
+/-- Off the polar axis, the first Cartesian component of the regular interior branch satisfies
+`Δ_⊥ b₁ = κ² b₁`. -/
+theorem horizontalInteriorLaplacian_apply_zero_eq
+    {kappa : ℂ} (hkappa : kappa ≠ 0) {y : WholePlane} (hy : y ≠ 0) :
+    horizontalInteriorLaplacian kappa y 0 = kappa ^ 2 * horizontalInteriorField kappa y 0 := by
   have hfield : horizontalInteriorField kappa y 0 =
       (1 / 2 : ℂ) * horizontalMinusInsideReal kappa ‖y‖ +
         (1 / 2 : ℂ) * (exteriorPhase y ^ 2 * horizontalPlusInsideReal kappa ‖y‖) :=
@@ -470,32 +482,13 @@ theorem horizontalInteriorLaplacian_apply_zero_eq
   rw [horizontalInteriorLaplacian_apply,
     scalarCartesianLaplacian_congr_of_eventuallyEq
       (horizontalInteriorField_apply_zero_eventuallyEq_modes kappa hy),
-    scalarCartesianLaplacian_linearCombination hmC2 hpC2, hmLap, hpLap, hfield]
-  ring
+    horizontalInteriorModes_laplacian hkappa hy, hfield]
 
 /-- Off the polar axis, the second Cartesian component of the regular interior branch satisfies
 `Δ_⊥ b₂ = κ² b₂`. -/
 theorem horizontalInteriorLaplacian_apply_one_eq
     {kappa : ℂ} (hkappa : kappa ≠ 0) {y : WholePlane} (hy : y ≠ 0) :
     horizontalInteriorLaplacian kappa y 1 = kappa ^ 2 * horizontalInteriorField kappa y 1 := by
-  have hrne : ‖y‖ ≠ 0 := norm_ne_zero_iff.mpr hy
-  have hmC2 : ContDiffAt ℝ 2 (radialMode (horizontalMinusInsideReal kappa)) y :=
-    radialMode_contDiffAt_two hy (minusInside_analyticAt kappa ((‖y‖ : ℝ) : ℂ))
-  have hpC2 : ContDiffAt ℝ 2 (phaseSqRadialMode (horizontalPlusInsideReal kappa)) y :=
-    phaseSqRadialMode_contDiffAt_two hy (plusInside_analyticAt kappa ((‖y‖ : ℝ) : ℂ))
-  have hmLap : scalarCartesianLaplacian (radialMode (horizontalMinusInsideReal kappa)) y =
-      kappa ^ 2 * horizontalMinusInsideReal kappa ‖y‖ := by
-    rw [scalarCartesianLaplacian_radialMode_eq_polar
-      (fun _ _ ↦ horizontalMinusInsideReal_hasDerivAt_self kappa _)
-      (fun _ _ ↦ horizontalMinusInsideReal_deriv_hasDerivAt_self kappa _) hy,
-      horizontalMinusInsideReal_polar kappa hrne]
-  have hpLap :
-      scalarCartesianLaplacian (phaseSqRadialMode (horizontalPlusInsideReal kappa)) y =
-      exteriorPhase y ^ 2 * (kappa ^ 2 * horizontalPlusInsideReal kappa ‖y‖) := by
-    rw [scalarCartesianLaplacian_phaseSqRadialMode_eq_polar
-      (fun _ _ ↦ horizontalPlusInsideReal_hasDerivAt_self kappa _)
-      (fun _ _ ↦ horizontalPlusInsideReal_deriv_hasDerivAt_self kappa _) hy,
-      horizontalPlusInsideReal_polar hkappa hrne]
   have hfield : horizontalInteriorField kappa y 1 =
       (I / 2 : ℂ) * horizontalMinusInsideReal kappa ‖y‖ +
         (-I / 2 : ℂ) * (exteriorPhase y ^ 2 * horizontalPlusInsideReal kappa ‖y‖) :=
@@ -503,8 +496,7 @@ theorem horizontalInteriorLaplacian_apply_one_eq
   rw [horizontalInteriorLaplacian_apply,
     scalarCartesianLaplacian_congr_of_eventuallyEq
       (horizontalInteriorField_apply_one_eventuallyEq_modes kappa hy),
-    scalarCartesianLaplacian_linearCombination hmC2 hpC2, hmLap, hpLap, hfield]
-  ring
+    horizontalInteriorModes_laplacian hkappa hy, hfield]
 
 /-- Off the polar axis the regular interior branch satisfies the transverse Helmholtz equation
 `Δ_⊥ b_in = κ² b_in`.  Both circular combinations obey the same radial system

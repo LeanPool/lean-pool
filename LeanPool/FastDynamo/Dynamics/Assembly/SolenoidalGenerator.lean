@@ -85,9 +85,8 @@ theorem productInductionAction_mem_productSolenoidalSubspace (u : TransverseReal
   have hlap : productLaplacianFromH2 B ∈ productSolenoidalSubspace := by
     rw [mem_productSolenoidalSubspace_iff]
     intro n k
-    have h := (productDivergenceFromH2_eq_zero_iff B).1 hB n k
-    simp only [Fin.sum_univ_two, productCoeffCLM_productLaplacianFromH2] at h ⊢
-    linear_combination (-(productFrequencyEnergy n k : ℂ)) * h
+    rw [productFrequencyDivergenceCoeff_laplacian,
+      (productDivergenceFromH2_eq_zero_iff B).1 hB n k, mul_zero]
   rw [productInductionAction_eq_diffusion_add_lower, hlower]
   exact productSolenoidalSubspace.add_mem (productSolenoidalSubspace.smul_mem _ hlap)
     ((mem_productSolenoidalSubspace_iff _).2 (productVelocityCrossWeakCurl_solenoidal u B))

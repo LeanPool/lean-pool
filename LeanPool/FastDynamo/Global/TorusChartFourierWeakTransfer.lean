@@ -360,6 +360,65 @@ theorem euclideanMonomial_memLp_top
     1 (Filter.Eventually.of_forall fun x ↦
       (norm_euclideanMonomial frequency x).le)
 
+/-- Integration by parts against a Fourier monomial on the covering plane. -/
+theorem integral_euclideanMonomial_mul_lineDerivative
+    {source derivative : (Fin 2 → ℝ) → ℂ}
+    (frequency : TransverseFrequency) (j : Fin 2)
+    (hsource : Integrable source) (hderiv : Integrable derivative)
+    (hline : ∀ x, HasLineDerivAt ℝ source (derivative x) x (Pi.single j (1 : ℝ))) :
+    (∫ x : Fin 2 → ℝ, euclideanMonomial (-frequency) x * derivative x) =
+      (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
+        ∫ x : Fin 2 → ℝ, euclideanMonomial (-frequency) x * source x := by
+  let multiplier : ℂ :=
+    2 * Real.pi * Complex.I * ((-frequency) j : ℂ)
+  have hmonomial := euclideanMonomial_memLp_top (-frequency)
+  have hmono_source : Integrable (fun x : Fin 2 → ℝ ↦
+      euclideanMonomial (-frequency) x * source x) :=
+    hsource.mul_of_top_right hmonomial
+  have hmono_deriv : Integrable (fun x : Fin 2 → ℝ ↦
+      euclideanMonomial (-frequency) x *
+        derivative x) :=
+    hderiv.mul_of_top_right hmonomial
+  have hderivMono : MemLp
+      (fun x : Fin 2 → ℝ ↦ multiplier * euclideanMonomial (-frequency) x)
+      ∞ := by
+    exact hmonomial.const_mul multiplier
+  have hderivMono_source : Integrable (fun x : Fin 2 → ℝ ↦
+      (multiplier * euclideanMonomial (-frequency) x) *
+        source x) :=
+    hsource.mul_of_top_right hderivMono
+  have hibp :=
+    integral_bilinear_hasLineDerivAt_right_eq_neg_left_of_integrable
+      (E := Fin 2 → ℝ) (F := ℂ) (G := ℂ) (W := ℂ)
+      (B := ContinuousLinearMap.mul ℝ ℂ)
+      hderivMono_source hmono_deriv hmono_source
+      (fun x _ ↦ by
+        simpa [multiplier] using
+          euclideanMonomial_hasLineDerivAt (-frequency) j x)
+      (fun x _ ↦ hline x)
+  change (∫ x : Fin 2 → ℝ,
+      euclideanMonomial (-frequency) x *
+        derivative x) = _ at hibp
+  calc
+    (∫ x : Fin 2 → ℝ,
+        euclideanMonomial (-frequency) x *
+          derivative x) =
+        -∫ x : Fin 2 → ℝ,
+          (multiplier * euclideanMonomial (-frequency) x) *
+            source x := hibp
+    _ = -multiplier * ∫ x : Fin 2 → ℝ,
+          euclideanMonomial (-frequency) x *
+            source x := by
+      rw [← integral_neg, ← integral_const_mul]
+      apply integral_congr_ae
+      filter_upwards with x
+      ring
+    _ = (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
+          ∫ x : Fin 2 → ℝ,
+            euclideanMonomial (-frequency) x *
+              source x := by
+      simp [multiplier]
+
 /-- Euclidean integration by parts against every pulled-back torus
 monomial. -/
 theorem integral_euclideanMonomial_mul_firstDerivativeCoord
@@ -371,58 +430,10 @@ theorem integral_euclideanMonomial_mul_firstDerivativeCoord
       (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
         ∫ x : Fin 2 → ℝ,
           euclideanMonomial (-frequency) x *
-            C.euclideanSourceCoord i x := by
-  let multiplier : ℂ :=
-    2 * Real.pi * Complex.I * ((-frequency) j : ℂ)
-  have hsource := C.integrable_euclideanSourceCoord i
-  have hderiv := C.integrable_euclideanFirstDerivativeCoord j i
-  have hmonomial := euclideanMonomial_memLp_top (-frequency)
-  have hmono_source : Integrable (fun x : Fin 2 → ℝ ↦
-      euclideanMonomial (-frequency) x * C.euclideanSourceCoord i x) :=
-    hsource.mul_of_top_right hmonomial
-  have hmono_deriv : Integrable (fun x : Fin 2 → ℝ ↦
-      euclideanMonomial (-frequency) x *
-        C.euclideanFirstDerivativeCoord j i x) :=
-    hderiv.mul_of_top_right hmonomial
-  have hderivMono : MemLp
-      (fun x : Fin 2 → ℝ ↦ multiplier * euclideanMonomial (-frequency) x)
-      ∞ := by
-    exact hmonomial.const_mul multiplier
-  have hderivMono_source : Integrable (fun x : Fin 2 → ℝ ↦
-      (multiplier * euclideanMonomial (-frequency) x) *
-        C.euclideanSourceCoord i x) :=
-    hsource.mul_of_top_right hderivMono
-  have hibp :=
-    integral_bilinear_hasLineDerivAt_right_eq_neg_left_of_integrable
-      (E := Fin 2 → ℝ) (F := ℂ) (G := ℂ) (W := ℂ)
-      (B := ContinuousLinearMap.mul ℝ ℂ)
-      hderivMono_source hmono_deriv hmono_source
-      (fun x _ ↦ by
-        simpa [multiplier] using
-          euclideanMonomial_hasLineDerivAt (-frequency) j x)
-      (fun x _ ↦ C.euclideanSourceCoord_hasLineDerivAt j i x)
-  change (∫ x : Fin 2 → ℝ,
-      euclideanMonomial (-frequency) x *
-        C.euclideanFirstDerivativeCoord j i x) = _ at hibp
-  calc
-    (∫ x : Fin 2 → ℝ,
-        euclideanMonomial (-frequency) x *
-          C.euclideanFirstDerivativeCoord j i x) =
-        -∫ x : Fin 2 → ℝ,
-          (multiplier * euclideanMonomial (-frequency) x) *
-            C.euclideanSourceCoord i x := hibp
-    _ = -multiplier * ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x *
-            C.euclideanSourceCoord i x := by
-      rw [← integral_neg, ← integral_const_mul]
-      apply integral_congr_ae
-      filter_upwards with x
-      ring
-    _ = (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
-          ∫ x : Fin 2 → ℝ,
-            euclideanMonomial (-frequency) x *
-              C.euclideanSourceCoord i x := by
-      simp [multiplier]
+            C.euclideanSourceCoord i x :=
+  integral_euclideanMonomial_mul_lineDerivative frequency j
+    (C.integrable_euclideanSourceCoord i) (C.integrable_euclideanFirstDerivativeCoord j i)
+    (C.euclideanSourceCoord_hasLineDerivAt j i)
 
 /-! ## Exact fundamental-domain transfer -/
 
@@ -434,6 +445,49 @@ theorem measurableSet_iocFundamentalBox :
     (fun _ : Fin 2 ↦ measurableSet_Ioc (a := (0 : ℝ)) (b := 0 + 1))
   simpa [iocFundamentalBox] using h
 
+/-- A supported scalar field on the covering plane has the same Fourier pairings as the
+corresponding torus field. The fields must agree on the half-open fundamental box. -/
+theorem torusIntegral_mFourier_mul_eq_euclidean
+    (frequency : TransverseFrequency)
+    {torus : TransverseTorus → ℂ} {plane : (Fin 2 → ℝ) → ℂ}
+    (hsupport : Function.support plane ⊆ iocFundamentalBox)
+    (hmatch : ∀ x : Fin 2 → ℝ,
+      (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) →
+      (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) →
+      torus (transverseTorusPoint (finTwoToPair x)) = plane x) :
+    (∫ q : TransverseTorus, UnitAddTorus.mFourier (-frequency) q * torus q
+      ∂transverseMeasure) =
+      ∫ x : Fin 2 → ℝ, euclideanMonomial (-frequency) x * plane x := by
+  calc
+    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox,
+          UnitAddTorus.mFourier (-frequency) (fun k ↦ (x k : UnitAddCircle)) *
+            torus (fun k ↦ (x k : UnitAddCircle)) := by
+      rw [show transverseMeasure = torusHaarMeasure (Fin 2) from volume_unitAddTorus_eq_haar]
+      have hpre := UnitAddTorus.integral_preimage
+        (f := fun q : TransverseTorus ↦ UnitAddTorus.mFourier (-frequency) q * torus q)
+        (fun _ : Fin 2 ↦ (0 : ℝ))
+      change (∫ q : TransverseTorus, UnitAddTorus.mFourier (-frequency) q * torus q
+        ∂torusHaarMeasure (Fin 2)) = _ at hpre
+      simpa [iocFundamentalBox] using hpre
+    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox, euclideanMonomial (-frequency) x * plane x := by
+      apply integral_congr_ae
+      filter_upwards [ae_restrict_mem measurableSet_iocFundamentalBox] with x hx
+      have hx0 : (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
+        simpa using hx (0 : Fin 2)
+      have hx1 : (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
+        simpa using hx (1 : Fin 2)
+      have hq : (fun k ↦ (x k : UnitAddCircle)) = transverseTorusPoint (finTwoToPair x) := by
+        funext k
+        fin_cases k <;> simp
+      rw [euclideanMonomial_eq_mFourier, hq, hmatch x hx0 hx1]
+    _ = _ := by
+      apply setIntegral_eq_integral_of_forall_compl_eq_zero
+      intro x hx
+      have hzero : plane x = 0 := by
+        by_contra hne
+        exact hx (hsupport hne)
+      rw [hzero, mul_zero]
+
 /-- Transfer of the value pairing from the torus to the covering plane: the torus integral of
 `e^{-2πi m·q}` against a coordinate of the periodized source equals the corresponding Euclidean
 integral, because `(0,1]²` is a fundamental domain and the source is supported in it. -/
@@ -444,49 +498,11 @@ theorem torusIntegral_mFourier_mul_sourceCoord_eq_euclidean
         UnitAddTorus.mFourier (-frequency) q * C.torusSource q i
           ∂transverseMeasure) =
       ∫ x : Fin 2 → ℝ,
-        euclideanMonomial (-frequency) x * C.euclideanSourceCoord i x := by
-  calc
-    (∫ q : TransverseTorus,
-        UnitAddTorus.mFourier (-frequency) q * C.torusSource q i
-          ∂transverseMeasure) =
-        ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-            UnitAddTorus.mFourier (-frequency)
-              (fun k ↦ (x k : UnitAddCircle)) *
-            C.torusSource (fun k ↦ (x k : UnitAddCircle)) i := by
-      rw [show transverseMeasure = torusHaarMeasure (Fin 2) from
-        volume_unitAddTorus_eq_haar]
-      have hpre := UnitAddTorus.integral_preimage
-          (f := fun q : TransverseTorus ↦
-            UnitAddTorus.mFourier (-frequency) q * C.torusSource q i)
-          (fun _ : Fin 2 ↦ (0 : ℝ))
-      change (∫ q : TransverseTorus,
-          UnitAddTorus.mFourier (-frequency) q * C.torusSource q i
-            ∂torusHaarMeasure (Fin 2)) = _ at hpre
-      simpa [iocFundamentalBox] using hpre
-    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          euclideanMonomial (-frequency) x * C.euclideanSourceCoord i x := by
-      apply integral_congr_ae
-      filter_upwards [ae_restrict_mem measurableSet_iocFundamentalBox] with x hx
-      have hx0 : (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (0 : Fin 2)
-      have hx1 : (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (1 : Fin 2)
-      have hq : (fun k ↦ (x k : UnitAddCircle)) =
-          transverseTorusPoint (finTwoToPair x) := by
-        funext k
-        fin_cases k <;> simp
-      rw [hq, C.torusSource_transverseTorusPoint_eq_source_of_mem_Ioc
-        hx0 hx1]
-      rw [euclideanMonomial_eq_mFourier]
-      rfl
-    _ = ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x * C.euclideanSourceCoord i x := by
-      apply setIntegral_eq_integral_of_forall_compl_eq_zero
-      intro x hx
-      have hzero : C.euclideanSourceCoord i x = 0 := by
-        by_contra hne
-        exact hx (C.support_euclideanSourceCoord_subset_iocFundamentalBox i hne)
-      rw [hzero, mul_zero]
+        euclideanMonomial (-frequency) x * C.euclideanSourceCoord i x :=
+  torusIntegral_mFourier_mul_eq_euclidean frequency
+    (C.support_euclideanSourceCoord_subset_iocFundamentalBox i)
+    (fun _ hx0 hx1 ↦ congrArg (fun value : C3 ↦ value i)
+      (C.torusSource_transverseTorusPoint_eq_source_of_mem_Ioc hx0 hx1))
 
 /-- Transfer of the derivative pairing from the torus to the covering plane: the torus integral of
 `e^{-2πi m·q}` against a coordinate of the periodized stored derivative equals the corresponding
@@ -499,57 +515,11 @@ theorem torusIntegral_mFourier_mul_firstDerivativeCoord_eq_euclidean
           C.torusFirstDerivative j q i ∂transverseMeasure) =
       ∫ x : Fin 2 → ℝ,
         euclideanMonomial (-frequency) x *
-          C.euclideanFirstDerivativeCoord j i x := by
-  calc
-    (∫ q : TransverseTorus,
-        UnitAddTorus.mFourier (-frequency) q *
-          C.torusFirstDerivative j q i ∂transverseMeasure) =
-        ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-            UnitAddTorus.mFourier (-frequency)
-              (fun k ↦ (x k : UnitAddCircle)) *
-            C.torusFirstDerivative j
-              (fun k ↦ (x k : UnitAddCircle)) i := by
-      rw [show transverseMeasure = torusHaarMeasure (Fin 2) from
-        volume_unitAddTorus_eq_haar]
-      have hpre := UnitAddTorus.integral_preimage
-          (f := fun q : TransverseTorus ↦
-            UnitAddTorus.mFourier (-frequency) q *
-              C.torusFirstDerivative j q i)
-          (fun _ : Fin 2 ↦ (0 : ℝ))
-      change (∫ q : TransverseTorus,
-          UnitAddTorus.mFourier (-frequency) q *
-            C.torusFirstDerivative j q i
-              ∂torusHaarMeasure (Fin 2)) = _ at hpre
-      simpa [iocFundamentalBox] using hpre
-    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          euclideanMonomial (-frequency) x *
-            C.euclideanFirstDerivativeCoord j i x := by
-      apply integral_congr_ae
-      filter_upwards [ae_restrict_mem measurableSet_iocFundamentalBox] with x hx
-      have hx0 : (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (0 : Fin 2)
-      have hx1 : (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (1 : Fin 2)
-      have hq : (fun k ↦ (x k : UnitAddCircle)) =
-          transverseTorusPoint (finTwoToPair x) := by
-        funext k
-        fin_cases k <;> simp
-      rw [hq,
-        C.torusFirstDerivative_transverseTorusPoint_eq_firstDerivative_of_mem_Ioc
-          j hx0 hx1]
-      rw [euclideanMonomial_eq_mFourier]
-      rfl
-    _ = ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x *
-            C.euclideanFirstDerivativeCoord j i x := by
-      apply setIntegral_eq_integral_of_forall_compl_eq_zero
-      intro x hx
-      have hzero : C.euclideanFirstDerivativeCoord j i x = 0 := by
-        by_contra hne
-        exact hx
-          (C.support_euclideanFirstDerivativeCoord_subset_iocFundamentalBox
-            j i hne)
-      rw [hzero, mul_zero]
+          C.euclideanFirstDerivativeCoord j i x :=
+  torusIntegral_mFourier_mul_eq_euclidean frequency
+    (C.support_euclideanFirstDerivativeCoord_subset_iocFundamentalBox j i)
+    (fun _ hx0 hx1 ↦ congrArg (fun value : C3 ↦ value i)
+      (C.torusFirstDerivative_transverseTorusPoint_eq_firstDerivative_of_mem_Ioc j hx0 hx1))
 
 /-! ## Fourier coefficients of the bundled fields -/
 

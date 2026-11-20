@@ -73,11 +73,9 @@ The scalar constraint functional whose vanishing at `(n, k)` is the
 distributional solenoidality of a product `L²` field in that single Fourier
 mode: `V ↦ ∑_{j<2} 2πi n_j V̂_j(n,k) + 2πi k V̂_3(n,k)`.
 -/
-def productSolenoidalFunctional (n : TransverseFrequency) (k : ℤ) :
+abbrev productSolenoidalFunctional (n : TransverseFrequency) (k : ℤ) :
     ProductC3L2 →L[ℂ] ℂ :=
-  (∑ j : Fin 2,
-    (2 * Real.pi * Complex.I * (n j : ℂ)) • productCoeffCLM n k j.castSucc) +
-  (2 * Real.pi * Complex.I * (k : ℂ)) • productCoeffCLM n k (2 : Fin 3)
+  productFrequencyDivergenceCLM n k
 
 /-- Evaluation of the solenoidality constraint functional, written with the
 scalar multiplications displayed. -/
@@ -86,8 +84,8 @@ theorem productSolenoidalFunctional_apply (n : TransverseFrequency) (k : ℤ)
     productSolenoidalFunctional n k V =
       (∑ j : Fin 2, (2 * Real.pi * Complex.I * (n j : ℂ)) *
           productCoeffCLM n k j.castSucc V) +
-        (2 * Real.pi * Complex.I * (k : ℂ)) * productCoeffCLM n k (2 : Fin 3) V := by
-  simp [productSolenoidalFunctional]
+        (2 * Real.pi * Complex.I * (k : ℂ)) * productCoeffCLM n k (2 : Fin 3) V :=
+  productFrequencyDivergenceCoeff_apply n k V
 
 /--
 `L²_σ` in the product model: the solenoidal subspace of `ProductC3L2`, realized
@@ -104,7 +102,6 @@ theorem mem_productSolenoidalSubspace_iff (V : ProductC3L2) :
   · intro h n k
     have hk : V ∈ (productSolenoidalFunctional n k).ker :=
       (Submodule.mem_iInf _).mp ((Submodule.mem_iInf _).mp h n) k
-    rw [← productSolenoidalFunctional_apply]
     exact hk
   · intro h
     rw [productSolenoidalSubspace, Submodule.mem_iInf]
@@ -112,7 +109,6 @@ theorem mem_productSolenoidalSubspace_iff (V : ProductC3L2) :
     rw [Submodule.mem_iInf]
     intro k
     change productSolenoidalFunctional n k V = 0
-    rw [productSolenoidalFunctional_apply]
     exact h n k
 
 /-- The solenoidal subspace is closed, being an intersection of kernels of

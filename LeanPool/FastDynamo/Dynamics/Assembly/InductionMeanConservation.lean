@@ -154,7 +154,8 @@ theorem exists_productSolenoidal_mean_eq_one :
     ?_, norm_constantField⟩
   · rw [productDivergenceFromH2_eq_zero_iff]
     intro n k
-    simp only [productH2Embedding_apply, productCoeffCLM_constantField]
+    simp only [productFrequencyDivergenceCoeff_apply, productH2Embedding_apply,
+      productCoeffCLM_constantField]
     by_cases h : n = 0 ∧ k = 0
     · obtain ⟨rfl, rfl⟩ := h
       simp

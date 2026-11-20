@@ -160,16 +160,14 @@ The full product divergence symbol, as a continuous linear functional; it agrees
 function `productFrequencyDivergenceCoeff` of
 `FastDynamo/Analysis/ProductVectorCalculus.lean`.
 -/
-def productDivergenceCoeff (n : TransverseFrequency) (k : ℤ) :
+abbrev productDivergenceCoeff (n : TransverseFrequency) (k : ℤ) :
     ProductC3L2 →L[ℂ] ℂ :=
-  (∑ j : Fin 2,
-      (2 * Real.pi * Complex.I * (n j : ℂ)) • productCoeffCLM n k j.castSucc) +
-    (2 * Real.pi * Complex.I * (k : ℂ)) • productCoeffCLM n k (2 : Fin 3)
+  productFrequencyDivergenceCLM n k
 
 /-- The bundled product divergence symbol is the repository's divergence coefficient. -/
 theorem productDivergenceCoeff_eq (n : TransverseFrequency) (k : ℤ) (V : ProductC3L2) :
-    productDivergenceCoeff n k V = productFrequencyDivergenceCoeff n k V := by
-  simp [productDivergenceCoeff, productFrequencyDivergenceCoeff]
+    productDivergenceCoeff n k V = productFrequencyDivergenceCoeff n k V :=
+  rfl
 
 /--
 In the axial sector `K` the product divergence symbol of a lifted amplitude is the transverse
@@ -178,7 +176,7 @@ sector divergence symbol of that amplitude.
 theorem productDivergenceCoeff_axialLiftL2 (K : ℤ) (n : TransverseFrequency)
     (g : TransverseC3L2) :
     productDivergenceCoeff n K (axialLiftL2 K g) = fixedSectorDivergenceCoeff K n g := by
-  simp only [productDivergenceCoeff, fixedSectorDivergenceCoeff,
+  simp only [productDivergenceCoeff, productFrequencyDivergenceCLM, fixedSectorDivergenceCoeff,
     add_apply, sum_apply, smul_apply, smul_eq_mul, productCoeffCLM_axialLiftL2]
   rfl
 

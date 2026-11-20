@@ -212,8 +212,8 @@ theorem gamma_normalizedVelocity (u : TransverseRealW1Inf) (hu : IsTransverseDiv
 /-- **The growth-rate clause of `thm:main` for the normalised velocity** (Remark 1.6): for
 every `0 < ε ≤ M⁻¹ ε₀`, the growth rate of `uNorm = normalizedVelocity mainVelocity` is at least
 `M⁻¹ γ₀`.  By `gamma_normalizedVelocity`, `γ(uNorm, ε) = M⁻¹ γ(u, M ε)` with `M ε ≤ ε₀`, and
-`gamma_ge_gamma0` bounds `γ(u, M ε)` below by `γ₀`.  As for `gamma_ge_gamma0`, the closed
-interval is stronger than the open one of the paper. -/
+`gamma_ge_gamma0` bounds `γ(u, M ε)` below by `γ₀`.  The bound includes the upper
+diffusivity endpoint in Theorem 1.2 and Remark 1.6. -/
 theorem normalizedGrowthFloor_le_gamma {ε : ℝ} (hpos : 0 < ε)
     (hle : ε ≤ velocityNormalizer mainVelocity * mainEps0) :
     ((velocityNormalizer mainVelocity * mainGrowthFloor : ℝ) : EReal) ≤

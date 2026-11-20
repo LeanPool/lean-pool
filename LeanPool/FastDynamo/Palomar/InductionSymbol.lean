@@ -300,7 +300,8 @@ theorem literalEigenmode_of_mainPhysicalClausesAt (u : TransverseRealW1Inf)
   · rw [mem_L2σ_iff]
     intro m
     have hs := (productDivergenceFromH2_eq_zero_iff V).1 hdiv (fun j : Fin 2 ↦ m j.castSucc) (m 2)
-    simp only [productCoeffCLM_split_eq_mFourierCoeff, Fin.sum_univ_two] at hs
+    simp only [productFrequencyDivergenceCoeff_apply, productCoeffCLM_split_eq_mFourierCoeff,
+      Fin.sum_univ_two] at hs
     have h2pi : (2 * Real.pi * Complex.I : ℂ) ≠ 0 := by
       simp [Real.pi_ne_zero, Complex.I_ne_zero]
     have hsum : (2 * Real.pi * Complex.I : ℂ) *

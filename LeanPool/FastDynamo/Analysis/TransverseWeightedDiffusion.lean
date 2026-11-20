@@ -64,33 +64,6 @@ open scoped ENNReal
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-! ## Fibre-generic transverse Fourier weak derivatives
-
-`Analysis/PeriodicWeakDerivative.lean` fixes the fibre of its weak-derivative
-predicate at `Fin 3`.  §§5–7 of the paper work on `L²(T²;ℂ²)`, so the same predicate is
-restated here for an arbitrary finite fibre `ι`; at `ι = Fin 3` it is
-definitionally the predicate of that module.
--/
-
-omit [DecidableEq ι] in
-/-- `df` is the `j`-th periodic weak derivative of `f : TransverseVecL2 ι`,
-expressed by the equivalent Fourier-coefficient characterization.  This is the
-fibre-generic form of `HasTransverseFourierDerivative`. -/
-def HasTransverseVecFourierDerivative (j : Fin 2)
-    (f df : TransverseVecL2 ι) : Prop :=
-  ∀ n i, transverseCoeffCLM n i df =
-    (2 * Real.pi * Complex.I * (n j : ℂ)) *
-      transverseCoeffCLM n i f
-
-/-- The bounded derivative synthesized from a transverse `H²` certificate is the
-periodic Fourier weak derivative of its physical field, at any finite fibre. -/
-theorem transverseVecDerivFromH2_hasFourierDerivative (j : Fin 2)
-    (b : TransverseVecH2 ι) :
-    HasTransverseVecFourierDerivative j (transverseH2Embedding b)
-      (transverseVecDerivFromH2 ι j b) := by
-  intro n i
-  exact transverseCoeffCLM_transverseDerivFromH2 j b n i
-
 /-! ## Fibre-generic scalar multipliers
 
 `Analysis/Holder.lean` introduces `scalarVectorMulTransverseVec ι` but names its

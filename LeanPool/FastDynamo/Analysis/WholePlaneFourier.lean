@@ -192,6 +192,69 @@ theorem smulLeftCLM_wholePlaneL2ToTempered_eq_of_ae
 
 end Fourier
 
+namespace WholePlaneHorizontalFibre
+
+variable {F G : Type*}
+  [NormedAddCommGroup F] [InnerProductSpace ℂ F] [CompleteSpace F]
+  [NormedAddCommGroup G] [InnerProductSpace ℂ G] [CompleteSpace G]
+
+/-- A bounded fibre map acting pointwise on whole-plane `L²` fields. -/
+def fibreL2 (L : F →L[ℂ] G) : WholePlaneL2 F →L[ℂ] WholePlaneL2 G :=
+  L.compLpL 2 volume
+
+omit [CompleteSpace F] [CompleteSpace G] in
+/-- The pointwise fibre action is represented almost everywhere by the pointwise image. -/
+theorem fibreL2_coe_ae (L : F →L[ℂ] G) (f : WholePlaneL2 F) :
+    (fibreL2 L f : WholePlane → G) =ᵐ[volume] fun x ↦ L ((f : WholePlane → F) x) :=
+  L.coeFn_compLpL f
+
+/-- A bounded fibre map acting on whole-plane tempered distributions by postcomposition. -/
+def fibreTempered (L : F →L[ℂ] G) :
+    TemperedDistribution WholePlane F →L[ℂ] TemperedDistribution WholePlane G :=
+  PointwiseConvergenceCLM.postcomp (SchwartzMap WholePlane ℂ) L
+
+omit [CompleteSpace F] [CompleteSpace G] in
+/-- Postcomposition acts after testing. -/
+@[simp] theorem fibreTempered_apply_apply (L : F →L[ℂ] G)
+    (T : TemperedDistribution WholePlane F) (phi : SchwartzMap WholePlane ℂ) :
+    fibreTempered L T phi = L (T phi) :=
+  rfl
+
+omit [CompleteSpace F] [CompleteSpace G] in
+/-- Postcomposition commutes with distributional line differentiation. -/
+theorem fibreTempered_lineDeriv (L : F →L[ℂ] G) (e : WholePlane)
+    (T : TemperedDistribution WholePlane F) :
+    fibreTempered L (∂_{e} T) = ∂_{e} (fibreTempered L T) := by
+  ext phi
+  rfl
+
+/-- The canonical `L² → 𝓢'` embedding commutes with a bounded fibre map. -/
+theorem fibreTempered_l2 (L : F →L[ℂ] G) (f : WholePlaneL2 F) :
+    fibreTempered L (wholePlaneL2ToTempered F f) =
+      wholePlaneL2ToTempered G (fibreL2 L f) := by
+  apply ContinuousLinearMap.ext
+  intro phi
+  have hint : Integrable (fun x : WholePlane ↦ phi x • ((f : WholePlane → F) x)) volume :=
+    memLp_one_iff_integrable.mp <|
+      (ContinuousLinearMap.lsmul ℂ ℂ : ℂ →L[ℂ] F →L[ℂ] F).memLp_of_bilin
+        1 (phi.memLp 2 volume) (Lp.memLp f)
+  calc
+    fibreTempered L (wholePlaneL2ToTempered F f) phi =
+        L ((wholePlaneL2ToTempered F f) phi) := rfl
+    _ = L (∫ x : WholePlane, phi x • ((f : WholePlane → F) x) ∂volume) := by
+      rw [wholePlaneL2ToTempered_apply, MeasureTheory.Lp.toTemperedDistribution_apply]
+    _ = ∫ x : WholePlane, L (phi x • ((f : WholePlane → F) x)) ∂volume :=
+      (L.integral_comp_comm hint).symm
+    _ = ∫ x : WholePlane, phi x • ((fibreL2 L f : WholePlane → G) x) ∂volume := by
+      refine integral_congr_ae ?_
+      filter_upwards [fibreL2_coe_ae L f] with x hx
+      rw [hx]
+      exact L.map_smul_of_tower (phi x) _
+    _ = (wholePlaneL2ToTempered G (fibreL2 L f)) phi := by
+      rw [wholePlaneL2ToTempered_apply, MeasureTheory.Lp.toTemperedDistribution_apply]
+
+end WholePlaneHorizontalFibre
+
 end
 
 end FastDynamo

@@ -49,7 +49,7 @@ open Filter Topology
 /-- Fourier synthesis on the `H⁻²` model: the `L²` field whose Fourier coefficients are the
 entries of an `H⁻²` coefficient array.  On `productL2ToHMinus2 f` it is `(1 − Δ)⁻¹ f`. -/
 def productHMinus2Synthesis : ProductC3HMinus2 →L[ℂ] ProductC3L2 :=
-  productC3OfCoordsL2.comp (mapWeightedProductCoords productScalarFourierSynthesisNested)
+  productC3FourierSynthesis
 
 /-- **`(1 − Δ)⁻¹` from `L²` into `H²`.**  Every `f ∈ L²` is `g − Δg` for an `H²` field `g` whose
 `L²` part is the Fourier synthesis of the `H⁻²` coefficients `f̂/(1 + 4π²|ξ|²)` of `f`. -/
@@ -60,8 +60,8 @@ theorem exists_productH2_sub_laplacian_eq (f : ProductC3L2) :
       (productHMinus2Synthesis (productL2ToHMinus2 f)) =
         productCoeffCLM n k i f / (productH2Weight n k : ℂ) := by
     intro n k i
-    rw [productHMinus2Synthesis, ContinuousLinearMap.comp_apply,
-      productCoeffCLM_productC3OfCoordsL2_synthesis, productL2ToHMinus2_apply]
+    rw [productHMinus2Synthesis, productCoeffCLM_productC3FourierSynthesis,
+      productL2ToHMinus2_apply]
   have hw : ∀ n k, (productH2Weight n k : ℂ) ≠ 0 := fun n k ↦ by
     exact_mod_cast (productH2Weight_pos n k).ne'
   have hmem : (productHMinus2Synthesis (productL2ToHMinus2 f), productC3FourierAnalysis f) ∈

@@ -15,7 +15,8 @@ public import LeanPool.FastDynamo.Dynamics.Assembly.InductionSemigroupSpectrum
 
 The paper's Lemma A.1 (`lem:semigroup-spectral-growth`), together with the facts about
 `γ(u, ε)` that §1.1 states with it, as one statement: `SemigroupSpectralGrowth u hu hε`, proved
-for every divergence-free velocity and every `ε > 0` by `semigroupSpectralGrowth_holds`.
+for every axially independent divergence-free velocity and every `ε > 0` by
+`semigroupSpectralGrowth_holds`.
 
 For a divergence-free `u ∈ W^{1,∞}(T³; ℝ³)` and `ε > 0` the lemma says: `L_{ε,u}` with domain
 `H² ∩ L²_σ` generates an analytic `C₀`-semigroup on `L²_σ`; its resolvent is compact; `e^{tL_{ε,u}}`
@@ -101,8 +102,8 @@ noncomputable section
 open Filter Topology
 
 /-- **Lemma A.1 of the paper** (`lem:semigroup-spectral-growth`, "Semigroup generation and
-spectral growth"), with the facts on `γ(u, ε)` stated in §1.1, for one divergence-free velocity
-`u` and one diffusivity `ε > 0`, about the induction semigroup
+spectral growth"), with the facts on `γ(u, ε)` stated in §1.1, for an axially independent
+divergence-free velocity `u` and one diffusivity `ε > 0`, about the induction semigroup
 `e^{tL_{ε,u}} = solenoidalInductionSemigroup u hu hε` on `L²_σ` and its generator `L_{ε,u}`.
 The module docstring lists how each clause differs from the paper's. -/
 structure SemigroupSpectralGrowth (u : TransverseRealW1Inf) (hu : IsTransverseDivergenceFree u)
@@ -171,8 +172,8 @@ structure SemigroupSpectralGrowth (u : TransverseRealW1Inf) (hu : IsTransverseDi
 
 variable (u : TransverseRealW1Inf) (hu : IsTransverseDivergenceFree u) {ε : ℝ} (hε : 0 < ε)
 
-/-- **Lemma A.1 of the paper holds** (`lem:semigroup-spectral-growth`): for every
-divergence-free axially independent velocity `u` and every `ε > 0`, every clause of
+/-- **Axially independent case of Lemma A.1** (`lem:semigroup-spectral-growth`):
+for every axially independent divergence-free velocity `u` and every `ε > 0`, every clause of
 `SemigroupSpectralGrowth`.  The clauses are `generator_solenoidalInductionSemigroup`,
 `productL2ToHMinus2_generator_solenoidalInductionSemigroup`,
 `eq_solenoidalInductionSemigroup_of_generator_eq`,

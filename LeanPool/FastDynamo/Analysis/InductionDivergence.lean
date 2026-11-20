@@ -580,7 +580,7 @@ theorem productVelocityCrossWeakCurl_solenoidal
     (u : TransverseRealW1Inf) (B : ProductC3H2) :
     IsProductSolenoidal (productVelocityCrossWeakCurl u B) := by
   intro n k
-  simp only [Fin.sum_univ_two]
+  simp only [productFrequencyDivergenceCoeff_apply, Fin.sum_univ_two]
   rw [productCoeffCLM_eq_flatCoordAnalysis,
     productCoeffCLM_eq_flatCoordAnalysis,
     productCoeffCLM_eq_flatCoordAnalysis]

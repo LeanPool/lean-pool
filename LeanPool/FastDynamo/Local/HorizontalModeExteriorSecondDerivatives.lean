@@ -299,11 +299,15 @@ theorem horizontalExteriorLaplacian_apply
   simp only [horizontalExteriorLaplacian, Fin.sum_univ_two, PiLp.add_apply,
     horizontalExteriorSecondPartialDerivative_apply hkappa hy, scalarCartesianLaplacian]
 
-/-- Away from the origin, the first Cartesian component of the decaying exterior branch
-satisfies `Δ_⊥ b₁ = κ² b₁`. -/
-theorem horizontalExteriorLaplacian_apply_zero_eq
-    {kappa : ℂ} (hkappa : 0 < kappa.re) {y : WholePlane} (hy : y ≠ 0) :
-    horizontalExteriorLaplacian kappa y 0 = kappa ^ 2 * horizontalExteriorField kappa y 0 := by
+/-- Each linear combination of the two exterior modes obeys the same Helmholtz equation. -/
+private theorem horizontalExteriorModes_laplacian
+    {kappa : ℂ} (hkappa : 0 < kappa.re) {y : WholePlane} (hy : y ≠ 0)
+    (c d : ℂ) :
+    scalarCartesianLaplacian
+        (fun x ↦ c * radialMode (minusOutsideReal kappa) x +
+          d * phaseSqRadialMode (plusOutsideReal kappa) x) y =
+      kappa ^ 2 * (c * minusOutsideReal kappa ‖y‖ +
+        d * (exteriorPhase y ^ 2 * plusOutsideReal kappa ‖y‖)) := by
   have hr : (0 : ℝ) < ‖y‖ := norm_pos_iff.mpr hy
   have hm := (horizontalExteriorMinusMode_contDiffAt hkappa hy).of_le horizontalTwo_le_top
   have hp := (horizontalExteriorPlusMode_contDiffAt hkappa hy).of_le horizontalTwo_le_top
@@ -319,39 +323,30 @@ theorem horizontalExteriorLaplacian_apply_zero_eq
       (fun _ hs ↦ horizontalPlusOutsideReal_hasDerivAt_self hkappa hs)
       (fun _ hs ↦ horizontalPlusOutsideReal_deriv_hasDerivAt_self hkappa hs) hy,
       horizontalPlusOutsideReal_polar hkappa hr]
+  rw [scalarCartesianLaplacian_linearCombination hm hp, hmLap, hpLap]
+  ring
+
+/-- Away from the origin, the first Cartesian component of the decaying exterior branch
+satisfies `Δ_⊥ b₁ = κ² b₁`. -/
+theorem horizontalExteriorLaplacian_apply_zero_eq
+    {kappa : ℂ} (hkappa : 0 < kappa.re) {y : WholePlane} (hy : y ≠ 0) :
+    horizontalExteriorLaplacian kappa y 0 = kappa ^ 2 * horizontalExteriorField kappa y 0 := by
   have hfield := congrFun (horizontalExteriorField_apply_zero_eq_modes kappa) y
   rw [horizontalExteriorLaplacian_apply hkappa hy,
     horizontalExteriorField_apply_zero_eq_modes,
-    scalarCartesianLaplacian_linearCombination hm hp, hmLap, hpLap, hfield]
-  simp only [radialMode, phaseSqRadialMode]
-  ring
+    horizontalExteriorModes_laplacian hkappa hy, hfield]
+  rfl
 
 /-- Away from the origin, the second Cartesian component of the decaying exterior branch
 satisfies `Δ_⊥ b₂ = κ² b₂`. -/
 theorem horizontalExteriorLaplacian_apply_one_eq
     {kappa : ℂ} (hkappa : 0 < kappa.re) {y : WholePlane} (hy : y ≠ 0) :
     horizontalExteriorLaplacian kappa y 1 = kappa ^ 2 * horizontalExteriorField kappa y 1 := by
-  have hr : (0 : ℝ) < ‖y‖ := norm_pos_iff.mpr hy
-  have hm := (horizontalExteriorMinusMode_contDiffAt hkappa hy).of_le horizontalTwo_le_top
-  have hp := (horizontalExteriorPlusMode_contDiffAt hkappa hy).of_le horizontalTwo_le_top
-  have hmLap : scalarCartesianLaplacian (radialMode (minusOutsideReal kappa)) y =
-      kappa ^ 2 * minusOutsideReal kappa ‖y‖ := by
-    rw [scalarCartesianLaplacian_radialMode_eq_polar
-      (fun _ hs ↦ horizontalMinusOutsideReal_hasDerivAt_self hkappa hs)
-      (fun _ hs ↦ horizontalMinusOutsideReal_deriv_hasDerivAt_self hkappa hs) hy,
-      horizontalMinusOutsideReal_polar hkappa hr]
-  have hpLap : scalarCartesianLaplacian (phaseSqRadialMode (plusOutsideReal kappa)) y =
-      exteriorPhase y ^ 2 * (kappa ^ 2 * plusOutsideReal kappa ‖y‖) := by
-    rw [scalarCartesianLaplacian_phaseSqRadialMode_eq_polar
-      (fun _ hs ↦ horizontalPlusOutsideReal_hasDerivAt_self hkappa hs)
-      (fun _ hs ↦ horizontalPlusOutsideReal_deriv_hasDerivAt_self hkappa hs) hy,
-      horizontalPlusOutsideReal_polar hkappa hr]
   have hfield := congrFun (horizontalExteriorField_apply_one_eq_modes kappa) y
   rw [horizontalExteriorLaplacian_apply hkappa hy,
     horizontalExteriorField_apply_one_eq_modes,
-    scalarCartesianLaplacian_linearCombination hm hp, hmLap, hpLap, hfield]
-  simp only [radialMode, phaseSqRadialMode]
-  ring
+    horizontalExteriorModes_laplacian hkappa hy, hfield]
+  rfl
 
 /-- Away from the origin the decaying exterior branch satisfies the same transverse Helmholtz
 equation `Δ_⊥ b_out = κ² b_out` as the regular one: the radial system in the proof of

@@ -35,8 +35,7 @@ open scoped LineDeriv SchwartzMap
 def wholePlaneCoordTempered (i : Fin 3) :
     TemperedDistribution WholePlane C3 →L[ℂ]
       TemperedDistribution WholePlane ℂ :=
-  PointwiseConvergenceCLM.postcomp (SchwartzMap WholePlane ℂ)
-    (EuclideanSpace.proj i)
+  WholePlaneHorizontalFibre.fibreTempered (EuclideanSpace.proj i)
 
 /-- Coordinate extraction is applied after testing: the `i`-th coordinate distribution
 evaluated on `f` is the `i`-th component of the vector value `T f`. -/
@@ -50,40 +49,15 @@ evaluated on `f` is the `i`-th component of the vector value `T f`. -/
 theorem wholePlaneCoordTempered_lineDeriv (i : Fin 3)
     (e : WholePlane) (T : TemperedDistribution WholePlane C3) :
     wholePlaneCoordTempered i (∂_{e} T) =
-      ∂_{e} (wholePlaneCoordTempered i T) := by
-  ext f
-  rfl
+      ∂_{e} (wholePlaneCoordTempered i T) :=
+  WholePlaneHorizontalFibre.fibreTempered_lineDeriv (EuclideanSpace.proj i) e T
 
 /-- Coordinate extraction commutes with the canonical `L² → tempered distribution`
 embedding. -/
 theorem wholePlaneCoordTempered_l2 (i : Fin 3) (b : WholePlaneC3L2) :
     wholePlaneCoordTempered i (wholePlaneL2ToTempered C3 b) =
-      wholePlaneL2ToTempered ℂ (wholePlaneCoordL2 i b) := by
-  ext f
-  simp only [wholePlaneCoordTempered_apply_apply,
-    wholePlaneL2ToTempered_apply, MeasureTheory.Lp.toTemperedDistribution_apply]
-  have hint : Integrable (fun x : WholePlane ↦ f x • (b x : C3)) volume :=
-    memLp_one_iff_integrable.mp <|
-      (ContinuousLinearMap.lsmul ℂ ℂ : ℂ →L[ℂ] C3 →L[ℂ] C3).memLp_of_bilin
-        1 (f.memLp 2 volume) (Lp.memLp b)
-  calc
-    (EuclideanSpace.proj i) (∫ x : WholePlane, f x • (b x : C3) ∂volume) =
-        ∫ x : WholePlane, (EuclideanSpace.proj i) (f x • (b x : C3))
-          ∂volume :=
-      ((EuclideanSpace.proj i).integral_comp_comm hint).symm
-    _ = ∫ x : WholePlane,
-          f x • ((wholePlaneCoordL2 i b : WholePlane → ℂ) x)
-          ∂volume := by
-      apply integral_congr_ae
-      filter_upwards [
-        (EuclideanSpace.proj (𝕜 := ℂ) i).coeFn_compLpL
-          (p := 2) (μ := (volume : Measure WholePlane)) b] with x hx
-      calc
-        (EuclideanSpace.proj i) (f x • (b x : C3)) =
-            f x • (EuclideanSpace.proj i) (b x : C3) := by simp
-        _ = f x • ((wholePlaneCoordL2 i b : WholePlane → ℂ) x) := by
-          simpa [wholePlaneCoordL2] using
-            congrArg (fun z : ℂ ↦ f x • z) hx.symm
+      wholePlaneL2ToTempered ℂ (wholePlaneCoordL2 i b) :=
+  WholePlaneHorizontalFibre.fibreTempered_l2 (EuclideanSpace.proj i) b
 
 end
 

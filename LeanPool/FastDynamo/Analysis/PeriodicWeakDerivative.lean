@@ -33,61 +33,46 @@ coefficients. -/
 theorem transverseScalarL2_ext_coeff {f g : TransverseScalarL2}
     (h : ∀ n, transverseScalarCoeffCLM n f =
       transverseScalarCoeffCLM n g) :
-    f = g := by
-  apply transverseScalarFourierAnalysis.injective
-  apply lp.ext
-  funext n
-  exact h n
+    f = g :=
+  transverseScalarL2_ext_of_coeff h
 
 /-- Vector-valued `L²` fields are determined coordinatewise by all Fourier
 coefficients. -/
 theorem transverseC3L2_ext_coeff {f g : TransverseC3L2}
     (h : ∀ n i, transverseCoeffCLM n i f =
       transverseCoeffCLM n i g) :
-    f = g := by
-  have hcoord : ∀ i : Fin 3, transverseCoordL2 i f =
-      transverseCoordL2 i g := by
-    intro i
-    apply transverseScalarL2_ext_coeff
-    intro n
-    exact h n i
-  apply Lp.ext
-  have hcoord_ae : ∀ i : Fin 3,
-      ((transverseCoordL2 i f : TransverseScalarL2) :
-          TransverseTorus → ℂ) =ᵐ[transverseMeasure]
-        ((transverseCoordL2 i g : TransverseScalarL2) :
-          TransverseTorus → ℂ) := by
-    intro i
-    rw [hcoord i]
-  have hf : ∀ i : Fin 3,
-      ((transverseCoordL2 i f : TransverseScalarL2) :
-          TransverseTorus → ℂ) =ᵐ[transverseMeasure]
-        fun x => (f x) i := by
-    intro i
-    exact (EuclideanSpace.proj (𝕜 := ℂ) i).coeFn_compLpL f
-  have hg : ∀ i : Fin 3,
-      ((transverseCoordL2 i g : TransverseScalarL2) :
-          TransverseTorus → ℂ) =ᵐ[transverseMeasure]
-        fun x => (g x) i := by
-    intro i
-    exact (EuclideanSpace.proj (𝕜 := ℂ) i).coeFn_compLpL g
-  filter_upwards [ae_all_iff.2 hcoord_ae, ae_all_iff.2 hf,
-    ae_all_iff.2 hg] with x hfg hfx hgx
-  apply PiLp.ext
-  intro i
-  calc
-    (f x) i = (transverseCoordL2 i f : TransverseScalarL2) x :=
-      (hfx i).symm
-    _ = (transverseCoordL2 i g : TransverseScalarL2) x := hfg i
-    _ = (g x) i := hgx i
+    f = g :=
+  transverseVecL2_ext_coeff h
+
+section
+
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+omit [DecidableEq ι] in
+/-- `df` is the `j`-th periodic weak derivative of `f : TransverseVecL2 ι`,
+expressed by the equivalent Fourier-coefficient characterization. -/
+def HasTransverseVecFourierDerivative (j : Fin 2)
+    (f df : TransverseVecL2 ι) : Prop :=
+  ∀ n i, transverseCoeffCLM n i df =
+    (2 * Real.pi * Complex.I * (n j : ℂ)) *
+      transverseCoeffCLM n i f
+
+/-- The bounded derivative synthesized from a transverse `H²` certificate is the
+periodic Fourier weak derivative of its physical field, at any finite fibre. -/
+theorem transverseVecDerivFromH2_hasFourierDerivative (j : Fin 2)
+    (b : TransverseVecH2 ι) :
+    HasTransverseVecFourierDerivative j (transverseH2Embedding b)
+      (transverseVecDerivFromH2 ι j b) := by
+  intro n i
+  exact transverseCoeffCLM_transverseDerivFromH2 j b n i
+
+end
 
 /-- `df` is the `j`-th periodic weak derivative of `f`, expressed by the
 equivalent Fourier-coefficient characterization. -/
 def HasTransverseFourierDerivative (j : Fin 2)
     (f df : TransverseC3L2) : Prop :=
-  ∀ n i, transverseCoeffCLM n i df =
-    (2 * Real.pi * Complex.I * (n j : ℂ)) *
-      transverseCoeffCLM n i f
+  HasTransverseVecFourierDerivative j f df
 
 /-- An `L²` Fourier weak derivative is unique. -/
 theorem HasTransverseFourierDerivative.unique {j : Fin 2}
@@ -104,9 +89,8 @@ the unique periodic Fourier weak derivative of its physical field. -/
 theorem transverseDerivFromH2_hasFourierDerivative
     (j : Fin 2) (b : TransverseC3H2) :
     HasTransverseFourierDerivative j (transverseH2Embedding b)
-      (transverseDerivFromH2 j b) := by
-  intro n i
-  exact transverseCoeffCLM_transverseDerivFromH2 j b n i
+      (transverseDerivFromH2 j b) :=
+  transverseVecDerivFromH2_hasFourierDerivative j b
 
 /-- `lap` is the periodic weak Laplacian of `f`, expressed through its Fourier
 coefficients. -/

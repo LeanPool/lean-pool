@@ -81,37 +81,22 @@ deviation from the identity of the domain is the domain-valued resolvent
 composed with the embedding. -/
 theorem inv_comp_pencil (h : HasResolventOn A S) {z w : ℂ} (hz : z ∈ S) :
     (h.inv z).comp (A.pencil w)
-      = ContinuousLinearMap.id ℂ D + (w - z) • (h.inv z).comp A.embedding := by
-  have hpw : A.pencil w = A.pencil z + (w - z) • A.embedding := by
-    ext d
-    simp [DomainOperator.pencil, sub_smul]
-  rw [hpw, ContinuousLinearMap.comp_add, h.left_inv z hz]
-  congr 1
-  ext d; simp
+      = ContinuousLinearMap.id ℂ D + (w - z) • (h.inv z).comp A.embedding :=
+  h.inv_comp_pencil (w := w) hz
 
 /-- The resolvent identity in its domain-valued form,
 `R(z) - R(w) = (w - z) R(z) R(w)`, with the right-hand resolvent read as a state
 resolvent. -/
 theorem resolvent_identity (h : HasResolventOn A S) {z w : ℂ} (hz : z ∈ S) (hw : w ∈ S) :
-    h.inv z - h.inv w = (w - z) • (h.inv z).comp (h.stateResolvent w) := by
-  calc h.inv z - h.inv w
-      = ((h.inv z).comp (A.pencil w)).comp (h.inv w) - h.inv w := by
-        rw [ContinuousLinearMap.comp_assoc, h.right_inv w hw,
-          ContinuousLinearMap.comp_id]
-    _ = (ContinuousLinearMap.id ℂ D
-          + (w - z) • (h.inv z).comp A.embedding).comp (h.inv w) - h.inv w := by
-        rw [inv_comp_pencil h hz]
-    _ = (w - z) • (h.inv z).comp (h.stateResolvent w) := by
-        ext x; simp [HasResolventOn.stateResolvent]
+    h.inv z - h.inv w = (w - z) • (h.inv z).comp (h.stateResolvent w) :=
+  h.inv_sub_inv hz hw
 
 /-- The resolvent identity on the ambient space:
 `R(z) - R(w) = (w - z) R(z) R(w)` for the state resolvents. -/
 theorem stateResolvent_identity (h : HasResolventOn A S) {z w : ℂ} (hz : z ∈ S) (hw : w ∈ S) :
     h.stateResolvent z - h.stateResolvent w
-      = (w - z) • (h.stateResolvent z).comp (h.stateResolvent w) := by
-  have := congrArg (fun T : X →L[ℂ] D ↦ A.embedding.comp T) (resolvent_identity h hz hw)
-  simpa [HasResolventOn.stateResolvent, ContinuousLinearMap.comp_sub,
-    ContinuousLinearMap.comp_smul, ← ContinuousLinearMap.comp_assoc] using this
+      = (w - z) • (h.stateResolvent z).comp (h.stateResolvent w) :=
+  h.stateResolvent_sub_stateResolvent hz hw
 
 /-- `A R(z) ι d = R(z) A d`: the resolvent commutes with the operator on the
 domain. -/

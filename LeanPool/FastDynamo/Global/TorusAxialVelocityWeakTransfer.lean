@@ -223,59 +223,10 @@ theorem integral_euclideanMonomial_mul_derivativeCoord
       (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
         ∫ x : Fin 2 → ℝ,
           euclideanMonomial (-frequency) x *
-            euclideanSourceCoord P tau n i x := by
-  let multiplier : ℂ :=
-    2 * Real.pi * Complex.I * ((-frequency) j : ℂ)
-  have hsource := integrable_euclideanSourceCoord P tau n i
-  have hderiv := integrable_euclideanDerivativeCoord P htau n j i
-  have hmonomial := euclideanMonomial_memLp_top (-frequency)
-  have hmono_source : Integrable (fun x : Fin 2 → ℝ ↦
-      euclideanMonomial (-frequency) x *
-        euclideanSourceCoord P tau n i x) :=
-    hsource.mul_of_top_right hmonomial
-  have hmono_deriv : Integrable (fun x : Fin 2 → ℝ ↦
-      euclideanMonomial (-frequency) x *
-        euclideanDerivativeCoord P tau n j i x) :=
-    hderiv.mul_of_top_right hmonomial
-  have hderivMono : MemLp
-      (fun x : Fin 2 → ℝ ↦ multiplier * euclideanMonomial (-frequency) x)
-      ∞ :=
-    hmonomial.const_mul multiplier
-  have hderivMono_source : Integrable (fun x : Fin 2 → ℝ ↦
-      (multiplier * euclideanMonomial (-frequency) x) *
-        euclideanSourceCoord P tau n i x) :=
-    hsource.mul_of_top_right hderivMono
-  have hibp :=
-    integral_bilinear_hasLineDerivAt_right_eq_neg_left_of_integrable
-      (E := Fin 2 → ℝ) (F := ℂ) (G := ℂ) (W := ℂ)
-      (B := ContinuousLinearMap.mul ℝ ℂ)
-      hderivMono_source hmono_deriv hmono_source
-      (fun x _ ↦ by
-        simpa [multiplier] using
-          euclideanMonomial_hasLineDerivAt (-frequency) j x)
-      (fun x _ ↦ euclideanSourceCoord_hasLineDerivAt P tau n j i x)
-  change (∫ x : Fin 2 → ℝ,
-      euclideanMonomial (-frequency) x *
-        euclideanDerivativeCoord P tau n j i x) = _ at hibp
-  calc
-    (∫ x : Fin 2 → ℝ,
-        euclideanMonomial (-frequency) x *
-          euclideanDerivativeCoord P tau n j i x) =
-        -∫ x : Fin 2 → ℝ,
-          (multiplier * euclideanMonomial (-frequency) x) *
-            euclideanSourceCoord P tau n i x := hibp
-    _ = -multiplier * ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x *
-            euclideanSourceCoord P tau n i x := by
-      rw [← integral_neg, ← integral_const_mul]
-      apply integral_congr_ae
-      filter_upwards with x
-      ring
-    _ = (2 * Real.pi * Complex.I * (frequency j : ℂ)) *
-          ∫ x : Fin 2 → ℝ,
-            euclideanMonomial (-frequency) x *
-              euclideanSourceCoord P tau n i x := by
-      simp [multiplier]
+            euclideanSourceCoord P tau n i x :=
+  integral_euclideanMonomial_mul_lineDerivative frequency j
+    (integrable_euclideanSourceCoord P tau n i) (integrable_euclideanDerivativeCoord P htau n j i)
+    (euclideanSourceCoord_hasLineDerivAt P tau n j i)
 
 /-! ## Exact transfer through the quotient fundamental domain -/
 
@@ -336,60 +287,11 @@ theorem torusIntegral_mFourier_mul_sourceCoord_eq_euclidean
           ∂transverseMeasure) =
       ∫ x : Fin 2 → ℝ,
         euclideanMonomial (-frequency) x *
-          euclideanSourceCoord P tau n i x := by
-  calc
-    (∫ q : TransverseTorus,
-        UnitAddTorus.mFourier (-frequency) q *
-          complexifyR3 (P.axialOffsetTorus tau n q) i
-          ∂transverseMeasure) =
-        ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          UnitAddTorus.mFourier (-frequency)
-              (fun k ↦ (x k : UnitAddCircle)) *
-            complexifyR3
-              (P.axialOffsetTorus tau n
-                (fun k ↦ (x k : UnitAddCircle))) i := by
-      rw [show transverseMeasure = torusHaarMeasure (Fin 2) from
-        volume_unitAddTorus_eq_haar]
-      have hpre := UnitAddTorus.integral_preimage
-        (f := fun q : TransverseTorus ↦
-          UnitAddTorus.mFourier (-frequency) q *
-            complexifyR3 (P.axialOffsetTorus tau n q) i)
-        (fun _ : Fin 2 ↦ (0 : ℝ))
-      change (∫ q : TransverseTorus,
-          UnitAddTorus.mFourier (-frequency) q *
-            complexifyR3 (P.axialOffsetTorus tau n q) i
-            ∂torusHaarMeasure (Fin 2)) = _ at hpre
-      simpa [iocFundamentalBox] using hpre
-    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          euclideanMonomial (-frequency) x *
-            euclideanSourceCoord P tau n i x := by
-      apply integral_congr_ae
-      filter_upwards [ae_restrict_mem measurableSet_iocFundamentalBox]
-        with x hx
-      have hx0 : (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (0 : Fin 2)
-      have hx1 : (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (1 : Fin 2)
-      have hq : (fun k ↦ (x k : UnitAddCircle)) =
-          transverseTorusPoint (finTwoToPair x) := by
-        funext k
-        fin_cases k <;> simp
-      rw [hq,
-        axialOffsetTorus_transverseTorusPoint_eq_euclidean_of_mem_Ioc
-          P tau n hx0 hx1,
-        euclideanMonomial_eq_mFourier]
-      rfl
-    _ = ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x *
-            euclideanSourceCoord P tau n i x := by
-      apply setIntegral_eq_integral_of_forall_compl_eq_zero
-      intro x hx
-      have hzero : euclideanSourceCoord P tau n i x = 0 := by
-        by_contra hne
-        exact hx
-          (support_euclideanSourceCoord_subset_iocFundamentalBox
-            P tau n i hne)
-      rw [hzero, mul_zero]
+          euclideanSourceCoord P tau n i x :=
+  torusIntegral_mFourier_mul_eq_euclidean frequency
+    (support_euclideanSourceCoord_subset_iocFundamentalBox P tau n i)
+    (fun _ hx0 hx1 ↦ congrArg (fun value ↦ complexifyR3 value i)
+      (axialOffsetTorus_transverseTorusPoint_eq_euclidean_of_mem_Ioc P tau n hx0 hx1))
 
 /-- Transfer of the derivative pairing from the torus to the plane: the torus integral of
 `e^{-2πi m·q}` against a coordinate of the descended displayed derivative equals the
@@ -403,60 +305,11 @@ theorem torusIntegral_mFourier_mul_derivativeCoord_eq_euclidean
           ∂transverseMeasure) =
       ∫ x : Fin 2 → ℝ,
         euclideanMonomial (-frequency) x *
-          euclideanDerivativeCoord P tau n j i x := by
-  calc
-    (∫ q : TransverseTorus,
-        UnitAddTorus.mFourier (-frequency) q *
-          complexifyR3 (P.axialOffsetTorusDerivative tau n j q) i
-          ∂transverseMeasure) =
-        ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          UnitAddTorus.mFourier (-frequency)
-              (fun k ↦ (x k : UnitAddCircle)) *
-            complexifyR3
-              (P.axialOffsetTorusDerivative tau n j
-                (fun k ↦ (x k : UnitAddCircle))) i := by
-      rw [show transverseMeasure = torusHaarMeasure (Fin 2) from
-        volume_unitAddTorus_eq_haar]
-      have hpre := UnitAddTorus.integral_preimage
-        (f := fun q : TransverseTorus ↦
-          UnitAddTorus.mFourier (-frequency) q *
-            complexifyR3 (P.axialOffsetTorusDerivative tau n j q) i)
-        (fun _ : Fin 2 ↦ (0 : ℝ))
-      change (∫ q : TransverseTorus,
-          UnitAddTorus.mFourier (-frequency) q *
-            complexifyR3 (P.axialOffsetTorusDerivative tau n j q) i
-            ∂torusHaarMeasure (Fin 2)) = _ at hpre
-      simpa [iocFundamentalBox] using hpre
-    _ = ∫ x : Fin 2 → ℝ in iocFundamentalBox,
-          euclideanMonomial (-frequency) x *
-            euclideanDerivativeCoord P tau n j i x := by
-      apply integral_congr_ae
-      filter_upwards [ae_restrict_mem measurableSet_iocFundamentalBox]
-        with x hx
-      have hx0 : (finTwoToPair x).1 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (0 : Fin 2)
-      have hx1 : (finTwoToPair x).2 ∈ Set.Ioc (0 : ℝ) (0 + 1) := by
-        simpa using hx (1 : Fin 2)
-      have hq : (fun k ↦ (x k : UnitAddCircle)) =
-          transverseTorusPoint (finTwoToPair x) := by
-        funext k
-        fin_cases k <;> simp
-      rw [hq,
-        axialOffsetTorusDerivative_transverseTorusPoint_eq_euclidean_of_mem_Ioc
-          P tau n j hx0 hx1,
-        euclideanMonomial_eq_mFourier]
-      rfl
-    _ = ∫ x : Fin 2 → ℝ,
-          euclideanMonomial (-frequency) x *
-            euclideanDerivativeCoord P tau n j i x := by
-      apply setIntegral_eq_integral_of_forall_compl_eq_zero
-      intro x hx
-      have hzero : euclideanDerivativeCoord P tau n j i x = 0 := by
-        by_contra hne
-        exact hx
-          (support_euclideanDerivativeCoord_subset_iocFundamentalBox
-            P tau n j i hne)
-      rw [hzero, mul_zero]
+          euclideanDerivativeCoord P tau n j i x :=
+  torusIntegral_mFourier_mul_eq_euclidean frequency
+    (support_euclideanDerivativeCoord_subset_iocFundamentalBox P tau n j i)
+    (fun _ hx0 hx1 ↦ congrArg (fun value ↦ complexifyR3 value i)
+      (axialOffsetTorusDerivative_transverseTorusPoint_eq_euclidean_of_mem_Ioc P tau n j hx0 hx1))
 
 /-! ## Real `L∞` fields -/
 
