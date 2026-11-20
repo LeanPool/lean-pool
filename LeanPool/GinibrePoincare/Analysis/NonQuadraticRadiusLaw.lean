@@ -193,7 +193,7 @@ theorem potentialKostlanCoordinateLaw_squaredRadius (n : ℕ) (hn : 0 < n)
   rw [Measure.map_smul _ Complex.continuous_normSq.measurable.aemeasurable, ht,
     smul_smul] at hmapP ⊢
   have hm := hmapP.measure_univ
-  rw [Measure.smul_apply, smul_eq_mul] at hm
+  rw [smul_apply, smul_eq_mul] at hm
   have hcoef := ENNReal.eq_inv_of_mul_eq_one_left hm
   rw [hcoef]
   rfl

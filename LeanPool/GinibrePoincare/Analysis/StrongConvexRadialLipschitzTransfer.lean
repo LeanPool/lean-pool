@@ -75,8 +75,8 @@ theorem rhoConvex_magnitude_map_absolutelyContinuous (n : ℕ) (hn : 0 < n)
     have hh := ha.map (radius_relabel_volume_preserving n e).measurable
     rwa [(radius_relabel_volume_preserving n e).map_eq] at hh
   intro s hs
-  simp only [potentialSymmetrizedRadiusProduct, Measure.smul_apply,
-    Measure.finsetSum_apply, hb _ hs, Finset.sum_const_zero, smul_zero]
+  simp only [potentialSymmetrizedRadiusProduct, smul_apply,
+    _root_.sum_apply, hb _ hs, Finset.sum_const_zero, smul_zero]
 
 /-- Rademacher differentiability at the actual magnitudes under the interacting gas. -/
 theorem rhoConvex_radial_profile_differentiableAt_ae (n : ℕ) (hn : 0 < n)

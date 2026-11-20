@@ -80,7 +80,7 @@ theorem coordinateDirectionalEnergy_integrable (μ : Measure (I → ℝ)) [IsFin
           _ ≤ ‖fderiv ℝ f x‖ * ‖Pi.single i (1 : ℝ)‖ := ContinuousLinearMap.le_opNorm _ _
           _ ≤ (K : ℝ) := by
             have hn : ‖(Pi.single i (1 : ℝ) : I → ℝ)‖ = 1 := by
-              have hh := congrArg (fun a : ℝ≥0 => (a : ℝ)) (Pi.nnnorm_single (G := fun _ : I => ℝ)
+              have hh := congrArg (fun a : ℝ≥0 => (a : ℝ)) (Pi.nnNorm_single (G := fun _ : I => ℝ)
                   (i := i) (1 : ℝ))
               simpa using hh
             rw [hn, mul_one]

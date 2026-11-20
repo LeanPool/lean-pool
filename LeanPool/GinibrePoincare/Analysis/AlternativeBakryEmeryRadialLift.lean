@@ -139,7 +139,7 @@ theorem bakryEmeryRawBlockLift_mass (n k : ℕ) {V : Potential}
   have h := congrArg (fun μ : Measure ℝ => μ univ)
     (bakryEmeryRawBlockLift_squaredRadius n k hV)
   rw [Measure.map_apply (continuous_gaussianBlockRadius 1 (k + 1)).measurable
-    MeasurableSet.univ, preimage_univ, Measure.smul_apply, smul_eq_mul] at h
+    MeasurableSet.univ, preimage_univ, smul_apply, smul_eq_mul] at h
   exact h
 
 /-- The Euclidean unit-sublevel volume scalar is positive and finite. -/
