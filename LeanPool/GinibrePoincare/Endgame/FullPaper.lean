@@ -108,8 +108,8 @@ For a mathematical reading order, follow these modules, each under the
 3. Theorem 1.4 and Corollary 1.5, polynomial sector and spectrum:
    `Analysis.PolynomialEigenfunctions`, `Analysis.PolynomialGeneratorSpectrum`,
    and `Analysis.CorrespondenceOperatorNumberSpectrum`.
-4. Lemmas 1.7 and 1.8, pointwise curvature and collision capacity:
-   `Analysis.GinibrePointwiseCurvature` and `Analysis.GinibreCollisionCapacity`.
+4. Lemma 1.7 and Remark 1.8, curvature unbounded below and constant mean
+   curvature: `Analysis.GinibrePointwiseCurvature`.
 5. Theorems 1.9 and 1.10, exact deficits: `Endgame.FullTheoremOneNine`,
    `Endgame.FullTheoremOneNinePointwiseGamma`, and `Endgame.FullTheoremOneTen`.
 6. Theorems 1.12 to 1.14, radial LSI, matrix lift and general potentials:
@@ -117,6 +117,7 @@ For a mathematical reading order, follow these modules, each under the
    `Endgame.FullNonQuadraticPotential`.
 7. Section 2 and Appendices A and B, domains, cores and dbar foundations:
    `Analysis.GaussianDbarCompactCore`, `Analysis.CorrespondenceCollisionCutoff`,
+   `Analysis.GinibreCollisionCapacity` for the collision capacity of Lemma A.3,
    and `Analysis.CorrespondenceAuxiliaryHermiteLeading`.
 
 The pinned [upstream reading guide][reading-guide] and its four topic guides
