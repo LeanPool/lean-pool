@@ -1,0 +1,50 @@
+slug: fast-dynamo
+title: A fast dynamo with zero topological entropy
+summary: >-
+  Constructs a Lipschitz divergence-free velocity on the flat three-torus
+  that drives uniform exponential growth in the resistive kinematic
+  induction equation at small positive diffusivity. The particle flow
+  has zero topological entropy and the ideal induction group has
+  zero exponential growth rate.
+branch: partial differential equations
+entry_module: LeanPool.FastDynamo
+authors:
+- Lukas Niebel
+source:
+  title: A fast dynamo with zero topological entropy
+  arxiv: 2608.02586v3
+  url: https://github.com/lukasniebel/fast_dynamo_lean/tree/f2e17cdd0f814af1bd9c0a6ce10320b216ed4fe0
+  github_repo: lukasniebel/fast_dynamo_lean
+  commit: f2e17cdd0f814af1bd9c0a6ce10320b216ed4fe0
+  announcement_url: https://github.com/lukasniebel/fast_dynamo_lean/commit/f2e17cdd0f814af1bd9c0a6ce10320b216ed4fe0
+  announcement_date: '2026-11-17'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  The upstream formalization metadata credits Claude coding agents with the Lean proofs under Lukas Niebel's direction.
+main_declarations:
+- FastDynamo.challenge_statement
+- FastDynamo.main_theorem_strengthened
+- FastDynamo.tendstoUniformlyOn_resistiveEvolution_mainIdealGroup
+main_results:
+- declaration: FastDynamo.challenge_statement
+  informal: >-
+    A single velocity yields a uniform positive resistive growth rate with a
+    growing real solution, a zero-entropy particle flow and a unique ideal
+    solution group of zero exponential growth rate.
+- declaration: FastDynamo.main_theorem_strengthened
+  informal: The construction supplies explicit velocity regularity, spectral and solution witnesses.
+- declaration: FastDynamo.tendstoUniformlyOn_resistiveEvolution_mainIdealGroup
+  informal: >-
+    For each fixed divergence-free L² datum, as positive diffusivity tends to zero, the resistive
+    evolution converges in L² to the ideal group uniformly on bounded intervals of nonnegative time.
+tags:
+- kinematic-dynamo
+- induction-equation
+- spectral-theory
+- topological-entropy
+msc:
+- 35Q35
+- 76W05
+- 37B40
