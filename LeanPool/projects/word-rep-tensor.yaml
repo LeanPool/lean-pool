@@ -1,0 +1,46 @@
+slug: word-rep-tensor
+title: Non-word-representability of tensor products of Mycielski graphs
+summary: >
+  Answers three questions of Alshammari about word-representability of tensor
+  products of graphs built from odd cycles. Induced embeddings settle the
+  products with odd wheels, and a seven-vertex orientation certificate rules
+  out word representations of the mixed and extended Mycielski products.
+branch: graph theory
+entry_module: LeanPool.WordRepTensor
+authors:
+- Horace Dong
+source:
+  title: Tensor products of Mycielskians of odd cycles with odd wheels and with extended Mycielskians of odd cycles are not word-representable
+  url: https://github.com/Horace-Maxwell/ai4math-results/blob/65dd8899dfe1abf289282f141222057d5593ca02/papers/wordrep-tensor/note.pdf
+  github_repo: Horace-Maxwell/ai4math-results
+  commit: 65dd8899dfe1abf289282f141222057d5593ca02
+  completion_url: https://github.com/Horace-Maxwell/ai4math-results/releases/tag/v1.19.0
+  completion_date: '2026-11-12T03:38:37Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- WordRepTensor.not_wordRepresentable_mycielskian_tensor_wheel
+- WordRepTensor.not_wordRepresentable_extended_tensor_wheel
+- WordRepTensor.not_wordRepresentable_mycielskian_tensor_extended
+- WordRepTensor.not_wordRepresentable_extended_tensor_extended
+main_results:
+- declaration: WordRepTensor.not_wordRepresentable_mycielskian_tensor_wheel
+  informal: For n ≥ 1 and m ≥ 2, the tensor product of the Mycielskian of C(2n+1)
+    with the wheel on a rim C(2m+1) is not word-representable.
+- declaration: WordRepTensor.not_wordRepresentable_extended_tensor_wheel
+  informal: The same non-word-representability holds when the first factor
+    is the extended Mycielskian of C(2n+1).
+- declaration: WordRepTensor.not_wordRepresentable_mycielskian_tensor_extended
+  informal: For 1 ≤ n < m, the product of the Mycielskian of C(2n+1) and the
+    extended Mycielskian of C(2m+1) is not word-representable.
+- declaration: WordRepTensor.not_wordRepresentable_extended_tensor_extended
+  informal: For 1 ≤ n < m, the product of the extended Mycielskians of
+    C(2n+1) and C(2m+1) is not word-representable.
+tags:
+- graph-products
+- mycielski-graphs
+- word-representability
+msc:
+- 05C76
+- 05C62
