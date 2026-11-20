@@ -1,0 +1,51 @@
+slug: noncommutative-amgm
+title: Noncommutative arithmetic–geometric mean bounds for ordered products
+summary: >-
+  Bounds the mean of products of m distinct real positive semidefinite matrices
+  in Loewner order when their sum is at most nI. Proves the two-sided quadratic
+  threshold, the original sine-node and cubic criteria, and the strengthened
+  lower bounds, using harmonic decomposition and Chebyshev quadrature on
+  Boolean slices.
+branch: matrix inequalities
+entry_module: LeanPool.NoncommutativeAMGM
+authors:
+- Yimin Zhong
+source:
+  title: When the noncommutative AM-GM inequality holds
+  arxiv: 2610.04874v1
+  url: https://github.com/lowrank/noncommutative-amgm-lean/tree/26ecfa508fd375e3d8fae87a4526d0be5efd8b3f
+  github_repo: lowrank/noncommutative-amgm-lean
+  commit: 26ecfa508fd375e3d8fae87a4526d0be5efd8b3f
+  announcement_url: https://github.com/lowrank/noncommutative-amgm-lean/commit/bba1cdc60c4d15e6ce4a46d616ca94cb16fcb818
+  announcement_date: '2026-11-17'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  The upstream formalization metadata credits GPT-6 (Codex) with proof construction under Yimin Zhong's direction.
+main_declarations:
+- NoncommutativeAMGM.withoutReplacementMean_quadratic_bounds
+- NoncommutativeAMGM.withoutReplacementMean_rounded_lower
+- NoncommutativeAMGM.withoutReplacementMean_endpoint_lower
+- NoncommutativeAMGM.withoutReplacementMean_sine_bounds
+- NoncommutativeAMGM.withoutReplacementMean_cubic_bounds
+main_results:
+- declaration: NoncommutativeAMGM.withoutReplacementMean_quadratic_bounds
+  informal: The mean lies between −I and I when n ≥ 2⌈m/2⌉².
+- declaration: NoncommutativeAMGM.withoutReplacementMean_rounded_lower
+  informal: The mean is at least (−1 + 1/(2m))I when n ≥ 4m².
+- declaration: NoncommutativeAMGM.withoutReplacementMean_endpoint_lower
+  informal: Keeping the zero-slice endpoint yields the lower bound (−1 + 1/m)I at the quadratic threshold.
+- declaration: NoncommutativeAMGM.withoutReplacementMean_sine_bounds
+  informal: The paper's sine-node criterion implies the two-sided bound.
+- declaration: NoncommutativeAMGM.withoutReplacementMean_cubic_bounds
+  informal: The sufficient condition m³ ≤ 2n implies the two-sided bound.
+tags:
+- matrix-inequalities
+- positive-semidefinite
+- Chebyshev-polynomials
+- quadrature
+msc:
+- 15A45
+- 47A63
+- 41A55
