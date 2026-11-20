@@ -6,6 +6,7 @@ Authors: Moritz Firsching
 
 module
 
+import LeanPool.Zeta5Irrational.Table.RationalLogCertificate
 import LeanPool.Zeta5Irrational.Table.RationalSeries
 
 public import LeanPool.Zeta5Irrational.Potential
@@ -24,6 +25,8 @@ import Mathlib.Tactic.NormNum.Pow
 open Finset
 
 namespace Zeta5Irrational
+
+open scoped LogarithmCertificates
 
 lemma V_br :
     ((236122014583635193 / 40000000000000000000 : ℝ) -

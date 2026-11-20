@@ -107,6 +107,7 @@ public import LeanPool.Zeta5Irrational.Table.Intervals.Fourth
 public import LeanPool.Zeta5Irrational.Table.Intervals.Second
 public import LeanPool.Zeta5Irrational.Table.Intervals.Third
 public import LeanPool.Zeta5Irrational.Table.LowerCertificate
+public import LeanPool.Zeta5Irrational.Table.RationalLogCertificate
 public import LeanPool.Zeta5Irrational.Table.RationalSeries
 public import LeanPool.Zeta5Irrational.Table.Tail
 public import LeanPool.Zeta5Irrational.Table.U00
