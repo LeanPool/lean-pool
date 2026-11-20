@@ -6,6 +6,7 @@ Authors: Moritz Firsching
 
 module
 
+import LeanPool.Zeta5Irrational.Table.RationalLogCertificate
 import LeanPool.Zeta5Irrational.Table.RationalSeries
 
 public import LeanPool.Zeta5Irrational.TableCheck
@@ -23,6 +24,8 @@ import Mathlib.Tactic.NormNum.Pow
 open Finset
 
 namespace Zeta5Irrational
+
+open scoped LogarithmCertificates
 
 lemma aρ_1 : aρ 1 = (1953374043 / 500000000000 : ℝ) := by norm_num [aρ, table1]
 
