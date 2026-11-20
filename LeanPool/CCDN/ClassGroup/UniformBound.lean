@@ -82,7 +82,7 @@ theorem classGroup_uniform_logarithmic_bound (n : ℕ) (hn : 2 ≤ n) :
     ∃ C : ℝ, 0 < C ∧ ClassGroupLogarithmicBound.{u} n C := by
   classical
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn2 : n = 2
     · subst n
       obtain ⟨C, hC, hbound⟩ := quadratic_class_group_base_numeric

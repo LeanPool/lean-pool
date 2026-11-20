@@ -98,7 +98,7 @@ theorem exists_fundamental : ∃ Φ Ψ : ℝ → A,
       _ ≤ ‖B‖*‖x-y‖ + ‖x-y‖*‖B‖ := add_le_add
         (mul_le_mul_of_nonneg_right (hnorm t) (norm_nonneg _))
         (mul_le_mul_of_nonneg_left (hnorm t) (norm_nonneg _))
-      _ = _ := by simp only [NNReal.coe_mul, NNReal.coe_ofNat, coe_nnnorm]; ring
+      _ = _ := by simp only [NNReal.coe_mul, NNReal.coe_ofNat, coe_nnNorm]; ring
   have hfront : EqOn (fun t => Φ t*Ψ t) (fun _ => (1 : A)) (Icc (0 : ℝ) T) := by
     apply ODE_solution_unique_of_mem_Icc_right
       (v := fun t x => b t*x-x*b t) (s := fun _ => Set.univ)

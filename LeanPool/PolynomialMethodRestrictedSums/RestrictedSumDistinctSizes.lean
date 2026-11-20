@@ -178,7 +178,7 @@ lemma restricted_sum_m_bound (A : Fin (k + 1) → Finset (ZMod p))
               norm_num;
         simp_all +decide [Nat.choose];
         omega;
-      rcases p with (_ | p) <;> (try simp_all (config := { decide := Bool.true }))
+      rcases p with (_ | p) <;> simp_all (config := { decide := Bool.true })
 
 /-
 The coefficient of the monomial corresponding to c in the product of the power sum and the
@@ -377,7 +377,7 @@ theorem restricted_sum_distinct_sizes (A : Fin (k + 1) → Finset (ZMod p))
         let S := (Fintype.piFinset A).filter (fun f => h.eval f ≠ 0) |>.image (fun f => ∑ i, f i);
         S.card ≥ m + 1 := by
           convert ANR_polynomial_method (vandermondePolynomial k) A c _ _ _ using 1;
-          any_goals exact m;
+          on_goal 3 => exact m;
           · refine Iff.intro (fun h_card_ge h_coeff => ⟨h_card_ge, ?_⟩) (fun a => ?_)
             · exact restricted_sum_m_bound A h_nonempty h_sum_bound
             · convert a _ |>.1;

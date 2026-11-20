@@ -62,7 +62,7 @@ private theorem polynomial_eq_zero_of_differential_constant_coefficients
     (hcoeff : Differential.mapCoeffs f = 0) (hroot : f.eval t = 0) :
     f = 0 := by
   induction hn : f.natDegree using Nat.strong_induction_on generalizing f with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn0 : n = 0
     · have he := eq_C_of_natDegree_eq_zero (hn.trans hn0)
       rw [he, eval_C] at hroot

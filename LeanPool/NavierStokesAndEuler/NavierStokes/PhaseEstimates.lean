@@ -814,7 +814,7 @@ theorem hasDerivAt_projected_iff {β ρ x y : ℝ → ℝ} {B : ℝ → Frame}
     x' = rhsX F d (ρ v) ρ' rot (B v) g f (x v) (y v) ∧
       y' = rhsY F d (ρ v) rot (B v) g f (x v) (y v) := by
   have ht := hasDerivAt_tangent hρ hx hy hK hN
-  rw [← tangentMotion_eq_projectedRhs_iff hβ0]
+  rw [← tangentMotion_eq_projectedRhs_iff hβ0 β']
   constructor
   · intro h
     exact ht.unique h

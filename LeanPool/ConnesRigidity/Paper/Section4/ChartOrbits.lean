@@ -98,7 +98,7 @@ theorem transvection_action_vector {i j : Fin 3} (hij : i ≠ j)
 
 theorem moveOne_apply :
     sl3AAction moveOne (basisVector 0) = basisVector 1 := by
-  simp only [moveOne, t10, t01, map_mul, LinearEquiv.mul_apply]
+  simp only [moveOne, t10, t01, map_mul, mul_apply_eq_comp]
   rw [transvection_action_vector h10 1,
     transvection_action_vector h01 1,
     transvection_action_vector h10 1]
@@ -108,7 +108,7 @@ theorem moveOne_apply :
 
 theorem moveTwo_apply :
     sl3AAction moveTwo (basisVector 0) = basisVector 2 := by
-  simp only [moveTwo, t20, t02, map_mul, LinearEquiv.mul_apply]
+  simp only [moveTwo, t20, t02, map_mul, mul_apply_eq_comp]
   rw [transvection_action_vector h20 1,
     transvection_action_vector h02 1,
     transvection_action_vector h20 1]
@@ -138,7 +138,7 @@ def chartOrbitWitness (s : Fin 3) (f h : R) : SpecialLinear.SL3 :=
 theorem chartOrbitWitness_apply (s : Fin 3) (f h : R) :
     sl3AAction (chartOrbitWitness s f h) (basisVector 0) =
       chartVector s f h := by
-  simp only [chartOrbitWitness, map_mul, LinearEquiv.mul_apply]
+  simp only [chartOrbitWitness, map_mul, mul_apply_eq_comp]
   rw [transvection_action_vector (nextNext_ne s) h,
     transvection_action_vector (next_ne s) f,
     basisMove_apply]

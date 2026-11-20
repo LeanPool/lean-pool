@@ -390,7 +390,7 @@ theorem tsum_cubeVolume_weight_le [NeZero d] (T : KuhnCell d) {s : ℝ} (hs : s 
         (3 : ℝ) ^ (2 * s * ((T.supportCube.scale - R.scale : ℤ) : ℝ)) :=
       Real.rpow_nonneg (by norm_num) _
     exact mul_nonneg (div_nonneg (cubeVolume_nonneg _) hmupos.le) h2
-  rw [ENNReal.tsum_eq_iSup_sum]
+  rw [tsum_eq_iSup_sum]
   refine iSup_le fun J => ?_
   have hnnJ : ∀ R ∈ J, (0 : ℝ) ≤ cubeVolume (R : TriadicCube d) / (volume T.openCarrier).toReal *
       (3 : ℝ) ^ (2 * s * ((T.supportCube.scale - (R : TriadicCube d).scale : ℤ) : ℝ)) :=
@@ -652,7 +652,7 @@ theorem responseJ_simplexDomain_zero_flux_le_LambdaSq [NeZero d]
       linarith [hJ]
     rw [hTs]
     nlinarith [hJ2, hw, hexp]
-  have hchain := hsubadd.trans (ENNReal.tsum_le_tsum hterm)
+  have hchain := hsubadd.trans (tsum_le_tsum hterm)
   rw [ENNReal.tsum_mul_left] at hchain
   have hfin : ENNReal.ofReal
       (2 * Ch02.responseJ (simplexDomain T) (simplexCoeffOn a T) p 0) ≤
@@ -747,7 +747,7 @@ theorem responseJ_simplexDomain_zero_slope_le_lambdaSq_inv [NeZero d]
       linarith [hJ]
     rw [hTs]
     nlinarith [hJ2, hw, hexp]
-  have hchain := hsubadd.trans (ENNReal.tsum_le_tsum hterm)
+  have hchain := hsubadd.trans (tsum_le_tsum hterm)
   rw [ENNReal.tsum_mul_left] at hchain
   have hfin : ENNReal.ofReal
       (2 * Ch02.responseJ (simplexDomain T) (simplexCoeffOn a T) 0 q) ≤

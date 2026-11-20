@@ -190,15 +190,15 @@ lemma masterApprox_cauchy_le (n m : ℕ) {t : ℝ} (ht_nn : 0 ≤ t) :
         = -(H ω s - Gn.eval s ω) + (H ω s - Gm.eval s ω) := by ring
     rw [hrw, hA, hB]
     refine le_trans (sq_nnnorm_add_le_two_mul_brownian _ _) ?_
-    rw [show ‖-(H ω s - Gn.eval s ω)‖₊ = ‖H ω s - Gn.eval s ω‖₊ from by rw [nnnorm_neg]]
+    rw [show ‖-(H ω s - Gn.eval s ω)‖₊ = ‖H ω s - Gn.eval s ω‖₊ from by rw [nnNorm_neg]]
   -- joint measurability of `A` and the `s`-section measurability
   have hH_pair : Measurable (fun p : Ω × ℝ => H p.1 p.2) := h_meas
   have hA_pair : Measurable (fun p : Ω × ℝ => A p.1 p.2) := by
     rw [hA]
-    exact (((hH_pair.sub Gn.eval_jointly_measurable).nnnorm).coe_nnreal_ennreal).pow_const 2
+    exact (((hH_pair.sub Gn.eval_jointly_measurable).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hB_pair : Measurable (fun p : Ω × ℝ => B p.1 p.2) := by
     rw [hB]
-    exact (((hH_pair.sub Gm.eval_jointly_measurable).nnnorm).coe_nnreal_ennreal).pow_const 2
+    exact (((hH_pair.sub Gm.eval_jointly_measurable).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hA_s : ∀ ω, Measurable (A ω) := fun ω =>
     hA_pair.comp (measurable_const.prodMk measurable_id)
   have hA_outer : Measurable (fun ω => ∫⁻ s in Set.Icc (0 : ℝ) t, A ω s ∂volume) :=
@@ -520,7 +520,7 @@ lemma masterApprox_evalNorm_tendsto {T : ℝ} (hT : 0 < T) :
     intro f hf
     rw [eLpNorm_sq_eq_lintegral_nnnorm_sq f hf.aestronglyMeasurable,
         MeasureTheory.lintegral_prod _
-          (((hf.nnnorm.coe_nnreal_ennreal).pow_const 2).aemeasurable)]
+          (((hf.nnNorm.coe_nnreal_ennreal).pow_const 2).aemeasurable)]
   -- `eLpNorm < ⊤` from finiteness of the squared mass.
   have hfin : ∀ (f : Ω × ℝ → ℝ), Measurable f →
       (∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, (‖f (ω, s)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P ≠ ⊤) →
@@ -544,7 +544,7 @@ lemma masterApprox_evalNorm_tendsto {T : ℝ} (hT : 0 < T) :
       rw [hbridge (Gp n - Hp) ((hGp_meas n).sub hHp_meas)]
       refine lintegral_congr (fun ω =>
         MeasureTheory.setLIntegral_congr_fun measurableSet_Icc (fun s _ => ?_))
-      rw [Pi.sub_apply, hGp, hHp, ← nnnorm_neg]
+      rw [Pi.sub_apply, hGp, hHp, ← nnNorm_neg]
       congr 1; ring_nf
     have h2 : Filter.Tendsto (fun n => MeasureTheory.eLpNorm (Gp n - Hp) 2 (P.prod ν) ^ (2 : ℝ))
         Filter.atTop (nhds 0) := by
@@ -557,8 +557,8 @@ lemma masterApprox_evalNorm_tendsto {T : ℝ} (hT : 0 < T) :
   -- transfer to `Lp`, take norms.
   have hLp := (MeasureTheory.Lp.tendsto_Lp_iff_tendsto_eLpNorm'' (fun n => Gp n)
     (fun n => hGmemLp n) Hp hHmemLp).mpr hdiff
-  have hnorm := hLp.enorm
-  simp only [MeasureTheory.Lp.enorm_def] at hnorm
+  have hnorm := hLp.eNorm
+  simp only [MeasureTheory.Lp.eNorm_def] at hnorm
   have hnorm2 : Filter.Tendsto (fun n => MeasureTheory.eLpNorm (Gp n) 2 (P.prod ν))
       Filter.atTop (nhds (MeasureTheory.eLpNorm Hp 2 (P.prod ν))) := by
     rw [MeasureTheory.eLpNorm_congr_ae (MeasureTheory.MemLp.coeFn_toLp hHmemLp)] at hnorm

@@ -460,12 +460,12 @@ theorem Probability.affineSupport_mapContinuousLinearEquiv :
       (affineSupport ν).map (T : V₁ →ₗ[ℝ] V₂).toAffineMap := by
   apply le_antisymm
   · apply affineSupport_le_of_ae_mem
-    · exact ((affineSupport ν).map (T : V₁ →ₗ[ℝ] V₂).toAffineMap).closed_of_finiteDimensional
+    · exact ((affineSupport ν).map (T : V₁ →ₗ[ℝ] V₂).toAffineMap).isClosed_of_finiteDimensional
     · rw [coe_mapContinuousLinearEquiv]
       refine
         (ae_map_iff T.continuous.measurable.aemeasurable
               ((affineSupport ν).map
-                  (T : V₁ →ₗ[ℝ] V₂).toAffineMap).closed_of_finiteDimensional.measurableSet).2
+                  (T : V₁ →ₗ[ℝ] V₂).toAffineMap).isClosed_of_finiteDimensional.measurableSet).2
           ?_
       filter_upwards [ae_mem_affineSupport ν] with x hx
       exact ⟨x, hx, rfl⟩

@@ -38,7 +38,7 @@ def GalerkinForcing.forcingClosedCell : Set (Vec 2) :=
   Set.pi Set.univ (fun _ : Fin 2 => Set.Icc (0 : ℝ) 1)
 
 theorem GalerkinForcing.unitCell_ae_eq_forcingClosedCell :
-    Filter.EventuallyEq (ae (volume : Measure (Vec 2)))
+    Filter.EventuallyEqSet (ae (volume : Measure (Vec 2)))
       (AVenhance.Infra.Torus.unitCell 2) GalerkinForcing.forcingClosedCell := by
   have hopen : AVenhance.unitCube =ᵐ[volume] GalerkinForcing.forcingClosedCell := by
     simpa [AVenhance.unitCube, GalerkinForcing.forcingClosedCell, volume_pi] using

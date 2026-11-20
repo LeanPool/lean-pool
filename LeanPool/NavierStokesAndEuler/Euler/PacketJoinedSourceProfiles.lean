@@ -157,7 +157,7 @@ include hT τ hτ hτT B C hmean hhigh hcorrector hprimary in
 theorem joined_profiles_regular (p : ℕ) :
     Nonempty (ProfileRegularity P M.T M.T_pos.le D.support (profiles O primary p)) := by
   induction p using Nat.strong_induction_on with
-  | h p ih =>
+  | ind p ih =>
     by_cases hp0 : p = 0
     · subst p
       rw [profiles_zero]
@@ -239,7 +239,7 @@ variable {P : ℝ} [Fact (0 < P)] (M : EulerMeanPacketProvider.Data)
 include hT τ hτ hτT B C hmean hhigh hcorrector E eM hSym hF hDM hBH hprimary hprimaryParity in
 theorem joined_profiles_parity (p : ℕ) : ProfileParity M.T (profiles O primary p) := by
   induction p using Nat.strong_induction_on with
-  | h p ih =>
+  | ind p ih =>
     by_cases hp0 : p = 0
     · subst p
       rw [profiles_zero]

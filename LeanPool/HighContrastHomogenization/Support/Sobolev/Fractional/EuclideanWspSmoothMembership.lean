@@ -217,7 +217,7 @@ private theorem smoothWspPowerKernel_integrable_gagliardoCubeMeasure {d : ℕ} [
           _ = 4 * C := by ring
       exact (setIntegral_mono_set hbig
         (Filter.Eventually.of_forall fun x => Real.rpow_nonneg (norm_nonneg _) _)
-        hsubball.eventuallyLE).trans_eq hmove
+        (Filter.Eventually.of_forall hsubball)).trans_eq hmove
     have hnonneg : 0 ≤ ∫ x, ‖smoothWspPowerKernel a x y‖ ∂μ :=
       integral_nonneg fun x => norm_nonneg _
     rw [Real.norm_of_nonneg hnonneg]
@@ -232,7 +232,7 @@ private theorem smoothWspPowerKernel_integrable_gagliardoCubeMeasure {d : ℕ} [
       _ ≤ ∫ x in Metric.ball (0 : Vec d) (2 * C), smoothWspPowerKernel a x y := by
             exact setIntegral_mono_set hlarge
               (Filter.Eventually.of_forall fun x => Real.rpow_nonneg (norm_nonneg _) _)
-                hsub.eventuallyLE
+                (Filter.Eventually.of_forall hsub)
       _ ≤ B := htrans
   have houter_int : Integrable (fun _ : Vec d => B) μ := integrable_const B
   have hnorm_int : Integrable (fun y => ∫ x, ‖smoothWspPowerKernel a x y‖ ∂μ) μ :=

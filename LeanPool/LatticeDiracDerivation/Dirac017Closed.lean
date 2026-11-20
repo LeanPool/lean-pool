@@ -305,7 +305,7 @@ theorem standard_cube_spin0_basis_spectrum :
       simp [standardCubeSpin, standardCubePlaneBivector,
         standardCubeGamma, standardDiracAlphaX, standardDiracAlphaY,
         standardCell4Basis]
-    all_goals ring_nf
+    ring_nf
   constructor
   · funext component
     fin_cases component <;>
@@ -318,7 +318,7 @@ theorem standard_cube_spin0_basis_spectrum :
       simp [standardCubeSpin, standardCubePlaneBivector,
         standardCubeGamma, standardDiracAlphaX, standardDiracAlphaY,
         standardCell4Basis]
-    all_goals ring_nf
+    ring_nf
   · funext component
     fin_cases component <;>
       simp [standardCubeSpin, standardCubePlaneBivector,

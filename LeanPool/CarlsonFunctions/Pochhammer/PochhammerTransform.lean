@@ -101,7 +101,7 @@ theorem ascPochhammer_eq_sum_stirlingFirst (n : ℕ) :
       ∑ k ∈ Finset.range (n + 1), Polynomial.monomial k (n.stirlingFirst k : R) := by
   ext j
   rw [Polynomial.finsetSum_coeff]
-  simp only [Polynomial.coeff_monomial, Finset.sum_ite_eq']
+  simp only [Polynomial.coeff_monomial_apply, Finset.sum_ite_eq']
   split_ifs with h
   · simp only [coeff_ascPochhammer]
   · rw [coeff_ascPochhammer]
@@ -369,7 +369,7 @@ theorem natDegree_ascPochhammerTransform (p : Polynomial R) :
     · rw [Polynomial.mem_support_iff]
       rw [coeff_natDegree_ascPochhammerTransform R p]
       exact Polynomial.mem_support_iff.mp
-        (Polynomial.natDegree_mem_support_of_nonzero hp)
+        (Polynomial.natDegree_mem_support_of_ne_zero hp)
 
 /-- The ascending Pochhammer transform is injective. -/
 theorem ascPochhammerTransform_injective :
@@ -390,7 +390,7 @@ theorem ascPochhammerTransform_injective :
   rw [coeff_natDegree_ascPochhammerTransform R (p - q)] at hc
   have hmem :
       (p - q).natDegree ∈ (p - q).support :=
-    Polynomial.natDegree_mem_support_of_nonzero hpq0
+    Polynomial.natDegree_mem_support_of_ne_zero hpq0
   have hcoeff :
       (p - q).coeff (p - q).natDegree ≠ 0 := by
     exact Polynomial.mem_support_iff.mp hmem

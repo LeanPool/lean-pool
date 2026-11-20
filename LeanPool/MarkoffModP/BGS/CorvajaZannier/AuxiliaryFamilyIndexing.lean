@@ -101,7 +101,7 @@ theorem indexedAuxiliaryWronskian_det_eq_derivationWronskian_det
     simp only [indexedDedekindLocalWronskian, auxiliaryFamilyDerivativeOrder, Matrix.reindex_apply,
       Matrix.submatrix, Algebra.derivationWronskian, Equiv.symm_symm, Equiv.symm_apply_apply,
       Matrix.of_apply, e, g]
-    exact (Module.End.pow_apply D.toLinearMap _ (f j)).symm
+    exact (pow_apply_eq_iterate D.toLinearMap _ (f j)).symm
   rw [hmatrix, Matrix.det_reindex_self]
 
 /-- Exact constants and linear independence make the indexed global

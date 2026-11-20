@@ -58,7 +58,7 @@ abbrev helperContinuation1782Conditions.{u_1, u_2} : Prop :=
            have := hXY.1
            have := GoldbergSeymour.TreeSequence.positive X
            have := GoldbergSeymour.TreeSequence.positive Y
-           all_goals omega)
+           omega)
     )) (stageSegment :
     ∀ (a d : ℕ) (hbound : a + d ≤ H.dividerCount + (1 : ℕ)), TreeSequenceInitialSegment (H.stage
         (⟨a,

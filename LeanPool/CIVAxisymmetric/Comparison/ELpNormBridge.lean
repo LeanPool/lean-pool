@@ -61,7 +61,7 @@ theorem comparison_eLpNorm_top_of_ae_dominance {m : ℕ} {I : Set ℝ} {q : Vec 
       have hxreal : ‖q (x, τ₀)‖ₑ.toReal
           ≤ (eLpNorm (fun x : Vec m => q (x, τ₀)) ⊤ volume).toReal :=
         ENNReal.toReal_mono hRtop hx
-      rwa [toReal_enorm, Real.norm_eq_abs] at hxreal
+      rwa [toReal_eNorm, Real.norm_eq_abs] at hxreal
     have hbound : ∀ᵐ x : Vec m,
         |q (x, τ)| ≤ (eLpNorm (fun x : Vec m => q (x, τ₀)) ⊤ volume).toReal :=
       hτ hlt _ hbound0

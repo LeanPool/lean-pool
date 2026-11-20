@@ -254,7 +254,7 @@ open AddSubgroup AddMonoidHom
 section NatGen
 
 noncomputable def natGen (K : AddSubgroup ℤ) : ℕ :=
-  ((K.isAddCyclic_iff_exists_zmultiples_eq_top).mp (AddSubgroup.isAddCyclic K)).choose.natAbs
+  ((K.isAddCyclic_iff_exists_zmultiples_eq).mp (AddSubgroup.isAddCyclic K)).choose.natAbs
 
 theorem zmultiples_natAbs (a : ℤ) :
     AddSubgroup.zmultiples ((a.natAbs : ℕ) : ℤ) = AddSubgroup.zmultiples a := by
@@ -263,7 +263,7 @@ theorem zmultiples_natAbs (a : ℤ) :
 
 theorem zmultiples_natGen (K : AddSubgroup ℤ) :
     AddSubgroup.zmultiples ((natGen K : ℕ) : ℤ) = K := by
-  have h := ((K.isAddCyclic_iff_exists_zmultiples_eq_top).mp
+  have h := ((K.isAddCyclic_iff_exists_zmultiples_eq).mp
     (AddSubgroup.isAddCyclic K)).choose_spec
   rw [natGen, zmultiples_natAbs]
   exact h

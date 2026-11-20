@@ -61,11 +61,11 @@ theorem energyL2_components_memLp
     intro z
     exact le_add_of_nonneg_left (by positivity)
   constructor
-  · rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  · rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) hu]
     simp only [ENNReal.toReal_ofNat]
     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) huFin.ne
-  · rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  · rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) hDu]
     simp only [ENNReal.toReal_ofNat]
     exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hDuFin.ne

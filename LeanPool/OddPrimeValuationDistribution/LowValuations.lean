@@ -91,7 +91,7 @@ theorem coeff_one_oddCarryPolynomial_add_two (half length : ℕ) :
         simp
       rw [Polynomial.coeff_add, Polynomial.coeff_natCast_mul,
         hshift, hzero, hone]
-      simp [Polynomial.coeff_natCast_ite, Polynomial.coeff_one]
+      simp [Polynomial.coeff_one]
       ring
   | succ length ih =>
       rw [show length + 1 + 2 = (length + 2) + 1 by omega]

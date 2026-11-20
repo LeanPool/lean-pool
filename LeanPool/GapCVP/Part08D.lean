@@ -499,7 +499,7 @@ private theorem guardedSourcePair_quadratic_lt_two_pow
     4 * (count * count + count) + 1 <
       2 ^ ((count + 12) / 2) := by
   induction count using Nat.strong_induction_on with
-  | h count ih =>
+  | ind count ih =>
       by_cases hsmall : count < 7
       · interval_cases count <;> norm_num
       · have hcount : 7 ≤ count := by omega
@@ -3024,14 +3024,14 @@ private theorem bitValue_decide (value : ZMod 2) :
     have hval : j.val ≠ i.val := by
       intro heq
       exact hji (Fin.ext heq)
-    simp only [coeff_monomial, hval, ↓reduceIte]
+    simp only [coeff_monomial_apply, hval, ↓reduceIte]
   · simp only [Finset.mem_univ, not_true_eq_false, coeff_monomial_same, IsEmpty.forall_iff]
 
 theorem wordPolynomial_coeff_eq_zero {e : ℕ}
     (word : Word e) (k : ℕ) (hk : e ≤ k) :
     (wordPolynomial word).coeff k = 0 := by
   classical
-  simp only [wordPolynomial, finsetSum_coeff, coeff_monomial,
+  simp only [wordPolynomial, finsetSum_coeff, coeff_monomial_apply,
       show ∀ i : Fin e, i.val ≠ k by
           intro i h
           have := i.isLt
@@ -3059,7 +3059,8 @@ private theorem wordPolynomial_coefficientWord
     (hdegree : p.degree < (e : WithBot ℕ)) :
     wordPolynomial (coefficientWord e p) = p := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro k
   by_cases hk : k < e
   · let i : Fin e := ⟨k, hk⟩
@@ -3256,7 +3257,7 @@ private theorem wordPolynomial_mul_coeff {e : ℕ}
   classical
   simp only [wordPolynomial, Finset.mul_sum, Finset.sum_mul, monomial_mul_monomial,
       finsetSum_coeff,
-      coeff_monomial]
+      coeff_monomial_apply]
   rw [Finset.sum_comm]
 
 theorem wordPolynomial_multiplyWords {e : ℕ}
@@ -3264,7 +3265,8 @@ theorem wordPolynomial_multiplyWords {e : ℕ}
     wordPolynomial (multiplyWords left right) =
       wordPolynomial left * wordPolynomial right := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro k
   by_cases hk : k < 2 * e
   · let i : Fin (2 * e) := ⟨k, hk⟩
@@ -3309,7 +3311,8 @@ private theorem wordPolynomial_monicWord {e : ℕ} (he : 0 < e)
     (lower : Word e) :
     wordPolynomial (monicWord lower) = monicPolynomial lower := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro k
   by_cases hk : k < 2 * e
   · let i : Fin (2 * e) := ⟨k, hk⟩
@@ -3534,7 +3537,8 @@ theorem wordPolynomial_xorAt {d : ℕ}
       wordPolynomial word +
         Polynomial.monomial index.val (bitValue bit) := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro k
   by_cases hk : k < d
   · let i : Fin d := ⟨k, hk⟩
@@ -3543,7 +3547,7 @@ theorem wordPolynomial_xorAt {d : ℕ}
         (wordPolynomial word +
           Polynomial.monomial index.val (bitValue bit)).coeff i.val
     rw [Polynomial.coeff_add, wordPolynomial_coeff_fin,
-      wordPolynomial_coeff_fin, Polynomial.coeff_monomial]
+      wordPolynomial_coeff_fin, Polynomial.coeff_monomial_apply]
     by_cases hi : i = index
     · subst index
       simp only [xorAt, ↓reduceIte, bitValue_xor]
@@ -3558,7 +3562,7 @@ theorem wordPolynomial_xorAt {d : ℕ}
     rw [wordPolynomial_coeff_eq_zero _ k hlarge,
       Polynomial.coeff_add,
       wordPolynomial_coeff_eq_zero _ k hlarge,
-      Polynomial.coeff_monomial]
+      Polynomial.coeff_monomial_apply]
     simp only [hindex, ↓reduceIte, add_zero]
 
 /-- GapCVP reduction support. -/
@@ -4324,7 +4328,7 @@ theorem sourceFiniteField_card_upper {N : ℕ} (hN : 100 ≤ N) :
   have hpred :
       2 ^ (sourceFieldExponent N).pred < N ^ 200 := by
     rw [sourceFieldExponent_eq]
-    exact Nat.pow_pred_clog_lt_self (by norm_num) hpow
+    exact Nat.pow_pred_clog_lt_self 2 hpow
   have hexp : (sourceFieldExponent N).pred + 1 =
       sourceFieldExponent N :=
     Nat.succ_pred_eq_of_pos (sourceFieldExponent_pos hN)

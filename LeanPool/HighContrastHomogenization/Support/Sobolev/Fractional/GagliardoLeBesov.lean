@@ -325,7 +325,7 @@ private theorem enorm_sub_rpow_le {pr : ℝ} (hpr : 0 ≤ pr) (u : Vec d → ℝ
   have hsplit : ‖u z.1 - u z.2‖ₑ ≤ ‖u z.1 - c‖ₑ + ‖u z.2 - c‖ₑ := by
     have hrw : u z.1 - u z.2 = (u z.1 - c) - (u z.2 - c) := by ring
     rw [hrw]
-    exact enorm_sub_le
+    exact eNorm_sub_le
   calc ‖u z.1 - u z.2‖ₑ ^ pr
       ≤ (‖u z.1 - c‖ₑ + ‖u z.2 - c‖ₑ) ^ pr := ENNReal.rpow_le_rpow hsplit hpr
     _ ≤ 2 ^ pr * (‖u z.1 - c‖ₑ ^ pr + ‖u z.2 - c‖ₑ ^ pr) :=
@@ -411,7 +411,7 @@ private theorem lintegral_enorm_sub_average_eq {S : TriadicCube d} {p : ℝ≥0�
     have hsub : AEStronglyMeasurable (fun x => u x - ScalarOverlap.cubeAverage S u)
         (ScalarOverlap.normalizedCubeMeasure S) :=
       hu.aestronglyMeasurable.sub aestronglyMeasurable_const
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hsub, ← ENNReal.rpow_mul,
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hsub, ← ENNReal.rpow_mul,
       one_div_mul_cancel hpr.ne', ENNReal.rpow_one]
   calc (∫⁻ x in ScalarOverlap.cubeSet S, g x ∂MeasureTheory.volume)
       = 1 * ∫⁻ x in ScalarOverlap.cubeSet S, g x ∂MeasureTheory.volume :=
@@ -444,7 +444,7 @@ private theorem setLIntegral_prod_overlap_le {S : TriadicCube d} {p : ℝ≥0∞
   set g : Vec d → ℝ≥0∞ := fun x => ‖u x - c‖ₑ ^ p.toReal with hgdef
   have hg : Measurable g :=
     (ENNReal.continuous_rpow_const.measurable).comp
-      ((humeas.sub measurable_const).enorm)
+      ((humeas.sub measurable_const).eNorm)
   have hpoint : ∀ z : Vec d × Vec d,
       ‖u z.1 - u z.2‖ₑ ^ p.toReal ≤ 2 ^ p.toReal * (g z.1 + g z.2) :=
     fun z => enorm_sub_rpow_le hpr.le u c z
@@ -651,7 +651,7 @@ private theorem shell_lintegral_le {Q : TriadicCube d} {s : ℝ} {p : ℝ≥0∞
             ENNReal.ofReal (cubeBesovOverlapDepthAverage Q p u (n - 1)))) := by
   have hF : Measurable fun z : Vec d × Vec d => ‖u z.1 - u z.2‖ₑ ^ p.toReal :=
     (ENNReal.continuous_rpow_const.measurable).comp
-      (((humeas.comp measurable_fst).sub (humeas.comp measurable_snd)).enorm)
+      (((humeas.comp measurable_fst).sub (humeas.comp measurable_snd)).eNorm)
   have hvolS : ∀ S ∈ ScalarOverlap.centersAtDepth Q (n - 1),
       ScalarOverlap.cubeVolume S = (cubeScaleFactor Q / 3 ^ (n - 1)) ^ d := by
     intro S hS
@@ -887,13 +887,13 @@ theorem gagliardo_rpow_le_iSup_partialSeminorm {d : ℕ} [NeZero d]
     set h : ℕ → ℝ≥0∞ := fun j => ENNReal.ofReal
       (cubeBesovOverlapDepthSeminorm Q s p u j ^ p.toReal) with hh
     have hsplit : (∑' n : ℕ, h (n - 1)) = h (0 - 1) + ∑' n : ℕ, h ((n + 1) - 1) :=
-      tsum_eq_zero_add' ENNReal.summable
+      tsum_eq_zero_add' CompleteLattice.summable
     calc (∑' n : ℕ, h (n - 1))
         = h (0 - 1) + ∑' n : ℕ, h ((n + 1) - 1) := hsplit
       _ = h 0 + ∑' n : ℕ, h n := by
           simp only [Nat.zero_sub, Nat.add_sub_cancel]
       _ ≤ (∑' n : ℕ, h n) + ∑' n : ℕ, h n :=
-          add_le_add (ENNReal.le_tsum 0) le_rfl
+          add_le_add (le_tsum h 0) le_rfl
       _ = 2 * ∑' n : ℕ, h n := (two_mul _).symm
   -- the depth series is the supremum of the partial seminorm powers
   have htsum_eq :
@@ -932,7 +932,7 @@ theorem gagliardo_rpow_le_iSup_partialSeminorm {d : ℕ} [NeZero d]
     _ ≤ ∑' n : ℕ, ((2 : ℝ≥0∞) ^ 2 * 3 ^ (3 * d + 2)) ^ p.toReal *
           ENNReal.ofReal
             (cubeBesovOverlapDepthSeminorm Q s p u (n - 1) ^ p.toReal) :=
-        ENNReal.tsum_le_tsum fun n =>
+        tsum_le_tsum fun n =>
           shell_term_le hs hs1 hp hpt humeas hu n
     _ = ((2 : ℝ≥0∞) ^ 2 * 3 ^ (3 * d + 2)) ^ p.toReal *
           ∑' n : ℕ, ENNReal.ofReal

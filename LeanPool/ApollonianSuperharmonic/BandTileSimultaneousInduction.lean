@@ -505,7 +505,7 @@ theorem BandTileSimultaneousInduction (q : Fin 4 → CircleCoordinates)
   classical
   generalize hn : Int.toNat (q 0).1 = n
   induction n using Nat.strong_induction_on generalizing q T with
-  | h n ih =>
+  | ind n ih =>
     have smallT1 : ∀ (p : Fin 4 → CircleCoordinates) (U : ProtoTile)
         (S : Fin 3 → Bool → ProtoTile), ProperBandQuadruple p →
         BandPrototile (p 0) U →

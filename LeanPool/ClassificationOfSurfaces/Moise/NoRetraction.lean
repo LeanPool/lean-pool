@@ -32,7 +32,7 @@ open scoped Pointwise unitInterval
 
 /-- The complex closed unit disk, used only as the standard model for the no-retraction
 argument. -/
-abbrev ClosedUnitDisk := Metric.closedBall (0 : ℂ) 1
+noncomputable abbrev ClosedUnitDisk := Metric.closedBall (0 : ℂ) 1
 
 /-- The boundary circle included in the closed unit disk. -/
 def circleToClosedUnitDisk (z : Circle) : ClosedUnitDisk :=

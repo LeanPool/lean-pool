@@ -98,7 +98,7 @@ theorem blowupLimitAssembly_pairing_tendsto_zero_of_unit_balls
     intro k
     calc
       ‖∫ x, ∑ i : Fin 3, g k x i * ψ x i‖ₑ ≤ ∫⁻ x, ‖∑ i : Fin 3, g k x i * ψ x i‖ₑ :=
-        enorm_integral_le_lintegral_enorm _
+        eNorm_integral_le_lintegral_eNorm _
       _ ≤ ∫⁻ x, K.indicator (fun x => ENNReal.ofReal (3 * C) * ‖g k x‖ₑ) x :=
         lintegral_mono (hpoint k)
       _ = ∫⁻ x in K, ENNReal.ofReal (3 * C) * ‖g k x‖ₑ :=
@@ -125,7 +125,7 @@ theorem blowupLimitAssembly_pairing_tendsto_zero_of_unit_balls
         calc
           (∫⁻ x in vec3Ball c 1, ‖g k x‖ₑ) =
               eLpNorm (g k) 1 (volume.restrict (vec3Ball c 1)) :=
-            (eLpNorm_one_eq_lintegral_enorm (hg k).restrict).symm
+            (eLpNorm_one_eq_lintegral_eNorm (hg k).restrict).symm
           _ ≤ eLpNorm (g k) 2 (volume.restrict (vec3Ball c 1)) *
                 (volume.restrict (vec3Ball c 1)) univ ^
                   (1 / (1 : ℝ≥0∞).toReal - 1 / (2 : ℝ≥0∞).toReal) :=

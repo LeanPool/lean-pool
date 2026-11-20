@@ -423,9 +423,9 @@ private theorem sinTwoAngleOperator_model_eq_matrix (θ : ℝ) :
     fin_cases i <;>
       simp [uθ, e0, e1, Matrix.toLpLin_apply,
         Real.sin_two_mul]
-    try simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]
+    simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal]
     ring_nf
-    try push_cast
+    push_cast
     ring1
   · simp only [sinTwoAngleOperator, complementaryProjection, projection,
       ContinuousLinearMap.coe_coe, LinearMap.comp_apply,
@@ -1584,7 +1584,7 @@ theorem modelGappedOperator_isSymmetric (a b : ℝ) :
   rw [modelGappedOperator_eq_matrix]
   ext i
   fin_cases i <;> simp [e0, Matrix.toLpLin_apply]
-  all_goals simp only [RCLike.real_smul_eq_coe_mul, mul_one]
+  simp only [RCLike.real_smul_eq_coe_mul, mul_one]
 
 /-- The second coordinate is the high eigenvector of the gapped model operator. -/
 @[simp] theorem modelGappedOperator_apply_e1 (a b : ℝ) :
@@ -1592,7 +1592,7 @@ theorem modelGappedOperator_isSymmetric (a b : ℝ) :
   rw [modelGappedOperator_eq_matrix]
   ext i
   fin_cases i <;> simp [e1, Matrix.toLpLin_apply]
-  all_goals simp only [RCLike.real_smul_eq_coe_mul, mul_one]
+  simp only [RCLike.real_smul_eq_coe_mul, mul_one]
 
 /-- The gapped model operator in the rotated frame: a diagonal entry and the off-diagonal entry
 `(b - a) sin θ cos θ` that every tangent and double-angle model has to cancel. -/
@@ -1831,7 +1831,7 @@ theorem modelRotatedOffDiagonal_apply_uθ (r θ : ℝ) :
     simp [uθ, vθ, e0, e1, Matrix.toLpLin_apply, Real.sin_two_mul, Real.cos_two_mul'] <;>
     simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
     ring_nf <;>
-    (try push_cast) <;>
+    (push_cast) <;>
     first
       | linear_combination ((r : 𝕜) * (Real.sin θ : 𝕜)) * hpy
       | linear_combination (-((r : 𝕜) * (Real.sin θ : 𝕜))) * hpy
@@ -1849,7 +1849,7 @@ theorem modelRotatedOffDiagonal_apply_vθ (r θ : ℝ) :
     simp [uθ, vθ, e0, e1, Matrix.toLpLin_apply, Real.sin_two_mul, Real.cos_two_mul'] <;>
     simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
     ring_nf <;>
-    (try push_cast) <;>
+    (push_cast) <;>
     first
       | linear_combination ((r : 𝕜) * (Real.sin θ : 𝕜)) * hpy
       | linear_combination (-((r : 𝕜) * (Real.sin θ : 𝕜))) * hpy
@@ -2272,7 +2272,7 @@ private theorem modelTanTwoThetaPerturbation_apply_uθ (a b θ : ℝ) :
       ← hh] <;>
     simp [RCLike.real_smul_eq_coe_mul, RCLike.algebraMap_eq_ofReal] <;>
     ring_nf <;>
-    (try push_cast) <;>
+    (push_cast) <;>
     first
       | linear_combination ((h : 𝕜) * (Real.sin θ : 𝕜)) * hpy
       | linear_combination (-((h : 𝕜) * (Real.sin θ : 𝕜))) * hpy

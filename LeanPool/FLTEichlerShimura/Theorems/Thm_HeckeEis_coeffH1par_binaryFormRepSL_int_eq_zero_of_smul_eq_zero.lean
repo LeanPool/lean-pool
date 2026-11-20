@@ -170,7 +170,7 @@ theorem SolMain.A4 (n N : ℕ) [NeZero N] (m : ℤ) (hm : m ≠ 0)
       N).subtype) γ - 1) w = (z : Gamma0 N → _) γ →
         binaryFormRepSL ℤ n (γ : SL(2, ℤ)) (v - m • w) = v - m • w :=
       fun γ w hw => aux_fix (binaryFormRepSL ℤ n (γ : SL(2, ℤ))).toAddMonoidHom m v w _ (hv' γ)
-        (by rw [LinearMap.sub_apply, Module.End.one_apply] at hw; exact hw)
+        (by rw [LinearMap.sub_apply, one_apply_eq_self] at hw; exact hw)
     have hjR : ∀ j : ℕ, 1 ≤ j → j ≤ n → (j : ℤ) ≠ 0 :=
       fun j hj _ => by exact_mod_cast Nat.one_le_iff_ne_zero.mp hj
     obtain ⟨c₁, hc₁⟩ :=

@@ -578,7 +578,7 @@ theorem BandTileAcyclicIndegree :
         (fun x => 2 + FourNeighborLaplacian f x)) := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       intro c U k f hn ho hd he
       cases ho with
       | line w x hw k hk =>

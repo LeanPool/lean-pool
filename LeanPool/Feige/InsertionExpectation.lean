@@ -155,8 +155,8 @@ theorem insertionLevelScore_eq_booleanChainTerm {n : ℕ}
     unfold insertedChainState
     rw [dite_eq_right h]
     congr 3
-    all_goals simp only [j]
-    all_goals omega
+    simp only [j]
+    omega
 
 /-- The canonical pairwise score is exactly the concrete expectation of
 the corresponding inserted maximal chain. -/

@@ -293,7 +293,8 @@ lemma natDegree_numOf_le (κ : ℚ) (Z : Multiset ℤ) : (numOf κ Z).natDegree 
     mul_one]
 
 lemma padicValNat_24 (hp5 : 5 ≤ p) : padicValNat p 24 = 0 := by
-  apply padicValNat.eq_zero_of_not_dvd
+  rw [Nat.padicValNat_def]
+  apply multiplicity_eq_zero_of_not_dvd
   intro h
   have h1 : p ≤ 24 := Nat.le_of_dvd (by norm_num) h
   have hpr := hp.out

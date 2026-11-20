@@ -561,7 +561,7 @@ theorem chart_side_injective
     rw [hx_c, hy_c] at hj
     rw [h0] at hj
     have hy_sub : 1 - y 0 ≠ 0 := sub_ne_zero.mpr (Ne.symm hy)
-    exact (div_left_inj' hy_sub).mp hj
+    exact (div_left_inj₀ hy_sub).mp hj
 
 /-- Every recursive one-step cylinder chart is injective. -/
 theorem chart_injective_all :

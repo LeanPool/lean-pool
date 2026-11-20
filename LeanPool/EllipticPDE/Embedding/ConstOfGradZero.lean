@@ -84,7 +84,7 @@ theorem ae_const_of_tendsto_ae_const {B : Set (EuclideanSpace ℝ (Fin d))}
     refine htend.congr fun n => ?_
     rw [Lp.edist_toLp_toLp]
   have hclosed : IsClosed ((Submodule.span ℝ {one} : Submodule ℝ (Lp ℝ 1 μ)) : Set (Lp ℝ 1 μ)) :=
-    (Submodule.span ℝ {one}).closed_of_finiteDimensional
+    (Submodule.span ℝ {one}).isClosed_of_finiteDimensional
   have hmem : hf.toLp f ∈ Submodule.span ℝ {one} := by
     refine hclosed.mem_of_tendsto htend' (Eventually.of_forall fun n => ?_)
     rw [hfn_eq n]

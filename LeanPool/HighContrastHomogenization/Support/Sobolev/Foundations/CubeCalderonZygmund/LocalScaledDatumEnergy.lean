@@ -53,7 +53,7 @@ theorem eLpNorm_hilbertify_grad_two_eq_ofReal_norm_gradToHilbertVectorL2
     memHilbertVectorL2_hilbertifyVecField u.grad_memVectorL2
   calc
     eLpNorm (hilbertifyVecField u.grad) 2 (volume.restrict U) =
-        ‖hu.toLp (hilbertifyVecField u.grad)‖ₑ := (Lp.enorm_toLp hu).symm
+        ‖hu.toLp (hilbertifyVecField u.grad)‖ₑ := (Lp.eNorm_toLp hu).symm
     _ = ENNReal.ofReal ‖hu.toLp (hilbertifyVecField u.grad)‖ :=
       (ofReal_norm _).symm
     _ = ENNReal.ofReal ‖u.gradToHilbertVectorL2‖ := by
@@ -70,7 +70,7 @@ theorem eLpNorm_hilbertifyVecField_two_eq_ofReal_norm_toHilbertVectorL2
     memHilbertVectorL2_hilbertifyVecField hH
   calc
     eLpNorm (hilbertifyVecField H) 2 (volume.restrict U) =
-        ‖hHH.toLp (hilbertifyVecField H)‖ₑ := (Lp.enorm_toLp hHH).symm
+        ‖hHH.toLp (hilbertifyVecField H)‖ₑ := (Lp.eNorm_toLp hHH).symm
     _ = ENNReal.ofReal ‖hHH.toLp (hilbertifyVecField H)‖ :=
       (ofReal_norm _).symm
     _ = ENNReal.ofReal ‖toHilbertVectorL2OfVecField hH‖ := by

@@ -172,7 +172,7 @@ theorem origin_centered_source_majorant_obligations_on_local_box
     have hh := (origin_velocity_cube_integrable_on_local_box hsol hbox).hasFiniteIntegral
     change (∫⁻ w : Vec3 × ℝ in vec3Ball x ρ ×ˢ J,
       ‖vec3EuclideanNorm (u w) ^ (3 : ℕ)‖ₑ) < ⊤ at hh
-    simp only [Real.enorm_eq_ofReal_abs, abs_pow,
+    simp only [Real.eNorm_eq_ofReal_abs, abs_pow,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _),
       ENNReal.ofReal_pow (vec3EuclideanNorm_nonneg _) 3] at hh
     simpa only [abs_of_nonneg (vec3EuclideanNorm_nonneg _), ENNReal.rpow_ofNat] using hh

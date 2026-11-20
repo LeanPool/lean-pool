@@ -46,11 +46,11 @@ namespace GinibrePoincare
 namespace ComplexHermite
 noncomputable section
 
-/-- The one-variable Wirtinger operator `∂̄` when `bar` is true and `∂` otherwise. -/
+/-- The one-variable Wirtinger operator `dbar` when `bar` is true and `∂` otherwise. -/
 def rodriguesOneOperator (bar : Bool) : (ℂ → ℂ) → ℂ → ℂ :=
   if bar then dbarOnePublic else dholOne
 
-/-- The Wirtinger operator `∂̄_j` in coordinate `j` when `bar` is true and `∂_j` otherwise. -/
+/-- The Wirtinger operator `dbar_j` in coordinate `j` when `bar` is true and `∂_j` otherwise. -/
 def rodriguesCoordinateOperator {m : ℕ} (bar : Bool) (j : Fin m) :
     (Configuration m → ℂ) → Configuration m → ℂ :=
   if bar then (fun F z => dbarComponent F j z) else (fun F z => dholComponent F j z)

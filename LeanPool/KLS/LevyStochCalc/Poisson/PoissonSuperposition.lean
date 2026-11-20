@@ -70,7 +70,7 @@ noncomputable def pieceMeasure (θ : PieceSpace 𝓧) : Measure 𝓧 :=
 lemma pieceMeasure_apply (θ : PieceSpace 𝓧) {B : Set 𝓧} (hB : MeasurableSet B) :
     pieceMeasure θ B = (pieceCountOn B θ : ℝ≥0∞) := by
   unfold pieceMeasure pieceCountOn markCount
-  rw [Measure.finsetSum_apply, Nat.cast_sum]
+  rw [_root_.sum_apply, Nat.cast_sum]
   refine Finset.sum_congr rfl fun j _ => ?_
   rw [Measure.dirac_apply' _ hB]
   by_cases h : θ.2 j ∈ B <;> simp [h]
@@ -94,7 +94,7 @@ lemma superIntensity_apply {B : Set 𝓧} (hB : MeasurableSet B) :
     superIntensity r ρ B = ∑' p, r p * ρ p B := by
   unfold superIntensity
   rw [Measure.sum_apply _ hB]
-  simp [Measure.smul_apply]
+  simp [smul_apply]
 
 variable {r ρ}
 
@@ -293,7 +293,7 @@ lemma tendsto_finset_exhaustion {ι : Type*} {F : ℕ → Finset ι} (hF : Monot
 
 lemma tendsto_sum_exhaustion {ι : Type*} {F : ℕ → Finset ι} (hF : Tendsto F atTop atTop)
     (f : ι → ℝ≥0∞) : Tendsto (fun m => ∑ p ∈ F m, f p) atTop (𝓝 (∑' p, f p)) :=
-  (ENNReal.summable (f := f)).hasSum.comp hF
+  (CompleteLattice.summable (f := f)).hasSum.comp hF
 
 end Exhaustion
 
@@ -476,7 +476,7 @@ theorem ae_eq_top_superposition {B : Set 𝓧} (hB : MeasurableSet B)
       have h1 : (∑ p ∈ F m, (pieceCountOn B (ω p) : ℝ≥0∞)) ≤ k := by
         refine le_trans ?_ hω
         rw [superposition_apply ω hB]
-        exact ENNReal.sum_le_tsum (F m)
+        exact sum_le_tsum (F m)
       rw [partialCount_eq_toReal, ← ENNReal.toReal_natCast k]
       exact ENNReal.toReal_mono (ENNReal.natCast_ne_top k) h1
     have hlim : Tendsto (fun m => (superLaw r ρ) {ω | partialCount (F m) B ω ≤ k}) atTop

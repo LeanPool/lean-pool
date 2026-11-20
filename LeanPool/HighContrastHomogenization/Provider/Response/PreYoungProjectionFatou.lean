@@ -109,11 +109,11 @@ theorem ofReal_abs_integral_le_of_tendsto_of_uniform_bound
     _ ≤ ENNReal.ofReal (∫ a, ‖f a‖ ∂μ) :=
       ENNReal.ofReal_le_ofReal (norm_integral_le_integral_norm f)
     _ = ∫⁻ a, ‖f a‖ₑ ∂μ :=
-      ofReal_integral_norm_eq_lintegral_enorm hf
+      ofReal_integral_norm_eq_lintegral_eNorm hf
     _ = ∫⁻ a, ENNReal.ofReal |f a| ∂μ := by
       apply lintegral_congr
       intro a
-      exact Real.enorm_eq_ofReal_abs (f a)
+      exact Real.eNorm_eq_ofReal_abs (f a)
     _ ≤ B := hlimit
 
 end

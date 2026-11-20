@@ -248,7 +248,7 @@ private theorem buSmallTimeDyadicCell_union_ae (k : ℤ) :
       (Set.univ ×ˢ Set.Ioo (buSmallTimeDyadicScale k / 2)
         (buSmallTimeDyadicScale k) : Set (Vec3 × ℝ))
   rw [Measure.volume_eq_prod Vec3 ℝ]
-  exact Measure.set_prod_ae_eq Filter.EventuallyEq.rfl
+  exact Measure.set_prod_ae_eq (Filter.Eventually.of_forall (fun _ => Iff.rfl))
     (buSmallTimeDyadicTimeCell_union_ae k)
 
 private theorem buSmallTimeDyadicGridIntervals_disjoint {h : ℝ} (hh : 0 < h)

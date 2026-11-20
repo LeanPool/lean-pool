@@ -158,7 +158,7 @@ theorem mulL_quad_op (a c y : J) :
     mulL ((a * c) * y) + mulL a * mulL y * mulL c + mulL c * mulL y * mulL a
       = mulL a * mulL (c * y) + mulL c * mulL (a * y) + mulL y * mulL (a * c) := by
   ext v
-  simp only [LinearMap.add_apply, Module.End.mul_apply, mulL_apply]
+  simp only [LinearMap.add_apply, mul_apply_eq_comp, mulL_apply]
   exact jordan_quadrilinear a c y v
 
 /-- **The Jordan trace functional** `x ↦ tr(L_x)`, as an `ℝ`-linear form.

@@ -94,10 +94,10 @@ theorem normalizedVolumeMeasureOn_le_smul {A B : Set (Vec d)} {K : ℝ≥0∞}
   have hres : (volume.restrict B) S ≤ (volume.restrict A) S :=
     Measure.restrict_mono hAB le_rfl S
   calc ((volume B)⁻¹ • volume.restrict B) S = (volume B)⁻¹ * (volume.restrict B) S := by
-        simp only [Measure.smul_apply, smul_eq_mul]
+        simp only [smul_apply, smul_eq_mul]
     _ ≤ (K * (volume A)⁻¹) * (volume.restrict A) S := mul_le_mul' hinv hres
     _ = (K • ((volume A)⁻¹ • volume.restrict A)) S := by
-        simp only [Measure.smul_apply, smul_eq_mul, mul_assoc]
+        simp only [smul_apply, smul_eq_mul, mul_assoc]
 
 /-- **The `L²` carrier move.**  If `B ⊆ A` and `|A| ≤ K |B|` then the normalized
 `L²` norm over `B` costs `K^{1/2}` against the one over `A`. -/
@@ -127,7 +127,7 @@ theorem isProbabilityMeasure_normalizedVolumeMeasureOn {A : Set (Vec d)}
     (h0 : volume A ≠ 0) (htop : volume A ≠ ⊤) :
     IsProbabilityMeasure (Support.normalizedVolumeMeasureOn A) := by
   constructor
-  rw [Support.normalizedVolumeMeasureOn_def, Measure.smul_apply, smul_eq_mul,
+  rw [Support.normalizedVolumeMeasureOn_def, smul_apply, smul_eq_mul,
     Measure.restrict_apply_univ]
   exact ENNReal.inv_mul_cancel h0 htop
 
@@ -193,8 +193,8 @@ theorem eLpNorm_sub_volumeAverage_le_two_mul {A : Set (Vec d)} (h0 : volume A �
       rw [eLpNorm_const _ (by norm_num) (IsProbabilityMeasure.ne_zero mu), measure_univ,
         ENNReal.one_rpow, mul_one]
     rw [hc]
-    refine le_trans (enorm_integral_le_lintegral_enorm _) ?_
-    rw [← eLpNorm_one_eq_lintegral_enorm hgmeas]
+    refine le_trans (eNorm_integral_le_lintegral_eNorm _) ?_
+    rw [← eLpNorm_one_eq_lintegral_eNorm hgmeas]
     exact eLpNorm_le_eLpNorm_of_exponent_le (by norm_num)
   refine le_trans (eLpNorm_sub_le (by norm_num)) ?_
   have hstep : eLpNorm (fun y => f y - c) 2 mu +

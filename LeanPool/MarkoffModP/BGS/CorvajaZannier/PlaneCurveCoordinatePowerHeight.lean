@@ -75,7 +75,7 @@ theorem finiteExtensionPositiveDegree_planeCurveFirstCoordinate_pow_sub_one
       hf hpartialSecond,
     show P.natDegree = m by
       simpa [P] using (Polynomial.natDegree_X_pow_sub_C
-        (R := K) (n := m) (r := 1))]
+        (R := K) (n := m) (a := 1))]
     at hheight
   exact hheight
 
@@ -124,7 +124,7 @@ theorem finiteExtensionPositiveDegree_planeCurveSecondCoordinate_pow_sub_one
       hf hpartialFirst,
     show P.natDegree = n by
       simpa [P] using (Polynomial.natDegree_X_pow_sub_C
-        (R := K) (n := n) (r := 1))]
+        (R := K) (n := n) (a := 1))]
     at hheight
   exact hheight
 

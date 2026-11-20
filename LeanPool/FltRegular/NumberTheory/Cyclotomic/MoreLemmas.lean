@@ -122,7 +122,8 @@ lemma norm_add_one_smul_of_isUnit {K} [Field K] [NumberField K] {p : ℕ} (hpri 
     apply Int.natAbs_eq_iff.mp
     apply (Int.cast_injective (α := ℚ)).comp Nat.cast_injective
     simp only [Int.cast_abs, Function.comp_apply, Nat.cast_one, Int.cast_one, ← Int.abs_eq_natAbs,
-      Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx, RingOfIntegers.coe_norm]
+      Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx,
+      NumberField.RingOfIntegers.coe_norm]
   have hne : Algebra.norm ℤ (1 + p • x) ≠ -1 := by
     intro e
     apply hp

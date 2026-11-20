@@ -800,9 +800,9 @@ lemma continuousWithinAt_cfc_of_continuousOn {T : Set ℝ} {g : ℝ → ℝ}
     generalize_proofs at *; (
     have h_diff_small : ‖B.cfc g - B.cfc h‖ ≤ Real.sqrt (Fintype.card d) * (ε / (Real.sqrt
         (Fintype.card d) + 1)) := by
-      apply_rules [ norm_cfc_sub_le_of_sup_le ];
-      · positivity;
-      · exact fun x hx => hx
+      apply norm_cfc_sub_le_of_sup_le (Set.Subset.refl _) (by positivity)
+      intro x hx
+      simpa only [Real.norm_eq_abs] using h_diff_small x hx
     generalize_proofs at *; (
     apply h_diff_small.trans_lt
     rw [mul_div, div_lt_iff₀] <;>
@@ -1492,8 +1492,9 @@ lemma ker_cfc_le_ker_on_set
         0 := by
       -- Since $A.H.eigenvalues i \neq 0$, by hypothesis $h$, we have $f(A.H.eigenvalues i) \neq 0$.
       have h_f_nonzero : ∀ i, A.H.eigenvalues i ≠ 0 → f (A.H.eigenvalues i) ≠ 0 := by
-        intro i hi; specialize h ( A.H.eigenvalues i ) ( hs <| by
-          exact Matrix.IsHermitian.eigenvalues_mem_spectrum_real (H A) i ); contrapose! hi; aesop;
+        intro i hi hfi
+        exact hi (h (A.H.eigenvalues i)
+          (hs (Matrix.IsHermitian.eigenvalues_mem_spectrum_real (H A) i)) hfi)
       generalize_proofs at *; (
       exact fun i hi => by simpa [ h_f_nonzero i hi ] using h_inner_zero_coeff i;)
     exact h_inner_zero_final;

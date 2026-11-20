@@ -101,13 +101,12 @@ theorem rankDelta_crossOneOff_two_interior_boundary_eq_zero
     have hCommon := (principalDivisors B.graph).add_mem
       ((principalDivisors B.graph).zero_mem) hPair
     convert hCommon using 1
-    all_goals
-      (dsimp [D, E, EUV, pPrev, qNext]
-       unfold bananaNormalForm
-       ext z
-       simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, Pi.zero_apply,
-         smul_eq_mul]
-       ring)
+    dsimp [D, E, EUV, pPrev, qNext]
+    unfold bananaNormalForm
+    ext z
+    simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, Pi.zero_apply,
+      smul_eq_mul]
+    ring
   have hDegreeD : CFDiv.degree D = 2 * (g : ℤ) := by
     rw [degree_bananaNormalForm, hdegE]
     ring

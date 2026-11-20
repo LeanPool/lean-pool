@@ -28,7 +28,7 @@ omit hp in
 lemma VG_of_not_dvd_den {r : ℚ} (hr : ¬ p ∣ r.den) : VG p r 0 := by
   right
   unfold padicValRat
-  rw [padicValNat.eq_zero_of_not_dvd hr]
+  rw [multiplicity_eq_zero_of_not_dvd hr]
   simp
 
 lemma VG_inv_prime {q : ℕ} (hq : q.Prime) : VG p (1 / (q:ℚ)) (if q = p then -1 else 0) := by
@@ -40,7 +40,7 @@ lemma VG_inv_prime {q : ℕ} (hq : q.Prime) : VG p (1 / (q:ℚ)) (if q = p then 
     rw [padicValRat.self hq.one_lt]
     norm_num
   · have hnd : ¬ p ∣ q := fun hd => h ((Nat.prime_dvd_prime_iff_eq hp.out hq).mp hd).symm
-    rw [padicValRat.of_nat, padicValNat.eq_zero_of_not_dvd hnd]
+    rw [padicValRat.of_nat, multiplicity_eq_zero_of_not_dvd hnd]
     norm_num
 
 /-- von Staudt-Clausen, in `VG` form: `B_{2k} = z - Σ_{(q-1) ∣ 2k} 1/q`. -/
@@ -156,7 +156,7 @@ lemma nat_VG_dvd (j : ℕ) (hj : 0 < j) : VG p (j:ℚ) (if p ∣ j then 1 else 0
   split_ifs with h
   · right
     rw [padicValRat.of_nat]
-    exact_mod_cast one_le_padicValNat_of_dvd (by omega) h
+    exact_mod_cast one_le_multiplicity_of_dvd (by omega) h
   · exact VG.natCast j
 
 lemma beta_VG {r : ℚ} (hr : VG p r 0) {j : ℕ} (hj : j < p ^ 2) :

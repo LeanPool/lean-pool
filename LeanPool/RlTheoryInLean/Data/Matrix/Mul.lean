@@ -27,7 +27,8 @@ lemma mul_diagonal_mulVec
   [DecidableEq n] [Fintype n] (d : n → ℝ) (x : n → ℝ) (A : Matrix m n ℝ) :
   (A * Matrix.diagonal d) *ᵥ x = ∑ i, d i • x i • A.col i := by
   ext j
-  simp only [mulVec, dotProduct, mul_diagonal, sum_apply, Pi.smul_apply, col_apply, smul_eq_mul]
+  simp only [mulVec, dotProduct, mul_diagonal, Finset.sum_apply, Pi.smul_apply, col_apply,
+    smul_eq_mul]
   apply sum_congr rfl
   intro i hi
   ring_nf

@@ -62,8 +62,7 @@ theorem fv_syn_cwpppowateq (F : Class) (D : Class) :
   ext u
   simp [synCwpppowateq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec,
     NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwppimageat,
-    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpppostcomp];
-  aesop
+    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cwpppostcomp]
 
 theorem fv_syn_cwppprecomp (F : Class) : (synCwppprecomp F).fv = F.fv :=
   by
@@ -100,8 +99,8 @@ theorem fv_syn_cwecutiso (R : Class) (D : Class) (S : Class) (E : Class) :
     freshVar_injective (R.fv ∪ D.fv ∪ S.fv ∪ E.fv) (by decide)
   ext u
   simp [synCwecutiso, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_wiso,
-    Class.fv];
-  aesop
+    Class.fv]
+  grind only
 
 theorem fv_syn_cwecutisogen (R : Class) (D : Class) (S : Class) (E : Class) :
     (synCwecutisogen R D S E).fv = (D.fv) ∪ (E.fv) ∪ (R.fv) ∪ (S.fv) :=

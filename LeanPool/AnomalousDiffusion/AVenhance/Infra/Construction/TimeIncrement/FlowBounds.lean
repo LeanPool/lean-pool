@@ -240,7 +240,7 @@ theorem continuous_norm_le_of_ae_le {f : Vec 2 → ℝ} {B : ℝ}
     filter_upwards [h] with y hy
     intro hyU
     have hle : ENNReal.ofReal ‖f y‖ ≤ ENNReal.ofReal B := by
-      simpa [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs] using hy
+      simpa [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs] using hy
     have hle' : ‖f y‖ ≤ B := (ENNReal.ofReal_le_ofReal_iff hB).mp hle
     exact (not_lt_of_ge hle') hyU
   have hUzero : volume U = 0 := by simpa [ae_iff] using hnotU

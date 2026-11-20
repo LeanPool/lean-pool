@@ -434,7 +434,7 @@ theorem exists_finiteExtensionInfinityPlace_canonicalDifferent_scaling_certifica
     intro t
     obtain ⟨t', ht'⟩ := hPreserves t
     refine ⟨t', ?_⟩
-    simpa only [c, Derivation.smul_apply, Algebra.smul_def,
+    simpa only [c, smul_apply, Algebra.smul_def,
       Algebra.algebraMap_self_apply, Derivation.restrictScalars_apply] using ht'
   refine ⟨c, hc, ?_, ?_⟩
   · rw [primeOverHeightOne_asIdeal] at hOrder
@@ -979,6 +979,8 @@ theorem finiteExtensionInfinityPlace_residueField_finite [Finite K]
       simp only [RingHom.algebraMap_toAlgebra, RingHom.comp_apply,
         Localization.localRingHom_to_map]
   let : Algebra.QuasiFiniteAt (RatFuncInfinityIntegers K) P.1 := inferInstance
+  let : Algebra p.ResidueField P.1.ResidueField := IsLocalRing.ResidueField.instAlgebra
+  let : Module p.ResidueField P.1.ResidueField := Algebra.toModule
   let : Module.Finite p.ResidueField P.1.ResidueField :=
     Algebra.WeaklyQuasiFiniteAt.finite_residueField p P.1
   exact Module.finite_of_finite p.ResidueField

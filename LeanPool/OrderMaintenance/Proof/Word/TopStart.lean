@@ -194,8 +194,7 @@ theorem ht_insertAroundPrep (hβ : P0.beta ≤ K) (x : Nat) :
   refine HT.bind (ht_mapM_roomNextTo hβ _ x true) fun ly hly => ?_
   refine HT.bind (ht_mapM_roomNextTo hβ _ x false) fun lz hlz => ?_
   ht [ht_getLpar _]
-  all_goals first
-    | exact ⟨hst.cinE x, hly, hlz, by assumption⟩
+  exact ⟨hst.cinE x, hly, hlz, by assumption⟩
 
 /-- **A split's insertion into the top structure keeps the stored-value bound**, given the new
 chunks below `2^K` and the bound of their final tags (which the top invariant after the split

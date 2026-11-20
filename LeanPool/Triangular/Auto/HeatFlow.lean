@@ -49,7 +49,7 @@ lemma rdiag_posSemidef {f : ι → ℝ} (hf : ∀ i, 0 ≤ f i) : (rdiag f).PosS
 def wGram (B : Matrix ι κ ℂ) (f : ι → ℝ) : Matrix κ κ ℂ := Bᴴ * rdiag f * B
 
 omit [DecidableEq κ] [Fintype κ] in
-lemma wGram_posSemidef [Finite κ] (B : Matrix ι κ ℂ) {f : ι → ℝ} (hf : ∀ i, 0 ≤ f i) :
+lemma wGram_posSemidef (B : Matrix ι κ ℂ) {f : ι → ℝ} (hf : ∀ i, 0 ≤ f i) :
     (wGram B f).PosSemidef := by
   exact (rdiag_posSemidef hf).conjTranspose_mul_mul_same B
 

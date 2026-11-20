@@ -273,7 +273,7 @@ include N W LM WM BC hRc hcost hα hgrowth hprimaryBudget
 theorem forwardSource_profile_budgets (p : ℕ) : 1 ≤ p →
     ProfileBudget (sourceProfileWitness P M D hTime (InitialData.zero P D) Y p) S L.R p := by
   induction p using Nat.strong_induction_on with
-  | h p ih =>
+  | ind p ih =>
     intro hp
     by_cases hp1 : p = 1
     · subst p

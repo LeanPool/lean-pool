@@ -187,7 +187,7 @@ lemma det_mul_width3_two (P : Matrix (Fin 2) (Fin 3) ℝ)
       (P.submatrix id (Fin.succAbove 0)).det * (Q.submatrix (Fin.succAbove 0) id).det +
       (P.submatrix id (Fin.succAbove 1)).det * (Q.submatrix (Fin.succAbove 1) id).det +
       (P.submatrix id (Fin.succAbove 2)).det * (Q.submatrix (Fin.succAbove 2) id).det := by
-  simp only [det_fin_two, mul_apply, submatrix_apply, Fin.sum_univ_three, id_eq,
+  simp only [det_fin_two, Matrix.mul_apply, submatrix_apply, Fin.sum_univ_three, id_eq,
     succAbove_fin3_zero_zero, succAbove_fin3_zero_one, succAbove_fin3_one_zero,
     succAbove_fin3_one_one, succAbove_fin3_two_zero, succAbove_fin3_two_one]
   ring
@@ -206,7 +206,7 @@ lemma det_mul_eq_sum_strictMono_width3 {r : ℕ}
   | 1 =>
     rw [← constStrictMono_bijective.sum_comp fun S ↦
       (P.submatrix id S.1).det * (Q.submatrix S.1 id).det]
-    simp [constStrictMono, mul_apply, submatrix_apply, Fin.sum_univ_three]
+    simp [constStrictMono, Matrix.mul_apply, submatrix_apply, Fin.sum_univ_three]
   | 2 =>
     rw [← succAboveStrictMono_bijective.sum_comp fun S ↦
       (P.submatrix id S.1).det * (Q.submatrix S.1 id).det]
@@ -228,7 +228,7 @@ lemma submatrix_mul_transpose {r : ℕ}
     (I : Fin r → ι) (J : Fin r → κ) :
     (X * Yᵀ).submatrix I J = X.submatrix I id * (Y.submatrix J id)ᵀ := by
   ext a b
-  simp [submatrix_apply, mul_apply, transpose_apply]
+  simp [submatrix_apply, Matrix.mul_apply, transpose_apply]
 
 /-- Square minors of size greater than `3` of a product `X * Yᵀ` vanish,
 since the factors have only three columns (rank at most `3`). -/

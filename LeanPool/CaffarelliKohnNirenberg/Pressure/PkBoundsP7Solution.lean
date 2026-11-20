@@ -71,17 +71,17 @@ theorem eLpNorm'_prod_three_halves
           simp only [Measure.restrict_apply_univ]
           congr 1
           norm_num
-    rw [eLpNorm'_eq_lintegral_enorm] at hlow'
+    rw [eLpNorm'_eq_lintegral_eNorm] at hlow'
     have hpow := ENNReal.rpow_le_rpow hlow' (by norm_num : (0 : ℝ) ≤ 3 / 2)
     simpa only [← ENNReal.rpow_mul, one_div,
       inv_mul_cancel₀ (by norm_num : (3 / 2 : ℝ) ≠ 0), ENNReal.rpow_one] using hpow
-  rw [eLpNorm'_eq_lintegral_enorm]
+  rw [eLpNorm'_eq_lintegral_eNorm]
   rw [show volume.restrict (B ×ˢ T) =
       (volume.restrict B).prod (volume.restrict T) by
     rw [Measure.prod_restrict B T, MeasureTheory.Measure.volume_eq_prod Vec3 ℝ]]
-  rw [MeasureTheory.lintegral_prod _ (hP'.enorm.pow_const (3 / 2 : ℝ))]
+  rw [MeasureTheory.lintegral_prod _ (hP'.eNorm.pow_const (3 / 2 : ℝ))]
   rw [MeasureTheory.lintegral_lintegral_swap
-    (hP'.enorm.pow_const (3 / 2 : ℝ))]
+    (hP'.eNorm.pow_const (3 / 2 : ℝ))]
   have hmon := lintegral_mono_ae hpoint
   simpa only [show (1 / (3 / 2 : ℝ)) = (2 / 3 : ℝ) by norm_num] using
     (ENNReal.rpow_le_rpow hmon (by norm_num : (0 : ℝ) ≤ 2 / 3))
@@ -143,7 +143,7 @@ private theorem source_eLpNorm_five_halves_le
   let g : Vec3 → ℝ := fun y => η y * f (y, s) j
   have hfq : eLpNorm' (fun y : Vec3 => f (y, s)) q
       (volume.restrict B) < ⊤ := by
-    rw [eLpNorm'_eq_lintegral_enorm]
+    rw [eLpNorm'_eq_lintegral_eNorm]
     have hq0 : 0 < q := by linarith only [hq]
     exact ENNReal.rpow_lt_top_of_nonneg (by positivity)
       (ne_of_lt (by simpa [B] using hI))
@@ -190,7 +190,7 @@ private theorem source_eLpNorm_five_halves_le
   have hsource_norm : eLpNorm' g (5 / 2 : ℝ) volume ≤
       eLpNorm' (fun y : Vec3 => f (y, s)) q (volume.restrict B) *
         volume B ^ (2 / 5 - 1 / q : ℝ) := by
-    rw [eLpNorm'_eq_lintegral_enorm]
+    rw [eLpNorm'_eq_lintegral_eNorm]
     have hfull : (∫⁻ y, ‖g y‖ₑ ^ (5 / 2 : ℝ)) =
         ∫⁻ y in B, ‖g y‖ₑ ^ (5 / 2 : ℝ) := by
       rw [← lintegral_indicator (vec3Ball_measurable x₀ ρ)]
@@ -219,10 +219,10 @@ private theorem source_eLpNorm_five_halves_le
       (∫⁻ y in B, ‖g y‖ₑ ^ (5 / 2 : ℝ)) ^ (1 / (5 / 2 : ℝ)) ≤
           (∫⁻ y in B, ‖f (y, s) j‖ₑ ^ (5 / 2 : ℝ)) ^ (2 / 5 : ℝ) := by
         convert hpow using 1
-        all_goals norm_num
+        norm_num
       _ = eLpNorm' (fun y : Vec3 => f (y, s) j) (5 / 2 : ℝ)
           (volume.restrict B) := by
-        rw [eLpNorm'_eq_lintegral_enorm]
+        rw [eLpNorm'_eq_lintegral_eNorm]
         norm_num
       _ ≤ _ := hlow'
   simpa [g, B] using hsource_norm
@@ -276,7 +276,7 @@ private theorem sws_force_slice_data
   have hFpow : AEMeasurable
       (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ q)
       ((volume.restrict B).prod (volume.restrict T)) :=
-    hfprod.enorm.pow_const q
+    hfprod.eNorm.pow_const q
   have hFtime : AEMeasurable (fun s : ℝ =>
       ∫⁻ x in B, ‖f (x, s)‖ₑ ^ q) (volume.restrict T) :=
     hFpow.lintegral_prod_left'
@@ -366,7 +366,7 @@ private theorem p7_slice_source_data
       (by simpa [B] using hI) j (hsource j)
   have hqnorm : eLpNorm' (fun y : Vec3 => f (y, s)) q
       (volume.restrict B) < ⊤ := by
-    rw [eLpNorm'_eq_lintegral_enorm]
+    rw [eLpNorm'_eq_lintegral_eNorm]
     simpa [B] using
       (ENNReal.rpow_lt_top_of_nonneg (by positivity) (ne_of_lt hI))
   have hqpos : 0 < q := lt_trans (by norm_num) hq
@@ -388,7 +388,7 @@ private theorem p7_slice_source_data
     · rw [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 5 / 2)]
       exact hnormtop
     · exact hsource j
-  have hlt := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have hlt := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (p := ENNReal.ofReal (5 / 2 : ℝ)) (by norm_num) ENNReal.ofReal_ne_top
     hmem.eLpNorm_lt_top
   simpa only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 5 / 2),
@@ -458,7 +458,7 @@ theorem force_time_norm_bound
     filter_upwards [hHae] with s hs
     have hmul : (1 / q) * q = (1 : ℝ) := by
       field_simp
-    rw [Real.enorm_eq_ofReal (Real.rpow_nonneg ENNReal.toReal_nonneg _)]
+    rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg ENNReal.toReal_nonneg _)]
     rw [ENNReal.ofReal_rpow_of_nonneg
       (Real.rpow_nonneg ENNReal.toReal_nonneg _) hq.le]
     rw [← Real.rpow_mul ENNReal.toReal_nonneg, hmul, Real.rpow_one,
@@ -467,7 +467,7 @@ theorem force_time_norm_bound
     apply lintegral_congr_ae
     exact hpow
   have hnorm : eLpNorm' g q (volume.restrict T) ≤ ENNReal.ofReal A := by
-    rw [eLpNorm'_eq_lintegral_enorm, hlin]
+    rw [eLpNorm'_eq_lintegral_eNorm, hlin]
     calc
       (∫⁻ s in T, H s) ^ (1 / q) ≤
           (ENNReal.ofReal (A ^ q)) ^ (1 / q) :=
@@ -537,7 +537,7 @@ theorem sws_force_time_data
   have hFpow : AEMeasurable
       (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ q)
       ((volume.restrict B).prod (volume.restrict T)) :=
-    hfprod.enorm.pow_const q
+    hfprod.eNorm.pow_const q
   have hFtime : AEMeasurable (fun s : ℝ =>
       ∫⁻ x in B, ‖f (x, s)‖ₑ ^ q) (volume.restrict T) :=
     hFpow.lintegral_prod_left'
@@ -609,7 +609,7 @@ theorem pressureP7_eLpNorm15_le_slice_holder
     intro j
     have h := source_eLpNorm_five_halves_le hq hηbound hηsupp hf hI j
       (hsource j)
-    rw [eLpNorm'_eq_lintegral_enorm] at h
+    rw [eLpNorm'_eq_lintegral_eNorm] at h
     have heq : (∫⁻ y, ‖η y * f (y, s) j‖ₑ ^ (5 / 2 : ℝ)) =
         ∫⁻ y, ENNReal.ofReal |η y * f (y, s) j| ^ (5 / 2 : ℝ) := by
       apply lintegral_congr

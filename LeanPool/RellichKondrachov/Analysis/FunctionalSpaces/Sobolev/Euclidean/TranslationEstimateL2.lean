@@ -124,7 +124,7 @@ private lemma lintegral_enorm_sub_sq_le (a : E) (f : ↥(C1c (E := E))) :
       have hgrad : Continuous (grad (E := E) f.1) := continuous_grad (E := E) (f := f.1) f.2.1
       have hline : Continuous fun t : ℝ => x + t • a := by
         fun_prop
-      exact (hgrad.comp hline).measurable.enorm.aemeasurable
+      exact (hgrad.comp hline).measurable.eNorm.aemeasurable
     -- Combine and rewrite.
     calc
       ‖f.1 (x + a) - f.1 x‖ₑ ^ (2 : ℝ)
@@ -154,7 +154,7 @@ private lemma lintegral_enorm_sub_sq_le (a : E) (f : ↥(C1c (E := E))) :
     have hcont : Continuous fun z : E × ℝ => z.1 + z.2 • a := by
       fun_prop
     have hbase : Measurable fun z : E × ℝ => ‖grad (E := E) f.1 (z.1 + z.2 • a)‖ₑ := by
-      exact (hgrad.comp hcont).measurable.enorm
+      exact (hgrad.comp hcont).measurable.eNorm
     have hpow : Measurable fun r : ℝ≥0∞ => r ^ (2 : ℝ) :=
       (ENNReal.continuous_rpow_const (y := (2 : ℝ))).measurable
     exact (hpow.comp hbase).aemeasurable
@@ -185,7 +185,7 @@ private lemma lintegral_enorm_sub_sq_le (a : E) (f : ↥(C1c (E := E))) :
     -- Change of variables `x ↦ x + t•a`.
     have hmeas' : Measurable fun x : E => ‖grad (E := E) f.1 x‖ₑ ^ (2 : ℝ) := by
       have hgrad : Continuous (grad (E := E) f.1) := continuous_grad (E := E) (f := f.1) f.2.1
-      have hbase : Measurable fun x : E => ‖grad (E := E) f.1 x‖ₑ := hgrad.measurable.enorm
+      have hbase : Measurable fun x : E => ‖grad (E := E) f.1 x‖ₑ := hgrad.measurable.eNorm
       have hpow : Measurable fun r : ℝ≥0∞ => r ^ (2 : ℝ) :=
         (ENNReal.continuous_rpow_const (y := (2 : ℝ))).measurable
       exact hpow.comp hbase
@@ -270,7 +270,7 @@ lemma enorm_translateL2_sub_toL2_le (a : E) (f : ↥(C1c (E := E))) :
     let d : E →₂[μ] ℝ :=
       translateL2 (μ := μ) (F := ℝ) a (toL2 (μ := μ) (E := E) f) - toL2 (μ := μ) (E := E) f
     have hd0 : (‖d‖ₑ : ℝ≥0∞) = MeasureTheory.eLpNorm (fun x : E => (d : E → ℝ) x) (2 : ℝ≥0∞) μ := by
-      simp [MeasureTheory.Lp.enorm_def]
+      simp [MeasureTheory.Lp.eNorm_def]
     have hd1 :
         MeasureTheory.eLpNorm (fun x : E => (d : E → ℝ) x) (2 : ℝ≥0∞) μ =
           MeasureTheory.eLpNorm (fun x : E => f.1 (x + a) - f.1 x) (2 : ℝ≥0∞) μ :=
@@ -286,7 +286,7 @@ lemma enorm_translateL2_sub_toL2_le (a : E) (f : ↥(C1c (E := E))) :
         (‖toL2Grad (μ := μ) (E := E) f‖ₑ : ℝ≥0∞) =
           MeasureTheory.eLpNorm (fun x : E => (toL2Grad (μ := μ) (E := E) f : E → E) x)
             (2 : ℝ≥0∞) μ := by
-      simp [MeasureTheory.Lp.enorm_def]
+      simp [MeasureTheory.Lp.eNorm_def]
     have h1 :
         MeasureTheory.eLpNorm (fun x : E => (toL2Grad (μ := μ) (E := E) f : E → E) x)
             (2 : ℝ≥0∞) μ =
@@ -311,8 +311,8 @@ lemma enorm_translateL2_sub_toL2_le (a : E) (f : ↥(C1c (E := E))) :
     have hgrad_meas :
         MeasureTheory.AEStronglyMeasurable (fun x : E => grad (E := E) f.1 x) μ :=
       (memLp_grad_of_mem_C1c (μ := μ) (E := E) f.2).aestronglyMeasurable
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal h2_ne0 h2_netop hshift_meas,
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal h2_ne0 h2_netop hgrad_meas,
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal h2_ne0 h2_netop hshift_meas,
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal h2_ne0 h2_netop hgrad_meas,
       ENNReal.toReal_ofNat]
     -- It suffices to compare the squared integrals.
     have hsq := lintegral_enorm_sub_sq_le (μ := μ) a f
@@ -353,19 +353,19 @@ lemma norm_translateL2_sub_toL2_le (a : E) (f : ↥(C1c (E := E))) :
   have hA_ne_top :
       (‖translateL2 (μ := μ) (F := ℝ) a (toL2 (μ := μ) (E := E) f) -
             toL2 (μ := μ) (E := E) f‖ₑ : ℝ≥0∞) ≠ ∞ := by
-    simp [enorm]
+    simp
   have hGrad_ne_top :
       (‖toL2Grad (μ := μ) (E := E) f‖ₑ : ℝ≥0∞) ≠ ∞ := by
-    simp [enorm]
+    simp
   have hB_ne_top : (‖a‖ₑ * ‖toL2Grad (μ := μ) (E := E) f‖ₑ : ℝ≥0∞) ≠ ∞ := by
     refine ENNReal.mul_ne_top ?_ hGrad_ne_top
-    simp [enorm]
+    simp
   have h' :
       (‖translateL2 (μ := μ) (F := ℝ) a (toL2 (μ := μ) (E := E) f) -
             toL2 (μ := μ) (E := E) f‖ₑ).toReal ≤
         (‖a‖ₑ * ‖toL2Grad (μ := μ) (E := E) f‖ₑ).toReal := by
     exact (ENNReal.toReal_le_toReal hA_ne_top hB_ne_top).2 h
-  simpa only [ENNReal.toReal_mul, toReal_enorm] using h'
+  simpa only [ENNReal.toReal_mul, toReal_eNorm] using h'
 
 end
 

@@ -47,7 +47,7 @@ private theorem completed_truth_at_complexity
             (completedModel root).denote (completedValuation root) p := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro p hcomplexity world
       cases p with
       | var x =>

@@ -123,9 +123,9 @@ theorem eLpNorm_weakRoot_le_profileMajorant
             (ENNReal.ofReal (U a) + ENNReal.ofReal (V a)) +
           ENNReal.ofReal B *
             (badEnergy a + ENNReal.ofReal R * goodEnergy a)) 2 P := by
-    apply eLpNorm_mono_enorm_ae hroot
+    apply eLpNorm_mono_eNorm_ae hroot
     filter_upwards [hpoint, hfinite] with a ha _
-    simpa only [enorm_eq_self, R, hbranch a] using ha
+    simpa only [eNorm_eq_self, R, hbranch a] using ha
   have htriangle := eLpNorm_add_le
     (f := fun a ↦ ENNReal.ofReal A * (ENNReal.ofReal (U a) + ENNReal.ofReal (V a)))
     (g := fun a ↦ ENNReal.ofReal B * (badEnergy a + ENNReal.ofReal R * goodEnergy a))
@@ -266,9 +266,9 @@ theorem eLpNorm_weakRoot_le_profileMajorantAt
             (ENNReal.ofReal (U a) + ENNReal.ofReal (V a)) +
           ENNReal.ofReal B *
             (badEnergy a + ENNReal.ofReal R * goodEnergy a)) 2 P := by
-    apply eLpNorm_mono_enorm_ae hroot
+    apply eLpNorm_mono_eNorm_ae hroot
     filter_upwards [hpoint, hfinite] with a ha _
-    simpa only [enorm_eq_self, R, hbranch a] using ha
+    simpa only [eNorm_eq_self, R, hbranch a] using ha
   have htriangle := eLpNorm_add_le
     (f := fun a ↦ ENNReal.ofReal A * (ENNReal.ofReal (U a) + ENNReal.ofReal (V a)))
     (g := fun a ↦ ENNReal.ofReal B * (badEnergy a + ENNReal.ofReal R * goodEnergy a))

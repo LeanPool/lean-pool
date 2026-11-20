@@ -175,7 +175,7 @@ theorem support_translatedTruncLE_orderedIntervalHsum_sub_source_subset
             (truncLE_add_truncGT c (w : HahnSeries G R))).symm
         _ = -truncLE c (w : HahnSeries G R) := by abel
     rw [he, support_neg, support_truncLE]
-    exact inter_subset_right
+    exact fun _ h ↦ h.2
   have he : translate (-center i) (truncLE (center i)
       (orderedIntervalHsum hι f cut center hsupp hord)) - (w : HahnSeries G R) =
       (translate (-center i) (truncLE (center i)

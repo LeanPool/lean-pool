@@ -33,7 +33,7 @@ private theorem regUniform_eLpNorm_two_sq_eq_lintegral
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (2 : ℝ≥0∞) μ ^ (2 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (2 : ℝ≥0∞) ≠ 0)
       (by norm_num : (2 : ℝ≥0∞) ≠ ∞) hf,
     ENNReal.toReal_ofNat, ← ENNReal.rpow_mul]
@@ -45,7 +45,7 @@ private theorem regUniform_memLp_of_lintegral_lt_top
     (hp : 0 < p) {f : α → E} (hf : AEStronglyMeasurable f μ)
     (hlt : (∫⁻ x, ‖f x‖ₑ ^ p ∂μ) < ⊤) :
     MemLp f (ENNReal.ofReal p) μ := by
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by simpa using hp) ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal hp.le]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hlt.ne
@@ -169,11 +169,11 @@ theorem regUniform_component_memLp_tenThirds
     exact hfmeas.aemeasurable
   have hfdensity : AEMeasurable
       (fun z : ParabolicPoint => ‖f z‖ₑ ^ (10 / 3 : ℝ)) μ := by
-    exact hfjoint.enorm.pow_const (10 / 3 : ℝ)
+    exact hfjoint.eNorm.pow_const (10 / 3 : ℝ)
   have hfdensityProduct : AEMeasurable
       (fun z : Vec3 × ℝ => ‖f z‖ₑ ^ (10 / 3 : ℝ))
       ((volume : Measure Vec3).prod μt) := by
-    exact (hfmeas.enorm.pow_const (10 / 3 : ℝ)).aemeasurable
+    exact (hfmeas.eNorm.pow_const (10 / 3 : ℝ)).aemeasurable
   have hspatialDensityMeas : Measurable
       (fun z : ParabolicPoint => CKN.spatialGradientSq u Du z) := by
     unfold CKN.spatialGradientSq
@@ -224,7 +224,7 @@ theorem regUniform_component_memLp_tenThirds
         eLpNorm (fun x : Vec3 => f (x, t))
             (ENNReal.ofReal (10 / 3 : ℝ)) volume ^ (10 / 3 : ℝ) =
           ∫⁻ x : Vec3, ‖f (x, t)‖ₑ ^ (10 / 3 : ℝ) ∂volume := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
           (by norm_num : ENNReal.ofReal (10 / 3 : ℝ) ≠ 0)
           ENNReal.ofReal_ne_top hfSliceMeas,
         ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 10 / 3),
@@ -291,7 +291,7 @@ theorem regUniform_component_memLp_tenThirds
   have hLpIdentity :
       eLpNorm f (ENNReal.ofReal (10 / 3 : ℝ)) μ ^ (10 / 3 : ℝ) =
         ∫⁻ z : ParabolicPoint, ‖f z‖ₑ ^ (10 / 3 : ℝ) ∂μ := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (by norm_num : ENNReal.ofReal (10 / 3 : ℝ) ≠ 0)
         ENNReal.ofReal_ne_top hfstrong,
       ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 10 / 3),

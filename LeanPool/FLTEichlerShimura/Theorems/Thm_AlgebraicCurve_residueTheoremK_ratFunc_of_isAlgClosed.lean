@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_LocalResidue
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_RatFuncPlaces
 
@@ -1125,7 +1127,7 @@ theorem surjective_algebraMap_residueField_placeInfty :
     Function.Surjective (algebraMap K (placeInfty K).ResidueField) := by
   intro z
   obtain ⟨c, hc⟩ :=
-    (finrank_eq_one_iff_of_nonzero' (1 : (placeInfty K).ResidueField) one_ne_zero).mp
+    (finrank_eq_one_iff_of_ne_zero' (1 : (placeInfty K).ResidueField) one_ne_zero).mp
       (show Module.finrank K (placeInfty K).ResidueField = 1 from deg_placeInfty K) z
   exact ⟨c, by rw [Algebra.algebraMap_eq_smul_one]; exact hc⟩
 
@@ -3848,7 +3850,7 @@ theorem surjective_algebraMap_residueField_of_deg_eq_one {F : Type*} [Field F] [
     (v : Place K F) (hdeg : v.deg = 1) :
     Function.Surjective (algebraMap K v.ResidueField) := by
   intro z
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' (1 : v.ResidueField) one_ne_zero).mp
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' (1 : v.ResidueField) one_ne_zero).mp
     (show Module.finrank K v.ResidueField = 1 from hdeg) z
   exact ⟨c, by rw [Algebra.algebraMap_eq_smul_one]; exact hc⟩
 
@@ -4876,7 +4878,7 @@ theorem p0n21_rtk_surjective_algebraMap_residueField_of_deg_eq_one
     (v : Place K F) (hdeg : v.deg = 1) :
     Function.Surjective (algebraMap K v.ResidueField) := by
   intro z
-  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_nonzero' (1 : v.ResidueField) one_ne_zero).mp
+  obtain ⟨c, hc⟩ := (finrank_eq_one_iff_of_ne_zero' (1 : v.ResidueField) one_ne_zero).mp
     (show Module.finrank K v.ResidueField = 1 from hdeg) z
   exact ⟨c, by rw [Algebra.algebraMap_eq_smul_one]; exact hc⟩
 

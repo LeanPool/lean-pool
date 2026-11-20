@@ -469,7 +469,7 @@ theorem borisovLemma4_of_pinchReduction
   intro P Q L R heq
   generalize hn : contextComplexity datum hfree L R = n
   induction n using Nat.strong_induction_on generalizing Q L R with
-  | h n ih =>
+  | ind n ih =>
       rcases hpinch P Q L R heq with hzero | hstep
       · have hsum : L.word.toList.length + R.word.toList.length = 0 := by
           simpa [contextComplexity] using hzero

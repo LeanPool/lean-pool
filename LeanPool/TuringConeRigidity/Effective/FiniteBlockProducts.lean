@@ -35,7 +35,7 @@ theorem finite_block_product_certificates (M : ZFSet.{u}) (hM : Transitive M)
       (level (groundReals M) (Ordinal.omega0 ^ β * (n+2)+1))
       (Ordinal.omega0 ^ β) n := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     let R := groundReals M
     let a := Ordinal.omega0 ^ β
     let γ := a*(n+2)

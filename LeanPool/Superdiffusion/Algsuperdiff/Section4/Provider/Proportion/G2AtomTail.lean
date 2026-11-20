@@ -188,7 +188,7 @@ private theorem wsumE_add {T U V : ℕ → Omega → ℝ} {c : ℕ → ℝ}
     (hV : ∀ i omega, 0 ≤ V i omega)
     (hsplit : ∀ i omega, U i omega + V i omega = T i omega) (omega : Omega) :
     wsumE T c omega = wsumE U c omega + wsumE V c omega := by
-  rw [wsumE, wsumE, wsumE, ← ENNReal.tsum_add]
+  rw [wsumE, wsumE, wsumE, ← tsum_add]
   refine tsum_congr fun i => ?_
   rw [← ENNReal.ofReal_add (mul_nonneg (hc i) (hU i omega))
     (mul_nonneg (hc i) (hV i omega)), ← mul_add, hsplit i omega]

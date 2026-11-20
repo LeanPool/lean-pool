@@ -166,7 +166,7 @@ theorem normalizedNegativeWhitneyFamilyRow_le_fullDualRow
         K * (volume (system.cell i) *
           physicalFullDualWhitneyFamilyCellEnergy system s F i) := by
             simpa only [mul_comm] using
-              (mul_le_mul_right (ENNReal.tsum_le_tsum hpoint) (volume U)⁻¹)
+              (mul_le_mul_right (tsum_le_tsum hpoint) (volume U)⁻¹)
     _ = (volume U)⁻¹ *
         (K * ∑' i : system.CellIndex,
           volume (system.cell i) *

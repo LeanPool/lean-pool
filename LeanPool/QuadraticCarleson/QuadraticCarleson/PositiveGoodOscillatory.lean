@@ -36,7 +36,8 @@ theorem allHeightMajorant_eq_zero_add_tail (b : ℝ → ℂ) (x : ℝ) :
       highHeightMajorant 0 b x := by
   unfold allHeightMajorant highHeightMajorant
   simpa only [zero_add] using
-    (tsum_eq_zero_add' (f := fun r ↦ paperFixedHeightQuadraticMaximal r b x) ENNReal.summable)
+    (tsum_eq_zero_add' (f := fun r ↦ paperFixedHeightQuadraticMaximal r b x)
+      CompleteLattice.summable)
 
 theorem measurable_allHeightMajorant {b : ℝ → ℂ} (hb : MemLp b 2) :
     Measurable (allHeightMajorant b) :=
@@ -52,7 +53,7 @@ theorem allHeightL2Constant_lt_top : allHeightL2Constant < ∞ :=
 theorem tsum_fixedHeightDecay_allHeights :
     (∑' r : ℕ, ENNReal.ofReal (fixedHeightL2DecayConstant *
       (2 : ℝ) ^ (-(r : ℝ) / 10))) = allHeightL2Constant := by
-  rw [tsum_eq_zero_add' ENNReal.summable]
+  rw [tsum_eq_zero_add' CompleteLattice.summable]
   have ht := tsum_fixedHeightDecay_highHeight 0
   simp only [Nat.cast_zero, neg_zero, zero_div, Real.rpow_zero, ENNReal.ofReal_one,
     mul_one, zero_add] at ht
@@ -64,7 +65,7 @@ theorem allHeightMajorant_eLpNorm_le {b : ℝ → ℂ} (hb : MemLp b 2) :
   have hp (r : ℕ) : eLpNorm (paperFixedHeightQuadraticMaximal r b) 2 ≤
       ENNReal.ofReal (fixedHeightL2DecayConstant * (2 : ℝ) ^ (-(r : ℝ) / 10)) *
         eLpNorm b 2 := paperFixedHeightQuadraticMaximal_eLpNorm_decay r hb
-  have hs := ENNReal.tsum_le_tsum hp
+  have hs := tsum_le_tsum hp
   rw [ENNReal.tsum_mul_right, tsum_fixedHeightDecay_allHeights] at hs
   exact (eLpNorm_tsum_two_le (fun r ↦ paperFixedHeightQuadraticMaximal r b)
     (fun r ↦ measurable_paperFixedHeightQuadraticMaximal r hb)).trans hs
@@ -78,8 +79,8 @@ theorem paperOscillatoryMaximal_le_majorant (b : ℝ → ℂ) (x : ℝ) :
     paperOscillatoryMaximal b x ≤ allHeightMajorant b x := by
   apply iSup_le
   intro lam
-  apply enorm_tsum_le_tsum_enorm.trans
-  apply ENNReal.tsum_le_tsum
+  apply eNorm_tsum_le_tsum_eNorm.trans
+  apply tsum_le_tsum
   intro r
   exact le_iSup (fun μ : {μ : ℝ // μ ≠ 0} ↦ ‖∫ t, b (x - t) *
     (dyadicPsi (oscillatoryScaleIndex μ.1 r μ.2) t : ℂ) * phase (μ.1 * t ^ 2)‖ₑ) lam
@@ -104,13 +105,13 @@ theorem measurable_paperOscillatoryMaximal {b : ℝ → ℂ} (hb : MemLp b 2) :
   unfold paperOscillatoryMaximal
   apply lowerSemicontinuous_iSup
   intro lam
-  exact (continuous_paperOscillatoryAction lam.val lam.property hb).enorm.lowerSemicontinuous
+  exact (continuous_paperOscillatoryAction lam.val lam.property hb).eNorm.lowerSemicontinuous
 
 /-- The real-modulation oscillatory operator uses the exact series from
 the principal-value reduction. -/
 theorem paperOscillatoryMaximal_eLpNorm_le {b : ℝ → ℂ} (hb : MemLp b 2) :
     eLpNorm (paperOscillatoryMaximal b) 2 ≤ allHeightL2Constant * eLpNorm b 2 := by
-  apply (eLpNorm_mono_enorm (f := paperOscillatoryMaximal b) (g := allHeightMajorant b)
+  apply (eLpNorm_mono_eNorm (f := paperOscillatoryMaximal b) (g := allHeightMajorant b)
     (measurable_paperOscillatoryMaximal hb).aestronglyMeasurable
     (fun x ↦ paperOscillatoryMaximal_le_majorant b x)).trans
   exact allHeightMajorant_eLpNorm_le hb
@@ -131,7 +132,7 @@ theorem allHeightMajorant_sq_lintegral_le {b : ℝ → ℂ} (hb : MemLp b 2) :
   have h := pow_le_pow_left₀ bot_le (allHeightMajorant_eLpNorm_le hb) 2
   simpa only [mul_pow, eLpNorm_two_sq_lintegral _
     (measurable_allHeightMajorant hb).aestronglyMeasurable,
-    eLpNorm_two_sq_lintegral _ hb.aestronglyMeasurable, enorm_eq_self] using h
+    eLpNorm_two_sq_lintegral _ hb.aestronglyMeasurable, eNorm_eq_self] using h
 
 /-- Chebyshev for the common measurable majorant, with arbitrary threshold. -/
 theorem paperOscillatoryMaximal_levelSet_mul_le {b : ℝ → ℂ} (hb : MemLp b 2)
@@ -161,11 +162,11 @@ theorem paperLacunaryOscillatoryMaximal_le_full (b : ℝ → ℂ) (x : ℝ) :
 theorem measurable_paperLacunaryOscillatoryMaximal {b : ℝ → ℂ} (hb : MemLp b 2) :
     Measurable (paperLacunaryOscillatoryMaximal b) :=
   Measurable.iSup (fun m ↦ (continuous_paperOscillatoryAction
-    (dyadicModulation m) (dyadicModulation_pos m).ne' hb).enorm.measurable)
+    (dyadicModulation m) (dyadicModulation_pos m).ne' hb).eNorm.measurable)
 
 theorem paperLacunaryOscillatoryMaximal_eLpNorm_le {b : ℝ → ℂ} (hb : MemLp b 2) :
     eLpNorm (paperLacunaryOscillatoryMaximal b) 2 ≤ allHeightL2Constant * eLpNorm b 2 := by
-  exact (eLpNorm_mono_enorm (f := paperLacunaryOscillatoryMaximal b)
+  exact (eLpNorm_mono_eNorm (f := paperLacunaryOscillatoryMaximal b)
     (g := paperOscillatoryMaximal b)
     (measurable_paperLacunaryOscillatoryMaximal hb).aestronglyMeasurable (fun x ↦
       paperLacunaryOscillatoryMaximal_le_full b x)).trans
@@ -175,9 +176,10 @@ theorem paperLacunaryOscillatoryMaximal_levelSet_mul_le {b : ℝ → ℂ} (hb : 
     (a : ℝ≥0∞) :
     a ^ 2 * volume {x | a < paperLacunaryOscillatoryMaximal b x} ≤
       allHeightL2Constant ^ 2 * ∫⁻ x, ‖b x‖ₑ ^ 2 := by
-  apply (mul_le_mul' le_rfl (measure_mono (fun x hx ↦
-    hx.trans_le (paperLacunaryOscillatoryMaximal_le_full b x)))).trans
-  exact paperOscillatoryMaximal_levelSet_mul_le hb a
+  refine (mul_le_mul' le_rfl (measure_mono ?_)).trans
+    (paperOscillatoryMaximal_levelSet_mul_le hb a)
+  intro x hx
+  exact hx.trans_le (paperLacunaryOscillatoryMaximal_le_full b x)
 
 end PositiveGoodOscillatory
 end QuadraticCarleson

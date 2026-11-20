@@ -72,7 +72,7 @@ theorem buGaussian_local_quadratic_l2
   have hWmeas : AEMeasurable W (volume.restrict S) := by
     dsimp [W]
     exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-      (hderiv.1.mono_set hS |>.aestronglyMeasurable.enorm)
+      (hderiv.1.mono_set hS |>.aestronglyMeasurable.eNorm)
   have hsplit := lintegral_add_left' hWmeas
     (μ := volume.restrict S) (f := W) (g := G)
   have hsum : (∫⁻ z in S, W z + G z) < ⊤ := by

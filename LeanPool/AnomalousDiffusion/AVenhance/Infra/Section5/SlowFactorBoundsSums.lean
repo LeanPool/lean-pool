@@ -55,7 +55,7 @@ theorem slowFactor_cutoff_eLpNorm_le {f : Vec 2 → ℝ} {F L ξ : ℝ}
       ENNReal.ofReal (F * w.length.factorial * L ^ w.length)) (w : List (Fin 2)) :
     eLpNorm (amnrSpaceWord w (ξ • f)) p μ ≤
       ENNReal.ofReal (F * w.length.factorial * L ^ w.length) := by
-  rw [amnrSpaceWord_const_smul, eLpNorm_const_smul, Real.enorm_eq_ofReal_abs]
+  rw [amnrSpaceWord_const_smul, eLpNorm_const_smul, Real.eNorm_eq_ofReal_abs]
   calc
     _ ≤ ENNReal.ofReal 1 * eLpNorm (amnrSpaceWord w f) p μ :=
       mul_le_mul_left (ENNReal.ofReal_le_ofReal hξ) _

@@ -229,7 +229,7 @@ theorem exists_qParam_pow_le {h : ℝ} (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriod
     have := hz hq
     rw [eq_cuspFunction τ hh.ne' hper] at this
     simpa using this
-  obtain ⟨n, φ, hφ, hφ0, hev⟩ := hΦ.exists_eventuallyEq_pow_smul_nonzero_iff.mpr hne
+  obtain ⟨n, φ, hφ, hφ0, hev⟩ := hΦ.exists_eventuallyEq_pow_smul_ne_zero_iff.mpr hne
   refine ⟨n, ‖φ 0‖ / 2, by positivity, ?_⟩
   have hlow : ∀ᶠ q in 𝓝 (0 : ℂ), ‖φ 0‖ / 2 < ‖φ q‖ :=
     hφ.continuousAt.norm.eventually_const_lt (by simpa using hφ0)
@@ -344,7 +344,7 @@ theorem exists_qParam_pow_le_slash [Γ.FiniteIndex] (h : ModularForm (Γ : Subgr
     have h1 : (⇑h ∣[k] A) = 0 := by
       rw [← coe_translateSL Γ h A, h0]; rfl
     rw [SlashAction.slash_eq_zero_iff] at h1
-    exact (FunLike.coe_zero_iff h).mp h1
+    exact (FunLike.coe_zero_iff (f := h)).mp h1
   exact exists_qParam_pow_le (wd_pos Γ) (wd_mem_strictPeriods Γ)
     (translateSL Γ h A) hne
 
@@ -444,7 +444,7 @@ def Δ₁ : ModularForm 𝒮ℒ 12 := restrict le_rfl CuspForm.discriminant
 @[scoped simp] theorem coe_Δ₁ : ((Δ₁ : ModularForm _ 12) : ℍ → ℂ) = ModularForm.discriminant := rfl
 
 theorem coe_ne_zero {k : ℤ} (h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k) (hh : h ≠ 0) :
-    (h : ℍ → ℂ) ≠ 0 := fun e => hh ((FunLike.coe_zero_iff h).mp e)
+    (h : ℍ → ℂ) ≠ 0 := fun e => hh ((FunLike.coe_zero_iff (f := h)).mp e)
 
 theorem eventually_ne_zero_coe {k : ℤ} (h : ModularForm (Γ : Subgroup (GL (Fin 2) ℝ)) k)
     (hh : h ≠ 0) (c : ℂ) (hc : 0 < c.im) : ∀ᶠ z in 𝓝[≠] c, h (ofComplex z) ≠ 0 :=

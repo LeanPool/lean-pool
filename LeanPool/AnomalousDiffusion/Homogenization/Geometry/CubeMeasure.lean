@@ -25,15 +25,11 @@ theorem CubeMeasure.cubeScaleFactor_pos {d : ℕ} (Q : TriadicCube d) :
 
 theorem CubeMeasure.measurableSet_coord_halfOpenStrip {d : ℕ} (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a ≤ x i ∧ x i < b} := by
-  refine MeasurableSet.inter ?_ ?_
-  · exact (isClosed_le continuous_const (continuous_apply i)).measurableSet
-  · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet
+  exact measurableSet_Ico.preimage (continuous_apply i).measurable
 
 theorem CubeMeasure.measurableSet_coord_openStrip {d : ℕ} (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a < x i ∧ x i < b} := by
-  refine MeasurableSet.inter ?_ ?_
-  · exact (isOpen_lt continuous_const (continuous_apply i)).measurableSet
-  · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet
+  exact measurableSet_Ioo.preimage (continuous_apply i).measurable
 
 theorem measurableSet_cubeSet {d : ℕ} (Q : TriadicCube d) :
     MeasurableSet (cubeSet Q) := by

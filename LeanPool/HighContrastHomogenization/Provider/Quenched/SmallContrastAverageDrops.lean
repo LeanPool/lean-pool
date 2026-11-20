@@ -466,7 +466,7 @@ theorem eLpNorm_diagonalWeakAverageSum_le_drops [NeZero d]
     funext a
     simp [smul_eq_mul]
   rw [hsmul, eLpNorm_const_smul]
-  rw [Real.enorm_eq_ofReal hw0]
+  rw [Real.eNorm_eq_ofReal hw0]
   refine mul_le_mul' le_rfl ?_
   exact eLpNorm_sqrt_blockSize_averageDefect_le_drop hstat hgrid
     (by omega) (by omega) (hintAll _) (hintAll _) hFsym hFpd

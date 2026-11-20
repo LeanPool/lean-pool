@@ -290,7 +290,7 @@ variable {K : IntrinsicTwoComplex} {h : K.realization → Plane}
   {D : K.VertexDiskControl h} {e : K.Edge}
 
 /-- The compact middle of an intrinsic edge after removing its two vertex-disk ends. -/
-def centralCarrier (T : K.EdgeTrimData h D e) : Set Plane :=
+noncomputable def centralCarrier (T : K.EdgeTrimData h D e) : Set Plane :=
   K.edgeCurve h e '' Set.Icc T.left T.right
 
 theorem isCompact_centralCarrier (T : K.EdgeTrimData h D e)
@@ -609,7 +609,7 @@ noncomputable def exitData (A : K.CentralPolygonalArc hcont hinj D C e) :
         (K.edgeFirstUsed_ne_edgeSecondUsed e)
 
 /-- The `trimmedCarrier` declaration. -/
-def trimmedCarrier (A : K.CentralPolygonalArc hcont hinj D C e) : Set Plane :=
+noncomputable def trimmedCarrier (A : K.CentralPolygonalArc hcont hinj D C e) : Set Plane :=
   A.parameterization.curve '' Set.Icc A.exitData.left A.exitData.right
 
 theorem trimmedCarrier_subset_resolvedCarrier

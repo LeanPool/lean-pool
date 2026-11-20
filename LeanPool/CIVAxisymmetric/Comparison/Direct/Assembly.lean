@@ -146,7 +146,7 @@ theorem ae_ae_abs_le_of_isDistributionalDriftDiffusion {d : ℕ} {I : Set ℝ} (
       ae_le_eLpNormEssSup
     filter_upwards [h1] with x hx
     have hxreal : ‖q (x, τ₀)‖ₑ.toReal ≤ M0 := ENNReal.toReal_mono hnetop hx
-    rwa [toReal_enorm, Real.norm_eq_abs] at hxreal
+    rwa [toReal_eNorm, Real.norm_eq_abs] at hxreal
   have hM0bound_neg : ∀ᵐ x : Vec m, |(fun z => -q z) (x, τ₀)| ≤ M0 := by
     simpa using hM0bound
   filter_upwards [hτ₀pos M0 hM0nonneg hM0bound, hτ₀neg M0 hM0nonneg hM0bound_neg]

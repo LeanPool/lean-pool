@@ -170,7 +170,7 @@ theorem local_stability
           have h := MeasureTheory.lpNorm_const_smul (c := |a|)
             (f := fun x : Ω => ‖(ι f0 : Ω → ℂ) x‖)
             (p := (2 : ℝ≥0∞)) (μ := μ)
-          simp only [coe_nnnorm, Real.norm_eq_abs, abs_abs] at h
+          simp only [coe_nnNorm, Real.norm_eq_abs, abs_abs] at h
           exact h
         rw [htmp, lpNorm_norm_l2 μ (ι f0), hf0, mul_one]
       simpa [hvf_norm] using hle

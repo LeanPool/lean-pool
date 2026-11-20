@@ -279,7 +279,7 @@ theorem rampSlope_diff (sgn : Fin p → ℤ) (lo : Fin p → ℕ) (t : ℕ)
       by_cases h2 : lo e ≤ k - 1 ∧ k - 1 < lo e + t
       · rw [ite_eq_left h2, ite_eq_right (show ¬ (k = lo e ∧ 0 < t) by omega),
           ite_eq_right (show ¬ (k = lo e + t ∧ 0 < t) by omega)]
-        try ring
+        ring
       · rw [ite_eq_right h2, ite_eq_left (show k = lo e ∧ 0 < t by omega),
           ite_eq_right (show ¬ (k = lo e + t ∧ 0 < t) by omega)]
     · rw [ite_eq_right h1]

@@ -84,7 +84,7 @@ theorem IsStrictlySingular.hilbert_adjoint
         (norm_nonneg (T r))
     · exact (mul_le_mul_iff_of_pos_left (norm_pos_iff.mpr hd)).mp hCancel
   simpa only [dist_eq_norm, map_sub, ContinuousLinearMap.comp_apply,
-    NNReal.coe_mul, coe_nnnorm, pow_two, d, r] using hFinal
+    NNReal.coe_mul, coe_nnNorm, pow_two, d, r] using hFinal
 
 /-- Strict singularity is invariant under Hilbert-space adjoint. -/
 theorem isStrictlySingular_hilbert_adjoint_iff

@@ -254,7 +254,7 @@ theorem HmMeasurability.hm_vector_spacetime_eLpNorm_bound_of_slice_energy
         (Set.Ioo (0 : ℝ) 1 ×ˢ unitCube)) := by
     have h : AEMeasurable (fun z : ℝ × Vec 2 => ‖M z‖ₑ)
         (volume.restrict timeCube) := by
-      simpa only [M] using hVmagMeas.enorm
+      simpa only [M] using hVmagMeas.eNorm
     rw [hvol] at h
     exact (ENNReal.continuous_rpow_const (y := (2 : ℝ))).measurable.comp_aemeasurable h
   have hprod := setLIntegral_prod (μ := (volume : Measure ℝ))
@@ -264,7 +264,7 @@ theorem HmMeasurability.hm_vector_spacetime_eLpNorm_bound_of_slice_energy
   have hnorm : eLpNorm M 2 μ =
       (∫⁻ z in Set.Ioo (0 : ℝ) 1 ×ˢ unitCube, ‖M z‖ₑ ^ (2 : ℝ)
         ∂((volume : Measure ℝ).prod (volume : Measure (Vec 2)))) ^ (1 / 2 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hVmagMeas]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hVmagMeas]
     simp only [ENNReal.toReal_ofNat]
     rw [hvol]
     rfl

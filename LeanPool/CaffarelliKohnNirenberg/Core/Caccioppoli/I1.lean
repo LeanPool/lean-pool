@@ -258,7 +258,7 @@ theorem caccioppoli_I1_velocity_energy_bound
       (volume.restrict (Ioc (z.2 - ρ ^ 2) z.2)) =
       ENNReal.ofReal (ρ * alpha u z ρ ^ 2) := by
     simpa only [timeSliceEnergyEssSup, timeSliceBallEnergy,
-      Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)] using
+      Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)] using
       sws_timeSliceEnergyEssSup_eq_ofReal_alpha_sq hsol z hρ hsub
   have henergy := caccioppoli_energy_lintegral_bound hρ hnorm'.aemeasurable hess
   rw [← ENNReal.ofReal_mul (by positivity : (0 : ℝ) ≤ ρ ^ 2)] at henergy

@@ -53,7 +53,7 @@ theorem directionalCoefficientOperator_bound (K : SmoothCoefficient period) (a :
     (fun x => translatedCoefficientDerivative_bound period a K.coefficient K.firstBound
         K.norm_first x)
   have h' : ‖directionalCoefficientOperator period K a‖ ≤ (K.firstBound : ℝ) * ‖a‖ := by
-    simpa only [directionalCoefficientOperator, NNReal.coe_mul, coe_nnnorm] using h
+    simpa only [directionalCoefficientOperator, NNReal.coe_mul, coe_nnNorm] using h
   exact ((directionalCoefficientOperator period K a).le_opNorm f).trans
     (mul_le_mul_of_nonneg_right h' (norm_nonneg f))
 

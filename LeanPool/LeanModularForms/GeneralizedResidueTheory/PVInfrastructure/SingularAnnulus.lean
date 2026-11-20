@@ -91,6 +91,7 @@ private lemma singular_annulus_symmDiff_measurableSet
   have h_abs : MeasurableSet {t : ℝ | |t - t₀| < δ₀'} :=
     (isOpen_lt (continuous_abs.comp (continuous_id.sub continuous_const))
       continuous_const).measurableSet
+  simp only [Set.ofPred_and]
   refine MeasurableSet.symmDiff ?_ ?_
   · refine measurableSet_Icc.inter (h_abs.inter ?_)
     exact (hh'_sm.measurable measurableSet_Ioi).inter (hh'_sm.measurable measurableSet_Iic)
@@ -240,7 +241,8 @@ private lemma singular_annulus_f_lin_measurable
       if ε₂ < ‖L‖ * |t - t₀| ∧ ‖L‖ * |t - t₀| ≤ ε₁
       then (↑(t - t₀) : ℂ)⁻¹ else 0) := by
   apply Measurable.ite
-  · apply MeasurableSet.inter
+  · simp only [Set.ofPred_and]
+    apply MeasurableSet.inter
     · exact (isOpen_lt continuous_const (continuous_const.mul
         (continuous_abs.comp (continuous_id.sub continuous_const)))).measurableSet
     · exact (isClosed_le (continuous_const.mul

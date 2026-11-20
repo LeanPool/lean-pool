@@ -79,7 +79,7 @@ private theorem memVectorL2_openCubeSet_of_euclideanMemLpTwo
     have heq : ENNReal.ofReal (cubeVolume Q) • normalizedCubeMeasure Q = cubeMeasure Q := by
       rw [normalizedCubeMeasure]
       ext s
-      rw [Measure.smul_apply, Measure.smul_apply]
+      rw [smul_apply, smul_apply]
       change ENNReal.ofReal (cubeVolume Q) *
           (ENNReal.ofReal ((cubeVolume Q)⁻¹) * cubeMeasure Q s) = cubeMeasure Q s
       rw [← mul_assoc, hmul, one_mul]

@@ -27,12 +27,14 @@ private theorem cubeScaleFactor_pos {d : ℕ} (Q : TriadicCube d) :
 
 private theorem measurableSet_coord_halfOpenStrip {d : ℕ} (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a ≤ x i ∧ x i < b} := by
+  change MeasurableSet ({x : Vec d | a ≤ x i} ∩ {x : Vec d | x i < b})
   refine MeasurableSet.inter ?_ ?_
   · exact (isClosed_le continuous_const (continuous_apply i)).measurableSet
   · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet
 
 private theorem measurableSet_coord_openStrip {d : ℕ} (i : Fin d) (a b : ℝ) :
     MeasurableSet {x : Vec d | a < x i ∧ x i < b} := by
+  change MeasurableSet ({x : Vec d | a < x i} ∩ {x : Vec d | x i < b})
   refine MeasurableSet.inter ?_ ?_
   · exact (isOpen_lt continuous_const (continuous_apply i)).measurableSet
   · exact (isOpen_lt (continuous_apply i) continuous_const).measurableSet

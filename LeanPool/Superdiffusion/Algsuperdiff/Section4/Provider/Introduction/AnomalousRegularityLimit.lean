@@ -172,7 +172,7 @@ theorem eLpNorm_sqrt_vecNormSq_restrict_le {W : Set (Vec d)} {F : Vec d → Vec 
       simp [smul_eq_mul]
     rw [hsm, eLpNorm_const_smul, eLpNorm_norm _ hF.aestronglyMeasurable]
     congr 1
-    exact Real.enorm_eq_ofReal (Real.sqrt_nonneg _)
+    exact Real.eNorm_eq_ofReal (Real.sqrt_nonneg _)
   have h3 : eLpNorm F 2 (volume.restrict W) =
       ENNReal.ofReal (Real.sqrt (∫ y in W, ‖F y‖ ^ (2 : ℕ) ∂volume)) := by
     rw [hF.eLpNorm_eq_integral_rpow_norm (by norm_num) (by norm_num)]

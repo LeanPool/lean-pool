@@ -58,7 +58,7 @@ theorem scalar_embedding_compact (φ : LiftDomain period → ℝ) (hφ : HasComp
     HasCompactSupport (fun x => scalarEmbedding (φ x)) := by
   apply hφ.mono
   intro x hx
-  contrapose! hx
+  contrapose hx
   simp only [Function.mem_support, not_not] at hx ⊢
   rw [hx, map_zero]
 

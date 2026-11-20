@@ -81,7 +81,7 @@ private theorem fixed_velocity_integral_lt_top
     apply le_of_eq
     apply lintegral_congr
     intro y
-    rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg (u (y, s)))]
+    rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg (u (y, s)))]
   have hE : E < ⊤ := lt_of_le_of_lt
     (essSup_mono_measure_and_ae (Measure.restrict_mono_set volume hTsub)
       (Filter.Eventually.of_forall hpoint)) (by

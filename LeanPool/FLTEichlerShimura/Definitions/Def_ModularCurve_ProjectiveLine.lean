@@ -139,10 +139,8 @@ def borel (R : Type*) [CommRing R] : Subgroup (SpecialLinearGroup (Fin 2) R) whe
   inv_mem' := by
     intro A hA
     simp only [Set.mem_ofPred_eq] at *
-    change (A⁻¹).1 1 0 = 0
-    rw [SpecialLinearGroup.SL2_inv_expl A]
-    simp only [Matrix.cons_val_one, Matrix.cons_val_zero, neg_eq_zero]
-    exact hA
+    rw [SpecialLinearGroup.SL2_inv_expl]
+    simpa using hA
 
 theorem mem_borel_iff {A : SpecialLinearGroup (Fin 2) R} : A ∈ borel R ↔ A.1 1 0 = 0 :=
   Iff.rfl

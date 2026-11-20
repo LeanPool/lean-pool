@@ -111,7 +111,6 @@ theorem ginibreBrownian_original_killed_compact_path_law {Ω : Type*}
       exact h t.val.toNNReal (Real.toNNReal_le_iff_le_coe.mpr t.property.2)
   have hSetEq : C ⁻¹' G=ᵐ[Q] S := by
     filter_upwards [hPath.1, hCouple] with ω hAlive hω
-    apply propext
     exact (ginibreCanonicalCompactPath_forall_iff_of_alive n α z T N ω hAlive
       (ginibreHamiltonianOUSublevelDomain n R)).trans (hω.1.trans (hOStay ω).symm)
   have hCO : ∀ᵐ ω ∂Q, ω∈S → C ω=O ω := by

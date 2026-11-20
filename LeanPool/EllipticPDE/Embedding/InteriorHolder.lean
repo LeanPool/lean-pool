@@ -91,7 +91,7 @@ theorem eLpNorm_restrictL2 (B : Set (EuclideanSpace ℝ (Fin d))) (X : EucL2 d) 
 /-- Restricting a whole-space `L²` class to a set does not increase its norm. -/
 theorem nnnorm_restrictL2_le (B : Set (EuclideanSpace ℝ (Fin d))) (X : EucL2 d) :
     ‖restrictL2 (Ω := B) X‖₊ ≤ ‖X‖₊ := by
-  rw [Lp.nnnorm_def, Lp.nnnorm_def]
+  rw [Lp.nnNorm_def, Lp.nnNorm_def]
   refine ENNReal.toNNReal_mono (Lp.eLpNorm_ne_top X) ?_
   rw [eLpNorm_restrictL2]
   exact eLpNorm_mono_measure _ Measure.restrict_le_self
@@ -99,7 +99,7 @@ theorem nnnorm_restrictL2_le (B : Set (EuclideanSpace ℝ (Fin d))) (X : EucL2 d
 /-- The `L²` seminorm of a whole-space class over a set is bounded by the class norm. -/
 theorem eLpNorm_restrict_toNNReal_le (B : Set (EuclideanSpace ℝ (Fin d))) (X : EucL2 d) :
     (eLpNorm (X : EuclideanSpace ℝ (Fin d) → ℝ) 2 (volume.restrict B)).toNNReal ≤ ‖X‖₊ := by
-  rw [Lp.nnnorm_def]
+  rw [Lp.nnNorm_def]
   exact ENNReal.toNNReal_mono (Lp.eLpNorm_ne_top X)
     (eLpNorm_mono_measure _ Measure.restrict_le_self)
 
@@ -108,7 +108,7 @@ norm. -/
 theorem eLpNorm_restrict_mono_toNNReal_le {S T : Set (EuclideanSpace ℝ (Fin d))} (hST : S ⊆ T)
     (X : Lp ℝ 2 (volume.restrict T)) :
     (eLpNorm (X : EuclideanSpace ℝ (Fin d) → ℝ) 2 (volume.restrict S)).toNNReal ≤ ‖X‖₊ := by
-  rw [Lp.nnnorm_def]
+  rw [Lp.nnNorm_def]
   exact ENNReal.toNNReal_mono (Lp.eLpNorm_ne_top X)
     (eLpNorm_mono_measure _ (Measure.restrict_mono hST le_rfl))
 
@@ -171,12 +171,12 @@ theorem interior_holder_estimate_one (Op : FullEllipticOp 1)
     intro k
     have hstep : (eLpNorm (fun x => (restrictL2 (Ω := B) (Y k) x : ℝ)) (ENNReal.ofReal 2)
         (volume.restrict B)).toNNReal = ‖restrictL2 (Ω := B) (Y k)‖₊ := by
-      rw [h2, Lp.nnnorm_def]
+      rw [h2, Lp.nnNorm_def]
     have hle : ‖restrictL2 (Ω := B) (Y k)‖₊ ≤ ‖(u : H1amb Ω) k.succ‖₊ :=
       (nnnorm_restrictL2_le B (Y k)).trans
         (le_of_eq (NNReal.coe_injective (by simp [hYdef])))
     have hbd : ‖(u : H1amb Ω) k.succ‖₊ ≤ Real.toNNReal dcoef * Real.toNNReal P := by
-      rw [← Real.toNNReal_mul hd0, ← NNReal.coe_le_coe, coe_nnnorm,
+      rw [← Real.toNNReal_mul hd0, ← NNReal.coe_le_coe, coe_nnNorm,
         Real.coe_toNNReal _ (mul_nonneg hd0 hP0)]
       exact firstOrder_gradNorm_le Op u f hu k
     rw [hstep]
@@ -281,7 +281,7 @@ theorem interior_holder_estimate_two (Op : FullEllipticOp 2)
     refine (eLpNorm_restrict_toNNReal_le _ _).trans ?_
     have : ‖extendL2 hΩm ((u : H1amb Ω) i.succ)‖₊ = ‖(u : H1amb Ω) i.succ‖₊ :=
       NNReal.coe_injective (by simp)
-    rw [this, hQdef, ← Real.toNNReal_mul hd0, ← NNReal.coe_le_coe, coe_nnnorm,
+    rw [this, hQdef, ← Real.toNNReal_mul hd0, ← NNReal.coe_le_coe, coe_nnNorm,
       Real.coe_toNNReal _ (mul_nonneg hd0 hP0)]
     exact firstOrder_gradNorm_le Op u f hu i
   have hWbd : ∀ k i : Fin 2,
@@ -289,7 +289,7 @@ theorem interior_holder_estimate_two (Op : FullEllipticOp 2)
         (volume.restrict (Metric.ball c R))).toNNReal ≤ Real.toNNReal C₁ * Q := by
     intro k i
     refine (eLpNorm_restrict_mono_toNNReal_le hballV _).trans ?_
-    rw [hQdef, ← Real.toNNReal_mul hC₁0, ← NNReal.coe_le_coe, coe_nnnorm,
+    rw [hQdef, ← Real.toNNReal_mul hC₁0, ← NNReal.coe_le_coe, coe_nnNorm,
       Real.coe_toNNReal _ (mul_nonneg hC₁0 hP0)]
     have hpos := hWb k i
     have h1 : (0 : ℝ) ≤ ‖restrictL2 (Ω := V) (extendL2 hΩm ((u : H1amb Ω) i.succ))‖ :=
@@ -419,7 +419,7 @@ theorem interior_holder_estimate (Op : FullEllipticOp 3)
     refine (eLpNorm_restrict_toNNReal_le _ _).trans ?_
     have : ‖extendL2 hΩm ((u : H1amb Ω) i.succ)‖₊ = ‖(u : H1amb Ω) i.succ‖₊ :=
       NNReal.coe_injective (by simp)
-    rw [this, hQdef, ← Real.toNNReal_mul hd0, ← NNReal.coe_le_coe, coe_nnnorm,
+    rw [this, hQdef, ← Real.toNNReal_mul hd0, ← NNReal.coe_le_coe, coe_nnNorm,
       Real.coe_toNNReal _ (mul_nonneg hd0 hP0)]
     exact firstOrder_gradNorm_le Op u f hu i
   have hWbd : ∀ k i : Fin 3,
@@ -427,7 +427,7 @@ theorem interior_holder_estimate (Op : FullEllipticOp 3)
         (volume.restrict (Metric.ball c R))).toNNReal ≤ Real.toNNReal C₁ * Q := by
     intro k i
     refine (eLpNorm_restrict_mono_toNNReal_le hballV _).trans ?_
-    rw [hQdef, ← Real.toNNReal_mul hC₁0, ← NNReal.coe_le_coe, coe_nnnorm,
+    rw [hQdef, ← Real.toNNReal_mul hC₁0, ← NNReal.coe_le_coe, coe_nnNorm,
       Real.coe_toNNReal _ (mul_nonneg hC₁0 hP0)]
     have hpos := hWb k i
     have h1 : (0 : ℝ) ≤ ‖restrictL2 (Ω := V) (extendL2 hΩm ((u : H1amb Ω) i.succ))‖ :=

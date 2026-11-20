@@ -35,10 +35,10 @@ private theorem essLocal_enorm_smul_sq_le (a : ℝ) (ha0 : 0 ≤ a)
     (v : V) :
     ‖a • v‖ₑ ^ (2 : ℝ) ≤ ‖v‖ₑ ^ (2 : ℝ) := by
   have hscalar : ‖a‖ₑ ≤ 1 := by
-    rw [Real.enorm_of_nonneg ha0]
+    rw [Real.eNorm_of_nonneg ha0]
     exact ENNReal.ofReal_le_one.mpr ha1
   have hnorm : ‖a • v‖ₑ ≤ ‖v‖ₑ := by
-    rw [enorm_smul]
+    rw [eNorm_smul]
     calc
       ‖a‖ₑ * ‖v‖ₑ ≤ 1 * ‖v‖ₑ :=
         mul_le_mul_of_nonneg_right hscalar (by positivity)
@@ -228,9 +228,9 @@ private theorem essLocal_reflectedDerivativeL2_finite
       (hderiv.2.2.2.1.mono_set hTsub).aestronglyMeasurable
     have hFmeas : AEMeasurable F (volume.restrict T) := by
       dsimp [F]
-      exact ((ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDmeas.enorm).add
-        (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hD2meas.enorm)).add
-          (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDtmeas.enorm)
+      exact ((ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDmeas.eNorm).add
+        (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hD2meas.eNorm)).add
+          (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDtmeas.eNorm)
     have hFmap : AEMeasurable F (Measure.map e (volume.restrict S)) := by
       rw [hmapS]
       exact hFmeas
@@ -245,7 +245,7 @@ private theorem essLocal_reflectedDerivativeL2_finite
     have hD2 : d2g z = D2ω (e z) :=
       funext fun i => funext fun j => funext fun k => hd2g z i j k
     have hDt : dtg z = -Dtω (e z) := funext fun i => hdtg z i
-    simp only [hD, hD2, hDt, enorm_neg, F]
+    simp only [hD, hD2, hDt, eNorm_neg, F]
   simpa only [hEq] using hsourceL2
 
 private theorem essLocal_backwardUniqueness_affineSecondSlab

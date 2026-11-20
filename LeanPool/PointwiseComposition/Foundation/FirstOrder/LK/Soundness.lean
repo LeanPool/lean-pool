@@ -140,9 +140,7 @@ lemma consistent_of_model [hM : M↓[L] ⊧* T] : Entailment.Consistent T :=
 variable {M}
 
 lemma unprovable_of_countermodel [hM : M↓[L] ⊧* T] {φ} : M↓[L] ⊭ φ → T ⊬ φ :=
-  by
-  contrapose!; intro h
-  exact Theory.Proof.sound h hM
+  fun hm h ↦ hm (Theory.Proof.sound h hM)
 
 variable {T}
 

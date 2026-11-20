@@ -25,7 +25,7 @@ theorem fv_syn_wtru : synWtru.fv = (∅ : Finset Var) := by rfl
 theorem fv_syn_wb (ph : Wff) (ps : Wff) : (synWb ph ps).fv = (ph.fv) ∪ (ps.fv) :=
   by
   ext u
-  simp [synWb, Wff.fv, Wff.neg]; aesop
+  simp [synWb, Wff.fv, Wff.neg]
 
 theorem fv_syn_wo (ph : Wff) (ps : Wff) : (synWo ph ps).fv = (ph.fv) ∪ (ps.fv) :=
   by
@@ -186,12 +186,12 @@ theorem fv_syn_cdif (A : Class) (B : Class) : (synCdif A B).fv = (A.fv) ∪ (B.f
 theorem fv_syn_csymdif (A : Class) (B : Class) : (synCsymdif A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [synCsymdif, fv_syn_cdif, fv_syn_cun]; aesop
+  simp [synCsymdif, fv_syn_cdif, fv_syn_cun]
 
 theorem fv_syn_wss (A : Class) (B : Class) : (synWss A B).fv = (A.fv) ∪ (B.fv) :=
   by
   ext u
-  simp [synWss, fv_syn_cin, Wff.fv]; aesop
+  simp [synWss, fv_syn_cin, Wff.fv]
 
 theorem fv_syn_wpss (A : Class) (B : Class) : (synWpss A B).fv = (A.fv) ∪ (B.fv) :=
   by

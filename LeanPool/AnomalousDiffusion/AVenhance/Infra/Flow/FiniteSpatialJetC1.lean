@@ -479,7 +479,7 @@ theorem spatialJetFlow_fixed_start_contDiff_one
   have hParam (t : ℝ) (z : SpatialJetState n) :
       HasStrictFDerivAt (fun w => f (t, w)) (dparam (t, z)) z := by
     have hAt : ContDiffAt ℝ 1 (fun w => f (t, w)) z := (hSlice t).contDiffAt
-    have hs := hAt.hasStrictFDerivAt (by norm_num)
+    have hs := hAt.hasStrictFDerivAt_fderiv (by norm_num)
     have hD := (spatialJetFlow_hasFDerivAt hb hX n s t z).fderiv
     change fderiv ℝ (fun w => f (t, w)) z = dparam (t, z) at hD
     rw [hD] at hs
@@ -525,7 +525,7 @@ theorem spatialJetFlow_fixed_start_hasFDerivAt
     have hSlice := spatialJetFlow_spatial_contDiff_one hb hX n s t
     have hAt : ContDiffAt ℝ 1 (fun w => f (t, w)) z := by
       simpa [f] using hSlice.contDiffAt (x := z)
-    have hs := hAt.hasStrictFDerivAt (by norm_num)
+    have hs := hAt.hasStrictFDerivAt_fderiv (by norm_num)
     have hD := (spatialJetFlow_hasFDerivAt hb hX n s t z).fderiv
     change fderiv ℝ (fun w => f (t, w)) z = dparam (t, z) at hD
     rw [hD] at hs

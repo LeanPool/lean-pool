@@ -126,7 +126,7 @@ private theorem eLpNorm_centeredCubeH10Pullback_toFun
     simp only [Pi.smul_apply, smul_eq_mul, Function.comp_apply,
       centeredCubeDilation, centeredCubeH10Pullback_apply]]
   rw [eLpNorm_const_smul, hcomp]
-  rw [Real.enorm_eq_ofReal (inv_nonneg.mpr (centeredCubeScale_pos m).le)]
+  rw [Real.eNorm_eq_ofReal (inv_nonneg.mpr (centeredCubeScale_pos m).le)]
 
 private theorem eLpNorm_centeredCubeH10Pullback_grad
     {d : ℕ} {m : ℤ} (p : ℝ≥0∞)
@@ -371,9 +371,9 @@ private theorem abs_integral_mul_le_eLpNorm_toReal_mul
     rw [memLp_one_iff_integrable]
     exact hFG
   have hnorm : ENNReal.ofReal |∫ x, f x ∂μ| ≤ eLpNorm f 1 μ := by
-    simpa only [Real.enorm_eq_ofReal_abs] using
-      (enorm_integral_le_lintegral_enorm (μ := μ) f).trans_eq
-        (eLpNorm_one_eq_lintegral_enorm hfLp.aestronglyMeasurable).symm
+    simpa only [Real.eNorm_eq_ofReal_abs] using
+      (eNorm_integral_le_lintegral_eNorm (μ := μ) f).trans_eq
+        (eLpNorm_one_eq_lintegral_eNorm hfLp.aestronglyMeasurable).symm
   have hholder : eLpNorm f 1 μ ≤ eLpNorm F p μ * eLpNorm G r μ := by
     simpa only [f, Pi.smul_apply, smul_eq_mul] using!
       eLpNorm_smul_le_mul_eLpNorm hF.aestronglyMeasurable hG.aestronglyMeasurable
@@ -516,7 +516,7 @@ private theorem eLpNorm_radialTruncation_rpow_conjugate_eq_truncatedMoment
     (eLpNorm (INTERNAL.hilbertRadialTruncation q.exponent.toReal n F)
       q.conjugate.exponent μ) ^ q.conjugate.exponent.toReal =
       ∫⁻ x, INTERNAL.truncatedMoment q.exponent.toReal n F x ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ne_of_gt (zero_lt_one.trans q.conjugate.one_lt)) q.conjugate.lt_top.ne
     (INTERNAL.aestronglyMeasurable_hilbertRadialTruncation hF),
     ← ENNReal.rpow_mul]
@@ -571,7 +571,7 @@ private theorem eLpNorm_le_of_truncated_cross_bound
         rw [← ENNReal.rpow_mul, inv_mul_cancel₀ (by linarith : q ≠ 0),
           ENNReal.rpow_one]
       _ ≤ B ^ q := ENNReal.rpow_le_rpow hroot (by linarith)
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ENNReal.ofReal_pos.mpr (by linarith : 0 < q)).ne' ENNReal.ofReal_ne_top hF,
     ENNReal.toReal_ofReal (by linarith : 0 ≤ q)]
   have hmoment : (∫⁻ x, ‖F x‖ₑ ^ q ∂μ) ≤ A ^ q := by

@@ -13,6 +13,8 @@ Misere combinatorial games.
 
 namespace MisereGames
 
+open scoped Pointwise
+
 universe u
 
 variable {G : Type (u + 1)} [Form G]

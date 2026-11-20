@@ -187,7 +187,7 @@ theorem normalFixedQuotient_hasAlmostInvariantUnitVectors
       add_lt_add_of_le_of_lt hpupper hzbound
     have hsum' : ‖p‖ + ‖z‖ < 1 := by
       convert hsum using 1
-      all_goals ring
+      ring
     exact (not_lt_of_ge htriangle) hsum'
   have halpha_kappa : α / κ ≤ 1 / 4 := by
     apply (div_le_iff₀ hκ).2

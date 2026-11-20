@@ -263,7 +263,7 @@ lemma Mat.inv_toFun1' (n : ℕ) :
   Basis.ext ((Matrix.stdBasis _ _ _).tensorProduct ((Matrix.stdBasis _ _ _).map (opLinearEquiv ..)))
   fun ⟨⟨i0, j0⟩, k0, l0⟩ ↦  by
     simp [stdBasis_eq_single, AlgHom.mulLeftRight_apply,
-      single, ite_and, mul_apply, Fintype.sum_prod_type]
+      single, ite_and, Matrix.mul_apply, Fintype.sum_prod_type]
 
 lemma Mat.inv_toFun2' (n : ℕ) :
     (AlgHom.mulLeftRight R (Matrix (Fin n) (Fin n) R)).toLinearMap.comp (Mat.inv R n) = .id := by

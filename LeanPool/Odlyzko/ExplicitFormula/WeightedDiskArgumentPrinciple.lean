@@ -106,7 +106,7 @@ theorem exists_analytic_weightedLogDerivFiniteRemainder_of_mem
   have hg : AnalyticAt ℂ g p := by
     have hdslope : AnalyticAt ℂ (dslope h p) p := by
       obtain ⟨P, hP⟩ := hh
-      exact ⟨P.fslope, hP.has_fpower_series_dslope_fslope⟩
+      exact ⟨P.fslope, hP.dslope_fslope⟩
     apply (hh.mul hu).add (analyticAt_const.mul hdslope) |>.sub
     change AnalyticAt ℂ
       (fun z : ℂ ↦ ∑ q ∈ S.erase p, (h q * (order q : ℂ)) / (z - q)) p

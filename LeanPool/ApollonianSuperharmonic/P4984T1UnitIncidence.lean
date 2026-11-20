@@ -424,7 +424,7 @@ private theorem hγcontinuous :
   classical
   intro u γ left upper
   cases left <;> cases upper <;> unfold γ <;>
-    (try simp only [Bool.false_eq_true, ite_false, ite_true]) <;>
+    (simp only [Bool.false_eq_true, ite_false, ite_true]) <;>
     fun_prop
 
 private theorem hQpre :

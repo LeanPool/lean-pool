@@ -79,8 +79,8 @@ theorem actualDensity_bounded_test_error_tendsto {Ω : Type*} [MeasurableSpace �
   have hnorm : Tendsto (fun n => ∫ ω, ‖D n ω-d ω‖ ∂P) atTop (𝓝 0) := by
     have ht := (ENNReal.continuousAt_toReal (by simp : (0 : ℝ≥0∞)≠∞)).tendsto.comp hL
     have he (n : ℕ) : (∫ ω, ‖D n ω-d ω‖ ∂P) = (eLpNorm (D n-d) 1 P).toReal := by
-      rw [eLpNorm_one_eq_lintegral_enorm ((hDi n).sub hdi).aestronglyMeasurable]
-      simpa only [Pi.sub_apply] using integral_norm_eq_lintegral_enorm ((hDi n).sub
+      rw [eLpNorm_one_eq_lintegral_eNorm ((hDi n).sub hdi).aestronglyMeasurable]
+      simpa only [Pi.sub_apply] using integral_norm_eq_lintegral_eNorm ((hDi n).sub
           hdi).aestronglyMeasurable
     simpa only [he, Function.comp_def, ENNReal.toReal_zero] using ht
   have hbound (n : ℕ) : ‖∫ ω, (D n ω-d ω)*b n ω ∂P‖ ≤ C*(∫ ω, ‖D n ω-d ω‖ ∂P) := by

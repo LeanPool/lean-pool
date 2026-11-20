@@ -32,7 +32,7 @@ local notation x " ⊗ₘ " y => TensorProduct.map x y
 
 instance FiniteDimensional.innerProductSpace.complete {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℂ E] [FiniteDimensional ℂ E] : CompleteSpace E :=
-  FiniteDimensional.complete ℂ E
+  FiniteDimensional.completeSpace ℂ E
 
 theorem symmMap_apply_schurMul {A B : Type*} [starAlgebra A] [starAlgebra B]
     [hA : QuantumSet A] [QuantumSet B] (f g : A →ₗ[ℂ] B) :
@@ -731,7 +731,7 @@ instance QuantumGraph.Real.upsilonSubmodule.hasOrthogonalProjection {f : A →�
     (gns : hA.k = 0) (hf : QuantumGraph.Real A f) :
     (upsilonSubmodule gns hf).HasOrthogonalProjection := by
   let : CompleteSpace (upsilonSubmodule gns hf) :=
-    FiniteDimensional.complete ℂ (upsilonSubmodule gns hf)
+    FiniteDimensional.completeSpace ℂ (upsilonSubmodule gns hf)
   infer_instance
 
 theorem QuantumGraph.Real.upsilonOrthogonalProjection {f : A →ₗ[ℂ] A}
@@ -1104,7 +1104,7 @@ theorem PhiMap_rankOne (x y : B) :
 
 theorem LinearMap.real_zero :
   LinearMap.real (0 : B →ₗ[ℂ] B) = 0 :=
-by ext; simp only [real_apply, zero_apply, star_zero]
+by ext; simp only [real_apply, LinearMap.zero_apply, star_zero]
 
 theorem lTensor_counit_PhiMap_rTensor_algebraLinearMap (x : B →ₗ[ℂ] B) :
   (modAut (-k B)).toLinearMap

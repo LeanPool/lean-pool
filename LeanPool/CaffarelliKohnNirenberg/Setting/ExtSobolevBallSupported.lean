@@ -168,7 +168,7 @@ private theorem lpNormOn_tenThirds_pow_eq_lintegral
     lpNormOn (ENNReal.ofReal (10 / 3 : ℝ)) S f ^ (10 / 3 : ℝ) =
       ∫⁻ x in S, ‖f x‖ₑ ^ (10 / 3 : ℝ) := by
   dsimp [lpNormOn]
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf,
     ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 10 / 3),
     ← ENNReal.rpow_mul]
   norm_num

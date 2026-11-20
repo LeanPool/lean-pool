@@ -33,7 +33,6 @@ lemma Program.voc_steps : ∀ as : List Program, (Program.steps as).voc = as.pdl
   | a :: as => by
       simp only [Program.steps, Program.voc, Program.voc_steps as, List.pdlPvoc, List.map_cons,
         Vocab.fromList, List.toFinset_cons, Finset.sup_insert, id_eq]
-      rfl
 
 /-! ## Entailment from the left component of a node -/
 

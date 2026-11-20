@@ -91,7 +91,7 @@ def barycenter : (D.support → ℝ) →ₗ[ℝ] RealCoord d where
   map_smul' r β := by simp [Finset.smul_sum, mul_smul]
 
 /-- A simplex with an individual upper bound on each coefficient. -/
-def cappedSimplex (θ : ℝ) : Set (D.support → ℝ) :=
+noncomputable def cappedSimplex (θ : ℝ) : Set (D.support → ℝ) :=
   Set.Icc 0 (fun q ↦ D.weight q / (θ * ∑ r, D.weight r)) ∩
     {β | ∑ q, β q = 1}
 

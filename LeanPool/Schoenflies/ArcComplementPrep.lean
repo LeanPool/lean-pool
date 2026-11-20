@@ -1006,7 +1006,7 @@ theorem exists_mesh {α : ℝ → Plane} (hα : ContinuousOn α I) {ε : ℝ} (h
 /-! ## Part 4: nonadjacent subarcs are at positive distance -/
 
 /-- The `i`-th subarc of the even partition of an arc into `n` pieces. -/
-def subarcCell (α : ℝ → Plane) (n i : ℕ) : Set Plane :=
+noncomputable def subarcCell (α : ℝ → Plane) (n i : ℕ) : Set Plane :=
   α '' Icc (sample n i) (sample n (i + 1))
 
 theorem isCompact_subarcCell {α : ℝ → Plane} (hα : ContinuousOn α I) {n i : ℕ}

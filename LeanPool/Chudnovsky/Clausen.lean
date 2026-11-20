@@ -189,7 +189,7 @@ theorem generalizedHypergeometric_summable (α β γ δ ε : ℂ) {z : ℂ} (hz 
     have hsum := (generalizedHypergeometricSeries ℂ α β γ δ ε).summable_norm_mul_pow hlt
     apply Summable.of_norm
     refine hsum.congr (fun n => ?_)
-    simp only [generalizedHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnnorm]
+    simp only [generalizedHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnNorm]
   · -- Degenerate case: some parameter is a non-positive integer, so the coefficients eventually
     -- vanish and the series is a finite sum.
     rw [not_forall] at hnz
@@ -209,19 +209,19 @@ theorem generalizedHypergeometric_summable (α β γ δ ε : ℂ) {z : ℂ} (hz 
         first
         | (rw [show (ascPochhammer ℂ n).eval α = 0 by
               rw [show α = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval β = 0 by
               rw [show β = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval γ = 0 by
               rw [show γ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval δ = 0 by
               rw [show δ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; simp)
         | (rw [show (ascPochhammer ℂ n).eval ε = 0 by
               rw [show ε = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; simp)
     rw [hc0, zero_mul]
 
 /-! ### Term-by-term differentiation of scalar power series on the open unit disc
@@ -367,7 +367,7 @@ private theorem ordinaryHypergeometric_discSummable (a b c : ℂ) (hc : ∀ k : 
       rw [hrad]; exact_mod_cast hw
     have hsum := (ordinaryHypergeometricSeries ℂ a b c).summable_norm_mul_pow hlt
     refine hsum.congr (fun n => ?_)
-    simp only [ordinaryHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnnorm]
+    simp only [ordinaryHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnNorm]
   · push Not at hab
     obtain ⟨kn, hkn⟩ := hab
     have hkn' : (kn : ℂ) = -a ∨ (kn : ℂ) = -b := by
@@ -383,10 +383,10 @@ private theorem ordinaryHypergeometric_discSummable (a b c : ℂ) (hc : ∀ k : 
       rcases hkn' with hp | hp
       · rw [show (ascPochhammer ℂ n).eval a = 0 by
               rw [show a = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; ring
       · rw [show (ascPochhammer ℂ n).eval b = 0 by
               rw [show b = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; ring
     rw [hc0, zero_mul, norm_zero]
 
 /-- The `₂F₁` coefficient recurrence `(m+a)(m+b) cₘ = (m+1)(m+c) c₍ₘ₊₁₎`
@@ -552,7 +552,7 @@ private theorem generalizedHypergeometric_discSummable (α β γ δ ε : ℂ) :
       rw [hrad]; exact_mod_cast hw
     have hsum := (generalizedHypergeometricSeries ℂ α β γ δ ε).summable_norm_mul_pow hlt
     refine hsum.congr (fun n => ?_)
-    simp only [generalizedHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnnorm]
+    simp only [generalizedHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnNorm]
   · rw [not_forall] at hnz
     obtain ⟨kn, hkn⟩ := hnz
     have hkn' : (kn : ℂ) = -α ∨ (kn : ℂ) = -β ∨ (kn : ℂ) = -γ ∨ (kn : ℂ) = -δ ∨ (kn : ℂ) = -ε := by
@@ -570,20 +570,20 @@ private theorem generalizedHypergeometric_discSummable (α β γ δ ε : ℂ) :
         first
         | (rw [show (ascPochhammer ℂ n).eval α = 0 by
               rw [show α = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; ring)
         | (rw [show (ascPochhammer ℂ n).eval β = 0 by
               rw [show β = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; ring)
         | (rw [show (ascPochhammer ℂ n).eval γ = 0 by
               rw [show γ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; ring)
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; ring)
         | (rw [show (ascPochhammer ℂ n).eval δ = 0 by
               rw [show δ = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp only [inv_zero, mul_zero,
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; simp only [inv_zero, mul_zero,
                 zero_mul])
         | (rw [show (ascPochhammer ℂ n).eval ε = 0 by
               rw [show ε = -(kn : ℂ) by exact neg_eq_iff_eq_neg.mp hp.symm]
-              exact ascPochhammer_eval_neg_coe_nat_of_lt hlt]; simp only [inv_zero, mul_zero])
+              exact ascPochhammer_eval_neg_natCast_of_lt hlt]; simp only [inv_zero, mul_zero])
     rw [hc0, zero_mul, norm_zero]
 
 /-- Paper Thm. `dgl3f2`: on the unit disc, `g = ₃F₂(α, β, γ; δ, ε; ·)` satisfies the third-order
@@ -909,7 +909,7 @@ theorem ordinaryHypergeometric_norm_summable (a b c : ℂ)
     rw [hrad]; exact_mod_cast hz
   have hsum := (ordinaryHypergeometricSeries ℂ a b c).summable_norm_mul_pow hlt
   refine hsum.congr (fun n => ?_)
-  simp only [ordinaryHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnnorm]
+  simp only [ordinaryHypergeometricSeries, ofScalars_norm, norm_mul, norm_pow, coe_nnNorm]
 
 namespace Chudnovsky
 

@@ -431,8 +431,7 @@ theorem quasiMeasurePreserving_convexApproxSample_prod
       (measurable_const : Measurable (fun _ : Vec d × Vec d => x0)).sub h2
     have h4 : Measurable (fun p : Vec d × Vec d => ε • (x0 - r • p.2)) :=
       (measurable_const : Measurable (fun _ : Vec d × Vec d => ε)).smul h3
-    change Measurable (fun p : Vec d × Vec d => convexApproxSample x0 p.2 r ε p.1)
-    exact h1.add h4
+    exact (h1.add h4).aemeasurable
   · refine Filter.Eventually.of_forall ?_
     intro z
     exact

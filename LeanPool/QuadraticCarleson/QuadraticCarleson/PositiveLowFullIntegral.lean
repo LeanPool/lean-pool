@@ -76,7 +76,7 @@ theorem tsum_lintegral_enorm_paperLowCZKernel_mul_levelAtom_lt_top
         apply lintegral_mono
         intro y
         dsimp only
-        rw [enorm_mul]
+        rw [eNorm_mul]
         apply mul_le_mul' ?_ le_rfl
         simpa only [← ofReal_norm, paperLowCZKernel] using ENNReal.ofReal_le_ofReal
           (paperLowOscillatoryKernel_norm_le_global hlam B (x - y))
@@ -85,7 +85,7 @@ theorem tsum_lintegral_enorm_paperLowCZKernel_mul_levelAtom_lt_top
         rw [lintegral_const_mul' _ _ (by finiteness),
           ← ofReal_integral_eq_lintegral_ofReal (integrable_levelAtom hf hAk (z i) (R i)).norm
             (Filter.Eventually.of_forall fun y ↦ norm_nonneg (levelAtom A f k (z i) (R i) y))]
-  have hs := ENNReal.tsum_le_tsum hp
+  have hs := tsum_le_tsum hp
   rw [ENNReal.tsum_mul_left] at hs
   apply hs.trans_lt
   have hmass : magnitudeLevelL1Mass volume A f k < ∞ := by
@@ -129,8 +129,8 @@ theorem paperLowLevelMaximal_disjointLevelAtomSum_le
   apply iSup_le
   intro lam
   rw [integral_paperLowCZKernel_mul_disjointLevelAtomSum lam.2 B hf hfi hAk z R hdisj x]
-  apply enorm_tsum_le_tsum_enorm.trans
-  apply ENNReal.tsum_le_tsum
+  apply eNorm_tsum_le_tsum_eNorm.trans
+  apply tsum_le_tsum
   intro i
   simpa only [ofReal_norm, paperLowBadAtomMaximal] using le_iSup (fun μ : {μ : ℝ // μ ≠ 0} ↦
     ENNReal.ofReal ‖∫ y in centeredInterval (z i) (R i),

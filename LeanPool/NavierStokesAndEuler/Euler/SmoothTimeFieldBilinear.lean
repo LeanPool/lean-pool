@@ -146,7 +146,7 @@ theorem exists_bilinear_jet (B : V →L[ℝ] W →L[ℝ] Z)
       rw [B.fderiv_of_bilinear ((A.smooth t).differentiable (by simp) y)
         ((C.smooth t).differentiable (by simp) y)]
       simp only [derivative, derivativeField_eq]
-    simp only [uncurryRightPath_apply, ContinuousMap.add_apply, BoundedContinuousFunction.add_apply,
+    simp only [uncurryRightPath_apply, ContinuousMap.add_apply, _root_.add_apply,
       h₁.choose_spec, h₂.choose_spec, iteratedFDeriv_succ_eq_comp_right, Function.comp_apply, hd]
     refine congrArg _ ?_
     refine (fun_iteratedFDeriv_add_apply ?_ ?_).symm

@@ -84,7 +84,7 @@ private lemma lps_l2_curve_representative_continuity
     have htab := hIccsub ht
     have hF' : F t' = Zc ⟨t', ht'ab⟩ := by simp only [F, ht'ab, ↓reduceDIte]
     have hF : F t = Zc ⟨t, htab⟩ := by simp only [F, htab, ↓reduceDIte]
-    rw [hZt t' ht'ab, hZt t htab, hF', hF, ofReal_norm, Lp.enorm_def]
+    rw [hZt t' ht'ab, hZt t htab, hF', hF, ofReal_norm, Lp.eNorm_def]
     exact le_of_eq (eLpNorm_congr_ae (Lp.coeFn_sub _ _).symm)
   have hlim : Tendsto (fun t' => ENNReal.ofReal ‖F t' - F t‖) (𝓝[Icc s b] t) (𝓝 0) := by
     have h := (ENNReal.tendsto_ofReal hFt)

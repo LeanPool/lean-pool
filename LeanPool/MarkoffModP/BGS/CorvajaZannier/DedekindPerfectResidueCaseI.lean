@@ -294,7 +294,7 @@ theorem
         (indexedDedekindLocalColumnCombination f A i) := by
   induction hN : dedekindPoleWeight v f using Nat.strong_induction_on
       generalizing f with
-  | h N ih =>
+  | ind N ih =>
       by_cases hdistinct : NegativeFinitePlaceOrdersPairwiseDistinct v f
       · refine ⟨(1 : Matrix (Fin k) (Fin k) (frobeniusSubfield L p)),
           Matrix.det_one, ?_, ?_⟩

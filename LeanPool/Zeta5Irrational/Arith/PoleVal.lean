@@ -37,16 +37,19 @@ variable {p : ℕ} [hp : Fact p.Prime]
 lemma VG_inv_nat_le {u : ℕ} (hu : u ≠ 0) {e : ℕ} (he : padicValNat p u ≤ e) :
     VG p ((u : ℚ)⁻¹) (-(e : ℚ)) := by
   refine VG.inv (by exact_mod_cast hu) ?_
+  rw [Nat.padicValNat_def] at he
   rw [padicValRat.of_nat]; exact_mod_cast he
 
 omit hp in
-lemma padicValNat_lt_p {u : ℕ} (hu : 1 ≤ u) (hup : u < p) : padicValNat p u = 0 :=
-  padicValNat.eq_zero_of_not_dvd fun h => absurd (Nat.le_of_dvd (by omega) h) (by omega)
+lemma padicValNat_lt_p {u : ℕ} (hu : 1 ≤ u) (hup : u < p) : padicValNat p u = 0 := by
+  rw [Nat.padicValNat_def]
+  exact multiplicity_eq_zero_of_not_dvd fun h => absurd (Nat.le_of_dvd (by omega) h) (by omega)
 
 lemma padicValNat_lt_sq {u : ℕ} (hu : 1 ≤ u) (hup : u < p ^ 2) : padicValNat p u ≤ 1 := by
+  rw [Nat.padicValNat_def]
   by_contra h
   rw [not_le] at h
-  have : p ^ 2 ∣ u := (padicValNat_dvd_iff_le (by omega)).mpr h
+  have : p ^ 2 ∣ u := (multiplicity_dvd_iff_le (by omega)).mpr h
   exact absurd (Nat.le_of_dvd (by omega) this) (by omega)
 
 lemma VG_H5_lt {j : ℕ} (hj : j < p) : VG p (H5 j) 0 := by
@@ -55,21 +58,25 @@ lemma VG_H5_lt {j : ℕ} (hj : j < p) : VG p (H5 j) 0 := by
   have hu' := Finset.mem_Icc.mp hu
   rw [one_div, show ((u : ℚ) ^ 5) = ((u ^ 5 : ℕ) : ℚ) by push_cast; ring]
   refine (VG_inv_nat_le (e := 0) (pow_ne_zero _ (by omega)) ?_).mono (by norm_num)
-  rw [padicValNat.pow (p := p) u 5, padicValNat_lt_p hu'.1 (by omega)]
+  rw [Nat.padicValNat_def, Nat.multiplicity_pow (p := p) u 5,
+    ← Nat.padicValNat_def, padicValNat_lt_p hu'.1 (by omega)]
 
 lemma VG_quarter (hp3 : 3 ≤ p) : VG p (1 / 4 : ℚ) 0 := by
   rw [one_div, show (4 : ℚ) = ((4 : ℕ) : ℚ) by norm_num]
   refine (VG_inv_nat_le (e := 0) (by norm_num) ?_).mono (by norm_num)
-  rw [show (4 : ℕ) = 2 ^ 2 by norm_num, padicValNat.pow (p := p) 2 2]
+  rw [show (4 : ℕ) = 2 ^ 2 by norm_num, Nat.padicValNat_def,
+    Nat.multiplicity_pow (p := p) 2 2]
   have := Fact.mk Nat.prime_two
-  rw [padicValNat_primes (p := p) (q := 2) (by omega)]
+  rw [multiplicity_primes (p := p) (q := 2) (by omega)]
 
 lemma VG_inv_2j (hp3 : 3 ≤ p) {j e : ℕ} (hj : 1 ≤ j) (he : padicValNat p j ≤ e) :
     VG p (1 / (2 * (j : ℚ))) (-(e : ℚ)) := by
   rw [one_div, show (2 * (j : ℚ)) = ((2 * j : ℕ) : ℚ) by push_cast; ring]
   refine VG_inv_nat_le (by omega) ?_
+  simp_rw [Nat.padicValNat_def] at he ⊢
   have := Fact.mk Nat.prime_two
-  rw [padicValNat.mul (by norm_num) (by omega), padicValNat_primes (p := p) (q := 2) (by omega)]
+  rw [Nat.multiplicity_mul (by norm_num) (by omega),
+    multiplicity_primes (p := p) (q := 2) (by omega)]
   omega
 
 /-- Integral pole values for `1 ≤ j < p`. -/
@@ -101,8 +108,8 @@ lemma GV_poleValue_mul (hp3 : 3 ≤ p) {k : ℕ} (hk : 1 ≤ k) (hkp : k < p) :
   unfold poleValue
   have h4 : VG p (((p * k : ℕ) : ℚ) ^ 4) 4 := by
     right
-    rw [padicValRat.pow, padicValRat.of_nat, padicValNat.mul (by omega) (by omega),
-      padicValNat_self, padicValNat_lt_p hk hkp];
+    rw [padicValRat.pow, padicValRat.of_nat, Nat.multiplicity_mul (by omega) (by omega),
+      Nat.Prime.multiplicity_self, ← Nat.padicValNat_def, padicValNat_lt_p hk hkp];
     norm_num
   have h1 : GV p (C (((p * k : ℕ) : ℚ) ^ 4) * (X - C (H5 (p * k)))) (-1) := by
     have := GV.C_mul h4 ((GV.X.mono (by norm_num)).sub (GV.C (VG_H5 hjp)))
@@ -135,8 +142,11 @@ lemma VG_pair (_hp3 : 3 ≤ p) {u : ℕ} (hu : 1 ≤ u) (hup : u < p) :
     have hA : (p - u) ^ 5 ≠ 0 := pow_ne_zero _ (by omega)
     have hB : u ^ 5 ≠ 0 := pow_ne_zero _ (by omega)
     refine (VG_inv_nat_le (e := 0) (mul_ne_zero hA hB) ?_).mono (by norm_num)
-    rw [padicValNat.mul hA hB, padicValNat.pow (p := p) _ 5, padicValNat.pow (p := p) _ 5,
-      padicValNat_lt_p (by omega) (by omega), padicValNat_lt_p hu hup]
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul hA hB,
+      Nat.multiplicity_pow (p := p) _ 5, Nat.multiplicity_pow (p := p) _ 5]
+    simp only [← Nat.padicValNat_def,
+      padicValNat_lt_p (p := p) (u := p - u) (by omega) (by omega),
+      padicValNat_lt_p hu hup, mul_zero, add_zero, le_refl]
   simpa using hnum.mul hden
 
 /-- `H⁽⁵⁾_{p-1} ≡ 0 (mod p)`. -/
@@ -166,7 +176,7 @@ lemma VG_H5_pm1 (hp3 : 3 ≤ p) : VG p (H5 (p - 1)) 1 := by
     rw [one_div, show (2 : ℚ) = ((2 : ℕ) : ℚ) by norm_num]
     have := Fact.mk Nat.prime_two
     refine (VG_inv_nat_le (e := 0) (by norm_num) ?_).mono (by norm_num)
-    rw [padicValNat_primes (p := p) (q := 2) (by omega)]
+    rw [Nat.padicValNat_def, multiplicity_primes (p := p) (q := 2) (by omega)]
   have := hhalf.mul hsum
   rw [show 1 / 2 * (2 * H5 (p - 1)) = H5 (p - 1) by ring] at this
   simpa using this
@@ -248,7 +258,7 @@ theorem GV_poleValue_congr (hp3 : 3 ≤ p) {c : ℕ} (hc : 1 ≤ c) (hcp : c < p
       one_div, show (((p - u : ℕ) : ℚ) ^ 5) = (((p - u) ^ 5 : ℕ) : ℚ) by push_cast; ring]
     refine
       (VG_inv_nat_le (e := 0) (pow_ne_zero _ (Nat.sub_ne_zero_of_lt hu2)) ?_).mono (by norm_num)
-    rw [padicValNat.pow (p := p) _ 5,
+    rw [Nat.padicValNat_def, Nat.multiplicity_pow (p := p) _ 5, ← Nat.padicValNat_def,
       padicValNat_lt_p (Nat.one_le_iff_ne_zero.mpr (Nat.sub_ne_zero_of_lt hu2))
         (Nat.sub_lt (by omega) (by omega))]
   · have :=
@@ -268,7 +278,8 @@ theorem GV_poleValue_congr (hp3 : 3 ≤ p) {c : ℕ} (hc : 1 ≤ c) (hcp : c < p
             (VG_inv_2j (e := 0) hp3
               (Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero (by omega) (by omega))) ?_)).mono
         (by norm_num)
-    rw [padicValNat.mul (by omega) (by omega), padicValNat_lt_p hc hcp,
-      padicValNat_lt_p (by omega) (by omega)]
+    rw [Nat.padicValNat_def, Nat.multiplicity_mul (by omega) (by omega)]
+    simp only [← Nat.padicValNat_def, padicValNat_lt_p hc hcp,
+      padicValNat_lt_p (p := p) (u := d) (by omega) (by omega), add_zero, le_refl]
 
 end Zeta5Irrational

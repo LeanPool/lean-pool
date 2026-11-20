@@ -53,7 +53,7 @@ theorem MaterialFlowComposition.derivativeSup_le_of_uniform_coordinate_bound
     filter_upwards with x
     rw [MaterialFlowComposition.orderedPartial_eq_iteratedFDeriv_local hf x J]
     simpa using ENNReal.ofReal_le_ofReal (hcoord x J)
-  rw [eLpNormEssSup_eq_essSup_enorm]
+  rw [eLpNormEssSup_eq_essSup_eNorm]
   exact essSup_le_of_ae_le _ hae
 
 /-- Coordinate derivatives bounded at the natural inverse-regularity radius

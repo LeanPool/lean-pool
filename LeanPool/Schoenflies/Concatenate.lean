@@ -53,11 +53,11 @@ namespace Schoenflies
 /-! ### The two halves of the parameter interval -/
 
 /-- The lower half of the parameter interval, where the first arc runs. -/
-def lowerHalf : Set ℝ := Icc 0 (1 / 2)
+noncomputable def lowerHalf : Set ℝ := Icc 0 (1 / 2)
 
 /-- The upper half of the parameter interval, where the second arc runs. The two halves
 overlap in the midpoint: that is the seam. -/
-def upperHalf : Set ℝ := Icc (1 / 2) 1
+noncomputable def upperHalf : Set ℝ := Icc (1 / 2) 1
 
 theorem lowerHalf_subset_I : lowerHalf ⊆ I := Icc_subset_Icc le_rfl (by norm_num)
 

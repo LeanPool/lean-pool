@@ -233,7 +233,7 @@ assumed -- it follows from `enorm_le_gauge`, since the operator norm is already 
 theorem gauge_eq_zero {A : E →L[𝕜] F} (h : N.gauge A = 0) : A = 0 := by
   have hle : ‖A‖ₑ ≤ 0 := h ▸ N.enorm_le_gauge A
   have hz : ‖A‖ₑ = 0 := le_antisymm hle (by simp)
-  rwa [enorm_eq_nnnorm, ENNReal.coe_eq_zero, nnnorm_eq_zero] at hz
+  rwa [eNorm_eq_nnNorm, ENNReal.coe_eq_zero, nnNorm_eq_zero] at hz
 
 /-- Definiteness as an iff. -/
 theorem gauge_eq_zero_iff {A : E →L[𝕜] F} : N.gauge A = 0 ↔ A = 0 :=
@@ -463,7 +463,7 @@ noncomputable instance : NormedSpace 𝕜 (N.Elem E F) where
 dominates the operator norm. -/
 theorem norm_val_le (A : N.Elem E F) : ‖A.val‖ ≤ ‖A‖ := by
   have h := ENNReal.toReal_mono A.gauge_val_ne_top (N.enorm_le_gauge A.val)
-  rwa [← norm_def, toReal_enorm] at h
+  rwa [← norm_def, toReal_eNorm] at h
 
 /-- **A gauge-Cauchy sequence is operator-norm Cauchy**, because the ideal norm
 dominates the operator norm.

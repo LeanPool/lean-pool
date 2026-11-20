@@ -517,7 +517,7 @@ theorem ScheideMaximalExtendsEveryTree {V E : Type*}
         TreeSequenceVertexSet R = X ∧ TreeSequenceInitialSegment S R := by
     intro m
     induction m using Nat.strong_induction_on with
-    | h m ih =>
+    | ind m ih =>
       intro C hm hC hCX hSC
       by_cases heq : TreeSequenceVertexSet C = X
       · exact ⟨C, hC, heq, hSC⟩

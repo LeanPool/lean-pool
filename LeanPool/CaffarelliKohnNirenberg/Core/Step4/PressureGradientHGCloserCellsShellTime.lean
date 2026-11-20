@@ -67,7 +67,7 @@ theorem pressure_source_dyadic_sum_bound
     _ ≤ ∑ n ∈ Finset.range N, ((2 : ℝ≥0∞) ^ (-2 / 15 : ℝ)) ^ n := by
       exact Finset.sum_le_sum (fun n _ => pow_le_pow_left₀ (by positivity) hr n)
     _ ≤ ∑' n : ℕ, ((2 : ℝ≥0∞) ^ (-2 / 15 : ℝ)) ^ n :=
-      ENNReal.sum_le_tsum _
+      sum_le_tsum _
     _ = _ := ENNReal.tsum_geometric _
 
 /-- The universal dyadic constant is finite. -/
@@ -88,7 +88,7 @@ theorem pressure_source_spatial_mass_aemeasurable
     exact hF
   have hrestrict : AEMeasurable (fun z : Vec3 × ℝ => ‖F z‖ₑ)
       ((volume.restrict (vec3Ball x ρ)).prod (volume : Measure ℝ)) :=
-    hprod.enorm.mono_measure (Measure.prod_mono Measure.restrict_le_self le_rfl)
+    hprod.eNorm.mono_measure (Measure.prod_mono Measure.restrict_le_self le_rfl)
   exact hrestrict.lintegral_prod_left'
 
 /-- Pulling a nonnegative constant out of the temporal `L^{6/5}` norm. -/

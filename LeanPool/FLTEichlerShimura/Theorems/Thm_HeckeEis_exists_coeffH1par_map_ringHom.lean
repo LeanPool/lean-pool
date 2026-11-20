@@ -204,7 +204,7 @@ theorem isParabolicCocycle_pushForm_comp {z : Γ → ↥(BinaryForm R n)}
   intro γ hγ
   obtain ⟨u, hu⟩ := hz γ hγ
   refine ⟨pushForm f n u, ?_⟩
-  rw [LinearMap.sub_apply, Module.End.one_apply] at hu ⊢
+  rw [LinearMap.sub_apply, one_apply_eq_self] at hu ⊢
   change binaryFormRepSL R n (γ : SL(2, ℤ)) u - u = z γ at hu
   change binaryFormRepSL R' n (γ : SL(2, ℤ)) (pushForm f n u) - pushForm f n u = pushForm f n (z γ)
   rw [← hu, pushForm_sub, pushForm_binaryFormRepSL]

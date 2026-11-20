@@ -105,11 +105,11 @@ lemma VG_H5 {m : ℕ} (hm : m < p ^ 2) : VG p (H5 m) (-5) := by
   rw [one_div]
   apply VG.inv (pow_ne_zero _ (by exact_mod_cast (by omega : v ≠ 0)))
   rw [show ((v : ℚ) ^ 5) = ((v ^ 5 : ℕ) : ℚ) by push_cast; ring, padicValRat.of_nat,
-    padicValNat.pow (p := p) v 5]
-  have : padicValNat p v ≤ 1 := by
+    Nat.multiplicity_pow (p := p) v 5]
+  have : multiplicity p v ≤ 1 := by
     by_contra hne
     rw [not_le] at hne
-    have h2 : p ^ 2 ∣ v := (padicValNat_dvd_iff_le (by omega)).mpr hne
+    have h2 : p ^ 2 ∣ v := (multiplicity_dvd_iff_le (by omega)).mpr hne
     exact absurd (Nat.le_of_dvd (by omega) h2) (by omega)
   push_cast
   have h3 : (padicValRat p (v : ℚ) : ℚ) ≤ 1 := by rw [padicValRat.of_nat]; exact_mod_cast this

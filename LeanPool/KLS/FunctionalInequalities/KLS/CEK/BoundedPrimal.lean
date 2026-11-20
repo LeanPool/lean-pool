@@ -91,7 +91,7 @@ theorem bounded_source_cap_lsc
       filter_upwards [hV] with x hx
       simpa [A, AffineSubspace.mem_mk'] using hx
     have hle : Probability.affineSupport μ ≤ A :=
-      Probability.affineSupport_le_of_ae_mem μ A A.closed_of_finiteDimensional hAe
+      Probability.affineSupport_le_of_ae_mem μ A A.isClosed_of_finiteDimensional hAe
     have hAtop : A = ⊤ := by
       rw [hfull] at hle
       exact top_unique hle

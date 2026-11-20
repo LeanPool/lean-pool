@@ -561,7 +561,7 @@ pathwise cell average `C = ⟨X_a⟩_{U_t}` to the annealed centre `Y^±`.  The 
 `ProfileWeakSplit.lean`
 (`normalized_primal_weak_split` / `profilePrimalWeakRoot_le_randomCentered_add_constant`), where
 it is carried by `blockCellAverage_metricRoot_sub_const_diagonalWeakState`; there it is an
-`ℝ≥0∞` `tsum` split (`ENNReal.tsum_add`), here it is `besovSeminorm_add_const_le`, which is
+`ℝ≥0∞` `tsum` split (`tsum_add`), here it is `besovSeminorm_add_const_le`, which is
 why the real-valued route needs the centred-family summability and the `ℝ≥0∞` route did not. -/
 
 private theorem blockMatVecMul_sub_split (M : BlockMat d) (v c y : BlockVec d) :

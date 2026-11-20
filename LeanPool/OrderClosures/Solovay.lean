@@ -603,10 +603,10 @@ abbrev BooleanStone := {f : B → Bool // IsBooleanStonePoint B f}
 the Cantor cube; used to obtain compactness of the Stone spectrum. -/
 theorem isClosed_isBooleanStonePoint :
     IsClosed {f : B → Bool | IsBooleanStonePoint B f} := by
-  unfold IsBooleanStonePoint
+  simp only [IsBooleanStonePoint, Set.ofPred_and]
   repeat' apply IsClosed.inter
-  · exact isClosed_eq (continuous_apply ⊥) continuous_const
-  · exact isClosed_eq (continuous_apply ⊤) continuous_const
+  · exact isClosed_eq (continuous_apply (A := fun _ : B ↦ Bool) ⊥) continuous_const
+  · exact isClosed_eq (continuous_apply (A := fun _ : B ↦ Bool) ⊤) continuous_const
   · change IsClosed ({f : B → Bool | ∀ a b, f (a ⊓ b) = f a ⊓ f b} :
       Set (B → Bool))
     rw [show {f : B → Bool | ∀ a b, f (a ⊓ b) = f a ⊓ f b} =

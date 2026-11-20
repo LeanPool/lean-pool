@@ -129,7 +129,7 @@ private lemma memLp_dominating_of_memLp_of_ea_nonneg_of_memLp
   refine MemLp.add (MemLp.add (hbr.const_mul 2) ?_) ?_
   · apply MemLp.const_mul
     convert memLp_rpow_div_of_memLp_of_ae_nonneg .. using 1
-    any_goals positivity
+    on_goal 2 => positivity
     · rw [div_div_cancel₀ (ne_zero_of_ge_one h1p)]
     · filter_upwards [h0g] with ω hω
       exact add_nonneg (norm_nonneg _) hω
@@ -344,10 +344,10 @@ private lemma exists_exists_strictMono_and_memLp_and_ae_nonneg_and
     / 2 ^ k) :=
     Filter.Tendsto.extract_fast_subseq_eLpNorm hlp
   have hlp : ∑' k : ℕ, ∫⁻ ω, ↱(‖l (s k) ω‖ ^ p) ∂μ ≠ ⊤ := by
-    refine ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum
+    refine ne_of_lt (lt_of_le_of_lt (tsum_le_tsum
       (g := fun k : ℕ => ↱(1 / 2 ^ k) ^ p) fun k => ?_) ?_)
     · convert ENNReal.rpow_le_rpow (s_eLpNorm k) (by positivity) using 1
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal]
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal]
       · simp [ENNReal.toReal_ofReal (zero_le_one.trans hp), ←ENNReal.rpow_mul]
         simp [←ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) (by positivity), ne_of_gt
           (zero_lt_one.trans_le hp)]
@@ -405,13 +405,13 @@ private lemma exists_exists_strictMono_and_memLp_and_ae_nonneg_and
       exact g_in_Lp.aemeasurable.pow_const (1/p) |>.aestronglyMeasurable
     apply memLp_iff_measurable_and_finite.mpr
     refine ⟨hmeas, ?_⟩
-    · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal _ _ hmeas]
+    · rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal _ _ hmeas]
       · apply ENNReal.rpow_lt_top_of_nonneg
         · positivity
         · convert g_in_Lp.ne using 1
           apply lintegral_congr
           intro
-          rw [Real.enorm_eq_ofReal (Real.rpow_nonneg (tsum_nonneg ↓(by positivity)) _),
+          rw [Real.eNorm_eq_ofReal (Real.rpow_nonneg (tsum_nonneg ↓(by positivity)) _),
               ENNReal.toReal_ofReal (by positivity),
               ENNReal.ofReal_rpow_of_nonneg (Real.rpow_nonneg (tsum_nonneg ↓(by positivity)) _) (by
                 positivity),

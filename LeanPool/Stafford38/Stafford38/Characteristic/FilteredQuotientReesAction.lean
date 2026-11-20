@@ -337,7 +337,8 @@ theorem orderPieceOpDirectSumToReesOp_rightInverse :
   intro r
   apply MulOpposite.unop_injective
   apply Subtype.ext
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro N
   rw [orderPieceOpDirectSumToReesOp_coeff]
   rw [orderReesOpToDirectSum_apply]

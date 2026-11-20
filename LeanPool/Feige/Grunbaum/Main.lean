@@ -54,7 +54,7 @@ lemma cdf_map_uniformVolume_eq_truncVolumeRatio {d : ℕ}
     Measure.map_apply ℓ.measurable measurableSet_Iic]
   have hm : MeasurableSet (ℓ ⁻¹' Iic t) :=
     measurableSet_Iic.preimage ℓ.measurable
-  simp only [uniformVolume, Measure.smul_apply,
+  simp only [uniformVolume, smul_apply,
     Measure.restrict_apply hm, smul_eq_mul, trunc, div_eq_mul_inv]
   rw [inter_comm, mul_comm]
 

@@ -98,11 +98,11 @@ theorem finiteField_finrank_eq_lcm_of_tensorLift_surjective
       (Z := Finset.univ) (fun x _ => by
         rw [Polynomial.mem_roots']
         constructor
-        · exact FiniteField.X_pow_card_pow_sub_X_ne_zero T hl0
-            Fintype.one_lt_card
+        · exact Polynomial.X_pow_sub_X_ne_zero
+            (Nat.one_lt_pow hl0 Fintype.one_lt_card)
         · simp [hpow x])
-    rw [FiniteField.X_pow_card_pow_sub_X_natDegree_eq T hl0
-      Fintype.one_lt_card] at hroots
+    rw [Polynomial.natDegree_X_pow_sub_X
+      (Nat.one_lt_pow hl0 Fintype.one_lt_card)] at hroots
     exact hroots
   have hle : Module.finrank C T ≤ l := by
     rw [← Nat.pow_le_pow_iff_right (a := q) Fintype.one_lt_card]

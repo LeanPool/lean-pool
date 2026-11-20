@@ -52,7 +52,7 @@ private theorem memLp_hilbert_scalarOverlap_of_memLp {d : ℕ}
         mul_inv_cancel₀ hvolQ.ne', ENNReal.ofReal_one, mul_one]
     rw [hcancel]
     refine Measure.le_iff'.2 fun A => ?_
-    simp only [Measure.smul_apply, smul_eq_mul]
+    simp only [smul_apply, smul_eq_mul]
     refine mul_le_mul_right ?_ _
     rw [ScalarOverlap.cubeMeasure, cubeMeasure]
     exact Measure.le_iff'.1 (Measure.restrict_mono hsub le_rfl) A

@@ -73,7 +73,7 @@ measure whenever its scalar factor is positive. -/
 theorem quasiMeasurePreserving_globalAffineExpansion {d : ℕ} (x0 : Vec d) {ε : ℝ}
     (hε : 0 ≤ ε) :
     MeasureTheory.QuasiMeasurePreserving (globalAffineExpansion x0 ε) volume volume := by
-  refine ⟨(measurable_const_smul (1 + ε)).sub measurable_const, ?_⟩
+  refine ⟨((measurable_const_smul (1 + ε)).sub measurable_const).aemeasurable, ?_⟩
   rw [map_globalAffineExpansion_volume x0 hε]
   exact Measure.smul_absolutelyContinuous
 

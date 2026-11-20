@@ -75,7 +75,7 @@ lemma diagonal_increment_lint
     rw [show (‖ξ ω * ΔW ω‖₊ : ℝ≥0∞)
         = (‖ξ ω‖₊ : ℝ≥0∞) * (‖ΔW ω‖₊ : ℝ≥0∞) from by
       rw [show (‖ξ ω * ΔW ω‖₊ : ℝ≥0∞) = ((‖ξ ω * ΔW ω‖₊ : ℝ≥0) : ℝ≥0∞) from rfl]
-      rw [show (‖ξ ω * ΔW ω‖₊ : ℝ≥0) = ‖ξ ω‖₊ * ‖ΔW ω‖₊ from nnnorm_mul _ _]
+      rw [show (‖ξ ω * ΔW ω‖₊ : ℝ≥0) = ‖ξ ω‖₊ * ‖ΔW ω‖₊ from nnNorm_mul _ _]
       push_cast; rfl]
     ring
   rw [show (∫⁻ ω, (‖ξ ω * ΔW ω‖₊ : ℝ≥0∞) ^ 2 ∂P)
@@ -485,7 +485,7 @@ lemma simpleIntegral_intermediate_isometry
       ← ENNReal.ofReal_pow (norm_nonneg _), show ‖x‖ ^ 2 = x ^ 2 from by
         rw [Real.norm_eq_abs, sq_abs]]
   have hξsqmeas : ∀ i : Fin H.N, Measurable (fun ω => (‖H.ξ i ω‖₊ : ℝ≥0∞) ^ 2) :=
-    fun i => (((H.ξ_measurable i).nnnorm).coe_nnreal_ennreal).pow_const 2
+    fun i => (((H.ξ_measurable i).nnNorm).coe_nnreal_ennreal).pow_const 2
   have hξ_int : ∀ i : Fin H.N, MeasureTheory.Integrable (fun ω => (H.ξ i ω) ^ 2) P := by
     intro i; obtain ⟨M, hM⟩ := H.ξ_bounded i
     refine MeasureTheory.Integrable.mono' (g := fun _ : Ω => M ^ 2)
@@ -558,7 +558,7 @@ lemma simpleIntegral_memLp_intermediate_brownian
     unfold simpleIntegral
     refine Finset.measurable_sum _ (fun i _ => ?_)
     exact (H.ξ_measurable i).mul ((W.measurable_eval _).sub (W.measurable_eval _))
-  · rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  · rw [MeasureTheory.memLp_iff, MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
         (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by simp : (2 : ℝ≥0∞) ≠ ⊤) hmeas]
     rw [show (2 : ℝ≥0∞).toReal = 2 from by simp]
     have h_rewrite : (fun ω => (‖simpleIntegral W H t ω‖ₑ : ℝ≥0∞) ^ (2 : ℝ))

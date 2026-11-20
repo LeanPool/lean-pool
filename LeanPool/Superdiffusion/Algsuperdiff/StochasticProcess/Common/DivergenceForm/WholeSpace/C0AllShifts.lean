@@ -142,12 +142,12 @@ theorem hasVanishingAnalyticMinimalResolvent_of_aboveOne
       induction n with
       | zero =>
           intro x
-          simp only [Finset.range_zero, Finset.sum_empty, ZeroAtInftyContinuousMap.coe_zero,
+          simp only [Finset.range_zero, Finset.sum_empty, FunLike.coe_zero,
             Pi.zero_apply, zero_add, hu_zero]
       | succ n ih =>
           intro x
           rw [ih x, hstep (u n) x]
-          simp only [Finset.sum_range_succ, ZeroAtInftyContinuousMap.coe_add,
+          simp only [Finset.sum_range_succ, FunLike.coe_add,
             Pi.add_apply]
           rw [← hu_succ n]
           ring

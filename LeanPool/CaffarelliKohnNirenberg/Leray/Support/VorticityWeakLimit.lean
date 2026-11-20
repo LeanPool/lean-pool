@@ -80,7 +80,7 @@ theorem vorticity_tendsto_integral_mul {α : Type*} [MeasurableSpace α] {μ : M
     have hmeas : AEStronglyMeasurable (fun x => a n x * φ x - A x * φ x) μ :=
       ((ha n).aestronglyMeasurable.mul hφ.aestronglyMeasurable).sub
         (hA.aestronglyMeasurable.mul hφ.aestronglyMeasurable)
-    rw [← eLpNorm_one_eq_lintegral_enorm hmeas, heq]
+    rw [← eLpNorm_one_eq_lintegral_eNorm hmeas, heq]
     have hsmul := eLpNorm_smul_le_mul_eLpNorm (p := 2) (q := 2) (r := 1)
       ((ha n).aestronglyMeasurable.sub hA.aestronglyMeasurable) hφ.aestronglyMeasurable
     have hfun : (a n - A) • φ = (a n - A) * φ := by

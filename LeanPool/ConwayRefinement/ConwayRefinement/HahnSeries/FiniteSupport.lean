@@ -222,8 +222,8 @@ private theorem finiteSupportCoefficients_surjective :
     have hgf' : f' g ≠ 0 := by
       simpa [bHahn, HahnSeries.mem_support] using hg
     have hgrange : g ∈ Set.range e := by
-      contrapose! hgf'
-      exact Finsupp.embDomain_of_notMem_range e f g hgf'
+      by_contra hgrange
+      exact hgf' (Finsupp.embDomain_of_notMem_range e f g hgrange)
     obtain ⟨x, rfl⟩ := hgrange
     exact x.2
   let b : Nonpositive G K :=

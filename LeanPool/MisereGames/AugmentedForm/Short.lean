@@ -40,7 +40,12 @@ noncomputable def toForm : ShortTree → AugmentedForm.{u}
             ShortTree.toForm ((p.cases L R).get i)))
         (fun p => p.cases tL tR)
   decreasing_by
-    cases p
+    · cases p <;>
+        simp only [Player.cases, ShortTree.mk.sizeOf_spec]
+      all_goals
+        have h := List.sizeOf_get _ i
+        simp only [Player.cases] at h
+        omega
     all_goals
       simp only [Player.cases, ShortTree.mk.sizeOf_spec]
       have h := List.sizeOf_get _ i

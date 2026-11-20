@@ -1423,20 +1423,18 @@ noncomputable def partialInterpolationLeft {𝕏 : Proof} [fin_X : Fintype 𝕏.
         | Sum.inr (Sum.inr z₂) =>
             have 𝕐₂_h := 𝕐₂.step z₂
             simp only [partialInterpolationLeftAlpha, Ext.r]
-            split
+            split <;> rename_i eq
+            all_goals cases r_def : r 𝕐₂.α z₂ <;> simp [r_def, splitToExt] at eq
             all_goals
-              rename_i eq
-              cases r_def : r 𝕐₂.α z₂ <;> simp [r_def, splitToExt] at eq
+              replace 𝕐₂_h := by simpa [r_def] using 𝕐₂_h
+              simp only [partialInterpolationLeftAlpha, Ext.T, Ext.p, 𝕐₂_h, List.map_nil,
+                List.empty_eq, List.map_map, Finset.union_singleton, Finset.union_insert,
+                List.map_eq_singleton_iff, Function.comp_apply]
+            all_goals
+              convert 𝕐₂_h
               all_goals
-                replace 𝕐₂_h := by simpa [r_def] using 𝕐₂_h
-                simp only [partialInterpolationLeftAlpha, Ext.T, Ext.p, 𝕐₂_h, List.map_nil,
-                  List.empty_eq, List.map_map, Finset.union_singleton, Finset.union_insert,
-                  List.map_eq_singleton_iff, Function.comp_apply]
-                all_goals
-                  convert 𝕐₂_h
-                  all_goals
-                    try simp [split_to_ext_f, split_to_ext_fₙ]
-                    try tauto
+                try simp [split_to_ext_f, split_to_ext_fₙ]
+            all_goals tauto
       root := Sum.inl ()
       path := by
         intro node
@@ -1536,20 +1534,18 @@ noncomputable def partialInterpolationRight {𝕏 : Proof} [fin_X : Fintype 𝕏
         | Sum.inr (Sum.inr z₂) =>
             have 𝕐₂_h := 𝕐₂.step z₂
             simp only [partialInterpolationRightAlpha, Ext.r]
-            split
+            split <;> rename_i eq
+            all_goals cases r_def : r 𝕐₂.α z₂ <;> simp [r_def, splitToExt] at eq
             all_goals
-              rename_i eq
-              cases r_def : r 𝕐₂.α z₂ <;> simp [r_def, splitToExt] at eq
+              replace 𝕐₂_h := by simpa [r_def] using 𝕐₂_h
+              simp only [partialInterpolationRightAlpha, Ext.T, Ext.p, 𝕐₂_h, List.map_nil,
+                List.empty_eq, List.map_map, Finset.union_singleton, Finset.union_insert,
+                List.map_eq_singleton_iff, Function.comp_apply]
+            all_goals
+              convert 𝕐₂_h
               all_goals
-                replace 𝕐₂_h := by simpa [r_def] using 𝕐₂_h
-                simp only [partialInterpolationRightAlpha, Ext.T, Ext.p, 𝕐₂_h, List.map_nil,
-                  List.empty_eq, List.map_map, Finset.union_singleton, Finset.union_insert,
-                  List.map_eq_singleton_iff, Function.comp_apply]
-                all_goals
-                  convert 𝕐₂_h
-                  all_goals
-                    try simp [split_to_ext_f, split_to_ext_fₙ]
-                    try tauto
+                try simp [split_to_ext_f, split_to_ext_fₙ]
+            all_goals tauto
       root := Sum.inl ()
       path := by
         intro node

@@ -77,7 +77,7 @@ theorem measurable_localizedTailMaximal
     (ell₀ : ℤ) (scale : RealInterval → ℤ) (S : Finset RealInterval)
     {f : ℝ → ℂ} (hf : Measurable f) :
     Measurable (localizedTailMaximal ell₀ scale S f) :=
-  Measurable.iSup fun ell ↦ (measurable_localizedTailAction scale S hf ell.1).enorm
+  Measurable.iSup fun ell ↦ (measurable_localizedTailAction scale S hf ell.1).eNorm
 
 /-- Restricting the input to a parent interval does not change any of its
 localized descendants. This is an exact integral identity. -/
@@ -122,7 +122,7 @@ theorem localizedTailMaximal_eq_zero_of_notMem
     have hz := krauseLaceyLocalizedPiece_eq_zero_of_notMem 1 (scale I) I f
       (hscale I hI) (fun hxI ↦ hx (hsub I hI hxI))
     simp only [hz, ite_self]
-  simp only [localizedTailMaximal, htail, enorm_zero, iSup_const]
+  simp only [localizedTailMaximal, htail, eNorm_zero, iSup_const]
 
 /-- The exact complex-valued decomposition at each truncation threshold. -/
 theorem localizedTailAction_eq_good_add_children
@@ -153,10 +153,10 @@ theorem localizedTailMaximal_le_good_add_children
   apply iSup_le
   intro ell
   rw [localizedTailAction_eq_good_add_children scale f g I hlam]
-  apply (enorm_add_le _ _).trans
+  apply (eNorm_add_le _ _).trans
   apply add_le_add (le_iSup (fun ell : {ell : ℤ // ell₀ ≤ ell} ↦
     ‖localizedTailAction scale (goodCollection S f g I) f ell.1 x‖ₑ) ell)
-  apply (enorm_sum_le _ _).trans
+  apply (eNorm_sum_le _ _).trans
   apply Finset.sum_le_sum
   intro K hK
   exact le_iSup (fun ell : {ell : ℤ // ell₀ ≤ ell} ↦
@@ -184,12 +184,12 @@ theorem localizedTailMaximal_pairing_le_good_add_children
       simp_rw [add_mul, Finset.sum_mul]
       have hgood : Measurable (fun x ↦
           localizedTailMaximal ell₀ scale (goodCollection S f g I) f x * ‖g x‖ₑ) :=
-        (measurable_localizedTailMaximal ell₀ scale (goodCollection S f g I) hf).mul hg.enorm
+        (measurable_localizedTailMaximal ell₀ scale (goodCollection S f g I) hf).mul hg.eNorm
       rw [lintegral_add_left hgood]
       congr 1
       apply lintegral_finsetSum
       intro K hK
-      exact (measurable_localizedTailMaximal ell₀ scale (childCollection S K) hf).mul hg.enorm
+      exact (measurable_localizedTailMaximal ell₀ scale (childCollection S K) hf).mul hg.eNorm
 
 /-- One complete finite stopping step for the actual localized maximal
 operator: a constructed sparse root/children family, verified bounded

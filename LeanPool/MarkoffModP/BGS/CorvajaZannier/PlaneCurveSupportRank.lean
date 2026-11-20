@@ -152,7 +152,7 @@ private theorem integerVectorLine_cyclic {d : Fin 2 → ℤ} (hd : d ≠ 0) :
   let e : L ≃+ L.map (integerCoordinate i) :=
     AddEquiv.ofBijective phi ⟨hphi_inj, hphi_surj⟩
   obtain ⟨a, haGen⟩ :=
-    (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top (L.map (integerCoordinate i))).mp
+    (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq (L.map (integerCoordinate i))).mp
       inferInstance
   have ha : L.map (integerCoordinate i) = AddSubgroup.closure {a} := by
     simpa only [AddSubgroup.zmultiples_eq_closure] using haGen.symm
@@ -498,9 +498,9 @@ private theorem exists_directionalPolynomial_representation
           (Polynomial.monomial (index t) (F.coeff t)).coeff (index s) by
       simp [q]]
     rw [Finset.sum_eq_single s]
-    · rw [Polynomial.coeff_monomial, ite_eq_left rfl]
+    · rw [Polynomial.coeff_monomial_apply, ite_eq_left rfl]
     · intro t ht hts
-      rw [Polynomial.coeff_monomial]
+      rw [Polynomial.coeff_monomial_apply]
       simp only [ite_eq_right_iff]
       intro hit
       exfalso
@@ -523,7 +523,7 @@ private theorem exists_directionalPolynomial_representation
         ∑ s ∈ F.support,
           (Polynomial.monomial (index s) (F.coeff s)).coeff n by
       simp [q]]
-    simp only [Polynomial.coeff_monomial]
+    simp only [Polynomial.coeff_monomial_apply]
     apply Finset.sum_eq_zero
     intro s hs
     simp only [ite_eq_right_iff]

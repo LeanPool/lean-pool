@@ -35,7 +35,7 @@ theorem mono_of_point_ne_zero
     (hu : HasScalarUnit A) {X : A}
     {u : 𝟙_ A ⟶ X} (h : u ≠ 0) : Mono u := by
   have := simple_unit_of_hasScalarUnit hu
-  exact mono_of_nonzero_from_simple h
+  exact mono_of_ne_zero_from_simple h
 
 /-- **The tensor of two nonzero points is a monomorphism.** -/
 theorem mono_tensorHom_point

@@ -102,7 +102,7 @@ private lemma not_diffAt_at_one (s : ℝ) (hs : s ∈ Set.Icc (0 : ℝ) 1) :
             -↑Real.pi * ↑(Real.sqrt 3) / 12 + ↑Real.pi / 12 * I := by
           simp only [rho']; apply Complex.ext <;> simp <;> ring
         have h2 : iPoint - rho' = (-1/2 : ℂ) + (1 - ↑(Real.sqrt 3) / 2) * I := by
-          simp only [iPoint, rho']; apply Complex.ext <;> (simp; try norm_num)
+          simp only [iPoint, rho']; apply Complex.ext <;> norm_num
         rw [h1, h2]
         simp only [Complex.real_smul]; push_cast; ac_rfl
       rw [h_deriv_eq] at h_combined

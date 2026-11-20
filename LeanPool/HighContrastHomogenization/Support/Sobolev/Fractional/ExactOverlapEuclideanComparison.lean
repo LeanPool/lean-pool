@@ -109,7 +109,7 @@ private theorem measurable_centeredCube_scalar_gagliardoKernel_enorm_sq
     (F : CenteredCubeEuclideanL2Field d m) (hF : Measurable F) (i : Fin d) :
     Measurable (fun z =>
       ‖Gagliardo.gagliardoKernel s.1 (2 : ℝ≥0∞) (fun x => F x i) z‖ₑ ^ (2 : ℝ)) :=
-  (measurable_centeredCube_scalar_gagliardoKernel s F hF i).enorm.pow measurable_const
+  (measurable_centeredCube_scalar_gagliardoKernel s F hF i).eNorm.pow measurable_const
 
 /-- The physical coordinate energy is one integral of the finite sum of
 scalar kernels for a measurable representative. -/
@@ -138,7 +138,7 @@ private theorem centeredCube_sum_enorm_sq_coordinate_diff_eq_ofReal_numerator
   apply Finset.sum_congr rfl
   intro i _
   norm_num
-  rw [Real.enorm_eq_ofReal_abs,
+  rw [Real.eNorm_eq_ofReal_abs,
     ← ENNReal.ofReal_pow (abs_nonneg (F z.1 i - F z.2 i)), sq_abs]
 
 private theorem centeredCube_sum_scalar_gagliardoKernel_eq_distance_mul_numerator

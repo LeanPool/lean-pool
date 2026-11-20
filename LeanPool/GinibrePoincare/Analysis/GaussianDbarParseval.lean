@@ -627,10 +627,9 @@ private theorem lower_local_off_iff {n : ℕ} (r s p q : Fin n → ℕ)
     constructor
     · rw [eq_iff_eq_at_and_eq_off]
       exact ⟨hlocal.1.symm, fun i hi ↦ (hoff i hi).1.symm⟩
-    · rw [eq_iff_eq_at_and_eq_off]
+    · rw [eq_iff_eq_at_and_eq_off q (lowerAt s j) j]
       constructor
-      · change q j = lowerAt s j j
-        simpa [lowerAt] using hlocal.2.symm
+      · simpa [lowerAt] using hlocal.2.symm
       · intro i hi
         have hij : i ≠ j := Finset.ne_of_mem_erase hi
         simpa [lowerAt, Function.update_of_ne hij] using (hoff i hi).2.symm
@@ -654,10 +653,9 @@ private theorem raise_local_off_iff {n : ℕ} (r s p q : Fin n → ℕ)
   · rintro ⟨hlocal, hoff⟩
     have hpjr : p j = r j + 1 := by omega
     constructor
-    · rw [eq_iff_eq_at_and_eq_off]
+    · rw [eq_iff_eq_at_and_eq_off p (raiseAt r j) j]
       constructor
-      · change p j = raiseAt r j j
-        simpa [raiseAt] using hpjr
+      · simpa [raiseAt] using hpjr
       · intro i hi
         have hij : i ≠ j := Finset.ne_of_mem_erase hi
         simpa [raiseAt, Function.update_of_ne hij] using (hoff i hi).1.symm

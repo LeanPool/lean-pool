@@ -50,12 +50,12 @@ open scoped ENNReal BigOperators
 
 variable {d : ℕ}
 
-/-- Measurability of the pairwise difference enorm power. -/
+/-- Measurability of the pairwise difference eNorm power. -/
 theorem measurable_pair_diff_enorm_rpow {u : Vec d → ℝ} (humeas : Measurable u)
     (pr : ℝ) :
     Measurable fun z : Vec d × Vec d => ‖u z.1 - u z.2‖ₑ ^ pr :=
   ENNReal.continuous_rpow_const.measurable.comp
-    (((humeas.comp measurable_fst).sub (humeas.comp measurable_snd)).enorm)
+    (((humeas.comp measurable_fst).sub (humeas.comp measurable_snd)).eNorm)
 
 /-- Multiplying by a `0/1` indicator inside a lintegral restricts the domain. -/
 theorem lintegral_indicator_one_mul {α : Type*} [MeasurableSpace α]
@@ -392,7 +392,7 @@ theorem pointwise_pair_sum_le (Q : TriadicCube d) {a pr : ℝ} (ha : 1 ≤ a)
   by_cases hz : z.1 = z.2
   · -- diagonal: the difference power vanishes
     have hFz : ‖u z.1 - u z.2‖ₑ ^ pr = 0 := by
-      rw [hz, sub_self, enorm_zero]
+      rw [hz, sub_self, eNorm_zero]
       exact ENNReal.zero_rpow_of_pos hpr
     simp [hFz]
   · have hdist : 0 < dist z.1 z.2 := dist_pos.2 hz

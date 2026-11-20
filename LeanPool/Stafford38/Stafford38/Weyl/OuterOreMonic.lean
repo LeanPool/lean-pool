@@ -214,7 +214,7 @@ theorem coeff_flattenPairSymbols (n a p : ℕ)
       | add r₁ r₂ h₁ h₂ =>
           rw [map_add (Polynomial.monomial p') r₁ r₂]
           simp only [map_add, AddMonoidAlgebra.coeff_add, Finsupp.add_apply,
-            Polynomial.coeff_monomial, Polynomial.coeff_add]
+            Polynomial.coeff_monomial]
           by_cases hp : p' = p
           · subst p'
             simp [h₁, h₂]
@@ -261,7 +261,7 @@ theorem nested_coeff_eq_zero_of_outer_exponent_gt (n N : ℕ)
     {p : ℕ} (hp : N < p) :
     (presentedNestedNormalForm k n d).coeff p = 0 := by
   ext a m
-  simp only [Polynomial.coeff_zero, AddMonoidAlgebra.coeff_zero]
+  simp only [AddMonoidAlgebra.coeff_zero]
   rw [← coeff_flattenPairSymbols k n a p m]
   rw [flatten_presentedNestedNormalForm]
   exact coeff_normalForm_eq_zero_of_exponent_gt k
@@ -297,7 +297,7 @@ theorem nested_coeff_eq_one_at_bound (n N : ℕ)
           simpa [monomialWeight, bernsteinWeight] using hle
         omega
       rw [hz]
-      simp [Polynomial.coeff_one, MvPolynomial.coeff_one, Ne.symm hm]
+      simp [MvPolynomial.coeff_one, Ne.symm hm]
   · have hdegree : N < (pairExponent n a N m).degree := by
       rw [degree_pairExponent]
       omega

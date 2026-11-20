@@ -50,7 +50,7 @@ theorem masterSummand_vanish_of_not_eulerian
   refine masterSummand_vanish_of_block_odd f P e' W c v ?_
   rw [blockRestrict_parity]
   intro hEvenFlags
-  refine hv₀ ?_
+  refine (Nat.not_even_iff_odd.mpr hv₀) ?_
   rw [EdgeSubset.deg]
   convert hEvenFlags using 2
   ext g

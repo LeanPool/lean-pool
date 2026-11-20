@@ -266,7 +266,7 @@ theorem measure_maximal_gt_le (g : E → ℝ≥0∞) {t : ℝ≥0∞} (ht0 : t �
         congr 1; ext b
         exact G.measure_ball_mul _ (by norm_num) (by exact_mod_cast hqpos b (huA b.2))
     _ ≤ ∑' b : u, ENNReal.ofReal (3 ^ G.D) / t * ∫⁻ y in G.ball b (qx b), g y ∂μ := by
-        refine ENNReal.tsum_le_tsum fun b => ?_
+        refine tsum_le_tsum fun b => ?_
         have h := hball b (huA b.2)
         have hB : μ (G.ball b (qx b)) ≤ (∫⁻ y in G.ball b (qx b), g y ∂μ) / t :=
           (ENNReal.le_div_iff_mul_le (Or.inl ht0) (Or.inl htop)).mpr (by rwa [mul_comm])
@@ -619,7 +619,7 @@ theorem lintegral_mul_gauge_le [μ.IsNegInvariant] {lam : ℝ} (hlam : 0 < lam) 
       rw [← setLIntegral_univ]
       refine le_antisymm ((lintegral_mono_set hcover).trans ((lintegral_iUnion_le _ _).trans ?_))
         bot_le
-      exact le_of_eq (ENNReal.tsum_eq_zero.mpr fun q => hball0 q q.2)
+      exact le_of_eq (tsum_eq_zero_iff.mpr fun q => hball0 q q.2)
     have hae : g =ᵐ[μ] 0 := (lintegral_eq_zero_iff hg).mp hg0
     have := lintegral_sub_left_eq_self (μ := μ) (fun z => g z * W (G.ρ (x - z))) x
     simp only [sub_sub_cancel] at this

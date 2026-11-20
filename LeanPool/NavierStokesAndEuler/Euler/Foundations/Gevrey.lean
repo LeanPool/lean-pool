@@ -258,7 +258,7 @@ theorem triangular_inverse_majorant (A Rc R : ℝ)
       _ ≤ 1 := (div_le_one hR).2 (by linarith only [hA, hlarge])
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       have hw : 0 ≤ majorant R (d + 1) n := majorant_nonneg R hR.le _ _
       have hshift : majorant R d n ≤ majorant R (d + 1) n / R := by
         apply (le_div_iff₀ hR).2

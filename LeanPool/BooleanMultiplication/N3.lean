@@ -454,7 +454,7 @@ theorem five_gate_impossible (C : Circuit 6 5) :
     have all : ∀ k : Nat, ∀ hk : k < 5, C.gate ⟨k, hk⟩ ∈ rationalSpace := by
       intro k
       induction k using Nat.strong_induction_on with
-      | h k ih =>
+      | ind k ih =>
           intro hk
           let j : Fin 5 := ⟨k, hk⟩
           have hw : wireSpace C.gate k ≤ rationalSpace := by

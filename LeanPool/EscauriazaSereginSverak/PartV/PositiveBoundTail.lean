@@ -57,8 +57,8 @@ theorem pv_energyDensity_slab_lt_top {T : ℝ} {u : ParabolicPoint → Vec3}
       (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) := by
     have h : AEMeasurable (fun z => ‖p z‖ₑ ^ (3 / 2 : ℝ))
         (volume.restrict (spaceTimeSet (Set.univ : Set Vec3) (Ioo 0 T))) :=
-      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.enorm
-    simpa only [Function.comp_def, Real.enorm_eq_ofReal_abs] using h
+      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hp.eNorm
+    simpa only [Function.comp_def, Real.eNorm_eq_ofReal_abs] using h
   have hUb := pv_setLIntegral_slab_le hUm
     (ae_le_essSup (μ := volume.restrict (Ioo 0 T))
       (f := fun t : ℝ => ∫⁻ x : Vec3,
@@ -68,7 +68,7 @@ theorem pv_energyDensity_slab_lt_top {T : ℝ} {u : ParabolicPoint → Vec3}
       (volume.restrict (Ioo 0 T))) (by
     have h := ae_le_essSup (μ := volume.restrict (Ioo 0 T))
       (f := fun t : ℝ => ∫⁻ x : Vec3, ‖p (x, t)‖ₑ ^ (3 / 2 : ℝ))
-    simpa only [Real.enorm_eq_ofReal_abs] using h)
+    simpa only [Real.eNorm_eq_ofReal_abs] using h)
   have hvol : volume (Ioo (0 : ℝ) T) < ⊤ := by
     rw [Real.volume_Ioo]
     exact ENNReal.ofReal_lt_top

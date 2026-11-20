@@ -486,7 +486,7 @@ theorem actualJet_uniformContinuousOn {s : Set Y} {f : Y → V}
   obtain ⟨C, hC⟩ := hb (n + 1)
   let K : NNReal := ⟨max C 0, le_max_right _ _⟩
   have hLip : LipschitzOnWith K (iteratedFDeriv ℝ n f) s := by
-    apply hc.lipschitzOnWith_of_nnnorm_hasFDerivWithin_le
+    apply hc.lipschitzOnWith_of_nnNorm_hasFDerivWithin_le
       (fun x hx => (actualJet_hasFDerivAt hs hf n hx).hasFDerivWithinAt)
     intro x hx
     change ‖(iteratedFDeriv ℝ (n + 1) f x).curryLeft‖₊ ≤ K

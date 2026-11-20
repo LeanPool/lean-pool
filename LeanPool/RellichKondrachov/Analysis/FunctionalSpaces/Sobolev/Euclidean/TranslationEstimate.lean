@@ -94,7 +94,7 @@ lemma enorm_fderiv_apply_le_enorm_grad_mul (f : E → ℝ) (x a : E) :
     -- `grad f x = (toDual).symm (fderiv f x)` and `toDual.symm` is an isometry.
     simp only [grad]
     exact
-      (LinearIsometry.enorm_map
+      (LinearIsometry.eNorm_map
         (f := (InnerProductSpace.toDual ℝ E).symm.toLinearIsometry)
         (fderiv ℝ f x))
   -- Replace the operator norm by the gradient norm.
@@ -126,7 +126,7 @@ lemma enorm_sub_le_enorm_mul_lintegral_grad (x a : E) {f : E → ℝ} (hf : Cont
   have hFTC :
       ‖f (x + a) - f x‖ₑ ≤ ∫⁻ t in Icc (0 : ℝ) 1, ‖deriv (fun t : ℝ => f (x + t • a)) t‖ₑ := by
     simpa using
-      (enorm_sub_le_lintegral_deriv_of_contDiffOn_Icc (f := fun t : ℝ => f (x + t • a))
+      (eNorm_sub_le_lintegral_deriv_of_contDiffOn_Icc (f := fun t : ℝ => f (x + t • a))
         (a := (0 : ℝ)) (b := 1) hCont (by exact zero_le_one))
   refine hFTC.trans ?_
   have hDerivBound :
@@ -155,7 +155,7 @@ lemma enorm_sub_le_enorm_mul_lintegral_grad (x a : E) {f : E → ℝ} (hf : Cont
     exact (hgradCont.comp (by
       have : Continuous (fun t : ℝ => x + t • a) := by
         fun_prop
-      exact this)).measurable.enorm
+      exact this)).measurable.eNorm
   -- Now finish: `∫⁻ t in Icc, ‖a‖ * g t = ‖a‖ * ∫⁻ t in Icc, g t`.
   exact le_of_eq <| by
     simpa [mul_assoc] using

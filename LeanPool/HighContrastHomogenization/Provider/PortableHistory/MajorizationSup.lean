@@ -200,9 +200,9 @@ theorem centeredMoment_rpow (P : Measure (CoeffSpace d)) {Q : ℝ} (hQ : 0 < Q) 
       (isSymmetricBlockMat_blockSub (isSymmetricBlockMat_coarseBlock _ x)
         (Recurrence.isSymmetricBlockMat_adaptedMean P q j))) Q
   rw [centeredMoment, lqSchattenSize,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal hne (by simp) hmeas, htoReal, one_div,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal hne (by simp) hmeas, htoReal, one_div,
     ENNReal.rpow_inv_rpow hQ.ne']
-  exact lintegral_congr fun x => by rw [Real.enorm_eq_ofReal (hnn x)]
+  exact lintegral_congr fun x => by rw [Real.eNorm_eq_ofReal (hnn x)]
 
 end Statistic
 

@@ -532,13 +532,13 @@ def rieszSecondL2CzCertificateOfInterfaces
       calc
         ENNReal.ofReal |∑' Q : {Q // Q ∈ D.cubes}, Tbad Q x| =
             ‖∑' Q : {Q // Q ∈ D.cubes}, Tbad Q x‖ₑ := by
-              simp only [Real.enorm_eq_ofReal_abs]
+              simp only [Real.eNorm_eq_ofReal_abs]
         _ ≤ ∑' Q : {Q // Q ∈ D.cubes}, ‖Tbad Q x‖ₑ :=
-          enorm_tsum_le_tsum_enorm
+          eNorm_tsum_le_tsum_eNorm
         _ = ∑' Q : {Q // Q ∈ D.cubes}, ENNReal.ofReal |Tbad Q x| := by
           apply tsum_congr
           intro Q
-          simp only [Real.enorm_eq_ofReal_abs]
+          simp only [Real.eNorm_eq_ofReal_abs]
     have hBoutside := rieszSecond_bad_part_exterior_bound D
       hpoint hmeas hbridge
     have hUvol : volume U < ∞ := by

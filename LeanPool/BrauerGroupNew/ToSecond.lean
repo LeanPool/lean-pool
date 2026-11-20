@@ -614,7 +614,7 @@ omit [FiniteDimensional F K] in
 lemma conjFactor_linearIndependent (x_ : Π σ, A.conjFactor σ) :
     LinearIndependent K (v := fun (i : Gal(K, F)) => (x_ i).1.1) := by
   classical
-  by_contra! rid
+  by_contra rid
   obtain ⟨J, LI, maximal⟩ := exists_maximal_linearIndepOn K (fun (i : Gal(K, F)) => (x_ i).1.1)
   have ne : J ≠ Set.univ := by
     rintro rfl
@@ -899,9 +899,8 @@ lemma toSnd_fromSnd : toSnd ∘ fromSnd F K ∘ (H2Iso (galAct F K)).hom = id :=
   let y_ σ : A.conjFactor σ :=
     ⟨CrossProductAlgebra.of am σ,
     fun c ↦ by erw [CrossProductAlgebra.of_conj]; rfl⟩
-  simp only [H2π, ModuleCat.hom_comp, LinearMap.coe_comp, Function.comp_apply,
-    π_comp_H2Iso_hom_apply,
-    CategoryTheory.Iso.inv_hom_id_apply]
+  simp only [H2π, CategoryTheory.comp_apply]
+  erw [π_comp_H2Iso_hom_apply, CategoryTheory.Iso.inv_hom_id_apply]
   change toSnd (fromSnd F K (Quotient.mk'' a)) =
     (ModuleCat.Hom.hom (π (galAct F K) 2)) ((ModuleCat.Hom.hom (isoCocycles₂ (galAct F K)).inv) a)
   rw [fromSnd_wd]
@@ -944,9 +943,8 @@ lemma fromSnd_toSnd : (fromSnd F K ∘ (H2Iso (galAct F K)).hom) ∘ toSnd = id 
   conv_rhs => rw [← A.quot_eq]
   simp only [GoodRep.toH2]
   unfold galAct
-  simp only [H2π, ModuleCat.hom_comp, LinearMap.coe_comp, Function.comp_apply,
-    π_comp_H2Iso_hom_apply,
-    CategoryTheory.Iso.inv_hom_id_apply]
+  simp only [H2π, CategoryTheory.comp_apply]
+  erw [π_comp_H2Iso_hom_apply, CategoryTheory.Iso.inv_hom_id_apply]
   let z : cocycles₂ (galAct F K) :=
     cocyclesOfIsMulCocycle₂ (GoodRep.isMulCocycle₂ A.arbitraryConjFactor)
   change (fromSnd F K (Quotient.mk'' z)).1 = Quotient.mk'' A.toCSA

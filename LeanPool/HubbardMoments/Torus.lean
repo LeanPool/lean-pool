@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Prod
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
 

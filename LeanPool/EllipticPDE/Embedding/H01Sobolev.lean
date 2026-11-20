@@ -116,7 +116,7 @@ lemma eLpNorm_fderiv_le_sum (hΩm : MeasurableSet Ω)
         refine Finset.sum_congr rfl (fun i _ => ?_)
         rw [eLpNorm_norm _ (hmeas i), ← eLpNorm_restrict_eq_of_tsupport_subset hΩm
           ((tsupport_partialD_subset i φ).trans h.2.2) 2,
-          IsTestFn.testGraph_succ, Lp.enorm_def, IsTestFn.partialCls]
+          IsTestFn.testGraph_succ, Lp.eNorm_def, IsTestFn.partialCls]
         exact (eLpNorm_congr_ae (h.memLp_partialD i).coeFn_toLp).symm
 
 /-- The function coordinate of a test graph is the test function. -/
@@ -226,7 +226,7 @@ theorem eLpNorm_le_of_mem_H01_of_forall_testFn {q : ℝ≥0∞} {C : ℝ≥0}
       (𝓝 ((C : ℝ≥0∞) * ∑ i : Fin d, ‖U i.succ‖ₑ)) := by
     refine ENNReal.Tendsto.const_mul (tendsto_finsetSum _ (fun i _ => ?_))
       (Or.inr ENNReal.coe_ne_top)
-    exact (continuous_enorm.tendsto (U i.succ)).comp (hconv i.succ)
+    exact (continuous_eNorm.tendsto (U i.succ)).comp (hconv i.succ)
   refine le_of_forall_gt_imp_ge_of_dense (fun b hb => ?_)
   refine eLpNorm_le_of_tendstoInMeasure ?_ hmeasure (fun n => (Lp.aestronglyMeasurable _))
   filter_upwards [hrhs.eventually_lt_const hb] with n hn
@@ -256,7 +256,7 @@ theorem memLp_of_mem_H01 {q : ℝ≥0∞} {C : ℝ≥0} {U : H1amb Ω}
   refine lt_of_le_of_lt hbound ?_
   refine ENNReal.mul_lt_top ENNReal.coe_lt_top ?_
   refine ENNReal.sum_lt_top.mpr (fun i _ => ?_)
-  rw [Lp.enorm_def]
+  rw [Lp.eNorm_def]
   exact (Lp.memLp (U i.succ)).eLpNorm_lt_top
 
 /-! ### The embedding as a continuous linear map -/

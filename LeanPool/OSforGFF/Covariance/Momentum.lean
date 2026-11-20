@@ -1849,7 +1849,8 @@ lemma freeCovarianceKernel_continuousOn (m : ℝ) (hm : 0 < m) :
         simp only [Set.mem_Ioi] at hr
         positivity
     · -- K₁(mr) is continuous on (0, ∞)
-      have h := besselK1_continuousOn.comp (continuousOn_const.mul continuousOn_id)
+      have h := besselK1_continuousOn.comp (s := Set.Ioi 0)
+        (continuousOn_const.mul continuousOn_id)
         (fun r hr => by simp only [Set.mem_Ioi] at hr ⊢; exact mul_pos hm hr)
       exact h
   -- Now compose with ‖·‖ and use that z ≠ 0 implies ‖z‖ ≠ 0

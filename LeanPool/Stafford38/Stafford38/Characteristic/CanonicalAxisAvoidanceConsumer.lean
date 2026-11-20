@@ -105,7 +105,7 @@ theorem exists_strict_coordinate_preimage
         y' ∈ orderPiece k (n + 1) m ∧ qmk I (y' * x) = qmk I z := by
     intro L
     induction L using Nat.strong_induction_on with
-    | h L ih =>
+    | ind L ih =>
       intro y hyL hyx
       by_cases hLm : L ≤ m
       · exact ⟨y, presentedWeightPiece_mono k orderWeight hLm hyL, hyx⟩

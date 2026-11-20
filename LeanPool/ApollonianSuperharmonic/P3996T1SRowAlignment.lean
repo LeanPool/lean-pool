@@ -649,7 +649,7 @@ private theorem rowAlignment :
   case reflectedS6.refl.refine_2 => simpa [SubtileOccurrenceInterpretation, TileTranslation,
       GaussianTranslation, certU, certV, I, edgeVector, w] using occF 1 0
   all_goals constructor
-  all_goals try constructor
+  all_goals constructor
   all_goals try first
     | (apply composeCellsEq; abel)
     | (intro _; apply composeAnchorEq; simp []; abel)

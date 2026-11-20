@@ -139,7 +139,7 @@ theorem bu_short_trace_rescaled_data
   have hDtmeas : AEStronglyMeasurable Dtv (volume.restrict K) :=
     (hweakv.2.2.2.1.mono_set hKsub).aestronglyMeasurable
   have hDtLp : MemLp Dtv 2 (volume.restrict K) := by
-    apply (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    apply (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hDtmeas).2
     simpa using hDtfin
   have hmeasure : (volume : Measure ParabolicPoint).restrict K =

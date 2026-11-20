@@ -377,7 +377,7 @@ theorem gaugeNorm_add_le {x y : X} (hx : x ∈ principal a) (hy : y ∈ principa
   have step1 : ∀ cy, cy ∈ {c : ℝ | 0 ≤ c ∧ |y| ≤ c • |a|} →
       gaugeNorm a (x + y) - cy ≤ gaugeNorm a x := by
     intro cy ⟨hcy, hcy_le⟩
-    apply le_csInf hx
+    apply le_csInf (s := {c : ℝ | 0 ≤ c ∧ |x| ≤ c • |a|}) hx
     intro cx ⟨hcx, hcx_le⟩
     have : cx + cy ∈ {c : ℝ | 0 ≤ c ∧ |x + y| ≤ c • |a|} :=
       ⟨add_nonneg hcx hcy, le_trans (abs_add_le x y)
@@ -479,7 +479,7 @@ property. -/
 theorem gaugeNorm_mono_abs {x y : X} (hy : y ∈ principal a) (h : |x| ≤ |y|) :
     gaugeNorm a x ≤ gaugeNorm a y := by
   -- S_y ⊆ S_x, so sInf S_x ≤ sInf S_y
-  apply le_csInf hy
+  apply le_csInf (s := {c : ℝ | 0 ≤ c ∧ |y| ≤ c • |a|}) hy
   intro c ⟨hc, hle⟩
   exact csInf_le (gaugeNorm_bddBelow a x) ⟨hc, le_trans h hle⟩
 
@@ -510,7 +510,7 @@ theorem gaugeNorm_le_one_iff [IsVLArchimedean X] {x : X} (hx : x ∈ principal a
 theorem gaugeNorm_anti {e u : X} (he : 0 ≤ e) (heu : e ≤ u)
     {x : X} (hx : x ∈ principal e) : gaugeNorm u x ≤ gaugeNorm e x := by
   -- S_e ⊆ S_u (since |e| = e ≤ u = |u|, so c • |e| ≤ c • |u|)
-  apply le_csInf hx
+  apply le_csInf (s := {c : ℝ | 0 ≤ c ∧ |x| ≤ c • |e|}) hx
   intro c ⟨hc, hle⟩
   apply csInf_le (gaugeNorm_bddBelow u x)
   exact ⟨hc, le_trans hle (smul_le_smul_of_nonneg_left

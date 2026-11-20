@@ -56,7 +56,7 @@ theorem blowupUnitEnergy_eq_eLpNorm_powers
       (p := (3 : NNReal)) (f := fun z => vec3EuclideanNorm (v z))
       (by norm_num) hv
     norm_num at h ⊢
-    simpa [Real.enorm_eq_ofReal_abs,
+    simpa [Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)] using h
   have hP :
       eLpNorm p (3 / 2 : ℝ≥0∞)
@@ -66,7 +66,7 @@ theorem blowupUnitEnergy_eq_eLpNorm_powers
     have h := eLpNorm_nnreal_pow_eq_lintegral
       (p := (3 / 2 : NNReal)) (f := p) (by norm_num) hp
     norm_num at h ⊢
-    simpa [Real.enorm_eq_ofReal_abs] using h
+    simpa [Real.eNorm_eq_ofReal_abs] using h
   rw [← hV, ← hP]
 
 /-- Strong `L³` velocity convergence and strong `L^(3/2)` pressure convergence

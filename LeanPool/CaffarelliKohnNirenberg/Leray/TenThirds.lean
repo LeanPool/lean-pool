@@ -41,7 +41,7 @@ private theorem memLp_two_of_lintegral_lt_top
     (hlt : (∫⁻ z, ‖v z‖ₑ ^ (2 : ℝ) ∂μ) < ⊤) :
     MemLp v 2 μ := by
   rw [memLp_iff,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hv]
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hv]
   simp only [ENNReal.toReal_ofNat]
   exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) hlt.ne
 
@@ -77,7 +77,7 @@ private theorem eLpNorm_two_sq_eq_lintegral
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (2 : ℝ≥0∞) μ ^ (2 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (2 : ℝ≥0∞) ≠ 0)
       (by norm_num : (2 : ℝ≥0∞) ≠ ∞) hf,
     ENNReal.toReal_ofNat, ← ENNReal.rpow_mul]
@@ -89,7 +89,7 @@ private theorem eLpNorm_tenThirds_pow_eq_lintegral
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (ENNReal.ofReal (10 / 3 : ℝ)) μ ^ (10 / 3 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (10 / 3 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : ENNReal.ofReal (10 / 3 : ℝ) ≠ 0)
       ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 10 / 3),
@@ -102,7 +102,7 @@ private theorem memLp_ofReal_of_lintegral_lt_top
     (hf : AEStronglyMeasurable f μ)
     (hlt : (∫⁻ x, ‖f x‖ₑ ^ p ∂μ) < ⊤) :
     MemLp f (ENNReal.ofReal p) μ := by
-  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [memLp_iff, eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by simpa using hp) ENNReal.ofReal_ne_top hf,
     ENNReal.toReal_ofReal hp.le]
   exact ENNReal.rpow_lt_top_of_nonneg (by positivity) hlt.ne
@@ -334,7 +334,7 @@ private theorem lerayHopf_component_tenThirds_on_ball
           (fun x : Vec3 => u (x, s) i) (volume.restrict U) := by
         exact (memLp_pi_iff.mp (hmem.1.mono_measure
           (Measure.restrict_mono (Set.subset_univ U) le_rfl)) i).aestronglyMeasurable
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (by norm_num) (by norm_num) hcomponentMeas]
       simp only [ENNReal.toReal_ofNat]
       refine ENNReal.rpow_le_rpow ?_ (by norm_num)
@@ -445,7 +445,7 @@ private theorem lerayHopf_component_tenThirds_lintegral_bound
       hQmeas
   let f : ParabolicPoint → ℝ≥0∞ := fun z => ‖u z i‖ₑ ^ (10 / 3 : ℝ)
   have hf : AEMeasurable f μ := by
-    exact huComp.enorm.pow_const (10 / 3 : ℝ)
+    exact huComp.eNorm.pow_const (10 / 3 : ℝ)
   let S : ℕ → Set ParabolicPoint := fun n =>
     spaceTimeSet (vec3Ball 0 (radius n)) (Set.univ : Set ℝ)
   have hSmeas (n : ℕ) : MeasurableSet (S n) := by
@@ -712,7 +712,7 @@ theorem lerayHopf_memLp_tenThirds
     (ContinuousLinearMap.proj (R := ℝ) i).continuous.comp_aestronglyMeasurable hQmeas
   have hcomponentPowMeas (i : Fin 3) :
       AEMeasurable (fun z : ParabolicPoint => ‖u z i‖ₑ ^ (10 / 3 : ℝ)) μ :=
-    (hcomponentMeas i).enorm.pow_const (10 / 3 : ℝ)
+    (hcomponentMeas i).eNorm.pow_const (10 / 3 : ℝ)
   have hmass :
       (∫⁻ z in Q, ENNReal.ofReal (vec3EuclideanNorm (u z)) ^ (10 / 3 : ℝ)) ≤
         energyTenThirdsConstant * (B ^ (2 / 3 : ℝ) * G) := by

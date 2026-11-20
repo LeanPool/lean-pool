@@ -86,7 +86,7 @@ theorem regR12_norm_fourierInv_le (h : L2Vec3 → E) (hh : AEStronglyMeasurable 
         norm_integral_le_integral_norm _
     _ = ∫ v, ‖h v‖ := by simp_rw [Circle.norm_smul]
     _ = (eLpNorm h 1 volume).toReal := by
-        rw [integral_norm_eq_lintegral_enorm hh, eLpNorm_one_eq_lintegral_enorm]
+        rw [integral_norm_eq_lintegral_eNorm hh, eLpNorm_one_eq_lintegral_eNorm]
         exact hh
 
 /-- The inverse Fourier integral is additive on integrable fields. -/
@@ -196,7 +196,7 @@ theorem regR12Kernel_memLp : MemLp regR12Kernel 2 volume := by
   have hkMeas : AEStronglyMeasurable regR12Kernel volume :=
     regR12Kernel_continuous.aestronglyMeasurable
   rw [memLp_iff,
-    eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top (by norm_num) (by norm_num) hkMeas]
+    eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top (by norm_num) (by norm_num) hkMeas]
   have hkernel : Integrable (fun ξ : L2Vec3 =>
       (1 + ‖ξ‖ ^ 2) ^ (-4 / 2 : ℝ)) volume :=
     integrable_rpow_neg_one_add_norm_sq (by norm_num [hfin])
@@ -204,7 +204,7 @@ theorem regR12Kernel_memLp : MemLp regR12Kernel 2 volume := by
   refine lintegral_congr fun ξ => ?_
   have hpos : 0 < 1 + ‖ξ‖ ^ 2 := by positivity
   unfold regR12Kernel
-  rw [Real.enorm_of_nonneg (Real.rpow_nonneg hpos.le _), ENNReal.toReal_ofNat,
+  rw [Real.eNorm_of_nonneg (Real.rpow_nonneg hpos.le _), ENNReal.toReal_ofNat,
     ENNReal.ofReal_rpow_of_nonneg (Real.rpow_nonneg hpos.le _) (by norm_num),
     ← Real.rpow_mul hpos.le]
   norm_num
@@ -247,7 +247,7 @@ theorem regR12_weighted_eLpNorm_one_le {E : Type*} [NormedAddCommGroup E] [Norme
           ((continuous_const.mul regR12Kernel_continuous).aestronglyMeasurable) hG
     _ = ENNReal.ofReal C * eLpNorm regR12Kernel 2 volume * eLpNorm G 2 volume := by
         rw [show (fun ξ => C * regR12Kernel ξ) = C • regR12Kernel from rfl,
-          eLpNorm_const_smul, Real.enorm_of_nonneg hC]
+          eLpNorm_const_smul, Real.eNorm_of_nonneg hC]
 
 /-- The multiplied weighted field is integrable. -/
 theorem regR12_weighted_integrable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]

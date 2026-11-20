@@ -173,7 +173,7 @@ private theorem tendsto_sqrt_setIntegral_mono {y : Vec d} {n : ℤ} {V : Set (Ve
   refine squeeze_zero (fun L => Real.sqrt_nonneg _) (fun L => ?_) hlim
   refine Real.sqrt_le_sqrt ?_
   exact setIntegral_mono_set (hint L) (Filter.Eventually.of_forall fun x => by positivity)
-    (LE.le.eventuallyLE hV)
+    (LE.le.eventuallySubset hV)
 
 /-- **A uniform bound on the truncated solutions' representatives passes to the
 representative of the `L²` limit**, at every point of an open subset of the

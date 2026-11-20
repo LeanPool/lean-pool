@@ -563,7 +563,7 @@ private def
     SpecialPeriods.MuTorsor.affineSubgroup {G B : Type*} [Group G] (ρ : G →* Equiv.Perm (B × ℂ))
     (β : G →* Equiv.Perm B) : Subgroup G
     where
-  carrier := AffineFibres ρ β
+  carrier := {g | AffineFibres ρ β g}
   one_mem' := affineFibres_one ρ β
   mul_mem' := affineFibres_mul ρ β
   inv_mem' := affineFibres_inv ρ β
@@ -675,7 +675,7 @@ private def SpecialPeriods.MuTorsor.holomorphicAffineSubgroup {G B : Type*} [Gro
     [NormedSpace ℂ E] [TopologicalSpace H] [TopologicalSpace B] [ChartedSpace H B]
     (I : ModelWithCorners ℂ E H) (hβ : ∀ g, ContMDiff I I ω (β g)) : Subgroup G
     where
-  carrier := HolomorphicAffineFibres ρ β I
+  carrier := {g | HolomorphicAffineFibres ρ β I g}
   one_mem' := holomorphicAffineFibres_one ρ β I
   mul_mem' := holomorphicAffineFibres_mul ρ β I hβ
   inv_mem' := holomorphicAffineFibres_inv ρ β I hβ

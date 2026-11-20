@@ -314,6 +314,7 @@ lemma IsKolmogorovProcess.measurableSet_holderSet
   have : Countable (T' ∩ U : Set T) := hT'.mono Set.inter_subset_left
   let C ω := ⨆ (s : (T' ∩ U : Set T)) (t : (T' ∩ U : Set T)),
     edist (X s ω) (X t ω) ^ p / edist s t ^ (β * p)
+  rw [holderSet, Set.ofPred_and]
   refine MeasurableSet.inter ?_ ?_
   · change MeasurableSet {ω | C ω < ∞}
     refine measurableSet_lt ?_ (by fun_prop)
@@ -689,8 +690,8 @@ lemma edist_modification_holderModification (hT : HasBoundedCoveringNumber U c d
       refine (hY_cont ω t htU).tendsto.comp ?_
       exact tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ hu (.of_forall huU)
     refine tendstoInMeasure_of_tendsto_ae_of_measurable_edist (fun n ↦ ?_) (ae_of_all _ h_ae)
-    exact measurable_edist_holderModification' hT hU hX hc hd_pos hdq_lt hβ_pos hβ_lt hβ_pos hβ_lt
-      (u n) t
+    exact (measurable_edist_holderModification' hT hU hX hc hd_pos hdq_lt hβ_pos hβ_lt
+      hβ_pos hβ_lt (u n) t).aemeasurable
   refine (ae_le_const_iff_forall_gt_measure_zero _ _).mpr fun ε hε ↦ ?_
   suffices Tendsto (fun n : ℕ ↦ P {ω | ε ≤ edist (Y t ω) (X t ω)}) atTop (𝓝 0) by
     simpa using this

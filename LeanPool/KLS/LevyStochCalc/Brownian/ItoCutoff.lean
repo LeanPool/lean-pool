@@ -251,7 +251,7 @@ theorem energy_lt_top_of_bounded {K : Ω → ℝ → ℝ} {M : ℝ} (hM : ∀ ω
     intro ω s
     have h0 : (0 : ℝ) ≤ M := le_trans (abs_nonneg _) (hM ω s)
     have h1 : ‖K ω s‖₊ ≤ Real.toNNReal M := by
-      rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal M h0]
+      rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal M h0]
       simpa [Real.norm_eq_abs] using hM ω s
     exact pow_le_pow_left' (by exact_mod_cast h1) 2
   calc ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, (‖K ω s‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P

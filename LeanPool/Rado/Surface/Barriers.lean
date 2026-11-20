@@ -41,7 +41,7 @@ section Config
 variable (e : OpenPartialHomeomorph X ℂ)
 
 /-- The surface `X` minus the two closed configuration disks. -/
-def configY : Set X :=
+noncomputable def configY : Set X :=
   univ \ (e.symm '' closedBall (-4) 1 ∪ e.symm '' closedBall 4 1)
 
 /-- The Perron family for the configuration: subharmonic on `configY`,

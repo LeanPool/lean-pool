@@ -559,7 +559,7 @@ theorem IsFellerKernelSemigroup.lintegral_discountedStoppingWeight_hitExitTime_l
     _ = ∑' i, ∫⁻ omega, W i omega * S.indicator
         (fun omega ↦ G i (Y omega)) omega ∂Q y := lintegral_tsum hSummandMeas
     _ ≤ ∑' i, ∫⁻ omega, W i omega * S.indicator (fun _ ↦ rho) omega ∂Q y :=
-      ENNReal.tsum_le_tsum hPiece
+      tsum_le_tsum hPiece
     _ = ∫⁻ omega, ∑' i, W i omega * S.indicator (fun _ ↦ rho) omega ∂Q y := by
       rw [lintegral_tsum]
       intro i

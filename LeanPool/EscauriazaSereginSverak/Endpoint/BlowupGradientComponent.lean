@@ -67,7 +67,7 @@ theorem blowup_gradient_component_eLpNorm_sq_le
     have h := eLpNorm_nnreal_pow_eq_lintegral
       (p := (2 : NNReal)) (f := g) (by norm_num) hgm
     norm_num at h ⊢
-    simpa only [Real.enorm_eq_ofReal_abs, abs_of_nonneg (hgpos _),
+    simpa only [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hgpos _),
       ENNReal.ofReal_pow (hgpos _) 2] using h
   have hpoint (z : ParabolicPoint) :
       ENNReal.ofReal (g z ^ (2 : ℕ)) ≤

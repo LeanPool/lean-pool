@@ -28,7 +28,7 @@ controlled by the doubled `L^p` difference integral, where
 of volume on the enlarged cube of `S`.
 
 The proof is the standard one: the deviation from the average is the average
-of differences (probability measure), the enorm of a Bochner integral is at
+of differences (probability measure), the eNorm of a Bochner integral is at
 most the lintegral of enorms, and `L^1(μ) ↪ L^p(μ)` on a probability measure
 (Jensen/Hölder).
 -/
@@ -76,19 +76,19 @@ theorem eLpNorm_sub_average_rpow_le_double_lintegral {d : ℕ}
     intro x
     have hmeas : AEStronglyMeasurable (fun y => u x - u y) μ :=
       aestronglyMeasurable_const.sub hu.aestronglyMeasurable
-    -- Step 2: enorm of the integral is at most the lintegral of enorms.
+    -- Step 2: eNorm of the integral is at most the lintegral of enorms.
     have h1 : ‖u x - ScalarOverlap.cubeAverage S u‖ₑ ≤
         ∫⁻ y, ‖u x - u y‖ₑ ∂μ := by
       rw [havg x]
-      exact enorm_integral_le_lintegral_enorm _
+      exact eNorm_integral_le_lintegral_eNorm _
     -- Step 3: `L^1 ↪ L^p` on the probability measure `μ`.
     have h2 : ∫⁻ y, ‖u x - u y‖ₑ ∂μ ≤
         (∫⁻ y, ‖u x - u y‖ₑ ^ p.toReal ∂μ) ^ (1 / p.toReal) := by
       have hle : eLpNorm (fun y => u x - u y) 1 μ ≤
           eLpNorm (fun y => u x - u y) p μ :=
         eLpNorm_le_eLpNorm_of_exponent_le hp
-      rwa [eLpNorm_one_eq_lintegral_enorm hmeas,
-        eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hmeas] at hle
+      rwa [eLpNorm_one_eq_lintegral_eNorm hmeas,
+        eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hmeas] at hle
     calc ‖u x - ScalarOverlap.cubeAverage S u‖ₑ ^ p.toReal
         ≤ ((∫⁻ y, ‖u x - u y‖ₑ ^ p.toReal ∂μ) ^ (1 / p.toReal)) ^ p.toReal :=
           ENNReal.rpow_le_rpow (h1.trans h2) hpr.le
@@ -101,7 +101,7 @@ theorem eLpNorm_sub_average_rpow_le_double_lintegral {d : ℕ}
     have hmeas : AEStronglyMeasurable
         (fun x => u x - ScalarOverlap.cubeAverage S u) μ :=
       hu.aestronglyMeasurable.sub aestronglyMeasurable_const
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hmeas, ← ENNReal.rpow_mul,
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hmeas, ← ENNReal.rpow_mul,
       one_div_mul_cancel hpr.ne', ENNReal.rpow_one]
   calc (eLpNorm (fun x => u x - ScalarOverlap.cubeAverage S u) p μ) ^ p.toReal
       = ∫⁻ x, ‖u x - ScalarOverlap.cubeAverage S u‖ₑ ^ p.toReal ∂μ := hLHS

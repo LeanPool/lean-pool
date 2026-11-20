@@ -36,9 +36,9 @@ theorem iterate_smooth_time_product_pairing {u v : ℝ → Vec 2 → ℝ}
     filter_upwards [hI.prod_left_ae] with x hx
     have hc : ContinuousOn (fun s => u s x * v s x) (Set.Icc 0 T) :=
       (hu.continuousOn.comp (continuous_id.prodMk continuous_const).continuousOn
-        (fun s hs => ⟨hs.1, Set.mem_univ x⟩)).mul
+        (fun s (hs : s ∈ Set.Icc (0 : ℝ) T) => ⟨hs.1, Set.mem_univ x⟩)).mul
       (hv.continuousOn.comp (continuous_id.prodMk continuous_const).continuousOn
-        (fun s hs => ⟨hs.1, Set.mem_univ x⟩))
+        (fun s (hs : s ∈ Set.Icc (0 : ℝ) T) => ⟨hs.1, Set.mem_univ x⟩))
     have hd : ∀ s ∈ Set.Ioo 0 T, HasDerivAt (fun t => u t x * v t x)
         (u s x * deriv (fun t => v t x) s + v s x * deriv (fun t => u t x) s) s := by
       intro s hs

@@ -110,20 +110,20 @@ private lemma projectivePermutation_zeroLocus {K : Type*} [Field K] {n : ℕ}
   intro v hv hvx f hf
   have hxperm : coordinatePermutation e x.rep ≠ 0 := by
     intro h
-    apply x.rep_nonzero
+    apply x.rep_ne_zero
     apply coordinatePermutation_injective (K := K) e
     simpa only [map_zero] using h
   have he : Projectivization.mk K v hv =
       Projectivization.mk K (coordinatePermutation e x.rep) hxperm := by
     change Projectivization.mk K v hv =
-      projectivePermutation e (Projectivization.mk K x.rep x.rep_nonzero)
+      projectivePermutation e (Projectivization.mk K x.rep x.rep_ne_zero)
     rw [x.mk_rep]
     exact hvx
   obtain ⟨c, hc⟩ := (Projectivization.mk_eq_mk_iff K _ _ _ _).mp he
-  have hw : (c : K) • x.rep ≠ 0 := smul_ne_zero c.ne_zero x.rep_nonzero
+  have hw : (c : K) • x.rep ≠ 0 := smul_ne_zero c.ne_zero x.rep_ne_zero
   have hwx : Projectivization.mk K ((c : K) • x.rep) hw = x := by
     calc
-      _ = Projectivization.mk K x.rep x.rep_nonzero :=
+      _ = Projectivization.mk K x.rep x.rep_ne_zero :=
         (Projectivization.mk_eq_mk_iff' K _ _ _ _).mpr ⟨c, rfl⟩
       _ = x := x.mk_rep
   have h := hx ((c : K) • x.rep) hw hwx (rename e f) ((mem_projectivePermutedIdeal I e f).mp hf)

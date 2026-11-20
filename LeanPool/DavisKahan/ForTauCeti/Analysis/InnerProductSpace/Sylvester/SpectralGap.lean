@@ -207,7 +207,7 @@ theorem norm_block_ge (U : TauCeti.OneParameterUnitaryGroup E)
 
 private theorem enorm_eq_ofReal_norm {X : Type*} [NormedAddCommGroup X] (x : X) :
     ‖x‖ₑ = ENNReal.ofReal ‖x‖ := by
-  rw [enorm_eq_nnnorm, ← ENNReal.ofReal_coe_nnreal, coe_nnnorm]
+  rw [eNorm_eq_nnNorm, ← ENNReal.ofReal_coe_nnreal, coe_nnNorm]
 
 /-- **The global lower bound at a fixed grid width.**  The block bounds sum. -/
 theorem norm_sub_smul_ge_of_grid (hA : IsSelfAdjoint A) (hB : IsSelfAdjoint Bop)

@@ -96,7 +96,7 @@ private theorem band_transform :
         dsimp [GaussianRealPoint] at hfirst hsecond ⊢
         ring_nf at hfirst hsecond ⊢
         apply Prod.ext
-        all_goals try dsimp at *
+        all_goals dsimp at *
         all_goals linarith
 
 private theorem transform_translate :

@@ -39,8 +39,8 @@ theorem P4994T6UnitChartRotation (orientation : Bool) (e f : GaussianInt)
       Finset.mem_insert, Finset.mem_singleton] at he hf hsum <;>
     rcases he with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases hf with rfl | rfl | rfl | rfl | rfl | rfl
-  all_goals try norm_num at hdet
-  all_goals try norm_num [Zsqrtd.ext_iff] at hsum
+  all_goals norm_num at hdet
+  all_goals norm_num [Zsqrtd.ext_iff] at hsum
   all_goals first
     | refine ⟨0, by decide, ?_⟩
       intro p; ext <;> simp [P4994T6UnitCoordinates, P4994T6Rotation] <;> omega

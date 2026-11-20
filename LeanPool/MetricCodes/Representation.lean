@@ -4011,7 +4011,8 @@ theorem traceOperator_polarization_harmonicLift {r n : ℕ}
       all_goals
         simp only [ha, hb, ite_true, ite_false, Finset.sum_add_distrib,
           zero_add, add_zero, traceOperator_apply,
-          map_sum]; try abel
+          map_sum]
+      all_goals abel
 
 theorem traceFree_of_firstTrace_and_highestWeight {r n : ℕ}
     (p : PolynomialSpace r n)
@@ -5504,7 +5505,7 @@ def rowDerivation {r n : ℕ} (i j : Fin (r + 1)) :
       ∑ a : Fin n, MvPolynomial.X (variableIndex i a) *
         MvPolynomial.pderiv (variableIndex j a) p := by
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ a : Fin n,
         (MvPolynomial.X (variableIndex i a) :
           MvPolynomial (Fin ((r + 1) * n)) ℂ) •
@@ -6173,7 +6174,7 @@ theorem ambientPositiveRoot_apply {r n : ℕ}
               MvPolynomial.pderiv (variableIndex a (oddCoordinate h p)) f)) := by
   classical
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ a : Fin (r + 1), (
         isotropicVariable h a p •
           ((MvPolynomial.pderiv (variableIndex a (evenCoordinate h q)) :
@@ -6387,7 +6388,7 @@ theorem ambientSumPositiveRoot_isotropicVariable {r n : ℕ}
     ambientSumPositiveRoot h p q (isotropicVariable h i j) = 0 := by
   classical
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ a : Fin (r + 1),
         (isotropicVariable h a p • antiholomorphicDerivative h a q -
           isotropicVariable h a q • antiholomorphicDerivative h a p)))
@@ -6477,7 +6478,7 @@ theorem ambientShortPositiveRoot_isotropicVariable {r n : ℕ}
     ambientShortPositiveRoot h p t (isotropicVariable h i j) = 0 := by
   classical
   change
-    (Derivation.coeFnAddMonoidHom
+    (FunLike.coeAddMonoidHom _ _ _
       (∑ a : Fin (r + 1),
         (isotropicVariable h a p •
           (MvPolynomial.pderiv (variableIndex a t) :

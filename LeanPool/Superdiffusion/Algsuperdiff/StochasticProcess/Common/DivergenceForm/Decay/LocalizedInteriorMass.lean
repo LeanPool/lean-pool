@@ -255,7 +255,7 @@ theorem agmonMass_localizedInterior_le {Om : Set (Vec d)}
       habs hmassBound
     simp only [chi] at hfinal
     convert hfinal using 1
-    all_goals ring
+    ring
   · rw [localizedInteriorUpper, ite_eq_right hzero] at hkappa ⊢
     exact agmonMass_localizedSplit_interior_le hOm hnu hKs hKl hmass hM hEllS
       hsplit hksSkew hklSkew hklC1 hsol hMbound heta hetaCompact hetaOm hetaL

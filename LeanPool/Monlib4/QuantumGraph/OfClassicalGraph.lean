@@ -108,6 +108,6 @@ theorem SimpleGraph.adjMatrix_irreflexive
   simp only [schurMul_apply_apply, LinearMap.comp_apply]
   rw [EuclideanSpace.comul_eq]
   simp only [map_sum, map_smul, TensorProduct.map_tmul, LinearMap.mul'_apply,
-    Module.End.one_apply]
+    one_apply_eq_self]
   ext i
   simp_all

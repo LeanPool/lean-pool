@@ -358,7 +358,7 @@ theorem context (B n m k : ℕ)
     (hi : CommonWindow.index h n + k = CommonWindow.index h m) :
     CycleStateCoherence.ContextBand geometry (overlap n m) n m k (commonContext B) :=
   ActualInitialCoherence.context_band B
-    (fun s hs => standardRegion.time_pos s hs.1) n m k hi
+    (fun s (hs : s ∈ overlap n m) => standardRegion.time_pos s hs.1) n m k hi
 
 theorem initial_state (B N0 : ℕ) : StateCoherent (ActualInitialization.initialState B N0) :=
   ActualInitialization.initial_on_overlap B N0

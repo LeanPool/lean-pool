@@ -1198,7 +1198,7 @@ private theorem helper_second_ne_of_matching_4215.{u_1, u_2} :
         | ( have := GoldbergSeymour.TreeSequence.positive S
             have := Fin.isLt pc
             have := GoldbergSeymour.TreeSequence.positive S
-            all_goals omega)⟩ :
+            omega)⟩ :
       Fin (7 : ℕ));
   ∀
     (_ :

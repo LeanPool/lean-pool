@@ -252,7 +252,7 @@ private theorem boundaryIndex_card_eq_boundaryEdgeCount
   let v : List.Vector T.Edge (T.triangleBoundary f).length :=
     List.Vector.ofFn fun i => ((T.triangleBoundary f).get i).edge
   simpa [v, List.ofFn_comp'] using
-    Fin.card_filter_univ_eq_vector_get_eq_count e v
+    (List.Vector.count_toList e v).symm
 
 private theorem sum_boundaryEdgeCount_eq_edgeOccurrenceCount
     (T : FiniteSurfaceTriangulation S) (e : T.Edge) :

@@ -562,7 +562,7 @@ private lemma residueAt_eq_of_simple_pole_decomp (f : ℂ → ℂ) (z₀ c : ℂ
     circleIntegrable_sub_inv_iff.mpr (Or.inr (by
       rw [Metric.mem_sphere, dist_self, abs_of_pos hr_pos]; exact hr_ne.symm))
   have h_ci_cinv : CircleIntegrable (fun z => c * (z - z₀)⁻¹) z₀ r :=
-    h_ci_inv.const_fun_smul
+    by simpa only [smul_eq_mul] using h_ci_inv.const_fun_smul (a := c)
   have h_int_eq : (∮ z in C(z₀, r), f z) =
       c * (∮ z in C(z₀, r), (z - z₀)⁻¹) + (∮ z in C(z₀, r), g z) := by
     rw [circleIntegral.integral_congr hr_pos.le h_eq_on,

@@ -92,7 +92,7 @@ variable {𝕜 E : Type*} [RCLike 𝕜]
 `u`; the partial-isometry hypothesis enters only when identifying `star u * u` with a projection. -/
 private theorem re_inner_star_mul_self (u : E →ₗ[𝕜] E) (x : E) :
     ‖u x‖ ^ 2 = RCLike.re ⟪(star u * u) x, x⟫_𝕜 := by
-  rw [star_eq_adjoint, Module.End.mul_apply, LinearMap.adjoint_inner_left,
+  rw [star_eq_adjoint, mul_apply_eq_comp, LinearMap.adjoint_inner_left,
     InnerProductSpace.norm_sq_eq_re_inner (𝕜 := 𝕜)]
 
 /-- The initial projection of a partial isometry is the orthogonal projection onto `(ker u)ᗮ`:
@@ -104,9 +104,9 @@ theorem IsPartialIsometry.star_mul_self_eq_starProjection {u : E →ₗ[𝕜] E}
   ext x
   have huxx : u ((star u * u) x) = u x := by
     have hx : (u * star u * u) x = u x := congrArg (fun f : E →ₗ[𝕜] E => f x) hu'
-    rwa [mul_assoc, Module.End.mul_apply] at hx
+    rwa [mul_assoc, mul_apply_eq_comp] at hx
   have hv : (star u * u) x ∈ (ker u)ᗮ := by
-    rw [LinearMap.orthogonal_ker, star_eq_adjoint, Module.End.mul_apply]
+    rw [LinearMap.orthogonal_ker, star_eq_adjoint, mul_apply_eq_comp]
     exact LinearMap.mem_range_self _ _
   have hz : x - (star u * u) x ∈ ((ker u)ᗮ)ᗮ := by
     rw [Submodule.orthogonal_orthogonal, LinearMap.mem_ker, map_sub, huxx, sub_self]
@@ -156,7 +156,7 @@ theorem isPartialIsometry_iff_norm_map {u : E →ₗ[𝕜] E} :
       have hw0 := inner_self_eq_zero.mp hzero
       rw [hw, sub_eq_zero] at hw0
       exact hw0
-    rw [mul_assoc, Module.End.mul_apply, star_eq_adjoint, Module.End.mul_apply, hqP]
+    rw [mul_assoc, mul_apply_eq_comp, star_eq_adjoint, mul_apply_eq_comp, hqP]
     exact hux.symm
 
 /-- **Constructor** used by the polar decomposition: a linear map that is isometric on a submodule

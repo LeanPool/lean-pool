@@ -148,7 +148,7 @@ theorem weightedSplitTraceLaurentJacobianFactors_span_top
     have hsum : B + (X ^ 2 - 1) ∈ I := I.add_mem hB hXSquare
     rw [hBeq] at hsum
     convert hsum using 1
-    all_goals ring
+    ring
   have hAlphaSquareY : a ^ 2 * Y ^ 2 - 1 ∈ I := by
     have hproduct : (a * X * Y - 1) * (a * X * Y + 1) ∈ I :=
       I.mul_mem_right (a * X * Y + 1) hAlphaXY
@@ -156,14 +156,14 @@ theorem weightedSplitTraceLaurentJacobianFactors_span_top
       I.mul_mem_left (a ^ 2 * Y ^ 2) hXSquare
     have hsub := I.sub_mem hproduct hcorrection
     convert hsub using 1
-    all_goals ring
+    ring
   have hProductMinusOne : a * b - 1 ∈ I := by
     have haA : a * A ∈ I := I.mul_mem_left a hA
     rw [hAeq] at haA
     have htwice : 2 * (a * X * Y - 1) ∈ I := I.mul_mem_left 2 hAlphaXY
     have hcombination := I.add_mem (I.sub_mem haA hAlphaSquareY) htwice
     convert hcombination using 1
-    all_goals ring
+    ring
   have hProductUnit : IsUnit (a * b - 1) := by
     have h : IsUnit (alpha * beta - 1) :=
       isUnit_iff_ne_zero.mpr (sub_ne_zero.mpr hnondegenerate)

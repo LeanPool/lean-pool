@@ -365,7 +365,7 @@ theorem part_solution_test_inequality (a : CoeffField d) (hV : IsOpenBoundedConv
           (1 / (2 * K)) * (φ.toScalarL2 x * φ.toScalarL2 x)
         convert scalar_truncation_error_le (x := ZeroTraceSobolev.toL2 u x)
           (y := φ.toScalarL2 x) hK using 1
-        all_goals ring
+        ring
       · have hxS : x ∉ S := hx
         rw [ite_eq_right hxS, mul_zero]
         exact mul_nonneg (by positivity) (mul_self_nonneg _)
@@ -398,7 +398,7 @@ theorem part_solution_test_inequality (a : CoeffField d) (hV : IsOpenBoundedConv
           coefficient_truncation_error_le (d := d) (K := K) (n := nR)
             rfl hnR hlam hM hLamM (hEll.2 x hxV)
             (ZeroTraceSobolev.gradient u x) (φ.gradToHilbertVectorL2 x) using 1
-        all_goals ring
+        ring
       · rw [ite_eq_right hx, inner_zero_right]
         exact mul_nonneg (div_nonneg (sq_nonneg _) (by norm_num)) real_inner_self_nonneg
     have hpre : D ≤
@@ -418,7 +418,7 @@ theorem part_solution_test_inequality (a : CoeffField d) (hV : IsOpenBoundedConv
     have hM0 : M ≠ 0 := hM.ne'
     have hlam0 : lam ≠ 0 := hlam.ne'
     convert hpre using 1
-    all_goals field_simp [hn0, hM0, hlam0]
+    field_simp [hn0, hM0, hlam0]
   have htendInv : Tendsto (fun n : ℕ =>
       (1 : ℝ) / ((n + 1 : ℕ) : ℝ) ^ 2) atTop (nhds 0) := by
     have ht := tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)

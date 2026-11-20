@@ -249,8 +249,8 @@ private theorem suslin_exists_away_specialLinear_eq_of_localization_eq
   refine ⟨e, ?_⟩
   apply Matrix.SpecialLinearGroup.ext
   intro i j
-  apply Polynomial.ext
-  intro n
+  apply AddMonoidAlgebra.ext
+  ext n : 1
   change
     (Polynomial.map (suslinAwayToProduct M d e) (x.1 i j)).coeff n =
       (Polynomial.map (suslinAwayToProduct M d e) (y.1 i j)).coeff n
@@ -314,8 +314,8 @@ private theorem suslin_exists_away_elementary_of_atPrime
       Polynomial.map (suslinAwayToAtPrime m d)
         (Polynomial.map
           (algebraMap A (Localization.Away (d : A))) (g.1 i j))
-    apply Polynomial.ext
-    intro n
+    apply AddMonoidAlgebra.ext
+    ext n : 1
     simp only [coeff_map, suslinAwayToAtPrime_algebraMap]
   obtain ⟨e, heq'⟩ :=
     suslin_exists_away_specialLinear_eq_of_localization_eq
@@ -345,8 +345,8 @@ private theorem suslin_exists_away_elementary_of_atPrime
         Polynomial.map
           (algebraMap A
             (Localization.Away ((d * e : m.primeCompl) : A))) (g.1 i j)
-    apply Polynomial.ext
-    intro n
+    apply AddMonoidAlgebra.ext
+    ext n : 1
     simp only [Polynomial.coeff_map]
     exact suslinAwayToProduct_algebraMap
       m.primeCompl d e ((g.1 i j).coeff n)
@@ -477,7 +477,7 @@ private theorem suslinPolynomialDilate_zero
   intro i j
   simp only [suslinPolynomialDilate_entry, eq_intCast, Int.cast_zero, zero_mul,
     Polynomial.eval₂_at_zero, Polynomial.coeff_zero_eq_eval_zero, suslinConstantSection,
-    suslinEvaluation, Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply,
+    suslinEvaluation, Matrix.SpecialLinearGroup.map_apply_coe,
     Polynomial.coe_evalRingHom, Matrix.map_apply]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -2984,14 +2984,14 @@ instance instYT2Space : T2Space Y := yClosedEmbedding.toIsEmbedding.t2Space
 public
 instance instXSecondCountableTopology : SecondCountableTopology X := by
   let : Countable R :=
-    (AddMonoidAlgebra.coeff_injective.comp Polynomial.toFinsupp_injective).countable
+    AddMonoidAlgebra.coeff_injective.countable
   exact xClosedEmbedding.toIsEmbedding.secondCountableTopology
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 public
 instance instYSecondCountableTopology : SecondCountableTopology Y := by
   let : Countable R :=
-    (AddMonoidAlgebra.coeff_injective.comp Polynomial.toFinsupp_injective).countable
+    AddMonoidAlgebra.coeff_injective.countable
   let : Countable B := by
     change Countable (Submodule.span F (Set.range square))
     infer_instance
@@ -6153,7 +6153,7 @@ def kLinear : K →* (V ≃ₗ[F] V) where
     apply LinearEquiv.ext
     intro v
     change Matrix.SpecialLinearGroup.toLin' (pi₂ 1) v = v
-    simp only [map_one, LinearEquiv.coe_one, id_eq]
+    simp only [map_one, FunLike.coe_one_eq_id, id_eq]
   map_mul' k l := by
     apply LinearEquiv.ext
     intro v
@@ -6211,7 +6211,7 @@ def kDividedSquareLinear : K →* (B ≃ₗ[F] B) where
   map_one' := by
     ext b
     change kTensorLinear 1 (b : T) = (b : T)
-    simp only [map_one, LinearEquiv.coe_one, id_eq]
+    simp only [map_one, FunLike.coe_one_eq_id, id_eq]
   map_mul' k l := by
     ext b
     change kTensorLinear (k * l) (b : T) =
@@ -6242,10 +6242,10 @@ def kDLinear : K →* (D ≃ₗ[F] D) where
   toFun k := (kLinear k).prodCongr (kDividedSquareLinear k)
   map_one' := by
     ext d <;>
-      simp only [map_one, LinearEquiv.prodCongr_apply, LinearEquiv.coe_one, id_eq, Prod.mk.eta]
+      simp only [map_one, LinearEquiv.prodCongr_apply, FunLike.coe_one_eq_id, id_eq, Prod.mk.eta]
   map_mul' k l := by
     ext d <;>
-      simp only [map_mul, LinearEquiv.prodCongr_apply, LinearEquiv.mul_apply, kLinear_apply,
+      simp only [map_mul, LinearEquiv.prodCongr_apply, mul_apply_eq_comp, kLinear_apply,
         kDividedSquareLinear_val]
 
 
@@ -6259,7 +6259,7 @@ def kDAction : K →* MulAut (Multiplicative D) where
     apply MulEquiv.ext
     intro d
     change kDLinear 1 (Multiplicative.toAdd d) = Multiplicative.toAdd d
-    simp only [map_one, LinearEquiv.coe_one, id_eq]
+    simp only [map_one, FunLike.coe_one_eq_id, id_eq]
   map_mul' k l := by
     apply MulEquiv.ext
     intro d
@@ -6531,13 +6531,13 @@ def kXLinear : K →* (X ≃ₗ[F] X) where
     intro ℓ
     apply LinearMap.ext
     intro v
-    simp only [inv_one, map_one, LinearEquiv.dualMap_apply, LinearEquiv.coe_one, id_eq]
+    simp only [inv_one, map_one, LinearEquiv.dualMap_apply, FunLike.coe_one_eq_id, id_eq]
   map_mul' k h := by
     apply LinearEquiv.ext
     intro ℓ
     apply LinearMap.ext
     intro v
-    simp only [mul_inv_rev, map_mul, map_inv, LinearEquiv.dualMap_apply, LinearEquiv.mul_apply,
+    simp only [mul_inv_rev, map_mul, map_inv, LinearEquiv.dualMap_apply, mul_apply_eq_comp,
       LinearEquiv.coe_inv]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -6556,13 +6556,13 @@ def kYLinear : K →* (Y ≃ₗ[F] Y) where
     intro q
     apply LinearMap.ext
     intro b
-    simp only [inv_one, map_one, LinearEquiv.dualMap_apply, LinearEquiv.coe_one, id_eq]
+    simp only [inv_one, map_one, LinearEquiv.dualMap_apply, FunLike.coe_one_eq_id, id_eq]
   map_mul' k h := by
     apply LinearEquiv.ext
     intro q
     apply LinearMap.ext
     intro b
-    simp only [mul_inv_rev, map_mul, map_inv, LinearEquiv.dualMap_apply, LinearEquiv.mul_apply,
+    simp only [mul_inv_rev, map_mul, map_inv, LinearEquiv.dualMap_apply, mul_apply_eq_comp,
       LinearEquiv.coe_inv]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
@@ -6655,10 +6655,10 @@ def kCarryAction (n : ℕ) : K →* MulAut (Multiplicative (CarryGroup n)) where
     apply CarryGroup.ext
     · change kXLinear 1 (Multiplicative.toAdd z).linear =
         (Multiplicative.toAdd z).linear
-      simp only [map_one, LinearEquiv.coe_one, id_eq]
+      simp only [map_one, FunLike.coe_one_eq_id, id_eq]
     · change kYLinear 1 (Multiplicative.toAdd z).quadratic =
         (Multiplicative.toAdd z).quadratic
-      simp only [map_one, LinearEquiv.coe_one, id_eq]
+      simp only [map_one, FunLike.coe_one_eq_id, id_eq]
   map_mul' k h := by
     apply MulEquiv.ext
     intro z
@@ -6780,7 +6780,7 @@ def paperSplitPerm : K →* Equiv.Perm (X × Y) where
     apply Equiv.ext
     intro z
     change (kXLinear 1 z.1, kYLinear 1 z.2) = z
-    simp only [map_one, LinearEquiv.coe_one, id_eq, Prod.mk.eta]
+    simp only [map_one, FunLike.coe_one_eq_id, id_eq, Prod.mk.eta]
   map_mul' k h := by
     apply Equiv.ext
     intro z
@@ -6788,7 +6788,7 @@ def paperSplitPerm : K →* Equiv.Perm (X × Y) where
       (kXLinear (k * h) z.1, kYLinear (k * h) z.2) =
         (kXLinear k (kXLinear h z.1),
           kYLinear k (kYLinear h z.2))
-    simp only [map_mul, LinearEquiv.mul_apply]
+    simp only [map_mul, mul_apply_eq_comp]
 
 /-- Cross-module support for the infinite Connes-rigidity construction. -/
 private theorem continuous_paperSplitAddAut (k : K) :
@@ -6846,9 +6846,9 @@ def paperCarryPerm (n : ℕ) : K →* Equiv.Perm (CarryGroup n) where
     intro z
     apply CarryGroup.ext
     · change kXLinear 1 z.linear = z.linear
-      simp only [map_one, LinearEquiv.coe_one, id_eq]
+      simp only [map_one, FunLike.coe_one_eq_id, id_eq]
     · change kYLinear 1 z.quadratic = z.quadratic
-      simp only [map_one, LinearEquiv.coe_one, id_eq]
+      simp only [map_one, FunLike.coe_one_eq_id, id_eq]
   map_mul' k h := by
     apply Equiv.ext
     intro z

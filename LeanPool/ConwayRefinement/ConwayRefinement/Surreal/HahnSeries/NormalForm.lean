@@ -1087,7 +1087,8 @@ instance : SuccOrder (PartialSum x) :=
     intro y hy z
     rw [isMax_iff_eq_top] at hy
     rw [← length_lt_length, ← length_le_length, length_succ'_of_ne, Order.add_one_le_iff]
-    contrapose! hy
+    intro h
+    apply hy
     rwa [← carrier_inj, ← toSurreal_inj, coe_carrier_top, eq_comm]
   ) (by simp [succ', coe_carrier_top])
 

@@ -135,7 +135,8 @@ theorem stoppingChild_mass_le
   calc
     (∫ x in J.carrier, ‖f x‖) ≤ ∫ x in K.carrier, ‖f x‖ :=
       setIntegral_mono_set hf.norm.integrableOn
-        (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x)) hJK.eventuallyLE
+        (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
+        (Filter.Eventually.of_forall fun _ hx ↦ hJK hx)
     _ = intervalL1Average f K * K.length := (intervalL1Average_mul_length f K).symm
     _ ≤ (10 * intervalL1Average f I₀) * (2 * J.length) :=
       mul_le_mul havg hlen' K.length_pos.le (by positivity [intervalL1Average_nonneg f I₀])
@@ -162,7 +163,7 @@ theorem badScaleInput_localMass_le
     _ ≤ ∫ x in I.carrier, ‖f x‖ :=
       setIntegral_mono_set hf.norm.integrableOn
         (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
-        I.centralThird_subset_carrier.eventuallyLE
+        (Filter.Eventually.of_forall fun _ hx ↦ I.centralThird_subset_carrier hx)
     _ = intervalL1Average f I * I.length := (intervalL1Average_mul_length f I).symm
     _ ≤ _ := mul_le_mul_of_nonneg_right
       (goodCollection_averages_le hsub hI).1 I.length_pos.le

@@ -41,7 +41,7 @@ theorem ScheideReversedPathPreparation.helper_hparity_47.{u_1, u_2} :
   classical
   intro V E G k e0 phi T alpha beta p d hd n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro hn
     constructor
     · intro he

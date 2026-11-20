@@ -54,7 +54,7 @@ noncomputable def nominalDfCsb (x : Var) (y : Var) (A : Class) (B : Class)
               simp only [List.mem_cons, List.not_mem_nil, or_false, Prod.mk.injEq] at h;
               repeat'
                 ((rcases h with ⟨rfl, rfl⟩));
-                all_goals aesop)) (TAlphaClass.cab (TAlphaWff.classMem (TAlphaClass.cv
+                aesop)) (TAlphaClass.cab (TAlphaWff.classMem (TAlphaClass.cv
                 (TAlphaVar.there (Ne.symm (Nat.ne_of_lt (mem_lt_freshVar support_mem_0000 0)))
                   (Ne.symm dv_x_y) (TAlphaVar.here _ _ _))) (TAlphaClass.reflOfFvFresh _ _
                 (by

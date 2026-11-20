@@ -28,7 +28,7 @@ theorem measurable_particlePosition {N : ℕ} (i : Fin N) :
 
 theorem measurable_state_norm_sq {N q : ℕ} (ψ : State N q) :
     Measurable (fun x : Configuration N => (‖ψ x‖₊ : ℝ≥0∞) ^ 2) :=
-  (Lp.stronglyMeasurable ψ).measurable.nnnorm.coe_nnreal_ennreal.pow_const 2
+  (Lp.stronglyMeasurable ψ).measurable.nnNorm.coe_nnreal_ennreal.pow_const 2
 
 theorem measurable_inserted_state_norm_sq {N q : ℕ} (ψ : State N q) (i : Fin N) :
     Measurable (fun z : Position × OtherConfiguration i =>
@@ -85,7 +85,7 @@ theorem lintegral_state_norm_sq {N q : ℕ} (ψ : State N q) :
   have h := eLpNorm_nnreal_pow_eq_lintegral (p := (2 : ℝ≥0)) (by norm_num)
     (Lp.aestronglyMeasurable ψ)
   simpa only [ENNReal.coe_ofNat, NNReal.coe_ofNat, ENNReal.rpow_two,
-    ← Lp.enorm_def, enorm_eq_nnnorm] using h.symm
+    ← Lp.eNorm_def, eNorm_eq_nnNorm] using h.symm
 
 theorem density_mass {N q : ℕ} (ψ : State N q) :
     (∫⁻ x : Position, density ψ x) = (N : ℝ≥0∞) * (‖ψ‖₊ : ℝ≥0∞) ^ 2 := by

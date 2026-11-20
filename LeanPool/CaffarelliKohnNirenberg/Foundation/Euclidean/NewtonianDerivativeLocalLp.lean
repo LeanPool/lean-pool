@@ -223,8 +223,8 @@ private theorem scalarConvolution_aemeasurable {f g : Vec3 → ℝ}
 private theorem enorm_scalarConvolution_le (f g : Vec3 → ℝ) (x : Vec3) :
     ‖scalarConvolution f g x‖ₑ ≤
       convolutionMajorant (fun y => ‖f y‖ₑ) (fun y => ‖g y‖ₑ) x := by
-  simpa only [scalarConvolution, convolutionMajorant, enorm_mul] using
-    (enorm_integral_le_lintegral_enorm
+  simpa only [scalarConvolution, convolutionMajorant, eNorm_mul] using
+    (eNorm_integral_le_lintegral_eNorm
       (fun y : Vec3 => f y * g (x - y)))
 
 /-- Young's estimate for the exponents used by the truncated Newtonian derivative.
@@ -234,20 +234,20 @@ theorem eLpNorm_scalarConvolution_six_fifths_three_halves
     eLpNorm (scalarConvolution f g) (ENNReal.ofReal (3 / 2 : ℝ)) volume ≤
       eLpNorm f (ENNReal.ofReal (6 / 5 : ℝ)) volume *
         eLpNorm g (ENNReal.ofReal (6 / 5 : ℝ)) volume := by
-  have hmajor := convolutionMajorant_young_three_halves hf.enorm hg.enorm
+  have hmajor := convolutionMajorant_young_three_halves hf.eNorm hg.eNorm
   have hb : (∫⁻ x : Vec3, ‖scalarConvolution f g x‖ₑ ^ (3 / 2 : ℝ)) ≤
       (∫⁻ y : Vec3, ‖f y‖ₑ ^ (6 / 5 : ℝ)) ^ (5 / 4 : ℝ) *
         (∫⁻ z : Vec3, ‖g z‖ₑ ^ (6 / 5 : ℝ)) ^ (5 / 4 : ℝ) := by
     refine (lintegral_mono fun x => ?_).trans hmajor
     exact ENNReal.rpow_le_rpow (enorm_scalarConvolution_le f g x) (by norm_num)
   have hp := ENNReal.rpow_le_rpow hb (by norm_num : (0 : ℝ) ≤ 2 / 3)
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := ENNReal.ofReal (3 / 2 : ℝ)) (by positivity) ENNReal.ofReal_ne_top
       (scalarConvolution_aemeasurable hf hg),
-    eLpNorm_eq_lintegral_rpow_enorm_toReal
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := ENNReal.ofReal (6 / 5 : ℝ)) (by positivity) ENNReal.ofReal_ne_top
         hf.aestronglyMeasurable,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := ENNReal.ofReal (6 / 5 : ℝ)) (by positivity) ENNReal.ofReal_ne_top
         hg.aestronglyMeasurable]
   simp only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3 / 2),
@@ -265,15 +265,15 @@ private theorem ae_integrable_scalarConvolution_six_fifths_three_halves
     ∀ᵐ x ∂volume, Integrable (fun y : Vec3 => f y * g (x - y)) := by
   have hfm : (∫⁻ y : Vec3, ‖f y‖ₑ ^ (6 / 5 : ℝ)) < ∞ := by
     simpa only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 6 / 5)] using
-      (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+      (lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
         (p := ENNReal.ofReal (6 / 5 : ℝ)) (by positivity) ENNReal.ofReal_ne_top
         hf₆.eLpNorm_lt_top)
   have hgm : (∫⁻ y : Vec3, ‖g y‖ₑ ^ (6 / 5 : ℝ)) < ∞ := by
     simpa only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 6 / 5)] using
-      (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+      (lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
         (p := ENNReal.ofReal (6 / 5 : ℝ)) (by positivity) ENNReal.ofReal_ne_top
         hg₆.eLpNorm_lt_top)
-  have hmajor := convolutionMajorant_young_three_halves hf.enorm hg.enorm
+  have hmajor := convolutionMajorant_young_three_halves hf.eNorm hg.eNorm
   have hfin : (∫⁻ x : Vec3,
       convolutionMajorant (fun y => ‖f y‖ₑ) (fun y => ‖g y‖ₑ) x ^ (3 / 2 : ℝ)) < ∞ := by
     exact hmajor.trans_lt (by finiteness)
@@ -281,7 +281,7 @@ private theorem ae_integrable_scalarConvolution_six_fifths_three_halves
       convolutionMajorant (fun y => ‖f y‖ₑ) (fun y => ‖g y‖ₑ) x < ∞ := by
     have hpow : ∀ᵐ x ∂volume,
         convolutionMajorant (fun y => ‖f y‖ₑ) (fun y => ‖g y‖ₑ) x ^ (3 / 2 : ℝ) < ∞ :=
-      ae_lt_top ((convolutionMajorant_aemeasurable hf.enorm hg.enorm).pow_const _)
+      ae_lt_top ((convolutionMajorant_aemeasurable hf.eNorm hg.eNorm).pow_const _)
         (by exact hfin.ne)
     filter_upwards [hpow] with x hx
     by_contra hx'
@@ -290,8 +290,8 @@ private theorem ae_integrable_scalarConvolution_six_fifths_three_halves
     simp [htop'] at hx
   filter_upwards [htop] with x hx
   refine ⟨(hf.mul (hg.comp (measurable_const.sub measurable_id))).aestronglyMeasurable, ?_⟩
-  rw [hasFiniteIntegral_iff_enorm]
-  simpa only [convolutionMajorant, enorm_mul] using hx
+  rw [hasFiniteIntegral_iff_eNorm]
+  simpa only [convolutionMajorant, eNorm_mul] using hx
 
 /-! The next declarations specialize the preceding Young estimate to the
 three-dimensional Newtonian derivative. -/
@@ -417,7 +417,7 @@ theorem newtonianDerivative_far_integral_enorm_le
   calc
     ‖newtonianDerivativePotential i G x‖ₑ ≤
         ∫⁻ y, ‖spatialDeriv newtonianKernel i (x - y) * G y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y, ENNReal.ofReal ((4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹) * ‖G y‖ₑ := by
       apply lintegral_mono
       intro y
@@ -426,11 +426,11 @@ theorem newtonianDerivative_far_integral_enorm_le
       · have hbound := newtonianDerivative_far_kernel_bound hR' (hfar y hGy) i
         have hbound' : ‖spatialDeriv newtonianKernel i (x - y)‖ₑ ≤
           ENNReal.ofReal ((4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹) := by
-          simpa only [Real.enorm_eq_ofReal_abs] using ENNReal.ofReal_le_ofReal hbound
+          simpa only [Real.eNorm_eq_ofReal_abs] using ENNReal.ofReal_le_ofReal hbound
         calc
           ‖spatialDeriv newtonianKernel i (x - y) * G y‖ₑ =
               ‖spatialDeriv newtonianKernel i (x - y)‖ₑ * ‖G y‖ₑ := by
-            rw [← enorm_mul]
+            rw [← eNorm_mul]
           _ ≤ ENNReal.ofReal ((4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹) * ‖G y‖ₑ :=
             mul_le_mul_of_nonneg_right hbound' (by positivity)
     _ = ENNReal.ofReal ((4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹) *
@@ -446,14 +446,14 @@ theorem scalarConvolution_far_enorm_le
   calc
     ‖scalarConvolution G (farNewtonianDerivative R i) x‖ₑ ≤
         ∫⁻ y, ‖G y * farNewtonianDerivative R i (x - y)‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y, ENNReal.ofReal ((4 * Real.pi)⁻¹ * (R ^ 2)⁻¹) * ‖G y‖ₑ := by
       apply lintegral_mono
       intro y
       calc
         ‖G y * farNewtonianDerivative R i (x - y)‖ₑ =
             ‖farNewtonianDerivative R i (x - y)‖ₑ * ‖G y‖ₑ := by
-          rw [enorm_mul]
+          rw [eNorm_mul]
           ac_rfl
         _ ≤ ENNReal.ofReal ((4 * Real.pi)⁻¹ * (R ^ 2)⁻¹) * ‖G y‖ₑ := by
           have hbound := norm_farNewtonianDerivative_le hR i (x - y)
@@ -484,7 +484,7 @@ theorem eLpNorm_one_le_of_memLp_six_fifths_of_support
   have honeK : AEMeasurable oneK := by
     exact (measurable_const.indicator hKmeas).aemeasurable
   have hholder := ENNReal.lintegral_mul_le_Lp_mul_Lq (volume : Measure Vec3)
-    hconj hGmeas.enorm.aemeasurable honeK
+    hconj hGmeas.eNorm.aemeasurable honeK
   have hleft : (∫⁻ y, ‖G y‖ₑ * oneK y) = ∫⁻ y, ‖G y‖ₑ := by
     apply lintegral_congr
     intro y
@@ -500,7 +500,7 @@ theorem eLpNorm_one_le_of_memLp_six_fifths_of_support
     simp
   have hGnorm : eLpNorm G (ENNReal.ofReal (6 / 5 : ℝ)) volume =
       (∫⁻ y, ‖G y‖ₑ ^ (6 / 5 : ℝ)) ^ (5 / 6 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := ENNReal.ofReal (6 / 5 : ℝ)) (by positivity) ENNReal.ofReal_ne_top
       hGmeas.aestronglyMeasurable]
     simp only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 6 / 5)]
@@ -508,7 +508,7 @@ theorem eLpNorm_one_le_of_memLp_six_fifths_of_support
     norm_num
   calc
     eLpNorm G 1 volume = ∫⁻ y, ‖G y‖ₑ :=
-      eLpNorm_one_eq_lintegral_enorm hGmeas.aestronglyMeasurable
+      eLpNorm_one_eq_lintegral_eNorm hGmeas.aestronglyMeasurable
     _ = ∫⁻ y, ‖G y‖ₑ * oneK y := hleft.symm
     _ ≤ (∫⁻ y, ‖G y‖ₑ ^ (6 / 5 : ℝ)) ^ (5 / 6 : ℝ) *
         (∫⁻ y, oneK y ^ (6 : ℝ)) ^ (1 / 6 : ℝ) := by
@@ -594,9 +594,9 @@ theorem newtonianDerivativePotential_eLpNorm_three_halves_restrict_ball_le_split
         ‖(4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹ * (∫ y : Vec3, ‖G y‖)‖ₑ := by
     have h := scalarConvolution_far_enorm_le (G := G) i hR' x
     have hnormG : ENNReal.ofReal (∫ y : Vec3, ‖G y‖) = ∫⁻ y, ‖G y‖ₑ :=
-      ofReal_integral_norm_eq_lintegral_enorm hGint
+      ofReal_integral_norm_eq_lintegral_eNorm hGint
     have hC : 0 ≤ (4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹ := by positivity
-    rw [Real.enorm_eq_ofReal (mul_nonneg hC (integral_nonneg (fun _ => norm_nonneg _))),
+    rw [Real.eNorm_eq_ofReal (mul_nonneg hC (integral_nonneg (fun _ => norm_nonneg _))),
       ENNReal.ofReal_mul hC, hnormG]
     exact h
   have hfarMeas : AEStronglyMeasurable (scalarConvolution G kFar) volume :=
@@ -605,7 +605,7 @@ theorem newtonianDerivativePotential_eLpNorm_three_halves_restrict_ball_le_split
       eLpNorm (fun _ : Vec3 =>
         (4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹ * (∫ y : Vec3, ‖G y‖))
         (ENNReal.ofReal (3 / 2 : ℝ)) μ := by
-    apply eLpNorm_mono_enorm_ae (μ := μ) hfarMeas.restrict
+    apply eLpNorm_mono_eNorm_ae (μ := μ) hfarMeas.restrict
     exact Eventually.of_forall hfarBound
   have hμne : μ ≠ 0 := by
     intro hzero
@@ -620,8 +620,8 @@ theorem newtonianDerivativePotential_eLpNorm_three_halves_restrict_ball_le_split
   have hC : 0 ≤ (4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹ := by positivity
   have hGintnorm : ENNReal.ofReal (∫ y : Vec3, ‖G y‖) =
       eLpNorm G 1 volume := by
-    rw [ofReal_integral_norm_eq_lintegral_enorm hGint,
-      (eLpNorm_one_eq_lintegral_enorm hGmeas.aestronglyMeasurable).symm]
+    rw [ofReal_integral_norm_eq_lintegral_eNorm hGint,
+      (eLpNorm_one_eq_lintegral_eNorm hGmeas.aestronglyMeasurable).symm]
   have hfarLp' : eLpNorm (scalarConvolution G kFar) (ENNReal.ofReal (3 / 2 : ℝ)) μ ≤
       ENNReal.ofReal ((4 * Real.pi)⁻¹ * (R' ^ 2)⁻¹) *
         volume (ball (0 : Vec3) ρ) ^ (2 / 3 : ℝ) *
@@ -638,7 +638,7 @@ theorem newtonianDerivativePotential_eLpNorm_three_halves_restrict_ball_le_split
           volume (closedBall (0 : Vec3) R) ^ (1 / 6 : ℝ) *
           eLpNorm G (ENNReal.ofReal (6 / 5 : ℝ)) volume := by
         rw [Measure.restrict_apply_univ,
-          Real.enorm_eq_ofReal (mul_nonneg hC (integral_nonneg (fun _ => norm_nonneg _))),
+          Real.eNorm_eq_ofReal (mul_nonneg hC (integral_nonneg (fun _ => norm_nonneg _))),
           ENNReal.ofReal_mul hC, hGintnorm,
           ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 3 / 2)]
         have hL1 := eLpNorm_one_le_of_memLp_six_fifths_of_support

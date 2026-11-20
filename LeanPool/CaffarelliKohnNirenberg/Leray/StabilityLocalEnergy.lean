@@ -38,17 +38,17 @@ theorem stability_local_energy_lintegral_lt_top
   have hu2 : MemLp u 2 μ :=
     @MemLp.mono_exponent _ _ _ μ u _ _ 2 3 hfinite hu (by norm_num)
   have huInt : (∫⁻ z, ‖u z‖ₑ ^ (2 : ℝ) ∂μ) < ⊤ := by
-    have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hu2.eLpNorm_lt_top
     norm_num at h ⊢
     exact h
   have hDuInt : (∫⁻ z, ‖Du z‖ₑ ^ (2 : ℝ) ∂μ) < ⊤ := by
-    have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+    have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
       (p := (2 : ℝ≥0∞)) (by norm_num) (by norm_num) hDu.eLpNorm_lt_top
     norm_num at h ⊢
     exact h
   have hmeas : AEMeasurable (fun z => ‖u z‖ₑ ^ (2 : ℝ)) μ :=
-    hu2.aestronglyMeasurable.enorm.pow_const (2 : ℝ)
+    hu2.aestronglyMeasurable.eNorm.pow_const (2 : ℝ)
   change (∫⁻ z, ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ) ∂μ) < ⊤
   rw [lintegral_add_left' hmeas]
   exact ENNReal.add_lt_top.mpr ⟨huInt, hDuInt⟩

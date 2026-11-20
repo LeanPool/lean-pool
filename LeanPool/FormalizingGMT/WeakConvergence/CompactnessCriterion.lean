@@ -221,7 +221,7 @@ private lemma weighted_univ_le_one (μ : ℕ → Measure X) (K : CompactExhausti
   rw [hw_coe, lintegral_tsum]
   · calc
       ∑' m, ∫⁻ x, (weightCoefficient B m * cutoff m x : ℝ≥0) ∂μ k
-        ≤ ∑' m, (geometricWeight m : ℝ≥0∞) := ENNReal.tsum_le_tsum fun m ↦ by
+        ≤ ∑' m, (geometricWeight m : ℝ≥0∞) := tsum_le_tsum fun m ↦ by
           change (∫⁻ x, (weightCoefficient B m : ℝ≥0∞) *
             (cutoff m x : ℝ≥0∞) ∂μ k) ≤ (geometricWeight m : ℝ≥0∞)
           rw [lintegral_const_mul]
@@ -258,7 +258,7 @@ private lemma weighted_compl_le_geometric (μ : ℕ → Measure X)
       ∑' m, ∫⁻ x in (K N)ᶜ,
           ((weightCoefficient B m * cutoff m x : ℝ≥0) : ℝ≥0∞) ∂μ k
         ≤ ∑' m, if N ≤ m then (geometricWeight m : ℝ≥0∞) else 0 :=
-          ENNReal.tsum_le_tsum fun m ↦ by
+          tsum_le_tsum fun m ↦ by
             split_ifs with hm
             · calc
                 (∫⁻ x in (K N)ᶜ,
@@ -337,13 +337,13 @@ private theorem exists_tendsto_subseq_of_mass_le_of_compl_le
     have hmass_lower (j : ℕ) : c ≤ (ν' j).mass :=
       (hN (j + N) (by omega)).le
     have hν'_ne (j : ℕ) : ν' j ≠ 0 := by
-      rw [← FiniteMeasure.mass_nonzero_iff]
+      rw [← FiniteMeasure.mass_ne_zero_iff]
       exact (hc_pos.trans_le (hmass_lower j)).ne'
     let u' : ℕ → ℝ≥0 := fun n ↦ u n / c
     have hu' : Tendsto u' atTop (𝓝 0) := by
       simpa [u', div_eq_mul_inv] using hu.mul_const c⁻¹
     have htail_normalize (j n : ℕ) : (ν' j).normalize (K n)ᶜ ≤ u' n := by
-      rw [(ν' j).normalize_eq_of_nonzero (hν'_ne j)]
+      rw [(ν' j).normalize_eq_of_ne_zero (hν'_ne j)]
       calc
         (ν' j).mass⁻¹ * ν' j (K n)ᶜ
           ≤ c⁻¹ * u n := mul_le_mul

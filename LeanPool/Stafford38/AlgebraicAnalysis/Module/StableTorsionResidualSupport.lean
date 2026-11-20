@@ -50,7 +50,7 @@ theorem residual_nontrivial_of_support
     | zero => intro z; simp
     | succ m ih =>
         intro z
-        simp [pow_succ, Module.End.mul_apply, ih, f, scalarEnd, smul_smul]
+        simp [pow_succ, mul_apply_eq_comp, ih, f, scalarEnd, smul_smul]
   have hTann : x ^ n ∈ Module.annihilator R T := by
     rw [Module.mem_annihilator]
     intro z

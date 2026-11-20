@@ -52,7 +52,7 @@ theorem buAffineHomeomorph_symm_eq (τ scale : ℝ) (hscale : 0 < scale) :
   all_goals simp [buAffineHomeomorph, Homeomorph.trans, Homeomorph.prodCongr,
     Homeomorph.smulOfNeZero, Homeomorph.addLeft,
     Equiv.addLeft, Units.smul_def]
-  all_goals ring
+  ring
 
 /-- The inverse affine map is smooth on the ordinary product space. -/
 theorem buAffineHomeomorph_symm_contDiff

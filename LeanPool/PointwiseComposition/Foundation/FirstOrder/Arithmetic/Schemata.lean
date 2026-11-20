@@ -97,7 +97,7 @@ notation "𝐈Π₁" => IPi 1
 
 /-- The 𝐏𝐀 construction in `𝐏𝐀`. -/
 abbrev Peano : ArithmeticTheory :=
-  𝐏𝐀⁻ ∪ InductionScheme ℒₒᵣ Set.univ
+  𝐏𝐀⁻ ∪ InductionScheme ℒₒᵣ (fun _ ↦ True)
 
 /-- The «term𝐏𝐀» construction in `FFL.FirstOrder.Arithmetic`. -/
 notation "𝐏𝐀" => Peano
@@ -551,7 +551,7 @@ instance models_Peano : ℕ↓[ℒₒᵣ] ⊧* 𝐏𝐀 :=
   have : ∀ φ, ℕ↓[ℒₒᵣ] ⊧ (succInd φ).univCl := models_succInd
   simp only [Peano, Semantics.ModelsSet.union_iff,
     PeanoMinus.instModelsSetStrucORingSentenceStrNat, true_and, InductionScheme]
-  exact Semantics.ModelsSet.setOf_iff.mpr (fun ψ ⟨φ, _, hψ⟩ => hψ ▸ this φ)
+  exact Semantics.ModelsSet.setOf_iff.mpr (fun ψ ⟨φ, hψ⟩ => hψ ▸ this φ)
 
 instance sigmaOneSound_ISigmaOne : 𝐈Σ₁.SoundOnHierarchy Σ 1 :=
   inferInstance

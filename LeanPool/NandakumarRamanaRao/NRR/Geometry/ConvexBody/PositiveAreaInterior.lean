@@ -57,7 +57,7 @@ theorem convex_emptyInterior_subset_affineLine
       ⟨_, subset_affineSpan ℝ S (Classical.choose_spec (Set.nonempty_iff_ne_empty.mpr h_empty))⟩
     -- Hence the direction of the affine span is a proper submodule.
     have h_direction_ne_top : (affineSpan ℝ S).direction ≠ ⊤ := by
-      contrapose! h_affine_span
+      contrapose h_affine_span
       obtain ⟨x, hx⟩ := h_affine_span_nonempty
       ext y
       convert AffineSubspace.vadd_mem_of_mem_direction

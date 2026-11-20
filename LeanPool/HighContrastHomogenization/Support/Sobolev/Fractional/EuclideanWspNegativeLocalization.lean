@@ -298,7 +298,7 @@ private theorem negativeLocalization_pairing_le_dual_mul_full {d : ℕ}
         dsimp [r]
         rw [ENNReal.ofReal_inv_of_pos (ENNReal.toReal_pos hNzero hNtop.ne),
           ENNReal.ofReal_toReal hNtop.ne]
-      rw [Real.enorm_eq_ofReal hrpos.le, hr,
+      rw [Real.eNorm_eq_ofReal hrpos.le, hr,
         ENNReal.inv_mul_cancel hNzero hNtop.ne]
     let u : CubeEuclideanWspSmoothUnitTest Q s p.conjugate :=
       ⟨hs, hhsnorm.le⟩

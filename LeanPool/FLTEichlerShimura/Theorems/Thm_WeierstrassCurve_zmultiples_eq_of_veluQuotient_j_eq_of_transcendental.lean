@@ -136,7 +136,8 @@ theorem solution
     :=
     by
     convert ht using 2 ; exact Subsingleton.elim _ _
-  exact zmultiples_eq_of_veluQuotient_j_eq_of_forall_isogenyEndDatum_exists_int W hNs
+  exact zmultiples_eq_of_veluQuotient_j_eq_of_forall_isogenyEndDatum_exists_int
+    (charZero := inferInstance) (isAlgClosed := inferInstance) W hNs
     (fun D => IsogenyEndDatum.exists_forall_pointEnd_eq_zsmul_of_transcendental_j W hNs ht' D)
     n Q Q' hQ hQ' hΔ hΔ' hj
 

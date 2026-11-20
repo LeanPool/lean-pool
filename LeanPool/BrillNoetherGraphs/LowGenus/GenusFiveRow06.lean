@@ -601,8 +601,8 @@ theorem bananaCoefficient_eq_one (d : DegSpec 8 12)
         ConfigurationThreeChain.forward, add_right_inj, Fin.mk_one, Fin.reduceSucc, zeroChip,
         tailLedger, zero_sub, Int.reduceNeg, Fin.reduceFinMk, headContribution_same,
         tailContribution_same, positiveChip, add_left_inj]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
   all_goals ring
 
 theorem bananaCoefficient_eq_five (d : DegSpec 8 12)
@@ -624,8 +624,8 @@ theorem bananaCoefficient_eq_five (d : DegSpec 8 12)
         headContribution_same, Fin.reduceSucc, sub_zero, Fin.reduceFinMk, zeroChip,
         shiftWeight, tailLedger, rev, ConfigurationThreeChain.reverse, Finset.sum_singleton,
         add_right_inj]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
   all_goals ring
 
 theorem bananaCoefficient_eq_six (d : DegSpec 8 12)
@@ -646,8 +646,8 @@ theorem bananaCoefficient_eq_six (d : DegSpec 8 12)
         positiveChip, fwd, ConfigurationThreeChain.forward, add_left_inj, Fin.mk_one,
         headContribution_same, Fin.reduceSucc, sub_zero, Fin.reduceFinMk, zeroChip,
         shiftWeight, tailLedger, add_right_inj]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
   all_goals ring
 
 theorem bananaCoefficient_eq (c : Fin 8) (hc : isBananaCenter c = true)

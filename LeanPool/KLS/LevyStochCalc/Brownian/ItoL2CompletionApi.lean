@@ -83,7 +83,7 @@ lemma martingale_rightCont_quadVar_stochasticIntegralBrownian :
       (nhdsWithin s (Set.Ioi s)) (nhds 0) := by
     rcases le_or_gt 0 s with hs | hs
     · have hslab := tendsto_setLIntegral_Ioc_prod_zero (fun ω u => (‖H ω u‖₊ : ℝ≥0∞) ^ 2)
-        ((h_meas.nnnorm.coe_nnreal_ennreal).pow_const 2) hs (lt_add_one s)
+        ((h_meas.nnNorm.coe_nnreal_ennreal).pow_const 2) hs (lt_add_one s)
         (h_sq_int_global (s + 1) (by linarith)).ne
       refine hslab.congr' ?_
       filter_upwards [self_mem_nhdsWithin] with r hr
@@ -92,7 +92,7 @@ lemma martingale_rightCont_quadVar_stochasticIntegralBrownian :
       have hHr : ∀ᵐ ω ∂P, MeasureTheory.Integrable
           (fun u => (H ω u) ^ 2) (volume.restrict (Set.Icc (0 : ℝ) r)) :=
         (compensatorH_memLp_prod H h_meas h_sq_int_global hrpos).integrable_sq.prod_right_ae
-      rw [MeasureTheory.eLpNorm_one_eq_lintegral_enorm
+      rw [MeasureTheory.eLpNorm_one_eq_lintegral_eNorm
         (f := fun ω => (∫ u in Set.Icc (0 : ℝ) r, (H ω u) ^ 2 ∂volume)
           - ∫ u in Set.Icc (0 : ℝ) s, (H ω u) ^ 2 ∂volume)
         (((compensatorH_adapted ℱ H h_progMeas r).mono (ℱ.le r)).aestronglyMeasurable.sub
@@ -110,10 +110,10 @@ lemma martingale_rightCont_quadVar_stochasticIntegralBrownian :
       have hsplit : (∫ u in Set.Icc (0 : ℝ) r, (H ω u) ^ 2 ∂volume)
           - ∫ u in Set.Icc (0 : ℝ) s, (H ω u) ^ 2 ∂volume
           = ∫ u in Set.Ioc s r, (H ω u) ^ 2 ∂volume := by
+        have hdisjoint : Disjoint (Set.Icc (0 : ℝ) s) (Set.Ioc s r) :=
+          (Set.Iic_disjoint_Ioc (c := r) (le_refl s)).mono Set.Icc_subset_Iic_self subset_rfl
         rw [← Set.Icc_union_Ioc_eq_Icc hs hsr,
-          MeasureTheory.setIntegral_union
-            (Set.disjoint_left.mpr (fun x hx1 hx2 => absurd hx2.1 (not_lt.mpr hx1.2)))
-            measurableSet_Ioc hHsω hHscω]
+          MeasureTheory.setIntegral_union hdisjoint measurableSet_Ioc hHsω hHscω]
         ring
       rw [hsplit, ← ofReal_norm, Real.norm_eq_abs,
         abs_of_nonneg (MeasureTheory.integral_nonneg (fun u => sq_nonneg _)),
@@ -355,7 +355,7 @@ theorem isometry_diff_stochasticIntegralBrownian
         = ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, (‖f (ω, s)‖₊ : ℝ≥0∞) ^ 2 ∂volume ∂P := by
     intro f hf
     rw [MeasureTheory.lintegral_prod _
-      (((hf.nnnorm.coe_nnreal_ennreal).pow_const 2).aemeasurable)]
+      (((hf.nnNorm.coe_nnreal_ennreal).pow_const 2).aemeasurable)]
   -- `eval_n(H) → H` in `L²(P⊗ν)` for each integrand.
   have hevalL2 : ∀ (H : Ω → ℝ → ℝ) (hm : Measurable (Function.uncurry H))
       (hp : Probability.ProgressivelyMeasurable ℱ H)
@@ -379,7 +379,7 @@ theorem isometry_diff_stochasticIntegralBrownian
       refine MeasureTheory.setLIntegral_congr_fun measurableSet_Icc (fun s _ => ?_)
       rw [show (‖H ω s - (masterApprox ℱ H hm hp hs n).eval s ω‖₊ : ℝ≥0∞)
           = ‖(masterApprox ℱ H hm hp hs n).eval s ω - H ω s‖₊ from by
-        rw [← nnnorm_neg]; congr 1; ring_nf]
+        rw [← nnNorm_neg]; congr 1; ring_nf]
     have h3 := h2.ennrpow_const ((1 : ℝ) / 2)
     rw [ENNReal.zero_rpow_of_pos (by norm_num)] at h3
     refine h3.congr (fun n => ?_)

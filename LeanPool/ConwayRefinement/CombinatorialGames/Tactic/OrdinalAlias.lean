@@ -22,7 +22,8 @@ open Lean
 
 /-- Doc-comment allowing antiquotation. -/
 meta def mkDocComment (s : String) : TSyntax `Lean.Parser.Command.docComment :=
-  .mk <| mkNode ``Parser.Command.docComment #[mkAtom "/--", mkAtom (s ++ "-/")]
+  .mk <| mkNode ``Parser.Command.docComment #[mkAtom "/--",
+    mkNode ``Parser.Command.commentBody #[mkAtom s, mkAtom "-/"]]
 
 /-- `Alias.of` -/
 meta def mkOf (Alias : TSyntax `ident) : TSyntax `ident :=

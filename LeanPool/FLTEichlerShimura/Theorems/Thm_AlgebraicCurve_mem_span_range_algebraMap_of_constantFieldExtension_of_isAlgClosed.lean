@@ -228,15 +228,15 @@ theorem linearIndependent_pow_of_transcendental {R A : Type*} [CommRing R] [Ring
   rw [linearIndependent_iff]
   intro l hl
   have hinj := transcendental_iff_injective.mp hx
-  have h0 : aeval x (Polynomial.ofFinsupp (.ofCoeff l)) = 0 := by
+  have h0 : aeval x ((.ofCoeff l : R[X])) = 0 := by
     rw [Finsupp.linearCombination_apply] at hl
-    rw [aeval_def, eval₂_eq_sum, Polynomial.sum, Polynomial.support_ofFinsupp,
+    rw [aeval_def, eval₂_eq_sum, Polynomial.sum, Polynomial.support,
       AddMonoidAlgebra.coeff_ofCoeff]
     rw [Finsupp.sum] at hl
     convert hl using 2 with n hn
-    rw [Polynomial.coeff_ofFinsupp, Algebra.smul_def]
-  have h1 : (Polynomial.ofFinsupp (.ofCoeff l) : R[X]) = 0 := hinj (by rw [h0, map_zero])
-  exact AddMonoidAlgebra.ofCoeff_eq_zero.mp (Polynomial.ofFinsupp_eq_zero.mp h1)
+    rw [Algebra.smul_def]
+  have h1 : ((.ofCoeff l : R[X]) : R[X]) = 0 := hinj (by rw [h0, map_zero])
+  exact AddMonoidAlgebra.ofCoeff_eq_zero.mp h1
 
 theorem isIntegral_of_forall_mem_valuationSubring {R L : Type*} [CommRing R] [Field L]
     [Algebra R L] (w : L)

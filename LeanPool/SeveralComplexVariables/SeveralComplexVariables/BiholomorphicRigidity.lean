@@ -53,7 +53,7 @@ theorem IsBiholomorphic.eqOn_of_value_fderiv_eq
     (hc : IsPreconnected e.source) (hb : Bornology.IsBounded e.source)
     {a : E} (ha : a ∈ e.source) (hv : e' a = e a)
     (hd : fderiv ℂ e' a = fderiv ℂ e a) : EqOn e' e e.source := by
-  let := FiniteDimensional.complete ℂ E
+  let := FiniteDimensional.completeSpace ℂ E
   have hmem : MapsTo e' e.source e.target := by
     intro x hx
     rw [← ht]
@@ -123,7 +123,7 @@ theorem IsBiholomorphic.map_smul_of_circular
     (hzero : (0 : E) ∈ e.source) (hfix : e 0 = 0)
     {z : E} (hz : z ∈ e.source) {c : ℂ} (hc1 : ‖c‖ = 1) :
     e (c • z) = c • e z := by
-  let := FiniteDimensional.complete ℂ E
+  let := FiniteDimensional.completeSpace ℂ E
   have hcn : c ≠ 0 := norm_ne_zero_iff.mp (by rw [hc1]; norm_num)
   have hci : ‖c⁻¹‖ = 1 := by simp [hc1]
   have hi0 : e.symm 0 = 0 := by simpa [hfix] using e.left_inv hzero
@@ -162,7 +162,7 @@ theorem IsBiholomorphic.exists_linearEquiv_of_circular
     (hrot : IsCircular e.source)
     (hrot' : IsCircular e.target) (hzero : (0 : E) ∈ e.source) (hfix : e 0 = 0) :
       ∃ L : E ≃L[ℂ] F, EqOn e L e.source := by
-  let := FiniteDimensional.complete ℂ F
+  let := FiniteDimensional.completeSpace ℂ F
   obtain ⟨L, hL⟩ := he.isInvertible_fderiv hzero
   refine ⟨L, ?_⟩
   have h := eqOn_fderiv_of_circle_equivariant e.open_source hc hzero he.1

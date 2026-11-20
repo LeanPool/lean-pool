@@ -253,7 +253,7 @@ noncomputable def depth (rules : List (HornClause Lg B k)) (q : BAtom B A) : ℕ
 
 private theorem derivesIn_depth {rules : List (HornClause Lg B k)} {q : BAtom B A}
     (h : Derives rules q) : derivesIn rules (depth rules q) q :=
-  Nat.sInf_mem (derives_iff_derivesIn.mp h)
+  Nat.sInf_mem (s := {n | derivesIn rules n q}) (derives_iff_derivesIn.mp h)
 
 private theorem depth_le {rules : List (HornClause Lg B k)} {n : ℕ} {q : BAtom B A}
     (h : derivesIn rules n q) : depth rules q ≤ n :=

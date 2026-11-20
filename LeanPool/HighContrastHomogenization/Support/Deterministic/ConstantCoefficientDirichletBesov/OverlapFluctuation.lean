@@ -193,7 +193,7 @@ theorem overlapCentersAverage_lintegral_rpow_enorm_two_le {d : ℕ} {E : Type*}
     have hnorm :
         AEMeasurable (fun x => ‖R x‖ₑ ^ (2 : ℝ))
           (normalizedCubeMeasure Q) :=
-      hR.aestronglyMeasurable.aemeasurable.enorm.pow_const (2 : ℝ)
+      hR.aestronglyMeasurable.aemeasurable.eNorm.pow_const (2 : ℝ)
     have hc : ENNReal.ofReal ((cubeVolume Q)⁻¹) ≠ 0 :=
       ENNReal.ofReal_ne_zero_iff.2 (inv_pos.mpr (cubeVolume_pos Q))
     simpa [normalizedCubeMeasure, cubeMeasure] using
@@ -208,7 +208,7 @@ theorem overlapCentersAverage_lintegral_rpow_enorm_two_le {d : ℕ} {E : Type*}
     have hnorm :
         AEMeasurable (fun x => ‖R x‖ₑ ^ (2 : ℝ))
           (normalizedOverlapCubeMeasure S) :=
-      (hRloc S hS).aestronglyMeasurable.aemeasurable.enorm.pow_const (2 : ℝ)
+      (hRloc S hS).aestronglyMeasurable.aemeasurable.eNorm.pow_const (2 : ℝ)
     have hc : ENNReal.ofReal ((overlapCubeVolume S)⁻¹) ≠ 0 :=
       ENNReal.ofReal_ne_zero_iff.2 (inv_pos.mpr (overlapCubeVolume_pos S))
     simpa [normalizedOverlapCubeMeasure, overlapCubeMeasure] using
@@ -223,7 +223,7 @@ theorem overlapCentersAverage_lintegral_rpow_enorm_two_le {d : ℕ} {E : Type*}
         (Q := Q) (j := j) (f := fun x => ‖R x‖ₑ ^ (2 : ℝ)) hfQ hfS
   have hIQ_lt_top : IQ < ∞ := by
     simpa [IQ] using
-      (MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+      (MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
         (p := (2 : ℝ≥0∞)) (μ := normalizedCubeMeasure Q) (f := R)
         (by norm_num) (by norm_num) hR.aestronglyMeasurable).1 hR.eLpNorm_lt_top
   have hIQ_ne_top : IQ ≠ ∞ := ne_of_lt hIQ_lt_top
@@ -231,7 +231,7 @@ theorem overlapCentersAverage_lintegral_rpow_enorm_two_le {d : ℕ} {E : Type*}
     intro S hS
     have hSlt : I S < ∞ := by
       simpa [I] using
-        (MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+        (MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
           (p := (2 : ℝ≥0∞)) (μ := normalizedOverlapCubeMeasure S) (f := R)
           (by norm_num) (by norm_num) (hRloc S (by simpa [D] using hS)).aestronglyMeasurable).1
           (hRloc S (by simpa [D] using hS)).eLpNorm_lt_top
@@ -550,7 +550,7 @@ theorem toReal_overlapCentersAtDepth_average_lintegral_fluctuation_eq_depthAvera
                 (normalizedOverlapCubeMeasure S) :=
             (hmeas S (by simpa [D] using hS)).sub aestronglyMeasurable_const
           unfold overlapCubeLpNorm
-          rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hmeasS,
+          rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hmeasS,
             ← ENNReal.toReal_pow, ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
           norm_num [I]
 
@@ -570,7 +570,7 @@ theorem lintegral_overlapCubeFluctuationVec_rpow_enorm_two_ne_top
         ‖overlapCubeFluctuationVec S u x‖ₑ ^ (2 : ℝ)
         ∂normalizedOverlapCubeMeasure S) < ∞ := by
     simpa using
-      (MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+      (MeasureTheory.eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
         (p := (2 : ℝ≥0∞))
         (μ := normalizedOverlapCubeMeasure S)
         (f := overlapCubeFluctuationVec S u)

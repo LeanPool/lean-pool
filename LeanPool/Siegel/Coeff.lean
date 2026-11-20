@@ -64,7 +64,7 @@ lemma prodChar_sq {χ₁ : DirichletCharacter ℂ N₁} {χ₂ : DirichletCharac
 
 lemma mul_apply_prime_pow (f g : ArithmeticFunction ℂ) {p : ℕ} (hp : p.Prime) (k : ℕ) :
     (f * g) (p ^ k) = ∑ i ∈ range (k + 1), f (p ^ i) * g (p ^ (k - i)) := by
-  rw [mul_apply, Nat.sum_divisorsAntidiagonal (fun x y => f x * g y),
+  rw [ArithmeticFunction.mul_apply, Nat.sum_divisorsAntidiagonal (fun x y => f x * g y),
     Nat.sum_divisors_prime_pow hp]
   refine sum_congr rfl fun i hi => ?_
   rw [Nat.pow_div (by have := mem_range.mp hi; omega) hp.pos]
@@ -143,7 +143,7 @@ lemma coeff_prime_pow_nonneg {χ₁ : DirichletCharacter ℂ N₁} {χ₂ : Diri
     simpa only [mul_comm (χ₂ p) (χ₁ p)] using this
   · have hx' : χ₁ p = 0 ∨ χ₁ p = 1 ∨ (χ₁ p = -1 ∧ χ₂ p = -1) := by
       rcases hx with h | h | h <;> rcases hy with h' | h' | h' <;>
-        (try norm_num [h, h'] at hcase) <;> (try norm_num [h, h'])
+        norm_num [h, h'] at hcase <;> norm_num [h, h']
     rw [coeff_eq', mul_apply_prime_pow _ _ hp]
     refine sum_nonneg fun i _ => mul_nonneg (zetaMul_nonneg h₂ _) ?_
     rw [XX_prime_pow _ _ hp, hψ]

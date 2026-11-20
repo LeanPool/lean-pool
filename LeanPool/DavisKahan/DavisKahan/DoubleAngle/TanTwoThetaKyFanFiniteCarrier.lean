@@ -250,7 +250,7 @@ theorem sum_absDoubleAngleTangent_le_of_finiteDimensional_invariantSubspace
   set M : Submodule 𝕜 E := U ⊔ W with hMdef
   have : FiniteDimensional 𝕜 W := Module.Finite.map U (T : E →ₗ[𝕜] E)
   have : FiniteDimensional 𝕜 M := inferInstance
-  have : CompleteSpace M := FiniteDimensional.complete 𝕜 ↥M
+  have : CompleteSpace M := FiniteDimensional.completeSpace 𝕜 ↥M
   have hUM : U ≤ M := le_sup_left
   have hMperpU : Mᗮ ≤ Uᗮ := Submodule.orthogonal_le hUM
   have hTsplit : ∀ x : E, T x = T (U.starProjection x) := by
@@ -280,7 +280,7 @@ theorem sum_absDoubleAngleTangent_le_of_finiteDimensional_invariantSubspace
     exact Submodule.starProjection_eq_self_iff.mpr (hTM (x : E))
   -- the trial subspace inside the carrier
   set U' : Submodule 𝕜 ↥M := U.comap M.subtype with hU'def
-  have : CompleteSpace U' := FiniteDimensional.complete 𝕜 ↥U'
+  have : CompleteSpace U' := FiniteDimensional.completeSpace 𝕜 ↥U'
   have hU'mem : ∀ x : ↥M, x ∈ U' ↔ (x : E) ∈ U := fun x => Iff.rfl
   have hU'perp : ∀ x : ↥M, x ∈ U'ᗮ ↔ (x : E) ∈ Uᗮ := by
     intro x

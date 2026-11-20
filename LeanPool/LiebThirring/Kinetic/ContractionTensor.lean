@@ -106,7 +106,7 @@ theorem tensorInsertion_norm (f : Lp (EuclideanSpace ℂ ι) 2 μ) (v : H) :
     rw [hs, Real.sqrt_mul (sq_nonneg ‖f x‖), Real.sqrt_sq_eq_abs, abs_norm,
       Real.sqrt_sq_eq_abs, abs_norm, mul_comm]
   rw [heq, eLpNorm_const_smul]
-  simp [enorm_eq_nnnorm, Lp.norm_def, mul_comm]
+  simp [eNorm_eq_nnNorm, Lp.norm_def, mul_comm]
 
 /-- The operator norm of insertion is bounded by the norm of the inserted
 finite-spin function. -/

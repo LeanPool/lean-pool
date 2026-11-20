@@ -235,13 +235,13 @@ theorem spatialDeriv_secondFormula {x : CKN.Vec 3} (hx : x ≠ 0)
     · subst j
       simp [secondDerivative, qDerivative, sum_apply,
         ContinuousLinearMap.proj_apply, smul_eq_mul]
-      all_goals ring_nf
+      ring_nf
     · have hjm : ¬j = m := by
         intro h
         exact hmj h.symm
       simp [secondDerivative, qDerivative, sum_apply,
         ContinuousLinearMap.proj_apply, smul_eq_mul, hmj, hjm]
-      all_goals ring_nf
+      ring_nf
   · by_cases hmj : m = j
     · subst j
       have him : ¬i = m := by
@@ -249,8 +249,8 @@ theorem spatialDeriv_secondFormula {x : CKN.Vec 3} (hx : x ≠ 0)
         exact hmi h.symm
       simp [secondDerivative, qDerivative, sum_apply,
         ContinuousLinearMap.proj_apply, smul_eq_mul, hmi, him]
-      all_goals simp only [show -(5 : ℝ) / 2 - 1 = -(7 : ℝ) / 2 by norm_num]
-      all_goals ring_nf
+      simp only [show -(5 : ℝ) / 2 - 1 = -(7 : ℝ) / 2 by norm_num]
+      ring_nf
     · by_cases hij : i = j
       · subst j
         have him : ¬i = m := by
@@ -268,7 +268,7 @@ theorem spatialDeriv_secondFormula {x : CKN.Vec 3} (hx : x ≠ 0)
           exact hmj h.symm
         simp [secondDerivative, qDerivative, sum_apply,
           ContinuousLinearMap.proj_apply, smul_eq_mul, hmi, hmj, hij, him, hjm]
-        all_goals ring_nf
+        ring_nf
 
 theorem spatialDeriv_third_radialInverse {x : CKN.Vec 3} (hx : x ≠ 0)
     (i j m : Fin 3) :
@@ -665,8 +665,8 @@ theorem newtonianKernel_spatialDeriv_size_bound {x : CKN.Vec 3} (hx : x ≠ 0)
               if l = j then x m else 0) *
               (-5 / 2 * (r ^ 7)⁻¹ * (2 * x n))| := by
         convert hsum using 1
-        all_goals congr 1
-        all_goals ring
+        congr 1
+        ring
       _ ≤ 204 * (r ^ 5)⁻¹ := by
         calc
           _ ≤

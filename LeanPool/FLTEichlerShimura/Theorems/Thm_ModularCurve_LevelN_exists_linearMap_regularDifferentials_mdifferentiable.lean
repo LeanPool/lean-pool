@@ -318,10 +318,13 @@ theorem real_add (k l : K) : real N K (k + l) =ᶠ[𝓕] fun z => real N K k z +
     (den_ne_zero N K l)
   have hk := algebraMap_ne_zero N K (den_ne_zero N K k)
   have hl := algebraMap_ne_zero N K (den_ne_zero N K l)
+  have hadd (a b : ring N) : algebraMap (ring N) K (a + b) =
+      algebraMap (ring N) K a + algebraMap (ring N) K b :=
+    (algebraMap (ring N) K).map_add' a b
   have h : algebraMap (ring N) K (num N K k * den N K l + num N K l * den N K k) /
       algebraMap (ring N) K (den N K k * den N K l) = k + l := by
     conv_rhs => rw [← num_div_den N K k, ← num_div_den N K l]
-    rw [map_add, map_mul, map_mul, map_mul]
+    rw [hadd, map_mul, map_mul, map_mul]
     field_simp
   filter_upwards [real_eventuallyEq N K (a := num N K k * den N K l + num N K l * den N K k)
     (b := den N K k * den N K l) hb h, eventually_ne_zero N (den N K k).2 (den_ne_zero N K k),

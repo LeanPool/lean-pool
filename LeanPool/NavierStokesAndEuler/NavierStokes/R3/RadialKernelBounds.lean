@@ -121,7 +121,7 @@ private theorem kernel_one_power_integrable :
     Real.rpow_nonneg (radialCommutatorKernel_nonneg (by norm_num) z) _
   refine ⟨hm.aestronglyMeasurable, ?_⟩
   change HasFiniteIntegral f volume
-  rw [hasFiniteIntegral_iff_enorm, lintegral_enorm_of_nonneg hn,
+  rw [hasFiniteIntegral_iff_eNorm, lintegral_eNorm_of_nonneg hn,
     lintegral_eq_lintegral_meas_le volume (Filter.Eventually.of_forall hn) hm.aemeasurable]
   calc
     (∫⁻ t in Ioi (0 : ℝ), volume {z | t ≤ f z}) ≤

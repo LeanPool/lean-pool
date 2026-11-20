@@ -115,14 +115,14 @@ theorem pv_unit_L2_essSup_lt_top {T t₀ R : ℝ} (x₀ : Vec3) (hR : 0 < R)
       (volume.restrict (Ioo (-1) 0)) < ⊤ := by
   have hΦ : ∀ v : Vec3, ‖R • v‖ₑ ^ (2 : ℝ) = ‖R‖ₑ ^ (2 : ℝ) * ‖v‖ₑ ^ (2 : ℝ) := by
     intro v
-    rw [enorm_smul, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
+    rw [eNorm_smul, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num)]
   have hle := pv_unit_slice_essSup_le x₀ hR hlow hup u (fun v => ‖v‖ₑ ^ (2 : ℝ))
-    (c := ‖R‖ₑ ^ (2 : ℝ)) (ENNReal.rpow_ne_top_of_nonneg (by norm_num) enorm_ne_top)
+    (c := ‖R‖ₑ ^ (2 : ℝ)) (ENNReal.rpow_ne_top_of_nonneg (by norm_num) eNorm_ne_top)
     hΦ (ae_le_essSup (μ := volume.restrict (Ioo 0 T))
       (f := fun s : ℝ => ∫⁻ x : Vec3, ‖u (x, s)‖ₑ ^ (2 : ℝ)))
   refine lt_of_le_of_lt hle (ENNReal.mul_lt_top ?_ (ENNReal.mul_lt_top
     ENNReal.ofReal_lt_top hL2))
-  exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) enorm_ne_top
+  exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) eNorm_ne_top
 
 /-- The rescaled velocity has essentially bounded critical L³ norms on the
 unit ball. -/
@@ -165,15 +165,15 @@ theorem pv_unit_energy_lt_top {T t₀ R : ℝ} (x₀ : Vec3) (hR : 0 < R)
   let G : ParabolicPoint → ℝ≥0∞ := fun z => ‖u z‖ₑ ^ (2 : ℝ) + ‖Du z‖ₑ ^ (2 : ℝ)
   let a : ℝ≥0∞ := ‖R‖ₑ ^ (2 : ℝ)
   let b : ℝ≥0∞ := ‖R ^ 2‖ₑ ^ (2 : ℝ)
-  have ha : a ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) enorm_ne_top
-  have hb : b ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) enorm_ne_top
+  have ha : a ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) eNorm_ne_top
+  have hb : b ≠ ⊤ := ENNReal.rpow_ne_top_of_nonneg (by norm_num) eNorm_ne_top
   have hpoint : ∀ z : ParabolicPoint,
       ‖CKN.rescaleVelocity R (x₀, t₀) u z‖ₑ ^ (2 : ℝ) +
           ‖CKN.rescaleGradient R (x₀, t₀) Du z‖ₑ ^ (2 : ℝ) ≤ (a + b) * G (e z) := by
     intro z
     have hv : CKN.rescaleVelocity R (x₀, t₀) u z = R • u (e z) := rfl
     have hD : CKN.rescaleGradient R (x₀, t₀) Du z = (R ^ 2) • Du (e z) := rfl
-    rw [hv, hD, enorm_smul, enorm_smul, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num),
+    rw [hv, hD, eNorm_smul, eNorm_smul, ENNReal.mul_rpow_of_nonneg _ _ (by norm_num),
       ENNReal.mul_rpow_of_nonneg _ _ (by norm_num), mul_add]
     exact add_le_add (mul_le_mul_left le_self_add _) (mul_le_mul_left le_add_self _)
   have hsub := pv_unit_subset_rescaled_slab x₀ hR hlow hup

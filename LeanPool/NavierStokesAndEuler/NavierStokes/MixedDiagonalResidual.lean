@@ -381,7 +381,9 @@ theorem exists_three_component_local_schedule {h qbig : ℝ}
       g (commonRawLoss LA LB LP)
       (scalarFamily (fun j m => |CA j m|) (fun j m => |CB j m|) (fun j m => |CP j m|))
       (scalarFamily pA pB pP)
-      (family_raw_bounds (fun w hw => PhysicalWaveSum.physicalQ_pos hh hh1 hw.2.1)
+      (family_raw_bounds
+        (fun w (hw : w ∈ S ∩ CutStageEstimates.physicalSublevel h qbig) =>
+          PhysicalWaveSum.physicalQ_pos hh hh1 hw.2.1)
         rawA rawB rawP) hg lower
   refine ⟨a, hal, hap, had, ham, hat, hrecip,
     ⟨cut_bounds_of_positiveStages (hb Component.potential).1,

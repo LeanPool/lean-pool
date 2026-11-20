@@ -36,8 +36,8 @@ theorem tsum_lintegral_enorm_kernel_mul_scale
       ∫⁻ y, ‖K y * canonicalLevelBadPart A f k y‖ₑ := by
   rw [← lintegral_tsum
     (f := fun j : ℤ ↦ fun y ↦ ‖K y * stoppingScaleLevelBadPart A f j k y‖ₑ) (fun j ↦
-    (hK.mul (measurable_stoppingScaleLevelBadPart hf j k)).enorm.aemeasurable)]
-  simp only [enorm_mul, ENNReal.tsum_mul_left, tsum_enorm_stoppingScaleLevelBadPart]
+    (hK.mul (measurable_stoppingScaleLevelBadPart hf j k)).eNorm.aemeasurable)]
+  simp only [eNorm_mul, ENNReal.tsum_mul_left, tsum_enorm_stoppingScaleLevelBadPart]
 
 /-- A precise Bochner interchange rule. Its sole integrability requirement
 is on the actual combined input, and all concrete kernels below discharge it. -/

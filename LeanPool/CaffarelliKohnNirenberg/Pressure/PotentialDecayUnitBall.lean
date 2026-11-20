@@ -58,7 +58,7 @@ theorem lintegral_ball_one_inv_norm_rpow_lt_top :
           ENNReal.ofReal (‖x‖ ^ (-(3 / 2) : ℝ)) := by
     apply setLIntegral_congr_fun measurableSet_ball
     intro x _
-    exact Real.enorm_eq_ofReal (Real.rpow_nonneg (norm_nonneg x) _)
+    exact Real.eNorm_eq_ofReal (Real.rpow_nonneg (norm_nonneg x) _)
   rw [← hcongr]
   exact hIntBall.hasFiniteIntegral
 

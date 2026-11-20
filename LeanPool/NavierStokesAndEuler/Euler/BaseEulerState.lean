@@ -150,11 +150,11 @@ omit [Fact (0 < P)] in
 theorem jet_boundLevel (A : Space →L[ℝ] Space) (q r : ℕ) :
     boundLevel P (jet P A q) r = if r=0 then ‖A‖ else 0 := by
   induction q generalizing A r with
-  | zero => cases r <;> simp only [coefficient, jet, boundLevel, coe_nnnorm, ↓reduceIte,
+  | zero => cases r <;> simp only [coefficient, jet, boundLevel, coe_nnNorm, ↓reduceIte,
       Nat.add_eq_zero_iff, one_ne_zero, and_false]
   | succ q ih =>
     cases r with
-    | zero => simp only [coefficient, jet, boundLevel, coe_nnnorm, ↓reduceIte]
+    | zero => simp only [coefficient, jet, boundLevel, coe_nnNorm, ↓reduceIte]
     | succ r =>
       simp only [jet]
       rw [boundLevel]
@@ -247,7 +247,7 @@ def metricBudget {T : ℝ} (hT : 0 ≤ T) (F R : FieldTower P T) :
   bound_nonneg := zero_le_one
   first_nonneg := le_rfl
   time_nonneg := le_rfl
-  bound_le _ := by simp only [coefficient,coe_nnnorm]; exact norm_id_le
+  bound_le _ := by simp only [coefficient,coe_nnNorm]; exact norm_id_le
   first_le _ := le_rfl
   time_le _ := by simp only [ContinuousMap.zero_apply,norm_zero,le_refl]
 

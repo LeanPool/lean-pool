@@ -127,7 +127,7 @@ theorem ratFuncInfinityPlace_order_eq
   have hinfty_u0 : RatFunc.inftyValuation K u0 = 1 := by
     rw [show u0 = f * RatFunc.X ^ (-d) by rfl, map_mul,
       RatFunc.inftyValuation_apply,
-      RatFunc.inftyValuation_of_nonzero (F := K) hf,
+      RatFunc.inftyValuation_of_ne_zero (F := K) hf,
       RatFunc.inftyValuation.X_zpow, ← WithZero.exp_add]
     simp [d]
   let u : RatFuncInfinityIntegers K := ⟨u0, hinfty_u0.le⟩

@@ -106,7 +106,7 @@ private lemma commutator_lsmul_jgen_of_module_uea_heisenbergAlgebra
       | (rw [apply_ite (f := fun A : ModuleOfModuleAlgebra 𝕜 _ V →ₗ[𝕜]
               ModuleOfModuleAlgebra 𝕜 _ V ↦ A v)]
          by_cases hkl : k + l = 0
-         · simp only [hkl, ↓reduceIte, LinearMap.smul_apply, Module.End.one_apply,
+         · simp only [hkl, ↓reduceIte, LinearMap.smul_apply, one_apply_eq_self,
              Int.cast_smul_eq_zsmul]
            rfl
          · simp only [hkl, ↓reduceIte, LinearMap.zero_apply]

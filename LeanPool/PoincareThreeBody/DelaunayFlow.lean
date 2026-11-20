@@ -506,7 +506,9 @@ def irrationalFrequencyInteriorPositiveActions (eccentricity : ℝ) :
 theorem irrationalFrequencyInteriorPositiveActions_dense
     (eccentricity : ℝ) :
     Dense (irrationalFrequencyInteriorPositiveActions eccentricity) := by
-  apply Subtype.dense_iff.mpr
+  refine (Subtype.dense_iff
+    (s := {candidate : PositiveAction | candidate.1 ^ 2 * (1 + eccentricity) < 1})
+    (t := irrationalFrequencyInteriorPositiveActions eccentricity)).mpr ?_
   intro action haction
   have hopen : IsOpen
       {candidate : PositiveAction |

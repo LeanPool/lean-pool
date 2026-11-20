@@ -469,7 +469,7 @@ theorem finrank_weilDifferential_eq_one :
     apply hφ0
     have hval : ω₀.toFun = φ := rfl
     rw [← hval, h]; rfl
-  refine (finrank_eq_one_iff_of_nonzero' ω₀ hω₀ne).mpr ?_
+  refine (finrank_eq_one_iff_of_ne_zero' ω₀ hω₀ne).mpr ?_
   intro ω
   by_contra hspan
   push Not at hspan

@@ -1199,7 +1199,7 @@ namespace ChartKind
 /-- The open disk in which chart-coordinate perturbations are performed.  For a half-disk chart
 the model region is a closed subset of this disk; the later bordered approximation must preserve
 that half-disk rather than use the extra side. -/
-def perturbationRegion (_k : ChartKind) : Set Plane := Metric.ball 0 1
+noncomputable def perturbationRegion (_k : ChartKind) : Set Plane := Metric.ball 0 1
 
 /-- A disk or half-disk model is locally compact in its subtype topology. -/
 theorem modelRegionLocallyCompactSpace (k : ChartKind) :

@@ -210,7 +210,7 @@ theorem solution (N : ℕ) [NeZero N] (ι₀ : AlgebraicClosure ℚ →+* ℂ)
   have hCO := ModularCurve.isCurveOver_modularFunctionFieldBar N
   have hrank : Module.finrank (modularFunctionFieldBar N)
       Ω[modularFunctionFieldBar N⁄AlgebraicClosure ℚ] = 1 := IsCurveOver.finrank_kaehler
-  obtain ⟨x, hx⟩ := (finrank_eq_one_iff_of_nonzero'
+  obtain ⟨x, hx⟩ := (finrank_eq_one_iff_of_ne_zero'
     (D (AlgebraicClosure ℚ) (modularFunctionFieldBar N) (jB N)) (D_jB_ne_zero N)).mp hrank ω
   have hxreg : x • D (AlgebraicClosure ℚ) (modularFunctionFieldBar N) (jB N) ∈
     regularDifferentialsBar N :=

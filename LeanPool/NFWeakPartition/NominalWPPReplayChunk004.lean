@@ -3564,61 +3564,61 @@ noncomputable def gAx12o (x : Var) (y : Var) (z : Var) :
   have p0000 :=
     @gAx12v z y w
       (by
-        aesop)
+        exact fresh_z_ne_w)
       (by
-        aesop)
+        exact fresh_y_ne_w)
   have p0001 :=
     @gAx12v z y v
       (by
-        aesop)
+        exact fresh_z_ne_v)
       (by
-        aesop)
+        exact fresh_y_ne_v)
   have p0002 :=
     @gAx12olem4 z y w v
       (by
-        aesop)
+        exact fresh_v_ne_z)
       (by
-        aesop)
+        exact fresh_v_ne_y)
       (by
-        aesop)
+        exact fresh_v_ne_w)
       (by
-        aesop)
+        exact fresh_z_ne_w)
       (by
-        aesop)
+        exact fresh_y_ne_w)
       p0000 p0001
   have p0003 :=
     @gAx12v z x w
       (by
-        aesop)
+        exact fresh_z_ne_w)
       (by
-        aesop)
+        exact fresh_x_ne_w)
   have p0004 :=
     @gAx12v z x v
       (by
-        aesop)
+        exact fresh_z_ne_v)
       (by
-        aesop)
+        exact fresh_x_ne_v)
   have p0005 :=
     @gAx12olem4 z x w v
       (by
-        aesop)
+        exact fresh_v_ne_z)
       (by
-        aesop)
+        exact fresh_v_ne_x)
       (by
-        aesop)
+        exact fresh_v_ne_w)
       (by
-        aesop)
+        exact fresh_z_ne_w)
       (by
-        aesop)
+        exact fresh_x_ne_w)
       p0003 p0004
   have p0006 :=
     @gAx12olem7 z x y w
       (by
-        aesop)
+        exact fresh_w_ne_z)
       (by
-        aesop)
+        exact fresh_w_ne_x)
       (by
-        aesop)
+        exact fresh_w_ne_y)
       p0002 p0005
   exact p0006
 
@@ -4114,31 +4114,31 @@ noncomputable def gAx10lem5 (x : Var) (y : Var) (z : Var) (w : Var) (dv_w_z : w 
   have p0000 :=
     @gAx10lem1 z v w
       (by
-        aesop)
+        exact dv_w_z)
       (by
-        aesop)
+        exact fresh_w_ne_v)
   have p0001 :=
     @gAx10lem4 v u w
       (by
-        aesop)
+        exact fresh_w_ne_v)
       (by
-        aesop)
+        exact fresh_w_ne_u)
   have p0002 :=
     @gSyl (.all z (.objEq z w)) (.all v (.objEq v w)) (.all u (.objEq u v)) p0000 p0001
   have p0003 :=
     @gAx10lem1 u x v
       (by
-        aesop)
+        exact fresh_v_ne_u)
       (by
-        aesop)
+        exact fresh_v_ne_x)
   have p0004 :=
     @gSyl (.all z (.objEq z w)) (.all u (.objEq u v)) (.all x (.objEq x v)) p0002 p0003
   have p0005 :=
     @gAx10lem4 x y v
       (by
-        aesop)
+        exact fresh_v_ne_x)
       (by
-        aesop)
+        exact fresh_v_ne_y)
   have p0006 :=
     @gSyl (.all z (.objEq z w)) (.all x (.objEq x v)) (.all y (.objEq y x)) p0004 p0005
   exact p0006

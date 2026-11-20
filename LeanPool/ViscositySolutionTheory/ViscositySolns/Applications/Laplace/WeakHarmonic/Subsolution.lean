@@ -64,7 +64,7 @@ theorem integral_mul_lapTrace_nonneg_of_ae_tendsto {w χ : Point n → ℝ}
   obtain ⟨x₀, hx₀⟩ := hzero
   have hχcont : Continuous χ := hχ.continuous
   have hpos : 0 < ∫ x, χ x :=
-    hχcont.integral_pos_of_hasCompactSupport_nonneg_nonzero hχc hχ0 hx₀
+    hχcont.integral_pos_of_hasCompactSupport_nonneg_ne_zero hχc hχ0 hx₀
   set c' : ℝ := |c| + 1 with hc'def
   have hc'pos : 0 < c' := by positivity
   have hcc' : c ≤ c' := by

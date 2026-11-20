@@ -419,10 +419,10 @@ theorem potentialKostlanReference_eq_product (n : ℕ) (hn : 0 < n) {V : Potenti
   apply Measure.pi_eq
   intro s hs
   unfold potentialKostlanReference
-  rw [rawPotentialKostlanReference_eq_product n hVc hVr, Measure.smul_apply, Measure.pi_pi,
+  rw [rawPotentialKostlanReference_eq_product n hVc hVr, smul_apply, Measure.pi_pi,
     Measure.pi_univ]
   unfold potentialKostlanCoordinateLaw
-  simp only [Measure.smul_apply, smul_eq_mul]
+  simp only [smul_apply, smul_eq_mul]
   rw [ENNReal.prod_inv_distrib, Finset.prod_mul_distrib]
   intro i hi j hj hij
   exact Or.inl (ne_of_gt (rawPotentialKostlanCoordinateLaw_mass_valid n hn hVc hVr hfin i).1)

@@ -115,7 +115,7 @@ theorem u_bound {U : Type*} [DecidableEq U] [Fintype U]
     |f Finset.univ| ≤ 1 := by
   have hP : |f P + f Pᶜ - f Finset.univ| ≤ 1 := by
     convert hf.2 P Pᶜ (Finset.disjoint_right.mpr fun x => by aesop) using 1
-    simp +decide [Finset.union_compl]
+    simp +decide
   have hN : |f N + f Nᶜ - f Finset.univ| ≤ 1 := by
     convert hf.2 N Nᶜ ( disjoint_compl_right ) using 1; aesop;
   grind

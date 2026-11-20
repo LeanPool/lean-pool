@@ -59,7 +59,7 @@ private theorem normalizedVolumeOn_isProbability
     {W : Set (Vec d)} (hW0 : volume W ≠ 0) (hWtop : volume W ≠ ∞) :
     IsProbabilityMeasure (normalizedVolumeOn W) := by
   refine ⟨?_⟩
-  rw [normalizedVolumeOn, Measure.smul_apply, smul_eq_mul,
+  rw [normalizedVolumeOn, smul_apply, smul_eq_mul,
     Measure.restrict_apply_univ]
   exact ENNReal.inv_mul_cancel hW0 hWtop
 

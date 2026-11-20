@@ -58,7 +58,7 @@ theorem lps_finite_coordinate_mixed_data
           (∫⁻ x : Vec3, ‖vec3EuclideanNorm (u (x, t))‖ₑ ^ s ∂volume) ^
             (ell / s)) := by
       filter_upwards [hNormSlice] with t ht
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (ENNReal.ofReal_pos.mpr hs0).ne' ENNReal.ofReal_ne_top
           ht.aestronglyMeasurable,
         ENNReal.toReal_ofReal hs0.le, ← ENNReal.rpow_mul]
@@ -71,7 +71,7 @@ theorem lps_finite_coordinate_mixed_data
           ENNReal.ofReal (vec3EuclideanNorm (u (x, t))) ^ s ∂volume := by
       apply lintegral_congr
       intro x
-      rw [← Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+      rw [← Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
     have hEq : (∫⁻ t in Ioo 0 T,
         (∫⁻ x : Vec3, ‖vec3EuclideanNorm (u (x, t))‖ₑ ^ s ∂volume) ^
           (ell / s)) =

@@ -531,7 +531,7 @@ theorem rank_degree_inequality
     rw [← eq_σ]
     abel
   have h_D'_F : ¬ winnable G (D' - F) := by
-    by_contra!
+    by_contra
     have := winnable_add_winnable G (D' - F) E this (winnable_of_effective G E E_eff)
     apply unwinnable_of_moderator M'_moderator
     apply winnable_equiv_winnable G (D' - F + E) M' this M'_equiv

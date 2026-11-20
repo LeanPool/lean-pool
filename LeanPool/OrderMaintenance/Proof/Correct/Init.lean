@@ -106,7 +106,8 @@ theorem noerr_prepareStep : NoErr prepareStep := by
 theorem pres_prepareStep : Pres SameLinks prepareStep := by
   unfold prepareStep
   pres [pres_initStep]
-  all_goals (intro s; constructor <;> intros <;> rfl)
+  intro s
+  constructor <;> intros <;> rfl
 
 end OrderMaintenance.Proof
 

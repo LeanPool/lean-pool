@@ -310,11 +310,11 @@ private theorem indicatorAgreement_empty (S : KernelIdentificationInput A)
   have hfun : (fun _ : Vec d ↦ (0 : ℝ≥0∞)) =
       fun y ↦ ENNReal.ofReal ((0 : C₀(Vec d, ℝ)) y) := by
     funext y
-    simp only [ZeroAtInftyContinuousMap.coe_zero, Pi.zero_apply, ENNReal.ofReal_zero]
+    simp only [FunLike.coe_zero, Pi.zero_apply, ENNReal.ofReal_zero]
   rw [hfun, hzero]
   exact A.analyticMinimalResolvent_congr_ae mu _ _ _ _
     (Eventually.of_forall fun y ↦ by
-      simp only [Pi.zero_apply, ZeroAtInftyContinuousMap.coe_zero]) x
+      simp only [Pi.zero_apply, FunLike.coe_zero]) x
 
 private theorem indicatorAgreement_union (S : KernelIdentificationInput A)
     (mu : PositiveShift) (x : Vec d) {E F : Set (Vec d)}

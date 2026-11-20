@@ -123,11 +123,11 @@ theorem blowup_rescaled_ball_velocity_eLpNorm_three_eq
       (∫⁻ x in vec3Ball c 1,
         ENNReal.ofReal (vec3EuclideanNorm (r • u (x₀ + r • x))) ^
           (3 : ℝ)) ^ (1 / 3 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 : ℝ≥0∞) ≠ ⊤) hrescaled.restrict]
     norm_num
-    simp only [Real.enorm_eq_ofReal_abs,
+    simp only [Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
   have hright :
       eLpNorm (fun y => vec3EuclideanNorm (u y)) 3
@@ -135,11 +135,11 @@ theorem blowup_rescaled_ball_velocity_eLpNorm_three_eq
       (∫⁻ y in vec3Ball (x₀ + r • c) r,
         ENNReal.ofReal (vec3EuclideanNorm (u y)) ^ (3 : ℝ)) ^
           (1 / 3 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (3 : ℝ≥0∞) ≠ 0)
       (by finiteness : (3 : ℝ≥0∞) ≠ ⊤) hgm.restrict]
     norm_num
-    simp only [g, Real.enorm_eq_ofReal_abs,
+    simp only [g, Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
   rw [hleft, hright, blowup_rescaled_ball_velocity_mass_eq u hu x₀ c r hr]
 
@@ -275,11 +275,11 @@ theorem blowup_terminal_rescaled_vector_eLpNorm_two_tendsto_zero
   have hbound (k : ℕ) :
       eLpNorm (fun x => r k • u (x₀ + r k • x)) 2 μ ≤
       eLpNorm (fun x => vec3EuclideanNorm (r k • u (x₀ + r k • x))) 2 μ := by
-    apply eLpNorm_mono_enorm_ae
+    apply eLpNorm_mono_eNorm_ae
       ((blowup_rescaled_velocitySlice_aestronglyMeasurable
         u hu x₀ (r k) (hr k)).restrict)
     filter_upwards [] with x
-    rw [← ofReal_norm, Real.enorm_eq_ofReal_abs,
+    rw [← ofReal_norm, Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (vec3EuclideanNorm_nonneg _)]
     exact ENNReal.ofReal_le_ofReal
       (norm_le_vec3EuclideanNorm _)

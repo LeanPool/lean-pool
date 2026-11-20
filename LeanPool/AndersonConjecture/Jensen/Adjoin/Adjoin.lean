@@ -112,8 +112,7 @@ private theorem adjoin_surjectivity_avoidance_bound (R : NSubring T) (u : T)
       intro _
       exact (associatedPrimes.finite T _).countable
     have : Countable (Polynomial R.carrier) :=
-      Countable.of_equiv _ ((Polynomial.toFinsuppIso R.carrier).toEquiv.trans
-        AddMonoidAlgebra.coeffEquiv).symm
+      Countable.of_equiv _ AddMonoidAlgebra.coeffEquiv.symm
     have hD'_countable : D'.Countable := by
       apply Set.Countable.union
       · apply Set.Countable.union (Set.countable_singleton _)
@@ -379,7 +378,7 @@ theorem adjoin_surjectivity
       have hf_bar_ne : f.map (φ P) ≠ 0 := by
         intro h_eq
         apply h_neg
-        have h := congr_arg (fun p => Polynomial.coeff p i) h_eq
+        have h := congr_arg (fun p => AddMonoidAlgebra.coeff p i) h_eq
         simp only [Polynomial.coeff_map, Polynomial.coeff_zero] at h
         exact Ideal.mem_comap.mpr (Ideal.Quotient.eq_zero_iff_mem.mp h)
       have hP_in_C : P ∈ C := by

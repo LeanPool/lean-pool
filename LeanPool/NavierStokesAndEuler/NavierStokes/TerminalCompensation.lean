@@ -537,7 +537,7 @@ theorem correction_family_contDiffOn (P : Patch) {U : Set ℝ} {c : ℝ → Coef
     ContDiffOn ℝ ∞ (fun z : ℝ × ℝ => correction P (c z.1) z.2) (U ×ˢ univ) := by
   apply ContDiffOn.sum
   intro j _
-  exact ((contDiffOn_pi.mp hc j).comp contDiffOn_fst (fun z hz => hz.1)).mul
+  exact ((contDiffOn_pi.mp hc j).comp contDiffOn_fst (fun z (hz : z ∈ U ×ˢ univ) => hz.1)).mul
     ((bump_contDiff P j).comp_contDiffOn contDiffOn_snd)
 
 /-- Composition with the debt gives the true parameter derivative, with no

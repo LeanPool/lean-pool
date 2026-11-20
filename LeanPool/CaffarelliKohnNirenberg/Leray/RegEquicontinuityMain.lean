@@ -178,8 +178,8 @@ private theorem regEquicontinuity_interval_pressure_bound
       |∫ z, f z ∂μ| ≤ ∫ z, |f z| ∂μ := abs_integral_le_integral_abs
       _ = ∫ z, ‖f z‖ ∂μ := by simp [Real.norm_eq_abs]
       _ = (eLpNorm f 1 μ).toReal := by
-        rw [integral_norm_eq_lintegral_enorm hProductIntegrable.aestronglyMeasurable,
-          eLpNorm_one_eq_lintegral_enorm hProductIntegrable.aestronglyMeasurable]
+        rw [integral_norm_eq_lintegral_eNorm hProductIntegrable.aestronglyMeasurable,
+          eLpNorm_one_eq_lintegral_eNorm hProductIntegrable.aestronglyMeasurable]
   have hFubini := integral_prod_symm f hProductIntegrable
   have hInterval : (∫ r in s..t, ∫ x : Vec3, p (x, r) * g x ∂volume) =
       ∫ z, f z ∂μ := by

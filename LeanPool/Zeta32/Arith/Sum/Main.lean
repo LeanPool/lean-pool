@@ -153,8 +153,9 @@ lemma natLog_mul_log_le {k Z : ℕ} (hk : 2 ≤ k) (hZ : 1 ≤ Z) :
 
 lemma padicValNat_mul_log_le {k d : ℕ} (hk : k.Prime) (hd : 0 < d) :
     (padicValNat k d : ℝ) * Real.log k ≤ Real.log d := by
-  have := Fact.mk hk
-  have hdvd : k ^ padicValNat k d ∣ d := pow_padicValNat_dvd
+  have hdvd : k ^ padicValNat k d ∣ d := by
+    rw [Nat.padicValNat_def]
+    exact pow_multiplicity_dvd k d
   have hle := Nat.le_of_dvd hd hdvd
   have h' : ((k ^ padicValNat k d : ℕ) : ℝ) ≤ (d : ℝ) := by exact_mod_cast hle
   have hk0 : (0 : ℝ) < k := by exact_mod_cast hk.pos

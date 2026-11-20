@@ -220,7 +220,7 @@ theorem SimplePredictable.lintegral_eval_mul_sq_lt_top {T : ℝ} (G : SimplePred
   have hpt : ∀ s ω, (‖G.eval s ω * H ω s‖₊ : ℝ≥0∞) ^ 2
       ≤ ENNReal.ofReal B ^ 2 * (‖H ω s‖₊ : ℝ≥0∞) ^ 2 := by
     intro s ω
-    rw [nnnorm_mul, ENNReal.coe_mul, mul_pow]
+    rw [nnNorm_mul, ENNReal.coe_mul, mul_pow]
     gcongr
     exact hbd s ω
   have hne : ENNReal.ofReal B ^ 2 ≠ ⊤ := (ENNReal.pow_lt_top ENNReal.ofReal_lt_top).ne
@@ -278,7 +278,7 @@ theorem stochasticIntegralBrownian_eval_simple {t : ℝ} (ht : 0 ≤ t) :
       (masterApprox_adapt ℱ (fun ω s => G.eval s ω) hm hp hq n) h_adapt ht]
     refine lintegral_congr fun ω =>
       MeasureTheory.setLIntegral_congr_fun measurableSet_Icc fun s _ => ?_
-    rw [← nnnorm_neg, neg_sub]
+    rw [← nnNorm_neg, neg_sub]
   -- and to the `L²` Itô integral
   have hconv : ∀ g : Ω → ℝ, MeasureTheory.AEStronglyMeasurable g P →
       MeasureTheory.eLpNorm g 2 P * MeasureTheory.eLpNorm g 2 P
@@ -323,7 +323,7 @@ theorem stochasticIntegralBrownian_eval_simple {t : ℝ} (ht : 0 ≤ t) :
                   hq n) t ω - simpleIntegral W G t ω) := by ring
           rw [hrw]
           refine le_trans (sq_nnnorm_add_le_two_mul_brownian _ _) ?_
-          rw [nnnorm_neg]
+          rw [nnNorm_neg]
       _ = 2 * ((∫⁻ ω, (‖simpleIntegral W (masterApprox ℱ (fun ω s => G.eval s ω) hm
               hp hq n) t ω - stochasticIntegralBrownian W ℱ hℱ
               (fun ω s => G.eval s ω) hm hp hq t ω‖₊ : ℝ≥0∞) ^ 2 ∂P)
@@ -333,7 +333,7 @@ theorem stochasticIntegralBrownian_eval_simple {t : ℝ} (ht : 0 ≤ t) :
               (fun ω s => G.eval s ω) hm hp hq n) t ω
                 - stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω) hm hp
                   hq t ω‖₊ : ℝ≥0∞) ^ 2) P :=
-            ((((hIn n).sub hSI).nnnorm).coe_nnreal_ennreal).pow_const 2 |>.aemeasurable
+            ((((hIn n).sub hSI).nnNorm).coe_nnreal_ennreal).pow_const 2 |>.aemeasurable
           rw [MeasureTheory.lintegral_const_mul' 2 _ (by norm_num),
             MeasureTheory.lintegral_add_left' hm2]
   have hzero : ∫⁻ ω, (‖stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω) hm
@@ -342,7 +342,7 @@ theorem stochasticIntegralBrownian_eval_simple {t : ℝ} (ht : 0 ≤ t) :
   have hmeas : Measurable fun ω => (‖stochasticIntegralBrownian W ℱ hℱ
       (fun ω s => G.eval s ω) hm hp hq t ω
         - simpleIntegral W G t ω‖₊ : ℝ≥0∞) ^ 2 :=
-    (((hSI.sub hIG).nnnorm).coe_nnreal_ennreal).pow_const 2
+    (((hSI.sub hIG).nnNorm).coe_nnreal_ennreal).pow_const 2
   filter_upwards [(lintegral_eq_zero_iff hmeas).mp hzero] with ω hω
   have h0 : (‖stochasticIntegralBrownian W ℱ hℱ (fun ω s => G.eval s ω) hm hp hq t ω
       - simpleIntegral W G t ω‖₊ : ℝ≥0∞) = 0 := by

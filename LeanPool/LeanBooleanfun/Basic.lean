@@ -406,7 +406,7 @@ lemma laplace_eq_dderiv (i : Fin n) (f : BooleanFunc n) (x : Fin n → Fin 2) :
   change (f x - _) / 2 = (-1)^_ * ((_ - _) / 2)
   by_cases hx : x i = 0
   · simp only [hx, Fin.isValue, Fin.coe_ofNat_eq_mod, Nat.zero_mod, pow_zero, one_mul, ne_eq,
-      OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj']
+      OfNat.ofNat_ne_zero, not_false_eq_true, div_left_inj₀]
     rw [setAt_eq_id hx, setAt_eq_flipAt (by rw [hx]; trivial)]
   · have hx1 := Fin.eq_one_of_ne_zero (x i) hx
     rw [setAt_eq_id hx1, setAt_eq_flipAt hx]

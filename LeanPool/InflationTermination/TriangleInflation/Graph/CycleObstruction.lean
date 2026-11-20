@@ -452,7 +452,10 @@ theorem moment_eq (M : GModel Γ) (F : Finset Γ.V) :
         (∑ β : Bool, (if v ∈ F then sgn β else 1) * respMass (M.resp v (fun e => x e.1)) β)
           = if v ∈ F then sResp M v x else 1 := by
       intro v
-      by_cases h : v ∈ F <;> (simp [h, respMass, sgn, sResp]; try ring)
+      by_cases h : v ∈ F
+      · simp [h, respMass, sgn, sResp]
+        ring
+      · simp [h, respMass]
     simp only [e2]
     rw [Finset.prod_ite_mem, Finset.univ_inter]
   simp only [GModel.law, Finset.sum_mul]

@@ -46,7 +46,8 @@ theorem cdfIndDiff_of_le {x y : ℝ} (h : x ≤ y) (u : ℝ) :
     simp only [mem_Iic, mem_Ico, h1, h2, indicator_of_mem, indicator_of_notMem,
       sub_self, sub_zero, zero_sub, true_and, false_and, not_lt, not_false_eq_true,
       indicator_apply, left_eq_ite_iff, one_ne_zero, imp_self, neg_eq_zero]
-  all_goals (exfalso; linarith only [h, h1, h2])
+  exfalso
+  linarith only [h, h1, h2]
 
 /-- Reversing the points negates their indicator difference. -/
 theorem cdfIndDiff_swap (x y u : ℝ) : cdfIndDiff y x u = -cdfIndDiff x y u := by

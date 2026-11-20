@@ -736,7 +736,7 @@ lemma goodQ_prod_coeff [NeZero m] (s : Finset (Option (ZMod m))) :
     intro n
     by_cases hn : n = 0
     · refine (goodQ_const hm (show (1:ℂ) ∈ RI from RI.one_mem)).of_eq (fun τ ↦ ?_)
-      simp only [map_pow, map_mul, prod_empty, hn, coeff_one_zero]
+      simp only [map_pow, map_mul, prod_empty, hn, coeff_one, ↓reduceIte]
     · refine (goodQ_const hm RI.zero_mem).of_eq (fun τ ↦ ?_)
       simp only [map_pow, map_mul, prod_empty, coeff_one, hn, ↓reduceIte]
   | @insert a s ha ih =>

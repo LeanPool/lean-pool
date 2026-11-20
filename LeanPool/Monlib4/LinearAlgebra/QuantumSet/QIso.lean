@@ -220,7 +220,7 @@ theorem FrobeniusAlgebra.snake_equation_2 {A : Type*} [Semiring A] [FrobeniusAlg
   ext
   simp only [LinearEquiv.comp_coe, LinearEquiv.coe_coe, LinearEquiv.trans_apply,
     TensorProduct.lid_symm_apply, TensorProduct.comm_tmul, TensorProduct.rid_tmul, one_smul,
-    Module.End.one_apply]
+    one_apply_eq_self]
 
 end
 
@@ -262,7 +262,7 @@ theorem QFun.self_comp_adjoint_eq_id_of_map_comul
   simp only [TensorProduct.AlgebraTensorModule.curry_apply, LinearMap.restrictScalars_self,
     TensorProduct.curry_apply, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
     LinearMap.rTensor_tmul, TensorProduct.rid_symm_apply, LinearMap.lTensor_tmul,
-    Algebra.linearMap_apply, map_one, Module.End.one_apply]
+    Algebra.linearMap_apply, map_one, one_apply_eq_self]
   obtain ⟨S, hS⟩ := TensorProduct.exists_finset (R := ℂ) (Coalgebra.comul (1 : B₂))
   rw [hS]
   simp only [TensorProduct.sum_tmul, TensorProduct.tmul_sum, map_sum, LinearMap.comp_apply,
@@ -472,10 +472,10 @@ noncomputable def QFun.qBijective.toLinearEquiv
   invFun := LinearMap.adjoint P
   left_inv _ := by
     simp only [LinearMap.toFun_eq_coe, ← LinearMap.comp_apply]
-    rw [(hp.qBijective_iff_inv_eq_adjoint.mp h).2, Module.End.one_apply]
+    rw [(hp.qBijective_iff_inv_eq_adjoint.mp h).2, one_apply_eq_self]
   right_inv _ := by
     simp only [LinearMap.toFun_eq_coe, ← LinearMap.comp_apply]
-    rw [(hp.qBijective_iff_inv_eq_adjoint.mp h).1, Module.End.one_apply]
+    rw [(hp.qBijective_iff_inv_eq_adjoint.mp h).1, one_apply_eq_self]
 
 lemma QFun.qBijective.toLinearEquiv_toLinearMap
   {P : (B₁ ⊗[ℂ] H) →ₗ[ℂ] (H ⊗[ℂ] B₂)} [hp : QFun H P]
@@ -496,7 +496,7 @@ theorem QFun.qBijective_iso_id
   ext
   simp only [LinearMap.rTensor_one, TensorProduct.AlgebraTensorModule.curry_apply,
     LinearMap.restrictScalars_self, TensorProduct.curry_apply, LinearMap.coe_comp,
-    LinearEquiv.coe_coe, Function.comp_apply, Module.End.one_apply, LinearEquiv.apply_symm_apply,
+    LinearEquiv.coe_coe, Function.comp_apply, one_apply_eq_self, LinearEquiv.apply_symm_apply,
     LinearMap.lTensor_one]
 
 theorem rankOne_one_one_eq :

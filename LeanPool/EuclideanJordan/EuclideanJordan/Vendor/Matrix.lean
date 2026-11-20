@@ -83,7 +83,7 @@ omit [DecidableEq n] in
 theorem smul_real (c : ℝ) : (c • A).IsHermitian := by
   convert hA.smul_im_zero (RCLike.ofReal_im c) using 1
   ext
-  simp only [smul_apply, smul_eq_mul, RCLike.real_smul_eq_coe_mul]
+  simp only [Matrix.smul_apply, smul_eq_mul, RCLike.real_smul_eq_coe_mul]
 
 /-- The real vector subspace of Hermitian matrices. -/
 def HermitianSubspace (n 𝕜 : Type*) [RCLike 𝕜] : Subspace ℝ (Matrix n n 𝕜) where
@@ -414,7 +414,8 @@ theorem mul_mul_conjTranspose_mono [Finite m] (C : Matrix m n 𝕜) :
         rw [Matrix.le_iff] at hAB ⊢
         have hDistrib : C * B * Cᴴ - C * A * Cᴴ = C * (B - A) * Cᴴ := by
           ext i j
-          simp only [sub_apply, mul_apply, conjTranspose_apply, RCLike.star_def, Finset.sum_mul,
+          simp only [Matrix.sub_apply, Matrix.mul_apply, conjTranspose_apply, RCLike.star_def,
+            Finset.sum_mul,
             ←Finset.sum_sub_distrib, mul_sub_left_distrib, mul_sub_right_distrib]
         rw [hDistrib]
         exact mul_mul_conjTranspose_same hAB C
@@ -471,7 +472,8 @@ theorem le_smul_one_of_eigenvalues_iff (hA : A.IsHermitian) (c : ℝ) :
     simp only [Algebra.mul_smul_comm, mul_one, hU, Algebra.smul_mul_assoc, hU']
   have hc' : c • (1 : Matrix n n 𝕜) = diagonal (RCLike.ofReal ∘ fun _ : n ↦ c) := by
     ext i j
-    simp only [smul_apply, one_apply, smul_ite, RCLike.real_smul_eq_coe_mul, mul_one, smul_zero,
+    simp only [Matrix.smul_apply, Matrix.one_apply, smul_ite, RCLike.real_smul_eq_coe_mul,
+      mul_one, smul_zero,
       diagonal, Function.comp_apply, of_apply]
   have hAST : A = U * diagonal (RCLike.ofReal ∘ hA.eigenvalues) * U.conjTranspose := by
     rw [hU]
@@ -509,7 +511,8 @@ theorem smul_one_le_of_eigenvalues_iff (hA : A.IsHermitian) (c : ℝ) :
     simp only [Algebra.mul_smul_comm, mul_one, hU, Algebra.smul_mul_assoc, hU']
   have hc' : c • (1 : Matrix n n 𝕜) = diagonal (RCLike.ofReal ∘ fun _ : n ↦ c) := by
     ext i j
-    simp only [smul_apply, one_apply, smul_ite, RCLike.real_smul_eq_coe_mul, mul_one, smul_zero,
+    simp only [Matrix.smul_apply, Matrix.one_apply, smul_ite, RCLike.real_smul_eq_coe_mul,
+      mul_one, smul_zero,
       diagonal, Function.comp_apply, of_apply]
   have hAST : A = U * diagonal (RCLike.ofReal ∘ hA.eigenvalues) * U.conjTranspose := by
     rw [hU]
@@ -685,7 +688,8 @@ open scoped Kronecker in
 theorem trace_mul_kron_one_right {R : Type*} [Ring R]
     (M : Matrix (dA × dB) (dA × dB) R) (A : Matrix dA dA R) :
     (M * (A ⊗ₖ (1 : Matrix dB dB R))).trace = (M.traceRight * A).trace := by
-  simp only [trace, diag_apply, mul_apply, kroneckerMap_apply, one_apply, mul_ite, mul_one,
+  simp only [trace, diag_apply, Matrix.mul_apply, kroneckerMap_apply, Matrix.one_apply, mul_ite,
+    mul_one,
       mul_zero, Fintype.sum_prod_type, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, traceRight,
       of_apply, Finset.sum_mul]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_comm
@@ -698,7 +702,8 @@ open scoped Kronecker in
 theorem trace_mul_one_kron_right {R : Type*} [Ring R]
     (M : Matrix (dA × dB) (dA × dB) R) (B : Matrix dB dB R) :
     (M * ((1 : Matrix dA dA R) ⊗ₖ B)).trace = (M.traceLeft * B).trace := by
-  simp only [trace, diag_apply, mul_apply, kroneckerMap_apply, one_apply, ite_mul, one_mul,
+  simp only [trace, diag_apply, Matrix.mul_apply, kroneckerMap_apply, Matrix.one_apply, ite_mul,
+    one_mul,
       zero_mul, mul_ite, mul_zero, Fintype.sum_prod_type, Finset.sum_ite_irrel,
       Finset.sum_const_zero, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte, traceLeft, of_apply,
       Finset.sum_mul]
@@ -796,7 +801,7 @@ theorem PosSemidef.rsmul {n : Type*} [Finite n] {M : Matrix n n ℂ} (hM : M.Pos
     rw [smul_mulVec, dotProduct_smul]
     exact smul_nonneg hc (hM.2 x)
 
-theorem PosDef.Convex {n 𝕜 : Type*} [RCLike 𝕜] : Convex ℝ (Matrix.PosDef (n := n) (R := 𝕜)) := by
+theorem PosDef.Convex {n 𝕜 : Type*} [RCLike 𝕜] : Convex ℝ {M : Matrix n n 𝕜 | M.PosDef} := by
   intro A hA B hB a b ha hb hab
   rcases ha.lt_or_eq with ha | rfl
   · apply (hA.smul ha).add_posSemidef
@@ -854,17 +859,9 @@ theorem IsHermitian.cfc_eigenvalues {M : Matrix d d 𝕜} (hM : M.IsHermitian) (
         rw [ h_det, Matrix.det_mul, Matrix.det_mul ];
         rw [ mul_right_comm, ← Matrix.det_mul, mul_comm ];
         norm_num +zetaDelta at *;
-      refine Polynomial.funext fun t => ?_;
-      convert h_char_poly t using 1;
-      · simp only [det_apply', Polynomial.eval_finsetSum, Polynomial.eval_mul,
-            Polynomial.eval_intCast, sub_apply, smul_apply, smul_eq_mul];
-        simp only [Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
-        congr! 3;
-        aesop;
-      · simp only [charmatrix_diagonal, Function.comp_apply, det_apply', Polynomial.eval_finsetSum,
-            Polynomial.eval_mul, Polynomial.eval_intCast, sub_apply, smul_apply, smul_eq_mul];
-        simp only [Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
-        exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
+      rw [← charpoly, ← charpoly]
+      refine Polynomial.funext fun t => ?_
+      simpa only [eval_charpoly, scalar_apply, smul_one_eq_diagonal] using h_char_poly t
     simp_all only [charmatrix, scalar_apply, RingHom.mapMatrix_apply, Matrix.map_mul, map_zero,
         diagonal_map, Function.comp_apply, diagonal_sub, det_diagonal,
         Unitary.conjStarAlgAut_apply];
@@ -909,15 +906,8 @@ lemma IsHermitian.eigenvalues_eq_of_unitary_similarity_diagonal {d 𝕜 : Type*}
         rw [h_det, Matrix.det_mul_comm, ← mul_assoc]
         rw [← star_eq_conjTranspose, Matrix.UnitaryGroup.star_mul_self ⟨U, hU⟩]
         simp only [one_mul]
-      refine Polynomial.funext fun t => ?_;
-      convert h_det t using 1 <;> simp only [charpoly, det_apply', sub_apply, smul_apply,
-          smul_eq_mul, charmatrix_diagonal];
-      · simp only [Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_intCast,
-            Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
-        exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
-      · simp only [Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_intCast,
-            Polynomial.eval_prod, one_apply, mul_ite, mul_one, mul_zero];
-        exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
+      refine Polynomial.funext fun t => ?_
+      simpa only [eval_charpoly, scalar_apply, smul_one_eq_diagonal] using h_det t
     rw [ h, h_char_poly ];
   -- The roots of the characteristic polynomial of A are its eigenvalues (by
   -- `IsHermitian.charpoly_roots_eq_eigenvalues`).
@@ -1001,8 +991,8 @@ theorem cfc_diagonal (g : d → ℝ) (f : ℝ → ℝ) :
       exact RCLike.continuous_ofReal.comp (continuous_eval_const _)
     · simp only [diagonal_apply_ne _ h]
       exact continuous_const
-  rw [cfc, dite_eq_left ⟨h_self_adjoint,
-    continuousOn_iff_continuous_domRestrict.mpr (by fun_prop)⟩]
+  rw [cfc_apply f _ h_self_adjoint
+    (continuousOn_iff_continuous_domRestrict.mpr (by fun_prop))]
   rw [cfcHom_eq_of_continuous_of_map_id h_self_adjoint φ hφ (by
     ext i j
     by_cases h : i = j <;> simp [φ, h])]
@@ -1136,14 +1126,15 @@ private lemma spectrum_prod_complex {d d₂ : Type*}
       have h_det_diag : Matrix.det (D ⊗ₖ E - x • 1) = Matrix.det (Matrix.diagonal (fun p : d ×
           d₂ => D p.1 p.1 * E p.2 p.2 - x)) := by
         congr with p q
-        simp_all only [ne_eq, kronecker, sub_apply,
-          kroneckerMap_apply, smul_apply, smul_eq_mul]
+        simp_all only [ne_eq, kronecker, Matrix.sub_apply,
+          kroneckerMap_apply, Matrix.smul_apply, smul_eq_mul]
         obtain ⟨fst, snd⟩ := p
         obtain ⟨fst_1, snd_1⟩ := q
         obtain ⟨left, rfl⟩ := hD
         obtain ⟨left_1, rfl⟩ := hE
         simp_all only
-        by_cases h : fst = fst_1 <;> by_cases h' : snd = snd_1 <;> simp only [h, h', one_apply,
+        by_cases h : fst = fst_1 <;> by_cases h' : snd = snd_1 <;> simp only [h, h',
+          Matrix.one_apply,
             ↓reduceIte, mul_one, diagonal_apply_eq, ne_eq, Prod.mk.injEq, and_false,
             not_false_eq_true, mul_zero, sub_zero, diagonal_apply_ne, mul_eq_zero, and_true,
             and_self];
@@ -1163,10 +1154,10 @@ private lemma spectrum_prod_complex {d d₂ : Type*}
       rw [ Matrix.det_eq_zero_of_row_eq_zero i ]
       intro j_1
       subst hij
-      simp_all only [map_mul, sub_apply, smul_apply, smul_eq_mul]
+      simp_all only [map_mul, Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul]
       obtain ⟨left, rfl⟩ := hD
       obtain ⟨left_1, rfl⟩ := hE
-      by_cases hij : i = j_1 <;> simp_all only [one_apply, ↓reduceIte, mul_one, sub_self,
+      by_cases hij : i = j_1 <;> simp_all only [Matrix.one_apply, ↓reduceIte, mul_one, sub_self,
           mul_zero, zero_sub, neg_eq_zero];
       exact left hij;
     simp_all only [det_mul, det_nonsing_inv, Ring.inverse_eq_inv', mul_eq_zero, inv_eq_zero,
@@ -1183,8 +1174,8 @@ private lemma spectrum_prod_complex {d d₂ : Type*}
         intro j_1
         subst hij
         simp_all only [map_mul, isUnit_iff_ne_zero, ne_eq, not_false_eq_true, nonsing_inv_mul,
-            sub_apply,
-          smul_apply, smul_eq_mul]
+            Matrix.sub_apply,
+          Matrix.smul_apply, smul_eq_mul]
         obtain ⟨left, rfl⟩ := hD
         obtain ⟨left_1, rfl⟩ := hE
         by_cases h : j = j_1 <;> aesop;
@@ -1232,9 +1223,11 @@ theorem spectrum_prod {d d₂ : Type*}
       rw [ spectrum.mem_iff ] at hy;
       simp_all only [isUnit_iff_isUnit_det, isUnit_iff_ne_zero, ne_eq, Decidable.not_not];
       have := Matrix.exists_mulVec_eq_zero_iff.mpr hy;
-      simp_all only [ne_eq, funext_iff, Pi.zero_apply, not_forall, mulVec, dotProduct, sub_apply,
+      simp_all only [ne_eq, funext_iff, Pi.zero_apply, not_forall, mulVec, dotProduct,
+        Matrix.sub_apply,
           Pi.smul_apply];
-      simp_all only [Algebra.algebraMap_eq_smul_one, smul_apply, one_apply, smul_ite, smul_zero,
+      simp_all only [Algebra.algebraMap_eq_smul_one, Matrix.smul_apply, Matrix.one_apply,
+        smul_ite, smul_zero,
           sub_mul, ite_mul, Algebra.smul_mul_assoc, one_mul, zero_mul, Finset.sum_sub_distrib,
           Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte];
       exact ⟨ this.choose, this.choose_spec.1, fun x => by
@@ -1247,7 +1240,7 @@ theorem spectrum_prod {d d₂ : Type*}
       obtain ⟨ w, hw, hw' ⟩ := this; use w; simp_all only [Algebra.algebraMap_eq_smul_one,
           sub_eq_zero, not_false_eq_true, true_and];
       simp_all only [funext_iff, Pi.zero_apply, not_forall, mulVec, dotProduct, Pi.smul_apply,
-          smul_apply, Algebra.smul_mul_assoc];
+          Matrix.smul_apply, Algebra.smul_mul_assoc];
       simp_all [ Matrix.one_apply];
     refine spectrum.mem_iff.mpr ?_;
     -- Consider the vector $v \otimes w$.
@@ -1372,8 +1365,8 @@ lemma sub_iInf_eignevalues (hA : A.IsHermitian) :
           mul_one];
       simp only [mulVec_conjTranspose, star_star, vecMul_vecMul];
       rw [ ← Matrix.mul_assoc, mul_eq_one_comm.mp hQ, one_mul ];
-    simp_all only [ge_iff_le, dotProduct, Pi.star_apply, RCLike.star_def, mulVec, sub_apply,
-      smul_apply, Complex.real_smul, conjTranspose_apply, star_sum, star_mul',
+    simp_all only [ge_iff_le, dotProduct, Pi.star_apply, RCLike.star_def, mulVec, Matrix.sub_apply,
+      Matrix.smul_apply, Complex.real_smul, conjTranspose_apply, star_sum, star_mul',
       RingHomCompTriple.comp_apply, RingHom.id_apply];
     simp_all only [implies_true, and_self, diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq,
         ↓reduceIte];
@@ -1404,7 +1397,7 @@ lemma iInf_eigenvalues_le_dotProduct_mulVec (hA : A.IsHermitian) (v : d → ℂ)
   conv_lhs =>
     equals (star v ⬝ᵥ (iInf hA.eigenvalues • 1) *ᵥ v) =>
       simp only [dotProduct, Pi.star_apply, RCLike.star_def, mul_comm, mulVec]
-      simp only [Finset.mul_sum, mul_left_comm, smul_apply, one_apply, smul_ite,
+      simp only [Finset.mul_sum, mul_left_comm, Matrix.smul_apply, Matrix.one_apply, smul_ite,
         Complex.real_smul, mul_one, smul_zero, mul_ite, mul_zero, Finset.sum_ite_eq,
         Finset.mem_univ, ↓reduceIte, mul_assoc]
   rw [← sub_nonneg, ← dotProduct_sub, ← Matrix.sub_mulVec]
@@ -1688,11 +1681,11 @@ variable {A B : Matrix (m × n) (m × n) α}
 @[simp]
 theorem traceLeft_add : (A + B).traceLeft = A.traceLeft + B.traceLeft := by
   ext : 2
-  simp only [traceLeft, add_apply, Finset.sum_add_distrib, of_apply]
+  simp only [traceLeft, Matrix.add_apply, Finset.sum_add_distrib, of_apply]
 
 @[simp]
 theorem traceLeft_neg : (-A).traceLeft = -A.traceLeft := by
-  ext : 2; simp only [traceLeft, neg_apply, Finset.sum_neg_distrib, of_apply]
+  ext : 2; simp only [traceLeft, Matrix.neg_apply, Finset.sum_neg_distrib, of_apply]
 
 @[simp]
 theorem traceLeft_sub : (A - B).traceLeft = A.traceLeft - B.traceLeft := by
@@ -1703,11 +1696,11 @@ variable {A B : Matrix (n × m) (n × m) α}
 @[simp]
 theorem traceRight_add : (A + B).traceRight = A.traceRight + B.traceRight := by
   ext : 2
-  simp only [traceRight, add_apply, Finset.sum_add_distrib, of_apply]
+  simp only [traceRight, Matrix.add_apply, Finset.sum_add_distrib, of_apply]
 
 @[simp]
 theorem traceRight_neg : (-A).traceRight = -A.traceRight := by
-  ext : 2; simp only [traceRight, neg_apply, Finset.sum_neg_distrib, of_apply]
+  ext : 2; simp only [traceRight, Matrix.neg_apply, Finset.sum_neg_distrib, of_apply]
 
 @[simp]
 theorem traceRight_sub : (A - B).traceRight = A.traceRight - B.traceRight := by
@@ -1717,12 +1710,12 @@ variable {R : Type*} [DistribSMul R α]
 @[simp]
 theorem traceLeft_smul {A : Matrix (m × n) (m × n) α} (r : R) :
     (r • A).traceLeft = r • A.traceLeft := by
-  ext : 2; simp only [traceLeft, smul_apply, ← Finset.smul_sum, of_apply]
+  ext : 2; simp only [traceLeft, Matrix.smul_apply, ← Finset.smul_sum, of_apply]
 
 @[simp]
 theorem traceRight_smul {A : Matrix (n × m) (n × m) α} (r : R) :
     (r • A).traceRight = r • A.traceRight := by
-  ext : 2; simp only [traceRight, smul_apply, ← Finset.smul_sum, of_apply]
+  ext : 2; simp only [traceRight, Matrix.smul_apply, ← Finset.smul_sum, of_apply]
 
 end traceLeftRight
 
@@ -1783,7 +1776,7 @@ theorem PosSemidef.piProd [∀ i, Finite (d i)] [RCLike R] (hA : ∀ i, (A i).Po
   have hBigB_conjTranspose_mul_BigB : Matrix.of (fun j k : (∀ i, d i) => ∏ i, (B i * star (B i))
       (j i) (k i)) = Matrix.of (fun j k : (∀ i, d i) => ∏ i, (B i) (j i) (k i)) * star
       (Matrix.of (fun j k : (∀ i, d i) => ∏ i, (B i) (j i) (k i))) := by
-    ext j k; simp only [mul_apply, star_apply, RCLike.star_def, of_apply, star_prod]
+    ext j k; simp only [Matrix.mul_apply, star_apply, RCLike.star_def, of_apply, star_prod]
     simp only [Finset.prod_sum, ← Finset.prod_mul_distrib];
     refine Finset.sum_bij ( fun p hp => fun i => p i ( Finset.mem_univ i ) ) ?_ ?_ ?_ ?_ <;>
         simp +decide only [Finset.univ_pi_univ, Finset.mem_univ, imp_self, implies_true,
@@ -1801,7 +1794,8 @@ theorem PosSemidef.piProd [∀ i, Finite (d i)] [RCLike R] (hA : ∀ i, (A i).Po
     simp only [dotProduct_mulVec, y];
     simp only [dotProduct, vecMul, Pi.star_apply, RCLike.star_def, mul_comm, star_apply, of_apply,
       star_prod];
-    simp only [mul_apply, of_apply, star_apply, star_prod, RCLike.star_def, Finset.mul_sum _ _ _,
+    simp only [Matrix.mul_apply, of_apply, star_apply, star_prod, RCLike.star_def,
+      Finset.mul_sum _ _ _,
       mul_left_comm, mulVec, dotProduct, mul_comm, map_sum, map_mul, map_prod,
       RingHomCompTriple.comp_apply, RingHom.id_apply, mul_assoc];
     exact Finset.sum_congr rfl fun _ _ => Finset.sum_comm.trans ( Finset.sum_congr rfl fun _ _

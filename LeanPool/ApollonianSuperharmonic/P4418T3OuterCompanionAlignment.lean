@@ -327,7 +327,6 @@ private theorem geometry :
   all_goals
     dsimp only [slot, turn, shift]
     norm_num only
-    try
     simp only [show (0 : Fin 3).succ = (1 : Fin 4) from rfl,
       show (1 : Fin 3).succ = (2 : Fin 4) from rfl,
       show (2 : Fin 3).succ = (3 : Fin 4) from rfl]

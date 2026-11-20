@@ -521,7 +521,7 @@ theorem parabolicRieszKernel_local_le {β : ℝ} (hβ : 0 < β) (hβ5 : β < 5)
           parabolicRieszKernel β z w := hsum
     _ ≤ ∑' n : ℕ,
           A * (ENNReal.ofReal (((2 : ℝ) ^ (Int.negSucc n : ℝ)) ^ β) * B) :=
-      ENNReal.tsum_le_tsum hterm
+      tsum_le_tsum hterm
     _ = (A * ∑' n : ℕ, ENNReal.ofReal
           (((2 : ℝ) ^ (Int.negSucc n : ℝ)) ^ β)) * B := by
       have hfun : (fun n : ℕ => A *

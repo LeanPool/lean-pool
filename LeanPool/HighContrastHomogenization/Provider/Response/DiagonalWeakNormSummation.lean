@@ -60,7 +60,7 @@ theorem normalized_adaptedWeakSeminorm_le_of_summable
           blockAvsumL2 (alignedIndex q (t - (j : ℤ)) t)
             (fun z => blockCellAverage (adaptedCellAt q (t - (j : ℤ)) z) F))) ≤
         ∑' j : ℕ, ENNReal.ofReal (b j) :=
-      ENNReal.tsum_le_tsum fun j => ENNReal.ofReal_le_ofReal (hscale j)
+      tsum_le_tsum fun j => ENNReal.ofReal_le_ofReal (hscale j)
     _ = ENNReal.ofReal (∑' j, b j) :=
       (ENNReal.ofReal_tsum_of_nonneg hb0 hbsum).symm
 

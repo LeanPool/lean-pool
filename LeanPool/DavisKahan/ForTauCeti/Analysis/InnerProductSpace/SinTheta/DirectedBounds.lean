@@ -259,7 +259,7 @@ theorem opNorm_directed_sinTheta_le {A B : E →ₗ[𝕜] E}
     (hVspec : PointSpectrumIn B V (Set.Iic c))
     (hε0 : 0 ≤ ε) (hε : ∀ x, ‖(B - A) x‖ ≤ ε * ‖x‖) :
     ‖(V.starProjection ∘L U.starProjection : E →L[𝕜] E)‖ ≤ ε / g := by
-  have : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  have : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   set Ac : E →L[𝕜] E := A.toContinuousLinearMap with hAc
   set Bc : E →L[𝕜] E := B.toContinuousLinearMap with hBc
   have hApp : ∀ x, Ac x = A x := fun _ => rfl
@@ -323,7 +323,7 @@ theorem uiNorm_directed_sinTheta_le (N : UnitarilyInvariantSeminorm 𝕜 E E)
     (hVspec : PointSpectrumIn B V (Set.Iic c)) :
     N ((V.starProjection ∘L U.starProjection : E →L[𝕜] E) : E →ₗ[𝕜] E)
       ≤ N (B - A) / g := by
-  have : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  have : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   exact UnitarilyInvariantSeminorm.apply_starProjection_comp_starProjection_le N
     hA hB hU hV hg
     (fun x hx => lowerFormBound_of_pointSpectrumIn hA hU hUspec x hx)
@@ -374,7 +374,7 @@ theorem opNorm_starProjection_sub_le {A B : E →ₗ[𝕜] E}
     (hWlo : PointSpectrumIn B Wᗮ (Set.Iic c))
     (hε0 : 0 ≤ ε) (hε : ∀ x, ‖(B - A) x‖ ≤ ε * ‖x‖) :
     ‖(U.starProjection - W.starProjection : E →L[𝕜] E)‖ ≤ ε / g := by
-  have : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  have : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   let Ac : E →L[𝕜] E := A.toContinuousLinearMap
   let Bc : E →L[𝕜] E := B.toContinuousLinearMap
   have hAself : Ac.IsSymmetric := by

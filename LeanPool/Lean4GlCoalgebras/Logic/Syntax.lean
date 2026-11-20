@@ -525,8 +525,8 @@ def full (σ : Nat → Formula) (A : Formula) : Formula := match A with
 termination_by Formula.length A
 decreasing_by
   all_goals
-  simp [Formula.length]
-  try linarith
+    simp only [Formula.length]
+    linarith
 
 /-! # Properties of Vocab -/
 
@@ -594,7 +594,7 @@ lemma in_single_voc' {m n : ℕ} {φ ψ : Formula} :
       (m ∈ φ.vocab ∧ n ∈ ψ.vocab) ∨ (m ∈ ψ.vocab ∧ m ≠ n) := by
   intro m_in
   induction ψ <;> simp_all [single] <;>
-    try grind [Formula.vocab, in_neg_voc_iff, Formula.instTop, Formula.instBot]
+    grind [Formula.vocab, in_neg_voc_iff, Formula.instTop, Formula.instBot]
 
 
 /-! # Some very specific lemmas about Finset.sum

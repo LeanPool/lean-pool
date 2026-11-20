@@ -202,10 +202,10 @@ theorem rescaleForce_eq_zero_of_vanishing {R R' δ' : ℝ} (hR0 : 0 < R) (hRR' :
 /-- A real scalar of modulus at most one does not increase the extended norm. -/
 private theorem enorm_smul_le_of_abs_le_one {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {c : ℝ} (hc : |c| ≤ 1) (v : E) : ‖c • v‖ₑ ≤ ‖v‖ₑ := by
-  rw [enorm_smul]
+  rw [eNorm_smul]
   calc ‖c‖ₑ * ‖v‖ₑ ≤ 1 * ‖v‖ₑ := by
         gcongr
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         exact ENNReal.ofReal_le_one.2 hc
     _ = ‖v‖ₑ := one_mul _
 
@@ -258,7 +258,7 @@ theorem globalEnergyClass_rescale {R : ℝ} (hR0 : 0 < R) (hR1 : R ≤ 1)
         CKN.Foundation.Parabolic.Integration.timeSlice_setLIntegral_comp_parabolicRescale hR0 (0
         : Vec3) (0 : ℝ) 1 s
         (fun z => ‖u z‖)
-      simp only [enorm_norm, mul_one, zero_add] at hcv
+      simp only [eNorm_norm, mul_one, zero_add] at hcv
       calc ∫⁻ x in vec3Ball 0 1, ‖rescaleVelocity R ((0 : Vec3), (0 : ℝ)) u (x, s)‖ₑ ^ (2 : ℝ)
           ≤ ∫⁻ x in vec3Ball 0 1,
               ‖u (parabolicTranslate 0 0 (parabolicScale R (x, s)))‖ₑ ^ (2 : ℝ) := by

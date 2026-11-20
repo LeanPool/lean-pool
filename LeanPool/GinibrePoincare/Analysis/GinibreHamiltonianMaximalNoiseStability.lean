@@ -107,7 +107,7 @@ theorem ginibreDrivenMaximalLifetime_uniform_noise_neighborhood {n : ℕ} (hn : 
   have hsmall : δ*Real.exp ((L : ℝ)*(T : ℝ)) < r := by
     dsimp [δ]
     field_simp
-   ; nlinarith
+    nlinarith
   refine ⟨δ, hδ, ?_⟩
   intro M hM hM0 hnoise
   exact ginibreDrivenMaximalLifetime_gt_of_small_noise (K := K) hn hX hM hM0

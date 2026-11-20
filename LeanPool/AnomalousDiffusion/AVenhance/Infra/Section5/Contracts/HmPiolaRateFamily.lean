@@ -113,7 +113,7 @@ theorem hmPiolaSourceRate_onA7 (β C₀ : ℝ) :
     have hfun : (fun z : ℝ × Vec 2 => c * hmPiolaQ E Tn z.1 z.2) =
         c • (fun z : ℝ × Vec 2 => hmPiolaQ E Tn z.1 z.2) := by
       funext z; simp
-    rw [hfun, eLpNorm_const_smul, Real.enorm_of_nonneg hc0]
+    rw [hfun, eLpNorm_const_smul, Real.eNorm_of_nonneg hc0]
   change eLpNorm (fun z : ℝ × Vec 2 => hmFrozenPiolaSource I hΦ m κm Tn z.1 z.2) 2 μ ≤
     ENNReal.ofReal ((32 * Cflux * Cq) * B * Qm * (Real.sqrt κprev)⁻¹ *
       E ^ (-(1 + gamma β / 2)))

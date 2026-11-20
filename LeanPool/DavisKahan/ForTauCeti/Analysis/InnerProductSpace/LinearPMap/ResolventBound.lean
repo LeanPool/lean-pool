@@ -21,7 +21,7 @@ than the resolvent set:
 * **resolvent spectral mapping** in the direction that matters — if `ν ≠ 0` and
   `z - ν⁻¹` is in the resolvent set of `A`, then `ν` is not in the spectrum of
   the bounded operator `resolvent A z`;
-* hence, via Mathlib's `IsSelfAdjoint.spectralRadius_eq_nnnorm`, the
+* hence, via Mathlib's `IsSelfAdjoint.spectralRadius_eq_nnNorm`, the
   quantitative bound the Davis--Kahan unbounded theory consumes:
 
 > if `A` is self-adjoint and its spectrum avoids the ball of radius `s` about a
@@ -142,7 +142,7 @@ theorem notMem_spectrum_resolvent {A : E →ₗ.[𝕜] E} {z : 𝕜}
     -- `module` reduces to scalar identities; they need `ν ≠ 0`, so `field_simp`.
     match_scalars
     all_goals field_simp
-    all_goals ring
+    ring
   exact (spectrum.notMem_iff).mpr ⟨⟨_, T, hleft, hright⟩, rfl⟩
 
 /-- **Resolvents at two points of the resolvent set commute**, packaged as

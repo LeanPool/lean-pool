@@ -195,7 +195,7 @@ private theorem helper_cardBound_183.{u_1, u_2} :
   classical
   intro V E _ _ _ G k e0 input T generating ett hMP hlarge positive stepFacts oddAt n hn
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hz : n = 0
     · subst n
       have hbaseEq := hMP.1

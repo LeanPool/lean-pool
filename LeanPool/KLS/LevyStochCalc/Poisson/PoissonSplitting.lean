@@ -214,7 +214,7 @@ lemma integral_prod_range_markPhase (hB : ∀ i, MeasurableSet (B i)) (mK : Meas
         ← ofReal_norm, hF_norm, ENNReal.ofReal_one]
     · have h1 : ω ∉ K ⁻¹' {m} := h
       rw [Set.indicator_of_notMem (fun h' => h (Set.mem_singleton_iff.1 h')),
-        Set.indicator_of_notMem h1, zero_mul, enorm_zero]
+        Set.indicator_of_notMem h1, zero_mul, eNorm_zero]
   simp_rw [hpt]
   rw [integral_tsum (fun m => (hG_meas m).aestronglyMeasurable)]
   · refine tsum_congr fun m => ?_

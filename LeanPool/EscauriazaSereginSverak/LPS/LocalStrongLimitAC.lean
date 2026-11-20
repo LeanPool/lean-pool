@@ -165,7 +165,7 @@ theorem lps_ac_family_sq_integrable
         simp [Measure.real, Real.volume_Ioc, ENNReal.toReal_ofReal (sub_nonneg.2 huv)]
       rw [hreal] at hcs
       have hmono : ∫ r in Ioc u v, g x r ^ 2 ≤ ∫ r in Ioc a b, g x r ^ 2 :=
-        setIntegral_mono_set hx (ae_of_all _ fun r => sq_nonneg _) hsub.eventuallyLE
+        setIntegral_mono_set hx (ae_of_all _ fun r => sq_nonneg _) hsub.eventuallySubset
       have hnn : 0 ≤ ∫ r in Ioc u v, g x r ^ 2 :=
         integral_nonneg fun r => sq_nonneg _
       have hta : v - u ≤ b - a := by linarith only [hu, hv]

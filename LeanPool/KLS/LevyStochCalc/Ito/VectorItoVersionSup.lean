@@ -56,7 +56,7 @@ theorem enorm_pi_le_sum {m : ℕ} (x : Fin m → ℝ) :
 
 /-- The extended norm does not see the absolute value. -/
 theorem nnnorm_abs_real (x : ℝ) : ‖|x|‖₊ = ‖x‖₊ := by
-  rw [← Real.norm_eq_abs, nnnorm_norm]
+  rw [← Real.norm_eq_abs, nnNorm_norm]
 
 /-- A squared sum of two terms, up to a constant. -/
 theorem add_sq_le_four_mul (a b : ℝ≥0∞) : (a + b) ^ 2 ≤ 4 * (a ^ 2 + b ^ 2) := by
@@ -179,7 +179,7 @@ private theorem lintegral_iSup_sq_drift_step_le
         (Filter.Eventually.of_forall fun s => abs_nonneg _) hsub.eventuallySubset
     have hnn : ‖D t ω‖₊ ≤ ‖∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume‖₊ := by
       rw [← NNReal.coe_le_coe]
-      simp only [coe_nnnorm, Real.norm_eq_abs]
+      simp only [coe_nnNorm, Real.norm_eq_abs]
       have hAnn : (0 : ℝ) ≤ ∫ s in Set.Icc (0 : ℝ) T, |b₂ p ω s - b₁ p ω s| ∂volume :=
         MeasureTheory.integral_nonneg_of_ae
           (Filter.Eventually.of_forall fun s => abs_nonneg _)
@@ -269,7 +269,7 @@ theorem lintegral_iSup_sq_norm_version_sub_le
         exact Real.norm_of_nonneg hnn
       have hle : ‖Y (t : ℝ) ω - X (t : ℝ) ω‖₊ ≤ ‖Zabs (t : ℝ) ω‖₊ := by
         rw [← NNReal.coe_le_coe]
-        simpa only [coe_nnnorm, hZ] using hreal
+        simpa only [coe_nnNorm, hZ] using hreal
       exact_mod_cast hle
     refine hstep1.trans ?_
     rw [iSup_enorm_eq_iSup_dyadicRunMax hT.le hcad]
@@ -363,7 +363,7 @@ theorem lintegral_iSup_sq_norm_version_sub_le
           (hm₁ p k) (hp₁ p k) (hq₁ p k) T) :=
         ((stochasticIntegralBrownian_stronglyAdapted (W.W k) ℱ (hcoord k) (H₁ p k)
           (hm₁ p k) (hp₁ p k) (hq₁ p k) T).mono (ℱ.le T)).measurable
-      exact (((h2.sub h1).nnnorm).coe_nnreal_ennreal).pow_const 2
+      exact (((h2.sub h1).nnNorm).coe_nnreal_ennreal).pow_const 2
     calc ∫⁻ ω, (‖M T ω‖₊ : ℝ≥0∞) ^ 2 ∂P
         ≤ ∫⁻ ω, (d : ℝ≥0∞) * ∑ k : Fin d,
             (‖stochasticIntegralBrownian (W.W k) ℱ (hcoord k) (H₂ p k) (hm₂ p k) (hp₂ p k)
@@ -446,7 +446,7 @@ theorem lintegral_energy_sub_le {f g h : Ω → ℝ → ℝ}
           have hfhm : Measurable fun s : ℝ => (‖f ω s - h ω s‖₊ : ℝ≥0∞) ^ 2 := by
             have h1 : Measurable fun s : ℝ => f ω s - h ω s :=
               (Measurable.of_uncurry_left hf).sub (Measurable.of_uncurry_left hh)
-            exact ((h1.nnnorm).coe_nnreal_ennreal).pow_const 2
+            exact ((h1.nnNorm).coe_nnreal_ennreal).pow_const 2
           rw [MeasureTheory.lintegral_const_mul' _ _ (by finiteness),
             MeasureTheory.lintegral_add_left hfhm]
         simp only [hinner]

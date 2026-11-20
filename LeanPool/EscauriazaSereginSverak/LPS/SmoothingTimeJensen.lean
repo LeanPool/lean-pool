@@ -89,7 +89,7 @@ private theorem lps_twj_sq_slice_integrableOn {t₀ T : ℝ} {F : ParabolicPoint
       (volume.restrict ((Set.univ : Set Vec3) ×ˢ Ioo t₀ T)) := hF
   have h := hFL.integrable_sq
   rw [lps_measure_slab_eq_prod] at h
-  exact (integrableOn_Ioc_iff_integrableOn_Ioo enorm_ne_top).2 h.integral_prod_right
+  exact (integrableOn_Ioc_iff_integrableOn_Ioo eNorm_ne_top).2 h.integral_prod_right
 
 /-- The spatial `L²` norm of the slices of a square-integrable slab field is
 integrable on every subinterval of `(t₀, T]`. -/
@@ -118,7 +118,7 @@ private theorem lps_twj_pairing_integrableOn {t₀ T : ℝ} {F : ParabolicPoint 
     IntegrableOn (fun τ => ∫ x : Vec3, F (x, τ) * ψ x) (Ioc t₀ T) volume := by
   have hFL : MemLp (fun q : Vec3 × ℝ => F q) 2
       (volume.restrict ((Set.univ : Set Vec3) ×ˢ Ioo t₀ T)) := hF
-  exact (integrableOn_Ioc_iff_integrableOn_Ioo enorm_ne_top).2
+  exact (integrableOn_Ioc_iff_integrableOn_Ioo eNorm_ne_top).2
     (lps_integrable_slice_pairing hFL hψ).integral_prod_right
 
 /-- The time integrals of the pairings of a square-integrable slab field with two

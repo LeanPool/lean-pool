@@ -90,9 +90,8 @@ private theorem dense_intervalTest_approx {τ : ℝ} {n : ℕ}
     ContinuousMap.isOpen_setOfPred_mapsTo
       (by simp only [timeCompact]; exact isCompact_Icc) isOpen_Ioo
   have hN : IsOpen N := by
-    apply IsOpen.inter
-    · exact hbase.preimage (continuous_fst.sub continuous_const)
-    · exact hbase.preimage (continuous_snd.sub continuous_const)
+    exact (hbase.preimage (continuous_fst.sub continuous_const)).inter
+      (hbase.preimage (continuous_snd.sub continuous_const))
   have hφN : pφ ∈ N := by
     constructor
     · intro t _

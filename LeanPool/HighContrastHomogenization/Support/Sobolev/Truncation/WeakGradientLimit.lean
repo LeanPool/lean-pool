@@ -66,22 +66,22 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
   have hFmeas : ∀ n, AEMeasurable (F n) μ := by
     intro n
     exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable (((hf n).sub
-      hg.aestronglyMeasurable).enorm)
+      hg.aestronglyMeasurable).eNorm)
   have hBound : ∀ n, F n ≤ᵐ[μ] B := by
     intro n
     filter_upwards [hbound n] with x hx
     have hfe : ‖f n x‖ₑ ≤ ‖h x‖ₑ := by
-      rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs]
       exact ENNReal.ofReal_le_ofReal (hx.trans (le_abs_self _))
     have hsub : ‖f n x - g x‖ₑ ≤ ‖h x‖ₑ + ‖g x‖ₑ :=
-      enorm_sub_le.trans (by gcongr)
+      eNorm_sub_le.trans (by gcongr)
     exact ENNReal.rpow_le_rpow hsub (by norm_num)
   have hlhh : ∫⁻ x, ‖h x‖ₑ ^ (2 : ℝ) ∂μ ≠ ⊤ := by
     simpa [h2r] using
-      (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top h2z h2t hh.eLpNorm_lt_top).ne
+      (lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top h2z h2t hh.eLpNorm_lt_top).ne
   have hlgg : ∫⁻ x, ‖g x‖ₑ ^ (2 : ℝ) ∂μ ≠ ⊤ := by
     simpa [h2r] using
-      (lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top h2z h2t hg.eLpNorm_lt_top).ne
+      (lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top h2z h2t hg.eLpNorm_lt_top).ne
   have hBfin : ∫⁻ x, B x ∂μ ≠ ⊤ := by
     have hpt : ∀ x, B x ≤ 4 * (‖h x‖ₑ ^ (2 : ℝ) + ‖g x‖ₑ ^ (2 : ℝ)) := by
       intro x
@@ -98,7 +98,7 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
             · rw [(ENNReal.strictMono_rpow_of_pos (by norm_num)).monotone.map_max]
               exact max_le (le_add_right le_rfl) (le_add_left le_rfl)
     have hHmeas : AEMeasurable (fun x => ‖h x‖ₑ ^ (2:ℝ)) μ :=
-      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hh.aestronglyMeasurable.enorm
+      ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hh.aestronglyMeasurable.eNorm
     have hle : ∫⁻ x, B x ∂μ ≤ 4 * (∫⁻ x, ‖h x‖ₑ ^ (2:ℝ) ∂μ + ∫⁻ x, ‖g x‖ₑ ^ (2:ℝ) ∂μ) := by
       calc ∫⁻ x, B x ∂μ ≤ ∫⁻ x, 4 * (‖h x‖ₑ ^ (2:ℝ) + ‖g x‖ₑ ^ (2:ℝ)) ∂μ :=
             lintegral_mono hpt
@@ -112,7 +112,7 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
       have h0 : Tendsto (fun n => f n x - g x) atTop (𝓝 0) := by
         have := hx.sub (tendsto_const_nhds (x := g x))
         rwa [sub_self] at this
-      simpa using! (continuous_enorm.tendsto 0).comp h0
+      simpa using! (continuous_eNorm.tendsto 0).comp h0
     have := (ENNReal.continuous_rpow_const (y := (2:ℝ))).tendsto 0 |>.comp hen
     simpa [hF] using! this
   have hlim0 : Tendsto (fun n => ∫⁻ x, F n x ∂μ) atTop (𝓝 (∫⁻ x, (0 : ℝ≥0∞) ∂μ)) :=
@@ -120,7 +120,7 @@ theorem tendsto_eLpNorm_two_of_tendsto_ae_of_dominated
   rw [lintegral_zero] at hlim0
   have hrw : ∀ n, eLpNorm (fun x => f n x - g x) 2 μ = (∫⁻ x, F n x ∂μ) ^ (1 / (2:ℝ)) := by
     intro n
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal h2z h2t, h2r]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal h2z h2t, h2r]
     exact (hf n).sub hg.aestronglyMeasurable
   simp_rw [hrw]
   have hc : Tendsto (fun y : ℝ≥0∞ => y ^ (1 / (2:ℝ))) (𝓝 0) (𝓝 0) := by
@@ -254,7 +254,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_two
   rw [hdiff_eq n]
   have hae : ∀ᵐ x ∂μ,
       ‖(f n x - g x) * h x‖₊ ≤ 1 * ‖f n x - g x‖₊ * ‖h x‖₊ :=
-    Filter.Eventually.of_forall (fun x => by rw [nnnorm_mul]; simp)
+    Filter.Eventually.of_forall (fun x => by rw [nnNorm_mul]; simp)
   have hHolder :
       eLpNorm (fun x => (f n x - g x) * h x) 1 μ ≤ B n := by
     have := eLpNorm_le_eLpNorm_mul_eLpNorm
@@ -266,7 +266,7 @@ theorem tendsto_setIntegral_mul_of_tendsto_eLpNorm_two
       ≤ (∫⁻ x, ENNReal.ofReal ‖(f n x - g x) * h x‖ ∂μ).toReal :=
         norm_integral_le_lintegral_norm _
     _ = (eLpNorm (fun x => (f n x - g x) * h x) 1 μ).toReal := by
-        rw [eLpNorm_one_eq_lintegral_enorm]
+        rw [eLpNorm_one_eq_lintegral_eNorm]
         · simp_rw [ofReal_norm]
         · exact ((hf n).sub hg).aestronglyMeasurable.mul hh.aestronglyMeasurable
     _ ≤ (B n).toReal := by

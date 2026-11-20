@@ -30,9 +30,8 @@ theorem stability_localBox_finiteMeasure
   obtain ⟨_hopen, hΩcompact, _hΩsub, _hconn, hJcompact, _hJsub⟩ := hbox
   let K : Set ParabolicPoint := closure Ω' ×ˢ closure J
   have hK : IsCompact K := by
-    apply parabolicHomeomorph.isCompact_preimage.mpr
-    change IsCompact (closure Ω' ×ˢ closure J)
-    exact hΩcompact.prod hJcompact
+    exact (parabolicHomeomorph.isCompact_preimage
+      (s := closure Ω' ×ˢ closure J)).mpr (hΩcompact.prod hJcompact)
   have hsub : CKN.spaceTimeSet Ω' J ⊆ K := by
     rintro ⟨x, t⟩ ⟨hx, ht⟩
     exact ⟨subset_closure hx, subset_closure ht⟩

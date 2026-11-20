@@ -98,7 +98,7 @@ theorem composition_memLp_and_bound
     rw [hfun, eLpNorm_const_smul,
       eLpNorm_comp_measurePreserving (hQLp c.length c.length_le).aestronglyMeasurable.norm hφ,
       eLpNorm_norm _ (hQLp c.length c.length_le).aestronglyMeasurable,
-      ENNReal.toReal_mul, toReal_enorm,
+      ENNReal.toReal_mul, toReal_eNorm,
       Real.norm_of_nonneg (innerPartitionBound_nonneg B R hB hR c)]
   simp_rw [hHnorm] at hreal
   calc

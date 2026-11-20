@@ -5,6 +5,7 @@ Authors: Siddhartha Gadgil, Anand Rao
 -/
 module
 
+public import Std.Data.HashMap.Basic
 public import LeanPool.Polylean.ConjInvLength.LengthBound
 
 /-!

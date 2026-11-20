@@ -123,7 +123,7 @@ theorem hasGeometricallyConvexModuli_iff_of_nonzero (hR : IsReinhardt U)
   exact hR.mem_modulusTrace_iff.mpr (h.geometricCombination_mem
     (hR.mem_modulusTrace_iff.mp ⟨z, hz, rfl⟩)
     (hR.mem_modulusTrace_iff.mp ⟨w, hw, rfl⟩)
-    (fun i => nnnorm_pos.mpr (hne z hz i)) (fun i => nnnorm_pos.mpr (hne w hw i)) ha hb hab)
+    (fun i => nnNorm_pos.mpr (hne z hz i)) (fun i => nnNorm_pos.mpr (hne w hw i)) ha hb hab)
 
 /-- The smallest complete Reinhardt set containing a given set. -/
 @[expose] def completeReinhardtHull (U : Set (ι → ℂ)) : Set (ι → ℂ) :=

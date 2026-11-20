@@ -97,7 +97,7 @@ theorem fieldDerivative_compact (a : LiftTangent) (f : LiftDomain period → W)
     (hf : HasCompactSupport f) : HasCompactSupport (fieldDerivative period a f) := by
   apply (fieldFDeriv_compact period f hf).mono
   intro x hx
-  contrapose! hx
+  contrapose hx
   simp only [Function.mem_support, not_not] at hx ⊢
   change fieldFDeriv period f x a = 0
   rw [hx]
@@ -204,12 +204,12 @@ theorem field_translation_remainder (a : LiftTangent)
   have hr := uniform_derivative_remainder
     (fun s => localFieldLift period f x (s • a))
     (fun s => fderiv ℝ (localFieldLift period f x) (s • a) a) hd (M * ‖a‖₊ ^ 2)
-    (fun s => by simpa only [zero_smul, NNReal.coe_mul, NNReal.coe_pow, coe_nnnorm] using
+    (fun s => by simpa only [zero_smul, NNReal.coe_mul, NNReal.coe_pow, coe_nnNorm] using
       directionalDerivative_line_lipschitz (localFieldLift period f x) (hf x) M (hDD x) a s) t
   change ‖f (x.1 + (t • a).1, x.2 + ((t • a).2 : AddCircle period)) - f x -
     t • fieldDerivative period a f x‖ ≤ _
   simpa only [localFieldLift, zero_smul, Prod.fst_zero, Prod.snd_zero,
-    AddCircle.coe_zero, add_zero, NNReal.coe_mul, NNReal.coe_pow, coe_nnnorm,
+    AddCircle.coe_zero, add_zero, NNReal.coe_mul, NNReal.coe_pow, coe_nnNorm,
     fieldDerivative] using hr
 
 theorem smoothFieldLp_translation_hasDerivAt (a : LiftTangent)

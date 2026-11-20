@@ -56,12 +56,12 @@ private lemma IsCaratheodory.growth_of_lintegral_growthSup_rpow_toReal_ne_top
         ‖f x ξ‖ ≤ |a x| + C * ‖ξ‖ ^ (p / q).toReal := by
   refine ⟨(growthSup f (p / q).toReal C · |>.toReal), memLp_iff_measurable_and_finite.mpr
     ⟨(hf.measurable_growthSup (p / q).toReal C).ennreal_toReal.aestronglyMeasurable, ?_⟩, ?_⟩
-  · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (ne_zero_of_ge_one h1q) hq.ne
+  · rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (ne_zero_of_ge_one h1q) hq.ne
       (hf.measurable_growthSup _ _).ennreal_toReal.aestronglyMeasurable]
     refine ENNReal.rpow_lt_top_of_nonneg (by positivity) (ne_of_lt ?_)
     refine lt_of_le_of_lt (lintegral_mono fun x : ℝ => ?_) (lt_top_iff_ne_top.← hfpqC)
     apply ENNReal.rpow_le_rpow _ ENNReal.toReal_nonneg
-    rw [Real.enorm_eq_ofReal ENNReal.toReal_nonneg]
+    rw [Real.eNorm_eq_ofReal ENNReal.toReal_nonneg]
     exact ENNReal.ofReal_toReal_le
   · have ae_finite : ∀ᵐ x ∂volume, growthSup f (p / q).toReal C x < ⊤ := by
       have ae_finite : ∀ᵐ x ∂volume, growthSup f (p / q).toReal C x ^ q.toReal < ⊤ := by
@@ -429,7 +429,7 @@ private lemma IsCaratheodory.exists_bad_subset_measurableSet
     Measurable.comp (show Measurable (denseSeqEucl m) from Measurable.of_discrete) s_meas
   have f_u₀_meas : Measurable (fun x : ℝ => f x (u₀ x)) :=
     hf.measurable_comp_denseSeqEucl_measurable s_meas
-  have meas_out : Measurable (fun x : ℝ => ‖f x (u₀ x)‖ₑ ^ Q) := f_u₀_meas.enorm.pow_const _
+  have meas_out : Measurable (fun x : ℝ => ‖f x (u₀ x)‖ₑ ^ Q) := f_u₀_meas.eNorm.pow_const _
   have hu₀_bound : ∀ x ∈ E', ‖f x (u₀ x)‖ₑ ^ Q ≤ (↱N) ^ Q := by
     intro x hx
     have hfN : ‖f x (u₀ x)‖ ≤ N :=
@@ -563,7 +563,7 @@ private lemma exists_memLp_and_not_memLp_nemytskii_of_pairwise_disjoint_measurab
           · filter_upwards with x
             by_cases hx : x ∈ ⋃ j, A j <;>
               simp_all only [Set.mem_iUnion, Set.indicator_of_mem, not_exists,
-                not_false_eq_true, Set.indicator_of_notMem, tsum_zero, enorm_zero,
+                not_false_eq_true, Set.indicator_of_notMem, tsum_zero, eNorm_zero,
                 exists_const, ENNReal.rpow_eq_zero_iff, true_and, ENNReal.zero_ne_top,
                 false_and, or_false]
             exact ENNReal.toReal_pos (ne_zero_of_ge_one h1p) hp.ne
@@ -576,9 +576,9 @@ private lemma exists_memLp_and_not_memLp_nemytskii_of_pairwise_disjoint_measurab
           · exact fun i hi => Set.indicator_of_notMem (hi <| False.elim <| (hA hi).le_bot ⟨·, hx⟩) _
         · exact A_meas
         · exact hA
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal _ _ hmeas]
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal _ _ hmeas]
       · refine ENNReal.rpow_lt_top_of_nonneg ?_ ?_ <;> norm_num
-        exact integral.symm ▸ ne_of_lt (lt_of_le_of_lt (ENNReal.tsum_le_tsum h2) (by simp
+        exact integral.symm ▸ ne_of_lt (lt_of_le_of_lt (tsum_le_tsum h2) (by simp
           [ENNReal.tsum_geometric]))
       · exact ne_zero_of_ge_one h1p
       · exact ne_of_lt hp
@@ -590,7 +590,7 @@ private lemma exists_memLp_and_not_memLp_nemytskii_of_pairwise_disjoint_measurab
           ∫⁻ x in ⋃ j, A j, ‖f x (∑' j : ℕ, (A j).indicator (u j) x)‖ₑ ^ q.toReal ∂volume ≥
           ∑' j : ℕ, ∫⁻ x in A j, ‖f x (u j x)‖ₑ ^ q.toReal ∂volume := by
         rw [lintegral_iUnion]
-        · refine ENNReal.tsum_le_tsum fun j : ℕ => setLIntegral_mono' (A_meas j) ?_
+        · refine tsum_le_tsum fun j : ℕ => setLIntegral_mono' (A_meas j) ?_
           intro x hx
           rw [tsum_eq_single j]
           · simp [*]
@@ -599,9 +599,9 @@ private lemma exists_memLp_and_not_memLp_nemytskii_of_pairwise_disjoint_measurab
         · exact A_meas
         · exact hA
       exact output.trans (setLIntegral_le_lintegral _ _)
-    refine absurd (output.trans' (ENNReal.tsum_le_tsum h1)) ?_
+    refine absurd (output.trans' (tsum_le_tsum h1)) ?_
     convert hfAq.eLpNorm_lt_top.ne using 1
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal _ _ hfAq.aestronglyMeasurable]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal _ _ hfAq.aestronglyMeasurable]
     · rw [ENNReal.rpow_eq_top_iff]
       norm_num
       exact ⟨(Or.inr ⟨·, ENNReal.toReal_pos (ne_zero_of_ge_one h1q) hq.ne⟩), (·.elim (by aesop)

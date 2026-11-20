@@ -440,6 +440,13 @@ theorem exactConstantExtension_infinityDifferent_eq_map :
     exact (algebraMap N L).injective.comp (IsFractionRing.injective R₂ N)
   let : SMul R₂ B := Algebra.toSMul
   let : Module R₂ B := Algebra.toModule
+  let : SMul A B := Algebra.toSMul
+  let : Module A B := Algebra.toModule
+  let : IsScalarTower A R₁ B := IsScalarTower.of_algebraMap_eq (fun z => by
+    apply Subtype.ext
+    change algebraMap A L z = algebraMap R₁ L (algebraMap A R₁ z)
+    exact IsScalarTower.algebraMap_apply A R₁ L z)
+  let : IsScalarTower A B L := IsScalarTower.of_algebraMap_eq' (by ext z; rfl)
   let : IsScalarTower R₂ B L := IsScalarTower.of_algebraMap_eq' (by
     ext x
     exact exactConstantExtensionInfinityNormalizationAlgebra_coe C S N hExact x)

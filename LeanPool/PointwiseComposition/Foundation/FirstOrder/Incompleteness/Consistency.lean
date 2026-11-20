@@ -90,11 +90,11 @@ variable {T}
 end
 
 /-- The Con construction in `FFL.FirstOrder.Theory`. -/
-abbrev _root_.PointwiseComposition.FFL.FirstOrder.Theory.Con : ArithmeticTheory :=
+noncomputable abbrev _root_.PointwiseComposition.FFL.FirstOrder.Theory.Con : ArithmeticTheory :=
   { T.consistent.val }
 
 /-- The Incon construction in `FFL.FirstOrder.Theory`. -/
-abbrev _root_.PointwiseComposition.FFL.FirstOrder.Theory.Incon : ArithmeticTheory :=
+noncomputable abbrev _root_.PointwiseComposition.FFL.FirstOrder.Theory.Incon : ArithmeticTheory :=
   {∼T.consistent.val}
 
 noncomputable instance : T.Con.Δ₁ :=

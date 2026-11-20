@@ -420,7 +420,7 @@ theorem approximationNumber_eq_sInf_norm_comp_starProjection_orthogonal
     simp
   refine le_antisymm (le_csInf hne ?_) ?_
   · rintro r ⟨V, _, _, hVdim, rfl⟩
-    have : CompleteSpace V := FiniteDimensional.complete 𝕜 V
+    have : CompleteSpace V := FiniteDimensional.completeSpace 𝕜 V
     exact T.approximationNumber_le_norm_comp_starProjection_orthogonal n V hVdim
   · refine le_of_forall_pos_le_add fun ε hε => ?_
     obtain ⟨R, hR, hRlt⟩ :=

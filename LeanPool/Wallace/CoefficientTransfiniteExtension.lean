@@ -54,7 +54,7 @@ def ClosedUnderPreparedSupports {R : Type w} {I : Type u} [Zero R] [LT I]
 def LocallyAdmissible {R : Type w} {I : Type u} [AddCommMonoid R] [One R] [LT I]
     (E : Data R I) (D : Set I) (character : (D →₀ R) →+ UnitAddCircle) : Prop :=
   ∀ (c : E.Code) (hc : E.codeIndex c ∈ D),
-    Tendsto (fun n ↦ character (Finsupp.subtypeDomain D (E.prepared c n))) (E.p c)
+    Tendsto (fun n ↦ character (Finsupp.subtypeDomain (· ∈ D) (E.prepared c n))) (E.p c)
       (nhds (character (Finsupp.single ⟨E.codeIndex c, hc⟩ 1)))
 
 /-- The character on a direct sum induced by its coordinate characters. -/
@@ -175,15 +175,16 @@ private theorem globalCharacter_extendDomain {R : Type w} {I : Type u}
     [AddCommMonoid R] [One R] [LinearOrder I] [WellFoundedLT I]
     (extension : CoordinateExtension R) (E : Data R I) (D : Set I)
     (character : (D →₀ R) →+ UnitAddCircle) (x : D →₀ R) :
-    globalCharacter extension E D character (Finsupp.embDomain (.subtype D) x) = character x := by
+    globalCharacter extension E D character (Finsupp.embDomain (.subtype (· ∈ D)) x) =
+      character x := by
   let inclusion : (D →₀ R) →+ (I →₀ R) :=
-    Finsupp.embDomain.addMonoidHom (.subtype (D : I → Prop))
+    Finsupp.embDomain.addMonoidHom (.subtype (· ∈ D))
   have hhom : (globalCharacter extension E D character).comp inclusion = character := by
     apply Finsupp.addHom_ext
     intro i r
     rcases i with ⟨i, hi⟩
     change globalCharacter extension E D character
-      (Finsupp.embDomain (.subtype (D : I → Prop)) (Finsupp.single ⟨i, hi⟩ r)) =
+      (Finsupp.embDomain (.subtype (· ∈ D)) (Finsupp.single ⟨i, hi⟩ r)) =
         character (Finsupp.single ⟨i, hi⟩ r)
     rw [Finsupp.embDomain_single, globalCharacter_single]
     have hcoordinate := globalCoordinate_of_mem extension E D character (i := i) hi
@@ -197,16 +198,17 @@ theorem globalCharacter_eq_local_restriction {R : Type w} {I : Type u}
     (extension : CoordinateExtension R) (E : Data R I) (D : Set I)
     (character : (D →₀ R) →+ UnitAddCircle)
     (x : I →₀ R) (hx : ∀ i ∈ x.support, i ∈ D) :
-    globalCharacter extension E D character x = character (Finsupp.subtypeDomain D x) := by
-  have hxrange : (↑x.support : Set I) ⊆ Set.range (Function.Embedding.subtype D) := by
+    globalCharacter extension E D character x =
+      character (Finsupp.subtypeDomain (· ∈ D) x) := by
+  have hxrange : (↑x.support : Set I) ⊆ Set.range (Function.Embedding.subtype (· ∈ D)) := by
     intro i hi
     exact ⟨⟨i, hx i hi⟩, rfl⟩
   obtain ⟨y, rfl⟩ :=
-    (Finsupp.mem_range_embDomain_iff (Function.Embedding.subtype D) x).2 hxrange
+    (Finsupp.mem_range_embDomain_iff (Function.Embedding.subtype (· ∈ D)) x).2 hxrange
   rw [globalCharacter_extendDomain extension E D character y]
   congr 1
   ext i
-  exact (Finsupp.embDomain_apply_self (Function.Embedding.subtype D) y i).symm
+  exact (Finsupp.embDomain_apply_self (Function.Embedding.subtype (· ∈ D)) y i).symm
 
 private theorem stageEvaluation_eq_globalCharacter
     {R : Type w} {I : Type u} [AddCommMonoid R] [One R] [LinearOrder I] [WellFoundedLT I]
@@ -241,7 +243,7 @@ theorem globalCharacter_admissible
   by_cases hc : E.codeIndex c ∈ D
   · have heval :
         (fun n ↦ globalCharacter extension E D character (E.prepared c n)) =
-          (fun n ↦ character (Finsupp.subtypeDomain D (E.prepared c n))) := by
+          (fun n ↦ character (Finsupp.subtypeDomain (· ∈ D) (E.prepared c n))) := by
       funext n
       exact globalCharacter_eq_local_restriction extension E D character (E.prepared c n)
         (hclosed c hc n)

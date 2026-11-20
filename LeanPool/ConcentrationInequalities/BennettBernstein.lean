@@ -315,7 +315,7 @@ private lemma exp_series_split_two (u : ℝ) :
   have htail' : ∑' n : ℕ, u ^ (n + 1) / ((n + 1).factorial : ℝ) =
       u + ∑' n : ℕ, u ^ (n + 2) / ((n + 2).factorial : ℝ) := by
     convert htail using 2
-    all_goals simp only [pow_one, Nat.factorial_one, Nat.cast_one, div_one]
+    simp only [pow_one, Nat.factorial_one, Nat.cast_one, div_one]
   linarith
 
 /-- Closed form of the geometric series used to dominate the exponential tail. -/

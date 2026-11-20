@@ -129,11 +129,11 @@ private theorem norm_power_integral_eq
   have hs : AEStronglyMeasurable (fun y => Dp (y, s) i) (volume.restrict E) :=
     (((measurable_pi_apply i).comp hDp).comp (measurable_id.prodMk
       measurable_const)).aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) ENNReal.ofReal_ne_top hs]
   norm_num only [ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 6 / 5)]
   rw [← ENNReal.rpow_mul]
   norm_num only [one_div, inv_mul_cancel₀ (by norm_num : (6 / 5 : ℝ) ≠ 0), ENNReal.rpow_one]
-  simp only [Real.enorm_eq_ofReal_abs]
+  simp only [Real.eNorm_eq_ofReal_abs]
 
 /-- Uniform finite-cover costs give the two clipped slice budgets on the
 origin carrier. All numerical constants precede the solution. The only

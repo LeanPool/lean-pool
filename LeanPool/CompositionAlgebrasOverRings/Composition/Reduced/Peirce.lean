@@ -310,8 +310,7 @@ theorem trace_mul_mul_self_outer (hc : C.IsElementaryIdempotent c)
 
 /-- The trilinear form `(x, y, z) ↦ t((xy)z)` on a Peirce component. -/
 def peirceTraceTrilinear (C : ConicAlgebra k A) (c : A) (i j : Bool) :
-    MultilinearMap k
-      (fun _ : Fin 3 ↦ IsAlternative.peirceComponent (R := k) c i j) k :=
+    (Fin 3 → IsAlternative.peirceComponent (R := k) c i j) →ₘₗ[k] k :=
   MultilinearMap.mk' (fun x ↦ C.trace (((x 0 : A) * x 1) * x 2)) (by
     intro x m y z
     fin_cases m <;> simp [Function.update, Fin.ext_iff, add_mul, mul_add])

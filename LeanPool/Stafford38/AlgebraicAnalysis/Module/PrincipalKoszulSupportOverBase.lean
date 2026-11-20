@@ -56,7 +56,7 @@ theorem length_cokernel_gt_kernel_of_support_over_base
     | succ m ih =>
         rw [pow_succ, pow_succ, ih]
         ext z
-        simp [fR, LinearMap.restrictScalars_apply, Module.End.mul_apply]
+        simp [fR, LinearMap.restrictScalars_apply, mul_apply_eq_comp]
   have hstable : LinearMap.ker (fR ^ n) = LinearMap.ker (fR ^ (n + 1)) := by
     rw [hpow, hpow, LinearMap.ker_restrictScalars, LinearMap.ker_restrictScalars]
     exact congrArg (Submodule.restrictScalars R) hn

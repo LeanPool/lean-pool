@@ -90,7 +90,7 @@ theorem min_helper {m n : ℤ} (m_pos : m ≥ 1) (n_pos : n ≥ 1)
   push Not at h
   by_cases m_ge_2 : m ≥ 2
   · have mem_m_dec : ⟨m-1, n⟩ ∈ S := by
-      by_contra! h1
+      by_contra h1
       linarith [h.1 h1]
     exact min_helper (m := m-1) (m_pos := by omega) n_pos mem_m_dec nmem
   have m_one : m = 1 := le_antisymm (by omega) m_pos
@@ -98,7 +98,7 @@ theorem min_helper {m n : ℤ} (m_pos : m ≥ 1) (n_pos : n ≥ 1)
   let h := h.2
   by_cases n_ge_2 : n ≥ 2
   · have mem_n_dec : ⟨1, n-1⟩ ∈ S:= by
-      by_contra! h1
+      by_contra h1
       linarith [h h1]
     exact min_helper m_pos (n := n-1) (n_pos := by omega) mem_n_dec nmem
   have n_one : n = 1 := le_antisymm (by omega) n_pos

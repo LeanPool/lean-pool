@@ -534,7 +534,7 @@ lemma eLpNorm_toReal_le_of_strip {f : ℝ × ℝ → ℂ} {a : ℝ → ℝ} {r c
   swap
   · rw [eLpNorm_of_not_aestronglyMeasurable hm, ENNReal.toReal_top]
     positivity
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hm]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm]
   have h3 : (3 : ℝ≥0∞).toReal = 3 := by norm_num
   rw [h3, ← ENNReal.toReal_rpow]
   gcongr
@@ -562,7 +562,7 @@ lemma eLpNorm_carlesonF₁_le {g : ℝ → ℂ} {L B : ℝ} (hB : 0 ≤ B) (hgB 
   have hfin : volume K ≠ (⊤ : ℝ≥0∞) := (isCompact_carlesonBox L).measure_lt_top.ne
   calc (eLpNorm (carlesonF₁ g) 3 volume).toReal
       ≤ (‖(B : ℂ)‖ₑ * volume K ^ (1 / (3 : ℝ≥0∞).toReal)).toReal :=
-        ENNReal.toReal_mono (ENNReal.mul_ne_top enorm_ne_top
+        ENNReal.toReal_mono (ENNReal.mul_ne_top eNorm_ne_top
           (ENNReal.rpow_ne_top_of_nonneg (by positivity) hfin))
           (hle.trans (eLpNorm_indicator_const_le _ 3
             (isCompact_carlesonBox L).isClosed.measurableSet.nullMeasurableSet))
@@ -1364,8 +1364,9 @@ theorem carleson_maximal (bound : HasTriangularHilbertBound) (R : ℝ) :
     intro j
     have hQm : MeasurableSet (Q j) := measurableSet_Icc.inter
       (measurableSet_le measurable_const (Complex.measurable_re.comp (hzm.const_mul _)))
+    have hsub : Q j ⊆ Icc (-R) R := sep_subset _ _
     have hfin : volume (Q j) ≠ ⊤ :=
-      ((measure_mono fun x hx => hx.1).trans_lt (by simp [Real.volume_Icc])).ne
+      ((measure_mono hsub).trans_lt (by simp [Real.volume_Icc])).ne
     have hform := hK (Q j) ν h R (M n) B hQm (fun x hx => hx.1) hνm hνV hh hB hhz
     rw [carlesonForm_indicator hQm hh hνm hB hνV hfin] at hform
     have hzi : IntegrableOn z (Q j) :=

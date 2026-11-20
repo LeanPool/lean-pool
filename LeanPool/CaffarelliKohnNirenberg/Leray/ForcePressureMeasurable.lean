@@ -85,12 +85,12 @@ theorem measurable_eLpNorm_two_slice {F : Vec3 × ℝ → Vec3} (hF : StronglyMe
   have heq : (fun t : ℝ => eLpNorm (fun x : Vec3 => F (x, t)) 2 volume) =
       fun t => (∫⁻ x, ‖F (x, t)‖ₑ ^ (2 : ℝ)) ^ (1 / (2 : ℝ)) := by
     funext t
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) (hslice t)]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) (hslice t)]
     simp
   rw [heq]
   refine Measurable.pow_const ?_ _
   exact Measurable.lintegral_prod_left'
-    (f := fun q : Vec3 × ℝ => ‖F q‖ₑ ^ (2 : ℝ)) (hF.measurable.enorm.pow_const _)
+    (f := fun q : Vec3 × ℝ => ‖F q‖ₑ ^ (2 : ℝ)) (hF.measurable.eNorm.pow_const _)
 
 /-- The set of times at which a strongly measurable field has a square
 integrable slice is measurable. -/

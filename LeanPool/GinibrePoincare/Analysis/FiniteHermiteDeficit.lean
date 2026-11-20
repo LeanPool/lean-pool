@@ -112,7 +112,7 @@ theorem norm_sq_zero_add_positive (n : ℕ) (hn : 0 < n)
   exact inner_zero_positiveAnti_eq_zero n hn c
 
 /-- The finite deficit after subtracting the positive-mode mass from the
-normalized `∂̄` energy. -/
+normalized `dbar` energy. -/
 def finiteHermiteDeficit {n : ℕ} (hn : 0 < n)
     (c : HermiteMultiIndex n →₀ ℂ) : ℝ :=
   (n : ℝ)⁻¹ * finiteDbarEnergy c -

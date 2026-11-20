@@ -99,8 +99,7 @@ lemma padicValRat_eq_factorization {q : ℚ} {p : ℕ} (hp : p.Prime) :
     padicValRat p q =
       (q.num.natAbs.factorization p : ℤ) - (q.den.factorization p : ℤ) := by
   simp only [padicValRat, padicValInt]
-  rw [Nat.padicValNat_def, Nat.padicValNat_def,
-    Nat.multiplicity_eq_factorization hp,
+  rw [Nat.multiplicity_eq_factorization hp,
     Nat.multiplicity_eq_factorization hp]
 
 -- Theorem: if `q : ℚ` is a square then all of its `p`-adic valuations are even.
@@ -140,13 +139,13 @@ theorem Rat.isSquare_iff_even_padicValRat {q : ℚ} :
           have hx : ((q.num.natAbs.factorization p : ℤ)) = 0 := by rw [hA]; simp
           have : Even (-(q.den.factorization p : ℤ)) := by
             rwa [hx, zero_sub] at hdiff
-          exact (Int.even_coe_nat (q.den.factorization p)).mp (even_neg.mp this)
+          exact (Int.even_natCast (q.den.factorization p)).mp (even_neg.mp this)
         exact ⟨hA', hB'⟩
       · have hA' : Even (q.num.natAbs.factorization p) := by
           have hy : ((q.den.factorization p : ℤ)) = 0 := by rw [hB]; simp
           have : Even ((q.num.natAbs.factorization p : ℤ)) := by
             rwa [hy, sub_zero] at hdiff
-          exact (Int.even_coe_nat (q.num.natAbs.factorization p)).mp this
+          exact (Int.even_natCast (q.num.natAbs.factorization p)).mp this
         have hB' : Even (q.den.factorization p) := by rw [hB]; exact Even.zero
         exact ⟨hA', hB'⟩
     have hden_sq : IsSquare q.den :=

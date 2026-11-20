@@ -208,7 +208,7 @@ open Classical in
 open Classical in
 variable (G f U) in
 /-- The graph `G - (S ∪ T)`. -/
-abbrev Gr : SimpleGraph ↥(((Sset G f U ∪ Tset G f U : Finset V) : Set V)ᶜ) :=
+noncomputable abbrev Gr : SimpleGraph ↥(((Sset G f U ∪ Tset G f U : Finset V) : Set V)ᶜ) :=
   G.induce (((Sset G f U ∪ Tset G f U : Finset V) : Set V)ᶜ)
 
 open Classical in

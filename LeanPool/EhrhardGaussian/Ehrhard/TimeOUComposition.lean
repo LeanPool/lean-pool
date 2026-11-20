@@ -79,7 +79,8 @@ theorem contDiffOn_time_ouComposition {n k : ℕ} {f : Fin k → (Fin n → ℝ)
   intro p hp
   exact ((hJ p.1 ⟨hp.1.1.le, hp.1.2.le⟩ _ (ouFamily_mem_Icc hf hbound p.2 p.1)).of_le
     (by norm_num)).comp_contDiffWithinAt p
-    ((contDiffOn_ouSpaceTimeFamily hf).mono (fun _ h => ⟨hl.trans h.1.1, h.2⟩) p hp)
+    ((contDiffOn_ouSpaceTimeFamily hf).mono (t := Ioo l u ×ˢ univ)
+      (fun _ h => ⟨hl.trans h.1.1, h.2⟩) p hp)
 
 /-- Compact time slabs provide the domination needed to differentiate the
 time-dependent nonlinear interpolation. No derivative of the composite is

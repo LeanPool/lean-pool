@@ -111,7 +111,7 @@ theorem normDet_graphLinear (ι : H →ₗᵢ[ℝ] V) {e : V} (he : ‖e‖ = 1)
     LinearMap.normDet ((graphLinear ι e a : H →ₗ[ℝ] V)) = graphJacobian a := by
   set s : Set H := Metric.closedBall 0 1 with hs
   have hmpos : μH[(Module.finrank ℝ H : ℝ)] s ≠ 0 := by
-    rw [hausdorffMeasure_finrank_eq_smul_volume H, Measure.smul_apply, smul_eq_mul]
+    rw [hausdorffMeasure_finrank_eq_smul_volume H, smul_apply, smul_eq_mul]
     have hball : (0 : ℝ≥0∞) < volume (Metric.closedBall (0 : H) 1) :=
       lt_of_lt_of_le
         (Metric.isOpen_ball.measure_pos volume (Metric.nonempty_ball.2 one_pos))
@@ -122,7 +122,7 @@ theorem normDet_graphLinear (ι : H →ₗᵢ[ℝ] V) {e : V} (he : ‖e‖ = 1)
       unfold KLS.unitBallVolume; positivity
     positivity
   have hmtop : μH[(Module.finrank ℝ H : ℝ)] s ≠ ⊤ := by
-    rw [hausdorffMeasure_finrank_eq_smul_volume H, Measure.smul_apply, smul_eq_mul]
+    rw [hausdorffMeasure_finrank_eq_smul_volume H, smul_apply, smul_eq_mul]
     exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top measure_closedBall_lt_top.ne
   have hrepo := hausdorffMeasure_image_graphLinear ι he hperp a s
   have hmath := LinearMap.hausdorffMeasure_image ((graphLinear ι e a : H →ₗ[ℝ] V)) s

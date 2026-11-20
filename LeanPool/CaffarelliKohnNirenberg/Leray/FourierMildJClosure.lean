@@ -85,7 +85,7 @@ theorem realVectorL2Representative_sub_eLpNorm_le (u v : RealVectorL2) :
     filter_upwards [hnorm] with x hx
     have hnn : ‖realVectorL2Representative u x - realVectorL2Representative v x‖₊ ≤
         ‖(u - v) (WithLp.toLp 2 x)‖₊ := by exact_mod_cast hx
-    simpa [enorm] using (ENNReal.coe_le_coe.mpr hnn)
+    simpa [eNorm] using (ENNReal.coe_le_coe.mpr hnn)
   calc
     eLpNorm (realVectorL2Representative u - realVectorL2Representative v) 2 volume ≤
         eLpNorm (fun x : Vec3 => (u - v) (WithLp.toLp 2 x)) 2 volume := by

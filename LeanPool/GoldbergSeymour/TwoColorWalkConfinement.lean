@@ -34,7 +34,7 @@ theorem TwoColorWalk.confinedBefore {V E : Type*}
   classical
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro hn x hx
       by_cases hn0 : n = 0
       · subst n

@@ -37,11 +37,11 @@ theorem measurable_eLpNorm_slice {P : Vec3 × ℝ → ℝ} (hP : StronglyMeasura
   have heq : (fun t : ℝ => eLpNorm (fun x : Vec3 => P (x, t)) p μ) =
       fun t => (∫⁻ x, ‖P (x, t)‖ₑ ^ p.toReal ∂μ) ^ (1 / p.toReal) := by
     funext t
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop (hslice t)]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop (hslice t)]
   rw [heq]
   refine Measurable.pow_const ?_ _
   exact Measurable.lintegral_prod_left'
-    (f := fun q : Vec3 × ℝ => ‖P q‖ₑ ^ p.toReal) (hP.measurable.enorm.pow_const _)
+    (f := fun q : Vec3 × ℝ => ‖P q‖ₑ ^ p.toReal) (hP.measurable.eNorm.pow_const _)
 
 private theorem forcePressure_rpow_rpow (x : ℝ≥0∞) {a b : ℝ} (hab : a * b = 1) :
     (x ^ a) ^ b = x := by
@@ -75,12 +75,12 @@ theorem eLpNorm_threeHalves_cylinder_le {P : Vec3 × ℝ → ℝ} (hP : Strongly
     rw [Measure.volume_eq_prod, ← Measure.prod_restrict]
   have hstep1 : eLpNorm P q ((volume : Measure (Vec3 × ℝ)).restrict (K ×ˢ I)) =
       (∫⁻ t, b t ^ (3 / 2 : ℝ) ∂μI) ^ (2 / 3 : ℝ) := by
-    rw [hmeasure, eLpNorm_eq_lintegral_rpow_enorm_toReal hq0 ENNReal.ofReal_ne_top
+    rw [hmeasure, eLpNorm_eq_lintegral_rpow_eNorm_toReal hq0 ENNReal.ofReal_ne_top
       hP.aestronglyMeasurable, hqReal,
-      lintegral_prod_symm' _ (hP.measurable.enorm.pow_const _)]
+      lintegral_prod_symm' _ (hP.measurable.eNorm.pow_const _)]
     have hb (t : ℝ) : b t ^ (3 / 2 : ℝ) = ∫⁻ x, ‖P (x, t)‖ₑ ^ (3 / 2 : ℝ) ∂μK := by
       simp only [b]
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hq0 ENNReal.ofReal_ne_top (hslice t), hqReal]
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hq0 ENNReal.ofReal_ne_top (hslice t), hqReal]
       exact forcePressure_rpow_rpow _ (by norm_num)
     simp only [hb]
     norm_num
@@ -111,10 +111,10 @@ theorem eLpNorm_threeHalves_cylinder_le {P : Vec3 × ℝ → ℝ} (hP : Strongly
     have h := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (μ := μI)
       (show q ≤ (2 : ℝ≥0∞) from ENNReal.ofReal_le_ofNat.2 (by norm_num))
       ha.aestronglyMeasurable
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hq0 ENNReal.ofReal_ne_top ha.aestronglyMeasurable,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) ha.aestronglyMeasurable,
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hq0 ENNReal.ofReal_ne_top ha.aestronglyMeasurable,
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) ha.aestronglyMeasurable,
       hqReal, Measure.restrict_apply_univ] at h
-    simp only [enorm_eq_self, ENNReal.toReal_ofNat] at h
+    simp only [eNorm_eq_self, ENNReal.toReal_ofNat] at h
     have hexp : (1 / (3 / 2 : ℝ) - 1 / 2) = 1 / 6 := by norm_num
     have h23 : (1 / (3 / 2 : ℝ)) = 2 / 3 := by norm_num
     rw [hexp, h23] at h

@@ -91,8 +91,8 @@ lemma LinearIsometryEquiv.commutes_with_mul_adjoint_iff_of_surjective_isometry
     ↔
       ∀ x y : X, f (x * y) = f x * f y := by
   simp_rw [LinearMap.commutes_with_mul_adjoint_iff]
-  have : CompleteSpace X := FiniteDimensional.complete 𝕜 _
-  have : CompleteSpace Y := FiniteDimensional.complete 𝕜 _
+  have : CompleteSpace X := FiniteDimensional.completeSpace 𝕜 _
+  have : CompleteSpace Y := FiniteDimensional.completeSpace 𝕜 _
   have : LinearMap.adjoint f.toLinearMap = f.symm.toLinearMap := by
     calc
       LinearMap.adjoint f.toLinearMap =

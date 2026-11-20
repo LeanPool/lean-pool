@@ -208,7 +208,7 @@ private theorem rescaled_energy_pointwise
           (‖Du (scalingParabolic μ z₀ z)‖ₑ ^ (2 : ℝ)) := by
   change ‖μ • u (scalingParabolic μ z₀ z)‖ₑ ^ (2 : ℝ) +
       ‖μ ^ 2 • Du (scalingParabolic μ z₀ z)‖ₑ ^ (2 : ℝ) = _
-  rw [enorm_smul, enorm_smul]
+  rw [eNorm_smul, eNorm_smul]
   rw [← ofReal_norm μ, ← ofReal_norm (μ ^ 2)]
   rw [Real.norm_eq_abs, abs_of_pos hμ]
   rw [Real.norm_eq_abs, abs_of_pos (sq_pos_of_pos hμ)]
@@ -229,7 +229,7 @@ private theorem rescaled_velocity_pointwise
       ENNReal.ofReal (μ ^ 2) *
         (‖u (scalingParabolic μ z₀ z)‖ₑ ^ (2 : ℝ)) := by
   change ‖μ • u (scalingParabolic μ z₀ z)‖ₑ ^ (2 : ℝ) = _
-  rw [enorm_smul]
+  rw [eNorm_smul]
   rw [← ofReal_norm μ]
   rw [Real.norm_eq_abs, abs_of_pos hμ]
   rw [ENNReal.mul_rpow_of_nonneg]
@@ -561,9 +561,9 @@ private theorem rescaled_energy_finite
   let U : ParabolicPoint → ℝ≥0∞ := fun z => ‖u z‖ₑ ^ (2 : ℝ)
   let D : ParabolicPoint → ℝ≥0∞ := fun z => ‖Du z‖ₑ ^ (2 : ℝ)
   have hU : AEMeasurable U (volume.restrict (spaceTimeSet Ω I)) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hu.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hu.eNorm
   have hD : AEMeasurable D (volume.restrict (spaceTimeSet Ω I)) :=
-    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDu.enorm
+    ENNReal.continuous_rpow_const.measurable.comp_aemeasurable hDu.eNorm
   have hUcomp := aemeasurable_comp_scaling μ hμ z₀ hΩ hI hU
   have hDcomp := aemeasurable_comp_scaling μ hμ z₀ hΩ hI hD
   have hUfin : (∫⁻ z in spaceTimeSet Ω I, U z) < ⊤ :=
@@ -654,7 +654,7 @@ theorem isSuitableWeakSolutionIntegrable_rescale
       have hU : AEMeasurable U
           (volume.restrict (spaceTimeSet Ωf Jf)) := by
         exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-          hloc.1.enorm
+          hloc.1.eNorm
       have hUprod : AEMeasurable U
           ((volume.restrict Ωf).prod (volume.restrict Jf)) := by
         rw [Measure.prod_restrict]

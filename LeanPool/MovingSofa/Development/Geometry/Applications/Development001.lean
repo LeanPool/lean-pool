@@ -4460,8 +4460,7 @@ theorem gerver_canonical_paper_literal :
         ⋂ t ∈ Set.Icc (0 : ℝ) (Real.pi / 2),
           (fun s ↦ rotationMap (t : Real.Angle) s + paperGerverPath t) '' hallway := by
     change (strips (Real.pi / 2)).1 ∩ (strips (Real.pi / 2)).2.2 ∩ _ = _
-    rw [Set.ext hstrip]
-    rfl
+    rw [Set.ext (b := {z : Point | 0 ≤ z 1 ∧ z 1 ≤ 1}) hstrip]
   rw [hgs, hpaper]
   ext q
   have hn0 : inner ℝ (q - paperGerverPath 0) (normalVector ((0 : ℝ) : Real.Angle)) = q 0 := by
@@ -5757,7 +5756,9 @@ theorem ae_mem_openStage (c : ℝ) {S : Set ℝ} (hS : MeasurableSet S)
     (hSsub : S ⊆ Set.Icc c (c + Real.pi / 2)) :
     ∀ᵐ u ∂volume.restrict S, ∃ j : Fin 5,
       u - c ∈ Set.Ioo (gerverStageTimes j.castSucc) (gerverStageTimes j.succ) := by
-  refine ae_restrict_mem_of_countable_diff hS
+  refine ae_restrict_mem_of_countable_diff (μ := volume)
+    (A := {u : ℝ | ∃ j : Fin 5,
+      u - c ∈ Set.Ioo (gerverStageTimes j.castSucc) (gerverStageTimes j.succ)}) hS
     (((Set.finite_range gerverStageTimes).countable).image fun x ↦ x + c) ?_
   rintro u ⟨hu, hu'⟩
   by_contra hcon

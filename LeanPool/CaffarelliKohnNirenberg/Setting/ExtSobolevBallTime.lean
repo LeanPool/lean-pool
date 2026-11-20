@@ -49,7 +49,7 @@ private theorem eLpNorm_two_sq_eq_lintegral
     (hf : AEStronglyMeasurable f μ) :
     eLpNorm f (2 : ℝ≥0∞) μ ^ (2 : ℝ) =
       ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num : (2 : ℝ≥0∞) ≠ 0)
       (by norm_num : (2 : ℝ≥0∞) ≠ ∞) hf,
     ENNReal.toReal_ofNat, ← ENNReal.rpow_mul]
@@ -208,7 +208,7 @@ private lemma ball_time_sobolev_hM₂total_1 :
       (volume : Measure Vec3).prod (volume : Measure ℝ) from
         Measure.volume_eq_prod Vec3 ℝ]
     exact (Measure.prod_restrict E J).symm
-  have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ∞)
     hgProd).mp hgLpProd.eLpNorm_lt_top
   simpa [hprodE, ENNReal.toReal_ofNat] using hfinite
@@ -226,7 +226,7 @@ private lemma ball_time_sobolev_hDgint_2 :
       (volume : Measure Vec3).prod (volume : Measure ℝ) from
         Measure.volume_eq_prod Vec3 ℝ]
     exact (Measure.prod_restrict E J).symm
-  have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+  have hfinite := (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
     (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num : (2 : ℝ≥0∞) ≠ ∞)
     hDgLpProd.aestronglyMeasurable).mp hDgLpProd.eLpNorm_lt_top
   simpa [hprodE, ENNReal.toReal_ofNat] using hfinite
@@ -482,7 +482,7 @@ private lemma ball_time_sobolev_hDcompare_7 :
           _ ≤ ENNReal.ofReal (vec3EuclideanNorm (Dg z)) :=
             ENNReal.ofReal_le_ofReal (norm_le_vec3EuclideanNorm (Dg z))
           _ = ‖vec3EuclideanNorm (Dg z)‖ₑ :=
-            (Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg (Dg z))).symm
+            (Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg (Dg z))).symm
       exact ENNReal.rpow_le_rpow hnorm (by norm_num)
     _ = eLpNorm (fun z => vec3EuclideanNorm (Dg z)) 2
           (volume.restrict (U ×ˢ J)) ^ (2 : ℝ) := hEid.symm
@@ -530,7 +530,7 @@ private lemma ball_time_sobolev_hIntegralBound_8 :
     hqMeasTarget hDcompare
   have htargetId' : eLpNorm g q (volume.restrict (U ×ˢ J)) ^ (10 / 3 : ℝ) =
       ∫⁻ z in U ×ˢ J, ‖g z‖ₑ ^ (10 / 3 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by dsimp [q]; norm_num) (by dsimp [q]; norm_num) hqMeasTarget,
       ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 10 / 3),
       ← ENNReal.rpow_mul]
@@ -698,11 +698,11 @@ theorem ball_time_sobolev :
   have hG₂fun : AEMeasurable
       (fun z : Vec3 × ℝ => ‖g z‖ₑ ^ (2 : ℝ))
       ((volume.restrict E).prod (volume.restrict J)) :=
-    hgProd.enorm.pow_const (2 : ℝ)
+    hgProd.eNorm.pow_const (2 : ℝ)
   have hD₂fun : AEMeasurable
       (fun z : Vec3 × ℝ => ‖Dg z‖ₑ ^ (2 : ℝ))
       ((volume.restrict E).prod (volume.restrict J)) :=
-    hDgProd.enorm.pow_const (2 : ℝ)
+    hDgProd.eNorm.pow_const (2 : ℝ)
   have hM₂meas : AEMeasurable M₂ ν := by
     exact hG₂fun.lintegral_prod_left'
   have hD₂meas : AEMeasurable D₂ ν := by
@@ -751,7 +751,7 @@ theorem ball_time_sobolev :
   have hqfun : AEMeasurable
       (fun z : Vec3 × ℝ => ‖g z‖ₑ ^ (10 / 3 : ℝ))
       ((volume.restrict E).prod (volume.restrict J)) := by
-    exact hgProd.enorm.pow_const (10 / 3 : ℝ)
+    exact hgProd.eNorm.pow_const (10 / 3 : ℝ)
   have hqtime := extSobolevBall_productIntegral_eq_timeSlices
     (x₀ := x₀) (r := r) (J := J) (g := g) (u := u) hqfun hrepG
   have hpointTime := @ball_time_sobolev_hpointTime_4 K x₀ r hr A ν u Q hUbound hspatial hQ hRadius
@@ -772,7 +772,7 @@ theorem ball_time_sobolev :
       ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 10 / 3)] using hqIntegralFinite
   have hmemq : MemLp g q (volume.restrict (U ×ˢ J)) := by
     rw [memLp_iff]
-    exact (eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top
+    exact (eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top
       (by dsimp [q]; norm_num) (by dsimp [q]; norm_num) hqMeasTarget).2
       hqIntegralFiniteTarget
   have hDcompare := @ball_time_sobolev_hDcompare_7 x₀ r J Dg hDg hBall

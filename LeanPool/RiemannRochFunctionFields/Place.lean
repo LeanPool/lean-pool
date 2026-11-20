@@ -342,7 +342,7 @@ theorem residue_algebraMap_surjective :
     rw [Valuation.mem_valuationSubring_iff] at ha
     change RatFunc.inftyValuation k z ≤ 1 at ha
     have hv : RatFunc.inftyValuation k z = WithZero.exp z.intDegree :=
-      RatFunc.inftyValuation_of_nonzero k hz
+      RatFunc.inftyValuation_of_ne_zero k hz
     rw [hv] at ha
     exact WithZero.exp_le_exp.mp (by simpa only [WithZero.exp_zero] using ha)
   obtain ⟨c, hc | hc⟩ := RatFunc.exists_sub_C_intDegree_neg z hzdeg
@@ -365,7 +365,7 @@ theorem residue_algebraMap_surjective :
       change RatFunc.inftyValuation k (z - RatFunc.C c) < 1
       have hv : RatFunc.inftyValuation k (z - RatFunc.C c) =
           WithZero.exp (z - RatFunc.C c).intDegree :=
-        RatFunc.inftyValuation_of_nonzero k hne
+        RatFunc.inftyValuation_of_ne_zero k hne
       rw [hv]
       exact WithZero.exp_lt_exp.mpr hc
     simpa only [neg_sub] using ᵐ∞.neg_mem hpos

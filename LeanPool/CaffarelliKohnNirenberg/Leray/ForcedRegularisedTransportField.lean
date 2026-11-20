@@ -80,7 +80,7 @@ theorem norm_convolution_le_of_memLp_two {κ f : Vec3 → ℝ} (hκ : MemLp κ 2
     (hf : MemLp f 2 volume) (x : Vec3) :
     ‖(κ ⋆[ContinuousLinearMap.lsmul ℝ ℝ, volume] f) x‖ ≤
       (eLpNorm κ 2 volume * eLpNorm f 2 volume).toReal := by
-  have h := enorm_convolution_le (L := ContinuousLinearMap.lsmul ℝ ℝ) (μ := volume)
+  have h := eNorm_convolution_le (L := ContinuousLinearMap.lsmul ℝ ℝ) (μ := volume)
     (p := 2) (q := 2) hκ.aestronglyMeasurable hf.aestronglyMeasurable x
   have hL : ‖(ContinuousLinearMap.lsmul ℝ ℝ : ℝ →L[ℝ] ℝ →L[ℝ] ℝ)‖ₑ ≤ 1 := by
     rw [← ofReal_norm]

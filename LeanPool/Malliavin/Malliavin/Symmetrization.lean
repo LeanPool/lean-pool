@@ -244,7 +244,7 @@ theorem eLpNorm_symmetrize_le {n : ℕ} {f : (Fin n → T) → E}
     _ = ‖(n.factorial : ℝ)⁻¹‖ₑ * ((n.factorial : ℝ≥0∞) * eLpNorm f p ν) := by
         rw [Finset.sum_const, Finset.card_univ, Fintype.card_perm, Fintype.card_fin, nsmul_eq_mul]
     _ = eLpNorm f p ν := by
-        rw [enorm_inv (by exact_mod_cast n.factorial_ne_zero), Real.enorm_natCast, ← mul_assoc,
+        rw [eNorm_inv (by exact_mod_cast n.factorial_ne_zero), Real.eNorm_natCast, ← mul_assoc,
           ENNReal.inv_mul_cancel hfac (ENNReal.natCast_ne_top _), one_mul]
 
 theorem memLp_symmetrize {n : ℕ} {f : (Fin n → T) → E} {p : ℝ≥0∞}

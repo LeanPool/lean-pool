@@ -417,7 +417,7 @@ theorem parabolicRieszKernel_tail_le {β q : ℝ} (hβ : 0 < β) (hβ5 : β < 5)
           parabolicRieszKernel β z w * ENNReal.ofReal |f w| := hsum
     _ ≤ ∑' n : ℕ, (ENNReal.ofReal (2 : ℝ)) ^
           ((n : ℝ) * (β - 5 / q) + 2 * (5 * (1 - 1 / q))) * T * N :=
-      ENNReal.tsum_le_tsum hterm
+      tsum_le_tsum hterm
     _ = parabolicTailKernelConstant β q * T * N := by
       have hfun : (fun n : ℕ =>
           (ENNReal.ofReal (2 : ℝ)) ^

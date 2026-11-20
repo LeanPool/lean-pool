@@ -368,7 +368,7 @@ private theorem exists_larger_of_augmenting [Finite V] :
       have hpos : 0 < M.edgeSet.ncard :=
         (Set.ncard_pos (Set.toFinite _)).2 ⟨_, show s(w1, w2) ∈ M.edgeSet from e1⟩
       rw [hM1def, Subgraph.edgeSet_sup, edgeSet_deleteVerts_pair hM e1, edgeSet_subgraphOfAdj,
-        Set.union_singleton, Set.ncard_insert_of_notMem
+        Set.union_singleton, Set.ncard_insert_of_notMem (s := M.edgeSet \ {s(w1, w2)})
           (fun hm => not_mem_edgeSet_of_not_mem_verts hu hm.1),
         Set.ncard_sdiff_singleton_of_mem (show s(w1, w2) ∈ M.edgeSet from e1)]
       omega

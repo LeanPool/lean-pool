@@ -113,7 +113,7 @@ theorem blowupLimitAssembly_integrableOn_of_le_one_add
       apply lintegral_mono
       intro x
       change ‖g x‖ₑ ≤ 1 + F x
-      rw [Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs]
       exact hpt x
     _ = volume B + ∫⁻ x in B, F x := by
       rw [lintegral_add_left measurable_const, lintegral_const,

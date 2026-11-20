@@ -75,7 +75,9 @@ omit [Fintype n] [DecidableEq n] in
 /-- Scalar multiple of a nonneg matrix by a nonneg scalar is nonneg. -/
 theorem Matrix.Nonneg.smul {M : Matrix n n ℝ} (hM : M.Nonneg) {c : ℝ} (hc : 0 ≤ c) :
     (c • M).Nonneg := by
-  intro i j; simp only [smul_apply, smul_eq_mul]; exact mul_nonneg hc (hM i j)
+  intro i j
+  simp only [Matrix.smul_apply, smul_eq_mul]
+  exact mul_nonneg hc (hM i j)
 
 /-- The truncated matrix exponential Σ_{k=0}^{N} (tM)^k / k! is nonneg
 when M is nonneg and t ≥ 0. -/

@@ -65,7 +65,7 @@ abbrev enumeration (x : ContinuumFreeGroup) : ℕ → LocalGroup x :=
 /-- The restriction of `x` to its local coordinate closure. -/
 def distinguished (x : ContinuumFreeGroup) : LocalGroup x := by
   classical
-  exact Finsupp.subtypeDomain (localCarrier x) x
+  exact Finsupp.subtypeDomain (· ∈ localCarrier x) x
 
 theorem distinguished_ne_zero {x : ContinuumFreeGroup} (hx : x ≠ 0) :
     distinguished x ≠ 0 := by

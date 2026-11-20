@@ -14,6 +14,8 @@ Misere combinatorial games.
 
 namespace MisereGames
 
+open scoped Pointwise
+
 universe u
 
 public section

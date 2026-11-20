@@ -76,7 +76,7 @@ $(0,-1)$, or $X<L+2$ for $(0,1)$), these four points form a nondegenerate
 quadrilateral. These geometric descriptions are conditional; the same
 definition applies to degenerate hulls and all other raw inputs.
 -/
-def P4909T1ParentPolygon (L : ℝ) (q : Fin 4 → CircleCoordinates) : Set ℂ :=
+noncomputable def P4909T1ParentPolygon (L : ℝ) (q : Fin 4 → CircleCoordinates) : Set ℂ :=
 -- BODY
   let p (i : Fin 3) : ℂ := (q i.succ).2 / ((q i.succ).1 : ℝ)
   convexHull ℝ {z | ∃ i : Fin 3, 0 < (q i.succ).1 ∧

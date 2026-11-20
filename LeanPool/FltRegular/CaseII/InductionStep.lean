@@ -292,7 +292,7 @@ lemma c_div_principal (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) : Submodule.
     ((𝔠 η₁ / 𝔠 η₂ : FractionalIdeal (𝓞 K)⁰ K) : Submodule (𝓞 K) K) := by
   rw [← c_div_principal_aux, FractionalIdeal.coeIdeal_span_singleton,
     FractionalIdeal.coeIdeal_span_singleton, FractionalIdeal.spanSingleton_div_spanSingleton,
-    FractionalIdeal.coe_spanSingleton]
+    FractionalIdeal.coeToSubmodule_spanSingleton]
   exact ⟨⟨_, rfl⟩⟩
 
 /-- The unique root of unity whose quotient is divisible by `ζ - 1`. -/

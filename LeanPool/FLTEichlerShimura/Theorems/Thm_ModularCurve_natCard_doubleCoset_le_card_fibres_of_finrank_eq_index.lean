@@ -1026,7 +1026,7 @@ theorem main_K (ι : ℚ̄ →+* ℂ) (y : FF) (hy : (y : LaurentSeries ℚ̄) =
     exact (IntermediateField.mem_fixedField_iff _ e).mp (hle he) _ (Subgroup.mem_zpowers _)
   set H := Γ.map (σ' M K) with hH
   have hEle : E ≤ IntermediateField.fixedField H := by
-    rw [IntermediateField.le_iff_le]
+    rw [IntermediateField.le_fixedField_iff_le_fixingSubgroup]
     rintro _ ⟨γ, hγ, rfl⟩
     rw [IntermediateField.mem_fixingSubgroup_iff]
     intro e he

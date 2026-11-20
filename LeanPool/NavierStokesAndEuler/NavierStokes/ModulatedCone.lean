@@ -528,7 +528,8 @@ theorem axialErrorFactor_continuousOn
     (StressActivation.meanExp_smooth.continuous.comp ht).continuousOn).sub
       (((continuousOn_const.mul (continuous_fst.comp
         (continuous_snd.comp continuous_fst)).continuousOn).mul hAX.continuousOn).div
-        hEp.continuousOn (fun z hz => hE0 z.1.2 hz.1.2) |>.mul
+        hEp.continuousOn
+          (fun z (hz : z ∈ (Icc (0 : ℝ) 1 ×ˢ K) ×ˢ (univ : Set ℝ)) => hE0 z.1.2 hz.1.2) |>.mul
           (Real.continuous_exp.comp ht).continuousOn)
 
 /-- Both actual shears differ from their prescribed loop values by `C/n`.
@@ -631,10 +632,10 @@ theorem compact_periodic_stockShear_stable {X : Type*} [TopologicalSpace X]
       TrueConeLoop.InTrueCone q₁ q₂ A' C' := by
   let F : X × ℝ → StockShearDatum := fun z => ((p₁ z.1, p₂ z.1), (A z, C z))
   have hF : ContinuousOn F (K ×ˢ Icc (0 : ℝ) 1) :=
-    ((hp₁.comp continuousOn_fst (fun _ hz => hz.1)).prodMk
-      (hp₂.comp continuousOn_fst (fun _ hz => hz.1))).prodMk
-        ((hA.mono (fun _ hz => ⟨hz.1, mem_univ _⟩)).prodMk
-          (hC.mono (fun _ hz => ⟨hz.1, mem_univ _⟩)))
+    ((hp₁.comp continuousOn_fst (fun _ (hz : _ ∈ K ×ˢ Icc (0 : ℝ) 1) => hz.1)).prodMk
+      (hp₂.comp continuousOn_fst (fun _ (hz : _ ∈ K ×ˢ Icc (0 : ℝ) 1) => hz.1))).prodMk
+        ((hA.mono (fun _ (hz : _ ∈ K ×ˢ Icc (0 : ℝ) 1) => ⟨hz.1, mem_univ _⟩)).prodMk
+          (hC.mono (fun _ (hz : _ ∈ K ×ˢ Icc (0 : ℝ) 1) => ⟨hz.1, mem_univ _⟩)))
   have hcompact := (hK.prod isCompact_Icc).image_of_continuousOn hF
   have hsub : F '' (K ×ˢ Icc (0 : ℝ) 1) ⊆ stockShearCone := by
     rintro z ⟨w, hw, rfl⟩

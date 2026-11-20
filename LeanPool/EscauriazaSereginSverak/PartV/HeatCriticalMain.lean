@@ -113,7 +113,7 @@ theorem heatOrbit_eLpNorm_le_of_smooth {p q : ℝ} (hpq : p.HolderConjugate q)
     rw [tendsto_iff_edist_tendsto_0]
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbd
       (fun _ => bot_le) fun n => ?_
-    rw [edist_eq_enorm_sub]
+    rw [eDist_eq_eNorm_sub]
     exact heatOrbit_sub_enorm_le hpq (hbsMem n) hb ht
   have hmeasSeq (n : ℕ) : AEStronglyMeasurable (heatOrbit (bs n)) (volume.restrict Q) :=
     heatOrbit_aestronglyMeasurable_smooth (hs n) (hc n) τ

@@ -80,7 +80,7 @@ noncomputable def genFunCoeff (K : Type*) [Field K] (m n r : ℕ) {s : ℕ}
 lemma polyP_constantCoeff (R : Type*) [CommRing R] (n : ℕ) :
     (polyP R n).coeff 0 = 1 := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     match n with
     | 0 | 1 => simp [polyP]
     | n + 2 =>
@@ -171,7 +171,7 @@ private lemma partitionPoly_split_concrete (K : Type*) [CommRing K] (m : ℕ) {s
 lemma polyP_map {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) (n : ℕ) :
     Polynomial.map f (polyP R n) = polyP S n := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     match n with
     | 0 | 1 => simp [polyP]
     | n + 2 => simp_all [polyP]
@@ -294,7 +294,7 @@ private lemma polyP_eval_eq_chebyshev_S (n : ℕ) (y : ℝ) (hy : y ≠ 0) :
     Polynomial.eval (1 / y ^ 2) (polyP ℝ n) =
       (1 / y ^ n) * Polynomial.eval y (Polynomial.Chebyshev.S ℝ ↑n) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     match n with
     | 0 => simp [polyP, Polynomial.Chebyshev.S_zero]
     | 1 =>
@@ -737,7 +737,7 @@ lemma polyP_roots_pos (m : ℕ) (_hm : 2 ≤ m) (x : ℝ)
   suffices ∀ (n : ℕ), Polynomial.eval x (polyP ℝ n) > 0 by linarith [this m]
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     match n with
     | 0 | 1 => simp [polyP]
     | n + 2 =>
@@ -1264,8 +1264,8 @@ noncomputable def nScaled (ρ : ℝ) (N_poly : Polynomial ℝ) : Polynomial ℝ 
 lemma N_scaled_coe_eq_rescale (ρ : ℝ) (N_poly : Polynomial ℝ) :
     (↑(nScaled ρ N_poly) : PowerSeries ℝ) =
     (PowerSeries.rescale ρ) (↑N_poly : PowerSeries ℝ) := by
-  have h_main : ∀ (n : ℕ), (Polynomial.coeff (N_poly.comp (Polynomial.C ρ * Polynomial.X)) n : ℝ)
-      = (ρ : ℝ) ^ n * Polynomial.coeff N_poly n := by
+  have h_main : ∀ (n : ℕ), (N_poly.comp (Polynomial.C ρ * Polynomial.X)).coeff n
+      = (ρ : ℝ) ^ n * N_poly.coeff n := by
     intro n
     induction N_poly using Polynomial.induction_on' with
     | add p q hp hq =>
@@ -1274,7 +1274,7 @@ lemma N_scaled_coe_eq_rescale (ρ : ℝ) (N_poly : Polynomial ℝ) :
     | monomial k a =>
       simp only [Polynomial.monomial_comp, Polynomial.C_mul_X_eq_monomial,
                  Polynomial.monomial_pow, Polynomial.coeff_C_mul,
-                 Polynomial.coeff_monomial, one_mul]
+                 Polynomial.coeff_monomial, Finsupp.single_apply, one_mul]
       split_ifs with h
       · subst h
         ring

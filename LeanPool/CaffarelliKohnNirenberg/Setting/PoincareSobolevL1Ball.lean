@@ -275,7 +275,7 @@ private theorem integral_rpow_unit_to_real
         filter_upwards [] with x
         rw [← ofReal_norm]
       _ = eLpNorm (fderiv ℝ g) 1 (volume.restrict U) := by
-        rw [eLpNorm_one_eq_lintegral_enorm hgradmeas]
+        rw [eLpNorm_one_eq_lintegral_eNorm hgradmeas]
   have hunit := poincareSobolevL1_unit g hg
   have hunit' :
       (∫⁻ x in U, ‖v x‖ₑ ^ (3 / 2 : ℝ) ∂volume) ^ (2 / 3 : ℝ) ≤

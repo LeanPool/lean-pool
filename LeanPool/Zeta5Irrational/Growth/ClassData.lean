@@ -91,9 +91,10 @@ lemma SX_zero (X : ℕ) : SX p X 0 = 2 * (X / p) := by
 /-! ### `v_p(S_K)` -/
 
 lemma padicValNat_factorial_ge {k : ℕ} : k / p ≤ padicValNat p k.factorial := by
+  rw [Nat.padicValNat_def]
   rcases Nat.lt_or_ge k p with h | h
   · rw [Nat.div_eq_of_lt h]; exact Nat.zero_le _
-  · rw [padicValNat_factorial (b := Nat.log p k + 1) (by omega)]
+  · rw [multiplicity_factorial (b := Nat.log p k + 1) (by omega)]
     have h1 : 1 ∈ Ico 1 (Nat.log p k + 1) := by
       simp only [Finset.mem_Ico]
       exact ⟨le_rfl, by have := Nat.log_pos hp.out.one_lt h; omega⟩
@@ -101,7 +102,7 @@ lemma padicValNat_factorial_ge {k : ℕ} : k / p ≤ padicValNat p k.factorial :
     simpa using this
 
 lemma padicValNat_factorial_small {k : ℕ} (hk : k < p ^ 2) : padicValNat p k.factorial = k / p := by
-  rw [padicValNat_factorial (b := 2)]
+  rw [Nat.padicValNat_def, multiplicity_factorial (b := 2)]
   · simp
   · rcases Nat.eq_zero_or_pos k with h0 | h0
     · subst h0; simp

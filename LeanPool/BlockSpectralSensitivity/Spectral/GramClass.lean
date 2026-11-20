@@ -79,7 +79,7 @@ theorem eq_flipSet_singleton_of_common_nbr {x z : Input V} {p q : V} (hpq : p â‰
   have hr : r âˆˆ ({p, q} : Finset V) := by
     by_contra hr
     have hd : Disjoint ({p, q} : Finset V) {r} := Finset.disjoint_singleton_right.2 hr
-    rw [(symmDiff_eq_sup _ _).2 hd, Finset.sup_eq_union, Finset.card_union_of_disjoint hd,
+    rw [(symmDiff_eq_sup _ _).2 hd, Finset.card_union_of_disjoint hd,
       Finset.card_pair hpq, Finset.card_singleton] at hyz
     omega
   simp only [Finset.mem_insert, Finset.mem_singleton] at hr

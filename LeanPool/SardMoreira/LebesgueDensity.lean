@@ -53,7 +53,7 @@ theorem MeasurableEmbedding.quasiMeasurePreserving_iff_comap {α β : Type*}
   constructor <;> intro h
   · rw [← he.comap_map μ]
     exact h.2.comap _ fun s hs ↦ (he.measurableSet_image.mpr hs).nullMeasurableSet
-  · use he.measurable
+  · use he.measurable.aemeasurable
     refine (h.map he.measurable).trans ?_
     rw [he.map_comap]
     exact ν.restrict_le_self.absolutelyContinuous
@@ -127,7 +127,7 @@ theorem exists_absolutelyContinuous_forall_pos_exists_lt_gt :
           simp [ENNReal.ofReal_div_of_pos, mul_div_assoc]
         _ ≤ _ := by
           rw [withDensity_apply _ measurableSet_Icc, ← setLIntegral_const]
-          refine setLIntegral_mono measurable_enorm ?_
+          refine setLIntegral_mono measurable_eNorm ?_
           rintro x ⟨hx, -⟩
           simpa [← NNReal.coe_le_coe] using hx.trans (le_abs_self x)
 
@@ -220,7 +220,7 @@ theorem exists_pos_forall_measure_le_toSphere_ge_le
     refine lt_of_le_of_lt ?_ (hδ (Ioi (0 : ℝ) ↓∩ s) hsδ)
     rw [(MeasurableEmbedding.subtype_coe measurableSet_Ioi).comap_preimage, Subtype.range_val]
     apply measure_mono_ae
-    filter_upwards [Ioi_ae_eq_Ici.symm.le] with a ha hsa using ⟨hsa, ha (hs hsa)⟩
+    filter_upwards [Ioi_ae_eq_Ici.symm.subset] with a ha hsa using ⟨hsa, ha (hs hsa)⟩
   set T : Set E → Set (Metric.sphere (0 : E) 1) := fun s ↦
     {x | Measure.volumeIoiPow (Module.finrank ℝ E - 1)
       {t : Ioi (0 : ℝ) | ((homeomorphUnitSphereProd E).symm (x, t)).1 ∈ s} ≥ δ}
@@ -232,7 +232,7 @@ theorem exists_pos_forall_measure_le_toSphere_ge_le
     contrapose! hx
     apply hδ
     · exact fun _ ↦ And.left
-    · convert hx
+    · convert hx using 2
       ext t
       simp [t.2.out.le]
   obtain ⟨ε', hε'₀, hε'⟩ : ∃ ε' : ℝ≥0, 0 < ε' ∧ ε' < ε :=
@@ -329,7 +329,7 @@ theorem exists_pos_forall_measure_le_exists_mem_sphere_dist_lt_volume_lineMap_me
         grw [hs]
         simp (disch := positivity) [ENNReal.coe_div, hμB']
       _ = (r : ℝ≥0∞)⁻¹ ^ d * (δ / μB * (c * (r ^ d * μB))) := by
-        simp only [Measure.smul_apply, Measure.nnreal_smul_coe_apply]
+        simp only [smul_apply, Measure.nnreal_smul_coe_apply]
         simp [Measure.addHaar.addHaar_ball_of_pos _ (r := r) hgt, d, ← hμB]
       _ = c * (r / r) ^ d * (μB / μB) * δ := by
         simp only [div_eq_mul_inv, mul_pow]

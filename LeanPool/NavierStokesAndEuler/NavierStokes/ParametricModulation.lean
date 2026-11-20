@@ -315,7 +315,7 @@ def quadraticFactor : ℝ → ℝ := dslope (dslope baseVariance 0) 0
 
 theorem quadraticFactor_zero : quadraticFactor 0 = 1 / 2 := by
   have hp := (baseVariance_analyticAt 0).hasFPowerSeriesAt
-  have hd := hp.has_fpower_series_dslope_fslope.deriv
+  have hd := hp.dslope_fslope.deriv
   rw [quadraticFactor, dslope_same]
   rw [hd]
   change (FormalMultilinearSeries.ofScalars ℝ
@@ -337,7 +337,7 @@ theorem quadraticFactor_analyticAt (s : ℝ) : AnalyticAt ℝ quadraticFactor s 
   · subst s
     obtain ⟨p, hp⟩ := baseVariance_analyticAt 0
     exact ⟨p.fslope.fslope,
-      hp.has_fpower_series_dslope_fslope.has_fpower_series_dslope_fslope⟩
+      hp.dslope_fslope.dslope_fslope⟩
   · have hq : AnalyticAt ℝ (fun t => baseVariance t / t ^ 2) s :=
       (baseVariance_analyticAt s).div (analyticAt_id.pow 2) (pow_ne_zero 2 hs)
     apply hq.congr
@@ -647,7 +647,7 @@ theorem inverseSlope_analyticAt (s : ℝ) : AnalyticAt ℝ inverseSlope s := by
   by_cases hs : s = 0
   · subst s
     obtain ⟨p, hp⟩ := inverseRoot_contDiff.contDiffAt.analyticAt (x := (0 : ℝ))
-    exact ⟨p.fslope, hp.has_fpower_series_dslope_fslope⟩
+    exact ⟨p.fslope, hp.dslope_fslope⟩
   · have hq : AnalyticAt ℝ (fun t => inverseRoot t / t) s :=
       inverseRoot_contDiff.contDiffAt.analyticAt.div analyticAt_id hs
     apply hq.congr
@@ -803,7 +803,7 @@ theorem dslope_zero_analyticAt (f : ℝ → ℝ) (hf : ∀ s, AnalyticAt ℝ f s
   by_cases hs : s = 0
   · subst s
     obtain ⟨p, hp⟩ := hf 0
-    exact ⟨p.fslope, hp.has_fpower_series_dslope_fslope⟩
+    exact ⟨p.fslope, hp.dslope_fslope⟩
   · have hq : AnalyticAt ℝ (fun t => (f t - f 0) / t) s :=
       ((hf s).sub analyticAt_const).div analyticAt_id hs
     apply hq.congr

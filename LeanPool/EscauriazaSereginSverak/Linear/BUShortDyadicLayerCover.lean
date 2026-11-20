@@ -109,7 +109,7 @@ theorem bu_short_shifted_parabolic_layers_ae :
       (Set.univ ×ˢ Ioo (1 / 2 : ℝ) 1 : Set ParabolicPoint) := by
   rw [← Set.prod_iUnion]
   rw [Measure.volume_eq_prod Vec3 ℝ]
-  exact Measure.set_prod_ae_eq Filter.EventuallyEq.rfl
+  exact Measure.set_prod_ae_eq Filter.EventuallyEqSet.rfl
     bu_short_shifted_open_layers_ae
 
 end ESS

@@ -232,7 +232,7 @@ variable (N : ℕ) [NeZero N]
 def unimodularRowToCyclicAddSubgroup (v : UnimodularRow (ZMod N)) :
     {H : AddSubgroup (ZMod N × ZMod N) // IsAddCyclic H ∧ Nat.card H = N} :=
   ⟨AddSubgroup.zmultiples v.1,
-    (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top _).mpr ⟨v.1, rfl⟩,
+    (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq _).mpr ⟨v.1, rfl⟩,
     by rw [Nat.card_zmultiples, IsUnimodularRow.addOrderOf_eq N v.2]⟩
 
 def projectiveLineToCyclicAddSubgroup :
@@ -276,7 +276,7 @@ theorem projectiveLineToCyclicAddSubgroup_injective :
 theorem projectiveLineToCyclicAddSubgroup_surjective :
     Function.Surjective (projectiveLineToCyclicAddSubgroup N) := by
   rintro ⟨H, hcyc, hcard⟩
-  obtain ⟨g, hg⟩ := (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq_top H).mp hcyc
+  obtain ⟨g, hg⟩ := (AddSubgroup.isAddCyclic_iff_exists_zmultiples_eq H).mp hcyc
   have horder : addOrderOf g = N := by
     have := Nat.card_zmultiples g
     rw [hg, hcard] at this

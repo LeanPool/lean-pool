@@ -263,7 +263,7 @@ theorem discr_reflect_eq (f : F[X]) (hzero : f.coeff 0 ≠ 0) :
   by_cases hn : n = 0
   · have hfdeg : f.natDegree = 0 := hn
     obtain ⟨a, rfl⟩ := natDegree_eq_zero.mp hfdeg
-    simp [reflect]
+    simp [reflect_C]
   have hnpos : 0 < n := Nat.pos_of_ne_zero hn
   let h := reflect n f
   have hfne : f ≠ 0 := by

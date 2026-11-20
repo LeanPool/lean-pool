@@ -80,7 +80,7 @@ theorem eLpNorm_const_mul_inv_norm_euclideanBall_le
         ENNReal.ofReal (‖x‖ ^ (-(3 / 2) : ℝ)) := by
     intro x
     have hnn : (0 : ℝ) ≤ M * ‖x‖⁻¹ := by positivity
-    rw [Real.enorm_eq_ofReal hnn,
+    rw [Real.eNorm_eq_ofReal hnn,
       ENNReal.ofReal_rpow_of_nonneg hnn (by norm_num),
       Real.mul_rpow hM (by positivity),
       Real.inv_rpow (norm_nonneg x), ← Real.rpow_neg (norm_nonneg x),
@@ -109,7 +109,7 @@ theorem eLpNorm_const_mul_inv_norm_euclideanBall_le
       _ = ENNReal.ofReal (M ^ (3 / 2 : ℝ) *
             (invNormBallConstant * ρ ^ (3 / 2 : ℝ))) :=
           (ENNReal.ofReal_mul (Real.rpow_nonneg hM _)).symm
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal exponent_ne_zero ENNReal.ofReal_ne_top
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal exponent_ne_zero ENNReal.ofReal_ne_top
     hmeasfun.aestronglyMeasurable, exponent_toReal,
     show (1 : ℝ) / (3 / 2 : ℝ) = (2 / 3 : ℝ) by norm_num]
   have hpow := ENNReal.rpow_le_rpow hint (by norm_num : (0 : ℝ) ≤ 2 / 3)

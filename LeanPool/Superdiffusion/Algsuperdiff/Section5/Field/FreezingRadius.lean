@@ -246,7 +246,7 @@ private theorem streamFreezing_pointwise (M : ABKModel d)
     have h := mul_le_mul_of_nonneg_left (show 3 + t ≤ 3 * (1 + t) by
       linarith only [ht0]) hC0
     convert h using 1
-    all_goals ring
+    ring
   have hamp_budget : (1 + 3 * C) * streamFreezingAmplitude M omega nu delta ≤
       delta * nu := by
     exact (mul_le_mul_of_nonneg_left hamp_le (by positivity)).trans_eq

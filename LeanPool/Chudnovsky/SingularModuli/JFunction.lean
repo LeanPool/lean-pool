@@ -393,7 +393,7 @@ private lemma cuspFunction_qfun_eqOn :
     simpa only [id_eq] using isZeroAtImInfty_qfun.cuspFunction_apply_zero one_pos
   · have him := Function.Periodic.im_invQParam_pos_of_norm_lt_one one_pos
       (by simpa only [Metric.mem_ball, dist_zero_right] using hz) hz0
-    simp only [cuspFunction, q, Function.Periodic.cuspFunction_eq_of_nonzero 1 _ hz0,
+    simp only [cuspFunction, q, Function.Periodic.cuspFunction_eq_of_ne_zero 1 _ hz0,
       Function.comp_apply, ofComplex_apply_of_im_pos him,
       Function.Periodic.qParam_right_inv one_ne_zero hz0, id_eq]
 

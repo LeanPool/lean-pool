@@ -66,7 +66,7 @@ theorem diam_convexAttachment_le {F V : Set (EuclideanSpace ℝ (Fin 2))} (hV : 
       Metric.diam_mono inter_subset_right hV.thickening
     _ ≤ 5 * Metric.diam V := by
       convert diam_diameterThickening_le (by norm_num : (0 : ℝ) ≤ 2) V using 1
-      all_goals norm_num
+      norm_num
 
 /-- The same five-fold bound holds for extended diameter. -/
 theorem ediam_convexAttachment_le {F V : Set (EuclideanSpace ℝ (Fin 2))} (hV : IsBounded V) :
@@ -79,7 +79,7 @@ theorem ediam_convexAttachment_le {F V : Set (EuclideanSpace ℝ (Fin 2))} (hV :
     _ ≤ Metric.ediam (diameterThickening 2 V) := Metric.ediam_mono inter_subset_right
     _ ≤ ENNReal.ofReal 5 * Metric.ediam V := by
       convert ediam_diameterThickening_le (by norm_num : (0 : ℝ) ≤ 2) hV using 1
-      all_goals norm_num
+      norm_num
 
 /-- For a positive-diameter convex hole, its attachment lies in the three-diameter enlargement. -/
 theorem convexAttachment_subset_diameterThickening_three {F V : Set (EuclideanSpace ℝ (Fin 2))}

@@ -210,7 +210,7 @@ theorem lintegral_stochasticIntegralBrownian_pow_four_le
     refine lintegral_mono fun ω => lintegral_mono fun s => ?_
     have hle : ‖((G0 n).truncate C).eval s ω - H ω s‖₊ ≤ ‖H ω s - (G0 n).eval s ω‖₊ := by
       rw [← NNReal.coe_le_coe]
-      simp only [coe_nnnorm, Real.norm_eq_abs]
+      simp only [coe_nnNorm, Real.norm_eq_abs]
       rw [(G0 n).truncate_eval hC0 s ω, abs_sub_comm (H ω s)]
       exact abs_clamp_sub_le hC0 (hCH ω s)
     exact pow_le_pow_left' (ENNReal.coe_le_coe.mpr hle) 2
@@ -268,7 +268,7 @@ theorem lintegral_stochasticIntegralBrownian_pow_four_le
         = fun x : ℝ => ((‖x‖₊ ^ 4 : ℝ≥0) : ℝ≥0∞) := by
       funext x; rw [ENNReal.coe_pow]
     rw [hfun]
-    exact ENNReal.continuous_coe.comp (continuous_nnnorm.pow 4)
+    exact ENNReal.continuous_coe.comp (continuous_nnNorm.pow 4)
   have hfatou : ∫⁻ ω,
       (‖stochasticIntegralBrownian W ℱ hℱ H hm hp hq T ω‖₊ : ℝ≥0∞) ^ 4 ∂P
       ≤ Filter.liminf (fun k => ∫⁻ ω,

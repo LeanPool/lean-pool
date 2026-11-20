@@ -62,7 +62,7 @@ lemma abs_clip_le_abs {M : ℝ} (hM : 0 ≤ M) (x : ℝ) : |max (-M) (min M x)| 
 lemma nnnorm_clip_le {M : ℝ} (hM : 0 ≤ M) (x : ℝ) :
     (‖max (-M) (min M x)‖₊ : ℝ≥0∞) ≤ ‖x‖₊ := by
   have h : ‖max (-M) (min M x)‖₊ ≤ ‖x‖₊ := by
-    rw [← NNReal.coe_le_coe, coe_nnnorm, coe_nnnorm, Real.norm_eq_abs, Real.norm_eq_abs]
+    rw [← NNReal.coe_le_coe, coe_nnNorm, coe_nnNorm, Real.norm_eq_abs, Real.norm_eq_abs]
     exact abs_clip_le_abs hM x
   exact_mod_cast h
 
@@ -128,7 +128,7 @@ lemma triple_sq_lt_of_lt {T : ℝ} {a b c : Ω → ℝ → E → ℝ}
     exact sq_nnnorm_add_le_two_mul _ _
   have hu : Measurable (fun p : Ω × ℝ × E =>
       (‖a p.1 p.2.1 p.2.2 - b p.1 p.2.1 p.2.2‖₊ : ℝ≥0∞) ^ 2) :=
-    (ENNReal.continuous_coe.measurable.comp (ha.sub hb).nnnorm).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp (ha.sub hb).nnNorm).pow_const 2
   calc ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
         (‖a ω s e - c ω s e‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P
       ≤ ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
@@ -452,11 +452,11 @@ lemma stageIntegral_sub_sq_horizon_le {n n' : ℕ} (h : n ≤ n') :
     rw [G.eval_dyadicRefine hℓ, G'.eval_dyadicRestrict (stageHorizon_pos n) hd hT hs.2]
   have hu : Measurable (fun p : Ω × ℝ × E =>
       (‖φ p.1 p.2.1 p.2.2 - G.eval p.2.1 p.2.2 p.1‖₊ : ℝ≥0∞) ^ 2) :=
-    (ENNReal.continuous_coe.measurable.comp (h_meas.sub G.eval_measurable).nnnorm).pow_const 2
+    (ENNReal.continuous_coe.measurable.comp (h_meas.sub G.eval_measurable).nnNorm).pow_const 2
   have hw : Measurable (fun p : Ω × ℝ × E =>
       (‖G.eval p.2.1 p.2.2 p.1 - G'.eval p.2.1 p.2.2 p.1‖₊ : ℝ≥0∞) ^ 2) :=
     (ENNReal.continuous_coe.measurable.comp
-      (G.eval_measurable.sub G'.eval_measurable).nnnorm).pow_const 2
+      (G.eval_measurable.sub G'.eval_measurable).nnNorm).pow_const 2
   have hpt : ∀ ω s e, (‖G.eval s e ω - G'.eval s e ω‖₊ : ℝ≥0∞) ^ 2
       ≤ 2 * ((‖φ ω s e - G.eval s e ω‖₊ : ℝ≥0∞) ^ 2
         + (‖φ ω s e - G'.eval s e ω‖₊ : ℝ≥0∞) ^ 2) := by
@@ -464,7 +464,7 @@ lemma stageIntegral_sub_sq_horizon_le {n n' : ℕ} (h : n ≤ n') :
     rw [show G.eval s e ω - G'.eval s e ω
       = -(φ ω s e - G.eval s e ω) + (φ ω s e - G'.eval s e ω) by ring]
     have h2 := sq_nnnorm_add_le_two_mul (-(φ ω s e - G.eval s e ω)) (φ ω s e - G'.eval s e ω)
-    rwa [nnnorm_neg] at h2
+    rwa [nnNorm_neg] at h2
   have herr' : ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) (stageHorizon n), ∫⁻ e,
       (‖φ ω s e - G'.eval s e ω‖₊ : ℝ≥0∞) ^ 2 ∂ν ∂volume ∂P
       ≤ stageErr φ P n' G' :=

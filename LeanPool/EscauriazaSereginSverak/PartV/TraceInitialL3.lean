@@ -131,12 +131,12 @@ theorem lerayHopf_initialTrace_memLp_three
         (∫⁻ x : Vec3,
           ENNReal.ofReal (vec3EuclideanNorm (u (x, ts n) - a x)) ^ (2 : ℝ)) ^
             (1 / 2 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (by norm_num) (by norm_num) (hScalarMeas n)]
     congr 1
     apply lintegral_congr_ae
     filter_upwards [] with x
-    rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
+    rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _)]
     norm_num
   have hScalarTendsto : Tendsto
       (fun n : ℕ => eLpNorm

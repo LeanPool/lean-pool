@@ -295,8 +295,8 @@ theorem segment_integral_eq_sub_of_hasDerivAt {f G : ℂ → ℂ} {S : Set ℂ}
   have hcont : ContinuousOn (fun t : ℝ => f (a + t • (b - a))) (Icc 0 1) :=
     hf_cont.comp (continuous_const.add
       (continuous_ofReal.smul continuous_const)).continuousOn h_mem
-  have key := @intervalIntegral.integral_unitInterval_deriv_eq_sub ℂ ℂ _ _ _ _ _
-    IsScalarTower.right G f a (b - a)
+  have key := intervalIntegral.integral_unitInterval_deriv_eq_sub
+    (f := G) (f' := f) (z₀ := a) (z₁ := b - a)
     hcont (fun t ht => hG _ (h_mem t ht))
   rw [show a + (b - a) = b from by ring] at key
   rw [smul_eq_mul] at key
@@ -847,7 +847,8 @@ private theorem ftc_tail_diag (r : ℝ) (G : ℂ → ℂ)
       (hG _ (contour_neg1_to_i_im_pos ht_pos))
       (hasDerivAt_contour_neg1_to_i t))).congr_deriv (by simp only [smul_eq_mul]; ac_rfl)
   have h := intervalIntegral.integral_eq_sub_of_hasDerivAt hGdiag
-    ((hcont.mono (fun x hx => ⟨by linarith only [hδ, hx, hx.1], hx.2⟩)).intervalIntegrable_of_Icc
+    ((hcont.mono (t := Icc δ 1)
+      (fun x hx => ⟨by linarith only [hδ, hx, hx.1], hx.2⟩)).intervalIntegrable_of_Icc
       (by linarith only [hδ1]))
   simpa [Function.comp] using h
 
@@ -870,7 +871,8 @@ private theorem ftc_tail_vert (r : ℝ) (G : ℂ → ℂ)
       (hG _ (vertical_contour_im_pos ht_pos))
       (hasDerivAt_vert_contour t))).congr_deriv (by simp only [smul_eq_mul]; ac_rfl)
   exact intervalIntegral.integral_eq_sub_of_hasDerivAt hGvert
-    ((hcont.mono (fun x hx => ⟨by linarith only [hδ, hx, hx.1], hx.2⟩)).intervalIntegrable_of_Icc
+    ((hcont.mono (t := Icc δ 1)
+      (fun x hx => ⟨by linarith only [hδ, hx, hx.1], hx.2⟩)).intervalIntegrable_of_Icc
       (by linarith only [hδ1]))
 
 /-- For each delta in (0, 1], the difference `I12 - (I12Vert + I12Horiz)` equals

@@ -276,7 +276,7 @@ private theorem timeCutoff_hasDerivAt
     (fun x => timeCutoffLeft t₀ r R x * timeCutoffRight t₀ r R x) _ t
   convert (timeCutoffLeft_hasDerivAt hr hrR).mul
       (timeCutoffRight_hasDerivAt hr hrR) using 1
-  all_goals simp only [timeCutoffLeft, timeCutoffRight]
+  simp only [timeCutoffLeft, timeCutoffRight]
 
 private theorem timeCutoffLeft_abs_deriv_le
     {t₀ r R t : ℝ} (hr : 0 ≤ r) (hrR : r < R) :

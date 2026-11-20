@@ -132,7 +132,7 @@ variable {a b x y : Plane} {S U : Set Plane}
 /-- The line through `a` and `b`: the range of the parametrization `t ↦ a + t • (b - a)`.
 For `a = b` this degenerates to the single point `{a}`; the lemmas that need a genuine line take
 `a ≠ b` as a hypothesis. -/
-def line (a b : Plane) : Set Plane := Set.range (AffineMap.lineMap a b : ℝ → Plane)
+noncomputable def line (a b : Plane) : Set Plane := Set.range (AffineMap.lineMap a b : ℝ → Plane)
 
 /-- The coordinate of a point on the line through `a` and `b`: the inverse of the
 parametrization. It is defined on the whole plane — off the line it returns the parameter of the

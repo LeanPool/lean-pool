@@ -83,7 +83,7 @@ theorem derivativeSup_mul_le {d n : ℕ} [Nonempty (Fin d)]
         · exact hgx (n - k)
   have hOp := essSup_le_of_ae_le _ (by
     filter_upwards [hpoint] with x hx
-    simpa [Real.enorm_eq_ofReal_abs] using hx)
+    simpa [Real.eNorm_eq_ofReal_abs] using hx)
   calc
     derivativeSup n (fun x ↦ f x * g x) ≤
         operatorDerivativeSup n (fun x ↦ f x * g x) :=
@@ -91,8 +91,8 @@ theorem derivativeSup_mul_le {d n : ℕ} [Nonempty (Fin d)]
     _ = essSup
         (fun x : Vec d ↦
           ‖iteratedFDeriv ℝ n (liftVecOne (fun y ↦ f y * g y)) (WithLp.toLp 1 x)‖ₑ) μ := by
-          simp [μ, operatorDerivativeSup, eLpNormEssSup_eq_essSup_enorm,
-            Real.enorm_eq_ofReal_abs]
+          simp [μ, operatorDerivativeSup, eLpNormEssSup_eq_essSup_eNorm,
+            Real.eNorm_eq_ofReal_abs]
     _ ≤ _ := by simpa [μ] using hOp
 
 /-- Sum of the reciprocals of the first positive integers up to the given order. -/

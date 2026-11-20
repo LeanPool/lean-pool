@@ -68,7 +68,7 @@ private lemma denom_at_I (g : SL(2, ℤ)) :
     ↑((g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) := by
   simp only [UpperHalfPlane.denom, Matrix.SpecialLinearGroup.coe_GL_coe_matrix]
   rw [Matrix.SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) g]
-  simp only [Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.map_apply,
+  simp only [Fin.isValue, Int.coe_castRingHom, Matrix.map_apply,
     ofReal_intCast]
 
 private lemma normSq_denom_at_I (g : SL(2, ℤ)) :
@@ -180,7 +180,7 @@ private lemma denom_at_rho (g : SL(2, ℤ)) :
     ↑((g : Matrix (Fin 2) (Fin 2) ℤ) 1 1 : ℤ) := by
   simp only [UpperHalfPlane.denom, Matrix.SpecialLinearGroup.coe_GL_coe_matrix]
   rw [Matrix.SpecialLinearGroup.map_apply_coe (Int.castRingHom ℝ) g]
-  simp only [Fin.isValue, RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.map_apply,
+  simp only [Fin.isValue, Int.coe_castRingHom, Matrix.map_apply,
     ofReal_intCast, ellipticPointRho']
 
 private lemma normSq_denom_at_rho (g : SL(2, ℤ)) :
@@ -363,7 +363,7 @@ private lemma c_abs_le_one_of_smul_fd (g : SL(2, ℤ)) (p₁ p₂ : ℍ)
   have h1 : (↑c : ℝ) ^ 2 * p₂.im ^ 2 ≤ p₂.im / p₁.im := by
     rw [← h_nsq_eq]; convert p₂.c_mul_im_sq_le_normSq_denom g using 1; simp only [Fin.isValue,
       Matrix.SpecialLinearGroup.coe_GL_coe_matrix, Matrix.SpecialLinearGroup.map_apply_coe,
-      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.map_apply, c]; ring
+      Int.coe_castRingHom, Matrix.map_apply, c]; ring
   have h2 : (↑c : ℝ) ^ 2 * p₂.im ^ 2 * p₁.im ≤ p₂.im := by
     have := mul_le_mul_of_nonneg_right h1 p₁.im_pos.le
     rwa [div_mul_cancel₀ _ (ne_of_gt p₁.im_pos)] at this
@@ -476,7 +476,7 @@ theorem finsum_nonell_eq_repCanon_sum :
     ∑ᶠ (q : NonEllOrbit), ordOrbitQ f q =
     ∑ s ∈ repCanon f hf, (orderOfVanishingAt' (⇑f) s : ℂ) := by
   set S := (finite_support_ordOrbit_nonEll f hf).toFinset with hS_def
-  rw [finsum_eq_sum_of_support_subset _ (fun q hq => by
+  rw [finsum_eq_sum_of_support_subset _ (s := S) (fun q hq => by
     rw [Finset.mem_coe, Set.Finite.mem_toFinset]
     exact Int.cast_ne_zero.mp (Function.mem_support.mp hq))]
   set R := repCanon f hf
@@ -490,10 +490,13 @@ theorem finsum_nonell_eq_repCanon_sum :
     obtain ⟨p, hp_mem, hp_orb⟩ := exists_repCanon_of_nonEllOrbit f hf q
       ((Set.Finite.mem_toFinset _).mp hq)
     exact ⟨p, hp_mem, Subtype.ext hp_orb⟩
-  exact (Finset.sum_bij φ h_im
+  symm
+  refine Finset.sum_bij φ h_im
     (fun _ h₁ _ h₂ heq => orb_injOn_repCanon f hf h₁ h₂ (congr_arg Subtype.val heq))
-    h_surj (fun p hp => by
-      simp only [ordOrbitQ, hφ_def]; exact_mod_cast (ordOrbit_mk f p).symm)).symm
+    h_surj ?_
+  intro p hp
+  simp only [ordOrbitQ, hφ_def]
+  exact_mod_cast (ordOrbit_mk f p).symm
 
 private lemma disjoint_repStrict_repLeftVert :
     Disjoint (repStrict f hf) (repLeftVert f hf) := by

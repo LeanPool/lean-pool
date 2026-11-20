@@ -166,7 +166,7 @@ theorem cubeGagliardoESeminorm_eq_lintegral {Q : TriadicCube d} {s : ℝ}
     cubeGagliardoESeminorm Q s p u =
       (∫⁻ z, ‖gagliardoKernel s p u z‖ₑ ^ p.toReal
         ∂gagliardoCubeMeasure Q) ^ (1 / p.toReal) :=
-  eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hu
+  eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hu
 
 end Internal
 

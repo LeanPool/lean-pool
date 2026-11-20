@@ -143,6 +143,9 @@ theorem exists_measurable_feasible_strategy
         (fun t y => (κνP t y : Measure (Y (t + 1)))) t := by
     intro t
     exact WeakP.exists_measurable_selection
+      (Φ := fun h => {γ | (h, γ) ∈ FeasGraph
+        (fun t x => (κμP t x : Measure (X (t + 1))))
+        (fun t y => (κνP t y : Measure (Y (t + 1)))) t})
       (fun h => feasGraph_fiber_nonempty' κμP κνP t h)
       (fun h => (isCompact_feasGraph_fiber κμP κνP t h).isClosed)
       (fun U hU => measurableSet_feasGraph_fiber_hit_of_measurable

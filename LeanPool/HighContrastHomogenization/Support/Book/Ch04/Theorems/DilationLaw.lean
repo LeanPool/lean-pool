@@ -316,10 +316,9 @@ private theorem nullMeasurableSet_map_of_preimage_measurableEquiv
     NullMeasurableSet s (Measure.map e μ) := by
   rcases hs with ⟨t, ht, hst⟩
   refine ⟨e '' t, e.measurableEmbedding.measurableSet_image' ht, ?_⟩
-  unfold Filter.EventuallyEqSet Filter.EventuallyEq
+  unfold Filter.EventuallyEqSet
   rw [e.measurableEmbedding.ae_map_iff]
   filter_upwards [hst] with a ha
-  apply propext
   constructor
   · intro hs_ea
     exact ⟨a, ha.mp hs_ea, rfl⟩

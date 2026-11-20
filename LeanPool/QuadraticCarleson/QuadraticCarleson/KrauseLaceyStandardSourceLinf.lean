@@ -220,7 +220,7 @@ theorem integral_norm_energyStandardSourceParentInput_le
     _ ≤ ∫ x in I.carrier, ‖f x‖ :=
       setIntegral_mono_set hf.norm.integrableOn
         (Filter.Eventually.of_forall fun x ↦ norm_nonneg (f x))
-        I.centralThird_subset_carrier.eventuallyLE
+        (Filter.Eventually.of_forall fun _ hx ↦ I.centralThird_subset_carrier hx)
     _ = intervalL1Average f I * I.length :=
       (intervalL1Average_mul_length f I).symm
     _ ≤ 10 * intervalL1Average f I₀ * I.length :=

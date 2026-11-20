@@ -699,23 +699,23 @@ theorem continuous_jet_joint (I : Window) (w : ℕ → ℕ → ℝ) (n m : ℕ) 
         (continuous_const.prodMk (I.continuous_project.comp continuous_snd))))
 
 @[simp] theorem jet_zero (I : Window) (w : ℕ → ℕ → ℝ) (n m : ℕ) (x : ℝ) :
-    jet I w 0 n m x = 0 := by simp only [jet, BoundedContinuousFunction.coe_zero, Pi.zero_apply,
+    jet I w 0 n m x = 0 := by simp only [jet, FunLike.coe_zero, Pi.zero_apply,
         mul_zero]
 
 @[simp] theorem jet_add (I : Window) (w : ℕ → ℕ → ℝ) (A B : RawJets I)
     (n m : ℕ) (x : ℝ) :
     jet I w (A + B) n m x = jet I w A n m x + jet I w B n m x := by
-  simp only [jet, BoundedContinuousFunction.coe_add, Pi.add_apply, mul_add]
+  simp only [jet, FunLike.coe_add, Pi.add_apply, mul_add]
 
 @[simp] theorem jet_sub (I : Window) (w : ℕ → ℕ → ℝ) (A B : RawJets I)
     (n m : ℕ) (x : ℝ) :
     jet I w (A - B) n m x = jet I w A n m x - jet I w B n m x := by
-  simp only [jet, BoundedContinuousFunction.coe_sub, Pi.sub_apply, mul_sub]
+  simp only [jet, FunLike.coe_sub, Pi.sub_apply, mul_sub]
 
 @[simp] theorem jet_smul (I : Window) (w : ℕ → ℕ → ℝ) (c : ℝ) (A : RawJets I)
     (n m : ℕ) (x : ℝ) :
     jet I w (c • A) n m x = c * jet I w A n m x := by
-  simp only [jet, BoundedContinuousFunction.coe_smul, smul_eq_mul]
+  simp only [jet, FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
   ring
 
 /-- Compatibility is an actual FTC identity for every successive pair of

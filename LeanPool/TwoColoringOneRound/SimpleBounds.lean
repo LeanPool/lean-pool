@@ -70,7 +70,7 @@ noncomputable def simpleUpperAlg : ClassicalAlgorithm where
       measurable_g.comp (h0.prodMk (h1.prodMk h2))
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
-def side (b : Color) : Set Rand :=
+noncomputable def side (b : Color) : Set Rand :=
   if b = 0 then Set.Iio half else Set.Ici half
 
 lemma fin2_eq_one_of_ne_zero {b : Color} (hb : b ≠ 0) : b = 1 := by
@@ -87,7 +87,7 @@ lemma side_measure (b : Color) : (volume : Measure Rand) (side b) = (1 / 2 : ENN
       _ = (1 / 2 : ENNReal) := by simp
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
-def cell (w : Fin 4 → Color) : Set (Samples 4) :=
+noncomputable def cell (w : Fin 4 → Color) : Set (Samples 4) :=
   Set.univ.pi fun i => side (w i)
 
 lemma measurableSet_cell (w : Fin 4 → Color) : MeasurableSet (cell w) := by

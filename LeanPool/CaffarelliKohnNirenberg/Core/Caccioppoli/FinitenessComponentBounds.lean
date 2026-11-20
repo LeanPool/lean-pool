@@ -50,12 +50,12 @@ theorem caccioppoli_l2_component_bound
         (volume.restrict (vec3Ball x₀ r)) := hmono
     _ = (∫⁻ x in vec3Ball x₀ r,
         ENNReal.ofReal (vec3EuclideanNorm (u x)) ^ (2 : ℝ)) ^ (1 / 2 : ℝ) := by
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (p := (2 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top hnorm]
       apply congrArg (fun z : ℝ≥0∞ => z ^ (1 / (2 : ℝ) : ℝ))
       apply lintegral_congr
       intro x
-      rw [Real.enorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
+      rw [Real.eNorm_eq_ofReal (vec3EuclideanNorm_nonneg _),
         ENNReal.ofReal_rpow_of_nonneg (vec3EuclideanNorm_nonneg _) (by norm_num)]
       norm_num
       rw [ENNReal.ofReal_pow (vec3EuclideanNorm_nonneg _) 2]
@@ -137,12 +137,12 @@ theorem caccioppoli_gradient_component_bound
           (fun x : Vec3 => Real.sqrt (∑ k : Fin 3, ∑ j : Fin 3,
             (g x k j) ^ (2 : ℕ))) (volume.restrict (vec3Ball x₀ r)) :=
         (Real.continuous_sqrt.measurable.comp_aemeasurable hs).aestronglyMeasurable
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (p := (2 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top hroot]
       apply congrArg (fun z : ℝ≥0∞ => z ^ (1 / (2 : ℝ) : ℝ))
       apply lintegral_congr
       intro x
-      rw [Real.enorm_eq_ofReal (Real.sqrt_nonneg _),
+      rw [Real.eNorm_eq_ofReal (Real.sqrt_nonneg _),
         ENNReal.ofReal_rpow_of_nonneg (Real.sqrt_nonneg _) (by norm_num)]
       norm_num
       calc
@@ -161,12 +161,12 @@ theorem caccioppoli_eLpNorm_cube_eq_lintegral_abs_cube
     (hf : AEStronglyMeasurable f (volume.restrict s)) :
     eLpNorm f (3 : ℝ≥0∞) (volume.restrict s) ^ (3 : ℕ) =
       ∫⁻ x in s, ENNReal.ofReal |f x| ^ (3 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
       (p := (3 : ℝ≥0∞)) (by norm_num) ENNReal.coe_ne_top hf,
     ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul]
   norm_num
   apply lintegral_congr
   intro x
-  rw [Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs]
 
 end CKN

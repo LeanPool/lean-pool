@@ -225,11 +225,11 @@ theorem lintegral_energyStandardSourceTail_pairing_le
       eLpNorm (energyStandardSourceTailMaximal S f I₀ k₀ s scale N) 2 volume *
         eLpNorm g 2 volume := by
   have h := ENNReal.lintegral_mul_le_Lp_mul_Lq volume Real.HolderConjugate.two_two
-    (aemeasurable_energyStandardSourceTailMaximal S hf I₀ k₀ s scale N).enorm
-    hgi.aestronglyMeasurable.enorm
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num)
+    (aemeasurable_energyStandardSourceTailMaximal S hf I₀ k₀ s scale N).eNorm
+    hgi.aestronglyMeasurable.eNorm
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by norm_num)
       (aemeasurable_energyStandardSourceTailMaximal S hf I₀ k₀ s scale N).aestronglyMeasurable,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by norm_num)
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by norm_num)
       hgi.aestronglyMeasurable]
   exact h
 
@@ -253,7 +253,7 @@ theorem eLpNorm_energyStandardSourceTailMaximal_le
     _ = ENNReal.ofReal 2 *
         eLpNorm (energyStandardGenerationPrefixMaximal S f I₀ k₀ s scale N) 2 volume := by
       rw [eLpNorm_const_smul, show ‖(2 : ℝ)‖ₑ = ENNReal.ofReal 2 by
-        exact Real.enorm_of_nonneg (by norm_num1)]
+        exact Real.eNorm_of_nonneg (by norm_num1)]
     _ ≤ _ := by
       calc
         _ ≤ ENNReal.ofReal 2 * ENNReal.ofReal ((Nat.log2 N.card + 1 : ℝ) * Real.sqrt

@@ -41,7 +41,7 @@ def derivationWronskian (D : Derivation C L L) {n : ℕ} (f : Fin n → L) :
 
 private lemma derivation_iterate_succ (D : Derivation C L L) (n : ℕ) (x : L) :
     D ((D.toLinearMap ^ n) x) = (D.toLinearMap ^ (n + 1)) x := by
-  rw [pow_succ', Module.End.mul_apply]
+  rw [pow_succ', mul_apply_eq_comp]
   rfl
 
 /-- If every element killed by `D` comes from `C`, then a family linearly independent over

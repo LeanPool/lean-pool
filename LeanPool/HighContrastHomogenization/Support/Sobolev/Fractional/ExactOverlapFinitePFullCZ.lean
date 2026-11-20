@@ -36,7 +36,7 @@ noncomputable section
 
 private theorem enorm_inv_eq_ofReal_inv {sigma : ℝ} (hsigma : 0 < sigma) :
     ‖sigma⁻¹‖ₑ = (ENNReal.ofReal sigma)⁻¹ := by
-  rw [Real.enorm_eq_ofReal (inv_nonneg.mpr hsigma.le),
+  rw [Real.eNorm_eq_ofReal (inv_nonneg.mpr hsigma.le),
     ENNReal.ofReal_inv_of_pos hsigma]
 
 /-- The global exact-overlap finite-`p` Calderón--Zygmund estimate for a
@@ -114,7 +114,7 @@ theorem exists_exactOverlapFiniteP_full_cz
           ∑' j : ℕ, C * ‖sigma0⁻¹‖ₑ ^ r *
             (weight j *
               (cubeEuclideanPositiveBesovOverlapDepthENorm Q q h.toField j) ^ r) := by
-            apply ENNReal.tsum_le_tsum
+            apply tsum_le_tsum
             intro j
             calc
               weight j *

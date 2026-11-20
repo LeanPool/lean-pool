@@ -205,8 +205,8 @@ theorem finite_set_integral_norm_le (f : LiftDomain period → Vector3)
   have hfin : eLpNorm f 2 (liftMeasure period) * (liftMeasure period K) ^ (1/2 : ℝ) ≠ ⊤ := by
       finiteness
   have hC := ENNReal.toReal_mono hfin (hA.trans hB)
-  rw [integral_norm_eq_lintegral_enorm (hf.restrict K).aestronglyMeasurable,
-    ← eLpNorm_one_eq_lintegral_enorm (hf.restrict K).aestronglyMeasurable]
+  rw [integral_norm_eq_lintegral_eNorm (hf.restrict K).aestronglyMeasurable,
+    ← eLpNorm_one_eq_lintegral_eNorm (hf.restrict K).aestronglyMeasurable]
   convert hC using 1
   simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow]
 

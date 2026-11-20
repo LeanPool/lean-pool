@@ -406,7 +406,7 @@ theorem ExtensionBaseClaim43EdgeEffects {V E : Type*}
         trace.coloring ⟨n, Nat.lt_succ_of_le hn⟩ f := by
     intro n hn
     induction hrem : trace.steps - n using Nat.strong_induction_on generalizing n with
-    | h rem ih =>
+    | ind rem ih =>
       intro hafter
       by_cases heq : n = trace.steps
       · subst n

@@ -92,7 +92,7 @@ theorem splitDiagonalSL_mul (w z : Fˣ) :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [splitDiagonalSL_coe, Matrix.mul_apply]
-  all_goals ring
+  ring
 
 /-- Diagonal determinant-one matrices form the split-torus homomorphism into `SL₂`. -/
 noncomputable def splitDiagonalSLHom : Fˣ →* Matrix.SpecialLinearGroup (Fin 2) F where

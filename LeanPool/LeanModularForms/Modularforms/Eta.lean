@@ -108,7 +108,7 @@ lemma eta_logderivs_const : ∃ z : ℂ, z ≠ 0 ∧ {z : ℂ | 0 < z.im}.EqOn (
   · exact h
   · apply DifferentiableOn.comp
     pick_goal 4
-    · use ({z : ℂ | 0 < z.im})
+    · exact {z : ℂ | 0 < z.im}
     · intro x hx
       apply DifferentiableAt.differentiableWithinAt
       simpa [ModularForm.eta] using
@@ -120,13 +120,8 @@ lemma eta_logderivs_const : ∃ z : ℂ, z ≠ 0 ∧ {z : ℂ | 0 < z.im}.EqOn (
       have hx2 := ne_zero (⟨x, hx⟩ : ℍ)
       norm_cast at *
     · intro y hy
-      simp only [mem_ofPred_eq]
-      have := UpperHalfPlane.im_inv_neg_coe_pos (⟨y, hy⟩ : ℍ)
-      conv =>
-        enter [2,1]
-        rw [neg_div, div_eq_mul_inv]
-        simp
-      simp_all
+      simpa [div_eq_mul_inv] using
+        UpperHalfPlane.im_inv_neg_coe_pos (⟨y, hy⟩ : ℍ)
   · apply DifferentiableOn.mul
     · intro x hx; exact (csqrt_differentiableAt ⟨x, hx⟩).differentiableWithinAt
     · intro x hx

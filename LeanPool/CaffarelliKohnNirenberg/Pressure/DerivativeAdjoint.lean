@@ -341,7 +341,7 @@ private lemma pressure_heat_derivative_integral {z : Vec3} (hz : z ≠ 0)
   have hrpow' : ((vec3EuclideanNorm z) ^ 2 / 4) ^ (-(3 / 2 : ℝ)) =
       8 / (vec3EuclideanNorm z) ^ 3 := by
     convert hrpow using 1
-    all_goals ring_nf
+    ring_nf
   rw [hrpow']
   rw [newtonianKernel_spatialDeriv_formula hz i]
   simp only [vec3EuclideanNorm, mul_one, one_div, mul_inv_rev, neg_mul]

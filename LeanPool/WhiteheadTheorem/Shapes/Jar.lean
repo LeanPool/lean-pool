@@ -54,9 +54,7 @@ lemma isClosed_rim (n : ℕ) : IsClosed (rim n) :=
 
 /-- `midProjToFun` -/
 noncomputable def midProjToFun (n : ℕ) : mid.{u} n → disk.{u} n := fun p ↦ ⟨{
-  -- Note: pattern matching is done inside `toFun` to make `Continuous.subtype_mk` work
-  val := match p with
-    | ⟨⟨ ⟨⟨x, _⟩⟩, ⟨y, _⟩ ⟩, _⟩ => (2 / (2 - y)) • x,
+  val := (2 / (2 - p.val.snd.val)) • p.val.fst.down.val,
   property := by
     obtain ⟨⟨ ⟨⟨x, _⟩⟩, ⟨y, _, _⟩ ⟩, hxy⟩ := p
     dsimp only [Int.ofNat_eq_natCast, Set.coe_ofPred, Set.mem_ofPred_eq]
@@ -90,8 +88,7 @@ lemma rim_fst_ne_zero (n : ℕ) : ∀ p : rim.{u} n, ‖p.val.fst.down.val‖ �
 
 /-- `rimProjFstToFun` -/
 noncomputable def rimProjFstToFun (n : ℕ) : rim.{u} n → diskBoundary.{u} n := fun p ↦ ⟨{
-  val := match p with
-    | ⟨⟨ ⟨⟨x, _⟩⟩, _ ⟩, _⟩ => (1 / ‖x‖) • x
+  val := (1 / ‖p.val.fst.down.val‖) • p.val.fst.down.val
   property := by
     obtain ⟨⟨ ⟨⟨x, _⟩⟩, ⟨y, yl, yr⟩ ⟩, hxy⟩ := p
     simp only [one_div, mem_sphere_iff_norm, sub_zero, norm_smul, norm_inv, norm_norm]
@@ -191,7 +188,7 @@ lemma proj_compatible' (n : ℕ) {Y : Type v} [TopologicalSpace Y]
       (hpj : p ∈ closedCover.{u} n j),
     proj n f H i ⟨p, hpi⟩ = proj n f H j ⟨p, hpj⟩ := by
   intro ⟨i, hi⟩ ⟨j, hj⟩ p hpi hpj
-  interval_cases i <;> (interval_cases j <;> (try simp only [Fin.zero_eta, Fin.mk_one]))
+  interval_cases i <;> (interval_cases j <;> simp only [Fin.zero_eta, Fin.mk_one])
   · exact proj_compatible n f H hf p hpi hpj
   · exact Eq.symm <| proj_compatible n f H hf p hpj hpi
 

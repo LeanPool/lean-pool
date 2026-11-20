@@ -77,7 +77,7 @@ theorem lintegral_directRegular_offsetTailMaximalOn_le_low_add_high
     (measurable_offsetTailMaximalOn S A scale
       f.measurable_toFun ell₀ (n : ℤ)).aemeasurable.mul
         (KrauseLaceyBadScale.integrable_interpolationLow_local g.measurable_toFun
-          g.integrable_finiteSparseProof a).aestronglyMeasurable.enorm
+          g.integrable_finiteSparseProof a).aestronglyMeasurable.eNorm
   have hnorm (x : ℝ) :
       ‖g x‖ₑ = ‖interpolationLow g a x‖ₑ +
         ‖interpolationHigh g a x‖ₑ := by
@@ -171,7 +171,7 @@ theorem lintegral_offsetTailMaximalOn_le_oneOffset_directQuadratic
     ((measurable_offsetTailMaximalOn S
       (directExceptionalIntervals S g p Λ) scale
         f.measurable_toFun ell₀ (n : ℤ)).mul
-      g.measurable_toFun.enorm).aemeasurable
+      g.measurable_toFun.eNorm).aemeasurable
   have hsplit :=
     lintegral_offsetTailMaximalOn_directRegular_exceptional_le
       S scale (f : ℝ → ℂ) (g : ℝ → ℂ) p Λ ell₀ (n : ℤ) hE
@@ -205,7 +205,7 @@ theorem lintegral_localizedTailMaximal_le_sum_offsetPairings
       offsetTailMaximal S scale (f : ℝ → ℂ) ell₀ s x * ‖g x‖ₑ) volume := by
     intro s hs
     exact ((measurable_offsetTailMaximalOn S S scale
-      f.measurable_toFun ell₀ s).mul g.measurable_toFun.enorm).aemeasurable
+      f.measurable_toFun ell₀ s).mul g.measurable_toFun.eNorm).aemeasurable
   calc
     (∫⁻ x, localizedTailMaximal ell₀ scale S f x * ‖g x‖ₑ) ≤
         ∫⁻ x, (∑ s ∈ O, offsetTailMaximal S scale

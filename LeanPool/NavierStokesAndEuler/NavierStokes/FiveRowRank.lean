@@ -542,7 +542,7 @@ theorem repair_joint_contDiffOn {n : ℕ} (a l u : Fin n → ℝ) {S : Set E}
   rw [hfun]
   apply ContDiffOn.sum
   intro j _
-  exact ((contDiffOn_pi.mp hd j).comp contDiffOn_fst (fun _ hz => hz.1)).mul
+  exact ((contDiffOn_pi.mp hd j).comp contDiffOn_fst (fun _ (hz : _ ∈ S ×ˢ univ) => hz.1)).mul
     ((LocalizedMomentRepair.repair_contDiff a l u (Pi.single j 1)).comp contDiff_snd).contDiffOn
 
 theorem angularDebt_contDiffOn {S : Set E} {C : E → ℝ} {d : E → Debt}

@@ -42,10 +42,12 @@ variable {R : Type*} [Semiring R] (k : ℕ) (f : R[X])
 
 /-- `hasseDeriv k f` vanishes iff `(n.choose k) * f.coeff n = 0` for every `n`. -/
 theorem hasseDeriv_eq_zero_iff : hasseDeriv k f = 0 ↔ ∀ n, (n.choose k : R) * f.coeff n = 0 := by
-  refine ⟨fun h n ↦ ?_, fun h ↦ ext fun n ↦ by rw [hasseDeriv_coeff, coeff_zero, h]⟩
+  refine ⟨fun h n ↦ ?_,
+    fun h ↦ AddMonoidAlgebra.ext <| Finsupp.ext fun n ↦ by
+      rw [hasseDeriv_coeff, coeff_zero, h]⟩
   rcases lt_or_ge n k with hn | hn
   · simp [Nat.choose_eq_zero_of_lt hn]
-  · simpa [hasseDeriv_coeff, Nat.sub_add_cancel hn] using congr(coeff $h (n - k))
+  · simpa [hasseDeriv_coeff, Nat.sub_add_cancel hn] using congr(AddMonoidAlgebra.coeff $h (n - k))
 
 /-- If the Hasse derivatives of `f` of orders `0 < i ≤ k` vanish, then
 `hasseDeriv k (f * g) = f * hasseDeriv k g`. -/
@@ -142,7 +144,7 @@ theorem forall_hasseDeriv_eq_zero_iff_exists_expand {e : ℕ} {f : R[X]} :
     (∀ k, 0 < k → k < p ^ e → hasseDeriv k f = 0) ↔ ∃ g, expand R (p ^ e) g = f := by
   have hpe : 0 < p ^ e := pow_pos hp.out.pos e
   rw [forall_hasseDeriv_eq_zero_iff]
-  refine ⟨fun h ↦ ⟨contract (p ^ e) f, ext fun n ↦ ?_⟩, ?_⟩
+  refine ⟨fun h ↦ ⟨contract (p ^ e) f, AddMonoidAlgebra.ext (Finsupp.ext fun n ↦ ?_)⟩, ?_⟩
   · rw [coeff_expand hpe, coeff_contract hpe.ne']
     split_ifs with hn
     · rw [Nat.div_mul_cancel hn]

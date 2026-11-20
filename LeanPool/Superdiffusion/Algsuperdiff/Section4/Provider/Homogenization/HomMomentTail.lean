@@ -163,7 +163,7 @@ theorem homMinimalScaleFactor_le_trunc_add_tsum {c : ℝ} (hc : 0 ≤ c) (N0 : �
           (fun _ => ENNReal.ofReal ((3 : ℝ) ^ (c * ((N0 + 1 + N : ℕ) : ℝ)))) omega := by
       calc (⊤ : ℝ≥0∞) = ∑' _N : ℕ, (1 : ℝ≥0∞) :=
             (ENNReal.tsum_const_eq_top_of_ne_zero one_ne_zero).symm
-        _ ≤ _ := ENNReal.tsum_le_tsum hterm
+        _ ≤ _ := tsum_le_tsum hterm
     have hLHS : homMinimalScaleFactor c X omega = ⊤ := by
       rw [homMinimalScaleFactor, htop, enatThreeRpow_top]
     rw [hLHS]
@@ -191,7 +191,7 @@ theorem homMinimalScaleFactor_le_trunc_add_tsum {c : ℝ} (hc : 0 ≤ c) (N0 : �
               (fun _ => ENNReal.ofReal
                 ((3 : ℝ) ^ (c * ((N0 + 1 + (k - (N0 + 1)) : ℕ) : ℝ)))) omega := by
             rw [Set.indicator_of_mem hmem, hkeq]
-        _ ≤ _ := ENNReal.le_tsum (f := fun N : ℕ =>
+        _ ≤ _ := le_tsum (fun N : ℕ =>
             Set.indicator {w : Omega | ((N0 + 1 + N : ℕ) : ℕ∞) ≤ X w}
               (fun _ => ENNReal.ofReal ((3 : ℝ) ^ (c * ((N0 + 1 + N : ℕ) : ℝ)))) omega)
             (k - (N0 + 1))
@@ -260,7 +260,7 @@ theorem tsum_ofReal_pow_le_two {rho : ℝ} (h : rho ≤ 1 / 2) :
       rw [ENNReal.inv_two_add_inv_two]
     rw [hsub, inv_inv]
   calc ∑' _N : ℕ, ENNReal.ofReal rho ^ _N ≤ ∑' _N : ℕ, ((2 : ℝ≥0∞)⁻¹) ^ _N :=
-        ENNReal.tsum_le_tsum fun N => pow_le_pow_left' hle N
+        tsum_le_tsum fun N => pow_le_pow_left' hle N
     _ = ((1 : ℝ≥0∞) - (2 : ℝ≥0∞)⁻¹)⁻¹ := ENNReal.tsum_geometric _
     _ = 2 := hgeom
 
@@ -339,7 +339,7 @@ theorem lintegral_homMinimalScaleFactor_rpow_le_two {mu : Measure Omega}
         mu {w : Omega | ((N0 + 1 + N : ℕ) : ℕ∞) ≤ X w}) ≤
         ENNReal.ofReal (B * rho ^ (N0 + 1)) * ∑' _N : ℕ, ENNReal.ofReal rho ^ _N := by
       rw [← ENNReal.tsum_mul_left]
-      exact ENNReal.tsum_le_tsum hterm
+      exact tsum_le_tsum hterm
     refine hbound.trans ?_
     have hgeom := tsum_ofReal_pow_le_two (rho := rho) hratio
     have hstep : ENNReal.ofReal (B * rho ^ (N0 + 1)) *

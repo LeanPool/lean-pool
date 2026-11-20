@@ -37,7 +37,7 @@ noncomputable def highContributionMajorant (B : ℕ → ℕ) (b : ℕ → ℝ �
 
 theorem paperHighContribution_le_majorant (B : ℕ → ℕ) (b : ℕ → ℝ → ℂ) (x : ℝ) :
     paperHighContribution B b x ≤ highContributionMajorant B b x :=
-  ENNReal.tsum_le_tsum (fun k ↦ paperHighHeightTail_le_majorant (B k) (b k) x)
+  tsum_le_tsum (fun k ↦ paperHighHeightTail_le_majorant (B k) (b k) x)
 
 theorem measurable_highContributionMajorant
     (B : ℕ → ℕ) {b : ℕ → ℝ → ℂ} (hb : ∀ k, MemLp (b k) 2) :
@@ -52,7 +52,7 @@ theorem highContributionMajorant_eLpNorm_le
   have hp (k : ℕ) : eLpNorm (highHeightMajorant (B k) (b k)) 2 ≤
       highHeightTailConstant * ENNReal.ofReal ((2 : ℝ) ^ (-((B k : ℕ) : ℝ) / 10)) *
         eLpNorm (b k) 2 := highHeightMajorant_eLpNorm_le (B k) (hb k)
-  have hs := ENNReal.tsum_le_tsum hp
+  have hs := tsum_le_tsum hp
   simp_rw [mul_assoc] at hs
   rw [ENNReal.tsum_mul_left] at hs
   exact (eLpNorm_tsum_two_le (fun k ↦ highHeightMajorant (B k) (b k))
@@ -69,7 +69,7 @@ theorem paperHighContribution_eLpNorm_le
     eLpNorm (paperHighContribution B b) 2 ≤
       highHeightTailConstant * ∑' k : ℕ,
         ENNReal.ofReal ((2 : ℝ) ^ (-((B k : ℕ) : ℝ) / 10)) * eLpNorm (b k) 2 := by
-  apply (eLpNorm_mono_enorm (f := paperHighContribution B b) (g := highContributionMajorant B b)
+  apply (eLpNorm_mono_eNorm (f := paperHighContribution B b) (g := highContributionMajorant B b)
     (measurable_paperHighContribution B hb).aestronglyMeasurable
     (fun x ↦ paperHighContribution_le_majorant B b x)).trans
   exact highContributionMajorant_eLpNorm_le B hb
@@ -88,7 +88,7 @@ theorem paperHighContribution_levelSet_le
     exact (hx.trans_le (paperHighContribution_le_majorant B b x)).le
   have hcheb : volume {x | 1 ≤ highContributionMajorant B b x} ≤
       eLpNorm (highContributionMajorant B b) 2 ^ 2 := by
-    simpa only [ENNReal.toReal_ofNat, enorm_eq_self, ENNReal.one_rpow,
+    simpa only [ENNReal.toReal_ofNat, eNorm_eq_self, ENNReal.one_rpow,
       one_mul, one_pow, ENNReal.rpow_two] using mul_meas_ge_le_pow_eLpNorm' volume
       (by norm_num1 : (2 : ℝ≥0∞) ≠ 0) (by decide +kernel : (2 : ℝ≥0∞) ≠ ∞)
       (f := highContributionMajorant B b) (1 : ℝ≥0∞)
@@ -101,7 +101,7 @@ theorem disjointLevelAtomSum_eLpNorm_le {ι : Type*} [Countable ι]
     (hdisj : Pairwise (Disjoint on fun i ↦ centeredInterval (z i) (R i))) :
     eLpNorm (disjointLevelAtomSum A f k z R) 2 ≤
       (ENNReal.ofReal (4 * A k) * magnitudeLevelL1Mass volume A f k) ^ (1 / 2 : ℝ) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num1) (by decide +kernel)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num1) (by decide +kernel)
     (measurable_disjointLevelAtomSum (A := A) hf k z R).aestronglyMeasurable]
   simp only [ENNReal.toReal_ofNat, ENNReal.rpow_two]
   exact ENNReal.rpow_le_rpow (disjointLevelAtomSum_sq_lintegral_le hf hAk z R hR hdisj)
@@ -122,7 +122,7 @@ theorem paperHighContribution_disjointLevelAtoms_levelSet_le
     (fun k ↦ memLp_disjointLevelAtomSum hf hfi (hA k) z R hR hdisj)).trans
   apply pow_le_pow_left₀ bot_le ?_ 2
   apply mul_le_mul' le_rfl
-  apply ENNReal.tsum_le_tsum
+  apply tsum_le_tsum
   intro k
   exact mul_le_mul' le_rfl (disjointLevelAtomSum_eLpNorm_le hf (hA k) z R hR hdisj)
 

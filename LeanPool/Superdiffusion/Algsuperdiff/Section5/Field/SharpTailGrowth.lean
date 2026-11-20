@@ -260,7 +260,7 @@ private theorem sharpGrowthTerm_le (M : ABKModel d) {C : ℕ}
                 (pow_nonneg (sharpLowerRatio_pos M).le _))
         have hsC := mul_le_mul_of_nonneg_left hs hC0
         convert hsC using 1
-        all_goals ring
+        ring
       _ = _ := by ring
   have hbridge := scale_mul_shellW1InfGradNorm_le_sharpGradientGauge ell r omega
   have hupperBridge : (3 : ℝ) ^ (2 * ell) *

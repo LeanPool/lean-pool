@@ -864,7 +864,7 @@ omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] in
 theorem hausdorffNormalized_image_add_left (x₀ : V) (d : ℕ) (A : Set V) :
     KLS.hausdorffNormalized V d ((fun x => x₀ + x) '' A)
       = KLS.hausdorffNormalized V d A := by
-  rw [KLS.hausdorffNormalized, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul]
+  rw [KLS.hausdorffNormalized, smul_apply, smul_apply, smul_eq_mul, smul_eq_mul]
   congr 1
   exact (isometry_add_left x₀).hausdorffMeasure_image (Or.inl (Nat.cast_nonneg d)) A
 

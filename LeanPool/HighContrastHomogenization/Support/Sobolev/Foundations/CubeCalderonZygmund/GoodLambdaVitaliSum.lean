@@ -80,7 +80,7 @@ theorem measure_le_mul_measure_of_vitali_closedBall_cover
   have hlocal_tsum :
       (∑' i : u, ν (target ∩ Metric.closedBall (centre i) (τ * radius i))) ≤
         ∑' i : u, K * κ (Metric.closedBall (centre i) (radius i)) := by
-    exact ENNReal.tsum_le_tsum fun i => hlocal i i.2
+    exact tsum_le_tsum fun i => hlocal i i.2
   have hκ_union :
       κ (⋃ i ∈ u, Metric.closedBall (centre i) (radius i)) =
         ∑' i : u, κ (Metric.closedBall (centre i) (radius i)) := by

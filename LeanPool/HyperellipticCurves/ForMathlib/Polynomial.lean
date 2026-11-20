@@ -86,7 +86,8 @@ theorem topCoeffMod_sum {ι : Type*} (s : Finset ι) (p : ι → R[X]) :
 chart decomposition of the modulus. -/
 theorem topCoeffMod_C_mul (a : R) (p : R[X]) :
     topCoeffMod u (C a * p) = a * topCoeffMod u p := by
-  rw [topCoeffMod, topCoeffMod, ← smul_eq_C_mul, smul_modByMonic, coeff_smul, smul_eq_mul]
+  rw [topCoeffMod, topCoeffMod, ← smul_eq_C_mul, smul_modByMonic,
+    AddMonoidAlgebra.coeff_smul_apply, smul_eq_mul]
 
 /-- The functional commutes with base change, the modulus being monic. -/
 theorem topCoeffMod_map {S : Type*} [CommRing S] [Nontrivial S] (φ : R →+* S) (hu : u.Monic)
@@ -397,8 +398,8 @@ theorem Monic.dvd_of_C_mul_dvd {R : Type*} [CommRing R] [IsDomain R] {U W : R[X]
   rw [← modByMonic_eq_zero_iff_dvd hU] at h ⊢
   rw [show (C a * W : R[X]) = a • W by rw [smul_eq_C_mul], smul_modByMonic] at h
   have h2 : ∀ i, a * (W %ₘ U).coeff i = 0 := fun i ↦ by
-    have := congrArg (fun p ↦ Polynomial.coeff p i) h
-    simpa [coeff_smul, smul_eq_mul] using this
+    have := congrArg (fun p ↦ AddMonoidAlgebra.coeff p i) h
+    simpa [AddMonoidAlgebra.coeff_smul_apply, smul_eq_mul] using this
   ext i
   rw [coeff_zero]
   exact (mul_eq_zero.mp (h2 i)).resolve_left ha

@@ -67,7 +67,7 @@ variable [FiniteDimensional ℝ E]
 /-- The affine support is closed in finite dimension. -/
 theorem isClosed_affineSupport (μ : ProbabilityMeasure E) :
     IsClosed (affineSupport μ : Set E) :=
-  (affineSupport μ).closed_of_finiteDimensional
+  (affineSupport μ).isClosed_of_finiteDimensional
 
 variable [BorelSpace E]
 
@@ -236,7 +236,7 @@ theorem affineSupport_intrinsicMeasure (μ : ProbabilityMeasure E) :
     affineSupport (intrinsicMeasure μ) = ⊤ := by
   let ν := intrinsicMeasure μ
   let A := (affineSupport ν).map (reconstruct μ).toAffineMap
-  have hA : IsClosed (A : Set E) := A.closed_of_finiteDimensional
+  have hA : IsClosed (A : Set E) := A.isClosed_of_finiteDimensional
   have hfull : ∀ᵐ x ∂(μ : Measure E), x ∈ A := by
     rw [← (measurePreserving_reconstruct μ).map_eq]
     apply (ae_map_iff (measurable_reconstruct μ).aemeasurable hA.measurableSet).2

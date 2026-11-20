@@ -131,7 +131,7 @@ theorem normalized_mul_finrank (A B : Submodule k K)
     Module.finrank k A + Module.finrank k B ≤ Module.finrank k (A * B) + 1 := by
   generalize hn : Module.finrank k A = n
   induction n using Nat.strong_induction_on generalizing A B with
-  | h n ih =>
+  | ind n ih =>
       have hnpos : 0 < n := by
         rw [← hn, Module.finrank_pos_iff]
         exact ⟨⟨1, hA1⟩, 0, by simp⟩

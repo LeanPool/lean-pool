@@ -52,7 +52,7 @@ theorem not_nilpotent_of_eigenvector (f : Module.End K M) (t : K) (z : M)
     induction n with
     | zero => simp
     | succ n ih =>
-        simp only [pow_succ', Module.End.mul_apply, ih, map_smul, he, smul_smul]
+        simp only [pow_succ', mul_apply_eq_comp, ih, map_smul, he, smul_smul]
         rw [mul_comm]
   rintro ⟨n, hn⟩
   have hz' : t ^ n • z = 0 := by rw [← hp n, hn]; rfl
@@ -76,7 +76,7 @@ theorem nonnil_matrix_of_fixed_vector
     rw [← map_one φ, ← map_sub, ← map_mul, hg, map_one]
   have hrel : (1 - φ (a 0)) z = t • φ (a 1) z + t ^ 2 • φ (a 2) z := by
     simp only [LinearMap.add_apply, LinearMap.smul_apply] at he
-    simp only [LinearMap.sub_apply, Module.End.one_apply]
+    simp only [LinearMap.sub_apply, one_apply_eq_self]
     exact (sub_eq_iff_eq_add).mpr (by
       simpa [add_comm, add_left_comm, add_assoc] using he.symm)
   have hzrel : z = t • φ b z + t ^ 2 • φ c z := by
@@ -85,7 +85,7 @@ theorem nonnil_matrix_of_fixed_vector
       _ = φ g ((1 - φ (a 0)) z) := rfl
       _ = t • φ b z + t ^ 2 • φ c z := by
         rw [hrel, map_add, map_smul, map_smul]
-        simp only [b, c, map_mul, Module.End.mul_apply]
+        simp only [b, c, map_mul, mul_apply_eq_comp]
   have hcomp : φ b z + t • φ c z = t⁻¹ • z := by
     conv_rhs => rw [hzrel]
     simp [smul_add, smul_smul, pow_two, ht]

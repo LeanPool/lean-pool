@@ -436,7 +436,7 @@ instance kw_ffgc_finiteDimensional_adicCompletion [FiniteDimensional F F'] :
   exact Module.Finite.of_surjective (kwFfgcCompletionLinearCombination F W b) (by
     rw [← Set.range_eq_univ, ← LinearMap.coe_range,
       ← (LinearMap.range
-          (kwFfgcCompletionLinearCombination F W b)).closed_of_finiteDimensional.closure_eq]
+          (kwFfgcCompletionLinearCombination F W b)).isClosed_of_finiteDimensional.closure_eq]
     exact (kw_ffgc_denseRange_completionLinearCombination F W b).closure_range)
 
 end FiniteDimensional

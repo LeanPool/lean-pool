@@ -823,7 +823,7 @@ theorem exists_patch (ν : ProbabilityMeasure V) {f : V → ℝ} {L : ℝ≥0} (
           measure_union_le _ _
       _ ≤ (∑' i, (ν : Measure V) (D i \ Kc i)) + ∑' k, (ν : Measure V) (D (k + N)) :=
           add_le_add (measure_iUnion_le _) (measure_iUnion_le _)
-      _ ≤ (∑' i, ε i) + δ' / 2 := add_le_add (ENNReal.tsum_le_tsum fun i ↦ (hKcmeas i).le) hN.le
+      _ ≤ (∑' i, ε i) + δ' / 2 := add_le_add (tsum_le_tsum fun i ↦ (hKcmeas i).le) hN.le
       _ = δ' := by rw [hεsum, ENNReal.add_halves]
       _ ≤ δ := min_le_left _ _
   · intro x hx
@@ -1263,8 +1263,8 @@ theorem relaxation_le_localSlope_of_admissible (ν : ProbabilityMeasure V) {g : 
         _ = (1 + (θ : ℝ≥0∞)) * E + (1 + (θ : ℝ≥0∞)⁻¹) * (((N n : ℝ≥0) : ℝ≥0∞) ^ 2 * G) := by
             rw [lintegral_add_left ((hmeas_s.pow_const 2).const_mul _),
               lintegral_const_mul _ (hmeas_s.pow_const 2),
-              lintegral_const_mul _ (((hgcont.measurable.enorm).pow_const 2).mul_const _)]
-            rw [lintegral_mul_const _ (hgcont.measurable.enorm.pow_const 2)]
+              lintegral_const_mul _ (((hgcont.measurable.eNorm).pow_const 2).mul_const _)]
+            rw [lintegral_mul_const _ (hgcont.measurable.eNorm.pow_const 2)]
             rw [hG, hE]
             simp only [LocalSlope.energy]
             ring

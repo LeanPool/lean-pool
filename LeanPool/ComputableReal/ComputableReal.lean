@@ -180,8 +180,10 @@ instance instCommRing : CommRing Computableℝ := by
   all_goals
     intros
     rw [← eq_iff_eq_val]
-    simp
-    try ring_nf!
+    solve
+    | simp
+    | simp
+      ring_nf!
 
 @[simp]
 theorem val_natpow (x : Computableℝ) (n : ℕ) : (x ^ n).val = x.val ^ n := by
@@ -227,7 +229,7 @@ theorem safeInv_val (hnz : x ≠ 0) : (x.safeInv hnz).val = x.val⁻¹ := by
   have : (nzQuotEquiv { val := ⟦x'⟧, property := hnz : { x : Computableℝ // x ≠ 0 } }) =
       ⟦{ val := x', property := (by
         rw [show (0 : Computableℝ) = ⟦0⟧ by rfl] at hnz
-        contrapose! hnz
+        contrapose hnz
         rwa [← Computableℝ.val_zero, ← val_quot_eq_val, eq_iff_eq_val] at hnz
       )}⟧ := by
     apply Equiv.subtypeQuotientEquivQuotientSubtype_mk

@@ -312,7 +312,7 @@ lemma approximationNumber_strict {X : Type u} [NormedAddCommGroup X]
       rw [h_top, finrank_top] at hV_finrank_lt
       exact lt_irrefl _ hV_finrank_lt
     -- Finite-dimensional subspaces are closed (uses `[CompleteSpace 𝕜]`).
-    have hV_closed : IsClosed (V : Set X) := V.closed_of_finiteDimensional
+    have hV_closed : IsClosed (V : Set X) := V.isClosed_of_finiteDimensional
     -- Properness gives some point outside `V`.
     have hV_exists : ∃ x : X, x ∉ V := SetLike.exists_notMem_of_ne_top V hV_ne_top
     -- ===== Steps B–D: for every `r ∈ (0, 1)`, show `r ≤ ‖I − L‖`. =====

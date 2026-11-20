@@ -41,7 +41,7 @@ theorem map_eq_on_space (v : FpCoord p d) (hv : v ∈ Ψ.representation.space y)
   rw [(hΨ y).1] at hv
   exact AffineMap.eqOn_affineSpan
     (f := (M.coord.modp p).comp (Ψ.representation.map y))
-    (g := Φ.representation.map x) M.map_eq hv
+    (g := Φ.representation.map x) (fun v hv ↦ M.map_eq v hv) hv
 
 theorem level_le : Φ.level x ≤ Ψ.level y :=
   Φ.representation.level_le_of_space_le_of_factor Ψ.representation x y (M.coord.modp p)

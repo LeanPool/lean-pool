@@ -212,9 +212,9 @@ theorem integral_primitive_mul_deriv_eq_integral_mul
     hχderivc.continuousOn
   have hχLip : LipschitzOnWith C.toNNReal χ (uIcc a b) := by
     rw [huIcc]
-    refine (convex_Icc a b).lipschitzOnWith_of_nnnorm_deriv_le (fun x _ => hχdiff x) ?_
+    refine (convex_Icc a b).lipschitzOnWith_of_nnNorm_deriv_le (fun x _ => hχdiff x) ?_
     intro x hx
-    rw [← NNReal.coe_le_coe, coe_nnnorm, Real.coe_toNNReal']
+    rw [← NNReal.coe_le_coe, coe_nnNorm, Real.coe_toNNReal']
     exact le_trans (hC x hx) (le_max_left _ _)
   have hχac : AbsolutelyContinuousOnInterval χ a b := hχLip.absolutelyContinuousOnInterval
   have hIBP := AbsolutelyContinuousOnInterval.integral_mul_deriv_eq_deriv_mul hχac hFac

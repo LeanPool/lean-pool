@@ -92,7 +92,7 @@ theorem ucFinalTimeCutoff_abs_deriv_le (s : ℝ) :
     all_goals
       try funext u
       try simp only [id_eq]
-      try ring
+      ring
   have hprofile : DifferentiableAt ℝ smoothTransitionProfile (7 - 4 * s) :=
     smoothTransitionProfile.smooth.differentiable (by simp) _
   have hD : deriv ucFinalTimeCutoff s =

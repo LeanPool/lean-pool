@@ -93,8 +93,8 @@ theorem force_source_morrey_le_of_small_data
   have hq0 : 0 < q := by linarith only [hq]
   have hint := force_source_integral_le_of_small_data q ε₀ hq0 hsmall hdom hsupp
   have hLp : eLpNorm' F q volume ≤ ENNReal.ofReal ε₀ ^ (1 / q : ℝ) := by
-    rw [eLpNorm'_eq_lintegral_enorm]
-    simp only [Real.enorm_eq_ofReal_abs]
+    rw [eLpNorm'_eq_lintegral_eNorm]
+    simp only [Real.eNorm_eq_ofReal_abs]
     exact ENNReal.rpow_le_rpow hint (one_div_nonneg.mpr hq0.le)
   have hm := morreyNorm_le_eLpNorm' (p := (6 / 5 : ℝ)) (q := q)
     (by norm_num) (by linarith only [hq]) hF

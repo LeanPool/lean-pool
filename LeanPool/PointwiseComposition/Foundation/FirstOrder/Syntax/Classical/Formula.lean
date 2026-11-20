@@ -805,7 +805,7 @@ lemma lMap_exsItr {k} (φ : Semiformula L₁ ξ (n + k)) : lMap Φ (∃¹^[k] φ
 lemma freeVariables_lMap [DecidableEq ξ] (Φ : L₁ →ᵥ L₂) (φ : Semiformula L₁ ξ n) :
     (Semiformula.lMap Φ φ).freeVariables = φ.freeVariables := by
   induction φ using Semiformula.rec' <;>
-    try simp [lMap_rel, lMap_nrel, freeVariables_rel, freeVariables_nrel, *]
+    simp [lMap_rel, lMap_nrel, freeVariables_rel, freeVariables_nrel, *]
 
 section enumerateFVar
 

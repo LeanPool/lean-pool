@@ -85,8 +85,7 @@ def landauMatrix (Ψ : ℝ → ℝ) (z : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3)
 
 lemma innerLandauMatrix_apply (z : Fin 3 → ℝ) (i j : Fin 3) :
     innerLandauMatrix z i j = (if i = j then normSq z else 0) - z i * z j := by
-  simp [innerLandauMatrix, one_apply, vecMulVec_apply,
-    smul_eq_mul]
+  simp [innerLandauMatrix, Matrix.one_apply, vecMulVec_apply, smul_eq_mul, mul_ite]
 
 -- ============================================================================
 -- Section 3: Maxwellian Distributions

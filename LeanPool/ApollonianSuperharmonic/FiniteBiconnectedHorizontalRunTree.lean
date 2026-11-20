@@ -206,7 +206,7 @@ private theorem vertical_reachable :
   intro S I VF JF X rel G horizontal_adj selected_vertical_adj leftmost hmin z hz hzI
   induction hmeasure : Int.toNat (z.re - leftmost.re) using
       Nat.strong_induction_on generalizing z with
-  | h n ih =>
+  | ind n ih =>
     by_cases hzJ : z ∈ JF
     · exact (selected_vertical_adj hz hzI hzJ).reachable
     · have hzV : z ∈ VF := by simp [VF, hz, hzI]

@@ -165,7 +165,7 @@ lemma rectApprox_indicator (μ : Measure (Ω × E)) [IsFiniteMeasure μ]
             = (⋃ i, F i).indicator (fun _ => (1 : ℝ)) from by funext x; simp,
         MeasureTheory.eLpNorm_indicator_const (MeasurableSet.iUnion hFm).nullMeasurableSet
           (by norm_num) (by norm_num)]
-      simp only [enorm_one, one_mul]
+      simp only [eNorm_one, one_mul]
       exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) (measure_ne_top _ _)
     have hε2 : (0 : ℝ≥0∞) < ε / 2 := ENNReal.div_pos hε.ne' (by norm_num)
     set S : ℕ → Set (Ω × E) := fun N => ⋃ i ∈ Finset.range N, F i with hSdef
@@ -217,7 +217,7 @@ lemma rectApprox_indicator (μ : Measure (Ω × E)) [IsFiniteMeasure μ]
         MeasureTheory.eLpNorm_indicator_const
           (MeasurableSet.diff (MeasurableSet.iUnion hFm) (hSmeas N)).nullMeasurableSet
           (by norm_num) (by norm_num)]
-      simp only [enorm_one, one_mul]
+      simp only [eNorm_one, one_mul]
       calc (μ ((⋃ i, F i) \ S N)) ^ (1 / (2 : ℝ≥0∞).toReal)
           < ((ε / 2) ^ 2) ^ (1 / (2 : ℝ≥0∞).toReal) := by
             apply ENNReal.rpow_lt_rpow hN (by norm_num)
@@ -266,13 +266,13 @@ lemma RectApprox.const_smul {μ : Measure (Ω × E)} {f : Ω × E → ℝ}
     exact hε
   · intro ε hε
     have hcn : ‖c‖ₑ ≠ 0 := by simp [hc]
-    obtain ⟨g, hg, hgerr⟩ := hf (ε / ‖c‖ₑ) (ENNReal.div_pos hε.ne' enorm_ne_top)
+    obtain ⟨g, hg, hgerr⟩ := hf (ε / ‖c‖ₑ) (ENNReal.div_pos hε.ne' eNorm_ne_top)
     refine ⟨c • g, hg.smul c, ?_⟩
     rw [show c • f - c • g = c • (f - g) from (smul_sub c f g).symm,
       MeasureTheory.eLpNorm_const_smul]
     calc ‖c‖ₑ * MeasureTheory.eLpNorm (f - g) 2 μ
-        < ‖c‖ₑ * (ε / ‖c‖ₑ) := ENNReal.mul_lt_mul_right hcn enorm_ne_top hgerr
-      _ = ε := ENNReal.mul_div_cancel hcn enorm_ne_top
+        < ‖c‖ₑ * (ε / ‖c‖ₑ) := ENNReal.mul_lt_mul_right hcn eNorm_ne_top hgerr
+      _ = ε := ENNReal.mul_div_cancel hcn eNorm_ne_top
 
 /-- The indicator of a measurable set scaled by a constant is `L²`-approximable by
 rectangle-simple functions (finite measure, **general `E`**). -/

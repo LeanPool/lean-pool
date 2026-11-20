@@ -50,14 +50,14 @@ private lemma h2Core_average_bound {f : Vec3 → ℝ}
   have hh := ENNReal.lintegral_mul_le_Lp_mul_Lq μ
     (show (2 : ℝ).HolderConjugate 2 by
       exact Real.holderConjugate_iff.mpr ⟨by norm_num, by norm_num⟩)
-    hf.aestronglyMeasurable.enorm
+    hf.aestronglyMeasurable.eNorm
     (aemeasurable_const (b := (1 : ℝ≥0∞)))
   have hh : ∫⁻ x, ‖f x‖ₑ ∂μ ≤
       (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) *
         (μ Set.univ) ^ (1 / 2 : ℝ) := by
     simpa only [Pi.mul_apply, mul_one, one_mul, ENNReal.one_rpow, lintegral_const] using hh
   have he : ‖average μ f‖ₑ = (μ Set.univ)⁻¹ * ‖∫ x, f x ∂μ‖ₑ := by
-    rw [average_eq, smul_eq_mul, enorm_mul, Real.enorm_eq_ofReal,
+    rw [average_eq, smul_eq_mul, eNorm_mul, Real.eNorm_eq_ofReal,
       ENNReal.ofReal_inv_of_pos, measureReal_def, ENNReal.ofReal_toReal
         (measure_ne_top μ Set.univ)]
     · exact ENNReal.toReal_pos hμ0 (measure_ne_top μ Set.univ)
@@ -68,24 +68,24 @@ private lemma h2Core_average_bound {f : Vec3 → ℝ}
     calc
       _ ≤ (μ Set.univ)⁻¹ * ∫⁻ x, ‖f x‖ₑ ∂μ := by
         gcongr
-        exact enorm_integral_le_lintegral_enorm f
+        exact eNorm_integral_le_lintegral_eNorm f
       _ ≤ (μ Set.univ)⁻¹ *
           ((∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ) *
             (μ Set.univ) ^ (1 / 2 : ℝ)) :=
         mul_le_mul_of_nonneg_left hh (by positivity)
       _ = _ := by
-        rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+        rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
           (by norm_num : (2 : ℝ≥0∞) ≠ 0) (by norm_num) hf.aestronglyMeasurable]
         norm_num only [ENNReal.toReal_ofNat]
         rw [mul_comm _ ((μ Set.univ) ^ (1 / 2 : ℝ)), ← mul_assoc,
           ← ENNReal.rpow_neg_one, ← ENNReal.rpow_add _ _ hμ0
             (measure_ne_top μ Set.univ)]
         norm_num
-        simp [μ, Measure.restrict_apply MeasurableSet.univ, univ_inter]
+        simp [μ, Measure.restrict_apply MeasurableSet.univ]
   have hreal := ENNReal.toReal_mono
     (by finiteness : (μ Set.univ) ^ (-(1 / 2 : ℝ)) * eLpNorm f 2 μ ≠ ∞)
     hE
-  simpa [integralAverage, μ, lpNorm, Real.enorm_eq_ofReal,
+  simpa [integralAverage, μ, lpNorm, Real.eNorm_eq_ofReal,
     ENNReal.toReal_mul, ENNReal.toReal_rpow,
     Measure.restrict_apply MeasurableSet.univ, univ_inter] using hreal
 

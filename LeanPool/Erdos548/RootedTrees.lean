@@ -492,7 +492,7 @@ lemma rooted_word_tree_bound_aux (t : ℕ) :
       fullWordCount l₀ G.Adj (fun _ _ => True) ≤
         rootedWordCount T r G l₀ + (t - 2) * (permutationWords l₀).card := by
   induction t using Nat.strong_induction_on with
-  | h t ih =>
+  | ind t ih =>
     intro U V _ _ T r hT ht ht2 G l₀ hl hne
     classical
     by_cases htbase : t = 2

@@ -70,7 +70,7 @@ theorem centeredInterval_ae_eq_stoppingInterval {f : ℝ → ℂ}
     centeredInterval (stoppingCenter c) (stoppingLength c) =ᵐ[volume]
       c.1.interval (rootLength f) :=
   Filter.Eventually.of_forall fun x ↦ Set.ext_iff.mp
-    (centeredInterval_eq_stoppingInterval c) x |> propext
+    (centeredInterval_eq_stoppingInterval c) x
 
 /-- Center/length representatives of distinct stopping cells are literally
 pairwise disjoint. -/

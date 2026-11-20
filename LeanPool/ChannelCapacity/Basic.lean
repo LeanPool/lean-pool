@@ -53,9 +53,9 @@ noncomputable def convexCombination (μ ν : ProbabilityMeasure Ω) (t : NNReal)
     calc
       (t • μ.toMeasure + ((1 : NNReal) - t) • ν.toMeasure) Set.univ =
           (t • μ.toMeasure) Set.univ + (((1 : NNReal) - t) • ν.toMeasure) Set.univ := by
-            rw [Measure.add_apply]
+            rw [add_apply]
       _ = t • (μ.toMeasure Set.univ) + ((1 : NNReal) - t) • (ν.toMeasure Set.univ) := by
-            simp [Measure.smul_apply]
+            simp
       _ = t • (1 : ENNReal) + ((1 : NNReal) - t) • (1 : ENNReal) := by simp
       _ = 1 := by
             change (t : ENNReal) * 1 + (((1 : NNReal) - t : NNReal) : ENNReal) * 1 = 1
@@ -75,7 +75,7 @@ lemma convexCombination_apply (μ ν : ProbabilityMeasure Ω) (t : NNReal)
     {s : Set Ω} (_hs : MeasurableSet s) :
     (convexCombination μ ν t ht).toMeasure s =
       (t : ENNReal) * μ.toMeasure s + (((1 : NNReal) - t : NNReal) : ENNReal) * ν.toMeasure s := by
-  simp [convexCombination_toMeasure, Measure.add_apply, Measure.smul_apply]
+  simp [convexCombination_toMeasure]
 
 end ProbabilityMeasure
 

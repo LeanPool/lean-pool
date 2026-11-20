@@ -47,6 +47,6 @@ noncomputable def nominalDfSn (x : Var) (A : Class) (dv_A_x : x ∉ A.fv) :
               simp only [List.mem_cons, List.not_mem_nil, or_false, Prod.mk.injEq] at h;
               repeat'
                 ((rcases h with ⟨rfl, rfl⟩));
-                all_goals aesop))))
+                aesop))))
 
 end NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired

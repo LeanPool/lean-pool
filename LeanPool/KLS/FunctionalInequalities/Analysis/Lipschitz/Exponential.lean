@@ -24,7 +24,7 @@ namespace FunctionalInequalities.Analysis
 bound is required, and the threshold may be negative. -/
 theorem lipschitzOnWith_exp_Iic (C : ℝ) :
     LipschitzOnWith (Real.toNNReal (Real.exp C)) Real.exp (Set.Iic C) := by
-  refine (convex_Iic C).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+  refine (convex_Iic C).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
     (f' := Real.exp)
     (fun x _ => (Real.hasDerivAt_exp x).hasDerivWithinAt) ?_
   intro x hx

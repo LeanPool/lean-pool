@@ -109,7 +109,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 omit [CompleteSpace E] in
 theorem velocity_lipschitz (t : Icc (0 : ℝ) T) :
     LipschitzWith ‖A.derivative.field‖₊ (A.field t : E → E) := by
-  apply lipschitzWith_of_nnnorm_fderiv_le ((A.smooth t).differentiable (by simp))
+  apply lipschitzWith_of_nnNorm_fderiv_le ((A.smooth t).differentiable (by simp))
   intro x
   apply NNReal.coe_le_coe.mp
   change ‖fderiv ℝ (A.field t : E → E) x‖ ≤ ‖A.derivative.field‖

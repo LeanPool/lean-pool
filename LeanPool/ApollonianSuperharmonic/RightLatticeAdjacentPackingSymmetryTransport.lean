@@ -506,8 +506,8 @@ private theorem transportedAdjacency :
           Bool.bne_true, Bool.not_false] at ⊢
       all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
           ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
-      all_goals try rw [real_coord] at newFlipRe
-      all_goals try rw [imag_coord] at newFlipIm
+      all_goals rw [real_coord] at newFlipRe
+      all_goals rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvr hvi
       all_goals norm_num at hvr hvi
       all_goals rw [← GaussianInt.intCast_re] at hvr ⊢
@@ -547,8 +547,8 @@ private theorem transportedAdjacency :
           one_mul, bne_self_eq_false, neg_mul] at ⊢
       all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
           ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
-      all_goals try rw [real_coord] at newFlipRe
-      all_goals try rw [imag_coord] at newFlipIm
+      all_goals rw [real_coord] at newFlipRe
+      all_goals rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvr hvi
       all_goals norm_num at hvr hvi
       all_goals rw [← GaussianInt.intCast_re] at hvr ⊢
@@ -584,8 +584,8 @@ private theorem transportedAdjacency :
           Bool.bne_true, Bool.not_false] at ⊢
       all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
           ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
-      all_goals try rw [real_coord] at newFlipRe
-      all_goals try rw [imag_coord] at newFlipIm
+      all_goals rw [real_coord] at newFlipRe
+      all_goals rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvi
       all_goals simp only [hn, hr] at hvr
       all_goals norm_num at hvi
@@ -629,8 +629,8 @@ private theorem transportedAdjacency :
           one_mul, bne_self_eq_false, neg_mul] at ⊢
       all_goals simp only [Int.reduceNeg, Fin.isValue, newIndex_eq, hr, Bool.false_eq_true,
           ↓reduceIte, GaussianInt.intCast_re, GaussianInt.intCast_im] at newFlipRe newFlipIm
-      all_goals try rw [real_coord] at newFlipRe
-      all_goals try rw [imag_coord] at newFlipIm
+      all_goals rw [real_coord] at newFlipRe
+      all_goals rw [imag_coord] at newFlipIm
       all_goals simp only [hn, hr] at hvi
       all_goals simp only [hn, hr] at hvr
       all_goals norm_num at hvi
@@ -763,8 +763,8 @@ theorem RightLatticeAdjacentPackingSymmetryTransport
   simp only [Int.reduceNeg, GaussianQuarterTurn, Fin.isValue, GaussianInt.intCast_re,
       GaussianInt.intCast_im]
       at affineRightRe affineRightIm
-  try rw [← GaussianInt.intCast_re] at affineRightRe
-  try rw [← GaussianInt.intCast_im] at affineRightIm
+  rw [← GaussianInt.intCast_re] at affineRightRe
+  rw [← GaussianInt.intCast_im] at affineRightIm
   have transportedAdjacency := RightAdjacencyAssembly.transportedAdjacency g q i e T T' h h' p p'
       hcent hslopeRe hslopeIm negative hphase hvec hOT hOT' hsr hsr' centroid_transport
       vector_sign vector_neg affine_neg real_coord imag_coord slope_transport newIndex_eq oldPair

@@ -380,7 +380,7 @@ lemma packRaw_add (a b : Phillips.Linfty 𝕜) (t : ℝ) :
   by_cases ht : ∃ n, t ∈ window S n
   · obtain ⟨n, hn⟩ := ht
     rw [packRaw_on S (a + b) hn, packRaw_on S a hn, packRaw_on S b hn]
-    simp only [BoundedContinuousFunction.add_apply, add_smul]
+    simp only [add_apply, add_smul]
   · simp only [packRaw_off S (a + b) ht, packRaw_off S a ht,
       packRaw_off S b ht, add_zero]
 
@@ -390,7 +390,7 @@ lemma packRaw_smul (c : 𝕜) (a : Phillips.Linfty 𝕜) (t : ℝ) :
   by_cases ht : ∃ n, t ∈ window S n
   · obtain ⟨n, hn⟩ := ht
     rw [packRaw_on S (c • a) hn, packRaw_on S a hn]
-    simp only [BoundedContinuousFunction.smul_apply, smul_eq_mul, smul_smul]
+    simp only [smul_apply, smul_eq_mul, smul_smul]
   · simp only [packRaw_off S (c • a) ht, packRaw_off S a ht, smul_zero]
 
 lemma packRaw_bound (a : Phillips.Linfty 𝕜) (t : ℝ) :

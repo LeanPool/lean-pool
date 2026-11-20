@@ -158,7 +158,7 @@ theorem open_approx_of_isBorelRegular
   · have hsub : (⋃ i, U i ∩ V i) \ E ⊆ ⋃ i, (U i ∩ V i) \ E := by simp [iUnion_sdiff]
     calc μ ((⋃ i, U i ∩ V i) \ E) ≤ μ (⋃ i, (U i ∩ V i) \ E) := measure_mono hsub
       _ ≤ ∑' i, μ ((U i ∩ V i) \ E) := measure_iUnion_le _
-      _ ≤ ∑' i, δ i := ENNReal.tsum_le_tsum fun i => (hU_lt i).le
+      _ ≤ ∑' i, δ i := tsum_le_tsum fun i => (hU_lt i).le
       _ < ε := hδsum
 
 end MeasureApproximation

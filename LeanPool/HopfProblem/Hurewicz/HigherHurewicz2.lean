@@ -903,7 +903,7 @@ private theorem HigherHurewicz.CubeTriangulation.valuePreservingPermutation_indu
     h _ r rfl hr
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     intro q hq hvalues
     by_cases hqone : q = 1
     · simpa only [hqone] using hone

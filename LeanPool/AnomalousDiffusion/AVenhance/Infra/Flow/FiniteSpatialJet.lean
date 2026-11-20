@@ -164,7 +164,7 @@ theorem spatialJetField_lipschitzOnWith_on_window
   let K : ℝ≥0 := ⟨C, hC⟩
   refine ⟨K, ?_⟩
   intro t ht
-  apply Convex.lipschitzOnWith_of_nnnorm_fderiv_le (𝕜 := ℝ)
+  apply Convex.lipschitzOnWith_of_nnNorm_fderiv_le (𝕜 := ℝ)
   · intro z hz
     have hslice : ContDiff ℝ ∞ (spatialJetField b n t) := by
       have hmap : ContDiff ℝ ∞ (fun z : SpatialJetState n => (t, z)) := by

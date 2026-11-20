@@ -190,7 +190,7 @@ theorem flow_spatialFDeriv_contDiffOn_one_of_le
     have hAt : ContDiffAt ℝ 1
         (fun y : Vec 2 => fderiv ℝ (fun z => X t z s) y) x := by
       exact hslice.contDiffAt
-    have hstrict := hAt.hasStrictFDerivAt
+    have hstrict := hAt.hasStrictFDerivAt_fderiv
       (by norm_num : (1 : ℕ∞ω) ≠ 0)
     simpa [f, Dparam, flowSecondSpatialDerivative] using hstrict
   have hA : Continuous (fun q : ℝ × Vec 2 =>
@@ -256,7 +256,7 @@ theorem flow_spatialFDeriv_contDiff_one
       (flow_spatial_contDiff_two hb hX s t).fderiv_right (by norm_num)
     have hAt : ContDiffAt ℝ 1
         (fun y : Vec 2 => fderiv ℝ (fun z => X t z s) y) x := hslice.contDiffAt
-    have hstrict := hAt.hasStrictFDerivAt (by norm_num : (1 : ℕ∞ω) ≠ 0)
+    have hstrict := hAt.hasStrictFDerivAt_fderiv (by norm_num : (1 : ℕ∞ω) ≠ 0)
     simpa [f, Dparam, flowSecondSpatialDerivative] using hstrict
   have hflow : Continuous (fun p : ℝ × Vec 2 => X p.1 p.2 s) := by
     have hbase := flow_continuous_joint_of_smoothPeriodic hb hX

@@ -109,7 +109,7 @@ theorem lintegral_lowLevelMajorant_le {ι : Type*} [Countable ι]
   have hC := lowKernelBadAtomConstant_nonneg
   unfold lowLevelMajorant
   rw [lintegral_tsum (fun i ↦ (measurable_lowAtomMajorant B _ (z i) (R i)).aemeasurable)]
-  have hs := ENNReal.tsum_le_tsum
+  have hs := tsum_le_tsum
     (fun i ↦ lintegral_lowAtomMajorant_le B (levelAtom A f k (z i) (R i)) (z i) (R i) (hR i))
   rw [ENNReal.tsum_mul_left] at hs
   apply hs.trans
@@ -158,7 +158,7 @@ theorem lintegral_fullLowMajorant_le_orlicz {ι : Type*} [Countable ι]
     rw [← cast_fullHighCutoff]
     have hB : (1 : ℝ) ≤ fullHighCutoff k := by exact_mod_cast fullHighCutoff_pos k
     nlinarith only [hC, hB, lowKernelBadAtomConstant_nonneg]
-  have hs := ENNReal.tsum_le_tsum hp
+  have hs := tsum_le_tsum hp
   rw [ENNReal.tsum_mul_left] at hs
   have hw := tsum_full_weight_mul_levelMass_le_orlicz volume (C := 20) (by norm_num1) hf
   norm_num only [show (4 : ℝ) * 20 = 80 by norm_num1] at hw

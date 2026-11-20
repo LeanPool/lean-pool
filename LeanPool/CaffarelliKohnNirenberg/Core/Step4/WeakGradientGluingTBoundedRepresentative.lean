@@ -36,7 +36,7 @@ theorem exists_measurable_spatially_bounded_representative
   let M₀ := hM.mk M
   let E : Set ParabolicPoint := {w | ‖H w‖ₑ ≤ M₀ w.2}
   have hm : Measurable M₀ := hM.measurable_mk
-  have hE : MeasurableSet E := measurableSet_le hH.enorm (hm.comp measurable_snd)
+  have hE : MeasurableSet E := measurableSet_le hH.eNorm (hm.comp measurable_snd)
   let H' := E.indicator H
   have hm' : Measurable H' := hH.indicator hE
   have hb (x : Vec3) (s : ℝ) : ‖H' (x, s)‖ₑ ≤ M₀ s := by
@@ -44,7 +44,7 @@ theorem exists_measurable_spatially_bounded_representative
     by_cases he : (x, s) ∈ E
     · rw [Set.indicator_of_mem (α := ParabolicPoint) he]
       exact he
-    · rw [Set.indicator_of_notMem (α := ParabolicPoint) he, enorm_zero]
+    · rw [Set.indicator_of_notMem (α := ParabolicPoint) he, eNorm_zero]
       exact bot_le
   have hslice : ∀ᵐ s ∂volume, ∀ᵐ x ∂volume, (x, s) ∈ S → H' (x, s) = H (x, s) := by
     filter_upwards [hbound, hM.ae_eq_mk] with s hs he

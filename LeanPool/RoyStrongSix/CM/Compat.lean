@@ -235,10 +235,8 @@ lemma IsLocalRing.depth_eq_of_algebraMap_surjective [IsLocalRing R] [IsNoetheria
       rcases hr with ⟨r', hr', eq⟩
       simpa [← eq] using mem r' hr'
     have reg' : RingTheory.Sequence.IsRegular M (rs.map (algebraMap R S)) := by
-      refine ⟨(RingTheory.Sequence.isWeaklyRegular_map_algebraMap_iff S M rs).mpr reg.1, ?_⟩
-      apply (ne_top_of_le_ne_top (Ne.symm _) (Submodule.smul_mono_left (span_le.mpr mem'))).symm
-      apply Submodule.top_ne_ideal_smul_of_le_jacobson_annihilator
-      exact IsLocalRing.maximalIdeal_le_jacobson _
+      apply RingTheory.Sequence.IsRegular.of_isWeaklyRegular_of_mem_maximalIdeal M mem'
+      exact (RingTheory.Sequence.isWeaklyRegular_map_algebraMap_iff S M rs).mpr reg.1
     use rs.map (algebraMap R S), reg', mem'
     simpa
   · rcases List.map_surjective_iff.mpr surj rs with ⟨rs', hrs'⟩
@@ -250,11 +248,9 @@ lemma IsLocalRing.depth_eq_of_algebraMap_surjective [IsLocalRing R] [IsNoetheria
         use r
       simpa using this
     have reg' : RingTheory.Sequence.IsRegular M rs' := by
-      refine ⟨(RingTheory.Sequence.isWeaklyRegular_map_algebraMap_iff S M rs').mp
-        (by simpa [hrs'] using reg.1), ?_⟩
-      apply (ne_top_of_le_ne_top (Ne.symm _) (Submodule.smul_mono_left (span_le.mpr mem'))).symm
-      apply Submodule.top_ne_ideal_smul_of_le_jacobson_annihilator
-      exact IsLocalRing.maximalIdeal_le_jacobson _
+      apply RingTheory.Sequence.IsRegular.of_isWeaklyRegular_of_mem_maximalIdeal M mem'
+      exact (RingTheory.Sequence.isWeaklyRegular_map_algebraMap_iff S M rs').mp
+        (by simpa [hrs'] using reg.1)
     use rs', reg', mem'
     simpa [← hrs'] using len
 

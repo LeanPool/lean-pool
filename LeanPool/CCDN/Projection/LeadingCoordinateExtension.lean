@@ -103,7 +103,7 @@ theorem exists_homogeneous_extended_projection_equation
   rw [hker, principal_filteredHilbertPolynomial_leadingCoeff f hf.ne_zero hfpos,
     hdimdeg.leadingCoeff_eq] at hlead
   have hfdeg : f.totalDegree = d := by
-    have hh := (div_left_inj' (by positivity : ((m + 1).factorial : ℚ) ≠ 0)).mp hlead
+    have hh := (div_left_inj₀ (by positivity : ((m + 1).factorial : ℚ) ≠ 0)).mp hlead
     exact_mod_cast hh
   refine ⟨f, hf, ?_, hfdeg, hfdeg ▸ hfpos, hker⟩
   rw [← hfdeg]

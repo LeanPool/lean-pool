@@ -94,7 +94,7 @@ private theorem enorm_gagliardoKernel_sq_le {A : Set (Vec d)} {g : Vec d → E} 
   rcases eq_or_ne z.1 z.2 with heq | hne
   · have hzero : Gagliardo.gagliardoKernel s 2 g z = 0 := by
       rw [hker, heq, sub_self, smul_zero]
-    rw [hzero, enorm_zero, ENNReal.zero_rpow_of_pos (by norm_num)]
+    rw [hzero, eNorm_zero, ENNReal.zero_rpow_of_pos (by norm_num)]
     exact zero_le
   have ht : 0 < dist z.1 z.2 := dist_pos.mpr hne
   have henorm : ‖z.1 - z.2‖ₑ = ENNReal.ofReal (dist z.1 z.2) := by
@@ -118,7 +118,7 @@ private theorem enorm_gagliardoKernel_sq_le {A : Set (Vec d)} {g : Vec d → E} 
       have hd12 : ‖z.1 - z.2‖ = t := (dist_eq_norm z.1 z.2).symm
       rw [hd12] at hgb
       exact hgb
-    rw [hker, enorm_smul, hscal, hMdef, ENNReal.ofReal_mul (Real.rpow_nonneg ht.le _)]
+    rw [hker, eNorm_smul, hscal, hMdef, ENNReal.ofReal_mul (Real.rpow_nonneg ht.le _)]
     exact mul_le_mul' le_rfl hdiff
   have hreal : M ^ (2 : ℕ) = K ^ 2 * t ^ (-holderGagliardoBeta d s) := by
     have hprod : t ^ (-(s + (d : ℝ) / 2)) * t ^ ((1 : ℝ) / 2) =
@@ -224,7 +224,7 @@ theorem normalizedGagliardoESeminormOn_le_of_holderHalf {A : Set (Vec d)} {g : V
     (R ^ d * R ^ (-holderGagliardoBeta d s))) with hMdef
   have hkermeas : Measurable fun z : Vec d × Vec d =>
       ‖z.1 - z.2‖ₑ ^ (-holderGagliardoBeta d s) :=
-    ENNReal.continuous_rpow_const.measurable.comp (measurable_fst.sub measurable_snd).enorm
+    ENNReal.continuous_rpow_const.measurable.comp (measurable_fst.sub measurable_snd).eNorm
   have hmu : Support.normalizedGagliardoMeasureOn A =
       (volume A)⁻¹ • ((volume.prod volume).restrict (A ×ˢ A)) := by
     rw [Support.normalizedGagliardoMeasureOn_def, Support.normalizedVolumeMeasureOn_def,
@@ -258,7 +258,7 @@ theorem normalizedGagliardoESeminormOn_le_of_holderHalf {A : Set (Vec d)} {g : V
       _ = ENNReal.ofReal (K ^ 2) * M := by
           rw [ENNReal.inv_mul_cancel hA0 hAtop, mul_one]
   rw [Support.normalizedGagliardoESeminormOn_def,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num)
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num)
       (aestronglyMeasurable_gagliardoKernel_of_holderHalfBound hAmeas hK hg)]
   have htwo : (2 : ℝ≥0∞).toReal = 2 := by norm_num
   rw [htwo]

@@ -1291,7 +1291,7 @@ private lemma complete_of_section_and_complete_ker
     have hsub : Tendsto (fun n ↦ v n - v 0) atTop (nhds z.1) :=
       (continuous_subtype_val.tendsto z).comp hz
     convert tendsto_const_nhds.add hsub using 1
-    all_goals simp [sub_eq_add_neg]
+    simp [sub_eq_add_neg]
   have huv : Tendsto (fun n ↦ v n - c n) atTop (nhds (v 0 + z.1 - 0)) :=
     hvlim.sub hc
   simpa [v] using huv

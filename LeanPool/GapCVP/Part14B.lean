@@ -5917,7 +5917,8 @@ private theorem compactPhysicalFieldWordXorValue_wordPolynomial
     (left right : GapCVP.Core.EffectiveBinaryField.Word degree) :
     wordPolynomial (compactPhysicalFieldWordXorValue left right) =
       wordPolynomial left + wordPolynomial right := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro position
   by_cases hposition : position < degree
   · let index : Fin degree := ⟨position, hposition⟩

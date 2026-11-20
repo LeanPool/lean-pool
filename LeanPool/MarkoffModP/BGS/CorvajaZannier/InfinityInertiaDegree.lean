@@ -74,7 +74,7 @@ theorem ratFuncInfinityIntegers_exists_constant_mod_maximalIdeal
     have hmem := r.property
     change RatFunc.inftyValuation K f ≤ 1 at hmem
     rw [RatFunc.inftyValuation_apply,
-      RatFunc.inftyValuation_of_nonzero K hf, ← exp_zero, exp_le_exp] at hmem
+      RatFunc.inftyValuation_of_ne_zero K hf, ← exp_zero, exp_le_exp] at hmem
     exact hmem
   rcases lt_or_eq_of_le hdegree with hdegree | hdegree
   · refine ⟨0, ?_⟩
@@ -85,7 +85,7 @@ theorem ratFuncInfinityIntegers_exists_constant_mod_maximalIdeal
     rw [Valuation.Integer.not_isUnit_iff_valuation_lt_one]
     change RatFunc.inftyValuation K f < 1
     rw [RatFunc.inftyValuation_apply,
-      RatFunc.inftyValuation_of_nonzero K hf, ← exp_zero, exp_lt_exp]
+      RatFunc.inftyValuation_of_ne_zero K hf, ← exp_zero, exp_lt_exp]
     exact hdegree
   · let c : K := f.num.leadingCoeff / f.denom.leadingCoeff
     refine ⟨c, ?_⟩
@@ -149,7 +149,7 @@ theorem ratFuncInfinityIntegers_exists_constant_mod_maximalIdeal
       rw [Valuation.Integer.not_isUnit_iff_valuation_lt_one]
       change RatFunc.inftyValuation K (f - RatFunc.C c) < 1
       rw [RatFunc.inftyValuation_apply,
-        RatFunc.inftyValuation_of_nonzero K hdiff, ← exp_zero, exp_lt_exp,
+        RatFunc.inftyValuation_of_ne_zero K hdiff, ← exp_zero, exp_lt_exp,
         hrepr, RatFunc.intDegree_div
           (RatFunc.algebraMap_ne_zero hP)
           (RatFunc.algebraMap_ne_zero hdenom),
@@ -215,12 +215,12 @@ theorem finiteExtensionInfinityPlace_inertiaDeg_eq_one
       (RatFuncInfinityIntegralClosure K L)) :
     P.1.inertiaDeg (RatFuncInfinityIntegers K) = 1 := by
   classical
-  let hLocalAlg :=
+  let : Algebra
+      (Localization.AtPrime (ratFuncInfinityPlace K).asIdeal)
+      (Localization.AtPrime P.1) :=
     Localization.AtPrime.algebraOfLiesOver
       (ratFuncInfinityPlace K).asIdeal P.1
-  let : IsScalarTower (RatFuncInfinityIntegers K)
-      (Localization.AtPrime (ratFuncInfinityPlace K).asIdeal) (Localization.AtPrime P.1) :=
-    inferInstance
+  let := Localization.AtPrime.instIsScalarTower (ratFuncInfinityPlace K).asIdeal P.1
   let : IsAlgClosed (ratFuncInfinityPlace K).asIdeal.ResidueField :=
     IsAlgClosed.of_ringEquiv K
       (ratFuncInfinityPlace K).asIdeal.ResidueField

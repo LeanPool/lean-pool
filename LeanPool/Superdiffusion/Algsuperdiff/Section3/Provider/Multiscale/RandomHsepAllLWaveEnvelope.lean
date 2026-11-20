@@ -138,7 +138,7 @@ theorem measureReal_exists_allLCubeSupBound_gt_le
       simp only [allLWavePrice, A, q]
       rw [tsum_mul_left, tsum_geometric_of_lt_one hq0 hq1],
       ENNReal.ofReal_tsum_of_nonneg (fun r => mul_nonneg hA0 (pow_nonneg hq0 r)) hsummable]
-    exact (measure_iUnion_le _).trans (ENNReal.tsum_le_tsum fun r =>
+    exact (measure_iUnion_le _).trans (tsum_le_tsum fun r =>
       (ENNReal.le_ofReal_iff_toReal_le (measure_ne_top _ _) (mul_nonneg hA0 (pow_nonneg hq0 r))).2
         (hEr r))
   have htoReal := ENNReal.toReal_mono ENNReal.ofReal_ne_top hmeasure

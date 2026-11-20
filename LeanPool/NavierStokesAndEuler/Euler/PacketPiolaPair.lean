@@ -496,7 +496,7 @@ theorem liftedPullbackCovector_compact (Ξ : Space → Space)
     HasCompactSupport (liftedPullbackCovector period Ξ Q) := by
   apply hc.mono
   intro x hx
-  contrapose! hx
+  contrapose hx
   simp only [Function.mem_support, not_not] at hx ⊢
   simp only [liftedPullbackCovector, hx, map_zero]
 

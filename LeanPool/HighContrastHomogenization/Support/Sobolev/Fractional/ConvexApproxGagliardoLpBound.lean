@@ -137,7 +137,7 @@ theorem map_gagliardoCubeMeasure_diagonalConvexApproxSample_le {d : ℕ}
   rw [smul_smul, smul_smul, mul_comm J c]
   apply Measure.le_iff'.2
   intro s
-  rw [Measure.smul_apply, Measure.smul_apply]
+  rw [smul_apply, smul_apply]
   exact mul_le_mul_right (hprod s) (c * J)
 
 /-- A fixed supported diagonal affine sample is bounded on finite-
@@ -237,7 +237,7 @@ theorem map_diagonalConvexApproxJointSample_le {d : ℕ}
       _ = Measure.map A μ s := (Measure.map_apply hA hs).symm
       _ ≤ (J • μ) s := hmap s
       _ = J * μ s := by
-        rw [Measure.smul_apply, smul_eq_mul]
+        rw [smul_apply, smul_eq_mul]
   calc
     ∫⁻ z, ∫⁻ xy, f (xy, z) ∂μ ∂ν ≤ ∫⁻ z, J * μ s ∂ν :=
       lintegral_mono_ae hfixed
@@ -245,7 +245,7 @@ theorem map_diagonalConvexApproxJointSample_le {d : ℕ}
       rw [lintegral_const]
     _ = J * μ s := by
       rw [MeasureTheory.measure_univ, mul_one]
-    _ = (J • μ) s := by rw [Measure.smul_apply, smul_eq_mul]
+    _ = (J • μ) s := by rw [smul_apply, smul_eq_mul]
 
 /-- The diagonal convex average satisfies the powered finite-`L^p` Gagliardo
 bound without caller-supplied Fubini section hypotheses. -/
@@ -299,7 +299,7 @@ theorem lintegral_diagonalConvexApproxAverage_rpow_le_of_memLp
       (μ.prod ν) := by
     simpa only [T, diagonalConvexApproxJointSample, Function.comp_apply] using!
       (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-        hKT.aestronglyMeasurable.enorm)
+        hKT.aestronglyMeasurable.eNorm)
   have hp_one_le_toReal : 1 ≤ p.exponent.toReal := by
     rw [← ENNReal.toReal_one]
     exact (ENNReal.toReal_le_toReal (by norm_num) (finiteLpExponent_ne_top p)).mpr
@@ -325,7 +325,7 @@ theorem lintegral_diagonalConvexApproxAverage_rpow_le_of_memLp
       symm
       exact lintegral_map'
         (ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
-          hKmap.aestronglyMeasurable.enorm) hT.aemeasurable
+          hKmap.aestronglyMeasurable.eNorm) hT.aemeasurable
     _ ≤ ∫⁻ xy, ‖K xy‖ₑ ^ p.exponent.toReal ∂J • μ :=
       lintegral_mono' hmap le_rfl
     _ = J * ∫⁻ xy, ‖K xy‖ₑ ^ p.exponent.toReal ∂μ := by
@@ -363,9 +363,9 @@ theorem eLpNorm_diagonalConvexApproxAverage_le_of_memLp
     have hint := hKT.integral_prod_right'
     refine hint.congr (Filter.Eventually.of_forall fun xy => ?_)
     exact (diagonalConvexApproxAverage_eq_integral_kernelMeasure hρ K x0 r ε xy).symm
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_ne_zero p)
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (finiteLpExponent_ne_zero p)
       (finiteLpExponent_ne_top p) havg,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (finiteLpExponent_ne_zero p)
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (finiteLpExponent_ne_zero p)
       (finiteLpExponent_ne_top p) hK.aestronglyMeasurable]
   rw [← hp_inv, ← ENNReal.mul_rpow_of_nonneg _ _ (by positivity)]
   exact ENNReal.rpow_le_rpow hpow (by positivity)

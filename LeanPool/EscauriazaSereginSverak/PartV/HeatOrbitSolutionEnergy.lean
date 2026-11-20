@@ -42,7 +42,7 @@ private theorem enorm_rpow_two_le_double_sum (M : Fin 3 → Fin 3 → ℝ) :
   obtain ⟨k, -, hk⟩ := Finset.exists_mem_eq_sup Finset.univ Finset.univ_nonempty
     (fun i => ‖M i‖₊)
   have hM : ‖M‖ₑ = ‖M k‖ₑ := by
-    rw [enorm_eq_nnnorm, enorm_eq_nnnorm, Pi.nnnorm_def, hk]
+    rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, Pi.nnNorm_def, hk]
   rw [hM]
   exact (enorm_rpow_two_le_sum (M k)).trans
     (Finset.single_le_sum (f := fun i => ∑ j : Fin 3, ‖M i j‖ₑ ^ (2 : ℝ))
@@ -62,7 +62,7 @@ theorem heatConvGrad_tendsto_of_eLpNorm {fs : ℕ → Vec3 → ℝ} {f : Vec3 �
   rw [tendsto_iff_edist_tendsto_0]
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hbd
     (fun _ => bot_le) fun n => ?_
-  rw [edist_eq_enorm_sub]
+  rw [eDist_eq_eNorm_sub]
   exact integral_mul_sub_sub_enorm_le (hD j) (hfs n) hf x
 
 /-- The `L²` contraction of the heat flow on the heat orbit of an `L²` datum:
@@ -91,7 +91,7 @@ theorem heatOrbit_slice_lintegral_le {a : Vec3 → Vec3} (ha : MemLp a 2 volume)
       lintegral_mono fun x => enorm_rpow_two_le_sum (heatOrbit a (x, s))
     _ = ∑ i : Fin 3, ∫⁻ x, ‖heatConv s (fun y => a y i) x‖ₑ ^ (2 : ℝ) :=
       lintegral_finsetSum' _ fun i _ =>
-        ((hcont i).aestronglyMeasurable.enorm.pow_const _)
+        ((hcont i).aestronglyMeasurable.eNorm.pow_const _)
     _ = ∑ i : Fin 3, eLpNorm (heatConv s (fun y => a y i)) 2 volume ^ (2 : ℝ) := by
       apply Finset.sum_congr rfl
       intro i _
@@ -135,7 +135,7 @@ theorem heatConvVec3_grad_lintegral_le {b : Vec3 → Vec3}
     norm_num
   have hmeas (i j : Fin 3) : AEMeasurable
       (fun x => ‖spatialDeriv (fun y => heatConvVec3 t b y i) j x‖ₑ ^ (2 : ℝ)) volume :=
-    ((hmem i j).aestronglyMeasurable.enorm.pow_const _)
+    ((hmem i j).aestronglyMeasurable.eNorm.pow_const _)
   have hnn (i j : Fin 3) :
       0 ≤ ∫ x, (spatialDeriv (fun y => heatConvVec3 t b y i) j x) ^ 2 :=
     integral_nonneg fun x => sq_nonneg _
@@ -175,9 +175,9 @@ theorem heatOrbit_energy_lintegral_lt_top {a : Vec3 → Vec3} (ha : IsInJ a) {τ
   have hQ : MeasurableSet Q := MeasurableSet.univ.prod measurableSet_Ioo
   obtain ⟨hmh, -⟩ := heatOrbit_grad_aestronglyMeasurable ha τ
   have hai (i : Fin 3) : MemLp (fun y => a y i) 2 volume := memLp_pi_iff.1 ha.1 i
-  rw [lintegral_add_left' (hmh.enorm.pow_const _)]
+  rw [lintegral_add_left' (hmh.eNorm.pow_const _)]
   refine ENNReal.add_lt_top.2 ⟨?_, ?_⟩
-  · rw [lintegral_spaceTimeSet_univ_eq (hmh.enorm.pow_const _)]
+  · rw [lintegral_spaceTimeSet_univ_eq (hmh.eNorm.pow_const _)]
     have hfin : ∑ i : Fin 3, eLpNorm (fun y => a y i) 2 volume ^ (2 : ℝ) < ⊤ :=
       ENNReal.sum_lt_top.2 fun i _ => ENNReal.rpow_lt_top_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)
         (hai i).eLpNorm_ne_top
@@ -211,13 +211,13 @@ theorem heatOrbit_energy_lintegral_lt_top {a : Vec3 → Vec3} (ha : IsInJ a) {τ
         refine tendsto_pi_nhds.2 fun i => tendsto_pi_nhds.2 fun j => ?_
         rw [heatOrbit_spatialDeriv_eq ha.1 hz2 z.1 i j]
         exact heatConvGrad_tendsto_of_eLpNorm (fun k => hmem k i) (hai i) (hlim i) hz2 j z.1
-      exact (ENNReal.continuous_rpow_const.tendsto _).comp ((continuous_enorm.tendsto _).comp hconv)
+      exact (ENNReal.continuous_rpow_const.tendsto _).comp ((continuous_eNorm.tendsto _).comp hconv)
     have hbound (k : ℕ) : ∫⁻ z in Q, ‖G k z‖ₑ ^ (2 : ℝ) ≤
         ENNReal.ofReal (∫ x : Vec3, ∑ i : Fin 3, (aSeq k x i) ^ 2) := by
       have hm : AEMeasurable (fun z => ∑ i : Fin 3, ∑ j : Fin 3, ‖G k z i j‖ₑ ^ (2 : ℝ))
           (volume.restrict Q) :=
         (Finset.measurable_fun_sum _ fun i _ => Finset.measurable_fun_sum _ fun j _ =>
-          ((hGij k i j).enorm.pow_const _)).aemeasurable
+          ((hGij k i j).eNorm.pow_const _)).aemeasurable
       calc
         ∫⁻ z in Q, ‖G k z‖ₑ ^ (2 : ℝ) ≤
             ∫⁻ z in Q, ∑ i : Fin 3, ∑ j : Fin 3, ‖G k z i j‖ₑ ^ (2 : ℝ) :=
@@ -252,7 +252,7 @@ theorem heatOrbit_energy_lintegral_lt_top {a : Vec3 → Vec3} (ha : IsInJ a) {τ
           ∫⁻ z in Q, Filter.liminf (fun k => ‖G k z‖ₑ ^ (2 : ℝ)) atTop :=
         lintegral_congr_ae (hlimit.mono fun z hz => hz.liminf_eq.symm)
       _ ≤ Filter.liminf (fun k => ∫⁻ z in Q, ‖G k z‖ₑ ^ (2 : ℝ)) atTop :=
-        lintegral_liminf_le' fun k => ((hGm k).enorm.pow_const _).aemeasurable
+        lintegral_liminf_le' fun k => ((hGm k).eNorm.pow_const _).aemeasurable
       _ ≤ 3 * (eLpNorm a 2 volume + 1) ^ (2 : ℝ) := liminf_le_of_frequently_le' hev.frequently
       _ < ⊤ := ENNReal.mul_lt_top (by norm_num)
         (ENNReal.rpow_lt_top_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)

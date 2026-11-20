@@ -192,7 +192,7 @@ theorem upperTriGL_mem_doubleCoset (a : Fin n → ℕ) (hpos : ∀ i, 0 < a i)
     simp only [upperTriMat, unipMat]
     split_ifs <;> push_cast <;> ring
   · intro k _ hk
-    simp only [Ne.symm hk, ↓reduceIte, map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom,
+    simp only [Ne.symm hk, ↓reduceIte, map_apply_coe, Int.coe_castRingHom,
       map_apply, zero_mul]
   · intro h; exact absurd (Finset.mem_univ i) h
 
@@ -281,7 +281,7 @@ theorem upperTriMat_distinct_cosets (a : Fin n → ℕ)
   have hmat : upperTriMat n a hdiv B₁ = σ.val * upperTriMat n a hdiv B₂ := by
     have h := congr_arg Units.val heq
     have hσ_val : (↑(mapGL ℚ σ) : Matrix _ _ ℚ) = σ.val.map (Int.cast) := by
-      simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+      simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
         Int.coe_castRingHom]
     simp only [Units.val_mul, upperTriGL_val, hσ_val] at h
     ext i j

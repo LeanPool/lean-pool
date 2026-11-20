@@ -1152,7 +1152,7 @@ private theorem captureInput_measured_of_leaf {tm : TM n} (x : List Bool)
         convert! hbranch using 1
         all_goals simp [captureInput, hone, wordWidth,
           Structured.Internal.valueWidth]
-        all_goals ring
+        ring
 
 /-- The full public-input marshaller has a concrete resource certificate and
 hands the simulation core an exact sparse representation. -/

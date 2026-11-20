@@ -306,7 +306,7 @@ theorem avsum_cellAverageFamily_sq_le (q : Mat d) (hq : IsUnit q) (t : ℤ)
     intro w hw
     exact hsub w hw
   have hmono : ∫ x in (⋃ w ∈ triadicIndexBox d n, V w), f x ≤ ∫ x in U, f x := by
-    refine setIntegral_mono_set hXint ?_ (LE.le.eventuallyLE hUsub)
+    refine setIntegral_mono_set hXint ?_ (Filter.Eventually.of_forall hUsub)
     filter_upwards with x using hfnn x
   have hsumle : ∑ w ∈ triadicIndexBox d n, ∫ x in V w, f x ≤ ∫ x in U, f x := by
     rw [← hunion]; exact hmono

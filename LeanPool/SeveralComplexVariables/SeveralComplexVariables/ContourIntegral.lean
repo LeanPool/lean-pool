@@ -49,11 +49,11 @@ theorem analyticOnNhd_integral_smul_compact_kernel
   let D := fun (x : E) (t : α) =>
     (fderiv ℂ H (x, γ t)).comp (ContinuousLinearMap.inl ℂ E ℂ)
   have hc : ContinuousOn (fun p : E × α => H (p.1, γ p.2)) (U ×ˢ K) :=
-    hH.continuousOn.comp
+    hH.continuousOn.comp (s := U ×ˢ K)
       (continuousOn_fst.prodMk (hγ.comp continuousOn_snd (fun _ hp => hp.2)))
       (fun p hp => hW p.1 hp.1 p.2 hp.2)
   have hD : ContinuousOn (fun p : E × α => D p.1 p.2) (U ×ˢ K) :=
-    (hH.fderiv.continuousOn.comp
+    (hH.fderiv.continuousOn.comp (s := U ×ˢ K)
       (continuousOn_fst.prodMk (hγ.comp continuousOn_snd (fun _ hp => hp.2)))
       (fun p hp => hW p.1 hp.1 p.2 hp.2)).clm_comp continuousOn_const
   have hslice {x : E} (hx : x ∈ U) : ContinuousOn (fun t => H (x, γ t)) K :=

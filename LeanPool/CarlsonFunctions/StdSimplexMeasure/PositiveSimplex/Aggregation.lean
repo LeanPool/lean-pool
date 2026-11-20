@@ -350,7 +350,7 @@ theorem lintegral_posSimplex_comp_aggregate
     ∫⁻ x in posSimplex α r, g (FunOnFinite.linearMap ℝ ℝ f x) =
       ∫⁻ z in posSimplex β r, g z * posSimplexAggregateDensity f z := by
   induction hcard : Fintype.card β using Nat.strong_induction_on generalizing α β r with
-  | h n ih =>
+  | ind n ih =>
       cases isEmpty_or_nonempty β with
       | inl _ => exact lintegral_posSimplex_comp_aggregate_of_isEmpty f hf r hr g hg
       | inr _ =>

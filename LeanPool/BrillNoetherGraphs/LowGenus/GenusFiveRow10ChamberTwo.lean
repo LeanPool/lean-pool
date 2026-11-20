@@ -478,12 +478,12 @@ theorem fCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Int.reduceNeg, sub_self, add_zero, contribForm, hT10, tsub_pos_iff_lt, heightFlat,
       tailContribution_same, headContribution_same, fCoeff, zeroChip, add_left_inj, Fin.mk_one,
       one_ne_zero, positiveChip, Fin.reduceFinMk, sub_zero, hH10]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
     Int.reduceNeg, add_neg_cancel, ↓reduceIte, sub_self, add_zero, sub_zero, not_true_eq_false,
-    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
-  all_goals (try omega)
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff]
+  omega
 
 theorem fCoeff_owner_three {d : DegSpec 8 12} : 1 ≤ fCoeff d 3 := by
   change (1 : ℤ) ≤
@@ -586,12 +586,12 @@ theorem bCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Int.reduceNeg, sub_self, add_zero, contribForm, hT10, tsub_pos_iff_lt, heightB,
       tailContribution_same, headContribution_same, bCoeff, zeroChip, add_left_inj, Fin.mk_one,
       one_ne_zero, positiveChip, Fin.reduceFinMk, sub_zero, hH10]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
     Int.reduceNeg, add_neg_cancel, ↓reduceIte, sub_self, add_zero, sub_zero, not_true_eq_false,
-    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff])
-  all_goals (try omega)
+    Std.le_refl, zero_add, tsub_zero, not_false_eq_true, one_ne_zero, not_le, tsub_lt_self_iff]
+  omega
 
 theorem htB_le_three {d : DegSpec 8 12} : htB d ≤ d.length 3 := by
   simp only [htB, resB]; omega
@@ -754,13 +754,13 @@ theorem pCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       Int.reduceNeg, sub_self, add_zero, contribForm, hT10, tsub_pos_iff_lt, heightP,
       tailContribution_same, headContribution_same, pCoeff, zeroChip, add_left_inj, Fin.mk_one,
       one_ne_zero, positiveChip, Fin.reduceFinMk, sub_zero, hH10, shift, add_right_inj]
-  all_goals (try (first | ring1 | ring_nf))
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
+  all_goals (first | ring1 | ring_nf)
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, nonpos_iff_eq_zero, zero_le, tsub_self,
     Int.reduceNeg, add_neg_cancel, ↓reduceIte, sub_self, add_zero, sub_zero, not_true_eq_false,
     Std.le_refl, zero_add, tsub_zero, zero_sub, not_false_eq_true, zero_eq_neg, one_ne_zero,
-    not_le, tsub_lt_self_iff, Int.reduceAdd, Int.reduceSub, not_and, not_lt])
-  all_goals (try omega)
+    not_le, tsub_lt_self_iff, Int.reduceAdd, Int.reduceSub, not_and, not_lt]
+  all_goals omega
 
 /-- The nested minima of the target-`P` profile, in the shape
 `ConfigurationEleven` consumes. -/
@@ -947,12 +947,11 @@ theorem tCoeff_eq {d : DegSpec 8 12} (hCore : d.core = row10Core)
       contribForm, hT10, heightT, one_ne_zero, tCoeff, zeroChip, Fin.mk_one, add_zero,
       sub_self, zero_sub, Int.reduceNeg, tailContribution_same, headContribution_same,
       positiveChip, add_left_inj, Fin.reduceFinMk, hH10, tsub_lt_self_iff]
-  all_goals (try ring_nf)
-  all_goals (try split_ifs)
-  all_goals (try simp_all only [Fin.isValue, rowMark_ten, Int.reduceAdd, ↓reduceIte, add_zero,
-    zero_add, Int.reduceNeg, add_neg_cancel, not_le, tsub_lt_self_iff])
-  all_goals (try split_ifs)
-  all_goals (try omega)
+  all_goals ring_nf
+  all_goals split_ifs
+  all_goals simp_all only [Fin.isValue, rowMark_ten, Int.reduceAdd, ↓reduceIte, add_zero,
+    zero_add, Int.reduceNeg, add_neg_cancel, not_le, tsub_lt_self_iff]
+  all_goals omega
 
 theorem tCoeff_owner {d : DegSpec 8 12} : 1 ≤ tCoeff d 0 := by
   change (1 : ℤ) ≤

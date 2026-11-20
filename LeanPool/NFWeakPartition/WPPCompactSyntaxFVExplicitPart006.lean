@@ -83,15 +83,13 @@ theorem fv_syn_chnwcutfn (R : Class) (D : Class) :
   by
   ext u
   simp [synChnwcutfn, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcodefn,
-    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwsegfn];
-  aesop
+    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwsegfn]
 
 theorem fv_syn_chnwcutrel (R : Class) (D : Class) :
     (synChnwcutrel R D).fv = (D.fv) ∪ (R.fv) :=
   by
   ext u
-  simp [synChnwcutrel, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutfn];
-  aesop
+  simp [synChnwcutrel, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_chnwcutfn]
 
 theorem fv_syn_clnqrel (R : Class) : (synClnqrel R).fv = R.fv :=
   by
@@ -118,8 +116,7 @@ theorem fv_syn_clnqord (R : Class) (C : Class) : (synClnqord R C).fv = (C.fv) �
   by
   ext u
   simp [synClnqord, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_clnqrel,
-    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_clnquo];
-  aesop
+    NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_clnquo]
 
 theorem fv_syn_clnpwc (A : Class) : (synClnpwc A).fv = A.fv :=
   by
@@ -135,7 +132,7 @@ theorem fv_syn_cfrecteq (F : Class) (G : Class) (I : Class) :
     (synCfrecteq F G I).fv = (F.fv) ∪ (G.fv) ∪ (I.fv) :=
   by
   ext u
-  simp [synCfrecteq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec]; aesop
+  simp [synCfrecteq, NFChoice.Compiler.WPPCompactSyntaxFVExplicit.fv_syn_cfrec]
 
 theorem fv_syn_chnqinc (D : Class) (A : Class) : (synChnqinc D A).fv = (A.fv) ∪ (D.fv) :=
   by

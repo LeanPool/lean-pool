@@ -79,12 +79,12 @@ theorem lps_lintegral_mul_le_two {a b : Vec3 → ℝ}
     ∫⁻ x, ‖a x‖ₑ * ‖b x‖ₑ ≤ eLpNorm a 2 volume * eLpNorm b 2 volume := by
   have : ENNReal.HolderTriple 2 2 1 := ⟨by simp [ENNReal.inv_two_add_inv_two]⟩
   have h := eLpNorm_smul_le_mul_eLpNorm (p := 2) (q := 2) (r := 1) ha hb
-  rw [eLpNorm_one_eq_lintegral_enorm (ha.smul hb)] at h
-  simpa [Pi.smul_apply, smul_eq_mul, enorm_mul] using h
+  rw [eLpNorm_one_eq_lintegral_eNorm (ha.smul hb)] at h
+  simpa [Pi.smul_apply, smul_eq_mul, eNorm_mul] using h
 
 private theorem lps_enorm_le_of_abs_le {x c : ℝ} (h : |x| ≤ c) :
     ‖x‖ₑ ≤ ENNReal.ofReal c := by
-  rw [Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs]
   exact ENNReal.ofReal_le_ofReal h
 
 private theorem lps_mollify_aesm {g : Vec3 → ℝ} (hg : LocallyIntegrable g volume) (n : ℕ) :
@@ -132,17 +132,17 @@ theorem lps_endpoint_slice_pairing_linf_l1
           mul_le_mul (serrinCutoff_abs_le_one n x) (hMfB n x) (abs_nonneg _) zero_le_one
       _ = B := one_mul B
   have hg1norm : eLpNorm g 1 volume = ∫⁻ x, ‖g x‖ₑ :=
-    eLpNorm_one_eq_lintegral_enorm hg.aestronglyMeasurable
+    eLpNorm_one_eq_lintegral_eNorm hg.aestronglyMeasurable
   have hgfin : (∫⁻ x, ‖g x‖ₑ) ≠ ⊤ := hg.hasFiniteIntegral.ne
   -- the two pieces
   let P : ℕ → ℝ≥0∞ := fun n => ∫⁻ x, ‖serrinCutoff n x * Mf n x - f x‖ₑ * ‖g x‖ₑ
   let Q : ℕ → ℝ≥0∞ := fun n => ∫⁻ x, ‖serrinCutoff n x * Mf n x‖ₑ * ‖Mg n x - g x‖ₑ
   have hPmeas (n : ℕ) : AEMeasurable
       (fun x => ‖serrinCutoff n x * Mf n x - f x‖ₑ * ‖g x‖ₑ) volume :=
-    (((hηMfMeas n).sub hf).enorm).mul hg.aestronglyMeasurable.enorm
+    (((hηMfMeas n).sub hf).eNorm).mul hg.aestronglyMeasurable.eNorm
   have hQmeas (n : ℕ) : AEMeasurable
       (fun x => ‖serrinCutoff n x * Mf n x‖ₑ * ‖Mg n x - g x‖ₑ) volume :=
-    ((hηMfMeas n).enorm).mul ((hMgMeas n).sub hg.aestronglyMeasurable).enorm
+    ((hηMfMeas n).eNorm).mul ((hMgMeas n).sub hg.aestronglyMeasurable).eNorm
   have hSplit (n : ℕ) : ∫⁻ x : Vec3,
       ‖serrinCutoff n x * Mf n x * Mg n x - f x * g x‖ₑ ≤ P n + Q n := by
     calc
@@ -154,8 +154,8 @@ theorem lps_endpoint_slice_pairing_linf_l1
               (serrinCutoff n x * Mf n x) * (Mg n x - g x) := by ring
         rw [hid]
         calc _ ≤ ‖(serrinCutoff n x * Mf n x - f x) * g x‖ₑ +
-              ‖(serrinCutoff n x * Mf n x) * (Mg n x - g x)‖ₑ := enorm_add_le _ _
-          _ = _ := by rw [enorm_mul, enorm_mul]
+              ‖(serrinCutoff n x * Mf n x) * (Mg n x - g x)‖ₑ := eNorm_add_le _ _
+          _ = _ := by rw [eNorm_mul, eNorm_mul]
       _ = P n + Q n := lintegral_add_left' (hPmeas n) _
   have hPbound (n : ℕ) : P n ≤ 2 * ENNReal.ofReal B * ∫⁻ x, ‖g x‖ₑ := by
     calc P n ≤ ∫⁻ x, (2 * ENNReal.ofReal B) * ‖g x‖ₑ := by
@@ -174,13 +174,13 @@ theorem lps_endpoint_slice_pairing_linf_l1
   have hQbound (n : ℕ) : Q n ≤ ENNReal.ofReal B * eLpNorm (fun x => Mg n x - g x) 1 volume := by
     have hnorm : eLpNorm (fun x => Mg n x - g x) 1 volume =
         ∫⁻ x, ‖Mg n x - g x‖ₑ :=
-      eLpNorm_one_eq_lintegral_enorm ((hMgMeas n).sub hg.aestronglyMeasurable)
+      eLpNorm_one_eq_lintegral_eNorm ((hMgMeas n).sub hg.aestronglyMeasurable)
     rw [hnorm]
     calc Q n ≤ ∫⁻ x, ENNReal.ofReal B * ‖Mg n x - g x‖ₑ := by
           refine lintegral_mono fun x => ?_
           gcongr
           exact lps_enorm_le_of_abs_le (hηMfB n x)
-      _ = _ := lintegral_const_mul'' _ ((hMgMeas n).sub hg.aestronglyMeasurable).enorm
+      _ = _ := lintegral_const_mul'' _ ((hMgMeas n).sub hg.aestronglyMeasurable).eNorm
   have hMgNorm (n : ℕ) : eLpNorm (fun x => Mg n x - g x) 1 volume ≤ 2 * ∫⁻ x, ‖g x‖ₑ := by
     calc _ ≤ eLpNorm (Mg n) 1 volume + eLpNorm g 1 volume :=
           eLpNorm_sub_le le_rfl
@@ -224,7 +224,7 @@ theorem lps_endpoint_slice_pairing_linf_l1
           have hprod : Tendsto (fun n => serrinCutoff n x * Mf n x - f x) atTop (𝓝 0) := by
             have := (hη.mul hx).sub_const (f x)
             simpa using this
-          have h0 := ENNReal.Tendsto.mul_const hprod.enorm (Or.inr (enorm_ne_top (x := g x)))
+          have h0 := ENNReal.Tendsto.mul_const hprod.eNorm (Or.inr (eNorm_ne_top (x := g x)))
           simpa using h0
       simpa using hDCT
     have hsum := hPlim.add hQlim
@@ -262,7 +262,7 @@ theorem lps_endpoint_slice_pairing_l2_l2
   let A : ℕ → ℝ≥0∞ := fun n => eLpNorm (fun x => Mf n x - f x) 2 volume * eLpNorm g 2 volume
   let C : ℕ → ℝ≥0∞ := fun n => eLpNorm f 2 volume * eLpNorm (fun x => Mg n x - g x) 2 volume
   have hfg : ∫⁻ x, ‖f x * g x‖ₑ ≤ eLpNorm f 2 volume * eLpNorm g 2 volume := by
-    simpa only [enorm_mul] using lps_lintegral_mul_le_two hfm hgm
+    simpa only [eNorm_mul] using lps_lintegral_mul_le_two hfm hgm
   have hSplit (n : ℕ) : ∫⁻ x : Vec3,
       ‖serrinCutoff n x * Mf n x * Mg n x - f x * g x‖ₑ ≤ A n + C n + R n := by
     have hA : ∫⁻ x, ‖Mf n x - f x‖ₑ * ‖Mg n x‖ₑ ≤ A n := by
@@ -279,37 +279,37 @@ theorem lps_endpoint_slice_pairing_l2_l2
               (serrinCutoff n x - 1) * (f x * g x) := by ring
         rw [hid]
         have hη : ‖serrinCutoff n x‖ₑ ≤ 1 := by
-          rw [Real.enorm_eq_ofReal_abs]
+          rw [Real.eNorm_eq_ofReal_abs]
           exact ENNReal.ofReal_le_one.mpr (serrinCutoff_abs_le_one n x)
         calc _ ≤ ‖serrinCutoff n x * ((Mf n x - f x) * Mg n x + f x * (Mg n x - g x))‖ₑ +
-              ‖(serrinCutoff n x - 1) * (f x * g x)‖ₑ := enorm_add_le _ _
+              ‖(serrinCutoff n x - 1) * (f x * g x)‖ₑ := eNorm_add_le _ _
           _ ≤ (‖Mf n x - f x‖ₑ * ‖Mg n x‖ₑ + ‖f x‖ₑ * ‖Mg n x - g x‖ₑ) +
               ‖(serrinCutoff n x - 1) * (f x * g x)‖ₑ := by
             gcongr
-            rw [enorm_mul]
+            rw [eNorm_mul]
             calc ‖serrinCutoff n x‖ₑ * ‖(Mf n x - f x) * Mg n x + f x * (Mg n x - g x)‖ₑ
                 ≤ 1 * ‖(Mf n x - f x) * Mg n x + f x * (Mg n x - g x)‖ₑ := by gcongr
               _ ≤ _ := by
                 rw [one_mul]
                 calc _ ≤ ‖(Mf n x - f x) * Mg n x‖ₑ + ‖f x * (Mg n x - g x)‖ₑ :=
-                      enorm_add_le _ _
-                  _ = _ := by rw [enorm_mul, enorm_mul]
+                      eNorm_add_le _ _
+                  _ = _ := by rw [eNorm_mul, eNorm_mul]
       _ = (∫⁻ x, ‖Mf n x - f x‖ₑ * ‖Mg n x‖ₑ) + (∫⁻ x, ‖f x‖ₑ * ‖Mg n x - g x‖ₑ) + R n := by
         have hX : AEMeasurable (fun x => ‖Mf n x - f x‖ₑ * ‖Mg n x‖ₑ) volume :=
-          (((hMfMeas n).sub hfm).enorm).mul (hMgMeas n).enorm
+          (((hMfMeas n).sub hfm).eNorm).mul (hMgMeas n).eNorm
         have hZ : AEMeasurable (fun x => ‖(serrinCutoff n x - 1) * (f x * g x)‖ₑ) volume :=
-          (((hηMeas n).sub aestronglyMeasurable_const).mul (hfm.mul hgm)).enorm
+          (((hηMeas n).sub aestronglyMeasurable_const).mul (hfm.mul hgm)).eNorm
         rw [lintegral_add_right' _ hZ, lintegral_add_left' hX]
       _ ≤ A n + C n + R n := by gcongr
   have hRlim : Tendsto R atTop (𝓝 0) := by
     have hDCT : Tendsto R atTop (𝓝 (∫⁻ x : Vec3, (0 : ℝ≥0∞))) := by
       refine tendsto_lintegral_of_dominated_convergence'
         (fun x => 2 * ‖f x * g x‖ₑ)
-        (fun n => (((hηMeas n).sub aestronglyMeasurable_const).mul (hfm.mul hgm)).enorm)
+        (fun n => (((hηMeas n).sub aestronglyMeasurable_const).mul (hfm.mul hgm)).eNorm)
         ?_ ?_ ?_
       · intro n
         filter_upwards [] with x
-        rw [enorm_mul]
+        rw [eNorm_mul]
         gcongr
         have : |serrinCutoff n x - 1| ≤ 2 := by
           calc _ ≤ |serrinCutoff n x| + |(1 : ℝ)| := abs_sub _ _
@@ -323,7 +323,7 @@ theorem lps_endpoint_slice_pairing_l2_l2
       · filter_upwards [] with x
         have hsub : Tendsto (fun n : ℕ => serrinCutoff n x - 1) atTop (𝓝 0) := by
           simpa using (serrinCutoff_tendsto_one x).sub_const 1
-        simpa using (hsub.mul_const (f x * g x)).enorm
+        simpa using (hsub.mul_const (f x * g x)).eNorm
     simpa using hDCT
   refine ⟨fun n => ?_, ?_⟩
   · refine (hSplit n).trans ?_
@@ -350,7 +350,7 @@ theorem lps_endpoint_slice_pairing_l2_l2
     have hR : R n ≤ 2 * (eLpNorm f 2 volume * eLpNorm g 2 volume) := by
       calc R n ≤ ∫⁻ x, 2 * ‖f x * g x‖ₑ := by
             refine lintegral_mono fun x => ?_
-            rw [enorm_mul]
+            rw [eNorm_mul]
             gcongr
             have : |serrinCutoff n x - 1| ≤ 2 := by
               calc _ ≤ |serrinCutoff n x| + |(1 : ℝ)| := abs_sub _ _

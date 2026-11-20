@@ -107,7 +107,7 @@ private theorem localizedTailMaximal_le_sum_rootSubfamilies
   apply iSup_le
   intro ell
   rw [haction ell.1]
-  apply (enorm_sum_le _ _).trans
+  apply (eNorm_sum_le _ _).trans
   apply Finset.sum_le_sum
   intro q₀ hq₀
   exact le_iSup
@@ -230,7 +230,7 @@ theorem exists_sparse_bound_forest_of_tree_witnesses
       apply lintegral_finsetSum
       intro q₀ hq₀
       exact (measurable_localizedTailMaximal ell₀ scale (branch q₀)
-        f.measurable_toFun).mul g.measurable_toFun.enorm
+        f.measurable_toFun).mul g.measurable_toFun.eNorm
     _ ≤ ∑ q₀ ∈ Q, ENNReal.ofReal (A * holderConjugate p) *
         sparseForm p f g (↑(R' q₀) : Set RealInterval) := by
       exact Finset.sum_le_sum fun q₀ hq₀ ↦ hRbound' q₀ hq₀

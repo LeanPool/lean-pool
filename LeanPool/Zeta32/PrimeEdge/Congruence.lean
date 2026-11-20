@@ -26,7 +26,7 @@ variable {p : ℕ} [hp : Fact p.Prime]
 omit hp in
 lemma VG_of_not_dvd_den {r : ℚ} (hden : ¬ p ∣ r.den) : VG p r 0 := by
   right
-  rw [padicValRat, padicValNat.eq_zero_of_not_dvd hden]
+  rw [padicValRat, multiplicity_eq_zero_of_not_dvd hden]
   simp
 
 omit hp in

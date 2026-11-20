@@ -336,10 +336,10 @@ theorem progression_truncated_tendsto (f₁ f₂ f₃ : SchwartzMap ℝ ℂ) (x 
       ext t; simp only [Set.mem_ofPred_eq, Set.mem_union, Set.mem_Ioi, Set.mem_Iio, lt_abs]
       constructor <;> rintro (h | h) <;> [left; right; left; right] <;> linarith
     have! hIoi : IntegrableOn (fun t : ℝ => g t / t) (Set.Ioi ε) :=
-      (hdiv ε hε).mono_set fun t ht => by
+      (hdiv ε hε).mono_set (s := Set.Ioi ε) fun t ht => by
         change ε < |t|; exact lt_of_lt_of_le ht (le_abs_self t)
     have! hIio : IntegrableOn (fun t : ℝ => g t / t) (Set.Iio (-ε)) :=
-      (hdiv ε hε).mono_set fun t ht => by
+      (hdiv ε hε).mono_set (s := Set.Iio (-ε)) fun t ht => by
         change ε < |t|; have : t < -ε := ht; rw [lt_abs]; right; linarith
     have! hneg : ∫ t in Set.Iio (-ε), g t / t = ∫ t in Set.Ioi ε, g (-t) / ((-t : ℝ) : ℂ) := by
       rw [← integral_Iic_eq_integral_Iio, ← integral_comp_neg_Ioi]
@@ -914,7 +914,7 @@ theorem cellLqNorm_eq (G : RealDyadicGrid) {q : ℝ} (hq : 0 < q) (f : ℝ → �
     (hf : Measurable f) (K : ℤ × ℤ) :
     cellLqNorm G q f K = cellPowAverage G q f K ^ (1 / q) := by
   have hr := dyadicGridLength_pos G K.1
-  rw [cellLqNorm, eLpNorm_eq_lintegral_rpow_enorm_toReal
+  rw [cellLqNorm, eLpNorm_eq_lintegral_rpow_eNorm_toReal
     (ne_of_gt (ENNReal.ofReal_pos.mpr hq)) ENNReal.ofReal_ne_top hf.aestronglyMeasurable,
     ENNReal.toReal_ofReal hq.le, cellPowAverage, dyadicGridCell_volume]
   congr 1
@@ -1027,7 +1027,7 @@ theorem firstStops_pairwiseDisjoint {α : Type*} {C : Finset α} {cell : α → 
 theorem finiteDepth_input_lintegral_ne_top {κ : LocalKernelClass} {q : ℝ} {N : ℕ} (hq : 0 < q)
     (D : FiniteDepthLocalData κ q N) (j : Fin 4) (s : Set ℝ) :
     ∫⁻ x in s, ‖D.input j x‖ₑ ^ q ≠ ∞ := by
-  have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top
+  have h := lintegral_rpow_eNorm_lt_top_of_eLpNorm_lt_top
     (ne_of_gt (ENNReal.ofReal_pos.mpr hq)) ENNReal.ofReal_ne_top (D.memLp_input j)
   rw [ENNReal.toReal_ofReal hq.le] at h
   exact ne_top_of_le_ne_top h.ne (setLIntegral_le_lintegral _ _)
@@ -1719,7 +1719,7 @@ theorem rescaledKernel_partial_le {ι : Type*} (s : Finset ι) (c : ι → ℂ) 
               ‖iteratedDeriv n (B k) (a⁻¹ * z.2 + 0)‖) := by ring
           _ ≤ r / a * a⁻¹ ^ (m + n) * (‖c k‖ * GA k m * GB k n) := by
               gcongr
-              all_goals exact mul_nonneg (norm_nonneg _) ((norm_nonneg _).trans h1)
+              exact mul_nonneg (norm_nonneg _) ((norm_nonneg _).trans h1)
     _ = _ := by rw [Finset.mul_sum]
 
 /-- Blueprint line 2974: the products of Gevrey bounds `G(j) = (C₀(j+1))^{C₀(j+1)}` occurring in
@@ -2491,7 +2491,7 @@ theorem scalarMaximalQ_le_of_bound {q : ℝ} (hq : 0 < q) {f : ℝ → ℂ} {B :
   have hbound : uncenteredRealMaximal (fun y => ‖f y‖ ^ q) x ≤ ENNReal.ofReal (B ^ q) := by
     refine iSup_le fun a => iSup_le fun b => iSup_le fun hab => iSup_le fun _ => ?_
     have hpt : ∀ y, ‖‖f y‖ ^ q‖ₑ ≤ ENNReal.ofReal (B ^ q) := fun y => by
-      rw [Real.enorm_eq_ofReal (by positivity)]
+      rw [Real.eNorm_eq_ofReal (by positivity)]
       exact ENNReal.ofReal_le_ofReal (Real.rpow_le_rpow (norm_nonneg _) (hf y) hq.le)
     calc (ENNReal.ofReal (b - a))⁻¹ * ∫⁻ y in Set.Icc a b, ‖‖f y‖ ^ q‖ₑ ≤
         (ENNReal.ofReal (b - a))⁻¹ * ∫⁻ _ in Set.Icc a b, ENNReal.ofReal (B ^ q) := by
@@ -2531,19 +2531,19 @@ theorem lintegral_hlMaximal_pow_le {q : ℝ} (hq : 0 < q) (hq3 : q < 3) {f : ℝ
   have h := eLpNorm_hlMaximal_le_real hp hh
   have hM : Measurable (hlMaximal volume (fun y => ‖f y‖ ^ q)) :=
     measurable_hlMaximal (fun _ _ => measure_closedBall_lt_top.ne) hh
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by positivity) ENNReal.ofReal_ne_top
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by positivity) ENNReal.ofReal_ne_top
       hM.aestronglyMeasurable,
-    eLpNorm_eq_lintegral_rpow_enorm_toReal (by positivity) ENNReal.ofReal_ne_top hh,
+    eLpNorm_eq_lintegral_rpow_eNorm_toReal (by positivity) ENNReal.ofReal_ne_top hh,
     ENNReal.toReal_ofReal hp0.le] at h
   have hpow := ENNReal.rpow_le_rpow h hp0.le
   rw [← ENNReal.rpow_mul, one_div_mul_cancel hp0.ne', ENNReal.rpow_one,
     ENNReal.mul_rpow_of_nonneg _ _ hp0.le, ← ENNReal.rpow_mul, one_div_mul_cancel hp0.ne',
     ENNReal.rpow_one] at hpow
-  simp only [enorm_eq_self] at hpow
+  simp only [eNorm_eq_self] at hpow
   refine hpow.trans (le_of_eq ?_)
   congr 1
   apply lintegral_congr; intro y
-  rw [Real.enorm_eq_ofReal (by positivity), ← ofReal_norm,
+  rw [Real.eNorm_eq_ofReal (by positivity), ← ofReal_norm,
     ← ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) hq.le, ← ENNReal.rpow_mul]
   congr 1; field_simp
 
@@ -3053,12 +3053,12 @@ theorem integrated_scale_form_bound {ω φ : ℝ → ℝ} (hω : ContDiff ℝ (�
           ∏ j, f j (realProgressionCoordinate j z)) * ((a⁻¹ : ℝ) : ℂ)‖ₑ
       ≤ ∫⁻ a in Set.Ioc A B, ‖(∫ z : ℝ × ℝ, ((a⁻¹ : ℝ) : ℂ) * ψ' (z.2 / a) *
           ∏ j, f j (realProgressionCoordinate j z)) * ((a⁻¹ : ℝ) : ℂ)‖ₑ :=
-        enorm_integral_le_lintegral_enorm _
+        eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ a in Set.Ioc A B, H a := by
         apply lintegral_mono_ae
         filter_upwards [ae_restrict_mem measurableSet_Ioc] with a ha
         have! ha0 : 0 < a := hA.trans ha.1
-        rw [hsumF a ha, enorm_mul, ← ofReal_norm ((a⁻¹ : ℝ) : ℂ), Complex.norm_real,
+        rw [hsumF a ha, eNorm_mul, ← ofReal_norm ((a⁻¹ : ℝ) : ℂ), Complex.norm_real,
           Real.norm_eq_abs, abs_of_pos (inv_pos.mpr ha0), ← ofReal_norm]
         exact mul_le_mul_left (ENNReal.ofReal_le_ofReal (norm_sum_le _ _)) _
     _ ≤ ∫⁻ a in Set.Ico ((2 : ℝ) ^ n₁) ((2 : ℝ) ^ n₂), H a := by
@@ -3679,7 +3679,7 @@ theorem pv_form_bound {ω φ : ℝ → ℝ} (hω : ContDiff ℝ (⊤ : ℕ∞) �
     refine hmax.trans ?_
     gcongr with j x
     simp only [ft]
-    rw [enorm_indicator_eq_indicator_enorm]
+    rw [eNorm_indicator_eq_indicator_eNorm]
     exact Set.indicator_le_self _ _ x
   -- the limit
   have! hlim := explicit_kernel_tendsto hd hψb hdb hψs hψeven hPi hQi
@@ -3694,8 +3694,8 @@ theorem pv_form_bound {ω φ : ℝ → ℝ} (hω : ContDiff ℝ (⊤ : ℕ∞) �
     simp only [T_eq_neg_integral, mul_neg, integral_neg]
     ring
   rw [hval] at hlim
-  rw [← enorm_neg]
-  exact le_of_tendsto ((continuous_enorm.tendsto _).comp hlim)
+  rw [← eNorm_neg]
+  exact le_of_tendsto ((continuous_eNorm.tendsto _).comp hlim)
     (Filter.eventually_atTop.mpr ⟨1, fun n hn => hbound n hn⟩)
 
 /-! ### The `L¹` bound by duality (thm:main, blueprint lines 2996-2999) -/
@@ -3711,7 +3711,7 @@ theorem lintegral_enorm_le_of_duality {g : ℝ → ℂ} (hg : Measurable g) {Mg 
     ∫⁻ x, ‖g x‖ₑ ≤ Y := by
   set F : ℕ → ℝ → ℝ≥0∞ := fun n => (Set.Icc (-(n : ℝ)) n).indicator fun x => ‖g x‖ₑ
   have! hFm : ∀ n, Measurable (F n) := fun n =>
-    hg.enorm.indicator measurableSet_Icc
+    hg.eNorm.indicator measurableSet_Icc
   have! hFmono : Monotone F := by
     intro m n hmn x
     apply Set.indicator_le_indicator_of_subset _ (fun _ => bot_le)
@@ -3768,7 +3768,7 @@ theorem lintegral_enorm_le_of_duality {g : ℝ → ℂ} (hg : Measurable g) {Mg 
       rw [integral_indicator measurableSet_Icc, integral_complex_ofReal,
         ← ofReal_norm, Complex.norm_real, Real.norm_eq_abs,
         abs_of_nonneg (setIntegral_nonneg measurableSet_Icc fun _ _ => norm_nonneg _),
-        ofReal_integral_norm_eq_lintegral_enorm hgi] at hpair
+        ofReal_integral_norm_eq_lintegral_eNorm hgi] at hpair
       rw [lintegral_indicator measurableSet_Icc]
       exact hpair
 
@@ -4004,13 +4004,13 @@ theorem T_lintegral_le {ω φ : ℝ → ℝ} (hω : ContDiff ℝ (⊤ : ℕ∞) 
     intro i hi x
     obtain ⟨g, rfl, -, h2⟩ := hlist i hi
     exact (SchwartzMap.norm_le_seminorm ℝ (SchwartzMap.derivCLM ℝ ℂ g) x).trans h2
-  have! hψ0 : ‖ψ0‖ₑ ≠ 0 := enorm_ne_zero.mpr hφ0
+  have! hψ0 : ‖ψ0‖ₑ ≠ 0 := eNorm_ne_zero.mpr hφ0
   apply lintegral_enorm_le_of_duality (T_measurable f₁ f₂ f₃) (T_bound hd hb hb')
   intro f₀ T hf₀m hf₀b hT hf₀T
   have! h := pv_form_bound hω hsupp hsum hωc hφ hφc hφodd hR hωs hφs hC₀ hD hDR hωG hφG hq hq3
     hCst hf₀m zero_le_one hf₀b hT hf₀T f₁ f₂ f₃
-  rw [enorm_mul, ENNReal.ofReal_one, one_mul] at h
-  rw [ENNReal.le_div_iff_mul_le (Or.inl hψ0) (Or.inl enorm_ne_top), mul_comm]
+  rw [eNorm_mul, ENNReal.ofReal_one, one_mul] at h
+  rw [ENNReal.le_div_iff_mul_le (Or.inl hψ0) (Or.inl eNorm_ne_top), mul_comm]
   refine h.trans (le_of_eq ?_)
   congr 3
   apply Finset.prod_congr rfl
@@ -4020,7 +4020,7 @@ theorem T_lintegral_le {ω φ : ℝ → ℝ} (hω : ContDiff ℝ (⊤ : ℕ∞) 
     · exact f₁.continuous.aestronglyMeasurable
     · exact f₂.continuous.aestronglyMeasurable
     · exact f₃.continuous.aestronglyMeasurable
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hm]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hm]
   norm_num
 
 /-! ### The concrete kernel and the `L¹` bound (thm:main, blueprint lines 2934-2947) -/
@@ -4250,7 +4250,7 @@ theorem tht_main_of_uniform
       (f₃.memLp 3 volume).eLpNorm_ne_top)
   have! hmem : ∀ f₁ f₂ f₃ : SchwartzMap ℝ ℂ, MemLp (TrilinearHT.T ![⇑f₁, ⇑f₂, ⇑f₃]) 1 volume := by
     intro f₁ f₂ f₃
-    rw [memLp_iff, eLpNorm_one_eq_lintegral_enorm
+    rw [memLp_iff, eLpNorm_one_eq_lintegral_eNorm
       (T_measurable f₁ f₂ f₃).aestronglyMeasurable]
     exact (hbound f₁ f₂ f₃).trans_lt (lt_top_iff_ne_top.mpr (hfin f₁ f₂ f₃))
   -- the trilinear operator into `L¹`
@@ -4292,7 +4292,7 @@ theorem tht_main_of_uniform
         ‖f₃.toLp 3 (volume : Measure ℝ)‖ := by
     intro f₁ f₂ f₃
     rw [hT, Lp.norm_toLp, SchwartzMap.norm_toLp, SchwartzMap.norm_toLp, SchwartzMap.norm_toLp,
-      eLpNorm_one_eq_lintegral_enorm
+      eLpNorm_one_eq_lintegral_eNorm
         (T_measurable f₁ f₂ f₃).aestronglyMeasurable]
     refine (ENNReal.toReal_mono (hfin f₁ f₂ f₃) (hbound f₁ f₂ f₃)).trans (le_of_eq ?_)
     rw [ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.toReal_ofReal hC]

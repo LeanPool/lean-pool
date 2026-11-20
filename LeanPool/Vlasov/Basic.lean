@@ -243,7 +243,7 @@ lemma empiricalMeasure_isProbabilityMeasure (N : ℕ) [NeZero N]
     (X V : Fin N → PhysSpace d) :
     IsProbabilityMeasure (empiricalMeasure N X V) := by
   refine ⟨?_⟩
-  simp only [empiricalMeasure, Measure.smul_apply, Measure.finsetSum_apply,
+  simp only [empiricalMeasure, smul_apply, sum_apply,
              measure_univ, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
              smul_eq_mul, nsmul_eq_mul, mul_one]
   exact ENNReal.div_mul_cancel
@@ -444,7 +444,7 @@ lemma convolveFunctionMeasure_empiricalSpatial_eq (N : ℕ)
   rw [integral_smul_measure]
   -- Distribute integration over the finite sum of Dirac measures.
   rw [integral_finsetSum_measure (fun j _ =>
-        integrable_dirac' hsm_z (by simp [enorm_lt_top]))]
+        integrable_dirac' hsm_z (by simp))]
   -- Each Dirac integral collapses to the function value at the centre.
   simp only [integral_dirac' _ _ hsm_z]
   -- Normalize (1/(N:ℝ≥0∞)).toReal = 1/(N:ℝ); the .1 projection collapses on pairs.

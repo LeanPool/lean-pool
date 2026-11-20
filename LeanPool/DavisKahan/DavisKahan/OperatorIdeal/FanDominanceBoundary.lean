@@ -148,7 +148,7 @@ theorem hasFanDominanceSeparable_of_symmetricGaugeRepresentation
 local instance instCompleteSpaceFiniteFanDominance
     {E : Type v} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     [FiniteDimensional ℂ E] : CompleteSpace E :=
-  FiniteDimensional.complete ℂ E
+  FiniteDimensional.completeSpace ℂ E
 
 /-- Every operator between finite-dimensional complex Hilbert spaces belongs to
 this source ideal.
@@ -1671,9 +1671,9 @@ noncomputable def finiteRankOperatorNormIdealFamily :
         exact probeFiniteRank_zero
       have h1 : ‖((0 : ℂ) • A)‖ₑ = 0 := by
         rw [zero_smul]
-        simp [enorm_eq_nnnorm]
+        simp [eNorm_eq_nnNorm]
       have h2 : ‖(0 : ℂ)‖ₑ = 0 := by
-        simp [enorm_eq_nnnorm]
+        simp [eNorm_eq_nnNorm]
       change finiteRankOperatorNormGauge ((0 : ℂ) • A) =
         ‖(0 : ℂ)‖ₑ * finiteRankOperatorNormGauge A
       rw [finiteRankOperatorNormGauge, ite_eq_left hz, h1, h2, zero_mul]
@@ -1691,7 +1691,7 @@ noncomputable def finiteRankOperatorNormIdealFamily :
           ‖c‖ₑ * finiteRankOperatorNormGauge A
         simp only [finiteRankOperatorNormGauge, ite_eq_right hA,
           ite_eq_right hcA]
-        simp [ENNReal.mul_top, enorm_ne_zero.mpr hc]
+        simp [ENNReal.mul_top, eNorm_ne_zero.mpr hc]
   enorm_le_gauge A := by
     classical
     change ‖A‖ₑ ≤ finiteRankOperatorNormGauge A
@@ -1718,7 +1718,7 @@ noncomputable def finiteRankOperatorNormIdealFamily :
           exact probeFiniteRank_zero
         have hz0 : ‖L ∘L A ∘L R‖ₑ = 0 := by
           rw [hzero]
-          simp [enorm_eq_nnnorm]
+          simp [eNorm_eq_nnNorm]
         rw [ite_eq_left hz, hz0]
         exact zero_le
       · by_cases hR : R = 0
@@ -1729,16 +1729,16 @@ noncomputable def finiteRankOperatorNormIdealFamily :
             exact probeFiniteRank_zero
           have hz0 : ‖L ∘L A ∘L R‖ₑ = 0 := by
             rw [hzero]
-            simp [enorm_eq_nnnorm]
+            simp [eNorm_eq_nnNorm]
           rw [ite_eq_left hz, hz0]
           exact zero_le
         · have hLe : ‖L‖ₑ ≠ 0 := by
-            simp only [enorm_eq_nnnorm, ne_eq, ENNReal.coe_eq_zero,
-              nnnorm_eq_zero]
+            simp only [eNorm_eq_nnNorm, ne_eq, ENNReal.coe_eq_zero,
+              nnNorm_eq_zero]
             exact hL
           have hRe : ‖R‖ₑ ≠ 0 := by
-            simp only [enorm_eq_nnnorm, ne_eq, ENNReal.coe_eq_zero,
-              nnnorm_eq_zero]
+            simp only [eNorm_eq_nnNorm, ne_eq, ENNReal.coe_eq_zero,
+              nnNorm_eq_zero]
             exact hR
           rw [ENNReal.mul_top hLe, ENNReal.top_mul hRe]
           exact le_top
@@ -1771,7 +1771,7 @@ noncomputable def finiteRankNormalizedSymmetricOperatorIdealFamily :
     intro E F _ _ _ _ _ _ V hVnorm hVrank
     have hfin : ProbeFiniteRank V := ⟨1, hVrank⟩
     change (finiteRankOperatorNormGauge V).toReal = 1
-    rw [finiteRankOperatorNormGauge, ite_eq_left hfin, toReal_enorm, hVnorm]
+    rw [finiteRankOperatorNormGauge, ite_eq_left hfin, toReal_eNorm, hVnorm]
   gauge_le_of_forall_kyFanApproximationGauge_le_defined := by
     intro E F E' F' _ _ _ _ _ _ _ _ _ _ _ _ A B hA hB hAB
     classical
@@ -1997,11 +1997,11 @@ theorem normalizedSymmetricFamilyLaws_do_not_imply_fanDominance :
 
 /-- The same countermodel is separable as soon as Lean is supplied the missing
 `SeparableSpace` instance for the pinned `lp` model.  Pinned Mathlib does not
-currently provide that instance, so the fact is kept explicit rather than
-smuggled in as an axiom or local instance. -/
+currently provide that instance, so separability remains an explicit premise. -/
 theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominantSeparable
-    [TopologicalSpace.SeparableSpace FanCounterexampleSpace] :
+    (hseparable : TopologicalSpace.SeparableSpace FanCounterexampleSpace) :
     ¬ HasFanDominanceSeparable (finiteRankNormalizedSymmetricOperatorIdealFamily.{0}) := by
+  let : TopologicalSpace.SeparableSpace FanCounterexampleSpace := hseparable
   intro hfan
   have hle := hfan (A := fanCounterexampleA) (B := fanCounterexampleB)
     fanCounterexample_kyFan_domination
@@ -2012,10 +2012,10 @@ theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominantSeparabl
 
 /-- Conditional existential form of the separable countermodel. -/
 theorem normalizedSymmetricFamilyLaws_do_not_imply_fanDominanceSeparable
-    [TopologicalSpace.SeparableSpace FanCounterexampleSpace] :
+    (hseparable : TopologicalSpace.SeparableSpace FanCounterexampleSpace) :
     ∃ N : NormalizedSymmetricOperatorIdealFamily.{0, 0} ℂ, ¬ HasFanDominanceSeparable N :=
   ⟨finiteRankNormalizedSymmetricOperatorIdealFamily.{0},
-    finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominantSeparable⟩
+    finiteRankNormalizedSymmetricOperatorIdealFamily_not_fanDominantSeparable hseparable⟩
 
 /-! ## Where-defined dominance and membership transfer -/
 
@@ -2179,9 +2179,10 @@ theorem finiteRankNormalizedSymmetricOperatorIdealFamily_fanDominantWhereDefined
 /-- The same counterexample pinpoints the failed component: membership transfer,
 not the norm inequality on the finite-rank ideal. -/
 theorem finiteRankNormalizedSymmetricOperatorIdealFamily_not_membershipTransfer
-    [TopologicalSpace.SeparableSpace FanCounterexampleSpace] :
+    (hseparable : TopologicalSpace.SeparableSpace FanCounterexampleSpace) :
     ¬ HasKyFanMembershipTransferSeparable (finiteRankNormalizedSymmetricOperatorIdealFamily.{0})
       := by
+  let : TopologicalSpace.SeparableSpace FanCounterexampleSpace := hseparable
   intro htransfer
   have hB :
       (finiteRankNormalizedSymmetricOperatorIdealFamily.{0}).toSymmetricOperatorIdealFamily.gauge

@@ -168,7 +168,7 @@ theorem splitTraceBaseKummerPolynomial_irreducible
     (sigma : K) (hsigma : sigma ≠ 0) :
     Irreducible (splitTraceBaseKummerPolynomial sigma) := by
   rw [splitTraceBaseKummerPolynomial]
-  apply X_pow_sub_C_irreducible_of_prime Nat.prime_two
+  apply irreducible_X_pow_sub_C_of_prime Nat.prime_two
   intro z
   apply RatFunc.pow_ne_of_not_dvd_intDegree
     (splitTraceRadicand sigma) (splitTraceRadicand_ne_zero sigma hsigma)
@@ -227,7 +227,7 @@ theorem splitTraceEtaKummerPolynomial_irreducible
       (X ^ e - C (AdjoinRoot.root (splitTraceBaseKummerPolynomial sigma))) := by
   let hBaseIrred := splitTraceBaseKummerPolynomial_irreducible sigma hsigma
   let : Fact (Irreducible (splitTraceBaseKummerPolynomial sigma)) := ⟨hBaseIrred⟩
-  apply X_pow_sub_C_irreducible_of_odd heOdd
+  apply irreducible_X_pow_sub_C_of_odd heOdd
   intro q hq _ z
   exact splitTraceBaseRoot_not_primePower sigma hsigma q hq z
 
@@ -454,7 +454,7 @@ theorem splitTraceXiKummerPolynomial_irreducible
   let hEtaIrred := splitTraceEtaKummerPolynomial_irreducible' sigma hsigma e heOdd
   let : Fact (Irreducible (splitTraceEtaKummerPolynomial sigma e)) := ⟨hEtaIrred⟩
   rw [splitTraceXiKummerPolynomial]
-  apply X_pow_sub_C_irreducible_of_odd hdOdd
+  apply irreducible_X_pow_sub_C_of_odd hdOdd
   intro q hq hqd z
   have hqe : ¬ q ∣ e :=
     (hq.coprime_iff_not_dvd.mp (Nat.Coprime.of_dvd_left hqd hde))

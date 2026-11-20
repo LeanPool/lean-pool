@@ -47,7 +47,7 @@ theorem particle_marginal_eq_currying_norm_sq_ae {N q : ℕ} (i : Fin N) (ψ : S
         ‖spinCurryingLinearIsometryEquiv i (ψ (insertParticle i x y))‖ₑ ^ 2 := by
       apply lintegral_congr
       intro y
-      rw [LinearIsometryEquiv.enorm_map]
+      rw [LinearIsometryEquiv.eNorm_map]
       rfl
     _ = ∫⁻ y : OtherConfiguration i, ∑ s : Fin q,
         ‖oneParticleCurrying i ψ x s y‖ₑ ^ 2 := by
@@ -62,7 +62,7 @@ theorem particle_marginal_eq_currying_norm_sq_ae {N q : ℕ} (i : Fin N) (ψ : S
     _ = ∑ s : Fin q, ∫⁻ y : OtherConfiguration i,
         ‖oneParticleCurrying i ψ x s y‖ₑ ^ 2 :=
       lintegral_finsetSum _ (fun s _ =>
-        ((Lp.stronglyMeasurable (oneParticleCurrying i ψ x s)).enorm.pow_const 2))
+        ((Lp.stronglyMeasurable (oneParticleCurrying i ψ x s)).eNorm.pow_const 2))
     _ = ∑ s : Fin q, ‖oneParticleCurrying i ψ x s‖ₑ ^ 2 := by
       apply Finset.sum_congr rfl
       intro s _
@@ -100,7 +100,7 @@ theorem density_eq_densityField_norm_sq_ae {N q : ℕ} (i : Fin N) (ψ : State N
   simpa only [ENNReal.ofReal_mul (Nat.cast_nonneg N), ENNReal.ofReal_natCast,
     ENNReal.ofReal_pow (norm_nonneg ((Real.sqrt N : ℂ) • oneParticleCurrying i ψ x)),
     ENNReal.ofReal_pow (norm_nonneg (oneParticleCurrying i ψ x)),
-    ofReal_norm, enorm_eq_nnnorm]
+    ofReal_norm, eNorm_eq_nnNorm]
     using (congrArg ENNReal.ofReal hnorm).symm
 
 end LiebThirring

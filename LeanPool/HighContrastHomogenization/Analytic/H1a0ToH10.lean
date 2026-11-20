@@ -255,7 +255,7 @@ theorem exists_h10Function_of_memH1a0 [NeZero d]
     funext n
     have hmeas : AEStronglyMeasurable (fun x ↦ v n x - u x) (volume.restrict U) :=
       (hvL2 n).aestronglyMeasurable.sub hpair.1
-    rw [eLpNorm_one_eq_lintegral_enorm hmeas]
+    rw [eLpNorm_one_eq_lintegral_eNorm hmeas]
     apply lintegral_congr
     intro x
     rw [← ofReal_norm]

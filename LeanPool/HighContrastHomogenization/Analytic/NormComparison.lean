@@ -104,7 +104,7 @@ theorem exists_lipschitz_of_hasCompactSupport {ψ : Vec d → Vec d}
   have hone : ((⊤ : ℕ∞) : WithTop ℕ∞) ≠ 0 := by simp
   obtain ⟨C, hC0, hC⟩ := exists_fderiv_bound_of_hasCompactSupport hsm hcs
   have hlip : LipschitzWith C.toNNReal ψ := by
-    refine lipschitzWith_of_nnnorm_fderiv_le (hsm.differentiable hone) fun x => ?_
+    refine lipschitzWith_of_nnNorm_fderiv_le (hsm.differentiable hone) fun x => ?_
     exact (Real.le_toNNReal_iff_coe_le hC0).mpr (by simpa using hC x)
   refine ⟨C, hC0, fun x y => ?_⟩
   have h := hlip.dist_le_mul x y

@@ -95,7 +95,7 @@ lemma sum_sq_le_card_mul_sum_sq_real
   simpa [Finset.card_univ, Fintype.card_fin] using h
 
 omit [MeasurableSpace Ω] [MeasurableSpace E] in
-/-- **Real-to-ENNReal nnnorm-square identity.**  For `r : ℝ`,
+/-- **Real-to-ENNReal nnNorm-square identity.**  For `r : ℝ`,
 
   `(‖r‖₊ : ℝ≥0∞)² = ENNReal.ofReal (r²)`.
 
@@ -105,11 +105,11 @@ The bridge between the real-side bookkeeping (where we manipulate
 lemma ennreal_nnnorm_sq_real (r : ℝ) :
     ((‖r‖₊ : ℝ≥0∞)) ^ 2 = ENNReal.ofReal (r ^ 2) := by
   have h1 : ((‖r‖₊ : ℝ≥0∞)) = ENNReal.ofReal |r| := by
-    rw [show ((‖r‖₊ : ℝ≥0∞)) = ‖r‖ₑ from rfl, Real.enorm_eq_ofReal_abs]
+    rw [show ((‖r‖₊ : ℝ≥0∞)) = ‖r‖ₑ from rfl, Real.eNorm_eq_ofReal_abs]
   rw [h1, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
 
 omit [MeasurableSpace Ω] [MeasurableSpace E] in
-/-- **Normed-space ENNReal nnnorm-square identity.**  For a normed group
+/-- **Normed-space ENNReal nnNorm-square identity.**  For a normed group
 element `r : α`,
 
   `(‖r‖₊ : ℝ≥0∞)² = ENNReal.ofReal (‖r‖²)`.
@@ -194,7 +194,7 @@ lemma lintegral_nnnorm_sum_sq_le_card_mul_sum_lintegral_nnnorm_sq
         congr 1
         rw [MeasureTheory.lintegral_finsetSum]
         intro j _
-        exact ((hM j).enorm).pow_const 2
+        exact ((hM j).eNorm).pow_const 2
     _ = (d : ℝ≥0∞) * ∑ j : Fin d, ∫⁻ ω, (‖M j ω‖₊ : ℝ≥0∞) ^ 2 ∂P := by
         rw [ENNReal.ofReal_natCast]
 
@@ -358,7 +358,7 @@ lemma picardStep_diffusion_diff_lipschitz_sq_componentwise
       have h_sub_at_ω : Measurable
           (fun s : ℝ => coeffs.σ s (X s ω) i j - coeffs.σ s (Y s ω) i j) :=
         h_X_at_ω.sub h_Y_at_ω
-      exact (h_sub_at_ω.enorm).pow_const 2
+      exact (h_sub_at_ω.eNorm).pow_const 2
     · intro j _
       have h_X := h_σ_meas_X i j
       have h_Y := h_σ_meas_Y i j
@@ -370,7 +370,7 @@ lemma picardStep_diffusion_diff_lipschitz_sq_componentwise
           (fun p : Ω × ℝ =>
             (‖coeffs.σ p.2 (X p.2 p.1) i j - coeffs.σ p.2 (Y p.2 p.1) i j‖₊
               : ℝ≥0∞) ^ 2) :=
-        (h_sub.enorm).pow_const 2
+        (h_sub.eNorm).pow_const 2
       exact h_meas_pow.lintegral_prod_right
   -- Step 6: pointwise Lipschitz bound after the swap.
   --   ∑_j (σ(X) i j - σ(Y) i j)² ≤ ∑_{i' j'} (σ(X) i' j' - σ(Y) i' j')²

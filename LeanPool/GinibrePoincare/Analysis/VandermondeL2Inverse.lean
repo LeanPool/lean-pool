@@ -157,20 +157,20 @@ theorem enorm_inverseVandermondeMultiplier_sq {n : ℕ}
     rw [← ENNReal.ofReal_pow (Real.sqrt_nonneg _), Real.sq_sqrt ENNReal.toReal_nonneg]
     exact ENNReal.ofReal_toReal htop
   unfold inverseVandermondeMultiplier groundStateNormalization
-  rw [ENNReal.rpow_two, enorm_mul, mul_pow]
-  simp only [enorm]
+  rw [ENNReal.rpow_two, eNorm_mul, mul_pow]
+  simp only [eNorm_eq_nnNorm]
   rw [show (↑‖(Real.sqrt (ginibreNormalizingMass n).toReal : ℂ)‖₊ : ℝ≥0∞) =
       ENNReal.ofReal (Real.sqrt (ginibreNormalizingMass n).toReal) by
     rw [ENNReal.coe_nnreal_eq]
     congr 1
     simp]
   rw [hsqrt]
-  simp only [nnnorm_inv]
+  simp only [nnNorm_inv]
   unfold vandermondeDensity vandermondeWeight
   rw [show ENNReal.ofReal (Complex.normSq (vandermonde z)) =
       (‖vandermonde z‖₊ : ℝ≥0∞) ^ 2 by
     rw [Complex.normSq_eq_norm_sq]
-    simp [ENNReal.ofReal_pow, enorm]]
+    simp [ENNReal.ofReal_pow, eNorm_eq_nnNorm]]
   rw [ENNReal.coe_inv (by simpa using hV)]
   congr 1
   exact ENNReal.inv_pow.symm
@@ -196,7 +196,7 @@ theorem inverseVandermonde_lintegral {n : ℕ}
       ‖inverseVandermondeFunction n v z‖ₑ ^ (2 : ℝ))
       (complexGaussianMeasure n) :=
     measurable_vandermondeDensity.aemeasurable.mul
-      (hinvmeas.enorm.pow_const 2)
+      (hinvmeas.eNorm.pow_const 2)
   unfold ginibreMeasure rawGinibreMeasure
   rw [lintegral_smul_measure]
   change (ginibreNormalizingMass n)⁻¹ *
@@ -211,7 +211,7 @@ theorem inverseVandermonde_lintegral {n : ℕ}
     apply lintegral_congr_ae
     filter_upwards [houtside] with z hz
     unfold inverseVandermondeFunction
-    rw [enorm_mul, ENNReal.mul_rpow_of_nonneg]
+    rw [eNorm_mul, ENNReal.mul_rpow_of_nonneg]
     · rw [enorm_inverseVandermondeMultiplier_sq h hz]
       have hd0 : vandermondeDensity z ≠ 0 := by
         unfold vandermondeDensity vandermondeWeight
@@ -240,12 +240,12 @@ theorem inverseVandermonde_memLp {n : ℕ}
   have hf := inverseVandermondeFunction_aestronglyMeasurable n v
   rw [memLp_iff]
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) hf,
-    eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm]
   norm_num only [ENNReal.toReal_ofNat]
   rw [inverseVandermonde_lintegral h v]
   have hv := (Lp.memLp v).eLpNorm_lt_top
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable v),
-    eLpNorm'_eq_lintegral_enorm] at hv
+    eLpNorm'_eq_lintegral_eNorm] at hv
   exact hv
 
 theorem inverseVandermonde_norm {n : ℕ}
@@ -257,7 +257,7 @@ theorem inverseVandermonde_norm {n : ℕ}
   rw [eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (inverseVandermonde_memLp h
     v).aestronglyMeasurable,
     eLpNorm_eq_eLpNorm' (by norm_num) (by norm_num) (Lp.aestronglyMeasurable v),
-    eLpNorm'_eq_lintegral_enorm, eLpNorm'_eq_lintegral_enorm]
+    eLpNorm'_eq_lintegral_eNorm, eLpNorm'_eq_lintegral_eNorm]
   norm_num only [ENNReal.toReal_ofNat]
   rw [inverseVandermonde_lintegral h v]
 

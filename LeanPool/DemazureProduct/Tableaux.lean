@@ -119,7 +119,7 @@ lemma B_AspSet_prop (L : Link) :
     · exact hvw' hvwS
   coclosed := by
     intro u v w u_lt_v v_lt_w huv hvw
-    by_contra! huw
+    by_contra huw
     have := L.S.coclosed u v w u_lt_v v_lt_w
     have h : ⟨u, v⟩ ∈ L.S.I ∨ ⟨v, w⟩ ∈ L.S.I := by
       by_contra! h'
@@ -270,7 +270,7 @@ lemma A_AspSet_prop (L : Link) :
 
 /-- The abstract ASP set represented by the first piece of a link. -/
 def aAspSet (L : Link) : AspSet :=
-  ⟨L.τ.revMap '' L.A, A_AspSet_prop L⟩
+  ⟨{p | p ∈ L.τ.revMap '' L.A}, A_AspSet_prop L⟩
 
 /-- The first ASP factor associated to a link. -/
 noncomputable def α (L : Link) : AspPerm :=
@@ -437,7 +437,7 @@ noncomputable def linkEquivDprod :
       · rw [AspSet.invSet_of_toAspPerm]
         subst asps
         change (linkOfDprod h_321a h_dprod).aAspSet.I = invSet α⁻¹.func
-        simpa [Link.aAspSet, hτL] using
+        simpa only [Link.aAspSet, Set.ofPred_mem_eq, hτL] using
           rev_A_eq_inv_inv_of_Link_of_dprod (τ := τ) h_321a h_dprod
       · rw [AspSet.chi_of_toAspPerm]
         simp only [linkOfDprod, AspPerm.chi_dual]
@@ -814,7 +814,7 @@ variable {τ : AspPerm} {n : ℕ}
 
 /-- Convert a tableau to the corresponding family of label sets. -/
 def labelChainOfTableau (T : SetValuedTableau τ n) : LabelChain τ n := by
-  refine ⟨fun i p => ∃ hp : p ∈ invSet τ, i ∈ T.1 ⟨p, hp⟩, ?_⟩
+  refine ⟨fun i => {p | ∃ hp : p ∈ invSet τ, i ∈ T.1 ⟨p, hp⟩}, ?_⟩
   refine ⟨?_, ?_⟩
   · intro p
     constructor

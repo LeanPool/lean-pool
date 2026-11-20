@@ -140,7 +140,7 @@ private def intersection_close_up_proof_ker_pf₁
     apply h_ndvd
     rw [Polynomial.C_dvd_iff_dvd_coeff]
     intro n
-    have h_coeff : Polynomial.coeff
+    have h_coeff : AddMonoidAlgebra.coeff
         (Polynomial.map ((Ideal.Quotient.mk P).comp R.carrier.subtype) f) n = 0 := by
       simp only [h_eq, Polynomial.coeff_zero]
     rw [Polynomial.coeff_map] at h_coeff
@@ -262,7 +262,7 @@ theorem intersection_close_up_ker_pf₂
     apply h_ndvd
     rw [Polynomial.C_dvd_iff_dvd_coeff]
     intro n
-    have h_coeff : Polynomial.coeff
+    have h_coeff : AddMonoidAlgebra.coeff
         (Polynomial.map ((Ideal.Quotient.mk P).comp R.carrier.subtype) f) n = 0 := by
       simp only [h_eq, Polynomial.coeff_zero]
     rw [Polynomial.coeff_map] at h_coeff

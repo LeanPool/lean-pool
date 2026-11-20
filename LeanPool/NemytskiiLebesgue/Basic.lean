@@ -55,7 +55,7 @@ lemma integralLpNorm_mono_ae {Ω E F : Type*} [MeasurableSpace Ω]
   unfold integralLpNorm
   split_ifs
   · rfl
-  · apply eLpNormEssSup_mono_enorm_ae
+  · apply eLpNormEssSup_mono_eNorm_ae
     exact hfg.mono fun _ h => by
       simpa only [← ofReal_norm] using ENNReal.ofReal_le_ofReal h
   · exact eLpNorm'_mono_ae ENNReal.toReal_nonneg hfg

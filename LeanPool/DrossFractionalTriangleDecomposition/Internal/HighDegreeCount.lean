@@ -41,7 +41,6 @@ private theorem highNeighbor_lower (G : SimpleGraph V) [DecidableEq V] [Decidabl
       (G.neighborFinset v ∩ Vb) ∪ (G.neighborFinset v \ Vb) := by
     ext x
     simp
-    tauto
   have hdisj : Disjoint (G.neighborFinset v ∩ Vb) (G.neighborFinset v \ Vb) := by
     rw [Finset.disjoint_left]
     intro x hx hxn

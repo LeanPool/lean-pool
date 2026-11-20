@@ -93,10 +93,10 @@ theorem integral_norm_kernel_le {k f : Vec3 → ℝ} (hk : MemLp k 2 volume)
     (ENNReal.mul_lt_top hk.eLpNorm_lt_top hf.eLpNorm_lt_top).ne
   have hsub := integral_sub_left_eq_self (fun y : Vec3 => ‖k (x - y) * f y‖) volume x
   simp only [sub_sub_cancel] at hsub
-  rw [← hsub, ← Real.norm_of_nonneg (integral_nonneg fun _ => norm_nonneg _), ← toReal_enorm]
+  rw [← hsub, ← Real.norm_of_nonneg (integral_nonneg fun _ => norm_nonneg _), ← toReal_eNorm]
   apply ENNReal.toReal_mono hfin
-  refine (enorm_integral_le_lintegral_enorm _).trans ?_
-  simpa only [enorm_norm, enorm_mul] using
+  refine (eNorm_integral_le_lintegral_eNorm _).trans ?_
+  simpa only [eNorm_norm, eNorm_mul] using
     lintegral_enorm_mul_sub_le hk.aestronglyMeasurable hf.aestronglyMeasurable x
 
 /-- The Gaussian convolution with the kernel evaluated at `x - y`. -/

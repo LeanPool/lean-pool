@@ -204,7 +204,7 @@ theorem rankOne_psi_transpose_to_lin {n : Type _} [DecidableEq n] [Fintype n]
   have : (1 / 2 : ℝ) + -1 = -(1 / 2) := by norm_num
   rw [AlgEquiv.apply_symm_apply, Module.Dual.IsFaithfulPosMap.psi, LinearEquiv.coe_mk]
   simp only [QuantumSet.Psi_apply, QuantumSet.PsiToFun_apply, TensorProduct.map_tmul,
-    TensorProduct.toKronecker_apply, Module.End.one_apply, AlgEquiv.toLinearMap_apply,
+    TensorProduct.toKronecker_apply, one_apply_eq_self, AlgEquiv.toLinearMap_apply,
     LinearEquiv.coe_coe, transposeAlgEquiv_symm_op_apply]
   rw [starAlgebra.modAut_zero, this]
   simp only [AlgEquiv.one_apply]
@@ -250,19 +250,19 @@ theorem rankOne_toMatrix_transpose_psi_symm [hφ : φ.IsFaithfulPosMap]
     TensorProduct.map_tmul, QuantumSet.Psi_symm_apply, QuantumSet.PsiInvFun_apply,
     vecMulVec_apply, neg_zero, starAlgebra.modAut_zero, AlgEquiv.one_apply]
   simp_rw [AlgEquiv.toLinearMap_apply, transposeAlgEquiv_apply, MulOpposite.unop_op,
-    Module.End.one_apply, ← rankOne_lm_smul_smul, Pi.star_apply, star_star,
+    one_apply_eq_self, ← rankOne_lm_smul_smul, Pi.star_apply, star_star,
     matrix.stdBasisMatrix.transpose', star_eq_conjTranspose, Matrix.single_conjTranspose,
     star_one]
   ext a i j
   simp only [LinearMap.sum_apply, ContinuousLinearMap.coe_coe, rankOne_apply, inner_smul_left,
-    QuantumSet.modAut_isSymmetric, Module.End.mul_apply, LinearMap.matrix.mulRight_adjoint,
+    QuantumSet.modAut_isSymmetric, mul_apply_eq_comp, LinearMap.matrix.mulRight_adjoint,
     LinearMap.mulRight_apply, LinearMap.mulLeft_apply, OrthonormalBasis.repr_apply_apply,
     inner_single_left, Module.Dual.IsFaithfulPosMap.inner_coord hφ]
   simp_rw [starRingEnd_apply, smul_smul, mul_assoc,
     ← mul_comm _ ((modAut (-(1 / 2)) (_ : ℍ) * φ.matrix) _ _)]
   rw [Finset.sum_sum_comm_sum]
-  simp only [← Finset.sum_smul, ← Finset.mul_sum, ← mul_apply]
-  simp_rw [mul_comm (star _), ← conjTranspose_apply, ← mul_apply, ← Matrix.smul_single']
+  simp only [← Finset.sum_smul, ← Finset.mul_sum, ← Matrix.mul_apply]
+  simp_rw [mul_comm (star _), ← conjTranspose_apply, ← Matrix.mul_apply, ← Matrix.smul_single']
   rw [show
       (∑ x_1, ∑ x_2, Matrix.single x_1 x_2
           ((x * hφ.matrixIsPosDef.rpow (1 / 2) *
@@ -326,7 +326,7 @@ theorem orthogonal_projection_iff_lm {𝕜 E : Type _} [RCLike 𝕜] [NormedAddC
     [InnerProductSpace 𝕜 E] [FiniteDimensional 𝕜 E] {p : E →ₗ[𝕜] E} :
     (∃ U : Submodule 𝕜 E, (orthogonalProjection' U : E →ₗ[𝕜] E) = p) ↔
       IsSelfAdjoint p ∧ IsIdempotentElem p := by
-  let : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  let : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   have := @orthogonal_projection_iff 𝕜 E _ _ _ _ _ (toContinuousLinearMap p)
   simp_rw [is_idempotent_elem_to_clm, is_self_adjoint_to_clm] at this ⊢
   rw [← this]
@@ -591,7 +591,7 @@ theorem RealQam.edges_eq [hφ : φ.IsFaithfulPosMap] {A : l(ℍ)} (hA : RealQam 
   symm
   nth_rw 1 [Qam.IdempotentAndReal.eq hA1 hA2]
   let U := Qam.submoduleOfIdempotentAndReal hA1 hA2
-  simp_rw [LinearMap.sum_apply, LinearMap.matrix.mulRight_adjoint, Module.End.mul_apply,
+  simp_rw [LinearMap.sum_apply, LinearMap.matrix.mulRight_adjoint, mul_apply_eq_comp,
     LinearMap.mulRight_apply, LinearMap.mulLeft_apply, conjTranspose_mul,
     hφ.matrixIsPosDef.1.eq, ← Matrix.mul_assoc, sig_apply_matrix_hMul_posDef']
   have :
@@ -667,7 +667,7 @@ theorem Qam.trivialGraph_edges [hφ : φ.IsFaithfulPosMap] [Nonempty p] :
   let : QuantumSetDeltaForm ℍ := Matrix.quantumSetDeltaForm (φ := φ)
   have := RealQam.edges_eq (@Qam.trivialGraphRealQam p _ _ φ hφ _)
   nth_rw 2 [Qam.trivialGraph_eq] at this
-  simp_rw [LinearMap.smul_apply, Module.End.one_apply, trace_smul, smul_eq_mul] at this
+  simp_rw [LinearMap.smul_apply, one_apply_eq_self, trace_smul, smul_eq_mul] at this
   rw [show QuantumSetDeltaForm.delta ℍ = φ.matrix⁻¹.trace by rfl] at this
   have hδ : φ.matrix⁻¹.trace ≠ 0 := ne_of_gt (Qam.Nontracial.delta_pos (φ := φ))
   simp_all
@@ -813,7 +813,7 @@ theorem RealQam.edges_eq_one_iff [hφ : φ.IsFaithfulPosMap] {A : l(ℍ)} (hA : 
       rfl
     have := RealQam.edges_eq hA
     rw [← @Nat.cast_inj ℂ, this]
-    simp only [LinearMap.smul_apply, trace_smul, Module.End.mul_apply,
+    simp only [LinearMap.smul_apply, trace_smul, mul_apply_eq_comp,
       LinearMap.matrix.mulRight_adjoint, LinearMap.mulLeft_apply, LinearMap.mulRight_apply,
       conjTranspose_mul, hφ.matrixIsPosDef.1.eq, sig_apply_matrix_hMul_posDef',
       inv_mul_cancel_left_of_invertible, ugh, smul_eq_mul, one_div] at this ⊢

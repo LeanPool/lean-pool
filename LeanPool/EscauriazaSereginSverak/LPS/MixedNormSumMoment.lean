@@ -59,14 +59,14 @@ theorem lps_mixed_sum_three_moment
       rw [← serrin_slab_measure_eq T]
       exact hf i
     have hpow : AEMeasurable (fun z : Vec3 × ℝ => ‖f i z‖ₑ ^ q) ν :=
-      hfiν.enorm.pow_const q
+      hfiν.eNorm.pow_const q
     have hlin : AEMeasurable (fun t : ℝ =>
       ∫⁻ x : Vec3, ‖f i (x,t)‖ₑ ^ q ∂volume) μt := hpow.lintegral_prod_left'
     have hformula : N i =ᵐ[μt] fun t =>
         (∫⁻ x : Vec3, ‖f i (x,t)‖ₑ ^ q ∂volume) ^ (1 / q) := by
       filter_upwards [hSlice i] with t ht
       change eLpNorm (fun x : Vec3 => f i (x,t)) (ENNReal.ofReal q) volume = _
-      have hformula := eLpNorm_eq_lintegral_rpow_enorm_toReal
+      have hformula := eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (ENNReal.ofReal_pos.mpr hq0).ne' hqtop ht.aestronglyMeasurable
       rw [hformula, ENNReal.toReal_ofReal hq0.le]
     exact (hlin.pow_const (1 / q)).congr hformula.symm

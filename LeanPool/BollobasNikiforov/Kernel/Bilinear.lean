@@ -131,7 +131,7 @@ lemma leading2_mul_schur_inv_𝒜 (hq : ∀ i, 0 < q i) :
       𝒜 t q i.castSucc 0 * (𝒜 t q)⁻¹ 0 k + 𝒜 t q i.castSucc 1 * (𝒜 t q)⁻¹ 1 k =
         (if i.castSucc = k then (1 : ℝ) else 0) - 𝒜 t q i.castSucc 2 * (𝒜 t q)⁻¹ 2 k := by
     have hentry := congrArg (fun M : Matrix (Fin 3) (Fin 3) ℝ ↦ M i.castSucc k) hAA
-    simp only [mul_apply, one_apply, Fin.sum_univ_three] at hentry
+    simp only [Matrix.mul_apply, Matrix.one_apply, Fin.sum_univ_three] at hentry
     linarith
   have hR := hrow j.castSucc
   have h2 := hrow 2
@@ -160,7 +160,7 @@ lemma leading2_mul_schur_inv_𝒜 (hq : ∀ i, 0 < q i) :
     rw [hexpand, hR, h2]
     field_simp [h22]
     ring
-  simp only [mul_apply, one_apply, Fin.sum_univ_two, submatrix_apply, of_apply,
+  simp only [Matrix.mul_apply, Matrix.one_apply, Fin.sum_univ_two, submatrix_apply, of_apply,
     Fin.castSucc_zero]
   have c1 : Fin.castSucc (1 : Fin 2) = (1 : Fin 3) := rfl
   simp only [c1]

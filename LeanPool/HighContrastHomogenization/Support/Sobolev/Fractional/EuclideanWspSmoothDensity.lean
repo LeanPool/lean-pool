@@ -300,7 +300,7 @@ private theorem tendsto_eLpNorm_diagonalConvexApproxAverage_sub_zero_of_boundedC
     exact ENNReal.continuous_rpow_const.measurable.comp_aemeasurable
       ((aestronglyMeasurable_diagonalConvexApproxAverage_of_boundedContinuous
         Q G x0 r (unitConvexApproxScale n)).sub
-          G.continuous.aestronglyMeasurable).enorm
+          G.continuous.aestronglyMeasurable).eNorm
   have hbound : ∀ n : ℕ, (fun xy => ‖diagonalConvexApproxAverage
         (unitConvexApproxKernel (d := d)) G x0 r
           (unitConvexApproxScale n) xy - G xy‖ₑ ^ q) ≤ᵐ[μ]
@@ -347,16 +347,16 @@ private theorem tendsto_eLpNorm_diagonalConvexApproxAverage_sub_zero_of_boundedC
       have hconst : Filter.Tendsto (fun _n : ℕ => G xy)
           Filter.atTop (nhds (G xy)) := tendsto_const_nhds
       simpa using hpoint.sub hconst
-    have henorm := (continuous_enorm.tendsto (0 : E)).comp hsub
+    have henorm := (continuous_eNorm.tendsto (0 : E)).comp hsub
     have henorm' : Filter.Tendsto
         (fun n : ℕ => ‖diagonalConvexApproxAverage
           (unitConvexApproxKernel (d := d)) G x0 r
             (unitConvexApproxScale n) xy - G xy‖ₑ)
         Filter.atTop (nhds 0) := by
-      simpa only [Function.comp_apply, enorm_zero] using! henorm
+      simpa only [Function.comp_apply, eNorm_zero] using! henorm
     have hrpow := ((ENNReal.continuous_rpow_const (y := q)).tendsto
       (0 : ℝ≥0∞)).comp henorm'
-    simpa only [Function.comp_apply, enorm_zero, ENNReal.zero_rpow_of_pos hqpos] using! hrpow
+    simpa only [Function.comp_apply, eNorm_zero, ENNReal.zero_rpow_of_pos hqpos] using! hrpow
   have hpower : Filter.Tendsto
       (fun n : ℕ => ∫⁻ xy, ‖diagonalConvexApproxAverage
           (unitConvexApproxKernel (d := d)) G x0 r
@@ -378,7 +378,7 @@ private theorem tendsto_eLpNorm_diagonalConvexApproxAverage_sub_zero_of_boundedC
             (unitConvexApproxScale n) xy - G xy) μ :=
         (aestronglyMeasurable_diagonalConvexApproxAverage_of_boundedContinuous
           Q G x0 r (unitConvexApproxScale n)).sub G.continuous.aestronglyMeasurable
-      rw [eLpNorm_eq_lintegral_rpow_enorm_toReal
+      rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (ne_of_gt (lt_trans zero_lt_one p.one_lt)) p.lt_top.ne hsub_meas]]
   have hrpow : Filter.Tendsto
       (fun n : ℕ => (∫⁻ xy, ‖diagonalConvexApproxAverage
@@ -846,14 +846,14 @@ private theorem tendsto_cubeEuclideanWspESeminorm_convexApproxSmoothField_sub_ze
     simpa only [c] using tendsto_fractional_diagonal_scale_one (d := d) s p
   have hcnorm : Filter.Tendsto (fun n : ℕ => ‖c n‖ₑ)
       Filter.atTop (nhds 1) := by
-    simpa using! (continuous_enorm.tendsto (1 : ℝ)).comp hc
+    simpa using! (continuous_eNorm.tendsto (1 : ℝ)).comp hc
   have hdiffnorm : Filter.Tendsto (fun n : ℕ => ‖c n - 1‖ₑ)
       Filter.atTop (nhds 0) := by
     have hreal : Filter.Tendsto (fun n : ℕ => c n - 1)
         Filter.atTop (nhds 0) := by
       simpa using hc.sub (tendsto_const_nhds : Filter.Tendsto
         (fun _ : ℕ => (1 : ℝ)) Filter.atTop (nhds 1))
-    simpa using! (continuous_enorm.tendsto (0 : ℝ)).comp hreal
+    simpa using! (continuous_eNorm.tendsto (0 : ℝ)).comp hreal
   have hfirst : Filter.Tendsto (fun n : ℕ => eLpNorm (fun xy => c n •
       (diagonalConvexApproxAverage (unitConvexApproxKernel (d := d)) K x0 r
         (unitConvexApproxScale n) xy - K xy)) p.exponent μ)
@@ -1025,7 +1025,7 @@ private theorem tendsto_normalizedEuclideanLpENorm_convexApproxSmoothField_sub_z
       (fun n : ℕ => ∑ i : Fin d, eLpNorm (fun x => V n x i) p.exponent μ)
       Filter.atTop (nhds 0) := by
     simpa using tendsto_finsetSum Finset.univ (fun i _ => hcoord i)
-  have hdimtop : ‖(d : ℝ)‖ₑ ≠ ⊤ := enorm_ne_top
+  have hdimtop : ‖(d : ℝ)‖ₑ ≠ ⊤ := eNorm_ne_top
   have hbound : Filter.Tendsto (fun n : ℕ => ‖(d : ℝ)‖ₑ *
       ∑ i : Fin d, eLpNorm (fun x => V n x i) p.exponent μ)
       Filter.atTop (nhds 0) := by
@@ -1213,7 +1213,7 @@ private theorem tendsto_eLpNorm_two_convexApproxSmoothField_sub_zero
         eLpNorm (fun x => V n x i) 2 (normalizedCubeMeasure Q))
       Filter.atTop (nhds 0) := by
     simpa using tendsto_finsetSum Finset.univ (fun i _ => hcoord i)
-  have hdimtop : ‖(d : ℝ)‖ₑ ≠ ⊤ := enorm_ne_top
+  have hdimtop : ‖(d : ℝ)‖ₑ ≠ ⊤ := eNorm_ne_top
   have hbound : Filter.Tendsto (fun n : ℕ => ‖(d : ℝ)‖ₑ *
       ∑ i : Fin d, eLpNorm (fun x => V n x i) 2 (normalizedCubeMeasure Q))
       Filter.atTop (nhds 0) := by

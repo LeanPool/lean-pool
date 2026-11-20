@@ -48,7 +48,7 @@ private theorem isProbabilityMeasure_normalizedSetMeasure {E : Set (Vec d)}
     (hEpos : 0 < volume E) (hEtop : volume E ≠ ⊤) :
     IsProbabilityMeasure (normalizedSetMeasure E) := by
   refine ⟨?_⟩
-  rw [normalizedSetMeasure, Measure.smul_apply, Measure.restrict_apply_univ,
+  rw [normalizedSetMeasure, smul_apply, Measure.restrict_apply_univ,
     smul_eq_mul]
   exact ENNReal.inv_mul_cancel hEpos.ne' hEtop
 
@@ -74,7 +74,7 @@ private theorem eLpNorm_two_eq_rpow
     {E : Type*} [NormedAddCommGroup E] (f : A → E) (mu : Measure A)
     (hf : AEStronglyMeasurable f mu) :
     eLpNorm f 2 mu = (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂mu) ^ (1 / (2 : ℝ)) := by
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hf]
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hf]
   norm_num
 
 private theorem enorm_integral_rpow_two_le
@@ -84,13 +84,13 @@ private theorem enorm_integral_rpow_two_le
     {f : A → E} (hf : Integrable f mu) :
     ‖∫ x, f x ∂mu‖ₑ ^ (2 : ℝ) ≤ ∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂mu := by
   have hL1 : ‖∫ x, f x ∂mu‖ₑ ≤ ∫⁻ x, ‖f x‖ₑ ∂mu :=
-    enorm_integral_le_lintegral_enorm _
+    eNorm_integral_le_lintegral_eNorm _
   have hL2 : (∫⁻ x, ‖f x‖ₑ ∂mu) ≤
       (∫⁻ x, ‖f x‖ₑ ^ (2 : ℝ) ∂mu) ^ (1 / (2 : ℝ)) := by
     have hcmp := eLpNorm_le_eLpNorm_of_exponent_le
       (μ := mu) (p := 1) (q := 2) (f := f)
       (by norm_num)
-    rwa [eLpNorm_one_eq_lintegral_enorm hf.aestronglyMeasurable,
+    rwa [eLpNorm_one_eq_lintegral_eNorm hf.aestronglyMeasurable,
       eLpNorm_two_eq_rpow _ _ hf.aestronglyMeasurable] at hcmp
   have hpow := ENNReal.rpow_le_rpow (hL1.trans hL2) (by norm_num : (0 : ℝ) ≤ 2)
   refine hpow.trans (le_of_eq ?_)

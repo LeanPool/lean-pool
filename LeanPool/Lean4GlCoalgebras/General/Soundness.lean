@@ -186,18 +186,7 @@ lemma chain_model_prop {𝕏 : Proof}
           · rw [chain]
     rcases chain prop w_prop n with ⟨x_ih, w_ih, w_ih_prop⟩
     simp
-    split <;> try grind [RuleApp.isBox]
-    rename_i Δ φ in_Δ r_def
-    intro _
-    simp only
-    split
-    · exact (Classical.not_imp.1 (Classical.choose_spec
-        (not_forall.1 (fun z ↦
-          (not_exists.1 w_ih_prop) (□ φ) ⟨(r_def ▸ in_Δ), z⟩)))).1
-    all_goals
-      exfalso
-      have step := 𝕏.step x_ih
-      simp_all
+    split <;> grind [RuleApp.isBox]
 
 /-- The right projection of `chain` eventually progresses. -/
 lemma has_children_of_chain_model {𝕏 : Proof}

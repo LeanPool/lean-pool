@@ -906,7 +906,8 @@ private theorem restore_mixed :
   have bconnect : ∀ x ∈ (TileCellComplement B O).cells,
       reach ((R.cells : Set LatticeCell)ᶜ) x outbase := by
     intro x hx
-    exact mono_reach _ _ hBmR (connected_reach _ cb x hx outbase houtbase)
+    exact mono_reach ((TileCellComplement B O).cells : Set LatticeCell)
+      ((R.cells : Set LatticeCell)ᶜ) hBmR (connected_reach _ cb x hx outbase houtbase)
   have outside : FourNeighborConnected ((R.cells : Set LatticeCell)ᶜ) := by
     refine ⟨⟨outbase,hBmR outbase houtbase⟩,?_⟩
     intro x hx y hy
@@ -2030,7 +2031,7 @@ private theorem all_centroids :
   refine ⟨?_,?_,?_,?_⟩
   all_goals intro i; fin_cases i
   all_goals dsimp only [plusRepresentative,minusRepresentative,firstPeriod,firstParent,firstShift]
-  all_goals try simp only [(TileTranslationFormulas _ _).2.2.2.2.1]
+  all_goals simp only [(TileTranslationFormulas _ _).2.2.2.2.1]
   all_goals apply Prod.ext <;>
     norm_num
         [Prod.ext_iff,GaussianRealPoint,Fin.succ,Fin.add,Fin.add_def,Fin.ofNat,Matrix.cons_val]

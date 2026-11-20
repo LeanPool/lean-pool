@@ -154,12 +154,11 @@ def twoRecombine : Fin 3 → ANF 4 :=
 
 theorem two_formula : Mul 2 = twoRecombine := by
   funext s
-  fin_cases s
-  all_goals
+  fin_cases s <;>
     simp [Mul, mulCoefficient, Fin.sum_univ_succ, twoRecombine, two, twoLeft, twoRight,
       Circuit.ofAffineProducts]
-    try ring_nf
-  all_goals simp
+  ring_nf
+  simp
 
 theorem two_computes : two.Computes (Mul 2) := by
   rw [two_formula]

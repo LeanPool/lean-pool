@@ -229,7 +229,7 @@ theorem SolMain.slash {n : ℕ} {f : ℍ → ℂ} {F : ℍ → ↥(BinaryForm �
   have hinv : binaryFormRepSL ℂ n δ⁻¹ (linePow n ((δ • τ : ℍ) : ℂ))
       = (jFactor δ τ ^ n)⁻¹ • linePow n (τ : ℂ) := by
     have h := congrArg (binaryFormRepSL ℂ n δ⁻¹) (binaryFormRepSL_linePow n δ τ)
-    rw [← Module.End.mul_apply, ← map_mul, inv_mul_cancel, map_one, Module.End.one_apply,
+    rw [← mul_apply_eq_comp, ← map_mul, inv_mul_cancel, map_one, one_apply_eq_self,
       map_smul] at h
     rw [h, smul_smul, inv_mul_cancel₀ (pow_ne_zero _ (jFactor_ne_zero δ τ)), one_smul]
   have hslash : (f ∣[((n : ℤ) + 2)] δ) τ

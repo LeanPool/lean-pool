@@ -17,6 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.Algebra.CharP.Algebra
+
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_Differentials
 
 import LeanPool.FLTEichlerShimura.Theorems.Thm_AlgebraicCurve_Place_exists_regular_derivative
@@ -76,6 +80,8 @@ theorem AlgebraicCurve.Place.ord_diffCoeff_D_nonneg {K F : Type*} [Field K] [Fie
     v.transcendental_of_ord_ne_zero (by rw [ht]; exact one_ne_zero)
   have : FiniteDimensional (IntermediateField.adjoin K ({t} : Set F)) F :=
     AlgebraicCurve.finiteDimensional_adjoin_of_transcendental x htr
+  have : CharZero (IntermediateField.adjoin K ({t} : Set F)) :=
+    charZero_of_injective_algebraMap (algebraMap K _).injective
   obtain ⟨g, hg, hDf⟩ := v.exists_regular_derivative ht hf
   have hcoeff : AlgebraicCurve.Place.diffCoeff t (KaehlerDifferential.D K F f) = g :=
     smul_left_injective F (KaehlerDifferential.D_ne_zero_of_transcendental K t htr)

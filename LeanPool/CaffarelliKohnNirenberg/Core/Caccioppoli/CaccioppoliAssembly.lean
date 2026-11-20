@@ -80,7 +80,7 @@ private theorem caccioppoli_centered_time_holder
               (3 / 4 : ℝ) *
             (∫⁻ s in T, (1 : ℝ≥0∞) ^ (4 : ℝ)) ^ (1 / 4 : ℝ) := by
       convert hholder using 1
-      all_goals norm_num
+      norm_num
     have hDpow_eq :
         (∫⁻ s in T, (D s ^ (3 / 4 : ℝ)) ^ (4 / 3 : ℝ)) =
           ∫⁻ s in T, D s := by

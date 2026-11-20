@@ -308,7 +308,7 @@ private theorem iterated_inv {bit : Bool} {rest : List Bool}
     rw [iterated_high bit store _ (by simp [inputBase]; omega)]
     have hinput := hinv.input_eq (offset + 1)
     convert! hinput using 1
-    all_goals simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
+    simp [Nat.add_assoc, Nat.add_comm, Nat.add_left_comm]
 
 private def loopAdvance (state : ℕ × ℕ) (bit : Bool) : ℕ × ℕ :=
   (state.1 + 1, state.2 + bitValue bit)
@@ -452,7 +452,7 @@ private theorem finalize_measured {inputLength : ℕ} {store : Store}
   have hrun := hzero.seq hadd
   rw [finalize, Cmd.seqList]
   convert! hrun using 1
-  all_goals ring
+  ring
 
 theorem program_measured_internal (bits : List Bool) :
     ∃ final cost space,

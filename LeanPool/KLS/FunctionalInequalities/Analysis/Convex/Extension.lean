@@ -317,7 +317,7 @@ theorem exists_negative_sublevel_patch {E : Type*} [NormedAddCommGroup E]
   let K : Set E := {x ∈ closure Ω | u x ≤ r}
   have hKclosed : IsClosed K := hC.preimage_isClosed_of_isClosed isClosed_closure isClosed_Iic
   have hKcomp : IsCompact K :=
-    hb.isCompact_closure.of_isClosed_subset hKclosed inter_subset_left
+    hb.isCompact_closure.of_isClosed_subset hKclosed (fun _ hx ↦ hx.1)
   have hKΩ : K ⊆ Ω := by
     intro x hx
     by_contra hn

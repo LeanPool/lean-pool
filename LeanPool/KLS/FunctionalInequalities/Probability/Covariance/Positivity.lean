@@ -48,7 +48,7 @@ theorem Covariance.inner_operator_self_pos_of_affineSupport_eq_top (μ : Probabi
     rw [AffineSubspace.mem_mk', Submodule.mem_orthogonal_singleton_iff_inner_right, vsub_eq_sub,
       inner_sub_right, inner_smul_right, real_inner_self_eq_norm_sq, hx',
       div_mul_cancel₀ c (pow_ne_zero 2 hv'), sub_self]
-  have hle := Probability.affineSupport_le_of_ae_mem μ H H.closed_of_finiteDimensional hmem
+  have hle := Probability.affineSupport_le_of_ae_mem μ H H.isClosed_of_finiteDimensional hmem
   rw [hfull] at hle
   have hH : H = ⊤ := top_le_iff.mp hle
   have hdir : (Submodule.span ℝ {v})ᗮ = ⊤ := by

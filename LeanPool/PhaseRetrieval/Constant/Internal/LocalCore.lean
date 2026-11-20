@@ -1339,7 +1339,7 @@ private lemma s2_le_aux {N B : ℂ → ℝ} {x2 : ℝ}
   have : IsFiniteMeasure gaussianMeasure := gaussianMeasure_isFinite
   have hrhs_int : Integrable (fun z => 4 + 4 * N z + N z ^ 2) gaussianMeasure := by
     have h := (MeasureTheory.integrable_const (4 : ℝ)).add ((hN_int.const_mul 4).add hN2_int)
-    simp_all only [ne_eq, enorm_ne_top, not_false_eq_true, integrable_const_enorm,
+    simp_all only [ne_eq, eNorm_ne_top, not_false_eq_true, integrable_const_eNorm,
       integrable_add_iff_integrable_right, integrable_add_iff_integrable_left,
       integrable_add_iff_integrable_left']
   have hmono : ∫ z, B z ^ 2 ∂gaussianMeasure ≤

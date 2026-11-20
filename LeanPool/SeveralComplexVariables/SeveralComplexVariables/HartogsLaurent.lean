@@ -135,6 +135,7 @@ private theorem exists_uniform_laurent_neighborhood_zero (hH : IsHartogs U) (hU 
       ⟨⟨mem_ball_self (lt_min hδ hε), mem_ball_self (half_pos hR)⟩, hz⟩)
   refine ⟨N, hN, ?_⟩
   apply hasSumUniformlyOn_of_geometric_int_bounds
+    (N := N)
     (M₁ := M) (q₁ := (R / 2) / R) (M₂ := 0) (q₂ := 0)
     (by positivity) ((div_lt_one hR).mpr (half_lt_self hR)) le_rfl zero_lt_one
     (fun p hp => hsum p hp.2)
@@ -177,6 +178,7 @@ private theorem exists_uniform_laurent_neighborhood_ne_zero (hH : IsHartogs U) (
     (((isOpen_ball.prod hV).inter hU).mem_nhds
       ⟨⟨mem_ball_self (lt_min hδ₁ hδ₂), htp, hpT⟩, hp⟩), ?_⟩
   apply hasSumUniformlyOn_of_geometric_int_bounds
+    (N := N)
     (M₁ := M₁) (q₁ := T / R) (M₂ := M₂) (q₂ := r / t)
     (by dsimp [T]; positivity) ((div_lt_one hR).mpr hTR)
     (by positivity) ((div_lt_one ht).mpr hrt) (fun q hq => hsum q hq.2)

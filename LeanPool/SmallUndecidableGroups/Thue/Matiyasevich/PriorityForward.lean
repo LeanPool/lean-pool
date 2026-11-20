@@ -209,8 +209,9 @@ private theorem simulate_row (F E : Fin r → List (Fin n))
       simp
     rw [hrow] at h
     convert h using 1 <;>
-      (simp [leftBlock, encode, liftBinary_append, liftBit, Priority.a,
-        liftBinary_nil, List.append_assoc]; try rfl)
+      simp [leftBlock, encode, liftBinary_append, liftBit, Priority.a,
+        liftBinary_nil, List.append_assoc]
+    rfl
   have hright' : FirstEq
       (List.replicate (u n r) Priority.e ++ liftBinary rightBlock)
       (encode (u n r) (paddedRightRows F E j ++ right)) := by
@@ -223,8 +224,9 @@ private theorem simulate_row (F E : Fin r → List (Fin n))
       simp
     rw [hrow] at h
     convert h using 1 <;>
-      (simp [rightBlock, encode, liftBinary_append, liftBit, Priority.a,
-        liftBinary_nil, List.append_assoc]; try rfl)
+      simp [rightBlock, encode, liftBinary_append, liftBit, Priority.a,
+        liftBinary_nil, List.append_assoc]
+    rfl
   have hlong : ThueEq (stage₂System (leftLong F E) (rightLong F E))
       (List.replicate (u n r) Priority.e ++ liftBinary leftBlock)
       (List.replicate (u n r) Priority.e ++ liftBinary rightBlock) := by

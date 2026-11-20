@@ -188,8 +188,9 @@ theorem signedPressurePath_value_base {T : ℝ} (hT : 0 < T) (A : Data period T)
     (q : ℕ) (hq : 6 ≤ q) (t : Icc (0 : ℝ) T) :
     value period (signedPressurePath period hT A B q hq t) =
       value period (signedPressurePath period hT A B 6 le_rfl t) := by
-  exact Nat.le_induction (P := fun n hn => value period (signedPressurePath period hT A B n hn t) =
-      value period (signedPressurePath period hT A B 6 le_rfl t)) rfl
+  exact Nat.le_induction (motive := fun n hn =>
+      value period (signedPressurePath period hT A B n hn t) =
+        value period (signedPressurePath period hT A B 6 le_rfl t)) rfl
     (fun n hn ih => (signedPressurePath_value_succ period hT A B n hn t).trans ih) q hq
 
 /-- The common actual signed pressure is a continuous L² path. -/
@@ -248,7 +249,7 @@ theorem solution_value_base {T : ℝ} (hT : 0 < T) (A : Data period T) (B : Budg
     (q : ℕ) (hq : 6 ≤ q) (t : Icc (0 : ℝ) T) :
     value period (solution period hT A B q hq t) = value period (solution period hT A B 6 le_rfl t)
         := by
-  exact Nat.le_induction (P := fun n hn => value period (solution period hT A B n hn t) =
+  exact Nat.le_induction (motive := fun n hn => value period (solution period hT A B n hn t) =
       value period (solution period hT A B 6 le_rfl t)) rfl
     (fun n hn ih => (solution_value_succ period hT A B n hn t).trans ih) q hq
 

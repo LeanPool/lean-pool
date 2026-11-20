@@ -80,7 +80,7 @@ private theorem enorm_average_mul_le {A E : Set (Vec d)} (u : Vec d → ℝ)
   have hconst : eLpNorm (fun _ : Vec d => -a) 2 (volume.restrict E) =
       ‖a‖ₑ * volume E ^ (1 / 2 : ℝ) := by
     rw [eLpNorm_const (-a) (by norm_num) hrestr, Measure.restrict_apply_univ,
-      enorm_neg]
+      eNorm_neg]
     norm_num
   have hmono : eLpNorm (fun x => u x - a) 2 (volume.restrict E) ≤
       eLpNorm (fun x => u x - a) 2 (volume.restrict A) :=

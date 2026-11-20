@@ -988,7 +988,7 @@ private theorem normalizedTargetBodyMeasure_open_pos_of_inter_interior
         K.carrier)⁻¹ :=
     ENNReal.inv_pos.mpr K.compact.measure_ne_top
   unfold normalizedTargetBodyMeasure
-  rw [Measure.smul_apply,
+  rw [smul_apply,
     Measure.restrict_apply hU.measurableSet]
   exact ENNReal.mul_pos hscale.ne' hbody.ne'
 
@@ -1253,7 +1253,7 @@ private theorem affineSpan_finiteEnergyFiniteTargetSet_eq_top
       F htransport]
     exact closure_minimal
       (subset_affineSpan ℝ (finiteEnergyFiniteTargetSet F))
-      (affineSpan ℝ (finiteEnergyFiniteTargetSet F)).closed_of_finiteDimensional
+      (affineSpan ℝ (finiteEnergyFiniteTargetSet F)).isClosed_of_finiteDimensional
   apply top_unique
   rw [← isOpen_interior.affineSpan_eq_top K.fullDimensional]
   exact affineSpan_le.mpr (interior_subset.trans hbody)

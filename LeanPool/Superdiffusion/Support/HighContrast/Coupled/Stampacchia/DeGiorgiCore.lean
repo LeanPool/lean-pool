@@ -403,8 +403,10 @@ private theorem deGiorgiCore_comparisonBounds1 : deGiorgiCore_comparisonBounds1_
       (hfin_2star fk) hεnn hSsub1
     have hcheb2 := real_chebyshev_level hp_ne_zero hp_ne_top
       (hfin_2star gk) hεnn hSsub2
-    rw [hμvol _ (fun x hx => hx.1), ← hq_def] at hcheb1
-    rw [hμvol _ (fun x hx => hx.1), ← hq_def] at hcheb2
+    rw [hμvol {x | x ∈ axisCube z L ∧ m₀ + l < w₁.toFun x}
+      (fun _ hx => hx.1), ← hq_def] at hcheb1
+    rw [hμvol {x | x ∈ axisCube z L ∧ m₀ + l < w₂.toFun x}
+      (fun _ hx => hx.1), ← hq_def] at hcheb2
     have hkey := sq_level_recursion_of_le (ε := l - k) (r := 1 / q)
       (a := (volume {x | x ∈ axisCube z L ∧ m₀ + l < w₁.toFun x}).toReal)
       (b := (volume {x | x ∈ axisCube z L ∧ m₀ + l < w₂.toFun x}).toReal) hεnn hr0 hr1
@@ -562,7 +564,9 @@ theorem deGiorgi_one_sided_core {d : ℕ} (hd : 3 ≤ d) :
               = (fun x => x ∈ axisCube z L ∧ m₀ < w₂.toFun x) from by funext x; rw [add_zero]]
         exact hmedian
       have hmono := ENNReal.toReal_mono hVolU_top hmed'
-      rwa [ENNReal.toReal_add (hSub_top _ (fun x hx => hx.1)) (hSub_top _ (fun x hx => hx.1))]
+      rwa [ENNReal.toReal_add
+        (hSub_top {x | x ∈ axisCube z L ∧ m₀ + (0 : ℝ) < w₁.toFun x} (fun _ hx => hx.1))
+        (hSub_top {x | x ∈ axisCube z L ∧ m₀ + (0 : ℝ) < w₂.toFun x} (fun _ hx => hx.1))]
         at hmono
     have hchoice : C_F * ((4 : ℝ) ^ α) ^ (1 / (2 * β)) ≤ Cd := by
       rw [hCd_def, ← hB_def]; linarith

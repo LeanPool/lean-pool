@@ -78,7 +78,7 @@ theorem log_lipschitz_real_ball {x : ℂ} (hx : x.im = 0) (hx10 : 10 ≤ x.re) :
   have hslit : ∀ z ∈ ball (Complex.exp x) 8, z ∈ Complex.slitPlane := by
     intro z hz
     exact Or.inl (by linarith [hrez z hz])
-  apply (convex_ball (Complex.exp x) 8).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+  apply (convex_ball (Complex.exp x) 8).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
     (fun z hz => (Complex.hasDerivAt_log (hslit z hz)).hasDerivWithinAt)
   intro z hz
   change ‖z⁻¹‖ ≤ (1 / 2 : ℝ)
@@ -141,7 +141,7 @@ theorem logIterate_real_ball {x : ℂ} (hx : x.im = 0) (hx10 : 10 ≤ x.re) (n :
 /-- The principal logarithm is `1`-Lipschitz on the closed half-plane `Im z ≥ 1`. -/
 theorem log_lipschitz_upper :
     LipschitzOnWith 1 Complex.log {z : ℂ | 1 ≤ z.im} := by
-  apply (convex_halfSpace_im_ge 1).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+  apply (convex_halfSpace_im_ge 1).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
     (fun z hz => (Complex.hasDerivAt_log (Or.inr (by
       have hz' : 1 ≤ z.im := hz
       linarith : z.im ≠ 0))).hasDerivWithinAt)

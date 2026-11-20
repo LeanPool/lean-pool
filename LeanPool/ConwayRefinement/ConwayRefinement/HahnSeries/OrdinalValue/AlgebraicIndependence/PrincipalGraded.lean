@@ -706,7 +706,7 @@ private theorem finiteDegreeOf_mem_polynomialRange
     finiteDegreeOf K n x ∈
       (finiteDegreePolynomialEval K).range := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       let A := (finiteDegreePolynomialEval K).range
       rcases n.eq_zero_or_pos with rfl | hn
       · obtain ⟨k, hk⟩ := principalComponentScalarHom_surjective K x

@@ -110,7 +110,7 @@ lemma not_dvd_nonDividingShift_of_three_le (hp : 3 ≤ p) :
   · subst p4
     obtain ⟨dv, dw⟩ := (mem_filter_univ _).mp (min'_mem _ (nonempty_double_not_dvd_four v w))
     refine ⟨dv, ?_⟩
-    contrapose! dw
+    contrapose dw
     exact (show 2 ∣ 4 by decide).trans dw
   simpa using min'_mem _ (nonempty_double_not_dvd v w p hp)
 

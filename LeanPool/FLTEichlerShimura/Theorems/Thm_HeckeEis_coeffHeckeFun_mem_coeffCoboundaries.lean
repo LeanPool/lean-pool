@@ -98,8 +98,8 @@ theorem mem_coeffCoboundaries {z : Gamma0 N → V} (hz : z ∈ coeffCoboundaries
   congr 1
   · refine Finset.sum_congr rfl fun q _ => ?_
     simp only [ha_apply N ℓ ρ a ha]
-    rw [← Module.End.mul_apply (ρ (g • q).out) (ρ _), ← map_mul, out_mul_transferAux, map_mul,
-      Module.End.mul_apply]
+    rw [← mul_apply_eq_comp (ρ (g • q).out) (ρ _), ← map_mul, out_mul_transferAux, map_mul,
+      mul_apply_eq_comp]
   · exact (Fintype.sum_bijective (g • ·) (MulAction.bijective g)
       (fun q : Gamma0 N ⧸ U => ρ (g • q).out (a v)) (fun q : Gamma0 N ⧸ U => ρ q.out (a v)) fun q =>
         rfl).symm

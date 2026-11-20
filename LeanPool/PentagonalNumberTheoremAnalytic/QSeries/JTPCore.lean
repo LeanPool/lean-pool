@@ -63,9 +63,9 @@ theorem jacobiTripleProduct_zero {z : ℂ} (hz' : z ≠ 0) :
     (∑' m : ℕ, z⁻¹ ^ (m + 1) * (0 : ℂ) ^ (m + 2).choose 2) := by
   norm_num [qPochhammerInf]
   rw [tprod_eq_prod]
-  any_goals exact {0}
+  on_goal 3 => exact {0}
   · rw [tsum_eq_sum, tsum_eq_single 0] <;> norm_num
-    any_goals exact {0, 1}
+    on_goal 4 => exact {0, 1}
     · norm_num [Finset.sum_pair]
     · exact fun n hn => Or.inr <| Nat.ne_of_gt <| Nat.choose_pos <| by omega
     · intro b hb; rcases b with (_ | _ | b) <;> simp_all [Nat.choose]

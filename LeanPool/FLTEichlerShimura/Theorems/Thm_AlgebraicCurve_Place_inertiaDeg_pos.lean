@@ -17,6 +17,10 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.Separable
+
+public import Mathlib.FieldTheory.Separable
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_AlgebraicCurve_DivisorPushPull
 
 import LeanPool.FLTEichlerShimura.Definitions.Def_P2M_Util

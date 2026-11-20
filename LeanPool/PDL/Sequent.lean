@@ -544,7 +544,7 @@ theorem Sequent.without_loaded_in_side_isFree (LRO : Sequent) ξ side :
   rcases LRO with ⟨L, R, _|(OL|OR)⟩ <;> cases side
   all_goals
     simp [Sequent.without, isFree, isLoaded, AnyNegFormula.inSide]
-    try aesop (rule_sets := [-default])
+  all_goals aesop (rule_sets := [-default])
 
 /-! ## Whatever formulas
 

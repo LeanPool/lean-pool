@@ -139,7 +139,7 @@ theorem dualFrame_dotProduct {e : ι → (Fin n → ℝ) → (Fin N → ℝ)}
   have hdet : IsUnit (gramMatrix e x).det := isUnit_iff_ne_zero.mpr (gramMatrix_det_ne_zero he x)
   have h1 : ((gramMatrix e x)⁻¹ * gramMatrix e x) i j = (1 : Matrix ι ι ℝ) i j := by
     rw [nonsing_inv_mul _ hdet]
-  rw [one_apply, mul_apply] at h1
+  simp only [Matrix.one_apply, Matrix.mul_apply] at h1
   rw [← h1, dualFrame, sum_dotProduct]
   simp only [smul_dotProduct, smul_eq_mul, gramMatrix]
 

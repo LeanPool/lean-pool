@@ -491,7 +491,7 @@ lemma squareBoundaryBig_eq (i : Fin 4) :
     · convert linear_co_closed _ (real_to_fin_2_closed hx₀ hx₁)
       ext k
       fin_cases k <;>
-        all_goals simp_all [linearCombination, real_to_fin_2, reverseSegment,
+        simp_all [linearCombination, real_to_fin_2, reverseSegment,
           squareBoundaryBig, toSegment, v]
 
 

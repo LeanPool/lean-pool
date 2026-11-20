@@ -340,7 +340,7 @@ lemma constructionPolynomial_coeff_target_generalized
           intro h_not
           exfalso; apply h_not
           simp [Finset.mem_antidiagonal]
-      contrapose! h_coeff
+      contrapose h_coeff
       simp_all +decide only [ne_eq, mul_eq_zero, mul_comm, zero_eq_mul, false_or]
       rw [MvPolynomial.coeff_mul]
       rw [Finset.sum_eq_single (0, (Finsupp.equivFunOnFinite.symm c))]
@@ -1177,7 +1177,7 @@ theorem ANR_polynomial_method (h : MvPolynomial (Fin (k + 1)) (ZMod p))
                     = coeff (h * (∑ i : Fin (k + 1),
                         MvPolynomial.X i) ^ m) (Finsupp.equivFunOnFinite.symm c) := by
           apply coeff_mul_eq_of_degree_bound
-          any_goals exact m
+          on_goal 3 => exact m
           · linarith
           · norm_num +zetaDelta at *
             by_cases hm : m = 0

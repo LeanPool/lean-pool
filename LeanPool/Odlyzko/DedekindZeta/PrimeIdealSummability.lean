@@ -30,7 +30,7 @@ theorem summable_ideal_absNorm_rpow {σ : ℝ} (hσ : 1 < σ) :
   constructor
   · intro n
     let : Fintype {I : Ideal (𝓞 K) // absNorm I = n} :=
-      (Ideal.finite_setOfPred_absNorm_eq n).fintype
+      (Ring.HasFiniteQuotients.finite_absNorm_eq n).fintype
     exact Summable.of_finite
   · have hseries :=
       (lSeriesSummable_idealNormCount K (s := (σ : ℂ)) (by simpa using hσ)).norm

@@ -390,7 +390,7 @@ theorem exists_planeFirstSeparatingDeflation_or_degreeOf_zero
   have hP : ∀ n, P n := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
         intro f hfn hdegree habsolute hpartialSecond
         by_cases hdegreeZero : degreeOf 0 f = 0
         · exact Or.inl hdegreeZero

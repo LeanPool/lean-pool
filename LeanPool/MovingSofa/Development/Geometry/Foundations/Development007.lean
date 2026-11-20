@@ -5580,6 +5580,10 @@ theorem eventually_mem_polygonNiche_of_mem_capNiche (ω : ℝ) (hω : 0 < ω)
   obtain ⟨hfan, hq⟩ := hp
   obtain ⟨t, ht, hpt⟩ := Set.mem_iUnion₂.mp hq
   have hopen : IsOpen {s : ℝ | p ∈ innerQuadrant K.val s} := by
+    change IsOpen ({s : ℝ | inner ℝ p (normalVector (s : Real.Angle)) <
+      supportValue K.val (s : Real.Angle) - 1} ∩
+      {s : ℝ | inner ℝ p (normalVector ((s + Real.pi / 2 : ℝ) : Real.Angle)) <
+        supportValue K.val ((s + Real.pi / 2 : ℝ) : Real.Angle) - 1})
     apply IsOpen.inter
     · exact isOpen_lt (continuous_const.inner continuous_normalVector_real)
         ((continuous_supportValue_real K.val).sub continuous_const)
@@ -7443,6 +7447,7 @@ Authors: Dean Cureton
 noncomputable section
 
 open MeasureTheory
+open scoped Pointwise
 
 namespace MovingSofa
 

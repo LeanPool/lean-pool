@@ -42,7 +42,7 @@ private lemma projectorMap_term_all
           ((S ^ (j + r) * D ^ (j + r)) x) := by
   unfold projectorMapG
   simp only [Finset.mul_sum, Finset.sum_mul,
-    smul_mul_assoc, mul_smul_comm,  Module.End.mul_apply]
+    smul_mul_assoc, mul_smul_comm,  mul_apply_eq_comp]
   rw [LinearMap.sum_apply]
   apply Finset.sum_congr rfl
   intro r hr
@@ -213,7 +213,7 @@ private lemma projectorMap_term_trim
       apply Module.End.pow_map_zero_of_le (m := x) (k := K + 1) (l := j + r)
       · omega
       · exact hnil
-    simp [Module.End.mul_apply, hpow]
+    simp [hpow]
 
 /-- The all-order finite Taylor reconstruction for a nilpotent derivative. -/
 theorem reconstruction_all

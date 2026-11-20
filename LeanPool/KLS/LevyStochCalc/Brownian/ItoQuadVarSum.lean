@@ -248,7 +248,7 @@ theorem memLp_two_sq_increment {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
       = (‖stochasticIntegralBrownian W ℱ hℱ H hm hp hq b ω
         - stochasticIntegralBrownian W ℱ hℱ H hm hp hq a ω‖₊ : ℝ≥0∞) ^ 4 := by
     intro ω
-    rw [nnnorm_pow, ENNReal.coe_pow, ← pow_mul]
+    rw [nnNorm_pow, ENNReal.coe_pow, ← pow_mul]
   simp_rw [hpt]
   exact lt_of_le_of_lt
     (lintegral_stochasticIntegralBrownian_sub_pow_four_le W ℱ hℱ H hm hp hq hC0 hCH ha hab)
@@ -557,7 +557,7 @@ theorem exists_continuous_modification_stochasticIntegralBrownian :
         = (‖stochasticIntegralBrownian W ℱ hℱ H hm hp hq b ω
           - stochasticIntegralBrownian W ℱ hℱ H hm hp hq a ω‖₊ : ℝ≥0∞) := by
       intro ω
-      rw [← nnnorm_neg, neg_sub]
+      rw [← nnNorm_neg, neg_sub]
     simp_rw [hswap]
     exact lintegral_stochasticIntegralBrownian_sub_pow_four_le W ℱ hℱ H hm hp hq hC0 hCH ha hab
   have hkol : ∀ s t : ℝ, ∫⁻ ω, edist (Xc s ω) (Xc t ω) ^ (4 : ℝ) ∂P
@@ -589,7 +589,7 @@ theorem exists_continuous_modification_stochasticIntegralBrownian :
       simp_rw [hzero]
       simp
     · have hswap : ∀ ω : Ω, (‖Xc s ω - Xc t ω‖₊ : ℝ≥0∞)
-          = (‖Xc t ω - Xc s ω‖₊ : ℝ≥0∞) := fun ω => by rw [← nnnorm_neg, neg_sub]
+          = (‖Xc t ω - Xc s ω‖₊ : ℝ≥0∞) := fun ω => by rw [← nnNorm_neg, neg_sub]
       simp_rw [hswap]
       refine le_trans (hpair (max t 0) (max s 0) (le_max_right _ _) hst) ?_
       refine ENNReal.ofReal_le_ofReal ?_

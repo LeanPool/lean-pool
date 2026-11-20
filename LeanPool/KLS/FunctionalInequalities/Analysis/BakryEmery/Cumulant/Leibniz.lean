@@ -51,7 +51,7 @@ theorem directional_centeredGradient_logLaplace_zero_of_compact (μ : Probabilit
           gradient (logLaplace (μ : Measure E)) z - gradient (logLaplace (μ : Measure E)) 0)
         0 =
       if l = [] then 0 else cumulantVector (μ : Measure E) l := by
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   have hΛ : ContDiff ℝ ∞ (logLaplace (μ : Measure E)) :=
     contDiff_logLaplace _ (compact_support_integrable_exp _ hc)
   have hg : ContDiff ℝ ∞ (gradient (logLaplace (μ : Measure E))) := by
@@ -91,7 +91,7 @@ theorem iteratedFDeriv_inner_centeredGradient_zero_of_compact (μ : ProbabilityM
       ∑ q ∈ (Finset.univ.filter fun q : Fin m → Bool => (∃ i, q i = true) ∧ (∃ i, q i = false)),
         ⟪cumulantVector (μ : Measure E) (selected h q),
           M (cumulantVector (μ : Measure E) (selected h (fun i => !(q i))))⟫ := by
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   have hΛ : ContDiff ℝ ∞ (logLaplace (μ : Measure E)) :=
     contDiff_logLaplace _ (compact_support_integrable_exp _ hc)
   have hg : ContDiff ℝ ∞ (gradient (logLaplace (μ : Measure E))) := by
@@ -192,7 +192,7 @@ private theorem one_le_selected_length_iff {α : Type*} {m : ℕ} (h : Fin m →
 private theorem inner_inverse_covariance_comm (mu : ProbabilityMeasure E) (x y : E) :
     ⟪x, Ring.inverse (Covariance.operator (mu : Measure E)) y⟫ =
       ⟪y, Ring.inverse (Covariance.operator (mu : Measure E)) x⟫ := by
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   have hs := (Covariance.operator_isSelfAdjoint (mu : Measure E)).ringInverse
   have hsym := ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hs
   calc

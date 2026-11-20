@@ -681,7 +681,7 @@ theorem PVM.integral_mul (E_pvm : PVM E)
   let sf := boundedApprox f hf (Classical.choose hbddf) (Classical.choose_spec hbddf)
   let sg := boundedApprox g hg (Classical.choose hbddg) (Classical.choose_spec hbddg)
   have hUniform : TendstoUniformly (fun n t => (sf n * sg n) t) (f * g) Filter.atTop := by
-    simpa only [SimpleFunc.mul_apply] using boundedApprox_mul_tendstoUniformly
+    simpa only [mul_apply] using boundedApprox_mul_tendstoUniformly
       f hf (Classical.choose hbddf) (Classical.choose_spec hbddf)
       g hg (Classical.choose hbddg) (Classical.choose_spec hbddg)
   have hfgLimit := E_pvm.tendsto_simpleIntegral_of_tendstoUniformly

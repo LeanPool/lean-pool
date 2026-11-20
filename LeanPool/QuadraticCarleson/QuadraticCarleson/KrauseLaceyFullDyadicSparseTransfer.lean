@@ -74,13 +74,13 @@ theorem continuous_finiteFullDyadicTail (lam : ℝ) (j : ℤ) (n : ℕ)
 theorem continuous_finitePositiveDyadicTailMaxOperator (lam : ℝ) (j : ℤ) (N : ℕ)
     (f : L0Infinity) : Continuous (finitePositiveDyadicTailMaxOperator lam j N f) := by
   have hm : Continuous (finitePositiveDyadicTailMaxNNNorm lam j N f) :=
-    Continuous.finset_sup_apply fun n hn ↦ (continuous_finitePositiveDyadicTail lam j n f).nnnorm
+    Continuous.finset_sup_apply fun n hn ↦ (continuous_finitePositiveDyadicTail lam j n f).nnNorm
   exact Complex.continuous_ofReal.comp (continuous_subtype_val.comp hm)
 
 theorem continuous_finiteFullDyadicTailMaxOperator (lam : ℝ) (j : ℤ) (N : ℕ)
     (f : L0Infinity) : Continuous (finiteFullDyadicTailMaxOperator lam j N f) := by
   have hm : Continuous (finiteFullDyadicTailMaxNNNorm lam j N f) :=
-    Continuous.finset_sup_apply fun n hn ↦ (continuous_finiteFullDyadicTail lam j n f).nnnorm
+    Continuous.finset_sup_apply fun n hn ↦ (continuous_finiteFullDyadicTail lam j n f).nnNorm
   exact Complex.continuous_ofReal.comp (continuous_subtype_val.comp hm)
 
 theorem locallyIntegrable_finitePositiveDyadicTailMaxOperator (lam : ℝ) (j : ℤ) (N : ℕ)
@@ -171,14 +171,14 @@ theorem continuous_finitePositiveDyadicSuffixMaxOperator (lam : ℝ) (j : ℤ) (
     (f : L0Infinity) : Continuous (finitePositiveDyadicSuffixMaxOperator lam j N f) := by
   have hm : Continuous (finitePositiveDyadicSuffixMaxNNNorm lam j N f) :=
     Continuous.finset_sup_apply fun m hm ↦
-      (continuous_finitePositiveDyadicTail lam (j + m) (N - m) f).nnnorm
+      (continuous_finitePositiveDyadicTail lam (j + m) (N - m) f).nnNorm
   exact Complex.continuous_ofReal.comp (continuous_subtype_val.comp hm)
 
 theorem continuous_finiteFullDyadicSuffixMaxOperator (lam : ℝ) (j : ℤ) (N : ℕ)
     (f : L0Infinity) : Continuous (finiteFullDyadicSuffixMaxOperator lam j N f) := by
   have hm : Continuous (finiteFullDyadicSuffixMaxNNNorm lam j N f) :=
     Continuous.finset_sup_apply fun m hm ↦
-      (continuous_finiteFullDyadicTail lam (j + m) (N - m) f).nnnorm
+      (continuous_finiteFullDyadicTail lam (j + m) (N - m) f).nnNorm
   exact Complex.continuous_ofReal.comp (continuous_subtype_val.comp hm)
 
 theorem locallyIntegrable_finitePositiveDyadicSuffixMaxOperator (lam : ℝ) (j : ℤ) (N : ℕ)

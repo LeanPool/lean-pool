@@ -45,7 +45,7 @@ theorem norm_le_sum_abs_apply_basis {n : ℕ}
         = (∏ i : Fin n, m i (v i)) • A (fun i => basisVec (v i)) := by
     intro v
     have hmap := A.toMultilinearMap.map_smul_univ (fun i => m i (v i)) (fun i => basisVec (v i))
-    simpa only [ContinuousMultilinearMap.coe_coe] using hmap
+    simpa only [ContinuousMultilinearMap.coe_coe, RingHom.id_apply] using hmap
   rw [hsum, Real.norm_eq_abs]
   calc
     |∑ v : Fin n → Fin 3, A (fun i => m i (v i) • basisVec (v i))|

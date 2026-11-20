@@ -67,7 +67,7 @@ lemma nullSingletonClass_map_uniform
     (measurableSet_singleton t).preimage L.measurable
   have hzero : volume ((L ⁻¹' ({t} : Set ℝ)) ∩ K) = 0 :=
     measure_mono_null inter_subset_left (volume_preimage_singleton_eq_zero L hL t)
-  rw [Measure.map_apply L.measurable (measurableSet_singleton t), Measure.smul_apply,
+  rw [Measure.map_apply L.measurable (measurableSet_singleton t), smul_apply,
     Measure.restrict_apply hm, hzero, smul_zero]
 
 end Projection
@@ -328,7 +328,7 @@ lemma isProbabilityMeasure_uniformVolume (K : Set E)
     (hK0 : volume K ≠ 0) (hKtop : volume K ≠ ∞) :
     IsProbabilityMeasure (uniformVolume K) := by
   constructor
-  simp only [uniformVolume, Measure.smul_apply,
+  simp only [uniformVolume, smul_apply,
     Measure.restrict_apply_univ, smul_eq_mul]
   exact ENNReal.inv_mul_cancel hK0 hKtop
 

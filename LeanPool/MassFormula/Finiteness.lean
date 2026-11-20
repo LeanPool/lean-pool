@@ -188,7 +188,7 @@ theorem eq_and_dvd_of_infinite (n : ℕ) (hn : 0 < n) (h : (sigma K n).Infinite)
       exact ENNReal.pow_ne_top (ENNReal.natCast_ne_top (q K)))
   have hle : (⊤ : ℝ≥0∞) ≤ (n : ℝ≥0∞) :=
     calc (⊤ : ℝ≥0∞) = ∑' _ : sigma K n, 1 / (q K : ℝ≥0∞) ^ (n * t) := htop.symm
-      _ ≤ ∑' L : sigma K n, 1 / (q K : ℝ≥0∞) ^ c L.1 := ENNReal.tsum_le_tsum hbound
+      _ ≤ ∑' L : sigma K n, 1 / (q K : ℝ≥0∞) ^ c L.1 := tsum_le_tsum hbound
       _ = n := tsum_one_div_q_pow_c K n hn
   exact ENNReal.natCast_ne_top n (top_le_iff.mp hle)
 

@@ -645,7 +645,7 @@ lemma isCompressible_mapcyl_domInclFromTop_of_isWeakHomotopyEquiv
         let x := (TopCat.MapCyl.domHomeoTop φ).invFun a
         convert RelHomotopyGroup.unique_pi_mapCyl_of_isWeakHomotopyEquiv n φ x hφ
         unfold MapCyl.domInclToTop x
-        simp only [Equiv.invFun_as_coe, Homeomorph.coe_symm_toEquiv, ContinuousMap.coe_coe,
+        simp only [Equiv.invFun_as_coe, Homeomorph.coe_symm_toEquiv, ContinuousMap.coe_ofClass,
           Homeomorph.apply_symm_apply]
       convert isCompressible_subtype_val_of_unique_pi n (MapCyl φ) (MapCyl.top φ) hpi using 3
       rfl
@@ -662,13 +662,13 @@ theorem isCompressible_mapCyl_domIncl_of_isWeakHomotopyEquiv
       -- (domIncl f).hom = (domInclFromTop f).comp (domInclToTop f)
       (ofHom <| MapCyl.domInclFromTop φ) F := ⟨sq.w⟩
     let l := com.sq_hasLift sq' |>.hasLift.some
-    let inv : C(MapCyl.top φ, X) := toContinuousMap (MapCyl.domHomeoTop φ).symm
+    let inv : C(MapCyl.top φ, X) := ContinuousMap.ofClass (MapCyl.domHomeoTop φ).symm
     use l.l ≫ ofHom inv
     · have := congrArg₂ CategoryStruct.comp l.fac_left (Eq.refl (ofHom inv))
       convert this using 1
       all_goals rw [Category.assoc]
-      all_goals unfold inv MapCyl.domInclToTop
-      all_goals ext x : 1
+      unfold inv MapCyl.domInclToTop
+      ext x : 1
       simp_all
     · convert l.H using 2
       rw [Category.assoc]
@@ -677,9 +677,9 @@ theorem isCompressible_mapCyl_domIncl_of_isWeakHomotopyEquiv
       change ((MapCyl.domIncl φ).hom ∘ inv) x = _
       rw [MapCyl.domIncl_hom_eq_domInclFromTop_comp_domInclToTop]
       unfold inv
-      simp only [ContinuousMap.coe_comp, ContinuousMap.coe_coe, Function.comp_apply, hom_ofHom]
+      simp only [ContinuousMap.coe_comp, ContinuousMap.coe_ofClass, Function.comp_apply, hom_ofHom]
       congr 1
       unfold MapCyl.domInclToTop
-      simp only [ContinuousMap.coe_coe, Homeomorph.apply_symm_apply]
+      simp only [ContinuousMap.coe_ofClass, Homeomorph.apply_symm_apply]
 
 end TopCat.disk

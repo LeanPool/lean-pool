@@ -337,9 +337,9 @@ theorem onePointKernelSemigroup_tail_le_of_tail_le
   have hliveSet : MeasurableSet live := OnePoint.isOpen_range_coe.measurableSet
   have hliveBound :
       R.onePointKernelSemigroup h (x : OnePoint X) (tail ∩ live) ≤ a := by
-    rw [R.onePointKernelSemigroup_apply_coe h x, Measure.add_apply,
+    rw [R.onePointKernelSemigroup_apply_coe h x, _root_.add_apply,
       Measure.map_apply OnePoint.continuous_coe.measurable (htail.inter hliveSet),
-      Measure.smul_apply, Measure.dirac_apply' OnePoint.infty (htail.inter hliveSet)]
+      smul_apply, Measure.dirac_apply' OnePoint.infty (htail.inter hliveSet)]
     have hinfty : OnePoint.infty ∉ tail ∩ live :=
       fun hz ↦ OnePoint.infty_notMem_range_coe hz.2
     rw [Set.indicator_of_notMem hinfty, smul_zero, add_zero]
@@ -497,7 +497,7 @@ theorem killedSemigroup_onePointLive_image
               (((↑) : X → OnePoint X) '' B)) := by
     apply measure_congr
     filter_upwards [hevent] with omega homega
-    exact propext homega
+    exact homega
   rw [hmeasure]
   change (IsConservative.continuousProcess R.onePointKernelSemigroup
       R.isConservative_onePointKernelSemigroup (x : OnePoint X))
@@ -515,9 +515,9 @@ theorem killedSemigroup_onePointLive_image
   rw [R.isFellerKernelSemigroup_onePointKernelSemigroup.continuousProcess_map_eval_nnreal
       R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
       hK t,
-    R.onePointKernelSemigroup_apply_coe, Measure.add_apply,
+    R.onePointKernelSemigroup_apply_coe, _root_.add_apply,
     Measure.map_apply OnePoint.continuous_coe.measurable hcoeB,
-    Measure.smul_apply, Measure.dirac_apply' OnePoint.infty hcoeB]
+    smul_apply, Measure.dirac_apply' OnePoint.infty hcoeB]
   simp only [Set.preimage_image_eq B OnePoint.coe_injective,
     Set.indicator_of_notMem (OnePoint.infty_notMem_image_coe (s := B)), smul_zero, add_zero]
 
@@ -572,7 +572,7 @@ theorem killedKernel_onePointLive_eq_map
             ((fun omega : ContinuousPath (OnePoint X) ↦ omega t) ⁻¹' (A ∩ live)) := by
     apply measure_congr
     filter_upwards [hevent] with omega homega
-    exact propext homega
+    exact homega
   rw [hmeasure]
   change (IsConservative.continuousProcess R.onePointKernelSemigroup
       R.isConservative_onePointKernelSemigroup (x : OnePoint X))
@@ -590,9 +590,9 @@ theorem killedKernel_onePointLive_eq_map
   rw [R.isFellerKernelSemigroup_onePointKernelSemigroup.continuousProcess_map_eval_nnreal
       R.onePointKernelSemigroup R.isConservative_onePointKernelSemigroup
       hK t,
-    R.onePointKernelSemigroup_apply_coe, Measure.add_apply,
+    R.onePointKernelSemigroup_apply_coe, _root_.add_apply,
     Measure.map_apply OnePoint.continuous_coe.measurable hAlive,
-    Measure.smul_apply, Measure.dirac_apply' OnePoint.infty hAlive,
+    smul_apply, Measure.dirac_apply' OnePoint.infty hAlive,
     Measure.map_apply OnePoint.continuous_coe.measurable hA]
   have hinf : OnePoint.infty ∉ A ∩ live := fun h ↦ OnePoint.infty_notMem_range_coe h.2
   rw [Set.indicator_of_notMem hinf, smul_zero, add_zero]

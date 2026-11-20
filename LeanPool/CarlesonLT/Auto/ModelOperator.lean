@@ -163,7 +163,7 @@ theorem rhoNN_add_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (x y : Rn n)
   calc ‖(x + y) i‖₊ ^ ((α i : ℝ)⁻¹)
       ≤ (‖x i‖₊ + ‖y i‖₊) ^ ((α i : ℝ)⁻¹) := by
         gcongr
-        simpa using nnnorm_add_le (x i) (y i)
+        simpa using nnNorm_add_le (x i) (y i)
     _ ≤ ‖x i‖₊ ^ ((α i : ℝ)⁻¹) + ‖y i‖₊ ^ ((α i : ℝ)⁻¹) :=
         NNReal.rpow_add_le_add_rpow _ _ h1 h2
     _ ≤ rhoNN α x + rhoNN α y :=
@@ -177,7 +177,7 @@ theorem rhoNN_dil (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {t : ℝ} (ht :
     have hαi : (α i : ℝ) ≠ 0 := by
       have := hα i
       positivity
-    rw [dil_apply, nnnorm_mul, NNReal.mul_rpow, nnnorm_pow]
+    rw [dil_apply, nnNorm_mul, NNReal.mul_rpow, nnNorm_pow]
     congr 1
     have : ‖t‖₊ = t.toNNReal := by
       ext
@@ -782,12 +782,12 @@ theorem symbol_estimate (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {ν : ℕ
   have hs : 0 < s := inv_pos.mpr hρ
   have hunit : rho α (dil α s ξ) = 1 := by
     rw [rho_dil α hα hs]; exact inv_mul_cancel₀ hρ.ne'
-  rw [iterPartial_eq_prod_mul_iterPartial_dil α hm hk i hs hξ, enorm_smul, mul_comm]
+  rw [iterPartial_eq_prod_mul_iterPartial_dil α hm hk i hs hξ, eNorm_smul, mul_comm]
   have hprod : (∏ j, s ^ α (i j) : ℝ) = ∏ j, rho α ξ ^ (-(α (i j) : ℝ)) := by
     refine Finset.prod_congr rfl fun j _ => ?_
     rw [Real.rpow_neg hρ.le, Real.rpow_natCast, inv_pow]
   have hnn : 0 ≤ (∏ j, s ^ α (i j) : ℝ) := Finset.prod_nonneg fun j _ => by positivity
-  rw [Real.enorm_eq_ofReal hnn, hprod]
+  rw [Real.eNorm_eq_ofReal hnn, hprod]
   gcongr
   exact le_iSup₂_of_le k hk (le_iSup_of_le i (le_iSup₂_of_le (dil α s ξ) hunit le_rfl))
 
@@ -1184,7 +1184,7 @@ theorem integral_norm_iteratedFDeriv_gloc_le (α : Fin n → ℕ) (hα : ∀ i, 
   calc ∫ ζ, ‖iteratedFDeriv ℝ l (gloc m a) ζ‖
       ≤ ∫ ζ, (boxB n).indicator (fun _ => gBound α l * (normM α ν m).toReal) ζ := by
         apply integral_mono_of_nonneg (Filter.Eventually.of_forall fun ζ => norm_nonneg _)
-        · exact (integrableOn_const hfinB enorm_ne_top).integrable_indicator hmeas
+        · exact (integrableOn_const hfinB eNorm_ne_top).integrable_indicator hmeas
         · exact Filter.Eventually.of_forall fun ζ =>
             norm_iteratedFDeriv_gloc_le α hα hm hfin ha hl ζ
     _ = gBound α l * (normM α ν m).toReal * volB n := by
@@ -1398,7 +1398,7 @@ theorem continuous_rhoNN (α : Fin n → ℕ) : Continuous (rhoNN α) := by
   unfold rhoNN
   exact Continuous.finset_sup_apply (f := fun i (x : Rn n) => ‖x i‖₊ ^ ((α i : ℝ)⁻¹))
     fun i _ => (NNReal.continuous_rpow_const (by positivity)).comp
-      (continuous_nnnorm.comp ((continuous_apply i).comp (PiLp.continuous_ofLp 2 _)))
+      (continuous_nnNorm.comp ((continuous_apply i).comp (PiLp.continuous_ofLp 2 _)))
 
 theorem continuous_rho (α : Fin n → ℕ) : Continuous (rho α) :=
   NNReal.continuous_coe.comp (continuous_rhoNN α)
@@ -1423,7 +1423,7 @@ theorem rho_le_one_add_norm (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (z : 
     rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ (by positivity)]
     have h1 := abs_rpow_inv_le_one_add (α i) (hα i) (z i)
     have h2 : |z i| ≤ ‖z‖ := by simpa [Real.norm_eq_abs] using PiLp.norm_apply_le z i
-    simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs]
+    simp only [NNReal.coe_rpow, coe_nnNorm, Real.norm_eq_abs]
     linarith
   have := NNReal.coe_le_coe.mpr h
   rwa [Real.coe_toNNReal _ (by positivity)] at this
@@ -1828,7 +1828,7 @@ theorem rho_sub_latticePt_le_one (α : Fin n → ℕ) (ℓ : Fin n → ℤ) {w :
     simp only [side_zero, one_mul] at hi
     apply NNReal.rpow_le_one _ (by positivity)
     rw [← NNReal.coe_le_coe]
-    simp only [coe_nnnorm, PiLp.sub_apply, latticePt_apply, Real.norm_eq_abs, NNReal.coe_one]
+    simp only [coe_nnNorm, PiLp.sub_apply, latticePt_apply, Real.norm_eq_abs, NNReal.coe_one]
     rw [abs_le]
     constructor <;> linarith [hi.1, hi.2]
   simpa [rho] using (NNReal.coe_le_coe.mpr h)
@@ -1894,7 +1894,7 @@ theorem tsum_wgt_lattice_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {s : 
         rw [setLIntegral_const, volume_unitCube, mul_one]
     _ ≤ ∑' ℓ : Fin n → ℤ, ∫⁻ w in (⟨0, ℓ⟩ : DCube n).toSet α,
           ENNReal.ofReal (2 ^ s * F (z - w)) := by
-        refine ENNReal.tsum_le_tsum fun ℓ => ?_
+        refine tsum_le_tsum fun ℓ => ?_
         exact setLIntegral_mono' (hmeas ℓ) fun w hw => ENNReal.ofReal_le_ofReal (hcmp ℓ w hw)
     _ = ∫⁻ w in ⋃ ℓ : Fin n → ℤ, (⟨0, ℓ⟩ : DCube n).toSet α, ENNReal.ofReal (2 ^ s * F (z - w)) :=
         (lintegral_iUnion hmeas (pairwise_disjoint_unitCube α) _).symm
@@ -2209,7 +2209,7 @@ theorem rho_sub_bounds_of_mem_suppBox (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ �
       rw [rhoNN_le_iff]
       intro i
       rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ (by positivity)]
-      simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs]
+      simp only [NNReal.coe_rpow, coe_nnNorm, Real.norm_eq_abs]
       have hs := side_pos α (-P.k) i
       have hNi := hN i
       have hξi := hξ i
@@ -2322,7 +2322,7 @@ theorem tsum_ind_suppBox_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : 
     · simp [Set.indicator_of_notMem hNP]
   calc _ ≤ ∑' k : ℤ, ∑' u : Fin n → ℤ,
         (if k ∈ K then (if u = freqPos α k ξ then (1 : ℝ≥0∞) else 0) else 0) :=
-        ENNReal.tsum_le_tsum fun k => ENNReal.tsum_le_tsum fun u => hle k u
+        tsum_le_tsum fun k => tsum_le_tsum fun u => hle k u
     _ = ∑' k : ℤ, (if k ∈ K then (1 : ℝ≥0∞) else 0) := by
         congr 1
         ext k
@@ -2391,7 +2391,7 @@ theorem tsum_enorm_modelTerm_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {
         _ = c0 * M * I P * w P * (t ^ ((absA α : ℝ) / 2) * t ^ (-(absA α : ℝ) / 2)) := by
             simp only [c0]; ring
         _ = c0 * M * I P * w P := by rw [htt, mul_one]
-    · rw [Set.indicator_of_notMem hNP, mul_zero, enorm_zero]
+    · rw [Set.indicator_of_notMem hNP, mul_zero, eNorm_zero]
       exact bot_le
   -- Step 2: the lattice sum in `ℓ`
   have hlat : ∀ (k : ℤ) (u : Fin n → ℤ),
@@ -2420,12 +2420,12 @@ theorem tsum_enorm_modelTerm_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {
   calc ∑' P : Tile n, ‖pairing g (wavePhi α P) * wavePsi α m N P x *
         (P.semi α r).indicator (fun _ => (1 : ℂ)) N‖ₑ
       ≤ ∑' P : Tile n, ENNReal.ofReal (c0 * M * I P * ind P) * ENNReal.ofReal (w P) :=
-        ENNReal.tsum_le_tsum hterm
+        tsum_le_tsum hterm
     _ = ∑' k : ℤ, ∑' u : Fin n → ℤ, ∑' ℓ : Fin n → ℤ,
           ENNReal.ofReal (c0 * M * I ⟨k, 0, u⟩ * ind ⟨k, 0, u⟩) *
             ENNReal.ofReal (w ⟨k, ℓ, u⟩) := by
-        rw [← tileEquiv.symm.tsum_eq, ENNReal.tsum_prod', tsum_congr fun k =>
-          ENNReal.tsum_prod']
+        rw [← tileEquiv.symm.tsum_eq, tsum_prod', tsum_congr fun k =>
+          tsum_prod']
         rfl
     _ = ∑' k : ℤ, ∑' u : Fin n → ℤ, ENNReal.ofReal (c0 * M * I ⟨k, 0, u⟩ * ind ⟨k, 0, u⟩) *
           ∑' ℓ : Fin n → ℤ, ENNReal.ofReal (w ⟨k, ℓ, u⟩) := by
@@ -2433,7 +2433,7 @@ theorem tsum_enorm_modelTerm_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {
         rw [ENNReal.tsum_mul_left]
     _ ≤ ∑' k : ℤ, ∑' u : Fin n → ℤ, ENNReal.ofReal (c0 * M * I ⟨k, 0, u⟩ * ind ⟨k, 0, u⟩) *
           ENNReal.ofReal Lc :=
-        ENNReal.tsum_le_tsum fun k => ENNReal.tsum_le_tsum fun u => by gcongr; exact hlat k u
+        tsum_le_tsum fun k => tsum_le_tsum fun u => by gcongr; exact hlat k u
     _ = ENNReal.ofReal (c0 * M * Lc) * ∑' k : ℤ, ∑' u : Fin n → ℤ,
           ENNReal.ofReal (ind ⟨k, 0, u⟩) * ∫⁻ ξ, (suppBox α ⟨k, 0, u⟩).indicator
             (fun ξ => ENNReal.ofReal (F ξ)) ξ := by
@@ -2487,9 +2487,9 @@ theorem summable_and_norm_tsum_le_of_enorm_sum_le {ι E : Type*} [NormedAddCommG
     [CompleteSpace E] {f : ι → E} {C : ℝ} (hC : 0 ≤ C)
     (hb : ∑' i, ‖f i‖ₑ ≤ ENNReal.ofReal C) : Summable f ∧ ‖∑' i, f i‖ ≤ C := by
   have hfin := ne_top_of_le_ne_top ENNReal.ofReal_ne_top hb
-  refine ⟨(tsum_enorm_ne_top_iff_summable_norm.mp hfin).of_norm, ?_⟩
+  refine ⟨(tsum_eNorm_ne_top_iff_summable_norm.mp hfin).of_norm, ?_⟩
   exact (ENNReal.ofReal_le_ofReal_iff hC).mp
-    (by simpa only [ofReal_norm] using enorm_tsum_le_tsum_enorm.trans hb)
+    (by simpa only [ofReal_norm] using eNorm_tsum_le_tsum_eNorm.trans hb)
 
 /-- The model sum converges absolutely and is uniformly bounded (paper, §3, (3.3)):
 for `r ≠ 0`, integrable `g` with integrable `ĝ`, the series defining `A^{r,m}_N g(x)` is
@@ -2614,7 +2614,7 @@ theorem tsum_enorm_modelTermHO_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i)
         (P.semiHO α r).indicator (fun _ => (1 : ℂ)) N‖ₑ ≤
       ENNReal.ofReal (C * (normM α (absA α + 1) m).toReal * ∫ ξ, ‖fhat g ξ‖) := by
   obtain ⟨C, hC, h⟩ := tsum_enorm_modelTerm_le α hα hr
-  exact ⟨C, hC, fun m hm g hg hG N x => (ENNReal.tsum_le_tsum fun P =>
+  exact ⟨C, hC, fun m hm g hg hG N x => (tsum_le_tsum fun P =>
     enorm_indicator_semiHO_le α P r N _).trans (h m hm g hg hG N x)⟩
 
 theorem modelOpHO_summable_bound (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : Fin n → Fin 2}
@@ -2702,8 +2702,8 @@ theorem integral_Tlin_mul_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r :
   have hpt : ∀ x, ∑' P, ‖h P x‖ₑ ≤ ENNReal.ofReal B := by
     intro x
     calc ∑' P, ‖h P x‖ₑ ≤ ∑' P, ‖TlinTerm α r m N g P x‖ₑ := by
-          refine ENNReal.tsum_le_tsum fun P => ?_
-          simp only [h, enorm_mul]
+          refine tsum_le_tsum fun P => ?_
+          simp only [h, eNorm_mul]
           calc ‖TlinTerm α r m N g P x‖ₑ * ‖σ x‖ₑ ≤ ‖TlinTerm α r m N g P x‖ₑ * 1 := by
                 gcongr
                 rw [← ofReal_norm]
@@ -2712,7 +2712,7 @@ theorem integral_Tlin_mul_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r :
       _ ≤ ENNReal.ofReal B := hb m hm g (SchwartzMap.integrable g)
           (integrable_fhat_schwartz g) (N x) x
   have hfin : ∑' P, ∫⁻ x in E, ‖h P x‖ₑ ≠ ⊤ := by
-    rw [← lintegral_tsum fun P => (hmeas P).enorm]
+    rw [← lintegral_tsum fun P => (hmeas P).eNorm]
     refine ne_top_of_le_ne_top (b := ∫⁻ _ in E, ENNReal.ofReal B) ?_ (lintegral_mono hpt)
     rw [setLIntegral_const]
     exact ENNReal.mul_ne_top ENNReal.ofReal_ne_top hEfin.ne
@@ -2735,17 +2735,17 @@ theorem integral_Tlin_mul_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r :
       ring
   · -- integrability of each term
     refine Integrable.mono' (g := fun _ => B) ?_ (hmeas P) (Filter.Eventually.of_forall fun x => ?_)
-    · exact integrableOn_const hEfin.ne enorm_ne_top
+    · exact integrableOn_const hEfin.ne eNorm_ne_top
     · have := hpt x
       have h1 : ‖h P x‖ₑ ≤ ENNReal.ofReal B :=
-        (ENNReal.le_tsum (f := fun P => ‖h P x‖ₑ) P).trans this
+        (le_tsum (fun P => ‖h P x‖ₑ) P).trans this
       rw [← ofReal_norm] at h1
       exact (ENNReal.ofReal_le_ofReal_iff hB).mp h1
   · -- summability of the integral norms
     have hfin' := hfin
     have hs := ENNReal.summable_toReal hfin'
     refine hs.congr fun P => ?_
-    rw [integral_norm_eq_lintegral_enorm (hmeas P)]
+    rw [integral_norm_eq_lintegral_eNorm (hmeas P)]
 
 instance : Encodable (Tile n) := Encodable.ofEquiv _ (tileEquiv (n := n))
 
@@ -3265,7 +3265,7 @@ theorem wnorm_le_tsum (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {ν : ℝ} 
   have hex := exists_mem_enl α hα P x
   set j0 := Nat.find hex
   have hj0 : x ∈ P.enl α j0 := Nat.find_spec hex
-  refine le_trans ?_ (ENNReal.le_tsum j0)
+  refine le_trans ?_ (le_tsum _ j0)
   rw [Set.indicator_of_mem hj0, Pi.one_apply, mul_one]
   refine ENNReal.ofReal_le_ofReal ?_
   have h4 : (4 : ℝ) ^ ν = (2 : ℝ) ^ ν * (2 : ℝ) ^ ν := by
@@ -4218,7 +4218,7 @@ theorem rho_sub_cI_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (P : Tile n
     rw [rhoNN_le_iff]
     intro i
     rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ ht.le]
-    simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, PiLp.sub_apply]
+    simp only [NNReal.coe_rpow, coe_nnNorm, Real.norm_eq_abs, PiLp.sub_apply]
     have h1 := abs_sub_cI_le_of_mem_I α P hy i
     have hs := side_pos α P.k i
     have hai : (α i : ℝ) ≠ 0 := by have := hα i; positivity
@@ -5129,7 +5129,7 @@ theorem volume_rho_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) {r : ℝ} (
   have hmeas : MeasurableSet {y : Rn n | rho α y ≤ 1} :=
     measurableSet_le (continuous_rho α).measurable measurable_const
   rw [setOf_rho_le_eq_preimage α hα hr, ← Measure.map_apply (dil_measurableEmbedding α
-    (inv_pos.mpr hr)).measurable hmeas, map_dil_volume α (inv_pos.mpr hr), Measure.smul_apply,
+    (inv_pos.mpr hr)).measurable hmeas, map_dil_volume α (inv_pos.mpr hr), smul_apply,
     smul_eq_mul, inv_pow, inv_inv, Real.rpow_natCast]
 
 theorem setOf_rho_le_one_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) :
@@ -5148,7 +5148,7 @@ theorem setOf_rho_le_one_eq (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) :
       rw [rhoNN_le_iff]
       intro i
       rw [← NNReal.coe_le_coe]
-      simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, NNReal.coe_one]
+      simp only [NNReal.coe_rpow, coe_nnNorm, Real.norm_eq_abs, NNReal.coe_one]
       exact Real.rpow_le_one (abs_nonneg _) (abs_le.mpr (h i)) (by positivity)
     exact_mod_cast hle
 
@@ -5525,7 +5525,7 @@ theorem rho_sub_le_of_mem_DCube (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (
     rw [rhoNN_le_iff]
     intro i
     rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ (by positivity)]
-    simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, PiLp.sub_apply]
+    simp only [NNReal.coe_rpow, coe_nnNorm, Real.norm_eq_abs, PiLp.sub_apply]
     have h1 := hx i
     have h2 := hy i
     have hs : |x i - y i| ≤ ((2 : ℝ) ^ J.k) ^ (α i : ℝ) := by
@@ -5907,7 +5907,7 @@ theorem K1_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n) {r : F
             ‖c P * wavePsi α m (N x) P x‖ₑ * (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x := by
             refine lintegral_finsetSum' _ fun P _ => ?_
             exact ((measurable_const.mul ((continuous_wavePsi_joint α hm P).measurable.comp
-              (hN.prodMk measurable_id))).enorm.mul (measurable_one.indicator
+              (hN.prodMk measurable_id))).eNorm.mul (measurable_one.indicator
                 (hE.inter (hN (measurableSet_semiHO α P r))))).aemeasurable
         _ ≤ ∑ P ∈ T with P.k ≤ (J : DCube n).k + 1, ENNReal.ofReal (Kc * (P.vol α *
               (1 + ((2 : ℝ) ^ P.k)⁻¹ * rho α (x₀ - P.cI α)) ^ (-a))) := by
@@ -5952,7 +5952,7 @@ theorem K1_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n) {r : F
   calc ∑' J : jSet α T, ∫⁻ x in (J : DCube n).toSet α, ∑ P ∈ T with P.k ≤ (J : DCube n).k + 1,
         ‖c P * wavePsi α m (N x) P x‖ₑ * (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x
       ≤ ∑' J : jSet α T, ∫⁻ x in (J : DCube n).toSet α, ENNReal.ofReal (Kc * Cs * WT x) :=
-        ENNReal.tsum_le_tsum hJ
+        tsum_le_tsum hJ
     _ = ∫⁻ x, ENNReal.ofReal (Kc * Cs * WT x) :=
         (lintegral_eq_tsum_jSet α hα hn T hTne _).symm
     _ = ENNReal.ofReal (∫ x, Kc * Cs * WT x) :=
@@ -5975,7 +5975,7 @@ theorem rho_sub_le_of_mem_enl3 (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (Q
     rw [rhoNN_le_iff]
     intro i
     rw [← NNReal.coe_le_coe, Real.coe_toNNReal _ ht.le]
-    simp only [NNReal.coe_rpow, coe_nnnorm, Real.norm_eq_abs, PiLp.sub_apply]
+    simp only [NNReal.coe_rpow, coe_nnNorm, Real.norm_eq_abs, PiLp.sub_apply]
     have h1 := hx i
     have h2 := hy i
     have hs := side_pos α Q.k i
@@ -6384,7 +6384,7 @@ theorem K2_oneTree_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n
         c P * wavePsi α m (N x) P x * (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x‖ₑ
       ≤ ∑' J : jSet α T, ENNReal.ofReal (K * C2 * μ) *
           {J : DCube n | ∃ P ∈ T, J.k + 2 ≤ P.k}.indicator (fun J => volume (J.toSet α))
-            (J : DCube n) := ENNReal.tsum_le_tsum hJ
+            (J : DCube n) := tsum_le_tsum hJ
     _ = ENNReal.ofReal (K * C2 * μ) * ∑' J : jSet α T,
           {J : DCube n | ∃ P ∈ T, J.k + 2 ≤ P.k}.indicator (fun J => volume (J.toSet α))
             (J : DCube n) := ENNReal.tsum_mul_left
@@ -6532,7 +6532,7 @@ theorem integral_norm_glocDiff_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i)
   calc ∫ ζ, ‖iteratedFDeriv ℝ l (glocDiff m a a') ζ‖
       ≤ ∫ ζ, (boxB n).indicator (fun _ => gBoundD α l * (normM α ν m).toReal * ‖a - a'‖) ζ := by
         apply integral_mono_of_nonneg (Filter.Eventually.of_forall fun ζ => norm_nonneg _)
-        · exact (integrableOn_const hfinB enorm_ne_top).integrable_indicator hmeas
+        · exact (integrableOn_const hfinB eNorm_ne_top).integrable_indicator hmeas
         · exact Filter.Eventually.of_forall fun ζ =>
             norm_iteratedFDeriv_glocDiff_le α hα hm hfin hj hj' hl ζ
     _ = _ := by
@@ -7586,7 +7586,7 @@ theorem term1_le_maximal (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 
   have hlam : 0 < lam := by positivity
   have hlamk : lam ≤ (2 : ℝ) ^ km := zpow_le_zpow_right₀ (by norm_num) hk
   set g : Rn n → ℝ≥0∞ := fun y => ‖H y‖ₑ
-  have hg : Measurable g := hH.enorm
+  have hg : Measurable g := hH.eNorm
   set W₁ := hMaj α C₁ M kp lam
   set W₂ := hMaj α C₂ M km lam
   have hW₁ : ∫⁻ y, g (x - y) * W₁ (rho α y) ≤ (∫⁻ y, W₁ (rho α y)) * G.maximal lam g x :=
@@ -7602,12 +7602,12 @@ theorem term1_le_maximal (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 
       ((hMaj_antitone α hC₁ M kp hlam.le).measurable.comp (continuous_rho α).measurable)
   calc ‖∫ z, H (x - z) * (hBump α 12 (by norm_num) kp cp z - hBump α 6 (by norm_num) km cm z)‖ₑ
       ≤ ∫⁻ z, ‖H (x - z) * (hBump α 12 (by norm_num) kp cp z -
-          hBump α 6 (by norm_num) km cm z)‖ₑ := enorm_integral_le_lintegral_enorm _
+          hBump α 6 (by norm_num) km cm z)‖ₑ := eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ z, g (x - z) * W₁ (rho α z) + g (x - z) * W₂ (rho α z) := by
         refine lintegral_mono fun z => ?_
-        rw [enorm_mul, ← mul_add]
+        rw [eNorm_mul, ← mul_add]
         gcongr
-        refine (enorm_sub_le).trans (add_le_add ?_ ?_)
+        refine (eNorm_sub_le).trans (add_le_add ?_ ?_)
         · exact h₁ kp cp lam hlam.le le_rfl z
         · exact h₂ km cm lam hlam.le hlamk z
     _ ≤ (∫⁻ y, W₁ (rho α y)) * G.maximal lam g x + (∫⁻ y, W₂ (rho α y)) * G.maximal lam g x := by
@@ -7654,7 +7654,7 @@ theorem twoTree_pointwise_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn 
         have : P ∈ A0 := Finset.mem_filter.mpr ⟨hP, hxP⟩
         simp [hA0] at this
       rw [Set.indicator_of_notMem hxP, mul_zero]
-    rw [this, enorm_zero]; exact bot_le
+    rw [this, eNorm_zero]; exact bot_le
   obtain ⟨Pm, hPmA, hPmax⟩ := A0.exists_max_image (fun P => P.k) hA0
   have hPmS : Pm ∈ S := (Finset.mem_filter.mp (Finset.mem_filter.mp hPmA).1).1
   have hkpPm : kp ≤ Pm.k := (Finset.mem_filter.mp (Finset.mem_filter.mp hPmA).1).2
@@ -7711,7 +7711,7 @@ theorem twoTree_pointwise_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn 
     rw [← Finset.sum_add_distrib]
     refine Finset.sum_congr rfl fun P _ => by ring
   rw [hsplit, hconv]
-  refine (enorm_add_le _ _).trans (add_le_add ?_ hT1)
+  refine (eNorm_add_le _ _).trans (add_le_add ?_ hT1)
   rw [← ofReal_norm]
   exact ENNReal.ofReal_le_ofReal hT2
 
@@ -7799,7 +7799,7 @@ theorem K2_twoTree_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n
     have h2 : Continuous fun x : Rn n => ((top.cω α, x) : Rn n × Rn n) :=
       continuous_const.prodMk continuous_id
     simpa only [Function.comp_def] using h1.comp h2)
-  have hHn : Measurable Hn := hHc.measurable.enorm
+  have hHn : Measurable Hn := hHc.measurable.eNorm
   set M0 := G.maximal 0 Hn
   have hM0 : Measurable M0 := G.measurable_maximal 0 hHn
   -- the `L²` bound for `H`
@@ -7897,7 +7897,7 @@ theorem K2_twoTree_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n
               refine ⟨hx, Set.mem_biUnion (Finset.mem_filter.mpr ⟨hST (Finset.mem_filter.mp hP).1,
                 (Finset.mem_filter.mp hP).2⟩) hxP⟩
             rw [Set.indicator_of_notMem hxP, mul_zero]
-          rw [hzero, enorm_zero]
+          rw [hzero, eNorm_zero]
       have hbJ : bJ * volume ((J : DCube n).toSet α) =
           ENNReal.ofReal (2 ^ D) * ∫⁻ y in (J : DCube n).toSet α, M0 y := by
         simp only [bJ]
@@ -7948,12 +7948,12 @@ theorem K2_twoTree_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n
       ≤ ∑' J : jSet α T, (ENNReal.ofReal (C2 * μ) * a *
           R.indicator (fun J => volume (J.toSet α)) (J : DCube n) +
         ENNReal.ofReal (C2 * μ) * ENNReal.ofReal K1 * ENNReal.ofReal (2 ^ D) *
-          R.indicator (fun J => ∫⁻ y in J.toSet α, M0 y) (J : DCube n)) := ENNReal.tsum_le_tsum hJ
+          R.indicator (fun J => ∫⁻ y in J.toSet α, M0 y) (J : DCube n)) := tsum_le_tsum hJ
     _ = ENNReal.ofReal (C2 * μ) * a * ∑' J : jSet α T,
           R.indicator (fun J => volume (J.toSet α)) (J : DCube n) +
         ENNReal.ofReal (C2 * μ) * ENNReal.ofReal K1 * ENNReal.ofReal (2 ^ D) * ∑' J : jSet α T,
           R.indicator (fun J => ∫⁻ y in J.toSet α, M0 y) (J : DCube n) := by
-        rw [ENNReal.tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left]
+        rw [tsum_add, ENNReal.tsum_mul_left, ENNReal.tsum_mul_left]
     _ ≤ ENNReal.ofReal (C2 * μ) * a * ENNReal.ofReal (5 ^ n * top.vol α) +
         ENNReal.ofReal (C2 * μ) * ENNReal.ofReal K1 * ENNReal.ofReal (2 ^ D) *
           ENNReal.ofReal (Real.sqrt (5 ^ n * top.vol α) *
@@ -8003,16 +8003,16 @@ theorem lintegral_treeSum_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn 
       ∑' J : jSet α T, ∫⁻ x in (J : DCube n).toSet α, ‖∑ P ∈ S with (J : DCube n).k + 2 ≤ P.k,
         c P * wavePsi α m (N x) P x * (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x‖ₑ := by
   classical
-  rw [lintegral_eq_tsum_jSet α hα hn T hT, ← ENNReal.tsum_add]
-  refine ENNReal.tsum_le_tsum fun J => ?_
+  rw [lintegral_eq_tsum_jSet α hα hn T hT, ← tsum_add]
+  refine tsum_le_tsum fun J => ?_
   have hA : Measurable fun x => ∑ P ∈ T with P.k ≤ (J : DCube n).k + 1,
       ‖c P * wavePsi α m (N x) P x‖ₑ * (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x :=
     Finset.measurable_sum _ fun P _ => (((measurable_wavePsi_comp hm hN P).const_mul
-      (c P)).enorm).mul (measurable_one.indicator (hE.inter (hN (measurableSet_semiHO α P r))))
+      (c P)).eNorm).mul (measurable_one.indicator (hE.inter (hN (measurableSet_semiHO α P r))))
   rw [← lintegral_add_left hA]
   refine lintegral_mono fun x => ?_
   rw [← Finset.sum_filter_add_sum_filter_not S (fun P => (J : DCube n).k + 2 ≤ P.k)]
-  refine (enorm_add_le _ _).trans ?_
+  refine (eNorm_add_le _ _).trans ?_
   rw [add_comm]
   refine add_le_add ?_ le_rfl
   have hterm : ∀ P : Tile n, ‖c P * wavePsi α m (N x) P x *
@@ -8025,7 +8025,7 @@ theorem lintegral_treeSum_le (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn 
   calc ‖∑ P ∈ S with ¬ (J : DCube n).k + 2 ≤ P.k, c P * wavePsi α m (N x) P x *
         (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x‖ₑ
       ≤ ∑ P ∈ S with ¬ (J : DCube n).k + 2 ≤ P.k, ‖c P * wavePsi α m (N x) P x *
-        (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x‖ₑ := enorm_sum_le _ _
+        (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x‖ₑ := eNorm_sum_le _ _
     _ = ∑ P ∈ S with ¬ (J : DCube n).k + 2 ≤ P.k,
         ‖c P * wavePsi α m (N x) P x‖ₑ * (E ∩ N ⁻¹' (P.semiHO α r)).indicator 1 x :=
         Finset.sum_congr rfl fun P _ => hterm P
@@ -8147,9 +8147,9 @@ theorem tree_estimate (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n
       rw [Finset.sum_congr rfl fun P _ => hcd P, ← Complex.ofReal_sum, ← ofReal_norm,
         Complex.norm_real, Real.norm_of_nonneg (Finset.sum_nonneg fun P _ => by positivity)]
     rw [e, hsum]
-    calc ‖∫ x, σ x * Fs T x‖ₑ ≤ ∫⁻ x, ‖σ x * Fs T x‖ₑ := enorm_integral_le_lintegral_enorm _
+    calc ‖∫ x, σ x * Fs T x‖ₑ ≤ ∫⁻ x, ‖σ x * Fs T x‖ₑ := eNorm_integral_le_lintegral_eNorm _
       _ ≤ ∫⁻ x, (‖Fs S1 x‖ₑ + ‖Fs S2 x‖ₑ) := lintegral_mono fun x => by
-          rw [enorm_mul]
+          rw [eNorm_mul]
           have hsplit : Fs T x = Fs S1 x + Fs S2 x := by
             simp only [Fs, S1, S2]
             rw [← Finset.sum_filter_add_sum_filter_not T (fun P => top.cω α ∈ P.semiHO α r)]
@@ -8159,8 +8159,8 @@ theorem tree_estimate (α : Fin n → ℕ) (hα : ∀ i, 1 ≤ α i) (hn : 0 < n
                 gcongr
                 rw [← ofReal_norm]
                 exact ENNReal.ofReal_le_one.mpr (hσ1 x)
-            _ ≤ _ := by rw [one_mul]; exact enorm_add_le _ _
-      _ = _ := lintegral_add_left (hFm S1).enorm _
+            _ ≤ _ := by rw [one_mul]; exact eNorm_add_le _ _
+      _ = _ := lintegral_add_left (hFm S1).eNorm _
   have hK1b := hK1 m hm E hE N hN top T hT c ε μ hε hμ hc hmass1
   have hA1 := lintegral_treeSum_le α hα hn (r := r) hm hE hN T hTne S1 hS1T c
   have hA2 := lintegral_treeSum_le α hα hn (r := r) hm hE hN T hTne S2 hS2T c

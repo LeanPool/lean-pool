@@ -339,18 +339,18 @@ theorem tailAmplitudeGate_heavy {Ccg Ctail X : ℝ} (hCcg : 0 < Ccg)
       mul_le_mul_of_nonneg_right hinv hX.le
     have h2 : (2 : ℝ) * ((4 * Ccg)⁻¹ * X) = (2 * Ccg)⁻¹ * X := by
       field_simp
-      try ring
+      ring
     linarith only [h2, mul_le_mul_of_nonneg_left h1 (by norm_num : (0 : ℝ) ≤ 2)]
   have hgap : 323 ≤ Ccg⁻¹ * X - (2 * Ccg)⁻¹ * X := by
     have hid : Ccg⁻¹ * X - (2 * Ccg)⁻¹ * X = (2 * Ccg)⁻¹ * X := by
       field_simp
-      try ring
+      ring
     have hstep : (2 * Ccg)⁻¹ * (646 * Ccg) ≤ (2 * Ccg)⁻¹ * X :=
       mul_le_mul_of_nonneg_left hbig
         (inv_nonneg.2 (by positivity : (0 : ℝ) ≤ 2 * Ccg))
     have heq : (2 * Ccg)⁻¹ * (646 * Ccg) = 323 := by
       field_simp
-      try ring
+      ring
     rw [heq] at hstep
     rw [hid]
     exact hstep

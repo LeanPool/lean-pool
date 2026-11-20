@@ -47,9 +47,8 @@ instance LocalTableau.instDecidableEq {lt1 lt2 : LocalTableau X} : Decidable (lt
     · apply isFalse
       aesop
   all_goals
-    try simp_all only [reduceCtorEq]
-    try exact instDecidableFalse
-    try exact instDecidableTrue
+    simp_all only [reduceCtorEq]
+    infer_instance
 
 /-! ## Termination of LocalTableau -/
 
@@ -240,7 +239,7 @@ theorem Dset_goes_down (α : Program) φ {Fs δ} (in_D : (Fs, δ) ∈ Dset α) {
           cases β
           all_goals
             simp_all [Dset, testsOfProgram, lmOfFormula]
-            try linarith
+          all_goals linarith
       · simp_all only [↓reduceIte, List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false,
           testsOfProgram, List.attach_append, List.map_append, List.map_map, Function.comp_apply,
           List.map_subtype, List.unattach_attach, List.sum_append]
@@ -515,13 +514,15 @@ lemma OneSidedLocalRule.lmOfFormula_lt {precond ress} (orule : OneSidedLocalRule
     subst hres
     simp only [Finset.mem_insert, Finset.mem_singleton] at hχ
     refine ⟨φ ⋀ ψ, by simp, ?_⟩
-    rcases hχ with rfl | rfl <;> (simp; try omega)
+    rcases hχ with rfl | rfl <;> simp
+    omega
   case nCo φ ψ =>
     intro res hres χ hχ
     simp only [Finset.mem_insert, Finset.mem_singleton] at hres
     refine ⟨~(φ ⋀ ψ), by simp, ?_⟩
     rcases hres with rfl | rfl <;>
-      (simp only [Finset.mem_singleton] at hχ; subst hχ; simp; try omega)
+      (simp only [Finset.mem_singleton] at hχ; subst hχ; simp)
+    omega
   case box α φ notAtom =>
     intro res hres ψ hψ
     simp only [List.pdlToFinFin, List.mem_toFinset, List.mem_map] at hres

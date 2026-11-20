@@ -168,7 +168,7 @@ theorem tsum_one_div_w_mul_q_pow_c (n : ℕ) (hn : 0 < n)
         = ∑' M : ↥R, ∑' L : ↑(rep ⁻¹' {M}), (1 : ℝ≥0∞) / (q K : ℝ≥0∞) ^ c L.1.1 :=
           tsum_congr fun M => (hinner M).symm
       _ = ∑' L : ↥(sigma K n), 1 / (q K : ℝ≥0∞) ^ c L.1 :=
-          ENNReal.tsum_fiberwise (fun L : ↥(sigma K n) => 1 / (q K : ℝ≥0∞) ^ c L.1) rep
+          tsum_fiberwise (fun L : ↥(sigma K n) => 1 / (q K : ℝ≥0∞) ^ c L.1) rep
       _ = (n : ℝ≥0∞) := tsum_one_div_q_pow_c K n hn
   -- cancel `n`: each summand of the regrouped identity is `n` times the corresponding mass
   have hn0 : (n : ℝ≥0∞) ≠ 0 := Nat.cast_ne_zero.mpr hn.ne'

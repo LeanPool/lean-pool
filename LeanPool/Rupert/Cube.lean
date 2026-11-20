@@ -46,14 +46,14 @@ abbrev outerRot : Matrix (Fin 3) (Fin 3) ℝ :=
 
 private lemma outerRot_o3_lemma1 : (star outerRotDenorm) * outerRotDenorm = 6 • 1 := by
   (ext i j; fin_cases i, j) <;>
-  · simp only [mul_apply, of_apply, cons_val', star_apply, Fin.sum_univ_three, cons_val]
+  · simp only [Matrix.mul_apply, of_apply, cons_val', star_apply, Fin.sum_univ_three, cons_val]
     norm_num
 
 private lemma outerRot_o3_lemma2 : (outerRotDenorm) * (star outerRotDenorm) = 6 • 1 := by
   (ext i j; fin_cases i, j) <;>
-  · simp only [mul_apply, of_apply, cons_val', star_apply, Fin.sum_univ_three, cons_val]
-    try norm_num
-    try ring_nf
+    simp only [Matrix.mul_apply, of_apply, cons_val', star_apply, Fin.sum_univ_three, cons_val]
+  all_goals norm_num
+  all_goals ring
 
 lemma two_three_six : √3 * √2 = √6 := by calc √3 * √2
      _ = √(3 * 2) := (Real.sqrt_mul' 3 zero_le_two).symm
@@ -373,10 +373,10 @@ lemma nontrivial_rectangle1 : rnn 1 < rpp 1 := by
   norm_num
 
 /-- Closed rectangle used as the intermediate shadow contained in the outer hull. -/
-def closedMediant : Set ℝ² := closedRectangle (rnn 0) (rpp 0) (rnn 1) (rpp 1)
+noncomputable def closedMediant : Set ℝ² := closedRectangle (rnn 0) (rpp 0) (rnn 1) (rpp 1)
 
 /-- Interior rectangle used as the intermediate shadow contained in the outer hull. -/
-def openMediant : Set ℝ² := openRectangle (rnn 0) (rpp 0) (rnn 1) (rpp 1)
+noncomputable def openMediant : Set ℝ² := openRectangle (rnn 0) (rpp 0) (rnn 1) (rpp 1)
 
 lemma rect_fact1 : ![rpp 0, rnn 1] = rpn := by
   have coord0 : rpp 0 = rpn 0 := by

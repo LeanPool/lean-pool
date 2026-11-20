@@ -95,7 +95,7 @@ private theorem ae_tendsto_of_eLpNorm_le_four_pow (g : ℕ → α → E) (h : α
       (hcheb.trans hpow).trans_eq hsq
     exact (ENNReal.mul_le_mul_iff_right hne ENNReal.ofReal_ne_top).1 hmul
   have hsum : ∑' k, μ (S k) ≠ ⊤ := by
-    refine ne_top_of_le_ne_top ?_ (ENNReal.tsum_le_tsum hS)
+    refine ne_top_of_le_ne_top ?_ (tsum_le_tsum hS)
     rw [← ENNReal.ofReal_tsum_of_nonneg (fun k => by positivity)
       (summable_geometric_of_lt_one (by norm_num) (by norm_num))]
     exact ENNReal.ofReal_ne_top
@@ -209,7 +209,7 @@ theorem setIntegral_norm_le_sqrt_measure_mul_norm (f : Lp E 2 μ) {B : Set α}
     h12.trans (mul_le_mul_left hmono _)
   have hfinR : eLpNorm (f : α → E) 2 μ * μ B ^ (1 / 2 : ℝ) ≠ ⊤ :=
     ENNReal.mul_ne_top hfin2 (ENNReal.rpow_ne_top_of_nonneg (by norm_num) hB)
-  rw [integral_norm_eq_lintegral_enorm hmeas, ← eLpNorm_one_eq_lintegral_enorm hmeas]
+  rw [integral_norm_eq_lintegral_eNorm hmeas, ← eLpNorm_one_eq_lintegral_eNorm hmeas]
   calc (eLpNorm (f : α → E) 1 (μ.restrict B)).toReal
       ≤ (eLpNorm (f : α → E) 2 μ * μ B ^ (1 / 2 : ℝ)).toReal :=
         ENNReal.toReal_mono hfinR hle

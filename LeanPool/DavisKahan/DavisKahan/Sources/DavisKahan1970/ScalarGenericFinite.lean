@@ -54,10 +54,10 @@ variable {E F : Type v}
 these implementation instances local so completeness does not appear as an
 extra mathematical hypothesis in the reviewer-facing theorem signatures. -/
 local instance headlineCompleteE : CompleteSpace E :=
-  FiniteDimensional.complete 𝕜 E
+  FiniteDimensional.completeSpace 𝕜 E
 
 local instance headlineCompleteF : CompleteSpace F :=
-  FiniteDimensional.complete 𝕜 F
+  FiniteDimensional.completeSpace 𝕜 F
 
 /-- **Davis--Kahan 1970, Section 2 `tan Theta`, scalar-generic directed
 headline form.**

@@ -182,9 +182,9 @@ theorem diff_subset_edgeArc [G.Finite] (h : IsStageOn G drawing C D)
   set R : Set Plane := V(G) ∪ ⋃ f ∈ {f | f ∈ E(G) ∧ f ≠ e}, edgeArc drawing f with hRdef
   have hRclosed : IsClosed R := by
     refine (Graph.finite_vertexSet (G := G)).isCompact.isClosed.union ?_
-    refine (Set.Finite.isCompact_biUnion ?_
-      fun f hf => h.isDrawing.isCompact_edgeArc hf.1).isClosed
-    exact (Graph.finite_edgeSet (G := G)).subset fun f hf => hf.1
+    refine (Set.Finite.isCompact_biUnion ?_ ?_).isClosed
+    · exact (Graph.finite_edgeSet (G := G)).subset fun f hf => hf.1
+    · exact fun f hf => h.isDrawing.isCompact_edgeArc hf.1
   have hcover : pointSet G drawing ⊆ edgeArc drawing e ∪ R := by
     rintro p (hv | hp)
     · exact Or.inr (Or.inl hv)
@@ -278,8 +278,9 @@ theorem interiorPart_subset_pointSet : interiorPart G drawing D ⊆ pointSet G d
 theorem isClosed_interiorPart [G.Finite] (h : IsDrawing G drawing) :
     IsClosed (interiorPart G drawing D) := by
   refine ((Graph.finite_vertexSet (G := G)).inter_of_left D).isCompact.isClosed.union ?_
-  refine (Set.Finite.isCompact_biUnion ?_ fun e he => h.isCompact_edgeArc he.1).isClosed
-  exact (Graph.finite_edgeSet (G := G)).subset fun e he => he.1
+  refine (Set.Finite.isCompact_biUnion ?_ ?_).isClosed
+  · exact (Graph.finite_edgeSet (G := G)).subset fun e he => he.1
+  · exact fun e he => h.isCompact_edgeArc he.1
 
 /-- The union of a subset of `Λ` with the closed edges meeting it. The blueprint attaches the
 *half-open* edges; taking the whole closed edge instead gives a set that is closed in the
@@ -293,8 +294,9 @@ theorem subset_attachEdges {S : Set Plane} : S ⊆ attachEdges G drawing S := su
 theorem isClosed_attachEdges [G.Finite] (h : IsDrawing G drawing) {S : Set Plane}
     (hS : IsClosed S) : IsClosed (attachEdges G drawing S) := by
   refine hS.union ?_
-  refine (Set.Finite.isCompact_biUnion ?_ fun e he => h.isCompact_edgeArc he.1).isClosed
-  exact (Graph.finite_edgeSet (G := G)).subset fun e he => he.1
+  refine (Set.Finite.isCompact_biUnion ?_ ?_).isClosed
+  · exact (Graph.finite_edgeSet (G := G)).subset fun e he => he.1
+  · exact fun e he => h.isCompact_edgeArc he.1
 
 namespace IsStageOn
 
@@ -579,7 +581,7 @@ theorem exists_crosscut [G.Finite] (h : IsStageOn G drawing C D) {a b : Plane}
       · exact hbnb
     have hfin : (Sum.inl '' (V(G) ∩ D) ∪ Sum.inr '' EE : Set (Plane ⊕ β)).Finite :=
       (((Graph.finite_vertexSet (G := G)).inter_of_left D).image _).union
-        (((Graph.finite_edgeSet (G := G)).subset fun e he => he.1).image _)
+        (((Graph.finite_edgeSet (G := G)).subset (t := EE) fun e he => he.1).image _)
     have hApoly : ∀ i ∈ (Sum.inl '' (V(G) ∩ D) ∪ Sum.inr '' EE : Set (Plane ⊕ β)),
         IsPolygonal (Sum.elim (fun v : Plane => ({v} : Set Plane)) (edgeArc drawing) i) := by
       rintro (v | e) hi

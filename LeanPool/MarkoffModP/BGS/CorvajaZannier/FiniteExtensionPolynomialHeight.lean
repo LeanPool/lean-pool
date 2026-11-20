@@ -160,7 +160,7 @@ private theorem polynomial_lift_infinityPlaceOrder_nonpositive
   let a : RatFuncInfinityIntegers K := ⟨f⁻¹, by
     change RatFunc.inftyValuation K f⁻¹ ≤ 1
     rw [RatFunc.inftyValuation_apply,
-      RatFunc.inftyValuation_of_nonzero K (inv_ne_zero hf),
+      RatFunc.inftyValuation_of_ne_zero K (inv_ne_zero hf),
       ← exp_zero, exp_le_exp, RatFunc.intDegree_inv]
     have hdegree : f.intDegree = (P.natDegree : ℤ) := by
       exact RatFunc.intDegree_polynomial

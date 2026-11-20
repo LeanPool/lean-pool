@@ -57,7 +57,7 @@ theorem pathLp_inner_zero_trace (T : ℝ) (hT : 0 ≤ T)
     ⟪pathLp T hT p,v⟫_ℝ = -⟪pathLp T hT q,primitiveTimeLp T hT v⟫_ℝ := by
   have hac : AbsolutelyContinuousOnInterval (extendPath T hT p) 0 T := by
     have hl : LipschitzOnWith ‖q‖₊ (extendPath T hT p) (Icc (0 : ℝ) T) := by
-      apply (convex_Icc (0 : ℝ) T).lipschitzOnWith_of_nnnorm_hasDerivWithin_le
+      apply (convex_Icc (0 : ℝ) T).lipschitzOnWith_of_nnNorm_hasDerivWithin_le
         (f' := extendPath T hT q)
       · intro t ht
         simpa only [extendPath,projIcc_of_mem hT ht] using hd ⟨t,ht⟩

@@ -38,7 +38,7 @@ theorem powerSeries_eq_of_constantCoeff_eq_of_derivative_eq_mul
   apply PowerSeries.ext
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero =>
       simpa only [PowerSeries.coeff_zero_eq_constantCoeff_apply] using hconstant

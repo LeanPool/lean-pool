@@ -57,7 +57,8 @@ theorem lowerSemicontinuous_measure_ball_toUpper_symm {X : Type*} [PseudoMetricS
   obtain ⟨r₂, hr₁r₂, hr₂r⟩ : ∃ r₂, r₁ < r₂ ∧ r₂ < r := exists_between hr₁
   have H : ∀ᶠ xr : X × WithUpper ℝ in 𝓝 (x, WithUpper.toUpper r),
       xr.1 ∈ ball x (r₂ - r₁) ∧ r₂ < WithUpper.toUpper.symm xr.2 :=
-    prod_mem_nhds (ball_mem_nhds _ (sub_pos.2 hr₁r₂)) (eventually_gt_nhds hr₂r)
+    prod_mem_nhds (ball_mem_nhds _ (sub_pos.2 hr₁r₂))
+      (eventually_gt_nhds (α := WithUpper ℝ) hr₂r)
   refine H.mono ?_
   simp only [Prod.forall, WithUpper.toUpper.surjective.forall, Equiv.symm_apply_apply, mem_ball]
   rintro y r' ⟨hy, hr'⟩

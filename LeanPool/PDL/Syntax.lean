@@ -139,9 +139,7 @@ def Program.isStar : Program → Prop
 instance : DecidablePred Program.isStar := by
   intro α
   cases α <;> simp only [Program.isStar, Bool.false_eq_true] <;>
-  all_goals
-    try exact instDecidableTrue
-    try exact instDecidableFalse
+    first | exact instDecidableTrue | exact instDecidableFalse
 
 theorem Program.isStar_iff {α : Program} : α.isStar ↔ ∃ β, α = (∗β) := by
   cases α <;> simp_all [isStar]

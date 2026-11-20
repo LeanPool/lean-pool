@@ -55,7 +55,7 @@ private theorem vecDot_matVecMul_of_symm
 private theorem linear_quasiMeasurePreserving
     (L : Mat d) (hL : IsUnit L.det) :
     MeasureTheory.QuasiMeasurePreserving (matVecMul L) volume volume := by
-  refine ⟨(continuous_matVecMul L).measurable, ?_⟩
+  refine ⟨(continuous_matVecMul L).measurable.aemeasurable, ?_⟩
   have hmap := Real.map_matrix_volume_pi_eq_smul_volume_pi
     (M := L) hL.ne_zero
   change Measure.map (Matrix.toLin' L) volume ≪ volume

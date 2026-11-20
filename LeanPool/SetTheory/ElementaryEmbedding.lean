@@ -202,9 +202,10 @@ lemma ωₘ_le_crit : ωₘ ≤ crit j₀ := by
   apply le_csInf
   · exact ⟨crit j₀, j_crit_ne_crit, isOrdinal_crit⟩
   · intro α ⟨hα, ord_α⟩
-    contrapose! hα
-    erw [isOrdinal_ωₘ.not_le_iff ord_α, ← ord_α.mem_iff_lt isOrdinal_ωₘ, ωₘ.spec] at hα
-    obtain ⟨n, ⟨_⟩⟩ := eq_natCast_of_memOmega hα
+    by_contra h
+    apply hα
+    erw [isOrdinal_ωₘ.not_le_iff ord_α, ← ord_α.mem_iff_lt isOrdinal_ωₘ, ωₘ.spec] at h
+    obtain ⟨n, ⟨_⟩⟩ := eq_natCast_of_memOmega h
     exact j_natCast _
 
 lemma isOrdinal_crit_iter (n : ℕ) : IsOrdinal (j^[n] (crit j)) := by

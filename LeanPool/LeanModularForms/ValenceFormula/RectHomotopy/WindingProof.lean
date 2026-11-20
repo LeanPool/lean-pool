@@ -100,7 +100,7 @@ lemma angle_lifted_ref_p₀_continuousOn :
     by_cases htT : t = T
     · subst htT
       rw [ContinuousWithinAt, hval_at_T]
-      apply Filter.Tendsto.mono_left _ (nhdsWithin_mono _ (fun x hx => hx.2))
+      apply Filter.Tendsto.mono_left _ (nhdsWithin_mono _ Set.inter_subset_right)
       rw [show {t : ℝ | ¬t < T} = Ici T from by ext; simp [not_lt]]
       exact lifted_angle_right_tendsto_neg_pi
     · have h_slit : fdPolygon t - refP₀ ∈ Complex.slitPlane :=

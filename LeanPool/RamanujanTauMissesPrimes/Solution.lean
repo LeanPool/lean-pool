@@ -414,7 +414,7 @@ lemma triple_inter_empty_of_X2k_inter_empty (R : RamanujanTau) (k : ℕ) (X : �
     (h : X2k R k ∩ {z : ℤ | (|z| : ℝ) ≤ X} = ∅) :
     oddPrimesSigned ∩ X2k R k ∩ {z : ℤ | (|z| : ℝ) ≤ X} = ∅ := by
   rw [Set.inter_assoc]
-  exact Set.subset_eq_empty Set.inter_subset_right h
+  exact Set.eq_empty_of_subset Set.inter_subset_right h
 
 lemma per_k_ncard_le_rpow_half (R : RamanujanTau) (h54 : Proposition54 R) :
     ∃ C : ℝ, 0 < C ∧ ∃ X₀ : ℝ, 0 < X₀ ∧ ∀ X : ℝ, X₀ < X →
@@ -925,7 +925,7 @@ lemma ell_split_large_small (R : RamanujanTau) (X : ℝ) :
 lemma bounded_nat_set_finite_real (B : ℝ) :
     {n : ℕ | (n : ℝ) ≤ B}.Finite := by
   by_cases hB : B < 0
-  · convert Set.finite_empty
+  · convert Set.finite_empty using 1
     ext n
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
     linarith [Nat.cast_nonneg (α := ℝ) n]

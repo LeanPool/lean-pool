@@ -109,7 +109,7 @@ theorem correspondenceBrownian_stopping_fresh_noise {Ω : Type*} [MeasurableSpac
     simpa only [mul_comm] using (Nat.le_ceil (((m+1 : ℕ) : ℝ≥0)*τ ω))
   have hlaw (m : ℕ) : (P.restrict A).map (X m) = (P A) • P.map N := by
     ext C hC
-    rw [Measure.map_apply (hX m) hC, Measure.restrict_apply ((hX m) hC), Measure.smul_apply]
+    rw [Measure.map_apply (hX m) hC, Measure.restrict_apply ((hX m) hC), _root_.smul_apply]
     have he := correspondenceNoiseShift_countable_actual n B P hB hind α (q m) (hc m)
     have he' : P ((X m) ⁻¹' C ∩ A) =
         P ({ω | ginibreBrownianFullContinuousNoise n (brownianFamilyShift B (q m ω)) α ω ∈ C} ∩ A)

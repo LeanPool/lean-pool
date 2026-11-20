@@ -890,9 +890,9 @@ theorem lintegral_enorm_rpow_two_le_lintegral_enorm_rpow_rpow_of_two_le
     have hmono :=
       eLpNorm_two_le_eLpNorm_of_two_le_real_exponent
         (μ := μ) (X := X) hQ
-    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+    rw [MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (p := (2 : ENNReal)) htwo_ne_zero htwo_ne_top hX,
-      MeasureTheory.eLpNorm_eq_lintegral_rpow_enorm_toReal
+      MeasureTheory.eLpNorm_eq_lintegral_rpow_eNorm_toReal
         (p := ENNReal.ofReal Q) hQenn_ne_zero hQenn_ne_top hX] at hmono
     simpa [ENNReal.toReal_ofReal hQ_nonneg] using hmono
   have hpow := ENNReal.rpow_le_rpow hnorm (by norm_num : 0 ≤ (2 : ℝ))
@@ -939,7 +939,7 @@ Source label `M_m^st`: the coercion from an ENNReal finite maximum to the real
 maximum is harmless for upper bounds by the original ENNReal quantity.
 -/
 theorem enorm_ennreal_toReal_le (x : ENNReal) : ‖x.toReal‖ₑ ≤ x := by
-  rw [Real.enorm_eq_ofReal ENNReal.toReal_nonneg]
+  rw [Real.eNorm_eq_ofReal ENNReal.toReal_nonneg]
   exact ENNReal.ofReal_toReal_le
 
 /--

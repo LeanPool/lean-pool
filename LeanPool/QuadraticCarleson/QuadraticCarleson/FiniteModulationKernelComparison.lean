@@ -257,7 +257,7 @@ theorem cutoffBoundaryOperator_enorm_le_maximal
   calc
     ‖∫ y, cutoffBoundaryKernel lam ρ (x - y) * f y‖ₑ ≤
         ∫⁻ y, ‖cutoffBoundaryKernel lam ρ (x - y) * f y‖ₑ :=
-      enorm_integral_le_lintegral_enorm _
+      eNorm_integral_le_lintegral_eNorm _
     _ ≤ ∫⁻ y in closedBall x (2 * ρ),
           ENNReal.ofReal (1 / ρ) * ‖f y‖ₑ := by
       rw [← lintegral_indicator measurableSet_closedBall]
@@ -265,7 +265,7 @@ theorem cutoffBoundaryOperator_enorm_le_maximal
       intro y
       by_cases hy : y ∈ closedBall x (2 * ρ)
       · simp only [Set.indicator_of_mem hy]
-        rw [enorm_mul]
+        rw [eNorm_mul]
         apply mul_le_mul'
         · simpa only [← ofReal_norm] using
             ENNReal.ofReal_le_ofReal (cutoffBoundaryKernel_norm_le lam hρ)
@@ -277,10 +277,10 @@ theorem cutoffBoundaryOperator_enorm_le_maximal
           apply hy
           have hs := cutoffBoundaryKernel_support_subset lam hρ hmem
           simpa [mem_closedBall, Real.dist_eq, abs_sub_comm] using hs
-        simp only [hk, zero_mul, enorm_zero, Std.le_refl]
+        simp only [hk, zero_mul, eNorm_zero, Std.le_refl]
     _ = ENNReal.ofReal (1 / ρ) *
           ∫⁻ y in closedBall x (2 * ρ), ‖f y‖ₑ := by
-      rw [MeasureTheory.lintegral_const_mul _ hf.enorm]
+      rw [MeasureTheory.lintegral_const_mul _ hf.eNorm]
     _ = 4 * centeredAverage (2 * ρ) (fun y ↦ ‖f y‖ₑ) x := by
       unfold centeredAverage
       rw [show ENNReal.ofReal (1 / ρ) =
@@ -475,11 +475,11 @@ theorem finiteQuadraticDyadicBlock_enorm_le_maximalTruncation_add_maximal
   rw [finiteQuadraticDyadicBlock_eq_truncations_add_boundaries lam j B hfi]
   change ‖A - D + E - F‖ₑ ≤ 2 * H + 16 * M
   calc
-    ‖A - D + E - F‖ₑ ≤ ‖A - D + E‖ₑ + ‖F‖ₑ := enorm_sub_le
+    ‖A - D + E - F‖ₑ ≤ ‖A - D + E‖ₑ + ‖F‖ₑ := eNorm_sub_le
     _ ≤ (‖A - D‖ₑ + ‖E‖ₑ) + ‖F‖ₑ :=
-      add_le_add (enorm_add_le (A - D) E) le_rfl
+      add_le_add (eNorm_add_le (A - D) E) le_rfl
     _ ≤ ((‖A‖ₑ + ‖D‖ₑ) + ‖E‖ₑ) + ‖F‖ₑ :=
-      add_le_add (add_le_add enorm_sub_le le_rfl) le_rfl
+      add_le_add (add_le_add eNorm_sub_le le_rfl) le_rfl
     _ ≤ ((H + H) + 8 * M) + 8 * M := by
       gcongr
     _ = 2 * H + 16 * M := by ring

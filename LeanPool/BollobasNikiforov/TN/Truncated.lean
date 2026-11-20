@@ -67,7 +67,7 @@ lemma unrestrictedSquare_eq_sum_vecMulVec (a : ι → ℝ) (t : κ → ℝ) :
 lemma unrestrictedSquare_eq_mul (a : ι → ℝ) (t : κ → ℝ) :
     unrestrictedSquare a t = unrestrictedSquareLeft a * unrestrictedSquareRight t := by
   ext i j
-  simp [unrestrictedSquareLeft, unrestrictedSquareRight, mul_apply, Fin.sum_univ_three,
+  simp [unrestrictedSquareLeft, unrestrictedSquareRight, Matrix.mul_apply, Fin.sum_univ_three,
     cons_val_zero, cons_val_one, cons_val_two, vecHead, vecTail]
   ring
 
@@ -842,7 +842,7 @@ lemma det_mul_eq_sum_comp {k m : ℕ}
   calc (P * Q).det
       = ∑ p : Fin k → Fin m, ∑ σ : Equiv.Perm (Fin k),
           Equiv.Perm.sign σ * ∏ i, P (σ i) (p i) * Q (p i) i := by
-        simp only [det_apply', mul_apply, prod_univ_sum, mul_sum, Fintype.piFinset_univ]
+        simp only [det_apply', Matrix.mul_apply, prod_univ_sum, mul_sum, Fintype.piFinset_univ]
         rw [sum_comm]
     _ = ∑ p : Fin k → Fin m, (P.submatrix id p).det * ∏ i, Q (p i) i := by
         refine sum_congr rfl fun p _ => ?_
@@ -930,7 +930,7 @@ lemma IsTotallyNonneg.mul {l m n : Type*}
   have hre : (A * B).submatrix I J =
       A.submatrix I e * B.submatrix (e : Fin (Fintype.card m) → m) J := by
     ext i j
-    simp only [submatrix_apply, mul_apply]
+    simp only [submatrix_apply, Matrix.mul_apply]
     exact (e.toEquiv.sum_comp fun x => A (I i) x * B x (J j)).symm
   rw [hre, det_mul_eq_sum_strictMono]
   refine sum_nonneg fun S _ =>
@@ -1080,7 +1080,7 @@ lemma gridK_apply {r c : ℕ} (hr : 0 < r) (a : Fin r → ℝ) (t : Fin c → �
   have h1 : ∀ k,
       (gridH1 hr a t N * gridD hr a t N) i k = gridH1 hr a t N i k * δ := by
     intro k
-    simp only [mul_apply, hD, mul_ite, mul_zero]
+    simp only [Matrix.mul_apply, hD, mul_ite, mul_zero]
     trans ∑ x : Fin (N + 1), if x = k then gridH1 hr a t N i k * δ else 0
     · refine sum_congr rfl fun x _ => ?_
       split_ifs with hx <;> simp [hx]

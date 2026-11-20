@@ -104,7 +104,7 @@ theorem entropy_bound_on_closure {α V : Type*} [MeasurableSpace α]
     ∀ p ∈ closure S,
       Integrable (fun x => p.1 x ^ 2 * Real.log (p.1 x ^ 2)) μ ∧
         squareEntropy μ p.1 ≤ c * ‖p.2‖ ^ 2 := by
-  exact closure_minimal hS (isClosed_entropy_energy_pairs μ c)
+  exact closure_minimal (fun p hp => hS p hp) (isClosed_entropy_energy_pairs μ c)
 
 end
 end GinibrePoincare

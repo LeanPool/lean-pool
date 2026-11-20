@@ -44,7 +44,7 @@ lemma enorm_condExp_le (f : Ω → E) :
   have : 0 ≤ᵐ[μ] μ[fun ω ↦ ‖f ω‖|m] :=
     condExp_nonneg (ae_of_all _ fun _ ↦ by positivity)
   filter_upwards [norm_condExp_le f, this] with ω hω1 hω2
-  rwa [le_ofReal_iff_toReal_le (by simp) hω2, toReal_enorm]
+  rwa [le_ofReal_iff_toReal_le (by simp) hω2, toReal_eNorm]
 
 lemma norm_rpow_condExp_le {p : ℝ≥0∞} (one_le_p : 1 ≤ p) (p_ne_top : p ≠ ∞) (hf : MemLp f p μ) :
     ∀ᵐ ω ∂μ, ‖μ[f|m] ω‖ ^ p.toReal ≤ μ[fun ω ↦ ‖f ω‖ ^ p.toReal|m] ω := by
@@ -62,7 +62,7 @@ lemma enorm_rpow_condExp_le {p : ℝ≥0∞} (one_le_p : 1 ≤ p) (p_ne_top : p 
   have : 0 ≤ᵐ[μ] μ[fun ω ↦ ‖f ω‖ ^ p.toReal|m] :=
     condExp_nonneg (ae_of_all _ fun _ ↦ by positivity)
   filter_upwards [norm_rpow_condExp_le one_le_p p_ne_top hf, this] with ω hω1 hω2
-  rwa [le_ofReal_iff_toReal_le (by simp) hω2, ← toReal_rpow, toReal_enorm]
+  rwa [le_ofReal_iff_toReal_le (by simp) hω2, ← toReal_rpow, toReal_eNorm]
 
 omit [NormedSpace ℝ E] [CompleteSpace E] in
 lemma ofReal_condExp_norm_ae_le_eLpNormEssSup (hf : AEStronglyMeasurable f μ) :
@@ -73,7 +73,7 @@ lemma ofReal_condExp_norm_ae_le_eLpNormEssSup (hf : AEStronglyMeasurable f μ) :
   · simp [h]
   have hf' : MemLp f ∞ μ := by rw [memLp_iff, eLpNorm_exponent_top hf]; exact Ne.lt_top h
   have : (‖f ·‖) ≤ᵐ[μ] fun _ ↦ (eLpNormEssSup f μ).toReal := by
-    filter_upwards [enorm_ae_le_eLpNormEssSup f μ] with ω hω
+    filter_upwards [eNorm_ae_le_eLpNormEssSup f μ] with ω hω
     exact (ofReal_le_iff_le_toReal h).1 (by simpa)
   filter_upwards [condExp_mono (m := m) (hf'.integrable (by simp)).norm
     (integrable_const _) this] with ω hω
@@ -109,7 +109,7 @@ lemma Integrable.uniformIntegrable_condExp' {ι : Type*} {g : Ω → E}
     UniformIntegrable (fun i => μ[g|ℱ i]) 1 μ := by
   let A : MeasurableSpace Ω := mΩ
   have hmeas : ∀ n, ∀ C, MeasurableSet {x | C ≤ ‖(μ[g|ℱ n]) x‖₊} := fun n C =>
-    stronglyMeasurable_const.measurableSet_le (stronglyMeasurable_condExp.mono (hℱ n)).nnnorm
+    stronglyMeasurable_const.measurableSet_le (stronglyMeasurable_condExp.mono (hℱ n)).nnNorm
   have hg : MemLp g 1 μ := memLp_one_iff_integrable.2 hint
   refine uniformIntegrable_of le_rfl one_ne_top
     (fun n => (stronglyMeasurable_condExp.mono (hℱ n)).aestronglyMeasurable) fun ε hε => ?_
@@ -136,7 +136,7 @@ lemma Integrable.uniformIntegrable_condExp' {ι : Type*} {g : Ω → E}
       rw [toReal_one, rpow_one]
       convert!
         mul_meas_ge_le_pow_eLpNorm μ one_ne_zero ENNReal.one_ne_top C
-      rw [ENNReal.toReal_one, ENNReal.rpow_one, enorm_eq_nnnorm]
+      rw [ENNReal.toReal_one, ENNReal.rpow_one, eNorm_eq_nnNorm]
     rw [toReal_one, rpow_one, mul_comm,
       ← ENNReal.le_div_iff_mul_le (Or.inl (coe_ne_zero.2 hCpos.ne'))
         (Or.inl coe_lt_top.ne)] at this
@@ -150,7 +150,7 @@ lemma Integrable.uniformIntegrable_condExp' {ι : Type*} {g : Ω → E}
     fun n ↦ (h {x : Ω | C ≤ ‖(μ[g|ℱ n]) x‖₊} (hmeas n C).nullMeasurableSet (this n)).trans' ?_⟩
   have hmeasℱ : MeasurableSet[ℱ n] {x : Ω | C ≤ ‖(μ[g|ℱ n]) x‖₊} :=
     @StronglyMeasurable.measurableSet_le _ _ (ℱ n) _ _ _ _ _ _ stronglyMeasurable_const
-      stronglyMeasurable_condExp.nnnorm
+      stronglyMeasurable_condExp.nnNorm
   rw [← eLpNorm_congr_ae (condExp_indicator hint hmeasℱ)]
   exact eLpNorm_condExp_le_eLpNorm _ le_rfl
 

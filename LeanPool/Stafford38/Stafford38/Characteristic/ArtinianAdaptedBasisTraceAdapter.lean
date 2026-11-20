@@ -156,7 +156,7 @@ theorem leftMultiplicationMatrix_isNilpotent
       | zero => intro w; simp
       | succ j ih =>
           intro w
-          rw [pow_succ, Module.End.mul_apply, ih, leftMultiplicationEnd_apply]
+          rw [pow_succ, mul_apply_eq_comp, ih, leftMultiplicationEnd_apply]
           exact (SemigroupAction.mul_smul (r ^ j) r w).symm.trans (by rw [pow_succ])
     rw [hp N v, hN, zero_smul, LinearMap.zero_apply]
   exact hend.map (LinearMap.toMatrixAlgEquiv b)

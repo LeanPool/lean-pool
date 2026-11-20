@@ -101,7 +101,7 @@ variable [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] {L : Submo
 /-! ### The lower bound -/
 
 /-- The cross-polytope on a basis: the points whose coordinates have `ℓ¹`-norm less than one. -/
-private def crossPolytope {n : ℕ} (b : Basis (Fin n) ℝ E) : Set E :=
+private noncomputable def crossPolytope {n : ℕ} (b : Basis (Fin n) ℝ E) : Set E :=
   b.equivFun ⁻¹' {x : Fin n → ℝ | ∑ i, |x i| < 1}
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
@@ -143,7 +143,7 @@ private theorem measure_crossPolytope {n : ℕ} (b : Basis (Fin n) ℝ E) (μ : 
     intro S hS
     rw [← Measure.map_apply hmeas hS]
     change (Measure.map (b.equivFun.toLinearMap : E → (Fin n → ℝ)) μ) S = _
-    rw [hc, Measure.smul_apply, smul_eq_mul]
+    rw [hc, smul_apply, smul_eq_mul]
   have hfd : ZSpan.fundamentalDomain b = (b.equivFun : E → (Fin n → ℝ)) ⁻¹' Q := by
     ext x
     simp [ZSpan.fundamentalDomain, hQ, Basis.equivFun_apply]

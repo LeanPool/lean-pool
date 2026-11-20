@@ -17,6 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+
 public import LeanPool.FLTEichlerShimura.Definitions.Def_WeierstrassCurve_GenusOnePlaceGateCentred
 
 import LeanPool.FLTEichlerShimura.Definitions.Defs_IsogenyEndDatum_sharedLibrary

@@ -446,7 +446,7 @@ theorem vertexImage_not_mem_nonincidentEdgeImage (v : K.Vertex) :
       ⟨K.vertexPoint v, K.vertexPoint_mem_support v⟩)
 
 /-- Singleton chart images of the global vertices. -/
-def vertexImageCarrier (v : K.Vertex) : Set Plane :=
+noncomputable def vertexImageCarrier (v : K.Vertex) : Set Plane :=
   {G.vertexImage v}
 
 /-- A singleton vertex image in the open chart range. -/
@@ -521,7 +521,7 @@ theorem exists_vertex_ne (v : K.Vertex) : ∃ w : K.Vertex, w ≠ v := by
   exact ⟨hrest.choose, (Finset.mem_erase.mp hrest.choose_spec).1⟩
 
 /-- The chart images of all vertices other than `v`. -/
-def otherVertexImages (v : K.Vertex) : Set Plane :=
+noncomputable def otherVertexImages (v : K.Vertex) : Set Plane :=
   (⋃ w : {w : K.Vertex // w ≠ v}, G.vertexImageCarrier w.1) ∪
     G.regionᶜ
 
@@ -569,7 +569,7 @@ theorem otherVertexImages_nonempty (v : K.Vertex) :
 
 /-- Closed geometric obstacles that a vertex neighborhood must avoid: every nonincident edge and
 every other vertex. -/
-def vertexObstacle (v : K.Vertex) : Set Plane :=
+noncomputable def vertexObstacle (v : K.Vertex) : Set Plane :=
   G.nonincidentEdgeImage v ∪ G.otherVertexImages v
 
 theorem isClosed_vertexObstacle (v : K.Vertex) :
@@ -624,7 +624,7 @@ theorem vertexIsolationRadius_lt_infDist (v : K.Vertex) :
     _ < Metric.infDist (G.vertexImage v) (G.vertexObstacle v) := by linarith
 
 /-- The closed disk selected around a charted vertex. -/
-def vertexDisk (v : K.Vertex) : Set Plane :=
+noncomputable def vertexDisk (v : K.Vertex) : Set Plane :=
   Metric.closedBall (G.vertexImage v) (G.vertexIsolationRadius v)
 
 /-- A selected vertex disk, restricted to the open chart range. -/
@@ -783,7 +783,7 @@ theorem locallyFinite_vertexDisks : LocallyFinite G.vertexDiskInRange := by
 /-! ## Pairwise-separated central edge carriers -/
 
 /-- Open endpoint disks removed before independently perturbing the central part of an edge. -/
-def edgeEndpointNeighborhood (e : K.Edge) : Set Plane :=
+noncomputable def edgeEndpointNeighborhood (e : K.Edge) : Set Plane :=
   Metric.ball (G.vertexImage (K.edgeFirst e))
       (G.vertexIsolationRadius (K.edgeFirst e)) ∪
     Metric.ball (G.vertexImage (K.edgeSecond e))
@@ -794,7 +794,7 @@ theorem isOpen_edgeEndpointNeighborhood (e : K.Edge) :
   Metric.isOpen_ball.union Metric.isOpen_ball
 
 /-- The compact middle of an edge after removing its two open endpoint disks. -/
-def edgeCentralCarrier (e : K.Edge) : Set Plane :=
+noncomputable def edgeCentralCarrier (e : K.Edge) : Set Plane :=
   G.edgeImage e \ G.edgeEndpointNeighborhood e
 
 theorem isCompact_edgeCentralCarrier (e : K.Edge) :
@@ -865,7 +865,7 @@ theorem locallyFinite_edgeCentralCarriers :
   exact hp.1
 
 /-- The closed union of all central edge carriers other than `e`. -/
-def otherEdgeCentralCarriers (e : K.Edge) : Set Plane :=
+noncomputable def otherEdgeCentralCarriers (e : K.Edge) : Set Plane :=
   (⋃ d : {d : K.Edge // d ≠ e}, G.edgeCentralCarrier d.1) ∪
     G.regionᶜ
 
@@ -898,7 +898,7 @@ theorem disjoint_edgeCentralCarrier_other (e : K.Edge) :
       exact G.map_mem_region q)
 
 /-- The locally finite union of vertex disks not incident to a fixed edge. -/
-def nonincidentVertexDisks (e : K.Edge) : Set Plane :=
+noncomputable def nonincidentVertexDisks (e : K.Edge) : Set Plane :=
   (⋃ v : {v : K.Vertex // v ∉ e.1}, G.vertexDisk v.1) ∪
     G.regionᶜ
 
@@ -936,7 +936,7 @@ theorem disjoint_edgeCentralCarrier_nonincidentVertexDisks (e : K.Edge) :
       exact G.map_mem_region q)
 
 /-- All closed obstacles from which the middle of `e` must be separated. -/
-def edgeCentralObstacle (e : K.Edge) : Set Plane :=
+noncomputable def edgeCentralObstacle (e : K.Edge) : Set Plane :=
   G.otherEdgeCentralCarriers e ∪ G.nonincidentVertexDisks e
 
 theorem isClosed_edgeCentralObstacle (e : K.Edge) :
@@ -1018,7 +1018,7 @@ theorem four_mul_centralTubeRadius_lt_dist {e d : K.Edge} (hed : e ≠ d)
   linarith
 
 /-- The open tube in which the central part of edge `e` may be polygonalized. -/
-def edgeCentralTube (e : K.Edge) : Set Plane :=
+noncomputable def edgeCentralTube (e : K.Edge) : Set Plane :=
   Metric.thickening (G.centralTubeRadius e) (G.edgeCentralCarrier e)
 
 theorem disjoint_edgeCentralTube_nonincidentVertexDisk (e : K.Edge)
@@ -1318,7 +1318,7 @@ namespace EdgeTrimData
 variable {G} {e : K.Edge}
 
 /-- The connected compact subarc between the two selected exits. -/
-def carrier (T : G.EdgeTrimData e) : Set Plane :=
+noncomputable def carrier (T : G.EdgeTrimData e) : Set Plane :=
   G.chartEdgeCurve e '' Set.Icc T.left T.right
 
 theorem isCompact_carrier (T : G.EdgeTrimData e) : IsCompact T.carrier := by
@@ -1935,7 +1935,7 @@ noncomputable def exitData (A : G.CentralPolygonalArc e) :
   · exact G.disjoint_vertexDisks (K.edgeFirst_ne_edgeSecond e)
 
 /-- The `trimmedCarrier` declaration. -/
-def trimmedCarrier (A : G.CentralPolygonalArc e) : Set Plane :=
+noncomputable def trimmedCarrier (A : G.CentralPolygonalArc e) : Set Plane :=
   A.parameterization.curve '' Set.Icc A.exitData.left A.exitData.right
 
 theorem trimmedCarrier_subset_resolvedCarrier (A : G.CentralPolygonalArc e) :
@@ -3193,7 +3193,7 @@ theorem graphReplacementMapInRange_injective :
   exact congrArg Subtype.val hpq
 
 /-- The relative image of the part of a source set carried by one edge. -/
-private def edgewiseImageInRange (C : Set (oneSkeletonInSupport (K := K)))
+private noncomputable def edgewiseImageInRange (C : Set (oneSkeletonInSupport (K := K)))
     (e : K.Edge) : Set G.region :=
   G.graphReplacementMapInRange '' (C ∩ edgePiece (K := K) e)
 

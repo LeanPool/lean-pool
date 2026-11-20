@@ -198,7 +198,7 @@ theorem BranchClaims.node_impossible
           (claims.nodeAt identifier).pairTwice).Exact assignments → False := by
   intro identifier
   induction identifier using Nat.strong_induction_on with
-  | h identifier hinduction =>
+  | ind identifier hinduction =>
       intro hidentifier assignments hcentres hassignments hcode hpair
       let claim := claims.nodeAt identifier
       let centre := searchCentres.getD claim.depth 0

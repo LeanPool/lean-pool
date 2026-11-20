@@ -329,7 +329,7 @@ theorem cubeEuclideanCoordinateOverlapPowerEnergy_eq_exact {d : ℕ}
       rw [tsum_fintype]
     _ = ∑' i : Fin d, ∑' j : ℕ, w j *
         (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => L j S.1 i) :=
-      ENNReal.tsum_comm
+      tsum_comm
     _ = ∑ i : Fin d, ∑' j : ℕ, w j *
         (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => L j S.1 i) := by
       rw [tsum_fintype]
@@ -464,7 +464,7 @@ theorem cubeEuclideanCoordinateOverlapPowerEnergy_le_dimension_mul_overlap
         w j * (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => C j S.1)) ≤
       ∑' j : ℕ, (d : ℝ≥0∞) *
         (w j * (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => V j S.1)) := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro j
         calc
           w j * (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => C j S.1) ≤
@@ -609,7 +609,7 @@ theorem cubeEuclideanOverlapPowerEnergy_le_coordinate_mul
         w j * (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => V j S.1)) ≤
       ∑' j : ℕ, K *
         (w j * (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => C j S.1)) := by
-        apply ENNReal.tsum_le_tsum
+        apply tsum_le_tsum
         intro j
         calc
           w j * (ScalarOverlap.centersAtDepth Q j).attach.sum (fun S => V j S.1) ≤
@@ -891,7 +891,7 @@ private theorem cubeMetricComparisonConstant_root_le_dimension_power
   have hd : 1 ≤ (d : ℝ≥0∞) := ennreal_natCast_one_le
   convert ENNReal.rpow_le_rpow_of_exponent_le hd
     (finiteLpExponent_dimension_add_mul_inv_le_dimension_add_one d p) using 1
-  all_goals simp
+  simp
 
 private theorem flatOverlapConstant_root_le_flatOverlapConstant
     (d : ℕ) (p : FiniteLpExponent) :

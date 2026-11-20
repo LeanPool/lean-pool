@@ -69,17 +69,14 @@ variable [IsStrictOrderedRing 𝕜]
 /-- Far right, a nonzero polynomial has the sign of its leading coefficient. -/
 theorem eventually_atTop_sign_eval {p : 𝕜[X]} (hp : p ≠ 0) :
     ∀ᶠ x in atTop, SignType.sign (p.eval x) = SignType.sign p.leadingCoeff := by
-  by_cases hd : p.degree ≤ 0
-  · rw [eq_C_of_degree_le_zero hd]
-    simp
-  have hd' : 0 < p.degree := not_le.mp hd
+  have h := p.tendsTo_atTop_div_nhds_leadingCoeff
   rcases (leadingCoeff_ne_zero.mpr hp).lt_or_gt with hlt | hgt
-  · filter_upwards [(tendsto_atBot_of_leadingCoeff_nonpos p hd' hlt.le).eventually_lt_atBot 0]
-      with x hx
-    rw [sign_neg hx, sign_neg hlt]
-  · filter_upwards [(tendsto_atTop_of_leadingCoeff_nonneg p hd' hgt.le).eventually_gt_atTop 0]
-      with x hx
-    rw [sign_pos hx, sign_pos hgt]
+  · filter_upwards [h.eventually (gt_mem_nhds hlt), eventually_gt_atTop (0 : 𝕜)] with x hx hx0
+    have hx' : p.eval x < 0 := by
+      simpa only [zero_mul] using (div_lt_iff₀ (pow_pos hx0 _)).mp hx
+    rw [sign_neg hx', sign_neg hlt]
+  · filter_upwards [h.eventually (lt_mem_nhds hgt), eventually_gt_atTop (0 : 𝕜)] with x hx hx0
+    rw [sign_pos ((div_pos_iff_of_pos_right (pow_pos hx0 _)).mp hx), sign_pos hgt]
 
 /-- Far left, a nonzero polynomial has the sign of `(-1) ^ deg` times its leading coefficient. -/
 theorem eventually_atBot_sign_eval {p : 𝕜[X]} (hp : p ≠ 0) :

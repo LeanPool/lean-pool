@@ -867,12 +867,12 @@ theorem gaussianRegularize_ft_integrable (φ : V → ℂ)
       apply Continuous.cexp
       exact (continuous_const).mul (Complex.continuous_ofReal.comp (continuous_norm.pow 2))
     have hf_meas : ∀ n, Measurable (f n) := by
-      intro n; exact (hft_cont.mul (hcexp_cont n)).measurable.enorm
+      intro n; exact (hft_cont.mul (hcexp_cont n)).measurable.eNorm
     -- Tendsto: h_n(ξ) → 𝓕 φ_ε(ξ) as cexp → 1, so ‖h_n‖ₑ → ‖𝓕 φ_ε‖ₑ
     have hf_tendsto : ∀ ξ, Tendsto (fun n => f n ξ) atTop
         (𝓝 ((‖𝓕 φ_ε ξ‖₊ : ENNReal))) := by
       intro ξ
-      apply (Filter.Tendsto.enorm (a := 𝓕 φ_ε ξ) _).congr (fun n => rfl)
+      apply (Filter.Tendsto.eNorm (a := 𝓕 φ_ε ξ) _).congr (fun n => rfl)
       show Tendsto (fun n => 𝓕 φ_ε ξ * cexp (-(↑(tn n) : ℂ) * ↑(‖ξ‖ ^ 2)))
         atTop (𝓝 (𝓕 φ_ε ξ))
       conv_rhs => rw [show 𝓕 φ_ε ξ = 𝓕 φ_ε ξ * 1 from (mul_one _).symm]
@@ -902,7 +902,7 @@ theorem gaussianRegularize_ft_integrable (φ : V → ℂ)
         (gaussian_cexp_integrable _ (htn_pos n)).bdd_mul hft_cont.aestronglyMeasurable
           (ae_of_all _ hft_bdd)
       -- Convert ∫⁻ ‖h_n‖ₑ to ENNReal.ofReal (∫ ‖h_n‖)
-      rw [← ofReal_integral_norm_eq_lintegral_enorm hhn_int]
+      rw [← ofReal_integral_norm_eq_lintegral_eNorm hhn_int]
       apply ENNReal.ofReal_le_ofReal
       -- Key: ‖h_n(ξ)‖ = (h_n(ξ)).re since h_n is nonneg real-valued
       -- Then ∫ ‖h_n‖ = ∫ h_n.re = (∫ h_n).re ≤ (φ 0).re

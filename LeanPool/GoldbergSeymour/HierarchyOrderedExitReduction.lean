@@ -440,7 +440,7 @@ private theorem helper_continuation_896.{u_1, u_2} :
               | omega
               | ( have := GoldbergSeymour.TreeSequence.positive T
                   have := GoldbergSeymour.ExtendedTashkinovTree.roundsPositive ett
-                  all_goals omega)
+                  omega)
     ⟩ : Fin ett.rounds);
     let Tn : TreeSequence G e0 := ett.series.data.tree (Fin.last ett.rounds).castSucc;
         ColoredVertexSetElementary G (ett.series.data.coloring i.castSucc) (TreeSequenceVertexSet

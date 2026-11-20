@@ -93,7 +93,7 @@ theorem gap_force_increment_majorant_of_sws
     exact h
   filter_upwards [hi,hf] with s his hfs
   intro i x hx
-  rw [his i x hx, Real.enorm_eq_ofReal_abs]
+  rw [his i x hx, Real.eNorm_eq_ofReal_abs]
   have hF : 0 ≤ ∫ y in vec3Ball z.1 ρ, vec3EuclideanNorm (f (y,s)) :=
     integral_nonneg (fun _ => vec3EuclideanNorm_nonneg _)
   have hA : 0 ≤ (cutoffGradientConstant/ρ) * ∫ y in vec3Ball z.1 ρ,

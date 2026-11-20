@@ -166,7 +166,7 @@ theorem neg_one_not_mem_Gamma1 {M : ℕ} (hM : 5 ≤ M) : (-1 : SL(2, ℤ)) ∉ 
     (by norm_num)
 
 theorem S_sq : ModularGroup.S ^ 2 = (-1 : SL(2, ℤ)) :=
-  Subtype.ext (by rw [coe_pow, pow_two, S_mul_S_eq, coe_neg, Matrix.SpecialLinearGroup.coe_one])
+  by rw [pow_two, S_mul_S_eq]
 
 theorem S_pow_four : ModularGroup.S ^ 4 = (1 : SL(2, ℤ)) := by
   rw [show (4 : ℕ) = 2 * 2 from rfl, pow_mul, S_sq, neg_one_sq]

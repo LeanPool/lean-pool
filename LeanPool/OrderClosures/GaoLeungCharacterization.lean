@@ -252,7 +252,7 @@ private theorem disjointSup_add
   apply le_antisymm
   · apply hAC.2
     rintro _ ⟨F, rfl⟩
-    simp only [disjointFiniteSum, BoundedContinuousFunction.add_apply, add_smul,
+    simp only [disjointFiniteSum, add_apply, add_smul,
       Finset.sum_add_distrib]
     exact add_le_add (hA.1 ⟨F, rfl⟩) (hC.1 ⟨F, rfl⟩)
   · rw [add_comm, ← le_sub_iff_add_le]
@@ -276,7 +276,7 @@ private theorem disjointSup_add
       disjointFiniteSum x a F + disjointFiniteSum x c G ≤
           disjointFiniteSum x a H + disjointFiniteSum x c H := add_le_add hFa hGc
       _ = disjointFiniteSum x (a + c) H := by
-        simp only [disjointFiniteSum, BoundedContinuousFunction.add_apply, add_smul,
+        simp only [disjointFiniteSum, add_apply, add_smul,
           Finset.sum_add_distrib]
       _ ≤ disjointSup x (a + c) := hAC.1 ⟨H, rfl⟩
 
@@ -914,7 +914,7 @@ private theorem rowHead_not_mem_orderAdherence_image
   have hcoord := tendsto_apply_of_disjointEmbedding_orderConvergesTo
     x hx b hb hxb c rowHead hcorder (m, 0) hxp
   have hhalf : ∀ᶠ i in atTop, (1 / 2 : ℝ) < c i (m, 0) := by
-    apply hcoord
+    apply hcoord.eventually
     exact Ioi_mem_nhds (show (1 / 2 : ℝ) < rowHead (m, 0) by simp [rowHead]; norm_num)
   obtain ⟨i, hic, hihalf⟩ := (hcbound.and hhalf).exists
   have hlimit_le : (m + 1 : ℕ) * c i (m, 0) ≤ M := by

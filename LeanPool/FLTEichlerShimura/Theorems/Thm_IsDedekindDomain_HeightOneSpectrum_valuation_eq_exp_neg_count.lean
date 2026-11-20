@@ -17,7 +17,8 @@ Licensed under Apache License 2.0
 
 module
 
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 public import Mathlib.RingTheory.DedekindDomain.Factorization
 
 
@@ -88,8 +89,9 @@ theorem solution {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Fiel
   have hs' : ((Ideal.span {(s : R)} : Ideal R) : FractionalIdeal R⁰ K) ≠ 0 := by
     rwa [Ne, FractionalIdeal.coeIdeal_eq_zero, Ideal.span_singleton_eq_bot]
   rw [hx', FractionalIdeal.count_mul K v hr' (inv_ne_zero hs'), FractionalIdeal.count_inv,
-    FractionalIdeal.count_coe K v (by rwa [Ne, Ideal.span_singleton_eq_bot] : Ideal.span {r} ≠ ⊥),
-    FractionalIdeal.count_coe K v
+    FractionalIdeal.count_coeIdeal K v
+      (by rwa [Ne, Ideal.span_singleton_eq_bot] : Ideal.span {r} ≠ ⊥),
+    FractionalIdeal.count_coeIdeal K v
       (by rwa [Ne, Ideal.span_singleton_eq_bot] : Ideal.span {(s : R)} ≠ ⊥),
     ← WithZero.exp_sub]
   congr 1

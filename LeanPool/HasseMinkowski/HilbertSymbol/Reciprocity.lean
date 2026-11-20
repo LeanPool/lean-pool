@@ -107,13 +107,13 @@ theorem almost_all_one {a b : ℚ} (ha : a ≠ 0) (hb : b ≠ 0) :
   -- Both casts are `p`-adic units.
   have hv_a : Padic.valuation (a : ℚ_[p]) = 0 := by
     rw [Padic.valuation_ratCast, padicValRat_def]
-    rw [show padicValInt (p : ℕ) a.num = padicValNat (p : ℕ) a.num.natAbs from rfl,
-      padicValNat.eq_zero_of_not_dvd ha_num, padicValNat.eq_zero_of_not_dvd ha_den]
+    rw [padicValInt,
+      multiplicity_eq_zero_of_not_dvd ha_num, multiplicity_eq_zero_of_not_dvd ha_den]
     norm_num
   have hv_b : Padic.valuation (b : ℚ_[p]) = 0 := by
     rw [Padic.valuation_ratCast, padicValRat_def]
-    rw [show padicValInt (p : ℕ) b.num = padicValNat (p : ℕ) b.num.natAbs from rfl,
-      padicValNat.eq_zero_of_not_dvd hb_num, padicValNat.eq_zero_of_not_dvd hb_den]
+    rw [padicValInt,
+      multiplicity_eq_zero_of_not_dvd hb_num, multiplicity_eq_zero_of_not_dvd hb_den]
     norm_num
   have ha' : (a : ℚ_[p]) ≠ 0 := by
     exact_mod_cast ha
@@ -530,7 +530,7 @@ private abbrev twoPrime : Nat.Primes := ⟨2, Nat.prime_two⟩
 private lemma padic_valuation_natCast_cast {ℓ : ℕ} [Fact (Nat.Prime ℓ)] {n : ℕ}
     (h : ¬ ℓ ∣ n) : Padic.valuation ((n : ℚ) : ℚ_[ℓ]) = 0 := by
   have hcast : ((n : ℚ) : ℚ_[ℓ]) = (n : ℚ_[ℓ]) := by norm_cast
-  rw [hcast, Padic.valuation_natCast, padicValNat.eq_zero_of_not_dvd h]
+  rw [hcast, Padic.valuation_natCast, multiplicity_eq_zero_of_not_dvd h]
   norm_num
 
 -- Theorem: the `p`-adic valuation of `-1` is `0`.
@@ -733,7 +733,7 @@ private lemma padic_valuation_prime_ne {ℓ p : Nat.Primes} (hp : p ≠ ℓ) :
 private lemma padic_valuation_prime_self (p : Nat.Primes) :
     Padic.valuation (((p : ℚ) : ℚ_[p])) = 1 := by
   rw [show (((p : ℚ) : ℚ_[p])) = ((p : ℕ) : ℚ_[p]) by norm_cast, Padic.valuation_natCast,
-    padicValNat_self]
+    Nat.Prime.multiplicity_self]
   norm_num
 
 -- Theorem: `(-1,p)_p = (p/-1)` for odd `p`.

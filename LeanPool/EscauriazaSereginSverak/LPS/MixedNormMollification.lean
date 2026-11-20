@@ -36,7 +36,7 @@ private theorem lps_eLpNorm_ofReal_rpow_eq {E : Type} [NormedAddCommGroup E]
       (∫⁻ x, ‖f x‖ₑ ^ p ∂volume) ^ (1 / p) := by
   have hp0 : ENNReal.ofReal p ≠ 0 := (ENNReal.ofReal_pos.mpr hp).ne'
   have hptop : ENNReal.ofReal p ≠ ⊤ := ENNReal.ofReal_ne_top
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hptop hf,
+  rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hptop hf,
     ENNReal.toReal_ofReal hp.le]
 
 /-- Slice-wise spatial mollification converges in the mixed norm
@@ -75,7 +75,7 @@ theorem lps_mollify_mixed_norm_tendsto
       rw [← serrin_slab_measure_eq T]
       exact hfn
     have hG : AEMeasurable (fun z : Vec3 × ℝ =>
-        ‖serrinSM f n z - f z‖ₑ ^ q) ν := hfnProd.enorm.pow_const q
+        ‖serrinSM f n z - f z‖ₑ ^ q) ν := hfnProd.eNorm.pow_const q
     have hlin : AEMeasurable (fun t : ℝ =>
         ∫⁻ x : Vec3, ‖serrinSM f n (x,t) - f (x,t)‖ₑ ^ q ∂volume) μt :=
       hG.lintegral_prod_left'

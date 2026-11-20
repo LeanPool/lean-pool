@@ -55,13 +55,12 @@ private theorem semi :
         (SemiProperQuadruple.successor
           (SemiProperQuadruple.rotate (SemiProperQuadruple.rotate ih)))
       convert next using 1
-      all_goals
-        simp only [configuration, DiamondRecursiveQuadruple,
-          Nat.cast_add, Nat.cast_mul, Nat.cast_one, Nat.cast_sub (by omega : 1 ≤ n + 1)]
-        norm_num
-        constructor
-        · ring
-        apply Zsqrtd.ext <;> simp <;> ring
+      simp only [configuration, DiamondRecursiveQuadruple,
+        Nat.cast_add, Nat.cast_mul, Nat.cast_one, Nat.cast_sub (by omega : 1 ≤ n + 1)]
+      norm_num
+      constructor
+      · ring
+      apply Zsqrtd.ext <;> simp <;> ring
 
 private theorem root10'At246 :
     (BandVectors.1 ((0 : ℤ), (1 : GaussianInt)) ((1 : ℤ), (1 : GaussianInt) + (2 : GaussianInt) *
@@ -87,7 +86,6 @@ private theorem root10'At246 :
   intro r21 r13 root10 coordU
   simp only [Nat.succ_eq_add_one, Nat.reduceAdd, Int.reduceNeg, Fin.isValue,
       Matrix.cons_val_one, Matrix.cons_val_zero, Matrix.cons_val] at root10
-  try
   change BandVectors.1 (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)) (1, 1) =
     BandVectors.1 (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)) (0, -1) -
       (⟨0, 1⟩ : GaussianInt) *
@@ -110,7 +108,6 @@ private theorem hxAt261 :
       ⟨(1 : Int), 0⟩)) := by
   classical
   intro configuration r13 coordU
-  try
   change BandVectors.1 (1, 1 + 2 * (⟨0, 1⟩ : GaussianInt)) (0, -1) =
     ⟨1, 0⟩ at r13
   have e := congrArg (fun C : CircleCoordinates =>

@@ -36,7 +36,7 @@ theorem blowupPastCylinder_restrict_eq
   rw [CKN.Foundation.Parabolic.Integration.volume_parabolicPoint_eq_prod]
   change (vec3Ball x r ×ˢ Ioo (t - r ^ 2) t) =ᵐ[(volume : Measure Vec3).prod volume]
     (vec3Ball x r ×ˢ Ioc (t - r ^ 2) t)
-  exact Measure.set_prod_ae_eq EventuallyEq.rfl Ioo_ae_eq_Ioc
+  exact Measure.set_prod_ae_eq EventuallyEqSet.rfl Ioo_ae_eq_Ioc
 
 /-- The good-point energy can be integrated over the open past cylinder. -/
 theorem goodPointEnergy_eq_open_top

@@ -89,8 +89,8 @@ private theorem eLpNorm_comp_measurableEquiv {alpha beta : Type*}
     (hpt : p ≠ ∞) (f : beta → E) :
     eLpNorm f p nu = eLpNorm (fun x => f (e x)) p mu := by
   by_cases hf : AEStronglyMeasurable f nu
-  · rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt hf,
-      eLpNorm_eq_lintegral_rpow_enorm_toReal hp0 hpt
+  · rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt hf,
+      eLpNorm_eq_lintegral_rpow_eNorm_toReal hp0 hpt
         (show AEStronglyMeasurable (fun x => f (e x)) mu from hf.comp_measurePreserving he)]
     congr 1
     exact MeasurePreserving.lintegral_map_equiv (fun a => ‖f a‖ₑ ^ p.toReal) e he

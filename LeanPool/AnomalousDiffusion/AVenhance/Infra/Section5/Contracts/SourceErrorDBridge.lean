@@ -66,7 +66,7 @@ theorem sed_lhs_le_eLpNorm (d : ℝ → Vec 2 → Vec 2)
       (((volume : Measure ℝ).prod (volume : Measure (Vec 2))).restrict
         (Set.Ioo (0 : ℝ) 1 ×ˢ unitCube)) := by
     have h : AEMeasurable (fun z : ℝ × Vec 2 => ‖d z.1 z.2‖ₑ)
-        (volume.restrict timeCube) := hd.enorm
+        (volume.restrict timeCube) := hd.eNorm
     rw [hvol] at h
     exact (ENNReal.continuous_rpow_const (y := (2 : ℝ))).measurable.comp_aemeasurable h
   have hprod := setLIntegral_prod (μ := (volume : Measure ℝ)) (ν := (volume : Measure (Vec 2)))
@@ -74,7 +74,7 @@ theorem sed_lhs_le_eLpNorm (d : ℝ → Vec 2 → Vec 2)
   have hnorm : eLpNorm (fun z : ℝ × Vec 2 => d z.1 z.2) 2 (volume.restrict timeCube) =
       (∫⁻ z in Set.Ioo (0 : ℝ) 1 ×ˢ unitCube, ‖d z.1 z.2‖ₑ ^ (2 : ℝ)
         ∂((volume : Measure ℝ).prod (volume : Measure (Vec 2)))) ^ (1 / 2 : ℝ) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by norm_num) (by norm_num) hd]
+    rw [eLpNorm_eq_lintegral_rpow_eNorm_toReal (by norm_num) (by norm_num) hd]
     simp only [ENNReal.toReal_ofNat]
     rw [hvol]
     rfl

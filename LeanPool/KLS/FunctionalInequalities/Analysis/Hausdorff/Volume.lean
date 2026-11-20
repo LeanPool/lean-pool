@@ -49,7 +49,7 @@ theorem volume_le_ofReal_mul_hausdorffMeasure (S : Set V) :
     have hb : Bornology.IsBounded s :=
       Metric.isBounded_iff_ediam_ne_top.mpr (ne_top_of_le_ne_top ENNReal.one_ne_top hs)
     have hd0 : (0:ℝ) ≤ Metric.diam s := Metric.diam_nonneg
-    rw [Measure.smul_apply, smul_eq_mul]
+    rw [smul_apply, smul_eq_mul]
     calc ENNReal.ofReal (2 ^ Module.finrank ℝ V / KLS.unitBallVolume (Module.finrank ℝ V))
           * volume s
         ≤ ENNReal.ofReal (2 ^ Module.finrank ℝ V / KLS.unitBallVolume (Module.finrank ℝ V))
@@ -68,7 +68,7 @@ theorem volume_le_ofReal_mul_hausdorffMeasure (S : Set V) :
             rw [ENNReal.ofReal_toReal hb.ediam_ne_top]
           rw [ENNReal.rpow_natCast, ENNReal.ofReal_pow hd0, hdiam]
   have := (Measure.le_iff'.mp hkey) S
-  rw [Measure.smul_apply, smul_eq_mul] at this
+  rw [smul_apply, smul_eq_mul] at this
   calc volume S
       = ENNReal.ofReal (KLS.unitBallVolume (Module.finrank ℝ V) / 2 ^ Module.finrank ℝ V)
         * (ENNReal.ofReal (2 ^ Module.finrank ℝ V / KLS.unitBallVolume (Module.finrank ℝ V))
@@ -169,7 +169,7 @@ private theorem hausdorffMeasure_ball_le [Nontrivial V] :
     · exact Or.inr ⟨hy, hmem⟩
   have hdiff0 : P k (Metric.ball (0:V) 1 \ ⋃ x ∈ t, Metric.closedBall x (r x)) = 0 := by
     refine le_antisymm ((hPle k _).trans ?_) (by simp)
-    rw [hsmul, Measure.smul_apply, smul_eq_mul, hnull, mul_zero]
+    rw [hsmul, smul_apply, smul_eq_mul, hnull, mul_zero]
   have hterm : ∀ x ∈ t, P k (Metric.closedBall x (r x))
       ≤ ENNReal.ofReal (2 ^ n / KLS.unitBallVolume n) * volume (Metric.closedBall x (r x)) := by
     intro x hx
@@ -198,7 +198,7 @@ private theorem hausdorffMeasure_ball_le [Nontrivial V] :
     _ ≤ ∑' x : t, P k (Metric.closedBall (x : V) (r x)) := measure_biUnion_le _ htc _
     _ ≤ ∑' x : t, ENNReal.ofReal (2 ^ n / KLS.unitBallVolume n)
           * volume (Metric.closedBall (x : V) (r x)) :=
-        ENNReal.tsum_le_tsum fun x => hterm (x : V) x.2
+        tsum_le_tsum fun x => hterm (x : V) x.2
     _ = ENNReal.ofReal (2 ^ n / KLS.unitBallVolume n)
           * ∑' x : t, volume (Metric.closedBall (x : V) (r x)) := ENNReal.tsum_mul_left
     _ = ENNReal.ofReal (2 ^ n / KLS.unitBallVolume n)
@@ -259,10 +259,10 @@ theorem hausdorffMeasure_finrank_eq_smul_volume :
     have hle : (c : ℝ≥0∞) ≤ ENNReal.ofReal (2 ^ n / KLS.unitBallVolume n) := by
       refine hcancel _ _ ?_
       have := hausdorffMeasure_ball_le (V := V)
-      rwa [hsmul, Measure.smul_apply, smul_eq_mul] at this
+      rwa [hsmul, smul_apply, smul_eq_mul] at this
     have hge : ENNReal.ofReal (2 ^ n / KLS.unitBallVolume n) ≤ (c : ℝ≥0∞) := by
       have hlow := volume_le_ofReal_mul_hausdorffMeasure (Metric.ball (0 : V) 1)
-      rw [hsmul, Measure.smul_apply, smul_eq_mul] at hlow
+      rw [hsmul, smul_apply, smul_eq_mul] at hlow
       have h1 : (1 : ℝ≥0∞) * volume (Metric.ball (0 : V) 1)
           ≤ (ENNReal.ofReal (KLS.unitBallVolume n / 2 ^ n) * c)
             * volume (Metric.ball (0 : V) 1) := by

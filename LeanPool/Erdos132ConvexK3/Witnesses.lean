@@ -83,7 +83,7 @@ private def terminalWordGeometry :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [terminalWordPoints, InLeftOpenHalfPlane, turn]
+    norm_num [terminalWordPoints, InLeftOpenHalfPlane, turn]
   left_x_ne := by
     intro j hj
     fin_cases j
@@ -92,7 +92,7 @@ private def terminalWordGeometry :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [terminalWordPoints, InLeftOpenHalfPlane, turn]
+    norm_num [terminalWordPoints, InLeftOpenHalfPlane, turn]
   right_t_ne := by
     intro j hj
     fin_cases j
@@ -101,12 +101,12 @@ private def terminalWordGeometry :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [terminalWordPoints, StrictConvexQuad, turn]
+    norm_num [terminalWordPoints, StrictConvexQuad, turn]
   rightQuad := by
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [terminalWordPoints, StrictConvexQuad, turn]
+    norm_num [terminalWordPoints, StrictConvexQuad, turn]
   centralLeftQuad := by
     norm_num [terminalWordPoints, StrictConvexQuad, turn]
   centralRightQuad := by
@@ -117,7 +117,7 @@ private def terminalWordGeometry :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [terminalWordPoints, StrictConvexQuad, turn]
+    norm_num [terminalWordPoints, StrictConvexQuad, turn]
   xw_le := by norm_num [terminalWordPoints, sqDist]
   xs := by norm_num [terminalWordPoints, sqDist]
   tw := by norm_num [terminalWordPoints, sqDist]
@@ -324,7 +324,7 @@ private def fullTwoRungGeometry :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [sharedTipPoints, InLeftOpenHalfPlane, turn]
+    norm_num [sharedTipPoints, InLeftOpenHalfPlane, turn]
   ePositiveQuad := by
     intro j hj
     fin_cases j
@@ -336,7 +336,7 @@ private def fullTwoRungGeometry :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [sharedTipPoints, StrictConvexQuad, turn]
+    norm_num [sharedTipPoints, StrictConvexQuad, turn]
 }
 
 /-- The two-rung hexagon inhabits the row-1 `B:2→1` realization. -/
@@ -431,12 +431,12 @@ private def fourEdgeFirstRight :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [fourEdgePoints, InLeftOpenHalfPlane, turn])
+    norm_num [fourEdgePoints, InLeftOpenHalfPlane, turn])
   quad := by
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [fourEdgePoints, StrictConvexQuad, turn]
+    norm_num [fourEdgePoints, StrictConvexQuad, turn]
   diameterEdge := by norm_num [fourEdgePoints, sqDist]
 }
 
@@ -452,12 +452,12 @@ private def fourEdgeSecondLeft :
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [fourEdgePoints, InLeftOpenHalfPlane, turn])
+    norm_num [fourEdgePoints, InLeftOpenHalfPlane, turn])
   quad := by
     intro j hj
     fin_cases j
     all_goals simp_all
-    all_goals norm_num [fourEdgePoints, StrictConvexQuad, turn]
+    norm_num [fourEdgePoints, StrictConvexQuad, turn]
   diameterEdge := by norm_num [fourEdgePoints, sqDist]
 }
 

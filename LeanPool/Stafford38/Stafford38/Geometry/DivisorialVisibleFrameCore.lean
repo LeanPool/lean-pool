@@ -353,10 +353,14 @@ theorem stage7_kaehler_finite_ofField
   exact (by
     set S := Localization.subalgebra.ofField K p.primeCompl
       p.primeCompl_le_nonZeroDivisors with hS
+    let : SMul A S := S.algebra.toSMul
     let inst : Algebra k S.toSubring := ((algebraMap k K).codRestrict _ hk).toAlgebra
     have : Algebra.EssFiniteType A S := Algebra.EssFiniteType.of_isLocalization S p.primeCompl
-    have : IsScalarTower k A S := IsScalarTower.of_algebraMap_eq fun c =>
-      Subtype.ext (IsScalarTower.algebraMap_apply k A K c)
+    have : IsScalarTower k A S := by
+      apply IsScalarTower.of_algebraMap_eq (R := k) (S := A) (A := S)
+      intro c
+      apply Subtype.ext
+      exact IsScalarTower.algebraMap_apply k A K c
     have : Algebra.EssFiniteType k A := Algebra.EssFiniteType.of_finiteType k A
     have h1 : Algebra.EssFiniteType k S := Algebra.EssFiniteType.comp k A S
     have h2 : inst = (inferInstance : Algebra k S) := by

@@ -61,14 +61,16 @@ theorem rodrigues_contDiff_diagonal (P : Poly) :
     simp [diagonalEvalPublic, diagonalEval]
   | add P Q hP hQ =>
     convert! hP.add hQ using 1
-    all_goals funext z; simp [diagonalEvalPublic, diagonalEval]
+    funext z
+    simp [diagonalEvalPublic, diagonalEval]
   | mul_X P i hP =>
     have hi : ContDiff ℝ ∞ (fun z : ℂ => (![z, conj z] : Fin 2 → ℂ) i) := by
       fin_cases i
       · exact contDiff_id
       · exact Complex.conjCLE.contDiff
     convert! hP.mul hi using 1
-    all_goals funext z; simp [diagonalEvalPublic, diagonalEval]
+    funext z
+    simp [diagonalEvalPublic, diagonalEval]
 
 theorem contDiff_iterate_dhol_gaussian (n q : ℕ) :
     ContDiff ℝ ∞ (dholOne^[q] (rodriguesGaussian n)) := by

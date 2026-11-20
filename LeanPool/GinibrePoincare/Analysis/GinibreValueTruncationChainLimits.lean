@@ -55,7 +55,7 @@ noncomputable section
 theorem sobolevValueTruncation_lipschitz : ∃ B : ℝ≥0, ∀ m,
     LipschitzWith B (sobolevValueTruncation m) := by
   obtain ⟨B, hB0, hB⟩ := sobolevValueTruncation_deriv_bound
-  refine ⟨⟨B, hB0⟩, fun m => lipschitzWith_of_nnnorm_deriv_le
+  refine ⟨⟨B, hB0⟩, fun m => lipschitzWith_of_nnNorm_deriv_le
     ((sobolevValueTruncation_smooth m).differentiable (by simp)) ?_⟩
   intro x
   exact_mod_cast hB m x

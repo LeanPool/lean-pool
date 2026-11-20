@@ -133,7 +133,7 @@ theorem perronMap_apply (ξ : E) (x : ℕ →ᵇ E) :
 theorem lipschitzWith_perronNonlinear :
     LipschitzWith (1 / 2) (S.perronOp ∘ superpose F.φ) := by
   refine (S.perronOp.lipschitzWith.comp (lipschitzWith_superpose F.lipschitzWith)).weaken ?_
-  rw [← NNReal.coe_le_coe, NNReal.coe_mul, coe_nnnorm]
+  rw [← NNReal.coe_le_coe, NNReal.coe_mul, coe_nnNorm]
   calc ‖S.perronOp‖ * F.lip ≤ S.bound * F.lip := by gcongr; exact S.norm_perronOp_le
     _ = F.lip * S.bound := mul_comm _ _
     _ ≤ 1 / 2 := F.lip_mul_bound_le
@@ -246,7 +246,7 @@ theorem norm_orbitSeq_apply_le (ξ : E) (n : ℕ) :
       refine (S.norm_pow_apply_proj_le n ξ).trans ?_
       gcongr
       exacts [S.rate_pos.le, S.rate_lt_decayRate.le]
-    rw [perronMap_apply, BoundedContinuousFunction.add_apply, S.stableOrbit_apply]
+    rw [perronMap_apply, _root_.add_apply, S.stableOrbit_apply]
     refine (norm_add_le _ _).trans ((add_le_add h2 h1).trans (le_of_eq ?_))
     rw [hM]
     ring
@@ -385,7 +385,7 @@ theorem hasFDerivAt_graph_zero (hφ : HasFDerivAt F.φ (0 : E →L[ℝ] E) 0) :
   have hg : F.graph ξ = S.perronOp (superpose F.φ (F.orbitSeq ξ)) 0 := by
     have h1 : F.orbitSeq ξ 0 = S.proj ξ + S.perronOp (superpose F.φ (F.orbitSeq ξ)) 0 := by
       conv_lhs => rw [← F.perronMap_orbitSeq ξ]
-      rw [perronMap_apply, BoundedContinuousFunction.add_apply, S.stableOrbit_apply,
+      rw [perronMap_apply, _root_.add_apply, S.stableOrbit_apply,
         pow_zero, one_apply_eq_self]
     rw [F.orbitSeq_apply_zero] at h1
     exact add_left_cancel h1

@@ -51,8 +51,8 @@ private theorem lintegral_rpow_le_of_lintegral_rpow_le
     (∫⁻ omega, F omega ^ p ∂mu) ≤ ENNReal.ofReal R ^ p := by
   have hq0 : 0 < q := hp.trans_le hpq
   have hnorm := eLpNorm'_le_eLpNorm'_of_exponent_le hp hpq mu hF.aestronglyMeasurable
-  rw [eLpNorm'_eq_lintegral_enorm, eLpNorm'_eq_lintegral_enorm] at hnorm
-  simp only [enorm_eq_self] at hnorm
+  rw [eLpNorm'_eq_lintegral_eNorm, eLpNorm'_eq_lintegral_eNorm] at hnorm
+  simp only [eNorm_eq_self] at hnorm
   have hqroot : (∫⁻ omega, F omega ^ q ∂mu) ^ (1 / q) ≤ ENNReal.ofReal R := by
     refine (ENNReal.rpow_le_rpow hq (by positivity)).trans_eq ?_
     rw [← ENNReal.rpow_mul, mul_one_div_cancel hq0.ne', ENNReal.rpow_one]

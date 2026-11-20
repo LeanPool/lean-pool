@@ -70,7 +70,7 @@ theorem lintegral_enorm_restrict_le_eLpNorm {W : Type*} [NormedAddCommGroup W] {
   calc
     ∫⁻ x in K, ‖u x‖ₑ ∂(ν : Measure V) ≤ ∫⁻ x, ‖u x‖ₑ ∂(ν : Measure V) :=
       lintegral_mono' Measure.restrict_le_self le_rfl
-    _ = eLpNorm u 1 (ν : Measure V) := (eLpNorm_one_eq_lintegral_enorm hu).symm
+    _ = eLpNorm u 1 (ν : Measure V) := (eLpNorm_one_eq_lintegral_eNorm hu).symm
     _ ≤
         eLpNorm u 2 (ν : Measure V) *
           (ν : Measure V) Set.univ ^ (1 / (1 : ℝ≥0∞).toReal - 1 / (2 : ℝ≥0∞).toReal) :=
@@ -128,11 +128,11 @@ theorem lintegral_enorm_smul_le
   have hpt : ∀ x, ‖ψ x • u x‖ₑ ≤ K.indicator (fun x ↦ (M : ℝ≥0∞) * ‖u x‖ₑ) x := by
     intro x
     by_cases hx : x ∈ K
-    · rw [Set.indicator_of_mem hx, enorm_smul]
+    · rw [Set.indicator_of_mem hx, eNorm_smul]
       gcongr
-      rw [enorm_eq_nnnorm]
+      rw [eNorm_eq_nnNorm]
       exact_mod_cast hM x
-    · rw [Set.indicator_of_notMem hx, hψ x hx, zero_smul, enorm_zero]
+    · rw [Set.indicator_of_notMem hx, hψ x hx, zero_smul, eNorm_zero]
   calc ∫⁻ x, ‖ψ x • u x‖ₑ ∂m ≤ ∫⁻ x, K.indicator (fun x ↦ (M : ℝ≥0∞) * ‖u x‖ₑ) x ∂m :=
         lintegral_mono hpt
     _ = ∫⁻ x in K, (M : ℝ≥0∞) * ‖u x‖ₑ ∂m := lintegral_indicator hK.measurableSet _

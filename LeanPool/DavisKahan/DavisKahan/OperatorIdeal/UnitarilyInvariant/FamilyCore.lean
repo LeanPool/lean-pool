@@ -237,7 +237,7 @@ theorem Core.extendedGauge_smul (c : 𝕜) (A : E →L[𝕜] F) :
         ENNReal.ofReal_mul (norm_nonneg c), ← ofReal_norm]
     · rw [Core.extendedGauge_of_not_mem hA,
         Core.extendedGauge_of_not_mem (fun h => hA ((Core.mem_smul_iff hc).mp h))]
-      simp [ENNReal.mul_top, enorm_ne_zero.mpr hc]
+      simp [ENNReal.mul_top, eNorm_ne_zero.mpr hc]
 
 /-- The operator norm is dominated by the extended gauge. -/
 theorem Core.enorm_le_extendedGauge (A : E →L[𝕜] F) :

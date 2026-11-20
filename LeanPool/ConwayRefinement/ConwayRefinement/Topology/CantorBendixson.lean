@@ -40,20 +40,20 @@ theorem derived_le (s : Closeds X) : s.derived ≤ s :=
 
 /-- The transfinite Cantor–Bendixson derivative, with the original closed set at stage zero. -/
 def cantorBendixson (s : Closeds X) (o : Ordinal.{w}) : Closeds X :=
-  transfiniteIterate (I := (Closeds X)ᵒᵈ) derived o s
+  supTransfiniteIterate (I := (Closeds X)ᵒᵈ) derived o s
 
 @[simp]
 theorem cantorBendixson_zero (s : Closeds X) : s.cantorBendixson (0 : Ordinal.{w}) = s := by
-  exact transfiniteIterate_bot (I := (Closeds X)ᵒᵈ) derived s
+  exact supTransfiniteIterate_bot (I := (Closeds X)ᵒᵈ) derived s
 
 @[simp]
 theorem cantorBendixson_add_one (s : Closeds X) (o : Ordinal.{w}) :
     s.cantorBendixson (o + 1) = (s.cantorBendixson o).derived := by
-  exact transfiniteIterate_succ (I := (Closeds X)ᵒᵈ) derived s o (not_isMax o)
+  exact supTransfiniteIterate_succ_of_not_isMax (I := (Closeds X)ᵒᵈ) derived s (not_isMax o)
 
 theorem cantorBendixson_limit (s : Closeds X) (o : Ordinal.{w}) (ho : IsSuccLimit o) :
     s.cantorBendixson o = ⨅ i : Iio o, s.cantorBendixson i.1 := by
-  exact transfiniteIterate_limit (I := (Closeds X)ᵒᵈ) derived s o ho
+  exact supTransfiniteIterate_limit (I := (Closeds X)ᵒᵈ) derived s ho
 
 theorem cantorBendixson_mono {s t : Closeds X} (hst : s ≤ t) (o : Ordinal.{w}) :
     s.cantorBendixson o ≤ t.cantorBendixson o := by
@@ -68,7 +68,7 @@ theorem cantorBendixson_mono {s t : Closeds X} (hst : s ≤ t) (o : Ordinal.{w})
 
 theorem cantorBendixson_antitone (s : Closeds X) :
     Antitone (s.cantorBendixson : Ordinal.{w} → Closeds X) :=
-  monotone_transfiniteIterate (I := (Closeds X)ᵒᵈ) derived s derived_le
+  supTransfiniteIterate_monotone (I := (Closeds X)ᵒᵈ) s derived_le
 
 theorem cantorBendixson_le (s : Closeds X) (o : Ordinal.{w}) : s.cantorBendixson o ≤ s := by
   simpa using s.cantorBendixson_antitone (show 0 ≤ o from zero_le)

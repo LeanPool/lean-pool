@@ -268,7 +268,7 @@ private theorem exists_hilbertSym_eq_neg_one_odd (hp : p ≠ 2) {c : ℚ_[p]}
       exact hnd (by rw [hn0]; exact dvd_zero p)
     have hxval : x.valuation = 0 := by
       change (n : ℚ_[p]).valuation = 0
-      rw [Padic.valuation_natCast, padicValNat.eq_zero_of_not_dvd hnd]
+      rw [Padic.valuation_natCast, multiplicity_eq_zero_of_not_dvd hnd]
       norm_num
     refine ⟨x, hx, ?_⟩
     refine hilbertSym_padic_odd_unit_of_neg_valuation hp hx hc hxval hβ ?_
@@ -292,7 +292,7 @@ private lemma hilbertSym_two_five_eq {c : ℚ_[2]} (hc : c ≠ 0) :
   have hx : (5 : ℚ_[2]) ≠ 0 := by norm_num
   have hval : ((5 : ℚ_[2])).valuation = 0 := by
     rw [show (5 : ℚ_[2]) = ((5 : ℕ) : ℚ_[2]) by norm_num, Padic.valuation_natCast,
-      padicValNat.eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 5)]
+      multiplicity_eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 5)]
     norm_num
   have hunit : (twoAdicUnit (5 : ℚ_[2]) hx : ℤ_[2]) = ((5 : ℕ) : ℤ_[2]) :=
     padicUnit_eq_natCast_of_valuation_zero hx hval rfl
@@ -317,7 +317,7 @@ private lemma hilbertSym_two_seven_eq {c : ℚ_[2]} (hc : c ≠ 0) :
   have hx : (7 : ℚ_[2]) ≠ 0 := by norm_num
   have hval : ((7 : ℚ_[2])).valuation = 0 := by
     rw [show (7 : ℚ_[2]) = ((7 : ℕ) : ℚ_[2]) by norm_num, Padic.valuation_natCast,
-      padicValNat.eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 7)]
+      multiplicity_eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 7)]
     norm_num
   have hunit : (twoAdicUnit (7 : ℚ_[2]) hx : ℤ_[2]) = ((7 : ℕ) : ℤ_[2]) :=
     padicUnit_eq_natCast_of_valuation_zero hx hval rfl
@@ -445,7 +445,7 @@ private lemma exists_nonsquare_unit (p : ℕ) [Fact p.Prime] :
   · subst hp
     refine ⟨(7 : ℚ_[2]), by norm_num, ?_, ?_⟩
     · rw [show (7 : ℚ_[2]) = ((7 : ℕ) : ℚ_[2]) by norm_num, Padic.valuation_natCast,
-        padicValNat.eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 7)]
+        multiplicity_eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 7)]
       norm_num
     · intro hs
       have h7 : (7 : ℚ_[2]) ≠ 0 := by norm_num
@@ -461,7 +461,7 @@ private lemma exists_nonsquare_unit (p : ℕ) [Fact p.Prime] :
       have h2 : hilbertSym (7 : ℚ_[2]) (7 : ℚ_[2]) = -1 := by
         have hval7 : ((7 : ℚ_[2])).valuation = 0 := by
           rw [show (7 : ℚ_[2]) = ((7 : ℕ) : ℚ_[2]) by norm_num, Padic.valuation_natCast,
-            padicValNat.eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 7)]
+            multiplicity_eq_zero_of_not_dvd (by decide : ¬ 2 ∣ 7)]
           norm_num
         have hunit : (twoAdicUnit (7 : ℚ_[2]) h7 : ℤ_[2]) = ((7 : ℕ) : ℤ_[2]) :=
           padicUnit_eq_natCast_of_valuation_zero h7 hval7 rfl
@@ -485,7 +485,7 @@ private lemma exists_nonsquare_unit (p : ℕ) [Fact p.Prime] :
       exact a.ne_zero h0
     have hn0 : n ≠ 0 := fun h => hnd (by rw [h]; exact dvd_zero p)
     have huval : ((n : ℚ_[p])).valuation = 0 := by
-      rw [Padic.valuation_natCast, padicValNat.eq_zero_of_not_dvd hnd]
+      rw [Padic.valuation_natCast, multiplicity_eq_zero_of_not_dvd hnd]
       norm_num
     refine ⟨(n : ℚ_[p]), Nat.cast_ne_zero.mpr hn0, huval, ?_⟩
     intro hs

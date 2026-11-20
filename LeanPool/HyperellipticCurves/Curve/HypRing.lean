@@ -64,12 +64,12 @@ variable {K : Type*} [Field K] (f : K[X])
 
 theorem not_isSquare_algebraMap_ratFunc (hf : Odd f.natDegree) :
     ¬IsSquare (algebraMap K[X] (RatFunc K) f) :=
-  RatFunc.not_isSquare_of_odd_intDegree (by rwa [RatFunc.intDegree_polynomial, Int.odd_coe_nat])
+  RatFunc.not_isSquare_of_odd_intDegree (by rwa [RatFunc.intDegree_polynomial, Int.odd_natCast])
 
 /-- For `f : K[X]` of odd degree, the polynomial `Y² - f` is irreducible over `K(x)`. -/
 theorem irreducible_Ysq_sub_f (hf : Odd f.natDegree) :
     Irreducible (X ^ 2 - C (algebraMap K[X] (RatFunc K) f) : (RatFunc K)[X]) :=
-  X_pow_sub_C_irreducible_of_prime Nat.prime_two
+  irreducible_X_pow_sub_C_of_prime Nat.prime_two
     fun r hr ↦ not_isSquare_algebraMap_ratFunc f hf ⟨r, by rw [← hr, sq]⟩
 
 /-- For `f` of odd degree, the defining quadratic of `HypField K f` has no root in `K(x)`;
@@ -131,7 +131,7 @@ theorem eq_algebraMap_re_add_im (z : HypRing R f) :
 
 /-- The hyperelliptic involution `ι` on the coordinate ring, as an `R[x]`-algebra
 automorphism; it is given by the `star` operation, `a + b·y ↦ a - b·y`. -/
-noncomputable def iota : HypRing R f ≃ₐ[R[X]] HypRing R f := starAlgEquiv
+noncomputable def iota : HypRing R f ≃ₐ[R[X]] HypRing R f := starAlgEquivOfAlgebra
 
 @[simp]
 theorem iota_apply (z : HypRing R f) : iota f z = star z := rfl
@@ -174,7 +174,7 @@ theorem star_y : star (y f) = -y f := by rw [star_omega]; simp
 
 /-- The hyperelliptic involution `ι` on `K(x)[Y]/(Y² - f)`, as a `K(x)`-algebra
 automorphism; it is given by the `star` operation, `a + b·y ↦ a - b·y`. -/
-noncomputable def iota : HypField K f ≃ₐ[RatFunc K] HypField K f := starAlgEquiv
+noncomputable def iota : HypField K f ≃ₐ[RatFunc K] HypField K f := starAlgEquivOfAlgebra
 
 @[simp]
 theorem iota_apply (z : HypField K f) : iota f z = star z := rfl
