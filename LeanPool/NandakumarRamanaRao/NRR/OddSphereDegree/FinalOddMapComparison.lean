@@ -303,7 +303,7 @@ theorem oddMap_degree_odd_of_ringBridge_of_modTwoTopClassComparison {n : ℕ}
 The theorems in §3b/§3c route the sphere-side nonvanishing through `projPullback`
 (`proj^*`). For `n ≥ 1`, the class `proj^* α` in `H¹(Sⁿ; F₂)` vanishes. For `n > 1` this
 group is zero. For `n = 1` the double cover has degree two and induces the zero map
-on mod-two cohomology. Thus `proj^*(αⁿ) = 0` and the hypothesis `proj^* (αⁿ) ≠ 0` is
+on `H¹(-; F₂)`. Thus `proj^*(αⁿ) = 0` and the hypothesis `proj^* (αⁿ) ≠ 0` is
 unsatisfiable and the genuine comparison really proceeds through the double-cover
 *transfer*, not `proj^*`. The assembly below avoids that degenerate route
 entirely: it depends on exactly three honest named blockers and no vacuous or
