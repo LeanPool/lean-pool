@@ -33,7 +33,7 @@ open CategoryTheory Limits Opposite
 
 universe u v w
 
-/-- **Layer 2.1.** A globular extension (Ara 2013, 1.4): a category with a coglobular object and
+/-- **Roadmap 2.1.** A globular extension (Ara 2013, 1.4): a category with a coglobular object and
 a chosen globular sum for every table. No condition is put on the objects: `TopCat` with its
 disks is one, and so is every free globular extension. -/
 structure GlobularExtension where
@@ -105,7 +105,7 @@ abbrev idPair (n : ℕ) : C.AdmissiblePair where
 
 end GlobularExtension
 
-/-- **Layer 2.1.** A globular functor from a globular extension `C` to a category `K` with a
+/-- **Roadmap 2.1.** A globular functor from a globular extension `C` to a category `K` with a
 coglobular object `D` (Ara 2013, 1.4): `R` sends the disks and faces of `C` to those of `D`, and
 the image of each globular sum of `C` is a globular sum in `K`. -/
 structure IsGlobularFunctor {K : Type u} [Category.{v} K] (C : GlobularExtension)
@@ -121,8 +121,8 @@ structure IsGlobularFunctor {K : Type u} [Category.{v} K] (C : GlobularExtension
 
 /-- A contractible globular extension, called a pseudo-coherator by Maltsiniotis (2010) and in
 Ara's thesis, as Ara 2013, 2.4, recalls. A coherator is a pseudo-coherator with a defining
-cellular tower (Ara 2013, 2.10–2.11); the tower is Layer 2.4's `CellularTower` and is not
-prototyped here, so this structure omits freeness. -/
+cellular tower (Ara 2013, 2.10–2.11); cellular towers (roadmap 2.4) are not formalised, so this
+structure omits freeness. -/
 structure PseudoCoherator extends GlobularExtension where
   contractible : toGlobularExtension.IsContractible
   /-- The lifting of `(1_{D_n}, 1_{D_n})` chosen once as data, from which the identity cells are
@@ -132,7 +132,7 @@ structure PseudoCoherator extends GlobularExtension where
   isLifting_idLift :
     ∀ n : ℕ, toGlobularExtension.IsLifting (toGlobularExtension.idPair n) (idLift n)
 
-/-! ## Layer 3: ∞-groupoids of type `C` -/
+/-! ## Roadmap layer 3: ∞-groupoids of type `C` -/
 
 /-- A presheaf on `C` sends globular sums to globular products: every compatible family of
 elements on the disks of a table comes from a unique element on the table (Ara 2013, 1.8). -/
@@ -142,7 +142,7 @@ def IsGlobularPresheaf (C : GlobularExtension) (X : C.Objᵒᵖ ⥤ Type w) : Pr
       X.map (C.disks.faceTo (T.bot_lt_right j) true).op (v j.succ)) →
     ∃! a : X.obj (op (C.ofTable T)), ∀ k, X.map (C.incl T k).op a = v k
 
-/-- **Layer 3.1.** The category `∞-Gpd_C` of ∞-groupoids of type `C` (Ara 2013, 2.5). -/
+/-- **Roadmap 3.1.** The category `∞-Gpd_C` of ∞-groupoids of type `C` (Ara 2013, 2.5). -/
 abbrev InfinityGroupoid (C : PseudoCoherator) :=
   ObjectProperty.FullSubcategory
     (fun X : C.Objᵒᵖ ⥤ Type w => IsGlobularPresheaf C.toGlobularExtension X)

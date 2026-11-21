@@ -50,7 +50,7 @@ abbrev cellSrc (X : C.Objᵒᵖ ⥤ Type w) (n : ℕ) : C.Cell X (n + 1) → C.C
 abbrev cellTgt (X : C.Objᵒᵖ ⥤ Type w) (n : ℕ) : C.Cell X (n + 1) → C.Cell X n :=
   fun a => X.map (C.disks.τ n).op a
 
-/-- **Layer 4.1.** Two `n`-cells are homotopic, `a ∼_n b`: some `(n+1)`-cell goes from `a` to `b`
+/-- **Roadmap 4.1.** Two `n`-cells are homotopic, `a ∼_n b`: some `(n+1)`-cell goes from `a` to `b`
 (Ara 2013, 4.2). -/
 def CellJoined (X : C.Objᵒᵖ ⥤ Type w) (n : ℕ) (a b : C.Cell X n) : Prop :=
   ∃ h : C.Cell X (n + 1), C.cellSrc X n h = a ∧ C.cellTgt X n h = b
@@ -76,24 +76,25 @@ namespace PseudoCoherator
 
 variable (C : PseudoCoherator)
 
-/-- **Layer 3.2.** The structural map `D_{n+1} ⟶ D_n` of identities: the chosen lifting `idLift n`
+/-- **Roadmap 3.2.** The structural map `D_{n+1} ⟶ D_n` of identities: the chosen lifting `idLift n`
 of the admissible pair `(1_{D_n}, 1_{D_n})`. -/
 def identityMap (n : ℕ) : C.disks.disk (n + 1) ⟶ C.disks.disk n :=
   C.idLift n ≫ eqToHom (C.ofTable_globe n)
 
-/-- **Layer 4.1.** The iterated identity `1^n_x` of a `0`-cell `x` (Ara's `k⁰_n(x)`, 2013, 4.11). -/
+/-- **Roadmap 4.1.** The iterated identity `1^n_x` of a `0`-cell `x` (Ara's `k⁰_n(x)`, 2013,
+4.11). -/
 noncomputable def iteratedIdentity (X : C.Objᵒᵖ ⥤ Type w) : (n : ℕ) → C.Cell X 0 → C.Cell X n
   | 0, x => x
   | n + 1, x => X.map (C.identityMap n).op (iteratedIdentity X n x)
 
-/-- **Layer 4.3.** Weak equivalences (Ara 2013, 4.17): a bijection on `π₀` and on every
+/-- **Roadmap 4.3.** Weak equivalences (Ara 2013, 4.17): a bijection on `π₀` and on every
 `π_{n+1}(X, x) = π_{n+1}(X, 1^n_x)`. Since `φ` commutes with the structural maps,
 `φ (1^n_x) = 1^n_{φ x}`, so the target loops are Ara's. -/
 def IsWeakEquivalence {X Y : C.Objᵒᵖ ⥤ Type w} (φ : X ⟶ Y) : Prop :=
   C.BijectiveOnComponents φ ∧
     ∀ (n : ℕ) (x : C.Cell X 0), C.BijectiveOnLoops φ n (C.iteratedIdentity X n x)
 
-/-- **Layer 7.1.** The class `W_C` of weak equivalences, on presheaves; `W_C` on `∞-Gpd_C` is its
+/-- **Roadmap 7.1.** The class `W_C` of weak equivalences, on presheaves; `W_C` on `∞-Gpd_C` is its
 inverse image under the inclusion. -/
 def weakEquivalences : MorphismProperty (C.Objᵒᵖ ⥤ Type w) := fun _ _ φ => C.IsWeakEquivalence φ
 

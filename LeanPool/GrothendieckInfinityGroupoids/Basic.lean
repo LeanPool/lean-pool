@@ -11,7 +11,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.CategoryTheory.EqToHom
 
 /-!
-# Globular sets, coglobular objects and tables (roadmap Layers 0 and 1.1)
+# Globular sets, coglobular objects and tables (roadmap 0.1, 1.1)
 
 The globe category `𝔾` (`Globe`), globular sets as presheaves on it (`GlobularPresheaf`) and in
 explicit form (`GlobularSet`), coglobular objects of a category (`CoglobularObject`) with their
@@ -32,9 +32,9 @@ open CategoryTheory
 
 universe u v w
 
-/-! ## Layer 0: globular sets -/
+/-! ## Roadmap layer 0: globular sets -/
 
-/-- **Layer 0.1.** The objects of the globe category `𝔾`: the natural numbers, wrapped so that the
+/-- **Roadmap 0.1.** The objects of the globe category `𝔾`: the natural numbers, wrapped so that the
 category structure below is not confused with the order category of `ℕ`. -/
 structure Globe where
   /-- The dimension `n` of the object `n` of `𝔾`. -/
@@ -57,7 +57,7 @@ def Hom.comp {l m n : ℕ} : Hom l m → Hom m n → Hom l n
   | .side h ε, .id _ => .side h ε
   | .side h ε, .side h' _ => .side (h.trans h') ε
 
-/-- **Layer 0.1.** The globe category `𝔾`. -/
+/-- **Roadmap 0.1.** The globe category `𝔾`. -/
 instance : Category Globe where
   Hom m n := Hom m.dim n.dim
   id m := .id m.dim
@@ -76,7 +76,7 @@ def τ (n : ℕ) : (⟨n⟩ : Globe) ⟶ ⟨n + 1⟩ := Hom.side (Nat.lt_succ_se
 
 end Globe
 
-/-- **Layer 0.1.** Globular sets as presheaves on `𝔾`. -/
+/-- **Roadmap 0.1.** Globular sets as presheaves on `𝔾`. -/
 abbrev GlobularPresheaf := Globeᵒᵖ ⥤ Type u
 
 /-- A globular set, in explicit form: cells in each dimension, with source and target maps
@@ -99,7 +99,7 @@ def Joined (X : GlobularSet.{u}) (n : ℕ) (a b : X.Cell n) : Prop :=
 
 end GlobularSet
 
-/-! ## Layer 1: coglobular objects and tables -/
+/-! ## Roadmap layer 1: coglobular objects and tables -/
 
 /-- A coglobular object of a category `K`: disks `D n` with source and target inclusions
 `σ n, τ n : D n ⟶ D (n+1)` satisfying the coglobular identities. -/
@@ -129,7 +129,7 @@ def faceTo {m n : ℕ} (h : m < n) (ε : Bool) : D.disk m ⟶ D.disk n :=
 
 end CoglobularObject
 
-/-- **Layer 1.1.** The point `(x, √(1 − ‖x‖²))` (side `ε = false`, the source) or
+/-- **Roadmap 1.1.** The point `(x, √(1 − ‖x‖²))` (side `ε = false`, the source) or
 `(x, −√(1 − ‖x‖²))` (side `ε = true`, the target) of `ℝ^{n+1}`, for `x ∈ ℝ^n` (Ara 2013,
 Examples 1.5.2). -/
 noncomputable def hemiPoint (n : ℕ) (ε : Bool) (x : EuclideanSpace ℝ (Fin n)) :
@@ -137,7 +137,7 @@ noncomputable def hemiPoint (n : ℕ) (ε : Bool) (x : EuclideanSpace ℝ (Fin n
   WithLp.toLp 2 (Fin.snoc (α := fun _ => ℝ) (fun i => x i)
     ((if ε then -1 else 1) * Real.sqrt (1 - ‖x‖ ^ 2)))
 
-/-- **Layer 1.1.** A point of the closed unit ball goes to the unit sphere. -/
+/-- **Roadmap 1.1.** A point of the closed unit ball goes to the unit sphere. -/
 theorem norm_hemiPoint (n : ℕ) (ε : Bool) {x : EuclideanSpace ℝ (Fin n)} (hx : ‖x‖ ≤ 1) :
     ‖hemiPoint n ε x‖ = 1 := by
   have h0 : 0 ≤ 1 - ‖x‖ ^ 2 := by nlinarith [norm_nonneg x]
@@ -150,7 +150,7 @@ theorem norm_hemiPoint (n : ℕ) (ε : Bool) {x : EuclideanSpace ℝ (Fin n)} (h
     linarith [hs, hx2]
   rw [← Real.sqrt_sq (norm_nonneg (hemiPoint n ε x)), hsq, Real.sqrt_one]
 
-/-- **Layer 1.1.** The map `x ↦ (x, ±√(1 − ‖x‖²))` is continuous. -/
+/-- **Roadmap 1.1.** The map `x ↦ (x, ±√(1 − ‖x‖²))` is continuous. -/
 theorem continuous_hemiPoint (n : ℕ) (ε : Bool) : Continuous (hemiPoint n ε) := by
   have hg : Continuous fun x : EuclideanSpace ℝ (Fin n) =>
       (if ε then (-1 : ℝ) else 1) * Real.sqrt (1 - ‖x‖ ^ 2) :=
@@ -164,20 +164,20 @@ theorem continuous_hemiPoint (n : ℕ) (ε : Bool) : Continuous (hemiPoint n ε)
     · simpa using (PiLp.continuous_apply 2 (fun _ : Fin n => ℝ) i)
   exact (PiLp.continuous_toLp 2 _).comp hf
 
-/-- **Layer 1.1.** On the unit sphere the last coordinate `±√(1 − ‖y‖²)` is `0`, so both sides
+/-- **Roadmap 1.1.** On the unit sphere the last coordinate `±√(1 − ‖y‖²)` is `0`, so both sides
 give the same point. -/
 theorem hemiPoint_eq_of_norm_eq_one (m : ℕ) (ε ε' : Bool) {y : EuclideanSpace ℝ (Fin m)}
     (hy : ‖y‖ = 1) : hemiPoint m ε y = hemiPoint m ε' y := by
   simp only [hemiPoint, hy, one_pow, sub_self, Real.sqrt_zero, mul_zero]
 
-/-- **Layer 1.1.** The coglobular identities on points: `hemiPoint n δ x` lies on the unit sphere,
+/-- **Roadmap 1.1.** The coglobular identities on points: `hemiPoint n δ x` lies on the unit sphere,
 so both maps of dimension `n + 1` send it to the point with last coordinate `0`. -/
 theorem hemiPoint_hemiPoint (n : ℕ) (δ ε ε' : Bool) {x : EuclideanSpace ℝ (Fin n)}
     (hx : ‖x‖ ≤ 1) :
     hemiPoint (n + 1) ε (hemiPoint n δ x) = hemiPoint (n + 1) ε' (hemiPoint n δ x) :=
   hemiPoint_eq_of_norm_eq_one (n + 1) ε ε' (norm_hemiPoint n δ hx)
 
-/-- **Layer 1.1.** The hemisphere inclusion `D^n → D^{n+1}` of side `ε` on Mathlib's disks
+/-- **Roadmap 1.1.** The hemisphere inclusion `D^n → D^{n+1}` of side `ε` on Mathlib's disks
 `TopCat.disk` (Ara 2013, Examples 1.5.2). -/
 noncomputable def hemisphere (n : ℕ) (ε : Bool) : TopCat.disk.{0} n ⟶ TopCat.disk.{0} (n + 1) :=
   TopCat.ofHom
@@ -188,13 +188,13 @@ noncomputable def hemisphere (n : ℕ) (ε : Bool) : TopCat.disk.{0} n ⟶ TopCa
       continuous_uliftMap _
         (Continuous.subtype_mk ((continuous_hemiPoint n ε).comp continuous_subtype_val) _)⟩
 
-/-- **Layer 1.1.** The coglobular identities for the hemisphere inclusions. -/
+/-- **Roadmap 1.1.** The coglobular identities for the hemisphere inclusions. -/
 theorem hemisphere_hemisphere (n : ℕ) (δ ε ε' : Bool) :
     hemisphere n δ ≫ hemisphere (n + 1) ε = hemisphere n δ ≫ hemisphere (n + 1) ε' :=
   TopCat.ext fun x => congrArg ULift.up (Subtype.ext
     (hemiPoint_hemiPoint n δ ε ε' (mem_closedBall_zero_iff.1 x.down.2)))
 
-/-- **Layer 1.1.** The coglobular space of disks `D^n` and hemisphere inclusions `σ, τ` (Ara 2013,
+/-- **Roadmap 1.1.** The coglobular space of disks `D^n` and hemisphere inclusions `σ, τ` (Ara 2013,
 Examples 1.5.2), the coglobular object of `TopCat` used throughout. -/
 noncomputable def stdDisks : CoglobularObject TopCat.{0} where
   disk n := TopCat.disk.{0} n
