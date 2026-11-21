@@ -198,14 +198,4 @@ theorem Internal.coverFactorLoopPath {ι : Type v}
     exact Internal.coverVertex_action_root G H s
   refine ⟨p₀.comp (p₁.cast hs hroot)⟩
 
-theorem Internal.coverFactorLoopPath_value {ι : Type v}
-    (G : ι → Type u) [∀ i, Group (G i)] (H : Subgroup (FreeProduct G))
-    (a : RawBassSerreOrbitVertex G H)
-    (k : treeVertexStabilizer G H a) :
-    Nonempty (@Quiver.Path (Quiver.Symmetrify (CoverVertex G H)) _
-      (coverVertexMk G H (rawBassSerreOrbitRoot G H) 1)
-      (coverVertexMk G H (rawBassSerreOrbitRoot G H)
-        (treeKuroshVertexInclusion G H a k))) :=
-  Internal.coverFactorLoopPath G H a k
-
 end GraphCoveringTheory.Kurosh
