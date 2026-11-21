@@ -112,37 +112,5 @@ theorem tanTwoTheta_addBounded_of_spectrum_gap
           (1 - 2 * U.directedProjectionGap V ^ 2) :=
       div_le_div_of_nonneg_right hsinDiv hden.le
 
-/-- Set-localized form of the unbounded operator-norm tangent-two-theta
-estimate. -/
-theorem tanTwoTheta_addBounded_of_intervalExterior
-    (A : H →ₗ.[ℂ] H) (hA : IsSelfAdjoint A)
-    (E : H →L[ℂ] H) (hE : E.IsSymmetric)
-    (B S : Set ℝ) (hB : MeasurableSet B) (hS : MeasurableSet S)
-    {β α δ : ℝ} (hβα : β ≤ α) (hδ : 0 < δ)
-    (hBsub : B ⊆ Set.Icc β α)
-    (hBcomplDisj : Bᶜ ∩ Set.Ioo (β - δ) (α + δ) = ∅)
-    (hquarter : IsQuarterAcute
-      (selfAdjointSpectralSubspace A hA B hB)
-      (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-        (addBounded_isSelfAdjoint A hA E hE) S hS)) :
-    ‖directedTanTwoAngleOperatorC
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)
-        hquarter‖ ≤
-      (2 * ‖E‖ / δ) /
-        (1 - 2 * Submodule.directedProjectionGap
-          (selfAdjointSpectralSubspace A hA B hB)
-          (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-            (addBounded_isSelfAdjoint A hA E hE) S hS) ^ 2) := by
-  obtain ⟨hBlow, hBhigh⟩ :=
-    selfAdjointSpectralRestriction_semibounded_of_subset_Icc
-      A hA B hB hBsub
-  have hBcomplSpec :=
-    selfAdjointSpectralRestriction_spectrum_avoids_open_of_inter_eq_empty
-      A hA Bᶜ hB.compl hBcomplDisj
-  exact tanTwoTheta_addBounded_of_spectrum_gap
-    A hA E hE B S hB hS hβα hδ hBlow hBhigh hBcomplSpec hquarter
-
 end DavisKahan
 end TauCeti

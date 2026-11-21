@@ -150,46 +150,6 @@ theorem tanTwoTheta_addBounded_gauge_of_spectrum_gap
           (1 - 2 * U.directedProjectionGap V ^ 2) :=
       div_le_div_of_nonneg_right hsin.2 hden.le
 
-/-- Set-localized rectangular ideal-gauge form of unbounded tangent two theta. -/
-theorem tanTwoTheta_addBounded_gauge_of_intervalExterior
-    (N : TauCeti.SymmetricOperatorIdealFamily.{0, v} ℂ)
-    [N.toOperatorIdealFamily.IsComplete]
-    (A : H →ₗ.[ℂ] H) (hA : IsSelfAdjoint A)
-    (E : H →L[ℂ] H) (hE : E.IsSymmetric)
-    (B S : Set ℝ) (hB : MeasurableSet B) (hS : MeasurableSet S)
-    {β α δ : ℝ} (hβα : β ≤ α) (hδ : 0 < δ)
-    (hBsub : B ⊆ Set.Icc β α)
-    (hBcomplDisj : Bᶜ ∩ Set.Ioo (β - δ) (α + δ) = ∅)
-    (hEmem : N.Mem E)
-    (hquarter : IsQuarterAcute
-      (selfAdjointSpectralSubspace A hA B hB)
-      (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-        (addBounded_isSelfAdjoint A hA E hE) S hS)) :
-    N.Mem (tanTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)
-        hquarter) ∧
-      δ * N.gaugeReal (tanTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)
-        hquarter) ≤
-        (2 * N.gaugeReal E) /
-          (1 - 2 * Submodule.directedProjectionGap
-            (selfAdjointSpectralSubspace A hA B hB)
-            (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-              (addBounded_isSelfAdjoint A hA E hE) S hS) ^ 2) := by
-  obtain ⟨hBlow, hBhigh⟩ :=
-    selfAdjointSpectralRestriction_semibounded_of_subset_Icc
-      A hA B hB hBsub
-  have hBcomplSpec :=
-    selfAdjointSpectralRestriction_spectrum_avoids_open_of_inter_eq_empty
-      A hA Bᶜ hB.compl hBcomplDisj
-  exact tanTwoTheta_addBounded_gauge_of_spectrum_gap
-    N A hA E hE B S hB hS hβα hδ hBlow hBhigh hBcomplSpec
-      hEmem hquarter
-
 /-- Source-facing unitary-invariant-family wrapper for the spectrum-gap ideal
 form. -/
 theorem tanTwoTheta_addBounded_unitaryInvariant_of_spectrum_gap
@@ -228,40 +188,6 @@ theorem tanTwoTheta_addBounded_unitaryInvariant_of_spectrum_gap
   exact tanTwoTheta_addBounded_gauge_of_spectrum_gap
     N.toSymmetricOperatorIdealFamily A hA E hE B S hB hS
       hβα hδ hBlow hBhigh hBcomplSpec hEmem hquarter
-
-/-- Source-facing unitary-invariant-family wrapper for the set-localized ideal
-form. -/
-theorem tanTwoTheta_addBounded_unitaryInvariant_of_intervalExterior
-    (N : KyFanDominantIdealFamily (𝕜 := ℂ))
-    (A : H →ₗ.[ℂ] H) (hA : IsSelfAdjoint A)
-    (E : H →L[ℂ] H) (hE : E.IsSymmetric)
-    (B S : Set ℝ) (hB : MeasurableSet B) (hS : MeasurableSet S)
-    {β α δ : ℝ} (hβα : β ≤ α) (hδ : 0 < δ)
-    (hBsub : B ⊆ Set.Icc β α)
-    (hBcomplDisj : Bᶜ ∩ Set.Ioo (β - δ) (α + δ) = ∅)
-    (hEmem : N.Mem E)
-    (hquarter : IsQuarterAcute
-      (selfAdjointSpectralSubspace A hA B hB)
-      (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-        (addBounded_isSelfAdjoint A hA E hE) S hS)) :
-    N.Mem (tanTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)
-        hquarter) ∧
-      δ * N.gauge (tanTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)
-        hquarter) ≤
-        (2 * N.gauge E) /
-          (1 - 2 * Submodule.directedProjectionGap
-            (selfAdjointSpectralSubspace A hA B hB)
-            (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-              (addBounded_isSelfAdjoint A hA E hE) S hS) ^ 2) := by
-  exact tanTwoTheta_addBounded_gauge_of_intervalExterior
-    N.toSymmetricOperatorIdealFamily A hA E hE B S hB hS
-      hβα hδ hBsub hBcomplDisj hEmem hquarter
 
 end DavisKahan
 end TauCeti

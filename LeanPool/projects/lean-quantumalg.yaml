@@ -31,8 +31,13 @@ main_results:
 - declaration: QuantumAlg.QuantumKernel.main
   informal: Proves that fidelity quantum-kernel Gram matrices are positive semidefinite.
 - declaration: QuantumAlg.QuantumKernelAdvantage.separation
-  informal: States the conditional quantum-kernel learning separation from discrete-log
-    hardness.
+  informal: States a conditional quantum-kernel learning separation over the discrete-log
+    concept class from a bundle of assumed hypotheses. DLP hardness is not formalized as a
+    statement about the discrete-log problem; it is an arbitrary proposition together with
+    its negation (which may be taken to be False), and the learner-to-solver reduction and
+    the 99% quantum-accuracy floor are also assumed. Given these, the classical learner's
+    accuracy is at most 1/2 + eps and so below the quantum accuracy; the proved ingredient
+    is the secret-homogeneity transport to the fixed concept.
 - declaration: QuantumAlg.fullControllability_hasBarrenPlateau
   informal: Exhibits an exponentially vanishing loss-variance family for a fully controllable
     dynamical Lie algebra, conditional on the assumed Ragone second-moment variance
