@@ -1,0 +1,106 @@
+slug: locally-presentable-categories
+title: Locally presentable categories and Gabriel–Ulmer duality
+summary: Structure theorems for locally presentable and accessible categories, built on
+  Mathlib's carriers. A locally presentable category is complete; it is locally
+  κ-presentable exactly when it is a full reflective subcategory of a presheaf category on a
+  small category, with κ-accessible inclusion, and exactly when it is a small-orthogonality
+  class of presheaves for maps between κ-presentable presheaves. A category is locally
+  presentable exactly when it is accessible and complete. Between locally presentable
+  categories, a functor is a right adjoint exactly when it preserves limits and is accessible,
+  and a left adjoint exactly when it preserves colimits. A category is finitely accessible
+  exactly when it is Ind A for a small A. Gabriel–Ulmer duality on objects and morphisms is
+  proved; every locally κ-presentable category is the category of κ-small-limit-preserving
+  functors from a small theory with κ-small limits, the theory is recovered as the opposite
+  of the κ-presentable models, and the κ-accessible right adjoints between categories of
+  models are the restrictions along morphisms of theories. Algebras of finite-product
+  theories form a locally finitely presentable category with sifted colimits computed
+  pointwise, the colimit of the initial chain of an endofunctor that preserves it is an
+  initial algebra, models of theories with D-limits form a reflective locally presentable
+  subcategory, and generation under D-limits is detected by fully faithful D-functors.
+branch: category theory
+entry_module: LeanPool.LocallyPresentableCategories
+authors:
+- Michel Hua
+source:
+  title: Locally presentable and accessible categories (J. Adámek, J. Rosický)
+  doi: 10.1017/CBO9780511600579
+  url: https://github.com/TauCetiProject/TauCetiRoadmap/pull/1926
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.LocallyPresentableCategories.hasLimitsOfSize_of_isCardinalLocallyPresentable
+- LeanPool.LocallyPresentableCategories.isCardinalLocallyPresentable_iff_exists_reflective
+- LeanPool.LocallyPresentableCategories.isRightAdjoint_iff
+- LeanPool.LocallyPresentableCategories.isLeftAdjoint_iff
+- LeanPool.LocallyPresentableCategories.isFinitelyAccessibleCategory_iff_exists_ind
+- LeanPool.LocallyPresentableCategories.isCardinalLocallyPresentable_iff_exists_isLocal
+- LeanPool.LocallyPresentableCategories.isCardinalLocallyPresentable_iff_exists_models
+- LeanPool.LocallyPresentableCategories.nonempty_isCardinalPresentable_models_equivalence
+- LeanPool.LocallyPresentableCategories.exists_iso_restrict
+main_results:
+- declaration: LeanPool.LocallyPresentableCategories.hasLimitsOfSize_of_isCardinalLocallyPresentable
+  informal: A locally κ-presentable category has all small limits.
+- declaration: LeanPool.LocallyPresentableCategories.isCardinalLocallyPresentable_iff_exists_reflective
+  informal: A category is locally κ-presentable exactly when it is equivalent to a full
+    reflective subcategory of the presheaves on a small category whose inclusion preserves
+    κ-filtered colimits.
+- declaration: LeanPool.LocallyPresentableCategories.isLocallyPresentable_iff_isAccessibleCategory_and_hasLimits
+  informal: A category is locally presentable exactly when it is accessible and has all small
+    limits.
+- declaration: LeanPool.LocallyPresentableCategories.isRightAdjoint_iff
+  informal: A functor between locally presentable categories is a right adjoint exactly when
+    it preserves small limits and is accessible.
+- declaration: LeanPool.LocallyPresentableCategories.isLeftAdjoint_iff
+  informal: A functor between locally presentable categories is a left adjoint exactly when it
+    preserves small colimits.
+- declaration: LeanPool.LocallyPresentableCategories.isFinitelyAccessibleCategory_iff_exists_ind
+  informal: A category is finitely accessible exactly when it is equivalent to the category of
+    ind-objects of a small category.
+- declaration: LeanPool.LocallyPresentableCategories.isCardinalLocallyPresentable_iff_exists_isLocal
+  informal: A category is locally κ-presentable exactly when it is equivalent to the full
+    subcategory of presheaves on a small category orthogonal to a small set of maps between
+    κ-presentable presheaves.
+- declaration: LeanPool.LocallyPresentableCategories.isCardinalLocallyPresentable_models
+  informal: For a small category T, the functors from T to sets preserving κ-small limits form
+    a locally κ-presentable category.
+- declaration: LeanPool.LocallyPresentableCategories.isCardinalLocallyPresentable_iff_exists_models
+  informal: A category is locally κ-presentable exactly when it is equivalent to the category of
+    κ-small-limit-preserving functors to sets from a small category with κ-small limits.
+- declaration: LeanPool.LocallyPresentableCategories.nonempty_isCardinalPresentable_models_equivalence
+  informal: For a small category T with κ-small limits, the κ-presentable functors among the
+    κ-small-limit-preserving functors from T to sets form a category equivalent to the
+    opposite of T.
+- declaration: LeanPool.LocallyPresentableCategories.restrict_isRightAdjoint
+  informal: Restriction of models along a κ-small-limit-preserving functor between small
+    categories is a right adjoint that preserves κ-filtered colimits.
+- declaration: LeanPool.LocallyPresentableCategories.exists_iso_restrict
+  informal: When T' has κ-small limits, every right adjoint from the models of T' to the models
+    of T that preserves κ-filtered colimits is isomorphic to restriction along a
+    κ-small-limit-preserving functor from T to T'.
+- declaration: LeanPool.LocallyPresentableCategories.isLocallyFinitelyPresentable_algebras
+  informal: The finite-product-preserving functors from a small category to sets form a locally
+    finitely presentable category.
+- declaration: LeanPool.LocallyPresentableCategories.preservesColimitsOfShape_algebras_ι
+  informal: Sifted colimits of finite-product-preserving functors to sets are computed
+    pointwise.
+- declaration: LeanPool.LocallyPresentableCategories.exists_isInitial_algebra_colimit_initialChain
+  informal: If an endofunctor preserves the colimit of its initial chain 0 → F 0 → F² 0 → ⋯,
+    that colimit carries an initial algebra structure.
+- declaration: LeanPool.LocallyPresentableCategories.isRightAdjoint_ι_dModels
+  informal: For a small family D of small shapes, the functors from a small category to sets
+    preserving D-limits form a reflective, locally presentable subcategory.
+- declaration: LeanPool.LocallyPresentableCategories.generates_iff_essSurj
+  informal: In a category with D-limits, a family of objects generates it under D-limits
+    exactly when every fully faithful D-limit-preserving functor from a category with
+    D-limits whose essential image contains the family is essentially surjective.
+tags:
+- locally-presentable
+- accessible-categories
+- gabriel-ulmer-duality
+- algebraic-theories
+msc:
+- 18C35
+- 18C10
+- 18A40
