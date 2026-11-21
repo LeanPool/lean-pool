@@ -28,6 +28,18 @@ isomorphism `Subfunctor.orderIsoSubobject F`. We record:
 * `Subfunctor.compl`: when every morphism of `C` is an isomorphism, the objectwise set
   complement of a subfunctor is a subfunctor, and it is a lattice complement
   (`Subfunctor.isCompl_compl`).
+
+We also record two facts used to transport the Boolean and De Morgan conditions along
+equivalences of categories (`Boolean.lean`, `DeMorgan.lean`):
+
+* `LeanPool.ToposTheoreticBridges.subobjectOrderIsoOfEquivalence`: an equivalence
+  `e : E ≌ E'` induces order isomorphisms `Subobject X ≃o Subobject (e.functor.obj X)`;
+* `LeanPool.ToposTheoreticBridges.disjoint_orderIso_apply_iff`,
+  `LeanPool.ToposTheoreticBridges.codisjoint_orderIso_apply_iff`,
+  `LeanPool.ToposTheoreticBridges.isCompl_orderIso_apply_iff`: order isomorphisms preserve and
+  reflect disjointness, codisjointness and complementation, for partial orders with the
+  relevant bounds only (Mathlib's `disjoint_map_orderIso_iff` and `OrderIso.isCompl_iff` ask for
+  (semi)lattices, which `Subobject X` only is under extra limit assumptions).
 -/
 
 @[expose] public section
@@ -111,3 +123,46 @@ theorem isCompl_compl [IsGroupoid C] (S : Subfunctor F) : IsCompl S S.compl :=
 end Subfunctor
 
 end CategoryTheory
+
+namespace LeanPool.ToposTheoreticBridges
+
+open CategoryTheory
+
+section OrderIso
+
+variable {α β : Type*}
+
+/-- An order isomorphism between partial orders with a bottom element preserves and reflects
+disjointness. -/
+theorem disjoint_orderIso_apply_iff [PartialOrder α] [OrderBot α] [PartialOrder β] [OrderBot β]
+    (f : α ≃o β) {a b : α} : Disjoint (f a) (f b) ↔ Disjoint a b := by
+  constructor
+  · intro h x ha hb
+    rw [← f.le_iff_le, f.map_bot]
+    exact h (f.monotone ha) (f.monotone hb)
+  · intro h y ha hb
+    rw [← f.apply_symm_apply y, ← f.map_bot, f.le_iff_le]
+    exact h (f.symm_apply_le.2 ha) (f.symm_apply_le.2 hb)
+
+/-- An order isomorphism between partial orders with a top element preserves and reflects
+codisjointness. -/
+theorem codisjoint_orderIso_apply_iff [PartialOrder α] [OrderTop α] [PartialOrder β]
+    [OrderTop β] (f : α ≃o β) {a b : α} : Codisjoint (f a) (f b) ↔ Codisjoint a b := by
+  rw [← disjoint_toDual_iff, ← disjoint_toDual_iff]
+  exact disjoint_orderIso_apply_iff f.dual
+
+/-- An order isomorphism between bounded partial orders preserves and reflects
+complementation. -/
+theorem isCompl_orderIso_apply_iff [PartialOrder α] [BoundedOrder α] [PartialOrder β]
+    [BoundedOrder β] (f : α ≃o β) {a b : α} : IsCompl (f a) (f b) ↔ IsCompl a b := by
+  rw [isCompl_iff, isCompl_iff, disjoint_orderIso_apply_iff, codisjoint_orderIso_apply_iff]
+
+end OrderIso
+
+/-- An equivalence of categories `e : E ≌ E'` induces an order isomorphism between the
+subobjects of `X` and those of `e.functor.obj X`. -/
+noncomputable def subobjectOrderIsoOfEquivalence {E E' : Type*} [Category E] [Category E']
+    (e : E ≌ E') (X : E) : Subobject X ≃o Subobject (e.functor.obj X) :=
+  (Subobject.lowerEquivalence (MonoOver.congr X e)).toOrderIso
+
+end LeanPool.ToposTheoreticBridges

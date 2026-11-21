@@ -11,6 +11,8 @@ public import Mathlib.CategoryTheory.Sites.LeftExact
 public import Mathlib.CategoryTheory.Sites.LocallySurjective
 public import Mathlib.CategoryTheory.Limits.Types.Pullbacks
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
+public import Mathlib.CategoryTheory.Localization.Bousfield
+public import Mathlib.CategoryTheory.MorphismProperty.Limits
 public import Mathlib.Order.Hom.Basic
 
 /-!
@@ -41,7 +43,13 @@ transported along `e`.
   iff it is local for `P` (`isSheaf_iff_isLocalFor`).
 * Locality is transported along equivalences (`isLocalFor_functor_obj_iff`). This gives
   `transportTopology e J'` with `isSheaf_iff_isSheaf_transportTopology`, and the order
-  isomorphism is assembled from `transportTopology e` and `transportTopology e.symm`.
+  isomorphism is assembled from `transportTopology e` and `transportTopology e.symm`, which are
+  monotone because `topologyOfSheaves J P` is antitone in `P` (`topologyOfSheaves_anti`).
+
+`IsOrthogonal`, `IsDenseFor` and `IsLocalFor` are stated with unique extensions; they agree with
+Mathlib's `ObjectProperty.isLocal`, `MorphismProperty.universally` and
+`MorphismProperty.isLocal` (`isOrthogonal_iff_bijective`, `forall_isOrthogonal_iff_isLocal`,
+`isDenseFor_iff_universally`, `isLocalFor_iff_isLocal`).
 
 We do not formalise subtopoi, Lawvere–Tierney topologies or the fact that every subtopos comes
 from a topology; only the topologies finer than the given ones are considered.
@@ -60,9 +68,23 @@ section General
 variable {𝒞 𝒟 : Type*} [Category 𝒞] [Category 𝒟]
 
 /-- `X` is *right orthogonal* to `m : A ⟶ B` (or `m`-local): every morphism `A ⟶ X` extends
-uniquely along `m`. -/
+uniquely along `m`. Equivalently, precomposition with `m` is a bijection
+`(B ⟶ X) → (A ⟶ X)` (`isOrthogonal_iff_bijective`), which is the condition used by Mathlib's
+`ObjectProperty.isLocal` and `MorphismProperty.isLocal` (`forall_isOrthogonal_iff_isLocal`). -/
 def IsOrthogonal {A B : 𝒞} (m : A ⟶ B) (X : 𝒞) : Prop :=
   ∀ f : A ⟶ X, ∃! g : B ⟶ X, m ≫ g = f
+
+/-- Orthogonality is bijectivity of precomposition with `m`. -/
+theorem isOrthogonal_iff_bijective {A B : 𝒞} (m : A ⟶ B) (X : 𝒞) :
+    IsOrthogonal m X ↔ Function.Bijective (fun g : B ⟶ X => m ≫ g) :=
+  (Function.bijective_iff_existsUnique _).symm
+
+/-- A morphism is orthogonal to every object of `P` iff it is `P`-local in the sense of
+Mathlib's `ObjectProperty.isLocal`. -/
+theorem forall_isOrthogonal_iff_isLocal (P : ObjectProperty 𝒞) {A B : 𝒞} (m : A ⟶ B) :
+    (∀ X, P X → IsOrthogonal m X) ↔ P.isLocal m := by
+  simp only [isOrthogonal_iff_bijective]
+  rfl
 
 /-- Orthogonality is reflected and preserved by a fully faithful functor. -/
 theorem isOrthogonal_map_iff {F : 𝒞 ⥤ 𝒟} (hF : F.FullyFaithful) {A B : 𝒞} (m : A ⟶ B)
@@ -108,15 +130,34 @@ theorem isOrthogonal_map_iff_of_adjunction {L : 𝒞 ⥤ 𝒟} {R : 𝒟 ⥤ �
 
 /-- A morphism `m : A ⟶ B` is *dense for* a class `P` of objects when it is a monomorphism and
 every pullback of `m` (along any morphism `t : T ⟶ B`) is orthogonal to every object of `P`.
-This notion only uses the category structure, hence is invariant under equivalences. -/
+In Mathlib's terms, `m` is a monomorphism which is universally `P`-local
+(`(ObjectProperty.isLocal P).universally`, see `isDenseFor_iff_universally`); the definition
+spells this out with `IsOrthogonal`. This notion only uses the category structure, hence is
+invariant under equivalences. -/
 def IsDenseFor (P : 𝒞 → Prop) {A B : 𝒞} (m : A ⟶ B) : Prop :=
   Mono m ∧ ∀ ⦃T A' : 𝒞⦄ (t : T ⟶ B) (n : A' ⟶ T) (a : A' ⟶ A), IsPullback n a t m →
     ∀ H, P H → IsOrthogonal n H
 
 /-- An object `X` is *local for* a class `P` when it is orthogonal to every morphism which is
-dense for `P` (`IsDenseFor`). -/
+dense for `P` (`IsDenseFor`). In Mathlib's terms, `X` is local for the class of morphisms dense
+for `P` (`MorphismProperty.isLocal`, see `isLocalFor_iff_isLocal`). -/
 def IsLocalFor (P : 𝒞 → Prop) (X : 𝒞) : Prop :=
   ∀ ⦃A B : 𝒞⦄ (m : A ⟶ B), IsDenseFor P m → IsOrthogonal m X
+
+/-- Density for `P` is being a monomorphism which is universally `P`-local, in the sense of
+Mathlib's `ObjectProperty.isLocal` and `MorphismProperty.universally`. -/
+theorem isDenseFor_iff_universally (P : ObjectProperty 𝒞) {A B : 𝒞} (m : A ⟶ B) :
+    IsDenseFor P m ↔ Mono m ∧ P.isLocal.universally m := by
+  refine and_congr Iff.rfl ⟨fun h _ _ i₁ i₂ f' hp => ?_, fun h _ _ t n a hp => ?_⟩
+  · exact (forall_isOrthogonal_iff_isLocal P f').1 (h i₂ f' i₁ hp)
+  · exact (forall_isOrthogonal_iff_isLocal P n).2 (h a t n hp)
+
+/-- Locality for `P` is locality, in the sense of Mathlib's `MorphismProperty.isLocal`, with
+respect to the class of morphisms dense for `P`. -/
+theorem isLocalFor_iff_isLocal (P : ObjectProperty 𝒞) (X : 𝒞) :
+    IsLocalFor P X ↔ MorphismProperty.isLocal (fun _ _ m => IsDenseFor P m) X := by
+  simp only [IsLocalFor, isOrthogonal_iff_bijective]
+  rfl
 
 /-- Being dense for `P` is antitone in the class `P`. -/
 theorem IsDenseFor.mono_class {P P' : 𝒞 → Prop} (hPP' : ∀ H, P' H → P H) {A B : 𝒞}
@@ -242,6 +283,14 @@ variable {J} in
 theorem isSheaf_topologyOfSheaves {P : Sheaf J (Type u) → Prop} {F : Sheaf J (Type u)}
     (hF : P F) : Presieve.IsSheaf (topologyOfSheaves J P) F.obj :=
   Sheaf.sheaf_for_finestTopology _ ⟨F, hF, rfl⟩
+
+variable {J} in
+/-- `topologyOfSheaves J P` is antitone in the class `P`: fewer sheaves, finer topology. -/
+theorem topologyOfSheaves_anti {P P' : Sheaf J (Type u) → Prop} (h : ∀ F, P' F → P F) :
+    topologyOfSheaves J P ≤ topologyOfSheaves J P' :=
+  Sheaf.le_finestTopology _ _ (by
+    rintro _ ⟨F, hF, rfl⟩
+    exact isSheaf_topologyOfSheaves (h F hF))
 
 variable {J} in
 /-- If `S` is a covering sieve for `topologyOfSheaves J P`, the sheafification of the inclusion
@@ -414,16 +463,11 @@ theorem isSheaf_iff_isSheaf_transportTopology (e : Sheaf J (Type u) ≌ Sheaf K 
     isLocalFor_functor_obj_iff e (fun X Y i => (isSheaf_obj_iff_of_iso J' i).1),
     isSheaf_iff_isLocalFor h]
 
-/-- Transport of topologies is monotone on the topologies finer than `J`. -/
+/-- Transport of topologies is monotone. -/
 theorem transportTopology_mono (e : Sheaf J (Type u) ≌ Sheaf K (Type u))
-    {J₁ J₂ : GrothendieckTopology C} (h₁ : J ≤ J₁) (h₁₂ : J₁ ≤ J₂) :
-    transportTopology e J₁ ≤ transportTopology e J₂ := by
-  rw [le_iff_forall_isSheaf (le_transportTopology e J₂)]
-  intro G hG
-  have i : e.functor.obj (e.inverse.obj G) ≅ G := e.counitIso.app G
-  rw [← isSheaf_obj_iff_of_iso _ i, ← isSheaf_iff_isSheaf_transportTopology e h₁]
-  rw [← isSheaf_obj_iff_of_iso _ i, ← isSheaf_iff_isSheaf_transportTopology e (h₁.trans h₁₂)] at hG
-  exact hG.of_le h₁₂
+    {J₁ J₂ : GrothendieckTopology C} (h : J₁ ≤ J₂) :
+    transportTopology e J₁ ≤ transportTopology e J₂ :=
+  topologyOfSheaves_anti fun _ hG => hG.of_le h
 
 /-- Transporting back along `e.symm` recovers the topology. -/
 theorem transportTopology_symm_transportTopology (e : Sheaf J (Type u) ≌ Sheaf K (Type u))
@@ -450,8 +494,8 @@ theorem exists_orderIso_ici_of_sheafEquiv {C D : Type u} [SmallCategory C] [Smal
       invFun := fun K' => ⟨transportTopology e.symm K'.1, le_transportTopology e.symm _⟩
       left_inv := fun J' => Subtype.ext (transportTopology_symm_transportTopology e J'.2)
       right_inv := fun K' => Subtype.ext (transportTopology_symm_transportTopology e.symm K'.2) }
-  refine ⟨Equiv.toOrderIso φ (fun J₁ J₂ h => transportTopology_mono e J₁.2 h)
-    (fun K₁ K₂ h => transportTopology_mono e.symm K₁.2 h), fun J' F => ?_⟩
+  refine ⟨Equiv.toOrderIso φ (fun _ _ h => transportTopology_mono e h)
+    (fun _ _ h => transportTopology_mono e.symm h), fun J' F => ?_⟩
   exact isSheaf_iff_isSheaf_transportTopology e J'.2 F
 
 end LeanPool.ToposTheoreticBridges

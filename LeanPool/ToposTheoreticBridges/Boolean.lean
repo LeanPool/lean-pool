@@ -23,13 +23,16 @@ subobject lattice. We prove:
 Proof of the main equivalence. Subobjects of a presheaf are subpresheaves
 (`Subfunctor.orderIsoSubobject`), whose lattice operations are objectwise.
 If `C` is a groupoid, the objectwise set complement of a subpresheaf is again a subpresheaf
-(`Subfunctor.compl`). Conversely, for `f : d ⟶ c`, the complement of the subpresheaf of
-`yoneda.obj c` made of the maps factoring through `f` is the objectwise set complement; since
-it is stable under precomposition and does not contain `f`, it does not contain `𝟙 c`, so `f`
-has a section. Every morphism having a section, every morphism is an isomorphism.
+(`Subfunctor.compl`). Conversely, for `f : d ⟶ c`, the complement of the subpresheaf
+`Subfunctor.range (yoneda.map f)` of `yoneda.obj c` (the maps factoring through `f`) is the
+objectwise set complement; since it is stable under precomposition and does not contain `f`,
+it does not contain `𝟙 c`, so `f` has a section. Every morphism having a section, every
+morphism is an isomorphism.
 
 The notion `IsBooleanTopos` is stated for any category with the instances needed for the
-order on subobjects to be bounded; we do not formalise topoi or subobject classifiers here.
+order on subobjects to be bounded, and its invariance under equivalences only uses these
+instances (`isCompl_orderIso_apply_iff`, for bounded partial orders). We do not formalise
+topoi or subobject classifiers here.
 -/
 
 @[expose] public section
@@ -47,27 +50,17 @@ def IsBooleanTopos (E : Type*) [Category E] [HasInitial E] [InitialMonoClass E] 
 
 section Equivalence
 
-variable {E E' : Type*} [Category E] [Category E']
-
-/-- An equivalence of categories `e : E ≌ E'` induces an order isomorphism between the
-subobjects of `X` and those of `e.functor.obj X`. -/
-noncomputable def subobjectOrderIsoOfEquivalence (e : E ≌ E') (X : E) :
-    Subobject X ≃o Subobject (e.functor.obj X) :=
-  (Subobject.lowerEquivalence (MonoOver.congr X e)).toOrderIso
-
-variable [HasPullbacks E] [HasImages E] [HasBinaryCoproducts E] [HasInitial E]
-  [InitialMonoClass E] [HasPullbacks E'] [HasImages E'] [HasBinaryCoproducts E'] [HasInitial E']
-  [InitialMonoClass E']
+variable {E E' : Type*} [Category E] [Category E'] [HasInitial E] [InitialMonoClass E]
+  [HasInitial E'] [InitialMonoClass E']
 
 /-- Being Boolean is invariant under equivalence of categories. -/
 theorem isBooleanTopos_of_equivalence (e : E ≌ E') (h : IsBooleanTopos E) :
     IsBooleanTopos E' := by
   intro Y A
   let o : Subobject (e.inverse.obj Y) ≃o Subobject Y :=
-    (subobjectOrderIsoOfEquivalence e _).trans
-      (Subobject.mapIsoToOrderIso (e.counitIso.app Y))
+    (subobjectOrderIsoOfEquivalence e.symm Y).symm
   obtain ⟨B, hB⟩ := h _ (o.symm A)
-  exact ⟨o B, by simpa using o.isCompl_iff.1 hB⟩
+  exact ⟨o B, by simpa using (isCompl_orderIso_apply_iff o).2 hB⟩
 
 /-- Being Boolean is invariant under equivalence of categories. -/
 theorem isBooleanTopos_congr (e : E ≌ E') : IsBooleanTopos E ↔ IsBooleanTopos E' :=
@@ -79,19 +72,11 @@ section Presheaf
 
 variable {C : Type u} [SmallCategory C]
 
-/-- The subpresheaf of the representable presheaf `yoneda.obj c` made of the morphisms that
-factor through a given `f : d ⟶ c`. -/
-def factorsThroughSubfunctor {d c : C} (f : d ⟶ c) : Subfunctor (yoneda.obj c) where
-  obj U := {g | ∃ k, k ≫ f = g}
-  map {U V} i := by
-    rintro g ⟨k, rfl⟩
-    exact ⟨i.unop ≫ k, by simp⟩
-
 /-- If presheaves on `C` form a Boolean category, every morphism of `C` has a section. -/
 theorem exists_section_of_isBooleanTopos (h : IsBooleanTopos (Cᵒᵖ ⥤ Type u)) {d c : C}
     (f : d ⟶ c) : ∃ s : c ⟶ d, s ≫ f = 𝟙 c := by
-  obtain ⟨T, hT⟩ := (Subfunctor.exists_isCompl_iff_subobject (factorsThroughSubfunctor f)).2
-    (h _ _)
+  obtain ⟨T, hT⟩ :=
+    (Subfunctor.exists_isCompl_iff_subobject (Subfunctor.range (yoneda.map f))).2 (h _ _)
   have hT' := Subfunctor.isCompl_iff_forall.1 hT
   by_contra hs
   have hc : 𝟙 c ∈ T.obj (Opposite.op c) := by
