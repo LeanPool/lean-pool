@@ -12,7 +12,7 @@ public import LeanPool.GrothendieckInfinityGroupoids.Homotopy
 public import LeanPool.GrothendieckInfinityGroupoids.Topological
 
 /-!
-# Grothendieck ∞-groupoids and their fundamental ∞-groupoid
+# Grothendieck ∞-groupoids, globular sums and the degree-zero comparison
 
 Source: arxiv:1206.2941
 Authors: Michel Hua
@@ -33,8 +33,9 @@ MSC: 18N65, 55U35, 18N50
 ## Overview
 
 Root module of the formalisation of the roadmap *Grothendieck ∞-groupoids: globular theories,
-coherators and their models* (proposed to Tau Ceti in TauCetiProject/TauCetiRoadmap#1060, not
-merged), after D. Ara, « On the homotopy theory of Grothendieck ∞-groupoids », J. Pure Appl.
+coherators and their models*. This project develops the same author's prototype in
+`Suggested.lean` from the unmerged proposal TauCetiProject/TauCetiRoadmap#1060, after D. Ara,
+« On the homotopy theory of Grothendieck ∞-groupoids », J. Pure Appl.
 Algebra 217 (2013), 1237–1278, arXiv:1206.2941, with Maltsiniotis' form of the definitions of
 *Pursuing Stacks*. Target numbers such as 3.2 refer to that roadmap.
 
@@ -47,12 +48,14 @@ Algebra 217 (2013), 1237–1278, arXiv:1206.2941, with Maltsiniotis' form of the
 * `Homotopy`: identities, inverses and composites from liftings (3.2); the homotopy relation is an
   equivalence relation on the cells of an ∞-groupoid of type `C` (4.1); weak equivalences, the
   identities and composites of weak equivalences, and a presheaf with two components (4.3).
-* `Topological`: the fundamental ∞-groupoid `Π_∞^R` is an ∞-groupoid of type `C` (5.2); its
-  `0`-cells modulo homotopy are the path components of the space (5.3, `π₀` part), so `Π_∞^R f`
+* `Topological`: given a globular functor `R` from a pseudo-coherator `C` into the disks,
+  `Π_∞^R` is an ∞-groupoid of type `C` (5.2). Its `0`-cells modulo homotopy are the path
+  components of the space (5.3, `π₀` part), so `Π_∞^R f`
   is a bijection on `π₀` exactly when `f` is a bijection on path components (5.4, `π₀` part).
 
-Only defined, with no theorem about them: the explicit globular sets `GlobularSet` (0.1), the
-class `PseudoCoherator.weakEquivalences` and the weak homotopy equivalences `weTop` (7.1).
+The explicit globular sets `GlobularSet` (0.1) and the class
+`PseudoCoherator.weakEquivalences` are defined here. Topological weak homotopy equivalence
+is available from Tau Ceti as `ContinuousMap.IsWeakHomotopyEquivalence`.
 
 Not formalised:
 

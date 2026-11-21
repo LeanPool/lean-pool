@@ -6,7 +6,6 @@ Authors: Michel Hua
 module
 
 public import LeanPool.GrothendieckInfinityGroupoids.Homotopy
-public import TauCeti.Topology.Homotopy.HomotopyGroup.Map
 public import Mathlib.Analysis.Convex.PathConnected
 public import Mathlib.Analysis.Normed.Module.Convex
 
@@ -32,14 +31,6 @@ namespace LeanPool.GrothendieckInfinityGroupoids
 open CategoryTheory Limits Opposite
 
 universe u v w
-
-/-- **Roadmap 7.1.** The weak homotopy equivalences `W_Top` of `TopCat.{0}`: bijective on path
-components and on every `π_{n+1}(X, x)`. -/
-def weTop : MorphismProperty TopCat.{0} := fun X _ f =>
-  Function.Bijective (ZerothHomotopy.lift (fun x => ZerothHomotopy.mk (f.hom x))
-    (fun {_ _} p => ZerothHomotopy.sound (p.map f.hom.continuous))) ∧
-    ∀ (x : X) (n : ℕ),
-      Function.Bijective (HomotopyGroup.map (N := Fin (n + 1)) (x := x) f.hom rfl)
 
 /-- **Roadmap 5.2.** The fundamental ∞-groupoid presheaf `Π_∞^R(X) = TopCat(R(−), X)` for a functor
 `R : C ⥤ TopCat` out of a globular extension (Ara 2013, 5.2); when `R` is a globular functor into
