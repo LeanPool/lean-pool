@@ -14,7 +14,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# Generalization Error, Sample/Query/Label Complexity, ERM
+# Generalization Error, Sample/Query Complexity, ERM
 
 The numerical quantities that PAC learning bounds.
 Includes the canonical PAC learner (ERM).
@@ -45,16 +45,6 @@ noncomputable def SampleComplexity (X : Type u) [MeasurableSpace X]
 noncomputable def QueryComplexity (X : Type u)
     (C : ConceptClass X Bool) : ℕ :=
   sInf { _q : ℕ | ∃ (L : ActiveLearner X Bool),
-    ∀ (c : Concept X Bool), c ∈ C →
-      ∀ (mq : MembershipOracle X Bool), mq.target = c →
-        L.learnMQ mq = c }
-
-/-- Label complexity: minimum labels for active PAC learning.
-    Formally: sInf { k | ∃ active learner using ≤ k labels achieving PAC(ε,δ) }.
-    The current oracle model abstracts away the concrete label counter. -/
-noncomputable def LabelComplexity (X : Type u)
-    (C : ConceptClass X Bool) : ℝ → ℝ → ℕ :=
-  fun ε δ => sInf { _k : ℕ | ε = ε ∧ δ = δ ∧ ∃ (L : ActiveLearner X Bool),
     ∀ (c : Concept X Bool), c ∈ C →
       ∀ (mq : MembershipOracle X Bool), mq.target = c →
         L.learnMQ mq = c }
@@ -529,36 +519,6 @@ theorem consistent_tail_bound {X : Type u} [MeasurableSpace X]
     _ = ENNReal.ofReal (1 - ε) ^ m := by rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
     _ = ENNReal.ofReal ((1 - ε) ^ m) := by
         rw [ENNReal.ofReal_pow (by linarith : (0 : ℝ) ≤ 1 - ε)]
-
-/-- Sample-dependent covering lemma: for a FIXED sample xs : Fin m → X, the set of
-    "bad" hypotheses in C (those consistent with c on xs but with true error > ε) can be
-    covered by at most GrowthFunction(C,m) representative hypotheses.
-
-    The key insight: for a fixed sample xs, the consistency condition ∀ i, h(xs i) = c(xs i)
-    depends only on h's restriction to {xs i | i}. Two hypotheses with the same restriction
-    produce identical consistency predicates on xs. The number of distinct restrictions of C
-    to any m-point set is at most GrowthFunction(C,m) by definition.
-
-    This is the SAMPLE-DEPENDENT version (Γ₆₅-fix): representatives are chosen per-sample,
-    which is the standard approach in PAC learning proofs. The previous sample-independent
-    version was unprovable for infinite concept classes. -/
-theorem growth_function_cover {X : Type u} [MeasurableSpace X]
-    (D : MeasureTheory.Measure X)
-    (C : ConceptClass X Bool) (c : Concept X Bool) (hcC : c ∈ C)
-    (m : ℕ) (ε : ℝ) (xs : Fin m → X)
-    (hGF : 0 < GrowthFunction X C m) :
-    ∃ (n : ℕ) (_hn : n ≤ GrowthFunction X C m)
-      (reps : Fin n → Concept X Bool),
-      (∀ j, reps j ∈ C) ∧
-      ∀ h ∈ C, (∀ i, h (xs i) = c (xs i)) →
-        D { x | h x ≠ c x } > ENNReal.ofReal ε →
-        ∃ j : Fin n, ∀ i, reps j (xs i) = c (xs i) := by
-  -- GrowthFunction ≥ 1: use n = 1 with representative = c.
-  -- c ∈ C and c trivially agrees with itself on all sample points.
-  -- Note: the GF=0 case (m > |X|, no m-element Finset) is excluded by hGF,
-  -- since the conclusion ∃ j : Fin 0, ... would be False in that case.
-  exact ⟨1, hGF, fun _ => c, fun _ => hcC,
-    fun _ _ _ _ => ⟨⟨0, Nat.one_pos⟩, fun _ => rfl⟩⟩
 
 /-- Key arithmetic lemma for PAC bound: for t > 0, t^d * exp(-t) ≤ (d+1)!/t.
     Follows from exp(t) ≥ t^(d+1)/(d+1)! (partial sum of Taylor series). -/
@@ -1699,11 +1659,12 @@ theorem pac_lower_bound_good_event_le_half
 /-- PAC lower bound core: sample complexity is at least (d-1)/2.
     For any PAC learner with VCDim = d, at least ⌈(d-1)/2⌉ samples needed.
     Proof: construct d shattered points, uniform distribution, counting argument.
-    Note: the tight constant is (d-1)/(2ε) (EHKV 1989); see EHKV.lean. -/
+    The bound does not depend on ε; the bound linear in d/ε (EHKV 1989) is not
+    proved here. -/
 theorem pac_lower_bound_core (X : Type u) [MeasurableSpace X] [MeasurableSingletonClass X]
     (C : ConceptClass X Bool) (d : ℕ) (hd_pos : 1 ≤ d)
     (hd : VCDim X C = d) (ε : ℝ) (hε : 0 < ε) (hε1 : ε ≤ 1 / 4) :
-    -- Any PAC learner needs at least ⌈(d-1)/(64ε)⌉ samples
+    -- Any PAC learner needs at least ⌈(d-1)/2⌉ samples
     ∀ (L : BatchLearner X Bool) (mf : ℝ → ℝ → ℕ),
       (∀ (δ : ℝ), 0 < δ → δ ≤ 1 →
         ∀ (D : MeasureTheory.Measure X), MeasureTheory.IsProbabilityMeasure D →
@@ -1714,12 +1675,12 @@ theorem pac_lower_bound_core (X : Type u) [MeasurableSpace X] [MeasurableSinglet
                 ≤ ENNReal.ofReal ε }
             ≥ ENNReal.ofReal (1 - δ)) →
       Nat.ceil ((d - 1 : ℝ) / 2) ≤ mf ε (1 / 7) := by
-  -- Proof by contradiction: assume mf ε (1 / 7) < ⌈(d-1)/(2ε)⌉, derive violation
+  -- Proof by contradiction: assume mf ε (1 / 7) < ⌈(d-1)/2⌉, derive violation
   -- of the PAC guarantee using NFL counting on the shattered set.
   intro L mf hpac
   by_contra h_lt
   push Not at h_lt
-  -- h_lt : mf ε (1 / 7) < ⌈(d-1)/(2ε)⌉
+  -- h_lt : mf ε (1 / 7) < ⌈(d-1)/2⌉
   set m := mf ε (1 / 7) with hm_def
   -- Step 1: Extract shattered set T with |T| = d from VCDim X C = d.
   have ⟨T, hTshat, hTcard⟩ : ∃ T : Finset X, Shatters X C T ∧ T.card = d := by
@@ -2073,17 +2034,15 @@ theorem growth_bounded_imp_vcdim_finite (X : Type u)
   -- Chain: 2^T.card ≤ GrowthFunction ≤ ∑ C(T.card,i) < 2^T.card → contradiction
   exact absurd (le_trans hgrowth_large hd_app) (not_le.mpr hsum_lt_pow)
 /-- PAC lower bound membership: if m achieves PAC for C with VCDim = d,
-    then m ≥ ⌈(d-1)/(64ε)⌉.
+    then m ≥ ⌈(d-1)/2⌉ (for ε ≤ 1 / 4 and δ ≤ 1 / 7).
     This is the core adversarial counting argument factored for PAC.lean assembly.
-    Note: the tight constant is (d-1)/(2ε) (EHKV 1989); see EHKV.lean.
+    The bound does not depend on ε; the bound linear in d/ε (EHKV 1989) is not
+    proved here.
 
-    Proof route (double-averaging on shattered set):
-    1. VCDim = d → ∃ shattered S with |S| = d
-    2. D = uniform on S (probability measure, each point has weight 1/d)
-    3. m < ⌈(d-1)/(64ε)⌉ → 2m < d → NFL counting applies
-    4. Double-averaging over 2^d labelings: E_f[E_xs[error]] ≥ (d-m)/(2d) > 1 / 4
-    5. Reversed Markov: ∃ c₀ ∈ C with Pr[error ≤ 1 / 8] ≤ 6 / 7
-    6. For ε ≤ 1 / 8: Pr[error ≤ ε] ≤ 6 / 7 = 1 - 1 / 7, contradicting PAC -/
+    If `m < ⌈(d-1)/2⌉`, double-counting successful sample–labeling pairs on a
+    shattered set with the uniform distribution gives a target with probability
+    at most `1 / 2` of error at most `ε`. The PAC guarantee requires at least
+    `1 - δ ≥ 6 / 7` -/
 theorem pac_lower_bound_member (X : Type u) [MeasurableSpace X] [MeasurableSingletonClass X]
     (C : ConceptClass X Bool) (d : ℕ)
     (hd : VCDim X C = d) (ε δ : ℝ) (_hε : 0 < ε) (hε1 : ε ≤ 1 / 4)
@@ -2097,11 +2056,11 @@ theorem pac_lower_bound_member (X : Type u) [MeasurableSpace X] [MeasurableSingl
                 ≤ ENNReal.ofReal ε }
             ≥ ENNReal.ofReal (1 - δ) }) :
     Nat.ceil ((d - 1 : ℝ) / 2) ≤ m := by
-  -- Proof by contradiction: assume m < ⌈(d-1)/(64ε)⌉ and derive a violation
+  -- Proof by contradiction: assume m < ⌈(d-1)/2⌉ and derive a violation
   -- of the PAC guarantee using the NFL counting argument on the shattered set.
   by_contra h_lt
   push Not at h_lt
-  -- h_lt : m < ⌈(d-1)/(64ε)⌉
+  -- h_lt : m < ⌈(d-1)/2⌉
   -- Step 1: Extract shattered set T with |T| = d from VCDim X C = d.
   have ⟨T, hTshat, hTcard⟩ : ∃ T : Finset X, Shatters X C T ∧ T.card = d := by
     -- VCDim = d with d ≥ 1 → ∃ witness achieving the sup
@@ -2130,24 +2089,8 @@ theorem pac_lower_bound_member (X : Type u) [MeasurableSpace X] [MeasurableSingl
   -- Step 3: T is nonempty (|T| = d ≥ 1)
   have hTne : T.Nonempty := by
     rw [Finset.nonempty_iff_ne_empty]; intro h; simp [h] at hTcard; omega
-  -- Step 4: Construct D = pushforward of uniform on ↥T to X.
-  -- D is (1/d) · ∑_{x ∈ T} δ_x, a probability measure on X supported on T.
-  --
-  -- Step 5: The NFL double-averaging argument on the shattered set T.
-  -- With 1/(64ε) constant, m < ⌈(d-1)/(64ε)⌉ → 2m < d = |T|.
-  --
-  -- PROOF ROUTE (same as pac_lower_bound_core):
-  -- (1) 2m < d from h_lt and ε ≤ 1.
-  -- (2) Double-averaging over f : ↥T → Bool (each realized by c_f ∈ C):
-  --     pairing on unseen points gives E_f[D{error}] ≥ (d-m)/(2d) > 1 / 4.
-  -- (3) By Fubini + averaging: ∃ c₀ ∈ C with E_xs[error(c₀)] > 1 / 4.
-  -- (4) Reversed Markov: Pr[error ≤ 1 / 8] < 6 / 7.
-  -- (5) For ε ≤ 1 / 8: contradiction with PAC at δ ≤ 1 / 7.
-  --     For ε > 1 / 8: same, since 2m < d still holds.
-  --
-  -- SORRY: the double-averaging + reversed Markov measure bridge.
-  -- Infrastructure: pairing counting (disagreement_sum_eq proved),
-  -- finite sum averaging, reversed Markov on [0,1]-valued rv.
+  -- Count successful sample–labeling pairs and use the uniform distribution
+  -- on T to turn the counting bound into a probability of at most 1 / 2.
   suffices ∃ (D : MeasureTheory.Measure X), MeasureTheory.IsProbabilityMeasure D ∧
       ∃ c ∈ C,
         MeasureTheory.Measure.pi (fun _ : Fin m => D)

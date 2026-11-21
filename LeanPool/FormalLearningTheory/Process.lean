@@ -20,7 +20,6 @@ Concrete learning processes, algorithms, and scope boundaries:
 - Concept drift, lifelong learning, meta-learning applications
 - Inductive logic programming
 - Scope boundaries (bandits, RL, quantum - markers only)
-- Granger causality (causal inference connection)
 -/
 
 @[expose] public section
@@ -116,21 +115,6 @@ structure ILP (X : Type u) (Y : Type v) (B : Type*) where
   background : BackgroundKnowledge B
   /-- The learner (uses background knowledge) -/
   learner : B → GoldLearner X Y
-
-/-!
-## Granger Causality
--/
-
-/-- Granger causality: X Granger-causes Y if past values of X improve
-    prediction of Y beyond past values of Y alone.
-    Analogy to online learning (sequential, predictive). -/
-def GrangerCauses (X Y : ℕ → ℝ) : Prop :=
-  -- Prediction error using (past X, past Y) < Prediction error using (past Y only)
-  -- For every linear predictor of Y from its own past, there exists a strictly
-  -- better predictor that also uses past values of X.
-  ∀ (predictY : (ℕ → ℝ) → ℕ → ℝ),
-    ∃ (predictXY : (ℕ → ℝ) → (ℕ → ℝ) → ℕ → ℝ),
-      ∀ (t : ℕ), |Y t - predictXY X Y t| ≤ |Y t - predictY Y t|
 
 /-!
 ## Program Synthesis
