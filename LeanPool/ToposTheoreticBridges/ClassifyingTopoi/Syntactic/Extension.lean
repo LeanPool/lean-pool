@@ -139,13 +139,7 @@ end PointIso
 /-- The extension of a presheaf structure, composed with the Yoneda embedding, is the functor of
 the fibers. -/
 noncomputable def yonedaCompExtensionIso : yoneda ⋙ extension.{u} P ≅ (fibers.{u} P).flip :=
-  NatIso.ofComponents
-    (fun X => NatIso.ofComponents
-      (fun d => (yonedaCompPointPresheafFiberIso (@point L _ (P.fiberStr d))).app X)
-      (fun g => yonedaCompPointPresheafFiberIso_naturality _ X))
-    (fun g => by
-      ext d : 2
-      exact ((yonedaCompPointPresheafFiberIso (@point L _ (P.fiberStr d))).hom.naturality g))
+  yonedaCompPointsExtensionIso (pointsFunctor.{u} P)
 
 instance (n : ℕ) :
     PreservesLimit (Discrete.functor fun _ : Fin n => top.{u} (L := L) 1) (fibers.{u} P).flip :=

@@ -77,6 +77,39 @@ def torsorTheory (G : Type u) [Group G] : GeometricTheory.{u} (torsorLanguage G)
   {σ | ∃ g h : G, g ≠ h ∧
     σ = ⟨1, .equal (torsorAct g (.var 0)) (torsorAct h (.var 0)), .bot⟩}
 
+section TorsorAxioms
+
+variable {G : Type u} [Group G]
+
+/-- The axiom `⊢ 1 · x = x` of `torsorTheory`. -/
+theorem one_mem_torsorTheory :
+    (⟨1, .top, .equal (torsorAct 1 (.var 0)) (.var 0)⟩ : Sequent _) ∈ torsorTheory G :=
+  Or.inl (Or.inl (Or.inl (Or.inl rfl)))
+
+/-- The axiom `⊢ (g * h) · x = g · (h · x)` of `torsorTheory`. -/
+theorem mul_mem_torsorTheory (g h : G) :
+    (⟨1, .top, .equal (torsorAct (g * h) (.var 0)) (torsorAct g (torsorAct h (.var 0)))⟩ :
+      Sequent _) ∈ torsorTheory G :=
+  Or.inl (Or.inl (Or.inl (Or.inr ⟨(g, h), rfl⟩)))
+
+/-- The axiom `⊢ ∃ x, ⊤` of `torsorTheory`. -/
+theorem nonempty_mem_torsorTheory : (⟨0, .top, .ex .top⟩ : Sequent _) ∈ torsorTheory G :=
+  Or.inl (Or.inl (Or.inr rfl))
+
+/-- The axiom `⊢ ⋁_g g · x = y` of `torsorTheory`. -/
+theorem transitive_mem_torsorTheory :
+    (⟨2, .top, .iSup fun g : G => .equal (torsorAct g (.var 0)) (.var 1)⟩ : Sequent _) ∈
+      torsorTheory G :=
+  Or.inl (Or.inr rfl)
+
+/-- The axiom `g · x = h · x ⊢ ⊥` of `torsorTheory`, for `g ≠ h`. -/
+theorem free_mem_torsorTheory {g h : G} (hne : g ≠ h) :
+    (⟨1, .equal (torsorAct g (.var 0)) (torsorAct h (.var 0)), .bot⟩ : Sequent _) ∈
+      torsorTheory G :=
+  Or.inr ⟨g, h, hne, rfl⟩
+
+end TorsorAxioms
+
 /-- **3.3.** The Yoneda embedding of `SingleObj G` into the topos of right `G`-sets. -/
 noncomputable abbrev torsorYoneda (G : Type u) [Group G] :
     SingleObj G ⥤ Sheaf (⊥ : GrothendieckTopology (AsSmall.{u} (SingleObj G))) (Type u) :=
@@ -348,19 +381,19 @@ theorem isModel_reduct (e : G ≃* H) {M : CatStructure (torsorLanguage H) (Shea
   · rw [Set.mem_singleton_iff] at h
     subst h
     simp only [GeometricFormula.onLHom, onTerm_torsorAct, LHom.onTerm, map_one]
-    exact hM _ (Or.inl (Or.inl (Or.inl (Or.inl rfl))))
+    exact hM _ one_mem_torsorTheory
   · simp only [GeometricFormula.onLHom, onTerm_torsorAct, LHom.onTerm, map_mul]
-    exact hM _ (Or.inl (Or.inl (Or.inl (Or.inr ⟨(e gh.1, e gh.2), rfl⟩))))
+    exact hM _ (mul_mem_torsorTheory (e gh.1) (e gh.2))
   · rw [Set.mem_singleton_iff] at h
     subst h
-    exact hM _ (Or.inl (Or.inl (Or.inr rfl)))
+    exact hM _ nonempty_mem_torsorTheory
   · rw [Set.mem_singleton_iff] at h
     subst h
-    refine interp_le_of_realize_iff M (hM _ (Or.inl (Or.inr rfl))) (fun _ _ _ => Iff.rfl)
+    refine interp_le_of_realize_iff M (hM _ transitive_mem_torsorTheory) (fun _ _ _ => Iff.rfl)
       fun N _ x => ?_
     simp only [GeometricFormula.onLHom, onTerm_torsorAct, LHom.onTerm]
     exact ⟨fun ⟨g, hg⟩ => ⟨e g, hg⟩, fun ⟨h, hh⟩ => ⟨e.symm h, by simpa using hh⟩⟩
-  · refine interp_le_of_realize_iff M (hM _ (Or.inr ⟨e g, e g', e.injective.ne hne, rfl⟩))
+  · refine interp_le_of_realize_iff M (hM _ (free_mem_torsorTheory (e.injective.ne hne)))
       (fun _ _ _ => ?_) fun _ _ _ => ?_
     · simp only [GeometricFormula.onLHom, onTerm_torsorAct, LHom.onTerm]
     · exact ⟨fun ⟨i, _⟩ => i.elim, fun ⟨i, _⟩ => i.elim⟩

@@ -6,6 +6,7 @@ Authors: Michel Hua
 module
 
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Torsors
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuGeneral
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.SheafSemantics
 public import LeanPool.ToposTheoreticBridges.Morita
 
@@ -194,8 +195,7 @@ include hM
 theorem one_smul (d : D) (x : (M.map (sheafToPresheaf K (Type u))).carrier.obj (op d)) :
     smul M 1 x = x := by
   apply eq_of_locally (F := M.carrier)
-  refine (hM.locally_realize (σ := ⟨1, .top, .equal (torsorAct 1 (.var 0)) (.var 0)⟩)
-    (Or.inl (Or.inl (Or.inl (Or.inl rfl)))) d (fun _ => x) trivial).mono fun d' k hk => ?_
+  refine (hM.locally_realize one_mem_torsorTheory d (fun _ => x) trivial).mono fun d' k hk => ?_
   simp only [GeometricFormula.Realize, realize_torsorAct_apply, Term.realize_var] at hk
   exact (smul_map M 1 k x).symm.trans hk
 
@@ -204,9 +204,8 @@ theorem mul_smul (g h : G) (d : D)
     (x : (M.map (sheafToPresheaf K (Type u))).carrier.obj (op d)) :
     smul M (g * h) x = smul M g (smul M h x) := by
   apply eq_of_locally (F := M.carrier)
-  refine (hM.locally_realize (σ := ⟨1, .top, .equal (torsorAct (g * h) (.var 0))
-    (torsorAct g (torsorAct h (.var 0)))⟩) (Or.inl (Or.inl (Or.inl (Or.inr ⟨(g, h), rfl⟩))))
-    d (fun _ => x) trivial).mono fun d' k hk => ?_
+  refine (hM.locally_realize (mul_mem_torsorTheory g h) d (fun _ => x) trivial).mono
+    fun d' k hk => ?_
   simp only [GeometricFormula.Realize, realize_torsorAct_apply, Term.realize_var] at hk
   exact (smul_map M (g * h) k x).symm.trans (hk.trans ((congrArg (smul M g)
     (smul_map M h k x)).trans (smul_map M g k _)))
@@ -214,8 +213,7 @@ theorem mul_smul (g h : G) (d : D)
 /-- A torsor is locally inhabited. -/
 theorem locally_nonempty (d : D) :
     Locally K d fun d' _ => Nonempty ((M.map (sheafToPresheaf K (Type u))).carrier.obj (op d')) :=
-  (hM.locally_realize (σ := ⟨0, .top, .ex .top⟩) (Or.inl (Or.inl (Or.inr rfl))) d
-    Fin.elim0 trivial).mono fun _ _ ⟨a, _⟩ => ⟨a⟩
+  (hM.locally_realize nonempty_mem_torsorTheory d Fin.elim0 trivial).mono fun _ _ ⟨a, _⟩ => ⟨a⟩
 
 /-- In a torsor, two sections are locally related by the action. -/
 theorem locally_exists_smul_eq (d : D)
@@ -223,9 +221,8 @@ theorem locally_exists_smul_eq (d : D)
     Locally K d fun _ k => ∃ g : G,
       smul M g ((M.map (sheafToPresheaf K (Type u))).carrier.map k.op x) =
         (M.map (sheafToPresheaf K (Type u))).carrier.map k.op y := by
-  refine (hM.locally_realize (σ := ⟨2, .top,
-    .iSup fun g : G => .equal (torsorAct g (.var 0)) (.var 1)⟩) (Or.inl (Or.inr rfl)) d
-    ![x, y] trivial).mono fun d' k ⟨g, hg⟩ => ⟨g, ?_⟩
+  refine (hM.locally_realize transitive_mem_torsorTheory d ![x, y] trivial).mono
+    fun d' k ⟨g, hg⟩ => ⟨g, ?_⟩
   simp only [GeometricFormula.Realize, realize_torsorAct_apply, Term.realize_var] at hg
   exact hg
 
@@ -234,8 +231,7 @@ on the empty covering. -/
 theorem locally_false_of_smul_eq {g h : G} (hne : g ≠ h) (d : D)
     (x : (M.map (sheafToPresheaf K (Type u))).carrier.obj (op d))
     (hx : smul M g x = smul M h x) : Locally K d fun _ _ => False := by
-  refine (hM.locally_realize (σ := ⟨1, .equal (torsorAct g (.var 0)) (torsorAct h (.var 0)),
-    .bot⟩) (Or.inr ⟨g, h, hne, rfl⟩) d (fun _ => x) ?_).mono fun d' k hk => ?_
+  refine (hM.locally_realize (free_mem_torsorTheory hne) d (fun _ => x) ?_).mono fun d' k hk => ?_
   · let := (M.map (sheafToPresheaf K (Type u))).fiberStr (op d)
     simp only [GeometricFormula.Realize, realize_torsorAct_apply, Term.realize_var]
     exact hx

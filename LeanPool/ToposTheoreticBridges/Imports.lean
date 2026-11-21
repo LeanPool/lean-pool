@@ -30,6 +30,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.LocallyFiltering
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Morleyization
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalForm
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalFormSemantics
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.PullbackElements
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Quotients
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Semantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.SheafSemantics

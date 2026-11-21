@@ -5,9 +5,11 @@ Authors: Michel Hua
 -/
 module
 
-public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuGeneral
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.LocallyFiltering
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.PullbackElements
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.InverseImage
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Presheaf
+public import Mathlib.CategoryTheory.Sites.LocallyBijective
 
 /-!
 # Local Kripke–Joyal semantics in sheaf topoi
