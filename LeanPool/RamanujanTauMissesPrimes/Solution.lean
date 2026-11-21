@@ -5342,6 +5342,10 @@ lemma combine_five_bounds {S t₁ t₂ t₃ t₄ t₅ B C₁ : ℝ}
   have hsum : t₁ + t₂ + t₃ + t₄ + t₅ ≤ 5 * B := by linarith
   nlinarith [mul_le_mul_of_nonneg_left hsum hC₁.le]
 
+/-- **Main theorem**, conditional on two hypotheses: the ABC conjecture `ABC` and the
+sharper `N ^ (1/2)` form of Xiong's Proposition 5.4 (`Proposition54 R`), which is assumed here
+and not proved. Under both, the number `S R X` of primes `ℓ ≤ X` attained by `|τ|` is
+`O(X ^ (13/22))`. -/
 theorem main_theorem (habc : ABC) (h54 : Proposition54 R) :
     ∃ C : ℝ, 0 < C ∧ ∃ X₀ : ℝ, 0 < X₀ ∧
       ∀ X : ℝ, X₀ < X →
