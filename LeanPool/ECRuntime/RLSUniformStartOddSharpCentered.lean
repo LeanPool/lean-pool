@@ -25,8 +25,9 @@ open scoped BigOperators
 
 namespace ECRuntime
 
-/-- The expected runtime centered at `(2m+1) * H_m` has limiting additive
-constant `+1/2` for odd dimensions. -/
+/-- For RLS on the unit-weight linear function (OneMax) from a uniform start, the
+expected runtime centered at `(2m+1) * H_m` has limiting additive constant `+1/2`
+for odd dimensions. -/
 theorem proposed_rlsLinear_uniformInitial_oddSharpCentered :
     Tendsto
       (fun m : Nat =>
