@@ -31,8 +31,8 @@ maps that raw phase vector to the computational-basis vector `|j>`.
   of the QPE controlled-power ladder.
 - `LeanPool.LeanQuantumAlg.phaseState_eq_qftApplyKet` — `phaseState t (j/2^t) = QFT t |j>`.
 - `LeanPool.LeanQuantumAlg.QuantumPhaseEstimation.main_exact_dyadic` — exact QPE readout.
-- `LeanPool.LeanQuantumAlg.QuantumPhaseEstimation.main_exact_probability_one` — the basis
-  outcome `j` has probability one after the exact readout.
+- `LeanPool.LeanQuantumAlg.QuantumPhaseEstimation.main_exact_probability_one` — measuring
+  the inverse-QFT readout state gives the basis outcome `j` with probability one.
 -/
 
 @[expose] public section
@@ -191,11 +191,14 @@ theorem QuantumPhaseEstimation.main_exact_dyadic (t : Nat) (j : Fin (2 ^ t))
   rw [phaseState_eq_qftApplyKet]
   exact qpe_readoutVec t j
 
-/-- The exact readout has deterministic basis outcome `j`. -/
+/-- The exact readout has deterministic basis outcome `j`: measuring the inverse-QFT
+image of the QPE phase superposition in the computational basis yields `j` with
+probability one. -/
 theorem QuantumPhaseEstimation.main_exact_probability_one (t : Nat) (j : Fin (2 ^ t))
-    (phi : Real) (_hphi : phi = (j.val : Real) / (2 : Real) ^ t) :
-    PureState.probOutcome (ket j : PureState t) j = 1 := by
-  rw [PureState.probOutcome_ket, ite_eq_left rfl]
+    (phi : Real) (hphi : phi = (j.val : Real) / (2 : Real) ^ t) :
+    StateVector.probOutcome ((invQFT t).applyVec (phaseState t phi)) j = 1 := by
+  rw [QuantumPhaseEstimation.main_exact_dyadic t j phi hphi, StateVector.probOutcome_ket,
+    ite_eq_left rfl]
 
 /-- Trusted decoupled phase-register resource profile for exact dyadic QPE. -/
 def qpeExactResourceProfile (t : Nat) : ResourceProfile where
