@@ -94,9 +94,8 @@ theorem rank_ge_one_of_inHeavyReachable (O : CFOrientation G)
   exact ⟨ordiv G O' - oneChip q, effective_ordiv_sub_one_chip_of_inHeavyAt hheavy,
     linear_equiv_sub_one_chip hequiv q⟩
 
-/-- The same statement with the reachability hypothesis phrased through the reversal
-system, using Gioan's theorem in the direction already proved in
-`Utilities/Foundations/OrientationReversal.lean`. -/
+/-- The same statement with `InHeavyAt O' q` unfolded into `SourceFree O'` and
+`2 ≤ indeg G O' q`. -/
 theorem rank_ge_one_of_inHeavyReachable' (O : CFOrientation G)
     (h : ∀ q : G.V, ∃ O' : CFOrientation G,
       linearEquiv G (ordiv G O) (ordiv G O') ∧ SourceFree O' ∧ 2 ≤ indeg G O' q) :

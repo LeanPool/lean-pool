@@ -122,10 +122,9 @@ theorem BNExists_swapped_iff (length : Fin 9 → ℕ)
       BNExists (Spec length hLength).graph r d := by
   exact (swapGraphIso length hLength).BNExists_iff r d
 
-/-- If the normalized chamber has existence for every positive assignment,
-then Core 095 has existence for every positive assignment.  The theorem is
-stated for arbitrary rank and degree so the same normalization can be reused
-at the transmission/essential-row level. -/
+/-- If the normalized chamber has rank-one, degree-three existence for every
+positive assignment, then Core 095 has rank-one, degree-three existence for
+every positive assignment. -/
 theorem BNExists_of_normalized
     (hNormalized : ∀ (length : Fin 9 → ℕ)
       (hLength : ∀ edge, 0 < length edge),
