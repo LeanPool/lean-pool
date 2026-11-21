@@ -16,6 +16,8 @@ public import LeanPool.ClassifyingTopoi.ClassifyingSite
 public import LeanPool.ClassifyingTopoi.NormalForm
 public import LeanPool.ClassifyingTopoi.NormalFormSemantics
 public import LeanPool.ClassifyingTopoi.Bridges
+public import LeanPool.ClassifyingTopoi.Diaconescu
+public import LeanPool.ClassifyingTopoi.Quotients
 
 /-!
 # Classifying topoi of geometric theories
@@ -46,11 +48,19 @@ Layer 2 of the roadmap: classifying topoi.
   the same theory have equivalent topoi of sheaves;
 * `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_orderIso_quotients`: bridges between
   Morita-equivalent theories, an order isomorphism between their quotients, assuming the
-  correspondence between quotients and finer topologies (roadmap 2.5) on the classifying sites.
+  correspondence between quotients and finer topologies (roadmap 2.5) on the classifying sites;
+* `LeanPool.ClassifyingTopoi.exists_iso_sheafify_comp_iff`,
+  `LeanPool.ClassifyingTopoi.nonempty_iso_of_yoneda_comp_iso`: the localisation and uniqueness
+  halves of Diaconescu's theorem;
+* `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology` (roadmap 2.5): every
+  quotient of `T` is classified by a topology finer than `J`, with the sheafified generic model;
+  the converse `IsClassifyingSite.exists_quotient_theory_of_definable` and the bridges theorem
+  `IsClassifyingSite.exists_orderIso_quotients'` assume the definability of sieves
+  (`SievesDefinable`).
 
-The existence of classifying sites (roadmap 2.3, the syntactic site), the definability of
-subobjects of the generic model (2.4) and the correspondence between quotients and topologies
-(2.5) are not formalised.
+The existence of classifying sites (roadmap 2.3, the syntactic site) and the definability of
+subobjects of the generic model (2.4) are not formalised; hence neither is the converse of 2.5
+without the definability hypothesis, nor the existence half of Diaconescu's theorem.
 
 The translation of geometric formulas into infinitary logic `L_{∞ω}` (roadmap 1.2, `toInf` and
 `realize_toInf`) is not formalised, since it is not available in Mathlib.
