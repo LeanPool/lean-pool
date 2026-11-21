@@ -138,11 +138,6 @@ operator norm.** -/
 alias sinTwoTheta_unbounded_perturbation_opNorm_complex :=
   DavisKahan.sinTwoTheta_addBounded_of_spectrum_gap
 
-/-- Set-localized interval/exterior form of the unbounded operator-norm
-theorem. -/
-alias sinTwoTheta_unbounded_perturbation_intervalExterior_opNorm_complex :=
-  DavisKahan.sinTwoTheta_addBounded_of_intervalExterior
-
 /-- **Reflection-residual form** of the unbounded operator-norm theorem: the
 bounded operator `R` implements the mirrored system on the full domain and
 controls `sin 2Θ` with constant one. -/
@@ -153,10 +148,6 @@ alias sinTwoTheta_unbounded_reflectionResidual_opNorm_complex :=
 every source unitary-invariant ideal family.** -/
 alias sinTwoTheta_unbounded_perturbation_blockRepresentative_idealFamily_complex :=
   DavisKahan.sinTwoTheta_addBounded_unitaryInvariant_of_spectrum_gap
-
-/-- Set-localized interval/exterior form at unitary-invariant ideal scope. -/
-alias sinTwoTheta_unbounded_perturbation_intervalExterior_blockRepresentative_idealFamily_complex :=
-  DavisKahan.sinTwoTheta_addBounded_unitaryInvariant_of_intervalExterior
 
 /-- Reflection-residual form at rectangular symmetric ideal-gauge scope. -/
 alias sinTwoTheta_unbounded_reflectionResidual_blockRepresentative_symmetricIdealFamily_complex :=
