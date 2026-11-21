@@ -13,8 +13,8 @@ public import LeanPool.DavisKahan.ForTauCeti.Analysis.InnerProductSpace.OneParam
 A bounded operator that commutes with every `U t` preserves the generator's
 domain and commutes with the generator.
 
-`Basic.lean` proves this for the group's *own* elements
-(`generator_domain_invariant`).  The statement here is the same fact for an
+`Basic.lean` proves the domain part for the group's *own* elements
+(`generator_domain_invariant`).  The statement here gives both parts for an
 arbitrary element of the group's commutant, and it is what a block-diagonal
 argument needs: spectral projections of `A` commute with the unitary group of
 `A`, so cutting a vector into spectral blocks commutes with the flow, and

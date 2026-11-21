@@ -153,20 +153,6 @@ theorem beta_pow_four_mul_integral_mode_sq
   simp only [modeD4]
   ring
 
-/-- **The free-beam operator is nonnegative on its free-end domain.**
-
-Immediate from the Rayleigh identity, since the right-hand side integrates a
-square.  This is the positivity a Friedrichs-style construction of the
-self-adjoint realisation needs, and it is also why the paper's eigenvalues
-`α₁ ≤ α₂ ≤ …` are indexed as nonnegative reals. -/
-theorem nonneg_beta_pow_four_mul_integral_mode_sq
-    {beta a b c d : ℝ} (hu : FreeBoundary beta a b c d) :
-    0 ≤ beta ^ 4 * ∫ x in (0 : ℝ)..1, mode beta a b c d x ^ 2 := by
-  rw [beta_pow_four_mul_integral_mode_sq hu]
-  refine intervalIntegral.integral_nonneg (by norm_num) ?_
-  intro x _
-  positivity
-
 /-! ### Normalization
 
 Orthogonality is only half of an eigenbasis; the other half is that a nontrivial
