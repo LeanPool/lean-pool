@@ -116,7 +116,8 @@ theorem khom_diag_entries_eq_of_flux_continuous {β : ℝ}
 
 /-- Conditional completion of the scalar-flux argument: once the fixed-time
 flux entries are shown continuous in time, its time average is scalar and its
-scalar is at least `κ`. -/
+scalar is positive.  The sharper bound `κ ≤ I.KhomScalar κ m` is
+`khomScalar_ge_input`. -/
 theorem khom_eq_scalar_of_flux_continuous {β : ℝ}
     (I : Ingredients β) {m : ℕ} (hm : 1 ≤ m) (κ : ℝ) (hκ : 0 < κ)
     (hcont : ∀ i j : Fin 2, Continuous (fun t => I.flux κ m t i j)) :

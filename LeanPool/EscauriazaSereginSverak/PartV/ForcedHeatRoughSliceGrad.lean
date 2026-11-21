@@ -169,7 +169,7 @@ theorem forcedHeat_slice_weakGradient_of_approx {τ : ℝ} (hτ : 0 < τ)
       tendsto_finsetSum (Finset.univ : Finset (Fin 3)) fun j _ => hE i j
     have h := hW.add h2
     simpa only [Finset.sum_const_zero, add_zero] using h
-  obtain ⟨m, hm⟩ := exists_subseq_slice_tendsto hFm hFlim
+  obtain ⟨m, hm⟩ := exists_indexSequence_slice_tendsto hFm hFlim
   -- almost every slice is measurable with a square integrable limit gradient
   have hA2 : ∀ᵐ s ∂ν, ∀ ij : Fin 3 × Fin 3,
       ∫⁻ x, ‖DZ ij.1 ij.2 (x, s)‖ₑ ^ (2 : ℝ) < ∞ :=

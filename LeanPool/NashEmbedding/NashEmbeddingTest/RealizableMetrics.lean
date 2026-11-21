@@ -58,9 +58,9 @@ example : IsRealizable ((2 : ℝ) • flatMetric n) :=
 example : IsPosDefSmoothMetric (flatMetric n) :=
   injRealizable_posDef flatTorusEmb_injRealizes
 
-/-- **TN4** — `convex_combination_approx` invokable on `flatMetric` with
-    any tolerance `η > 0`. Witnesses the headline theorem on a concrete
-    smooth metric input. -/
+/-- **TN4** — Smoke test: `convex_combination_approx` applies to `flatMetric`
+    with any tolerance `η > 0`. The conclusion keeps only the positivity of the
+    returned `M` and none of the approximation guarantees. -/
 example (hn : 0 < n) {s : ℝ} (hs : (n : ℝ) < 2 * s) {η : ℝ} (hη : 0 < η) :
     ∃ M : ℕ, 0 < M := by
   obtain ⟨M, hM, _, _, _, _, _, _, _⟩ :=

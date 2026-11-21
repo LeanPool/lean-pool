@@ -57,7 +57,9 @@ variable (ρ : RegMollifierProfile) (ε : ℝ) (hε : 0 < ε) (a : Vec3 → Vec3
       complexifyVectorL2 (regR12Curve ρ ε hε a ha t.1))
 
 include hPath in
-/-- `thm:regularised` (R1) for the pointwise regularized velocity. -/
+/-- `thm:regularised` (R1) for the pointwise regularized velocity, assuming the section
+hypothesis `hPath`: on every `[0, T]` the complexified curve `regR12Curve` lifts to a continuous
+path in the Bessel potential space of order `4`. -/
 theorem regR12Velocity_R1 :
     let u := regR12Velocity ρ ε hε a ha
     ∃ hSlice : ∀ t : ℝ, 0 ≤ t → MemLp (fun x : Vec3 => u (x, t)) 2 volume,

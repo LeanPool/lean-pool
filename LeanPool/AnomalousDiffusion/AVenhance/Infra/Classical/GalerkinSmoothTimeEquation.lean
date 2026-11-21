@@ -532,8 +532,8 @@ theorem classicalGalerkinSmoothLift_transportFourierCoeff_eq_sum
   simpa [u, classicalGalerkinRealSmoothDerivativeL2,
     GalerkinSmoothTimeEquation.classicalTimeEquationWord_periodic] using hbase
 
-/-- Finite Galerkin transport Fourier coefficients converge uniformly in time to those of the
-smooth representative. -/
+/-- At each fixed time `t ∈ [0, 1]`, finite Galerkin transport Fourier coefficients converge to
+those of the smooth representative. -/
 theorem classicalGalerkinFiniteTransportFourierCoeff_tendsto
     (φ : ℝ → Vec 2 → ℝ) (hφ : AVenhance.IsAdmissibleStream φ)
     (κ : ℝ) (hκ : 0 < κ) (F : ℝ → Vec 2 → ℝ)

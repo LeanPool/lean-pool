@@ -12,8 +12,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Abstract `L²` limits along a fast subsequence
 
-A sequence that is Cauchy in `L²` has a fast subsequence converging almost everywhere; the
-pointwise limit (chosen by `limUnder`) is in `L²` and is the `L²` limit of the whole sequence.
+A sequence that is Cauchy in `L²` has a fast subsequence converging almost everywhere.
+An eventual finite `L²` norm bound passes to the almost-everywhere limit.
 Everything here is stated for an arbitrary measure space.
 -/
 
@@ -103,8 +103,8 @@ theorem ae_tendsto_fast {α : Type*} [MeasurableSpace α] {μ : Measure α}
   rw [hl.limUnder_eq]
   exact hl
 
-/-- The pointwise limit is in `L²`, and the whole sequence converges to it in `L²` with the
-`liminf` bound. -/
+/-- The almost-everywhere limit of a sequence whose `L²` norms are eventually at most `c` is in
+`L²`, with norm at most `c`. -/
 theorem memLp_limit_of_bound {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {f : ℕ → α → ℝ} {g : α → ℝ} (hf : ∀ k, AEStronglyMeasurable (f k) μ)
     (hlim : ∀ᵐ x ∂μ, Tendsto (fun k => f k x) atTop (𝓝 (g x)))

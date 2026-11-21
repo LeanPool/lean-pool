@@ -52,10 +52,12 @@ private theorem dualNegativeBesovVectorNormTwo_congr_on_cubeSet
   exact Book.Ch03.cubeBesovDualFullNorm_eq_of_ae_eq_on_cubeSet
     s (2 : ℝ≥0∞) (2 : ℝ≥0∞) (hFG.fun_comp fun z => z i)
 
-/-- **The weak corrector row.**  At a good scale the scale-normalized negative
-Besov norm of the affine-plus-corrector gradient on a centered triadic cube is
-bounded by the Euclidean slope, with a constant depending only on the dimension
-and the multiscale order. -/
+/-- **The weak corrector row.**  There is a tolerance `c ∈ (0, 1)`, depending only
+on the dimension and the multiscale order, such that at a good scale with
+`delta ≤ c` the scale-normalized negative Besov norm of the affine-plus-corrector
+gradient on the centered triadic cubes of scale at least `n.toNat` is bounded
+uniformly in the scale.  The bound `N` may depend on `a`, `delta`, `n`, `hCauchy`
+and the slope `e`. -/
 theorem exists_scalarIdentityGoodTailCorrectorWeakGradientRowConstant
     (d : ℕ) [NeZero d] (s : ℝ) (hs : 0 < s) (hs_lt : s < 1 / 2) :
     ∃ c : ℝ, c ∈ Ioo (0 : ℝ) 1 ∧

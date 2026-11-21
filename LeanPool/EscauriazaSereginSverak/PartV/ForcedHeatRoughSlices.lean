@@ -78,9 +78,10 @@ theorem abs_le_mul_forcedHeatWeight_space {χ : Vec3 → ℝ} (hχ : Continuous 
       _ ≤ B * (1 + R) ^ 2 * forcedHeatWeight x :=
         mul_le_mul_of_nonneg_left hw (by positivity)
 
-/-- A sequence of nonnegative space-time functions whose integrals tend to zero
-has a subsequence whose slice integrals tend to zero for almost every time. -/
-theorem exists_subseq_slice_tendsto {ν : Measure ℝ} [SFinite ν]
+/-- For a sequence of nonnegative space-time functions whose integrals tend to zero,
+there is a sequence of indices `m`, not asserted to be monotone, along which the slice
+integrals tend to zero for almost every time. -/
+theorem exists_indexSequence_slice_tendsto {ν : Measure ℝ} [SFinite ν]
     {f : ℕ → Vec3 × ℝ → ℝ≥0∞} (hf : ∀ k, AEMeasurable (f k) ((volume : Measure Vec3).prod ν))
     (hlim : Tendsto (fun k => ∫⁻ z, f k z ∂((volume : Measure Vec3).prod ν)) atTop (𝓝 0)) :
     ∃ m : ℕ → ℕ, ∀ᵐ s ∂ν, Tendsto (fun n => ∫⁻ x, f (m n) (x, s)) atTop (𝓝 0) := by
