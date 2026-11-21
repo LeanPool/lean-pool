@@ -211,17 +211,11 @@ theorem teleportation_correct_block (α β : ℂ) :
 an `n`-qubit product input at the current parallel block boundary. -/
 abbrev TeleportationInput (n : ℕ) := Fin n → ℂ × ℂ
 
-/-- Bob's recovered global input in the exact block protocol. -/
-def teleportationRecoveredInput {n : ℕ} (input : TeleportationInput n) :
-    TeleportationInput n :=
-  fun i => input i
-
 /-- The global correctness proposition for the `n`-block protocol: every block
 recovers the corresponding input qubit after Alice's two-bit classical message
 and Bob's branch correction. -/
 def TeleportationGlobalCorrect {n : ℕ} (input : TeleportationInput n) : Prop :=
-  teleportationRecoveredInput input = input ∧
-    ∀ i : Fin n, TeleportationBlockCorrect (input i).1 (input i).2
+  ∀ i : Fin n, TeleportationBlockCorrect (input i).1 (input i).2
 
 /-- Communication resources for running `n` independent teleportation blocks:
 `n` shared Bell pairs and `2n` classical bits from Alice to Bob. -/
@@ -255,12 +249,8 @@ theorem QuantumTeleportation.main
     {n : ℕ} (input : TeleportationInput n) :
     TeleportationGlobalCorrect input ∧
       CommunicationProfile.HasExactCounts
-        (teleportationCommunicationProfile n) (2 * n) 0 n := by
-  constructor
-  · constructor
-    · rfl
-    · exact (teleportation_componentwise_correct input).1
-  · exact (teleportation_componentwise_correct input).2
+        (teleportationCommunicationProfile n) (2 * n) 0 n :=
+  teleportation_componentwise_correct input
 
 end
 

@@ -38,15 +38,15 @@ import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
     (4) THE TYPED WALL (`tight_bound_decodes`, CONDITIONAL): IF a verifier's bound `lb` is tight
         on a body's syndrome (`lb z = minCosetWeight z`) THEN evaluating that cheap bound there
         COMPUTES the decoding distance.  HONEST: the antecedent "tight on this code" IS the
-        decoding answer — the theorem TYPES that equivalence, it does NOT discharge it.  With
+        decoding answer — the theorem is `TightAt` unfolded and does NOT discharge it.  With
         (2)+(3): a bound tight on EVERY basis would be a code invariant (2), yet `colWeightLb`
         provably is not (3); so "cheap + basis-robust + tight" is exactly the imported-hard
         decoder, which `colWeightLb` (and the cheap bounds here) do NOT achieve.
 
   HONESTY LEDGER.  (1) is definitional ground truth.  (2) is a non-trivial invariance (the
   invertible-`M` coset bijection).  (3) is a concrete refutation with witnessed schemes
-  (`projScheme` vs `denseScheme`).  (4) is deliberately a CONDITIONAL whose hypothesis IS the
-  decoding assumption, so it makes NO unconditional hardness claim.  The synthesis
+  (`projScheme` vs `denseScheme`).  (4) is `TightAt` unfolded: its hypothesis IS its conclusion,
+  the decoding assumption, so it makes NO unconditional hardness claim.  The synthesis
   (`colWeightLb_cannot_be_tight_basisRobust`) is a CONSEQUENCE of (2)+(3) stated about
   `colWeightLb` only — never a claim about the hardness of decoding itself.
 -/
@@ -198,11 +198,10 @@ def TightAt {m n : ℕ} (H : Matrix (Fin m) (Fin n) F) (lb : (Fin m → F) → �
   lb z = minCosetWeight H z
 
 /-- **THE TYPED WALL (conditional).**  IF a verifier's bound is tight on a body's syndrome, THEN
-    evaluating that cheap bound there EQUALS the decoding distance `minCosetWeight` — i.e. the
-    cheap evaluation decides the imported-hard decoding question.  This is the HONEST typing of
-    "a cheap, basis-robust, tight bound is a decoder": the conclusion is decoding, reached ONLY
-    under the tightness HYPOTHESIS; nothing here discharges that hypothesis, so NO
-    hardness/P≠NP/one-wayness claim is made. -/
+    evaluating that cheap bound there EQUALS the decoding distance `minCosetWeight`.  The proof
+    is `hTight`: the conclusion is the definition of `TightAt` unfolded, so this names the
+    hypothesis and derives nothing further from it.  Nothing here discharges that hypothesis,
+    so NO hardness/P≠NP/one-wayness claim is made. -/
 theorem tight_bound_decodes (S : Scheme F) (V : Verifier S) (y : Fin S.n → F)
     (hTight : TightAt S.H V.lb (S.H *ᵥ y)) :
     V.lb (S.H *ᵥ y) = minCosetWeight S.H (S.H *ᵥ y) :=

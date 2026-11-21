@@ -21,8 +21,8 @@ main_declarations:
 - QuantumAlg.GroverSearch.main_success_probability
 main_results:
 - declaration: QuantumAlg.QuantumFourierTransform.main
-  informal: Proves the QFT action on computational-basis states and records exact
-    circuit counts.
+  informal: Proves the QFT action on computational-basis states. The accompanying gate
+    counts are the fields of a fixed profile record and are not derived from a circuit.
 - declaration: QuantumAlg.ReflectionBasedQuantumSignalProcessing.main
   informal: Characterizes reflection-based single-qubit QSP transforms in the Chebyshev
     basis.

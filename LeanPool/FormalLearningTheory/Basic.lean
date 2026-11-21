@@ -147,12 +147,6 @@ structure VersionSpace (X : Type u) (Y : Type v) where
 def Realizable (X : Type u) (Y : Type v) (C : ConceptClass X Y) (H : HypothesisSpace X Y) : Prop :=
   C ⊆ H
 
-/-- Agnostic setting: no assumption that target ∈ H. The learner competes against
-    the best hypothesis in H. -/
-def Agnostic (X : Type u) (Y : Type v) (C : ConceptClass X Y) (H : HypothesisSpace X Y) : Prop :=
-  C = C ∧ H = H -- The agnostic setting is the ABSENCE of a realizability assumption.
-  -- It's captured by NOT requiring Realizable as a hypothesis in theorem statements.
-
 /-!
 ## Loss Functions
 

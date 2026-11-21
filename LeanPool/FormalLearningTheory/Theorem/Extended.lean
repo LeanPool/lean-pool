@@ -1001,30 +1001,11 @@ theorem baxter_base_case (X : Type u) [MeasurableSpace X]
   exact pac_lower_bound_member X C_new d hd ε δ hε hε1 hδ hδ1 hδ2 hd_pos
     (ML.sampleComplexity env ε δ) ⟨ML.learn env, hPAC⟩
 
-/-- Baxter's multi-task lower bound: any sample-based meta-learner
-    that achieves PAC on a new task C_new with VCDim = d, after seeing
-    n training tasks with m samples each, requires ⌈(d-1)/2⌉ samples
-    for the new task.
-
-    This is the n-independent version. The n-dependent improvement
-    m ≥ Ω(d/(ε²·n)) requires the product-measure information-theoretic
-    argument.
-
-    Key insight: the meta-learner's output (L, mf) is a PAC witness
-    for C_new. By pac_lower_bound_member, any PAC witness requires
-    at least ⌈(d-1)/2⌉ samples. The meta-learner's training phase
-    (seeing n tasks) cannot reduce this bound because the new task's
-    concept class is adversarially chosen AFTER training.
-
-    The n-dependent improvement (Baxter 2000, Theorem 3):
-    For the PRODUCT measure over n tasks × m samples per task,
-    the adversary argument gives m ≥ Ω(d/(ε²·n)).
-    This requires:
-    - TaskDistribution: a measure over concept classes
-    - Product measure: D^(n×m) decomposed as (D^m)^n
-    - Information-theoretic counting: n·m bits vs 2^d labelings
-    This theorem proves the n-independent base case. -/
-theorem baxter_full (X : Type u) [MeasurableSpace X]
+/-- For fixed training data, if the resulting learner satisfies the uniform PAC guarantee
+on a new task `C_new` of VC dimension `d`, then it needs at least `⌈(d - 1) / 2⌉`
+samples from that task. The bound is independent of the number of training tasks and the
+number of examples per training task. -/
+theorem baxter_n_independent_lower_bound (X : Type u) [MeasurableSpace X]
     [MeasurableSingletonClass X]
     (SML : SampleMetaLearner X)
     (C_new : ConceptClass X Bool)

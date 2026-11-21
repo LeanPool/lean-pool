@@ -43,7 +43,9 @@ where `N = 2^n` and `ω = e^{2πi/N}` is the primitive `N`-th root of unity.
 - `LeanPool.LeanQuantumAlg.QFT_apply_ket` — component formula for `QFT |x⟩`.
 - `LeanPool.LeanQuantumAlg.sum_omega_zpow_eq_zero` — full-period geometric sums of
   nontrivial powers of `ω` vanish (column orthogonality).
-- `LeanPool.LeanQuantumAlg.QuantumFourierTransform.main` — the QFT is unitary.
+- `LeanPool.LeanQuantumAlg.QFT_mem_unitaryGroup` — the QFT matrix is unitary.
+- `LeanPool.LeanQuantumAlg.QuantumFourierTransform.main` — the basis-state formula for
+  `QFT`, paired with the gate counts recorded in `QFTCircuitProfile`.
 
 Pinned Mathlib API: `Complex.exp`, `Complex.exp_nat_mul`, `Complex.exp_eq_one_iff`,
 `Complex.norm_exp_ofReal_mul_I`, `Complex.isPrimitiveRoot_exp`,
@@ -230,8 +232,9 @@ theorem QFTCircuitProfile_exact (n : ℕ) :
       (QFTCircuitProfile n) n (n * (n - 1) / 2) (n / 2) := by
   simp [CircuitGateProfile.HasExactCounts, QFTCircuitProfile]
 
-/-- QFT basis action paired with the fixed-circuit gate counts used by the
-standard decomposition. -/
+/-- QFT basis action paired with the gate counts of the standard decomposition.
+The counts are the fields of `QFTCircuitProfile`; they are not derived from a
+circuit. -/
 theorem QuantumFourierTransform.main (n : ℕ) (x : Fin (2 ^ n)) :
     (∀ i : Fin (2 ^ n),
       (QFT n).apply (ket x) i = invSqrtN n * omega n ^ (i.val * x.val)) ∧

@@ -30,13 +30,15 @@ namespace VML
 -- Reference: Lemmas 10-12, Corollary 2
 -- ============================================================================
 
-/-- Corollary 2 (Steady state is a local Maxwellian).
+/-- Corollary 2 (vanishing dissipation gives a local Maxwellian).
     Reference: cor:local_maxwellian
 
-    At any steady state of the VML system with ν > 0, f(x,·) is a Maxwellian
-    for each x ∈ T³.
+    For a positive family `f(x,·)` on any index type `X`, if the entropy dissipation
+    `Dₓ(f)` vanishes at every `x` and the score form and integrability hypotheses hold
+    at every `x`, then `f(x,·)` is a Maxwellian for each `x`. The VML equation and `ν`
+    do not appear here: `Theorem42` derives `Dₓ(f) = 0` for its steady states.
 
-    Proof: By Lemma 11, Dₓ(f) = 0 for all x. By Corollary 1, f(x,·) is Maxwellian. -/
+    Proof: apply Corollary 1 (`D_zero_implies_maxwellian`) at each `x`. -/
 theorem steady_state_is_local_maxwellian
     (X : Type*)
     (f : X → (Fin 3 → ℝ) → ℝ) (Ψ : ℝ → ℝ)

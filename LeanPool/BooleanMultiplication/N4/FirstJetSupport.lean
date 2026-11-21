@@ -123,8 +123,8 @@ theorem twoFormSupport_le_fourVectorSpan
   · exact Submodule.smul_mem _ _
       (Submodule.subset_span ⟨3, by simp [fourVectorFamily]⟩)
 
-/-- A rank-four two-form expressed as two wedges has all four displayed
-vectors in its intrinsic column support. -/
+/-- In a decomposition of an outside target as two wedges `u ∧ z + p ∧ w`, the first
+vectors `u` and `p` lie in that target’s column support. -/
 theorem decomposition_vectors_mem_outside_support
     (i : Fin 9) (u z p w : LinearForm)
     (hq : targetTwo (outsideRankTwoWord i) =
