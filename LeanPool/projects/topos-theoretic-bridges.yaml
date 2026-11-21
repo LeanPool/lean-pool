@@ -1,0 +1,46 @@
+slug: topos-theoretic-bridges
+title: Topos-theoretic bridges for presheaf topoi
+summary: Morita equivalence of small categories, defined as equivalence of their presheaf
+  topoi, is characterised by equivalence of Karoubi envelopes, through the retracts of
+  representable presheaves. The presheaf topos of a small category is Boolean exactly when
+  the category is a groupoid, and De Morgan exactly when it satisfies the right Ore condition;
+  both properties are invariant under Morita equivalence. These are instances of O.
+  Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
+  presentations.
+branch: category theory
+entry_module: LeanPool.ToposTheoreticBridges
+authors:
+- Michel Hua
+source:
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
+- LeanPool.ToposTheoreticBridges.isBooleanTopos_presheaf_iff_isGroupoid
+- LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition
+main_results:
+- declaration: LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
+  informal: Two small categories have equivalent categories of presheaves of sets exactly
+    when their Karoubi envelopes (idempotent completions) are equivalent.
+- declaration: LeanPool.ToposTheoreticBridges.isBooleanTopos_presheaf_iff_isGroupoid
+  informal: Every subpresheaf of every presheaf on a small category C has a complement
+    exactly when every morphism of C is invertible.
+- declaration: LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition
+  informal: In the presheaf topos of a small category C, every subobject's pseudocomplement
+    and its double pseudocomplement together cover the whole object exactly when every cospan
+    in C can be completed to a commutative square.
+- declaration: LeanPool.ToposTheoreticBridges.isGroupoid_iff_of_moritaEquivalentCat
+  informal: Being a groupoid is invariant under Morita equivalence of small categories.
+- declaration: LeanPool.ToposTheoreticBridges.rightOreCondition_iff_of_moritaEquivalentCat
+  informal: The right Ore condition is invariant under Morita equivalence of small categories.
+tags:
+- topos-theory
+- morita-equivalence
+- karoubi-envelope
+- presheaf-topoi
+msc:
+- 18F10
+- 18B25
+- 18E50
