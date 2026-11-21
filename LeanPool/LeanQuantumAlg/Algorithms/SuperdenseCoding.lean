@@ -91,16 +91,10 @@ theorem superdense_coding_block (a b : Bool) :
 equivalently a `2n`-bit string grouped by Bell-pair block. -/
 abbrev SuperdenseMessage (n : ℕ) := Fin n → Bool × Bool
 
-/-- Bob's decoded global message in the exact block protocol. -/
-def superdenseRecoveredMessage {n : ℕ} (bits : SuperdenseMessage n) :
-    SuperdenseMessage n :=
-  fun i => bits i
-
 /-- The global correctness proposition for the `n`-block protocol: every block
-decodes its bit pair, so Bob's recovered message is the whole input message. -/
+decodes its bit pair. -/
 def SuperdenseGlobalCorrect {n : ℕ} (bits : SuperdenseMessage n) : Prop :=
-  superdenseRecoveredMessage bits = bits ∧
-    ∀ i : Fin n, SuperdenseBlockCorrect (bits i).1 (bits i).2
+  ∀ i : Fin n, SuperdenseBlockCorrect (bits i).1 (bits i).2
 
 /-- Communication resources for running `n` independent superdense-coding
 blocks: `n` shared Bell pairs and `n` transmitted qubits from Alice to Bob. -/
@@ -135,12 +129,8 @@ theorem SuperdenseCoding.main
     {n : ℕ} (bits : SuperdenseMessage n) :
     SuperdenseGlobalCorrect bits ∧
       CommunicationProfile.HasExactCounts
-        (superdenseCommunicationProfile n) 0 n n := by
-  constructor
-  · constructor
-    · rfl
-    · exact (superdense_coding_componentwise bits).1
-  · exact (superdense_coding_componentwise bits).2
+        (superdenseCommunicationProfile n) 0 n n :=
+  superdense_coding_componentwise bits
 
 end
 
