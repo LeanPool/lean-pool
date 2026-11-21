@@ -452,6 +452,54 @@ def test_only_the_largest_analyzer_stops_under_a_shortage(
     assert "other analyzers: LeanPool.Small 0.2 GiB" in str(outcome["LeanPool.Huge"])
 
 
+def test_analyzer_does_not_act_on_a_reading_older_than_another_stop(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """A stale "memory is low" must not stop a second, healthy analyzer.
+
+    The small analyzer reads the low figure and is slow to decide. Meanwhile
+    the large one would stop and leave the list, and the small one, deciding
+    on its old reading, would find itself the largest and stop as well.
+    """
+    build = tmp_path / "docbuild" / ".lake" / "build"
+    build.mkdir(parents=True)
+    script = sleeping_doc_gen(tmp_path, {"LeanPool.Huge": 60, "LeanPool.Small": 2})
+    monkeypatch.setattr(documentation, "MEMORY_POLL_SECONDS", 0.05)
+    sizes = {"LeanPool.Huge": 13 * 2**30, "LeanPool.Small": 2**28}
+
+    def held(pid: int) -> int | None:
+        module = documentation._RUNNING.get(pid)
+        return sizes[module] if module else None
+
+    def free() -> int:
+        low = "LeanPool.Huge" in documentation._RUNNING.values()
+        if low and threading.current_thread().name == "LeanPool.Small":
+            time.sleep(0.5)
+        return 2**29 if low else 8 * 2**30
+
+    monkeypatch.setattr(documentation, "process_memory", held)
+    monkeypatch.setattr(documentation, "free_memory", free)
+    analyzer = documentation.Analyzer(str(script), {}, build, "https://example.com")
+    outcome: dict[str, BaseException | None] = {}
+
+    def run(module: str) -> None:
+        try:
+            analyzer.analyze(module)
+            outcome[module] = None
+        except BaseException as error:
+            outcome[module] = error
+
+    threads = [
+        threading.Thread(target=run, args=(module,), name=module) for module in sizes
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=30)
+    assert isinstance(outcome["LeanPool.Huge"], documentation.AnalysisMemoryError)
+    assert outcome["LeanPool.Small"] is None
+
+
 def test_memory_polling_keeps_output_larger_than_a_pipe(
     tmp_path: Path, monkeypatch, caplog
 ) -> None:

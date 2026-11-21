@@ -409,6 +409,10 @@ class AnalysisMemoryError(RuntimeError):
 # The analyzers running now, by process, so the largest one can be found.
 _RUNNING: dict[int, str] = {}
 _RUNNING_LOCK = threading.Lock()
+# One analyzer at a time reads the free memory, decides and, if it is the one
+# to go, has exited before the next one looks. Otherwise a second analyzer
+# could act on a reading taken before the first one released its memory.
+_STOP_LOCK = threading.Lock()
 
 
 def _gibibytes(size: int) -> str:
@@ -482,9 +486,14 @@ class Analyzer:
                         raise subprocess.TimeoutExpired(
                             command, ANALYSIS_SECONDS
                         ) from None
-                    if shortage := memory_shortage(process.pid):
-                        process.kill()
-                        process.communicate()
+                    with _STOP_LOCK:
+                        shortage = memory_shortage(process.pid)
+                        if shortage:
+                            process.kill()
+                            process.communicate()
+                            with _RUNNING_LOCK:
+                                _RUNNING.pop(process.pid, None)
+                    if shortage:
                         raise AnalysisMemoryError(
                             f"documentation analysis of {module} was stopped: "
                             f"{shortage[0]}",
