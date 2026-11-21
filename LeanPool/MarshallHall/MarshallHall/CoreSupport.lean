@@ -209,37 +209,6 @@ theorem basis_retraction_loop_of_edge
     exact (congrArg (fun z => retractBasisElement B Y z = z) hBx).mp
       (retractBasisElement_of_mem B Y x hxY)
 
-theorem basis_retraction_loop_of_path
-    {T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))}
-    [Arborescence T]
-    (P : Set (Quiver.Total (IsFreeGroupoid.Generators G)))
-    {a : Symmetrify (IsFreeGroupoid.Generators G)}
-    (p : @Path (Symmetrify (IsFreeGroupoid.Generators G))
-      (symmetrifyQuiver (IsFreeGroupoid.Generators G))
-      (show Symmetrify (IsFreeGroupoid.Generators G) from root T) a)
-    (hp : ∀ {x y : IsFreeGroupoid.Generators G} (e : x ⟶ y),
-      ⟨x, y, e⟩ ∈ P) :
-    retractBasisElement (spanningTreeBasis T) (basisSupport (T := T) P)
-        (IsFreeGroupoid.SpanningTree.loopOfHom T (symPathHom p)) =
-      IsFreeGroupoid.SpanningTree.loopOfHom T (symPathHom p) := by
-  let B := spanningTreeBasis T
-  let Y := basisSupport (T := T) P
-  induction p with
-  | nil =>
-      change retractBasisElement B Y (IsFreeGroupoid.SpanningTree.loopOfHom T (𝟙 _)) =
-        IsFreeGroupoid.SpanningTree.loopOfHom T (𝟙 _)
-      rw [loopOfHom_id]
-      exact retractBasisElement_one B Y
-  | cons p e ih =>
-      cases e with
-      | inl e =>
-          exact retract_loop_comp Y (symPathHom p) (IsFreeGroupoid.of e) ih
-            (basis_retraction_loop_of_edge P e (hp e))
-      | inr e =>
-          exact retract_loop_comp Y (symPathHom p) _ ih
-            (retract_loop_inv Y (IsFreeGroupoid.of e)
-              (basis_retraction_loop_of_edge P e (hp e)))
-
 theorem basis_retraction_loop_of_subquiver_path
     {T : WideSubquiver (Symmetrify (IsFreeGroupoid.Generators G))}
     [Arborescence T]
