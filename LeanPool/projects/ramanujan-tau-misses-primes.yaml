@@ -1,5 +1,5 @@
 slug: ramanujan-tau-misses-primes
-title: ABC implies that Ramanujan's tau function misses almost all primes
+title: ABC and Xiong's Proposition 5.4 imply that Ramanujan's tau function misses almost all primes
 summary: Formalizes the proof, conditional on the ABC conjecture and on the sharper
   N^{1/2} form of Xiong's Proposition 5.4, that Ramanujan's tau function takes prime
   values only rarely.
