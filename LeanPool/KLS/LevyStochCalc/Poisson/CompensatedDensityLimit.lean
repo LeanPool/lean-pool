@@ -415,9 +415,11 @@ lemma eLpNorm_two_rpow_eq_lintegral_sq {P : Measure Ω} (g : Ω → ℝ)
   rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) from by norm_num, ENNReal.rpow_natCast]; rfl
 
 /-- **Dissertation #2(B): the compensated Euler sums converge in `L²(P)`.** For a
-bounded, progressively measurable `φ` with finite mark support, there is an
-`L²(P)` random variable `F` (the L²-Itô-Lévy integral) such that the adapted Euler
-step integrals `∑ᵢ∑ₖ ciₖⁿ·Ñ((pᵢⁿ,pᵢ₊₁ⁿ]×Biₖⁿ)` converge to `F` in `L²(P)`.
+bounded, progressively measurable `φ` with finite mark support, there are adapted,
+bounded mark-simple step data `(Biₖⁿ, ciₖⁿ)` (with marks in `S`) whose step functions
+converge to `φ` in `L²(P ⊗ vol ⊗ ν)`, and an `L²(P)` random variable `F` (the L²-Itô-Lévy
+integral) such that the Euler step integrals `∑ᵢ∑ₖ ciₖⁿ·Ñ((pᵢⁿ,pᵢ₊₁ⁿ]×Biₖⁿ)` converge to
+`F` in `L²(P)`.
 Assembles the density (`exists_markEval_L2_tendsto`), the cross-resolution Cauchy
 bound (`eulerStepIntegral_cauchy_le`), and `Lp`-completeness
 (`exists_L2_limit_of_memLp_cauchySeq`). -/
@@ -434,6 +436,17 @@ theorem compensated_eulerSum_L2_limit
     ∃ (Ki : (n : ℕ) → Fin (2 ^ n) → ℕ)
       (Bi : (n : ℕ) → (i : Fin (2 ^ n)) → Fin (Ki n i) → Set E)
       (ci : (n : ℕ) → (i : Fin (2 ^ n)) → Fin (Ki n i) → Ω → ℝ) (F : Ω → ℝ),
+      (∀ n i k, MeasurableSet (Bi n i k)) ∧ (∀ n i k, Bi n i k ⊆ S) ∧
+      (∀ n i k, @MeasureTheory.StronglyMeasurable Ω ℝ _
+        (ℱ (dyadicPartition T n i.castSucc))
+        (ci n i k)) ∧
+      (∀ n i k, ∃ C, ∀ ω, |ci n i k ω| ≤ C) ∧
+      Filter.Tendsto (fun n => ∫⁻ ω, ∫⁻ s in Set.Icc (0 : ℝ) T, ∫⁻ e,
+        (‖φ ω s e - ∑ i : Fin (2 ^ n),
+            (Set.Ioc (dyadicPartition T n i.castSucc) (dyadicPartition T n i.succ)).indicator
+              (fun _ => (1 : ℝ)) s
+            * ∑ k, ci n i k ω * (Bi n i k).indicator (fun _ => (1 : ℝ)) e‖₊ : ℝ≥0∞) ^ 2
+        ∂ν ∂volume ∂P) Filter.atTop (nhds 0) ∧
       MeasureTheory.MemLp F 2 P ∧
       Filter.Tendsto (fun n => MeasureTheory.eLpNorm
         ((fun ω => ∑ i : Fin (2 ^ n), ∑ k, ci n i k ω
@@ -493,7 +506,7 @@ theorem compensated_eulerSum_L2_limit
               ENNReal.mul_div_cancel (by norm_num) (by norm_num)]
     exact (ENNReal.rpow_lt_rpow_iff (by norm_num : (0 : ℝ) < 2)).mp hsq
   obtain ⟨F, hF_mem, hF_tend⟩ := exists_L2_limit_of_memLp_cauchySeq hImem hcauchy
-  exact ⟨Ki, Bi, ci, F, hF_mem, hF_tend⟩
+  exact ⟨Ki, Bi, ci, F, hBim, hBiS, hcia, hcib, htend, hF_mem, hF_tend⟩
 
 /-! ### Path regularity bricks (toward the càdlàg conjunct of #6)
 
