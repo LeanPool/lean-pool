@@ -34,12 +34,15 @@ and the generic torsor (`LeanPool.ClassifyingTopoi.genericTorsor`), the represen
 
 The classification of torsors by the presheaf topos on `SingleObj G`
 (`isClassifyingSite_genericTorsor`) and the converse direction of
-`moritaEquivalent_torsorTheory_iff` (that Morita-equivalent theories of torsors come from
-isomorphic groups) are not formalised. The first needs the existence half of Diaconescu's theorem
-for `SingleObj G`: a torsor `M` in a sheaf topos gives the left exact functor `P ↦ P ⊗_G M`,
-whose left exactness rests on the internal flatness of `M` (locally inhabited, transitive and
-free), which Mathlib does not provide; the second then follows from the reconstruction of `G`
-from the Cauchy completion of `SingleObj G` (`moritaEquivalentCat_iff_karoubi`).
+`moritaEquivalent_torsorTheory_iff` (that Morita-equivalent theories of torsors come from isomorphic
+groups) are not formalised. The first needs the existence half of Diaconescu's theorem for
+`SingleObj G`, which has no finite limits, beyond the presheaf-topos and left exact cases of
+`LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_flat` and
+`exists_leftAdjoint_of_preservesFiniteLimits`: a torsor `M` in a sheaf topos gives the left exact
+functor `P ↦ P ⊗_G M`, whose left exactness rests on the internal flatness of `M` (locally
+inhabited, transitive and free), which Mathlib does not provide; the second then follows from the
+reconstruction of `G` from the Cauchy completion of `SingleObj G`
+(`moritaEquivalentCat_iff_karoubi`).
 -/
 
 @[expose] public section

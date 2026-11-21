@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntax
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Semantics
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Infinitary
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.CatSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.TypeSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.InverseImage
@@ -17,6 +18,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalForm
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalFormSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Bridges
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Diaconescu
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuExistence
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Quotients
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Horn
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Fiber
@@ -49,6 +51,9 @@ Layer 1 of the roadmap: geometric logic and its semantics.
   geometric logic over a first-order language of Mathlib;
 * `LeanPool.ClassifyingTopoi.GeometricFormula.realize_hom`: homomorphisms of structures preserve
   geometric formulas;
+* `LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf` (roadmap 1.2): geometric formulas
+  are formulas of the infinitary logic `L_{∞ω}` of Tau Ceti (`GeometricFormula.toInf`), with the
+  same satisfaction; `GeometricTheory.isSetModel_iff_toInf` for theories;
 * `LeanPool.ClassifyingTopoi.CatStructure.interp`: the interpretation of geometric formulas as
   subobjects in a category with finite limits, images and coproducts;
 * `LeanPool.ClassifyingTopoi.CatStructure.isModel_ofStructure_iff`: in the category `Type u`, the
@@ -73,6 +78,10 @@ Layer 2 of the roadmap: classifying topoi.
 * `LeanPool.ClassifyingTopoi.exists_iso_sheafify_comp_iff`,
   `LeanPool.ClassifyingTopoi.nonempty_iso_of_yoneda_comp_iso`: the localisation and uniqueness
   halves of Diaconescu's theorem;
+* `LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_flat`,
+  `LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_preservesFiniteLimits`: the existence half of
+  Diaconescu's theorem for presheaf topoi (pointwise flat and continuous functors), and for left
+  exact functors to a sheaf topos out of a site with finite limits;
 * `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology` (roadmap 2.5): every
   quotient of `T` is classified by a topology finer than `J`, with the sheafified generic model;
   the converse `IsClassifyingSite.exists_quotient_theory_of_definable` and the bridges theorem
@@ -132,9 +141,8 @@ Layer 3 of the roadmap: theories of presheaf type (the modules
 Not formalised in layer 3: the classification of torsors by `SingleObj G` and the converse of
 the Morita equivalence (roadmap 3.3), the classification of intervals by simplicial sets
 (roadmap 3.4), and the theorems of roadmap 3.5 and the existence of quotients of 3.6, which need
-the existence half of Diaconescu's theorem beyond the Horn sites and the identification of the
-finitely presentable models with the irreducible objects of the classifying topos.
-
-The translation of geometric formulas into infinitary logic `L_{∞ω}` (roadmap 1.2, `toInf` and
-`realize_toInf`) is not formalised, since it is not available in Mathlib.
+the existence half of Diaconescu's theorem for functors that are flat in the internal sense of a
+sheaf topos (only presheaf topoi and left exact functors out of sites with finite limits are
+covered) and the identification of the finitely presentable models with the irreducible objects
+of the classifying topos.
 -/

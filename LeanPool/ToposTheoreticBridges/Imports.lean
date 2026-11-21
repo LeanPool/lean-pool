@@ -14,6 +14,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Bridges
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.CatSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.ClassifyingSite
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Diaconescu
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuExistence
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.FinitelyPresentable
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Homogeneous
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Interval
@@ -21,6 +22,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.ObjectCla
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.PresheafType
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Torsors
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Homomorphisms
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Infinitary
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.InverseImage
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Morleyization
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalForm

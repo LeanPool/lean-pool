@@ -5,6 +5,7 @@ Authors: Michel Hua
 -/
 module
 
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuExistence
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Fiber
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Generic
 public import Mathlib.CategoryTheory.Functor.KanExtension.RestrictedYoneda
@@ -85,21 +86,11 @@ noncomputable def pointsFunctor :
     ext X x
     exact Subtype.ext (funext fun i => Functor.map_comp_apply P.carrier g g' _)
 
-variable (L) in
-/-- The fiber functors on presheaves of the points of the Horn site. -/
-noncomputable def presheafFiberFunctor :
-    (GrothendieckTopology.Point.{max u₁ u₂ u} (⊥ : GrothendieckTopology (HornCat.{u} L)))ᵒᵖ ⥤
-      ((HornCat.{u} L)ᵒᵖ ⥤ Type (max u₁ u₂ u)) ⥤ Type (max u₁ u₂ u) where
-  obj Φ := Φ.unop.presheafFiber
-  map f := GrothendieckTopology.Point.Hom.presheafFiber f.unop
-  map_id _ := GrothendieckTopology.Point.Hom.presheafFiber_id _
-  map_comp _ _ := GrothendieckTopology.Point.Hom.presheafFiber_comp _ _
-
 /-- The extension of a presheaf structure along the Yoneda embedding of the Horn category:
 the presheaf of fibers, at the points given by the fiber structures. -/
 noncomputable def extension :
     ((HornCat.{u} L)ᵒᵖ ⥤ Type (max u₁ u₂ u)) ⥤ (Dᵒᵖ ⥤ Type (max u₁ u₂ u)) :=
-  (pointsFunctor.{u} P ⋙ presheafFiberFunctor L).flip
+  pointsExtension (pointsFunctor.{u} P)
 
 /-- Evaluating the extension at an object is the fiber functor of the corresponding point. -/
 noncomputable def extensionCompEvaluationIso (d : Dᵒᵖ) :
@@ -107,64 +98,21 @@ noncomputable def extensionCompEvaluationIso (d : Dᵒᵖ) :
   Iso.refl _
 
 instance : PreservesFiniteLimits (extension.{u} P) :=
-  preservesFiniteLimits_of_evaluation _ fun d =>
-    preservesFiniteLimits_of_natIso (extensionCompEvaluationIso.{u} P d).symm
+  inferInstanceAs (PreservesFiniteLimits (pointsExtension _))
 
 instance : PreservesColimitsOfSize.{max u₁ u₂ u, max u₁ u₂ u} (extension.{u} P) :=
-  preservesColimits_of_evaluation _ fun d =>
-    preservesColimits_of_natIso (extensionCompEvaluationIso.{u} P d).symm
-
-section PointIso
-
-variable {Φ₁ Φ₂ : GrothendieckTopology.Point.{max u₁ u₂ u}
-  (⊥ : GrothendieckTopology (HornCat.{u} L))} (f : Φ₁ ⟶ Φ₂)
-
-/-- The fiber of a representable presheaf at a point is the fiber of the point, through the
-Yoneda embedding. -/
-noncomputable def yonedaCompPresheafFiberIso
-    (Φ : GrothendieckTopology.Point.{max u₁ u₂ u} (⊥ : GrothendieckTopology (HornCat.{u} L))) :
-    yoneda ⋙ Φ.presheafFiber ≅ Φ.fiber :=
-  Functor.isoWhiskerRight shrinkYonedaIsoYoneda.symm _ ≪≫ Φ.shrinkYonedaCompPresheafFiberIso
-
-/-- The isomorphism `shrinkYonedaCompPresheafFiberIso` is natural in the point. -/
-theorem shrinkYonedaCompPresheafFiberIso_naturality (X : HornCat.{u} L) :
-    f.presheafFiber.app (shrinkYoneda.obj X) ≫ Φ₁.shrinkYonedaCompPresheafFiberIso.hom.app X =
-      Φ₂.shrinkYonedaCompPresheafFiberIso.hom.app X ≫ f.hom.app X := by
-  have h : Φ₂.shrinkYonedaCompPresheafFiberIso.inv.app X ≫
-      f.presheafFiber.app (shrinkYoneda.obj X) =
-        f.hom.app X ≫ Φ₁.shrinkYonedaCompPresheafFiberIso.inv.app X := by
-    ext x
-    change f.presheafFiber.app (shrinkYoneda.obj X)
-      (Φ₂.shrinkYonedaCompPresheafFiberIso.inv.app X x) =
-        Φ₁.shrinkYonedaCompPresheafFiberIso.inv.app X (f.hom.app X x)
-    rw [GrothendieckTopology.Point.shrinkYonedaCompPresheafFiberIso_inv_app_toPresheafFiber,
-      GrothendieckTopology.Point.shrinkYonedaCompPresheafFiberIso_inv_app_toPresheafFiber]
-    simp only [GrothendieckTopology.Point.Hom.presheafFiber_app]
-    rw [← types_comp_apply (Φ₂.toPresheafFiber X x _)]
-    exact types_congr_hom (Φ₂.toPresheafFiber_presheafFiberDesc _ _ X x) _
-  rw [← cancel_epi (Φ₂.shrinkYonedaCompPresheafFiberIso.inv.app X), Iso.inv_hom_id_app_assoc,
-    reassoc_of% h, Iso.inv_hom_id_app, Category.comp_id]
-
-/-- The isomorphism `yonedaCompPresheafFiberIso` is natural in the point. -/
-theorem yonedaCompPresheafFiberIso_naturality (X : HornCat.{u} L) :
-    f.presheafFiber.app (yoneda.obj X) ≫ (yonedaCompPresheafFiberIso Φ₁).hom.app X =
-      (yonedaCompPresheafFiberIso Φ₂).hom.app X ≫ f.hom.app X := by
-  simp only [yonedaCompPresheafFiberIso, Iso.trans_hom, Functor.isoWhiskerRight_hom,
-    NatTrans.comp_app, Functor.whiskerRight_app, Iso.symm_hom, Category.assoc]
-  rw [← NatTrans.naturality_assoc, shrinkYonedaCompPresheafFiberIso_naturality]
-
-end PointIso
+  inferInstanceAs (PreservesColimitsOfSize (pointsExtension _))
 
 /-- The extension of a presheaf structure, composed with the Yoneda embedding, is the functor of
 the fibers. -/
 noncomputable def yonedaCompExtensionIso : yoneda ⋙ extension.{u} P ≅ (fibers.{u} P).flip :=
   NatIso.ofComponents
     (fun X => NatIso.ofComponents
-      (fun d => (yonedaCompPresheafFiberIso (@point L _ (P.fiberStr d))).app X)
-      (fun g => yonedaCompPresheafFiberIso_naturality _ X))
+      (fun d => (yonedaCompPointPresheafFiberIso (@point L _ (P.fiberStr d))).app X)
+      (fun g => yonedaCompPointPresheafFiberIso_naturality _ X))
     (fun g => by
       ext d : 2
-      exact ((yonedaCompPresheafFiberIso (@point L _ (P.fiberStr d))).hom.naturality g))
+      exact ((yonedaCompPointPresheafFiberIso (@point L _ (P.fiberStr d))).hom.naturality g))
 
 instance (n : ℕ) :
     PreservesLimit (Discrete.functor fun _ : Fin n => top.{u} (L := L) 1) (fibers.{u} P).flip :=
