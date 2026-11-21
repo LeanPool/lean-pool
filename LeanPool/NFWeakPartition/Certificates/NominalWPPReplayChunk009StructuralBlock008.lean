@@ -778,91 +778,91 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   let syntaxClass0178 : Class := (synCin (synCxpk (synCvv) (synCvv)) syntaxClass0049)
   have p0000 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfLtfin x y z w
-      (show y ≠ z from (by exact fresh_y_ne_z)) (show y ≠ w from (by exact fresh_y_ne_w))
-      (show y ≠ x from (by exact fresh_y_ne_x)) (show z ≠ w from (by exact fresh_z_ne_w))
-      (show z ≠ x from (by exact fresh_z_ne_x)) (show w ≠ x from (by exact fresh_w_ne_x))
+      (show y ≠ z from fresh_y_ne_z) (show y ≠ w from fresh_y_ne_w)
+      (show y ≠ x from fresh_y_ne_x) (show z ≠ w from fresh_z_ne_w)
+      (show z ≠ x from fresh_z_ne_x) (show w ≠ x from fresh_w_ne_x)
   have p0001 := @gElin (.cv x) (synCxpk (synCvv) (synCvv)) syntaxClass0049
   have freshnessCertificate0000 : y ∉ ((Class.cv x)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show y ∉ ({ x } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show y ≠ x from (by exact fresh_y_ne_x)))))
+              (show y ≠ x from fresh_y_ne_x))))
   have freshnessCertificate0001 : z ∉ ((Class.cv x)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show z ∉ ({ x } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show z ≠ x from (by exact fresh_z_ne_x)))))
+              (show z ≠ x from fresh_z_ne_x))))
   have p0002 :=
-    @gElvvk y z (.cv x) (by exact freshnessCertificate0000)
-      (by exact freshnessCertificate0001) (show y ≠ z from (by exact fresh_y_ne_z))
+    @gElvvk y z (.cv x) freshnessCertificate0000
+      freshnessCertificate0001 (show y ≠ z from fresh_y_ne_z)
   have p0003 :=
     @gAnbi1i (.classMem (.cv x) (synCxpk (synCvv) (synCvv)))
       (synWex y (synWex z (.classEq (.cv x) (synCopk (.cv y) (.cv z)))))
       syntaxFormula0050 p0002
   have freshnessCertificate0002 : y ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0003 : y ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0002)
   have freshnessCertificate0004 : y ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0003)
   have freshnessCertificate0005 :
     y ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0004)
   have freshnessCertificate0006 :
     y ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0005)
   have freshnessCertificate0007 :
     y ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0006)
   have freshnessCertificate0008 :
     y ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0004)
   have freshnessCertificate0009 :
     y ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0008)
   have freshnessCertificate0010 : y ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0002)
   have freshnessCertificate0011 : y ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0010)
   have freshnessCertificate0012 :
     y ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0011)
   have freshnessCertificate0013 :
     y ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0012)
   have freshnessCertificate0014 : y ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0002)
   have freshnessCertificate0015 :
     y ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -873,19 +873,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0016 :
     y ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0015)
   have freshnessCertificate0017 : y ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0018 : y ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0017)
   have freshnessCertificate0019 : y ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0018)
   have freshnessCertificate0020 :
     y ∉
@@ -897,90 +897,90 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0016 freshnessCertificate0019))
   have freshnessCertificate0021 : y ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0020)
   have freshnessCertificate0022 : y ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0021)
   have freshnessCertificate0023 : y ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0022)
   have freshnessCertificate0024 : y ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0023)
   have freshnessCertificate0025 : y ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0024)
   have freshnessCertificate0026 : y ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0025)
   have freshnessCertificate0027 : y ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0026)
   have freshnessCertificate0028 : y ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0027)
   have freshnessCertificate0029 : y ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0028)
   have freshnessCertificate0030 : y ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0029)
   have freshnessCertificate0031 :
     y ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0006)
   have freshnessCertificate0032 : y ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0031)
   have freshnessCertificate0033 : y ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0032)
   have freshnessCertificate0034 : y ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0033)
   have freshnessCertificate0035 :
     y ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0031)
   have freshnessCertificate0036 : y ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0035)
   have freshnessCertificate0037 : y ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0036)
   have freshnessCertificate0038 : y ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0037)
   have freshnessCertificate0039 : y ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0038)
   have freshnessCertificate0040 : y ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0036)
   have freshnessCertificate0041 : y ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0040)
   have freshnessCertificate0042 : y ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -989,7 +989,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0039 freshnessCertificate0041))
   have freshnessCertificate0043 : y ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0042)
   have freshnessCertificate0044 : y ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -998,47 +998,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0034 freshnessCertificate0043))
   have freshnessCertificate0045 : y ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0044)
   have freshnessCertificate0046 : y ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0019)
   have freshnessCertificate0047 :
     y ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0046)
   have freshnessCertificate0048 :
     y ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0047)
   have freshnessCertificate0049 :
     y ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0048)
   have freshnessCertificate0050 : y ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0049)
   have freshnessCertificate0051 : y ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0050)
   have freshnessCertificate0052 : y ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0051)
   have freshnessCertificate0053 : y ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0052)
   have freshnessCertificate0054 : y ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0053)
   have freshnessCertificate0055 : y ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -1047,11 +1047,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0045 freshnessCertificate0054))
   have freshnessCertificate0056 : y ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0055)
   have freshnessCertificate0057 : y ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0056)
   have freshnessCertificate0058 : y ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -1060,7 +1060,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0030 freshnessCertificate0057))
   have freshnessCertificate0059 : y ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0058)
   have freshnessCertificate0060 :
     y ∉
@@ -1072,7 +1072,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0013 freshnessCertificate0059))
   have freshnessCertificate0061 : y ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0060)
   have freshnessCertificate0062 : y ∉ ((syntaxClass0029).fv) ∪ ((syntaxClass0022).fv) :=
     (by
@@ -1081,7 +1081,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0061 freshnessCertificate0051))
   have freshnessCertificate0063 : y ∉ (syntaxClass0030).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0062)
   have freshnessCertificate0064 :
     y ∉
@@ -1093,7 +1093,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0009 freshnessCertificate0063))
   have freshnessCertificate0065 : y ∉ (syntaxClass0031).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0064)
   have freshnessCertificate0066 :
     y ∉
@@ -1105,11 +1105,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0065 freshnessCertificate0049))
   have freshnessCertificate0067 : y ∉ (syntaxClass0032).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0066)
   have freshnessCertificate0068 : y ∉ (syntaxClass0033).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0067)
   have freshnessCertificate0069 :
     y ∉
@@ -1121,7 +1121,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0007 freshnessCertificate0068))
   have freshnessCertificate0070 : y ∉ (syntaxClass0034).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0069)
   have freshnessCertificate0071 :
     y ∉
@@ -1133,19 +1133,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0070 freshnessCertificate0049))
   have freshnessCertificate0072 : y ∉ (syntaxClass0035).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0071)
   have freshnessCertificate0073 : y ∉ (syntaxClass0036).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0072)
   have freshnessCertificate0074 : y ∉ (syntaxClass0037).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0022)
   have freshnessCertificate0075 : y ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0014)
   have freshnessCertificate0076 :
     y ∉
@@ -1157,7 +1157,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0011 freshnessCertificate0008))
   have freshnessCertificate0077 : y ∉ (syntaxClass0038).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0076)
   have freshnessCertificate0078 :
     y ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
@@ -1167,7 +1167,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0075 freshnessCertificate0077))
   have freshnessCertificate0079 : y ∉ (syntaxClass0039).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0078)
   have freshnessCertificate0080 :
     y ∉
@@ -1179,7 +1179,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0079 freshnessCertificate0047))
   have freshnessCertificate0081 : y ∉ (syntaxClass0040).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0080)
   have freshnessCertificate0082 : y ∉ ((syntaxClass0037).fv) ∪ ((syntaxClass0040).fv) :=
     (by
@@ -1188,7 +1188,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0074 freshnessCertificate0081))
   have freshnessCertificate0083 : y ∉ (syntaxClass0041).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0082)
   have freshnessCertificate0084 :
     y ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
@@ -1198,19 +1198,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0083 freshnessCertificate0019))
   have freshnessCertificate0085 : y ∉ (syntaxClass0042).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0084)
   have freshnessCertificate0086 : y ∉ (syntaxClass0043).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
       exact freshnessCertificate0085)
   have freshnessCertificate0087 : y ∉ (syntaxClass0044).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0086)
   have freshnessCertificate0088 : y ∉ (syntaxClass0045).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0087)
   have freshnessCertificate0089 : y ∉ ((syntaxClass0036).fv) ∪ ((syntaxClass0045).fv) :=
     (by
@@ -1219,7 +1219,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0073 freshnessCertificate0088))
   have freshnessCertificate0090 : y ∉ (syntaxClass0046).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0089)
   have freshnessCertificate0091 :
     y ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
@@ -1229,19 +1229,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0090 freshnessCertificate0046))
   have freshnessCertificate0092 : y ∉ (syntaxClass0047).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0091)
   have freshnessCertificate0093 : y ∉ ((synCnnc)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0094 : y ∉ ((synCpw1 (synCnnc))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0093)
   have freshnessCertificate0095 : y ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0094)
   have freshnessCertificate0096 :
     y ∉ ((syntaxClass0047).fv) ∪ (((synCpw1 (synCpw1 (synCnnc)))).fv) :=
@@ -1251,28 +1251,62 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0092 freshnessCertificate0095))
   have freshnessCertificate0097 : y ∉ (syntaxClass0048).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0096)
   have freshnessCertificate0098 : y ∉ ((synC0)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0099 : y ∉ ((synCsn (synC0))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0098)
   have freshnessCertificate0100 : y ∉ ((synCvv)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
       exact (show y ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0101 : y ∉ (((synCsn (synC0))).fv) ∪ (((synCvv)).fv) :=
     (by
       with_reducible
         exact
           (not_mem_support_union _ _ _ freshnessCertificate0099 freshnessCertificate0100))
+  -- Drop certificates after their last use to keep the replay context small.
+  clear p0002 freshnessCertificate0002 freshnessCertificate0003 freshnessCertificate0004
+    freshnessCertificate0005 freshnessCertificate0006 freshnessCertificate0007
+    freshnessCertificate0008 freshnessCertificate0009 freshnessCertificate0010
+    freshnessCertificate0011 freshnessCertificate0012 freshnessCertificate0013
+    freshnessCertificate0014 freshnessCertificate0015 freshnessCertificate0016
+    freshnessCertificate0017 freshnessCertificate0018 freshnessCertificate0019
+    freshnessCertificate0020 freshnessCertificate0021 freshnessCertificate0022
+    freshnessCertificate0023 freshnessCertificate0024 freshnessCertificate0025
+    freshnessCertificate0026 freshnessCertificate0027 freshnessCertificate0028
+    freshnessCertificate0029 freshnessCertificate0030 freshnessCertificate0031
+    freshnessCertificate0032 freshnessCertificate0033 freshnessCertificate0034
+    freshnessCertificate0035 freshnessCertificate0036 freshnessCertificate0037
+    freshnessCertificate0038 freshnessCertificate0039 freshnessCertificate0040
+    freshnessCertificate0041 freshnessCertificate0042 freshnessCertificate0043
+    freshnessCertificate0044 freshnessCertificate0045 freshnessCertificate0046
+    freshnessCertificate0047 freshnessCertificate0048 freshnessCertificate0049
+    freshnessCertificate0050 freshnessCertificate0051 freshnessCertificate0052
+    freshnessCertificate0053 freshnessCertificate0054 freshnessCertificate0055
+    freshnessCertificate0056 freshnessCertificate0057 freshnessCertificate0058
+    freshnessCertificate0059 freshnessCertificate0060 freshnessCertificate0061
+    freshnessCertificate0062 freshnessCertificate0063 freshnessCertificate0064
+    freshnessCertificate0065 freshnessCertificate0066 freshnessCertificate0067
+    freshnessCertificate0068 freshnessCertificate0069 freshnessCertificate0070
+    freshnessCertificate0071 freshnessCertificate0072 freshnessCertificate0073
+    freshnessCertificate0074 freshnessCertificate0075 freshnessCertificate0076
+    freshnessCertificate0077 freshnessCertificate0078 freshnessCertificate0079
+    freshnessCertificate0080 freshnessCertificate0081 freshnessCertificate0082
+    freshnessCertificate0083 freshnessCertificate0084 freshnessCertificate0085
+    freshnessCertificate0086 freshnessCertificate0087 freshnessCertificate0088
+    freshnessCertificate0089 freshnessCertificate0090 freshnessCertificate0091
+    freshnessCertificate0092 freshnessCertificate0093 freshnessCertificate0094
+    freshnessCertificate0095 freshnessCertificate0096 freshnessCertificate0098
+    freshnessCertificate0099 freshnessCertificate0100
   have freshnessCertificate0102 : y ∉ ((synCxpk (synCsn (synC0)) (synCvv))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0101)
   have freshnessCertificate0103 :
     y ∉ ((syntaxClass0048).fv) ∪ (((synCxpk (synCsn (synC0)) (synCvv))).fv) :=
@@ -1282,7 +1316,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0097 freshnessCertificate0102))
   have freshnessCertificate0104 : y ∉ (syntaxClass0049).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0103)
   have freshnessCertificate0105 : y ∉ (((Class.cv x)).fv) ∪ ((syntaxClass0049).fv) :=
     (by
@@ -1293,62 +1327,62 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0105)
   have freshnessCertificate0107 : z ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0108 : z ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0107)
   have freshnessCertificate0109 : z ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0108)
   have freshnessCertificate0110 :
     z ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0109)
   have freshnessCertificate0111 :
     z ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0110)
   have freshnessCertificate0112 :
     z ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0111)
   have freshnessCertificate0113 :
     z ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0109)
   have freshnessCertificate0114 :
     z ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0113)
   have freshnessCertificate0115 : z ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0107)
   have freshnessCertificate0116 : z ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0115)
   have freshnessCertificate0117 :
     z ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0116)
   have freshnessCertificate0118 :
     z ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0117)
   have freshnessCertificate0119 : z ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0107)
   have freshnessCertificate0120 :
     z ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -1359,19 +1393,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0121 :
     z ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0120)
   have freshnessCertificate0122 : z ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0123 : z ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0122)
   have freshnessCertificate0124 : z ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0123)
   have freshnessCertificate0125 :
     z ∉
@@ -1383,90 +1417,90 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0121 freshnessCertificate0124))
   have freshnessCertificate0126 : z ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0125)
   have freshnessCertificate0127 : z ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0126)
   have freshnessCertificate0128 : z ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0127)
   have freshnessCertificate0129 : z ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0128)
   have freshnessCertificate0130 : z ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0129)
   have freshnessCertificate0131 : z ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0130)
   have freshnessCertificate0132 : z ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0131)
   have freshnessCertificate0133 : z ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0132)
   have freshnessCertificate0134 : z ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0133)
   have freshnessCertificate0135 : z ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0134)
   have freshnessCertificate0136 :
     z ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0111)
   have freshnessCertificate0137 : z ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0136)
   have freshnessCertificate0138 : z ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0137)
   have freshnessCertificate0139 : z ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0138)
   have freshnessCertificate0140 :
     z ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0136)
   have freshnessCertificate0141 : z ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0140)
   have freshnessCertificate0142 : z ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0141)
   have freshnessCertificate0143 : z ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0142)
   have freshnessCertificate0144 : z ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0143)
   have freshnessCertificate0145 : z ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0141)
   have freshnessCertificate0146 : z ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0145)
   have freshnessCertificate0147 : z ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -1475,7 +1509,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0144 freshnessCertificate0146))
   have freshnessCertificate0148 : z ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0147)
   have freshnessCertificate0149 : z ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -1484,47 +1518,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0139 freshnessCertificate0148))
   have freshnessCertificate0150 : z ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0149)
   have freshnessCertificate0151 : z ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0124)
   have freshnessCertificate0152 :
     z ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0151)
   have freshnessCertificate0153 :
     z ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0152)
   have freshnessCertificate0154 :
     z ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0153)
   have freshnessCertificate0155 : z ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0154)
   have freshnessCertificate0156 : z ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0155)
   have freshnessCertificate0157 : z ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0156)
   have freshnessCertificate0158 : z ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0157)
   have freshnessCertificate0159 : z ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0158)
   have freshnessCertificate0160 : z ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -1533,11 +1567,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0150 freshnessCertificate0159))
   have freshnessCertificate0161 : z ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0160)
   have freshnessCertificate0162 : z ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0161)
   have freshnessCertificate0163 : z ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -1546,7 +1580,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0135 freshnessCertificate0162))
   have freshnessCertificate0164 : z ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0163)
   have freshnessCertificate0165 :
     z ∉
@@ -1558,7 +1592,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0118 freshnessCertificate0164))
   have freshnessCertificate0166 : z ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0165)
   have freshnessCertificate0167 : z ∉ ((syntaxClass0029).fv) ∪ ((syntaxClass0022).fv) :=
     (by
@@ -1567,7 +1601,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0166 freshnessCertificate0156))
   have freshnessCertificate0168 : z ∉ (syntaxClass0030).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0167)
   have freshnessCertificate0169 :
     z ∉
@@ -1579,7 +1613,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0114 freshnessCertificate0168))
   have freshnessCertificate0170 : z ∉ (syntaxClass0031).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0169)
   have freshnessCertificate0171 :
     z ∉
@@ -1591,11 +1625,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0170 freshnessCertificate0154))
   have freshnessCertificate0172 : z ∉ (syntaxClass0032).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0171)
   have freshnessCertificate0173 : z ∉ (syntaxClass0033).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0172)
   have freshnessCertificate0174 :
     z ∉
@@ -1607,7 +1641,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0112 freshnessCertificate0173))
   have freshnessCertificate0175 : z ∉ (syntaxClass0034).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0174)
   have freshnessCertificate0176 :
     z ∉
@@ -1619,19 +1653,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0175 freshnessCertificate0154))
   have freshnessCertificate0177 : z ∉ (syntaxClass0035).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0176)
   have freshnessCertificate0178 : z ∉ (syntaxClass0036).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0177)
   have freshnessCertificate0179 : z ∉ (syntaxClass0037).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0127)
   have freshnessCertificate0180 : z ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0119)
   have freshnessCertificate0181 :
     z ∉
@@ -1643,7 +1677,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0116 freshnessCertificate0113))
   have freshnessCertificate0182 : z ∉ (syntaxClass0038).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0181)
   have freshnessCertificate0183 :
     z ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
@@ -1653,7 +1687,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0180 freshnessCertificate0182))
   have freshnessCertificate0184 : z ∉ (syntaxClass0039).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0183)
   have freshnessCertificate0185 :
     z ∉
@@ -1665,7 +1699,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0184 freshnessCertificate0152))
   have freshnessCertificate0186 : z ∉ (syntaxClass0040).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0185)
   have freshnessCertificate0187 : z ∉ ((syntaxClass0037).fv) ∪ ((syntaxClass0040).fv) :=
     (by
@@ -1674,7 +1708,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0179 freshnessCertificate0186))
   have freshnessCertificate0188 : z ∉ (syntaxClass0041).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0187)
   have freshnessCertificate0189 :
     z ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
@@ -1684,19 +1718,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0188 freshnessCertificate0124))
   have freshnessCertificate0190 : z ∉ (syntaxClass0042).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0189)
   have freshnessCertificate0191 : z ∉ (syntaxClass0043).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
       exact freshnessCertificate0190)
   have freshnessCertificate0192 : z ∉ (syntaxClass0044).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0191)
   have freshnessCertificate0193 : z ∉ (syntaxClass0045).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0192)
   have freshnessCertificate0194 : z ∉ ((syntaxClass0036).fv) ∪ ((syntaxClass0045).fv) :=
     (by
@@ -1705,7 +1739,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0178 freshnessCertificate0193))
   have freshnessCertificate0195 : z ∉ (syntaxClass0046).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0194)
   have freshnessCertificate0196 :
     z ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
@@ -1715,19 +1749,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0195 freshnessCertificate0151))
   have freshnessCertificate0197 : z ∉ (syntaxClass0047).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0196)
   have freshnessCertificate0198 : z ∉ ((synCnnc)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0199 : z ∉ ((synCpw1 (synCnnc))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0198)
   have freshnessCertificate0200 : z ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0199)
   have freshnessCertificate0201 :
     z ∉ ((syntaxClass0047).fv) ∪ (((synCpw1 (synCpw1 (synCnnc)))).fv) :=
@@ -1737,19 +1771,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0197 freshnessCertificate0200))
   have freshnessCertificate0202 : z ∉ (syntaxClass0048).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0201)
   have freshnessCertificate0203 : z ∉ ((synC0)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0204 : z ∉ ((synCsn (synC0))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0203)
   have freshnessCertificate0205 : z ∉ ((synCvv)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
       exact (show z ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0206 : z ∉ (((synCsn (synC0))).fv) ∪ (((synCvv)).fv) :=
     (by
@@ -1758,7 +1792,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0204 freshnessCertificate0205))
   have freshnessCertificate0207 : z ∉ ((synCxpk (synCsn (synC0)) (synCvv))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0206)
   have freshnessCertificate0208 :
     z ∉ ((syntaxClass0048).fv) ∪ (((synCxpk (synCsn (synC0)) (synCvv))).fv) :=
@@ -1768,7 +1802,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0202 freshnessCertificate0207))
   have freshnessCertificate0209 : z ∉ (syntaxClass0049).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0208)
   have freshnessCertificate0210 : z ∉ (((Class.cv x)).fv) ∪ ((syntaxClass0049).fv) :=
     (by
@@ -1779,67 +1813,67 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0210)
   have p0004 :=
     @gN1941vv (.classEq (.cv x) (synCopk (.cv y) (.cv z))) syntaxFormula0050 y z
-      (by exact freshnessCertificate0106) (by exact freshnessCertificate0211)
+      freshnessCertificate0106 freshnessCertificate0211
   have p0005 := @gEleq1 (.cv x) (synCopk (.cv y) (.cv z)) syntaxClass0049
   have p0006 := @gOpkex (.cv y) (.cv z)
   have freshnessCertificate0212 : t ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show t ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0213 : t ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0212)
   have freshnessCertificate0214 : t ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0213)
   have freshnessCertificate0215 :
     t ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0214)
   have freshnessCertificate0216 :
     t ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0215)
   have freshnessCertificate0217 :
     t ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0216)
   have freshnessCertificate0218 :
     t ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0214)
   have freshnessCertificate0219 :
     t ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0218)
   have freshnessCertificate0220 : t ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0212)
   have freshnessCertificate0221 : t ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0220)
   have freshnessCertificate0222 :
     t ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0221)
   have freshnessCertificate0223 :
     t ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0222)
   have freshnessCertificate0224 : t ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0212)
   have freshnessCertificate0225 :
     t ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -1850,19 +1884,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0226 :
     t ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0225)
   have freshnessCertificate0227 : t ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show t ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0228 : t ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0227)
   have freshnessCertificate0229 : t ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0228)
   have freshnessCertificate0230 :
     t ∉
@@ -1874,90 +1908,90 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0226 freshnessCertificate0229))
   have freshnessCertificate0231 : t ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0230)
   have freshnessCertificate0232 : t ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0231)
   have freshnessCertificate0233 : t ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0232)
   have freshnessCertificate0234 : t ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0233)
   have freshnessCertificate0235 : t ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0234)
   have freshnessCertificate0236 : t ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0235)
   have freshnessCertificate0237 : t ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0236)
   have freshnessCertificate0238 : t ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0237)
   have freshnessCertificate0239 : t ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0238)
   have freshnessCertificate0240 : t ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0239)
   have freshnessCertificate0241 :
     t ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0216)
   have freshnessCertificate0242 : t ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0241)
   have freshnessCertificate0243 : t ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0242)
   have freshnessCertificate0244 : t ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0243)
   have freshnessCertificate0245 :
     t ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0241)
   have freshnessCertificate0246 : t ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0245)
   have freshnessCertificate0247 : t ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0246)
   have freshnessCertificate0248 : t ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0247)
   have freshnessCertificate0249 : t ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0248)
   have freshnessCertificate0250 : t ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0246)
   have freshnessCertificate0251 : t ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0250)
   have freshnessCertificate0252 : t ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -1966,7 +2000,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0249 freshnessCertificate0251))
   have freshnessCertificate0253 : t ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0252)
   have freshnessCertificate0254 : t ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -1975,47 +2009,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0244 freshnessCertificate0253))
   have freshnessCertificate0255 : t ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0254)
   have freshnessCertificate0256 : t ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0229)
   have freshnessCertificate0257 :
     t ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0256)
   have freshnessCertificate0258 :
     t ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0257)
   have freshnessCertificate0259 :
     t ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0258)
   have freshnessCertificate0260 : t ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0259)
   have freshnessCertificate0261 : t ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0260)
   have freshnessCertificate0262 : t ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0261)
   have freshnessCertificate0263 : t ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0262)
   have freshnessCertificate0264 : t ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0263)
   have freshnessCertificate0265 : t ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -2024,11 +2058,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0255 freshnessCertificate0264))
   have freshnessCertificate0266 : t ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0265)
   have freshnessCertificate0267 : t ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0266)
   have freshnessCertificate0268 : t ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -2037,7 +2071,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0240 freshnessCertificate0267))
   have freshnessCertificate0269 : t ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0268)
   have freshnessCertificate0270 :
     t ∉
@@ -2049,7 +2083,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0223 freshnessCertificate0269))
   have freshnessCertificate0271 : t ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0270)
   have freshnessCertificate0272 : t ∉ ((syntaxClass0029).fv) ∪ ((syntaxClass0022).fv) :=
     (by
@@ -2058,7 +2092,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0271 freshnessCertificate0261))
   have freshnessCertificate0273 : t ∉ (syntaxClass0030).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0272)
   have freshnessCertificate0274 :
     t ∉
@@ -2070,7 +2104,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0219 freshnessCertificate0273))
   have freshnessCertificate0275 : t ∉ (syntaxClass0031).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0274)
   have freshnessCertificate0276 :
     t ∉
@@ -2082,12 +2116,68 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0275 freshnessCertificate0259))
   have freshnessCertificate0277 : t ∉ (syntaxClass0032).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0276)
   have freshnessCertificate0278 : t ∉ (syntaxClass0033).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0277)
+  clear freshnessCertificate0000 freshnessCertificate0001 freshnessCertificate0097
+    freshnessCertificate0101 freshnessCertificate0102 freshnessCertificate0103
+    freshnessCertificate0104 freshnessCertificate0105 freshnessCertificate0106
+    freshnessCertificate0107 freshnessCertificate0108 freshnessCertificate0109
+    freshnessCertificate0110 freshnessCertificate0111 freshnessCertificate0112
+    freshnessCertificate0113 freshnessCertificate0114 freshnessCertificate0115
+    freshnessCertificate0116 freshnessCertificate0117 freshnessCertificate0118
+    freshnessCertificate0119 freshnessCertificate0120 freshnessCertificate0121
+    freshnessCertificate0122 freshnessCertificate0123 freshnessCertificate0124
+    freshnessCertificate0125 freshnessCertificate0126 freshnessCertificate0127
+    freshnessCertificate0128 freshnessCertificate0129 freshnessCertificate0130
+    freshnessCertificate0131 freshnessCertificate0132 freshnessCertificate0133
+    freshnessCertificate0134 freshnessCertificate0135 freshnessCertificate0136
+    freshnessCertificate0137 freshnessCertificate0138 freshnessCertificate0139
+    freshnessCertificate0140 freshnessCertificate0141 freshnessCertificate0142
+    freshnessCertificate0143 freshnessCertificate0144 freshnessCertificate0145
+    freshnessCertificate0146 freshnessCertificate0147 freshnessCertificate0148
+    freshnessCertificate0149 freshnessCertificate0150 freshnessCertificate0151
+    freshnessCertificate0152 freshnessCertificate0153 freshnessCertificate0154
+    freshnessCertificate0155 freshnessCertificate0156 freshnessCertificate0157
+    freshnessCertificate0158 freshnessCertificate0159 freshnessCertificate0160
+    freshnessCertificate0161 freshnessCertificate0162 freshnessCertificate0163
+    freshnessCertificate0164 freshnessCertificate0165 freshnessCertificate0166
+    freshnessCertificate0167 freshnessCertificate0168 freshnessCertificate0169
+    freshnessCertificate0170 freshnessCertificate0171 freshnessCertificate0172
+    freshnessCertificate0173 freshnessCertificate0174 freshnessCertificate0175
+    freshnessCertificate0176 freshnessCertificate0177 freshnessCertificate0178
+    freshnessCertificate0179 freshnessCertificate0180 freshnessCertificate0181
+    freshnessCertificate0182 freshnessCertificate0183 freshnessCertificate0184
+    freshnessCertificate0185 freshnessCertificate0186 freshnessCertificate0187
+    freshnessCertificate0188 freshnessCertificate0189 freshnessCertificate0190
+    freshnessCertificate0191 freshnessCertificate0192 freshnessCertificate0193
+    freshnessCertificate0194 freshnessCertificate0195 freshnessCertificate0196
+    freshnessCertificate0197 freshnessCertificate0198 freshnessCertificate0199
+    freshnessCertificate0200 freshnessCertificate0201 freshnessCertificate0202
+    freshnessCertificate0203 freshnessCertificate0204 freshnessCertificate0205
+    freshnessCertificate0206 freshnessCertificate0207 freshnessCertificate0208
+    freshnessCertificate0209 freshnessCertificate0210 freshnessCertificate0211
+    freshnessCertificate0212 freshnessCertificate0213 freshnessCertificate0214
+    freshnessCertificate0215 freshnessCertificate0216 freshnessCertificate0219
+    freshnessCertificate0220 freshnessCertificate0222 freshnessCertificate0223
+    freshnessCertificate0225 freshnessCertificate0226 freshnessCertificate0227
+    freshnessCertificate0228 freshnessCertificate0230 freshnessCertificate0231
+    freshnessCertificate0233 freshnessCertificate0234 freshnessCertificate0235
+    freshnessCertificate0236 freshnessCertificate0237 freshnessCertificate0238
+    freshnessCertificate0239 freshnessCertificate0240 freshnessCertificate0241
+    freshnessCertificate0242 freshnessCertificate0243 freshnessCertificate0244
+    freshnessCertificate0245 freshnessCertificate0246 freshnessCertificate0247
+    freshnessCertificate0248 freshnessCertificate0249 freshnessCertificate0250
+    freshnessCertificate0251 freshnessCertificate0252 freshnessCertificate0253
+    freshnessCertificate0254 freshnessCertificate0258 freshnessCertificate0260
+    freshnessCertificate0262 freshnessCertificate0263 freshnessCertificate0265
+    freshnessCertificate0266 freshnessCertificate0267 freshnessCertificate0268
+    freshnessCertificate0269 freshnessCertificate0270 freshnessCertificate0272
+    freshnessCertificate0273 freshnessCertificate0274 freshnessCertificate0276
+    freshnessCertificate0277
   have freshnessCertificate0279 :
     t ∉
       (((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv) ∪
@@ -2098,7 +2188,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0217 freshnessCertificate0278))
   have freshnessCertificate0280 : t ∉ (syntaxClass0034).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0279)
   have freshnessCertificate0281 :
     t ∉
@@ -2110,19 +2200,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0280 freshnessCertificate0259))
   have freshnessCertificate0282 : t ∉ (syntaxClass0035).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0281)
   have freshnessCertificate0283 : t ∉ (syntaxClass0036).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0282)
   have freshnessCertificate0284 : t ∉ (syntaxClass0037).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0232)
   have freshnessCertificate0285 : t ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0224)
   have freshnessCertificate0286 :
     t ∉
@@ -2134,7 +2224,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0221 freshnessCertificate0218))
   have freshnessCertificate0287 : t ∉ (syntaxClass0038).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0286)
   have freshnessCertificate0288 :
     t ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
@@ -2144,7 +2234,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0285 freshnessCertificate0287))
   have freshnessCertificate0289 : t ∉ (syntaxClass0039).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0288)
   have freshnessCertificate0290 :
     t ∉
@@ -2156,7 +2246,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0289 freshnessCertificate0257))
   have freshnessCertificate0291 : t ∉ (syntaxClass0040).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0290)
   have freshnessCertificate0292 : t ∉ ((syntaxClass0037).fv) ∪ ((syntaxClass0040).fv) :=
     (by
@@ -2165,7 +2255,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0284 freshnessCertificate0291))
   have freshnessCertificate0293 : t ∉ (syntaxClass0041).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0292)
   have freshnessCertificate0294 :
     t ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
@@ -2175,19 +2265,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0293 freshnessCertificate0229))
   have freshnessCertificate0295 : t ∉ (syntaxClass0042).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0294)
   have freshnessCertificate0296 : t ∉ (syntaxClass0043).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
       exact freshnessCertificate0295)
   have freshnessCertificate0297 : t ∉ (syntaxClass0044).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0296)
   have freshnessCertificate0298 : t ∉ (syntaxClass0045).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0297)
   have freshnessCertificate0299 : t ∉ ((syntaxClass0036).fv) ∪ ((syntaxClass0045).fv) :=
     (by
@@ -2196,7 +2286,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0283 freshnessCertificate0298))
   have freshnessCertificate0300 : t ∉ (syntaxClass0046).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0299)
   have freshnessCertificate0301 :
     t ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
@@ -2206,36 +2296,36 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0300 freshnessCertificate0256))
   have freshnessCertificate0302 : t ∉ (syntaxClass0047).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0301)
   have freshnessCertificate0303 : t ∉ ((synCnnc)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show t ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0304 : t ∉ ((synCpw1 (synCnnc))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0303)
   have freshnessCertificate0305 : t ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0304)
   have freshnessCertificate0306 : t ∉ ((Class.cv y)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ y } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ y from (by exact fresh_t_ne_y)))))
+              (show t ≠ y from fresh_t_ne_y))))
   have freshnessCertificate0307 : t ∉ ((Class.cv z)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ z } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ z from (by exact fresh_t_ne_z)))))
+              (show t ≠ z from fresh_t_ne_z))))
   have freshnessCertificate0308 : t ∉ (((Class.cv y)).fv) ∪ (((Class.cv z)).fv) :=
     (by
       with_reducible
@@ -2243,47 +2333,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0306 freshnessCertificate0307))
   have freshnessCertificate0309 : t ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0308)
   have p0007 :=
     @gElimak t syntaxClass0047 (synCpw1 (synCpw1 (synCnnc)))
-      (synCopk (.cv y) (.cv z)) (by exact freshnessCertificate0302)
-      (by exact freshnessCertificate0305) (by exact freshnessCertificate0309) p0006
+      (synCopk (.cv y) (.cv z)) freshnessCertificate0302
+      freshnessCertificate0305 freshnessCertificate0309 p0006
   have freshnessCertificate0310 : w ∉ ((Class.cv t)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show w ∉ ({ t } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show w ≠ t from (by exact fresh_w_ne_t)))))
+              (show w ≠ t from fresh_w_ne_t))))
   have freshnessCertificate0311 : w ∉ ((synCnnc)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show w ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have p0008 :=
-    @gElpw12 w (.cv t) (synCnnc) (by exact freshnessCertificate0310)
-      (by exact freshnessCertificate0311)
+    @gElpw12 w (.cv t) (synCnnc) freshnessCertificate0310
+      freshnessCertificate0311
   have p0009 :=
     @gAnbi1i (.classMem (.cv t) (synCpw1 (synCpw1 (synCnnc))))
       (synWrex w (synCnnc) (.classEq (.cv t) (synCsn (synCsn (.cv w)))))
       syntaxFormula0052 p0008
   have freshnessCertificate0312 : w ∉ ((Class.cv y)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show w ∉ ({ y } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show w ≠ y from (by exact fresh_w_ne_y)))))
+              (show w ≠ y from fresh_w_ne_y))))
   have freshnessCertificate0313 : w ∉ ((Class.cv z)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show w ∉ ({ z } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show w ≠ z from (by exact fresh_w_ne_z)))))
+              (show w ≠ z from fresh_w_ne_z))))
   have freshnessCertificate0314 : w ∉ (((Class.cv y)).fv) ∪ (((Class.cv z)).fv) :=
     (by
       with_reducible
@@ -2291,7 +2381,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0312 freshnessCertificate0313))
   have freshnessCertificate0315 : w ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0314)
   have freshnessCertificate0316 :
     w ∉ (((Class.cv t)).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
@@ -2302,66 +2392,66 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0317 :
     w ∉ ((synCopk (.cv t) (synCopk (.cv y) (.cv z)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0316)
   have freshnessCertificate0318 : w ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show w ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0319 : w ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0318)
   have freshnessCertificate0320 : w ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0319)
   have freshnessCertificate0321 :
     w ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0320)
   have freshnessCertificate0322 :
     w ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0321)
   have freshnessCertificate0323 :
     w ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0322)
   have freshnessCertificate0324 :
     w ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0320)
   have freshnessCertificate0325 :
     w ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0324)
   have freshnessCertificate0326 : w ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0318)
   have freshnessCertificate0327 : w ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0326)
   have freshnessCertificate0328 :
     w ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0327)
   have freshnessCertificate0329 :
     w ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0328)
   have freshnessCertificate0330 : w ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0318)
   have freshnessCertificate0331 :
     w ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -2372,19 +2462,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0332 :
     w ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0331)
   have freshnessCertificate0333 : w ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show w ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0334 : w ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0333)
   have freshnessCertificate0335 : w ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0334)
   have freshnessCertificate0336 :
     w ∉
@@ -2396,90 +2486,90 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0332 freshnessCertificate0335))
   have freshnessCertificate0337 : w ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0336)
   have freshnessCertificate0338 : w ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0337)
   have freshnessCertificate0339 : w ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0338)
   have freshnessCertificate0340 : w ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0339)
   have freshnessCertificate0341 : w ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0340)
   have freshnessCertificate0342 : w ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0341)
   have freshnessCertificate0343 : w ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0342)
   have freshnessCertificate0344 : w ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0343)
   have freshnessCertificate0345 : w ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0344)
   have freshnessCertificate0346 : w ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0345)
   have freshnessCertificate0347 :
     w ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0322)
   have freshnessCertificate0348 : w ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0347)
   have freshnessCertificate0349 : w ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0348)
   have freshnessCertificate0350 : w ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0349)
   have freshnessCertificate0351 :
     w ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0347)
   have freshnessCertificate0352 : w ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0351)
   have freshnessCertificate0353 : w ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0352)
   have freshnessCertificate0354 : w ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0353)
   have freshnessCertificate0355 : w ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0354)
   have freshnessCertificate0356 : w ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0352)
   have freshnessCertificate0357 : w ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0356)
   have freshnessCertificate0358 : w ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -2488,7 +2578,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0355 freshnessCertificate0357))
   have freshnessCertificate0359 : w ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0358)
   have freshnessCertificate0360 : w ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -2497,47 +2587,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0350 freshnessCertificate0359))
   have freshnessCertificate0361 : w ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0360)
   have freshnessCertificate0362 : w ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0335)
   have freshnessCertificate0363 :
     w ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0362)
   have freshnessCertificate0364 :
     w ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0363)
   have freshnessCertificate0365 :
     w ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0364)
   have freshnessCertificate0366 : w ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0365)
   have freshnessCertificate0367 : w ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0366)
   have freshnessCertificate0368 : w ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0367)
   have freshnessCertificate0369 : w ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0368)
   have freshnessCertificate0370 : w ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0369)
   have freshnessCertificate0371 : w ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -2546,11 +2636,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0361 freshnessCertificate0370))
   have freshnessCertificate0372 : w ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0371)
   have freshnessCertificate0373 : w ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0372)
   have freshnessCertificate0374 : w ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -2559,7 +2649,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0346 freshnessCertificate0373))
   have freshnessCertificate0375 : w ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0374)
   have freshnessCertificate0376 :
     w ∉
@@ -2571,7 +2661,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0329 freshnessCertificate0375))
   have freshnessCertificate0377 : w ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0376)
   have freshnessCertificate0378 : w ∉ ((syntaxClass0029).fv) ∪ ((syntaxClass0022).fv) :=
     (by
@@ -2580,7 +2670,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0377 freshnessCertificate0367))
   have freshnessCertificate0379 : w ∉ (syntaxClass0030).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0378)
   have freshnessCertificate0380 :
     w ∉
@@ -2592,7 +2682,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0325 freshnessCertificate0379))
   have freshnessCertificate0381 : w ∉ (syntaxClass0031).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0380)
   have freshnessCertificate0382 :
     w ∉
@@ -2604,11 +2694,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0381 freshnessCertificate0365))
   have freshnessCertificate0383 : w ∉ (syntaxClass0032).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0382)
   have freshnessCertificate0384 : w ∉ (syntaxClass0033).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0383)
   have freshnessCertificate0385 :
     w ∉
@@ -2620,7 +2710,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0323 freshnessCertificate0384))
   have freshnessCertificate0386 : w ∉ (syntaxClass0034).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0385)
   have freshnessCertificate0387 :
     w ∉
@@ -2632,19 +2722,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0386 freshnessCertificate0365))
   have freshnessCertificate0388 : w ∉ (syntaxClass0035).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0387)
   have freshnessCertificate0389 : w ∉ (syntaxClass0036).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0388)
   have freshnessCertificate0390 : w ∉ (syntaxClass0037).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0338)
   have freshnessCertificate0391 : w ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0330)
   have freshnessCertificate0392 :
     w ∉
@@ -2656,7 +2746,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0327 freshnessCertificate0324))
   have freshnessCertificate0393 : w ∉ (syntaxClass0038).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0392)
   have freshnessCertificate0394 :
     w ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
@@ -2666,7 +2756,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0391 freshnessCertificate0393))
   have freshnessCertificate0395 : w ∉ (syntaxClass0039).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0394)
   have freshnessCertificate0396 :
     w ∉
@@ -2678,7 +2768,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0395 freshnessCertificate0363))
   have freshnessCertificate0397 : w ∉ (syntaxClass0040).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0396)
   have freshnessCertificate0398 : w ∉ ((syntaxClass0037).fv) ∪ ((syntaxClass0040).fv) :=
     (by
@@ -2687,7 +2777,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0390 freshnessCertificate0397))
   have freshnessCertificate0399 : w ∉ (syntaxClass0041).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0398)
   have freshnessCertificate0400 :
     w ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
@@ -2697,19 +2787,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0399 freshnessCertificate0335))
   have freshnessCertificate0401 : w ∉ (syntaxClass0042).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0400)
   have freshnessCertificate0402 : w ∉ (syntaxClass0043).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
       exact freshnessCertificate0401)
   have freshnessCertificate0403 : w ∉ (syntaxClass0044).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0402)
   have freshnessCertificate0404 : w ∉ (syntaxClass0045).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0403)
   have freshnessCertificate0405 : w ∉ ((syntaxClass0036).fv) ∪ ((syntaxClass0045).fv) :=
     (by
@@ -2718,7 +2808,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0389 freshnessCertificate0404))
   have freshnessCertificate0406 : w ∉ (syntaxClass0046).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0405)
   have freshnessCertificate0407 :
     w ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
@@ -2728,7 +2818,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0406 freshnessCertificate0362))
   have freshnessCertificate0408 : w ∉ (syntaxClass0047).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0407)
   have freshnessCertificate0409 :
     w ∉ (((synCopk (.cv t) (synCopk (.cv y) (.cv z)))).fv) ∪ ((syntaxClass0047).fv) :=
@@ -2742,7 +2832,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0409)
   have p0010 :=
     @gR1941v (.classEq (.cv t) (synCsn (synCsn (.cv w)))) syntaxFormula0052 w
-      (synCnnc) (by exact freshnessCertificate0410)
+      (synCnnc) freshnessCertificate0410
   have p0011 :=
     @gBitr4i syntaxFormula0053
       (synWa (synWrex w (synCnnc) (.classEq (.cv t) (synCsn (synCsn (.cv w)))))
@@ -2751,8 +2841,8 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0012 := @gExbii syntaxFormula0053 syntaxFormula0055 t p0011
   have p0013 := (Nominal.biimpRefl syntaxFormula0056)
   have p0014 :=
-    @gRexcom4 syntaxFormula0054 w t (synCnnc) (by exact freshnessCertificate0303)
-      (show w ≠ t from (by exact fresh_w_ne_t))
+    @gRexcom4 syntaxFormula0054 w t (synCnnc) freshnessCertificate0303
+      (show w ≠ t from fresh_w_ne_t)
   have p0015 :=
     @gN3bitr4i (synWex t syntaxFormula0053) (synWex t syntaxFormula0055)
       syntaxFormula0056 syntaxFormula0058 p0012 p0013 p0014
@@ -2765,19 +2855,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
       p0017
   have freshnessCertificate0411 : t ∉ ((Class.cv w)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ w } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ w from (by exact fresh_t_ne_w)))))
+              (show t ≠ w from fresh_t_ne_w))))
   have freshnessCertificate0412 : t ∉ ((synCsn (.cv w))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0411)
   have freshnessCertificate0413 : t ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0412)
   have freshnessCertificate0414 :
     t ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
@@ -2788,7 +2878,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0415 :
     t ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0414)
   have freshnessCertificate0416 :
     t ∉
@@ -2805,58 +2895,58 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0416)
   have p0019 :=
     @gCeqsexv syntaxFormula0052 syntaxFormula0059 t (synCsn (synCsn (.cv w)))
-      (by exact freshnessCertificate0413) (by exact freshnessCertificate0417) p0016 p0018
+      freshnessCertificate0413 freshnessCertificate0417 p0016 p0018
   have p0020 := @gOpkex (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))
   have p0021 :=
     @gElimak t syntaxClass0046 (synCpw1 (synCpw1 (synCpw1 (synC1c))))
       (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))
-      (by exact freshnessCertificate0300) (by exact freshnessCertificate0256)
-      (by exact freshnessCertificate0415) p0020
+      freshnessCertificate0300 freshnessCertificate0256
+      freshnessCertificate0415 p0020
   have freshnessCertificate0418 : x ∉ ((Class.cv t)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show x ∉ ({ t } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show x ≠ t from (by exact fresh_x_ne_t)))))
-  have p0022 := @gElpw131c x (.cv t) (by exact freshnessCertificate0418)
+              (show x ≠ t from fresh_x_ne_t))))
+  have p0022 := @gElpw131c x (.cv t) freshnessCertificate0418
   have p0023 :=
     @gAnbi1i (.classMem (.cv t) (synCpw1 (synCpw1 (synCpw1 (synC1c)))))
       (synWex x (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x)))))))
       syntaxFormula0061 p0022
   have freshnessCertificate0419 : x ∉ ((Class.cv w)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show x ∉ ({ w } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show x ≠ w from (by exact fresh_x_ne_w)))))
+              (show x ≠ w from fresh_x_ne_w))))
   have freshnessCertificate0420 : x ∉ ((synCsn (.cv w))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0419)
   have freshnessCertificate0421 : x ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0420)
   have freshnessCertificate0422 : x ∉ ((Class.cv y)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show x ∉ ({ y } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show x ≠ y from (by exact fresh_x_ne_y)))))
+              (show x ≠ y from fresh_x_ne_y))))
   have freshnessCertificate0423 : x ∉ ((Class.cv z)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show x ∉ ({ z } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show x ≠ z from (by exact fresh_x_ne_z)))))
+              (show x ≠ z from fresh_x_ne_z))))
   have freshnessCertificate0424 : x ∉ (((Class.cv y)).fv) ∪ (((Class.cv z)).fv) :=
     (by
       with_reducible
@@ -2864,7 +2954,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0422 freshnessCertificate0423))
   have freshnessCertificate0425 : x ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0424)
   have freshnessCertificate0426 :
     x ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
@@ -2875,7 +2965,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0427 :
     x ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0426)
   have freshnessCertificate0428 :
     x ∉
@@ -2887,66 +2977,119 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0418 freshnessCertificate0427))
   have freshnessCertificate0429 : x ∉ (syntaxClass0060).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0428)
   have freshnessCertificate0430 : x ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0431 : x ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0430)
   have freshnessCertificate0432 : x ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0431)
   have freshnessCertificate0433 :
     x ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0432)
   have freshnessCertificate0434 :
     x ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0433)
   have freshnessCertificate0435 :
     x ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0434)
   have freshnessCertificate0436 :
     x ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0432)
   have freshnessCertificate0437 :
     x ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0436)
   have freshnessCertificate0438 : x ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0430)
   have freshnessCertificate0439 : x ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0438)
   have freshnessCertificate0440 :
     x ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0439)
   have freshnessCertificate0441 :
     x ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0440)
+  clear freshnessCertificate0217 freshnessCertificate0218 freshnessCertificate0221
+    freshnessCertificate0224 freshnessCertificate0229 freshnessCertificate0232
+    freshnessCertificate0256 freshnessCertificate0257 freshnessCertificate0278
+    freshnessCertificate0279 freshnessCertificate0281 freshnessCertificate0282
+    freshnessCertificate0283 freshnessCertificate0284 freshnessCertificate0285
+    freshnessCertificate0286 freshnessCertificate0287 freshnessCertificate0288
+    freshnessCertificate0289 freshnessCertificate0290 freshnessCertificate0291
+    freshnessCertificate0292 freshnessCertificate0293 freshnessCertificate0294
+    freshnessCertificate0295 freshnessCertificate0296 freshnessCertificate0297
+    freshnessCertificate0298 freshnessCertificate0299 freshnessCertificate0301
+    freshnessCertificate0302 freshnessCertificate0303 freshnessCertificate0304
+    freshnessCertificate0305 freshnessCertificate0306 freshnessCertificate0307
+    freshnessCertificate0308 freshnessCertificate0309 freshnessCertificate0310
+    freshnessCertificate0311 p0008 p0009 freshnessCertificate0312 freshnessCertificate0313
+    freshnessCertificate0314 freshnessCertificate0315 freshnessCertificate0316
+    freshnessCertificate0317 freshnessCertificate0318 freshnessCertificate0319
+    freshnessCertificate0320 freshnessCertificate0321 freshnessCertificate0322
+    freshnessCertificate0323 freshnessCertificate0324 freshnessCertificate0325
+    freshnessCertificate0326 freshnessCertificate0327 freshnessCertificate0328
+    freshnessCertificate0329 freshnessCertificate0330 freshnessCertificate0331
+    freshnessCertificate0332 freshnessCertificate0333 freshnessCertificate0334
+    freshnessCertificate0335 freshnessCertificate0336 freshnessCertificate0337
+    freshnessCertificate0338 freshnessCertificate0339 freshnessCertificate0340
+    freshnessCertificate0341 freshnessCertificate0342 freshnessCertificate0343
+    freshnessCertificate0344 freshnessCertificate0345 freshnessCertificate0346
+    freshnessCertificate0347 freshnessCertificate0348 freshnessCertificate0349
+    freshnessCertificate0350 freshnessCertificate0351 freshnessCertificate0352
+    freshnessCertificate0353 freshnessCertificate0354 freshnessCertificate0355
+    freshnessCertificate0356 freshnessCertificate0357 freshnessCertificate0358
+    freshnessCertificate0359 freshnessCertificate0360 freshnessCertificate0361
+    freshnessCertificate0362 freshnessCertificate0363 freshnessCertificate0364
+    freshnessCertificate0365 freshnessCertificate0366 freshnessCertificate0367
+    freshnessCertificate0368 freshnessCertificate0369 freshnessCertificate0370
+    freshnessCertificate0371 freshnessCertificate0372 freshnessCertificate0373
+    freshnessCertificate0374 freshnessCertificate0375 freshnessCertificate0376
+    freshnessCertificate0377 freshnessCertificate0378 freshnessCertificate0379
+    freshnessCertificate0380 freshnessCertificate0381 freshnessCertificate0382
+    freshnessCertificate0383 freshnessCertificate0384 freshnessCertificate0385
+    freshnessCertificate0386 freshnessCertificate0387 freshnessCertificate0388
+    freshnessCertificate0389 freshnessCertificate0390 freshnessCertificate0391
+    freshnessCertificate0392 freshnessCertificate0393 freshnessCertificate0394
+    freshnessCertificate0395 freshnessCertificate0396 freshnessCertificate0397
+    freshnessCertificate0398 freshnessCertificate0399 freshnessCertificate0400
+    freshnessCertificate0401 freshnessCertificate0402 freshnessCertificate0403
+    freshnessCertificate0404 freshnessCertificate0405 freshnessCertificate0406
+    freshnessCertificate0407 freshnessCertificate0408 freshnessCertificate0409
+    freshnessCertificate0410 p0010 p0011 p0012 p0013 p0014 p0017 p0018 freshnessCertificate0411
+    freshnessCertificate0412 freshnessCertificate0413 freshnessCertificate0414
+    freshnessCertificate0416 freshnessCertificate0417 freshnessCertificate0418 p0022
+    freshnessCertificate0420 freshnessCertificate0421 freshnessCertificate0424
+    freshnessCertificate0425 freshnessCertificate0426 freshnessCertificate0427
+    freshnessCertificate0428 freshnessCertificate0431 freshnessCertificate0432
+    freshnessCertificate0433 freshnessCertificate0440
   have freshnessCertificate0442 : x ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0430)
   have freshnessCertificate0443 :
     x ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -2957,19 +3100,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0444 :
     x ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0443)
   have freshnessCertificate0445 : x ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0446 : x ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0445)
   have freshnessCertificate0447 : x ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0446)
   have freshnessCertificate0448 :
     x ∉
@@ -2981,90 +3124,90 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0444 freshnessCertificate0447))
   have freshnessCertificate0449 : x ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0448)
   have freshnessCertificate0450 : x ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0449)
   have freshnessCertificate0451 : x ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0450)
   have freshnessCertificate0452 : x ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0451)
   have freshnessCertificate0453 : x ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0452)
   have freshnessCertificate0454 : x ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0453)
   have freshnessCertificate0455 : x ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0454)
   have freshnessCertificate0456 : x ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0455)
   have freshnessCertificate0457 : x ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0456)
   have freshnessCertificate0458 : x ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0457)
   have freshnessCertificate0459 :
     x ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0434)
   have freshnessCertificate0460 : x ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0459)
   have freshnessCertificate0461 : x ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0460)
   have freshnessCertificate0462 : x ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0461)
   have freshnessCertificate0463 :
     x ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0459)
   have freshnessCertificate0464 : x ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0463)
   have freshnessCertificate0465 : x ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0464)
   have freshnessCertificate0466 : x ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0465)
   have freshnessCertificate0467 : x ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0466)
   have freshnessCertificate0468 : x ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0464)
   have freshnessCertificate0469 : x ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0468)
   have freshnessCertificate0470 : x ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -3073,7 +3216,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0467 freshnessCertificate0469))
   have freshnessCertificate0471 : x ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0470)
   have freshnessCertificate0472 : x ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -3082,47 +3225,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0462 freshnessCertificate0471))
   have freshnessCertificate0473 : x ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0472)
   have freshnessCertificate0474 : x ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0447)
   have freshnessCertificate0475 :
     x ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0474)
   have freshnessCertificate0476 :
     x ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0475)
   have freshnessCertificate0477 :
     x ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0476)
   have freshnessCertificate0478 : x ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0477)
   have freshnessCertificate0479 : x ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0478)
   have freshnessCertificate0480 : x ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0479)
   have freshnessCertificate0481 : x ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0480)
   have freshnessCertificate0482 : x ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0481)
   have freshnessCertificate0483 : x ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -3131,11 +3274,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0473 freshnessCertificate0482))
   have freshnessCertificate0484 : x ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0483)
   have freshnessCertificate0485 : x ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0484)
   have freshnessCertificate0486 : x ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -3144,7 +3287,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0458 freshnessCertificate0485))
   have freshnessCertificate0487 : x ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0486)
   have freshnessCertificate0488 :
     x ∉
@@ -3156,7 +3299,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0441 freshnessCertificate0487))
   have freshnessCertificate0489 : x ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0488)
   have freshnessCertificate0490 : x ∉ ((syntaxClass0029).fv) ∪ ((syntaxClass0022).fv) :=
     (by
@@ -3165,7 +3308,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0489 freshnessCertificate0479))
   have freshnessCertificate0491 : x ∉ (syntaxClass0030).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0490)
   have freshnessCertificate0492 :
     x ∉
@@ -3177,7 +3320,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0437 freshnessCertificate0491))
   have freshnessCertificate0493 : x ∉ (syntaxClass0031).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0492)
   have freshnessCertificate0494 :
     x ∉
@@ -3189,11 +3332,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0493 freshnessCertificate0477))
   have freshnessCertificate0495 : x ∉ (syntaxClass0032).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0494)
   have freshnessCertificate0496 : x ∉ (syntaxClass0033).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0495)
   have freshnessCertificate0497 :
     x ∉
@@ -3205,7 +3348,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0435 freshnessCertificate0496))
   have freshnessCertificate0498 : x ∉ (syntaxClass0034).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0497)
   have freshnessCertificate0499 :
     x ∉
@@ -3217,19 +3360,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0498 freshnessCertificate0477))
   have freshnessCertificate0500 : x ∉ (syntaxClass0035).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0499)
   have freshnessCertificate0501 : x ∉ (syntaxClass0036).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0500)
   have freshnessCertificate0502 : x ∉ (syntaxClass0037).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0450)
   have freshnessCertificate0503 : x ∉ ((synCins2k (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0442)
   have freshnessCertificate0504 :
     x ∉
@@ -3241,7 +3384,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0439 freshnessCertificate0436))
   have freshnessCertificate0505 : x ∉ (syntaxClass0038).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0504)
   have freshnessCertificate0506 :
     x ∉ (((synCins2k (synCins2k (synCssetk)))).fv) ∪ ((syntaxClass0038).fv) :=
@@ -3251,7 +3394,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0503 freshnessCertificate0505))
   have freshnessCertificate0507 : x ∉ (syntaxClass0039).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0506)
   have freshnessCertificate0508 :
     x ∉
@@ -3263,7 +3406,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0507 freshnessCertificate0475))
   have freshnessCertificate0509 : x ∉ (syntaxClass0040).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0508)
   have freshnessCertificate0510 : x ∉ ((syntaxClass0037).fv) ∪ ((syntaxClass0040).fv) :=
     (by
@@ -3272,7 +3415,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0502 freshnessCertificate0509))
   have freshnessCertificate0511 : x ∉ (syntaxClass0041).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0510)
   have freshnessCertificate0512 :
     x ∉ ((syntaxClass0041).fv) ∪ (((synCpw1 (synCpw1 (synC1c)))).fv) :=
@@ -3282,19 +3425,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0511 freshnessCertificate0447))
   have freshnessCertificate0513 : x ∉ (syntaxClass0042).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0512)
   have freshnessCertificate0514 : x ∉ (syntaxClass0043).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimagek];
       exact freshnessCertificate0513)
   have freshnessCertificate0515 : x ∉ (syntaxClass0044).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0514)
   have freshnessCertificate0516 : x ∉ (syntaxClass0045).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0515)
   have freshnessCertificate0517 : x ∉ ((syntaxClass0036).fv) ∪ ((syntaxClass0045).fv) :=
     (by
@@ -3303,7 +3446,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0501 freshnessCertificate0516))
   have freshnessCertificate0518 : x ∉ (syntaxClass0046).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0517)
   have freshnessCertificate0519 : x ∉ ((syntaxClass0060).fv) ∪ ((syntaxClass0046).fv) :=
     (by
@@ -3315,7 +3458,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0519)
   have p0024 :=
     @gN1941v (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x))))))
-      syntaxFormula0061 x (by exact freshnessCertificate0520)
+      syntaxFormula0061 x freshnessCertificate0520
   have p0025 :=
     @gBitr4i syntaxFormula0062
       (synWa (synWex x (.classEq (.cv t) (synCsn (synCsn (synCsn (synCsn (.cv x)))))))
@@ -3336,28 +3479,28 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
       syntaxClass0060 syntaxClass0068 syntaxClass0046 p0031
   have freshnessCertificate0521 : t ∉ ((Class.cv x)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ x } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ x from (by exact fresh_t_ne_x)))))
+              (show t ≠ x from fresh_t_ne_x))))
   have freshnessCertificate0522 : t ∉ ((synCsn (.cv x))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0521)
   have freshnessCertificate0523 : t ∉ ((synCsn (synCsn (.cv x)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0522)
   have freshnessCertificate0524 : t ∉ ((synCsn (synCsn (synCsn (.cv x))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0523)
   have freshnessCertificate0525 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv x)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0524)
   have freshnessCertificate0526 :
     t ∉
@@ -3369,7 +3512,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0525 freshnessCertificate0415))
   have freshnessCertificate0527 : t ∉ (syntaxClass0068).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0526)
   have freshnessCertificate0528 : t ∉ ((syntaxClass0068).fv) ∪ ((syntaxClass0046).fv) :=
     (by
@@ -3381,8 +3524,8 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0528)
   have p0033 :=
     @gCeqsexv syntaxFormula0061 syntaxFormula0069 t
-      (synCsn (synCsn (synCsn (synCsn (.cv x))))) (by exact freshnessCertificate0525)
-      (by exact freshnessCertificate0529) p0030 p0032
+      (synCsn (synCsn (synCsn (synCsn (.cv x))))) freshnessCertificate0525
+      freshnessCertificate0529 p0030 p0032
   have p0034 := @gElin syntaxClass0068 syntaxClass0036 syntaxClass0045
   have p0035 :=
     @gOpkex (synCsn (synCsn (synCsn (synCsn (.cv x)))))
@@ -3390,76 +3533,76 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0036 :=
     @gElimak t syntaxClass0034
       (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
-      syntaxClass0068 (by exact freshnessCertificate0280)
-      (by exact freshnessCertificate0259) (by exact freshnessCertificate0527) p0035
+      syntaxClass0068 freshnessCertificate0280
+      freshnessCertificate0259 freshnessCertificate0527 p0035
   have freshnessCertificate0530 : c ∉ ((Class.cv t)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show c ∉ ({ t } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show c ≠ t from (by exact fresh_c_ne_t)))))
-  have p0037 := @gElpw161c c (.cv t) (by exact freshnessCertificate0530)
+              (show c ≠ t from fresh_c_ne_t))))
+  have p0037 := @gElpw161c c (.cv t) freshnessCertificate0530
   have p0038 :=
     @gAnbi1i syntaxFormula0070 (synWex c syntaxFormula0071) syntaxFormula0073 p0037
   have freshnessCertificate0531 : c ∉ ((Class.cv x)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show c ∉ ({ x } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show c ≠ x from (by exact fresh_c_ne_x)))))
+              (show c ≠ x from fresh_c_ne_x))))
   have freshnessCertificate0532 : c ∉ ((synCsn (.cv x))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0531)
   have freshnessCertificate0533 : c ∉ ((synCsn (synCsn (.cv x)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0532)
   have freshnessCertificate0534 : c ∉ ((synCsn (synCsn (synCsn (.cv x))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0533)
   have freshnessCertificate0535 :
     c ∉ ((synCsn (synCsn (synCsn (synCsn (.cv x)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0534)
   have freshnessCertificate0536 : c ∉ ((Class.cv w)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show c ∉ ({ w } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show c ≠ w from (by exact fresh_c_ne_w)))))
+              (show c ≠ w from fresh_c_ne_w))))
   have freshnessCertificate0537 : c ∉ ((synCsn (.cv w))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0536)
   have freshnessCertificate0538 : c ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0537)
   have freshnessCertificate0539 : c ∉ ((Class.cv y)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show c ∉ ({ y } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show c ≠ y from (by exact fresh_c_ne_y)))))
+              (show c ≠ y from fresh_c_ne_y))))
   have freshnessCertificate0540 : c ∉ ((Class.cv z)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show c ∉ ({ z } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show c ≠ z from (by exact fresh_c_ne_z)))))
+              (show c ≠ z from fresh_c_ne_z))))
   have freshnessCertificate0541 : c ∉ (((Class.cv y)).fv) ∪ (((Class.cv z)).fv) :=
     (by
       with_reducible
@@ -3467,7 +3610,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0539 freshnessCertificate0540))
   have freshnessCertificate0542 : c ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0541)
   have freshnessCertificate0543 :
     c ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
@@ -3478,7 +3621,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0544 :
     c ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0543)
   have freshnessCertificate0545 :
     c ∉
@@ -3490,7 +3633,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0535 freshnessCertificate0544))
   have freshnessCertificate0546 : c ∉ (syntaxClass0068).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0545)
   have freshnessCertificate0547 : c ∉ (((Class.cv t)).fv) ∪ ((syntaxClass0068).fv) :=
     (by
@@ -3499,66 +3642,66 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0530 freshnessCertificate0546))
   have freshnessCertificate0548 : c ∉ (syntaxClass0072).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0547)
   have freshnessCertificate0549 : c ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show c ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0550 : c ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0549)
   have freshnessCertificate0551 : c ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0550)
   have freshnessCertificate0552 :
     c ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0551)
   have freshnessCertificate0553 :
     c ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0552)
   have freshnessCertificate0554 :
     c ∉ ((synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0553)
   have freshnessCertificate0555 :
     c ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0551)
   have freshnessCertificate0556 :
     c ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0555)
   have freshnessCertificate0557 : c ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0549)
   have freshnessCertificate0558 : c ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0557)
   have freshnessCertificate0559 :
     c ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0558)
   have freshnessCertificate0560 :
     c ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0559)
   have freshnessCertificate0561 : c ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0549)
   have freshnessCertificate0562 :
     c ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -3569,19 +3712,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0563 :
     c ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0562)
   have freshnessCertificate0564 : c ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show c ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0565 : c ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0564)
   have freshnessCertificate0566 : c ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0565)
   have freshnessCertificate0567 :
     c ∉
@@ -3593,90 +3736,90 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0563 freshnessCertificate0566))
   have freshnessCertificate0568 : c ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0567)
   have freshnessCertificate0569 : c ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0568)
   have freshnessCertificate0570 : c ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0569)
   have freshnessCertificate0571 : c ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0570)
   have freshnessCertificate0572 : c ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0571)
   have freshnessCertificate0573 : c ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0572)
   have freshnessCertificate0574 : c ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0573)
   have freshnessCertificate0575 : c ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0574)
   have freshnessCertificate0576 : c ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0575)
   have freshnessCertificate0577 : c ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0576)
   have freshnessCertificate0578 :
     c ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0553)
   have freshnessCertificate0579 : c ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0578)
   have freshnessCertificate0580 : c ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0579)
   have freshnessCertificate0581 : c ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0580)
   have freshnessCertificate0582 :
     c ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0578)
   have freshnessCertificate0583 : c ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0582)
   have freshnessCertificate0584 : c ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0583)
   have freshnessCertificate0585 : c ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0584)
   have freshnessCertificate0586 : c ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0585)
   have freshnessCertificate0587 : c ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0583)
   have freshnessCertificate0588 : c ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0587)
   have freshnessCertificate0589 : c ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -3685,7 +3828,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0586 freshnessCertificate0588))
   have freshnessCertificate0590 : c ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0589)
   have freshnessCertificate0591 : c ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -3694,47 +3837,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0581 freshnessCertificate0590))
   have freshnessCertificate0592 : c ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0591)
   have freshnessCertificate0593 : c ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0566)
   have freshnessCertificate0594 :
     c ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0593)
   have freshnessCertificate0595 :
     c ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0594)
   have freshnessCertificate0596 :
     c ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0595)
   have freshnessCertificate0597 : c ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0596)
   have freshnessCertificate0598 : c ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0597)
   have freshnessCertificate0599 : c ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0598)
   have freshnessCertificate0600 : c ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0599)
   have freshnessCertificate0601 : c ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0600)
   have freshnessCertificate0602 : c ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -3743,11 +3886,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0592 freshnessCertificate0601))
   have freshnessCertificate0603 : c ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0602)
   have freshnessCertificate0604 : c ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0603)
   have freshnessCertificate0605 : c ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -3756,8 +3899,62 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0577 freshnessCertificate0604))
   have freshnessCertificate0606 : c ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0605)
+  clear freshnessCertificate0300 p0023 freshnessCertificate0429 freshnessCertificate0430
+    freshnessCertificate0434 freshnessCertificate0435 freshnessCertificate0436
+    freshnessCertificate0437 freshnessCertificate0438 freshnessCertificate0439
+    freshnessCertificate0441 freshnessCertificate0442 freshnessCertificate0443
+    freshnessCertificate0444 freshnessCertificate0446 freshnessCertificate0447
+    freshnessCertificate0448 freshnessCertificate0449 freshnessCertificate0450
+    freshnessCertificate0451 freshnessCertificate0452 freshnessCertificate0453
+    freshnessCertificate0454 freshnessCertificate0455 freshnessCertificate0456
+    freshnessCertificate0457 freshnessCertificate0458 freshnessCertificate0459
+    freshnessCertificate0460 freshnessCertificate0461 freshnessCertificate0462
+    freshnessCertificate0463 freshnessCertificate0464 freshnessCertificate0465
+    freshnessCertificate0466 freshnessCertificate0467 freshnessCertificate0468
+    freshnessCertificate0469 freshnessCertificate0470 freshnessCertificate0471
+    freshnessCertificate0472 freshnessCertificate0473 freshnessCertificate0475
+    freshnessCertificate0476 freshnessCertificate0477 freshnessCertificate0478
+    freshnessCertificate0479 freshnessCertificate0480 freshnessCertificate0481
+    freshnessCertificate0482 freshnessCertificate0483 freshnessCertificate0484
+    freshnessCertificate0485 freshnessCertificate0486 freshnessCertificate0487
+    freshnessCertificate0488 freshnessCertificate0489 freshnessCertificate0490
+    freshnessCertificate0491 freshnessCertificate0492 freshnessCertificate0493
+    freshnessCertificate0494 freshnessCertificate0495 freshnessCertificate0496
+    freshnessCertificate0497 freshnessCertificate0498 freshnessCertificate0499
+    freshnessCertificate0500 freshnessCertificate0501 freshnessCertificate0502
+    freshnessCertificate0503 freshnessCertificate0504 freshnessCertificate0505
+    freshnessCertificate0506 freshnessCertificate0507 freshnessCertificate0508
+    freshnessCertificate0509 freshnessCertificate0510 freshnessCertificate0511
+    freshnessCertificate0512 freshnessCertificate0513 freshnessCertificate0514
+    freshnessCertificate0515 freshnessCertificate0516 freshnessCertificate0517
+    freshnessCertificate0519 freshnessCertificate0520 p0024 p0025 p0026 p0027 p0028 p0031 p0032
+    freshnessCertificate0521 freshnessCertificate0522 freshnessCertificate0523
+    freshnessCertificate0524 freshnessCertificate0525 freshnessCertificate0526
+    freshnessCertificate0528 freshnessCertificate0529 freshnessCertificate0530 p0037
+    freshnessCertificate0532 freshnessCertificate0533 freshnessCertificate0534
+    freshnessCertificate0535 freshnessCertificate0537 freshnessCertificate0538
+    freshnessCertificate0540 freshnessCertificate0541 freshnessCertificate0542
+    freshnessCertificate0543 freshnessCertificate0544 freshnessCertificate0545
+    freshnessCertificate0546 freshnessCertificate0547 freshnessCertificate0549
+    freshnessCertificate0550 freshnessCertificate0551 freshnessCertificate0552
+    freshnessCertificate0553 freshnessCertificate0555 freshnessCertificate0557
+    freshnessCertificate0558 freshnessCertificate0559 freshnessCertificate0561
+    freshnessCertificate0562 freshnessCertificate0563 freshnessCertificate0564
+    freshnessCertificate0565 freshnessCertificate0566 freshnessCertificate0567
+    freshnessCertificate0568 freshnessCertificate0569 freshnessCertificate0570
+    freshnessCertificate0571 freshnessCertificate0572 freshnessCertificate0573
+    freshnessCertificate0574 freshnessCertificate0575 freshnessCertificate0576
+    freshnessCertificate0577 freshnessCertificate0578 freshnessCertificate0579
+    freshnessCertificate0580 freshnessCertificate0581 freshnessCertificate0582
+    freshnessCertificate0583 freshnessCertificate0584 freshnessCertificate0585
+    freshnessCertificate0586 freshnessCertificate0587 freshnessCertificate0588
+    freshnessCertificate0589 freshnessCertificate0590 freshnessCertificate0591
+    freshnessCertificate0592 freshnessCertificate0593 freshnessCertificate0594
+    freshnessCertificate0595 freshnessCertificate0597 freshnessCertificate0599
+    freshnessCertificate0600 freshnessCertificate0601 freshnessCertificate0602
+    freshnessCertificate0603 freshnessCertificate0604 freshnessCertificate0605
   have freshnessCertificate0607 :
     c ∉
       (((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv) ∪
@@ -3768,7 +3965,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0560 freshnessCertificate0606))
   have freshnessCertificate0608 : c ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0607)
   have freshnessCertificate0609 : c ∉ ((syntaxClass0029).fv) ∪ ((syntaxClass0022).fv) :=
     (by
@@ -3777,7 +3974,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0608 freshnessCertificate0598))
   have freshnessCertificate0610 : c ∉ (syntaxClass0030).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0609)
   have freshnessCertificate0611 :
     c ∉
@@ -3789,7 +3986,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0556 freshnessCertificate0610))
   have freshnessCertificate0612 : c ∉ (syntaxClass0031).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0611)
   have freshnessCertificate0613 :
     c ∉
@@ -3801,11 +3998,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0612 freshnessCertificate0596))
   have freshnessCertificate0614 : c ∉ (syntaxClass0032).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0613)
   have freshnessCertificate0615 : c ∉ (syntaxClass0033).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0614)
   have freshnessCertificate0616 :
     c ∉
@@ -3817,7 +4014,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0554 freshnessCertificate0615))
   have freshnessCertificate0617 : c ∉ (syntaxClass0034).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0616)
   have freshnessCertificate0618 : c ∉ ((syntaxClass0072).fv) ∪ ((syntaxClass0034).fv) :=
     (by
@@ -3828,7 +4025,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     c ∉ ((Wff.classMem syntaxClass0072 syntaxClass0034)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0618)
   have p0039 :=
-    @gN1941v syntaxFormula0071 syntaxFormula0073 c (by exact freshnessCertificate0619)
+    @gN1941v syntaxFormula0071 syntaxFormula0073 c freshnessCertificate0619
   have p0040 :=
     @gBitr4i syntaxFormula0074 (synWa (synWex c syntaxFormula0071) syntaxFormula0073)
       syntaxFormula0076 p0038 p0039
@@ -3848,44 +4045,44 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     @gEleq1d syntaxFormula0071 syntaxClass0072 syntaxClass0080 syntaxClass0034 p0046
   have freshnessCertificate0620 : t ∉ ((Class.cv c)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ c } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ c from (by exact fresh_t_ne_c)))))
+              (show t ≠ c from fresh_t_ne_c))))
   have freshnessCertificate0621 : t ∉ ((synCsn (.cv c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0620)
   have freshnessCertificate0622 : t ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0621)
   have freshnessCertificate0623 : t ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0622)
   have freshnessCertificate0624 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0623)
   have freshnessCertificate0625 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0624)
   have freshnessCertificate0626 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0625)
   have freshnessCertificate0627 :
     t ∉
       ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0626)
   have freshnessCertificate0628 :
     t ∉
@@ -3897,7 +4094,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0627 freshnessCertificate0527))
   have freshnessCertificate0629 : t ∉ (syntaxClass0080).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0628)
   have freshnessCertificate0630 : t ∉ ((syntaxClass0080).fv) ∪ ((syntaxClass0034).fv) :=
     (by
@@ -3910,7 +4107,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0048 :=
     @gCeqsexv syntaxFormula0073 syntaxFormula0081 t
       (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))))
-      (by exact freshnessCertificate0627) (by exact freshnessCertificate0631) p0045 p0047
+      freshnessCertificate0627 freshnessCertificate0631 p0045 p0047
   have p0049 :=
     @gElsymdif syntaxClass0080
       (synCins3k (synCsik (synCsik (synCsik (synCsik (synCssetk))))))
@@ -3997,86 +4194,86 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0625 freshnessCertificate0415))
   have freshnessCertificate0633 : t ∉ (syntaxClass0083).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0632)
   have p0070 :=
     @gElimak t syntaxClass0031
       (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))
-      syntaxClass0083 (by exact freshnessCertificate0275)
-      (by exact freshnessCertificate0259) (by exact freshnessCertificate0633) p0069
+      syntaxClass0083 freshnessCertificate0275
+      freshnessCertificate0259 freshnessCertificate0633 p0069
   have freshnessCertificate0634 : b ∉ ((Class.cv t)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show b ∉ ({ t } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show b ≠ t from (by exact fresh_b_ne_t)))))
-  have p0071 := @gElpw161c b (.cv t) (by exact freshnessCertificate0634)
+              (show b ≠ t from fresh_b_ne_t))))
+  have p0071 := @gElpw161c b (.cv t) freshnessCertificate0634
   have p0072 :=
     @gAnbi1i syntaxFormula0070 (synWex b syntaxFormula0084) syntaxFormula0086 p0071
   have freshnessCertificate0635 : b ∉ ((Class.cv c)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show b ∉ ({ c } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show b ≠ c from (by exact fresh_b_ne_c)))))
+              (show b ≠ c from fresh_b_ne_c))))
   have freshnessCertificate0636 : b ∉ ((synCsn (.cv c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0635)
   have freshnessCertificate0637 : b ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0636)
   have freshnessCertificate0638 : b ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0637)
   have freshnessCertificate0639 :
     b ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0638)
   have freshnessCertificate0640 :
     b ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0639)
   have freshnessCertificate0641 : b ∉ ((Class.cv w)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show b ∉ ({ w } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show b ≠ w from (by exact fresh_b_ne_w)))))
+              (show b ≠ w from fresh_b_ne_w))))
   have freshnessCertificate0642 : b ∉ ((synCsn (.cv w))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0641)
   have freshnessCertificate0643 : b ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0642)
   have freshnessCertificate0644 : b ∉ ((Class.cv y)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show b ∉ ({ y } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show b ≠ y from (by exact fresh_b_ne_y)))))
+              (show b ≠ y from fresh_b_ne_y))))
   have freshnessCertificate0645 : b ∉ ((Class.cv z)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show b ∉ ({ z } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show b ≠ z from (by exact fresh_b_ne_z)))))
+              (show b ≠ z from fresh_b_ne_z))))
   have freshnessCertificate0646 : b ∉ (((Class.cv y)).fv) ∪ (((Class.cv z)).fv) :=
     (by
       with_reducible
@@ -4084,7 +4281,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0644 freshnessCertificate0645))
   have freshnessCertificate0647 : b ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0646)
   have freshnessCertificate0648 :
     b ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
@@ -4095,7 +4292,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0649 :
     b ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0648)
   have freshnessCertificate0650 :
     b ∉
@@ -4107,7 +4304,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0640 freshnessCertificate0649))
   have freshnessCertificate0651 : b ∉ (syntaxClass0083).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0650)
   have freshnessCertificate0652 : b ∉ (((Class.cv t)).fv) ∪ ((syntaxClass0083).fv) :=
     (by
@@ -4116,51 +4313,51 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0634 freshnessCertificate0651))
   have freshnessCertificate0653 : b ∉ (syntaxClass0085).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0652)
   have freshnessCertificate0654 : b ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show b ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0655 : b ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0654)
   have freshnessCertificate0656 : b ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0655)
   have freshnessCertificate0657 :
     b ∉ ((synCins3k (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0656)
   have freshnessCertificate0658 :
     b ∉ ((synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0657)
   have freshnessCertificate0659 : b ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0654)
   have freshnessCertificate0660 : b ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0659)
   have freshnessCertificate0661 :
     b ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0660)
   have freshnessCertificate0662 :
     b ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0661)
   have freshnessCertificate0663 : b ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0654)
   have freshnessCertificate0664 :
     b ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -4171,19 +4368,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0665 :
     b ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0664)
   have freshnessCertificate0666 : b ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show b ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0667 : b ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0666)
   have freshnessCertificate0668 : b ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0667)
   have freshnessCertificate0669 :
     b ∉
@@ -4195,100 +4392,100 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0665 freshnessCertificate0668))
   have freshnessCertificate0670 : b ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0669)
   have freshnessCertificate0671 : b ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0670)
   have freshnessCertificate0672 : b ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0671)
   have freshnessCertificate0673 : b ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0672)
   have freshnessCertificate0674 : b ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0673)
   have freshnessCertificate0675 : b ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0674)
   have freshnessCertificate0676 : b ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0675)
   have freshnessCertificate0677 : b ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0676)
   have freshnessCertificate0678 : b ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0677)
   have freshnessCertificate0679 : b ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0678)
   have freshnessCertificate0680 :
     b ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0656)
   have freshnessCertificate0681 :
     b ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0680)
   have freshnessCertificate0682 :
     b ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0681)
   have freshnessCertificate0683 : b ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0682)
   have freshnessCertificate0684 : b ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0683)
   have freshnessCertificate0685 : b ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0684)
   have freshnessCertificate0686 :
     b ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0682)
   have freshnessCertificate0687 : b ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0686)
   have freshnessCertificate0688 : b ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0687)
   have freshnessCertificate0689 : b ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0688)
   have freshnessCertificate0690 : b ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0689)
   have freshnessCertificate0691 : b ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0687)
   have freshnessCertificate0692 : b ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0691)
   have freshnessCertificate0693 : b ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -4297,7 +4494,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0690 freshnessCertificate0692))
   have freshnessCertificate0694 : b ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0693)
   have freshnessCertificate0695 : b ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -4306,47 +4503,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0685 freshnessCertificate0694))
   have freshnessCertificate0696 : b ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0695)
   have freshnessCertificate0697 : b ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0668)
   have freshnessCertificate0698 :
     b ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0697)
   have freshnessCertificate0699 :
     b ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0698)
   have freshnessCertificate0700 :
     b ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0699)
   have freshnessCertificate0701 : b ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0700)
   have freshnessCertificate0702 : b ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0701)
   have freshnessCertificate0703 : b ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0702)
   have freshnessCertificate0704 : b ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0703)
   have freshnessCertificate0705 : b ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0704)
   have freshnessCertificate0706 : b ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -4355,11 +4552,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0696 freshnessCertificate0705))
   have freshnessCertificate0707 : b ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0706)
   have freshnessCertificate0708 : b ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0707)
   have freshnessCertificate0709 : b ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -4368,7 +4565,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0679 freshnessCertificate0708))
   have freshnessCertificate0710 : b ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0709)
   have freshnessCertificate0711 :
     b ∉
@@ -4380,7 +4577,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0662 freshnessCertificate0710))
   have freshnessCertificate0712 : b ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0711)
   have freshnessCertificate0713 : b ∉ ((syntaxClass0029).fv) ∪ ((syntaxClass0022).fv) :=
     (by
@@ -4389,7 +4586,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0712 freshnessCertificate0702))
   have freshnessCertificate0714 : b ∉ (syntaxClass0030).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0713)
   have freshnessCertificate0715 :
     b ∉
@@ -4401,7 +4598,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0658 freshnessCertificate0714))
   have freshnessCertificate0716 : b ∉ (syntaxClass0031).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0715)
   have freshnessCertificate0717 : b ∉ ((syntaxClass0085).fv) ∪ ((syntaxClass0031).fv) :=
     (by
@@ -4412,7 +4609,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     b ∉ ((Wff.classMem syntaxClass0085 syntaxClass0031)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0717)
   have p0073 :=
-    @gN1941v syntaxFormula0084 syntaxFormula0086 b (by exact freshnessCertificate0718)
+    @gN1941v syntaxFormula0084 syntaxFormula0086 b freshnessCertificate0718
   have p0074 :=
     @gBitr4i syntaxFormula0087 (synWa (synWex b syntaxFormula0084) syntaxFormula0086)
       syntaxFormula0089 p0072 p0073
@@ -4432,44 +4629,44 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     @gEleq1d syntaxFormula0084 syntaxClass0085 syntaxClass0093 syntaxClass0031 p0080
   have freshnessCertificate0719 : t ∉ ((Class.cv b)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ b } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ b from (by exact fresh_t_ne_b)))))
+              (show t ≠ b from fresh_t_ne_b))))
   have freshnessCertificate0720 : t ∉ ((synCsn (.cv b))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0719)
   have freshnessCertificate0721 : t ∉ ((synCsn (synCsn (.cv b)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0720)
   have freshnessCertificate0722 : t ∉ ((synCsn (synCsn (synCsn (.cv b))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0721)
   have freshnessCertificate0723 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv b)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0722)
   have freshnessCertificate0724 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0723)
   have freshnessCertificate0725 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0724)
   have freshnessCertificate0726 :
     t ∉
       ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0725)
   have freshnessCertificate0727 :
     t ∉
@@ -4481,7 +4678,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0726 freshnessCertificate0633))
   have freshnessCertificate0728 : t ∉ (syntaxClass0093).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0727)
   have freshnessCertificate0729 : t ∉ ((syntaxClass0093).fv) ∪ ((syntaxClass0031).fv) :=
     (by
@@ -4494,7 +4691,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0082 :=
     @gCeqsexv syntaxFormula0086 syntaxFormula0094 t
       (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))
-      (by exact freshnessCertificate0726) (by exact freshnessCertificate0730) p0079 p0081
+      freshnessCertificate0726 freshnessCertificate0730 p0079 p0081
   have p0083 :=
     @gElin syntaxClass0093 (synCins2k (synCins3k (synCsik (synCsik (synCssetk)))))
       syntaxClass0030
@@ -4516,6 +4713,52 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0091 := @gSnex (.cv b)
   have p0092 := @gVex w
   have p0093 := @gOpksnelsik (synCsn (.cv b)) (.cv w) (synCssetk) p0091 p0092
+  clear freshnessCertificate0259 freshnessCertificate0275 freshnessCertificate0280
+    freshnessCertificate0415 freshnessCertificate0527 p0038 freshnessCertificate0548
+    freshnessCertificate0554 freshnessCertificate0556 freshnessCertificate0560
+    freshnessCertificate0596 freshnessCertificate0598 freshnessCertificate0606
+    freshnessCertificate0607 freshnessCertificate0608 freshnessCertificate0609
+    freshnessCertificate0610 freshnessCertificate0611 freshnessCertificate0612
+    freshnessCertificate0613 freshnessCertificate0614 freshnessCertificate0615
+    freshnessCertificate0616 freshnessCertificate0617 freshnessCertificate0618
+    freshnessCertificate0619 p0039 p0040 p0041 p0042 p0043 p0045 p0046 p0047
+    freshnessCertificate0620 freshnessCertificate0621 freshnessCertificate0622
+    freshnessCertificate0623 freshnessCertificate0624 freshnessCertificate0625
+    freshnessCertificate0626 freshnessCertificate0627 freshnessCertificate0628
+    freshnessCertificate0629 freshnessCertificate0630 freshnessCertificate0631 p0051 p0053 p0054
+    p0057 p0059 p0060 p0063 p0065 p0066 p0067 freshnessCertificate0632 freshnessCertificate0633
+    freshnessCertificate0634 p0071 p0072 freshnessCertificate0635 freshnessCertificate0636
+    freshnessCertificate0637 freshnessCertificate0638 freshnessCertificate0639
+    freshnessCertificate0640 freshnessCertificate0642 freshnessCertificate0643
+    freshnessCertificate0645 freshnessCertificate0646 freshnessCertificate0647
+    freshnessCertificate0648 freshnessCertificate0649 freshnessCertificate0650
+    freshnessCertificate0651 freshnessCertificate0652 freshnessCertificate0653
+    freshnessCertificate0654 freshnessCertificate0655 freshnessCertificate0656
+    freshnessCertificate0657 freshnessCertificate0658 freshnessCertificate0659
+    freshnessCertificate0660 freshnessCertificate0661 freshnessCertificate0662
+    freshnessCertificate0663 freshnessCertificate0664 freshnessCertificate0665
+    freshnessCertificate0666 freshnessCertificate0667 freshnessCertificate0668
+    freshnessCertificate0669 freshnessCertificate0670 freshnessCertificate0671
+    freshnessCertificate0672 freshnessCertificate0673 freshnessCertificate0674
+    freshnessCertificate0675 freshnessCertificate0676 freshnessCertificate0677
+    freshnessCertificate0678 freshnessCertificate0679 freshnessCertificate0680
+    freshnessCertificate0681 freshnessCertificate0682 freshnessCertificate0683
+    freshnessCertificate0684 freshnessCertificate0685 freshnessCertificate0686
+    freshnessCertificate0687 freshnessCertificate0688 freshnessCertificate0689
+    freshnessCertificate0690 freshnessCertificate0691 freshnessCertificate0692
+    freshnessCertificate0693 freshnessCertificate0694 freshnessCertificate0695
+    freshnessCertificate0696 freshnessCertificate0697 freshnessCertificate0698
+    freshnessCertificate0699 freshnessCertificate0700 freshnessCertificate0701
+    freshnessCertificate0702 freshnessCertificate0703 freshnessCertificate0704
+    freshnessCertificate0705 freshnessCertificate0706 freshnessCertificate0707
+    freshnessCertificate0708 freshnessCertificate0709 freshnessCertificate0710
+    freshnessCertificate0711 freshnessCertificate0712 freshnessCertificate0713
+    freshnessCertificate0714 freshnessCertificate0715 freshnessCertificate0716
+    freshnessCertificate0717 freshnessCertificate0718 p0073 p0074 p0075 p0076 p0077 p0080 p0081
+    freshnessCertificate0719 freshnessCertificate0720 freshnessCertificate0721
+    freshnessCertificate0722 freshnessCertificate0723 freshnessCertificate0724
+    freshnessCertificate0725 freshnessCertificate0726 freshnessCertificate0727
+    freshnessCertificate0729 freshnessCertificate0730 p0089
   have p0094 := @gVex b
   have p0095 := @gElssetk (.cv b) (.cv w) p0094 p0092
   have p0096_e02_recanon :
@@ -4558,122 +4801,122 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
       syntaxClass0083
   have p0099 :=
     @gElimak t syntaxClass0029 syntaxClass0022 syntaxClass0093
-      (by exact freshnessCertificate0271) (by exact freshnessCertificate0261)
-      (by exact freshnessCertificate0728) p0098
+      freshnessCertificate0271 freshnessCertificate0261
+      freshnessCertificate0728 p0098
   have freshnessCertificate0731 : a ∉ ((Class.cv t)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show a ∉ ({ t } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show a ≠ t from (by exact fresh_a_ne_t)))))
-  have p0100 := @gElpw181c a (.cv t) (by exact freshnessCertificate0731)
+              (show a ≠ t from fresh_a_ne_t))))
+  have p0100 := @gElpw181c a (.cv t) freshnessCertificate0731
   have p0101 :=
     @gAnbi1i syntaxFormula0096 (synWex a syntaxFormula0099) syntaxFormula0101 p0100
   have freshnessCertificate0732 : a ∉ ((Class.cv b)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show a ∉ ({ b } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show a ≠ b from (by exact fresh_a_ne_b)))))
+              (show a ≠ b from fresh_a_ne_b))))
   have freshnessCertificate0733 : a ∉ ((synCsn (.cv b))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0732)
   have freshnessCertificate0734 : a ∉ ((synCsn (synCsn (.cv b)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0733)
   have freshnessCertificate0735 : a ∉ ((synCsn (synCsn (synCsn (.cv b))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0734)
   have freshnessCertificate0736 :
     a ∉ ((synCsn (synCsn (synCsn (synCsn (.cv b)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0735)
   have freshnessCertificate0737 :
     a ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0736)
   have freshnessCertificate0738 :
     a ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0737)
   have freshnessCertificate0739 :
     a ∉
       ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0738)
   have freshnessCertificate0740 : a ∉ ((Class.cv c)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show a ∉ ({ c } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show a ≠ c from (by exact fresh_a_ne_c)))))
+              (show a ≠ c from fresh_a_ne_c))))
   have freshnessCertificate0741 : a ∉ ((synCsn (.cv c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0740)
   have freshnessCertificate0742 : a ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0741)
   have freshnessCertificate0743 : a ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0742)
   have freshnessCertificate0744 :
     a ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0743)
   have freshnessCertificate0745 :
     a ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0744)
   have freshnessCertificate0746 : a ∉ ((Class.cv w)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show a ∉ ({ w } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show a ≠ w from (by exact fresh_a_ne_w)))))
+              (show a ≠ w from fresh_a_ne_w))))
   have freshnessCertificate0747 : a ∉ ((synCsn (.cv w))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0746)
   have freshnessCertificate0748 : a ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0747)
   have freshnessCertificate0749 : a ∉ ((Class.cv y)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show a ∉ ({ y } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show a ≠ y from (by exact fresh_a_ne_y)))))
+              (show a ≠ y from fresh_a_ne_y))))
   have freshnessCertificate0750 : a ∉ ((Class.cv z)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show a ∉ ({ z } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show a ≠ z from (by exact fresh_a_ne_z)))))
+              (show a ≠ z from fresh_a_ne_z))))
   have freshnessCertificate0751 : a ∉ (((Class.cv y)).fv) ∪ (((Class.cv z)).fv) :=
     (by
       with_reducible
@@ -4681,7 +4924,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0749 freshnessCertificate0750))
   have freshnessCertificate0752 : a ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0751)
   have freshnessCertificate0753 :
     a ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
@@ -4692,7 +4935,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0754 :
     a ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0753)
   have freshnessCertificate0755 :
     a ∉
@@ -4704,7 +4947,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0745 freshnessCertificate0754))
   have freshnessCertificate0756 : a ∉ (syntaxClass0083).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0755)
   have freshnessCertificate0757 :
     a ∉
@@ -4716,7 +4959,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0739 freshnessCertificate0756))
   have freshnessCertificate0758 : a ∉ (syntaxClass0093).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0757)
   have freshnessCertificate0759 : a ∉ (((Class.cv t)).fv) ∪ ((syntaxClass0093).fv) :=
     (by
@@ -4725,33 +4968,33 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0731 freshnessCertificate0758))
   have freshnessCertificate0760 : a ∉ (syntaxClass0100).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0759)
   have freshnessCertificate0761 : a ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show a ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0762 : a ∉ ((synCins3k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0761)
   have freshnessCertificate0763 : a ∉ ((synCins2k (synCins3k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0762)
   have freshnessCertificate0764 :
     a ∉ ((synCins2k (synCins2k (synCins3k (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0763)
   have freshnessCertificate0765 :
     a ∉ ((synCins2k (synCins2k (synCins2k (synCins3k (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0764)
   have freshnessCertificate0766 : a ∉ ((synCins2k (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0761)
   have freshnessCertificate0767 :
     a ∉ (((synCins3k (synCssetk))).fv) ∪ (((synCins2k (synCssetk))).fv) :=
@@ -4762,19 +5005,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0768 :
     a ∉ ((synCin (synCins3k (synCssetk)) (synCins2k (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0767)
   have freshnessCertificate0769 : a ∉ ((synC1c)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c1c];
       exact (show a ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0770 : a ∉ ((synCpw1 (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0769)
   have freshnessCertificate0771 : a ∉ ((synCpw1 (synCpw1 (synC1c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0770)
   have freshnessCertificate0772 :
     a ∉
@@ -4786,108 +5029,108 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0768 freshnessCertificate0771))
   have freshnessCertificate0773 : a ∉ (syntaxClass0000).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0772)
   have freshnessCertificate0774 : a ∉ (syntaxClass0001).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0773)
   have freshnessCertificate0775 : a ∉ (syntaxClass0002).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0774)
   have freshnessCertificate0776 : a ∉ (syntaxClass0003).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0775)
   have freshnessCertificate0777 : a ∉ (syntaxClass0004).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0776)
   have freshnessCertificate0778 : a ∉ (syntaxClass0005).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0777)
   have freshnessCertificate0779 : a ∉ (syntaxClass0006).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0778)
   have freshnessCertificate0780 : a ∉ (syntaxClass0007).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0779)
   have freshnessCertificate0781 : a ∉ (syntaxClass0008).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0780)
   have freshnessCertificate0782 : a ∉ (syntaxClass0009).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0781)
   have freshnessCertificate0783 : a ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0761)
   have freshnessCertificate0784 : a ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0783)
   have freshnessCertificate0785 :
     a ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0784)
   have freshnessCertificate0786 :
     a ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0785)
   have freshnessCertificate0787 :
     a ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0786)
   have freshnessCertificate0788 : a ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0787)
   have freshnessCertificate0789 : a ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0788)
   have freshnessCertificate0790 : a ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0789)
   have freshnessCertificate0791 :
     a ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0787)
   have freshnessCertificate0792 : a ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0791)
   have freshnessCertificate0793 : a ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0792)
   have freshnessCertificate0794 : a ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0793)
   have freshnessCertificate0795 : a ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0794)
   have freshnessCertificate0796 : a ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0792)
   have freshnessCertificate0797 : a ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0796)
   have freshnessCertificate0798 : a ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -4896,7 +5139,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0795 freshnessCertificate0797))
   have freshnessCertificate0799 : a ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0798)
   have freshnessCertificate0800 : a ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -4905,47 +5148,47 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0790 freshnessCertificate0799))
   have freshnessCertificate0801 : a ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0800)
   have freshnessCertificate0802 : a ∉ ((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0771)
   have freshnessCertificate0803 :
     a ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0802)
   have freshnessCertificate0804 :
     a ∉ ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0803)
   have freshnessCertificate0805 :
     a ∉
       ((synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synCpw1 (synC1c)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0804)
   have freshnessCertificate0806 : a ∉ (syntaxClass0021).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0805)
   have freshnessCertificate0807 : a ∉ (syntaxClass0022).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0806)
   have freshnessCertificate0808 : a ∉ (syntaxClass0023).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0807)
   have freshnessCertificate0809 : a ∉ (syntaxClass0024).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0808)
   have freshnessCertificate0810 : a ∉ (syntaxClass0025).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0809)
   have freshnessCertificate0811 : a ∉ ((syntaxClass0020).fv) ∪ ((syntaxClass0025).fv) :=
     (by
@@ -4954,11 +5197,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0801 freshnessCertificate0810))
   have freshnessCertificate0812 : a ∉ (syntaxClass0026).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0811)
   have freshnessCertificate0813 : a ∉ (syntaxClass0027).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_ccompl];
       exact freshnessCertificate0812)
   have freshnessCertificate0814 : a ∉ ((syntaxClass0009).fv) ∪ ((syntaxClass0027).fv) :=
     (by
@@ -4967,7 +5210,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0782 freshnessCertificate0813))
   have freshnessCertificate0815 : a ∉ (syntaxClass0028).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0814)
   have freshnessCertificate0816 :
     a ∉
@@ -4979,7 +5222,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0765 freshnessCertificate0815))
   have freshnessCertificate0817 : a ∉ (syntaxClass0029).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0816)
   have freshnessCertificate0818 : a ∉ ((syntaxClass0100).fv) ∪ ((syntaxClass0029).fv) :=
     (by
@@ -4990,7 +5233,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     a ∉ ((Wff.classMem syntaxClass0100 syntaxClass0029)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0818)
   have p0102 :=
-    @gN1941v syntaxFormula0099 syntaxFormula0101 a (by exact freshnessCertificate0819)
+    @gN1941v syntaxFormula0099 syntaxFormula0101 a freshnessCertificate0819
   have p0103 :=
     @gBitr4i syntaxFormula0102 (synWa (synWex a syntaxFormula0099) syntaxFormula0101)
       syntaxFormula0104 p0101 p0102
@@ -5006,52 +5249,52 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     @gEleq1d syntaxFormula0099 syntaxClass0100 syntaxClass0108 syntaxClass0029 p0109
   have freshnessCertificate0820 : t ∉ ((Class.cv a)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ a } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ a from (by exact fresh_t_ne_a)))))
+              (show t ≠ a from fresh_t_ne_a))))
   have freshnessCertificate0821 : t ∉ ((synCsn (.cv a))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0820)
   have freshnessCertificate0822 : t ∉ ((synCsn (synCsn (.cv a)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0821)
   have freshnessCertificate0823 : t ∉ ((synCsn (synCsn (synCsn (.cv a))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0822)
   have freshnessCertificate0824 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv a)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0823)
   have freshnessCertificate0825 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0824)
   have freshnessCertificate0826 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0825)
   have freshnessCertificate0827 :
     t ∉
       ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0826)
   have freshnessCertificate0828 : t ∉ (syntaxClass0097).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0827)
   have freshnessCertificate0829 : t ∉ (syntaxClass0098).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0828)
   have freshnessCertificate0830 : t ∉ ((syntaxClass0098).fv) ∪ ((syntaxClass0093).fv) :=
     (by
@@ -5060,7 +5303,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0829 freshnessCertificate0728))
   have freshnessCertificate0831 : t ∉ (syntaxClass0108).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0830)
   have freshnessCertificate0832 : t ∉ ((syntaxClass0108).fv) ∪ ((syntaxClass0029).fv) :=
     (by
@@ -5072,7 +5315,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0832)
   have p0111 :=
     @gCeqsexv syntaxFormula0101 syntaxFormula0109 t syntaxClass0098
-      (by exact freshnessCertificate0829) (by exact freshnessCertificate0833) p0108 p0110
+      freshnessCertificate0829 freshnessCertificate0833 p0108 p0110
   have p0112 :=
     @gElin syntaxClass0108
       (synCins2k (synCins2k (synCins2k (synCins3k (synCssetk))))) syntaxClass0028
@@ -5203,171 +5446,211 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0152 := @gOpkex syntaxClass0098 syntaxClass0093
   have p0153 :=
     @gElimak t syntaxClass0020 syntaxClass0025 syntaxClass0108
-      (by exact freshnessCertificate0255) (by exact freshnessCertificate0264)
-      (by exact freshnessCertificate0831) p0152
+      freshnessCertificate0255 freshnessCertificate0264
+      freshnessCertificate0831 p0152
   have freshnessCertificate0834 : d ∉ ((Class.cv t)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show d ∉ ({ t } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show d ≠ t from (by exact fresh_d_ne_t)))))
-  have p0154 := @gElpw1111c d (.cv t) (by exact freshnessCertificate0834)
+              (show d ≠ t from fresh_d_ne_t))))
+  have p0154 := @gElpw1111c d (.cv t) freshnessCertificate0834
   have p0155 :=
     @gAnbi1i syntaxFormula0116 (synWex d syntaxFormula0122) syntaxFormula0124 p0154
   have freshnessCertificate0835 : d ∉ ((Class.cv a)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show d ∉ ({ a } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show d ≠ a from (by exact fresh_d_ne_a)))))
+              (show d ≠ a from fresh_d_ne_a))))
   have freshnessCertificate0836 : d ∉ ((synCsn (.cv a))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0835)
   have freshnessCertificate0837 : d ∉ ((synCsn (synCsn (.cv a)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0836)
   have freshnessCertificate0838 : d ∉ ((synCsn (synCsn (synCsn (.cv a))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0837)
   have freshnessCertificate0839 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (.cv a)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0838)
   have freshnessCertificate0840 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0839)
   have freshnessCertificate0841 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0840)
   have freshnessCertificate0842 :
     d ∉
       ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv a))))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0841)
   have freshnessCertificate0843 : d ∉ (syntaxClass0097).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0842)
   have freshnessCertificate0844 : d ∉ (syntaxClass0098).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0843)
   have freshnessCertificate0845 : d ∉ ((Class.cv b)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show d ∉ ({ b } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show d ≠ b from (by exact fresh_d_ne_b)))))
+              (show d ≠ b from fresh_d_ne_b))))
   have freshnessCertificate0846 : d ∉ ((synCsn (.cv b))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0845)
+  clear freshnessCertificate0261 freshnessCertificate0264 freshnessCertificate0271
+    freshnessCertificate0728 p0085 p0087 p0090 p0093 p0095 p0096 freshnessCertificate0731 p0100
+    p0101 freshnessCertificate0732 freshnessCertificate0733 freshnessCertificate0734
+    freshnessCertificate0735 freshnessCertificate0736 freshnessCertificate0737
+    freshnessCertificate0738 freshnessCertificate0739 freshnessCertificate0740
+    freshnessCertificate0741 freshnessCertificate0742 freshnessCertificate0743
+    freshnessCertificate0744 freshnessCertificate0745 freshnessCertificate0747
+    freshnessCertificate0748 freshnessCertificate0750 freshnessCertificate0751
+    freshnessCertificate0752 freshnessCertificate0753 freshnessCertificate0754
+    freshnessCertificate0755 freshnessCertificate0756 freshnessCertificate0757
+    freshnessCertificate0758 freshnessCertificate0759 freshnessCertificate0760
+    freshnessCertificate0761 freshnessCertificate0762 freshnessCertificate0763
+    freshnessCertificate0764 freshnessCertificate0765 freshnessCertificate0766
+    freshnessCertificate0767 freshnessCertificate0768 freshnessCertificate0769
+    freshnessCertificate0770 freshnessCertificate0771 freshnessCertificate0772
+    freshnessCertificate0773 freshnessCertificate0774 freshnessCertificate0775
+    freshnessCertificate0776 freshnessCertificate0777 freshnessCertificate0778
+    freshnessCertificate0779 freshnessCertificate0780 freshnessCertificate0781
+    freshnessCertificate0782 freshnessCertificate0783 freshnessCertificate0784
+    freshnessCertificate0785 freshnessCertificate0786 freshnessCertificate0787
+    freshnessCertificate0788 freshnessCertificate0789 freshnessCertificate0790
+    freshnessCertificate0791 freshnessCertificate0792 freshnessCertificate0793
+    freshnessCertificate0794 freshnessCertificate0795 freshnessCertificate0796
+    freshnessCertificate0797 freshnessCertificate0798 freshnessCertificate0799
+    freshnessCertificate0800 freshnessCertificate0801 freshnessCertificate0802
+    freshnessCertificate0803 freshnessCertificate0804 freshnessCertificate0805
+    freshnessCertificate0806 freshnessCertificate0807 freshnessCertificate0808
+    freshnessCertificate0809 freshnessCertificate0810 freshnessCertificate0811
+    freshnessCertificate0812 freshnessCertificate0813 freshnessCertificate0814
+    freshnessCertificate0815 freshnessCertificate0816 freshnessCertificate0817
+    freshnessCertificate0818 freshnessCertificate0819 p0102 p0103 p0104 p0105 p0106 p0109 p0110
+    freshnessCertificate0820 freshnessCertificate0821 freshnessCertificate0822
+    freshnessCertificate0823 freshnessCertificate0824 freshnessCertificate0825
+    freshnessCertificate0826 freshnessCertificate0827 freshnessCertificate0828
+    freshnessCertificate0829 freshnessCertificate0830 freshnessCertificate0832
+    freshnessCertificate0833 p0114 p0116 p0118 p0122 p0124 p0125 p0128 p0131 p0132 p0135 p0136 p0138
+    p0139 p0140 p0141 p0142 p0143 p0144 p0145 p0146 p0147 p0148 p0149 p0150 p0154
+    freshnessCertificate0836 freshnessCertificate0837 freshnessCertificate0838
+    freshnessCertificate0839 freshnessCertificate0840 freshnessCertificate0841
+    freshnessCertificate0842 freshnessCertificate0843
   have freshnessCertificate0847 : d ∉ ((synCsn (synCsn (.cv b)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0846)
   have freshnessCertificate0848 : d ∉ ((synCsn (synCsn (synCsn (.cv b))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0847)
   have freshnessCertificate0849 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (.cv b)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0848)
   have freshnessCertificate0850 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0849)
   have freshnessCertificate0851 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0850)
   have freshnessCertificate0852 :
     d ∉
       ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv b))))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0851)
   have freshnessCertificate0853 : d ∉ ((Class.cv c)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show d ∉ ({ c } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show d ≠ c from (by exact fresh_d_ne_c)))))
+              (show d ≠ c from fresh_d_ne_c))))
   have freshnessCertificate0854 : d ∉ ((synCsn (.cv c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0853)
   have freshnessCertificate0855 : d ∉ ((synCsn (synCsn (.cv c)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0854)
   have freshnessCertificate0856 : d ∉ ((synCsn (synCsn (synCsn (.cv c))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0855)
   have freshnessCertificate0857 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (.cv c)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0856)
   have freshnessCertificate0858 :
     d ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv c))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0857)
   have freshnessCertificate0859 : d ∉ ((Class.cv w)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show d ∉ ({ w } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show d ≠ w from (by exact fresh_d_ne_w)))))
+              (show d ≠ w from fresh_d_ne_w))))
   have freshnessCertificate0860 : d ∉ ((synCsn (.cv w))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0859)
   have freshnessCertificate0861 : d ∉ ((synCsn (synCsn (.cv w)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0860)
   have freshnessCertificate0862 : d ∉ ((Class.cv y)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show d ∉ ({ y } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show d ≠ y from (by exact fresh_d_ne_y)))))
+              (show d ≠ y from fresh_d_ne_y))))
   have freshnessCertificate0863 : d ∉ ((Class.cv z)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show d ∉ ({ z } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show d ≠ z from (by exact fresh_d_ne_z)))))
+              (show d ≠ z from fresh_d_ne_z))))
   have freshnessCertificate0864 : d ∉ (((Class.cv y)).fv) ∪ (((Class.cv z)).fv) :=
     (by
       with_reducible
@@ -5375,7 +5658,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0862 freshnessCertificate0863))
   have freshnessCertificate0865 : d ∉ ((synCopk (.cv y) (.cv z))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0864)
   have freshnessCertificate0866 :
     d ∉ (((synCsn (synCsn (.cv w)))).fv) ∪ (((synCopk (.cv y) (.cv z))).fv) :=
@@ -5386,7 +5669,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0867 :
     d ∉ ((synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0866)
   have freshnessCertificate0868 :
     d ∉
@@ -5398,7 +5681,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0858 freshnessCertificate0867))
   have freshnessCertificate0869 : d ∉ (syntaxClass0083).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0868)
   have freshnessCertificate0870 :
     d ∉
@@ -5410,7 +5693,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0852 freshnessCertificate0869))
   have freshnessCertificate0871 : d ∉ (syntaxClass0093).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0870)
   have freshnessCertificate0872 : d ∉ ((syntaxClass0098).fv) ∪ ((syntaxClass0093).fv) :=
     (by
@@ -5419,7 +5702,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0844 freshnessCertificate0871))
   have freshnessCertificate0873 : d ∉ (syntaxClass0108).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0872)
   have freshnessCertificate0874 : d ∉ (((Class.cv t)).fv) ∪ ((syntaxClass0108).fv) :=
     (by
@@ -5428,76 +5711,76 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0834 freshnessCertificate0873))
   have freshnessCertificate0875 : d ∉ (syntaxClass0123).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0874)
   have freshnessCertificate0876 : d ∉ ((synCssetk)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cssetk];
       exact (show d ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0877 : d ∉ ((synCsik (synCssetk))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0876)
   have freshnessCertificate0878 : d ∉ ((synCsik (synCsik (synCssetk)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0877)
   have freshnessCertificate0879 :
     d ∉ ((synCsik (synCsik (synCsik (synCssetk))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0878)
   have freshnessCertificate0880 :
     d ∉ ((synCsik (synCsik (synCsik (synCsik (synCssetk)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0879)
   have freshnessCertificate0881 :
     d ∉ ((synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0880)
   have freshnessCertificate0882 : d ∉ (syntaxClass0010).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0881)
   have freshnessCertificate0883 : d ∉ (syntaxClass0011).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0882)
   have freshnessCertificate0884 : d ∉ (syntaxClass0012).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0883)
   have freshnessCertificate0885 :
     d ∉
       ((synCsik (synCsik (synCsik (synCsik (synCsik (synCsik (synCssetk)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0881)
   have freshnessCertificate0886 : d ∉ (syntaxClass0013).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0885)
   have freshnessCertificate0887 : d ∉ (syntaxClass0014).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0886)
   have freshnessCertificate0888 : d ∉ (syntaxClass0015).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csik];
       exact freshnessCertificate0887)
   have freshnessCertificate0889 : d ∉ (syntaxClass0016).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0888)
   have freshnessCertificate0890 : d ∉ (syntaxClass0017).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins3k];
       exact freshnessCertificate0886)
   have freshnessCertificate0891 : d ∉ (syntaxClass0018).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cins2k];
       exact freshnessCertificate0890)
   have freshnessCertificate0892 : d ∉ ((syntaxClass0016).fv) ∪ ((syntaxClass0018).fv) :=
     (by
@@ -5506,7 +5789,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0889 freshnessCertificate0891))
   have freshnessCertificate0893 : d ∉ (syntaxClass0019).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0892)
   have freshnessCertificate0894 : d ∉ ((syntaxClass0012).fv) ∪ ((syntaxClass0019).fv) :=
     (by
@@ -5515,7 +5798,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0884 freshnessCertificate0893))
   have freshnessCertificate0895 : d ∉ (syntaxClass0020).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csymdif];
       exact freshnessCertificate0894)
   have freshnessCertificate0896 : d ∉ ((syntaxClass0123).fv) ∪ ((syntaxClass0020).fv) :=
     (by
@@ -5526,7 +5809,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     d ∉ ((Wff.classMem syntaxClass0123 syntaxClass0020)).fv :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0896)
   have p0156 :=
-    @gN1941v syntaxFormula0122 syntaxFormula0124 d (by exact freshnessCertificate0897)
+    @gN1941v syntaxFormula0122 syntaxFormula0124 d freshnessCertificate0897
   have p0157 :=
     @gBitr4i syntaxFormula0125 (synWa (synWex d syntaxFormula0122) syntaxFormula0124)
       syntaxFormula0127 p0155 p0156
@@ -5542,64 +5825,64 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     @gEleq1d syntaxFormula0122 syntaxClass0123 syntaxClass0131 syntaxClass0020 p0163
   have freshnessCertificate0898 : t ∉ ((Class.cv d)).fv :=
     (by
-      rw [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
+      with_reducible rewrite [NFChoice.Compiler.CoreFVSimp.fv_class_cv];
       exact
         (show t ∉ ({ d } : Finset Var) from
           (by
             simpa only [Finset.mem_singleton] using
-              (show t ≠ d from (by exact fresh_t_ne_d)))))
+              (show t ≠ d from fresh_t_ne_d))))
   have freshnessCertificate0899 : t ∉ ((synCsn (.cv d))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0898)
   have freshnessCertificate0900 : t ∉ ((synCsn (synCsn (.cv d)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0899)
   have freshnessCertificate0901 : t ∉ ((synCsn (synCsn (synCsn (.cv d))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0900)
   have freshnessCertificate0902 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (.cv d)))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0901)
   have freshnessCertificate0903 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0902)
   have freshnessCertificate0904 :
     t ∉ ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d)))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0903)
   have freshnessCertificate0905 :
     t ∉
       ((synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (synCsn (.cv d))))))))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0904)
   have freshnessCertificate0906 : t ∉ (syntaxClass0117).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0905)
   have freshnessCertificate0907 : t ∉ (syntaxClass0118).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0906)
   have freshnessCertificate0908 : t ∉ (syntaxClass0119).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0907)
   have freshnessCertificate0909 : t ∉ (syntaxClass0120).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0908)
   have freshnessCertificate0910 : t ∉ (syntaxClass0121).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0909)
   have freshnessCertificate0911 : t ∉ ((syntaxClass0121).fv) ∪ ((syntaxClass0108).fv) :=
     (by
@@ -5608,7 +5891,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0910 freshnessCertificate0831))
   have freshnessCertificate0912 : t ∉ (syntaxClass0131).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_copk];
       exact freshnessCertificate0911)
   have freshnessCertificate0913 : t ∉ ((syntaxClass0131).fv) ∪ ((syntaxClass0020).fv) :=
     (by
@@ -5620,7 +5903,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
     (by rw [NFChoice.Compiler.CoreFVSimp.fv_wff_classMem]; exact freshnessCertificate0913)
   have p0165 :=
     @gCeqsexv syntaxFormula0124 syntaxFormula0132 t syntaxClass0121
-      (by exact freshnessCertificate0910) (by exact freshnessCertificate0914) p0162 p0164
+      freshnessCertificate0910 freshnessCertificate0914 p0162 p0164
   have p0166 := @gElsymdif syntaxClass0131 syntaxClass0012 syntaxClass0019
   have p0167 := @gSnex syntaxClass0118
   have p0168 :=
@@ -5940,11 +6223,11 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0835 freshnessCertificate0845))
   have freshnessCertificate0916 : d ∉ ((synCun (.cv a) (.cv b))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cun];
       exact freshnessCertificate0915)
   have p0234 :=
-    @gDfcleq d (.cv c) (synCun (.cv a) (.cv b)) (by exact freshnessCertificate0853)
-      (by exact freshnessCertificate0916)
+    @gDfcleq d (.cv c) (synCun (.cv a) (.cv b)) freshnessCertificate0853
+      freshnessCertificate0916
   have p0235 :=
     @gAlex (synWb (.objMem d c) (.classMem (.cv d) (synCun (.cv a) (.cv b)))) d
   have p0236_e00_recanon :
@@ -6063,8 +6346,8 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
       (synCopk (synCsn (synCsn (.cv w))) (synCopk (.cv y) (.cv z))) syntaxClass0032
       p0050 p0030 p0020
   have p0251 :=
-    @gRexcom syntaxFormula0152 a b (.cv y) (.cv w) (by exact freshnessCertificate0644)
-      (by exact freshnessCertificate0746) (show a ≠ b from (by exact fresh_a_ne_b))
+    @gRexcom syntaxFormula0152 a b (.cv y) (.cv w) freshnessCertificate0644
+      freshnessCertificate0746 (show a ≠ b from fresh_a_ne_b)
   have p0252 := (Nominal.biimpRefl syntaxFormula0156)
   have p0253_e01_recanon :
     Nominal.NPrf
@@ -6109,6 +6392,41 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
       (.neg (synWb (.objMem c x) syntaxFormula0158)) p0048 p0049 p0256
   have p0258 :=
     @gExbii syntaxFormula0078 (.neg (synWb (.objMem c x) syntaxFormula0158)) c p0257
+  clear freshnessCertificate0255 p0020 p0030 p0048 p0049 p0050 p0052 p0055 p0058 p0061 p0064 p0068
+    p0069 p0070 p0078 p0079 p0082 p0083 p0084 p0086 p0088 p0091 p0094 p0097 p0098 p0099 p0107 p0108
+    freshnessCertificate0831 p0111 p0112 p0113 p0115 p0117 p0119 p0123 p0126 p0127 p0129 p0130 p0133
+    p0134 p0137 p0151 p0152 p0153 freshnessCertificate0834 p0155 freshnessCertificate0835
+    freshnessCertificate0844 freshnessCertificate0845 freshnessCertificate0846
+    freshnessCertificate0847 freshnessCertificate0848 freshnessCertificate0849
+    freshnessCertificate0850 freshnessCertificate0851 freshnessCertificate0852
+    freshnessCertificate0853 freshnessCertificate0854 freshnessCertificate0855
+    freshnessCertificate0856 freshnessCertificate0857 freshnessCertificate0858
+    freshnessCertificate0859 freshnessCertificate0860 freshnessCertificate0861
+    freshnessCertificate0862 freshnessCertificate0863 freshnessCertificate0864
+    freshnessCertificate0865 freshnessCertificate0866 freshnessCertificate0867
+    freshnessCertificate0868 freshnessCertificate0869 freshnessCertificate0870
+    freshnessCertificate0871 freshnessCertificate0872 freshnessCertificate0873
+    freshnessCertificate0874 freshnessCertificate0875 freshnessCertificate0876
+    freshnessCertificate0877 freshnessCertificate0878 freshnessCertificate0879
+    freshnessCertificate0880 freshnessCertificate0881 freshnessCertificate0882
+    freshnessCertificate0883 freshnessCertificate0884 freshnessCertificate0885
+    freshnessCertificate0886 freshnessCertificate0887 freshnessCertificate0888
+    freshnessCertificate0889 freshnessCertificate0890 freshnessCertificate0891
+    freshnessCertificate0892 freshnessCertificate0893 freshnessCertificate0894
+    freshnessCertificate0895 freshnessCertificate0896 freshnessCertificate0897 p0156 p0157 p0158
+    p0159 p0160 p0161 p0162 p0163 p0164 freshnessCertificate0898 freshnessCertificate0899
+    freshnessCertificate0900 freshnessCertificate0901 freshnessCertificate0902
+    freshnessCertificate0903 freshnessCertificate0904 freshnessCertificate0905
+    freshnessCertificate0906 freshnessCertificate0907 freshnessCertificate0908
+    freshnessCertificate0909 freshnessCertificate0910 freshnessCertificate0911
+    freshnessCertificate0912 freshnessCertificate0913 freshnessCertificate0914 p0165 p0166 p0167
+    p0168 p0169 p0170 p0171 p0172 p0173 p0174 p0175 p0176 p0177 p0178 p0179 p0180 p0181 p0182 p0183
+    p0184 p0185 p0186 p0187 p0188 p0189 p0190 p0191 p0192 p0193 p0194 p0195 p0196 p0197 p0198 p0199
+    p0200 p0201 p0202 p0203 p0204 p0205 p0206 p0207 p0208 p0209 p0210 p0211 p0212 p0213 p0214 p0215
+    p0216 p0217 p0218 p0219 p0220 p0221 p0222 p0223 p0224 p0225 p0226 p0227 p0228 p0229 p0230 p0231
+    p0232 p0233 freshnessCertificate0915 freshnessCertificate0916 p0234 p0235 p0236 p0237 p0238
+    p0239 p0240 p0241 p0242 p0243 p0244 p0245 p0246 p0247 p0248 p0249 p0250 p0251 p0252 p0253 p0254
+    p0255 p0256 p0257
   have p0259 :=
     @gN3bitri syntaxFormula0161 syntaxFormula0077 syntaxFormula0079
       (synWex c (.neg (synWb (.objMem c x) syntaxFormula0158))) p0036 p0044 p0258
@@ -6118,13 +6436,13 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0261 := @gElcompl syntaxClass0068 syntaxClass0035 p0035
   have p0262 :=
     NFChoice.DirectNominalPrf.NominalAlphaWrappersRepaired.nominalDfAddc c a b (.cv y)
-      (.cv w) (by exact freshnessCertificate0539) (by exact freshnessCertificate0749)
-      (by exact freshnessCertificate0644) (by exact freshnessCertificate0536)
-      (by exact freshnessCertificate0746) (by exact freshnessCertificate0641)
-      (show c ≠ a from (by exact fresh_c_ne_a)) (show c ≠ b from (by exact fresh_c_ne_b))
-      (show a ≠ b from (by exact fresh_a_ne_b))
+      (.cv w) freshnessCertificate0539 freshnessCertificate0749
+      freshnessCertificate0644 freshnessCertificate0536
+      freshnessCertificate0746 freshnessCertificate0641
+      (show c ≠ a from fresh_c_ne_a) (show c ≠ b from fresh_c_ne_b)
+      (show a ≠ b from fresh_a_ne_b)
   have p0263 := @gEqeq2i (synCplc (.cv y) (.cv w)) syntaxClass0162 (.cv x) p0262
-  have p0264 := @gEqabb syntaxFormula0158 c (.cv x) (by exact freshnessCertificate0531)
+  have p0264 := @gEqabb syntaxFormula0158 c (.cv x) freshnessCertificate0531
   have p0265 := @gAlex (synWb (.objMem c x) syntaxFormula0158) c
   have p0266_e01_recanon :
     Nominal.NPrf
@@ -6206,7 +6524,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0422 freshnessCertificate0419))
   have freshnessCertificate0918 : x ∉ ((synCplc (.cv y) (.cv w))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc];
       exact freshnessCertificate0917)
   have freshnessCertificate0919 :
     x ∉ (((synCplc (.cv y) (.cv w))).fv) ∪ (((synC1c)).fv) :=
@@ -6217,7 +6535,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have freshnessCertificate0920 :
     x ∉ ((synCplc (synCplc (.cv y) (.cv w)) (synC1c))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cplc];
       exact freshnessCertificate0919)
   have freshnessCertificate0921 :
     x ∉ (((Class.cv z)).fv) ∪ (((synCplc (synCplc (.cv y) (.cv w)) (synC1c))).fv) :=
@@ -6231,8 +6549,8 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
   have p0282 :=
     @gCeqsexv (.classEq (.cv z) (synCplc (.cv x) (synC1c)))
       (.classEq (.cv z) (synCplc (synCplc (.cv y) (.cv w)) (synC1c))) x
-      (synCplc (.cv y) (.cv w)) (by exact freshnessCertificate0918)
-      (by exact freshnessCertificate0922) p0279 p0281
+      (synCplc (.cv y) (.cv w)) freshnessCertificate0918
+      freshnessCertificate0922 p0279 p0281
   have p0283 :=
     @gN3bitri syntaxFormula0057 syntaxFormula0059 (synWex x syntaxFormula0168)
       (.classEq (.cv z) (synCplc (synCplc (.cv y) (.cv w)) (synC1c))) p0019 p0278 p0282
@@ -6294,7 +6612,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
       syntaxFormula0175 syntaxFormula0177 p0001 p0003 p0301
   have freshnessCertificate0923 : x ∉ ((synCvv)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cvv];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0924 : x ∉ (((synCvv)).fv) ∪ (((synCvv)).fv) :=
     (by
@@ -6303,7 +6621,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0923 freshnessCertificate0923))
   have freshnessCertificate0925 : x ∉ ((synCxpk (synCvv) (synCvv))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0924)
   have freshnessCertificate0926 :
     x ∉ ((syntaxClass0046).fv) ∪ (((synCpw1 (synCpw1 (synCpw1 (synC1c))))).fv) :=
@@ -6313,19 +6631,19 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0518 freshnessCertificate0474))
   have freshnessCertificate0927 : x ∉ (syntaxClass0047).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0926)
   have freshnessCertificate0928 : x ∉ ((synCnnc)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cnnc];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0929 : x ∉ ((synCpw1 (synCnnc))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0928)
   have freshnessCertificate0930 : x ∉ ((synCpw1 (synCpw1 (synCnnc)))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cpw1];
       exact freshnessCertificate0929)
   have freshnessCertificate0931 :
     x ∉ ((syntaxClass0047).fv) ∪ (((synCpw1 (synCpw1 (synCnnc)))).fv) :=
@@ -6335,15 +6653,15 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0927 freshnessCertificate0930))
   have freshnessCertificate0932 : x ∉ (syntaxClass0048).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cimak];
       exact freshnessCertificate0931)
   have freshnessCertificate0933 : x ∉ ((synC0)).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_c0];
       exact (show x ∉ (∅ : Finset Var) from (fun hmem => by cases hmem)))
   have freshnessCertificate0934 : x ∉ ((synCsn (synC0))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_csn];
       exact freshnessCertificate0933)
   have freshnessCertificate0935 : x ∉ (((synCsn (synC0))).fv) ∪ (((synCvv)).fv) :=
     (by
@@ -6352,7 +6670,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0934 freshnessCertificate0923))
   have freshnessCertificate0936 : x ∉ ((synCxpk (synCsn (synC0)) (synCvv))).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cxpk];
       exact freshnessCertificate0935)
   have freshnessCertificate0937 :
     x ∉ ((syntaxClass0048).fv) ∪ (((synCxpk (synCsn (synC0)) (synCvv))).fv) :=
@@ -6362,7 +6680,7 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0932 freshnessCertificate0936))
   have freshnessCertificate0938 : x ∉ (syntaxClass0049).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cdif];
       exact freshnessCertificate0937)
   have freshnessCertificate0939 :
     x ∉ (((synCxpk (synCvv) (synCvv))).fv) ∪ ((syntaxClass0049).fv) :=
@@ -6372,10 +6690,10 @@ noncomputable def gLtfinex : Nominal.NPrf (.classMem (synCltfin) (synCvv)) :=
           (not_mem_support_union _ _ _ freshnessCertificate0925 freshnessCertificate0938))
   have freshnessCertificate0940 : x ∉ (syntaxClass0178).fv :=
     (by
-      rw [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
+      with_reducible rewrite [NFChoice.Compiler.CompactSyntaxFVExplicit.fv_syn_cin];
       exact freshnessCertificate0939)
   have p0303 :=
-    @gEqabi syntaxFormula0177 x syntaxClass0178 (by exact freshnessCertificate0940) p0302
+    @gEqabi syntaxFormula0177 x syntaxClass0178 freshnessCertificate0940 p0302
   have p0304 :=
     @gEqtr4i (synCltfin) (.cab x syntaxFormula0177) syntaxClass0178 p0000 p0303
   have p0305 := @gVvex
