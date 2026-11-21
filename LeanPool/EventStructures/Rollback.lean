@@ -100,7 +100,8 @@ lemma rollback_redoable {c : Conf es} {e : es.Event} (he : e ∈ c.1) :
   intro x hx
   exact ⟨c.2.2 he (le_of_lt hx), fun h => not_le_of_gt hx h⟩
 
-/-- Causal safety: Rollback removes exactly the causal consequences of `e`. -/
+/-- Causal safety: every event that survives the rollback of `e` lies outside the causal
+future of `e`, which contains `e` itself. The exact membership is `rollbackFuture_mem`. -/
 lemma rollback_causal_safety {c : Conf es} {e : es.Event} {x : es.Event} :
     x ∈ (@rollbackFuture es c e).1 → x ∉ es.future e :=
   fun hx => hx.2
