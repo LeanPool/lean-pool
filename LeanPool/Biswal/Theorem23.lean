@@ -28,10 +28,10 @@ for the generating-function coefficients, nonnegativity of the pair coefficients
 coefficients.
 
 The Theorem 3 statements (`thm_manifest_factorization`, `thm_manifest_coeff_formula`,
-`thm_manifest_coeff_nonneg`) are conditional: they take as hypotheses a list of pairs
-`(a, b)` with `a + b ≤ m - 1` and the factorization of `alphaProd` as the product of the
-corresponding `polyP a * polyP b`. The combinatorial step that constructs such a pairing
-from the partition is not formalized here.
+`thm_manifest_coeff_nonneg`) assume `2 ≤ m`, parts at most `m`, and
+`countMaxParts m ξ ≤ μ / m + 1`. They also assume pairs `(a, b)` with `a + b ≤ m - 1`
+that factor `alphaProd` into the corresponding product of `polyP a * polyP b`.
+The combinatorial step that constructs the pairing from the partition is outside this formalization.
 -/
 
 @[expose] public section
@@ -385,9 +385,9 @@ lemma coe_prod_mul_inv_pow_eq_prod (m k : ℕ)
         ∏ _ν : Fin k, ((↑(polyP ℚ m) : PowerSeries ℚ)⁻¹) from (Fin.prod_const k _).symm]
   exact Finset.prod_mul_distrib.symm
 
-/-- Theorem 3 (i), conditional on a pairing: if `alphaProd ℚ m μ ξ` factors as the product
-of `polyP a * polyP b` over `k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`
-(hypotheses `h_bound`, `h_factor`), then the generating function is the product of the
+/-- Theorem 3 (i), with the reduction hypotheses `hm`, `h_parts`, and `hk_nonneg`: if
+`alphaProd ℚ m μ ξ` factors as the product of `polyP a * polyP b` over
+`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then the generating function is the product of the
 power series with coefficients `dCoeff ℚ m a b`. The existence of such a pairing is
 assumed, not proved. -/
 theorem thm_manifest_factorization (m μ : ℕ) {s : ℕ}
@@ -419,8 +419,8 @@ lemma coeff_prod_mk_eq_sum_antidiag (k r : ℕ) (g : Fin k → ℕ → ℚ) :
   rw [coeff_fin_prod_eq_antidiag_sum' k r (fun ν => PowerSeries.mk (g ν))]
   simp_rw [PowerSeries.coeff_mk]
 
-/-- Theorem 3 (i), coefficient form, conditional on a pairing: under the assumed pairing
-and factorization `h_bound`, `h_factor` of `thm_manifest_factorization`, the `r`-th
+/-- Theorem 3 (i), coefficient form, under the reduction and pairing hypotheses of
+`thm_manifest_factorization`, the `r`-th
 coefficient of the generating function is the sum over `k`-tuples summing to `r` of
 products of `dCoeff` values. The existence of the pairing is assumed, not proved. -/
 theorem thm_manifest_coeff_formula (m μ : ℕ) {s : ℕ}
@@ -1092,9 +1092,9 @@ lemma D_coeff_eq_nat_cast (m a b u : ℕ) (hm : 2 ≤ m)
 
 /-! ## Theorem 3: Part (iii) - Nonnegativity of all coefficients, given a pairing -/
 
-/-- Theorem 3 (iii), conditional on a pairing: if `alphaProd ℚ m μ ξ` factors as the product
-of `polyP a * polyP b` over `k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`
-(hypotheses `h_bound`, `h_factor`), then every coefficient of the generating function is
+/-- Theorem 3 (iii), with the reduction hypotheses `hm`, `h_parts`, and `hk_nonneg`: if
+`alphaProd ℚ m μ ξ` factors as the product of `polyP a * polyP b` over
+`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then every coefficient of the generating function is
 nonnegative. The existence of such a pairing for the partition is assumed, not proved. -/
 theorem thm_manifest_coeff_nonneg (m μ : ℕ) {s : ℕ}
     (ξ : Nat.Partition s) (hm : 2 ≤ m) (h_parts : ∀ i ∈ ξ.parts, i ≤ m)
