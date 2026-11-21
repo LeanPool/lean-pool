@@ -12,7 +12,7 @@ public import LeanPool.ConwayRefinement.CombinatorialGames.Surreal.Pow
 # API checks for the ordered real module structure on surreal numbers
 
 The first check identifies scalar multiplication with the standard real embedding. The second
-uses the genuinely non-real surreal `ω` and confirms that multiplication by a positive real is
+uses the genuinely non-real surreal `ω^ 1` and confirms that multiplication by a positive real is
 strictly monotone on it.
 -/
 
@@ -25,10 +25,10 @@ theorem surreal_real_smul (r : ℝ) (x : Surreal) :
   Surreal.real_smul_def r x
 
 theorem surreal_real_smul_omega_strictMono :
-    StrictMono (fun r : ℝ ↦ r • (ω^ (0 : Surreal))) := by
+    StrictMono (fun r : ℝ ↦ r • (ω^ (1 : Surreal))) := by
   intro r s hrs
-  change r • (ω^ (0 : Surreal)) < s • (ω^ (0 : Surreal))
+  change r • (ω^ (1 : Surreal)) < s • (ω^ (1 : Surreal))
   rw [Surreal.real_smul_def, Surreal.real_smul_def]
-  exact mul_lt_mul_of_pos_right (Real.toSurreal_lt_iff.mpr hrs) (Surreal.wpow_pos 0)
+  exact mul_lt_mul_of_pos_right (Real.toSurreal_lt_iff.mpr hrs) (Surreal.wpow_pos 1)
 
 end Tests
