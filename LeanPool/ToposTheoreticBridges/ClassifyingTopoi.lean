@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntax
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Semantics
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Infinitary
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.CatSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.TypeSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.InverseImage
@@ -17,6 +18,8 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalForm
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalFormSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Bridges
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Diaconescu
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuExistence
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuGeneral
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Quotients
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Horn
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Fiber
@@ -36,6 +39,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Unconditional
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.PresheafType
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.ObjectClassifier
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Torsors
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.TorsorClassification
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Interval
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.FinitelyPresentable
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Homogeneous
@@ -49,6 +53,9 @@ Layer 1 of the roadmap: geometric logic and its semantics.
   geometric logic over a first-order language of Mathlib;
 * `LeanPool.ClassifyingTopoi.GeometricFormula.realize_hom`: homomorphisms of structures preserve
   geometric formulas;
+* `LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf` (roadmap 1.2): geometric formulas
+  are formulas of the infinitary logic `L_{∞ω}` of Tau Ceti (`GeometricFormula.toInf`), with the
+  same satisfaction; `GeometricTheory.isSetModel_iff_toInf` for theories;
 * `LeanPool.ClassifyingTopoi.CatStructure.interp`: the interpretation of geometric formulas as
   subobjects in a category with finite limits, images and coproducts;
 * `LeanPool.ClassifyingTopoi.CatStructure.isModel_ofStructure_iff`: in the category `Type u`, the
@@ -73,6 +80,11 @@ Layer 2 of the roadmap: classifying topoi.
 * `LeanPool.ClassifyingTopoi.exists_iso_sheafify_comp_iff`,
   `LeanPool.ClassifyingTopoi.nonempty_iso_of_yoneda_comp_iso`: the localisation and uniqueness
   halves of Diaconescu's theorem;
+* `LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering`: the existence half of
+  Diaconescu's theorem: a functor `C ⥤ Sh(D, K)` flat in the internal sense of `Sh(D, K)`
+  (`IsLocallyFiltering`) and sending covers to epimorphic families extends to a left exact left
+  adjoint `Sh(C, J) ⥤ Sh(D, K)`; the special cases `exists_leftAdjoint_of_flat` (presheaf topoi)
+  and `exists_leftAdjoint_of_preservesFiniteLimits` (left exact functors, `C` with finite limits);
 * `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology` (roadmap 2.5): every
   quotient of `T` is classified by a topology finer than `J`, with the sheafified generic model;
   the converse `IsClassifyingSite.exists_quotient_theory_of_definable` and the bridges theorem
@@ -118,10 +130,11 @@ Layer 3 of the roadmap: theories of presheaf type (the modules
   of the language, whose induced topology is the topology classifying the theory;
 * `LeanPool.ClassifyingTopoi.isClassifyingSite_genericObject` (roadmap 3.2): the functors from
   finite sets to sets classify objects, with the inclusion as generic object;
-* `LeanPool.ClassifyingTopoi.isModel_genericTorsor` and
-  `LeanPool.ClassifyingTopoi.moritaEquivalent_torsorTheory_of_mulEquiv` (roadmap 3.3, partial):
-  the generic torsor is a torsor, and isomorphic groups have Morita-equivalent theories of
-  torsors;
+* `LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor` and
+  `LeanPool.ClassifyingTopoi.moritaEquivalent_torsorTheory_iff` (roadmap 3.3): the topos of
+  `G`-sets classifies `G`-torsors, through Diaconescu's theorem and the local Kripke–Joyal
+  semantics of sheaf topoi (`CatStructure.IsModel.locally_realize`), and the theories of
+  `G`-torsors and `H`-torsors are Morita equivalent exactly when `G ≃* H`;
 * `LeanPool.ClassifyingTopoi.isModel_genericInterval` (roadmap 3.4, partial): the standard
   `1`-simplex is an interval in simplicial sets;
 * the definitions of roadmap 3.5 (`GeometricFormula.IsIrreducible`, `SetModel`, `FPModel`,
@@ -129,12 +142,10 @@ Layer 3 of the roadmap: theories of presheaf type (the modules
   `LeanPool.ClassifyingTopoi.isSetModel_iff_isIrreducibleObject`: a finitely presentable model is
   a model of a quotient whose models are the homogeneous ones iff it is irreducible.
 
-Not formalised in layer 3: the classification of torsors by `SingleObj G` and the converse of
-the Morita equivalence (roadmap 3.3), the classification of intervals by simplicial sets
-(roadmap 3.4), and the theorems of roadmap 3.5 and the existence of quotients of 3.6, which need
-the existence half of Diaconescu's theorem beyond the Horn sites and the identification of the
-finitely presentable models with the irreducible objects of the classifying topos.
-
-The translation of geometric formulas into infinitary logic `L_{∞ω}` (roadmap 1.2, `toInf` and
-`realize_toInf`) is not formalised, since it is not available in Mathlib.
+Not formalised in layer 3: the classification of intervals by simplicial sets (roadmap 3.4), and
+the theorems of roadmap 3.5 and the existence of quotients of 3.6. The existence half of
+Diaconescu's theorem they rely on is available (`exists_leftAdjoint_of_isLocallyFiltering`);
+missing are the translation of intervals into locally filtering functors on the simplex category,
+and the identification of the finitely presentable models with the irreducible objects of the
+classifying topos.
 -/

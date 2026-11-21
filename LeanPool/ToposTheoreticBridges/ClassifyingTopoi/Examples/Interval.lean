@@ -26,9 +26,10 @@ interval (`LeanPool.ClassifyingTopoi.genericInterval`), the standard `1`-simplex
 ## Not formalised
 
 The classification of intervals by simplicial sets (`isClassifyingSite_genericInterval`) is not
-formalised: it needs the existence half of Diaconescu's theorem for the simplex category, the
-left exact extension of the flat functor `[n] ↦ {x₁ ≤ ⋯ ≤ xₙ}` defined by an interval in a sheaf
-topos.
+formalised. The existence half of Diaconescu's theorem it uses is
+`LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering`; missing are the proof that
+the functor `[n] ↦ {x₁ ≤ ⋯ ≤ xₙ}` defined by an interval in a sheaf topos is locally filtering,
+and the uniqueness part of the universal property.
 -/
 
 @[expose] public section

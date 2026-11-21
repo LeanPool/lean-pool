@@ -39,13 +39,15 @@ the topologies `J₁ ≥ J` on `C` (roadmap 2.5, `LeanPool.ClassifyingTopoi.Quot
   functors out of `Sh(C, J₁)` are those between their composites with the sheafification
   `Sh(C, J) ⥤ Sh(C, J₁)`, which is a localisation.
 
-## Not formalised
+## Existence half
 
-The existence half of Diaconescu's theorem in general (a flat `J`-continuous functor
-`C ⥤ Sh(D, K)` extends to a left exact left adjoint `Sh(C, J) ⥤ Sh(D, K)`) is not formalised: it
-needs the internal notion of flatness in a sheaf topos (filtering functors), which Mathlib does
-not have. For the Horn sites it is proved in `Syntactic/Extension.lean` through points
-(`GrothendieckTopology.Point`), which is all the classifying sites need.
+The existence half is proved in the module
+`LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuExistence` for presheaf topoi
+(`exists_leftAdjoint_of_flat`) and for left exact functors out of a category with finite limits
+(`exists_leftAdjoint_of_preservesFiniteLimits`), through the points of the site
+(`GrothendieckTopology.Point`). The general case, a functor `C ⥤ Sh(D, K)` flat in the internal
+sense of `Sh(D, K)` (locally filtering), is `exists_leftAdjoint_of_isLocallyFiltering`
+(`DiaconescuGeneral`).
 -/
 
 @[expose] public section

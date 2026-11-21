@@ -22,8 +22,9 @@ sequent; set-models of a geometric theory.
   preserved by `HomClass.realize_term`, relations by `Hom.map_rel`, and disjunctions and
   existentials push forward their witnesses.
 
-The translation of geometric formulas into infinitary first-order logic (roadmap 1.2,
-`GeometricFormula.toInf`) is not formalised here, since `L_{∞ω}` is not available in Mathlib.
+The translation of geometric formulas into the infinitary first-order logic `L_{∞ω}` of
+Tau Ceti (roadmap 1.2, `GeometricFormula.toInf`) is in the module
+`LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Infinitary`.
 -/
 
 @[expose] public section

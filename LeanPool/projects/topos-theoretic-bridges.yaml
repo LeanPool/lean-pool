@@ -12,7 +12,12 @@ summary: Morita equivalence of small categories, defined as equivalence of their
   categorical semantics in sheaf topoi is developed; every geometric theory has a classifying
   site, unique up to equivalence of topoi, on which every subobject of a power of the generic
   model is definable; the quotients of a theory correspond to the topologies finer than its
-  classifying one, and the quotients of Morita-equivalent theories correspond. These are
+  classifying one, and the quotients of Morita-equivalent theories correspond. Geometric
+  formulas translate into the infinitary logic of Tau Ceti with the same satisfaction, and the
+  existence half of Diaconescu's theorem is proved, extending every internally flat continuous
+  functor from a site to a sheaf topos to the inverse image of a geometric morphism; as an
+  application, G-sets classify G-torsors, whose theories are Morita equivalent exactly for
+  isomorphic groups. These are
   instances of O. Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
   presentations.
 branch: category theory
@@ -38,6 +43,9 @@ main_declarations:
 - LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology
 - LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_theory
 - LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients
+- LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf
+- LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering
+- LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor
 main_results:
 - declaration: LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
   informal: Two small categories have equivalent categories of presheaves of sets exactly
@@ -101,6 +109,43 @@ main_results:
 - declaration: LeanPool.ClassifyingTopoi.GeometricTheory.Provable.sound
   informal: Geometric sequents provable from a theory hold in every model of the theory in every
     sheaf topos of a small site.
+- declaration: LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf
+  informal: The translation of a geometric formula into Tau Ceti's infinitary first-order logic,
+    with no free variables and the context as bound variables, holds in a structure at an
+    assignment of the context exactly when the geometric formula does.
+- declaration: LeanPool.ClassifyingTopoi.GeometricTheory.isSetModel_iff_toInf
+  informal: A structure on a type is a model of a geometric theory exactly when it satisfies,
+    for every axiom phi |- psi of the theory, the infinitary sentence saying that every
+    assignment satisfying phi satisfies psi.
+- declaration: LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_flat
+  informal: Let (C, J) be a small site and D a small category. If F is a functor from C to
+    presheaves of sets on D such that, for every object d of D, the functor F(-)(d) has a
+    cofiltered category of elements and sends every J-covering sieve to a jointly surjective
+    family, then there is a finite-limit preserving left adjoint G from J-sheaves of sets on C
+    to presheaves of sets on D whose composite with the sheafified Yoneda embedding of C is
+    isomorphic to F.
+- declaration: LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_preservesFiniteLimits
+  informal: Let (C, J) and (D, K) be small sites, C having finite limits. A finite-limit
+    preserving functor F from C to K-sheaves of sets on D which sends every J-covering sieve
+    to an epimorphic family extends to a finite-limit preserving left adjoint G from J-sheaves
+    of sets on C to K-sheaves of sets on D, whose composite with the sheafified Yoneda
+    embedding of C is isomorphic to F.
+- declaration: LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering
+  informal: Let (C, J) and (D, K) be small sites and F a functor from C to K-sheaves of sets
+    on D. Suppose that, viewed as presheaves, the categories of elements of F are cofiltered
+    locally for K (for every object d of D, after restriction to some K-covering sieve of d
+    there is an element, any two elements come from one along a span, and any element
+    equalized by two parallel morphisms comes from one along an equalizing morphism), and that
+    F sends every J-covering sieve to an epimorphic family. Then there is a finite-limit
+    preserving left adjoint G from J-sheaves of sets on C to K-sheaves of sets on D whose
+    composite with the sheafified Yoneda embedding of C is isomorphic to F.
+- declaration: LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor
+  informal: For a group G, the category of presheaves of sets on the one-object category of G
+    (right G-sets), with the representable presheaf on which G acts on the left, classifies
+    the geometric theory of G-torsors (a left action that is inhabited, transitive and free).
+- declaration: LeanPool.ClassifyingTopoi.moritaEquivalent_torsorTheory_iff
+  informal: The geometric theories of G-torsors and of H-torsors are Morita equivalent exactly
+    when the groups G and H are isomorphic.
 tags:
 - topos-theory
 - classifying-topoi

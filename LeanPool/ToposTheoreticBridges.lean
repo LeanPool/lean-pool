@@ -3,6 +3,7 @@ Copyright (c) 2026 Michel Hua. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Michel Hua
 -/
+
 module
 
 public import LeanPool.ToposTheoreticBridges.Morita
@@ -29,7 +30,10 @@ Main declarations: `LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karou
   `LeanPool.ClassifyingTopoi.exists_isClassifyingSite`,
   `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology`,
   `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_theory`,
-  `LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients`
+  `LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients`,
+  `LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf`,
+  `LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering`,
+  `LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor`
 Tags: topos-theory, classifying-topoi, morita-equivalence, karoubi-envelope, presheaf-topoi
 MSC: 18F10, 18B25, 18E50, 03G30
 -/
