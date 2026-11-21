@@ -75,7 +75,7 @@ theorem le_iff {S T : Subtopos E} : S ≤ T ↔ ∀ X, S.prop X → T.prop X :=
 
 /-- Every object is orthogonal to an isomorphism. -/
 theorem isOrthogonal_of_isIso {A B : E} (m : A ⟶ B) [IsIso m] (X : E) : IsOrthogonal m X :=
-  fun f => ⟨inv m ≫ f, by simp, fun g hg => by simp [← hg]⟩
+  (forall_isOrthogonal_iff_isLocal ⊤ m).2 (ObjectProperty.isLocal_of_isIso _ m) X trivial
 
 section Localisation
 
@@ -84,12 +84,13 @@ variable {P : ObjectProperty E} {L : E ⥤ P.FullSubcategory} (adj : L ⊣ P.ι)
 
 include adj in
 /-- For a reflective class `P` with pullback-preserving reflector `L`, a monomorphism inverted
-by `L` is dense for `P`. -/
+by `L` is dense for `P`: its pullbacks are inverted by `L`, hence `P`-local
+(`ObjectProperty.isLocal_iff_isIso_map`). -/
 theorem isDenseFor_of_isIso_map {A B : E} (m : A ⟶ B) [Mono m] [IsIso (L.map m)] :
     IsDenseFor P m := by
-  refine ⟨inferInstance, fun T A' t n a hp H hH => ?_⟩
+  refine (isDenseFor_iff_universally P m).2 ⟨inferInstance, fun _ _ _ _ n hp H hH => ?_⟩
   have := (L.map_isPullback hp).isIso_fst_of_isIso
-  exact (isOrthogonal_map_iff_of_adjunction adj n ⟨H, hH⟩).1 (isOrthogonal_of_isIso _ _)
+  exact (ObjectProperty.isLocal_iff_isIso_map adj n).2 this H ⟨⟨H, hH⟩, rfl⟩
 
 omit [PreservesLimitsOfShape WalkingCospan L] in
 include adj in
