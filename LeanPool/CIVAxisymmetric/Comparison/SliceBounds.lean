@@ -91,8 +91,8 @@ theorem IsLocallyBoundedOn.ae_slice_measurable {m : ℕ} {I : Set ℝ} {q : Vec 
   exact (hg_slice τ).congr hτ.symm
 
 /-- If `B` is an admissible drift on `I`, then for every compact `J ⊆ I` there exists `Λ ≥ 0`
-such that for almost every `τ ∈ J` the slice `B(·, τ)` is bounded and `Λ`-Lipschitz in `x`,
-`|divB(·, τ)| ≤ Λ`, and `divB(·, τ)` is the weak divergence of `B(·, τ)`. -/
+such that for almost every `τ ∈ J` the slice `B(·, τ)` is bounded by `Λ` and `Λ`-Lipschitz in
+`x`, and `|divB(·, τ)| ≤ Λ`. -/
 theorem IsAdmissibleDrift.ae_slice {m : ℕ} {I J : Set ℝ} {B : Vec m × ℝ → Vec m}
     {divB : Vec m × ℝ → ℝ} (hB : IsAdmissibleDrift m I B divB) (hJ : IsCompact J) (hJI : J ⊆ I) :
     ∃ Λ : NNReal, ∀ᵐ τ ∂(volume.restrict J),
