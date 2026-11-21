@@ -51,8 +51,8 @@ Mathlib's `ObjectProperty.isLocal`, `MorphismProperty.universally` and
 `MorphismProperty.isLocal` (`isOrthogonal_iff_bijective`, `forall_isOrthogonal_iff_isLocal`,
 `isDenseFor_iff_universally`, `isLocalFor_iff_isLocal`).
 
-We do not formalise subtopoi, Lawvere–Tierney topologies or the fact that every subtopos comes
-from a topology; only the topologies finer than the given ones are considered.
+Subtopoi and their correspondence with finer topologies are formalised in
+`LeanPool.ToposTheoreticBridges.Subtopos`. Lawvere–Tierney topologies are not formalised.
 -/
 
 @[expose] public section
