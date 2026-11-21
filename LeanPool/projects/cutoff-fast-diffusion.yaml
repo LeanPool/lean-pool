@@ -72,8 +72,8 @@ main_results:
 - declaration: Cutfast.cutoff_fixedExponent_fisherInfo
   informal: >-
     For fixed porous medium exponent m > 1 and r > 0, the supremum of
-    relative Fisher information over the ball of initial points of radius
-    r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at
+    relative Fisher information over the closed ball of initial points of
+    radius r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at
     (1 + ε)t* for fixed ε > 0, with t* = log d / 2.
 tags:
 - barenblatt-profiles

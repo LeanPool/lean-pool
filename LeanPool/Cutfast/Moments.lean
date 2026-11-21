@@ -281,4 +281,24 @@ theorem compactBarenblatt_secondMoment_eq {d : ℕ} (hd : 1 ≤ d) {m : ℝ} (hm
   have g2 : 0 < Gamma (q + 1 + d / 2) := Gamma_pos_of_pos (by positivity)
   field_simp
 
+/-- **Lemma 3.1, eq. (Bac).** For `d ≥ 1`, `p > d/2`, `b > 0` and `-d < a < 2p - d`:
+`∫ |x|ᵃ B(x) dx = (π^{d/2} Γ(p-d/2) / (bᵖ Γ(p)))^{a/(2p-d)} Γ((d+a)/2) Γ(p-(d+a)/2) /
+(Γ(d/2) Γ(p-d/2))`. For `a = 0` this says that `B` is a probability density. -/
+alias fullBarenblatt_moment := fullBarenblatt_moment'
+
+/-- **Lemma 3.1, eq. (Bm).** For `d ≥ 1`, `m > 0`, `b > 0` and `p > d/(2m)`, `p > d/2`:
+`∫ B(x)ᵐ dx = (π/b)^{dp(1-m)/(2p-d)} (Γ(p)/Γ(p-d/2))^{(2pm-d)/(2p-d)} Γ(pm-d/2) / Γ(pm)`. -/
+alias fullBarenblatt_integral_rpow := fullBarenblatt_integral_rpow'
+
+/-- **Extension of Lemma 4.1, equation (4.2).** For `d ≥ 1`, `p > 0` and `b > 0`, the formula
+holds for all `a > -d`, including negative exponents.
+`∫ |x|ᵃ B(x) dx = (Γ(p+1+d/2) / (π^{d/2} bᵖ Γ(p+1)))^{a/(d+2p)}
+Γ(p+1+d/2) Γ((d+a)/2) / (Γ(d/2) Γ(p+1+(d+a)/2))`. For `a = 0`, `B` is a probability density. -/
+alias compactBarenblatt_moment := compactBarenblatt_moment'
+
+/-- **Lemma 4.1, eq. (Bmpme).** For `d ≥ 1`, `p > 0`, `b > 0` and `m > 0`:
+`∫ B(x)ᵐ dx = Γ(p+1+d/2)/Γ(pm+1+d/2) · Γ(pm+1)/Γ(p+1) ·
+(b^{d/2}/π^{d/2} · Γ(p+1+d/2)/Γ(p+1))^{2p(m-1)/(2p+d)}`. -/
+alias compactBarenblatt_integral_rpow := compactBarenblatt_integral_rpow'
+
 end Cutfast

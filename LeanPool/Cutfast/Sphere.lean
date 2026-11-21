@@ -8,10 +8,10 @@ Authors: Djalil Chafaï
 
 module
 
+public import LeanPool.Cutfast.GaussianDensity
 public import LeanPool.Cutfast.Radial
 public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 public import Mathlib.Tactic.Linter.Style
 public import Mathlib.Topology.UniformSpace.Uniformizable
 public import Std.Tactic.BVDecide.Normalize.Prop
@@ -75,9 +75,6 @@ theorem lintegral_polar {d : ℕ} (hd : 1 ≤ d) (G : EuclideanSpace ℝ (Fin d)
         exact lintegral_subtype_comap measurableSet_Ioi (fun r ↦ ENNReal.ofReal (r ^ (d - 1)) * φ r)
 
 
-/-- The radial profile of the standard Gaussian density on `ℝᵈ`. -/
-noncomputable def gaussProfile (d : ℕ) (r : ℝ) : ℝ := (√(2 * π))⁻¹ ^ d * rexp (-r ^ 2 / 2)
-
 lemma prod_gaussianPDFReal {d : ℕ} (v : Fin d → ℝ) :
     ∏ i, gaussianPDFReal 0 1 (v i) =
       gaussProfile d ‖(WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d))‖ := by
@@ -120,14 +117,10 @@ lemma pi_gaussianReal {d : ℕ} :
 lemma lintegral_stdGaussian {d : ℕ} (h : EuclideanSpace ℝ (Fin d) → ℝ≥0∞) (hh : Measurable h) :
     ∫⁻ x, h x ∂(stdGaussian (EuclideanSpace ℝ (Fin d))) =
       ∫⁻ x, h x * ENNReal.ofReal (gaussProfile d ‖x‖) := by
-  rw [← map_pi_eq_stdGaussian, lintegral_map hh (by fun_prop), pi_gaussianReal,
-    lintegral_withDensity_eq_lintegral_mul _ (by fun_prop)
-      (g := fun v : Fin d → ℝ ↦ h (WithLp.toLp 2 v)) (hh.comp (by fun_prop)),
-    ← (PiLp.volume_preserving_toLp (Fin d)).lintegral_comp_emb
-    (MeasurableEquiv.toLp 2 (Fin d → ℝ)).measurableEmbedding]
-  congr 1 with v
-  simp only [Pi.mul_apply, prod_gaussianPDFReal, mul_comm]
-
+  rw [Student.stdGaussian_eq_withDensity,
+    lintegral_withDensity_eq_lintegral_mul _
+      Student.continuous_gaussDensity.measurable.ennreal_ofReal hh]
+  simp only [Pi.mul_apply, Student.gaussDensity, mul_comm]
 
 /-- Integrals against the uniform law on the sphere of radius `R`. -/
 lemma lintegral_sphereUniform (d : ℕ) (R : ℝ) {h : E d → ℝ≥0∞} (hh : Measurable h) :
@@ -802,5 +795,18 @@ theorem sphereUniform_map_stereoProj' {d : ℕ} (hd : 2 ≤ d) :
       positivity),
     ← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity), ← mul_assoc,
     Sphere.stereo_const hm hq]
+
+/-- **Remark 4.3.** If `X` is uniform on the sphere of radius `R` of `ℝᵈ`, then for
+`1 ≤ n ≤ d-1`, `(X₁, …, X_n)` has density `C (R² - |y|²)^{(d-n-2)/2} 1_{|y| < R}` on `ℝⁿ`, with
+`C = Γ(d/2) / (π^{n/2} Γ((d-n)/2) R^{d-2})`. -/
+alias sphereUniform_map_projFirst := sphereUniform_map_projFirst'
+
+/-- **Remark 4.3.** If `Z ∼ 𝒩(0, I_d)` then `R Z/|Z|` is uniform on the sphere of radius `R`. -/
+alias stdGaussian_map_sphereUniform := stdGaussian_map_sphereUniform'
+
+/-- **Remark 4.3, stereographic projection.** If `X` is uniform on the unit sphere of `ℝᵈ`,
+`d ≥ 2`, then its stereographic projection on `ℝ^{d-1}` has the full-space Barenblatt density
+`Γ(d-1) / (π^{(d-1)/2} Γ((d-1)/2)) (1 + |y|²)^{-(d-1)}` (no extra radial weight). -/
+alias sphereUniform_map_stereoProj := sphereUniform_map_stereoProj'
 
 end Cutfast

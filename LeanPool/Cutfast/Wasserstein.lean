@@ -110,6 +110,31 @@ lemma inner_reg_le {A : E d →L[ℝ] E d} (hA : A.IsPositive) {δ : ℝ} (hδ :
   rw [hB]
   nlinarith [mul_nonneg hδ hw]
 
+private lemma integrable_coupling_cost {μ ν : Measure (E d)} {γ : Measure (E d × E d)}
+    (h1 : γ.map Prod.fst = μ) (h2 : γ.map Prod.snd = ν)
+    (hμ : Integrable (fun x => ‖x‖ ^ 2) μ) (hν : Integrable (fun y => ‖y‖ ^ 2) ν) :
+    Integrable (fun p => ‖p.1 - p.2‖ ^ 2) γ := by
+  have hγ1 : Integrable (fun p : E d × E d => ‖p.1‖ ^ 2) γ := by
+    have : Integrable (fun x : E d => ‖x‖ ^ 2) (γ.map Prod.fst) := h1 ▸ hμ
+    exact (integrable_map_measure (by fun_prop) measurable_fst.aemeasurable).1 this
+  have hγ2 : Integrable (fun p : E d × E d => ‖p.2‖ ^ 2) γ := by
+    have : Integrable (fun x : E d => ‖x‖ ^ 2) (γ.map Prod.snd) := h2 ▸ hν
+    exact (integrable_map_measure (by fun_prop) measurable_snd.aemeasurable).1 this
+  refine ((hγ1.add hγ2).const_mul 2).mono' (by fun_prop) (ae_of_all _ fun p => ?_)
+  rw [Real.norm_eq_abs, abs_of_nonneg (by positivity), Pi.add_apply]
+  have := norm_sub_le p.1 p.2
+  nlinarith [norm_nonneg (p.1 - p.2), sq_nonneg (‖p.1‖ - ‖p.2‖)]
+
+private lemma integrable_affine_displacement {μ : Measure (E d)} [IsFiniteMeasure μ]
+    (hμ : Integrable (fun x => ‖x‖ ^ 2) μ) (A : E d →L[ℝ] E d) (h : E d) :
+    Integrable (fun x => ‖x - (A x + h)‖ ^ 2) μ := by
+  have hid : AEStronglyMeasurable (fun x : E d => x) μ := aestronglyMeasurable_id
+  have := integrable_sq_clm hid hμ (1 - A) (-h)
+  refine this.congr (ae_of_all _ fun x => ?_)
+  simp only [sub_apply, one_apply_eq_self]
+  congr 2
+  abel
+
 /-- The key lower bound: for every coupling `γ` of `μ` and `T_#μ` and every `δ > 0`,
 `∫ ‖x - T x‖² dμ - δ ∫ ‖x‖² dμ ≤ ∫ ‖x - y‖² dγ`. -/
 lemma lower_bound (μ : Measure (E d)) [IsProbabilityMeasure μ]
@@ -124,13 +149,6 @@ lemma lower_bound (μ : Measure (E d)) [IsProbabilityMeasure μ]
   have hid : AEStronglyMeasurable (fun x : E d => x) μ := aestronglyMeasurable_id
   have hν2 : Integrable (fun y => ‖y‖ ^ 2) ν :=
     (integrable_map_measure (by fun_prop) hTm.aemeasurable).2 (integrable_sq_clm hid hμ A h)
-  -- second moments of the marginals of `γ`
-  have hγ1 : Integrable (fun p : E d × E d => ‖p.1‖ ^ 2) γ := by
-    have : Integrable (fun x : E d => ‖x‖ ^ 2) (γ.map Prod.fst) := h1 ▸ hμ
-    exact (integrable_map_measure (by fun_prop) measurable_fst.aemeasurable).1 this
-  have hγ2 : Integrable (fun p : E d × E d => ‖p.2‖ ^ 2) γ := by
-    have : Integrable (fun x : E d => ‖x‖ ^ 2) (γ.map Prod.snd) := h2 ▸ hν2
-    exact (integrable_map_measure (by fun_prop) measurable_snd.aemeasurable).1 this
   -- the regularized operator and its inverse
   set B : E d →L[ℝ] E d := A + δ • (1 : E d →L[ℝ] E d) with hBdef
   have hBinner : ∀ x, ⟪B x, x⟫_ℝ = ⟪A x, x⟫_ℝ + δ * ‖x‖ ^ 2 := fun x => by
@@ -202,17 +220,8 @@ lemma lower_bound (μ : Measure (E d)) [IsProbabilityMeasure μ]
   have hf₂γ : Integrable (fun p : E d × E d => f₂ p.2) γ := by
     have : Integrable f₂ (γ.map Prod.snd) := by rw [h2]; exact hf₂i
     exact this.comp_measurable measurable_snd
-  have hcost : Integrable (fun p : E d × E d => ‖p.1 - p.2‖ ^ 2) γ := by
-    refine ((hγ1.add hγ2).const_mul 2).mono' (by fun_prop) (ae_of_all _ fun p => ?_)
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity), Pi.add_apply]
-    have := norm_sub_le p.1 p.2
-    nlinarith [norm_nonneg (p.1 - p.2), sq_nonneg (‖p.1‖ - ‖p.2‖)]
-  have hI : Integrable (fun x => ‖x - T x‖ ^ 2) μ := by
-    have := integrable_sq_clm hid hμ (1 - A) (-h)
-    refine this.congr (ae_of_all _ fun x => ?_)
-    simp only [hT, sub_apply, one_apply_eq_self]
-    congr 2
-    abel
+  have hcost := integrable_coupling_cost h1 h2 hμ hν2
+  have hI : Integrable (fun x => ‖x - T x‖ ^ 2) μ := integrable_affine_displacement hμ A h
   have hTsq : Integrable (fun x => ‖T x‖ ^ 2 - ⟪A x, x⟫_ℝ) μ :=
     (integrable_sq_clm hid hμ A h).sub (integrable_inner (by fun_prop) hid
       (by simpa using integrable_sq_clm hid hμ A 0) hμ)
@@ -265,12 +274,7 @@ theorem wassersteinSq_map_affine' {d : ℕ} (μ : Measure (E d)) [IsProbabilityM
   have hTc : Continuous T := A.continuous.add continuous_const
   have hTm : Measurable T := hTc.measurable
   have hid : AEStronglyMeasurable (fun x : E d => x) μ := aestronglyMeasurable_id
-  have hI : Integrable (fun x => ‖x - T x‖ ^ 2) μ := by
-    have := integrable_sq_clm hid hμ (1 - A) (-h)
-    refine this.congr (ae_of_all _ fun x => ?_)
-    simp only [hT, sub_apply, one_apply_eq_self]
-    congr 2
-    abel
+  have hI : Integrable (fun x => ‖x - T x‖ ^ 2) μ := integrable_affine_displacement hμ A h
   have hRHS : ∫ x, ‖(A - 1) x‖ ^ 2 ∂μ + 2 * ⟪(A - 1) (∫ x, x ∂μ), h⟫_ℝ + ‖h‖ ^ 2 =
       ∫ x, ‖x - T x‖ ^ 2 ∂μ := by
     have hx : Integrable (fun x : E d => x) μ := integrable_of_sq hid hμ
@@ -309,19 +313,9 @@ theorem wassersteinSq_map_affine' {d : ℕ} (μ : Measure (E d)) [IsProbabilityM
       simp only [edist_sq_eq, le_refl]
   · -- lower bound
     refine le_iInf fun γ => le_iInf fun _ => le_iInf fun h1 => le_iInf fun h2 => ?_
-    have hγ1 : Integrable (fun p : E d × E d => ‖p.1‖ ^ 2) γ := by
-      have : Integrable (fun x : E d => ‖x‖ ^ 2) (γ.map Prod.fst) := h1 ▸ hμ
-      exact (integrable_map_measure (by fun_prop) measurable_fst.aemeasurable).1 this
-    have hγ2 : Integrable (fun p : E d × E d => ‖p.2‖ ^ 2) γ := by
-      have hν2 : Integrable (fun y => ‖y‖ ^ 2) (μ.map T) :=
-        (integrable_map_measure (by fun_prop) hTm.aemeasurable).2 (integrable_sq_clm hid hμ A h)
-      have : Integrable (fun x : E d => ‖x‖ ^ 2) (γ.map Prod.snd) := h2 ▸ hν2
-      exact (integrable_map_measure (by fun_prop) measurable_snd.aemeasurable).1 this
-    have hcost : Integrable (fun p : E d × E d => ‖p.1 - p.2‖ ^ 2) γ := by
-      refine ((hγ1.add hγ2).const_mul 2).mono' (by fun_prop) (ae_of_all _ fun p => ?_)
-      rw [Real.norm_eq_abs, abs_of_nonneg (by positivity), Pi.add_apply]
-      have := norm_sub_le p.1 p.2
-      nlinarith [norm_nonneg (p.1 - p.2), sq_nonneg (‖p.1‖ - ‖p.2‖)]
+    have hν : Integrable (fun y => ‖y‖ ^ 2) (μ.map T) :=
+      (integrable_map_measure (by fun_prop) hTm.aemeasurable).2 (integrable_sq_clm hid hμ A h)
+    have hcost := integrable_coupling_cost h1 h2 hμ hν
     have hlin : ∫⁻ p, edist p.1 p.2 ^ 2 ∂γ = ENNReal.ofReal (∫ p, ‖p.1 - p.2‖ ^ 2 ∂γ) := by
       rw [ofReal_integral_eq_lintegral_ofReal hcost (ae_of_all _ fun x => by positivity)]
       simp only [edist_sq_eq]
@@ -336,5 +330,11 @@ theorem wassersteinSq_map_affine' {d : ℕ} (μ : Measure (E d)) [IsProbabilityM
       nlinarith
     simp only [hT] at *
     linarith
+
+/-- **Lemma 2.1.** If `μ` is a probability measure on `ℝᵈ` with finite second moment and `ν`
+is its image by `x ↦ Ax + h` with `A` symmetric positive semidefinite, then
+`W₂²(μ,ν) = Tr((A-I)² M_μ) + 2⟨(A-I) m_μ, h⟩ + |h|²`, where `m_μ = ∫ x dμ` and
+`Tr((A-I)² M_μ) = ∫ |(A-I)x|² dμ(x)` with `M_μ = ∫ x xᵀ dμ`. -/
+alias wassersteinSq_map_affine := wassersteinSq_map_affine'
 
 end Cutfast

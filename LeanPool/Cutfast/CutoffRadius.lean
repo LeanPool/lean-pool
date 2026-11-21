@@ -431,6 +431,102 @@ theorem cutoff_fixedExponent_fisherInfo_radius' {m r ε θ : ℝ} (hm : 1 < m) (
   obtain ⟨K, H⟩ := upperHyp_fixed hm hr hε hθ
   exact ⟨fun hε1 => fisherInfo_lower_shift (shiftHyp_fixed hm hr hε hε1 hθ), fisherInfo_upper H⟩
 
+private lemma max_half_cutoffTime (α : ℝ) : max (α / 2) (1 / 2 : ℝ) = max 1 α / 2 := by
+  rw [max_div_div_right (by norm_num : (0 : ℝ) ≤ 2), max_comm]
+
+/-- **Theorem 1.1, Wasserstein distance.** Fix `α ∈ (0,1/2) ∪ (1/2,∞)`, `r > 0`, and let
+`m = ((d-2)α+1)/(dα)`. Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
+`t_d = (1-ε) max(1,α)/2 log d` and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
+theorem cutoff_wassersteinSq' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
+    (hε : 0 < ε) :
+    (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        wassersteinSq
+          (densityMeasure (solution d (exponentOfAlpha α d) x₀ ((1 - ε) * (max 1 α / 2) * log d)))
+          (densityMeasure (equilibrium d (exponentOfAlpha α d)))) atTop (𝓝 ⊤)) ∧
+    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        wassersteinSq
+          (densityMeasure (solution d (exponentOfAlpha α d) x₀ ((1 + ε) * (max 1 α / 2) * log d)))
+          (densityMeasure (equilibrium d (exponentOfAlpha α d)))) atTop (𝓝 0) := by
+  simpa only [← Real.sqrt_eq_rpow, max_half_cutoffTime] using
+    cutoff_wassersteinSq_radius' (θ := 1 / 2) hα hα2 hr hε
+
+
+/-- **Theorem 1.1, relative entropy.** Same setting as `cutoff_wassersteinSq`. For large `d`
+the entropy integrand is integrable for all `t > 0` and `|x₀| ≤ r√d`, and
+`sup_{|x₀| ≤ r√d} Hₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
+and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
+theorem cutoff_relEntropy' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
+    (hε : 0 < ε) :
+    (∀ᶠ d : ℕ in atTop, ∀ x₀ ∈ closedBall (0 : E d) (r * √d), ∀ t > 0,
+      Integrable (relEntropyDensity (exponentOfAlpha α d) (solution d (exponentOfAlpha α d) x₀ t)
+        (equilibrium d (exponentOfAlpha α d)))) ∧
+    (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        (relEntropy (exponentOfAlpha α d)
+          (solution d (exponentOfAlpha α d) x₀ ((1 - ε) * (max 1 α / 2) * log d))
+          (equilibrium d (exponentOfAlpha α d)) : EReal)) atTop (𝓝 ⊤)) ∧
+    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        (relEntropy (exponentOfAlpha α d)
+          (solution d (exponentOfAlpha α d) x₀ ((1 + ε) * (max 1 α / 2) * log d))
+          (equilibrium d (exponentOfAlpha α d)) : EReal)) atTop (𝓝 0) := by
+  simpa only [← Real.sqrt_eq_rpow, max_half_cutoffTime] using
+    cutoff_relEntropy_radius' (θ := 1 / 2) hα hα2 hr hε
+
+
+/-- **Theorem 1.1, Fisher information.** Same setting as `cutoff_wassersteinSq`:
+`sup_{|x₀| ≤ r√d} Iₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
+and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
+theorem cutoff_fisherInfo' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
+    (hε : 0 < ε) :
+    (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        fisherInfo (exponentOfAlpha α d)
+          (solution d (exponentOfAlpha α d) x₀ ((1 - ε) * (max 1 α / 2) * log d))) atTop (𝓝 ⊤)) ∧
+    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        fisherInfo (exponentOfAlpha α d)
+          (solution d (exponentOfAlpha α d) x₀ ((1 + ε) * (max 1 α / 2) * log d))) atTop (𝓝 0) := by
+  simpa only [← Real.sqrt_eq_rpow, max_half_cutoffTime] using
+    cutoff_fisherInfo_radius' (θ := 1 / 2) hα hα2 hr hε
+
+
+/-- **Theorem 1.2, Wasserstein distance.** Fix `m > 1` and `r > 0` (so that
+`α = 1/(2 - d(1-m)) → 0`). Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
+`t_d = (1-ε)/2 log d` and to `0` if `t_d = (1+ε)/2 log d`. -/
+theorem cutoff_fixedExponent_wassersteinSq' {m r ε : ℝ} (hm : 1 < m) (hr : 0 < r)
+    (hε : 0 < ε) :
+    (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        wassersteinSq (densityMeasure (solution d m x₀ ((1 - ε) / 2 * log d)))
+          (densityMeasure (equilibrium d m))) atTop (𝓝 ⊤)) ∧
+    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        wassersteinSq (densityMeasure (solution d m x₀ ((1 + ε) / 2 * log d)))
+          (densityMeasure (equilibrium d m))) atTop (𝓝 0) := by
+  simpa only [Real.sqrt_eq_rpow, div_eq_mul_inv, one_mul] using
+    cutoff_fixedExponent_wassersteinSq_radius' (θ := 1 / 2) hm hr hε (by norm_num)
+
+
+/-- **Theorem 1.2, relative entropy.** Same setting as `cutoff_fixedExponent_wassersteinSq`,
+with integrability of the entropy integrand for large `d`. -/
+theorem cutoff_fixedExponent_relEntropy' {m r ε : ℝ} (hm : 1 < m) (hr : 0 < r) (hε : 0 < ε) :
+    (∀ᶠ d : ℕ in atTop, ∀ x₀ ∈ closedBall (0 : E d) (r * √d), ∀ t > 0,
+      Integrable (relEntropyDensity m (solution d m x₀ t) (equilibrium d m))) ∧
+    (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        (relEntropy m (solution d m x₀ ((1 - ε) / 2 * log d)) (equilibrium d m) : EReal))
+        atTop (𝓝 ⊤)) ∧
+    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        (relEntropy m (solution d m x₀ ((1 + ε) / 2 * log d)) (equilibrium d m) : EReal))
+        atTop (𝓝 0) := by
+  simpa only [Real.sqrt_eq_rpow, div_eq_mul_inv, one_mul] using
+    cutoff_fixedExponent_relEntropy_radius' (θ := 1 / 2) hm hr hε (by norm_num)
+
+
+/-- **Theorem 1.2, Fisher information.** Same setting as
+`cutoff_fixedExponent_wassersteinSq`. -/
+theorem cutoff_fixedExponent_fisherInfo' {m r ε : ℝ} (hm : 1 < m) (hr : 0 < r) (hε : 0 < ε) :
+    (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        fisherInfo m (solution d m x₀ ((1 - ε) / 2 * log d))) atTop (𝓝 ⊤)) ∧
+    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
+        fisherInfo m (solution d m x₀ ((1 + ε) / 2 * log d))) atTop (𝓝 0) := by
+  simpa only [Real.sqrt_eq_rpow, div_eq_mul_inv, one_mul] using
+    cutoff_fixedExponent_fisherInfo_radius' (θ := 1 / 2) hm hr hε (by norm_num)
+
 /-- **After Lemma 4.2.** The compactly supported Barenblatt profile is positive exactly on the
 open ball of radius `√(c/b)`, and for fixed `m > 1` (`p = 1/(m-1)`, `b = (m-1)/(2m)`) this
 radius is equivalent to `√(d/(2πe))` as `d → ∞`. -/
@@ -476,5 +572,63 @@ theorem compactBarenblatt_support' {m : ℝ} (hm : 1 < m) :
     filter_upwards with d
     simp only [Function.comp_apply, Pi.div_apply]
     rw [sqrt_div' _ (by positivity)]
+
+/-- **Theorem 1.1, Wasserstein distance.** Fix `α ∈ (0,1/2) ∪ (1/2,∞)`, `r > 0`, and let
+`m = ((d-2)α+1)/(dα)`. Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
+`t_d = (1-ε) max(1,α)/2 log d` and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
+alias cutoff_wassersteinSq := cutoff_wassersteinSq'
+
+/-- **Theorem 1.1, relative entropy.** Same setting as `cutoff_wassersteinSq`. For large `d`
+the entropy integrand is integrable for all `t > 0` and `|x₀| ≤ r√d`, and
+`sup_{|x₀| ≤ r√d} Hₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
+and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
+alias cutoff_relEntropy := cutoff_relEntropy'
+
+/-- **Theorem 1.1, Fisher information.** Same setting as `cutoff_wassersteinSq`:
+`sup_{|x₀| ≤ r√d} Iₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
+and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
+alias cutoff_fisherInfo := cutoff_fisherInfo'
+
+/-- **Theorem 1.2, Wasserstein distance.** Fix `m > 1` and `r > 0` (so that
+`α = 1/(2 - d(1-m)) → 0`). Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
+`t_d = (1-ε)/2 log d` and to `0` if `t_d = (1+ε)/2 log d`. -/
+alias cutoff_fixedExponent_wassersteinSq := cutoff_fixedExponent_wassersteinSq'
+
+/-- **Theorem 1.2, relative entropy.** Same setting as `cutoff_fixedExponent_wassersteinSq`,
+with integrability of the entropy integrand for large `d`. -/
+alias cutoff_fixedExponent_relEntropy := cutoff_fixedExponent_relEntropy'
+
+/-- **Theorem 1.2, Fisher information.** Same setting as
+`cutoff_fixedExponent_wassersteinSq`. -/
+alias cutoff_fixedExponent_fisherInfo := cutoff_fixedExponent_fisherInfo'
+
+/-- **Section 1.4.3, Theorem 1.1 for other initial data, Wasserstein.** For initial points in the
+ball of radius `r d^θ` (`θ ∈ ℝ`), the critical time becomes `max(α/2, θ) log d`. -/
+alias cutoff_wassersteinSq_radius := cutoff_wassersteinSq_radius'
+
+/-- **Section 1.4.3, Theorem 1.1 for other initial data, relative entropy.** As in
+`cutoff_relEntropy`, the entropy integrand is integrable for large `d`, for all `t > 0` and all
+initial points in the ball. -/
+alias cutoff_relEntropy_radius := cutoff_relEntropy_radius'
+
+/-- **Section 1.4.3, Theorem 1.1 for other initial data, Fisher information.** -/
+alias cutoff_fisherInfo_radius := cutoff_fisherInfo_radius'
+
+/-- **Section 1.4.3, Theorem 1.2 for other initial data, Wasserstein.** For initial points in the
+ball of radius `r d^θ` (`θ > 0`), the critical time becomes `θ log d`. -/
+alias cutoff_fixedExponent_wassersteinSq_radius := cutoff_fixedExponent_wassersteinSq_radius'
+
+/-- **Section 1.4.3, Theorem 1.2 for other initial data, relative entropy.** As in
+`cutoff_fixedExponent_relEntropy`, the entropy integrand is integrable for large `d`, for all
+`t > 0` and all initial points in the ball. -/
+alias cutoff_fixedExponent_relEntropy_radius := cutoff_fixedExponent_relEntropy_radius'
+
+/-- **Section 1.4.3, Theorem 1.2 for other initial data, Fisher information.** -/
+alias cutoff_fixedExponent_fisherInfo_radius := cutoff_fixedExponent_fisherInfo_radius'
+
+/-- **After Lemma 4.2.** The compactly supported Barenblatt profile is positive exactly on the
+open ball of radius `√(c/b)`, and for fixed `m > 1` (`p = 1/(m-1)`, `b = (m-1)/(2m)`) this
+radius is equivalent to `√(d/(2πe))` as `d → ∞`. -/
+alias compactBarenblatt_support := compactBarenblatt_support'
 
 end Cutfast

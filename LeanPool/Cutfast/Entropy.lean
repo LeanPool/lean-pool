@@ -233,4 +233,18 @@ theorem tsallis_strictConvexOn_tendsto_log' {m : ℝ} (hm0 : 0 < m) (hm1 : m ≠
     ∀ x : ℝ, 0 < x → Tendsto (fun m : ℝ => (x ^ m - x) / (m - 1)) (𝓝[≠] 1) (𝓝 (x * log x)) := by
   exact ⟨Entropy.tsallis_strictConvexOn hm0 hm1, fun x hx => Entropy.tsallis_tendsto hx⟩
 
+/-- The entropy dissipation identity `d/dt Hₘ(v(t) | v_∞) = -Iₘ(v(t) | v_∞)` along the solution
+(the Fisher information is finite). -/
+alias relEntropy_hasDerivAt := relEntropy_hasDerivAt'
+
+/-- The Bregman form of the relative entropy (eq. (tsalisbis)): for a probability density `f`
+with finite second moment and `fᵐ` integrable, which vanishes outside the support of `v_∞` when
+`m > 1`, `Hₘ(f | v_∞) = 1/(m-1) ∫ (fᵐ - v_∞ᵐ - m v_∞^{m-1} (f - v_∞))`, and this is `≥ 0`. -/
+alias relEntropy_eq_bregman := relEntropy_eq_bregman'
+
+/-- `x ↦ (xᵐ - 1)/(m - 1)` is strictly convex on `[0,∞)` for `m > 0`, `m ≠ 1`, and, up to the
+affine term `(x - 1)/(m - 1)` (whose integral vanishes between probability densities), it gives
+the classical entropy as `m → 1`: `(xᵐ - x)/(m - 1) → x log x` (Section 1.3). -/
+alias tsallis_strictConvexOn_tendsto_log := tsallis_strictConvexOn_tendsto_log'
+
 end Cutfast

@@ -529,4 +529,15 @@ theorem tendsto_solution_one' {d : ℕ} (hd : 1 ≤ d) (x₀ : E d) {t : ℝ} (h
     show 2 * (1 - exp (-2 * t)) = 4 * ((1 - exp (-2 * t)) / 2) by ring]
   exact this
 
+/-- Diffusion limit (Section 1.4.2): as `m → 1` at fixed `d`, `B(x) → (4π)^{-d/2} e^{-|x|²/4}`. -/
+alias tendsto_barenblatt_one := tendsto_barenblatt_one'
+
+/-- Diffusion limit, heat kernel (eq. (heatkernel)): as `m → 1`,
+`u(t,x) → (4πt)^{-d/2} e^{-|x-x₀|²/(4t)}`. -/
+alias tendsto_fdeSolution_one := tendsto_fdeSolution_one'
+
+/-- Diffusion limit, Mehler formula: as `m → 1`, `v(t,·)` tends pointwise to the density of
+`𝒩(e^{-t}x₀, (1-e^{-2t}) I)`. -/
+alias tendsto_solution_one := tendsto_solution_one'
+
 end Cutfast

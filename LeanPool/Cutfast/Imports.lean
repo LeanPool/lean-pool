@@ -17,6 +17,7 @@ public import LeanPool.Cutfast.Distances
 public import LeanPool.Cutfast.Elliptic
 public import LeanPool.Cutfast.Entropy
 public import LeanPool.Cutfast.FDE
+public import LeanPool.Cutfast.GaussianDensity
 public import LeanPool.Cutfast.HeavyTail
 public import LeanPool.Cutfast.Moments
 public import LeanPool.Cutfast.PDE

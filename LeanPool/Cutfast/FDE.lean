@@ -138,25 +138,7 @@ theorem fdeSolution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m)
         ← rpow_mul hy.le]
       rfl
     rw [(InnerProductSpace.laplacian_congr_nhds hcongr).eq_of_nhds]
-    have hr : ∀ᶠ r in 𝓝 r0, 0 < c + K * r :=
-      ((continuous_const.add (continuous_const.mul continuous_id)).continuousAt (x
-        := r0)).eventually
-        (lt_mem_nhds hB0)
-    refine (laplacian_comp_normSq_sub (F := E d) (fun r => (S⁻¹) ^ m * (c + K * r) ^ (q * m))
-      (fun r => (S⁻¹) ^ m * (K * (q * m) * (c + K * r) ^ (q * m - 1)))
-      ((S⁻¹) ^ m * (K * (q * m) * (K * (q * m - 1) * B0 ^ (q * m - 1 - 1)))) x₀ x ?_ ?_).trans ?_
-    · filter_upwards [hr] with r hr
-      have := ((((hasDerivAt_id r).const_mul K).const_add c).rpow_const (p := q * m)
-        (Or.inl hr.ne')).const_mul ((S⁻¹) ^ m)
-      refine this.congr_deriv ?_
-      simp
-    · have := ((((hasDerivAt_id r0).const_mul K).const_add c).rpow_const (p := q * m - 1)
-        (Or.inl hB0.ne')).const_mul (K * (q * m)) |>.const_mul ((S⁻¹) ^ m)
-      refine this.congr_deriv ?_
-      simp only [id, mul_one]
-      rfl
-    · rw [finrank_euclideanSpace_fin]
-      rfl
+    exact laplacian_radialAffine_rpow ((S⁻¹) ^ m) c K (q * m) x₀ x hB0
   -- algebra
   rw [hlap]
   refine hT'.congr_deriv ?_
@@ -311,5 +293,25 @@ theorem tendsto_solution_atTop' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m)
   refine hlim.congr' ?_
   filter_upwards [eventually_gt_atTop 0] with t ht
   exact (solution_eq h x₀ ht x).symm
+
+/-- `u` solves `∂ₜu = Δ(uᵐ)` (eq. (FDE)) at every point `(t,x)`, `t > 0`, of positivity of `u`. -/
+alias fdeSolution_hasDerivAt := fdeSolution_hasDerivAt'
+
+/-- For every `t > 0`, `u(t,·)` is a probability density function (positivity and mass are
+preserved). -/
+alias fdeSolution_isProbabilityDensity := fdeSolution_isProbabilityDensity'
+
+/-- The time change (eqs. (uv) and (FDEFPv)): `v(t,x) = e^{dt} u(α(e^{t/α} - 1), eᵗx)`. -/
+alias solution_eq_fdeSolution := solution_eq_fdeSolution'
+
+/-- Initial condition: `u(t,·) → δ_{x₀}` weakly as `t → 0⁺`. -/
+alias tendsto_fdeSolution_zero := tendsto_fdeSolution_zero'
+
+/-- Initial condition: `v(t,·) → δ_{x₀}` weakly as `t → 0⁺`. -/
+alias tendsto_solution_zero := tendsto_solution_zero'
+
+/-- Long-time behavior (eq. (vinf)): `v(t,x) → v_∞(x)` as `t → ∞`, and
+`v_∞(x) = (C + (1-m)/(2m)|x|²)₊^{1/(m-1)}` for some constant `C > 0`. -/
+alias tendsto_solution_atTop := tendsto_solution_atTop'
 
 end Cutfast

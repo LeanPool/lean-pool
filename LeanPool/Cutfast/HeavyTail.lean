@@ -363,4 +363,11 @@ theorem wassersteinSq_eq_top' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m)
   rw [lintegral_cost_eq_top ν (scaleFactor_pos h ht) (scaleFactor_lt_one h ht) _ hq0 hq2 N hN
     hNunb γ h1 h2]
 
+/-- `v_∞` has a finite second moment if and only if `m > d/(d+2)` (Section 1.2). -/
+alias integrable_sq_mul_equilibrium_iff := integrable_sq_mul_equilibrium_iff'
+
+/-- When `(d-2)/d < m ≤ d/(d+2)`, the Wasserstein distance between `v(t)` and `v_∞` is infinite
+for every `t > 0` (Section 1.3). -/
+alias wassersteinSq_eq_top := wassersteinSq_eq_top'
+
 end Cutfast

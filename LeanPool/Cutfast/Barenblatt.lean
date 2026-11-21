@@ -676,4 +676,15 @@ theorem eqSecondMoment_pos (h : Admissible d m) (h2 : (d : ℝ) / (d + 2) < m) :
     have := Real.Gamma_pos_of_pos hd2
     positivity
 
+/-- The normalizing constant of the Barenblatt profile exists and is unique: for `d ≥ 1`,
+`m > 0`, `m ≠ 1` and `m > (d-2)/d`, `c_{d,m}` is the unique `c > 0` making `B_c` a
+probability density function. -/
+alias barenblattConst_spec := barenblattConst_spec'
+
+/-- For every time `t > 0`, `v(t,·)` is a probability density function. -/
+alias solution_isProbabilityDensity := solution_isProbabilityDensity'
+
+/-- `v_∞` is a probability density function. -/
+alias equilibrium_isProbabilityDensity := equilibrium_isProbabilityDensity'
+
 end Cutfast

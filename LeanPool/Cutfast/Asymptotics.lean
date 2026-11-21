@@ -626,4 +626,20 @@ theorem compactBarenblatt_fixedExponent_asymptotics' {m : ℝ} (hm : 1 < m) :
     have : (d : ℝ) ≠ 0 := by positivity
     field_simp
 
+/-- **Lemma 3.1, eqs. (M2sim) and (difference-fde).** Fix `α > 1/2` and set
+`m = ((d-2)α+1)/(dα)`, `p = 1/(1-m) = dα/(2α-1)`, `b = (2α-1)/(2(α(d-2)+1))`. Then as `d → ∞`,
+`∫ |x|² B = (2πe)^{2α-1} d + o(d)`, `∫ Bᵐ = (2πe)^{2α-1} + o(1)`, and
+`∫ |x|² B - d ∫ Bᵐ = O(1)`. -/
+alias fullBarenblatt_asymptotics := fullBarenblatt_asymptotics'
+
+/-- **Lemma 4.1, eqs. (limit-alpha-constant-pme) and (difference-pme).** Fix `α ∈ (0,1/2)` and
+set `m = 1 + (1-2α)/(dα)` (that is, `m = exponentOfAlpha α d`), `p = 1/(m-1)`, `b = (m-1)/(2m)`.
+Then as `d → ∞`, `∫ |x|² B = d/(2πe)^{1-2α} + o(d)`, `∫ Bᵐ = 1/(2πe)^{1-2α} + o(1)`, and
+`∫ |x|² B - d ∫ Bᵐ = O(1)`. -/
+alias compactBarenblatt_asymptotics := compactBarenblatt_asymptotics'
+
+/-- **Lemma 4.2.** Fix `m > 1` and set `p = 1/(m-1)`, `b = (m-1)/(2m)`. Then as `d → ∞`,
+`c ~ bd/(2πe)`, `∫ |x|² B ~ d/(2πe)` and `∫ Bᵐ ~ 1/(2πe)`. -/
+alias compactBarenblatt_fixedExponent_asymptotics := compactBarenblatt_fixedExponent_asymptotics'
+
 end Cutfast

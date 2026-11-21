@@ -130,6 +130,30 @@ theorem hasDerivAt_baseFun {d : ℕ} {m : ℝ} (hm : m ≠ 0) (hα : alpha d m �
     Nat.cast_ofNat]
   generalize sFun (alpha d m) t ^ alpha d m = A at hpos ⊢
   field_simp
+/-- The Laplacian of a power of an affine function of squared distance, at a point where
+the base of the power is positive. -/
+theorem laplacian_radialAffine_rpow {d : ℕ} (s c K p : ℝ) (center x : E d)
+    (hpos : 0 < c + K * ‖x - center‖ ^ 2) :
+    Laplacian.laplacian (fun y => s * (c + K * ‖y - center‖ ^ 2) ^ p) x =
+      4 * ‖x - center‖ ^ 2 *
+          (s * (K * p * (K * (p - 1) * (c + K * ‖x - center‖ ^ 2) ^ (p - 1 - 1)))) +
+        2 * d * (s * (K * p * (c + K * ‖x - center‖ ^ 2) ^ (p - 1))) := by
+  let r₀ : ℝ := ‖x - center‖ ^ 2
+  have hr : ∀ᶠ r in 𝓝 r₀, 0 < c + K * r :=
+    ((continuous_const.add (continuous_const.mul continuous_id)).continuousAt (x := r₀)).eventually
+      (lt_mem_nhds hpos)
+  refine (laplacian_comp_normSq_sub (fun r => s * (c + K * r) ^ p)
+    (fun r => s * (K * p * (c + K * r) ^ (p - 1)))
+    (s * (K * p * (K * (p - 1) * (c + K * r₀) ^ (p - 1 - 1)))) center x ?_ ?_).trans ?_
+  · filter_upwards [hr] with r hr
+    have hd := ((((hasDerivAt_id r).const_mul K).const_add c).rpow_const (p := p)
+      (Or.inl hr.ne')).const_mul s
+    exact hd.congr_deriv (by simp)
+  · have hd := ((((hasDerivAt_id r₀).const_mul K).const_add c).rpow_const (p := p - 1)
+      (Or.inl hpos.ne')).const_mul (K * p) |>.const_mul s
+    exact hd.congr_deriv (by simp only [id, mul_one])
+  · rw [finrank_euclideanSpace_fin]
+
 end PDE
 
 open PDE in
@@ -216,25 +240,7 @@ theorem solution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) (h
         ← rpow_mul hy.le]
       rfl
     rw [(InnerProductSpace.laplacian_congr_nhds hcongr).eq_of_nhds]
-    have hr : ∀ᶠ r in 𝓝 r0, 0 < c + K * r :=
-      ((continuous_const.add (continuous_const.mul continuous_id)).continuousAt (x
-        := r0)).eventually
-        (lt_mem_nhds hB0)
-    refine (laplacian_comp_normSq_sub (F := E d) (fun r => (S⁻¹) ^ m * (c + K * r) ^ (q * m))
-      (fun r => (S⁻¹) ^ m * (K * (q * m) * (c + K * r) ^ (q * m - 1)))
-      ((S⁻¹) ^ m * (K * (q * m) * (K * (q * m - 1) * B0 ^ (q * m - 1 - 1)))) h x ?_ ?_).trans ?_
-    · filter_upwards [hr] with r hr
-      have := ((((hasDerivAt_id r).const_mul K).const_add c).rpow_const (p := q * m)
-        (Or.inl hr.ne')).const_mul ((S⁻¹) ^ m)
-      refine this.congr_deriv ?_
-      simp
-    · have := ((((hasDerivAt_id r0).const_mul K).const_add c).rpow_const (p := q * m - 1)
-        (Or.inl hB0.ne')).const_mul (K * (q * m)) |>.const_mul ((S⁻¹) ^ m)
-      refine this.congr_deriv ?_
-      simp only [id, mul_one]
-      rfl
-    · rw [finrank_euclideanSpace_fin]
-      rfl
+    exact laplacian_radialAffine_rpow ((S⁻¹) ^ m) c K (q * m) h x hB0
   -- algebra
   have hval : solution d m x₀ t x = S⁻¹ * B0 ^ q := by
     rw [solution_eq_max, max_eq_left hB0.le]
@@ -268,4 +274,9 @@ theorem solution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) (h
   have h1E : 1 - E0 ≠ 0 := (sub_pos.mpr hE0lt).ne'
   field_simp
   ring
+/-- `v` solves the Fokker–Planck equation `∂ₜv = Δ(vᵐ) + div(x v)` (eq. (FDEFP)), written as
+`∂ₜv = Δ(vᵐ) + d v + ⟨x, ∇v⟩`, at every point `(t,x)`, `t > 0`, of positivity of `v`
+(this is everywhere when `m < 1`). -/
+alias solution_hasDerivAt := solution_hasDerivAt'
+
 end Cutfast
