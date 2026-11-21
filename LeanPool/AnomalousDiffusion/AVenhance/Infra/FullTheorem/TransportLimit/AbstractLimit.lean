@@ -12,8 +12,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Abstract `L²` limits along a fast subsequence
 
-A sequence that is Cauchy in `L²` has a fast subsequence converging almost everywhere; the
-pointwise limit (chosen by `limUnder`) is in `L²` and is the `L²` limit of the whole sequence.
+A sequence that is Cauchy in `L²` has a fast subsequence converging almost everywhere.
+An eventual finite `L²` norm bound passes to the almost-everywhere limit.
 Everything here is stated for an arbitrary measure space.
 -/
 

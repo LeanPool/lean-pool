@@ -22,9 +22,8 @@ Module imports, support namespace and local option directives adapted for Lean P
 # Integration of the approximate recurrence
 
 The reported constant is one fixed numeral, independent of the sequence, of
-`ν, c⋆, γ, E, F` and of the endpoint `m₀`: this is the manuscript's "there
-exists a universal `C < ∞`" made explicit (see
-`integrate_approx_recurrence_universal` for the literal existential form).
+`ν, c⋆, γ, E, F` and of the endpoint `m₀`. The bound in
+`integrate_approx_recurrence_cstarPlus` uses `recurrenceIntegrationConstant`.
 
 ## The upper bound on `c⋆`
 
@@ -337,9 +336,8 @@ The manuscript denominates both the a-priori envelope `e.small.scale.bound` and
 the fixed-point target `A_{n,m}` / `P_m` in the single constant `c⋆`.  This form
 assumes `c⋆ ≤ 3 / 2`.
 
-Taking `c⁺ = c⋆` recovers `integrate_approx_recurrence` up to the universal
-constant.  This is **not** a node statement: `l.integrate.approx.recurrence` is
-`integrate_approx_recurrence` above. -/
+Setting `c⁺ = c⋆` gives the one-constant specialization with the same
+hypothesis `c⋆ ≤ 3 / 2`. -/
 theorem integrate_approx_recurrence_cstarPlus
     {ν cstar cstarPlus γ E F : ℝ} {m₀ : ℤ} {s : ℤ → ℝ}
     (hν : 0 < ν) (hcstar : 0 < cstar) (hcstar32 : cstar ≤ 3 / 2)
