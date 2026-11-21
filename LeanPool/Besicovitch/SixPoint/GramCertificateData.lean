@@ -676,121 +676,240 @@ local macro "verify_gram_certificate" : tactic =>
 theorem gramCertificates_valid_0 : (gramCertificates 0).Valid := by
   verify_gram_certificate
 
+/-! ## Rational certificate validation -/
+
+private def gramRationalTarget (c : GramCertificate) : Matrix Five Five ℚ :=
+  !![0, c.alpha₀ + c.alpha₂ + c.alpha₄, c.alpha₁ + c.alpha₅,
+        c.alpha₀ + c.alpha₃ + c.alpha₅, c.alpha₁ + c.alpha₄;
+      c.alpha₀ + c.alpha₂ + c.alpha₄, 0, c.etaP, -c.alpha₀, -c.alpha₄;
+      c.alpha₁ + c.alpha₅, c.etaP, 0, -c.alpha₅, -c.alpha₁;
+      c.alpha₀ + c.alpha₃ + c.alpha₅, -c.alpha₀, -c.alpha₅, 0, c.etaW;
+      c.alpha₁ + c.alpha₄, -c.alpha₄, -c.alpha₁, c.etaW, 0]
+
+private theorem gramRationalTarget_cast (c : GramCertificate) (i j : Five) :
+    (gramRationalTarget c i j : ℝ) = targetOffDiagonal c i j := by
+  fin_cases i <;> fin_cases j <;>
+    simp only [gramRationalTarget, targetOffDiagonal, Matrix.of_apply, Matrix.cons_val_zero',
+      Matrix.cons_val_succ', Rat.cast_add,
+      Rat.cast_neg, Rat.cast_zero]
+
+private theorem gramRationalEntry_cast (c : GramCertificate) (i j : Five) :
+    (rationalGramEntry c.factor i j : ℝ) = factorGram c i j :=
+  cast_rationalGramEntry c.factor i j
+
+private def gramRationalDiagonal (c : GramCertificate) : Five → ℚ :=
+  rationalCorrectedDiagonal c.factor (gramRationalTarget c) 0
+
+private theorem gramRationalDiagonal_cast (c : GramCertificate) (i : Five) :
+    (gramRationalDiagonal c i : ℝ) =
+      ![diagonal₀ c, diagonal₁ c, diagonal₂ c, diagonal₃ c, diagonal₄ c] i := by
+  fin_cases i <;>
+    simp only [gramRationalDiagonal, rationalCorrectedDiagonal, Matrix.cons_val_zero',
+      Matrix.cons_val_succ',
+      Rat.cast_add, Rat.cast_abs, Rat.cast_sub, add_zero,
+      gramRationalEntry_cast, gramRationalTarget_cast, diagonal₀, diagonal₁, diagonal₂,
+      diagonal₃, diagonal₄, residual]
+
+private def gramRationalChord : ℚ := 3467 / 2500
+private def gramRationalLambda : ℚ := 1 / 12
+private def gramRationalMu : ℚ := 13 / 14
+
+private def gramRationalFirstPenalty : ℚ :=
+  (gramRationalChord - 1) * (gramRationalLambda / 2 + gramRationalMu) / 2
+
+private def gramRationalSecondPenalty : ℚ :=
+  ((gramRationalChord + 1) * gramRationalLambda / 2 +
+    3 * gramRationalChord * gramRationalMu) / 2
+
+private def gramRationalConstant : ℚ :=
+  2 * gramRationalChord * (2 * gramRationalChord - 1) +
+    gramRationalLambda * (3 * gramRationalChord ^ 2 - 3 * gramRationalChord + 2) / 2 +
+    gramRationalMu * (gramRationalChord ^ 2 - gramRationalChord)
+
+private def gramRationalRedFirstLower (c : GramCertificate) : ℚ := gramRationalChord - c.pUpper
+private def gramRationalBlueFirstLower (c : GramCertificate) : ℚ := gramRationalChord - c.wUpper
+
+private def gramRationalRadialBound (c : GramCertificate) : ℚ :=
+  let root := gramRationalDiagonal c 0 + c.alpha₀ + c.alpha₁ + c.alpha₂ +
+    c.alpha₃ + c.alpha₄ + c.alpha₅
+  let redFirst := gramRationalDiagonal c 1 + c.alpha₀ + c.alpha₂ + c.alpha₄ -
+    gramRationalFirstPenalty / (gramRationalRedFirstLower c + 1) + c.etaP
+  let redSecond := gramRationalDiagonal c 2 + c.alpha₁ + c.alpha₅ -
+    gramRationalSecondPenalty / (c.pLower + c.pUpper) + c.etaP
+  let blueFirst := gramRationalDiagonal c 3 + c.alpha₀ + c.alpha₃ + c.alpha₅ -
+    gramRationalFirstPenalty / (gramRationalBlueFirstLower c + 1) + c.etaW
+  let blueSecond := gramRationalDiagonal c 4 + c.alpha₁ + c.alpha₄ -
+    gramRationalSecondPenalty / (c.wLower + c.wUpper) + c.etaW
+  root +
+    max redFirst 0 - max (-redFirst) 0 * gramRationalRedFirstLower c ^ 2 +
+    max redSecond 0 * c.pUpper ^ 2 - max (-redSecond) 0 * c.pLower ^ 2 +
+    max blueFirst 0 - max (-blueFirst) 0 * gramRationalBlueFirstLower c ^ 2 +
+    max blueSecond 0 * c.wUpper ^ 2 - max (-blueSecond) 0 * c.wLower ^ 2 -
+    (c.etaP + c.etaW) * gramRationalChord ^ 2
+
+private def gramRationalUpperBound (c : GramCertificate) : ℚ :=
+  -gramRationalConstant + (1 + gramRationalLambda) ^ 2 / (4 * c.alpha₀) +
+    1 / (4 * c.alpha₁) + (gramRationalMu / 2) ^ 2 / (4 * c.alpha₂) +
+    (gramRationalMu / 2) ^ 2 / (4 * c.alpha₃) + (gramRationalMu / 2) ^ 2 / (4 * c.alpha₄) +
+    (gramRationalMu / 2) ^ 2 / (4 * c.alpha₅) -
+    gramRationalFirstPenalty * gramRationalRedFirstLower c / (gramRationalRedFirstLower c + 1) -
+    gramRationalSecondPenalty * c.pLower * c.pUpper / (c.pLower + c.pUpper) -
+    gramRationalFirstPenalty * gramRationalBlueFirstLower c / (gramRationalBlueFirstLower c + 1) -
+    gramRationalSecondPenalty * c.wLower * c.wUpper / (c.wLower + c.wUpper) +
+    gramRationalRadialBound c
+
+private theorem gramRationalUpperBound_cast (c : GramCertificate) :
+    (gramRationalUpperBound c : ℝ) = c.upperBound := by
+  simp only [gramRationalUpperBound, gramRationalRadialBound, gramRationalDiagonal_cast,
+    gramRationalRedFirstLower, gramRationalBlueFirstLower, gramRationalConstant,
+    gramRationalFirstPenalty, gramRationalSecondPenalty, gramRationalChord, gramRationalLambda,
+    gramRationalMu, GramCertificate.upperBound, dualRadialBound, balance₀, balance₁, balance₂,
+    balance₃, balance₄, redFirstLower, blueFirstLower, gramLambda, gramMu, gramFirstPenalty,
+    gramSecondPenalty, weightedFirstPenalty, weightedSecondPenalty, weightedConstantTerm, barC,
+    positivePart, negativePart, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+    Matrix.cons_val_three, Matrix.cons_val_four, Matrix.head_cons, Matrix.tail_cons,
+    Rat.cast_add, Rat.cast_sub, Rat.cast_mul, Rat.cast_div, Rat.cast_pow, Rat.cast_max,
+    Rat.cast_neg, Rat.cast_zero, Rat.cast_one, Rat.cast_ofNat]
+
+-- Check each row with the kernel's rational arithmetic, then cast to the real-valued conditions.
+private def gramRationalValid (c : GramCertificate) : Prop :=
+  gramRationalChord - 1 ≤ c.pLower ∧ c.pLower ≤ c.pUpper ∧ c.pUpper ≤ 1 ∧
+    gramRationalChord - 1 ≤ c.wLower ∧ c.wLower ≤ c.wUpper ∧ c.wUpper ≤ 1 ∧
+    0 < c.alpha₀ ∧ 0 < c.alpha₁ ∧ 0 < c.alpha₂ ∧ 0 < c.alpha₃ ∧ 0 < c.alpha₄ ∧ 0 < c.alpha₅ ∧
+    0 ≤ c.etaP ∧ 0 ≤ c.etaW ∧ gramRationalUpperBound c ≤ -(1 / 2000)
+deriving Decidable
+
+private theorem gramValid_of_rationalValid {c : GramCertificate} (h : gramRationalValid c) :
+    c.Valid := by
+  have chord : (gramRationalChord : ℝ) = barC := by
+    simp only [gramRationalChord, barC, Rat.cast_div, Rat.cast_ofNat]
+  have threshold : ((-(1 / 2000) : ℚ) : ℝ) = -(1 / 2000) := by
+    simp only [Rat.cast_neg, Rat.cast_div, Rat.cast_one, Rat.cast_ofNat]
+  have lower (q : ℚ) : barC - 1 ≤ (q : ℝ) ↔ gramRationalChord - 1 ≤ q := by
+    rw [← chord, ← Rat.cast_one (α := ℝ), ← Rat.cast_sub, Rat.cast_le]
+  have unit (q : ℚ) : (q : ℝ) ≤ 1 ↔ q ≤ 1 := by
+    rw [← Rat.cast_one (α := ℝ), Rat.cast_le]
+  have upper : c.upperBound ≤ -(1 / 2000) ↔
+      gramRationalUpperBound c ≤ -(1 / 2000) := by
+    rw [← gramRationalUpperBound_cast, ← threshold, Rat.cast_le]
+  simpa only [GramCertificate.Valid, gramRationalValid, lower, unit, upper,
+    Rat.cast_le, Rat.cast_pos, Rat.cast_nonneg] using h
+
 /-- Arithmetic validation for certificate 1. -/
-theorem gramCertificates_valid_1 : (gramCertificates 1).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_1 : (gramCertificates 1).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 2. -/
-theorem gramCertificates_valid_2 : (gramCertificates 2).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_2 : (gramCertificates 2).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 3. -/
-theorem gramCertificates_valid_3 : (gramCertificates 3).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_3 : (gramCertificates 3).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 4. -/
-theorem gramCertificates_valid_4 : (gramCertificates 4).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_4 : (gramCertificates 4).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 5. -/
-theorem gramCertificates_valid_5 : (gramCertificates 5).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_5 : (gramCertificates 5).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 6. -/
-theorem gramCertificates_valid_6 : (gramCertificates 6).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_6 : (gramCertificates 6).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 7. -/
-theorem gramCertificates_valid_7 : (gramCertificates 7).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_7 : (gramCertificates 7).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 8. -/
-theorem gramCertificates_valid_8 : (gramCertificates 8).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_8 : (gramCertificates 8).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 9. -/
-theorem gramCertificates_valid_9 : (gramCertificates 9).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_9 : (gramCertificates 9).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 10. -/
-theorem gramCertificates_valid_10 : (gramCertificates 10).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_10 : (gramCertificates 10).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 11. -/
-theorem gramCertificates_valid_11 : (gramCertificates 11).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_11 : (gramCertificates 11).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 12. -/
-theorem gramCertificates_valid_12 : (gramCertificates 12).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_12 : (gramCertificates 12).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 13. -/
-theorem gramCertificates_valid_13 : (gramCertificates 13).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_13 : (gramCertificates 13).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 14. -/
-theorem gramCertificates_valid_14 : (gramCertificates 14).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_14 : (gramCertificates 14).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 15. -/
-theorem gramCertificates_valid_15 : (gramCertificates 15).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_15 : (gramCertificates 15).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 16. -/
-theorem gramCertificates_valid_16 : (gramCertificates 16).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_16 : (gramCertificates 16).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 17. -/
-theorem gramCertificates_valid_17 : (gramCertificates 17).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_17 : (gramCertificates 17).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 18. -/
-theorem gramCertificates_valid_18 : (gramCertificates 18).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_18 : (gramCertificates 18).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 19. -/
-theorem gramCertificates_valid_19 : (gramCertificates 19).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_19 : (gramCertificates 19).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 20. -/
-theorem gramCertificates_valid_20 : (gramCertificates 20).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_20 : (gramCertificates 20).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 21. -/
-theorem gramCertificates_valid_21 : (gramCertificates 21).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_21 : (gramCertificates 21).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 22. -/
-theorem gramCertificates_valid_22 : (gramCertificates 22).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_22 : (gramCertificates 22).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 23. -/
-theorem gramCertificates_valid_23 : (gramCertificates 23).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_23 : (gramCertificates 23).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 24. -/
-theorem gramCertificates_valid_24 : (gramCertificates 24).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_24 : (gramCertificates 24).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 25. -/
-theorem gramCertificates_valid_25 : (gramCertificates 25).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_25 : (gramCertificates 25).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 26. -/
-theorem gramCertificates_valid_26 : (gramCertificates 26).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_26 : (gramCertificates 26).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 27. -/
-theorem gramCertificates_valid_27 : (gramCertificates 27).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_27 : (gramCertificates 27).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 28. -/
-theorem gramCertificates_valid_28 : (gramCertificates 28).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_28 : (gramCertificates 28).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Arithmetic validation for certificate 29. -/
-theorem gramCertificates_valid_29 : (gramCertificates 29).Valid := by
-  verify_gram_certificate
+theorem gramCertificates_valid_29 : (gramCertificates 29).Valid :=
+  gramValid_of_rationalValid (by decide +kernel)
 
 /-- Every stored certificate satisfies its arithmetic side conditions. -/
 theorem gramCertificates_valid (i : Fin 30) : (gramCertificates i).Valid := by

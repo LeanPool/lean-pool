@@ -125,4 +125,27 @@ theorem matrix_inner_sum_nonneg [Fintype ι] {E : Type*} [NormedAddCommGroup E]
     (fun _ ↦ (1 : ℝ))
   simpa [dotProduct, Matrix.mulVec, Finset.mul_sum] using h
 
+/-- Gram matrix entry of a three-row factor, evaluated over ℚ. -/
+def rationalGramEntry (factor : Fin 3 → Fin 5 → ℚ) (i j : Fin 5) : ℚ :=
+  ∑ k, factor k i * factor k j
+
+/-- Computing the Gram entry in the rationals commutes with casting to the reals. -/
+theorem cast_rationalGramEntry (factor : Fin 3 → Fin 5 → ℚ) (i j : Fin 5) :
+    (rationalGramEntry factor i j : ℝ) =
+      (∑ k, Matrix.vecMulVec (fun a ↦ (factor k a : ℝ)) (fun a ↦ (factor k a : ℝ))) i j := by
+  simp only [rationalGramEntry, Matrix.sum_apply, Matrix.vecMulVec_apply, Fin.sum_univ_three,
+    Rat.cast_add, Rat.cast_mul]
+
+/-- Each diagonal entry gains the absolute residual for each pair incident to its index.
+The residual is taken in upper-triangular order, as in `fivePairCompletion`. -/
+def rationalCorrectedDiagonal (factor : Fin 3 → Fin 5 → ℚ)
+    (target : Matrix (Fin 5) (Fin 5) ℚ) (offset : ℚ) : Fin 5 → ℚ :=
+  let gram := rationalGramEntry factor
+  let correction i j := |target i j - gram i j|
+  ![gram 0 0 + offset + correction 0 1 + correction 0 2 + correction 0 3 + correction 0 4,
+    gram 1 1 + offset + correction 0 1 + correction 1 2 + correction 1 3 + correction 1 4,
+    gram 2 2 + offset + correction 0 2 + correction 1 2 + correction 2 3 + correction 2 4,
+    gram 3 3 + offset + correction 0 3 + correction 1 3 + correction 2 3 + correction 3 4,
+    gram 4 4 + offset + correction 0 4 + correction 1 4 + correction 2 4 + correction 3 4]
+
 end LeanPool.Besicovitch

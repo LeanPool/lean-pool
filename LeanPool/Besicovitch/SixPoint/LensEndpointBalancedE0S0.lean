@@ -692,86 +692,172 @@ local macro "verify_lens_certificate" : tactic => `(tactic|
 private theorem lensCertificates_valid_0 : (lensCertificates 0).Valid := by
   verify_lens_certificate
 
-private theorem lensCertificates_valid_1 : (lensCertificates 1).Valid := by
-  verify_lens_certificate
+/-! ## Rational certificate validation -/
 
-private theorem lensCertificates_valid_2 : (lensCertificates 2).Valid := by
-  verify_lens_certificate
+private def lensRationalTarget (c : LensCertificate) : Matrix Five Five ℚ :=
+  !![0, c.alpha₁₁ + c.alpha₁₂, c.alpha₂₂,
+        c.alpha₁₁, c.alpha₁₂ + c.alpha₂₂;
+      c.alpha₁₁ + c.alpha₁₂, 0, c.redSeparation, -c.alpha₁₁, -c.alpha₁₂;
+      c.alpha₂₂, c.redSeparation, 0, 0, -c.alpha₂₂;
+      c.alpha₁₁, -c.alpha₁₁, 0, 0, c.blueSeparation;
+      c.alpha₁₂ + c.alpha₂₂, -c.alpha₁₂, -c.alpha₂₂, c.blueSeparation, 0]
 
-private theorem lensCertificates_valid_3 : (lensCertificates 3).Valid := by
-  verify_lens_certificate
+private theorem lensRationalTarget_cast (c : LensCertificate) (i j : Five) :
+    (lensRationalTarget c i j : ℝ) = targetOffDiagonal c i j := by
+  fin_cases i <;> fin_cases j <;>
+    simp only [lensRationalTarget, targetOffDiagonal, Matrix.of_apply, Matrix.cons_val_zero',
+      Matrix.cons_val_succ', Rat.cast_add,
+      Rat.cast_neg, Rat.cast_zero]
 
-private theorem lensCertificates_valid_4 : (lensCertificates 4).Valid := by
-  verify_lens_certificate
+private theorem lensRationalEntry_cast (c : LensCertificate) (i j : Five) :
+    (rationalGramEntry c.factor i j : ℝ) = factorGram c i j :=
+  cast_rationalGramEntry c.factor i j
 
-private theorem lensCertificates_valid_5 : (lensCertificates 5).Valid := by
-  verify_lens_certificate
+private def lensRationalDiagonal (c : LensCertificate) : Five → ℚ :=
+  rationalCorrectedDiagonal c.factor (lensRationalTarget c) (1 / 1000000)
 
-private theorem lensCertificates_valid_6 : (lensCertificates 6).Valid := by
-  verify_lens_certificate
+private theorem lensRationalDiagonal_cast (c : LensCertificate) (i : Five) :
+    (lensRationalDiagonal c i : ℝ) =
+      ![diagonal₀ c, diagonal₁ c, diagonal₂ c, diagonal₃ c, diagonal₄ c] i := by
+  fin_cases i <;>
+    simp only [lensRationalDiagonal, rationalCorrectedDiagonal, Matrix.cons_val_zero',
+      Matrix.cons_val_succ',
+      Rat.cast_add, Rat.cast_abs, Rat.cast_sub, Rat.cast_one, Rat.cast_div, Rat.cast_ofNat,
+      lensRationalEntry_cast, lensRationalTarget_cast, diagonal₀, diagonal₁, diagonal₂,
+      diagonal₃, diagonal₄, residual]
 
-private theorem lensCertificates_valid_7 : (lensCertificates 7).Valid := by
-  verify_lens_certificate
+private def lensRationalChord : ℚ := 6933 / 5000
 
-private theorem lensCertificates_valid_8 : (lensCertificates 8).Valid := by
-  verify_lens_certificate
+private def lensRationalRedSecondPenalty : ℚ := 3 * (lensRationalChord + 1)
+private def lensRationalBlueSecondPenalty : ℚ := 9 / 2 * (lensRationalChord + 1)
 
-private theorem lensCertificates_valid_9 : (lensCertificates 9).Valid := by
-  verify_lens_certificate
+private def lensRationalRadialBound (c : LensCertificate) : ℚ :=
+  let root := lensRationalDiagonal c 0 + c.alpha₁₁ + c.alpha₁₂ + c.alpha₂₂
+  let redFirst := lensRationalDiagonal c 1 + c.alpha₁₁ + c.alpha₁₂ -
+    3 * (lensRationalChord - 1) + c.redSeparation
+  let redSecond := lensRationalDiagonal c 2 + c.alpha₂₂ -
+    lensRationalRedSecondPenalty / (c.redLower + c.redUpper) + c.redSeparation
+  let blueFirst := lensRationalDiagonal c 3 + c.alpha₁₁ -
+    9 / 2 * (lensRationalChord - 1) + c.blueSeparation
+  let blueSecond := lensRationalDiagonal c 4 + c.alpha₁₂ + c.alpha₂₂ -
+    lensRationalBlueSecondPenalty / (c.blueLower + c.blueUpper) + c.blueSeparation
+  root + max redFirst 0 +
+    max redSecond 0 * c.redUpper ^ 2 - max (-redSecond) 0 * c.redLower ^ 2 +
+    max blueFirst 0 + max blueSecond 0 * c.blueUpper ^ 2 - max (-blueSecond) 0 * c.blueLower ^ 2 -
+    (c.redSeparation + c.blueSeparation) * lensRationalChord ^ 2
 
-private theorem lensCertificates_valid_10 : (lensCertificates 10).Valid := by
-  verify_lens_certificate
+private def lensRationalUpperBound (c : LensCertificate) : ℚ :=
+  -9 + 59 / 2 * lensRationalChord - 85 / 2 * lensRationalChord ^ 2 +
+    17 ^ 2 / (4 * c.alpha₁₁) + 3 ^ 2 / (4 * c.alpha₁₂) + 5 ^ 2 / (4 * c.alpha₂₂) -
+    lensRationalRedSecondPenalty * c.redLower * c.redUpper / (c.redLower + c.redUpper) -
+    lensRationalBlueSecondPenalty * c.blueLower * c.blueUpper / (c.blueLower + c.blueUpper) +
+    lensRationalRadialBound c
 
-private theorem lensCertificates_valid_11 : (lensCertificates 11).Valid := by
-  verify_lens_certificate
+private theorem lensRationalUpperBound_cast (c : LensCertificate) :
+    (lensRationalUpperBound c : ℝ) = certificateUpperBound c := by
+  simp only [lensRationalUpperBound, lensRationalRadialBound, lensRationalDiagonal_cast,
+    lensRationalChord, lensRationalRedSecondPenalty, lensRationalBlueSecondPenalty,
+    certificateUpperBound, dualRadialBound, dualY, redFirstBalance, redSecondBalance,
+    blueFirstBalance, blueSecondBalance, redFirstPenalty, redSecondPenalty, blueFirstPenalty,
+    blueSecondPenalty, comparisonChord, positivePart, negativePart, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.cons_val_two, Matrix.cons_val_three, Matrix.cons_val_four,
+    Matrix.head_cons, Matrix.tail_cons, Rat.cast_add, Rat.cast_sub, Rat.cast_mul, Rat.cast_div,
+    Rat.cast_pow, Rat.cast_max,
+    Rat.cast_neg, Rat.cast_zero, Rat.cast_one, Rat.cast_ofNat]
 
-private theorem lensCertificates_valid_12 : (lensCertificates 12).Valid := by
-  verify_lens_certificate
+-- Only the upper-bound field of `LensCertificate.Valid` is a real comparison.
+private def lensRationalValid (c : LensCertificate) : Prop :=
+  0 < c.redLower ∧ c.redLower ≤ c.redUpper ∧ c.redUpper ≤ 1 ∧
+    0 < c.blueLower ∧ c.blueLower ≤ c.blueUpper ∧ c.blueUpper ≤ 1 ∧
+    0 < c.alpha₁₁ ∧ 0 < c.alpha₁₂ ∧ 0 < c.alpha₂₂ ∧
+    0 ≤ c.redSeparation ∧ 0 ≤ c.blueSeparation ∧ lensRationalUpperBound c < 0
+deriving Decidable
 
-private theorem lensCertificates_valid_13 : (lensCertificates 13).Valid := by
-  verify_lens_certificate
+private theorem lensValid_of_rationalValid {c : LensCertificate} (h : lensRationalValid c) :
+    c.Valid := by
+  simpa only [LensCertificate.Valid, lensRationalValid, ← lensRationalUpperBound_cast,
+    Rat.cast_lt_zero] using h
 
-private theorem lensCertificates_valid_14 : (lensCertificates 14).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_1 : (lensCertificates 1).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_15 : (lensCertificates 15).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_2 : (lensCertificates 2).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_16 : (lensCertificates 16).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_3 : (lensCertificates 3).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_17 : (lensCertificates 17).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_4 : (lensCertificates 4).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_18 : (lensCertificates 18).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_5 : (lensCertificates 5).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_19 : (lensCertificates 19).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_6 : (lensCertificates 6).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_20 : (lensCertificates 20).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_7 : (lensCertificates 7).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_21 : (lensCertificates 21).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_8 : (lensCertificates 8).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_22 : (lensCertificates 22).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_9 : (lensCertificates 9).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_23 : (lensCertificates 23).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_10 : (lensCertificates 10).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_24 : (lensCertificates 24).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_11 : (lensCertificates 11).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_25 : (lensCertificates 25).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_12 : (lensCertificates 12).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_26 : (lensCertificates 26).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_13 : (lensCertificates 13).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
-private theorem lensCertificates_valid_27 : (lensCertificates 27).Valid := by
-  verify_lens_certificate
+private theorem lensCertificates_valid_14 : (lensCertificates 14).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_15 : (lensCertificates 15).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_16 : (lensCertificates 16).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_17 : (lensCertificates 17).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_18 : (lensCertificates 18).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_19 : (lensCertificates 19).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_20 : (lensCertificates 20).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_21 : (lensCertificates 21).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_22 : (lensCertificates 22).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_23 : (lensCertificates 23).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_24 : (lensCertificates 24).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_25 : (lensCertificates 25).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_26 : (lensCertificates 26).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
+
+private theorem lensCertificates_valid_27 : (lensCertificates 27).Valid :=
+  lensValid_of_rationalValid (by decide +kernel)
 
 private theorem lensCertificates_valid (i : Fin 28) : (lensCertificates i).Valid := by
   fin_cases i
