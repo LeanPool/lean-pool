@@ -195,27 +195,39 @@ theorem norm_crouzeixPolynomialAuxiliaryOperator_le (A : E →L[ℂ] E)
   exact norm_crouzeixAuxiliaryOperator_le A Omega
     (fun z => star (Polynomial.eval z p)) hbound
 
-/-- For every containing smooth Jordan domain, the polynomial auxiliary
-operator admits a finite explicit contour-length bound. -/
+/-- For every containing smooth Jordan domain, some `C` bounds the polynomial
+auxiliary integrand on `[0, 2π]`, and the auxiliary operator satisfies the
+contour-length bound in that `C`. -/
 theorem exists_norm_bound_crouzeixPolynomialAuxiliaryOperator [CompleteSpace E]
     (A : E →L[ℂ] E) (Omega : SmoothJordanDomain) (p : Polynomial ℂ)
     (hOmega : closure (numericalRange A) ⊆ Omega.carrier) :
-    ∃ C : ℝ, ‖crouzeixPolynomialAuxiliaryOperator A Omega p‖ ≤
-      ‖(2 * (Real.pi : ℂ) * I)⁻¹‖ * (2 * Real.pi * C) := by
+    ∃ C : ℝ,
+      (∀ t ∈ Icc (0 : ℝ) (2 * Real.pi),
+        ‖deriv Omega.boundaryParam t •
+          (star (Polynomial.eval (Omega.boundaryParam t) p) •
+            resolvent A (Omega.boundaryParam t))‖ ≤ C) ∧
+      ‖crouzeixPolynomialAuxiliaryOperator A Omega p‖ ≤
+        ‖(2 * (Real.pi : ℂ) * I)⁻¹‖ * (2 * Real.pi * C) := by
   obtain ⟨C, hC⟩ := exists_bound_crouzeixPolynomialAuxiliaryIntegrand A Omega p hOmega
-  exact ⟨C, norm_crouzeixPolynomialAuxiliaryOperator_le A Omega p hC⟩
+  exact ⟨C, hC, norm_crouzeixPolynomialAuxiliaryOperator_le A Omega p hC⟩
 
-/-- Every polynomial admits a normalized auxiliary operator on some smooth
-Jordan domain containing `closure (numericalRange A)`, together with a finite
-contour-length norm bound. -/
+/-- For every polynomial there are a smooth Jordan domain containing
+`closure (numericalRange A)` and a `C` bounding the auxiliary integrand on
+`[0, 2π]`, such that the auxiliary operator satisfies the contour-length bound
+in that `C`. -/
 theorem exists_smoothJordanDomain_norm_bound_crouzeixPolynomialAuxiliaryOperator
     [CompleteSpace E] (A : E →L[ℂ] E) (p : Polynomial ℂ) :
     ∃ (Omega : SmoothJordanDomain) (C : ℝ),
       closure (numericalRange A) ⊆ Omega.carrier ∧
+      (∀ t ∈ Icc (0 : ℝ) (2 * Real.pi),
+        ‖deriv Omega.boundaryParam t •
+          (star (Polynomial.eval (Omega.boundaryParam t) p) •
+            resolvent A (Omega.boundaryParam t))‖ ≤ C) ∧
       ‖crouzeixPolynomialAuxiliaryOperator A Omega p‖ ≤
         ‖(2 * (Real.pi : ℂ) * I)⁻¹‖ * (2 * Real.pi * C) := by
   obtain ⟨Omega, hOmega⟩ := exists_smoothJordanDomain_for_numericalRange A
-  obtain ⟨C, hC⟩ := exists_norm_bound_crouzeixPolynomialAuxiliaryOperator A Omega p hOmega
-  exact ⟨Omega, C, hOmega, hC⟩
+  obtain ⟨C, hC, hnorm⟩ :=
+    exists_norm_bound_crouzeixPolynomialAuxiliaryOperator A Omega p hOmega
+  exact ⟨Omega, C, hOmega, hC, hnorm⟩
 
 /- Adapted for Lean Pool: module imports and compatibility with its pinned toolchain. -/
