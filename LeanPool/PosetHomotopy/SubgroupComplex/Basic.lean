@@ -161,8 +161,9 @@ def upperSetMap (f : PSubgroupPoset G p →o PSubgroupPoset G p) :
       exact f.monotone hab⟩
 
 /-- **Roadmap 4.4.** Stong's theorem: for a finite group `G`, `S_p(G)`, as a finite space with its
-upper-set topology, is contractible exactly when `G` has a nontrivial normal `p`-subgroup. -/
-theorem contractibleSpace_withUpperSet_iff [Finite G] [Fact p.Prime] :
+upper-set topology, is contractible exactly when `G` has a nontrivial normal `p`-subgroup. The
+roadmap assumes `p` prime; the proof does not use it. -/
+theorem contractibleSpace_withUpperSet_iff [Finite G] :
     ContractibleSpace (WithUpperSet (PSubgroupPoset G p)) ↔
       ∃ N : Subgroup G, N.Normal ∧ N ≠ ⊥ ∧ IsPGroup p N := by
   constructor
