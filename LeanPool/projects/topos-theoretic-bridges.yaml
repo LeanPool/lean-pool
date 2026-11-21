@@ -1,0 +1,114 @@
+slug: topos-theoretic-bridges
+title: Topos-theoretic bridges for presheaf topoi
+summary: Morita equivalence of small categories, defined as equivalence of their presheaf
+  topoi, is characterised by equivalence of Karoubi envelopes, through the retracts of
+  representable presheaves. The presheaf topos of a small category is Boolean exactly when
+  the category is a groupoid, and De Morgan exactly when it satisfies the right Ore condition;
+  both properties are invariant under Morita equivalence. An equivalence of the sheaf topoi
+  of two small sites gives an order isomorphism between the Grothendieck topologies finer than
+  the two given ones, matching their sheaf conditions. The subtopoi of a sheaf topos
+  correspond to the finer topologies, and the essential points of a presheaf topos form a
+  category equivalent to the opposite of the Karoubi envelope. For geometric theories, the
+  categorical semantics in sheaf topoi is developed; every geometric theory has a classifying
+  site, unique up to equivalence of topoi, on which every subobject of a power of the generic
+  model is definable; the quotients of a theory correspond to the topologies finer than its
+  classifying one, and the quotients of Morita-equivalent theories correspond. These are
+  instances of O. Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
+  presentations.
+branch: category theory
+entry_module: LeanPool.ToposTheoreticBridges
+authors:
+- Michel Hua
+source:
+  title: The unification of Mathematics via Topos Theory (O. Caramello)
+  arxiv: '1006.3930'
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
+- LeanPool.ToposTheoreticBridges.isBooleanTopos_presheaf_iff_isGroupoid
+- LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition
+- LeanPool.ToposTheoreticBridges.exists_orderIso_ici_of_sheafEquiv
+- LeanPool.ToposTheoreticBridges.subtoposOrderIso
+- LeanPool.ToposTheoreticBridges.essentialPointEquivKaroubiOp
+- LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_equivalence
+- LeanPool.ClassifyingTopoi.exists_isClassifyingSite
+- LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology
+- LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_theory
+- LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients
+main_results:
+- declaration: LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
+  informal: Two small categories have equivalent categories of presheaves of sets exactly
+    when their Karoubi envelopes (idempotent completions) are equivalent.
+- declaration: LeanPool.ToposTheoreticBridges.isBooleanTopos_presheaf_iff_isGroupoid
+  informal: Every subpresheaf of every presheaf on a small category C has a complement
+    exactly when every morphism of C is invertible.
+- declaration: LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition
+  informal: In the presheaf topos of a small category C, every subobject's pseudocomplement
+    and its double pseudocomplement together cover the whole object exactly when every cospan
+    in C can be completed to a commutative square.
+- declaration: LeanPool.ToposTheoreticBridges.isGroupoid_iff_of_moritaEquivalentCat
+  informal: Being a groupoid is invariant under Morita equivalence of small categories.
+- declaration: LeanPool.ToposTheoreticBridges.rightOreCondition_iff_of_moritaEquivalentCat
+  informal: The right Ore condition is invariant under Morita equivalence of small categories.
+- declaration: LeanPool.ToposTheoreticBridges.exists_orderIso_ici_of_sheafEquiv
+  informal: An equivalence between the categories of sheaves of sets on two small sites (C, J)
+    and (D, K) gives an order isomorphism between the Grothendieck topologies on C finer than J
+    and those on D finer than K, under which a J-sheaf is a sheaf for a finer topology J'
+    exactly when its image is a sheaf for the corresponding topology on D.
+- declaration: LeanPool.ToposTheoreticBridges.subtoposOrderIso
+  informal: For a Grothendieck topology J on a small category, the subtopoi of the category of
+    J-sheaves of sets (reflective full subcategories with left exact reflector) correspond, by
+    an order-reversing bijection, to the Grothendieck topologies finer than J.
+- declaration: LeanPool.ToposTheoreticBridges.essentialPointEquivKaroubiOp
+  informal: The essential points of the presheaf topos of a small category C (finite-limit
+    preserving functors to sets with both a left and a right adjoint) form a category equivalent
+    to the opposite of the Karoubi envelope of C.
+- declaration: LeanPool.ClassifyingTopoi.CatStructure.IsModel.map
+  informal: The inverse image of a geometric morphism between sheaf topoi of small sites sends
+    models of a geometric theory to models.
+- declaration: LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_equivalence
+  informal: Two classifying sites of the same geometric theory have equivalent topoi of
+    sheaves.
+- declaration: LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology
+  informal: If (C, J) with generic model U classifies a geometric theory T, every theory
+    containing T is classified by a Grothendieck topology on C finer than J, with the
+    sheafified generic model.
+- declaration: LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_orderEmbedding_quotients_ici
+  informal: The quotients of a theory with a classifying site (C, J) embed, as an order, into
+    the Grothendieck topologies on C finer than J.
+- declaration: LeanPool.ClassifyingTopoi.exists_isClassifyingSite
+  informal: Every geometric theory has a classifying site, a small site with a model of the
+    theory in its sheaf topos through which every model in every sheaf topos factors uniquely
+    up to isomorphism by the inverse image of a geometric morphism.
+- declaration: LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_interp_eq_of_subobject
+  informal: On a classifying site, every subobject of a power of the generic model is the
+    interpretation of a geometric formula.
+- declaration: LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_theory
+  informal: If (C, J) classifies a geometric theory T, every Grothendieck topology on C finer
+    than J classifies some theory containing T, with the sheafified generic model.
+- declaration: LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients
+  informal: The posets of quotients of two Morita-equivalent geometric theories are order
+    isomorphic, corresponding quotients being Morita equivalent.
+- declaration: LeanPool.ClassifyingTopoi.isOfPresheafType_of_isHorn
+  informal: Every Horn theory is of presheaf type, its classifying topos being the category of
+    presheaves on its Horn category.
+- declaration: LeanPool.ClassifyingTopoi.isClassifyingSite_genericObject
+  informal: The functors from finite sets to sets classify the theory of objects, the inclusion
+    of finite sets into sets being the generic object.
+- declaration: LeanPool.ClassifyingTopoi.GeometricTheory.Provable.sound
+  informal: Geometric sequents provable from a theory hold in every model of the theory in every
+    sheaf topos of a small site.
+tags:
+- topos-theory
+- classifying-topoi
+- morita-equivalence
+- karoubi-envelope
+- presheaf-topoi
+msc:
+- 18F10
+- 18B25
+- 18E50
+- 03G30
