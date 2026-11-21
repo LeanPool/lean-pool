@@ -25,9 +25,9 @@ homotopy invariance of contour integrals.
     parametric interval integral
 * `schwarz_partialDeriv_comm` — mixed partials of a C² function
     commute
-* `hasDerivAt_homotopy_integral_zero` — derivative of the
-    homotopy integral vanishes when boundary s-derivatives are
-    zero
+* `hasDerivAt_homotopy_integral_zero` — for an entire `f` and a
+    C² homotopy, the derivative of the homotopy integral vanishes
+    when boundary s-derivatives are zero
 -/
 
 @[expose] public section
@@ -574,7 +574,10 @@ private lemma homotopy_J_deriv_continuousOn
       hH.continuous).comp h_embed).mul (h_partialT.continuous.comp h_embed)).continuousOn
   · exact (h_fH_cont.mul h_partial_deriv_cont).continuousOn
 
-/-- Derivative of the homotopy integral vanishes. -/
+/-- Derivative of the homotopy integral vanishes, for an **entire** `f`
+(`Differentiable ℂ f`; the pointwise hypothesis `hf_diff` on the image of `H` is
+then automatic) and a C² homotopy `H` whose `s`-derivatives vanish at the endpoints
+`t = a` and `t = b`. -/
 theorem hasDerivAt_homotopy_integral_zero
     (f : ℂ → ℂ) (H : ℝ × ℝ → ℂ) (a b s : ℝ)
     (hab : a < b)
