@@ -423,12 +423,8 @@ theorem weakRadialCutoffLimitStep_of_coarea_and_oneDimensional {n m : ℕ}
   intro hrad
   exact hsharp (hcoarea hrad)
 
-/-- Step 1: compute the derivative and divergence of `X(x) = phi(|x|) x`.
-
-In the full proof this should produce the integrand
-`((n - 2) * phi |x| + |x| * phi' |x|) * |du|^2
- - 2 * |x| * phi' |x| * |partial_r u|^2`.
--/
+/-- Radial vector-field computation for the stationarity integrand of
+`X(x) = phi(|x|) x`. -/
 theorem radial_vector_field_computation {n m : ℕ}
     (u : Domain n → Target m) (phi : ℝ → ℝ)
     (hphi : Differentiable ℝ phi) :
@@ -523,9 +519,9 @@ theorem weak_boundary_identity_from_radial_identity_via_formula_ibpFormula_primi
       (n := n) (m := m) (Du := Du) (R0 := R0) hibp_formula)
     hprimitive
 
-/-- The most decomposed route currently used by the formalization: vector-field
-regularity, coarea/radius integration, one-dimensional IBP, and primitive
-cutoffs are independent ingredients. -/
+/-- Derive the weak boundary identity from radial stationarity with separate
+hypotheses for vector-field regularity, coarea integration, one-dimensional
+integration by parts, and primitive cutoffs. -/
 theorem weak_boundary_identity_from_radial_identity_via_split_ingredients {n m : ℕ}
     {Du : Domain n → Gradient n m} {R0 : ℝ}
     (hrad : WeakRadialStationarityIdentity Du R0)
