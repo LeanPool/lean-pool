@@ -137,6 +137,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ExpChaotic                https://github.com/LR-UK/exp-chaotic
   LeanPool/FBLOrderContinuity        https://github.com/pedrotradacete/FBLOrderContinuousLH
   LeanPool/FLTEichlerShimura         https://github.com/loefflerd/KN-scratch
+  LeanPool/FastDynamo                https://github.com/lukasniebel/fast_dynamo_lean
   LeanPool/Feige                     https://github.com/pengzhang91/Feige
   LeanPool/Fekete                    https://github.com/Egly443/lean-fekete
   LeanPool/Fineqs                    https://github.com/nasqret/fineqs
@@ -252,6 +253,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Neukirch                  https://github.com/jjdishere/neukirch
   LeanPool/Nikodym                   https://github.com/shengtongzhang-alt/nikodym
   LeanPool/NonSoficGroup             https://github.com/openai/ten-proofs
+  LeanPool/NoncommutativeAMGM        https://github.com/lowrank/noncommutative-amgm-lean
   LeanPool/OSforGFF                  https://github.com/mrdouglasny/OSforGFF
   LeanPool/OddPrimeValuationDistribution
                                      https://github.com/lyfar/gkp-carry-lean
@@ -309,6 +311,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/RungeKuttaOrderConditions https://github.com/karlesmarin/runge-kutta-order-conditions-lean
   LeanPool/RunsOfMultiples           https://github.com/jas-ho/runs-of-multiples-lean
   LeanPool/Rupert                    https://github.com/dwrensha/Rupert.lean
+  LeanPool/RupertMinimality          https://github.com/tom7/noperts
   LeanPool/SNumbers                  https://github.com/mario-ullrich/lean-snumbers
   LeanPool/Sabidussi                 https://github.com/gexahedron/sabidussi-lean
   LeanPool/SardMoreira               https://github.com/urkud/SardMoreira
@@ -355,6 +358,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Vlasov                    https://github.com/Hydrodynamical/Vlasov_Meanfield_Formalization
   LeanPool/Wallace                   https://github.com/vo-rodrigues/wallace-problem-zfc-paper
   LeanPool/WhiteheadTheorem          https://github.com/jzxia/WhiteheadTheorem
+  LeanPool/WordRepTensor             https://github.com/Horace-Maxwell/ai4math-results
   LeanPool/ZFLean                    https://github.com/VTrelat/ZFLean
   LeanPool/Zeta32                    https://github.com/dtq1997/zeta2-zeta3-linear-independence
   LeanPool/Zeta3Irrational           https://github.com/ahhwuhu/zeta_3_irrational
