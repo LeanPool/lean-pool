@@ -206,11 +206,6 @@ denominator, under explicit quarter-acuteness. -/
 alias tanTwoTheta_unbounded_opNorm_complex :=
   DavisKahan.tanTwoTheta_addBounded_of_spectrum_gap
 
-/-- Set-localized interval/exterior form of the unbounded operator-norm
-estimate. -/
-alias tanTwoTheta_unbounded_intervalExterior_opNorm_complex :=
-  DavisKahan.tanTwoTheta_addBounded_of_intervalExterior
-
 /-- The ideal-theoretic tangent companion of the reflected overlap block. -/
 alias tanTwoThetaBlock :=
   DavisKahan.tanTwoThetaIdealBlock
@@ -228,10 +223,6 @@ alias tanTwoTheta_unbounded_blockRepresentative_symmetricIdealFamily_complex :=
 family. -/
 alias tanTwoTheta_unbounded_blockRepresentative_idealFamily_complex :=
   DavisKahan.tanTwoTheta_addBounded_unitaryInvariant_of_spectrum_gap
-
-/-- Set-localized interval/exterior form at unitary-invariant ideal scope. -/
-alias tanTwoTheta_unbounded_intervalExterior_blockRepresentative_idealFamily_complex :=
-  DavisKahan.tanTwoTheta_addBounded_unitaryInvariant_of_intervalExterior
 
 end DavisKahan1970
 end TauCeti
