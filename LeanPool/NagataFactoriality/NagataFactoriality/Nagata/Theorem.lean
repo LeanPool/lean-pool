@@ -82,29 +82,4 @@ theorem nagata_theorem_of_finite_prime_generators_isLocalization {R T : Type*}
   exact nagata_theorem_of_prime_generators_isLocalization (R := R) (T := T) (s := (↑s : Set R))
     (fun q hq => hs q hq) hUFD
 
-theorem nagata_theorem_of_prime_or_unit {R : Type*} [CommRing R] [IsDomain R] [IsNoetherianRing R]
-    (S : Submonoid R) (hS : ∀ s ∈ S, Prime s ∨ IsUnit s)
-    (hUFD :
-      @UniqueFactorizationMonoid (Localization S)
-        (by
-          let : Fact ((0 : R) ∉ S) := ⟨Submonoid.zero_notMem_of_prime_or_unit hS⟩
-          infer_instance)) :
-    UniqueFactorizationMonoid R := by
-  let : Fact ((0 : R) ∉ S) := ⟨Submonoid.zero_notMem_of_prime_or_unit hS⟩
-  let : UniqueFactorizationMonoid (Localization S) := hUFD
-  exact ufd_of_factorization_and_primes
-    (hasFactorization_of_noetherian (α := R))
-    (fun p hp => nagata_key_lemma_isLocalization
-      (S := S) (β := Localization S) hS hp)
-
-theorem nagata_theorem_of_prime_or_unit_isLocalization {R T : Type*}
-    [CommRing R] [IsDomain R] [IsNoetherianRing R] (S : Submonoid R) [CommRing T] [Algebra R T]
-    [_root_.IsLocalization S T]
-    (hS : ∀ s ∈ S, Prime s ∨ IsUnit s) (hUFD : UniqueFactorizationMonoid T) :
-    UniqueFactorizationMonoid R := by
-  let : UniqueFactorizationMonoid T := hUFD
-  exact ufd_of_factorization_and_primes
-    (hasFactorization_of_noetherian (α := R))
-    (fun p hp => nagata_key_lemma_isLocalization (S := S) (β := T) hS hp)
-
 end NagataFactoriality
