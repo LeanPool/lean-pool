@@ -25,10 +25,10 @@ All computations go through polar coordinates (`Sphere.lintegral_polar`, from Ma
 stereographic projection are then computed by splitting `ℝ^{n+k} = ℝⁿ × ℝᵏ`
 (`Sphere.lintegral_append`), one-dimensional substitutions, Tonelli and scaling.
 
-The interface statement `sphereUniform_map_projFirst'` is false for `d = n + 2` (the density
-`C (max (R² - |y|²) 0) ^ 0` equals `C` everywhere, see
-`Sphere.sphereUniform_map_projFirst_counterexample`); the corrected statement, with the density
-restricted to the ball, is `Sphere.sphereUniform_map_projFirst_ball`.
+The projected density is restricted to the ball in `Sphere.sphereUniform_map_projFirst_ball`.
+This restriction matters for `d = n + 2`, where the untruncated formula
+`C (max (R² - |y|²) 0) ^ 0` is constant on all of `ℝⁿ`. See
+`Sphere.sphereUniform_map_projFirst_counterexample`.
 -/
 
 @[expose] public section
@@ -513,8 +513,8 @@ theorem sphereUniform_map_projFirst_ball {n d : ℕ} (hn : 1 ≤ n) (hnd : n + 1
   simp only [Pi.mul_apply]
   rw [← mul_assoc, ← mul_assoc, projDensity_eq hn hk hR u]
 
-/-- For `d = n + 2` the interface statement `sphereUniform_map_projFirst'` is false: its right-hand
-side has density `C (max (R² - |y|²) 0) ^ 0 = C` on all of `ℝⁿ`, hence infinite mass. -/
+/-- For `d = n + 2`, the untruncated density formula gives the constant `C` on all of `ℝⁿ`
+and therefore infinite mass. The projected probability measure differs from this measure. -/
 theorem sphereUniform_map_projFirst_counterexample {n : ℕ} (hn : 1 ≤ n) {R : ℝ} (hR : 0 < R) :
     (sphereUniform (n + 2) R).map (projFirst (by omega : n ≤ n + 2)) ≠
       densityMeasure (fun y : E n => Gamma (((n + 2 : ℕ) : ℝ) / 2) / (π ^ ((n : ℝ) / 2) *

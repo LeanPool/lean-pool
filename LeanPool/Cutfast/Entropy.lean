@@ -225,8 +225,9 @@ theorem tsallis_not_tendsto :
 
 end Entropy
 
-/-- `x ↦ (xᵐ - 1)/(m - 1)` is strictly convex on `[0,∞)` for `m > 0`, `m ≠ 1`, and tends to
-`log x` as `m → 1` (Section 1.3). -/
+/-- The Tsallis profile is strictly convex on `[0,∞)` for `m > 0`, `m ≠ 1`.
+For positive `x`, the centered quotient `(xᵐ - x)/(m - 1)` tends to `x * log x`
+as `m → 1` (Section 1.3). -/
 theorem tsallis_strictConvexOn_tendsto_log' {m : ℝ} (hm0 : 0 < m) (hm1 : m ≠ 1) :
     StrictConvexOn ℝ (Set.Ici 0) (fun x : ℝ => (x ^ m - 1) / (m - 1)) ∧
     ∀ x : ℝ, 0 < x → Tendsto (fun m : ℝ => (x ^ m - x) / (m - 1)) (𝓝[≠] 1) (𝓝 (x * log x)) := by

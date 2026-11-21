@@ -111,9 +111,8 @@ section Generic
 
 variable {m t R : ℕ → ℝ}
 
-lemma sq_le_of_mem {d : ℕ} {ρ : ℝ} {x : E d} (hx : x ∈ closedBall (0 : E d) ρ) :
-    ‖x‖ ^ 2 ≤ ρ ^ 2 :=
-  pow_le_pow_left₀ (norm_nonneg _) (mem_closedBall_zero_iff.1 hx) 2
+export Cutoff.GeneralRadius (sq_le_of_mem ShiftHyp wassersteinSq_lower_shift
+  relEntropy_lower_shift fisherInfo_lower_shift)
 
 /-- Hypotheses for the upper bounds, for initial points in the ball of radius `R d`. -/
 def UpperHyp (m t R : ℕ → ℝ) (A K : ℝ) : Prop :=
@@ -122,98 +121,26 @@ def UpperHyp (m t R : ℕ → ℝ) (A K : ℝ) : Prop :=
   Tendsto (fun d : ℕ => (d : ℝ) * exp (-t d / alpha d (m d)) ^ 2) atTop (𝓝 0) ∧
   Tendsto (fun d : ℕ => R d ^ 2 * exp (-t d) ^ 2) atTop (𝓝 0)
 
-lemma UpperHyp.eventually {A K : ℝ} (H : UpperHyp m t R A K) :
-    ∀ᶠ d : ℕ in atTop, Admissible d (m d) ∧ (d : ℝ) / (d + 2) < m d ∧ 0 < t d ∧
-      alpha d (m d) ≤ A ∧ eqSecondMoment d (m d) ≤ K * d ∧ exp (-t d / alpha d (m d)) ≤ 1 / 2 :=
-  by
-  filter_upwards [H.1, eventually_le_half H.2.1] with d hd hu
-  exact ⟨hd.1, hd.2.1, hd.2.2.1, hd.2.2.2.1, hd.2.2.2.2.1, hu⟩
-
-lemma tendsto_bound {A K C D : ℝ} (H : UpperHyp m t R A K) :
-    Tendsto (fun d : ℕ => C * K * ((d : ℝ) * exp (-t d / alpha d (m d)) ^ 2) +
-      D * (R d ^ 2 * exp (-t d) ^ 2)) atTop (𝓝 0) := by
-  simpa using (H.2.1.const_mul (C * K)).add (H.2.2.const_mul D)
+private lemma UpperHyp.generalRadius {A K : ℝ} (H : UpperHyp m t R A K) :
+    Cutoff.GeneralRadius.UpperHyp m t R A K :=
+  ⟨H.1.mono (fun _ hd => ⟨hd.1, hd.2.1, hd.2.2.1, hd.2.2.2.1, hd.2.2.2.2.1⟩), H.2⟩
 
 lemma wassersteinSq_upper {A K : ℝ} (H : UpperHyp m t R A K) :
     Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
       wassersteinSq (densityMeasure (solution d (m d) x₀ (t d)))
-        (densityMeasure (equilibrium d (m d)))) atTop (𝓝 0) := by
-  refine tendsto_iSup_ennreal_zero (tendsto_bound (C := max 1 A ^ 2) (D := 1) H) ?_
-  filter_upwards [H.eventually] with d ⟨h, h2, ht, hA, hK, hu⟩ x₀ hx₀
-  refine (wassersteinSq_le h h2 ht hu x₀ (sq_le_of_mem hx₀)).trans
-    (ENNReal.ofReal_le_ofReal ?_)
-  have hM := (eqSecondMoment_pos h h2).le
-  have h1 : max 1 (alpha d (m d)) ^ 2 ≤ max 1 A ^ 2 :=
-    pow_le_pow_left₀ (by positivity) (max_le_max le_rfl hA) 2
-  have h3 : max 1 (alpha d (m d)) ^ 2 * eqSecondMoment d (m d) ≤ max 1 A ^ 2 * (K * d) :=
-    mul_le_mul h1 hK hM (by positivity)
-  have := mul_le_mul_of_nonneg_right h3 (sq_nonneg (exp (-t d / alpha d (m d))))
-  nlinarith
+        (densityMeasure (equilibrium d (m d)))) atTop (𝓝 0) :=
+  Cutoff.GeneralRadius.wassersteinSq_upper H.generalRadius
 
 lemma relEntropy_upper {A K : ℝ} (H : UpperHyp m t R A K) :
     Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
       (relEntropy (m d) (solution d (m d) x₀ (t d)) (equilibrium d (m d)) : EReal))
-        atTop (𝓝 0) := by
-  refine tendsto_iSup_ereal_zero (tendsto_bound (C := 2 * A) (D := 1 / 2) H)
-    (H.1.mono fun d hd => hd.2.2.2.2.2) ?_
-  filter_upwards [H.eventually] with d ⟨h, h2, ht, hA, hK, hu⟩ x₀ hx₀
-  obtain ⟨h0, h1⟩ := relEntropy_le h h2 ht hu x₀ (sq_le_of_mem hx₀)
-  refine ⟨h0, h1.trans ?_⟩
-  have hM := (eqSecondMoment_pos h h2).le
-  have hα := (alpha_pos h).le
-  have h3 : 2 * alpha d (m d) * eqSecondMoment d (m d) ≤ 2 * A * (K * d) :=
-    mul_le_mul (by linarith) hK hM (by linarith)
-  have := mul_le_mul_of_nonneg_right h3 (sq_nonneg (exp (-t d / alpha d (m d))))
-  nlinarith
+        atTop (𝓝 0) :=
+  Cutoff.GeneralRadius.relEntropy_upper H.generalRadius (H.1.mono fun _ hd => hd.2.2.2.2.2)
 
 lemma fisherInfo_upper {A K : ℝ} (H : UpperHyp m t R A K) :
     Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
-      fisherInfo (m d) (solution d (m d) x₀ (t d))) atTop (𝓝 0) := by
-  refine tendsto_iSup_ennreal_zero (tendsto_bound (C := 4) (D := 1) H) ?_
-  filter_upwards [H.eventually] with d ⟨h, h2, ht, hA, hK, hu⟩ x₀ hx₀
-  refine (fisherInfo_le h h2 ht hu x₀ (sq_le_of_mem hx₀)).trans
-    (ENNReal.ofReal_le_ofReal ?_)
-  have := mul_le_mul_of_nonneg_left hK
-    (by positivity : (0 : ℝ) ≤ 4 * exp (-t d / alpha d (m d)) ^ 2)
-  nlinarith
-
-/-- Hypotheses for the lower bounds driven by the translation `e^{-t}x₀`, `|x₀| = R d`. -/
-def ShiftHyp (m t R : ℕ → ℝ) : Prop :=
-  (∀ᶠ d : ℕ in atTop, Admissible d (m d) ∧ (d : ℝ) / (d + 2) < m d ∧ 0 < t d ∧ 0 ≤ R d) ∧
-  Tendsto (fun d : ℕ => R d ^ 2 * exp (-t d) ^ 2) atTop atTop
-
-lemma ShiftHyp.exists (H : ShiftHyp m t R) :
-    ∀ᶠ d : ℕ in atTop, Admissible d (m d) ∧ (d : ℝ) / (d + 2) < m d ∧ 0 < t d ∧
-      ∃ x₀ ∈ closedBall (0 : E d) (R d), ‖x₀‖ = R d := by
-  filter_upwards [H.1] with d ⟨h, h2, ht, hR⟩
-  obtain ⟨x, hx⟩ := exists_norm_eq_of_one_le h.1 hR
-  exact ⟨h, h2, ht, x, by rw [mem_closedBall_zero_iff, hx], hx⟩
-
-lemma wassersteinSq_lower_shift (H : ShiftHyp m t R) :
-    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
-      wassersteinSq (densityMeasure (solution d (m d) x₀ (t d)))
-        (densityMeasure (equilibrium d (m d)))) atTop (𝓝 ⊤) := by
-  refine tendsto_iSup_ennreal_top H.2 ?_
-  filter_upwards [H.exists] with d ⟨h, h2, ht, x, hx, hnx⟩
-  refine ⟨x, hx, le_trans (le_of_eq ?_) (le_wassersteinSq h h2 ht x)⟩
-  rw [hnx, mul_comm]
-
-lemma relEntropy_lower_shift (H : ShiftHyp m t R) :
-    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
-      (relEntropy (m d) (solution d (m d) x₀ (t d)) (equilibrium d (m d)) : EReal))
-        atTop (𝓝 ⊤) := by
-  refine tendsto_iSup_ereal_top (H.2.const_mul_atTop (by norm_num : (0 : ℝ) < 1 / 2)) ?_
-  filter_upwards [H.exists] with d ⟨h, h2, ht, x, hx, hnx⟩
-  refine ⟨x, hx, le_trans (le_of_eq ?_) (le_relEntropy h h2 ht x)⟩
-  rw [hnx]; ring
-
-lemma fisherInfo_lower_shift (H : ShiftHyp m t R) :
-    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
-      fisherInfo (m d) (solution d (m d) x₀ (t d))) atTop (𝓝 ⊤) := by
-  refine tendsto_iSup_ennreal_top H.2 ?_
-  filter_upwards [H.exists] with d ⟨h, h2, ht, x, hx, hnx⟩
-  refine ⟨x, hx, le_trans (le_of_eq ?_) (le_fisherInfo h h2 ht x)⟩
-  rw [hnx, mul_comm]
+      fisherInfo (m d) (solution d (m d) x₀ (t d))) atTop (𝓝 0) :=
+  Cutoff.GeneralRadius.fisherInfo_upper H.generalRadius
 
 lemma scaleHyp_eventually {α k : ℝ} (H : ScaleHyp m t α k) (hR : ∀ᶠ d : ℕ in atTop, 0 ≤ R d) :
     ∀ᶠ d : ℕ in atTop, Admissible d (m d) ∧ (d : ℝ) / (d + 2) < m d ∧ 0 < t d ∧
