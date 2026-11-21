@@ -8,6 +8,7 @@ module
 public import LeanPool.ToposTheoreticBridges.Morita
 public import LeanPool.ToposTheoreticBridges.Boolean
 public import LeanPool.ToposTheoreticBridges.DeMorgan
+public import LeanPool.ToposTheoreticBridges.Sites
 
 /-!
 # Topos-theoretic bridges
@@ -21,7 +22,11 @@ presheaf topoi with their characterisations on the site:
   `C` is Boolean exactly when `C` is a groupoid;
 * `LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition`: it is
   De Morgan exactly when `C` satisfies the right Ore condition;
-* the Morita invariance of both properties, as « bridges » in O. Caramello's sense: an invariant
-  of the topos, read on two presentations, gives an equivalence of properties of the
-  presentations.
+* `LeanPool.ToposTheoreticBridges.exists_orderIso_ici_of_sheafEquiv`: an equivalence of the sheaf
+  topoi of two small sites gives an order isomorphism between the topologies finer than the two
+  given ones, under which the sheaf conditions correspond;
+* the Morita invariance of being a groupoid and of the right Ore condition.
+
+These are « bridges » in O. Caramello's sense: an invariant of the topos, read on two
+presentations, gives an equivalence of properties of the presentations.
 -/

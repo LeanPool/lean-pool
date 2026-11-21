@@ -4,7 +4,9 @@ summary: Morita equivalence of small categories, defined as equivalence of their
   topoi, is characterised by equivalence of Karoubi envelopes, through the retracts of
   representable presheaves. The presheaf topos of a small category is Boolean exactly when
   the category is a groupoid, and De Morgan exactly when it satisfies the right Ore condition;
-  both properties are invariant under Morita equivalence. These are instances of O.
+  both properties are invariant under Morita equivalence. An equivalence of the sheaf topoi
+  of two small sites gives an order isomorphism between the Grothendieck topologies finer than
+  the two given ones, matching their sheaf conditions. These are instances of O.
   Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
   presentations.
 branch: category theory
@@ -21,6 +23,7 @@ main_declarations:
 - LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
 - LeanPool.ToposTheoreticBridges.isBooleanTopos_presheaf_iff_isGroupoid
 - LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition
+- LeanPool.ToposTheoreticBridges.exists_orderIso_ici_of_sheafEquiv
 main_results:
 - declaration: LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
   informal: Two small categories have equivalent categories of presheaves of sets exactly
@@ -36,6 +39,11 @@ main_results:
   informal: Being a groupoid is invariant under Morita equivalence of small categories.
 - declaration: LeanPool.ToposTheoreticBridges.rightOreCondition_iff_of_moritaEquivalentCat
   informal: The right Ore condition is invariant under Morita equivalence of small categories.
+- declaration: LeanPool.ToposTheoreticBridges.exists_orderIso_ici_of_sheafEquiv
+  informal: An equivalence between the categories of sheaves of sets on two small sites (C, J)
+    and (D, K) gives an order isomorphism between the Grothendieck topologies on C finer than J
+    and those on D finer than K, under which a J-sheaf is a sheaf for a finer topology J'
+    exactly when its image is a sheaf for the corresponding topology on D.
 tags:
 - topos-theory
 - morita-equivalence
