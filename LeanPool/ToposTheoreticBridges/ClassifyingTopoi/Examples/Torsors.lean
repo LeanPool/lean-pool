@@ -30,18 +30,10 @@ and the generic torsor (`LeanPool.ClassifyingTopoi.genericTorsor`), the represen
   `G`-torsors, so the reduct of the generic model of a classifying site of `G`-torsors classifies
   `H`-torsors (`Torsor.isClassifyingSite_reduct`).
 
-## Not formalised
-
 The classification of torsors by the presheaf topos on `SingleObj G`
-(`isClassifyingSite_genericTorsor`) and the converse direction of
-`moritaEquivalent_torsorTheory_iff` (that Morita-equivalent theories of torsors come from isomorphic
-groups) are not formalised. For the first, the existence half of Diaconescu's theorem for an
-arbitrary site is `LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering`: a torsor
-`M` in a sheaf topos (locally inhabited, transitive and free) is a locally filtering functor on
-`SingleObj G`. Missing are this translation, the identification of the image of the generic
-torsor with `M`, and the uniqueness part of the universal property; the second then follows from
-the reconstruction of `G` from the Cauchy completion of `SingleObj G`
-(`moritaEquivalentCat_iff_karoubi`).
+(`isClassifyingSite_genericTorsor`) and the converse of the Morita criterion
+(`moritaEquivalent_torsorTheory_iff`) are in
+`LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.TorsorClassification`.
 -/
 
 @[expose] public section

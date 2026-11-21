@@ -32,7 +32,8 @@ Main declarations: `LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karou
   `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_theory`,
   `LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients`,
   `LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf`,
-  `LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering`
+  `LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering`,
+  `LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor`
 Tags: topos-theory, classifying-topoi, morita-equivalence, karoubi-envelope, presheaf-topoi
 MSC: 18F10, 18B25, 18E50, 03G30
 -/

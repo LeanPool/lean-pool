@@ -15,7 +15,9 @@ summary: Morita equivalence of small categories, defined as equivalence of their
   classifying one, and the quotients of Morita-equivalent theories correspond. Geometric
   formulas translate into the infinitary logic of Tau Ceti with the same satisfaction, and the
   existence half of Diaconescu's theorem is proved, extending every internally flat continuous
-  functor from a site to a sheaf topos to the inverse image of a geometric morphism. These are
+  functor from a site to a sheaf topos to the inverse image of a geometric morphism; as an
+  application, G-sets classify G-torsors, whose theories are Morita equivalent exactly for
+  isomorphic groups. These are
   instances of O. Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
   presentations.
 branch: category theory
@@ -43,6 +45,7 @@ main_declarations:
 - LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients
 - LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf
 - LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering
+- LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor
 main_results:
 - declaration: LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
   informal: Two small categories have equivalent categories of presheaves of sets exactly
@@ -136,6 +139,13 @@ main_results:
     F sends every J-covering sieve to an epimorphic family. Then there is a finite-limit
     preserving left adjoint G from J-sheaves of sets on C to K-sheaves of sets on D whose
     composite with the sheafified Yoneda embedding of C is isomorphic to F.
+- declaration: LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor
+  informal: For a group G, the category of presheaves of sets on the one-object category of G
+    (right G-sets), with the representable presheaf on which G acts on the left, classifies
+    the geometric theory of G-torsors (a left action that is inhabited, transitive and free).
+- declaration: LeanPool.ClassifyingTopoi.moritaEquivalent_torsorTheory_iff
+  informal: The geometric theories of G-torsors and of H-torsors are Morita equivalent exactly
+    when the groups G and H are isomorphic.
 tags:
 - topos-theory
 - classifying-topoi

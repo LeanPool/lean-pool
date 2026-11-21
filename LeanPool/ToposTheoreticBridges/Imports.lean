@@ -21,6 +21,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Homogeneo
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Interval
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.ObjectClassifier
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.PresheafType
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.TorsorClassification
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Torsors
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Homomorphisms
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Infinitary
@@ -31,6 +32,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalForm
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalFormSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Quotients
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Semantics
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.SheafSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Definability
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Extension
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Fiber

@@ -39,6 +39,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Unconditional
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.PresheafType
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.ObjectClassifier
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Torsors
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.TorsorClassification
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Interval
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.FinitelyPresentable
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Homogeneous
@@ -129,10 +130,11 @@ Layer 3 of the roadmap: theories of presheaf type (the modules
   of the language, whose induced topology is the topology classifying the theory;
 * `LeanPool.ClassifyingTopoi.isClassifyingSite_genericObject` (roadmap 3.2): the functors from
   finite sets to sets classify objects, with the inclusion as generic object;
-* `LeanPool.ClassifyingTopoi.isModel_genericTorsor` and
-  `LeanPool.ClassifyingTopoi.moritaEquivalent_torsorTheory_of_mulEquiv` (roadmap 3.3, partial):
-  the generic torsor is a torsor, and isomorphic groups have Morita-equivalent theories of
-  torsors;
+* `LeanPool.ClassifyingTopoi.isClassifyingSite_genericTorsor` and
+  `LeanPool.ClassifyingTopoi.moritaEquivalent_torsorTheory_iff` (roadmap 3.3): the topos of
+  `G`-sets classifies `G`-torsors, through Diaconescu's theorem and the local Kripke–Joyal
+  semantics of sheaf topoi (`CatStructure.IsModel.locally_realize`), and the theories of
+  `G`-torsors and `H`-torsors are Morita equivalent exactly when `G ≃* H`;
 * `LeanPool.ClassifyingTopoi.isModel_genericInterval` (roadmap 3.4, partial): the standard
   `1`-simplex is an interval in simplicial sets;
 * the definitions of roadmap 3.5 (`GeometricFormula.IsIrreducible`, `SetModel`, `FPModel`,
@@ -140,12 +142,10 @@ Layer 3 of the roadmap: theories of presheaf type (the modules
   `LeanPool.ClassifyingTopoi.isSetModel_iff_isIrreducibleObject`: a finitely presentable model is
   a model of a quotient whose models are the homogeneous ones iff it is irreducible.
 
-Not formalised in layer 3: the classification of torsors by `SingleObj G` and the converse of
-the Morita equivalence (roadmap 3.3), the classification of intervals by simplicial sets
-(roadmap 3.4), and the theorems of roadmap 3.5 and the existence of quotients of 3.6. The
-existence half of Diaconescu's theorem they rely on is now available
-(`exists_leftAdjoint_of_isLocallyFiltering`); what is missing is the translation of torsors and
-intervals into locally filtering functors, the uniqueness part of the universal property on these
-sites, and the identification of the finitely presentable models with the irreducible objects of
-the classifying topos.
+Not formalised in layer 3: the classification of intervals by simplicial sets (roadmap 3.4), and
+the theorems of roadmap 3.5 and the existence of quotients of 3.6. The existence half of
+Diaconescu's theorem they rely on is available (`exists_leftAdjoint_of_isLocallyFiltering`);
+missing are the translation of intervals into locally filtering functors on the simplex category,
+and the identification of the finitely presentable models with the irreducible objects of the
+classifying topos.
 -/
