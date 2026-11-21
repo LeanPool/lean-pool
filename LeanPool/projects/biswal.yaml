@@ -4,8 +4,9 @@ summary: Formalizes positivity results for the coefficients of Chebyshev-type po
   quotients attached to integer partitions, modelling Demazure multiplicities. Proves
   that the relevant generating function is a polynomial and that its coefficients
   are eventually positive (Theorem 1), gives explicit Cauchy-product and matrix-inverse
-  formulas for the coefficients (Theorem 2), and establishes their nonnegativity through
-  a Dyck-path lattice counting model (Theorem 3).
+  formulas for the coefficients (Theorem 2), and proves their nonnegativity through a
+  Dyck-path lattice counting model (Theorem 3), given the reduction hypotheses and a
+  pairing of the reduced parameters.
 branch: algebraic combinatorics
 entry_module: LeanPool.Biswal
 authors:
@@ -34,7 +35,10 @@ main_results:
     partition are eventually strictly positive.
 - declaration: Biswal.Theorem23.thm_manifest_coeff_nonneg
   informal: Proves that every coefficient of the generating function is nonnegative,
-    via the explicit Dyck-path lattice counting model.
+    via the explicit Dyck-path lattice counting model. It assumes `2 ≤ m`, all parts
+    at most `m`, and `countMaxParts m ξ ≤ μ / m + 1`. It also assumes `k = reducedK` pairs
+    `(a, b)` with `a + b ≤ m - 1` that factor `alphaProd` into a product of `polyP a * polyP b`.
+    The existence of this pairing is not proved.
 tags:
 - algebraic-combinatorics
 - chebyshev
