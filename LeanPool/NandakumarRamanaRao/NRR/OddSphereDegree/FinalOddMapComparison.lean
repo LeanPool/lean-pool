@@ -156,7 +156,9 @@ Given the bridge `Φ`:
 The only remaining inputs are the genuinely sphere and degree side ones: the action
 hypothesis `hα_fixed` (`fbar^*(α) = α`, gated on the degree-one UCT identifying
 `α`), the sphere nonvanishing `hne`, and the top-class/degree comparison `hcmp`.
-Thus the RPⁿ top-class story is reduced to the one explicit input `Φ`. -/
+Thus the RPⁿ top-class story is reduced to the one explicit input `Φ`.
+For `n ≥ 1` the hypothesis `hne` cannot hold, since `proj^*(αⁿ) = 0` (see §3d),
+so the theorem is vacuous in that range. -/
 theorem oddMap_degree_odd_of_ringBridge {n : ℕ}
     (e : SphereTopHomologyIso n) (f : C(Sphere n, Sphere n)) (hf : IsOddMap f)
     (Φ : RPnCohomologyToModelHom n)
@@ -282,7 +284,9 @@ bridge.** Combines the two reductions: the RPⁿ top-class story is reduced to o
 ring bridge `Φ : RPnCohomologyToModelHom n`, and the sphere/degree story to the
 one comparison `ModTwoTopClassComparison e`. The only remaining sphere-side
 hypotheses are the genuine action input `hα_fixed` (`fbar^*(α) = α`) and the
-sphere nonvanishing `hne`; all parity reasoning is discharged. -/
+sphere nonvanishing `hne`; all parity reasoning is discharged.
+For `n ≥ 1` the hypothesis `hne` cannot hold, since `proj^*(αⁿ) = 0` (see §3d),
+so the theorem is vacuous in that range. -/
 theorem oddMap_degree_odd_of_ringBridge_of_modTwoTopClassComparison {n : ℕ}
     (e : SphereTopHomologyIso n) (hcmp : ModTwoTopClassComparison e)
     (f : C(Sphere n, Sphere n)) (hf : IsOddMap f)
@@ -297,8 +301,9 @@ theorem oddMap_degree_odd_of_ringBridge_of_modTwoTopClassComparison {n : ℕ}
 /-! ## 3d. conditional near-final assembly: three named blockers, no vacuous hypothesis
 
 The theorems in §3b/§3c route the sphere-side nonvanishing through `projPullback`
-(`proj^*`). That route is degenerate: for `n ≥ 1` one has `proj^* α = 0` in
-`H¹(RPⁿ; F₂)`, hence `proj^*(αⁿ) = 0`, so the hypothesis `proj^* (αⁿ) ≠ 0` is
+(`proj^*`). For `n ≥ 1`, the class `proj^* α` in `H¹(Sⁿ; F₂)` vanishes. For `n > 1` this
+group is zero. For `n = 1` the double cover has degree two and induces the zero map
+on `H¹(-; F₂)`. Thus `proj^*(αⁿ) = 0` and the hypothesis `proj^* (αⁿ) ≠ 0` is
 unsatisfiable and the genuine comparison really proceeds through the double-cover
 *transfer*, not `proj^*`. The assembly below avoids that degenerate route
 entirely: it depends on exactly three honest named blockers and no vacuous or
@@ -391,7 +396,9 @@ Taking the top class to be the `n`-th cup power `(rpAlpha n m)ⁿ`, both the act
 hypothesis `fbar^*(α) = α` (via `inducedOnRPPullback_rpAlpha`) and its power
 consequence `fbar^*(αⁿ) = αⁿ` (via `inducedOnRP_cohPullback_cupPow_fixed`) are
 proved. The only remaining inputs are the genuine sphere/degree-side ones
-(`e`, `hne`, `hcmp`) and the single monodromy functional `m`. -/
+(`e`, `hne`, `hcmp`) and the single monodromy functional `m`.
+For `n ≥ 1` the hypothesis `hne` cannot hold, since `proj^*(αⁿ) = 0` (see §3d),
+so the theorem is vacuous in that range. -/
 theorem oddMap_degree_odd_of_monodromyFunctional {n : ℕ}
     (e : SphereTopHomologyIso n) (m : MonodromyFunctional n)
     (f : C(Sphere n, Sphere n)) (hf : IsOddMap f)

@@ -63,8 +63,8 @@ of a mixed object as a free super module.
 * `RS.finrank_fibre_tensor_point_even` and
   `RS.finrank_fibre_tensor_point_odd` — the two dimensions of the fibre
   at a point, with their finite-dimensionality.
-* `RS.exists_superVect_fibre` — the fibre, packaged as an
-  `RS.SuperVect` of dimension `(p | q)`.
+* `RS.exists_superVect_fibre` — some `RS.SuperVect` of dimension
+  `(p | q)`, the two dimensions of the fibre.
 * `RS.exists_superPoint_fibre_of_countable_family` — the whole chain,
   steps 1 to 5.
 -/
@@ -222,9 +222,10 @@ theorem finrank_fibre_tensor_point_odd
       (((fibreFun L 𝔸).obj X).tensor (pointMod P)).odd = q :=
   finrank_odd_of_free P p q _ (fibreFreeIso L 𝔸 e)
 
-/-- **The fibre at a point, as a super vector space of dimension
-`(p | q)`.**  The packaging is `RS.toSuperVect`, whose components are
-coordinate spaces of the two dimensions just computed. -/
+/-- **A super vector space of the dimension `(p | q)` of the fibre.**
+The witness is `RS.toSuperVect` of the fibre, whose components are
+coordinate spaces of the two dimensions just computed; the statement
+records only the dimension pair, with no link to `X` or `P`. -/
 theorem exists_superVect_fibre
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [MonoidalPreadditive C] [CategoryTheory.Linear ℂ (Ind C)]
@@ -244,11 +245,9 @@ end Fibre
 
 /-! ## The whole chain -/
 
-/-- **From a countable family of objects to split to a fibre functor
-valued in finite-dimensional super vector spaces.**  The algebra and
-the point of `RS.exists_superPoint_of_countable_family`, with the fibre
-of each object of the family recorded as a super vector space of the
-dimension pair its mixed sum prescribes. -/
+/-- A common splitting algebra and complex point for a countable family, together with
+the even and odd dimensions of each point fibre and a super vector space with the same
+dimension pair. -/
 theorem exists_superPoint_fibre_of_countable_family
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [RigidCategory C] [MonoidalPreadditive C]

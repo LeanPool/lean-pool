@@ -283,7 +283,8 @@ end FoxNeuwirthOrderComplex
 
 namespace AAK
 
-/-- The explicit sign-reversing internal pairing kernel is available. -/
+/-- The bottom-partner map on maximal flag codes is an involution. Its fixed-point-freeness and
+sign reversal are the separate lemmas `bottomPartner_ne` and `coefficient_bottomPartner`. -/
 theorem simplestRoute_internalPairingKernel :
     ∀ {p : Nat} (hp : Nat.Prime p),
       Function.Involutive
