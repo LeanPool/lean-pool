@@ -296,7 +296,7 @@ theorem weakSharpCutoffDistributionIdentity_from_stationarity_of_W12Loc_primitiv
 
 /-- Boundary identity from weak stationarity through the primitive-cutoff
 distributional route.  The only one-dimensional analytic input is the packaged
-radius energy calculus; no global `hflat`/`hX` hypothesis is needed. -/
+radius energy calculus; no global `hX` hypothesis is needed. -/
 theorem weak_boundary_identity_from_stationarity_of_W12Loc_via_primitives
     {n m : ℕ} [NeZero n]
     {u : Domain n → Target m} {Du : Domain n → Gradient n m} {Ω : Set (Domain n)}
@@ -423,12 +423,8 @@ theorem weakRadialCutoffLimitStep_of_coarea_and_oneDimensional {n m : ℕ}
   intro hrad
   exact hsharp (hcoarea hrad)
 
-/-- Step 1: compute the derivative and divergence of `X(x) = phi(|x|) x`.
-
-In the full proof this should produce the integrand
-`((n - 2) * phi |x| + |x| * phi' |x|) * |du|^2
- - 2 * |x| * phi' |x| * |partial_r u|^2`.
--/
+/-- Radial vector-field computation for the stationarity integrand of
+`X(x) = phi(|x|) x`. -/
 theorem radial_vector_field_computation {n m : ℕ}
     (u : Domain n → Target m) (phi : ℝ → ℝ)
     (hphi : Differentiable ℝ phi) :
@@ -438,33 +434,6 @@ theorem radial_vector_field_computation {n m : ℕ}
   exact ⟨radialVectorFieldDerivativeFormula hphi,
     radialVectorFieldDivergenceFormula hphi,
     radialStressContractionFormula u hphi⟩
-
-/-- Step 2: stationarity implies the radial identity. -/
-theorem radial_identity_from_stationarity {n m : ℕ}
-    {u : Domain n → Target m} {R0 : ℝ}
-    (hstationary : SmoothStationaryIn u (Metric.ball (0 : Domain n) R0))
-    (halgebra :
-      ∀ phi : ℝ → ℝ,
-        RadialVectorFieldDivergenceFormula (n := n) phi ∧
-          RadialStressContractionFormula u phi)
-    (hderive :
-      SmoothStationaryIn u (Metric.ball (0 : Domain n) R0) →
-        (∀ phi : ℝ → ℝ,
-          RadialVectorFieldDivergenceFormula (n := n) phi ∧
-            RadialStressContractionFormula u phi) →
-        RadialStationarityIdentity u R0) :
-    RadialStationarityIdentity u R0 := by
-  exact hderive hstationary halgebra
-
-/-- Step 3: approximate the sharp radial cutoff and pass to Lebesgue points. -/
-theorem boundary_identity_from_radial_identity {n m : ℕ}
-    {u : Domain n → Target m} {R0 : ℝ}
-    (hrad : RadialStationarityIdentity u R0)
-    (hderive :
-      RadialStationarityIdentity u R0 →
-        BoundaryIdentity u (0 : Domain n) R0) :
-    BoundaryIdentity u (0 : Domain n) R0 := by
-  exact hderive hrad
 
 /-- Weak version of the cutoff-to-boundary step: the radial stationarity identity
 is first converted into the sharp-cutoff a.e. radius identity, then algebraically
@@ -550,9 +519,9 @@ theorem weak_boundary_identity_from_radial_identity_via_formula_ibpFormula_primi
       (n := n) (m := m) (Du := Du) (R0 := R0) hibp_formula)
     hprimitive
 
-/-- The most decomposed route currently used by the formalization: vector-field
-regularity, coarea/radius integration, one-dimensional IBP, and primitive
-cutoffs are independent ingredients. -/
+/-- Derive the weak boundary identity from radial stationarity with separate
+hypotheses for vector-field regularity, coarea integration, one-dimensional
+integration by parts, and primitive cutoffs. -/
 theorem weak_boundary_identity_from_radial_identity_via_split_ingredients {n m : ℕ}
     {Du : Domain n → Gradient n m} {R0 : ℝ}
     (hrad : WeakRadialStationarityIdentity Du R0)
@@ -570,50 +539,6 @@ theorem weak_boundary_identity_from_radial_identity_via_split_ingredients {n m :
     hrad
     (weakRadialCoareaDerivativeFormula_of_contDiff_and_integral
       (n := n) (m := m) (Du := Du) (R0 := R0) hX hcoarea_integral)
-    hdefect_loc hibp_formula hprimitive
-
-/-- Same fully decomposed route, with radial vector-field regularity discharged
-from the natural flat-at-origin condition on scalar cutoffs. -/
-theorem weak_boundary_identity_from_radial_identity_via_flat_cutoffs {n m : ℕ}
-    {Du : Domain n → Gradient n m} {R0 : ℝ}
-    (hrad : WeakRadialStationarityIdentity Du R0)
-    (hflat : ScalarCutoffsConstNearOrigin R0)
-    (hcoarea_integral : WeakRadialCoareaIntegralFormula Du R0)
-    (hdefect_loc :
-      LocallyIntegrableOn
-        (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
-        (Ioo (0 : ℝ) R0) volume)
-    (hibp_formula : WeakOneDimensionalIBPFormula Du R0)
-    (hprimitive : WeakOneDimensionalPrimitiveTestFamily Du R0) :
-    WeakBoundaryIdentity Du (0 : Domain n) R0 := by
-  exact weak_boundary_identity_from_radial_identity_via_split_ingredients
-    (n := n) (m := m) (Du := Du) (R0 := R0)
-    hrad
-    (radialVectorFieldContDiffForCutoffs_of_constNearOrigin
-      (n := n) (R0 := R0) hflat)
-    hcoarea_integral hdefect_loc hibp_formula hprimitive
-
-/-- Same route with the coarea ingredient supplied as the two standard radius
-integral formulas for energy and radial energy. -/
-theorem weak_boundary_identity_from_radial_identity_via_radius_formulas {n m : ℕ}
-    {Du : Domain n → Gradient n m} {R0 : ℝ}
-    (hrad : WeakRadialStationarityIdentity Du R0)
-    (hflat : ScalarCutoffsConstNearOrigin R0)
-    (henergy_radius : WeakEnergyRadiusIntegralFormula Du R0)
-    (hradial_radius : WeakRadialEnergyRadiusIntegralFormula Du R0)
-    (hdefect_loc :
-      LocallyIntegrableOn
-        (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
-        (Ioo (0 : ℝ) R0) volume)
-    (hibp_formula : WeakOneDimensionalIBPFormula Du R0)
-    (hprimitive : WeakOneDimensionalPrimitiveTestFamily Du R0) :
-    WeakBoundaryIdentity Du (0 : Domain n) R0 := by
-  exact weak_boundary_identity_from_radial_identity_via_flat_cutoffs
-    (n := n) (m := m) (Du := Du) (R0 := R0)
-    hrad hflat
-    (weakRadialCoareaIntegralFormula_of_radiusIntegral
-      (n := n) (m := m) (Du := Du) (R0 := R0)
-      henergy_radius hradial_radius)
     hdefect_loc hibp_formula hprimitive
 
 /-- Boundary identity from the `W^{1,2}_{loc}`-friendly scalar-cutoff radial

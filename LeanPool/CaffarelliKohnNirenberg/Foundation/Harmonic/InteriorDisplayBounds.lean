@@ -158,63 +158,6 @@ lemma local_weak_harmonic
     rw [spatialLaplacian_zero_off (hψV.trans hVU) hx, mul_zero])]
   exact hweak ψ hψ hψc (hψV.trans hVU)
 
-lemma local_value_bound
-    {h : Vec3 → ℝ} {x₀ x : Vec3} {ρ : ℝ} (hρ : 0 < ρ)
-    (hx : x ∈ euclideanBall x₀ (3 * ρ / 4))
-    (hmem : MemLp h (ENNReal.ofReal (3 / 2 : ℝ))
-      (volume.restrict (euclideanBall x₀ ρ)))
-    (hweak : WeaklyHarmonicOn (euclideanBall x₀ ρ) h) :
-    ∃ v : ℝ, |v| ≤ 576 * weakHarmonicInteriorSupConstant *
-      (ρ ^ 2)⁻¹ * lpNorm h (ENNReal.ofReal (3 / 2 : ℝ))
-        (volume.restrict (euclideanBall x₀ ρ)) := by
-  let ε : ℝ := ρ / 24
-  let V : Set Vec3 := euclideanBall x ε
-  have hε : 0 < ε := by
-    dsimp [ε]
-    positivity
-  have hVsub : V ⊆ euclideanBall x₀ ρ := by
-    exact (euclideanBall_subset_closedBall hε).trans
-      (closedBall_subset_euclideanBall hρ hε hx (by
-      dsimp [ε]
-      nlinarith only [hρ]))
-  have hVmeas : MeasurableSet V := by
-    dsimp [V]
-    exact (isOpen_lt (contDiff_euclideanSqDist_left x).continuous continuous_const).measurableSet
-  have hmemV := hmem.mono_measure (Measure.restrict_mono_set volume hVsub)
-  have hweakV : WeaklyHarmonicOn V h :=
-    local_weak_harmonic hVsub hweak
-  obtain ⟨H, hHdiff, hHae, hHbound, hHgrad⟩ :=
-    weakly_harmonic_interior_smooth hε hmemV hweakV
-  refine ⟨H x, ?_⟩
-  have hxcenter : x ∈ euclideanBall x (ε / 2) := by
-    apply (mem_euclideanBall_iff_vecEuclideanNorm_lt (by positivity)).2
-    simpa [sub_self, vecEuclideanNorm, vecNormSq, vecDot] using (half_pos hε)
-  have hbound := hHbound x hxcenter
-  have hmono : lpNorm h (ENNReal.ofReal (3 / 2 : ℝ))
-      (volume.restrict V) ≤ lpNorm h (ENNReal.ofReal (3 / 2 : ℝ))
-        (volume.restrict (euclideanBall x₀ ρ)) := by
-    rw [← MeasureTheory.toReal_eLpNorm, ← MeasureTheory.toReal_eLpNorm]
-    exact ENNReal.toReal_mono hmem.eLpNorm_lt_top.ne
-      (eLpNorm_mono_measure h (Measure.restrict_mono_set volume hVsub))
-  have hscale : (ε ^ 2)⁻¹ = 576 * (ρ ^ 2)⁻¹ := by
-    dsimp [ε]
-    field_simp [hρ.ne']
-    ring
-  rw [hscale] at hbound
-  have hK := weakHarmonicInteriorSupConstant_nonneg
-  have hcoef : 0 ≤ 576 * weakHarmonicInteriorSupConstant * (ρ ^ 2)⁻¹ := by
-    positivity
-  calc
-    |H x| ≤ weakHarmonicInteriorSupConstant *
-        (576 * (ρ ^ 2)⁻¹) *
-        lpNorm h (ENNReal.ofReal (3 / 2 : ℝ)) (volume.restrict V) := hbound
-    _ = 576 * weakHarmonicInteriorSupConstant * (ρ ^ 2)⁻¹ *
-        lpNorm h (ENNReal.ofReal (3 / 2 : ℝ)) (volume.restrict V) := by ring
-    _ ≤ 576 * weakHarmonicInteriorSupConstant * (ρ ^ 2)⁻¹ *
-        lpNorm h (ENNReal.ofReal (3 / 2 : ℝ))
-          (volume.restrict (euclideanBall x₀ ρ)) :=
-      mul_le_mul_of_nonneg_left hmono hcoef
-
 lemma norm_sub_le_gradient_on_euclideanBall
     {H : Vec3 → ℝ} {x₀ : Vec3} {R G : ℝ} (hR : 0 < R)
     (hH : ContDiffOn ℝ (1 : ℕ∞) H (euclideanBall x₀ R))

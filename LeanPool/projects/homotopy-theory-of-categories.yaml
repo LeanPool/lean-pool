@@ -1,0 +1,105 @@
+slug: homotopy-theory-of-categories
+title: Basic localizers and the homotopy theory of small categories
+summary: Grothendieck's homotopy theory of small categories, after Pursuing Stacks and
+  Cisinski. The classes W₀ (functors bijective on connected components) and W₁ (functors
+  inducing an equivalence of fundamental groupoids) are compared, and a functor between
+  groupoids is an equivalence exactly when it is bijective on connected components and on
+  automorphism groups; fibrations of groupoids have an exact sequence of fibre, total groupoid
+  and base. Basic localizers are defined, the minimal one W∞ is the intersection of all of
+  them, W₀ and W₋₁ are basic localizers, Quillen's Theorem A holds for any basic localizer,
+  and every functor with an adjoint lies in every basic localizer. For presheaves, the
+  adjunction between the category-of-elements functor and its right adjoint is constructed.
+  Direct categories are those with a well-founded relation of non-identity morphisms; those
+  of finite ranks are characterised by direct Reedy structures with natural-number degrees,
+  and a partial order is direct exactly when it is well-founded. Non-singular presheaves are those whose category of elements is thin, and
+  categories of elements give discrete fibrations. In a cofibration category, Brown's
+  factorization lemma holds between cofibrant objects. For a map of abelian groups d, the
+  gr-category of two-term complexes has π₀ the cokernel and π₁ the kernel of d.
+branch: category theory
+entry_module: LeanPool.HomotopyTheoryOfCategories
+authors:
+- Michel Hua
+source:
+  title: Le localisateur fondamental minimal (D.-C. Cisinski)
+  url: https://www.numdam.org/item/CTGDC_2004__45_2_109_0/
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.HomotopyTheoryOfCategories.Winfty_le
+- LeanPool.HomotopyTheoryOfCategories.isBasicLocalizer_Winfty
+- LeanPool.HomotopyTheoryOfCategories.isBasicLocalizer_W₀
+- LeanPool.HomotopyTheoryOfCategories.mem_of_isAsphericalFunctor
+- LeanPool.HomotopyTheoryOfCategories.mem_of_isLeftAdjoint
+- LeanPool.HomotopyTheoryOfCategories.mem_of_isRightAdjoint
+- LeanPool.HomotopyTheoryOfCategories.W₁_iff_isEquivalence
+- LeanPool.HomotopyTheoryOfCategories.nonempty_reedyStructure_nat_iff
+- LeanPool.HomotopyTheoryOfCategories.brown_factorization
+main_results:
+- declaration: LeanPool.HomotopyTheoryOfCategories.Groupoid.isEquivalence_iff_bijective
+  informal: A functor between groupoids is an equivalence exactly when it is bijective on
+    connected components and induces isomorphisms on all automorphism groups.
+- declaration: LeanPool.HomotopyTheoryOfCategories.W₁_iff_isEquivalence
+  informal: A functor between small groupoids induces an equivalence of fundamental groupoids
+    exactly when it is an equivalence.
+- declaration: LeanPool.HomotopyTheoryOfCategories.IsGroupoidFibration.range_mapAut_fiberInclusion
+  informal: For a fibration of groupoids, the image of the automorphism group of a point in
+    its fibre is the kernel of the map on automorphism groups to the base.
+- declaration: LeanPool.HomotopyTheoryOfCategories.IsGroupoidFibration.mapConnectedComponents_eq_iff
+  informal: For a fibration of groupoids, two points of a fibre lie in the same connected
+    component of the total groupoid exactly when one is moved to the component of the other
+    by a lift of an automorphism of the base point.
+- declaration: LeanPool.HomotopyTheoryOfCategories.isBasicLocalizer_Winfty
+  informal: The intersection of all basic localizers is a basic localizer.
+- declaration: LeanPool.HomotopyTheoryOfCategories.Winfty_le
+  informal: The intersection of all basic localizers is contained in every basic localizer.
+- declaration: LeanPool.HomotopyTheoryOfCategories.isBasicLocalizer_W₀
+  informal: The functors between small categories that are bijective on connected components
+    form a basic localizer.
+- declaration: LeanPool.HomotopyTheoryOfCategories.isBasicLocalizer_WNeg₁
+  informal: The functors between small categories whose source is nonempty exactly when
+    their target is form a basic localizer.
+- declaration: LeanPool.HomotopyTheoryOfCategories.mem_of_isAsphericalFunctor
+  informal: Quillen's Theorem A for a basic localizer W; a functor between small categories
+    all of whose comma categories are W-aspherical lies in W.
+- declaration: LeanPool.HomotopyTheoryOfCategories.mem_of_isLeftAdjoint
+  informal: Every left adjoint between small categories lies in every basic localizer.
+- declaration: LeanPool.HomotopyTheoryOfCategories.mem_of_isRightAdjoint
+  informal: Every right adjoint between small categories lies in every basic localizer.
+- declaration: LeanPool.HomotopyTheoryOfCategories.nonempty_iAAdjunction
+  informal: The functor sending a presheaf to its category of elements has a right adjoint.
+- declaration: LeanPool.HomotopyTheoryOfCategories.nonempty_reedyStructure_nat_iff
+  informal: A category has a Reedy structure with natural-number degrees whose degree-raising
+    maps are all its morphisms and whose degree-lowering maps are the identities exactly when
+    it has no infinite descending chain of non-identity morphisms and every object has finite
+    rank for the relation of non-identity morphisms.
+- declaration: LeanPool.HomotopyTheoryOfCategories.isDirect_iff_wellFoundedLT
+  informal: A partial order, viewed as a category, is direct exactly when it is well-founded.
+- declaration: LeanPool.HomotopyTheoryOfCategories.Presheaf.isNonsingular_iff_isThin
+  informal: A presheaf is non-singular exactly when its category of elements is thin.
+- declaration: LeanPool.HomotopyTheoryOfCategories.Presheaf.isNonsingular_iff_mono
+  informal: A presheaf on a small category is non-singular exactly when every map from a
+    representable presheaf classifying an element is a monomorphism.
+- declaration: LeanPool.HomotopyTheoryOfCategories.isDiscreteFibration_elements
+  informal: The projection from the category of elements of a presheaf is a discrete
+    fibration.
+- declaration: LeanPool.HomotopyTheoryOfCategories.brown_factorization
+  informal: In a cofibration category, every map between cofibrant objects factors as a
+    cofibration followed by a retraction of a trivial cofibration.
+- declaration: LeanPool.HomotopyTheoryOfCategories.nonempty_skeletonTwoTerm_mulEquiv
+  informal: The isomorphism classes of the gr-category of a map of abelian groups d form a
+    group isomorphic to the cokernel of d.
+- declaration: LeanPool.HomotopyTheoryOfCategories.nonempty_autUnitTwoTerm_mulEquiv
+  informal: The automorphism group of the unit of the gr-category of a map of abelian groups d
+    is isomorphic to the kernel of d.
+tags:
+- basic-localizers
+- homotopy-of-categories
+- quillen-theorem-a
+- reedy-categories
+- gr-categories
+msc:
+- 55U35
+- 18N40
+- 18M05

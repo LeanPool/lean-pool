@@ -201,19 +201,4 @@ theorem existingConicSeedNonsplitTraceCoverEquation_iff_weightedSplitTraceCover
 
 end ExistingConicSeed
 
-namespace DegenerateUnseededCountermodel
-
-variable (p : ℕ) [Fact p.Prime]
-
-/-- This is the tempting but incorrect unseeded model.  It is retained only to state the
-degeneracy explicitly. -/
-def UnseededNormOneTraceCountermodel (d e : ℕ)
-    (w : quadraticNormOneTorus p) (u : (ZMod p)ˣ) : Prop :=
-  quadraticNormOneTrace p (w ^ d) = splitTorusTrace (u ^ e)
-
-theorem unseededCountermodel_weights_product_eq_one :
-    (1 : quadraticFiniteField p) * 1 = 1 := by simp
-
-end DegenerateUnseededCountermodel
-
 end BGS.Markoff

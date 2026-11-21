@@ -229,14 +229,6 @@ theorem rademacherComplexity_nonneg (X : Type u) [MeasurableSpace X]
   intro xs
   exact empRad_nonneg C (Nat.pos_iff_ne_zero.mp hm) xs
 
-theorem rademacher_gen_bound (X : Type u) [MeasurableSpace X]
-    (C : ConceptClass X Bool) (D : MeasureTheory.Measure X)
-    (m : ℕ) (hm : 0 < m) (c : Concept X Bool) (_hcC : c ∈ C)
-    (ε : ℝ) (hε : 0 < ε) :
-    ∃ (bound : ℝ), bound = 2 * RademacherComplexity X C D m + ε ∧ bound ≥ 0 := by
-  refine ⟨2 * RademacherComplexity X C D m + ε, rfl, ?_⟩
-  linarith [rademacherComplexity_nonneg X C D m hm]
-
 /-- When h agrees with σ on all sample points, correlation is exactly 1. -/
 private theorem corr_eq_one_of_agree {X : Type u} {m : ℕ} (hm : 0 < m)
     (h : Concept X Bool) (σ : SignVector m) (xs : Fin m → X)

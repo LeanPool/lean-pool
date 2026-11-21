@@ -244,10 +244,3 @@ theorem interpClass_wellBehaved_of_routerCode
   let := R.instMeasΡ
   let := R.instStdΡ
   exact patch_borel_param_wellBehavedVCMeasTarget e₁ e₂ R.eval he₁ he₂ R.eval_meas
-
-/-! ## Open Question Definition -/
-
-/-- Whether there exists a BorelRouterCode for X — i.e., whether every measurable
-    region can be encoded by a Borel-parameterized router. -/
-def HasFullInterpolationRouterCode (X : Type u) [MeasurableSpace X] : Prop :=
-  Nonempty (BorelRouterCode X)

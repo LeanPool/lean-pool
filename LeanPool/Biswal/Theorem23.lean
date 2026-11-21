@@ -23,8 +23,15 @@ import Mathlib.Tactic.Positivity.Finset
 
 This file formalizes Theorems 2 and 3 of the Chebyshev-quotient /
 Demazure-multiplicity paper: explicit Cauchy-product and matrix-inverse formulas
-for the generating-function coefficients and their nonnegativity via a
-Dyck-path counting model.
+for the generating-function coefficients, nonnegativity of the pair coefficients
+`dCoeff` via a Dyck-path counting model, and nonnegativity of the generating-function
+coefficients.
+
+The Theorem 3 statements (`thm_manifest_factorization`, `thm_manifest_coeff_formula`,
+`thm_manifest_coeff_nonneg`) assume `2 ≤ m`, parts at most `m`, and
+`countMaxParts m ξ ≤ μ / m + 1`. They also assume pairs `(a, b)` with `a + b ≤ m - 1`
+that factor `alphaProd` into the corresponding product of `polyP a * polyP b`.
+The combinatorial step that constructs the pairing from the partition is outside this formalization.
 -/
 
 @[expose] public section
@@ -378,6 +385,11 @@ lemma coe_prod_mul_inv_pow_eq_prod (m k : ℕ)
         ∏ _ν : Fin k, ((↑(polyP ℚ m) : PowerSeries ℚ)⁻¹) from (Fin.prod_const k _).symm]
   exact Finset.prod_mul_distrib.symm
 
+/-- Theorem 3 (i), with the reduction hypotheses `hm`, `h_parts`, and `hk_nonneg`: if
+`alphaProd ℚ m μ ξ` factors as the product of `polyP a * polyP b` over
+`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then the generating
+function is the product of the power series with coefficients `dCoeff ℚ m a b`.
+The existence of such a pairing is assumed. -/
 theorem thm_manifest_factorization (m μ : ℕ) {s : ℕ}
     (ξ : Nat.Partition s) (hm : 2 ≤ m) (h_parts : ∀ i ∈ ξ.parts, i ≤ m)
     (hk_nonneg : countMaxParts m ξ ≤ μ / m + 1)
@@ -407,6 +419,10 @@ lemma coeff_prod_mk_eq_sum_antidiag (k r : ℕ) (g : Fin k → ℕ → ℚ) :
   rw [coeff_fin_prod_eq_antidiag_sum' k r (fun ν => PowerSeries.mk (g ν))]
   simp_rw [PowerSeries.coeff_mk]
 
+/-- Theorem 3 (i), coefficient form, under the reduction and pairing hypotheses of
+`thm_manifest_factorization`, the `r`-th
+coefficient of the generating function is the sum over `k`-tuples summing to `r` of
+products of `dCoeff` values. The existence of the pairing is assumed, not proved. -/
 theorem thm_manifest_coeff_formula (m μ : ℕ) {s : ℕ}
     (ξ : Nat.Partition s) (hm : 2 ≤ m) (h_parts : ∀ i ∈ ξ.parts, i ≤ m)
     (hk_nonneg : countMaxParts m ξ ≤ μ / m + 1)
@@ -1074,8 +1090,13 @@ lemma D_coeff_eq_nat_cast (m a b u : ℕ) (hm : 2 ≤ m)
     exact_mod_cast (Int.toNat_of_nonneg (by
       exact_mod_cast hz ▸ thm_manifest_D_nonneg m a b u hm ha hb hab)).symm⟩
 
-/-! ## Theorem 3: Part (iii) - Nonnegativity of all coefficients -/
+/-! ## Theorem 3: Part (iii) - Nonnegativity of all coefficients, given a pairing -/
 
+/-- Theorem 3 (iii), with the reduction hypotheses `hm`, `h_parts`, and `hk_nonneg`: if
+`alphaProd ℚ m μ ξ` factors as the product of `polyP a * polyP b` over
+`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then every coefficient
+of the generating function is nonnegative. The existence of such a pairing for
+the partition is assumed. -/
 theorem thm_manifest_coeff_nonneg (m μ : ℕ) {s : ℕ}
     (ξ : Nat.Partition s) (hm : 2 ≤ m) (h_parts : ∀ i ∈ ξ.parts, i ≤ m)
     (hk_nonneg : countMaxParts m ξ ≤ μ / m + 1)
