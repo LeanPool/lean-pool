@@ -537,36 +537,6 @@ theorem sinTwoTheta_addBounded_gauge_of_spectrum_gap
   refine ⟨hmain.1, hmain.2.trans ?_⟩
   exact hDideal.2
 
-/-- Set-localized canonical ideal-gauge form of unbounded sine two theta. -/
-theorem sinTwoTheta_addBounded_gauge_of_intervalExterior
-    (N : TauCeti.SymmetricOperatorIdealFamily.{0, v} ℂ)
-    [N.toOperatorIdealFamily.IsComplete]
-    (A : H →ₗ.[ℂ] H) (hA : IsSelfAdjoint A)
-    (E : H →L[ℂ] H) (hE : E.IsSymmetric)
-    (B S : Set ℝ) (hB : MeasurableSet B) (hS : MeasurableSet S)
-    {β α δ : ℝ} (hβα : β ≤ α) (hδ : 0 < δ)
-    (hBsub : B ⊆ Set.Icc β α)
-    (hBcomplDisj : Bᶜ ∩ Set.Ioo (β - δ) (α + δ) = ∅)
-    (hEmem : N.Mem E) :
-    N.Mem (sinTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)) ∧
-      δ * N.gaugeReal (sinTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)) ≤
-        2 * N.gaugeReal E := by
-  obtain ⟨hBlow, hBhigh⟩ :=
-    selfAdjointSpectralRestriction_semibounded_of_subset_Icc
-      A hA B hB hBsub
-  have hBcomplSpec :=
-    selfAdjointSpectralRestriction_spectrum_avoids_open_of_inter_eq_empty
-      A hA Bᶜ hB.compl hBcomplDisj
-  exact sinTwoTheta_addBounded_gauge_of_spectrum_gap
-    N A hA E hE B S hB hS hβα hδ hBlow hBhigh hBcomplSpec hEmem
-
-
 /-- Source-facing unitary-invariant-family wrapper for the spectrum-gap ideal
 form. -/
 theorem sinTwoTheta_addBounded_unitaryInvariant_of_spectrum_gap
@@ -595,30 +565,6 @@ theorem sinTwoTheta_addBounded_unitaryInvariant_of_spectrum_gap
   exact sinTwoTheta_addBounded_gauge_of_spectrum_gap
     N.toSymmetricOperatorIdealFamily A hA E hE B S hB hS
       hβα hδ hBlow hBhigh hBcomplSpec hEmem
-
-/-- Source-facing unitary-invariant-family wrapper for the set-localized ideal
-form. -/
-theorem sinTwoTheta_addBounded_unitaryInvariant_of_intervalExterior
-    (N : KyFanDominantIdealFamily (𝕜 := ℂ))
-    (A : H →ₗ.[ℂ] H) (hA : IsSelfAdjoint A)
-    (E : H →L[ℂ] H) (hE : E.IsSymmetric)
-    (B S : Set ℝ) (hB : MeasurableSet B) (hS : MeasurableSet S)
-    {β α δ : ℝ} (hβα : β ≤ α) (hδ : 0 < δ)
-    (hBsub : B ⊆ Set.Icc β α)
-    (hBcomplDisj : Bᶜ ∩ Set.Ioo (β - δ) (α + δ) = ∅)
-    (hEmem : N.Mem E) :
-    N.Mem (sinTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)) ∧
-      δ * N.gauge (sinTwoThetaIdealBlock
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)) ≤
-        2 * N.gauge E := by
-  exact sinTwoTheta_addBounded_gauge_of_intervalExterior
-    N.toSymmetricOperatorIdealFamily A hA E hE B S hB hS
-      hβα hδ hBsub hBcomplDisj hEmem
 
 /-- Residual reflection form of the unbounded sine-two-theta theorem, operator norm.  The
 bounded operator `R` is required to implement reflection of `A` on its full domain.
@@ -687,29 +633,6 @@ theorem sinTwoTheta_addBounded_of_spectrum_gap
       (perturbedSpectralReflection_mem_domain A hA E hE S hS)
       (add_reflectionPerturbation_intertwines A hA E hE S hS)
   exact hmain.trans (norm_reflectionPerturbation_le V E)
-
-/-- Set-localized form of the canonical complex unbounded sine-two-theta
-theorem. -/
-theorem sinTwoTheta_addBounded_of_intervalExterior
-    (A : H →ₗ.[ℂ] H) (hA : IsSelfAdjoint A)
-    (E : H →L[ℂ] H) (hE : E.IsSymmetric)
-    (B S : Set ℝ) (hB : MeasurableSet B) (hS : MeasurableSet S)
-    {β α δ : ℝ} (hβα : β ≤ α) (hδ : 0 < δ)
-    (hBsub : B ⊆ Set.Icc β α)
-    (hBcomplDisj : Bᶜ ∩ Set.Ioo (β - δ) (α + δ) = ∅) :
-    δ * ‖directedSinTwoAngleOperatorC
-        (selfAdjointSpectralSubspace A hA B hB)
-        (selfAdjointSpectralSubspace (TauCeti.LinearPMap.addBounded A E)
-          (addBounded_isSelfAdjoint A hA E hE) S hS)‖ ≤
-      2 * ‖E‖ := by
-  obtain ⟨hBlow, hBhigh⟩ :=
-    selfAdjointSpectralRestriction_semibounded_of_subset_Icc
-      A hA B hB hBsub
-  have hBcomplSpec :=
-    selfAdjointSpectralRestriction_spectrum_avoids_open_of_inter_eq_empty
-      A hA Bᶜ hB.compl hBcomplDisj
-  exact sinTwoTheta_addBounded_of_spectrum_gap
-    A hA E hE B S hB hS hβα hδ hBlow hBhigh hBcomplSpec
 
 end DavisKahan
 end TauCeti
