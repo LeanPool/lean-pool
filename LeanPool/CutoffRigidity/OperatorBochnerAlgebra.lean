@@ -24,25 +24,6 @@ namespace CutoffRigidity
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
-/-- Contract the actual potential Hessian against an arbitrary vector. -/
-theorem hessian_vector_coordinate_contraction {V : E → ℝ}
-    (hV : ContDiff ℝ 2 V) (x z : E) :
-    (∑ i : Fin d, z i * (∑ j : Fin d,
-      coordinateDerivative i (coordinateDerivative j V) x * z j)) =
-      fderiv ℝ (fderiv ℝ V) x z z := by
-  have hd : DifferentiableAt ℝ (fderiv ℝ V) x :=
-    ((hV.fderiv_right (m := 1) (by norm_num)).differentiable (by norm_num)) x
-  rw [bilinear_euclidean_coordinate_expansion]
-  simp only [Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro i hi
-  apply Finset.sum_congr rfl
-  intro j hj
-  rw [show coordinateDerivative i (coordinateDerivative j V) x =
-    fderiv ℝ (fderiv ℝ V) x (EuclideanSpace.single i 1) (EuclideanSpace.single j 1) from
-      second_fderiv_apply_const hd _ _]
-  ring
-
 /-- The boundary cross term is absorbed by half the Hessian energy. -/
 theorem weak_bochner_boundary_young (η : ℝ) (g b : E)
     (H : Fin d → Fin d → ℝ) :

@@ -12,6 +12,7 @@ public import LeanPool.CutoffRigidity.GibbsEnergy
 public import LeanPool.CutoffRigidity.GeneratorIntertwining
 public import LeanPool.CutoffRigidity.CurvatureMonotonicity
 public import LeanPool.CutoffRigidity.AffineRigidity
+public import LeanPool.CutoffRigidity.EuclideanDerivatives
 public import Mathlib.MeasureTheory.Function.LocallyIntegrable
 public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 
@@ -31,16 +32,6 @@ open MeasureTheory
 
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
-
-/-- Actual differentiation in a standard Euclidean coordinate direction. -/
-@[expose] noncomputable def coordinateDerivative (i : Fin d) (f : E → ℝ) (x : E) : ℝ :=
-  fderiv ℝ f x (EuclideanSpace.single i 1)
-
-/-- Differentiating a coordinate derivative loses exactly one regularity order. -/
-theorem contDiff_coordinateDerivative {n : WithTop ℕ∞} {f : E → ℝ}
-    (hf : ContDiff ℝ (n + 1) f) (i : Fin d) :
-    ContDiff ℝ n (coordinateDerivative i f) := by
-  exact (hf.fderiv_right le_rfl).clm_apply (contDiff_const (c := EuclideanSpace.single i 1))
 
 /-- Coordinate mixed partials agree for a C² function. -/
 theorem coordinateDerivative_commute {f : E → ℝ} (hf : ContDiff ℝ 2 f)
@@ -262,6 +253,25 @@ theorem integrated_bochner_coordinate_identity {V f : E → ℝ}
   dsimp only [B, C] at hIL
   linarith
 
+/-- Contract the actual potential Hessian against an arbitrary vector. -/
+theorem hessian_vector_coordinate_contraction {V : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (x z : E) :
+    (∑ i : Fin d, z i * (∑ j : Fin d,
+      coordinateDerivative i (coordinateDerivative j V) x * z j)) =
+      fderiv ℝ (fderiv ℝ V) x z z := by
+  have hd : DifferentiableAt ℝ (fderiv ℝ V) x :=
+    ((hV.fderiv_right (m := 1) (by norm_num)).differentiable (by norm_num)) x
+  rw [bilinear_euclidean_coordinate_expansion]
+  simp only [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro i hi
+  apply Finset.sum_congr rfl
+  intro j hj
+  rw [show coordinateDerivative i (coordinateDerivative j V) x =
+    fderiv ℝ (fderiv ℝ V) x (EuclideanSpace.single i 1) (EuclideanSpace.single j 1) from
+      second_fderiv_apply_const hd _ _]
+  ring
+
 /-- The coordinate potential term is the actual Hessian evaluated twice on
 the actual gradient, without an abstract tensor standing in for it. -/
 theorem hessian_gradient_coordinate_contraction {V : E → ℝ}
@@ -270,20 +280,10 @@ theorem hessian_gradient_coordinate_contraction {V : E → ℝ}
       ∑ i : Fin d, ∑ j : Fin d,
         coordinateDerivative i f x * coordinateDerivative i (coordinateDerivative j V) x *
           coordinateDerivative j f x := by
-  have hd : DifferentiableAt ℝ (fderiv ℝ V) x :=
-    ((hV.fderiv_right (m := 1) (by norm_num)).differentiable (by norm_num)) x
-  have hcoef (i j : Fin d) : coordinateDerivative i (coordinateDerivative j V) x =
-      fderiv ℝ (fderiv ℝ V) x (EuclideanSpace.single i 1) (EuclideanSpace.single j 1) := by
-    exact second_fderiv_apply_const hd _ _
+  have h := (hessian_vector_coordinate_contraction hV x (gradient f x)).symm
   have hg (i : Fin d) : coordinateDerivative i f x = gradient f x i :=
     fderiv_single_eq_gradient_coordinate f x i
-  rw [bilinear_euclidean_coordinate_expansion]
-  simp_rw [hcoef, hg]
-  apply Finset.sum_congr rfl
-  intro i hi
-  apply Finset.sum_congr rfl
-  intro j hj
-  ring
+  simpa only [← hg, Finset.mul_sum, mul_assoc] using h
 
 /-- The weighted integrated Bochner identity in Hessian form. Its domain
 premises remain explicit; the paper's spectral-domain extension is separate. -/

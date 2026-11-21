@@ -51,48 +51,6 @@ theorem gibbsOperatorEigen_inner_eq_zero_of_ne {V : E → ℝ} (hV : ContDiff �
       nlinarith)).resolve_left
       (sub_ne_zero.mpr hab)
 
-/-- Nonzero actual form-operator eigenvectors have nonnegative eigenvalue,
-from the proved nonnegativity of the self-adjoint operator. -/
-theorem gibbsOperatorEigenvalue_nonneg {V : E → ℝ} (hV : ContDiff ℝ 2 V)
-    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
-    (u : gibbsOperatorEigenspace hV hprob rate) (hu : u ≠ 0) : 0 ≤ rate := by
-  let A := gibbsPositiveGenerator hV hprob
-  obtain ⟨uv, huv, hau⟩ := A.mem_graph_iff.mp u.property
-  change (uv : E →₂[gibbsMeasure volume V] ℝ) = (u : E →₂[gibbsMeasure volume V] ℝ) at huv
-  change A uv = rate • (u : E →₂[gibbsMeasure volume V] ℝ) at hau
-  have hn := gibbsPositiveGenerator_nonneg hV hprob uv
-  change 0 ≤ inner ℝ (A uv) (uv : E →₂[gibbsMeasure volume V] ℝ) at hn
-  rw [hau, huv, real_inner_smul_left, real_inner_self_eq_norm_sq] at hn
-  have hu0 : (u : E →₂[gibbsMeasure volume V] ℝ) ≠ 0 := by
-    intro h
-    exact hu (Subtype.ext h)
-  have hs : 0 < ‖(u : E →₂[gibbsMeasure volume V] ℝ)‖ ^ 2 :=
-    sq_pos_of_pos (norm_pos_iff.mpr hu0)
-  exact nonneg_of_mul_nonneg_left hn hs
-
-/-- Exact inverse-resolvent characterization of actual operator eigenvectors. -/
-theorem mem_gibbsOperatorEigenspace_iff_resolvent {V : E → ℝ} (hV : ContDiff ℝ 2 V)
-    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
-    (u : E →₂[gibbsMeasure volume V] ℝ) :
-    u ∈ gibbsOperatorEigenspace hV hprob rate ↔
-      gibbsL2Resolvent hV hprob ((1 + rate) • u) = u := by
-  rw [mem_gibbsOperatorEigenspace]
-  change (u, rate • u) ∈ (positiveResolventOperator (gibbsL2Resolvent hV hprob)).graph ↔ _
-  rw [positiveResolventOperator_graph _ (gibbsL2Resolvent_injective hV hprob),
-    mem_positiveResolventGraph]
-  constructor
-  · rintro ⟨f, hf, he⟩
-    have heq : f = (1 + rate) • u := by
-      calc
-        f = (f - gibbsL2Resolvent hV hprob f) + gibbsL2Resolvent hV hprob f := by abel
-        _ = rate • u + u := by rw [he, hf]
-        _ = (1 + rate) • u := by module
-    simpa only [heq] using hf
-  · intro h
-    refine ⟨(1 + rate) • u, h, ?_⟩
-    rw [h]
-    module
-
 /-- Exact equality of actual Hilbert eigenspaces, with no regularity premise. -/
 theorem gibbsOperatorEigenspace_eq_resolvent_eigenspace {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ) (hrate : 1 + rate ≠ 0) :

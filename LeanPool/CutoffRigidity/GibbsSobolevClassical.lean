@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.GibbsSobolev
+public import LeanPool.CutoffRigidity.RealL2Identities
 
 /-!
 # Actual C² L² functions with L² gradients belong to the closed energy domain
@@ -47,11 +48,8 @@ theorem tendsto_toL2_of_dominated_sq
     · filter_upwards [hlim] with x hx
       simpa using ((hx.sub (tendsto_const_nhds (x := f x))).norm.pow 2)
   have hnorm (n : ℕ) : ‖(hfn n).toLp (fn n) - hf.toLp f‖ ^ 2 = ∫ x, ‖fn n x - f x‖ ^ 2 ∂μ := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [Lp.coeFn_sub ((hfn n).toLp (fn n)) (hf.toLp f),
-      (hfn n).coeFn_toLp, hf.coeFn_toLp] with x hsub hn hf'
-    rw [hsub, Pi.sub_apply, hn, hf', real_inner_self_eq_norm_sq]
+    rw [← MemLp.toLp_sub (hfn n) hf, norm_toLp_norm_sq]
+    rfl
   apply tendsto_iff_norm_sub_tendsto_zero.mpr
   have hh := Real.continuous_sqrt.continuousAt.tendsto.comp hInt
   simpa only [Function.comp_def, ← hnorm, Real.sqrt_sq (norm_nonneg _), Real.sqrt_zero] using hh

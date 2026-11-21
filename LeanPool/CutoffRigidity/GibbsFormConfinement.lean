@@ -12,6 +12,7 @@ public import LeanPool.CutoffRigidity.L2FatouBounds
 public import LeanPool.CutoffRigidity.GibbsSobolevClassical
 public import LeanPool.CutoffRigidity.GibbsSobolevApproximation
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
+public import LeanPool.CutoffRigidity.RealL2Identities
 
 /-!
 # Actual weighted form confinement
@@ -222,19 +223,11 @@ theorem compactGradient_graph_confinement {V : E → ℝ} (hV : ContDiff ℝ 2 V
       (g := fun x : E => ‖x‖ ^ 2) (by fun_prop)
     simpa only [mul_comm] using hi
   have hN : ‖(u : E →₂[gibbsMeasure volume V] ℝ)‖ ^ 2 =
-      ∫ x, f x ^ 2 ∂gibbsMeasure volume V := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(compactGibbsRepresentative_spec V u).2.2] with x hx
-    rw [← hx, Real.inner_apply, pow_two]
+      ∫ x, f x ^ 2 ∂gibbsMeasure volume V :=
+    lp_real_norm_sq_eq_integral (compactGibbsRepresentative_spec V u).2.2.symm
   have hE : ‖compactGibbsGradientMap hV.continuous hprob u‖ ^ 2 =
-      ∫ x, ‖gradient f x‖ ^ 2 ∂gibbsMeasure volume V := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(compactGibbsGradient_memLp hprob u).coeFn_toLp] with x hx
-    change inner ℝ ((compactGibbsGradient_memLp hprob u).toLp _ x)
-      ((compactGibbsGradient_memLp hprob u).toLp _ x) = _
-    rw [hx, real_inner_self_eq_norm_sq]
+      ∫ x, ‖gradient f x‖ ^ 2 ∂gibbsMeasure volume V :=
+    norm_toLp_norm_sq (compactGibbsGradient_memLp hprob u)
   have hae : (fun x => ENNReal.ofReal (‖x‖ ^ 2 * (u : E →₂[gibbsMeasure volume V] ℝ) x ^ 2))
     =ᵐ[gibbsMeasure volume V]
       (fun x => ENNReal.ofReal (‖x‖ ^ 2 * f x ^ 2)) := by

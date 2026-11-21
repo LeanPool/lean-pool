@@ -62,13 +62,8 @@ theorem norm_gibbsL2Resolvent_le_one {V : E → ℝ} (hV : ContDiff ℝ 2 V)
 theorem gibbsL2Resolvent_constant {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (c : ℝ) :
     gibbsL2Resolvent hV hprob (gibbsConstantLp hprob c) = gibbsConstantLp hprob c := by
-  have hg := gibbsConstantLp_graph_mem hV hprob c
-  change (gibbsConstantLp hprob c, 0) ∈
-    (positiveResolventOperator (gibbsL2Resolvent hV hprob)).graph at hg
-  rw [positiveResolventOperator_graph _ (gibbsL2Resolvent_injective hV hprob),
-    mem_positiveResolventGraph] at hg
-  obtain ⟨f, hf, hzero⟩ := hg
-  have heq : f = gibbsConstantLp hprob c := by rw [sub_eq_zero] at hzero; exact hzero.trans hf
-  simpa only [heq] using hf
+  have h := (mem_gibbsPositiveGenerator_graph_iff_resolvent hV hprob _ _).mp
+    (gibbsConstantLp_graph_mem hV hprob c)
+  simpa only [add_zero] using h
 
 end CutoffRigidity

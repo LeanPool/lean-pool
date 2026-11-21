@@ -27,23 +27,6 @@ open MeasureTheory
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
-/-- Actual vector-coordinate products with continuous compact coefficients
-are Lebesgue integrable under the positive Gibbs density. -/
-theorem integrable_compact_test_gibbsVector_coordinate_volume {V χ : E → ℝ}
-    (hV : Continuous V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
-    (hχ : Continuous χ) (hχc : HasCompactSupport χ)
-    (w : E →₂[gibbsMeasure volume V] E) (i : Fin d) :
-    Integrable (fun x => χ x * (w x) i) volume := by
-  have hi : MemLp (fun x => (w x) i) 2 (gibbsMeasure volume V) := by
-    apply (Lp.memLp w).of_le_mul (c := 1) (by fun_prop)
-    filter_upwards with x
-    simpa only [one_mul] using (PiLp.norm_apply_le (w x) i)
-  have hh := integrable_compact_test_mul_gibbsLp_volume hV hprob hχ hχc (hi.toLp (fun x => (w x) i))
-  have hae := (gibbsMeasure_ae_eq_iff volume hV.measurable).mp hi.coeFn_toLp
-  apply hh.congr
-  filter_upwards [hae] with x hx
-  rw [hx]
-
 /-- Actual closed weak gradients give the ordinary distributional Laplacian
 pairing, with no classical differentiability of the Sobolev element. -/
 theorem gibbsSobolev_laplacian_test_volume {V φ : E → ℝ} (hV : ContDiff ℝ 2 V)

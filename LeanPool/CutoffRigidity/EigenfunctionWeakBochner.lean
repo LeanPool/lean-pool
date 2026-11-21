@@ -30,22 +30,6 @@ open scoped ENNReal
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
-/-- The first coordinate derivatives of a C² function are genuinely C¹. -/
-theorem c1_coordinateDerivative_of_c2 {f : E → ℝ} (hf : ContDiff ℝ 2 f) (i : Fin d) :
-    ContDiff ℝ 1 (coordinateDerivative i f) := by
-  apply contDiff_coordinateDerivative
-  convert hf using 1
-  norm_num
-
-/-- C¹ functions have continuous actual coordinate derivatives. -/
-theorem continuous_coordinateDerivative_of_c1 {f : E → ℝ} (hf : ContDiff ℝ 1 f) (i : Fin d) :
-    Continuous (coordinateDerivative i f) := by
-  have h : ContDiff ℝ 0 (coordinateDerivative i f) := by
-    apply contDiff_coordinateDerivative
-    convert hf using 1
-    norm_num
-  exact h.continuous
-
 /-- The scalar coordinate weighted-adjoint expression. -/
 @[expose] noncomputable def coordinateWeightedAdjoint (i : Fin d) (V ψ : E → ℝ) (x : E) : ℝ :=
   coordinateDerivative i ψ x - ψ x * coordinateDerivative i V x

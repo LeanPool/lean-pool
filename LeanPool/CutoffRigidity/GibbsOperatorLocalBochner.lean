@@ -61,7 +61,7 @@ theorem gibbsOperatorWeightedLocalGradientRhs_memLp {V χ : E → ℝ}
   have hc : Continuous (fun x => χ x * Real.exp (-V x)) := by fun_prop
   have hs : HasCompactSupport (fun x => χ x * Real.exp (-V x)) := by
     simpa only [Pi.mul_def] using hχc.mul_right (f' := fun x => Real.exp (-V x))
-  have hfirst := (compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hp hc hs G
+  have hfirst := (compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hc hs G
     i).const_mul rate
   have hterm (j : Fin d) : MemLp (fun x =>
       ((χ x * Real.exp (-V x)) * coordinateDerivative i (coordinateDerivative j V) x) * (G x) j)
@@ -72,7 +72,7 @@ theorem gibbsOperatorWeightedLocalGradientRhs_memLp {V χ : E → ℝ}
         (χ x * Real.exp (-V x)) * coordinateDerivative i (coordinateDerivative j V) x) := by
       simpa only [Pi.mul_def] using hs.mul_right (f' := coordinateDerivative i
         (coordinateDerivative j V))
-    exact compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hp hcj hsj G j
+    exact compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hcj hsj G j
   have hsum := memLp_finsetSum' Finset.univ (fun j _ => hterm j)
   convert hfirst.sub hsum using 1
   funext x

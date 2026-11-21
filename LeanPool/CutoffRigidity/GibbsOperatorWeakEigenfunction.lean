@@ -35,20 +35,8 @@ theorem gibbsOperatorEigen_resolvent {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
     (u : gibbsOperatorEigenspace hV hprob rate) :
     gibbsL2Resolvent hV hprob ((1 + rate) • (u : E →₂[gibbsMeasure volume V] ℝ)) =
-      (u : E →₂[gibbsMeasure volume V] ℝ) := by
-  have hu := u.property
-  change ((u : E →₂[gibbsMeasure volume V] ℝ), rate • (u : E →₂[gibbsMeasure volume V] ℝ)) ∈
-    (positiveResolventOperator (gibbsL2Resolvent hV hprob)).graph at hu
-  rw [positiveResolventOperator_graph _ (gibbsL2Resolvent_injective hV hprob),
-    mem_positiveResolventGraph] at hu
-  obtain ⟨f, hf, hAf⟩ := hu
-  have hshift : f = (1 + rate) • (u : E →₂[gibbsMeasure volume V] ℝ) := by
-    rw [hf] at hAf
-    calc
-      f = (u : E →₂[gibbsMeasure volume V] ℝ) + rate • (u : E →₂[gibbsMeasure volume V] ℝ) := by
-        exact sub_eq_iff_eq_add.mp hAf |>.trans (add_comm _ _)
-      _ = _ := by module
-  rwa [hshift] at hf
+      (u : E →₂[gibbsMeasure volume V] ℝ) :=
+  (mem_gibbsOperatorEigenspace_iff_resolvent hV hprob rate u).mp u.property
 
 /-- The canonical H¹ lift of an actual operator eigenclass is constructed
 from the actual variational resolvent. -/
@@ -91,16 +79,12 @@ theorem gibbsOperatorEigen_energy {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq] at hh
   exact hh
 
-/-- Nonzero actual operator eigenvectors have nonnegative eigenvalue,
-proved from the actual weak-gradient energy. -/
+/-- Nonzero actual operator eigenvectors have nonnegative eigenvalue. -/
 theorem gibbsOperatorEigen_eigenvalue_nonneg {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
     (u : gibbsOperatorEigenspace hV hprob rate) (hu : (u : E →₂[gibbsMeasure volume V] ℝ) ≠ 0) :
-    0 ≤ rate := by
-  have hh := gibbsOperatorEigen_energy hV hprob rate u
-  have hp : 0 < ‖(u : E →₂[gibbsMeasure volume V] ℝ)‖ ^ 2 := sq_pos_of_pos (norm_pos_iff.mpr hu)
-  nlinarith [sq_nonneg ‖gibbsSobolevDerivative hV hprob (gibbsOperatorEigenSobolevLift hV hprob
-    rate u)‖]
+    0 ≤ rate :=
+  gibbsOperatorEigenvalue_nonneg hV hprob rate u (fun h => hu (congrArg Subtype.val h))
 
 /-- A closed Sobolev test lift with the given representatives yields the weak equation
 as integrals of the function and its gradient. -/
@@ -198,23 +182,6 @@ theorem gibbsOperatorEigen_volume_test_equation {V φ : E → ℝ} (hV : ContDif
     ring
   rwa [hleft, hright] at he
 
-/-- Actual Gibbs L² vector coordinates admit compact localization in actual
-Lebesgue L², by the proved positive-density measure comparison. -/
-theorem compact_cutoff_gibbsVector_coordinate_memLp_volume {V χ : E → ℝ}
-    (hV : Continuous V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
-    (hχ : Continuous χ) (hχc : HasCompactSupport χ)
-    (w : E →₂[gibbsMeasure volume V] E) (i : Fin d) :
-    MemLp (fun x => χ x * (w x) i) 2 volume := by
-  have hi : MemLp (fun x => (w x) i) 2 (gibbsMeasure volume V) := by
-    apply (Lp.memLp w).of_le_mul (c := 1) (by fun_prop)
-    filter_upwards with x
-    simpa only [one_mul] using (PiLp.norm_apply_le (w x) i)
-  have hh := compact_cutoff_gibbsLp_memLp_volume hV hprob hχ hχc (hi.toLp (fun x => (w x) i))
-  have hae := (gibbsMeasure_ae_eq_iff volume hV.measurable).mp hi.coeFn_toLp
-  refine (memLp_congr_ae ?_).mp hh
-  filter_upwards [hae] with x hx
-  rw [hx]
-
 /-- The lower-order elliptic right-hand side is genuinely locally L² for
 every actual operator eigenvector, without any regularity hypothesis. -/
 theorem gibbsOperatorEigen_local_rhs_memLp {V χ : E → ℝ} (hV : ContDiff ℝ 2 V)
@@ -231,13 +198,13 @@ theorem gibbsOperatorEigen_local_rhs_memLp {V χ : E → ℝ} (hV : ContDiff ℝ
       hχ.mul ((EuclideanSpace.proj i : E →L[ℝ] ℝ).continuous.comp hGV)
     have hs : HasCompactSupport (fun x => χ x * (gradient V x) i) := by
       simpa only [Pi.mul_def] using hχc.mul_right (f' := fun x => (gradient V x) i)
-    exact compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hprob hc hs G i
+    exact compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hc hs G i
   have hsum : MemLp (fun x => ∑ i : Fin d, (χ x * (gradient V x) i) * (G x) i) 2 volume :=
     by
       convert memLp_finsetSum' Finset.univ (fun i _ => hi i) using 1
       funext x
       simp
-  have hu := (compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ hχc
+  have hu := (compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ hχc
     (u : E →₂[gibbsMeasure volume V] ℝ)).const_mul rate
   convert hsum.sub hu using 1
   funext x

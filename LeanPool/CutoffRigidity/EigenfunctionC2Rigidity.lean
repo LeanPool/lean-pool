@@ -10,6 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.EigenfunctionWeakBochner
 public import LeanPool.CutoffRigidity.CompactDifferenceQuotients
+public import LeanPool.CutoffRigidity.EuclideanDerivatives
 
 /-!
 # Curvature equality rigidity at the paper's C² regularity
@@ -96,13 +97,6 @@ theorem integral_compact_weight_inner_differenceQuotient_tendsto
   · filter_upwards with x
     exact ((directionalDifferenceQuotient_tendsto (hG.differentiable (by norm_num)) v x).inner
       tendsto_const_nhds).const_mul (w x)
-
-/-- Continuity of the actual gradient requires only C¹ regularity. -/
-theorem continuous_gradient_of_c1 {f : E → ℝ} (hf : ContDiff ℝ 1 f) :
-    Continuous (gradient f) := by
-  let R : (E →L[ℝ] ℝ) →L[ℝ] E :=
-    (InnerProductSpace.toDual ℝ E).symm.toContinuousLinearEquiv.toContinuousLinearMap
-  exact R.continuous.comp ((hf.fderiv_right (m := 0) (by norm_num)).continuous)
 
 /-- The exact localized derivative energy at C² regularity. The compact test
 χ²∂if is obtained from actual C² finite-difference tests, rather than by

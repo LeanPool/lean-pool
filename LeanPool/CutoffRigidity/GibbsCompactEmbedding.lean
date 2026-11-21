@@ -58,12 +58,12 @@ theorem isCompact_closure_gibbsSobolevInclusion_unitBall {V : E → ℝ}
   obtain ⟨C, hC, htranslation⟩ := exists_gibbsSobolev_cutoff_translation_integral_bound hV hprob hχ
     hχc
   obtain ⟨A, hA, hAbound⟩ :=
-    exists_compact_cutoff_gibbsLp_L2_norm_bound hV.continuous hprob hχ.continuous hχc
+    exists_compact_cutoff_gibbsLp_L2_norm_bound hV.continuous hχ.continuous hχc
   let f : U → E → ℝ := fun u x => χ x * J u x
   have hfm (u : U) : Measurable (f u) :=
     hχ.continuous.measurable.mul (Lp.stronglyMeasurable (J u)).measurable
   have hf (u : U) : MemLp (f u) 2 volume :=
-    compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ.continuous hχc (J u)
+    compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ.continuous hχc (J u)
   have hbound (u : U) : ‖(hf u).toLp (f u)‖ ≤ A := by
     have hi := norm_gibbsSobolevInclusion_apply_le hV hprob (u : gibbsSobolevGraph hV hprob)
     have hu : ‖J u‖ ≤ 1 := hi.trans u.property

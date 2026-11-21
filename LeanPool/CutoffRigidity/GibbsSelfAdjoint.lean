@@ -58,6 +58,18 @@ theorem positiveResolventOperator_graph (R : H →L[ℝ] H) (hR : Function.Injec
   Submodule.toLinearPMap_graph_eq _ (positiveResolventGraph_singleValued R hR)
 
 omit [CompleteSpace H] in
+/-- The graph equation for `R⁻¹-I` is equivalent to the shifted resolvent equation. -/
+theorem mem_positiveResolventOperator_graph_iff (R : H →L[ℝ] H) (hR : Function.Injective R)
+    (u g : H) : (u, g) ∈ (positiveResolventOperator R).graph ↔ R (u + g) = u := by
+  rw [positiveResolventOperator_graph R hR, mem_positiveResolventGraph]
+  constructor
+  · rintro ⟨f, hf, hg⟩
+    have hsum : u + g = f := by rw [← hf, ← hg]; abel
+    simpa only [hsum] using hf
+  · intro h
+    exact ⟨u + g, h, by rw [h]; abel⟩
+
+omit [CompleteSpace H] in
 theorem positiveResolventOperator_mem_domain (R : H →L[ℝ] H) (hR : Function.Injective R)
     (x : H) : x ∈ (positiveResolventOperator R).domain ↔ ∃ f, R f = x := by
   rw [LinearPMap.mem_domain_iff, positiveResolventOperator_graph R hR]
@@ -181,6 +193,12 @@ Dirichlet form. The diffusion generator has the opposite sign. -/
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) :
     (E →₂[gibbsMeasure volume V] ℝ) →ₗ.[ℝ] (E →₂[gibbsMeasure volume V] ℝ) :=
   positiveResolventOperator (gibbsL2Resolvent hV hprob)
+
+/-- The operator graph is characterized by the variational Gibbs resolvent. -/
+theorem mem_gibbsPositiveGenerator_graph_iff_resolvent {V : E → ℝ} (hV : ContDiff ℝ 2 V)
+    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (u g : E →₂[gibbsMeasure volume V] ℝ) :
+    (u, g) ∈ (gibbsPositiveGenerator hV hprob).graph ↔ gibbsL2Resolvent hV hprob (u + g) = u :=
+  mem_positiveResolventOperator_graph_iff _ (gibbsL2Resolvent_injective hV hprob) u g
 
 /-- Self-adjointness is derived from the actual variational construction. -/
 theorem gibbsPositiveGenerator_selfAdjoint {V : E → ℝ} (hV : ContDiff ℝ 2 V)

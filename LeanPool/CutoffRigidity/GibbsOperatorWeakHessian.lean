@@ -45,7 +45,7 @@ theorem exists_gibbsOperatorEigen_local_weak_hessian {V χ : E → ℝ}
   let F := localizedOperatorEigenLaplacian hV hprob rate u χ
   have hwm : Measurable w := hχ.continuous.measurable.mul
     (Lp.stronglyMeasurable (u : E →₂[gibbsMeasure volume V] ℝ)).measurable
-  have hw : MemLp w 2 volume := compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob
+  have hw : MemLp w 2 volume := compact_cutoff_gibbsLp_memLp_volume hV.continuous
     hχ.continuous hχc (u : E →₂[gibbsMeasure volume V] ℝ)
   have hwc : HasCompactSupport w := by
     simpa only [w, Pi.mul_def] using hχc.mul_right (f' := fun x => (u : E →₂[gibbsMeasure volume V]
@@ -88,10 +88,10 @@ theorem localizedOperatorEigenGradient_memLp {V χ : E → ℝ} (hV : ContDiff �
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
     (u : gibbsOperatorEigenspace hV hprob rate) (hχ : ContDiff ℝ 3 χ) (hχc : HasCompactSupport χ)
     (i : Fin d) : MemLp (localizedOperatorEigenGradient hV hprob rate u χ i) 2 volume := by
-  have ha := compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hprob hχ.continuous
+  have ha := compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hχ.continuous
     hχc
     (gibbsSobolevDerivative hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u)) i
-  have hb := compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob
+  have hb := compact_cutoff_gibbsLp_memLp_volume hV.continuous
     (c1_coordinateDerivative_of_c2 (hχ.of_le (by norm_num)) i).continuous
     (hχc.fderiv_apply ℝ (EuclideanSpace.single i 1)) (u : E →₂[gibbsMeasure volume V] ℝ)
   convert ha.add hb using 1

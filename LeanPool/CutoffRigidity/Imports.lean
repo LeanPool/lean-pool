@@ -41,6 +41,7 @@ public import LeanPool.CutoffRigidity.EigenfunctionWeakBochner
 public import LeanPool.CutoffRigidity.Eigenmap
 public import LeanPool.CutoffRigidity.EuclideanBochner
 public import LeanPool.CutoffRigidity.EuclideanConvolutionDerivatives
+public import LeanPool.CutoffRigidity.EuclideanDerivatives
 public import LeanPool.CutoffRigidity.EuclideanGaussianSplitting
 public import LeanPool.CutoffRigidity.EuclideanHessianEnergy
 public import LeanPool.CutoffRigidity.EuclideanL2Coordinates

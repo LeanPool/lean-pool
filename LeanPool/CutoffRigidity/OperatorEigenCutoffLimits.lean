@@ -10,6 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.GibbsOperatorIntegratedBochner
 public import LeanPool.CutoffRigidity.GibbsSobolevConstants
+public import LeanPool.CutoffRigidity.RealL2Identities
 
 /-! # Genuine cutoff limits for actual operator eigenvectors -/
 
@@ -23,10 +24,8 @@ variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
 theorem integral_norm_sq_L2_vector {μ : Measure E} (G : E →₂[μ] E) :
-    (∫ x, ‖G x‖ ^ 2 ∂μ) = ‖G‖ ^ 2 := by
-  rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-  apply integral_congr_ae
-  exact Filter.Eventually.of_forall (fun x => (real_inner_self_eq_norm_sq (G x)).symm)
+    (∫ x, ‖G x‖ ^ 2 ∂μ) = ‖G‖ ^ 2 :=
+  (lp_norm_sq_eq_integral Filter.EventuallyEq.rfl).symm
 
 theorem L2_vector_cutoff_boundary_bound {μ : Measure E} (G : E →₂[μ] E)
     {η : E → ℝ} (hη : ContDiff ℝ 2 η) (M : ℝ) (hM : 0 ≤ M)

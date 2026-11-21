@@ -11,6 +11,7 @@ module
 public import LeanPool.CutoffRigidity.GibbsSpectralGap
 public import LeanPool.CutoffRigidity.GibbsSobolevClassical
 public import LeanPool.CutoffRigidity.SmoothPoincare
+public import LeanPool.CutoffRigidity.RealL2Identities
 
 /-! # The actual Gibbs spectral gap and the source Poincaré inequality
 
@@ -89,17 +90,11 @@ theorem hasSmoothPoincare_gibbsSpectralGap {V : E → ℝ} (hV : ContDiff ℝ 2 
   have h := gibbsSharpPoincare hV hprob hd ρ hρ hHess u hmean
   have hfnorm : ‖gibbsSobolevInclusion hV hprob u‖ ^ 2 =
       ∫ x, f x ^ 2 ∂gibbsMeasure volume V := by
-    rw [hJ, ← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hfLp.coeFn_toLp] with x hx
-    rw [hx, Real.inner_apply, pow_two]
+    rw [hJ, norm_toLp_sq]
   have henergy : gibbsDirichletEnergy hV hprob u u =
       ∫ x, ‖gradient f x‖ ^ 2 ∂gibbsMeasure volume V := by
     change inner ℝ (hgLp.toLp (gradient f)) (hgLp.toLp (gradient f)) = _
-    rw [L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hgLp.coeFn_toLp] with x hx
-    rw [hx, real_inner_self_eq_norm_sq]
+    rw [real_inner_self_eq_norm_sq, norm_toLp_norm_sq]
   rw [hfnorm, henergy] at h
   apply (le_div_iff₀ (gibbsSpectralGap_pos hV hprob hd ρ hρ hHess)).mpr
   exact (mul_comm _ _).trans_le h

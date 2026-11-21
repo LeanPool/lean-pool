@@ -213,17 +213,17 @@ theorem volumeToGibbsL2_norm_le
 function passed through the actual unweighted-to-weighted inclusion. -/
 theorem volumeToGibbsL2_cutoff_coeFn
     {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : ContDiff ℝ 2 V)
-    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (ρ : ℝ) (hρ : 0 < ρ)
+    (ρ : ℝ) (hρ : 0 < ρ)
     (hHess : ∀ x z, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
     (hχ : Continuous χ) (hχc : HasCompactSupport χ)
     (u : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ) :
     (volumeToGibbsL2 hV ρ hρ hHess
-      ((compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ hχc u).toLp
+      ((compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ hχc u).toLp
         (fun x => χ x * u x)) :
       EuclideanSpace ℝ (Fin d) → ℝ) =ᵐ[gibbsMeasure volume V] fun x => χ x * u x := by
   exact (volumeToGibbsL2_coeFn hV ρ hρ hHess _).trans
     ((gibbsMeasure_absolutelyContinuous volume V).ae_eq
-      (compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ hχc u).coeFn_toLp)
+      (compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ hχc u).coeFn_toLp)
 
 /-- The actual approximation error after unweighted localization and the
 canonical continuous inclusion back into Gibbs L². This is directly usable
@@ -237,18 +237,18 @@ theorem gibbsSobolev_cutoff_transferred_error_L2_norm_le
     (hχone : ∀ x ∈ Metric.closedBall (0 : EuclideanSpace ℝ (Fin d)) R, χ x = 1)
     (u : gibbsSobolevGraph hV hprob) :
     ‖gibbsSobolevInclusion hV hprob u - volumeToGibbsL2 hV ρ hρ hHess
-      ((compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ hχc
+      ((compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ hχc
         (gibbsSobolevInclusion hV hprob u)).toLp
         (fun x => χ x * gibbsSobolevInclusion hV hprob u x))‖ ≤
       Real.sqrt (gibbsFormConfinementConstant V ρ) / R * ‖u‖ := by
   let U := gibbsSobolevInclusion hV hprob u
-  let f := (compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ hχc U).toLp
+  let f := (compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ hχc U).toLp
     (fun x => χ x * U x)
   let J := volumeToGibbsL2 hV ρ hρ hHess
   let hE := gibbs_cutoff_error_memLp hprob hχ hχc U
   have heq : U - J f = hE.toLp (fun x => U x - χ x * U x) := by
     apply Lp.ext
-    filter_upwards [Lp.coeFn_sub U (J f), volumeToGibbsL2_cutoff_coeFn hV hprob ρ hρ hHess hχ hχc U,
+    filter_upwards [Lp.coeFn_sub U (J f), volumeToGibbsL2_cutoff_coeFn hV ρ hρ hHess hχ hχc U,
       hE.coeFn_toLp] with x hs hc he
     have hsub : (U - J f : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ) x = U x - J f x
       := by
@@ -266,7 +266,7 @@ theorem gibbsSobolev_spatial_cutoff_transferred_error_L2_norm_le
     (hHess : ∀ x z, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
     (R : ℝ) (hR : 0 < R) (u : gibbsSobolevGraph hV hprob) :
     ‖gibbsSobolevInclusion hV hprob u - volumeToGibbsL2 hV ρ hρ hHess
-      ((compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob
+      ((compact_cutoff_gibbsLp_memLp_volume hV.continuous
         (gibbsSpatialCutoff_contDiff R hR).continuous (gibbsSpatialCutoff_hasCompactSupport R hR)
         (gibbsSobolevInclusion hV hprob u)).toLp
         (fun x => gibbsSpatialCutoff R hR x * gibbsSobolevInclusion hV hprob u x))‖ ≤

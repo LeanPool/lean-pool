@@ -12,6 +12,7 @@ public import LeanPool.CutoffRigidity.GibbsWeakDerivative
 public import LeanPool.CutoffRigidity.EuclideanL2Translations
 public import LeanPool.CutoffRigidity.L2FatouBounds
 public import LeanPool.CutoffRigidity.GibbsSobolevApproximation
+public import LeanPool.CutoffRigidity.RealL2Identities
 
 /-! # Actual localized translations of closed Gibbs H¹ functions
 
@@ -180,7 +181,7 @@ theorem gibbsSobolev_cutoff_translation_memLp
     (u : gibbsSobolevGraph hV hprob) (h : EuclideanSpace ℝ (Fin d)) :
     MemLp (fun x => χ (x + h) * gibbsSobolevInclusion hV hprob u (x + h) -
       χ x * gibbsSobolevInclusion hV hprob u x) 2 volume := by
-  have hL := compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ hχc
+  have hL := compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ hχc
     (gibbsSobolevInclusion hV hprob u)
   convert! (hL.comp_measurePreserving (measurePreserving_add_right volume h)).sub hL using 1
 
@@ -240,20 +241,11 @@ theorem gibbsSobolev_cutoff_translation_integral_sq_le
     simpa only [Pi.mul_def] using hχc.mul_right (f' := f n)
   have ht := c1_compact_translation_integral_sq_le ((hχ.mul (hf n)).of_le (by norm_num)) hcutc h
   have he := compact_cutoff_gradient_energy_le hV hprob hχ hχc (hf n) (hfc n) hAb hBb
-  have hN : (∫ x, f n x ^ 2 ∂μ) = ‖(p n).1‖ ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hrep] with x hx
-    rw [← hx n, Real.inner_apply, pow_two]
+  have hN : (∫ x, f n x ^ 2 ∂μ) = ‖(p n).1‖ ^ 2 :=
+    (lp_real_norm_sq_eq_integral (hrep.mono fun _ hx => (hx n).symm)).symm
   have hD : (∫ x, ‖gradient (f n) x‖ ^ 2 ∂μ) = ‖(p n).2‖ ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    have hh := (compactGibbsGradient_memLp hprob (v n)).coeFn_toLp
-    filter_upwards [hh] with x hx
     rw [← hv2 n]
-    change ‖gradient (f n) x‖ ^ 2 = inner ℝ ((compactGibbsGradient_memLp hprob (v n)).toLp _ x)
-      ((compactGibbsGradient_memLp hprob (v n)).toLp _ x)
-    rw [hx, real_inner_self_eq_norm_sq]
+    exact (norm_toLp_norm_sq (compactGibbsGradient_memLp hprob (v n))).symm
   change (∫ x, (χ (x + h) * f n (x + h) - χ x * f n x) ^ 2 ∂volume) ≤ _
   rw [hD, hN] at he
   exact ht.trans (mul_le_mul_of_nonneg_left he (sq_nonneg ‖h‖))
@@ -318,19 +310,17 @@ theorem exists_gibbsSobolev_cutoff_translation_L2_bound
 Lebesgue L², not merely an assertion of local membership. -/
 theorem exists_compact_cutoff_gibbsLp_L2_norm_bound
     {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : Continuous V)
-    (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
     (hχ : Continuous χ) (hχc : HasCompactSupport χ) :
     ∃ A : ℝ, 0 < A ∧ ∀ u : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ,
-      ‖(compact_cutoff_gibbsLp_memLp_volume hV hprob hχ hχc u).toLp
+      ‖(compact_cutoff_gibbsLp_memLp_volume hV hχ hχc u).toLp
         (fun x => χ x * u x)‖ ≤ A * ‖u‖ := by
-  let := hprob
   let H := fun x => Real.exp (V x / 2) * χ x
   obtain ⟨hH, hHc⟩ := weighted_cutoff_continuous_compact hV hχ hχc
   obtain ⟨A, hA, hAbound⟩ := (hHc.isCompact_range hH).isBounded.exists_pos_norm_le
   have hAb (x : EuclideanSpace ℝ (Fin d)) : ‖H x‖ ≤ A := hAbound (H x) ⟨x, rfl⟩
   refine ⟨A, hA, ?_⟩
   intro u
-  have hm := weighted_cutoff_gibbsLp_memLp hV hprob hχ hχc u
+  have hm := weighted_cutoff_gibbsLp_memLp hV hχ hχc u
   have hi : (∫ x, (χ x * u x) ^ 2 ∂volume) ≤ A ^ 2 * ‖u‖ ^ 2 := by
     rw [integral_sq_cutoff_eq_gibbs hV.measurable]
     have h := integral_mono hm.integrable_sq ((Lp.memLp u).integrable_sq.const_mul (A ^ 2))
@@ -341,9 +331,8 @@ theorem exists_compact_cutoff_gibbsLp_L2_norm_bound
       rw [mul_pow]
       exact mul_le_mul_of_nonneg_right hh (sq_nonneg (u x)))
     rw [integral_const_mul] at h
-    have hu : (∫ x, u x ^ 2 ∂gibbsMeasure volume V) = ‖u‖ ^ 2 := by
-      rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-      simp only [Real.inner_apply, pow_two]
+    have hu : (∫ x, u x ^ 2 ∂gibbsMeasure volume V) = ‖u‖ ^ 2 :=
+      (lp_real_norm_sq_eq_integral Filter.EventuallyEq.rfl).symm
     rwa [hu] at h
   apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg hA.le (norm_nonneg _))).mp
   rw [norm_toLp_sq, mul_pow]

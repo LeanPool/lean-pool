@@ -56,15 +56,9 @@ theorem gibbsPositiveGenerator_of_weak_equation {V : E → ℝ} (hV : ContDiff �
     (u : gibbsSobolevGraph hV hprob) (g : E →₂[gibbsMeasure volume V] ℝ)
     (he : ∀ v : gibbsSobolevGraph hV hprob,
       gibbsDirichletEnergy hV hprob u v = inner ℝ g (gibbsSobolevInclusion hV hprob v)) :
-    (gibbsSobolevInclusion hV hprob u, g) ∈ (gibbsPositiveGenerator hV hprob).graph := by
-  change (gibbsSobolevInclusion hV hprob u, g) ∈
-    (positiveResolventOperator (gibbsL2Resolvent hV hprob)).graph
-  rw [positiveResolventOperator_graph _ (gibbsL2Resolvent_injective hV hprob),
-    mem_positiveResolventGraph]
-  refine ⟨gibbsSobolevInclusion hV hprob u + g, ?_, ?_⟩
-  · exact gibbsL2Resolvent_of_weak_equation hV hprob u g he
-  · rw [gibbsL2Resolvent_of_weak_equation hV hprob u g he]
-    abel
+    (gibbsSobolevInclusion hV hprob u, g) ∈ (gibbsPositiveGenerator hV hprob).graph :=
+  (mem_gibbsPositiveGenerator_graph_iff_resolvent hV hprob _ _).mpr
+    (gibbsL2Resolvent_of_weak_equation hV hprob u g he)
 
 /-- A classical eigenclass belongs to the genuine self-adjoint form
 operator domain; it is not merely an eigenfunction of a formal expression. -/
@@ -112,6 +106,34 @@ theorem mem_gibbsOperatorEigenspace {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     (u : E →₂[gibbsMeasure volume V] ℝ) :
     u ∈ gibbsOperatorEigenspace hV hprob ρ ↔
       (u, ρ • u) ∈ (gibbsPositiveGenerator hV hprob).graph := Iff.rfl
+
+/-- Exact inverse-resolvent characterization of actual operator eigenvectors. -/
+theorem mem_gibbsOperatorEigenspace_iff_resolvent {V : E → ℝ} (hV : ContDiff ℝ 2 V)
+    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
+    (u : E →₂[gibbsMeasure volume V] ℝ) :
+    u ∈ gibbsOperatorEigenspace hV hprob rate ↔
+      gibbsL2Resolvent hV hprob ((1 + rate) • u) = u := by
+  rw [mem_gibbsOperatorEigenspace, mem_gibbsPositiveGenerator_graph_iff_resolvent,
+    add_smul, one_smul]
+
+/-- Nonzero actual form-operator eigenvectors have nonnegative eigenvalue,
+from the proved nonnegativity of the self-adjoint operator. -/
+theorem gibbsOperatorEigenvalue_nonneg {V : E → ℝ} (hV : ContDiff ℝ 2 V)
+    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
+    (u : gibbsOperatorEigenspace hV hprob rate) (hu : u ≠ 0) : 0 ≤ rate := by
+  let A := gibbsPositiveGenerator hV hprob
+  obtain ⟨uv, huv, hau⟩ := A.mem_graph_iff.mp u.property
+  change (uv : E →₂[gibbsMeasure volume V] ℝ) = (u : E →₂[gibbsMeasure volume V] ℝ) at huv
+  change A uv = rate • (u : E →₂[gibbsMeasure volume V] ℝ) at hau
+  have hn := gibbsPositiveGenerator_nonneg hV hprob uv
+  change 0 ≤ inner ℝ (A uv) (uv : E →₂[gibbsMeasure volume V] ℝ) at hn
+  rw [hau, huv, real_inner_smul_left, real_inner_self_eq_norm_sq] at hn
+  have hu0 : (u : E →₂[gibbsMeasure volume V] ℝ) ≠ 0 := by
+    intro h
+    exact hu (Subtype.ext h)
+  have hs : 0 < ‖(u : E →₂[gibbsMeasure volume V] ℝ)‖ ^ 2 :=
+    sq_pos_of_pos (norm_pos_iff.mpr hu0)
+  exact nonneg_of_mul_nonneg_left hn hs
 
 /-- Classical eigenfunctions embed into the actual operator eigenspace.
 The reverse inclusion remains a regularity theorem to prove. -/

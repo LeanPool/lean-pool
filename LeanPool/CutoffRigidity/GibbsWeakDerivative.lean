@@ -254,14 +254,12 @@ theorem weighted_cutoff_continuous_compact
 /-- The inverse-density cutoff times a weighted L² class is still weighted L². -/
 theorem weighted_cutoff_gibbsLp_memLp
     {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : Continuous V)
-    (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
     (hχ : Continuous χ) (hχc : HasCompactSupport χ)
     (u : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ) :
     MemLp (fun x => (Real.exp (V x / 2) * χ x) * u x) 2 (gibbsMeasure volume V) := by
-  let := hprob
   obtain ⟨hH, hHc⟩ := weighted_cutoff_continuous_compact hV hχ hχc
   have hHL : MemLp (fun x => Real.exp (V x / 2) * χ x) ⊤ (gibbsMeasure volume V) :=
-    hH.memLp_of_hasCompactSupport hHc
+    hH.memLp_top_of_hasCompactSupport hHc _
   exact hHL.fun_mul (Lp.memLp u)
 
 /-- Squaring the weighted cutoff supplies the inverse Gibbs density factor. -/
@@ -287,11 +285,10 @@ theorem integral_sq_cutoff_eq_gibbs
 Lebesgue L². This proves the local measure comparison needed for Rellich. -/
 theorem compact_cutoff_gibbsLp_memLp_volume
     {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : Continuous V)
-    (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
     (hχ : Continuous χ) (hχc : HasCompactSupport χ)
     (u : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ) :
     MemLp (fun x => χ x * u x) 2 volume := by
-  have hmul := weighted_cutoff_gibbsLp_memLp hV hprob hχ hχc u
+  have hmul := weighted_cutoff_gibbsLp_memLp hV hχ hχc u
   have hmeas : AEStronglyMeasurable (fun x => χ x * u x) volume :=
     hχ.aestronglyMeasurable.mul (AEStronglyMeasurable.mono_ac
       (absolutelyContinuous_gibbsMeasure volume hV.measurable) (Lp.memLp u).aestronglyMeasurable)
@@ -302,6 +299,39 @@ theorem compact_cutoff_gibbsLp_memLp_volume
     rw [smul_eq_mul, weighted_cutoff_sq, ← mul_assoc, ← Real.exp_add, neg_add_cancel,
       Real.exp_zero, one_mul]
   simpa only [heq] using hi
+
+local notation "E" => EuclideanSpace ℝ (Fin d)
+
+/-- A Gibbs L² vector coordinate has a scalar Gibbs L² representative,
+with the representative equality also holding for Lebesgue measure. -/
+theorem exists_gibbsVector_coordinateLp_ae_volume {V : E → ℝ}
+    (hV : Measurable V) (w : E →₂[gibbsMeasure volume V] E) (i : Fin d) :
+    ∃ v : E →₂[gibbsMeasure volume V] ℝ, (v : E → ℝ) =ᵐ[volume] fun x => (w x) i := by
+  have h : MemLp (fun x => (w x) i) 2 (gibbsMeasure volume V) :=
+    (EuclideanSpace.proj i : E →L[ℝ] ℝ).comp_memLp w
+  exact ⟨h.toLp _, (gibbsMeasure_ae_eq_iff volume hV).mp h.coeFn_toLp⟩
+
+/-- Actual vector-coordinate products with continuous compact coefficients
+are Lebesgue integrable under the positive Gibbs density. -/
+theorem integrable_compact_test_gibbsVector_coordinate_volume {V χ : E → ℝ}
+    (hV : Continuous V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
+    (hχ : Continuous χ) (hχc : HasCompactSupport χ)
+    (w : E →₂[gibbsMeasure volume V] E) (i : Fin d) :
+    Integrable (fun x => χ x * (w x) i) volume := by
+  obtain ⟨v, hv⟩ := exists_gibbsVector_coordinateLp_ae_volume hV.measurable w i
+  apply (integrable_compact_test_mul_gibbsLp_volume hV hprob hχ hχc v).congr
+  filter_upwards [hv] with x hx
+  rw [hx]
+
+/-- Compactly supported continuous multiples of Gibbs L² vector coordinates are in Lebesgue L². -/
+theorem compact_cutoff_gibbsVector_coordinate_memLp_volume {V χ : E → ℝ}
+    (hV : Continuous V) (hχ : Continuous χ) (hχc : HasCompactSupport χ)
+    (w : E →₂[gibbsMeasure volume V] E) (i : Fin d) :
+    MemLp (fun x => χ x * (w x) i) 2 volume := by
+  obtain ⟨v, hv⟩ := exists_gibbsVector_coordinateLp_ae_volume hV.measurable w i
+  refine (memLp_congr_ae ?_).mp (compact_cutoff_gibbsLp_memLp_volume hV hχ hχc v)
+  filter_upwards [hv] with x hx
+  rw [hx]
 
 /-- Both ordinary-volume pairings in the weak-derivative formula are
 actual integrable functions, so the identity does not rely on undefined
@@ -314,19 +344,10 @@ theorem gibbsSobolev_coordinate_pairings_integrable_volume
     Integrable (fun x => φ x * (gibbsSobolevDerivative hV hprob u x) i) volume ∧
       Integrable (fun x => coordinateDerivative i φ x * gibbsSobolevInclusion hV hprob u x) volume
         := by
-  have hcoord : MemLp (fun x => (gibbsSobolevDerivative hV hprob u x) i) 2
-      (gibbsMeasure volume V) := by
-    apply (Lp.memLp (gibbsSobolevDerivative hV hprob u)).of_le_mul (c := 1) (by fun_prop)
-    filter_upwards with x
-    simpa only [one_mul] using (PiLp.norm_apply_le (gibbsSobolevDerivative hV hprob u x) i)
-  have hi := integrable_compact_test_mul_gibbsLp_volume hV.continuous hprob hφ.continuous hφc
-    (hcoord.toLp (fun x => (gibbsSobolevDerivative hV hprob u x) i))
-  have heq := (gibbsMeasure_ae_eq_iff volume hV.continuous.measurable).mp hcoord.coeFn_toLp
-  refine ⟨hi.congr ?_, ?_⟩
-  · filter_upwards [heq] with x hx
-    rw [hx]
-  · exact integrable_compact_test_mul_gibbsLp_volume hV.continuous hprob
+  exact ⟨integrable_compact_test_gibbsVector_coordinate_volume hV.continuous hprob
+    hφ.continuous hφc (gibbsSobolevDerivative hV hprob u) i,
+    integrable_compact_test_mul_gibbsLp_volume hV.continuous hprob
       (c1_coordinateDerivative_of_c2 hφ i).continuous
-      (hφc.fderiv_apply ℝ (EuclideanSpace.single i 1)) (gibbsSobolevInclusion hV hprob u)
+      (hφc.fderiv_apply ℝ (EuclideanSpace.single i 1)) (gibbsSobolevInclusion hV hprob u)⟩
 
 end CutoffRigidity

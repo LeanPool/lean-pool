@@ -8,7 +8,12 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.GibbsSobolevClassical
+public import LeanPool.CutoffRigidity.EuclideanDerivatives
+public import LeanPool.CutoffRigidity.RealL2Identities
+public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
+public import Mathlib.Probability.Moments.Variance
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
@@ -134,20 +139,8 @@ theorem c1_compact_translation_L2_norm_le {f : E → ℝ}
     (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) (h : E) :
     ‖(c1_compact_translation_memLp hf hfc h).toLp (fun x => f (x + h) - f x)‖ ≤
       ‖h‖ * ‖(c1_compact_gradient_memLp hf hfc).toLp (gradient f)‖ := by
-  have hnormD : ‖(c1_compact_translation_memLp hf hfc h).toLp (fun x => f (x + h) - f x)‖ ^ 2 =
-      ∫ x, (f (x + h) - f x) ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(c1_compact_translation_memLp hf hfc h).coeFn_toLp] with x hx
-    rw [hx, Real.inner_apply, pow_two]
-  have hnormG : ‖(c1_compact_gradient_memLp hf hfc).toLp (gradient f)‖ ^ 2 =
-      ∫ x, ‖gradient f x‖ ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(c1_compact_gradient_memLp hf hfc).coeFn_toLp] with x hx
-    rw [hx, real_inner_self_eq_norm_sq]
   apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg (norm_nonneg _) (norm_nonneg _))).mp
-  rw [hnormD, mul_pow, hnormG]
+  rw [norm_toLp_sq (c1_compact_translation_memLp hf hfc h), mul_pow, norm_toLp_norm_sq]
   exact c1_compact_translation_integral_sq_le hf hfc h
 
 end CutoffRigidity

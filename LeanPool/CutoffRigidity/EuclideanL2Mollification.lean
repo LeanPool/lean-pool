@@ -220,21 +220,8 @@ theorem bumpMollification_error_L2_norm_le (φ : ContDiffBump (0 : E)) {f : E �
     (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) :
     ‖(bumpMollification_error_memLp φ hf hfc).toLp (fun x => bumpMollification φ f x - f x)‖ ≤
       φ.rOut * ‖(c1_compact_gradient_memLp hf hfc).toLp (gradient f)‖ := by
-  have hnormD : ‖(bumpMollification_error_memLp φ hf hfc).toLp
-    (fun x => bumpMollification φ f x - f x)‖ ^ 2 =
-      ∫ x, (bumpMollification φ f x - f x) ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(bumpMollification_error_memLp φ hf hfc).coeFn_toLp] with x hx
-    rw [hx, Real.inner_apply, pow_two]
-  have hnormG : ‖(c1_compact_gradient_memLp hf hfc).toLp (gradient f)‖ ^ 2 =
-      ∫ x, ‖gradient f x‖ ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [(c1_compact_gradient_memLp hf hfc).coeFn_toLp] with x hx
-    rw [hx, real_inner_self_eq_norm_sq]
   apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg φ.rOut_pos.le (norm_nonneg _))).mp
-  rw [hnormD, mul_pow, hnormG]
+  rw [norm_toLp_sq (bumpMollification_error_memLp φ hf hfc), mul_pow, norm_toLp_norm_sq]
   exact bumpMollification_error_integral_sq_le φ hf hfc
 
 /-- An actual smooth mollifier at positive scale ε, with exact outer radius ε. -/

@@ -275,7 +275,7 @@ theorem localizedOperatorEigenLaplacian_memLp {V χ : E → ℝ} (hV : ContDiff 
   have hχ2 : ContDiff ℝ 2 χ := hχ.of_le (by norm_num)
   have hCross : MemLp (fun x => inner ℝ (gradient χ x) (G x)) 2 volume := by
     have hi (i : Fin d) : MemLp (fun x => coordinateDerivative i χ x * (G x) i) 2 volume :=
-      compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous hprob
+      compact_cutoff_gibbsVector_coordinate_memLp_volume hV.continuous
         (c1_coordinateDerivative_of_c2 hχ2 i).continuous
         (hχc.fderiv_apply ℝ (EuclideanSpace.single i 1)) G i
     have hh := memLp_finsetSum Finset.univ (fun i _ => hi i)
@@ -292,7 +292,7 @@ theorem localizedOperatorEigenLaplacian_memLp {V χ : E → ℝ} (hV : ContDiff 
       simp [langevinDifferentialOperator, gradient_fun_const]
     rw [← hL]
     exact hh
-  have hLap := compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob
+  have hLap := compact_cutoff_gibbsLp_memLp_volume hV.continuous
     (euclideanLaplacian_contDiff_one hχ).continuous hLapc (u : E →₂[gibbsMeasure volume V] ℝ)
   convert (hLower.add (hCross.const_mul 2)).add hLap using 1
   funext x
@@ -311,7 +311,7 @@ theorem gibbsOperatorEigen_mollified_local_hessian_energy_le {V χ : E → ℝ}
       (coordinateDerivative j (coordinateDerivative i (bumpMollification φ
         (fun y => χ y * (u : E →₂[gibbsMeasure volume V] ℝ) y))) x) ^ 2) ≤
       ∫ x, localizedOperatorEigenLaplacian hV hprob rate u χ x ^ 2 := by
-  have hwLp := compact_cutoff_gibbsLp_memLp_volume hV.continuous hprob hχ.continuous hχc
+  have hwLp := compact_cutoff_gibbsLp_memLp_volume hV.continuous hχ.continuous hχc
     (u : E →₂[gibbsMeasure volume V] ℝ)
   have hwc : HasCompactSupport (fun x => χ x * (u : E →₂[gibbsMeasure volume V] ℝ) x) := by
     simpa only [Pi.mul_def] using hχc.mul_right (f' := fun x => (u : E →₂[gibbsMeasure volume V] ℝ)

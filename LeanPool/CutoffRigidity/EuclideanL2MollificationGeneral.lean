@@ -49,19 +49,9 @@ theorem bumpMollification_L2_dist_le_of_translation_bound
     ‖(bumpMollification_memLp_of_translation_bound φ hfm hf C htrans).toLp (bumpMollification φ
       f) -
       hf.toLp f‖ ≤ φ.rOut * C := by
-  have hnorm : ‖(bumpMollification_memLp_of_translation_bound φ hfm hf C htrans).toLp
-    (bumpMollification φ f) -
-      hf.toLp f‖ ^ 2 = ∫ x, (bumpMollification φ f x - f x) ^ 2 := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [Lp.coeFn_sub
-      ((bumpMollification_memLp_of_translation_bound φ hfm hf C htrans).toLp (bumpMollification
-        φ f))
-      (hf.toLp f), (bumpMollification_memLp_of_translation_bound φ hfm hf C htrans).coeFn_toLp,
-      hf.coeFn_toLp] with x hsub hsm hf'
-    rw [hsub, Pi.sub_apply, hsm, hf', Real.inner_apply, pow_two]
+  have hs := bumpMollification_memLp_of_translation_bound φ hfm hf C htrans
   apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg φ.rOut_pos.le hC)).mp
-  rw [hnorm, mul_pow]
+  rw [← MemLp.toLp_sub hs hf, norm_toLp_sq, mul_pow]
   exact (bumpMollification_integral_error_of_translation_bound φ hfm hf C htrans).2
 
 /-- Common compact support of inputs gives common enlarged compact support

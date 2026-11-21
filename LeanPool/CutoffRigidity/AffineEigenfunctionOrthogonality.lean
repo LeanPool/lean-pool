@@ -139,7 +139,9 @@ theorem affine_eigenfunction_row_gram
 @[expose] noncomputable def normalizedAffineRows (a : Fin k → E) (ρ : ℝ) : Fin k → E :=
   fun i => (Real.sqrt ρ)⁻¹ • a i
 
-/-- The normalized gradients are orthonormal, as asserted in Remark 3.2. -/
+/-- Polarizing the single-eigenfunction norm identity from Remark 3.2 gives orthonormality
+of the normalized gradients. The proof of Lemma 3.3 uses this orthogonality in its
+calculation of the eigenmap's carré du champ. See Chafaï–Fathi, arXiv:2412.15969v5, §3.1. -/
 theorem affine_eigenfunction_normalized_rows_orthonormal
     (V : E → ℝ) (hV : Differentiable ℝ V) (a : Fin k → E) (b : Fin k → ℝ)
     (ρ : ℝ) (hρ : 0 < ρ)

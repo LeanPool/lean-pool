@@ -30,21 +30,6 @@ open MeasureTheory
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
-/-- Linearity of actual coordinate derivatives on differentiable functions. -/
-theorem coordinateDerivative_add_classical {f g : E → ℝ}
-    (hf : Differentiable ℝ f) (hg : Differentiable ℝ g) (i : Fin d) :
-    coordinateDerivative i (fun x => f x + g x) =
-      fun x => coordinateDerivative i f x + coordinateDerivative i g x := by
-  ext x
-  simp only [coordinateDerivative, fderiv_fun_add (hf x) (hg x), add_apply]
-
-/-- Scalar linearity of actual coordinate derivatives. -/
-theorem coordinateDerivative_smul_classical {f : E → ℝ}
-    (hf : Differentiable ℝ f) (r : ℝ) (i : Fin d) :
-    coordinateDerivative i (fun x => r * f x) = fun x => r * coordinateDerivative i f x := by
-  ext x
-  simp only [coordinateDerivative, fderiv_const_mul (hf x), smul_apply, smul_eq_mul]
-
 /-- The actual pointwise Langevin differential expression is additive. -/
 theorem langevinDifferentialOperator_add_classical (V : E → ℝ) {f g : E → ℝ}
     (hf : ContDiff ℝ 2 f) (hg : ContDiff ℝ 2 g) (x : E) :
