@@ -227,13 +227,13 @@ lemma rpow_facts (δ C : ℝ) (hδ : 0 < δ) :
     have : (1 : ℝ) ≤ n := by exact_mod_cast hn1
     exact Real.log_le_log (by positivity) (by linarith)
   have hkey : 9 * Real.log (10 * n + 2) + 3 * C ≤ δ * t := by
-    nlinarith [hlogn, h10, hl', hT2']
+    linarith only [hlogn, h10, hl', hT2']
   constructor
   · rw [ht2]
     have h := mul_le_mul_of_nonneg_right hT20 (sq_nonneg t)
     have : (n : ℝ) / 20 = t ^ 3 / 20 := by rw [← ht3]
     rw [this]
-    nlinarith
+    linarith only [h]
   · rw [ht2]
     have hA : 0 ≤ t ^ 2 * (n : ℝ) := by positivity
     calc t ^ 2 * (9 * n * Real.log (10 * n + 2) + 3 * n * C)
@@ -279,7 +279,7 @@ lemma tail_range_bound (cost : ℕ → ℕ → ℝ) (den : ℕ) (hden : 0 < den)
         have f1 := mul_le_mul_of_nonneg_left e1 hn0
         have f2 := mul_le_mul_of_nonneg_left e2 hn0
         have f3 := mul_nonneg hA0 hlog0
-        nlinarith
+        linarith only [h, f1, f2, f3]
       · simp only [hsm, ↓reduceIte, add_zero]
         have hk1R : (1 : ℝ) ≤ k := by exact_mod_cast hk1
         have hnpos : (0 : ℝ) < n := by linarith
@@ -382,8 +382,8 @@ theorem arith_sum (cost : ℕ → ℕ → ℝ) (den : ℕ) (hden : 0 < den)
     filter_upwards [eventually_ge_atTop ⌈138 / ε⌉₊] with n hn
     have e1 : 138 / ε ≤ n := Nat.ceil_le.mp hn
     have e2 : 138 ≤ n * ε := (div_le_iff₀ hε).mp e1
-    have : (0 : ℝ) ≤ n := Nat.cast_nonneg n
-    nlinarith
+    have scaled := mul_le_mul_of_nonneg_right e2 (Nat.cast_nonneg (α := ℝ) n)
+    linarith only [scaled]
   filter_upwards [h1, h2, hMe, hsmall, hconst, eventually_ge_atTop 1] with n hh1 hh2 hMn hsm hcn hn1
   obtain ⟨hpow, hE⟩ := hsm
   have hn0 : (0 : ℝ) < n := by exact_mod_cast hn1
@@ -421,15 +421,22 @@ theorem arith_sum (cost : ℕ → ℕ → ℝ) (den : ℕ) (hden : 0 < den)
       push_cast
       linarith
     push_cast at h ⊢
-    nlinarith
+    have scaled := mul_le_mul_of_nonneg_left hl4.le
+      (mul_nonneg (by norm_num : (0 : ℝ) ≤ 5) hn0.le)
+    linarith only [h, scaled]
   have hθ20 : Chebyshev.theta ((n : ℝ) / 20) ≤ ∑ k ∈ Ioc 0 ⌊(n : ℝ) / (1 / 5)⌋₊, cPrime k := by
     rw [theta_eq_sum_cPrime]
     exact sum_cPrime_le (hab.trans hbc)
   have hSR := sum_cPrime_le (a := ⌊(n : ℝ) / 20⌋₊) hbc
   have hSO := sum_cPrime_le (a := ⌊(n : ℝ) / (3 / 7)⌋₊) (le_refl ⌊(n : ℝ) / (1 / 5)⌋₊)
-  have hθ0 : 0 ≤ Chebyshev.theta ((n : ℝ) / 20) := Chebyshev.theta_nonneg _
   have hLn := mul_le_mul_of_nonneg_right hL.le hn2.le
-  nlinarith
+  -- The three per-prime offsets contribute at most (3/4 + 3/4 + 5) · 7n.
+  have hoffsets := add_le_add (add_le_add
+    (mul_le_mul_of_nonneg_left hθ20 (by norm_num : (0 : ℝ) ≤ 3 / 4))
+    (mul_le_mul_of_nonneg_left hSR (by norm_num : (0 : ℝ) ≤ 3 / 4)))
+    (mul_le_mul_of_nonneg_left hSO (by norm_num : (0 : ℝ) ≤ 5))
+  have hcost := add_le_add (add_le_add hT hR) hO
+  linarith only [hcost, hMn', hE, hcn, hoffsets, hS5, hLn, hn0]
 
 end
 end Zeta32.ArithSum
