@@ -30,6 +30,8 @@ variable [MeasurableSpace Y₀] [MeasurableSpace Y₁]
 variable (c₀ : X₀ × Y₀ → ENNReal) (c₁ : (X₀ × Y₀) × (X₁ × Y₁) → ENNReal)
 
 omit [MeasurableSpace X₀] [MeasurableSpace Y₀] in
+/-- A family of feasible couplings `γ₁`, chosen pointwise, each within `ε` of the fiber infimum
+of the continuation cost. The family is not claimed to be measurable in `z₀`. -/
 theorem eps_optimal_kernel_bound
     (κ_μ : X₀ → Measure X₁) (κ_ν : Y₀ → Measure Y₁)
     (h_ne : ∀ z₀ : X₀ × Y₀, (FeasibleSet₀ κ_μ κ_ν z₀).Nonempty)

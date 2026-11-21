@@ -232,19 +232,6 @@ lemma CovarianceBilinear_of_integrable
               Matrix.cons_val_zero]
   -- Bundle the four identities
   exact And.intro h1 (And.intro h2 (And.intro h3 h4))
-/-! ## Exponential Series Connection to Generating Functional
-
-The key insight: Instead of functional derivatives, we use the constructive exponential series:
-Z[J] = ∫ exp(i⟨ω, J⟩) dμ(ω) = ∑_{n=0}^∞ (i)^n/n! * S_n(J,...,J)
-
-This approach is more elementary and constructive than functional derivatives.
--/
-/-- A (centered) Gaussian field measure: the generating functional is an exponential of a
-quadratic form. -/
-def IsGaussianMeasure (dμ : ProbabilityMeasure FieldConfiguration) : Prop :=
-  ∃ (Cov : OSforGFF.TestFunction → OSforGFF.TestFunction → ℝ),
-    ∀ J : OSforGFF.TestFunction,
-      GJGeneratingFunctional dμ J = Complex.exp ((-(1 : ℂ) / 2) * (Cov J J : ℂ))
 
 /-! ## Basic Distribution Framework
 

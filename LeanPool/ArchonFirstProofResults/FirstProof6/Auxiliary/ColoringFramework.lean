@@ -27,8 +27,8 @@ and `barrier_parameter_bound`.
 ## Main theorems
 
 - `Problem6.largest_color_class_bound`: pigeonhole bound
-- `Problem6.coloring_step_exists`: one-step coloring extension
-- `Problem6.coloring_iterate`: k-step coloring iteration
+- `Problem6.coloring_step_exists`: one-step coloring extension, under a per-vertex bound
+- `Problem6.coloring_iterate`: k-step coloring iteration, under the same bound
 - `Problem6.barrier_parameter_bound`: final parameter bound
 -/
 
@@ -83,13 +83,14 @@ lemma largest_color_class_bound
 
 /-! ### The inductive coloring step -/
 
-/-- **Coloring step**: Given a partial coloring of `t` vertices satisfying the per-color
-    PSD barrier invariant at level `u_t`, and given `t < k < n`, there exists a way to
-    extend the coloring by one vertex such that the invariant holds at level `u_{t+1}`.
-    The proof uses averaging: the average barrier cost over all (vertex, color) choices
-    is < 1 (by `averaging_step`), so some valid (v, γ) choice exists. Then
-    `one_sided_barrier` ensures the barrier condition propagates.
-    This is the core mathematical step of the coloring construction. -/
+/-- **Coloring step under a per-vertex bound**: Given a partial coloring of `t` vertices
+    satisfying the per-color PSD barrier invariant at level `u_t`, and assuming `hA_small`,
+    that every vertex `v` has a color `γ` with `A v γ ≼ (ε / n) • 1`, the coloring extends by
+    one vertex so that the invariant holds at level `u_{t+1}`.
+    The proof gives an uncolored vertex the color provided by `hA_small` and adds the two
+    PSD bounds; it uses no averaging or barrier-function argument. The main theorem
+    `exists_eps_light_subset` does not use this lemma: it goes through
+    `dynamic_barrier_coloring`, which does not assume `hA_small`. -/
 lemma coloring_step_exists
     (ε : ℝ) (hε : 0 < ε) (_hε1 : ε ≤ 1)
     (n : ℕ) (hn : 4 ≤ n)
@@ -133,7 +134,7 @@ lemma coloring_step_exists
   have hu_diff_nn : (0 : ℝ) ≤ u_t' - u_t := by rw [hu_diff]; positivity
   -- === Step 4: Reduce to finding a good color γ₀ ===
   -- For colors γ ≠ γ₀: sum unchanged, u_t' > u_t makes barrier stronger.
-  -- For γ = γ₀: sum gains A v₀ γ₀, needs averaging argument.
+  -- For γ = γ₀: sum gains A v₀ γ₀, controlled by `hA_small`.
   suffices h_exists_color : ∃ (γ₀ : Fin r),
       (u_t' • (1 : Matrix V V ℝ) -
         (∑ v ∈ pc.colored.filter (fun v => pc.color v = γ₀),
@@ -217,8 +218,9 @@ lemma coloring_step_exists
   rw [h_split2]
   exact (hbarrier γ₀).add hγ₀
 
-/-- **Coloring iteration**: Apply `coloring_step_exists` k times to build a partial
-    coloring of k = n/4 vertices satisfying the barrier invariant.
+/-- **Coloring iteration under a per-vertex bound**: Assuming `hA_small`, apply
+    `coloring_step_exists` k times to build a partial coloring of k = n/4 vertices
+    satisfying the barrier invariant.
     Starting from the empty coloring (t = 0, u_0 = ε/2), we iteratively extend
     the coloring. At each step, `coloring_step_exists` provides the next coloring.
     After k steps, we have a coloring of k vertices with the barrier invariant at u_k. -/

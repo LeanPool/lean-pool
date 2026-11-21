@@ -139,7 +139,10 @@ theorem lyapunov_derivative_nonpos
       deriv (fun x => weightedKuramotoV K N W (Function.update θ i x)) (θ i) ≤ 0 := by
         apply weighted_lyapunov_descent K hK N W hW θ
 
-theorem lyapunov_nonincreasing_along_trajectory
+/-- Chain rule for the Lyapunov function along a solution of the Kuramoto flow: `s ↦ V (θ s)`
+has derivative `∑ i, F i (θ t) * ∂ᵢ V (θ t)` at every `t`. Nonpositivity of this derivative is
+`lyapunov_derivative_nonpos`. -/
+theorem lyapunov_hasDerivAt_along_trajectory
     (K : ℝ) (_hK : 0 < K) (N : ℕ) (W : Fin N → Fin N → ℝ) (_hW : ∀ i j, W i j = W j i)
     (θ : ℝ → Fin N → ℝ)
     (hsol : ∀ t, HasDerivAt θ (kuramotoVectorField K N W (θ t)) t) :
@@ -755,7 +758,7 @@ private theorem sum_F_sq_tendsto_zero
       (∑ i, (weightedKuramotoF K N W i (θ t))^2) t := by
     intro t;
     refine ( HasDerivAt.neg
-      ( lyapunov_nonincreasing_along_trajectory K hK N W hWsym θ hsol t ) ).congr_deriv ?_;
+      ( lyapunov_hasDerivAt_along_trajectory K hK N W hWsym θ hsol t ) ).congr_deriv ?_;
     rw [ lyapunov_derivative_eq K N W hWsym ( θ t ) ]; ring;
   have h_F_bdd : BddAbove (Set.range (fun t => -(weightedKuramotoV K N W (θ t)))) := by
     use (K / 2) * (N : ℝ) ^ 2;

@@ -6,12 +6,10 @@ Authors: KT. Wu
 /-
   ε-optimal Selection — proved by pointwise choice
 
-  This file provides everything UpperBound.lean needs, with ZERO sorry.
-
-  Note: the original axiom claimed `Measurable sel`, but the statement
-  has only [MeasurableSpace α] — no topology or Polish structure — making
-  measurability unprovable. Since `Measurable sel` is discarded at the
-  call site (UpperBound.lean uses `_`), we drop it and prove the rest.
+  The selection is made pointwise by choice. The index type `α` carries no
+  measurable or topological structure here, so the selection is not claimed to be
+  measurable. The analytically measurable selector on Polish spaces is
+  `exists_eps_optimal_selector`.
 -/
 module
 
@@ -27,7 +25,7 @@ public import Mathlib.MeasureTheory.Measure.Prod
 /-!
 # JankovVonNeumann
 
-Supporting results for bicausal optimal transport and measurable selection.
+Pointwise ε-optimal selection by choice, with no measurability claim on the selection.
 -/
 
 @[expose] public section
@@ -51,7 +49,9 @@ theorem eps_optimal_element
   · simp [htop] at hlt
   · exact absurd this (not_le.mpr (ENNReal.lt_add_right htop hε.ne'))
 
-/-- ε-optimal selection: for each a, choose m ∈ S(a) with f(a,m) ≤ inf + ε. -/
+/-- Pointwise ε-optimal selection: for each `a`, choose `m ∈ S a` with
+`f a m ≤ inf + ε`. The function `sel` is not claimed to be measurable; for an analytically
+measurable selector on Polish spaces see `exists_eps_optimal_selector`. -/
 theorem eps_optimal_selection
     {α β : Type*} [MeasurableSpace β]
     (S : α → Set (Measure β))

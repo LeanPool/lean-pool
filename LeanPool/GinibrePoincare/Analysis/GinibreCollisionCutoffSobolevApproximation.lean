@@ -118,8 +118,9 @@ theorem ginibreCollisionCutoff_smoothPair_core_sequence
     have hpair := hvlim.prodMk_nhds hgsum
     simpa [q, value, firstGrad, cutoffGrad] using hpair
 
-/-- The smooth compact symmetric core pair approximation needs no separate
-integrability or boundedness assumptions: compact support supplies them. -/
+/-- The smooth compact symmetric core pair approximation with no separate boundedness
+assumption: compact support supplies the uniform bound on `f`. The `MemLp` hypotheses `hv` and
+`hd` remain because they name the `L²` limit; for such `f` they follow from compact support. -/
 theorem ginibreCollisionCutoff_smoothPair_core_sequence_of_smoothCompact
     (n : ℕ) (hn : 0 < n) (f : Configuration n → ℝ)
     (hf : IsSmoothCompactSymmetric f)

@@ -18,7 +18,7 @@ Authors: KT. Wu
     Existence.lean                         — Step 5: optimal coupling exists
     DescriptiveSetTheory/
       Tree.lean                            — Jankov–von Neumann uniformization (Kechris 18.1)
-      JankovVonNeumann.lean                — ε-optimal selection
+      JankovVonNeumann.lean                — pointwise ε-optimal selection
       AnalyticSigmaAlgebra.lean            — σ(Σ₁¹), analytical measurability
       LowerSemianalytic.lean               — lower semianalytic functions (BS 7.21, 7.47)
       Capacitability.lean                  — Choquet capacitability (Kechris 30.13, BS 7.42)
