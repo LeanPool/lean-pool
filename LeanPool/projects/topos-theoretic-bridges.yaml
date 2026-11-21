@@ -12,8 +12,8 @@ summary: Morita equivalence of small categories, defined as equivalence of their
   categorical semantics in sheaf topoi is developed, a classifying topos is unique up to
   equivalence, every quotient of a theory with a classifying site is classified by a finer
   topology, and quotients of Morita-equivalent theories correspond, assuming the
-  definability of covering sieves on the classifying sites. These are instances of O.
-  Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
+  definability of all sieves (not only covering ones) on the classifying sites. These are
+  instances of O. Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
   presentations.
 branch: category theory
 entry_module: LeanPool.ToposTheoreticBridges
@@ -78,9 +78,10 @@ main_results:
   informal: The quotients of a theory with a classifying site (C, J) embed, as an order, into
     the Grothendieck topologies on C finer than J.
 - declaration: LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_orderIso_quotients'
-  informal: For two Morita-equivalent geometric theories with classifying sites on which every
-    sheafified covering sieve is the interpretation of a sequent, the posets of quotients of
-    the two theories are order isomorphic, corresponding quotients being Morita equivalent.
+  informal: For two Morita-equivalent geometric theories with classifying sites on which the
+    sheafification of every sieve (covering or not) is the interpretation of a sequent, the
+    posets of quotients of the two theories are order isomorphic, corresponding quotients
+    being Morita equivalent.
 tags:
 - topos-theory
 - classifying-topoi

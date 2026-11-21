@@ -421,10 +421,11 @@ variable {T : GeometricTheory.{u} L} {C : Type u} [SmallCategory C]
   {J : GrothendieckTopology C}
 
 variable (U : CatStructure L (Sheaf J (Type u))) in
-/-- Definability of covering sieves for a structure `U` in `Sh(C, J)`: for every sieve `S` on
-an object of `C`, the `J`-sheafification of the inclusion of `S` in the representable presheaf
-is isomorphic, as an arrow, to the monomorphism `[[φ ∧ ψ]]_U ⟶ [[φ]]_U` of some sequent. This
-holds for the generic model on the syntactic site (roadmap 2.3, 2.4), which is not formalised. -/
+/-- Definability of sieves for a structure `U` in `Sh(C, J)`: for every sieve `S`, covering or
+not, on an object of `C`, the `J`-sheafification of the inclusion of `S` in the representable
+presheaf is isomorphic, as an arrow, to the monomorphism `[[φ ∧ ψ]]_U ⟶ [[φ]]_U` of some
+sequent. This holds for the generic model on the syntactic site (roadmap 2.3, 2.4), which is not
+formalised. -/
 def SievesDefinable : Prop :=
   ∀ (X : C) (S : Sieve X), ∃ σ : Sequent.{u} L,
     Nonempty (Arrow.mk ((presheafToSheaf J (Type u)).map S.functorInclusion) ≅
@@ -474,7 +475,7 @@ theorem exists_orderEmbedding_quotients_ici (hU : IsClassifyingSite T J U) :
   exact aux _ (congrArg Subtype.val (hg T₁))
 
 /-- **Bridges between theories, under definability.** Let `T` and `T'` be Morita-equivalent
-theories, classified by `(C, J, U)` and `(D, K, U')` on which covering sieves are definable
+theories, classified by `(C, J, U)` and `(D, K, U')` on which all sieves are definable
 (`SievesDefinable`, true on syntactic sites). Then the quotients of `T` and of `T'` are order
 isomorphic, by an isomorphism carrying each quotient of `T` to a Morita-equivalent quotient of
 `T'`. -/
