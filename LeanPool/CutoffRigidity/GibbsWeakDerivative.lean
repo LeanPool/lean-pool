@@ -118,12 +118,8 @@ theorem gibbsSobolev_weak_pairing
     change inner ℝ p.2 T = -inner ℝ p.1 A
     rw [← hv1, ← hv2]
     exact compactGibbsGradient_weak_pairing hV hprob hψ hψc i v
-  have hmem : (gibbsSobolevInclusion hV hprob u, gibbsSobolevDerivative hV hprob u) ∈
-      closure (G.graph : Set _) := by
-    change _ ∈ G.graph.topologicalClosure
-    rw [(compactGibbsGradient_isClosable hV hprob).graph_closure_eq_closure_graph]
-    exact u.property
-  exact closure_minimal hcore hS hmem
+  exact closure_minimal hcore hS
+    (gibbsSobolev_mem_closure_compactGradient hV hprob u)
 
 /-- The actual closed gradient satisfies weighted coordinate distributional
 integration by parts against every compact C² test. -/

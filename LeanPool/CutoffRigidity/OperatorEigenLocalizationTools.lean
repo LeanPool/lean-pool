@@ -144,44 +144,4 @@ theorem operatorEigen_local_gradient_energy_integrable {V η : E → ℝ}
   have hGi := gibbsOperatorEigen_gradient_coordinate_memLp hV hp rate u i
   simpa only [pow_two, mul_assoc] using integrable_compact_coefficient_L2_product hp hc hs hGi hGi
 
-/-- Actual smooth compact exhaustion at the C³ test regularity needed for weak Bochner. -/
-theorem exists_smooth_C3_cutoff_exhaustion :
-    ∃ C : ℝ, 0 ≤ C ∧ ∃ χ : ℕ → E → ℝ,
-      (∀ n, ContDiff ℝ 3 (χ n)) ∧ (∀ n, HasCompactSupport (χ n)) ∧
-      (∀ n x, 0 ≤ χ n x ∧ χ n x ≤ 1) ∧
-      (∀ x, ∀ᶠ n : ℕ in Filter.atTop, χ n x = 1) ∧
-      (∀ n x, ‖gradient (χ n) x‖ ≤ C / ((n : ℝ) + 1)) := by
-  let φ : ContDiffBump (0 : E) := ⟨1, 2, by norm_num, by norm_num⟩
-  have hφ : ContDiff ℝ 2 (φ : E → ℝ) := φ.contDiff
-  have hGφ : Continuous (gradient (φ : E → ℝ)) :=
-    (differentiable_gradient_of_contDiff_two hφ).continuous
-  have hGφc : HasCompactSupport (gradient (φ : E → ℝ)) := by
-    exact (φ.hasCompactSupport.fderiv ℝ).comp_left
-      (g := (InnerProductSpace.toDual ℝ E).symm) (by simp)
-  obtain ⟨C, hC0, hC⟩ := exists_nonneg_bound_of_continuous_compactSupport hGφ hGφc
-  let ψ (n : ℕ) : ContDiffBump (0 : E) :=
-    ⟨(n : ℝ) + 1, 2 * ((n : ℝ) + 1), by positivity, by nlinarith [Nat.cast_nonneg (α := ℝ) n]⟩
-  let χ : ℕ → E → ℝ := fun n x => ψ n x
-  have hscale (n : ℕ) : χ n = fun x => φ ((((n : ℝ) + 1)⁻¹) • x) := by
-    funext x
-    dsimp only [χ]
-    rw [(ψ n).apply, φ.apply]
-    have hn : (n : ℝ) + 1 ≠ 0 := by positivity
-    simp [ψ, φ, hn]
-  refine ⟨C, hC0, χ, (fun n => (ψ n).contDiff), (fun n => (ψ n).hasCompactSupport),
-    (fun n x => ⟨(ψ n).nonneg, (ψ n).le_one⟩), ?_, ?_⟩
-  · intro x
-    have hevent : ∀ᶠ n : ℕ in Filter.atTop, ‖x‖ ≤ (n : ℝ) + 1 :=
-      (tendsto_natCast_atTop_atTop.eventually (eventually_ge_atTop ‖x‖)).mono
-        (fun n hn => by linarith)
-    filter_upwards [hevent] with n hn
-    apply (ψ n).one_of_mem_closedBall
-    simpa [ψ, Metric.mem_closedBall, dist_zero_right] using hn
-  · intro n x
-    rw [hscale n, gradient_comp_scalar (hφ.differentiable (by norm_num))]
-    rw [norm_smul, Real.norm_eq_abs, abs_inv, abs_of_pos (by positivity : (0 : ℝ) < n + 1)]
-    calc
-      _ ≤ ((n : ℝ) + 1)⁻¹ * C := mul_le_mul_of_nonneg_left (hC _) (by positivity)
-      _ = _ := by ring
-
 end CutoffRigidity

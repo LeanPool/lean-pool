@@ -29,7 +29,7 @@ local notation "E" => EuclideanSpace ℝ (Fin d)
 
 /-- Weak first derivatives commute with actual compact smooth convolution. -/
 theorem coordinateDerivative_convolution_of_weak_derivative
-    {g H k : E → ℝ} (hg : LocallyIntegrable g volume) (_hH : LocallyIntegrable H volume)
+    {g H k : E → ℝ} (hg : LocallyIntegrable g volume)
     (hk : ContDiff ℝ 3 k) (hkc : HasCompactSupport k) (j : Fin d)
     (hweak : ∀ ψ : E → ℝ, ContDiff ℝ 3 ψ → HasCompactSupport ψ →
       (∫ y, g y * coordinateDerivative j ψ y) = -(∫ y, H y * ψ y)) (x : E) :
@@ -51,11 +51,11 @@ theorem coordinateDerivative_convolution_of_weak_derivative
 approximation and closed-gradient graph construction. -/
 theorem coordinateDerivative_bumpMollification_of_weak_derivative
     (φ : ContDiffBump (0 : E)) {g H : E → ℝ}
-    (hg : LocallyIntegrable g volume) (hH : LocallyIntegrable H volume) (j : Fin d)
+    (hg : LocallyIntegrable g volume) (j : Fin d)
     (hweak : ∀ ψ : E → ℝ, ContDiff ℝ 3 ψ → HasCompactSupport ψ →
       (∫ y, g y * coordinateDerivative j ψ y) = -(∫ y, H y * ψ y)) (x : E) :
     coordinateDerivative j (bumpMollification φ g) x = bumpMollification φ H x :=
-  coordinateDerivative_convolution_of_weak_derivative hg hH (φ.contDiff_normed (n := 3))
+  coordinateDerivative_convolution_of_weak_derivative hg (φ.contDiff_normed (n := 3))
     φ.hasCompactSupport_normed j hweak x
 
 end CutoffRigidity

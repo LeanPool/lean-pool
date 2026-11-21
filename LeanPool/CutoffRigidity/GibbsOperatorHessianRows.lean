@@ -55,7 +55,7 @@ theorem gibbsOperatorLocalizedHessian_weak_derivative {V χ : E → ℝ}
     (i j : Fin d) (ψ : E → ℝ) (hψ : ContDiff ℝ 3 ψ) (hψc : HasCompactSupport ψ) :
     (∫ x, localizedOperatorEigenGradient hV hprob rate u χ i x * coordinateDerivative j ψ x) =
       -(∫ x, gibbsOperatorLocalizedHessian hV hprob rate u hχ hχc i j x * ψ x) := by
-  rw [localizedOperatorEigenGradient_second_test hV hprob rate u hχ hχc hψ hψc i j,
+  rw [localizedOperatorEigenGradient_second_test hV hprob rate u hχ hχc hψ i j,
     (gibbsOperatorLocalizedHessian_spec hV hprob rate u hχ hχc i j).2 ψ hψ hψc]
 
 /-- Actual compact-test L² pairing uniqueness. -/

@@ -71,11 +71,12 @@ theorem coordinateSum_second_moment_gibbs (hW : Differentiable ℝ W) (hρ : 0 <
 
 /-- In positive dimension the displayed function supplies an actual nonzero
 classical L² eigenvector. No arbitrary representative is evaluated. -/
-theorem exists_nonzero_classical_eigenvector_of_diagonal_invariance
+theorem coordinateSum_classical_eigenvector
     (hd : 0 < d) (hW : ContDiff ℝ 2 W) (hρ : 0 < ρ)
     (hinv : ∀ x : E, ∀ u : ℝ, W (x + u • diagonalDirection d) = W x)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) :
-    ∃ u : classicalL2Eigenspace V ρ, u ≠ 0 := by
+    ∃ u : classicalL2Eigenspace V ρ,
+      (u : E →₂[gibbsMeasure volume V] ℝ) =ᵐ[gibbsMeasure volume V] coordinateSum ∧ u ≠ 0 := by
   have hm := coordinateSum_memLp_gibbs (hW.differentiable (by norm_num)) hρ hinv hprob
   have hsum : ContDiff ℝ 2 (coordinateSum : E → ℝ) := by
     have heq : (coordinateSum : E → ℝ) = innerSL ℝ (diagonalDirection d) :=
@@ -86,7 +87,7 @@ theorem exists_nonzero_classical_eigenvector_of_diagonal_invariance
     hsum,
     (fun x => langevinDifferentialOperator_coordinateSum
       (hW.differentiable (by norm_num) x) (hinv x)), hm.coeFn_toLp.symm⟩
-  refine ⟨u, ?_⟩
+  refine ⟨u, hm.coeFn_toLp, ?_⟩
   intro hu
   have hae : (coordinateSum : E → ℝ) =ᵐ[gibbsMeasure volume V] 0 := by
     have hv : hm.toLp coordinateSum = 0 := congrArg Subtype.val hu
@@ -104,6 +105,15 @@ theorem exists_nonzero_classical_eigenvector_of_diagonal_invariance
   rw [coordinateSum_second_moment_gibbs (hW.differentiable (by norm_num)) hρ hinv hprob] at hzero
   have : (0 : ℝ) < (d : ℝ) / ρ := div_pos (by exact_mod_cast hd) hρ
   linarith
+
+/-- Diagonal invariance supplies a nonzero classical L² eigenvector. -/
+theorem exists_nonzero_classical_eigenvector_of_diagonal_invariance
+    (hd : 0 < d) (hW : ContDiff ℝ 2 W) (hρ : 0 < ρ)
+    (hinv : ∀ x : E, ∀ u : ℝ, W (x + u • diagonalDirection d) = W x)
+    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) :
+    ∃ u : classicalL2Eigenspace V ρ, u ≠ 0 := by
+  obtain ⟨u, _, hu⟩ := coordinateSum_classical_eigenvector hd hW hρ hinv hprob
+  exact ⟨u, hu⟩
 
 /-- In the curved setting the actual classical eigenspace at the quadratic
 rate is nonempty and finite dimensional. This supplies the positive rank

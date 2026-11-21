@@ -80,31 +80,18 @@ theorem convexInteraction_theorem
   have hgap := convexInteraction_spectralGap_eq hd hW hconv hρ hinv hp hV
   have hHess := hessian_quadratic_add_convex_lower hW hconv ρ
   refine ⟨hV, ⟨hgap, ?_, hHess, ?_, ?_⟩⟩
-  · let := hp
-    have hm := coordinateSum_memLp_gibbs (hW.differentiable (by norm_num)) hρ hinv hp
-    have hsum : ContDiff ℝ 2 (coordinateSum : E → ℝ) := by
-      have heq : (coordinateSum : E → ℝ) = innerSL ℝ (diagonalDirection d) :=
-        funext (fun x => (inner_diagonalDirection x).symm)
-      rw [heq]
-      exact (innerSL ℝ (diagonalDirection d)).contDiff
-    have heigen (x : E) : langevinDifferentialOperator V coordinateSum x = -ρ * coordinateSum x :=
-      langevinDifferentialOperator_coordinateSum (hW.differentiable (by norm_num) x) (hinv x)
-    have hc : hm.toLp coordinateSum ∈ classicalL2Eigenspace V ρ :=
-      ⟨coordinateSum, hsum, heigen, hm.coeFn_toLp.symm⟩
-    have hOp := classicalL2Eigenspace_le_gibbsOperatorEigenspace hV hp ρ hρ.le hc
-    have hFirst : hm.toLp coordinateSum ∈ gibbsFirstEigenspace hV hp := by
-      change hm.toLp coordinateSum ∈ gibbsOperatorEigenspace hV hp (gibbsSpectralGap hV hp)
+  · obtain ⟨u, hsum, hnonzero⟩ := coordinateSum_operator_eigenvector hd hW hρ hinv hp hV
+    have hFirst : (u : E →₂[gibbsMeasure volume V] ℝ) ∈ gibbsFirstEigenspace hV hp := by
+      change (u : E →₂[gibbsMeasure volume V] ℝ) ∈
+        gibbsOperatorEigenspace hV hp (gibbsSpectralGap hV hp)
       rw [hgap]
-      exact hOp
-    have hnorm : ‖hm.toLp coordinateSum‖ ^ 2 = (d : ℝ) / ρ := by
-      rw [norm_toLp_sq hm, coordinateSum_second_moment_gibbs (hW.differentiable
-        (by norm_num)) hρ hinv hp]
-    refine ⟨⟨hm.toLp coordinateSum, hFirst⟩, hm.coeFn_toLp, ?_⟩
+      exact u.property
+    refine ⟨⟨u, hFirst⟩, hsum, ?_⟩
     intro hz
-    have hz' : hm.toLp coordinateSum = 0 := congrArg Subtype.val hz
-    rw [hz', norm_zero, zero_pow (by decide : (2 : ℕ) ≠ 0)] at hnorm
-    have hp0 : (0 : ℝ) < (d : ℝ) / ρ := div_pos (by exact_mod_cast hd) hρ
-    linarith
+    have hv : (u : E →₂[gibbsMeasure volume V] ℝ) = 0 :=
+      congrArg (fun v : gibbsFirstEigenspace hV hp =>
+        (v : E →₂[gibbsMeasure volume V] ℝ)) hz
+    exact hnonzero (Subtype.ext hv)
   · simpa only [hgap] using hHess
   · have hEigen (x : E) :
         langevinDifferentialOperator V (fun y => inner ℝ (diagonalDirection d) y + 0) x =

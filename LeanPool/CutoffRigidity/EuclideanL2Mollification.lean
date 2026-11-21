@@ -24,7 +24,7 @@ public section
 namespace CutoffRigidity
 
 open MeasureTheory ProbabilityTheory Filter Topology ContinuousLinearMap
-open scoped ENNReal Convolution
+open scoped ENNReal Convolution Pointwise
 
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
@@ -87,45 +87,121 @@ theorem bumpMollification_error_memLp (φ : ContDiffBump (0 : E)) {f : E → ℝ
   simpa only [Pi.sub_def] using (hc.memLp_of_hasCompactSupport hs).sub
     (hf.continuous.memLp_of_hasCompactSupport hfc : MemLp f 2 volume)
 
+/-- The actual smooth compact probability density is bounded above by a
+finite multiple of Lebesgue measure. -/
+theorem bumpProbability_le_smul_volume (φ : ContDiffBump (0 : E)) :
+    ∃ M : ℝ, 0 ≤ M ∧ bumpProbability φ ≤ ENNReal.ofReal M • volume := by
+  obtain ⟨M₀, hM₀⟩ := (φ.hasCompactSupport_normed (μ := (volume : Measure
+    E))).exists_bound_of_continuousOn
+    (φ.continuous_normed (μ := (volume : Measure E))).continuousOn
+  let M := max M₀ 0
+  have hM (y : E) : φ.normed volume y ≤ M := by
+    have hn : ‖φ.normed volume y‖ ≤ M := by
+      by_cases hy : y ∈ tsupport (φ.normed volume)
+      · exact (hM₀ y hy).trans (le_max_left _ _)
+      · have hz : φ.normed volume y = 0 := image_eq_zero_of_notMem_tsupport hy
+        simpa only [hz, norm_zero] using le_max_right M₀ 0
+    simpa only [Real.norm_eq_abs, abs_of_nonneg (φ.nonneg_normed y)] using hn
+  refine ⟨M, le_max_right _ _, ?_⟩
+  rw [bumpProbability, ← withDensity_const]
+  exact withDensity_mono (Filter.Eventually.of_forall fun y => ENNReal.ofReal_le_ofReal (hM y))
+
+/-- Every actual Lebesgue L² input is pointwise square integrable under the
+shifted bump probability; bounded kernel density proves this. -/
+theorem bumpProbability_shift_memLp (φ : ContDiffBump (0 : E)) {f : E → ℝ}
+    (hf : MemLp f 2 volume) (x : E) :
+    MemLp (fun y => f (x - y)) 2 (bumpProbability φ) := by
+  obtain ⟨M, hM, hle⟩ := bumpProbability_le_smul_volume φ
+  have ht : MemLp (fun y => f (x - y)) 2 volume :=
+    hf.comp_measurePreserving (volume.measurePreserving_sub_left x)
+  exact MemLp.mono_measure hle (ht.smul_measure ENNReal.ofReal_ne_top)
+
+/-- Genuine Jensen for arbitrary actual Lebesgue L² input. -/
+theorem bumpMollification_error_sq_le_of_memLp (φ : ContDiffBump (0 : E)) {f : E → ℝ}
+    (hf : MemLp f 2 volume) (x : E) :
+    (bumpMollification φ f x - f x) ^ 2 ≤ ∫ y, (f (x - y) - f x) ^ 2 ∂bumpProbability φ := by
+  have hm := bumpProbability_shift_memLp φ hf x
+  have hg : MemLp (fun y => f (x - y) - f x) 2 (bumpProbability φ) := by
+    simpa only [Pi.sub_def] using hm.sub (memLp_const (f x))
+  have hj := variance_nonneg (fun y => f (x - y) - f x) (bumpProbability φ)
+  rw [variance_eq_sub hg, integral_sub (hm.integrable (by norm_num)) (integrable_const _),
+    bumpProbability_integral_eq_convolution, integral_const] at hj
+  simp only [Pi.pow_apply, measureReal_def, measure_univ, ENNReal.toReal_one, one_smul] at hj
+  linarith
+
+/-- Actual quantitative L² smoothing approximation from an actual uniform
+translation modulus. All error integrability is derived. -/
+private theorem bumpMollification_error_of_translation_energy
+    (φ : ContDiffBump (0 : E)) {f : E → ℝ} (hfm : Measurable f) (hf : MemLp f 2 volume)
+    (C : ℝ) (hC : 0 ≤ C)
+    (htrans : ∀ h : E, (∫ x, (f (x + h) - f x) ^ 2) ≤ C * ‖h‖ ^ 2) :
+    MemLp (fun x => bumpMollification φ f x - f x) 2 volume ∧
+      (∫ x, (bumpMollification φ f x - f x) ^ 2) ≤ φ.rOut ^ 2 * C := by
+  let F (x y : E) : ℝ≥0∞ := ENNReal.ofReal ((f (x - y) - f x) ^ 2)
+  have hFm : Measurable (Function.uncurry F) :=
+    (((hfm.comp (measurable_fst.sub measurable_snd)).sub (hfm.comp measurable_fst)).pow_const
+      2).ennreal_ofReal
+  have hpoint (x : E) : ENNReal.ofReal ((bumpMollification φ f x - f x) ^ 2) ≤
+      ∫⁻ y, F x y ∂bumpProbability φ := by
+    have hm := bumpProbability_shift_memLp φ hf x
+    have hg : MemLp (fun y => f (x - y) - f x) 2 (bumpProbability φ) := by
+      simpa only [Pi.sub_def] using hm.sub (memLp_const (f x))
+    have hi := ENNReal.ofReal_le_ofReal (bumpMollification_error_sq_le_of_memLp φ hf x)
+    rw [ofReal_integral_eq_lintegral_ofReal hg.integrable_sq
+      (Filter.Eventually.of_forall fun y => sq_nonneg _)] at hi
+    exact hi
+  have hi := lintegral_mono (μ := (volume : Measure E)) hpoint
+  rw [lintegral_lintegral_swap hFm.aemeasurable] at hi
+  have hinner : ∀ᵐ y ∂bumpProbability φ, (∫⁻ x, F x y) ≤ ENNReal.ofReal (φ.rOut ^ 2 * C) := by
+    filter_upwards [bumpProbability_ae_norm_le φ] with y hy
+    have hdiff : MemLp (fun x => f (x - y) - f x) 2 volume := by
+      simpa only [Function.comp_def, sub_eq_add_neg, Pi.sub_def, Pi.add_def, Pi.neg_def] using
+        (hf.comp_measurePreserving (measurePreserving_add_right volume (-y))).sub hf
+    change (∫⁻ x, ENNReal.ofReal ((f (x - y) - f x) ^ 2)) ≤ _
+    rw [← ofReal_integral_eq_lintegral_ofReal hdiff.integrable_sq
+      (Filter.Eventually.of_forall fun x => sq_nonneg _)]
+    apply ENNReal.ofReal_le_ofReal
+    have ht := htrans (-y)
+    simp only [← sub_eq_add_neg, norm_neg] at ht
+    apply ht.trans
+    rw [mul_comm (φ.rOut ^ 2) C]
+    exact mul_le_mul_of_nonneg_left ((sq_le_sq₀ (norm_nonneg y) φ.rOut_pos.le).mpr hy) hC
+  have hb := lintegral_mono_ae hinner
+  simp only [lintegral_const, measure_univ, mul_one] at hb
+  have hfinal := hi.trans hb
+  have hfloc : LocallyIntegrable f volume := hf.locallyIntegrable (by norm_num)
+  have herrorM : AEStronglyMeasurable (fun x => bumpMollification φ f x - f x) volume :=
+    ((bumpMollification_contDiff φ hfloc).continuous.measurable.sub hfm).aestronglyMeasurable
+  have herrorInt : Integrable (fun x => (bumpMollification φ f x - f x) ^ 2) volume := by
+    refine ⟨herrorM.pow 2, ?_⟩
+    apply (hasFiniteIntegral_iff_ofReal (Filter.Eventually.of_forall fun x => sq_nonneg _)).2
+    exact lt_of_le_of_lt hfinal ENNReal.ofReal_lt_top
+  refine ⟨(memLp_two_iff_integrable_sq herrorM).mpr herrorInt, ?_⟩
+  rw [← ofReal_integral_eq_lintegral_ofReal herrorInt
+    (Filter.Eventually.of_forall fun x => sq_nonneg _)] at hfinal
+  exact (ENNReal.ofReal_le_ofReal_iff (mul_nonneg (sq_nonneg _) hC)).mp hfinal
+
+/-- Squared L² smoothing error from a translation bound with constant `C²`. -/
+theorem bumpMollification_integral_error_of_translation_bound
+    (φ : ContDiffBump (0 : E)) {f : E → ℝ} (hfm : Measurable f) (hf : MemLp f 2 volume)
+    (C : ℝ) (htrans : ∀ h : E, (∫ x, (f (x + h) - f x) ^ 2) ≤ C ^ 2 * ‖h‖ ^ 2) :
+    MemLp (fun x => bumpMollification φ f x - f x) 2 volume ∧
+      (∫ x, (bumpMollification φ f x - f x) ^ 2) ≤ φ.rOut ^ 2 * C ^ 2 :=
+  bumpMollification_error_of_translation_energy φ hfm hf (C ^ 2) (sq_nonneg C) htrans
+
 /-- Genuine pointwise Jensen bound for the smoothing error. -/
 theorem bumpMollification_error_sq_le (φ : ContDiffBump (0 : E)) {f : E → ℝ}
     (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) (x : E) :
     (bumpMollification φ f x - f x) ^ 2 ≤
-      ∫ y, (f (x - y) - f x) ^ 2 ∂bumpProbability φ := by
-  obtain ⟨M₀, hM₀⟩ := hfc.exists_bound_of_continuousOn hf.continuous.continuousOn
-  let M := max M₀ 0
-  have hM (y : E) : ‖f y‖ ≤ M := by
-    by_cases hy : y ∈ tsupport f
-    · exact (hM₀ y hy).trans (le_max_left _ _)
-    · have hzero : f y = 0 := image_eq_zero_of_notMem_tsupport hy
-      simpa only [hzero, norm_zero] using le_max_right M₀ 0
-  have hm : MemLp (fun y => f (x - y)) 2 (bumpProbability φ) :=
-    MemLp.of_bound (by fun_prop) M (Filter.Eventually.of_forall fun y => hM (x - y))
-  have hg : MemLp (fun y => f (x - y) - f x) 2 (bumpProbability φ) := by
-    simpa only [Pi.sub_def] using hm.sub (memLp_const (f x))
-  have hj := variance_nonneg (fun y => f (x - y) - f x) (bumpProbability φ)
-  rw [variance_eq_sub hg] at hj
-  rw [integral_sub (hm.integrable (by norm_num)) (integrable_const _),
-    bumpProbability_integral_eq_convolution, integral_const] at hj
-  simp only [Pi.pow_apply, measureReal_def, measure_univ, ENNReal.toReal_one, one_smul] at hj
-  linarith
+      ∫ y, (f (x - y) - f x) ^ 2 ∂bumpProbability φ :=
+  bumpMollification_error_sq_le_of_memLp φ (hf.continuous.memLp_of_hasCompactSupport hfc) x
 
 /-- Actual L² integrability under the compact bump probability. -/
 theorem bumpProbability_difference_memLp (φ : ContDiffBump (0 : E)) {f : E → ℝ}
     (hf : Continuous f) (hfc : HasCompactSupport f) (x : E) :
     MemLp (fun y => f (x - y) - f x) 2 (bumpProbability φ) := by
-  obtain ⟨M₀, hM₀⟩ := hfc.exists_bound_of_continuousOn hf.continuousOn
-  let M := max M₀ 0
-  have hM (y : E) : ‖f y‖ ≤ M := by
-    by_cases hy : y ∈ tsupport f
-    · exact (hM₀ y hy).trans (le_max_left _ _)
-    · have hzero : f y = 0 := image_eq_zero_of_notMem_tsupport hy
-      simpa only [hzero, norm_zero] using le_max_right M₀ 0
-  apply MemLp.of_bound (by fun_prop) (M + ‖f x‖)
-  filter_upwards with y
-  calc
-    _ ≤ ‖f (x - y)‖ + ‖f x‖ := norm_sub_le _ _
-    _ ≤ M + ‖f x‖ := by gcongr; exact hM _
+  have hm := bumpProbability_shift_memLp φ (hf.memLp_of_hasCompactSupport hfc) x
+  simpa only [Pi.sub_def] using hm.sub (memLp_const (f x))
 
 /-- Quantitative actual squared L² approximation by normalized smooth
 compact convolution, with the actual support radius as constant. -/
@@ -133,38 +209,11 @@ theorem bumpMollification_error_integral_sq_le (φ : ContDiffBump (0 : E)) {f : 
     (hf : ContDiff ℝ 1 f) (hfc : HasCompactSupport f) :
     (∫ x, (bumpMollification φ f x - f x) ^ 2) ≤
       φ.rOut ^ 2 * ∫ x, ‖gradient f x‖ ^ 2 := by
-  let F (x y : E) : ℝ≥0∞ := ENNReal.ofReal ((f (x - y) - f x) ^ 2)
-  have hFm : Measurable (Function.uncurry F) := by
-    have hc : Continuous (fun p : E × E => (f (p.1 - p.2) - f p.1) ^ 2) := by fun_prop
-    exact hc.measurable.ennreal_ofReal
-  have hpoint (x : E) : ENNReal.ofReal ((bumpMollification φ f x - f x) ^ 2) ≤
-      ∫⁻ y, F x y ∂bumpProbability φ := by
-    have hi := ENNReal.ofReal_le_ofReal (bumpMollification_error_sq_le φ hf hfc x)
-    rw [ofReal_integral_eq_lintegral_ofReal
-      (bumpProbability_difference_memLp φ hf.continuous hfc x).integrable_sq
-      (Filter.Eventually.of_forall fun y => sq_nonneg _)] at hi
-    exact hi
-  have hi := lintegral_mono (μ := (volume : Measure E)) hpoint
-  rw [lintegral_lintegral_swap hFm.aemeasurable] at hi
-  have hE0 : 0 ≤ ∫ x, ‖gradient f x‖ ^ 2 := integral_nonneg fun x => sq_nonneg _
-  have hinner : ∀ᵐ y ∂bumpProbability φ, (∫⁻ x, F x y) ≤
-      ENNReal.ofReal (φ.rOut ^ 2 * ∫ x, ‖gradient f x‖ ^ 2) := by
-    filter_upwards [bumpProbability_ae_norm_le φ] with y hy
-    have hD : Integrable (fun x => (f (x - y) - f x) ^ 2) volume := by
-      simpa only [sub_eq_add_neg] using (c1_compact_translation_memLp hf hfc (-y)).integrable_sq
-    have ht : (∫ x, (f (x - y) - f x) ^ 2) ≤ ‖y‖ ^ 2 * ∫ x, ‖gradient f x‖ ^ 2 := by
-      simpa only [sub_eq_add_neg, norm_neg] using c1_compact_translation_integral_sq_le hf hfc (-y)
-    change (∫⁻ x, ENNReal.ofReal ((f (x - y) - f x) ^ 2)) ≤ _
-    rw [← ofReal_integral_eq_lintegral_ofReal hD (Filter.Eventually.of_forall fun x => sq_nonneg _)]
-    apply ENNReal.ofReal_le_ofReal
-    apply ht.trans
-    gcongr
-  have hb := lintegral_mono_ae hinner
-  simp only [lintegral_const, measure_univ, mul_one] at hb
-  have hfinal := hi.trans hb
-  rw [← ofReal_integral_eq_lintegral_ofReal (bumpMollification_error_memLp φ hf hfc).integrable_sq
-    (Filter.Eventually.of_forall fun x => sq_nonneg _)] at hfinal
-  exact (ENNReal.ofReal_le_ofReal_iff (mul_nonneg (sq_nonneg _) hE0)).mp hfinal
+  have htrans (h : E) : (∫ x, (f (x + h) - f x) ^ 2) ≤ (∫ x, ‖gradient f x‖ ^ 2) * ‖h‖ ^ 2 := by
+    simpa only [mul_comm] using c1_compact_translation_integral_sq_le hf hfc h
+  exact (bumpMollification_error_of_translation_energy φ hf.continuous.measurable
+    (hf.continuous.memLp_of_hasCompactSupport hfc) _ (integral_nonneg fun x => sq_nonneg _)
+      htrans).2
 
 /-- The quantitative genuine L² norm approximation. -/
 theorem bumpMollification_error_L2_norm_le (φ : ContDiffBump (0 : E)) {f : E → ℝ}

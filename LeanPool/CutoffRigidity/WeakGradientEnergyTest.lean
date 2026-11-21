@@ -78,8 +78,7 @@ theorem weak_divergence_localized_energy_test {g η : E → ℝ}
       bumpMollification (φ n) (fun x => K j x) := by
     funext x
     exact coordinateDerivative_bumpMollification_of_weak_derivative (φ n)
-      (hg.locallyIntegrable (by norm_num)) ((Lp.memLp (K j)).locallyIntegrable (by norm_num))
-      j (hderiv j) x
+      (hg.locallyIntegrable (by norm_num)) j (hderiv j) x
   have hDnLp (n : ℕ) (j : Fin d) : MemLp (coordinateDerivative j (gn n)) 2 volume := by
     rw [hDpoint]
     exact (bumpMollification_L2_contraction (φ n) (Lp.stronglyMeasurable (K j)).measurable

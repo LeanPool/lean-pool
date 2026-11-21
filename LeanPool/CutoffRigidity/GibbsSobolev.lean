@@ -212,6 +212,16 @@ noncomputable instance gibbsSobolevGraph_completeSpace {V : E → ℝ} (hV : Con
       (E →₂[gibbsMeasure volume V] ℝ) (E →₂[gibbsMeasure volume V] E)).toContinuousLinearMap.comp
         (gibbsSobolevGraph hV hprob).subtypeL)
 
+/-- Each closed Sobolev pair lies in the closure of the compact gradient graph. -/
+theorem gibbsSobolev_mem_closure_compactGradient
+    {V : EuclideanSpace ℝ (Fin d) → ℝ} (hV : ContDiff ℝ 2 V)
+    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (u : gibbsSobolevGraph hV hprob) :
+    (gibbsSobolevInclusion hV hprob u, gibbsSobolevDerivative hV hprob u) ∈
+      closure ((compactGibbsGradient hV.continuous hprob).graph : Set _) := by
+  change _ ∈ (compactGibbsGradient hV.continuous hprob).graph.topologicalClosure
+  rw [(compactGibbsGradient_isClosable hV hprob).graph_closure_eq_closure_graph]
+  exact u.property
+
 /-- The inclusion is injective because the closed graph is an operator graph. -/
 theorem gibbsSobolevInclusion_injective {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) :

@@ -100,6 +100,57 @@ theorem gradient_cutoff_square_mul {χ f : E → ℝ}
   simp only [map_mul, map_pow, RCLike.conj_to_real, Nat.cast_ofNat]
   ring
 
+/-- A compact scalar cutoff makes every continuous product Gibbs integrable. -/
+theorem integrable_cutoff_mul_continuous {V χ g : E → ℝ}
+    (hV : Continuous V) (hχ : Continuous χ) (hχc : HasCompactSupport χ) (hg : Continuous g) :
+    Integrable (fun x => χ x * g x) (gibbsMeasure volume V) := by
+  apply integrable_gibbs_of_continuous_hasCompactSupport hV (hχ.mul hg)
+  simpa only [Pi.mul_def] using hχc.mul_right (f' := g)
+
+/-- The squared-cutoff version used in the local energy identity. -/
+theorem integrable_cutoff_square_mul_continuous {V χ g : E → ℝ}
+    (hV : Continuous V) (hχ : Continuous χ) (hχc : HasCompactSupport χ) (hg : Continuous g) :
+    Integrable (fun x => χ x ^ 2 * g x) (gibbsMeasure volume V) := by
+  have hcs : HasCompactSupport (fun x => χ x ^ 2) := by
+    simpa only [Function.comp_def] using hχc.comp_left (g := fun y : ℝ => y ^ 2) (by norm_num)
+  exact integrable_cutoff_mul_continuous hV (hχ.pow 2) hcs hg
+
+/-- The exact local energy identity for an arbitrary C² function, with the
+actual compact test `χ²f`; no eigenfunction or global-domain premise. -/
+theorem cutoff_gibbs_energy_identity {V f χ : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hf : ContDiff ℝ 2 f) (hχ : ContDiff ℝ 2 χ)
+    (hχc : HasCompactSupport χ) :
+    (∫ x, χ x ^ 2 * f x * langevinDifferentialOperator V f x ∂gibbsMeasure volume V) +
+      (∫ x, χ x ^ 2 * ‖gradient f x‖ ^ 2 ∂gibbsMeasure volume V) +
+        2 * (∫ x, χ x * f x * inner ℝ (gradient χ x) (gradient f x) ∂gibbsMeasure volume V) = 0
+          := by
+  have htest : ContDiff ℝ 1 (fun x => χ x ^ 2 * f x) :=
+    ((hχ.pow 2).mul hf).of_le (by norm_num)
+  have htestc : HasCompactSupport (fun x => χ x ^ 2 * f x) := by
+    have hcs : HasCompactSupport (fun x => χ x ^ 2) := by
+      simpa only [Function.comp_def] using hχc.comp_left (g := fun y : ℝ => y ^ 2) (by norm_num)
+    simpa only [Pi.mul_def] using hcs.mul_right (f' := f)
+  have hGf : Continuous (gradient f) := (differentiable_gradient_of_contDiff_two hf).continuous
+  have hGχ : Continuous (gradient χ) := (differentiable_gradient_of_contDiff_two hχ).continuous
+  have hA : Integrable (fun x => χ x ^ 2 * ‖gradient f x‖ ^ 2) (gibbsMeasure volume V) :=
+    integrable_cutoff_square_mul_continuous hV.continuous hχ.continuous hχc (by fun_prop)
+  have hC : Integrable (fun x => χ x * f x * inner ℝ (gradient χ x) (gradient f x))
+      (gibbsMeasure volume V) := by
+    have h := integrable_cutoff_mul_continuous hV.continuous hχ.continuous hχc
+      (hf.continuous.mul (hGχ.inner hGf))
+    simpa only [mul_assoc, Pi.mul_apply] using h
+  have h := compact_test_gibbs_energy hV htest hf htestc
+  have hright (x : E) : inner ℝ (gradient (fun y => χ y ^ 2 * f y) x) (gradient f x) =
+      χ x ^ 2 * ‖gradient f x‖ ^ 2 +
+        2 * (χ x * f x * inner ℝ (gradient χ x) (gradient f x)) := by
+    rw [gradient_cutoff_square_mul (hχ.differentiable (by norm_num)) (hf.differentiable
+      (by norm_num)),
+      inner_add_left, real_inner_smul_left, real_inner_smul_left, real_inner_self_eq_norm_sq]
+    ring
+  simp_rw [hright] at h
+  rw [integral_add hA (hC.const_mul 2), integral_const_mul] at h
+  linarith
+
 /-- The exact compact-cutoff eigenfunction energy identity. No global
 integrability assumption on derivatives of f is used. -/
 theorem eigenfunction_cutoff_energy_identity {V f χ : E → ℝ}
@@ -109,37 +160,13 @@ theorem eigenfunction_cutoff_energy_identity {V f χ : E → ℝ}
     (∫ x, χ x ^ 2 * ‖gradient f x‖ ^ 2 ∂gibbsMeasure volume V) +
       2 * (∫ x, χ x * f x * inner ℝ (gradient χ x) (gradient f x) ∂gibbsMeasure volume V) =
       rate * (∫ x, χ x ^ 2 * f x ^ 2 ∂gibbsMeasure volume V) := by
-  have hχsqc : HasCompactSupport (fun x => χ x ^ 2) := by
-    simpa only [Function.comp_def] using hχc.comp_left (g := fun y : ℝ => y ^ 2) (by norm_num)
-  have htest : ContDiff ℝ 1 (fun x => χ x ^ 2 * f x) :=
-    ((hχ.pow 2).mul hf).of_le (by norm_num)
-  have htestc : HasCompactSupport (fun x => χ x ^ 2 * f x) := by
-    simpa only [Pi.mul_def] using hχsqc.mul_right (f' := f)
-  have hGf : Continuous (gradient f) :=
-    (differentiable_gradient_of_contDiff_two hf).continuous
-  have hGχ : Continuous (gradient χ) :=
-    (differentiable_gradient_of_contDiff_two hχ).continuous
-  have hA : Integrable (fun x => χ x ^ 2 * ‖gradient f x‖ ^ 2) (gibbsMeasure volume V) := by
-    apply integrable_gibbs_of_continuous_hasCompactSupport hV.continuous (by fun_prop)
-    simpa only [Pi.mul_def] using hχsqc.mul_right
-      (f' := fun x => ‖gradient f x‖ ^ 2)
-  have hC : Integrable (fun x => χ x * f x * inner ℝ (gradient χ x) (gradient f x))
-      (gibbsMeasure volume V) := by
-    apply integrable_gibbs_of_continuous_hasCompactSupport hV.continuous (by fun_prop)
-    simpa only [Pi.mul_def] using (hχc.mul_right (f' := f)).mul_right
-      (f' := fun x => inner ℝ (gradient χ x) (gradient f x))
-  have h := compact_test_gibbs_energy hV htest hf htestc
-  have hleft (x : E) : χ x ^ 2 * f x * langevinDifferentialOperator V f x =
-      -rate * (χ x ^ 2 * f x ^ 2) := by rw [heigen]; ring
-  have hright (x : E) : inner ℝ (gradient (fun y => χ y ^ 2 * f y) x) (gradient f x) =
-      χ x ^ 2 * ‖gradient f x‖ ^ 2 +
-        2 * (χ x * f x * inner ℝ (gradient χ x) (gradient f x)) := by
-    rw [gradient_cutoff_square_mul (hχ.differentiable (by norm_num)) (hf.differentiable
-      (by norm_num)),
-      inner_add_left, real_inner_smul_left, real_inner_smul_left, real_inner_self_eq_norm_sq]
+  have h := cutoff_gibbs_energy_identity hV hf hχ hχc
+  have hpoint (x : E) : χ x ^ 2 * f x * langevinDifferentialOperator V f x =
+      -rate * (χ x ^ 2 * f x ^ 2) := by
+    rw [heigen]
     ring
-  simp_rw [hleft, hright] at h
-  rw [integral_const_mul, integral_add hA (hC.const_mul 2), integral_const_mul] at h
+  simp_rw [hpoint] at h
+  rw [integral_const_mul] at h
   linarith
 
 /-- Caccioppoli's compact cutoff estimate, with all global derivative
@@ -213,11 +240,10 @@ theorem exists_nonneg_bound_of_continuous_compactSupport {G : E → E}
   · have hzero : G x = 0 := Function.notMem_support.mp (fun hs => hx (subset_tsupport G hs))
     simpa only [hzero, norm_zero] using le_max_right C 0
 
-/-- Actual smooth compact cutoffs tending pointwise eventually to one,
-whose gradients have the required inverse-radius bound. -/
-theorem exists_smooth_cutoff_exhaustion :
+/-- Actual smooth compact exhaustion at the C³ test regularity needed for weak Bochner. -/
+theorem exists_smooth_C3_cutoff_exhaustion :
     ∃ C : ℝ, 0 ≤ C ∧ ∃ χ : ℕ → E → ℝ,
-      (∀ n, ContDiff ℝ 2 (χ n)) ∧ (∀ n, HasCompactSupport (χ n)) ∧
+      (∀ n, ContDiff ℝ 3 (χ n)) ∧ (∀ n, HasCompactSupport (χ n)) ∧
       (∀ n x, 0 ≤ χ n x ∧ χ n x ≤ 1) ∧
       (∀ x, ∀ᶠ n : ℕ in Filter.atTop, χ n x = 1) ∧
       (∀ n x, ‖gradient (χ n) x‖ ≤ C / ((n : ℝ) + 1)) := by
@@ -245,14 +271,26 @@ theorem exists_smooth_cutoff_exhaustion :
       (tendsto_natCast_atTop_atTop.eventually (eventually_ge_atTop ‖x‖)).mono
         (fun n hn => by linarith)
     filter_upwards [hevent] with n hn
-    exact (ψ n).one_of_mem_closedBall (by simpa [ψ, Metric.mem_closedBall,
-      dist_zero_right] using hn)
+    apply (ψ n).one_of_mem_closedBall
+    simpa [ψ, Metric.mem_closedBall, dist_zero_right] using hn
   · intro n x
     rw [hscale n, gradient_comp_scalar (hφ.differentiable (by norm_num))]
     rw [norm_smul, Real.norm_eq_abs, abs_inv, abs_of_pos (by positivity : (0 : ℝ) < n + 1)]
     calc
       _ ≤ ((n : ℝ) + 1)⁻¹ * C := mul_le_mul_of_nonneg_left (hC _) (by positivity)
       _ = _ := by ring
+
+/-- Actual smooth compact cutoffs tending pointwise eventually to one,
+whose gradients have the required inverse-radius bound. -/
+theorem exists_smooth_cutoff_exhaustion :
+    ∃ C : ℝ, 0 ≤ C ∧ ∃ χ : ℕ → E → ℝ,
+      (∀ n, ContDiff ℝ 2 (χ n)) ∧ (∀ n, HasCompactSupport (χ n)) ∧
+      (∀ n x, 0 ≤ χ n x ∧ χ n x ≤ 1) ∧
+      (∀ x, ∀ᶠ n : ℕ in Filter.atTop, χ n x = 1) ∧
+      (∀ n x, ‖gradient (χ n) x‖ ≤ C / ((n : ℝ) + 1)) := by
+  obtain ⟨C, hC, χ, hχ, hχc, hbounds, hone, hgrad⟩ :=
+    exists_smooth_C3_cutoff_exhaustion (d := d)
+  exact ⟨C, hC, χ, fun n => (hχ n).of_le (by norm_num), hχc, hbounds, hone, hgrad⟩
 
 /-- Genuine exhaustion of compact cutoffs proves square integrability of
 the actual gradient of an L² pointwise eigenfunction. No global derivative

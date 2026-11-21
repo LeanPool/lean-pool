@@ -123,6 +123,17 @@ theorem convexInteraction_normalized_probability_memLp_two {d : ℕ}
   exact normalized_gibbs_probability_memLp_two hV ρ hρ (hessian_quadratic_add_convex_lower hW hconv
     ρ)
 
+/-- The normalized convex interaction has a C² potential and a Gibbs probability law. -/
+theorem convexInteraction_normalization {d : ℕ} {W : EuclideanSpace ℝ (Fin d) → ℝ}
+    (hW : ContDiff ℝ 2 W) (hconv : ConvexOn ℝ univ W) (ρ : ℝ) (hρ : 0 < ρ) :
+    let Z := ∫ x, Real.exp (-(ρ / 2 * ‖x‖ ^ 2 + W x))
+    let Vn := fun x => ρ / 2 * ‖x‖ ^ 2 + (W x + Real.log Z)
+    ContDiff ℝ 2 Vn ∧ IsProbabilityMeasure (gibbsMeasure volume Vn) := by
+  intro Z Vn
+  refine ⟨(contDiff_const.mul (contDiff_norm_sq ℝ)).add (hW.add contDiff_const), ?_⟩
+  simpa only [Vn, add_assoc] using
+    (convexInteraction_normalized_probability_memLp_two hW hconv ρ hρ).1
+
 /-- With the source normalization and diagonal invariance, convexity itself
 supplies every curvature premise of the nonempty classical eigenspace result. -/
 theorem classicalL2Eigenspace_finrank_pos_of_convex_diagonal_invariance

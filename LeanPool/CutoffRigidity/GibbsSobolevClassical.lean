@@ -293,13 +293,8 @@ theorem classicalEigenSobolevLift_weak_eigenfunction {V : E → ℝ} (hV : ContD
     change inner ℝ gu p.2 = ρ * inner ℝ (u : E →₂[gibbsMeasure volume V] ℝ) p.1
     rw [← hwf, ← hwg]
     exact classicalEigen_compactGradient_pairing hV hprob ρ hρ u w
-  have hmem : (gibbsSobolevInclusion hV hprob v, gibbsSobolevDerivative hV hprob v) ∈
-      closure (G.graph : Set _) := by
-    change (gibbsSobolevInclusion hV hprob v, gibbsSobolevDerivative hV hprob v) ∈
-      (compactGibbsGradient hV.continuous hprob).graph.topologicalClosure
-    rw [(compactGibbsGradient_isClosable hV hprob).graph_closure_eq_closure_graph]
-    exact v.property
-  exact closure_minimal hinit hS hmem
+  exact closure_minimal hinit hS
+    (gibbsSobolev_mem_closure_compactGradient hV hprob v)
 
 /-- The variational resolvent acts on each actual classical eigenclass with
 the expected shifted eigenvalue. This supplies a graph witness for the

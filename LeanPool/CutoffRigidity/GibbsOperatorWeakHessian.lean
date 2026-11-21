@@ -104,7 +104,7 @@ against one derivative of a compact C³ function. -/
 theorem localizedOperatorEigenGradient_second_test {V χ ψ : E → ℝ}
     (hV : ContDiff ℝ 2 V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
     (u : gibbsOperatorEigenspace hV hprob rate) (hχ : ContDiff ℝ 3 χ) (hχc : HasCompactSupport χ)
-    (hψ : ContDiff ℝ 3 ψ) (_hψc : HasCompactSupport ψ) (i j : Fin d) :
+    (hψ : ContDiff ℝ 3 ψ) (i j : Fin d) :
     (∫ x, localizedOperatorEigenGradient hV hprob rate u χ i x * coordinateDerivative j ψ x) =
       -(∫ x, (χ x * (u : E →₂[gibbsMeasure volume V] ℝ) x) *
         coordinateDerivative j (coordinateDerivative i ψ) x) := by
@@ -186,7 +186,7 @@ theorem exists_gibbsOperatorEigen_local_gradient_weak_derivative {V χ : E → �
   obtain ⟨H, hH, hpair⟩ := exists_gibbsOperatorEigen_local_weak_hessian hV hprob rate u hχ hχc i j
   refine ⟨H, hH, ?_⟩
   intro ψ hψ hψc
-  rw [localizedOperatorEigenGradient_second_test hV hprob rate u hχ hχc hψ hψc i j,
+  rw [localizedOperatorEigenGradient_second_test hV hprob rate u hχ hχc hψ i j,
     hpair ψ hψ hψc]
 
 end CutoffRigidity

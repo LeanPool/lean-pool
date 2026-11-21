@@ -61,8 +61,7 @@ theorem project_mollifiedGradientLp_of_weak_derivative (φ : ContDiffBump (0 : E
   rw [hgrad, hH]
   change (gradient (bumpMollification φ g) x) j = bumpMollification φ (fun y => H y) x
   rw [← fderiv_single_eq_gradient_coordinate]
-  exact coordinateDerivative_bumpMollification_of_weak_derivative φ hg
-    ((Lp.memLp H).locallyIntegrable (by norm_num)) j hweak x
+  exact coordinateDerivative_bumpMollification_of_weak_derivative φ hg j hweak x
 
 /-- The genuine weak derivatives provide actual strong vector-gradient
 convergence of compact smooth mollifications in Lebesgue L². -/

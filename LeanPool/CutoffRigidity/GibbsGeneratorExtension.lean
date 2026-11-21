@@ -66,13 +66,8 @@ theorem gibbs_weak_equation_of_compact_pairing {V : E → ℝ} (hV : ContDiff �
     change inner ℝ (gibbsSobolevDerivative hV hprob u) p.2 = inner ℝ g p.1
     rw [← hwf, ← hwg]
     exact he w
-  have hmem : (gibbsSobolevInclusion hV hprob v, gibbsSobolevDerivative hV hprob v) ∈
-      closure (G.graph : Set _) := by
-    change (gibbsSobolevInclusion hV hprob v, gibbsSobolevDerivative hV hprob v) ∈
-      (compactGibbsGradient hV.continuous hprob).graph.topologicalClosure
-    rw [(compactGibbsGradient_isClosable hV hprob).graph_closure_eq_closure_graph]
-    exact v.property
-  exact closure_minimal hinit hS hmem
+  exact closure_minimal hinit hS
+    (gibbsSobolev_mem_closure_compactGradient hV hprob v)
 
 /-- Actual compact integration by parts is the weak equation for the
 canonical positive generator, with every domain already proved. -/

@@ -93,7 +93,7 @@ theorem mollified_toL2_tendsto_of_translation_bound {w : E → ℝ}
     Tendsto (fun n =>
       (bumpMollification_memLp_of_translation_bound (euclideanMollifierBump (differenceStep n)
         (differenceStep_pos n))
-        hwm hw C hC htrans).toLp
+        hwm hw C htrans).toLp
           (bumpMollification (euclideanMollifierBump (differenceStep n) (differenceStep_pos n)) w))
       atTop (𝓝 (hw.toLp w)) := by
   apply tendsto_iff_norm_sub_tendsto_zero.mpr
@@ -122,7 +122,7 @@ theorem bounded_second_derivative_distribution
     (bumpMollification_contDiff (φ n) (hw.locallyIntegrable (by norm_num))).of_le (by norm_num)
   have hwnc (n : ℕ) : HasCompactSupport (wn n) := bumpMollification_hasCompactSupport (φ n) hwc
   have hwnLp (n : ℕ) : MemLp (wn n) 2 volume :=
-    bumpMollification_memLp_of_translation_bound (φ n) hwm hw C hC htrans
+    bumpMollification_memLp_of_translation_bound (φ n) hwm hw C htrans
   have hψLp : MemLp ψ 2 volume := hψ.continuous.memLp_of_hasCompactSupport hψc
   have hDψLp := compact_second_coordinate_memLp hψ hψc i j
   have hDwnNorm (n : ℕ) : ‖(compact_second_coordinate_memLp (hwn n) (hwnc n) i j).toLp

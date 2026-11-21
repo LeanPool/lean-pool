@@ -52,8 +52,7 @@ theorem normalized_convexInteraction_spectralGap_eq (hd : 0 < d)
       (hp : IsProbabilityMeasure (gibbsMeasure volume Vn)),
       gibbsSpectralGap hVn hp = ρ := by
   intro Z Vn
-  obtain ⟨hVn, hp, _, _⟩ := normalized_convexInteraction_has_operator_eigenvector hd hW hconv hρ
-    hinv
+  obtain ⟨hVn, hp⟩ := convexInteraction_normalization hW hconv ρ hρ
   refine ⟨hVn, hp, ?_⟩
   apply convexInteraction_spectralGap_eq hd (hW.add contDiff_const) (hconv.add_const _) hρ
     (fun x t => by rw [hinv]) hp hVn

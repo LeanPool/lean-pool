@@ -22,6 +22,17 @@ open MeasureTheory Filter Topology
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
+/-- Approximate a closed Gibbs gradient pair by compact tests in the two L² norms. -/
+theorem gibbsSobolev_strong_approximation_seq {V : E → ℝ} (hV : ContDiff ℝ 2 V)
+    (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (u : gibbsSobolevGraph hV hprob) :
+    ∃ p : ℕ → (E →₂[gibbsMeasure volume V] ℝ) × (E →₂[gibbsMeasure volume V] E),
+      (∀ n, p n ∈ (compactGibbsGradient hV.continuous hprob).graph) ∧
+      Tendsto (fun n => (p n).1) atTop (𝓝 (gibbsSobolevInclusion hV hprob u)) ∧
+      Tendsto (fun n => (p n).2) atTop (𝓝 (gibbsSobolevDerivative hV hprob u)) := by
+  obtain ⟨p, hp, hlim⟩ := mem_closure_iff_seq_limit.mp
+    (gibbsSobolev_mem_closure_compactGradient hV hprob u)
+  exact ⟨p, hp, (continuous_fst.tendsto _).comp hlim, (continuous_snd.tendsto _).comp hlim⟩
+
 /-- Approximate a closed Gibbs gradient pair by compact tests, with strong L² convergence of
 both components and almost-everywhere convergence of the scalar component. -/
 theorem gibbsSobolev_approximation_seq {V : E → ℝ} (hV : ContDiff ℝ 2 V)
@@ -32,16 +43,7 @@ theorem gibbsSobolev_approximation_seq {V : E → ℝ} (hV : ContDiff ℝ 2 V)
       Tendsto (fun n => (p n).2) atTop (𝓝 (gibbsSobolevDerivative hV hprob u)) ∧
       ∀ᵐ x ∂gibbsMeasure volume V,
         Tendsto (fun n => (p n).1 x) atTop (𝓝 (gibbsSobolevInclusion hV hprob u x)) := by
-  let G := compactGibbsGradient hV.continuous hprob
-  let U := gibbsSobolevInclusion hV hprob u
-  let D := gibbsSobolevDerivative hV hprob u
-  have hmem : (U, D) ∈ closure (G.graph : Set _) := by
-    change (U, D) ∈ G.graph.topologicalClosure
-    rw [(compactGibbsGradient_isClosable hV hprob).graph_closure_eq_closure_graph]
-    exact u.property
-  obtain ⟨p, hp, hplim⟩ := mem_closure_iff_seq_limit.mp hmem
-  have hfirst : Tendsto (fun n => (p n).1) atTop (𝓝 U) := (continuous_fst.tendsto _).comp hplim
-  have hsecond : Tendsto (fun n => (p n).2) atTop (𝓝 D) := (continuous_snd.tendsto _).comp hplim
+  obtain ⟨p, hp, hfirst, hsecond⟩ := gibbsSobolev_strong_approximation_seq hV hprob u
   obtain ⟨ns, hns, hae⟩ := (tendstoInMeasure_of_tendsto_Lp hfirst).exists_seq_tendsto_ae'
   exact ⟨fun n => p (ns n), fun n => hp (ns n), hfirst.comp hns, hsecond.comp hns, hae⟩
 

@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.GibbsSobolevClassical
+public import LeanPool.CutoffRigidity.GibbsSobolevApproximation
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 
 /-!
@@ -267,20 +268,10 @@ theorem gibbsSobolev_form_confinement {V : E → ℝ} (hV : ContDiff ℝ 2 V)
   let G := compactGibbsGradient hV.continuous hprob
   let a := 2 * (ρ * d + ‖gradient V 0‖ ^ 2)
   have ha : 0 ≤ a := by dsimp [a]; positivity
-  have hmem : (gibbsSobolevInclusion hV hprob u, gibbsSobolevDerivative hV hprob u) ∈
-      closure (G.graph : Set _) := by
-    change (gibbsSobolevInclusion hV hprob u, gibbsSobolevDerivative hV hprob u) ∈
-      G.graph.topologicalClosure
-    rw [(compactGibbsGradient_isClosable hV hprob).graph_closure_eq_closure_graph]
-    exact u.property
-  obtain ⟨p, hp, hplim⟩ := mem_closure_iff_seq_limit.mp hmem
+  obtain ⟨p, hp, hfirst, hsecond⟩ := gibbsSobolev_strong_approximation_seq hV hprob u
   let bn (n : ℕ) : ℝ := (a * ‖(p n).1‖ ^ 2 + 8 * ‖(p n).2‖ ^ 2) / ρ ^ 2
   let b : ℝ := (a * ‖gibbsSobolevInclusion hV hprob u‖ ^ 2 +
     8 * ‖gibbsSobolevDerivative hV hprob u‖ ^ 2) / ρ ^ 2
-  have hfirst : Tendsto (fun n => (p n).1) atTop (𝓝 (gibbsSobolevInclusion hV hprob u)) :=
-    (continuous_fst.tendsto _).comp hplim
-  have hsecond : Tendsto (fun n => (p n).2) atTop (𝓝 (gibbsSobolevDerivative hV hprob u)) :=
-    (continuous_snd.tendsto _).comp hplim
   have hbn : Tendsto bn atTop (𝓝 b) :=
     (((hfirst.norm.pow 2).const_mul a).add ((hsecond.norm.pow 2).const_mul 8)).div_const (ρ ^ 2)
   have hb0 : 0 ≤ b := by dsimp [b]; positivity
@@ -365,7 +356,7 @@ Sobolev graph norm. The missing local Rellich theorem remains separate. -/
 theorem gibbsSobolev_uniform_tail_bound {V : E → ℝ} (hV : ContDiff ℝ 2 V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (ρ : ℝ) (hρ : 0 < ρ)
     (hHess : ∀ x z : E, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
-    (M : ℝ) (_hM : 0 ≤ M) (u : gibbsSobolevGraph hV hprob) (hu : ‖u‖ ≤ M)
+    (M : ℝ) (u : gibbsSobolevGraph hV hprob) (hu : ‖u‖ ≤ M)
     (R : ℝ) (hR : 0 < R) :
     (∫ x in {x : E | R ≤ ‖x‖}, (gibbsSobolevInclusion hV hprob u x) ^ 2 ∂gibbsMeasure volume V) ≤
       gibbsFormConfinementConstant V ρ * M ^ 2 / R ^ 2 := by

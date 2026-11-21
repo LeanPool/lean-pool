@@ -52,7 +52,7 @@ theorem normalized_gibbs_affineSubspace_gaussian_product
   let μ := gibbsMeasure volume V
   let A := (affineEigenRows V ρ).orthogonalDecomposition
   have hcoords := measurable_affineSplittingCoordinates V ρ
-  have hprod := normalized_separated_gibbs_map_product_marginals A V hV.continuous.measurable
+  have hprod := normalized_separated_gibbs_map_product_marginals A V
     (affineSplittingCenter V) (fun z : affineEigenRows V ρ => ρ/2*‖z‖^2) (by fun_prop)
     (affineComplementPotential V ρ) (contDiff_affineComplementPotential hV ρ).continuous.measurable
     (by

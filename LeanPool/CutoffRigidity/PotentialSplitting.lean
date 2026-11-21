@@ -119,13 +119,73 @@ variable {E F : Type*}
   [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
   [MeasurableSpace F] [BorelSpace F]
 
+section OrthogonalProduct
+
+variable {U : Type*}
+  [NormedAddCommGroup U] [InnerProductSpace ℝ U] [FiniteDimensional ℝ U]
+  [MeasurableSpace U] [BorelSpace U]
+
+theorem orthogonalProductCoordinates_measurePreserving
+    (A : E ≃ₗᵢ[ℝ] WithLp 2 (U × F)) :
+    MeasurePreserving (fun x => (A x).ofLp) (volume : Measure E) ((volume : Measure U).prod volume)
+      :=
+  (WithLp.volume_preserving_ofLp U F).comp (LinearIsometryEquiv.measurePreserving A)
+
+theorem separated_gibbs_map_orthogonal_product
+    (A : E ≃ₗᵢ[ℝ] WithLp 2 (U × F)) (V : E → ℝ)
+    (m : E) (Q : U → ℝ) (hQ : Measurable Q) (W : F → ℝ) (hW : Measurable W)
+    (hsplit : ∀ u w, V (A.symm (WithLp.toLp 2 (u, w)) + m) = Q u + W w) :
+    ((volume : Measure E).withDensity (fun x => ENNReal.ofReal (Real.exp (-V x)))).map
+      (fun x => (A (x-m)).ofLp) =
+        ((volume : Measure U).withDensity (fun u => ENNReal.ofReal (Real.exp (-Q u)))).prod
+          ((volume : Measure F).withDensity (fun w => ENNReal.ofReal (Real.exp (-W w)))) := by
+  let g := fun z : U × F => ENNReal.ofReal (Real.exp (-(Q z.1+W z.2)))
+  have hg : Measurable g := by fun_prop
+  have hf : Measurable (fun x : E => (A x).ofLp) := by fun_prop
+  have hsplit' (y : E) : ENNReal.ofReal (Real.exp (-V (y+m)))=g (A y).ofLp := by
+    have hh := hsplit (A y).ofLp.1 (A y).ofLp.2
+    have he : WithLp.toLp 2 ((A y).ofLp.1,(A y).ofLp.2)=A y := rfl
+    rw [he,A.symm_apply_apply] at hh
+    rw [hh]
+  have htrans : ((volume : Measure E).withDensity (fun x => ENNReal.ofReal (Real.exp (-V x)))).map
+      (fun x => x-m) = (volume : Measure E).withDensity (fun y => g (A y).ofLp) := by
+    have hh := map_withDensity_comp (volume : Measure E) (fun x => x+(-m))
+      (fun y => g (A y).ofLp) (by fun_prop) (hg.comp hf)
+    rw [(measurePreserving_add_right (volume : Measure E) (-m)).map_eq] at hh
+    have hdensity : (fun x : E => ENNReal.ofReal (Real.exp (-V x))) =
+        fun x => g (A (x+(-m))).ofLp := by
+      funext x
+      rw [← hsplit']
+      simp
+    rw [← hdensity] at hh
+    simpa only [sub_eq_add_neg] using hh
+  calc
+    _ = (((volume : Measure E).withDensity (fun x => ENNReal.ofReal (Real.exp (-V x)))).map
+        (fun x => x-m)).map (fun y => (A y).ofLp) := by
+      rw [Measure.map_map hf (by fun_prop)]
+      rfl
+    _ = ((volume : Measure E).withDensity (fun y => g (A y).ofLp)).map (fun y => (A y).ofLp)
+      := by rw [htrans]
+    _ = ((volume : Measure E).map (fun y => (A y).ofLp)).withDensity g
+      := map_withDensity_comp _ _ _ hf hg
+    _ = ((volume : Measure U).prod (volume : Measure F)).withDensity g := by
+      rw [(orthogonalProductCoordinates_measurePreserving A).map_eq]
+    _ = _ := by
+      rw [prod_withDensity (by fun_prop : Measurable (fun u => ENNReal.ofReal (Real.exp (-Q u))))
+        (by fun_prop : Measurable (fun w => ENNReal.ofReal (Real.exp (-W w))))]
+      congr 1
+      funext z
+      dsimp only [g]
+      rw [neg_add,Real.exp_add,ENNReal.ofReal_mul (Real.exp_nonneg _)]
+
+end OrthogonalProduct
+
 /-- An orthogonal splitting supplies product coordinates preserving actual Lebesgue volume. -/
 theorem orthogonalCoordinates_measurePreserving (A : E ≃ₗᵢ[ℝ] WithLp 2 (ℝ × F)) :
     MeasurePreserving (fun x => (A x).ofLp)
-      (volume : Measure E) ((volume : Measure ℝ).prod (volume : Measure F)) := by
-  have hA : MeasurePreserving A (volume : Measure E) (volume : Measure (WithLp 2 (ℝ × F))) :=
-    LinearIsometryEquiv.measurePreserving A
-  exact (WithLp.volume_preserving_ofLp ℝ F).comp hA
+      (volume : Measure E) ((volume : Measure ℝ).prod (volume : Measure F)) :=
+  orthogonalProductCoordinates_measurePreserving A
+
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
   [FiniteDimensional ℝ F] [MeasurableSpace F] [BorelSpace F] in
@@ -161,28 +221,19 @@ theorem gibbs_map_orthogonalCoordinates
         ENNReal.ofReal (Real.exp (-(W (A.symm (WithLp.toLp 2 (0, y))) + ρ / 2 * ‖y‖ ^ 2))))) := by
   let U : F → ℝ := fun y => W (A.symm (WithLp.toLp 2 (0, y))) + ρ / 2 * ‖y‖ ^ 2
   have hU : Measurable U := by fun_prop
-  let g : ℝ × F → ℝ≥0∞ := fun z =>
-    ENNReal.ofReal (Real.exp (-(ρ / 2 * z.1 ^ 2 + U z.2)))
-  have hg : Measurable g := by fun_prop
-  have hsplit (x : E) : ENNReal.ofReal (Real.exp (-(ρ / 2 * ‖x‖ ^ 2 + W x))) =
-      g (A x).ofLp := by
-    have hnorm : ‖x‖ ^ 2 = ((A x).ofLp.1) ^ 2 + ‖(A x).ofLp.2‖ ^ 2 := by
-      rw [← A.norm_map x, WithLp.prod_norm_sq_eq_of_L2]
+  have hsplit (r : ℝ) (y : F) :
+      ρ / 2 * ‖A.symm (WithLp.toLp 2 (r, y)) + (0 : E)‖ ^ 2 +
+        W (A.symm (WithLp.toLp 2 (r, y)) + (0 : E)) = ρ / 2 * r ^ 2 + U y := by
+    rw [add_zero, interaction_in_orthogonalCoordinates A W hinv]
+    have hnorm : ‖A.symm (WithLp.toLp 2 (r, y))‖ ^ 2 = r ^ 2 + ‖y‖ ^ 2 := by
+      rw [A.symm.norm_map, WithLp.prod_norm_sq_eq_of_L2]
       simp [Real.norm_eq_abs, sq_abs]
-    have hw : W x = W (A.symm (WithLp.toLp 2 (0, (A x).ofLp.2))) := by
-      have h := interaction_in_orthogonalCoordinates A W hinv (A x).ofLp.1 (A x).ofLp.2
-      have hp : WithLp.toLp 2 ((A x).ofLp.1, (A x).ofLp.2) = A x := by
-        exact WithLp.toLp_ofLp 2 (A x)
-      rw [hp, A.symm_apply_apply] at h
-      exact h
-    rw [hnorm, hw]
-    dsimp [g, U]
-    congr 2
+    rw [hnorm]
+    dsimp only [U]
     ring
-  simp_rw [hsplit]
-  rw [map_withDensity_comp _ _ _ (by fun_prop) hg,
-    (orthogonalCoordinates_measurePreserving A).map_eq]
-  exact separated_gibbs_product _ _ ρ U hU
+  simpa only [sub_zero] using separated_gibbs_map_orthogonal_product A
+    (fun x : E => ρ / 2 * ‖x‖ ^ 2 + W x) (0 : E) (fun r : ℝ => ρ / 2 * r ^ 2)
+      (by fun_prop) U hU hsplit
 
 /-- The one-dimensional quadratic Gibbs factor is a scalar multiple of the
 actual Gaussian probability measure with variance `1/ρ`. -/

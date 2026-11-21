@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.OperatorEigenDistributionRigidity
-public import LeanPool.CutoffRigidity.DistributionalConstantsC3
+public import LeanPool.CutoffRigidity.GibbsSobolevConstants
 public import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 
 /-! # Genuine affine representatives of curvature-rate operator eigenvectors -/

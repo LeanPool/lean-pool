@@ -8,7 +8,8 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.GibbsSobolevConstants
+public import LeanPool.CutoffRigidity.EuclideanL2Mollification
+public import LeanPool.CutoffRigidity.GibbsEnergy
 
 /-! # Constant distributions tested on actual compact C³ functions -/
 

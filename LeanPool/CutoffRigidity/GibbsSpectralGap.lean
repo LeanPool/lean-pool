@@ -92,26 +92,12 @@ theorem compact_positive_contraction_norm_lt_one
     (T : H →L[ℝ] H) (hc : IsCompactOperator T) (hs : T.IsSymmetric)
     (hp : ∀ x, 0 ≤ inner ℝ x (T x)) (hn : ‖T‖ ≤ 1)
     (hfixed : ∀ x, T x = x → x = 0) : ‖T‖ < 1 := by
-  nontriviality H
   apply lt_of_le_of_ne hn
   intro heq
-  have hspec : ‖T‖ ∈ spectrum ℝ T ∨ -‖T‖ ∈ spectrum ℝ T := by
-    simp_rw [spectrum, Set.mem_compl_iff]
-    by_contra! h
-    obtain ⟨c, hc0, hc⟩ := T.abs_rayleighQuotient_le_of_norm_mem_resolventSet
-      (by simpa using h.1) (by simpa using h.2)
-    have hle := ciSup_le hc
-    rw [← ContinuousLinearMap.norm_eq_iSup_rayleighQuotient T hs] at hle
-    linarith
-  have hnorm : ‖T‖ ≠ 0 := by rw [heq]; norm_num
-  have heigen : Module.End.HasEigenvalue T.toLinearMap ‖T‖ := by
-    rcases hspec with hpos | hneg
-    · exact (hc.hasEigenvalue_iff_mem_spectrum hnorm).mpr hpos
-    · have hnegE := (hc.hasEigenvalue_iff_mem_spectrum (neg_ne_zero.mpr hnorm)).mpr hneg
-      have hh := eigenvalue_nonneg_of_nonneg hnegE hp
-      rw [heq] at hh
-      change 0 ≤ -(1 : ℝ) at hh
-      linarith
+  have hT : T ≠ 0 := by
+    intro hz
+    simp [hz] at heq
+  have heigen := compact_positive_hasEigenvalue_norm T hc hs hp hT
   obtain ⟨x, hx, hx0⟩ := heigen.exists_hasEigenvector
   have hTx : T x = x := by
     have hh := hx

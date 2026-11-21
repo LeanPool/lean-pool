@@ -78,7 +78,7 @@ private theorem norm_add_sq_bound {E : Type*} [NormedAddCommGroup E] (a b : E) :
 theorem cutoff_gradient_density_bound
     {V χ f : EuclideanSpace ℝ (Fin d) → ℝ}
     (hχ : Differentiable ℝ χ) (hf : Differentiable ℝ f)
-    {A B : ℝ} (_hA : 0 ≤ A) (_hB : 0 ≤ B)
+    {A B : ℝ}
     (hAb : ∀ x, ‖Real.exp (V x / 2) * χ x‖ ≤ A)
     (hBb : ∀ x, ‖Real.exp (V x / 2) • gradient χ x‖ ≤ B)
     (x : EuclideanSpace ℝ (Fin d)) :
@@ -109,7 +109,7 @@ theorem compact_cutoff_gradient_energy_le
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
     (hχ : ContDiff ℝ 2 χ) (hχc : HasCompactSupport χ)
     (hf : ContDiff ℝ 2 f) (hfc : HasCompactSupport f)
-    {A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+    {A B : ℝ}
     (hAb : ∀ x, ‖Real.exp (V x / 2) * χ x‖ ≤ A)
     (hBb : ∀ x, ‖Real.exp (V x / 2) • gradient χ x‖ ≤ B) :
     (∫ x, ‖gradient (fun y => χ y * f y) x‖ ^ 2 ∂volume) ≤
@@ -141,7 +141,7 @@ theorem compact_cutoff_gradient_energy_le
   have h := integral_mono hWG
     (((hGL.norm.integrable_sq).const_mul (2 * A ^ 2)).add (hfL.integrable_sq.const_mul (2 * B ^ 2)))
     (cutoff_gradient_density_bound (hχ.differentiable (by norm_num)) (hf.differentiable
-      (by norm_num)) hA hB hAb hBb)
+      (by norm_num)) hAb hBb)
   simp only [Pi.add_apply] at h
   rwa [integral_add ((hGL.norm.integrable_sq).const_mul (2 * A ^ 2)) (hfL.integrable_sq.const_mul
     (2 * B ^ 2)),
@@ -199,7 +199,7 @@ theorem gibbsSobolev_cutoff_translation_integral_sq_le
     {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : ContDiff ℝ 2 V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
     (hχ : ContDiff ℝ 2 χ) (hχc : HasCompactSupport χ)
-    {A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+    {A B : ℝ}
     (hAb : ∀ x, ‖Real.exp (V x / 2) * χ x‖ ≤ A)
     (hBb : ∀ x, ‖Real.exp (V x / 2) • gradient χ x‖ ≤ B)
     (u : gibbsSobolevGraph hV hprob) (h : EuclideanSpace ℝ (Fin d)) :
@@ -247,7 +247,7 @@ theorem gibbsSobolev_cutoff_translation_integral_sq_le
   have hcutc : HasCompactSupport (fun x => χ x * f n x) := by
     simpa only [Pi.mul_def] using hχc.mul_right (f' := f n)
   have ht := c1_compact_translation_integral_sq_le ((hχ.mul (hf n)).of_le (by norm_num)) hcutc h
-  have he := compact_cutoff_gradient_energy_le hV hprob hχ hχc (hf n) (hfc n) hA hB hAb hBb
+  have he := compact_cutoff_gradient_energy_le hV hprob hχ hχc (hf n) (hfc n) hAb hBb
   have hN : (∫ x, f n x ^ 2 ∂μ) = ‖(p n).1‖ ^ 2 := by
     rw [← real_inner_self_eq_norm_sq, L2.inner_def]
     apply integral_congr_ae
@@ -281,7 +281,7 @@ theorem exists_gibbsSobolev_cutoff_translation_integral_bound
   have hC : 0 < C := by dsimp [C]; nlinarith [sq_pos_of_pos hA, sq_pos_of_pos hB]
   refine ⟨C, hC, ?_⟩
   intro u h
-  have hb := gibbsSobolev_cutoff_translation_integral_sq_le hV hprob hχ hχc hA.le hB.le hAb hBb u h
+  have hb := gibbsSobolev_cutoff_translation_integral_sq_le hV hprob hχ hχc hAb hBb u h
   let D := ‖gibbsSobolevDerivative hV hprob u‖
   let U := ‖gibbsSobolevInclusion hV hprob u‖
   have hid : ‖u‖ ^ 2 = U ^ 2 + D ^ 2 :=
