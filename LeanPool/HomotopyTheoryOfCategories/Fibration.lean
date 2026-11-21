@@ -119,8 +119,9 @@ theorem mem_range_mapAut_iff (hp : IsGroupoidFibration p) (x : E) (g : Aut (p.ob
 
 /-- **Layer 1.4.** Exactness at `π₀ F`: two objects of the fibre over `p x` lie in one component
 of `E` iff one lies in the component of an endpoint of a lift, out of the other, of an
-automorphism of `p x` (the fibres of `π₀ F → π₀ E` are the orbits of `Aut_B(p x)`). This holds
-for every functor of groupoids. -/
+automorphism of `p x`. This holds for every functor of groupoids. When `p` is a
+fibration, these lifts give the orbits of `Aut_B(p x)` on the components of the
+fibre. -/
 theorem mapConnectedComponents_eq_iff (p : E ⥤ B) (x : E)
     (y y' : p.Fiber (p.obj x)) :
     Functor.Fiber.fiberInclusion.mapConnectedComponents (Quotient.mk'' y) =

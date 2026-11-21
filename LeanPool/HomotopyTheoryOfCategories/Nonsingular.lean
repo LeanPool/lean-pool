@@ -14,8 +14,8 @@ import Mathlib.CategoryTheory.Limits.FunctorCategory.EpiMono
 # Non-singular presheaves and discrete fibrations
 
 A presheaf `X` on a category `C` is *non-singular* (`Presheaf.IsNonsingular`) if, for every
-element `x ∈ X(c)`, the map `(c' ⟶ c) → X(c')`, `u ↦ X(u)(x)`, is injective (compare Cisinski,
-Astérisque 308, 8.2.2). We prove:
+element `x ∈ X(c)`, the map `(c' ⟶ c) → X(c')`, `u ↦ X(u)(x)`, is injective.
+This is roadmap target 9.1. We prove:
 
 * `Presheaf.isNonsingular_iff_isThin`: `X` is non-singular iff its category of elements is thin;
 * `Presheaf.isNonsingular_iff_mono`: on a small category, `X` is non-singular iff every map
@@ -23,8 +23,10 @@ Astérisque 308, 8.2.2). We prove:
 * `isDiscreteFibration_elements`: the projection from the opposite of the category of elements
   of a presheaf is a discrete fibration (`Functor.IsDiscreteFibration`).
 
-The comparison with Mathlib's `SSet.Nonsingular` for simplicial sets and the regularity results
-of roadmap 9.2 are not formalised.
+The roadmap condition above quantifies over all elements. Mathlib's `SSet.Nonsingular`
+imposes the representable-map condition on nondegenerate simplices. Cisinski's
+Proposition 8.2.2 (Astérisque 308) concerns regularity of representables on a skeletal
+category. The regularity results of roadmap 9.2 are outside the scope of this file.
 
 This is Layer 9 of the roadmap *Homotopy theory of small categories*.
 -/
