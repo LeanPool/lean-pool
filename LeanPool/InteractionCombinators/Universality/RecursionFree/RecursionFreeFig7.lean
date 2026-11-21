@@ -509,10 +509,8 @@ theorem rawψ_self
     {α : S.Sym}
     {r : Rule S (S.arity α) (S.arity α)}
     (h : I.rule α α = some r) :
-    D.rawψ α α r h = D.rawφ α α r h := by
-  have e := D.self α r h
-  unfold rawψ rawφ
-  congr 1
+    D.rawψ α α r h = D.rawφ α α r h :=
+  D.toDecData.rawψ_self h
 
 /-- **The side of `β` against `α`, for a rule `α`–`β`, is the `ψ` of its decomposition** (page 86,
 `φ_{j,i} = ψ_{i,j}`). For `α ≠ β` there is no rule `β`–`α` (`WellFormed.unique`), so
@@ -525,11 +523,8 @@ theorem rawSide_swap_of_rule
     {α β : S.Sym}
     {r : Rule S (S.arity α) (S.arity β)}
     (h : I.rule α β = some r) :
-    D.rawSide β α = some (D.rawψ β α r h) := by
-  by_cases hab : α = β
-  · subst hab
-    rw [D.rawSide_of_rule h, D.rawψ_self h]
-  · exact D.rawSide_of_rule_swap (hI.unique α β hab (by simp [h])) h
+    D.rawSide β α = some (D.rawψ β α r h) :=
+  D.toDecData.rawSide_swap_of_rule hI h
 
 end System.RecursionFreeData
 

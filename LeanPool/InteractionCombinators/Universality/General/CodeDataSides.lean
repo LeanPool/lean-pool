@@ -53,33 +53,6 @@ variable {I : System S} (D : I.DecData)
 -- 1. Auxiliary lemmas: the raw sides of a rule
 -- ============================================================================================
 
-/-- For a rule `α`–`α`, the side `ψ` is the side `φ` (page 86, `φ_{i,i} = ψ_{i,i}`). -/
-theorem rawψ_self
-    -- a rule `r` between `α` and itself
-    {α : S.Sym}
-    {r : Rule S (S.arity α) (S.arity α)}
-    (h : I.rule α α = some r) :
-    D.rawψ α α r h = D.rawφ α α r h := by
-  have e := D.self α r h
-  unfold rawψ rawφ
-  congr 1
-
-/-- **The side of `β` against `α`, for a rule `α`–`β`, is the `ψ` of its decomposition** (page 86,
-`φ_{j,i} = ψ_{i,j}`), in a well-formed system: for `α ≠ β` there is no rule `β`–`α`
-(`WellFormed.unique`), for `α = β` the field `self` applies. -/
-theorem rawSide_swap_of_rule
-    -- the system is well formed
-    (hI : I.WellFormed)
-    -- a rule `r` between `α` and `β`
-    {α β : S.Sym}
-    {r : Rule S (S.arity α) (S.arity β)}
-    (h : I.rule α β = some r) :
-    D.rawSide β α = some (D.rawψ β α r h) := by
-  by_cases hab : α = β
-  · subst hab
-    rw [D.rawSide_of_rule h, D.rawψ_self h]
-  · exact D.rawSide_of_rule_swap (hI.unique α β hab (by simp [h])) h
-
 /-- **The two sides of a rule plug back into it** (pages 85–86, Fig. 10). In a well-formed system,
 for a rule `α`–`β`: the side of `α` against `β` is the `φ` of its decomposition, the side of `β`
 against `α` is its `ψ`, the two carry the same permutation (`σ_{j,i} = σ_{i,j}`), and plugging the

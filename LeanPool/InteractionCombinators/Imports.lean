@@ -72,6 +72,7 @@ public import LeanPool.InteractionCombinators.Universality.Codes.Decode
 public import LeanPool.InteractionCombinators.Universality.Codes.DecodeCopy
 public import LeanPool.InteractionCombinators.Universality.Codes.DecodeCopyChain
 public import LeanPool.InteractionCombinators.Universality.Codes.PackageDecomp
+public import LeanPool.InteractionCombinators.Universality.DecompositionData
 public import LeanPool.InteractionCombinators.Universality.Duplication.DupPackage
 public import LeanPool.InteractionCombinators.Universality.Duplication.DupWiring
 public import LeanPool.InteractionCombinators.Universality.Duplication.Duplication
@@ -122,4 +123,5 @@ public import LeanPool.InteractionCombinators.Universality.RecursionFree.Recursi
 public import LeanPool.InteractionCombinators.Universality.RecursionFree.RecursionFreeTerminates
 public import LeanPool.InteractionCombinators.Universality.RecursionFree.RecursionFreeTr
 public import LeanPool.InteractionCombinators.Universality.RecursionFree.SymmPerm
+public import LeanPool.InteractionCombinators.Universality.RuleSides
 public import LeanPool.InteractionCombinators.Universality.Theorem1

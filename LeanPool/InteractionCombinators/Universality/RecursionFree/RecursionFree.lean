@@ -9,7 +9,7 @@ Authors: Lorenzo Battistela
 module
 
 public import LeanPool.InteractionCombinators.Universality.RecursionFree.DecompositionLemmas
-public import LeanPool.InteractionCombinators.Universality.RecursionFree.Decomposition
+public import LeanPool.InteractionCombinators.Universality.DecompositionData
 
 /-!
 # Recursion-free interaction systems (pages 85–87)
@@ -98,23 +98,6 @@ open Term
 -- 1. Definitions: recursion-free systems
 -- ============================================================================================
 
-/-- Plugging the two sides of `D` through its permutation gives back the rule `r`, up to `Equiv`
-and an injective renaming of the internal wires of `r`: the form in which
-`Rule.plug_decompose` states it for the canonical decomposition (page 85). -/
-def Decomposition.Plugs
-    -- the numbers of auxiliary ports of the two cells
-    {a b : ℕ}
-    -- the decomposition and the rule
-    (D : Decomposition S a b)
-    (r : Rule S a b) :
-    Prop :=
-  -- there is a renaming `ι` of the internal wires of `r` into those of the plugged sides
-  ∃ ι : Fin r.internal → Fin (Rule.plug D.φ D.ψ D.σ).internal,
-    -- that is injective,
-    Function.Injective ι ∧
-    -- and the plugged sides are the same graph as `r` renamed by `ι`
-    Equiv (Rule.plug D.φ D.ψ D.σ).net (r.net.bind fun x => var (Sum.map id (Sum.map id ι) x))
-
 /-- The data that makes an interaction system recursion-free (Lafont 1997, page 86): an order on
 the alphabet, and a decomposition of every rule (page 85) normalised as on page 86, whose side
 `φ_{i,j}` on the ports of `α_i` contains only symbols smaller than `α_j`, and whose side `ψ_{i,j}`
@@ -160,6 +143,21 @@ structure System.RecursionFreeData
   rank_ψ :
     ∀ α β r (h : I.rule α β = some r),
       ∀ γ ∈ (dec α β r h).ψ.net.cells, rank γ < rank α
+
+/-- The decomposition data of a recursion-free system (page 86) with its order forgotten
+(page 90). -/
+def System.RecursionFreeData.toDecData
+    -- the data of a recursion-free system, with its order
+    {I : System S}
+    (D : I.RecursionFreeData) :
+    I.DecData where
+  dec := D.dec
+  plug := D.plug
+  linear := D.linear
+  reduced := D.reduced
+  involutive := D.involutive
+  self := D.self
+  ne := D.ne
 
 /-- An interaction system is recursion-free (Lafont 1997, page 86) if its alphabet can be ordered
 and its rules decomposed so that `φ_{i,j}` contains only symbols smaller than `α_j` and `ψ_{i,j}`
