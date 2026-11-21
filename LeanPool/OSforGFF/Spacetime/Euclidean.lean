@@ -335,12 +335,4 @@ noncomputable def euclideanActionCLM (g : E) : TestFunctionℂ →L[ℂ] TestFun
     (hg := euclidean_pullback_temperate_growth g)
     (hg_upper := euclidean_pullback_polynomial_bounds g)
 
-/-- Both actions are instances of the same abstract pattern. -/
-lemma euclidean_actions_unified (g : E) :
-    (∃ (T_test : TestFunctionℂ →L[ℂ] TestFunctionℂ),
-       ∀ f, euclideanAction g f = T_test f) ∧
-    (∃ (T_L2 : Lp ℂ 2 μ → Lp ℂ 2 μ),
-       ∀ f, euclideanActionL2 g f = T_L2 f) := by
-  exact ⟨⟨euclideanActionCLM g, fun _ => rfl⟩, ⟨euclideanActionL2 g, fun _ => rfl⟩⟩
-
 end QFT
