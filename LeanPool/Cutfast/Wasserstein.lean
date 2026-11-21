@@ -114,7 +114,7 @@ lemma inner_reg_le {A : E d →L[ℝ] E d} (hA : A.IsPositive) {δ : ℝ} (hδ :
 `∫ ‖x - T x‖² dμ - δ ∫ ‖x‖² dμ ≤ ∫ ‖x - y‖² dγ`. -/
 lemma lower_bound (μ : Measure (E d)) [IsProbabilityMeasure μ]
     (hμ : Integrable (fun x => ‖x‖ ^ 2) μ) {A : E d →L[ℝ] E d} (hA : A.IsPositive) (h : E d)
-    (γ : Measure (E d × E d)) [IsProbabilityMeasure γ] (h1 : γ.map Prod.fst = μ)
+    (γ : Measure (E d × E d)) (h1 : γ.map Prod.fst = μ)
     (h2 : γ.map Prod.snd = μ.map fun x => A x + h) {δ : ℝ} (hδ : 0 < δ) :
     ∫ x, ‖x - (A x + h)‖ ^ 2 ∂μ - δ * ∫ x, ‖x‖ ^ 2 ∂μ ≤ ∫ p, ‖p.1 - p.2‖ ^ 2 ∂γ := by
   set T : E d → E d := fun x => A x + h with hT
@@ -308,8 +308,7 @@ theorem wassersteinSq_map_affine' {d : ℕ} (μ : Measure (E d)) [IsProbabilityM
         (ae_of_all _ fun x => by positivity)]
       simp only [edist_sq_eq, le_refl]
   · -- lower bound
-    refine le_iInf fun γ => le_iInf fun hγ => le_iInf fun h1 => le_iInf fun h2 => ?_
-    have := hγ
+    refine le_iInf fun γ => le_iInf fun _ => le_iInf fun h1 => le_iInf fun h2 => ?_
     have hγ1 : Integrable (fun p : E d × E d => ‖p.1‖ ^ 2) γ := by
       have : Integrable (fun x : E d => ‖x‖ ^ 2) (γ.map Prod.fst) := h1 ▸ hμ
       exact (integrable_map_measure (by fun_prop) measurable_fst.aemeasurable).1 this
