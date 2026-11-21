@@ -387,9 +387,9 @@ lemma coe_prod_mul_inv_pow_eq_prod (m k : ℕ)
 
 /-- Theorem 3 (i), with the reduction hypotheses `hm`, `h_parts`, and `hk_nonneg`: if
 `alphaProd ℚ m μ ξ` factors as the product of `polyP a * polyP b` over
-`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then the generating function is the product of the
-power series with coefficients `dCoeff ℚ m a b`. The existence of such a pairing is
-assumed, not proved. -/
+`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then the generating
+function is the product of the power series with coefficients `dCoeff ℚ m a b`.
+The existence of such a pairing is assumed. -/
 theorem thm_manifest_factorization (m μ : ℕ) {s : ℕ}
     (ξ : Nat.Partition s) (hm : 2 ≤ m) (h_parts : ∀ i ∈ ξ.parts, i ≤ m)
     (hk_nonneg : countMaxParts m ξ ≤ μ / m + 1)
@@ -1094,8 +1094,9 @@ lemma D_coeff_eq_nat_cast (m a b u : ℕ) (hm : 2 ≤ m)
 
 /-- Theorem 3 (iii), with the reduction hypotheses `hm`, `h_parts`, and `hk_nonneg`: if
 `alphaProd ℚ m μ ξ` factors as the product of `polyP a * polyP b` over
-`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then every coefficient of the generating function is
-nonnegative. The existence of such a pairing for the partition is assumed, not proved. -/
+`k = reducedK m μ ξ` given pairs `(a, b)` with `a + b ≤ m - 1`, then every coefficient
+of the generating function is nonnegative. The existence of such a pairing for
+the partition is assumed. -/
 theorem thm_manifest_coeff_nonneg (m μ : ℕ) {s : ℕ}
     (ξ : Nat.Partition s) (hm : 2 ≤ m) (h_parts : ∀ i ∈ ξ.parts, i ≤ m)
     (hk_nonneg : countMaxParts m ξ ≤ μ / m + 1)
