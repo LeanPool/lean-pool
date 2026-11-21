@@ -9,7 +9,9 @@ module
 import LeanPool.Zeta5Irrational.Growth.InnerTable
 import LeanPool.Zeta5Irrational.Growth.TableGen
 public import LeanPool.Zeta5Irrational.Growth.TablePrime
+import Batteries.Data.List.Lemmas
 import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Data.List.GetD
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Ineq
 import Mathlib.Tactic.NormNum.Inv
@@ -96,9 +98,21 @@ def kIn (i : ℕ) : ℤ :=
 noncomputable def gIn (i : ℕ) (x : ℝ) : ℝ :=
   ((aInL.getD i 0 : ℚ) : ℝ) * x + ((bInL.getD i 0 : ℚ) : ℝ)
 
+private lemma tInL_chain : tInL.IsChain (fun a b => a < b) := by decide +kernel
+
+private lemma tInL_length : tInL.length = 126 := by decide +kernel
+
 theorem tIn_mono : ∀ i < 125, tIn i < tIn (i + 1) := by
   have certificate : ∀ i : Fin 125,
-      tInL.getD i.val 0 < tInL.getD (i.val + 1) 0 := by decide +kernel
+      tInL.getD i.val 0 < tInL.getD (i.val + 1) 0 := by
+    as_aux_lemma =>
+      intro i
+      have hsucc : i.val + 1 < tInL.length := by
+        rw [tInL_length]
+        exact Nat.succ_lt_succ i.isLt
+      have hindex := (Nat.lt_succ_self i.val).trans hsucc
+      simpa only [List.getD_eq_getElem _ _ hindex, List.getD_eq_getElem _ _ hsucc] using
+        tInL_chain.getElem i.val hsucc
   intro i hi
   simp only [tIn]
   exact_mod_cast certificate ⟨i, hi⟩
