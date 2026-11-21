@@ -375,6 +375,386 @@ def test_stuck_analyzer_is_stopped_and_named(tmp_path: Path, monkeypatch) -> Non
         analyzer.analyze("LeanPool.Stuck")
 
 
+def sleeping_doc_gen(tmp_path: Path, seconds: dict[str, float]) -> Path:
+    """Write a doc-gen stand-in that sleeps for a time chosen by module."""
+    script = tmp_path / "doc-gen4"
+    script.write_text(
+        f"#!{sys.executable}\nimport sys, time\ntime.sleep({seconds!r}[sys.argv[4]])\n"
+    )
+    script.chmod(0o755)
+    return script
+
+
+def test_analyzer_exhausting_memory_is_stopped_and_named(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """A runner that runs out of memory dies without a message or a checkpoint.
+
+    On 2026-11-21 doc-gen passed 27 GiB on one module and the hosted runner was
+    shut down after three and a half hours of analysis, none of it saved.
+    """
+    build = tmp_path / "docbuild" / ".lake" / "build"
+    build.mkdir(parents=True)
+    script = sleeping_doc_gen(tmp_path, {"LeanPool.Huge": 60})
+    monkeypatch.setattr(documentation, "MEMORY_POLL_SECONDS", 0.05)
+    monkeypatch.setattr(documentation, "free_memory", lambda: 2**30)
+    monkeypatch.setattr(documentation, "process_memory", lambda pid: 14 * 2**30)
+    analyzer = documentation.Analyzer(str(script), {}, build, "https://example.com")
+    started = time.monotonic()
+    with pytest.raises(
+        documentation.AnalysisMemoryError,
+        match=r"LeanPool\.Huge was stopped: it held 14\.0 GiB .* had 1\.0 GiB left",
+    ):
+        analyzer.analyze("LeanPool.Huge")
+    assert time.monotonic() - started < 30
+    assert documentation._RUNNING == {}
+
+
+def test_only_the_largest_analyzer_stops_under_a_shortage(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """The other analyzers finish their modules, and the error names them."""
+    build = tmp_path / "docbuild" / ".lake" / "build"
+    build.mkdir(parents=True)
+    script = sleeping_doc_gen(tmp_path, {"LeanPool.Huge": 60, "LeanPool.Small": 1})
+    monkeypatch.setattr(documentation, "MEMORY_POLL_SECONDS", 0.05)
+    sizes = {"LeanPool.Huge": 13 * 2**30, "LeanPool.Small": 2**28}
+
+    def held(pid: int) -> int | None:
+        module = documentation._RUNNING.get(pid)
+        return sizes[module] if module else None
+
+    def free() -> int:
+        # The shortage lasts while both run, and ends with the large analyzer.
+        both = len(documentation._RUNNING) == 2
+        huge = "LeanPool.Huge" in documentation._RUNNING.values()
+        return 2**29 if both and huge else 8 * 2**30
+
+    monkeypatch.setattr(documentation, "process_memory", held)
+    monkeypatch.setattr(documentation, "free_memory", free)
+    analyzer = documentation.Analyzer(str(script), {}, build, "https://example.com")
+    outcome: dict[str, BaseException | None] = {}
+
+    def run(module: str) -> None:
+        try:
+            analyzer.analyze(module)
+            outcome[module] = None
+        except BaseException as error:
+            outcome[module] = error
+
+    threads = [threading.Thread(target=run, args=(module,)) for module in sizes]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=30)
+    assert outcome["LeanPool.Small"] is None
+    assert isinstance(outcome["LeanPool.Huge"], documentation.AnalysisMemoryError)
+    assert "other analyzers: LeanPool.Small 0.2 GiB" in str(outcome["LeanPool.Huge"])
+
+
+def test_analyzer_does_not_act_on_a_reading_older_than_another_stop(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """A stale "memory is low" must not stop a second, healthy analyzer.
+
+    The small analyzer reads the low figure and is slow to decide. Meanwhile
+    the large one would stop and leave the list, and the small one, deciding
+    on its old reading, would find itself the largest and stop as well.
+    """
+    build = tmp_path / "docbuild" / ".lake" / "build"
+    build.mkdir(parents=True)
+    script = sleeping_doc_gen(tmp_path, {"LeanPool.Huge": 60, "LeanPool.Small": 2})
+    monkeypatch.setattr(documentation, "MEMORY_POLL_SECONDS", 0.05)
+    sizes = {"LeanPool.Huge": 13 * 2**30, "LeanPool.Small": 2**28}
+
+    def held(pid: int) -> int | None:
+        module = documentation._RUNNING.get(pid)
+        return sizes[module] if module else None
+
+    def free() -> int:
+        low = "LeanPool.Huge" in documentation._RUNNING.values()
+        if low and threading.current_thread().name == "LeanPool.Small":
+            time.sleep(0.5)
+        return 2**29 if low else 8 * 2**30
+
+    monkeypatch.setattr(documentation, "process_memory", held)
+    monkeypatch.setattr(documentation, "free_memory", free)
+    analyzer = documentation.Analyzer(str(script), {}, build, "https://example.com")
+    outcome: dict[str, BaseException | None] = {}
+
+    def run(module: str) -> None:
+        try:
+            analyzer.analyze(module)
+            outcome[module] = None
+        except BaseException as error:
+            outcome[module] = error
+
+    threads = [
+        threading.Thread(target=run, args=(module,), name=module) for module in sizes
+    ]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join(timeout=30)
+    assert isinstance(outcome["LeanPool.Huge"], documentation.AnalysisMemoryError)
+    assert outcome["LeanPool.Small"] is None
+
+
+def test_memory_polling_keeps_output_larger_than_a_pipe(
+    tmp_path: Path, monkeypatch, caplog
+) -> None:
+    """Polling must not lose or block on what doc-gen prints between two looks."""
+    build = tmp_path / "docbuild" / ".lake" / "build"
+    build.mkdir(parents=True)
+    script = tmp_path / "doc-gen4"
+    script.write_text(
+        f"#!{sys.executable}\n"
+        "import sys, time\n"
+        "print('first ' + 'x' * 300000, flush=True)\n"
+        "time.sleep(0.3)\n"
+        "print('last line')\n"
+    )
+    script.chmod(0o755)
+    monkeypatch.setattr(documentation, "MEMORY_POLL_SECONDS", 0.05)
+    analyzer = documentation.Analyzer(str(script), {}, build, "https://example.com")
+    with caplog.at_level(logging.INFO):
+        analyzer.analyze("LeanPool.Verbose")
+    assert "LeanPool.Verbose: first x" in caplog.text
+    assert "x\nlast line" in caplog.text
+
+
+def test_failed_stage_keeps_its_finished_batches_for_the_next_run(
+    repository: Path, monkeypatch, tmp_path: Path
+) -> None:
+    """One module that cannot be analyzed must not cost the hours before it."""
+    (repository / "LeanPool" / "Large").mkdir()
+    for number in range(8):
+        (repository / "LeanPool" / "Large" / f"M{number}.lean").write_text("module\n")
+    failing = RecordingAnalyzer(repository, fail="LeanPool.Large.M6")
+    monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: failing)
+    output = tmp_path / "github-output"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(output))
+    arguments = ["documentation", "batch", "--repo", str(repository)]
+    monkeypatch.setattr(
+        sys, "argv", [*arguments, "--batch-size", "2", "--workers", "1"]
+    )
+    with pytest.raises(subprocess.CalledProcessError):
+        documentation.main()
+    assert output.read_text() == "resumable=true\n"
+    finished = [module for module in failing.modules if module != "LeanPool.Large.M6"]
+    assert len(finished) >= 4
+    working = RecordingAnalyzer(repository)
+    monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: working)
+    output.write_text("")
+    documentation.main()
+    assert output.read_text() == "complete=true\n"
+    # Whole batches that finished before the failure are not analyzed again.
+    assert len(working.modules) < len(failing.modules)
+    assert "LeanPool.Large.M6" in working.modules
+    documentation.require_complete(repository)
+
+
+def test_stage_that_fails_before_analysis_replaces_no_checkpoint(
+    repository: Path, analyzer: RecordingAnalyzer, monkeypatch, tmp_path: Path
+) -> None:
+    """Preparation may rewrite rows, so its failure leaves nothing worth saving."""
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+
+    def fail(root: Path, lake: str) -> None:
+        raise RuntimeError("prerequisite failed")
+
+    monkeypatch.setattr(documentation, "prepare_analysis", fail)
+    output = tmp_path / "github-output"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(output))
+    monkeypatch.setattr(
+        sys, "argv", ["documentation", "batch", "--repo", str(repository)]
+    )
+    with pytest.raises(RuntimeError, match="prerequisite failed"):
+        documentation.main()
+    assert output.read_text() == "resumable=false\n"
+
+
+def test_failed_stage_saves_only_a_resumable_checkpoint() -> None:
+    """The save step must follow the analysis's own word, never a cancelled job."""
+    workflow = Path(__file__).resolve().parents[2] / ".github/workflows/docs-build.yml"
+    steps = yaml.safe_load(workflow.read_text())["jobs"]["build"]["steps"]
+    save = next(
+        step for step in steps if step.get("name") == "Save completed analysis batches"
+    )
+    condition = save["if"]
+    assert "!cancelled()" in condition
+    assert "inputs.phase == 'analysis'" in condition
+    assert "steps.analysis.outcome == 'success'" in condition
+    assert "steps.analysis.outputs.resumable == 'true'" in condition
+    assert "always()" not in condition
+
+
+class UnanalyzableAnalyzer(RecordingAnalyzer):
+    """Stand in for doc-gen failing on chosen modules the way a real run does."""
+
+    def __init__(self, root: Path, errors: dict[str, BaseException]) -> None:
+        """Raise the given error for each listed module."""
+        super().__init__(root)
+        self.errors = errors
+
+    def analyze(self, module: str) -> None:
+        """Record the attempt, then fail or commit the module's records."""
+        if module in self.errors:
+            with self.lock:
+                self.modules.append(module)
+            raise self.errors[module]
+        super().analyze(module)
+
+
+def exhausted(module: str, gibibytes: float) -> documentation.AnalysisMemoryError:
+    """Build the error of an analyzer stopped while holding that much."""
+    return documentation.AnalysisMemoryError(
+        f"documentation analysis of {module} was stopped: it held {gibibytes} GiB",
+        int(gibibytes * 2**30),
+    )
+
+
+def add_project(root: Path, name: str, modules: int) -> list[str]:
+    """Add a project of independent modules and return their names."""
+    (root / "LeanPool" / name).mkdir()
+    for number in range(modules):
+        (root / "LeanPool" / name / f"M{number}.lean").write_text("module\n")
+    return [f"LeanPool.{name}.M{number}" for number in range(modules)]
+
+
+def test_project_doc_gen_cannot_analyze_is_left_out_and_named(
+    repository: Path, monkeypatch
+) -> None:
+    """One project's module must not keep every other project unpublished.
+
+    FastDynamo, imported on 2026-11-20, has modules on which doc-gen allocates
+    without end. Every later documentation run would have ended there.
+    """
+    add_project(repository, "Large", 6)
+    add_project(repository, "Later", 3)
+    recorder = UnanalyzableAnalyzer(
+        repository, {"LeanPool.Large.M2": exhausted("LeanPool.Large.M2", 13.2)}
+    )
+    monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: recorder)
+    assert documentation.build_batches(repository, "lake", 60, 2, workers=1)
+    build = repository / "docbuild" / ".lake" / "build"
+    state = json.loads((build / documentation.STATE).read_text())
+    assert sorted(state["projects"]) == ["", "A", "Later", "Z"]
+    assert state["partial"] == {}
+    assert state["undocumented"]["Large"]["module"] == "LeanPool.Large.M2"
+    assert "it held 13.2 GiB" in state["undocumented"]["Large"]["reason"]
+    # No further module of the project was started.
+    assert [name for name in recorder.modules if ".Large." in name] == [
+        "LeanPool.Large.M0",
+        "LeanPool.Large.M1",
+        "LeanPool.Large.M2",
+    ]
+    documentation.require_complete(repository)
+    # The next run does not try the unchanged project again ...
+    recorder.modules.clear()
+    assert documentation.build_batches(repository, "lake", 60, 2, workers=1)
+    assert recorder.modules == []
+    # ... and analyzes it again once its sources change.
+    (repository / "LeanPool" / "Large" / "M2.lean").write_text("module\n-- repaired\n")
+    recorder.errors.clear()
+    assert documentation.build_batches(repository, "lake", 60, 2, workers=1)
+    assert len([name for name in recorder.modules if ".Large." in name]) == 6
+    state = json.loads((build / documentation.STATE).read_text())
+    assert "undocumented" not in state
+    assert "Large" in state["projects"]
+
+
+def test_stuck_module_leaves_its_project_out(repository: Path, monkeypatch) -> None:
+    """An analysis that never ends is the project's property as well."""
+    add_project(repository, "Slow", 2)
+    stuck = subprocess.TimeoutExpired(["doc-gen4", "single", "LeanPool.Slow.M0"], 1800)
+    recorder = UnanalyzableAnalyzer(repository, {"LeanPool.Slow.M0": stuck})
+    monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: recorder)
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    build = repository / "docbuild" / ".lake" / "build"
+    state = json.loads((build / documentation.STATE).read_text())
+    assert state["undocumented"]["Slow"]["module"] == "LeanPool.Slow.M0"
+    assert "1800 seconds" in state["undocumented"]["Slow"]["reason"]
+
+
+def test_analyzer_stopped_as_a_bystander_fails_the_stage(
+    repository: Path, monkeypatch
+) -> None:
+    """A small analyzer stopped in a shortage says nothing about its project."""
+    add_project(repository, "Small", 2)
+    recorder = UnanalyzableAnalyzer(
+        repository, {"LeanPool.Small.M0": exhausted("LeanPool.Small.M0", 0.3)}
+    )
+    monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: recorder)
+    with pytest.raises(documentation.AnalysisMemoryError, match="LeanPool.Small.M0"):
+        documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    build = repository / "docbuild" / ".lake" / "build"
+    assert "undocumented" not in json.loads((build / documentation.STATE).read_text())
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+
+
+def test_many_unanalyzable_projects_fail_instead_of_emptying_the_site(
+    repository: Path, monkeypatch
+) -> None:
+    """A broken doc-gen or runner must not publish a site without its projects."""
+    errors = {}
+    for number in range(documentation.MAX_UNDOCUMENTED_PROJECTS + 1):
+        module = add_project(repository, f"Broken{number}", 1)[0]
+        errors[module] = exhausted(module, 12.0)
+    recorder = UnanalyzableAnalyzer(repository, errors)
+    monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: recorder)
+    with pytest.raises(RuntimeError, match="leaves out at most"):
+        documentation.build_batches(repository, "lake", 60, 128, workers=1)
+    with pytest.raises(ValueError, match="incomplete"):
+        documentation.require_complete(repository)
+
+
+def test_site_has_no_page_of_a_project_left_out_and_reports_it(
+    repository: Path, monkeypatch, tmp_path: Path, capsys
+) -> None:
+    """A partly analyzed project is not published, and the site says which."""
+    modules = add_project(repository, "Large", 3)
+    recorder = UnanalyzableAnalyzer(
+        repository, {modules[2]: exhausted(modules[2], 13.2)}
+    )
+    monkeypatch.setattr(documentation, "prepare_analysis", lambda root, lake: recorder)
+    assert documentation.build_batches(repository, "lake", 60, 8, workers=1)
+    build = repository / "docbuild" / ".lake" / "build"
+    left_out = documentation.undocumented_projects(repository)
+    assert list(left_out) == ["Large"]
+    # Rendering first removes the rows of the modules that were analyzed.
+    kept = {
+        name
+        for name in documentation.module_sources(repository)
+        if documentation.project_of(name) not in left_out
+    }
+    assert documentation.prune_modules(build, kept) == modules[:2]
+    site = build / "doc"
+    for name in ("index.html", "declarations/declaration-data.bmp", "LeanPool.html"):
+        (site / name).parent.mkdir(parents=True, exist_ok=True)
+        (site / name).write_text("content")
+    (site / "LeanPool").mkdir()
+    for name in ("A", "Z"):
+        (site / "LeanPool" / f"{name}.html").write_text("content")
+    documentation.validate_site(repository)
+    (site / "LeanPool" / "Large").mkdir()
+    (site / "LeanPool" / "Large" / "M0.html").write_text("content")
+    with pytest.raises(ValueError, match="pages of a project that was left out"):
+        documentation.validate_site(repository)
+    summary = tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    documentation.report_undocumented(site, left_out)
+    report = json.loads((site / "undocumented.json").read_text())
+    assert report["Large"]["module"] == modules[2]
+    assert "::warning::Project Large is not in this documentation" in (
+        capsys.readouterr().out
+    )
+    assert "Project Large is not in this documentation" in summary.read_text()
+    documentation.report_undocumented(site, {})
+    assert json.loads((site / "undocumented.json").read_text()) == {}
+
+
 def test_lake_prepares_every_input_before_direct_analysis(tmp_path: Path) -> None:
     """Lake must still compile the pool and doc-gen's prerequisites first."""
     (tmp_path / "docbuild").mkdir()

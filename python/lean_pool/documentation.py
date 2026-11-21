@@ -7,6 +7,13 @@ modules and needs no rollback. Progress is recorded per project, and per module
 inside an unfinished project: a project whose sources and compiled modules are
 unchanged is never analyzed again, so routine merges, option edits and helper
 changes do not restart the whole pool.
+
+The site holds every module of every project doc-gen can analyze. A project
+with a module it cannot analyze within the machine's memory or the time allowed
+is left out whole, listed in the site's `undocumented.json` and in the run's
+warnings, and analyzed again once its sources change. A few projects import
+another one; their pages are still rendered when that one is left out, with
+nothing to link to for its declarations.
 """
 
 from __future__ import annotations
@@ -29,6 +36,11 @@ from dataclasses import dataclass
 from graphlib import TopologicalSorter
 from pathlib import Path
 
+from lean_pool.build_time_limits import (
+    MEMORY_FLOOR_BYTES,
+    free_memory,
+    process_memory,
+)
 from lean_pool.exposition.source_text import code_view
 from lean_pool.indexes import structure_errors
 
@@ -45,6 +57,22 @@ ANALYZERS = 4
 # Ordinary modules take seconds. A stuck analyzer must fail by name instead of
 # silently consuming the job's remaining time.
 ANALYSIS_SECONDS = 1800
+# doc-gen can allocate without end on a single module: on 2026-11-21 it gained
+# 55 MiB a second on LeanPool.FastDynamo.Fourier.PeriodicH2 and passed 27 GiB.
+# A 16 GB runner then dies without a message and without saving the stage. So
+# when the machine is about to run out, the analyzer holding the most is stopped
+# and named. No fixed size per analyzer: a module that fits today keeps fitting.
+MEMORY_POLL_SECONDS = 1.0
+# A project is left out of a publication when doc-gen cannot analyze one of its
+# modules: stopped while holding at least this much, or still running after
+# ANALYSIS_SECONDS. That is a property of the project's declarations, which its
+# authors can change, and must not keep every other project's pages from being
+# published. An analyzer stopped while holding less was a victim of a shortage
+# it did not cause, and fails the stage as before.
+UNDOCUMENTED_MEMORY_BYTES = 4 * 1024**3
+# More projects than this in one publication means the fault is ours (doc-gen,
+# the runner), so the stage fails instead of publishing a hollow site.
+MAX_UNDOCUMENTED_PROJECTS = 3
 # What doc-gen's `docInfo` facet builds before it analyzes a local module.
 PREREQUISITES = ("doc-gen4", "doc-gen4/bibPrepass", "doc-gen4/coreDocs")
 SOURCE_TARGET = "lean-pool/LeanPool:srcUri"
@@ -190,7 +218,8 @@ def read_state(build: Path, identity: str) -> dict:
     state = json.loads(path.read_text()) if path.exists() else {}
     if state.get("identity") != identity:
         return {}
-    if not all(isinstance(state.get(key, {}), dict) for key in ("projects", "partial")):
+    keys = ("projects", "partial", "undocumented")
+    if not all(isinstance(state.get(key, {}), dict) for key in keys):
         raise ValueError("invalid documentation checkpoint progress")
     return state
 
@@ -221,6 +250,27 @@ def restore_progress(
         if fingerprints.get(project) == record["fingerprint"] and project not in done
     }
     return done, partial
+
+
+def restore_undocumented(
+    fingerprints: dict[str, str], state: dict
+) -> dict[str, dict[str, str]]:
+    """Return the projects left out earlier whose sources and modules are unchanged.
+
+    A changed project is analyzed again, so repairing its declarations is all it
+    takes to bring its pages back.
+    """
+    return {
+        project: dict(record)
+        for project, record in state.get("undocumented", {}).items()
+        if fingerprints.get(project) == record.get("fingerprint")
+    }
+
+
+def undocumented_projects(root: Path) -> dict[str, dict[str, str]]:
+    """Return the projects this snapshot's checkpoint leaves out, with the reason."""
+    build = root / "docbuild" / ".lake" / "build"
+    return read_state(build, input_identity(root)).get("undocumented", {})
 
 
 def ordered_modules(root: Path, projects: set[str] | None = None) -> list[str]:
@@ -347,6 +397,57 @@ def validate_database(build: Path) -> None:
         raise ValueError(f"invalid documentation checkpoint: {checkpoint}, {integrity}")
 
 
+class AnalysisMemoryError(RuntimeError):
+    """An analyzer was stopped because the machine was running out of memory."""
+
+    def __init__(self, message: str, held: int = 0) -> None:
+        """Keep what the stopped analyzer held, in bytes."""
+        super().__init__(message)
+        self.held = held
+
+
+# The analyzers running now, by process, so the largest one can be found.
+_RUNNING: dict[int, str] = {}
+_RUNNING_LOCK = threading.Lock()
+# One analyzer at a time reads the free memory, decides and, if it is the one
+# to go, has exited before the next one looks. Otherwise a second analyzer
+# could act on a reading taken before the first one released its memory.
+_STOP_LOCK = threading.Lock()
+
+
+def _gibibytes(size: int) -> str:
+    return f"{size / 2**30:.1f} GiB"
+
+
+def memory_shortage(pid: int) -> tuple[str, int] | None:
+    """Say why analyzer ``pid`` must stop and what it holds, or ``None``.
+
+    Only the analyzer holding the most anonymous memory stops, and only when
+    the machine has less than the floor left; the others finish their modules.
+    """
+    free = free_memory()
+    if free is None or free >= MEMORY_FLOOR_BYTES:
+        return None
+    with _RUNNING_LOCK:
+        running = dict(_RUNNING)
+    held = {process: process_memory(process) or 0 for process in running}
+    if (
+        pid not in held
+        or max(held, key=lambda process: (held[process], -process)) != pid
+    ):
+        return None
+    others = ", ".join(
+        f"{module} {_gibibytes(held[process])}"
+        for process, module in sorted(running.items())
+        if process != pid
+    )
+    reason = (
+        f"it held {_gibibytes(held[pid])} when the machine had {_gibibytes(free)} left"
+        + (f" (other analyzers: {others})" if others else "")
+    )
+    return reason, held[pid]
+
+
 @dataclass(frozen=True)
 class Analyzer:
     """Run doc-gen's single-module analysis exactly as its Lake facet would."""
@@ -361,19 +462,50 @@ class Analyzer:
         location = "/".join([self.sources, *module.split(".")]) + ".lean"
         command = [self.executable, "single", "--build", str(self.build)]
         command += [module, "api-docs.db", location]
-        result = subprocess.run(
+        started = time.monotonic()
+        process = subprocess.Popen(
             command,
             cwd=self.build.parents[1],
             env=self.environment,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            timeout=ANALYSIS_SECONDS,
         )
-        if output := result.stdout.strip():
+        with _RUNNING_LOCK:
+            _RUNNING[process.pid] = module
+        try:
+            while True:
+                try:
+                    output, _ = process.communicate(timeout=MEMORY_POLL_SECONDS)
+                    break
+                except subprocess.TimeoutExpired:
+                    # A retried `communicate` keeps what it has already read.
+                    if time.monotonic() - started >= ANALYSIS_SECONDS:
+                        process.kill()
+                        process.communicate()
+                        raise subprocess.TimeoutExpired(
+                            command, ANALYSIS_SECONDS
+                        ) from None
+                    with _STOP_LOCK:
+                        shortage = memory_shortage(process.pid)
+                        if shortage:
+                            process.kill()
+                            process.communicate()
+                            with _RUNNING_LOCK:
+                                _RUNNING.pop(process.pid, None)
+                    if shortage:
+                        raise AnalysisMemoryError(
+                            f"documentation analysis of {module} was stopped: "
+                            f"{shortage[0]}",
+                            shortage[1],
+                        ) from None
+        finally:
+            with _RUNNING_LOCK:
+                _RUNNING.pop(process.pid, None)
+        if output := output.strip():
             LOGGER.info("%s: %s", module, output)
-        if result.returncode:
-            raise subprocess.CalledProcessError(result.returncode, command)
+        if process.returncode:
+            raise subprocess.CalledProcessError(process.returncode, command)
 
 
 def compile_pool(root: Path, lake: str) -> None:
@@ -410,13 +542,31 @@ def prepare_analysis(root: Path, lake: str) -> Analyzer:
     return Analyzer(executable, environment, docbuild / ".lake" / "build", sources[-1])
 
 
+def undocumented_reason(error: BaseException) -> str | None:
+    """Why this failure leaves the module's project out, or ``None`` if it must fail."""
+    if isinstance(error, AnalysisMemoryError):
+        return str(error) if error.held >= UNDOCUMENTED_MEMORY_BYTES else None
+    if isinstance(error, subprocess.TimeoutExpired):
+        return f"its documentation analysis ran for {ANALYSIS_SECONDS} seconds"
+    return None
+
+
 def analyze_modules(
-    analyzer: Analyzer, modules: list[str], workers: int, deadline: float
+    analyzer: Analyzer,
+    modules: list[str],
+    workers: int,
+    deadline: float,
+    undocumented: dict[str, dict[str, str]] | None = None,
 ) -> list[str]:
     """Analyze with a fixed number of processes and return the modules finished.
 
     No analysis starts after the deadline or after another one failed. Those
     already running complete first, so no writer outlives this call.
+
+    With ``undocumented`` given, a module that doc-gen cannot analyze (see
+    `undocumented_reason`) does not fail the call: its project is recorded
+    there with the module and the reason, and no further module of that
+    project is started.
     """
     queue = iter(modules)
     lock = threading.Lock()
@@ -429,11 +579,21 @@ def analyze_modules(
                 module = next(queue, None)
             if module is None:
                 return
+            project = project_of(module)
+            if undocumented is not None and project in undocumented:
+                continue
             try:
                 analyzer.analyze(module)
             except BaseException as error:
-                failures.append(error)
-                return
+                reason = None if undocumented is None else undocumented_reason(error)
+                if reason is None:
+                    failures.append(error)
+                    return
+                with lock:
+                    undocumented.setdefault(
+                        project, {"module": module, "reason": reason}
+                    )
+                continue
             with lock:
                 finished.append(module)
 
@@ -462,15 +622,18 @@ def build_batches(
     identity = input_identity(root)
     fingerprints = project_fingerprints(root)
     done, partial = restore_progress(build, identity, fingerprints, previous)
-    write_progress(build, identity, done, partial, fingerprints)
+    undocumented = restore_undocumented(fingerprints, previous)
+    write_progress(build, identity, done, partial, fingerprints, undocumented)
     clean_checkpoint(build, set(module_sources(root)))
     pending = [
         module
-        for module in ordered_modules(root, set(fingerprints) - set(done))
+        for module in ordered_modules(
+            root, set(fingerprints) - set(done) - set(undocumented)
+        )
         if module not in partial.get(project_of(module), ())
     ]
     remaining = Counter(map(project_of, pending))
-    for project in set(fingerprints) - set(done) - set(remaining):
+    for project in set(fingerprints) - set(done) - set(remaining) - set(undocumented):
         done[project] = fingerprints[project]
     LOGGER.info(
         "Documentation analysis: %s/%s projects reused, %s modules to analyze",
@@ -478,26 +641,62 @@ def build_batches(
         len(fingerprints),
         len(pending),
     )
-    analyzed = 0
+    analyzed = left_out = 0
     for position in range(0, len(pending), batch_size):
         if time.monotonic() >= deadline:
             break
         batch = pending[position : position + batch_size]
-        for module in analyze_modules(analyzer, batch, workers, deadline):
+        finished = analyze_modules(analyzer, batch, workers, deadline, undocumented)
+        for project, record in undocumented.items():
+            if "fingerprint" not in record:
+                record["fingerprint"] = fingerprints[project]
+                partial.pop(project, None)
+                left_out += 1
+                LOGGER.warning("Leaving out project %s: %s", project, record["reason"])
+                print(f"::warning::Leaving out project {project}: {record['reason']}")
+        if len(undocumented) > MAX_UNDOCUMENTED_PROJECTS:
+            raise RuntimeError(
+                f"doc-gen could not analyze {len(undocumented)} projects "
+                f"({', '.join(sorted(undocumented))}); a publication leaves out "
+                f"at most {MAX_UNDOCUMENTED_PROJECTS}"
+            )
+        for module in finished:
             project = project_of(module)
+            if project in undocumented:
+                continue
             partial.setdefault(project, set()).add(module)
             remaining[project] -= 1
             analyzed += 1
             if not remaining[project]:
                 done[project] = fingerprints[project]
-        write_progress(build, identity, done, partial, fingerprints)
+        write_progress(build, identity, done, partial, fingerprints, undocumented)
         LOGGER.info("Documentation analysis: %s/%s modules", analyzed, len(pending))
-    if pending and not analyzed:
+    if pending and not analyzed and not left_out:
         raise RuntimeError("no module was analyzed within the time allowance")
-    write_progress(build, identity, done, partial, fingerprints)
+    write_progress(build, identity, done, partial, fingerprints, undocumented)
     if analyzed:
         validate_database(build)
-    return done == project_fingerprints(root)
+    accounted = {
+        project: record["fingerprint"] for project, record in undocumented.items()
+    }
+    return accounted | done == project_fingerprints(root)
+
+
+def resumable(root: Path) -> bool:
+    """Whether a failed stage left a checkpoint that the next run may reuse.
+
+    Progress carries the snapshot's identity only once preparation has passed,
+    and then lists nothing but batches that finished. A stage that fails before
+    that, or with a damaged database, must not replace an older checkpoint.
+    """
+    build = root / "docbuild" / ".lake" / "build"
+    try:
+        if not read_state(build, input_identity(root)):
+            return False
+        validate_database(build)
+    except (OSError, ValueError, sqlite3.Error):
+        return False
+    return True
 
 
 def write_progress(
@@ -506,8 +705,9 @@ def write_progress(
     done: dict[str, str],
     partial: dict[str, set[str]],
     fingerprints: dict[str, str],
+    undocumented: dict[str, dict[str, str]] | None = None,
 ) -> None:
-    """Record completed projects and the analyzed modules of unfinished ones."""
+    """Record completed projects, partly analyzed ones, and those left out."""
     build.mkdir(parents=True, exist_ok=True)
     state = {
         "identity": identity,
@@ -518,13 +718,24 @@ def write_progress(
             if project not in done
         },
     }
+    if left_out := {
+        project: record
+        for project, record in sorted((undocumented or {}).items())
+        if project not in done and "fingerprint" in record
+    }:
+        state["undocumented"] = left_out
     (build / STATE).write_text(json.dumps(state) + "\n")
 
 
 def require_complete(root: Path) -> None:
     """Refuse to render or publish an incomplete or different source snapshot."""
     build = root / "docbuild" / ".lake" / "build"
-    if read_progress(build, input_identity(root)) != project_fingerprints(root):
+    state = read_state(build, input_identity(root))
+    accounted = {
+        project: record.get("fingerprint")
+        for project, record in state.get("undocumented", {}).items()
+    }
+    if accounted | state.get("projects", {}) != project_fingerprints(root):
         raise ValueError("documentation analysis is incomplete for this snapshot")
     validate_database(build)
 
@@ -535,6 +746,13 @@ def render(root: Path, lake: str) -> None:
     require_complete(root)
     build = root / "docbuild" / ".lake" / "build"
     shutil.rmtree(build / "doc" / "LeanPool", ignore_errors=True)
+    # A project left out has some analyzed modules; none of them is published.
+    left_out = undocumented_projects(root)
+    if left_out:
+        prune_modules(
+            build,
+            {name for name in module_sources(root) if project_of(name) not in left_out},
+        )
     # Loading one import-all Lean environment would combine the independent
     # projects' memory requirements. The database already holds every local
     # module; only external names need an environment before rendering it.
@@ -569,13 +787,40 @@ def render(root: Path, lake: str) -> None:
     validate_site(root)
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True)
     (build / "doc" / "SOURCE_SHA").write_text(commit)
+    report_undocumented(build / "doc", left_out)
+
+
+def report_undocumented(site: Path, left_out: dict[str, dict[str, str]]) -> None:
+    """Publish and announce which projects this site leaves out, and why."""
+    report = {
+        project: {"module": record["module"], "reason": record["reason"]}
+        for project, record in sorted(left_out.items())
+    }
+    (site / "undocumented.json").write_text(json.dumps(report, indent=2) + "\n")
+    lines = [
+        f"Project {project} is not in this documentation: {record['reason']}"
+        for project, record in report.items()
+    ]
+    for line in lines:
+        print(f"::warning::{line}")
+    if lines and (summary := os.environ.get("GITHUB_STEP_SUMMARY")):
+        with Path(summary).open("a") as stream:
+            stream.write("\n".join(["### Projects left out", "", *lines, ""]))
 
 
 def validate_site(root: Path) -> None:
-    """Require every local module page and reject accidentally rendered dependencies."""
+    """Require every module page of every documented project, and nothing else.
+
+    A project that was left out must have no page at all, and dependencies must
+    not have been rendered by accident.
+    """
     site = root / "docbuild" / ".lake" / "build" / "doc"
+    left_out = undocumented_projects(root)
+    pages = {name: name.replace(".", "/") + ".html" for name in module_sources(root)}
     required = ["index.html", "declarations/declaration-data.bmp"]
-    required += [name.replace(".", "/") + ".html" for name in module_sources(root)]
+    required += [
+        page for name, page in pages.items() if project_of(name) not in left_out
+    ]
     missing = [
         name
         for name in required
@@ -583,6 +828,13 @@ def validate_site(root: Path) -> None:
     ]
     if missing:
         raise ValueError(f"missing documentation pages: {missing[:10]}")
+    partial = [
+        page
+        for name, page in pages.items()
+        if project_of(name) in left_out and (site / page).exists()
+    ]
+    if partial:
+        raise ValueError(f"pages of a project that was left out: {partial[:10]}")
     for name in ("Mathlib", "TauCeti", "Init", "Std", "Lean", "Lake"):
         if (site / name).exists() or (site / f"{name}.html").exists():
             raise ValueError(f"unexpected dependency documentation: {name}")
@@ -603,14 +855,26 @@ def main() -> None:
     if arguments.command == "prepare":
         prepare(root)
     elif arguments.command == "batch":
-        complete = build_batches(
-            root,
-            arguments.lake,
-            arguments.seconds,
-            arguments.batch_size,
-            arguments.workers,
-        )
-        if output := os.environ.get("GITHUB_OUTPUT"):
+        output = os.environ.get("GITHUB_OUTPUT")
+        try:
+            complete = build_batches(
+                root,
+                arguments.lake,
+                arguments.seconds,
+                arguments.batch_size,
+                arguments.workers,
+            )
+        except BaseException as error:
+            # The stage still fails. Its finished batches are saved when they
+            # are valid, so one module cannot cost every later run the hours
+            # of analysis that came before it.
+            if isinstance(error, AnalysisMemoryError):
+                print(f"::error::{error}")
+            if output:
+                with Path(output).open("a") as stream:
+                    stream.write(f"resumable={str(resumable(root)).lower()}\n")
+            raise
+        if output:
             with Path(output).open("a") as stream:
                 stream.write(f"complete={str(complete).lower()}\n")
     elif arguments.command == "render":
