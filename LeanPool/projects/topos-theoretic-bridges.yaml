@@ -12,7 +12,8 @@ entry_module: LeanPool.ToposTheoreticBridges
 authors:
 - Michel Hua
 source:
-  github_repo: mycaule/lean-pool
+  title: The unification of Mathematics via Topos Theory (O. Caramello)
+  arxiv: '1006.3930'
 license: Apache-2.0
 status: verified
 provenance: AI
