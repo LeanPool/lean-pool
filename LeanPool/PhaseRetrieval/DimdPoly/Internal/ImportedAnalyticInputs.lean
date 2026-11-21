@@ -3380,23 +3380,4 @@ theorem L2_eq_zero_of_rep_ae_eq_zero
     _ = 0 := hrep
     _ = ((0 : L2Real d) : RealVec d -> ℂ) u := h0.symm
 
-theorem boxPartialSums_have_L2_limit
-    {d : Nat} (hd : 0 < d) (kappa : MultiIndex d) :
-    True := by
-  let _ := hd
-  let _ := kappa
-  /-
-  Placeholder for the imported `L²` convergence package for box partial sums of
-  square-summable coefficient data.
-  -/
-  trivial
-
-theorem circleFourier_exact_modulus_bridge :
-    True := by
-  /-
-  Placeholder for the one-dimensional analytic uniqueness and Fourier/STFT
-  bridge used downstream by the circle and rigidity modules.
-  -/
-  trivial
-
 end DimdPolyLEAN
