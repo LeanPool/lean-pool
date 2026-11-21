@@ -14,6 +14,7 @@ public import Mathlib.Tactic
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Ring
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.NewtonImageCertificates
 /-!
 # Gerver sofa: related certificate and semantic modules
 
@@ -4228,7 +4229,9 @@ theorem full_point_0_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (0 : Fin 22))
       (fullPointCache (0 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 0).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 0).2
 
 theorem full_point_0_mem :
     systemEval fullExpr
@@ -4270,7 +4273,7 @@ open LeanCert.Engine
 theorem full_image_0_inside :
     intervalStrictInside (fullImageCachedQ (0 : Fin 22))
       (unitBox (n := 22) (0 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 0
 
 end PartALeanCert
 end GerverSofa
@@ -4337,7 +4340,9 @@ theorem full_point_1_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (1 : Fin 22))
       (fullPointCache (1 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 1).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 1).2
 
 theorem full_point_1_mem :
     systemEval fullExpr
@@ -4379,7 +4384,7 @@ open LeanCert.Engine
 theorem full_image_1_inside :
     intervalStrictInside (fullImageCachedQ (1 : Fin 22))
       (unitBox (n := 22) (1 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 1
 
 end PartALeanCert
 end GerverSofa
@@ -4446,7 +4451,9 @@ theorem full_point_2_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (2 : Fin 22))
       (fullPointCache (2 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 2).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 2).2
 
 theorem full_point_2_mem :
     systemEval fullExpr
@@ -4488,7 +4495,7 @@ open LeanCert.Engine
 theorem full_image_2_inside :
     intervalStrictInside (fullImageCachedQ (2 : Fin 22))
       (unitBox (n := 22) (2 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 2
 
 end PartALeanCert
 end GerverSofa
@@ -4555,7 +4562,9 @@ theorem full_point_3_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (3 : Fin 22))
       (fullPointCache (3 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 3).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 3).2
 
 theorem full_point_3_mem :
     systemEval fullExpr
@@ -4597,7 +4606,7 @@ open LeanCert.Engine
 theorem full_image_3_inside :
     intervalStrictInside (fullImageCachedQ (3 : Fin 22))
       (unitBox (n := 22) (3 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 3
 
 end PartALeanCert
 end GerverSofa
@@ -4664,7 +4673,9 @@ theorem full_point_4_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (4 : Fin 22))
       (fullPointCache (4 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 4).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 4).2
 
 theorem full_point_4_mem :
     systemEval fullExpr
@@ -4706,7 +4717,7 @@ open LeanCert.Engine
 theorem full_image_4_inside :
     intervalStrictInside (fullImageCachedQ (4 : Fin 22))
       (unitBox (n := 22) (4 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 4
 
 end PartALeanCert
 end GerverSofa
@@ -4811,7 +4822,9 @@ theorem full_point_5_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (5 : Fin 22))
       (fullPointCache (5 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 5).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 5).2
 
 theorem full_point_5_mem :
     systemEval fullExpr
@@ -4853,7 +4866,7 @@ open LeanCert.Engine
 theorem full_image_5_inside :
     intervalStrictInside (fullImageCachedQ (5 : Fin 22))
       (unitBox (n := 22) (5 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 5
 
 end PartALeanCert
 end GerverSofa
@@ -4920,7 +4933,9 @@ theorem full_point_6_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (6 : Fin 22))
       (fullPointCache (6 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 6).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 6).2
 
 theorem full_point_6_mem :
     systemEval fullExpr
@@ -4962,7 +4977,7 @@ open LeanCert.Engine
 theorem full_image_6_inside :
     intervalStrictInside (fullImageCachedQ (6 : Fin 22))
       (unitBox (n := 22) (6 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 6
 
 end PartALeanCert
 end GerverSofa
@@ -5029,7 +5044,9 @@ theorem full_point_7_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (7 : Fin 22))
       (fullPointCache (7 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 7).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 7).2
 
 theorem full_point_7_mem :
     systemEval fullExpr
@@ -5071,7 +5088,7 @@ open LeanCert.Engine
 theorem full_image_7_inside :
     intervalStrictInside (fullImageCachedQ (7 : Fin 22))
       (unitBox (n := 22) (7 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 7
 
 end PartALeanCert
 end GerverSofa
@@ -5138,7 +5155,9 @@ theorem full_point_8_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (8 : Fin 22))
       (fullPointCache (8 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 8).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 8).2
 
 theorem full_point_8_mem :
     systemEval fullExpr
@@ -5180,7 +5199,7 @@ open LeanCert.Engine
 theorem full_image_8_inside :
     intervalStrictInside (fullImageCachedQ (8 : Fin 22))
       (unitBox (n := 22) (8 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 8
 
 end PartALeanCert
 end GerverSofa
@@ -5247,7 +5266,9 @@ theorem full_point_9_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (9 : Fin 22))
       (fullPointCache (9 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 9).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 9).2
 
 theorem full_point_9_mem :
     systemEval fullExpr
@@ -5289,7 +5310,7 @@ open LeanCert.Engine
 theorem full_image_9_inside :
     intervalStrictInside (fullImageCachedQ (9 : Fin 22))
       (unitBox (n := 22) (9 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 9
 
 end PartALeanCert
 end GerverSofa
@@ -5356,7 +5377,9 @@ theorem full_point_10_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (10 : Fin 22))
       (fullPointCache (10 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 10).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 10).2
 
 theorem full_point_10_mem :
     systemEval fullExpr
@@ -5436,7 +5459,7 @@ open LeanCert.Engine
 theorem full_image_10_inside :
     intervalStrictInside (fullImageCachedQ (10 : Fin 22))
       (unitBox (n := 22) (10 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 10
 
 end PartALeanCert
 end GerverSofa
@@ -5503,7 +5526,9 @@ theorem full_point_11_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (11 : Fin 22))
       (fullPointCache (11 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 11).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 11).2
 
 theorem full_point_11_mem :
     systemEval fullExpr
@@ -5545,7 +5570,7 @@ open LeanCert.Engine
 theorem full_image_11_inside :
     intervalStrictInside (fullImageCachedQ (11 : Fin 22))
       (unitBox (n := 22) (11 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 11
 
 end PartALeanCert
 end GerverSofa
@@ -5612,7 +5637,9 @@ theorem full_point_12_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (12 : Fin 22))
       (fullPointCache (12 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 12).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 12).2
 
 theorem full_point_12_mem :
     systemEval fullExpr
@@ -5654,7 +5681,7 @@ open LeanCert.Engine
 theorem full_image_12_inside :
     intervalStrictInside (fullImageCachedQ (12 : Fin 22))
       (unitBox (n := 22) (12 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 12
 
 end PartALeanCert
 end GerverSofa
@@ -5721,7 +5748,9 @@ theorem full_point_13_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (13 : Fin 22))
       (fullPointCache (13 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 13).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 13).2
 
 theorem full_point_13_mem :
     systemEval fullExpr
@@ -5763,7 +5792,7 @@ open LeanCert.Engine
 theorem full_image_13_inside :
     intervalStrictInside (fullImageCachedQ (13 : Fin 22))
       (unitBox (n := 22) (13 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 13
 
 end PartALeanCert
 end GerverSofa
@@ -5830,7 +5859,9 @@ theorem full_point_14_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (14 : Fin 22))
       (fullPointCache (14 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 14).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 14).2
 
 theorem full_point_14_mem :
     systemEval fullExpr
@@ -5872,7 +5903,7 @@ open LeanCert.Engine
 theorem full_image_14_inside :
     intervalStrictInside (fullImageCachedQ (14 : Fin 22))
       (unitBox (n := 22) (14 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 14
 
 end PartALeanCert
 end GerverSofa
@@ -5939,7 +5970,9 @@ theorem full_point_15_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (15 : Fin 22))
       (fullPointCache (15 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 15).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 15).2
 
 theorem full_point_15_mem :
     systemEval fullExpr
@@ -5981,7 +6014,7 @@ open LeanCert.Engine
 theorem full_image_15_inside :
     intervalStrictInside (fullImageCachedQ (15 : Fin 22))
       (unitBox (n := 22) (15 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 15
 
 end PartALeanCert
 end GerverSofa
@@ -6086,7 +6119,9 @@ theorem full_point_16_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (16 : Fin 22))
       (fullPointCache (16 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 16).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 16).2
 
 theorem full_point_16_mem :
     systemEval fullExpr
@@ -6128,7 +6163,7 @@ open LeanCert.Engine
 theorem full_image_16_inside :
     intervalStrictInside (fullImageCachedQ (16 : Fin 22))
       (unitBox (n := 22) (16 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 16
 
 end PartALeanCert
 end GerverSofa
@@ -6195,7 +6230,9 @@ theorem full_point_17_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (17 : Fin 22))
       (fullPointCache (17 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 17).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 17).2
 
 theorem full_point_17_mem :
     systemEval fullExpr
@@ -6237,7 +6274,7 @@ open LeanCert.Engine
 theorem full_image_17_inside :
     intervalStrictInside (fullImageCachedQ (17 : Fin 22))
       (unitBox (n := 22) (17 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 17
 
 end PartALeanCert
 end GerverSofa
@@ -6304,7 +6341,9 @@ theorem full_point_18_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (18 : Fin 22))
       (fullPointCache (18 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 18).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 18).2
 
 theorem full_point_18_mem :
     systemEval fullExpr
@@ -6346,7 +6385,7 @@ open LeanCert.Engine
 theorem full_image_18_inside :
     intervalStrictInside (fullImageCachedQ (18 : Fin 22))
       (unitBox (n := 22) (18 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 18
 
 end PartALeanCert
 end GerverSofa
@@ -6413,7 +6452,9 @@ theorem full_point_19_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (19 : Fin 22))
       (fullPointCache (19 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 19).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 19).2
 
 theorem full_point_19_mem :
     systemEval fullExpr
@@ -6455,7 +6496,7 @@ open LeanCert.Engine
 theorem full_image_19_inside :
     intervalStrictInside (fullImageCachedQ (19 : Fin 22))
       (unitBox (n := 22) (19 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 19
 
 end PartALeanCert
 end GerverSofa
@@ -6522,7 +6563,9 @@ theorem full_point_20_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (20 : Fin 22))
       (fullPointCache (20 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 20).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 20).2
 
 theorem full_point_20_mem :
     systemEval fullExpr
@@ -6564,7 +6607,7 @@ open LeanCert.Engine
 theorem full_image_20_inside :
     intervalStrictInside (fullImageCachedQ (20 : Fin 22))
       (unitBox (n := 22) (20 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 20
 
 end PartALeanCert
 end GerverSofa
@@ -6655,7 +6698,9 @@ theorem full_point_21_contained :
     intervalContained
       (pointEvalIntervalsKernel fullExpr (zeroCenter (n := 22)) cfg (21 : Fin 22))
       (fullPointCache (21 : Fin 22)) := by
-  constructor <;> decide +kernel
+  constructor
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 21).1
+  · as_aux_lemma => exact (NewtonImageCertificates.centers_contained 21).2
 
 theorem full_point_21_mem :
     systemEval fullExpr
@@ -6697,7 +6742,7 @@ open LeanCert.Engine
 theorem full_image_21_inside :
     intervalStrictInside (fullImageCachedQ (21 : Fin 22))
       (unitBox (n := 22) (21 : Fin 22)) = true := by
-  decide +kernel
+  as_aux_lemma => exact NewtonImageCertificates.images_inside 21
 
 end PartALeanCert
 end GerverSofa

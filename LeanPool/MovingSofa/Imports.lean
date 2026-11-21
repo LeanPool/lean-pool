@@ -31,6 +31,8 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle006
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle007
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle008
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.NewtonImageCertificates
+public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.ProductCellBounds
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.CachedIntervals
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle001
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle002

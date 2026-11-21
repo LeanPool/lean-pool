@@ -7,6 +7,7 @@ module
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle001
 public import Mathlib.Tactic.FinCases
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.ProductCellBounds
 /-!
 # Gerver sofa: related certificate and semantic modules
 
@@ -6012,9 +6013,6 @@ def cachedSine (i : Cell) : RatInterval :=
   | 62 => cachedSine62
   | _ => cachedSine63
 
-theorem cachedPath_eq : ∀ i : Cell, cellPathInterval i = cachedPath i := by
-  decide +kernel
-
 theorem cachedCosine_eq : ∀ i : Cell,
     ExactReplay.cosineInterval (cellTimeInterval i) = cachedCosine i := by
   decide +kernel
@@ -6022,6 +6020,154 @@ theorem cachedCosine_eq : ∀ i : Cell,
 theorem cachedSine_eq : ∀ i : Cell,
     ExactReplay.sineInterval (cellTimeInterval i) = cachedSine i := by
   decide +kernel
+
+-- Reuse the checked trigonometric values in the path formulas.
+private theorem cachedPath_eq_from_angles : ∀ i : Cell, cellPathInterval i = cachedPath i := by
+  delta cellPathInterval cellPieceInterval
+  simp only [cachedSine_eq, cachedCosine_eq]
+  decide +kernel
+
+theorem cachedPath_eq : ∀ i : Cell, cellPathInterval i = cachedPath i := by
+  as_aux_lemma => exact cachedPath_eq_from_angles
+
+-- Four outward-rounded intervals for each mesh cell: path x, path y, cosine, and sine.
+private def roundedCell (i : Cell) :
+    ProductCellBounds.GridInterval × ProductCellBounds.GridInterval ×
+    ProductCellBounds.GridInterval × ProductCellBounds.GridInterval :=
+  match i.val with
+  | 0 => (⟨-657, 614⟩, ⟨-8, 3494⟩, ⟨99969, 100001⟩, ⟨0, 2455⟩)
+  | 1 => (⟨-1551, 1029⟩, ⟨3429, 6963⟩, ⟨99879, 99970⟩, ⟨2454, 4907⟩)
+  | 2 => (⟨-2014, 645⟩, ⟨6829, 10378⟩, ⟨99729, 99880⟩, ⟨4906, 7357⟩)
+  | 3 => (⟨-2617, 119⟩, ⟨10173, 13742⟩, ⟨99518, 99730⟩, ⟨7356, 9802⟩)
+  | 4 => (⟨-3356, -548⟩, ⟨13464, 17050⟩, ⟨99247, 99519⟩, ⟨9801, 12242⟩)
+  | 5 => (⟨-4230, -1353⟩, ⟨16695, 20296⟩, ⟨98917, 99248⟩, ⟨12241, 14674⟩)
+  | 6 => (⟨-5235, -2293⟩, ⟨19862, 23475⟩, ⟨98527, 98918⟩, ⟨14673, 17097⟩)
+  | 7 => (⟨-6370, -3365⟩, ⟨22959, 26581⟩, ⟨98078, 98528⟩, ⟨17096, 19510⟩)
+  | 8 => (⟨-7630, -4567⟩, ⟨25981, 29610⟩, ⟨97570, 98079⟩, ⟨19509, 21911⟩)
+  | 9 => (⟨-9012, -5895⟩, ⟨28922, 32556⟩, ⟨97003, 97571⟩, ⟨21910, 24299⟩)
+  | 10 => (⟨-10513, -7346⟩, ⟨31779, 35414⟩, ⟨96377, 97004⟩, ⟨24298, 26672⟩)
+  | 11 => (⟨-12130, -8916⟩, ⟨34545, 38179⟩, ⟨95694, 96378⟩, ⟨26671, 29029⟩)
+  | 12 => (⟨-13858, -10602⟩, ⟨37217, 40848⟩, ⟨94952, 95695⟩, ⟨29028, 31369⟩)
+  | 13 => (⟨-15693, -12399⟩, ⟨39789, 43415⟩, ⟨94154, 94953⟩, ⟨31368, 33689⟩)
+  | 14 => (⟨-17631, -14303⟩, ⟨42257, 45876⟩, ⟨93299, 94155⟩, ⟨33688, 35990⟩)
+  | 15 => (⟨-19668, -16310⟩, ⟨44617, 48226⟩, ⟨92387, 93300⟩, ⟨35989, 38269⟩)
+  | 16 => (⟨-21799, -18415⟩, ⟨46865, 50462⟩, ⟨91420, 92388⟩, ⟨38268, 40525⟩)
+  | 17 => (⟨-24020, -20615⟩, ⟨48997, 52580⟩, ⟨90398, 91421⟩, ⟨40524, 42756⟩)
+  | 18 => (⟨-26325, -22903⟩, ⟨51008, 54576⟩, ⟨89322, 90399⟩, ⟨42755, 44962⟩)
+  | 19 => (⟨-28710, -25275⟩, ⟨52896, 56446⟩, ⟨88192, 89323⟩, ⟨44961, 47140⟩)
+  | 20 => (⟨-31169, -27726⟩, ⟨54656, 58188⟩, ⟨87008, 88193⟩, ⟨47139, 49290⟩)
+  | 21 => (⟨-33698, -30251⟩, ⟨56286, 59797⟩, ⟨85772, 87009⟩, ⟨49289, 51411⟩)
+  | 22 => (⟨-36290, -32845⟩, ⟨57783, 61271⟩, ⟨84485, 85773⟩, ⟨51410, 53500⟩)
+  | 23 => (⟨-38941, -35501⟩, ⟨59143, 62607⟩, ⟨83146, 84486⟩, ⟨53499, 55558⟩)
+  | 24 => (⟨-41645, -38214⟩, ⟨60364, 63802⟩, ⟨81758, 83147⟩, ⟨55557, 57581⟩)
+  | 25 => (⟨-44396, -40979⟩, ⟨61443, 64855⟩, ⟨80320, 81759⟩, ⟨57580, 59570⟩)
+  | 26 => (⟨-47188, -43790⟩, ⟨62378, 65762⟩, ⟨78834, 80321⟩, ⟨59569, 61524⟩)
+  | 27 => (⟨-50356, -46313⟩, ⟨62844, 66802⟩, ⟨77301, 78835⟩, ⟨61523, 63440⟩)
+  | 28 => (⟨-53223, -49187⟩, ⟨63456, 67440⟩, ⟨75720, 77302⟩, ⟨63439, 65318⟩)
+  | 29 => (⟨-56111, -52081⟩, ⟨63915, 67920⟩, ⟨74095, 75721⟩, ⟨65317, 67156⟩)
+  | 30 => (⟨-59016, -54989⟩, ⟨64222, 68240⟩, ⟨72424, 74096⟩, ⟨67155, 68955⟩)
+  | 31 => (⟨-61930, -57905⟩, ⟨64376, 68400⟩, ⟨70710, 72425⟩, ⟨68954, 70711⟩)
+  | 32 => (⟨-64848, -60823⟩, ⟨64376, 68400⟩, ⟨68954, 70711⟩, ⟨70710, 72425⟩)
+  | 33 => (⟨-67764, -63737⟩, ⟨64222, 68240⟩, ⟨67155, 68955⟩, ⟨72424, 74096⟩)
+  | 34 => (⟨-70672, -66641⟩, ⟨63915, 67920⟩, ⟨65317, 67156⟩, ⟨74095, 75721⟩)
+  | 35 => (⟨-73565, -69530⟩, ⟨63456, 67440⟩, ⟨63439, 65318⟩, ⟨75720, 77302⟩)
+  | 36 => (⟨-76978, -71887⟩, ⟨62490, 67220⟩, ⟨61523, 63440⟩, ⟨77301, 78835⟩)
+  | 37 => (⟨-79870, -74674⟩, ⟨61705, 66457⟩, ⟨59569, 61524⟩, ⟨78834, 80321⟩)
+  | 38 => (⟨-82721, -77426⟩, ⟨60775, 65545⟩, ⟨57580, 59570⟩, ⟨80320, 81759⟩)
+  | 39 => (⟨-85528, -80135⟩, ⟨59703, 64487⟩, ⟨55557, 57581⟩, ⟨81758, 83147⟩)
+  | 40 => (⟨-88282, -82797⟩, ⟨58490, 63284⟩, ⟨53499, 55558⟩, ⟨83146, 84486⟩)
+  | 41 => (⟨-90980, -85406⟩, ⟨57140, 61939⟩, ⟨51410, 53500⟩, ⟨84485, 85773⟩)
+  | 42 => (⟨-93615, -87957⟩, ⟨55655, 60455⟩, ⟨49289, 51411⟩, ⟨85772, 87009⟩)
+  | 43 => (⟨-96182, -90444⟩, ⟨54039, 58833⟩, ⟨47139, 49290⟩, ⟨87008, 88193⟩)
+  | 44 => (⟨-98675, -92861⟩, ⟨52293, 57078⟩, ⟨44961, 47140⟩, ⟨88192, 89323⟩)
+  | 45 => (⟨-101089, -95204⟩, ⟨50422, 55192⟩, ⟨42755, 44962⟩, ⟨89322, 90399⟩)
+  | 46 => (⟨-103418, -97467⟩, ⟨48429, 53179⟩, ⟨40524, 42756⟩, ⟨90398, 91421⟩)
+  | 47 => (⟨-105659, -99646⟩, ⟨46318, 51042⟩, ⟨38268, 40525⟩, ⟨91420, 92388⟩)
+  | 48 => (⟨-107806, -101735⟩, ⟨44092, 48785⟩, ⟨35989, 38269⟩, ⟨92387, 93300⟩)
+  | 49 => (⟨-109854, -103731⟩, ⟨41755, 46412⟩, ⟨33688, 35990⟩, ⟨93299, 94155⟩)
+  | 50 => (⟨-111798, -105628⟩, ⟨39312, 43927⟩, ⟨31368, 33689⟩, ⟨94154, 94953⟩)
+  | 51 => (⟨-113635, -107422⟩, ⟨36766, 41335⟩, ⟨29028, 31369⟩, ⟨94952, 95695⟩)
+  | 52 => (⟨-115360, -109110⟩, ⟨34123, 38638⟩, ⟨26671, 29029⟩, ⟨95694, 96378⟩)
+  | 53 => (⟨-116969, -110686⟩, ⟨31387, 35843⟩, ⟨24298, 26672⟩, ⟨96377, 97004⟩)
+  | 54 => (⟨-118459, -112148⟩, ⟨28563, 32954⟩, ⟨21910, 24299⟩, ⟨97003, 97571⟩)
+  | 55 => (⟨-119825, -113492⟩, ⟨25655, 29976⟩, ⟨19509, 21911⟩, ⟨97570, 98079⟩)
+  | 56 => (⟨-121064, -114714⟩, ⟨22668, 26913⟩, ⟨17096, 19510⟩, ⟨98078, 98528⟩)
+  | 57 => (⟨-122173, -115811⟩, ⟨19608, 23771⟩, ⟨14673, 17097⟩, ⟨98527, 98918⟩)
+  | 58 => (⟨-123149, -116780⟩, ⟨16479, 20555⟩, ⟨12241, 14674⟩, ⟨98917, 99248⟩)
+  | 59 => (⟨-123988, -117618⟩, ⟨13288, 17269⟩, ⟨9801, 12242⟩, ⟨99247, 99519⟩)
+  | 60 => (⟨-124689, -118323⟩, ⟨10039, 13921⟩, ⟨7356, 9802⟩, ⟨99518, 99730⟩)
+  | 61 => (⟨-125248, -118891⟩, ⟨6738, 10514⟩, ⟨4906, 7357⟩, ⟨99729, 99880⟩)
+  | 62 => (⟨-125663, -119321⟩, ⟨3391, 7056⟩, ⟨2454, 4907⟩, ⟨99879, 99970⟩)
+  | _ => (⟨-123367, -122096⟩, ⟨-8, 3494⟩, ⟨0, 2455⟩, ⟨99969, 100001⟩)
+
+private theorem roundedCell_eq : ∀ i : Cell, roundedCell i =
+    (ProductCellBounds.roundOutward (cachedPath i).1,
+      ProductCellBounds.roundOutward (cachedPath i).2,
+      ProductCellBounds.roundOutward (cachedCosine i),
+      ProductCellBounds.roundOutward (cachedSine i)) := by
+  decide +kernel
+
+private theorem cachedIntervals_ordered :
+    ∀ i : Cell, (cachedPath i).1.lo ≤ (cachedPath i).1.hi ∧
+      (cachedPath i).2.lo ≤ (cachedPath i).2.hi ∧
+      (cachedCosine i).lo ≤ (cachedCosine i).hi ∧ (cachedSine i).lo ≤ (cachedSine i).hi := by
+  decide +kernel
+
+-- The exact cache entries have long rational denominators. The rounded checks
+-- use the same mesh and transport their strict bounds to those entries.
+private def scaledTarget : ℤ := 1710000000
+
+private theorem scaledTarget_eq :
+    (scaledTarget : ℚ) / (ProductCellBounds.scale : ℚ) ^ 2 = targetQ := by
+  delta scaledTarget ProductCellBounds.scale targetQ
+  norm_num
+
+private abbrev RoundedRowPasses (i : Cell) : Prop := ∀ j : Cell,
+  ProductCellBounds.passes scaledTarget ((roundedCell i).1, (roundedCell i).2.1)
+    ((roundedCell j).1, (roundedCell j).2.1) (roundedCell i).2.2.1 (roundedCell i).2.2.2 = true
+
+private def blockRow (block : Fin 4) (offset : Fin 16) : Cell :=
+  ⟨16 * block.val + offset.val, by
+    have block_lt := block.isLt
+    have offset_lt := offset.isLt
+    omega⟩
+
+private abbrev BlockPasses (block : Fin 4) : Prop :=
+  ∀ offset : Fin 16, RoundedRowPasses (blockRow block offset)
+
+-- Release the kernel's reduction cache between blocks.
+private theorem roundedBlock0 : BlockPasses 0 := by decide +kernel
+private theorem roundedBlock1 : BlockPasses 1 := by decide +kernel
+private theorem roundedBlock2 : BlockPasses 2 := by decide +kernel
+private theorem roundedBlock3 : BlockPasses 3 := by decide +kernel
+
+private theorem roundedBlocksPass (block : Fin 4) : BlockPasses block := by
+  fin_cases block
+  · exact roundedBlock0
+  · exact roundedBlock1
+  · exact roundedBlock2
+  · exact roundedBlock3
+
+private theorem roundedRowsPass (i : Cell) : RoundedRowPasses i := by
+  let block : Fin 4 := ⟨i.val / 16, by
+    have row_lt := i.isLt
+    omega⟩
+  let offset : Fin 16 := ⟨i.val % 16, Nat.mod_lt _ (by decide)⟩
+  have row_eq : blockRow block offset = i := Fin.ext (Nat.div_add_mod i.val 16)
+  rw [← row_eq]
+  exact roundedBlocksPass block offset
+
+private theorem cachedRow_bounds (i : Cell) : ∀ j : Cell,
+    targetQ < (ProductCellBounds.imageU
+      (cachedPath i) (cachedPath j) (cachedCosine i) (cachedSine i)).lo ∧
+    targetQ < (ProductCellBounds.imageV
+      (cachedPath i) (cachedPath j) (cachedCosine i) (cachedSine i)).lo := by
+  intro j
+  obtain ⟨xOrdered, yOrdered, cosineOrdered, sineOrdered⟩ := cachedIntervals_ordered i
+  obtain ⟨xOrdered', yOrdered', -, -⟩ := cachedIntervals_ordered j
+  exact ProductCellBounds.sound ⟨xOrdered, yOrdered⟩ ⟨xOrdered', yOrdered'⟩
+    cosineOrdered sineOrdered scaledTarget_eq (by
+      simpa only [roundedCell_eq] using roundedRowsPass i j)
 
 end GerverSofa.PartB
 
@@ -6082,7 +6228,7 @@ theorem cell_row_48 :
       targetQ < (guCellInterval (48 : Cell) j).lo ∧
       targetQ < (gvCellInterval (48 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 48
 
 end GerverSofa.PartB
 
@@ -6105,7 +6251,7 @@ theorem cell_row_49 :
       targetQ < (guCellInterval (49 : Cell) j).lo ∧
       targetQ < (gvCellInterval (49 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 49
 
 end GerverSofa.PartB
 
@@ -6128,7 +6274,7 @@ theorem cell_row_50 :
       targetQ < (guCellInterval (50 : Cell) j).lo ∧
       targetQ < (gvCellInterval (50 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 50
 
 end GerverSofa.PartB
 
@@ -6151,7 +6297,7 @@ theorem cell_row_51 :
       targetQ < (guCellInterval (51 : Cell) j).lo ∧
       targetQ < (gvCellInterval (51 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 51
 
 end GerverSofa.PartB
 
@@ -6174,7 +6320,7 @@ theorem cell_row_52 :
       targetQ < (guCellInterval (52 : Cell) j).lo ∧
       targetQ < (gvCellInterval (52 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 52
 
 end GerverSofa.PartB
 
@@ -6197,7 +6343,7 @@ theorem cell_row_53 :
       targetQ < (guCellInterval (53 : Cell) j).lo ∧
       targetQ < (gvCellInterval (53 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 53
 
 end GerverSofa.PartB
 
@@ -6220,7 +6366,7 @@ theorem cell_row_54 :
       targetQ < (guCellInterval (54 : Cell) j).lo ∧
       targetQ < (gvCellInterval (54 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 54
 
 end GerverSofa.PartB
 
@@ -6243,7 +6389,7 @@ theorem cell_row_55 :
       targetQ < (guCellInterval (55 : Cell) j).lo ∧
       targetQ < (gvCellInterval (55 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 55
 
 end GerverSofa.PartB
 
@@ -6266,7 +6412,7 @@ theorem cell_row_56 :
       targetQ < (guCellInterval (56 : Cell) j).lo ∧
       targetQ < (gvCellInterval (56 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 56
 
 end GerverSofa.PartB
 
@@ -6289,7 +6435,7 @@ theorem cell_row_57 :
       targetQ < (guCellInterval (57 : Cell) j).lo ∧
       targetQ < (gvCellInterval (57 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 57
 
 end GerverSofa.PartB
 
@@ -6312,7 +6458,7 @@ theorem cell_row_58 :
       targetQ < (guCellInterval (58 : Cell) j).lo ∧
       targetQ < (gvCellInterval (58 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 58
 
 end GerverSofa.PartB
 
@@ -6335,7 +6481,7 @@ theorem cell_row_59 :
       targetQ < (guCellInterval (59 : Cell) j).lo ∧
       targetQ < (gvCellInterval (59 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 59
 
 end GerverSofa.PartB
 
@@ -6358,7 +6504,7 @@ theorem cell_row_60 :
       targetQ < (guCellInterval (60 : Cell) j).lo ∧
       targetQ < (gvCellInterval (60 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 60
 
 end GerverSofa.PartB
 
@@ -6381,7 +6527,7 @@ theorem cell_row_61 :
       targetQ < (guCellInterval (61 : Cell) j).lo ∧
       targetQ < (gvCellInterval (61 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 61
 
 end GerverSofa.PartB
 
@@ -6404,7 +6550,7 @@ theorem cell_row_62 :
       targetQ < (guCellInterval (62 : Cell) j).lo ∧
       targetQ < (gvCellInterval (62 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 62
 
 end GerverSofa.PartB
 
@@ -6427,7 +6573,7 @@ theorem cell_row_63 :
       targetQ < (guCellInterval (63 : Cell) j).lo ∧
       targetQ < (gvCellInterval (63 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 63
 
 end GerverSofa.PartB
 
@@ -6488,7 +6634,7 @@ theorem cell_row_32 :
       targetQ < (guCellInterval (32 : Cell) j).lo ∧
       targetQ < (gvCellInterval (32 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 32
 
 end GerverSofa.PartB
 
@@ -6511,7 +6657,7 @@ theorem cell_row_33 :
       targetQ < (guCellInterval (33 : Cell) j).lo ∧
       targetQ < (gvCellInterval (33 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 33
 
 end GerverSofa.PartB
 
@@ -6534,7 +6680,7 @@ theorem cell_row_34 :
       targetQ < (guCellInterval (34 : Cell) j).lo ∧
       targetQ < (gvCellInterval (34 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 34
 
 end GerverSofa.PartB
 
@@ -6557,7 +6703,7 @@ theorem cell_row_35 :
       targetQ < (guCellInterval (35 : Cell) j).lo ∧
       targetQ < (gvCellInterval (35 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 35
 
 end GerverSofa.PartB
 
@@ -6580,7 +6726,7 @@ theorem cell_row_36 :
       targetQ < (guCellInterval (36 : Cell) j).lo ∧
       targetQ < (gvCellInterval (36 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 36
 
 end GerverSofa.PartB
 
@@ -6603,7 +6749,7 @@ theorem cell_row_37 :
       targetQ < (guCellInterval (37 : Cell) j).lo ∧
       targetQ < (gvCellInterval (37 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 37
 
 end GerverSofa.PartB
 
@@ -6626,7 +6772,7 @@ theorem cell_row_38 :
       targetQ < (guCellInterval (38 : Cell) j).lo ∧
       targetQ < (gvCellInterval (38 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 38
 
 end GerverSofa.PartB
 
@@ -6649,7 +6795,7 @@ theorem cell_row_39 :
       targetQ < (guCellInterval (39 : Cell) j).lo ∧
       targetQ < (gvCellInterval (39 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 39
 
 end GerverSofa.PartB
 
@@ -6672,7 +6818,7 @@ theorem cell_row_40 :
       targetQ < (guCellInterval (40 : Cell) j).lo ∧
       targetQ < (gvCellInterval (40 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 40
 
 end GerverSofa.PartB
 
@@ -6695,7 +6841,7 @@ theorem cell_row_41 :
       targetQ < (guCellInterval (41 : Cell) j).lo ∧
       targetQ < (gvCellInterval (41 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 41
 
 end GerverSofa.PartB
 
@@ -6718,7 +6864,7 @@ theorem cell_row_42 :
       targetQ < (guCellInterval (42 : Cell) j).lo ∧
       targetQ < (gvCellInterval (42 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 42
 
 end GerverSofa.PartB
 
@@ -6741,7 +6887,7 @@ theorem cell_row_43 :
       targetQ < (guCellInterval (43 : Cell) j).lo ∧
       targetQ < (gvCellInterval (43 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 43
 
 end GerverSofa.PartB
 
@@ -6764,7 +6910,7 @@ theorem cell_row_44 :
       targetQ < (guCellInterval (44 : Cell) j).lo ∧
       targetQ < (gvCellInterval (44 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 44
 
 end GerverSofa.PartB
 
@@ -6787,7 +6933,7 @@ theorem cell_row_45 :
       targetQ < (guCellInterval (45 : Cell) j).lo ∧
       targetQ < (gvCellInterval (45 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 45
 
 end GerverSofa.PartB
 
@@ -6810,7 +6956,7 @@ theorem cell_row_46 :
       targetQ < (guCellInterval (46 : Cell) j).lo ∧
       targetQ < (gvCellInterval (46 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 46
 
 end GerverSofa.PartB
 
@@ -6833,7 +6979,7 @@ theorem cell_row_47 :
       targetQ < (guCellInterval (47 : Cell) j).lo ∧
       targetQ < (gvCellInterval (47 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 47
 
 end GerverSofa.PartB
 
@@ -6894,7 +7040,7 @@ theorem cell_row_16 :
       targetQ < (guCellInterval (16 : Cell) j).lo ∧
       targetQ < (gvCellInterval (16 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 16
 
 end GerverSofa.PartB
 
@@ -6917,7 +7063,7 @@ theorem cell_row_17 :
       targetQ < (guCellInterval (17 : Cell) j).lo ∧
       targetQ < (gvCellInterval (17 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 17
 
 end GerverSofa.PartB
 
@@ -6940,7 +7086,7 @@ theorem cell_row_18 :
       targetQ < (guCellInterval (18 : Cell) j).lo ∧
       targetQ < (gvCellInterval (18 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 18
 
 end GerverSofa.PartB
 
@@ -6963,7 +7109,7 @@ theorem cell_row_19 :
       targetQ < (guCellInterval (19 : Cell) j).lo ∧
       targetQ < (gvCellInterval (19 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 19
 
 end GerverSofa.PartB
 
@@ -6986,7 +7132,7 @@ theorem cell_row_20 :
       targetQ < (guCellInterval (20 : Cell) j).lo ∧
       targetQ < (gvCellInterval (20 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 20
 
 end GerverSofa.PartB
 
@@ -7009,7 +7155,7 @@ theorem cell_row_21 :
       targetQ < (guCellInterval (21 : Cell) j).lo ∧
       targetQ < (gvCellInterval (21 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 21
 
 end GerverSofa.PartB
 
@@ -7032,7 +7178,7 @@ theorem cell_row_22 :
       targetQ < (guCellInterval (22 : Cell) j).lo ∧
       targetQ < (gvCellInterval (22 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 22
 
 end GerverSofa.PartB
 
@@ -7055,7 +7201,7 @@ theorem cell_row_23 :
       targetQ < (guCellInterval (23 : Cell) j).lo ∧
       targetQ < (gvCellInterval (23 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 23
 
 end GerverSofa.PartB
 
@@ -7078,7 +7224,7 @@ theorem cell_row_24 :
       targetQ < (guCellInterval (24 : Cell) j).lo ∧
       targetQ < (gvCellInterval (24 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 24
 
 end GerverSofa.PartB
 
@@ -7101,7 +7247,7 @@ theorem cell_row_25 :
       targetQ < (guCellInterval (25 : Cell) j).lo ∧
       targetQ < (gvCellInterval (25 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 25
 
 end GerverSofa.PartB
 
@@ -7124,7 +7270,7 @@ theorem cell_row_26 :
       targetQ < (guCellInterval (26 : Cell) j).lo ∧
       targetQ < (gvCellInterval (26 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 26
 
 end GerverSofa.PartB
 
@@ -7147,7 +7293,7 @@ theorem cell_row_27 :
       targetQ < (guCellInterval (27 : Cell) j).lo ∧
       targetQ < (gvCellInterval (27 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 27
 
 end GerverSofa.PartB
 
@@ -7170,7 +7316,7 @@ theorem cell_row_28 :
       targetQ < (guCellInterval (28 : Cell) j).lo ∧
       targetQ < (gvCellInterval (28 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 28
 
 end GerverSofa.PartB
 
@@ -7193,7 +7339,7 @@ theorem cell_row_29 :
       targetQ < (guCellInterval (29 : Cell) j).lo ∧
       targetQ < (gvCellInterval (29 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 29
 
 end GerverSofa.PartB
 
@@ -7216,7 +7362,7 @@ theorem cell_row_30 :
       targetQ < (guCellInterval (30 : Cell) j).lo ∧
       targetQ < (gvCellInterval (30 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 30
 
 end GerverSofa.PartB
 
@@ -7239,7 +7385,7 @@ theorem cell_row_31 :
       targetQ < (guCellInterval (31 : Cell) j).lo ∧
       targetQ < (gvCellInterval (31 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 31
 
 end GerverSofa.PartB
 
@@ -7300,7 +7446,7 @@ theorem cell_row_00 :
       targetQ < (guCellInterval (0 : Cell) j).lo ∧
       targetQ < (gvCellInterval (0 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 0
 
 end GerverSofa.PartB
 
@@ -7323,7 +7469,7 @@ theorem cell_row_01 :
       targetQ < (guCellInterval (1 : Cell) j).lo ∧
       targetQ < (gvCellInterval (1 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 1
 
 end GerverSofa.PartB
 
@@ -7346,7 +7492,7 @@ theorem cell_row_02 :
       targetQ < (guCellInterval (2 : Cell) j).lo ∧
       targetQ < (gvCellInterval (2 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 2
 
 end GerverSofa.PartB
 
@@ -7369,7 +7515,7 @@ theorem cell_row_03 :
       targetQ < (guCellInterval (3 : Cell) j).lo ∧
       targetQ < (gvCellInterval (3 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 3
 
 end GerverSofa.PartB
 
@@ -7392,7 +7538,7 @@ theorem cell_row_04 :
       targetQ < (guCellInterval (4 : Cell) j).lo ∧
       targetQ < (gvCellInterval (4 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 4
 
 end GerverSofa.PartB
 
@@ -7415,7 +7561,7 @@ theorem cell_row_05 :
       targetQ < (guCellInterval (5 : Cell) j).lo ∧
       targetQ < (gvCellInterval (5 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 5
 
 end GerverSofa.PartB
 
@@ -7438,7 +7584,7 @@ theorem cell_row_06 :
       targetQ < (guCellInterval (6 : Cell) j).lo ∧
       targetQ < (gvCellInterval (6 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 6
 
 end GerverSofa.PartB
 
@@ -7461,7 +7607,7 @@ theorem cell_row_07 :
       targetQ < (guCellInterval (7 : Cell) j).lo ∧
       targetQ < (gvCellInterval (7 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 7
 
 end GerverSofa.PartB
 
@@ -7484,7 +7630,7 @@ theorem cell_row_08 :
       targetQ < (guCellInterval (8 : Cell) j).lo ∧
       targetQ < (gvCellInterval (8 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 8
 
 end GerverSofa.PartB
 
@@ -7507,7 +7653,7 @@ theorem cell_row_09 :
       targetQ < (guCellInterval (9 : Cell) j).lo ∧
       targetQ < (gvCellInterval (9 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 9
 
 end GerverSofa.PartB
 
@@ -7530,7 +7676,7 @@ theorem cell_row_10 :
       targetQ < (guCellInterval (10 : Cell) j).lo ∧
       targetQ < (gvCellInterval (10 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 10
 
 end GerverSofa.PartB
 
@@ -7553,7 +7699,7 @@ theorem cell_row_11 :
       targetQ < (guCellInterval (11 : Cell) j).lo ∧
       targetQ < (gvCellInterval (11 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 11
 
 end GerverSofa.PartB
 
@@ -7576,7 +7722,7 @@ theorem cell_row_12 :
       targetQ < (guCellInterval (12 : Cell) j).lo ∧
       targetQ < (gvCellInterval (12 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 12
 
 end GerverSofa.PartB
 
@@ -7599,7 +7745,7 @@ theorem cell_row_13 :
       targetQ < (guCellInterval (13 : Cell) j).lo ∧
       targetQ < (gvCellInterval (13 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 13
 
 end GerverSofa.PartB
 
@@ -7622,7 +7768,7 @@ theorem cell_row_14 :
       targetQ < (guCellInterval (14 : Cell) j).lo ∧
       targetQ < (gvCellInterval (14 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 14
 
 end GerverSofa.PartB
 
@@ -7645,7 +7791,7 @@ theorem cell_row_15 :
       targetQ < (guCellInterval (15 : Cell) j).lo ∧
       targetQ < (gvCellInterval (15 : Cell) j).lo := by
   simp only [guCellInterval, gvCellInterval, cachedPath_eq, cachedCosine_eq, cachedSine_eq]
-  decide +kernel
+  as_aux_lemma => exact cachedRow_bounds 15
 
 end GerverSofa.PartB
 
