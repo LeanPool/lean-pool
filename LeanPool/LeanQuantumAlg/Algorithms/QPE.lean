@@ -237,9 +237,11 @@ theorem QuantumPhaseEstimation.main_exact_eigenstate_readout_with_resources {n :
   · exact QuantumPhaseEstimation.main_exact_dyadic_with_resources t j P.phase hphase
 
 /-- Exact QPE from the source-level eigenstate/access assumptions, phrased as
-an exact estimate theorem. In the dyadic regime the phase estimate has zero
-error, so it satisfies any nonnegative precision and failure-probability
-thresholds. -/
+an exact estimate theorem. Measuring the inverse-QFT readout state fails to return
+`j` with probability `0`, so the failure probability is below any nonnegative
+threshold `eta`. The precision conjunct only records that the estimate `j / 2^t`
+is within `eps` of the phase; since `hphase` assumes the phase is exactly `j / 2^t`,
+it carries no content beyond that hypothesis. -/
 theorem QuantumPhaseEstimation.main {n : Nat}
     (P : QPEEigenstateInput n) (t : Nat) (j : Fin (2 ^ t))
     (eps eta : ℝ) (heps : 0 ≤ eps) (heta : 0 ≤ eta)
@@ -247,17 +249,17 @@ theorem QuantumPhaseEstimation.main {n : Nat}
     QPEControlledPowerKickbacks P ∧
       (invQFT t).applyVec (phaseState t P.phase) = (ket j : StateVector t) ∧
         |P.phase - (j.val : ℝ) / (2 : ℝ) ^ t| ≤ eps ∧
-          1 - PureState.probOutcome (ket j : PureState t) j ≤ eta ∧
+          1 - StateVector.probOutcome ((invQFT t).applyVec (phaseState t P.phase)) j
+              ≤ eta ∧
             ResourceProfile.HasExactCounts
               (qpeExactResourceProfile t) (2 ^ t - 1) t (t ^ 2) 0 := by
-  refine ⟨qpe_eigenstate_controlled_power_kickbacks P, ?_⟩
-  have hreadout : (invQFT t).applyVec (phaseState t P.phase) = (ket j : StateVector t) :=
-    QuantumPhaseEstimation.main_exact_dyadic t j P.phase hphase
-  refine ⟨hreadout, ?_⟩
-  refine ⟨?_, ?_⟩
-  · simp_all
-  · refine ⟨?_, qpeExactResourceProfile_exact t⟩
-    simp_all
+  refine ⟨qpe_eigenstate_controlled_power_kickbacks P,
+    QuantumPhaseEstimation.main_exact_dyadic t j P.phase hphase, ?_, ?_,
+    qpeExactResourceProfile_exact t⟩
+  · rw [hphase, sub_self, abs_zero]
+    exact heps
+  · rw [QuantumPhaseEstimation.main_exact_probability_one t j P.phase hphase, sub_self]
+    exact heta
 
 end
 
