@@ -33,6 +33,12 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Quotient
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Substitution
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Provability
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Unconditional
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.PresheafType
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.ObjectClassifier
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Torsors
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Interval
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.FinitelyPresentable
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Homogeneous
 
 /-!
 # Classifying topoi of geometric theories
@@ -102,6 +108,32 @@ syntactic category of the theory (formulas in context and provably functional re
 two have equivalent topoi of sheaves. Not formalised: the syntactic category and its topology,
 and the completeness of geometric sequent calculus (a sequent valid in the generic model is
 provable).
+
+Layer 3 of the roadmap: theories of presheaf type (the modules
+`LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.*`).
+
+* `LeanPool.ClassifyingTopoi.isOfPresheafType_of_isHorn` (roadmap 3.1): Horn theories are of
+  presheaf type, classified by the presheaves on their Horn category
+  (`Syntactic.HornTheoryCat`), through the comparison lemma for the functor from the Horn category
+  of the language, whose induced topology is the topology classifying the theory;
+* `LeanPool.ClassifyingTopoi.isClassifyingSite_genericObject` (roadmap 3.2): the functors from
+  finite sets to sets classify objects, with the inclusion as generic object;
+* `LeanPool.ClassifyingTopoi.isModel_genericTorsor` and
+  `LeanPool.ClassifyingTopoi.moritaEquivalent_torsorTheory_of_mulEquiv` (roadmap 3.3, partial):
+  the generic torsor is a torsor, and isomorphic groups have Morita-equivalent theories of
+  torsors;
+* `LeanPool.ClassifyingTopoi.isModel_genericInterval` (roadmap 3.4, partial): the standard
+  `1`-simplex is an interval in simplicial sets;
+* the definitions of roadmap 3.5 (`GeometricFormula.IsIrreducible`, `SetModel`, `FPModel`,
+  `SetModel.IsPresentedBy`, `irreducibleFormulaObjects`) and, for roadmap 3.6,
+  `LeanPool.ClassifyingTopoi.isSetModel_iff_isIrreducibleObject`: a finitely presentable model is
+  a model of a quotient whose models are the homogeneous ones iff it is irreducible.
+
+Not formalised in layer 3: the classification of torsors by `SingleObj G` and the converse of
+the Morita equivalence (roadmap 3.3), the classification of intervals by simplicial sets
+(roadmap 3.4), and the theorems of roadmap 3.5 and the existence of quotients of 3.6, which need
+the existence half of Diaconescu's theorem beyond the Horn sites and the identification of the
+finitely presentable models with the irreducible objects of the classifying topos.
 
 The translation of geometric formulas into infinitary logic `L_{∞ω}` (roadmap 1.2, `toInf` and
 `realize_toInf`) is not formalised, since it is not available in Mathlib.
