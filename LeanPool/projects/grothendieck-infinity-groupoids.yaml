@@ -57,9 +57,10 @@ main_results:
   informal: The constant presheaf with value a two-element set is an ∞-groupoid of type C, and
     its map to the terminal presheaf is not a weak equivalence.
 - declaration: LeanPool.GrothendieckInfinityGroupoids.isGlobularPresheaf_piPresheaf
-  informal: For a globular functor R from a pseudo-coherator C to topological spaces with the
+  informal: For a globular functor R from a globular extension C to topological spaces with the
     disks and hemisphere inclusions, and a space X, the presheaf sending S to the continuous maps
-    from R(S) to X is an ∞-groupoid of type C.
+    from R(S) to X sends globular sums to globular products, so that it is an ∞-groupoid of type
+    C when C is a pseudo-coherator.
 - declaration: LeanPool.GrothendieckInfinityGroupoids.cellJoined_zero_piPresheaf_iff
   informal: For such R, two 0-cells of this presheaf, maps from R(D_0) to X, are related by a
     1-cell exactly when the corresponding points of X are joined by a path.

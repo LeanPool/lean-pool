@@ -13,11 +13,12 @@ public import Mathlib.Analysis.Normed.Module.Convex
 /-!
 # The fundamental ∞-groupoid of a space and its `π₀` (roadmap 5.2, 5.3, 5.4)
 
-For a pseudo-coherator `C` and a functor `R : C ⥤ TopCat`, the fundamental ∞-groupoid presheaf
-`Π_∞^R(X) = TopCat(R(−), X)` (`piPresheaf`, D. Ara, « On the homotopy theory of Grothendieck
-∞-groupoids », J. Pure Appl. Algebra 217 (2013), 1237–1278, 5.2). When `R` is a globular functor
-into the coglobular space of disks, `Π_∞^R(X)` is an ∞-groupoid of type `C`
-(`isGlobularPresheaf_piPresheaf`), its `0`-cells are the points of `X` and two of them are homotopic
+For a globular extension `C` and a functor `R : C ⥤ TopCat`, the fundamental ∞-groupoid
+presheaf `Π_∞^R(X) = TopCat(R(−), X)` (`piPresheaf`, D. Ara, « On the homotopy theory of
+Grothendieck ∞-groupoids », J. Pure Appl. Algebra 217 (2013), 1237–1278, 5.2). When `R` is a
+globular functor into the coglobular space of disks, `Π_∞^R(X)` sends globular sums to globular
+products, so it is an ∞-groupoid of type `C` when `C` is a pseudo-coherator
+(`isGlobularPresheaf_piPresheaf`); its `0`-cells are the points of `X` and two of them are homotopic
 exactly when they are joined by a path (`cellJoined_zero_piPresheaf_iff`), so that `Π_∞^R f` is a
 bijection on `π₀` exactly when `f` is a bijection on path components
 (`bijectiveOnComponents_piPresheaf_iff`): the `π₀` part of Ara 2013, Theorem 8.7 and Corollaries
@@ -41,9 +42,10 @@ def weTop : MorphismProperty TopCat.{0} := fun X _ f =>
       Function.Bijective (HomotopyGroup.map (N := Fin (n + 1)) (x := x) f.hom rfl)
 
 /-- **Roadmap 5.2.** The fundamental ∞-groupoid presheaf `Π_∞^R(X) = TopCat(R(−), X)` for a functor
-`R : C ⥤ TopCat` (Ara 2013, 5.2); when `R` is a globular functor into `stdDisks`
-(`IsGlobularFunctor`) it is an ∞-groupoid of type `C`. -/
-def piPresheaf (C : PseudoCoherator) (R : C.Obj ⥤ TopCat.{0}) :
+`R : C ⥤ TopCat` out of a globular extension (Ara 2013, 5.2); when `R` is a globular functor into
+`stdDisks` (`IsGlobularFunctor`) it sends globular sums to globular products, and it is an
+∞-groupoid of type `C` when `C` is a pseudo-coherator. -/
+def piPresheaf (C : GlobularExtension) (R : C.Obj ⥤ TopCat.{0}) :
     TopCat.{0} ⥤ (C.Objᵒᵖ ⥤ Type) :=
   yoneda ⋙ (Functor.whiskeringLeft _ _ _).obj R.op
 
@@ -82,7 +84,7 @@ theorem joined_disk1 (y z : TopCat.disk.{0} 1) : Joined y z := by
 
 end Disks
 
-variable (C : PseudoCoherator.{u, v}) (R : C.Obj ⥤ TopCat.{0})
+variable (C : GlobularExtension.{u, v}) (R : C.Obj ⥤ TopCat.{0})
 
 theorem piPresheaf_map_apply (X : TopCat.{0}) {S S' : C.Obj} (g : S ⟶ S')
     (a : R.obj S' ⟶ X) : ((piPresheaf C R).obj X).map g.op a = R.map g ≫ a := rfl
@@ -92,7 +94,7 @@ theorem piPresheaf_app_apply {X Y : TopCat.{0}} (f : X ⟶ Y) (S : C.Obj) (a : R
 
 namespace IsGlobularFunctor
 
-variable {C R} (hR : IsGlobularFunctor C.toGlobularExtension stdDisks R)
+variable {C R} (hR : IsGlobularFunctor C stdDisks R)
 include hR
 
 theorem map_face (m : ℕ) : ∀ (k : ℕ) (ε : Bool),
@@ -114,8 +116,8 @@ end IsGlobularFunctor
 /-- **Roadmap 5.2.** For a globular functor `R` into the coglobular space of disks, the
 fundamental ∞-groupoid presheaf `Π_∞^R(X)` sends globular sums to globular products: it is an
 ∞-groupoid of type `C` (Ara 2013, 5.2). -/
-theorem isGlobularPresheaf_piPresheaf (hR : IsGlobularFunctor C.toGlobularExtension stdDisks R)
-    (X : TopCat.{0}) : IsGlobularPresheaf C.toGlobularExtension ((piPresheaf C R).obj X) := by
+theorem isGlobularPresheaf_piPresheaf (hR : IsGlobularFunctor C stdDisks R)
+    (X : TopCat.{0}) : IsGlobularPresheaf C ((piPresheaf C R).obj X) := by
   intro T v hv
   let v' : ∀ k, R.obj (C.disks.disk (T.top k)) ⟶ X := v
   have hv' : ∀ j, R.map (C.disks.faceTo (T.bot_lt_left j) false) ≫ v' j.castSucc =
@@ -137,7 +139,7 @@ theorem isGlobularPresheaf_piPresheaf (hR : IsGlobularFunctor C.toGlobularExtens
 
 section Pi0
 
-variable {C R} (hR : IsGlobularFunctor C.toGlobularExtension stdDisks R)
+variable {C R} (hR : IsGlobularFunctor C stdDisks R)
 
 /-- The point of `X` underlying a `0`-cell of `Π_∞^R(X)`. -/
 noncomputable def cellPoint {X : TopCat.{0}} (c : R.obj (C.disks.disk 0) ⟶ X) : X :=
@@ -269,11 +271,18 @@ theorem bijectiveOnComponents_piPresheaf_iff {X Y : TopCat.{0}} (f : X ⟶ Y) :
         (a₂ := ZerothHomotopy.mk (cellPoint hR c')) ((mk_eq_mk_iff _ _).2 h')
       exact (cellJoined_zero_piPresheaf_iff hR c c').2 ((mk_eq_mk_iff _ _).1 this)
 
+end Pi0
+
+section WeakEquivalence
+
+variable {C : PseudoCoherator.{u, v}} {R : C.Obj ⥤ TopCat.{0}}
+  (hR : IsGlobularFunctor C.toGlobularExtension stdDisks R)
+
 include hR in
 /-- **Roadmap 5.4.** If `Π_∞^R f` is a weak equivalence of ∞-groupoids of type `C`, then `f` is a
 bijection on path components. -/
 theorem IsWeakEquivalence.bijective_mapZerothHomotopy {X Y : TopCat.{0}} {f : X ⟶ Y}
-    (h : C.IsWeakEquivalence ((piPresheaf C R).map f)) :
+    (h : C.IsWeakEquivalence ((piPresheaf C.toGlobularExtension R).map f)) :
     Function.Bijective (mapZerothHomotopy f) :=
   (bijectiveOnComponents_piPresheaf_iff hR f).1 h.1
 
@@ -281,7 +290,7 @@ include hR in
 /-- **Roadmap 5.4.** `Π_∞^R` of the inclusion of a point into the two-point discrete space is not a
 weak equivalence. -/
 theorem not_isWeakEquivalence_piPresheaf_point_bool :
-    ¬ C.IsWeakEquivalence ((piPresheaf C R).map
+    ¬ C.IsWeakEquivalence ((piPresheaf C.toGlobularExtension R).map
       (TopCat.ofHom ⟨fun _ : PUnit.{1} => false, continuous_const⟩ :
         TopCat.of PUnit.{1} ⟶ TopCat.of Bool)) := by
   intro h
@@ -291,6 +300,6 @@ theorem not_isWeakEquivalence_piPresheaf_point_bool :
   have := (p.continuous.isConst_of_preconnectedSpace) 0 1
   simp at this
 
-end Pi0
+end WeakEquivalence
 
 end LeanPool.GrothendieckInfinityGroupoids
