@@ -171,12 +171,15 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/HasseMinkowski            https://github.com/jayyswan/hasse-minkowski
   LeanPool/HighContrastHomogenization
                                      https://github.com/scottnarmstrong/HighContrastHomogenization
+  LeanPool/HomotopyTheoryOfCategories
+                                     https://github.com/mycaule/lean-pool
   LeanPool/HopfProblem               https://github.com/plby/HopfProblem
   LeanPool/HubbardMoments            https://github.com/zhineos/hubbard-spectral-moments
   LeanPool/HyperellipticCurves       https://github.com/MichaelStollBayreuth/HyperellipticCurves
   LeanPool/Incompleteness            https://github.com/FormalizedFormalLogic/Incompleteness
   LeanPool/InfinitaryLogic           https://github.com/cameronfreer/infinitary-logic
   LeanPool/InfiniteConnesRigidity    https://github.com/openai/ten-proofs
+  LeanPool/InteractionCombinators    https://github.com/Lorenzobattistela/interaction-combinators-lean
   LeanPool/IrisAlgebra               https://github.com/leanprover-community/iris-lean
   LeanPool/IsTranscendentalPi        https://github.com/samuelborza/IsTranscendentalPi
   LeanPool/IsoGraph                  https://github.com/Timeroot/IsoGraph
@@ -213,6 +216,8 @@ Apache License, Version 2.0, and are redistributed here under the same license.
                                      https://github.com/mycaule/lean-pool
   LeanPool/ListEdgeColoringComplete  https://github.com/jtraverso/haggkvist-janssen
   LeanPool/LocalComplexGeometry      https://github.com/BochaoKong/nullstellensatz
+  LeanPool/LocallyPresentableCategories
+                                     https://github.com/mycaule/lean-pool
   LeanPool/LongGapsBetweenPrimes     https://github.com/openai/LongGapsBetweenPrimes
   LeanPool/LongTails                 https://github.com/k3nfalt/longtails
   LeanPool/LowDimSolvClassification  https://github.com/LieLean/LowDimSolvClassification
@@ -276,6 +281,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/PermanentFormulaLowerBound
                                      https://github.com/openai/ten-proofs
   LeanPool/PhaseRetrieval            https://github.com/susannabertolini/PhaseRetrieval
+  LeanPool/PlanarSeparator           https://github.com/RBarish-UTokyo/PlanarSeparator-NestedDissection-WordRAM-Lean4
   LeanPool/PoincareThreeBody         https://github.com/gersh/lean-pool
   LeanPool/PointwiseBirkhoff         https://github.com/lua-vr/pointwise-birkhoff
   LeanPool/PointwiseComposition      https://github.com/flengyel/FailureOfComposition
@@ -343,6 +349,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Superorthogonality        https://github.com/roos-j/lean-superorthogonality
   LeanPool/SyntheticEuclid4          https://github.com/ah1112/synthetic_euclid_4
   LeanPool/ThreeGap                  https://github.com/ElVec1o/five-distance-sharp
+  LeanPool/ToposTheoreticBridges     https://github.com/mycaule/lean-pool
   LeanPool/Triangular                https://github.com/roos-j/lean-triangular
   LeanPool/TrilinearHilbertTransform https://github.com/roos-j/lean-trilinearht
   LeanPool/TruthTableRigidity        https://github.com/bjoernkjoshanssen/tt-auto
