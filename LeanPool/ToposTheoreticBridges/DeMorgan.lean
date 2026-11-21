@@ -20,7 +20,8 @@ public import Mathlib.CategoryTheory.Category.Preorder
 
 A topos is *De Morgan* when, for every subobject `A`, the pseudocomplement `¬A` and its own
 pseudocomplement `¬¬A` cover: `¬A ⊔ ¬¬A = ⊤`. We state this for any category whose subobjects
-form bounded lattices (`IsDeMorganTopos`), and prove (Johnstone, *Elephant*, A4.5.21/D4.6.3):
+form bounded lattices (`IsDeMorganTopos`), and prove (Johnstone, *Elephant*, Example D4.6.3(a);
+see also Hemelaer and Rogers, Theorem 2.32):
 
 * `isDeMorganTopos_presheaf_iff_rightOreCondition`: the presheaf topos `Cᵒᵖ ⥤ Type u` is
   De Morgan iff `C` satisfies the right Ore condition (every cospan `Y ⟶ X ⟵ Z` is completed
