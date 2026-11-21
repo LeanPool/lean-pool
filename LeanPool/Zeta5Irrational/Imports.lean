@@ -71,6 +71,7 @@ public import LeanPool.Zeta5Irrational.Growth.InnerTable.SevenToEleven
 public import LeanPool.Zeta5Irrational.Growth.InnerTable.ThreeToSeven
 public import LeanPool.Zeta5Irrational.Growth.OuterPrime
 public import LeanPool.Zeta5Irrational.Growth.OuterTable
+public import LeanPool.Zeta5Irrational.Growth.PieceCertificate
 public import LeanPool.Zeta5Irrational.Growth.PieceIdx
 public import LeanPool.Zeta5Irrational.Growth.TableGen
 public import LeanPool.Zeta5Irrational.Growth.TableIntegrals
