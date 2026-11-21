@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.ClassifyingSite
 public import LeanPool.ToposTheoreticBridges.Sites
+public import LeanPool.ToposTheoreticBridges.Subtopos
 public import Mathlib.CategoryTheory.Adjunction.Restrict
 public import Mathlib.CategoryTheory.Adjunction.Unique
 public import Mathlib.Order.Antisymmetrization
@@ -74,16 +75,16 @@ section Sheafification
 
 variable {C : Type u} [SmallCategory C] {J J₁ : GrothendieckTopology C}
 
-/-- For `J ≤ J₁`, the inclusion of the `J₁`-sheaves among the `J`-sheaves. -/
+/-- For `J ≤ J₁`, the inclusion of the `J₁`-sheaves among the `J`-sheaves
+(`LeanPool.ToposTheoreticBridges.sheafInclusionOfLE`). -/
 abbrev sheafInclusion (h : J ≤ J₁) : Sheaf J₁ (Type u) ⥤ Sheaf J (Type u) :=
-  ObjectProperty.ιOfLE fun _ hF => Presheaf.IsSheaf.of_le h hF
+  ToposTheoreticBridges.sheafInclusionOfLE h
 
-/-- For `J ≤ J₁`, sheafification of `J`-sheaves for `J₁` is left adjoint to the inclusion. -/
-noncomputable def sheafifyAdjunction (h : J ≤ J₁) :
+/-- For `J ≤ J₁`, sheafification of `J`-sheaves for `J₁` is left adjoint to the inclusion
+(`LeanPool.ToposTheoreticBridges.sheafInclusionOfLEAdjunction`). -/
+noncomputable abbrev sheafifyAdjunction (h : J ≤ J₁) :
     sheafToPresheaf J (Type u) ⋙ presheafToSheaf J₁ (Type u) ⊣ sheafInclusion h :=
-  (sheafificationAdjunction J₁ (Type u)).restrictFullyFaithful
-    (fullyFaithfulSheafToPresheaf J _) (Functor.FullyFaithful.id _)
-    (Functor.rightUnitor _).symm (NatIso.ofComponents fun _ => Iso.refl _)
+  ToposTheoreticBridges.sheafInclusionOfLEAdjunction h
 
 /-- Sheafification of `J`-sheaves for `J₁ ≥ J` is the inverse image of a geometric morphism. -/
 theorem isLeftAdjoint_sheafify (h : J ≤ J₁) :
@@ -183,16 +184,19 @@ def HasQuotientTopologies : Prop :=
     ∀ J₁ : GrothendieckTopology C, J ≤ J₁ → ∃ T₁ : GeometricTheory.{u} L, T ⊆ T₁ ∧
       IsClassifyingSite T₁ J₁ (U.map (sheafToPresheaf J (Type u) ⋙ presheafToSheaf J₁ (Type u)))
 
-/-- Under the correspondence of roadmap 2.5, the quotients of `T` are order isomorphic to the
-topologies finer than `J`, each quotient being classified by the corresponding topology with the
-sheafified generic model. -/
-theorem exists_orderIso_quotients_ici (hU : IsClassifyingSite T J U)
-    (hQ : HasQuotientTopologies T J U) :
-    ∃ Φ : T.Quotients ≃o Set.Ici J, ∀ T₁ : T.QuotientTheory,
-      IsClassifyingSite T₁.1 (Φ (toAntisymmetrization _ T₁)).1
-        (U.map (sheafToPresheaf J (Type u) ⋙
-          presheafToSheaf (Φ (toAntisymmetrization _ T₁)).1 (Type u))) := by
-  choose f hf hfc using fun T₁ : T.QuotientTheory => hQ.1 T₁.1 T₁.2
+/-- A choice, for each quotient `T₁` of `T`, of a topology `f T₁ ≥ J` classifying `T₁` with the
+sheafified generic model descends to an order embedding of the quotients of `T` into the
+topologies finer than `J` (by `le_iff_forall_isModel`), sending each quotient to the chosen
+topology, which classifies it. -/
+theorem exists_orderEmbedding_of_isClassifyingSite (hU : IsClassifyingSite T J U)
+    (f : T.QuotientTheory → GrothendieckTopology C) (hf : ∀ T₁, J ≤ f T₁)
+    (hfc : ∀ T₁ : T.QuotientTheory, IsClassifyingSite T₁.1 (f T₁)
+      (U.map (sheafToPresheaf J (Type u) ⋙ presheafToSheaf (f T₁) (Type u)))) :
+    ∃ Φ : T.Quotients ↪o Set.Ici J, ∀ T₁ : T.QuotientTheory,
+      (Φ (toAntisymmetrization _ T₁)).1 = f T₁ ∧
+        IsClassifyingSite T₁.1 (Φ (toAntisymmetrization _ T₁)).1
+          (U.map (sheafToPresheaf J (Type u) ⋙
+            presheafToSheaf (Φ (toAntisymmetrization _ T₁)).1 (Type u))) := by
   have key : ∀ T₁ T₂ : T.QuotientTheory, f T₁ ≤ f T₂ ↔ T₁ ≤ T₂ := fun T₁ T₂ =>
     hU.le_iff_forall_isModel (hf T₁) (hf T₂) (hfc T₁) (hfc T₂)
   let g : T.Quotients → Set.Ici J := fun q => ⟨f (ofAntisymmetrization _ q), hf _⟩
@@ -205,17 +209,30 @@ theorem exists_orderIso_quotients_ici (hU : IsClassifyingSite T J U)
     induction b using Antisymmetrization.ind with | _ b
     rw [hg, hg, toAntisymmetrization_le_toAntisymmetrization_iff]
     exact key a b
-  have hgs : Function.Surjective g := fun J₁ => by
-    obtain ⟨T₁, hT₁, hc⟩ := hQ.2 J₁.1 J₁.2
-    refine ⟨toAntisymmetrization _ (⟨T₁, hT₁⟩ : T.QuotientTheory), (hg _).trans ?_⟩
-    exact Subtype.ext ((hU.eq_iff_forall_isModel (hf _) J₁.2 (hfc _) hc).2
-      fun _ _ _ _ => Iff.rfl)
-  refine ⟨OrderIso.ofSurjective (OrderEmbedding.ofMapLEIff g hgle) hgs, fun T₁ => ?_⟩
+  refine ⟨OrderEmbedding.ofMapLEIff g hgle, fun T₁ => ⟨congrArg Subtype.val (hg T₁), ?_⟩⟩
   have aux : ∀ X : Set.Ici J, X.1 = f T₁ → IsClassifyingSite T₁.1 X.1
       (U.map (sheafToPresheaf J (Type u) ⋙ presheafToSheaf X.1 (Type u))) := by
     rintro ⟨X, -⟩ (rfl : X = f T₁)
     exact hfc T₁
   exact aux _ (congrArg Subtype.val (hg T₁))
+
+/-- Under the correspondence of roadmap 2.5, the quotients of `T` are order isomorphic to the
+topologies finer than `J`, each quotient being classified by the corresponding topology with the
+sheafified generic model. -/
+theorem exists_orderIso_quotients_ici (hU : IsClassifyingSite T J U)
+    (hQ : HasQuotientTopologies T J U) :
+    ∃ Φ : T.Quotients ≃o Set.Ici J, ∀ T₁ : T.QuotientTheory,
+      IsClassifyingSite T₁.1 (Φ (toAntisymmetrization _ T₁)).1
+        (U.map (sheafToPresheaf J (Type u) ⋙
+          presheafToSheaf (Φ (toAntisymmetrization _ T₁)).1 (Type u))) := by
+  choose f hf hfc using fun T₁ : T.QuotientTheory => hQ.1 T₁.1 T₁.2
+  obtain ⟨Φ, hΦ⟩ := hU.exists_orderEmbedding_of_isClassifyingSite f hf hfc
+  have hs : Function.Surjective Φ := fun J₁ => by
+    obtain ⟨T₁, hT₁, hc⟩ := hQ.2 J₁.1 J₁.2
+    refine ⟨toAntisymmetrization _ (⟨T₁, hT₁⟩ : T.QuotientTheory), Subtype.ext ?_⟩
+    exact (hΦ _).1.trans ((hU.eq_iff_forall_isModel (hf _) J₁.2 (hfc _) hc).2
+      fun _ _ _ _ => Iff.rfl)
+  exact ⟨OrderIso.ofSurjective Φ hs, fun T₁ => (hΦ T₁).2⟩
 
 end IsClassifyingSite
 

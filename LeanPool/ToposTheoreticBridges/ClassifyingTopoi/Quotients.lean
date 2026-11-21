@@ -144,51 +144,9 @@ namespace CatStructure
 section MapComp
 
 variable {E : Type*} [Category E] {E' : Type*} [Category E'] {E'' : Type*} [Category E'']
-  [HasFiniteLimits E] [HasFiniteLimits E'] [HasFiniteLimits E''] [HasImages E'']
+  [HasFiniteProducts E] [HasFiniteProducts E'] [HasFiniteLimits E''] [HasImages E'']
   (M : CatStructure L E) (F : E ⥤ E') (G : E' ⥤ E'')
   [PreservesFiniteProducts F] [PreservesFiniteProducts G]
-
-/-- The identity of carriers is a homomorphism from the image of a structure under a composite
-functor to the iterated image. -/
-theorem isHom_map_comp_hom : (M.map (F ⋙ G)).IsHom ((M.map F).map G) (𝟙 _) := by
-  have key : ∀ {k : ℕ},
-      inv (piComparison (F ⋙ G) fun _ : Fin k => M.carrier) =
-        inv (piComparison G fun _ => F.obj M.carrier) ≫
-          G.map (inv (piComparison F fun _ => M.carrier)) := fun {k} => by
-    apply IsIso.inv_eq_of_hom_inv_id
-    rw [piComparison_comp']
-    simp
-  refine ⟨fun f => ?_, fun R => ?_⟩
-  · change (inv (piComparison (F ⋙ G) _) ≫ G.map (F.map (M.funMap f))) ≫ 𝟙 _ =
-      _ ≫ inv (piComparison G _) ≫ G.map (inv (piComparison F _) ≫ F.map (M.funMap f))
-    rw [key]
-    simp
-  · refine imageSubobject_le_pullback _ _ _ (𝟙 _) ?_
-    change (G.map (F.map (M.relMap R).hom) ≫ piComparison (F ⋙ G) _) ≫ _ =
-      𝟙 _ ≫ G.map (F.map (M.relMap R).hom ≫ piComparison F _) ≫ piComparison G _
-    rw [piComparison_comp']
-    simp
-
-/-- The identity of carriers is a homomorphism from the iterated image of a structure to its
-image under the composite functor. -/
-theorem isHom_map_comp_inv : ((M.map F).map G).IsHom (M.map (F ⋙ G)) (𝟙 _) := by
-  have key : ∀ {k : ℕ},
-      inv (piComparison (F ⋙ G) fun _ : Fin k => M.carrier) =
-        inv (piComparison G fun _ => F.obj M.carrier) ≫
-          G.map (inv (piComparison F fun _ => M.carrier)) := fun {k} => by
-    apply IsIso.inv_eq_of_hom_inv_id
-    rw [piComparison_comp']
-    simp
-  refine ⟨fun f => ?_, fun R => ?_⟩
-  · change (inv (piComparison G _) ≫ G.map (inv (piComparison F _) ≫ F.map (M.funMap f))) ≫
-      𝟙 _ = _ ≫ inv (piComparison (F ⋙ G) _) ≫ G.map (F.map (M.funMap f))
-    rw [key]
-    simp
-  · refine imageSubobject_le_pullback _ _ _ (𝟙 _) ?_
-    change (G.map (F.map (M.relMap R).hom ≫ piComparison F _) ≫ piComparison G _) ≫ _ =
-      𝟙 _ ≫ G.map (F.map (M.relMap R).hom) ≫ piComparison (F ⋙ G) _
-    rw [piComparison_comp']
-    simp
 
 /-- Homomorphisms between the images of a structure under composite functors `F ⋙ G` and
 `F ⋙ G'` are the homomorphisms between the iterated images. -/
@@ -450,29 +408,10 @@ theorem exists_orderEmbedding_quotients_ici (hU : IsClassifyingSite T J U) :
       IsClassifyingSite T₁.1 (Φ (toAntisymmetrization _ T₁)).1
         (U.map (sheafToPresheaf J (Type u) ⋙
           presheafToSheaf (Φ (toAntisymmetrization _ T₁)).1 (Type u))) := by
-  let f : T.QuotientTheory → GrothendieckTopology C := fun T₁ => quotientTopology U T₁.1
-  have hf : ∀ T₁, J ≤ f T₁ := fun T₁ => le_quotientTopology U T₁.1
-  have hfc : ∀ T₁ : T.QuotientTheory, IsClassifyingSite T₁.1 (f T₁)
-      (U.map (sheafToPresheaf J (Type u) ⋙ presheafToSheaf (f T₁) (Type u))) :=
+  obtain ⟨Φ, hΦ⟩ := hU.exists_orderEmbedding_of_isClassifyingSite
+    (fun T₁ => quotientTopology U T₁.1) (fun T₁ => le_quotientTopology U T₁.1)
     fun T₁ => hU.quotient T₁.2
-  have key : ∀ T₁ T₂ : T.QuotientTheory, f T₁ ≤ f T₂ ↔ T₁ ≤ T₂ := fun T₁ T₂ =>
-    hU.le_iff_forall_isModel (hf T₁) (hf T₂) (hfc T₁) (hfc T₂)
-  let g : T.Quotients → Set.Ici J := fun q => ⟨f (ofAntisymmetrization _ q), hf _⟩
-  have hg : ∀ T₁, g (toAntisymmetrization _ T₁) = ⟨f T₁, hf T₁⟩ := fun T₁ => by
-    have h := (toAntisymmetrization_eq (· ≤ ·) _ _).1
-      (toAntisymmetrization_ofAntisymmetrization (· ≤ ·) (toAntisymmetrization _ T₁))
-    exact Subtype.ext (le_antisymm ((key _ _).2 h.1) ((key _ _).2 h.2))
-  have hgle : ∀ a b, g a ≤ g b ↔ a ≤ b := fun a b => by
-    induction a using Antisymmetrization.ind with | _ a
-    induction b using Antisymmetrization.ind with | _ b
-    rw [hg, hg, toAntisymmetrization_le_toAntisymmetrization_iff]
-    exact key a b
-  refine ⟨OrderEmbedding.ofMapLEIff g hgle, fun T₁ => ?_⟩
-  have aux : ∀ X : Set.Ici J, X.1 = f T₁ → IsClassifyingSite T₁.1 X.1
-      (U.map (sheafToPresheaf J (Type u) ⋙ presheafToSheaf X.1 (Type u))) := by
-    rintro ⟨X, -⟩ (rfl : X = f T₁)
-    exact hfc T₁
-  exact aux _ (congrArg Subtype.val (hg T₁))
+  exact ⟨Φ, fun T₁ => (hΦ T₁).2⟩
 
 /-- **Bridges between theories, under definability.** Let `T` and `T'` be Morita-equivalent
 theories, classified by `(C, J, U)` and `(D, K, U')` on which all sieves are definable

@@ -20,10 +20,6 @@ homomorphisms between the image models.
 ## Main definitions
 
 * `LeanPool.ClassifyingTopoi.IsClassifyingSite`: the universal property above;
-* `LeanPool.ClassifyingTopoi.GeometricFormula.IsHorn`, `GeometricTheory.IsHorn`: Horn formulas
-  (finite conjunctions of atomic formulas) and Horn theories;
-* `LeanPool.ClassifyingTopoi.GeometricFormula.exs`: existential quantification of the last `m`
-  variables;
 * `LeanPool.ClassifyingTopoi.MoritaEquivalent`: two theories are Morita-equivalent when they
   have classifying sites with equivalent topoi of sheaves.
 
@@ -49,7 +45,7 @@ syntactic site), which is not formalised here.
 
 @[expose] public section
 
-universe w u₁ u₂ u₃ u₄ u₅ u₆ u
+universe u₁ u₂ u₃ u₄ u₅ u₆ u
 
 open CategoryTheory CategoryTheory.Limits
 
@@ -74,26 +70,6 @@ def IsClassifyingSite (T : GeometricTheory.{u} L) {C : Type u} [SmallCategory C]
       Function.Injective (fun α : F ⟶ G => α.app U.carrier) ∧
       ∀ h : F.obj U.carrier ⟶ G.obj U.carrier,
         (U.map F).IsHom (U.map G) h ↔ ∃ α : F ⟶ G, α.app U.carrier = h
-
-/-- Horn formulas: finite conjunctions of atomic formulas. -/
-def GeometricFormula.IsHorn : {n : ℕ} → GeometricFormula.{w} L n → Prop
-  | _, .top => True
-  | _, .and φ ψ => φ.IsHorn ∧ ψ.IsHorn
-  | _, .iSup _ => False
-  | _, .equal _ _ => True
-  | _, .rel _ _ => True
-  | _, .ex _ => False
-
-/-- A Horn theory: every axiom is a sequent between Horn formulas. -/
-def GeometricTheory.IsHorn (T : GeometricTheory.{w} L) : Prop :=
-  ∀ σ ∈ T, σ.lhs.IsHorn ∧ σ.rhs.IsHorn
-
-/-- Existential quantification of the last `m` variables of the context
-`Fin (n + m)`. -/
-def GeometricFormula.exs {n : ℕ} : {m : ℕ} → GeometricFormula.{w} L (n + m) →
-    GeometricFormula.{w} L n
-  | 0, φ => φ
-  | m + 1, φ => exs (m := m) (.ex φ)
 
 /-- Two geometric theories, possibly over different languages, are Morita-equivalent
 when they have classifying sites whose topoi of sheaves are equivalent. -/
