@@ -58,5 +58,9 @@ presheaf topoi with their characterisations on the site:
   topoi, and the bridges between quotients of Morita-equivalent theories.
 
 These are « bridges » in O. Caramello's sense: an invariant of the topos, read on two
-presentations, gives an equivalence of properties of the presentations.
+presentations, gives an equivalence of properties of the presentations. The card's source,
+Caramello's *The unification of Mathematics via Topos Theory* (arXiv:1006.3930), is background
+for this method; each file cites the sources of its own results (for instance SGA 4 IV,
+Exercise 7.7, for the essential points, and Johnstone's *Elephant*, Example D4.6.3(a), for De
+Morgan presheaf topoi).
 -/
