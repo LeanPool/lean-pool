@@ -24,8 +24,8 @@ the language and the family are **mutually recursive**:
   `SkolemClosure.lean` and `skWitnessTerm … ψ₀.not` in `EMTermModel.lean`), so Skolemizing `Γ_k`
   alone would miss exactly the symbol the rebased truth lemma needs;
 * `Γ_{k+1}` = the subformula/component closure of a seed built from `skolemNeed Γ_k` (lifted along
-  the language inclusion), the Skolem-witness bodies of the new symbols, and a reserved
-  deForm-closure slot.
+  the language inclusion), the Skolem-witness bodies of the new symbols, and the empty
+  `deFormSeed`. The deForm closure is added over the colimit by `ΓEMlocal`.
 
 The mutual recursion is packaged as one `ℕ`-indexed sequence of `LocalStage` bundles
 (language plus family and countability certificates), sidestepping dependent-recursion sprawl.
@@ -175,19 +175,20 @@ private theorem localSkWitnessSeed_countable
   have := localSkolem_sigma_functions_countable Γ hΓ
   exact Set.countable_range _
 
-/-- **Reserved deForm-closure seed** (placeholder). The truth lemma's family must be closed under
-the *de-substituted* formulas `deForm S φ ts` of its members; but `deForm` is defined over a
-term-model carrier `J` (see `EMTermModel.deForm`), which does not exist at the pure language-tower
-level. This named slot is empty until the local colimit and its term model are in place. -/
+/-- **Empty deForm seed.** The truth lemma's family must be closed under the *de-substituted*
+formulas `deForm S φ ts` of its members; but `deForm` is defined over a term-model carrier `J`
+(see `EMTermModel.deForm`), which does not exist at the pure language-tower level. So this seed
+adds nothing to the tower; the closure is supplied over the colimit by `ΓEMlocal` in
+`LocalEMFamily.lean`. -/
 def deFormSeed (Γ : Set (Σ n, L.BoundedFormulaω Empty n)) :
     Set (Σ n, (L.sum (localSkolem L Γ)).BoundedFormulaω Empty n) := ∅
 
-/-- The reserved deForm seed is (trivially) countable. -/
+/-- The empty deForm seed is countable. -/
 private theorem deFormSeed_countable (Γ : Set (Σ n, L.BoundedFormulaω Empty n)) :
     (deFormSeed Γ).Countable := Set.countable_empty
 
 /-- The full **seed** of the successor family: the lift of `Γ`, the Skolem-witness bodies, and the
-reserved deForm slot. -/
+empty deForm seed. -/
 def localSeed (Γ : Set (Σ n, L.BoundedFormulaω Empty n)) :
     Set (Σ n, (L.sum (localSkolem L Γ)).BoundedFormulaω Empty n) :=
   liftGamma Γ ∪ localSkWitnessSeed Γ ∪ deFormSeed Γ
@@ -202,7 +203,7 @@ private theorem localSeed_countable {Γ : Set (Σ n, L.BoundedFormulaω Empty n)
 /-- The **successor family**: the subformula/component closure (`setClosure bfSubformulas`) of the
 successor seed. Closing under `bfSubformulas` makes `Γ_{k+1}` closed under immediate subformulas
 and countable-connective components — the structural-induction requirement of the truth lemma —
-while the Skolem-witness and (reserved) deForm generators sit in the seed. -/
+while the Skolem-witness generators sit in the seed. -/
 def localGammaNext (Γ : Set (Σ n, L.BoundedFormulaω Empty n)) :
     Set (Σ n, (L.sum (localSkolem L Γ)).BoundedFormulaω Empty n) :=
   setClosure bfSubformulas (localSeed Γ)
