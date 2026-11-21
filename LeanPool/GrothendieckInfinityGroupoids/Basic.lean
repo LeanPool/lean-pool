@@ -22,6 +22,11 @@ those of D. Ara, « On the homotopy theory of Grothendieck ∞-groupoids », J. 
 (2013), 1237–1278, §1: 1.1–1.2 for globular sets, Examples 1.5.2 for the disks, 1.3 for tables,
 with the left disk of each gluing attached by its source face and the right disk by its target
 face.
+
+The globe category and explicit globular-set definitions adapt
+`lean/OAI/CategoryTheory/Globular/Model.lean` from `openai/math` (Apache-2.0),
+commit `7ef5c0cc5ca4b0e072b7a050fca09ab24bc6fa3a`. See the same repository's
+`lean/OAI/CategoryTheory/Globular/Coglobular.lean` for the coglobular-object construction.
 -/
 
 @[expose] public section

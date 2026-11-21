@@ -19,7 +19,8 @@ being the disk itself (D. Ara, « On the homotopy theory of Grothendieck ∞-gro
 Appl. Algebra 217 (2013), 1237–1278, 1.3).
 
 In a category with pushouts every coglobular object has globular sums
-(`GlobularSums.nonempty_of_hasPushouts`, Ara 2013, Examples 1.5.1): the sum of a table of width
+(`GlobularSums.nonempty_of_hasPushouts`, strengthening the cocomplete case in Ara 2013,
+Examples 1.5.1): the sum of a table of width
 `w + 1` is the pushout of the sum of its first `w + 1` disks and of its last disk along the last
 gluing disk (`sumAux`), and the universal property follows by induction on the width. In
 particular `TopCat` with the coglobular space of disks has globular sums
