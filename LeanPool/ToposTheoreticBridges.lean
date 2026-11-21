@@ -26,8 +26,10 @@ Main declarations: `LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karou
   `LeanPool.ToposTheoreticBridges.subtoposOrderIso`,
   `LeanPool.ToposTheoreticBridges.essentialPointEquivKaroubiOp`,
   `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_equivalence`,
+  `LeanPool.ClassifyingTopoi.exists_isClassifyingSite`,
   `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_topology`,
-  `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_orderIso_quotients'`
+  `LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_theory`,
+  `LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients`
 Tags: topos-theory, classifying-topoi, morita-equivalence, karoubi-envelope, presheaf-topoi
 MSC: 18F10, 18B25, 18E50, 03G30
 -/
