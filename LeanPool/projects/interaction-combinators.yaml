@@ -1,0 +1,38 @@
+slug: interaction-combinators
+title: Lafont's interaction combinators
+summary: Formalizes interaction nets, reduction modulo wire substitutions, strong confluence,
+  and Lafont's construction of a strict translation from any well-formed interaction system
+  over a finite signature into the three interaction combinators.
+branch: computer science
+entry_module: LeanPool.InteractionCombinators
+authors:
+- Lorenzo Battistela
+source:
+  title: Interaction Combinators
+  authors:
+  - Yves Lafont
+  doi: 10.1006/inco.1997.2643
+  url: https://github.com/Lorenzobattistela/interaction-combinators-lean/tree/7400551e918781e674808e0040172118028d2968
+  github_repo: Lorenzobattistela/interaction-combinators-lean
+  commit: 7400551e918781e674808e0040172118028d2968
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- INet.Comb.universal
+- INet.Comb.universal_strict
+main_results:
+- declaration: INet.Comb.universal
+  informal: Every well-formed interaction system over a finite signature translates into
+    Lafont's system of three interaction combinators, with rule reductions simulated up to wire
+    equivalence.
+- declaration: INet.Comb.universal_strict
+  informal: The translation can be chosen so that the image of every source symbol begins
+    with a cell.
+tags:
+- interaction-nets
+- term-rewriting
+- universality
+msc:
+- 68Q42
+- 03B70
