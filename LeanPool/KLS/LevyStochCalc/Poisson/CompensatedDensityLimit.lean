@@ -417,7 +417,8 @@ lemma eLpNorm_two_rpow_eq_lintegral_sq {P : Measure Ω} (g : Ω → ℝ)
 /-- **Dissertation #2(B): the compensated Euler sums converge in `L²(P)`.** For a
 bounded, progressively measurable `φ` with finite mark support, there are adapted,
 bounded mark-simple step data `(Biₖⁿ, ciₖⁿ)` (with marks in `S`) whose step functions
-converge to `φ` in `L²(P ⊗ vol ⊗ ν)`, and an `L²(P)` random variable `F` (the L²-Itô-Lévy
+converge to `φ` in `L²(P ⊗ (vol restricted to [0, T]) ⊗ ν)`, and an `L²(P)` random
+variable `F` (the L²-Itô-Lévy
 integral) such that the Euler step integrals `∑ᵢ∑ₖ ciₖⁿ·Ñ((pᵢⁿ,pᵢ₊₁ⁿ]×Biₖⁿ)` converge to
 `F` in `L²(P)`.
 Assembles the density (`exists_markEval_L2_tendsto`), the cross-resolution Cauchy
