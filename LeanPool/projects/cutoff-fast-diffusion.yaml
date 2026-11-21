@@ -1,0 +1,88 @@
+slug: cutoff-fast-diffusion
+title: Cutoff for fast diffusion and porous medium equations
+summary: >-
+  Proves high-dimensional cutoff in quadratic Wasserstein distance, relative
+  entropy and Fisher information for the explicit Barenblatt flow started
+  from a point, using exact radial beta integrals, moments and transport
+  formulas. The development also describes heavy tails and the Gaussian
+  diffusion limit. All six cutoff results extend the paper's late-time
+  limits to every ε > 0.
+branch: partial differential equations
+entry_module: LeanPool.Cutfast
+authors:
+- Djalil Chafaï
+source:
+  title: On the cutoff phenomenon for fast diffusion and porous medium equations
+  arxiv: 2503.11770v2
+  url: https://github.com/djalilchafai/cutoff-fastdiff/tree/6621bf2a7779c7fb7cbda04bb7c860d853c5c516
+  github_repo: djalilchafai/cutoff-fastdiff
+  commit: 6621bf2a7779c7fb7cbda04bb7c860d853c5c516
+  announcement_url: https://github.com/djalilchafai/cutoff-fastdiff/commit/21fca8a827a1de332d9be0bf61e0aa3718283fba
+  announcement_date: '2026-10-24'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  Djalil Chafaï directed Claude Code agents and reviewed the formal statements
+  against the paper. The upstream formalization metadata credits the agents
+  with the Lean proofs.
+main_declarations:
+- Cutfast.cutoff_wassersteinSq
+- Cutfast.cutoff_relEntropy
+- Cutfast.cutoff_fisherInfo
+- Cutfast.cutoff_fixedExponent_wassersteinSq
+- Cutfast.cutoff_fixedExponent_relEntropy
+- Cutfast.cutoff_fixedExponent_fisherInfo
+main_results:
+- declaration: Cutfast.cutoff_wassersteinSq
+  informal: >-
+    Fix α > 0 with α ≠ 1/2 and r > 0, and set m = ((d − 2)α + 1)/(dα).
+    The supremum of squared Wasserstein distance over initial points in the
+    closed ball of radius r√d tends to infinity at (1 − ε)t* for fixed
+    0 < ε < 1 and to zero at (1 + ε)t* for fixed ε > 0, with
+    t* = max(1, α) log d / 2.
+- declaration: Cutfast.cutoff_relEntropy
+  informal: >-
+    Fix α > 0 with α ≠ 1/2 and r > 0, and set m = ((d − 2)α + 1)/(dα).
+    The supremum of relative entropy over the closed ball of initial points
+    of radius r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to
+    zero at (1 + ε)t* for fixed ε > 0, with t* = max(1, α) log d / 2.
+    In sufficiently large dimension its defining integrand is integrable
+    for every positive time and every initial point in this ball.
+- declaration: Cutfast.cutoff_fisherInfo
+  informal: >-
+    Fix α > 0 with α ≠ 1/2 and r > 0, and set m = ((d − 2)α + 1)/(dα).
+    The supremum of relative Fisher information over the closed ball of
+    initial points of radius r√d tends to infinity at (1 − ε)t* for fixed
+    0 < ε < 1 and to zero at (1 + ε)t* for fixed ε > 0, with
+    t* = max(1, α) log d / 2.
+- declaration: Cutfast.cutoff_fixedExponent_wassersteinSq
+  informal: >-
+    For fixed porous medium exponent m > 1 and r > 0, the supremum of
+    squared Wasserstein distance over initial points in the closed ball of radius
+    r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at
+    (1 + ε)t* for fixed ε > 0, with t* = log d / 2.
+- declaration: Cutfast.cutoff_fixedExponent_relEntropy
+  informal: >-
+    For fixed porous medium exponent m > 1 and r > 0, the supremum of
+    relative entropy over the closed ball of initial points of radius r√d tends
+    to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at (1 + ε)t*
+    for fixed ε > 0, with t* = log d / 2. In sufficiently large dimension
+    its defining integrand is integrable for every positive time and
+    every initial point in this ball.
+- declaration: Cutfast.cutoff_fixedExponent_fisherInfo
+  informal: >-
+    For fixed porous medium exponent m > 1 and r > 0, the supremum of
+    relative Fisher information over the closed ball of initial points of
+    radius r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at
+    (1 + ε)t* for fixed ε > 0, with t* = log d / 2.
+tags:
+- barenblatt-profiles
+- cutoff-phenomenon
+- optimal-transport
+- porous-medium-equation
+msc:
+- 35K55
+- 35B40
+- 49Q22
+- 60J60
