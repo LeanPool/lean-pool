@@ -173,6 +173,10 @@ theorem exists_smoothJordanDomain_norm_bound_crouzeixPolynomialAuxiliaryOperator
     [CompleteSpace E] (A : E →L[ℂ] E) (p : Polynomial ℂ) :
     ∃ (Omega : SmoothJordanDomain) (C : ℝ),
       closure (numericalRange A) ⊆ Omega.carrier ∧
+        (∀ t ∈ Icc (0 : ℝ) (2 * Real.pi),
+          ‖deriv Omega.boundaryParam t •
+            (star (Polynomial.eval (Omega.boundaryParam t) p) •
+              resolvent A (Omega.boundaryParam t))‖ ≤ C) ∧
         ‖crouzeixPolynomialAuxiliaryOperator A Omega p‖ ≤
           ‖(2 * (Real.pi : ℂ) * I)⁻¹‖ * (2 * Real.pi * C) :=
   exists_smoothJordanDomain_norm_bound_crouzeixPolynomialAuxiliaryOperator A p

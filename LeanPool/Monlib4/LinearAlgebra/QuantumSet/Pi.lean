@@ -14,7 +14,7 @@ import Mathlib.Tactic.Positivity.Finset
 # Quantum Sets on Finite Products
 
 This file restores the finite-product quantum set instance from upstream
-`Monlib.LinearAlgebra.QuantumSet.Pi`.
+`Monlib.LinearAlgebra.QuantumSet.Pi`, for factors that all have `k = 0`.
 -/
 
 @[expose] public section
@@ -121,6 +121,8 @@ theorem piInnerProductAlgebra.inner_apply (a b : PiQ A) :
     ⟪a, b⟫_ℂ = ∑ i, ⟪a i, b i⟫_ℂ :=
   piInnerProductAlgebra_inner_apply a b
 
+/-- The finite product of quantum sets whose factors all have `k = 0`; the product also has
+`k = 0`. -/
 noncomputable instance Pi.quantumSet [Fact (∀ i, (hQ i).k = 0)] : QuantumSet (PiQ A) where
   modAut_isSymmetric r x y := by
     rw [piInnerProductAlgebra_inner_apply, piInnerProductAlgebra_inner_apply]
