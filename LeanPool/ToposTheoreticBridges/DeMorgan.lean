@@ -50,8 +50,8 @@ universe u
 /-- A category whose subobjects form bounded lattices is De Morgan when every subobject `A` has a
 pseudocomplement `B`, the largest subobject disjoint from `A`, which has a pseudocomplement `B'`
 with `B ⊔ B' = ⊤`. -/
-def IsDeMorganTopos (E : Type*) [Category E] [HasImages E] [HasBinaryCoproducts E]
-    [HasInitial E] [InitialMonoClass E] : Prop :=
+def IsDeMorganTopos (E : Type*) [Category E] [HasImages E]
+    [HasBinaryCoproducts E] [HasInitial E] [InitialMonoClass E] : Prop :=
   ∀ (X : E) (A : Subobject X), ∃ B B' : Subobject X,
     (∀ S : Subobject X, Disjoint S A ↔ S ≤ B) ∧ (∀ S : Subobject X, Disjoint S B ↔ S ≤ B') ∧
       B ⊔ B' = ⊤
