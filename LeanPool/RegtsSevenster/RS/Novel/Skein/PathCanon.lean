@@ -142,10 +142,10 @@ noncomputable def throughMixedPartitionC [LinearOrder α]
 
 namespace EdgeSubset
 
-/-- Two path-canonical orientations of one system differ only on
-circuit components, so their summands agree — the difference set
-avoids every chain (both orientations direct each chain the same
-way) and is therefore pairing-closed on internal flags. -/
+/-- Two path-canonical orientations of one system have equal summands,
+assuming `hchain`: wherever they disagree on an internal flag, its
+pairing is internal.  The proof uses `hchain` alone, not path-canonicity;
+`pathCanonical_diff_pairing_closed` derives `hchain` from path-canonicity. -/
 theorem throughSummand_canonical_unique [LinearOrder α] {W : Fragment α}
     {F : EdgeSubset W}
     {k ℓ : ℕ} (h : MixedFunctional k ℓ)

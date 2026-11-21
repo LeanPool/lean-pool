@@ -63,8 +63,8 @@ of a mixed object as a free super module.
 * `RS.finrank_fibre_tensor_point_even` and
   `RS.finrank_fibre_tensor_point_odd` — the two dimensions of the fibre
   at a point, with their finite-dimensionality.
-* `RS.exists_superVect_fibre` — the fibre, packaged as an
-  `RS.SuperVect` of dimension `(p | q)`.
+* `RS.exists_superVect_fibre` — some `RS.SuperVect` of dimension
+  `(p | q)`, the two dimensions of the fibre.
 * `RS.exists_superPoint_fibre_of_countable_family` — the whole chain,
   steps 1 to 5.
 -/
@@ -222,9 +222,10 @@ theorem finrank_fibre_tensor_point_odd
       (((fibreFun L 𝔸).obj X).tensor (pointMod P)).odd = q :=
   finrank_odd_of_free P p q _ (fibreFreeIso L 𝔸 e)
 
-/-- **The fibre at a point, as a super vector space of dimension
-`(p | q)`.**  The packaging is `RS.toSuperVect`, whose components are
-coordinate spaces of the two dimensions just computed. -/
+/-- **A super vector space of the dimension `(p | q)` of the fibre.**
+The witness is `RS.toSuperVect` of the fibre, whose components are
+coordinate spaces of the two dimensions just computed; the statement
+records only the dimension pair, with no link to `X` or `P`. -/
 theorem exists_superVect_fibre
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [MonoidalPreadditive C] [CategoryTheory.Linear ℂ (Ind C)]
