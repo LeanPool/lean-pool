@@ -479,8 +479,6 @@ lemma mkPolarity {P : (Fin k → V) → Prop} {Γ : Polarity}
 lemma of_iff (H : ℌ.Boldface Q) (h : ∀ x, P x ↔ Q x) : ℌ.Boldface P := by
   rwa [show P = Q from by funext v; simp [h]]
 
-lemma of_oRing (h : ℌ.Boldface P) : ℌ.Boldface P := by rcases h with ⟨φ, hP⟩; exact ⟨φ.emb, hP.emb⟩
-
 lemma of_delta (h : Dlt-[m].Boldface P) : Γ-[m].Boldface P := by
   rcases h with ⟨φ, h⟩
   match Γ with
