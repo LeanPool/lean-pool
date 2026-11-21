@@ -1,0 +1,45 @@
+slug: rupert-minimality
+title: Rupert passages for convex solids with at most six vertices
+summary: >
+  Proves that every noncoplanar finite point set with at most six elements has
+  a convex hull with Rupert's property. The proof constructs passages from
+  suitable planar silhouettes and classifies the six-point configurations by
+  their affine dependencies. It also classifies Rupert's property for
+  coplanar and collinear point sets.
+branch: convex geometry
+entry_module: LeanPool.RupertMinimality
+authors:
+- Tom Murphy VII
+- Jason Reed
+- David Renshaw
+source:
+  title: "Minimality: Every nopert has at least 7 vertices"
+  url: https://github.com/tom7/noperts/blob/dd77d2a7c2d8170300d4afdb887ebffad2550952/minimality.md
+  github_repo: tom7/noperts
+  commit: dd77d2a7c2d8170300d4afdb887ebffad2550952
+  completion_url: https://github.com/tom7/noperts/commit/5dfb2fc96805f02c332bdcc254d6e0228b9cafd6
+  completion_date: '2026-10-10T13:37:35Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- RupertMinimality.isRupert_of_card_le_six
+- RupertMinimality.seven_le_card_of_isNopert
+- RupertMinimality.isRupert_iff_of_card_le_six
+main_results:
+- declaration: RupertMinimality.isRupert_of_card_le_six
+  informal: A noncoplanar set of at most six points has a convex hull with
+    Rupert's property.
+- declaration: RupertMinimality.seven_le_card_of_isNopert
+  informal: Every solid convex polyhedron without Rupert's property needs at
+    least seven vertices.
+- declaration: RupertMinimality.isRupert_iff_of_card_le_six
+  informal: A set of at most six points has Rupert's property exactly when
+    it is empty or its points are not collinear.
+tags:
+- convex-geometry
+- rupert-property
+- polytopes
+msc:
+- 52B10
+- 52B11
