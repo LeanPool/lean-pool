@@ -1,0 +1,69 @@
+slug: planar-separator
+title: Planar separators and nested dissection
+summary: Proves weighted separator bounds for finite plane rotation systems and induced
+  vertex sets, constructs separator trees, and verifies fill and arithmetic-operation bounds
+  for nested dissection. Also verifies a linear-step separator program on an explicit RAM.
+branch: computer science
+entry_module: LeanPool.PlanarSeparator
+authors:
+- Robert D. Barish
+source:
+  title: A Separator Theorem for Planar Graphs
+  authors:
+  - Richard J. Lipton
+  - Robert Endre Tarjan
+  doi: 10.1137/0136016
+  url: https://github.com/RBarish-UTokyo/PlanarSeparator-NestedDissection-WordRAM-Lean4/tree/0b5373fd782ef11c5b049f03fa69506948092c05
+  github_repo: RBarish-UTokyo/PlanarSeparator-NestedDissection-WordRAM-Lean4
+  commit: 0b5373fd782ef11c5b049f03fa69506948092c05
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- PlanarSeparator.separator_theorem
+- PlanarSeparator.separator_theorem_induced
+- PlanarSeparator.sepTree_exists
+- PlanarSeparator.square_sepTree_exists
+- PlanarSeparator.fill_bound
+- PlanarSeparator.planar_nested_dissection
+- PlanarSeparator.square_nested_dissection
+- PlanarSeparator.separator_machine
+main_results:
+- declaration: PlanarSeparator.separator_theorem
+  informal: A connected finite plane rotation system with an edge and nonnegative vertex weights
+    of total at most one admits a separator of size at most six times the square root of the
+    number of vertices, with each side of weight at most two thirds.
+- declaration: PlanarSeparator.separator_theorem_induced
+  informal: The weighted separator bound holds on every vertex-induced subgraph, with the size
+    bound measured using the number of selected vertices.
+- declaration: PlanarSeparator.sepTree_exists
+  informal: Plane rotation systems admit separator trees with shrinking parts and square-root
+    bounds on separators and boundaries.
+- declaration: PlanarSeparator.square_sepTree_exists
+  informal: The square of a bounded-degree plane graph also admits such a tree, with constants
+    depending on the degree.
+- declaration: PlanarSeparator.fill_bound
+  informal: Elimination in the order of a separator tree with square-root separator and boundary
+    bounds creates at most a constant times n times one plus the logarithm of n filled edges.
+- declaration: PlanarSeparator.planar_nested_dissection
+  informal: A nested dissection ordering for a plane rotation system gives the stated fill
+    bound. Given the filled graph, it computes the totalized elimination stage using at most
+    a constant times n to the power three halves charged field operations.
+- declaration: PlanarSeparator.square_nested_dissection
+  informal: The nested dissection fill and arithmetic bounds also hold for squares of
+    bounded-degree plane graphs, with degree-dependent constants.
+- declaration: PlanarSeparator.separator_machine
+  informal: One fixed RAM program computes a weighted separator on a plane graph with darts
+    ordered by their initial vertices. It halts within 320m + 191n + 403 steps for n vertices
+    and m darts when the natural word bound is at least 16m + 12n + 3 times the total weight
+    plus 22.
+tags:
+- planar-graphs
+- graph-separators
+- nested-dissection
+- verified-complexity
+msc:
+- 05C10
+- 05C85
+- 65F50
+- 68Q25
