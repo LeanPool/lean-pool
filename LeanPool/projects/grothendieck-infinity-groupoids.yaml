@@ -9,9 +9,10 @@ summary: Grothendieck's globular ∞-groupoids in the form Maltsiniotis and Ara 
   presheaves. Liftings of admissible pairs give identities, inverses and composites of cells,
   so that the homotopy relation on the cells of an ∞-groupoid of type C is an equivalence
   relation; weak equivalences contain the identities and are closed under composition. For a
-  supplied globular functor from a pseudo-coherator C into the disks, the fundamental
-  ∞-groupoid of a space is an ∞-groupoid of type C whose 0-cells modulo homotopy are the
-  path components of the space. It detects bijections on path components.
+  supplied globular functor from a globular extension C into the disks, the fundamental
+  ∞-groupoid of a space sends globular sums to globular products, an ∞-groupoid of type C when
+  C is a pseudo-coherator, and its 0-cells modulo homotopy are the path components of the
+  space. It detects bijections on path components.
 branch: algebraic topology
 entry_module: LeanPool.GrothendieckInfinityGroupoids
 authors:
