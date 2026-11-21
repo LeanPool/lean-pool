@@ -5265,30 +5265,6 @@ noncomputable def gOddfinex : Nominal.NPrf (.classMem (synCoddfin) (synCvv)) :=
   have p0377 := @gNncex
   have p0378 := @gImakex syntaxClass0031 (synCnnc) p0376 p0377
   have p0379 := @gSnex (synC0)
-  clear p0000 p0001 p0002 p0003 p0004 p0005 freshnessCertificate0172 freshnessCertificate0173
-    freshnessCertificate0189 p0013 p0017 p0018 p0019 p0020 p0022 p0024 p0025 p0026
-    freshnessCertificate0272 freshnessCertificate0274 freshnessCertificate0280
-    freshnessCertificate0292 freshnessCertificate0315 freshnessCertificate0354 p0034 p0035 p0038
-    p0039 freshnessCertificate0371 freshnessCertificate0373 p0049 p0050 p0053 p0054 p0056 p0058
-    p0141 p0199 p0212 p0213 p0214 freshnessCertificate0587 freshnessCertificate0594
-    freshnessCertificate0598 p0222 p0226 p0227 p0228 p0229 p0230 p0231 p0232 p0233 p0234 p0235 p0236
-    p0237 p0238 p0239 p0240 p0241 p0242 p0243 p0244 p0245 p0246 p0247 p0248 p0249 p0250 p0251 p0252
-    p0253 p0254 p0255 p0256 p0257 p0258 p0259 p0260 p0261 p0262 p0263 p0264 p0265 p0266 p0267 p0268
-    p0269 p0270 p0271 p0272 p0273 p0274 p0275 p0276 freshnessCertificate0641
-    freshnessCertificate0642 p0277 p0278 p0279 p0280 p0281 p0282 p0283 p0284 p0285 p0286 p0287
-    freshnessCertificate0643 freshnessCertificate0644 p0288 freshnessCertificate0645
-    freshnessCertificate0646 p0289 p0290 p0291 p0292 p0293 p0294 p0295 p0296 p0297 p0298 p0299
-    freshnessCertificate0647 freshnessCertificate0648 freshnessCertificate0649
-    freshnessCertificate0650 p0300 p0301 p0302 p0303 p0304 p0305 p0306 p0307
-    freshnessCertificate0651 freshnessCertificate0652 freshnessCertificate0653
-    freshnessCertificate0654 freshnessCertificate0655 freshnessCertificate0656
-    freshnessCertificate0657 freshnessCertificate0658 freshnessCertificate0659
-    freshnessCertificate0660 freshnessCertificate0661 freshnessCertificate0662
-    freshnessCertificate0663 freshnessCertificate0664 freshnessCertificate0665 p0308 p0310 p0311
-    p0312 p0313 p0314 p0315 p0317 p0318 p0319 p0320 p0321 p0322 p0323 p0324 p0325 p0326 p0327 p0329
-    p0330 p0331 p0332 p0333 p0334 p0335 p0336 p0337 p0338 p0339 p0340 p0341 p0342 p0343 p0344 p0345
-    p0346 p0347 p0348 p0349 p0350 p0351 p0352 p0353 p0354 p0356 p0357 p0358 p0359 p0360 p0361 p0362
-    p0363 p0364 p0365 p0366 p0367 p0368 p0369 p0370 p0371 p0372 p0373 p0374 p0375 p0376 p0377
   have p0380 := @gDifex syntaxClass0032 (synCsn (synC0)) p0378 p0379
   have p0381 := @gEqeltri (synCoddfin) syntaxClass0150 (synCvv) p0309 p0380
   exact p0381
