@@ -51,14 +51,6 @@ theorem ordinalVCDim_outer_bddAbove (X : Type u) (C : ConceptClass X Bool) :
   intro _
   exact le_of_lt (Ordinal.natCast_lt_omega0 S.card)
 
-/-- VCL tree: combines VC dimension and Littlestone dimension into a
-    single ordinal-valued measure. Used in universal learning trichotomy. -/
-structure VCLTree (X : Type u) where
-  /-- The ordinal value of the combined VC-Littlestone measure -/
-  value : Ordinal.{0}
-  /-- The concept class this measures -/
-  conceptClass : ConceptClass X Bool
-
 /-- Ordinal VC dimension: extends VCdim to ordinal values. -/
 noncomputable def OrdinalVCDim (X : Type u) (C : ConceptClass X Bool) : Ordinal :=
   ⨆ (S : Finset X) (_ : Shatters X C S), ((S.card : ℕ) : Ordinal)

@@ -147,19 +147,15 @@ theorem sauer_shelah_quantitative (X : Type u) [Fintype X] [DecidableEq X]
   -- M-Bridge: factored through Bridge.lean infrastructure
   growth_function_le_sauer_shelah C d hd m hm
 
-/-- PAC lower bound: sample complexity is at least linear in d/ε.
+/-- PAC lower bound: if VCDim(C) = d ≥ 1, then for ε ≤ 1 / 4 and δ ≤ 1 / 7 the
+    sample complexity of PAC learning C is at least ⌈(d-1)/2⌉.
 
-    This statement asserts the specific quantitative lower bound from learning
-    theory:
-      m ≥ ⌈(d-1)/(64ε)⌉ for PAC learning with VCDim = d.
-    Note: the tight constant is (d-1)/(2ε) (EHKV 1989); see EHKV.lean.
+    The bound does not depend on ε; the classical bound linear in d/ε
+    (Ehrenfeucht-Haussler-Kearns-Valiant 1989) is not proved here.
 
-    Proof route: construct 2^d labelings on a shattered set of size d,
-    use double-averaging + reversed Markov to show that m < (d-1)/(64ε)
-    implies Pr[error ≤ ε] < 6 / 7 under uniform distribution on shattered set.
-
-    KU₂₀: The exact constant (1 / 7 vs 1 / 8 vs 1 / 4) depends on the proof technique.
-    The factor (d-1) vs d also varies by source. -/
+    Proof route: construct 2^d labelings on a shattered set of size d and use
+    double-averaging + reversed Markov under the uniform distribution on the
+    shattered set (via `sample_complexity_lower_bound`). -/
 theorem pac_lower_bound (X : Type u) [MeasurableSpace X]
     [MeasurableSingletonClass X]
     (C : ConceptClass X Bool) (d : ℕ)
