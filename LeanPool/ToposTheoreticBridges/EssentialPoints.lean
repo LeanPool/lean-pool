@@ -24,11 +24,11 @@ For a small category `C` we prove that the essential points of the presheaf topo
 equivalently `essentialPointEquivKaroubi : EssentialPoint (Cᵒᵖ ⥤ Type u) ≌ Karoubi Cᵒᵖ`.
 On objects of `C`, the point attached to `X : C` is evaluation at `X`
 (`isEssentialPoint_evaluation`), and a morphism `X ⟶ Y` in `C` induces a natural
-transformation from evaluation at `Y` to evaluation at `X`: the variance is reversed, since
-morphisms of points are transformations of inverse images (SGA 4 IV, §3.2).
+transformation from evaluation at `Y` to evaluation at `X`. This uses inverse-image
+transformations, with arrows opposite to SGA 4 IV, §3.2's direct-image convention.
 
 The classification of essential points of a presheaf topos by the idempotent completion of `C`
-is SGA 4 IV, Exercise 7.7 (c), (e).
+is SGA 4 IV, Exercise 7.6(c,e).
 
 ## Proof
 
