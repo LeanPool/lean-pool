@@ -11,7 +11,21 @@ public import LeanPool.ToposTheoreticBridges.DeMorgan
 public import LeanPool.ToposTheoreticBridges.Sites
 
 /-!
-# Topos-theoretic bridges
+# Topos-theoretic bridges for presheaf topoi
+
+Source: arxiv:1006.3930
+Authors: Michel Hua
+Status: verified
+Main declarations: `LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi`,
+  `LeanPool.ToposTheoreticBridges.isBooleanTopos_presheaf_iff_isGroupoid`,
+  `LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition`,
+  `LeanPool.ToposTheoreticBridges.exists_orderIso_ici_of_sheafEquiv`
+Tags: topos-theory, morita-equivalence, karoubi-envelope, presheaf-topoi
+MSC: 18F10, 18B25, 18E50
+-/
+
+/-!
+## Overview
 
 Morita equivalence of small categories, read through their presheaf topoi, and two invariants of
 presheaf topoi with their characterisations on the site:

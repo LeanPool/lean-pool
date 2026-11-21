@@ -16,6 +16,7 @@ authors:
 source:
   title: The unification of Mathematics via Topos Theory (O. Caramello)
   arxiv: '1006.3930'
+  github_repo: mycaule/lean-pool
 license: Apache-2.0
 status: verified
 provenance: AI
