@@ -29,7 +29,7 @@ it is stable under precomposition and does not contain `f`, it does not contain 
 has a section. Every morphism having a section, every morphism is an isomorphism.
 
 The notion `IsBooleanTopos` is stated for any category with the instances needed for the
-subobject lattice to be bounded; we do not formalise topoi or subobject classifiers here.
+order on subobjects to be bounded; we do not formalise topoi or subobject classifiers here.
 -/
 
 @[expose] public section
@@ -40,10 +40,9 @@ open CategoryTheory Limits
 
 universe u
 
-/-- A category whose subobjects form bounded lattices is Boolean when every subobject has a
+/-- A category whose subobjects form bounded orders is Boolean when every subobject has a
 complement. -/
-def IsBooleanTopos (E : Type*) [Category E] [HasPullbacks E] [HasImages E]
-    [HasBinaryCoproducts E] [HasInitial E] [InitialMonoClass E] : Prop :=
+def IsBooleanTopos (E : Type*) [Category E] [HasInitial E] [InitialMonoClass E] : Prop :=
   ∀ (X : E) (A : Subobject X), ∃ B : Subobject X, IsCompl A B
 
 section Equivalence
