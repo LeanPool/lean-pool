@@ -35,19 +35,46 @@ main_declarations:
 main_results:
 - declaration: Cutfast.cutoff_wassersteinSq
   informal: >-
-    For fixed self-similarity exponent α > 0 with α ≠ 1/2, the worst squared
-    Wasserstein distance over initial points in a ball of radius r√d tends to
-    infinity before and zero after the critical time max(1, α) log d / 2.
+    Fix α > 0 with α ≠ 1/2 and r > 0, and set m = ((d − 2)α + 1)/(dα).
+    The supremum of squared Wasserstein distance over initial points in the
+    closed ball of radius r√d tends to infinity at (1 − ε)t* for fixed
+    0 < ε < 1 and to zero at (1 + ε)t* for fixed ε > 0, with
+    t* = max(1, α) log d / 2.
 - declaration: Cutfast.cutoff_relEntropy
-  informal: The same cutoff holds for the relative entropy, whose defining integrals are shown to exist.
+  informal: >-
+    Fix α > 0 with α ≠ 1/2 and r > 0, and set m = ((d − 2)α + 1)/(dα).
+    The supremum of relative entropy over the closed ball of initial points
+    of radius r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to
+    zero at (1 + ε)t* for fixed ε > 0, with t* = max(1, α) log d / 2.
+    In sufficiently large dimension its defining integrand is integrable
+    for every positive time and every initial point in this ball.
 - declaration: Cutfast.cutoff_fisherInfo
-  informal: The same cutoff holds for the relative Fisher information.
+  informal: >-
+    Fix α > 0 with α ≠ 1/2 and r > 0, and set m = ((d − 2)α + 1)/(dα).
+    The supremum of relative Fisher information over the closed ball of
+    initial points of radius r√d tends to infinity at (1 − ε)t* for fixed
+    0 < ε < 1 and to zero at (1 + ε)t* for fixed ε > 0, with
+    t* = max(1, α) log d / 2.
 - declaration: Cutfast.cutoff_fixedExponent_wassersteinSq
-  informal: For fixed porous medium exponent m > 1, the squared Wasserstein cutoff occurs at log d / 2.
+  informal: >-
+    For fixed porous medium exponent m > 1 and r > 0, the supremum of
+    squared Wasserstein distance over initial points in the closed ball of radius
+    r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at
+    (1 + ε)t* for fixed ε > 0, with t* = log d / 2.
 - declaration: Cutfast.cutoff_fixedExponent_relEntropy
-  informal: For fixed porous medium exponent m > 1, the relative entropy cutoff occurs at log d / 2.
+  informal: >-
+    For fixed porous medium exponent m > 1 and r > 0, the supremum of
+    relative entropy over the closed ball of initial points of radius r√d tends
+    to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at (1 + ε)t*
+    for fixed ε > 0, with t* = log d / 2. In sufficiently large dimension
+    its defining integrand is integrable for every positive time and
+    every initial point in this ball.
 - declaration: Cutfast.cutoff_fixedExponent_fisherInfo
-  informal: For fixed porous medium exponent m > 1, the relative Fisher information cutoff occurs at log d / 2.
+  informal: >-
+    For fixed porous medium exponent m > 1 and r > 0, the supremum of
+    relative Fisher information over the ball of initial points of radius
+    r√d tends to infinity at (1 − ε)t* for fixed 0 < ε < 1 and to zero at
+    (1 + ε)t* for fixed ε > 0, with t* = log d / 2.
 tags:
 - barenblatt-profiles
 - cutoff-phenomenon
