@@ -246,8 +246,7 @@ theorem exists_admissibleRadialCutoff_of_contDiff_const_near_origin {n : ℕ}
 
 /-- A scalar `C¹` cutoff supported before `R0` gives the packaged admissible
 radial cutoff once the `C¹` regularity of its radial vector field is supplied
-directly.  This is the correct replacement for the too-strong global
-flat-at-origin assumption. -/
+directly, without requiring `phi` to be flat near the origin. -/
 theorem exists_admissibleRadialCutoff_of_contDiff_and_vectorFieldContDiff {n : ℕ}
     {R0 : ℝ} {phi : ℝ → ℝ}
     (hR0_nonneg : 0 ≤ R0)

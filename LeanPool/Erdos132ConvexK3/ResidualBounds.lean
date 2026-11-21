@@ -82,10 +82,6 @@ theorem one_sided_shared_tip_d1_degree_bound
     degree ≤ 7 := by
   omega
 
-/-- Unique farthest immediately gives the low-tip branch of Section 6.1. -/
-theorem one_sided_shared_tip_low_degree_bound
-    {degree : ℕ} (hdegree : degree ≤ 1) : degree ≤ 1 := hdegree
-
 /-- Attempt 12, Section 1.  ED across the surviving `d₂` rung contradicts
 the top-two gap and strict unique-farthest inequality if `Vs=d₁`. -/
 theorem one_penultimate_anti_saturation

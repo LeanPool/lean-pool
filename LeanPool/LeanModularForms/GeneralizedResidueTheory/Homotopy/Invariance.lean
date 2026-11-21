@@ -28,7 +28,7 @@ smooth), plus the classical winding number formula for curves avoiding a point.
 * `generalizedWindingNumber_eq_classical_away` — PV winding number
     equals classical integral when curve avoids z₀
 * `contourIntegral_eq_of_homotopic` — contour integrals equal under
-    homotopy for holomorphic integrands
+    a C² homotopy with stationary endpoints, for entire integrands
 -/
 
 @[expose] public section
@@ -546,8 +546,9 @@ private lemma integral_congr_homotopy_endpoint
   rw [hHs t (Ioo_subset_Icc_self (ht.mpr ht_Ioc)),
     (h_eq.deriv isOpen_Ioo) (ht.mpr ht_Ioc)]
 
-/-- Contour integrals of a holomorphic function are equal
-along homotopic curves. -/
+/-- Contour integrals of an **entire** function (`Differentiable ℂ f`) are equal
+along curves joined by a C² homotopy whose `s`-derivatives vanish at the
+endpoints `t = a` and `t = b`. -/
 theorem contourIntegral_eq_of_homotopic
     (f : ℂ → ℂ) (γ₀ γ₁ : ℝ → ℂ) (a b : ℝ)
     (hab : a < b)

@@ -505,39 +505,6 @@ theorem weakTheta_increment_eq_weakMonotonicityRhs_from_W12Loc_euclidean
       (n := n) (m := m) (Du := Du) (R0 := R0) (s := s) (r := r)
       hboundary hac hradius.2 hs_pos hsr hr_lt
 
-/-- Final packaged weak-map interface with the primitive-cutoff realization
-constructed from interval integrals and smooth bumps.  The remaining
-one-dimensional inputs are the energy IBP formula and its integrability side
-conditions. -/
-theorem weakTheta_monotone_from_weakStationaryMapIn_via_constructed_primitive
-    {n m : ℕ} [NeZero n]
-    {u : Domain n → Target m} {Du : Domain n → Gradient n m} {Ω : Set (Domain n)}
-    {R0 : ℝ}
-    (hR0_nonneg : 0 ≤ R0)
-    (hmap : WeakStationaryMapIn u Du Ω)
-    (hΩ_meas : MeasurableSet Ω)
-    (hclosedBall_subset : Metric.closedBall (0 : Domain n) R0 ⊆ Ω)
-    (hflat : ScalarCutoffsConstNearOrigin R0)
-    (henergy_radius : WeakEnergyRadiusIntegralFormula Du R0)
-    (hradial_radius : WeakRadialEnergyRadiusIntegralFormula Du R0)
-    (hdefect_loc :
-      LocallyIntegrableOn
-        (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
-        (Ioo (0 : ℝ) R0) volume)
-    (henergy_ibp : WeakBallEnergyIntegrationByPartsFormula Du R0)
-    (hibp_int : WeakOneDimensionalIBPIntegrability Du R0)
-    (hderive :
-      WeakBoundaryIdentity Du (0 : Domain n) R0 →
-        ∀ ⦃s r : ℝ⦄, 0 < s → s < r → r < R0 →
-          weakTheta Du (0 : Domain n) r - weakTheta Du (0 : Domain n) s =
-            weakMonotonicityRhs Du (0 : Domain n) s r) :
-    MonotoneOn (weakTheta Du (0 : Domain n)) (Ioo (0 : ℝ) R0) := by
-  exact weakTheta_monotone_from_weakStationaryMapIn_via_realized_ingredients
-    (n := n) (m := m) (u := u) (Du := Du) (Ω := Ω) (R0 := R0)
-    hR0_nonneg hmap hΩ_meas hclosedBall_subset hflat
-    henergy_radius hradial_radius hdefect_loc henergy_ibp hibp_int
-    (weakPrimitiveCutoffRealization R0) hderive
-
 end StationaryHarmonicMap
 end LeanStationaryHarmonicMaps
 

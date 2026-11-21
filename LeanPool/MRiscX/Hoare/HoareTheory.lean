@@ -40,14 +40,3 @@ theorem weak_L_w_with_L_from_L_b : ∀ (s s' : MState) (L_w L_b L : Set UInt64) 
   specialize H HCode
   rcases H with ⟨n', ⟨H1, H2, H3, H4⟩⟩
   grind only [= Set.subset_def, = Set.mem_union, = Set.mem_sdiff]
-
-
-
-/-- Loop-style weakening relation used in proving the loop Hoare rule: from state
-`s` at label `l`, the invariant `I` is maintained until the condition `C` is met. -/
-def weakLoop (s : MState) (l : UInt64) (C I : Assertion) :=
-  ∃(n:ℕ), 0 < n → (s.runNSteps n).pc = l ∧
-  (∀ (n' : ℕ), 0 < n' ∧ n' < n →
-  (s.runNSteps n').pc = l →
-  I (s.runNSteps n')) ∧
-  ¬C (s.runNSteps n) ∧ I (s.runNSteps n)

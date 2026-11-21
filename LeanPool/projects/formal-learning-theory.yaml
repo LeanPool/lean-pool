@@ -27,7 +27,9 @@ main_results:
 - declaration: gold_theorem
   informal: States the Gold-style characterization for identification in the limit.
 - declaration: mind_change_characterization
-  informal: Characterizes learnability by a bounded mind-change ordinal.
+  informal: Shows EX-learnability is equivalent to some learner having a finite
+    mind-change ordinal on every text; since that ordinal is defined to be ω unless
+    the learner converges to the target, this is a near-definitional restatement.
 - declaration: littlestone_characterization
   informal: Characterizes online learnability by finite Littlestone dimension.
 - declaration: pac_not_implies_online

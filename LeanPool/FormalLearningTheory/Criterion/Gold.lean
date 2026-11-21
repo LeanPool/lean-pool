@@ -47,8 +47,9 @@ def BCLearnable (X : Type u) (C : ConceptClass X Bool) : Prop :=
         ∃ (t₀ : ℕ), ∀ (t : ℕ), t ≥ t₀ →
           ∀ (x : X), (L.conjecture (dataUpTo T.toDataStream t)) x = c x
 
-/-- Finite learning: EX-learning where the learner makes at most finitely many
-    mind changes and eventually outputs a CORRECT hypothesis. Stronger than EX. -/
+/-- The learner eventually gives the correct conjecture and all subsequent
+    conjectures agree with it. This criterion is equivalent to `EXLearnable`:
+    once every conjecture equals the target, they all agree. -/
 def FiniteLearnable (X : Type u) (C : ConceptClass X Bool) : Prop :=
   ∃ (L : GoldLearner X Bool),
     ∀ (c : Concept X Bool), c ∈ C →

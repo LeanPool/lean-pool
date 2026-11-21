@@ -207,9 +207,11 @@ theorem gold_theorem (X : Type u) [Countable X] [DecidableEq X]
   rw [hdata_eq] at hconv'
   exact hS_ne n (by rw [← hlock_conj n, hconv'])
 
-/-- Mind change characterization: EX-learnable iff every text presentation has
-    finite mind change ordinal. With correctness encoded in MindChangeOrdinal,
-    `< omega0` captures both correct convergence and finite mind changes. -/
+/-- Mind change characterization: C is EX-learnable iff some Gold learner has finite
+    mind change ordinal on every text presentation of every target in C.
+    `MindChangeOrdinal` is defined to be `omega0` unless the learner converges to the
+    target, so `< omega0` already encodes correct convergence and this equivalence is
+    a near-definitional restatement of EX-learnability. -/
 theorem mind_change_characterization (X : Type u)
     (C : ConceptClass X Bool) :
     EXLearnable X C ↔
