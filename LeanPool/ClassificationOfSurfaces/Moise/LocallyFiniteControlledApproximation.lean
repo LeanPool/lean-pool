@@ -801,15 +801,6 @@ theorem polygonalReplacementHomeomorph_coordZero_iff_of_facewiseCoordZeroExposed
     (sourceCoordZeroCarriedByOneSkeleton_of_facewiseCoordZeroExposed G hface)
     (graphReplacementPreservesCoordZero_of_facewiseCoordZeroExposed G hhalf hface) p
 
-omit [T2Space S] in
-/-- A controlled compatible cellwise replacement lands in the permitted perturbation region. -/
-theorem polygonalReplacementMap_mem_region (G : K.PlaneGraphRealization)
-    (H : K.CellwiseCompatibility G) {phi : K.support → ℝ}
-    (_ : FaceBoundariesControlled G phi)
-    (_ : G.ControlsStayInRegion phi) (p : K.support) :
-    (K.polygonalReplacementMap H p).1.1 ∈ G.region :=
-  (K.polygonalReplacementMap H p).1.2
-
 /-- The full locally finite Chapter 6 output from its quantitative graph hypotheses. -/
 theorem exists_controlled_polygonalReplacement (G : K.PlaneGraphRealization)
     (hfaces : Function.Injective K.faceVertices) {phi : K.support → ℝ}
