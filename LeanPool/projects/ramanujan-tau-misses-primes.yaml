@@ -1,8 +1,7 @@
 slug: ramanujan-tau-misses-primes
-title: ABC and Xiong's Proposition 5.4 imply that Ramanujan's tau function misses almost all primes
-summary: Formalizes the proof, conditional on the ABC conjecture and on the sharper
-  N^{1/2} form of Xiong's Proposition 5.4, that Ramanujan's tau function takes prime
-  values only rarely.
+title: ABC implies that Ramanujan's tau function misses almost all primes
+summary: Formalizes the ABC-conditional proof that Ramanujan's tau function takes
+  prime values only rarely.
 branch: analytic number theory
 entry_module: LeanPool.RamanujanTauMissesPrimes
 authors:
@@ -23,22 +22,13 @@ main_declarations:
 - abc_bound_E4
 main_results:
 - declaration: main_theorem
-  informal: For any function satisfying the properties of tau recorded in `RamanujanTau`
-    (Hecke multiplicativity and recurrence, the parity criterion, Deligne's bound and
-    the non-unit property), the ABC conjecture together with the sharper N^{1/2} form
-    of Xiong's Proposition 5.4 (the hypothesis `Proposition54`, which is assumed and
-    not proved) implies that the number of primes ℓ ≤ X with |τ(n)| = ℓ for some n is
-    O(X^{13/22}), so tau misses almost all primes.
+  informal: ABC implies that Ramanujan's tau function misses almost all primes.
 - declaration: reduction_lemma
-  informal: Assuming ABC and `Proposition54` (Xiong's Proposition 5.4, sharper
-    N^{1/2} form), bounds the prime-value count S(X) by a constant times
-    X^{1/2} log X + X^{13/22} + X^{6/11} + E2(X) + E4(X).
+  informal: Reduces the main prime-value statement to the key analytic estimates.
 - declaration: abc_bound_E2
-  informal: Assuming ABC, for every η > 0 the number E2(X) of pairs (x, y) with
-    x > X^{2/11} and 1 ≤ |x^11 - y^2| ≤ X is O(X^{4/9 + η}).
+  informal: ABC-bound input for the Eisenstein-series term E2.
 - declaration: abc_bound_E4
-  informal: Assuming ABC, for every η > 0 the number E4(X) of pairs (x, u) with
-    x > X^{1/11} and 1 ≤ |u^2 - 5 x^22| ≤ 4X is O(X^{1/5 + η}).
+  informal: ABC-bound input for the Eisenstein-series term E4.
 tags:
 - number-theory
 - modular-forms

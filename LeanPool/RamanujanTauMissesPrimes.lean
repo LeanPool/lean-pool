@@ -11,7 +11,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
-# ABC and Xiong's Proposition 5.4 imply that Ramanujan's tau function misses almost all primes
+# ABC implies that Ramanujan's tau function misses almost all primes
 
 Source: arxiv:2603.29970
 Authors: Evan Chen, Kenny Lau, Ken Ono, Jujian Zhang
