@@ -349,20 +349,29 @@ theorem key_alg_out (L Lq Lb κ : ℝ) :
       (Lb / 2))) - κ / (4 * π) * (2 * π * (L + Lq))) = L - Lq + Lb - κ * (L + Lq) := by
   field_simp; ring
 
+-- The outside factorization is the sum of two squares in reciprocal coordinates.
+private lemma reciprocal_sum_squares (q β : ℝ) (hq : q ≠ 0) (hβ : β ≠ 0) :
+    (1 / β - β)^2 + (q + 1 / q)^2 = (q^2 + β^2) * (β^2 * q^2 + 1) / (β^2 * q^2) := by
+  field_simp
+  ring
+
 /-- Outside the support (`x > a`): `2 L_c(x) ≤ kC + wC`. -/
 theorem two_potC_outside_pos (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : a < x) :
     2 * potC a c x ≤ kC a c + wC c x := by
   set ξ := x / a with hξdef
   have hξ1 : 1 < ξ := by rw [hξdef, one_lt_div ha]; exact hx
   set r := √(ξ^2 - 1) with hrdef
-  have hr2 : r^2 = ξ^2 - 1 := Real.sq_sqrt (by nlinarith)
+  have hr2 : r^2 = ξ^2 - 1 :=
+    Real.sq_sqrt (sub_nonneg.mpr (one_le_pow₀ hξ1.le))
   have hr0 : 0 ≤ r := Real.sqrt_nonneg _
   set q := ξ + r with hqdef
-  have hq1 : 1 < q := by linarith
-  have hq0 : 0 < q := by linarith
+  have hq1 : 1 < q := hξ1.trans_le (le_add_of_nonneg_right hr0)
+  have hq0 : 0 < q := zero_lt_one.trans hq1
   set q1 : ℂ := (q : ℂ)
   set q2 : ℂ := ((ξ - r : ℝ) : ℂ)
-  have hqq : q * (ξ - r) = 1 := by rw [hqdef]; nlinarith
+  have hqq : q * (ξ - r) = 1 := by
+    rw [hqdef]
+    linear_combination -hr2
   have hs : q1 + q2 = 2 * ((x / a : ℝ) : ℂ) := by
     simp only [q1, q2, hqdef, ← hξdef]; push_cast; ring
   have hp : q1 * q2 = 1 := by simp only [q1, q2]; rw [← Complex.ofReal_mul, hqq]; simp
@@ -383,16 +392,17 @@ theorem two_potC_outside_pos (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : a < x) :
     apply norm_pos_iff.mpr
     intro h
     have : ‖circleMap 0 1 θ‖ = ‖q1‖ := by rw [sub_eq_zero.mp h]
-    rw [hnq1] at this; simp at this; linarith
+    rw [norm_circleMap_zero, abs_one, hnq1] at this
+    exact hq1.ne this
   have hdec : ∀ θ, Lx a x θ =
       Real.log (a / 2) - Real.log q + 2 * Real.log ‖circleMap 0 1 θ - q1‖ := by
     intro θ
-    have hθ : a * Real.cos θ ≠ x := by
-      intro h; have := Real.cos_le_one θ; nlinarith
+    have hθ : a * Real.cos θ ≠ x :=
+      ((mul_le_of_le_one_right ha.le (Real.cos_le_one θ)).trans_lt hx).ne
     unfold Lx
     rw [log_abs_decomp x q1 q2 ha hs hp hθ]
-    have h2 : ‖circleMap 0 1 θ - q2‖ = ‖circleMap 0 1 θ - q1‖ / q := by
-      rw [← hrel θ]; field_simp
+    have h2 : ‖circleMap 0 1 θ - q2‖ = ‖circleMap 0 1 θ - q1‖ / q :=
+      (eq_div_iff_mul_eq hq0.ne').mpr (by rw [mul_comm, hrel θ])
     rw [h2, Real.log_div (hpos1 θ).ne' hq0.ne']
     ring
   have hLfun : Lx a x = fun θ => Real.log (a / 2) - Real.log q +
@@ -418,7 +428,6 @@ theorem two_potC_outside_pos (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : a < x) :
       integral_PK_log_out hw (by rw [hnq1]; exact hq1)]
     ring
   have hβ0 := betaC_pos ha hc.le
-  have hβ1 := betaC_lt_one ha hc
   rw [potC_eq_theta ha hc x hL, integral_Lx_fC ha hc x hL, hI1,
     hIP _ (PK_betaC_norm ha hc _ (Or.inl rfl)), hIP _ (PK_betaC_norm ha hc _ (Or.inr rfl))]
   have hnorm : ∀ b : ℝ, b = betaC a c ∨ b = -betaC a c →
@@ -429,13 +438,12 @@ theorem two_potC_outside_pos (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : a < x) :
     congr 2
     simp only [q1, Complex.normSq_apply, Complex.sub_re, Complex.sub_im, Complex.mul_re,
       Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im]
-    nlinarith
+    nlinarith only [hb2]
   rw [hnorm _ (Or.inl rfl), hnorm _ (Or.inr rfl)]
   -- the final inequality
   set u := uC a c with hu
   set β := betaC a c with hβ
   have hu0 : 0 < u := uC_pos ha c
-  have hu2 : u^2 = c^2 + a^2 := uC_sq a c
   have hm : β * (u + c) = a := betaC_mul ha hc.le
   have h1 : 1 - β^2 = 2 * c / (u + c) := one_sub_betaC_sq ha hc.le
   have h2 : 1 + β^2 = 2 * u / (u + c) := one_add_betaC_sq ha hc.le
@@ -444,17 +452,25 @@ theorem two_potC_outside_pos (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : a < x) :
   have hpsi := psi_nonneg hβ0 (by positivity) hκ hq1.le
   -- `c² + x² = (a/2)²(q²+β²)(β²q²+1)/(β²q²)`
   have hx2 : x = (a / 2) * (q + 1 / q) := by
-    have : 1 / q = ξ - r := by rw [eq_comm, ← hqq]; field_simp
-    rw [this]; simp only [hqdef]
-    rw [show (a / 2) * (ξ + r + (ξ - r)) = a * ξ by ring, hξdef]; field_simp
+    have : 1 / q = ξ - r :=
+      (eq_div_iff_mul_eq hq0.ne').mpr ((mul_comm _ _).trans hqq) |>.symm
+    rw [this, hqdef, show ξ + r + (ξ - r) = 2 * ξ by ring, hξdef]
+    rw [← mul_assoc, div_mul_cancel₀ _ (by norm_num : (2 : ℝ) ≠ 0), mul_div_cancel₀ _ ha.ne']
   have hcx : c^2 + x^2 = (a / 2)^2 * (q^2 + β^2) * (β^2 * q^2 + 1) / (β^2 * q^2) := by
-    rw [hx2]
-    have hβa : a = β * (u + c) := hm.symm
-    have hua : u^2 = c^2 + (β * (u + c))^2 := by rw [← hβa]; exact hu2
-    have hc' : (1 - β^2) * (u + c) = 2 * c := by rw [h1]; field_simp
-    field_simp
-    rw [hβa]
-    linear_combination (-(q^2 * β * (β * (u + c) * (1 - β^2) + 2 * β * c))) * hc'
+    have hc' : (1 - β^2) * (u + c) = 2 * c := by
+      rw [h1, div_mul_cancel₀ _ (add_pos hu0 hc).ne']
+    have hcβ : c = (a / 2) * (1 / β - β) := by
+      rw [← hm]
+      calc
+        c = (1 - β^2) * (u + c) / 2 :=
+          (eq_div_iff_mul_eq (by norm_num)).mpr (by simpa only [mul_comm c 2] using hc'.symm)
+        _ = β * (u + c) / 2 * (1 / β - β) := by field_simp
+    calc
+      c^2 + x^2 = (a / 2)^2 * ((1 / β - β)^2 + (q + 1 / q)^2) := by
+        rw [hcβ, hx2]
+        ring
+      _ = _ := by
+        simp only [reciprocal_sum_squares q β hq0.ne' hβ0.ne', ← mul_div_assoc, mul_assoc]
   unfold kC wC
   rw [← hu]
   have hl2 : Real.log (a * c / (u + c)) = Real.log β + Real.log c := by
@@ -473,7 +489,7 @@ theorem two_potC_outside_pos (ha : 0 < a) (hc : 0 < c) {x : ℝ} (hx : a < x) :
   rw [hl2, hl3, hl4]
   have hpi : (0:ℝ) < π := Real.pi_pos
   rw [key_alg_out (Real.log (a / 2)) (Real.log q) (Real.log (q^2 + β^2)) (c / u)]
-  linarith
+  linarith only [hpsi]
 
 theorem two_potC_le (ha : 0 < a) (hc : 0 < c) (x : ℝ) : 2 * potC a c x ≤ kC a c + wC c x := by
   rcases le_or_gt |x| a with hx | hx
