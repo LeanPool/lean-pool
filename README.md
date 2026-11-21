@@ -22,7 +22,7 @@ Explore compile costs in the [LeanPool source profile](https://vilin97.github.io
 from projects and files down to declarations and source lines.
 
 <!-- BEGIN STATS -->
-**379** formalization projects · **14,680,012** lines of Lean
+**379** formalization projects · **14,680,487** lines of Lean
 <!-- END STATS -->
 
 <sub>(stats above are refreshed daily by the [Daily documentation workflow](.github/workflows/docs-publish.yml) — edit [`python/lean_pool/stats.py`](python/lean_pool/stats.py), not the numbers)</sub>

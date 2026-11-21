@@ -82,6 +82,17 @@ def test_lake_proof_length_plugin(tmp_path: Path) -> None:
     assert libraries["LeanPoolLinters"]["srcDir"] == "scripts/ci"
     _write_test_project(root, tmp_path)
     _write_default_boundary_fixture(tmp_path)
+    # Lake can start two jobs for the plugin that both libraries load, and they
+    # overwrite each other's link inputs ("no such file or directory" for the
+    # shared library). CI builds the plugin alone first for the same reason.
+    plugin = subprocess.run(
+        [str(lake), "build", "LeanPoolLinters:shared"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=180,
+    )
+    assert plugin.returncode == 0, plugin.stdout + plugin.stderr
     result = subprocess.run(
         [str(lake), "build", "LeanPool"],
         cwd=tmp_path,

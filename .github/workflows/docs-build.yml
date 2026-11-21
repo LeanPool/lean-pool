@@ -112,8 +112,10 @@ jobs:
       # analyze 60 to 75 modules a minute, so four stages of 210 minutes cover
       # about 55,000 modules; progress is saved after each.
       run: PYTHONPATH=python python3 -m lean_pool.documentation batch --seconds 12600 --lake /home/runner/.elan/bin/lake
+    # A stage that fails on one module still saves the batches that finished
+    # (`resumable`), so the next run does not analyze the whole pool again.
     - name: Save completed analysis batches
-      if: inputs.phase == 'analysis'
+      if: ${{ !cancelled() && inputs.phase == 'analysis' && (steps.analysis.outcome == 'success' || steps.analysis.outputs.resumable == 'true') }}
       uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae
       with:
         path: |-
