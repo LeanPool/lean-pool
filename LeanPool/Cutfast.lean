@@ -363,8 +363,9 @@ theorem wassersteinSq_map_affine {d : ℕ} (μ : Measure (E d)) [IsProbabilityMe
       ENNReal.ofReal (∫ x, ‖(A - 1) x‖ ^ 2 ∂μ + 2 * ⟪(A - 1) (∫ x, x ∂μ), h⟫_ℝ + ‖h‖ ^ 2) := by
   apply wassersteinSq_map_affine' <;> assumption
 
-/-- **Lemma 2.2.** Let `η` be a rotationally invariant probability measure on `ℝᵈ` with finite
-second moment, zero mean and identity covariance, and let `μ`, `ν` be its images under
+/-- **Positive-definite case of Lemma 2.2.** Let `η` be a rotationally invariant probability
+measure on `ℝᵈ` with finite second moment, zero mean and identity covariance. Let `μ`, `ν` be
+its images under
 `x ↦ m_μ + √Σ_μ x` and `x ↦ m_ν + √Σ_ν x`, with `Σ_μ`, `Σ_ν` symmetric positive definite
 matrices. Then `μ`, `ν` have means `m_μ`, `m_ν` and covariances `Σ_μ`, `Σ_ν`, and
 `W₂²(μ,ν) = Tr(Σ_μ + Σ_ν - 2 √(√Σ_μ Σ_ν √Σ_μ)) + |m_μ - m_ν|²`; if moreover `Σ_μ` and `Σ_ν`
@@ -425,8 +426,9 @@ theorem fullBarenblatt_asymptotics {α : ℝ} (hα : 1 / 2 < α) :
   apply fullBarenblatt_asymptotics'
   assumption
 
-/-- **Lemma 4.1, eq. (CBac).** For `d ≥ 1`, `p > 0`, `b > 0` and `a > -d` (in particular all
-`a ≥ 0`): `∫ |x|ᵃ B(x) dx = (Γ(p+1+d/2) / (π^{d/2} bᵖ Γ(p+1)))^{a/(d+2p)}
+/-- **Extension of Lemma 4.1, equation (4.2).** For `d ≥ 1`, `p > 0` and `b > 0`, the formula
+holds for all `a > -d`, including negative exponents.
+`∫ |x|ᵃ B(x) dx = (Γ(p+1+d/2) / (π^{d/2} bᵖ Γ(p+1)))^{a/(d+2p)}
 Γ(p+1+d/2) Γ((d+a)/2) / (Γ(d/2) Γ(p+1+(d+a)/2))`. For `a = 0`, `B` is a probability density. -/
 theorem compactBarenblatt_moment {d : ℕ} (hd : 1 ≤ d) {p b a : ℝ} (hp : 0 < p) (hb : 0 < b)
     (ha : -(d : ℝ) < a) :

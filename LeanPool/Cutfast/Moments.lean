@@ -145,7 +145,7 @@ theorem integrable_compactBarenblatt_moment {d : ℕ} (hd : 1 ≤ d) {p b a : �
     Integrable (fun x : E d => ‖x‖ ^ a * compactBarenblatt d p b x) :=
   integrable_rpow_norm_mul_sub_sq_rpow hd ha hp (compactBarenblattConst_pos hp hb) hb
 
-/-- Lemma 4.1, eq. (CBac). -/
+/-- The compact Barenblatt moment formula from Lemma 4.1, equation (4.2), extended to `a > -d`. -/
 theorem compactBarenblatt_moment' {d : ℕ} (hd : 1 ≤ d) {p b a : ℝ} (hp : 0 < p) (hb : 0 < b)
     (ha : -(d : ℝ) < a) :
     ∫ x, ‖x‖ ^ a * compactBarenblatt d p b x =

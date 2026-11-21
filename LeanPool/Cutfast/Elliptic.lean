@@ -215,8 +215,9 @@ end Elliptic
 
 open Cutfast.Elliptic Matrix in
 open scoped MatrixOrder in
-/-- **Lemma 2.2.** Let `η` be a rotationally invariant probability measure on `ℝᵈ` with finite
-second moment, zero mean and identity covariance, and let `μ`, `ν` be its images under
+/-- **Positive-definite case of Lemma 2.2.** Let `η` be a rotationally invariant probability
+measure on `ℝᵈ` with finite second moment, zero mean and identity covariance. Let `μ`, `ν` be
+its images under
 `x ↦ m_μ + √Σ_μ x` and `x ↦ m_ν + √Σ_ν x`, with `Σ_μ`, `Σ_ν` symmetric positive definite
 matrices. Then `μ`, `ν` have means `m_μ`, `m_ν` and covariances `Σ_μ`, `Σ_ν`, and
 `W₂²(μ,ν) = Tr(Σ_μ + Σ_ν - 2 √(√Σ_μ Σ_ν √Σ_μ)) + |m_μ - m_ν|²`; if moreover `Σ_μ` and `Σ_ν`
