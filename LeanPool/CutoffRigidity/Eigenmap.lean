@@ -10,7 +10,6 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.InnerProductSpace.Orthonormal
-public import Mathlib.Tactic
 
 /-!
 # The Euclidean linear algebra of normalized multi-eigenmaps

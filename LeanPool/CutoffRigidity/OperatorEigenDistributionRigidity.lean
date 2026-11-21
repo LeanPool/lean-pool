@@ -192,9 +192,7 @@ theorem gibbsOperatorEigen_equalRate_gradient_distribution_zero {V : E → ℝ}
       atTop (𝓝 |∫ x, (G x) i * coordinateDerivative j ψ x|) := by
     simpa only [mul_assoc] using
       (cutoff_integral_tendsto hf η (fun n => (hη n).continuous.measurable) hb hone).abs
-  have hM : Tendsto (fun n : ℕ => C / ((n : ℝ) + 1)) atTop (𝓝 0) := by
-    simpa only [differenceStep, div_eq_mul_inv, mul_zero] using
-      differenceStep_tendsto_zero.const_mul C
+  have hM := cutoff_inverse_radius_tendsto_zero C
   have hright : Tendsto (fun n : ℕ => 2 * (C / ((n : ℝ) + 1)) * ‖G‖ * P +
       (C / ((n : ℝ) + 1)) * Q) atTop (𝓝 0) := by
     simpa only [mul_zero, zero_mul, add_zero] using

@@ -127,15 +127,7 @@ theorem gibbsOperatorEigen_weighted_local_divergence {V χ η : E → ℝ}
     · have hz : ψ x = 0 := image_eq_zero_of_notMem_tsupport (fun h => hx (hψs h))
       simp [hz]
   have hGi := integrable_compact_gibbsVector_coordinate hp hψ.continuous hψc G i
-  have hVterm (j : Fin d) : Integrable (fun x => ψ x *
-      (coordinateDerivative i (coordinateDerivative j V) x * (G x) j)) (gibbsMeasure volume V) := by
-    have hc := hψ.continuous.mul
-      (continuous_coordinateDerivative_of_c1 (c1_coordinateDerivative_of_c2 hV j) i)
-    have hs : HasCompactSupport (fun x => ψ x * coordinateDerivative i (coordinateDerivative j V)
-      x) := by
-      simpa only [Pi.mul_def] using hψc.mul_right (f' := coordinateDerivative i
-        (coordinateDerivative j V))
-    simpa only [Pi.mul_def, mul_assoc] using integrable_compact_gibbsVector_coordinate hp hc hs G j
+  have hVterm := integrable_gibbsTest_potentialHessian_coordinate hV hp hψ.continuous hψc G i
   have hVsum : Integrable (fun x => ψ x *
       (∑ j : Fin d, coordinateDerivative i (coordinateDerivative j V) x * (G x) j))
       (gibbsMeasure volume V) := by
@@ -143,19 +135,8 @@ theorem gibbsOperatorEigen_weighted_local_divergence {V χ η : E → ℝ}
     exact integrable_finsetSum _ (fun j _ => hVterm j)
   rw [hR, integral_sub (hGi.const_mul rate) hVsum, integral_const_mul]
   simp_rw [hL]
-  have hGradInt (j : Fin d) : Integrable (fun x => coordinateDerivative j ψ x *
-      gibbsOperatorLocalizedHessian hV hp rate u hχ hχc i j x) (gibbsMeasure volume V) := by
-    have hH := (memLp_congr_ae (gibbsOperatorLocalizedGradientSobolevLift_derivative_coordinate_ae
-      hV hp ρ hρ hHess rate u hχ hχc i j)).mp
-      ((EuclideanSpace.proj j : E →L[ℝ] ℝ).comp_memLp
-        (gibbsSobolevDerivative hV hp
-          (gibbsOperatorLocalizedGradientSobolevLift hV hp ρ hρ hHess rate u hχ hχc i)))
-    let := hp
-    have hD : MemLp (coordinateDerivative j ψ) 2 (gibbsMeasure volume V) :=
-      (c1_coordinateDerivative_of_c2 (hψ.of_le (by norm_num))
-        j).continuous.memLp_of_hasCompactSupport
-        (hψc.fderiv_apply ℝ (EuclideanSpace.single j 1))
-    exact hD.integrable_mul hH
+  have hGradInt := integrable_gibbsTest_localizedHessian hV hp ρ hρ hHess rate u
+    hχ hχc (hψ.of_le (by norm_num)) hψc i
   rw [integral_finsetSum _ (fun j _ => hGradInt j)] at he
   dsimp only [G] at *
   linarith only [he]

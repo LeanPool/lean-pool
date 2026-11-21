@@ -49,9 +49,7 @@ theorem exists_inverse_density_cutoff_bounds
       (∀ x, ‖Real.exp (V x / 2) * χ x‖ ≤ A) ∧
       (∀ x, ‖Real.exp (V x / 2) • gradient χ x‖ ≤ B) := by
   let H := fun x => Real.exp (V x / 2) * χ x
-  have hH : Continuous H := (Real.continuous_exp.comp (hV.div_const 2)).mul hχ.continuous
-  have hHc : HasCompactSupport H := by
-    simpa only [H, Pi.mul_def] using hχc.mul_left (f := fun x => Real.exp (V x / 2))
+  obtain ⟨hH, hHc⟩ := weighted_cutoff_continuous_compact hV hχ.continuous hχc
   have hG : Continuous (gradient χ) := (differentiable_gradient_of_contDiff_two hχ).continuous
   have hGc : HasCompactSupport (gradient χ) :=
     (hχc.fderiv ℝ).comp_left (g := (InnerProductSpace.toDual ℝ (EuclideanSpace ℝ (Fin d))).symm)
@@ -327,32 +325,20 @@ Lebesgue L², not merely an assertion of local membership. -/
 theorem exists_compact_cutoff_gibbsLp_L2_norm_bound
     {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : Continuous V)
     (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
-    (hχ : ContDiff ℝ 2 χ) (hχc : HasCompactSupport χ) :
+    (hχ : Continuous χ) (hχc : HasCompactSupport χ) :
     ∃ A : ℝ, 0 < A ∧ ∀ u : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ,
-      ‖(compact_cutoff_gibbsLp_memLp_volume hV hprob hχ.continuous hχc u).toLp
+      ‖(compact_cutoff_gibbsLp_memLp_volume hV hprob hχ hχc u).toLp
         (fun x => χ x * u x)‖ ≤ A * ‖u‖ := by
   let := hprob
-  obtain ⟨A, B, hA, hB, hAb, hBb⟩ := exists_inverse_density_cutoff_bounds hV hχ hχc
+  let H := fun x => Real.exp (V x / 2) * χ x
+  obtain ⟨hH, hHc⟩ := weighted_cutoff_continuous_compact hV hχ hχc
+  obtain ⟨A, hA, hAbound⟩ := (hHc.isCompact_range hH).isBounded.exists_pos_norm_le
+  have hAb (x : EuclideanSpace ℝ (Fin d)) : ‖H x‖ ≤ A := hAbound (H x) ⟨x, rfl⟩
   refine ⟨A, hA, ?_⟩
   intro u
-  let H := fun x => Real.exp (V x / 2) * χ x
-  have hH : Continuous H := (Real.continuous_exp.comp (hV.div_const 2)).mul hχ.continuous
-  have hHc : HasCompactSupport H := by
-    simpa only [H, Pi.mul_def] using hχc.mul_left (f := fun x => Real.exp (V x / 2))
-  have hHL : MemLp H ⊤ (gibbsMeasure volume V) := hH.memLp_of_hasCompactSupport hHc
-  have hm : MemLp (fun x => H x * u x) 2 (gibbsMeasure volume V) := hHL.fun_mul (Lp.memLp u)
-  have he (x : EuclideanSpace ℝ (Fin d)) : Real.exp (V x / 2) ^ 2 = Real.exp (V x) := by
-    rw [← Real.exp_nat_mul]
-    congr 1
-    ring
-  have hpoint (x : EuclideanSpace ℝ (Fin d)) : Real.exp (V x) * (χ x * u x) ^ 2 = (H x * u x) ^ 2
-    := by
-    dsimp only [H]
-    simp only [mul_pow, he]
-    ring
+  have hm := weighted_cutoff_gibbsLp_memLp hV hprob hχ hχc u
   have hi : (∫ x, (χ x * u x) ^ 2 ∂volume) ≤ A ^ 2 * ‖u‖ ^ 2 := by
-    rw [← integral_exp_potential_mul_gibbs_eq_volume hV.measurable]
-    simp_rw [hpoint]
+    rw [integral_sq_cutoff_eq_gibbs hV.measurable]
     have h := integral_mono hm.integrable_sq ((Lp.memLp u).integrable_sq.const_mul (A ^ 2))
       (fun x => by
       have hh := pow_le_pow_left₀ (norm_nonneg _) (hAb x) 2

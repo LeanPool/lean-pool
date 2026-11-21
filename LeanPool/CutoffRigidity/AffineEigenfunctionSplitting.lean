@@ -129,17 +129,6 @@ theorem affine_eigenfunction_residual_translation_invariant
     (affine_eigenfunction_directional_drift V a b ρ heigen) y u
   simp [norm_smul, norm_ne_zero_iff.mpr ha]
 
-/-- Translating the actual Gibbs probability law translates its potential by
-the inverse shift, because Lebesgue volume is translation invariant. -/
-theorem gibbs_map_translation (V : E → ℝ) (hV : Measurable V) (m : E) :
-    ((volume : Measure E).withDensity (fun x => ENNReal.ofReal (Real.exp (-V x)))).map
-        (fun x => x + m) =
-      (volume : Measure E).withDensity (fun y => ENNReal.ofReal (Real.exp (-V (y - m)))) := by
-  have h := map_withDensity_comp (volume : Measure E) (fun x => x + m)
-    (fun y => ENNReal.ofReal (Real.exp (-V (y - m)))) (by fun_prop) (by fun_prop)
-  rw [(measurePreserving_add_right (volume : Measure E) m).map_eq] at h
-  simpa only [add_sub_cancel_right] using h
-
 /-- The pointwise directional drift identity forces a genuine Gaussian factor
 of the translated Gibbs law. The probability premise is precisely Gibbs
 normalization, not an assumed factorization or projection law. -/

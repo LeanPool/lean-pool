@@ -378,12 +378,9 @@ theorem c2_eigenfunction_hessian_zero {V f : E → ℝ}
   have hG0 (y : E) : 0 ≤ G y := Finset.sum_nonneg (fun i _ => sq_nonneg _)
   obtain ⟨C, hC0, χ, hχ, hχc, hχbounds, hχone, hχgrad⟩ := exists_smooth_cutoff_exhaustion (d := d)
   let c (n : ℕ) := C / ((n : ℝ) + 1)
-  have hc0 (n : ℕ) : 0 ≤ c n := by positivity
-  have hcLim : Tendsto c atTop (𝓝 0) := by
-    have hden : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop :=
-      tendsto_natCast_atTop_atTop.atTop_add tendsto_const_nhds
-    simpa only [c, div_eq_mul_inv, mul_zero, Function.comp_apply] using
-      (tendsto_inv_atTop_zero.comp hden).const_mul C
+  have hcLim : Tendsto c atTop (𝓝 0) := cutoff_inverse_radius_tendsto_zero C
+  have hcutoffSq (n : ℕ) (y : E) : ‖gradient (χ n) y‖ ^ 2 ≤ c n ^ 2 :=
+    pow_le_pow_left₀ (norm_nonneg _) (hχgrad n y) 2
   have hAn (n : ℕ) : Integrable (fun y => χ n y ^ 2 * G y) (gibbsMeasure volume V) :=
     integrable_cutoff_square_mul_continuous hV.continuous (hχ n).continuous (hχc n) hGcont
   have hBn (n : ℕ) : Integrable
@@ -393,22 +390,14 @@ theorem c2_eigenfunction_hessian_zero {V f : E → ℝ}
     apply (hgradSq.const_mul (c n ^ 2)).mono' (by fun_prop)
     filter_upwards with y
     rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    have hsq : ‖gradient (χ n) y‖ ^ 2 ≤ c n ^ 2 := by
-      have h := hχgrad n y
-      change ‖gradient (χ n) y‖ ≤ c n at h
-      nlinarith [hc0 n, norm_nonneg (gradient (χ n) y)]
-    exact mul_le_mul_of_nonneg_right hsq (sq_nonneg _)
+    exact mul_le_mul_of_nonneg_right (hcutoffSq n y) (sq_nonneg _)
   have hBbound (n : ℕ) :
       (∫ y, ‖gradient (χ n) y‖ ^ 2 * ‖gradient f y‖ ^ 2 ∂gibbsMeasure volume V) ≤
         c n ^ 2 * (∫ y, ‖gradient f y‖ ^ 2 ∂gibbsMeasure volume V) := by
     rw [← integral_const_mul]
     apply integral_mono (hBn n) (hgradSq.const_mul (c n ^ 2))
     intro y
-    have hsq : ‖gradient (χ n) y‖ ^ 2 ≤ c n ^ 2 := by
-      have h := hχgrad n y
-      change ‖gradient (χ n) y‖ ≤ c n at h
-      nlinarith [hc0 n, norm_nonneg (gradient (χ n) y)]
-    exact mul_le_mul_of_nonneg_right hsq (sq_nonneg _)
+    exact mul_le_mul_of_nonneg_right (hcutoffSq n y) (sq_nonneg _)
   have hAbound (n : ℕ) :
       (∫ y, χ n y ^ 2 * G y ∂gibbsMeasure volume V) ≤
         4 * c n ^ 2 * (∫ y, ‖gradient f y‖ ^ 2 ∂gibbsMeasure volume V) := by

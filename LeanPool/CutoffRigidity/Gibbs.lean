@@ -13,7 +13,8 @@ public import Mathlib.MeasureTheory.Measure.OpenPos
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
-public import Mathlib.Tactic
+public import Mathlib.Tactic.FunProp
+public import Mathlib.Tactic.Positivity
 
 /-!
 # Gibbs measures and full support

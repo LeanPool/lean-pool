@@ -14,7 +14,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Gradient.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.InnerProductSpace.Calculus
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Ring
 
 /-!
 # Translation-invariant interactions

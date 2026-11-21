@@ -100,20 +100,10 @@ theorem c2_function_mem_closedGibbsGradient_graph {V f : E → ℝ}
   have hgfnLp (n : ℕ) : MemLp (gradient (fn n)) 2 μ := by
     have hc := ((hfnc n).fderiv ℝ).comp_left (g := (InnerProductSpace.toDual ℝ E).symm) (by simp)
     exact (hGfn n).memLp_of_hasCompactSupport hc
-  have hcLim : Tendsto (fun n : ℕ => C / ((n : ℝ) + 1)) atTop (𝓝 0) := by
-    have hden : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop :=
-      tendsto_natCast_atTop_atTop.atTop_add tendsto_const_nhds
-    simpa only [div_eq_mul_inv, mul_zero, Function.comp_apply] using
-      (tendsto_inv_atTop_zero.comp hden).const_mul C
-  have hGχlim (x : E) : Tendsto (fun n => gradient (χ n) x) atTop (𝓝 0) := by
-    apply tendsto_zero_iff_norm_tendsto_zero.mpr
-    exact squeeze_zero (fun n => norm_nonneg _) (fun n => hχgrad n x) hcLim
+  have hGχlim := cutoff_gradient_tendsto_zero hχgrad
   have hχlim (x : E) : Tendsto (fun n => χ n x) atTop (𝓝 1) :=
     tendsto_const_nhds.congr' ((hχone x).mono (fun n hn => hn.symm))
-  have hGχbound (n : ℕ) (x : E) : ‖gradient (χ n) x‖ ≤ C := by
-    apply (hχgrad n x).trans
-    apply (div_le_iff₀ (by positivity : (0 : ℝ) < n + 1)).mpr
-    nlinarith [Nat.cast_nonneg (α := ℝ) n]
+  have hGχbound := cutoff_gradient_le hC0 hχgrad
   have hsqχ (n : ℕ) (x : E) : 0 ≤ χ n x ^ 2 ∧ χ n x ^ 2 ≤ 1 := by
     have hb := hχbounds n x
     exact ⟨sq_nonneg _, by nlinarith⟩

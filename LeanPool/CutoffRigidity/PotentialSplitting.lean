@@ -13,7 +13,10 @@ public import Mathlib.MeasureTheory.Measure.WithDensity
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 public import Mathlib.Probability.Distributions.Gaussian.Real
-public import Mathlib.Tactic
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.FunProp
+public import Mathlib.Tactic.Positivity
+public import Mathlib.Tactic.Ring
 
 /-!
 # Splitting a translation-invariant interaction
@@ -88,17 +91,26 @@ section ProductMeasures
 
 variable {F : Type*} [MeasurableSpace F]
 
+/-- The exponential density of a separated potential factors over the two measures. -/
+theorem separated_potential_gibbs_product {X : Type*} [MeasurableSpace X]
+    (μ : Measure X) (ν : Measure F) [SFinite ν]
+    (Q : X → ℝ) (hQ : Measurable Q) (U : F → ℝ) (hU : Measurable U) :
+    (μ.prod ν).withDensity (fun z => ENNReal.ofReal (Real.exp (-(Q z.1 + U z.2)))) =
+      (μ.withDensity (fun r => ENNReal.ofReal (Real.exp (-Q r)))).prod
+        (ν.withDensity (fun y => ENNReal.ofReal (Real.exp (-U y)))) := by
+  rw [prod_withDensity (by fun_prop) (by fun_prop)]
+  congr 1
+  ext z
+  rw [neg_add, Real.exp_add, ENNReal.ofReal_mul (Real.exp_nonneg _)]
+
 /-- Once written in orthogonal product coordinates, a separated Gibbs density
 is the product of the corresponding actual weighted measures. -/
 theorem separated_gibbs_product (μ : Measure ℝ) (ν : Measure F) [SFinite ν]
     (ρ : ℝ) (U : F → ℝ) (hU : Measurable U) :
     (μ.prod ν).withDensity (fun z => ENNReal.ofReal (Real.exp (-(ρ / 2 * z.1 ^ 2 + U z.2)))) =
       (μ.withDensity (fun r => ENNReal.ofReal (Real.exp (-(ρ / 2 * r ^ 2))))).prod
-        (ν.withDensity (fun y => ENNReal.ofReal (Real.exp (-U y)))) := by
-  rw [prod_withDensity (by fun_prop) (by fun_prop)]
-  congr 1
-  ext z
-  rw [neg_add, Real.exp_add, ENNReal.ofReal_mul (Real.exp_nonneg _)]
+        (ν.withDensity (fun y => ENNReal.ofReal (Real.exp (-U y)))) :=
+  separated_potential_gibbs_product μ ν (fun r => ρ / 2 * r ^ 2) (by fun_prop) U hU
 
 end ProductMeasures
 
@@ -118,6 +130,17 @@ variable {E F : Type*}
   [MeasurableSpace E] [BorelSpace E]
   [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
   [MeasurableSpace F] [BorelSpace F]
+
+/-- Translating the actual Gibbs measure translates its potential by
+the inverse shift, because Lebesgue volume is translation invariant. -/
+theorem gibbs_map_translation (V : E → ℝ) (hV : Measurable V) (m : E) :
+    ((volume : Measure E).withDensity (fun x => ENNReal.ofReal (Real.exp (-V x)))).map
+        (fun x => x + m) =
+      (volume : Measure E).withDensity (fun y => ENNReal.ofReal (Real.exp (-V (y - m)))) := by
+  have h := map_withDensity_comp (volume : Measure E) (fun x => x + m)
+    (fun y => ENNReal.ofReal (Real.exp (-V (y - m)))) (by fun_prop) (by fun_prop)
+  rw [(measurePreserving_add_right (volume : Measure E) m).map_eq] at h
+  simpa only [add_sub_cancel_right] using h
 
 section OrthogonalProduct
 
@@ -142,23 +165,19 @@ theorem separated_gibbs_map_orthogonal_product
   let g := fun z : U × F => ENNReal.ofReal (Real.exp (-(Q z.1+W z.2)))
   have hg : Measurable g := by fun_prop
   have hf : Measurable (fun x : E => (A x).ofLp) := by fun_prop
-  have hsplit' (y : E) : ENNReal.ofReal (Real.exp (-V (y+m)))=g (A y).ofLp := by
+  have hsplit' (y : E) : V (y + m) = Q (A y).ofLp.1 + W (A y).ofLp.2 := by
     have hh := hsplit (A y).ofLp.1 (A y).ofLp.2
-    have he : WithLp.toLp 2 ((A y).ofLp.1,(A y).ofLp.2)=A y := rfl
-    rw [he,A.symm_apply_apply] at hh
-    rw [hh]
+    have he : WithLp.toLp 2 ((A y).ofLp.1, (A y).ofLp.2) = A y := rfl
+    rwa [he, A.symm_apply_apply] at hh
+  have hV : Measurable V := by
+    have he : V = fun x => Q (A (x - m)).ofLp.1 + W (A (x - m)).ofLp.2 := by
+      funext x
+      simpa only [sub_add_cancel] using hsplit' (x - m)
+    rw [he]
+    fun_prop
   have htrans : ((volume : Measure E).withDensity (fun x => ENNReal.ofReal (Real.exp (-V x)))).map
       (fun x => x-m) = (volume : Measure E).withDensity (fun y => g (A y).ofLp) := by
-    have hh := map_withDensity_comp (volume : Measure E) (fun x => x+(-m))
-      (fun y => g (A y).ofLp) (by fun_prop) (hg.comp hf)
-    rw [(measurePreserving_add_right (volume : Measure E) (-m)).map_eq] at hh
-    have hdensity : (fun x : E => ENNReal.ofReal (Real.exp (-V x))) =
-        fun x => g (A (x+(-m))).ofLp := by
-      funext x
-      rw [← hsplit']
-      simp
-    rw [← hdensity] at hh
-    simpa only [sub_eq_add_neg] using hh
+    simpa only [sub_eq_add_neg, neg_neg, hsplit', g] using gibbs_map_translation V hV (-m)
   calc
     _ = (((volume : Measure E).withDensity (fun x => ENNReal.ofReal (Real.exp (-V x)))).map
         (fun x => x-m)).map (fun y => (A y).ofLp) := by
@@ -170,13 +189,7 @@ theorem separated_gibbs_map_orthogonal_product
       := map_withDensity_comp _ _ _ hf hg
     _ = ((volume : Measure U).prod (volume : Measure F)).withDensity g := by
       rw [(orthogonalProductCoordinates_measurePreserving A).map_eq]
-    _ = _ := by
-      rw [prod_withDensity (by fun_prop : Measurable (fun u => ENNReal.ofReal (Real.exp (-Q u))))
-        (by fun_prop : Measurable (fun w => ENNReal.ofReal (Real.exp (-W w))))]
-      congr 1
-      funext z
-      dsimp only [g]
-      rw [neg_add,Real.exp_add,ENNReal.ofReal_mul (Real.exp_nonneg _)]
+    _ = _ := separated_potential_gibbs_product volume volume Q hQ W hW
 
 end OrthogonalProduct
 

@@ -158,6 +158,26 @@ theorem gibbsMeasure_le_smul_volume
       ρ hρ hHess x)))
   exact h.trans_eq (withDensity_const _)
 
+/-- Change measure from Lebesgue to a uniformly convex Gibbs law for any
+real normed coefficient space. -/
+@[expose] noncomputable def volumeToGibbsL2Map
+    {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+    {V : EuclideanSpace ℝ (Fin d) → ℝ} (hV : ContDiff ℝ 2 V) (ρ : ℝ) (hρ : 0 < ρ)
+    (hHess : ∀ x z, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z) :
+    (EuclideanSpace ℝ (Fin d) →₂[volume] F) →L[ℝ]
+      (EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] F) :=
+  Lp.LpToLpOfMeasureLeSMul ENNReal.ofReal_ne_top (gibbsMeasure_le_smul_volume hV ρ hρ hHess)
+
+/-- The change-of-measure map preserves representatives almost everywhere. -/
+theorem volumeToGibbsL2Map_coeFn
+    {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+    {V : EuclideanSpace ℝ (Fin d) → ℝ} (hV : ContDiff ℝ 2 V) (ρ : ℝ) (hρ : 0 < ρ)
+    (hHess : ∀ x z, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
+    (f : EuclideanSpace ℝ (Fin d) →₂[volume] F) :
+    (volumeToGibbsL2Map hV ρ hρ hHess f : EuclideanSpace ℝ (Fin d) → F)
+      =ᵐ[gibbsMeasure volume V] f :=
+  Lp.coeFn_LpToLpOfMeasureLeSMul ENNReal.ofReal_ne_top (gibbsMeasure_le_smul_volume hV ρ hρ hHess) f
+
 /-- The canonical actual continuous linear map from Lebesgue L² to the
 uniformly convex Gibbs L² space. -/
 @[expose] noncomputable def volumeToGibbsL2
@@ -165,7 +185,7 @@ uniformly convex Gibbs L² space. -/
     (hHess : ∀ x z, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z) :
     (EuclideanSpace ℝ (Fin d) →₂[volume] ℝ) →L[ℝ]
       (EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ) :=
-  Lp.LpToLpOfMeasureLeSMul ENNReal.ofReal_ne_top (gibbsMeasure_le_smul_volume hV ρ hρ hHess)
+  volumeToGibbsL2Map hV ρ hρ hHess
 
 /-- The genuine change-of-measure inclusion preserves actual representatives
 almost everywhere for the Gibbs measure. -/
@@ -174,7 +194,7 @@ theorem volumeToGibbsL2_coeFn
     (hHess : ∀ x z, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
     (f : EuclideanSpace ℝ (Fin d) →₂[volume] ℝ) :
     (volumeToGibbsL2 hV ρ hρ hHess f : EuclideanSpace ℝ (Fin d) → ℝ) =ᵐ[gibbsMeasure volume V] f :=
-  Lp.coeFn_LpToLpOfMeasureLeSMul ENNReal.ofReal_ne_top (gibbsMeasure_le_smul_volume hV ρ hρ hHess) f
+  volumeToGibbsL2Map_coeFn hV ρ hρ hHess f
 
 /-- Explicit finite operator-norm bound for the actual change-of-measure map. -/
 theorem volumeToGibbsL2_norm_le

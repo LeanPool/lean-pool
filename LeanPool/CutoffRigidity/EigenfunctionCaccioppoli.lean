@@ -292,6 +292,30 @@ theorem exists_smooth_cutoff_exhaustion :
     exists_smooth_C3_cutoff_exhaustion (d := d)
   exact ⟨C, hC, χ, fun n => (hχ n).of_le (by norm_num), hχc, hbounds, hone, hgrad⟩
 
+/-- The inverse-radius bound for cutoff gradients tends to zero. -/
+theorem cutoff_inverse_radius_tendsto_zero (C : ℝ) :
+    Tendsto (fun n : ℕ => C / ((n : ℝ) + 1)) atTop (𝓝 0) := by
+  have hden : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop :=
+    tendsto_natCast_atTop_atTop.atTop_add tendsto_const_nhds
+  simpa only [div_eq_mul_inv, mul_zero, Function.comp_apply] using
+    (tendsto_inv_atTop_zero.comp hden).const_mul C
+
+/-- A cutoff with the exhaustion bound has pointwise vanishing gradient in the limit. -/
+theorem cutoff_gradient_tendsto_zero {χ : ℕ → E → ℝ} {C : ℝ}
+    (hgrad : ∀ n x, ‖gradient (χ n) x‖ ≤ C / ((n : ℝ) + 1)) (x : E) :
+    Tendsto (fun n => gradient (χ n) x) atTop (𝓝 0) := by
+  apply tendsto_zero_iff_norm_tendsto_zero.mpr
+  exact squeeze_zero (fun n => norm_nonneg _) (fun n => hgrad n x)
+    (cutoff_inverse_radius_tendsto_zero C)
+
+/-- The exhaustion bound also uniformly controls the gradients by its numerator. -/
+theorem cutoff_gradient_le {χ : ℕ → E → ℝ} {C : ℝ} (hC : 0 ≤ C)
+    (hgrad : ∀ n x, ‖gradient (χ n) x‖ ≤ C / ((n : ℝ) + 1)) (n : ℕ) (x : E) :
+    ‖gradient (χ n) x‖ ≤ C := by
+  apply (hgrad n x).trans
+  apply (div_le_iff₀ (by positivity : (0 : ℝ) < n + 1)).mpr
+  nlinarith [mul_nonneg hC (Nat.cast_nonneg (α := ℝ) n)]
+
 /-- Genuine exhaustion of compact cutoffs proves square integrability of
 the actual gradient of an L² pointwise eigenfunction. No global derivative
 integration-domain assumption is used. -/
@@ -423,20 +447,8 @@ theorem eigenfunction_global_gradient_energy {V f : E → ℝ}
   have hgLp := eigenfunction_gradient_memLp_two hV hf hfLp rate hrate heigen
   have hGf : Continuous (gradient f) := (differentiable_gradient_of_contDiff_two hf).continuous
   have hfM : Measurable f := hf.continuous.measurable
-  have hχG (n : ℕ) (x : E) : ‖gradient (χ n) x‖ ≤ C := by
-    calc
-      _ ≤ C / ((n : ℝ) + 1) := hχgrad n x
-      _ ≤ C := by
-        apply (div_le_iff₀ (by positivity : (0 : ℝ) < n + 1)).2
-        nlinarith [mul_nonneg hC0 (Nat.cast_nonneg (α := ℝ) n)]
-  have hscale : Tendsto (fun n : ℕ => C / ((n : ℝ) + 1)) atTop (𝓝 0) := by
-    have hden : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop :=
-      tendsto_natCast_atTop_atTop.atTop_add tendsto_const_nhds
-    simpa only [div_eq_mul_inv, mul_zero, Function.comp_apply] using
-      (tendsto_inv_atTop_zero.comp hden).const_mul C
-  have hgχ (x : E) : Tendsto (fun n => gradient (χ n) x) atTop (𝓝 0) := by
-    apply tendsto_zero_iff_norm_tendsto_zero.mpr
-    exact squeeze_zero (fun n => norm_nonneg _) (fun n => hχgrad n x) hscale
+  have hχG := cutoff_gradient_le hC0 hχgrad
+  have hgχ := cutoff_gradient_tendsto_zero hχgrad
   have hχlim (x : E) : Tendsto (fun n => χ n x) atTop (𝓝 1) :=
     tendsto_const_nhds.congr' ((hχone x).mono (fun n hn => hn.symm))
   have hD : Integrable (fun x => C * |f x| * ‖gradient f x‖) (gibbsMeasure volume V) := by

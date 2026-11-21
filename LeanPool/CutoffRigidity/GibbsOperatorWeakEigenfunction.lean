@@ -102,6 +102,34 @@ theorem gibbsOperatorEigen_eigenvalue_nonneg {V : E → ℝ} (hV : ContDiff ℝ 
   nlinarith [sq_nonneg ‖gibbsSobolevDerivative hV hprob (gibbsOperatorEigenSobolevLift hV hprob
     rate u)‖]
 
+/-- A closed Sobolev test lift with the given representatives yields the weak equation
+as integrals of the function and its gradient. -/
+theorem gibbsOperatorEigen_test_equation_of_lift {V φ : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V)) (rate : ℝ)
+    (u : gibbsOperatorEigenspace hV hprob rate) (v : gibbsSobolevGraph hV hprob)
+    (hv : (gibbsSobolevInclusion hV hprob v : E → ℝ) =ᵐ[gibbsMeasure volume V] φ)
+    (hDv : (gibbsSobolevDerivative hV hprob v : E → E) =ᵐ[gibbsMeasure volume V] gradient φ) :
+    (∫ x, inner ℝ
+      (gibbsSobolevDerivative hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u) x)
+      (gradient φ x) ∂gibbsMeasure volume V) =
+      rate * (∫ x, (u : E →₂[gibbsMeasure volume V] ℝ) x * φ x ∂gibbsMeasure volume V) := by
+  have he := gibbsOperatorEigenSobolevLift_weak_eigenfunction hV hprob rate u v
+  have hl : gibbsDirichletEnergy hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u) v =
+      ∫ x, inner ℝ
+        (gibbsSobolevDerivative hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u) x)
+        (gradient φ x) ∂gibbsMeasure volume V := by
+    rw [gibbsDirichletEnergy, L2.inner_def]
+    apply integral_congr_ae
+    filter_upwards [hDv] with x hx
+    rw [hx]
+  have hr : inner ℝ (u : E →₂[gibbsMeasure volume V] ℝ) (gibbsSobolevInclusion hV hprob v) =
+      ∫ x, (u : E →₂[gibbsMeasure volume V] ℝ) x * φ x ∂gibbsMeasure volume V := by
+    rw [L2.inner_def]
+    apply integral_congr_ae
+    filter_upwards [hv] with x hx
+    rw [hx, Real.inner_apply]
+  rwa [hl, hr] at he
+
 /-- Actual operator eigenvectors satisfy the original weighted weak PDE
 against every compact C² test, with their genuine closed weak gradient. -/
 theorem gibbsOperatorEigen_compact_test_equation {V φ : E → ℝ} (hV : ContDiff ℝ 2 V)
@@ -118,24 +146,8 @@ theorem gibbsOperatorEigen_compact_test_equation {V φ : E → ℝ} (hV : ContDi
   have hgLp : MemLp (gradient φ) 2 (gibbsMeasure volume V) :=
     (continuous_gradient_of_c1 (hφ.of_le (by norm_num))).memLp_of_hasCompactSupport hgradc
   let v := c2GibbsSobolevLift hV hprob hφ hφLp hgLp
-  have he := gibbsOperatorEigenSobolevLift_weak_eigenfunction hV hprob rate u v
-  have hleft : gibbsDirichletEnergy hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u) v =
-      ∫ x, inner ℝ
-        (gibbsSobolevDerivative hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u) x)
-        (gradient φ x) ∂gibbsMeasure volume V := by
-    rw [gibbsDirichletEnergy, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hgLp.coeFn_toLp] with x hx
-    change inner ℝ _ (hgLp.toLp (gradient φ) x) = _
-    rw [hx]
-  have hright : inner ℝ (u : E →₂[gibbsMeasure volume V] ℝ) (gibbsSobolevInclusion hV hprob v) =
-      ∫ x, (u : E →₂[gibbsMeasure volume V] ℝ) x * φ x ∂gibbsMeasure volume V := by
-    rw [L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hφLp.coeFn_toLp] with x hx
-    change inner ℝ _ (hφLp.toLp φ x) = _
-    rw [hx, Real.inner_apply]
-  rwa [hleft, hright] at he
+  exact gibbsOperatorEigen_test_equation_of_lift hV hprob rate u v
+    hφLp.coeFn_toLp hgLp.coeFn_toLp
 
 /-- Actual gradient product rule for an inverse-density test. -/
 theorem gradient_exp_potential_mul_test {V φ : E → ℝ}

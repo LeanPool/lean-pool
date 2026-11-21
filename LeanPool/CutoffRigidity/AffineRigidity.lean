@@ -12,20 +12,20 @@ public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.Calculus.ContDiff.Comp
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Calculus.Gradient.Basic
-public import Mathlib.Tactic
+public import Mathlib.Tactic.NormNum
 
 /-!
 # Affine rigidity from a vanishing Hessian
 
-The Euclidean rigidity argument of Section 1.6 and Lemma `lem_rig` in
-`cutcur-lean.tex` uses that a function with identically vanishing Hessian is
-affine. Here the Hessian is the actual Fréchet derivative of the actual
-Fréchet derivative, with explicit differentiability assumptions. The proof
-uses the mean value theorem twice: first the derivative is constant, and
-then the function agrees with its affine linearization at zero.
+The Euclidean argument in Section 1.5 of arXiv:2412.15969v5, immediately after
+equation (1.33), uses that a function with identically vanishing Hessian
+is affine. Lemma 3.7 (labelled `lem_rig` in `cutcur-lean.tex`) uses the
+analogous step for the Riemannian splitting.
 
-The Bochner argument that forces this Hessian to vanish is not established
-by this file.
+The Hessian here is the second Fréchet derivative, with explicit
+differentiability assumptions. Two applications of the mean value theorem
+give constancy of the first derivative and then agreement with the affine
+linearization at zero.
 -/
 
 public section

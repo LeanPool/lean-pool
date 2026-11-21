@@ -34,13 +34,13 @@ local notation "E" => EuclideanSpace ℝ (Fin d)
     {V : E → ℝ} (hV : ContDiff ℝ 2 V) (ρ : ℝ) (hρ : 0 < ρ)
     (hHess : ∀ x z : E, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z) :
     (E →₂[volume] E) →L[ℝ] (E →₂[gibbsMeasure volume V] E) :=
-  Lp.LpToLpOfMeasureLeSMul ENNReal.ofReal_ne_top (gibbsMeasure_le_smul_volume hV ρ hρ hHess)
+  volumeToGibbsL2Map hV ρ hρ hHess
 
 theorem volumeToGibbsL2Vector_coeFn {V : E → ℝ} (hV : ContDiff ℝ 2 V) (ρ : ℝ) (hρ : 0 < ρ)
     (hHess : ∀ x z : E, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
     (f : E →₂[volume] E) :
     (volumeToGibbsL2Vector hV ρ hρ hHess f : E → E) =ᵐ[gibbsMeasure volume V] f :=
-  Lp.coeFn_LpToLpOfMeasureLeSMul ENNReal.ofReal_ne_top (gibbsMeasure_le_smul_volume hV ρ hρ hHess) f
+  volumeToGibbsL2Map_coeFn hV ρ hρ hHess f
 
 /-- The volume `L²` class of a compactly supported `C²` function. -/
 @[expose] noncomputable def compactC2VolumeLp (f : E → ℝ) (hf : ContDiff ℝ 2 f)

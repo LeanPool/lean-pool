@@ -57,7 +57,8 @@ theorem isCompact_closure_gibbsSobolevInclusion_unitBall {V : E → ℝ}
   have hχc : HasCompactSupport χ := gibbsSpatialCutoff_hasCompactSupport R hR
   obtain ⟨C, hC, htranslation⟩ := exists_gibbsSobolev_cutoff_translation_integral_bound hV hprob hχ
     hχc
-  obtain ⟨A, hA, hAbound⟩ := exists_compact_cutoff_gibbsLp_L2_norm_bound hV.continuous hprob hχ hχc
+  obtain ⟨A, hA, hAbound⟩ :=
+    exists_compact_cutoff_gibbsLp_L2_norm_bound hV.continuous hprob hχ.continuous hχc
   let f : U → E → ℝ := fun u x => χ x * J u x
   have hfm (u : U) : Measurable (f u) :=
     hχ.continuous.measurable.mul (Lp.stronglyMeasurable (J u)).measurable

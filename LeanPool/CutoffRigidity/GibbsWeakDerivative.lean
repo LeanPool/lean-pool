@@ -241,6 +241,48 @@ theorem gibbsSobolev_coordinate_weak_derivative_volume
     integral_exp_potential_mul_gibbs_eq_volume hV.continuous.measurable] at h
   exact h
 
+/-- Multiplying a compact cutoff by the square root of the inverse Gibbs density
+preserves continuity and compact support. -/
+theorem weighted_cutoff_continuous_compact
+    {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : Continuous V)
+    (hχ : Continuous χ) (hχc : HasCompactSupport χ) :
+    Continuous (fun x => Real.exp (V x / 2) * χ x) ∧
+      HasCompactSupport (fun x => Real.exp (V x / 2) * χ x) := by
+  refine ⟨(Real.continuous_exp.comp (hV.div_const 2)).mul hχ, ?_⟩
+  simpa only [Pi.mul_def] using hχc.mul_left (f := fun x => Real.exp (V x / 2))
+
+/-- The inverse-density cutoff times a weighted L² class is still weighted L². -/
+theorem weighted_cutoff_gibbsLp_memLp
+    {V χ : EuclideanSpace ℝ (Fin d) → ℝ} (hV : Continuous V)
+    (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
+    (hχ : Continuous χ) (hχc : HasCompactSupport χ)
+    (u : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ) :
+    MemLp (fun x => (Real.exp (V x / 2) * χ x) * u x) 2 (gibbsMeasure volume V) := by
+  let := hprob
+  obtain ⟨hH, hHc⟩ := weighted_cutoff_continuous_compact hV hχ hχc
+  have hHL : MemLp (fun x => Real.exp (V x / 2) * χ x) ⊤ (gibbsMeasure volume V) :=
+    hH.memLp_of_hasCompactSupport hHc
+  exact hHL.fun_mul (Lp.memLp u)
+
+/-- Squaring the weighted cutoff supplies the inverse Gibbs density factor. -/
+theorem weighted_cutoff_sq (v cutoff value : ℝ) :
+    ((Real.exp (v / 2) * cutoff) * value) ^ 2 = Real.exp v * (cutoff * value) ^ 2 := by
+  have hexp : Real.exp (v / 2) ^ 2 = Real.exp v := by
+    rw [← Real.exp_nat_mul]
+    congr 1
+    ring
+  simp only [mul_pow, hexp, mul_assoc]
+
+/-- The Lebesgue square integral of the cutoff equals the weighted square integral
+after multiplication by the square root of the inverse Gibbs density. -/
+theorem integral_sq_cutoff_eq_gibbs
+    {V χ u : EuclideanSpace ℝ (Fin d) → ℝ} (hV : Measurable V) :
+    (∫ x, (χ x * u x) ^ 2 ∂volume) =
+      ∫ x, ((Real.exp (V x / 2) * χ x) * u x) ^ 2 ∂gibbsMeasure volume V := by
+  rw [← integral_exp_potential_mul_gibbs_eq_volume hV]
+  exact integral_congr_ae (Filter.Eventually.of_forall
+    (fun x => (weighted_cutoff_sq (V x) (χ x) (u x)).symm))
+
 /-- Compact localization of an actual weighted L² class belongs to ordinary
 Lebesgue L². This proves the local measure comparison needed for Rellich. -/
 theorem compact_cutoff_gibbsLp_memLp_volume
@@ -249,30 +291,17 @@ theorem compact_cutoff_gibbsLp_memLp_volume
     (hχ : Continuous χ) (hχc : HasCompactSupport χ)
     (u : EuclideanSpace ℝ (Fin d) →₂[gibbsMeasure volume V] ℝ) :
     MemLp (fun x => χ x * u x) 2 volume := by
-  let := hprob
-  let H := fun x => Real.exp (V x / 2) * χ x
-  have hH : Continuous H := (Real.continuous_exp.comp (hV.div_const 2)).mul hχ
-  have hHc : HasCompactSupport H := by
-    simpa only [H, Pi.mul_def] using hχc.mul_left (f := fun x => Real.exp (V x / 2))
-  have hHL : MemLp H ⊤ (gibbsMeasure volume V) := hH.memLp_of_hasCompactSupport hHc
-  have hmul : MemLp (fun x => H x * u x) 2 (gibbsMeasure volume V) := hHL.fun_mul (Lp.memLp u)
+  have hmul := weighted_cutoff_gibbsLp_memLp hV hprob hχ hχc u
   have hmeas : AEStronglyMeasurable (fun x => χ x * u x) volume :=
     hχ.aestronglyMeasurable.mul (AEStronglyMeasurable.mono_ac
       (absolutelyContinuous_gibbsMeasure volume hV.measurable) (Lp.memLp u).aestronglyMeasurable)
   apply (memLp_two_iff_integrable_sq hmeas).mpr
   have hi := (integrable_gibbsMeasure_iff volume hV.measurable _).mp hmul.integrable_sq
   have heq (x : EuclideanSpace ℝ (Fin d)) :
-      Real.exp (-V x) • (H x * u x) ^ 2 = (χ x * u x) ^ 2 := by
-    have he : Real.exp (-V x) * Real.exp (V x / 2) ^ 2 = 1 := by
-      rw [← Real.exp_nat_mul, ← Real.exp_add]
-      have hz : -V x + (2 : ℝ) * (V x / 2) = 0 := by ring
-      simpa only [Nat.cast_ofNat, hz] using Real.exp_zero
-    change Real.exp (-V x) * ((Real.exp (V x / 2) * χ x) * u x) ^ 2 = _
-    calc
-      _ = (Real.exp (-V x) * Real.exp (V x / 2) ^ 2) * (χ x * u x) ^ 2 := by ring
-      _ = _ := by rw [he, one_mul]
-  simp_rw [heq] at hi
-  exact hi
+      Real.exp (-V x) • ((Real.exp (V x / 2) * χ x) * u x) ^ 2 = (χ x * u x) ^ 2 := by
+    rw [smul_eq_mul, weighted_cutoff_sq, ← mul_assoc, ← Real.exp_add, neg_add_cancel,
+      Real.exp_zero, one_mul]
+  simpa only [heq] using hi
 
 /-- Both ordinary-volume pairings in the weak-derivative formula are
 actual integrable functions, so the identity does not rely on undefined

@@ -11,7 +11,7 @@ module
 public import Mathlib.MeasureTheory.Measure.Prod
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Map
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Metric
-public import Mathlib.Tactic
+public import Mathlib.Tactic.FunProp
 
 /-!
 # Coupling transport cost and a deterministic initial condition

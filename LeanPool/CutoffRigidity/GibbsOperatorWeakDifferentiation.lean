@@ -143,6 +143,46 @@ theorem gibbsOperatorEigen_weightedAdjoint_gradient_row {V χ ψ : E → ℝ}
   change _ = -_ - _
   linarith
 
+/-- A compact test derivative times a coordinate of the localized weak Hessian is integrable. -/
+theorem integrable_gibbsTest_localizedHessian {V χ ψ : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
+    (ρ : ℝ) (hρ : 0 < ρ)
+    (hHess : ∀ x z : E, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
+    (rate : ℝ) (u : gibbsOperatorEigenspace hV hprob rate)
+    (hχ : ContDiff ℝ 3 χ) (hχc : HasCompactSupport χ)
+    (hψ : ContDiff ℝ 2 ψ) (hψc : HasCompactSupport ψ) (i j : Fin d) :
+    Integrable (fun x => coordinateDerivative j ψ x *
+      gibbsOperatorLocalizedHessian hV hprob rate u hχ hχc i j x) (gibbsMeasure volume V) := by
+  let := hprob
+  have hH : MemLp (gibbsOperatorLocalizedHessian hV hprob rate u hχ hχc i j) 2
+      (gibbsMeasure volume V) :=
+    (memLp_congr_ae (gibbsOperatorLocalizedGradientSobolevLift_derivative_coordinate_ae
+      hV hprob ρ hρ hHess rate u hχ hχc i j)).mp
+      ((EuclideanSpace.proj j : E →L[ℝ] ℝ).comp_memLp
+        (gibbsSobolevDerivative hV hprob
+          (gibbsOperatorLocalizedGradientSobolevLift hV hprob ρ hρ hHess rate u hχ hχc i)))
+  have hD : MemLp (coordinateDerivative j ψ) 2 (gibbsMeasure volume V) :=
+    (c1_coordinateDerivative_of_c2 hψ j).continuous.memLp_of_hasCompactSupport
+      (hψc.fderiv_apply ℝ (EuclideanSpace.single j 1))
+  exact hD.integrable_mul hH
+
+/-- A compact scalar test times a potential Hessian coefficient and an L² gradient
+coordinate is Gibbs integrable. -/
+theorem integrable_gibbsTest_potentialHessian_coordinate {V ψ : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
+    (hψ : Continuous ψ) (hψc : HasCompactSupport ψ)
+    (G : E →₂[gibbsMeasure volume V] E) (i j : Fin d) :
+    Integrable (fun x => ψ x * (coordinateDerivative i (coordinateDerivative j V) x * (G x) j))
+      (gibbsMeasure volume V) := by
+  have hc := hψ.mul
+    (continuous_coordinateDerivative_of_c1 (c1_coordinateDerivative_of_c2 hV j) i)
+  have hs : HasCompactSupport (fun x => ψ x * coordinateDerivative i (coordinateDerivative j V)
+    x) := by
+    simpa only [Pi.mul_def] using hψc.mul_right
+      (f' := coordinateDerivative i (coordinateDerivative j V))
+  simpa only [Pi.mul_apply, mul_assoc] using integrable_compact_gibbsVector_coordinate hprob hc
+    hs G j
+
 /-- The genuine differentiated weak eigenfunction equation. The original
 operator eigenclass is only L²; its actual locally constructed weak Hessian
 replaces the classical Hessian in the paper's coordinate proof. -/
@@ -169,29 +209,10 @@ theorem gibbsOperatorEigen_differentiated_weak_equation {V χ ψ : E → ℝ}
   have hψ2 : ContDiff ℝ 2 ψ := hψ.of_le (by norm_num)
   have ha := c1_coordinateWeightedAdjoint hV hψ2 i
   have hac : HasCompactSupport a := hasCompactSupport_coordinateWeightedAdjoint hψc i
-  have hGradInt (j : Fin d) : Integrable (fun x => coordinateDerivative j ψ x *
-      gibbsOperatorLocalizedHessian hV hprob rate u hχ hχc i j x) (gibbsMeasure volume V) := by
-    have hH : MemLp (gibbsOperatorLocalizedHessian hV hprob rate u hχ hχc i j) 2
-        (gibbsMeasure volume V) :=
-      (memLp_congr_ae (gibbsOperatorLocalizedGradientSobolevLift_derivative_coordinate_ae
-        hV hprob ρ hρ hHess rate u hχ hχc i j)).mp
-        ((EuclideanSpace.proj j : E →L[ℝ] ℝ).comp_memLp
-          (gibbsSobolevDerivative hV hprob
-            (gibbsOperatorLocalizedGradientSobolevLift hV hprob ρ hρ hHess rate u hχ hχc i)))
-    have hD : MemLp (coordinateDerivative j ψ) 2 (gibbsMeasure volume V) :=
-      (c1_coordinateDerivative_of_c2 hψ2 j).continuous.memLp_of_hasCompactSupport
-        (hψc.fderiv_apply ℝ (EuclideanSpace.single j 1))
-    exact hD.integrable_mul hH
-  have hHessInt (j : Fin d) : Integrable (fun x => ψ x *
-      (coordinateDerivative i (coordinateDerivative j V) x * (G x) j)) (gibbsMeasure volume V) := by
-    have hc := hψ.continuous.mul
-      (continuous_coordinateDerivative_of_c1 (c1_coordinateDerivative_of_c2 hV j) i)
-    have hs : HasCompactSupport (fun x => ψ x * coordinateDerivative i (coordinateDerivative j V)
-      x) := by
-      simpa only [Pi.mul_def] using hψc.mul_right
-        (f' := coordinateDerivative i (coordinateDerivative j V))
-    simpa only [Pi.mul_apply, mul_assoc] using integrable_compact_gibbsVector_coordinate hprob hc
-      hs G j
+  have hGradInt := integrable_gibbsTest_localizedHessian hV hprob ρ hρ hHess rate u
+    hχ hχc hψ2 hψc i
+  have hHessInt := integrable_gibbsTest_potentialHessian_coordinate hV hprob
+    hψ.continuous hψc G i
   have hDerInt (j : Fin d) : Integrable (fun x => coordinateDerivative j a x * (G x) j)
       (gibbsMeasure volume V) :=
     integrable_compact_gibbsVector_coordinate hprob (continuous_coordinateDerivative_of_c1 ha j)

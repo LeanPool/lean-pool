@@ -42,9 +42,8 @@ theorem differenceStep_le_one (n : ℕ) : differenceStep n ≤ 1 := by
   linarith [Nat.cast_nonneg (α := ℝ) n]
 
 theorem differenceStep_tendsto_zero : Tendsto differenceStep atTop (𝓝 0) := by
-  have hden : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop :=
-    tendsto_natCast_atTop_atTop.atTop_add tendsto_const_nhds
-  exact tendsto_inv_atTop_zero.comp hden
+  change Tendsto (fun n : ℕ => ((n : ℝ) + 1)⁻¹) atTop (𝓝 0)
+  simpa only [one_div] using cutoff_inverse_radius_tendsto_zero 1
 
 /-- Genuine finite difference in a fixed direction. -/
 @[expose] noncomputable def directionalDifferenceQuotient

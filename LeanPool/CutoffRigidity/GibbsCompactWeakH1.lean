@@ -140,21 +140,6 @@ theorem gibbsOperatorEigen_compact_c1_test_equation {V φ : E → ℝ}
       (gradient φ x) ∂gibbsMeasure volume V) =
       rate * (∫ x, (u : E →₂[gibbsMeasure volume V] ℝ) x * φ x ∂gibbsMeasure volume V) := by
   obtain ⟨v, hv, hDv⟩ := exists_gibbsSobolev_of_compact_c1 hV hprob ρ hρ hHess hφ hφc
-  have he := gibbsOperatorEigenSobolevLift_weak_eigenfunction hV hprob rate u v
-  have hl : gibbsDirichletEnergy hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u) v =
-      ∫ x, inner ℝ
-        (gibbsSobolevDerivative hV hprob (gibbsOperatorEigenSobolevLift hV hprob rate u) x)
-        (gradient φ x) ∂gibbsMeasure volume V := by
-    rw [gibbsDirichletEnergy, L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hDv] with x hx
-    rw [hx]
-  have hr : inner ℝ (u : E →₂[gibbsMeasure volume V] ℝ) (gibbsSobolevInclusion hV hprob v) =
-      ∫ x, (u : E →₂[gibbsMeasure volume V] ℝ) x * φ x ∂gibbsMeasure volume V := by
-    rw [L2.inner_def]
-    apply integral_congr_ae
-    filter_upwards [hv] with x hx
-    rw [hx, Real.inner_apply]
-  rwa [hl, hr] at he
+  exact gibbsOperatorEigen_test_equation_of_lift hV hprob rate u v hv hDv
 
 end CutoffRigidity
