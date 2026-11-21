@@ -54,8 +54,7 @@ theorem L2_vector_cutoff_square_tendsto {μ : Measure E} (G : E →₂[μ] E)
     (hηone : ∀ x, ∀ᶠ n : ℕ in atTop, η n x = 1) :
     Tendsto (fun n => ∫ x, η n x ^ 2 * ‖G x‖ ^ 2 ∂μ) atTop (𝓝 (‖G‖ ^ 2)) := by
   simpa only [integral_norm_sq_L2_vector] using
-    cutoff_square_integral_tendsto (Lp.memLp G).norm.integrable_sq
-      (fun x => sq_nonneg ‖G x‖) η hη hηbounds hηone
+    cutoff_square_integral_tendsto (Lp.memLp G).norm.integrable_sq η hη hηbounds hηone
 
 /-- Genuine ordinary-volume local integrability of every coordinate of
 an actual Gibbs L² vector field. -/

@@ -173,8 +173,8 @@ theorem gibbsOperatorEigen_localized_row_energy {V χ η : E → ℝ}
   exact gibbsOperatorEigen_weighted_local_divergence hV hp ρ hρ hHess rate u
     hχ hχc hlocal i ψ hψ hψc hψs
 
-/-- The same genuine local Bochner identity in the paper's Gibbs integral
-notation, with all auxiliary density and cutoff factors removed. -/
+/-- The local row energy identity expressed as integrals against the Gibbs
+measure, after removing the auxiliary density and localization factors. -/
 theorem gibbsOperatorEigen_localized_row_bochner {V χ η : E → ℝ}
     (hV : ContDiff ℝ 2 V) (hp : IsProbabilityMeasure (gibbsMeasure volume V))
     (ρ : ℝ) (hρ : 0 < ρ)

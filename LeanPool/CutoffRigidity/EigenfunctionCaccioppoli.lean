@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.EuclideanBochner
+public import LeanPool.CutoffRigidity.L2FatouBounds
 public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 public import Mathlib.MeasureTheory.Integral.Lebesgue.Add
 public import Mathlib.MeasureTheory.Function.L2Space
@@ -397,8 +398,6 @@ theorem eigenfunction_gradient_memLp_two {V f : E → ℝ}
       filter_upwards [hχone x] with n hn
       simp [F, hn]
     exact tendsto_const_nhds.congr' heq
-  have hFatou := lintegral_liminf_le (μ := gibbsMeasure volume V) (f := F) (u := atTop) hFmeas
-  simp_rw [(hFlim _).liminf_eq] at hFatou
   have hIntBound (n : ℕ) : (∫⁻ x, F n x ∂gibbsMeasure volume V) ≤ ENNReal.ofReal M := by
     have h := ofReal_integral_eq_lintegral_ofReal (hAn n)
       (Filter.Eventually.of_forall fun x => mul_nonneg (sq_nonneg _) (sq_nonneg _))
@@ -406,33 +405,41 @@ theorem eigenfunction_gradient_memLp_two {V f : E → ℝ}
       ∫⁻ x, F n x ∂gibbsMeasure volume V at h
     rw [← h]
     exact ENNReal.ofReal_le_ofReal (hAbound n)
-  have hlimBound : liminf (fun n => ∫⁻ x, F n x ∂gibbsMeasure volume V) atTop ≤ ENNReal.ofReal M :=
-    liminf_le_of_frequently_le (Filter.Eventually.of_forall hIntBound).frequently
+  have hInt := lintegral_le_of_ae_tendsto_bounds (fun n => (hFmeas n).aemeasurable)
+    (Filter.Eventually.of_forall hFlim) hIntBound tendsto_const_nhds
   apply (memLp_two_iff_integrable_sq_norm hGf.aestronglyMeasurable).2
   refine ⟨(hGf.norm.pow 2).aestronglyMeasurable, ?_⟩
   apply (hasFiniteIntegral_iff_ofReal (Filter.Eventually.of_forall fun x => sq_nonneg _)).2
-  exact lt_of_le_of_lt (hFatou.trans hlimBound) ENNReal.ofReal_lt_top
+  exact lt_of_le_of_lt hInt ENNReal.ofReal_lt_top
 
-/-- Dominated convergence for the actual compact cutoff weights. -/
-theorem cutoff_square_integral_tendsto {μ : Measure E} {g : E → ℝ}
-    (hg : Integrable g μ) (hg0 : ∀ x, 0 ≤ g x) (χ : ℕ → E → ℝ)
-    (hχ : ∀ n, Measurable (χ n)) (hχbounds : ∀ n x, 0 ≤ χ n x ∧ χ n x ≤ 1)
-    (hχone : ∀ x, ∀ᶠ n : ℕ in atTop, χ n x = 1) :
-    Tendsto (fun n => ∫ x, χ n x ^ 2 * g x ∂μ) atTop (𝓝 (∫ x, g x ∂μ)) := by
-  apply tendsto_integral_of_dominated_convergence g
+/-- Dominated convergence for bounded cutoff weights and a signed integrand. -/
+theorem cutoff_integral_tendsto {μ : Measure E} {f : E → ℝ} (hf : Integrable f μ)
+    (η : ℕ → E → ℝ) (hη : ∀ n, Measurable (η n))
+    (hb : ∀ n x, 0 ≤ η n x ∧ η n x ≤ 1)
+    (hone : ∀ x, ∀ᶠ n : ℕ in atTop, η n x = 1) :
+    Tendsto (fun n => ∫ x, η n x * f x ∂μ) atTop (𝓝 (∫ x, f x ∂μ)) := by
+  apply tendsto_integral_of_dominated_convergence (fun x => |f x|)
   · intro n
-    exact ((hχ n).pow_const 2).aestronglyMeasurable.mul hg.aestronglyMeasurable
-  · exact hg
+    exact (hη n).aestronglyMeasurable.mul hf.aestronglyMeasurable
+  · exact hf.abs
   · intro n
     filter_upwards with x
-    rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg (sq_nonneg _) (hg0 x))]
-    have hb := hχbounds n x
-    have hs : χ n x ^ 2 ≤ 1 := by nlinarith [hb.1, hb.2]
-    simpa only [one_mul] using mul_le_mul_of_nonneg_right hs (hg0 x)
+    rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (hb n x).1]
+    exact mul_le_of_le_one_left (abs_nonneg _) (hb n x).2
   · filter_upwards with x
     apply tendsto_const_nhds.congr'
-    filter_upwards [hχone x] with n hn
+    filter_upwards [hone x] with n hn
     simp [hn]
+
+/-- Dominated convergence for the squared cutoff weights. -/
+theorem cutoff_square_integral_tendsto {μ : Measure E} {g : E → ℝ}
+    (hg : Integrable g μ) (χ : ℕ → E → ℝ)
+    (hχ : ∀ n, Measurable (χ n)) (hχbounds : ∀ n x, 0 ≤ χ n x ∧ χ n x ≤ 1)
+    (hχone : ∀ x, ∀ᶠ n : ℕ in atTop, χ n x = 1) :
+    Tendsto (fun n => ∫ x, χ n x ^ 2 * g x ∂μ) atTop (𝓝 (∫ x, g x ∂μ)) :=
+  cutoff_integral_tendsto hg (fun n x => χ n x ^ 2) (fun n => (hχ n).pow_const 2)
+    (fun n x => ⟨sq_nonneg _, pow_le_one₀ (hχbounds n x).1 (hχbounds n x).2⟩)
+    (fun x => (hχone x).mono (fun n hn => by simp [hn]))
 
 /-- Exhausting the exact cutoff identity yields the genuine global energy
 identity for L² C² pointwise eigenfunctions, with no derivative domain premise. -/
@@ -479,9 +486,9 @@ theorem eigenfunction_global_gradient_energy {V f : E → ℝ}
       have ht := ((hχlim x).mul_const (f x)).mul
         ((hgχ x).inner (tendsto_const_nhds (x := gradient f x)))
       simpa using ht
-  have hA := cutoff_square_integral_tendsto hgLp.norm.integrable_sq (fun x => sq_nonneg _)
+  have hA := cutoff_square_integral_tendsto hgLp.norm.integrable_sq
     χ (fun n => (hχ n).continuous.measurable) hχbounds hχone
-  have hF := cutoff_square_integral_tendsto hfLp.integrable_sq (fun x => sq_nonneg _)
+  have hF := cutoff_square_integral_tendsto hfLp.integrable_sq
     χ (fun n => (hχ n).continuous.measurable) hχbounds hχone
   have hleft := hA.add (hCross.const_mul 2)
   have hright := hF.const_mul rate

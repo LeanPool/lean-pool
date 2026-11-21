@@ -18,24 +18,6 @@ added as a factorization premise.
 public section
 namespace CutoffRigidity
 
-theorem second_fderiv_comp_affine
-    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [NormedAddCommGroup F] [NormedSpace ℝ F]
-    {V : E → ℝ} (hV : ContDiff ℝ 2 V) (L : F →L[ℝ] E) (m : E) (y h k : F) :
-    fderiv ℝ (fderiv ℝ (fun z : F => V (L z+m))) y h k =
-      fderiv ℝ (fderiv ℝ V) (L y+m) (L h) (L k) := by
-  have hVd := hV.differentiable (by norm_num)
-  have hfirst : fderiv ℝ (fun z : F => V (L z+m)) =
-      fun z : F => (fderiv ℝ V (L z+m)).comp L := by
-    funext z
-    exact ((hVd (L z+m)).hasFDerivAt.comp z (L.hasFDerivAt.add_const m)).fderiv
-  have hDf : ContDiff ℝ 1 (fderiv ℝ V) := hV.fderiv_right (by norm_num)
-  have hd := ((hDf.differentiable one_ne_zero (L y+m)).hasFDerivAt.comp y
-    (L.hasFDerivAt.add_const m)).clm_comp (hasFDerivAt_const L y)
-  simp only [Function.comp_def] at hd
-  rw [hfirst,hd.fderiv]
-  simp
-
 open MeasureTheory
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)

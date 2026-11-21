@@ -26,8 +26,10 @@ open MeasureTheory
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
-/-- The actual weak Hessian and gradient satisfy the localized curvature
-estimate used before cutoff exhaustion in the paper's rigidity proof. -/
+/-- The weak Euclidean cutoff estimate for the operator gradient and Hessian.
+It adapts the estimate in Cheng–Zhou, arXiv:1305.4116v2, Section 3, equations
+(12)–(15), for use before cutoff exhaustion. Chafaï–Fathi, arXiv:2412.15969v5,
+Section 1.5, present the corresponding global calculation in equation (1.33). -/
 theorem gibbsOperatorEigen_localized_bochner_inequality {V χ η : E → ℝ}
     (hV : ContDiff ℝ 2 V) (hp : IsProbabilityMeasure (gibbsMeasure volume V))
     (ρ : ℝ) (hρ : 0 < ρ)

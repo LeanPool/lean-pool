@@ -8,7 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.GibbsGeneratorExtension
+public import LeanPool.CutoffRigidity.GibbsSelfAdjointEigenfunctions
 
 /-!
 # Constants and positive eigenspaces of the actual Gibbs operator

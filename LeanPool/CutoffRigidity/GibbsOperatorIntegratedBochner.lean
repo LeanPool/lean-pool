@@ -22,9 +22,11 @@ open MeasureTheory
 variable {d : ℕ}
 local notation "E" => EuclideanSpace ℝ (Fin d)
 
-/-- The paper's localized Bochner identity for a genuine operator
-eigenvector, with its actual weak Hessian. All product integrability is
-derived from the equation and compact localization. -/
+/-- A weak Euclidean localization of the global Bochner calculation in Chafaï–Fathi,
+arXiv:2412.15969v5, Section 1.5, equations (1.31)–(1.33). The compact cutoff
+produces a gradient cross term, as in the weighted integration by parts in
+Cheng–Zhou, arXiv:1305.4116v2, Section 3, proof of Theorem 2. Here the operator
+equation and compact localization give the product integrability for the weak Hessian. -/
 theorem gibbsOperatorEigen_localized_bochner_identity {V χ η : E → ℝ}
     (hV : ContDiff ℝ 2 V) (hp : IsProbabilityMeasure (gibbsMeasure volume V))
     (ρ : ℝ) (hρ : 0 < ρ)

@@ -10,6 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.AffineEigenspace
 public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
 
 /-! # The genuine standard Gaussian equilibrium eigenmap law
 

@@ -51,7 +51,6 @@ public import LeanPool.CutoffRigidity.EuclideanMollificationStrongLimit
 public import LeanPool.CutoffRigidity.EuclideanMollifiedCompactness
 public import LeanPool.CutoffRigidity.EuclideanWeakHessianEstimates
 public import LeanPool.CutoffRigidity.FirstEigenspaceAffineCoordinates
-public import LeanPool.CutoffRigidity.GaussianMoments
 public import LeanPool.CutoffRigidity.GeneratorIntertwining
 public import LeanPool.CutoffRigidity.Gibbs
 public import LeanPool.CutoffRigidity.GibbsCompactApproximation
@@ -61,7 +60,6 @@ public import LeanPool.CutoffRigidity.GibbsConstants
 public import LeanPool.CutoffRigidity.GibbsEnergy
 public import LeanPool.CutoffRigidity.GibbsFirstEigenspace
 public import LeanPool.CutoffRigidity.GibbsFormConfinement
-public import LeanPool.CutoffRigidity.GibbsGeneratorExtension
 public import LeanPool.CutoffRigidity.GibbsIntegrationByParts
 public import LeanPool.CutoffRigidity.GibbsLocalizedTranslations
 public import LeanPool.CutoffRigidity.GibbsMoments
@@ -102,9 +100,8 @@ public import LeanPool.CutoffRigidity.OrthogonalGibbsProduct
 public import LeanPool.CutoffRigidity.PotentialSplitting
 public import LeanPool.CutoffRigidity.ProductProbabilityNormalization
 public import LeanPool.CutoffRigidity.QuadraticLangevinPotential
+public import LeanPool.CutoffRigidity.RealL2Identities
 public import LeanPool.CutoffRigidity.SmoothPoincare
-public import LeanPool.CutoffRigidity.Transport
-public import LeanPool.CutoffRigidity.TransportMoments
 public import LeanPool.CutoffRigidity.WeakDerivativeMollification
 public import LeanPool.CutoffRigidity.WeakGradientEnergyTest
 public import LeanPool.CutoffRigidity.WeakH1Mollification

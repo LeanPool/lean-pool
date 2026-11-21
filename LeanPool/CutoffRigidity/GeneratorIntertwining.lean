@@ -145,29 +145,38 @@ theorem fderiv_comp_affine_apply
   rw [fderiv_fun_comp x hg hA, fderiv_add_const, A.fderiv]
   rfl
 
-/-- The affine map has no second derivative, so the second chain rule
-contains only the Hessian of the outer function evaluated on the linear images
-of the two directions. -/
-theorem second_fderiv_comp_affine_apply
+/-- The derivative of an affine pullback is differentiable, and its Hessian
+is the outer Hessian evaluated on the linear images of the two directions. -/
+private theorem affine_second_derivative
     {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [NormedAddCommGroup F] [NormedSpace ℝ F]
     (A : E →L[ℝ] F) (b : F) {g : F → ℝ}
-    (hg : Differentiable ℝ g) (hg' : Differentiable ℝ (fderiv ℝ g))
-    (x v w : E) :
-    fderiv ℝ (fun y => fderiv ℝ (fun z => g (A z + b)) y v) x w =
-      fderiv ℝ (fderiv ℝ g) (A x + b) (A w) (A v) := by
-  have hfirst : (fun y => fderiv ℝ (fun z => g (A z + b)) y v) =
-      fun y => fderiv ℝ g (A y + b) (A v) := by
-    funext y
-    exact fderiv_comp_affine_apply A b (hg (A y + b))
+    (hg : Differentiable ℝ g) (hg' : Differentiable ℝ (fderiv ℝ g)) (x : E) :
+    DifferentiableAt ℝ (fderiv ℝ (fun z => g (A z + b))) x ∧
+      ∀ w v, fderiv ℝ (fderiv ℝ (fun z => g (A z + b))) x w v =
+        fderiv ℝ (fderiv ℝ g) (A x + b) (A w) (A v) := by
+  have hfirst : fderiv ℝ (fun z => g (A z + b)) =
+      fun z => (fderiv ℝ g (A z + b)).comp A := by
+    funext z
+    exact ((hg (A z + b)).hasFDerivAt.comp z (A.hasFDerivAt.add_const b)).fderiv
+  have hd := ((hg' (A x + b)).hasFDerivAt.comp x (A.hasFDerivAt.add_const b)).clm_comp
+    (hasFDerivAt_const A x)
+  simp only [Function.comp_def] at hd
   rw [hfirst]
-  have hA : DifferentiableAt ℝ (fun y => A y + b) x := A.differentiableAt.add_const b
-  have hcomp : DifferentiableAt ℝ (fun y => fderiv ℝ g (A y + b)) x :=
-    (hg' (A x + b)).comp x hA
-  rw [fderiv_clm_apply hcomp (differentiableAt_const (A v)),
-    fderiv_const_apply, fderiv_fun_comp x (hg' (A x + b)) hA,
-    fderiv_add_const, A.fderiv]
+  refine ⟨hd.differentiableAt, fun w v => ?_⟩
+  rw [hd.fderiv]
   simp
+
+/-- The full Hessian formula for the affine pullback of a C² function. -/
+theorem second_fderiv_comp_affine
+    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    {V : E → ℝ} (hV : ContDiff ℝ 2 V) (L : F →L[ℝ] E) (m : E) (y h k : F) :
+    fderiv ℝ (fderiv ℝ (fun z : F => V (L z + m))) y h k =
+      fderiv ℝ (fderiv ℝ V) (L y + m) (L h) (L k) := by
+  have hV' : ContDiff ℝ 1 (fderiv ℝ V) := hV.fderiv_right (by norm_num)
+  exact (affine_second_derivative L m (hV.differentiable (by norm_num))
+    (hV'.differentiable one_ne_zero) y).2 h k
 
 /-- Differentiating a first derivative in a fixed direction is evaluation
 of the genuine second Fréchet derivative in that direction. -/
@@ -177,6 +186,18 @@ theorem second_fderiv_apply_const
     fderiv ℝ (fun y => fderiv ℝ g y v) x w = fderiv ℝ (fderiv ℝ g) x w v := by
   rw [fderiv_clm_apply hg' (differentiableAt_const v), fderiv_const_apply]
   simp
+
+/-- Applying the affine Hessian formula in a fixed direction. -/
+theorem second_fderiv_comp_affine_apply
+    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    (A : E →L[ℝ] F) (b : F) {g : F → ℝ}
+    (hg : Differentiable ℝ g) (hg' : Differentiable ℝ (fderiv ℝ g))
+    (x v w : E) :
+    fderiv ℝ (fun y => fderiv ℝ (fun z => g (A z + b)) y v) x w =
+      fderiv ℝ (fderiv ℝ g) (A x + b) (A w) (A v) := by
+  obtain ⟨hd, hessian⟩ := affine_second_derivative A b hg hg' x
+  exact (second_fderiv_apply_const hd v w).trans (hessian w v)
 
 theorem euclideanLaplacian_eq_second_fderiv_trace
     {k : ℕ} {g : EuclideanSpace ℝ (Fin k) → ℝ} {x : EuclideanSpace ℝ (Fin k)}

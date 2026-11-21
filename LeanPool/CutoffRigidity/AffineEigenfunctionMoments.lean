@@ -11,9 +11,9 @@ module
 public import LeanPool.CutoffRigidity.AffineEigenfunctionSplitting
 public import LeanPool.CutoffRigidity.AffineGradient
 public import LeanPool.CutoffRigidity.Gibbs
-public import LeanPool.CutoffRigidity.GaussianMoments
+public import Mathlib.Probability.Distributions.Gaussian.Fernique
 public import Mathlib.Probability.HasLaw
-public import LeanPool.CutoffRigidity.TransportMoments
+public import LeanPool.CutoffRigidity.RealL2Identities
 
 /-!
 # The Gaussian law and moments of an affine eigenfunction

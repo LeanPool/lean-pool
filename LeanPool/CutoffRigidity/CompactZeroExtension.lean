@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.L2CompactnessTools
-public import LeanPool.CutoffRigidity.TransportMoments
+public import LeanPool.CutoffRigidity.RealL2Identities
 public import Mathlib.MeasureTheory.Function.LpSpace.Indicator
 
 /-!

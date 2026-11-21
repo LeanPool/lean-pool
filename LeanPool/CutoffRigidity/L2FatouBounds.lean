@@ -14,9 +14,8 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 /-!
 # Second moments of almost everywhere limits
 
-Fatou's lemma transfers a uniform actual second-moment bound to the limit.
-This is used to pass finite-grid maximal inequalities to continuous Brownian
-paths. It requires no uniform-integrability or moment assumption on the limit.
+Fatou's lemma transfers bounds on integrals to the almost-everywhere limit.
+A uniform second-moment bound then gives L² membership of the limit.
 -/
 
 public section
@@ -24,9 +23,26 @@ public section
 namespace CutoffRigidity
 
 open MeasureTheory Filter Topology
+open scoped ENNReal
 
 variable {Ω E : Type*} [MeasurableSpace Ω] [NormedAddCommGroup E]
     {μ : Measure Ω}
+
+/-- Fatou's lemma with convergent upper bounds on the integrals. -/
+theorem lintegral_le_of_ae_tendsto_bounds {f : ℕ → Ω → ℝ≥0∞} {g : Ω → ℝ≥0∞}
+    {bound : ℕ → ℝ≥0∞} {limit : ℝ≥0∞}
+    (hf : ∀ n, AEMeasurable (f n) μ)
+    (hlim : ∀ᵐ x ∂μ, Tendsto (fun n => f n x) atTop (𝓝 (g x)))
+    (hbound : ∀ n, (∫⁻ x, f n x ∂μ) ≤ bound n)
+    (hbound_lim : Tendsto bound atTop (𝓝 limit)) :
+    (∫⁻ x, g x ∂μ) ≤ limit := by
+  have hpoint : (fun x => liminf (fun n => f n x) atTop) =ᵐ[μ] g :=
+    hlim.mono (fun _ hx => hx.liminf_eq)
+  calc
+    _ = ∫⁻ x, liminf (fun n => f n x) atTop ∂μ := (lintegral_congr_ae hpoint).symm
+    _ ≤ liminf (fun n => ∫⁻ x, f n x ∂μ) atTop := lintegral_liminf_le' hf
+    _ ≤ liminf bound atTop := liminf_le_liminf (Eventually.of_forall hbound)
+    _ = limit := hbound_lim.liminf_eq
 
 /-- Almost everywhere limits inherit a uniform L² bound by Fatou. -/
 theorem memLp_two_and_second_moment_le_of_ae_tendsto
@@ -41,22 +57,16 @@ theorem memLp_two_and_second_moment_le_of_ae_tendsto
   have hFmeas (n : ℕ) : AEMeasurable (F n) μ :=
     ENNReal.measurable_ofReal.comp_aemeasurable
       ((hf n).aestronglyMeasurable.norm.aemeasurable.pow_const 2)
-  have hFatou := lintegral_liminf_le' (μ := μ) (f := F) (u := atTop) hFmeas
-  have hlimEq : (fun ω => liminf (fun n => F n ω) atTop) =ᵐ[μ]
-      fun ω => ENNReal.ofReal (‖g ω‖ ^ 2) := by
+  have hpoint : ∀ᵐ ω ∂μ, Tendsto (fun n => F n ω) atTop (𝓝 (ENNReal.ofReal (‖g ω‖ ^ 2))) := by
     filter_upwards [hlim] with ω hω
-    exact (ENNReal.continuous_ofReal.tendsto _ |>.comp (hω.norm.pow 2)).liminf_eq
-  rw [lintegral_congr_ae hlimEq] at hFatou
+    exact ENNReal.continuous_ofReal.tendsto _ |>.comp (hω.norm.pow 2)
   have hEach (n : ℕ) : (∫⁻ ω, F n ω ∂μ) ≤ ENNReal.ofReal C := by
     have heq := ofReal_integral_eq_lintegral_ofReal (hfi n)
       (Eventually.of_forall (fun ω => sq_nonneg ‖f n ω‖))
     change ENNReal.ofReal (∫ ω, ‖f n ω‖ ^ 2 ∂μ) = ∫⁻ ω, F n ω ∂μ at heq
     rw [← heq]
     exact ENNReal.ofReal_le_ofReal (hbound n)
-  have hlimBound : liminf (fun n => ∫⁻ ω, F n ω ∂μ) atTop ≤ ENNReal.ofReal C :=
-    liminf_le_of_frequently_le (Eventually.of_forall hEach).frequently
-  have hcost : (∫⁻ ω, ENNReal.ofReal (‖g ω‖ ^ 2) ∂μ) ≤ ENNReal.ofReal C :=
-    hFatou.trans hlimBound
+  have hcost := lintegral_le_of_ae_tendsto_bounds hFmeas hpoint hEach tendsto_const_nhds
   have hgi : Integrable (fun ω => ‖g ω‖ ^ 2) μ := by
     refine ⟨hg.norm.pow 2, ?_⟩
     apply (hasFiniteIntegral_iff_ofReal (Eventually.of_forall (fun ω => sq_nonneg ‖g ω‖))).mpr

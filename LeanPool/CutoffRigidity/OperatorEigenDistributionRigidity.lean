@@ -136,24 +136,6 @@ theorem gibbsOperatorEigen_equalRate_cutoff_distribution_bound {V χ η ψ : E �
     simpa only [sub_eq_add_neg, abs_neg] using ha
   exact htri.trans (add_le_add hHpair hboundaryBound)
 
-theorem cutoff_integral_tendsto {μ : Measure E} {f : E → ℝ} (hf : Integrable f μ)
-    (η : ℕ → E → ℝ) (hη : ∀ n, Measurable (η n))
-    (hb : ∀ n x, 0 ≤ η n x ∧ η n x ≤ 1)
-    (hone : ∀ x, ∀ᶠ n : ℕ in atTop, η n x = 1) :
-    Tendsto (fun n => ∫ x, η n x * f x ∂μ) atTop (𝓝 (∫ x, f x ∂μ)) := by
-  apply tendsto_integral_of_dominated_convergence (fun x => |f x|)
-  · intro n
-    exact (hη n).aestronglyMeasurable.mul hf.aestronglyMeasurable
-  · exact hf.abs
-  · intro n
-    filter_upwards with x
-    rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (hb n x).1]
-    exact mul_le_of_le_one_left (abs_nonneg _) (hb n x).2
-  · filter_upwards with x
-    apply tendsto_const_nhds.congr'
-    filter_upwards [hone x] with n hn
-    simp [hn]
-
 /-- Equality of the actual operator eigenvalue and curvature forces all
 ordinary-volume distributional derivatives of the genuine weak gradient
 to vanish. No classical representative is assumed or bootstrapped. -/

@@ -183,9 +183,9 @@ theorem integrable_gibbsTest_potentialHessian_coordinate {V ψ : E → ℝ}
   simpa only [Pi.mul_apply, mul_assoc] using integrable_compact_gibbsVector_coordinate hprob hc
     hs G j
 
-/-- The genuine differentiated weak eigenfunction equation. The original
-operator eigenclass is only L²; its actual locally constructed weak Hessian
-replaces the classical Hessian in the paper's coordinate proof. -/
+/-- The differentiated eigenfunction equation for compact tests. This weak
+Euclidean form of the coordinate calculation in Chafaï–Fathi, arXiv:2412.15969v5,
+Section 1.5, uses an L² operator eigenclass and its locally constructed weak Hessian. -/
 theorem gibbsOperatorEigen_differentiated_weak_equation {V χ ψ : E → ℝ}
     (hV : ContDiff ℝ 2 V) (hprob : IsProbabilityMeasure (gibbsMeasure volume V))
     (ρ : ℝ) (hρ : 0 < ρ)

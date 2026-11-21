@@ -428,12 +428,8 @@ theorem c2_eigenfunction_hessian_zero {V f : E → ℝ}
     have hh := ((hcLim.pow 2).const_mul 4).mul_const
       (∫ y, ‖gradient f y‖ ^ 2 ∂gibbsMeasure volume V)
     simpa [Function.comp_def] using ENNReal.continuous_ofReal.continuousAt.tendsto.comp hh
-  have hIntLim : Tendsto (fun n => ∫⁻ y, F n y ∂gibbsMeasure volume V) atTop (𝓝 0) := by
-    have hlow (n : ℕ) : (0 : ℝ≥0∞) ≤ ∫⁻ y, F n y ∂gibbsMeasure volume V := bot_le
-    exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hRLim hlow hFbound
-  have hFatou := lintegral_liminf_le (μ := gibbsMeasure volume V) (f := F) (u := atTop) hFmeas
-  simp_rw [(hFlim _).liminf_eq] at hFatou
-  rw [hIntLim.liminf_eq] at hFatou
+  have hFatou := lintegral_le_of_ae_tendsto_bounds (fun n => (hFmeas n).aemeasurable)
+    (Filter.Eventually.of_forall hFlim) hFbound hRLim
   have hENN : (∫⁻ y, ENNReal.ofReal (G y) ∂gibbsMeasure volume V) = 0 := le_antisymm hFatou bot_le
   have hae := (lintegral_eq_zero_iff' hGcont.measurable.ennreal_ofReal.aemeasurable).mp hENN
   have hGfun : G = fun _ => (0 : ℝ) := by

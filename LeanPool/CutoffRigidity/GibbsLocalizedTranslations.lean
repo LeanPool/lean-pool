@@ -158,21 +158,15 @@ theorem integral_sq_le_of_ae_tendsto_bounds {α : Type*} [MeasurableSpace α]
   let F := fun n x => ENNReal.ofReal (fn n x ^ 2)
   have hFm (n : ℕ) : AEMeasurable (F n) μ :=
     ((hfn n).aestronglyMeasurable.pow 2).aemeasurable.ennreal_ofReal
-  have hpoint : (fun x => liminf (fun n => F n x) atTop) =ᵐ[μ]
-      (fun x => ENNReal.ofReal (g x ^ 2)) := by
+  have hpoint : ∀ᵐ x ∂μ, Tendsto (fun n => F n x) atTop (𝓝 (ENNReal.ofReal (g x ^ 2))) := by
     filter_upwards [hlim] with x hx
-    exact (ENNReal.continuous_ofReal.tendsto _ |>.comp (hx.pow 2)).liminf_eq
-  have hF := lintegral_liminf_le' (μ := μ) (f := F) (u := atTop) hFm
-  rw [lintegral_congr_ae hpoint] at hF
+    exact ENNReal.continuous_ofReal.tendsto _ |>.comp (hx.pow 2)
   have hEach (n : ℕ) : (∫⁻ x, F n x ∂μ) ≤ ENNReal.ofReal (bn n) := by
     rw [← ofReal_integral_eq_lintegral_ofReal (hfn n).integrable_sq
       (Filter.Eventually.of_forall (fun x => sq_nonneg _))]
     exact ENNReal.ofReal_le_ofReal (hbound n)
-  have hh := liminf_le_liminf (f := atTop) (Filter.Eventually.of_forall hEach)
   have hblim := ENNReal.continuous_ofReal.tendsto b |>.comp hb
-  change Tendsto (fun n => ENNReal.ofReal (bn n)) atTop (𝓝 (ENNReal.ofReal b)) at hblim
-  rw [hblim.liminf_eq] at hh
-  have hfinal := hF.trans hh
+  have hfinal := lintegral_le_of_ae_tendsto_bounds hFm hpoint hEach hblim
   rw [← ofReal_integral_eq_lintegral_ofReal hg.integrable_sq
     (Filter.Eventually.of_forall (fun x => sq_nonneg _))] at hfinal
   exact (ENNReal.ofReal_le_ofReal_iff hb0).mp hfinal

@@ -8,6 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
+public import LeanPool.CutoffRigidity.L2FatouBounds
 public import LeanPool.CutoffRigidity.GibbsSobolevClassical
 public import LeanPool.CutoffRigidity.GibbsSobolevApproximation
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
@@ -194,19 +195,13 @@ theorem weighted_sq_lintegral_le_of_L2_tendsto
   let F (n : ℕ) (x : α) := ENNReal.ofReal (w x * fn (ns n) x ^ 2)
   have hFm (n : ℕ) : Measurable (F n) := by
     exact (hw.mul ((Lp.stronglyMeasurable (fn (ns n))).measurable.pow_const 2)).ennreal_ofReal
-  have hpoint : ∀ᵐ x ∂μ, liminf (fun n => F n x) atTop = ENNReal.ofReal (w x * f x ^ 2) := by
+  have hpoint : ∀ᵐ x ∂μ,
+      Tendsto (fun n => F n x) atTop (𝓝 (ENNReal.ofReal (w x * f x ^ 2))) := by
     filter_upwards [hae] with x hx
-    exact (ENNReal.continuous_ofReal.continuousAt.tendsto.comp ((hx.pow 2).const_mul (w
-      x))).liminf_eq
-  have hFatou := lintegral_liminf_le (μ := μ) (f := F) (u := atTop) hFm
-  rw [lintegral_congr_ae hpoint] at hFatou
-  have hbound' : ∀ᶠ n : ℕ in atTop, (∫⁻ x, F n x ∂μ) ≤ ENNReal.ofReal (bn (ns n)) :=
-    Filter.Eventually.of_forall (fun n => hbound (ns n))
-  have hh := liminf_le_liminf hbound'
+    exact ENNReal.continuous_ofReal.continuousAt.tendsto.comp ((hx.pow 2).const_mul (w x))
   have hblim := ENNReal.continuous_ofReal.continuousAt.tendsto.comp (hb.comp hns)
-  change Tendsto (fun n => ENNReal.ofReal (bn (ns n))) atTop (𝓝 (ENNReal.ofReal b)) at hblim
-  rw [hblim.liminf_eq] at hh
-  exact hFatou.trans hh
+  exact lintegral_le_of_ae_tendsto_bounds (fun n => (hFm n).aemeasurable) hpoint
+    (fun n => hbound (ns n)) hblim
 
 /-- The actual compact generator graph satisfies confinement in terms of
 its genuine L² input and gradient norms. -/
