@@ -257,24 +257,25 @@ private theorem abs_integral_kernelCutoffTerm_mul_annulus_le (l : Fin 3) (β : F
           ρ ^ (β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2)) := by rw [hV0def, hndef]
 
 /-- The generic bound on the integral of a kernel-times-cutoff term against a function bounded
-on the ball. -/
+on the ball, with a constant depending only on `l`, `β` and `γ` (uniform in the centre `x`,
+the radius `ρ`, the time `t`, the bound `M` and the function `h`). -/
 theorem abs_integral_kernelCutoffTerm_mul_le (l : Fin 3) {β : Fin 3 → ℕ}
-    (hβ : β 0 + β 1 + β 2 ≤ 2) (x : Vec3) {ρ : ℝ} (hρ0 : 0 < ρ) {γ : Fin 3 → ℕ}
-    (hγ : γ 0 + γ 1 + γ 2 ≠ 0) (t M : ℝ) (hM : 0 ≤ M) (h : Vec3 → ℝ)
-    (hh : ∀ y : Vec3, vec3EuclideanNorm (y - x) ≤ ρ → |h y| ≤ M) :
-    ∃ C : ℝ, 0 ≤ C ∧ |∫ y : Vec3, kernelCutoffTerm l β x ρ γ t y * h y| ≤
-      C * M * ρ / ρ ^ (β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2)) := by
+    (hβ : β 0 + β 1 + β 2 ≤ 2) {γ : Fin 3 → ℕ} (hγ : γ 0 + γ 1 + γ 2 ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (x : Vec3) (ρ : ℝ), 0 < ρ → ∀ (t M : ℝ), 0 ≤ M → ∀ h : Vec3 → ℝ,
+      (∀ y : Vec3, vec3EuclideanNorm (y - x) ≤ ρ → |h y| ≤ M) →
+      |∫ y : Vec3, kernelCutoffTerm l β x ρ γ t y * h y| ≤
+        C * M * ρ / ρ ^ (β 0 + β 1 + β 2 + (γ 0 + γ 1 + γ 2)) := by
   obtain ⟨ck, hck0, hck⟩ := abs_multiPartialVec3_spatialDeriv_newtonianKernel_le l β hβ
-  obtain ⟨cc, hcc0, hcc⟩ := exists_bound_multiPartial_serrinBallCutoff_scaled x hρ0 γ t
+  obtain ⟨cc, hcc0, hcc⟩ := exists_bound_multiPartial_serrinBallCutoff_scaled γ
   let C := ck * cc * 2 ^ (2 + (β 0 + β 1 + β 2)) *
     volume.real (Metric.ball (0 : Vec3) 1)
-  refine ⟨C, by positivity, ?_⟩
+  refine ⟨C, by positivity, fun x ρ hρ0 t M hM h hh => ?_⟩
   have hck' : ∀ z : Vec3, z ≠ 0 →
       |multiPartialVec3 (spatialDeriv newtonianKernel l) β z| ≤
         ck * (vec3EuclideanNorm z ^ (2 + (β 0 + β 1 + β 2)))⁻¹ := hck
   have hcc' : ∀ y : Vec3,
       |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| ≤
-        cc / ρ ^ (γ 0 + γ 1 + γ 2) := hcc
+        cc / ρ ^ (γ 0 + γ 1 + γ 2) := hcc x ρ hρ0 t
   have hbound := abs_integral_kernelCutoffTerm_mul_annulus_le l β x hρ0 γ hγ t M hM h hh
     ck cc hck0 hcc0 hck' hcc'
   dsimp [C]
