@@ -64,11 +64,9 @@ presheaves inverting the inclusions of the covering sieves factors through `J`-s
   for `C` with finite limits, a left exact functor `C ⥤ Sh(D, K)` sending the `J`-covering sieves
   to epimorphic families extends to a left exact left adjoint `Sh(C, J) ⥤ Sh(D, K)`.
 
-## Not formalised
-
-The existence half for an arbitrary site `C` and a functor `C ⥤ Sh(D, K)` that is flat in the
-internal sense of `Sh(D, K)` (filtering): internal flatness is a local condition, weaker than
-the existence of a pointwise flat lift to presheaves, and is not defined in Mathlib.
+The general case, a functor `C ⥤ Sh(D, K)` flat in the internal sense of `Sh(D, K)`, is
+`LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering`, in the module
+`LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuGeneral`.
 
 ## References
 
@@ -320,6 +318,40 @@ theorem exists_leftAdjoint_sheaf_of_flat (K : GrothendieckTopology D) :
 
 end Flat
 
+section Continuity
+
+variable {D : Type u} [SmallCategory D] {K : GrothendieckTopology D}
+  (F : C ⥤ Sheaf K (Type u))
+
+/-- A functor `F : C ⥤ Sh(D, K)` is `J`-continuous when it sends the `J`-covering sieves to
+epimorphic families: two morphisms out of `F(X)` that agree after every `F(f)`, `f` in a covering
+sieve of `X`, are equal. -/
+def MapsCoversToEpimorphicFamilies : Prop :=
+  ∀ ⦃X : C⦄ (S : Sieve X), S ∈ J X → ∀ {Z : Sheaf K (Type u)} (g h : F.obj X ⟶ Z),
+    (∀ ⦃Y : C⦄ (f : Y ⟶ X), S f → F.map f ≫ g = F.map f ≫ h) → g = h
+
+/-- A left exact functor `G₀` out of presheaves extending a `J`-continuous functor `F` inverts
+the inclusions of the `J`-covering sieves: their images are monomorphisms (by left exactness) and
+epimorphisms (by continuity), in the balanced category `Sh(D, K)`. -/
+theorem isIso_map_shrinkFunctor_ι (hF : MapsCoversToEpimorphicFamilies (J := J) F)
+    (G₀ : (Cᵒᵖ ⥤ Type u) ⥤ Sheaf K (Type u)) [PreservesFiniteLimits G₀]
+    (es : shrinkYoneda.{u} ⋙ G₀ ≅ F) ⦃X : C⦄ (S : Sieve X) (hS : S ∈ J X) :
+    IsIso (G₀.map (Sieve.shrinkFunctor.{u} S).ι) := by
+  have : Epi (G₀.map (Sieve.shrinkFunctor.{u} S).ι) := ⟨fun {Z} g g' hgg' => by
+    have key : es.inv.app X ≫ g = es.inv.app X ≫ g' := hF S hS _ _ fun Y f hf => by
+      have hr : Subfunctor.range (shrinkYoneda.{u}.map f) ≤ Sieve.shrinkFunctor.{u} S := by
+        rintro Z _ ⟨x, rfl⟩
+        obtain ⟨x, rfl⟩ := shrinkYonedaObjObjEquiv.symm.surjective x
+        simp only [Sieve.shrinkFunctor_obj, Set.mem_ofPred_eq,
+          shrinkYoneda_map_app_shrinkYonedaObjObjEquiv_symm, Equiv.apply_symm_apply]
+        exact S.downward_closed hf x
+      rw [es.inv.naturality_assoc, es.inv.naturality_assoc, Functor.comp_map,
+        ← Subfunctor.lift_ι _ hr, G₀.map_comp, Category.assoc, Category.assoc, hgg']
+    simpa using congrArg (es.hom.app X ≫ ·) key⟩
+  exact isIso_of_mono_of_epi _
+
+end Continuity
+
 section LeftExact
 
 variable {D : Type u} [SmallCategory D]
@@ -335,13 +367,6 @@ theorem isPointwiseContinuous_bot (F : C ⥤ (Dᵒᵖ ⥤ Type u)) :
 
 variable [HasFiniteLimits C] {K : GrothendieckTopology D} (F : C ⥤ Sheaf K (Type u))
   [PreservesFiniteLimits F]
-
-/-- A functor `F : C ⥤ Sh(D, K)` is `J`-continuous when it sends the `J`-covering sieves to
-epimorphic families: two morphisms out of `F(X)` that agree after every `F(f)`, `f` in a covering
-sieve of `X`, are equal. -/
-def MapsCoversToEpimorphicFamilies : Prop :=
-  ∀ ⦃X : C⦄ (S : Sieve X), S ∈ J X → ∀ {Z : Sheaf K (Type u)} (g h : F.obj X ⟶ Z),
-    (∀ ⦃Y : C⦄ (f : Y ⟶ X), S f → F.map f ≫ g = F.map f ≫ h) → g = h
 
 instance (d : Dᵒᵖ) : IsCofiltered
     ((F ⋙ sheafToPresheaf K (Type u)) ⋙ (evaluation Dᵒᵖ (Type u)).obj d).Elements := by
@@ -370,21 +395,7 @@ theorem exists_leftAdjoint_of_preservesFiniteLimits
     Functor.isoWhiskerLeft F (asIso (sheafificationAdjunction K (Type u)).counit) ≪≫
     Functor.rightUnitor F
   let es : shrinkYoneda.{u} ⋙ G₀ ≅ F := Functor.isoWhiskerRight shrinkYonedaIsoYoneda G₀ ≪≫ e
-  have h : ∀ ⦃X : C⦄ (S : Sieve X), S ∈ J X →
-      IsIso (G₀.map (Sieve.shrinkFunctor.{u} S).ι) := by
-    intro X S hS
-    have : Epi (G₀.map (Sieve.shrinkFunctor.{u} S).ι) := ⟨fun {Z} g g' hgg' => by
-      have key : es.inv.app X ≫ g = es.inv.app X ≫ g' := hF S hS _ _ fun Y f hf => by
-        have hr : Subfunctor.range (shrinkYoneda.{u}.map f) ≤ Sieve.shrinkFunctor.{u} S := by
-          rintro Z _ ⟨x, rfl⟩
-          obtain ⟨x, rfl⟩ := shrinkYonedaObjObjEquiv.symm.surjective x
-          simp only [Sieve.shrinkFunctor_obj, Set.mem_ofPred_eq,
-            shrinkYoneda_map_app_shrinkYonedaObjObjEquiv_symm, Equiv.apply_symm_apply]
-          exact S.downward_closed hf x
-        rw [es.inv.naturality_assoc, es.inv.naturality_assoc, Functor.comp_map,
-          ← Subfunctor.lift_ι _ hr, G₀.map_comp, Category.assoc, Category.assoc, hgg']
-      simpa using congrArg (es.hom.app X ≫ ·) key⟩
-    exact isIso_of_mono_of_epi _
+  have h := isIso_map_shrinkFunctor_ι F hF G₀ es
   obtain ⟨G, hG, hG', ⟨e'⟩⟩ := exists_presheafToSheaf_comp_iso (J := J) G₀ h
   exact ⟨G, hG, hG', ⟨Functor.isoWhiskerLeft yoneda e' ≪≫ e⟩⟩
 

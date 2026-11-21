@@ -45,8 +45,9 @@ The existence half is proved in the module
 `LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuExistence` for presheaf topoi
 (`exists_leftAdjoint_of_flat`) and for left exact functors out of a category with finite limits
 (`exists_leftAdjoint_of_preservesFiniteLimits`), through the points of the site
-(`GrothendieckTopology.Point`). Not formalised: the general case, a functor `C ⥤ Sh(D, K)` flat in
-the internal sense of `Sh(D, K)` (filtering functors), a notion Mathlib does not have.
+(`GrothendieckTopology.Point`). The general case, a functor `C ⥤ Sh(D, K)` flat in the internal
+sense of `Sh(D, K)` (locally filtering), is `exists_leftAdjoint_of_isLocallyFiltering`
+(`DiaconescuGeneral`).
 -/
 
 @[expose] public section

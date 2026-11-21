@@ -15,6 +15,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.CatSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.ClassifyingSite
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Diaconescu
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuExistence
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.DiaconescuGeneral
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.FinitelyPresentable
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Homogeneous
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Interval
@@ -24,6 +25,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Examples.Torsors
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Homomorphisms
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Infinitary
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.InverseImage
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.LocallyFiltering
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Morleyization
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalForm
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.NormalFormSemantics
@@ -44,6 +46,7 @@ public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Syntacti
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Transport
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntactic.Universal
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Syntax
+public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Tensor
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.TypeSemantics
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Unconditional
 public import LeanPool.ToposTheoreticBridges.DeMorgan

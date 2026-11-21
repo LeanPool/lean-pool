@@ -14,8 +14,8 @@ summary: Morita equivalence of small categories, defined as equivalence of their
   model is definable; the quotients of a theory correspond to the topologies finer than its
   classifying one, and the quotients of Morita-equivalent theories correspond. Geometric
   formulas translate into the infinitary logic of Tau Ceti with the same satisfaction, and the
-  existence half of Diaconescu's theorem is proved for presheaf topoi and for left exact functors
-  out of sites with finite limits. These are
+  existence half of Diaconescu's theorem is proved, extending every internally flat continuous
+  functor from a site to a sheaf topos to the inverse image of a geometric morphism. These are
   instances of O. Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
   presentations.
 branch: category theory
@@ -42,7 +42,7 @@ main_declarations:
 - LeanPool.ClassifyingTopoi.IsClassifyingSite.exists_quotient_theory
 - LeanPool.ClassifyingTopoi.MoritaEquivalent.exists_orderIso_quotients
 - LeanPool.ClassifyingTopoi.GeometricFormula.realize_toInf
-- LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_preservesFiniteLimits
+- LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering
 main_results:
 - declaration: LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
   informal: Two small categories have equivalent categories of presheaves of sets exactly
@@ -127,6 +127,15 @@ main_results:
     to an epimorphic family extends to a finite-limit preserving left adjoint G from J-sheaves
     of sets on C to K-sheaves of sets on D, whose composite with the sheafified Yoneda
     embedding of C is isomorphic to F.
+- declaration: LeanPool.ClassifyingTopoi.exists_leftAdjoint_of_isLocallyFiltering
+  informal: Let (C, J) and (D, K) be small sites and F a functor from C to K-sheaves of sets
+    on D. Suppose that, viewed as presheaves, the categories of elements of F are cofiltered
+    locally for K (for every object d of D, after restriction to some K-covering sieve of d
+    there is an element, any two elements come from one along a span, and any element
+    equalized by two parallel morphisms comes from one along an equalizing morphism), and that
+    F sends every J-covering sieve to an epimorphic family. Then there is a finite-limit
+    preserving left adjoint G from J-sheaves of sets on C to K-sheaves of sets on D whose
+    composite with the sheafified Yoneda embedding of C is isomorphic to F.
 tags:
 - topos-theory
 - classifying-topoi
