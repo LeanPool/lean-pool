@@ -21,7 +21,7 @@ authors:
 - Michel Hua
 source:
   title: Le localisateur fondamental minimal (D.-C. Cisinski)
-  url: https://github.com/TauCetiProject/TauCetiRoadmap/pull/1521
+  url: https://www.numdam.org/item/CTGDC_2004__45_2_109_0/
   github_repo: mycaule/lean-pool
 license: Apache-2.0
 status: verified

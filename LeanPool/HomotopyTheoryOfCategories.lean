@@ -18,7 +18,7 @@ public import LeanPool.HomotopyTheoryOfCategories.GrCategory
 /-!
 # Basic localizers and the homotopy theory of small categories
 
-Source: url:https://github.com/TauCetiProject/TauCetiRoadmap/pull/1521
+Source: url:https://www.numdam.org/item/CTGDC_2004__45_2_109_0/
 Authors: Michel Hua
 Status: verified
 Main declarations: `LeanPool.HomotopyTheoryOfCategories.Winfty_le`,

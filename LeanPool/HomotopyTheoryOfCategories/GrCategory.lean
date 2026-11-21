@@ -14,10 +14,9 @@ import Mathlib.Tactic.Abel
 /-!
 # Gr-categories and two-term complexes
 
-A *gr-category* (`IsGrCategory`) is a monoidal groupoid in which every object has a tensor
-inverse up to isomorphism. Its `π₀` is Mathlib's `Skeleton C` with `Skeleton.instMonoid`, and we
-prove `isUnit_skeleton`: every element of `π₀` is a unit, so `π₀` is a group (a right inverse in
-a monoid in which every element has one is two-sided).
+A *gr-category* is a monoidal groupoid in which every object has a tensor inverse
+up to isomorphism. In the two-term example below, Mathlib's `Skeleton` represents
+the monoid of isomorphism classes.
 
 For an additive map `d : K⁻¹ →+ K⁰` we define the symmetric monoidal groupoid `TwoTerm d`
 (`ch(d)` of Deligne, SGA 4 XVIII, §1.4): objects the elements of `K⁰`, morphisms `x ⟶ y` the
