@@ -70,8 +70,8 @@ main_results:
     bijection on 0-cells modulo the homotopy relation exactly when f induces a bijection on path
     components.
 - declaration: LeanPool.GrothendieckInfinityGroupoids.not_isWeakEquivalence_piPresheaf_point_bool
-  informal: For such R, the morphism induced by the inclusion of a point into the two-point
-    discrete space is not a weak equivalence.
+  informal: When C is a pseudo-coherator, the morphism induced by the inclusion of a point
+    into the two-point discrete space is not a weak equivalence.
 tags:
 - infinity-groupoids
 - globular-sets

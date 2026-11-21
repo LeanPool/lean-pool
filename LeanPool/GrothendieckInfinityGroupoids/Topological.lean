@@ -105,8 +105,8 @@ theorem map_faceTo {m n : ℕ} (h : m < n) (ε : Bool) :
 end IsGlobularFunctor
 
 /-- **Roadmap 5.2.** For a globular functor `R` into the coglobular space of disks, the
-fundamental ∞-groupoid presheaf `Π_∞^R(X)` sends globular sums to globular products: it is an
-∞-groupoid of type `C` (Ara 2013, 5.2). -/
+fundamental ∞-groupoid presheaf `Π_∞^R(X)` sends globular sums to globular products. If `C`
+is a pseudo-coherator, it is an ∞-groupoid of type `C` (Ara 2013, 5.2). -/
 theorem isGlobularPresheaf_piPresheaf (hR : IsGlobularFunctor C stdDisks R)
     (X : TopCat.{0}) : IsGlobularPresheaf C ((piPresheaf C R).obj X) := by
   intro T v hv
