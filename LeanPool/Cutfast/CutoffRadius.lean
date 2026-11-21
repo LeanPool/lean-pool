@@ -29,6 +29,7 @@ namespace Cutfast
 namespace CutoffRadius
 
 open Cutoff
+open Cutoff.GeneralRadius (UpperHyp)
 
 /-! ### Lower bounds on the dilation term for every `α` -/
 
@@ -51,13 +52,7 @@ lemma le_entropyProfile_of_le_one {α w : ℝ} (hα : 0 < α) (hα1 : α ≤ 1) 
     show α / 2 * (1 - w) ^ 2 = α * (1 - w) ^ 2 / 2 by ring, ← integral_mul_one_sub]
   apply intervalIntegral.integral_mono_on hw1
   · exact (continuous_const.mul (continuous_const.sub continuous_id)).intervalIntegrable _ _
-  · apply ContinuousOn.intervalIntegrable
-    apply ContinuousOn.mul continuousOn_const
-    apply ContinuousOn.sub
-    · exact continuousOn_id.rpow_const fun x hx => Or.inl (by
-        rw [Set.uIcc_of_le hw1] at hx; exact ne_of_gt (by simp only [id]; linarith [hx.1]))
-    · exact continuousOn_id.rpow_const fun x hx => Or.inl (by
-        rw [Set.uIcc_of_le hw1] at hx; exact ne_of_gt (by simp only [id]; linarith [hx.1]))
+  · exact intervalIntegrable_entropy_integrand hw0 hw1
   intro s hs
   have hs0 : 0 < s := by linarith [hs.1]
   rw [entropy_integrand_eq hs0]
@@ -118,34 +113,6 @@ variable {m t R : ℕ → ℝ}
 
 export Cutoff.GeneralRadius (sq_le_of_mem ShiftHyp wassersteinSq_lower_shift
   relEntropy_lower_shift fisherInfo_lower_shift)
-
-/-- Hypotheses for the upper bounds, for initial points in the ball of radius `R d`. -/
-def UpperHyp (m t R : ℕ → ℝ) (A K : ℝ) : Prop :=
-  (∀ᶠ d : ℕ in atTop, Admissible d (m d) ∧ (d : ℝ) / (d + 2) < m d ∧ 0 < t d ∧
-    alpha d (m d) ≤ A ∧ eqSecondMoment d (m d) ≤ K * d ∧ 0 ≤ R d) ∧
-  Tendsto (fun d : ℕ => (d : ℝ) * exp (-t d / alpha d (m d)) ^ 2) atTop (𝓝 0) ∧
-  Tendsto (fun d : ℕ => R d ^ 2 * exp (-t d) ^ 2) atTop (𝓝 0)
-
-private lemma UpperHyp.generalRadius {A K : ℝ} (H : UpperHyp m t R A K) :
-    Cutoff.GeneralRadius.UpperHyp m t R A K :=
-  ⟨H.1.mono (fun _ hd => ⟨hd.1, hd.2.1, hd.2.2.1, hd.2.2.2.1, hd.2.2.2.2.1⟩), H.2⟩
-
-lemma wassersteinSq_upper {A K : ℝ} (H : UpperHyp m t R A K) :
-    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
-      wassersteinSq (densityMeasure (solution d (m d) x₀ (t d)))
-        (densityMeasure (equilibrium d (m d)))) atTop (𝓝 0) :=
-  Cutoff.GeneralRadius.wassersteinSq_upper H.generalRadius
-
-lemma relEntropy_upper {A K : ℝ} (H : UpperHyp m t R A K) :
-    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
-      (relEntropy (m d) (solution d (m d) x₀ (t d)) (equilibrium d (m d)) : EReal))
-        atTop (𝓝 0) :=
-  Cutoff.GeneralRadius.relEntropy_upper H.generalRadius (H.1.mono fun _ hd => hd.2.2.2.2.2)
-
-lemma fisherInfo_upper {A K : ℝ} (H : UpperHyp m t R A K) :
-    Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (R d),
-      fisherInfo (m d) (solution d (m d) x₀ (t d))) atTop (𝓝 0) :=
-  Cutoff.GeneralRadius.fisherInfo_upper H.generalRadius
 
 lemma scaleHyp_eventually {α k : ℝ} (H : ScaleHyp m t α k) (hR : ∀ᶠ d : ℕ in atTop, 0 ≤ R d) :
     ∀ᶠ d : ℕ in atTop, Admissible d (m d) ∧ (d : ℝ) / (d + 2) < m d ∧ 0 < t d ∧
@@ -224,7 +191,7 @@ lemma radius_nonneg {r θ : ℝ} (hr : 0 < r) (d : ℕ) : 0 ≤ r * (d : ℝ) ^ 
 
 /-! ### Parameters of Theorem 1.1 -/
 
-lemma upperHyp_alpha {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r) (hε : 0 < ε) :
+lemma upperHyp_alpha {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hε : 0 < ε) :
     ∃ K, UpperHyp (fun d => exponentOfAlpha α d) (fun d => (1 + ε) * max (α / 2) θ * log d)
       (fun d => r * (d : ℝ) ^ θ) α K := by
   obtain ⟨K, hK, hM⟩ := tendsto_eqSecondMoment_div hα hα2
@@ -234,7 +201,7 @@ lemma upperHyp_alpha {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr
   refine ⟨2 * K, ?_, ?_, ?_⟩
   · filter_upwards [eventually_admissible_exponentOfAlpha hα hα2, bounds_of_tendsto_div hK hM]
       with d ⟨h, h2, hαd, hd⟩ hb
-    exact ⟨h, h2, mul_pos hc (log_natCast_pos hd), hαd.le, hb.2, radius_nonneg hr d⟩
+    exact ⟨h, h2, mul_pos hc (log_natCast_pos hd), hαd.le, hb.2⟩
   · have : Tendsto (fun d : ℕ => (d : ℝ) *
         exp (-((1 + ε) * max (α / 2) θ / α * log d)) ^ 2) atTop (𝓝 0) := by
       apply tendsto_mul_exp_sq_zero
@@ -282,7 +249,7 @@ lemma scaleHyp_alpha {α ε θ : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hε 
 
 /-! ### Parameters of Theorem 1.2 -/
 
-lemma upperHyp_fixed {m r ε θ : ℝ} (hm : 1 < m) (hr : 0 < r) (hε : 0 < ε) (hθ : 0 < θ) :
+lemma upperHyp_fixed {m r ε θ : ℝ} (hm : 1 < m) (hε : 0 < ε) (hθ : 0 < θ) :
     ∃ K, UpperHyp (fun _ => m) (fun d => (1 + ε) * θ * log d) (fun d => r * (d : ℝ) ^ θ)
       (1 / 2) K := by
   have hK : (0 : ℝ) < 1 / (2 * π * exp 1) := by positivity
@@ -294,8 +261,7 @@ lemma upperHyp_fixed {m r ε θ : ℝ} (hm : 1 < m) (hr : 0 < r) (hε : 0 < ε) 
   · filter_upwards [eventually_ge_atTop 2, bounds_of_tendsto_div hK
       (tendsto_eqSecondMoment_div_fixed hm)] with d hd hb
     obtain ⟨h, h2⟩ := admissible_of_one_lt hm (by omega : 1 ≤ d)
-    exact ⟨h, h2, mul_pos hc (log_natCast_pos hd), alpha_le_half hm d, hb.2,
-      radius_nonneg hr d⟩
+    exact ⟨h, h2, mul_pos hc (log_natCast_pos hd), alpha_le_half hm d, hb.2⟩
   · refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds he
       (Eventually.of_forall fun d => by positivity) ?_
     filter_upwards [eventually_ge_atTop 1, eventually_ge_atTop N] with d hd hdN
@@ -346,8 +312,8 @@ theorem cutoff_wassersteinSq_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : �
     · exact wassersteinSq_lower_shift (shiftHyp_alpha hα hα2 hr hε1 hε hθ)
     · obtain ⟨k, hk, H⟩ := scaleHyp_alpha hα hα2 hε hε1 hθ
       exact wassersteinSq_lower_scale hα hk H (Eventually.of_forall fun d => radius_nonneg hr d)
-  · obtain ⟨K, H⟩ := upperHyp_alpha (θ := θ) hα hα2 hr hε
-    exact wassersteinSq_upper H
+  · obtain ⟨K, H⟩ := upperHyp_alpha (r := r) (θ := θ) hα hα2 hε
+    exact Cutoff.GeneralRadius.wassersteinSq_upper H
 
 /-- **Section 1.4.3, Theorem 1.1 with extended late-time range, relative entropy.**
 As in `cutoff_relEntropy`, for large `d` the entropy integrand is integrable for all `t > 0`
@@ -373,8 +339,8 @@ theorem cutoff_relEntropy_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α �
     · exact relEntropy_lower_shift (shiftHyp_alpha hα hα2 hr hε1 hε hθ)
     · obtain ⟨k, hk, H⟩ := scaleHyp_alpha hα hα2 hε hε1 hθ
       exact relEntropy_lower_scale hα hα2 hk H (Eventually.of_forall fun d => radius_nonneg hr d)
-  · obtain ⟨K, H⟩ := upperHyp_alpha (θ := θ) hα hα2 hr hε
-    exact relEntropy_upper H
+  · obtain ⟨K, H⟩ := upperHyp_alpha (r := r) (θ := θ) hα hα2 hε
+    exact Cutoff.GeneralRadius.relEntropy_upper H (Eventually.of_forall fun d => radius_nonneg hr d)
 
 /-- **Section 1.4.3, Theorem 1.1 with extended late-time range,
 Fisher information.** -/
@@ -391,8 +357,8 @@ theorem cutoff_fisherInfo_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α �
     · exact fisherInfo_lower_shift (shiftHyp_alpha hα hα2 hr hε1 hε hθ)
     · obtain ⟨k, hk, H⟩ := scaleHyp_alpha hα hα2 hε hε1 hθ
       exact fisherInfo_lower_scale hk H (Eventually.of_forall fun d => radius_nonneg hr d)
-  · obtain ⟨K, H⟩ := upperHyp_alpha (θ := θ) hα hα2 hr hε
-    exact fisherInfo_upper H
+  · obtain ⟨K, H⟩ := upperHyp_alpha (r := r) (θ := θ) hα hα2 hε
+    exact Cutoff.GeneralRadius.fisherInfo_upper H
 
 /-- **Section 1.4.3, Theorem 1.2 with extended late-time range, Wasserstein.**
 For initial points in the ball of radius `r d^θ` (`θ > 0`), the critical time becomes `θ log d`. -/
@@ -404,9 +370,9 @@ theorem cutoff_fixedExponent_wassersteinSq_radius' {m r ε θ : ℝ} (hm : 1 < m
     Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ),
         wassersteinSq (densityMeasure (solution d m x₀ ((1 + ε) * θ * log d)))
           (densityMeasure (equilibrium d m))) atTop (𝓝 0) := by
-  obtain ⟨K, H⟩ := upperHyp_fixed hm hr hε hθ
+  obtain ⟨K, H⟩ := upperHyp_fixed (r := r) hm hε hθ
   exact ⟨fun hε1 => wassersteinSq_lower_shift (shiftHyp_fixed hm hr hε hε1 hθ),
-    wassersteinSq_upper H⟩
+    Cutoff.GeneralRadius.wassersteinSq_upper H⟩
 
 /-- **Section 1.4.3, Theorem 1.2 with extended late-time range, relative entropy.**
 As in `cutoff_fixedExponent_relEntropy`, the entropy integrand is integrable for large `d`, for all
@@ -421,9 +387,9 @@ theorem cutoff_fixedExponent_relEntropy_radius' {m r ε θ : ℝ} (hm : 1 < m) (
     Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ),
         (relEntropy m (solution d m x₀ ((1 + ε) * θ * log d)) (equilibrium d m) : EReal))
         atTop (𝓝 0) := by
-  obtain ⟨K, H⟩ := upperHyp_fixed hm hr hε hθ
+  obtain ⟨K, H⟩ := upperHyp_fixed (r := r) hm hε hθ
   refine ⟨?_, fun hε1 => relEntropy_lower_shift (shiftHyp_fixed hm hr hε hε1 hθ),
-    relEntropy_upper H⟩
+    Cutoff.GeneralRadius.relEntropy_upper H (Eventually.of_forall fun d => radius_nonneg hr d)⟩
   filter_upwards [eventually_ge_atTop 1] with d hd x₀ _ t ht
   obtain ⟨h, h2⟩ := Cutoff.admissible_of_one_lt hm hd
   exact integrable_relEntropyDensity_solution h h2 x₀ ht
@@ -436,8 +402,9 @@ theorem cutoff_fixedExponent_fisherInfo_radius' {m r ε θ : ℝ} (hm : 1 < m) (
         fisherInfo m (solution d m x₀ ((1 - ε) * θ * log d))) atTop (𝓝 ⊤)) ∧
     Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ),
         fisherInfo m (solution d m x₀ ((1 + ε) * θ * log d))) atTop (𝓝 0) := by
-  obtain ⟨K, H⟩ := upperHyp_fixed hm hr hε hθ
-  exact ⟨fun hε1 => fisherInfo_lower_shift (shiftHyp_fixed hm hr hε hε1 hθ), fisherInfo_upper H⟩
+  obtain ⟨K, H⟩ := upperHyp_fixed (r := r) hm hε hθ
+  exact ⟨fun hε1 => fisherInfo_lower_shift (shiftHyp_fixed hm hr hε hε1 hθ),
+    Cutoff.GeneralRadius.fisherInfo_upper H⟩
 
 private lemma max_half_cutoffTime (α : ℝ) : max (α / 2) (1 / 2 : ℝ) = max 1 α / 2 := by
   rw [max_div_div_right (by norm_num : (0 : ℝ) ≤ 2), max_comm]

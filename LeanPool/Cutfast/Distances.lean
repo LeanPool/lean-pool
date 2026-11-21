@@ -17,7 +17,7 @@ public import Mathlib.MeasureTheory.Function.L2Space
 # Exact formulas for `W₂²`, `Hₘ` and `Iₘ` between `v(t)` and `v_∞`
 
 With `a = a(t) = (1-e^{-t/α})^α`, `h = e^{-t}x₀`, `M₂ = ∫ |x|² v_∞`:
-* `W₂²(v(t), v_∞) = (1-a)² M₂ + |h|²` (eq. (w2_exact));
+* `W₂²(v(t), v_∞) = (1-a)² M₂ + |h|²` (arXiv:2503.11770v2, eqs. (3.14), (4.12) and (4.13));
 * `Hₘ(v(t) | v_∞) = M₂ ((1-a^κ)/κ - (1-a²)/2) + |h|²/2` with `κ = d(1-m)`;
 * `Iₘ(v(t) | v_∞) = a² (1-a^{-1/α})² M₂ + |h|²`.
 -/
@@ -35,6 +35,35 @@ noncomputable def entropyProfile (κ a : ℝ) : ℝ := (1 - a ^ κ) / κ - (1 - 
 variable {d : ℕ} {m : ℝ}
 
 namespace Distances
+
+private lemma relEntropyDensity_eq (f g : E d → ℝ) :
+    relEntropyDensity m f g = fun x =>
+      (f x ^ m - g x ^ m - (1 - m) / 2 * (‖x‖ ^ 2 * f x) +
+        (1 - m) / 2 * (‖x‖ ^ 2 * g x)) / (m - 1) := by
+  funext x
+  unfold relEntropyDensity
+  ring
+
+/-- Integrable `m`-th powers and second-moment integrands give integrable relative entropy. -/
+lemma integrable_relEntropyDensity {f g : E d → ℝ}
+    (hfm : Integrable fun x => f x ^ m) (hgm : Integrable fun x => g x ^ m)
+    (hf2 : Integrable fun x => ‖x‖ ^ 2 * f x) (hg2 : Integrable fun x => ‖x‖ ^ 2 * g x) :
+    Integrable (relEntropyDensity m f g) := by
+  rw [relEntropyDensity_eq]
+  exact ((((hfm.sub hgm).sub (hf2.const_mul _)).add (hg2.const_mul _)).div_const _)
+
+private lemma relEntropy_eq_integrals {f g : E d → ℝ}
+    (hfm : Integrable fun x => f x ^ m) (hgm : Integrable fun x => g x ^ m)
+    (hf2 : Integrable fun x => ‖x‖ ^ 2 * f x) (hg2 : Integrable fun x => ‖x‖ ^ 2 * g x) :
+    relEntropy m f g =
+      ((∫ x, f x ^ m) - (∫ x, g x ^ m) - (1 - m) / 2 * (∫ x, ‖x‖ ^ 2 * f x) +
+        (1 - m) / 2 * (∫ x, ‖x‖ ^ 2 * g x)) / (m - 1) := by
+  have hf₂ := hf2.const_mul ((1 - m) / 2)
+  have hg₂ := hg2.const_mul ((1 - m) / 2)
+  have hdifference : Integrable (fun x => f x ^ m - g x ^ m) := hfm.sub hgm
+  rw [relEntropy, relEntropyDensity_eq, integral_div,
+    integral_add (by exact hdifference.sub hf₂) hg₂, integral_sub hdifference hf₂,
+    integral_sub hfm hgm, integral_const_mul, integral_const_mul]
 
 theorem measurable_equilibrium (h : Admissible d m) : Measurable (equilibrium d m) := by
   rw [show equilibrium d m = fun x =>
@@ -228,7 +257,9 @@ end Distances
 
 open Distances
 
-/-- Eq. (w2_exact): `W₂²(v(t), v_∞) = (1-a)² M₂ + e^{-2t}|x₀|²`. -/
+/-- The exact identity `W₂²(v(t), v_∞) = (1-a)² M₂ + e^{-2t}|x₀|²` holds in both regimes
+when the equilibrium has a finite second moment. See arXiv:2503.11770v2, eq. (3.14) for
+fast diffusion and eqs. (4.12) and (4.13) for the porous medium. -/
 theorem wassersteinSq_solution (h : Admissible d m) (h2 : (d : ℝ) / (d + 2) < m) (x₀ : E d)
     {t : ℝ} (ht : 0 < t) :
     wassersteinSq (densityMeasure (solution d m x₀ t)) (densityMeasure (equilibrium d m)) =
@@ -261,15 +292,9 @@ theorem wassersteinSq_solution (h : Admissible d m) (h2 : (d : ℝ) / (d + 2) < 
 theorem integrable_relEntropyDensity_solution (h : Admissible d m) (h2 : (d : ℝ) / (d + 2) < m)
     (x₀ : E d) {t : ℝ} (ht : 0 < t) :
     Integrable (relEntropyDensity m (solution d m x₀ t) (equilibrium d m)) := by
-  have e : relEntropyDensity m (solution d m x₀ t) (equilibrium d m) = fun x =>
-      (solution d m x₀ t x ^ m - equilibrium d m x ^ m -
-        (1 - m) / 2 * (‖(1 : ℝ) • x + 0‖ ^ 2 * solution d m x₀ t x) +
-        (1 - m) / 2 * (‖x‖ ^ 2 * equilibrium d m x)) / (m - 1) := by
-    funext x; simp only [relEntropyDensity, one_smul, add_zero]; ring
-  rw [e]
-  exact (((((integral_solution_rpow h h2 x₀ ht).1.sub (integrable_equilibrium_rpow h h2)).sub
-    ((integral_sq_mul_solution h h2 x₀ ht 1 0).1.const_mul _)).add
-    ((integrable_sq_mul_equilibrium h h2).const_mul _)).div_const _)
+  apply integrable_relEntropyDensity (integral_solution_rpow h h2 x₀ ht).1
+    (integrable_equilibrium_rpow h h2) ?_ (integrable_sq_mul_equilibrium h h2)
+  simpa only [one_smul, add_zero] using (integral_sq_mul_solution h h2 x₀ ht 1 0).1
 
 /-- `Hₘ(v(t) | v_∞) = M₂ ((1-a^κ)/κ - (1-a²)/2) + e^{-2t}|x₀|²/2` with `κ = d(1-m)`. -/
 theorem relEntropy_solution (h : Admissible d m) (h2 : (d : ℝ) / (d + 2) < m) (x₀ : E d)
@@ -277,20 +302,12 @@ theorem relEntropy_solution (h : Admissible d m) (h2 : (d : ℝ) / (d + 2) < m) 
     relEntropy m (solution d m x₀ t) (equilibrium d m) =
       eqSecondMoment d m * entropyProfile (d * (1 - m)) (scaleFactor d m t) +
         exp (-t) ^ 2 * ‖x₀‖ ^ 2 / 2 := by
-  have e : relEntropyDensity m (solution d m x₀ t) (equilibrium d m) = fun x =>
-      (solution d m x₀ t x ^ m - equilibrium d m x ^ m -
-        (1 - m) / 2 * (‖(1 : ℝ) • x + 0‖ ^ 2 * solution d m x₀ t x) +
-        (1 - m) / 2 * (‖x‖ ^ 2 * equilibrium d m x)) / (m - 1) := by
-    funext x; simp only [relEntropyDensity, one_smul, add_zero]; ring
   obtain ⟨i1, e1⟩ := integral_solution_rpow h h2 x₀ ht
-  have i2 := integrable_equilibrium_rpow h h2
   obtain ⟨i3, e3⟩ := integral_sq_mul_solution h h2 x₀ ht 1 0
-  have i3' := i3.const_mul ((1 - m) / 2)
-  have i4 := (integrable_sq_mul_equilibrium h h2).const_mul ((1 - m) / 2)
-  rw [relEntropy, e, integral_div, integral_add (by exact (i1.sub i2).sub i3') i4,
-    integral_sub (by exact i1.sub i2) i3', integral_sub i1 i2, integral_const_mul,
-    integral_const_mul, e1, e3, integral_equilibrium_rpow h h2, ← eqSecondMoment, entropyProfile]
-  simp only [one_mul, add_zero, one_smul]
+  simp only [one_mul, add_zero, one_smul] at i3 e3
+  rw [relEntropy_eq_integrals i1 (integrable_equilibrium_rpow h h2) i3
+    (integrable_sq_mul_equilibrium h h2), e1, e3, integral_equilibrium_rpow h h2,
+    ← eqSecondMoment, entropyProfile]
   rw [norm_smul, Real.norm_of_nonneg (exp_pos _).le]
   have hd : (d : ℝ) ≠ 0 := by have := h.1; positivity
   have hm1 : m - 1 ≠ 0 := sub_ne_zero.2 h.2.2.1

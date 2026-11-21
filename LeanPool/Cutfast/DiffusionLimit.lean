@@ -355,6 +355,18 @@ lemma tendsto_alpha (d : ℕ) : Tendsto (alpha d) (𝓝 1) (𝓝 (1 / 2)) := by
     simpa using this
   exact tendsto_const_nhds.div h two_ne_zero
 
+private lemma tendsto_inv_mul_scaled_alpha {d : ℕ} {l : Filter ℝ} {s : ℝ → ℝ}
+    (hl : l ≤ 𝓝 1) (hs : ∀ᶠ m in l, s m ≠ 0) :
+    Tendsto (fun m => 1 / s m * (alpha d m * s m / (2 * m))) l (𝓝 (1 / 4)) := by
+  have hα := (tendsto_alpha d).mono_left hl
+  have hid := (tendsto_id (x := 𝓝 (1 : ℝ))).mono_left hl
+  have h := hα.div ((tendsto_const_nhds (x := (2 : ℝ))).mul hid) (by norm_num)
+  rw [show (1 : ℝ) / 2 / (2 * 1) = 1 / 4 by norm_num] at h
+  refine h.congr' ?_
+  filter_upwards [hs] with m hm
+  simp only [Pi.div_apply, id, ← mul_div_assoc]
+  rw [mul_left_comm, one_div_mul_cancel hm, mul_one]
+
 lemma tendsto_barenblatt_lt (hd : 1 ≤ d) {y : ℝ → E d} {y0 : E d}
     (hy : Tendsto y (𝓝[<] 1) (𝓝 y0)) :
     Tendsto (fun m => barenblatt d m (y m)) (𝓝[<] 1)
@@ -379,16 +391,8 @@ lemma tendsto_barenblatt_lt (hd : 1 ≤ d) {y : ℝ → E d} {y0 : E d}
       ((tendsto_const_nhds (x := (2 : ℝ))).mul hid) (by norm_num)
     rw [show (1 : ℝ) / 2 * (1 - 1) / (2 * 1) = 0 by norm_num] at this
     exact this
-  have hpκ : Tendsto (fun m => 1 / (1 - m) * (alpha d m * (1 - m) / (2 * m))) (𝓝[<] 1)
-      (𝓝 (1 / 4)) := by
-    have := hα.div ((tendsto_const_nhds (x := (2 : ℝ))).mul hid) (by norm_num)
-    rw [show (1 : ℝ) / 2 / (2 * 1) = 1 / 4 by norm_num] at this
-    refine this.congr' ?_
-    filter_upwards [hadm] with m hm
-    have : 1 - m ≠ 0 := by linarith [hm.2]
-    have := hm.1.2.1.ne'
-    simp only [Pi.div_apply]
-    field_simp
+  have hpκ := tendsto_inv_mul_scaled_alpha (d := d) (s := fun m => 1 - m)
+    nhdsWithin_le_nhds (hadm.mono fun _ hm => sub_ne_zero.2 hm.2.ne')
   have hκ : ∀ᶠ m in 𝓝[<] (1 : ℝ), 0 < alpha d m * (1 - m) / (2 * m) := by
     filter_upwards [hadm] with m hm
     have := alpha_pos hm.1
@@ -423,16 +427,8 @@ lemma tendsto_barenblatt_gt (hd : 1 ≤ d) {y : ℝ → E d} {y0 : E d}
       ((tendsto_const_nhds (x := (2 : ℝ))).mul hid) (by norm_num)
     rw [show (1 : ℝ) / 2 * (1 - 1) / (2 * 1) = 0 by norm_num] at this
     exact this
-  have hpκ : Tendsto (fun m => 1 / (m - 1) * (alpha d m * (m - 1) / (2 * m))) (𝓝[>] 1)
-      (𝓝 (1 / 4)) := by
-    have := hα.div ((tendsto_const_nhds (x := (2 : ℝ))).mul hid) (by norm_num)
-    rw [show (1 : ℝ) / 2 / (2 * 1) = 1 / 4 by norm_num] at this
-    refine this.congr' ?_
-    filter_upwards [hadm] with m hm
-    have : m - 1 ≠ 0 := by linarith [hm.2]
-    have := hm.1.2.1.ne'
-    simp only [Pi.div_apply]
-    field_simp
+  have hpκ := tendsto_inv_mul_scaled_alpha (d := d) (s := fun m => m - 1)
+    nhdsWithin_le_nhds (hadm.mono fun _ hm => sub_ne_zero.2 hm.2.ne')
   have hκ : ∀ᶠ m in 𝓝[>] (1 : ℝ), 0 < alpha d m * (m - 1) / (2 * m) := by
     filter_upwards [hadm] with m hm
     have := alpha_pos hm.1

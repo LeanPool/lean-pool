@@ -339,14 +339,6 @@ lemma lintegral_comp_affEquiv (x₀ : E d) (hS : S.PosDef) (G : E d → ℝ≥0�
   rw [← smul_eq_mul, ← lintegral_smul_measure, ← map_affEquiv x₀ hS, lintegral_map_equiv]
   rfl
 
-lemma integral_comp_affEquiv (x₀ : E d) (hS : S.PosDef) (F : E d → ℝ) :
-    ∫ y, F (x₀ + 𝓛 (CFC.sqrt S) y) = ((CFC.sqrt S).det)⁻¹ * ∫ x, F x := by
-  have h := integral_map_equiv (μ := volume) (affEquiv x₀ hS) F
-  rw [map_affEquiv x₀ hS, integral_smul_measure,
-    ENNReal.toReal_ofReal (inv_pos.2 (det_sqrt_pos hS)).le, smul_eq_mul] at h
-  simp only [affEquiv_apply] at h
-  exact h.symm
-
 lemma integral_comp_affEquiv_smul {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
     (x₀ : E d) (hS : S.PosDef) (F : E d → V) :
     ∫ y, F (x₀ + 𝓛 (CFC.sqrt S) y) = ((CFC.sqrt S).det)⁻¹ • ∫ x, F x := by
@@ -355,6 +347,10 @@ lemma integral_comp_affEquiv_smul {V : Type*} [NormedAddCommGroup V] [NormedSpac
     ENNReal.toReal_ofReal (inv_pos.2 (det_sqrt_pos hS)).le] at h
   simp only [affEquiv_apply] at h
   exact h.symm
+
+lemma integral_comp_affEquiv (x₀ : E d) (hS : S.PosDef) (F : E d → ℝ) :
+    ∫ y, F (x₀ + 𝓛 (CFC.sqrt S) y) = ((CFC.sqrt S).det)⁻¹ * ∫ x, F x := by
+  simpa only [smul_eq_mul] using integral_comp_affEquiv_smul x₀ hS F
 
 lemma integrable_comp_affEquiv_iff (x₀ : E d) (hS : S.PosDef) (F : E d → ℝ) :
     Integrable (fun y => F (x₀ + 𝓛 (CFC.sqrt S) y)) ↔ Integrable F := by

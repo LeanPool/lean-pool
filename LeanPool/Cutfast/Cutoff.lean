@@ -122,6 +122,14 @@ lemma entropyProfile_eq_integral {α w : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 
   rw [mul_comm α 2]
   field_simp
 
+lemma intervalIntegrable_entropy_integrand {α w : ℝ} (hw : 0 < w) (hw1 : w ≤ 1) :
+    IntervalIntegrable (fun s : ℝ => α * (s ^ (2 * α - 2) - s ^ (2 * α - 1))) volume w 1 := by
+  have hzero : (0 : ℝ) ∉ Set.uIcc w 1 := by
+    rw [Set.uIcc_of_le hw1]
+    exact fun h => (not_le_of_gt hw) h.1
+  exact ((intervalIntegral.intervalIntegrable_rpow (Or.inr hzero)).sub
+    (intervalIntegral.intervalIntegrable_rpow (Or.inr hzero))).const_mul _
+
 lemma entropy_integrand_eq {α s : ℝ} (hs : 0 < s) :
     α * (s ^ (2 * α - 2) - s ^ (2 * α - 1)) = α * s ^ (2 * α - 2) * (1 - s) := by
   rw [show 2 * α - 1 = (2 * α - 2) + 1 by ring, rpow_add hs, rpow_one]
@@ -144,13 +152,7 @@ lemma entropyProfile_le {α w : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hw : 
   rw [entropyProfile_eq_integral hα hα2 hw0 hw1,
     show 2 * α * (1 - w) ^ 2 = (4 * α) * (1 - w) ^ 2 / 2 by ring, ← integral_mul_one_sub]
   apply intervalIntegral.integral_mono_on hw1
-  · apply ContinuousOn.intervalIntegrable
-    apply ContinuousOn.mul continuousOn_const
-    apply ContinuousOn.sub
-    · exact continuousOn_id.rpow_const fun x hx => Or.inl (by
-        rw [Set.uIcc_of_le hw1] at hx; exact ne_of_gt (by simp only [id]; linarith [hx.1]))
-    · exact continuousOn_id.rpow_const fun x hx => Or.inl (by
-        rw [Set.uIcc_of_le hw1] at hx; exact ne_of_gt (by simp only [id]; linarith [hx.1]))
+  · exact intervalIntegrable_entropy_integrand hw0 hw1
   · exact (continuous_const.mul (continuous_const.sub continuous_id)).intervalIntegrable _ _
   intro s hs
   have hs0 : 0 < s := by linarith [hs.1]
@@ -173,13 +175,7 @@ lemma le_entropyProfile {α w : ℝ} (hα : 1 ≤ α) (hw : 1 / 2 ≤ w) (hw1 : 
       (α * (1 / 2) ^ (2 * α - 2)) * (1 - w) ^ 2 / 2 by ring, ← integral_mul_one_sub]
   apply intervalIntegral.integral_mono_on hw1
   · exact (continuous_const.mul (continuous_const.sub continuous_id)).intervalIntegrable _ _
-  · apply ContinuousOn.intervalIntegrable
-    apply ContinuousOn.mul continuousOn_const
-    apply ContinuousOn.sub
-    · exact continuousOn_id.rpow_const fun x hx => Or.inl (by
-        rw [Set.uIcc_of_le hw1] at hx; exact ne_of_gt (by simp only [id]; linarith [hx.1]))
-    · exact continuousOn_id.rpow_const fun x hx => Or.inl (by
-        rw [Set.uIcc_of_le hw1] at hx; exact ne_of_gt (by simp only [id]; linarith [hx.1]))
+  · exact intervalIntegrable_entropy_integrand hw0 hw1
   intro s hs
   have hs0 : 0 < s := by linarith [hs.1]
   rw [entropy_integrand_eq hs0]

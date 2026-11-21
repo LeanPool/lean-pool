@@ -154,6 +154,21 @@ theorem laplacian_radialAffine_rpow {d : ℕ} (s c K p : ℝ) (center x : E d)
     exact hd.congr_deriv (by simp only [id, mul_one])
   · rw [finrank_euclideanSpace_fin]
 
+/-- The Laplacian of the powered clipped radial profile at a point with positive base. -/
+theorem laplacian_clippedRadialAffine_rpow {d : ℕ} {s : ℝ} (hs : 0 ≤ s)
+    (c K q m : ℝ) (center x : E d) (hpos : 0 < c + K * ‖x - center‖ ^ 2) :
+    Laplacian.laplacian (fun y => (s * max (c + K * ‖y - center‖ ^ 2) 0 ^ q) ^ m) x =
+      4 * ‖x - center‖ ^ 2 * (s ^ m * (K * (q * m) *
+        (K * (q * m - 1) * (c + K * ‖x - center‖ ^ 2) ^ (q * m - 1 - 1)))) +
+        2 * d * (s ^ m * (K * (q * m) * (c + K * ‖x - center‖ ^ 2) ^ (q * m - 1))) := by
+  have hcont : Continuous (fun y : E d => c + K * ‖y - center‖ ^ 2) := by fun_prop
+  have hcongr : (fun y : E d => (s * max (c + K * ‖y - center‖ ^ 2) 0 ^ q) ^ m) =ᶠ[𝓝 x]
+      fun y => s ^ m * (c + K * ‖y - center‖ ^ 2) ^ (q * m) := by
+    filter_upwards [hcont.continuousAt.eventually (lt_mem_nhds hpos)] with y hy
+    rw [max_eq_left hy.le, mul_rpow hs (rpow_nonneg hy.le _), ← rpow_mul hy.le]
+  rw [(InnerProductSpace.laplacian_congr_nhds hcongr).eq_of_nhds]
+  exact laplacian_radialAffine_rpow (s ^ m) c K (q * m) center x hpos
+
 /-- Rewrite the inverse scaling power using the exponent relation for the diffusion. -/
 theorem inverse_scale_rpow {scale α m : ℝ} {d : ℕ} (hs : 0 < scale)
     (hα : α * (2 - d * (1 - m)) = 1) :
@@ -218,7 +233,6 @@ theorem solution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) (h
   -- spatial structure
   have hcont : Continuous fun y => baseFun d m x₀ t y := by unfold baseFun; fun_prop
   have hev : ∀ᶠ y in 𝓝 x, 0 < baseFun d m x₀ t y := hcont.continuousAt.eventually (lt_mem_nhds hB0)
-  have hbase : ∀ y, baseFun d m x₀ t y = c + K * ‖y - h‖ ^ 2 := fun y => rfl
   have hφ : ∀ y : E d, HasFDerivAt (fun y => ‖y - h‖ ^ 2) (2 • innerSL ℝ (y - h)) y := by
     intro y
     simpa using ((hasFDerivAt_id y).sub_const h).norm_sq
@@ -244,14 +258,8 @@ theorem solution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) (h
   have hlap : Laplacian.laplacian (fun y => solution d m x₀ t y ^ m) x =
       4 * r0 * ((S⁻¹) ^ m * (K * (q * m) * (K * (q * m - 1) * B0 ^ (q * m - 1 - 1)))) +
         2 * d * ((S⁻¹) ^ m * (K * (q * m) * B0 ^ (q * m - 1))) := by
-    have hcongr : (fun y => solution d m x₀ t y ^ m) =ᶠ[𝓝 x]
-        fun y => (fun r => (S⁻¹) ^ m * (c + K * r) ^ (q * m)) (‖y - h‖ ^ 2) := by
-      filter_upwards [hev] with y hy
-      rw [solution_eq_max, max_eq_left hy.le, mul_rpow (by positivity) (by positivity),
-        ← rpow_mul hy.le]
-      rfl
-    rw [(InnerProductSpace.laplacian_congr_nhds hcongr).eq_of_nhds]
-    exact laplacian_radialAffine_rpow ((S⁻¹) ^ m) c K (q * m) h x hB0
+    simp_rw [solution_eq_max]
+    exact laplacian_clippedRadialAffine_rpow (inv_nonneg.2 hS.le) c K q m h x hB0
   -- algebra
   have hval : solution d m x₀ t x = S⁻¹ * B0 ^ q := by
     rw [solution_eq_max, max_eq_left hB0.le]

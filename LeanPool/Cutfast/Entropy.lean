@@ -143,14 +143,9 @@ theorem relEntropy_eq_bregman' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) 
   have h : Admissible d m := ⟨hd, hm0, hm1, hmd⟩
   set v := equilibrium d m
   have hv := integrable_equilibrium h
-  have hint : Integrable (relEntropyDensity m f v) := by
-    have e : relEntropyDensity m f v = fun x =>
-        (f x ^ m - v x ^ m - (1 - m) / 2 * (‖x‖ ^ 2 * f x) +
-          (1 - m) / 2 * (‖x‖ ^ 2 * v x)) / (m - 1) := by
-      funext x; simp only [relEntropyDensity]; ring
-    rw [e]
-    exact ((((hfm.sub (integrable_equilibrium_rpow h h2)).sub (hf2.const_mul _)).add
-      ((integrable_sq_mul_equilibrium h h2).const_mul _)).div_const _)
+  have hint : Integrable (relEntropyDensity m f v) :=
+    Distances.integrable_relEntropyDensity hfm (integrable_equilibrium_rpow h h2) hf2
+      (integrable_sq_mul_equilibrium h h2)
   have hbreg : (fun x => (f x ^ m - v x ^ m - m * v x ^ (m - 1) * (f x - v x)) / (m - 1)) =
       fun x => relEntropyDensity m f v x - m * equilibriumConst d m / (m - 1) * (f x - v x) := by
     funext x

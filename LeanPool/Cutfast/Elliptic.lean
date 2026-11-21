@@ -137,8 +137,7 @@ lemma integrable_id' [IsProbabilityMeasure η] (h2 : Integrable (fun x => ‖x�
 
 lemma integrable_sq_norm_affine [IsProbabilityMeasure η] (h2 : Integrable (fun x => ‖x‖ ^ 2) η)
     (a : E d) (T : E d →L[ℝ] E d) : Integrable (fun x => ‖a + T x‖ ^ 2) η := by
-  have : MemLp (fun x => a + T x) 2 η := (memLp_const a).add (T.comp_memLp' (memLp_two_id h2))
-  exact (memLp_two_iff_integrable_sq_norm this.aestronglyMeasurable).mp this
+  simpa only [id, add_comm a] using Wasserstein.integrable_sq_clm aestronglyMeasurable_id h2 T a
 
 /-- For `η` centered, `∫ ‖a + T x‖² dη = ‖a‖² + ∫ ‖T x‖² dη`. -/
 lemma integral_sq_norm_affine [IsProbabilityMeasure η] (h2 : Integrable (fun x => ‖x‖ ^ 2) η)

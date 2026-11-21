@@ -123,22 +123,12 @@ theorem fdeSolution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m)
     filter_upwards [hb.continuousAt.eventually (lt_mem_nhds hB0)] with τ hτ
     rw [fdeSolution_eq_max, max_eq_left hτ.le]
     rfl)
-  -- spatial structure
-  have hcont : Continuous fun y => fdeBase d m x₀ t y := by unfold fdeBase; fun_prop
-  have hev : ∀ᶠ y in 𝓝 x, 0 < fdeBase d m x₀ t y :=
-    hcont.continuousAt.eventually (lt_mem_nhds hB0)
   -- Laplacian
   have hlap : Laplacian.laplacian (fun y => fdeSolution d m x₀ t y ^ m) x =
       4 * r0 * ((S⁻¹) ^ m * (K * (q * m) * (K * (q * m - 1) * B0 ^ (q * m - 1 - 1)))) +
         2 * d * ((S⁻¹) ^ m * (K * (q * m) * B0 ^ (q * m - 1))) := by
-    have hcongr : (fun y => fdeSolution d m x₀ t y ^ m) =ᶠ[𝓝 x]
-        fun y => (fun r => (S⁻¹) ^ m * (c + K * r) ^ (q * m)) (‖y - x₀‖ ^ 2) := by
-      filter_upwards [hev] with y hy
-      rw [fdeSolution_eq_max, max_eq_left hy.le, mul_rpow (by positivity) (by positivity),
-        ← rpow_mul hy.le]
-      rfl
-    rw [(InnerProductSpace.laplacian_congr_nhds hcongr).eq_of_nhds]
-    exact laplacian_radialAffine_rpow ((S⁻¹) ^ m) c K (q * m) x₀ x hB0
+    simp_rw [fdeSolution_eq_max]
+    exact laplacian_clippedRadialAffine_rpow (inv_nonneg.2 hS.le) c K q m x₀ x hB0
   -- algebra
   rw [hlap]
   refine hT'.congr_deriv ?_

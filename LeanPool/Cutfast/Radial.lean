@@ -19,8 +19,10 @@ public import Mathlib.Tactic.Lemma
 # Radial integrals of Barenblatt type
 
 Exact values, via spherical coordinates and Euler Beta integrals, of
-`∫_{ℝᵈ} |x|ᵃ (C + β|x|²)^{-p} dx` and `∫_{ℝᵈ} |x|ᵃ (C - β|x|²)₊ᵖ dx`
-(proofs of Lemmas 3.1 and 4.1 of the paper, eqs. (Ba) and (Baporous)).
+`∫_{ℝᵈ} |x|ᵃ (C + β|x|²)^{-p} dx` and `∫_{ℝᵈ} |x|ᵃ (C - β|x|²)₊ᵖ dx`.
+In arXiv:2503.11770v2, the full-space integral extends eq. (3.6) to the
+integrability range `-d < a < 2p - d`, allowing `p ≤ d/2` for negative `a`.
+The compactly supported integral extends eq. (4.6) from `a ≥ 0` to `a > -d`.
 -/
 
 @[expose] public section
@@ -297,15 +299,19 @@ end Radial
 
 open Radial
 
-/-- Eq. (Ba): `∫ |x|ᵃ (C + β|x|²)^{-p} dx
-= C^{(d+a)/2-p} β^{-(d+a)/2} π^{d/2} Γ((d+a)/2) Γ(p-(d+a)/2) / (Γ(d/2) Γ(p))`,
-for `-d < a < 2p - d`. -/
+/-- The full-space integrand `|x|ᵃ (C + β|x|²)^{-p}` is integrable for
+`d ≥ 1`, `-d < a < 2p - d`, `C > 0` and `β > 0`.
+For negative `a`, this allows `p ≤ d/2` beyond the range in arXiv:2503.11770v2, eq. (3.6). -/
 theorem integrable_rpow_norm_mul_add_sq_rpow_neg {d : ℕ} (hd : 1 ≤ d) {a p C β : ℝ}
     (ha : -(d : ℝ) < a) (hap : a + d < 2 * p) (hC : 0 < C) (hβ : 0 < β) :
     Integrable (fun x : E d => ‖x‖ ^ a * (C + β * ‖x‖ ^ 2) ^ (-p)) :=
   (radial hd (fun u ↦ (C + β * u) ^ (-p)) a).1.2
     (integral_add_rpow_neg (by linarith) (by linarith) hC hβ).1
 
+/-- Extension of arXiv:2503.11770v2, eq. (3.6), to `-d < a < 2p - d`,
+allowing `p ≤ d/2` for negative `a`.
+For `d ≥ 1`, `C > 0` and `β > 0`, the integral of `|x|ᵃ (C + β|x|²)^{-p}` is
+`C^{(d+a)/2-p} β^{-(d+a)/2} π^{d/2} Γ((d+a)/2) Γ(p-(d+a)/2) / (Γ(d/2) Γ(p))`. -/
 theorem integral_rpow_norm_mul_add_sq_rpow_neg {d : ℕ} (hd : 1 ≤ d) {a p C β : ℝ}
     (ha : -(d : ℝ) < a) (hap : a + d < 2 * p) (hC : 0 < C) (hβ : 0 < β) :
     ∫ x : E d, ‖x‖ ^ a * (C + β * ‖x‖ ^ 2) ^ (-p) =
@@ -316,15 +322,18 @@ theorem integral_rpow_norm_mul_add_sq_rpow_neg {d : ℕ} (hd : 1 ≤ d) {a p C �
     (integral_add_rpow_neg (by linarith) (by linarith) hC hβ).2]
   ring
 
-/-- Eq. (Baporous): `∫ |x|ᵃ (C - β|x|²)₊ᵖ dx
-= C^{(d+a)/2+p} β^{-(d+a)/2} π^{d/2} Γ((d+a)/2) Γ(p+1) / (Γ(d/2) Γ(p+1+(d+a)/2))`,
-for `a > -d` and `p > 0`. -/
+/-- The compactly supported integrand `|x|ᵃ (C - β|x|²)₊ᵖ` is integrable for
+`d ≥ 1`, `a > -d`, `p > 0`, `C > 0` and `β > 0`.
+This extends the range `a ≥ 0` in arXiv:2503.11770v2, eq. (4.6). -/
 theorem integrable_rpow_norm_mul_sub_sq_rpow {d : ℕ} (hd : 1 ≤ d) {a p C β : ℝ}
     (ha : -(d : ℝ) < a) (hp : 0 < p) (hC : 0 < C) (hβ : 0 < β) :
     Integrable (fun x : E d => ‖x‖ ^ a * (max (C - β * ‖x‖ ^ 2) 0) ^ p) :=
   (radial hd (fun u ↦ (max (C - β * u) 0) ^ p) a).1.2
     (integral_max_sub_rpow (by linarith) hp hC hβ).1
 
+/-- Extension of arXiv:2503.11770v2, eq. (4.6), from `a ≥ 0` to `a > -d`.
+For `d ≥ 1`, `p > 0`, `C > 0` and `β > 0`, the integral of `|x|ᵃ (C - β|x|²)₊ᵖ` is
+`C^{(d+a)/2+p} β^{-(d+a)/2} π^{d/2} Γ((d+a)/2) Γ(p+1) / (Γ(d/2) Γ(p+1+(d+a)/2))`. -/
 theorem integral_rpow_norm_mul_sub_sq_rpow {d : ℕ} (hd : 1 ≤ d) {a p C β : ℝ}
     (ha : -(d : ℝ) < a) (hp : 0 < p) (hC : 0 < C) (hβ : 0 < β) :
     ∫ x : E d, ‖x‖ ^ a * (max (C - β * ‖x‖ ^ 2) 0) ^ p =
