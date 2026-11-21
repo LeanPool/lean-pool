@@ -18,12 +18,14 @@ public import Mathlib.Topology.Order.UpperLowerSetTopology
 Brown's poset `S_p(G)` of nontrivial `p`-subgroups (`PSubgroupPoset`) and Quillen's poset
 `A_p(G)` of nontrivial elementary abelian `p`-subgroups (`ElemAbelianPoset`), ordered by
 inclusion (D. Quillen, « Homotopy properties of the poset of nontrivial p-subgroups of a group »,
-Adv. Math. 28 (1978), 101–128, §2). The group acts on both by conjugation, through `ConjAct G`
-and the pointwise action on subgroups.
+Adv. Math. 28 (1978), 101–128, §2). Here `S_p(G)` uses Mathlib's elementwise `IsPGroup`
+condition and `A_p(G)` uses commutativity and exponent dividing `p`. For finite `G` and prime
+`p` these give the classical posets. Conjugation on `S_p(G)` uses `ConjAct G` and the
+pointwise action on subgroups.
 
-* `contractibleSpace_of_normal` (roadmap 4.3; Quillen 1978, Proposition 2.4): if `G`, finite or
-  not, has a nontrivial normal `p`-subgroup `N`, the realization of `S_p(G)` is contractible,
-  since `Q ≤ QN ≥ N` makes the poset conical.
+* `contractibleSpace_of_normal` (roadmap 4.3) formalizes the `S_p(G)` step in Quillen's proof
+  of Proposition 2.4 for the elementwise poset. If `N` is a nontrivial normal subgroup
+  satisfying `IsPGroup p N`, then `Q ≤ QN ≥ N` makes the poset conical.
 * `contractibleSpace_withUpperSet_iff` (roadmap 4.4; R. E. Stong, « Group actions on finite
   spaces », Discrete Math. 49 (1984), 95–100, as stated in E. G. Minian, K. I. Piterman, « The
   homotopy types of the posets of p-subgroups of a finite group », Adv. Math. 328 (2018),
@@ -107,8 +109,8 @@ def supNormal (N : Subgroup G) [N.Normal] (hNp : IsPGroup p N) :
     Q.2.2.to_sup_of_normal_right hNp⟩
   monotone' _ _ h := sup_le_sup_right h N
 
-/-- **Roadmap 4.3.** If a group `G`, finite or not, has a nontrivial normal `p`-subgroup, then
-`S_p(G)` has a contractible realization. -/
+/-- **Roadmap 4.3.** A nontrivial normal subgroup `N` satisfying `IsPGroup p N` makes the
+realization of the elementwise `p`-subgroup order complex contractible. -/
 theorem contractibleSpace_of_normal (N : Subgroup G) [N.Normal]
     (hN : N ≠ ⊥) (hNp : IsPGroup p N) :
     ContractibleSpace

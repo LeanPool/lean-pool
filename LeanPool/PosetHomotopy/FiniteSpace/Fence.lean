@@ -16,7 +16,7 @@ public import Mathlib.Topology.UnitInterval
 For Alexandrov-discrete spaces, continuity is monotonicity for the specialization preorder
 (`continuous_of_specializes`). Two pointwise comparable maps `f₁ x ⤳ f₂ x` are homotopic
 relative to the set where they agree (`homotopicRel_of_specializes`), by the homotopy equal to
-`f₂` on `[0, 1) × X` and to `f₁` on `{1} × X`. Conversely, for a finite source and an
+`f₁` on `[0, 1) × X` and to `f₂` on `{1} × X`. Conversely, for a finite source and an
 Alexandrov-discrete target, the maps along a homotopy form a fence of pointwise comparable maps
 (`eqvGen_of_homotopic`): the set of times joined to `0` by a fence is open and closed in the unit
 interval. Together they give `homotopic_iff_eqvGen` (J. A. Barmak, *Algebraic Topology of Finite

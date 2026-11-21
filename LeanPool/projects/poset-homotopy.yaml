@@ -8,12 +8,14 @@ summary: The homotopy theory of finite spaces and of posets, applied to the pose
   has an invariant core, so that a contractible one has a fixed point. For order complexes,
   comparable monotone maps realize to homotopic maps, through an explicit prism homotopy, and a
   conical preorder has a contractible realization. If a finite group acts monotonically on a
-  finite poset and the fixed subposet of every nontrivial subgroup has Euler characteristic 1,
-  the Euler characteristic of the poset is 1 modulo the order of the group. For the poset of
-  nontrivial p-subgroups of a group, the realization is contractible when there is a nontrivial
-  normal p-subgroup (Quillen); for a finite group, the poset with its upper-set topology is a
-  contractible finite space exactly when there is one (Stong); and its Euler characteristic is
-  1 modulo the p-part of the order of the group (Brown's homological Sylow theorem).
+  finite poset and the alternating count of nonempty chains of every nontrivial subgroup's
+  fixed subposet is 1, that count for the poset is 1 modulo the order of the group. The
+  realization of the poset of nontrivial subgroups satisfying Mathlib's elementwise p-group
+  condition is contractible when one of those subgroups is normal, following the proof of
+  Quillen's Proposition 2.4. For finite groups, the poset with its upper-set topology is
+  contractible exactly when such a normal subgroup exists (Stong). For finite groups and
+  prime p, the alternating nonempty-chain count is 1 modulo the p-part of the group order
+  (Brown's congruence).
 branch: algebraic topology
 entry_module: LeanPool.PosetHomotopy
 authors:
@@ -72,8 +74,9 @@ main_results:
     self-map φ and some element q of S with φ q = q lies below φ z for every z in S, then the
     alternating count of the nonempty chains contained in S is 1.
 - declaration: LeanPool.PosetHomotopy.contractibleSpace_of_normal
-  informal: If a group G, finite or not, has a nontrivial normal p-subgroup, then the realization
-    of the order complex of the poset of nontrivial p-subgroups of G is contractible.
+  informal: Consider the poset of nontrivial subgroups H of G in which every element
+    is killed by some power of p. If one such H is normal in G, the realization of the
+    order complex of this poset is contractible.
 - declaration: LeanPool.PosetHomotopy.contractibleSpace_withUpperSet_iff
   informal: For a finite group G and a natural number p, the poset of nontrivial p-subgroups of
     G with its upper-set topology is a contractible space exactly when G has a nontrivial normal

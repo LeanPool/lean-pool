@@ -48,14 +48,16 @@ realizations. Target numbers such as 1.3 refer to that roadmap.
 * `FiniteSpace.Core`: Stong's classification (1.4); invariant cores and fixed points (1.5).
 * `OrderComplex.Prism`: the prism homotopy between the realizations of comparable monotone maps
   (3.2) and conical contractibility (3.3).
-* `OrderComplex.EulerChar`: the Euler characteristic of a poset, its invariance under the removal
-  of an up beat point and its value on posets with a least element or a closure operator (3.5).
+* `OrderComplex.EulerChar`: the alternating count of nonempty chains in a finite poset, its
+  invariance under removing an up beat point, and its value in the presence of a least element
+  or a closure operator (3.5).
 * `OrderComplex.FixedPoints`: the congruence for a group action whose nontrivial subgroups fix
   subposets of Euler characteristic `1` (3.5).
-* `SubgroupComplex.Basic`: the posets `S_p(G)` and `A_p(G)` with the conjugation action (4.1),
-  contractibility when `G` has a nontrivial normal `p`-subgroup (4.3), and Stong's finite-space
-  form (4.4).
-* `SubgroupComplex.Brown`: Brown's homological Sylow theorem (4.7).
+* `SubgroupComplex.Basic`: the posets `S_p(G)` and `A_p(G)` and conjugation on `S_p(G)` (4.1).
+  A nontrivial normal `p`-subgroup gives contractibility of the realization of `S_p(G)` (4.3),
+  using Mathlib's elementwise `IsPGroup`. Stong's finite-space form concerns the upper-set
+  topology (4.4).
+* `SubgroupComplex.Brown`: Brown's congruence for the alternating chain count (4.7).
 
 Not formalised:
 
@@ -70,9 +72,8 @@ Not formalised:
   `A_p(G)`; 4.2, the Brown–Quillen homotopy equivalence, which needs 3.4;
 * 4.5, Quillen's connectivity criterion, which needs 2.2; 4.6, Quillen's theorem for solvable
   groups, which needs the homology of `A_p(G)`;
-* the identification of `chainEulerChar` with the Euler characteristic of the realization: Tau
-  Ceti's `AbstractSimplicialComplex.eulerChar_realization` does not build at the pinned versions,
-  so the Euler characteristic statements are proved by counting chains.
+* the identification of `chainEulerChar` with the Euler characteristic of the realization. The
+  congruences in 3.5 and 4.7 are stated and proved for the alternating count of nonempty chains.
 
 ## References
 
