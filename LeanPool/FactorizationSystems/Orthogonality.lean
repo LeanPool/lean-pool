@@ -483,7 +483,7 @@ def homOrthogonalAux {A B X Y : C} (l : A ⟶ B) (r : X ⟶ Y) : Prop :=
 omit HasPullbacks in
 lemma hom_orthogonal_implies_hom_orthogonal_aux
     {A B X Y : C} (l : A ⟶ B) (r : X ⟶ Y) (h : homOrthogonal l r) :
-    homOrthogonal l r := h
+    homOrthogonalAux l r := h
 
 omit HasPullbacks in
 lemma hom_orthogonal_aux_implies_hom_orthogonal

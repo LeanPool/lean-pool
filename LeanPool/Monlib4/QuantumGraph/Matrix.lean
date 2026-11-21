@@ -658,40 +658,6 @@ theorem QuantumGraph.Real.numOfEdges_ne_one_of_isSelfAdjoint_and_reflexive
   have hone := LinearMap.congr_fun hzero (1 : PiMat ℂ ι p)
   simp at hone
 
-theorem QuantumGraph.Real.PiMatFinTwo_same_isSelfAdjoint_reflexive_and_numOfEdges_eq_one
-  {φ : Π i, Module.Dual ℂ (Matrix (PiFinTwoSame n i) (PiFinTwoSame n i) ℂ)}
-  [hφ : Π i, (φ i).IsFaithfulPosMap]
-  [Nontrivial n]
-  : withPiBlockCoalgebraQuantum[φ]
-    letI := fun i => (Coalgebra.ofFiniteDimensionalHilbertAlgebra
-      (R := ℂ) (A := Mat ℂ (PiFinTwoSame n i)) :
-        Coalgebra ℂ (Mat ℂ (PiFinTwoSame n i)))
-    letI := fun i => (Matrix.quantumSetDeltaForm (φ := φ i) :
-      QuantumSetDeltaForm (Mat ℂ (PiFinTwoSame n i)))
-    (Coalgebra.counit (R := ℂ) (A := PiMat ℂ (Fin 2) (PiFinTwoSame n)) =
-      PiMat.traceLinearMap) →
-    ∀ {A : PiMat ℂ (Fin 2) (PiFinTwoSame n) →ₗ[ℂ]
-        PiMat ℂ (Fin 2) (PiFinTwoSame n)},
-    (hA : QuantumGraph.Real _ A) →
-    LinearMap.adjoint A = A →
-    A •ₛ 1 = 1 →
-    QuantumGraph.NumOfEdges A = 1 →
-  A = LinearMap.adjoint (LinearMap.proj 0)
-    ∘ₗ Qam.trivialGraph (Mat ℂ (PiFinTwoSame n 0))
-    ∘ₗ LinearMap.proj 0
-  ∨
-  A = LinearMap.adjoint (LinearMap.proj 1)
-    ∘ₗ Qam.trivialGraph (Mat ℂ (PiFinTwoSame n 1))
-    ∘ₗ LinearMap.proj 1 := by
-    withPiBlockCoalgebraQuantumCtx[φ]
-    let := fun i => (Coalgebra.ofFiniteDimensionalHilbertAlgebra
-      (R := ℂ) (A := Mat ℂ (PiFinTwoSame n i)) :
-        Coalgebra ℂ (Mat ℂ (PiFinTwoSame n i)))
-    let := fun i => (Matrix.quantumSetDeltaForm (φ := φ i) :
-      QuantumSetDeltaForm (Mat ℂ (PiFinTwoSame n i)))
-    intro hc A hA hA₂ hA₃ hA₄
-    exact (hA.numOfEdges_ne_one_of_isSelfAdjoint_and_reflexive hc hA₂ hA₃ hA₄).elim
-
 /-- Isomorphism data between two quantum graphs via a star-algebra equivalence. -/
 class QuantumGraph.equiv
     {A B : Type*} [starAlgebra A] [QuantumSet A] [starAlgebra B] [QuantumSet B]
@@ -808,26 +774,3 @@ theorem PiMat_finTwo_same_proj_one_comp_swapStarAlgEquiv
   LinearMap.proj 1 ∘ₗ (PiMatFinTwoSameSwapStarAlgEquiv (n := n)).toLinearMap
     = LinearMap.proj 0 :=
 rfl
-
-theorem
-  QuantumGraph.Real.piMatFinTwo_same_eq_zero_of_isSelfAdjoint_and_reflexive_and_numOfEdges_eq_one
-  [Nontrivial n]
-  : letI : ∀ i, (PiFinTwoSameFunctional φ i).IsFaithfulPosMap := fun _ => hφ
-    withPiBlockCoalgebraQuantum[PiFinTwoSameFunctional φ]
-      (Coalgebra.counit (R := ℂ) (A := PiMat ℂ (Fin 2) (PiFinTwoSame n)) =
-        PiMat.traceLinearMap) →
-      ∀ {A : PiMat ℂ (Fin 2) (PiFinTwoSame n) →ₗ[ℂ]
-          PiMat ℂ (Fin 2) (PiFinTwoSame n)},
-      (hA : QuantumGraph.Real _ A) →
-      LinearMap.adjoint A = A →
-      A •ₛ 1 = 1 →
-      QuantumGraph.NumOfEdges A = 1 →
-      A = 0 := by
-  let ψ := PiFinTwoSameFunctional φ
-  let : ∀ i, (ψ i).IsFaithfulPosMap := fun _ => hφ
-  withPiBlockCoalgebraQuantumCtx[ψ]
-  let := fun i => (Coalgebra.ofFiniteDimensionalHilbertAlgebra
-    (R := ℂ) (A := Mat ℂ (PiFinTwoSame n i)) :
-      Coalgebra ℂ (Mat ℂ (PiFinTwoSame n i)))
-  intro hc A hA hA₂ hA₃ hA₄
-  exact (hA.numOfEdges_ne_one_of_isSelfAdjoint_and_reflexive hc hA₂ hA₃ hA₄).elim
