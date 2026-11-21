@@ -42,14 +42,6 @@ theorem exists_alpha_psi_small {d : ℕ} (m : E d) (Ψ : E d → ℝ)
     rw [Real.dist_eq, hzero, sub_zero]; exact le_abs_self _
   linarith
 
-/-- Ball containment: if ‖x - m‖ < α and α < r and 4r ≤ dist(m, ∂Ω), then x ∈ Ω.
-    Stated as: if dist(x, m) < α, α + displacement < dist(m, ∂Ω), then x ∈ Ω. -/
-theorem ball_mem_of_dist_lt {d : ℕ} (x m : E d) (α : ℝ)
-    (Ω : Set (E d)) (_hΩ : IsOpen Ω) (_hm : m ∈ Ω)
-    (hx : dist x m < α) :
-    x ∈ Metric.ball m α := by
-  exact Metric.mem_ball.mpr hx
-
 /-- Sum bound: if f(k) ≤ C · r^k for all k, then Σ f(k) ≤ C · Σ r^k. -/
 theorem series_bound_from_geometric (f : ℕ → ℝ) (C r : ℝ) (n : ℕ)
     (_hC : 0 ≤ C) (_hr : 0 ≤ r) (hf : ∀ k, k < n → f k ≤ C * r ^ k) :
