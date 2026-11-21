@@ -28,7 +28,7 @@ Main declarations: `LeanPool.HomotopyTheoryOfCategories.Winfty_le`,
   `LeanPool.HomotopyTheoryOfCategories.mem_of_isLeftAdjoint`,
   `LeanPool.HomotopyTheoryOfCategories.mem_of_isRightAdjoint`,
   `LeanPool.HomotopyTheoryOfCategories.W₁_iff_isEquivalence`,
-  `LeanPool.HomotopyTheoryOfCategories.isDirect_iff_nonempty_reedyStructure`,
+  `LeanPool.HomotopyTheoryOfCategories.nonempty_reedyStructure_nat_iff`,
   `LeanPool.HomotopyTheoryOfCategories.brown_factorization`
 Tags: basic-localizers, homotopy-of-categories, quillen-theorem-a, reedy-categories, gr-categories
 MSC: 55U35, 18N40, 18M05
@@ -49,7 +49,8 @@ repeated here. It imports:
 * `Localizer`: Layer 2 (basic localizers, `W∞`, `W₀`, `W₋₁`, Theorem A, adjoints);
 * `Presheaf`: Layers 3.1–3.2 and 6.1 (`i_A ⊣ i_A^*`, presheaf weak equivalences, the
   definitions of test categories);
-* `Direct`: Layers 7–8 (direct and inverse categories and Reedy structures);
+* `Direct`: Layers 7–8 (direct and inverse categories and Reedy structures; the ordinal-valued
+  characterisation 7.2 and the semi-simplex category 8.4 are already in `CategoryTheoryToolkit`);
 * `Nonsingular`: Layer 9 (non-singular presheaves, discrete fibrations);
 * `Derivator`: Layer 10.1–10.2 (definitions);
 * `CofibrationCategory`: Layer 11 (Brown's factorization lemma);

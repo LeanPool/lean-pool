@@ -14,11 +14,6 @@ import Mathlib.Tactic.Abel
 /-!
 # Gr-categories and two-term complexes
 
-A *gr-category* (`IsGrCategory`) is a monoidal groupoid in which every object has a tensor
-inverse up to isomorphism. Its `π₀` is Mathlib's `Skeleton C` with `Skeleton.instMonoid`, and we
-prove `isUnit_skeleton`: every element of `π₀` is a unit, so `π₀` is a group (a right inverse in
-a monoid in which every element has one is two-sided).
-
 For an additive map `d : K⁻¹ →+ K⁰` we define the symmetric monoidal groupoid `TwoTerm d`
 (`ch(d)` of Deligne, SGA 4 XVIII, §1.4): objects the elements of `K⁰`, morphisms `x ⟶ y` the
 labels `k : K⁻¹` with `x + d k = y`, tensor `+` and `0`-labelled structure isomorphisms, and we
@@ -27,7 +22,8 @@ prove
 * `nonempty_skeletonTwoTerm_mulEquiv`: `π₀ ch(d) ≃* coker d`;
 * `nonempty_autUnitTwoTerm_mulEquiv`: `π₁ ch(d) = Aut (𝟙_) ≃* ker d`.
 
-We also define `IsStrictlyCommutative`. Sính's classification by `(π₀, π₁, k)`, crossed modules,
+We also define `IsStrictlyCommutative`. Gr-categories as a class, the group structure on the
+`π₀` of a general gr-category, Sính's classification by `(π₀, π₁, k)`, crossed modules,
 Picard groupoids and Deligne's equivalence (roadmap 12.2–12.6 beyond these, Layer 13) are not
 formalised.
 

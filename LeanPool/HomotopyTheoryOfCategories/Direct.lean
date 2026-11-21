@@ -6,7 +6,6 @@ Authors: Michel Hua
 module
 
 public import Mathlib.AlgebraicTopology.Reedy.Basic
-public import Mathlib.AlgebraicTopology.SimplexCategory.SemiSimplexCategory
 public import Mathlib.CategoryTheory.Widesubcategory
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
 public import Mathlib.Order.Interval.Finset.Defs
@@ -25,18 +24,19 @@ Reedy categories*, TAC 2014). We prove:
 
 * `IsDirect.eq_id_of_endo` and `IsDirect.skeletal`: a direct category has no non-identity
   endomorphisms and is skeletal;
-* `isDirect_iff_nonempty_reedyStructure`: `C` is direct iff it has a direct Reedy structure with
-  ordinal degrees, the degree being the rank `IsDirect.rank`; `IsDirect.of_reedyStructure`: a
-  direct Reedy structure with values in any well-ordered `α` makes `C` direct;
 * `nonempty_reedyStructure_nat_iff`: `C` has an `ℕ`-valued direct Reedy structure iff it is
-  direct with every rank finite;
+  direct with every rank `IsDirect.rank` finite;
 * `ReedyStructure.exists_directPart` and `ReedyStructure.exists_inversePart`: the degree-raising
   (resp. degree-lowering) wide subcategory of a Reedy category is direct (resp. inverse), with the
   same degree;
 * `isDirect_iff_wellFoundedLT` and `exists_reedyStructure_card_Iio`: a partial order is direct iff
-  `<` is well-founded, and has the degree `x ↦ #{y | y < x}` when its lower sets are finite;
-* `SemiSimplexCategory.exists_reedyStructure_len`: the semi-simplex category has a direct Reedy
-  structure with degree `len`.
+  `<` is well-founded, and has the degree `x ↦ #{y | y < x}` when its lower sets are finite.
+
+The equivalence between direct categories and ordinal-valued direct Reedy structures (roadmap
+7.2) and the direct Reedy structure of the semi-simplex category (roadmap 8.4) are already in the
+pool, in `CategoryTheoryToolkit` (`HomotopicalAlgebra.ReedyStructure.ofWellFounded`,
+`HomotopicalAlgebra.ReedyStructure.wellFounded` and `SemiSimplexCategory.reedyStructure`), and are
+not repeated here.
 
 Everything rests on two constructors, `reedyStructureOfDirect` and `reedyStructureOfInverse`,
 for which the unique factorization is automatic. Products of Reedy structures and the further
@@ -143,11 +143,6 @@ lemma rank_eq (X : C) : rank X = ⨆ Y : { Y // DirectRel C Y X }, Order.succ (r
   haveI : WellFounded (DirectRel C) := IsDirect.wellFounded
   WellFounded.rank_eq (DirectRel C) X
 
-variable (C) in
-/-- **Layer 7.2.** The direct Reedy structure of a direct category, with degree the rank. -/
-noncomputable def reedyStructure : ReedyStructure (identities C) ⊤ Ordinal.{u} :=
-  reedyStructureOfDirect rank fun _ _ f hf ↦ rank_lt ⟨f, hf⟩
-
 /-- **Layer 7.1.** In a direct category every endomorphism is the identity. -/
 theorem eq_id_of_endo {X : C} (f : X ⟶ X) : f = 𝟙 X := by
   by_contra hf
@@ -156,28 +151,24 @@ theorem eq_id_of_endo {X : C} (f : X ⟶ X) : f = 𝟙 X := by
   rfl
 
 /-- **Layer 7.1.** A direct category is skeletal. -/
-theorem skeletal : Skeletal C :=
-  (reedyStructure C).skeletal
+theorem skeletal : Skeletal C := by
+  rintro X Y ⟨e⟩
+  by_contra hXY
+  have hne : ∀ {A B : C} (f : A ⟶ B), A ≠ B → ¬ identities C f := fun f h hf => h (by
+    obtain ⟨⟩ := hf
+    rfl)
+  exact (rank_lt ⟨e.hom, hne e.hom hXY⟩).asymm (rank_lt ⟨e.inv, hne e.inv (Ne.symm hXY)⟩)
 
 end IsDirect
 
 variable (C : Type u) [Category.{v} C]
 
-/-- **Layer 7.2.** A direct Reedy structure with values in any well-ordered `α` makes `C` direct.
--/
-theorem IsDirect.of_reedyStructure {α : Type w} [LinearOrder α] [OrderBot α] [SuccOrder α]
+/-- A direct Reedy structure with values in any well-ordered `α` makes `C` direct. -/
+lemma isDirect_of_reedyStructure {α : Type w} [LinearOrder α] [OrderBot α] [SuccOrder α]
     [WellFoundedLT α]
     (r : HomotopicalAlgebra.ReedyStructure (MorphismProperty.identities C) ⊤ α) :
     IsDirect C :=
   ⟨Subrelation.wf (fun h ↦ deg_lt_of_directRel r h) (InvImage.wf r.deg wellFounded_lt)⟩
-
-/-- **Layer 7.2.** Direct categories are exactly those carrying a Reedy structure whose `W₁` is
-the identities and whose `W₂` is everything, with ordinal degrees. -/
-theorem isDirect_iff_nonempty_reedyStructure :
-    IsDirect C ↔
-      Nonempty (HomotopicalAlgebra.ReedyStructure (MorphismProperty.identities C) ⊤
-        Ordinal.{u}) :=
-  ⟨fun _ ↦ ⟨IsDirect.reedyStructure C⟩, fun ⟨r⟩ ↦ IsDirect.of_reedyStructure C r⟩
 
 /-- The rank is bounded by the degree of any direct Reedy structure with values in `ℕ`. -/
 lemma IsDirect.rank_le_deg [IsDirect C]
@@ -196,7 +187,7 @@ theorem nonempty_reedyStructure_nat_iff :
       ∃ _ : IsDirect C, ∀ X : C, IsDirect.rank X < Ordinal.omega0 := by
   constructor
   · rintro ⟨r⟩
-    have := IsDirect.of_reedyStructure C r
+    have := isDirect_of_reedyStructure C r
     exact ⟨this, fun X ↦ (IsDirect.rank_le_deg C r X).trans_lt (Ordinal.natCast_lt_omega0 _)⟩
   · rintro ⟨_, h⟩
     choose n hn using fun X ↦ Ordinal.lt_omega0.1 (h X)
@@ -272,32 +263,3 @@ theorem exists_reedyStructure_card_Iio (P : Type u) [PartialOrder P]
   exact lt_irrefl x (Finset.mem_Iio.1 (h (Finset.mem_Iio.2 hxy)))
 
 end LeanPool.HomotopyTheoryOfCategories
-
-namespace LeanPool.HomotopyTheoryOfCategories.SemiSimplexCategory
-
-open CategoryTheory MorphismProperty _root_.SemiSimplexCategory
-
-/-- A morphism of the semi-simplex category between objects of the same length is an identity. -/
-lemma identities_of_len_eq {m n : _root_.SemiSimplexCategory} (f : m ⟶ n) (h : m.len = n.len) :
-    identities _ f := by
-  obtain ⟨m⟩ := m
-  obtain ⟨n⟩ := n
-  dsimp at h
-  subst h
-  have hf : (homEquiv f : Fin (m + 1) → Fin (m + 1)) = id :=
-    (homEquiv f).strictMono.eq_id
-  obtain rfl : f = 𝟙 _ := hom_ext (DFunLike.ext _ _ fun i ↦ congrFun hf i)
-  exact ⟨_⟩
-
-/-- **Layer 8.4.** The semi-simplex category has an `ℕ`-valued direct Reedy structure with
-degree `len`. -/
-theorem exists_reedyStructure_len :
-    ∃ r : HomotopicalAlgebra.ReedyStructure
-        (MorphismProperty.identities _root_.SemiSimplexCategory) ⊤ ℕ,
-      ∀ n, r.deg n = n.len := by
-  refine ⟨reedyStructureOfDirect (fun n ↦ n.len) fun m n f hf ↦ ?_, fun _ ↦ rfl⟩
-  have hle : m.len + 1 ≤ n.len + 1 := by
-    simpa using Fintype.card_le_of_injective _ (homEquiv f).injective
-  exact lt_of_le_of_ne (by omega) fun h ↦ hf (identities_of_len_eq f h)
-
-end LeanPool.HomotopyTheoryOfCategories.SemiSimplexCategory

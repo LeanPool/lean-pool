@@ -9,9 +9,9 @@ summary: Grothendieck's homotopy theory of small categories, after Pursuing Stac
   them, W₀ and W₋₁ are basic localizers, Quillen's Theorem A holds for any basic localizer,
   and every functor with an adjoint lies in every basic localizer. For presheaves, the
   adjunction between the category-of-elements functor and its right adjoint is constructed.
-  Direct categories are those with a well-founded relation of non-identity morphisms; they
-  are characterised by direct Reedy structures, and a partial order is direct exactly when it
-  is well-founded. Non-singular presheaves are those whose category of elements is thin, and
+  Direct categories are those with a well-founded relation of non-identity morphisms; those
+  of finite ranks are characterised by direct Reedy structures with natural-number degrees,
+  and a partial order is direct exactly when it is well-founded. Non-singular presheaves are those whose category of elements is thin, and
   categories of elements give discrete fibrations. In a cofibration category, Brown's
   factorization lemma holds between cofibrant objects. For a map of abelian groups d, the
   gr-category of two-term complexes has π₀ the cokernel and π₁ the kernel of d.
@@ -34,7 +34,7 @@ main_declarations:
 - LeanPool.HomotopyTheoryOfCategories.mem_of_isLeftAdjoint
 - LeanPool.HomotopyTheoryOfCategories.mem_of_isRightAdjoint
 - LeanPool.HomotopyTheoryOfCategories.W₁_iff_isEquivalence
-- LeanPool.HomotopyTheoryOfCategories.isDirect_iff_nonempty_reedyStructure
+- LeanPool.HomotopyTheoryOfCategories.nonempty_reedyStructure_nat_iff
 - LeanPool.HomotopyTheoryOfCategories.brown_factorization
 main_results:
 - declaration: LeanPool.HomotopyTheoryOfCategories.Groupoid.isEquivalence_iff_bijective
@@ -69,10 +69,11 @@ main_results:
   informal: Every right adjoint between small categories lies in every basic localizer.
 - declaration: LeanPool.HomotopyTheoryOfCategories.nonempty_iAAdjunction
   informal: The functor sending a presheaf to its category of elements has a right adjoint.
-- declaration: LeanPool.HomotopyTheoryOfCategories.isDirect_iff_nonempty_reedyStructure
-  informal: A category is direct exactly when it has a Reedy structure, indexed by ordinals,
-    whose degree-raising maps are all its morphisms and whose degree-lowering maps are the
-    identities.
+- declaration: LeanPool.HomotopyTheoryOfCategories.nonempty_reedyStructure_nat_iff
+  informal: A category has a Reedy structure with natural-number degrees whose degree-raising
+    maps are all its morphisms and whose degree-lowering maps are the identities exactly when
+    it has no infinite descending chain of non-identity morphisms and every object has finite
+    rank for the relation of non-identity morphisms.
 - declaration: LeanPool.HomotopyTheoryOfCategories.isDirect_iff_wellFoundedLT
   informal: A partial order, viewed as a category, is direct exactly when it is well-founded.
 - declaration: LeanPool.HomotopyTheoryOfCategories.Presheaf.isNonsingular_iff_isThin
