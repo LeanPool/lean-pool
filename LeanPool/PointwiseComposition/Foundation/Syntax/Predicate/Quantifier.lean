@@ -394,7 +394,7 @@ prefix:64 "∀²* " => allClosure
 lemma allClosure_zero (a : α 0 n) : ∀²* a = a :=
   rfl
 
-lemma allClosure_succ {n} (a : α (n + 1) n) : ∀²* a = ∀²* ∀² a :=
+lemma allClosure_succ {m} (a : α (m + 1) n) : ∀²* a = ∀²* ∀² a :=
   rfl
 
 /-- The all Itr construction in `FFL.SecondOrder`. -/
