@@ -14,7 +14,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 
 /-!
-# Generalization Error, Sample/Query Complexity, ERM
+# Generalization Error, Sample Complexity, ERM
 
 The numerical quantities that PAC learning bounds.
 Includes the canonical PAC learner (ERM).
@@ -37,17 +37,6 @@ noncomputable def SampleComplexity (X : Type u) [MeasurableSpace X]
             D { x | L.learn (fun i => (xs i, c (xs i))) x ≠ c x }
               ≤ ENNReal.ofReal ε }
           ≥ ENNReal.ofReal (1 - δ) }
-
-/-- Query complexity: minimum membership queries for exact learning.
-    Formally: sInf { q | ∃ active learner that identifies c using ≤ q queries }.
-    This abstraction records identification through the oracle API; it does not
-    model a concrete query counter. -/
-noncomputable def QueryComplexity (X : Type u)
-    (C : ConceptClass X Bool) : ℕ :=
-  sInf { _q : ℕ | ∃ (L : ActiveLearner X Bool),
-    ∀ (c : Concept X Bool), c ∈ C →
-      ∀ (mq : MembershipOracle X Bool), mq.target = c →
-        L.learnMQ mq = c }
 
 /-- Mistake bound: minimum worst-case mistakes for online learning of C. -/
 noncomputable def OptimalMistakeBound (X : Type u) (C : ConceptClass X Bool) : WithTop ℕ :=

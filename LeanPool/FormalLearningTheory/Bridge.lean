@@ -280,14 +280,6 @@ def restrictConceptClass {X : Type u}
     (C : Finset (X → Bool)) (S : Finset X) : Finset (↥S → Bool) :=
   C.image (fun c => restrictToFinset c S)
 
-/-- The number of distinct restrictions is our GrowthFunction.
-    GrowthFunction X C m = max over m-element S of |C|_S|.
-    This lemma connects GrowthFunction to the restriction operation. -/
-theorem growthFunction_le_card_restrict {X : Type u}
-    (C : Finset (X → Bool)) (S : Finset X) :
-    (restrictConceptClass C S).card ≤ C.card :=
-  Finset.card_image_le
-
 /-- Sauer-Shelah via Mathlib: |C|_S| ≤ Σ_{i ≤ d} C(|S|, i).
     The proof chain:
     1. Convert C|_S to a Finset family over S (conceptToFinset on restrictions)

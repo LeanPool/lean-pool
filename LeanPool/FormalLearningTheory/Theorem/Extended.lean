@@ -1001,8 +1001,8 @@ theorem baxter_base_case (X : Type u) [MeasurableSpace X]
   exact pac_lower_bound_member X C_new d hd ε δ hε hε1 hδ hδ1 hδ2 hd_pos
     (ML.sampleComplexity env ε δ) ⟨ML.learn env, hPAC⟩
 
-/-- Baxter's multi-task lower bound: any sample-based meta-learner
-    that achieves PAC on a new task C_new with VCDim = d, after seeing
+/-- An `n`-independent lower bound for multi-task learning: any sample-based
+    meta-learner that achieves PAC on a new task C_new with VCDim = d, after seeing
     n training tasks with m samples each, requires ⌈(d-1)/2⌉ samples
     for the new task.
 
@@ -1024,7 +1024,7 @@ theorem baxter_base_case (X : Type u) [MeasurableSpace X]
     - Product measure: D^(n×m) decomposed as (D^m)^n
     - Information-theoretic counting: n·m bits vs 2^d labelings
     This theorem proves the n-independent base case. -/
-theorem baxter_full (X : Type u) [MeasurableSpace X]
+theorem baxter_n_independent_lower_bound (X : Type u) [MeasurableSpace X]
     [MeasurableSingletonClass X]
     (SML : SampleMetaLearner X)
     (C_new : ConceptClass X Bool)

@@ -15,7 +15,7 @@ import Mathlib.MeasureTheory.Covering.Besicovitch
 # Processes and Applications
 
 Concrete learning processes, algorithms, and scope boundaries:
-- Grammar induction and L* (Angluin's query-learning algorithm)
+- Grammar induction: L* (Angluin's query-learning algorithm)
 - CEGIS (counterexample-guided inductive synthesis)
 - Concept drift, lifelong learning, meta-learning applications
 - Inductive logic programming
@@ -29,18 +29,6 @@ universe u v
 /-!
 ## Grammar Induction
 -/
-
-/-- Grammar induction: learning a formal grammar (regular, CFG) from examples.
-    A Gold-style learning process applied to the formal language hierarchy. -/
-structure GrammarInduction (Sym : Type*) where
-  /-- The class of grammars to learn (regular, CFG, etc.) -/
-  grammarClass : Set (FormalLanguage Sym)
-  /-- The learning algorithm (Gold-style) -/
-  learner : GoldLearner (Word Sym) Bool
-  /-- The learner identifies the grammar class in the limit (EX-sense) -/
-  -- Full version: EXLearnable (Word Sym) grammarClass
-  -- Simplified to Prop for skeleton; would connect to Criterion.lean's EXLearnable
-  identifies : Prop
 
 /-- L* algorithm (Angluin 1987): learns DFAs using membership and
     equivalence queries in polynomial time.
@@ -58,17 +46,14 @@ structure LStar (Sym : Type*) [DecidableEq Sym] [Fintype Sym] where
 ## CEGIS (Counterexample-Guided Inductive Synthesis)
 -/
 
-/-- CEGIS: a loop between a synthesizer and a verifier.
-    The synthesizer proposes candidates, the verifier checks them and
-    returns counterexamples. Terminates when the verifier accepts. -/
+/-- The components of a CEGIS loop: a synthesizer that proposes candidates from
+    counterexamples, and a verifier that accepts a candidate or returns a
+    counterexample. The iteration and its termination are not modelled. -/
 structure CEGIS (X : Type u) (Y : Type v) where
   /-- The synthesizer: produces candidate concepts -/
   synth : Synthesizer X Y
   /-- The verifier: checks candidates -/
   verify : Concept X Y → Option X  -- None = correct, Some x = counterexample
-  /-- CEGIS loop: iterate synth → verify → refine -/
-  loop (counterexamples : List (X × Y)) : Concept X Y :=
-    synth counterexamples
 
 /-!
 ## Concept Drift and Non-Stationary Learning
