@@ -897,8 +897,10 @@ private theorem boost_two_thirds_to_pac (X : Type u) [MeasurableSpace X]
   -- Step 3g: Final composition
   exact le_trans hconc (MeasureTheory.measure_mono hsub)
 
-/-- Universal learnable → PAC learnable.
-    Proof sketch: UniversalLearnable gives learner L with rate → 0 and Pr[error ≤ rate(m)] ≥ 2 / 3.
+/-- Universal learning by a jointly measurable learner implies PAC learnability.
+    The hypotheses `hrate` and `huniv` say that `L` witnesses `UniversalLearnable X C`
+    with rate function `rate`; joint measurability of `L` is required for the boosting.
+    Proof sketch: L has rate → 0 and Pr[error ≤ rate(m)] ≥ 2 / 3.
     Two components:
     1. Event containment: rate(m) < ε ⟹ {error ≤ rate(m)} ⊆ {error ≤ ε} (monotonicity).
     2. Confidence boosting: 2 / 3 → 1-δ via median-of-means
@@ -907,13 +909,19 @@ private theorem boost_two_thirds_to_pac (X : Type u) [MeasurableSpace X]
 theorem universal_imp_pac (X : Type u) [MeasurableSpace X]
     (C : ConceptClass X Bool)
     [MeasurableHypotheses X C]
-    (hL_meas : ∀ (L : BatchLearner X Bool), LearnEvalMeasurable L)
-    (hul : UniversalLearnable X C) :
-    PACLearnable X C := by
-  have hc_meas : ∀ c ∈ C, Measurable c := MeasurableHypotheses.mem_measurable (C := C)
-  obtain ⟨L, rate, hrate, huniv⟩ := hul
-  have : MeasurableBatchLearner X L := ⟨hL_meas L⟩
-  exact boost_two_thirds_to_pac X C L rate hrate huniv
+    (L : BatchLearner X Bool) [MeasurableBatchLearner X L]
+    (rate : ℕ → ℝ)
+    (hrate : ∀ ε > 0, ∃ m₀, ∀ m ≥ m₀, rate m < ε)
+    (huniv : ∀ (D : MeasureTheory.Measure X), MeasureTheory.IsProbabilityMeasure D →
+      ∀ (c : Concept X Bool), c ∈ C →
+        ∀ (m : ℕ),
+          MeasureTheory.Measure.pi (fun _ : Fin m => D)
+            { xs : Fin m → X |
+              D { x | L.learn (fun i => (xs i, c (xs i))) x ≠ c x }
+                ≤ ENNReal.ofReal (rate m) }
+            ≥ ENNReal.ofReal (2 / 3)) :
+    PACLearnable X C :=
+  boost_two_thirds_to_pac X C L rate hrate huniv
 
 -- PAC does not imply mistake-bounded.
 -- Standard witness: X = ℕ, C = threshold functions {x ↦ (x ≤ n) | n : ℕ}.
@@ -1203,8 +1211,9 @@ theorem online_strictly_stronger_pac :
   --           conjunct 2 = pac_not_implies_online.
   ⟨fun X _ C _ hol => online_imp_pac X C hol, pac_not_implies_online⟩
 
-/-- EX learning is strictly stronger than finite learning. -/
-theorem ex_strictly_stronger_finite :
+/-- Finite learnability implies EX learnability (identification in the limit).
+    The strictness of this inclusion is not proved here. -/
+theorem finiteLearnable_imp_exLearnable :
     ∀ (X : Type u) (C : ConceptClass X Bool),
       FiniteLearnable X C → EXLearnable X C := by
   intro X C ⟨L, hL⟩
