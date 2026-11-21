@@ -138,13 +138,4 @@ theorem IsHARA.relativeRiskAversionLeOne {u : ℝ → ℝ} {γ a k l : ℝ} (hγ
   simp only [RelativeRiskAversionLeOne, hfun]
   exact (hbase.smul hk.le).add_const l
 
-/-- **A negative shift breaks it**, however small `γ` is: relative risk aversion `γ c / (a + c)`
-exceeds one as consumption approaches the subsistence level from above. Recorded to show that
-`0 ≤ a` in the theorem above is doing work. -/
-theorem haraUtility_rra_gt_one_of_neg_shift {γ a c : ℝ} (hac : 0 < a + c)
-    (hnear : (a + c) < γ * c) :
-    1 < γ * c / (a + c) := by
-  rw [lt_div_iff₀ hac]
-  linarith
-
 end LeanEconomics
