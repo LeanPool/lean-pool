@@ -10,6 +10,8 @@ public import LeanPool.ToposTheoreticBridges
 public import LeanPool.ToposTheoreticBridges.Basic
 public import LeanPool.ToposTheoreticBridges.Boolean
 public import LeanPool.ToposTheoreticBridges.DeMorgan
+public import LeanPool.ToposTheoreticBridges.EssentialPoints
 public import LeanPool.ToposTheoreticBridges.Morita
 public import LeanPool.ToposTheoreticBridges.Sites
 public import LeanPool.ToposTheoreticBridges.Subpresheaf
+public import LeanPool.ToposTheoreticBridges.Subtopos

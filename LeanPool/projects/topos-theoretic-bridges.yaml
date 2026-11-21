@@ -6,7 +6,9 @@ summary: Morita equivalence of small categories, defined as equivalence of their
   the category is a groupoid, and De Morgan exactly when it satisfies the right Ore condition;
   both properties are invariant under Morita equivalence. An equivalence of the sheaf topoi
   of two small sites gives an order isomorphism between the Grothendieck topologies finer than
-  the two given ones, matching their sheaf conditions. These are instances of O.
+  the two given ones, matching their sheaf conditions. The subtopoi of a sheaf topos
+  correspond to the finer topologies, and the essential points of a presheaf topos form a
+  category equivalent to the opposite of the Karoubi envelope. These are instances of O.
   Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
   presentations.
 branch: category theory
@@ -25,6 +27,8 @@ main_declarations:
 - LeanPool.ToposTheoreticBridges.isBooleanTopos_presheaf_iff_isGroupoid
 - LeanPool.ToposTheoreticBridges.isDeMorganTopos_presheaf_iff_rightOreCondition
 - LeanPool.ToposTheoreticBridges.exists_orderIso_ici_of_sheafEquiv
+- LeanPool.ToposTheoreticBridges.subtoposOrderIso
+- LeanPool.ToposTheoreticBridges.essentialPointEquivKaroubiOp
 main_results:
 - declaration: LeanPool.ToposTheoreticBridges.moritaEquivalentCat_iff_karoubi
   informal: Two small categories have equivalent categories of presheaves of sets exactly
@@ -45,6 +49,14 @@ main_results:
     and (D, K) gives an order isomorphism between the Grothendieck topologies on C finer than J
     and those on D finer than K, under which a J-sheaf is a sheaf for a finer topology J'
     exactly when its image is a sheaf for the corresponding topology on D.
+- declaration: LeanPool.ToposTheoreticBridges.subtoposOrderIso
+  informal: For a Grothendieck topology J on a small category, the subtopoi of the category of
+    J-sheaves of sets (reflective full subcategories with left exact reflector) correspond, by
+    an order-reversing bijection, to the Grothendieck topologies finer than J.
+- declaration: LeanPool.ToposTheoreticBridges.essentialPointEquivKaroubiOp
+  informal: The essential points of the presheaf topos of a small category C (finite-limit
+    preserving functors to sets with both a left and a right adjoint) form a category equivalent
+    to the opposite of the Karoubi envelope of C.
 tags:
 - topos-theory
 - morita-equivalence
