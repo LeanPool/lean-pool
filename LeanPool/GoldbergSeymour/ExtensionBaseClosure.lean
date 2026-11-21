@@ -24,6 +24,10 @@ Adapted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour
 
+/-- Extends `seed` to a closure `TjPrime` carrying a corresponding extended Tashkinov tree with
+the maximum property, and with `TjPrime` elementary. The final disjunction is only the case
+split on whether `awayMissing ∩ supportColors` is empty, so it constrains neither
+`terminalSupport` nor `supportColors`. -/
 theorem ExtensionBaseClosure {V E : Type*}
     [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}

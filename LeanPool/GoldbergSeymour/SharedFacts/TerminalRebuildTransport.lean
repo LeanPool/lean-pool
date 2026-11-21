@@ -19,7 +19,8 @@ Extracted from Wesley Pegden’s Trellis formalization at
 
 namespace GoldbergSeymour.SharedFacts.TerminalRebuildTransport
 
-/-- Dependent interface shared by the proof branches, so its assumptions stay synchronized. -/
+/-- The impossible terminal case: `q.succ` is the last index, so the last round cannot have
+kind `PE` and also kind `SE` or `RE`. The hypotheses are contradictory. -/
 abbrev branchStatement.{u_1, u_2} : Prop :=
   open scoped Classical in
       ∀ {V : Type u_1} {E : Type u_2} [ Fintype V] [ Fintype E] [ DecidableEq E] (G :
@@ -40,7 +41,7 @@ abbrev branchStatement.{u_1, u_2} : Prop :=
           ett.rounds).castSucc) f seed ∧ TashkinovAugmentationSequence sigma seed Tstar) → Nonempty
           (CorrespondingExtendedTashkinovTree G k e0 ett sigma Tstar)
 
-/-- A common proof used by the branches of this transport or construction argument. -/
+/-- Discharges the impossible terminal case by contradiction between the two round kinds. -/
 theorem branch.{u_1, u_2} : branchStatement.{u_1, u_2} := by
   classical
   intro V E _ _ _ G k e0 input T generating ett hpositive sigma _ q hqSucc hpeKind hsimple
