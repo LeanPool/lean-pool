@@ -1,10 +1,11 @@
 slug: cutoff-rigidity
 title: Gaussian factorization and convex interaction for rigid diffusions
 summary: >-
-  Formalizes the Euclidean Gaussian factorization and convex interaction
-  theorems of Chafaï and Fathi. It connects the canonical spectral gap of a
-  log-concave Gibbs measure to an affine first eigenspace and an independent
-  Gaussian factor.
+  Formalizes the convex interaction theorem of Chafaï and Fathi and their
+  Euclidean formulation of Cheng and Zhou's Gaussian splitting theorem for
+  normalized C² Gibbs potentials at curvature equality. The proofs connect
+  the canonical spectral gap to an affine first eigenspace and an
+  independent Gaussian factor.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -29,16 +30,18 @@ main_declarations:
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
-    For a convex C² interaction invariant along the diagonal, adding a
-    quadratic confinement term of rate ρ gives spectral gap ρ, a Gaussian
-    factor in the diagonal direction and the rigidity curvature bound,
-    after normalizing the Gibbs probability measure.
+    In positive Euclidean dimension, adding quadratic confinement of rate
+    ρ > 0 to a convex C² interaction invariant along the diagonal gives
+    spectral gap ρ, a Gaussian factor in the diagonal direction and the
+    rigidity curvature bound after normalizing the Gibbs measure.
 - declaration: CutoffRigidity.euclidean_gaussian_splitting
   informal: >-
-    When the positive curvature lower bound is the first spectral gap,
-    the potential splits off a quadratic term in the first eigenspace
-    directions. The Gibbs law factors into a Gaussian law on this space
-    and a Gibbs law on its orthogonal complement.
+    The Euclidean form of Cheng and Zhou's theorem takes a C² potential on a
+    positive-dimensional Euclidean space with a normalized Gibbs density and
+    a positive Hessian lower bound equal to the first spectral gap. The
+    potential splits off a quadratic term in the first eigenspace directions.
+    The Gibbs law factors into a Gaussian law on this space and a Gibbs law
+    on its orthogonal complement.
 tags:
 - curvature
 - spectral-gap
