@@ -262,7 +262,12 @@ theorem cauchyPrincipalValueExists_of_continuous
         (by rw [uIoc_of_le hab.le]; exact Ioc_subset_Icc_self)
         le_rfl)
 
-/-- PV exists for singular 1/(z-z₀) integrands on C¹ immersions. -/
+/-- The principal value of `1/(z - z₀)` along a piecewise C¹ immersion exists, given
+`h_crossing_cauchy`.
+
+When the curve avoids `z₀`, existence is proved. When it meets `z₀`, Cauchyness of the
+truncated integrals is the hypothesis `h_crossing_cauchy`, and completeness of `ℂ` supplies
+the limit. -/
 theorem cauchyPrincipalValueExists_of_singular_inv
     (γ : PiecewiseC1Immersion) (z₀ : ℂ)
     (h_crossing_cauchy :
