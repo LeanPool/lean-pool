@@ -23,9 +23,11 @@ Trans. Amer. Math. Soc. 123 (1966), 325–340).
 
 If a group acts on a finite `T₀` space by homeomorphisms, the orbit of a beat point is an
 antichain of beat points of the same kind, removed at once; iterating gives an invariant
-subspace without beat points onto which the space strongly deformation retracts
-(`exists_invariant_core`, Barmak 2011, Lemma 8.1.2 and Proposition 8.1.3), and a point when the
-space is contractible, fixed by the group (`exists_fixedPoint_of_contractibleSpace`).
+subspace without beat points onto which the space strongly deformation retracts.
+`exists_invariant_core` is the consequence of Barmak 2011, Lemma 8.1.2, obtained by
+forgetting equivariance of the retraction and homotopy. When the space is contractible,
+the invariant core gives a fixed point (`exists_fixedPoint_of_contractibleSpace`,
+Barmak 2011, Proposition 8.1.3).
 -/
 
 @[expose] public section

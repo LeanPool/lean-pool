@@ -18,9 +18,10 @@ public import Mathlib.Topology.Homotopy.Contractible
 # The homotopy property of order complexes (roadmap 3.2, 3.3)
 
 For monotone maps `f ≤ g : P →o Q` of preorders, the realizations of `orderComplexMap f` and
-`orderComplexMap g` are homotopic (`homotopic_realizationMap_of_le`; D. Quillen, « Homotopy
-properties of the poset of nontrivial p-subgroups of a group », Adv. Math. 28 (1978), 101–128,
-§1). The homotopy is the prism construction, written in barycentric coordinates: order the
+`orderComplexMap g` are homotopic (`homotopic_realizationMap_of_le`). This extends the
+partially ordered case of D. Quillen, « Homotopy properties of the poset of nontrivial
+p-subgroups of a group », Adv. Math. 28 (1978), 101–128, §1.3, to preorders. The homotopy is
+the prism construction, written in barycentric coordinates: order the
 vertices of the carrier of a point `x` increasingly (ties between equivalent elements of the
 preorder are broken by a well-order, `Prec`), and read the weights of `x` as consecutive
 intervals of `[0, 1]`. At time `t`, the part of each interval below `1 - t` is sent to the image
@@ -29,7 +30,8 @@ under `f` of its vertex, and the part above `1 - t` to its image under `g`
 `g`, so the support is a chain of `Q`.
 
 As a consequence, a preorder with an element `x₀` and a monotone `f` such that `x ≤ f x ≥ x₀`
-for every `x` has a contractible realization (`contractibleSpace_of_conical`, Quillen 1978, 1.5).
+for every `x` has a contractible realization (`contractibleSpace_of_conical`). This is the
+preorder extension of the upward-cone case in Quillen 1978, §1.5.
 -/
 
 @[expose] public section
@@ -404,8 +406,9 @@ theorem realizationMap_const [DecidableEq P] (x₀ : P) :
     simpa [Finsupp.sum] using hsum
   · simp [Finsupp.sum, h]
 
-/-- **Roadmap 3.3.** Quillen's conical contractibility: a preorder with a monotone self-map `f`
-and an element `x₀` such that `x ≤ f x ≥ x₀` for every `x` has a contractible realization. -/
+/-- **Roadmap 3.3.** The preorder extension of Quillen's upward-cone criterion: a preorder
+with a monotone self-map `f` and an element `x₀` such that `x ≤ f x ≥ x₀` for every `x` has
+a contractible realization. -/
 theorem contractibleSpace_of_conical (x₀ : P) (f : P →o P)
     (h₁ : ∀ x, x ≤ f x) (h₂ : ∀ x, x₀ ≤ f x) :
     ContractibleSpace (AbstractSimplicialComplex.Realization (orderComplex P)) := by

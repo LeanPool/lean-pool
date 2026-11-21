@@ -18,10 +18,11 @@ import Mathlib.Tactic.Ring
 # Euler characteristics of posets with a group action (roadmap 3.5)
 
 Let a finite group `P` act on a finite partial order `T` by monotone maps. If the fixed subposet
-of every nontrivial subgroup has Euler characteristic `1`, then the Euler characteristic of `T`
-is congruent to `1` modulo `|P|` (`chainEulerChar_modEq_of_fixedPoints`, a combinatorial form of
-K. S. Brown, « Euler characteristics of groups: the p-fractional part », Invent. Math. 29 (1975),
-1–5, Theorem 1).
+of every nontrivial subgroup has alternating chain count `1`, then the alternating chain
+count of `T` is congruent to `1` modulo `|P|` (`chainEulerChar_modEq_of_fixedPoints`). This
+is a finite-poset variant of K. S. Brown, « Euler characteristics of groups: the p-fractional
+part », Invent. Math. 29 (1975), 1–5, Theorem 1. For the fixed order complexes, the chain-count
+hypothesis replaces Brown's stronger acyclicity hypothesis.
 
 The route: a chain mapped to itself is fixed pointwise (`mem_ptStab_of_image_eq`), so the chains
 fixed by a subgroup `Q` are those of the fixed subposet. Writing `e H` for the signed count of the
