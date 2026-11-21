@@ -27,37 +27,6 @@ open scoped Topology BigOperators ENNReal
 namespace LeanStationaryHarmonicMaps
 namespace StationaryHarmonicMap
 
-/-- Step 4: integrate the a.e. derivative formula for `theta`. -/
-theorem interior_monotonicity_formula_smooth {n m : ℕ}
-    {u : Domain n → Target m} {a : Domain n} {R0 s r : ℝ}
-    (hu : ContDiff ℝ 1 u)
-    (hboundary : BoundaryIdentity u a R0)
-    (hs : 0 < s) (hsr : s < r) (hr : r < R0)
-    (hderive :
-      ContDiff ℝ 1 u →
-        BoundaryIdentity u a R0 →
-          0 < s →
-            s < r →
-              r < R0 →
-                theta u a r - theta u a s = monotonicityRhs u a s r) :
-    theta u a r - theta u a s = monotonicityRhs u a s r := by
-  exact hderive hu hboundary hs hsr hr
-
-/-- Weak version of the final integration step, using `weakTheta` and the weak
-annular radial-energy term. -/
-theorem interior_monotonicity_formula_weak {n m : ℕ}
-    {Du : Domain n → Gradient n m} {a : Domain n} {R0 s r : ℝ}
-    (hboundary : WeakBoundaryIdentity Du a R0)
-    (hs : 0 < s) (hsr : s < r) (hr : r < R0)
-    (hderive :
-      WeakBoundaryIdentity Du a R0 →
-        0 < s →
-          s < r →
-            r < R0 →
-              weakTheta Du a r - weakTheta Du a s = weakMonotonicityRhs Du a s r) :
-    weakTheta Du a r - weakTheta Du a s = weakMonotonicityRhs Du a s r := by
-  exact hderive hboundary hs hsr hr
-
 /-- Radius-variable form of the final monotonicity increment.  This integrates
 the a.e. boundary identity against the derivative of the monotonicity weight;
 the remaining step is to convert the right-hand side to the annular spatial
