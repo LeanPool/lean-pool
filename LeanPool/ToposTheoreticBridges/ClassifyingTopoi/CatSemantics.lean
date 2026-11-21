@@ -32,7 +32,8 @@ has finite limits, images and coproducts indexed by `Type w`.
 ## References
 
 * P. T. Johnstone, *Sketches of an Elephant*, D1.2.
-* O. Caramello, *Theories, Sites, Toposes*, 1.2.
+* O. Caramello, *Theories, Sites, Toposes*, 1.3 (categorical structures) and 1.3.3
+  (interpretation of formulas).
 -/
 
 @[expose] public section

@@ -12,8 +12,8 @@ summary: Morita equivalence of small categories, defined as equivalence of their
   categorical semantics in sheaf topoi is developed; every geometric theory has a classifying
   site, unique up to equivalence of topoi, on which every subobject of a power of the generic
   model is definable; the quotients of a theory correspond to the topologies finer than its
-  classifying one, and the quotients of Morita-equivalent theories correspond. These are instances of O.
-  Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
+  classifying one, and the quotients of Morita-equivalent theories correspond. These are
+  instances of O. Caramello's topos-theoretic bridges, an invariant of a topos read on two of its
   presentations.
 branch: category theory
 entry_module: LeanPool.ToposTheoreticBridges

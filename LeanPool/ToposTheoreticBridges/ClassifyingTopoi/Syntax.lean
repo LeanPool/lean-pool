@@ -28,7 +28,7 @@ sequents.
 ## References
 
 * P. T. Johnstone, *Sketches of an Elephant*, D1.1.
-* O. Caramello, *Theories, Sites, Toposes*, 1.1.
+* O. Caramello, *Theories, Sites, Toposes*, 1.2.1 (Definitions 1.2.3–1.2.5).
 -/
 
 @[expose] public section
