@@ -156,13 +156,14 @@ theorem NStar_eq_solution (N : ScottSys) (hN : ([] : Str) ∈ N.sys.master) :
 rooted domain
 (`Λ ∈ tok(N)`, since its token set is the fixed point `Γ₁ ∋ Λ`), so it is a
 legitimate datum domain
-for the third: `N*` exists *over the very `N` produced by* `N ≅ {{0},{0,Λ}} ⊕ N`. -/
+for the third: `N*` exists *over the very `N` produced by* `N ≅ {{0},{0,Λ}} ⊕ N`, namely
+`N = {Γ₁}` with `Γ₁ = tok(NExpr({Γ₁}))`. -/
 theorem NStar_over_N_exists :
-    ∃ N : ScottSys, ([] : Str) ∈ N.sys.master ∧
-      ∃ (Γ : Set Str) (h : Γ.Nonempty),
-        (singletonSys Γ h).sys ◁ ((NStarExpr N).obj (singletonSys Γ h)).sys := by
-  obtain ⟨Γ₁, hnil₁, _⟩ := gExists_tok_fixedPoint NExpr NExpr_rooted
-  exact ⟨singletonSys Γ₁ ⟨[], hnil₁⟩, hnil₁, NStar_eq_solution _ hnil₁⟩
+    ∃ (Γ₁ : Set Str) (h₁ : ([] : Str) ∈ Γ₁), gFun NExpr Γ₁ = Γ₁ ∧
+      ∃ (Γ : Set Str) (h : Γ.Nonempty), (singletonSys Γ h).sys ◁
+        ((NStarExpr (singletonSys Γ₁ ⟨[], h₁⟩)).obj (singletonSys Γ h)).sys := by
+  obtain ⟨Γ₁, hnil₁, hfix₁⟩ := gExists_tok_fixedPoint NExpr NExpr_rooted
+  exact ⟨Γ₁, hnil₁, hfix₁, NStar_eq_solution _ hnil₁⟩
 
 end Exercise619
 
