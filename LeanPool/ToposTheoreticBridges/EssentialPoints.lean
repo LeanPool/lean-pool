@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ToposTheoreticBridges.Morita
 public import Mathlib.CategoryTheory.Functor.KanExtension.RestrictedYoneda
+public import Mathlib.CategoryTheory.ObjectProperty.FunctorCategory.PreservesLimits
 
 /-!
 # Essential points of a presheaf topos
@@ -38,9 +39,10 @@ is SGA 4 IV, Exercise 7.7 (c), (e).
   is a retract of a representable presheaf by `isRetractOfRepresentable_iff` (from
   `LeanPool.ToposTheoreticBridges.Morita`).
 * Conversely, if `P` is a retract of `yoneda.obj X`, then `Hom(P, -)` is a retract of
-  `Hom(yoneda.obj X, -) ≅ evaluation at X`, so it preserves colimits
-  (`preservesColimitsOfSize_of_retract`), and therefore has a right adjoint by the adjoint
-  functor theorem for presheaf categories; it has the left adjoint `S ↦ ∐_S P`
+  `Hom(yoneda.obj X, -) ≅ evaluation at X` (a component of `curriedYonedaLemma`), so it
+  preserves colimits (`preservesColimitsOfSize_of_retract`, from Mathlib's stability of
+  `ObjectProperty.preservesColimitsOfShape` under retracts), and therefore has a right adjoint
+  by the adjoint functor theorem for presheaf categories; it has the left adjoint `S ↦ ∐_S P`
   (`sigmaConstAdj`) and preserves limits.
 * The functor `P ↦ Hom(P, -)` from the opposite of the full subcategory of retracts of
   representables is fully faithful (Yoneda) and, by the above, essentially surjective onto
@@ -83,36 +85,14 @@ theorem isEssentialPoint_of_iso {E : Type u₁} [Category.{v₁} E] {p q : E ⥤
 section Retract
 
 variable {A : Type u₁} [Category.{v₁} A] {B : Type u₂} [Category.{v₂} B]
-  {J : Type w} [Category.{w'} J]
 
-/-- A cocone which is a retract of a colimit cocone, over a retract of the diagram, is a
-colimit cocone. -/
-def isColimitOfRetract {K K' : J ⥤ A} (ρ : Retract K' K) {c : Cocone K} (hc : IsColimit c)
-    (c' : Cocone K') (σ : Retract c'.pt c.pt)
-    (hi : ∀ j, c'.ι.app j ≫ σ.i = ρ.i.app j ≫ c.ι.app j)
-    (hr : ∀ j, c.ι.app j ≫ σ.r = ρ.r.app j ≫ c'.ι.app j) : IsColimit c' where
-  desc s := σ.i ≫ hc.desc ((Cocone.precompose ρ.r).obj s)
-  fac s j := by
-    rw [reassoc_of% (hi j), hc.fac]
-    simp [ρ.retract_app_assoc]
-  uniq s m hm := by
-    have h : σ.r ≫ m = hc.desc ((Cocone.precompose ρ.r).obj s) :=
-      hc.uniq ((Cocone.precompose ρ.r).obj s) (σ.r ≫ m) fun j => by
-        rw [reassoc_of% (hr j), hm]; rfl
-    rw [← h, σ.retract_assoc]
-
-/-- A retract of a functor preserving a colimit preserves that colimit. -/
-theorem preservesColimit_of_retract {G H : A ⥤ B} (ρ : Retract G H) (K : J ⥤ A)
-    [PreservesColimit K H] : PreservesColimit K G where
-  preserves {c} hc := ⟨isColimitOfRetract
-    ⟨Functor.whiskerLeft K ρ.i, Functor.whiskerLeft K ρ.r, by ext j; simp [ρ.retract_app]⟩
-    (isColimitOfPreserves H hc) (G.mapCocone c) (ρ.app c.pt)
-    (fun j => ρ.i.naturality (c.ι.app j)) (fun j => ρ.r.naturality (c.ι.app j))⟩
-
-/-- A retract of a functor preserving colimits preserves colimits. -/
+/-- A retract of a functor preserving colimits preserves colimits: this is Mathlib's stability of
+`ObjectProperty.preservesColimitsOfShape` under retracts, for every shape. -/
 theorem preservesColimitsOfSize_of_retract {G H : A ⥤ B} (ρ : Retract G H)
     [PreservesColimitsOfSize.{w', w} H] : PreservesColimitsOfSize.{w', w} G where
-  preservesColimitsOfShape := ⟨fun {K} => preservesColimit_of_retract ρ K⟩
+  preservesColimitsOfShape {K} _ :=
+    (ObjectProperty.preservesColimitsOfShape K).prop_of_retract ρ
+      (inferInstanceAs (PreservesColimitsOfShape K H))
 
 end Retract
 
@@ -121,11 +101,10 @@ section Presheaf
 variable {C : Type u} [SmallCategory C]
 
 /-- The functor corepresented by a representable presheaf `yoneda.obj X` is evaluation
-at `X` (Yoneda lemma). -/
+at `X`: the component at `op X` of the curried Yoneda lemma `curriedYonedaLemma`. -/
 noncomputable def coyonedaYonedaIsoEvaluation (X : C) :
     coyoneda.obj (op (yoneda.obj X)) ≅ (evaluation Cᵒᵖ (Type u)).obj (op X) :=
-  NatIso.ofComponents (fun F => Equiv.toIso yonedaEquiv) fun f => by
-    ext g; exact yonedaEquiv_comp g f
+  curriedYonedaLemma.app (op X)
 
 /-- The functor corepresented by a retract of a representable presheaf preserves small
 colimits. -/
