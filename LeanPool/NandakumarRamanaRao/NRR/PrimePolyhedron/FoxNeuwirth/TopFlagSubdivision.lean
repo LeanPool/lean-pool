@@ -199,13 +199,4 @@ theorem cycle_of_rankTwo_and_terminal
 end TopFlagSubdivision
 end FoxNeuwirthOrderComplex
 
-namespace AAK
-
-/-- Step S3 now has a concrete maximal-flag chain on the glued order complex. -/
-theorem simplestRoute_topFlagSubdivision_defined :
-    Nonempty (FoxNeuwirthOrderComplex.SimplicialChain (ZMod 2) 2 1) :=
-  ⟨FoxNeuwirthOrderComplex.TopFlagSubdivision.chain⟩
-
-end AAK
-
 end NRR

@@ -260,55 +260,8 @@ def RadialVectorFieldContDiffForCutoffs (n : ℕ) (R0 : ℝ) : Prop :=
           tsupport phi ⊆ Iio R0 →
             ContDiff ℝ 1 (radialVectorField (n := n) phi)
 
-/-- The scalar cutoffs used for the radial vector-field tests are flat at the
-origin.  This is the natural condition ensuring that `phi(|x|) x` is `C¹` at
-`x = 0`. -/
-def ScalarCutoffsConstNearOrigin (R0 : ℝ) : Prop :=
-  ∀ phi : ℝ → ℝ,
-    Differentiable ℝ phi →
-      ContDiff ℝ 1 phi →
-        HasCompactSupport phi →
-          tsupport phi ⊆ Iio R0 →
-            ∃ ε : ℝ, 0 < ε ∧ ∀ t : ℝ, |t| < ε → phi t = phi 0
-
-/-- Flatness at the origin discharges the radial vector-field `C¹` regularity
-ingredient. -/
-theorem radialVectorFieldContDiffForCutoffs_of_constNearOrigin {n : ℕ} {R0 : ℝ}
-    (hflat : ScalarCutoffsConstNearOrigin R0) :
-    RadialVectorFieldContDiffForCutoffs n R0 := by
-  intro phi hphi_diff hphi_cont hphi_compact hphi_support
-  exact radialVectorField_contDiff_of_contDiff_const_near_origin
-    (n := n) hphi_cont
-    (hflat phi hphi_diff hphi_cont hphi_compact hphi_support)
-
 /-- Weak `W^{1,2}_{loc}` stationarity gives the scalar-cutoff radial identity
-for every cutoff in the flat-at-origin class used by the sharp-cutoff
-argument. -/
-theorem weak_radial_scalar_cutoff_identity_from_stationarity_of_W12Loc
-    {n m : ℕ} [NeZero n]
-    {u : Domain n → Target m} {Du : Domain n → Gradient n m} {Ω : Set (Domain n)}
-    {R0 : ℝ}
-    (hR0_nonneg : 0 ≤ R0)
-    (hstationary : WeakStationaryIn Du (Metric.ball (0 : Domain n) R0))
-    (hW : W12LocIn u Du Ω)
-    (hclosedBall_subset : Metric.closedBall (0 : Domain n) R0 ⊆ Ω)
-    (hflat : ScalarCutoffsConstNearOrigin R0) :
-    WeakRadialScalarCutoffStationarityIdentity Du R0 := by
-  intro phi hphi_diff hphi_cont hphi_compact hphi_support
-  rcases exists_admissibleRadialCutoff_of_contDiff_const_near_origin
-      (n := n) (R0 := R0) (phi := phi)
-      hR0_nonneg hphi_diff hphi_cont hphi_compact hphi_support
-      (hflat phi hphi_diff hphi_cont hphi_compact hphi_support) with
-    ⟨M0, M1, hcut⟩
-  exact weak_radial_identity_from_stationarity_of_W12Loc_cutoff
-    (n := n) (m := m) (u := u) (Du := Du) (Ω := Ω)
-    (R0 := R0) (M0 := M0) (M1 := M1)
-    hstationary hW hclosedBall_subset hcut
-
-/-- Weak `W^{1,2}_{loc}` stationarity gives the scalar-cutoff radial identity
-once the radial vector fields for the scalar cutoffs are known to be `C¹`.
-This avoids the false global assumption that every scalar cutoff is flat near
-the origin. -/
+once the radial vector fields for the scalar cutoffs are known to be `C¹`. -/
 theorem weak_radial_scalar_cutoff_identity_from_stationarity_of_W12Loc_vectorFieldContDiff
     {n m : ℕ} [NeZero n]
     {u : Domain n → Target m} {Du : Domain n → Gradient n m} {Ω : Set (Domain n)}

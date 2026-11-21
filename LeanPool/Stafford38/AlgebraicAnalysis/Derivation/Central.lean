@@ -63,19 +63,18 @@ theorem commute_of_mem_subring_closure
 omit [Nontrivial E] in
 /--
 A central element of a source ring remains central in a target ring when
-every target element has a right-fraction presentation and every denominator
-maps to a unit.  No commutativity of either ring is assumed.
+every target element has a right-fraction presentation `z = ι c * (ι s)⁻¹`
+whose denominator `ι s` is a unit.  No commutativity of either ring is assumed.
 -/
 theorem commute_map_of_right_fraction_representation
     {R : Type*} [Ring R]
     (ι : R →+* E) (x : R)
     (hcentral : ∀ y : R, Commute x y)
-    (hunit : ∀ s : R, IsUnit (ι s))
-    (hrep : ∀ z : E, ∃ c s : R, z * ι s = ι c) :
+    (hrep : ∀ z : E, ∃ c s : R, IsUnit (ι s) ∧ z * ι s = ι c) :
     ∀ z : E, Commute (ι x) z := by
   intro z
-  obtain ⟨c, s, hs⟩ := hrep z
-  apply (hunit s).mul_right_cancel
+  obtain ⟨c, s, hunit, hs⟩ := hrep z
+  apply hunit.mul_right_cancel
   calc
     (ι x * z) * ι s = ι x * (z * ι s) := by rw [mul_assoc]
     _ = ι x * ι c := by rw [hs]

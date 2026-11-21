@@ -351,16 +351,15 @@ theorem exists_bound_multiPartialVec3_serrinBallCutoff (γ : Fin 3 → ℕ) :
   exact ⟨C, (norm_nonneg _).trans (hC 0), fun z => by
     simpa [Real.norm_eq_abs] using hC z⟩
 
-/-- The ρ-scaling bound: every nonzero-or-zero order `multiPartial` derivative of the ball
-cutoff `serrinBallCutoff x ρ` is bounded by an absolute constant (depending only on the order)
-times `ρ^{-n}`. -/
-theorem exists_bound_multiPartial_serrinBallCutoff_scaled (x : Vec3) {ρ : ℝ} (hρ : 0 < ρ)
-    (γ : Fin 3 → ℕ) (t : ℝ) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ y : Vec3,
+/-- The ρ-scaling bound: every `multiPartial` derivative of order `n` of the ball cutoff
+`serrinBallCutoff x ρ` is bounded by a constant depending only on the order `γ` (uniform in
+the centre `x`, the radius `ρ`, the time `t` and the point `y`) times `ρ^{-n}`. -/
+theorem exists_bound_multiPartial_serrinBallCutoff_scaled (γ : Fin 3 → ℕ) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (x : Vec3) (ρ : ℝ), 0 < ρ → ∀ (t : ℝ) (y : Vec3),
       |multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t)| ≤
         C / ρ ^ (γ 0 + γ 1 + γ 2) := by
   obtain ⟨C, hC0, hC⟩ := exists_bound_multiPartialVec3_serrinBallCutoff γ
-  refine ⟨C, hC0, fun y => ?_⟩
+  refine ⟨C, hC0, fun x ρ hρ t y => ?_⟩
   rw [show multiPartial (fun z : ParabolicPoint => serrinBallCutoff x ρ z.1) γ (y, t) =
       multiPartialVec3 (serrinBallCutoff x ρ) γ y from
       multiPartial_lift_eq (serrinBallCutoff x ρ) γ (y, t)]

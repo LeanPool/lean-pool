@@ -20,8 +20,8 @@ import Mathlib.Topology.MetricSpace.Bounded
 
 Computability-theoretic substrate for Gold-style learning theory. Contains:
 - Automata (DFA, NFA, PDA, Turing machines) with Mathlib bridges
-- Formal languages (regular, context-free, recursively enumerable)
-- Computability classes (partial computable, RE sets, Δ₀₂, limiting recursion)
+- Formal languages (regular, context-free)
+- Partial computable functions
 - Information-theoretic primitives (Kolmogorov complexity, MDL, MML, SRM)
 - Execution traces for program synthesis
 -/
@@ -145,21 +145,6 @@ def GodelNumbering (α : Type*) := α ≃ ℕ
 def PartialComputable (α β : Type*) [Encodable α] [Encodable β] :=
   { f : α →. β // ∃ g : ℕ →. ℕ, Nat.Partrec g ∧
     ∀ a : α, (f a).map Encodable.encode = g (Encodable.encode a) }
-
-/-- Recursively enumerable set. -/
-def RESet (α : Type*) :=
-  { S : Set α // ∃ f : ℕ → Option α, S = { a | ∃ n, f n = some a } }
-
-/-- Limiting recursion: functions that converge in the limit.
-    f is limiting-recursive if there exists a total computable g such that
-    f(x) = lim_{s→∞} g(x, s). This is the computational substrate of EX-learning. -/
-def LimitingRecursive (α β : Type*) :=
-  { f : α → β // ∃ g : α → ℕ → β, (∀ x, ∃ s₀, ∀ s ≥ s₀, g x s = f x) }
-
-/-- Δ₀₂ class: sets whose characteristic function is limiting-recursive.
-    EX-learnable concept classes have Δ₀₂ membership. -/
-def Delta02Class (α : Type*) :=
-  { S : Set α // ∃ f : α → ℕ → Bool, ∀ x, (x ∈ S ↔ ∃ s₀, ∀ s ≥ s₀, f x s = true) }
 
 /-!
 ## Information-Theoretic Primitives

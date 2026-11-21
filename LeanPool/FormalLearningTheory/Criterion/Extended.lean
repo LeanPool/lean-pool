@@ -14,8 +14,8 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 /-!
 # Extended and Cross-Paradigm Criteria
 
-EX under drift, universal learning, Bayesian criteria (posterior consistency,
-PAC-Bayes, information-theoretic bounds).
+EX under drift, universal learning, and the Bayesian criterion of posterior
+consistency.
 -/
 
 @[expose] public section
@@ -59,27 +59,6 @@ def UniversalLearnable (X : Type u) [MeasurableSpace X]
                 ≤ ENNReal.ofReal (rate m) }
             ≥ ENNReal.ofReal (2 / 3)
 
-/-- PAC learning with concept-dependent advice: for every target concept c in C,
-    there exists an advice value a(c) in A such that the advice-augmented learner
-    achieves PAC learning of C when given advice a(c). The advice may depend on
-    the target concept but not on the distribution or the sample.
-
-    When A is finite, advice can be eliminated (Ben-David & Dichterman 1998):
-    PACLearnableWithAdvice X C A → PACLearnable X C (see advice_elimination). -/
-def PACLearnableWithAdvice (X : Type u) [MeasurableSpace X]
-    (C : ConceptClass X Bool) (A : Type*) : Prop :=
-  ∃ (LA : LearnerWithAdvice X Bool A) (mf : ℝ → ℝ → ℕ),
-    ∀ (ε δ : ℝ), 0 < ε → 0 < δ →
-      ∀ (D : MeasureTheory.Measure X), MeasureTheory.IsProbabilityMeasure D →
-        ∀ (c : Concept X Bool), c ∈ C →
-          ∃ (a : A),
-            let m := mf ε δ
-            MeasureTheory.Measure.pi (fun _ : Fin m => D)
-              { xs : Fin m → X |
-                D { x | LA.learnWithAdvice a (fun i => (xs i, c (xs i))) x ≠ c x }
-                  ≤ ENNReal.ofReal ε }
-              ≥ ENNReal.ofReal (1 - δ)
-
 /-!
 ## Bayesian Criteria
 -/
@@ -96,38 +75,3 @@ def PosteriorConsistent (X : Type u) (Y : Type v)
       ∀ (data : List (X × Y)),
         data.length = m →
           BL.inference.posterior c data ≥ 1 - ε
-
-/-- PAC-Bayes bound: generalization error bounded by prior-posterior KL divergence.
-    For any data-dependent posterior Q over hypotheses and any prior P (chosen before
-    seeing data), with probability ≥ 1 - δ over S ~ D^m:
-      E_{h~Q}[err_D(h)] ≤ E_{h~Q}[err_S(h)] + √((KL(Q ‖ P) + ln(m/δ)) / (2m))
-    We express this as three conjuncts: absolute continuity, KL finiteness,
-    and the actual bound inequality. -/
-def PACBayesBound (X : Type u) (Y : Type v)
-    [MeasurableSpace X] [MeasurableSpace Y]
-    (prior posterior : Concept X Y → ℝ)
-    (S : IIDSample X Y) : Prop :=
-  -- (1) Absolute continuity: posterior support ⊆ prior support
-  (∀ (h : Concept X Y), posterior h > 0 → prior h > 0) ∧
-  -- (2) KL divergence is finite (required for the bound to be non-vacuous)
-  (∃ (kl : ℝ), kl ≥ 0 ∧
-    -- kl = Σ_h Q(h) · ln(Q(h) / P(h))  [discrete case]
-    -- kl = ∫ Q(h) · ln(Q(h) / P(h)) dh  [continuous case]
-    -- We abstract over the computation and assert its properties:
-    -- (3) The actual PAC-Bayes inequality: for any loss function ℓ,
-    --     the expected generalization gap under Q is bounded by √((kl + ln(m/δ)) / (2m))
-    ∀ (δ : ℝ), 0 < δ → δ < 1 →
-      ∃ (genBound : ℝ),
-        genBound = Real.sqrt ((kl + Real.log (S.sampleSize / δ)) / (2 * S.sampleSize)) ∧
-        genBound ≥ 0)
-
-/-- Information-theoretic bound: generalization bounds based on mutual information. -/
-def InformationTheoreticBound (X : Type u) (Y : Type v)
-    [MeasurableSpace X] [MeasurableSpace Y]
-    (L : BatchLearner X Y) (S : IIDSample X Y) : Prop :=
-  -- Generalization gap is bounded by the mutual information I(S; L(S))
-  -- between the sample and the hypothesis output:
-  -- |E[err_D(L(S))] - E[emp_err_S(L(S))]| ≤ √(2 · I(S; L(S)) / m)
-  L = L ∧ ∃ (genGap : ℝ) (mutualInfo : ℝ),
-    genGap ≥ 0 ∧ mutualInfo ≥ 0 ∧
-    genGap ≤ Real.sqrt (2 * mutualInfo / S.sampleSize)

@@ -22,7 +22,6 @@ valid splits, and split measures. No learning-theory types.
 - `mergeSamples` / `splitMergedSample` : merge/split isomorphism
 - `ValidSplit` : assignment of 2m indices to two groups of m
 - `SplitMeasure` : uniform measure over valid splits
-- `splitFirst` / `splitSecond` : extract groups from a merged sample
 
 ## References
 
@@ -120,15 +119,3 @@ noncomputable def SplitMeasure (m : ℕ) : MeasureTheory.Measure (ValidSplit m) 
   if _h : Fintype.card (ValidSplit m) = 0 then 0
   else (Fintype.card (ValidSplit m) : ENNReal)⁻¹ •
     ∑ vs : ValidSplit m, MeasureTheory.Measure.dirac vs
-
-/-- Given a merged sample z and a valid split, extract the first group (training sample). -/
-def splitFirst {X : Type u} {m : ℕ} (z : MergedSample X m) (vs : ValidSplit m) :
-    Fin m → X := by
-  let _validSplit := vs.card_true
-  exact fun i => z (Fin.castAdd m i |>.cast (two_mul m).symm)
-
-/-- Given a merged sample z and a valid split, extract the second group (ghost sample). -/
-def splitSecond {X : Type u} {m : ℕ} (z : MergedSample X m) (vs : ValidSplit m) :
-    Fin m → X := by
-  let _validSplit := vs.card_true
-  exact fun i => z (Fin.natAdd m i |>.cast (two_mul m).symm)

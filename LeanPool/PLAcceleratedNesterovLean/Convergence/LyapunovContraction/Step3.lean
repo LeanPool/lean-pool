@@ -136,18 +136,7 @@ theorem function_descent_with_aiming
   linarith
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 4. Gradient inner product decomposition
--- ════════════════════════════════════════════════════════════════════════════
-
-/-- Gradient inner product splits: ⟨g, e⟩ = ⟨P⊥g, e⟩ + ⟨Pg, e⟩.
-    In the flat case, ⟨Pg, e⟩ = 0 (tangent vs normal).
-    The Hessian bound controls ⟨Pg, e⟩ in the curved case. -/
-theorem gradient_inner_split (ge perpge tange : ℝ)
-    (h_split : ge = perpge + tange) :
-    ge = perpge + tange := h_split
-
--- ════════════════════════════════════════════════════════════════════════════
--- § 5. Normal energy: the completing-the-square core
+-- § 4. Normal energy: the completing-the-square core
 -- ════════════════════════════════════════════════════════════════════════════
 
 -- In the flat case, the auxiliary variable satisfies:
@@ -171,7 +160,7 @@ theorem sq_contraction_le (a : ℝ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
 -- Already proved in Step1 as velocity_normal_coeff.
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 6. Assembly: flat case contraction
+-- § 5. Assembly: flat case contraction
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- **Flat-case contraction assembly** (pure arithmetic).
@@ -203,7 +192,7 @@ theorem flat_contraction_assembly (a : ℝ)
   linarith
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 7. Assembly: contraction with perturbation
+-- § 6. Assembly: contraction with perturbation
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- **Contraction with perturbation** (pure arithmetic).
@@ -233,7 +222,7 @@ theorem perturbation_bound (a εη C Ln : ℝ)
   nlinarith
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 8. Tangential energy expansion
+-- § 7. Tangential energy expansion
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- The tangential energy at step n+1, expanded.
@@ -287,7 +276,7 @@ theorem tangential_cross_absorption (a sqrtη PVsq PGsq PVG : ℝ)
     _ ≤ (1 - a) / 2 * (PVsq + sqrtη ^ 2 * PGsq) := by nlinarith
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 9. Combined descent + tangential: gradient squared recovery
+-- § 8. Combined descent + tangential: gradient squared recovery
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- The descent provides -η/2 ‖g‖², and the tangential expansion creates
@@ -307,7 +296,7 @@ theorem gradient_sq_net (a η PGsq PperpGsq Gsq : ℝ)
   rw [h_orth]; ring
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 10. Main assembly theorem (the entry point for LyapunovContraction.lean)
+-- § 9. Main assembly theorem (the entry point for LyapunovContraction.lean)
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- **Main contraction assembly** (pure arithmetic).
@@ -343,7 +332,7 @@ theorem lyapunov_contraction_arithmetic
   linarith
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 11. Sufficient condition for perturbation absorption
+-- § 10. Sufficient condition for perturbation absorption
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- The perturbation from curvature error ξ_n contributes to ‖u_{n+1}‖²
@@ -371,17 +360,7 @@ theorem curvature_perturbation_absorption
   nlinarith [mul_nonneg (le_of_lt ha) hLn]
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 12. Orthogonal projector norm decomposition
--- ════════════════════════════════════════════════════════════════════════════
-
-/-- For an orthogonal projector P: ‖v‖² = ‖Pv‖² + ‖P⊥v‖².
-    This is the Pythagorean theorem. Stated for real numbers. -/
-theorem norm_sq_decomp (total tang perp : ℝ)
-    (h : total = tang + perp) (_ht : 0 ≤ tang) (_hp : 0 ≤ perp) :
-    total = tang + perp := h
-
--- ════════════════════════════════════════════════════════════════════════════
--- § 13. Strong aiming gives normal velocity recursion
+-- § 11. Strong aiming gives normal velocity recursion
 -- ════════════════════════════════════════════════════════════════════════════
 
 -- Strong aiming provides: ⟨g_n, e_n⟩ ≥ Ψ(x'_n) where Ψ = (f-f*) + (μ'/2)‖e‖².
@@ -392,7 +371,7 @@ theorem norm_sq_decomp (total tang perp : ℝ)
 -- this gives the (1-a) contraction for the normal energy.
 
 -- ════════════════════════════════════════════════════════════════════════════
--- § 14. Two-step contraction: sufficiency lemma
+-- § 12. Two-step contraction: sufficiency lemma
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- **Two-step sufficiency**: To prove L_{n+1} ≤ (1-a/2)L_n, it suffices to show:

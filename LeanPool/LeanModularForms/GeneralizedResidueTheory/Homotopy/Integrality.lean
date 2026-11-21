@@ -46,10 +46,10 @@ noncomputable section
 `γ₁ a = γ₁ b`) avoiding `z₀`, where `P` is the finite partition set of points
 at which the derivative of the homotopy may be discontinuous or undefined.
 
-Use this when working with closed piecewise-smooth curves; it is strictly
-stronger than `CurvesHomotopicAvoiding` (which handles open-endpoint curves
-fixed at `z₀`) but weaker than `ClosedCurvesHomotopicAvoiding` (which requires
-a globally continuous derivative without a partition). -/
+Use this when working with closed piecewise-smooth curves; it is weaker than
+`ClosedCurvesHomotopicAvoiding` (which requires a globally continuous derivative
+without a partition) and is not comparable with `CurvesHomotopicAvoiding` (which
+handles open-endpoint curves fixed at `z₀`). -/
 def PiecewiseCurvesHomotopicAvoiding (γ₀ γ₁ : ℝ → ℂ)
     (a b : ℝ) (z₀ : ℂ) (P : Finset ℝ) : Prop :=
   ∃ H : ℝ × ℝ → ℂ,
@@ -104,9 +104,7 @@ ClosedCurvesHomotopicAvoiding
         |
         v  (toPiecewise)
 PiecewiseCurvesHomotopicAvoiding   CurvesHomotopicAvoiding
-        |                                   ^
-        v  (toBasic, when endpoints = z₀)   |
-        (structurally different endpoint conditions)
+                                   (structurally different endpoint conditions)
 ```
 
 `CurvesHomotopicAvoiding` (from `Basic.lean`) requires `H(a,s) = z₀` and
@@ -139,27 +137,6 @@ theorem ClosedCurvesHomotopicAvoiding.toPiecewise
     rcases hK.exists_bound_of_continuousOn hf_cont.continuousOn with ⟨M, hM⟩
     simp only [norm_norm] at hM
     exact ⟨M, fun t ht s hs => hM ⟨t, s⟩ ⟨ht, hs⟩⟩
-
-/-- A piecewise homotopy (forgetting derivative bounds) gives a basic homotopy.
-
-**Note**: this conversion requires an extra hypothesis `hpts` asserting that the
-homotopy `H` (from `h`) satisfies `H(a,s) = z₀` and `H(b,s) = z₀` for all `s`.
-This is the endpoint condition required by `CurvesHomotopicAvoiding` (Basic.lean).
-The piecewise/closed variants only require `H(a,s) = H(b,s)` (closed curves),
-which is a strictly weaker condition — so no hypothesis-free conversion exists. -/
-theorem PiecewiseCurvesHomotopicAvoiding.toBasic
-    {γ₀ γ₁ : ℝ → ℂ} {a b : ℝ} {z₀ : ℂ} {P : Finset ℝ}
-    (h : PiecewiseCurvesHomotopicAvoiding γ₀ γ₁ a b z₀ P)
-    (hpts : ∀ H : ℝ × ℝ → ℂ,
-        Continuous H →
-        (∀ t ∈ Set.Icc a b, H (t, 0) = γ₀ t) →
-        (∀ t ∈ Set.Icc a b, H (t, 1) = γ₁ t) →
-        ∀ s ∈ Set.Icc (0 : ℝ) 1, H (a, s) = z₀ ∧ H (b, s) = z₀) :
-    CurvesHomotopicAvoiding γ₀ γ₁ a b z₀ := by
-  obtain ⟨H, hcont, hH0, hH1, _hclosed, havoid, _hdiff, _hderiv, _hbound⟩ := h
-  exact ⟨H, hcont, hH0, hH1,
-    hpts H hcont hH0 hH1,
-    fun t ht s hs => havoid t (Set.Ioo_subset_Icc_self ht) s hs⟩
 
 /-- If f is eventually equal to a constant, `limUnder` equals that constant. -/
 theorem limUnder_eventually_eq_const {α : Type*} {f : α → ℂ}
