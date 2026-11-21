@@ -53,8 +53,10 @@ public import LeanPool.QECCertificates.GF2.HGP
    index and every block is exactly $\mathrm{HGP}(A, B^{\top})$:
    $$H^{\mathrm{LP}}_X\bigl((i,s),\gamma\bigr)\bigl((j,t),\gamma\bigr)
      = \bigl[\mathrm{HGP}(A,B^{\top})\bigr]_{(i,s)(j,t)}.$$
-   Taking $\ell = 1$ (`Subsingleton G`) gives `lp_trivialGroup_eq_hgp`: **on the trivial group LP
-   is HGP entrywise**. This agrees with the literature (Panteleev–Kalachev, p. 8: "for
+   Taking $\ell = 1$ (`Subsingleton G`) gives `lp_trivialGroup_eq_hgp` and
+   `lp_trivialGroup_eq_hgp_Z`: **on the trivial group LP is HGP entrywise on the `Sum.inl`
+   block**; the `Sum.inr` block has the same form by `lpHX_liftConst_inr` and
+   `lpHZ_liftConst_inr`. This agrees with the literature (Panteleev–Kalachev, p. 8: "for
    $R = \mathbb{F}_q$ the lifted product is equivalent to the product construction", and the
    group algebra at $\ell = 1$ is $\mathbb{F}_q$ itself).
 
@@ -435,12 +437,13 @@ theorem lpHZ_liftConst_inr [DecidableEq G] {mA nA mB nB : ℕ} (A : Matrix (Fin 
   · simp [h]
   · simp [h, Ne.symm h]
 
-/-- **On the trivial group ($\ell = 1$) LP is HGP entrywise** ($X$ side).
+/-- **On the trivial group ($\ell = 1$) LP is HGP entrywise on the `Sum.inl` block** ($X$ side).
 
 At $\ell = 1$ the group index has a single element (`Subsingleton G`), so $\delta_{\sigma\tau}$ is
-constantly $1$ and the factor in `lpHX_liftConst_inl` disappears. This is the statement of the
-literature that "for $R = \mathbb{F}_q$ the lifted product is equivalent to the product
-construction" (Panteleev–Kalachev, p. 8). -/
+constantly $1$ and the factor in `lpHX_liftConst_inl` disappears. The `Sum.inr` block has the same
+form by `lpHX_liftConst_inr`. Compare the statement of the literature that "for
+$R = \mathbb{F}_q$ the lifted product is equivalent to the product construction"
+(Panteleev–Kalachev, p. 8). -/
 theorem lp_trivialGroup_eq_hgp [Subsingleton G] [DecidableEq G] {mA nA mB nB : ℕ}
     (A : Matrix (Fin mA) (Fin nA) (ZMod 2)) (B : Matrix (Fin mB) (Fin nB) (ZMod 2))
     (i : Fin mA) (s : Fin mB) (j : Fin nA) (t : Fin mB) (σ τ : G) :
@@ -448,7 +451,8 @@ theorem lp_trivialGroup_eq_hgp [Subsingleton G] [DecidableEq G] {mA nA mB nB : �
       = hgpHX A B.transpose (i, s) (Sum.inl (j, t)) := by
   rw [lpHX_liftConst_inl, ite_eq_left (Subsingleton.elim σ τ), mul_one]
 
-/-- **On the trivial group ($\ell = 1$) LP is HGP entrywise** ($Z$ side). -/
+/-- **On the trivial group ($\ell = 1$) LP is HGP entrywise on the `Sum.inl` block** ($Z$ side).
+The `Sum.inr` block has the same form by `lpHZ_liftConst_inr`. -/
 theorem lp_trivialGroup_eq_hgp_Z [Subsingleton G] [DecidableEq G] {mA nA mB nB : ℕ}
     (A : Matrix (Fin mA) (Fin nA) (ZMod 2)) (B : Matrix (Fin mB) (Fin nB) (ZMod 2))
     (j : Fin nA) (t : Fin nB) (j' : Fin nA) (s : Fin mB) (σ τ : G) :
