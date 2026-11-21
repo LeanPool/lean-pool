@@ -19,8 +19,8 @@ A unit-cost random-access machine with natural-number words, for algorithms on i
   (`Input.tape : ℕ → ℕ`); a deterministic algorithm ignores the tape, a randomized one reads it,
   and probabilities are taken over the tape;
 * the output is a list of natural numbers;
-* natural-number multiplication, division and remainder are unit-cost instructions (division and
-  remainder by zero give `0`, as in Lean);
+* Natural-number multiplication, division and remainder are unit-cost instructions. Division by
+  zero gives `0`, and remainder by zero gives the dividend.
 * `readIn` reads one input word, `rand` one word of the random tape, `outN` appends one word to
   the output.
 

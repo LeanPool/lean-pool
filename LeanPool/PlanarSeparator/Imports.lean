@@ -8,6 +8,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.PlanarSeparator
 public import LeanPool.PlanarSeparator.Kasteleyn.Plane.Cochain
+public import LeanPool.PlanarSeparator.Kasteleyn.Plane.Cochain.Basic
 public import LeanPool.PlanarSeparator.Kasteleyn.Plane.Map
 public import LeanPool.PlanarSeparator.Kasteleyn.Spec
 public import LeanPool.PlanarSeparator.NestedDissection.Bounds

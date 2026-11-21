@@ -9,7 +9,7 @@ Authors: Robert D. Barish
 module
 
 public import LeanPool.PlanarSeparator.PlanarSeparator.Map
-public import LeanPool.PlanarSeparator.Kasteleyn.Plane.Cochain
+public import LeanPool.PlanarSeparator.Kasteleyn.Plane.Cochain.Basic
 
 /-!
 # Closed cochains on a plane map are face coboundaries
@@ -43,14 +43,8 @@ variable {D P : Type*} (M : Map D P) [Fintype D] [DecidableEq D]
 
 /-- The sums of a cochain over the fibres of a function `g` on the darts. -/
 def fibreSum {X : Type*} [DecidableEq X] (g : D → X) :
-    (M.Edge → ZMod 2) →ₗ[ZMod 2] (X → ZMod 2) where
-  toFun c x := ∑ d with g d = x, c (M.edge d)
-  map_add' a b := by
-    funext x
-    simp [sum_add_distrib]
-  map_smul' r a := by
-    funext x
-    simp [mul_sum]
+    (M.Edge → ZMod 2) →ₗ[ZMod 2] (X → ZMod 2) :=
+  Kasteleyn.dartFibreSum M.edge g
 
 omit [DecidableEq D] in
 lemma fibreSum_apply {X : Type*} [DecidableEq X] (g : D → X) (c : M.Edge → ZMod 2) (x : X) :
@@ -58,17 +52,8 @@ lemma fibreSum_apply {X : Type*} [DecidableEq X] (g : D → X) (c : M.Edge → Z
 
 /-- The fibre sums of the indicator of a single edge. -/
 lemma fibreSum_single {X : Type*} [DecidableEq X] (g : D → X) (d : D) :
-    M.fibreSum g (Pi.single (M.edge d) 1) = Pi.single (g d) 1 + Pi.single (g (M.α d)) 1 := by
-  funext x
-  rw [fibreSum_apply, sum_filter]
-  have : ∀ d' : D, (if g d' = x then (Pi.single (M.edge d) (1 : ZMod 2) : _ → ZMod 2)
-      (M.edge d') else 0) =
-      if M.edge d' = M.edge d then (if g d' = x then 1 else 0) else 0 := by
-    intro d'
-    by_cases h1 : g d' = x <;> by_cases h2 : M.edge d' = M.edge d <;> simp [h1, h2]
-  rw [sum_congr rfl fun d' _ => this d', ← sum_filter, filter_edge_eq,
-    sum_pair (M.α_ne d).symm]
-  simp [Pi.single_apply, eq_comm]
+    M.fibreSum g (Pi.single (M.edge d) 1) = Pi.single (g d) 1 + Pi.single (g (M.α d)) 1 :=
+  Kasteleyn.dartFibreSum_single M.edge g (M.α_ne d).symm (M.filter_edge_eq d)
 
 omit [DecidableEq D] in
 /-- If the fibres of `g` are connected by the edges, the fibre sums of the cochains are all the
@@ -78,31 +63,9 @@ lemma sumZero_le_range_fibreSum {X : Type*} [Fintype X] [DecidableEq X] (g : D �
       x₀ y) :
     Kasteleyn.sumZero X ≤ LinearMap.range (M.fibreSum g) := by
   classical
-  set R := LinearMap.range (M.fibreSum g)
-  have hpair : ∀ y, Pi.single x₀ (1 : ZMod 2) + Pi.single y 1 ∈ R := by
-    intro y
-    induction hconn y with
-    | refl =>
-      convert R.zero_mem
-      funext z
-      exact Kasteleyn.ZMod.two_add_self _
-    | @tail a b _ hab ih =>
-      obtain ⟨d, rfl, rfl⟩ := hab
-      have h := R.add_mem ih ⟨_, M.fibreSum_single g d⟩
-      convert h using 1
-      funext z
-      simp only [Pi.add_apply]
-      rw [add_assoc, ← add_assoc (Pi.single (g d) 1 z), Kasteleyn.ZMod.two_add_self, zero_add]
-  intro p hp
-  rw [Kasteleyn.mem_sumZero] at hp
-  have hp' : p = ∑ y, p y • (Pi.single x₀ (1 : ZMod 2) + Pi.single y 1) := by
-    funext z
-    by_cases hz : z = x₀
-    · subst hz
-      simp [Finset.sum_apply, Pi.single_apply, sum_add_distrib, hp]
-    · simp [Finset.sum_apply, Pi.single_apply, hz]
-  rw [hp']
-  exact R.sum_mem fun y _ => R.smul_mem _ (hpair y)
+  refine Kasteleyn.sumZero_le_range_of_reachable (M.fibreSum g) x₀ hconn ?_
+  rintro _ _ ⟨d, rfl, rfl⟩
+  exact ⟨_, M.fibreSum_single g d⟩
 
 /-- The coboundary of a function on the faces: on each edge, the sum of its values on the two
 sides of the edge. -/

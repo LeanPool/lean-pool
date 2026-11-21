@@ -681,48 +681,6 @@ open WordRAM Map Map.SpTree CycleSearch CycleSearch.Coded
 variable {D Q : Type*} [Fintype D] [DecidableEq D] [Fintype Q] [DecidableEq Q] {M : Map D Q}
   {T : M.SpTree} {k : ℕ} {cd : D ≃ Fin (3 * k)} {A Tm : ℕ → ℕ}
 
-/-- **The balance of the cycle found by the search**, for the weights of the vertices given to the
-faces by first darts: the vertices inside and outside the dart `a`, without the set `X` (empty in
-mode `0`, the corners of the last triangle `δ` in mode `1`), weigh at most `2/3` each. -/
-theorem CycleOut.balance (hM : M.IsPlane) (hT3 : ∀ δ, M.IsTriangle δ) {first : Q → D}
-    (hfirst : ∀ v, M.vert (first v) = v) (w : Q → ℕ) {mode δn an : ℕ}
-    (h : CycleOut M T (fwt M first w) cd mode δn an) :
-    ∃ (a : D) (X : Finset Q), (cd a : ℕ) = an ∧ #X ≤ 3 ∧
-      ((mode = 0 ∧ X = ∅) ∨ (mode = 1 ∧ ∃ δ : D, (cd δ : ℕ) = δn ∧
-        X = {M.vert δ, M.vert (M.φ δ), M.vert (M.φ (M.φ δ))})) ∧
-      3 * ∑ v ∈ T.inV a \ X, w v ≤ 2 * ∑ v, w v ∧ 3 * ∑ v ∈ T.outV a \ X, w v ≤ 2 * ∑ v, w v := by
-  classical
-  have htot := sum_fwt_univ (M := M) first w
-  rcases h with ⟨h0, a, ha, hnt, h1, h2⟩ | ⟨h0, δ, a, hδ, ha, hnt, hda, h1, h2⟩
-  · refine ⟨a, ∅, ha, by simp, Or.inl ⟨h0, rfl⟩, ?_, ?_⟩
-    · have := sum_inV_le (T := T) w hM hfirst a
-      simp only [sdiff_empty]
-      omega
-    · have := sum_inV_le (T := T) w hM hfirst (M.α a)
-      rw [inV_α hM hnt] at this
-      simp only [sdiff_empty]
-      omega
-  · set X : Finset Q := {M.vert δ, M.vert (M.φ δ), M.vert (M.φ (M.φ δ))}
-    refine ⟨a, X, ha, card_le_three, Or.inr ⟨h0, δ, hδ, rfl⟩, ?_, ?_⟩
-    · have := sum_inV_le (T := T) w hM hfirst a
-      have := sum_le_sum_of_subset (f := w) (sdiff_subset (s := T.inV a) (t := X))
-      omega
-    · have hnδ : ¬ T.IsTree δ := hnt
-      have hout : M.face δ ∉ T.inside a := by
-        rcases hda with rfl | rfl
-        · intro hm
-          have := inside_α_subset hM hnδ (M.face_φ δ) (hT3 δ).edge_ne₁ hm
-          simp at this
-        · intro hm
-          have := inside_α_subset hM hnδ ((M.face_φ _).trans (M.face_φ δ)) (hT3 δ).edge_ne₂ hm
-          simp at this
-      have hle := sum_outV_le (T := T) w hM hfirst a (hT3 δ).φ_three hout
-      have heq : (T.outV a \ X) = (T.outV a).filter fun v => v ≠ M.vert δ ∧
-          v ≠ M.vert (M.φ δ) ∧ v ≠ M.vert (M.φ (M.φ δ)) := by
-        ext v; simp only [X, mem_sdiff, mem_filter, mem_insert, mem_singleton, not_or, ne_eq]
-      rw [heq]
-      omega
-
 open Classical in
 /-- **The inside marks.** The marks written by `inLoop` for the face `F` and the flag given by
 `sideOf` describe the inside of the dart `a`: a face is inside `a` exactly when its mark differs

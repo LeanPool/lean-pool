@@ -496,6 +496,49 @@ def CycleOut (M : Map D P) (T : M.SpTree) (fw : M.Face → ℕ) (cd : D ≃ Fin 
       (a = M.α (M.φ δ) ∨ a = M.α (M.φ (M.φ δ))) ∧ 3 * ∑ G ∈ T.inside a, fw G ≤ 2 * ∑ G, fw G ∧
       3 * (∑ G, fw G - ∑ G ∈ T.inside a, fw G - fw (M.face δ)) ≤ 2 * ∑ G, fw G)
 
+/-- **The balance of the cycle found by the search**, for the weights of the vertices given to the
+faces by first darts: the vertices inside and outside the dart `a`, without the set `X` (empty in
+mode `0`, the corners of the last triangle `δ` in mode `1`), weigh at most `2/3` each. -/
+theorem _root_.PlanarSeparator.SepProg.CycleOut.balance
+    (hM : M.IsPlane) (hT3 : ∀ δ, M.IsTriangle δ) {first : P → D}
+    (hfirst : ∀ v, M.vert (first v) = v) (w : P → ℕ) {mode δn an : ℕ}
+    (h : CycleOut M T (fwt M first w) cd mode δn an) :
+    ∃ (a : D) (X : Finset P), (cd a : ℕ) = an ∧ #X ≤ 3 ∧
+      ((mode = 0 ∧ X = ∅) ∨ (mode = 1 ∧ ∃ δ : D, (cd δ : ℕ) = δn ∧
+        X = {M.vert δ, M.vert (M.φ δ), M.vert (M.φ (M.φ δ))})) ∧
+      3 * ∑ v ∈ T.inV a \ X, w v ≤ 2 * ∑ v, w v ∧ 3 * ∑ v ∈ T.outV a \ X, w v ≤ 2 * ∑ v, w v := by
+  classical
+  have htot := sum_fwt_univ (M := M) first w
+  rcases h with ⟨h0, a, ha, hnt, h1, h2⟩ | ⟨h0, δ, a, hδ, ha, hnt, hda, h1, h2⟩
+  · refine ⟨a, ∅, ha, by simp, Or.inl ⟨h0, rfl⟩, ?_, ?_⟩
+    · have := sum_inV_le (T := T) w hM hfirst a
+      simp only [sdiff_empty]
+      omega
+    · have := sum_inV_le (T := T) w hM hfirst (M.α a)
+      rw [inV_α hM hnt] at this
+      simp only [sdiff_empty]
+      omega
+  · set X : Finset P := {M.vert δ, M.vert (M.φ δ), M.vert (M.φ (M.φ δ))}
+    refine ⟨a, X, ha, card_le_three, Or.inr ⟨h0, δ, hδ, rfl⟩, ?_, ?_⟩
+    · have := sum_inV_le (T := T) w hM hfirst a
+      have := sum_le_sum_of_subset (f := w) (sdiff_subset (s := T.inV a) (t := X))
+      omega
+    · have hnδ : ¬ T.IsTree δ := hnt
+      have hout : M.face δ ∉ T.inside a := by
+        rcases hda with rfl | rfl
+        · intro hm
+          have := inside_α_subset hM hnδ (M.face_φ δ) (hT3 δ).edge_ne₁ hm
+          simp at this
+        · intro hm
+          have := inside_α_subset hM hnδ ((M.face_φ _).trans (M.face_φ δ)) (hT3 δ).edge_ne₂ hm
+          simp at this
+      have hle := sum_outV_le (T := T) w hM hfirst a (hT3 δ).φ_three hout
+      have heq : (T.outV a \ X) = (T.outV a).filter fun v => v ≠ M.vert δ ∧
+          v ≠ M.vert (M.φ δ) ∧ v ≠ M.vert (M.φ (M.φ δ)) := by
+        ext v; simp only [X, mem_sdiff, mem_filter, mem_insert, mem_singleton, not_or, ne_eq]
+      rw [heq]
+      omega
+
 /-- **The separation given by the cycle search.** Let the face weights be carried by vertex
 weights `w` through darts `first v` at the vertices (`fwt`). If the outcome of the cycle search
 is `CycleOut`, then the vertices split into `S`, `A`, `B`, with `S` the two root paths of a dart
@@ -509,7 +552,6 @@ theorem CycleOut.separation (hM : M.IsPlane) (hT3 : ∀ δ, M.IsTriangle δ) {fi
       (∀ d, M.vert d ∈ A → M.vert (M.α d) ∉ B) ∧
       3 * ∑ v ∈ A, w v ≤ 2 * ∑ v, w v ∧ 3 * ∑ v ∈ B, w v ≤ 2 * ∑ v, w v := by
   classical
-  have htot := sum_fwt_univ (M := M) first w
   have hsep : ∀ (a : D) (X : Finset P), (T.sep a ∪ X) ∪ (T.inV a \ X) ∪ (T.outV a \ X) = univ ∧
       Disjoint (T.sep a ∪ X) (T.inV a \ X) ∧ Disjoint (T.sep a ∪ X) (T.outV a \ X) ∧
       Disjoint (T.inV a \ X) (T.outV a \ X) ∧
@@ -532,37 +574,11 @@ theorem CycleOut.separation (hM : M.IsPlane) (hT3 : ∀ δ, M.IsTriangle δ) {fi
     · rw [disjoint_left]; intro v h1 h2
       exact (mem_filter.1 (mem_sdiff.1 h2).1).2.2 (mem_sdiff.1 h1).1
     · exact vert_α_ne_of_mem_inV hM (mem_sdiff.1 hd).1 (mem_sdiff.1 hd').1 rfl rfl
-  rcases h with ⟨-, a, ha, hnt, h1, h2⟩ | ⟨-, δ, a, -, ha, hnt, hda, h1, h2⟩
-  · obtain ⟨u, s1, s2, s3, s4⟩ := hsep a ∅
-    refine ⟨a, ∅, _, _, _, ha, by simp, rfl, u, s1, s2, s3, s4, ?_, ?_⟩
-    · have := sum_inV_le (T := T) w hM hfirst a
-      simp only [sdiff_empty] at this ⊢
-      omega
-    · have := sum_inV_le (T := T) w hM hfirst (M.α a)
-      rw [inV_α hM hnt] at this
-      simp only [sdiff_empty] at this ⊢
-      omega
-  · set X : Finset P := {M.vert δ, M.vert (M.φ δ), M.vert (M.φ (M.φ δ))}
-    obtain ⟨u, s1, s2, s3, s4⟩ := hsep a X
-    have hX : #X ≤ 3 := card_le_three
-    refine ⟨a, X, _, _, _, ha, hX, rfl, u, s1, s2, s3, s4, ?_, ?_⟩
-    · have := sum_inV_le (T := T) w hM hfirst a
-      have := sum_le_sum_of_subset (f := w) (sdiff_subset (s := T.inV a) (t := X))
-      omega
-    · have hout : M.face δ ∉ T.inside a := by
-        rcases hda with rfl | rfl
-        · intro hm
-          have := inside_α_subset hM hnt (M.face_φ δ) (hT3 δ).edge_ne₁ hm
-          simp at this
-        · intro hm
-          have := inside_α_subset hM hnt ((M.face_φ _).trans (M.face_φ δ)) (hT3 δ).edge_ne₂ hm
-          simp at this
-      have hle := sum_outV_le (T := T) w hM hfirst a (hT3 δ).φ_three hout
-      have heq : (T.outV a \ X) = (T.outV a).filter fun v => v ≠ M.vert δ ∧
-          v ≠ M.vert (M.φ δ) ∧ v ≠ M.vert (M.φ (M.φ δ)) := by
-        ext v; simp only [X, mem_sdiff, mem_filter, mem_insert, mem_singleton, not_or, ne_eq]
-      rw [heq]
-      omega
+  obtain ⟨a, X, ha, hX, _, hA, hB⟩ :=
+    SepProg.CycleOut.balance hM hT3 hfirst w h
+  obtain ⟨cover, disjointLeft, disjointRight, disjointSides, noCrossing⟩ := hsep a X
+  exact ⟨a, X, _, _, _, ha, hX, rfl, cover, disjointLeft, disjointRight, disjointSides,
+    noCrossing, hA, hB⟩
 
 end CycleSearch
 
