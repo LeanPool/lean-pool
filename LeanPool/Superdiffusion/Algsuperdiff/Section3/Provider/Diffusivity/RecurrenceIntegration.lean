@@ -26,12 +26,13 @@ The reported constant is one fixed numeral, independent of the sequence, of
 exists a universal `C < ∞`" made explicit (see
 `integrate_approx_recurrence_universal` for the literal existential form).
 
-## No `c⋆ ≤ 1`
+## The upper bound on `c⋆`
 
-Neither the printed statement nor this formalization assumes any upper bound on
-`c⋆`: the descent instead caps its step at `c = min{c⋆,1}`
-(`Internal.adaptStep_le_cap`), and the resulting slack is absorbed into the
-single universal constant `C`.
+The descent assumes no upper bound on `c⋆`: it caps its step at
+`c = min{c⋆,1}` (`Internal.adaptStep_le_cap`), and the resulting slack is
+absorbed into the single universal constant `C`.  The public form
+`integrate_approx_recurrence_cstarPlus` does assume `c⋆ ≤ 3 / 2`, which it uses
+to bound the capped term `(c⋆·min{c⋆,1})⁻¹` by `4 (c⋆²)⁻¹`.
 
 ## References
 
@@ -333,7 +334,8 @@ private theorem integrate_of_bracket
 /-- **Two-constant form of `l.integrate.approx.recurrence`**.
 
 The manuscript denominates both the a-priori envelope `e.small.scale.bound` and
-the fixed-point target `A_{n,m}` / `P_m` in the single constant `c⋆`.
+the fixed-point target `A_{n,m}` / `P_m` in the single constant `c⋆`.  This form
+assumes `c⋆ ≤ 3 / 2`.
 
 Taking `c⁺ = c⋆` recovers `integrate_approx_recurrence` up to the universal
 constant.  This is **not** a node statement: `l.integrate.approx.recurrence` is
