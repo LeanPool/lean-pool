@@ -73,11 +73,8 @@ theorem isIso_of_forall_isOrthogonal {A B : 𝒞} (m : A ⟶ B) (h : ∀ X, IsOr
 the image of `G`: every pullback of `m` is orthogonal to the objects `G.obj Y`. -/
 theorem isDenseFor_of_isIso_map_of_adjunction {F : 𝒞 ⥤ 𝒟} {G : 𝒟 ⥤ 𝒞} (adj : F ⊣ G)
     [PreservesLimitsOfShape WalkingCospan F] {A B : 𝒞} (m : A ⟶ B) [Mono m]
-    [IsIso (F.map m)] : IsDenseFor (fun X => ∃ Y, X = G.obj Y) m := by
-  refine ⟨inferInstance, fun T A' t n a hp H ⟨Y, hY⟩ => ?_⟩
-  subst hY
-  have := (F.map_isPullback hp).isIso_fst_of_isIso
-  exact (isOrthogonal_map_iff_of_adjunction adj n Y).1 (Subtopos.isOrthogonal_of_isIso _ _)
+    [IsIso (F.map m)] : IsDenseFor (fun X => ∃ Y, X = G.obj Y) m :=
+  Subtopos.isDenseFor_of_isIso_map_of_adjunction adj (fun _ h => h) m
 
 end Orthogonal
 
@@ -98,7 +95,7 @@ theorem exists_iso_sheafify_comp (h : J ≤ J₁) (F : Sheaf J (Type u) ⥤ E) [
     ObjectProperty.lift _ (F.rightAdjoint ⋙ sheafToPresheaf J (Type u)) hF
   let adj : sheafInclusion h ⋙ F ⊣ G' :=
     (Adjunction.ofIsLeftAdjoint F).restrictFullyFaithful (iC := sheafInclusion h)
-      (iD := 𝟭 E) (ObjectProperty.fullyFaithfulιOfLE _) (Functor.FullyFaithful.id _)
+      (iD := 𝟭 E) (.ofFullyFaithful _) (Functor.FullyFaithful.id _)
       (Functor.rightUnitor _).symm (NatIso.ofComponents fun _ => Iso.refl _)
   have : PreservesFiniteLimits (sheafInclusion h) :=
     have := (sheafifyAdjunction h).rightAdjoint_preservesLimits

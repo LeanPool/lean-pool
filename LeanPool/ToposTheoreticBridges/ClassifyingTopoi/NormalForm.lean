@@ -5,7 +5,6 @@ Authors: Michel Hua
 -/
 module
 
-public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.ClassifyingSite
 public import LeanPool.ToposTheoreticBridges.ClassifyingTopoi.Semantics
 
 /-!

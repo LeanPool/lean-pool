@@ -23,7 +23,11 @@ sequents.
 * `LeanPool.ClassifyingTopoi.GeometricFormula.bot`: the false formula, the empty disjunction;
 * `LeanPool.ClassifyingTopoi.GeometricFormula.IsCoherent`: coherent formulas, whose disjunctions
   are all finite;
-* `LeanPool.ClassifyingTopoi.Sequent`, `LeanPool.ClassifyingTopoi.GeometricTheory`.
+* `LeanPool.ClassifyingTopoi.Sequent`, `LeanPool.ClassifyingTopoi.GeometricTheory`;
+* `LeanPool.ClassifyingTopoi.GeometricFormula.IsHorn`, `GeometricTheory.IsHorn`: Horn formulas
+  (finite conjunctions of atomic formulas) and Horn theories;
+* `LeanPool.ClassifyingTopoi.GeometricFormula.exs`: existential quantification of the last `m`
+  variables.
 
 ## References
 
@@ -82,5 +86,25 @@ structure Sequent (L : FirstOrder.Language.{u₁, u₂}) where
 variable (L) in
 /-- A geometric theory: a set of geometric sequents. -/
 abbrev GeometricTheory := Set (Sequent.{w} L)
+
+/-- Horn formulas: finite conjunctions of atomic formulas. -/
+def GeometricFormula.IsHorn : {n : ℕ} → GeometricFormula.{w} L n → Prop
+  | _, .top => True
+  | _, .and φ ψ => φ.IsHorn ∧ ψ.IsHorn
+  | _, .iSup _ => False
+  | _, .equal _ _ => True
+  | _, .rel _ _ => True
+  | _, .ex _ => False
+
+/-- A Horn theory: every axiom is a sequent between Horn formulas. -/
+def GeometricTheory.IsHorn (T : GeometricTheory.{w} L) : Prop :=
+  ∀ σ ∈ T, σ.lhs.IsHorn ∧ σ.rhs.IsHorn
+
+/-- Existential quantification of the last `m` variables of the context
+`Fin (n + m)`. -/
+def GeometricFormula.exs {n : ℕ} : {m : ℕ} → GeometricFormula.{w} L (n + m) →
+    GeometricFormula.{w} L n
+  | 0, φ => φ
+  | m + 1, φ => exs (m := m) (.ex φ)
 
 end LeanPool.ClassifyingTopoi

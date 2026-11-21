@@ -219,6 +219,17 @@ theorem piComparison_comp' [HasFiniteProducts E] [HasFiniteProducts E'] [HasFini
   rw [← G.map_comp, piComparison_comp_π]
   exact piComparison_comp_π (F ⋙ G) (fun _ => X) j
 
+/-- The inverse of the comparison morphism of a composite of functors preserving finite
+products. -/
+theorem inv_piComparison_comp [HasFiniteProducts E] [HasFiniteProducts E']
+    [HasFiniteProducts E''] (F : E ⥤ E') (G : E' ⥤ E'') [PreservesFiniteProducts F]
+    [PreservesFiniteProducts G] (X : E) (k : ℕ) :
+    inv (piComparison (F ⋙ G) fun _ : Fin k => X) =
+      inv (piComparison G fun _ => F.obj X) ≫ G.map (inv (piComparison F fun _ => X)) := by
+  apply IsIso.inv_eq_of_hom_inv_id
+  rw [piComparison_comp']
+  simp
+
 /-- The comparison morphism of the identity functor. -/
 theorem piComparison_id [HasFiniteProducts E] (X : E) (k : ℕ) :
     piComparison (𝟭 E) (fun _ : Fin k => X) = 𝟙 _ := by
@@ -229,10 +240,11 @@ theorem piComparison_id [HasFiniteProducts E] (X : E) (k : ℕ) :
 variable [HasFiniteLimits E] [HasImages E] [HasFiniteLimits E'] [HasImages E']
   [HasFiniteLimits E''] [HasImages E'']
 
-omit [HasImages E] in
+omit [HasFiniteLimits E] [HasImages E] in
 /-- A natural transformation between functors preserving finite products induces a homomorphism
 between the images of a structure. -/
-theorem isHom_map_app (M : CatStructure L E) {F G : E ⥤ E'} [PreservesFiniteProducts F]
+theorem isHom_map_app [HasFiniteProducts E] (M : CatStructure L E) {F G : E ⥤ E'}
+    [PreservesFiniteProducts F]
     [PreservesFiniteProducts G] (α : F ⟶ G) : (M.map F).IsHom (M.map G) (α.app M.carrier) where
   funMap {k} f := by
     have : inv (piComparison F fun _ : Fin k => M.carrier) ≫ α.app _ =
@@ -247,9 +259,10 @@ theorem isHom_map_app (M : CatStructure L E) {F G : E ⥤ E'} [PreservesFinitePr
     rw [Category.assoc, ← app_comp_piComparison, ← Category.assoc, α.naturality,
       Category.assoc]
 
-omit [HasImages E] in
+omit [HasFiniteLimits E] [HasImages E] in
 /-- The images of a structure under isomorphic functors are isomorphic. -/
-theorem isomorphic_map_of_iso (M : CatStructure L E) {F G : E ⥤ E'} [PreservesFiniteProducts F]
+theorem isomorphic_map_of_iso [HasFiniteProducts E] (M : CatStructure L E) {F G : E ⥤ E'}
+    [PreservesFiniteProducts F]
     [PreservesFiniteProducts G] (α : F ≅ G) : (M.map F).Isomorphic (M.map G) :=
   ⟨α.app M.carrier, M.isHom_map_app α.hom, M.isHom_map_app α.inv⟩
 
@@ -274,37 +287,46 @@ theorem isomorphic_map_id (M : CatStructure L E) : (M.map (𝟭 E)).Isomorphic M
     rw [piComparison_id]
     simp
 
-omit [HasImages E] [HasImages E'] in
-/-- The image of a structure under a composite functor is isomorphic to the iterated image. -/
-theorem isomorphic_map_comp (M : CatStructure L E) (F : E ⥤ E') (G : E' ⥤ E'')
-    [PreservesFiniteProducts F] [PreservesFiniteProducts G] :
-    (M.map (F ⋙ G)).Isomorphic ((M.map F).map G) := by
-  have key : ∀ {k : ℕ},
-      inv (piComparison (F ⋙ G) fun _ : Fin k => M.carrier) =
-        inv (piComparison G fun _ => F.obj M.carrier) ≫
-          G.map (inv (piComparison F fun _ => M.carrier)) := fun {k} => by
-    apply IsIso.inv_eq_of_hom_inv_id
-    rw [piComparison_comp']
-    simp
-  refine ⟨Iso.refl _, ⟨fun f => ?_, fun R => ?_⟩, ⟨fun f => ?_, fun R => ?_⟩⟩
+section MapComp
+
+omit [HasFiniteLimits E] [HasImages E] [HasFiniteLimits E'] [HasImages E']
+
+variable [HasFiniteProducts E] [HasFiniteProducts E'] (M : CatStructure L E) (F : E ⥤ E')
+  (G : E' ⥤ E'') [PreservesFiniteProducts F] [PreservesFiniteProducts G]
+
+/-- The identity of carriers is a homomorphism from the image of a structure under a composite
+functor to the iterated image. -/
+theorem isHom_map_comp_hom : (M.map (F ⋙ G)).IsHom ((M.map F).map G) (𝟙 _) := by
+  refine ⟨fun f => ?_, fun R => ?_⟩
   · change (inv (piComparison (F ⋙ G) _) ≫ G.map (F.map (M.funMap f))) ≫ 𝟙 _ =
       _ ≫ inv (piComparison G _) ≫ G.map (inv (piComparison F _) ≫ F.map (M.funMap f))
-    rw [key]
+    rw [inv_piComparison_comp]
     simp
   · refine imageSubobject_le_pullback _ _ _ (𝟙 _) ?_
     change (G.map (F.map (M.relMap R).hom) ≫ piComparison (F ⋙ G) _) ≫ _ =
       𝟙 _ ≫ G.map (F.map (M.relMap R).hom ≫ piComparison F _) ≫ piComparison G _
     rw [piComparison_comp']
     simp
+
+/-- The identity of carriers is a homomorphism from the iterated image of a structure to its
+image under the composite functor. -/
+theorem isHom_map_comp_inv : ((M.map F).map G).IsHom (M.map (F ⋙ G)) (𝟙 _) := by
+  refine ⟨fun f => ?_, fun R => ?_⟩
   · change (inv (piComparison G _) ≫ G.map (inv (piComparison F _) ≫ F.map (M.funMap f))) ≫
       𝟙 _ = _ ≫ inv (piComparison (F ⋙ G) _) ≫ G.map (F.map (M.funMap f))
-    rw [key]
+    rw [inv_piComparison_comp]
     simp
   · refine imageSubobject_le_pullback _ _ _ (𝟙 _) ?_
     change (G.map (F.map (M.relMap R).hom ≫ piComparison F _) ≫ piComparison G _) ≫ _ =
       𝟙 _ ≫ G.map (F.map (M.relMap R).hom) ≫ piComparison (F ⋙ G) _
     rw [piComparison_comp']
     simp
+
+/-- The image of a structure under a composite functor is isomorphic to the iterated image. -/
+theorem isomorphic_map_comp : (M.map (F ⋙ G)).Isomorphic ((M.map F).map G) :=
+  ⟨Iso.refl _, M.isHom_map_comp_hom F G, M.isHom_map_comp_inv F G⟩
+
+end MapComp
 
 /-- A functor preserving finite limits and epimorphisms, into a strong-epi category, maps
 homomorphisms to homomorphisms. -/
