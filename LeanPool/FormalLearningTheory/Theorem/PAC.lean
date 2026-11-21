@@ -153,9 +153,9 @@ theorem sauer_shelah_quantitative (X : Type u) [Fintype X] [DecidableEq X]
     The bound does not depend on ε; the classical bound linear in d/ε
     (Ehrenfeucht-Haussler-Kearns-Valiant 1989) is not proved here.
 
-    Proof route: construct 2^d labelings on a shattered set of size d and use
-    double-averaging + reversed Markov under the uniform distribution on the
-    shattered set (via `sample_complexity_lower_bound`). -/
+    Under the uniform distribution on a shattered set of size `d`, double-counting
+    successful sample–labeling pairs gives a target with success probability at
+    most `1 / 2`, contradicting the PAC guarantee when `m < ⌈(d-1)/2⌉`. -/
 theorem pac_lower_bound (X : Type u) [MeasurableSpace X]
     [MeasurableSingletonClass X]
     (C : ConceptClass X Bool) (d : ℕ)

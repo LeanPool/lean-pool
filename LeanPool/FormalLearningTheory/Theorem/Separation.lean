@@ -727,27 +727,11 @@ private lemma boosted_sample_error_le_of_good_blocks
 
 /-- Boosting lemma: given a learner with success probability ≥ 2 / 3 under D^m,
     construct a boosted learner with success probability ≥ 1-δ for any δ > 0.
-    Standard technique: run L independently k times on independent samples of
-    size m₀, take majority vote.
-
-    Construction:
-    - kmin = ⌈9/δ⌉ + 2 (enough blocks for Chebyshev concentration)
-    - m₀ from hrate(ε/kmin) so that rate(m₀) < ε/kmin
-    - n = max m₀ (kmin - 1). Then k = n + 1 ≥ kmin.
-    - Total samples: (n + 1) * n, with Nat.sqrt((n+1)*n) = n.
-    - At sample size m = (n+1)*n, L' recovers k = n+1 blocks of size n.
-    - Event containment: when > k/2 blocks have D-error ≤ rate(n) < ε/kmin,
-      majority D-error ≤ k · rate(n) < k/kmin · ε ≤ ε via union bound.
-
-    The measure-theoretic proof uses:
-    (a) blockExtract : (Fin (k*n) → X) → Fin k → (Fin n → X)
-    (b) iIndepFun for block extractions under product measure D^(k*n)
-    (c) chebyshev_majority_bound for i.i.d. Bernoulli(≥2 / 3) events
-    (d) block extraction marginal = D^n
-    (e) majority vote D-error analysis via union bound
-
-    The helper lemmas below provide the concentration and majority analysis
-    needed by the final PAC bound. -/
+    Run the learner on `k = n + 1` independent blocks of size `n` and take the
+    pointwise majority. Choose `k ≥ ⌈36/δ⌉ + 2` and `rate n < ε / 7`.
+    Chebyshev's inequality gives at least `7 / 12` good blocks with probability
+    at least `1 - δ`. On that event the majority error is bounded by
+    `7 * max (rate n) 0`, which is at most `ε` -/
 private theorem boost_two_thirds_to_pac (X : Type u) [MeasurableSpace X]
     (C : ConceptClass X Bool)
     [MeasurableHypotheses X C]
@@ -900,12 +884,9 @@ private theorem boost_two_thirds_to_pac (X : Type u) [MeasurableSpace X]
 /-- Universal learning by a jointly measurable learner implies PAC learnability.
     The hypotheses `hrate` and `huniv` say that `L` witnesses `UniversalLearnable X C`
     with rate function `rate`; joint measurability of `L` is required for the boosting.
-    Proof sketch: L has rate → 0 and Pr[error ≤ rate(m)] ≥ 2 / 3.
-    Two components:
-    1. Event containment: rate(m) < ε ⟹ {error ≤ rate(m)} ⊆ {error ≤ ε} (monotonicity).
-    2. Confidence boosting: 2 / 3 → 1-δ via median-of-means
-       implemented in boost_two_thirds_to_pac.
-    Routes through boost_two_thirds_to_pac which encapsulates the Chernoff-based boosting. -/
+    The boosted learner takes the pointwise majority of independent block
+    learners. Chebyshev's inequality ensures enough good blocks to make the
+    majority error at most `ε` with probability at least `1 - δ` -/
 theorem universal_imp_pac (X : Type u) [MeasurableSpace X]
     (C : ConceptClass X Bool)
     [MeasurableHypotheses X C]
@@ -1212,7 +1193,8 @@ theorem online_strictly_stronger_pac :
   ⟨fun X _ C _ hol => online_imp_pac X C hol, pac_not_implies_online⟩
 
 /-- Finite learnability implies EX learnability (identification in the limit).
-    The strictness of this inclusion is not proved here. -/
+    The two criteria as defined here are equivalent. Once every conjecture
+    equals the target, it also equals the conjecture at the stabilization time. -/
 theorem finiteLearnable_imp_exLearnable :
     ∀ (X : Type u) (C : ConceptClass X Bool),
       FiniteLearnable X C → EXLearnable X C := by
