@@ -17,7 +17,7 @@ import Mathlib.Tactic.NormNum.OfScientific
 # Left and right multiplication sets
 
 Provides `leftMul a = Ra`, `rightMul a = aR`, the `leftIdealOfElement` constructor, and
-the consequence that `aRb = 0` collapses these auxiliary sets to zero. Used by the prime ring
+the consequence that `aRb = 0` implies `Ra * Rb = 0`. Used by the prime ring
 characterisation.
 -/
 
@@ -47,8 +47,8 @@ theorem in_particular (a c b : R) : bothMul a b = {0} → a * c * b = 0 := by
 
 open Pointwise Set
 
--- aRb = 0 implies Ra = 0 or Rb = 0
-theorem both_mul_zero_one_left_zero :
+-- aRb = 0 implies Ra * Rb = 0
+theorem left_mul_mul_left_mul_eq_zero_of_both_mul_eq_zero :
     bothMul a b = {0} → (leftMul a) * (leftMul b) = {0} := by
   intro h
   apply Set.ext_iff.mpr

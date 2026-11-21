@@ -50,7 +50,7 @@ theorem prime_ring_equiv :
   · intro hR a b hab
     have rhs : ∀ x ∈ (leftMul a) * (leftMul b), x = (0 : R) := by
       rintro x hx
-      rw [both_mul_zero_one_left_zero a b hab] at hx
+      rw [left_mul_mul_left_mul_eq_zero_of_both_mul_eq_zero a b hab] at hx
       trivial
     have h := hR (leftIdealOfElement a) (leftIdealOfElement b) (Ideal.span_eq_bot.mpr rhs)
     cases h with
