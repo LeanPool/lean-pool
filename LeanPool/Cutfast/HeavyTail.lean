@@ -36,19 +36,11 @@ namespace HeavyTail
 
 /-! ### Elementary real inequalities -/
 
-/-- `(C + b u)^{-p} ≥ (C + b)^{-p} u^{-p}` for `u ≥ 1`. -/
-lemma add_rpow_neg_ge {C b p u : ℝ} (hC : 0 < C) (hb : 0 < b) (hp : 0 ≤ p) (hu : 1 ≤ u) :
-    (C + b) ^ (-p) * u ^ (-p) ≤ (C + b * u) ^ (-p) := by
-  rw [← Real.mul_rpow (by positivity) (by linarith)]
-  exact Real.rpow_le_rpow_of_nonpos (by positivity) (by nlinarith) (by linarith)
+/-- The power-tail bound for a shifted monomial, for `u ≥ 1`. -/
+alias add_rpow_neg_ge := Radial.add_rpow_neg_ge
 
-/-- `u^s (C + b u)^{-p} ≥ (C + b)^{-p} u^{s-p}` for `u ≥ 1`. -/
-lemma pointwise_ge {C b p s u : ℝ} (hC : 0 < C) (hb : 0 < b) (hp : 0 ≤ p) (hu : 1 ≤ u) :
-    (C + b) ^ (-p) * u ^ (s - p) ≤ u ^ s * (C + b * u) ^ (-p) := by
-  have h0 : 0 < u := by linarith
-  calc (C + b) ^ (-p) * u ^ (s - p) = u ^ s * ((C + b) ^ (-p) * u ^ (-p)) := by
-        rw [sub_eq_add_neg, Real.rpow_add h0]; ring
-    _ ≤ _ := mul_le_mul_of_nonneg_left (add_rpow_neg_ge hC hb hp hu) (by positivity)
+/-- The power-tail bound after multiplication by `u^s`. -/
+alias pointwise_ge := Radial.pointwise_ge
 
 /-- `(u + v)ʳ ≤ cʳ uʳ + (c/(c-1))ʳ vʳ` for `c > 1`. -/
 lemma rpow_add_le {u v r c : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) (hr : 0 ≤ r) (hc : 1 < c) :
@@ -85,24 +77,8 @@ lemma rpow_le_sq {c r : ℝ} (hc : 1 ≤ c) (hr2 : r ≤ 2) : c ^ r ≤ c ^ 2 :=
 
 /-! ### Integrals on `(0, ∞)` -/
 
-/-- If `s - p ≥ -1`, then `u^s (C + b u)^{-p}` is not integrable on `(0, ∞)`. -/
-lemma not_integrableOn {C b p s : ℝ} (hC : 0 < C) (hb : 0 < b) (hp : 0 ≤ p)
-    (hs : -1 ≤ s - p) : ¬ IntegrableOn (fun u => u ^ s * (C + b * u) ^ (-p)) (Ioi 0) := by
-  intro hI
-  have hK : 0 < (C + b) ^ (-p) := by positivity
-  have h1 : IntegrableOn (fun u : ℝ => (C + b) ^ (-p) * u ^ (s - p)) (Ioi 1) := by
-    refine (hI.mono_set (Ioi_subset_Ioi zero_le_one)).mono' ?_ ?_
-    · exact ((measurable_id.pow_const _).const_mul _).aestronglyMeasurable
-    · refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun u hu => ?_)
-      have hu' : (0 : ℝ) < u := lt_trans zero_lt_one hu
-      rw [Real.norm_of_nonneg (by positivity)]
-      exact pointwise_ge hC hb hp (le_of_lt hu)
-  have h2 : IntegrableOn (fun u : ℝ => u ^ (s - p)) (Ioi 1) := by
-    refine (integrableOn_congr_fun (fun u _ => ?_) measurableSet_Ioi).1
-      (h1.const_mul ((C + b) ^ (-p))⁻¹)
-    rw [← mul_assoc, inv_mul_cancel₀ hK.ne', one_mul]
-  have := (integrableOn_Ioi_rpow_iff zero_lt_one).1 h2
-  linarith
+/-- A shifted power with tail exponent at least `-1` has divergent integral. -/
+alias not_integrableOn := Radial.not_integrableOn_affine_rpow_tail
 
 /-- Lower bound `∫₀^∞ u^s (C + b u)^{-p} du ≥ (C+b)^{-p} / (-(s - p + 1))` when `s - p < -1`. -/
 lemma integral_ge {C b p s : ℝ} (hC : 0 < C) (hb : 0 < b) (hp : 0 ≤ p) (hs : s - p < -1)

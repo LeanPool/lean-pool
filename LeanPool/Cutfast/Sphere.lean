@@ -75,45 +75,6 @@ theorem lintegral_polar {d : ℕ} (hd : 1 ≤ d) (G : EuclideanSpace ℝ (Fin d)
         exact lintegral_subtype_comap measurableSet_Ioi (fun r ↦ ENNReal.ofReal (r ^ (d - 1)) * φ r)
 
 
-lemma prod_gaussianPDFReal {d : ℕ} (v : Fin d → ℝ) :
-    ∏ i, gaussianPDFReal 0 1 (v i) =
-      gaussProfile d ‖(WithLp.toLp 2 v : EuclideanSpace ℝ (Fin d))‖ := by
-  simp only [gaussianPDFReal, gaussProfile, NNReal.coe_one, mul_one, sub_zero]
-  rw [Finset.prod_mul_distrib, ← Real.exp_sum, EuclideanSpace.real_norm_sq_eq]
-  simp [Finset.prod_const, Finset.sum_div, neg_div, Finset.sum_neg_distrib]
-
-lemma pi_gaussianReal {d : ℕ} :
-    Measure.pi (fun _ : Fin d ↦ gaussianReal 0 1) =
-      volume.withDensity (fun v : Fin d → ℝ ↦ ENNReal.ofReal (∏ i, gaussianPDFReal 0 1 (v i))) := by
-  refine Measure.pi_eq fun s hs ↦ ?_
-  rw [withDensity_apply _ (MeasurableSet.univ_pi hs),
-    ← lintegral_indicator (MeasurableSet.univ_pi hs)]
-  have hind : (univ.pi s).indicator
-        (fun v : Fin d → ℝ ↦ ENNReal.ofReal (∏ i, gaussianPDFReal 0 1 (v i)))
-      = fun v ↦ ENNReal.ofReal (∏ i, (s i).indicator (gaussianPDFReal 0 1) (v i)) := by
-    ext v
-    by_cases hv : v ∈ univ.pi s
-    · rw [indicator_of_mem hv]
-      congr 1
-      refine Finset.prod_congr rfl fun i _ ↦ ?_
-      rw [indicator_of_mem (hv i (mem_univ i))]
-    · rw [indicator_of_notMem hv]
-      simp only [Set.mem_pi, mem_univ, true_implies, not_forall] at hv
-      obtain ⟨i, hi⟩ := hv
-      rw [Finset.prod_eq_zero (Finset.mem_univ i) (indicator_of_notMem hi _), ENNReal.ofReal_zero]
-  have hint :
-      Integrable (fun v : Fin d → ℝ ↦ ∏ i, (s i).indicator (gaussianPDFReal 0 1) (v i)) := by
-    rw [volume_pi]
-    exact Integrable.fintype_prod fun i ↦ (integrable_gaussianPDFReal 0 1).indicator (hs i)
-  rw [hind, ← ofReal_integral_eq_lintegral_ofReal hint
-    (.of_forall fun v ↦ Finset.prod_nonneg fun i _ ↦
-      indicator_nonneg (fun x _ ↦ gaussianPDFReal_nonneg 0 1 x) _),
-    volume_pi, integral_fintype_prod_eq_prod, ENNReal.ofReal_prod_of_nonneg
-      (fun i _ ↦ integral_nonneg fun x ↦
-        indicator_nonneg (fun x _ ↦ gaussianPDFReal_nonneg 0 1 x) _)]
-  refine Finset.prod_congr rfl fun i _ ↦ ?_
-  rw [gaussianReal_apply_eq_integral 0 one_ne_zero, integral_indicator (hs i)]
-
 lemma lintegral_stdGaussian {d : ℕ} (h : EuclideanSpace ℝ (Fin d) → ℝ≥0∞) (hh : Measurable h) :
     ∫⁻ x, h x ∂(stdGaussian (EuclideanSpace ℝ (Fin d))) =
       ∫⁻ x, h x * ENNReal.ofReal (gaussProfile d ‖x‖) := by
@@ -749,20 +710,12 @@ end Sphere
 open Sphere Set
 
 /-- **Remark 4.3.** If `X` is uniform on the sphere of radius `R` of `ℝᵈ`, then for
-`1 ≤ n ≤ d-1`, `(X₁, …, X_n)` has density `C (R² - |y|²)₊^{(d-n-2)/2}` on `ℝⁿ`, with
+`1 ≤ n ≤ d-1`, `(X₁, …, X_n)` has density `C (R² - |y|²)^{(d-n-2)/2} 1_{|y| < R}` on `ℝⁿ`, with
 `C = Γ(d/2) / (π^{n/2} Γ((d-n)/2) R^{d-2})`. -/
-theorem sphereUniform_map_projFirst' {n d : ℕ} (hn : 1 ≤ n) (hnd : n + 1 ≤ d) {R : ℝ}
-    (hR : 0 < R) :
-    (sphereUniform d R).map (projFirst (Nat.le_of_succ_le hnd)) =
-      densityMeasure (fun y : E n => (ball (0 : E n) R).indicator (fun y =>
-        Gamma (d / 2) / (π ^ ((n : ℝ) / 2) * Gamma ((d - n) / 2) * R ^ ((d : ℝ) - 2)) *
-          (R ^ 2 - ‖y‖ ^ 2) ^ (((d : ℝ) - n - 2) / 2)) y) :=
-  Sphere.sphereUniform_map_projFirst_ball hn hnd hR
+alias sphereUniform_map_projFirst' := Sphere.sphereUniform_map_projFirst_ball
 
 /-- **Remark 4.3.** If `Z ∼ 𝒩(0, I_d)` then `R Z/|Z|` is uniform on the sphere of radius `R`. -/
-theorem stdGaussian_map_sphereUniform' {d : ℕ} (hd : 1 ≤ d) (R : ℝ) :
-    (ProbabilityTheory.stdGaussian (E d)).map (fun z => (R / ‖z‖) • z) = sphereUniform d R :=
-  Sphere.stdGaussian_map_sphereUniform hd R
+alias stdGaussian_map_sphereUniform' := Sphere.stdGaussian_map_sphereUniform
 
 /-- **Remark 4.3, stereographic projection.** If `X` is uniform on the unit sphere of `ℝᵈ`,
 `d ≥ 2`, then its stereographic projection on `ℝ^{d-1}` has the full-space Barenblatt density

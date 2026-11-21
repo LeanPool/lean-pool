@@ -11,7 +11,12 @@ module
 public import LeanPool.Cutfast.Cutoff
 
 /-!
-# Cutoff for other sizes of the set of initial points (Section 1.4.3)
+# Cutoff for square-root and other power-radius starting balls
+
+Theorems 1.1 and 1.2 of arXiv:2503.11770v2 give the two limits for `0 < ε < 1`.
+The Wasserstein, relative entropy and Fisher information results below strengthen
+the late-time limit to all `ε > 0`. The early-time limit retains `0 < ε < 1`.
+This also applies to the power-radius variants from Section 1.4.3.
 -/
 
 @[expose] public section
@@ -323,8 +328,9 @@ end CutoffRadius
 open CutoffRadius
 
 
-/-- **Section 1.4.3, Theorem 1.1 for other initial data, Wasserstein.** For initial points in the
-ball of radius `r d^θ` (`θ ∈ ℝ`), the critical time becomes `max(α/2, θ) log d`. -/
+/-- **Section 1.4.3, Theorem 1.1 with extended late-time range, Wasserstein.**
+For initial points in the ball of radius `r d^θ` (`θ ∈ ℝ`), the critical time becomes
+`max(α/2, θ) log d`. -/
 theorem cutoff_wassersteinSq_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
     (hε : 0 < ε) :
     (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ),
@@ -343,9 +349,9 @@ theorem cutoff_wassersteinSq_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : �
   · obtain ⟨K, H⟩ := upperHyp_alpha (θ := θ) hα hα2 hr hε
     exact wassersteinSq_upper H
 
-/-- **Section 1.4.3, Theorem 1.1 for other initial data, relative entropy.** As in
-`cutoff_relEntropy`, the entropy integrand is integrable for large `d`, for all `t > 0` and all
-initial points in the ball. -/
+/-- **Section 1.4.3, Theorem 1.1 with extended late-time range, relative entropy.**
+As in `cutoff_relEntropy`, for large `d` the entropy integrand is integrable for all `t > 0`
+and all initial points in the ball. -/
 theorem cutoff_relEntropy_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
     (hε : 0 < ε) :
     (∀ᶠ d : ℕ in atTop, ∀ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ), ∀ t > 0,
@@ -370,7 +376,8 @@ theorem cutoff_relEntropy_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α �
   · obtain ⟨K, H⟩ := upperHyp_alpha (θ := θ) hα hα2 hr hε
     exact relEntropy_upper H
 
-/-- **Section 1.4.3, Theorem 1.1 for other initial data, Fisher information.** -/
+/-- **Section 1.4.3, Theorem 1.1 with extended late-time range,
+Fisher information.** -/
 theorem cutoff_fisherInfo_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
     (hε : 0 < ε) :
     (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ),
@@ -387,8 +394,8 @@ theorem cutoff_fisherInfo_radius' {α r ε θ : ℝ} (hα : 0 < α) (hα2 : α �
   · obtain ⟨K, H⟩ := upperHyp_alpha (θ := θ) hα hα2 hr hε
     exact fisherInfo_upper H
 
-/-- **Section 1.4.3, Theorem 1.2 for other initial data, Wasserstein.** For initial points in the
-ball of radius `r d^θ` (`θ > 0`), the critical time becomes `θ log d`. -/
+/-- **Section 1.4.3, Theorem 1.2 with extended late-time range, Wasserstein.**
+For initial points in the ball of radius `r d^θ` (`θ > 0`), the critical time becomes `θ log d`. -/
 theorem cutoff_fixedExponent_wassersteinSq_radius' {m r ε θ : ℝ} (hm : 1 < m) (hr : 0 < r)
     (hε : 0 < ε) (hθ : 0 < θ) :
     (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ),
@@ -401,8 +408,8 @@ theorem cutoff_fixedExponent_wassersteinSq_radius' {m r ε θ : ℝ} (hm : 1 < m
   exact ⟨fun hε1 => wassersteinSq_lower_shift (shiftHyp_fixed hm hr hε hε1 hθ),
     wassersteinSq_upper H⟩
 
-/-- **Section 1.4.3, Theorem 1.2 for other initial data, relative entropy.** As in
-`cutoff_fixedExponent_relEntropy`, the entropy integrand is integrable for large `d`, for all
+/-- **Section 1.4.3, Theorem 1.2 with extended late-time range, relative entropy.**
+As in `cutoff_fixedExponent_relEntropy`, the entropy integrand is integrable for large `d`, for all
 `t > 0` and all initial points in the ball. -/
 theorem cutoff_fixedExponent_relEntropy_radius' {m r ε θ : ℝ} (hm : 1 < m) (hr : 0 < r)
     (hε : 0 < ε) (hθ : 0 < θ) :
@@ -421,7 +428,8 @@ theorem cutoff_fixedExponent_relEntropy_radius' {m r ε θ : ℝ} (hm : 1 < m) (
   obtain ⟨h, h2⟩ := Cutoff.admissible_of_one_lt hm hd
   exact integrable_relEntropyDensity_solution h h2 x₀ ht
 
-/-- **Section 1.4.3, Theorem 1.2 for other initial data, Fisher information.** -/
+/-- **Section 1.4.3, Theorem 1.2 with extended late-time range,
+Fisher information.** -/
 theorem cutoff_fixedExponent_fisherInfo_radius' {m r ε θ : ℝ} (hm : 1 < m) (hr : 0 < r)
     (hε : 0 < ε) (hθ : 0 < θ) :
     (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * (d : ℝ) ^ θ),
@@ -434,8 +442,9 @@ theorem cutoff_fixedExponent_fisherInfo_radius' {m r ε θ : ℝ} (hm : 1 < m) (
 private lemma max_half_cutoffTime (α : ℝ) : max (α / 2) (1 / 2 : ℝ) = max 1 α / 2 := by
   rw [max_div_div_right (by norm_num : (0 : ℝ) ≤ 2), max_comm]
 
-/-- **Theorem 1.1, Wasserstein distance.** Fix `α ∈ (0,1/2) ∪ (1/2,∞)`, `r > 0`, and let
-`m = ((d-2)α+1)/(dα)`. Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
+/-- **Theorem 1.1 with extended late-time range, Wasserstein distance.**
+Fix `α ∈ (0,1/2) ∪ (1/2,∞)`, `r > 0`, and let `m = ((d-2)α+1)/(dα)`. Then
+`sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
 `t_d = (1-ε) max(1,α)/2 log d` and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
 theorem cutoff_wassersteinSq' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
     (hε : 0 < ε) :
@@ -451,7 +460,8 @@ theorem cutoff_wassersteinSq' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 
     cutoff_wassersteinSq_radius' (θ := 1 / 2) hα hα2 hr hε
 
 
-/-- **Theorem 1.1, relative entropy.** Same setting as `cutoff_wassersteinSq`. For large `d`
+/-- **Theorem 1.1 with extended late-time range, relative entropy.**
+Same setting as `cutoff_wassersteinSq`. For large `d`
 the entropy integrand is integrable for all `t > 0` and `|x₀| ≤ r√d`, and
 `sup_{|x₀| ≤ r√d} Hₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
 and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
@@ -472,7 +482,8 @@ theorem cutoff_relEntropy' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) 
     cutoff_relEntropy_radius' (θ := 1 / 2) hα hα2 hr hε
 
 
-/-- **Theorem 1.1, Fisher information.** Same setting as `cutoff_wassersteinSq`:
+/-- **Theorem 1.1 with extended late-time range, Fisher information.**
+Same setting as `cutoff_wassersteinSq`:
 `sup_{|x₀| ≤ r√d} Iₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
 and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
 theorem cutoff_fisherInfo' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) (hr : 0 < r)
@@ -487,7 +498,8 @@ theorem cutoff_fisherInfo' {α r ε : ℝ} (hα : 0 < α) (hα2 : α ≠ 1 / 2) 
     cutoff_fisherInfo_radius' (θ := 1 / 2) hα hα2 hr hε
 
 
-/-- **Theorem 1.2, Wasserstein distance.** Fix `m > 1` and `r > 0` (so that
+/-- **Theorem 1.2 with extended late-time range, Wasserstein distance.**
+Fix `m > 1` and `r > 0` (so that
 `α = 1/(2 - d(1-m)) → 0`). Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
 `t_d = (1-ε)/2 log d` and to `0` if `t_d = (1+ε)/2 log d`. -/
 theorem cutoff_fixedExponent_wassersteinSq' {m r ε : ℝ} (hm : 1 < m) (hr : 0 < r)
@@ -502,7 +514,8 @@ theorem cutoff_fixedExponent_wassersteinSq' {m r ε : ℝ} (hm : 1 < m) (hr : 0 
     cutoff_fixedExponent_wassersteinSq_radius' (θ := 1 / 2) hm hr hε (by norm_num)
 
 
-/-- **Theorem 1.2, relative entropy.** Same setting as `cutoff_fixedExponent_wassersteinSq`,
+/-- **Theorem 1.2 with extended late-time range, relative entropy.**
+Same setting as `cutoff_fixedExponent_wassersteinSq`,
 with integrability of the entropy integrand for large `d`. -/
 theorem cutoff_fixedExponent_relEntropy' {m r ε : ℝ} (hm : 1 < m) (hr : 0 < r) (hε : 0 < ε) :
     (∀ᶠ d : ℕ in atTop, ∀ x₀ ∈ closedBall (0 : E d) (r * √d), ∀ t > 0,
@@ -517,8 +530,8 @@ theorem cutoff_fixedExponent_relEntropy' {m r ε : ℝ} (hm : 1 < m) (hr : 0 < r
     cutoff_fixedExponent_relEntropy_radius' (θ := 1 / 2) hm hr hε (by norm_num)
 
 
-/-- **Theorem 1.2, Fisher information.** Same setting as
-`cutoff_fixedExponent_wassersteinSq`. -/
+/-- **Theorem 1.2 with extended late-time range, Fisher information.**
+Same setting as `cutoff_fixedExponent_wassersteinSq`. -/
 theorem cutoff_fixedExponent_fisherInfo' {m r ε : ℝ} (hm : 1 < m) (hr : 0 < r) (hε : 0 < ε) :
     (ε < 1 → Tendsto (fun d : ℕ => ⨆ x₀ ∈ closedBall (0 : E d) (r * √d),
         fisherInfo m (solution d m x₀ ((1 - ε) / 2 * log d))) atTop (𝓝 ⊤)) ∧
@@ -573,57 +586,65 @@ theorem compactBarenblatt_support' {m : ℝ} (hm : 1 < m) :
     simp only [Function.comp_apply, Pi.div_apply]
     rw [sqrt_div' _ (by positivity)]
 
-/-- **Theorem 1.1, Wasserstein distance.** Fix `α ∈ (0,1/2) ∪ (1/2,∞)`, `r > 0`, and let
-`m = ((d-2)α+1)/(dα)`. Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
+/-- **Theorem 1.1 with extended late-time range, Wasserstein distance.**
+Fix `α ∈ (0,1/2) ∪ (1/2,∞)`, `r > 0`, and let `m = ((d-2)α+1)/(dα)`. Then
+`sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
 `t_d = (1-ε) max(1,α)/2 log d` and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
 alias cutoff_wassersteinSq := cutoff_wassersteinSq'
 
-/-- **Theorem 1.1, relative entropy.** Same setting as `cutoff_wassersteinSq`. For large `d`
+/-- **Theorem 1.1 with extended late-time range, relative entropy.**
+Same setting as `cutoff_wassersteinSq`. For large `d`
 the entropy integrand is integrable for all `t > 0` and `|x₀| ≤ r√d`, and
 `sup_{|x₀| ≤ r√d} Hₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
 and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
 alias cutoff_relEntropy := cutoff_relEntropy'
 
-/-- **Theorem 1.1, Fisher information.** Same setting as `cutoff_wassersteinSq`:
+/-- **Theorem 1.1 with extended late-time range, Fisher information.**
+Same setting as `cutoff_wassersteinSq`:
 `sup_{|x₀| ≤ r√d} Iₘ(v(t_d) | v_∞)` tends to `+∞` if `t_d = (1-ε) max(1,α)/2 log d`
 and to `0` if `t_d = (1+ε) max(1,α)/2 log d`. -/
 alias cutoff_fisherInfo := cutoff_fisherInfo'
 
-/-- **Theorem 1.2, Wasserstein distance.** Fix `m > 1` and `r > 0` (so that
+/-- **Theorem 1.2 with extended late-time range, Wasserstein distance.**
+Fix `m > 1` and `r > 0` (so that
 `α = 1/(2 - d(1-m)) → 0`). Then `sup_{|x₀| ≤ r√d} W₂²(v(t_d), v_∞)` tends to `+∞` if
 `t_d = (1-ε)/2 log d` and to `0` if `t_d = (1+ε)/2 log d`. -/
 alias cutoff_fixedExponent_wassersteinSq := cutoff_fixedExponent_wassersteinSq'
 
-/-- **Theorem 1.2, relative entropy.** Same setting as `cutoff_fixedExponent_wassersteinSq`,
+/-- **Theorem 1.2 with extended late-time range, relative entropy.**
+Same setting as `cutoff_fixedExponent_wassersteinSq`,
 with integrability of the entropy integrand for large `d`. -/
 alias cutoff_fixedExponent_relEntropy := cutoff_fixedExponent_relEntropy'
 
-/-- **Theorem 1.2, Fisher information.** Same setting as
-`cutoff_fixedExponent_wassersteinSq`. -/
+/-- **Theorem 1.2 with extended late-time range, Fisher information.**
+Same setting as `cutoff_fixedExponent_wassersteinSq`. -/
 alias cutoff_fixedExponent_fisherInfo := cutoff_fixedExponent_fisherInfo'
 
-/-- **Section 1.4.3, Theorem 1.1 for other initial data, Wasserstein.** For initial points in the
-ball of radius `r d^θ` (`θ ∈ ℝ`), the critical time becomes `max(α/2, θ) log d`. -/
+/-- **Section 1.4.3, Theorem 1.1 with extended late-time range, Wasserstein.**
+For initial points in the ball of radius `r d^θ` (`θ ∈ ℝ`), the critical time becomes
+`max(α/2, θ) log d`. -/
 alias cutoff_wassersteinSq_radius := cutoff_wassersteinSq_radius'
 
-/-- **Section 1.4.3, Theorem 1.1 for other initial data, relative entropy.** As in
-`cutoff_relEntropy`, the entropy integrand is integrable for large `d`, for all `t > 0` and all
-initial points in the ball. -/
+/-- **Section 1.4.3, Theorem 1.1 with extended late-time range, relative entropy.**
+As in `cutoff_relEntropy`, for large `d` the entropy integrand is integrable for all `t > 0`
+and all initial points in the ball. -/
 alias cutoff_relEntropy_radius := cutoff_relEntropy_radius'
 
-/-- **Section 1.4.3, Theorem 1.1 for other initial data, Fisher information.** -/
+/-- **Section 1.4.3, Theorem 1.1 with extended late-time range,
+Fisher information.** -/
 alias cutoff_fisherInfo_radius := cutoff_fisherInfo_radius'
 
-/-- **Section 1.4.3, Theorem 1.2 for other initial data, Wasserstein.** For initial points in the
-ball of radius `r d^θ` (`θ > 0`), the critical time becomes `θ log d`. -/
+/-- **Section 1.4.3, Theorem 1.2 with extended late-time range, Wasserstein.**
+For initial points in the ball of radius `r d^θ` (`θ > 0`), the critical time becomes `θ log d`. -/
 alias cutoff_fixedExponent_wassersteinSq_radius := cutoff_fixedExponent_wassersteinSq_radius'
 
-/-- **Section 1.4.3, Theorem 1.2 for other initial data, relative entropy.** As in
-`cutoff_fixedExponent_relEntropy`, the entropy integrand is integrable for large `d`, for all
+/-- **Section 1.4.3, Theorem 1.2 with extended late-time range, relative entropy.**
+As in `cutoff_fixedExponent_relEntropy`, the entropy integrand is integrable for large `d`, for all
 `t > 0` and all initial points in the ball. -/
 alias cutoff_fixedExponent_relEntropy_radius := cutoff_fixedExponent_relEntropy_radius'
 
-/-- **Section 1.4.3, Theorem 1.2 for other initial data, Fisher information.** -/
+/-- **Section 1.4.3, Theorem 1.2 with extended late-time range,
+Fisher information.** -/
 alias cutoff_fixedExponent_fisherInfo_radius := cutoff_fixedExponent_fisherInfo_radius'
 
 /-- **After Lemma 4.2.** The compactly supported Barenblatt profile is positive exactly on the

@@ -154,6 +154,17 @@ theorem laplacian_radialAffine_rpow {d : ℕ} (s c K p : ℝ) (center x : E d)
     exact hd.congr_deriv (by simp only [id, mul_one])
   · rw [finrank_euclideanSpace_fin]
 
+/-- Rewrite the inverse scaling power using the exponent relation for the diffusion. -/
+theorem inverse_scale_rpow {scale α m : ℝ} {d : ℕ} (hs : 0 < scale)
+    (hα : α * (2 - d * (1 - m)) = 1) :
+    (scale ^ (α * d))⁻¹ ^ m = (scale ^ α) ^ 2 / (scale * scale ^ (α * d)) := by
+  have hpower : (scale ^ (α * d))⁻¹ ^ m = scale ^ (2 * α - 1 - α * d) := by
+    rw [inv_rpow (rpow_nonneg hs.le _), ← rpow_mul hs.le, ← rpow_neg hs.le]
+    congr 1
+    linear_combination (-1 : ℝ) * hα
+  rw [hpower, rpow_sub hs, rpow_sub hs, rpow_one, two_mul, rpow_add hs]
+  ring
+
 end PDE
 
 open PDE in
@@ -252,13 +263,7 @@ theorem solution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) (h
   have ha1 : s ^ (α - 1) = a / s := rpow_sub_one hs.ne' _
   have hB1 : B0 ^ (q - 1) = B0 ^ q / B0 := rpow_sub_one hB0.ne' _
   have hqm : q * m - 1 = q := by rw [hqdef]; field_simp; ring
-  have hAm : S⁻¹ ^ m = a ^ 2 / (s * S) := by
-    have : S⁻¹ ^ m = s ^ (2 * α - 1 - α * d) := by
-      rw [inv_rpow hS.le, ← rpow_mul hs.le, ← rpow_neg hs.le]
-      congr 1
-      linear_combination (-1 : ℝ) * hα1
-    rw [this, rpow_sub hs, rpow_sub hs, rpow_one, two_mul, rpow_add hs]
-    ring
+  have hAm : S⁻¹ ^ m = a ^ 2 / (s * S) := inverse_scale_rpow hs hα1
   have hin : ⟪x - h, x⟫_ℝ = r0 + ⟪x - h, h⟫_ℝ := by
     rw [hr0, ← real_inner_self_eq_norm_sq, ← inner_add_right, sub_add_cancel]
   rw [hS1, ha1, hqm, hB1, hAm, hin]

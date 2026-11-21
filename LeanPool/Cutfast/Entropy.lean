@@ -125,9 +125,11 @@ theorem equilibrium_rpow_mul (h : Admissible d m) {f : E d → ℝ}
 
 end Entropy
 
-/-- The Bregman form of the relative entropy (eq. (tsalisbis)): for a probability density `f`
-with finite second moment and `fᵐ` integrable, which vanishes outside the support of `v_∞` when
-`m > 1`, `Hₘ(f | v_∞) = 1/(m-1) ∫ (fᵐ - v_∞ᵐ - m v_∞^{m-1} (f - v_∞))`, and this is `≥ 0`. -/
+/-- The finite-second-moment case of the Bregman form of the relative entropy,
+equation (1.14) of arXiv:2503.11770v2. The equilibrium `v_∞` has finite second moment
+when `m > d/(d+2)`. The probability density `f` has finite second moment and integrable
+`fᵐ`, and it vanishes wherever `v_∞` vanishes when `m > 1`. Then
+`Hₘ(f | v_∞) = 1/(m-1) ∫ (fᵐ - v_∞ᵐ - m v_∞^{m-1} (f - v_∞))` and `Hₘ(f | v_∞) ≥ 0`. -/
 theorem relEntropy_eq_bregman' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) (hm1 : m ≠ 1)
     (hmd : ((d : ℝ) - 2) / d < m) (h2 : (d : ℝ) / (d + 2) < m) (f : E d → ℝ)
     (hf0 : ∀ x, 0 ≤ f x) (hf : Integrable f) (hf1 : ∫ x, f x = 1)
@@ -237,9 +239,11 @@ theorem tsallis_strictConvexOn_tendsto_log' {m : ℝ} (hm0 : 0 < m) (hm1 : m ≠
 (the Fisher information is finite). -/
 alias relEntropy_hasDerivAt := relEntropy_hasDerivAt'
 
-/-- The Bregman form of the relative entropy (eq. (tsalisbis)): for a probability density `f`
-with finite second moment and `fᵐ` integrable, which vanishes outside the support of `v_∞` when
-`m > 1`, `Hₘ(f | v_∞) = 1/(m-1) ∫ (fᵐ - v_∞ᵐ - m v_∞^{m-1} (f - v_∞))`, and this is `≥ 0`. -/
+/-- The finite-second-moment case of the Bregman form of the relative entropy,
+equation (1.14) of arXiv:2503.11770v2. The equilibrium `v_∞` has finite second moment
+when `m > d/(d+2)`. The probability density `f` has finite second moment and integrable
+`fᵐ`, and it vanishes wherever `v_∞` vanishes when `m > 1`. Then
+`Hₘ(f | v_∞) = 1/(m-1) ∫ (fᵐ - v_∞ᵐ - m v_∞^{m-1} (f - v_∞))` and `Hₘ(f | v_∞) ≥ 0`. -/
 alias relEntropy_eq_bregman := relEntropy_eq_bregman'
 
 /-- `x ↦ (xᵐ - 1)/(m - 1)` is strictly convex on `[0,∞)` for `m > 0`, `m ≠ 1`, and, up to the

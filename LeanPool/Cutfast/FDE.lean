@@ -147,13 +147,7 @@ theorem fdeSolution_hasDerivAt' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m)
   have ha1 : t ^ (α - 1) = a / t := rpow_sub_one ht.ne' _
   have hB1 : B0 ^ (q - 1) = B0 ^ q / B0 := rpow_sub_one hB0.ne' _
   have hqm : q * m - 1 = q := by rw [hqdef]; field_simp; ring
-  have hAm : S⁻¹ ^ m = a ^ 2 / (t * S) := by
-    have : S⁻¹ ^ m = t ^ (2 * α - 1 - α * d) := by
-      rw [inv_rpow hS.le, ← rpow_mul ht.le, ← rpow_neg ht.le]
-      congr 1
-      linear_combination (-1 : ℝ) * hα1
-    rw [this, rpow_sub ht, rpow_sub ht, rpow_one, two_mul, rpow_add ht]
-    ring
+  have hAm : S⁻¹ ^ m = a ^ 2 / (t * S) := inverse_scale_rpow ht hα1
   rw [hS1, ha1, hqm, hB1, hAm]
   rw [show t ^ (α * d) = S from rfl, show t ^ α = a from rfl,
     show fdeBase d m x₀ t x = B0 from rfl, show ‖x - x₀‖ ^ 2 = r0 from rfl, hKdef, hqdef]

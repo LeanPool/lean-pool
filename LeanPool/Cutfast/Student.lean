@@ -161,41 +161,9 @@ lemma not_integrable_rpow_norm_mul_kernel (hd : 1 ≤ d) {r a : ℝ} (hr : 0 < r
   intro hI
   have h := (Radial.radial hd (fun u => (1 + r⁻¹ * u) ^ (-((r + d) / 2))) a).1.1
     (by simpa [kernel] using hI)
-  set p := (r + d) / 2
-  -- lower bound on `Ioi (max 1 r)`
-  have hsub : Set.Ioi (max 1 r) ⊆ Set.Ioi (0 : ℝ) := fun u hu =>
-    lt_of_lt_of_le zero_lt_one ((le_max_left _ _).trans (le_of_lt hu))
-  have h1 := h.mono_set hsub
-  have hlow : IntegrableOn (fun u : ℝ => (2 / r) ^ (-p) * u ^ (-1 : ℝ)) (Set.Ioi (max 1 r)) := by
-    refine Integrable.mono' h1 (by fun_prop) ?_
-    refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun u hu => ?_)
-    have hu1 : 1 < u := lt_of_le_of_lt (le_max_left _ _) hu
-    have hur : r < u := lt_of_le_of_lt (le_max_right _ _) hu
-    have hu0 : 0 < u := by linarith
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    have hb : 1 + r⁻¹ * u ≤ 2 / r * u := by
-      rw [div_mul_eq_mul_div, le_div_iff₀ hr]
-      field_simp
-      linarith
-    have hp0 : 0 ≤ p := by positivity
-    have e1 : (1 + r⁻¹ * u) ^ (-p) ≥ (2 / r * u) ^ (-p) :=
-      rpow_le_rpow_of_nonpos (by positivity) hb (by linarith)
-    rw [mul_rpow (by positivity) hu0.le] at e1
-    have e2 : u ^ (-1 : ℝ) ≤ u ^ ((d + a) / 2 - 1) * u ^ (-p) := by
-      rw [← rpow_add hu0]
-      apply rpow_le_rpow_of_exponent_le hu1.le
-      simp only [p]; linarith
-    calc (2 / r) ^ (-p) * u ^ (-1 : ℝ) ≤ (2 / r) ^ (-p) * (u ^ ((d + a) / 2 - 1) * u ^ (-p)) :=
-          mul_le_mul_of_nonneg_left e2 (by positivity)
-      _ = u ^ ((d + a) / 2 - 1) * ((2 / r) ^ (-p) * u ^ (-p)) := by ring
-      _ ≤ u ^ ((d + a) / 2 - 1) * (1 + r⁻¹ * u) ^ (-p) :=
-          mul_le_mul_of_nonneg_left e1 (by positivity)
-  have := (hlow.const_mul ((2 / r) ^ (-p))⁻¹)
-  have hc : (2 / r) ^ (-p) ≠ 0 := by positivity
-  simp_rw [← mul_assoc, inv_mul_cancel₀ hc, one_mul] at this
-  have := (integrableOn_Ioi_rpow_iff (s := (-1 : ℝ))
-    (lt_of_lt_of_le zero_lt_one (le_max_left 1 r))).1 this
-  linarith
+  exact Radial.not_integrableOn_affine_rpow_tail
+    (C := 1) (b := r⁻¹) (p := (r + d) / 2) (s := (d + a) / 2 - 1)
+    zero_lt_one (inv_pos.mpr hr) (by positivity) (by linarith) h
 
 /-! ### Symmetries and moments of the standard Student law -/
 
@@ -1126,14 +1094,7 @@ theorem Student.barenblatt_eq_student {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 
 
 /-- **Remark 3.2.** In the fast diffusion case, the Barenblatt profile and the equilibrium are
 isotropic Student t-densities with `r = 1/(α(1-m))` degrees of freedom. -/
-theorem barenblatt_eq_student' {d : ℕ} {m : ℝ} (hd : 1 ≤ d) (hm0 : 0 < m) (hm1 : m < 1)
-    (hmd : ((d : ℝ) - 2) / d < m) :
-    (∃ σ2 : ℝ, 0 < σ2 ∧ ∀ x, barenblatt d m x =
-      studentDensity d (1 / (alpha d m * (1 - m))) 0 (σ2 • 1) x) ∧
-    ∃ σ2 : ℝ, 0 < σ2 ∧ ∀ x, equilibrium d m x =
-      studentDensity d (1 / (alpha d m * (1 - m))) 0 (σ2 • 1) x :=
-  Student.barenblatt_eq_student hd hm0 hm1 hmd
-
+alias barenblatt_eq_student' := Student.barenblatt_eq_student
 
 namespace Student
 

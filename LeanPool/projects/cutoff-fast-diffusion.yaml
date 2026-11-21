@@ -5,7 +5,8 @@ summary: >-
   entropy and Fisher information for the explicit Barenblatt flow started
   from a point, using exact radial beta integrals, moments and transport
   formulas. The development also describes heavy tails and the Gaussian
-  diffusion limit.
+  diffusion limit. All six cutoff results extend the paper's late-time
+  limits to every ε > 0.
 branch: partial differential equations
 entry_module: LeanPool.Cutfast
 authors:

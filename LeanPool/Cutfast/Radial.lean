@@ -10,6 +10,7 @@ module
 
 public import LeanPool.Cutfast.Defs
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
 public import Mathlib.Probability.Distributions.Beta
 public import Mathlib.Tactic.Lemma
@@ -258,6 +259,39 @@ lemma radial {d : ℕ} (hd : 1 ≤ d) (F : ℝ → ℝ) (a : ℝ) :
       finrank_euclideanSpace_fin]
     rw [← mul_assoc, real_vol_ball hd]
     ring
+
+/-- `(C + b u)^{-p} ≥ (C + b)^{-p} u^{-p}` for `u ≥ 1`. -/
+lemma add_rpow_neg_ge {C b p u : ℝ} (hC : 0 < C) (hb : 0 < b) (hp : 0 ≤ p) (hu : 1 ≤ u) :
+    (C + b) ^ (-p) * u ^ (-p) ≤ (C + b * u) ^ (-p) := by
+  rw [← Real.mul_rpow (by positivity) (by linarith)]
+  exact Real.rpow_le_rpow_of_nonpos (by positivity) (by nlinarith) (by linarith)
+
+/-- `u^s (C + b u)^{-p} ≥ (C + b)^{-p} u^{s-p}` for `u ≥ 1`. -/
+lemma pointwise_ge {C b p s u : ℝ} (hC : 0 < C) (hb : 0 < b) (hp : 0 ≤ p) (hu : 1 ≤ u) :
+    (C + b) ^ (-p) * u ^ (s - p) ≤ u ^ s * (C + b * u) ^ (-p) := by
+  have h0 : 0 < u := by linarith
+  calc (C + b) ^ (-p) * u ^ (s - p) = u ^ s * ((C + b) ^ (-p) * u ^ (-p)) := by
+        rw [sub_eq_add_neg, Real.rpow_add h0]; ring
+    _ ≤ _ := mul_le_mul_of_nonneg_left (add_rpow_neg_ge hC hb hp hu) (by positivity)
+
+/-- If `s - p ≥ -1`, then `u^s (C + b u)^{-p}` is not integrable on `(0, ∞)`. -/
+lemma not_integrableOn_affine_rpow_tail {C b p s : ℝ} (hC : 0 < C) (hb : 0 < b) (hp : 0 ≤ p)
+    (hs : -1 ≤ s - p) : ¬ IntegrableOn (fun u => u ^ s * (C + b * u) ^ (-p)) (Ioi 0) := by
+  intro hI
+  have hK : 0 < (C + b) ^ (-p) := by positivity
+  have h1 : IntegrableOn (fun u : ℝ => (C + b) ^ (-p) * u ^ (s - p)) (Ioi 1) := by
+    refine (hI.mono_set (Ioi_subset_Ioi zero_le_one)).mono' ?_ ?_
+    · exact ((measurable_id.pow_const _).const_mul _).aestronglyMeasurable
+    · refine (ae_restrict_iff' measurableSet_Ioi).2 (Eventually.of_forall fun u hu => ?_)
+      have hu' : (0 : ℝ) < u := lt_trans zero_lt_one hu
+      rw [Real.norm_of_nonneg (by positivity)]
+      exact pointwise_ge hC hb hp (le_of_lt hu)
+  have h2 : IntegrableOn (fun u : ℝ => u ^ (s - p)) (Ioi 1) := by
+    refine (integrableOn_congr_fun (fun u _ => ?_) measurableSet_Ioi).1
+      (h1.const_mul ((C + b) ^ (-p))⁻¹)
+    rw [← mul_assoc, inv_mul_cancel₀ hK.ne', one_mul]
+  have := (integrableOn_Ioi_rpow_iff zero_lt_one).1 h2
+  linarith
 
 end Radial
 

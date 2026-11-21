@@ -109,11 +109,7 @@ theorem integral_sq_affine_mul_equilibrium (h : Admissible d m) (h2 : (d : ℝ) 
   ring
 
 /-- `v(t, a y + h) = a^{-d} v_∞(y)`. -/
-theorem solution_affine (h : Admissible d m) (x₀ : E d) {t : ℝ} (ht : 0 < t) (y : E d) :
-    solution d m x₀ t (scaleFactor d m t • y + exp (-t) • x₀) =
-      (scaleFactor d m t ^ d)⁻¹ * equilibrium d m y := by
-  rw [solution_eq h x₀ ht, add_sub_cancel_right,
-    inv_smul_smul₀ (scaleFactor_pos h ht).ne']
+alias solution_affine := Barenblatt.solution_affine'
 
 theorem solution_nonneg (h : Admissible d m) (x₀ : E d) {t : ℝ} (ht : 0 < t) (x : E d) :
     0 ≤ solution d m x₀ t x :=
