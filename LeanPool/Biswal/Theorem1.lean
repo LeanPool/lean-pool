@@ -247,9 +247,7 @@ lemma genFun_as_rational_fraction_with_pos_numerator
     rw [Polynomial.map_mul, Polynomial.eval_mul]
     exact mul_pos (h_pos_j (m - n % m - 1) (by omega)) (second_factor_pos m ξ hm h_parts ρ h_pos_j)
 
-/-- A decomposition `A / D = S + R / D` with matching late coefficients. The witness is `S = 0`,
-`R = A`, `N = 0`; no degree bound on `R` is claimed, so `R / D` need not be proper. -/
-lemma exists_rational_fraction_decomposition
+lemma coeff_rational_fraction_eq_proper_part
     (A D : Polynomial ℚ) (_hD : PowerSeries.constantCoeff (↑D : PowerSeries ℚ) ≠ 0) :
     ∃ (S R : Polynomial ℚ) (N : ℕ),
       (↑A : PowerSeries ℚ) * ((↑D : PowerSeries ℚ))⁻¹ =
@@ -2284,7 +2282,7 @@ theorem genFun_coeff_eventually_pos
       (↑(polyP ℚ m ^ k) : PowerSeries ℚ)⁻¹ := by
     rw [hgenFun, hpow_coe]
   obtain ⟨S, R, N₁, hdiv, hcoeff_eq⟩ :=
-    exists_rational_fraction_decomposition A (polyP ℚ m ^ k) hD_ne
+    coeff_rational_fraction_eq_proper_part A (polyP ℚ m ^ k) hD_ne
   have hR_pos : ∀ (ρ : ℝ), 0 < ρ →
       Polynomial.eval ρ (Polynomial.map (algebraMap ℚ ℝ) (polyP ℚ m)) = 0 →
       (∀ j : ℕ, j < m →

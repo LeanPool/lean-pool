@@ -67,6 +67,27 @@ theorem Isomorphic.interp_eq {E : Type u} [Category.{v} E] [HasFiniteLimits E] [
     rw [this, Subobject.pullback_id]
   rw [key, key, hφψ]
 
+/-- The order of subobjects of a functor to types is the objectwise inclusion of ranges. -/
+theorem _root_.LeanPool.ClassifyingTopoi.Syntactic.le_iff_range_app_subset {D : Type*} [Category D]
+    {X : D ⥤ Type w} (S T : Subobject X) :
+    S ≤ T ↔ ∀ d, Set.range (S.arrow.app d) ⊆ Set.range (T.arrow.app d) := by
+  constructor
+  · intro h d
+    rintro _ ⟨s, rfl⟩
+    exact ⟨(Subobject.ofLE S T h).app d s, by
+      rw [← NatTrans.comp_app_apply, Subobject.ofLE_arrow]⟩
+  · intro h
+    have inj : ∀ d, Function.Injective (T.arrow.app d) := fun d =>
+      (mono_iff_injective _).1 inferInstance
+    choose g hg using fun d (s : (S : D ⥤ Type w).obj d) => h d ⟨s, rfl⟩
+    refine Subobject.le_of_comm { app := fun d => TypeCat.ofHom (g d), naturality := ?_ } ?_
+    · intro d d' f
+      ext s
+      apply inj d'
+      simp [hg, NatTrans.naturality_apply]
+    · ext d s
+      exact hg d s
+
 section Types
 
 /-- The `L`-structure on the carrier of a structure in `Type u`. -/
@@ -75,33 +96,42 @@ noncomputable def toStructure (M : CatStructure L (Type u)) : L.Structure M.carr
   funMap f x := M.funMap f ((Types.productIso _).inv x)
   RelMap R x := (Types.productIso _).inv x ∈ Set.range (M.relMap R).hom
 
-/-- A structure in `Type u` is isomorphic to the structure on a type that it induces. -/
-theorem isomorphic_ofStructure (M : CatStructure L (Type u)) :
-    M.Isomorphic (@ofStructure L M.carrier M.toStructure) := by
+/-- A structure in `Type u` is a structure on a type, through the identity. -/
+theorem isHom_ofStructure_id (M : CatStructure L (Type u)) :
+    M.IsHom (@ofStructure L M.carrier M.toStructure) (𝟙 _) := by
   let := M.toStructure
-  have hid : ∀ k, (Limits.Pi.map fun _ : Fin k => 𝟙 M.carrier) = 𝟙 _ := fun k => by
-    ext
-    simp
-  refine ⟨Iso.refl _, ⟨fun {k} f => ?_, fun {k} R => ?_⟩, ⟨fun {k} f => ?_, fun {k} R => ?_⟩⟩
-  · simp only [Iso.refl_hom, hid, Category.comp_id, Category.id_comp]
+  refine ⟨fun {k} f => ?_, fun {k} R => ?_⟩
+  · simp only [Limits.Pi.map_id, Category.comp_id, Category.id_comp]
     ext x
     change _ = M.funMap f ((Types.productIso _).inv ((Types.productIso _).hom x))
     simp
-  · simp only [Iso.refl_hom, hid, Subobject.pullback_id]
+  · simp only [Limits.Pi.map_id, Subobject.pullback_id]
     rw [TypeSubobject.le_iff_range_subset, TypeSubobject.range_imageSubobject_arrow,
       TypeSubobject.range_imageSubobject_arrow]
     rintro _ ⟨z, rfl⟩
     refine ⟨⟨(Types.productIso _).hom ((M.relMap R).hom z), z, ?_⟩, ?_⟩
     · simp
     · simp
-  · ext x
+
+/-- A structure on a type is a structure in `Type u`, through the identity. -/
+theorem isHom_ofStructure_id' (M : CatStructure L (Type u)) :
+    (@ofStructure L M.carrier M.toStructure).IsHom M (𝟙 _) := by
+  let := M.toStructure
+  refine ⟨fun {k} f => ?_, fun {k} R => ?_⟩
+  · simp only [Limits.Pi.map_id, Category.comp_id, Category.id_comp]
+    ext x
     change M.funMap f ((Types.productIso _).inv ((Types.productIso _).hom x)) = _
     simp
-  · simp only [Iso.refl_inv, hid, Subobject.pullback_id]
+  · simp only [Limits.Pi.map_id, Subobject.pullback_id]
     rw [TypeSubobject.le_iff_range_subset, TypeSubobject.range_imageSubobject_arrow,
       TypeSubobject.range_imageSubobject_arrow]
     rintro _ ⟨⟨x, z, hz⟩, rfl⟩
     exact ⟨z, hz⟩
+
+/-- A structure in `Type u` is isomorphic to the structure on a type that it induces. -/
+theorem isomorphic_ofStructure (M : CatStructure L (Type u)) :
+    M.Isomorphic (@ofStructure L M.carrier M.toStructure) :=
+  ⟨Iso.refl _, isHom_ofStructure_id M, isHom_ofStructure_id' M⟩
 
 /-- In `Type u`, two geometric formulas equivalent in every structure on a type have the same
 interpretation. -/
@@ -122,17 +152,8 @@ variable {D : Type u} [SmallCategory D]
 
 /-- A subobject of a presheaf of types lies below another when it does so objectwise. -/
 theorem presheaf_le_of_range_subset {X : Dᵒᵖ ⥤ Type u} {S T : Subobject X}
-    (h : ∀ d, Set.range (S.arrow.app d) ⊆ Set.range (T.arrow.app d)) : S ≤ T := by
-  have inj : ∀ d, Function.Injective (T.arrow.app d) := fun d =>
-    (mono_iff_injective _).1 inferInstance
-  choose g hg using fun d (s : (S : Dᵒᵖ ⥤ Type u).obj d) => h d ⟨s, rfl⟩
-  refine Subobject.le_of_comm { app := fun d => TypeCat.ofHom (g d), naturality := ?_ } ?_
-  · intro d d' f
-    ext s
-    apply inj d'
-    simp [hg, NatTrans.naturality_apply]
-  · ext d s
-    exact hg d s
+    (h : ∀ d, Set.range (S.arrow.app d) ⊆ Set.range (T.arrow.app d)) : S ≤ T :=
+  (Syntactic.le_iff_range_app_subset S T).2 h
 
 /-- The evaluation of a presheaf subobject at an object, through an isomorphism. -/
 theorem range_subset_of_mapSubobject_evaluation_le {X : Dᵒᵖ ⥤ Type u} {Y : Type u} (d : Dᵒᵖ)

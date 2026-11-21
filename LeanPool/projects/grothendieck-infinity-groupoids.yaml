@@ -1,0 +1,83 @@
+slug: grothendieck-infinity-groupoids
+title: Grothendieck ∞-groupoids, globular sums and the degree-zero comparison
+summary: Grothendieck's globular ∞-groupoids in the form Maltsiniotis and Ara gave to the
+  definition of Pursuing Stacks. The globe category, globular sets, coglobular objects and the
+  coglobular space of disks with its hemisphere inclusions; tables of dimensions and globular
+  sums, which exist in every category with pushouts; globular extensions, globular functors,
+  admissible pairs, contractibility and pseudo-coherators; ∞-groupoids of type C, the presheaves
+  sending globular sums to globular products, among which the terminal and the representable
+  presheaves. Liftings of admissible pairs give identities, inverses and composites of cells,
+  so that the homotopy relation on the cells of an ∞-groupoid of type C is an equivalence
+  relation; weak equivalences contain the identities and are closed under composition. For a
+  supplied globular functor from a globular extension C into the disks, the fundamental
+  ∞-groupoid of a space sends globular sums to globular products, an ∞-groupoid of type C when
+  C is a pseudo-coherator, and its 0-cells modulo homotopy are the path components of the
+  space. It detects bijections on path components.
+branch: algebraic topology
+entry_module: LeanPool.GrothendieckInfinityGroupoids
+authors:
+- Michel Hua
+source:
+  title: On the homotopy theory of Grothendieck ∞-groupoids (D. Ara)
+  arxiv: '1206.2941'
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.GrothendieckInfinityGroupoids.GlobularSums.nonempty_of_hasPushouts
+- LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.exists_inverse
+- LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.exists_comp
+- LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.cellJoined_equivalence
+- LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.IsWeakEquivalence.comp
+- LeanPool.GrothendieckInfinityGroupoids.isGlobularPresheaf_piPresheaf
+- LeanPool.GrothendieckInfinityGroupoids.cellJoined_zero_piPresheaf_iff
+- LeanPool.GrothendieckInfinityGroupoids.bijectiveOnComponents_piPresheaf_iff
+main_results:
+- declaration: LeanPool.GrothendieckInfinityGroupoids.GlobularSums.nonempty_of_hasPushouts
+  informal: In a category with pushouts, every coglobular object has a choice of globular sums,
+    one for each table of dimensions, the sum of the one-disk table (n) being the disk D_n.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.isGlobularPresheaf_yoneda
+  informal: Every representable presheaf on a globular extension sends globular sums to globular
+    products.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.exists_inverse
+  informal: In a presheaf on a pseudo-coherator, every (n+1)-cell has a cell going from its target
+    to its source.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.exists_comp
+  informal: In an ∞-groupoid of type C, for a pseudo-coherator C, an (n+1)-cell from a to b and an
+    (n+1)-cell from b to c have a composite (n+1)-cell from a to c.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.cellJoined_equivalence
+  informal: In an ∞-groupoid of type C, the relation on n-cells "some (n+1)-cell goes from the first
+    to the second" is an equivalence relation.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.isWeakEquivalence_id
+  informal: The identity of every presheaf on a pseudo-coherator is a weak equivalence.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.IsWeakEquivalence.comp
+  informal: If φ X → Y and ψ Y → Z are weak equivalences of presheaves on a pseudo-coherator C and
+    Z is an ∞-groupoid of type C, then the composite of φ and ψ is a weak equivalence.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.PseudoCoherator.not_isWeakEquivalence_const_bool
+  informal: The constant presheaf with value a two-element set is an ∞-groupoid of type C, and
+    its map to the terminal presheaf is not a weak equivalence.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.isGlobularPresheaf_piPresheaf
+  informal: For a globular functor R from a globular extension C to topological spaces with the
+    disks and hemisphere inclusions, and a space X, the presheaf sending S to the continuous maps
+    from R(S) to X sends globular sums to globular products, so that it is an ∞-groupoid of type
+    C when C is a pseudo-coherator.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.cellJoined_zero_piPresheaf_iff
+  informal: For such R, two 0-cells of this presheaf, maps from R(D_0) to X, are related by a
+    1-cell exactly when the corresponding points of X are joined by a path.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.bijectiveOnComponents_piPresheaf_iff
+  informal: For such R and a continuous map f, the morphism of presheaves induced by f is a
+    bijection on 0-cells modulo the homotopy relation exactly when f induces a bijection on path
+    components.
+- declaration: LeanPool.GrothendieckInfinityGroupoids.not_isWeakEquivalence_piPresheaf_point_bool
+  informal: When C is a pseudo-coherator, the morphism induced by the inclusion of a point
+    into the two-point discrete space is not a weak equivalence.
+tags:
+- infinity-groupoids
+- globular-sets
+- coherators
+- homotopy-hypothesis
+msc:
+- 18N65
+- 55U35
+- 18N50

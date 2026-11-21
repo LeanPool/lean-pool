@@ -301,8 +301,9 @@ theorem oddMap_degree_odd_of_ringBridge_of_modTwoTopClassComparison {n : ℕ}
 /-! ## 3d. conditional near-final assembly: three named blockers, no vacuous hypothesis
 
 The theorems in §3b/§3c route the sphere-side nonvanishing through `projPullback`
-(`proj^*`). That route is degenerate: for `n ≥ 1` one has `proj^* α = 0` in
-`H¹(RPⁿ; F₂)`, hence `proj^*(αⁿ) = 0`, so the hypothesis `proj^* (αⁿ) ≠ 0` is
+(`proj^*`). For `n ≥ 1`, the class `proj^* α` in `H¹(Sⁿ; F₂)` vanishes. For `n > 1` this
+group is zero. For `n = 1` the double cover has degree two and induces the zero map
+on mod-two cohomology. Thus `proj^*(αⁿ) = 0` and the hypothesis `proj^* (αⁿ) ≠ 0` is
 unsatisfiable and the genuine comparison really proceeds through the double-cover
 *transfer*, not `proj^*`. The assembly below avoids that degenerate route
 entirely: it depends on exactly three honest named blockers and no vacuous or

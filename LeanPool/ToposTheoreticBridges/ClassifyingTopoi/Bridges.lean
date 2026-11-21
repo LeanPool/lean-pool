@@ -236,18 +236,25 @@ theorem exists_orderIso_quotients_ici (hU : IsClassifyingSite T J U)
 
 end IsClassifyingSite
 
-/-- An equivalence of topoi of sheaves matching the `J₁`-sheaves with the `K₁`-sheaves restricts
-to an equivalence between the topoi of `J₁`-sheaves and of `K₁`-sheaves. -/
-theorem nonempty_sheafEquiv_of_isSheaf_iff {C D : Type u} [SmallCategory C] [SmallCategory D]
-    {J J₁ : GrothendieckTopology C} {K K₁ : GrothendieckTopology D} (h₁ : J ≤ J₁) (k₁ : K ≤ K₁)
-    (e : Sheaf J (Type u) ≌ Sheaf K (Type u))
-    (he : ∀ F : Sheaf J (Type u),
-      Presheaf.IsSheaf J₁ F.obj ↔ Presheaf.IsSheaf K₁ (e.functor.obj F).obj) :
-    Nonempty (Sheaf J₁ (Type u) ≌ Sheaf K₁ (Type u)) := by
-  let Φ : Sheaf J₁ (Type u) ⥤ Sheaf K₁ (Type u) :=
-    ObjectProperty.lift _ (sheafInclusion h₁ ⋙ e.functor ⋙ sheafToPresheaf K (Type u))
-      fun X => (he _).1 X.property
-  have : Φ.EssSurj := ⟨fun Y => by
+section Restrict
+
+variable {C D : Type u} [SmallCategory C] [SmallCategory D] {J J₁ : GrothendieckTopology C}
+  {K K₁ : GrothendieckTopology D} (h₁ : J ≤ J₁) (k₁ : K ≤ K₁)
+  (e : Sheaf J (Type u) ≌ Sheaf K (Type u))
+  (he : ∀ F : Sheaf J (Type u),
+    Presheaf.IsSheaf J₁ F.obj ↔ Presheaf.IsSheaf K₁ (e.functor.obj F).obj)
+
+/-- The restriction of an equivalence of topoi of sheaves to the sheaves for finer topologies,
+when it matches them. -/
+noncomputable abbrev sheafEquivFunctor : Sheaf J₁ (Type u) ⥤ Sheaf K₁ (Type u) :=
+  ObjectProperty.lift _ (sheafInclusion h₁ ⋙ e.functor ⋙ sheafToPresheaf K (Type u))
+    fun X => (he _).1 X.property
+
+include k₁ in
+/-- The restriction of an equivalence of topoi of sheaves to the sheaves for finer topologies,
+when it matches them, is an equivalence. -/
+theorem isEquivalence_sheafEquivFunctor : (sheafEquivFunctor h₁ e he).IsEquivalence := by
+  have : (sheafEquivFunctor h₁ e he).EssSurj := ⟨fun Y => by
     let G := e.inverse.obj ((sheafInclusion k₁).obj Y)
     have i : e.functor.obj G ≅ (sheafInclusion k₁).obj Y := e.counitIso.app _
     have hG : Presheaf.IsSheaf J₁ G.obj := (he G).2
@@ -255,8 +262,31 @@ theorem nonempty_sheafEquiv_of_isSheaf_iff {C D : Type u} [SmallCategory C] [Sma
     exact ⟨⟨G.obj, hG⟩,
       ⟨(fullyFaithfulSheafToPresheaf K₁ (Type u)).preimageIso
         ((sheafToPresheaf K (Type u)).mapIso i)⟩⟩⟩
-  have : Φ.IsEquivalence := { }
-  exact ⟨Φ.asEquivalence⟩
+  exact { }
+
+include k₁ in
+/-- The restriction of an equivalence of topoi of sheaves to the sheaves for finer topologies. -/
+noncomputable def sheafEquivOfIsSheafIff : Sheaf J₁ (Type u) ≌ Sheaf K₁ (Type u) :=
+  have := isEquivalence_sheafEquivFunctor h₁ k₁ e he
+  (sheafEquivFunctor h₁ e he).asEquivalence
+
+/-- The restricted equivalence commutes with the inclusions of sheaves. -/
+noncomputable def sheafEquivOfIsSheafIffCompIso :
+    (sheafEquivOfIsSheafIff h₁ k₁ e he).functor ⋙ sheafInclusion k₁ ≅
+      sheafInclusion h₁ ⋙ e.functor :=
+  NatIso.ofComponents (fun _ => Iso.refl _) fun _ => rfl
+
+end Restrict
+
+/-- An equivalence of topoi of sheaves matching the `J₁`-sheaves with the `K₁`-sheaves restricts
+to an equivalence between the topoi of `J₁`-sheaves and of `K₁`-sheaves. -/
+theorem nonempty_sheafEquiv_of_isSheaf_iff {C D : Type u} [SmallCategory C] [SmallCategory D]
+    {J J₁ : GrothendieckTopology C} {K K₁ : GrothendieckTopology D} (h₁ : J ≤ J₁) (k₁ : K ≤ K₁)
+    (e : Sheaf J (Type u) ≌ Sheaf K (Type u))
+    (he : ∀ F : Sheaf J (Type u),
+      Presheaf.IsSheaf J₁ F.obj ↔ Presheaf.IsSheaf K₁ (e.functor.obj F).obj) :
+    Nonempty (Sheaf J₁ (Type u) ≌ Sheaf K₁ (Type u)) :=
+  ⟨sheafEquivOfIsSheafIff h₁ k₁ e he⟩
 
 namespace IsClassifyingSite
 

@@ -12,8 +12,8 @@ public import LeanPool.ConwayRefinement.CombinatorialGames.Surreal.Pow
 # API checks for the ordered real module structure on surreal numbers
 
 The first check identifies scalar multiplication with the standard real embedding. The second
-uses the genuinely non-real surreal `ω^ 1` and confirms that multiplication by a positive real is
-strictly monotone on it.
+checks that `r ↦ r • (ω^ 1)` is strictly increasing in the real scalar `r`, using the
+non-real surreal `ω^ 1`.
 -/
 
 public noncomputable section

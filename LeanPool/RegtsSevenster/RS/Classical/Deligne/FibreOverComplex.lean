@@ -245,11 +245,9 @@ end Fibre
 
 /-! ## The whole chain -/
 
-/-- **From a countable family of objects to split to a fibre functor
-valued in finite-dimensional super vector spaces.**  The algebra and
-the point of `RS.exists_superPoint_of_countable_family`, with the fibre
-of each object of the family recorded as a super vector space of the
-dimension pair its mixed sum prescribes. -/
+/-- A common splitting algebra and complex point for a countable family, together with
+the even and odd dimensions of each point fibre and a super vector space with the same
+dimension pair. -/
 theorem exists_superPoint_fibre_of_countable_family
     [SmallCategory C] [MonoidalCategory C] [SymmetricCategory C] [Abelian C]
     [RigidCategory C] [MonoidalPreadditive C]
