@@ -69,7 +69,9 @@ lemma sum_Icc_eq_sum_Ico_succ {α : Type*} [AddCommMonoid α] (f : ℤ → α)
   simp only [Finset.cons_eq_insert, Finset.mem_Ico, lt_self_iff_false, and_false,
     not_false_eq_true, Finset.sum_insert, add_comm]
 
-lemma CauchySeq_Icc_iff_CauchySeq_Ico (f : ℤ → ℂ) (hs : ∀ n, f n = f (-n))
+/-- For an even `f`, Cauchyness of the sums over `Icc (-N) N` implies Cauchyness of the sums
+over `Ico (-N) N`. -/
+lemma CauchySeq_Ico_of_CauchySeq_Icc (f : ℤ → ℂ) (hs : ∀ n, f n = f (-n))
   (hc : CauchySeq (fun N : ℕ => ∑ m ∈ Finset.Icc (-N : ℤ) N, f m) ) :
   CauchySeq (fun N : ℕ => ∑ m ∈ Finset.Ico (-N : ℤ) N, f m) := by
   have h0 := cc f hc hs

@@ -831,15 +831,11 @@ theorem blockLocalization
         (C * Real.exp (-(c) * max (((blockDistance j ℓ : ℕ) : ℝ) - B) 0 ^ 2)) *
           hermiteNormSq κ (blockPart ℓ G) := by rw [← finiteParseval]
 
-/-- Crude shell-count helper for sup-norm block shells. -/
-theorem shellCountingFormula
+/-- The value `(2 * r + 1) ^ d - (2 * r - 1) ^ d` of `shellCardinality d r` is at most
+`(2 * r + 1) ^ d`. -/
+theorem shellCardinality_le_pow
     (d r : ℕ) :
     (2 * r + 1) ^ d - (2 * r - 1) ^ d ≤ (2 * r + 1) ^ d := by
-  /-
-  Scaffolding guidance:
-  replace this placeholder inequality with exact shell-count formulas on
-  `ℤ^d` once the finite shell enumerators are fixed.
-  -/
   exact Nat.sub_le _ _
 
 private lemma summable_exp_neg_mul_sq {a : ℝ} (ha : 0 < a) :
@@ -952,7 +948,7 @@ private lemma shellExp_global_majorant
       linarith only [hzero, hpow1, hfac, mul_le_mul hpow1 hfac (by norm_num) (by positivity)]
     · have hr1 : 1 ≤ r := Nat.succ_le_of_lt (Nat.pos_iff_ne_zero.mpr hr0)
       have hs : (shellCardinality d r : ℝ) ≤ ((2 * r + 1) ^ d : ℕ) := by
-        exact_mod_cast shellCountingFormula d r
+        exact_mod_cast shellCardinality_le_pow d r
       have hbase : (2 * r + 1 : ℝ) ≤ 3 * r := by
         linarith only [
           hr1, show (1 : ℝ) ≤ r by exact_mod_cast hr1

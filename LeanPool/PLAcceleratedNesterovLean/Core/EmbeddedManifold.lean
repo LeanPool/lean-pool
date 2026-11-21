@@ -1131,7 +1131,8 @@ theorem exists_general_tubular_subneighborhood
     (fun m hm => local_tubular_of_smooth_embedding M ι hι hU_open hS_sub m hm)
 
 /-- For compact C² embedded submanifolds, a general tubular neighborhood
-    can be refined to a metric tubular neighborhood with C² chart structure. -/
+    contains a metric tube `{x | infDist x S < r}` of uniform radius `r > 0`,
+    and that tube has the C² chart structure. -/
 theorem general_to_metric_tubular
     {d n : ℕ}
     (M : Type*) [TopologicalSpace M] [ChartedSpace (ManifoldModel n) M]
@@ -1141,6 +1142,7 @@ theorem general_to_metric_tubular
     (U : Set (E d))
     (hU : IsGeneralTubularNeighborhood (Set.range ι) U) :
     ∃ (U' : Set (E d)),
+      (∃ r : ℝ, 0 < r ∧ U' = {x : E d | Metric.infDist x (Set.range ι) < r}) ∧
       IsOpen U' ∧ Set.range ι ⊆ U' ∧ U' ⊆ U ∧
       IsTubularNeighborhoodOfSubmanifold (Set.range ι) U' := by
   set S := Set.range ι
@@ -1149,7 +1151,7 @@ theorem general_to_metric_tubular
   obtain ⟨r_U, hr_U_pos, hr_U_sub⟩ :=
     exists_metric_tube_subset hK hKne hU.isOpen hU.subset
   set U' := {x : E d | Metric.infDist x S < r_U}
-  refine ⟨U', ?_, ?_, ?_, ?_⟩
+  refine ⟨U', ⟨r_U, hr_U_pos, rfl⟩, ?_, ?_, ?_, ?_⟩
   · exact isOpen_lt (Metric.continuous_infDist_pt _) continuous_const
   · intro x hx
     change Metric.infDist x S < r_U

@@ -25,8 +25,8 @@ generalizing the specific computations used in winding number calculations.
 * `integral_logDeriv_eq_log_sub` - ∫ f'/f = log f(b) - log f(a) when f stays in slitPlane
 * `ftc_log_on_segment` - combined integrability + FTC for a single C¹ function in slitPlane
 * `ftc_log_neg_on_segment` - combined integrability + FTC when -f stays in slitPlane
-* `ftc_log_piece` - combined integrability + FTC when f and g agree a.e. (generalizes
-  Common.lean version)
+* `ftc_log_piece` - combined integrability + FTC when `g` and `deriv g` equal `h` and `deriv h`
+  on (a,b) and `g` matches `h` at both endpoints
 -/
 
 @[expose] public section
@@ -71,20 +71,18 @@ theorem integral_logDeriv_eq_log_sub {f : ℝ → ℂ} {a b : ℝ} (hab : a ≤ 
     (intervalIntegrable_logDeriv_of_slitPlane hab hf_cont hf_deriv_cont hf_slit)
 
 /-!
-### Combined integrability + FTC for a.e.-equal pairs of curves
+### Combined integrability + FTC for a curve matching a C¹ reference
 
-This is the general version of `ftc_log_piece` from `ValenceFormula.WindingWeights.Common`,
-allowing g to differ from f on a null set (e.g. finitely many points).
+Here `deriv g` is unconstrained at the endpoints of `[a, b]`, where only the values of `g` are
+matched to `h`. `ValenceFormula.WindingWeights.Common` restates this lemma under the same name.
 -/
 
 /-- Combined integrability and FTC for log-derivative integrals.
 
 Given a "reference" function h (C¹ with values in slitPlane) and a function g
-that agrees with h on (a,b) up to a null set (with matching endpoint values),
-both ∫ g'/g and ∫ h'/h are interval integrable and equal Complex.log(g b) - Complex.log(g a).
-
-This generalizes the `ftc_log_piece` lemma in `ValenceFormula.WindingWeights.Common`
-to the setting where h serves as the smooth comparison function. -/
+with `g t = h t` and `deriv g t = deriv h t` at every point of (a,b) and with matching
+endpoint values, ∫ g'/g is interval integrable and equals
+Complex.log(g b) - Complex.log(g a). -/
 theorem ftc_log_piece {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Icc a b))
     (hh_diff : ∀ t ∈ Ioo a b, DifferentiableAt ℝ h t)
@@ -126,7 +124,7 @@ theorem ftc_log_piece {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
 /-- Combined integrability and FTC for a single C¹ function staying in slitPlane.
 
 Returns both `IntervalIntegrable (f'/f)` and `∫ f'/f = log(f(b)) - log(f(a))`.
-This is the direct-function version of `ftc_log_piece` (no g/h a.e.-equal pair needed). -/
+This is the direct-function version of `ftc_log_piece` (no g/h pair needed). -/
 theorem ftc_log_on_segment {f : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     (hf_cont : ContinuousOn f (Icc a b))
     (hf_diff : ∀ t ∈ Ioo a b, DifferentiableAt ℝ f t)

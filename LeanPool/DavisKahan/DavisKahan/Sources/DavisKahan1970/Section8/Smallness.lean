@@ -72,7 +72,8 @@ structure ResidualHalfGapBridge
     selectedBranchProjectionLipschitzConstant C.contour V C.margin <
       Real.sqrt 2 / 2
 
-/-- The exact branch conclusion obtained from the perturbation-norm bridge. -/
+/-- The selected-branch conclusion from the contour bound stored in the bridge.  The field
+`perturbation_small` is not used: the caller supplies the contour bound when building `B`. -/
 theorem theorem82_branch_of_perturbationHalfGapBridge
     (C : SpectralContinuationWitness A V s) {delta : ℝ}
     (B : PerturbationHalfGapBridge C delta) :
@@ -80,7 +81,9 @@ theorem theorem82_branch_of_perturbationHalfGapBridge
   selectedBranchConclusion_of_contour_bound C
     B.contour_selects_quarter_branch
 
-/-- The exact branch conclusion obtained from the residual-norm bridge. -/
+/-- The selected-branch conclusion from the contour bound stored in the bridge.  The field
+`residual_small` is not used: the caller supplies the contour bound when building `B`, and
+no Krein replacement happens here. -/
 theorem theorem82_branch_of_residualHalfGapBridge
     (C : SpectralContinuationWitness A V s)
     (R : F →L[ℂ] H) {delta : ℝ}

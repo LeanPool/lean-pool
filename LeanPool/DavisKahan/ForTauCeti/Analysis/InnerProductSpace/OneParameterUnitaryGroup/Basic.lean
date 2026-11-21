@@ -233,10 +233,10 @@ lemma generator_isFormalAdjoint (U : OneParameterUnitaryGroup (H := H)) :
     rw [hconj]
   exact tendsto_nhds_unique (hgx.congr' key) hgy'
 
-/-! ### Domain invariance (and the commutation `A ∘ U s = U s ∘ A`) -/
+/-! ### Domain invariance -/
 
-/-- The group preserves the domain of its generator, and `A (U s ψ) = U s (A ψ)`.
-This is the clean structural identity that the resolvent argument downstream relies on. -/
+/-- The group preserves the domain of its generator.  For commutation with the generator,
+apply `generator_commute` from `Commutant.lean` to `U s`. -/
 lemma generator_domain_invariant (U : OneParameterUnitaryGroup (H := H))
     (s : ℝ) (x : (generator U).domain) :
     U.U s (x : H) ∈ (generator U).domain := by

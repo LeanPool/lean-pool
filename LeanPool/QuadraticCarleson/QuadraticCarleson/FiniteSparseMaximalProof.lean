@@ -1648,8 +1648,9 @@ theorem finiteSparseMaximal_weakOneOneNorm_le
       (paperLog_one_sq_nonneg N)
   · exact finiteSparseMaximal_hasWeakOneOneBound T A hT
 
-/-- Paper Lemma `l:weak11sparse`, including the absolute placement of the
-constant outside all family quantifiers. -/
+/-- The weak-norm form of paper Lemma `l:weak11sparse`, with the constant
+outside all family quantifiers. The distribution inequality itself is
+`exists_finiteSparseMaximal_hasWeakOneOneBound`. -/
 theorem weak11sparseStatement_proof : weak11sparseStatement := by
   refine ⟨finiteSparseMaximalUniversalConstant,
     finiteSparseMaximalUniversalConstant_pos, ?_⟩

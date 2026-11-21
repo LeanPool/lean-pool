@@ -735,10 +735,15 @@ theorem FiniteSparseMaximalHypothesis.hasSparseOnePBound_add {N : ℕ}
   exact hasSparseOnePBound_of_sparseOnePNorm_lt hbounded
     (hnorm.trans_lt (lt_add_of_pos_right _ hε))
 
-/-- The formal proposition corresponding exactly to paper Lemma
-`l:weak11sparse`. The witness `K` is outside the quantifiers over `N`, the
-operator family, and its sparse-growth constant, so it is genuinely absolute
-rather than being chosen separately for each family. -/
+/-- The weak-norm form of paper Lemma `l:weak11sparse`. The witness `K` is
+outside the quantifiers over `N`, the operator family, and its sparse-growth
+constant, so it is genuinely absolute rather than being chosen separately for
+each family.
+
+`weakOneOneNorm` is a real infimum, which is `0` when no finite bound exists, so
+this proposition alone does not assert that `finiteMax T` has a finite weak
+`(1,1)` bound. The distribution inequality itself is
+`exists_finiteSparseMaximal_hasWeakOneOneBound`. -/
 def weak11sparseStatement : Prop :=
   ∃ K : ℝ, 0 < K ∧ ∀ {N : ℕ} (T : Fin N → TestOperator) (A : ℝ),
     FiniteSparseMaximalHypothesis T A →

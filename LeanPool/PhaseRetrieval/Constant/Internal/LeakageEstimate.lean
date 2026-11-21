@@ -13,7 +13,7 @@ Authors: Susanna Bertolini, Jaume de Dios Pont
   Public API:
   - `block_annulus_leakage`  (Theorem 5.7)
   - `total_leakage_bound`   (Theorem 5.8)
-  - `eta_5_bound`           (Theorem 5.9)
+  - `eta_5_bound`           (Theorem 5.9, sum truncated at `m = 100`)
 -/
 module
 
@@ -261,7 +261,10 @@ private lemma blockPoly_circle_norm_sq {D : ℕ} (a : Fin D → ℂ) (ℓ : ℕ)
 For `ℓ ≥ 1`, `j ≥ 0`, and `a : Fin D → ℂ` defining `U_ℓ`:
 
   `(1/π) ∫_{j ≤ |z| < j+1} |U_ℓ(z)|² exp(−|z|²) dm ≤
-      exp(1/4) · exp(−(max(|j−ℓ|−1, 0))²) · fockNormSq(U_ℓ)`
+      exp(1/4) · exp(−(max(j−ℓ−1, 0))²) · fockNormSq(U_ℓ)`
+
+This one-sided bound decays only for `j > ℓ + 1`. The two-sided bound, with
+`max(|j−ℓ|−1, 0)` in the exponent, is `block_annulus_leakage_symmetric` below.
 
 **Proof**:
 1. Circle orthogonality (Thm 5.4): decompose into radial integrals.
@@ -945,9 +948,10 @@ theorem total_leakage_bound {D : ℕ} (a : Fin D → ℂ) {M : ℕ} (hM : 2 ≤ 
         rw [fockNorm_decomposes]; simp only [fockNormSqBlock]
         rw [Finset.mul_sum]; congr 1; ext ℓ; ring
 
-/-! ## Theorem 5.9: Explicit bound for η₅
+/-! ## Theorem 5.9: Explicit bound for truncated η₅
 
-`η₅ < 4 × 10⁻¹¹`
+`etaCoeff 5 100 < 4 × 10⁻¹¹`, for the sum truncated at `m = 100`. The same bound for
+every truncation `etaCoeff 5 J` is `etaCoeff_5_universal` in `MainTheorem`.
 
 **Proof**: Bound `exp(1/4) < 13/10`, `exp(-25) < 14/10¹²`, `exp(-36) < 1/10¹⁴`.
 Split the sum at `m = 5`, bound the tail by `95 · exp(-36)`.
