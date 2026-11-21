@@ -47,12 +47,13 @@ theorem). Hence `(C, quotientTopology U T₁)` with the sheafified generic model
   Morita-equivalent theories, assuming only `SievesDefinable` on the two classifying sites
   instead of `HasQuotientTopologies`.
 
-## Not formalised
+## Unconditional versions
 
-The converse of roadmap 2.5 without hypothesis (`exists_quotient_theory` of the roadmap) needs
-the definability of subobjects of the generic model (roadmap 2.4), proved on the syntactic site
-(roadmap 2.3), which is not formalised: `SievesDefinable` is exactly what is used of it. Hence
-the bridges theorem `exists_orderIso_quotients'` still assumes `SievesDefinable` on both sites.
+`SievesDefinable` holds on the Horn sites of `Syntactic/` (`sievesDefinable_genericModel`), but
+not on arbitrary classifying sites. The unconditional converse of roadmap 2.5
+(`IsClassifyingSite.exists_quotient_theory`) and the unconditional bridges theorem
+(`MoritaEquivalent.exists_orderIso_quotients`) are in `Unconditional.lean`: they transport the
+topologies along the equivalence of topoi with a Horn site.
 -/
 
 @[expose] public section
@@ -424,7 +425,8 @@ variable (U : CatStructure L (Sheaf J (Type u))) in
 /-- Definability of covering sieves for a structure `U` in `Sh(C, J)`: for every sieve `S` on
 an object of `C`, the `J`-sheafification of the inclusion of `S` in the representable presheaf
 is isomorphic, as an arrow, to the monomorphism `[[φ ∧ ψ]]_U ⟶ [[φ]]_U` of some sequent. This
-holds for the generic model on the syntactic site (roadmap 2.3, 2.4), which is not formalised. -/
+holds for the generic model on the Horn sites (`sievesDefinable_genericModel`), not on every
+classifying site. -/
 def SievesDefinable : Prop :=
   ∀ (X : C) (S : Sieve X), ∃ σ : Sequent.{u} L,
     Nonempty (Arrow.mk ((presheafToSheaf J (Type u)).map S.functorInclusion) ≅

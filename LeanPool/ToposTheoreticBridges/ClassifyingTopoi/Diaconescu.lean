@@ -41,11 +41,11 @@ the topologies `J₁ ≥ J` on `C` (roadmap 2.5, `LeanPool.ClassifyingTopoi.Quot
 
 ## Not formalised
 
-The existence half of Diaconescu's theorem (a flat `J`-continuous functor `C ⥤ Sh(D, K)`
-extends to a left exact left adjoint `Sh(C, J) ⥤ Sh(D, K)`) is not formalised: it needs the
-internal notion of flatness in a sheaf topos (filtering functors), which Mathlib does not have;
-Mathlib's `Functor.RepresentablyFlat` is the external notion, adequate only for the target
-`Type u`. It is not needed for roadmap 2.5, whose proof only uses the localisation half.
+The existence half of Diaconescu's theorem in general (a flat `J`-continuous functor
+`C ⥤ Sh(D, K)` extends to a left exact left adjoint `Sh(C, J) ⥤ Sh(D, K)`) is not formalised: it
+needs the internal notion of flatness in a sheaf topos (filtering functors), which Mathlib does
+not have. For the Horn sites it is proved in `Syntactic/Extension.lean` through points
+(`GrothendieckTopology.Point`), which is all the classifying sites need.
 -/
 
 @[expose] public section
