@@ -86,6 +86,13 @@ noncomputable def pointsFunctor :
     ext X x
     exact Subtype.ext (funext fun i => Functor.map_comp_apply P.carrier g g' _)
 
+variable (L) in
+/-- The fiber functors on presheaves of the points of the Horn site. -/
+noncomputable def presheafFiberFunctor :
+    (GrothendieckTopology.Point.{max u₁ u₂ u} (⊥ : GrothendieckTopology (HornCat.{u} L)))ᵒᵖ ⥤
+      ((HornCat.{u} L)ᵒᵖ ⥤ Type (max u₁ u₂ u)) ⥤ Type (max u₁ u₂ u) :=
+  pointPresheafFiberFunctor (C := HornCat.{u} L) ⊥
+
 /-- The extension of a presheaf structure along the Yoneda embedding of the Horn category:
 the presheaf of fibers, at the points given by the fiber structures. -/
 noncomputable def extension :
@@ -102,6 +109,32 @@ instance : PreservesFiniteLimits (extension.{u} P) :=
 
 instance : PreservesColimitsOfSize.{max u₁ u₂ u, max u₁ u₂ u} (extension.{u} P) :=
   inferInstanceAs (PreservesColimitsOfSize (pointsExtension _))
+
+section PointIso
+
+variable {Φ₁ Φ₂ : GrothendieckTopology.Point.{max u₁ u₂ u}
+  (⊥ : GrothendieckTopology (HornCat.{u} L))} (f : Φ₁ ⟶ Φ₂)
+
+/-- The fiber of a representable presheaf at a point is the fiber of the point, through the
+Yoneda embedding. -/
+noncomputable def yonedaCompPresheafFiberIso
+    (Φ : GrothendieckTopology.Point.{max u₁ u₂ u} (⊥ : GrothendieckTopology (HornCat.{u} L))) :
+    yoneda ⋙ Φ.presheafFiber ≅ Φ.fiber :=
+  yonedaCompPointPresheafFiberIso Φ
+
+/-- The isomorphism `shrinkYonedaCompPresheafFiberIso` is natural in the point. -/
+theorem shrinkYonedaCompPresheafFiberIso_naturality (X : HornCat.{u} L) :
+    f.presheafFiber.app (shrinkYoneda.obj X) ≫ Φ₁.shrinkYonedaCompPresheafFiberIso.hom.app X =
+      Φ₂.shrinkYonedaCompPresheafFiberIso.hom.app X ≫ f.hom.app X :=
+  LeanPool.ClassifyingTopoi.shrinkYonedaCompPresheafFiberIso_naturality f X
+
+/-- The isomorphism `yonedaCompPresheafFiberIso` is natural in the point. -/
+theorem yonedaCompPresheafFiberIso_naturality (X : HornCat.{u} L) :
+    f.presheafFiber.app (yoneda.obj X) ≫ (yonedaCompPresheafFiberIso Φ₁).hom.app X =
+      (yonedaCompPresheafFiberIso Φ₂).hom.app X ≫ f.hom.app X :=
+  yonedaCompPointPresheafFiberIso_naturality f X
+
+end PointIso
 
 /-- The extension of a presheaf structure, composed with the Yoneda embedding, is the functor of
 the fibers. -/

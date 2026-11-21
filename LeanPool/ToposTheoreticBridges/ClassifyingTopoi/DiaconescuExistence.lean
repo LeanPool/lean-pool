@@ -70,8 +70,8 @@ The general case, a functor `C ⥤ Sh(D, K)` flat in the internal sense of `Sh(D
 
 ## References
 
-* S. Mac Lane, I. Moerdijk, *Sheaves in Geometry and Logic*, VII.5–VII.9 (Theorem VII.7.2 for
-  presheaf topoi, Theorem VII.9.1 for sites).
+* S. Mac Lane, I. Moerdijk, *Sheaves in Geometry and Logic*, VII.7 Theorem 2 for
+  presheaf topoi and VII.9 Corollary 2 and VII.10 Theorem 1 for sites.
 * P. T. Johnstone, *Sketches of an Elephant*, B3.2.7 (presheaf topoi) and C2.3.8 (sites).
 * M. Artin, A. Grothendieck, J.-L. Verdier, SGA 4, IV 6.3 (points of a site).
 -/

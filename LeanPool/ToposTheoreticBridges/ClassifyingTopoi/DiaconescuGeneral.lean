@@ -38,8 +38,8 @@ left exact case (`exists_leftAdjoint_of_preservesFiniteLimits`).
 
 ## References
 
-* S. Mac Lane, I. Moerdijk, *Sheaves in Geometry and Logic*, VII.8 (Theorem 2) and VII.9
-  (Theorem 1).
+* S. Mac Lane, I. Moerdijk, *Sheaves in Geometry and Logic*, VII.8 Theorem 2,
+  VII.9 Corollary 2 and VII.10 Theorem 1.
 * P. T. Johnstone, *Sketches of an Elephant*, B3.2.7 and C2.3.8.
 -/
 
