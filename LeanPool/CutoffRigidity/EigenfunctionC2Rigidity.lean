@@ -483,4 +483,50 @@ theorem c2_L2_eigenfunction_is_affine {V f : E → ℝ}
   exact eq_affine_inner_gradient_of_contDiff_two_of_hessian_zero
     (hf.of_le (by norm_num)) (c2_eigenfunction_hessian_zero hV hf hfLp ρ hρ hHess heigen) x
 
+/-- The localized Bochner identity for a C³ eigenfunction. -/
+theorem localized_eigenfunction_bochner_identity {V f χ : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hf : ContDiff ℝ 3 f) (hχ : ContDiff ℝ 2 χ)
+    (hχc : HasCompactSupport χ) (ρ : ℝ)
+    (heigen : ∀ x, langevinDifferentialOperator V f x = -ρ * f x) :
+    (∫ x, ∑ i : Fin d, χ x ^ 2 * ‖gradient (coordinateDerivative i f) x‖ ^ 2
+      ∂gibbsMeasure volume V) +
+      2 * (∫ x, ∑ i : Fin d, χ x * coordinateDerivative i f x *
+        inner ℝ (gradient χ x) (gradient (coordinateDerivative i f) x) ∂gibbsMeasure volume V) +
+      (∫ x, ∑ i : Fin d, χ x ^ 2 * coordinateDerivative i f x *
+        (∑ j : Fin d, coordinateDerivative i (coordinateDerivative j V) x * coordinateDerivative j
+          f x)
+          ∂gibbsMeasure volume V) =
+      ρ * (∫ x, ∑ i : Fin d, χ x ^ 2 * (coordinateDerivative i f x) ^ 2
+        ∂gibbsMeasure volume V) :=
+  c2_localized_eigenfunction_bochner_identity hV (hf.of_le (by norm_num)) hχ hχc ρ heigen
+
+/-- The cutoff Hessian estimate for a C³ eigenfunction. -/
+theorem eigenfunction_cutoff_hessian_bound {V f χ : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hf : ContDiff ℝ 3 f) (hχ : ContDiff ℝ 2 χ)
+    (hχc : HasCompactSupport χ) (ρ : ℝ)
+    (hHess : ∀ x z : E, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
+    (heigen : ∀ x, langevinDifferentialOperator V f x = -ρ * f x) :
+    (∫ x, χ x ^ 2 * (∑ i : Fin d, ‖gradient (coordinateDerivative i f) x‖ ^ 2)
+      ∂gibbsMeasure volume V) ≤
+      4 * (∫ x, ‖gradient χ x‖ ^ 2 * ‖gradient f x‖ ^ 2 ∂gibbsMeasure volume V) :=
+  c2_eigenfunction_cutoff_hessian_bound hV (hf.of_le (by norm_num)) hχ hχc ρ hHess heigen
+
+/-- An L² C³ eigenfunction at curvature equality has zero Hessian. -/
+theorem c3_eigenfunction_hessian_zero {V f : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hf : ContDiff ℝ 3 f)
+    (hfLp : MemLp f 2 (gibbsMeasure volume V)) (ρ : ℝ) (hρ : 0 ≤ ρ)
+    (hHess : ∀ x z : E, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
+    (heigen : ∀ x, langevinDifferentialOperator V f x = -ρ * f x) (x : E) :
+    fderiv ℝ (fderiv ℝ f) x = 0 :=
+  c2_eigenfunction_hessian_zero hV (hf.of_le (by norm_num)) hfLp ρ hρ hHess heigen x
+
+/-- An L² C³ eigenfunction at curvature equality is affine. -/
+theorem c3_L2_eigenfunction_is_affine {V f : E → ℝ}
+    (hV : ContDiff ℝ 2 V) (hf : ContDiff ℝ 3 f)
+    (hfLp : MemLp f 2 (gibbsMeasure volume V)) (ρ : ℝ) (hρ : 0 ≤ ρ)
+    (hHess : ∀ x z : E, ρ * ‖z‖ ^ 2 ≤ fderiv ℝ (fderiv ℝ V) x z z)
+    (heigen : ∀ x, langevinDifferentialOperator V f x = -ρ * f x) (x : E) :
+    f x = f 0 + inner ℝ (gradient f 0) x :=
+  c2_L2_eigenfunction_is_affine hV (hf.of_le (by norm_num)) hfLp ρ hρ hHess heigen x
+
 end CutoffRigidity
