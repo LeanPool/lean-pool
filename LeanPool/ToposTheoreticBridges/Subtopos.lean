@@ -77,6 +77,18 @@ theorem le_iff {S T : Subtopos E} : S ≤ T ↔ ∀ X, S.prop X → T.prop X :=
 theorem isOrthogonal_of_isIso {A B : E} (m : A ⟶ B) [IsIso m] (X : E) : IsOrthogonal m X :=
   (forall_isOrthogonal_iff_isLocal ⊤ m).2 (ObjectProperty.isLocal_of_isIso _ m) X trivial
 
+/-- A pullback-preserving left adjoint `F ⊣ G` inverting a monomorphism `m` makes `m` dense for
+every class `P` of objects of the form `G.obj Y`: the pullbacks of `m` are inverted by `F`,
+hence orthogonal to the objects `G.obj Y` (`isOrthogonal_map_iff_of_adjunction`). -/
+theorem isDenseFor_of_isIso_map_of_adjunction {D : Type u₂} [Category.{v₂} D] {F : E ⥤ D}
+    {G : D ⥤ E} (adj : F ⊣ G) [PreservesLimitsOfShape WalkingCospan F] {P : E → Prop}
+    (hP : ∀ X, P X → ∃ Y, X = G.obj Y) {A B : E} (m : A ⟶ B) [Mono m] [IsIso (F.map m)] :
+    IsDenseFor P m := by
+  refine ⟨inferInstance, fun _ _ _ n _ hp H hH => ?_⟩
+  obtain ⟨Y, rfl⟩ := hP H hH
+  have := (F.map_isPullback hp).isIso_fst_of_isIso
+  exact (isOrthogonal_map_iff_of_adjunction adj n Y).1 (isOrthogonal_of_isIso _ _)
+
 section Localisation
 
 variable {P : ObjectProperty E} {L : E ⥤ P.FullSubcategory} (adj : L ⊣ P.ι)
@@ -84,13 +96,11 @@ variable {P : ObjectProperty E} {L : E ⥤ P.FullSubcategory} (adj : L ⊣ P.ι)
 
 include adj in
 /-- For a reflective class `P` with pullback-preserving reflector `L`, a monomorphism inverted
-by `L` is dense for `P`: its pullbacks are inverted by `L`, hence `P`-local
-(`ObjectProperty.isLocal_iff_isIso_map`). -/
+by `L` is dense for `P`: its pullbacks are inverted by `L`, hence orthogonal to `P`
+(`isDenseFor_of_isIso_map_of_adjunction`). -/
 theorem isDenseFor_of_isIso_map {A B : E} (m : A ⟶ B) [Mono m] [IsIso (L.map m)] :
-    IsDenseFor P m := by
-  refine (isDenseFor_iff_universally P m).2 ⟨inferInstance, fun _ _ _ _ n hp H hH => ?_⟩
-  have := (L.map_isPullback hp).isIso_fst_of_isIso
-  exact (ObjectProperty.isLocal_iff_isIso_map adj n).2 this H ⟨⟨H, hH⟩, rfl⟩
+    IsDenseFor P m :=
+  isDenseFor_of_isIso_map_of_adjunction adj (fun X hX => ⟨⟨X, hX⟩, rfl⟩) m
 
 omit [PreservesLimitsOfShape WalkingCospan L] in
 include adj in

@@ -389,6 +389,8 @@ theorem rieszSecond_bad_part_interface_of_cube
         ((volume.restrict (dyadicCubeSet Q.1)).prod
           (volume.restrict (rieszSecondCubeStar Q.1)ᶜ))) :
     ∀ Q : {Q // Q ∈ D.cubes}, ∃ Tbad : Vec3 → ℝ,
+      (∀ x, Tbad x = ∫ y in dyadicCubeSet Q.1,
+        rieszSecondKernel i j (x - y) * dyadicBadPart F Q.1 y) ∧
       AEMeasurable (fun x => ENNReal.ofReal |Tbad x|)
         (volume.restrict
           (⋃ Q : {Q // Q ∈ D.cubes}, rieszSecondCubeStar Q.1)ᶜ) ∧
@@ -400,7 +402,7 @@ theorem rieszSecond_bad_part_interface_of_cube
             ENNReal.ofReal |dyadicBadPart F Q.1 x| := by
   intro Q
   obtain ⟨hb, hterm, hjoint, hjointSwap⟩ := hdata Q
-  obtain ⟨Tbad, hmeas, hIntegrable, hbound⟩ :=
+  obtain ⟨Tbad, hTbad, hmeas, hIntegrable, hbound⟩ :=
     rieszSecond_bad_cube_hormander (Q := Q.1)
       (b := dyadicBadPart F Q.1) i j (D.bad_part_mean Q.2)
       hb hterm hjoint hjointSwap
@@ -410,7 +412,7 @@ theorem rieszSecond_bad_part_interface_of_cube
     exact hx (mem_iUnion.2 ⟨Q, hxQ⟩)
   have hmeas' := hmeas.mono_measure
     (Measure.restrict_mono hsubset le_rfl)
-  refine ⟨Tbad, hmeas', hIntegrable, hbound⟩
+  exact ⟨Tbad, hTbad, hmeas', hIntegrable, hbound⟩
 
 lemma measurableSet_rieszSecondCubeStar_assembly (Q : DyadicIndex) :
     MeasurableSet (rieszSecondCubeStar Q) := by

@@ -22,7 +22,6 @@ The public statements use the primed uniform-convergence route from
 ## Main results
 
 - `uc_does_not_imply_online` : UC ⊬ online learnability (paradigm separation)
-- `consistent_learner_pac` : consistency + finite VCDim → PAC
 - `sample_complexity_lower_bound` : PAC lower bound via VCDim
 - `rademacher_vanishing_imp_pac` : uniform Rademacher vanishing → PAC
 -/
@@ -178,11 +177,11 @@ theorem uc_does_not_imply_online' (X : Type u) [MeasurableSpace X] [Infinite X]
     (UniversallyMeasurableSpace.class_wellBehaved)
 
 -- ============================================================
--- Block 2: consistent_learner_pac (moved from Generalization.lean)
+-- Block 2: PAC learnability from finite VCDim
 -- ============================================================
 
 /-- PAC learnability from finite VCDim plus measurability data, with an empty-class
-    fallback. Shared by `consistent_learner_pac` and `sample_complexity_lower_bound`. -/
+    fallback, used by `sample_complexity_lower_bound`. -/
 private theorem pacLearnable_of_vcdim_finite (X : Type u) [MeasurableSpace X]
     (C : ConceptClass X Bool) (hvcdim : VCDim X C < ⊤)
     (hmeas_C : ∀ h ∈ C, Measurable h) (hc_meas : ∀ c : Concept X Bool, Measurable c)
@@ -192,26 +191,6 @@ private theorem pacLearnable_of_vcdim_finite (X : Type u) [MeasurableSpace X]
   · rw [Set.not_nonempty_iff_eq_empty] at hne
     exact ⟨⟨Set.univ, fun _ => fun _ => false, fun _ => Set.mem_univ _⟩,
            fun _ _ => 0, fun _ _ _ _ _ _ c hcC => by simp [hne] at hcC⟩
-
-/-- Consistent learners are PAC learners when VCDim < ⊤. -/
-theorem consistent_learner_pac (X : Type u) [MeasurableSpace X]
-    (C : ConceptClass X Bool) (hvcdim : VCDim X C < ⊤)
-    (hmeas_C : ∀ h ∈ C, Measurable h) (hc_meas : ∀ c : Concept X Bool, Measurable c)
-    (hWB : WellBehavedVC X C)
-    (L : BatchLearner X Bool)
-    (_hcons : ∀ {m : ℕ} (S : Fin m → X × Bool), ∀ i, L.learn S (S i).1 = (S i).2) :
-    PACLearnable X C :=
-  pacLearnable_of_vcdim_finite X C hvcdim hmeas_C hc_meas hWB
-
-/-- Typeclass version of consistent_learner_pac. -/
-theorem consistent_learner_pac' (X : Type u) [MeasurableSpace X]
-    (C : ConceptClass X Bool) [MeasurableConceptClass X C] (hvcdim : VCDim X C < ⊤)
-    (L : BatchLearner X Bool)
-    (hcons : ∀ {m : ℕ} (S : Fin m → X × Bool), ∀ i, L.learn S (S i).1 = (S i).2) :
-    PACLearnable X C :=
-  consistent_learner_pac X C hvcdim
-    (MeasurableConceptClass.hmeas_C C) (MeasurableConceptClass.hc_meas C)
-    (MeasurableConceptClass.hWB C) L hcons
 
 -- ============================================================
 -- Block 3: sample_complexity_lower_bound (moved from Generalization.lean)

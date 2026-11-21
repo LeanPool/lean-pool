@@ -138,11 +138,6 @@ theorem memC_prepend (σ : Str) {X : Set Str} (hX : memC X) : memC (prepend σ X
   · exact Or.inl ⟨σ ++ ρ, prepend_cone σ ρ⟩
   · exact Or.inr ⟨σ ++ ρ, prepend_singleton σ ρ⟩
 
-/-- `σX ⊆ X` along the prefix order: a prepended neighbourhood is contained in any
-neighbourhood it
-refines. (Used only via `prepend_mono`; kept implicit.) -/
-theorem prepend_subset_self : True := trivial
-
 /-- **Example 4.4 — the successors `x ↦ bx`.** The approximable map prepending the
 bit `b`:
 `X (bx) Y ↔ bX ⊆ Y`. Approximable because `bX` is again a neighbourhood
