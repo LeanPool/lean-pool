@@ -52,9 +52,9 @@ theorem overlay_has_outer_face (pieces : List Piece) (hnd : ∀ P ∈ pieces, P.
   let _ := hfin
   exact ⟨G, hpt, Graph.exists_unbounded_face hdraw⟩
 
-/-- Cutting a Jordan curve at two points and gluing the pieces back returns a Jordan curve —
-`IsJordanCurve.two_arcs` composed with `IsJordanCurve.of_two_arcs`. The two are converse, and
-this is what says so. -/
+/-- Composition check: the arcs produced by `IsJordanCurve.two_arcs` are accepted by
+`IsJordanCurve.two_arcs_of_two_arcs`. The conclusion alone is weak, since `A = B = C` satisfies
+it; the check is that the proof's two calls fit together. -/
 theorem two_arcs_roundtrip {C : Set Plane} (hC : IsJordanCurve C) {p q : Plane}
     (hp : p ∈ C) (hq : q ∈ C) (hpq : p ≠ q) :
     ∃ A B, A ∪ B = C ∧ IsJordanCurve (A ∪ B) := by
