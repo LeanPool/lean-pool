@@ -415,6 +415,7 @@ theorem rieszSecond_bad_cube_hormander {Q : DyadicIndex} {b : Vec3 → ℝ}
         ) ((volume.restrict (dyadicCubeSet Q)).prod
           (volume.restrict (rieszSecondCubeStar Q)ᶜ))) :
     ∃ Tbad : Vec3 → ℝ,
+      (∀ x, Tbad x = ∫ y in dyadicCubeSet Q, rieszSecondKernel i j (x - y) * b y) ∧
       AEMeasurable (fun x => ENNReal.ofReal |Tbad x|)
         (volume.restrict (rieszSecondCubeStar Q)ᶜ) ∧
       IntegrableOn Tbad (rieszSecondCubeStar Q)ᶜ volume ∧
@@ -507,6 +508,6 @@ theorem rieszSecond_bad_cube_hormander {Q : DyadicIndex} {b : Vec3 → ℝ}
   have hTint : IntegrableOn Tbad E volume := by
     apply hTabs.mono' hTbad_ae.aestronglyMeasurable.restrict
     exact ae_of_all _ (fun x => le_rfl)
-  exact ⟨Tbad, hTmeas, hTint, hbridge⟩
+  exact ⟨Tbad, fun _ => rfl, hTmeas, hTint, hbridge⟩
 
 end CKN.Foundation.Euclidean
