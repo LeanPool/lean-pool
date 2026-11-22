@@ -1,0 +1,46 @@
+slug: extriangulated-realization
+title: An extriangulated category with no triangulated embedding
+summary: Over every field, an Aronszajn tree gives one essentially small hereditary
+  Krull–Schmidt extriangulated category with enough injectives that has no fully
+  faithful extriangulated embedding into a triangulated category in any universe.
+  Every countable family of objects lies in an extension-closed subcategory with
+  an algebraic realization. For inverse systems of vector spaces over a field indexed
+  by a nonempty well-ordered set, with surjective transition maps, surjectivity of
+  the limit projections characterizes embeddings and algebraic realizations.
+branch: category theory
+entry_module: LeanPool.ExtriangulatedRealization
+authors:
+- Haruhisa Enomoto
+source:
+  title: An extriangulated category with no triangulated embedding
+  url: https://hexagonmath.org/2611.00805v1
+  github_repo: haruhisa-enomoto/extriangulated-triangulated-embedding
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- ExtriangulatedRealization.theoremA
+- ExtriangulatedRealization.theoremB
+- ExtriangulatedRealization.theoremB_necessity
+main_results:
+- declaration: ExtriangulatedRealization.theoremA
+  informal: Constructs a single inverse system over the first uncountable ordinal whose
+    extriangulated category has the stated structure and fails the limit-surjectivity test.
+- declaration: ExtriangulatedRealization.theoremB
+  informal: For an inverse system of vector spaces over a field indexed by a nonempty
+    well-ordered set, with surjective transition maps, surjectivity of the inverse-limit
+    projections is equivalent to triangulated embeddability and to algebraic realizability
+    in the stated target universes.
+- declaration: ExtriangulatedRealization.theoremB_necessity
+  informal: For an inverse system of vector spaces over a field indexed by a linearly
+    ordered set, a triangulated embedding in arbitrary target universes forces surjectivity
+    of the inverse-limit projections, ruling out every target for the witness of Theorem A.
+tags:
+- extriangulated categories
+- triangulated categories
+- inverse systems
+- Aronszajn trees
+msc:
+- 18G80
+- 18E10
+- 03E05
