@@ -38,7 +38,7 @@ theorem injective_mfderiv_level_val' :
     ∀ y : fr.Level, Function.Injective
       (mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
         (Subtype.val : fr.Level → M) y) :=
-  injective_mfderiv_level_val fr.contMDiff_sv fr.hsub
+  injective_mfderiv_level_val fr.contMDiff_sv fr.zero_isRegularValue
 
 /-- The induced Riemannian metric on the level. -/
 noncomputable instance levelRiemannianBundle :
@@ -65,7 +65,7 @@ noncomputable def toLevel (x : M) : fr.Level := ⟨fr.retr x, fr.sv_retr x⟩
 
 theorem contMDiff_toLevel :
     ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞ fr.toLevel :=
-  contMDiff_into_level fr.contMDiff_sv fr.hsub fr.contMDiff_retr fr.sv_retr
+  contMDiff_into_level fr.contMDiff_sv fr.zero_isRegularValue fr.contMDiff_retr fr.sv_retr
 
 theorem toLevel_val (y : fr.Level) : fr.toLevel y.val = y :=
   Subtype.ext (fr.retr_of_level y.property)

@@ -32,24 +32,26 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] {k : ℕ} (fr : Frame F M k)
 
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
-theorem hsub : ∀ y : M, fr.sv y = 0 →
-    Function.Surjective (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, EuclideanSpace ℝ (Fin k)) fr.sv y) :=
-  fun y _ => fr.surjective_mfderiv_sv y
+/-- The origin is a regular value of the parallel-frame coordinates. -/
+theorem zero_isRegularValue : TauCeti.IsRegularValue 𝓘(ℝ, F)
+    𝓘(ℝ, EuclideanSpace ℝ (Fin k)) fr.sv 0 :=
+  TauCeti.isRegularValue_iff.2 fun y _ ↦
+    TauCeti.isRegularPoint_iff.2 (fr.surjective_mfderiv_sv y)
 
 /-- Charts on the zero level. -/
 noncomputable instance levelCharted :
     ChartedSpace (LevelModel F (EuclideanSpace ℝ (Fin k))) fr.Level :=
-  levelChartedSpace fr.contMDiff_sv fr.hsub
+  levelChartedSpace fr.contMDiff_sv fr.zero_isRegularValue
 
 instance levelIsManifold :
     IsManifold 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞ fr.Level :=
-  isManifold_level fr.contMDiff_sv fr.hsub
+  isManifold_level fr.contMDiff_sv fr.zero_isRegularValue
 
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
 theorem contMDiff_level_val' :
     ContMDiff 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F) ∞
       (Subtype.val : fr.Level → M) :=
-  contMDiff_level_val fr.contMDiff_sv fr.hsub
+  contMDiff_level_val fr.contMDiff_sv fr.zero_isRegularValue
 
 /-- The smooth product decomposition. -/
 noncomputable def splitEquiv :
@@ -63,7 +65,8 @@ noncomputable def splitEquiv :
     refine Prod.ext (fr.sv_comp t y hy) (Subtype.ext ?_)
     exact fr.retr_comp t y hy
   contMDiff_toFun :=
-    fr.contMDiff_sv.prodMk (contMDiff_into_level fr.contMDiff_sv fr.hsub fr.contMDiff_retr
+    fr.contMDiff_sv.prodMk (contMDiff_into_level fr.contMDiff_sv fr.zero_isRegularValue
+      fr.contMDiff_retr
       fr.sv_retr)
   contMDiff_invFun :=
     (fr.contMDiff_comp (List.finRange k)).comp

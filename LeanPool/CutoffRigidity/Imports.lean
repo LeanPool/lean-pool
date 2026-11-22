@@ -129,9 +129,6 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitFrame
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitGaussian
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitIsometry
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitLevelAtlas
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitLevelData
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitLevelEuclid
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitLevelManifold
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitMetric
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitProduct
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitRiemannLevel
@@ -166,7 +163,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferential
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianGradientCalculus
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianIntegralCurveBounds
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelFields
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelFlow
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelPairing
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianPullbackMetric
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianTangentMetricMap
 public import LeanPool.CutoffRigidity.RiemannianSplitting.SmoothRiemannianPullbackMetric

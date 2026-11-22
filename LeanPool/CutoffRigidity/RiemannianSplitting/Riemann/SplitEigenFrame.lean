@@ -11,7 +11,7 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitFrame
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.EigenFinite
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitEigen
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelFlow
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelPairing
 import Mathlib.Analysis.Matrix.Order
 
 /-! # From the orthonormal eigenbasis to an orthonormal parallel frame
