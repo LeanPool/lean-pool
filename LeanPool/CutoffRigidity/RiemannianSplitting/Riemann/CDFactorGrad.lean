@@ -97,14 +97,6 @@ theorem surjective_dpi (x : M) : Function.Surjective (fr.dpi x) := by
   exact h2
 
 
-theorem inner_mgrad_gen {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    [FiniteDimensional ℝ E]
-    {P : Type} [EMetricSpace P] [ChartedSpace E P] [IsManifold 𝓘(ℝ, E) ∞ P]
-    [RiemannianBundle (fun x : P => TangentSpace 𝓘(ℝ, E) x)]
-    (f : P → ℝ) (x : P) (v : TangentSpace 𝓘(ℝ, E) x) :
-    inner ℝ (mgrad E f x) v = mvfderiv 𝓘(ℝ, E) f x v := by
-  simp [mgrad]
-
 /-- Chain rule for functions pulled back by `π`. -/
 theorem mvfderiv_comp_toLevel {u' : fr.Level → ℝ}
     (hu' : ContMDiff 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, ℝ) ∞ u') (x : M)
@@ -120,7 +112,7 @@ theorem dsv_mgrad_comp {u' : fr.Level → ℝ}
     (hu' : ContMDiff 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, ℝ) ∞ u') (x : M) :
     fr.dsv x (mgrad F (fun z => u' (fr.toLevel z)) x) = 0 := by
   ext j
-  rw [fr.dsv_apply, real_inner_comm, inner_mgrad_gen, fr.mvfderiv_comp_toLevel hu', fr.dpi_X]
+  rw [fr.dsv_apply, real_inner_comm, mgrad_inner, fr.mvfderiv_comp_toLevel hu', fr.dpi_X]
   simp
 
 theorem dpi_mgrad_comp {u' : fr.Level → ℝ}
@@ -133,8 +125,8 @@ theorem dpi_mgrad_comp {u' : fr.Level → ℝ}
             := by
     intro v
     have h := fr.inner_split x (mgrad F (fun z => u' (fr.toLevel z)) x) v
-    rw [fr.dsv_mgrad_comp hu', inner_zero_left, zero_add, inner_mgrad_gen,
-      fr.mvfderiv_comp_toLevel hu', ← inner_mgrad_gen] at h
+    rw [fr.dsv_mgrad_comp hu', inner_zero_left, zero_add, mgrad_inner,
+      fr.mvfderiv_comp_toLevel hu', ← mgrad_inner] at h
     exact h.symm
   obtain ⟨w, hv⟩ := fr.surjective_dpi x (fr.dpi x (mgrad F (fun z => u' (fr.toLevel z)) x) -
     mgrad (LevelModel F (EuclideanSpace ℝ (Fin k))) u' (fr.toLevel x))
@@ -162,7 +154,7 @@ theorem carre_sv_comp_toLevel {u' : fr.Level → ℝ}
     {χ : EuclideanSpace ℝ (Fin k) → ℝ} (hχ : ContDiff ℝ ∞ χ) (x : M) :
     carre F (fun z => χ (fr.sv z)) (fun z => u' (fr.toLevel z)) x = 0 := by
   unfold carre
-  rw [inner_mgrad_gen]
+  rw [mgrad_inner]
   have hc : MDifferentiableAt 𝓘(ℝ, EuclideanSpace ℝ (Fin k)) 𝓘(ℝ, ℝ) χ (fr.sv x) :=
     (hχ.contMDiff.mdifferentiable (by simp)) _
   rw [show (fun y ↦ χ (fr.sv y)) = χ ∘ fr.sv from rfl,

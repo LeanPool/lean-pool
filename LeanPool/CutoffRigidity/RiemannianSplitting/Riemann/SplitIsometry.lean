@@ -63,7 +63,7 @@ theorem norm_sq_action (t : EuclideanSpace ℝ (Fin k)) (y : M) (w : EuclideanSp
 /-- The retraction differential has no component along the frame. -/
 theorem inner_X_dretr (i : Fin k) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     inner ℝ (fr.X i (fr.retr x)) (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v) = 0 := by
-  rw [Frame.X, inner_mgrad]
+  rw [Frame.X, mgrad_inner]
   rw [← mvfderiv_comp_apply x
     (((fr.smooth i).mdifferentiable (by simp)) _) (fr.contMDiff_retr_mdiff x) v]
   have : (fr.s i ∘ fr.retr) = fun _ => (0 : ℝ) := funext fun y => fr.s_retr y i

@@ -53,7 +53,7 @@ theorem inner_X_mfderiv_level_val (i : Fin k) (y : fr.Level)
     (v : TangentSpace 𝓘(ℝ, LevelModel F (Rd k)) y) :
     inner ℝ (fr.X i y.val) (mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)
       (Subtype.val : fr.Level → M) y v) = 0 := by
-  rw [Frame.X, inner_mgrad]
+  rw [Frame.X, mgrad_inner]
   have hs : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (fr.s i) y.val :=
     ((fr.smooth i).mdifferentiable (by simp)) _
   have hval : MDifferentiableAt 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)

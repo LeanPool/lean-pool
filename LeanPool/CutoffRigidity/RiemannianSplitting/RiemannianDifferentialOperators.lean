@@ -7,10 +7,11 @@ Authors: Djalil Chafaï
 -- Modified for Lean Pool.
 
 module
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelFields
+public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCivita
 public import Mathlib.Analysis.InnerProductSpace.Trace
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import TauCeti.Geometry.Manifold.Riemannian.Gradient.Basic
+import Mathlib.Tactic.Ring
 
 /-! # Riemannian gradient and Hessian
 

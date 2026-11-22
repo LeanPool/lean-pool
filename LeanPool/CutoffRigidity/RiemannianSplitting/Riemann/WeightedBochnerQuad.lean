@@ -54,12 +54,6 @@ theorem mdiffAt_of_smAt {X : (y : M) → TangentSpace 𝓘(ℝ, F) y} {x : M} (h
       (fun y => (⟨y, X y⟩ : TangentBundle 𝓘(ℝ, F) M)) x :=
   h.mdifferentiableAt (by simp)
 
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-/-- `⟨∇ φ, Y⟩ = dφ(Y)`. -/
-theorem inner_mgrad_eq (φ : M → ℝ) (y : M) (w : TangentSpace 𝓘(ℝ, F) y) :
-    inner ℝ (mgrad F φ y) w = mvfderiv 𝓘(ℝ, F) φ y w :=
-  CutoffRigidity.inner_manifoldGradient (I := 𝓘(ℝ, F)) φ y w
-
 /-- `dΓ(f)(w) = 2 ⟨∇_w u, u⟩`. -/
 theorem mvfderiv_carre_apply {f : M → ℝ} (hf : MSmooth F f) (y : M)
     (w : TangentSpace 𝓘(ℝ, F) y) :
@@ -97,7 +91,7 @@ theorem carre2_eq {V f : M → ℝ} (hV : MSmooth F V) (hf : MSmooth F f)
   have h2 : inner ℝ (mgrad F V x) (mgrad F (carre F f f) x) =
       2 * inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F f) x
         (mgrad F V x)) (mgrad F f x) := by
-    rw [real_inner_comm, inner_mgrad_eq, mvfderiv_carre_apply F hf]
+    rw [real_inner_comm, mgrad_inner, mvfderiv_carre_apply F hf]
   have h3 := hsymm f hf x (mgrad F V x) (mgrad F f x)
   have h4 := real_inner_comm (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M
     (mgrad F f) x (mgrad F f x)) (mgrad F V x)

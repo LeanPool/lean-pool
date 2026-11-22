@@ -33,11 +33,6 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 include F
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mgrad_inner (f : M → ℝ) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
-    inner ℝ (mgrad F f x) v = mvfderiv 𝓘(ℝ, F) f x v :=
-  CutoffRigidity.inner_manifoldGradient 𝓘(ℝ, F) f x v
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem abs_mvfderiv_le_norm_mgrad (f : M → ℝ) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     |mvfderiv 𝓘(ℝ, F) f x v| ≤ ‖mgrad F f x‖ * ‖v‖ := by
   rw [← mgrad_inner F]

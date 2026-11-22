@@ -257,10 +257,9 @@ theorem exists_test_function (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     rw [e.right_inv hz2, hz1, one_mul]
   have hGd : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) g x := (hgs x).mdifferentiableAt (by simp)
   refine ⟨g, hgs, ?_, ?_⟩
-  · unfold mgrad
-    rw [LinearIsometryEquiv.symm_apply_eq]
-    ext w
-    rw [InnerProductSpace.toDual_apply_apply]
+  · apply ext_inner_right ℝ
+    intro w
+    rw [mgrad_inner F]
     exact mvfderiv_eq_xi x ξ hGd hG w
   · have h0 : ∀ a w : TangentSpace 𝓘(ℝ, F) x, CutoffRigidity.manifoldHessian 𝓘(ℝ, F) g x a w = 0 :=
       fun a w => hessian_zero_of_chart x ξ hgs hG a w

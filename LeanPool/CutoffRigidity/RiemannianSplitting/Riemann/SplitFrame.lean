@@ -51,15 +51,6 @@ namespace Frame
 
 variable (fr : Frame F M k)
 
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
-  [IsRiemannianManifold 𝓘(ℝ, F) M]
-  [CompleteSpace M] in
-/-- The Riesz gradient pairs with the differential. -/
-theorem inner_mgrad (f : M → ℝ) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
-    inner ℝ (mgrad F f x) v = mvfderiv 𝓘(ℝ, F) f x v := by
-  simp [mgrad]
-  rfl
-
 /-- The unit parallel gradient field. -/
 noncomputable def X (i : Fin k) : (x : M) → TangentSpace 𝓘(ℝ, F) x := mgrad F (fr.s i)
 
@@ -96,7 +87,7 @@ noncomputable def flow (i : Fin k) (x : M) (t : ℝ) : M :=
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
 theorem mvfderiv_s_X (j i : Fin k) (x : M) :
     mvfderiv 𝓘(ℝ, F) (fr.s j) x (fr.X i x) = if j = i then 1 else 0 := by
-  rw [← inner_mgrad]
+  rw [← mgrad_inner]
   exact fr.gram j i x
 
 /-- `sⱼ` is shifted by `δᵢⱼ t` along the flow of `Xᵢ`. -/
@@ -189,8 +180,8 @@ theorem mfderiv_flow_X (i j : Fin k) (x : M) (t : ℝ) :
   have hV : ‖V‖ = 1 := fr.norm_X j _
   have hWV : inner ℝ V W = 1 := by
     have h1 : inner ℝ V W = mvfderiv 𝓘(ℝ, F) (fr.s j) (fr.flow i x t) W :=
-      inner_mgrad (fr.s j) _ W
-    rw [h1, hWdef, fr.mvfderiv_s_flow, ← inner_mgrad]
+      mgrad_inner F (fr.s j) _ W
+    rw [h1, hWdef, fr.mvfderiv_s_flow, ← mgrad_inner]
     have := fr.inner_X j j x
     simpa [Frame.X] using this
   have hsq : ‖W - V‖ ^ 2 = 0 := by

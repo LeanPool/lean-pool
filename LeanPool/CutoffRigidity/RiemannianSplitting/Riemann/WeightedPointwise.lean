@@ -90,7 +90,7 @@ omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 
 theorem carre_eq_mvfderiv (χ f : M → ℝ) (x : M) :
     carre F χ f x = mvfderiv 𝓘(ℝ, F) f x (mgrad F χ x) := by
   rw [carre, real_inner_comm]
-  exact CutoffRigidity.inner_manifoldGradient (I := 𝓘(ℝ, F)) f x (mgrad F χ x)
+  exact mgrad_inner F f x (mgrad F χ x)
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem carre_nonneg (f : M → ℝ) (x : M) : 0 ≤ carre F f f x := by

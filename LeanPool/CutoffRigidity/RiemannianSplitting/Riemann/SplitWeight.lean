@@ -39,7 +39,7 @@ theorem mvfderiv_V_X [MeasurableSpace M] {V : M → ℝ} {μ : Measure M} {ρ : 
   unfold mgenerator at h1
   rw [h2] at h1
   have h3 : inner ℝ (mgrad F V x) (fr.X i x) = mvfderiv 𝓘(ℝ, F) V x (fr.X i x) :=
-    inner_mgrad V x _
+    mgrad_inner F V x _
   rw [← h3]
   have : inner ℝ (mgrad F V x) (mgrad F (fr.s i) x) = ρ * fr.s i x := by linarith
   exact this

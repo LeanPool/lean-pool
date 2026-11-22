@@ -42,6 +42,12 @@ noncomputable def mHessNormSq (f : M → ℝ) (x : M) : ℝ :=
 /-- Smoothness of a real function on `M`. -/
 abbrev MSmooth (f : M → ℝ) : Prop := ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ f
 
+omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
+/-- The gradient pairs with a tangent vector by applying the manifold derivative. -/
+theorem mgrad_inner (f : M → ℝ) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
+    inner ℝ (mgrad F f x) v = mvfderiv 𝓘(ℝ, F) f x v :=
+  CutoffRigidity.inner_manifoldGradient 𝓘(ℝ, F) f x v
+
 /-- **(G1) Integration by parts** for the weighted measure: `∫ Γ(u,v) dμ = -∫ u 𝓛v dμ` whenever
 `u, v` are smooth and `u` has compact support. -/
 def WeightedIBP [MeasurableSpace M] (μ : Measure M) (V : M → ℝ) : Prop :=

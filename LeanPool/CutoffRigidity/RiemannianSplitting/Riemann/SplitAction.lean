@@ -159,7 +159,7 @@ theorem mfderiv_sv_apply (y : M) (v : TangentSpace 𝓘(ℝ, F) y) (j : Fin k) :
   rw [hproj] at h
   have h2 := congrArg (fun L => L v) h
   have h3 : inner ℝ (fr.X j y) v = mfderiv 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (fr.s j) y v := by
-    rw [Frame.X, inner_mgrad]
+    rw [Frame.X, mgrad_inner]
     rfl
   rw [h3, h2]
   rfl
