@@ -11,6 +11,7 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitIsometry
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianTangentMetricMap
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.ContDiff
+import TauCeti.Geometry.Manifold.Riemannian.Basic
 
 /-! # The distance identity `d(x,y)² = |s(x)-s(y)|² + d(π x, π y)²` -/
 
@@ -72,30 +73,9 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 omit [FiniteDimensional ℝ F] in
 theorem continuous_norm_mfderiv_curve {σ : ℝ → M} (hσ : ContMDiff 𝓘(ℝ, ℝ) 𝓘(ℝ, F) 1 σ) :
     Continuous fun τ => ‖mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1‖ := by
-  have ht := hσ.contMDiff_tangentMap (m := 0) (by simp)
-  have hι : ContMDiff 𝓘(ℝ, ℝ) 𝓘(ℝ, ℝ).tangent 0
-      (fun τ : ℝ => (⟨τ, (1 : ℝ)⟩ : TangentBundle 𝓘(ℝ, ℝ) ℝ)) := by
-    rw [contMDiff_zero_iff]
-    have : Continuous (fun τ : ℝ => ((tangentBundleModelSpaceHomeomorph 𝓘(ℝ, ℝ)).symm
-        ((τ, (1 : ℝ)) : ModelProd ℝ ℝ))) :=
-      (tangentBundleModelSpaceHomeomorph 𝓘(ℝ, ℝ)).symm.continuous.comp
-        (continuous_id.prodMk continuous_const)
-    exact this
-  have hv := ht.comp hι
-  have hv' : ContMDiff 𝓘(ℝ, ℝ) 𝓘(ℝ, F).tangent 0
-      (fun τ : ℝ => (⟨σ τ, mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1⟩ : TangentBundle 𝓘(ℝ, F) M)) := hv
-  have hi := ContMDiff.inner_bundle (IB := 𝓘(ℝ, F)) (F := F) (E := TangentSpace 𝓘(ℝ, F))
-    (b := σ) (v := fun τ => mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1)
-    (w := fun τ => mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1) hv' hv'
-  have hc : Continuous fun τ => inner ℝ (mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1)
-      (mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1) := (contMDiff_zero_iff.mp hi)
-  have : (fun τ => ‖mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1‖) =
-      fun τ => Real.sqrt (inner ℝ (mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1) (mfderiv 𝓘(ℝ, ℝ) 𝓘(ℝ, F) σ τ 1))
-          := by
-    funext τ
-    rw [real_inner_self_eq_norm_sq, Real.sqrt_sq (norm_nonneg _)]
-  rw [this]
-  exact Real.continuous_sqrt.comp hc
+  let : IsContinuousRiemannianBundle F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x) :=
+    IsContMDiffRiemannianBundle.toIsContinuousRiemannianBundle (IB := 𝓘(ℝ, F)) (n := ∞)
+  exact continuousOn_univ.mp (hσ.contMDiffOn.continuousOn_norm_mfderiv le_rfl isOpen_univ 1)
 
 end
 

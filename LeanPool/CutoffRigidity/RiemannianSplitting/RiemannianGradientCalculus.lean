@@ -13,7 +13,6 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferential
 
 Gradient differentiability is derived from C² functions and the actual metric.
 The finite squared tensor norm is the sum of squares of all Hessian entries.
-Product rules are proved using the actual Levi-Civita Leibniz law.
 -/
 @[expose] public section
 open Bundle
@@ -43,42 +42,5 @@ theorem manifoldHessianNormSq_eq_sum_sq {ι : Type*} [Fintype ι] (f : M → ℝ
   simp only [ContinuousLinearMap.coe_coe, ContinuousLinearMap.comp_apply,
     ContinuousLinearMap.adjoint_inner_right, real_inner_self_eq_norm_sq]
   exact Finset.sum_congr rfl (fun i _ ↦ (b.sum_sq_inner_left _).symm)
-
-/-- Product Hessian rule for the true covariant Hessian, with all field
-regularity supplied by the actual C² scalar functions. -/
-theorem manifoldHessian_mul {f g : M → ℝ}
-    (hf : ContMDiff I 𝓘(ℝ, ℝ) 2 f) (hg : ContMDiff I 𝓘(ℝ, ℝ) 2 g)
-    (x : M) (v w : TangentSpace I x) :
-    manifoldHessian I (f*g) x v w =
-      f x*manifoldHessian I g x v w + g x*manifoldHessian I f x v w +
-      mvfderiv I f x v*mvfderiv I g x w + mvfderiv I g x v*mvfderiv I f x w := by
-  let cov := CovariantDerivative.leviCivitaConnection I M
-  have hdf := (hf x).mdifferentiableAt (by norm_num : (2:ℕ∞ω) ≠ 0)
-  have hdg := (hg x).mdifferentiableAt (by norm_num : (2:ℕ∞ω) ≠ 0)
-  have hgf := (contMDiff_manifoldGradient hf x).mdifferentiableAt one_ne_zero
-  have hgg := (contMDiff_manifoldGradient hg x).mdifferentiableAt one_ne_zero
-  have hgrad : manifoldGradient I (f*g) = f • manifoldGradient I g + g • manifoldGradient I f := by
-    funext y
-    exact manifoldGradient_mul I ((hf y).mdifferentiableAt (by norm_num))
-      ((hg y).mdifferentiableAt (by norm_num))
-  have ha : cov (f • manifoldGradient I g + g • manifoldGradient I f) x =
-      cov (f • manifoldGradient I g) x + cov (g • manifoldGradient I f) x := by
-    exact cov.isCovariantDerivativeOn.add (s := Set.univ)
-      (hdf.fun_smul_section hgg) (hdg.fun_smul_section hgf)
-  have hb : cov (f • manifoldGradient I g) x =
-      f x • cov (manifoldGradient I g) x + (mvfderiv I f x).smulRight (manifoldGradient I g x) := by
-    exact cov.isCovariantDerivativeOn.leibniz (s := Set.univ) hgg hdf
-  have hc : cov (g • manifoldGradient I f) x =
-      g x • cov (manifoldGradient I f) x + (mvfderiv I g x).smulRight (manifoldGradient I f x) := by
-    exact cov.isCovariantDerivativeOn.leibniz (s := Set.univ) hgf hdg
-  have hd := (congrArg (fun Y => cov Y x) hgrad).trans
-    (ha.trans (congrArg₂ (fun A B => A+B) hb hc))
-  have he := congrArg (fun L => inner ℝ (L v) w) hd
-  change manifoldHessian I (f*g) x v w = _ at he
-  rw [he]
-  simp only [add_apply,smul_apply,ContinuousLinearMap.smulRight_apply,inner_add_left,
-    inner_smul_left,starRingEnd_apply,star_trivial,inner_manifoldGradient]
-  dsimp only [manifoldHessian,cov]
-  ring
 
 end CutoffRigidity

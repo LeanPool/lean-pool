@@ -89,32 +89,45 @@ theorem contMDiff_toLevel :
 theorem toLevel_val (y : fr.Level) : fr.toLevel y.val = y :=
   Subtype.ext (fr.retr_of_level y.property)
 
+/-- The differential of the projection onto the level. -/
+noncomputable abbrev dpi (x : M) :
+    TangentSpace 𝓘(ℝ, F) x →L[ℝ]
+      TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) (fr.toLevel x) :=
+  mfderiv 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x
+
+theorem mdiff_toLevel (x : M) :
+    MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x :=
+  (fr.contMDiff_toLevel.mdifferentiable (by simp)) x
+
+omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
+theorem mdiff_level_val (y : fr.Level) :
+    MDifferentiableAt 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
+      (Subtype.val : fr.Level → M) y :=
+  (fr.contMDiff_level_val'.mdifferentiable (by simp)) y
+
+/-- `d val ∘ dπ = d retr`. -/
+theorem dval_dpi (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
+    mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
+        (Subtype.val : fr.Level → M) (fr.toLevel x) (fr.dpi x v) =
+      mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v := by
+  have h2 := mfderiv_comp x (fr.mdiff_level_val (fr.toLevel x)) (fr.mdiff_toLevel x)
+  have h4 : mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x =
+      (mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
+        (Subtype.val : fr.Level → M) (fr.toLevel x)).comp (fr.dpi x) := h2
+  exact (congrArg (fun L => L v) h4).symm
+
+theorem norm_dpi (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
+    ‖fr.dpi x v‖ = ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v‖ := by
+  rw [← fr.dval_dpi]
+  exact (fr.norm_mfderiv_level_val (fr.toLevel x) (fr.dpi x v)).symm
+
 theorem norm_mfderiv_toLevel_le (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x v‖ ≤ ‖v‖ := by
-  set u := mfderiv 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x v with hu
-  have h1 : ‖mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-      (Subtype.val : fr.Level → M) (fr.toLevel x) u‖ = ‖u‖ := fr.norm_mfderiv_level_val _ u
-  have hmd : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k)))
-      fr.toLevel x := (fr.contMDiff_toLevel.mdifferentiable (by simp)) x
-  have hval : MDifferentiableAt 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-      (Subtype.val : fr.Level → M) (fr.toLevel x) :=
-    (fr.contMDiff_level_val'.mdifferentiable (by simp)) _
-  have h2 := mfderiv_comp x hval hmd
-  have h3 : mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v =
-      mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-        (Subtype.val : fr.Level → M) (fr.toLevel x) u := by
-    have : (fun y : M => ((fr.toLevel y : fr.Level) : M)) = fr.retr := rfl
-    have h4 : mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x =
-        (mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-          (Subtype.val : fr.Level → M) (fr.toLevel x)).comp
-          (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x) := h2
-    exact congrArg (fun L => L v) h4
-  have h5 : ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v‖ ≤ ‖v‖ := by
-    have := fr.norm_sq_split x v
-    nlinarith [norm_nonneg (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v), norm_nonneg v,
-      sq_nonneg ‖fr.dsv x v‖]
-  rw [← h1, ← h3]
-  exact h5
+  change ‖fr.dpi x v‖ ≤ ‖v‖
+  rw [fr.norm_dpi]
+  have h := fr.norm_sq_split x v
+  nlinarith [norm_nonneg (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v), norm_nonneg v,
+    sq_nonneg ‖fr.dsv x v‖]
 
 instance levelIsRiemannianManifold :
     IsRiemannianManifold 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.Level := by

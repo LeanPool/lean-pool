@@ -35,38 +35,6 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] {k : ℕ} (fr : Frame F M k)
 
-/-- The differential of the projection onto the level. -/
-noncomputable abbrev dpi (x : M) :
-    TangentSpace 𝓘(ℝ, F) x →L[ℝ]
-      TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) (fr.toLevel x) :=
-  mfderiv 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x
-
-theorem mdiff_toLevel (x : M) :
-    MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x :=
-  (fr.contMDiff_toLevel.mdifferentiable (by simp)) x
-
-omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
-theorem mdiff_level_val (y : fr.Level) :
-    MDifferentiableAt 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-      (Subtype.val : fr.Level → M) y :=
-  (fr.contMDiff_level_val'.mdifferentiable (by simp)) y
-
-/-- `d val ∘ dπ = d retr`. -/
-theorem dval_dpi (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
-    mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-        (Subtype.val : fr.Level → M) (fr.toLevel x) (fr.dpi x v) =
-      mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v := by
-  have h2 := mfderiv_comp x (fr.mdiff_level_val (fr.toLevel x)) (fr.mdiff_toLevel x)
-  have h4 : mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x =
-      (mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-        (Subtype.val : fr.Level → M) (fr.toLevel x)).comp (fr.dpi x) := h2
-  exact (congrArg (fun L => L v) h4).symm
-
-theorem norm_dpi (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
-    ‖fr.dpi x v‖ = ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v‖ := by
-  rw [← fr.dval_dpi]
-  exact (fr.norm_mfderiv_level_val (fr.toLevel x) (fr.dpi x v)).symm
-
 /-- Pythagoras in terms of `dπ`. -/
 theorem norm_sq_split' (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     ‖v‖ ^ 2 = ‖fr.dsv x v‖ ^ 2 + ‖fr.dpi x v‖ ^ 2 := by
