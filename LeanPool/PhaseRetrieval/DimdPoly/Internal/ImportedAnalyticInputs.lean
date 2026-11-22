@@ -868,12 +868,12 @@ theorem continuous_eq_of_ae_eq_gamma
   exact MeasureTheory.Measure.eq_of_ae_eq hfg hf hg
 
 /-!
-## Phase-space analytic boundary stubs
+## Phase-space analysis
 
-These declaration-shaped stubs expose the analytic objects needed by
-`ExactModulusRecovery`.  The definitions are placeholders; the theorem
-statements record the frozen API that the STFT/ambiguity proof must eventually
-provide.
+The short-time Fourier transform `stftRep`, the ambiguity function `ambiguityRep`
+and the symplectic Fourier transform `symplecticFourierRep` on `L²(ℝᵈ)`.  The main
+results are their continuity and norm bounds, and the spectrogram--ambiguity
+identity `spectrogram_ambiguity_identity` used by `ExactModulusRecovery`.
 -/
 
 /-- `RealVec`: Real Vec. -/
