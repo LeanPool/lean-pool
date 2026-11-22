@@ -59,7 +59,7 @@ theorem normalized_positive_frequency_current_formula
         (fun axis : Fin 3 => if axis = 0 then px else if axis = 1 then py else pz) axis *
         uniformCell2Density q := by
   fin_cases axis <;>
-    simp [cubicalDiracCurrent, cubicalVelocityOperator,
+    simp [cubicalDiracCurrent, cubicalVelocityOperator, cubicalAlpha,
       cubicalCell4RealPair, normalizedPositiveFrequencyEmbedding,
       cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
       positivePauliSpatial, uniformCell2Density, Fin.sum_univ_succ,

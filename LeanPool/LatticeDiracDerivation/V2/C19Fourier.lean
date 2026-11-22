@@ -8,15 +8,12 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.NativeAction
 public import LeanPool.LatticeDiracDerivation.V2.C19PlaneWave
 
 /-!
 # C19 Fourier symbol from the native geometry
 
-This module contains only Fourier analysis of the canonical C19 bonds.  It
-imports the native action and geometry, but no prepared rays, background,
-Dirac stage, spinor, or Clifford matrix.
+The moments and low-momentum symbol follow from the canonical C19 bond geometry.
 -/
 
 @[expose] public section

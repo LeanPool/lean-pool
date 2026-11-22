@@ -31,13 +31,6 @@ noncomputable section
 def cubicalGammaTime (z : CubicalCell4) : CubicalCell4 :=
   cubicalStandardBeta z
 
-/-- Coordinate form of the incidence-derived spatial alpha operator. -/
-def cubicalAlpha (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
-  match axis with
-  | 0 => cubicalStandardAlphaX z
-  | 1 => cubicalStandardAlphaY z
-  | _ => cubicalStandardAlphaZ z
-
 /-- `gamma^j = beta alpha^j`, derived from the same cubical operators. -/
 def cubicalGammaSpace (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
   cubicalGammaTime (cubicalAlpha axis z)
@@ -107,13 +100,37 @@ theorem cubical_gamma_time_covariant_residual
         I * (timeDerivative component -
           cubicalDiracTimeDerivative mass z spatialDerivative component) := by
   funext component
-  fin_cases component <;>
-    simp [cubicalGammaTime, cubicalCovariantDiracResidual,
-      cubicalGammaSpace, cubicalAlpha, cubicalDiracTimeDerivative,
-      cubicalVelocityOperator, cubicalStandardBeta,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, Fin.sum_univ_succ] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  let sign : ℂ := if component.val < 2 then 1 else -1
+  have beta (field : CubicalCell4) : cubicalGammaTime field component = sign * field component := by
+    fin_cases component <;> simp [sign, cubicalGammaTime, cubicalStandardBeta]
+  have time_square := congrFun (cubical_gamma_time_square timeDerivative) component
+  change cubicalGammaTime (cubicalGammaTime timeDerivative) component = _ at time_square
+  rw [beta] at time_square
+  have spatial (axis : Fin 3) :
+      sign * ((c19ContinuumSpeed : ℂ) * cubicalGammaSpace axis (spatialDerivative axis) component) =
+        cubicalVelocityOperator axis (spatialDerivative axis) component := by
+    have square := congrFun
+      (cubical_gamma_time_square (cubicalAlpha axis (spatialDerivative axis))) component
+    change cubicalGammaTime (cubicalGammaSpace axis (spatialDerivative axis)) component =
+      _ at square
+    rw [beta] at square
+    change _ = (c19ContinuumSpeed : ℂ) * cubicalAlpha axis (spatialDerivative axis) component
+    rw [← square]
+    ring
+  have spatial_sum :
+      sign * (I * ∑ axis : Fin 3, (c19ContinuumSpeed : ℂ) *
+        cubicalGammaSpace axis (spatialDerivative axis) component) =
+        I * ∑ axis : Fin 3, cubicalVelocityOperator axis (spatialDerivative axis) component := by
+    rw [mul_left_comm sign I, Finset.mul_sum]
+    simp_rw [spatial]
+  rw [beta]
+  simp only [cubicalCovariantDiracResidual, cubicalDiracTimeDerivative, mul_add, mul_sub]
+  rw [mul_left_comm sign I, spatial_sum, time_square]
+  change _ = I * timeDerivative component -
+    (I * (-I * (mass : ℂ) * cubicalGammaTime z component) -
+      I * ∑ axis, cubicalVelocityOperator axis (spatialDerivative axis) component)
+  rw [beta]
+  linear_combination -(mass : ℂ) * (sign * z component) * Complex.I_sq
 
 /-- Hamiltonian and covariant free-Dirac equations are equivalent, with all
 operators inherited from the cubical incidence construction. -/

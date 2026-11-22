@@ -269,6 +269,13 @@ def cubicalStandardAlphaY (z : CubicalCell4) : CubicalCell4
 def cubicalStandardAlphaZ (z : CubicalCell4) : CubicalCell4
   | 0 => z 2 | 1 => -z 3 | 2 => z 0 | _ => -z 1
 
+/-- Coordinate form of the incidence-derived spatial alpha operator. -/
+def cubicalAlpha (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
+  match axis with
+  | 0 => cubicalStandardAlphaX z
+  | 1 => cubicalStandardAlphaY z
+  | _ => cubicalStandardAlphaZ z
+
 /-- The momentum-weighted spatial Dirac matrix in standard coordinates. -/
 def cubicalStandardSpatial
     (px py pz : ℂ) (z : CubicalCell4) : CubicalCell4 := fun component =>

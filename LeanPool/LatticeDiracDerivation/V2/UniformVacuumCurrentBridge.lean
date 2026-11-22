@@ -47,15 +47,8 @@ theorem cubical_cell4_real_pair_self (z : CubicalCell4) :
     Complex.normSq, Complex.mul_re, Fin.sum_univ_succ]
 
 /-- The Dirac transport matrix associated with the chosen axis. -/
-def cubicalVelocityOperator
-    (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
-  match axis with
-  | 0 => fun component =>
-      (c19ContinuumSpeed : ℂ) * cubicalStandardAlphaX z component
-  | 1 => fun component =>
-      (c19ContinuumSpeed : ℂ) * cubicalStandardAlphaY z component
-  | _ => fun component =>
-      (c19ContinuumSpeed : ℂ) * cubicalStandardAlphaZ z component
+def cubicalVelocityOperator (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
+  fun component => (c19ContinuumSpeed : ℂ) * cubicalAlpha axis z component
 
 theorem cubical_velocity_sum {Mode : Type*} [Fintype Mode]
     (axis : Fin 3) (field : Mode → CubicalCell4) :
@@ -65,7 +58,7 @@ theorem cubical_velocity_sum {Mode : Type*} [Fintype Mode]
         cubicalVelocityOperator axis (field mode) component := by
   funext component
   fin_cases axis <;> fin_cases component <;>
-    simp [cubicalVelocityOperator, cubicalStandardAlphaX,
+    simp [cubicalVelocityOperator, cubicalAlpha, cubicalStandardAlphaX,
       cubicalStandardAlphaY, cubicalStandardAlphaZ,
       Finset.mul_sum]
 
@@ -74,7 +67,7 @@ theorem cubical_velocity_mul (axis : Fin 3) (scale : ℂ) (spinor : CubicalCell4
       fun component => scale * cubicalVelocityOperator axis spinor component := by
   funext component
   fin_cases axis <;> fin_cases component <;>
-    simp [cubicalVelocityOperator, cubicalStandardAlphaX,
+    simp [cubicalVelocityOperator, cubicalAlpha, cubicalStandardAlphaX,
       cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
 
 /-- Shift just the specified component of the physical momentum. -/
@@ -101,11 +94,9 @@ theorem cubical_velocity_is_hamiltonian_momentum_response
       simp [c19ContinuumSpeed]
     exact_mod_cast ne_of_gt hpos
   funext component
-  fin_cases axis <;> fin_cases component <;>
+  fin_cases axis <;>
     simp [cubicalShiftMomentum, cubicalStandardHamiltonian,
-      cubicalStandardSpatial, cubicalVelocityOperator,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
+      cubicalStandardSpatial, cubicalVelocityOperator, cubicalAlpha] <;>
     field_simp [hc] <;> ring
 
 /-- The spinor expectation of the velocity operator for a chosen axis. -/
@@ -182,7 +173,7 @@ theorem cubical_standard_hamiltonian_is_position_dirac
         (I * (momentum axis : ℂ)) * cubicalVelocityOperator axis z component :=
     congrFun (cubical_velocity_mul axis (I * (momentum axis : ℂ)) z) component
   simp only [cubicalDiracTimeDerivative, velocity]
-  simp only [Fin.sum_univ_three, cubicalVelocityOperator,
+  simp only [Fin.sum_univ_three, cubicalVelocityOperator, cubicalAlpha,
     uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
     Complex.ofReal_mul, cubicalStandardHamiltonian, cubicalStandardSpatial]
   ring
@@ -326,7 +317,8 @@ theorem uniform_positive_rest_dirac_current_zero
       (uniformRestPositivePhase r position) = 0 := by
   rw [uniformPhaseSpaceCurrent, uniform_rest_positive_readout_eq_double r hr position]
   fin_cases axis <;>
-    simp [cubicalDiracCurrent, cubicalCell4RealPair, cubicalVelocityOperator, cubicalUpperEmbedding,
+    simp [cubicalDiracCurrent, cubicalCell4RealPair, cubicalVelocityOperator, cubicalAlpha,
+      cubicalUpperEmbedding,
       cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ, Fin.sum_univ_succ,
       two_mul]
 

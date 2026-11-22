@@ -10,6 +10,7 @@ module
 
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
 public import LeanPool.LatticeDiracDerivation.V2.CubicalClifford
+import Mathlib.Tactic.Abel
 
 /-!
 # The oriented-cube square root of the native C19 continuum Hessian
@@ -197,20 +198,18 @@ def cubicalAxisBit (axis : Fin 3) (corner : CubicalCorner) : Nat :=
   | 1 => cubicalBit1 corner
   | _ => cubicalBit2 corner
 
-/-- Oriented cubical coboundary in one axis.  It adds that axis to the cell
-label; the Koszul factor is exactly the induced cell-orientation sign. -/
-def cubicalCoboundaryAxis
-    (axis : Fin 3) (amplitude : CubicalCell8) : CubicalCell8 := fun corner =>
-  if cubicalAxisBit axis corner = 1 then
-    cubicalIncidenceSign axis corner * amplitude (cubicalFlip axis corner)
-  else 0
+/-- The signed crossing in one axis restricted by the bit of the target cell. -/
+def cubicalSelectedIncidence (degree : Fin 2) (axis : Fin 3)
+    (amplitude : CubicalCell8) : CubicalCell8 := fun corner =>
+  if cubicalAxisBit axis corner = degree.val then cubicalGamma axis amplitude corner else 0
 
-/-- Reverse cubical incidence (contraction) in one axis. -/
-def cubicalBoundaryAxis
-    (axis : Fin 3) (amplitude : CubicalCell8) : CubicalCell8 := fun corner =>
-  if cubicalAxisBit axis corner = 0 then
-    cubicalIncidenceSign axis corner * amplitude (cubicalFlip axis corner)
-  else 0
+/-- The oriented coboundary on one axis adds the axis to the cell label. -/
+def cubicalCoboundaryAxis (axis : Fin 3) (amplitude : CubicalCell8) : CubicalCell8 :=
+  cubicalSelectedIncidence 1 axis amplitude
+
+/-- Reverse cubical incidence contracts one axis. -/
+def cubicalBoundaryAxis (axis : Fin 3) (amplitude : CubicalCell8) : CubicalCell8 :=
+  cubicalSelectedIncidence 0 axis amplitude
 
 /-- Sum the incidence maps that raise the cubical degree. -/
 def cubicalExteriorDerivative (amplitude : CubicalCell8) : CubicalCell8 :=
@@ -246,36 +245,78 @@ theorem cubical_boundary_coboundary_axis_eq_gamma
         cubicalBoundaryAxis axis amplitude corner) =
       cubicalGamma axis amplitude := by
   funext corner
-  fin_cases axis <;> fin_cases corner <;>
-    simp [cubicalCoboundaryAxis, cubicalBoundaryAxis, cubicalAxisBit,
-      cubicalGamma, cubicalIncidenceSign, cubicalFlip,
-      cubicalFlip0, cubicalFlip1, cubicalFlip2,
-      cubicalBit0, cubicalBit1, cubicalBit2]
+  have bit_range (axis : Fin 3) (corner : CubicalCorner) :
+      cubicalAxisBit axis corner = 0 ∨ cubicalAxisBit axis corner = 1 := by
+    decide +revert
+  rcases bit_range axis corner with zero_bit | one_bit
+  · simp [cubicalCoboundaryAxis, cubicalBoundaryAxis, cubicalSelectedIncidence, zero_bit]
+  · simp [cubicalCoboundaryAxis, cubicalBoundaryAxis, cubicalSelectedIncidence, one_bit]
 
-/-- The cubical coboundary is a differential: oriented two-step faces cancel. -/
+private theorem cubical_selected_incidence_square_zero (degree : Fin 2) (amplitude : CubicalCell8) :
+    let operator (field : CubicalCell8) : CubicalCell8 := fun corner =>
+      ∑ axis : Fin 3, cubicalSelectedIncidence degree axis field corner
+    operator (operator amplitude) = fun _ => 0 := by
+  dsimp only
+  funext corner
+  have flip_own (axis : Fin 3) (corner : CubicalCorner) (degree : Fin 2) :
+      ¬(cubicalAxisBit axis corner = degree.val ∧
+        cubicalAxisBit axis (cubicalFlip axis corner) = degree.val) := by
+    decide +revert
+  have flip_other (axis other : Fin 3) (distinct : axis ≠ other) (corner : CubicalCorner) :
+      cubicalAxisBit other (cubicalFlip axis corner) = cubicalAxisBit other corner := by
+    decide +revert
+  have distribute (axis : Fin 3) :
+      cubicalSelectedIncidence degree axis
+          (fun c => ∑ other : Fin 3, cubicalSelectedIncidence degree other amplitude c) corner =
+        ∑ other : Fin 3,
+          cubicalSelectedIncidence degree axis (cubicalSelectedIncidence degree other amplitude)
+            corner := by
+    by_cases selected : cubicalAxisBit axis corner = degree.val
+    · simp only [cubicalSelectedIncidence, selected, ite_true, cubicalGamma, Finset.mul_sum]
+    · simp only [cubicalSelectedIncidence, selected, ite_false, Finset.sum_const_zero]
+  have composition (axis other : Fin 3) :
+      cubicalSelectedIncidence degree axis
+          (cubicalSelectedIncidence degree other amplitude) corner =
+        if cubicalAxisBit axis corner = degree.val ∧
+            cubicalAxisBit other (cubicalFlip axis corner) = degree.val
+        then cubicalGamma axis (cubicalGamma other amplitude) corner else 0 := by
+    by_cases axis_selected : cubicalAxisBit axis corner = degree.val <;>
+      by_cases other_selected : cubicalAxisBit other (cubicalFlip axis corner) = degree.val <;>
+      simp only [cubicalSelectedIncidence, cubicalGamma, axis_selected, other_selected, ite_true,
+        ite_false, true_and, false_and, and_false, mul_zero]
+  have diagonal (axis : Fin 3) :
+      cubicalSelectedIncidence degree axis (cubicalSelectedIncidence degree axis amplitude) corner =
+        0 := by
+    rw [composition, ite_eq_right (flip_own axis corner degree)]
+  have anticommutation (axis other : Fin 3) (distinct : axis ≠ other) :
+      cubicalSelectedIncidence degree axis
+          (cubicalSelectedIncidence degree other amplitude) corner =
+        -cubicalSelectedIncidence degree other (cubicalSelectedIncidence degree axis amplitude)
+          corner := by
+    rw [composition, composition, flip_other axis other distinct,
+      flip_other other axis distinct.symm]
+    by_cases axis_selected : cubicalAxisBit axis corner = degree.val <;>
+      by_cases other_selected : cubicalAxisBit other corner = degree.val <;>
+      simp only [axis_selected, other_selected, true_and, false_and, and_false, ite_true,
+        ite_false, neg_zero]
+    exact congrFun (cubical_gamma_anticommute axis other distinct amplitude) corner
+  simp_rw [distribute]
+  simp only [Fin.sum_univ_three, diagonal]
+  rw [anticommutation 0 1 (by decide), anticommutation 0 2 (by decide),
+    anticommutation 1 2 (by decide)]
+  abel
+
+/-- The cubical coboundary is a differential because oriented two-step faces cancel. -/
 theorem cubical_exterior_derivative_square_zero (amplitude : CubicalCell8) :
     cubicalExteriorDerivative (cubicalExteriorDerivative amplitude) =
-      fun _ => 0 := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalExteriorDerivative, cubicalCoboundaryAxis,
-      cubicalAxisBit, cubicalIncidenceSign, cubicalFlip,
-      cubicalFlip0, cubicalFlip1, cubicalFlip2,
-      cubicalBit0, cubicalBit1, cubicalBit2, Fin.sum_univ_three];
-    ring
+      fun _ => 0 :=
+  cubical_selected_incidence_square_zero 1 amplitude
 
-/-- The reverse incidence map is nilpotent for the same geometric reason. -/
-theorem cubical_exterior_coderivative_square_zero
-    (amplitude : CubicalCell8) :
+/-- The reverse incidence map is nilpotent by the same face cancellation. -/
+theorem cubical_exterior_coderivative_square_zero (amplitude : CubicalCell8) :
     cubicalExteriorCoderivative (cubicalExteriorCoderivative amplitude) =
-      fun _ => 0 := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalExteriorCoderivative, cubicalBoundaryAxis,
-      cubicalAxisBit, cubicalIncidenceSign, cubicalFlip,
-      cubicalFlip0, cubicalFlip1, cubicalFlip2,
-      cubicalBit0, cubicalBit1, cubicalBit2, Fin.sum_univ_three];
-    ring
+      fun _ => 0 :=
+  cubical_selected_incidence_square_zero 0 amplitude
 
 /-- Summing the three oriented axis-incidence crossings is precisely the
 Kähler--Dirac operator `d + d†` of the cube. -/
