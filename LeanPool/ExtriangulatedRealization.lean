@@ -1,0 +1,78 @@
+/-
+Copyright (c) 2026 Haruhisa Enomoto. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Haruhisa Enomoto
+-/
+module
+
+public import LeanPool.ExtriangulatedRealization.Statement
+public import LeanPool.ExtriangulatedRealization.Intervals.Maps
+public import LeanPool.ExtriangulatedRealization.Intervals.Exact
+public import LeanPool.ExtriangulatedRealization.Intervals.Injective
+public import LeanPool.ExtriangulatedRealization.Intervals.Good
+public import LeanPool.ExtriangulatedRealization.Intervals.Peeling
+public import LeanPool.ExtriangulatedRealization.Intervals.Decomposition
+public import LeanPool.ExtriangulatedRealization.CD.Singles
+public import LeanPool.ExtriangulatedRealization.CD.Parts
+public import LeanPool.ExtriangulatedRealization.CD.Existence
+public import LeanPool.ExtriangulatedRealization.Intervals.Homs
+public import LeanPool.ExtriangulatedRealization.Realization.QCategory
+public import LeanPool.ExtriangulatedRealization.Realization.Functors
+public import LeanPool.ExtriangulatedRealization.Realization.Complexes
+public import LeanPool.ExtriangulatedRealization.Realization.Comparison
+public import LeanPool.ExtriangulatedRealization.Realization.XPart
+public import LeanPool.ExtriangulatedRealization.Categories.OnePointLift
+public import LeanPool.ExtriangulatedRealization.Realization.Functor
+public import LeanPool.ExtriangulatedRealization.Criterion.Necessity
+public import LeanPool.ExtriangulatedRealization.Realization.FullyFaithful
+public import LeanPool.ExtriangulatedRealization.Complexes.DegreewiseSplit
+public import LeanPool.ExtriangulatedRealization.Complexes.Frobenius
+public import LeanPool.ExtriangulatedRealization.CD.Subcategory
+public import LeanPool.ExtriangulatedRealization.Triangulated.Reflect
+public import LeanPool.ExtriangulatedRealization.Realization.Model
+public import LeanPool.ExtriangulatedRealization.Realization.Shadow
+public import LeanPool.ExtriangulatedRealization.Realization.ShadowHom
+public import LeanPool.ExtriangulatedRealization.Categories.MapBijective
+public import LeanPool.ExtriangulatedRealization.Realization.Extensions
+public import LeanPool.ExtriangulatedRealization.Triangulated.Biproduct
+public import LeanPool.ExtriangulatedRealization.Realization.Triangles
+public import LeanPool.ExtriangulatedRealization.Realization.Realizations
+public import LeanPool.ExtriangulatedRealization.Categories.Biproduct
+public import LeanPool.ExtriangulatedRealization.Realization.Proposition
+public import LeanPool.ExtriangulatedRealization.CD.Closure
+public import LeanPool.ExtriangulatedRealization.Realization.Transfer
+public import LeanPool.ExtriangulatedRealization.CD.Extensions
+public import LeanPool.ExtriangulatedRealization.Realization.Extriangulated
+public import LeanPool.ExtriangulatedRealization.Criterion.TheoremB
+public import LeanPool.ExtriangulatedRealization.Criterion.Bounds
+public import LeanPool.ExtriangulatedRealization.Intervals.Endomorphisms
+public import LeanPool.ExtriangulatedRealization.Intervals.Ext
+public import LeanPool.ExtriangulatedRealization.Categories.Indecomposable
+public import LeanPool.ExtriangulatedRealization.Categories.Idempotents
+public import LeanPool.ExtriangulatedRealization.Categories.Mat
+public import LeanPool.ExtriangulatedRealization.CD.Indecomposables
+public import LeanPool.ExtriangulatedRealization.CD.Heredity
+public import LeanPool.ExtriangulatedRealization.CD.Idempotents
+public import LeanPool.ExtriangulatedRealization.CD.Injectives
+public import LeanPool.ExtriangulatedRealization.CD.Structure
+public import LeanPool.ExtriangulatedRealization.Extriangulated.Injectives
+public import LeanPool.ExtriangulatedRealization.InverseSystems.Omega1
+public import LeanPool.ExtriangulatedRealization.InverseSystems.Linearization
+public import LeanPool.ExtriangulatedRealization.InverseSystems.Aronszajn
+public import LeanPool.ExtriangulatedRealization.CD.Counting
+public import LeanPool.ExtriangulatedRealization.Criterion.TheoremA
+public import LeanPool.ExtriangulatedRealization.InverseSystems.Injections
+public import LeanPool.ExtriangulatedRealization.MainTheorems
+public import LeanPool.ExtriangulatedRealization.Realization.Subcategory
+
+/-!
+# An extriangulated category with no triangulated embedding
+
+Source: url:https://hexagonmath.org/2611.00805v1
+Authors: Haruhisa Enomoto
+Status: verified
+Main declarations: `ExtriangulatedRealization.theoremA`, `ExtriangulatedRealization.theoremB`,
+  `ExtriangulatedRealization.theoremB_necessity`
+Tags: extriangulated categories, triangulated categories, inverse systems, Aronszajn trees
+MSC: 18G80, 18E10, 03E05
+-/

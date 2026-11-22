@@ -1,0 +1,85 @@
+/-
+Copyright (c) 2026 Haruhisa Enomoto. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Haruhisa Enomoto
+-/
+module
+
+public import LeanPool.ExtriangulatedRealization.Realization.QCategory
+public import LeanPool.ExtriangulatedRealization.CD.Parts
+public import LeanPool.ExtriangulatedRealization.Categories.OnePointLift
+
+/-!
+# The comparison functors out of `Q₀`
+
+`Q₀` is the additive envelope of the interval category. The functor `ι₀ : Q₀ ⥤ Rep k I`
+realizes its objects as finite direct sums of interval representations, and `e₀ : Q₀ ⥤ Q`
+includes it into `Q`. Both are fully faithful.
+-/
+
+@[expose] public section
+
+namespace ExtriangulatedRealization
+
+open CategoryTheory Limits Opposite Statement IntervalLabel
+
+universe u
+
+section MapMat
+
+variable {𝒞 𝒟 : Type*} [Category.{u} 𝒞] [Preadditive 𝒞] [Category.{u} 𝒟] [Preadditive 𝒟]
+  (F : 𝒞 ⥤ 𝒟) [F.Additive]
+
+instance mapMat_full [F.Full] : F.mapMat_.Full where
+  map_surjective {M N} g := ⟨fun i j => F.preimage (g i j), by
+    funext i j
+    exact F.map_preimage (g i j)⟩
+
+instance mapMat_faithful [F.Faithful] : F.mapMat_.Faithful where
+  map_injective {M N} f g h := by
+    funext i j
+    exact F.map_injective (congrFun (congrFun h i) j)
+
+end MapMat
+
+variable {k : Type u} [Field k] {I : Type u} [LinearOrder I]
+
+/-- The additive envelope `Q₀` of the interval category. -/
+abbrev Q₀ (k I : Type u) [Field k] [LinearOrder I] := Mat_ (IntervalCat k I)
+
+instance inducedFunctor_additive :
+    (inducedFunctor (IntervalLabel.rep k (I := I))).Additive where
+
+/-- `ι₀ : Q₀ ⥤ Rep k I`. -/
+noncomputable def ι₀ : Q₀ k I ⥤ Rep k I :=
+  (inducedFunctor (IntervalLabel.rep k (I := I))).mapMat_ ⋙ Mat_.lift (𝟭 (Rep k I))
+
+instance : (ι₀ (k := k) (I := I)).Additive := by
+  unfold ι₀
+  infer_instance
+
+instance : (ι₀ (k := k) (I := I)).Full := by
+  unfold ι₀
+  have : (Mat_.lift (𝟭 (Rep k I))).Full :=
+    (Mat_.equivalenceSelfOfHasFiniteBiproducts (Rep k I)).full_functor
+  infer_instance
+
+instance : (ι₀ (k := k) (I := I)).Faithful := by
+  unfold ι₀
+  have : (Mat_.lift (𝟭 (Rep k I))).Faithful :=
+    (Mat_.equivalenceSelfOfHasFiniteBiproducts (Rep k I)).faithful_functor
+  infer_instance
+
+variable {D : Iᵒᵖ ⥤ ModuleCat.{u} k} {J : Set I} (R : RealizationData D J)
+
+namespace RealizationData
+
+/-- The inclusion of the interval category into the one-point extension `QInd`. -/
+noncomputable abbrev someFunctor : IntervalCat k I ⥤ R.QInd := OnePointExtension.incl R.phi
+
+/-- `e₀ : Q₀ ⥤ Q`. -/
+noncomputable abbrev e₀ : Q₀ k I ⥤ R.Q := R.someFunctor.mapMat_
+
+end RealizationData
+
+end ExtriangulatedRealization
