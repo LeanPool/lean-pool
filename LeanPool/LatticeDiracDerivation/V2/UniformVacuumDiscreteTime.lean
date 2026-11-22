@@ -150,20 +150,8 @@ theorem uniform_centered_update_through_same_dirac_readout
         uniformActionToStandardDirac r momentum
           (uniformCenteredDiracDefect r dt momentum phase) component := by
   rw [uniform_centered_difference_quotient_splits r dt hdt]
-  rw [show uniformActionToStandardDirac r momentum
-      (fun component =>
-        (uniformVacuumContinuumGenerator r momentum phase).1 component +
-          (uniformCenteredDiracDefect r dt momentum phase).1 component,
-       fun component =>
-        (uniformVacuumContinuumGenerator r momentum phase).2 component +
-          (uniformCenteredDiracDefect r dt momentum phase).2 component) =
-      fun component =>
-        uniformActionToStandardDirac r momentum
-            (uniformVacuumContinuumGenerator r momentum phase) component +
-          uniformActionToStandardDirac r momentum
-            (uniformCenteredDiracDefect r dt momentum phase) component by
-    unfold uniformActionToStandardDirac
-    exact cubical_phase_readout_add _ _ _ _ _ _]
+  rw [uniform_action_readout_add r momentum (uniformVacuumContinuumGenerator r momentum phase)
+    (uniformCenteredDiracDefect r dt momentum phase)]
   rw [uniform_action_tangent_intertwines_cubical_dirac r hr]
 
 /-- Through the exact same four-component readout used by the Dirac

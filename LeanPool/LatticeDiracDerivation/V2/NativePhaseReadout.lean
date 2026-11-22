@@ -352,6 +352,17 @@ theorem cubical_phase_readout_add
       cubicalStandardAlphaX, cubicalStandardAlphaY,
       cubicalStandardAlphaZ] <;> ring
 
+/-- The action-derived spinor readout preserves addition of native phases. -/
+theorem uniform_action_readout_add
+    (r : ℝ) (momentum : LatticeMomentum) (first second : UniformTwoChannelPhase) :
+    uniformActionToStandardDirac r momentum
+        (fun component => first.1 component + second.1 component,
+         fun component => first.2 component + second.2 component) =
+      fun component =>
+        uniformActionToStandardDirac r momentum first component +
+          uniformActionToStandardDirac r momentum second component :=
+  cubical_phase_readout_add _ _ _ _ first second
+
 private theorem cubical_phase_lower_of_decoded_velocity (mass px py pz : ℂ) (hmass : mass ≠ 0)
     (position lower : UniformCell2) :
     cubicalPhaseLower mass px py pz

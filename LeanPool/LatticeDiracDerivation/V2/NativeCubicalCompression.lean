@@ -135,8 +135,8 @@ theorem native_cubical_phase_embed_minus_add
       fun corner =>
         nativeCubicalPhaseEmbedMinus r momentum first corner +
           nativeCubicalPhaseEmbedMinus r momentum second corner := by
-  unfold nativeCubicalPhaseEmbedMinus uniformActionToStandardDirac
-  rw [uniformPhaseAdd, cubical_phase_readout_add]
+  unfold nativeCubicalPhaseEmbedMinus uniformPhaseAdd
+  rw [uniform_action_readout_add r momentum first second]
   exact map_add cubicalDiracLinearEmbedMinus _ _
 
 theorem native_cubical_phase_embed_plus_add
@@ -147,8 +147,8 @@ theorem native_cubical_phase_embed_plus_add
       fun corner =>
         nativeCubicalPhaseEmbedPlus r momentum first corner +
           nativeCubicalPhaseEmbedPlus r momentum second corner := by
-  unfold nativeCubicalPhaseEmbedPlus uniformActionToStandardDirac
-  rw [uniformPhaseAdd, cubical_phase_readout_add]
+  unfold nativeCubicalPhaseEmbedPlus uniformPhaseAdd
+  rw [uniform_action_readout_add r momentum first second]
   exact map_add cubicalDiracLinearEmbedPlus _ _
 
 theorem uniform_native_generator_is_phase_add

@@ -188,26 +188,9 @@ theorem finite_native_time_derivative_splits [Fintype Mode]
   apply Finset.sum_congr rfl
   intro mode _
   rw [uniform_native_generator_exact_defect]
-  rw [show uniformActionToStandardDirac r (momentum mode)
-      (fun channel =>
-          (uniformVacuumContinuumGenerator r
-            (momentum mode) (phase mode)).1 channel +
-            (uniformNativeSpatialDefectPhase
-              (momentum mode) (phase mode)).1 channel,
-       fun channel =>
-          (uniformVacuumContinuumGenerator r
-            (momentum mode) (phase mode)).2 channel +
-            (uniformNativeSpatialDefectPhase
-              (momentum mode) (phase mode)).2 channel) =
-      fun output =>
-        uniformActionToStandardDirac r (momentum mode)
-            (uniformVacuumContinuumGenerator r
-              (momentum mode) (phase mode)) output +
-          uniformActionToStandardDirac r (momentum mode)
-            (uniformNativeSpatialDefectPhase
-              (momentum mode) (phase mode)) output by
-    unfold uniformActionToStandardDirac
-    exact cubical_phase_readout_add _ _ _ _ _ _]
+  rw [uniform_action_readout_add r (momentum mode)
+    (uniformVacuumContinuumGenerator r (momentum mode) (phase mode))
+    (uniformNativeSpatialDefectPhase (momentum mode) (phase mode))]
   ring
 
 /-- Exact discrete position-space statement: the native C19 tangent equals

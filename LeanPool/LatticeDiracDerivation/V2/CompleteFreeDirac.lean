@@ -11,6 +11,7 @@ module
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletDispersion
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicSector
 public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketBridge
 public import LeanPool.LatticeDiracDerivation.V2.ReadoutCharacterization
@@ -34,6 +35,40 @@ variable {Site : Type} {Mode : Type*}
 
 open Complex Filter Topology
 noncomputable section
+
+/-- The finite periodic action sector and the spectral Dirac diagram use the
+same native phase.  The first equality has the full state/velocity action
+provenance; the second is its four-component image. -/
+theorem periodic_full_native_action_to_canonical_spectral
+    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
+    (mass energy : ℝ) (hmass : mass ≠ 0)
+    (henergy : energy ≠ 0) (hdenom : energy + mass ≠ 0)
+    (hshell : energy ^ 2 = mass ^ 2 +
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
+    (mode : PeriodicC19FourierMode L momentum)
+    (phase : UniformTwoChannelPhase) :
+    periodicNativeTransverseTangentGenerator mass
+        (periodicFullNativeTangentEmbed mode phase) =
+      periodicFullNativeTangentEmbed mode
+        (uniformVacuumNativeGenerator mass momentum phase) ∧
+    canonicalSpectralMomentumReadout mass energy momentum
+        (uniformVacuumNativeGenerator mass momentum phase) =
+      fun component =>
+        -I * cubicalStandardHamiltonian (mass : ℂ)
+          (uniformContinuumPx momentum)
+          (uniformContinuumPy momentum)
+          (uniformContinuumPz momentum)
+          (canonicalSpectralMomentumReadout mass energy momentum phase)
+          component +
+        canonicalSpectralMomentumReadout mass energy momentum
+          (uniformNativeSpatialDefectPhase momentum phase) component := by
+  have haction := periodic_full_native_action_generator_intertwines
+    mass hmass mode phase
+  exact ⟨haction.1,
+    canonical_spectral_native_generator_exact
+      mass energy momentum henergy hdenom hshell phase⟩
 
 /-- The nonnegative square root of the native vacuum Hessian is fixed by
 the action scale, not fitted to the target equation. -/

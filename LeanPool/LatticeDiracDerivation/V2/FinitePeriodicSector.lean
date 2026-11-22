@@ -145,41 +145,24 @@ theorem periodic_mode_phase_embed_injective
     unfold periodicModePhaseEmbed periodicModeField at hcomponent
     exact (mul_left_cancel₀ hcharacter hcomponent)
 
+theorem periodic_transverse_phase_lift_injective {L : ℕ} [NeZero L] :
+    Function.Injective (periodicTransversePhaseLift (L := L)) := by
+  intro first second heq
+  apply PeriodicTransversePhase.ext
+  · funext component site
+    fin_cases component
+    · exact congrArg (fun native => native.1.psi site (0 : Fin 3)) heq
+    · exact congrArg (fun native => native.1.psi site (1 : Fin 3)) heq
+  · funext component site
+    fin_cases component
+    · exact congrArg (fun native => native.2.psiDot site (0 : Fin 3)) heq
+    · exact congrArg (fun native => native.2.psiDot site (1 : Fin 3)) heq
+
 theorem periodic_full_native_tangent_embed_injective
     {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
     (mode : PeriodicC19FourierMode L momentum) :
-    Function.Injective (periodicFullNativeTangentEmbed mode) := by
-  intro first second heq
-  have hstate := congrArg Prod.fst heq
-  have hvelocity := congrArg Prod.snd heq
-  let origin : PeriodicCubicSite L := fun _ => 0
-  have hcharacter : mode.character origin ≠ 0 :=
-    periodic_mode_character_nonzero mode origin
-  apply Prod.ext
-  · funext component
-    fin_cases component
-    · have hcomponent := congrArg
-        (fun state => state.psi origin (0 : Fin 3)) hstate
-      simp only [periodicFullNativeTangentEmbed,
-        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
-      exact mul_left_cancel₀ hcharacter hcomponent
-    · have hcomponent := congrArg
-        (fun state => state.psi origin (1 : Fin 3)) hstate
-      simp only [periodicFullNativeTangentEmbed,
-        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
-      exact mul_left_cancel₀ hcharacter hcomponent
-  · funext component
-    fin_cases component
-    · have hcomponent := congrArg
-        (fun velocity => velocity.psiDot origin (0 : Fin 3)) hvelocity
-      simp only [periodicFullNativeTangentEmbed,
-        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
-      exact mul_left_cancel₀ hcharacter hcomponent
-    · have hcomponent := congrArg
-        (fun velocity => velocity.psiDot origin (1 : Fin 3)) hvelocity
-      simp only [periodicFullNativeTangentEmbed,
-        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
-      exact mul_left_cancel₀ hcharacter hcomponent
+    Function.Injective (periodicFullNativeTangentEmbed mode) :=
+  periodic_transverse_phase_lift_injective.comp (periodic_mode_phase_embed_injective mode)
 
 /-- True sector closure: the full finite-lattice transverse Hessian generator
 maps an embedded Fourier phase state to the embedding of the modal native
@@ -359,20 +342,8 @@ theorem periodic_native_sector_intertwines_dirac_with_remainder
             (uniformNativeSpatialDefectPhase momentum phase) component := by
   refine ⟨periodic_mode_sector_is_invariant r mode phase, ?_⟩
   rw [uniform_native_generator_exact_defect]
-  rw [show uniformActionToStandardDirac r momentum
-      (fun channel =>
-          (uniformVacuumContinuumGenerator r momentum phase).1 channel +
-            (uniformNativeSpatialDefectPhase momentum phase).1 channel,
-       fun channel =>
-          (uniformVacuumContinuumGenerator r momentum phase).2 channel +
-            (uniformNativeSpatialDefectPhase momentum phase).2 channel) =
-      fun output =>
-        uniformActionToStandardDirac r momentum
-            (uniformVacuumContinuumGenerator r momentum phase) output +
-          uniformActionToStandardDirac r momentum
-            (uniformNativeSpatialDefectPhase momentum phase) output by
-    unfold uniformActionToStandardDirac
-    exact cubical_phase_readout_add _ _ _ _ _ _]
+  rw [uniform_action_readout_add r momentum (uniformVacuumContinuumGenerator r momentum phase)
+    (uniformNativeSpatialDefectPhase momentum phase)]
   rw [uniform_action_tangent_intertwines_cubical_dirac r hr]
 
 /-- Native charge continuity for the same force used in the periodic action Hessian. -/

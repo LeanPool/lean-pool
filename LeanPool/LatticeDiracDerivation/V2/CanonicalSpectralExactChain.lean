@@ -9,7 +9,6 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralReadout
-public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicSector
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletTime
 public import LeanPool.LatticeDiracDerivation.V2.PositionSpaceFreeDirac
@@ -132,40 +131,6 @@ theorem canonical_spectral_native_generator_exact
   rw [canonical_spectral_momentum_readout_additive]
   rw [canonical_spectral_continuum_generator_exact
     mass energy momentum henergy hdenom hshell]
-
-/-- The finite periodic action sector and the spectral Dirac diagram use the
-same native phase.  The first equality has the full state/velocity action
-provenance; the second is its four-component image. -/
-theorem periodic_full_native_action_to_canonical_spectral
-    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
-    (mass energy : ℝ) (hmass : mass ≠ 0)
-    (henergy : energy ≠ 0) (hdenom : energy + mass ≠ 0)
-    (hshell : energy ^ 2 = mass ^ 2 +
-      c19ScaledMomentum momentum 0 ^ 2 +
-      c19ScaledMomentum momentum 1 ^ 2 +
-      c19ScaledMomentum momentum 2 ^ 2)
-    (mode : PeriodicC19FourierMode L momentum)
-    (phase : UniformTwoChannelPhase) :
-    periodicNativeTransverseTangentGenerator mass
-        (periodicFullNativeTangentEmbed mode phase) =
-      periodicFullNativeTangentEmbed mode
-        (uniformVacuumNativeGenerator mass momentum phase) ∧
-    canonicalSpectralMomentumReadout mass energy momentum
-        (uniformVacuumNativeGenerator mass momentum phase) =
-      fun component =>
-        -I * cubicalStandardHamiltonian (mass : ℂ)
-          (uniformContinuumPx momentum)
-          (uniformContinuumPy momentum)
-          (uniformContinuumPz momentum)
-          (canonicalSpectralMomentumReadout mass energy momentum phase)
-          component +
-        canonicalSpectralMomentumReadout mass energy momentum
-          (uniformNativeSpatialDefectPhase momentum phase) component := by
-  have haction := periodic_full_native_action_generator_intertwines
-    mass hmass mode phase
-  exact ⟨haction.1,
-    canonical_spectral_native_generator_exact
-      mass energy momentum henergy hdenom hshell phase⟩
 
 /-- The exact centered difference quotient is the spectral Dirac flow plus
 the displayed joint time/C19 defect under the same readout. -/
