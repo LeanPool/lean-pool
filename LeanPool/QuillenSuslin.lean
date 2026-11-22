@@ -21,9 +21,14 @@ public import LeanPool.QuillenSuslin.QuillenPatching
 public import LeanPool.QuillenSuslin.PatchingDescent
 public import LeanPool.QuillenSuslin.MvTransport
 public import LeanPool.QuillenSuslin.QuillenPatchingMv
+public import LeanPool.QuillenSuslin.HorrocksRankOne
+public import LeanPool.QuillenSuslin.HorrocksLattice
+public import LeanPool.QuillenSuslin.HorrocksLocal
+public import LeanPool.QuillenSuslin.Horrocks
+public import LeanPool.QuillenSuslin.Bass
 
 /-!
-# Projective modules over polynomial rings (Quillen patching)
+# Projective modules over polynomial rings (Quillen patching and Horrocks)
 
 Source: doi:10.1007/BF01390008, url:https://github.com/TauCetiProject/TauCetiRoadmap/pull/2295
 Authors: Michel Hua
@@ -35,7 +40,11 @@ Main declarations: `LeanPool.QuillenSuslin.isPrincipalIdealRing_monicLocalizatio
   `LeanPool.QuillenSuslin.exists_finite_projective_glue`,
   `LeanPool.QuillenSuslin.exists_ideal_isExtendedAfter_away`,
   `LeanPool.QuillenSuslin.isExtendedFrom_of_forall_isMaximal`,
-  `LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial_of_forall_isMaximal`
-Tags: commutative-algebra, projective-modules, polynomial-rings, quillen-suslin, quillen-patching
+  `LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial_of_forall_isMaximal`,
+  `LeanPool.QuillenSuslin.free_of_free_monicLocalization_of_isLocalRing`,
+  `LeanPool.QuillenSuslin.isExtendedFrom_of_isExtendedFrom_monicLocalization`,
+  `LeanPool.QuillenSuslin.nonempty_linearEquiv_of_monicLocalization`,
+  `LeanPool.QuillenSuslin.free_of_free_monicLocalization`
+Tags: projective-modules, polynomial-rings, quillen-suslin, quillen-patching, horrocks
 MSC: 13C10, 13B30, 19A13
 -/

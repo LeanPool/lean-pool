@@ -20,7 +20,9 @@ ideal lies in no maximal ideal and contains `1`.
 
 ## Main results
 
+* `exists_mem_isExtendedAfter_away_of_isLocalization`: descent from `S⁻¹A` to some `A_s`.
 * `exists_notMem_isExtendedAfter_away`: descent from `A_m` to some `A_s`.
+* `isExtendedFrom_of_isExtendedAfter_away_one`: extension after inverting `1` is extension.
 * `isExtendedFrom_of_forall_isMaximal`: Quillen's patching theorem.
 
 ## References
@@ -38,31 +40,6 @@ namespace LeanPool.QuillenSuslin
 
 variable {A : Type u} [CommRing A]
 
-section Localization
-
-variable (S : Submonoid A) (B : Type*) [CommRing B] [Algebra A B] [IsLocalization S B]
-
-theorem isLocalizedModule_locP' (N : Type*) [AddCommGroup N] [Module A N] :
-    letI := Polynomial.algebra A B
-    IsLocalizedModule (S.map C) (locP B N) := by
-  let _ := Polynomial.algebra A B
-  have := Polynomial.isLocalization S B
-  let e := (AlgebraTensorModule.cancelBaseChange A A[X] B[X] B[X] N).restrictScalars A[X]
-  have h : e.toLinearMap ∘ₗ TensorProduct.mk A[X] B[X] (A[X] ⊗[A] N) 1 = locP B N := by
-    ext
-    simp [e, locP_tmul, Algebra.smul_def]
-  rw [← h]
-  infer_instance
-
-theorem isLocalizedModule_mk_polynomial' (M : Type*) [AddCommGroup M] [Module A[X] M] :
-    letI := Polynomial.algebra A B
-    IsLocalizedModule (S.map C) (TensorProduct.mk A[X] B[X] M 1) := by
-  let _ := Polynomial.algebra A B
-  have := Polynomial.isLocalization S B
-  infer_instance
-
-end Localization
-
 theorem bijective_of_isLocalizedModule_powers_one {R M M' : Type*} [CommRing R]
     [AddCommMonoid M] [Module R M] [AddCommMonoid M'] [Module R M'] (f : M →ₗ[R] M')
     [IsLocalizedModule (Submonoid.powers (1 : R)) f] : Function.Bijective f := by
@@ -77,18 +54,18 @@ theorem bijective_of_isLocalizedModule_powers_one {R M M' : Type*} [CommRing R]
 
 variable {M : Type v} [AddCommGroup M] [Module A[X] M]
 
-/-- An extension isomorphism over `A_p[X]` descends to `A_s[X]` for some `s ∉ p`, for `M`
+/-- An extension isomorphism over `S⁻¹A[X]` descends to `A_s[X]` for some `s ∈ S`, for `M`
 finitely presented. -/
-theorem exists_notMem_isExtendedAfter_away [Module.FinitePresentation A[X] M] (p : Ideal A)
-    [p.IsPrime] (h : IsExtendedAfter A (Localization.AtPrime p) M) :
-    ∃ s ∉ p, IsExtendedAfter A (Localization.Away s) M := by
-  let B := Localization.AtPrime p
-  let _ := Polynomial.algebra A B
-  obtain ⟨u, -⟩ := exists_normalized_equiv A M B h
-  have := isLocalizedModule_locP' p.primeCompl B (fibre A M)
-  have := isLocalizedModule_mk_polynomial' p.primeCompl B M
+theorem exists_mem_isExtendedAfter_away_of_isLocalization [Module.FinitePresentation A[X] M]
+    (S : Submonoid A) (L : Type*) [CommRing L] [Algebra A L] [IsLocalization S L]
+    (h : IsExtendedAfter A L M) :
+    ∃ s ∈ S, IsExtendedAfter A (Localization.Away s) M := by
+  let _ := Polynomial.algebra A L
+  obtain ⟨u, -⟩ := exists_normalized_equiv A M L h
+  have := isLocalizedModule_locP_of_isLocalization S L (fibre A M)
+  have := isLocalizedModule_mk_polynomial_of_isLocalization S L M
   obtain ⟨r, hr, l', -⟩ := Module.FinitePresentation.exists_lift_equiv_of_isLocalizedModule
-    (p.primeCompl.map C) (locP B (fibre A M)) (TensorProduct.mk A[X] B[X] M 1)
+    (S.map C) (locP L (fibre A M)) (TensorProduct.mk A[X] L[X] M 1)
     (u.restrictScalars A[X])
   obtain ⟨s, hs, rfl⟩ := hr
   refine ⟨s, hs, ?_⟩
@@ -102,6 +79,31 @@ theorem exists_notMem_isExtendedAfter_away [Module.FinitePresentation A[X] M] (p
       IsLocalizedModule.iso (Submonoid.powers (C s)) (TensorProduct.mk A[X] Bs[X] M 1)
   exact isExtendedAfter_of_equiv (e.extendScalarsOfIsLocalization (Submonoid.powers (C s)) Bs[X])
 
+/-- An extension isomorphism over `A_p[X]` descends to `A_s[X]` for some `s ∉ p`, for `M`
+finitely presented. -/
+theorem exists_notMem_isExtendedAfter_away [Module.FinitePresentation A[X] M] (p : Ideal A)
+    [p.IsPrime] (h : IsExtendedAfter A (Localization.AtPrime p) M) :
+    ∃ s ∉ p, IsExtendedAfter A (Localization.Away s) M :=
+  exists_mem_isExtendedAfter_away_of_isLocalization p.primeCompl _ h
+
+/-- An `A[X]`-module that is extended after inverting `1` is extended. -/
+theorem isExtendedFrom_of_isExtendedAfter_away_one
+    (h : IsExtendedAfter A (Localization.Away (1 : A)) M) : IsExtendedFrom A A[X] M := by
+  obtain ⟨u, -⟩ := exists_normalized_equiv A M _ h
+  let L := Localization.Away (1 : A)
+  let _ := Polynomial.algebra A L
+  have hP : IsLocalizedModule (Submonoid.powers (1 : A[X])) (locP L (fibre A M)) := by
+    have := isLocalizedModule_locP (1 : A) L (fibre A M)
+    rwa [map_one] at this
+  have hM : IsLocalizedModule (Submonoid.powers (1 : A[X])) (TensorProduct.mk A[X] L[X] M 1) := by
+    have := isLocalizedModule_mk_polynomial (1 : A) L M
+    rwa [map_one] at this
+  let eP := LinearEquiv.ofBijective (locP (A := A) L (fibre A M))
+    (bijective_of_isLocalizedModule_powers_one _)
+  let eM := LinearEquiv.ofBijective (TensorProduct.mk A[X] L[X] M 1)
+    (bijective_of_isLocalizedModule_powers_one _)
+  exact .of_polynomial_linearEquiv (eM ≪≫ₗ u.symm.restrictScalars A[X] ≪≫ₗ eP.symm)
+
 variable (M) in
 /-- **3.4.** Quillen patching: a finitely presented `A[X]`-module that is extended at every
 maximal ideal of `A` is extended (Quillen 1976, Theorem 1, p. 168). -/
@@ -114,22 +116,7 @@ theorem isExtendedFrom_of_forall_isMaximal [Module.FinitePresentation A[X] M]
     obtain ⟨m, hm, hle⟩ := I.exists_le_maximal hne
     obtain ⟨s, hs, hext⟩ := exists_notMem_isExtendedAfter_away m (@h m hm)
     exact hs (hle ((hI s).mpr hext))
-  have h1 : IsExtendedAfter A (Localization.Away (1 : A)) M := (hI 1).mp (htop ▸ Submodule.mem_top)
-  obtain ⟨u, -⟩ := exists_normalized_equiv A M _ h1
-  let B := Localization.Away (1 : A)
-  let _ := Polynomial.algebra A B
-  have hP : IsLocalizedModule (Submonoid.powers (1 : A[X])) (locP B (fibre A M)) := by
-    have := isLocalizedModule_locP (1 : A) B (fibre A M)
-    rwa [map_one] at this
-  have hM : IsLocalizedModule (Submonoid.powers (1 : A[X])) (TensorProduct.mk A[X] B[X] M 1) := by
-    have := isLocalizedModule_mk_polynomial (1 : A) B M
-    rwa [map_one] at this
-  let eP := LinearEquiv.ofBijective (locP (A := A) B (fibre A M))
-    (bijective_of_isLocalizedModule_powers_one _)
-  have hbij : Function.Bijective (TensorProduct.mk A[X] B[X] M 1) :=
-    bijective_of_isLocalizedModule_powers_one _
-  let eM := LinearEquiv.ofBijective (TensorProduct.mk A[X] B[X] M 1) hbij
-  exact .of_polynomial_linearEquiv (eM ≪≫ₗ u.symm.restrictScalars A[X] ≪≫ₗ eP.symm)
+  exact isExtendedFrom_of_isExtendedAfter_away_one ((hI 1).mp (htop ▸ Submodule.mem_top))
 
 end LeanPool.QuillenSuslin
 

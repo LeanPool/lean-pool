@@ -140,24 +140,43 @@ def locP (N : Type*) [AddCommGroup N] [Module A N] :
 theorem locP_tmul (N : Type*) [AddCommGroup N] [Module A N] (p : A[X]) (n : N) :
     locP B N (p ⊗ₜ n) = (p.map (algebraMap A B) ⊗ₜ n : B[X] ⊗[A] N) := rfl
 
-theorem isLocalizedModule_locP (N : Type*) [AddCommGroup N] [Module A N] :
-    letI := Polynomial.algebra A B
-    IsLocalizedModule (Submonoid.powers (C a)) (locP B N) := by
-  let _ := Polynomial.algebra A B
-  have := isLocalization_polynomial_away a B
-  let e := (AlgebraTensorModule.cancelBaseChange A A[X] B[X] B[X] N).restrictScalars A[X]
-  have h : e.toLinearMap ∘ₗ TensorProduct.mk A[X] B[X] (A[X] ⊗[A] N) 1 = locP B N := by
+/-- Localising `A[X] ⊗[A] N` at the image of any submonoid `S` of `A` gives
+`(S⁻¹A)[X] ⊗[A] N`. -/
+theorem isLocalizedModule_locP_of_isLocalization (S : Submonoid A) (L : Type*) [CommRing L]
+    [Algebra A L] [IsLocalization S L] (N : Type*) [AddCommGroup N] [Module A N] :
+    letI := Polynomial.algebra A L
+    IsLocalizedModule (S.map C) (locP L N) := by
+  let _ := Polynomial.algebra A L
+  have := Polynomial.isLocalization S L
+  let e := (AlgebraTensorModule.cancelBaseChange A A[X] L[X] L[X] N).restrictScalars A[X]
+  have h : e.toLinearMap ∘ₗ TensorProduct.mk A[X] L[X] (A[X] ⊗[A] N) 1 = locP L N := by
     ext
     simp [e, locP_tmul, Algebra.smul_def]
   rw [← h]
   infer_instance
 
+/-- Base change of an `A[X]`-module along `A[X] → (S⁻¹A)[X]` is a localisation at the image
+of `S`. -/
+theorem isLocalizedModule_mk_polynomial_of_isLocalization (S : Submonoid A) (L : Type*)
+    [CommRing L] [Algebra A L] [IsLocalization S L] (M : Type*) [AddCommGroup M]
+    [Module A[X] M] :
+    letI := Polynomial.algebra A L
+    IsLocalizedModule (S.map C) (TensorProduct.mk A[X] L[X] M 1) := by
+  let _ := Polynomial.algebra A L
+  have := Polynomial.isLocalization S L
+  infer_instance
+
+theorem isLocalizedModule_locP (N : Type*) [AddCommGroup N] [Module A N] :
+    letI := Polynomial.algebra A B
+    IsLocalizedModule (Submonoid.powers (C a)) (locP B N) := by
+  have := isLocalizedModule_locP_of_isLocalization (Submonoid.powers a) B N
+  rwa [Submonoid.map_powers] at this
+
 theorem isLocalizedModule_mk_polynomial (M : Type*) [AddCommGroup M] [Module A[X] M] :
     letI := Polynomial.algebra A B
     IsLocalizedModule (Submonoid.powers (C a)) (TensorProduct.mk A[X] B[X] M 1) := by
-  let _ := Polynomial.algebra A B
-  have := isLocalization_polynomial_away a B
-  infer_instance
+  have := isLocalizedModule_mk_polynomial_of_isLocalization (Submonoid.powers a) B M
+  rwa [Submonoid.map_powers] at this
 
 end Localization
 
