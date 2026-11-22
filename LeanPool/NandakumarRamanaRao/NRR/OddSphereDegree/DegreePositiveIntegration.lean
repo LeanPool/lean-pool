@@ -20,9 +20,9 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.UnconditionalDegr
 
 Packages the conditional degree API through `SphereOrientationPos`, so all
 positive dimensions share one coherent family of top-homology orientations.
-It derives identity, composition, homotopy invariance, and conditional odd-map
-results from that bundle. Later sphere-homology modules construct the
-unconditional orientation used by the public final theorem.
+It derives identity, composition, homotopy invariance, and a conditional odd-map
+result from that bundle. `sphereOrientationPosUnconditional` constructs such an
+orientation.
 -/
 
 @[expose] public section
@@ -131,13 +131,13 @@ theorem degreePos_intCast_zmodTwo_eq_one_iff_odd (o : SphereOrientationPos) {n :
     ((degreePos o hn f : ZMod 2) = 1) ↔ Odd (degreePos o hn f) :=
   degreeOfIso_intCast_zmodTwo_eq_one_iff_odd (o.iso n hn) f
 
-/-! ## The final odd-map theorem, with the free `SphereTopHomologyIso n` removed -/
+/-! ## The conditional odd-map theorem through a positive orientation -/
 
-/-- **Final odd-map degree theorem through a positive orientation.**
+/-- **Conditional odd-map degree theorem through a positive orientation.**
 
 This is `oddMap_degree_odd_final` with the free `e : SphereTopHomologyIso n`
 argument replaced by a bundled positive orientation `o : SphereOrientationPos`
-together with `hn : 1 ≤ n`. Given the two remaining named topological inputs
+together with `hn : 1 ≤ n`. Given the two named inputs, neither proved in this project,
 
 * `hcmp : ModTwoTopClassComparison (o.iso n hn)` — a self-map fixing a nonzero top
  `F₂`-class has odd integer degree;
@@ -150,22 +150,5 @@ theorem oddMap_degreePos_odd_final (o : SphereOrientationPos) {n : ℕ} (hn : 1 
     (f : C(Sphere n, Sphere n)) (hf : IsOddMap f) :
     Odd (degreePos o hn f) :=
   oddMap_degree_odd_final (o.iso n hn) hcmp htop f hf
-
-/-- **Final odd-map theorem through a positive orientation and a monodromy
-functional.** This is `oddMap_degree_odd_of_monodromyFunctional` with the free
-`SphereTopHomologyIso n` replaced by a bundled positive orientation; the action
-hypothesis `fbar^*(α) = α` and its top-power consequence are discharged via the
-constructed class `rpAlpha n m`. The remaining inputs are the orientation `o`,
-the monodromy functional `m`, and the sphere-side comparison data. -/
-theorem oddMap_degreePos_odd_of_monodromyFunctional (o : SphereOrientationPos)
-    {n : ℕ} (hn : 1 ≤ n) (m : MonodromyFunctional n)
-    (f : C(Sphere n, Sphere n)) (hf : IsOddMap f)
-    (hne : projPullback n n (cupPowZMod2 (rpAlpha n m) n) ≠ 0)
-    (hcmp : spherePullback f n (projPullback n n (cupPowZMod2 (rpAlpha n m) n))
-              = projPullback n n (cupPowZMod2 (rpAlpha n m) n) →
-            projPullback n n (cupPowZMod2 (rpAlpha n m) n) ≠ 0 →
-            (degreePos o hn f : ZMod 2) = 1) :
-    Odd (degreePos o hn f) :=
-  oddMap_degree_odd_of_monodromyFunctional (o.iso n hn) m f hf hne hcmp
 
 end SphereOddDegree
