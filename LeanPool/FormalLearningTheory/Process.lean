@@ -14,33 +14,17 @@ import Mathlib.MeasureTheory.Covering.Besicovitch
 /-!
 # Processes and Applications
 
-Concrete learning processes, algorithms, and scope boundaries:
-- Grammar induction: L* (Angluin's query-learning algorithm)
+Records for learning processes, and scope boundaries:
 - CEGIS (counterexample-guided inductive synthesis)
-- Concept drift, lifelong learning, meta-learning applications
+- Concept drift
 - Inductive logic programming
+- Program synthesis
 - Scope boundaries (bandits, RL, quantum - markers only)
 -/
 
 @[expose] public section
 
 universe u v
-
-/-!
-## Grammar Induction
--/
-
-/-- L* algorithm (Angluin 1987): learns DFAs using membership and
-    equivalence queries in polynomial time.
-    The canonical exact learning algorithm. -/
-structure LStar (Sym : Type*) [DecidableEq Sym] [Fintype Sym] where
-  /-- The MAT providing queries -/
-  teacher : MinimallyAdequateTeacher (Word Sym) Bool
-  -- The observation table (implementation detail; the structure tracks the algorithm's state)
-  /-- Number of states in the learned DFA -/
-  numStates : ℕ
-  /-- The learned DFA (after termination) -/
-  result : Option (DFA' Sym (Fin (numStates + 1)))
 
 /-!
 ## CEGIS (Counterexample-Guided Inductive Synthesis)
@@ -73,16 +57,6 @@ structure ConceptDrift (X : Type u) (Y : Type v) where
   drift : DriftRate
   /-- Drift is bounded -/
   drift_bounded : 0 ≤ drift
-
-/-- Lifelong learning: learning a sequence of tasks, leveraging
-    shared structure across tasks. Meta-learning over time. -/
-structure LifelongLearning (X : Type u) (Y : Type v) where
-  /-- The sequence of tasks (each task is a concept class) -/
-  tasks : ℕ → ConceptClass X Y
-  /-- The meta-learner that improves across tasks -/
-  metaLearner : MetaLearner X Y
-  /-- Performance on task t after seeing tasks 1..t-1 -/
-  performance : ℕ → ℝ
 
 /-!
 ## Inductive Logic Programming

@@ -14,13 +14,12 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 /-!
 # Extended and Cross-Paradigm Criteria
 
-EX under drift, universal learning, and the Bayesian criterion of posterior
-consistency.
+EX under drift and universal learning.
 -/
 
 @[expose] public section
 
-universe u v
+universe u
 
 /-- EX-learning under drift: the target concept changes over time.
     The learner must track the drifting target. At each time step t,
@@ -58,20 +57,3 @@ def UniversalLearnable (X : Type u) [MeasurableSpace X]
               D { x | L.learn (fun i => (xs i, c (xs i))) x ≠ c x }
                 ≤ ENNReal.ofReal (rate m) }
             ≥ ENNReal.ofReal (2 / 3)
-
-/-!
-## Bayesian Criteria
--/
-
-/-- Posterior consistency: as sample size grows, the posterior concentrates
-    on the true parameter/concept. -/
-def PosteriorConsistent (X : Type u) (Y : Type v)
-    [MeasurableSpace X]
-    (BL : BayesianLearner X Y) (C : ConceptClass X Y) : Prop :=
-  ∀ (c : Concept X Y), c ∈ C →
-    -- As sample size m → ∞, the posterior probability assigned to the true
-    -- concept c converges to 1 (posterior concentration)
-    ∀ ε > 0, ∃ (m₀ : ℕ), ∀ (m : ℕ), m ≥ m₀ →
-      ∀ (data : List (X × Y)),
-        data.length = m →
-          BL.inference.posterior c data ≥ 1 - ε
