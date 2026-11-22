@@ -173,6 +173,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPCoo
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPDensity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPEuclid
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGlobal
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGreen
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPLocal
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPLocalIBP
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPTransfer

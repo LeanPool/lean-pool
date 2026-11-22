@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGreen
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPLocalIBP
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPContinuity
 import Mathlib.Geometry.Manifold.Algebra.Structures
@@ -151,8 +152,8 @@ theorem exists_bump (x : M) :
     f.tsupport_subset_chartAt_source⟩
   rw [f.eq_one]; exact one_pos
 
-/-- **(G1)** Integration by parts for the weighted volume measure. -/
-theorem weightedIBP_of_isWeightedVolume {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M}
+/-- Integration by parts using chart bumps on the compact support of the test function. -/
+theorem weightedIBP_of_isWeightedVolume_chartwise {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M}
     (hμ : IsWeightedVolume F μ V) [IsFiniteMeasure μ] : WeightedIBP F μ V := by
   classical
   intro u v hu hv hK
@@ -202,5 +203,13 @@ theorem weightedIBP_of_isWeightedVolume {V : M → ℝ} (hV : MSmooth F V) {μ :
       simp [hux, h0]
   rw [hEq] at hsum
   exact hsum.2.2
+
+/-- Integration by parts for the weighted volume measure. -/
+theorem weightedIBP_of_isWeightedVolume {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M}
+    (hμ : IsWeightedVolume F μ V) [IsFiniteMeasure μ] : WeightedIBP F μ V := by
+  by_cases hσ : SigmaCompactSpace M
+  · let : SigmaCompactSpace M := hσ
+    exact weightedIBP_of_isWeightedVolume_of_sigmaCompact F hV hμ
+  · exact weightedIBP_of_isWeightedVolume_chartwise F hV hμ
 
 end CutCur

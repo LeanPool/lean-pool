@@ -39,9 +39,10 @@ theorem manifold_eigenfunction_parallel_gradient {V : M → ℝ} (hV : MSmooth F
     {μ : Measure M} [IsProbabilityMeasure μ] (hμ : IsWeightedVolume F μ V) {ρ : ℝ} (hρ : 0 < ρ)
     (hCD : CD F ρ V) (_hgap : mSpectralGap F μ = ρ) {f : M → ℝ}
     (hf : IsMEigenfunction F μ V ρ f) (x : M) :
-    CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F f) x = 0 :=
-  manifold_eigenfunction_parallel_gradient_of_inputs F hV hμ hρ.le
-    (weightedIBP_of_isWeightedVolume F hV hμ) (weightedRegular V hV)
+    CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F f) x = 0 := by
+  let : SigmaCompactSpace M := sigmaCompactSpace_of_complete_riemannian (F := F) (M := M)
+  exact manifold_eigenfunction_parallel_gradient_of_inputs F hV hμ hρ.le
+    (weightedIBP_of_isWeightedVolume_of_sigmaCompact F hV hμ) (weightedRegular V hV)
     (weightedBochnerIneq_of_CD F hV hCD) (weightedCutoffs_of_complete F) hf x
 
 end Final

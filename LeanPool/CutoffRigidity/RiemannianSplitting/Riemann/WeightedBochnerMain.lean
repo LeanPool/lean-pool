@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerQuad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerTest
+public import TauCeti.Geometry.Manifold.Riemannian.Laplacian
 import TauCeti.Geometry.Manifold.Riemannian.Bochner.Basic
 /-!
 # Weighted Bochner inequality
@@ -33,12 +34,12 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-private theorem mgrad_eq_mgradient (f : M → ℝ) :
+theorem mgrad_eq_mgradient (f : M → ℝ) :
     mgrad F f = mgradient 𝓘(ℝ, F) f := by
   funext x
   exact (eq_mgradient_iff (I := 𝓘(ℝ, F))).2 (WBoch.inner_mgrad_eq F f x)
 
-private theorem mlaplacian_eq_laplaceBeltrami (f : M → ℝ) :
+theorem mlaplacian_eq_laplaceBeltrami (f : M → ℝ) :
     mlaplacian F f = laplaceBeltrami 𝓘(ℝ, F) f := by
   funext x
   rw [laplaceBeltrami_eq_sum_hessian 𝓘(ℝ, F) f x (stdOrthonormalBasis ℝ _)]

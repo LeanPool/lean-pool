@@ -60,20 +60,6 @@ theorem inner_mgrad_eq (φ : M → ℝ) (y : M) (w : TangentSpace 𝓘(ℝ, F) y
     inner ℝ (mgrad F φ y) w = mvfderiv 𝓘(ℝ, F) φ y w :=
   CutoffRigidity.inner_manifoldGradient (I := 𝓘(ℝ, F)) φ y w
 
-theorem hessian_eq_fields_aux {φ : M → ℝ} (hφ : MSmooth F φ)
-    {X Y : (y : M) → TangentSpace 𝓘(ℝ, F) y} {x : M} (_hX : SmAt F X x) (hY : SmAt F Y x) :
-    inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F φ) x (X x)) (Y x) =
-      mvfderiv 𝓘(ℝ, F) (fun y => mvfderiv 𝓘(ℝ, F) φ y (Y y)) x (X x)
-        - mvfderiv 𝓘(ℝ, F) φ x
-          (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M Y x (X x)) := by
-  have h := mvfderiv_inner_lc F (mdiffAt_of_smAt F (smAt_mgrad F hφ x)) (mdiffAt_of_smAt F hY)
-    (X x)
-  have e : (fun y => inner ℝ (mgrad F φ y) (Y y)) = fun y => mvfderiv 𝓘(ℝ, F) φ y (Y y) := by
-    funext y; exact inner_mgrad_eq F φ y (Y y)
-  rw [e] at h
-  rw [h, inner_mgrad_eq]
-  ring
-
 /-- `dΓ(f)(w) = 2 ⟨∇_w u, u⟩`. -/
 theorem mvfderiv_carre_apply {f : M → ℝ} (hf : MSmooth F f) (y : M)
     (w : TangentSpace 𝓘(ℝ, F) y) :
