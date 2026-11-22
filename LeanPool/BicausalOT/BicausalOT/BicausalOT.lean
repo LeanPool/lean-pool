@@ -7,14 +7,15 @@ Authors: KT. Wu
   Bicausal Optimal Transport — Bellman Recursion (T=1)
   Formally verified in Lean 4 + Mathlib.
 
-  Main result: bellman_value_eq (Value Representation Theorem)
+  One-step result: bellman_value_eq (value representation over arbitrary,
+  possibly non-measurable, families of conditional couplings)
 
   Structure:
     Defs.lean                              — definitions
     Proposition1.lean                      — bicausal ↔ kernel decomposition
     LowerBound.lean                        — Step 2: ∫V₀ ≤ totalCost
     UpperBound.lean                        — Step 3: ε-optimal construction
-    ValueRepresentation.lean               — Step 4: equality (main theorem)
+    ValueRepresentation.lean               — Step 4: equality
     Existence.lean                         — Step 5: optimal coupling exists
     DescriptiveSetTheory/
       Tree.lean                            — Jankov–von Neumann uniformization (Kechris 18.1)

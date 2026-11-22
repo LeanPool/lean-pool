@@ -99,7 +99,12 @@ theorem bellman_value_leq
               gcongr; exact h_prob γ₀ h_coup
           _ = ↑ε := mul_one _
 
-/-- **Main Theorem**: Bellman value representation (equality). -/
+/-- **One-step Bellman value representation.** The infimum of `totalCost` over couplings `γ₀`
+and families `γ₁` equals the infimum of the integrated value `V₀`. Each `γ₁` is an arbitrary
+function into the feasible sets, with no measurability required, and the costs are not assumed
+measurable, so both sides may integrate non-measurable functions with `lintegral`. For the
+multi-period infimum over analytically measurable strategies, see
+`MultiPeriod.bellman_value_eq_multi_measurable`. -/
 theorem bellman_value_eq
     (μ₀ : Measure X₀) (ν₀ : Measure Y₀)
     (κ_μ : X₀ → Measure X₁) (κ_ν : Y₀ → Measure Y₁)
