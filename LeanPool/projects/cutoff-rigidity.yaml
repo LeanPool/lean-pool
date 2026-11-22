@@ -1,11 +1,14 @@
 slug: cutoff-rigidity
-title: Gaussian factorization and convex interaction for rigid diffusions
+title: Gaussian splitting and convex interaction for rigid diffusions
 summary: >-
   Formalizes the convex interaction theorem of Chafaï and Fathi and their
   Euclidean formulation of Cheng and Zhou's Gaussian splitting theorem for
   normalized C² Gibbs potentials at curvature equality. The proofs connect
   the canonical spectral gap to an affine first eigenspace and an
-  independent Gaussian factor.
+  independent Gaussian factor. On a connected complete smooth weighted
+  Riemannian manifold attaining the positive Bakry–Émery curvature bound,
+  it constructs a Gaussian product isometry and identifies the smooth
+  first eigenfunctions in the Gaussian coordinates.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -27,6 +30,7 @@ provenance_evidence: >-
 main_declarations:
 - CutoffRigidity.normalized_convexInteraction_theorem
 - CutoffRigidity.euclidean_gaussian_splitting
+- CutoffRigidity.Paper.riemannian_gaussian_splitting
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
@@ -42,6 +46,15 @@ main_results:
     potential splits off a quadratic term in the first eigenspace directions.
     The Gibbs law factors into a Gaussian law on this space and a Gibbs law
     on its orthogonal complement.
+- declaration: CutoffRigidity.Paper.riemannian_gaussian_splitting
+  informal: >-
+    If the positive spectral gap equals the Bakry–Émery curvature lower bound
+    on a connected complete smooth weighted manifold, a smooth isometry splits
+    off a Euclidean factor whose dimension is the dimension of the space
+    of smooth L² eigenfunctions at the gap. It factors the weighted law into a Gaussian and a complete
+    connected weighted manifold with the same curvature lower bound, gives
+    the potential identity, and proves the eigenfunction representation and
+    norm and orthogonality identities.
 tags:
 - curvature
 - spectral-gap
@@ -50,3 +63,4 @@ tags:
 msc:
 - 60J60
 - 47D07
+- 53C21
