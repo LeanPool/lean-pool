@@ -167,17 +167,9 @@ theorem mvfderiv_s_flow (j i : Fin k) (x : M) (t : ℝ) (u : TangentSpace 𝓘(�
     ((fr.contMDiff_flow_slice i t).mdifferentiable (by simp)) x
   have hcomp : (fun y => fr.s j (fr.flow i y t)) = fun y => fr.s j y + (if j = i then t else 0) :=
     funext fun y => fr.s_flow j i y t
-  have h1 : mfderiv 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (fun y ↦ fr.s j (fr.flow i y t)) x =
-      (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (fr.s j) (fr.flow i x t)).comp
-        (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y ↦ fr.flow i y t) x) := mfderiv_comp x hs hf
-  have h3 : mvfderiv 𝓘(ℝ, F) (fun y => fr.s j (fr.flow i y t)) x =
-      (mvfderiv 𝓘(ℝ, F) (fr.s j) (fr.flow i x t)).comp
-        (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x) := by
-    ext u
-    simp only [mvfderiv, ContinuousLinearMap.comp_apply]
-    rw [h1]
-    rfl
-  have h4 : mvfderiv 𝓘(ℝ, F) (fun y => fr.s j (fr.flow i y t)) x = mvfderiv 𝓘(ℝ, F) (fr.s j) x := by
+  have chain_rule := mvfderiv_comp (g := fr.s j) (f := fun y ↦ fr.flow i y t) x hs hf
+  have same_derivative : mvfderiv 𝓘(ℝ, F) (fun y => fr.s j (fr.flow i y t)) x =
+      mvfderiv 𝓘(ℝ, F) (fr.s j) x := by
     rw [hcomp]
     have hs' : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (fr.s j) x :=
       ((fr.smooth j).mdifferentiable (by simp)) x
@@ -185,8 +177,7 @@ theorem mvfderiv_s_flow (j i : Fin k) (x : M) (t : ℝ) (u : TangentSpace 𝓘(�
       (mdifferentiableAt_const (c := (if j = i then t else 0)))
     simp only [Pi.add_def] at this
     rw [this, mvfderiv_const, add_zero]
-  have := congrArg (fun L => L u) (h3.symm.trans h4)
-  exact this
+  exact congrArg (fun L => L u) (chain_rule.symm.trans same_derivative)
 
 /-- Parallel gradient fields are invariant under the flows of the frame:
 `dφᵢᵗ (Xⱼ) = Xⱼ ∘ φᵢᵗ`. -/

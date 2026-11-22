@@ -62,16 +62,9 @@ theorem inner_X_mfderiv_level_val (i : Fin k) (y : fr.Level)
     funext z
     have := congrArg (fun v : EuclideanSpace ℝ (Fin k) => v i) z.property
     simpa [sv] using this
-  have h1 := mfderiv_comp y hs hval
-  have h2 : mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, ℝ)
-      (fun z : fr.Level => fr.s i z.val) y = 0 := by
-    rw [hc, mfderiv_const]
-    rfl
-  have h3 := congrArg (fun L => L v) h1
-  simp only [Function.comp_def] at h3
-  rw [h2] at h3
-  simp only [mvfderiv]
-  exact h3.symm.trans rfl
+  rw [← mvfderiv_comp_apply y hs hval v]
+  change mvfderiv 𝓘(ℝ, LevelModel F (Rd k)) (fun z : fr.Level ↦ fr.s i z.val) y v = 0
+  rw [hc, mvfderiv_const, zero_apply]
 
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
 /-- Chain rule for the inclusion of the level composed with a chart inverse. -/

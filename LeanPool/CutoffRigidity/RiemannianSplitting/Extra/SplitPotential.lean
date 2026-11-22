@@ -64,7 +64,7 @@ theorem riemannian_gaussian_splitting_potential {V : M → ℝ} (hV : ContMDiff 
   set γ := multivariateGaussian (0 : CutCur.Rd k) (ρ⁻¹ • (1 : Matrix (Fin k) (Fin k) ℝ)) with hγ
   have hfact' : μ.map fr.splitEquiv = γ.prod (μ.map fr.toLevel) := hfact
   have hCD' : CutCur.CD (CutoffRigidity.Riemann.LevelModel F (CutCur.Rd k)) ρ
-      (fun y : fr.Level => V y.val + (k / 2 : ℝ) * Real.log (ρ / (2 * Real.pi))) :=
+      (fr.Vlev V ρ) :=
     fr.cd_level hV hμ hV' hW hfact' hCD
   have hg : ∀ i, MemLp (fun x => Real.sqrt ρ * fr.s i x) 2 μ := fun i => (hfs i).2.1.const_mul _
   have hs : 0 < Real.sqrt ρ := Real.sqrt_pos.mpr hρ
@@ -84,16 +84,15 @@ theorem riemannian_gaussian_splitting_potential {V : M → ℝ} (hV : ContMDiff 
     (fun i x => Real.sqrt ρ * fr.s i x) hg horth (fun x => fr.sv x) hp
     (CutCur.IsMEigenfunction F μ V ρ) hE
   have hconn : ConnectedSpace fr.Level :=
-    Function.Surjective.connectedSpace (f := fun x : M => (⟨fr.retr x, fr.sv_retr x⟩ : fr.Level))
-      (fun y => ⟨y.val, Subtype.ext (fr.retr_of_level y.property)⟩)
-      (continuous_induced_rng.2 fr.contMDiff_retr.continuous)
+    Function.Surjective.connectedSpace (f := fr.toLevel)
+      (fun y => ⟨y.val, fr.toLevel_val y⟩) fr.contMDiff_toLevel.continuous
   have hcompl : CompleteSpace fr.Level :=
     (isClosed_singleton.preimage fr.contMDiff_sv.continuous : IsClosed {x : M | fr.sv x =
         0}).completeSpace_coe
   refine ⟨CutoffRigidity.Riemann.LevelModel F (CutCur.Rd k), inferInstance, inferInstance,
     inferInstance, fr.Level, inferInstance, inferInstance, inferInstance, inferInstance,
     inferInstance, inferInstance, inferInstance, inferInstance, inferInstance, inferInstance,
-    (fun y : fr.Level => V y.val + (k / 2 : ℝ) * Real.log (ρ / (2 * Real.pi))),
+    fr.Vlev V ρ,
     μ.map fr.toLevel, fr.splitEquiv, ⟨hV', hprob, hW, hCD', hconn, hcompl⟩, fun x y => fr.edist_sq
         x y, ?_, hfact', hA, hB⟩
   intro x
@@ -102,9 +101,12 @@ theorem riemannian_gaussian_splitting_potential {V : M → ℝ} (hV : ContMDiff 
   rw [fr.comp_retr x] at h
   have hl : Real.log (2 * Real.pi / ρ) = -Real.log (ρ / (2 * Real.pi)) := by
     rw [← Real.log_inv, inv_div]
-  change V x = ρ * ‖fr.sv x‖ ^ 2 / 2 + (V (fr.retr x) + (k / 2 : ℝ) * Real.log (ρ / (2 * Real.pi)))
-    + k / 2 * Real.log (2 * Real.pi / ρ)
-  rw [hl, h]; ring
+  change V x = ρ * ‖fr.sv x‖ ^ 2 / 2 + fr.Vlev V ρ (fr.toLevel x) +
+    k / 2 * Real.log (2 * Real.pi / ρ)
+  have level_potential : fr.Vlev V ρ (fr.toLevel x) =
+      V (fr.retr x) + (k / 2 : ℝ) * Real.log (ρ / (2 * Real.pi)) := rfl
+  rw [level_potential, hl, h]
+  ring
 
 /-- The Gaussian product splitting of a complete weighted Riemannian manifold
 at curvature equality, including the potential identity and the first

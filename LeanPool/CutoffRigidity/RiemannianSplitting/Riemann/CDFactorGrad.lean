@@ -113,10 +113,7 @@ theorem mvfderiv_comp_toLevel {u' : fr.Level → ℝ}
       mvfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) u' (fr.toLevel x) (fr.dpi x v) := by
   have hu : MDifferentiableAt 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, ℝ) u'
       (fr.toLevel x) := (hu'.mdifferentiable (by simp)) _
-  have h1 := mfderiv_comp x hu (fr.mdiff_toLevel x)
-  simp only [mvfderiv]
-  rw [show (fun y => u' (fr.toLevel y)) = u' ∘ fr.toLevel from rfl, h1]
-  rfl
+  exact mvfderiv_comp_apply x hu (fr.mdiff_toLevel x) v
 
 /-- The gradient of `u' ∘ π` is horizontal and `dπ` maps it to `∇u'`. -/
 theorem dsv_mgrad_comp {u' : fr.Level → ℝ}
@@ -168,15 +165,12 @@ theorem carre_sv_comp_toLevel {u' : fr.Level → ℝ}
   rw [inner_mgrad_gen]
   have hc : MDifferentiableAt 𝓘(ℝ, EuclideanSpace ℝ (Fin k)) 𝓘(ℝ, ℝ) χ (fr.sv x) :=
     (hχ.contMDiff.mdifferentiable (by simp)) _
-  have h1 := mfderiv_comp x hc (fr.mdiff_sv x)
-  have h2 : mvfderiv 𝓘(ℝ, F) (fun z => χ (fr.sv z)) x (mgrad F (fun z => u' (fr.toLevel z)) x) =
-      mfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin k)) 𝓘(ℝ, ℝ) χ (fr.sv x)
-        (fr.dsv x (mgrad F (fun z => u' (fr.toLevel z)) x)) := by
-    simp only [mvfderiv]
-    rw [show (fun y => χ (fr.sv y)) = χ ∘ fr.sv from rfl, h1]
-    rfl
-  rw [h2, fr.dsv_mgrad_comp hu']
-  exact map_zero (mfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin k)) 𝓘(ℝ, ℝ) χ (fr.sv x))
+  rw [show (fun y ↦ χ (fr.sv y)) = χ ∘ fr.sv from rfl,
+    mvfderiv_comp_apply x hc (fr.mdiff_sv x)]
+  change mvfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin k)) χ (fr.sv x)
+    (fr.dsv x (mgrad F (fun z ↦ u' (fr.toLevel z)) x)) = 0
+  rw [fr.dsv_mgrad_comp hu']
+  exact map_zero (mvfderiv 𝓘(ℝ, EuclideanSpace ℝ (Fin k)) χ (fr.sv x))
 
 end Frame
 

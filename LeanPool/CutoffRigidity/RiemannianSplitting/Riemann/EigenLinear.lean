@@ -8,7 +8,6 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRigidity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 
 /-! # Linearity of `mgrad`, `mlaplacian`, `mgenerator` on smooth functions
@@ -33,13 +32,13 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem mgrad_add' {f g : M → ℝ} (hf : MSmooth F f) (hg : MSmooth F g) (x : M) :
     mgrad F (fun y => f y + g y) x = mgrad F f x + mgrad F g x := by
-  unfold mgrad
-  rw [← map_add]
-  congr 1
-  exact mvfderiv_add (mdiffAt_of_smooth F hf x) (mdiffAt_of_smooth F hg x)
+  change mgrad F (f + g) x = _
+  simp only [mgrad_eq_mgradient, mgradient_add (hf.mdifferentiable (by simp))
+    (hg.mdifferentiable (by simp)), Pi.add_apply]
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mgrad_zero' (x : M) : mgrad F (fun _ : M => (0 : ℝ)) x = 0 := mgrad_const F 0 x
+theorem mgrad_zero' (x : M) : mgrad F (fun _ : M => (0 : ℝ)) x = 0 := by
+  simp only [mgrad_eq_mgradient, mgradient_const, Pi.zero_apply]
 
 theorem mlaplacian_add {f g : M → ℝ} (hf : MSmooth F f) (hg : MSmooth F g) (x : M) :
     mlaplacian F (fun y => f y + g y) x = mlaplacian F f x + mlaplacian F g x := by
@@ -63,8 +62,12 @@ theorem mgenerator_add {V f g : M → ℝ} (hf : MSmooth F f) (hg : MSmooth F g)
 
 theorem mgenerator_const_mul {V f : M → ℝ} (c : ℝ) (hf : MSmooth F f) (x : M) :
     mgenerator F V (fun y => c * f y) x = c * mgenerator F V f x := by
+  have gradient : mgrad F (fun y => c * f y) x = c • mgrad F f x := by
+    change mgrad F (c • f) x = _
+    simp only [mgrad_eq_mgradient, mgradient_smul, Pi.smul_apply]
   unfold mgenerator
-  rw [mlaplacian_const_mul F c hf, mgrad_const_mul F c hf, inner_smul_right]; ring
+  rw [mlaplacian_const_mul F c hf, gradient, inner_smul_right]
+  ring
 
 theorem mgenerator_zero {V : M → ℝ} (x : M) : mgenerator F V (fun _ : M => (0 : ℝ)) x = 0 := by
   unfold mgenerator

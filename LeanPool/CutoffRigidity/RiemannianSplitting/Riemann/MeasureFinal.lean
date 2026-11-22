@@ -189,7 +189,7 @@ Then, with `V' = V∘val + (k/2) log(ρ/2π)` on the level `N = {s = 0}` and `μ
 theorem weighted_factorization {V : M → ℝ} (hV : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ V)
     {μ : Measure M} [IsProbabilityMeasure μ] (hμ : IsWeightedVolume F μ V) {ρ : ℝ} (hρ : 0 < ρ)
     (hVX : ∀ i x, mvfderiv 𝓘(ℝ, F) V x (fr.X i x) = ρ * fr.s i x) :
-    let V' : fr.Level → ℝ := fun y => V y.val + (k / 2 : ℝ) * Real.log (ρ / (2 * Real.pi))
+    let V' := fr.Vlev V ρ
     let μ' : Measure fr.Level := μ.map fr.toLevel
     ContMDiff 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, ℝ) ∞ V' ∧
       IsProbabilityMeasure μ' ∧
