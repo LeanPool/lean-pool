@@ -290,16 +290,12 @@ def canonicalSpectralReadoutInverse
     (spectralPositiveCoordinate mass energy px py pz z)
     (spectralNegativeCoordinate mass energy px py pz z)
 
-private def pauliSpatialLinear (px py pz : ℝ) : UniformCell2 →ₗ[ℂ] UniformCell2 where
-  toFun := positivePauliSpatial px py pz
-  map_add' first second := by
-    funext component
-    fin_cases component <;>
-      simp [positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one] <;> ring
-  map_smul' scale field := by
-    funext component
-    fin_cases component <;>
-      simp [positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one] <;> ring
+private def pauliSpatialLinear (px py pz : ℝ) : UniformCell2 →ₗ[ℂ] UniformCell2 :=
+  cubicalSpatialLowerLinear (px : ℂ) (py : ℂ) (pz : ℂ)
+
+private theorem pauli_spatial_linear_apply (px py pz : ℝ) (position : UniformCell2) :
+    pauliSpatialLinear px py pz position = positivePauliSpatial px py pz position :=
+  (positive_pauli_spatial_is_cubical_lower px py pz position).symm
 
 private def spectralBlock (spatial : UniformCell2 →ₗ[ℂ] UniformCell2)
     (diagonal offDiagonal : ℂ) (first second : UniformCell2) : UniformCell2 :=
@@ -337,7 +333,7 @@ private theorem spectralEmbedding_halves (mass energy px py pz : ℝ)
       cubicalCell4LowerHalf z = spectralBlock spatial a b negative positive := by
   constructor <;> funext component <;> fin_cases component <;>
     simp [cubicalCell4Upper, cubicalCell4LowerHalf, normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, spectralBlock, pauliSpatialLinear, add_comm]
+      normalizedNegativeFrequencyEmbedding, spectralBlock, pauli_spatial_linear_apply, add_comm]
 
 private theorem spectralCoordinates_blocks (mass energy px py pz : ℝ) (z : CubicalCell4) :
     let a : ℂ := positiveFrequencyScale mass energy
@@ -350,7 +346,7 @@ private theorem spectralCoordinates_blocks (mass energy px py pz : ℝ) (z : Cub
         spectralBlock spatial a (-b) (cubicalCell4LowerHalf z) (cubicalCell4Upper z) := by
   constructor <;> funext component <;>
     simp [spectralPositiveCoordinate, spectralNegativeCoordinate, spectralBlock,
-      pauliSpatialLinear, div_eq_mul_inv, mul_comm, add_comm]
+      pauli_spatial_linear_apply, div_eq_mul_inv, mul_comm, add_comm]
 
 private theorem spectralNormalization_complex (mass energy px py pz : ℝ)
     (hpositive : 0 < energy + mass)

@@ -86,6 +86,63 @@ def cubicalSpatialLower
   | _ => orientedCubicalSpatialCoordinates px py pz
       (cubicalUpperEmbedding position) 3
 
+private theorem cubical_upper_embedding_add (first second : UniformCell2) :
+    cubicalUpperEmbedding (first + second) =
+      cubicalUpperEmbedding first + cubicalUpperEmbedding second := by
+  funext component
+  fin_cases component <;> simp [cubicalUpperEmbedding]
+
+private theorem cubical_upper_embedding_scale (scalar : ℂ) (position : UniformCell2) :
+    cubicalUpperEmbedding (scalar • position) = scalar • cubicalUpperEmbedding position := by
+  funext component
+  fin_cases component <;> simp [cubicalUpperEmbedding]
+
+private theorem cubical_standard_spatial_add (px py pz : ℂ) (first second : CubicalCell4) :
+    cubicalStandardSpatial px py pz (first + second) =
+      cubicalStandardSpatial px py pz first + cubicalStandardSpatial px py pz second := by
+  funext component
+  change cubicalStandardSpatial px py pz (fun index => first index + second index) component =
+    cubicalStandardSpatial px py pz first component +
+      cubicalStandardSpatial px py pz second component
+  simpa only [cubicalStandardHamiltonian, zero_mul, zero_add] using
+    congrFun (cubical_standard_hamiltonian_add 0 px py pz first second) component
+
+private theorem cubical_standard_spatial_scale (px py pz scalar : ℂ) (position : CubicalCell4) :
+    cubicalStandardSpatial px py pz (scalar • position) =
+      scalar • cubicalStandardSpatial px py pz position := by
+  funext component
+  change cubicalStandardSpatial px py pz (fun index => scalar * position index) component =
+    scalar * cubicalStandardSpatial px py pz position component
+  simpa only [cubicalStandardHamiltonian, zero_mul, zero_add] using
+    congrFun (cubical_standard_hamiltonian_scale 0 px py pz scalar position) component
+
+/-- The incidence-derived block as a linear map on the transverse coordinates. -/
+def cubicalSpatialLowerLinear (px py pz : ℂ) : UniformCell2 →ₗ[ℂ] UniformCell2 where
+  toFun := cubicalSpatialLower px py pz
+  map_add' first second := by
+    have add (index : Fin 4) :
+        orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding (first + second))
+          index =
+          orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding first) index +
+            orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding second) index := by
+      simp only [oriented_cubical_spatial_coordinates_eq_standard, cubical_upper_embedding_add,
+        cubical_standard_spatial_add, Pi.add_apply]
+    funext component
+    fin_cases component
+    · exact add 2
+    · exact add 3
+  map_smul' scalar position := by
+    have scale (index : Fin 4) :
+        orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding (scalar • position))
+          index = scalar •
+          orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding position) index := by
+      simp only [oriented_cubical_spatial_coordinates_eq_standard, cubical_upper_embedding_scale,
+        cubical_standard_spatial_scale, Pi.smul_apply]
+    funext component
+    fin_cases component
+    · exact scale 2
+    · exact scale 3
+
 /-- The velocity-dependent two-component coordinate in the native-to-spinor map. -/
 def cubicalPhaseLower
     (mass px py pz : ℂ) (phase : UniformTwoChannelPhase) : UniformCell2 :=
@@ -171,15 +228,13 @@ theorem cubical_phase_readout_scale
         (uniformTwoChannelScale scalar phase) =
       fun component =>
         scalar * cubicalPhaseReadout mass px py pz phase component := by
+  have spatial := (cubicalSpatialLowerLinear px py pz).map_smul scalar phase.1
+  change cubicalSpatialLower px py pz (fun component => scalar * phase.1 component) =
+    (fun component => scalar * cubicalSpatialLower px py pz phase.1 component) at spatial
   funext component
   fin_cases component <;>
     simp [uniformTwoChannelScale, cubicalPhaseReadout, cubicalFromPositionLower,
-      cubicalPhaseLower, cubicalSpatialLower,
-      oriented_cubical_spatial_coordinates_eq_standard,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;>
-    ring
+      cubicalPhaseLower, spatial] <;> ring
 
 /-- The four-component readout with the continuum momentum determined by the action. -/
 def uniformActionToStandardDirac
@@ -345,12 +400,13 @@ theorem cubical_phase_readout_add
       fun component =>
         cubicalPhaseReadout mass px py pz first component +
           cubicalPhaseReadout mass px py pz second component := by
+  have spatial := (cubicalSpatialLowerLinear px py pz).map_add first.1 second.1
+  change cubicalSpatialLower px py pz (fun component => first.1 component + second.1 component) =
+    (fun component => cubicalSpatialLower px py pz first.1 component +
+      cubicalSpatialLower px py pz second.1 component) at spatial
   funext component
   fin_cases component <;>
-    simp [cubicalPhaseReadout, cubicalFromPositionLower, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;> ring
+    simp [cubicalPhaseReadout, cubicalFromPositionLower, cubicalPhaseLower, spatial] <;> ring
 
 /-- The action-derived spinor readout preserves addition of native phases. -/
 theorem uniform_action_readout_add

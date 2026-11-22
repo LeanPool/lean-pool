@@ -35,45 +35,100 @@ def cubicalGammaTime (z : CubicalCell4) : CubicalCell4 :=
 def cubicalGammaSpace (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
   cubicalGammaTime (cubicalAlpha axis z)
 
+private def cubicalSpatialSign (axis : Fin 3) : ℂ := if axis = 2 then 1 else -1
+
+private theorem cubical_spatial_sign_square (axis : Fin 3) :
+    cubicalSpatialSign axis * cubicalSpatialSign axis = 1 := by
+  unfold cubicalSpatialSign
+  split <;> simp
+
+private theorem cubical_alpha_eq_oriented_axis (axis : Fin 3) (z : CubicalCell4) :
+    cubicalAlpha axis z = cubicalSpatialSign axis • cubicalStandardAxis axis.rev z := by
+  have rev_zero : (0 : Fin 3).rev = 2 := rfl
+  have rev_one : (1 : Fin 3).rev = 1 := rfl
+  have rev_two : (2 : Fin 3).rev = 0 := rfl
+  fin_cases axis <;> simp [cubicalAlpha, cubicalSpatialSign, cubicalStandardAxis,
+    rev_zero, rev_one, rev_two]
+
+private theorem cubical_gamma_scale (axis : Fin 3) (scalar : ℂ) (z : CubicalCell8) :
+    cubicalGamma axis (scalar • z) = scalar • cubicalGamma axis z := by
+  funext corner
+  simp [cubicalGamma, Pi.smul_apply, smul_eq_mul, mul_left_comm]
+
+private theorem cubical_beta_scale (scalar : ℂ) (z : CubicalCell8) :
+    cubicalBeta (scalar • z) = scalar • cubicalBeta z := by
+  funext corner
+  unfold cubicalBeta
+  simp only [Pi.smul_apply]
+  split <;> simp only [smul_neg]
+
+private theorem cubical_gamma_space_embedding (axis : Fin 3) (z : CubicalCell4) :
+    cubicalDiracEmbedMinus (cubicalGammaSpace axis z) =
+      cubicalSpatialSign axis • cubicalBeta (cubicalGamma axis.rev (cubicalDiracEmbedMinus z)) := by
+  unfold cubicalGammaSpace cubicalGammaTime
+  rw [← cubical_beta_intertwines_minus, cubical_alpha_eq_oriented_axis]
+  change cubicalBeta (cubicalDiracLinearEmbedMinus (_ • _)) = _
+  rw [map_smul, cubical_beta_scale]
+  change _ • cubicalBeta (cubicalDiracEmbedMinus _) = _
+  rw [cubical_gamma_intertwines_minus]
+
+private theorem cubical_beta_gamma_beta (axis : Fin 3) (z : CubicalCell8) :
+    cubicalBeta (cubicalGamma axis (cubicalBeta z)) = -cubicalGamma axis z := by
+  rw [cubical_beta_anticommutes, cubical_beta_square]
+  rfl
+
+private theorem cubical_gamma_space_product_embedding (axis other : Fin 3) (z : CubicalCell4) :
+    cubicalDiracEmbedMinus (cubicalGammaSpace axis (cubicalGammaSpace other z)) =
+      -(cubicalSpatialSign axis * cubicalSpatialSign other) •
+        cubicalGamma axis.rev (cubicalGamma other.rev (cubicalDiracEmbedMinus z)) := by
+  rw [cubical_gamma_space_embedding, cubical_gamma_space_embedding,
+    cubical_gamma_scale, cubical_beta_scale, smul_smul, cubical_beta_gamma_beta, smul_neg, neg_smul]
+
 theorem cubical_gamma_time_square (z : CubicalCell4) :
     cubicalGammaTime (cubicalGammaTime z) = z := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalGammaTime, cubicalStandardBeta]
+  apply cubical_dirac_embed_minus_injective
+  simpa only [cubicalGammaTime, ← cubical_beta_intertwines_minus] using
+    cubical_beta_square (cubicalDiracEmbedMinus z)
 
 theorem cubical_gamma_space_square (axis : Fin 3) (z : CubicalCell4) :
     cubicalGammaSpace axis (cubicalGammaSpace axis z) =
       fun component => -z component := by
-  funext component
-  fin_cases axis <;> fin_cases component <;>
-    simp [cubicalGammaSpace, cubicalGammaTime, cubicalAlpha,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  apply cubical_dirac_embed_minus_injective
+  change _ = cubicalDiracLinearEmbedMinus (-z)
+  rw [map_neg]
+  change _ = -cubicalDiracEmbedMinus z
+  rw [cubical_gamma_space_product_embedding, cubical_spatial_sign_square,
+    cubical_gamma_square, neg_smul, one_smul]
 
 theorem cubical_gamma_time_space_anticommute
     (axis : Fin 3) (z : CubicalCell4) :
     cubicalGammaTime (cubicalGammaSpace axis z) =
       fun component =>
         -cubicalGammaSpace axis (cubicalGammaTime z) component := by
-  funext component
-  fin_cases axis <;> fin_cases component <;>
-    simp [cubicalGammaSpace, cubicalGammaTime, cubicalAlpha,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ]
+  apply cubical_dirac_embed_minus_injective
+  change cubicalDiracEmbedMinus (cubicalStandardBeta (cubicalGammaSpace axis z)) =
+    cubicalDiracLinearEmbedMinus (-cubicalGammaSpace axis (cubicalStandardBeta z))
+  rw [map_neg]
+  change _ = -cubicalDiracEmbedMinus _
+  rw [← cubical_beta_intertwines_minus, cubical_gamma_space_embedding,
+    cubical_gamma_space_embedding, ← cubical_beta_intertwines_minus, cubical_beta_scale,
+    cubical_beta_square, cubical_beta_gamma_beta, smul_neg, neg_neg]
 
 theorem cubical_gamma_space_anticommute
     (axis other : Fin 3) (haxis : axis ≠ other) (z : CubicalCell4) :
     cubicalGammaSpace axis (cubicalGammaSpace other z) =
       fun component =>
         -cubicalGammaSpace other (cubicalGammaSpace axis z) component := by
-  funext component
-  fin_cases axis <;> fin_cases other <;> try { contradiction }
-  all_goals
-    fin_cases component <;>
-      simp [cubicalGammaSpace, cubicalGammaTime, cubicalAlpha,
-        cubicalStandardBeta, cubicalStandardAlphaX,
-        cubicalStandardAlphaY, cubicalStandardAlphaZ]
+  apply cubical_dirac_embed_minus_injective
+  change _ = cubicalDiracLinearEmbedMinus (-cubicalGammaSpace other (cubicalGammaSpace axis z))
+  rw [map_neg]
+  change _ = -cubicalDiracEmbedMinus _
+  have anti : cubicalGamma axis.rev (cubicalGamma other.rev (cubicalDiracEmbedMinus z)) =
+      -cubicalGamma other.rev (cubicalGamma axis.rev (cubicalDiracEmbedMinus z)) :=
+    cubical_gamma_anticommute axis.rev other.rev (Fin.rev_injective.ne haxis)
+      (cubicalDiracEmbedMinus z)
+  rw [cubical_gamma_space_product_embedding, cubical_gamma_space_product_embedding,
+    mul_comm (cubicalSpatialSign axis) (cubicalSpatialSign other), anti, smul_neg]
 
 /-- The displayed covariant residual
 `(i gamma ^ 0 d_t + i c gamma^j d_j - m) z`. -/
