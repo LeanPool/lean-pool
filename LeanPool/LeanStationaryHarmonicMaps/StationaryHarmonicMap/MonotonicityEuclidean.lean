@@ -36,10 +36,9 @@ open scoped Topology BigOperators ENNReal
 namespace LeanStationaryHarmonicMaps
 namespace StationaryHarmonicMap
 
-/-- Current strongest packaged weak-map monotonicity interface: primitive
-cutoffs are constructed, thin radial-shell volume control supplies radius
-absolute continuity, and the final boundary-to-monotonicity increment is proved
-inside Lean rather than supplied as an external `hderive` input. -/
+/-- Packaged weak-map monotonicity interface: primitive cutoffs are constructed,
+thin radial-shell volume control supplies radius absolute continuity, and the
+increment formula is derived from the resulting boundary identity. -/
 theorem weakTheta_monotone_from_weakStationaryMapIn_via_radialShellsVolume_primitiveCutoffs_closed
     {n m : ℕ} [NeZero n]
     {u : Domain n → Target m} {Du : Domain n → Gradient n m} {Ω : Set (Domain n)}
@@ -56,18 +55,14 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_radialShellsVolume_primi
         (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
         (Ioo (0 : ℝ) R0) volume) :
     MonotoneOn (weakTheta Du (0 : Domain n)) (Ioo (0 : ℝ) R0) := by
-  have hac : WeakEnergyAbsolutelyContinuousOnRadii Du R0 :=
-    weakEnergyAbsolutelyContinuousOnRadii_of_W12LocIn_radialShellsVolume
+  have hcalc : WeakBallEnergyOneDimensionalCalculus Du R0 :=
+    weakBallEnergyOneDimensionalCalculus_of_radiusIntegral_W12LocIn_radialShellsVolume
       (n := n) (m := m) (u := u) (Du := Du) (Ω := Ω) (R0 := R0)
-      hthin hmap.1 hclosedBall_subset
-  exact weakTheta_monotone_from_weakStationaryMapIn_via_radialShellsVolume_primitiveCutoffs
+      hR0_nonneg hthin hmap.1 hclosedBall_subset henergy_radius hradial_radius
+  exact weakTheta_monotone_from_weakStationaryMapIn_via_constructed_primitive_cutoffs
     (n := n) (m := m) (u := u) (Du := Du) (Ω := Ω) (R0 := R0)
-    hR0_nonneg hmap hΩ_meas hclosedBall_subset hthin
-    henergy_radius hradial_radius hdefect_loc
-    (fun hboundary {s} {r} hs hsr hr =>
-      weakTheta_increment_eq_weakMonotonicityRhs_of_boundary
-        (n := n) (m := m) (Du := Du) (R0 := R0) (s := s) (r := r)
-        hboundary hac hradial_radius hs hsr hr)
+    hR0_nonneg hmap hΩ_meas hclosedBall_subset
+    henergy_radius hradial_radius hdefect_loc hcalc
 
 /-- Restricted-weight version of the strongest packaged weak-map monotonicity
 interface through primitive cutoffs and thin radial-shell volume control. -/

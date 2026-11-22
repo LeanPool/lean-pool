@@ -8,19 +8,17 @@ module
 public import LeanPool.PLAcceleratedNesterovLean.Core.Defs
 
 /-!
-# Bootstrap Step 2: Choosing α and Closing the Induction
+# Bootstrap Step 2: Choosing α
 
-## Base case setup
-With v₁ = 0 and x₁ ∈ B(m⋆, α):
-  L₁ = Ψ(x₁) < R² (by continuity of Ψ and Ψ(m⋆) = 0)
-  x₁, x'₁ ∈ Ω (since α < r and 4r ≤ dist(m⋆, ∂Ω))
+Two auxiliary facts for the bootstrap argument:
 
-## Inductive step
-Assuming all iterates up to n stay in Ω with Lyapunov ≤ R²:
-  Total displacement: ‖x'_{n+1} - m⋆‖ ≤ α + C_h √η S_a R ≤ 2r
-  So x'_{n+1} ∈ Ω (since dist(m⋆, ∂Ω) = 4r)
-  And ‖x_{n+1} - m⋆‖ ≤ 2r + C_mov R ≤ 3r < 4r
-  So x_{n+1} ∈ Ω
+* `exists_alpha_psi_small`: if `R > 0` and `Ψ` is continuous at `m` with `Ψ m = 0`, then `Ψ < R²`
+  on a ball around `m`. The bootstrap uses this to choose the initial radius `α`.
+* `series_bound_from_geometric`: a finite sum dominated termwise by `C * r ^ k` is at most
+  `C * ∑ r ^ k`.
+
+The induction keeping the iterates in `Ω` is proved in `Convergence/Bootstrap/Main.lean`, and its
+result is `bootstrap_total_displacement`.
 -/
 
 @[expose] public section

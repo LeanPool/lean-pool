@@ -28,7 +28,7 @@ scalar bookkeeping that turns a calibration inequality on a flow constant
 when it substitutes the recurrence parameters
   `Eint = Cshell E² |log γ|²`,  `Fint = Cshell`
 
-into `integrate_approx_recurrence`:
+into `integrate_approx_recurrence_cstarPlus`:
 
 * the `γ`-threshold demanded by that lemma at the substituted parameters;
 * the absorption of the reported rate into `Cflow c⋆⁻¹ E √γ |log γ|`;
@@ -247,7 +247,7 @@ private theorem cube_of_calibration {Cshell cstarPlus Cflow : ℝ}
 /-- **Gate (i): the `γ`-threshold at the substituted recurrence parameters.**
 
 At `Eint = Cshell E² |log γ|²` and `Fint = Cshell` the smallness condition
-demanded by `integrate_approx_recurrence` follows from the calibration
+demanded by `integrate_approx_recurrence_cstarPlus` follows from the calibration
 hypothesis together with `Cflow cstar⁻¹ ≤ E` and `γ ≤ (E⁻¹)¹⁰`.  This is where
 the tenth inverse power of `E` is spent: `√γ ≤ (E⁻¹)⁵` converts the `E²|log γ|²`
 inflation of `Eint` into a decaying factor `E⁻³`. -/
@@ -299,7 +299,7 @@ theorem gamma_le_recurrenceIntegration_gate
 
 /-- **Gate (ii): absorption of the reported rate.**
 
-The rate reported by `integrate_approx_recurrence` at the substituted
+The rate reported by `integrate_approx_recurrence_cstarPlus` at the substituted
 parameters is at most `Cflow cstar⁻¹ E √γ |log γ|`.  Only the square form of the
 calibration hypothesis is used here; no `γ`-smallness is needed. -/
 theorem recurrenceIntegration_rate_le
@@ -469,7 +469,7 @@ theorem flow_amplitude_le_quarter
 
 /-- **Companion gate: the substituted recurrence parameters are at least `1`.**
 
-`integrate_approx_recurrence` additionally asks for `1 ≤ Eint` and `1 ≤ Fint`.
+`integrate_approx_recurrence_cstarPlus` additionally asks for `1 ≤ Eint` and `1 ≤ Fint`.
 At the substitution `Eint = Cshell E² |log γ|²`, `Fint = Cshell` both hold under
 the same regime conditions. -/
 theorem one_le_recurrence_parameters

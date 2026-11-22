@@ -31,12 +31,11 @@ This module does two things and nothing else.
    the two-sided closure of `l.approximate.recurrence.formula` has to
    produce.
 
-2. It proves, **unconditionally**, that those two displays deliver exactly the
-   two hypotheses `hupper` and `hlower` of
-   `RecurrenceIntegration.integrate_approx_recurrence`, at the sequence
-   `s = fun m => (Annealed.sigmaBar M m : ℝ)`.  This is the carrier match the
-   root assembly needs, and it is pure arithmetic: no measure, no corrector, no
-   in-flight endpoint.
+2. It derives pointwise upper and lower recurrence bounds for
+   `s = fun m => (Annealed.sigmaBar M m : ℝ)`. The upper bound uses the displayed
+   error coefficient. The lower bound uses the cap and error hypotheses and a
+   larger coefficient. The root assembly combines these bounds at shared
+   integration parameters in `ClosureRecurrenceFeed.lean`.
 
 ## The printed displays
 
@@ -175,8 +174,8 @@ theorem shellDrift_eq (M : ABKModel d) (n : ℤ) (h : ℕ) :
 
 /-- **`e.assump.upper` from the printed upper display.**
 
-Multiplying the ratio display by `shom_n > 0` converts it verbatim into the
-hypothesis `hupper` of `integrate_approx_recurrence`, with
+Multiplying the ratio display by `shom_n > 0` gives the pointwise upper
+recurrence bound with
 
 ```
   E_integration cgamma  =  C E^2 |log cgamma|^2 cgamma .
@@ -228,8 +227,8 @@ theorem sigmaBar_ratio_le (M : ABKModel d) {C E : ℝ} {n : ℤ} {h : ℕ}
 
 /-- **`e.assump.lower.modified` from the two printed displays.**
 
-The conclusion is exactly the `hlower` hypothesis of
-`integrate_approx_recurrence` at
+With the cap and error hypotheses, this gives the pointwise lower recurrence
+bound at
 
 ```
   s          = fun m => (Annealed.sigmaBar M m : R) ,
