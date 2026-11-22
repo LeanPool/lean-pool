@@ -8,6 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedProper
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSmoothing
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
 

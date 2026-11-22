@@ -11,6 +11,7 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLocalSmooth
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradHelpers
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
+import TauCeti.Geometry.Manifold.Riemannian.Basic
 
 /-! # Global smoothing of a 1-Lipschitz function with bounded gradient -/
 
@@ -46,7 +47,8 @@ theorem exists_smooth_lip_approx [SigmaCompactSpace M] (hfin : ∀ x y : M, edis
     {f : M → ℝ} (hf : LipschitzWith 1 f) :
     ∃ g : M → ℝ, ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ g ∧ (∀ x, |g x - f x| ≤ 1) ∧
       ∀ x, ‖mgrad F g x‖ ≤ 5 := by
-  have := isContinuousRiemannianBundle_tangent (F := F) (M := M)
+  let : IsContinuousRiemannianBundle F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x) :=
+    IsContMDiffRiemannianBundle.toIsContinuousRiemannianBundle (IB := 𝓘(ℝ, F)) (n := ∞)
   choose V hVo hpV hK hloc using exists_local_smooth F hfin hf
   obtain ⟨ρ, hρ⟩ := SmoothPartitionOfUnity.exists_isSubordinate (ι := M) 𝓘(ℝ, F)
     isClosed_univ V hVo (fun x _ => mem_iUnion.2 ⟨x, hpV x⟩)

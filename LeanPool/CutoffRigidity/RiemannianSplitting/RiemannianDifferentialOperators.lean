@@ -12,7 +12,7 @@ public import Mathlib.Analysis.InnerProductSpace.Trace
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import TauCeti.Geometry.Manifold.Riemannian.Gradient.Basic
 
-/-! # Actual Riemannian gradient, Hessian and Laplacian
+/-! # Riemannian gradient and Hessian
 
 The gradient is the Riesz representative of the genuine manifold derivative.
 The Hessian is its actual Levi-Civita covariant derivative paired with the
@@ -64,21 +64,11 @@ noncomputable def manifoldHessian (f : M → ℝ) (x : M)
     (v w : TangentSpace I x) : ℝ :=
   inner ℝ (CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x v) w
 
-/-- The metric trace of the Hessian with the divergence-of-gradient sign. -/
-noncomputable def manifoldLaplacian (f : M → ℝ) (x : M) : ℝ :=
-  ∑ i : Fin (Module.finrank ℝ (TangentSpace I x)),
-    manifoldHessian I f x ((stdOrthonormalBasis ℝ (TangentSpace I x)) i)
-      ((stdOrthonormalBasis ℝ (TangentSpace I x)) i)
-
 /-- The squared Hilbert–Schmidt norm of the Hessian in an orthonormal basis. -/
 noncomputable def manifoldHessianNormSq (f : M → ℝ) (x : M) : ℝ :=
   ∑ i : Fin (Module.finrank ℝ (TangentSpace I x)),
     ‖CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x
       ((stdOrthonormalBasis ℝ (TangentSpace I x)) i)‖^2
-
-/-- The Riemannian Laplacian with drift minus the gradient of the weight potential. -/
-noncomputable def manifoldLangevinOperator (V f : M → ℝ) (x : M) : ℝ :=
-  manifoldLaplacian I f x-inner ℝ (manifoldGradient I V x) (manifoldGradient I f x)
 
 /-- Actual zero Hessian is exactly actual parallelism of the Riesz gradient. -/
 theorem manifoldHessian_eq_zero_iff (f : M → ℝ) (x : M) :
@@ -91,14 +81,6 @@ theorem manifoldHessian_eq_zero_iff (f : M → ℝ) (x : M) :
     exact hh v _
   · intro hh v w
     simp [manifoldHessian,hh]
-
-/-- The trace definition is independent of the chosen orthonormal frame. -/
-theorem manifoldLaplacian_eq_trace (f : M → ℝ) (x : M) :
-    manifoldLaplacian I f x = LinearMap.trace ℝ (TangentSpace I x)
-      (CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x).toLinearMap := by
-  rw [LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℝ (TangentSpace I x))]
-  simp only [manifoldLaplacian,manifoldHessian,real_inner_comm]
-  rfl
 
 theorem manifoldHessianNormSq_nonneg (f : M → ℝ) (x : M) :
     0 ≤ manifoldHessianNormSq I f x := by

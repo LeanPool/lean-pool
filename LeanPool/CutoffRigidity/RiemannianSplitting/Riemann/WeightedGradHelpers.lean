@@ -8,8 +8,8 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedProper
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferentialOperators
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
+import TauCeti.Geometry.Manifold.Riemannian.Basic
 
 /-! # Small helpers on `mgrad` and `mvfderiv` -/
 
@@ -54,7 +54,8 @@ theorem norm_mgrad_le_of {f : M → ℝ} {x : M} {B : ℝ} (hB : 0 ≤ B)
 
 theorem continuous_norm_mgrad {f : M → ℝ} (hf : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ f) :
     Continuous (fun x => ‖mgrad F f x‖) := by
-  have := isContinuousRiemannianBundle_tangent (F := F) (M := M)
+  let : IsContinuousRiemannianBundle F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x) :=
+    IsContMDiffRiemannianBundle.toIsContinuousRiemannianBundle (IB := 𝓘(ℝ, F)) (n := ∞)
   have hsm := CutoffRigidity.contMDiff_manifoldGradient (I := 𝓘(ℝ, F)) (M := M)
     (f := f) (hf.of_le (by norm_num))
   have hc := hsm.continuous
