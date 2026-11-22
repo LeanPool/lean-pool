@@ -218,14 +218,9 @@ theorem canonical_spectral_verlet_local_defect_scale
       fun component => ((dt ^ 3 : ℝ) : ℂ) *
         canonicalSpectralMomentumReadout mass energy momentum
           (uniformVerletLocalDefect mass 1 momentum phase) component := by
-  funext component
-  fin_cases component <;>
-    simp [canonicalSpectralMomentumReadout, canonicalSpectralReadout,
-      nativePositiveAmplitude, nativeNegativeAmplitude,
-      normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial,
-      uniformVerletLocalDefect] <;>
-    ring
+  rw [uniform_verlet_local_defect_scale mass dt momentum phase]
+  unfold canonicalSpectralMomentumReadout
+  exact canonical_spectral_readout_scale mass energy _ _ _ _ _
 
 theorem canonical_spectral_verlet_local_defect_is_little_o_dt_sq
     (mass energy : ℝ) (momentum : LatticeMomentum)

@@ -29,6 +29,7 @@ public import LeanPool.LatticeDiracDerivation.V2.NativeCubicalCompression
 public import LeanPool.LatticeDiracDerivation.V2.NativeVariation
 public import LeanPool.LatticeDiracDerivation.V2.PositionSpaceFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyCurrentBridge
+public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyEmbedding
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketBridge
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketScope
 public import LeanPool.LatticeDiracDerivation.V2.ReadoutCharacterization

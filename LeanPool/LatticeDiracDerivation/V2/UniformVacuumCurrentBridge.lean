@@ -143,12 +143,20 @@ theorem cubical_dirac_local_continuity
     cubicalCell4DensityDerivative z
         (cubicalDiracTimeDerivative mass z spatialDerivative) +
       cubicalCurrentDivergence z spatialDerivative = 0 := by
-  simp [cubicalCell4DensityDerivative, cubicalCurrentDivergence,
-    cubicalDiracTimeDerivative, cubicalCell4RealPair,
-    cubicalVelocityOperator, cubicalStandardBeta,
-    cubicalStandardAlphaX, cubicalStandardAlphaY,
-    cubicalStandardAlphaZ, Complex.mul_re, Complex.mul_im,
-    Fin.sum_univ_succ]
+  have mass_pairing (component : Fin 4) :
+      (star (z component) * (-I * (mass : ℂ) * cubicalStandardBeta z component)).re = 0 := by
+    fin_cases component <;>
+      simp [cubicalStandardBeta, Complex.mul_re, Complex.mul_im] <;> ring
+  have transport_pairing :
+      cubicalCell4RealPair z (cubicalDiracTimeDerivative mass z spatialDerivative) =
+        -∑ axis : Fin 3, cubicalCell4RealPair z
+          (cubicalVelocityOperator axis (spatialDerivative axis)) := by
+    simp only [cubicalCell4RealPair, cubicalDiracTimeDerivative, mul_sub, sub_re,
+      Finset.mul_sum, Complex.re_sum, mass_pairing, zero_sub, Finset.sum_neg_distrib]
+    congr 1
+    exact Finset.sum_comm
+  rw [cubicalCell4DensityDerivative, transport_pairing]
+  unfold cubicalCurrentDivergence
   ring
 
 /-- The spatial derivative of a plane wave at the specified physical momentum. -/

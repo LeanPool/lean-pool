@@ -476,14 +476,8 @@ theorem lfm_canonical_spectral_positive_c19_flux_is_dirac_current
           (c19ScaledMomentum momentum 1)
           (c19ScaledMomentum momentum 2) nativePhase) +
         finiteC19CurrentRemainder momentum axis q := by
-  dsimp only
-  rw [canonical_spectral_readout_positive_phase
-    mass energy
-    (c19ScaledMomentum momentum 0)
-    (c19ScaledMomentum momentum 1)
-    (c19ScaledMomentum momentum 2) henergy q]
-  exact native_plane_wave_flux_is_dirac_current_plus_remainder
-    mass energy momentum hpositive hshell axis q
+  exact (canonical_spectral_positive_phase_has_native_density_current
+    mass energy momentum henergy hpositive hshell axis q).2
 
 /-- The statements connecting the reciprocal action to free Dirac dynamics and its explicit
 defects. -/

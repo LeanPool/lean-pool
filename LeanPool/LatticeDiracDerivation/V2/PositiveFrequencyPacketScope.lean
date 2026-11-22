@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralReadout
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumCurrentBridge
 
 /-!
 # Scope of the positive-frequency packet current bridge

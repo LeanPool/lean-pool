@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyCurrentBridge
+public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyEmbedding
 
 /-!
 # Canonical spectral readout of the native Klein--Gordon phase space
@@ -190,17 +190,6 @@ theorem native_amplitudes_of_kg_generator
     ring_nf <;>
     rw [← hshellC] <;>
     rw [Complex.I_sq] <;>
-    ring
-
-theorem normalized_positive_frequency_embedding_scale
-    (mass energy px py pz : ℝ) (scalar : ℂ) (q : UniformCell2) :
-    normalizedPositiveFrequencyEmbedding mass energy px py pz
-        (fun component => scalar * q component) =
-      fun component => scalar *
-        normalizedPositiveFrequencyEmbedding mass energy px py pz q component := by
-  funext component
-  fin_cases component <;>
-    simp [normalizedPositiveFrequencyEmbedding, positivePauliSpatial] <;>
     ring
 
 theorem normalized_negative_frequency_embedding_scale
@@ -512,49 +501,6 @@ theorem canonical_spectral_readout_bijective
       canonical_spectral_readout_right_inverse
         mass energy px py pz henergy hpositive hshell z⟩
 
-/-- Same-state positive-frequency density/current bridge.  The native phase,
-the canonical spectral spinor, the U(1) density, and the directed C19 bond
-flux all use the same native amplitude `q`.  The only current mismatch is the
-explicit finite-spacing sine remainder. -/
-theorem canonical_spectral_positive_phase_has_native_density_current
-    (mass energy : ℝ) (momentum : LatticeMomentum)
-    (henergy : energy ≠ 0) (hpositive : 0 < energy + mass)
-    (hshell : energy ^ 2 = mass ^ 2 +
-      c19ScaledMomentum momentum 0 ^ 2 +
-      c19ScaledMomentum momentum 1 ^ 2 +
-      c19ScaledMomentum momentum 2 ^ 2)
-    (axis : Fin 3) (q : UniformCell2) :
-    cubicalCell4Density
-        (canonicalSpectralReadout mass energy
-          (c19ScaledMomentum momentum 0)
-          (c19ScaledMomentum momentum 1)
-          (c19ScaledMomentum momentum 2)
-          (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0))) =
-      -uniformNativePhaseDensity
-        (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)).1
-        (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)).2 ∧
-    uniformNativePositiveAxisFlux momentum axis q =
-      cubicalDiracCurrent axis
-        (canonicalSpectralReadout mass energy
-          (c19ScaledMomentum momentum 0)
-          (c19ScaledMomentum momentum 1)
-          (c19ScaledMomentum momentum 2)
-          (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0))) +
-        finiteC19CurrentRemainder momentum axis q := by
-  have hread := canonical_spectral_readout_positive_phase mass energy
-    (c19ScaledMomentum momentum 0)
-    (c19ScaledMomentum momentum 1)
-    (c19ScaledMomentum momentum 2) henergy q
-  constructor
-  · rw [hread]
-    simpa [nativePhaseOfFrequencyAmplitudes] using
-      normalized_density_is_positive_native_u1 mass energy
-        (c19ScaledMomentum momentum 0)
-        (c19ScaledMomentum momentum 1)
-        (c19ScaledMomentum momentum 2) hpositive hshell q
-  · rw [hread]
-    exact native_plane_wave_flux_is_dirac_current_plus_remainder
-      mass energy momentum hpositive hshell axis q
 
 end
 end LeanDirac.V2

@@ -132,6 +132,17 @@ theorem uniform_verlet_step_is_second_order
       uniformVerletLocalDefect]
     ring
 
+theorem uniform_verlet_local_defect_scale
+    (r dt : ℝ) (momentum : LatticeMomentum) (phase : UniformTwoChannelPhase) :
+    uniformVerletLocalDefect r dt momentum phase =
+      uniformTwoChannelScale ((dt ^ 3 : ℝ) : ℂ) (uniformVerletLocalDefect r 1 momentum phase) := by
+  apply Prod.ext
+  · funext component
+    simp [uniformVerletLocalDefect, uniformTwoChannelScale]
+  · funext component
+    simp [uniformVerletLocalDefect, uniformTwoChannelScale]
+    ring
+
 theorem uniform_verlet_local_defect_readout_scale
     (r dt : ℝ) (momentum : LatticeMomentum)
     (phase : UniformTwoChannelPhase) :
@@ -141,15 +152,7 @@ theorem uniform_verlet_local_defect_readout_scale
         ((dt ^ 3 : ℝ) : ℂ) *
           uniformActionToStandardDirac r momentum
             (uniformVerletLocalDefect r 1 momentum phase) component := by
-  have hscale : uniformVerletLocalDefect r dt momentum phase =
-      uniformTwoChannelScale ((dt ^ 3 : ℝ) : ℂ) (uniformVerletLocalDefect r 1 momentum phase) := by
-    apply Prod.ext
-    · funext component
-      simp [uniformVerletLocalDefect, uniformTwoChannelScale]
-    · funext component
-      simp [uniformVerletLocalDefect, uniformTwoChannelScale]
-      ring
-  rw [hscale]
+  rw [uniform_verlet_local_defect_scale r dt momentum phase]
   unfold uniformActionToStandardDirac
   exact cubical_phase_readout_scale _ _ _ _ _ _
 
