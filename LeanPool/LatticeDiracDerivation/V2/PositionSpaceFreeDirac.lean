@@ -115,12 +115,22 @@ theorem cubical_dirac_time_derivative_sum [Fintype Mode]
         cubicalDiracTimeDerivative mass (field mode)
           (spatialDerivative mode) component := by
   funext component
+  simp only [cubicalDiracTimeDerivative, cubical_standard_beta_sum, cubical_velocity_sum,
+    Finset.mul_sum, Finset.sum_sub_distrib]
+  congr 1
+  exact Finset.sum_comm
+
+theorem cubical_dirac_time_derivative_mul (scale : ℂ) (mass : ℝ)
+    (field : CubicalCell4) (spatialDerivative : Fin 3 → CubicalCell4) :
+    cubicalDiracTimeDerivative mass (fun component => scale * field component)
+        (fun axis component => scale * spatialDerivative axis component) =
+      fun component =>
+        scale * cubicalDiracTimeDerivative mass field spatialDerivative component := by
+  funext component
   fin_cases component <;>
-    simp [cubicalDiracTimeDerivative, cubicalVelocityOperator,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Fin.sum_univ_succ, Finset.mul_sum, Finset.sum_sub_distrib,
-      Finset.sum_add_distrib]
+    simp [cubicalDiracTimeDerivative, cubicalVelocityOperator, cubicalStandardBeta,
+      cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
+      Fin.sum_univ_succ] <;> ring
 
 /-- Every finite superposition of action-derived continuum tangent modes
 obeys the full four-component position-space free Dirac equation. -/
@@ -172,11 +182,7 @@ theorem finite_native_tangent_obeys_position_space_dirac [Fintype Mode]
   funext component
   apply Finset.sum_congr rfl
   intro mode _
-  fin_cases component <;>
-    simp [cubicalDiracTimeDerivative, cubicalVelocityOperator,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Fin.sum_univ_succ] <;> ring
+  exact (congrFun (cubical_dirac_time_derivative_mul _ _ _ _) component).symm
 
 theorem finite_native_time_derivative_splits [Fintype Mode]
     (r : ℝ) (momentum : Mode → LatticeMomentum)

@@ -9,13 +9,16 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.NativeAction
+public import Mathlib.Analysis.Calculus.Deriv.Add
+public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.Analysis.Calculus.Deriv.Pow
+public import Mathlib.Analysis.InnerProductSpace.Basic
 
 /-!
 # Generic first variation of the native two-field action
 
 This module derives the directional derivative of the full native potential.
-It imports only the native action and therefore carries no prepared rays,
-background, spinor, or historical Dirac-stage dependency.
+It uses the native action and the ordinary derivative rules for its polynomial terms.
 -/
 
 @[expose] public section

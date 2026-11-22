@@ -424,11 +424,7 @@ theorem finite_spectral_tangent_obeys_position_space_dirac [Fintype Mode]
   funext component
   apply Finset.sum_congr rfl
   intro mode _
-  fin_cases component <;>
-    simp [cubicalDiracTimeDerivative, cubicalVelocityOperator,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Fin.sum_univ_succ] <;> ring
+  exact (congrFun (cubical_dirac_time_derivative_mul _ _ _ _) component).symm
 
 theorem finite_spectral_native_time_derivative_splits [Fintype Mode]
     (mass : ℝ) (energy : Mode → ℝ)
