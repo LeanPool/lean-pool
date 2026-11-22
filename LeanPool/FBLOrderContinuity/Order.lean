@@ -706,7 +706,7 @@ private theorem countable_finitary_hull {X : Type*} {I : ℕ → Type*}
       ∀ n i (a : Fin n → X), (∀ j, a j ∈ B) → f n i a ∈ B := by
   let L : FirstOrder.Language := ⟨I, fun _ => Empty⟩
   let : L.Structure X := ⟨fun {n} => f n, fun {_} => isEmptyElim⟩
-  let S := FirstOrder.Language.Substructure.closure L A
+  let S : L.Substructure X := FirstOrder.Language.Substructure.closure L A
   have : Countable (Σ n, L.Functions n) := inferInstanceAs (Countable (Σ n, I n))
   have : Countable S := hA.substructure_closure L
   exact ⟨S, FirstOrder.Language.Substructure.subset_closure, Set.to_countable _,
@@ -1474,19 +1474,33 @@ theorem noncompact_minima [CompleteSpace E] (p : Exponent) (u : ℕ → E)
       continuousWithinAt_const (fun ψ ⟨_, n, hn⟩ => by
         simpa only [WeakDual.toStrongDual_apply, hn, abs_zero] using hgabs ψ.toStrongDual n)
 
+/-- A dense linear core already contains witnesses to failure of a lower bound.
+Rescaling in the core fixes the source norm at any positive value. -/
+theorem exists_core_norm_eq_and_image_norm_lt
+    {A X Y : Type*} [AddCommMonoid A] [Module ℝ A]
+    [NormedAddCommGroup X] [NormedSpace ℝ X] [NormedAddCommGroup Y] [NormedSpace ℝ Y]
+    (e : A →ₗ[ℝ] X) (he : DenseRange e) (T : X →L[ℝ] Y) (hT : ¬ BoundedBelow T)
+    {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    ∃ x, ‖e x‖ = a ∧ ‖T (e x)‖ < b := by
+  have hba := div_pos hb ha
+  have hbad : ∃ x, ‖T (e x)‖ < (b / a) * ‖e x‖ := by
+    by_contra! h
+    exact hT ⟨b / a, hba, fun y =>
+      he.induction_on y (isClosed_le (continuous_const.mul continuous_norm) T.continuous.norm) h⟩
+  obtain ⟨x, hx⟩ := hbad
+  have hxpos : 0 < ‖e x‖ := (mul_pos_iff_of_pos_left hba).mp ((norm_nonneg _).trans_lt hx)
+  have hscale := div_pos ha hxpos
+  refine ⟨(a / ‖e x‖) • x, ?_, ?_⟩
+  · rw [map_smul, norm_smul, Real.norm_eq_abs, abs_of_pos hscale, div_mul_cancel₀ a hxpos.ne']
+  · rw [map_smul, map_smul, norm_smul, Real.norm_eq_abs, abs_of_pos hscale]
+    calc
+      _ < (a / ‖e x‖) * ((b / a) * ‖e x‖) := mul_lt_mul_of_pos_left hx hscale
+      _ = b := by field_simp
+
 private theorem exists_unit_image_small (T : F →L[ℝ] E) (hT : ¬ BoundedBelow T)
-    {c : ℝ} (hc : 0 < c) : ∃ x : F, ‖x‖ = 1 ∧ ‖T x‖ < c := by
-  have hbad : ¬ ∀ x, c * ‖x‖ ≤ ‖T x‖ := fun h => hT ⟨c, hc, h⟩
-  obtain ⟨x, hx⟩ := not_forall.mp hbad
-  have hxlt := lt_of_not_ge hx
-  have hnx : 0 < ‖x‖ := by
-    by_contra! hn
-    have hz : x = 0 := norm_eq_zero.mp (le_antisymm hn (norm_nonneg _))
-    simp [hz] at hxlt
-  refine ⟨‖x‖⁻¹ • x, ?_, ?_⟩
-  · rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hnx), inv_mul_cancel₀ hnx.ne']
-  · rw [map_smul, norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hnx)]
-    exact (inv_mul_lt_iff₀ hnx).mpr (by simpa [mul_comm] using hxlt)
+    {c : ℝ} (hc : 0 < c) : ∃ x : F, ‖x‖ = 1 ∧ ‖T x‖ < c :=
+  exists_core_norm_eq_and_image_norm_lt (LinearMap.id : F →ₗ[ℝ] F)
+    Function.surjective_id.denseRange T hT zero_lt_one hc
 
 /-- Proposition 1.2 (`prop:necessary`): an operator between Banach spaces whose induced
 free-lattice map is order continuous must be zero or bounded below. The proof combines

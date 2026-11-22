@@ -1044,18 +1044,13 @@ abbrev evalFVLv (ψ : FVLv.dualUnitBall E) : VecLatHom (FVL E) ℝ :=
 theorem radialEval_eq_liftToFree (p : Exponent) (φ : Dual E) (v : FVL E) :
     fvlFunction v φ = liftToFree p v φ := by
   let ev := evalVecLatHom p φ
-  have hleft : radialEval φ = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
+  have hcomp : radialEval φ = ev.comp (liftToFree p) := by
+    apply FVLv.hom_ext
     intro x
-    exact radialEval_of φ x
-  have hright : ev.comp (liftToFree p) = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    change liftToFree p (FVLv.of x) φ = φ x
-    rw [liftToFree, FVLv.lift_of]
+    change radialEval φ (FVLv.of x) = liftToFree p (FVLv.of x) φ
+    rw [radialEval_of, liftToFree, FVLv.lift_of]
     rfl
-  have h := DFunLike.congr_fun (hleft.trans hright.symm) v
-  exact h
+  exact DFunLike.congr_fun hcomp v
 
 /-- Radial extension of an algebraic free element has finite free norm. -/
 theorem fvlFunction_mem_finiteNormSublattice (p : Exponent) (v : FVL E) :
@@ -1126,23 +1121,26 @@ theorem ofFVL_of (p : Exponent) (x : E) :
   rw [ofFVL_eq_liftToFree]
   exact FVLv.lift_of (delta p).toLinearMap x
 
+-- The same scalar lift computes evaluation in every realization of the algebraic lattice.
+private theorem eval_comp_ofFVL (p : Exponent) (φ : Dual E) :
+    (evalVecLatHom p φ).comp (ofFVL p) = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
+  apply FVLv.lift_unique
+  intro x
+  change ofFVL p (FVLv.of x) φ = φ x
+  rw [ofFVL_of]
+  rfl
+
 private theorem ofFVL_apply_ball (p : Exponent) (v : FVL E)
     (ψ : FVLv.dualUnitBall E) :
     ofFVL p v (WeakDual.toStrongDual ψ.1) = v ψ := by
   let φ : Dual E := WeakDual.toStrongDual ψ.1
-  have hleft : (evalVecLatHom p φ).comp (ofFVL p) =
-      FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    rw [VecLatHom.comp_apply, ofFVL_of]
-    rfl
   have hright : evalFVLv ψ = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
     apply FVLv.lift_unique
     intro x
     change (FVLv.of x) ψ = φ x
     rw [FVLv.of_apply]
     rfl
-  exact DFunLike.congr_fun (hleft.trans hright.symm) v
+  exact DFunLike.congr_fun ((eval_comp_ofFVL p φ).trans hright.symm) v
 
 private theorem continuous_llExpr_dual_eval {n : ℕ} (x : Fin n → E) (e : LLexpr n) :
     Continuous (fun φ : Dual E => LLexpr.eval (fun i => φ (x i)) e) := by
@@ -1210,6 +1208,10 @@ private theorem free_apply_sub_le (p : Exponent) (f g : Free p E) (φ : Dual E) 
 theorem model_evaluation (p : Exponent) (x : E) (v : FVL E) (φ : Dual E) :
     delta p x φ = φ x ∧ ofFVL p v φ = fvlFunction v φ := by
   exact ⟨rfl, rfl⟩
+
+/-- On algebraic elements, evaluation is independent of the free-norm exponent. -/
+theorem ofFVL_apply (p : Exponent) (v : FVL E) (φ : Dual E) :
+    ofFVL p v φ = fvlFunction v φ := rfl
 
 /-- Section 2: pointwise order in the full-dual representation. -/
 theorem free_le_iff (p : Exponent) (f g : Free p E) :
@@ -1292,7 +1294,6 @@ theorem norm_ofFVL_eq_toReal (p : Exponent) (v : FVL E) :
 /-- The endpoint free norm is contractive on the common algebraic free lattice. -/
 theorem norm_ofFVL_infinity_le (p : Exponent) (v : FVL E) :
     ‖ofFVL Exponent.infinity v‖ ≤ ‖ofFVL p v‖ := by
-  rw [norm_ofFVL_eq_toReal, norm_ofFVL_eq_toReal]
   exact ENNReal.toReal_mono (ne_of_lt (ofFVL p v).1.2.2)
     (freeNormExt_infinity_le p (fvlFunction v))
 
@@ -1300,7 +1301,6 @@ theorem norm_ofFVL_infinity_le (p : Exponent) (v : FVL E) :
 decrease the free norm. This includes the target endpoint ∞. -/
 theorem norm_ofFVL_mono {p q : Exponent} (hpq : p ≤ q) (v : FVL E) :
     ‖ofFVL q v‖ ≤ ‖ofFVL p v‖ := by
-  rw [norm_ofFVL_eq_toReal, norm_ofFVL_eq_toReal]
   exact ENNReal.toReal_mono (ne_of_lt (ofFVL p v).1.2.2)
     (freeNormExt_mono hpq (fvlFunction v) (ofFVL p v).1.2.1)
 
@@ -1557,6 +1557,15 @@ theorem weakStar_continuous_compactlyGenerated [CompleteSpace E]
 /-- The zero-centered norm ball in the weak dual. -/
 def weakDualNormBall (R : ℝ) : Set (WeakDual ℝ E) :=
   {φ | ‖WeakDual.toStrongDual φ‖ ≤ R}
+
+private theorem weakDualNormBall_eq_preimage (R : ℝ) :
+    weakDualNormBall (E := E) R = WeakDual.toStrongDual ⁻¹' Metric.closedBall (0 : Dual E) R := by
+  exact Set.ext fun φ => (mem_closedBall_zero_iff (a := φ.toStrongDual)).symm
+
+private theorem weakDualNormBall_isClosed (R : ℝ) :
+    IsClosed (weakDualNormBall (E := E) R) := by
+  rw [weakDualNormBall_eq_preimage]
+  exact WeakDual.isClosed_closedBall (0 : Dual E) R
 
 /-- On a Banach dual, the compactly generated weak-star closed sets are exactly those whose
 intersections with all norm balls are weak-star closed. The forward direction uses compactness
@@ -2019,28 +2028,17 @@ theorem latticeOperator_ext_delta (p : Exponent) {X : Type w}
     [NormedAddCommGroup X] [Lattice X] [IsOrderedAddMonoid X] [BanachLattice X]
     (M N : LatticeOperator (Free p E) X)
     (h : ∀ x : E, M (delta p x) = N (delta p x)) : M = N := by
-  let T : E →ₗ[ℝ] X := M.toContinuousLinearMap.toLinearMap.comp (delta p).toLinearMap
-  have hM : M.toVecLatHom.comp (ofFVL p) = FVLv.lift T :=
-    FVLv.lift_unique T _ (by
-      intro x
-      change M (ofFVL p (FVLv.of x)) = M (delta p x)
-      rw [ofFVL_of])
-  have hN : N.toVecLatHom.comp (ofFVL p) = FVLv.lift T :=
-    FVLv.lift_unique T _ (by
-      intro x
-      change N (ofFVL p (FVLv.of x)) = M (delta p x)
-      rw [ofFVL_of]
-      exact (h x).symm)
-  have hMN : M.toVecLatHom.comp (ofFVL p) =
-      N.toVecLatHom.comp (ofFVL p) := hM.trans hN.symm
-  have hfun : (M : Free p E → X) = (N : Free p E → X) :=
-    (denseRange_ofFVL p).equalizer M.toContinuousLinearMap.continuous
-      N.toContinuousLinearMap.continuous (by
-        funext v
-        exact DFunLike.congr_fun hMN v)
-  have hlin : M.toContinuousLinearMap = N.toContinuousLinearMap := by
-    ext f
-    exact congrFun hfun f
+  have hcore : M.toVecLatHom.comp (ofFVL p) = N.toVecLatHom.comp (ofFVL p) := by
+    apply FVLv.hom_ext
+    intro x
+    change M.toContinuousLinearMap (ofFVL p (FVLv.of x)) =
+      N.toContinuousLinearMap (ofFVL p (FVLv.of x))
+    rw [ofFVL_of]
+    exact h x
+  have hfun := (denseRange_ofFVL p).equalizer M.toContinuousLinearMap.continuous
+    N.toContinuousLinearMap.continuous (funext fun v => DFunLike.congr_fun hcore v)
+  have hlin : M.toContinuousLinearMap = N.toContinuousLinearMap :=
+    DFunLike.ext _ _ (congrFun hfun)
   cases M with
   | mk m hsup hinf =>
     cases N with
@@ -3340,7 +3338,7 @@ private theorem positive_dual_linearCombination_le_eval {n : ℕ} (x : Fin n →
     exact StrongDual.apply_le_apply_of_nonneg hψ
       (Finset.le_sup' (f := Fintype.linearCombination ℝ x) hd)
   rw [← LLexpr.normalize_eval, LLexpr.NormalForm.eval]
-  linarith
+  exact hA.trans ((sub_add_cancel _ _).ge.trans (add_le_add le_rfl hB))
 
 private theorem positive_dual_fvl_lift_le (p : Exponent) {C : ℝ} (hC : ConvexWith p C X)
     (S : E →L[ℝ] X) (v : FVLv E) (ψ : Dual X) (hψ : 0 ≤ ψ) :
@@ -3358,7 +3356,7 @@ private theorem positive_dual_fvl_lift_le (p : Exponent) {C : ℝ} (hC : ConvexW
       LLexpr.map_eval (FVLv.lift S.toLinearMap) (fun i => FVLv.of (x i)) e
   rw [hlift, ← LLexpr.normalize_eval, LLexpr.NormalForm.eval, map_sub]
   change ψ (N.pos.eval y) - ψ (N.neg.eval y) ≤ ‖ψ‖ * C * ‖f‖
-  suffices hb : ψ (N.pos.eval y) ≤ ‖ψ‖ * C * ‖f‖ + ψ (N.neg.eval y) by linarith
+  apply sub_le_iff_le_add.mpr
   have hψOD : (0 : OrderDualSpace X) ≤ StrongDual.toOrderDualSpace ψ := by
     exact hψ
   apply (OrderBoundedHom.isLUB_apply_finset_sup N.pos.nonempty hψOD
@@ -3426,25 +3424,23 @@ def piLpEvalVec (p : Exponent) (n : ℕ) (i : Fin n) :
   map_sup' := by intros; rfl
   map_inf' := by intros; rfl
 
+private theorem fvl_lift_apply_hom {X : Type w} [AddCommGroup X] [Lattice X]
+    [IsOrderedAddMonoid X] [VectorLattice X] (p : Exponent) (S : E →ₗ[ℝ] X)
+    (ev : VecLatHom X ℝ) (φ : Dual E) (hφ : ∀ x, ev (S x) = φ x) (v : FVLv E) :
+    ev (FVLv.lift S v) = ofFVL p v φ := by
+  have hlift : ev.comp (FVLv.lift S) = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
+    apply FVLv.lift_unique
+    intro x
+    change ev (FVLv.lift S (FVLv.of x)) = φ x
+    rw [FVLv.lift_of]
+    exact hφ x
+  exact DFunLike.congr_fun (hlift.trans (eval_comp_ofFVL p φ).symm) v
+
 private theorem fvl_lift_piLp_apply (p : Exponent) (n : ℕ)
     (S : E →L[ℝ] PiLp p.1 (fun _ : Fin n => ℝ)) (v : FVLv E) (i : Fin n) :
-    (FVLv.lift S.toLinearMap v) i = ofFVL p v ((piLpEvalCLM p n i).comp S) := by
-  let φ : Dual E := (piLpEvalCLM p n i).comp S
-  let ev := evalVecLatHom p φ
-  have hleft : (piLpEvalVec p n i).comp (FVLv.lift S.toLinearMap) =
-      FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    change (FVLv.lift S.toLinearMap (FVLv.of x)) i = φ x
-    rw [FVLv.lift_of]
-    rfl
-  have hright : ev.comp (ofFVL p) = FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    change ofFVL p (FVLv.of x) φ = φ x
-    rw [ofFVL_of]
-    rfl
-  exact DFunLike.congr_fun (hleft.trans hright.symm) v
+    (FVLv.lift S.toLinearMap v) i = ofFVL p v ((piLpEvalCLM p n i).comp S) :=
+  fvl_lift_apply_hom p S.toLinearMap (piLpEvalVec p n i)
+    ((piLpEvalCLM p n i).comp S) (fun _ => rfl) v
 
 private theorem norm_fvl_lift_piLp (p : Exponent) (n : ℕ)
     (S : E →L[ℝ] PiLp p.1 (fun _ : Fin n => ℝ)) (v : FVLv E) :
@@ -3499,27 +3495,7 @@ private theorem fvl_lift_continuousMap_apply {K : Type*}
     map_smul' := by intros; rfl
     map_sup' := by intros; rfl
     map_inf' := by intros; rfl }
-  let evFree : VecLatHom (Free p E) ℝ := {
-    toFun f := f φ
-    map_add' := by intros; rfl
-    map_smul' := by intros; rfl
-    map_sup' := by intros; rfl
-    map_inf' := by intros; rfl }
-  have hleft : ev.comp (FVLv.lift S.toLinearMap) =
-      FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    change (FVLv.lift S.toLinearMap (FVLv.of x)) k = φ x
-    rw [FVLv.lift_of]
-    rfl
-  have hright : evFree.comp (ofFVL p) =
-      FVLv.lift (φ : E →ₗ[ℝ] ℝ) := by
-    apply FVLv.lift_unique
-    intro x
-    change ofFVL p (FVLv.of x) φ = φ x
-    rw [ofFVL_of]
-    rfl
-  exact DFunLike.congr_fun (hleft.trans hright.symm) v
+  exact fvl_lift_apply_hom p S.toLinearMap ev φ (fun _ => rfl) v
 
 private theorem free_eval_continuousMap_le {K : Type*}
     [TopologicalSpace K] [CompactSpace K] (p : Exponent)
@@ -3590,12 +3566,8 @@ private theorem algebraic_lift_extension_map_inf (p : Exponent) {X : Type w}
     (S : E →L[ℝ] X) (A : Free p E →L[ℝ] X)
     (hA : ∀ v : FVLv E, A (ofFVL p v) = FVLv.lift S.toLinearMap v)
     (f g : Free p E) : A (f ⊓ g) = A f ⊓ A g := by
-  refine map_binary_of_dense_range (ofFVL p (E := E)) (denseRange_ofFVL p)
-    A A.continuous (· ⊓ ·) (· ⊓ ·) (continuous_fst.inf continuous_snd)
-    (continuous_fst.inf continuous_snd) ?_ f g
-  intro v w
-  rw [← map_inf (ofFVL p (E := E)) v w, hA, hA, hA]
-  exact (FVLv.lift S.toLinearMap).map_inf' v w
+  have h := congrArg Neg.neg (algebraic_lift_extension_map_sup p S A hA (-f) (-g))
+  simpa only [← map_neg A, neg_sup, neg_neg] using h
 
 /-- A norm estimate on the algebraic free vector lattice extends its lift to the completed
 free Banach lattice, preserving both lattice operations. -/
@@ -4184,10 +4156,8 @@ theorem induced_injective_of [CompleteSpace F] (p : Exponent) (T : F →L[ℝ] E
   let C : Set (WeakDual ℝ F) := {θ | f (θ.toStrongDual + φ) = g (θ.toStrongDual + φ)}
   have h0 : (0 : WeakDual ℝ F) ∉ C := by simpa [C] using hφ
   have hC (R : ℝ) : IsClosed (C ∩ weakDualNormBall (E := F) R) := by
-    have hB : IsClosed (weakDualNormBall (E := F) R) := by
-      convert WeakDual.isClosed_closedBall (0 : Dual F) R using 1
-      ext θ
-      simp [weakDualNormBall, Metric.mem_closedBall, dist_zero_right]
+    have hB : IsClosed (weakDualNormBall (E := F) R) :=
+      weakDualNormBall_isClosed (E := F) R
     have hcont (a : Free p F) :
         ContinuousOn (fun θ : WeakDual ℝ F => a (θ.toStrongDual + φ))
           (weakDualNormBall (E := F) R) := by
@@ -4198,11 +4168,9 @@ theorem induced_injective_of [CompleteSpace F] (p : Exponent) (T : F →L[ℝ] E
           change ‖θ.toStrongDual + φ‖ ≤ R + ‖φ‖
           change ‖θ.toStrongDual‖ ≤ R at hθ
           exact (norm_add_le _ _).trans (add_le_add hθ le_rfl))
-      convert hc using 1
-      funext θ
-      rfl
-    simpa only [C, Set.ofPred_and, Set.ofPred_mem_eq, inter_comm]
-      using hB.isClosed_eq (hcont f) (hcont g)
+      exact hc
+    rw [inter_comm]
+    exact hB.isClosed_eq (hcont f) (hcont g)
   obtain ⟨K, hK, hsep⟩ := weakDual_exists_compact_separator C hC h0
   obtain ⟨ψ, hψ⟩ := dual_pullback_uniform_approx_compact T hT K hK φ zero_lt_one
   let θ : WeakDual ℝ F := StrongDual.toWeakDual (ψ.comp T - φ)
@@ -4233,10 +4201,7 @@ theorem induced_injective_of_dual_bounded_weakstar_dense (p : Exponent) (T : F �
       ‖WeakDual.toStrongDual θ‖ ≤ R}
   let b : Set (WeakDual ℝ F) := {θ | ‖WeakDual.toStrongDual θ‖ ≤ R}
   have hsb : s ⊆ b := fun θ hθ => hθ.2
-  have hbclosed : IsClosed b := by
-    convert (WeakDual.isClosed_closedBall (0 : Dual F) R) using 1
-    ext θ
-    simp [b, Metric.mem_closedBall, dist_zero_right]
+  have hbclosed : IsClosed b := weakDualNormBall_isClosed (E := F) R
   have hclosure : closure s ⊆ b := closure_minimal hsb hbclosed
   have hff : ContinuousOn (fun θ : WeakDual ℝ F => f (WeakDual.toStrongDual θ))
       (closure s) := (weakStar_continuous_bounded p f R).mono hclosure
