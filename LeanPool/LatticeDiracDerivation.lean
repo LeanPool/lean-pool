@@ -6,30 +6,43 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.Dirac030
+public import LeanPool.LatticeDiracDerivation.V2
 
 /-!
-# Cubical lattice Dirac factorization and its continuum limit
+# Free Dirac dynamics from a reciprocal C19 lattice action
 
-Source: doi:10.5281/zenodo.24150001, url:https://github.com/gpartin/LeanDiracDerivation/tree/867004142ada3eec464d5bd3088d7313fdad1613
+Source: url:https://github.com/gpartin/LeanDiracDerivation/tree/9522a8d32f51e79f57fcf16e85f214a7d88b1ff2
 Authors: G. D. Partin
 Status: verified
-Main declarations: `LeanDirac.restricted_action_variation_is_native_variation`,
-  `LeanDirac.native_prepared_modal_potential_expansion`,
-  `LeanDirac.native_psi_tangent_symbol_is_exact_scalar_coefficient`,
-  `LeanDirac.c19_spatial_remainder_bound`,
-  `LeanDirac.standard_c19_hamiltonian_square_is_continuum_dispersion`,
-  `LeanDirac.interpreted_hamiltonian_intertwines_minus`,
-  `LeanDirac.interpreted_hamiltonian_intertwines_plus`,
-  `LeanDirac.native_branch_defect_is_spatial_remainder`,
-  `LeanDirac.recurrence_branch_generator_defect_tends_to_zero`,
-  `LeanDirac.native_tangent_local_continuity`,
-  `LeanDirac.native_cell4_flux_continuum_limit_is_dirac_current`,
-  `LeanDirac.normalized_finite_fourier_basis_orthonormal`,
-  `LeanDirac.exists_unique_admissible_spin_scale`, `LeanDirac.cube_spin_casimir`,
-  `LeanDirac.cube_continuous_turn_two_pi`, `LeanDirac.admissible_two_copy_native_root_is_canonical`,
-  `LeanDirac.c19_first_brillouin_zone_zero_unique`, `LeanDirac.pauli_lubanski_mass_shell_spin_half`,
-  `LeanDirac.gordon_current_decomposition`
-Tags: mathematical-physics, dirac-operator, clifford-algebra, lattice, klein-gordon
+Main declarations: `LeanDirac.V2.complete_first_principles_free_dirac`,
+  `LeanDirac.V2.cubical_flavor_classification`,
+  `LeanDirac.V2.periodic_quantized_add_char_bijective`,
+  `LeanDirac.V2.periodic_integrated_positive_packet_current_bridge`,
+  `LeanDirac.V2.positive_packet_pointwise_bridge_is_false`
+Tags: mathematical-physics, dirac-operator, clifford-algebra, lattice, fourier-analysis
 MSC: 81Q05, 15A66, 65M06, 81R20
+-/
+
+/-
+MIT License
+
+Copyright (c) 2026 G. D. Partin
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 -/
