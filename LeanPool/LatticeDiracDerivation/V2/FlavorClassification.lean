@@ -92,66 +92,60 @@ def cubicalPositiveFlavorRead (amplitude : CubicalCell8) : CubicalCell4
   | 2 => amplitude 1
   | _ => amplitude 4
 
+private theorem cubical_flavor_readout_coordinates (amplitude : CubicalCell8) :
+    cubicalFlavor amplitude 2 = I * amplitude 1 ∧
+    cubicalFlavor amplitude 3 = -I * amplitude 0 ∧
+    cubicalFlavor amplitude 6 = I * amplitude 5 ∧
+    cubicalFlavor amplitude 7 = -I * amplitude 4 := by
+  simp [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+    cubicalFlip1, cubicalFlip2, cubicalBit2]
+
 theorem positive_flavor_is_exactly_plus_embedding
     (amplitude : CubicalCell8) (hflavor : cubicalFlavor amplitude = amplitude) :
     cubicalDiracEmbedPlus (cubicalPositiveFlavorRead amplitude) = amplitude := by
+  obtain ⟨hTwo, hThree, hSix, hSeven⟩ := cubical_flavor_readout_coordinates amplitude
   funext corner
   fin_cases corner
   · exact neg_neg _
   · rfl
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
+  · simpa [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
-      using congrFun hflavor 2
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
+      using hTwo.symm.trans (congrFun hflavor 2)
+  · simpa [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
-      using congrFun hflavor 3
+      using hThree.symm.trans (congrFun hflavor 3)
   · rfl
   · rfl
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
+  · simpa [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
-      using congrFun hflavor 6
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
+      using hSix.symm.trans (congrFun hflavor 6)
+  · simpa [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
-      using congrFun hflavor 7
+      using hSeven.symm.trans (congrFun hflavor 7)
 
 theorem negative_flavor_is_exactly_minus_embedding
     (amplitude : CubicalCell8)
     (hflavor : cubicalFlavor amplitude = fun corner => -amplitude corner) :
     cubicalDiracEmbedMinus (cubicalNegativeFlavorRead amplitude) = amplitude := by
+  obtain ⟨hTwo, hThree, hSix, hSeven⟩ := cubical_flavor_readout_coordinates amplitude
   funext corner
   fin_cases corner
   · rfl
   · exact neg_neg _
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
+  · simpa [cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
-      using congrArg Neg.neg (congrFun hflavor 2)
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
+      using congrArg Neg.neg (hTwo.symm.trans (congrFun hflavor 2))
+  · simpa [cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
-      using congrArg Neg.neg (congrFun hflavor 3)
+      using congrArg Neg.neg (hThree.symm.trans (congrFun hflavor 3))
   · rfl
   · rfl
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
+  · simpa [cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
-      using congrArg Neg.neg (congrFun hflavor 6)
-  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
-      cubicalFlip1, cubicalFlip2, cubicalBit2,
-      cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
+      using congrArg Neg.neg (hSix.symm.trans (congrFun hflavor 6))
+  · simpa [cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
-      using congrArg Neg.neg (congrFun hflavor 7)
+      using congrArg Neg.neg (hSeven.symm.trans (congrFun hflavor 7))
 
 theorem cubical_flavor_copies_intersect_only_at_zero
     (amplitude : CubicalCell8)

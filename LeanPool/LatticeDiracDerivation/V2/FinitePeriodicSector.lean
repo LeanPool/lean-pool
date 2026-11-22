@@ -251,11 +251,15 @@ theorem periodic_modal_action_hessian
     {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
     (r : ℝ) (hr : r ≠ 0) (mode : PeriodicC19FourierMode L momentum)
     (position : UniformCell2) : PeriodicModalActionHessian r mode position := by
+  let phase : UniformTwoChannelPhase := (position, 0)
   intro component site testAmplitude
-  have hforce := periodic_c19_transverse_hessian_localized_all_channels r hr component
-    (fun channel => periodicModeField mode (position channel)) site testAmplitude
-  simpa only [periodic_c19_linearized_force_is_modal_acceleration
-    r mode position component site] using hforce
+  have hforce := periodic_lifted_native_acceleration_is_action_hessian r hr
+    (periodicModePhaseEmbed mode phase) component site testAmplitude
+  have hgenerator := periodic_full_native_tangent_generator_intertwines r mode phase
+  unfold periodicFullNativeTangentEmbed at hgenerator
+  rw [hgenerator] at hforce
+  simpa only [periodic_transverse_phase_lift_velocity, periodicModePhaseEmbed,
+    uniformVacuumNativeGenerator] using hforce
 
 /-- Full native weak Euler--Lagrange closure of the periodic four-complex-
 dimensional tangent sector.  The first clause makes the embedding into
