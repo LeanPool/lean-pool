@@ -8,6 +8,7 @@ Authors: G. D. Partin
 
 module
 
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 
 /-!

@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 
 /-!
 # The actual centered two-layer update through the same Dirac readout

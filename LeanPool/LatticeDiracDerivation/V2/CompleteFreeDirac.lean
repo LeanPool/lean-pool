@@ -10,6 +10,7 @@ module
 
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletDispersion
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain
+public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketBridge
 public import LeanPool.LatticeDiracDerivation.V2.ReadoutCharacterization
 public import LeanPool.LatticeDiracDerivation.V2.FlavorClassification
@@ -227,9 +228,10 @@ theorem canonical_native_c19_defect_bound
     |c19SpatialRemainder momentum| ≤ 40 * radius ^ 4 :=
   c19_spatial_remainder_bound momentum radius hradius hmomentum hsmall
 
-/-- The actual stable two-layer recurrence has an exact all-update modal
-solution, and its accumulated angular frequency converges to the frequency
-selected by the native action Hessian. -/
+/-- The modal dispersion relation gives a unit-modulus solution. Its angular
+frequency converges to the frequency selected by the native action Hessian.
+At the upper endpoint the repeated root also allows solutions whose
+positions grow linearly with the step count. -/
 theorem lfm_verlet_modal_frequency_converges
     (r : ℝ) (momentum : LatticeMomentum) :
     Tendsto (fun dt : ℝ => uniformVerletAngularFrequency r dt momentum)

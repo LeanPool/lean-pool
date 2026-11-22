@@ -8,7 +8,8 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 
 /-!
 # Density and current through the same action-derived cubical readout
@@ -361,7 +362,7 @@ theorem uniform_native_noether_is_not_arbitrary_dirac_density :
   · norm_num [uniformNativePhaseDensity, uniformNoetherMismatchPhase,
       uniformScalarPhasePair, Complex.mul_im, Fin.sum_univ_succ]
   · unfold uniformPhaseSpaceDensity cubicalCell4Density
-    simp [uniformActionToStandardDirac, cubicalPhaseReadout,
+    simp [uniformActionToStandardDirac, cubicalPhaseReadout, cubicalFromPositionLower,
       cubicalPhaseLower, cubicalSpatialLower, cubicalUpperEmbedding,
       uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
       uniformNoetherMismatchPhase, cubicalStandardSpatial,

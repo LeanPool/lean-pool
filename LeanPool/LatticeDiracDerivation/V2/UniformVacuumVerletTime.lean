@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 
 /-!
 # Second-order phase coordinates for the native centered recurrence

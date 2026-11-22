@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 
 /-!
 # Characterization of the cubical phase-space readout
@@ -31,40 +31,6 @@ namespace LeanDirac.V2
 
 open Complex
 noncomputable section
-
-/-- Reconstruct a four-coordinate vector from its native position half and
-its complementary cubical half. -/
-def cubicalFromPositionLower
-    (position lower : UniformCell2) : CubicalCell4
-  | 0 => position 0 + lower 0
-  | 1 => position 1 + lower 1
-  | 2 => -position 0 + lower 0
-  | _ => -position 1 + lower 1
-
-@[simp] theorem cubical_standard_position_from_position_lower
-    (position lower : UniformCell2) :
-    cubicalStandardPosition (cubicalFromPositionLower position lower) =
-      position := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalStandardPosition, cubicalFromPositionLower]
-
-@[simp] theorem cubical_standard_lower_from_position_lower
-    (position lower : UniformCell2) :
-    cubicalStandardLower (cubicalFromPositionLower position lower) = lower := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalStandardLower, cubicalFromPositionLower] <;> ring
-
-/-- Position and complementary coordinates determine the four-component
-vector. -/
-theorem cubical_eq_from_position_and_lower (z : CubicalCell4) :
-    cubicalFromPositionLower (cubicalStandardPosition z)
-      (cubicalStandardLower z) = z := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalFromPositionLower, cubicalStandardPosition,
-      cubicalStandardLower] <;> ring
 
 private theorem cubical_position_of_hamiltonian_step
     (mass px py pz : ℂ) (position lower : UniformCell2) :
@@ -161,7 +127,7 @@ theorem cubical_phase_readout_is_uniquely_characterized
   · intro phase
     funext component
     fin_cases component <;>
-      simp [cubicalStandardPosition, cubicalPhaseReadout]
+      simp [cubicalPhaseReadout]
   · intro candidate hposition hintertwines
     exact cubical_phase_readout_unique_from_intertwining
       mass px py pz hmass candidate hposition hintertwines
