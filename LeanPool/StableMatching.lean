@@ -17,7 +17,7 @@ public import LeanPool.StableMatching.Examples
 /-!
 # Stable matching, deferred acceptance and incentives
 
-Source: doi:10.1007/s00182-007-0104-8, url:https://github.com/TauCetiProject/TauCetiRoadmap/pull/2346
+Source: doi:10.1007/s00182-008-0117-6, url:https://github.com/TauCetiProject/TauCetiRoadmap/pull/2346
 Authors: Michel Hua
 Status: verified
 Main declarations: `LeanPool.StableMatching.Market.exists_isStable_man_eq_deferredAcceptance`,

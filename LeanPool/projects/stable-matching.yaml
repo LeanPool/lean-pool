@@ -22,7 +22,7 @@ authors:
 source:
   title: Deferred acceptance algorithms, history, theory, practice, and open questions
     (A. E. Roth)
-  doi: 10.1007/s00182-007-0104-8
+  doi: 10.1007/s00182-008-0117-6
   url: https://github.com/TauCetiProject/TauCetiRoadmap/pull/2346
   github_repo: mycaule/lean-pool
 license: Apache-2.0
@@ -46,9 +46,10 @@ main_results:
 - declaration: LeanPool.StableMatching.Market.exists_isStable
   informal: Every marriage market on finite sets of men and women with strict preferences has a
     stable matching (Gale–Shapley).
+- declaration: LeanPool.StableMatching.Market.rej_mono
+  informal: The rejection sets of deferred acceptance only grow as the number of rounds increases.
 - declaration: LeanPool.StableMatching.Market.step_rej_of_le
-  informal: The rejection sets of deferred acceptance only grow, and after |M|·|W| rounds a
-    round changes nothing.
+  informal: After at least |M|·|W| rounds, another round leaves the rejection sets unchanged.
 - declaration: LeanPool.StableMatching.Market.rankM_deferredAcceptance_le
   informal: Every man likes the outcome of men-proposing deferred acceptance at least as well as
     his partner at any stable matching (Gale–Shapley).
@@ -99,7 +100,10 @@ main_results:
     every market makes truth-telling a dominant strategy for every agent (Roth).
 - declaration: LeanPool.StableMatching.roth22_deferredAcceptance
   informal: In Roth's 2 × 2 market, men-proposing deferred acceptance gives every man his first
-    choice, while women-proposing deferred acceptance gives every woman hers.
+    choice.
+- declaration: LeanPool.StableMatching.roth22_swap_deferredAcceptance
+  informal: In the same market, women-proposing deferred acceptance gives every woman her first
+    choice.
 tags:
 - stable-matching
 - deferred-acceptance
