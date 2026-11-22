@@ -153,6 +153,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointw
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedProper
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegular
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRigidity
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSigmaCompact
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSmoothing
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSupport
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedVolume

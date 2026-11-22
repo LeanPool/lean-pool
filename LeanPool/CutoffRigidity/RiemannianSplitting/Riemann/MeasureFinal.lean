@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureFactor
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedProper
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSigmaCompact
 
 /-! # The measure factorization for the splitting -/
 
@@ -177,12 +177,12 @@ end Measure
 
 section Main
 
-variable [MeasurableSpace F] [BorelSpace F] [MeasurableSpace M] [BorelSpace M] [ConnectedSpace M]
+variable [MeasurableSpace F] [BorelSpace F] [MeasurableSpace M] [BorelSpace M]
 
 /-- **Measure factorization for the Riemannian splitting** (workstream S8).
 
 Let `fr` be an orthonormal parallel frame with `⟨∇V, Xᵢ⟩ = ρ sᵢ` (e.g. a basis of first
-eigenfunctions) and `μ = e^{-V} vol` a probability measure on the complete connected manifold `M`.
+eigenfunctions) and `μ = e^{-V} vol` a probability measure on the complete manifold `M`.
 Then, with `V' = V∘val + (k/2) log(ρ/2π)` on the level `N = {s = 0}` and `μ' = μ.map toLevel`,
 `V'` is smooth, `μ'` is a probability measure with density `e^{-V'} vol_{g_N}` in the charts of `N`
 (`IsWeightedVolume`) and `μ.map Φ = γ_{k,ρ⁻¹} ⊗ μ'`, `Φ = fr.splitEquiv`. -/
@@ -200,7 +200,7 @@ theorem weighted_factorization {V : M → ℝ} (hV : ContMDiff 𝓘(ℝ, F) 𝓘
   have hne : (univ : Set M).Nonempty := nonempty_of_measure_ne_zero (μ := μ) (by simp)
   obtain ⟨x₀⟩ := hne.to_subtype
   obtain ⟨J⟩ := fr.exists_J x₀
-  have : SigmaCompactSpace M := sigmaCompactSpace_of_complete_riemannian (F := F) (M := M)
+  have : SigmaCompactSpace M := sigmaCompactSpace_of_finite_weightedVolume F hV hμ
   have : SecondCountableTopology M := inferInstance
   refine ⟨?_, ?_, ?_, ?_⟩
   · exact (hV.comp fr.contMDiff_level_val').add contMDiff_const

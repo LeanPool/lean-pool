@@ -10,6 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureFinal
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorMain
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitEigenFrame
 import Mathlib.Probability.Distributions.Gaussian.Fernique
 
 /-! # Riemannian Gaussian splitting with the potential identity (Theorem 3.6, extra conjunct) -/

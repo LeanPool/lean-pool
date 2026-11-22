@@ -9,8 +9,9 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorGrad
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedFinal
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitEigenFrame
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGlobal
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegular
 
 /-! # `CDFactor`, part 2: the generator commutes with `π`, and `CD(ρ)` on the level
 
@@ -115,15 +116,8 @@ theorem nonpos_of_integral_test {μ : Measure M} [IsFiniteMeasure μ] [μ.IsOpen
     by_cases hx : φ x = 0
     · simp [hx]
     · exact mul_nonneg (hφnn x) (hφU x hx).le
-  have hK : IsCompact (Φ.symm '' (tsupport f ×ˢ tsupport g)) :=
-    (f.hasCompactSupport.isCompact.prod g.hasCompactSupport.isCompact).image Φ.symm.continuous
-  have hφcs : HasCompactSupport φ := by
-    apply HasCompactSupport.intro hK
-    intro x hx
-    by_contra hne
-    apply hx
-    refine ⟨Φ x, ⟨subset_tsupport _ (left_ne_zero_of_mul hne),
-      subset_tsupport _ (right_ne_zero_of_mul hne)⟩, Φ.symm_apply_apply x⟩
+  have hφcs : HasCompactSupport φ :=
+    fr.hasCompactSupport_sv_mul_toLevel f.hasCompactSupport g.hasCompactSupport
   have hint := h f g hχd f.hasCompactSupport g.contMDiff g.hasCompactSupport
     (fun t => f.nonneg) (fun y => g.nonneg)
   have hpos2 : 0 < ∫ x, φ x * D x ∂μ := by
