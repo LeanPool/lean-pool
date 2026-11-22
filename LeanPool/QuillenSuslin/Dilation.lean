@@ -5,6 +5,7 @@ Authors: Michel Hua
 -/
 module
 
+public import Mathlib.Algebra.Module.LocalizedModule.Basic
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Inductions
 public import Mathlib.GroupTheory.MonoidLocalization.Away
@@ -33,6 +34,7 @@ the dilation `Z ↦ fˢ Z`, the image of a unit of `S[Z]` with constant term `1`
 
 * `dilate`: the substitution `X ↦ c X`, a ring endomorphism of `S[X]` for central `c`.
 * `IsAwayMap`, `IsAwayMap.polynomial`: the abstract localisation and its polynomial extension.
+* `IsAwayMap.of_isLocalizedModule`: algebra maps that are localisations of modules.
 * `exists_unit_lift_dilate`: units with constant term `1` lift after a dilation.
 * `exists_unit_lift_dilation`: Quillen's dilation lemma.
 
@@ -248,6 +250,22 @@ theorem exists_unit_lift_dilate {ι : S →ₐ[A] S'} (h : IsAwayMap f ι) (u : 
   · change (dilate (f ^ (t₁ + t₂)) φ).map (ι : S →+* S') = _
     rw [map_dilate, hφ, dilate_dilate, ← pow_add]
 
+/-- An `A`-algebra map whose underlying `A`-linear map is a localisation at the powers of `f`,
+and which sends `f` to a unit, is an `IsAwayMap`. -/
+theorem IsAwayMap.of_isLocalizedModule {ι : S →ₐ[A] S'}
+    [IsLocalizedModule (Submonoid.powers f) ι.toLinearMap] (hu : IsUnit (algebraMap A S' f)) :
+    IsAwayMap f ι := by
+  refine ⟨hu, fun x => ?_, fun r hr => ?_⟩
+  · obtain ⟨⟨r, ⟨_, e, rfl⟩⟩, hr⟩ := IsLocalizedModule.surj (Submonoid.powers f) ι.toLinearMap x
+    refine ⟨e, r, ?_⟩
+    rw [← map_pow, ← Algebra.smul_def]
+    exact hr
+  · obtain ⟨⟨_, e, rfl⟩, he⟩ := IsLocalizedModule.exists_of_eq (S := Submonoid.powers f)
+      (f := ι.toLinearMap) (x₁ := r) (x₂ := 0) (by simpa using hr)
+    refine ⟨e, ?_⟩
+    rw [← map_pow, ← Algebra.smul_def]
+    simpa [Submonoid.smul_def] using he
+
 end IsAwayMap
 
 section Dilation
@@ -257,21 +275,13 @@ variable (R : Type w) [Ring R] [Algebra A R] (f : A)
 /-- The map `R → R_f = A_f ⊗[A] R` is an `IsAwayMap`. -/
 theorem isAwayMap_includeRight :
     IsAwayMap f (Algebra.TensorProduct.includeRight : R →ₐ[A] Localization.Away f ⊗[A] R) := by
-  refine ⟨?_, fun x => ?_, fun r hr => ?_⟩
-  · rw [Algebra.TensorProduct.algebraMap_apply]
-    exact (IsLocalization.Away.algebraMap_isUnit f).map
-      (Algebra.TensorProduct.includeLeftRingHom : Localization.Away f →+* _)
-  · obtain ⟨⟨r, ⟨_, e, rfl⟩⟩, hr⟩ := IsLocalizedModule.surj (Submonoid.powers f)
-      (TensorProduct.mk A (Localization.Away f) R 1) x
-    refine ⟨e, r, ?_⟩
-    rw [← map_pow, ← Algebra.smul_def]
-    exact hr
-  · obtain ⟨⟨_, e, rfl⟩, he⟩ := IsLocalizedModule.exists_of_eq (S := Submonoid.powers f)
-      (f := TensorProduct.mk A (Localization.Away f) R 1) (x₁ := r) (x₂ := 0)
-      (by simpa using hr)
-    refine ⟨e, ?_⟩
-    rw [← map_pow, ← Algebra.smul_def]
-    simpa [Submonoid.smul_def] using he
+  have : IsLocalizedModule (Submonoid.powers f)
+      (Algebra.TensorProduct.includeRight : R →ₐ[A] Localization.Away f ⊗[A] R).toLinearMap :=
+    inferInstanceAs (IsLocalizedModule _ (TensorProduct.mk A (Localization.Away f) R 1))
+  refine .of_isLocalizedModule ?_
+  rw [Algebra.TensorProduct.algebraMap_apply]
+  exact (IsLocalization.Away.algebraMap_isUnit f).map
+    (Algebra.TensorProduct.includeLeftRingHom : Localization.Away f →+* _)
 
 end Dilation
 
