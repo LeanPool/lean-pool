@@ -1,0 +1,137 @@
+slug: pseudoline-arrangements
+title: Chirotopes, line arrangements and flag systems of maps
+summary: >-
+  Chirotopes of rank r in the three-term Grassmann–Plücker form, monotone arrangements, and
+  flag systems acted on by the cartographic group. The determinant signs of a spanning family
+  over an ordered field form a chirotope, and reorientation and relabelling preserve that
+  property. A monotone arrangement is simple exactly when its sign function is nonzero on
+  every triple of distinct elements. For straight lines of strictly decreasing slope, that
+  function equals the determinant signs of the line vectors. With at least two lines it is a
+  realizable rank-three chirotope. Flag-system connectedness is equivalent to graph
+  preconnectedness. The orientation double cover is orientable and, for nonempty systems with
+  fixed-point-free involutions, is connected exactly when the original is connected and
+  nonorientable. For closed-surface flag systems it doubles the natural cardinality of each
+  cell type. Nonempty connected flag systems are classified by conjugacy classes of subgroups
+  of the cartographic group. For nonempty connected closed-surface maps it characterizes
+  orientability by even monodromy. It characterizes regularity using automorphisms, normal
+  subgroups, and involutions satisfying the distant commutation relations.
+branch: combinatorics
+entry_module: LeanPool.PseudolineArrangements
+authors:
+- Michel Hua
+source:
+  title: Oriented Matroids (A. Björner, M. Las Vergnas, B. Sturmfels, N. White, G. M. Ziegler)
+  doi: 10.1017/CBO9780511586507
+  url: https://github.com/TauCetiProject/TauCetiRoadmap/pull/1523
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.PseudolineArrangements.GMap.isConnected_iff_preconnected_flagGraph
+- LeanPool.PseudolineArrangements.GMap.isConnected_orientationDoubleCover_iff
+- LeanPool.PseudolineArrangements.GMap.natCard_cell_orientationDoubleCover
+- LeanPool.PseudolineArrangements.Chirotope.isChirotope_ofVectorsFun
+- LeanPool.PseudolineArrangements.Chirotope.isChirotope_reorientFun
+- LeanPool.PseudolineArrangements.MonotoneArrangement.chiFun_ofLines
+- LeanPool.PseudolineArrangements.MonotoneArrangement.isUniform_chiFun_iff
+- LeanPool.PseudolineArrangements.GMap.exists_monoidHom_stringCoxeterMatrix_iff
+- LeanPool.PseudolineArrangements.GMap.nonempty_iso_cosetGMap_iff
+- LeanPool.PseudolineArrangements.GMap.isOrientable_iff_not_isPretransitive_evenMonodromy
+- LeanPool.PseudolineArrangements.GMap.isRegular_iff_isPretransitive_aut
+- LeanPool.PseudolineArrangements.GMap.isRegular_ofGroup
+main_results:
+- declaration: LeanPool.PseudolineArrangements.GMap.isConnected_iff_preconnected_flagGraph
+  informal: A flag system is connected (its monodromy group acts transitively on flags)
+    exactly when its flag graph is preconnected.
+- declaration: LeanPool.PseudolineArrangements.GMap.isOrientable_orientationDoubleCover
+  informal: The orientation double cover of every flag system is orientable.
+- declaration: LeanPool.PseudolineArrangements.GMap.isConnected_orientationDoubleCover_iff
+  informal: For a nonempty flag system in which no flag is fixed by any involution, the
+    orientation double cover is connected exactly when the system is connected and not
+    orientable.
+- declaration: LeanPool.PseudolineArrangements.exists_bool_flip_of_involutions
+  informal: Two fixed-point-free involutions of a set admit a common sign-reversing function
+    to Bool; equivalently the union of two perfect matchings is bipartite.
+- declaration: LeanPool.PseudolineArrangements.GMap.natCard_cell_orientationDoubleCover
+  informal: For a closed-surface flag system, the natural cardinality of the i-cells of
+    its orientation double cover is twice the original natural cardinality, for i = 0, 1, 2.
+- declaration: LeanPool.PseudolineArrangements.Chirotope.det_plucker
+  informal: For a square matrix and two distinct rows i, j, the determinants [p q] obtained
+    by replacing rows i, j by p, q satisfy [p1 p2][p3 p4] - [p1 p3][p2 p4] + [p1 p4][p2 p3] = 0.
+- declaration: LeanPool.PseudolineArrangements.Chirotope.isChirotope_ofVectorsFun
+  informal: The signs of the determinants of r-tuples of a family of vectors spanning the
+    r-dimensional space over an ordered field form a chirotope of rank r.
+- declaration: LeanPool.PseudolineArrangements.Chirotope.isChirotope_reorientFun
+  informal: Reorienting a chirotope on any subset of its ground set gives a chirotope.
+- declaration: LeanPool.PseudolineArrangements.Chirotope.isChirotope_relabelFun
+  informal: Relabelling a chirotope along a bijection of ground sets gives a chirotope.
+- declaration: LeanPool.PseudolineArrangements.MonotoneArrangement.isUniform_chiFun_iff
+  informal: The chirotope function of a monotone arrangement of pseudolines is nonzero on
+    every triple of distinct elements exactly when no three pseudolines pass through a
+    common point.
+- declaration: LeanPool.PseudolineArrangements.MonotoneArrangement.chiFun_ofLines
+  informal: For lines y = a_i x + b_i with strictly decreasing slopes, the chirotope function
+    of the arrangement equals the sign of the determinants of the vectors (-1, a_i, b_i), with
+    (0, 0, 1) for the line at infinity.
+- declaration: LeanPool.PseudolineArrangements.MonotoneArrangement.isChirotope_chiFun_ofLines
+  informal: The chirotope function of an arrangement of at least two straight lines with
+    distinct slopes is a chirotope of rank 3.
+- declaration: LeanPool.PseudolineArrangements.GMap.equivMonodromyHom
+  informal: Flag systems of rank n on a set D correspond bijectively to homomorphisms from the
+    cartographic group of rank n to the permutations of D.
+- declaration: LeanPool.PseudolineArrangements.GMap.exists_monoidHom_stringCoxeterMatrix_iff
+  informal: For Coxeter parameters p i different from 1, the monodromy homomorphism of a
+    flag system factors through the string Coxeter group of type p exactly when
+    (adj i adj (i+1))^(p i) = 1 for every i. A zero parameter imposes no finite-order relation.
+- declaration: LeanPool.PseudolineArrangements.GMap.surjective_of_map_adj
+  informal: A map of flags commuting with the involutions, from a nonempty flag system to a
+    connected one, is surjective.
+- declaration: LeanPool.PseudolineArrangements.GMap.eq_of_mem_aut_of_apply_eq
+  informal: Two automorphisms of a connected flag system that agree on one flag are equal.
+- declaration: LeanPool.PseudolineArrangements.GMap.natCard_aut_le
+  informal: A finite nonempty connected flag system has at most as many automorphisms as
+    flags.
+- declaration: LeanPool.PseudolineArrangements.GMap.exists_iso_cosetGMap
+  informal: Every nonempty connected flag system is isomorphic to the coset flag system of a
+    subgroup of the cartographic group.
+- declaration: LeanPool.PseudolineArrangements.GMap.nonempty_iso_cosetGMap_iff
+  informal: The coset flag systems of two subgroups of the cartographic group are isomorphic
+    exactly when the subgroups are conjugate.
+- declaration: LeanPool.PseudolineArrangements.GMap.isOrientable_iff_not_isPretransitive_evenMonodromy
+  informal: A nonempty connected closed-surface map is orientable exactly when the even part
+    of its monodromy group is not transitive on flags.
+- declaration: LeanPool.PseudolineArrangements.GMap.isRegular_iff_isPretransitive_aut
+  informal: A connected flag system is regular (its monodromy group acts freely) exactly when
+    its automorphism group acts transitively on flags.
+- declaration: LeanPool.PseudolineArrangements.GMap.isRegular_iff_natCard_aut
+  informal: A finite nonempty connected flag system is regular exactly when it has as many
+    automorphisms as flags.
+- declaration: LeanPool.PseudolineArrangements.GMap.exists_normal_iso_cosetGMap
+  informal: A nonempty regular flag system is isomorphic to the coset flag system of a normal
+    subgroup of the cartographic group.
+- declaration: LeanPool.PseudolineArrangements.GMap.nonempty_mulEquiv_aut_cosetGMap
+  informal: The automorphism group of the coset flag system of a normal subgroup N of the
+    cartographic group is isomorphic to the opposite of the quotient group by N.
+- declaration: LeanPool.PseudolineArrangements.GMap.isConnected_ofGroup_iff
+  informal: For a family of involutions whose distant generators commute, the flag system
+    given by left multiplication is connected exactly when the involutions generate the group.
+- declaration: LeanPool.PseudolineArrangements.GMap.isRegular_ofGroup
+  informal: For generating involutions with the prescribed distant commutation relations,
+    the left-multiplication flag system is regular and its automorphism group is the opposite
+    group, acting by right multiplication.
+- declaration: LeanPool.PseudolineArrangements.GMap.nonempty_iso_ofMonodromy
+  informal: Every nonempty regular flag system is isomorphic to the flag system of its
+    monodromy group on its generating involutions.
+tags:
+- oriented-matroids
+- chirotopes
+- pseudoline-arrangements
+- combinatorial-maps
+- coxeter-groups
+msc:
+- 52C40
+- 52C30
+- 05B35
+- 05C10
+- 20F55
