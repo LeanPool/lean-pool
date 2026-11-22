@@ -8,6 +8,7 @@ Authors: G. D. Partin
 
 module
 
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicFourierBasis
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyCurrentBridge
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketScope

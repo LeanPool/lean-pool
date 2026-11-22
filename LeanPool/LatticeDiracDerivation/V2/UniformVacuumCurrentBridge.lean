@@ -8,7 +8,6 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
 public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 
 /-!
@@ -178,14 +177,15 @@ theorem cubical_standard_hamiltonian_is_position_dirac
       cubicalDiracTimeDerivative mass z
         (uniformPlaneWaveSpatialDerivative momentum z) := by
   funext component
-  fin_cases component <;>
-    simp [cubicalDiracTimeDerivative, uniformPlaneWaveSpatialDerivative,
-      cubicalVelocityOperator, uniformContinuumPx, uniformContinuumPy,
-      uniformContinuumPz, c19ScaledMomentum, cubicalStandardHamiltonian,
-      cubicalStandardSpatial, cubicalStandardBeta,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, Fin.sum_univ_succ] <;>
-    ring_nf
+  have velocity (axis : Fin 3) :
+      cubicalVelocityOperator axis (uniformPlaneWaveSpatialDerivative momentum z axis) component =
+        (I * (momentum axis : ℂ)) * cubicalVelocityOperator axis z component :=
+    congrFun (cubical_velocity_mul axis (I * (momentum axis : ℂ)) z) component
+  simp only [cubicalDiracTimeDerivative, velocity]
+  simp only [Fin.sum_univ_three, cubicalVelocityOperator,
+    uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
+    Complex.ofReal_mul, cubicalStandardHamiltonian, cubicalStandardSpatial]
+  ring
 
 theorem uniform_readout_tangent_is_position_dirac
     (r : ℝ) (hr : r ≠ 0) (momentum : LatticeMomentum)
@@ -215,7 +215,7 @@ def uniformPhaseSpaceCurrent
 
 /-- The continuum generator obeys the Dirac density and current continuity
 law after applying the phase-space readout used in the operator theorem.
-The exact lattice law is `periodic_c19_native_tangent_local_continuity`. -/
+The exact periodic lattice law is developed in `FinitePeriodicSector`. -/
 theorem uniform_action_readout_local_continuity
     (r : ℝ) (hr : r ≠ 0) (momentum : LatticeMomentum)
     (phase : UniformTwoChannelPhase) :
@@ -281,14 +281,6 @@ theorem uniform_native_tangent_local_continuity
   apply Finset.sum_eq_zero
   intro direction _
   ring
-
-/-- Native charge continuity for the same force used in the periodic action Hessian. -/
-theorem periodic_c19_native_tangent_local_continuity {L : ℕ}
-    (r : ℝ) (position velocity : PeriodicCubicSite L → ℂ) (site : PeriodicCubicSite L) :
-    uniformNativePhaseDensityDerivative (position site) (velocity site)
-        (periodicC19LinearizedAcceleration r position site) +
-      uniformNativeOutwardCurrentDivergence (periodicC19Geometry L) position site = 0 :=
-  uniform_native_tangent_local_continuity (r ^ 2) (periodicC19Geometry L) position velocity site
 
 /-- The native phase paired with velocity on the positive-frequency branch. -/
 def uniformPositiveFrequencyPhase

@@ -66,15 +66,6 @@ def uniformCenteredDifferenceQuotient
       ((uniformCenteredPhaseStep r dt momentum phase).2 component -
         phase.2 component) / (dt : ℂ))
 
-/-- The explicit defect between the centered difference quotient and the free Dirac evolution. -/
-def uniformCenteredDiracDefect
-    (r dt : ℝ) (momentum : LatticeMomentum)
-    (phase : UniformTwoChannelPhase) : UniformTwoChannelPhase :=
-  (fun component =>
-      -(dt * uniformVacuumModalSquare r momentum : ℝ) * phase.1 component,
-    fun component =>
-      -(c19SpatialRemainder momentum : ℂ) * phase.1 component)
-
 /-- The part of the centered-update defect caused only by representing the
 second-order state with a backward-difference velocity. It is exactly linear
 in `dt`; no spatial approximation is included here. -/
@@ -86,12 +77,13 @@ def uniformCenteredTemporalDefect
     fun _ => 0)
 
 /-- The finite-C19 spatial defect, separated from the timestep defect. -/
-def uniformCenteredSpatialDefect
-    (momentum : LatticeMomentum)
+abbrev uniformCenteredSpatialDefect := uniformNativeSpatialDefectPhase
+
+/-- The explicit defect between the centered difference quotient and the free Dirac evolution. -/
+def uniformCenteredDiracDefect
+    (r dt : ℝ) (momentum : LatticeMomentum)
     (phase : UniformTwoChannelPhase) : UniformTwoChannelPhase :=
-  (fun _ => 0,
-    fun component =>
-      -(c19SpatialRemainder momentum : ℂ) * phase.1 component)
+  uniformCenteredTemporalDefect r dt momentum phase + uniformCenteredSpatialDefect momentum phase
 
 theorem uniform_centered_dirac_defect_splits
     (r dt : ℝ) (momentum : LatticeMomentum)
@@ -102,10 +94,7 @@ theorem uniform_centered_dirac_defect_splits
             (uniformCenteredSpatialDefect momentum phase).1 component,
        fun component =>
           (uniformCenteredTemporalDefect r dt momentum phase).2 component +
-            (uniformCenteredSpatialDefect momentum phase).2 component) := by
-  apply Prod.ext <;> funext component <;>
-    simp [uniformCenteredDiracDefect, uniformCenteredTemporalDefect,
-      uniformCenteredSpatialDefect]
+            (uniformCenteredSpatialDefect momentum phase).2 component) := rfl
 
 /-- Exact joint time-and-space defect of the actual centered update. -/
 theorem uniform_centered_difference_quotient_splits
@@ -121,11 +110,15 @@ theorem uniform_centered_difference_quotient_splits
   apply Prod.ext <;> funext component
   · simp [uniformCenteredDifferenceQuotient, uniformCenteredPhaseStep,
       uniformCenteredNext, uniformCenteredPrevious,
-      uniformCenteredDiracDefect, uniformVacuumContinuumGenerator]
+      uniformCenteredDiracDefect, uniformCenteredTemporalDefect,
+      uniformCenteredSpatialDefect, uniformNativeSpatialDefectPhase,
+      uniformVacuumContinuumGenerator]
     field_simp [hdt]
     ring
   · simp only [uniformCenteredDifferenceQuotient, uniformCenteredPhaseStep,
-      uniformCenteredDiracDefect, uniformVacuumContinuumGenerator,
+      uniformCenteredDiracDefect, uniformCenteredTemporalDefect, uniformCenteredSpatialDefect,
+      uniformNativeSpatialDefectPhase, Prod.snd_add, Pi.add_apply,
+      zero_add, uniformVacuumContinuumGenerator,
       uniformVacuumContinuumAcceleration, uniformVacuumModalSquare]
     rw [c19_symbol_exact_quadratic_plus_remainder]
     field_simp [hdt]

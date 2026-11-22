@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumCurrentBridge
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 
 /-!
@@ -414,6 +415,14 @@ theorem periodic_native_sector_intertwines_dirac_with_remainder
     unfold uniformActionToStandardDirac
     exact cubical_phase_readout_add _ _ _ _ _ _]
   rw [uniform_action_tangent_intertwines_cubical_dirac r hr]
+
+/-- Native charge continuity for the same force used in the periodic action Hessian. -/
+theorem periodic_c19_native_tangent_local_continuity {L : ℕ}
+    (r : ℝ) (position velocity : PeriodicCubicSite L → ℂ) (site : PeriodicCubicSite L) :
+    uniformNativePhaseDensityDerivative (position site) (velocity site)
+        (periodicC19LinearizedAcceleration r position site) +
+      uniformNativeOutwardCurrentDivergence (periodicC19Geometry L) position site = 0 :=
+  uniform_native_tangent_local_continuity (r ^ 2) (periodicC19Geometry L) position velocity site
 
 end
 end LeanDirac.V2
