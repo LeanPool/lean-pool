@@ -15,7 +15,7 @@ public import Mathlib.SetTheory.ZFC.VonNeumann
 For a regular strong limit cardinal `κ` (that is, `κ = ℵ₀` or `κ` inaccessible), the stage
 `V_ κ.ord` of the von Neumann hierarchy is a Grothendieck universe of cardinality `κ`. In
 particular `V_ ω`, the hereditarily finite sets, is a universe, and so is `V_ κ.ord` for every
-inaccessible cardinal `κ` (Williams 1969, (b) and (c), p. 2; Kruse 1965, Theorem 1).
+inaccessible cardinal `κ` (Williams 1969, Theorem 1; Kruse 1965, Theorem 1).
 
 ## References
 
@@ -78,12 +78,12 @@ theorem isGrothendieckUniverse_vonNeumann_of_isRegular {κ : Cardinal.{u}} (hr :
     rw [h] at this
     exact notMem_empty _ this
 
-/-- **`V_ κ` is a universe** for every inaccessible cardinal `κ` (Williams 1969, (c), p. 2). -/
+/-- **`V_ κ` is a universe** for every inaccessible cardinal `κ` (Williams 1969, Theorem 1). -/
 theorem isGrothendieckUniverse_vonNeumann {κ : Cardinal.{u}} (hκ : κ.IsInaccessible) :
     IsGrothendieckUniverse (V_ κ.ord) :=
   isGrothendieckUniverse_vonNeumann_of_isRegular hκ.isRegular hκ.isStrongLimit
 
-/-- **`V_ ω` is a universe**: the hereditarily finite sets (Williams 1969, (b), p. 2). -/
+/-- **`V_ ω` is a universe**: the hereditarily finite sets (Williams 1969, Theorem 1). -/
 theorem isGrothendieckUniverse_vonNeumann_omega0 :
     IsGrothendieckUniverse (V_ Ordinal.omega0.{u}) := by
   simpa using isGrothendieckUniverse_vonNeumann_of_isRegular isRegular_aleph0

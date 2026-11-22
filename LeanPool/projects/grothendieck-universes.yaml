@@ -17,7 +17,7 @@ authors:
 - Michel Hua
 source:
   title: On Grothendieck universes (N. H. Williams), Compositio Math. 21 (1969), 1–3
-  url: https://github.com/TauCetiProject/TauCetiRoadmap/pull/1783
+  url: https://archive.numdam.org/item/CM_1969__21_1_1_0/
   github_repo: mycaule/lean-pool
 license: Apache-2.0
 status: verified
