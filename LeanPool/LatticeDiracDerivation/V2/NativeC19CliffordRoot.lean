@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
 public import LeanPool.LatticeDiracDerivation.V2.CubicalClifford
 
 /-!

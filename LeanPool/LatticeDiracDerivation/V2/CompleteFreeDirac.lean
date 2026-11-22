@@ -271,9 +271,9 @@ theorem canonical_verlet_local_defect_is_little_o_dt_sq
   uniform_verlet_local_defect_is_little_o_dt_sq
     chi0 momentum phase component
 
-/-- The same phase-space coordinates carry a positive density and the
-momentum-response current, and they obey continuity on the native
-action-derived tangent flow. -/
+/-- The positive density and momentum-response current obey continuity for
+the continuum Dirac flow, expressed in native phase-space coordinates.
+`periodic_c19_native_tangent_local_continuity` gives the exact lattice charge law. -/
 theorem canonical_phase_space_density_current_continuity
     (momentum : LatticeMomentum) (phase : UniformTwoChannelPhase) :
     cubicalCell4DensityDerivative
@@ -763,6 +763,7 @@ structure CompleteFreeDiracCertificate : Prop where
           (uniformVerletCharacteristicRoot r dt momentum ^ (n + 1) *
             amplitude) -
         uniformVerletCharacteristicRoot r dt momentum ^ n * amplitude
+  /-- Continuum Dirac continuity expressed in the native phase coordinates. -/
   sameReadoutNativeContinuity : ∀ momentum phase,
     cubicalCell4DensityDerivative
         (uniformActionToStandardDirac chi0 momentum phase)

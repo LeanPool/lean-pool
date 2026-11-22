@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.NativeC19CliffordRoot
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
 
 /-!
 # One connected native-action to free-Dirac diagram

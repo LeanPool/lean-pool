@@ -204,9 +204,9 @@ def uniformPhaseSpaceCurrent
   cubicalDiracCurrent axis
     (uniformActionToStandardDirac r momentum phase)
 
-/-- The density/current continuity law is evaluated on the native
-action-derived tangent generator through the exact same phase-space map as
-the operator theorem. -/
+/-- The continuum generator obeys the Dirac density and current continuity
+law after applying the phase-space readout used in the operator theorem.
+The exact lattice law is `periodic_c19_native_tangent_local_continuity`. -/
 theorem uniform_action_readout_local_continuity
     (r : ℝ) (hr : r ≠ 0) (momentum : LatticeMomentum)
     (phase : UniformTwoChannelPhase) :
@@ -380,6 +380,7 @@ structure UniformVacuumCurrentCertificate : Prop where
         cubicalStandardHamiltonian mass px py pz z component +
           delta / (c19ContinuumSpeed : ℂ) *
             cubicalVelocityOperator axis z component
+  /-- Continuum Dirac continuity expressed in the native phase coordinates. -/
   sameReadoutNativeContinuity : ∀ r, r ≠ 0 → ∀ momentum phase,
     cubicalCell4DensityDerivative
         (uniformActionToStandardDirac r momentum phase)
