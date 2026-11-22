@@ -201,53 +201,6 @@ theorem cubical_phase_readout_intertwines
     field_simp [hmass] <;>
     ring_nf <;> simp only [Complex.I_sq, hI3] <;> ring
 
-theorem cubical_phase_readout_injective
-    (mass px py pz : ℂ) (hmass : mass ≠ 0) :
-    Function.Injective (cubicalPhaseReadout mass px py pz) := by
-  intro first second h
-  have h0 := congrFun h 0
-  have h1 := congrFun h 1
-  have h2 := congrFun h 2
-  have h3 := congrFun h 3
-  have hpos0 : first.1 0 = second.1 0 := by
-    simp [cubicalPhaseReadout] at h0 h2
-    linear_combination (h0 - h2) / 2
-  have hpos1 : first.1 1 = second.1 1 := by
-    simp [cubicalPhaseReadout] at h1 h3
-    linear_combination (h1 - h3) / 2
-  have hposition : first.1 = second.1 := by
-    funext component
-    fin_cases component
-    · exact hpos0
-    · exact hpos1
-  have hlower0 :
-      cubicalPhaseLower mass px py pz first 0 =
-        cubicalPhaseLower mass px py pz second 0 := by
-    simp only [cubicalPhaseReadout] at h0
-    rw [hpos0] at h0
-    exact add_left_cancel h0
-  have hlower1 :
-      cubicalPhaseLower mass px py pz first 1 =
-        cubicalPhaseLower mass px py pz second 1 := by
-    simp only [cubicalPhaseReadout] at h1
-    rw [hpos1] at h1
-    exact add_left_cancel h1
-  apply Prod.ext
-  · exact hposition
-  · funext component
-    have hlower :
-        cubicalPhaseLower mass px py pz first component =
-          cubicalPhaseLower mass px py pz second component := by
-      fin_cases component
-      · exact hlower0
-      · exact hlower1
-    simp only [cubicalPhaseLower] at hlower
-    have hn := (div_left_inj₀ hmass).mp hlower
-    rw [hposition] at hn
-    have hi : I * first.2 component = I * second.2 component :=
-      add_right_cancel hn
-    exact mul_left_cancel₀ I_ne_zero hi
-
 /-- Recover the two position coordinates by combining upper and lower spinor components. -/
 def cubicalStandardPosition (z : CubicalCell4) : UniformCell2
   | 0 => (z 0 - z 2) / 2
@@ -293,6 +246,28 @@ theorem cubical_phase_readout_left_inverse
         cubicalPhaseLower] <;>
       field_simp [hmass] <;>
       ring_nf <;> rw [Complex.I_sq] <;> ring
+
+theorem cubical_phase_readout_injective
+    (mass px py pz : ℂ) (hmass : mass ≠ 0) :
+    Function.Injective (cubicalPhaseReadout mass px py pz) := by
+  have leftInverse : Function.LeftInverse (cubicalPhaseReadoutInverse mass px py pz)
+      (cubicalPhaseReadout mass px py pz) := cubical_phase_readout_left_inverse mass px py pz hmass
+  exact leftInverse.injective
+
+theorem cubical_phase_readout_add
+    (mass px py pz : ℂ) (first second : UniformTwoChannelPhase) :
+    cubicalPhaseReadout mass px py pz
+        (fun component => first.1 component + second.1 component,
+         fun component => first.2 component + second.2 component) =
+      fun component =>
+        cubicalPhaseReadout mass px py pz first component +
+          cubicalPhaseReadout mass px py pz second component := by
+  funext component
+  fin_cases component <;>
+    simp [cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
+      cubicalUpperEmbedding, cubicalStandardSpatial,
+      cubicalStandardAlphaX, cubicalStandardAlphaY,
+      cubicalStandardAlphaZ] <;> ring
 
 theorem cubical_phase_readout_right_inverse
     (mass px py pz : ℂ) (hmass : mass ≠ 0)

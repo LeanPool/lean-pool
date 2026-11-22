@@ -11,11 +11,11 @@ module
 public import LeanPool.LatticeDiracDerivation.V2.CompleteFreeDirac
 
 /-!
-# Additive V2 free-Dirac proof facade
+# V2 free-Dirac proof facade
 
-This module exposes the preparation-independent linear-tangent derivation
-without changing any historical `DIRAC-NNN` theorem or importing the
-localized-movement research tree.
+The action-derived linear tangent and the two flavor sectors form the active
+Lean Pool development. The prepared-background V1 proofs remain available
+at the [original import commit](https://github.com/LeanPool/lean-pool/commit/f49758ce995f7806f146b65ca376794103966333).
 -/
 
 @[expose] public section

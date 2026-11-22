@@ -132,21 +132,6 @@ theorem uniform_centered_difference_quotient_splits
     push_cast
     ring
 
-theorem cubical_phase_readout_add
-    (mass px py pz : ℂ) (first second : UniformTwoChannelPhase) :
-    cubicalPhaseReadout mass px py pz
-        (fun component => first.1 component + second.1 component,
-         fun component => first.2 component + second.2 component) =
-      fun component =>
-        cubicalPhaseReadout mass px py pz first component +
-          cubicalPhaseReadout mass px py pz second component := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;> ring
-
 /-- The actual two-layer native difference quotient, transported through the
 same cubical phase-space readout, equals the Dirac flow plus one displayed
 defect containing both `dt` and the C19 spatial remainder. -/

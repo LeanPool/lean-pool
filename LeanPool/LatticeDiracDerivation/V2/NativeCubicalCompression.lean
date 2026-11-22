@@ -77,20 +77,14 @@ theorem native_cubical_phase_embed_plus_has_positive_flavor
 theorem cubical_dirac_embed_minus_scale
     (scalar : ℂ) (z : CubicalCell4) :
     cubicalDiracEmbedMinus (fun component => scalar * z component) =
-      fun corner => scalar * cubicalDiracEmbedMinus z corner := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalDiracEmbedMinus, cubicalEmbedMinus,
-      standardToCubicalMinus] <;> ring
+      fun corner => scalar * cubicalDiracEmbedMinus z corner :=
+  map_smul cubicalDiracLinearEmbedMinus scalar z
 
 theorem cubical_dirac_embed_plus_scale
     (scalar : ℂ) (z : CubicalCell4) :
     cubicalDiracEmbedPlus (fun component => scalar * z component) =
-      fun corner => scalar * cubicalDiracEmbedPlus z corner := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalDiracEmbedPlus, cubicalEmbedPlus,
-      standardToCubicalPlus] <;> ring
+      fun corner => scalar * cubicalDiracEmbedPlus z corner :=
+  map_smul cubicalDiracLinearEmbedPlus scalar z
 
 /-- The action-derived continuum tangent, compressed into the negative
 flavor fiber, is exactly the cubical Dirac flow. -/
@@ -142,14 +136,8 @@ theorem native_cubical_phase_embed_minus_add
         nativeCubicalPhaseEmbedMinus r momentum first corner +
           nativeCubicalPhaseEmbedMinus r momentum second corner := by
   unfold nativeCubicalPhaseEmbedMinus uniformActionToStandardDirac
-    uniformPhaseAdd
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalDiracEmbedMinus, cubicalEmbedMinus,
-      standardToCubicalMinus, cubicalPhaseReadout, cubicalPhaseLower,
-      cubicalSpatialLower, cubicalUpperEmbedding,
-      cubicalStandardSpatial, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
+  rw [uniformPhaseAdd, cubical_phase_readout_add]
+  exact map_add cubicalDiracLinearEmbedMinus _ _
 
 theorem native_cubical_phase_embed_plus_add
     (r : ℝ) (momentum : LatticeMomentum)
@@ -160,14 +148,8 @@ theorem native_cubical_phase_embed_plus_add
         nativeCubicalPhaseEmbedPlus r momentum first corner +
           nativeCubicalPhaseEmbedPlus r momentum second corner := by
   unfold nativeCubicalPhaseEmbedPlus uniformActionToStandardDirac
-    uniformPhaseAdd
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalDiracEmbedPlus, cubicalEmbedPlus,
-      standardToCubicalPlus, cubicalPhaseReadout, cubicalPhaseLower,
-      cubicalSpatialLower, cubicalUpperEmbedding,
-      cubicalStandardSpatial, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
+  rw [uniformPhaseAdd, cubical_phase_readout_add]
+  exact map_add cubicalDiracLinearEmbedPlus _ _
 
 theorem uniform_native_generator_is_phase_add
     (r : ℝ) (momentum : LatticeMomentum)

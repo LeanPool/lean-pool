@@ -442,38 +442,24 @@ theorem cubical_hamiltonian_intertwines_minus
     cubicalNativeHamiltonian mass px py pz (cubicalDiracEmbedMinus z) =
       cubicalDiracEmbedMinus
         (cubicalStandardHamiltonian mass px py pz z) := by
-  funext corner
-  rw [show cubicalNativeHamiltonian mass px py pz
-      (cubicalDiracEmbedMinus z) corner =
-      mass * cubicalBeta (cubicalDiracEmbedMinus z) corner +
-        cubicalNativeSpatial px py pz (cubicalDiracEmbedMinus z) corner by rfl]
-  rw [congrFun (cubical_beta_intertwines_minus z) corner,
-    congrFun (cubical_native_spatial_intertwines_minus px py pz z) corner]
-  fin_cases corner <;>
-    simp [cubicalDiracEmbedMinus, cubicalEmbedMinus,
-      standardToCubicalMinus, cubicalStandardHamiltonian,
-      cubicalStandardBeta, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;> ring
+  change mass • cubicalBeta (cubicalDiracEmbedMinus z) +
+      cubicalNativeSpatial px py pz (cubicalDiracEmbedMinus z) =
+    cubicalDiracLinearEmbedMinus (mass • cubicalStandardBeta z + cubicalStandardSpatial px py pz z)
+  rw [map_add, map_smul, cubical_beta_intertwines_minus,
+    cubical_native_spatial_intertwines_minus]
+  rfl
 
 theorem cubical_hamiltonian_intertwines_plus
     (mass px py pz : ℂ) (z : CubicalCell4) :
     cubicalNativeHamiltonian mass px py pz (cubicalDiracEmbedPlus z) =
       cubicalDiracEmbedPlus
         (cubicalStandardHamiltonian mass px py pz z) := by
-  funext corner
-  rw [show cubicalNativeHamiltonian mass px py pz
-      (cubicalDiracEmbedPlus z) corner =
-      mass * cubicalBeta (cubicalDiracEmbedPlus z) corner +
-        cubicalNativeSpatial px py pz (cubicalDiracEmbedPlus z) corner by rfl]
-  rw [congrFun (cubical_beta_intertwines_plus z) corner,
-    congrFun (cubical_native_spatial_intertwines_plus px py pz z) corner]
-  fin_cases corner <;>
-    simp [cubicalDiracEmbedPlus, cubicalEmbedPlus,
-      standardToCubicalPlus, cubicalStandardHamiltonian,
-      cubicalStandardBeta, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;> ring
+  change mass • cubicalBeta (cubicalDiracEmbedPlus z) +
+      cubicalNativeSpatial px py pz (cubicalDiracEmbedPlus z) =
+    cubicalDiracLinearEmbedPlus (mass • cubicalStandardBeta z + cubicalStandardSpatial px py pz z)
+  rw [map_add, map_smul, cubical_beta_intertwines_plus,
+    cubical_native_spatial_intertwines_plus]
+  rfl
 
 theorem cubical_standard_hamiltonian_square
     (mass px py pz : ℂ) (z : CubicalCell4) :
