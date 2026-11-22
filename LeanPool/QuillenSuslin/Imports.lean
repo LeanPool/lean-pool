@@ -12,6 +12,7 @@ public import LeanPool.QuillenSuslin.Dilation
 public import LeanPool.QuillenSuslin.EndPolynomial
 public import LeanPool.QuillenSuslin.Extended
 public import LeanPool.QuillenSuslin.Fibre
+public import LeanPool.QuillenSuslin.FreeMvPolynomial
 public import LeanPool.QuillenSuslin.Glue
 public import LeanPool.QuillenSuslin.GlueMaps
 public import LeanPool.QuillenSuslin.Horrocks

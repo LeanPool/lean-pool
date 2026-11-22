@@ -26,9 +26,10 @@ public import LeanPool.QuillenSuslin.HorrocksLattice
 public import LeanPool.QuillenSuslin.HorrocksLocal
 public import LeanPool.QuillenSuslin.Horrocks
 public import LeanPool.QuillenSuslin.Bass
+public import LeanPool.QuillenSuslin.FreeMvPolynomial
 
 /-!
-# Projective modules over polynomial rings (Quillen patching and Horrocks)
+# The Quillen–Suslin theorem (Quillen patching, Horrocks and Bass)
 
 Source: doi:10.1007/BF01390008, url:https://github.com/TauCetiProject/TauCetiRoadmap/pull/2295
 Authors: Michel Hua
@@ -44,7 +45,8 @@ Main declarations: `LeanPool.QuillenSuslin.isPrincipalIdealRing_monicLocalizatio
   `LeanPool.QuillenSuslin.free_of_free_monicLocalization_of_isLocalRing`,
   `LeanPool.QuillenSuslin.isExtendedFrom_of_isExtendedFrom_monicLocalization`,
   `LeanPool.QuillenSuslin.nonempty_linearEquiv_of_monicLocalization`,
-  `LeanPool.QuillenSuslin.free_of_free_monicLocalization`
+  `LeanPool.QuillenSuslin.free_of_free_monicLocalization`,
+  `LeanPool.QuillenSuslin.free_mvPolynomial`, `LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial`
 Tags: projective-modules, polynomial-rings, quillen-suslin, quillen-patching, horrocks
 MSC: 13C10, 13B30, 19A13
 -/
