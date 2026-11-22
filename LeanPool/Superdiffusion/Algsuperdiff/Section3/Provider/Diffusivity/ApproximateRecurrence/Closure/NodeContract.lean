@@ -53,7 +53,7 @@ assembly skeletons of `Closure.Junctions` have a stated destination.
 
 The second half of the module discharges the other side of the interface: the
 contract's two displays deliver, verbatim, the `hupper` and `hlower` binders of
-`RecurrenceIntegration.integrate_approx_recurrence` at the sequence
+`RecurrenceIntegration.integrate_approx_recurrence_cstarPlus` at the sequence
 `s = fun m => (Annealed.sigmaBar M m : R)`.  That is proved unconditionally, and
 it is the reason the displays are stated at these carriers.
 
@@ -113,7 +113,7 @@ def TwoSidedClosure (d : ℕ) : Prop :=
 /-- **The two displays deliver `e.assump.upper` and `e.assump.lower.modified`.**
 
 At one admissible pair `(n, n+h)` the two printed displays give exactly the two
-binders of `RecurrenceIntegration.integrate_approx_recurrence`, at
+binders of `RecurrenceIntegration.integrate_approx_recurrence_cstarPlus`, at
 
 ```
   s   = fun m => (Annealed.sigmaBar M m : R) ,

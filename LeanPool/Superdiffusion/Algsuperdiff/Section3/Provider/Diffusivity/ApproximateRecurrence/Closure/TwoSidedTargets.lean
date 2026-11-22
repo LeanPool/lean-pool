@@ -33,7 +33,7 @@ This module does two things and nothing else.
 
 2. It proves, **unconditionally**, that those two displays deliver exactly the
    two hypotheses `hupper` and `hlower` of
-   `RecurrenceIntegration.integrate_approx_recurrence`, at the sequence
+   `RecurrenceIntegration.integrate_approx_recurrence_cstarPlus`, at the sequence
    `s = fun m => (Annealed.sigmaBar M m : ℝ)`.  This is the carrier match the
    root assembly needs, and it is pure arithmetic: no measure, no corrector, no
    in-flight endpoint.
@@ -176,7 +176,7 @@ theorem shellDrift_eq (M : ABKModel d) (n : ℤ) (h : ℕ) :
 /-- **`e.assump.upper` from the printed upper display.**
 
 Multiplying the ratio display by `shom_n > 0` converts it verbatim into the
-hypothesis `hupper` of `integrate_approx_recurrence`, with
+hypothesis `hupper` of `integrate_approx_recurrence_cstarPlus`, with
 
 ```
   E_integration cgamma  =  C E^2 |log cgamma|^2 cgamma .
@@ -229,7 +229,7 @@ theorem sigmaBar_ratio_le (M : ABKModel d) {C E : ℝ} {n : ℤ} {h : ℕ}
 /-- **`e.assump.lower.modified` from the two printed displays.**
 
 The conclusion is exactly the `hlower` hypothesis of
-`integrate_approx_recurrence` at
+`integrate_approx_recurrence_cstarPlus` at
 
 ```
   s          = fun m => (Annealed.sigmaBar M m : R) ,
