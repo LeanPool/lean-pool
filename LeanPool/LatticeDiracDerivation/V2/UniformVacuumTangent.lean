@@ -72,31 +72,47 @@ theorem zero_psi_vacuum_texture_potential_zero
   simp [potential, zero_psi_vacuum_texture_site_zero r chiField hnorm,
     zero_psi_vacuum_texture_bond_zero]
 
+/-- The native coordinate of a transverse channel at the axial vacuum. -/
+def uniformTransverseAxis (channel : Fin 2) : Fin 3 :=
+  channel.castSucc
+
+/-- Assemble the two transverse components and the longitudinal component of `Psi`. -/
+def uniformAxialPsi (first second longitudinal : ℂ) (component : Fin 3) : ℂ :=
+  if component = uniformTransverseAxis 0 then first
+  else if component = uniformTransverseAxis 1 then second else longitudinal
+
+@[simp] theorem uniform_axial_psi_zero (first second longitudinal : ℂ) :
+    uniformAxialPsi first second longitudinal 0 = first := rfl
+
+@[simp] theorem uniform_axial_psi_one (first second longitudinal : ℂ) :
+    uniformAxialPsi first second longitudinal 1 = second := rfl
+
+@[simp] theorem uniform_axial_psi_two (first second longitudinal : ℂ) :
+    uniformAxialPsi first second longitudinal 2 = longitudinal := rfl
+
+theorem uniform_axial_psi_transverse
+    (values : Fin 2 → ℂ) (longitudinal : ℂ) (channel : Fin 2) :
+    uniformAxialPsi (values 0) (values 1) longitudinal (uniformTransverseAxis channel) =
+      values channel := by
+  fin_cases channel <;> rfl
+
 /-- Two independent complex transverse wave amplitudes, embedded into the
 native three-component `Psi` field with `chi` left on its vacuum value. -/
 def uniformTransverseState (r eps : ℝ) (f g : Site → ℂ) : State Site where
-  psi := fun site component =>
-    if component = 0 then (eps : ℂ) * f site
-    else if component = 1 then (eps : ℂ) * g site
-    else 0
+  psi := fun site => uniformAxialPsi ((eps : ℂ) * f site) ((eps : ℂ) * g site) 0
   chi := fun _ component => if component = 2 then (r : ℂ) else 0
 
 /-- The native velocity with only the two transverse components varying. -/
 def uniformTransverseVelocity (eps : ℝ) (fDot gDot : Site → ℂ) :
     Velocity Site where
-  psiDot := fun site component =>
-    if component = 0 then (eps : ℂ) * fDot site
-    else if component = 1 then (eps : ℂ) * gDot site
-    else 0
+  psiDot := fun site => uniformAxialPsi ((eps : ℂ) * fDot site) ((eps : ℂ) * gDot site) 0
   chiDot := fun _ _ => 0
 
 /-- Add the native Psi component parallel to the chosen vacuum axis. -/
 def uniformTransverseLongitudinalState
     (r eps eta : ℝ) (f g h : Site → ℂ) : State Site where
-  psi := fun site component =>
-    if component = 0 then (eps : ℂ) * f site
-    else if component = 1 then (eps : ℂ) * g site
-    else (eta : ℂ) * h site
+  psi := fun site =>
+    uniformAxialPsi ((eps : ℂ) * f site) ((eps : ℂ) * g site) ((eta : ℂ) * h site)
   chi := fun _ component => if component = 2 then (r : ℂ) else 0
 
 theorem uniform_transverse_longitudinal_density
@@ -196,9 +212,9 @@ theorem uniform_transverse_kinetic
         (Complex.normSq (fDot site) + Complex.normSq (gDot site)) := by
   unfold kinetic uniformTransverseVelocity density
   simp only [Fin.sum_univ_succ]
-  simp only [↓reduceIte, map_mul, normSq_ofReal, Fin.isValue, Fin.succ_zero_eq_one, one_ne_zero,
-    Fin.succ_one_eq_two, Fin.reduceEq, map_zero, Finset.univ_eq_empty, Fin.succ_ne_zero,
-    Finset.sum_empty, add_zero, Finset.sum_const_zero, mul_zero, zero_div]
+  simp only [Fin.succ_zero_eq_one, Fin.succ_one_eq_two, uniform_axial_psi_zero,
+    uniform_axial_psi_one, uniform_axial_psi_two, map_mul, normSq_ofReal, map_zero,
+    Finset.univ_eq_empty, Finset.sum_empty, Finset.sum_const_zero, mul_zero, zero_div, add_zero]
   rw [div_eq_mul_inv, Finset.sum_mul, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro site _

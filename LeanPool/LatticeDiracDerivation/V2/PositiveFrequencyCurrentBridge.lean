@@ -74,25 +74,9 @@ theorem normalized_positive_frequency_density
     cubicalCell4Density
         (normalizedPositiveFrequencyEmbedding mass energy px py pz q) =
       energy * uniformCell2Density q := by
-  have hdenom : energy + mass ≠ 0 := ne_of_gt hpositive
-  have hscale := positive_frequency_scale_square mass energy (le_of_lt hpositive)
-  have hcoefficient : positiveFrequencyScale mass energy ^ 2 +
-        positiveFrequencyRatio mass energy ^ 2 *
-          (px ^ 2 + py ^ 2 + pz ^ 2) = energy := by
-    rw [positiveFrequencyRatio]
-    field_simp [hdenom]
-    rw [hscale]
-    nlinarith
-  rw [normalized_positive_frequency_density_formula]
-  rw [positive_pauli_spatial_density]
-  calc
-    positiveFrequencyScale mass energy ^ 2 * uniformCell2Density q +
-        positiveFrequencyRatio mass energy ^ 2 *
-          ((px ^ 2 + py ^ 2 + pz ^ 2) * uniformCell2Density q) =
-      (positiveFrequencyScale mass energy ^ 2 +
-        positiveFrequencyRatio mass energy ^ 2 *
-          (px ^ 2 + py ^ 2 + pz ^ 2)) * uniformCell2Density q := by ring
-    _ = energy * uniformCell2Density q := by rw [hcoefficient]
+  rw [normalized_positive_frequency_density_formula, positive_pauli_spatial_density]
+  linear_combination uniformCell2Density q *
+    spectral_normalization_coefficient mass energy px py pz hpositive hshell
 
 /-- The normalized density is exactly the negative of the native U(1) phase
 charge on positive-frequency data. -/

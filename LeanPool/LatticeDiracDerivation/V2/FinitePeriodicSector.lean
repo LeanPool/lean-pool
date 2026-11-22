@@ -76,14 +76,22 @@ def periodicModePhaseEmbed
 /-- Lift a periodic transverse phase into the full native state and velocity. -/
 def periodicTransversePhaseLift {L : ℕ} [NeZero L] (phase : PeriodicTransversePhase L) :
     State (PeriodicCubicSite L) × Velocity (PeriodicCubicSite L) :=
-  ({ psi := fun site component =>
-       if component = 0 then phase.position 0 site
-       else if component = 1 then phase.position 1 site else 0
+  ({ psi := fun site => uniformAxialPsi (phase.position 0 site) (phase.position 1 site) 0
      chi := fun _ _ => 0 },
-   { psiDot := fun site component =>
-       if component = 0 then phase.velocity 0 site
-       else if component = 1 then phase.velocity 1 site else 0
+   { psiDot := fun site => uniformAxialPsi (phase.velocity 0 site) (phase.velocity 1 site) 0
      chiDot := fun _ _ => 0 })
+
+@[simp] theorem periodic_transverse_phase_lift_position {L : ℕ} [NeZero L]
+    (phase : PeriodicTransversePhase L) (channel : Fin 2) (site : PeriodicCubicSite L) :
+    (periodicTransversePhaseLift phase).1.psi site (uniformTransverseAxis channel) =
+      phase.position channel site :=
+  uniform_axial_psi_transverse (fun component => phase.position component site) 0 channel
+
+@[simp] theorem periodic_transverse_phase_lift_velocity {L : ℕ} [NeZero L]
+    (phase : PeriodicTransversePhase L) (channel : Fin 2) (site : PeriodicCubicSite L) :
+    (periodicTransversePhaseLift phase).2.psiDot site (uniformTransverseAxis channel) =
+      phase.velocity channel site :=
+  uniform_axial_psi_transverse (fun component => phase.velocity component site) 0 channel
 
 /-- Embed a Fourier phase into the complete native tangent phase space. -/
 def periodicFullNativeTangentEmbed
@@ -105,16 +113,11 @@ def periodicNativeTransverseTangentGenerator
     (native : State (PeriodicCubicSite L) ×
       Velocity (PeriodicCubicSite L)) :
     State (PeriodicCubicSite L) × Velocity (PeriodicCubicSite L) :=
+  let acceleration (channel : Fin 2) := periodicC19LinearizedAcceleration r
+    (fun site => native.1.psi site (uniformTransverseAxis channel))
   ({ psi := native.2.psiDot
      chi := native.2.chiDot },
-   { psiDot := fun site component =>
-       if component = 0 then
-         periodicC19LinearizedAcceleration r
-           (fun neighbor => native.1.psi neighbor 0) site
-       else if component = 1 then
-         periodicC19LinearizedAcceleration r
-           (fun neighbor => native.1.psi neighbor 1) site
-       else 0
+   { psiDot := fun site => uniformAxialPsi (acceleration 0 site) (acceleration 1 site) 0
      chiDot := fun _ _ => 0 })
 
 theorem periodic_mode_character_nonzero
@@ -149,14 +152,12 @@ theorem periodic_transverse_phase_lift_injective {L : ℕ} [NeZero L] :
     Function.Injective (periodicTransversePhaseLift (L := L)) := by
   intro first second heq
   apply PeriodicTransversePhase.ext
-  · funext component site
-    fin_cases component
-    · exact congrArg (fun native => native.1.psi site (0 : Fin 3)) heq
-    · exact congrArg (fun native => native.1.psi site (1 : Fin 3)) heq
-  · funext component site
-    fin_cases component
-    · exact congrArg (fun native => native.2.psiDot site (0 : Fin 3)) heq
-    · exact congrArg (fun native => native.2.psiDot site (1 : Fin 3)) heq
+  · funext channel site
+    simpa only [periodic_transverse_phase_lift_position] using
+      congrArg (fun native => native.1.psi site (uniformTransverseAxis channel)) heq
+  · funext channel site
+    simpa only [periodic_transverse_phase_lift_velocity] using
+      congrArg (fun native => native.2.psiDot site (uniformTransverseAxis channel)) heq
 
 theorem periodic_full_native_tangent_embed_injective
     {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
@@ -207,6 +208,25 @@ theorem periodic_full_native_tangent_generator_intertwines
   unfold periodicFullNativeTangentEmbed
   rw [periodic_native_generator_commutes_lift, periodic_mode_sector_is_invariant]
 
+/-- Testing a lifted transverse phase against the native action Hessian recovers the
+corresponding coordinate of the lifted generator's acceleration. -/
+theorem periodic_lifted_native_acceleration_is_action_hessian
+    {L : ℕ} [NeZero L] (r : ℝ) (hr : r ≠ 0) (phase : PeriodicTransversePhase L)
+    (channel : Fin 2) (site : PeriodicCubicSite L) (amplitude : ℂ) :
+    AnalyticHasDerivAt
+      (fun eps : ℝ =>
+        potentialFirstVariation r
+          (periodicTransverseComponentState r eps channel (phase.position channel))
+          (periodicTransverseComponentDirection channel
+            (periodicSingleSiteScalarDirection site amplitude))
+          (c19Bond (periodicC19Geometry L)))
+      (-uniformScalarRealPair
+        ((periodicNativeTransverseTangentGenerator r (periodicTransversePhaseLift phase)).2.psiDot
+          site (uniformTransverseAxis channel)) amplitude) 0 := by
+  rw [periodic_native_generator_commutes_lift, periodic_transverse_phase_lift_velocity]
+  exact periodic_c19_transverse_component_hessian_localized
+    r hr channel (phase.position channel) site amplitude
+
 /-- Full native weak Euler--Lagrange closure of the periodic four-complex-
 dimensional tangent sector.  The first clause makes the embedding into
 `(delta Psi, delta chi, delta PsiDot, delta chiDot)` lossless.  The second
@@ -254,9 +274,14 @@ theorem periodic_full_native_tangent_sector_is_action_invariant
         periodicModePhaseEmbed mode
           (uniformVacuumNativeGenerator r momentum phase) := by
   exact ⟨periodic_full_native_tangent_embed_injective mode,
-    fun component site testAmplitude =>
-      periodic_c19_action_hessian_mode_force
-        r hr mode phase.1 component site testAmplitude,
+    fun component site testAmplitude => by
+      have hforce := periodic_lifted_native_acceleration_is_action_hessian r hr
+        (periodicModePhaseEmbed mode phase) component site testAmplitude
+      have hgenerator := periodic_full_native_tangent_generator_intertwines r mode phase
+      unfold periodicFullNativeTangentEmbed at hgenerator
+      rw [hgenerator] at hforce
+      simpa only [periodic_transverse_phase_lift_velocity, periodicModePhaseEmbed,
+        uniformVacuumNativeGenerator] using hforce,
     fun eps longitudinal =>
       periodic_c19_transverse_longitudinal_cross_variation_zero
         r eps longitudinal

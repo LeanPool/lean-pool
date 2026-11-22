@@ -289,20 +289,6 @@ def canonicalSpectralReadoutInverse
     (spectralPositiveCoordinate mass energy px py pz z)
     (spectralNegativeCoordinate mass energy px py pz z)
 
-theorem spectral_normalization_coefficient
-    (mass energy px py pz : ℝ)
-    (hpositive : 0 < energy + mass)
-    (hshell : energy ^ 2 = mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2) :
-    positiveFrequencyScale mass energy ^ 2 +
-        positiveFrequencyRatio mass energy ^ 2 *
-          (px ^ 2 + py ^ 2 + pz ^ 2) = energy := by
-  have hdenom : energy + mass ≠ 0 := ne_of_gt hpositive
-  have hscale := positive_frequency_scale_square mass energy (le_of_lt hpositive)
-  rw [positiveFrequencyRatio]
-  field_simp [hdenom]
-  rw [hscale]
-  nlinarith
-
 private def pauliSpatialLinear (px py pz : ℝ) : UniformCell2 →ₗ[ℂ] UniformCell2 where
   toFun := positivePauliSpatial px py pz
   map_add' first second := by

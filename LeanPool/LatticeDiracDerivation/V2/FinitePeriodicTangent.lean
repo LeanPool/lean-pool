@@ -407,14 +407,14 @@ ordinary native-field direction, not a modal or Dirac coordinate. -/
 def periodicFirstTransverseDirection
     {L : ℕ} (field : PeriodicCubicSite L → ℂ) :
     State (PeriodicCubicSite L) where
-  psi := fun site component => if component = 0 then field site else 0
+  psi := fun site => uniformAxialPsi (field site) 0 0
   chi := fun _ _ => 0
 
 /-- Place a scalar test profile in the second transverse channel. -/
 def periodicSecondTransverseDirection
     {L : ℕ} (field : PeriodicCubicSite L → ℂ) :
     State (PeriodicCubicSite L) where
-  psi := fun site component => if component = 1 then field site else 0
+  psi := fun site => uniformAxialPsi 0 (field site) 0
   chi := fun _ _ => 0
 
 /-- The two transverse axes available at the fixed axial vacuum. -/
@@ -904,7 +904,7 @@ theorem periodic_c19_second_transverse_potential_hessian_localized
 def periodicLongitudinalPsiDirection
     {L : ℕ} (field : PeriodicCubicSite L → ℂ) :
     State (PeriodicCubicSite L) where
-  psi := fun site component => if component = 2 then field site else 0
+  psi := fun site => uniformAxialPsi 0 0 (field site)
   chi := fun _ _ => 0
 
 /-- A longitudinal `Psi` test direction has no Hessian cross-block with the
