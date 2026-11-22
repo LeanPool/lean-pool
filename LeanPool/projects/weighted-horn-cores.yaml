@@ -31,9 +31,17 @@ main_results:
 - declaration: WeightedHornCores.eq_unaryChain_of_unsatisfiable
   informal: >-
     The unary implication chain with opposing endpoint units has no proper
-    unsatisfiable subset. With n links it has n+2 clauses, zero branching
-    weight and minimum loss one under unit weights.
+    unsatisfiable subset.
   source_ref: Cut assignments in UnaryChain.lean.
+- declaration: WeightedHornCores.card_unaryChain
+  informal: The unary chain with n links has n+2 distinct clauses.
+  source_ref: UnaryChain.lean.
+- declaration: WeightedHornCores.branchingWeight_unaryChain
+  informal: The unary chain has branching weight zero for any weight function.
+  source_ref: UnaryChain.lean.
+- declaration: WeightedHornCores.unaryChain_isLeast_violationWeight
+  informal: Under unit weights, the minimum violated weight over all assignments is one.
+  source_ref: UnaryChain.lean.
 tags:
 - Horn satisfiability
 - unsatisfiable cores
