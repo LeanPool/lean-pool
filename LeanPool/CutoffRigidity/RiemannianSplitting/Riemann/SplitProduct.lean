@@ -10,7 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitAction
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitLevelAtlas
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitMetric
+public import Mathlib.Geometry.Manifold.Diffeomorph
 
 /-! # The smooth product decomposition `M ≃ₘ^∞ ℝ^k × N` of a frame -/
 

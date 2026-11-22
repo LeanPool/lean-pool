@@ -9,6 +9,8 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitDistance
+public import TauCeti.Geometry.Manifold.Riemannian.Pullback.Basic
+import TauCeti.Geometry.Manifold.Riemannian.Distance
 
 /-! # The Riemannian structure of the level `N` and `IsRiemannianManifold`
 
@@ -41,24 +43,41 @@ theorem injective_mfderiv_level_val' :
   injective_mfderiv_level_val fr.contMDiff_sv fr.zero_isRegularValue
 
 /-- The induced Riemannian metric on the level. -/
+noncomputable def levelRiemannianMetric :
+    ContMDiffRiemannianMetric 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞
+      (LevelModel F (EuclideanSpace ℝ (Fin k)))
+      (fun y : fr.Level ↦ TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) y) := by
+  let metric : ContMDiffRiemannianMetric 𝓘(ℝ, F) ∞ F
+      (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x) :=
+    ContMDiffRiemannianMetric.ofIsContMDiffRiemannianBundle
+  exact metric.pullback (Subtype.val : fr.Level → M)
+    (by simpa using fr.contMDiff_level_val')
+    fr.injective_mfderiv_level_val'
+
 noncomputable instance levelRiemannianBundle :
     RiemannianBundle (fun y : fr.Level =>
       TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) y) :=
-  immersionPullbackRiemannianBundle (Subtype.val : fr.Level → M) fr.injective_mfderiv_level_val'
+  ⟨fr.levelRiemannianMetric.toRiemannianMetric⟩
 
 instance levelIsContMDiffRiemannianBundle :
     IsContMDiffRiemannianBundle 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞
       (LevelModel F (EuclideanSpace ℝ (Fin k)))
-      (fun y : fr.Level => TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) y) :=
-  isContMDiffRiemannianBundle_immersionPullback_top (Subtype.val : fr.Level → M)
-    fr.contMDiff_level_val' fr.injective_mfderiv_level_val'
+      (fun y : fr.Level => TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) y) := by
+  infer_instance
 
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
 theorem norm_mfderiv_level_val (y : fr.Level)
     (v : TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) y) :
     ‖mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-      (Subtype.val : fr.Level → M) y v‖ = ‖v‖ :=
-  norm_mfderiv_immersionPullback (Subtype.val : fr.Level → M) fr.injective_mfderiv_level_val' y v
+      (Subtype.val : fr.Level → M) y v‖ = ‖v‖ := by
+  let w := mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
+    (Subtype.val : fr.Level → M) y v
+  have h : inner ℝ w w = inner ℝ v v := by
+    change inner ℝ w w = fr.levelRiemannianMetric.inner y v v
+    rw [levelRiemannianMetric, ContMDiffRiemannianMetric.pullback_inner,
+      ContMDiffRiemannianMetric.ofIsContMDiffRiemannianBundle_inner]
+    rfl
+  simpa only [norm_eq_sqrt_real_inner] using congrArg Real.sqrt h
 
 /-- The projection onto the level, as a map into the level manifold. -/
 noncomputable def toLevel (x : M) : fr.Level := ⟨fr.retr x, fr.sv_retr x⟩
@@ -99,21 +118,22 @@ theorem norm_mfderiv_toLevel_le (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
 
 instance levelIsRiemannianManifold :
     IsRiemannianManifold 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.Level := by
-  refine ⟨fun y y' => le_antisymm ?_ ?_⟩
-  · -- `edist ≤ riemannianEDist`
-    have h := riemannianEDist_le_riemannianEDist_of_norm_mfderiv_le_between
-      (I := 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k)))) (J := 𝓘(ℝ, F))
-      (φ := (Subtype.val : fr.Level → M))
-      (fr.contMDiff_level_val'.of_le (by simp))
-      (fun z v => (fr.norm_mfderiv_level_val z v).le) y y'
+  have hOne : (1 : ℕ∞ω) ≤ (∞ : ℕ∞ω) := by simp
+  refine ⟨fun y y' ↦ le_antisymm ?_ ?_⟩
+  · have h := TauCeti.Manifold.riemannianEDist_le_mul
+      (fr.contMDiff_level_val'.of_le hOne) (C := 1) one_ne_zero
+      (fun z v ↦ by simpa only [NNReal.coe_one, one_mul] using
+        (fr.norm_mfderiv_level_val z v).le) y y'
     rw [← IsRiemannianManifold.out (I := 𝓘(ℝ, F))] at h
-    exact h
-  · have h := riemannianEDist_le_edist_of_norm_mfderiv_le_between
-      (I := 𝓘(ℝ, F)) (J := 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))))
-      (φ := fr.toLevel) (fr.contMDiff_toLevel.of_le (by simp)) fr.norm_mfderiv_toLevel_le y.val
-          y'.val
-    rw [fr.toLevel_val, fr.toLevel_val] at h
-    exact h
+    change edist y.val y'.val ≤ _
+    simpa only [ENNReal.coe_one, one_mul] using h
+  · have h := TauCeti.Manifold.riemannianEDist_le_mul
+      (fr.contMDiff_toLevel.of_le hOne) (C := 1) one_ne_zero
+      (fun z v ↦ by simpa only [NNReal.coe_one, one_mul] using fr.norm_mfderiv_toLevel_le z v)
+      y.val y'.val
+    rw [fr.toLevel_val, fr.toLevel_val, ← IsRiemannianManifold.out (I := 𝓘(ℝ, F))] at h
+    change _ ≤ edist y.val y'.val
+    simpa only [ENNReal.coe_one, one_mul] using h
 
 end Frame
 
