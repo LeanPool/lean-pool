@@ -60,14 +60,6 @@ theorem branchingWeight_positiveSupport (hw : ∀ c ∈ F, 0 ≤ w c) :
   intro c _ hz
   simp [hz]
 
-/-- The loss on a single assignment cannot exceed the total weight. -/
-theorem violationWeight_le_total (hw : ∀ c ∈ F, 0 ≤ w c) (s : Set α) :
-    violationWeight F w s ≤ ∑ c ∈ F, w c := by
-  unfold violationWeight
-  apply Finset.sum_le_sum
-  intro c hc
-  split <;> first | exact le_rfl | exact hw c hc
-
 /-- Branching rules have nonnegative total weight when each clause has nonnegative weight. -/
 theorem branchingWeight_nonneg (hw : ∀ c ∈ F, 0 ≤ w c) : 0 ≤ branchingWeight F w := by
   unfold branchingWeight

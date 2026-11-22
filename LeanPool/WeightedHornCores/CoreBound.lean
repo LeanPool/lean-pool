@@ -34,6 +34,14 @@ noncomputable def violationWeight (F : Finset (Clause α)) (w : Clause α → �
   classical
   exact ∑ c ∈ F, if ¬ c.Holds s then w c else 0
 
+/-- The loss on a single assignment cannot exceed the total weight. -/
+theorem violationWeight_le_total {F : Finset (Clause α)} {w : Clause α → ℝ}
+    (hw : ∀ c ∈ F, 0 ≤ w c) (s : Set α) : violationWeight F w s ≤ ∑ c ∈ F, w c := by
+  unfold violationWeight
+  apply Finset.sum_le_sum
+  intro c hc
+  split <;> first | exact le_rfl | exact hw c hc
+
 /-- Positive rules with exactly two distinct premises are the branching rules. -/
 def Clause.Branches (c : Clause α) : Prop := c.head.isSome = true ∧ c.body.card = 2
 
@@ -71,12 +79,8 @@ private theorem capacity_rule {p : ℕ} (hp : 0 < p) (t : ℕ) {c : Clause α} {
 
 private theorem positive_repaired {F : Finset (Clause α)} {c : Clause α} {p i j : ℕ}
     {x : α} (hp : 0 < p) (hc : c ∈ F) (hh : c.head = some x) (hb : c.body.card ≤ 2)
-    (hi : ¬ c.Holds (Forced F (capacity p i))) (hj : i + duration p c ≤ j) :
+    (ready : ∀ y ∈ c.body, y ∈ Forced F (capacity p i)) (hj : i + duration p c ≤ j) :
     c.Holds (Forced F (capacity p j)) := by
-  classical
-  have ready : ∀ y ∈ c.body, y ∈ Forced F (capacity p i) := by
-    by_contra h
-    exact hi fun hbody => False.elim (h hbody)
   intro _
   rw [hh]
   exact forced_mono ((capacity_rule hp i hh hb).trans (capacity_mono hp hj))
@@ -98,12 +102,13 @@ theorem exists_core_of_horizon (F : Finset (Clause α)) (w : Clause α → ℝ) 
       ((Finset.range (H + 1)).filter (fun t => bad t c)).card ≤ duration p c := by
     apply card_le_of_close
     intro i hi hbad j _ hij
+    have ready : ∀ y ∈ c.body, y ∈ Forced F (capacity p i) := by
+      by_contra h
+      exact hbad fun hbody => False.elim (h hbody)
     cases hh : c.head with
-    | some x => exact fun hj => hj (positive_repaired hp hc hh (hpos c hc (by simp [hh])) hbad hij)
+    | some x =>
+      exact fun hj => hj (positive_repaired hp hc hh (hpos c hc (by simp [hh])) ready hij)
     | none =>
-      have ready : ∀ y ∈ c.body, y ∈ Forced F (capacity p i) := by
-        by_contra h
-        exact hbad fun hbody => False.elim (h hbody)
       obtain ⟨K, hK, hsize, hunsat⟩ := core_of_denial hc hh ready
       have htime : i ≤ H := Nat.le_of_lt_succ (Finset.mem_range.mp hi)
       have hcap := capacity_mono hp htime
@@ -138,10 +143,7 @@ theorem exists_small_core (F : Finset (Clause α)) (w : Clause α → ℝ) (τ :
     (hgap : ∀ s, τ ≤ violationWeight F w s) :
     ∃ K ⊆ F, K.card ≤ 1 + a * (⌈(∑ c ∈ F, w c) / τ⌉₊ * 2 ^ (⌈branchingWeight F w / τ⌉₊ + 1)) ∧
       ¬ ∃ s, Models K s := by
-  classical
-  have hW : τ ≤ ∑ c ∈ F, w c := by
-    refine (hgap ∅).trans (Finset.sum_le_sum fun c hc => ?_)
-    split <;> simp_all
+  have hW : τ ≤ ∑ c ∈ F, w c := (hgap ∅).trans (violationWeight_le_total hw ∅)
   have hp : 0 < ⌈(∑ c ∈ F, w c) / τ⌉₊ := Nat.ceil_pos.mpr (div_pos (hτ.trans_le hW) hτ)
   exact exists_core_of_budgets F w τ a _ _ hτ hp hw hpos hneg hgap
     ((div_le_iff₀ hτ).mp (Nat.le_ceil _)) ((div_le_iff₀ hτ).mp (Nat.le_ceil _))

@@ -55,6 +55,13 @@ private theorem holds_step (i : ℕ) (s : Set ℕ) : (step i).Holds s ↔ (i ∈
 private theorem holds_denial (n : ℕ) (s : Set ℕ) : (denial n).Holds s ↔ n ∉ s := by
   simp [denial, Clause.Holds]
 
+private theorem holds_empty_of_ne_fact {n : ℕ} {c : Clause ℕ} (hc : c ∈ unaryChain n)
+    (hne : c ≠ fact) : c.Holds ∅ := by
+  rcases mem_chain.mp hc with h | rfl | ⟨i, _, rfl⟩
+  · exact (hne h).elim
+  · simp [holds_denial]
+  · simp [holds_step]
+
 /-- Forward propagation reaches the forbidden final atom. -/
 theorem unaryChain_unsatisfiable (n : ℕ) : ¬ ∃ s, Models (unaryChain n) s := by
   rintro ⟨s, hs⟩
@@ -72,10 +79,7 @@ theorem unaryChain_erase_models {n : ℕ} {c : Clause ℕ} (hc : c ∈ unaryChai
   rcases mem_chain.mp hc with rfl | rfl | ⟨i, hi, rfl⟩
   · refine ⟨∅, fun d hd => ?_⟩
     obtain ⟨hne, hd⟩ := Finset.mem_erase.mp hd
-    rcases mem_chain.mp hd with h | rfl | ⟨j, _, rfl⟩
-    · exact (hne h).elim
-    · simp [holds_denial]
-    · simp [holds_step]
+    exact holds_empty_of_ne_fact hd hne
   · refine ⟨Set.univ, fun d hd => ?_⟩
     obtain ⟨hne, hd⟩ := Finset.mem_erase.mp hd
     rcases mem_chain.mp hd with rfl | h | ⟨j, _, rfl⟩
@@ -121,10 +125,7 @@ theorem unaryChain_isLeast_violationWeight (n : ℕ) :
     rw [Finset.sum_eq_single fact]
     · simp [holds_fact]
     · intro c hc hne
-      rcases mem_chain.mp hc with h | rfl | ⟨i, _, rfl⟩
-      · exact (hne h).elim
-      · simp [holds_denial]
-      · simp [holds_step]
+      simp [holds_empty_of_ne_fact hc hne]
     · intro h
       exact (h (mem_chain.mpr (Or.inl rfl))).elim
   · rintro _ ⟨s, rfl⟩
