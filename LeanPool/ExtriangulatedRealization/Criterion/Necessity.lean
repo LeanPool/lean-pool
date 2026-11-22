@@ -72,7 +72,7 @@ theorem projectionsSurjective_of_embedding {T : Type u'} [Category.{v'} T] [Prea
 
 /-- **Theorem B, (1) ⇒ (2)**, for triangulated targets in all universes. -/
 theorem theoremB_necessity : TheoremBNecessity.{u, v', u'} := by
-  intro k _ I _ _ _ D _ hD
+  intro k _ I _ D hD
   obtain ⟨T, _, _, _, _, _, _, _, Φ, hΦ⟩ := hD
   exact projectionsSurjective_of_embedding D Φ hΦ
 

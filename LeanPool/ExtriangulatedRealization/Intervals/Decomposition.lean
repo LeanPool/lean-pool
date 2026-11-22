@@ -334,7 +334,7 @@ lemma finrank_intervalRep (U : Set (WithBot I)) [U.OrdConnected] {t : WithBot I}
   rw [Module.finrank_fintype_fun_eq_card]
   exact Fintype.card_eq_one_iff.mpr ⟨⟨(), ht⟩, fun x => Subtype.ext rfl⟩
 
-lemma one_le_measure_rep (l : IntervalCat k I) (hl : LabelIn E l) : 1 ≤ measure (l.rep k) := by
+lemma one_le_measure_rep (l : IntervalCat k I) : 1 ≤ measure (l.rep k) := by
   rcases l with _ | d | d
   · have := finrank_intervalRep (k := k) (Y (I := I)).support (t := ⊥) (Set.mem_Iic.mpr le_rfl)
     unfold measure
@@ -462,7 +462,7 @@ theorem IsGood.decompose : ∀ (n : ℕ) (M : Rep k I), IsGood E M → measure M
       unfold measure
       rw [finrank_split ι r h ⊥, finrank_split ι r h (leastI : I)]
       ring
-    have := one_le_measure_rep l hl
+    have := one_le_measure_rep l
     obtain ⟨ι', _, L, hL, ⟨e⟩⟩ := ih (Limits.kernel r) hK (by omega)
     refine ⟨Option ι', inferInstance, fun o => o.elim l L, ?_, ⟨?_⟩⟩
     · rintro (_ | i)

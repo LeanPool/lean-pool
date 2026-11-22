@@ -13,7 +13,8 @@ public import LeanPool.ExtriangulatedRealization.Criterion.Necessity
 
 `C(D)` has a triangulated embedding if and only if every projection `lim D → D_i` is surjective,
 if and only if `C(D)` has an algebraic realization. Necessity is `theoremB_necessity`.
-Sufficiency is Proposition 2.3 for `J = I` and `W = lim D`, the module of compatible families,
+Sufficiency uses the algebraic-realization consequence of Proposition 2.3 with `J = I`
+and `W = lim D`, the module of compatible families,
 since `C_I` is all of `C(D)`.
 -/
 
@@ -54,7 +55,6 @@ noncomputable def limProj (i : I) : ModuleCat.of k (compatibleFamilies D) ⟶ D.
 lemma subcatJ_univ : subcatJ D (Set.univ : Set I) = ⊤ := by
   ext M
   refine ⟨fun _ => trivial, fun _ => ?_⟩
-  rw [subcatJ_eq_labelsIn]
   intro i
   rcases M.X i with _ | _ | j | j <;> trivial
 
@@ -105,7 +105,7 @@ theorem theoremB : TheoremB.{u} := by
       (cdData D).HasTriangulatedEmbedding.{_, _, _, _, u, max 1 u} := by
     rintro ⟨T, i₁, i₂, i₃, i₄, i₅, i₆, i₇, -, Φ, hΦ, -⟩
     exact ⟨T, i₁, i₂, i₃, i₄, i₅, i₆, i₇, Φ, hΦ⟩
-  have h₁₂ := theoremB_necessity.{u, u, max 1 u} k I D hD
+  have h₁₂ := theoremB_necessity.{u, u, max 1 u} k I D
   exact ⟨⟨h₁₂, fun h => h₃₁ (h₂₃ h)⟩, ⟨h₂₃, fun h => h₁₂ (h₃₁ h)⟩⟩
 
 end ExtriangulatedRealization

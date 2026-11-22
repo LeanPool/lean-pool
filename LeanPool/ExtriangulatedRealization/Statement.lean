@@ -5,6 +5,7 @@ Authors: Haruhisa Enomoto
 -/
 module
 
+public import LeanPool.ExtriangulatedRealization.Categories.Mat
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.Algebra.Category.ModuleCat.Basic
 public import Mathlib.Algebra.Homology.DerivedCategory.Ext.ExtClass
@@ -21,7 +22,6 @@ public import Mathlib.CategoryTheory.Linear.Basic
 public import Mathlib.CategoryTheory.Linear.FunctorCategory
 public import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
 public import Mathlib.CategoryTheory.Preadditive.Biproducts
-public import Mathlib.CategoryTheory.Preadditive.Mat
 public import Mathlib.CategoryTheory.Triangulated.Triangulated
 public import Mathlib.Data.Set.Countable
 public import Mathlib.GroupTheory.FreeAbelianGroup
@@ -845,19 +845,13 @@ noncomputable def extE : (CD D)ᵒᵖ ⥤ CD D ⥤ ModuleCat.{u + 1} k :=
     (Functor.whiskeringLeft _ _ _).obj (rho D)
 
 /-- The summand of an object of `C(D)` formed by its copies of `X`. -/
-def xPart (M : CD D) : CD D where
-  ι := {i : M.ι // (M.X i).isNone}
-  X i := M.X i.1
+def xPart (M : CD D) : CD D := subObj M fun i => (M.X i).isNone
 
-open Classical in
 /-- The inclusion of the `X`-part. -/
-noncomputable def xIncl (M : CD D) : xPart D M ⟶ M :=
-  fun i j => if h : i.1 = j then eqToHom (congrArg M.X h) else 0
+noncomputable def xIncl (M : CD D) : xPart D M ⟶ M := subIncl M fun i => (M.X i).isNone
 
-open Classical in
 /-- The projection onto the `X`-part. -/
-noncomputable def xProj (M : CD D) : M ⟶ xPart D M :=
-  fun i j => if h : i = j.1 then eqToHom (congrArg M.X h) else 0
+noncomputable def xProj (M : CD D) : M ⟶ xPart D M := subProj M fun i => (M.X i).isNone
 
 /-- The realizations of Construction 2.2: `A -x→ B -y→ C` realizes `ξ ∈ Ext¹(ρC, ρA)` when
 `ρA → ρB → ρC` is a short exact sequence of class `ξ` and the sequence is equivalent to the
@@ -885,9 +879,11 @@ def labelIn (J : Set I) : Option (IntervalLabel I) → Prop
   | some (IntervalLabel.P i) => i ∈ J
 
 /-- The full subcategory `C_J` of `C(D)`: finite direct sums of `X`, `Y` and `A i`, `P i` with
-`i ∈ J`, closed under isomorphisms. -/
-def subcatJ (J : Set I) : ObjectProperty (CD D) :=
-  ObjectProperty.isoClosure (fun M => ∀ i, labelIn J (M.X i))
+`i ∈ J`. -/
+def subcatJ (J : Set I) : ObjectProperty (CD D) := fun M => ∀ i, labelIn J (M.X i)
+
+/-- The label predicate defining the full subcategory `C_J`. -/
+abbrev labelsIn (J : Set I) : ObjectProperty (CD D) := subcatJ D J
 
 /-- The single object of `C(D)` given by a label (`none` is `X`). -/
 noncomputable abbrev single (l : IndCat D) : CD D := (Mat_.embedding (IndCat D)).obj l
@@ -900,12 +896,6 @@ section KrullSchmidt
 
 variable (𝒞 : Type*) [Category 𝒞] [Preadditive 𝒞] [HasFiniteBiproducts 𝒞]
 
-variable {𝒞} in
-/-- An indecomposable object: nonzero, and in every decomposition `X ≅ Y ⊞ Z` one summand is
-zero. -/
-def IsIndecomposable [HasBinaryBiproducts 𝒞] (X : 𝒞) : Prop :=
-  ¬ IsZero X ∧ ∀ Y Z : 𝒞, Nonempty (X ≅ Y ⊞ Z) → IsZero Y ∨ IsZero Z
-
 /-- A Krull–Schmidt category: every object is a finite direct sum of objects with local
 endomorphism rings. -/
 def IsKrullSchmidt : Prop :=
@@ -913,7 +903,7 @@ def IsKrullSchmidt : Prop :=
 
 /-- The isomorphism classes of indecomposable objects. -/
 def IndecomposableClasses [HasBinaryBiproducts 𝒞] : Type _ :=
-  {s : Set 𝒞 // ∃ X : 𝒞, IsIndecomposable X ∧ s = {Y | Nonempty (Y ≅ X)}}
+  {s : Set 𝒞 // ∃ X : 𝒞, Indecomposable X ∧ s = {Y | Nonempty (Y ≅ X)}}
 
 end KrullSchmidt
 
@@ -921,7 +911,7 @@ end KrullSchmidt
 
 section InverseSystems
 
-variable {k : Type u} [Field k] {I : Type u} [Preorder I]
+variable {k : Type u} [Ring k] {I : Type u} [Preorder I]
 
 /-- The transition maps `π_{ji} : D_j → D_i` of the inverse system are surjective. -/
 def HasSurjectiveTransitions (D : Iᵒᵖ ⥤ ModuleCat.{u} k) : Prop :=
@@ -945,9 +935,10 @@ def IsExtPair {k : Type u} [Field k] {I : Type u} [LinearOrder I] {D : Iᵒᵖ �
   | some (IntervalLabel.P j), some (IntervalLabel.A i) => j < i
   | _, _ => False
 
-/-- **Proposition 2.3.** If a vector space `W` maps compatibly and surjectively onto the `D_i`,
-`i ∈ J`, then `C_J`, with the induced structure, is extriangulated and has an algebraic
-realization. -/
+/-- Algebraic-realization consequence of Proposition 2.3. If a vector space `W` maps compatibly and
+surjectively onto the `D_i`, `i ∈ J`, then `C_J`, with the induced structure, is extriangulated
+and has an algebraic realization. The paper constructs the realization in the bounded
+homotopy category. The formal construction uses the homotopy category of all cochain complexes. -/
 def Proposition23 : Prop :=
   ∀ (k : Type u) [Field k] (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
     (D : Iᵒᵖ ⥤ ModuleCat.{u} k), HasSurjectiveTransitions D →
@@ -984,8 +975,8 @@ def TheoremB : Prop :=
 triangulated category in any universes forces every projection `lim D → D_i` to be
 surjective. -/
 def TheoremBNecessity : Prop :=
-  ∀ (k : Type u) [Field k] (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
-    (D : Iᵒᵖ ⥤ ModuleCat.{u} k), HasSurjectiveTransitions D →
+  ∀ (k : Type u) [Field k] (I : Type u) [LinearOrder I]
+    (D : Iᵒᵖ ⥤ ModuleCat.{u} k),
     (cdData D).HasTriangulatedEmbedding.{_, _, _, _, v', u'} → ProjectionsSurjective D
 
 open Classical in
@@ -998,8 +989,8 @@ def Proposition44 : Prop :=
   ∀ (k : Type u) [Field k] (I : Type u) [LinearOrder I] [WellFoundedLT I] [Nonempty I]
     (D : Iᵒᵖ ⥤ ModuleCat.{u} k), HasSurjectiveTransitions D →
     IsIdempotentComplete (CD D) ∧ IsKrullSchmidt (CD D) ∧
-    (∀ X : CD D, IsIndecomposable X → ∃ l : IndCat D, Nonempty (X ≅ single D l)) ∧
-    (∀ l : IndCat D, IsIndecomposable (single D l)) ∧
+    (∀ X : CD D, Indecomposable X → ∃ l : IndCat D, Nonempty (X ≅ single D l)) ∧
+    (∀ l : IndCat D, Indecomposable (single D l)) ∧
     (∀ l l' : IndCat D, Nonempty (single D l ≅ single D l') → l = l') ∧
     (∀ (l : IndCat D) (f : single D l ⟶ single D l), ∃! c : k, f = c • 𝟙 _) ∧
     (∀ c a : IndCat D, Module.rank k ((cdData D).Ext (single D c) (single D a)) =
@@ -1039,8 +1030,8 @@ def TheoremA : Prop :=
       ((cdData D).restrict P).HasAlgebraicRealization.{_, _, _, _, u, max 1 u}) ∧
     (cdData D).IsHereditary ∧ IsKrullSchmidt (CD D) ∧ (cdData D).HasEnoughInjectives ∧
     Cardinal.mk (IndecomposableClasses (CD D)) = Cardinal.aleph 1 ∧
-    (∀ X : CD D, IsIndecomposable X → ∀ f : X ⟶ X, ∃! c : k, f = c • 𝟙 X) ∧
-    (∀ A C' : CD D, IsIndecomposable A → IsIndecomposable C' →
+    (∀ X : CD D, Indecomposable X → ∀ f : X ⟶ X, ∃! c : k, f = c • 𝟙 X) ∧
+    (∀ A C' : CD D, Indecomposable A → Indecomposable C' →
       Module.rank k ((cdData D).Ext C' A) ≤ 1) ∧
     (∀ X Y : CD D, Module.rank k (X ⟶ Y) ≤ Cardinal.aleph0)
 

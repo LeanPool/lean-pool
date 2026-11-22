@@ -58,9 +58,9 @@ lemma smapS_smapS {a b c : I} (hab : a ≤ b) (hbc : b ≤ c) (x : S.obj (op c))
   rw [← S.map_comp]
   rfl
 
-variable (k : Type u) [Field k]
+variable (k : Type u) [Ring k]
 
-/-- The linearization `k^(S_i)` of an inverse system of sets. -/
+/-- The inverse system of free modules `k^(S_i)` of an inverse system of sets. -/
 noncomputable abbrev linearize : Iᵒᵖ ⥤ ModuleCat.{u} k := S ⋙ ModuleCat.free k
 
 lemma linearize_map_apply {a b : I} (h : a ≤ b) (v : (linearize S k).obj (op b)) :
@@ -81,7 +81,6 @@ theorem linearize_compatible_eq_zero (hI : ∀ T : Set I, T.Countable → BddAbo
     v i = 0 := by
   classical
   by_contra hi₀
-  have : Nonempty I := ⟨i⟩
   let F : ∀ j, Finset (S.obj (op j)) := fun j => (v j).support
   have hF : ∀ {a b : I} (h : a ≤ b), F a ⊆ (F b).image (smapS S h) := fun {a b} h => by
     change (v a).support ⊆ _
@@ -125,7 +124,8 @@ theorem linearize_compatible_eq_zero (hI : ∀ T : Set I, T.Countable → BddAbo
 
 /-- **Lemma 4.1**, consequence: if some `S_i` is nonempty, the projections from `lim k^(S_i)` are
 not all surjective. -/
-theorem linearize_not_projectionsSurjective (hI : ∀ T : Set I, T.Countable → BddAbove T)
+theorem linearize_not_projectionsSurjective [Nontrivial k]
+    (hI : ∀ T : Set I, T.Countable → BddAbove T)
     (hlim : ¬ ∃ s : ∀ i, S.obj (op i), ∀ {a b : I} (h : a ≤ b), smapS S h (s b) = s a)
     (i : I) (x : S.obj (op i)) : ¬ ProjectionsSurjective (linearize S k) := by
   intro hP

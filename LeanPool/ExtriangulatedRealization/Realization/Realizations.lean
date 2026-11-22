@@ -174,21 +174,17 @@ lemma bPart_realTriangle_distinguished {A B C : (labelsIn D J).FullSubcategory} 
 /-- An object of `C_J` goes to the direct sum of the images of its interval and `X`-parts. -/
 noncomputable def splitIso (M : (labelsIn D J).FullSubcategory) :
     (R.realP hR).obj M ≅ (R.realP hR).obj (bPartJ M) ⊞ (R.realP hR).obj (xPartJ M) :=
-  isoBiprodOfTotal (R.realMap hR (M := bPartJ M) (N := M) (bIncl D M.obj))
-    (R.realMap hR (M := xPartJ M) (N := M) (xIncl D M.obj))
-    (R.realMap hR (M := M) (N := bPartJ M) (bProj D M.obj))
-    (R.realMap hR (M := M) (N := xPartJ M) (xProj D M.obj))
-    ((R.realMap_comp hR _ _).symm.trans
-      ((congrArg (R.realMap hR) (bIncl_bProj D _)).trans (R.realMap_id hR _)))
-    ((R.realMap_comp hR _ _).symm.trans
-      ((congrArg (R.realMap hR) (xIncl_xProj D _)).trans (R.realMap_id hR _)))
-    ((R.realMap_comp hR _ _).symm.trans
-      ((congrArg (R.realMap hR) (bIncl_xProj D _)).trans (R.realMap_zero hR _ _)))
-    ((R.realMap_comp hR _ _).symm.trans
-      ((congrArg (R.realMap hR) (xIncl_bProj D _)).trans (R.realMap_zero hR _ _)))
-    ((congrArg₂ (· + ·) (R.realMap_comp hR _ _).symm (R.realMap_comp hR _ _).symm).trans
-      ((R.realMap_add hR _ _).symm.trans
-        ((congrArg (R.realMap hR) (bProj_bIncl_add D _)).trans (R.realMap_id hR _))))
+  mapBiprodOfTotal (R.realP hR) (X := bPartJ M) (Y := xPartJ M)
+    { pt := M
+      fst := ObjectProperty.homMk (bProj D M.obj)
+      snd := ObjectProperty.homMk (xProj D M.obj)
+      inl := ObjectProperty.homMk (bIncl D M.obj)
+      inr := ObjectProperty.homMk (xIncl D M.obj)
+      inl_fst := ObjectProperty.hom_ext _ (bIncl_bProj D M.obj)
+      inl_snd := ObjectProperty.hom_ext _ (bIncl_xProj D M.obj)
+      inr_fst := ObjectProperty.hom_ext _ (xIncl_bProj D M.obj)
+      inr_snd := ObjectProperty.hom_ext _ (xIncl_xProj D M.obj) }
+    (ObjectProperty.hom_ext _ (bProj_bIncl_add D M.obj))
 
 omit [Field k] [LinearOrder I] in
 lemma biprod_total₃ {𝒯 : Type*} [Category 𝒯] [Preadditive 𝒯] [HasBinaryBiproducts 𝒯]

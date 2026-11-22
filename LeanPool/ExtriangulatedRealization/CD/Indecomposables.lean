@@ -81,7 +81,7 @@ lemma single_endo_eq_smul (l : IndCat D) (f : single D l ⟶ single D l) :
   · exact singleX_endo_eq_smul D f
   · exact singleI_endo_eq_smul D a f
 
-lemma single_isIndecomposable (l : IndCat D) : IsIndecomposable (single D l) :=
+lemma single_isIndecomposable (l : IndCat D) : Indecomposable (single D l) :=
   isIndecomposable_of_endo_scalar (single_id_ne_zero D l) (single_endo_eq_smul D l)
 
 lemma single_existsUnique_smul (l : IndCat D) (f : single D l ⟶ single D l) :
@@ -113,7 +113,7 @@ lemma isKrullSchmidt_CD : IsKrullSchmidt (CD D) := by
     ⟨Mat_.isoReindex M e ≪≫ Mat_.isoBiproductEmbedding _⟩⟩
 
 /-- Every indecomposable object of `C(D)` is a single object. -/
-lemma exists_iso_single_of_isIndecomposable {M : CD D} (hM : IsIndecomposable M) :
+lemma exists_iso_single_of_isIndecomposable {M : CD D} (hM : Indecomposable M) :
     ∃ l : IndCat D, Nonempty (M ≅ single D l) := by
   classical
   rcases isEmpty_or_nonempty M.ι with hι | hne
@@ -139,7 +139,7 @@ lemma exists_iso_single_of_isIndecomposable {M : CD D} (hM : IsIndecomposable M)
       uniq := fun x => Subtype.ext (by simpa [p] using x.2) }
   let e₀ : subObj M p ≅ single D (M.X i₀) := Mat_.isoSingleOfUnique (subObj M p)
   refine ⟨M.X i₀, ?_⟩
-  rcases hM.2 _ _ ⟨iso⟩ with hp | hq
+  rcases hM.2 _ _ iso with hp | hq
   · exact absurd ((IsZero.of_iso hp e₀.symm).eq_of_src _ _) (single_id_ne_zero D _)
   · exact ⟨iso ≪≫ (isoBiprodZero hq).symm ≪≫ e₀⟩
 

@@ -6,7 +6,6 @@ Authors: Haruhisa Enomoto
 module
 
 public import LeanPool.ExtriangulatedRealization.Realization.Extriangulated
-public import LeanPool.ExtriangulatedRealization.Categories.Biproduct
 
 /-!
 # The subcategories `C_J` are extriangulated (Proposition 2.3, Corollary 2.4)
@@ -78,29 +77,24 @@ variable {𝒞 : Type*} [Category 𝒞] [Preadditive 𝒞] [HasBinaryBiproducts 
 /-- The biproduct chosen in a full subcategory, compared with the one of the ambient
 category. -/
 noncomputable def biprodObjIso (X Y : P.FullSubcategory) : (X ⊞ Y).obj ≅ X.obj ⊞ Y.obj :=
-  isoBiprodOfTotal (biprod.inl : X ⟶ X ⊞ Y).hom (biprod.inr : Y ⟶ X ⊞ Y).hom
-    (biprod.fst : X ⊞ Y ⟶ X).hom (biprod.snd : X ⊞ Y ⟶ Y).hom
-    (congrArg InducedCategory.Hom.hom (biprod.inl_fst (X := X) (Y := Y)))
-    (congrArg InducedCategory.Hom.hom (biprod.inr_snd (X := X) (Y := Y)))
-    (congrArg InducedCategory.Hom.hom (biprod.inl_snd (X := X) (Y := Y)))
-    (congrArg InducedCategory.Hom.hom (biprod.inr_fst (X := X) (Y := Y)))
-    (congrArg InducedCategory.Hom.hom (biprod.total (X := X) (Y := Y)))
+  letI := preservesBinaryBiproduct_of_preservesBiproduct P.ι X Y
+  P.ι.mapBiprod X Y
 
 lemma inl_biprodObjIso_inv (X Y : P.FullSubcategory) :
     biprod.inl ≫ (biprodObjIso X Y).inv = (biprod.inl : X ⟶ X ⊞ Y).hom := by
-  simp [biprodObjIso]
+  exact biprod.inl_desc _ _
 
 lemma inr_biprodObjIso_inv (X Y : P.FullSubcategory) :
     biprod.inr ≫ (biprodObjIso X Y).inv = (biprod.inr : Y ⟶ X ⊞ Y).hom := by
-  simp [biprodObjIso]
+  exact biprod.inr_desc _ _
 
 lemma biprodObjIso_hom_fst (X Y : P.FullSubcategory) :
     (biprodObjIso X Y).hom ≫ biprod.fst = (biprod.fst : X ⊞ Y ⟶ X).hom := by
-  simp [biprodObjIso]
+  exact biprod.lift_fst _ _
 
 lemma biprodObjIso_hom_snd (X Y : P.FullSubcategory) :
     (biprodObjIso X Y).hom ≫ biprod.snd = (biprod.snd : X ⊞ Y ⟶ Y).hom := by
-  simp [biprodObjIso]
+  exact biprod.lift_snd _ _
 
 lemma biprod_map_hom {X Y X' Y' : P.FullSubcategory} (f : X ⟶ Y) (g : X' ⟶ Y') :
     (biprod.map f g).hom =
@@ -117,9 +111,8 @@ end Biproducts
 
 omit [WellFoundedLT I] [Nonempty I] in
 lemma subcatJ_biprod {J : Set I} {A B : CD D} (hA : subcatJ D J A) (hB : subcatJ D J B) :
-    subcatJ D J (A ⊞ B) := by
-  rw [subcatJ_eq_labelsIn] at hA hB ⊢
-  exact labelsIn_biprod D hA hB
+    subcatJ D J (A ⊞ B) :=
+  labelsIn_biprod D hA hB
 
 /-- **Proposition 2.3, Corollary 2.4**: each `C_J`, with the induced structure, is
 extriangulated. -/
@@ -190,7 +183,9 @@ theorem subcatJ_isExtriangulatedSubcategory (hD : HasSurjectiveTransitions D) (J
         ObjectProperty.homMk d, ObjectProperty.homMk e, δ'', h₁, ObjectProperty.hom_ext _ h₂,
         ObjectProperty.hom_ext _ h₃, h₄, h₅, h₆⟩ }
 
-/-- **Proposition 2.3.** -/
+/-- The extriangulatedness and algebraic-realization consequences of Proposition 2.3.
+The realization here takes values in the homotopy category of all cochain complexes,
+whereas the paper uses the bounded homotopy category. -/
 theorem proposition_2_3 : Proposition23.{u} := by
   intro k _ I _ _ _ D hD J W q hsurj hcomm
   exact ⟨subcatJ_isExtriangulatedSubcategory D hD J,

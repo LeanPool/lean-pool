@@ -6,7 +6,6 @@ Authors: Haruhisa Enomoto
 module
 
 public import LeanPool.ExtriangulatedRealization.CD.Subcategory
-public import LeanPool.ExtriangulatedRealization.Categories.Biproduct
 public import LeanPool.ExtriangulatedRealization.Categories.Mat
 
 /-!
@@ -43,7 +42,6 @@ lemma labelsIn_of_realizes {J : Set I} {A B C : CD D} {δ : (cdData D).Ext C A} 
 
 /-- `C_J` is extension-closed. -/
 lemma subcatJ_isExtensionClosed (J : Set I) : (cdData D).IsExtensionClosed (subcatJ D J) := by
-  rw [subcatJ_eq_labelsIn]
   intro A B C δ x y h hA hC
   exact labelsIn_of_realizes D h hA hC
 
@@ -54,16 +52,8 @@ lemma labelsIn_biprod {J : Set I} {A C : CD D} (hA : labelsIn D J A) (hC : label
   refine labelsIn_of_isGood D E (fun e he => ?_) ?_
   · rcases Finset.mem_union.mp he with h | h
     exacts [mem_of_mem_objIdx D hA h, mem_of_mem_objIdx D hC h]
-  · have e : (rho D).obj (A ⊞ C) ≅ (rho D).obj A ⊞ (rho D).obj C :=
-      isoBiprodOfTotal ((rho D).map biprod.inl) ((rho D).map biprod.inr)
-        ((rho D).map biprod.fst) ((rho D).map biprod.snd)
-        (by rw [← Functor.map_comp, biprod.inl_fst, CategoryTheory.Functor.map_id])
-        (by rw [← Functor.map_comp, biprod.inr_snd, CategoryTheory.Functor.map_id])
-        (by rw [← Functor.map_comp, biprod.inl_snd, Functor.map_zero])
-        (by rw [← Functor.map_comp, biprod.inr_fst, Functor.map_zero])
-        (by rw [← Functor.map_comp, ← Functor.map_comp, ← Functor.map_add, biprod.total,
-          CategoryTheory.Functor.map_id])
-    exact IsGood.of_iso e.symm (IsGood.biprod
+  · let := preservesBinaryBiproduct_of_preservesBiproduct (rho D) A C
+    exact IsGood.of_iso ((rho D).mapBiprod A C).symm (IsGood.biprod
       (isGood_rho D E A (labelIn_objIdx D A Finset.subset_union_left))
       (isGood_rho D E C (labelIn_objIdx D C Finset.subset_union_right)))
 

@@ -61,7 +61,7 @@ theorem theoremA : TheoremA.{u} := by
   refine ⟨Omega1.{u}, inferInstance, inferInstance, inferInstance, D, hD,
     treeSystem_not_projectionsSurjective k, cdData_isExtriangulated D hD, essentiallySmall_CD D,
     fun h => treeSystem_not_projectionsSurjective k
-      (theoremB_necessity.{u, u, max 1 u} k _ D hD h), ?_,
+      (theoremB_necessity.{u, u, max 1 u} k _ D h), ?_,
     cdData_isHereditary D, isKrullSchmidt_CD D, cd_hasEnoughInjectives D hD,
     mk_indecomposableClasses D Omega1.mk_eq,
     fun X hX f => existsUnique_smul_of_isIndecomposable D hX f,
@@ -73,7 +73,6 @@ theorem theoremA : TheoremA.{u} := by
   obtain ⟨hclosed, hext, -, hreal⟩ := (corollary_2_4 k _ D hD).2.2 (Set.Iic m)
   refine ⟨subcatJ D (Set.Iic m), hclosed, fun X hX => ?_, hext,
     hreal ⟨m, Set.mem_Iic.mpr le_rfl, fun _ hi => hi⟩⟩
-  rw [subcatJ_eq_labelsIn]
   exact hm X hX
 
 end ExtriangulatedRealization

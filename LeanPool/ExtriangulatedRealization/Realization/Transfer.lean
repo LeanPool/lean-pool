@@ -293,27 +293,27 @@ noncomputable abbrev biprodJ (X Y : (labelsIn D J).FullSubcategory) :
 /-- The realization functor preserves binary direct sums. -/
 noncomputable def realBiprodIso (X Y : (labelsIn D J).FullSubcategory) :
     (R.realP hR).obj (biprodJ X Y) ≅ (R.realP hR).obj X ⊞ (R.realP hR).obj Y :=
-  isoBiprodOfTotal (R.realMap hR (M := X) (N := biprodJ X Y) biprod.inl)
-    (R.realMap hR (M := Y) (N := biprodJ X Y) biprod.inr)
-    (R.realMap hR (M := biprodJ X Y) (N := X) biprod.fst)
-    (R.realMap hR (M := biprodJ X Y) (N := Y) biprod.snd)
-    ((R.realMap_comp_eq hR biprod.inl_fst).trans (R.realMap_id hR _))
-    ((R.realMap_comp_eq hR biprod.inr_snd).trans (R.realMap_id hR _))
-    ((R.realMap_comp_eq hR biprod.inl_snd).trans (R.realMap_zero hR _ _))
-    ((R.realMap_comp_eq hR biprod.inr_fst).trans (R.realMap_zero hR _ _))
-    ((congrArg₂ (· + ·) (R.realMap_comp hR _ _).symm (R.realMap_comp hR _ _).symm).trans
-      ((R.realMap_add hR _ _).symm.trans
-        ((congrArg (R.realMap hR) biprod.total).trans (R.realMap_id hR _))))
+  mapBiprodOfTotal (R.realP hR) (X := X) (Y := Y)
+    { pt := biprodJ X Y
+      fst := ObjectProperty.homMk biprod.fst
+      snd := ObjectProperty.homMk biprod.snd
+      inl := ObjectProperty.homMk biprod.inl
+      inr := ObjectProperty.homMk biprod.inr
+      inl_fst := ObjectProperty.hom_ext _ biprod.inl_fst
+      inl_snd := ObjectProperty.hom_ext _ biprod.inl_snd
+      inr_fst := ObjectProperty.hom_ext _ biprod.inr_fst
+      inr_snd := ObjectProperty.hom_ext _ biprod.inr_snd }
+    (ObjectProperty.hom_ext _ biprod.total)
 
 omit [WellFoundedLT I] [Nonempty I] in
 lemma realMap_inl_comp_realBiprodIso (X Y : (labelsIn D J).FullSubcategory) :
     R.realMap hR (M := X) (N := biprodJ X Y) biprod.inl ≫ (R.realBiprodIso hR X Y).hom =
       biprod.inl := by
   apply biprod.hom_ext
-  · simp only [realBiprodIso, isoBiprodOfTotal_hom, Category.assoc, biprod.lift_fst,
+  · simp only [realBiprodIso, mapBiprodOfTotal_hom, Category.assoc, biprod.lift_fst,
       biprod.inl_fst]
     exact (R.realMap_comp_eq hR biprod.inl_fst).trans (R.realMap_id hR _)
-  · simp only [realBiprodIso, isoBiprodOfTotal_hom, Category.assoc, biprod.lift_snd,
+  · simp only [realBiprodIso, mapBiprodOfTotal_hom, Category.assoc, biprod.lift_snd,
       biprod.inl_snd]
     exact (R.realMap_comp_eq hR biprod.inl_snd).trans (R.realMap_zero hR _ _)
 
@@ -322,10 +322,10 @@ lemma realMap_inr_comp_realBiprodIso (X Y : (labelsIn D J).FullSubcategory) :
     R.realMap hR (M := Y) (N := biprodJ X Y) biprod.inr ≫ (R.realBiprodIso hR X Y).hom =
       biprod.inr := by
   apply biprod.hom_ext
-  · simp only [realBiprodIso, isoBiprodOfTotal_hom, Category.assoc, biprod.lift_fst,
+  · simp only [realBiprodIso, mapBiprodOfTotal_hom, Category.assoc, biprod.lift_fst,
       biprod.inr_fst]
     exact (R.realMap_comp_eq hR biprod.inr_fst).trans (R.realMap_zero hR _ _)
-  · simp only [realBiprodIso, isoBiprodOfTotal_hom, Category.assoc, biprod.lift_snd,
+  · simp only [realBiprodIso, mapBiprodOfTotal_hom, Category.assoc, biprod.lift_snd,
       biprod.inr_snd]
     exact (R.realMap_comp_eq hR biprod.inr_snd).trans (R.realMap_id hR _)
 
@@ -359,10 +359,10 @@ lemma realBiprodIso_naturality {X Y X' Y' : (labelsIn D J).FullSubcategory} (f :
       (R.realBiprodIso hR Y Y').hom =
       (R.realBiprodIso hR X X').hom ≫ biprod.map ((R.realP hR).map f) ((R.realP hR).map g) := by
   apply biprod.hom_ext
-  · simp only [realBiprodIso, isoBiprodOfTotal_hom, Category.assoc, biprod.lift_fst,
+  · simp only [realBiprodIso, mapBiprodOfTotal_hom, Category.assoc, biprod.lift_fst,
       biprod.map_fst, biprod.lift_fst_assoc]
     exact (R.realMap_comp_eq hR (biprod.map_fst _ _)).trans (R.realMap_comp hR _ _)
-  · simp only [realBiprodIso, isoBiprodOfTotal_hom, Category.assoc, biprod.lift_snd,
+  · simp only [realBiprodIso, mapBiprodOfTotal_hom, Category.assoc, biprod.lift_snd,
       biprod.map_snd, biprod.lift_snd_assoc]
     exact (R.realMap_comp_eq hR (biprod.map_snd _ _)).trans (R.realMap_comp hR _ _)
 

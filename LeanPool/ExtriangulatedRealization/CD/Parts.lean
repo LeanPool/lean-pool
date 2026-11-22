@@ -122,21 +122,6 @@ section SubObj
 
 variable {𝒞 : Type*} [Category.{u} 𝒞] [Preadditive 𝒞]
 
-/-- The summand of a `Mat_` object on the indices satisfying `p`. -/
-def subObj (M : Mat_ 𝒞) (p : M.ι → Bool) : Mat_ 𝒞 where
-  ι := {i : M.ι // p i}
-  X i := M.X i.1
-
-open Classical in
-/-- The inclusion of a summand. -/
-noncomputable def subIncl (M : Mat_ 𝒞) (p : M.ι → Bool) : subObj M p ⟶ M :=
-  fun i j => if h : i.1 = j then eqToHom (congrArg M.X h) else 0
-
-open Classical in
-/-- The projection onto a summand. -/
-noncomputable def subProj (M : Mat_ 𝒞) (p : M.ι → Bool) : M ⟶ subObj M p :=
-  fun i j => if h : i = j.1 then eqToHom (congrArg M.X h) else 0
-
 lemma subIncl_subProj (M : Mat_ 𝒞) (p : M.ι → Bool) :
     subIncl M p ≫ subProj M p = 𝟙 _ := by
   classical

@@ -51,8 +51,8 @@ variable [HasFiniteBiproducts 𝒞] [HasBinaryBiproducts 𝒞]
 omit [HasFiniteBiproducts 𝒞] in
 include h in
 /-- A nonzero object with scalar endomorphisms is indecomposable. -/
-lemma isIndecomposable_of_endo_scalar : IsIndecomposable X := by
-  refine ⟨fun hX => h₁ (hX.eq_of_src _ _), fun Y Z ⟨e⟩ => ?_⟩
+lemma isIndecomposable_of_endo_scalar : Indecomposable X := by
+  refine ⟨fun hX => h₁ (hX.eq_of_src _ _), fun Y Z e => ?_⟩
   let p : X ⟶ X := e.hom ≫ biprod.fst ≫ biprod.inl ≫ e.inv
   have hp : p ≫ p = p := by simp [p]
   obtain ⟨c, hc⟩ := h p

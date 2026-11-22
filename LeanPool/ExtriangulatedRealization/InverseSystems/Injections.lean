@@ -132,7 +132,7 @@ theorem example_4_2 (k : Type u) [Field k] :
   have hD : HasSurjectiveTransitions (linearize system k) :=
     linearize_hasSurjectiveTransitions _ k fun h => system_map_surjective h
   refine ⟨hD, fun h => ?_⟩
-  have hP := theoremB_necessity.{u, v', u'} k _ _ hD h
+  have hP := theoremB_necessity.{u, v', u'} k _ _ h
   exact linearize_not_projectionsSurjective _ k (fun _ hT => Omega1.bddAbove_of_countable hT)
     system_no_branch bot (system_obj_bot.1.some) hP
 

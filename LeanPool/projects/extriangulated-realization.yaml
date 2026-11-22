@@ -4,8 +4,9 @@ summary: Over every field, an Aronszajn tree gives one essentially small heredit
   Krull–Schmidt extriangulated category with enough injectives that has no fully
   faithful extriangulated embedding into a triangulated category in any universe.
   Every countable family of objects lies in an extension-closed subcategory with
-  an algebraic realization. For the inverse-system construction, surjectivity of the
-  limit projections characterizes embeddings and algebraic realizations.
+  an algebraic realization. For inverse systems of vector spaces over a field indexed
+  by a nonempty well-ordered set, with surjective transition maps, surjectivity of
+  the limit projections characterizes embeddings and algebraic realizations.
 branch: category theory
 entry_module: LeanPool.ExtriangulatedRealization
 authors:
@@ -26,10 +27,13 @@ main_results:
   informal: Constructs a single inverse system over the first uncountable ordinal whose
     extriangulated category has the stated structure and fails the limit-surjectivity test.
 - declaration: ExtriangulatedRealization.theoremB
-  informal: Surjectivity of the inverse-limit projections is equivalent to triangulated
-    embeddability and to algebraic realizability in the stated target universes.
+  informal: For an inverse system of vector spaces over a field indexed by a nonempty
+    well-ordered set, with surjective transition maps, surjectivity of the inverse-limit
+    projections is equivalent to triangulated embeddability and to algebraic realizability
+    in the stated target universes.
 - declaration: ExtriangulatedRealization.theoremB_necessity
-  informal: A triangulated embedding in arbitrary target universes forces surjectivity
+  informal: For an inverse system of vector spaces over a field indexed by a linearly
+    ordered set, a triangulated embedding in arbitrary target universes forces surjectivity
     of the inverse-limit projections, ruling out every target for the witness of Theorem A.
 tags:
 - extriangulated categories

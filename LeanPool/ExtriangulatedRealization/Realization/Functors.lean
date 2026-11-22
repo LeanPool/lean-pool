@@ -47,9 +47,6 @@ variable {k : Type u} [Field k] {I : Type u} [LinearOrder I]
 /-- The additive envelope `Q₀` of the interval category. -/
 abbrev Q₀ (k I : Type u) [Field k] [LinearOrder I] := Mat_ (IntervalCat k I)
 
-instance inducedFunctor_additive :
-    (inducedFunctor (IntervalLabel.rep k (I := I))).Additive where
-
 /-- `ι₀ : Q₀ ⥤ Rep k I`. -/
 noncomputable def ι₀ : Q₀ k I ⥤ Rep k I :=
   (inducedFunctor (IntervalLabel.rep k (I := I))).mapMat_ ⋙ Mat_.lift (𝟭 (Rep k I))

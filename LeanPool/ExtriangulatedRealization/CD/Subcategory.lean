@@ -28,9 +28,6 @@ universe u
 
 variable {k : Type u} [Field k] {I : Type u} [LinearOrder I] (D : Iᵒᵖ ⥤ ModuleCat.{u} k)
 
-/-- The objects of `C(D)` all of whose labels have their index in `J`. -/
-def labelsIn (J : Set I) : ObjectProperty (CD D) := fun M => ∀ i, labelIn J (M.X i)
-
 omit [Field k] [LinearOrder I] in
 lemma mem_of_mem_labelIdx {J : Set I} {l : Option (IntervalLabel I)} (hl : labelIn J l) {e : I}
     (he : e ∈ labelIdx l) : e ∈ J := by
@@ -74,15 +71,9 @@ lemma labelsIn_of_iso {J : Set I} {M N : CD D} (e : M ≅ N) (hN : labelsIn D J 
     labelsIn D J M :=
   labelsIn_of_retract D e.hom e.inv e.hom_inv_id hN
 
-/-- `C_J` is the full subcategory of objects all of whose labels lie in `J`. -/
-lemma subcatJ_eq_labelsIn (J : Set I) : subcatJ D J = labelsIn D J := by
-  ext M
-  constructor
-  · rintro ⟨N, hN, ⟨e⟩⟩
-    exact labelsIn_of_iso D e hN
-  · intro h
-    exact ObjectProperty.le_isoClosure _ _ h
-
+instance subcatJ_isClosedUnderIsomorphisms (J : Set I) :
+    (subcatJ D J).IsClosedUnderIsomorphisms where
+  of_iso e h := labelsIn_of_iso D e.symm h
 
 /-- If countable sets of indices are bounded, every countable family of objects has its labels in
 some initial segment `Iic m`. -/

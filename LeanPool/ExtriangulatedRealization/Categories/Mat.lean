@@ -8,7 +8,7 @@ module
 public import Mathlib.CategoryTheory.Preadditive.Mat
 
 /-!
-# Isomorphisms between objects of the additive envelope `Mat_ 𝒞`
+# Summands and isomorphisms in the additive envelope `Mat_ 𝒞`
 
 An object of `Mat_ 𝒞` is the direct sum of its entries, so it is determined up to isomorphism by
 its entries up to reindexing: it is isomorphic to its reindexing along a bijection, to any
@@ -23,6 +23,21 @@ namespace ExtriangulatedRealization
 open CategoryTheory Limits
 
 variable {𝒞 : Type*} [Category 𝒞] [Preadditive 𝒞]
+
+/-- The summand of a `Mat_` object on the indices satisfying `p`. -/
+def subObj (M : Mat_ 𝒞) (p : M.ι → Bool) : Mat_ 𝒞 where
+  ι := {i : M.ι // p i}
+  X i := M.X i.1
+
+open Classical in
+/-- The inclusion of a summand. -/
+noncomputable def subIncl (M : Mat_ 𝒞) (p : M.ι → Bool) : subObj M p ⟶ M :=
+  fun i j => if h : i.1 = j then eqToHom (congrArg M.X h) else 0
+
+open Classical in
+/-- The projection onto a summand. -/
+noncomputable def subProj (M : Mat_ 𝒞) (p : M.ι → Bool) : M ⟶ subObj M p :=
+  fun i j => if h : i = j.1 then eqToHom (congrArg M.X h) else 0
 
 /-- Objects of `Mat_ 𝒞` with entrywise equal entries along a bijection of indices are
 isomorphic. -/

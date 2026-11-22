@@ -137,10 +137,4 @@ theorem cdData_isExtriangulated (hD : HasSurjectiveTransitions D) :
     exact ⟨E.obj, h''.hom, d.hom, e.hom, δ'', h₁, congrArg InducedCategory.Hom.hom h₂,
       congrArg InducedCategory.Hom.hom h₃, h₄, h₅, h₆⟩
 
-omit [WellFoundedLT I] [Nonempty I] in
-instance subcatJ_isClosedUnderIsomorphisms (J : Set I) :
-    (subcatJ D J).IsClosedUnderIsomorphisms := by
-  unfold subcatJ
-  infer_instance
-
 end ExtriangulatedRealization

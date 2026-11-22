@@ -72,7 +72,7 @@ lemma rank_hom_le_aleph0 (hD : ∀ i, Module.rank k (D.obj (op i)) ≤ ℵ₀) (
 /-! ### Indecomposables -/
 
 /-- Every indecomposable of `C(D)` has endomorphism ring `k`. -/
-lemma existsUnique_smul_of_isIndecomposable {X : CD D} (hX : IsIndecomposable X) (f : X ⟶ X) :
+lemma existsUnique_smul_of_isIndecomposable {X : CD D} (hX : Indecomposable X) (f : X ⟶ X) :
     ∃! c : k, f = c • 𝟙 X := by
   obtain ⟨l, ⟨e⟩⟩ := exists_iso_single_of_isIndecomposable D hX
   have h : ∀ g : X ⟶ X, ∃ c : k, g = c • 𝟙 X := fun g => by
@@ -84,8 +84,8 @@ lemma existsUnique_smul_of_isIndecomposable {X : CD D} (hX : IsIndecomposable X)
   exact existsUnique_smul_id (fun h0 => hX.1 ((IsZero.iff_id_eq_zero X).mpr h0)) h f
 
 /-- Extension spaces between indecomposables have dimension at most one. -/
-lemma rank_ext_le_one_of_isIndecomposable {A C : CD D} (hA : IsIndecomposable A)
-    (hC : IsIndecomposable C) : Module.rank k ((cdData D).Ext C A) ≤ 1 := by
+lemma rank_ext_le_one_of_isIndecomposable {A C : CD D} (hA : Indecomposable A)
+    (hC : Indecomposable C) : Module.rank k ((cdData D).Ext C A) ≤ 1 := by
   classical
   obtain ⟨a, ⟨eA⟩⟩ := exists_iso_single_of_isIndecomposable D hA
   obtain ⟨c, ⟨eC⟩⟩ := exists_iso_single_of_isIndecomposable D hC

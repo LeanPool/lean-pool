@@ -9,10 +9,12 @@ public import LeanPool.ExtriangulatedRealization.Realization.Realizations
 public import LeanPool.ExtriangulatedRealization.Complexes.Frobenius
 
 /-!
-# Proposition 2.3: `C_J` has an algebraic realization
+# The algebraic-realization consequence of Proposition 2.3
 
 Given `W` mapping compatibly and surjectively onto the `D_i`, `i ∈ J`, the realization functor
 `C_J ⥤ K(Q)` with the maps `η` is a triangulated realization, and `K(Q)` is algebraic.
+Here `K(Q)` is the homotopy category of all cochain complexes. The paper constructs its
+realization in the bounded homotopy category.
 -/
 
 @[expose] public section
@@ -48,8 +50,10 @@ lemma extriangulatedFunctor_isTriangulatedRealization :
 
 end RealizationData
 
-/-- **Proposition 2.3**, the realization: compatible surjections `W → D_i`, `i ∈ J`, give an
-algebraic realization of `C_J`. -/
+/-- The algebraic-realization consequence of Proposition 2.3: compatible surjections
+`W → D_i`, `i ∈ J`, give an algebraic realization of `C_J` in the homotopy category of all
+cochain complexes. The cited proposition gives a realization in the bounded homotopy
+category. -/
 theorem hasAlgebraicRealization_subcatJ {k : Type u} [Field k] {I : Type u} [LinearOrder I]
     (D : Iᵒᵖ ⥤ ModuleCat.{u} k) (J : Set I) (W : ModuleCat.{u} k)
     (q : ∀ i ∈ J, W ⟶ D.obj (op i)) (hsurj : ∀ i (hi : i ∈ J), Function.Surjective (q i hi).hom)
@@ -58,7 +62,6 @@ theorem hasAlgebraicRealization_subcatJ {k : Type u} [Field k] {I : Type u} [Lin
     ((cdData D).restrict (subcatJ D J)).HasAlgebraicRealization.{_, _, _, _, u, max 1 u} := by
   let R : RealizationData D J := ⟨W, q⟩
   have hR : R.IsCompatible := ⟨hsurj, hcomm⟩
-  rw [subcatJ_eq_labelsIn]
   exact ⟨HomotopyCategory R.Q (ComplexShape.up ℤ), inferInstance, inferInstance, inferInstance,
     inferInstance, inferInstance, inferInstance, inferInstance,
     isAlgebraicTriangulated_homotopyCategory R.Q, R.extriangulatedFunctor hR,

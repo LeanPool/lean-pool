@@ -12,7 +12,7 @@ public import LeanPool.ExtriangulatedRealization.CD.Subcategory
 # `CDJ` is a model of `C_J`
 
 The inclusion of the intervals with index in `J` induces a fully faithful functor
-`CDJ J D ⥤ CD D` whose essential image is `labelsIn D J = subcatJ D J`, hence an equivalence
+`CDJ J D ⥤ CD D` whose essential image is `subcatJ D J`, hence an equivalence
 `CDJ J D ≌ (labelsIn D J).FullSubcategory`.
 -/
 
