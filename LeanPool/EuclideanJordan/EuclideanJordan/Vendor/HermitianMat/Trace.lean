@@ -101,17 +101,11 @@ theorem trace_kronecker [FaithfulSMul R α] : (A ⊗ₖ B).trace = A.trace * B.t
 
 end starring
 
-section trivialstar
-
-variable [Star α] [TrivialStar α] [CommSemiring α]
-
 /-- For real Hermitian matrices, `HermitianMat.trace` is `Matrix.trace`. -/
 @[simp]
 theorem trace_eq_trace_trivial (A : HermitianMat n ℝ) : A.trace = A.mat.trace := by
   rw [← trace_eq_trace]
   rfl
-
-end trivialstar
 
 section RCLike
 
