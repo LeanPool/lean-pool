@@ -338,6 +338,34 @@ theorem map_specHom {S' : Type*} [Ring S'] [Algebra A S'] (ι : S →ₐ[A] S') 
 
 end Substitutions
 
+/-- The dilation lemma for an abstract `IsAwayMap` `ι : S → S'`: for a unit `θ` of `S'[X]`
+there is `k` such that whenever `g₁ − g₂ ∈ fᵏA`, some unit `ψ` of `S[X]` with `ψ(0) = 1`
+satisfies `ψ · θ(g₂X) = θ(g₁X)` in `S'[X]`. -/
+theorem IsAwayMap.exists_unit_lift_dilation {f : A} {S S' : Type*} [Ring S] [Ring S']
+    [Algebra A S] [Algebra A S'] {ι : S →ₐ[A] S'} (h : IsAwayMap f ι) (θ : S'[X]ˣ) :
+    ∃ k : ℕ, ∀ g₁ g₂ : A, g₁ - g₂ ∈ Ideal.span {f ^ k} →
+      ∃ ψ : S[X]ˣ, (ψ : S[X]).coeff 0 = 1 ∧
+        (ψ : S[X]).map (ι : S →+* S') * dilate g₂ (θ : S'[X]) = dilate g₁ (θ : S'[X]) := by
+  have hι := h.polynomial
+  let u : S'[X][X]ˣ := Units.map (shiftHom S' : S'[X] →* S'[X][X]) θ *
+    Units.map ((C : S'[X] →+* S'[X][X]) : S'[X] →* S'[X][X]) θ⁻¹
+  have hu : (u : S'[X][X]).coeff 0 = 1 := by
+    simp only [u, Units.val_mul, Units.coe_map, MonoidHom.coe_ofClass, mul_coeff_zero,
+      coeff_zero_shiftHom, coeff_C_zero, Units.mul_inv]
+  obtain ⟨s, v, hv0, hv⟩ := exists_unit_lift_dilate hι u hu
+  refine ⟨s, fun g₁ g₂ hg => ?_⟩
+  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp hg
+  refine ⟨Units.map (specHom S g₂ c : S[X][X] →* S[X]) v, ?_, ?_⟩
+  · simp [coeff_zero_specHom, hv0]
+  · have h1 := map_specHom S ι g₂ c v
+    simp only [Units.coe_map, MonoidHom.coe_ofClass]
+    rw [h1, hv]
+    simp only [u, Units.val_mul, Units.coe_map, MonoidHom.coe_ofClass, map_mul, dilate_C,
+      specHom_C]
+    rw [mul_assoc, ← map_mul, Units.inv_mul, map_one, mul_one]
+    exact (specHom_dilate_shiftHom _ g₂ c (f ^ s) (θ : S'[X])).trans
+      (by rw [hc, add_sub_cancel])
+
 /-- **3.2.** Quillen's dilation lemma: let `R` be an `A`-algebra, not necessarily commutative,
 `f ∈ A`, and `θ` a unit of `R_f[X]`, where `R_f = A_f ⊗[A] R`. Then there is `k` such that
 whenever `g₁ − g₂ ∈ fᵏA`, some unit `ψ` of `R[X]` with `ψ(0) = 1` has image `θ(g₁X) θ(g₂X)⁻¹`
@@ -349,28 +377,7 @@ theorem exists_unit_lift_dilation (R : Type w) [Ring R] [Algebra A R] (f : A)
       ∃ ψ : R[X]ˣ, (ψ : R[X]).coeff 0 = 1 ∧
         (ψ : R[X]).map (Algebra.TensorProduct.includeRight : R →ₐ[A] Localization.Away f ⊗[A] R) *
             (θ : (Localization.Away f ⊗[A] R)[X]).eval₂ C (g₂ • X) =
-          (θ : (Localization.Away f ⊗[A] R)[X]).eval₂ C (g₁ • X) := by
-  set Rf := Localization.Away f ⊗[A] R
-  set ι := (Algebra.TensorProduct.includeRight : R →ₐ[A] Rf)
-  have hι := (isAwayMap_includeRight R f).polynomial
-  let u : Rf[X][X]ˣ := Units.map (shiftHom Rf : Rf[X] →* Rf[X][X]) θ *
-    Units.map ((C : Rf[X] →+* Rf[X][X]) : Rf[X] →* Rf[X][X]) θ⁻¹
-  have hu : (u : Rf[X][X]).coeff 0 = 1 := by
-    simp only [u, Units.val_mul, Units.coe_map, MonoidHom.coe_ofClass, mul_coeff_zero,
-      coeff_zero_shiftHom, coeff_C_zero, Units.mul_inv]
-  obtain ⟨s, v, hv0, hv⟩ := exists_unit_lift_dilate hι u hu
-  refine ⟨s, fun g₁ g₂ hg => ?_⟩
-  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp hg
-  refine ⟨Units.map (specHom R g₂ c : R[X][X] →* R[X]) v, ?_, ?_⟩
-  · simp [coeff_zero_specHom, hv0]
-  · have h1 := map_specHom R ι g₂ c v
-    simp only [Units.coe_map, MonoidHom.coe_ofClass]
-    rw [h1, hv]
-    simp only [u, Units.val_mul, Units.coe_map, MonoidHom.coe_ofClass, map_mul, dilate_C,
-      specHom_C]
-    rw [mul_assoc, ← dilate_apply, ← dilate_apply, ← map_mul, Units.inv_mul, map_one, mul_one]
-    exact (specHom_dilate_shiftHom _ g₂ c (f ^ s) (θ : (Localization.Away f ⊗[A] R)[X])).trans
-      (by rw [hc, add_sub_cancel])
+          (θ : (Localization.Away f ⊗[A] R)[X]).eval₂ C (g₁ • X) :=
+  (isAwayMap_includeRight R f).exists_unit_lift_dilation θ
 
 end LeanPool.QuillenSuslin
-

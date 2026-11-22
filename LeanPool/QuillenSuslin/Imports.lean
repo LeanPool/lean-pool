@@ -8,7 +8,15 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.QuillenSuslin
 public import LeanPool.QuillenSuslin.Dilation
+public import LeanPool.QuillenSuslin.EndPolynomial
 public import LeanPool.QuillenSuslin.Extended
+public import LeanPool.QuillenSuslin.Fibre
 public import LeanPool.QuillenSuslin.Glue
+public import LeanPool.QuillenSuslin.GlueMaps
 public import LeanPool.QuillenSuslin.MonicLocalization
+public import LeanPool.QuillenSuslin.PatchingCore
+public import LeanPool.QuillenSuslin.PatchingTwo
+public import LeanPool.QuillenSuslin.QuillenIdeal
 public import LeanPool.QuillenSuslin.QuillenLemmaTwo
+public import LeanPool.QuillenSuslin.QuillenPatching
+public import LeanPool.QuillenSuslin.Transition

@@ -128,6 +128,27 @@ theorem isExtendedFrom_iff_evalZero [Algebra A[X] A] (hA : algebraMap A[X] A = e
     have : Small.{v} (A ⊗[A[X]] M) := small_of_surjective (surjective_tmul_evalZero hA M)
     exact .of_linearEquiv_tensor e
 
+/-- An `A[X]`-module isomorphic to `A[X] ⊗[A] N` for an `A`-module `N` in any universe is
+extended from `A`. -/
+theorem IsExtendedFrom.of_polynomial_linearEquiv {M : Type v} [AddCommGroup M] [Module A[X] M]
+    {N : Type*} [AddCommGroup N] [Module A N] (e : M ≃ₗ[A[X]] A[X] ⊗[A] N) :
+    IsExtendedFrom A A[X] M := by
+  let _ : Algebra A[X] A := (evalRingHom 0).toAlgebra
+  have hA : algebraMap A[X] A = evalRingHom 0 := rfl
+  have := isScalarTower_evalZero hA
+  let φ : (A ⊗[A[X]] M) ≃ₗ[A] N :=
+    AlgebraTensorModule.congr (LinearEquiv.refl A A) e ≪≫ₗ
+      AlgebraTensorModule.cancelBaseChange A A[X] A A N ≪≫ₗ TensorProduct.lid A N
+  exact (isExtendedFrom_iff_evalZero hA M).mpr
+    ⟨e ≪≫ₗ AlgebraTensorModule.congr (LinearEquiv.refl A[X] A[X]) φ.symm⟩
+
+/-- Being extended over a polynomial ring transfers along linear isomorphisms, in any universe. -/
+theorem IsExtendedFrom.of_polynomial_equiv {M : Type v} [AddCommGroup M] [Module A[X] M]
+    {M' : Type*} [AddCommGroup M'] [Module A[X] M'] (h : IsExtendedFrom A A[X] M)
+    (e : M' ≃ₗ[A[X]] M) : IsExtendedFrom A A[X] M' := by
+  obtain ⟨N, _, _, ⟨f⟩⟩ := h
+  exact .of_polynomial_linearEquiv (e ≪≫ₗ f)
+
 end EvalZero
 
 section BaseChange
