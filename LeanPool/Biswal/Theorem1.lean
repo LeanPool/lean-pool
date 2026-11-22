@@ -247,16 +247,6 @@ lemma genFun_as_rational_fraction_with_pos_numerator
     rw [Polynomial.map_mul, Polynomial.eval_mul]
     exact mul_pos (h_pos_j (m - n % m - 1) (by omega)) (second_factor_pos m ξ hm h_parts ρ h_pos_j)
 
-lemma coeff_rational_fraction_eq_proper_part
-    (A D : Polynomial ℚ) (_hD : PowerSeries.constantCoeff (↑D : PowerSeries ℚ) ≠ 0) :
-    ∃ (S R : Polynomial ℚ) (N : ℕ),
-      (↑A : PowerSeries ℚ) * ((↑D : PowerSeries ℚ))⁻¹ =
-        ↑S + ↑R * ((↑D : PowerSeries ℚ))⁻¹ ∧
-      ∀ r, N < r →
-        (PowerSeries.coeff r) ((↑A : PowerSeries ℚ) * ((↑D : PowerSeries ℚ))⁻¹) =
-        (PowerSeries.coeff r) ((↑R : PowerSeries ℚ) * ((↑D : PowerSeries ℚ))⁻¹) := by
-  exact ⟨0, A, 0, by simp, fun r _ => by simp_all⟩
-
 /-! ## Trigonometric and Chebyshev Lemmas -/
 
 private lemma angle_pos_lt_pi (m : ℕ) (hm : 2 ≤ m) (j : ℕ) (hj : j < m) :
@@ -339,20 +329,6 @@ lemma polyP_roots_positive (m : ℕ) (hm : 2 ≤ m) :
   · intro j hj
     rw [polyP_map (algebraMap ℚ ℝ), polyP_eval_eq_chebyshev_S j y₀ hy₀_ne]
     exact mul_pos (by positivity) (chebyshev_S_eval_pos_at_cos m hm j hj)
-
-lemma remainder_positive_at_roots
-    (A D S R : Polynomial ℚ) (hdiv : (↑A : PowerSeries ℚ) * ((↑D : PowerSeries ℚ))⁻¹ =
-        ↑S + ↑R * ((↑D : PowerSeries ℚ))⁻¹)
-    (hD_ne : PowerSeries.constantCoeff (↑D : PowerSeries ℚ) ≠ 0)
-    (ρ : ℝ) (hρ : Polynomial.eval ρ (Polynomial.map (algebraMap ℚ ℝ) D) = 0)
-    (hA : 0 < Polynomial.eval ρ (Polynomial.map (algebraMap ℚ ℝ) A)) :
-    0 < Polynomial.eval ρ (Polynomial.map (algebraMap ℚ ℝ) R) := by
-  have h_main : (↑A : PowerSeries ℚ) = (S * D + R : Polynomial ℚ) := by
-    have key := congr_arg (· * (↑D : PowerSeries ℚ)) hdiv
-    simp only [add_mul, mul_assoc, PowerSeries.inv_mul_cancel _ hD_ne, mul_one] at key
-    simp_all
-  have h_poly : A = S * D + R := by exact_mod_cast h_main
-  simp_all
 
 lemma pos_coeff_transfer_R_to_Q
     (f : PowerSeries ℚ) (N : ℕ) (h : ∀ r, N < r →
@@ -2271,35 +2247,9 @@ theorem genFun_coeff_eventually_pos
     ∃ N, ∀ r, N < r → 0 < genFunCoeff ℚ m n r ξ := by
   obtain ⟨A, k, hk, hgenFun, hA_pos_at_roots⟩ :=
     genFun_as_rational_fraction_with_pos_numerator m n ξ hm h_parts h_t
-  have hpow_coe : (↑(polyP ℚ m) : PowerSeries ℚ) ^ k =
-      ↑(polyP ℚ m ^ k) := by
-    rw [Polynomial.coe_pow]
-  have hD_ne : PowerSeries.constantCoeff
-      (↑(polyP ℚ m ^ k) : PowerSeries ℚ) ≠ 0 := by
-    rw [← hpow_coe]
-    exact polyP_coe_pow_constantCoeff_ne_zero ℚ m k
-  have hgenFun' : genFun ℚ m n ξ = ↑A *
-      (↑(polyP ℚ m ^ k) : PowerSeries ℚ)⁻¹ := by
-    rw [hgenFun, hpow_coe]
-  obtain ⟨S, R, N₁, hdiv, hcoeff_eq⟩ :=
-    coeff_rational_fraction_eq_proper_part A (polyP ℚ m ^ k) hD_ne
-  have hR_pos : ∀ (ρ : ℝ), 0 < ρ →
-      Polynomial.eval ρ (Polynomial.map (algebraMap ℚ ℝ) (polyP ℚ m)) = 0 →
-      (∀ j : ℕ, j < m →
-        0 < Polynomial.eval ρ
-          (Polynomial.map (algebraMap ℚ ℝ) (polyP ℚ j))) →
-      0 < Polynomial.eval ρ (Polynomial.map (algebraMap ℚ ℝ) R) := by
-    intro ρ hρ_pos hρ_root hρ_other
-    have hA_pos : 0 < Polynomial.eval ρ (Polynomial.map (algebraMap ℚ ℝ) A) :=
-      hA_pos_at_roots ρ hρ_pos hρ_root hρ_other
-    exact remainder_positive_at_roots A (polyP ℚ m ^ k) S R hdiv hD_ne ρ
-      (by simp [Polynomial.map_pow, Polynomial.eval_pow, hρ_root, zero_pow hk.ne'])
-      hA_pos
-  obtain ⟨N₂, hN₂⟩ := proper_fraction_coeff_eventually_pos m hm R k hk hR_pos
-  refine ⟨max N₁ N₂, fun r hr => ?_⟩
-  simp only [genFunCoeff, hgenFun']
-  rw [hcoeff_eq r (by omega)]
-  rw [← hpow_coe] at hcoeff_eq ⊢
-  exact hN₂ r (by omega)
+  obtain ⟨N, hN⟩ := proper_fraction_coeff_eventually_pos m hm A k hk hA_pos_at_roots
+  refine ⟨N, fun r hr => ?_⟩
+  simp only [genFunCoeff, hgenFun]
+  exact hN r hr
 
 end Biswal.Theorem1
