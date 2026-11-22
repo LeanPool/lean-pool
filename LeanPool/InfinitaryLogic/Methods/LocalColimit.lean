@@ -35,8 +35,9 @@ the staged families.
   `localSkolemWitnessFormula_mem_ΓlocalColim` (the `skolemNeed` witness body of every family
   universal lands in `ΓlocalColim`).
 
-Next chunks (not here): the local atom/deForm seed and its countability, then the `EMContext`
-re-base over `localColim`.
+The countable local atom/deForm family `ΓEMlocal` built on this colimit is in `LocalEMFamily.lean`.
+The `EMContext` re-base over `localColim` is the structure `LocalEMContext` (`LocalEMContext.lean`),
+instantiated by `schemaTermLocalEMContext` (`SchemaLocalEMSource.lean`).
 -/
 
 @[expose] public section
