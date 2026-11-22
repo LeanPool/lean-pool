@@ -25,6 +25,11 @@ summary: The Quillen–Suslin theorem and the commutative algebra behind it, on 
   are isomorphic. The Quillen–Suslin theorem follows by induction on n; over a principal ideal
   domain k, every finitely generated projective k[X₁, …, Xₙ]-module is free. Over a Dedekind
   domain B, every finitely generated projective B[X₁, …, Xₙ]-module is extended from B.
+  Suslin's completion theorem follows; over a principal ideal domain k, every unimodular vector
+  over k[X₁, …, Xₙ] is the first column of an invertible matrix. Little Horrocks' global theorem
+  holds too; a unimodular vector f over A[X] whose head coefficients, for formal degrees bounding
+  the degrees of its entries, generate the unit ideal of A is sent to f(0) by an invertible
+  matrix over A[X].
 branch: commutative algebra
 entry_module: LeanPool.QuillenSuslin
 authors:
@@ -52,6 +57,8 @@ main_declarations:
 - LeanPool.QuillenSuslin.free_of_free_monicLocalization
 - LeanPool.QuillenSuslin.free_mvPolynomial
 - LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial
+- LeanPool.QuillenSuslin.exists_generalLinearGroup_col_eq_of_isUnimodular
+- LeanPool.QuillenSuslin.exists_mulVec_eq_eval_zero
 main_results:
 - declaration: LeanPool.QuillenSuslin.isPrincipalIdealRing_monicLocalization
   informal: If k is a principal ideal domain, then the localisation k⟨X⟩ of k[X] at the monic
@@ -145,6 +152,25 @@ main_results:
 - declaration: LeanPool.QuillenSuslin.eq_top_of_monic_mem_of_map_eq_one
   informal: Over a local ring, an ideal of A[X] containing a monic polynomial and an element congruent
     to 1 modulo the maximal ideal is the unit ideal.
+- declaration: LeanPool.QuillenSuslin.exists_generalLinearGroup_col_eq_of_isUnimodular
+  informal: Suslin's completion theorem. Over a principal ideal domain k, every unimodular vector
+    v over k[X₁, …, Xₙ] is the first column of an invertible matrix.
+- declaration: LeanPool.QuillenSuslin.exists_mulVec_eq_eval_zero
+  informal: Little Horrocks' global theorem. If f ∈ A[X]ⁿ is unimodular, deg fᵢ ≤ dᵢ and the
+    coefficients of the fᵢ in degree dᵢ generate the unit ideal of A, then g f = f(0) for some
+    invertible matrix g over A[X].
+- declaration: LeanPool.QuillenSuslin.exists_generalLinearGroup_col_eq_of_free_ker
+  informal: Over a nontrivial commutative ring, if a linear form φ on Rᵐ⁺¹ has φ(v) = 1 and a
+    free kernel, then v is the first column of an invertible matrix.
+- declaration: LeanPool.QuillenSuslin.exists_linearEquiv_apply_eq_of_kerEquiv
+  informal: If linear forms φ, φ' on M satisfy φ(v) = 1, φ'(v') = 1 and have isomorphic kernels,
+    then some automorphism of M sends v to v'.
+- declaration: LeanPool.QuillenSuslin.kerBaseChange
+  informal: For a linear form ψ on Rⁿ taking the value 1 at some vector and an R-algebra S, the
+    base change S ⊗ ker ψ is isomorphic to the kernel of the induced linear form on Sⁿ.
+- declaration: LeanPool.QuillenSuslin.isExtendedFrom_ker_dotForm
+  informal: If ψ · f = 1 in A[X] and the head coefficients of f generate the unit ideal, then the
+    kernel of ψ on A[X]ⁿ is extended from A.
 tags:
 - projective-modules
 - polynomial-rings

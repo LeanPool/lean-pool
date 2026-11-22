@@ -19,6 +19,7 @@ public import LeanPool.QuillenSuslin.Horrocks
 public import LeanPool.QuillenSuslin.HorrocksLattice
 public import LeanPool.QuillenSuslin.HorrocksLocal
 public import LeanPool.QuillenSuslin.HorrocksRankOne
+public import LeanPool.QuillenSuslin.LittleHorrocks
 public import LeanPool.QuillenSuslin.MonicLocalization
 public import LeanPool.QuillenSuslin.MvTransport
 public import LeanPool.QuillenSuslin.PatchingCore
@@ -29,3 +30,4 @@ public import LeanPool.QuillenSuslin.QuillenLemmaTwo
 public import LeanPool.QuillenSuslin.QuillenPatching
 public import LeanPool.QuillenSuslin.QuillenPatchingMv
 public import LeanPool.QuillenSuslin.Transition
+public import LeanPool.QuillenSuslin.Unimodular
