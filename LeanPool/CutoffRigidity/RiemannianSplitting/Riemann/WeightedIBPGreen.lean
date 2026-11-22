@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerMain
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPDensity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegular
 public import TauCeti.Geometry.Manifold.Riemannian.VolumeDensity.Volume
 import TauCeti.Geometry.Manifold.Riemannian.Basic
@@ -86,11 +87,7 @@ private theorem weightedVolume_restrict_chart [LindelofSpace M] {μ : Measure M}
   simp only [Measure.restrict_apply hs]
   rw [withDensity_apply _ (hs.inter e.open_source.measurableSet), hcov, ← hmap]
   refine setLIntegral_congr_fun hA fun z _ ↦ ?_
-  have hJacobian : riemannianJacobian (I := 𝓘(ℝ, F)) b.toBasis e.symm z =
-      chartVolumeDensity F α z := by
-    rw [riemannianJacobian_eq_sqrt_det_gram]
-    rfl
-  rw [hJacobian, ENNReal.ofReal_mul (Real.exp_nonneg _), mul_comm]
+  rw [← chartVolumeDensity_eq_jacobian F α z, ENNReal.ofReal_mul (Real.exp_nonneg _), mul_comm]
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)] in
 /-- The chart definition is the exponential density against canonical Riemannian volume. -/

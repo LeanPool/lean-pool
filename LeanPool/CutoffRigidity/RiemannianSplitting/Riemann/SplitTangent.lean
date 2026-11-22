@@ -27,12 +27,6 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] {k : ℕ} (fr : Frame F M k)
 
-theorem inner_mfderiv_flow (i : Fin k) (x : M) (u v : TangentSpace 𝓘(ℝ, F) x) (t : ℝ) :
-    inner ℝ (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x u)
-      (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x v) = inner ℝ u v :=
-  CutoffRigidity.inner_mfderiv_completeBoundedFlow_eq_of_parallel (fr.contMDiff_X_one i)
-    (fr.enorm_X_le i) (fr.parallel i) x u v t
-
 theorem contMDiff_comp_slice (L : List (Fin k)) (t : EuclideanSpace ℝ (Fin k)) :
     ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, F) ∞ (fun y : M => fr.comp L t y) :=
   (fr.contMDiff_comp L).comp (contMDiff_const.prodMk contMDiff_id)

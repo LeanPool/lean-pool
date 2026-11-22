@@ -9,9 +9,10 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitFlowGlobal
-public import LeanPool.CutoffRigidity.RiemannianSplitting.ParallelFlowIsometry
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteFlowLevelProduct
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegularChart
+import TauCeti.Geometry.Manifold.Flow.Complete
+import TauCeti.Geometry.Manifold.Riemannian.Killing.Flow
 
 /-! # Orthonormal parallel frames and their flows
 
@@ -57,6 +58,7 @@ omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 
 theorem inner_mgrad (f : M → ℝ) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     inner ℝ (mgrad F f x) v = mvfderiv 𝓘(ℝ, F) f x v := by
   simp [mgrad]
+  rfl
 
 /-- The unit parallel gradient field. -/
 noncomputable def X (i : Fin k) : (x : M) → TangentSpace 𝓘(ℝ, F) x := mgrad F (fr.s i)
@@ -117,10 +119,43 @@ theorem contMDiff_flow_slice (i : Fin k) (t : ℝ) :
     ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, F) ∞ (fun x : M => fr.flow i x t) :=
   (fr.contMDiff_flow_joint i).comp (contMDiff_id.prodMk contMDiff_const)
 
+private theorem flow_slice_eq_flowOf (i : Fin k) (t : ℝ) :
+    (fun y ↦ fr.flow i y t) = TauCeti.flowOf (fr.X i) t := by
+  funext y
+  have hcurve := CutoffRigidity.completeBoundedFlow_isMIntegralCurve
+    (fr.contMDiff_X_one i) (fr.enorm_X_le i) y
+  have h := TauCeti.flowOf_eq_of_isMIntegralCurve (fr.contMDiff_X_one i) hcurve t
+  simpa only [flow, CutoffRigidity.completeBoundedFlow_zero] using h.symm
+
+/-- The differential of the frame flow preserves the Riemannian pairing. -/
+theorem inner_mfderiv_flow (i : Fin k) (x : M) (u v : TangentSpace 𝓘(ℝ, F) x) (t : ℝ) :
+    inner ℝ (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x u)
+      (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x v) = inner ℝ u v := by
+  let I := 𝓘(ℝ, F)
+  have hK : TauCeti.Manifold.IsKillingField I (fr.X i) := by
+    have hcompatible := CovariantDerivative.isMetricCompatible_leviCivitaConnection (M := M) I
+    apply (hcompatible.isKillingField_iff
+      (CovariantDerivative.torsion_leviCivitaConnection_eq_zero I)).2
+    refine ⟨fr.contMDiff_X i, fun y w z ↦ ?_⟩
+    change inner ℝ (CovariantDerivative.leviCivitaConnection I M (mgrad F (fr.s i)) y w) z =
+      -inner ℝ w (CovariantDerivative.leviCivitaConnection I M (mgrad F (fr.s i)) y z)
+    have hparallel : CovariantDerivative.leviCivitaConnection I M (mgrad F (fr.s i)) y = 0 :=
+      fr.parallel i y
+    rw [hparallel]
+    simp
+  have hcomplete := TauCeti.isCompleteVectorField_of_forall_exists_isMIntegralCurve
+    (CutoffRigidity.exists_global_integralCurve_of_bounded (fr.contMDiff_X_one i) (fr.enorm_X_le i))
+  let preserves (slice : M → M) : Prop :=
+    inner ℝ (mfderiv I I slice x u) (mfderiv I I slice x v) = inner ℝ u v
+  change preserves (fun y ↦ fr.flow i y t)
+  rw [fr.flow_slice_eq_flowOf i t]
+  exact hK.inner_mfderiv_flowOf (hcomplete.mem_flowDomain t x) u v
+
 theorem norm_mfderiv_flow (i : Fin k) (x : M) (u : TangentSpace 𝓘(ℝ, F) x) (t : ℝ) :
-    ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x u‖ = ‖u‖ :=
-  CutoffRigidity.norm_mfderiv_completeBoundedFlow_eq_of_parallel (fr.contMDiff_X_one i)
-    (fr.enorm_X_le i) (fr.parallel i) x u t
+    ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x u‖ = ‖u‖ := by
+  have h := fr.inner_mfderiv_flow i x u u t
+  simpa only [real_inner_self_eq_norm_sq, Real.sqrt_sq_eq_abs, abs_norm] using
+    congrArg Real.sqrt h
 
 /-- Differentials of `sⱼ` are invariant under the flows of the frame. -/
 theorem mvfderiv_s_flow (j i : Fin k) (x : M) (t : ℝ) (u : TangentSpace 𝓘(ℝ, F) x) :
