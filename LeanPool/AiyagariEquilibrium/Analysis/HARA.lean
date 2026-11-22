@@ -40,14 +40,13 @@ not have is Light's condition, since relative risk aversion `α c` is unbounded
 step needs a different aggregator, the soft minimum of `Analysis.SoftMin` rather than a power
 mean; see `Models.IncomeFluctuationCARA`.
 
-The shift `a` is the subsistence level of Stone and Geary. `a = 0` is CRRA exactly.
+A negative shift gives the Stone–Geary subsistence threshold `-a`. A zero shift recovers CRRA.
 
 ## The result that matters
 
-`relativeRiskAversionLeOne_haraUtility`: HARA with a NONNEGATIVE shift and `γ ≤ 1` satisfies
-Light's condition. Relative risk aversion of the shifted family is `γ c / (a + c)`, which for
-`a ≥ 0` is at most `γ`; a negative shift (genuine subsistence) pushes it above `γ` and can break
-the condition however small `γ` is, so the sign of the shift is not a technicality.
+For `0 < γ ≤ 1` and `0 ≤ a`, `relativeRiskAversionLeOne_haraUtility` proves Light's condition.
+On the domain `0 < c` and `0 < a + c`, the informal relative risk aversion formula is
+`γ c / (a + c)`. For `γ > 0`, this is at most `γ` when `a ≥ 0` and exceeds `γ` when `a < 0`.
 
 The proof is derivative-free in the sense that matters: it factors
 
@@ -103,7 +102,7 @@ theorem mul_rpow_neg_eq {γ a c : ℝ} (hc : 0 < c) (hac : 0 < a + c) :
   rw [← Real.rpow_add hc, show (1 : ℝ) - γ + γ = 1 from by ring, Real.rpow_one]
   field_simp
 
-/-- **HARA with a nonnegative shift and `γ ≤ 1` satisfies Light's condition.** -/
+/-- **HARA with a nonnegative shift and `0 < γ ≤ 1` satisfies Light's condition.** -/
 theorem relativeRiskAversionLeOne_haraUtility {γ a : ℝ} (hγ0 : 0 < γ) (hγ1 : γ ≤ 1)
     (ha : 0 ≤ a) : RelativeRiskAversionLeOne (haraUtility γ a) := by
   refine relativeRiskAversionLeOne_of_monotoneOn

@@ -308,8 +308,8 @@ noncomputable def euclideanActionReal (g : E) (f : OSforGFF.TestFunction) : OSfo
     (hg := euclidean_pullback_temperate_growth g)
     (hg_upper := euclidean_pullback_polynomial_bounds g) f
 
-/-- The measure preservation result enables both test function and L² actions.
-    This is the key unifying lemma that works specifically for the spacetime measure μ.
+/-- The Euclidean pullback preserves the spacetime measure `μ`. This is the input to the
+    L² action `euclideanActionL2`; the test function actions use temperate growth instead.
 -/
 lemma euclidean_action_unified_basis (g : E) :
     MeasurePreserving (euclideanPullback g) (μ : Measure SpaceTime) μ := by
@@ -326,13 +326,5 @@ lemma euclidean_action_unified_basis (g : E) :
 noncomputable def euclideanActionL2 (g : E)
     (f : Lp ℂ 2 (μ : Measure SpaceTime)) : Lp ℂ 2 μ :=
   Lp.compMeasurePreserving (p := 2) (euclideanPullback g) (euclidean_action_unified_basis g) f
-
-/-- The Euclidean action as a continuous linear map on test functions.
-    This leverages the Schwartz space structure and temperate growth bounds.
--/
-noncomputable def euclideanActionCLM (g : E) : TestFunctionℂ →L[ℂ] TestFunctionℂ :=
-  SchwartzMap.compCLM (𝕜 := ℂ)
-    (hg := euclidean_pullback_temperate_growth g)
-    (hg_upper := euclidean_pullback_polynomial_bounds g)
 
 end QFT

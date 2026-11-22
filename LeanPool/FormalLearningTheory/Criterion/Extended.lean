@@ -14,28 +14,12 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 /-!
 # Extended and Cross-Paradigm Criteria
 
-EX under drift, universal learning, and the Bayesian criterion of posterior
-consistency.
+Universal learning: distribution-free convergence rates.
 -/
 
 @[expose] public section
 
-universe u v
-
-/-- EX-learning under drift: the target concept changes over time.
-    The learner must track the drifting target. At each time step t,
-    the current target is targets(t), and the learner must eventually
-    output a hypothesis matching the current target before it drifts again. -/
-def EXUnderDrift (X : Type u) (C : ConceptClass X Bool)
-    (driftRate : ℝ) : Prop :=
-  driftRate = driftRate ∧ ∃ (L : GoldLearner X Bool),
-    ∀ (targets : ℕ → Concept X Bool),
-      (∀ t, targets t ∈ C) →
-      ∀ (T : DataStream X Bool),
-        -- The learner's conjecture eventually tracks the target:
-        -- for all but finitely many t, output agrees with targets(t)
-        ∃ (t₀ : ℕ), ∀ (t : ℕ), t ≥ t₀ →
-          ∀ (x : X), (L.conjecture (dataUpTo T t)) x = (targets t) x
+universe u
 
 /-- Universal learning: distribution-free convergence rates.
     Strictly stronger than PAC.
@@ -58,20 +42,3 @@ def UniversalLearnable (X : Type u) [MeasurableSpace X]
               D { x | L.learn (fun i => (xs i, c (xs i))) x ≠ c x }
                 ≤ ENNReal.ofReal (rate m) }
             ≥ ENNReal.ofReal (2 / 3)
-
-/-!
-## Bayesian Criteria
--/
-
-/-- Posterior consistency: as sample size grows, the posterior concentrates
-    on the true parameter/concept. -/
-def PosteriorConsistent (X : Type u) (Y : Type v)
-    [MeasurableSpace X]
-    (BL : BayesianLearner X Y) (C : ConceptClass X Y) : Prop :=
-  ∀ (c : Concept X Y), c ∈ C →
-    -- As sample size m → ∞, the posterior probability assigned to the true
-    -- concept c converges to 1 (posterior concentration)
-    ∀ ε > 0, ∃ (m₀ : ℕ), ∀ (m : ℕ), m ≥ m₀ →
-      ∀ (data : List (X × Y)),
-        data.length = m →
-          BL.inference.posterior c data ≥ 1 - ε

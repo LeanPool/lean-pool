@@ -15,8 +15,8 @@ import Mathlib.MeasureTheory.Order.Group.Lattice
 /-!
 # Extended Theorems
 
-Advice elimination for finite advice sets and meta-learning sample-complexity
-lower bounds (Baxter's base case).
+Advice elimination for finite advice sets, and the no-free-lunch sample-complexity
+lower bound applied to the learner a meta-learner outputs.
 -/
 
 @[expose] public section
@@ -25,60 +25,9 @@ universe u v
 
 /-! ## Multi-Task Meta-Learning Infrastructure -/
 
-/-- A task environment: a finite collection of concept classes (tasks)
-    that a meta-learner is trained on. Each task is a concept class
-    over the same domain X.
-
-    This is the formalization of Baxter (2000)'s "learning environment."
-    In the full theory, tasks are drawn i.i.d. from a distribution over
-    concept classes; here we use a finite deterministic collection as the
-    base case. -/
-structure TaskEnvironment (X : Type u) where
-  /-- Number of training tasks -/
-  numTasks : ℕ
-  /-- The concept classes for each task -/
-  tasks : Fin numTasks → ConceptClass X Bool
-
-/-- A meta-learner with PAC guarantees: given a task environment (training tasks),
-    produces a BatchLearner and sample complexity function for new tasks.
-
-    Compared to MetaLearner (in Active.lean), this structure:
-    - takes a TaskEnvironment (multiple training tasks) rather than a single ConceptClass
-    - exposes the sample complexity function (not just the learner)
-    - is designed for quantitative PAC bounds, not just learnability
-
-    The key question: does seeing n training tasks reduce the per-task
-    sample complexity on new tasks? Baxter (2000) shows the answer is yes
-    under task similarity, but the NFL lower bound still applies per-task. -/
-structure MetaLearnerPAC (X : Type u) [MeasurableSpace X] where
-  /-- Given training tasks, produce a learner for new tasks -/
-  learn : TaskEnvironment X → BatchLearner X Bool
-  /-- Given training tasks, produce a sample complexity function -/
-  sampleComplexity : TaskEnvironment X → ℝ → ℝ → ℕ
-
-/-- A task sample environment: n training tasks, each with m samples.
-    The meta-learner observes labeled samples from each task and must
-    produce a learner for a new (unseen) task.
-
-    This extends TaskEnvironment by specifying sample sizes and
-    the actual samples drawn. The meta-learner's output may depend
-    on the samples but not on the true concepts. -/
-structure TaskSampleEnvironment (X : Type u) [MeasurableSpace X] where
-  /-- Number of training tasks -/
-  numTasks : ℕ
-  /-- Samples per task -/
-  samplesPerTask : ℕ
-  /-- The concept classes (one per task) -/
-  taskClasses : Fin numTasks → ConceptClass X Bool
-  /-- The true concepts (one per task, each in its class) -/
-  trueConcepts : (j : Fin numTasks) → Concept X Bool
-  /-- Each true concept is in its class -/
-  concept_mem : ∀ j, trueConcepts j ∈ taskClasses j
-
 /-- A sample-based meta-learner: sees labeled samples from n training tasks,
     produces a BatchLearner for new tasks.
-    Unlike MetaLearnerPAC (which takes a TaskEnvironment directly),
-    this meta-learner only sees the data, not the concept classes. -/
+    It only sees the data, not the concept classes. -/
 structure SampleMetaLearner (X : Type u) [MeasurableSpace X] where
   /-- Given n × m labeled samples, produce a learner -/
   learn : {n m : ℕ} → (Fin n → Fin m → X × Bool) → BatchLearner X Bool
@@ -967,45 +916,12 @@ theorem advice_elimination (X : Type u) [MeasurableSpace X]
         | (ext a; congr 1; exact (Fin.heq_fun_iff h_fst).mpr (fun i => rfl))
         | (exact (Fin.heq_fun_iff h_snd).mpr (fun j => rfl))))
 
-/-- Baxter base case: any meta-learner's output is subject to the NFL lower bound.
-    Even after seeing arbitrarily many training tasks, the meta-learner's output
-    learner on a NEW task C_new with VCDim = d requires at least ⌈(d-1)/2⌉ samples.
-
-    This is the n=1 (single environment) base case of Baxter (2000).
-    The full Baxter bound (n environments, per-task m ≥ d/(ε²·n)) requires
-    multi-environment product measure infrastructure not yet built.
-
-    Proof: the meta-learner produces a BatchLearner L and sample complexity mf.
-    If (L, mf) achieves PAC on C_new, then mf ε δ is a PAC-valid sample size,
-    so pac_lower_bound_member gives ⌈(d-1)/2⌉ ≤ mf ε δ.
-
-    The full multi-environment Baxter bound is outside this kernel; this theorem
-    records the single-environment lower-bound component. -/
-theorem baxter_base_case (X : Type u) [MeasurableSpace X]
-    [MeasurableSingletonClass X]
-    (ML : MetaLearnerPAC X)
-    (env : TaskEnvironment X)
-    (C_new : ConceptClass X Bool)
-    (d : ℕ) (hd : VCDim X C_new = d) (hd_pos : 1 ≤ d)
-    (ε δ : ℝ) (hε : 0 < ε) (hε1 : ε ≤ 1 / 4)
-    (hδ : 0 < δ) (hδ1 : δ ≤ 1) (hδ2 : δ ≤ 1 / 7)
-    (hPAC : ∀ (D : MeasureTheory.Measure X), MeasureTheory.IsProbabilityMeasure D →
-      ∀ c ∈ C_new,
-        MeasureTheory.Measure.pi
-          (fun _ : Fin (ML.sampleComplexity env ε δ) => D)
-          { xs : Fin (ML.sampleComplexity env ε δ) → X |
-            D { x | (ML.learn env).learn (fun i => (xs i, c (xs i))) x ≠ c x }
-              ≤ ENNReal.ofReal ε }
-          ≥ ENNReal.ofReal (1 - δ)) :
-    Nat.ceil ((d - 1 : ℝ) / 2) ≤ ML.sampleComplexity env ε δ := by
-  exact pac_lower_bound_member X C_new d hd ε δ hε hε1 hδ hδ1 hδ2 hd_pos
-    (ML.sampleComplexity env ε δ) ⟨ML.learn env, hPAC⟩
-
 /-- For fixed training data, if the resulting learner satisfies the uniform PAC guarantee
 on a new task `C_new` of VC dimension `d`, then it needs at least `⌈(d - 1) / 2⌉`
 samples from that task. The bound is independent of the number of training tasks and the
-number of examples per training task. -/
-theorem baxter_n_independent_lower_bound (X : Type u) [MeasurableSpace X]
+number of examples per training task. This is the no-free-lunch bound
+`pac_lower_bound_member` applied to the learner produced from the training data. -/
+theorem sampleMetaLearner_output_nfl_lower_bound (X : Type u) [MeasurableSpace X]
     [MeasurableSingletonClass X]
     (SML : SampleMetaLearner X)
     (C_new : ConceptClass X Bool)

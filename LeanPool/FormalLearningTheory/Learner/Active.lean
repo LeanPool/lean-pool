@@ -9,11 +9,10 @@ public import LeanPool.FormalLearningTheory.Learner.Core
 public import LeanPool.FormalLearningTheory.Data
 
 /-!
-# Active Learning, Teachers, and Meta-Learning
+# Active Learning and Teachers
 
 Active learners query oracles. Teachers present data strategically.
-Meta-learners learn to learn. Also includes synthesizers and verifiers
-for the CEGIS paradigm.
+Also includes synthesizers and verifiers for the CEGIS paradigm.
 -/
 
 @[expose] public section
@@ -96,25 +95,9 @@ def IsRandomTeacher {X : Type u} {Y : Type v} (T : Teacher X Y) : Prop :=
   -- does not depend on the examples shown at steps 1..n
   ∀ (data₁ data₂ : List (X × Y)), T.teach data₁ = T.teach data₂
 
-/-- Minimally adequate teacher: provides membership queries and equivalence queries.
-    Interface for Angluin's L* algorithm. -/
-structure MinimallyAdequateTeacher (X : Type u) (Y : Type v) where
-  /-- Membership oracle -/
-  mq : MembershipOracle X Y
-  /-- Equivalence oracle -/
-  eq : EquivalenceOracle X Y
-  /-- Both answer about the same target -/
-  consistent : mq.target = eq.target
-
 /-!
-## Meta-Learner
+## Critics, Synthesizers, and Verifiers
 -/
-
-/-- A meta-learner: a learner that takes a concept class and produces
-    a learner specialized for that class (learning-to-learn). -/
-structure MetaLearner (X : Type u) (Y : Type v) where
-  /-- Given a concept class, produce a learner for that class -/
-  metaLearn : ConceptClass X Y → BatchLearner X Y
 
 /-- LLM critic: a teacher that uses a language model as its strategy. -/
 structure LLMCritic (X : Type u) (Y : Type v) extends Teacher X Y where
