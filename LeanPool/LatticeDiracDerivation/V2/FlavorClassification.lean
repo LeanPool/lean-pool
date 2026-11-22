@@ -47,23 +47,43 @@ theorem cubical_flavor_projection_decomposition (amplitude : CubicalCell8) :
   simp [cubicalFlavorPlusProjection, cubicalFlavorMinusProjection]
   ring
 
+private def cubicalFlavorLinear : CubicalCell8 →ₗ[ℂ] CubicalCell8 where
+  toFun := cubicalFlavor
+  map_add' first second := by
+    funext corner
+    simp [cubicalFlavor, mul_add]
+  map_smul' scalar amplitude := by
+    funext corner
+    simp [cubicalFlavor]
+    ring
+
 theorem cubical_flavor_plus_projection_is_positive (amplitude : CubicalCell8) :
     cubicalFlavor (cubicalFlavorPlusProjection amplitude) =
       cubicalFlavorPlusProjection amplitude := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalFlavorPlusProjection, cubicalFlavor, cubicalFlavorSign,
-      cubicalFlip1, cubicalFlip2, cubicalBit2] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  have hprojection : cubicalFlavorPlusProjection amplitude =
+      (2 : ℂ)⁻¹ • (amplitude + cubicalFlavor amplitude) := by
+    funext corner
+    simp [cubicalFlavorPlusProjection, div_eq_mul_inv, mul_comm]
+  rw [hprojection]
+  change cubicalFlavorLinear ((2 : ℂ)⁻¹ • (amplitude + cubicalFlavorLinear amplitude)) = _
+  have hi : cubicalFlavorLinear (cubicalFlavorLinear amplitude) = amplitude :=
+    cubical_flavor_involution amplitude
+  rw [map_smul, map_add, hi, add_comm]
+  rfl
 
 theorem cubical_flavor_minus_projection_is_negative (amplitude : CubicalCell8) :
     cubicalFlavor (cubicalFlavorMinusProjection amplitude) =
       fun corner => -cubicalFlavorMinusProjection amplitude corner := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalFlavorMinusProjection, cubicalFlavor, cubicalFlavorSign,
-      cubicalFlip1, cubicalFlip2, cubicalBit2] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  have hprojection : cubicalFlavorMinusProjection amplitude =
+      (2 : ℂ)⁻¹ • (amplitude - cubicalFlavor amplitude) := by
+    funext corner
+    simp [cubicalFlavorMinusProjection, div_eq_mul_inv, mul_comm]
+  rw [hprojection]
+  change cubicalFlavorLinear ((2 : ℂ)⁻¹ • (amplitude - cubicalFlavorLinear amplitude)) =
+    -((2 : ℂ)⁻¹ • (amplitude - cubicalFlavorLinear amplitude))
+  have hi : cubicalFlavorLinear (cubicalFlavorLinear amplitude) = amplitude :=
+    cubical_flavor_involution amplitude
+  rw [map_smul, map_sub, hi, ← smul_neg, neg_sub]
 
 /-- Four standard coordinates recovered from a positive-flavor amplitude. -/
 def cubicalPositiveFlavorRead (amplitude : CubicalCell8) : CubicalCell4

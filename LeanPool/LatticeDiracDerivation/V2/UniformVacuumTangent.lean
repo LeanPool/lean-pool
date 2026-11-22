@@ -361,5 +361,14 @@ theorem uniform_axial_vacuum_first_variation_zero
       uniformAxialVacuum, wedge, difference, c3RealPair]
   simp [hsite, hbond]
 
+/-- The scalar massive tangent force for a general C19 neighbor map. -/
+def uniformScalarTangentAcceleration {Site : Type}
+    (massSq : ℝ) (geometry : C19Lattice Site)
+    (position : Site → ℂ) (site : Site) : ℂ :=
+  -(massSq : ℂ) * position site -
+    2 * ∑ direction : C19Neighbor,
+      (c19Weight direction : ℂ) *
+        (position site - position (geometry.neighbor site direction))
+
 end
 end LeanDirac.V2

@@ -217,15 +217,6 @@ def uniformNativeOutwardBondCurrent
     (weight : ℝ) (source target : ℂ) : ℝ :=
   -2 * weight * uniformScalarPhasePair source target
 
-/-- The scalar massive tangent force for a general C19 neighbor map. -/
-def uniformScalarTangentAcceleration
-    (massSq : ℝ) (geometry : C19Lattice Site)
-    (position : Site → ℂ) (site : Site) : ℂ :=
-  -(massSq : ℂ) * position site -
-    2 * ∑ direction : C19Neighbor,
-      (c19Weight direction : ℂ) *
-        (position site - position (geometry.neighbor site direction))
-
 /-- Sum the outward currents over all directed bonds from a site. -/
 def uniformNativeOutwardCurrentDivergence
     (geometry : C19Lattice Site)
@@ -261,6 +252,14 @@ theorem uniform_native_tangent_local_continuity
   apply Finset.sum_eq_zero
   intro direction _
   ring
+
+/-- Native charge continuity for the same force used in the periodic action Hessian. -/
+theorem periodic_c19_native_tangent_local_continuity {L : ℕ}
+    (r : ℝ) (position velocity : PeriodicCubicSite L → ℂ) (site : PeriodicCubicSite L) :
+    uniformNativePhaseDensityDerivative (position site) (velocity site)
+        (periodicC19LinearizedAcceleration r position site) +
+      uniformNativeOutwardCurrentDivergence (periodicC19Geometry L) position site = 0 :=
+  uniform_native_tangent_local_continuity (r ^ 2) (periodicC19Geometry L) position velocity site
 
 /-- The native phase paired with velocity on the positive-frequency branch. -/
 def uniformPositiveFrequencyPhase

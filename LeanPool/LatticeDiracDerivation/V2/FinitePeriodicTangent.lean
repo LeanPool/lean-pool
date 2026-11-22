@@ -456,10 +456,17 @@ def periodicC19LinearizedAcceleration
     {L : ℕ}
     (r : ℝ) (field : PeriodicCubicSite L → ℂ)
     (site : PeriodicCubicSite L) : ℂ :=
-  -(r ^ 2 : ℂ) * field site -
-    2 * ∑ direction : C19Neighbor,
-      (c19Weight direction : ℂ) *
-        (field site - field (periodicC19Neighbor L site direction))
+  uniformScalarTangentAcceleration (r ^ 2) (periodicC19Geometry L) field site
+
+theorem periodicC19LinearizedAcceleration_apply {L : ℕ}
+    (r : ℝ) (field : PeriodicCubicSite L → ℂ) (site : PeriodicCubicSite L) :
+    periodicC19LinearizedAcceleration r field site =
+      -(r ^ 2 : ℂ) * field site -
+        2 * ∑ direction : C19Neighbor,
+          (c19Weight direction : ℂ) *
+            (field site - field (periodicC19Neighbor L site direction)) := by
+  simp only [periodicC19LinearizedAcceleration, uniformScalarTangentAcceleration,
+    Complex.ofReal_pow, periodicC19Geometry]
 
 /-- A variation of the first native transverse `Psi` component.  It is an
 ordinary native-field direction, not a modal or Dirac coordinate. -/
@@ -797,8 +804,8 @@ theorem periodic_c19_transverse_quadratic_variation_is_force_pair
     simpa [c19Bond, periodicC19Geometry,
       periodicC19ScalarDifference, uniformScalarRealPair] using hgreen
   rw [hbond]
-  unfold periodicC19LinearizedAcceleration periodicC19ScalarLaplacian
-    uniformScalarRealPair
+  simp only [periodicC19LinearizedAcceleration_apply, periodicC19ScalarLaplacian,
+    uniformScalarRealPair]
   rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   rw [← Finset.sum_neg_distrib]
   apply Finset.sum_congr rfl
@@ -1046,7 +1053,8 @@ theorem periodic_c19_linearized_force_diagonalizes
         (periodicModeField mode amplitude) site =
       -((r ^ 2 + c19TransportSymbol momentum : ℝ) : ℂ) *
         periodicModeField mode amplitude site := by
-  unfold periodicC19LinearizedAcceleration periodicModeField
+  rw [periodicC19LinearizedAcceleration_apply]
+  unfold periodicModeField
   simp_rw [mode.neighbor_character]
   rw [show (∑ direction : C19Neighbor,
       (c19Weight direction : ℂ) *
