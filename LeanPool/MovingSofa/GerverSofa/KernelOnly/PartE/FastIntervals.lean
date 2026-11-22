@@ -194,4 +194,160 @@ private theorem rejected_eq (cell : AngleCell) : rejected cell = cell.rejected :
 @[instance_reducible] def decidableRejected (cell : AngleCell) : Decidable (cell.rejected = true) :=
   decidable_of_iff (rejected cell = true) (by rw [rejected_eq])
 
+private theorem lo_multiplyForTaylor (left right : IntervalRat) (positive : 0 ≤ right.lo) :
+    (multiplyForTaylor left right).lo = lowerProduct left.lo right := by
+  simp only [multiplyForTaylor, dite_eq_left positive]
+
+private theorem hi_multiplyForTaylor (left right : IntervalRat) (positive : 0 ≤ right.lo) :
+    (multiplyForTaylor left right).hi = upperProduct left.hi right := by
+  simp only [multiplyForTaylor, dite_eq_left positive]
+
+private theorem square_lo (interval : IntervalRat) (positive : 0 ≤ interval.lo) :
+    (multiplyForTaylor interval interval).lo = interval.lo * interval.lo := by
+  rw [lo_multiplyForTaylor _ _ positive]
+  simp only [lowerProduct, ite_eq_left positive]
+
+private theorem square_hi (interval : IntervalRat) (positive : 0 ≤ interval.lo) :
+    (multiplyForTaylor interval interval).hi = interval.hi * interval.hi := by
+  rw [hi_multiplyForTaylor _ _ positive]
+  simp only [upperProduct, ite_eq_left (positive.trans interval.le)]
+
+private theorem lowerProduct_twice (value : ℚ) (interval : IntervalRat)
+    (positive : 0 < interval.lo) :
+    lowerProduct (lowerProduct value interval) interval =
+      lowerProduct value (multiplyForTaylor interval interval) := by
+  by_cases sign : 0 ≤ value
+  · simp only [lowerProduct, ite_eq_left sign, ite_eq_left (mul_nonneg sign positive.le),
+      square_lo _ positive.le, mul_assoc]
+  · have negative : value < 0 := lt_of_not_ge sign
+    simp only [lowerProduct, ite_eq_right sign, ite_eq_right (not_le.mpr
+      (mul_neg_of_neg_of_pos negative (positive.trans_le interval.le))),
+      square_hi _ positive.le, mul_assoc]
+
+private theorem upperProduct_twice (value : ℚ) (interval : IntervalRat)
+    (positive : 0 < interval.lo) :
+    upperProduct (upperProduct value interval) interval =
+      upperProduct value (multiplyForTaylor interval interval) := by
+  by_cases sign : 0 ≤ value
+  · simp only [upperProduct, ite_eq_left sign,
+      ite_eq_left (mul_nonneg sign (positive.le.trans interval.le)),
+      square_hi _ positive.le, mul_assoc]
+  · have negative : value < 0 := lt_of_not_ge sign
+    simp only [upperProduct, ite_eq_right sign,
+      ite_eq_right (not_le.mpr (mul_neg_of_neg_of_pos negative positive)),
+      square_lo _ positive.le, mul_assoc]
+
+private theorem multiplyForTaylor_twice (accumulator interval : IntervalRat)
+    (positive : 0 < interval.lo) :
+    multiplyForTaylor (multiplyForTaylor accumulator interval) interval =
+      multiplyForTaylor accumulator (multiplyForTaylor interval interval) := by
+  have squareNonnegative : 0 ≤ (multiplyForTaylor interval interval).lo := by
+    rw [square_lo _ positive.le]
+    exact mul_nonneg positive.le positive.le
+  apply interval_eq
+  · rw [lo_multiplyForTaylor _ _ positive.le, lo_multiplyForTaylor _ _ positive.le,
+      lo_multiplyForTaylor _ _ squareNonnegative, lowerProduct_twice _ _ positive]
+  · rw [hi_multiplyForTaylor _ _ positive.le, hi_multiplyForTaylor _ _ positive.le,
+      hi_multiplyForTaylor _ _ squareNonnegative, upperProduct_twice _ _ positive]
+
+private theorem add_zero_coefficient (interval : IntervalRat) :
+    (singleton 0).add interval = interval := by
+  apply interval_eq <;> simp only [IntervalRat.add, IntervalRat.singleton, zero_add]
+
+private theorem zero_multiplyForTaylor (interval : IntervalRat) :
+    multiplyForTaylor (singleton 0) interval = singleton 0 := by
+  rw [multiplyForTaylor_eq]
+  apply interval_eq <;>
+    simp only [IntervalRat.mul, min4, max4, IntervalRat.singleton, zero_mul, min_self, max_self]
+
+private theorem evalTaylor_trailing_zero (coefficients : List ℚ) (interval : IntervalRat) :
+    evalTaylor (coefficients ++ [0]) interval = evalTaylor coefficients interval := by
+  induction coefficients with
+  | nil =>
+    simp only [List.nil_append, evalTaylor, List.foldr_cons, List.foldr_nil,
+      zero_multiplyForTaylor, add_zero_coefficient]
+  | cons coefficient coefficients ih =>
+    simp only [List.cons_append, evalTaylor, List.foldr_cons] at ih ⊢
+    rw [ih]
+
+private def insertZeros : List ℚ → List ℚ
+  | [] => []
+  | coefficient :: coefficients => coefficient :: 0 :: insertZeros coefficients
+
+private theorem evalTaylor_insertZeros (coefficients : List ℚ) (interval : IntervalRat)
+    (positive : 0 < interval.lo) :
+    evalTaylor (insertZeros coefficients) interval =
+      evalTaylor coefficients (multiplyForTaylor interval interval) := by
+  induction coefficients with
+  | nil => rfl
+  | cons coefficient coefficients ih =>
+    change (singleton coefficient).add
+      (multiplyForTaylor ((singleton 0).add
+        (multiplyForTaylor (evalTaylor (insertZeros coefficients) interval) interval)) interval) =
+      (singleton coefficient).add
+        (multiplyForTaylor (evalTaylor coefficients (multiplyForTaylor interval interval))
+          (multiplyForTaylor interval interval))
+    rw [add_zero_coefficient, multiplyForTaylor_twice _ _ positive, ih]
+
+/-- The even-degree coefficients of the depth-ten cosine polynomial, in ascending degree. -/
+def cosineEvenCoefficients : List ℚ :=
+  [1, -1 / 2, 1 / 24, -1 / 720, 1 / 40320, -1 / 3628800]
+
+/-- The odd-degree coefficients of the depth-ten sine polynomial, in ascending degree. -/
+def sineEvenCoefficients : List ℚ := [1, -1 / 6, 1 / 120, -1 / 5040, 1 / 362880]
+
+private theorem cosineEven_expanded :
+    insertZeros cosineEvenCoefficients = cosineCoefficients ++ [0] :=
+  rfl
+
+private theorem sineEven_expanded : 0 :: insertZeros sineEvenCoefficients = sineCoefficients := rfl
+
+/-- Sine enclosure with two Horner steps combined for positive inputs. -/
+def sineSparse (interval : IntervalRat) : IntervalRat :=
+  if 0 < interval.lo then
+    let square := multiplyForTaylor interval interval
+    clip ((multiplyForTaylor (evalTaylor sineEvenCoefficients square) interval).add
+      (sinRemainderBoundComputable interval 10))
+  else
+    sine interval
+
+/-- Cosine enclosure with two Horner steps combined for positive inputs. -/
+def cosineSparse (interval : IntervalRat) : IntervalRat :=
+  if 0 < interval.lo then
+    let square := multiplyForTaylor interval interval
+    clip ((evalTaylor cosineEvenCoefficients square).add (cosRemainderBoundComputable interval 10))
+  else
+    cosine interval
+
+theorem sineSparse_eq (interval : IntervalRat) :
+    sineSparse interval = sinComputable interval 10 := by
+  rw [← sine_eq]
+  unfold sineSparse
+  split_ifs with positive
+  · unfold sine
+    rw [← sineEven_expanded]
+    change _ = clip (((singleton 0).add
+      (multiplyForTaylor (evalTaylor (insertZeros sineEvenCoefficients) interval) interval)).add _)
+    rw [add_zero_coefficient, evalTaylor_insertZeros _ _ positive]
+  · rfl
+
+theorem cosineSparse_eq (interval : IntervalRat) :
+    cosineSparse interval = cosComputable interval 10 := by
+  rw [← cosine_eq]
+  unfold cosineSparse
+  split_ifs with positive
+  · unfold cosine
+    rw [← evalTaylor_trailing_zero cosineCoefficients interval, ← cosineEven_expanded,
+      evalTaylor_insertZeros _ _ positive]
+  · rfl
+
+/-- Decide the original rejection proposition using the sparse Taylor evaluator. -/
+@[instance_reducible] def decidableRejectedSparse (cell : AngleCell) :
+    Decidable (cell.rejected = true) :=
+  decidable_of_iff (rejectWith mulFast cell (cosineSparse cell.phiI) (sineSparse cell.phiI)
+    (cosineSparse cell.thetaI) (sineSparse cell.thetaI) = true) (by
+      have multiplication : mulFast = mul :=
+        funext fun left => funext fun right => mulFast_eq_mul left right
+      simp only [cosineSparse_eq, sineSparse_eq, multiplication, rejectWith_eq])
+
 end GerverSofa.PartE.FastIntervals
