@@ -29,11 +29,12 @@ open TauCeti.DavisKahan.Sylvester
 /-!
 # Davis--Kahan 1970, Section 8: the selected branch and its spectral repulsion
 
-The source-level conclusions of Theorems 8.1 and 8.2 that need the analytic
-continuation layer: existence of the selected branch with full spectral
-repulsion, the two half-gap bridges that discharge Theorem 8.2's smallness
-alternatives, and the printed compression inequalities of Theorem 8.1(i), both
-from a target splitting and at the canonical branch.
+This module proves existence of the selected branch with full spectral repulsion.
+It also proves the printed compression inequalities of Theorem 8.1(i) from a
+target splitting and at the canonical branch. The two half-gap bridges for
+Theorem 8.2 use quantitative contour estimates supplied by the caller. The printed
+alternatives in directed-gap form are `theorem8_2_perturbationHalfGap_complex`
+and `theorem8_2_residualHalfGap_complex` in `Section8/Theorem82Branch.lean`.
 
 The machinery is owned upstream.  The circle continuation witness is
 `InfiniteDimensional/SinTheta/Continuation/CircleWitness.lean`, the form/spectrum
@@ -295,15 +296,15 @@ theorem theorem8_1_selectedBranch_and_spectralRepulsion
         theorem8_1_lowerCompressionRepulsion_of_targetSplitting _
           hsym h0.invariant h1 }
 
-/-- Construct the perturbation half-gap bridge required by Theorem 8.2
-from a circle datum and an endpoint-size estimate.
+/-- Construct the perturbation half-gap bridge from a circle datum, the half-gap
+bound on `E`, and the caller's endpoint-size estimate `hquant`.
 
-The common circle and its uniform spectral margin are now constructed directly
-from the finite-gap, off-diagonal, and perturbation half-gap hypotheses by
-`exists_circleContinuationData_of_offDiagonal_halfGap`.  The additional bound
-below is a sufficient one-step estimate for locating the endpoint below the
-quarter-turn threshold; replacing it by the source continuation/no-crossing
-argument is a separate branch-selection step. -/
+The common circle and its uniform spectral margin can be constructed from the
+finite-gap, off-diagonal, and perturbation half-gap hypotheses by
+`exists_circleContinuationData_of_offDiagonal_halfGap`. The independent bound
+`hquant` puts the projection-Lipschitz constant below `sqrt 2 / 2`. The printed
+perturbation alternative in directed-gap form is
+`theorem8_2_perturbationHalfGap_complex`. -/
 theorem perturbationHalfGapBridge_of_circleContinuationData
     (D : CircleContinuationData A E s) {delta : ℝ}
     (hdelta : 0 < delta) (hsmall : ‖E‖ < delta / 2)

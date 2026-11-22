@@ -49,9 +49,10 @@ variable {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 variable {F : Type w} [NormedAddCommGroup F] [NormedSpace ℂ F]
 variable {A V : H →L[ℂ] H} {s : Set ℝ}
 
-/-- Proof data converting the perturbation-norm half-gap condition in Theorem
-8.2 into the quantitative common-contour condition already consumed by the
-continuation stack. -/
+/-- The perturbation-norm bridge for Theorem 8.2 packages the caller's half-gap
+bound on `V` and a bound below `sqrt 2 / 2` on the selected-branch Lipschitz
+constant of the witness contour. The printed perturbation alternative is
+`theorem8_2_perturbationHalfGap_complex`. -/
 structure PerturbationHalfGapBridge
     (C : SpectralContinuationWitness A V s) (delta : ℝ) : Prop where
   delta_pos : 0 < delta

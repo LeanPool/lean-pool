@@ -392,11 +392,13 @@ For `M ≥ 2`, every `ε > 0` and every `J` at least the largest block index:
 where `η_{M,J} := 2 exp(1/4) ∑_{m=M}^{J} exp(−m²)` is `etaCoeff M J`.
 
 **Proof**:
-1. Orthogonality on annuli: `∫_{A_j} |R_j|² dμ = ∑_{|ℓ−j|>M} ∫_{A_j} |U_ℓ|² dμ`.
-2. Apply Theorem 5.7 to each term.
-3. Swap order of summation (Tonelli): `∑_j ∑_{|ℓ−j|>M} … ≤ ∑_ℓ fockNormSq(U_ℓ) · …`.
+1. Use circle orthogonality to bound each remainder integral by the sum of block integrals
+   over `|ℓ−j|>M`.
+2. Apply the two-sided estimate `block_annulus_leakage_symmetric` to each term.
+3. Swap the two finite sums and factor out `fockNormSq(U_ℓ)` for each block.
 4. Inner sum: `∑_{j < J, |j−ℓ|>M} exp(−(|j−ℓ|−1)²) ≤ 2 ∑_{m=M}^{J} exp(−m²)`.
-5. Hence total `≤ η_{M,J} · fockNormSq(U)`.
+5. Summing the block estimates gives the upper bound `η_{M,J} · fockNormSq(U)`.
+   Since `fockNormSq(U) ≥ 0`, adding `ε` to the coefficient gives the displayed bound.
 -/
 
 /-- The leakage coefficient truncated at `bound`: `2 exp(1/4) ∑_{m=M}^{bound} exp(−m²)`. -/
