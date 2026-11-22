@@ -469,6 +469,30 @@ def periodicFirstTransverseDirection
   psi := fun site component => if component = 0 then field site else 0
   chi := fun _ _ => 0
 
+/-- Place a scalar test profile in the second transverse channel. -/
+def periodicSecondTransverseDirection
+    {L : ℕ} (field : PeriodicCubicSite L → ℂ) :
+    State (PeriodicCubicSite L) where
+  psi := fun site component => if component = 1 then field site else 0
+  chi := fun _ _ => 0
+
+/-- The two transverse axes available at the fixed axial vacuum. -/
+abbrev PeriodicTransverseChannel := Fin 2
+
+/-- Place a scalar perturbation in the selected transverse channel of the vacuum. -/
+def periodicTransverseComponentState
+    {L : ℕ} (r eps : ℝ) (component : PeriodicTransverseChannel)
+    (field : PeriodicCubicSite L → ℂ) : State (PeriodicCubicSite L) :=
+  if component = 0 then uniformTransverseState r eps field 0
+  else uniformTransverseState r eps 0 field
+
+/-- Place a scalar test direction in the selected transverse channel. -/
+def periodicTransverseComponentDirection
+    {L : ℕ} (component : PeriodicTransverseChannel)
+    (field : PeriodicCubicSite L → ℂ) : State (PeriodicCubicSite L) :=
+  if component = 0 then periodicFirstTransverseDirection field
+  else periodicSecondTransverseDirection field
+
 /-- The bilinear variation of the quadratic transverse C19 potential.  This
 definition mentions only the mass scale, the periodic C19 bonds, and two
 native scalar field profiles. -/
@@ -484,56 +508,90 @@ def periodicC19TransverseQuadraticVariation
           (direction (c19Bond (periodicC19Geometry L) edge).target -
             direction (c19Bond (periodicC19Geometry L) edge).source)
 
-private theorem periodic_first_transverse_site_variation
+private theorem periodic_transverse_site_variation
     {L : ℕ} (r eps : ℝ)
+    (channel : PeriodicTransverseChannel)
     (field direction : PeriodicCubicSite L → ℂ)
     (site : PeriodicCubicSite L) :
     sitePotentialFirstVariation r
-        (uniformTransverseState r eps field 0)
-        (periodicFirstTransverseDirection direction) site =
+        (periodicTransverseComponentState r eps channel field)
+        (periodicTransverseComponentDirection channel direction) site =
       eps * r ^ 2 * uniformScalarRealPair (field site) (direction site) +
         eps ^ 3 * Complex.normSq (field site) *
           uniformScalarRealPair (field site) (direction site) := by
-  unfold sitePotentialFirstVariation
-  rw [uniform_transverse_psi_density, uniform_transverse_chi_density]
-  simp [uniformTransverseState, periodicFirstTransverseDirection,
-    c3RealPair, uniformScalarRealPair, Fin.sum_univ_succ]
-  ring
+  fin_cases channel <;>
+    simp only [periodicTransverseComponentState, periodicTransverseComponentDirection] <;>
+    norm_num <;>
+    unfold sitePotentialFirstVariation <;>
+    rw [uniform_transverse_psi_density, uniform_transverse_chi_density] <;>
+    simp [uniformTransverseState, periodicFirstTransverseDirection,
+      periodicSecondTransverseDirection, c3RealPair, uniformScalarRealPair, Fin.sum_univ_succ] <;>
+    ring
 
-private theorem periodic_first_transverse_wedge_variation
+private theorem periodic_transverse_wedge_variation
     {L : ℕ} (r eps : ℝ)
+    (channel : PeriodicTransverseChannel)
     (field direction : PeriodicCubicSite L → ℂ)
     (site : PeriodicCubicSite L) :
     wedgeFirstVariation
-        (uniformTransverseState r eps field 0)
-        (periodicFirstTransverseDirection direction) site =
+        (periodicTransverseComponentState r eps channel field)
+        (periodicTransverseComponentDirection channel direction) site =
       fun component =>
-        if component = 1 then -(r : ℂ) * direction site else 0 := by
+        if component = channel.succ then -(r : ℂ) * direction site else 0 := by
   funext component
-  fin_cases component <;>
-    simp [wedgeFirstVariation, uniformTransverseState,
-      periodicFirstTransverseDirection, c3Add, wedge]
+  fin_cases channel <;> fin_cases component <;>
+    simp [wedgeFirstVariation, periodicTransverseComponentState,
+      periodicTransverseComponentDirection, uniformTransverseState,
+      periodicFirstTransverseDirection, periodicSecondTransverseDirection, c3Add, wedge,
+      Fin.succ]
 
-private theorem periodic_first_transverse_bond_variation
+private theorem periodic_transverse_bond_variation
     {L : ℕ} (r eps : ℝ) (hr : r ≠ 0)
+    (channel : PeriodicTransverseChannel)
     (field direction : PeriodicCubicSite L → ℂ)
     (edge : Bond (PeriodicCubicSite L)) :
     exteriorAreaBondFirstVariation r
-        (uniformTransverseState r eps field 0)
-        (periodicFirstTransverseDirection direction) edge =
+        (periodicTransverseComponentState r eps channel field)
+        (periodicTransverseComponentDirection channel direction) edge =
       eps * edge.weight *
         uniformScalarRealPair
           (field edge.target - field edge.source)
           (direction edge.target - direction edge.source) := by
   unfold exteriorAreaBondFirstVariation bondAreaDifference
     bondAreaFirstVariation
-  rw [uniform_transverse_wedge, uniform_transverse_wedge,
-    periodic_first_transverse_wedge_variation,
-    periodic_first_transverse_wedge_variation]
-  simp [difference, c3RealPair, uniformScalarRealPair,
-    Fin.sum_univ_succ]
-  field_simp [hr]
-  ring
+  rw [periodic_transverse_wedge_variation, periodic_transverse_wedge_variation]
+  fin_cases channel <;>
+    simp only [periodicTransverseComponentState] <;> norm_num <;>
+    rw [uniform_transverse_wedge, uniform_transverse_wedge] <;>
+    simp [difference, c3RealPair, uniformScalarRealPair, Fin.sum_univ_succ, Fin.succ] <;>
+    field_simp [hr] <;> ring
+
+/-- Exact first variation of the *full native potential* along an arbitrary
+transverse field and arbitrary transverse test direction.  The coefficient
+linear in `eps` is the Hessian of the full action at the axial vacuum; the
+displayed cubic term is the complete finite-amplitude remainder. -/
+theorem periodic_c19_transverse_component_potential_first_variation
+    {L : ℕ} [NeZero L]
+    (r eps : ℝ) (hr : r ≠ 0)
+    (channel : PeriodicTransverseChannel)
+    (field direction : PeriodicCubicSite L → ℂ) :
+    potentialFirstVariation r
+        (periodicTransverseComponentState r eps channel field)
+        (periodicTransverseComponentDirection channel direction)
+        (c19Bond (periodicC19Geometry L)) =
+      eps * periodicC19TransverseQuadraticVariation r field direction +
+        eps ^ 3 * ∑ site,
+          Complex.normSq (field site) *
+            uniformScalarRealPair (field site) (direction site) := by
+  unfold potentialFirstVariation
+    periodicC19TransverseQuadraticVariation
+  simp_rw [periodic_transverse_site_variation,
+    periodic_transverse_bond_variation r eps hr]
+  rw [Finset.sum_add_distrib]
+  simp only [Finset.mul_sum]
+  rw [mul_add]
+  rw [Finset.mul_sum, Finset.mul_sum]
+  ring_nf
 
 /-- Exact first variation of the *full native potential* along an arbitrary
 transverse field and arbitrary transverse test direction.  The coefficient
@@ -550,16 +608,24 @@ theorem periodic_c19_transverse_potential_first_variation
       eps * periodicC19TransverseQuadraticVariation r field direction +
         eps ^ 3 * ∑ site,
           Complex.normSq (field site) *
-            uniformScalarRealPair (field site) (direction site) := by
-  unfold potentialFirstVariation
-    periodicC19TransverseQuadraticVariation
-  simp_rw [periodic_first_transverse_site_variation,
-    periodic_first_transverse_bond_variation r eps hr]
-  rw [Finset.sum_add_distrib]
-  simp only [Finset.mul_sum]
-  rw [mul_add]
-  rw [Finset.mul_sum, Finset.mul_sum]
-  ring_nf
+            uniformScalarRealPair (field site) (direction site) :=
+  periodic_c19_transverse_component_potential_first_variation
+    r eps hr 0 field direction
+
+theorem periodic_c19_second_transverse_potential_first_variation
+    {L : ℕ} [NeZero L]
+    (r eps : ℝ) (hr : r ≠ 0)
+    (field direction : PeriodicCubicSite L → ℂ) :
+    potentialFirstVariation r
+        (uniformTransverseState r eps 0 field)
+        (periodicSecondTransverseDirection direction)
+        (c19Bond (periodicC19Geometry L)) =
+      eps * periodicC19TransverseQuadraticVariation r field direction +
+        eps ^ 3 * ∑ site,
+          Complex.normSq (field site) *
+            uniformScalarRealPair (field site) (direction site) :=
+  periodic_c19_transverse_component_potential_first_variation
+    r eps hr 1 field direction
 
 /-- The scalar field increment along one oriented periodic lattice edge. -/
 def periodicC19ScalarDifference
@@ -750,15 +816,16 @@ theorem periodic_c19_transverse_quadratic_variation_is_force_pair
 /-- The Hessian of the full native potential at the uniform axial vacuum,
 evaluated on an arbitrary transverse profile and arbitrary transverse test
 profile, is represented by the sitewise C19 acceleration. -/
-theorem periodic_c19_transverse_potential_hessian_is_force
+theorem periodic_c19_transverse_component_potential_hessian_is_force
     {L : ℕ} [NeZero L]
     (r : ℝ) (hr : r ≠ 0)
+    (channel : PeriodicTransverseChannel)
     (field direction : PeriodicCubicSite L → ℂ) :
     AnalyticHasDerivAt
       (fun eps : ℝ =>
         potentialFirstVariation r
-          (uniformTransverseState r eps field 0)
-          (periodicFirstTransverseDirection direction)
+          (periodicTransverseComponentState r eps channel field)
+          (periodicTransverseComponentDirection channel direction)
           (c19Bond (periodicC19Geometry L)))
       (-∑ site,
         uniformScalarRealPair
@@ -774,13 +841,13 @@ theorem periodic_c19_transverse_potential_hessian_is_force
   have hfun :
       (fun eps : ℝ =>
         potentialFirstVariation r
-          (uniformTransverseState r eps field 0)
-          (periodicFirstTransverseDirection direction)
+          (periodicTransverseComponentState r eps channel field)
+          (periodicTransverseComponentDirection channel direction)
           (c19Bond (periodicC19Geometry L))) =
       (fun eps : ℝ => eps * q + eps ^ 3 * cubic) := by
     funext eps
-    exact periodic_c19_transverse_potential_first_variation
-      r eps hr field direction
+    exact periodic_c19_transverse_component_potential_first_variation
+      r eps hr channel field direction
   rw [hfun]
   convert hsum using 1
   · funext eps
@@ -790,115 +857,25 @@ theorem periodic_c19_transverse_potential_hessian_is_force
     exact (periodic_c19_transverse_quadratic_variation_is_force_pair
       r field direction).symm
 
-/-- A scalar test profile supported at one periodic site. -/
-def periodicSingleSiteScalarDirection
-    {L : ℕ}
-    (site : PeriodicCubicSite L) (amplitude : ℂ) :
-    PeriodicCubicSite L → ℂ :=
-  fun testSite => if testSite = site then amplitude else 0
-
-theorem periodic_c19_transverse_potential_hessian_localized
+/-- The Hessian of the full native potential at the uniform axial vacuum,
+evaluated on an arbitrary transverse profile and arbitrary transverse test
+profile, is represented by the sitewise C19 acceleration. -/
+theorem periodic_c19_transverse_potential_hessian_is_force
     {L : ℕ} [NeZero L]
     (r : ℝ) (hr : r ≠ 0)
-    (field : PeriodicCubicSite L → ℂ)
-    (site : PeriodicCubicSite L) (amplitude : ℂ) :
+    (field direction : PeriodicCubicSite L → ℂ) :
     AnalyticHasDerivAt
       (fun eps : ℝ =>
         potentialFirstVariation r
           (uniformTransverseState r eps field 0)
-          (periodicFirstTransverseDirection
-            (periodicSingleSiteScalarDirection site amplitude))
+          (periodicFirstTransverseDirection direction)
           (c19Bond (periodicC19Geometry L)))
-      (-uniformScalarRealPair
-        (periodicC19LinearizedAcceleration r field site) amplitude) 0 := by
-  have h := periodic_c19_transverse_potential_hessian_is_force
-    r hr field (periodicSingleSiteScalarDirection site amplitude)
-  convert h using 1
-  rw [Finset.sum_eq_single site]
-  · simp [periodicSingleSiteScalarDirection]
-  · intro testSite _ hne
-    simp [periodicSingleSiteScalarDirection, hne, uniformScalarRealPair]
-  · simp
-
-/-- Place a scalar test profile in the second transverse channel. -/
-def periodicSecondTransverseDirection
-    {L : ℕ} (field : PeriodicCubicSite L → ℂ) :
-    State (PeriodicCubicSite L) where
-  psi := fun site component => if component = 1 then field site else 0
-  chi := fun _ _ => 0
-
-private theorem periodic_second_transverse_site_variation
-    {L : ℕ} (r eps : ℝ)
-    (field direction : PeriodicCubicSite L → ℂ)
-    (site : PeriodicCubicSite L) :
-    sitePotentialFirstVariation r
-        (uniformTransverseState r eps 0 field)
-        (periodicSecondTransverseDirection direction) site =
-      eps * r ^ 2 * uniformScalarRealPair (field site) (direction site) +
-        eps ^ 3 * Complex.normSq (field site) *
-          uniformScalarRealPair (field site) (direction site) := by
-  unfold sitePotentialFirstVariation
-  rw [uniform_transverse_psi_density, uniform_transverse_chi_density]
-  simp [uniformTransverseState, periodicSecondTransverseDirection,
-    c3RealPair, uniformScalarRealPair, Fin.sum_univ_succ]
-  ring
-
-private theorem periodic_second_transverse_wedge_variation
-    {L : ℕ} (r eps : ℝ)
-    (field direction : PeriodicCubicSite L → ℂ)
-    (site : PeriodicCubicSite L) :
-    wedgeFirstVariation
-        (uniformTransverseState r eps 0 field)
-        (periodicSecondTransverseDirection direction) site =
-      fun component =>
-        if component = 2 then -(r : ℂ) * direction site else 0 := by
-  funext component
-  fin_cases component <;>
-    simp [wedgeFirstVariation, uniformTransverseState,
-      periodicSecondTransverseDirection, c3Add, wedge]
-
-private theorem periodic_second_transverse_bond_variation
-    {L : ℕ} (r eps : ℝ) (hr : r ≠ 0)
-    (field direction : PeriodicCubicSite L → ℂ)
-    (edge : Bond (PeriodicCubicSite L)) :
-    exteriorAreaBondFirstVariation r
-        (uniformTransverseState r eps 0 field)
-        (periodicSecondTransverseDirection direction) edge =
-      eps * edge.weight *
+      (-∑ site,
         uniformScalarRealPair
-          (field edge.target - field edge.source)
-          (direction edge.target - direction edge.source) := by
-  unfold exteriorAreaBondFirstVariation bondAreaDifference
-    bondAreaFirstVariation
-  rw [uniform_transverse_wedge, uniform_transverse_wedge,
-    periodic_second_transverse_wedge_variation,
-    periodic_second_transverse_wedge_variation]
-  simp [difference, c3RealPair, uniformScalarRealPair,
-    Fin.sum_univ_succ]
-  field_simp [hr]
-  ring
-
-theorem periodic_c19_second_transverse_potential_first_variation
-    {L : ℕ} [NeZero L]
-    (r eps : ℝ) (hr : r ≠ 0)
-    (field direction : PeriodicCubicSite L → ℂ) :
-    potentialFirstVariation r
-        (uniformTransverseState r eps 0 field)
-        (periodicSecondTransverseDirection direction)
-        (c19Bond (periodicC19Geometry L)) =
-      eps * periodicC19TransverseQuadraticVariation r field direction +
-        eps ^ 3 * ∑ site,
-          Complex.normSq (field site) *
-            uniformScalarRealPair (field site) (direction site) := by
-  unfold potentialFirstVariation
-    periodicC19TransverseQuadraticVariation
-  simp_rw [periodic_second_transverse_site_variation,
-    periodic_second_transverse_bond_variation r eps hr]
-  rw [Finset.sum_add_distrib]
-  simp only [Finset.mul_sum]
-  rw [mul_add]
-  rw [Finset.mul_sum, Finset.mul_sum]
-  ring_nf
+          (periodicC19LinearizedAcceleration r field site)
+          (direction site)) 0 :=
+  periodic_c19_transverse_component_potential_hessian_is_force
+    r hr 0 field direction
 
 theorem periodic_c19_second_transverse_potential_hessian_is_force
     {L : ℕ} [NeZero L]
@@ -913,72 +890,16 @@ theorem periodic_c19_second_transverse_potential_hessian_is_force
       (-∑ site,
         uniformScalarRealPair
           (periodicC19LinearizedAcceleration r field site)
-          (direction site)) 0 := by
-  let q := periodicC19TransverseQuadraticVariation r field direction
-  let cubic := ∑ site,
-    Complex.normSq (field site) *
-      uniformScalarRealPair (field site) (direction site)
-  have hlinear := (hasDerivAt_id (0 : ℝ)).mul_const q
-  have hcubic := (hasDerivAt_pow 3 (0 : ℝ)).mul_const cubic
-  have hsum := hlinear.add hcubic
-  have hfun :
-      (fun eps : ℝ =>
-        potentialFirstVariation r
-          (uniformTransverseState r eps 0 field)
-          (periodicSecondTransverseDirection direction)
-          (c19Bond (periodicC19Geometry L))) =
-      (fun eps : ℝ => eps * q + eps ^ 3 * cubic) := by
-    funext eps
-    exact periodic_c19_second_transverse_potential_first_variation
-      r eps hr field direction
-  rw [hfun]
-  convert hsum using 1
-  · funext eps
-    rfl
-  · dsimp [q]
-    norm_num
-    exact (periodic_c19_transverse_quadratic_variation_is_force_pair
-      r field direction).symm
+          (direction site)) 0 :=
+  periodic_c19_transverse_component_potential_hessian_is_force
+    r hr 1 field direction
 
-theorem periodic_c19_second_transverse_potential_hessian_localized
-    {L : ℕ} [NeZero L]
-    (r : ℝ) (hr : r ≠ 0)
-    (field : PeriodicCubicSite L → ℂ)
+/-- A scalar test profile supported at one periodic site. -/
+def periodicSingleSiteScalarDirection
+    {L : ℕ}
     (site : PeriodicCubicSite L) (amplitude : ℂ) :
-    AnalyticHasDerivAt
-      (fun eps : ℝ =>
-        potentialFirstVariation r
-          (uniformTransverseState r eps 0 field)
-          (periodicSecondTransverseDirection
-            (periodicSingleSiteScalarDirection site amplitude))
-          (c19Bond (periodicC19Geometry L)))
-      (-uniformScalarRealPair
-        (periodicC19LinearizedAcceleration r field site) amplitude) 0 := by
-  have h := periodic_c19_second_transverse_potential_hessian_is_force
-    r hr field (periodicSingleSiteScalarDirection site amplitude)
-  convert h using 1
-  rw [Finset.sum_eq_single site]
-  · simp [periodicSingleSiteScalarDirection]
-  · intro testSite _ hne
-    simp [periodicSingleSiteScalarDirection, hne, uniformScalarRealPair]
-  · simp
-
-/-- The two transverse axes available at the fixed axial vacuum. -/
-abbrev PeriodicTransverseChannel := Fin 2
-
-/-- Place a scalar perturbation in the selected transverse channel of the vacuum. -/
-def periodicTransverseComponentState
-    {L : ℕ} (r eps : ℝ) (component : PeriodicTransverseChannel)
-    (field : PeriodicCubicSite L → ℂ) : State (PeriodicCubicSite L) :=
-  if component = 0 then uniformTransverseState r eps field 0
-  else uniformTransverseState r eps 0 field
-
-/-- Place a scalar test direction in the selected transverse channel. -/
-def periodicTransverseComponentDirection
-    {L : ℕ} (component : PeriodicTransverseChannel)
-    (field : PeriodicCubicSite L → ℂ) : State (PeriodicCubicSite L) :=
-  if component = 0 then periodicFirstTransverseDirection field
-  else periodicSecondTransverseDirection field
+    PeriodicCubicSite L → ℂ :=
+  fun testSite => if testSite = site then amplitude else 0
 
 /-- Both transverse native `Psi` components have the same localized Hessian
 force, proved from the full potential. -/
@@ -997,15 +918,48 @@ theorem periodic_c19_transverse_component_hessian_localized
           (c19Bond (periodicC19Geometry L)))
       (-uniformScalarRealPair
         (periodicC19LinearizedAcceleration r field site) amplitude) 0 := by
-  fin_cases component
-  · simpa [periodicTransverseComponentState,
-      periodicTransverseComponentDirection] using
-      periodic_c19_transverse_potential_hessian_localized
-        r hr field site amplitude
-  · simpa [periodicTransverseComponentState,
-      periodicTransverseComponentDirection] using
-      periodic_c19_second_transverse_potential_hessian_localized
-        r hr field site amplitude
+  have h := periodic_c19_transverse_component_potential_hessian_is_force
+    r hr component field (periodicSingleSiteScalarDirection site amplitude)
+  convert h using 1
+  rw [Finset.sum_eq_single site]
+  · simp [periodicSingleSiteScalarDirection]
+  · intro testSite _ hne
+    simp [periodicSingleSiteScalarDirection, hne, uniformScalarRealPair]
+  · simp
+
+theorem periodic_c19_transverse_potential_hessian_localized
+    {L : ℕ} [NeZero L]
+    (r : ℝ) (hr : r ≠ 0)
+    (field : PeriodicCubicSite L → ℂ)
+    (site : PeriodicCubicSite L) (amplitude : ℂ) :
+    AnalyticHasDerivAt
+      (fun eps : ℝ =>
+        potentialFirstVariation r
+          (uniformTransverseState r eps field 0)
+          (periodicFirstTransverseDirection
+            (periodicSingleSiteScalarDirection site amplitude))
+          (c19Bond (periodicC19Geometry L)))
+      (-uniformScalarRealPair
+        (periodicC19LinearizedAcceleration r field site) amplitude) 0 :=
+  periodic_c19_transverse_component_hessian_localized
+    r hr 0 field site amplitude
+
+theorem periodic_c19_second_transverse_potential_hessian_localized
+    {L : ℕ} [NeZero L]
+    (r : ℝ) (hr : r ≠ 0)
+    (field : PeriodicCubicSite L → ℂ)
+    (site : PeriodicCubicSite L) (amplitude : ℂ) :
+    AnalyticHasDerivAt
+      (fun eps : ℝ =>
+        potentialFirstVariation r
+          (uniformTransverseState r eps 0 field)
+          (periodicSecondTransverseDirection
+            (periodicSingleSiteScalarDirection site amplitude))
+          (c19Bond (periodicC19Geometry L)))
+      (-uniformScalarRealPair
+        (periodicC19LinearizedAcceleration r field site) amplitude) 0 :=
+  periodic_c19_transverse_component_hessian_localized
+    r hr 1 field site amplitude
 
 /-- The test direction parallel to the vacuum axis of the first field. -/
 def periodicLongitudinalPsiDirection

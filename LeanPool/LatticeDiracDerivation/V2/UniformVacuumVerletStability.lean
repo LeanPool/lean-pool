@@ -14,15 +14,11 @@ public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletTime
 # Stability of the native centered update on each Fourier mode
 
 The preceding module proves an exact cubic one-step consistency defect.  This
-module adds the separate stability statement needed before that fact may be
-used in a convergence argument.  For every fixed native C19 mode, the
-velocity-Verlet form of the unchanged two-layer recurrence preserves an exact
-modified quadratic energy.  Inside `0 <= dt ^ 2 Omega ^ 2 <= 4` that energy is
-nonnegative and controls the iterates.
-
-No global-in-time error theorem is claimed here: preservation and local
-consistency are the two proved ingredients, not a replacement for an
-accumulated-error estimate.
+module proves exact conservation of the modified quadratic energy of the
+velocity-Verlet form of the two-layer recurrence for each native C19 mode.
+On `0 ≤ dt ^ 2 * Omega ^ 2 ≤ 4` this energy is nonnegative and bounds
+the squared velocity norm. The position coefficient vanishes at the upper
+endpoint. The energy bound applies at every iterate of the fixed mode.
 -/
 
 @[expose] public section
@@ -37,7 +33,7 @@ def uniformVerletStabilityParameter
     (r dt : ℝ) (momentum : LatticeMomentum) : ℝ :=
   dt ^ 2 * uniformVacuumModalSquare r momentum
 
-/-- The strict stability condition for the modified energy of the native centered recurrence. -/
+/-- The closed parameter interval on which the modified Verlet energy is nonnegative. -/
 def uniformVerletStable
     (r dt : ℝ) (momentum : LatticeMomentum) : Prop :=
   0 ≤ uniformVerletStabilityParameter r dt momentum ∧
@@ -112,7 +108,7 @@ def uniformVerletIterate
       uniformVerletPhaseStep r dt momentum
         (uniformVerletIterate r dt momentum n phase)
 
-/-- Exact bounded-power statement in the modified energy norm. -/
+/-- Conservation of the modified quadratic energy over any number of Verlet steps. -/
 theorem uniform_verlet_modified_energy_iterate
     (r dt : ℝ) (momentum : LatticeMomentum)
     (n : ℕ) (phase : UniformTwoChannelPhase) :
