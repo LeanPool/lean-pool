@@ -9,6 +9,10 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureProduct
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureChart
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitWeight
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitGaussian
+import TauCeti.MeasureTheory.Measure.WithDensity
 
 /-! # Density of the weighted volume in the product charts -/
 
@@ -87,20 +91,20 @@ theorem map_Θ_eq [SecondCountableTopology M] {V : M → ℝ} {μ : Measure M}
   rw [Measure.map_congr hae, ← AEMeasurable.map_map_of_aemeasurable (eJ
       J).symm.measurable.aemeasurable
     hΞm, hmain]
-  ext B hB
-  rw [Measure.map_apply (eJ J).symm.measurable hB, withDensity_apply _ ((eJ J).symm.measurable hB),
-    withDensity_apply _ hB, Measure.restrict_restrict ((eJ J).symm.measurable hB),
-    Measure.restrict_restrict hB]
-  have hpre : eJ J ⁻¹' ((eJ J).symm ⁻¹' B ∩ (fr.Ξ J y₀).target) =
-      B ∩ (fr.prodChart y₀).target := by
-    ext p
-    simp only [mem_preimage, mem_inter_iff, MeasurableEquiv.symm_apply_apply]
-    rw [fr.eJ_mem_target_iff J y₀]
-  rw [← (measurePreserving_eJ J).setLIntegral_comp_preimage_emb (eJ J).measurableEmbedding _
-    ((eJ J).symm ⁻¹' B ∩ (fr.Ξ J y₀).target), hpre]
-  refine setLIntegral_congr_fun (hB.inter (fr.prodChart y₀).open_target.measurableSet) fun p hp =>
-      ?_
-  have hp' : eJ J p ∈ (fr.Ξ J y₀).target := (fr.eJ_mem_target_iff J y₀ p).2 hp.2
+  rw [MeasurableEquiv.map_withDensity]
+  have target_preimage : (eJ J).symm ⁻¹' (fr.prodChart y₀).target = (fr.Ξ J y₀).target := by
+    ext w
+    simpa only [mem_preimage, MeasurableEquiv.apply_symm_apply] using
+      (fr.eJ_mem_target_iff J y₀ ((eJ J).symm w)).symm
+  have restricted_map := ((measurePreserving_eJ J).symm.restrict_preimage
+    (fr.prodChart y₀).open_target.measurableSet).map_eq
+  rw [target_preimage] at restricted_map
+  rw [restricted_map]
+  simp only [MeasurableEquiv.symm_symm]
+  refine withDensity_congr_ae ?_
+  rw [Filter.EventuallyEq, ae_restrict_iff' (fr.prodChart y₀).open_target.measurableSet]
+  refine Filter.Eventually.of_forall fun p hp => ?_
+  have hp' := (fr.eJ_mem_target_iff J y₀ p).2 hp
   rw [Ξ_symm_eJ, eJ_apply, chartDensity_Ξ fr J y₀ _ (by rwa [← eJ_apply])]
   have : zc J ((Jc J) p) = p.2 := by simp [zc]
   rw [this]

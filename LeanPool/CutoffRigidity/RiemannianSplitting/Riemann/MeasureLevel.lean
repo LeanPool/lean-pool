@@ -8,11 +8,8 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureChart
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureGram
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitRiemannLevel
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitWeight
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitGaussian
 
 /-! # The Riemannian density of the level `N` computed in `M` -/
 

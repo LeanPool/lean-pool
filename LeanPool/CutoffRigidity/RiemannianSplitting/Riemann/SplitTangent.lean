@@ -8,7 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitProduct
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitAction
 
 /-! # Tangent maps of the `ℝ^k`-action of a frame -/
 
