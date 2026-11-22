@@ -45,9 +45,9 @@ The shift `a` is the subsistence level of Stone and Geary. `a = 0` is CRRA exact
 ## The result that matters
 
 `relativeRiskAversionLeOne_haraUtility`: HARA with a NONNEGATIVE shift and `γ ≤ 1` satisfies
-Light's condition. Relative risk aversion of the shifted family is `γ c / (a + c)`, which for
-`a ≥ 0` is at most `γ`; a negative shift (genuine subsistence) pushes it above `γ` and can break
-the condition however small `γ` is, so the sign of the shift is not a technicality.
+Light's condition. Informally, relative risk aversion of the shifted family is
+`γ c / (a + c)`, which for `a ≥ 0` is at most `γ`. This file proves nothing about a negative
+shift (genuine subsistence), where that formula exceeds `γ`; the theorem assumes `0 ≤ a`.
 
 The proof is derivative-free in the sense that matters: it factors
 
