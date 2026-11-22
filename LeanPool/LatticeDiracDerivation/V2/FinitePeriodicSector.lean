@@ -227,6 +227,36 @@ theorem periodic_lifted_native_acceleration_is_action_hessian
   exact periodic_c19_transverse_hessian_localized_all_channels
     r hr channel phase.position site amplitude
 
+/-- The localized native action Hessian on both transverse profiles of one Fourier mode. -/
+def PeriodicModalActionHessian
+    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
+    (r : ℝ) (mode : PeriodicC19FourierMode L momentum) (position : UniformCell2) : Prop :=
+  ∀ component site testAmplitude,
+    AnalyticHasDerivAt
+      (fun eps : ℝ =>
+        potentialFirstVariation r
+          (uniformTransverseState r eps
+            (periodicModeField mode (position 0))
+            (periodicModeField mode (position 1)))
+          (periodicTransverseComponentDirection component
+            (periodicSingleSiteScalarDirection site testAmplitude))
+          (c19Bond (periodicC19Geometry L)))
+      (-uniformScalarRealPair
+        (periodicModeField mode
+          ((uniformVacuumModalAcceleration r momentum position)
+            component) site)
+        testAmplitude) 0
+
+theorem periodic_modal_action_hessian
+    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
+    (r : ℝ) (hr : r ≠ 0) (mode : PeriodicC19FourierMode L momentum)
+    (position : UniformCell2) : PeriodicModalActionHessian r mode position := by
+  intro component site testAmplitude
+  have hforce := periodic_c19_transverse_hessian_localized_all_channels r hr component
+    (fun channel => periodicModeField mode (position channel)) site testAmplitude
+  simpa only [periodic_c19_linearized_force_is_modal_acceleration
+    r mode position component site] using hforce
+
 /-- Full native weak Euler--Lagrange closure of the periodic four-complex-
 dimensional tangent sector.  The first clause makes the embedding into
 `(delta Psi, delta chi, delta PsiDot, delta chiDot)` lossless.  The second
@@ -240,21 +270,7 @@ theorem periodic_full_native_tangent_sector_is_action_invariant
     (mode : PeriodicC19FourierMode L momentum)
     (phase : UniformTwoChannelPhase) :
     Function.Injective (periodicFullNativeTangentEmbed mode) ∧
-      (∀ component site testAmplitude,
-        AnalyticHasDerivAt
-          (fun eps : ℝ =>
-            potentialFirstVariation r
-              (uniformTransverseState r eps
-                (periodicModeField mode (phase.1 0))
-                (periodicModeField mode (phase.1 1)))
-              (periodicTransverseComponentDirection component
-                (periodicSingleSiteScalarDirection site testAmplitude))
-              (c19Bond (periodicC19Geometry L)))
-          (-uniformScalarRealPair
-            (periodicModeField mode
-              ((uniformVacuumModalAcceleration r momentum phase.1)
-                component) site)
-            testAmplitude) 0) ∧
+      PeriodicModalActionHessian r mode phase.1 ∧
       (∀ eps longitudinal,
         potentialFirstVariation r
           (uniformTransverseState r eps
@@ -275,14 +291,7 @@ theorem periodic_full_native_tangent_sector_is_action_invariant
         periodicModePhaseEmbed mode
           (uniformVacuumNativeGenerator r momentum phase) := by
   exact ⟨periodic_full_native_tangent_embed_injective mode,
-    fun component site testAmplitude => by
-      have hforce := periodic_lifted_native_acceleration_is_action_hessian r hr
-        (periodicModePhaseEmbed mode phase) component site testAmplitude
-      have hgenerator := periodic_full_native_tangent_generator_intertwines r mode phase
-      unfold periodicFullNativeTangentEmbed at hgenerator
-      rw [hgenerator] at hforce
-      simpa only [periodic_transverse_phase_lift_velocity, periodicModePhaseEmbed,
-        uniformVacuumNativeGenerator] using hforce,
+    periodic_modal_action_hessian r hr mode phase.1,
     fun eps longitudinal =>
       periodic_c19_transverse_longitudinal_cross_variation_zero
         r eps longitudinal
@@ -309,21 +318,7 @@ theorem periodic_full_native_action_generator_intertwines
         (periodicFullNativeTangentEmbed mode phase) =
       periodicFullNativeTangentEmbed mode
         (uniformVacuumNativeGenerator r momentum phase) ∧
-      (∀ component site testAmplitude,
-        AnalyticHasDerivAt
-          (fun eps : ℝ =>
-            potentialFirstVariation r
-              (uniformTransverseState r eps
-                (periodicModeField mode (phase.1 0))
-                (periodicModeField mode (phase.1 1)))
-              (periodicTransverseComponentDirection component
-                (periodicSingleSiteScalarDirection site testAmplitude))
-              (c19Bond (periodicC19Geometry L)))
-          (-uniformScalarRealPair
-            (periodicModeField mode
-              ((uniformVacuumModalAcceleration r momentum phase.1)
-                component) site)
-            testAmplitude) 0) ∧
+      PeriodicModalActionHessian r mode phase.1 ∧
       (∀ eps longitudinal,
         potentialFirstVariation r
           (uniformTransverseState r eps

@@ -163,22 +163,7 @@ theorem lfm_periodic_action_mode_to_free_dirac
     periodicTransverseGenerator chi0 (periodicModePhaseEmbed mode phase) =
       periodicModePhaseEmbed mode
         (uniformVacuumNativeGenerator chi0 momentum phase) ∧
-    ((∀ (component : Fin 2) (site : PeriodicCubicSite L)
-        (testAmplitude : ℂ),
-      AnalyticHasDerivAt
-        (fun eps : ℝ =>
-          potentialFirstVariation chi0
-            (uniformTransverseState chi0 eps
-              (periodicModeField mode (phase.1 0))
-              (periodicModeField mode (phase.1 1)))
-            (periodicTransverseComponentDirection component
-              (periodicSingleSiteScalarDirection site testAmplitude))
-            (c19Bond (periodicC19Geometry L)))
-        (-uniformScalarRealPair
-          (periodicModeField mode
-            ((uniformVacuumModalAcceleration
-              chi0 momentum phase.1) component) site)
-          testAmplitude) 0) ∧
+    (PeriodicModalActionHessian chi0 mode phase.1 ∧
       Tendsto
           (fun eps : ℝ =>
             periodicC19LagrangianTangentQuotient
@@ -591,22 +576,8 @@ structure CompleteFreeDiracCertificate : Prop where
         (uniformVacuumNativeGenerator r momentum phase)
   fullNativePeriodicActionForce : ∀ (L : ℕ) [NeZero L]
       (momentum : LatticeMomentum) (r : ℝ), r ≠ 0 →
-      ∀ (mode : PeriodicC19FourierMode L momentum)
-        (position : UniformCell2) component site testAmplitude,
-      AnalyticHasDerivAt
-        (fun eps : ℝ =>
-          potentialFirstVariation r
-            (uniformTransverseState r eps
-              (periodicModeField mode (position 0))
-              (periodicModeField mode (position 1)))
-            (periodicTransverseComponentDirection component
-              (periodicSingleSiteScalarDirection site testAmplitude))
-            (c19Bond (periodicC19Geometry L)))
-        (-uniformScalarRealPair
-          (periodicModeField mode
-            ((uniformVacuumModalAcceleration r momentum position)
-              component) site)
-          testAmplitude) 0
+      ∀ (mode : PeriodicC19FourierMode L momentum) (position : UniformCell2),
+        PeriodicModalActionHessian r mode position
   fullNativeLongitudinalLeakageZero : ∀ (L : ℕ) [NeZero L]
       (r eps : ℝ)
       (longitudinal first second : PeriodicCubicSite L → ℂ),
@@ -1046,9 +1017,7 @@ theorem complete_first_principles_free_dirac :
     fun _ _ _ r mode phase =>
       periodic_full_native_tangent_generator_intertwines r mode phase
   fullNativePeriodicActionForce :=
-    fun _ _ _ r hr mode position component site testAmplitude =>
-      (periodic_full_native_action_generator_intertwines r hr mode (position, 0)).2.1
-        component site testAmplitude
+    fun _ _ _ r hr mode position => periodic_modal_action_hessian r hr mode position
   fullNativeLongitudinalLeakageZero :=
     fun _ _ r eps longitudinal first second =>
       periodic_c19_transverse_longitudinal_cross_variation_zero

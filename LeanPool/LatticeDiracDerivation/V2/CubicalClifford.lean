@@ -108,12 +108,24 @@ def cubicalBeta (amplitude : CubicalCell8) : CubicalCell8 := fun corner =>
   else
     -amplitude corner
 
+private theorem cubical_flip_twice :
+    ∀ (axis : Fin 3) (corner : CubicalCorner),
+      cubicalFlip axis (cubicalFlip axis corner) = corner := by
+  decide
+
+private theorem cubical_crossing_sign_square :
+    ∀ (axis : Fin 3) (corner : CubicalCorner),
+      cubicalIncidenceSignInteger axis corner *
+        cubicalIncidenceSignInteger axis (cubicalFlip axis corner) = 1 := by
+  decide
+
 theorem cubical_gamma_square (axis : Fin 3) (amplitude : CubicalCell8) :
     cubicalGamma axis (cubicalGamma axis amplitude) = amplitude := by
   funext corner
-  fin_cases axis <;> fin_cases corner <;>
-    simp [cubicalGamma, cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalFlip,
-      cubicalFlip0, cubicalFlip1, cubicalFlip2, cubicalBit0, cubicalBit1]
+  have hsign : cubicalIncidenceSign axis corner *
+      cubicalIncidenceSign axis (cubicalFlip axis corner) = 1 := by
+    simp only [cubicalIncidenceSign, ← Int.cast_mul, cubical_crossing_sign_square, Int.cast_one]
+  simp only [cubicalGamma, ← mul_assoc, hsign, one_mul, cubical_flip_twice]
 
 private theorem cubical_flips_commute :
     ∀ (axis other : Fin 3) (corner : CubicalCorner),
@@ -148,18 +160,20 @@ theorem cubical_beta_square (amplitude : CubicalCell8) :
   fin_cases corner <;>
     simp [cubicalBeta, cubicalBit0, cubicalBit1, cubicalBit2]
 
+private theorem cubical_flip_switches_parity :
+    ∀ (axis : Fin 3) (corner : CubicalCorner),
+      let flipped := cubicalFlip axis corner
+      (cubicalBit0 flipped + cubicalBit1 flipped + cubicalBit2 flipped) % 2 = 0 ↔
+        ¬ (cubicalBit0 corner + cubicalBit1 corner + cubicalBit2 corner) % 2 = 0 := by
+  decide
+
 theorem cubical_beta_anticommutes
     (axis : Fin 3) (amplitude : CubicalCell8) :
     cubicalBeta (cubicalGamma axis amplitude) =
       fun corner => -cubicalGamma axis (cubicalBeta amplitude) corner := by
-  fin_cases axis
-  all_goals
-    funext corner
-    fin_cases corner <;>
-      simp [cubicalBeta, cubicalGamma, cubicalIncidenceSign,
-      cubicalIncidenceSignInteger, cubicalFlip,
-        cubicalFlip0, cubicalFlip1, cubicalFlip2,
-        cubicalBit0, cubicalBit1, cubicalBit2]
+  funext corner
+  by_cases h : (cubicalBit0 corner + cubicalBit1 corner + cubicalBit2 corner) % 2 = 0 <;>
+    simp [cubicalBeta, cubicalGamma, cubical_flip_switches_parity, h]
 
 /-- A linear combination of the three oriented incidence generators. -/
 def cubicalIncidenceLinear
@@ -193,38 +207,63 @@ theorem cubical_incidence_linear_square
 
 /-! ## The two geometry-derived rank-four flavor sectors -/
 
-/-- The orientation sign in the composition of the two flips defining the flavor operator. -/
-def cubicalFlavorSign (corner : CubicalCorner) : ℝ :=
+/-- The two coordinate flips defining the flavor involution. -/
+def cubicalFlavorFlip (corner : CubicalCorner) : CubicalCorner :=
+  cubicalFlip1 (cubicalFlip2 corner)
+
+/-- The integer orientation sign of the flavor involution. -/
+def cubicalFlavorSignInteger (corner : CubicalCorner) : ℤ :=
   if cubicalBit2 corner % 2 = 0 then 1 else -1
+
+/-- The orientation sign in the composition of the two flavor flips. -/
+def cubicalFlavorSign (corner : CubicalCorner) : ℝ :=
+  (cubicalFlavorSignInteger corner : ℝ)
 
 /-- The involution whose eigenspaces give the two four-component sectors. -/
 def cubicalFlavor (amplitude : CubicalCell8) : CubicalCell8 := fun corner =>
-  I * (cubicalFlavorSign corner : ℂ) *
-    amplitude (cubicalFlip1 (cubicalFlip2 corner))
+  I * (cubicalFlavorSign corner : ℂ) * amplitude (cubicalFlavorFlip corner)
 
 theorem cubical_flavor_involution (amplitude : CubicalCell8) :
     cubicalFlavor (cubicalFlavor amplitude) = amplitude := by
   funext corner
   fin_cases corner <;>
-    simp [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2,
+    simp [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2,
       cubicalBit2] <;> ring_nf <;> rw [Complex.I_sq] <;> ring
+
+private theorem cubical_flavor_sign_commutes_gamma :
+    ∀ (axis : Fin 3) (corner : CubicalCorner),
+      cubicalFlavorSignInteger corner *
+        cubicalIncidenceSignInteger axis (cubicalFlavorFlip corner) =
+        cubicalIncidenceSignInteger axis corner *
+          cubicalFlavorSignInteger (cubicalFlip axis corner) := by
+  decide
 
 theorem cubical_flavor_commutes_gamma
     (axis : Fin 3) (amplitude : CubicalCell8) :
     cubicalFlavor (cubicalGamma axis amplitude) =
       cubicalGamma axis (cubicalFlavor amplitude) := by
   funext corner
-  fin_cases axis <;> fin_cases corner <;>
-    simp [cubicalFlavor, cubicalFlavorSign, cubicalGamma,
-      cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalFlip, cubicalFlip0, cubicalFlip1,
-      cubicalFlip2, cubicalBit0, cubicalBit1, cubicalBit2]
+  have hflip : cubicalFlip axis (cubicalFlavorFlip corner) =
+      cubicalFlavorFlip (cubicalFlip axis corner) := by
+    change cubicalFlip axis (cubicalFlip 1 (cubicalFlip 2 corner)) =
+      cubicalFlip 1 (cubicalFlip 2 (cubicalFlip axis corner))
+    rw [cubical_flips_commute 1 axis, cubical_flips_commute 2 axis]
+  have hsign : (cubicalFlavorSign corner : ℂ) *
+        cubicalIncidenceSign axis (cubicalFlavorFlip corner) =
+      cubicalIncidenceSign axis corner * (cubicalFlavorSign (cubicalFlip axis corner) : ℂ) := by
+    simp only [cubicalFlavorSign, Complex.ofReal_intCast, cubicalIncidenceSign, ← Int.cast_mul,
+      cubical_flavor_sign_commutes_gamma]
+  simp only [cubicalFlavor, cubicalGamma, hflip]
+  linear_combination I * amplitude (cubicalFlavorFlip (cubicalFlip axis corner)) * hsign
 
 theorem cubical_flavor_commutes_beta (amplitude : CubicalCell8) :
     cubicalFlavor (cubicalBeta amplitude) =
       cubicalBeta (cubicalFlavor amplitude) := by
   funext corner
   fin_cases corner <;>
-    simp [cubicalFlavor, cubicalFlavorSign, cubicalBeta,
+    simp [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalBeta,
       cubicalFlip1, cubicalFlip2, cubicalBit0, cubicalBit1, cubicalBit2]
 
 /-- Extend four coordinates to an amplitude in the negative flavor eigenspace. -/
@@ -260,7 +299,8 @@ theorem cubical_embed_minus_has_negative_flavor (z : CubicalCell4) :
       fun corner => -cubicalEmbedMinus z corner := by
   funext corner
   fin_cases corner <;>
-    simp [cubicalFlavor, cubicalFlavorSign, cubicalEmbedMinus,
+    simp [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalEmbedMinus,
       cubicalFlip1, cubicalFlip2, cubicalBit2] <;>
     ring_nf <;> rw [Complex.I_sq] <;> ring
 
@@ -268,7 +308,8 @@ theorem cubical_embed_plus_has_positive_flavor (z : CubicalCell4) :
     cubicalFlavor (cubicalEmbedPlus z) = cubicalEmbedPlus z := by
   funext corner
   fin_cases corner <;>
-    simp [cubicalFlavor, cubicalFlavorSign, cubicalEmbedPlus,
+    simp [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalEmbedPlus,
       cubicalFlip1, cubicalFlip2, cubicalBit2] <;>
     ring_nf <;> rw [Complex.I_sq] <;> ring
 

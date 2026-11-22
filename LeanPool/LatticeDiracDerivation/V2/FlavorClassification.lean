@@ -99,21 +99,25 @@ theorem positive_flavor_is_exactly_plus_embedding
   fin_cases corner
   · exact neg_neg _
   · rfl
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
       using congrFun hflavor 2
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
       using congrFun hflavor 3
   · rfl
   · rfl
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
       using congrFun hflavor 6
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus,
       cubicalPositiveFlavorRead]
       using congrFun hflavor 7
@@ -126,21 +130,25 @@ theorem negative_flavor_is_exactly_minus_embedding
   fin_cases corner
   · rfl
   · exact neg_neg _
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
       using congrArg Neg.neg (congrFun hflavor 2)
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
       using congrArg Neg.neg (congrFun hflavor 3)
   · rfl
   · rfl
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
       using congrArg Neg.neg (congrFun hflavor 6)
-  · simpa [cubicalFlavor, cubicalFlavorSign, cubicalFlip1, cubicalFlip2, cubicalBit2,
+  · simpa [cubicalFlavor, cubicalFlavorFlip, cubicalFlavorSign, cubicalFlavorSignInteger,
+      cubicalFlip1, cubicalFlip2, cubicalBit2,
       cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus,
       cubicalNegativeFlavorRead]
       using congrArg Neg.neg (congrFun hflavor 7)
