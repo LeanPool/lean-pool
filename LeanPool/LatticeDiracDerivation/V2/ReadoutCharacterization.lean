@@ -66,6 +66,18 @@ theorem cubical_eq_from_position_and_lower (z : CubicalCell4) :
     simp [cubicalFromPositionLower, cubicalStandardPosition,
       cubicalStandardLower] <;> ring
 
+private theorem cubical_position_of_hamiltonian_step
+    (mass px py pz : ℂ) (position lower : UniformCell2) :
+    cubicalStandardPosition (fun component => -I * cubicalStandardHamiltonian mass px py pz
+        (cubicalFromPositionLower position lower) component) =
+      fun component => -I *
+        (mass * lower component - cubicalSpatialLower px py pz position component) := by
+  funext component
+  fin_cases component <;>
+    simp [cubicalStandardPosition, cubicalStandardHamiltonian, cubicalStandardSpatial,
+      cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
+      cubicalSpatialLower, cubicalUpperEmbedding, cubicalFromPositionLower] <;> ring
+
 /-- The position half of the first-order cubical equation forces the
 complementary half.  This is the spectral/Kähler--Dirac origin of
 `cubicalPhaseLower`; its defining balance is not assumed here. -/
@@ -94,38 +106,13 @@ theorem cubical_lower_forced_by_position_intertwining
   rw [hz] at hnext
   apply cubical_phase_lower_unique mass px py pz hmass phase
     (cubicalStandardLower (candidate phase))
+  rw [cubical_position_of_hamiltonian_step] at hnext
   intro component
-  fin_cases component
-  · have hnext0 := congrFun hnext 0
-    simp [uniformTwoChannelKleinGordonVector, cubicalStandardPosition,
-      cubicalStandardLower, cubicalStandardHamiltonian,
-      cubicalStandardSpatial, cubicalStandardBeta,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, cubicalSpatialLower,
-      oriented_cubical_spatial_coordinates_eq_standard,
-      cubicalUpperEmbedding, cubicalFromPositionLower] at hnext0 ⊢
-    ring_nf at hnext0 ⊢
-    simp only [Complex.I_sq] at hnext0 ⊢
-    have hi := congrArg (fun value : ℂ => I * value) hnext0
-    ring_nf at hi ⊢
-    simp only [Complex.I_sq] at hi ⊢
-    ring_nf at hi ⊢
-    linear_combination hi
-  · have hnext1 := congrFun hnext 1
-    simp [uniformTwoChannelKleinGordonVector, cubicalStandardPosition,
-      cubicalStandardLower, cubicalStandardHamiltonian,
-      cubicalStandardSpatial, cubicalStandardBeta,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, cubicalSpatialLower,
-      oriented_cubical_spatial_coordinates_eq_standard,
-      cubicalUpperEmbedding, cubicalFromPositionLower] at hnext1 ⊢
-    ring_nf at hnext1 ⊢
-    simp only [Complex.I_sq] at hnext1 ⊢
-    have hi := congrArg (fun value : ℂ => I * value) hnext1
-    ring_nf at hi ⊢
-    simp only [Complex.I_sq] at hi ⊢
-    ring_nf at hi ⊢
-    linear_combination hi
+  have hi := congrArg (fun value : ℂ => I * value) (congrFun hnext component)
+  change I * (-I * (mass * cubicalStandardLower (candidate phase) component -
+    cubicalSpatialLower px py pz phase.1 component)) = I * phase.2 component at hi
+  rw [← mul_assoc, mul_neg, Complex.I_mul_I, neg_neg, one_mul] at hi
+  exact sub_eq_iff_eq_add.mp hi
 
 /-- Once the Kähler--Dirac root and the native-position normalization are
 fixed, the existing readout is the unique map intertwining the native

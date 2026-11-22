@@ -484,17 +484,60 @@ theorem cubical_standard_hamiltonian_scale
     simp [cubicalStandardHamiltonian, cubicalStandardSpatial, cubicalStandardBeta,
       cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
 
+private theorem cubical_beta_at_corner (amplitude : CubicalCell8) (corner : CubicalCorner) :
+    cubicalBeta amplitude corner =
+      (if (cubicalBit0 corner + cubicalBit1 corner + cubicalBit2 corner) % 2 = 0 then 1 else -1) *
+        amplitude corner := by
+  unfold cubicalBeta
+  split <;> simp only [one_mul, neg_mul]
+
+/-- The native square follows from the Clifford and parity relations on the cube. -/
+theorem cubical_native_hamiltonian_square (mass px py pz : ℂ) (amplitude : CubicalCell8) :
+    cubicalNativeHamiltonian mass px py pz
+        (cubicalNativeHamiltonian mass px py pz amplitude) =
+      (mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2) • amplitude := by
+  funext corner
+  let spatial := cubicalNativeSpatial px py pz
+  let parity : ℂ := if (cubicalBit0 corner + cubicalBit1 corner + cubicalBit2 corner) % 2 = 0
+    then 1 else -1
+  have hBeta (field : CubicalCell8) : cubicalBeta field corner = parity * field corner :=
+    cubical_beta_at_corner field corner
+  have hAxis (axis : Fin 3) : parity * cubicalGamma axis amplitude corner =
+      -cubicalGamma axis (cubicalBeta amplitude) corner :=
+    (hBeta _).symm.trans (congrFun (cubical_beta_anticommutes axis amplitude) corner)
+  have hAnti : parity * spatial amplitude corner = -spatial (cubicalBeta amplitude) corner := by
+    simp only [spatial, cubicalNativeSpatial, cubicalIncidenceLinear]
+    linear_combination pz * hAxis 0 - py * hAxis 1 - px * hAxis 2
+  have hSpatialAdd : spatial (fun j => mass * cubicalBeta amplitude j + spatial amplitude j)
+        corner = mass * spatial (cubicalBeta amplitude) corner +
+          spatial (spatial amplitude) corner := by
+    simp only [spatial, cubicalNativeSpatial, cubicalIncidenceLinear, cubicalGamma]
+    ring
+  have hSpatialSquare : spatial (spatial amplitude) corner =
+      (px ^ 2 + py ^ 2 + pz ^ 2) * amplitude corner := by
+    simpa only [spatial, cubicalNativeSpatial, neg_sq, add_assoc, add_left_comm, add_comm] using
+      congrFun (cubical_incidence_linear_square pz (-py) (-px) amplitude) corner
+  have hBetaSquare : parity * cubicalBeta amplitude corner = amplitude corner :=
+    (hBeta _).symm.trans (congrFun (cubical_beta_square amplitude) corner)
+  change mass * cubicalBeta
+      (fun j => mass * cubicalBeta amplitude j + spatial amplitude j) corner +
+    spatial (fun j => mass * cubicalBeta amplitude j + spatial amplitude j) corner = _
+  rw [hBeta, hSpatialAdd, hSpatialSquare]
+  change _ = (mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2) * amplitude corner
+  linear_combination mass ^ 2 * hBetaSquare + mass * hAnti
+
 theorem cubical_standard_hamiltonian_square
     (mass px py pz : ℂ) (z : CubicalCell4) :
     cubicalStandardHamiltonian mass px py pz
         (cubicalStandardHamiltonian mass px py pz z) =
       fun component => (mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2) * z component := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalStandardHamiltonian, cubicalStandardBeta,
-      cubicalStandardSpatial, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  let coefficient := mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2
+  apply cubical_dirac_embed_minus_injective
+  rw [← cubical_hamiltonian_intertwines_minus, ← cubical_hamiltonian_intertwines_minus,
+    cubical_native_hamiltonian_square]
+  change coefficient • cubicalDiracLinearEmbedMinus z =
+    cubicalDiracLinearEmbedMinus (coefficient • z)
+  rw [map_smul]
 
 /-- The Hamiltonian shifted by an energy maps into its corresponding eigenspace on shell. -/
 theorem cubical_standard_hamiltonian_shift

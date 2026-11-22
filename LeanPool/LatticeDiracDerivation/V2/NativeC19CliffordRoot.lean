@@ -400,9 +400,8 @@ defined on the eight-dimensional oriented incidence fiber. -/
 def nativeC19OrientedMassiveRoot
     (r : ℝ) (momentum : LatticeMomentum)
     (amplitude : CubicalCell8) : CubicalCell8 :=
-  fun corner =>
-    (r : ℂ) * cubicalBeta amplitude corner +
-      nativeC19OrientedSpatialRoot momentum amplitude corner
+  cubicalNativeHamiltonian (r : ℂ) (nativeC19Px momentum) (nativeC19Py momentum)
+    (nativeC19Pz momentum) amplitude
 
 theorem native_c19_oriented_massive_root_square
     (r : ℝ) (momentum : LatticeMomentum) (amplitude : CubicalCell8) :
@@ -411,37 +410,10 @@ theorem native_c19_oriented_massive_root_square
       fun corner =>
         ((r ^ 2 + c19QuadraticSymbol momentum : ℝ) : ℂ) *
           amplitude corner := by
-  funext corner
-  let spatial := nativeC19OrientedSpatialRoot momentum
-  let parity : ℂ := if (cubicalAxisBit 0 corner + cubicalAxisBit 1 corner +
-    cubicalAxisBit 2 corner) % 2 = 0 then 1 else -1
-  have hBeta (field : CubicalCell8) : cubicalBeta field corner = parity * field corner :=
-    congrFun (cubical_beta_is_exterior_degree_parity field) corner
-  have hAxis (axis : Fin 3) : parity * cubicalGamma axis amplitude corner =
-      -cubicalGamma axis (cubicalBeta amplitude) corner :=
-    (hBeta _).symm.trans (congrFun (cubical_beta_anticommutes axis amplitude) corner)
-  have hAnti : parity * spatial amplitude corner = -spatial (cubicalBeta amplitude) corner := by
-    change parity * nativeC19OrientedSpatialRoot momentum amplitude corner =
-      -nativeC19OrientedSpatialRoot momentum (cubicalBeta amplitude) corner
-    simp only [nativeC19OrientedSpatialRoot, cubicalNativeSpatial, cubicalIncidenceLinear]
-    linear_combination nativeC19Pz momentum * hAxis 0 -
-      nativeC19Py momentum * hAxis 1 - nativeC19Px momentum * hAxis 2
-  have hSpatialAdd : spatial (fun j => (r : ℂ) * cubicalBeta amplitude j + spatial amplitude j)
-        corner = (r : ℂ) * spatial (cubicalBeta amplitude) corner +
-          spatial (spatial amplitude) corner := by
-    simp only [spatial, nativeC19OrientedSpatialRoot, cubicalNativeSpatial,
-      cubicalIncidenceLinear, cubicalGamma]
-    ring
-  have hSpatialSquare : spatial (spatial amplitude) corner =
-      (c19QuadraticSymbol momentum : ℂ) * amplitude corner :=
-    congrFun (native_c19_oriented_spatial_root_square momentum amplitude) corner
-  have hBetaSquare : parity * cubicalBeta amplitude corner = amplitude corner :=
-    (hBeta _).symm.trans (congrFun (cubical_beta_square amplitude) corner)
-  change (r : ℂ) * cubicalBeta
-      (fun j => (r : ℂ) * cubicalBeta amplitude j + spatial amplitude j) corner +
-    spatial (fun j => (r : ℂ) * cubicalBeta amplitude j + spatial amplitude j) corner = _
-  rw [hBeta, hSpatialAdd, hSpatialSquare, Complex.ofReal_add, Complex.ofReal_pow]
-  linear_combination (r : ℂ) ^ 2 * hBetaSquare + (r : ℂ) * hAnti
+  simp only [nativeC19OrientedMassiveRoot, cubical_native_hamiltonian_square, nativeC19Px,
+    nativeC19Py, nativeC19Pz, c19_quadratic_symbol_eq_scaled_momentum, Complex.ofReal_add,
+    Complex.ofReal_pow, add_assoc]
+  rfl
 
 /-- The scalar multiplying the square of the oriented incidence root is the
 same scalar obtained by the action-derived continuum acceleration. -/
