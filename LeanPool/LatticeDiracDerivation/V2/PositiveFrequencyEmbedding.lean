@@ -43,6 +43,27 @@ theorem positive_pauli_spatial_is_cubical_lower
       cubicalStandardAlphaZ] <;>
     ring
 
+/-- Assemble a spinor from its upper and lower Pauli coordinates. -/
+def cubicalSpinorOfBlocks (upper lower : UniformCell2) : CubicalCell4 :=
+  ![upper 0, upper 1, lower 0, lower 1]
+
+theorem cubical_standard_hamiltonian_blocks (mass px py pz : ℝ) (upper lower : UniformCell2) :
+    cubicalStandardHamiltonian (mass : ℂ) (px : ℂ) (py : ℂ) (pz : ℂ)
+        (cubicalSpinorOfBlocks upper lower) =
+      cubicalSpinorOfBlocks
+        (fun i => (mass : ℂ) * upper i + positivePauliSpatial px py pz lower i)
+        (fun i => positivePauliSpatial px py pz upper i - (mass : ℂ) * lower i) := by
+  funext component
+  fin_cases component <;>
+    simp [cubicalSpinorOfBlocks, cubicalStandardHamiltonian, cubicalStandardSpatial,
+      cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
+      cubicalStandardAlphaZ, positivePauliSpatial] <;> ring
+
+theorem positive_pauli_spatial_zero (px py pz : ℝ) :
+    positivePauliSpatial px py pz 0 = 0 := by
+  funext component
+  fin_cases component <;> simp [positivePauliSpatial]
+
 theorem positive_pauli_spatial_square
     (px py pz : ℝ) (q : UniformCell2) :
     positivePauliSpatial px py pz
@@ -128,11 +149,13 @@ theorem normalized_positive_frequency_is_energy_eigenstate
       fun component => (positiveFrequencyRatio mass energy : ℂ) *
         (cubicalStandardHamiltonian mass px py pz (cubicalUpperEmbedding q) component +
           (energy : ℂ) * cubicalUpperEmbedding q component) := by
+    have hupper : cubicalUpperEmbedding q = cubicalSpinorOfBlocks q 0 := by
+      funext component
+      fin_cases component <;> rfl
+    rw [hupper, cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
     funext component
     fin_cases component <;>
-      simp [normalizedPositiveFrequencyEmbedding, cubicalUpperEmbedding, cubicalStandardHamiltonian,
-        cubicalStandardSpatial, cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
-        cubicalStandardAlphaZ, positivePauliSpatial, ← hr] <;> ring_nf <;> simp
+      simp [cubicalSpinorOfBlocks, normalizedPositiveFrequencyEmbedding, ← hr] <;> ring
   rw [hshift]
   apply cubical_standard_hamiltonian_shift
   exact_mod_cast hshell.symm

@@ -168,8 +168,9 @@ theorem lfm_periodic_action_mode_to_free_dirac
       AnalyticHasDerivAt
         (fun eps : ℝ =>
           potentialFirstVariation chi0
-            (periodicTransverseComponentState chi0 eps component
-              (periodicModeField mode (phase.1 component)))
+            (uniformTransverseState chi0 eps
+              (periodicModeField mode (phase.1 0))
+              (periodicModeField mode (phase.1 1)))
             (periodicTransverseComponentDirection component
               (periodicSingleSiteScalarDirection site testAmplitude))
             (c19Bond (periodicC19Geometry L)))
@@ -595,8 +596,9 @@ structure CompleteFreeDiracCertificate : Prop where
       AnalyticHasDerivAt
         (fun eps : ℝ =>
           potentialFirstVariation r
-            (periodicTransverseComponentState r eps component
-              (periodicModeField mode (position component)))
+            (uniformTransverseState r eps
+              (periodicModeField mode (position 0))
+              (periodicModeField mode (position 1)))
             (periodicTransverseComponentDirection component
               (periodicSingleSiteScalarDirection site testAmplitude))
             (c19Bond (periodicC19Geometry L)))
@@ -1045,8 +1047,8 @@ theorem complete_first_principles_free_dirac :
       periodic_full_native_tangent_generator_intertwines r mode phase
   fullNativePeriodicActionForce :=
     fun _ _ _ r hr mode position component site testAmplitude =>
-      periodic_c19_action_hessian_mode_force
-        r hr mode position component site testAmplitude
+      (periodic_full_native_action_generator_intertwines r hr mode (position, 0)).2.1
+        component site testAmplitude
   fullNativeLongitudinalLeakageZero :=
     fun _ _ r eps longitudinal first second =>
       periodic_c19_transverse_longitudinal_cross_variation_zero

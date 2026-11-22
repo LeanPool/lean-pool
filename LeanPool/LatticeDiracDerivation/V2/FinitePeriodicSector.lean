@@ -216,7 +216,7 @@ theorem periodic_lifted_native_acceleration_is_action_hessian
     AnalyticHasDerivAt
       (fun eps : ℝ =>
         potentialFirstVariation r
-          (periodicTransverseComponentState r eps channel (phase.position channel))
+          (uniformTransverseState r eps (phase.position 0) (phase.position 1))
           (periodicTransverseComponentDirection channel
             (periodicSingleSiteScalarDirection site amplitude))
           (c19Bond (periodicC19Geometry L)))
@@ -224,8 +224,8 @@ theorem periodic_lifted_native_acceleration_is_action_hessian
         ((periodicNativeTransverseTangentGenerator r (periodicTransversePhaseLift phase)).2.psiDot
           site (uniformTransverseAxis channel)) amplitude) 0 := by
   rw [periodic_native_generator_commutes_lift, periodic_transverse_phase_lift_velocity]
-  exact periodic_c19_transverse_component_hessian_localized
-    r hr channel (phase.position channel) site amplitude
+  exact periodic_c19_transverse_hessian_localized_all_channels
+    r hr channel phase.position site amplitude
 
 /-- Full native weak Euler--Lagrange closure of the periodic four-complex-
 dimensional tangent sector.  The first clause makes the embedding into
@@ -244,8 +244,9 @@ theorem periodic_full_native_tangent_sector_is_action_invariant
         AnalyticHasDerivAt
           (fun eps : ℝ =>
             potentialFirstVariation r
-              (periodicTransverseComponentState r eps component
-                (periodicModeField mode (phase.1 component)))
+              (uniformTransverseState r eps
+                (periodicModeField mode (phase.1 0))
+                (periodicModeField mode (phase.1 1)))
               (periodicTransverseComponentDirection component
                 (periodicSingleSiteScalarDirection site testAmplitude))
               (c19Bond (periodicC19Geometry L)))
@@ -312,8 +313,9 @@ theorem periodic_full_native_action_generator_intertwines
         AnalyticHasDerivAt
           (fun eps : ℝ =>
             potentialFirstVariation r
-              (periodicTransverseComponentState r eps component
-                (periodicModeField mode (phase.1 component)))
+              (uniformTransverseState r eps
+                (periodicModeField mode (phase.1 0))
+                (periodicModeField mode (phase.1 1)))
               (periodicTransverseComponentDirection component
                 (periodicSingleSiteScalarDirection site testAmplitude))
               (c19Bond (periodicC19Geometry L)))

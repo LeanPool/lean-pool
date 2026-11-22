@@ -85,12 +85,16 @@ def cubicalFlip (axis : Fin 3) : CubicalCorner → CubicalCorner :=
   | 1 => cubicalFlip1
   | _ => cubicalFlip2
 
-/-- Koszul incidence sign: an axis crossing counts the lower-index bits. -/
-def cubicalIncidenceSign (axis : Fin 3) (corner : CubicalCorner) : ℂ :=
+/-- Integer Koszul incidence sign from the lower-index bits. -/
+def cubicalIncidenceSignInteger (axis : Fin 3) (corner : CubicalCorner) : ℤ :=
   match axis with
   | 0 => 1
   | 1 => if cubicalBit0 corner = 0 then 1 else -1
   | _ => if (cubicalBit0 corner + cubicalBit1 corner) % 2 = 0 then 1 else -1
+
+/-- The Koszul incidence sign acting on complex amplitudes. -/
+def cubicalIncidenceSign (axis : Fin 3) (corner : CubicalCorner) : ℂ :=
+  (cubicalIncidenceSignInteger axis corner : ℂ)
 
 /-- The signed coordinate flip representing one oriented incidence generator. -/
 def cubicalGamma (axis : Fin 3) (amplitude : CubicalCell8) : CubicalCell8 :=
@@ -108,19 +112,35 @@ theorem cubical_gamma_square (axis : Fin 3) (amplitude : CubicalCell8) :
     cubicalGamma axis (cubicalGamma axis amplitude) = amplitude := by
   funext corner
   fin_cases axis <;> fin_cases corner <;>
-    simp [cubicalGamma, cubicalIncidenceSign, cubicalFlip,
+    simp [cubicalGamma, cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalFlip,
       cubicalFlip0, cubicalFlip1, cubicalFlip2, cubicalBit0, cubicalBit1]
+
+private theorem cubical_flips_commute :
+    ∀ (axis other : Fin 3) (corner : CubicalCorner),
+      cubicalFlip other (cubicalFlip axis corner) =
+        cubicalFlip axis (cubicalFlip other corner) := by
+  decide
+
+private theorem cubical_crossing_sign_anticommutes :
+    ∀ (axis other : Fin 3), axis ≠ other → ∀ corner,
+      cubicalIncidenceSignInteger axis corner *
+        cubicalIncidenceSignInteger other (cubicalFlip axis corner) =
+      -(cubicalIncidenceSignInteger other corner *
+        cubicalIncidenceSignInteger axis (cubicalFlip other corner)) := by
+  decide
 
 theorem cubical_gamma_anticommute
     (axis other : Fin 3) (haxis : axis ≠ other) (amplitude : CubicalCell8) :
     cubicalGamma axis (cubicalGamma other amplitude) =
       fun corner => -cubicalGamma other (cubicalGamma axis amplitude) corner := by
-  fin_cases axis <;> fin_cases other <;> try { contradiction }
-  all_goals
-    funext corner
-    fin_cases corner <;>
-      simp [cubicalGamma, cubicalIncidenceSign, cubicalFlip,
-        cubicalFlip0, cubicalFlip1, cubicalFlip2, cubicalBit0, cubicalBit1]
+  funext corner
+  have signs := congrArg (fun sign : ℤ => (sign : ℂ))
+    (cubical_crossing_sign_anticommutes axis other haxis corner)
+  simp only [Int.cast_mul, Int.cast_neg] at signs
+  change cubicalIncidenceSign axis corner * cubicalIncidenceSign other (cubicalFlip axis corner) =
+    -(cubicalIncidenceSign other corner * cubicalIncidenceSign axis (cubicalFlip other corner))
+    at signs
+  simp only [cubicalGamma, ← mul_assoc, cubical_flips_commute axis other corner, signs, neg_mul]
 
 theorem cubical_beta_square (amplitude : CubicalCell8) :
     cubicalBeta (cubicalBeta amplitude) = amplitude := by
@@ -136,7 +156,8 @@ theorem cubical_beta_anticommutes
   all_goals
     funext corner
     fin_cases corner <;>
-      simp [cubicalBeta, cubicalGamma, cubicalIncidenceSign, cubicalFlip,
+      simp [cubicalBeta, cubicalGamma, cubicalIncidenceSign,
+      cubicalIncidenceSignInteger, cubicalFlip,
         cubicalFlip0, cubicalFlip1, cubicalFlip2,
         cubicalBit0, cubicalBit1, cubicalBit2]
 
@@ -195,7 +216,7 @@ theorem cubical_flavor_commutes_gamma
   funext corner
   fin_cases axis <;> fin_cases corner <;>
     simp [cubicalFlavor, cubicalFlavorSign, cubicalGamma,
-      cubicalIncidenceSign, cubicalFlip, cubicalFlip0, cubicalFlip1,
+      cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalFlip, cubicalFlip0, cubicalFlip1,
       cubicalFlip2, cubicalBit0, cubicalBit1, cubicalBit2]
 
 theorem cubical_flavor_commutes_beta (amplitude : CubicalCell8) :
@@ -388,7 +409,8 @@ theorem cubical_gamma_intertwines_minus (axis : Fin 3) (z : CubicalCell4) :
       cubicalDiracEmbedMinus (cubicalStandardAxis axis z) := by
   funext corner
   fin_cases axis <;> fin_cases corner <;>
-    simp [cubicalGamma, cubicalIncidenceSign, cubicalFlip, cubicalFlip0,
+    simp [cubicalGamma, cubicalIncidenceSign,
+      cubicalIncidenceSignInteger, cubicalFlip, cubicalFlip0,
       cubicalFlip1, cubicalFlip2, cubicalDiracEmbedMinus, cubicalEmbedMinus,
       standardToCubicalMinus, cubicalStandardAxis, cubicalStandardAlphaX,
       cubicalStandardAlphaY, cubicalStandardAlphaZ, cubicalBit0, cubicalBit1] <;>
@@ -411,7 +433,8 @@ theorem cubical_gamma_intertwines_plus (axis : Fin 3) (z : CubicalCell4) :
       cubicalDiracEmbedPlus (cubicalStandardAxis axis z) := by
   funext corner
   fin_cases axis <;> fin_cases corner <;>
-    simp [cubicalGamma, cubicalIncidenceSign, cubicalFlip, cubicalFlip0,
+    simp [cubicalGamma, cubicalIncidenceSign,
+      cubicalIncidenceSignInteger, cubicalFlip, cubicalFlip0,
       cubicalFlip1, cubicalFlip2, cubicalDiracEmbedPlus, cubicalEmbedPlus,
       standardToCubicalPlus, cubicalStandardAxis, cubicalStandardAlphaX,
       cubicalStandardAlphaY, cubicalStandardAlphaZ, cubicalBit0, cubicalBit1] <;>

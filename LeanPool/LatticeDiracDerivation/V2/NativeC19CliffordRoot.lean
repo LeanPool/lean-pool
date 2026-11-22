@@ -62,10 +62,10 @@ theorem cubical_incidence_sign_obeys_recursive_koszul
     RecursiveKoszulSignLaw axis (cubicalIncidenceSign axis) := by
   constructor
   · fin_cases axis <;>
-      simp [cubicalIncidenceSign, cubicalBit0, cubicalBit1]
+      simp [cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalBit0, cubicalBit1]
   · intro other corner
     fin_cases axis <;> fin_cases other <;> fin_cases corner <;>
-      simp [koszulFlipFactor, cubicalIncidenceSign, cubicalFlip,
+      simp [koszulFlipFactor, cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalFlip,
         cubicalFlip0, cubicalFlip1, cubicalFlip2,
         cubicalBit0, cubicalBit1]
 

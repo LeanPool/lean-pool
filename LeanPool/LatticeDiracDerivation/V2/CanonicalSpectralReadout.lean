@@ -98,17 +98,17 @@ theorem normalized_negative_frequency_is_energy_eigenstate
       fun component =>
         -(energy : ℂ) *
           normalizedNegativeFrequencyEmbedding mass energy px py pz q component := by
-  let lower : CubicalCell4 := ![0, 0, q 0, q 1]
+  let lower := cubicalSpinorOfBlocks 0 q
   have hr := positive_frequency_ratio_mul_denominator mass energy hdenom
   have hshift : normalizedNegativeFrequencyEmbedding mass energy px py pz q =
       fun component => -(positiveFrequencyRatio mass energy : ℂ) *
         (cubicalStandardHamiltonian mass px py pz lower component -
           (energy : ℂ) * lower component) := by
+    dsimp only [lower]
+    rw [cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
     funext component
     fin_cases component <;>
-      simp [normalizedNegativeFrequencyEmbedding, lower, cubicalStandardHamiltonian,
-        cubicalStandardSpatial, cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
-        cubicalStandardAlphaZ, positivePauliSpatial, ← hr] <;> ring_nf <;> simp
+      simp [cubicalSpinorOfBlocks, normalizedNegativeFrequencyEmbedding, ← hr] <;> ring
   simp only [sub_eq_add_neg, neg_mul] at hshift
   rw [hshift]
   have hshellC : (mass : ℂ) ^ 2 + (px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2 =
