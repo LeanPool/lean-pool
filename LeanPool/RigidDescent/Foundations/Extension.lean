@@ -6,6 +6,7 @@ Authors: Brendan Murphy
 module
 
 public import LeanPool.RigidDescent.Foundations.Neeman
+public import Mathlib.Algebra.FiveLemma
 public import Mathlib.Algebra.Homology.ShortComplex.Ab
 public import Mathlib.CategoryTheory.Triangulated.HomologicalFunctor
 
@@ -18,7 +19,7 @@ If `θ` is an isomorphism at every shifted generator `G i⟦n⟧`, it is an isom
 object (`NatTrans.isIso_app_of_homological`, `NatTrans.isIso_app_of_cohomological`).
 
 The objects `X` at which `θ` is an isomorphism at all shifts `X⟦n⟧` are closed under
-isomorphisms, shifts, extensions (by the five lemma, `AddCommGrpCat.bijective_of_five`) and
+isomorphisms, shifts, extensions (by the additive-group five lemma) and
 coproducts, and contain the generators; Neeman's theorem (`prop_of_localizing`) concludes.
 
 For covariant functors, compatibility with coproducts is the condition that every element of
@@ -35,78 +36,38 @@ universe v u
 
 namespace RigidDescent
 
-/-! ### The five lemma, elementwise -/
-
-/-- The five lemma for abelian groups. In a commutative diagram with exact rows
-`A₁ → A₂ → A₃ → A₄ → A₅` and `B₁ → B₂ → B₃ → B₄ → B₅`, if `v₁` is surjective, `v₂` and `v₄` are
-bijective and `v₅` is injective, then `v₃` is bijective. -/
-lemma AddCommGrpCat.bijective_of_five {A₁ A₂ A₃ A₄ A₅ B₁ B₂ B₃ B₄ B₅ : AddCommGrpCat.{v}}
+/-- The additive-group five lemma for diagrams in `AddCommGrpCat`. -/
+private lemma bijective_of_five {A₁ A₂ A₃ A₄ A₅ B₁ B₂ B₃ B₄ B₅ : AddCommGrpCat.{v}}
     {f₁ : A₁ ⟶ A₂} {f₂ : A₂ ⟶ A₃} {f₃ : A₃ ⟶ A₄} {f₄ : A₄ ⟶ A₅}
     {g₁ : B₁ ⟶ B₂} {g₂ : B₂ ⟶ B₃} {g₃ : B₃ ⟶ B₄} {g₄ : B₄ ⟶ B₅}
     {v₁ : A₁ ⟶ B₁} {v₂ : A₂ ⟶ B₂} {v₃ : A₃ ⟶ B₃} {v₄ : A₄ ⟶ B₄} {v₅ : A₅ ⟶ B₅}
     (c₁ : f₁ ≫ v₂ = v₁ ≫ g₁) (c₂ : f₂ ≫ v₃ = v₂ ≫ g₂) (c₃ : f₃ ≫ v₄ = v₃ ≫ g₃)
     (c₄ : f₄ ≫ v₅ = v₄ ≫ g₄)
-    (hf₁₂ : f₁ ≫ f₂ = 0) (hf₃ : ∀ x, f₃ x = 0 → ∃ y, f₂ y = x)
-    (hf₄ : ∀ x, f₄ x = 0 → ∃ y, f₃ y = x)
-    (hg₃₄ : g₃ ≫ g₄ = 0) (hg₂ : ∀ y, g₂ y = 0 → ∃ z, g₁ z = y)
-    (hg₃ : ∀ y, g₃ y = 0 → ∃ z, g₂ z = y)
+    (hf₁ : Function.Exact f₁ f₂) (hf₂ : Function.Exact f₂ f₃) (hf₃ : Function.Exact f₃ f₄)
+    (hg₁ : Function.Exact g₁ g₂) (hg₂ : Function.Exact g₂ g₃) (hg₃ : Function.Exact g₃ g₄)
     (hv₁ : Function.Surjective v₁) (hv₂ : Function.Bijective v₂) (hv₄ : Function.Bijective v₄)
-    (hv₅ : Function.Injective v₅) : Function.Bijective v₃ := by
-  have c₁' : ∀ x, v₂ (f₁ x) = g₁ (v₁ x) := fun x => by
-    simpa using ConcreteCategory.congr_hom c₁ x
-  have c₂' : ∀ x, v₃ (f₂ x) = g₂ (v₂ x) := fun x => by
-    simpa using ConcreteCategory.congr_hom c₂ x
-  have c₃' : ∀ x, v₄ (f₃ x) = g₃ (v₃ x) := fun x => by
-    simpa using ConcreteCategory.congr_hom c₃ x
-  have c₄' : ∀ x, v₅ (f₄ x) = g₄ (v₄ x) := fun x => by
-    simpa using ConcreteCategory.congr_hom c₄ x
-  have hf₁₂' : ∀ x, f₂ (f₁ x) = 0 := fun x => by
-    simpa using ConcreteCategory.congr_hom hf₁₂ x
-  have hg₃₄' : ∀ y, g₄ (g₃ y) = 0 := fun y => by
-    simpa using ConcreteCategory.congr_hom hg₃₄ y
-  refine ⟨(injective_iff_map_eq_zero (ConcreteCategory.hom v₃)).2 fun x hx => ?_, fun y => ?_⟩
-  · have h4 : f₃ x = 0 := (injective_iff_map_eq_zero (ConcreteCategory.hom v₄)).1 hv₄.1 _
-      (by rw [c₃', hx, map_zero])
-    obtain ⟨x₂, rfl⟩ := hf₃ _ h4
-    obtain ⟨y₁, hy₁⟩ := hg₂ _ (by rw [← c₂', hx])
-    obtain ⟨x₁, rfl⟩ := hv₁ y₁
-    have : x₂ = f₁ x₁ := hv₂.1 (by rw [c₁', hy₁])
-    rw [this, hf₁₂']
-  · obtain ⟨x₄, hx₄⟩ := hv₄.2 (g₃ y)
-    have h5 : f₄ x₄ = 0 := (injective_iff_map_eq_zero (ConcreteCategory.hom v₅)).1 hv₅ _
-      (by rw [c₄', hx₄, hg₃₄'])
-    obtain ⟨x₃, rfl⟩ := hf₄ _ h5
-    obtain ⟨y₂, hy₂⟩ := hg₃ (y - v₃ x₃) (by rw [map_sub, ← c₃', hx₄, sub_self])
-    obtain ⟨x₂, rfl⟩ := hv₂.2 y₂
-    refine ⟨x₃ + f₂ x₂, ?_⟩
-    rw [map_add, c₂', hy₂, add_sub_cancel]
+    (hv₅ : Function.Injective v₅) : Function.Bijective v₃ :=
+  AddMonoidHom.bijective_of_surjective_of_bijective_of_bijective_of_injective
+    f₁.hom f₂.hom f₃.hom f₄.hom g₁.hom g₂.hom g₃.hom g₄.hom
+    v₁.hom v₂.hom v₃.hom v₄.hom v₅.hom
+    (congrArg AddCommGrpCat.Hom.hom c₁.symm) (congrArg AddCommGrpCat.Hom.hom c₂.symm)
+    (congrArg AddCommGrpCat.Hom.hom c₃.symm) (congrArg AddCommGrpCat.Hom.hom c₄.symm)
+    hf₁ hf₂ hf₃ hg₁ hg₂ hg₃ hv₁ hv₂ hv₄ hv₅
 
 variable {T : Type u} [Category.{v} T] [Preadditive T] [HasZeroObject T] [HasShift T ℤ]
   [∀ n : ℤ, (shiftFunctor T n).Additive] [Pretriangulated T]
 
 /-! ### Homological functors -/
 
-/-- A functor `H : T ⥤ AddCommGrpCat` is *homological* if for every distinguished triangle
-`X₁ → X₂ → X₃ → X₁⟦1⟧` the sequence `H(X₁) → H(X₂) → H(X₃)` is exact in the middle. -/
-def IsHomological (H : T ⥤ AddCommGrpCat.{v}) : Prop :=
-  ∀ Tr ∈ distTriang T, ∀ y : H.obj Tr.obj₂, H.map Tr.mor₂ y = 0 →
-    ∃ x : H.obj Tr.obj₁, H.map Tr.mor₁ x = y
-
-/-- For an additive functor to abelian groups, elementwise exactness is equivalent to
-Mathlib's homological functor condition. -/
-theorem isHomological_iff_functor_isHomological (H : T ⥤ AddCommGrpCat.{v}) [H.Additive] :
-    IsHomological H ↔ H.IsHomological := by
-  constructor
-  · intro hH
-    exact ⟨fun triangle distinguished =>
-      (ShortComplex.ab_exact_iff _).2 (hH triangle distinguished)⟩
-  · intro hH triangle distinguished
-    exact (ShortComplex.ab_exact_iff _).1 (hH.exact triangle distinguished)
+private lemma homological_exact {H : T ⥤ AddCommGrpCat.{v}} (hH : H.IsHomological)
+    (triangle : Triangle T) (distinguished : triangle ∈ distTriang T) :
+    Function.Exact (H.map triangle.mor₁) (H.map triangle.mor₂) :=
+  (ShortComplex.ab_exact_iff_function_exact _).1 (hH.exact triangle distinguished)
 
 /-- A natural transformation between homological functors is an isomorphism at the middle
 vertex of a distinguished triangle if it is one at the other vertices and their shifts. -/
-lemma NatTrans.isIso_app_obj₂_of_homological {F G : T ⥤ AddCommGrpCat.{v}} [F.Additive]
-    [G.Additive] (hF : IsHomological F) (hG : IsHomological G) (θ : F ⟶ G)
+lemma NatTrans.isIso_app_obj₂_of_homological {F G : T ⥤ AddCommGrpCat.{v}}
+    (hF : F.IsHomological) (hG : G.IsHomological) (θ : F ⟶ G)
     (Tr : Triangle T) (hTr : Tr ∈ distTriang T)
     (h₁ : IsIso (θ.app (Tr.obj₁⟦(1 : ℤ)⟧))) (h₁' : IsIso (θ.app Tr.obj₁))
     (h₃ : IsIso (θ.app Tr.obj₃)) (h₃' : IsIso (θ.app (Tr.obj₃⟦(-1 : ℤ)⟧))) :
@@ -115,17 +76,15 @@ lemma NatTrans.isIso_app_obj₂_of_homological {F G : T ⥤ AddCommGrpCat.{v}} [
   have hrot := rot_of_distTriang _ hTr
   have hinv := inv_rot_of_distTriang _ hTr
   let first : Tr.obj₃⟦(-1 : ℤ)⟧ ⟶ Tr.obj₁ := Tr.invRotate.mor₁
-  have h0 : first ≫ Tr.mor₁ = 0 := comp_distTriang_mor_zero₁₂ _ hinv
-  exact AddCommGrpCat.bijective_of_five
+  exact bijective_of_five
     (f₁ := F.map first) (f₂ := F.map Tr.mor₁) (f₃ := F.map Tr.mor₂)
     (f₄ := F.map Tr.mor₃)
     (g₁ := G.map first) (g₂ := G.map Tr.mor₁) (g₃ := G.map Tr.mor₂)
     (g₄ := G.map Tr.mor₃)
     (θ.naturality _) (θ.naturality _) (θ.naturality _) (θ.naturality _)
-    (by rw [← F.map_comp, h0, F.map_zero])
-    (hF _ hTr) (hF _ hrot)
-    (by rw [← G.map_comp, comp_distTriang_mor_zero₂₃ _ hTr, G.map_zero])
-    (hG _ hinv) (hG _ hTr) h₃'.2 h₁' h₃ h₁.1
+    (homological_exact hF _ hinv) (homological_exact hF _ hTr) (homological_exact hF _ hrot)
+    (homological_exact hG _ hinv) (homological_exact hG _ hTr) (homological_exact hG _ hrot)
+    h₃'.2 h₁' h₃ h₁.1
 
 /-- Every element of `F(∐ Y)` is a finite sum of elements coming from the summands. -/
 def SpannedBySummands [HasCoproducts.{v} T] (F : T ⥤ AddCommGrpCat.{v}) : Prop :=
@@ -184,6 +143,14 @@ lemma NatTrans.isIso_app_sigma_of_spanned [HasCoproducts.{v} T] {F G : T ⥤ Add
 
 /-! ### Cohomological functors -/
 
+private lemma cohomological_exact {H : Tᵒᵖ ⥤ AddCommGrpCat.{v}} [H.Additive]
+    (hH : IsCohomological H) (triangle : Triangle T) (distinguished : triangle ∈ distTriang T) :
+    Function.Exact (H.map triangle.mor₂.op) (H.map triangle.mor₁.op) := by
+  have zero_composite : H.map triangle.mor₂.op ≫ H.map triangle.mor₁.op = 0 := by
+    rw [← H.map_comp, ← op_comp, comp_distTriang_mor_zero₁₂ _ distinguished, op_zero, H.map_zero]
+  exact (ShortComplex.ab_exact_iff_function_exact (ShortComplex.mk _ _ zero_composite)).1
+    ((ShortComplex.ab_exact_iff (ShortComplex.mk _ _ zero_composite)).2 (hH triangle distinguished))
+
 /-- A natural transformation between cohomological functors is an isomorphism at the middle
 vertex of a distinguished triangle if it is one at the other vertices and their shifts. -/
 lemma NatTrans.isIso_app_obj₂_of_cohomological {F G : Tᵒᵖ ⥤ AddCommGrpCat.{v}} [F.Additive]
@@ -196,17 +163,15 @@ lemma NatTrans.isIso_app_obj₂_of_cohomological {F G : Tᵒᵖ ⥤ AddCommGrpCa
   have hrot := rot_of_distTriang _ hTr
   have hinv := inv_rot_of_distTriang _ hTr
   let first : Tr.obj₃⟦(-1 : ℤ)⟧ ⟶ Tr.obj₁ := Tr.invRotate.mor₁
-  have h0 : first ≫ Tr.mor₁ = 0 := comp_distTriang_mor_zero₁₂ _ hinv
-  exact AddCommGrpCat.bijective_of_five
+  exact bijective_of_five
     (f₁ := F.map Tr.mor₃.op) (f₂ := F.map Tr.mor₂.op) (f₃ := F.map Tr.mor₁.op)
     (f₄ := F.map first.op)
     (g₁ := G.map Tr.mor₃.op) (g₂ := G.map Tr.mor₂.op) (g₃ := G.map Tr.mor₁.op)
     (g₄ := G.map first.op)
     (θ.naturality _) (θ.naturality _) (θ.naturality _) (θ.naturality _)
-    (by rw [← F.map_comp, ← op_comp, comp_distTriang_mor_zero₂₃ _ hTr, op_zero, F.map_zero])
-    (hF _ hTr) (hF _ hinv)
-    (by rw [← G.map_comp, ← op_comp, h0, op_zero, G.map_zero])
-    (hG _ hrot) (hG _ hTr) h₁.2 h₃ h₁' h₃'.1
+    (cohomological_exact hF _ hrot) (cohomological_exact hF _ hTr) (cohomological_exact hF _ hinv)
+    (cohomological_exact hG _ hrot) (cohomological_exact hG _ hTr) (cohomological_exact hG _ hinv)
+    h₁.2 h₃ h₁' h₃'.1
 
 omit [Preadditive T] [HasZeroObject T] [HasShift T ℤ] [∀ n : ℤ, (shiftFunctor T n).Additive]
   [Pretriangulated T] in
@@ -252,11 +217,13 @@ lemma prop_of_localizing' (P : ObjectProperty T) (hiso : ∀ {X Y : T}, (X ≅ Y
 
 /-- A natural transformation between additive homological functors spanned by summands which
 is an isomorphism at every shifted generator `G i⟦n⟧` is an isomorphism. -/
-theorem NatTrans.isIso_app_of_homological {F G : T ⥤ AddCommGrpCat.{v}} [F.Additive]
-    [G.Additive] (hF : IsHomological F) (hG : IsHomological G) (hFc : SpannedBySummands F)
+theorem NatTrans.isIso_app_of_homological {F G : T ⥤ AddCommGrpCat.{v}}
+    (hF : F.IsHomological) (hG : G.IsHomological) (hFc : SpannedBySummands F)
     (hGc : SpannedBySummands G) (θ : F ⟶ G)
     (h : ∀ (i : GenIndex T) (n : ℤ), IsIso (θ.app ((gen T i)⟦n⟧))) (X : T) :
     IsIso (θ.app X) := by
+  let := hF
+  let := hG
   let P : ObjectProperty T := fun X => ∀ n : ℤ, IsIso (θ.app (X⟦n⟧))
   have hiso : ∀ {X Y : T}, (X ≅ Y) → P X → P Y := fun e hX n =>
     (NatTrans.isIso_app_iff_of_iso θ ((shiftFunctor T n).mapIso e)).1 (hX n)

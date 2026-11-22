@@ -73,10 +73,6 @@ lemma whiskerRight_comp_whiskerRight_eq_zero (Tr : Triangle T) (hT : Tr ∈ dist
     (W : T) : Tr.mor₁ ▷ W ≫ Tr.mor₂ ▷ W = 0 := by
   rw [← comp_whiskerRight, comp_distTriang_mor_zero₁₂ _ hT, MonoidalPreadditive.zero_whiskerRight]
 
-/-- `M⟦n⟧ ≅ 𝟙⟦n⟧ ⊗ M`. -/
-noncomputable def shiftIsoUnitTensor (M : T) (n : ℤ) : M⟦n⟧ ≅ (𝟙_ T)⟦n⟧ ⊗ M :=
-  (shiftFunctor T n).mapIso (λ_ M).symm ≪≫ (((tensorRight M).commShiftIso n).app (𝟙_ T)).symm
-
 /-- The objects `M` with `M ⊗ X = 0` form a thick tensor ideal. -/
 lemma isThickTensorIdeal_isZero_tensor (X : T) :
     IsThickTensorIdeal (fun M => IsZero (M ⊗ X)) := by

@@ -257,12 +257,6 @@ theorem IsDescentType.isNilPure {I : T} {δ : I ⟶ 𝟙_ T} (h : IsDescentType 
 /-! ### Theorem A, (2) ⇒ (1) -/
 
 omit [IsTriangulated T] [BraidedCategory T] [MonoidalClosed T] [RigidlyCompactlyGenerated T] in
-lemma whiskerLeft_whiskerRight_eq_zero {M X Y : T} {f : X ⟶ Y} (h : M ◁ f = 0) (Z : T) :
-    M ◁ f ▷ Z = 0 := by
-  rw [← cancel_mono (α_ M Y Z).inv, associator_inv_naturality_middle, h,
-    MonoidalPreadditive.zero_whiskerRight, comp_zero, zero_comp]
-
-omit [IsTriangulated T] [BraidedCategory T] [MonoidalClosed T] [RigidlyCompactlyGenerated T] in
 /-- If `B ⊗ δ = 0`, the tower `B ⊗ I^{⊗ n} ⊗ X` has zero transition maps. -/
 lemma whiskerLeft_tensorPowTower_t_succ_eq_zero {B I : T} {δ : I ⟶ 𝟙_ T} (hδ : B ◁ δ = 0)
     (X : T) (m : ℕ) : B ◁ Tower.t (tensorPowTower δ X) (Nat.le_succ m) = 0 := by

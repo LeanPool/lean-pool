@@ -320,6 +320,12 @@ variable [MonoidalCategory T]
 `M ⊗ f = 0`. -/
 def IsTensorZero (M : T) : MorphismProperty T := fun _ _ f => M ◁ f = 0
 
+lemma whiskerLeft_whiskerRight_eq_zero [MonoidalPreadditive T] {M X Y : T} {f : X ⟶ Y}
+    (h : M ◁ f = 0) (Z : T) :
+    M ◁ f ▷ Z = 0 := by
+  rw [← cancel_mono (α_ M Y Z).inv, associator_inv_naturality_middle, h,
+    MonoidalPreadditive.zero_whiskerRight, comp_zero, zero_comp]
+
 end MZeroDef
 
 section CompOf
@@ -450,11 +456,14 @@ lemma IsTensorZero.of_isZero {M : T} (hM : IsZero M) {X Y : T} (f : X ⟶ Y) :
     IsTensorZero M f :=
   (Functor.map_isZero (tensorRight X) hM).eq_of_src _ _
 
+/-- `M⟦n⟧ ≅ 𝟙⟦n⟧ ⊗ M`. -/
+noncomputable def shiftIsoUnitTensor (M : T) (n : ℤ) : M⟦n⟧ ≅ (𝟙_ T)⟦n⟧ ⊗ M :=
+  (shiftFunctor T n).mapIso (λ_ M).symm ≪≫ (((tensorRight M).commShiftIso n).app (𝟙_ T)).symm
+
 /-- `M`-zero maps are `M⟦n⟧`-zero, as `M⟦n⟧ ≅ 𝟙⟦n⟧ ⊗ M`. -/
 lemma IsTensorZero.shift (n : ℤ) {M X Y : T} {f : X ⟶ Y} (h : IsTensorZero M f) :
     IsTensorZero (M⟦n⟧) f := by
-  let e : M⟦n⟧ ≅ (𝟙_ T)⟦n⟧ ⊗ M :=
-    (shiftFunctor T n).mapIso (λ_ M).symm ≪≫ (((tensorRight M).commShiftIso n).app (𝟙_ T)).symm
+  let e := shiftIsoUnitTensor M n
   exact (h.tensor _).of_retract e.hom e.inv e.hom_inv_id
 
 variable (B : T) in
@@ -535,11 +544,7 @@ lemma isCompOf_tensorPowHom (hT : Triangle.mk δ η ε ∈ distTriang T) [IsSpli
     refine IsCompOf.cons ?_ ih
     have hδ : B ◁ δ = 0 := isTensorZero_δ hT
     change B ◁ (δ ▷ tensorPow I n ≫ (λ_ (tensorPow I n)).hom) = 0
-    have h : B ◁ (δ ▷ tensorPow I n) = (α_ B I (tensorPow I n)).inv ≫
-        (B ◁ δ) ▷ tensorPow I n ≫ (α_ B (𝟙_ T) (tensorPow I n)).hom := by
-      simp
-    rw [MonoidalCategory.whiskerLeft_comp, h, hδ, MonoidalPreadditive.zero_whiskerRight,
-      zero_comp, comp_zero, zero_comp]
+    rw [MonoidalCategory.whiskerLeft_comp, whiskerLeft_whiskerRight_eq_zero hδ, zero_comp]
 
 end MZero
 

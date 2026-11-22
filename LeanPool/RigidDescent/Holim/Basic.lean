@@ -38,21 +38,6 @@ namespace RigidDescent
 
 open Tower
 
-/-! ### Lemma 3.3, first half (any category) -/
-
-/-- Paper, Lemma 3.3 (`lem:holim-const`): if the level map `u : cst U ⟶ Y` is a
-pro-isomorphism, then `U`, with the maps `u_m`, is a limit of `Y`. -/
-noncomputable def IsProIso.isLimit {S : Type*} [Category S] {Y : ℕᵒᵖ ⥤ S} {U : S}
-    {u : (Functor.const ℕᵒᵖ).obj U ⟶ Y} (hu : IsProIso u) : IsLimit (Cone.mk U u) := by
-  choose k v hv H using hu
-  refine IsLimit.ofExistsUnique fun s => ⟨s.π.app (op k) ≫ v, fun j => ?_, fun f hf => ?_⟩
-  · obtain ⟨k', hk, hm, e⟩ := H j.unop
-    change (s.π.app (op k) ≫ v) ≫ u.app (op j.unop) = s.π.app (op j.unop)
-    rw [← app_t s.π hk, ← app_t s.π hm, ← e]
-    simp only [Category.assoc]
-  · calc f = f ≫ u.app (op k) ≫ v := by rw [hv, Category.comp_id]
-      _ = s.π.app (op k) ≫ v := by rw [← Category.assoc]; exact congrArg (· ≫ v) (hf (op k))
-
 section Additive
 
 variable {T : Type u} [Category.{v} T] [Preadditive T] [HasCountableProducts T]

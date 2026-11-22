@@ -181,28 +181,6 @@ lemma cl_eq_zero_iff {W : T} (i : CompactIndex T) (l : compactObj T i ⟶ W)
   · rintro ⟨i', g, l', rfl, h⟩
     rw [cl_comp, h, map_zero]
 
-lemma isHomological_colimFun (hH : IsHomological H) : IsHomological (colimFun H) := by
-  intro Tr hTr y hy
-  obtain ⟨i, l, a, rfl⟩ := exists_cl y
-  rw [map_cl, cl_eq_zero_iff] at hy
-  obtain ⟨i', γ, l'', hγ, ha⟩ := hy
-  obtain ⟨Z, c, δ, hZ⟩ := distinguished_cocone_triangle γ
-  let Tr' := (Triangle.mk γ c δ).invRotate
-  have hTr' : Tr' ∈ distTriang T := inv_rot_of_distTriang _ hZ
-  obtain ⟨a₀, ha₀⟩ := hH Tr' hTr' a ha
-  let first : Tr'.obj₁ ⟶ compactObj T i := Tr'.mor₁
-  have h0 : (first ≫ l) ≫ Tr.mor₂ = 0 := by
-    have : first ≫ γ = 0 := comp_distTriang_mor_zero₁₂ _ hTr'
-    rw [Category.assoc, ← hγ, ← Category.assoc, this, zero_comp]
-  obtain ⟨l₀, hl₀⟩ := Triangle.coyoneda_exact₂ Tr hTr _ h0
-  have hL₀ : IsCompactObj Tr'.obj₁ := isCompactObj₁_of_distTriang _ hTr'
-    (isCompactObj_compactObj i) (isCompactObj_compactObj i')
-  obtain ⟨k, ⟨e⟩⟩ := exists_iso_compactObj hL₀
-  refine ⟨cl H k (e.inv ≫ l₀) (H.map e.hom a₀), ?_⟩
-  rw [map_cl, Category.assoc, ← hl₀, ← Category.assoc, cl_comp, functor_map_map_apply,
-    ← Category.assoc, e.hom_inv_id, Category.id_comp]
-  exact congrArg _ ha₀
-
 /-- At a compact object the comparison map is an isomorphism. -/
 lemma isIso_colimFunπ_app_of_isCompactObj {W : T} (hW : IsCompactObj W) :
     IsIso ((colimFunπ H).app W) := by
@@ -262,6 +240,36 @@ instance additive_colimFun : (colimFun H).Additive where
       (colimFun H).map f (cl H i l a) + (colimFun H).map g (cl H i l a)
     rw [map_cl, map_cl, map_cl, Preadditive.comp_add, cl_add]
 
+omit [H.Additive] in
+private lemma colimFun_exact (hH : H.IsHomological) (Tr : Triangle T) (hTr : Tr ∈ distTriang T)
+    (y : (colimFun H).obj Tr.obj₂) (hy : (colimFun H).map Tr.mor₂ y = 0) :
+    ∃ x : (colimFun H).obj Tr.obj₁, (colimFun H).map Tr.mor₁ x = y := by
+  obtain ⟨i, l, a, rfl⟩ := exists_cl y
+  rw [map_cl, cl_eq_zero_iff] at hy
+  obtain ⟨i', γ, l'', hγ, ha⟩ := hy
+  obtain ⟨Z, c, δ, hZ⟩ := distinguished_cocone_triangle γ
+  let Tr' := (Triangle.mk γ c δ).invRotate
+  have hTr' : Tr' ∈ distTriang T := inv_rot_of_distTriang _ hZ
+  have exact_middle : ∀ y : H.obj Tr'.obj₂, H.map Tr'.mor₂ y = 0 →
+      ∃ z : H.obj Tr'.obj₁, H.map Tr'.mor₁ z = y :=
+    (ShortComplex.ab_exact_iff _).1 (hH.exact Tr' hTr')
+  obtain ⟨a₀, ha₀⟩ := exact_middle a ha
+  let first : Tr'.obj₁ ⟶ compactObj T i := Tr'.mor₁
+  have h0 : (first ≫ l) ≫ Tr.mor₂ = 0 := by
+    have : first ≫ γ = 0 := comp_distTriang_mor_zero₁₂ _ hTr'
+    rw [Category.assoc, ← hγ, ← Category.assoc, this, zero_comp]
+  obtain ⟨l₀, hl₀⟩ := Triangle.coyoneda_exact₂ Tr hTr _ h0
+  have hL₀ : IsCompactObj Tr'.obj₁ := isCompactObj₁_of_distTriang _ hTr'
+    (isCompactObj_compactObj i) (isCompactObj_compactObj i')
+  obtain ⟨k, ⟨e⟩⟩ := exists_iso_compactObj hL₀
+  refine ⟨cl H k (e.inv ≫ l₀) (H.map e.hom a₀), ?_⟩
+  rw [map_cl, Category.assoc, ← hl₀, ← Category.assoc, cl_comp, functor_map_map_apply,
+    ← Category.assoc, e.hom_inv_id, Category.id_comp]
+  exact congrArg _ ha₀
+
+lemma isHomological_colimFun (hH : H.IsHomological) : (colimFun H).IsHomological where
+  exact Tr hTr := (ShortComplex.ab_exact_iff _).2 (colimFun_exact hH Tr hTr)
+
 lemma spannedBySummands_colimFun : SpannedBySummands (colimFun H) := by
   intro J Y x
   obtain ⟨i, l, a, rfl⟩ := exists_cl x
@@ -272,7 +280,7 @@ lemma spannedBySummands_colimFun : SpannedBySummands (colimFun H) := by
 
 /-- The comparison map `colim_{(L, l : L → W)} H(L) ⟶ H(W)` is an isomorphism, for `H`
 additive, homological and spanned by summands. -/
-theorem isIso_colimFunπ_app (hH : IsHomological H) (hHc : SpannedBySummands H) (W : T) :
+theorem isIso_colimFunπ_app (hH : H.IsHomological) (hHc : SpannedBySummands H) (W : T) :
     IsIso ((colimFunπ H).app W) :=
   NatTrans.isIso_app_of_homological (isHomological_colimFun hH) hH
     spannedBySummands_colimFun hHc (colimFunπ H)
@@ -288,7 +296,7 @@ variable {H} [H.Additive]
 /-- The colimit formula, surjectivity: for `H` additive, homological and spanned by summands,
 every element of `H(W)` is `H(l)(y)` for some map `l : L → W` from a compact object `L` of the
 small model. -/
-theorem exists_compactObj_map_eq (hH : IsHomological H) (hHc : SpannedBySummands H) {W : T}
+theorem exists_compactObj_map_eq (hH : H.IsHomological) (hHc : SpannedBySummands H) {W : T}
     (x : H.obj W) : ∃ (i : CompactIndex T) (l : compactObj T i ⟶ W)
       (y : H.obj (compactObj T i)), H.map l y = x := by
   have := isIso_colimFunπ_app hH hHc W
@@ -299,7 +307,7 @@ theorem exists_compactObj_map_eq (hH : IsHomological H) (hHc : SpannedBySummands
 /-- The colimit formula, injectivity: for `H` additive, homological and spanned by summands, if
 `H(l)(y) = 0` for a map `l : K → W` from a compact object `K`, then `l` factors as
 `K →g L → W` with `L` a compact object of the small model and `H(g)(y) = 0`. -/
-theorem exists_compactObj_factor_of_map_eq_zero (hH : IsHomological H)
+theorem exists_compactObj_factor_of_map_eq_zero (hH : H.IsHomological)
     (hHc : SpannedBySummands H) {K W : T} (hK : IsCompactObj K) (l : K ⟶ W) (y : H.obj K)
     (hy : H.map l y = 0) : ∃ (i : CompactIndex T) (g : K ⟶ compactObj T i)
       (l' : compactObj T i ⟶ W), g ≫ l' = l ∧ H.map g y = 0 := by

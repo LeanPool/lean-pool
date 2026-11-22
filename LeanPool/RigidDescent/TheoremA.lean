@@ -19,7 +19,8 @@ Paper, Theorem A (`thm:A`), in two forms:
   monomorphism. Remark 4.3 (`rem:unit-only`) observes that this is all the proofs use.
 * `theoremA`: for a ring object (monoid object) `B`, as stated in the paper.
 
-The proof is the paper's (§4): (1) ⇒ (3) is Theorem 4.2 (`IsDescentType.isNilPure`),
+Both forms are proved for a braided tensor product. The proof is the paper's (§4):
+(1) ⇒ (3) is Theorem 4.2 (`IsDescentType.isNilPure`),
 (3) ⇒ (2) is Theorem 3.6 (`IsNilPure.isEffectiveDescentType`), (3) ⇔ (4) is Lemma 2.7
 (`isNilPure_iff`), and (2) ⇒ (1) is `IsEffectiveDescentType.isDescentType`.
 -/
@@ -34,7 +35,7 @@ namespace RigidDescent
 
 variable {T : Type u} [Category.{v} T] [Preadditive T] [HasZeroObject T] [HasShift T ℤ]
   [∀ n : ℤ, (shiftFunctor T n).Additive] [Pretriangulated T] [IsTriangulated T]
-  [MonoidalCategory T] [SymmetricCategory T] [MonoidalClosed T] [TensorTriangulated T]
+  [MonoidalCategory T] [BraidedCategory T] [MonoidalClosed T] [TensorTriangulated T]
   [RigidlyCompactlyGenerated T]
 
 /-- Theorem A for a map `η : 𝟙 ⟶ B` with `B ⊗ η` a split monomorphism (Remark 4.3).

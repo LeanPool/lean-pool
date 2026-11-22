@@ -8,8 +8,7 @@ module
 public import LeanPool.RigidDescent.Foundations.ColimitFormula
 public import Mathlib.Algebra.Category.Grp.Abelian
 public import Mathlib.CategoryTheory.Abelian.FunctorCategory
-public import Mathlib.Tactic.NormNum.Ineq
-public import Mathlib.Tactic.NormNum.Pow
+public import Mathlib.CategoryTheory.Triangulated.Yoneda
 
 /-!
 # `A(T)`, restricted Yoneda, and `h(W ⊗ -)`
@@ -247,10 +246,8 @@ noncomputable abbrev homTensor (W : T) (K : CompactModel T) : T ⥤ AddCommGrpCa
   tensorLeft W ⋙ preadditiveCoyoneda.obj (op (compactObj T K))
 
 omit [MonoidalClosed T] in
-lemma isHomological_homTensor (W : T) (K : CompactModel T) : IsHomological (homTensor W K) := by
-  intro Tr hTr y hy
-  obtain ⟨x, hx⟩ := Triangle.coyoneda_exact₂ _ ((tensorLeft W).map_distinguished Tr hTr) y hy
-  exact ⟨x, hx.symm⟩
+lemma isHomological_homTensor (W : T) (K : CompactModel T) : (homTensor W K).IsHomological :=
+  inferInstanceAs ((tensorLeft W ⋙ preadditiveCoyoneda.obj (op (compactObj T K))).IsHomological)
 
 omit [TensorTriangulated T] in
 lemma spannedBySummands_homTensor (W : T) (K : CompactModel T) :

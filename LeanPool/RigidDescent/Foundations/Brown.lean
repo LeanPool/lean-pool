@@ -6,7 +6,6 @@ Authors: Brendan Murphy
 module
 
 public import LeanPool.RigidDescent.Foundations.Extension
-public import Aesop.Main
 
 /-!
 # Brown representability

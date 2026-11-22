@@ -136,7 +136,7 @@ variable {G : ℕᵒᵖ ⥤ AddCommGrpCat.{v}} {U : AddCommGrpCat.{v}}
 
 /-! ### Lemma 3.2 -/
 
-/-- Paper, Lemma 3.2 (`lem:ML-const`) [Stacks, Tag 0H9K]: a tower of abelian groups that is
+/-- Paper, Lemma 3.2 (`lem:ML-const`) [Stacks, Tag 070C]: a tower of abelian groups that is
 pro-isomorphic to a constant tower is Mittag-Leffler. -/
 theorem IsProIso.mittagLeffler (hu : IsProIso u) : MittagLeffler G := by
   obtain ⟨k, v, -, H⟩ := hu
@@ -299,8 +299,8 @@ lemma IsProZero.limVanishes (h : IsProZero G) : LimVanishes G := by
   rw [← hx.t_apply hm, e]
   rfl
 
-/-- [Stacks, Tag 0918]: if `lim¹` vanishes on the countable direct sum of copies of `G`, then
-`G` is Mittag-Leffler. -/
+/-- Emmanouil's criterion [Stacks, Tag 0CQA]: if `lim¹` vanishes on the countable direct sum
+of copies of `G`, then `G` is Mittag-Leffler. -/
 theorem mittagLeffler_of_limOneVanishes_sumTower (h : LimOneVanishes (sumTower G)) :
     MittagLeffler G := by
   classical

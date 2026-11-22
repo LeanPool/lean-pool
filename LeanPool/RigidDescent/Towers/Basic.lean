@@ -7,6 +7,7 @@ module
 
 public import LeanPool.RigidDescent.Defs.Tower
 public import Mathlib.CategoryTheory.Limits.Shapes.ZeroMorphisms
+public import Mathlib.CategoryTheory.Limits.IsLimit
 public import Mathlib.Tactic.Lemma
 
 /-!
@@ -166,34 +167,37 @@ lemma IsProIso.of_iso_comp {U' : S} {u' : (Functor.const ℕᵒᵖ).obj U' ⟶ Y
     (h : ∀ m, u.app (op m) = φ ≫ u'.app (op m)) : IsProIso u :=
   hu'.of_app (𝟭 S) u (asIso φ) (Functor.rightUnitor Y) (fun m => by simp [h])
 
+/-- Paper, Lemma 3.3 (`lem:holim-const`): if the level map `u : cst U ⟶ Y` is a
+pro-isomorphism, then `U`, with the maps `u_m`, is a limit of `Y`. -/
+noncomputable def IsProIso.isLimit {S : Type*} [Category S] {Y : ℕᵒᵖ ⥤ S} {U : S}
+    {u : (Functor.const ℕᵒᵖ).obj U ⟶ Y} (hu : IsProIso u) : IsLimit (Cone.mk U u) := by
+  choose k v hv H using hu
+  refine IsLimit.ofExistsUnique fun s => ⟨s.π.app (op k) ≫ v, fun j => ?_, fun f hf => ?_⟩
+  · obtain ⟨k', hk, hm, e⟩ := H j.unop
+    change (s.π.app (op k) ≫ v) ≫ u.app (op j.unop) = s.π.app (op j.unop)
+    rw [← app_t s.π hk, ← app_t s.π hm, ← e]
+    simp only [Category.assoc]
+  · calc f = f ≫ u.app (op k) ≫ v := by rw [hv, Category.comp_id]
+      _ = s.π.app (op k) ≫ v := by rw [← Category.assoc]; exact congrArg (· ≫ v) (hf (op k))
+
 /-- A level map `P ⟶ Q` induces a map `U ⟶ U'` of constant values, for level maps
 `cst U ⟶ P` and a pro-isomorphism `cst U' ⟶ Q` (`cst` is full). -/
 lemma IsProIso.exists_const {P Q : ℕᵒᵖ ⥤ S} {U U' : S} (u : (Functor.const ℕᵒᵖ).obj U ⟶ P)
     {u' : (Functor.const ℕᵒᵖ).obj U' ⟶ Q} (hu' : IsProIso u') (f : P ⟶ Q) :
     ∃ φ : U ⟶ U', ∀ m, φ ≫ u'.app (op m) = u.app (op m) ≫ f.app (op m) := by
-  obtain ⟨k, v, -, H⟩ := hu'
-  refine ⟨u.app (op k) ≫ f.app (op k) ≫ v, fun m => ?_⟩
-  obtain ⟨k', hk, hm, e⟩ := H m
-  calc (u.app (op k) ≫ f.app (op k) ≫ v) ≫ u'.app (op m)
-      = u.app (op k') ≫ f.app (op k') ≫ Tower.t Q hk ≫ v ≫ u'.app (op m) := by
-        rw [← app_t u hk]; simp only [Category.assoc, t_naturality_assoc]
-    _ = u.app (op m) ≫ f.app (op m) := by
-        rw [e, ← t_naturality, app_t_assoc]
+  let cone := Cone.mk U (u ≫ f)
+  exact ⟨hu'.isLimit.lift cone, fun m => hu'.isLimit.fac cone (op m)⟩
 
 /-- `cst` reflects isomorphisms: if `cst φ ≫ u'` and `u'` are pro-isomorphisms, then `φ` is an
 isomorphism. -/
 lemma IsProIso.isIso_of_comp {U' : S} {u' : (Functor.const ℕᵒᵖ).obj U' ⟶ Y} (hu : IsProIso u)
     (hu' : IsProIso u') (φ : U ⟶ U') (h : ∀ m, u.app (op m) = φ ≫ u'.app (op m)) :
     IsIso φ := by
-  obtain ⟨k, v, hv, H⟩ := hu
-  obtain ⟨k₁, v₁, hv₁, -⟩ := hu'
-  obtain ⟨k', hk, hk₁, e⟩ := H k₁
-  refine ⟨⟨u'.app (op k) ≫ v, by rw [← Category.assoc, ← h, hv], ?_⟩⟩
-  calc (u'.app (op k) ≫ v) ≫ φ = (u'.app (op k) ≫ v ≫ φ) ≫ u'.app (op k₁) ≫ v₁ := by
-        rw [hv₁, Category.comp_id, Category.assoc]
-    _ = u'.app (op k') ≫ (Tower.t Y hk ≫ v ≫ u.app (op k₁)) ≫ v₁ := by
-        rw [h k₁, ← app_t u' hk]; simp only [Category.assoc]
-    _ = 𝟙 U' := by rw [e, app_t_assoc, hv₁]
+  let e := hu.isLimit.conePointUniqueUpToIso hu'.isLimit
+  have he : e.hom = φ := hu'.isLimit.hom_ext fun j =>
+    (hu'.isLimit.fac (Cone.mk U u) j).trans (h j.unop)
+  rw [← he]
+  infer_instance
 
 lemma IsProConstant.of_iso {Y' : ℕᵒᵖ ⥤ S} (h : IsProConstant Y) (β : Y ≅ Y') :
     IsProConstant Y' := by
