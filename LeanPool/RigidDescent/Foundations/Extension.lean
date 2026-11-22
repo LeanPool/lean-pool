@@ -6,6 +6,8 @@ Authors: Brendan Murphy
 module
 
 public import LeanPool.RigidDescent.Foundations.Neeman
+public import Mathlib.Algebra.Homology.ShortComplex.Ab
+public import Mathlib.CategoryTheory.Triangulated.HomologicalFunctor
 
 /-!
 # Extending isomorphisms from the generators
@@ -89,6 +91,17 @@ variable {T : Type u} [Category.{v} T] [Preadditive T] [HasZeroObject T] [HasShi
 def IsHomological (H : T ⥤ AddCommGrpCat.{v}) : Prop :=
   ∀ Tr ∈ distTriang T, ∀ y : H.obj Tr.obj₂, H.map Tr.mor₂ y = 0 →
     ∃ x : H.obj Tr.obj₁, H.map Tr.mor₁ x = y
+
+/-- For an additive functor to abelian groups, elementwise exactness is equivalent to
+Mathlib's homological functor condition. -/
+theorem isHomological_iff_functor_isHomological (H : T ⥤ AddCommGrpCat.{v}) [H.Additive] :
+    IsHomological H ↔ H.IsHomological := by
+  constructor
+  · intro hH
+    exact ⟨fun triangle distinguished =>
+      (ShortComplex.ab_exact_iff _).2 (hH triangle distinguished)⟩
+  · intro hH triangle distinguished
+    exact (ShortComplex.ab_exact_iff _).1 (hH.exact triangle distinguished)
 
 /-- A natural transformation between homological functors is an isomorphism at the middle
 vertex of a distinguished triangle if it is one at the other vertices and their shifts. -/
