@@ -25,5 +25,6 @@ The endpoints of `Statement.lean` are proved in the following places:
 * `proposition_4_4`: `CD/Structure.lean`;
 * `proposition_4_6`: `Criterion/Bounds.lean`.
 
-Example 4.2 is `Injections.example_4_2` in `InverseSystems/Injections.lean`.
+The nonembedding consequence of Example 4.2 is `Injections.example_4_2` in
+`InverseSystems/Injections.lean`.
 -/

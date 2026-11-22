@@ -178,8 +178,8 @@ lemma cdExt_eq_zero {C A : CD D} (h : ∀ i j, ¬ IsExtPair (C.X i) (A.X j))
       (fun j => ext_rho0_eq_zero D (h i j)) η) ξ
 
 open Classical in
-/-- **(4.1)**: the only nonzero spaces `E(C, A)` between indecomposables are
-`E(Y, A i) ≃ k` and `E(P j, A i) ≃ k` for `j < i`. -/
+/-- The ranks in table (4.1) for arbitrary linearly ordered indices and transition maps.
+The two nonzero patterns `E(Y, A i)` and `E(P j, A i)` for `j < i` each have rank one. -/
 lemma rank_ext_single (c a : IndCat D) :
     Module.rank k ((cdData D).Ext (single D c) (single D a)) =
       if IsExtPair c a then 1 else 0 := by

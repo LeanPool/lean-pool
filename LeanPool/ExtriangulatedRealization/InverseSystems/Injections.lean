@@ -124,8 +124,8 @@ lemma system_obj_bot : Nonempty (system.obj (op bot.{u})) ∧
   rw [Set.range_eq_empty, Set.compl_empty]
   exact Set.infinite_univ
 
-/-- **Example 4.2.** The linearization `D'` of the injection system has surjective transition
-maps and `D'_0 = k`, but `C(D')` has no triangulated embedding. -/
+/-- The surjectivity of the transition maps and the nonembedding conclusion in Example 4.2.
+The argument uses the nonempty initial level and the absence of a compatible family. -/
 theorem example_4_2 (k : Type u) [Field k] :
     HasSurjectiveTransitions (linearize system k) ∧
       ¬ (cdData (linearize system k)).HasTriangulatedEmbedding.{_, _, _, _, v', u'} := by

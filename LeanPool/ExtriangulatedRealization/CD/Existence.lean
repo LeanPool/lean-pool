@@ -17,8 +17,9 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 A good representation embeds into a finite direct sum of the injectives `k_{[*,t]}`. Hence every
 class `ξ ∈ Ext¹(C', A')` between good representations is the pullback of the class of
 `A' ↪ J ↠ J/A'` along some `C' ⟶ J/A'`, so it is the class of a short exact sequence whose
-middle term is good (Lemma 2.1), hence a finite direct sum of intervals. Lifting the maps along
-the fully faithful functor `ρ` gives a realization in `C(D)` (Construction 2.2).
+middle term is good (Lemma 2.1), hence a finite direct sum of intervals. The full faithfulness
+of `ρ` on objects without copies of `X` lifts the maps between the interval parts. Adding
+the split sequence on the copies of `X` gives a realization in `C(D)` (Construction 2.2).
 -/
 
 @[expose] public section
@@ -221,7 +222,8 @@ theorem exists_realizes_of_shortExact {A C : CD D} {E : Finset I} {M : Rep k I} 
     exact h
   · simp only [x', ← Category.assoc, xIncl_bProj, zero_comp]
 
-/-- **Existence of realizations** for `C(D)` (Construction 2.2, using Lemma 2.1). -/
+/-- Realizations exist by the argument of Construction 2.2 and Lemma 2.1, with arbitrary
+transition maps over a nonempty well-ordered index. -/
 theorem cd_exists_realizes {A C : CD D} (ξ : (cdData D).Ext C A) :
     ∃ (B : CD D) (x : A ⟶ B) (y : B ⟶ C), (cdData D).Realizes ξ x y := by
   let E := objIdx D A ∪ objIdx D C

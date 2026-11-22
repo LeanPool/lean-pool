@@ -811,7 +811,12 @@ instance psi_linear : (psi D).Linear k where
 
 end Psi
 
-/-! ### The category `C(D)` (Construction 2.2) -/
+/-! ### The category `C(D)` (Construction 2.2)
+
+The underlying category, representation functor and extension data extend Construction 2.2
+to arbitrary linear orders and transition maps. The paper assumes a nonempty ordinal
+and surjective transitions. The bundled endpoints retain those assumptions where stated.
+-/
 
 section CD
 
@@ -821,7 +826,8 @@ variable {k : Type u} [Field k] {I : Type u} [LinearOrder I] (D : Iᵒᵖ ⥤ Mo
 representations `Y`, `A i`, `P i`, with morphisms (2.2) and (2.3). -/
 abbrev IndCat := OnePointExtension (IntervalCat k I) (psi D)
 
-/-- The category `C(D)`: finite direct sums of `X`, `Y`, `A i`, `P i` (Construction 2.2). -/
+/-- The category of Construction 2.2, extended to arbitrary linear orders and transition maps.
+Its objects are finite direct sums of `X`, `Y`, `A i`, and `P i`. -/
 abbrev CD := Mat_ (IndCat D)
 
 open ZeroObject in
@@ -946,8 +952,8 @@ end InverseSystems
 
 /-! ### The endpoints -/
 
-/-- The nonzero first extension spaces between indecomposables in (4.1):
-`E(Y, A i)` and `E(P j, A i)` with `j < i`. -/
+/-- The two label patterns in (4.1) that give nonzero first extension spaces.
+They are `E(Y, A i)` and `E(P j, A i)` with `j < i`. -/
 def IsExtPair {k : Type u} [Field k] {I : Type u} [LinearOrder I] {D : Iᵒᵖ ⥤ ModuleCat.{u} k} :
     IndCat D → IndCat D → Prop
   | some IntervalLabel.Y, some (IntervalLabel.A _) => True

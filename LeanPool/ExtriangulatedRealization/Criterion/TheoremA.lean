@@ -40,12 +40,13 @@ noncomputable abbrev treeSystem : (Omega1.{u})ᵒᵖ ⥤ ModuleCat.{u} k :=
 lemma treeSystem_hasSurjectiveTransitions : HasSurjectiveTransitions (treeSystem k) :=
   linearize_hasSurjectiveTransitions _ k fun h => Aronszajn.system_map_surjective h
 
-/-- **Construction 4.3** with Lemma 4.1: `lim D = 0` while `D_0 = k`. -/
+/-- The limit projections for the system in Construction 4.3 fail to be surjective.
+The argument of Lemma 4.1 gives a zero limit, while the space at the first index is nonzero. -/
 lemma treeSystem_not_projectionsSurjective : ¬ ProjectionsSurjective (treeSystem k) :=
   linearize_not_projectionsSurjective _ k (fun _ hT => Omega1.bddAbove_of_countable hT)
     Aronszajn.system_no_branch _ ⟨0, Aronszajn.zero_mem_tree_bot⟩
 
-/-- **Construction 4.3**: `dim D_i = |T_i| ≤ ℵ₀`. -/
+/-- The dimension bound in Construction 4.3 follows from `dim D_i = |T_i|`. -/
 lemma rank_treeSystem_le (i : Omega1.{u}) : Module.rank k ((treeSystem k).obj (op i)) ≤ ℵ₀ := by
   change Module.rank k (Aronszajn.system.obj (op i) →₀ k) ≤ ℵ₀
   rw [rank_finsupp_self']

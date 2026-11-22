@@ -15,7 +15,7 @@ public import Mathlib.Algebra.Homology.DerivedCategory.Ext.Linear
 public import Mathlib.LinearAlgebra.Dimension.FreeAndStrongRankCondition
 
 /-!
-# First extensions between interval representations (4.1)
+# Ambient first extensions used in table (4.1)
 
 Since `P i` and `Y` are injective, `Ext¹(-, P i) = Ext¹(-, Y) = 0`. Applying `Hom(B, -)` to
 `0 → A i → P i → Y → 0` shows that every class in `Ext¹(B, A i)` is `g^* ε_i` for some
@@ -143,7 +143,7 @@ lemma comp_epsRep_eq_zero_iff {B : Rep k I} (i : I) (g : B ⟶ (Y (I := I)).rep 
     erw [(intervalSeq_shortExact (k := k) i).comp_extClass]
     exact Ext.comp_zero (Ext.mk₀ h) ((A i).rep k) 1 1 _
 
-/-! ### The table (4.1) -/
+/-! ### The ambient extension calculations for table (4.1) -/
 
 lemma ext_one_A_A_eq_zero (i j : I) (ξ : Ext ((A j).rep k) ((A i).rep k) 1) : ξ = 0 := by
   obtain ⟨g, rfl⟩ := exists_eq_comp_epsRep i ξ
