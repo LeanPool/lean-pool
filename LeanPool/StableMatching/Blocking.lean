@@ -175,30 +175,19 @@ theorem exists_blocks_of_rankM_lt {μ' : M ≃. W} (hμ' : P.IsIndividuallyRatio
     exact exists_blocks_of_not_mem hμ' ((hmemS m').1 hm') hw hout
   push Not at hc
   -- the men of `S` are mapped by `μ'` onto their partners under deferred acceptance
-  have hsurj := exists_eq_some_of_injOn (s := S) (t := S)
-    (f := fun m ↦ (μ' m).bind P.daMatching.symm) (g := fun m ↦ (μ' m).bind P.daMatching.symm)
-    (fun m hm ↦ by
-      obtain ⟨w, hw⟩ := himp m hm
-      obtain ⟨m'', hm'', hle⟩ := hc m w hm hw
-      exact ⟨m'', (hmemS m'').2 hle, by
-        simp [hw, (PEquiv.eq_some_iff P.daMatching).2 hm'']⟩)
-    (fun a₁ a₂ b h₁ h₂ ↦ by
-      obtain ⟨w₁, hw₁, hb₁⟩ := Option.bind_eq_some_iff.1 h₁
-      obtain ⟨w₂, hw₂, hb₂⟩ := Option.bind_eq_some_iff.1 h₂
-      have : w₁ = w₂ := P.daMatching.symm.inj hb₁ hb₂
-      subst this
-      exact μ'.inj hw₁ hw₂)
-    (fun m hm ↦ by
-      obtain ⟨w, hw⟩ := himp m hm
-      obtain ⟨m'', hm'', hle⟩ := hc m w hm hw
-      exact ⟨m'', (hmemS m'').2 hle, by
-        simp [hw, (PEquiv.eq_some_iff P.daMatching).2 hm'']⟩)
-    (fun a₁ a₂ b h₁ h₂ ↦ by
-      obtain ⟨w₁, hw₁, hb₁⟩ := Option.bind_eq_some_iff.1 h₁
-      obtain ⟨w₂, hw₂, hb₂⟩ := Option.bind_eq_some_iff.1 h₂
-      have : w₁ = w₂ := P.daMatching.symm.inj hb₁ hb₂
-      subst this
-      exact μ'.inj hw₁ hw₂)
+  set f : M → Option M := fun m ↦ (μ' m).bind P.daMatching.symm with hf
+  have hmaps : ∀ m ∈ S, ∃ m'' ∈ S, f m = some m'' := fun m hm ↦ by
+    obtain ⟨w, hw⟩ := himp m hm
+    obtain ⟨m'', hm'', hle⟩ := hc m w hm hw
+    exact ⟨m'', (hmemS m'').2 hle, by
+      simp [hf, hw, (PEquiv.eq_some_iff P.daMatching).2 hm'']⟩
+  have hinj : ∀ a₁ a₂ b, f a₁ = some b → f a₂ = some b → a₁ = a₂ := fun a₁ a₂ b h₁ h₂ ↦ by
+    obtain ⟨w₁, hw₁, hb₁⟩ := Option.bind_eq_some_iff.1 h₁
+    obtain ⟨w₂, hw₂, hb₂⟩ := Option.bind_eq_some_iff.1 h₂
+    have : w₁ = w₂ := P.daMatching.symm.inj hb₁ hb₂
+    subst this
+    exact μ'.inj hw₁ hw₂
+  have hsurj := exists_eq_some_of_injOn hmaps hinj hmaps hinj
   -- the last round in which a man of `S` is rejected
   have hex : ∀ m : M, ∃ k, P.rej k m = P.finalRej m := fun _ ↦ ⟨_, rfl⟩
   obtain ⟨mstar, hmstar, hmax⟩ :=
