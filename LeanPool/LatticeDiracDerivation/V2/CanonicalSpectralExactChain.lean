@@ -335,75 +335,14 @@ theorem finite_spectral_tangent_obeys_position_space_dirac [Fintype Mode]
         (fun axis =>
           finiteSpectralDiracSpatialDerivative axis mass energy
             momentum phase site) := by
-  rw [show finiteSpectralDiracTimeDerivative
-      mass energy momentum phase site =
-      fun component => ∑ mode,
-        cubicLatticeCharacter (momentum mode) site *
-          cubicalDiracTimeDerivative mass
-            (canonicalSpectralMomentumReadout mass (energy mode)
-              (momentum mode) (phase mode))
-            (uniformPlaneWaveSpatialDerivative (momentum mode)
-              (canonicalSpectralMomentumReadout mass (energy mode)
-                (momentum mode) (phase mode))) component by
-    funext component
-    unfold finiteSpectralDiracTimeDerivative
-    apply Finset.sum_congr rfl
-    intro mode _
-    have hgenerator := canonical_spectral_continuum_generator_exact
-      mass (energy mode) (momentum mode)
-      (henergy mode) (hdenom mode) (hshell mode) (phase mode)
-    have hposition := cubical_standard_hamiltonian_is_position_dirac
-      mass (momentum mode)
-        (canonicalSpectralMomentumReadout mass (energy mode)
-          (momentum mode) (phase mode))
-    calc
-      cubicLatticeCharacter (momentum mode) site *
-          canonicalSpectralMomentumReadout mass (energy mode)
-            (momentum mode)
-            (uniformVacuumContinuumGenerator mass
-              (momentum mode) (phase mode)) component =
-        cubicLatticeCharacter (momentum mode) site *
-          (-I * cubicalStandardHamiltonian (mass : ℂ)
-            (uniformContinuumPx (momentum mode))
-            (uniformContinuumPy (momentum mode))
-            (uniformContinuumPz (momentum mode))
-            (canonicalSpectralMomentumReadout mass (energy mode)
-              (momentum mode) (phase mode)) component) := by rw [hgenerator]
-      _ = cubicLatticeCharacter (momentum mode) site *
-          cubicalDiracTimeDerivative mass
-            (canonicalSpectralMomentumReadout mass (energy mode)
-              (momentum mode) (phase mode))
-            (uniformPlaneWaveSpatialDerivative (momentum mode)
-              (canonicalSpectralMomentumReadout mass (energy mode)
-                (momentum mode) (phase mode))) component := by
-                  exact congrArg
-                    (fun value =>
-                      cubicLatticeCharacter (momentum mode) site * value)
-                    (congrFun hposition component)]
-  rw [show finiteSpectralDiracField mass energy momentum phase site =
-      fun component => ∑ mode,
-        (fun component =>
-          cubicLatticeCharacter (momentum mode) site *
-            canonicalSpectralMomentumReadout mass (energy mode)
-              (momentum mode) (phase mode) component) component by rfl]
-  rw [show (fun axis => finiteSpectralDiracSpatialDerivative axis mass
-      energy momentum phase site) =
-      fun axis component => ∑ mode,
-        cubicLatticeCharacter (momentum mode) site *
-          uniformPlaneWaveSpatialDerivative (momentum mode)
-            (canonicalSpectralMomentumReadout mass (energy mode)
-              (momentum mode) (phase mode)) axis component by
-    funext axis component
-    unfold finiteSpectralDiracSpatialDerivative
-      uniformPlaneWaveSpatialDerivative
-    apply Finset.sum_congr rfl
-    intro mode _
-    ring]
-  rw [cubical_dirac_time_derivative_sum]
-  funext component
-  apply Finset.sum_congr rfl
-  intro mode _
-  exact (congrFun (cubical_dirac_time_derivative_mul _ _ _ _) component).symm
+  refine finite_fourier_sum_obeys_position_space_dirac mass momentum
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode) (phase mode))
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
+      (uniformVacuumContinuumGenerator mass (momentum mode) (phase mode))) ?_ site
+  intro mode
+  exact (canonical_spectral_continuum_generator_exact mass (energy mode) (momentum mode)
+    (henergy mode) (hdenom mode) (hshell mode) (phase mode)).trans
+    (cubical_standard_hamiltonian_is_position_dirac mass (momentum mode) _)
 
 theorem finite_spectral_native_time_derivative_splits [Fintype Mode]
     (mass : ℝ) (energy : Mode → ℝ)

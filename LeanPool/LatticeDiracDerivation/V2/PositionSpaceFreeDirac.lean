@@ -114,11 +114,46 @@ theorem cubical_dirac_time_derivative_mul (scale : ℂ) (mass : ℝ)
         (fun axis component => scale * spatialDerivative axis component) =
       fun component =>
         scale * cubicalDiracTimeDerivative mass field spatialDerivative component := by
+  have beta_scale :
+      cubicalStandardBeta (fun component => scale * field component) =
+        fun component => scale * cubicalStandardBeta field component := by
+    funext component
+    fin_cases component <;> simp [cubicalStandardBeta]
   funext component
-  fin_cases component <;>
-    simp [cubicalDiracTimeDerivative, cubicalVelocityOperator, cubicalStandardBeta,
-      cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Fin.sum_univ_succ] <;> ring
+  simp only [cubicalDiracTimeDerivative, beta_scale, cubical_velocity_mul, ← Finset.mul_sum]
+  ring
+
+/-- Lift a family of plane-wave Dirac equations to its finite Fourier field. -/
+theorem finite_fourier_sum_obeys_position_space_dirac [Fintype Mode]
+    (mass : ℝ) (momentum : Mode → LatticeMomentum) (field timeDerivative : Mode → CubicalCell4)
+    (equation : ∀ mode, timeDerivative mode = cubicalDiracTimeDerivative mass (field mode)
+      (uniformPlaneWaveSpatialDerivative (momentum mode) (field mode)))
+    (site : InfiniteCubicSite) :
+    (fun component => ∑ mode,
+      cubicLatticeCharacter (momentum mode) site * timeDerivative mode component) =
+    cubicalDiracTimeDerivative mass
+      (fun component => ∑ mode,
+        cubicLatticeCharacter (momentum mode) site * field mode component)
+      (fun axis component => ∑ mode,
+        I * ((momentum mode axis : ℝ) : ℂ) * cubicLatticeCharacter (momentum mode) site *
+          field mode component) := by
+  have spatial :
+      (fun axis component => ∑ mode,
+        I * ((momentum mode axis : ℝ) : ℂ) * cubicLatticeCharacter (momentum mode) site *
+          field mode component) =
+      fun axis component => ∑ mode,
+        cubicLatticeCharacter (momentum mode) site *
+          uniformPlaneWaveSpatialDerivative (momentum mode) (field mode) axis component := by
+    funext axis component
+    apply Finset.sum_congr rfl
+    intro mode _
+    unfold uniformPlaneWaveSpatialDerivative
+    ring
+  rw [spatial, cubical_dirac_time_derivative_sum]
+  funext component
+  apply Finset.sum_congr rfl
+  intro mode _
+  rw [equation mode, cubical_dirac_time_derivative_mul]
 
 /-- Every finite superposition of action-derived continuum tangent modes
 obeys the full four-component position-space free Dirac equation. -/
@@ -132,45 +167,12 @@ theorem finite_native_tangent_obeys_position_space_dirac [Fintype Mode]
         (finiteDiracField r momentum phase site)
         (fun axis =>
           finiteDiracSpatialDerivative axis r momentum phase site) := by
-  rw [show finiteDiracTimeDerivative r momentum phase site =
-      fun component => ∑ mode,
-        cubicLatticeCharacter (momentum mode) site *
-          cubicalDiracTimeDerivative r
-            (uniformActionToStandardDirac r
-              (momentum mode) (phase mode))
-            (uniformPlaneWaveSpatialDerivative (momentum mode)
-              (uniformActionToStandardDirac r
-                (momentum mode) (phase mode))) component by
-    funext component
-    unfold finiteDiracTimeDerivative
-    apply Finset.sum_congr rfl
-    intro mode _
-    rw [uniform_readout_tangent_is_position_dirac
-      r hr (momentum mode) (phase mode)]]
-  rw [show finiteDiracField r momentum phase site =
-      fun component => ∑ mode,
-        (fun component =>
-          cubicLatticeCharacter (momentum mode) site *
-            uniformActionToStandardDirac r
-              (momentum mode) (phase mode) component) component by rfl]
-  rw [show (fun axis =>
-      finiteDiracSpatialDerivative axis r momentum phase site) =
-      fun axis component => ∑ mode,
-        cubicLatticeCharacter (momentum mode) site *
-          uniformPlaneWaveSpatialDerivative (momentum mode)
-            (uniformActionToStandardDirac r
-              (momentum mode) (phase mode)) axis component by
-    funext axis component
-    unfold finiteDiracSpatialDerivative
-      uniformPlaneWaveSpatialDerivative
-    apply Finset.sum_congr rfl
-    intro mode _
-    ring]
-  rw [cubical_dirac_time_derivative_sum]
-  funext component
-  apply Finset.sum_congr rfl
-  intro mode _
-  exact (congrFun (cubical_dirac_time_derivative_mul _ _ _ _) component).symm
+  exact finite_fourier_sum_obeys_position_space_dirac r momentum
+    (fun mode => uniformActionToStandardDirac r (momentum mode) (phase mode))
+    (fun mode => uniformActionToStandardDirac r (momentum mode)
+      (uniformVacuumContinuumGenerator r (momentum mode) (phase mode)))
+    (fun mode => uniform_readout_tangent_is_position_dirac r hr (momentum mode) (phase mode))
+    site
 
 theorem finite_native_time_derivative_splits [Fintype Mode]
     (r : ℝ) (momentum : Mode → LatticeMomentum)
