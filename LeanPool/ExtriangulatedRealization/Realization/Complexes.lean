@@ -15,9 +15,9 @@ public import Mathlib.Algebra.Homology.Embedding.CochainComplex
 /-!
 # Injective resolutions of the interval representations in `K(Q₀)`
 
-Each interval `l` has a resolution `I⁰(l) → I¹(l)` by objects of `Q₀`: `Y → 0`, `P i → 0`, and
-`P i → Y` for `A i` (Step 1 of the proof of Proposition 2.3). The resolution complex is the
-two-term complex `double`; its image under `ι₀` is a bounded complex of injective
+The resolutions from Step 1 of Proposition 2.3 are defined here for every interval label
+in the enlarged `Q₀`: `Y → 0`, `P i → 0`, and `P i → Y` for `A i`.
+The image of each two-term complex under `ι₀` is a bounded complex of injective
 representations, hence K-injective.
 -/
 

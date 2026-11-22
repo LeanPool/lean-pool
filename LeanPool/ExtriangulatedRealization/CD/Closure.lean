@@ -14,6 +14,8 @@ public import LeanPool.ExtriangulatedRealization.Categories.Mat
 `C_J` is closed under isomorphisms, finite direct sums and extensions: the middle term of a
 realization has `ρ`-image an extension of good representations, hence good. `C(D)` is
 essentially small: every object is isomorphic to one indexed by some `Fin n`.
+These closure and smallness properties hold for arbitrary linearly ordered indices and
+transition maps, extending the corresponding claims in Corollary 2.4.
 -/
 
 @[expose] public section

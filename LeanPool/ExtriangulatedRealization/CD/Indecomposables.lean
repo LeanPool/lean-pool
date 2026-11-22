@@ -105,7 +105,8 @@ lemma eq_of_single_iso {l l' : IndCat D} (e : single D l ≅ single D l') : l = 
 
 /-! ### Krull–Schmidt -/
 
-/-- `C(D)` is Krull–Schmidt: every object is the direct sum of its entries. -/
+/-- The Krull–Schmidt clause of Proposition 4.4 extends to arbitrary linearly ordered
+indices and arbitrary transition maps. Every object of `C(D)` is the direct sum of its entries. -/
 lemma isKrullSchmidt_CD : IsKrullSchmidt (CD D) := by
   intro M
   let e := Fintype.equivFin M.ι

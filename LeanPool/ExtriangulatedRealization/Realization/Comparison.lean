@@ -10,11 +10,12 @@ public import LeanPool.ExtriangulatedRealization.Realization.Complexes
 /-!
 # Comparing `K(Q₀)` with the derived category of `Rep k I`
 
-The functor `G : K(Q₀) ⥤ D(Rep k I)` is `ι₀` on complexes followed by the localization. It is
-bijective on morphisms into the resolution complexes (their images are K-injective), and
-`G(resC l) ≅ l` in the derived category through the quasi-isomorphism `qmap l`. Lifting the
-inclusion of the interval category into `D(Rep k I)` along `G` gives the functor `resFunctor`
-which sends an interval to its resolution (Step 1 of the proof of Proposition 2.3).
+The functor `G : K(Q₀) ⥤ D(Rep k I)` is `ι₀` on complexes followed by the localization.
+This version of Step 1 of Proposition 2.3 uses all interval labels in `Q₀`. The paper uses
+bounded complexes of injective objects. Here `G` is bijective on morphisms into targets
+whose images are K-injective, including the resolution complexes. The quasi-isomorphism
+`qmap l` identifies `G(resC l)` with `l` in the derived category. This lets `resFunctor`
+lift the inclusion of the interval category into `D(Rep k I)` along `G`.
 -/
 
 @[expose] public section
@@ -30,7 +31,7 @@ variable {k : Type u} [Field k] {I : Type u} [LinearOrder I]
 attribute [local instance] HasDerivedCategory.standard
 
 variable (k I) in
-/-- The functor `G : K(Q₀) ⥤ D(Rep k I)`. -/
+/-- The comparison functor from the homotopy category of the enlarged `Q₀`. -/
 noncomputable def Gfun : HomotopyCategory (Q₀ k I) (ComplexShape.up ℤ) ⥤
     DerivedCategory (Rep k I) :=
   ι₀.mapHomotopyCategory (ComplexShape.up ℤ) ⋙ Qh

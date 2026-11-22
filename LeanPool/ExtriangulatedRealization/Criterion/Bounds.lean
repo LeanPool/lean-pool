@@ -41,7 +41,8 @@ lemma trans_refl {a : I} (v : D.obj (op a)) : trans D (le_refl a) v = v := by
   rw [CategoryTheory.Functor.map_id]
   rfl
 
-/-- **Proposition 4.6 (1)**, the lifting argument. -/
+/-- The lifting argument of Proposition 4.6 (1) extends to arbitrary linearly ordered
+indices with surjective transition maps. The paper assumes a nonempty ordinal. -/
 lemma projectionsSurjective_of_countable_cofinal (hD : HasSurjectiveTransitions D) (S : Set I)
     (hS : S.Countable) (hcof : ∀ i, ∃ j ∈ S, i ≤ j) : ProjectionsSurjective D := by
   intro i u
@@ -121,8 +122,8 @@ lemma directLimit_exists_extend [Preorder I] [IsDirectedOrder I] [DecidableEq I]
     (LinearMap.ker_eq_bot.mpr hinj)
   exact ⟨ψ.comp g, by rw [LinearMap.comp_assoc, hg, LinearMap.comp_id]⟩
 
-/-- **Proposition 4.6 (2)**, the duality argument: for finite-dimensional `D_i`, every
-`u ∈ D_i` extends to a compatible family. -/
+/-- The duality argument of Proposition 4.6 (2) extends to arbitrary linearly ordered
+indices with surjective transition maps. The paper assumes a nonempty ordinal. -/
 lemma projectionsSurjective_of_finiteDimensional (hD : HasSurjectiveTransitions D)
     (hfin : ∀ i, FiniteDimensional k (D.obj (op i))) : ProjectionsSurjective D := by
   intro i u
