@@ -358,23 +358,8 @@ private theorem finiteSupport_compact_disk [CompleteSpace E] (p : Exponent)
 private theorem fvl_norm_separation (p : Exponent) (T : F →L[ℝ] E)
     (hb : ¬ BoundedBelow (induced p T)) (a b : ℝ) (ha : 0 < a) (hbpos : 0 < b) :
     ∃ v : FVL F, ‖ofFVL p v‖ = a ∧ ‖induced p T (ofFVL p v)‖ < b := by
-  have hbad : ∃ v : FVL F, ‖induced p T (ofFVL p v)‖ < (b / a) * ‖ofFVL p v‖ := by
-    by_contra! h
-    exact hb ⟨b / a, div_pos hbpos ha, fun f =>
-      (denseRange_ofFVL p).induction_on f
-        (isClosed_le (continuous_const.mul continuous_norm)
-          (induced p T).toContinuousLinearMap.continuous.norm) h⟩
-  obtain ⟨v, hv⟩ := hbad
-  have hvpos : 0 < ‖ofFVL p v‖ :=
-    (mul_pos_iff_of_pos_left (div_pos hbpos ha)).mp ((norm_nonneg _).trans_lt hv)
-  refine ⟨(a / ‖ofFVL p v‖) • v, ?_, ?_⟩
-  · rw [map_smul, norm_smul, Real.norm_of_nonneg (div_pos ha hvpos).le]
-    exact div_mul_cancel₀ a hvpos.ne'
-  · rw [map_smul, map_smul, norm_smul, Real.norm_of_nonneg (div_pos ha hvpos).le]
-    have h := mul_lt_mul_of_pos_left hv (div_pos ha hvpos)
-    calc
-      _ < (a / ‖ofFVL p v‖) * ((b / a) * ‖ofFVL p v‖) := h
-      _ = b := by field_simp
+  exact exists_core_norm_eq_and_image_norm_lt (ofFVL p).toLinearMap
+    (denseRange_ofFVL p) (induced p T).toContinuousLinearMap hb ha hbpos
 
 private theorem finiteSupport_norm_separation [CompleteSpace E] (p : Exponent)
     (hp : p.IsFinite) (M : Submodule ℝ E) (hM : IsClosed (M : Set E))
@@ -424,7 +409,7 @@ private theorem compact_support_algebraic_order_null [CompleteSpace E] (p : Expo
   have hpos (n : ℕ) : (0 : Free p E) ≤ ofFVL p (q n) := (ofFVL p).map_nonneg (hq n)
   have hpoint' (ψ : Dual E) :
       IsLUB (Set.range fun n => ofFVL p (q n) ψ) (support K ψ) := by
-    simpa only [(model_evaluation p (0 : E) _ _).2] using hpoint ψ
+    simpa only [ofFVL_apply] using hpoint ψ
   have hnull := compact_support_order_null p hp K hne hac hc hinf
     (fun n => ofFVL p (q n)) hpos hmono hpoint' e
   simpa only [ofFVL_positive_difference] using hnull
@@ -491,14 +476,14 @@ theorem poe_necessity [CompleteSpace E] (p : Exponent) (hp : p.IsFinite)
         freeNormExt p (support (seriesDisk K)) := by
       apply freeNormExt_mono_abs
       intro ψ
-      rw [(model_evaluation p (0 : M) _ _).2, ← hsupport, hDsupport,
+      rw [ofFVL_apply, ← hsupport, hDsupport,
         abs_of_nonneg (hspos ψ n), abs_of_nonneg (tsum_nonneg (hspos ψ))]
       exact (hsum ψ).le_tsum n (fun j _ => hspos ψ j)
     rw [freeNormExt_eq_norm] at hnorm
     have h := ENNReal.toReal_mono hfin hnorm
     rw [ENNReal.toReal_ofReal (norm_nonneg _)] at h
-    have := hlarge n
-    linarith
+    exact (not_lt_of_ge ((hlarge n).trans h))
+      (hn.trans_le (le_add_of_nonneg_right zero_le_one))
   let q (n : ℕ) : FVL M := ∑ k ∈ Finset.range n, finiteSupport (A k)
   have hq (n : ℕ) : 0 ≤ q n :=
     Finset.sum_nonneg (fun k _ => finiteSupport_nonneg (A k))
@@ -510,13 +495,9 @@ theorem poe_necessity [CompleteSpace E] (p : Exponent) (hp : p.IsFinite)
       finiteSupport_nonneg (A n)
   have hqeval (n : ℕ) (ψ : Dual M) :
       fvlFunction (q n) ψ = ∑ k ∈ Finset.range n, support (K k) ψ := by
-    rw [← (model_evaluation p (0 : M) (q n) ψ).2]
+    rw [← ofFVL_apply p (q n) ψ]
     simp only [q, map_sum]
-    let ev : Free p M →ₗ[ℝ] ℝ :=
-      { toFun := fun f => f ψ
-        map_add' := fun _ _ => rfl
-        map_smul' := fun _ _ => rfl }
-    exact (map_sum ev _ _).trans
+    exact (map_sum (evalVecLatHom p ψ) _ _).trans
       (Finset.sum_congr rfl fun k _ => (hsupport k ψ).symm)
   have hpoint (ψ : Dual M) :
       IsLUB (Set.range fun n => fvlFunction (q n) ψ) (support (seriesDisk K) ψ) := by

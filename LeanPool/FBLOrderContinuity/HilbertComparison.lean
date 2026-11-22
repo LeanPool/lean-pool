@@ -398,8 +398,7 @@ theorem hilbert_free_norm_comparison {H : Type*} [NormedAddCommGroup H]
   refine iSup_le fun n => iSup_le fun φ => iSup_le fun hφ => ENNReal.ofReal_le_ofReal ?_
   have hsum (a : Fin n → ℝ) : scalarPSum Exponent.one a = ∑ i, |a i| := by
     simp [scalarPSum, Exponent.one]
-  simpa only [hsum, (model_evaluation Exponent.one (0 : H) v _).2,
-    (model_evaluation Exponent.two (0 : H) v _).2] using
+  simpa only [hsum, ofFVL_apply] using
       hilbert_family_bound φ hφ (ofFVL Exponent.two v)
 
 end HilbertComparison

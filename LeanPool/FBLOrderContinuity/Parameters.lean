@@ -330,8 +330,7 @@ private theorem one_norm_le_of_norming_family {n : ℕ} (x : Fin n → E)
       intro j _
       have hh := hp_apply_abs_le Exponent.infinity (ofFVL Exponent.infinity v).1 (φ j)
       change |ofFVL Exponent.infinity v (φ j)| ≤ ‖φ j‖ * ‖ofFVL Exponent.infinity v‖ at hh
-      simpa only [(model_evaluation Exponent.infinity (0 : E) _ _).2,
-        (model_evaluation Exponent.one (0 : E) _ _).2] using hh
+      simpa only [ofFVL_apply] using hh
     _ = (∑ j, ‖φ j‖) * ‖ofFVL Exponent.infinity v‖ := (Finset.sum_mul _ _ _).symm
     _ ≤ C * n * ‖ofFVL Exponent.infinity v‖ :=
       mul_le_mul_of_nonneg_right (hfamily φ hφ) (norm_nonneg _)

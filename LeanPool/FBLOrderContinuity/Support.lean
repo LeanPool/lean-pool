@@ -2749,8 +2749,7 @@ private theorem finite_support_image_norm_le (p : Exponent) (hp : p.IsFinite)
   have hzbound (φ : Dual E) : |fvlFunction z φ| ≤
       scalarPSum p (fun i => φ (t • x i)) := by
     have hzeq : fvlFunction z φ = fvlFunction (finiteSupport A) (φ.comp M.subtypeL) := by
-      change ofFVL p z φ = ofFVL p (finiteSupport A) (φ.comp M.subtypeL)
-      rw [hz, canonical_map_formulas]
+      rw [← ofFVL_apply p z φ, hz, canonical_map_formulas, ofFVL_apply]
     rw [hzeq, finiteSupport_apply A hA]
     have hnonneg : 0 ≤ A.sup' hA (fun a => |(φ.comp M.subtypeL) a|) :=
       (abs_nonneg _).trans (Finset.le_sup' (fun a => |(φ.comp M.subtypeL) a|) hA.choose_spec)
@@ -2821,8 +2820,7 @@ theorem finite_support_majorant [CompleteSpace E] (p : Exponent) (hp : p.IsFinit
     obtain ⟨φ, hφ, hb⟩ := compact_support_extension_approx M hM K hKne hKa hKc ψ
       (support L ψ + ε) (lt_add_of_pos_right _ hε)
     have hv : fvlFunction w φ = fvlFunction v ψ := by
-      change ofFVL p w φ = ofFVL p v ψ
-      rw [hw, canonical_map_formulas, hφ]
+      rw [← ofFVL_apply p w φ, hw, canonical_map_formulas, hφ, ofFVL_apply]
     rw [← hv]
     exact (hmajor φ).trans ((hsupport φ).symm.le.trans hb)
   let C := scalarPSum p (fun i => ‖x i‖)
@@ -2831,13 +2829,18 @@ theorem finite_support_majorant [CompleteSpace E] (p : Exponent) (hp : p.IsFinit
   have hθ : 0 < θ := div_pos hη (mul_pos (by norm_num) (by linarith))
   have ht : 0 < 1 + θ := by linarith
   have hθC : θ * C < η / 2 := by
-    have heq : θ * (C + 1) = η / 2 := by
-      dsimp [θ]
-      field_simp
-    nlinarith
+    have hC1 : (C + 1) ≠ 0 := (add_pos_of_nonneg_of_pos hC zero_lt_one).ne'
+    calc
+      θ * C < θ * (C + 1) :=
+        mul_lt_mul_of_pos_left (lt_add_of_pos_right C zero_lt_one) hθ
+      _ = η / 2 := by
+        dsimp only [θ]
+        rw [← div_div, div_mul_cancel₀ _ hC1]
   have hscaled : (1 + θ) * C < ‖ofFVL p w‖ + η := by
-    change C < _ at hcost
-    nlinarith
+    calc
+      (1 + θ) * C = C + θ * C := by rw [add_mul, one_mul]
+      _ < (‖ofFVL p w‖ + η / 2) + η / 2 := add_lt_add hcost hθC
+      _ = ‖ofFVL p w‖ + η := by rw [add_assoc, add_halves]
   obtain ⟨A, hLA, hAL⟩ := outer_polytope_approximation L hLne hLa hLc hLfd θ hθ
   have hA : A.Nonempty := by
     by_contra hn

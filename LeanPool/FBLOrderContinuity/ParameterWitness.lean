@@ -57,25 +57,9 @@ theorem parameter_norm_separation {p q : Exponent} (hpq : p ≤ q)
     apply honto
     rw [← Set.range_eq_univ, ← hc.closure_eq]
     exact (inclusion_properties (E := E) hpq).2.2.1.closure_range
-  have hbad : ∃ v : FVL E, ‖ofFVL q v‖ < (b / a) * ‖ofFVL p v‖ := by
-    by_contra! h
-    apply hnot
-    refine ⟨b / a, div_pos hb ha, fun f => ?_⟩
-    exact (denseRange_ofFVL p).induction_on f
-      (isClosed_le (continuous_const.mul continuous_norm)
-        (inclusion hpq).toContinuousLinearMap.continuous.norm)
-      (fun v => by simpa only [inclusion_ofFVL] using h v)
-  obtain ⟨v, hv⟩ := hbad
-  have hvpos : 0 < ‖ofFVL p v‖ :=
-    (mul_pos_iff_of_pos_left (div_pos hb ha)).mp ((norm_nonneg _).trans_lt hv)
-  refine ⟨(a / ‖ofFVL p v‖) • v, ?_, ?_⟩
-  · rw [map_smul, norm_smul, Real.norm_of_nonneg (div_pos ha hvpos).le]
-    exact div_mul_cancel₀ a hvpos.ne'
-  · rw [map_smul, norm_smul, Real.norm_of_nonneg (div_pos ha hvpos).le]
-    calc
-      _ < (a / ‖ofFVL p v‖) * ((b / a) * ‖ofFVL p v‖) :=
-        mul_lt_mul_of_pos_left hv (div_pos ha hvpos)
-      _ = b := by field_simp
+  obtain ⟨v, hv, hvsmall⟩ := exists_core_norm_eq_and_image_norm_lt
+    (ofFVL p).toLinearMap (denseRange_ofFVL p) (inclusion hpq).toContinuousLinearMap hnot ha hb
+  exact ⟨v, hv, (inclusion_ofFVL hpq v) ▸ hvsmall⟩
 
 /-- The support of the unit ball in a finite-dimensional space is the dual norm. -/
 theorem support_unitBall [FiniteDimensional ℝ E] (φ : Dual E) :
@@ -155,7 +139,7 @@ private theorem infinity_compact_majorant [CompleteSpace E] (v : FVL E) :
   · intro φ
     rw [hh, hs]
     have heq : fvlFunction v φ = w (φ.comp M.subtypeL) := by
-      rw [← (model_evaluation Exponent.infinity (0 : E) v φ).2, ← hw, canonical_map_formulas]
+      rw [← ofFVL_apply Exponent.infinity v φ, ← hw, canonical_map_formulas]
     rw [heq, mul_comm c]
     exact (hp_apply_abs_le Exponent.infinity w.1 _).trans_eq
       (congrArg (‖φ.comp M.subtypeL‖ * ·) hwNorm)
@@ -253,7 +237,7 @@ theorem parameter_support_separation [CompleteSpace E] {p q : Exponent} (hpq : p
     have hnorm : freeNormExt p (ofFVL p (v n)) ≤ freeNormExt p (support (seriesDisk K)) := by
       apply freeNormExt_mono_abs
       intro φ
-      rw [(model_evaluation p (0 : E) _ _).2, ← hrep]
+      rw [ofFVL_apply, ← hrep]
       exact (hdom n φ).trans
         (((hrsum.le_tsum n (fun k _ => hrpos k)) φ).trans (le_abs_self _))
     rw [freeNormExt_eq_norm] at hnorm
