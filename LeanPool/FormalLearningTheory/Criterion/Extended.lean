@@ -14,27 +14,12 @@ public import Mathlib.MeasureTheory.Constructions.Pi
 /-!
 # Extended and Cross-Paradigm Criteria
 
-EX under drift and universal learning.
+Universal learning: distribution-free convergence rates.
 -/
 
 @[expose] public section
 
 universe u
-
-/-- EX-learning under drift: the target concept changes over time.
-    The learner must track the drifting target. At each time step t,
-    the current target is targets(t), and the learner must eventually
-    output a hypothesis matching the current target before it drifts again. -/
-def EXUnderDrift (X : Type u) (C : ConceptClass X Bool)
-    (driftRate : ℝ) : Prop :=
-  driftRate = driftRate ∧ ∃ (L : GoldLearner X Bool),
-    ∀ (targets : ℕ → Concept X Bool),
-      (∀ t, targets t ∈ C) →
-      ∀ (T : DataStream X Bool),
-        -- The learner's conjecture eventually tracks the target:
-        -- for all but finitely many t, output agrees with targets(t)
-        ∃ (t₀ : ℕ), ∀ (t : ℕ), t ≥ t₀ →
-          ∀ (x : X), (L.conjecture (dataUpTo T t)) x = (targets t) x
 
 /-- Universal learning: distribution-free convergence rates.
     Strictly stronger than PAC.

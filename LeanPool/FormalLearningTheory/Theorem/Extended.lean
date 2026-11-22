@@ -25,25 +25,6 @@ universe u v
 
 /-! ## Multi-Task Meta-Learning Infrastructure -/
 
-/-- A task sample environment: n training tasks, each with m samples.
-    The meta-learner observes labeled samples from each task and must
-    produce a learner for a new (unseen) task.
-
-    It records the sample sizes and the actual samples drawn. The
-    meta-learner's output may depend on the samples but not on the
-    true concepts. -/
-structure TaskSampleEnvironment (X : Type u) [MeasurableSpace X] where
-  /-- Number of training tasks -/
-  numTasks : ℕ
-  /-- Samples per task -/
-  samplesPerTask : ℕ
-  /-- The concept classes (one per task) -/
-  taskClasses : Fin numTasks → ConceptClass X Bool
-  /-- The true concepts (one per task, each in its class) -/
-  trueConcepts : (j : Fin numTasks) → Concept X Bool
-  /-- Each true concept is in its class -/
-  concept_mem : ∀ j, trueConcepts j ∈ taskClasses j
-
 /-- A sample-based meta-learner: sees labeled samples from n training tasks,
     produces a BatchLearner for new tasks.
     It only sees the data, not the concept classes. -/
@@ -938,9 +919,9 @@ theorem advice_elimination (X : Type u) [MeasurableSpace X]
 /-- For fixed training data, if the resulting learner satisfies the uniform PAC guarantee
 on a new task `C_new` of VC dimension `d`, then it needs at least `⌈(d - 1) / 2⌉`
 samples from that task. The bound is independent of the number of training tasks and the
-number of examples per training task. This is `pac_lower_bound_member` applied to the
-learner produced from the training data. -/
-theorem baxter_n_independent_lower_bound (X : Type u) [MeasurableSpace X]
+number of examples per training task. This is the no-free-lunch bound
+`pac_lower_bound_member` applied to the learner produced from the training data. -/
+theorem sampleMetaLearner_output_nfl_lower_bound (X : Type u) [MeasurableSpace X]
     [MeasurableSingletonClass X]
     (SML : SampleMetaLearner X)
     (C_new : ConceptClass X Bool)
