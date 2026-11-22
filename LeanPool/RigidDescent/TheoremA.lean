@@ -13,13 +13,14 @@ public import LeanPool.RigidDescent.Paper.Sec4
 /-!
 # Theorem A
 
-Paper, Theorem A (`thm:A`), in two forms:
+Braided extensions of Murphy's Theorem A (`thm:A`) and its split-mono variant. The upstream
+formalization of the manuscript in preparation assumes a symmetric tensor product.
 
 * `theoremA_of_splitMono`: for any map `η : 𝟙 ⟶ B` such that `B ⊗ η` is a split
   monomorphism. Remark 4.3 (`rem:unit-only`) observes that this is all the proofs use.
-* `theoremA`: for a ring object (monoid object) `B`, as stated in the paper.
+* `theoremA`: for a ring object (monoid object) `B`.
 
-Both forms are proved for a braided tensor product. The proof is the paper's (§4):
+The implications follow the argument in the upstream formalization of §4.
 (1) ⇒ (3) is Theorem 4.2 (`IsDescentType.isNilPure`),
 (3) ⇒ (2) is Theorem 3.6 (`IsNilPure.isEffectiveDescentType`), (3) ⇔ (4) is Lemma 2.7
 (`isNilPure_iff`), and (2) ⇒ (1) is `IsEffectiveDescentType.isDescentType`.
@@ -38,7 +39,8 @@ variable {T : Type u} [Category.{v} T] [Preadditive T] [HasZeroObject T] [HasShi
   [MonoidalCategory T] [BraidedCategory T] [MonoidalClosed T] [TensorTriangulated T]
   [RigidlyCompactlyGenerated T]
 
-/-- Theorem A for a map `η : 𝟙 ⟶ B` with `B ⊗ η` a split monomorphism (Remark 4.3).
+/-- Braided extension of the split-mono variant of Theorem A (Remark 4.3) for a map
+`η : 𝟙 ⟶ B` with `B ⊗ η` a split monomorphism.
 Let `I →δ 𝟙 →η B → ΣI` be an exact triangle. The following are equivalent:
 1. `B` is of descent type;
 2. `B` is of effective descent type;
@@ -54,8 +56,8 @@ theorem theoremA_of_splitMono {B I : T} (η : 𝟙_ T ⟶ B) [IsSplitMono (B ◁
   tfae_have 3 ↔ 4 := isNilPure_iff hT
   tfae_finish
 
-/-- Paper, Theorem A. Let `B` be a ring object of a rigidly-compactly generated
-tensor-triangulated category `T`, and `I →δ 𝟙 →η B → ΣI` the exact triangle of its unit.
+/-- Braided extension of Theorem A. Let `B` be a ring object of a rigidly compactly generated
+braided tensor-triangulated category `T`, and `I →δ 𝟙 →η B → ΣI` the exact triangle of its unit.
 The following are equivalent:
 1. `B` is of descent type;
 2. `B` is of effective descent type;

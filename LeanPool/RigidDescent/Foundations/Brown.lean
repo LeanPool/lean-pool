@@ -25,6 +25,7 @@ public import LeanPool.RigidDescent.Foundations.Extension
 @[expose] public section
 
 open CategoryTheory Limits Opposite Pretriangulated
+open CategoryTheory.Pretriangulated.Opposite
 
 universe v u
 
@@ -75,13 +76,16 @@ section Triangulated
 variable [HasZeroObject T] [HasShift T ℤ] [∀ n : ℤ, (shiftFunctor T n).Additive]
   [Pretriangulated T]
 
-lemma isCohomological_piYoneda {J : Type v} (Xs : J → T) : IsCohomological (piYoneda Xs) := by
-  intro Tr hTr y hy
-  have : ∀ j, ∃ z : Tr.obj₃ ⟶ Xs j, Tr.mor₂ ≫ z = y j := fun j => by
-    obtain ⟨z, hz⟩ := Triangle.yoneda_exact₂ Tr hTr (y j) (congrFun hy j)
-    exact ⟨z, hz.symm⟩
-  choose z hz using this
-  exact ⟨z, funext hz⟩
+instance {J : Type v} (Xs : J → T) : (piYoneda Xs).IsHomological where
+  exact Tr hTr := (ShortComplex.ab_exact_iff _).2 fun y hy => by
+    have lift (j : J) : ∃ z : Tr.obj₁.unop ⟶ Xs j, Tr.mor₁.unop ≫ z = y j := by
+      have component : ∀ a : Tr.obj₂.unop ⟶ Xs j, Tr.mor₂.unop ≫ a = 0 →
+          ∃ z : Tr.obj₁.unop ⟶ Xs j, Tr.mor₁.unop ≫ z = a :=
+        (ShortComplex.ab_exact_iff _).1
+          ((preadditiveYoneda.obj (Xs j)).map_distinguished_exact Tr hTr)
+      exact component (y j) (congrFun hy j)
+    choose z hz using lift
+    exact ⟨z, funext hz⟩
 
 end Triangulated
 
@@ -104,19 +108,22 @@ open CompactlyGenerated
 /-- **Brown representability.** An additive cohomological functor `H : Tᵒᵖ ⥤ AddCommGrpCat`
 sending coproducts to products is representable: there are `X` and `u ∈ H(X)` such that
 `a ↦ a^* u` is a bijection `Hom(Y, X) ≅ H(Y)` for every `Y`. -/
-theorem brown_representability (H : Tᵒᵖ ⥤ AddCommGrpCat.{v}) [H.Additive]
-    (hH : IsCohomological H) (hHc : SendsCoproductsToProducts H) :
+theorem brown_representability (H : Tᵒᵖ ⥤ AddCommGrpCat.{v})
+    (hH : H.IsHomological) (hHc : SendsCoproductsToProducts H) :
     ∃ (X : T) (u : H.obj (op X)), ∀ Y : T, Function.Bijective fun a : Y ⟶ X => H.map a.op u := by
+  let := hH
   obtain ⟨ct⟩ := CellularTower.nonempty hH hHc (isCompactObj_shiftedGen (T := T))
   refine ⟨ct.tel.obj, ct.u, fun Y => ?_⟩
-  have := NatTrans.isIso_app_of_cohomological (isCohomological_preadditiveYoneda _) hH
+  have := NatTrans.isIso_app_of_cohomological
+    (inferInstanceAs (preadditiveYoneda.obj ct.tel.obj).IsHomological) hH
     (sendsCoproductsToProducts_preadditiveYoneda _) hHc (yonedaElem H ct.u)
     (fun i n => (ConcreteCategory.isIso_iff_bijective _).2 (ct.bijective (i, n))) Y
   exact (ConcreteCategory.isIso_iff_bijective _).1 this
 
 /-- Every family of objects has a limit fan, an object representing `∏ⱼ Hom(-, Xⱼ)`. -/
 lemma exists_isLimit_fan {J : Type v} (Xs : J → T) : ∃ c : Fan Xs, Nonempty (IsLimit c) := by
-  obtain ⟨P, u, hu⟩ := brown_representability (piYoneda Xs) (isCohomological_piYoneda Xs)
+  obtain ⟨P, u, hu⟩ := brown_representability (piYoneda Xs)
+    (inferInstanceAs (piYoneda Xs).IsHomological)
     (sendsCoproductsToProducts_piYoneda Xs)
   refine ⟨Fan.mk P u, ⟨Fan.IsLimit.mk _ (fun s => ((hu s.pt).2 s.proj).choose)
     (fun s j => congrFun ((hu s.pt).2 s.proj).choose_spec j) (fun s m hm => ?_)⟩⟩

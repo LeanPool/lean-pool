@@ -6,11 +6,12 @@ Authors: Brendan Murphy
 module
 
 public import LeanPool.RigidDescent.Foundations.Telescope
+public import Mathlib.CategoryTheory.Triangulated.Yoneda
 
 /-!
 # Cellular towers
 
-Let `H : Tᵒᵖ ⥤ AddCommGrpCat` be additive, cohomological (`IsCohomological`) and send
+Let `H : Tᵒᵖ ⥤ AddCommGrpCat` be cohomological (`H.IsHomological`) and send
 coproducts to products (`SendsCoproductsToProducts`), and let `g : κ → T` be a family of
 compact objects. We kill maps from the `g k` one stage at a time:
 
@@ -32,6 +33,7 @@ This is the common core of Neeman's theorem (`Foundations/Neeman.lean`, for
 @[expose] public section
 
 open CategoryTheory Limits Opposite Pretriangulated
+open CategoryTheory.Pretriangulated.Opposite
 
 universe v u
 
@@ -44,11 +46,12 @@ section Predicates
 variable [HasZeroObject T] [HasShift T ℤ] [∀ n : ℤ, (shiftFunctor T n).Additive]
   [Pretriangulated T]
 
-/-- A functor `H : Tᵒᵖ ⥤ AddCommGrpCat` is *cohomological* if for every distinguished triangle
-`X₁ → X₂ → X₃ → X₁⟦1⟧` the sequence `H(X₃) → H(X₂) → H(X₁)` is exact in the middle. -/
-def IsCohomological (H : Tᵒᵖ ⥤ AddCommGrpCat.{v}) : Prop :=
-  ∀ Tr ∈ distTriang T, ∀ y : H.obj (op Tr.obj₂), H.map Tr.mor₁.op y = 0 →
-    ∃ z : H.obj (op Tr.obj₃), H.map Tr.mor₂.op z = y
+/-- Elementwise exactness of a cohomological functor on a distinguished triangle. -/
+private lemma exists_op_preimage {H : Tᵒᵖ ⥤ AddCommGrpCat.{v}} (hH : H.IsHomological)
+    (Tr : Triangle T) (hTr : Tr ∈ distTriang T) (y : H.obj (op Tr.obj₂))
+    (hy : H.map Tr.mor₁.op y = 0) : ∃ z : H.obj (op Tr.obj₃), H.map Tr.mor₂.op z = y := by
+  let := hH
+  exact (ShortComplex.ab_exact_iff _).1 (H.map_distinguished_op_exact Tr hTr) y hy
 
 end Predicates
 
@@ -118,15 +121,6 @@ lemma sendsCoproductsToProducts_preadditiveYoneda (X : T) :
   · intro b
     exact ⟨Sigma.desc b, funext fun j => Sigma.ι_comp_desc b j⟩
 
-variable [HasZeroObject T] [HasShift T ℤ] [∀ n : ℤ, (shiftFunctor T n).Additive]
-  [Pretriangulated T]
-
-omit [HasCoproducts.{v} T] in
-/-- `Hom(-, X)` is cohomological. -/
-lemma isCohomological_preadditiveYoneda (X : T) :
-    IsCohomological (preadditiveYoneda.obj X) :=
-  fun Tr hTr y hy => Triangle.yoneda_exact₂ Tr hTr y hy |>.imp fun _ hz => hz.symm
-
 end Yoneda
 
 variable [HasZeroObject T] [HasShift T ℤ] [∀ n : ℤ, (shiftFunctor T n).Additive]
@@ -136,11 +130,12 @@ variable {H : Tᵒᵖ ⥤ AddCommGrpCat.{v}}
 
 /-- For cohomological `H` sending coproducts to products, a compatible family of elements
 `uₙ ∈ H(Xₙ)` lifts to the telescope. -/
-lemma Telescope.exists_lift [H.Additive] (hH : IsCohomological H)
+lemma Telescope.exists_lift (hH : H.IsHomological)
     (hHc : SendsCoproductsToProducts H) {X : ℕ → T} {x : ∀ n, X n ⟶ X (n + 1)}
     (t : Telescope X x) (u : ∀ n, H.obj (op (X n)))
     (hu : ∀ n, H.map (x n).op (u (n + 1)) = u n) :
     ∃ w : H.obj (op t.obj), ∀ n, H.map (t.ι n).op w = u n := by
+  let := hH
   obtain ⟨hinj, hsurj⟩ := hHc.bijective_of_small X
   obtain ⟨lifted, hlifted⟩ := hsurj u
   have h0 : H.map (𝟙 (∐ X) - telescopeShift X x).op lifted = 0 := hinj (funext fun n => by
@@ -150,7 +145,7 @@ lemma Telescope.exists_lift [H.Additive] (hH : IsCohomological H)
     rw [← ConcreteCategory.comp_apply, ← Functor.map_comp, ← op_comp, Preadditive.comp_sub,
       Category.comp_id, ι_telescopeShift, op_sub, Functor.map_sub]
     simp [h1, h2, hu])
-  obtain ⟨w, hw⟩ := hH _ t.distinguished lifted h0
+  obtain ⟨w, hw⟩ := exists_op_preimage hH _ t.distinguished lifted h0
   refine ⟨w, fun n => ?_⟩
   have := congrFun hlifted n
   dsimp only at this hw
@@ -188,7 +183,7 @@ structure CellStep (s : CellStage H) where
 
 variable {H g}
 
-lemma CellStep.nonempty (hH : IsCohomological H)
+lemma CellStep.nonempty (hH : H.IsHomological)
     (hHc : SendsCoproductsToProducts H) (s : CellStage H) : Nonempty (CellStep H g s) := by
   obtain ⟨X', x, δ, hT⟩ := distinguished_cocone_triangle (Sigma.desc fun t : s.Killed H g => t.2.1)
   have h0 : H.map (Sigma.desc fun t : s.Killed H g => t.2.1).op s.u = 0 :=
@@ -197,7 +192,7 @@ lemma CellStep.nonempty (hH : IsCohomological H)
       rw [← ConcreteCategory.comp_apply, ← Functor.map_comp, ← op_comp, Sigma.ι_comp_desc,
         t.2.2]
       exact (map_zero _).symm)
-  obtain ⟨u', hu'⟩ := hH _ hT s.u h0
+  obtain ⟨u', hu'⟩ := exists_op_preimage hH _ hT s.u h0
   exact ⟨⟨X', x, δ, hT, u', hu'⟩⟩
 
 /-- The output of the construction: a sequence `X₀ → X₁ → ⋯` with telescope `X∞` and
@@ -219,9 +214,10 @@ structure CellularTower (H : Tᵒᵖ ⥤ AddCommGrpCat.{v}) (g : κ → T) where
     (δ : X (n + 1) ⟶ (∐ fun i => g (j i))⟦(1 : ℤ)⟧), Triangle.mk f (x n) δ ∈ distTriang T
 
 /-- Cellular towers exist. -/
-theorem CellularTower.nonempty [H.Additive] (hH : IsCohomological H)
+theorem CellularTower.nonempty (hH : H.IsHomological)
     (hHc : SendsCoproductsToProducts H) (hg : ∀ k, IsCompactObj (g k)) :
     Nonempty (CellularTower H g) := by
+  let := hH
   classical
   -- stage `0`
   let S₀ := Σ k : κ, H.obj (op (g k))

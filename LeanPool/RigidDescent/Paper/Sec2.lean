@@ -439,6 +439,19 @@ lemma isNilPure_iff_exists_one_le {δ : I ⟶ 𝟙_ T} (hu : IsCompactObj (𝟙_
   · rintro ⟨n, -, hn⟩
     exact ⟨n, hn⟩
 
+/-- `δ^{⊗ n}` is a composite of the `n` maps `δ ⊗ I^{⊗ i} : I^{⊗ (i+1)} → I^{⊗ i}`, which are
+`B`-zero whenever `B ◁ δ = 0`. -/
+lemma isCompOf_tensorPowHom [MonoidalPreadditive T] {B : T} {δ : I ⟶ 𝟙_ T}
+    (hδ : B ◁ δ = 0)
+    (n : ℕ) : IsCompOf (IsTensorZero B) n (tensorPowHom δ n) := by
+  induction n with
+  | zero => exact IsCompOf.id _
+  | succ n ih =>
+    rw [tensorPowHom_succ]
+    refine IsCompOf.cons ?_ ih
+    change B ◁ (δ ▷ tensorPow I n ≫ (λ_ (tensorPow I n)).hom) = 0
+    rw [MonoidalCategory.whiskerLeft_comp, whiskerLeft_whiskerRight_eq_zero hδ, zero_comp]
+
 end MZeroMonoidal
 
 section MZero
@@ -533,19 +546,6 @@ lemma isTensorZero_δ (hT : Triangle.mk δ η ε ∈ distTriang T) [IsSplitMono 
   ((isTensorZero_tfae hT δ).out 3 1).1
     (⟨𝟙 I, (Category.id_comp δ).symm⟩ : ∃ g' : I ⟶ I, δ = g' ≫ δ)
 
-/-- `δ^{⊗ n}` is a composite of the `n` maps `δ ⊗ I^{⊗ i} : I^{⊗ (i+1)} → I^{⊗ i}`, which are
-`B`-zero (Lemma 2.6(a)). -/
-lemma isCompOf_tensorPowHom (hT : Triangle.mk δ η ε ∈ distTriang T) [IsSplitMono (B ◁ η)]
-    (n : ℕ) : IsCompOf (IsTensorZero B) n (tensorPowHom δ n) := by
-  induction n with
-  | zero => exact IsCompOf.id _
-  | succ n ih =>
-    rw [tensorPowHom_succ]
-    refine IsCompOf.cons ?_ ih
-    have hδ : B ◁ δ = 0 := isTensorZero_δ hT
-    change B ◁ (δ ▷ tensorPow I n ≫ (λ_ (tensorPow I n)).hom) = 0
-    rw [MonoidalCategory.whiskerLeft_comp, whiskerLeft_whiskerRight_eq_zero hδ, zero_comp]
-
 end MZero
 
 /-! ### Lemma 2.7, Definition 2.4, Remark 2.8 -/
@@ -616,7 +616,7 @@ theorem isNilPure_iff (hT : Triangle.mk δ η ε ∈ distTriang T) [IsSplitMono 
   · rintro ⟨E, j, hj, hE⟩
     obtain ⟨s, -, hs⟩ := exists_isCompOf_isTensorZero hE
     refine ⟨s, fun K hK k => hj K hK _ ?_⟩
-    have h : E ◁ tensorPowHom δ s = 0 := hs _ (isCompOf_tensorPowHom hT s)
+    have h : E ◁ tensorPowHom δ s = 0 := hs _ (isCompOf_tensorPowHom (isTensorZero_δ hT) s)
     rw [Category.assoc, comp_eq_whiskerRight_comp_whiskerLeft (tensorPowHom δ s) j, h,
       zero_comp, comp_zero, comp_zero, comp_zero]
 
@@ -625,7 +625,9 @@ theorem isNilPure_iff (hT : Triangle.mk δ η ε ∈ distTriang T) [IsSplitMono 
 def IsDescendable (B : T) : Prop := thickTensorIdeal B (𝟙_ T)
 
 omit [CompactlyGenerated T] in
-/-- Paper, Definition 2.4 (`def:nilpure`), [MNN17, Prop. 4.7]: `B` is descendable iff
+/-- Tensor-triangulated extension of the unit case of Mathew–Naumann–Noel, Proposition 4.7.
+Their result takes an algebra object in a symmetric monoidal stable ∞-category. Here `η` is
+a map from the tensor unit with `B ◁ η` split monic. Then `B` is descendable exactly when
 `δ^{⊗ n} = 0` for some `n`. -/
 theorem isDescendable_iff (hT : Triangle.mk δ η ε ∈ distTriang T) [IsSplitMono (B ◁ η)] :
     IsDescendable B ↔ ∃ n, tensorPowHom δ n = 0 := by
@@ -633,7 +635,7 @@ theorem isDescendable_iff (hT : Triangle.mk δ η ε ∈ distTriang T) [IsSplitM
   · intro h
     obtain ⟨s, -, hs⟩ := exists_isCompOf_isTensorZero h
     refine ⟨s, ?_⟩
-    have h1 : 𝟙_ T ◁ tensorPowHom δ s = 0 := hs _ (isCompOf_tensorPowHom hT s)
+    have h1 : 𝟙_ T ◁ tensorPowHom δ s = 0 := hs _ (isCompOf_tensorPowHom (isTensorZero_δ hT) s)
     have h2 := congrArg (fun φ => (λ_ _).inv ≫ φ ≫ (λ_ _).hom) h1
     simpa using h2
   · rintro ⟨n, hn⟩

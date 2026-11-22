@@ -30,6 +30,7 @@ holds when `F` preserves coproducts (`spannedBySummands_of_preserves`).
 @[expose] public section
 
 open CategoryTheory Limits Opposite Pretriangulated ObjectProperty
+open CategoryTheory.Pretriangulated.Opposite
 open scoped ZeroObject
 
 universe v u
@@ -143,18 +144,17 @@ lemma NatTrans.isIso_app_sigma_of_spanned [HasCoproducts.{v} T] {F G : T ⥤ Add
 
 /-! ### Cohomological functors -/
 
-private lemma cohomological_exact {H : Tᵒᵖ ⥤ AddCommGrpCat.{v}} [H.Additive]
-    (hH : IsCohomological H) (triangle : Triangle T) (distinguished : triangle ∈ distTriang T) :
+private lemma cohomological_exact {H : Tᵒᵖ ⥤ AddCommGrpCat.{v}} (hH : H.IsHomological)
+    (triangle : Triangle T) (distinguished : triangle ∈ distTriang T) :
     Function.Exact (H.map triangle.mor₂.op) (H.map triangle.mor₁.op) := by
-  have zero_composite : H.map triangle.mor₂.op ≫ H.map triangle.mor₁.op = 0 := by
-    rw [← H.map_comp, ← op_comp, comp_distTriang_mor_zero₁₂ _ distinguished, op_zero, H.map_zero]
-  exact (ShortComplex.ab_exact_iff_function_exact (ShortComplex.mk _ _ zero_composite)).1
-    ((ShortComplex.ab_exact_iff (ShortComplex.mk _ _ zero_composite)).2 (hH triangle distinguished))
+  let := hH
+  exact (ShortComplex.ab_exact_iff_function_exact _).1
+    (H.map_distinguished_op_exact triangle distinguished)
 
 /-- A natural transformation between cohomological functors is an isomorphism at the middle
 vertex of a distinguished triangle if it is one at the other vertices and their shifts. -/
-lemma NatTrans.isIso_app_obj₂_of_cohomological {F G : Tᵒᵖ ⥤ AddCommGrpCat.{v}} [F.Additive]
-    [G.Additive] (hF : IsCohomological F) (hG : IsCohomological G) (θ : F ⟶ G)
+lemma NatTrans.isIso_app_obj₂_of_cohomological {F G : Tᵒᵖ ⥤ AddCommGrpCat.{v}}
+    (hF : F.IsHomological) (hG : G.IsHomological) (θ : F ⟶ G)
     (Tr : Triangle T) (hTr : Tr ∈ distTriang T)
     (h₁ : IsIso (θ.app (op (Tr.obj₁⟦(1 : ℤ)⟧)))) (h₁' : IsIso (θ.app (op Tr.obj₁)))
     (h₃ : IsIso (θ.app (op Tr.obj₃))) (h₃' : IsIso (θ.app (op (Tr.obj₃⟦(-1 : ℤ)⟧)))) :
@@ -246,11 +246,13 @@ theorem NatTrans.isIso_app_of_homological {F G : T ⥤ AddCommGrpCat.{v}}
 
 /-- A natural transformation between additive cohomological functors sending coproducts to
 products which is an isomorphism at every shifted generator `G i⟦n⟧` is an isomorphism. -/
-theorem NatTrans.isIso_app_of_cohomological {F G : Tᵒᵖ ⥤ AddCommGrpCat.{v}} [F.Additive]
-    [G.Additive] (hF : IsCohomological F) (hG : IsCohomological G)
+theorem NatTrans.isIso_app_of_cohomological {F G : Tᵒᵖ ⥤ AddCommGrpCat.{v}}
+    (hF : F.IsHomological) (hG : G.IsHomological)
     (hFc : SendsCoproductsToProducts F) (hGc : SendsCoproductsToProducts G) (θ : F ⟶ G)
     (h : ∀ (i : GenIndex T) (n : ℤ), IsIso (θ.app (op ((gen T i)⟦n⟧)))) (X : T) :
     IsIso (θ.app (op X)) := by
+  let := hF
+  let := hG
   let P : ObjectProperty T := fun X => ∀ n : ℤ, IsIso (θ.app (op (X⟦n⟧)))
   have hiso : ∀ {X Y : T}, (X ≅ Y) → P X → P Y := fun e hX n =>
     (NatTrans.isIso_app_iff_of_iso θ ((shiftFunctor T n).mapIso e).op).2 (hX n)

@@ -27,6 +27,7 @@ Let `T` be compactly generated, with chosen compact generators `G i`
 @[expose] public section
 
 open CategoryTheory Limits Opposite Pretriangulated
+open CategoryTheory.Pretriangulated.Opposite
 
 universe v u
 
@@ -127,7 +128,7 @@ theorem CellularTower.isIso_hom {X : T}
 of `Hom(-, X)` with respect to the shifted generators. -/
 lemma CellularTower.nonempty_yoneda (X : T) :
     Nonempty (CellularTower (preadditiveYoneda.obj X) (shiftedGen T)) :=
-  CellularTower.nonempty (isCohomological_preadditiveYoneda X)
+  CellularTower.nonempty (inferInstanceAs (preadditiveYoneda.obj X).IsHomological)
     (sendsCoproductsToProducts_preadditiveYoneda X) isCompactObj_shiftedGen
 
 /-- **Neeman's theorem.** A property of objects that is closed under isomorphisms, triangulated

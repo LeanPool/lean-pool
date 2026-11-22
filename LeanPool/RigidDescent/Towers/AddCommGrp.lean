@@ -152,19 +152,20 @@ theorem IsProIso.mittagLeffler (hu : IsProIso u) : MittagLeffler G := by
 `lim G ≅ U`: every compatible family is `(u_m z)_m` for a unique `z ∈ U`. -/
 theorem IsProIso.existsUnique_eq (hu : IsProIso u) {x : ∀ m, G.obj (op m)}
     (hx : IsCompatible G x) : ∃! z : U, ∀ m, u.app (op m) z = x m := by
-  obtain ⟨k, v, hv, H⟩ := hu
-  refine ⟨v (x k), fun m => ?_, fun z hz => ?_⟩
-  · obtain ⟨k', hk, hm, e⟩ := H m
-    have := ConcreteCategory.congr_hom e (x k')
-    simp only [CategoryTheory.comp_apply] at this
-    rwa [hx.t_apply hk, hx.t_apply hm] at this
-  · have := ConcreteCategory.congr_hom hv z
-    simp only [CategoryTheory.comp_apply] at this
-    rw [← hz k]
-    exact this.symm
+  let F := forget AddCommGrpCat.{v}
+  let cone := F.mapCone (Cone.mk U u)
+  have limit : IsLimit cone := isLimitOfPreserves F hu.isLimit
+  have compatible : (fun j : ℕᵒᵖ => x j.unop) ∈ (G ⋙ F).sections := by
+    intro j j' f
+    change G.map f (x j.unop) = x j'.unop
+    rw [show f = (homOfLE (leOfHom f.unop)).op from Subsingleton.elim _ _]
+    exact hx.t_apply (leOfHom f.unop)
+  obtain ⟨z, hz, unique⟩ := (Types.isLimit_iff cone).1 ⟨limit⟩ _ compatible
+  exact ⟨z, fun m => hz (op m), fun z h => unique z (fun j => h j.unop)⟩
 
-/-- Paper, Lemma 3.2 (`lem:ML-const`) [Stacks, Tag 07KW]: if `u : cst U ⟶ G` is a
-pro-isomorphism, then `lim¹ G = 0`. -/
+/-- Paper, Lemma 3.2 (`lem:ML-const`): if `u : cst U ⟶ G` is a pro-isomorphism, then
+`lim¹ G = 0`. This is the constant-tower case of pro-isomorphism invariance
+[Stacks, Tag 0H9K]. -/
 theorem IsProIso.limOneVanishes (hu : IsProIso u) : LimOneVanishes G := by
   classical
   obtain ⟨k, v, N, -, H⟩ := hu.exists_data
