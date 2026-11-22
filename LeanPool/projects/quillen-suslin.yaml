@@ -16,7 +16,8 @@ summary: Commutative algebra on the way to the Quillen–Suslin theorem, on Math
   of a polynomial ring. With the dilation lemma this proves Quillen's patching theorem. For a
   finitely presented A[X]-module M, the a ∈ A such that M becomes extended after inverting a
   form an ideal (the Quillen ideal), and M is extended from A as soon as it is extended after
-  localising at every maximal ideal of A.
+  localising at every maximal ideal of A; the same holds for finitely presented modules over
+  A[X₁, …, Xₙ], by induction on n through A[X₁, …, Xₙ₊₁] ≅ A[X₁, …, Xₙ][X].
 branch: commutative algebra
 entry_module: LeanPool.QuillenSuslin
 authors:
@@ -37,6 +38,7 @@ main_declarations:
 - LeanPool.QuillenSuslin.exists_finite_projective_glue
 - LeanPool.QuillenSuslin.exists_ideal_isExtendedAfter_away
 - LeanPool.QuillenSuslin.isExtendedFrom_of_forall_isMaximal
+- LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial_of_forall_isMaximal
 main_results:
 - declaration: LeanPool.QuillenSuslin.isPrincipalIdealRing_monicLocalization
   informal: If k is a principal ideal domain, then the localisation k⟨X⟩ of k[X] at the monic
@@ -92,6 +94,13 @@ main_results:
 - declaration: LeanPool.QuillenSuslin.isExtendedFrom_of_forall_isMaximal
   informal: Quillen's patching theorem. A finitely presented A[X]-module that becomes extended
     after localising at every maximal ideal of A is extended from A.
+- declaration: LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial_of_forall_isMaximal
+  informal: A finitely presented module over A[X₁, …, Xₙ] that becomes extended after
+    localising at every maximal ideal of A is extended from A (Quillen's Theorem 1′).
+- declaration: LeanPool.QuillenSuslin.isExtendedFrom_of_forall_isMaximal_algebra
+  informal: For an A-algebra B, a finitely presented B[X]-module is extended from B if, for
+    every maximal ideal m of A, it becomes extended after inverting the image in B of some
+    element outside m.
 tags:
 - commutative-algebra
 - projective-modules

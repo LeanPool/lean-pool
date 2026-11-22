@@ -14,9 +14,12 @@ public import LeanPool.QuillenSuslin.Fibre
 public import LeanPool.QuillenSuslin.Glue
 public import LeanPool.QuillenSuslin.GlueMaps
 public import LeanPool.QuillenSuslin.MonicLocalization
+public import LeanPool.QuillenSuslin.MvTransport
 public import LeanPool.QuillenSuslin.PatchingCore
+public import LeanPool.QuillenSuslin.PatchingDescent
 public import LeanPool.QuillenSuslin.PatchingTwo
 public import LeanPool.QuillenSuslin.QuillenIdeal
 public import LeanPool.QuillenSuslin.QuillenLemmaTwo
 public import LeanPool.QuillenSuslin.QuillenPatching
+public import LeanPool.QuillenSuslin.QuillenPatchingMv
 public import LeanPool.QuillenSuslin.Transition
