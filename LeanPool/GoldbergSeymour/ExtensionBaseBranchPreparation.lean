@@ -1473,7 +1473,6 @@ theorem helper_branch_5591.{u_1, u_2} :
         e0 input T generating), MaximumProperty ett →
     ∀ (hpositive : (0 : ℕ) < ett.rounds), LowerRoundInductionHypothesis G k e0 ett.rounds →
     ∀ (v : V) (sigma : PartialEdgeColoring E k),
-    let this : DecidableEq V := Classical.decEq V;
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by
           have := GoldbergSeymour.TreeSequence.positive T
@@ -1489,8 +1488,7 @@ theorem helper_branch_5591.{u_1, u_2} :
     ⟩ : Fin ett.rounds); (↑jSlot : ℕ) + (1 : ℕ) = ETTFirstAppearanceIndex ett v hvFinal → (
     ∀ (i : Fin (ett.rounds + (1 : ℕ))), (0 : ℕ) < (↑i : ℕ) → TreeSequenceInitialSegment
         (ett.series.data.tree i.castSucc) (ett.series.data.tree i.succ)) →
-    ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma) (p0 : ℕ) (indices0 : Fin (p0 +
-        (1 : ℕ)) → Fin ett.rounds),
+    ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma),
     let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
         IsProperEdgeColoring G rho1 → IsOneEdgeUncolored rho1 e0 → StableColoringBeforeVertex T v
         hvFinal (TashkinovStoredColors ett.series.data jSlot.castSucc) (ett.series.data.coloring
@@ -1509,23 +1507,18 @@ theorem helper_branch_5591.{u_1, u_2} :
         jSlot.castSucc) S seed → TashkinovAugmentationSequence rho1 S seed) → (
     ∀ {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A C → TreeSequenceInitialSegment B C
         → A.length ≤ B.length → TreeSequenceInitialSegment A B) →
-    let supportColors : Finset (Fin k) := Finset.univ.biUnion fun (a : Fin (p0 + (1 : ℕ))) ↦
-        ett.series.data.stored (indices0 a).succ; (0 : ℕ) < (↑jSlot : ℕ) →
+    (0 : ℕ) < (↑jSlot : ℕ) →
     ∃ (TjPrime : TreeSequence G e0), TashkinovClosure rho1 seed TjPrime ∧
-        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime) ∧
-    let awayMissing : Finset (Fin k) := ((TreeSequenceVertexSet TjPrime).erase v).biUnion fun (x :
-        V) ↦ MissingColors G rho1 x; (awayMissing ∩ supportColors : Finset (Fin k)).Nonempty ∨
-        (awayMissing ∩ supportColors : Finset (Fin k)) = ∅ := by
+        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hMP hpositive hlower v sigma this q hqTerminal
-      hvFinal hfirstUpper hfirstPositive jSlot hjSlot stepSegment trace p0 indices0 rho1 hrho1Proper
+  intro V E _ _ _ G k e0 input T generating ett hMP hpositive hlower v sigma q hqTerminal
+      hvFinal hfirstUpper hfirstPositive jSlot hjSlot stepSegment trace rho1 hrho1Proper
       hrho1One hb1Rho terminalPosition hterminalAt hterminalPositionPositive hterminalPositionBound
-      seed hjTreeIndex hseedTj segmentVertexBefore transportSeedRoute commonPrefix supportColors
-      hjPositive
+      seed hjTreeIndex hseedTj segmentVertexBefore transportSeedRoute commonPrefix hjPositive
   exact @helper_branch_880 (@V) (@E) inferInstance inferInstance inferInstance
     inferInstance (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hMP) (@hpositive)
     (@hlower) (@v) (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive)
-    (@hjSlot) (@stepSegment) (@trace) (@p0) (@indices0) (@hrho1Proper) (@hrho1One)
+    (@hjSlot) (@stepSegment) (@trace) (@hrho1Proper) (@hrho1One)
     (@hb1Rho) (@terminalPosition) (@hterminalAt) (@hterminalPositionPositive)
     (@hterminalPositionBound) (@hjTreeIndex) (@hseedTj) (@segmentVertexBefore)
     (@transportSeedRoute) (@commonPrefix) (@hjPositive)

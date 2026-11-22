@@ -25,17 +25,14 @@ Adapted from Wesley Pegden’s Trellis formalization at
 namespace GoldbergSeymour
 
 /-- Extends `seed` to a closure `TjPrime` carrying a corresponding extended Tashkinov tree with
-the maximum property, and with `TjPrime` elementary. The final disjunction is only the case
-split on whether `awayMissing ∩ supportColors` is empty, so it constrains neither
-`terminalSupport` nor `supportColors`. -/
+the maximum property, and with `TjPrime` elementary. -/
 theorem ExtensionBaseClosure {V E : Type*}
-    [Fintype V] [Fintype E] [DecidableEq V] [DecidableEq E]
+    [Fintype V] [Fintype E] [DecidableEq E]
     {G : LooplessMultigraph V E} {k : ℕ} {e0 : E}
     {input : PartialEdgeColoring E k} {T : TreeSequence G e0}
     {generating : PartialEdgeColoring E k}
     (base : ExtendedTashkinovTree G k e0 input T generating)
     (rho1 : PartialEdgeColoring E k) (seed : TreeSequence G e0)
-    (terminalSupport : V) (supportColors : Finset (Fin k))
     (hseedSegment : TreeSequenceInitialSegment
       (base.series.data.tree (Fin.last base.rounds).castSucc) seed)
     (hseedStrict :
@@ -66,12 +63,7 @@ theorem ExtensionBaseClosure {V E : Type*}
       TashkinovClosure rho1 seed TjPrime ∧
         MaximumProperty corr.replacementETT ∧
         ColoredVertexSetElementary G rho1
-          (TreeSequenceVertexSet TjPrime) ∧
-        (let awayMissing :=
-          ((TreeSequenceVertexSet TjPrime).erase terminalSupport).biUnion
-            fun v => MissingColors G rho1 v
-         (awayMissing ∩ supportColors).Nonempty ∨
-           awayMissing ∩ supportColors = ∅) := by
+          (TreeSequenceVertexSet TjPrime) := by
   classical
   let terminalTree : TreeSequence G e0 :=
     base.series.data.tree (Fin.last base.rounds).castSucc
@@ -131,13 +123,7 @@ theorem ExtensionBaseClosure {V E : Type*}
     MaximumPropertyTransport G k e0 base rho1 hmod TjPrime corr hMP
   have elementary : ColoredVertexSetElementary G rho1
       (TreeSequenceVertexSet TjPrime) := hLowerElementary TjPrime corr transported
-  refine ⟨TjPrime, corr, hclosure, transported, elementary, ?_⟩
-  let awayMissing :=
-    ((TreeSequenceVertexSet TjPrime).erase terminalSupport).biUnion
-      (fun v => MissingColors G rho1 v)
-  by_cases hnonempty : (awayMissing ∩ supportColors).Nonempty
-  · exact Or.inl hnonempty
-  · exact Or.inr (Finset.not_nonempty_iff_eq_empty.mp hnonempty)
+  exact ⟨TjPrime, corr, hclosure, transported, elementary⟩
 
 end GoldbergSeymour
 

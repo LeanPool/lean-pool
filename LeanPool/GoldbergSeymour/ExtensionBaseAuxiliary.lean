@@ -1243,7 +1243,6 @@ private theorem helper_branch_1907.{u_1, u_2} :
         TreeSequence G e0) (generating : PartialEdgeColoring E k) (ett : ExtendedTashkinovTree G k
         e0 input T generating) (hpositive : (0 : ℕ) < ett.rounds) (v : V) (sigma :
         PartialEdgeColoring E k),
-    let this : DecidableEq V := Classical.decEq V;
     let q : Fin ett.rounds := (⟨ett.rounds - (1 : ℕ),
     by omega
     ⟩ : Fin ett.rounds);
@@ -1254,8 +1253,7 @@ private theorem helper_branch_1907.{u_1, u_2} :
     by omega
     ⟩ : Fin ett.rounds);
     ∀ (_ : (↑jSlot : ℕ) + (1 : ℕ) = ETTFirstAppearanceIndex ett v hvFinal) (trace :
-        ExtensionBaseRestorationTrace ett v hvFinal sigma) (p0 : ℕ) (indices0 : Fin (p0 + (1 : ℕ))
-        → Fin ett.rounds),
+        ExtensionBaseRestorationTrace ett v hvFinal sigma),
     let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
     ∀ (_ : IsProperEdgeColoring G rho1) (_ : IsOneEdgeUncolored rho1 e0) (terminalPosition : Fin
         ((ett.series.data.tree jSlot.succ.castSucc).length + (1 : ℕ))) (hterminalPositionPositive
@@ -1269,19 +1267,14 @@ private theorem helper_branch_1907.{u_1, u_2} :
     ∀ {A B C : TreeSequence G e0} (_ : TreeSequenceInitialSegment A C) (_ :
         TreeSequenceInitialSegment B C) (_ : A.length ≤ B.length), TreeSequenceInitialSegment A
         B)),
-    let supportColors : Finset (Fin k) := Finset.univ.biUnion fun (a : Fin (p0 + (1 : ℕ))) ↦
-        ett.series.data.stored (indices0 a).succ;
     ∀ (_ : ¬(0 : ℕ) < (↑jSlot : ℕ)),
     ∃ (TjPrime : TreeSequence G e0), TashkinovClosure rho1 seed TjPrime ∧
-        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime) ∧
-    let awayMissing : Finset (Fin k) := ((TreeSequenceVertexSet TjPrime).erase v).biUnion fun (x :
-        V) ↦ MissingColors G rho1 x; (awayMissing ∩ supportColors).Nonempty ∨ awayMissing ∩
-        supportColors = ∅ := by
+        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime) := by
   classical
-  intro V E _ _ _ G k e0 input T generating ett hpositive v sigma this q hqTerminal hvFinal
-      hfirstUpper hfirstPositive jSlot hjSlot trace p0 indices0 rho1 hrho1Proper hrho1One
+  intro V E _ _ _ G k e0 input T generating ett hpositive v sigma q hqTerminal hvFinal
+      hfirstUpper hfirstPositive jSlot hjSlot trace rho1 hrho1Proper hrho1One
       terminalPosition hterminalPositionPositive hterminalPositionBound seed hseedTj
-      transportSeedRoute commonPrefix supportColors hjPositive
+      transportSeedRoute commonPrefix hjPositive
   have hjZero : jSlot.val = 0 := by omega
   have hjIndex : jSlot.castSucc = (0 : Fin (ett.rounds + 1)) := by
     apply Fin.ext
@@ -1337,13 +1330,7 @@ private theorem helper_branch_1907.{u_1, u_2} :
       intro x hx y hy hxy
       exact (TashTree G k e0 rho1 TjPrime htripleRho hprimeTree)
         hx hy hxy
-    refine ⟨TjPrime, hclosure, hprimeElementary, ?_⟩
-    let awayMissing :=
-      ((TreeSequenceVertexSet TjPrime).erase v).biUnion
-        fun x => MissingColors G rho1 x
-    by_cases hnonempty : (awayMissing ∩ supportColors).Nonempty
-    · exact Or.inl hnonempty
-    · exact Or.inr (Finset.not_nonempty_iff_eq_empty.mp hnonempty)
+    exact ⟨TjPrime, hclosure, hprimeElementary⟩
 
 private theorem helper_hTjElementary_2030.{u_1, u_2} :
     open scoped Classical in
