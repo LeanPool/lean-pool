@@ -32,10 +32,8 @@ universe u
 variable {k : Type u} [Field k] {I : Type u} [LinearOrder I]
 
 /-- Labels whose index lies in a finite set `E` (the label `Y` always does). -/
-def LabelIn (E : Finset I) : IntervalCat k I → Prop
-  | Y => True
-  | A i => i ∈ E
-  | P i => i ∈ E
+def LabelIn (E : Finset I) (l : IntervalCat k I) : Prop :=
+  labelIn (↑E : Set I) (some l)
 
 section IntervalsGood
 

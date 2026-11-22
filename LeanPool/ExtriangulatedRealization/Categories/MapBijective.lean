@@ -48,19 +48,11 @@ variable {ι κ : Type} [Finite ι] [Finite κ] (X : ι → 𝒞) (Y : κ → �
 lemma hom_ext_map_biproduct {a b : H.obj (⨁ X) ⟶ H.obj (⨁ Y)}
     (hab : ∀ i j, H.map (biproduct.ι X i) ≫ a ≫ H.map (biproduct.π Y j) =
       H.map (biproduct.ι X i) ≫ b ≫ H.map (biproduct.π Y j)) : a = b := by
-  let := Fintype.ofFinite ι
-  let := Fintype.ofFinite κ
-  have eX : 𝟙 (H.obj (⨁ X)) = ∑ i, H.map (biproduct.π X i) ≫ H.map (biproduct.ι X i) := by
-    rw [← H.map_id, ← biproduct.total, H.map_sum]
-    simp only [H.map_comp]
-  have eY : 𝟙 (H.obj (⨁ Y)) = ∑ j, H.map (biproduct.π Y j) ≫ H.map (biproduct.ι Y j) := by
-    rw [← H.map_id, ← biproduct.total, H.map_sum]
-    simp only [H.map_comp]
-  rw [← Category.id_comp a, ← Category.comp_id a, ← Category.id_comp b, ← Category.comp_id b,
-    eX, eY]
-  simp only [Preadditive.sum_comp, Preadditive.comp_sum, Category.assoc]
-  refine Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun i _ => ?_
-  rw [reassoc_of% (hab i j)]
+  apply (isBilimitOfPreserves H (biproduct.isBilimit Y)).isLimit.hom_ext
+  intro j
+  apply (isBilimitOfPreserves H (biproduct.isBilimit X)).isColimit.hom_ext
+  intro i
+  exact hab i.as j.as
 
 lemma map_bijective_biproduct
     (h : ∀ i j, Function.Bijective (H.map : (X i ⟶ Y j) → (H.obj (X i) ⟶ H.obj (Y j)))) :

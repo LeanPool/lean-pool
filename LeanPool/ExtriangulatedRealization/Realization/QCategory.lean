@@ -68,38 +68,32 @@ def phiObj : IntervalCat k I → ModuleCat.{u} k
 /-- `Φ_W` on morphisms. -/
 noncomputable def phiMap : ∀ {l l' : IntervalCat k I}, (l ⟶ l') → (R.phiObj l ⟶ R.phiObj l')
   | P j, P i, φ => if h : i ≤ j then
-      coeffBot (show HasBot (P j) from trivial) (show HasBot (P i) from trivial) φ.hom •
+      coeffBot (show HasBot (P i) from trivial) φ.hom •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti h))
       else 0
-  | P j, Y, φ => coeffBot (show HasBot (P j) from trivial) (show HasBot Y from trivial) φ.hom •
+  | P j, Y, φ => coeffBot (show HasBot Y from trivial) φ.hom •
       ModuleCat.ofHom (R.K j).subtype
-  | Y, Y, φ => coeffBot (show HasBot Y from trivial) (show HasBot Y from trivial) φ.hom • 𝟙 R.W
+  | Y, Y, φ => coeffBot (show HasBot Y from trivial) φ.hom • 𝟙 R.W
   | Y, P _, _ => 0
   | Y, A _, _ => 0
   | A _, _, _ => 0
   | P _, A _, _ => 0
 
 lemma coeffBot_Y_P (i : I) (φ : (Y (I := I)).rep k ⟶ (P i).rep k) :
-    coeffBot (show HasBot Y from trivial) (show HasBot (P i) from trivial) φ = 0 :=
-  coeffBot_eq_zero_of_P _ i (IntervalLabel.coe_not_mem_Y i) φ
+    coeffBot (show HasBot (P i) from trivial) φ = 0 :=
+  coeffBot_eq_zero_of_P i (IntervalLabel.coe_not_mem_Y i) φ
 
 lemma coeffBot_P_P {i j : I} (h : ¬ i ≤ j) (φ : (P j).rep k ⟶ (P i).rep k) :
-    coeffBot (show HasBot (P j) from trivial) (show HasBot (P i) from trivial) φ = 0 :=
-  coeffBot_eq_zero_of_P (l := P j) _ i (fun hm => h (IntervalLabel.coe_mem_P.mp hm)) φ
-
-lemma phi_hom_ext_src {M : ModuleCat.{u} k} (f g : ModuleCat.of k PUnit ⟶ M) : f = g :=
-  psi_hom_ext_of_source_punit f g
-
-lemma phi_hom_ext_tgt {M : ModuleCat.{u} k} (f g : M ⟶ ModuleCat.of k PUnit) : f = g :=
-  psi_hom_ext_of_target_punit f g
+    coeffBot (show HasBot (P i) from trivial) φ = 0 :=
+  coeffBot_eq_zero_of_P (l := P j) i (fun hm => h (IntervalLabel.coe_mem_P.mp hm)) φ
 
 lemma phiMap_comp_YYY (φ : (IntervalCat.objY (k := k) (I := I)) ⟶
       (IntervalCat.objY (k := k) (I := I)))
     (ψ : (IntervalCat.objY (k := k) (I := I)) ⟶ (IntervalCat.objY (k := k) (I := I))) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change coeffBot _ _ (φ.hom ≫ ψ.hom) • 𝟙 R.W =
-      (coeffBot _ _ φ.hom • 𝟙 R.W) ≫ (coeffBot _ _ ψ.hom • 𝟙 R.W)
-    rw [coeffBot_comp (show HasBot Y from trivial) (show HasBot Y from trivial)
+    change coeffBot _ (φ.hom ≫ ψ.hom) • 𝟙 R.W =
+      (coeffBot _ φ.hom • 𝟙 R.W) ≫ (coeffBot _ ψ.hom • 𝟙 R.W)
+    rw [coeffBot_comp (show HasBot Y from trivial)
       (show HasBot Y from trivial), Linear.smul_comp, Linear.comp_smul, smul_smul,
       Category.id_comp, mul_comm]
 
@@ -113,8 +107,8 @@ lemma phiMap_comp_YAY {i : I} (φ : (IntervalCat.objY (k := k) (I := I)) ⟶
       (IntervalCat.objA (k := k) i))
     (ψ : (IntervalCat.objA (k := k) i) ⟶ (IntervalCat.objY (k := k) (I := I))) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change coeffBot _ _ (φ.hom ≫ ψ.hom) • 𝟙 R.W = (0 : R.W ⟶ ModuleCat.of k PUnit) ≫ _
-    rw [coeffBot_comp_of_A (show HasBot Y from trivial) (show HasBot Y from trivial),
+    change coeffBot _ (φ.hom ≫ ψ.hom) • 𝟙 R.W = (0 : R.W ⟶ ModuleCat.of k PUnit) ≫ _
+    rw [coeffBot_comp_of_A (show HasBot Y from trivial),
       zero_smul]
     exact zero_comp.symm
 
@@ -128,8 +122,8 @@ lemma phiMap_comp_YPY {i : I} (φ : (IntervalCat.objY (k := k) (I := I)) ⟶
       (IntervalCat.objP (k := k) i))
     (ψ : (IntervalCat.objP (k := k) i) ⟶ (IntervalCat.objY (k := k) (I := I))) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change coeffBot _ _ (φ.hom ≫ ψ.hom) • 𝟙 R.W = (0 : R.W ⟶ ModuleCat.of k (R.K i)) ≫ _
-    rw [coeffBot_comp (show HasBot Y from trivial) (show HasBot (P i) from trivial)
+    change coeffBot _ (φ.hom ≫ ψ.hom) • 𝟙 R.W = (0 : R.W ⟶ ModuleCat.of k (R.K i)) ≫ _
+    rw [coeffBot_comp (show HasBot (P i) from trivial)
       (show HasBot Y from trivial), coeffBot_Y_P, zero_mul, zero_smul]
     exact zero_comp.symm
 
@@ -143,9 +137,9 @@ lemma phiMap_comp_PYY {j : I} (φ : (IntervalCat.objP (k := k) j) ⟶
       (IntervalCat.objY (k := k) (I := I)))
     (ψ : (IntervalCat.objY (k := k) (I := I)) ⟶ (IntervalCat.objY (k := k) (I := I))) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change coeffBot _ _ (φ.hom ≫ ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
-      (coeffBot _ _ φ.hom • ModuleCat.ofHom (R.K j).subtype) ≫ (coeffBot _ _ ψ.hom • 𝟙 R.W)
-    rw [coeffBot_comp (show HasBot (P j) from trivial) (show HasBot Y from trivial)
+    change coeffBot _ (φ.hom ≫ ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
+      (coeffBot _ φ.hom • ModuleCat.ofHom (R.K j).subtype) ≫ (coeffBot _ ψ.hom • 𝟙 R.W)
+    rw [coeffBot_comp (show HasBot Y from trivial)
       (show HasBot Y from trivial), Linear.smul_comp, Linear.comp_smul, smul_smul,
       Category.comp_id, mul_comm]
 
@@ -153,10 +147,10 @@ lemma phiMap_comp_PYP {j h : I} (φ : (IntervalCat.objP (k := k) j) ⟶
       (IntervalCat.objY (k := k) (I := I)))
     (ψ : (IntervalCat.objY (k := k) (I := I)) ⟶ (IntervalCat.objP (k := k) h)) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change (if hhj : h ≤ j then coeffBot _ _ (φ.hom ≫ ψ.hom) •
+    change (if hhj : h ≤ j then coeffBot _ (φ.hom ≫ ψ.hom) •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti hhj)) else 0) =
       _ ≫ (0 : R.W ⟶ ModuleCat.of k (R.K h))
-    rw [coeffBot_comp (show HasBot (P j) from trivial) (show HasBot Y from trivial)
+    rw [coeffBot_comp (show HasBot Y from trivial)
       (show HasBot (P h) from trivial), coeffBot_Y_P, mul_zero]
     simp only [zero_smul, dite_eq_ite, ite_self]
     exact comp_zero.symm
@@ -164,9 +158,9 @@ lemma phiMap_comp_PYP {j h : I} (φ : (IntervalCat.objP (k := k) j) ⟶
 lemma phiMap_comp_PAY {j i : I} (φ : (IntervalCat.objP (k := k) j) ⟶ (IntervalCat.objA (k := k) i))
     (ψ : (IntervalCat.objA (k := k) i) ⟶ (IntervalCat.objY (k := k) (I := I))) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change coeffBot _ _ (φ.hom ≫ ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
+    change coeffBot _ (φ.hom ≫ ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
       (0 : ModuleCat.of k (R.K j) ⟶ ModuleCat.of k PUnit) ≫ _
-    rw [coeffBot_comp_of_A (show HasBot (P j) from trivial) (show HasBot Y from trivial),
+    rw [coeffBot_comp_of_A (show HasBot Y from trivial),
       zero_smul]
     exact zero_comp.symm
 
@@ -174,11 +168,10 @@ lemma phiMap_comp_PAP {j i h : I} (φ : (IntervalCat.objP (k := k) j) ⟶
       (IntervalCat.objA (k := k) i))
     (ψ : (IntervalCat.objA (k := k) i) ⟶ (IntervalCat.objP (k := k) h)) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change (if hhj : h ≤ j then coeffBot _ _ (φ.hom ≫ ψ.hom) •
+    change (if hhj : h ≤ j then coeffBot _ (φ.hom ≫ ψ.hom) •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti hhj)) else 0) =
       (0 : ModuleCat.of k (R.K j) ⟶ ModuleCat.of k PUnit) ≫ _
-    rw [coeffBot_comp_of_A (show HasBot (P j) from trivial)
-      (show HasBot (P h) from trivial)]
+    rw [coeffBot_comp_of_A (show HasBot (P h) from trivial)]
     simp only [zero_smul, dite_eq_ite, ite_self]
     exact zero_comp.symm
 
@@ -190,11 +183,11 @@ private lemma ofHom_inclusion_comp {V : Type u} [AddCommGroup V] [Module k V]
 lemma phiMap_comp_PPY {j i : I} (φ : (IntervalCat.objP (k := k) j) ⟶ (IntervalCat.objP (k := k) i))
     (ψ : (IntervalCat.objP (k := k) i) ⟶ (IntervalCat.objY (k := k) (I := I))) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change coeffBot _ _ (φ.hom ≫ ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
-      (if hij : i ≤ j then coeffBot _ _ φ.hom •
+    change coeffBot _ (φ.hom ≫ ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
+      (if hij : i ≤ j then coeffBot _ φ.hom •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) else 0) ≫
-      (coeffBot _ _ ψ.hom • ModuleCat.ofHom (R.K i).subtype)
-    rw [coeffBot_comp (show HasBot (P j) from trivial) (show HasBot (P i) from trivial)
+      (coeffBot _ ψ.hom • ModuleCat.ofHom (R.K i).subtype)
+    rw [coeffBot_comp (show HasBot (P i) from trivial)
       (show HasBot Y from trivial)]
     by_cases hij : i ≤ j
     · have hc : ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) ≫
@@ -208,13 +201,13 @@ lemma phiMap_comp_PPP {j i h : I} (φ : (IntervalCat.objP (k := k) j) ⟶
       (IntervalCat.objP (k := k) i))
     (ψ : (IntervalCat.objP (k := k) i) ⟶ (IntervalCat.objP (k := k) h)) :
     R.phiMap (φ ≫ ψ) = R.phiMap φ ≫ R.phiMap ψ := by
-    change (if hhj : h ≤ j then coeffBot _ _ (φ.hom ≫ ψ.hom) •
+    change (if hhj : h ≤ j then coeffBot _ (φ.hom ≫ ψ.hom) •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti hhj)) else 0) =
-      (if hij : i ≤ j then coeffBot _ _ φ.hom •
+      (if hij : i ≤ j then coeffBot _ φ.hom •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) else 0) ≫
-      (if hhi : h ≤ i then coeffBot _ _ ψ.hom •
+      (if hhi : h ≤ i then coeffBot _ ψ.hom •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti hhi)) else 0)
-    rw [coeffBot_comp (show HasBot (P j) from trivial) (show HasBot (P i) from trivial)
+    rw [coeffBot_comp (show HasBot (P i) from trivial)
       (show HasBot (P h) from trivial)]
     by_cases hij : i ≤ j
     · by_cases hhi : h ≤ i
@@ -236,10 +229,10 @@ noncomputable def phi : IntervalCat k I ⥤ ModuleCat.{u} k where
   map := R.phiMap
   map_id l := by
     rcases l with _ | i | i
-    · change coeffBot _ _ (𝟙 _) • 𝟙 R.W = 𝟙 R.W
+    · change coeffBot _ (𝟙 _) • 𝟙 R.W = 𝟙 R.W
       rw [coeffBot_id, one_smul]
-    · exact phi_hom_ext_src _ _
-    · change (if h : i ≤ i then coeffBot _ _ (𝟙 _) •
+    · exact psi_hom_ext_of_source_punit _ _
+    · change (if h : i ≤ i then coeffBot _ (𝟙 _) •
         ModuleCat.ofHom (Submodule.inclusion (R.K_anti h)) else 0) = 𝟙 _
       rw [dite_eq_left le_rfl, coeffBot_id, one_smul]
       rfl
@@ -258,30 +251,30 @@ noncomputable def phi : IntervalCat k I ⥤ ModuleCat.{u} k where
     case P.P.Y => exact phiMap_comp_PPY R φ ψ
     case P.P.P => exact phiMap_comp_PPP R φ ψ
     all_goals first
-      | exact phi_hom_ext_src _ _
-      | exact phi_hom_ext_tgt _ _
+      | exact psi_hom_ext_of_source_punit _ _
+      | exact psi_hom_ext_of_target_punit _ _
 
 instance phi_additive : R.phi.Additive where
   map_add {l l'} φ ψ := by
     rcases l with _ | j | j
     · rcases l' with _ | i | i
-      · change coeffBot _ _ (φ.hom + ψ.hom) • 𝟙 R.W =
-          coeffBot _ _ φ.hom • 𝟙 R.W + coeffBot _ _ ψ.hom • 𝟙 R.W
+      · change coeffBot _ (φ.hom + ψ.hom) • 𝟙 R.W =
+          coeffBot _ φ.hom • 𝟙 R.W + coeffBot _ ψ.hom • 𝟙 R.W
         rw [coeffBot_add, add_smul]
-      · exact phi_hom_ext_tgt _ _
+      · exact psi_hom_ext_of_target_punit _ _
       · exact (add_zero (0 : R.W ⟶ ModuleCat.of k (R.K i))).symm
-    · exact phi_hom_ext_src _ _
+    · exact psi_hom_ext_of_source_punit _ _
     · rcases l' with _ | i | i
-      · change coeffBot _ _ (φ.hom + ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
-          coeffBot _ _ φ.hom • ModuleCat.ofHom (R.K j).subtype +
-            coeffBot _ _ ψ.hom • ModuleCat.ofHom (R.K j).subtype
+      · change coeffBot _ (φ.hom + ψ.hom) • ModuleCat.ofHom (R.K j).subtype =
+          coeffBot _ φ.hom • ModuleCat.ofHom (R.K j).subtype +
+            coeffBot _ ψ.hom • ModuleCat.ofHom (R.K j).subtype
         rw [coeffBot_add, add_smul]
-      · exact phi_hom_ext_tgt _ _
-      · change (if hij : i ≤ j then coeffBot _ _ (φ.hom + ψ.hom) •
+      · exact psi_hom_ext_of_target_punit _ _
+      · change (if hij : i ≤ j then coeffBot _ (φ.hom + ψ.hom) •
           ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) else 0) =
-          (if hij : i ≤ j then coeffBot _ _ φ.hom •
+          (if hij : i ≤ j then coeffBot _ φ.hom •
             ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) else 0) +
-          (if hij : i ≤ j then coeffBot _ _ ψ.hom •
+          (if hij : i ≤ j then coeffBot _ ψ.hom •
             ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) else 0)
         split_ifs
         · rw [coeffBot_add, add_smul]
@@ -291,19 +284,19 @@ instance phi_linear : R.phi.Linear k where
   map_smul {l l'} φ r := by
     rcases l with _ | j | j
     · rcases l' with _ | i | i
-      · change coeffBot _ _ (r • φ.hom) • 𝟙 R.W = r • (coeffBot _ _ φ.hom • 𝟙 R.W)
+      · change coeffBot _ (r • φ.hom) • 𝟙 R.W = r • (coeffBot _ φ.hom • 𝟙 R.W)
         rw [coeffBot_smul, smul_smul]
-      · exact phi_hom_ext_tgt _ _
+      · exact psi_hom_ext_of_target_punit _ _
       · exact (smul_zero (A := R.W ⟶ ModuleCat.of k (R.K i)) r).symm
-    · exact phi_hom_ext_src _ _
+    · exact psi_hom_ext_of_source_punit _ _
     · rcases l' with _ | i | i
-      · change coeffBot _ _ (r • φ.hom) • ModuleCat.ofHom (R.K j).subtype =
-          r • (coeffBot _ _ φ.hom • ModuleCat.ofHom (R.K j).subtype)
+      · change coeffBot _ (r • φ.hom) • ModuleCat.ofHom (R.K j).subtype =
+          r • (coeffBot _ φ.hom • ModuleCat.ofHom (R.K j).subtype)
         rw [coeffBot_smul, smul_smul]
-      · exact phi_hom_ext_tgt _ _
-      · change (if hij : i ≤ j then coeffBot _ _ (r • φ.hom) •
+      · exact psi_hom_ext_of_target_punit _ _
+      · change (if hij : i ≤ j then coeffBot _ (r • φ.hom) •
           ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) else 0) =
-          r • (if hij : i ≤ j then coeffBot _ _ φ.hom •
+          r • (if hij : i ≤ j then coeffBot _ φ.hom •
             ModuleCat.ofHom (Submodule.inclusion (R.K_anti hij)) else 0)
         split_ifs
         · rw [coeffBot_smul, smul_smul]

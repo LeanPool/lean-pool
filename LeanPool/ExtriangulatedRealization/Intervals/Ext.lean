@@ -154,10 +154,10 @@ lemma ext_one_P_A_eq_zero {i j : I} (hij : i ≤ j) (ξ : Ext ((P j).rep k) ((A 
     ξ = 0 := by
   obtain ⟨g, rfl⟩ := exists_eq_comp_epsRep i ξ
   rw [comp_epsRep_eq_zero_iff]
-  refine ⟨coeffBot (show HasBot (k := k) (P j) from trivial) (show HasBot (k := k) Y from trivial)
+  refine ⟨coeffBot (show HasBot (k := k) Y from trivial)
     g • pMap hij, ?_⟩
   rw [Linear.smul_comp, pMap_comp_cMap]
-  exact (hom_to_Y_eq_smul (l := P j) trivial (cMap j) (coeffBot_cMap j) g).symm
+  exact (hom_to_Y_eq_smul (l := P j) (cMap j) (coeffBot_cMap j) g).symm
 
 /-- `Ext¹(Y, A i)` is spanned by the nonzero class `ε_i`. -/
 lemma ext_one_Y_A (i : I) :
@@ -169,9 +169,9 @@ lemma ext_one_Y_A (i : I) :
     rw [hom_Y_P_eq_zero i φ, zero_comp] at hφ
     exact label_id_ne_zero (k := k) Y hφ.symm
   · obtain ⟨g, rfl⟩ := exists_eq_comp_epsRep i w
-    refine ⟨coeffBot (show HasBot (k := k) Y from trivial) (show HasBot (k := k) Y from trivial)
+    refine ⟨coeffBot (show HasBot (k := k) Y from trivial)
       g, ?_⟩
-    conv_rhs => rw [hom_to_Y_eq_smul (l := Y) trivial (𝟙 _) (coeffBot_id _) g]
+    conv_rhs => rw [hom_to_Y_eq_smul (l := Y) (𝟙 _) (coeffBot_id _) g]
     rw [Ext.mk₀_smul, Ext.smul_comp, Ext.mk₀_id_comp]
 
 /-- `Ext¹(P j, A i)` for `j < i` is spanned by the nonzero class `c_j^* ε_i`. -/
@@ -179,17 +179,15 @@ lemma ext_one_P_A {i j : I} (hji : j < i) :
     ∃ v : Ext ((P j).rep k) ((A i).rep k) 1, v ≠ 0 ∧ ∀ w, ∃ r : k, r • v = w := by
   refine ⟨(Ext.mk₀ (cMap j)).comp (epsRep i) (zero_add 1), fun h => ?_, fun w => ?_⟩
   · obtain ⟨φ, hφ⟩ := (comp_epsRep_eq_zero_iff i _).mp h
-    have h1 := congrArg (coeffBot (show HasBot (k := k) (P j) from trivial)
-      (show HasBot (k := k) Y from trivial)) hφ
-    rw [coeffBot_comp (l' := P i) _ trivial _, coeffBot_cMap, coeffBot_cMap,
-      coeffBot_eq_zero_of_P (l := P j) trivial i
+    have h1 := congrArg (coeffBot (show HasBot (k := k) Y from trivial)) hφ
+    rw [coeffBot_comp (l' := P i) trivial _, coeffBot_cMap, coeffBot_cMap,
+      coeffBot_eq_zero_of_P (l := P j) i
         (fun h => absurd (WithBot.coe_le_coe.mp (Set.mem_Iic.mp h)) (not_le.mpr hji)) φ,
       zero_mul] at h1
     exact zero_ne_one h1
   · obtain ⟨g, rfl⟩ := exists_eq_comp_epsRep i w
-    refine ⟨coeffBot (show HasBot (k := k) (P j) from trivial)
-      (show HasBot (k := k) Y from trivial) g, ?_⟩
-    conv_rhs => rw [hom_to_Y_eq_smul (l := P j) trivial (cMap j) (coeffBot_cMap j) g]
+    refine ⟨coeffBot (show HasBot (k := k) Y from trivial) g, ?_⟩
+    conv_rhs => rw [hom_to_Y_eq_smul (l := P j) (cMap j) (coeffBot_cMap j) g]
     rw [Ext.mk₀_smul, Ext.smul_comp]
 
 end ExtriangulatedRealization

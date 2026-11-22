@@ -46,7 +46,7 @@ lemma labelIn_indJIncl (x : IndJ J D) : labelIn J ((indJIncl J D).obj x) := by
 /-- A label with index in `J`, as an object of `IndJ J D`. -/
 def toIndJ : ∀ l : IndCat D, labelIn J l → IndJ J D
   | none, _ => none
-  | some l, h => some ⟨l, by rcases l with _ | i | i <;> exact h⟩
+  | some l, h => some ⟨l, h⟩
 
 lemma indJIncl_obj_toIndJ (l : IndCat D) (h : labelIn J l) :
     (indJIncl J D).obj (toIndJ l h) = l := by

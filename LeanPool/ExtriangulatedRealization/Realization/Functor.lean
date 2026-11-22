@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ExtriangulatedRealization.Realization.XPart
 public import LeanPool.ExtriangulatedRealization.Categories.OnePointLift
+public import LeanPool.ExtriangulatedRealization.Categories.Biproduct
 
 /-!
 # The realization functor `F : C_J ⥤ K(Q)` (Proposition 2.3, Step 2)
@@ -29,17 +30,6 @@ variable {k : Type u} [Field k] {I : Type u} [LinearOrder I]
 attribute [local instance] HasDerivedCategory.standard
 
 /-! ### Linearity of the resolution functor -/
-
-lemma biproduct_matrix_smul {𝒞 : Type*} [Category 𝒞] [Preadditive 𝒞] [Linear k 𝒞]
-    [HasFiniteBiproducts 𝒞] {α β : Type} [Finite α] [Finite β] (f : α → 𝒞) (g : β → 𝒞)
-    (m : ∀ a b, f a ⟶ g b) (c : k) :
-    biproduct.matrix (fun a b => c • m a b) = c • biproduct.matrix m := by
-  apply biproduct.hom_ext
-  intro b
-  apply biproduct.hom_ext'
-  intro a
-  rw [biproduct.matrix_π, biproduct.ι_desc, Linear.smul_comp, Linear.comp_smul,
-    biproduct.matrix_π, biproduct.ι_desc]
 
 instance ι₀_linear : (ι₀ (k := k) (I := I)).Linear k where
   map_smul {M N} f c :=
@@ -64,10 +54,7 @@ instance resFunctor_linear : (resFunctor (k := k) (I := I)).Linear k where
 variable (J : Set I)
 
 /-- The interval labels with index in `J`. -/
-abbrev LabelInJ : ObjectProperty (IntervalCat k I)
-  | Y => True
-  | A i => i ∈ J
-  | P i => i ∈ J
+abbrev LabelInJ : ObjectProperty (IntervalCat k I) := fun l => labelIn J (some l)
 
 /-- The intervals with index in `J`. -/
 abbrev IntervalJ := (LabelInJ (k := k) J).FullSubcategory
@@ -115,41 +102,22 @@ noncomputable abbrev FB : IntervalJ (k := k) J ⥤ HomotopyCategory R.Q (Complex
   (LabelInJ J).ι ⋙ resFunctor ⋙ R.e₀.mapHomotopyCategory (ComplexShape.up ℤ)
 
 /-- The morphisms out of `L[-1]`. -/
-noncomputable def ιX : ∀ a : IntervalJ (k := k) J, (psiJ J D).obj a →
+noncomputable def ιX : ∀ a : IntervalJ (k := k) J, (psiJ J D).obj a →ₗ[k]
     ((HomotopyCategory.quotient R.Q (ComplexShape.up ℤ)).obj R.Xc ⟶ (R.FB).obj a)
-  | ⟨Y, _⟩, _ => 0
-  | ⟨A i, hi⟩, x => R.xLin hR i hi x
-  | ⟨P _, _⟩, _ => 0
-
-lemma ιX_add (a : IntervalJ (k := k) J) (x y : (psiJ J D).obj a) :
-    R.ιX hR a (x + y) = R.ιX hR a x + R.ιX hR a y := by
-  rcases a with ⟨_ | i | i, ha⟩
-  · exact (add_zero 0).symm
-  · exact (R.xLin hR i ha).map_add x y
-  · exact (add_zero 0).symm
-
-lemma ιX_smul (c : k) (a : IntervalJ (k := k) J) (x : (psiJ J D).obj a) :
-    R.ιX hR a (c • x) = c • R.ιX hR a x := by
-  rcases a with ⟨_ | i | i, ha⟩
-  · exact (smul_zero c).symm
-  · exact (R.xLin hR i ha).map_smul c x
-  · exact (smul_zero c).symm
-
-lemma ιX_zero (a : IntervalJ (k := k) J) : R.ιX hR a 0 = 0 := by
-  have h := R.ιX_add hR a 0 0
-  rw [add_zero] at h
-  exact add_left_cancel (h.symm.trans (add_zero _).symm)
+  | ⟨Y, _⟩ => 0
+  | ⟨A i, hi⟩ => R.xLin hR i hi
+  | ⟨P _, _⟩ => 0
 
 lemma ιX_nat {a b : IntervalJ (k := k) J} (g : a ⟶ b) (x : (psiJ J D).obj a) :
     R.ιX hR b (((psiJ J D).map g).hom x) = R.ιX hR a x ≫ (R.FB).map g := by
   rcases a with ⟨_ | j | j, ha⟩
   · have : Subsingleton ((psiJ J D).obj ⟨Y, ha⟩) := inferInstanceAs (Subsingleton PUnit)
     obtain rfl : x = 0 := Subsingleton.elim _ _
-    rw [map_zero, ιX_zero, ιX_zero, zero_comp]
+    rw [map_zero, map_zero, map_zero, zero_comp]
   rotate_left
   · have : Subsingleton ((psiJ J D).obj ⟨P j, ha⟩) := inferInstanceAs (Subsingleton PUnit)
     obtain rfl : x = 0 := Subsingleton.elim _ _
-    rw [map_zero, ιX_zero, ιX_zero, zero_comp]
+    rw [map_zero, map_zero, map_zero, zero_comp]
   rcases b with ⟨_ | i | i, hb⟩
   · exact (R.hom_Xc_eq_zero (l := Y) trivial _).symm
   rotate_left
@@ -187,13 +155,13 @@ noncomputable def liftData : OnePointExtension.LiftData (psiJ J D)
   FB := R.FB
   Xt := (HomotopyCategory.quotient R.Q (ComplexShape.up ℤ)).obj R.Xc
   sc c := c • 𝟙 _
-  ι := R.ιX hR
+  ι a := R.ιX hR a
   sc_one := one_smul _ _
   sc_mul c c' := by rw [Linear.smul_comp, Linear.comp_smul, Category.id_comp, mul_smul]
   sc_add c c' := add_smul _ _ _
-  ι_add := R.ιX_add hR
+  ι_add a := (R.ιX hR a).map_add
   ι_nat g x := R.ιX_nat hR g x
-  ι_sc c a x := by rw [Linear.smul_comp, Category.id_comp, R.ιX_smul]
+  ι_sc c a x := by rw [Linear.smul_comp, Category.id_comp, map_smul]
 
 /-- The realization functor on the indecomposables of `C_J`. -/
 noncomputable def F₁ : IndJ J D ⥤ HomotopyCategory R.Q (ComplexShape.up ℤ) :=

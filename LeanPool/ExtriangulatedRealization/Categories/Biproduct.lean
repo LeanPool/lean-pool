@@ -5,6 +5,7 @@ Authors: Haruhisa Enomoto
 -/
 module
 
+public import Mathlib.CategoryTheory.Linear.Basic
 public import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
 public import Mathlib.CategoryTheory.Preadditive.Biproducts
 
@@ -20,6 +21,17 @@ object with the chosen binary biproduct.
 namespace ExtriangulatedRealization
 
 open CategoryTheory Limits
+
+lemma biproduct_matrix_smul {R 𝒞 : Type*} [Semiring R] [Category 𝒞] [Preadditive 𝒞]
+    [Linear R 𝒞] [HasFiniteBiproducts 𝒞] {α β : Type} [Finite α] [Finite β]
+    (f : α → 𝒞) (g : β → 𝒞) (m : ∀ a b, f a ⟶ g b) (c : R) :
+    biproduct.matrix (fun a b => c • m a b) = c • biproduct.matrix m := by
+  apply biproduct.hom_ext
+  intro b
+  apply biproduct.hom_ext'
+  intro a
+  rw [biproduct.matrix_π, biproduct.ι_desc, Linear.smul_comp, Linear.comp_smul,
+    biproduct.matrix_π, biproduct.ι_desc]
 
 /-- The isomorphism `Y ≅ X₁ ⊞ X₂` given by biproduct data on `Y`. -/
 @[simps!]

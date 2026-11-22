@@ -70,8 +70,8 @@ lemma kHom_comp_c (i : I) (w : R.K i) :
   rw [← (Mat_.embedding R.QInd).map_comp]
   congr 1
   change (R.phiMap (show IntervalCat.objP (k := k) i ⟶ IntervalCat.objY from ⟨cMap i⟩)).hom w = _
-  change (coeffBot _ _ (cMap i) • ModuleCat.ofHom (R.K i).subtype).hom w = _
-  have : coeffBot (show HasBot (P i) from trivial) (show HasBot Y from trivial)
+  change (coeffBot _ (cMap i) • ModuleCat.ofHom (R.K i).subtype).hom w = _
+  have : coeffBot (show HasBot Y from trivial)
       (cMap (k := k) i) = 1 := by
     exact (intervalMap_app_apply (k := k) _ _ _ ⊥ _ _).trans (dite_eq_left (Set.mem_Iic.mpr bot_le))
   rw [this, one_smul]

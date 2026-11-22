@@ -394,12 +394,12 @@ private lemma splitIso_comm_mor₃ {A C : (labelsIn D J).FullSubcategory}
   have hpull : ∀ {M : (labelsIn D J).FullSubcategory} (c : M.obj ⟶ C.obj),
       R.realMap hR c ≫ R.eta hR C A δ =
         R.eta hR M A ((dataJ (D := D) (J := J)).pull (ObjectProperty.homMk c) δ) :=
-    fun c => (R.eta_pull' hR (ObjectProperty.homMk c) δ).symm
+    fun c => (R.eta_pull hR (ObjectProperty.homMk c) δ).symm
   have hpush : ∀ {M : (labelsIn D J).FullSubcategory} (a : A.obj ⟶ M.obj)
       (δ' : (dataJ (D := D) (J := J)).Ext (bPartJ C) A),
       R.eta hR (bPartJ C) A δ' ≫ (R.realMap hR a)⟦(1 : ℤ)⟧' =
         R.eta hR (bPartJ C) M ((dataJ (D := D) (J := J)).push (ObjectProperty.homMk a) δ') :=
-    fun a δ' => (R.eta_push' hR (ObjectProperty.homMk a) δ').symm
+    fun a δ' => (R.eta_push hR (ObjectProperty.homMk a) δ').symm
   apply biprod.hom_ext'
   · rw [biprod.inl_desc_assoc, biprod.inl_desc, ← Category.assoc, hpull (M := bPartJ C)]
     have hpp := ((dataJ (D := D) (J := J)).pull_push (C'' := bPartJ C) (A' := bPartJ A)

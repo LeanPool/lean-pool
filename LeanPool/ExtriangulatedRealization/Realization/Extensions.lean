@@ -121,9 +121,10 @@ lemma shadow_map_shift_realP {A A' : (labelsIn D J).FullSubcategory} (a : A ⟶ 
   exact (Category.comp_id _).symm
 
 lemma eta_push {C A A' : (labelsIn D J).FullSubcategory} (a : A ⟶ A')
-    (δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1) :
+    (δ : (dataJ (D := D) (J := J)).Ext C A) :
     R.eta hR C A' ((dataJ (D := D) (J := J)).push a δ) =
       R.eta hR C A δ ≫ ((R.realP hR).map a)⟦(1 : ℤ)⟧' := by
+  let δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1 := δ
   apply (R.shadow_bijective_realP hR C A').1
   have hΘ := (R.shadowRealPIso hR).inv.naturality a
   dsimp at hΘ
@@ -155,8 +156,9 @@ lemma eta_push {C A A' : (labelsIn D J).FullSubcategory} (a : A ⟶ A')
         (R.shadow.map_comp _ _).symm
 
 lemma eta_pull {C'' C A : (labelsIn D J).FullSubcategory} (c : C'' ⟶ C)
-    (δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1) :
+    (δ : (dataJ (D := D) (J := J)).Ext C A) :
     R.eta hR C'' A ((dataJ (D := D) (J := J)).pull c δ) = (R.realP hR).map c ≫ R.eta hR C A δ := by
+  let δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1 := δ
   apply (R.shadow_bijective_realP hR C'' A).1
   have hΘ := (R.shadowRealPIso hR).hom.naturality c
   dsimp at hΘ
@@ -178,17 +180,6 @@ lemma eta_pull {C'' C A : (labelsIn D J).FullSubcategory} (c : C'' ⟶ C)
     _ = R.shadow.map ((R.realP hR).map c) ≫ R.shadow.map (R.eta hR C A δ) :=
         congrArg (_ ≫ ·) (R.shadow_map_eta hR C A δ).symm
     _ = R.shadow.map ((R.realP hR).map c ≫ R.eta hR C A δ) := (R.shadow.map_comp _ _).symm
-
-lemma eta_push' {C A A' : (labelsIn D J).FullSubcategory} (a : A ⟶ A')
-    (δ : (dataJ (D := D) (J := J)).Ext C A) :
-    R.eta hR C A' ((dataJ (D := D) (J := J)).push a δ) =
-      R.eta hR C A δ ≫ ((R.realP hR).map a)⟦(1 : ℤ)⟧' :=
-  R.eta_push hR a δ
-
-lemma eta_pull' {C'' C A : (labelsIn D J).FullSubcategory} (c : C'' ⟶ C)
-    (δ : (dataJ (D := D) (J := J)).Ext C A) :
-    R.eta hR C'' A ((dataJ (D := D) (J := J)).pull c δ) = (R.realP hR).map c ≫ R.eta hR C A δ :=
-  R.eta_pull hR c δ
 
 lemma etaTarget_bijective (C A : (labelsIn D J).FullSubcategory) :
     Function.Bijective (R.etaTarget hR C A) := by

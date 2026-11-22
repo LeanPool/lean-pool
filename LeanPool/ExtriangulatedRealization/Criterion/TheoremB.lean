@@ -7,6 +7,8 @@ module
 
 public import LeanPool.ExtriangulatedRealization.Realization.Extriangulated
 public import LeanPool.ExtriangulatedRealization.Criterion.Necessity
+public import Mathlib.Algebra.Category.ModuleCat.Limits
+public import Mathlib.LinearAlgebra.Pi
 
 /-!
 # Theorem B (= Theorem 3.1)
@@ -31,21 +33,16 @@ attribute [local instance] HasExt.standard
 variable {k : Type u} [Field k] {I : Type u} [LinearOrder I] (D : Iᵒᵖ ⥤ ModuleCat.{u} k)
 
 /-- The compatible families of an inverse system: the inverse limit `lim D`. -/
-def compatibleFamilies : Submodule k (∀ j : I, D.obj (op j)) where
-  carrier := {y | ∀ {j j' : I} (h : j ≤ j'), (D.map (homOfLE h).op).hom (y j') = y j}
-  add_mem' := by
-    intro y z hy hz j j' h
-    simp [hy h, hz h]
-  zero_mem' := by
-    intro j j' h
-    simp
-  smul_mem' := by
-    intro c y hy j j' h
-    simp [hy h]
+def compatibleFamilies : Submodule k (∀ j : I, D.obj (op j)) :=
+  (ModuleCat.sectionsSubmodule D).comap
+    (LinearEquiv.piCongrLeft k (fun j : Iᵒᵖ => D.obj j) (equivToOpposite : I ≃ Iᵒᵖ)).toLinearMap
 
 lemma mem_compatibleFamilies_iff (y : ∀ j : I, D.obj (op j)) :
     y ∈ compatibleFamilies D ↔
-      ∀ {j j' : I} (h : j ≤ j'), (D.map (homOfLE h).op).hom (y j') = y j := Iff.rfl
+      ∀ {j j' : I} (h : j ≤ j'), (D.map (homOfLE h).op).hom (y j') = y j := by
+  change (∀ {j j' : Iᵒᵖ} (f : j ⟶ j'), (D.map f).hom (y (unop j)) = y (unop j')) ↔ _
+  refine ⟨fun hs _ _ h => hs (homOfLE h).op, fun hs j j' f => ?_⟩
+  exact hs (leOfHom f.unop)
 
 /-- The projections `lim D → D_i`. -/
 noncomputable def limProj (i : I) : ModuleCat.of k (compatibleFamilies D) ⟶ D.obj (op i) :=

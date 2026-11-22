@@ -41,8 +41,8 @@ lemma bot_mem_support {l : IntervalCat k I} (hl : HasBot l) : (⊥ : WithBot I) 
 lemma bot_not_mem_support_A (i : I) : (⊥ : WithBot I) ∉ (A i).support :=
   IntervalLabel.not_bot_mem_A i
 
-/-- The value at `*` of a morphism between intervals containing `*`. -/
-noncomputable def coeffBot {l l' : IntervalCat k I} (_hl : HasBot l) (hl' : HasBot l')
+/-- The value at `*` of a morphism whose target interval contains `*`. -/
+noncomputable def coeffBot {l l' : IntervalCat k I} (hl' : HasBot l')
     (φ : l.rep k ⟶ l'.rep k) : k :=
   (φ.app ⊥).hom (fun _ => (1 : k)) ⟨(), bot_mem_support hl'⟩
 
@@ -65,36 +65,35 @@ lemma app_apply_eq_mul {U V : Set (WithBot I)} [U.OrdConnected] [V.OrdConnected]
   rw [LinearMap.map_smul]
   rfl
 
-lemma coeffBot_comp {l l' l'' : IntervalCat k I} (hl : HasBot l) (hl' : HasBot l')
+lemma coeffBot_comp {l l' l'' : IntervalCat k I} (hl' : HasBot l')
     (hl'' : HasBot l'') (φ : l.rep k ⟶ l'.rep k) (ψ : l'.rep k ⟶ l''.rep k) :
-    coeffBot hl hl'' (φ ≫ ψ) = coeffBot hl hl' φ * coeffBot hl' hl'' ψ :=
+    coeffBot hl'' (φ ≫ ψ) = coeffBot hl' φ * coeffBot hl'' ψ :=
   app_apply_eq_mul ψ (bot_mem_support hl') ((φ.app ⊥).hom (oneAt _ ⊥)) _
 
-lemma coeffBot_comp_of_A {l l'' : IntervalCat k I} (hl : HasBot l) (hl'' : HasBot l'') (i : I)
+lemma coeffBot_comp_of_A {l l'' : IntervalCat k I} (hl'' : HasBot l'') (i : I)
     (φ : l.rep k ⟶ (A i).rep k) (ψ : (A i).rep k ⟶ l''.rep k) :
-    coeffBot hl hl'' (φ ≫ ψ) = 0 := by
+    coeffBot hl'' (φ ≫ ψ) = 0 := by
   have hg : (φ.app ⊥).hom (oneAt _ ⊥) = 0 :=
     intervalRep_obj_eq_zero (bot_not_mem_support_A i) _
   change (ψ.app ⊥).hom ((φ.app ⊥).hom (oneAt _ ⊥)) _ = 0
   rw [hg, map_zero]
   rfl
 
-lemma coeffBot_id {l : IntervalCat k I} (hl : HasBot l) : coeffBot hl hl (𝟙 (l.rep k)) = 1 :=
+lemma coeffBot_id {l : IntervalCat k I} (hl : HasBot l) : coeffBot hl (𝟙 (l.rep k)) = 1 :=
   rfl
 
-lemma coeffBot_add {l l' : IntervalCat k I} (hl : HasBot l) (hl' : HasBot l')
-    (φ ψ : l.rep k ⟶ l'.rep k) : coeffBot hl hl' (φ + ψ) = coeffBot hl hl' φ + coeffBot hl hl' ψ :=
+lemma coeffBot_add {l l' : IntervalCat k I} (hl' : HasBot l')
+    (φ ψ : l.rep k ⟶ l'.rep k) : coeffBot hl' (φ + ψ) = coeffBot hl' φ + coeffBot hl' ψ :=
   rfl
 
-lemma coeffBot_smul {l l' : IntervalCat k I} (hl : HasBot l) (hl' : HasBot l') (r : k)
-    (φ : l.rep k ⟶ l'.rep k) : coeffBot hl hl' (r • φ) = r * coeffBot hl hl' φ :=
+lemma coeffBot_smul {l l' : IntervalCat k I} (hl' : HasBot l') (r : k)
+    (φ : l.rep k ⟶ l'.rep k) : coeffBot hl' (r • φ) = r * coeffBot hl' φ :=
   rfl
 
-/-- A morphism into `P i` from an interval containing `*` is determined by its value at
-`*` restricted to `i`: if the source vanishes at `i`, the value at `*` is zero. -/
-lemma coeffBot_eq_zero_of_P {l : IntervalCat k I} (hl : HasBot l) (i : I)
+/-- If the source vanishes at `i`, a morphism into `P i` has value zero at `*`. -/
+lemma coeffBot_eq_zero_of_P {l : IntervalCat k I} (i : I)
     (hi : (i : WithBot I) ∉ l.support) (φ : l.rep k ⟶ (P i).rep k) :
-    coeffBot hl (show HasBot (P i) from trivial) φ = 0 := by
+    coeffBot (show HasBot (P i) from trivial) φ = 0 := by
   have hbot : (⊥ : WithBot I) ≤ (i : WithBot I) := bot_le
   have hiP : (i : WithBot I) ∈ (P i).support := Set.mem_Iic.mpr le_rfl
   have hbP : (⊥ : WithBot I) ∈ (P i).support := Set.mem_Iic.mpr bot_le

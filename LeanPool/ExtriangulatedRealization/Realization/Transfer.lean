@@ -95,7 +95,7 @@ lemma realizes_morphism {δ : (dataJ (D := D) (J := J)).Ext C A}
     (R.realTriangle_distinguished hR h) (R.realTriangle_distinguished hR h')
     ((R.realP hR).map a) ((R.realP hR).map c) (by
       change R.eta hR C A δ ≫ _ = _ ≫ R.eta hR C' A' δ'
-      erw [← R.eta_push' hR, ← R.eta_pull' hR, hac])
+      erw [← R.eta_push hR, ← R.eta_pull hR, hac])
   refine ⟨(R.realP hR).preimage b, (R.realP hR).map_injective ?_,
     (R.realP hR).map_injective ?_⟩
   · rw [Functor.map_comp, Functor.map_comp]
@@ -120,7 +120,7 @@ lemma realizes_transport {δ : (dataJ (D := D) (J := J)).Ext C A} {x : A ⟶ B} 
     rw [← Functor.map_comp, Category.assoc, Iso.inv_hom_id, Category.comp_id, Category.id_comp]
   · change R.eta hR C' A' _ ≫ ((R.realP hR).map a.hom)⟦(1 : ℤ)⟧' =
       (R.realP hR).map c.hom ≫ R.eta hR C A δ
-    rw [R.eta_pull' hR, R.eta_push' hR, Category.assoc, Category.assoc, ← Functor.map_comp,
+    rw [R.eta_pull hR, R.eta_push hR, Category.assoc, Category.assoc, ← Functor.map_comp,
       ← Functor.map_comp, Iso.inv_hom_id, CategoryTheory.Functor.map_id,
       CategoryTheory.Functor.map_id, Category.comp_id]
 
@@ -141,7 +141,7 @@ lemma et3 {δ : (dataJ (D := D) (J := J)).Ext C A}
   · rw [Functor.map_comp, Functor.map_comp]
     erw [Functor.map_preimage]
     exact hc₂
-  · rw [R.eta_push' hR, R.eta_pull' hR]
+  · rw [R.eta_push hR, R.eta_pull hR]
     erw [Functor.map_preimage]
     exact hc₃
 
@@ -162,7 +162,7 @@ lemma et3_op {δ : (dataJ (D := D) (J := J)).Ext C A}
   · rw [Functor.map_comp, Functor.map_comp]
     erw [Functor.map_preimage]
     exact ha₁
-  · rw [R.eta_push' hR, R.eta_pull' hR]
+  · rw [R.eta_push hR, R.eta_pull hR]
     erw [Functor.map_preimage]
     exact ha₃
 
@@ -202,7 +202,7 @@ lemma et4 {A B C' D' F' : (labelsIn D J).FullSubcategory} {f : A ⟶ B} {f' : B 
   let o := Triangulated.someOctahedron (F.map_comp f g).symm h₁₂ h₂₃ h₁₃
   have hmem : Triangle.mk o.m₁ o.m₃ (R.eta hR F' D' ((dataJ (D := D) (J := J)).push f' δ')) ∈
       distTriang _ := by
-    rw [R.eta_push' hR]
+    rw [R.eta_push hR]
     exact o.mem
   obtain ⟨E, d, e, φ, hde, hφ₁, hφ₂⟩ := R.exists_realizes_iso hR _ hmem
   obtain ⟨δ'', hδ''⟩ := (R.eta_bijective hR E A).2 (φ.hom ≫ w₁₃)
@@ -225,9 +225,9 @@ lemma et4 {A B C' D' F' : (labelsIn D J).FullSubcategory} {f : A ⟶ B} {f' : B 
   · apply F.map_injective
     rw [Functor.map_comp, Functor.map_preimage, Category.assoc, ← hφ₂, Iso.inv_hom_id_assoc, hc₃]
   · apply (R.eta_bijective hR D' A).1
-    rw [R.eta_pull' hR, hδ'', ← Category.assoc, hφ₁, hc₂]
+    rw [R.eta_pull hR, hδ'', ← Category.assoc, hφ₁, hc₂]
   · apply (R.eta_bijective hR E B).1
-    rw [R.eta_push' hR, R.eta_pull' hR, hδ'', Category.assoc]
+    rw [R.eta_push hR, R.eta_pull hR, hδ'', Category.assoc]
     exact (congrArg (φ.hom ≫ ·) hc₄).trans ((Category.assoc _ _ _).symm.trans
       (congrArg (· ≫ R.eta hR F' B δ') hφ₂))
 
@@ -251,7 +251,7 @@ lemma et4_op {D' A B F' C' : (labelsIn D J).FullSubcategory} {f' : D' ⟶ A} {f 
   let o := Triangulated.someOctahedron' (F.map_comp f g).symm h₁₂ h₂₃ h₁₃
   have hmem : Triangle.mk o.m₁ o.m₃ (R.eta hR F' D' ((dataJ (D := D) (J := J)).pull g' δ)) ∈
       distTriang _ := by
-    rw [R.eta_pull' hR]
+    rw [R.eta_pull hR]
     exact o.mem
   obtain ⟨E, d, e, φ, hde, hφ₁, hφ₂⟩ := R.exists_realizes_iso hR _ hmem
   obtain ⟨δ'', hδ''⟩ := (R.eta_bijective hR C' E).2 (w₁₃ ≫ φ.inv⟦(1 : ℤ)⟧')
@@ -276,10 +276,10 @@ lemma et4_op {D' A B F' C' : (labelsIn D J).FullSubcategory} {f' : D' ⟶ A} {f 
     rw [Functor.map_comp, Functor.map_comp, Functor.map_preimage, ← hφ₂, Category.assoc, hc₄,
       Category.assoc]
   · apply (R.eta_bijective hR C' F').1
-    rw [R.eta_push' hR, hδ'', ← hφ₂, Functor.map_comp, ← Category.assoc, Category.assoc w₁₃,
+    rw [R.eta_push hR, hδ'', ← hφ₂, Functor.map_comp, ← Category.assoc, Category.assoc w₁₃,
       ← Functor.map_comp, Iso.inv_hom_id, CategoryTheory.Functor.map_id, Category.comp_id, hc₃]
   · apply (R.eta_bijective hR B E).1
-    rw [R.eta_push' hR, R.eta_pull' hR, hd, Functor.map_comp, ← Category.assoc, hc₂, hδ'',
+    rw [R.eta_push hR, R.eta_pull hR, hd, Functor.map_comp, ← Category.assoc, hc₂, hδ'',
       Category.assoc]
 
 /-! ### Direct sums -/
@@ -397,7 +397,7 @@ lemma realizes_sum {A B C A' B' C' : (labelsIn D J).FullSubcategory}
         R.eta hR (biprodJ C C') (biprodJ A A') (sumJ δ δ') =
         R.eta hR C (biprodJ A A')
           ((dataJ (D := D) (J := J)).push (ObjectProperty.homMk biprod.inl) δ) := by
-      exact (R.eta_pull' hR (C'' := C) (C := biprodJ C C') (A := biprodJ A A')
+      exact (R.eta_pull hR (C'' := C) (C := biprodJ C C') (A := biprodJ A A')
         (ObjectProperty.homMk biprod.inl) (sumJ δ δ')).symm.trans
         (congrArg (R.eta hR C (biprodJ A A')) (cdData_pull_inl_sum D δ δ'))
     change biprod.inl ≫ (R.realBiprodIso hR C C').inv ≫
@@ -405,7 +405,7 @@ lemma realizes_sum {A B C A' B' C' : (labelsIn D J).FullSubcategory}
           (R.realBiprodIso hR A A').hom⟦(1 : ℤ)⟧' =
       biprod.inl ≫ biprod.desc (R.eta hR C A δ ≫ biprod.inl⟦(1 : ℤ)⟧')
         (R.eta hR C' A' δ' ≫ biprod.inr⟦(1 : ℤ)⟧')
-    rw [biprod.inl_desc, ← Category.assoc, e₁, ← Category.assoc, e₂, R.eta_push' hR,
+    rw [biprod.inl_desc, ← Category.assoc, e₁, ← Category.assoc, e₂, R.eta_push hR,
       Category.assoc, ← Functor.map_comp]
     exact congrArg (fun φ => R.eta hR C A δ ≫ φ⟦(1 : ℤ)⟧')
       (R.realMap_inl_comp_realBiprodIso hR A A')
@@ -415,7 +415,7 @@ lemma realizes_sum {A B C A' B' C' : (labelsIn D J).FullSubcategory}
         R.eta hR (biprodJ C C') (biprodJ A A') (sumJ δ δ') =
         R.eta hR C' (biprodJ A A')
           ((dataJ (D := D) (J := J)).push (ObjectProperty.homMk biprod.inr) δ') := by
-      exact (R.eta_pull' hR (C'' := C') (C := biprodJ C C') (A := biprodJ A A')
+      exact (R.eta_pull hR (C'' := C') (C := biprodJ C C') (A := biprodJ A A')
         (ObjectProperty.homMk biprod.inr) (sumJ δ δ')).symm.trans
         (congrArg (R.eta hR C' (biprodJ A A')) (cdData_pull_inr_sum D δ δ'))
     change biprod.inr ≫ (R.realBiprodIso hR C C').inv ≫
@@ -423,7 +423,7 @@ lemma realizes_sum {A B C A' B' C' : (labelsIn D J).FullSubcategory}
           (R.realBiprodIso hR A A').hom⟦(1 : ℤ)⟧' =
       biprod.inr ≫ biprod.desc (R.eta hR C A δ ≫ biprod.inl⟦(1 : ℤ)⟧')
         (R.eta hR C' A' δ' ≫ biprod.inr⟦(1 : ℤ)⟧')
-    rw [biprod.inr_desc, ← Category.assoc, e₁, ← Category.assoc, e₂, R.eta_push' hR,
+    rw [biprod.inr_desc, ← Category.assoc, e₁, ← Category.assoc, e₂, R.eta_push hR,
       Category.assoc, ← Functor.map_comp]
     exact congrArg (fun φ => R.eta hR C' A' δ' ≫ φ⟦(1 : ℤ)⟧')
       (R.realMap_inr_comp_realBiprodIso hR A A')

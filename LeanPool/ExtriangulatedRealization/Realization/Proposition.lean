@@ -39,8 +39,8 @@ noncomputable def extriangulatedFunctor :
   F := R.realP hR
   additive := inferInstance
   η {C A} := R.eta hR C A
-  η_push a δ := R.eta_push' hR a δ
-  η_pull c δ := R.eta_pull' hR c δ
+  η_push a δ := R.eta_push hR a δ
+  η_pull c δ := R.eta_pull hR c δ
   distinguished h := R.realTriangle_distinguished hR h
 
 lemma extriangulatedFunctor_isTriangulatedRealization :

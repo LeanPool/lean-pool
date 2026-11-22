@@ -6,6 +6,7 @@ Authors: Haruhisa Enomoto
 module
 
 public import LeanPool.ExtriangulatedRealization.CD.Closure
+public import LeanPool.ExtriangulatedRealization.Categories.Biproduct
 
 /-!
 # The extension bifunctor of `C(D)`
@@ -39,13 +40,8 @@ instance rho_linear : (rho D).Linear k where
   map_smul {M N} f r := by
     change biproduct.matrix (fun i j => (rho0 D).map ((r • f) i j)) =
       r • biproduct.matrix (fun i j => (rho0 D).map (f i j))
-    apply biproduct.hom_ext
-    intro j
-    apply biproduct.hom_ext'
-    intro i
-    rw [biproduct.matrix_π, biproduct.ι_desc, Linear.smul_comp, Linear.comp_smul,
-      biproduct.matrix_π, biproduct.ι_desc]
-    exact (rho0 D).map_smul r (f i j)
+    rw [← biproduct_matrix_smul]
+    exact congrArg biproduct.matrix (funext fun i => funext fun j => (rho0 D).map_smul r (f i j))
 
 lemma cdData_push {C A A' : CD D} (a : A ⟶ A') (δ : (cdData D).Ext C A) :
     ((cdData D).push a δ : Abelian.Ext.{u + 1} _ _ 1) =

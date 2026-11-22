@@ -124,44 +124,40 @@ lemma label_endo_eq_smul (l : IntervalLabel I) (φ : l.rep k ⟶ l.rep k) :
   · exact ⟨_, intervalRep_endo_eq_smul (U := (P i).support) (t₀ := (i : WithBot I))
       (Set.mem_Iic.mpr le_rfl) φ⟩
 
-lemma mem_Y_iff {t : WithBot I} : t ∈ (Y (I := I)).support ↔ t = ⊥ := by
-  change t ∈ Set.Iic ⊥ ↔ _
-  rw [Set.mem_Iic, le_bot_iff]
-
 /-- `Hom(A j, Y) = 0`. -/
 lemma hom_A_Y_eq_zero (j : I) (φ : (A j).rep k ⟶ (Y (I := I)).rep k) : φ = 0 :=
   intervalRep_hom_ext fun _ hU hV =>
-    absurd ((mem_Y_iff.mp hV) ▸ hU) (not_bot_mem_A j)
+    absurd ((mem_Y.mp hV) ▸ hU) (not_bot_mem_A j)
 
 /-- `Hom(Y, P i) = 0`. -/
 lemma hom_Y_P_eq_zero (i : I) (φ : (Y (I := I)).rep k ⟶ (P i).rep k) : φ = 0 := by
   apply intervalRep_hom_ext
   intro t hU hV
-  obtain rfl := mem_Y_iff.mp hU
-  exact coeffBot_eq_zero_of_P (l := Y) trivial i (coe_not_mem_Y i) φ
+  obtain rfl := mem_Y.mp hU
+  exact coeffBot_eq_zero_of_P (l := Y) i (coe_not_mem_Y i) φ
 
-/-- A morphism into `Y` from an interval containing `*` is determined by its value at `*`. -/
-lemma hom_to_Y_ext {l : IntervalLabel I} (hl : HasBot (k := k) l)
+/-- A morphism into `Y` is determined by its value at `*`. -/
+lemma hom_to_Y_ext {l : IntervalLabel I}
     {φ ψ : l.rep k ⟶ (Y (I := I)).rep k}
-    (h : coeffBot hl (show HasBot (k := k) Y from trivial) φ =
-      coeffBot hl (show HasBot (k := k) Y from trivial) ψ) : φ = ψ := by
+    (h : coeffBot (show HasBot (k := k) Y from trivial) φ =
+      coeffBot (show HasBot (k := k) Y from trivial) ψ) : φ = ψ := by
   apply intervalRep_hom_ext
   intro t hU hV
-  obtain rfl := mem_Y_iff.mp hV
+  obtain rfl := mem_Y.mp hV
   exact h
 
-/-- A morphism into `Y` from an interval containing `*` is a multiple of any morphism with
+/-- A morphism into `Y` is a multiple of any morphism with
 value `1` at `*`. -/
-lemma hom_to_Y_eq_smul {l : IntervalLabel I} (hl : HasBot (k := k) l)
+lemma hom_to_Y_eq_smul {l : IntervalLabel I}
     (g : l.rep k ⟶ (Y (I := I)).rep k)
-    (hg : coeffBot hl (show HasBot (k := k) Y from trivial) g = 1)
+    (hg : coeffBot (show HasBot (k := k) Y from trivial) g = 1)
     (φ : l.rep k ⟶ (Y (I := I)).rep k) :
-    φ = coeffBot hl (show HasBot (k := k) Y from trivial) φ • g := by
-  apply hom_to_Y_ext hl
+    φ = coeffBot (show HasBot (k := k) Y from trivial) φ • g := by
+  apply hom_to_Y_ext
   rw [coeffBot_smul, hg, mul_one]
 
 lemma coeffBot_cMap (j : I) :
-    coeffBot (show HasBot (k := k) (P j) from trivial) (show HasBot (k := k) Y from trivial)
+    coeffBot (show HasBot (k := k) Y from trivial)
       (cMap (k := k) j) = 1 :=
   (intervalMap_app_apply (k := k) _ _ _ ⊥ _ _).trans
     (dite_eq_left (show (⊥ : WithBot I) ∈ (P j).support from Set.mem_Iic.mpr bot_le))
