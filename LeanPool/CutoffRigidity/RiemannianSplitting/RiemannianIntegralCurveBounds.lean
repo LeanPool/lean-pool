@@ -89,21 +89,16 @@ theorem IsMIntegralCurveOn.lipschitzOnWith_of_bounded
   · exact hone hu hv huv
   · simpa [edist_comm] using hone hv hu hvu
 
-/-- Completeness supplies a genuine finite right endpoint for every actual
-bounded-speed integral curve; an endpoint is not supplied as a hypothesis. -/
-theorem IsMIntegralCurveOn.exists_tendsto_right_endpoint [CompleteSpace M]
-    {X : (x : M) → TangentSpace I x} {γ : ℝ → M} {a b : ℝ} (hab : a < b)
-    (hγ : IsMIntegralCurveOn γ X (Ioo a b))
-    (hX : Continuous (T% X)) {C : ℝ≥0}
-    (hbound : ∀ t ∈ Ioo a b, ‖X (γ t)‖ₑ ≤ C) :
-    ∃ x : M, Tendsto γ (𝓝[Ioo a b] b) (𝓝 x) := by
-  have hne : NeBot (𝓝[Ioo a b] b) := by
-    rw [← mem_closure_iff_nhdsWithin_neBot]
-    simpa [closure_Ioo hab.ne] using (show b ∈ Icc a b from ⟨hab.le, le_rfl⟩)
+/-- A bounded-speed curve in a complete manifold tends to a limit at any finite
+time approached from its interval of definition. -/
+theorem IsMIntegralCurveOn.exists_tendsto_of_bounded [CompleteSpace M]
+    {X : (x : M) → TangentSpace I x} {γ : ℝ → M} {a b t : ℝ}
+    (hγ : IsMIntegralCurveOn γ X (Ioo a b)) (hX : Continuous (T% X)) {C : ℝ≥0}
+    (hbound : ∀ s ∈ Ioo a b, ‖X (γ s)‖ₑ ≤ C) (hne : NeBot (𝓝[Ioo a b] t)) :
+    ∃ x : M, Tendsto γ (𝓝[Ioo a b] t) (𝓝 x) := by
   have := hne
   apply cauchy_map_iff_exists_tendsto.mp
-  apply (cauchy_nhds.mono nhdsWithin_le_nhds).map_of_le
-    (IsMIntegralCurveOn.lipschitzOnWith_of_bounded hγ hX hbound).uniformContinuousOn
-  exact inf_le_right
+  exact (cauchy_nhds.mono nhdsWithin_le_nhds).map_of_le
+    (IsMIntegralCurveOn.lipschitzOnWith_of_bounded hγ hX hbound).uniformContinuousOn inf_le_right
 
 end CutoffRigidity

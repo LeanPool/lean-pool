@@ -9,11 +9,9 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedVectorField
+public import TauCeti.Geometry.Manifold.IntegralCurve.GlobalFlow
 
-/-! # The canonical global flow of an actual complete bounded field
-The map is chosen from the proved global ODE existence theorem. All identities
-follow from actual manifold integral-curve uniqueness, not supplied action laws.
--/
+/-! # Global flow of a bounded field on a complete Riemannian manifold -/
 
 @[expose] public section
 open Bundle Set
@@ -30,48 +28,30 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E
   {X : (x : M) → TangentSpace I x} (hX : ContMDiff I I.tangent 1 (T% X))
   {C : ℝ≥0} (hbound : ∀ x, ‖X x‖ₑ ≤ C)
 
-/-- The actual canonical flow of a bounded C¹ field on a complete manifold. -/
+include hX hbound in
+/-- A bounded `C¹` field on a complete Riemannian manifold is complete. -/
+theorem isCompleteVectorField_of_bounded : TauCeti.IsCompleteVectorField X :=
+  TauCeti.isCompleteVectorField_of_forall_exists_isMIntegralCurve
+    (exists_global_integralCurve_of_bounded hX hbound)
+
+/-- The canonical flow of a bounded `C¹` field on a complete manifold. -/
 noncomputable def completeBoundedFlow (x : M) (t : ℝ) : M :=
-  (exists_global_integralCurve_of_bounded hX hbound x).choose t
+  TauCeti.globalFlow X hX (isCompleteVectorField_of_bounded hX hbound) t x
 
 theorem completeBoundedFlow_zero (x : M) : completeBoundedFlow hX hbound x 0 = x :=
-  (exists_global_integralCurve_of_bounded hX hbound x).choose_spec.1
+  (TauCeti.globalFlow X hX (isCompleteVectorField_of_bounded hX hbound)).map_zero_apply x
 
 theorem completeBoundedFlow_isMIntegralCurve (x : M) :
     IsMIntegralCurve (completeBoundedFlow hX hbound x) X :=
-  (exists_global_integralCurve_of_bounded hX hbound x).choose_spec.2
+  TauCeti.isMIntegralCurve_globalFlow hX (isCompleteVectorField_of_bounded hX hbound) x
 
-/-- Every actual global integral curve is this canonical flow through its
-initial point. -/
-theorem completeBoundedFlow_unique {γ : ℝ → M} (hγ : IsMIntegralCurve γ X) :
-    γ = completeBoundedFlow hX hbound (γ 0) :=
-  isMIntegralCurve_Ioo_eq_of_contMDiff_boundaryless hX hγ
-    (completeBoundedFlow_isMIntegralCurve hX hbound (γ 0))
-    (completeBoundedFlow_zero hX hbound (γ 0)).symm
-
-/-- The flow group law, proved from the actual ODE. -/
 theorem completeBoundedFlow_add (x : M) (s t : ℝ) :
     completeBoundedFlow hX hbound x (t + s) =
-      completeBoundedFlow hX hbound (completeBoundedFlow hX hbound x s) t := by
-  have h := completeBoundedFlow_unique hX hbound
-    ((completeBoundedFlow_isMIntegralCurve hX hbound x).comp_add s)
-  simpa using congrFun h t
+      completeBoundedFlow hX hbound (completeBoundedFlow hX hbound x s) t :=
+  (TauCeti.globalFlow X hX (isCompleteVectorField_of_bounded hX hbound)).map_add t s x
 
 theorem completeBoundedFlow_neg_cancel (x : M) (t : ℝ) :
     completeBoundedFlow hX hbound (completeBoundedFlow hX hbound x t) (-t) = x := by
   rw [← completeBoundedFlow_add, neg_add_cancel, completeBoundedFlow_zero]
-
-/-- Each time slice is bijective with inverse the negative-time slice. -/
-noncomputable def completeBoundedFlowEquiv (t : ℝ) : M ≃ M where
-  toFun x := completeBoundedFlow hX hbound x t
-  invFun x := completeBoundedFlow hX hbound x (-t)
-  left_inv x := completeBoundedFlow_neg_cancel hX hbound x t
-  right_inv x := by simpa using completeBoundedFlow_neg_cancel hX hbound x (-t)
-
-/-- Time dependence of each actual orbit is continuous. Joint initial/time
-continuity is proved separately from coordinate Picard dependence. -/
-theorem continuous_completeBoundedFlow_orbit (x : M) :
-    Continuous (completeBoundedFlow hX hbound x) :=
-  (completeBoundedFlow_isMIntegralCurve hX hbound x).continuous
 
 end CutoffRigidity

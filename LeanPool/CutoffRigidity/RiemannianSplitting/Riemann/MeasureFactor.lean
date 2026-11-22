@@ -70,7 +70,10 @@ theorem map_Θ_eq [SecondCountableTopology M] {V : M → ℝ} {μ : Measure M}
           chartVolumeDensity (LevelModel F (Rd k)) y₀ p.2)) := by
   set S := (fr.Θ y₀).source with hS
   have hΞS : (fr.Ξ J y₀).source = S := fr.Ξ_source J y₀
-  have hmain := map_chart_density hμ (fr.Ξ J y₀) ((fr.contMDiffOn_Ξ J y₀).of_le (by simp))
+  let : IsContinuousRiemannianBundle F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x) :=
+    IsContMDiffRiemannianBundle.toIsContinuousRiemannianBundle
+      (IB := 𝓘(ℝ, F)) (n := ∞) (V := fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)
+  have hmain := map_chart_density hμ (fr.Ξ J y₀)
     ((fr.contMDiffOn_Ξ_symm J y₀).of_le (by simp))
   rw [hΞS] at hmain
   have hSm : MeasurableSet S := (fr.Θ y₀).open_source.measurableSet

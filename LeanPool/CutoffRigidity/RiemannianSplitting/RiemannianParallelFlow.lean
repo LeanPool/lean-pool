@@ -11,6 +11,7 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelFields
 public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldZeroDifferential
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedVectorField
+import Mathlib.Geometry.Manifold.VectorBundle.ContMDiffSection
 
 /-! # Complete parallel fields have actual global flows
 Metric compatibility and connectedness first prove constant norm. Global

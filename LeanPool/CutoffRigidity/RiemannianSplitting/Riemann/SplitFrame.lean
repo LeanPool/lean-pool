@@ -121,17 +121,17 @@ theorem contMDiff_flow_slice (i : Fin k) (t : ℝ) :
 
 private theorem flow_slice_eq_flowOf (i : Fin k) (t : ℝ) :
     (fun y ↦ fr.flow i y t) = TauCeti.flowOf (fr.X i) t := by
-  funext y
-  have hcurve := CutoffRigidity.completeBoundedFlow_isMIntegralCurve
-    (fr.contMDiff_X_one i) (fr.enorm_X_le i) y
-  have h := TauCeti.flowOf_eq_of_isMIntegralCurve (fr.contMDiff_X_one i) hcurve t
-  simpa only [flow, CutoffRigidity.completeBoundedFlow_zero] using h.symm
+  unfold flow CutoffRigidity.completeBoundedFlow
+  rw [TauCeti.flowOf_eq_globalFlow (fr.contMDiff_X_one i)
+    (CutoffRigidity.isCompleteVectorField_of_bounded (fr.contMDiff_X_one i) (fr.enorm_X_le i))]
 
 /-- The differential of the frame flow preserves the Riemannian pairing. -/
 theorem inner_mfderiv_flow (i : Fin k) (x : M) (u v : TangentSpace 𝓘(ℝ, F) x) (t : ℝ) :
     inner ℝ (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x u)
       (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x v) = inner ℝ u v := by
   let I := 𝓘(ℝ, F)
+  let : IsContMDiffRiemannianBundle I 1 F (fun y : M ↦ TangentSpace I y) :=
+    IsContMDiffRiemannianBundle.of_le (n := ∞) (by simp)
   have hK : TauCeti.Manifold.IsKillingField I (fr.X i) := by
     have hcompatible := CovariantDerivative.isMetricCompatible_leviCivitaConnection (M := M) I
     apply (hcompatible.isKillingField_iff
@@ -143,8 +143,8 @@ theorem inner_mfderiv_flow (i : Fin k) (x : M) (u v : TangentSpace 𝓘(ℝ, F) 
       fr.parallel i y
     rw [hparallel]
     simp
-  have hcomplete := TauCeti.isCompleteVectorField_of_forall_exists_isMIntegralCurve
-    (CutoffRigidity.exists_global_integralCurve_of_bounded (fr.contMDiff_X_one i) (fr.enorm_X_le i))
+  have hcomplete := CutoffRigidity.isCompleteVectorField_of_bounded
+    (fr.contMDiff_X_one i) (fr.enorm_X_le i)
   let preserves (slice : M → M) : Prop :=
     inner ℝ (mfderiv I I slice x u) (mfderiv I I slice x v) = inner ℝ u v
   change preserves (fun y ↦ fr.flow i y t)
@@ -167,13 +167,15 @@ theorem mvfderiv_s_flow (j i : Fin k) (x : M) (t : ℝ) (u : TangentSpace 𝓘(�
     ((fr.contMDiff_flow_slice i t).mdifferentiable (by simp)) x
   have hcomp : (fun y => fr.s j (fr.flow i y t)) = fun y => fr.s j y + (if j = i then t else 0) :=
     funext fun y => fr.s_flow j i y t
-  have h1 := mfderiv_comp x hs hf
+  have h1 : mfderiv 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (fun y ↦ fr.s j (fr.flow i y t)) x =
+      (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (fr.s j) (fr.flow i x t)).comp
+        (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y ↦ fr.flow i y t) x) := mfderiv_comp x hs hf
   have h3 : mvfderiv 𝓘(ℝ, F) (fun y => fr.s j (fr.flow i y t)) x =
       (mvfderiv 𝓘(ℝ, F) (fr.s j) (fr.flow i x t)).comp
         (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow i y t) x) := by
     ext u
     simp only [mvfderiv, ContinuousLinearMap.comp_apply]
-    rw [show (fun y => fr.s j (fr.flow i y t)) = (fr.s j) ∘ (fun y => fr.flow i y t) from rfl, h1]
+    rw [h1]
     rfl
   have h4 : mvfderiv 𝓘(ℝ, F) (fun y => fr.s j (fr.flow i y t)) x = mvfderiv 𝓘(ℝ, F) (fr.s j) x := by
     rw [hcomp]

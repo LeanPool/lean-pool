@@ -9,7 +9,6 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedFlow
-import TauCeti.Geometry.Manifold.IntegralCurve.GlobalFlow
 
 /-! # The complete flow of a smooth bounded field is `C^∞` jointly in point and time
 -/
@@ -36,16 +35,9 @@ include hXinf in
 theorem contMDiff_completeBoundedFlow_joint_infty :
     ContMDiff (I.prod 𝓘(ℝ, ℝ)) I ∞
       (fun p : M × ℝ ↦ completeBoundedFlow hX1 hbound p.1 p.2) := by
-  have hcomplete : TauCeti.IsCompleteVectorField X :=
-    TauCeti.isCompleteVectorField_of_forall_exists_isMIntegralCurve
-      (exists_global_integralCurve_of_bounded hX1 hbound)
-  have hsmooth := (TauCeti.contMDiff_globalFlow_uncurry hcomplete (by simp : 1 ≤ (⊤ : ℕ∞))
-    hXinf).comp (contMDiff_snd.prodMk contMDiff_fst :
-      ContMDiff (I.prod 𝓘(ℝ, ℝ)) (𝓘(ℝ, ℝ).prod I) ∞ (fun p : M × ℝ ↦ (p.2, p.1)))
-  apply hsmooth.congr
-  rintro ⟨x, t⟩
-  simpa only [Function.comp_apply, completeBoundedFlow_zero] using
-    (TauCeti.globalFlow_eq_of_isMIntegralCurve _ hcomplete
-      (completeBoundedFlow_isMIntegralCurve hX1 hbound x) t).symm
+  exact (TauCeti.contMDiff_globalFlow_uncurry (isCompleteVectorField_of_bounded hX1 hbound)
+    (by simp : 1 ≤ (⊤ : ℕ∞)) hXinf).comp
+      (contMDiff_snd.prodMk contMDiff_fst : ContMDiff (I.prod 𝓘(ℝ, ℝ))
+        (𝓘(ℝ, ℝ).prod I) ∞ (fun p : M × ℝ ↦ (p.2, p.1)))
 
 end CutoffRigidity.Riemann
