@@ -9,7 +9,6 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumCurrentBridge
-public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 
 /-!
 # Position-space free Dirac equation for finite Fourier fields

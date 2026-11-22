@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
+public import LeanPool.LatticeDiracDerivation.V2.NativeC19CliffordRoot
 public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 
 /-! # The native action and free Dirac certificate -/

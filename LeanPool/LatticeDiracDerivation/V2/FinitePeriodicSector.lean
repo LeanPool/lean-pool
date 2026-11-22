@@ -10,7 +10,6 @@ module
 
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumCurrentBridge
-public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 
 /-!
 # The invariant native periodic tangent sector
@@ -74,40 +73,25 @@ def periodicModePhaseEmbed
   velocity := fun component =>
     periodicModeField mode (phase.2 component)
 
-/-- The position part of the same mode written as an honest tangent vector
-in the complete native two-field state space.  It perturbs the first two
-`Psi` channels and has zero `chi` tangent; the uniform vacuum itself is kept
-separate from its tangent vector. -/
-def periodicNativeTangentState
-    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
-    (mode : PeriodicC19FourierMode L momentum)
-    (position : UniformCell2) : State (PeriodicCubicSite L) where
-  psi := fun site component =>
-    if component = 0 then periodicModeField mode (position 0) site
-    else if component = 1 then periodicModeField mode (position 1) site
-    else 0
-  chi := fun _ _ => 0
+/-- Lift a periodic transverse phase into the full native state and velocity. -/
+def periodicTransversePhaseLift {L : ℕ} [NeZero L] (phase : PeriodicTransversePhase L) :
+    State (PeriodicCubicSite L) × Velocity (PeriodicCubicSite L) :=
+  ({ psi := fun site component =>
+       if component = 0 then phase.position 0 site
+       else if component = 1 then phase.position 1 site else 0
+     chi := fun _ _ => 0 },
+   { psiDot := fun site component =>
+       if component = 0 then phase.velocity 0 site
+       else if component = 1 then phase.velocity 1 site else 0
+     chiDot := fun _ _ => 0 })
 
-/-- The velocity part of the complete native tangent vector. -/
-def periodicNativeTangentVelocity
-    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
-    (mode : PeriodicC19FourierMode L momentum)
-    (velocity : UniformCell2) : Velocity (PeriodicCubicSite L) where
-  psiDot := fun site component =>
-    if component = 0 then periodicModeField mode (velocity 0) site
-    else if component = 1 then periodicModeField mode (velocity 1) site
-    else 0
-  chiDot := fun _ _ => 0
-
-/-- Explicit embedding into the complete native tangent phase space.  No
-spinor coordinates or auxiliary fields occur in this map. -/
+/-- Embed a Fourier phase into the complete native tangent phase space. -/
 def periodicFullNativeTangentEmbed
     {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
     (mode : PeriodicC19FourierMode L momentum)
     (phase : UniformTwoChannelPhase) :
     State (PeriodicCubicSite L) × Velocity (PeriodicCubicSite L) :=
-  (periodicNativeTangentState mode phase.1,
-    periodicNativeTangentVelocity mode phase.2)
+  periodicTransversePhaseLift (periodicModePhaseEmbed mode phase)
 
 /-- The native first-order tangent generator, written on the complete
 `State × Velocity` phase-space representation and restricted only by the
@@ -177,59 +161,25 @@ theorem periodic_full_native_tangent_embed_injective
     · have hcomponent := congrArg
         (fun state => state.psi origin (0 : Fin 3)) hstate
       simp only [periodicFullNativeTangentEmbed,
-        periodicNativeTangentState, periodicModeField] at hcomponent
+        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
       exact mul_left_cancel₀ hcharacter hcomponent
     · have hcomponent := congrArg
         (fun state => state.psi origin (1 : Fin 3)) hstate
       simp only [periodicFullNativeTangentEmbed,
-        periodicNativeTangentState, periodicModeField] at hcomponent
+        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
       exact mul_left_cancel₀ hcharacter hcomponent
   · funext component
     fin_cases component
     · have hcomponent := congrArg
         (fun velocity => velocity.psiDot origin (0 : Fin 3)) hvelocity
       simp only [periodicFullNativeTangentEmbed,
-        periodicNativeTangentVelocity, periodicModeField] at hcomponent
+        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
       exact mul_left_cancel₀ hcharacter hcomponent
     · have hcomponent := congrArg
         (fun velocity => velocity.psiDot origin (1 : Fin 3)) hvelocity
       simp only [periodicFullNativeTangentEmbed,
-        periodicNativeTangentVelocity, periodicModeField] at hcomponent
+        periodicTransversePhaseLift, periodicModePhaseEmbed, periodicModeField] at hcomponent
       exact mul_left_cancel₀ hcharacter hcomponent
-
-/-- One commuting equality for the complete native phase-space coordinates.
-The full `State × Velocity` tangent generator sends the embedded Fourier
-phase to the embedding of the modal Euler--Lagrange generator.  Thus kinetic
-closure and force closure are established together rather than inferred
-from a list of scalar pairings. -/
-theorem periodic_full_native_tangent_generator_intertwines
-    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
-    (r : ℝ) (mode : PeriodicC19FourierMode L momentum)
-    (phase : UniformTwoChannelPhase) :
-    periodicNativeTransverseTangentGenerator r
-        (periodicFullNativeTangentEmbed mode phase) =
-      periodicFullNativeTangentEmbed mode
-        (uniformVacuumNativeGenerator r momentum phase) := by
-  apply Prod.ext
-  · cases phase with
-    | mk position velocity =>
-      rfl
-  · apply nativeVelocityExt
-    · funext site component
-      fin_cases component
-      · simp only [periodicNativeTransverseTangentGenerator,
-          periodicFullNativeTangentEmbed, periodicNativeTangentState,
-          periodicNativeTangentVelocity, ite_eq_left]
-        exact periodic_c19_linearized_force_is_modal_acceleration
-          r mode phase.1 0 site
-      · simp only [periodicNativeTransverseTangentGenerator,
-          periodicFullNativeTangentEmbed, periodicNativeTangentState,
-          periodicNativeTangentVelocity, Fin.isValue, ite_eq_left]
-        exact periodic_c19_linearized_force_is_modal_acceleration
-          r mode phase.1 1 site
-      · simp [periodicNativeTransverseTangentGenerator,
-          periodicFullNativeTangentEmbed, periodicNativeTangentVelocity]
-    · rfl
 
 /-- True sector closure: the full finite-lattice transverse Hessian generator
 maps an embedded Fourier phase state to the embedding of the modal native
@@ -245,14 +195,34 @@ theorem periodic_mode_sector_is_invariant
   · funext component site
     rfl
   · funext component site
-    change periodicC19LinearizedAcceleration r
-        (periodicModeField mode (phase.1 component)) site = _
-    rw [periodic_c19_linearized_force_diagonalizes]
-    simp only [periodicModePhaseEmbed, periodicModeField,
-      uniformVacuumNativeGenerator, uniformVacuumModalAcceleration,
-      uniformVacuumModalSquare]
-    push_cast
-    ring
+    exact periodic_c19_linearized_force_is_modal_acceleration r mode phase.1 component site
+
+private theorem periodic_native_generator_commutes_lift
+    {L : ℕ} [NeZero L] (r : ℝ) (phase : PeriodicTransversePhase L) :
+    periodicNativeTransverseTangentGenerator r (periodicTransversePhaseLift phase) =
+      periodicTransversePhaseLift (periodicTransverseGenerator r phase) := by
+  apply Prod.ext
+  · rfl
+  · apply nativeVelocityExt
+    · funext site component
+      fin_cases component <;> rfl
+    · rfl
+
+/-- One commuting equality for the complete native phase-space coordinates.
+The full `State × Velocity` tangent generator sends the embedded Fourier
+phase to the embedding of the modal Euler--Lagrange generator.  Thus kinetic
+closure and force closure are established together rather than inferred
+from a list of scalar pairings. -/
+theorem periodic_full_native_tangent_generator_intertwines
+    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
+    (r : ℝ) (mode : PeriodicC19FourierMode L momentum)
+    (phase : UniformTwoChannelPhase) :
+    periodicNativeTransverseTangentGenerator r
+        (periodicFullNativeTangentEmbed mode phase) =
+      periodicFullNativeTangentEmbed mode
+        (uniformVacuumNativeGenerator r momentum phase) := by
+  unfold periodicFullNativeTangentEmbed
+  rw [periodic_native_generator_commutes_lift, periodic_mode_sector_is_invariant]
 
 /-- Full native weak Euler--Lagrange closure of the periodic four-complex-
 dimensional tangent sector.  The first clause makes the embedding into

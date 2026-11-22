@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletDispersion
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain
 public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketBridge

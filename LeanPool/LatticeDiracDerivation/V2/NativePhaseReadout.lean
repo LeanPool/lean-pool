@@ -8,7 +8,8 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.NativeC19CliffordRoot
+public import LeanPool.LatticeDiracDerivation.V2.CubicalClifford
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
 
 /-!
 # Native phase readout and the free Dirac generator

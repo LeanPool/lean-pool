@@ -10,6 +10,7 @@ module
 
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralReadout
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicSector
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletTime
 public import LeanPool.LatticeDiracDerivation.V2.PositionSpaceFreeDirac
 

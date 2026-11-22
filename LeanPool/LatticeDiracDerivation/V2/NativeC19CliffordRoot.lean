@@ -489,34 +489,6 @@ theorem native_c19_root_square_is_exact_hessian_minus_remainder
 
 /-! ## Four-component coordinates are downstream -/
 
-/-- The shared readout for the negative flavor sector. -/
-abbrev negativeFlavorCoordinateRead := cubicalNegativeFlavorRead
-
-theorem negative_flavor_coordinate_read_embed (z : CubicalCell4) :
-    negativeFlavorCoordinateRead (cubicalDiracEmbedMinus z) = z := by
-  funext component
-  fin_cases component <;>
-    simp [negativeFlavorCoordinateRead, cubicalNegativeFlavorRead, cubicalDiracEmbedMinus,
-      cubicalEmbedMinus, standardToCubicalMinus]
-
-/-- The four-coordinate spatial operator is obtained by applying the
-eight-corner incidence root and then reading one derived flavor fiber.  No
-four-by-four matrix occurs in this definition. -/
-def orientedCubicalSpatialCoordinates
-    (px py pz : ℂ) (z : CubicalCell4) : CubicalCell4 :=
-  negativeFlavorCoordinateRead
-    (cubicalNativeSpatial px py pz (cubicalDiracEmbedMinus z))
-
-/-- In the conventional coordinate chart, the incidence-derived operator has
-the familiar standard spatial entries. -/
-@[simp] theorem oriented_cubical_spatial_coordinates_eq_standard
-    (px py pz : ℂ) (z : CubicalCell4) :
-    orientedCubicalSpatialCoordinates px py pz z =
-      cubicalStandardSpatial px py pz z := by
-  unfold orientedCubicalSpatialCoordinates
-  rw [cubical_native_spatial_intertwines_minus]
-  exact negative_flavor_coordinate_read_embed _
-
 /-- The negative flavor fiber is merely a coordinate chart on the derived
 eight-corner root. -/
 theorem native_c19_root_intertwines_negative_flavor
