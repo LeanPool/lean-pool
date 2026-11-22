@@ -7,6 +7,7 @@ module
 
 public import LeanPool.PseudolineArrangements.FlagSystem
 public import Mathlib.GroupTheory.Coxeter.Basic
+import TauCeti.GroupTheory.Coxeter.Basic
 
 /-!
 # The cartographic group
@@ -49,8 +50,7 @@ theorem commute_of_mul_self_eq_one {W : Type*} [Group W] {a b : W} (ha : a * a =
 /-- Two simple reflections of a Coxeter system whose matrix entry is `2` commute. -/
 theorem commute_simple_of_eq_two {B W : Type*} [Group W] {M : CoxeterMatrix B}
     (cs : CoxeterSystem M W) {i j : B} (h : M i j = 2) : Commute (cs.simple i) (cs.simple j) :=
-  commute_of_mul_self_eq_one (cs.simple_mul_simple_self i) (cs.simple_mul_simple_self j)
-    (h ▸ cs.simple_mul_simple_pow i j)
+  CoxeterSystem.commute_simple_of_eq_two cs h
 
 /-- The string Coxeter matrix with `M i (i + 1) = p i` (`0` meaning `∞`) and `2` between
 non-adjacent generators. -/
