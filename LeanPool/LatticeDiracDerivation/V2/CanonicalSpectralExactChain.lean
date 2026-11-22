@@ -39,39 +39,6 @@ def canonicalSpectralMomentumReadout
     (c19ScaledMomentum momentum 1)
     (c19ScaledMomentum momentum 2) phase
 
-theorem canonical_spectral_readout_additive
-    (mass energy px py pz : ℝ)
-    (first second : UniformTwoChannelPhase) :
-    canonicalSpectralReadout mass energy px py pz
-        (fun component => first.1 component + second.1 component,
-         fun component => first.2 component + second.2 component) =
-      fun component =>
-        canonicalSpectralReadout mass energy px py pz first component +
-          canonicalSpectralReadout mass energy px py pz second component := by
-  funext component
-  fin_cases component <;>
-    simp [canonicalSpectralReadout, nativePositiveAmplitude,
-      nativeNegativeAmplitude, normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, positive_pauli_spatial_apply_zero,
-      positive_pauli_spatial_apply_one] <;>
-    ring
-
-theorem canonical_spectral_readout_scale
-    (mass energy px py pz : ℝ) (scalar : ℂ)
-    (phase : UniformTwoChannelPhase) :
-    canonicalSpectralReadout mass energy px py pz
-        (uniformTwoChannelScale scalar phase) =
-      fun component => scalar *
-        canonicalSpectralReadout mass energy px py pz phase component := by
-  funext component
-  fin_cases component <;>
-    simp [canonicalSpectralReadout, nativePositiveAmplitude,
-      nativeNegativeAmplitude, uniformTwoChannelScale,
-      normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, positive_pauli_spatial_apply_zero,
-      positive_pauli_spatial_apply_one] <;>
-    ring
-
 theorem canonical_spectral_momentum_readout_additive
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (first second : UniformTwoChannelPhase) :

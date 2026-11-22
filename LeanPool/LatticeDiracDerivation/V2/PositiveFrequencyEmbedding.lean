@@ -51,6 +51,16 @@ theorem positive_pauli_spatial_apply_one (px py pz : ℝ) (q : UniformCell2) :
 def cubicalSpinorOfBlocks (upper lower : UniformCell2) : CubicalCell4 :=
   ![upper 0, upper 1, lower 0, lower 1]
 
+/-- Assemble a spinor from its two blocks by a complex-linear map. -/
+def cubicalSpinorOfBlocksLinear : (UniformCell2 × UniformCell2) →ₗ[ℂ] CubicalCell4 where
+  toFun blocks := cubicalSpinorOfBlocks blocks.1 blocks.2
+  map_add' first second := by
+    funext component
+    fin_cases component <;> rfl
+  map_smul' scalar blocks := by
+    funext component
+    fin_cases component <;> rfl
+
 theorem cubical_standard_hamiltonian_blocks (mass px py pz : ℝ) (upper lower : UniformCell2) :
     cubicalStandardHamiltonian (mass : ℂ) (px : ℂ) (py : ℂ) (pz : ℂ)
         (cubicalSpinorOfBlocks upper lower) =
@@ -130,17 +140,30 @@ def normalizedPositiveFrequencyEmbedding
   | _ => (positiveFrequencyRatio mass energy : ℂ) *
       positivePauliSpatial px py pz q 1
 
+/-- Complex-linear embedding of the normalized positive-frequency branch. -/
+def normalizedPositiveFrequencyEmbeddingLinear (mass energy px py pz : ℝ) :
+    UniformCell2 →ₗ[ℂ] CubicalCell4 :=
+  cubicalSpinorOfBlocksLinear.comp
+    (((positiveFrequencyScale mass energy : ℂ) • LinearMap.id).prod
+      ((positiveFrequencyRatio mass energy : ℂ) • cubicalSpatialLowerLinear px py pz))
+
+theorem normalized_positive_frequency_embedding_linear_apply (mass energy px py pz : ℝ)
+    (position : UniformCell2) :
+    normalizedPositiveFrequencyEmbeddingLinear mass energy px py pz position =
+      normalizedPositiveFrequencyEmbedding mass energy px py pz position := by
+  funext component
+  fin_cases component <;> rfl
+
 theorem normalized_positive_frequency_embedding_scale
     (mass energy px py pz : ℝ) (scalar : ℂ) (q : UniformCell2) :
     normalizedPositiveFrequencyEmbedding mass energy px py pz
         (fun component => scalar * q component) =
       fun component => scalar *
         normalizedPositiveFrequencyEmbedding mass energy px py pz q component := by
-  funext component
-  fin_cases component <;>
-    simp [normalizedPositiveFrequencyEmbedding, positive_pauli_spatial_apply_zero,
-      positive_pauli_spatial_apply_one] <;>
-    ring
+  change normalizedPositiveFrequencyEmbedding mass energy px py pz (scalar • q) =
+    scalar • normalizedPositiveFrequencyEmbedding mass energy px py pz q
+  simpa only [normalized_positive_frequency_embedding_linear_apply] using
+    (normalizedPositiveFrequencyEmbeddingLinear mass energy px py pz).map_smul scalar q
 
 theorem positive_frequency_ratio_mul_denominator (mass energy : ℝ)
     (hdenom : energy + mass ≠ 0) :

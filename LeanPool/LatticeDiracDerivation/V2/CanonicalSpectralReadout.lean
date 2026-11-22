@@ -88,6 +88,20 @@ def normalizedNegativeFrequencyEmbedding
   | 2 => (positiveFrequencyScale mass energy : ℂ) * q 0
   | _ => (positiveFrequencyScale mass energy : ℂ) * q 1
 
+/-- Complex-linear embedding of the normalized negative-frequency branch. -/
+def normalizedNegativeFrequencyEmbeddingLinear (mass energy px py pz : ℝ) :
+    UniformCell2 →ₗ[ℂ] CubicalCell4 :=
+  cubicalSpinorOfBlocksLinear.comp
+    ((-(positiveFrequencyRatio mass energy : ℂ) • cubicalSpatialLowerLinear px py pz).prod
+      ((positiveFrequencyScale mass energy : ℂ) • LinearMap.id))
+
+private theorem normalized_negative_frequency_embedding_linear_apply (mass energy px py pz : ℝ)
+    (position : UniformCell2) :
+    normalizedNegativeFrequencyEmbeddingLinear mass energy px py pz position =
+      normalizedNegativeFrequencyEmbedding mass energy px py pz position := by
+  funext component
+  fin_cases component <;> rfl
+
 theorem normalized_negative_frequency_is_energy_eigenstate
     (mass energy px py pz : ℝ)
     (hdenom : energy + mass ≠ 0)
@@ -127,6 +141,66 @@ def canonicalSpectralReadout
         (nativePositiveAmplitude energy phase) component +
       normalizedNegativeFrequencyEmbedding mass energy px py pz
         (nativeNegativeAmplitude energy phase) component
+
+/-- Linear combination of position and velocity used by the two frequency projections. -/
+def phaseAmplitudeLinear (coefficient : ℂ) (energy : ℝ) :
+    UniformTwoChannelPhase →ₗ[ℂ] UniformCell2 :=
+  (1 / 2 : ℂ) • (LinearMap.fst ℂ UniformCell2 UniformCell2 +
+    (coefficient / (energy : ℂ)) • LinearMap.snd ℂ UniformCell2 UniformCell2)
+
+private theorem phase_amplitude_linear_apply (coefficient : ℂ) (energy : ℝ)
+    (phase : UniformTwoChannelPhase) :
+    phaseAmplitudeLinear coefficient energy phase = fun component =>
+      (phase.1 component + coefficient * phase.2 component / (energy : ℂ)) / 2 := by
+  funext component
+  change (1 / 2 : ℂ) * (phase.1 component + coefficient / (energy : ℂ) * phase.2 component) =
+    (phase.1 component + coefficient * phase.2 component / (energy : ℂ)) / 2
+  ring
+
+/-- The canonical spectral readout is complex linear in the native phase. -/
+def canonicalSpectralReadoutLinear (mass energy px py pz : ℝ) :
+    UniformTwoChannelPhase →ₗ[ℂ] CubicalCell4 :=
+  (normalizedPositiveFrequencyEmbeddingLinear mass energy px py pz).comp
+      (phaseAmplitudeLinear I energy) +
+    (normalizedNegativeFrequencyEmbeddingLinear mass energy px py pz).comp
+      (phaseAmplitudeLinear (-I) energy)
+
+theorem canonical_spectral_readout_linear_apply (mass energy px py pz : ℝ)
+    (phase : UniformTwoChannelPhase) :
+    canonicalSpectralReadoutLinear mass energy px py pz phase =
+      canonicalSpectralReadout mass energy px py pz phase := by
+  simp only [canonicalSpectralReadoutLinear, LinearMap.add_apply, LinearMap.comp_apply,
+    phase_amplitude_linear_apply, normalized_positive_frequency_embedding_linear_apply,
+    normalized_negative_frequency_embedding_linear_apply,
+    neg_mul, neg_div]
+  rfl
+
+theorem canonical_spectral_readout_additive
+    (mass energy px py pz : ℝ)
+    (first second : UniformTwoChannelPhase) :
+    canonicalSpectralReadout mass energy px py pz
+        (fun component => first.1 component + second.1 component,
+         fun component => first.2 component + second.2 component) =
+      fun component =>
+        canonicalSpectralReadout mass energy px py pz first component +
+          canonicalSpectralReadout mass energy px py pz second component := by
+  change canonicalSpectralReadout mass energy px py pz (first + second) =
+    canonicalSpectralReadout mass energy px py pz first +
+      canonicalSpectralReadout mass energy px py pz second
+  simpa only [canonical_spectral_readout_linear_apply] using
+    (canonicalSpectralReadoutLinear mass energy px py pz).map_add first second
+
+theorem canonical_spectral_readout_scale
+    (mass energy px py pz : ℝ) (scalar : ℂ)
+    (phase : UniformTwoChannelPhase) :
+    canonicalSpectralReadout mass energy px py pz
+        (uniformTwoChannelScale scalar phase) =
+      fun component => scalar *
+        canonicalSpectralReadout mass energy px py pz phase component := by
+  change canonicalSpectralReadout mass energy px py pz (scalar • phase) =
+    scalar • canonicalSpectralReadout mass energy px py pz phase
+  simpa only [canonical_spectral_readout_linear_apply] using
+    (canonicalSpectralReadoutLinear mass energy px py pz).map_smul scalar phase
 
 theorem canonical_spectral_readout_positive_phase
     (mass energy px py pz : ℝ) (henergy : energy ≠ 0)
@@ -198,11 +272,10 @@ theorem normalized_negative_frequency_embedding_scale
         (fun component => scalar * q component) =
       fun component => scalar *
         normalizedNegativeFrequencyEmbedding mass energy px py pz q component := by
-  funext component
-  fin_cases component <;>
-    simp [normalizedNegativeFrequencyEmbedding, positive_pauli_spatial_apply_zero,
-      positive_pauli_spatial_apply_one] <;>
-    ring
+  change normalizedNegativeFrequencyEmbedding mass energy px py pz (scalar • q) =
+    scalar • normalizedNegativeFrequencyEmbedding mass energy px py pz q
+  simpa only [normalized_negative_frequency_embedding_linear_apply] using
+    (normalizedNegativeFrequencyEmbeddingLinear mass energy px py pz).map_smul scalar q
 
 /-- The one spectral map intertwines the complete positive+negative native
 phase space with the same cubical Hamiltonian. -/

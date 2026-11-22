@@ -14,6 +14,7 @@ public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicSector
 public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketBridge
+public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketScope
 public import LeanPool.LatticeDiracDerivation.V2.ReadoutCharacterization
 public import LeanPool.LatticeDiracDerivation.V2.FlavorClassification
 public import LeanPool.LatticeDiracDerivation.V2.NativeCubicalCompression
