@@ -33,34 +33,6 @@ open scoped Topology BigOperators ENNReal
 namespace LeanStationaryHarmonicMaps
 namespace StationaryHarmonicMap
 
-/-- Weak monotonicity from the scalar-cutoff radial stationarity identity and
-the split analytic ingredients. -/
-theorem weakTheta_monotone_from_scalar_cutoff_identity_via_radius_formulas {n m : ℕ}
-    {Du : Domain n → Gradient n m} {R0 : ℝ}
-    (hrad : WeakRadialScalarCutoffStationarityIdentity Du R0)
-    (henergy_radius : WeakEnergyRadiusIntegralFormula Du R0)
-    (hradial_radius : WeakRadialEnergyRadiusIntegralFormula Du R0)
-    (hdefect_loc :
-      LocallyIntegrableOn
-        (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
-        (Ioo (0 : ℝ) R0) volume)
-    (hibp_formula : WeakOneDimensionalIBPFormula Du R0)
-    (hprimitive : WeakOneDimensionalPrimitiveTestFamily Du R0)
-    (hderive :
-      WeakBoundaryIdentity Du (0 : Domain n) R0 →
-        ∀ ⦃s r : ℝ⦄, 0 < s → s < r → r < R0 →
-          weakTheta Du (0 : Domain n) r - weakTheta Du (0 : Domain n) s =
-            weakMonotonicityRhs Du (0 : Domain n) s r) :
-    MonotoneOn (weakTheta Du (0 : Domain n)) (Ioo (0 : ℝ) R0) := by
-  have hboundary : WeakBoundaryIdentity Du (0 : Domain n) R0 :=
-    weak_boundary_identity_from_scalar_cutoff_identity_via_radius_formulas
-      (n := n) (m := m) (Du := Du) (R0 := R0)
-      hrad henergy_radius hradial_radius
-      hdefect_loc hibp_formula hprimitive
-  exact weakTheta_monotone_on_of_formula'
-    (n := n) (m := m) (Du := Du) (a := (0 : Domain n)) (R0 := R0)
-    (fun {s} {r} hs hsr hr => hderive hboundary hs hsr hr)
-
 /-- Final weak-map interface through primitive cutoffs only.  This theorem does
 not assume that all radial vector fields are `C¹`; each one-dimensional
 test function is realized by a primitive cutoff that is proved flat near the
@@ -80,12 +52,7 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_primitive_cutoffs
         (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
         (Ioo (0 : ℝ) R0) volume)
     (hcalc : WeakBallEnergyOneDimensionalCalculus Du R0)
-    (hprimitive_realize : WeakPrimitiveCutoffRealization R0)
-    (hderive :
-      WeakBoundaryIdentity Du (0 : Domain n) R0 →
-        ∀ ⦃s r : ℝ⦄, 0 < s → s < r → r < R0 →
-          weakTheta Du (0 : Domain n) r - weakTheta Du (0 : Domain n) s =
-            weakMonotonicityRhs Du (0 : Domain n) s r) :
+    (hprimitive_realize : WeakPrimitiveCutoffRealization R0) :
     MonotoneOn (weakTheta Du (0 : Domain n)) (Ioo (0 : ℝ) R0) := by
   have hball_subset : Metric.ball (0 : Domain n) R0 ⊆ Ω :=
     (Metric.ball_subset_closedBall : Metric.ball (0 : Domain n) R0 ⊆
@@ -103,7 +70,10 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_primitive_cutoffs
       henergy_radius hradial_radius hdefect_loc hcalc hprimitive_realize
   exact weakTheta_monotone_on_of_formula'
     (n := n) (m := m) (Du := Du) (a := (0 : Domain n)) (R0 := R0)
-    (fun {s} {r} hs hsr hr => hderive hboundary hs hsr hr)
+    (fun {s} {r} hs hsr hr =>
+      weakTheta_increment_eq_weakMonotonicityRhs_of_boundary
+        (n := n) (m := m) (Du := Du) (R0 := R0) (s := s) (r := r)
+        hboundary hcalc.1 hradial_radius hs hsr hr)
 
 /-- Same primitive-cutoff route with the interval-integral/smooth-bump
 realization supplied by the formalized construction. -/
@@ -121,18 +91,13 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_constructed_primitive_cu
       LocallyIntegrableOn
         (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
         (Ioo (0 : ℝ) R0) volume)
-    (hcalc : WeakBallEnergyOneDimensionalCalculus Du R0)
-    (hderive :
-      WeakBoundaryIdentity Du (0 : Domain n) R0 →
-        ∀ ⦃s r : ℝ⦄, 0 < s → s < r → r < R0 →
-          weakTheta Du (0 : Domain n) r - weakTheta Du (0 : Domain n) s =
-            weakMonotonicityRhs Du (0 : Domain n) s r) :
+    (hcalc : WeakBallEnergyOneDimensionalCalculus Du R0) :
     MonotoneOn (weakTheta Du (0 : Domain n)) (Ioo (0 : ℝ) R0) := by
   exact weakTheta_monotone_from_weakStationaryMapIn_via_primitive_cutoffs
     (n := n) (m := m) (u := u) (Du := Du) (Ω := Ω) (R0 := R0)
     hR0_nonneg hmap hΩ_meas hclosedBall_subset
     henergy_radius hradial_radius hdefect_loc hcalc
-    (weakPrimitiveCutoffRealization R0) hderive
+    (weakPrimitiveCutoffRealization R0)
 
 /-- Final weak-map interface using the exact radial-vector-field regularity
 input needed for stationarity tests. -/
@@ -151,12 +116,7 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_radialShellsVolume_vecto
     (hdefect_loc :
       LocallyIntegrableOn
         (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
-        (Ioo (0 : ℝ) R0) volume)
-    (hderive :
-      WeakBoundaryIdentity Du (0 : Domain n) R0 →
-        ∀ ⦃s r : ℝ⦄, 0 < s → s < r → r < R0 →
-          weakTheta Du (0 : Domain n) r - weakTheta Du (0 : Domain n) s =
-            weakMonotonicityRhs Du (0 : Domain n) s r) :
+        (Ioo (0 : ℝ) R0) volume) :
     MonotoneOn (weakTheta Du (0 : Domain n)) (Ioo (0 : ℝ) R0) := by
   have hball_subset : Metric.ball (0 : Domain n) R0 ⊆ Ω :=
     (Metric.ball_subset_closedBall : Metric.ball (0 : Domain n) R0 ⊆
@@ -182,40 +142,10 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_radialShellsVolume_vecto
       hcalc.2.1 hcalc.2.2 (weakPrimitiveCutoffRealization R0)
   exact weakTheta_monotone_on_of_formula'
     (n := n) (m := m) (Du := Du) (a := (0 : Domain n)) (R0 := R0)
-    (fun {s} {r} hs hsr hr => hderive hboundary hs hsr hr)
-
-/-- Final packaged weak-map interface through primitive cutoffs and thin
-radial-shell volume control.  This is the current `W^{1,2}_{loc}` route without
-the global `hX` assumption. -/
-theorem weakTheta_monotone_from_weakStationaryMapIn_via_radialShellsVolume_primitiveCutoffs
-    {n m : ℕ} [NeZero n]
-    {u : Domain n → Target m} {Du : Domain n → Gradient n m} {Ω : Set (Domain n)}
-    {R0 : ℝ}
-    (hR0_nonneg : 0 ≤ R0)
-    (hmap : WeakStationaryMapIn u Du Ω)
-    (hΩ_meas : MeasurableSet Ω)
-    (hclosedBall_subset : Metric.closedBall (0 : Domain n) R0 ⊆ Ω)
-    (hthin : RadialOpenShellsVolumeTendstoZero n)
-    (henergy_radius : WeakEnergyRadiusIntegralFormula Du R0)
-    (hradial_radius : WeakRadialEnergyRadiusIntegralFormula Du R0)
-    (hdefect_loc :
-      LocallyIntegrableOn
-        (fun rho : ℝ => weakSharpCutoffDefect Du (0 : Domain n) rho)
-        (Ioo (0 : ℝ) R0) volume)
-    (hderive :
-      WeakBoundaryIdentity Du (0 : Domain n) R0 →
-        ∀ ⦃s r : ℝ⦄, 0 < s → s < r → r < R0 →
-          weakTheta Du (0 : Domain n) r - weakTheta Du (0 : Domain n) s =
-            weakMonotonicityRhs Du (0 : Domain n) s r) :
-    MonotoneOn (weakTheta Du (0 : Domain n)) (Ioo (0 : ℝ) R0) := by
-  have hcalc : WeakBallEnergyOneDimensionalCalculus Du R0 :=
-    weakBallEnergyOneDimensionalCalculus_of_radiusIntegral_W12LocIn_radialShellsVolume
-      (n := n) (m := m) (u := u) (Du := Du) (Ω := Ω) (R0 := R0)
-      hR0_nonneg hthin hmap.1 hclosedBall_subset henergy_radius hradial_radius
-  exact weakTheta_monotone_from_weakStationaryMapIn_via_constructed_primitive_cutoffs
-    (n := n) (m := m) (u := u) (Du := Du) (Ω := Ω) (R0 := R0)
-    hR0_nonneg hmap hΩ_meas hclosedBall_subset
-    henergy_radius hradial_radius hdefect_loc hcalc hderive
+    (fun {s} {r} hs hsr hr =>
+      weakTheta_increment_eq_weakMonotonicityRhs_of_boundary
+        (n := n) (m := m) (Du := Du) (R0 := R0) (s := s) (r := r)
+        hboundary hcalc.1 hradial_radius hs hsr hr)
 
 end StationaryHarmonicMap
 end LeanStationaryHarmonicMaps
