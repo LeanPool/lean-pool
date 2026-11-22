@@ -125,9 +125,7 @@ theorem norm_mfderiv_toLevel_le (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel x v‖ ≤ ‖v‖ := by
   change ‖fr.dpi x v‖ ≤ ‖v‖
   rw [fr.norm_dpi]
-  have h := fr.norm_sq_split x v
-  nlinarith [norm_nonneg (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v), norm_nonneg v,
-    sq_nonneg ‖fr.dsv x v‖]
+  exact fr.norm_mfderiv_retr_le x v
 
 instance levelIsRiemannianManifold :
     IsRiemannianManifold 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.Level := by

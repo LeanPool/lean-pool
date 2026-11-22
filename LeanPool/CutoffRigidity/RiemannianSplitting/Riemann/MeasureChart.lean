@@ -44,29 +44,8 @@ theorem map_chart_density [LindelofSpace M] {V : M → ℝ} {μ : Measure M}
     (hΞ : ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, F) 1 Ξ.symm Ξ.target) :
     (μ.restrict Ξ.source).map Ξ = (volume.restrict Ξ.target).withDensity
       fun w ↦ ENNReal.ofReal (Real.exp (-V (Ξ.symm w)) * chartDensity Ξ w) := by
-  ext B hB
-  have hpre : MeasurableSet (Ξ ⁻¹' B ∩ Ξ.source) :=
-    Ξ.continuousOn.measurableSet_preimage_inter Ξ.open_source.measurableSet hB
-  have hmeas := Ξ.continuousOn.aemeasurable (μ := μ) Ξ.open_source.measurableSet
-  rw [Measure.map_apply_of_aemeasurable hmeas hB,
-    Measure.restrict_apply' Ξ.open_source.measurableSet, eq_riemannianVolume_withDensity F hμ,
-    withDensity_apply _ hpre, withDensity_apply _ hB, Measure.restrict_restrict hB]
-  have himage : Ξ.symm '' (B ∩ Ξ.target) = Ξ ⁻¹' B ∩ Ξ.source := by
-    ext x
-    constructor
-    · rintro ⟨z, ⟨hzB, hzt⟩, rfl⟩
-      exact ⟨by rwa [mem_preimage, Ξ.right_inv hzt], Ξ.map_target hzt⟩
-    · rintro ⟨hxB, hxs⟩
-      exact ⟨Ξ x, ⟨hxB, Ξ.map_source hxs⟩, Ξ.left_inv hxs⟩
-  let b := stdOrthonormalBasis ℝ F
-  have hBt := hB.inter Ξ.open_target.measurableSet
-  have hcov := b.toBasis.setLIntegral_riemannianVolume_image_of_injOn (I := 𝓘(ℝ, F)) rfl
-    hBt (Ξ.symm.injOn.mono inter_subset_right)
-    (fun z hz ↦ (hΞ.contMDiffAt (Ξ.open_target.mem_nhds hz.2)).mdifferentiableAt one_ne_zero)
-    (fun x ↦ ENNReal.ofReal (Real.exp (-V x)))
-  rw [himage, b.addHaar_eq_volume] at hcov
-  rw [hcov]
-  refine setLIntegral_congr_fun hBt fun z _ ↦ ?_
-  rw [← chartDensity_eq_jacobian, ENNReal.ofReal_mul (Real.exp_nonneg _), mul_comm]
+  rw [eq_riemannianVolume_withDensity F hμ]
+  simpa only [chartDensity_eq_jacobian] using map_canonical_weighted_volume_chart F V Ξ hΞ
+
 
 end CutCur

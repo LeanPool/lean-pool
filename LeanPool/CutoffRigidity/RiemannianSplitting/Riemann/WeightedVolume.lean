@@ -37,23 +37,62 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [MeasurableSpace M] [BorelSpace M]
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)] in
+/-- Push forward the canonical weighted volume in a chart with a `C¹` inverse. -/
+theorem map_canonical_weighted_volume_chart [LindelofSpace M] (V : M → ℝ)
+    (Ξ : OpenPartialHomeomorph M F)
+    (hΞ : ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, F) 1 Ξ.symm Ξ.target) :
+    (((riemannianVolume 𝓘(ℝ, F) M).withDensity
+      (fun x ↦ ENNReal.ofReal (Real.exp (-V x)))).restrict Ξ.source).map Ξ =
+      (volume.restrict Ξ.target).withDensity fun w ↦ ENNReal.ofReal
+        (Real.exp (-V (Ξ.symm w)) *
+          riemannianJacobian (I := 𝓘(ℝ, F)) (stdOrthonormalBasis ℝ F).toBasis Ξ.symm w) := by
+  ext B hB
+  have hpre : MeasurableSet (Ξ ⁻¹' B ∩ Ξ.source) :=
+    Ξ.continuousOn.measurableSet_preimage_inter Ξ.open_source.measurableSet hB
+  have hmeas := Ξ.continuousOn.aemeasurable
+    (μ := (riemannianVolume 𝓘(ℝ, F) M).withDensity (fun x ↦ ENNReal.ofReal (Real.exp (-V x))))
+    Ξ.open_source.measurableSet
+  rw [Measure.map_apply_of_aemeasurable hmeas hB,
+    Measure.restrict_apply' Ξ.open_source.measurableSet,
+    withDensity_apply _ hpre, withDensity_apply _ hB, Measure.restrict_restrict hB]
+  have himage : Ξ.symm '' (B ∩ Ξ.target) = Ξ ⁻¹' B ∩ Ξ.source := by
+    ext x
+    constructor
+    · rintro ⟨z, ⟨hzB, hzt⟩, rfl⟩
+      exact ⟨by rwa [mem_preimage, Ξ.right_inv hzt], Ξ.map_target hzt⟩
+    · rintro ⟨hxB, hxs⟩
+      exact ⟨Ξ x, ⟨hxB, Ξ.map_source hxs⟩, Ξ.left_inv hxs⟩
+  let b := stdOrthonormalBasis ℝ F
+  have hBt := hB.inter Ξ.open_target.measurableSet
+  have hcov := b.toBasis.setLIntegral_riemannianVolume_image_of_injOn (I := 𝓘(ℝ, F)) rfl
+    hBt (Ξ.symm.injOn.mono inter_subset_right)
+    (fun z hz ↦ (hΞ.contMDiffAt (Ξ.open_target.mem_nhds hz.2)).mdifferentiableAt one_ne_zero)
+    (fun x ↦ ENNReal.ofReal (Real.exp (-V x)))
+  rw [himage, b.addHaar_eq_volume] at hcov
+  rw [hcov]
+  refine setLIntegral_congr_fun hBt fun z _ ↦ ?_
+  rw [ENNReal.ofReal_mul (Real.exp_nonneg _), mul_comm]
+
+omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)] in
 private theorem weightedVolume_restrict_chart [LindelofSpace M] {μ : Measure M} {V : M → ℝ}
     (hμ : IsWeightedVolume F μ V) (α : M) :
     μ.restrict (chartAt F α).source = ((riemannianVolume 𝓘(ℝ, F) M).withDensity
       fun x ↦ ENNReal.ofReal (Real.exp (-V x))).restrict (chartAt F α).source := by
   let e := chartAt F α
+  let ν := (riemannianVolume 𝓘(ℝ, F) M).withDensity
+    fun x ↦ ENNReal.ofReal (Real.exp (-V x))
+  have hchart : ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, F) 1 e.symm e.target := by
+    have hd := contMDiffOn_extChartAt_symm (I := 𝓘(ℝ, F)) (n := 1) α
+    simpa [e, extChartAt, OpenPartialHomeomorph.extend] using hd
+  have hmap : (μ.restrict e.source).map e = (ν.restrict e.source).map e := by
+    rw [show (ν.restrict e.source).map e = _ from map_canonical_weighted_volume_chart F V e hchart]
+    change (μ.restrict (chartAt F α).source).map (chartAt F α) = _
+    rw [hμ α]
+    simp only [chartVolumeDensity_eq_jacobian, e]
   ext s hs
   let A : Set F := e.symm ⁻¹' s ∩ e.target
   have hA : MeasurableSet A := e.continuousOn_symm.measurableSet_preimage_inter
     e.open_target.measurableSet hs
-  have hAt : A ⊆ e.target := inter_subset_right
-  have himage : e.symm '' A = s ∩ e.source := by
-    ext x
-    constructor
-    · rintro ⟨z, hz, rfl⟩
-      exact ⟨hz.1, e.map_target hz.2⟩
-    · rintro ⟨hx, hxs⟩
-      exact ⟨e x, ⟨by rwa [mem_preimage, e.left_inv hxs], e.map_source hxs⟩, e.left_inv hxs⟩
   have hpreimage : e ⁻¹' A ∩ e.source = s ∩ e.source := by
     ext x
     simp only [A, mem_preimage, mem_inter_iff]
@@ -62,27 +101,14 @@ private theorem weightedVolume_restrict_chart [LindelofSpace M] {μ : Measure M}
       exact ⟨by simpa only [e.left_inv hxs] using hx, hxs⟩
     · rintro ⟨hx, hxs⟩
       exact ⟨⟨by simpa only [e.left_inv hxs] using hx, e.map_source hxs⟩, hxs⟩
-  have hmap : (μ.restrict e.source).map e A = μ (s ∩ e.source) := by
-    rw [Measure.map_apply_of_aemeasurable
-      (e.continuousOn.aemeasurable e.open_source.measurableSet) hA,
-      Measure.restrict_apply' e.open_source.measurableSet, hpreimage]
-  rw [hμ α, withDensity_apply _ hA, Measure.restrict_restrict hA, inter_eq_left.mpr hAt] at hmap
-  let b := stdOrthonormalBasis ℝ F
-  have hd : ∀ z ∈ A, MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F) e.symm z := by
-    intro z hz
-    have ht : (extChartAt 𝓘(ℝ, F) α).target = e.target := by
-      simp [e, extChartAt, OpenPartialHomeomorph.extend]
-    have htarget : (extChartAt 𝓘(ℝ, F) α).target ∈ 𝓝 z :=
-      ht ▸ e.open_target.mem_nhds (hAt hz)
-    exact ((contMDiffOn_extChartAt_symm (n := 1) α).contMDiffAt htarget).mdifferentiableAt
-      one_ne_zero
-  have hcov := b.toBasis.setLIntegral_riemannianVolume_image_of_injOn (I := 𝓘(ℝ, F)) rfl
-    hA (e.symm.injOn.mono hAt) hd (fun x ↦ ENNReal.ofReal (Real.exp (-V x)))
-  rw [himage, b.addHaar_eq_volume] at hcov
-  simp only [Measure.restrict_apply hs]
-  rw [withDensity_apply _ (hs.inter e.open_source.measurableSet), hcov, ← hmap]
-  refine setLIntegral_congr_fun hA fun z _ ↦ ?_
-  rw [← chartVolumeDensity_eq_jacobian F α z, ENNReal.ofReal_mul (Real.exp_nonneg _), mul_comm]
+  have h := congrArg (fun m : Measure F ↦ m A) hmap
+  rw [Measure.map_apply_of_aemeasurable
+    (e.continuousOn.aemeasurable e.open_source.measurableSet) hA,
+    Measure.map_apply_of_aemeasurable
+    (e.continuousOn.aemeasurable e.open_source.measurableSet) hA,
+    Measure.restrict_apply' e.open_source.measurableSet,
+    Measure.restrict_apply' e.open_source.measurableSet, hpreimage] at h
+  simpa only [e, ν, Measure.restrict_apply hs] using h
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)] in
 /-- The chart definition is the exponential density against canonical Riemannian volume. -/

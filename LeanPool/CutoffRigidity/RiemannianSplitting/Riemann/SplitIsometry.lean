@@ -102,6 +102,13 @@ theorem norm_sq_split (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
   rw [hn] at hPM
   exact hPM
 
+/-- The differential of the level retraction has operator norm at most one. -/
+theorem norm_mfderiv_retr_le (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
+    ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v‖ ≤ ‖v‖ := by
+  have h := fr.norm_sq_split x v
+  nlinarith [norm_nonneg (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v), norm_nonneg v,
+    sq_nonneg ‖fr.dsv x v‖]
+
 end Frame
 
 end CutCur

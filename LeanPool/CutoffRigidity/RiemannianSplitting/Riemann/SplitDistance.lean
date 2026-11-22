@@ -204,15 +204,9 @@ theorem edist_le_aux {x y : M} {r : ℝ≥0∞} (hr : edist (fr.retr x) (fr.retr
   have hℓ0 : 0 ≤ ℓ := intervalIntegral.integral_nonneg zero_le_one (fun τ _ => hg0 τ)
   -- length of the projected path is bounded by that of `c`
   have hℓr : ℓ ≤ r.toReal := by
-    have hN : ∀ (z : M) (v : TangentSpace 𝓘(ℝ, F) z),
-        ‖mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr z v‖ ≤ ‖v‖ := by
-      intro z v
-      have h := fr.norm_sq_split z v
-      nlinarith [norm_nonneg (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr z v), norm_nonneg v,
-        sq_nonneg ‖fr.dsv z v‖]
     have h1 : pathELength 𝓘(ℝ, F) c' 0 1 ≤ pathELength 𝓘(ℝ, F) c 0 1 :=
       CutoffRigidity.pathELength_comp_le_of_norm_mfderiv_le_between
-        (fr.contMDiff_retr.of_le (by simp)) hN hc 0 1
+        (fr.contMDiff_retr.of_le (by simp)) fr.norm_mfderiv_retr_le hc 0 1
     have hint : IntegrableOn g (Icc (0 : ℝ) 1) := hgc.integrableOn_Icc
     have h2 : ENNReal.ofReal ℓ = pathELength 𝓘(ℝ, F) c' 0 1 := by
       rw [pathELength_eq_lintegral_mfderiv_Icc, hℓ, intervalIntegral.integral_of_le zero_le_one,
