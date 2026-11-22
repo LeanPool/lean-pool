@@ -1,0 +1,27 @@
+/-
+Copyright (c) 2026 Michel Hua. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Michel Hua
+-/
+module
+
+public import LeanPool.QuillenSuslin.MonicLocalization
+public import LeanPool.QuillenSuslin.QuillenLemmaTwo
+public import LeanPool.QuillenSuslin.Extended
+public import LeanPool.QuillenSuslin.Glue
+public import LeanPool.QuillenSuslin.Dilation
+
+/-!
+# Projective modules over polynomial rings (toward Quillen–Suslin)
+
+Source: doi:10.1007/BF01390008, url:https://github.com/TauCetiProject/TauCetiRoadmap/pull/2295
+Authors: Michel Hua
+Status: verified
+Main declarations: `LeanPool.QuillenSuslin.isPrincipalIdealRing_monicLocalization`,
+  `LeanPool.QuillenSuslin.isField_monicLocalization`,
+  `LeanPool.QuillenSuslin.isExtendedFrom_iff_evalZero`,
+  `LeanPool.QuillenSuslin.exists_unit_lift_dilation`,
+  `LeanPool.QuillenSuslin.exists_finite_projective_glue`
+Tags: commutative-algebra, projective-modules, polynomial-rings, quillen-suslin, localization
+MSC: 13C10, 13B30, 19A13
+-/
