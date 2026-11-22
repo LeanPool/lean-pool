@@ -65,22 +65,15 @@ theorem isAwayMap_tensorMap {B B' : Type*} [CommRing B] [CommRing B'] [Algebra A
     | tmul b e => rfl
     | add x y hx hy => rw [map_add, hx, hy, map_add]
   have hl : IsLocalizedModule (Submonoid.powers f)
-    (AlgebraTensorModule.rTensor A E β.toLinearMap) := inferInstance
-  refine ⟨?_, fun y => ?_, fun r hr => ?_⟩
-  · rw [Algebra.TensorProduct.algebraMap_apply]
-    exact hu.map (Algebra.TensorProduct.includeLeftRingHom : B' →+* B' ⊗[A] E)
-  · obtain ⟨⟨x, ⟨_, e, rfl⟩⟩, hx⟩ := IsLocalizedModule.surj (Submonoid.powers f)
-      (AlgebraTensorModule.rTensor A E β.toLinearMap) y
-    refine ⟨e, x, ?_⟩
-    rw [hfun, ← hx, ← map_pow, ← Algebra.smul_def]
-    rfl
-  · rw [hfun] at hr
-    obtain ⟨⟨_, e, rfl⟩, he⟩ := IsLocalizedModule.exists_of_eq (S := Submonoid.powers f)
-      (f := AlgebraTensorModule.rTensor A E β.toLinearMap) (x₁ := r) (x₂ := 0)
-      (by rw [hr, map_zero])
-    refine ⟨e, ?_⟩
-    rw [← map_pow, ← Algebra.smul_def]
-    simpa [Submonoid.smul_def] using he
+      (AlgebraTensorModule.rTensor A E β.toLinearMap) := inferInstance
+  have : IsLocalizedModule (Submonoid.powers f)
+      (Algebra.TensorProduct.map β (AlgHom.id A E)).toLinearMap := by
+    rwa [show AlgebraTensorModule.rTensor A E β.toLinearMap =
+      (Algebra.TensorProduct.map β (AlgHom.id A E)).toLinearMap from
+        LinearMap.ext fun x => (congrFun hfun x).symm] at hl
+  refine .of_isLocalizedModule ?_
+  rw [Algebra.TensorProduct.algebraMap_apply]
+  exact hu.map (Algebra.TensorProduct.includeLeftRingHom : B' →+* B' ⊗[A] E)
 
 section Units
 
