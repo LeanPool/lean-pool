@@ -13,7 +13,7 @@ public import LeanPool.GrothendieckUniverses.Order
 /-!
 # Grothendieck universes
 
-Source: url:https://github.com/TauCetiProject/TauCetiRoadmap/pull/1783
+Source: url:https://archive.numdam.org/item/CM_1969__21_1_1_0/
 Authors: Michel Hua
 Status: verified
 Main declarations: `LeanPool.GrothendieckUniverses.isGrothendieckUniverse_vonNeumann`,
