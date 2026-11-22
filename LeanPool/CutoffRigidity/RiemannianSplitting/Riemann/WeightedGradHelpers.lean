@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedProper
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianCoordinateGradient
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferentialOperators
 
 /-! # Small helpers on `mgrad` and `mvfderiv` -/
 

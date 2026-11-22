@@ -15,42 +15,46 @@ public import Mathlib.Geometry.Manifold.Riemannian.Basic
 
 @[expose] public section
 open Bundle Set Filter
-open scoped Manifold Topology
+open scoped Manifold ContDiff Topology
 
 
 namespace CutoffRigidity
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H}
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 2 M]
   [BoundarylessManifold I M]
 
-omit [FiniteDimensional ℝ E] in
-/-- A scalar chart derivative in the actual coordinate direction of `X` equals
-the original intrinsic differential applied to the original tangent vector. -/
-theorem fderiv_chartScalar_direction (x₀ : M) {f : M → ℝ}
-    (hf : MDifferentiableAt I 𝓘(ℝ, ℝ) f x₀)
-    (X : (x : M) → TangentSpace I x) :
-    (fderiv ℝ (f ∘ (extChartAt I x₀).symm) (extChartAt I x₀ x₀))
-      (chartCoordinateField (I := I) x₀ X (extChartAt I x₀ x₀)) =
-      mvfderiv I f x₀ (X x₀) := by
+/-- The scalar derivative in an arbitrary point of the actual chart is the
+intrinsic differential applied to the actual chart frame. -/
+theorem fderiv_chartScalar_frame (x₀ : M) {z : E}
+    (hz : z ∈ (extChartAt I x₀).target) {f : M → ℝ}
+    (hf : MDifferentiableAt I 𝓘(ℝ, ℝ) f ((extChartAt I x₀).symm z)) (v : E) :
+    fderiv ℝ (f ∘ (extChartAt I x₀).symm) z v =
+      mvfderiv I f ((extChartAt I x₀).symm z)
+        (chartFrame (I := I) x₀ v ((extChartAt I x₀).symm z)) := by
   let e := extChartAt I x₀
-  let z := e x₀
-  have hRange : range I ∈ 𝓝 z := range_mem_nhds_isInteriorPoint
-    (BoundarylessManifold.isInteriorPoint (I := I) (x := x₀))
+  let y := e.symm z
+  have hy : y ∈ (chartAt H x₀).source := by
+    simpa only [y, e, extChartAt_source] using e.map_target hz
+  have hround : e y = z := e.right_inv hz
+  have hRange : range I ∈ 𝓝 z := by
+    rw [← hround]
+    have ht := (I.isInteriorPoint_iff_of_mem_atlas (by norm_num : (2 : ℕ∞ω) ≠ 0)
+      (chart_mem_atlas H x₀) hy).mp
+        (BoundarylessManifold.isInteriorPoint (I := I) (x := y))
+    have hi : e y ∈ interior (range I) :=
+      OpenPartialHomeomorph.interior_extend_target_subset_interior_range _ ht
+    exact mem_of_superset (isOpen_interior.mem_nhds hi) interior_subset
   have hsymm : MDifferentiableAt 𝓘(ℝ, E) I e.symm z :=
-    (mdifferentiableWithinAt_extChartAt_symm (mem_extChartAt_target x₀)).mdifferentiableAt hRange
-  have atCenter : (mfderiv 𝓘(ℝ, E) I e.symm z : E →L[ℝ] E) =
-      ContinuousLinearMap.id ℝ E := by
-    rw [← mfderivWithin_of_mem_nhds hRange]
-    exact mfderivWithin_range_extChartAt_symm
-  rw [chartCoordinateField_self]
-  have derivative := mvfderiv_comp_apply_of_eq z hf hsymm
-    (extChartAt_to_inv (I := I) x₀) (X x₀)
+    (mdifferentiableWithinAt_extChartAt_symm hz).mdifferentiableAt hRange
+  have hframe : chartFrame (I := I) x₀ v y = mfderiv 𝓘(ℝ, E) I e.symm z v := by
+    unfold chartFrame chartFrameCLM
+    rw [TangentBundle.symmL_trivializationAt hy, hround, mfderivWithin_of_mem_nhds hRange]
+    rfl
+  rw [hframe]
+  have derivative := mvfderiv_comp_apply z hf hsymm v
   rw [mvfderiv_eq_fderiv] at derivative
-  change (fderiv ℝ (f ∘ e.symm) z) (X x₀) = _
-  refine derivative.trans ?_
-  have applied := congrArg (fun L : E →L[ℝ] E ↦ L (X x₀)) atCenter
-  exact congrArg (fun w : E ↦ mvfderiv I f x₀ w) applied
+  exact derivative
 
 end CutoffRigidity

@@ -7,7 +7,7 @@ Authors: Djalil Chafaï
 -- Modified for Lean Pool.
 
 module
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianCoordinateGradient
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferentialOperators
 
 /-! # Genuine gradient/Hessian calculus in the source smooth domain
 
@@ -23,7 +23,6 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   [FiniteDimensional ℝ E]
   {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H}
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 2 M]
-  [BoundarylessManifold I M]
   [RiemannianBundle (fun x : M => TangentSpace I x)]
   [IsContMDiffRiemannianBundle I 1 E (fun x : M => TangentSpace I x)]
 
@@ -36,18 +35,14 @@ theorem mvfderiv_manifoldGradient_norm_sq_of_C2 {f : M → ℝ}
   mvfderiv_manifoldGradient_norm_sq I
     ((contMDiff_manifoldGradient hf x).mdifferentiableAt one_ne_zero) v
 
-omit [BoundarylessManifold I M] in
-/-- The actual squared Hilbert--Schmidt Hessian norm is the finite sum of
-squares of every tensor coefficient, with no curvature premise. -/
-theorem manifoldHessianNormSq_eq_sum_sq (f : M → ℝ) (x : M) :
-    manifoldHessianNormSq I f x =
-      ∑ i : Fin (Module.finrank ℝ (TangentSpace I x)),
-      ∑ j : Fin (Module.finrank ℝ (TangentSpace I x)),
-        (manifoldHessian I f x ((stdOrthonormalBasis ℝ (TangentSpace I x)) i)
-          ((stdOrthonormalBasis ℝ (TangentSpace I x)) j))^2 := by
-  apply Finset.sum_congr rfl
-  intro i hi
-  exact ((stdOrthonormalBasis ℝ (TangentSpace I x)).sum_sq_inner_left _).symm
+/-- The squared Hessian norm is the sum of squared pairings in any orthonormal basis. -/
+theorem manifoldHessianNormSq_eq_sum_sq {ι : Type*} [Fintype ι] (f : M → ℝ) (x : M)
+    (b : OrthonormalBasis ι ℝ (TangentSpace I x)) :
+    manifoldHessianNormSq I f x = ∑ i, ∑ j, (manifoldHessian I f x (b i) (b j)) ^ 2 := by
+  rw [manifoldHessianNormSq_eq_trace_adjoint, LinearMap.trace_eq_sum_inner _ b]
+  simp only [ContinuousLinearMap.coe_coe, ContinuousLinearMap.comp_apply,
+    ContinuousLinearMap.adjoint_inner_right, real_inner_self_eq_norm_sq]
+  exact Finset.sum_congr rfl (fun i _ ↦ (b.sum_sq_inner_left _).symm)
 
 /-- Product Hessian rule for the true covariant Hessian, with all field
 regularity supplied by the actual C² scalar functions. -/

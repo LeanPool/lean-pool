@@ -10,9 +10,9 @@ module
 
 public import Mathlib.Geometry.Manifold.BumpFunction
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerDefs
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianCoordinateGradient
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChristoffel
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegularChart
+public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldScalarChartDerivative
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartBrackets
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 
 /-! # G2: test functions with prescribed gradient and vanishing Hessian at a point
 

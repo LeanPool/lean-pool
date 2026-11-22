@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerDefs
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegularChart
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
 
 /-! # The drift term in the iterated carré du champ -/

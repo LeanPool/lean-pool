@@ -10,7 +10,6 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianGradientCalculus
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianCoordinateGradient
 
 /-! # Pointwise calculus for the Challenge operators `mgrad`, `carre`
 

@@ -10,6 +10,7 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelFields
 public import Mathlib.Analysis.InnerProductSpace.Trace
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import TauCeti.Geometry.Manifold.Riemannian.Gradient.Basic
 
 /-! # Actual Riemannian gradient, Hessian and Laplacian
 
@@ -40,6 +41,23 @@ theorem inner_manifoldGradient (f : M → ℝ) (x : M) (v : TangentSpace I x) :
     inner ℝ (manifoldGradient I f x) v = mvfderiv I f x v := by
   exact congrArg (fun L : StrongDual ℝ (TangentSpace I x) => L v)
     ((InnerProductSpace.toDual ℝ (TangentSpace I x)).apply_symm_apply (mvfderiv I f x))
+
+omit [IsContMDiffRiemannianBundle I 1 E (fun x : M ↦ TangentSpace I x)] in
+/-- The Riesz representative agrees with Tau Ceti's Riemannian gradient. -/
+theorem manifoldGradient_eq_mgradient (f : M → ℝ) :
+    manifoldGradient I f = TauCeti.Manifold.mgradient I f := by
+  funext x
+  exact (TauCeti.Manifold.eq_mgradient_iff (I := I)).2 (inner_manifoldGradient I f x)
+
+variable {I} in
+/-- A `C²` function has a `C¹` gradient for a `C¹` Riemannian metric. -/
+theorem contMDiff_manifoldGradient {f : M → ℝ}
+    (hf : ContMDiff I 𝓘(ℝ, ℝ) 2 f) :
+    ContMDiff I I.tangent 1 (T% (manifoldGradient I f)) := by
+  rw [manifoldGradient_eq_mgradient]
+  have : IsManifold I ((1 : ℕ∞ω) + 1) M := by
+    simpa only [one_add_one_eq_two] using (inferInstance : IsManifold I 2 M)
+  exact TauCeti.Manifold.contMDiff_mgradient (by simpa only [one_add_one_eq_two] using hf)
 
 /-- The bilinear form given by the covariant derivative of the gradient. -/
 noncomputable def manifoldHessian (f : M → ℝ) (x : M)

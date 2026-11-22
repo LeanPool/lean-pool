@@ -9,8 +9,8 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitFlowGlobal
-public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteFlowLevelProduct
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegularChart
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelFields
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 import TauCeti.Geometry.Manifold.Flow.Complete
 import TauCeti.Geometry.Manifold.Riemannian.Killing.Flow
 
