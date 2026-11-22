@@ -1,0 +1,116 @@
+slug: stable-matching
+title: Stable matching, deferred acceptance and incentives
+summary: The marriage model of two-sided matching on finite sets of men and women with strict
+  preferences, given by injective rank functions in which `none` is staying single, with
+  matchings as partial equivalences. The men-proposing deferred acceptance algorithm of Gale and
+  Shapley, run in rounds, reaches a fixed point within |M|·|W| rounds and returns a stable
+  matching, so every finite market has one; it is the men-optimal stable matching, and the
+  women-proposing algorithm (that of the role swap) is women-optimal and men-pessimal. Stable
+  matchings are Pareto efficient, stability is ordinal and invariant under the role swap, and
+  the two sides have opposed interests. Conway's lattice theorem is proved (each man taking the
+  better, or the worse, of his partners at two stable matchings gives a stable matching, in
+  which each woman gets the worse, or the better, of hers), as is the McVitie–Wilson theorem
+  that the same agents are single at every stable matching. The Gale–Sotomayor blocking lemma
+  gives Roth's weak Pareto optimality of deferred acceptance for the men and the
+  Dubins–Freedman–Roth theorem that truth-telling is a dominant strategy for the men; Roth's
+  impossibility theorem shows that with at least two men and two women no stable mechanism
+  makes truth-telling dominant for every agent. Roth's 2 × 2 market is worked out.
+branch: game theory
+entry_module: LeanPool.StableMatching
+authors:
+- Michel Hua
+source:
+  title: Deferred acceptance algorithms, history, theory, practice, and open questions
+    (A. E. Roth)
+  doi: 10.1007/s00182-008-0117-6
+  url: https://github.com/TauCetiProject/TauCetiRoadmap/pull/2346
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.StableMatching.Market.exists_isStable_man_eq_deferredAcceptance
+- LeanPool.StableMatching.Market.exists_isStable
+- LeanPool.StableMatching.Market.rankM_deferredAcceptance_le
+- LeanPool.StableMatching.Market.exists_isStable_manSup
+- LeanPool.StableMatching.Market.exists_isStable_manInf
+- LeanPool.StableMatching.Market.man_eq_none_iff_of_isStable
+- LeanPool.StableMatching.Market.woman_eq_none_iff_of_isStable
+- LeanPool.StableMatching.Market.not_forall_rankM_lt_deferredAcceptance
+- LeanPool.StableMatching.Market.rankM_deferredAcceptance_le_updateMan
+- LeanPool.StableMatching.not_exists_truthful_stable_mechanism
+main_results:
+- declaration: LeanPool.StableMatching.Market.exists_isStable_man_eq_deferredAcceptance
+  informal: The final proposals of men-proposing deferred acceptance, run for |M|·|W| + 1
+    rounds, are the men's side of a stable matching (Gale–Shapley).
+- declaration: LeanPool.StableMatching.Market.exists_isStable
+  informal: Every marriage market on finite sets of men and women with strict preferences has a
+    stable matching (Gale–Shapley).
+- declaration: LeanPool.StableMatching.Market.rej_mono
+  informal: The rejection sets of deferred acceptance only grow as the number of rounds increases.
+- declaration: LeanPool.StableMatching.Market.step_rej_of_le
+  informal: After at least |M|·|W| rounds, another round leaves the rejection sets unchanged.
+- declaration: LeanPool.StableMatching.Market.rankM_deferredAcceptance_le
+  informal: Every man likes the outcome of men-proposing deferred acceptance at least as well as
+    his partner at any stable matching (Gale–Shapley).
+- declaration: LeanPool.StableMatching.Market.eq_daMatching_of_forall_rankM_le
+  informal: A stable matching that every man likes at least as well as any stable matching is
+    the outcome of men-proposing deferred acceptance.
+- declaration: LeanPool.StableMatching.Market.rankW_le_of_forall_rankM_le
+  informal: If every man likes a matching at least as well as a stable matching ν, then every
+    woman likes ν at least as well as that matching (opposition of interests).
+- declaration: LeanPool.StableMatching.Market.rankW_deferredAcceptance_swap_le
+  informal: Every woman likes the outcome of women-proposing deferred acceptance at least as
+    well as her partner at any stable matching.
+- declaration: LeanPool.StableMatching.Market.rankM_le_swap_daMatching_symm
+  informal: Every man likes any stable matching at least as well as the outcome of
+    women-proposing deferred acceptance.
+- declaration: LeanPool.StableMatching.Market.isStable_swap_iff
+  informal: A matching is stable for a market exactly when its inverse is stable for the market
+    with the roles of men and women exchanged.
+- declaration: LeanPool.StableMatching.Market.isStable_comp_iff
+  informal: Stability is unchanged when every rank function is composed with a strictly
+    monotone map of the natural numbers.
+- declaration: LeanPool.StableMatching.Market.IsStable.not_paretoImproves
+  informal: No matching makes every agent at least as well off as a stable matching and some
+    agent strictly better off.
+- declaration: LeanPool.StableMatching.Market.exists_isStable_manSup
+  informal: For two stable matchings, giving each man the better of his two partners defines a
+    stable matching (Conway).
+- declaration: LeanPool.StableMatching.Market.exists_isStable_manInf
+  informal: For two stable matchings, giving each man the worse of his two partners defines a
+    stable matching (Conway).
+- declaration: LeanPool.StableMatching.Market.man_eq_none_iff_of_isStable
+  informal: The same men are single at every stable matching (McVitie–Wilson).
+- declaration: LeanPool.StableMatching.Market.woman_eq_none_iff_of_isStable
+  informal: The same women are single at every stable matching (McVitie–Wilson).
+- declaration: LeanPool.StableMatching.Market.exists_blocks_of_rankM_lt
+  informal: If an individually rational matching makes some man strictly better off than
+    men-proposing deferred acceptance, it is blocked by a pair whose man is not made better off
+    and whose woman is matched to a man who is (the Gale–Sotomayor blocking lemma).
+- declaration: LeanPool.StableMatching.Market.not_forall_rankM_lt_deferredAcceptance
+  informal: If there is at least one man, no individually rational matching makes every man
+    strictly better off than men-proposing deferred acceptance (Roth).
+- declaration: LeanPool.StableMatching.Market.rankM_deferredAcceptance_le_updateMan
+  informal: No man obtains under men-proposing deferred acceptance, by stating other strict
+    preferences, a partner he truly prefers to the one he gets by stating his true preferences
+    (Dubins–Freedman, Roth).
+- declaration: LeanPool.StableMatching.not_exists_truthful_stable_mechanism
+  informal: With at least two men and two women, no mechanism that returns a stable matching for
+    every market makes truth-telling a dominant strategy for every agent (Roth).
+- declaration: LeanPool.StableMatching.roth22_deferredAcceptance
+  informal: In Roth's 2 × 2 market, men-proposing deferred acceptance gives every man his first
+    choice.
+- declaration: LeanPool.StableMatching.roth22_swap_deferredAcceptance
+  informal: In the same market, women-proposing deferred acceptance gives every woman her first
+    choice.
+tags:
+- stable-matching
+- deferred-acceptance
+- gale-shapley
+- matching-markets
+- mechanism-design
+msc:
+- 91B68
+- 91A80
+- 05C70
