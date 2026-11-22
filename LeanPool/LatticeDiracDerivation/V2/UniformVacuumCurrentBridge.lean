@@ -310,15 +310,12 @@ theorem uniform_positive_rest_density_noether_bridge
       -4 * uniformNativePhaseDensity
         (uniformRestPositivePhase r position).1
         (uniformRestPositivePhase r position).2 := by
-  simp [uniformPhaseSpaceDensity, cubicalCell4Density,
-    uniformActionToStandardDirac, uniformRestPositivePhase,
-    uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
-    cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-    cubicalStandardSpatial,
-    uniformNativePhaseDensity,
-    uniformScalarPhasePair, Complex.normSq, Complex.mul_re,
-    Complex.mul_im, Fin.sum_univ_succ]
-  field_simp [hr]
+  have hcharge : uniformNativePhaseDensity (uniformRestPositivePhase r position).1
+      (uniformRestPositivePhase r position).2 = -r * uniformCell2Density position :=
+    uniform_native_u1_positive_frequency r position
+  rw [uniformPhaseSpaceDensity, uniform_rest_positive_readout_eq_double r hr position, hcharge]
+  simp [cubicalCell4Density, cubicalUpperEmbedding, uniformCell2Density,
+    Complex.normSq, Fin.sum_univ_succ, two_mul]
   ring
 
 theorem uniform_positive_rest_dirac_current_zero
@@ -326,16 +323,11 @@ theorem uniform_positive_rest_dirac_current_zero
     (position : UniformCell2) :
     uniformPhaseSpaceCurrent axis r (fun _ => 0)
       (uniformRestPositivePhase r position) = 0 := by
+  rw [uniformPhaseSpaceCurrent, uniform_rest_positive_readout_eq_double r hr position]
   fin_cases axis <;>
-    simp [uniformPhaseSpaceCurrent, cubicalDiracCurrent,
-      cubicalCell4RealPair, cubicalVelocityOperator,
-      uniformActionToStandardDirac, uniformRestPositivePhase,
-      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
-      cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalStandardSpatial, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Complex.mul_re, Complex.mul_im, Fin.sum_univ_succ] <;>
-    field_simp [hr] <;> ring
+    simp [cubicalDiracCurrent, cubicalCell4RealPair, cubicalVelocityOperator, cubicalUpperEmbedding,
+      cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ, Fin.sum_univ_succ,
+      two_mul]
 
 theorem uniform_native_bond_current_zero_at_rest
     (weight : ℝ) (amplitude : ℂ) :

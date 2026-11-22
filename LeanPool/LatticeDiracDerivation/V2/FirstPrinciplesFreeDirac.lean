@@ -162,6 +162,32 @@ def uniformRestNegativePhase
     (r : ℝ) (position : UniformCell2) : UniformTwoChannelPhase :=
   (position, fun component => I * (r : ℂ) * position component)
 
+private theorem cubical_spatial_lower_zero (position : UniformCell2) :
+    cubicalSpatialLower 0 0 0 position = 0 := by
+  funext component
+  fin_cases component <;> simp [cubicalSpatialLower, cubicalStandardSpatial]
+
+/-- The positive rest mode reads out as twice its upper-block embedding. -/
+theorem uniform_rest_positive_readout_eq_double (r : ℝ) (hr : r ≠ 0) (position : UniformCell2) :
+    uniformActionToStandardDirac r (fun _ => 0) (uniformRestPositivePhase r position) =
+      2 • cubicalUpperEmbedding position := by
+  have hrC : (r : ℂ) ≠ 0 := by exact_mod_cast hr
+  have hlower :
+      cubicalPhaseLower (r : ℂ) 0 0 0 (uniformRestPositivePhase r position) = position := by
+    funext component
+    simp only [cubicalPhaseLower, uniformRestPositivePhase, cubical_spatial_lower_zero,
+      Pi.zero_apply, add_zero]
+    apply (div_eq_iff hrC).2
+    rw [← mul_assoc, ← mul_assoc, mul_neg, Complex.I_mul_I, neg_neg, one_mul, mul_comm]
+  have hcoordinate (axis : Fin 3) : (c19ScaledMomentum (fun _ => 0) axis : ℂ) = 0 := by
+    simp [c19ScaledMomentum]
+  have hposition : (uniformRestPositivePhase r position).1 = position := rfl
+  unfold uniformActionToStandardDirac
+  simp only [uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, hcoordinate]
+  funext component
+  fin_cases component <;>
+    simp [cubicalPhaseReadout, cubicalUpperEmbedding, hlower, hposition, add_comm, two_mul]
+
 /-- The cube-parity beta grading is forced by the native positive rest
 frequency after the lossless phase-space reconstruction. -/
 theorem uniform_rest_positive_readout_has_positive_beta
@@ -171,15 +197,9 @@ theorem uniform_rest_positive_readout_has_positive_beta
           (uniformRestPositivePhase r position)) =
       uniformActionToStandardDirac r (fun _ => 0)
         (uniformRestPositivePhase r position) := by
+  rw [uniform_rest_positive_readout_eq_double r hr position]
   funext component
-  fin_cases component <;>
-    simp [uniformActionToStandardDirac, uniformRestPositivePhase,
-      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
-      cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
-    field_simp [hr] <;> ring_nf <;> rw [Complex.I_sq] <;> ring
+  fin_cases component <;> simp [cubicalStandardBeta, cubicalUpperEmbedding, two_mul]
 
 /-- The opposite native rest frequency lands in the negative beta sector. -/
 theorem uniform_rest_negative_readout_has_negative_beta

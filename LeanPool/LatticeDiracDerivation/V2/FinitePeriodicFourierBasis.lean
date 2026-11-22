@@ -8,16 +8,14 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
 public import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
 
 /-!
 # Completeness of the quantized periodic C19 modes
 
-`FinitePeriodicTangent` constructs a compatible C19 mode for every label in
-`(ZMod L) ^ 3`.  This module proves those labels give every complex character
-of the finite cubic torus, and hence index a basis of all complex scalar
-fields on that torus.  No continuum momentum or spinor premise is used.
+The quantized labels in `(ZMod L) ^ 3` give all complex characters of the
+finite cubic torus, and hence index a basis of its complex scalar fields.
 -/
 
 @[expose] public section

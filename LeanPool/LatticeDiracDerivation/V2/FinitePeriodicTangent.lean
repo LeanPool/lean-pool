@@ -9,7 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
-public import Mathlib.Analysis.SpecialFunctions.Complex.CircleAddChar
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
 
 /-!
 # The full finite periodic action and its Fourier tangent
@@ -54,22 +54,12 @@ def periodicC19ZeroMode (L : ℕ) [NeZero L] :
 
 /-! ## Every quantized finite-torus Fourier mode -/
 
-/-- The native momentum labels of the finite cubic torus.  This has exactly
-`L ^ 3` elements, the same number as `PeriodicCubicSite L`. -/
-abbrev PeriodicCubicMomentum (L : ℕ) := Fin 3 → ZMod L
-
 /-- Real momentum chart for a finite-torus label.  The use of `ZMod.val`
 chooses the usual representatives `0,...,L-1`; different representatives
 give the same character. -/
 def periodicQuantizedMomentum (L : ℕ)
     (mode : PeriodicCubicMomentum L) : LatticeMomentum :=
   fun axis => 2 * Real.pi * (mode axis).val / L
-
-/-- The product character of the three cyclic axes, written as one standard
-additive character. -/
-def periodicQuantizedCharacter (L : ℕ) [NeZero L]
-    (mode : PeriodicCubicMomentum L) (site : PeriodicCubicSite L) : ℂ :=
-  ZMod.stdAddChar (∑ axis : Fin 3, mode axis * site axis)
 
 private theorem periodic_quantized_step_sum
     (L : ℕ) [NeZero L] (mode : PeriodicCubicMomentum L)
