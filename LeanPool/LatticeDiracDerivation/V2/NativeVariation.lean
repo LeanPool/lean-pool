@@ -12,7 +12,6 @@ public import LeanPool.LatticeDiracDerivation.NativeAction
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Pow
-public import Mathlib.Analysis.InnerProductSpace.Basic
 
 /-!
 # Generic first variation of the native two-field action
@@ -32,10 +31,7 @@ open BigOperators
 
 /-- The ordinary real derivative used for first and second variations of the action. -/
 abbrev AnalyticHasDerivAt (f : ℝ → ℝ) (f' x : ℝ) : Prop :=
-  @HasDerivAt ℝ inferInstance ℝ
-    Real.normedAddCommGroup.toAddCommGroup
-    RCLike.toInnerProductSpaceReal.toModule
-    inferInstance inferInstance f f' x
+  HasDerivAt f f' x
 
 /-- The real bilinear pairing underlying the Hermitian product on the native fields. -/
 def c3RealPair (u v : C3) : ℝ :=

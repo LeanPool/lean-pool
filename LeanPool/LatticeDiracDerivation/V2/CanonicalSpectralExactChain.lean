@@ -259,27 +259,6 @@ theorem canonical_spectral_verlet_local_defect_is_little_o_dt_sq
   simpa using ((Complex.continuous_ofReal.tendsto 0).mul
     tendsto_const_nhds)
 
-/-- The Hamiltonian and position-space forms agree for arbitrary
-four-component data; this lemma is independent of how the data were read out. -/
-theorem cubical_standard_hamiltonian_is_position_dirac
-    (mass : ℝ) (momentum : LatticeMomentum) (z : CubicalCell4) :
-    (fun component =>
-      -I * cubicalStandardHamiltonian (mass : ℂ)
-        (uniformContinuumPx momentum)
-        (uniformContinuumPy momentum)
-        (uniformContinuumPz momentum) z component) =
-      cubicalDiracTimeDerivative mass z
-        (uniformPlaneWaveSpatialDerivative momentum z) := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalDiracTimeDerivative, uniformPlaneWaveSpatialDerivative,
-      cubicalVelocityOperator, uniformContinuumPx, uniformContinuumPy,
-      uniformContinuumPz, cubicalStandardHamiltonian,
-      cubicalStandardSpatial, cubicalStandardBeta,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, Fin.sum_univ_succ] <;>
-    ring_nf
-
 /-- Synthesize the spinor field from finitely many canonical spectral modes. -/
 def finiteSpectralDiracField [Fintype Mode]
     (mass : ℝ) (energy : Mode → ℝ)

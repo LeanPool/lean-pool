@@ -379,6 +379,79 @@ theorem spectral_normalization_coefficient
   rw [hscale]
   nlinarith
 
+private def pauliSpatialLinear (px py pz : ℝ) : UniformCell2 →ₗ[ℂ] UniformCell2 where
+  toFun := positivePauliSpatial px py pz
+  map_add' first second := by
+    funext component
+    fin_cases component <;> simp [positivePauliSpatial] <;> ring
+  map_smul' scale field := by
+    funext component
+    fin_cases component <;> simp [positivePauliSpatial] <;> ring
+
+private def spectralBlock (spatial : UniformCell2 →ₗ[ℂ] UniformCell2)
+    (diagonal offDiagonal : ℂ) (first second : UniformCell2) : UniformCell2 :=
+  diagonal • first + offDiagonal • spatial second
+
+private theorem spectralBlock_smul (spatial : UniformCell2 →ₗ[ℂ] UniformCell2)
+    (a b c : ℂ) (u v : UniformCell2) :
+    spectralBlock spatial a b (c • u) (c • v) = c • spectralBlock spatial a b u v := by
+  simp only [spectralBlock, map_smul, smul_add, smul_comm a c, smul_comm b c]
+
+private theorem spectralBlock_comp (px py pz : ℝ) (a b coefficient : ℂ)
+    (hcoeff : a ^ 2 + b ^ 2 * ((px ^ 2 + py ^ 2 + pz ^ 2 : ℝ) : ℂ) = coefficient)
+    (u v : UniformCell2) :
+    let spatial := pauliSpatialLinear px py pz
+    spectralBlock spatial a (-b) (spectralBlock spatial a b u v)
+        (spectralBlock spatial a (-b) v u) = coefficient • u := by
+  dsimp only
+  have hSquare : pauliSpatialLinear px py pz (pauliSpatialLinear px py pz u) =
+      ((px ^ 2 + py ^ 2 + pz ^ 2 : ℝ) : ℂ) • u :=
+    positive_pauli_spatial_square px py pz u
+  simp only [spectralBlock, map_add, map_smul, hSquare]
+  funext i
+  simp only [Pi.smul_apply, Pi.add_apply, smul_eq_mul]
+  linear_combination u i * hcoeff
+
+private theorem spectralEmbedding_halves (mass energy px py pz : ℝ)
+    (positive negative : UniformCell2) :
+    let a : ℂ := positiveFrequencyScale mass energy
+    let b : ℂ := positiveFrequencyRatio mass energy
+    let spatial := pauliSpatialLinear px py pz
+    let z : CubicalCell4 := fun component ↦
+      normalizedPositiveFrequencyEmbedding mass energy px py pz positive component +
+        normalizedNegativeFrequencyEmbedding mass energy px py pz negative component
+    cubicalCell4Upper z = spectralBlock spatial a (-b) positive negative ∧
+      cubicalCell4LowerHalf z = spectralBlock spatial a b negative positive := by
+  constructor <;> funext component <;> fin_cases component <;>
+    simp [cubicalCell4Upper, cubicalCell4LowerHalf, normalizedPositiveFrequencyEmbedding,
+      normalizedNegativeFrequencyEmbedding, spectralBlock, pauliSpatialLinear, add_comm]
+
+private theorem spectralCoordinates_blocks (mass energy px py pz : ℝ) (z : CubicalCell4) :
+    let a : ℂ := positiveFrequencyScale mass energy
+    let b : ℂ := positiveFrequencyRatio mass energy
+    let spatial := pauliSpatialLinear px py pz
+    spectralPositiveCoordinate mass energy px py pz z =
+      (energy : ℂ)⁻¹ • spectralBlock spatial a b (cubicalCell4Upper z) (cubicalCell4LowerHalf z) ∧
+    spectralNegativeCoordinate mass energy px py pz z =
+      (energy : ℂ)⁻¹ •
+        spectralBlock spatial a (-b) (cubicalCell4LowerHalf z) (cubicalCell4Upper z) := by
+  constructor <;> funext component <;>
+    simp [spectralPositiveCoordinate, spectralNegativeCoordinate, spectralBlock,
+      pauliSpatialLinear, div_eq_mul_inv, mul_comm, add_comm]
+
+private theorem spectralNormalization_complex (mass energy px py pz : ℝ)
+    (hpositive : 0 < energy + mass)
+    (hshell : energy ^ 2 = mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2) :
+    (positiveFrequencyScale mass energy : ℂ) ^ 2 +
+        (positiveFrequencyRatio mass energy : ℂ) ^ 2 *
+          ((px ^ 2 + py ^ 2 + pz ^ 2 : ℝ) : ℂ) = (energy : ℂ) := by
+  exact_mod_cast spectral_normalization_coefficient mass energy px py pz hpositive hshell
+
+private theorem spectral_cancel_energy (energy : ℝ) (henergy : energy ≠ 0) (u : UniformCell2) :
+    (energy : ℂ)⁻¹ • ((energy : ℂ) • u) = u := by
+  have he : (energy : ℂ) ≠ 0 := by exact_mod_cast henergy
+  rw [smul_smul, inv_mul_cancel₀ he, one_smul]
+
 theorem spectral_coordinates_extract_embeddings
     (mass energy px py pz : ℝ)
     (henergy : energy ≠ 0) (hpositive : 0 < energy + mass)
@@ -390,26 +463,24 @@ theorem spectral_coordinates_extract_embeddings
     spectralPositiveCoordinate mass energy px py pz z = positive ∧
       spectralNegativeCoordinate mass energy px py pz z = negative := by
   dsimp only
-  have hcoeff := spectral_normalization_coefficient
-    mass energy px py pz hpositive hshell
-  have hcoeffC :
-      (positiveFrequencyScale mass energy : ℂ) ^ 2 +
-          (positiveFrequencyRatio mass energy : ℂ) ^ 2 *
-            ((px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2) =
-        (energy : ℂ) := by
-    exact_mod_cast hcoeff
-  constructor <;> funext component <;> fin_cases component <;>
-    simp [spectralPositiveCoordinate, spectralNegativeCoordinate,
-      cubicalCell4Upper, cubicalCell4LowerHalf,
-      normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial] <;>
-    field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring_nf <;>
-    first
-    | linear_combination positive 0 * hcoeffC
-    | linear_combination positive 1 * hcoeffC
-    | linear_combination negative 0 * hcoeffC
-    | linear_combination negative 1 * hcoeffC
+  let a : ℂ := positiveFrequencyScale mass energy
+  let b : ℂ := positiveFrequencyRatio mass energy
+  have hcoeff := spectralNormalization_complex mass energy px py pz hpositive hshell
+  have hpos := spectralBlock_comp px py pz a (-b) energy (by simpa only [neg_sq] using hcoeff)
+    positive negative
+  have hneg := spectralBlock_comp px py pz a b energy hcoeff negative positive
+  have hhalves := spectralEmbedding_halves mass energy px py pz positive negative
+  let z : CubicalCell4 := fun component ↦
+    normalizedPositiveFrequencyEmbedding mass energy px py pz positive component +
+      normalizedNegativeFrequencyEmbedding mass energy px py pz negative component
+  change spectralPositiveCoordinate mass energy px py pz z = positive ∧
+    spectralNegativeCoordinate mass energy px py pz z = negative
+  have hcoords := spectralCoordinates_blocks mass energy px py pz z
+  constructor
+  · rw [hcoords.1, hhalves.1, hhalves.2]
+    simp only [a, b, neg_neg] at hpos
+    rw [hpos, spectral_cancel_energy energy henergy]
+  · rw [hcoords.2, hhalves.1, hhalves.2, hneg, spectral_cancel_energy energy henergy]
 
 theorem canonical_spectral_readout_left_inverse
     (mass energy px py pz : ℝ)
@@ -447,27 +518,36 @@ theorem spectral_embeddings_reconstruct_cell
           (spectralPositiveCoordinate mass energy px py pz z) component +
         normalizedNegativeFrequencyEmbedding mass energy px py pz
           (spectralNegativeCoordinate mass energy px py pz z) component) = z := by
-  have hcoeff := spectral_normalization_coefficient
-    mass energy px py pz hpositive hshell
-  have hcoeffC :
-      (positiveFrequencyScale mass energy : ℂ) ^ 2 +
-          (positiveFrequencyRatio mass energy : ℂ) ^ 2 *
-            ((px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2) =
-        (energy : ℂ) := by
-    exact_mod_cast hcoeff
+  let result : CubicalCell4 := fun component ↦
+    normalizedPositiveFrequencyEmbedding mass energy px py pz
+        (spectralPositiveCoordinate mass energy px py pz z) component +
+      normalizedNegativeFrequencyEmbedding mass energy px py pz
+        (spectralNegativeCoordinate mass energy px py pz z) component
+  change result = z
+  let a : ℂ := positiveFrequencyScale mass energy
+  let b : ℂ := positiveFrequencyRatio mass energy
+  have hcoeff := spectralNormalization_complex mass energy px py pz hpositive hshell
+  have hpos := spectralBlock_comp px py pz a b energy hcoeff
+    (cubicalCell4Upper z) (cubicalCell4LowerHalf z)
+  have hneg := spectralBlock_comp px py pz a (-b) energy (by simpa only [neg_sq] using hcoeff)
+    (cubicalCell4LowerHalf z) (cubicalCell4Upper z)
+  simp only [a, b, neg_neg] at hneg
+  have hhalves := spectralEmbedding_halves mass energy px py pz
+    (spectralPositiveCoordinate mass energy px py pz z)
+    (spectralNegativeCoordinate mass energy px py pz z)
+  have hcoords := spectralCoordinates_blocks mass energy px py pz z
+  have hupper : cubicalCell4Upper result = cubicalCell4Upper z := by
+    rw [show cubicalCell4Upper result = _ from hhalves.1, hcoords.1, hcoords.2, spectralBlock_smul,
+      hpos, spectral_cancel_energy energy henergy]
+  have hlower : cubicalCell4LowerHalf result = cubicalCell4LowerHalf z := by
+    rw [show cubicalCell4LowerHalf result = _ from hhalves.2, hcoords.1, hcoords.2,
+      spectralBlock_smul, hneg, spectral_cancel_energy energy henergy]
   funext component
-  fin_cases component <;>
-    simp [spectralPositiveCoordinate, spectralNegativeCoordinate,
-      cubicalCell4Upper, cubicalCell4LowerHalf,
-      normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial] <;>
-    field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring_nf <;>
-    first
-    | linear_combination z 0 * hcoeffC
-    | linear_combination z 1 * hcoeffC
-    | linear_combination z 2 * hcoeffC
-    | linear_combination z 3 * hcoeffC
+  fin_cases component
+  · exact congrFun hupper 0
+  · exact congrFun hupper 1
+  · exact congrFun hlower 0
+  · exact congrFun hlower 1
 
 theorem canonical_spectral_readout_right_inverse
     (mass energy px py pz : ℝ)
