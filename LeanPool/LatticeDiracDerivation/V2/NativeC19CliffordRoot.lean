@@ -284,14 +284,13 @@ theorem cubical_kahler_dirac_eq_incidence_linear
     cubicalKahlerDirac amplitude =
       cubicalIncidenceLinear 1 1 1 amplitude := by
   funext corner
-  fin_cases corner <;>
-    simp [cubicalKahlerDirac, cubicalExteriorDerivative,
-      cubicalExteriorCoderivative, cubicalCoboundaryAxis,
-      cubicalBoundaryAxis, cubicalAxisBit, cubicalIncidenceLinear,
-      cubicalGamma, cubicalIncidenceSign, cubicalFlip,
-      cubicalFlip0, cubicalFlip1, cubicalFlip2,
-      cubicalBit0, cubicalBit1, cubicalBit2, Fin.sum_univ_succ] <;>
-    ring
+  unfold cubicalKahlerDirac cubicalExteriorDerivative cubicalExteriorCoderivative
+    cubicalIncidenceLinear
+  rw [← Finset.sum_add_distrib]
+  simp only [Fin.sum_univ_three, one_mul]
+  rw [congrFun (cubical_boundary_coboundary_axis_eq_gamma 0 amplitude) corner,
+    congrFun (cubical_boundary_coboundary_axis_eq_gamma 1 amplitude) corner,
+    congrFun (cubical_boundary_coboundary_axis_eq_gamma 2 amplitude) corner]
 
 /-- Every weighted first-order root used below is therefore a weighted
 oriented-cell incidence operator, not an independently introduced matrix. -/
@@ -462,19 +461,14 @@ theorem native_c19_root_square_is_exact_hessian_minus_remainder
 
 /-! ## Four-component coordinates are downstream -/
 
-/-- Read the four independent coordinates of the negative flavor fiber.
-This is a coordinate chart, not an additional field. -/
-def negativeFlavorCoordinateRead (amplitude : CubicalCell8) : CubicalCell4
-  | 0 => amplitude 0
-  | 1 => amplitude 5
-  | 2 => amplitude 4
-  | _ => -amplitude 1
+/-- The shared readout for the negative flavor sector. -/
+abbrev negativeFlavorCoordinateRead := cubicalNegativeFlavorRead
 
 theorem negative_flavor_coordinate_read_embed (z : CubicalCell4) :
     negativeFlavorCoordinateRead (cubicalDiracEmbedMinus z) = z := by
   funext component
   fin_cases component <;>
-    simp [negativeFlavorCoordinateRead, cubicalDiracEmbedMinus,
+    simp [negativeFlavorCoordinateRead, cubicalNegativeFlavorRead, cubicalDiracEmbedMinus,
       cubicalEmbedMinus, standardToCubicalMinus]
 
 /-- The four-coordinate spatial operator is obtained by applying the

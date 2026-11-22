@@ -282,10 +282,7 @@ theorem uniform_positive_rest_density_noether_bridge
     uniformActionToStandardDirac, uniformRestPositivePhase,
     uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
     cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-    orientedCubicalSpatialCoordinates,
-    negativeFlavorCoordinateRead, cubicalNativeSpatial,
-    cubicalIncidenceLinear, cubicalGamma, cubicalIncidenceSign,
-    cubicalFlip, cubicalFlip0, cubicalFlip1, cubicalFlip2,
+    cubicalStandardSpatial,
     uniformNativePhaseDensity,
     uniformScalarPhasePair, Complex.normSq, Complex.mul_re,
     Complex.mul_im, Fin.sum_univ_succ]
@@ -303,10 +300,7 @@ theorem uniform_positive_rest_dirac_current_zero
       uniformActionToStandardDirac, uniformRestPositivePhase,
       uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
       cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-      orientedCubicalSpatialCoordinates, negativeFlavorCoordinateRead,
-      cubicalNativeSpatial, cubicalIncidenceLinear, cubicalGamma,
-      cubicalIncidenceSign, cubicalFlip, cubicalFlip0,
-      cubicalFlip1, cubicalFlip2, cubicalStandardAlphaX,
+      cubicalStandardSpatial, cubicalStandardAlphaX,
       cubicalStandardAlphaY, cubicalStandardAlphaZ,
       Complex.mul_re, Complex.mul_im, Fin.sum_univ_succ] <;>
     field_simp [hr] <;> ring

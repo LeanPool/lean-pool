@@ -504,15 +504,22 @@ twelve edge bonds, not an estimated continuum coefficient. -/
 theorem c19_axis_absolute_weight_sum (axis : Fin 3) :
     ∑ direction : C19Neighbor,
       c19Weight direction * |(c19Coord axis direction : ℝ)| = 12 := by
-  have count : ∀ a : Fin 3, (∑ d : C19Neighbor,
-      (if d.val < 6 then 2 else 1) * (c19Coord a d).natAbs) = (12 : ℕ) := by
-    -- The count consists of three finite sums over the eighteen stencil offsets.
+  have coordinateSquare : ∀ (a : Fin 3) (d : C19Neighbor),
+      |c19Coord a d| = c19Coord a d * c19Coord a d := by
+    -- The finite coordinate table takes values in {−1, 0, 1}.
     decide
-  have castCount := congrArg (fun n : ℕ ↦ (n : ℝ)) (count axis)
-  push_cast at castCount
-  have absCast (n : ℤ) : (n.natAbs : ℝ) = |(n : ℝ)| := by
-    rw [← Int.cast_natCast, Int.natCast_natAbs, Int.cast_abs]
-  simpa only [c19Weight, absCast] using castCount
+  have moment : c19SecondMoment axis axis = 12 := by
+    simpa using c19_second_moment_isotropic axis axis
+  calc
+    _ = (c19SecondMoment axis axis : ℝ) := by
+      simp only [c19SecondMoment, Int.cast_sum, Int.cast_mul, ← c19_weight_is_integer_weight]
+      apply Finset.sum_congr rfl
+      intro direction _
+      have hs : |(c19Coord axis direction : ℝ)| =
+          (c19Coord axis direction : ℝ) * (c19Coord axis direction : ℝ) := by
+        exact_mod_cast coordinateSquare axis direction
+      rw [hs, mul_assoc]
+    _ = 12 := by exact_mod_cast moment
 
 /-- The sine error on every C19 bond is cubic in the momentum radius. -/
 theorem c19_sine_phase_error_bound

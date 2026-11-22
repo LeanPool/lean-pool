@@ -72,13 +72,6 @@ def cubicalPositiveFlavorRead (amplitude : CubicalCell8) : CubicalCell4
   | 2 => amplitude 1
   | _ => amplitude 4
 
-/-- Four standard coordinates recovered from a negative-flavor amplitude. -/
-def cubicalNegativeFlavorRead (amplitude : CubicalCell8) : CubicalCell4
-  | 0 => amplitude 0
-  | 1 => amplitude 5
-  | 2 => amplitude 4
-  | _ => -amplitude 1
-
 theorem positive_flavor_is_exactly_plus_embedding
     (amplitude : CubicalCell8) (hflavor : cubicalFlavor amplitude = amplitude) :
     cubicalDiracEmbedPlus (cubicalPositiveFlavorRead amplitude) = amplitude := by

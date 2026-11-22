@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import Mathlib.Basic.Complex.Basic
+public import Mathlib.LinearAlgebra.Pi
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.FunProp
@@ -285,6 +286,13 @@ def cubicalDiracEmbedMinus (z : CubicalCell4) : CubicalCell8 :=
 def cubicalDiracEmbedPlus (z : CubicalCell4) : CubicalCell8 :=
   cubicalEmbedPlus (standardToCubicalPlus z)
 
+/-- Four standard coordinates recovered from a negative-flavor amplitude. -/
+def cubicalNegativeFlavorRead (amplitude : CubicalCell8) : CubicalCell4
+  | 0 => amplitude 0
+  | 1 => amplitude 5
+  | 2 => amplitude 4
+  | _ => -amplitude 1
+
 theorem cubical_dirac_embed_minus_injective :
     Function.Injective cubicalDiracEmbedMinus := by
   intro first second h
@@ -338,33 +346,96 @@ theorem cubical_beta_intertwines_plus (z : CubicalCell4) :
       standardToCubicalPlus, cubicalStandardBeta,
       cubicalBit0, cubicalBit1, cubicalBit2]
 
+/-- The standard four-component matrix of an oriented cube axis. -/
+def cubicalStandardAxis : Fin 3 → CubicalCell4 → CubicalCell4
+  | 0 => cubicalStandardAlphaZ
+  | 1 => fun z => -cubicalStandardAlphaY z
+  | _ => fun z => -cubicalStandardAlphaX z
+
+/-- Embed standard spinors into the negative flavor sector as a complex linear map. -/
+def cubicalDiracLinearEmbedMinus : CubicalCell4 →ₗ[ℂ] CubicalCell8 where
+  toFun := cubicalDiracEmbedMinus
+  map_add' first second := by
+    funext corner
+    fin_cases corner <;>
+      simp [cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus, mul_add] <;> ring
+  map_smul' scalar amplitude := by
+    funext corner
+    fin_cases corner <;>
+      simp [cubicalDiracEmbedMinus, cubicalEmbedMinus, standardToCubicalMinus] <;> ring
+
+theorem cubical_gamma_intertwines_minus (axis : Fin 3) (z : CubicalCell4) :
+    cubicalGamma axis (cubicalDiracEmbedMinus z) =
+      cubicalDiracEmbedMinus (cubicalStandardAxis axis z) := by
+  funext corner
+  fin_cases axis <;> fin_cases corner <;>
+    simp [cubicalGamma, cubicalIncidenceSign, cubicalFlip, cubicalFlip0,
+      cubicalFlip1, cubicalFlip2, cubicalDiracEmbedMinus, cubicalEmbedMinus,
+      standardToCubicalMinus, cubicalStandardAxis, cubicalStandardAlphaX,
+      cubicalStandardAlphaY, cubicalStandardAlphaZ, cubicalBit0, cubicalBit1] <;>
+    ring_nf <;> rw [Complex.I_sq] <;> ring
+
+/-- Embed standard spinors into the positive flavor sector as a complex linear map. -/
+def cubicalDiracLinearEmbedPlus : CubicalCell4 →ₗ[ℂ] CubicalCell8 where
+  toFun := cubicalDiracEmbedPlus
+  map_add' first second := by
+    funext corner
+    fin_cases corner <;>
+      simp [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus, mul_add] <;> ring
+  map_smul' scalar amplitude := by
+    funext corner
+    fin_cases corner <;>
+      simp [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus] <;> ring
+
+theorem cubical_gamma_intertwines_plus (axis : Fin 3) (z : CubicalCell4) :
+    cubicalGamma axis (cubicalDiracEmbedPlus z) =
+      cubicalDiracEmbedPlus (cubicalStandardAxis axis z) := by
+  funext corner
+  fin_cases axis <;> fin_cases corner <;>
+    simp [cubicalGamma, cubicalIncidenceSign, cubicalFlip, cubicalFlip0,
+      cubicalFlip1, cubicalFlip2, cubicalDiracEmbedPlus, cubicalEmbedPlus,
+      standardToCubicalPlus, cubicalStandardAxis, cubicalStandardAlphaX,
+      cubicalStandardAlphaY, cubicalStandardAlphaZ, cubicalBit0, cubicalBit1] <;>
+    ring_nf <;> rw [Complex.I_sq] <;> ring
+
+private theorem cubical_standard_spatial_eq_axis_sum
+    (px py pz : ℂ) (z : CubicalCell4) :
+    cubicalStandardSpatial px py pz z =
+      pz • cubicalStandardAxis 0 z + (-py) • cubicalStandardAxis 1 z +
+        (-px) • cubicalStandardAxis 2 z := by
+  funext component
+  simp [cubicalStandardSpatial, cubicalStandardAxis]
+  ring
+
 theorem cubical_native_spatial_intertwines_minus
     (px py pz : ℂ) (z : CubicalCell4) :
     cubicalNativeSpatial px py pz (cubicalDiracEmbedMinus z) =
       cubicalDiracEmbedMinus (cubicalStandardSpatial px py pz z) := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalNativeSpatial, cubicalIncidenceLinear, cubicalGamma,
-      cubicalIncidenceSign, cubicalFlip, cubicalFlip0, cubicalFlip1,
-      cubicalFlip2, cubicalDiracEmbedMinus, cubicalEmbedMinus,
-      standardToCubicalMinus, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, cubicalBit0, cubicalBit1] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  change _ = cubicalDiracLinearEmbedMinus (cubicalStandardSpatial px py pz z)
+  rw [cubical_standard_spatial_eq_axis_sum,
+    map_add, map_add, map_smul, map_smul, map_smul]
+  change _ =
+    pz • cubicalDiracEmbedMinus (cubicalStandardAxis 0 z) +
+      (-py) • cubicalDiracEmbedMinus (cubicalStandardAxis 1 z) +
+      (-px) • cubicalDiracEmbedMinus (cubicalStandardAxis 2 z)
+  rw [← cubical_gamma_intertwines_minus, ← cubical_gamma_intertwines_minus,
+    ← cubical_gamma_intertwines_minus]
+  rfl
 
 theorem cubical_native_spatial_intertwines_plus
     (px py pz : ℂ) (z : CubicalCell4) :
     cubicalNativeSpatial px py pz (cubicalDiracEmbedPlus z) =
       cubicalDiracEmbedPlus (cubicalStandardSpatial px py pz z) := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalNativeSpatial, cubicalIncidenceLinear, cubicalGamma,
-      cubicalIncidenceSign, cubicalFlip, cubicalFlip0, cubicalFlip1,
-      cubicalFlip2, cubicalDiracEmbedPlus, cubicalEmbedPlus,
-      standardToCubicalPlus, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, cubicalBit0, cubicalBit1] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  change _ = cubicalDiracLinearEmbedPlus (cubicalStandardSpatial px py pz z)
+  rw [cubical_standard_spatial_eq_axis_sum,
+    map_add, map_add, map_smul, map_smul, map_smul]
+  change _ =
+    pz • cubicalDiracEmbedPlus (cubicalStandardAxis 0 z) +
+      (-py) • cubicalDiracEmbedPlus (cubicalStandardAxis 1 z) +
+      (-px) • cubicalDiracEmbedPlus (cubicalStandardAxis 2 z)
+  rw [← cubical_gamma_intertwines_plus, ← cubical_gamma_intertwines_plus,
+    ← cubical_gamma_intertwines_plus]
+  rfl
 
 theorem cubical_hamiltonian_intertwines_minus
     (mass px py pz : ℂ) (z : CubicalCell4) :
