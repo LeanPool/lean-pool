@@ -142,6 +142,10 @@ def c19ContinuumSpeed : ℝ := Real.sqrt 12
 theorem c19_continuum_speed_square : c19ContinuumSpeed ^ 2 = 12 := by
   norm_num [c19ContinuumSpeed]
 
+/-- The physical momentum along an axis, scaled by the C19 propagation speed. -/
+def c19ScaledMomentum (momentum : LatticeMomentum) (axis : Fin 3) : ℝ :=
+  c19ContinuumSpeed * momentum axis
+
 theorem normSq_one_sub_exp_I (angle : ℝ) :
     Complex.normSq
         (1 - Complex.exp (Complex.I * (angle : ℂ))) =
@@ -154,6 +158,12 @@ theorem normSq_one_sub_exp_I (angle : ℝ) :
 /-- The quadratic approximation of the C19 transport symbol at zero momentum. -/
 def c19QuadraticSymbol (momentum : LatticeMomentum) : ℝ :=
   12 * (momentum 0 ^ 2 + momentum 1 ^ 2 + momentum 2 ^ 2)
+
+theorem c19_quadratic_symbol_eq_scaled_momentum (momentum : LatticeMomentum) :
+    c19QuadraticSymbol momentum = c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 + c19ScaledMomentum momentum 2 ^ 2 := by
+  simp only [c19QuadraticSymbol, c19ScaledMomentum, mul_pow, c19_continuum_speed_square]
+  ring
 
 theorem c19_quadratic_symbol_is_phase_square_sum
     (momentum : LatticeMomentum) :

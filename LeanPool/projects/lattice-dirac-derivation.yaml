@@ -7,8 +7,9 @@ summary: >-
   four-component sectors carrying the same free generator. The development
   gives finite-periodic Fourier completeness, a bijective spectral readout,
   spatial and centered-time defect estimates, and the integrated
-  positive-frequency charge and current identities. The action fixes the
-  kinetic normalization at 1197.
+  positive-frequency charge and current identities. The conventional chi-field
+  kinetic coefficient is 1197. The transverse result holds for every value of
+  that coefficient.
 branch: mathematical physics
 entry_module: LeanPool.LatticeDiracDerivation
 authors:

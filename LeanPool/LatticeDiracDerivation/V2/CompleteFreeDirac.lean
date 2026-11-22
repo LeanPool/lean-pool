@@ -441,16 +441,16 @@ theorem lfm_positive_frequency_c19_flux_is_dirac_current
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (hpositive : 0 < energy + mass)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (axis : Fin 3) (q : UniformCell2) :
     uniformNativePositiveAxisFlux momentum axis q =
       cubicalDiracCurrent axis
         (normalizedPositiveFrequencyEmbedding mass energy
-          (c19ContinuumSpeed * momentum 0)
-          (c19ContinuumSpeed * momentum 1)
-          (c19ContinuumSpeed * momentum 2) q) +
+          (c19ScaledMomentum momentum 0)
+          (c19ScaledMomentum momentum 1)
+          (c19ScaledMomentum momentum 2) q) +
         finiteC19CurrentRemainder momentum axis q :=
   native_plane_wave_flux_is_dirac_current_plus_remainder
     mass energy momentum hpositive hshell axis q
@@ -463,25 +463,25 @@ theorem lfm_canonical_spectral_positive_c19_flux_is_dirac_current
     (henergy : energy ≠ 0)
     (hpositive : 0 < energy + mass)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (axis : Fin 3) (q : UniformCell2) :
     let nativePhase :=
       nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)
     uniformNativePositiveAxisFlux momentum axis q =
       cubicalDiracCurrent axis
         (canonicalSpectralReadout mass energy
-          (c19ContinuumSpeed * momentum 0)
-          (c19ContinuumSpeed * momentum 1)
-          (c19ContinuumSpeed * momentum 2) nativePhase) +
+          (c19ScaledMomentum momentum 0)
+          (c19ScaledMomentum momentum 1)
+          (c19ScaledMomentum momentum 2) nativePhase) +
         finiteC19CurrentRemainder momentum axis q := by
   dsimp only
   rw [canonical_spectral_readout_positive_phase
     mass energy
-    (c19ContinuumSpeed * momentum 0)
-    (c19ContinuumSpeed * momentum 1)
-    (c19ContinuumSpeed * momentum 2) henergy q]
+    (c19ScaledMomentum momentum 0)
+    (c19ScaledMomentum momentum 1)
+    (c19ScaledMomentum momentum 2) henergy q]
   exact native_plane_wave_flux_is_dirac_current_plus_remainder
     mass energy momentum hpositive hshell axis q
 
@@ -649,9 +649,9 @@ structure CompleteFreeDiracCertificate : Prop where
       (momentum : LatticeMomentum) (mass energy : ℝ),
     mass ≠ 0 → energy ≠ 0 → energy + mass ≠ 0 →
     energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2 →
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2 →
     ∀ (mode : PeriodicC19FourierMode L momentum) phase,
     periodicNativeTransverseTangentGenerator mass
         (periodicFullNativeTangentEmbed mode phase) =
@@ -671,9 +671,9 @@ structure CompleteFreeDiracCertificate : Prop where
   canonicalSpectralCenteredUpdate : ∀ mass energy dt momentum,
     energy ≠ 0 → energy + mass ≠ 0 → dt ≠ 0 →
     energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2 →
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2 →
     ∀ phase,
     canonicalSpectralMomentumReadout mass energy momentum
         (uniformCenteredDifferenceQuotient mass dt momentum phase) =
@@ -810,9 +810,9 @@ structure CompleteFreeDiracCertificate : Prop where
     (∀ mode, energy mode ≠ 0) →
     (∀ mode, energy mode + mass ≠ 0) →
     (∀ mode, (energy mode) ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum mode 0) ^ 2 +
-      (c19ContinuumSpeed * momentum mode 1) ^ 2 +
-      (c19ContinuumSpeed * momentum mode 2) ^ 2) →
+      c19ScaledMomentum (momentum mode) 0 ^ 2 +
+      c19ScaledMomentum (momentum mode) 1 ^ 2 +
+      c19ScaledMomentum (momentum mode) 2 ^ 2) →
     ∀ site,
     finiteSpectralNativeTimeDerivative mass energy momentum phase site =
       fun component =>
@@ -905,33 +905,33 @@ structure CompleteFreeDiracCertificate : Prop where
       (momentum : LatticeMomentum),
     0 < energy + mass →
     energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2 →
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2 →
     ∀ axis q,
     uniformNativePositiveAxisFlux momentum axis q =
       cubicalDiracCurrent axis
         (normalizedPositiveFrequencyEmbedding mass energy
-          (c19ContinuumSpeed * momentum 0)
-          (c19ContinuumSpeed * momentum 1)
-          (c19ContinuumSpeed * momentum 2) q) +
+          (c19ScaledMomentum momentum 0)
+          (c19ScaledMomentum momentum 1)
+          (c19ScaledMomentum momentum 2) q) +
         finiteC19CurrentRemainder momentum axis q
   canonicalSpectralC19Flux : ∀ (mass energy : ℝ)
       (momentum : LatticeMomentum),
     energy ≠ 0 → 0 < energy + mass →
     energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2 →
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2 →
     ∀ axis q,
     let nativePhase :=
       nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)
     uniformNativePositiveAxisFlux momentum axis q =
       cubicalDiracCurrent axis
         (canonicalSpectralReadout mass energy
-          (c19ContinuumSpeed * momentum 0)
-          (c19ContinuumSpeed * momentum 1)
-          (c19ContinuumSpeed * momentum 2) nativePhase) +
+          (c19ScaledMomentum momentum 0)
+          (c19ScaledMomentum momentum 1)
+          (c19ScaledMomentum momentum 2) nativePhase) +
         finiteC19CurrentRemainder momentum axis q
   arbitraryNoetherIdentificationRejected :
     uniformNativePhaseDensity uniformNoetherMismatchPhase.1
@@ -949,9 +949,9 @@ structure CompleteFreeDiracCertificate : Prop where
     (∀ mode, energy mode ≠ 0) →
     (∀ mode, 0 < energy mode + mass) →
     (∀ mode, (energy mode) ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0) ^ 2 +
-      (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1) ^ 2 +
-      (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2) ^ 2) →
+      c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+      c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+      c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2) →
     periodicAveragedDiracDensity
         (periodicPositiveSpectralPacket L mass energy amplitude) =
       periodicAveragedNativePositiveCharge L energy amplitude
@@ -962,9 +962,9 @@ structure CompleteFreeDiracCertificate : Prop where
     (∀ mode, energy mode ≠ 0) →
     (∀ mode, 0 < energy mode + mass) →
     (∀ mode, (energy mode) ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0) ^ 2 +
-      (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1) ^ 2 +
-      (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2) ^ 2) →
+      c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+      c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+      c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2) →
     ∀ axis,
     periodicAveragedNativePositiveAxisFlux L axis amplitude =
       periodicAveragedDiracCurrent axis

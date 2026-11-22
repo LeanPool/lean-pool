@@ -520,15 +520,15 @@ theorem canonical_spectral_positive_phase_has_native_density_current
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (henergy : energy ≠ 0) (hpositive : 0 < energy + mass)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (axis : Fin 3) (q : UniformCell2) :
     cubicalCell4Density
         (canonicalSpectralReadout mass energy
-          (c19ContinuumSpeed * momentum 0)
-          (c19ContinuumSpeed * momentum 1)
-          (c19ContinuumSpeed * momentum 2)
+          (c19ScaledMomentum momentum 0)
+          (c19ScaledMomentum momentum 1)
+          (c19ScaledMomentum momentum 2)
           (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0))) =
       -uniformNativePhaseDensity
         (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)).1
@@ -536,22 +536,22 @@ theorem canonical_spectral_positive_phase_has_native_density_current
     uniformNativePositiveAxisFlux momentum axis q =
       cubicalDiracCurrent axis
         (canonicalSpectralReadout mass energy
-          (c19ContinuumSpeed * momentum 0)
-          (c19ContinuumSpeed * momentum 1)
-          (c19ContinuumSpeed * momentum 2)
+          (c19ScaledMomentum momentum 0)
+          (c19ScaledMomentum momentum 1)
+          (c19ScaledMomentum momentum 2)
           (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0))) +
         finiteC19CurrentRemainder momentum axis q := by
   have hread := canonical_spectral_readout_positive_phase mass energy
-    (c19ContinuumSpeed * momentum 0)
-    (c19ContinuumSpeed * momentum 1)
-    (c19ContinuumSpeed * momentum 2) henergy q
+    (c19ScaledMomentum momentum 0)
+    (c19ScaledMomentum momentum 1)
+    (c19ScaledMomentum momentum 2) henergy q
   constructor
   · rw [hread]
     simpa [nativePhaseOfFrequencyAmplitudes] using
       normalized_density_is_positive_native_u1 mass energy
-        (c19ContinuumSpeed * momentum 0)
-        (c19ContinuumSpeed * momentum 1)
-        (c19ContinuumSpeed * momentum 2) hpositive hshell q
+        (c19ScaledMomentum momentum 0)
+        (c19ScaledMomentum momentum 1)
+        (c19ScaledMomentum momentum 2) hpositive hshell q
   · rw [hread]
     exact native_plane_wave_flux_is_dirac_current_plus_remainder
       mass energy momentum hpositive hshell axis q

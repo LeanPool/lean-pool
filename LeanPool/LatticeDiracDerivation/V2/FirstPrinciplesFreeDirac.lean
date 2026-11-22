@@ -36,15 +36,15 @@ def uniformTwoChannelKleinGordonVector
 
 /-- The first physical momentum coordinate, scaled by the C19 propagation speed. -/
 def uniformContinuumPx (momentum : LatticeMomentum) : ℂ :=
-  (c19ContinuumSpeed * momentum 0 : ℝ)
+  (c19ScaledMomentum momentum 0 : ℝ)
 
 /-- The second physical momentum coordinate, scaled by the C19 propagation speed. -/
 def uniformContinuumPy (momentum : LatticeMomentum) : ℂ :=
-  (c19ContinuumSpeed * momentum 1 : ℝ)
+  (c19ScaledMomentum momentum 1 : ℝ)
 
 /-- The third physical momentum coordinate, scaled by the C19 propagation speed. -/
 def uniformContinuumPz (momentum : LatticeMomentum) : ℂ :=
-  (c19ContinuumSpeed * momentum 2 : ℝ)
+  (c19ScaledMomentum momentum 2 : ℝ)
 
 theorem uniform_continuum_generator_is_kg
     (r : ℝ) (momentum : LatticeMomentum)
@@ -54,17 +54,13 @@ theorem uniform_continuum_generator_is_kg
         (uniformContinuumPx momentum)
         (uniformContinuumPy momentum)
         (uniformContinuumPz momentum) phase := by
-  have hc : ((c19ContinuumSpeed : ℂ) ^ 2) = 12 := by
-    exact_mod_cast c19_continuum_speed_square
   have hcoefficient :
       (((r ^ 2 + c19QuadraticSymbol momentum : ℝ) : ℂ)) =
         (r : ℂ) ^ 2 + (uniformContinuumPx momentum) ^ 2 +
           (uniformContinuumPy momentum) ^ 2 +
           (uniformContinuumPz momentum) ^ 2 := by
-    simp only [uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19QuadraticSymbol,
-      ofReal_add, ofReal_pow, ofReal_mul, ofReal_ofNat, mul_pow]
-    rw [hc]
-    ring
+    simp only [uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
+      c19_quadratic_symbol_eq_scaled_momentum, ofReal_add, ofReal_pow, add_assoc]
   apply Prod.ext
   · rfl
   · funext component
@@ -177,7 +173,7 @@ theorem uniform_rest_positive_readout_has_positive_beta
   funext component
   fin_cases component <;>
     simp [uniformActionToStandardDirac, uniformRestPositivePhase,
-      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
+      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
       cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
       cubicalUpperEmbedding, cubicalStandardSpatial,
       cubicalStandardBeta, cubicalStandardAlphaX,
@@ -196,7 +192,7 @@ theorem uniform_rest_negative_readout_has_negative_beta
   funext component
   fin_cases component <;>
     simp [uniformActionToStandardDirac, uniformRestNegativePhase,
-      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
+      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
       cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
       cubicalUpperEmbedding, cubicalStandardSpatial,
       cubicalStandardBeta, cubicalStandardAlphaX,

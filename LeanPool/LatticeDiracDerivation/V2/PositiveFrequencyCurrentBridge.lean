@@ -609,29 +609,29 @@ theorem native_plane_wave_flux_is_dirac_current_plus_remainder
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (hpositive : 0 < energy + mass)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (axis : Fin 3) (q : UniformCell2) :
     uniformNativePositiveAxisFlux momentum axis q =
       cubicalDiracCurrent axis
         (normalizedPositiveFrequencyEmbedding mass energy
-          (c19ContinuumSpeed * momentum 0)
-          (c19ContinuumSpeed * momentum 1)
-          (c19ContinuumSpeed * momentum 2) q) +
+          (c19ScaledMomentum momentum 0)
+          (c19ScaledMomentum momentum 1)
+          (c19ScaledMomentum momentum 2) q) +
         finiteC19CurrentRemainder momentum axis q := by
   rw [uniform_native_positive_axis_flux_eq_finite_c19,
     finite_c19_flux_is_continuum_plus_remainder,
     normalized_positive_frequency_current mass energy
-      (c19ContinuumSpeed * momentum 0)
-      (c19ContinuumSpeed * momentum 1)
-      (c19ContinuumSpeed * momentum 2) hpositive hshell q axis]
+      (c19ScaledMomentum momentum 0)
+      (c19ScaledMomentum momentum 1)
+      (c19ScaledMomentum momentum 2) hpositive hshell q axis]
   have hspeed := c19_continuum_speed_square
   have hspeedMul : c19ContinuumSpeed * c19ContinuumSpeed = 12 := by
     simpa [pow_two] using hspeed
   fin_cases axis <;>
-    simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue, one_ne_zero,
-      Fin.reduceEq, ↓reduceIte, add_left_inj, mul_eq_mul_right_iff] <;>
+    simp only [c19ScaledMomentum, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.isValue,
+      one_ne_zero, Fin.reduceEq, ↓reduceIte, add_left_inj, mul_eq_mul_right_iff] <;>
     rw [← hspeedMul] <;> ring_nf <;> simp
 
 end

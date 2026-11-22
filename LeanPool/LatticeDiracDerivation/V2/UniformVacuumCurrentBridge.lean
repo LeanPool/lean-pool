@@ -57,6 +57,26 @@ def cubicalVelocityOperator
   | _ => fun component =>
       (c19ContinuumSpeed : ℂ) * cubicalStandardAlphaZ z component
 
+theorem cubical_velocity_sum {Mode : Type*} [Fintype Mode]
+    (axis : Fin 3) (field : Mode → CubicalCell4) :
+    cubicalVelocityOperator axis
+        (fun component => ∑ mode, field mode component) =
+      fun component => ∑ mode,
+        cubicalVelocityOperator axis (field mode) component := by
+  funext component
+  fin_cases axis <;> fin_cases component <;>
+    simp [cubicalVelocityOperator, cubicalStandardAlphaX,
+      cubicalStandardAlphaY, cubicalStandardAlphaZ,
+      Finset.mul_sum]
+
+theorem cubical_velocity_mul (axis : Fin 3) (scale : ℂ) (spinor : CubicalCell4) :
+    cubicalVelocityOperator axis (fun component => scale * spinor component) =
+      fun component => scale * cubicalVelocityOperator axis spinor component := by
+  funext component
+  fin_cases axis <;> fin_cases component <;>
+    simp [cubicalVelocityOperator, cubicalStandardAlphaX,
+      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
+
 /-- Shift just the specified component of the physical momentum. -/
 def cubicalShiftMomentum
     (axis : Fin 3) (delta : ℂ) (px py pz : ℂ) : Fin 3 → ℂ
@@ -152,7 +172,7 @@ theorem cubical_standard_hamiltonian_is_position_dirac
   fin_cases component <;>
     simp [cubicalDiracTimeDerivative, uniformPlaneWaveSpatialDerivative,
       cubicalVelocityOperator, uniformContinuumPx, uniformContinuumPy,
-      uniformContinuumPz, cubicalStandardHamiltonian,
+      uniformContinuumPz, c19ScaledMomentum, cubicalStandardHamiltonian,
       cubicalStandardSpatial, cubicalStandardBeta,
       cubicalStandardAlphaX, cubicalStandardAlphaY,
       cubicalStandardAlphaZ, Fin.sum_univ_succ] <;>
@@ -292,7 +312,7 @@ theorem uniform_positive_rest_density_noether_bridge
         (uniformRestPositivePhase r position).2 := by
   simp [uniformPhaseSpaceDensity, cubicalCell4Density,
     uniformActionToStandardDirac, uniformRestPositivePhase,
-    uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
+    uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
     cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
     cubicalStandardSpatial,
     uniformNativePhaseDensity,
@@ -310,7 +330,7 @@ theorem uniform_positive_rest_dirac_current_zero
     simp [uniformPhaseSpaceCurrent, cubicalDiracCurrent,
       cubicalCell4RealPair, cubicalVelocityOperator,
       uniformActionToStandardDirac, uniformRestPositivePhase,
-      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
+      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
       cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
       cubicalStandardSpatial, cubicalStandardAlphaX,
       cubicalStandardAlphaY, cubicalStandardAlphaZ,
@@ -343,7 +363,7 @@ theorem uniform_native_noether_is_not_arbitrary_dirac_density :
   · unfold uniformPhaseSpaceDensity cubicalCell4Density
     simp [uniformActionToStandardDirac, cubicalPhaseReadout,
       cubicalPhaseLower, cubicalSpatialLower, cubicalUpperEmbedding,
-      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz,
+      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
       uniformNoetherMismatchPhase, cubicalStandardSpatial,
       cubicalStandardAlphaX, cubicalStandardAlphaY,
       cubicalStandardAlphaZ, Complex.normSq, Fin.sum_univ_succ]

@@ -35,9 +35,9 @@ def canonicalSpectralMomentumReadout
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (phase : UniformTwoChannelPhase) : CubicalCell4 :=
   canonicalSpectralReadout mass energy
-    (c19ContinuumSpeed * momentum 0)
-    (c19ContinuumSpeed * momentum 1)
-    (c19ContinuumSpeed * momentum 2) phase
+    (c19ScaledMomentum momentum 0)
+    (c19ScaledMomentum momentum 1)
+    (c19ScaledMomentum momentum 2) phase
 
 theorem canonical_spectral_readout_additive
     (mass energy px py pz : ℝ)
@@ -86,9 +86,9 @@ theorem canonical_spectral_continuum_generator_exact
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (henergy : energy ≠ 0) (hdenom : energy + mass ≠ 0)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (phase : UniformTwoChannelPhase) :
     canonicalSpectralMomentumReadout mass energy momentum
         (uniformVacuumContinuumGenerator mass momentum phase) =
@@ -102,9 +102,9 @@ theorem canonical_spectral_continuum_generator_exact
   unfold canonicalSpectralMomentumReadout
   rw [uniform_continuum_generator_is_kg]
   exact canonical_spectral_readout_intertwines mass energy
-    (c19ContinuumSpeed * momentum 0)
-    (c19ContinuumSpeed * momentum 1)
-    (c19ContinuumSpeed * momentum 2) henergy hdenom hshell phase
+    (c19ScaledMomentum momentum 0)
+    (c19ScaledMomentum momentum 1)
+    (c19ScaledMomentum momentum 2) henergy hdenom hshell phase
 
 /-- The exact finite-C19 generator, not its continuum replacement, passes
 through the same canonical spectral map. -/
@@ -112,9 +112,9 @@ theorem canonical_spectral_native_generator_exact
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (henergy : energy ≠ 0) (hdenom : energy + mass ≠ 0)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (phase : UniformTwoChannelPhase) :
     canonicalSpectralMomentumReadout mass energy momentum
         (uniformVacuumNativeGenerator mass momentum phase) =
@@ -140,9 +140,9 @@ theorem periodic_full_native_action_to_canonical_spectral
     (mass energy : ℝ) (hmass : mass ≠ 0)
     (henergy : energy ≠ 0) (hdenom : energy + mass ≠ 0)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (mode : PeriodicC19FourierMode L momentum)
     (phase : UniformTwoChannelPhase) :
     periodicNativeTransverseTangentGenerator mass
@@ -173,9 +173,9 @@ theorem canonical_spectral_centered_update_exact
     (henergy : energy ≠ 0) (hdenom : energy + mass ≠ 0)
     (hdt : dt ≠ 0)
     (hshell : energy ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum 0) ^ 2 +
-      (c19ContinuumSpeed * momentum 1) ^ 2 +
-      (c19ContinuumSpeed * momentum 2) ^ 2)
+      c19ScaledMomentum momentum 0 ^ 2 +
+      c19ScaledMomentum momentum 1 ^ 2 +
+      c19ScaledMomentum momentum 2 ^ 2)
     (phase : UniformTwoChannelPhase) :
     canonicalSpectralMomentumReadout mass energy momentum
         (uniformCenteredDifferenceQuotient mass dt momentum phase) =
@@ -325,9 +325,9 @@ theorem finite_spectral_tangent_obeys_position_space_dirac [Fintype Mode]
     (henergy : ∀ mode, energy mode ≠ 0)
     (hdenom : ∀ mode, energy mode + mass ≠ 0)
     (hshell : ∀ mode, (energy mode) ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum mode 0) ^ 2 +
-      (c19ContinuumSpeed * momentum mode 1) ^ 2 +
-      (c19ContinuumSpeed * momentum mode 2) ^ 2)
+      c19ScaledMomentum (momentum mode) 0 ^ 2 +
+      c19ScaledMomentum (momentum mode) 1 ^ 2 +
+      c19ScaledMomentum (momentum mode) 2 ^ 2)
     (site : InfiniteCubicSite) :
     finiteSpectralDiracTimeDerivative mass energy momentum phase site =
       cubicalDiracTimeDerivative mass
@@ -434,9 +434,9 @@ theorem finite_spectral_native_c19_obeys_position_dirac_with_remainder
     (henergy : ∀ mode, energy mode ≠ 0)
     (hdenom : ∀ mode, energy mode + mass ≠ 0)
     (hshell : ∀ mode, (energy mode) ^ 2 = mass ^ 2 +
-      (c19ContinuumSpeed * momentum mode 0) ^ 2 +
-      (c19ContinuumSpeed * momentum mode 1) ^ 2 +
-      (c19ContinuumSpeed * momentum mode 2) ^ 2)
+      c19ScaledMomentum (momentum mode) 0 ^ 2 +
+      c19ScaledMomentum (momentum mode) 1 ^ 2 +
+      c19ScaledMomentum (momentum mode) 2 ^ 2)
     (site : InfiniteCubicSite) :
     finiteSpectralNativeTimeDerivative mass energy momentum phase site =
       fun component =>

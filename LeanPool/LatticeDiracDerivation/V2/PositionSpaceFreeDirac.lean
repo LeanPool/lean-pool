@@ -92,18 +92,6 @@ theorem cubical_standard_beta_sum [Fintype Mode]
   funext component
   fin_cases component <;> simp [cubicalStandardBeta]
 
-theorem cubical_velocity_sum [Fintype Mode]
-    (axis : Fin 3) (field : Mode → CubicalCell4) :
-    cubicalVelocityOperator axis
-        (fun component => ∑ mode, field mode component) =
-      fun component => ∑ mode,
-        cubicalVelocityOperator axis (field mode) component := by
-  funext component
-  fin_cases axis <;> fin_cases component <;>
-    simp [cubicalVelocityOperator, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Finset.mul_sum]
-
 theorem cubical_dirac_time_derivative_sum [Fintype Mode]
     (mass : ℝ) (field : Mode → CubicalCell4)
     (spatialDerivative : Mode → Fin 3 → CubicalCell4) :

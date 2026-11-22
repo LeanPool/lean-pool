@@ -155,9 +155,9 @@ def periodicPositiveSpectralPacket
   fun site component => periodicScalarSynthesis L
     (fun mode =>
       canonicalSpectralReadout mass (energy mode)
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0)
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1)
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2)
+        (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
+        (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
+        (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
         (nativePhaseOfFrequencyAmplitudes (energy mode)
           (amplitude mode) (fun _ => 0)) component) site
 
@@ -177,9 +177,9 @@ theorem periodic_positive_spectral_packet_density
     (hpositive : ∀ mode, 0 < energy mode + mass)
     (hshell : ∀ mode,
       (energy mode) ^ 2 = mass ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0) ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1) ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2) ^ 2) :
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2) :
     periodicAveragedDiracDensity
         (periodicPositiveSpectralPacket L mass energy amplitude) =
       ∑ mode, energy mode * uniformCell2Density (amplitude mode) := by
@@ -189,9 +189,9 @@ theorem periodic_positive_spectral_packet_density
   rw [Complex.re_sum]
   apply congrArg (fun f : PeriodicCubicMomentum L → ℝ => ∑ mode, f mode)
   funext mode
-  let px := c19ContinuumSpeed * periodicQuantizedMomentum L mode 0
-  let py := c19ContinuumSpeed * periodicQuantizedMomentum L mode 1
-  let pz := c19ContinuumSpeed * periodicQuantizedMomentum L mode 2
+  let px := c19ScaledMomentum (periodicQuantizedMomentum L mode) 0
+  let py := c19ScaledMomentum (periodicQuantizedMomentum L mode) 1
+  let pz := c19ScaledMomentum (periodicQuantizedMomentum L mode) 2
   let nativePhase := nativePhaseOfFrequencyAmplitudes
     (energy mode) (amplitude mode) (fun _ => 0)
   have hread : canonicalSpectralReadout mass (energy mode) px py pz
@@ -217,9 +217,9 @@ theorem periodic_integrated_positive_packet_charge_bridge
     (hpositive : ∀ mode, 0 < energy mode + mass)
     (hshell : ∀ mode,
       (energy mode) ^ 2 = mass ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0) ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1) ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2) ^ 2) :
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2) :
     periodicAveragedDiracDensity
         (periodicPositiveSpectralPacket L mass energy amplitude) =
       periodicAveragedNativePositiveCharge L energy amplitude := by
@@ -383,13 +383,13 @@ theorem periodic_cell4_synthesis_velocity
       (periodicCell4Synthesis L amplitude site)) =
       periodicCell4Synthesis L
         (fun mode => cubicalVelocityOperator axis (amplitude mode)) := by
-  funext site component
-  fin_cases axis <;> fin_cases component <;>
-    simp [periodicCell4Synthesis, periodicScalarSynthesis,
-      cubicalVelocityOperator, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Finset.mul_sum] <;>
-    ring_nf
+  funext site
+  change cubicalVelocityOperator axis (fun component => ∑ mode,
+      periodicQuantizedAddChar L mode site * amplitude mode component) =
+    fun component => ∑ mode, periodicQuantizedAddChar L mode site *
+      cubicalVelocityOperator axis (amplitude mode) component
+  rw [cubical_velocity_sum]
+  simp_rw [cubical_velocity_mul]
 
 theorem periodic_cell4_synthesis_velocity_component
     (L : ℕ) [NeZero L] (axis : Fin 3)
@@ -426,17 +426,17 @@ theorem periodic_positive_spectral_packet_current
         (periodicPositiveSpectralPacket L mass energy amplitude) =
       ∑ mode, cubicalDiracCurrent axis
         (canonicalSpectralReadout mass (energy mode)
-          (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0)
-          (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1)
-          (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2)
+          (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
+          (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
+          (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
           (nativePhaseOfFrequencyAmplitudes (energy mode)
             (amplitude mode) (fun _ => 0))) := by
   exact periodic_averaged_dirac_current_diagonalizes L axis
     (fun mode =>
       canonicalSpectralReadout mass (energy mode)
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0)
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1)
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2)
+        (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
+        (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
+        (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
         (nativePhaseOfFrequencyAmplitudes (energy mode)
           (amplitude mode) (fun _ => 0)))
 
@@ -451,9 +451,9 @@ theorem periodic_integrated_positive_packet_current_bridge
     (hpositive : ∀ mode, 0 < energy mode + mass)
     (hshell : ∀ mode,
       (energy mode) ^ 2 = mass ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0) ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1) ^ 2 +
-        (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2) ^ 2)
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2)
     (axis : Fin 3) :
     periodicAveragedNativePositiveAxisFlux L axis amplitude =
       periodicAveragedDiracCurrent axis
@@ -466,9 +466,9 @@ theorem periodic_integrated_positive_packet_current_bridge
   apply Finset.sum_congr rfl
   intro mode _
   rw [canonical_spectral_readout_positive_phase mass (energy mode)
-    (c19ContinuumSpeed * periodicQuantizedMomentum L mode 0)
-    (c19ContinuumSpeed * periodicQuantizedMomentum L mode 1)
-    (c19ContinuumSpeed * periodicQuantizedMomentum L mode 2)
+    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
+    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
+    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
     (henergy mode) (amplitude mode)]
   exact native_plane_wave_flux_is_dirac_current_plus_remainder
     mass (energy mode) (periodicQuantizedMomentum L mode)

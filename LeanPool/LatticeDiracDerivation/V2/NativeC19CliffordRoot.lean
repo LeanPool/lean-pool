@@ -357,15 +357,15 @@ theorem c19_incidence_scale_unique
 second moment.  The signed axis permutation is an orientation convention; it
 does not change the square. -/
 def nativeC19Px (momentum : LatticeMomentum) : ℂ :=
-  (c19ContinuumSpeed * momentum 0 : ℝ)
+  (c19ScaledMomentum momentum 0 : ℝ)
 
 /-- The second continuum momentum component in the oriented C19 root. -/
 def nativeC19Py (momentum : LatticeMomentum) : ℂ :=
-  (c19ContinuumSpeed * momentum 1 : ℝ)
+  (c19ScaledMomentum momentum 1 : ℝ)
 
 /-- The third continuum momentum component in the oriented C19 root. -/
 def nativeC19Pz (momentum : LatticeMomentum) : ℂ :=
-  (c19ContinuumSpeed * momentum 2 : ℝ)
+  (c19ScaledMomentum momentum 2 : ℝ)
 
 /-- The momentum-weighted root of the quadratic C19 symbol built from oriented crossings. -/
 def nativeC19OrientedSpatialRoot
@@ -381,16 +381,12 @@ theorem native_c19_oriented_spatial_root_square
         (nativeC19OrientedSpatialRoot momentum amplitude) =
       fun corner =>
         (c19QuadraticSymbol momentum : ℂ) * amplitude corner := by
-  have hc : ((c19ContinuumSpeed : ℂ) ^ 2) = 12 := by
-    exact_mod_cast c19_continuum_speed_square
   have hcoefficient :
       (nativeC19Pz momentum) ^ 2 + (-nativeC19Py momentum) ^ 2 +
           (-nativeC19Px momentum) ^ 2 =
         (c19QuadraticSymbol momentum : ℂ) := by
-    simp only [nativeC19Px, nativeC19Py, nativeC19Pz, c19QuadraticSymbol,
-      even_two, Even.neg_pow, mul_pow, Complex.ofReal_mul, Complex.ofReal_add,
-      Complex.ofReal_pow, Complex.ofReal_ofNat]
-    rw [hc]
+    simp only [nativeC19Px, nativeC19Py, nativeC19Pz, even_two, Even.neg_pow,
+      c19_quadratic_symbol_eq_scaled_momentum, Complex.ofReal_add, Complex.ofReal_pow]
     ring
   unfold nativeC19OrientedSpatialRoot cubicalNativeSpatial
   rw [cubical_incidence_linear_square]
