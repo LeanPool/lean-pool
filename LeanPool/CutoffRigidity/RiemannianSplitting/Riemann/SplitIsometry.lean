@@ -60,29 +60,13 @@ theorem norm_sq_action (t : EuclideanSpace ℝ (Fin k)) (y : M) (w : EuclideanSp
   rw [norm_add_sq_real, hST, hSS, hTT]
   ring
 
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
-  [FiniteDimensional ℝ F]
-  [IsManifold 𝓘(ℝ, F) ∞ M]
-  [RiemannianBundle fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
-  [IsRiemannianManifold 𝓘(ℝ, F) M]
-  [CompleteSpace M] in
-theorem mvfderiv_comp_map (f : M → ℝ) (g : M → M) (x : M)
-    (hf : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) f (g x))
-    (hg : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F) g x) (v : TangentSpace 𝓘(ℝ, F) x) :
-    mvfderiv 𝓘(ℝ, F) f (g x) (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) g x v) = mvfderiv 𝓘(ℝ, F) (fun y => f (g y))
-        x v := by
-  have h1 := mfderiv_comp x hf hg
-  simp only [mvfderiv, ContinuousLinearMap.comp_apply]
-  rw [show (fun y => f (g y)) = f ∘ g from rfl, h1]
-  rfl
-
 /-- The retraction differential has no component along the frame. -/
 theorem inner_X_dretr (i : Fin k) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     inner ℝ (fr.X i (fr.retr x)) (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) fr.retr x v) = 0 := by
   rw [Frame.X, inner_mgrad]
-  rw [mvfderiv_comp_map (fr.s i) fr.retr x
+  rw [← mvfderiv_comp_apply x
     (((fr.smooth i).mdifferentiable (by simp)) _) (fr.contMDiff_retr_mdiff x) v]
-  have : (fun y => fr.s i (fr.retr y)) = fun _ => (0 : ℝ) := funext fun y => fr.s_retr y i
+  have : (fr.s i ∘ fr.retr) = fun _ => (0 : ℝ) := funext fun y => fr.s_retr y i
   rw [this, mvfderiv_const]
   rfl
 

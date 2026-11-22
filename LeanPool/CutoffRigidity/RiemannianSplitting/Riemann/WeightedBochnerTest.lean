@@ -13,6 +13,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochne
 public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldScalarChartDerivative
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartBrackets
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
+import TauCeti.Geometry.Manifold.MFDeriv.NormedSpace
 
 /-! # G2: test functions with prescribed gradient and vanishing Hessian at a point
 
@@ -170,16 +171,6 @@ theorem fderiv_Kfun_center (x : M) (ξ : F →L[ℝ] ℝ) (w a : F) :
   ring
 
 
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
-  [FiniteDimensional ℝ F]
-  [IsManifold 𝓘(ℝ, F) ∞ M]
-  [RiemannianBundle fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mvfderiv_congr_ev {f g : M → ℝ} {x : M} (h : f =ᶠ[𝓝 x] g) :
-    mvfderiv 𝓘(ℝ, F) f x = mvfderiv 𝓘(ℝ, F) g x := by
-  unfold mvfderiv
-  rw [h.mfderiv_eq, h.self_of_nhds]
-  rfl
-
 theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     (hGs : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ G)
     (hG : (G ∘ (extChartAt 𝓘(ℝ, F) x).symm) =ᶠ[𝓝 (extChartAt 𝓘(ℝ, F) x x)] gt x ξ)
@@ -215,7 +206,7 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     hK.comp x (mdifferentiableAt_extChartAt (I := 𝓘(ℝ, F)) (mem_chart_source F x))
   have hcongr : mvfderiv 𝓘(ℝ, F) (fun y => mvfderiv 𝓘(ℝ, F) G y
       (chartFrame (I := 𝓘(ℝ, F)) x w y)) x = mvfderiv 𝓘(ℝ, F) (Kfun x ξ w ∘ e) x := by
-    exact mvfderiv_congr_ev hEq
+    exact hEq.mvfderiv_eq
   have hKe2 : (Kfun x ξ w ∘ e) ∘ e.symm =ᶠ[𝓝 (e x)] Kfun x ξ w := by
     filter_upwards [extChartAt_target_mem_nhds (I := 𝓘(ℝ, F)) x] with z hz
     simp [e.right_inv hz]
