@@ -29,7 +29,11 @@ summary: The Quillen–Suslin theorem and the commutative algebra behind it, on 
   over k[X₁, …, Xₙ] is the first column of an invertible matrix. Little Horrocks' global theorem
   holds too; a unimodular vector f over A[X] whose head coefficients, for formal degrees bounding
   the degrees of its entries, generate the unit ideal of A is sent to f(0) by an invertible
-  matrix over A[X].
+  matrix over A[X]. Suslin's r! theorem is proved for factorial-shaped exponents; for a
+  unimodular row (a₀, …, a_r), r ≥ 1, and exponents m such that max(r − i, 1) divides m(σ i) for
+  some permutation σ, the row (a₀^m₀, …, a_r^m_r) is the first row of a matrix of determinant
+  one. In particular (a₀, a₁, a₂², …, a_rʳ) is completable, and the full divisibility statement
+  r! ∣ ∏ mᵢ holds for r ≤ 2 (Swan–Towber for r = 2).
 branch: commutative algebra
 entry_module: LeanPool.QuillenSuslin
 authors:
@@ -59,6 +63,8 @@ main_declarations:
 - LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial
 - LeanPool.QuillenSuslin.exists_generalLinearGroup_col_eq_of_isUnimodular
 - LeanPool.QuillenSuslin.exists_mulVec_eq_eval_zero
+- LeanPool.QuillenSuslin.exists_specialLinearGroup_row_pow_of_perm
+- LeanPool.QuillenSuslin.exists_specialLinearGroup_row_pow_of_le_two
 main_results:
 - declaration: LeanPool.QuillenSuslin.isPrincipalIdealRing_monicLocalization
   informal: If k is a principal ideal domain, then the localisation k⟨X⟩ of k[X] at the monic
@@ -171,6 +177,27 @@ main_results:
 - declaration: LeanPool.QuillenSuslin.isExtendedFrom_ker_dotForm
   informal: If ψ · f = 1 in A[X] and the head coefficients of f generate the unit ideal, then the
     kernel of ψ on A[X]ⁿ is extended from A.
+- declaration: LeanPool.QuillenSuslin.exists_specialLinearGroup_row_pow_of_perm
+  informal: Suslin's r! theorem for factorial-shaped exponents. If (a₀, …, a_r) is unimodular,
+    r ≥ 1, and max(r − i, 1) divides m(σ i) for some permutation σ, then (a₀^m₀, …, a_r^m_r) is
+    the first row of a matrix of determinant one.
+- declaration: LeanPool.QuillenSuslin.exists_specialLinearGroup_row_pow_max
+  informal: For a unimodular row (a₀, …, a_r) with r ≥ 1, the row (a₀, a₁, a₂², …, a_rʳ) is the
+    first row of a matrix of determinant one.
+- declaration: LeanPool.QuillenSuslin.exists_specialLinearGroup_row_pow_of_le_two
+  informal: Suslin's r! theorem for r ≤ 2. If (a₀, …, a_r) is unimodular, 1 ≤ r ≤ 2 and r!
+    divides the product of the exponents, then (a₀^m₀, …, a_r^m_r) is the first row of a matrix
+    of determinant one (Swan–Towber for r = 2).
+- declaration: LeanPool.QuillenSuslin.exists_row_pow_det
+  informal: For rows y and z of length k + 2, the row whose i-th entry is yᵢ to the power
+    max(k + 1 − i, 1) is the first row of a matrix of determinant (∑ yᵢ zᵢ)^(k + 1)!.
+- declaration: LeanPool.QuillenSuslin.exists_border
+  informal: Suslin's bordering step. If β is a square matrix of size n + 1 with first row b and
+    determinant δ, then for all X, τ and v the row (X, b) is the first row of a matrix of
+    determinant X τⁿ⁺¹ − δ ∑ⱼ τⁿ⁻ʲ δʲ vⱼ.
+- declaration: LeanPool.QuillenSuslin.det_border
+  informal: The matrix with first row (p, b) and lower block (u | Γ) has determinant
+    p det Γ − (b adj Γ) · u.
 tags:
 - projective-modules
 - polynomial-rings

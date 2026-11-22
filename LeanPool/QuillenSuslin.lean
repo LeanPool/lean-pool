@@ -29,6 +29,8 @@ public import LeanPool.QuillenSuslin.Bass
 public import LeanPool.QuillenSuslin.FreeMvPolynomial
 public import LeanPool.QuillenSuslin.Unimodular
 public import LeanPool.QuillenSuslin.LittleHorrocks
+public import LeanPool.QuillenSuslin.SuslinMatrix
+public import LeanPool.QuillenSuslin.SuslinFactorial
 
 /-!
 # The Quillen–Suslin theorem (Quillen patching, Horrocks and Bass)
@@ -50,7 +52,9 @@ Main declarations: `LeanPool.QuillenSuslin.isPrincipalIdealRing_monicLocalizatio
   `LeanPool.QuillenSuslin.free_of_free_monicLocalization`,
   `LeanPool.QuillenSuslin.free_mvPolynomial`, `LeanPool.QuillenSuslin.isExtendedFrom_mvPolynomial`,
   `LeanPool.QuillenSuslin.exists_generalLinearGroup_col_eq_of_isUnimodular`,
-  `LeanPool.QuillenSuslin.exists_mulVec_eq_eval_zero`
+  `LeanPool.QuillenSuslin.exists_mulVec_eq_eval_zero`,
+  `LeanPool.QuillenSuslin.exists_specialLinearGroup_row_pow_of_perm`,
+  `LeanPool.QuillenSuslin.exists_specialLinearGroup_row_pow_of_le_two`
 Tags: projective-modules, polynomial-rings, quillen-suslin, quillen-patching, horrocks
 MSC: 13C10, 13B30, 19A13
 -/

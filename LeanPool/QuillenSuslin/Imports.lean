@@ -29,5 +29,7 @@ public import LeanPool.QuillenSuslin.QuillenIdeal
 public import LeanPool.QuillenSuslin.QuillenLemmaTwo
 public import LeanPool.QuillenSuslin.QuillenPatching
 public import LeanPool.QuillenSuslin.QuillenPatchingMv
+public import LeanPool.QuillenSuslin.SuslinFactorial
+public import LeanPool.QuillenSuslin.SuslinMatrix
 public import LeanPool.QuillenSuslin.Transition
 public import LeanPool.QuillenSuslin.Unimodular
