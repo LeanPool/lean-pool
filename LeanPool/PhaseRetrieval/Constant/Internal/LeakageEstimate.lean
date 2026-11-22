@@ -385,21 +385,23 @@ theorem block_annulus_leakage {D : ℕ} (a : Fin D → ℂ) {ℓ : ℕ} (hℓ : 
 
 /-! ## Theorem 5.8: Total leakage bound
 
-For `M ≥ 2`:
+For `M ≥ 2`, every `ε > 0` and every `J` at least the largest block index:
 
-  `∑_j ∫_{A_j} |R_j|² dμ ≤ η_M · fockNormSq(U)`
+  `∑_{j < J} ∫_{A_j} |R_j|² dμ ≤ (η_{M,J} + ε) · fockNormSq(U)`
 
-where `η_M := 2 exp(1/4) ∑_{m ≥ M} exp(−m²)`.
+where `η_{M,J} := 2 exp(1/4) ∑_{m=M}^{J} exp(−m²)` is `etaCoeff M J`.
 
 **Proof**:
-1. Orthogonality on annuli: `∫_{A_j} |R_j|² dμ = ∑_{|ℓ−j|>M} ∫_{A_j} |U_ℓ|² dμ`.
-2. Apply Theorem 5.7 to each term.
-3. Swap order of summation (Tonelli): `∑_j ∑_{|ℓ−j|>M} … ≤ ∑_ℓ fockNormSq(U_ℓ) · …`.
-4. Inner sum: `∑_{|j−ℓ|>M} exp(−(|j−ℓ|−1)²) ≤ 2 ∑_{m≥M} exp(−m²)`.
-5. Hence total `≤ η_M · fockNormSq(U)`.
+1. Use circle orthogonality to bound each remainder integral by the sum of block integrals
+   over `|ℓ−j|>M`.
+2. Apply the two-sided estimate `block_annulus_leakage_symmetric` to each term.
+3. Swap the two finite sums and factor out `fockNormSq(U_ℓ)` for each block.
+4. Inner sum: `∑_{j < J, |j−ℓ|>M} exp(−(|j−ℓ|−1)²) ≤ 2 ∑_{m=M}^{J} exp(−m²)`.
+5. Summing the block estimates gives the upper bound `η_{M,J} · fockNormSq(U)`.
+   Since `fockNormSq(U) ≥ 0`, adding `ε` to the coefficient gives the displayed bound.
 -/
 
-/-- The leakage coefficient `η_M = 2 exp(1/4) ∑_{m ≥ M}^∞ exp(−m²)`. -/
+/-- The leakage coefficient truncated at `bound`: `2 exp(1/4) ∑_{m=M}^{bound} exp(−m²)`. -/
 def etaCoeff (M : ℕ) (bound : ℕ) : ℝ :=
   2 * Real.exp (1 / 4) * ∑ m ∈ Finset.Icc M bound, Real.exp (-(m : ℝ) ^ 2)
 
@@ -903,7 +905,7 @@ theorem total_leakage_bound {D : ℕ} (a : Fin D → ℂ) {M : ℕ} (hM : 2 ≤ 
         -- Factor out fockNormSqBlock and bound inner sum
         -- ∑_j [far] exp(1/4)*exp(-d²)*fockNormSqBlock(ℓ)
         -- = fockNormSqBlock(ℓ) * (∑_j [far] exp(1/4)*exp(-d²))
-        -- ≤ fockNormSqBlock(ℓ) * exp(1/4) * 2*∑_{m≥M} exp(-m²)
+        -- ≤ fockNormSqBlock(ℓ) * exp(1/4) * 2*∑_{m=M}^{J} exp(-m²)
         -- = fockNormSqBlock(ℓ) * etaCoeff M J
         have hfnsq := fockNormSqBlock_nonneg a ℓ
         -- Extract constant factors
