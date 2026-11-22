@@ -12,6 +12,7 @@ public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletDispersion
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicSector
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicFourierBasis
 public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketBridge
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyPacketScope

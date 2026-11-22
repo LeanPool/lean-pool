@@ -127,19 +127,6 @@ theorem spectral_normalization_coefficient
   rw [hscale]
   nlinarith
 
-/-- Canonical positive-frequency embedding of a two-channel amplitude.  Its
-scale is fixed by simultaneous energy-eigenstate and U(1)-normalization
-conditions below.  The explicit relation to the non-isometric full
-phase-space readout is proved separately rather than assumed here. -/
-def normalizedPositiveFrequencyEmbedding
-    (mass energy px py pz : ℝ) (q : UniformCell2) : CubicalCell4
-  | 0 => (positiveFrequencyScale mass energy : ℂ) * q 0
-  | 1 => (positiveFrequencyScale mass energy : ℂ) * q 1
-  | 2 => (positiveFrequencyRatio mass energy : ℂ) *
-      positivePauliSpatial px py pz q 0
-  | _ => (positiveFrequencyRatio mass energy : ℂ) *
-      positivePauliSpatial px py pz q 1
-
 /-- Complex-linear embedding of the normalized positive-frequency branch. -/
 def normalizedPositiveFrequencyEmbeddingLinear (mass energy px py pz : ℝ) :
     UniformCell2 →ₗ[ℂ] CubicalCell4 :=
@@ -147,10 +134,29 @@ def normalizedPositiveFrequencyEmbeddingLinear (mass energy px py pz : ℝ) :
     (((positiveFrequencyScale mass energy : ℂ) • LinearMap.id).prod
       ((positiveFrequencyRatio mass energy : ℂ) • cubicalSpatialLowerLinear px py pz))
 
+/-- Canonical positive-frequency embedding of a two-channel amplitude.  Its
+scale is fixed by simultaneous energy-eigenstate and U(1)-normalization
+conditions below.  The explicit relation to the non-isometric full
+phase-space readout is proved separately rather than assumed here. -/
+def normalizedPositiveFrequencyEmbedding (mass energy px py pz : ℝ)
+    (q : UniformCell2) : CubicalCell4 :=
+  normalizedPositiveFrequencyEmbeddingLinear mass energy px py pz q
+
 theorem normalized_positive_frequency_embedding_linear_apply (mass energy px py pz : ℝ)
     (position : UniformCell2) :
     normalizedPositiveFrequencyEmbeddingLinear mass energy px py pz position =
-      normalizedPositiveFrequencyEmbedding mass energy px py pz position := by
+      normalizedPositiveFrequencyEmbedding mass energy px py pz position := rfl
+
+theorem normalized_positive_frequency_embedding_apply (mass energy px py pz : ℝ)
+    (q : UniformCell2) :
+    normalizedPositiveFrequencyEmbedding mass energy px py pz q =
+      fun component => match component with
+      | 0 => (positiveFrequencyScale mass energy : ℂ) * q 0
+      | 1 => (positiveFrequencyScale mass energy : ℂ) * q 1
+      | 2 => (positiveFrequencyRatio mass energy : ℂ) *
+          positivePauliSpatial px py pz q 0
+      | _ => (positiveFrequencyRatio mass energy : ℂ) *
+          positivePauliSpatial px py pz q 1 := by
   funext component
   fin_cases component <;> rfl
 
@@ -193,7 +199,7 @@ theorem normalized_positive_frequency_is_energy_eigenstate
     rw [hupper, cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
     funext component
     fin_cases component <;>
-      simp [cubicalSpinorOfBlocks, normalizedPositiveFrequencyEmbedding, ← hr] <;> ring
+      simp [cubicalSpinorOfBlocks, normalized_positive_frequency_embedding_apply, ← hr] <;> ring
   rw [hshift]
   apply cubical_standard_hamiltonian_shift
   exact_mod_cast hshell.symm

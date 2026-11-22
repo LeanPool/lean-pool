@@ -89,7 +89,7 @@ theorem positive_packet_pointwise_native_density_is_not_dirac_density :
           packetScopeNativeAtOrigin.2 = 20 := by
   constructor
   · norm_num [packetScopeDiracAtOrigin, packetScopeAmplitude,
-      normalizedPositiveFrequencyEmbedding, positiveFrequencyScale,
+      normalized_positive_frequency_embedding_apply, positiveFrequencyScale,
       positiveFrequencyRatio, positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one,
       cubicalCell4Density, Complex.normSq, Fin.sum_univ_four]
   · norm_num [packetScopeNativeAtOrigin, packetScopeAmplitude,

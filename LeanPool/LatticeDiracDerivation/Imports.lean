@@ -17,6 +17,7 @@ public import LeanPool.LatticeDiracDerivation.V2.C19PlaneWave
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralReadout
 public import LeanPool.LatticeDiracDerivation.V2.CompleteFreeDirac
+public import LeanPool.LatticeDiracDerivation.V2.ContinuumDiracOperators
 public import LeanPool.LatticeDiracDerivation.V2.CovariantFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.CubicalClifford
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
@@ -27,6 +28,7 @@ public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.FlavorClassification
 public import LeanPool.LatticeDiracDerivation.V2.NativeC19CliffordRoot
 public import LeanPool.LatticeDiracDerivation.V2.NativeCubicalCompression
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseCharge
 public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 public import LeanPool.LatticeDiracDerivation.V2.NativeVariation
 public import LeanPool.LatticeDiracDerivation.V2.PositionSpaceFreeDirac

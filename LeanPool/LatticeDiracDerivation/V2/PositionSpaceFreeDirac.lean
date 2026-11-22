@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumCurrentBridge
+public import LeanPool.LatticeDiracDerivation.V2.ContinuumDiracOperators
 
 /-!
 # Position-space free Dirac equation for finite Fourier fields

@@ -26,17 +26,40 @@ namespace LeanDirac.V2
 open Complex BigOperators
 noncomputable section
 
+/-- Linear combination of position and velocity used by the two frequency projections. -/
+def phaseAmplitudeLinear (coefficient : ℂ) (energy : ℝ) :
+    UniformTwoChannelPhase →ₗ[ℂ] UniformCell2 :=
+  (1 / 2 : ℂ) • (LinearMap.fst ℂ UniformCell2 UniformCell2 +
+    (coefficient / (energy : ℂ)) • LinearMap.snd ℂ UniformCell2 UniformCell2)
+
+private theorem phase_amplitude_linear_apply (coefficient : ℂ) (energy : ℝ)
+    (phase : UniformTwoChannelPhase) :
+    phaseAmplitudeLinear coefficient energy phase = fun component =>
+      (phase.1 component + coefficient * phase.2 component / (energy : ℂ)) / 2 := by
+  funext component
+  change (1 / 2 : ℂ) * (phase.1 component + coefficient / (energy : ℂ) * phase.2 component) =
+    (phase.1 component + coefficient * phase.2 component / (energy : ℂ)) / 2
+  ring
+
 /-- Extract the positive-frequency amplitude from native position and velocity. -/
-def nativePositiveAmplitude
-    (energy : ℝ) (phase : UniformTwoChannelPhase) : UniformCell2 :=
-  fun component =>
-    (phase.1 component + I * phase.2 component / (energy : ℂ)) / 2
+def nativePositiveAmplitude (energy : ℝ) (phase : UniformTwoChannelPhase) : UniformCell2 :=
+  phaseAmplitudeLinear I energy phase
+
+theorem native_positive_amplitude_apply (energy : ℝ) (phase : UniformTwoChannelPhase) :
+    nativePositiveAmplitude energy phase = fun component =>
+      (phase.1 component + I * phase.2 component / (energy : ℂ)) / 2 :=
+  phase_amplitude_linear_apply I energy phase
 
 /-- Extract the negative-frequency amplitude from native position and velocity. -/
-def nativeNegativeAmplitude
-    (energy : ℝ) (phase : UniformTwoChannelPhase) : UniformCell2 :=
-  fun component =>
-    (phase.1 component - I * phase.2 component / (energy : ℂ)) / 2
+def nativeNegativeAmplitude (energy : ℝ) (phase : UniformTwoChannelPhase) : UniformCell2 :=
+  phaseAmplitudeLinear (-I) energy phase
+
+theorem native_negative_amplitude_apply (energy : ℝ) (phase : UniformTwoChannelPhase) :
+    nativeNegativeAmplitude energy phase = fun component =>
+      (phase.1 component - I * phase.2 component / (energy : ℂ)) / 2 := by
+  change phaseAmplitudeLinear (-I) energy phase = _
+  simpa only [neg_mul, neg_div, sub_eq_add_neg] using
+    phase_amplitude_linear_apply (-I) energy phase
 
 /-- Reassemble native position and velocity from both frequency branches. -/
 def nativePhaseOfFrequencyAmplitudes
@@ -54,12 +77,12 @@ theorem native_frequency_amplitudes_reconstruct
         (nativePositiveAmplitude energy phase)
         (nativeNegativeAmplitude energy phase) = phase := by
   apply Prod.ext <;> funext component
-  · simp [nativePhaseOfFrequencyAmplitudes, nativePositiveAmplitude,
-      nativeNegativeAmplitude]
+  · simp [nativePhaseOfFrequencyAmplitudes, native_positive_amplitude_apply,
+      native_negative_amplitude_apply]
     field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy]
     ring
-  · simp [nativePhaseOfFrequencyAmplitudes, nativePositiveAmplitude,
-      nativeNegativeAmplitude]
+  · simp [nativePhaseOfFrequencyAmplitudes, native_positive_amplitude_apply,
+      native_negative_amplitude_apply]
     field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy]
     ring_nf
     rw [Complex.I_sq]
@@ -73,20 +96,10 @@ theorem native_frequency_amplitudes_extract
       nativeNegativeAmplitude energy
         (nativePhaseOfFrequencyAmplitudes energy positive negative) = negative := by
   constructor <;> funext component <;>
-    simp [nativePositiveAmplitude, nativeNegativeAmplitude,
+    simp [native_positive_amplitude_apply, native_negative_amplitude_apply,
       nativePhaseOfFrequencyAmplitudes] <;>
     field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy] <;>
     ring_nf <;> rw [Complex.I_sq] <;> ring
-
-/-- Canonically normalized negative-energy embedding. -/
-def normalizedNegativeFrequencyEmbedding
-    (mass energy px py pz : ℝ) (q : UniformCell2) : CubicalCell4
-  | 0 => -(positiveFrequencyRatio mass energy : ℂ) *
-      positivePauliSpatial px py pz q 0
-  | 1 => -(positiveFrequencyRatio mass energy : ℂ) *
-      positivePauliSpatial px py pz q 1
-  | 2 => (positiveFrequencyScale mass energy : ℂ) * q 0
-  | _ => (positiveFrequencyScale mass energy : ℂ) * q 1
 
 /-- Complex-linear embedding of the normalized negative-frequency branch. -/
 def normalizedNegativeFrequencyEmbeddingLinear (mass energy px py pz : ℝ) :
@@ -95,10 +108,26 @@ def normalizedNegativeFrequencyEmbeddingLinear (mass energy px py pz : ℝ) :
     ((-(positiveFrequencyRatio mass energy : ℂ) • cubicalSpatialLowerLinear px py pz).prod
       ((positiveFrequencyScale mass energy : ℂ) • LinearMap.id))
 
+/-- Canonically normalized negative-energy embedding. -/
+def normalizedNegativeFrequencyEmbedding (mass energy px py pz : ℝ)
+    (q : UniformCell2) : CubicalCell4 :=
+  normalizedNegativeFrequencyEmbeddingLinear mass energy px py pz q
+
 private theorem normalized_negative_frequency_embedding_linear_apply (mass energy px py pz : ℝ)
     (position : UniformCell2) :
     normalizedNegativeFrequencyEmbeddingLinear mass energy px py pz position =
-      normalizedNegativeFrequencyEmbedding mass energy px py pz position := by
+      normalizedNegativeFrequencyEmbedding mass energy px py pz position := rfl
+
+theorem normalized_negative_frequency_embedding_apply (mass energy px py pz : ℝ)
+    (q : UniformCell2) :
+    normalizedNegativeFrequencyEmbedding mass energy px py pz q =
+      fun component => match component with
+      | 0 => -(positiveFrequencyRatio mass energy : ℂ) *
+          positivePauliSpatial px py pz q 0
+      | 1 => -(positiveFrequencyRatio mass energy : ℂ) *
+          positivePauliSpatial px py pz q 1
+      | 2 => (positiveFrequencyScale mass energy : ℂ) * q 0
+      | _ => (positiveFrequencyScale mass energy : ℂ) * q 1 := by
   funext component
   fin_cases component <;> rfl
 
@@ -122,7 +151,7 @@ theorem normalized_negative_frequency_is_energy_eigenstate
     rw [cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
     funext component
     fin_cases component <;>
-      simp [cubicalSpinorOfBlocks, normalizedNegativeFrequencyEmbedding, ← hr] <;> ring
+      simp [cubicalSpinorOfBlocks, normalized_negative_frequency_embedding_apply, ← hr] <;> ring
   simp only [sub_eq_add_neg, neg_mul] at hshift
   rw [hshift]
   have hshellC : (mass : ℂ) ^ 2 + (px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2 =
@@ -132,31 +161,6 @@ theorem normalized_negative_frequency_is_energy_eigenstate
   simpa only [neg_mul] using cubical_standard_hamiltonian_shift mass px py pz
     (-(energy : ℂ)) (-(positiveFrequencyRatio mass energy : ℂ)) hsquare lower
 
-/-- Combine the positive and negative branch embeddings in one spinor. -/
-def canonicalSpectralReadout
-    (mass energy px py pz : ℝ)
-    (phase : UniformTwoChannelPhase) : CubicalCell4 :=
-  fun component =>
-    normalizedPositiveFrequencyEmbedding mass energy px py pz
-        (nativePositiveAmplitude energy phase) component +
-      normalizedNegativeFrequencyEmbedding mass energy px py pz
-        (nativeNegativeAmplitude energy phase) component
-
-/-- Linear combination of position and velocity used by the two frequency projections. -/
-def phaseAmplitudeLinear (coefficient : ℂ) (energy : ℝ) :
-    UniformTwoChannelPhase →ₗ[ℂ] UniformCell2 :=
-  (1 / 2 : ℂ) • (LinearMap.fst ℂ UniformCell2 UniformCell2 +
-    (coefficient / (energy : ℂ)) • LinearMap.snd ℂ UniformCell2 UniformCell2)
-
-private theorem phase_amplitude_linear_apply (coefficient : ℂ) (energy : ℝ)
-    (phase : UniformTwoChannelPhase) :
-    phaseAmplitudeLinear coefficient energy phase = fun component =>
-      (phase.1 component + coefficient * phase.2 component / (energy : ℂ)) / 2 := by
-  funext component
-  change (1 / 2 : ℂ) * (phase.1 component + coefficient / (energy : ℂ) * phase.2 component) =
-    (phase.1 component + coefficient * phase.2 component / (energy : ℂ)) / 2
-  ring
-
 /-- The canonical spectral readout is complex linear in the native phase. -/
 def canonicalSpectralReadoutLinear (mass energy px py pz : ℝ) :
     UniformTwoChannelPhase →ₗ[ℂ] CubicalCell4 :=
@@ -165,15 +169,23 @@ def canonicalSpectralReadoutLinear (mass energy px py pz : ℝ) :
     (normalizedNegativeFrequencyEmbeddingLinear mass energy px py pz).comp
       (phaseAmplitudeLinear (-I) energy)
 
+/-- Combine both frequency branches by applying the complex-linear readout. -/
+def canonicalSpectralReadout (mass energy px py pz : ℝ)
+    (phase : UniformTwoChannelPhase) : CubicalCell4 :=
+  canonicalSpectralReadoutLinear mass energy px py pz phase
+
 theorem canonical_spectral_readout_linear_apply (mass energy px py pz : ℝ)
     (phase : UniformTwoChannelPhase) :
     canonicalSpectralReadoutLinear mass energy px py pz phase =
-      canonicalSpectralReadout mass energy px py pz phase := by
-  simp only [canonicalSpectralReadoutLinear, LinearMap.add_apply, LinearMap.comp_apply,
-    phase_amplitude_linear_apply, normalized_positive_frequency_embedding_linear_apply,
-    normalized_negative_frequency_embedding_linear_apply,
-    neg_mul, neg_div]
-  rfl
+      canonicalSpectralReadout mass energy px py pz phase := rfl
+
+theorem canonical_spectral_readout_apply (mass energy px py pz : ℝ)
+    (phase : UniformTwoChannelPhase) :
+    canonicalSpectralReadout mass energy px py pz phase = fun component =>
+      normalizedPositiveFrequencyEmbedding mass energy px py pz
+        (nativePositiveAmplitude energy phase) component +
+      normalizedNegativeFrequencyEmbedding mass energy px py pz
+        (nativeNegativeAmplitude energy phase) component := rfl
 
 theorem canonical_spectral_readout_additive
     (mass energy px py pz : ℝ)
@@ -210,14 +222,14 @@ theorem canonical_spectral_readout_positive_phase
       normalizedPositiveFrequencyEmbedding mass energy px py pz q := by
   have h := native_frequency_amplitudes_extract energy henergy q (fun _ => 0)
   funext component
-  simp only [canonicalSpectralReadout]
+  simp only [canonical_spectral_readout_apply]
   rw [show nativePositiveAmplitude energy
       (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)) = q from h.1,
     show nativeNegativeAmplitude energy
       (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)) =
         (fun _ => 0) from h.2]
   fin_cases component <;>
-    simp [normalizedNegativeFrequencyEmbedding,
+    simp [normalized_negative_frequency_embedding_apply,
       positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one]
 
 theorem canonical_spectral_readout_negative_phase
@@ -228,14 +240,14 @@ theorem canonical_spectral_readout_negative_phase
       normalizedNegativeFrequencyEmbedding mass energy px py pz q := by
   have h := native_frequency_amplitudes_extract energy henergy (fun _ => 0) q
   funext component
-  simp only [canonicalSpectralReadout]
+  simp only [canonical_spectral_readout_apply]
   rw [show nativePositiveAmplitude energy
       (nativePhaseOfFrequencyAmplitudes energy (fun _ => 0) q) =
         (fun _ => 0) from h.1,
     show nativeNegativeAmplitude energy
       (nativePhaseOfFrequencyAmplitudes energy (fun _ => 0) q) = q from h.2]
   fin_cases component <;>
-    simp [normalizedPositiveFrequencyEmbedding,
+    simp [normalized_positive_frequency_embedding_apply,
       positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one]
 
 theorem native_amplitudes_of_kg_generator
@@ -258,7 +270,7 @@ theorem native_amplitudes_of_kg_generator
       (py : ℂ) ^ 2 + (pz : ℂ) ^ 2) = (energy : ℂ) ^ 2 := by
     exact_mod_cast hshell.symm
   constructor <;> funext component <;>
-    simp [nativePositiveAmplitude, nativeNegativeAmplitude,
+    simp [native_positive_amplitude_apply, native_negative_amplitude_apply,
       uniformTwoChannelKleinGordonVector] <;>
     field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy] <;>
     ring_nf <;>
@@ -311,7 +323,7 @@ theorem canonical_spectral_readout_intertwines
       (nativePositiveAmplitude energy phase))
     (normalizedNegativeFrequencyEmbedding mass energy px py pz
       (nativeNegativeAmplitude energy phase))
-  unfold canonicalSpectralReadout
+  simp only [canonical_spectral_readout_apply]
   rw [show nativePositiveAmplitude energy
       (uniformTwoChannelKleinGordonVector (mass : ℂ)
         (px : ℂ) (py : ℂ) (pz : ℂ) phase) =
@@ -405,8 +417,9 @@ private theorem spectralEmbedding_halves (mass energy px py pz : ℝ)
     cubicalCell4Upper z = spectralBlock spatial a (-b) positive negative ∧
       cubicalCell4LowerHalf z = spectralBlock spatial a b negative positive := by
   constructor <;> funext component <;> fin_cases component <;>
-    simp [cubicalCell4Upper, cubicalCell4LowerHalf, normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, spectralBlock, pauli_spatial_linear_apply, add_comm]
+    simp [cubicalCell4Upper, cubicalCell4LowerHalf, normalized_positive_frequency_embedding_apply,
+      normalized_negative_frequency_embedding_apply, spectralBlock,
+      pauli_spatial_linear_apply, add_comm]
 
 private theorem spectralCoordinates_blocks (mass energy px py pz : ℝ) (z : CubicalCell4) :
     let a : ℂ := positiveFrequencyScale mass energy
@@ -475,7 +488,8 @@ theorem canonical_spectral_readout_left_inverse
     mass energy px py pz henergy hpositive hshell
       (nativePositiveAmplitude energy phase)
       (nativeNegativeAmplitude energy phase)
-  unfold canonicalSpectralReadoutInverse canonicalSpectralReadout
+  unfold canonicalSpectralReadoutInverse
+  simp only [canonical_spectral_readout_apply]
   rw [hcoords.1, hcoords.2]
   exact native_frequency_amplitudes_reconstruct energy henergy phase
 
@@ -541,7 +555,8 @@ theorem canonical_spectral_readout_right_inverse
   have hamp := native_frequency_amplitudes_extract energy henergy
     (spectralPositiveCoordinate mass energy px py pz z)
     (spectralNegativeCoordinate mass energy px py pz z)
-  unfold canonicalSpectralReadoutInverse canonicalSpectralReadout
+  unfold canonicalSpectralReadoutInverse
+  simp only [canonical_spectral_readout_apply]
   rw [hamp.1, hamp.2]
   exact spectral_embeddings_reconstruct_cell
     mass energy px py pz henergy hpositive hshell z

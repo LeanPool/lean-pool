@@ -9,7 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
-public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicFourierBasis
+public import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyCurrentBridge
 
 /-!

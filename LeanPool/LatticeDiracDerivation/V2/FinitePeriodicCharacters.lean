@@ -85,5 +85,45 @@ theorem periodic_quantized_character_neighbor
   simp only [mul_add, Finset.sum_add_distrib, AddChar.map_add_eq_mul]
   rw [periodic_quantized_phase]
 
+/-- The quantized mode as an additive character of the entire finite torus. -/
+def periodicQuantizedAddChar (L : ℕ) [NeZero L]
+    (mode : PeriodicCubicMomentum L) :
+    AddChar (PeriodicCubicSite L) ℂ where
+  toFun := periodicQuantizedCharacter L mode
+  map_zero_eq_one' := by
+    simp [periodicQuantizedCharacter]
+  map_add_eq_mul' := by
+    intro first second
+    unfold periodicQuantizedCharacter
+    simp only [Pi.add_apply, mul_add, Finset.sum_add_distrib,
+      AddChar.map_add_eq_mul]
+
+/-- Unit displacement in one lattice axis. -/
+def periodicCubicAxisUnit (L : ℕ) (axis : Fin 3) : PeriodicCubicSite L :=
+  fun component => if component = axis then 1 else 0
+
+theorem periodic_quantized_add_char_axis_unit
+    (L : ℕ) [NeZero L] (mode : PeriodicCubicMomentum L)
+    (axis : Fin 3) :
+    periodicQuantizedAddChar L mode (periodicCubicAxisUnit L axis) =
+      ZMod.stdAddChar (mode axis) := by
+  unfold periodicQuantizedAddChar periodicQuantizedCharacter
+    periodicCubicAxisUnit
+  fin_cases axis <;>
+    simp [Fin.sum_univ_succ]
+
+/-- Different momentum labels give different finite-torus characters. -/
+theorem periodic_quantized_add_char_injective
+    (L : ℕ) [NeZero L] :
+    Function.Injective (periodicQuantizedAddChar L) := by
+  intro first second heq
+  funext axis
+  have hvalue := congrArg
+    (fun character : AddChar (PeriodicCubicSite L) ℂ =>
+      character (periodicCubicAxisUnit L axis)) heq
+  rw [periodic_quantized_add_char_axis_unit,
+    periodic_quantized_add_char_axis_unit] at hvalue
+  exact ZMod.injective_stdAddChar hvalue
+
 end
 end LeanDirac.V2

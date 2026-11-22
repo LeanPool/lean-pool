@@ -9,7 +9,8 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
-public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumCurrentBridge
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseCharge
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 
 /-!
 # The invariant native periodic tangent sector

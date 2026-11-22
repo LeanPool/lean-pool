@@ -8,7 +8,8 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
+public import LeanPool.LatticeDiracDerivation.V2.ContinuumDiracOperators
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseCharge
 
 /-!
 # Density and current through the same action-derived cubical readout
@@ -45,30 +46,6 @@ theorem cubical_cell4_real_pair_self (z : CubicalCell4) :
     cubicalCell4RealPair z z = cubicalCell4Density z := by
   simp [cubicalCell4RealPair, cubicalCell4Density,
     Complex.normSq, Complex.mul_re, Fin.sum_univ_succ]
-
-/-- The Dirac transport matrix associated with the chosen axis. -/
-def cubicalVelocityOperator (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
-  fun component => (c19ContinuumSpeed : ℂ) * cubicalAlpha axis z component
-
-theorem cubical_velocity_sum {Mode : Type*} [Fintype Mode]
-    (axis : Fin 3) (field : Mode → CubicalCell4) :
-    cubicalVelocityOperator axis
-        (fun component => ∑ mode, field mode component) =
-      fun component => ∑ mode,
-        cubicalVelocityOperator axis (field mode) component := by
-  funext component
-  fin_cases axis <;> fin_cases component <;>
-    simp [cubicalVelocityOperator, cubicalAlpha, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Finset.mul_sum]
-
-theorem cubical_velocity_mul (axis : Fin 3) (scale : ℂ) (spinor : CubicalCell4) :
-    cubicalVelocityOperator axis (fun component => scale * spinor component) =
-      fun component => scale * cubicalVelocityOperator axis spinor component := by
-  funext component
-  fin_cases axis <;> fin_cases component <;>
-    simp [cubicalVelocityOperator, cubicalAlpha, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
 
 /-- Shift just the specified component of the physical momentum. -/
 def cubicalShiftMomentum
@@ -116,16 +93,6 @@ def cubicalCurrentDivergence
     cubicalCell4RealPair z
       (cubicalVelocityOperator axis (spatialDerivative axis))
 
-/-- The mode time evolution given by minus the imaginary unit times the Hamiltonian. -/
-def cubicalDiracTimeDerivative
-    (mass : ℝ) (z : CubicalCell4)
-    (spatialDerivative : Fin 3 → CubicalCell4) : CubicalCell4 :=
-  fun component =>
-    -I * (mass : ℂ) * cubicalStandardBeta z component -
-      ∑ axis : Fin 3,
-        cubicalVelocityOperator axis
-          (spatialDerivative axis) component
-
 /-- Local continuity for arbitrary four-component data follows from the
 same cube-derived alpha and beta operators. -/
 theorem cubical_dirac_local_continuity
@@ -149,46 +116,6 @@ theorem cubical_dirac_local_continuity
   rw [cubicalCell4DensityDerivative, transport_pairing]
   unfold cubicalCurrentDivergence
   ring
-
-/-- The spatial derivative of a plane wave at the specified physical momentum. -/
-def uniformPlaneWaveSpatialDerivative
-    (momentum : LatticeMomentum) (z : CubicalCell4) :
-    Fin 3 → CubicalCell4 :=
-  fun axis component => I * (momentum axis : ℂ) * z component
-
-/-- The Hamiltonian and position-space forms agree for arbitrary
-four-component data; this lemma is independent of how the data were read out. -/
-theorem cubical_standard_hamiltonian_is_position_dirac
-    (mass : ℝ) (momentum : LatticeMomentum) (z : CubicalCell4) :
-    (fun component =>
-      -I * cubicalStandardHamiltonian (mass : ℂ)
-        (uniformContinuumPx momentum)
-        (uniformContinuumPy momentum)
-        (uniformContinuumPz momentum) z component) =
-      cubicalDiracTimeDerivative mass z
-        (uniformPlaneWaveSpatialDerivative momentum z) := by
-  funext component
-  have velocity (axis : Fin 3) :
-      cubicalVelocityOperator axis (uniformPlaneWaveSpatialDerivative momentum z axis) component =
-        (I * (momentum axis : ℂ)) * cubicalVelocityOperator axis z component :=
-    congrFun (cubical_velocity_mul axis (I * (momentum axis : ℂ)) z) component
-  simp only [cubicalDiracTimeDerivative, velocity]
-  simp only [Fin.sum_univ_three, cubicalVelocityOperator, cubicalAlpha,
-    uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
-    Complex.ofReal_mul, cubicalStandardHamiltonian, cubicalStandardSpatial]
-  ring
-
-theorem uniform_readout_tangent_is_position_dirac
-    (r : ℝ) (hr : r ≠ 0) (momentum : LatticeMomentum)
-    (phase : UniformTwoChannelPhase) :
-    uniformActionToStandardDirac r momentum
-        (uniformVacuumContinuumGenerator r momentum phase) =
-      cubicalDiracTimeDerivative r
-        (uniformActionToStandardDirac r momentum phase)
-        (uniformPlaneWaveSpatialDerivative momentum
-          (uniformActionToStandardDirac r momentum phase)) := by
-  rw [uniform_action_tangent_intertwines_cubical_dirac r hr]
-  exact cubical_standard_hamiltonian_is_position_dirac r momentum _
 
 /-- The spinor density after reading out the native phase. -/
 def uniformPhaseSpaceDensity
@@ -222,73 +149,6 @@ theorem uniform_action_readout_local_continuity
   exact cubical_dirac_local_continuity r _ _
 
 /-! ## The native U(1) current, kept distinct from positive Dirac density -/
-
-/-- The scalar complex phase pairing used in the native continuity identity. -/
-def uniformScalarPhasePair (source target : ℂ) : ℝ :=
-  (star source * target).im
-
-/-- The native phase charge formed from position and velocity at a site. -/
-def uniformNativePhaseDensity (position velocity : UniformCell2) : ℝ :=
-  ∑ component, uniformScalarPhasePair
-    (position component) (velocity component)
-
-/-- The flux of native phase charge along an oriented weighted bond. -/
-def uniformNativeOutwardBondCurrent
-    (weight : ℝ) (source target : ℂ) : ℝ :=
-  -2 * weight * uniformScalarPhasePair source target
-
-/-- Sum the outward currents over all directed bonds from a site. -/
-def uniformNativeOutwardCurrentDivergence
-    (geometry : C19Lattice Site)
-    (position : Site → ℂ) (site : Site) : ℝ :=
-  ∑ direction : C19Neighbor,
-    uniformNativeOutwardBondCurrent (c19Weight direction)
-      (position site) (position (geometry.neighbor site direction))
-
-/-- The derivative of native charge given velocity and acceleration. -/
-def uniformNativePhaseDensityDerivative
-    (position velocity acceleration : ℂ) : ℝ :=
-  uniformScalarPhasePair velocity velocity +
-    uniformScalarPhasePair position acceleration
-
-/-- Exact action-tangent U(1) continuity for one native transverse channel.
-The second channel obeys the same identity and the two laws add. -/
-theorem uniform_native_tangent_local_continuity
-    (massSq : ℝ) (geometry : C19Lattice Site)
-    (position velocity : Site → ℂ) (site : Site) :
-    uniformNativePhaseDensityDerivative
-        (position site) (velocity site)
-        (uniformScalarTangentAcceleration massSq geometry position site) +
-      uniformNativeOutwardCurrentDivergence geometry position site = 0 := by
-  simp [uniformNativePhaseDensityDerivative,
-    uniformScalarTangentAcceleration, c19ScalarLaplacian,
-    uniformNativeOutwardCurrentDivergence,
-    uniformNativeOutwardBondCurrent, uniformScalarPhasePair,
-    Complex.mul_im]
-  ring_nf
-  rw [Finset.mul_sum, Finset.mul_sum, Finset.sum_mul, Finset.sum_mul]
-  rw [← Finset.sum_neg_distrib, ← Finset.sum_add_distrib,
-    ← Finset.sum_sub_distrib]
-  apply Finset.sum_eq_zero
-  intro direction _
-  ring
-
-/-- The native phase paired with velocity on the positive-frequency branch. -/
-def uniformPositiveFrequencyPhase
-    (energy : ℝ) (position : UniformCell2) : UniformTwoChannelPhase :=
-  (position, fun component => -I * (energy : ℂ) * position component)
-
-theorem uniform_native_u1_positive_frequency
-    (energy : ℝ) (position : UniformCell2) :
-    uniformNativePhaseDensity
-        (uniformPositiveFrequencyPhase energy position).1
-        (uniformPositiveFrequencyPhase energy position).2 =
-      -energy * uniformCell2Density position := by
-  simp [uniformNativePhaseDensity, uniformPositiveFrequencyPhase,
-    uniformScalarPhasePair, uniformCell2Density,
-    Complex.normSq, Complex.mul_re, Complex.mul_im,
-    Fin.sum_univ_succ]
-  ring
 
 /-- On the native positive-rest-frequency sector, the positive Dirac density
 and the action's U(1) charge density are the same quadratic information up to

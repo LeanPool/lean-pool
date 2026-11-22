@@ -45,7 +45,7 @@ theorem normalized_positive_frequency_density_formula
       positiveFrequencyScale mass energy ^ 2 * uniformCell2Density q +
         positiveFrequencyRatio mass energy ^ 2 *
           uniformCell2Density (positivePauliSpatial px py pz q) := by
-  simp [cubicalCell4Density, normalizedPositiveFrequencyEmbedding,
+  simp [cubicalCell4Density, normalized_positive_frequency_embedding_apply,
     uniformCell2Density, Complex.normSq, Complex.mul_re, Complex.mul_im,
     Fin.sum_univ_succ]
   ring
@@ -60,7 +60,7 @@ theorem normalized_positive_frequency_current_formula
         uniformCell2Density q := by
   fin_cases axis <;>
     simp [cubicalDiracCurrent, cubicalVelocityOperator, cubicalAlpha,
-      cubicalCell4RealPair, normalizedPositiveFrequencyEmbedding,
+      cubicalCell4RealPair, normalized_positive_frequency_embedding_apply,
       cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
       positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one,
       uniformCell2Density, Fin.sum_univ_succ,
