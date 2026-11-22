@@ -1346,6 +1346,18 @@ theorem integral_progDeriv_eq_zero (j u : ℝ) {g : ℝ × ℝ → ℂ} (hg : Co
 noncomputable def fourMarginalKernel (g : ℝ × ℝ → ℂ) : ℝ × ℝ → ℂ :=
   progDeriv 0 (progDeriv 1 (progDeriv 2 (progDeriv 3 g)))
 
+/-- The four directional derivatives preserve smoothness. -/
+private theorem fourMarginalKernel_contDiff {g : ℝ × ℝ → ℂ} (hg : ContDiff ℝ (⊤ : ℕ∞) g) :
+    ContDiff ℝ (⊤ : ℕ∞) (fourMarginalKernel g) :=
+  progDeriv_contDiff (j := 0) <| progDeriv_contDiff (j := 1) <|
+    progDeriv_contDiff (j := 2) <| progDeriv_contDiff (j := 3) hg
+
+/-- The four directional derivatives preserve compact support. -/
+private theorem fourMarginalKernel_hasCompactSupport {g : ℝ × ℝ → ℂ} (hg : HasCompactSupport g) :
+    HasCompactSupport (fourMarginalKernel g) :=
+  progDeriv_hasCompactSupport (j := 0) <| progDeriv_hasCompactSupport (j := 1) <|
+    progDeriv_hasCompactSupport (j := 2) <| progDeriv_hasCompactSupport (j := 3) hg
+
 /-- Blueprint lines 2945-2950: for a smooth compactly supported `g`, the kernel
 `W = Π_j (∂_S - j ∂_X) g` has the four zero marginals `∫ W(u - jS, S) dS = 0`, `j = 0, 1, 2, 3`
 (the constant-coefficient derivatives commute, so each factor can be taken outermost). -/
@@ -1768,6 +1780,15 @@ theorem iteratedDeriv_iteratedDeriv_add (i k : ℕ) (f : ℝ → ℂ) :
   funext x
   rw [Function.iterate_add_apply]
 
+private theorem scale_weighted_sum_le {ι : Type*} (s : Finset ι) (w u v : ι → ℝ)
+    {scale bound : ℝ} (hw : ∀ i ∈ s, 0 ≤ w i)
+    (h : ∀ i ∈ s, scale * (u i * v i) ≤ bound) :
+    scale * (∑ i ∈ s, w i * u i * v i) ≤ (∑ i ∈ s, w i) * bound := by
+  rw [Finset.mul_sum, Finset.sum_mul]
+  refine Finset.sum_le_sum fun i hi => ?_
+  rw [mul_assoc (w i), mul_left_comm scale (w i)]
+  exact mul_le_mul_of_nonneg_left (h i hi) (hw i hi)
+
 /-- Blueprint lines 2970-2974: for `ω, φ` with Gevrey bounds `‖g⁽ʲ⁾‖ ≤ (C₀(j+1))^{C₀(j+1)}`
 and `r = D a`, the rescaled kernel `w(x,t) = (r/a) W(x/a - m₀, t/a)` of
 `W = Π_j (∂_S - j∂_X)[ω φ]` satisfies `|∂_x^m ∂_t^n w| ≤ r^{-u} (C(u+2))^{C(u+2)}`,
@@ -1821,20 +1842,17 @@ theorem rescaledW_derivative_bound {ω φ : ℝ → ℂ} (hω : ContDiff ℝ (�
     field_simp
     rw [one_div, inv_pow, inv_mul_cancel₀ this]
   rw [hsplit, mul_assoc]
-  apply mul_le_mul_of_nonneg_left _ (by positivity)
-  rw [Finset.mul_sum]
-  calc ∑ k : Fin 4, (D : ℝ) ^ (m + n + 1) * (‖c k‖ * G (m + k) * G (n + (4 - k))) ≤
-      ∑ k : Fin 4, ‖c k‖ * (Bp / 34) := by
-        apply Finset.sum_le_sum; intro k _
-        clear_value c G Bp
-        have := mul_le_mul_of_nonneg_left (hk k) (norm_nonneg (c k))
-        nlinarith only [this]
-    _ = 24 / 34 * Bp := by
-        clear_value Bp
-        simp [Fin.sum_univ_four, c]; norm_num; ring
-    _ ≤ Bp := by
-        have : 0 ≤ Bp := by positivity
-        linarith only [this]
+  refine mul_le_mul_of_nonneg_left ?_ (pow_nonneg (inv_nonneg.mpr hDa.le) _)
+  have hcoeff : ∑ k : Fin 4, ‖c k‖ = (24 : ℝ) := by
+    norm_num [Fin.sum_univ_four, c]
+  have hBp : 0 ≤ Bp := by positivity
+  calc
+    _ ≤ (∑ k : Fin 4, ‖c k‖) * (Bp / 34) :=
+      scale_weighted_sum_le Finset.univ (fun k => ‖c k‖) (fun k => G (m + k))
+        (fun k => G (n + (4 - k))) (fun _ _ => norm_nonneg _) (fun k _ => hk k)
+    _ = (24 / 34) * Bp := by rw [hcoeff, div_mul_eq_mul_div, mul_div_assoc]
+    _ ≤ 1 * Bp := mul_le_mul_of_nonneg_right (by norm_num) hBp
+    _ = Bp := one_mul _
 
 /-! ### Gevrey bound for `φ(S) = S³ χ(S)` (thm:main, blueprint line 2935) -/
 
@@ -1962,6 +1980,13 @@ theorem tsupport_tensorKernel_subset (A B : ℝ → ℂ) :
   simp only [tensorKernel, Function.mem_support, mul_ne_zero_iff] at hp
   exact ⟨subset_tsupport _ hp.1, subset_tsupport _ hp.2⟩
 
+/-- The product kernel is compactly supported when both factors are. -/
+private theorem tensorKernel_hasCompactSupport {A B : ℝ → ℂ}
+    (hA : HasCompactSupport A) (hB : HasCompactSupport B) :
+    HasCompactSupport (tensorKernel A B) :=
+  (hA.isCompact.prod hB.isCompact).of_isClosed_subset (isClosed_tsupport _)
+    (tsupport_tensorKernel_subset A B)
+
 /-- Blueprint lines 2966-2968: if `ω` is supported in `[-1, 1]` and `φ` in `[-R, R]`, the
 progression coordinates `x + j t` on the support of the rescaled kernel
 `(r/a) W(x/a - m₀, t/a)` lie in `[a(m₀ - 1 - 3R), a(m₀ + 1 + 3R)]`. -/
@@ -2032,14 +2057,11 @@ theorem rescaledW_admissible {ω φ : ℝ → ℂ} (hω : ContDiff ℝ (⊤ : �
       (rescaledKernel (fourMarginalKernel (tensorKernel ω φ)) a (D * a) m₀) := by
   have! hg : ContDiff ℝ (⊤ : ℕ∞) (tensorKernel ω φ) :=
     (hω.comp contDiff_fst).mul (hφ.comp contDiff_snd)
-  have! hgc : HasCompactSupport (tensorKernel ω φ) := by
-    apply HasCompactSupport.of_support_subset_isCompact
-      ((isCompact_Icc (a := (-1 : ℝ)) (b := 1)).prod (isCompact_Icc (a := -R) (b := R)))
-    intro p hp
-    have := tsupport_tensorKernel_subset ω φ (subset_tsupport _ hp)
-    exact ⟨hωs this.1, hφs this.2⟩
-  have! hW : ContDiff ℝ (⊤ : ℕ∞) (fourMarginalKernel (tensorKernel ω φ)) :=
-    progDeriv_contDiff (progDeriv_contDiff (progDeriv_contDiff (progDeriv_contDiff hg)))
+  have! hgc : HasCompactSupport (tensorKernel ω φ) :=
+    tensorKernel_hasCompactSupport
+      (isCompact_Icc.of_isClosed_subset (isClosed_tsupport ω) hωs)
+      (isCompact_Icc.of_isClosed_subset (isClosed_tsupport φ) hφs)
+  have! hW := fourMarginalKernel_contDiff hg
   refine ⟨?_, ?_, ?_, ?_⟩
   · -- smoothness
     have! h1 : ContDiff ℝ (⊤ : ℕ∞) fun p : ℝ × ℝ => (p.1 / a - m₀, p.2 / a) := by fun_prop
@@ -2728,21 +2750,12 @@ theorem sum_scaleTranslateTerm {ω φ : ℝ → ℝ} (hω : ContDiff ℝ (⊤ : 
   have! hφC : ContDiff ℝ (⊤ : ℕ∞) fun y => (φ y : ℂ) := Complex.ofRealCLM.contDiff.comp hφ
   have! hg : ContDiff ℝ (⊤ : ℕ∞) (tensorKernel (fun y => (ω y : ℂ)) (fun y => (φ y : ℂ))) :=
     (hωC.comp contDiff_fst).mul (hφC.comp contDiff_snd)
-  have! hgc : HasCompactSupport (tensorKernel (fun y => (ω y : ℂ)) (fun y => (φ y : ℂ))) := by
-    have! h1 : HasCompactSupport fun y => (ω y : ℂ) :=
-      hωc.comp_left (g := Complex.ofReal) Complex.ofReal_zero
-    have! h2 : HasCompactSupport fun y => (φ y : ℂ) :=
-      hφc.comp_left (g := Complex.ofReal) Complex.ofReal_zero
-    refine HasCompactSupport.intro (h1.isCompact.prod h2.isCompact) fun p hp => ?_
-    simp only [tensorKernel]
-    rcases not_and_or.mp hp with h | h
-    · rw [image_eq_zero_of_notMem_tsupport h, zero_mul]
-    · rw [image_eq_zero_of_notMem_tsupport h, mul_zero]
-  have! hWs : ContDiff ℝ (⊤ : ℕ∞) W :=
-    progDeriv_contDiff (progDeriv_contDiff (progDeriv_contDiff (progDeriv_contDiff hg)))
-  have! hWc : HasCompactSupport W :=
-    progDeriv_hasCompactSupport (progDeriv_hasCompactSupport (progDeriv_hasCompactSupport
-      (progDeriv_hasCompactSupport hgc)))
+  have! hgc : HasCompactSupport (tensorKernel (fun y => (ω y : ℂ)) (fun y => (φ y : ℂ))) :=
+    tensorKernel_hasCompactSupport
+      (hωc.comp_left (g := Complex.ofReal) Complex.ofReal_zero)
+      (hφc.comp_left (g := Complex.ofReal) Complex.ofReal_zero)
+  have! hWs : ContDiff ℝ (⊤ : ℕ∞) W := fourMarginalKernel_contDiff hg
+  have! hWc : HasCompactSupport W := fourMarginalKernel_hasCompactSupport hgc
   have! hprodm : Measurable fun z : ℝ × ℝ => ∏ j, f j (realProgressionCoordinate j z) :=
     Finset.measurable_prod _ fun j _ =>
       (hfm j).comp (continuous_realProgressionCoordinate j).measurable
