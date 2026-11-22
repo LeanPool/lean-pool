@@ -64,13 +64,6 @@ noncomputable def Ξ (J : WithLp 2 (Rd k ×
 variable (J : WithLp 2 (Rd k ×
     LevelModel F (Rd k)) ≃ₗᵢ[ℝ] F) (y₀ : fr.Level)
 
-theorem Ξ_symm_apply (w : F) : (fr.Ξ J y₀).symm w =
-    fr.comp (List.finRange k) ((Jc J).symm w).1
-      ((chartAt (LevelModel F (Rd k)) y₀).symm ((Jc J).symm w).2).val := rfl
-
-theorem Ξ_apply (x : M) : (fr.Ξ J y₀) x = Jc J (fr.sv x,
-    (chartAt (LevelModel F (Rd k)) y₀) (fr.toLevel x)) := rfl
-
 theorem Θ_source : (fr.Θ y₀).source = {x | fr.toLevel x ∈ (chartAt (LevelModel F (EuclideanSpace ℝ
     (Fin k))) y₀).source} := by
   ext x
@@ -95,31 +88,12 @@ theorem Ξ_source : (fr.Ξ J y₀).source = (fr.Θ y₀).source := by
   simp [Ξ]
 
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
-theorem contMDiffOn_prodChart : ContMDiffOn
-    (𝓘(ℝ, Rd k).prod 𝓘(ℝ, LevelModel F (Rd k)))
-    𝓘(ℝ, Rd k × LevelModel F (Rd k)) ∞
-    (fr.prodChart y₀) (fr.prodChart y₀).source :=
-  contMDiffOn_chart (I := 𝓘(ℝ, Rd k).prod
-    𝓘(ℝ, LevelModel F (Rd k))) (n := ∞) (x := ((0 : Rd k), y₀))
-
-omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
 theorem contMDiffOn_prodChart_symm : ContMDiffOn
     𝓘(ℝ, Rd k × LevelModel F (Rd k))
     (𝓘(ℝ, Rd k).prod 𝓘(ℝ, LevelModel F (Rd k))) ∞
     (fr.prodChart y₀).symm (fr.prodChart y₀).target :=
   contMDiffOn_chart_symm (I := 𝓘(ℝ, Rd k).prod
     𝓘(ℝ, LevelModel F (Rd k))) (n := ∞) (x := ((0 : Rd k), y₀))
-
-theorem contMDiffOn_Ξ : ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, F) ∞ (fr.Ξ J y₀) (fr.Ξ J y₀).source := by
-  have h1 := fr.contMDiffOn_prodChart y₀
-  have h2 : ContMDiff 𝓘(ℝ, Rd k × LevelModel F (Rd k))
-      𝓘(ℝ, F) ∞ (Jc J) := (Jc J).contDiff.contMDiff
-  have h3 : ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, F) ∞ ((Jc J) ∘ (fr.prodChart y₀) ∘ fr.splitEquiv)
-      (fr.splitEquiv ⁻¹' (fr.prodChart y₀).source) :=
-    h2.comp_contMDiffOn (h1.comp fr.splitEquiv.contMDiff.contMDiffOn (fun _ h => h))
-  refine h3.congr_mono (fun y _ => rfl) ?_
-  intro x hx
-  simpa [Ξ, Θ] using hx
 
 theorem contMDiffOn_Ξ_symm :
     ContMDiffOn 𝓘(ℝ, F) 𝓘(ℝ, F) ∞ (fr.Ξ J y₀).symm (fr.Ξ J y₀).target := by
@@ -142,9 +116,6 @@ noncomputable abbrev zc (w : F) : LevelModel F (Rd k) := ((Jc J).symm w).2
 /-- The point of the level corresponding to `w`. -/
 noncomputable abbrev yp (w : F) : fr.Level := (chartAt (LevelModel F (Rd k))
     y₀).symm (zc J w)
-
-theorem Ξ_symm_eq (w : F) : (fr.Ξ J y₀).symm w = fr.comp (List.finRange k) (tc J w) (fr.yp J y₀
-    w).val := rfl
 
 /-- The differential of the inclusion of the level in the chart. -/
 noncomputable abbrev uu (w : F) : LevelModel F (Rd k) →L[ℝ]

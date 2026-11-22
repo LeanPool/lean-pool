@@ -10,6 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureFinal
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorMain
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitDistance
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitEigenFrame
 import Mathlib.Probability.Distributions.Gaussian.Fernique
 

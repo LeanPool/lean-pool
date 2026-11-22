@@ -8,7 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitDistance
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitIsometry
 public import TauCeti.Geometry.Manifold.Riemannian.Pullback.Basic
 import TauCeti.Geometry.Manifold.Riemannian.Distance
 

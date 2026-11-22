@@ -33,14 +33,6 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [RiemannianBundle (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
 
-/-- The squared Hessian norm is the sum of squared pairings in any orthonormal basis. -/
-theorem mHessNormSq_eq_sum_hessian {ι : Type*} [Fintype ι] (f : M → ℝ) (x : M)
-    (b : OrthonormalBasis ι ℝ (TangentSpace 𝓘(ℝ, F) x)) :
-    mHessNormSq F f x = ∑ i, ∑ j, hessian 𝓘(ℝ, F) f x (b i) (b j) ^ 2 := by
-  rw [mHessNormSq, CutoffRigidity.manifoldHessianNormSq_eq_sum_sq f x b]
-  simp only [CutoffRigidity.manifoldHessian, hessian_def,
-    CutoffRigidity.manifoldGradient_eq_mgradient]
-
 private theorem weighted_bochner_identity {V f : M → ℝ} (hV : MSmooth F V)
     (hf : MSmooth F f) (x : M) :
     carre2 F V f x = mHessNormSq F f x +

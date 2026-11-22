@@ -10,8 +10,9 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 public import TauCeti.Geometry.Manifold.Riemannian.Laplacian
+import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianGradientCalculus
 
-/-! # The weighted Laplacian and generator -/
+/-! # Weighted Riemannian differential operators -/
 
 @[expose] public section
 
@@ -51,5 +52,13 @@ theorem msmooth_mgenerator {V f : M → ℝ} (hV : MSmooth F V) (hf : MSmooth F 
   (msmooth_mlaplacian F hf).sub (msmooth_carre hV hf)
 
 end WReg
+
+/-- The squared Hessian norm is the sum of squared pairings in any orthonormal basis. -/
+theorem mHessNormSq_eq_sum_hessian {ι : Type*} [Fintype ι] (f : M → ℝ) (x : M)
+    (b : OrthonormalBasis ι ℝ (TangentSpace 𝓘(ℝ, F) x)) :
+    mHessNormSq F f x = ∑ i, ∑ j, hessian 𝓘(ℝ, F) f x (b i) (b j) ^ 2 := by
+  rw [mHessNormSq, CutoffRigidity.manifoldHessianNormSq_eq_sum_sq f x b]
+  simp only [CutoffRigidity.manifoldHessian, hessian_def,
+    CutoffRigidity.manifoldGradient_eq_mgradient]
 
 end CutCur

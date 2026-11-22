@@ -11,6 +11,8 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedProper
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSmoothing
 public import Mathlib.Analysis.SpecialFunctions.SmoothTransition
+import TauCeti.Analysis.SpecialFunctions.SmoothTransition
+import TauCeti.Topology.EMetricSpace.Lipschitz
 
 /-! # Smooth compactly supported cutoffs on complete Riemannian manifolds (G3)
 
@@ -32,29 +34,10 @@ namespace CutCur
 /-- A uniform bound on the derivative of the smooth transition. -/
 theorem exists_deriv_smoothTransition_bound :
     ∃ B : ℝ, 1 ≤ B ∧ ∀ t, |deriv Real.smoothTransition t| ≤ B := by
-  have hc : Continuous (deriv Real.smoothTransition) :=
-    (Real.smoothTransition.contDiff (n := ⊤)).continuous_deriv (by simp)
-  obtain ⟨C, hC⟩ := (isCompact_Icc (a := (0 : ℝ)) (b := 1)).exists_bound_of_continuousOn
-    hc.continuousOn
-  refine ⟨max C 1, le_max_right _ _, fun t => ?_⟩
-  by_cases ht : t ∈ Icc (0 : ℝ) 1
-  · have := hC t ht
-    rw [Real.norm_eq_abs] at this
-    exact this.trans (le_max_left _ _)
-  · have h0 : deriv Real.smoothTransition t = 0 := by
-      rcases not_and_or.1 ht with h | h
-      · push Not at h
-        have : (fun s => Real.smoothTransition s) =ᶠ[𝓝 t] fun _ => (0 : ℝ) := by
-          filter_upwards [Iio_mem_nhds (show t < 0 by simpa using h)] with s hs
-          exact Real.smoothTransition.zero_of_nonpos (le_of_lt hs)
-        rw [this.deriv_eq]; simp
-      · push Not at h
-        have : (fun s => Real.smoothTransition s) =ᶠ[𝓝 t] fun _ => (1 : ℝ) := by
-          filter_upwards [Ioi_mem_nhds (show 1 < t by simpa using h)] with s hs
-          exact Real.smoothTransition.one_of_one_le (le_of_lt hs)
-        rw [this.deriv_eq]; simp
-    rw [h0, abs_zero]
-    exact zero_le_one.trans (le_max_right _ _)
+  obtain ⟨B, hB⟩ := Real.smoothTransition.exists_forall_norm_deriv_le
+  refine ⟨max B 1, le_max_right _ _, fun t => ?_⟩
+  exact (by simpa only [Real.norm_eq_abs] using hB t : |deriv Real.smoothTransition t| ≤ B)
+    |>.trans (le_max_left _ _)
 
 section Cutoffs
 
@@ -75,22 +58,7 @@ theorem weightedCutoffs_of_complete : WeightedCutoffs F M := by
   have hfin := edist_ne_top_of_connected (F := F) (M := M)
   obtain ⟨x₀⟩ := (inferInstance : Nonempty M)
   set f : M → ℝ := fun x => (edist x₀ x).toReal with hfdef
-  have hf : LipschitzWith 1 f := by
-    intro x y
-    simp only [ENNReal.coe_one, one_mul]
-    have hxy : |f x - f y| ≤ (edist x y).toReal := by
-      have h1 : edist x₀ x ≤ edist x₀ y + edist y x := edist_triangle _ _ _
-      have h2 : edist x₀ y ≤ edist x₀ x + edist x y := edist_triangle _ _ _
-      have t1 := ENNReal.toReal_mono (ENNReal.add_ne_top.2 ⟨hfin _ _, hfin _ _⟩) h1
-      have t2 := ENNReal.toReal_mono (ENNReal.add_ne_top.2 ⟨hfin _ _, hfin _ _⟩) h2
-      rw [ENNReal.toReal_add (hfin _ _) (hfin _ _)] at t1 t2
-      rw [edist_comm y x] at t1
-      rw [abs_le]
-      constructor <;> simp only [hfdef] <;> linarith
-    rw [edist_dist, Real.dist_eq]
-    calc ENNReal.ofReal |f x - f y| ≤ ENNReal.ofReal (edist x y).toReal :=
-          ENNReal.ofReal_le_ofReal hxy
-      _ = edist x y := ENNReal.ofReal_toReal (hfin _ _)
+  have hf : LipschitzWith 1 f := TauCeti.lipschitzWith_toReal_edist x₀
   obtain ⟨ψ, hψs, hψf, hψg⟩ := exists_smooth_lip_approx F hfin hf
   obtain ⟨B, hB1, hB⟩ := exists_deriv_smoothTransition_bound
   set w : ℕ → ℝ := fun n => 5 * B * ((n : ℝ) + 1) with hw

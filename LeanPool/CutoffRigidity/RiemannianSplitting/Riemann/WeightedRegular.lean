@@ -8,7 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerMain
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 import TauCeti.Geometry.Manifold.Riemannian.Hessian.Regularity
 import TauCeti.Geometry.Manifold.VectorBundle.GramSchmidt
 
