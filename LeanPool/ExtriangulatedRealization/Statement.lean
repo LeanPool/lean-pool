@@ -91,6 +91,25 @@ def push {C' A A' : C} (a : A ⟶ A') : 𝔼.Ext C' A →ₗ[k] 𝔼.Ext C' A' :
 def pull {C'' C' A : C} (c : C'' ⟶ C') : 𝔼.Ext C' A →ₗ[k] 𝔼.Ext C'' A :=
   ((𝔼.E.map c.op).app A).hom
 
+omit [Preadditive C] [Linear k C] in
+lemma push_comp {C' A A' A'' : C} (a : A ⟶ A') (a' : A' ⟶ A'')
+    (δ : 𝔼.Ext C' A) : 𝔼.push a' (𝔼.push a δ) = 𝔼.push (a ≫ a') δ := by
+  unfold push
+  rw [Functor.map_comp]
+  rfl
+
+omit [Preadditive C] [Linear k C] in
+lemma pull_comp {C₃ C₂ C₁ A : C} (c : C₃ ⟶ C₂) (c' : C₂ ⟶ C₁)
+    (δ : 𝔼.Ext C₁ A) : 𝔼.pull c (𝔼.pull c' δ) = 𝔼.pull (c ≫ c') δ := by
+  unfold pull
+  rw [op_comp, Functor.map_comp, NatTrans.comp_app]
+  rfl
+
+omit [Preadditive C] [Linear k C] in
+lemma pull_push {C'' C' A A' : C} (c : C'' ⟶ C') (a : A ⟶ A') (δ : 𝔼.Ext C' A) :
+    𝔼.pull c (𝔼.push a δ) = 𝔼.push a (𝔼.pull c δ) :=
+  ConcreteCategory.congr_hom ((𝔼.E.map c.op).naturality a) δ
+
 section Biproducts
 
 variable [HasBinaryBiproducts C]
@@ -971,9 +990,10 @@ def TheoremB : Prop :=
     ((cdData D).HasTriangulatedEmbedding.{_, _, _, _, u, max 1 u} ↔ ProjectionsSurjective D) ∧
     (ProjectionsSurjective D ↔ (cdData D).HasAlgebraicRealization.{_, _, _, _, u, max 1 u})
 
-/-- **Theorem B, (1) ⇒ (2), in all universes.** A triangulated embedding of `C(D)` into a
-triangulated category in any universes forces every projection `lim D → D_i` to be
-surjective. -/
+/-- The necessity direction of Theorem B, extended to arbitrary target universes and
+linearly ordered indices with arbitrary transition maps. An embedding of `C(D)` forces
+every projection `lim D → D_i` to be surjective. The paper states the criterion for
+nonempty well orders and surjective transitions. -/
 def TheoremBNecessity : Prop :=
   ∀ (k : Type u) [Field k] (I : Type u) [LinearOrder I]
     (D : Iᵒᵖ ⥤ ModuleCat.{u} k),

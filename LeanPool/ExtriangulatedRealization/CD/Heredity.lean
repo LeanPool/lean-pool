@@ -109,7 +109,7 @@ lemma of_cons_word_mem {C' M A : CD D} {n : ℕ} (α : (cdData D).Ext M A)
     cases h : isALabel D (M.X i) <;> simp [p, q, h]
   have hα : α = (cdData D).pull (subProj M p) ((cdData D).pull (subIncl M p) α) +
       (cdData D).pull (subProj M q) ((cdData D).pull (subIncl M q) α) := by
-    rw [cdData_pull_comp, cdData_pull_comp, ← cdData_pull_add,
+    rw [ExtriangulatedData.pull_comp, ExtriangulatedData.pull_comp, ← cdData_pull_add,
       subProj_subIncl_add M p q hcov hdisj, cdData_pull_id]
   have h₁ : (cdData D).pull (subIncl M p) α = 0 :=
     cdExt_eq_zero D (C := subObj M p) (fun i j => not_isExtPair_of_isALabel D i.2 _) _

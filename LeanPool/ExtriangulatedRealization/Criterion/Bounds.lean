@@ -81,11 +81,9 @@ lemma projectionsSurjective_of_countable_cofinal (hD : HasSurjectiveTransitions 
   let z : ∀ j, D.obj (op j) := fun j => trans D (hN j) (y (N j))
   have hz : ∀ j n (h : j ≤ s n), z j = trans D h (y n) := by
     intro j n h
-    rcases le_total (N j) n with hn | hn
-    · change trans D (hN j) (y (N j)) = _
-      rw [← hy _ _ hn, trans_trans]
-    · change trans D (hN j) (y (N j)) = _
-      rw [← hy _ _ hn, trans_trans]
+    have hn : N j ≤ n := Nat.find_min' (hcof' j) h
+    change trans D (hN j) (y (N j)) = _
+    rw [← hy _ _ hn, trans_trans]
   refine ⟨z, fun {j j'} hjj' => ?_, ?_⟩
   · rw [hz j' (N j') (hN j'), trans_trans, hz j (N j') (hjj'.trans (hN j'))]
   · rw [hz i 0 hs_i]
@@ -109,7 +107,8 @@ instance : DirectedSystem (dualObj D) fun a b h => dualTrans D a b h where
     rw [trans_trans]
 
 omit [LinearOrder I] in
-lemma directLimit_exists_extend [LinearOrder I] (G : I → Type u) [∀ i, AddCommGroup (G i)]
+lemma directLimit_exists_extend [Preorder I] [IsDirectedOrder I] [DecidableEq I]
+    (G : I → Type u) [∀ i, AddCommGroup (G i)]
     [∀ i, Module k (G i)] (f : ∀ a b : I, a ≤ b → G a →ₗ[k] G b)
     [DirectedSystem G fun a b h => f a b h] (hf : ∀ a b (h : a ≤ b), Function.Injective (f a b h))
     (i : I) (ψ : Module.Dual k (G i)) :

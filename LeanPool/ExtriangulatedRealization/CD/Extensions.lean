@@ -107,14 +107,6 @@ lemma cdData_realizes_iso {A B B' C : CD D} {δ : (cdData D).Ext C A} {x : A ⟶
   · simp [h2]
   · simp [h3]
 
-lemma cdData_pull_comp {C₃ C₂ C₁ A : CD D} (c : C₃ ⟶ C₂) (c' : C₂ ⟶ C₁) (δ : (cdData D).Ext C₁ A) :
-    (cdData D).pull c ((cdData D).pull c' δ) = (cdData D).pull (c ≫ c') δ := by
-  change (Abelian.Ext.mk₀ ((rho D).map c)).comp ((Abelian.Ext.mk₀ ((rho D).map c')).comp
-      (δ : Abelian.Ext.{u + 1} ((rho D).obj C₁) ((rho D).obj A) 1) (zero_add 1)) (zero_add 1) =
-    (Abelian.Ext.mk₀ ((rho D).map (c ≫ c'))).comp δ (zero_add 1)
-  rw [Functor.map_comp, ← Abelian.Ext.mk₀_comp_mk₀]
-  exact (Abelian.Ext.comp_assoc_of_second_deg_zero _ _ _ _).symm
-
 lemma cdData_pull_id {C A : CD D} (δ : (cdData D).Ext C A) : (cdData D).pull (𝟙 C) δ = δ := by
   change (Abelian.Ext.mk₀ ((rho D).map (𝟙 C))).comp
       (δ : Abelian.Ext.{u + 1} ((rho D).obj C) ((rho D).obj A) 1) (zero_add 1) = δ
@@ -132,13 +124,15 @@ lemma cdData_pull_zero {C' C A : CD D} (δ : (cdData D).Ext C A) :
 lemma cdData_pull_inl_sum {C₁ A₁ C₂ A₂ : CD D} (δ : (cdData D).Ext C₁ A₁)
     (δ' : (cdData D).Ext C₂ A₂) :
     (cdData D).pull biprod.inl ((cdData D).sum δ δ') = (cdData D).push biprod.inl δ := by
-  rw [ExtriangulatedData.sum, map_add, cdData_pull_comp, cdData_pull_comp, biprod.inl_fst,
+  rw [ExtriangulatedData.sum, map_add, ExtriangulatedData.pull_comp, ExtriangulatedData.pull_comp,
+    biprod.inl_fst,
     biprod.inl_snd, cdData_pull_id, cdData_pull_zero, add_zero]
 
 lemma cdData_pull_inr_sum {C₁ A₁ C₂ A₂ : CD D} (δ : (cdData D).Ext C₁ A₁)
     (δ' : (cdData D).Ext C₂ A₂) :
     (cdData D).pull biprod.inr ((cdData D).sum δ δ') = (cdData D).push biprod.inr δ' := by
-  rw [ExtriangulatedData.sum, map_add, cdData_pull_comp, cdData_pull_comp, biprod.inr_fst,
+  rw [ExtriangulatedData.sum, map_add, ExtriangulatedData.pull_comp, ExtriangulatedData.pull_comp,
+    biprod.inr_fst,
     biprod.inr_snd, cdData_pull_id, cdData_pull_zero, zero_add]
 
 end ExtriangulatedRealization

@@ -259,19 +259,6 @@ lemma eta_eq_zero_of_isZero_right {M A : (labelsIn D J).FullSubcategory}
     R.eta hR M A δ = 0 := by
   rw [show δ = 0 from ExtriangulatedRealization.Ext.eq_zero_of_isZero_target hA δ, map_zero]
 
-omit R hR in
-lemma dataJ_push_pull {C'' C A A' : (labelsIn D J).FullSubcategory} (c : C'' ⟶ C) (a : A ⟶ A')
-    (δ : (dataJ (D := D) (J := J)).Ext C A) :
-    (dataJ (D := D) (J := J)).push a ((dataJ (D := D) (J := J)).pull c δ) =
-      (dataJ (D := D) (J := J)).pull c ((dataJ (D := D) (J := J)).push a δ) := by
-  change ((Abelian.Ext.mk₀ ((rho D).map c.hom)).comp
-      (δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1) (zero_add 1)).comp
-      (Abelian.Ext.mk₀ ((rho D).map a.hom)) (add_zero 1) =
-    (Abelian.Ext.mk₀ ((rho D).map c.hom)).comp
-      ((δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1).comp
-        (Abelian.Ext.mk₀ ((rho D).map a.hom)) (add_zero 1)) (zero_add 1)
-  exact Abelian.Ext.comp_assoc_of_third_deg_zero _ _ _ _
-
 private lemma splitIso_comm_mor₁ {A B C : (labelsIn D J).FullSubcategory} {N : CD D}
     (hNP : labelsIn D J N) (θ : B.obj ≅ N ⊞ (xPart D A.obj ⊞ xPart D C.obj))
     (x : A ⟶ B) (x' : A.obj ⟶ N) (h1 : xIncl D A.obj ≫ x' = 0)
@@ -415,8 +402,8 @@ private lemma splitIso_comm_mor₃ {A C : (labelsIn D J).FullSubcategory}
     fun a δ' => (R.eta_push' hR (ObjectProperty.homMk a) δ').symm
   apply biprod.hom_ext'
   · rw [biprod.inl_desc_assoc, biprod.inl_desc, ← Category.assoc, hpull (M := bPartJ C)]
-    have hpp := dataJ_push_pull (C'' := bPartJ C) (C := C) (A := A) (A' := bPartJ A)
-      (ObjectProperty.homMk (bIncl D C.obj)) (ObjectProperty.homMk (bProj D A.obj)) δ
+    have hpp := ((dataJ (D := D) (J := J)).pull_push (C'' := bPartJ C) (A' := bPartJ A)
+      (ObjectProperty.homMk (bIncl D C.obj)) (ObjectProperty.homMk (bProj D A.obj)) δ).symm
     have hz : ∀ δ' : (dataJ (D := D) (J := J)).Ext (bPartJ C) (xPartJ A),
         R.eta hR (bPartJ C) (xPartJ A) δ' = 0 :=
       fun δ' => R.eta_eq_zero_of_isZero_right hR (isZero_rho_xPart D A.obj) δ'

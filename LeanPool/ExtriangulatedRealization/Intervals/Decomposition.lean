@@ -258,24 +258,15 @@ section Split
 
 variable {X M : Rep k I} (ι : X ⟶ M) (r : M ⟶ X) (h : ι ≫ r = 𝟙 X)
 
-/-- The projection onto the kernel of a retraction. -/
-noncomputable def kerProj : M ⟶ kernel r :=
-  kernel.lift r (𝟙 M - r ≫ ι) (by
-    rw [Preadditive.sub_comp, Category.assoc, h, Category.comp_id, Category.id_comp, sub_self])
-
 include h in
-lemma ι_kerProj : ι ≫ kerProj ι r h = 0 := by
-  apply (cancel_mono (kernel.ι r)).mp
-  rw [Category.assoc, kerProj, kernel.lift_ι, Preadditive.comp_sub, Category.comp_id,
-    ← Category.assoc, h, Category.id_comp, sub_self, zero_comp]
+lemma ι_kerProj : ι ≫ kerProj ι r h = 0 :=
+  (kernelSplitBiproduct ι r h).bicone.inl_snd
 
-lemma kernelι_kerProj : kernel.ι r ≫ kerProj ι r h = 𝟙 _ := by
-  apply (cancel_mono (kernel.ι r)).mp
-  rw [Category.assoc, kerProj, kernel.lift_ι, Preadditive.comp_sub, Category.comp_id,
-    ← Category.assoc, kernel.condition, zero_comp, sub_zero, Category.id_comp]
+lemma kernelι_kerProj : kernel.ι r ≫ kerProj ι r h = 𝟙 _ :=
+  (kernelSplitBiproduct ι r h).bicone.inr_snd
 
-lemma retract_add_kerProj : r ≫ ι + kerProj ι r h ≫ kernel.ι r = 𝟙 M := by
-  rw [kerProj, kernel.lift_ι, add_sub_cancel]
+lemma retract_add_kerProj : r ≫ ι + kerProj ι r h ≫ kernel.ι r = 𝟙 M :=
+  IsBilimit.binary_total (kernelSplitBiproduct ι r h).isBilimit
 
 lemma app_apply_of_eq {A B : Rep k I} {f g : A ⟶ B} (hfg : f = g) (t : WithBot I) (x : A.obj t) :
     (f.app t).hom x = (g.app t).hom x := by rw [hfg]

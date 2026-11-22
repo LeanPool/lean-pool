@@ -31,27 +31,6 @@ attribute [local instance] HasExt.standard
 
 variable {k : Type u} [Field k] {I : Type u} [LinearOrder I] (D : Iᵒᵖ ⥤ ModuleCat.{u} k)
 
-/-! ### Functoriality of `E` -/
-
-lemma cdData_push_comp {C A A' A'' : CD D} (a : A ⟶ A') (a' : A' ⟶ A'')
-    (δ : (cdData D).Ext C A) :
-    (cdData D).push a' ((cdData D).push a δ) = (cdData D).push (a ≫ a') δ := by
-  change ((δ : Ext.{u + 1} ((rho D).obj C) ((rho D).obj A) 1).comp
-      (Ext.mk₀ ((rho D).map a)) (add_zero 1)).comp (Ext.mk₀ ((rho D).map a')) (add_zero 1) =
-    (δ : Ext.{u + 1} ((rho D).obj C) ((rho D).obj A) 1).comp
-      (Ext.mk₀ ((rho D).map (a ≫ a'))) (add_zero 1)
-  rw [Functor.map_comp, ← Ext.mk₀_comp_mk₀]
-  exact Ext.comp_assoc_of_third_deg_zero _ _ _ _
-
-lemma cdData_pull_push {C'' C A A' : CD D} (c : C'' ⟶ C) (a : A ⟶ A')
-    (δ : (cdData D).Ext C A) :
-    (cdData D).pull c ((cdData D).push a δ) = (cdData D).push a ((cdData D).pull c δ) := by
-  change (Ext.mk₀ ((rho D).map c)).comp ((δ : Ext.{u + 1} ((rho D).obj C) ((rho D).obj A) 1).comp
-      (Ext.mk₀ ((rho D).map a)) (add_zero 1)) (zero_add 1) =
-    ((Ext.mk₀ ((rho D).map c)).comp (δ : Ext.{u + 1} ((rho D).obj C) ((rho D).obj A) 1)
-      (zero_add 1)).comp (Ext.mk₀ ((rho D).map a)) (add_zero 1)
-  exact (Ext.comp_assoc_of_third_deg_zero _ _ _ _).symm
-
 variable [WellFoundedLT I] [Nonempty I]
 
 /-- Realizations in `C(D)` are invariant under isomorphisms of the end terms. -/
@@ -114,6 +93,23 @@ lemma subcatJ_biprod {J : Set I} {A B : CD D} (hA : subcatJ D J A) (hB : subcatJ
     subcatJ D J (A ⊞ B) :=
   labelsIn_biprod D hA hB
 
+omit [WellFoundedLT I] [Nonempty I] in
+private lemma restrict_sum (J : Set I)
+    [HasBinaryBiproducts (subcatJ D J).FullSubcategory]
+    {A C A' C' : (subcatJ D J).FullSubcategory}
+    (δ : (cdData D).Ext C.obj A.obj) (δ' : (cdData D).Ext C'.obj A'.obj) :
+    ((cdData D).restrict (subcatJ D J)).sum (C₁ := C) (A₁ := A) (C₂ := C') (A₂ := A') δ δ' =
+      (cdData D).pull (biprodObjIso C C').hom
+        ((cdData D).push (biprodObjIso A A').inv ((cdData D).sum δ δ')) := by
+  change (cdData D).pull (biprod.fst : C ⊞ C' ⟶ C).hom
+      ((cdData D).push (biprod.inl : A ⟶ A ⊞ A').hom δ) +
+    (cdData D).pull (biprod.snd : C ⊞ C' ⟶ C').hom
+      ((cdData D).push (biprod.inr : A' ⟶ A ⊞ A').hom δ') = _
+  rw [ExtriangulatedData.sum, map_add, map_add, ← ExtriangulatedData.pull_push,
+    ← ExtriangulatedData.pull_push, ExtriangulatedData.push_comp, ExtriangulatedData.push_comp,
+    ExtriangulatedData.pull_comp, ExtriangulatedData.pull_comp,
+    inl_biprodObjIso_inv, inr_biprodObjIso_inv, biprodObjIso_hom_fst, biprodObjIso_hom_snd]
+
 /-- **Proposition 2.3, Corollary 2.4**: each `C_J`, with the induced structure, is
 extriangulated. -/
 theorem subcatJ_isExtriangulatedSubcategory (hD : HasSurjectiveTransitions D) (J : Set I) :
@@ -123,19 +119,6 @@ theorem subcatJ_isExtriangulatedSubcategory (hD : HasSurjectiveTransitions D) (J
     (fun A B hA hB => subcatJ_biprod D hA hB)
   have h𝔼 := cdData_isExtriangulated D hD
   have hext : (cdData D).IsExtensionClosed (subcatJ D J) := subcatJ_isExtensionClosed D J
-  have hsum : ∀ {A C A' C' : (subcatJ D J).FullSubcategory} (δ : (cdData D).Ext C.obj A.obj)
-      (δ' : (cdData D).Ext C'.obj A'.obj),
-      ((cdData D).restrict (subcatJ D J)).sum (C₁ := C) (A₁ := A) (C₂ := C') (A₂ := A') δ δ' =
-        (cdData D).pull (biprodObjIso C C').hom
-          ((cdData D).push (biprodObjIso A A').inv ((cdData D).sum δ δ')) := by
-    intro A C A' C' δ δ'
-    change (cdData D).pull (biprod.fst : C ⊞ C' ⟶ C).hom
-        ((cdData D).push (biprod.inl : A ⟶ A ⊞ A').hom δ) +
-      (cdData D).pull (biprod.snd : C ⊞ C' ⟶ C').hom
-        ((cdData D).push (biprod.inr : A' ⟶ A ⊞ A').hom δ') = _
-    rw [ExtriangulatedData.sum, map_add, map_add, ← cdData_pull_push, ← cdData_pull_push,
-      cdData_push_comp, cdData_push_comp, cdData_pull_comp, cdData_pull_comp,
-      inl_biprodObjIso_inv, inr_biprodObjIso_inv, biprodObjIso_hom_fst, biprodObjIso_hom_snd]
   exact
   { push_add := fun a a' δ => h𝔼.push_add a.hom a'.hom δ
     push_smul := fun r a δ => h𝔼.push_smul r a.hom δ
@@ -164,7 +147,7 @@ theorem subcatJ_isExtriangulatedSubcategory (hD : HasSurjectiveTransitions D) (J
       rw [biprod_map_hom, biprod_map_hom]
       simp only [Iso.symm_hom, Iso.symm_inv, Category.assoc] at h₀
       convert h₀ using 2
-      rw [hsum δ δ']
+      rw [restrict_sum D J δ δ']
       rfl
     et3 := fun h h' a b hab => by
       obtain ⟨c, h₁, h₂⟩ := h𝔼.et3 h h' a.hom b.hom (congrArg InducedCategory.Hom.hom hab)

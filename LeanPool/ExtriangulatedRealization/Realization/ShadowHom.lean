@@ -31,16 +31,6 @@ variable {k : Type u} [Field k] {I : Type u} [LinearOrder I]
 
 attribute [local instance] HasDerivedCategory.standard
 
-lemma Gfun_map_bijective_of_isKInjective (K : HomotopyCategory (Q₀ k I) (ComplexShape.up ℤ))
-    (L : CochainComplex (Q₀ k I) ℤ)
-    [CochainComplex.IsKInjective ((ι₀.mapHomologicalComplex (ComplexShape.up ℤ)).obj L)] :
-    Function.Bijective ((Gfun k I).map : (K ⟶ (HomotopyCategory.quotient _ _).obj L) → _) := by
-  have h₁ : Function.Bijective ((ι₀.mapHomotopyCategory (ComplexShape.up ℤ)).map :
-      (K ⟶ (HomotopyCategory.quotient _ _).obj L) → _) :=
-    ⟨(ι₀.mapHomotopyCategory _).map_injective, (ι₀.mapHomotopyCategory _).map_surjective⟩
-  exact (CochainComplex.IsKInjective.Qh_map_bijective _
-    ((ι₀.mapHomologicalComplex _).obj L)).comp h₁
-
 instance isKInjective_resRep_shift (l : IntervalCat k I) (n : ℤ) :
     CochainComplex.IsKInjective ((ι₀.mapHomologicalComplex (ComplexShape.up ℤ)).obj
       ((resC l)⟦n⟧)) :=

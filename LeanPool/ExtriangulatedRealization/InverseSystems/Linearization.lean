@@ -9,12 +9,13 @@ public import LeanPool.ExtriangulatedRealization.Statement
 public import Mathlib.Algebra.Category.ModuleCat.Adjunctions
 
 /-!
-# Linearizing inverse systems of sets (Lemma 4.1)
+# Linearizing inverse systems of sets
 
-For an inverse system `S` of sets with surjective transition maps, the free vector spaces
-`k^(S_i)` form an inverse system with surjective transition maps. If moreover every countable
-set of indices is bounded and `lim S = ∅`, then `lim k^(S_i) = 0` (Bergman [Be, Lemma 3], after
-Higman and Stone).
+Enomoto's Lemma 4.1 treats vector spaces over a field and systems indexed by the first
+uncountable ordinal. Bergman's Lemma 3, after Higman and Stone, treats direct sums of copies
+of a fixed module over the same index. Here the linearization uses free modules over a ring
+and a general linear order. Surjectivity of the transition maps is preserved. If every
+countable set of indices is bounded and `lim S = ∅`, then `lim k^(S_i) = 0`.
 
 Proof (finite supports): for a compatible family `(v_i)` with `v_{i₀} ≠ 0`, the support sizes
 `|supp v_i|` are monotone, hence eventually constant, because countable sets of indices are
@@ -66,14 +67,16 @@ noncomputable abbrev linearize : Iᵒᵖ ⥤ ModuleCat.{u} k := S ⋙ ModuleCat.
 lemma linearize_map_apply {a b : I} (h : a ≤ b) (v : (linearize S k).obj (op b)) :
     ((linearize S k).map (homOfLE h).op).hom v = Finsupp.mapDomain (smapS S h) v := rfl
 
-/-- **Lemma 4.1**, surjectivity. -/
+/-- The surjectivity conclusion of Lemma 4.1 for free modules over a ring and arbitrary
+linearly ordered indices. -/
 lemma linearize_hasSurjectiveTransitions
     (hS : ∀ {a b : I} (h : a ≤ b), Function.Surjective (smapS S h)) :
     HasSurjectiveTransitions (linearize S k) := fun h =>
   Finsupp.mapDomain_surjective (hS h)
 
-/-- **Lemma 4.1**, vanishing of the limit: with countable index sets bounded and `lim S = ∅`,
-every compatible family in `k^(S_i)` is zero. -/
+/-- The vanishing argument of Lemma 4.1 extends from the first uncountable ordinal to any
+linear order with bounded countable subsets. For an inverse system of sets with `lim S = ∅`,
+every compatible family in the free modules `k^(S_i)` is zero. -/
 theorem linearize_compatible_eq_zero (hI : ∀ T : Set I, T.Countable → BddAbove T)
     (hlim : ¬ ∃ s : ∀ i, S.obj (op i), ∀ {a b : I} (h : a ≤ b), smapS S h (s b) = s a)
     (v : ∀ i, (linearize S k).obj (op i))
@@ -122,8 +125,8 @@ theorem linearize_compatible_eq_zero (hI : ∀ T : Set I, T.Countable → BddAbo
   change smapS S h (smapS S _ (sel (b ⊔ m) _)) = smapS S _ (sel (a ⊔ m) _)
   rw [smapS_smapS, ← sel_compat le_sup_right hab, smapS_smapS]
 
-/-- **Lemma 4.1**, consequence: if some `S_i` is nonempty, the projections from `lim k^(S_i)` are
-not all surjective. -/
+/-- For a nontrivial coefficient ring, limit vanishing in the generalized Lemma 4.1
+implies failure of surjectivity at any nonempty `S_i`. -/
 theorem linearize_not_projectionsSurjective [Nontrivial k]
     (hI : ∀ T : Set I, T.Countable → BddAbove T)
     (hlim : ¬ ∃ s : ∀ i, S.obj (op i), ∀ {a b : I} (h : a ≤ b), smapS S h (s b) = s a)

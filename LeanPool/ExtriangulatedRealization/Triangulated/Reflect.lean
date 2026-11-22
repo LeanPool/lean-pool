@@ -69,19 +69,9 @@ lemma exists_iso_of_distinguished {A B B' C : 𝒯} {x : A ⟶ B} {y : B ⟶ C} 
     {y' : B' ⟶ C} {z : C ⟶ A⟦(1 : ℤ)⟧} (h : Triangle.mk x y z ∈ distTriang 𝒯)
     (h' : Triangle.mk x' y' z ∈ distTriang 𝒯) :
     ∃ e : B ≅ B', x ≫ e.hom = x' ∧ e.hom ≫ y' = y := by
-  let e := isoTriangleOfIso₁₂ _ _ (inv_rot_of_distTriang _ h) (inv_rot_of_distTriang _ h')
-    (Iso.refl _) (Iso.refl _) (by simp [Triangle.invRotate])
-  let e₃ : B ≅ B' := Triangle.π₃.mapIso e
-  have i₁ : e.hom.hom₁ = 𝟙 _ := rfl
-  have i₂ : e.hom.hom₂ = 𝟙 _ := rfl
-  refine ⟨e₃, ?_, ?_⟩
-  · have := e.hom.comm₂
-    rw [i₂] at this
-    exact this.trans (Category.id_comp _)
-  · have := e.hom.comm₃
-    rw [i₁] at this
-    rw [← cancel_mono ((shiftEquiv 𝒯 (1 : ℤ)).counitIso.inv.app C)]
-    refine (Category.assoc _ _ _).trans (this.symm.trans ?_)
-    exact (congrArg _ ((shiftFunctor 𝒯 (1 : ℤ)).map_id _)).trans (Category.comp_id _)
+  let e := isoTriangleOfIso₁₃ _ _ h h' (Iso.refl _) (Iso.refl _) (by simp)
+  refine ⟨Triangle.π₂.mapIso e, ?_, ?_⟩
+  · simpa [e] using e.hom.comm₁
+  · simpa [e] using e.hom.comm₂.symm
 
 end ExtriangulatedRealization

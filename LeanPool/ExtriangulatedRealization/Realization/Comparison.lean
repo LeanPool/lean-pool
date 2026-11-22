@@ -44,13 +44,20 @@ noncomputable def eIso (l : IntervalCat k I) :
     (Gfun k I).obj (resK l) ≅ (singleFunctor (Rep k I) 0).obj (l.rep k) :=
   (quotientCompQhIso (Rep k I)).app (resRep l) ≪≫ (asIso (Q.map (qmap l))).symm
 
+lemma Gfun_map_bijective_of_isKInjective (K : HomotopyCategory (Q₀ k I) (ComplexShape.up ℤ))
+    (L : CochainComplex (Q₀ k I) ℤ)
+    [CochainComplex.IsKInjective ((ι₀.mapHomologicalComplex (ComplexShape.up ℤ)).obj L)] :
+    Function.Bijective ((Gfun k I).map : (K ⟶ (HomotopyCategory.quotient _ _).obj L) → _) := by
+  have h₁ : Function.Bijective ((ι₀.mapHomotopyCategory (ComplexShape.up ℤ)).map :
+      (K ⟶ (HomotopyCategory.quotient _ _).obj L) → _) :=
+    ⟨(ι₀.mapHomotopyCategory _).map_injective, (ι₀.mapHomotopyCategory _).map_surjective⟩
+  exact (CochainComplex.IsKInjective.Qh_map_bijective _
+    ((ι₀.mapHomologicalComplex _).obj L)).comp h₁
+
 lemma Gfun_map_bijective (K : HomotopyCategory (Q₀ k I) (ComplexShape.up ℤ))
     (l : IntervalCat k I) :
-    Function.Bijective ((Gfun k I).map : (K ⟶ resK l) → _) := by
-  have h₁ : Function.Bijective ((ι₀.mapHomotopyCategory (ComplexShape.up ℤ)).map :
-      (K ⟶ resK l) → _) :=
-    ⟨(ι₀.mapHomotopyCategory _).map_injective, (ι₀.mapHomotopyCategory _).map_surjective⟩
-  exact (CochainComplex.IsKInjective.Qh_map_bijective _ (resRep l)).comp h₁
+    Function.Bijective ((Gfun k I).map : (K ⟶ resK l) → _) :=
+  Gfun_map_bijective_of_isKInjective K (resC l)
 
 /-- The lift of `l ↦ l` along `G`: the resolution functor on the interval category. -/
 noncomputable def resFunctor : IntervalCat k I ⥤ HomotopyCategory (Q₀ k I) (ComplexShape.up ℤ) where

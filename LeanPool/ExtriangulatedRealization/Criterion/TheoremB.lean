@@ -82,7 +82,9 @@ lemma hasAlgebraicRealization_of_restrict_top {C : Type*} [Category C] [Preaddit
   · exact Functor.Faithful.comp L Φ.F
 
 
-/-- **Theorem B, (2) ⇒ (3).** -/
+/-- Generalized sufficiency direction of Theorem B. For any linearly ordered index and
+arbitrary transition maps, surjective limit projections give an algebraic realization.
+The paper states the implication for nonempty ordinals with surjective transition maps. -/
 lemma hasAlgebraicRealization_of_projectionsSurjective
     (hP : ProjectionsSurjective D) :
     (cdData D).HasAlgebraicRealization.{_, _, _, _, u, max 1 u} := by

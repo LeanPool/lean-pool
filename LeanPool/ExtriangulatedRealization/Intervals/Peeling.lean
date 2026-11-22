@@ -98,29 +98,33 @@ lemma fromVec_comp_toInt (M : Rep k I) (U : Set (WithBot I)) [U.OrdConnected] (a
 
 /-! ### Splitting a retract -/
 
+/-- The split kernel bicone associated to a retraction and its specified section. -/
+noncomputable def kernelSplitBiproduct {X M : Rep k I} (ι : X ⟶ M) (r : M ⟶ X)
+    (h : ι ≫ r = 𝟙 X) : BinaryBiproductData X (kernel r) := by
+  let projection := kernel.lift r (𝟙 M - r ≫ ι) (by
+    rw [Preadditive.sub_comp, Category.assoc, h, Category.comp_id, Category.id_comp, sub_self])
+  have projection_section : ι ≫ projection = 0 := by
+    apply (cancel_mono (kernel.ι r)).mp
+    rw [Category.assoc, kernel.lift_ι, Preadditive.comp_sub, Category.comp_id,
+      ← Category.assoc, h, Category.id_comp, sub_self, zero_comp]
+  have projection_kernel : kernel.ι r ≫ projection = 𝟙 _ := by
+    apply (cancel_mono (kernel.ι r)).mp
+    rw [Category.assoc, kernel.lift_ι, Preadditive.comp_sub, Category.comp_id,
+      ← Category.assoc, kernel.condition, zero_comp, sub_zero, Category.id_comp]
+  let bicone : BinaryBicone X (kernel r) :=
+    ⟨M, r, projection, ι, kernel.ι r, h, projection_section, kernel.condition r, projection_kernel⟩
+  refine ⟨bicone, isBinaryBilimitOfTotal bicone ?_⟩
+  change r ≫ ι + projection ≫ kernel.ι r = 𝟙 M
+  rw [kernel.lift_ι, add_sub_cancel]
+
+/-- The projection onto the kernel of a retraction. -/
+noncomputable def kerProj {X M : Rep k I} (ι : X ⟶ M) (r : M ⟶ X) (h : ι ≫ r = 𝟙 X) :
+    M ⟶ kernel r :=
+  (kernelSplitBiproduct ι r h).bicone.snd
+
 /-- A split monomorphism `X ⟶ M` with retraction `r` exhibits `M` as `X ⊞ ker r`. -/
 noncomputable def isoBiprodKernel {X M : Rep k I} (ι : X ⟶ M) (r : M ⟶ X) (h : ι ≫ r = 𝟙 X) :
-    M ≅ X ⊞ kernel r where
-  hom := biprod.lift r (kernel.lift r (𝟙 M - r ≫ ι) (by
-    rw [Preadditive.sub_comp, Category.assoc, h, Category.comp_id, Category.id_comp, sub_self]))
-  inv := biprod.desc ι (kernel.ι r)
-  hom_inv_id := by
-    rw [biprod.lift_desc, kernel.lift_ι, add_sub_cancel]
-  inv_hom_id := by
-    apply biprod.hom_ext'
-    · rw [biprod.inl_desc_assoc, Category.comp_id]
-      apply biprod.hom_ext
-      · rw [Category.assoc, biprod.lift_fst, h, biprod.inl_fst]
-      · rw [Category.assoc, biprod.lift_snd, biprod.inl_snd]
-        apply (cancel_mono (kernel.ι r)).mp
-        rw [Category.assoc, kernel.lift_ι, Preadditive.comp_sub, Category.comp_id,
-          ← Category.assoc, h, Category.id_comp, sub_self, zero_comp]
-    · rw [biprod.inr_desc_assoc, Category.comp_id]
-      apply biprod.hom_ext
-      · rw [Category.assoc, biprod.lift_fst, kernel.condition, biprod.inr_fst]
-      · rw [Category.assoc, biprod.lift_snd, biprod.inr_snd]
-        apply (cancel_mono (kernel.ι r)).mp
-        rw [Category.assoc, kernel.lift_ι, Preadditive.comp_sub, Category.comp_id,
-          ← Category.assoc, kernel.condition, zero_comp, sub_zero, Category.id_comp]
+    M ≅ X ⊞ kernel r :=
+  biprod.uniqueUpToIso _ _ (kernelSplitBiproduct ι r h).isBilimit
 
 end ExtriangulatedRealization

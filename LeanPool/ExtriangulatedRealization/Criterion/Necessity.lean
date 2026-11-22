@@ -27,8 +27,10 @@ universe u v' u'
 
 variable {k : Type u} [Field k] {I : Type u} [LinearOrder I] (D : Iᵒᵖ ⥤ ModuleCat.{u} k)
 
-/-- **Theorem 3.1, (1) ⇒ (2).** If `C(D)` has a triangulated embedding into a pretriangulated
-category, then every projection `lim D → D_i` is surjective. -/
+/-- Generalization of the necessity direction of Theorem 3.1 to any linearly ordered index,
+arbitrary transition maps, and pretriangulated targets. An embedding of `C(D)` forces every
+projection `lim D → D_i` to be surjective. The paper uses a nonempty ordinal, surjective
+transition maps, and a triangulated target. -/
 theorem projectionsSurjective_of_embedding {T : Type u'} [Category.{v'} T] [Preadditive T]
     [HasZeroObject T] [HasShift T ℤ] [∀ n : ℤ, (shiftFunctor T n).Additive] [Pretriangulated T]
     (Φ : ExtriangulatedFunctor (cdData D) T) (hΦ : Φ.IsTriangulatedEmbedding) :
@@ -70,7 +72,8 @@ theorem projectionsSurjective_of_embedding {T : Type u'} [Category.{v'} T] [Prea
     rw [hy]
     exact hv.symm
 
-/-- **Theorem B, (1) ⇒ (2)**, for triangulated targets in all universes. -/
+/-- Generalized necessity direction of Theorem B for linearly ordered indices, arbitrary
+transition maps, and triangulated targets in all universes. -/
 theorem theoremB_necessity : TheoremBNecessity.{u, v', u'} := by
   intro k _ I _ D hD
   obtain ⟨T, _, _, _, _, _, _, _, Φ, hΦ⟩ := hD
