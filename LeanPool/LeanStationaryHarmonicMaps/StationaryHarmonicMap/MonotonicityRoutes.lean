@@ -73,7 +73,8 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_primitive_cutoffs
     (fun {s} {r} hs hsr hr =>
       weakTheta_increment_eq_weakMonotonicityRhs_of_boundary
         (n := n) (m := m) (Du := Du) (R0 := R0) (s := s) (r := r)
-        hboundary hcalc.1 hradial_radius hs hsr hr)
+        hboundary (weakEnergyAbsolutelyContinuousOnRadii_of_oneDimensionalCalculus hcalc)
+        hradial_radius hs hsr hr)
 
 /-- Same primitive-cutoff route with the interval-integral/smooth-bump
 realization supplied by the formalized construction. -/
@@ -145,7 +146,8 @@ theorem weakTheta_monotone_from_weakStationaryMapIn_via_radialShellsVolume_vecto
     (fun {s} {r} hs hsr hr =>
       weakTheta_increment_eq_weakMonotonicityRhs_of_boundary
         (n := n) (m := m) (Du := Du) (R0 := R0) (s := s) (r := r)
-        hboundary hcalc.1 hradial_radius hs hsr hr)
+        hboundary (weakEnergyAbsolutelyContinuousOnRadii_of_oneDimensionalCalculus hcalc)
+        hradial_radius hs hsr hr)
 
 end StationaryHarmonicMap
 end LeanStationaryHarmonicMaps

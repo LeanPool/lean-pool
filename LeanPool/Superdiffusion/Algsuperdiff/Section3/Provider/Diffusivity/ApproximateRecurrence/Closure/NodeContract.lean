@@ -51,11 +51,11 @@ definition: the exact target, written down so that it can be verified against
 the source *before* the two remaining endpoints are proved, and so that the
 assembly skeletons of `Closure.Junctions` have a stated destination.
 
-The second half of the module discharges the other side of the interface: the
-contract's two displays deliver, verbatim, the `hupper` and `hlower` binders of
-`RecurrenceIntegration.integrate_approx_recurrence_cstarPlus` at the sequence
-`s = fun m => (Annealed.sigmaBar M m : R)`.  That is proved unconditionally, and
-it is the reason the displays are stated at these carriers.
+The second half derives the pointwise recurrence bounds for the sequence
+`s = fun m => (Annealed.sigmaBar M m : ℝ)`. The lower bound uses the cap and
+error hypotheses. In `ClosureRecurrenceFeed.lean`, `feed_pair` uses
+`recurrenceIntegrationSlack` and `max 1 C` to put both bounds in the form used
+by `RecurrenceIntegration.integrate_approx_recurrence_cstarPlus`.
 
 ## The scale gate on `m0`
 
@@ -110,20 +110,13 @@ def TwoSidedClosure (d : ℕ) : Prop :=
 
 /-! ## What the contract feeds -/
 
-/-- **The two displays deliver `e.assump.upper` and `e.assump.lower.modified`.**
+/-- At one pair `(n, n+h)`, the displays give an upper and a lower recurrence bound.
+The upper error coefficient is `C E² |log gamma|²`. The lower bound multiplies it by
+`2 + shellIncrementCap` and uses the quadratic error coefficient `C`.
 
-At one admissible pair `(n, n+h)` the two printed displays give exactly the two
-binders of `RecurrenceIntegration.integrate_approx_recurrence_cstarPlus`, at
-
-```
-  s   = fun m => (Annealed.sigmaBar M m : R) ,
-  E_integration = (2 + shellIncrementCap) C E^2 |log cgamma|^2 ,
-  F             = C .
-```
-
-`hcap` is produced by `Closure.shellDrift_le_cap` from the induction state and
-the shell budget; `herr` is the smallness of the printed error, which
-`e.cgamma.constraints` supplies.  Unconditional otherwise. -/
+The lower bound needs `hcap` and `herr` for the shell drift and printed error.
+`feed_pair` in `ClosureRecurrenceFeed.lean` puts the two bounds at shared integration
+parameters. -/
 theorem integrationHypotheses_of_displays {d : ℕ} (M : ABKModel d) {C E : ℝ}
     {n : ℤ} {h : ℕ} (hC : 0 ≤ C)
     (hup : RecurrenceUpperDisplay M C E n h)

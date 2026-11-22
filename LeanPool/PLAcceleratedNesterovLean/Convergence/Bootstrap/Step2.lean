@@ -12,8 +12,8 @@ public import LeanPool.PLAcceleratedNesterovLean.Core.Defs
 
 Two auxiliary facts for the bootstrap argument:
 
-* `exists_alpha_psi_small`: if `Ψ` is continuous at `m` with `Ψ m = 0`, then `Ψ < R²` on a ball
-  around `m`. The bootstrap uses this to choose the initial radius `α`.
+* `exists_alpha_psi_small`: if `R > 0` and `Ψ` is continuous at `m` with `Ψ m = 0`, then `Ψ < R²`
+  on a ball around `m`. The bootstrap uses this to choose the initial radius `α`.
 * `series_bound_from_geometric`: a finite sum dominated termwise by `C * r ^ k` is at most
   `C * ∑ r ^ k`.
 
