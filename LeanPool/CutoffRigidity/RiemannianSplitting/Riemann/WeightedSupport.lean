@@ -8,7 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPDensity
 
 /-! # Full support of the weighted volume
 
@@ -80,6 +80,15 @@ theorem measure_pos_of_isWeightedVolume {μ : Measure M} {V : M → ℝ} (hV : M
     simp only [Pi.zero_apply, hd]
     exact (ENNReal.ofReal_pos.mpr (mul_pos (Real.exp_pos _) this)).ne'
   exact absurd this hvol.ne'
+
+variable [IsManifold 𝓘(ℝ, F) ∞ M]
+  [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
+
+/-- The canonical weighted measure charges every nonempty open set. -/
+theorem isOpenPosMeasure_of_weighted {μ : Measure M} {V : M → ℝ} (hV : MSmooth F V)
+    (hμ : IsWeightedVolume F μ V) : μ.IsOpenPosMeasure :=
+  ⟨fun U hU hne => (measure_pos_of_isWeightedVolume F hV hμ (continuousOn_chartVolumeDensity F)
+    (fun x z hz => chartVolumeDensity_pos F x (z := z) hz) (U := U) hU hne).ne'⟩
 
 end Support
 

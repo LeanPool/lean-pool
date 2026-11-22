@@ -10,9 +10,8 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.EigenLinear
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedFinal
-public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldZeroDifferential
+import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelPairing
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSupport
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPDensity
 
 /-! # The first eigenspace is finite dimensional; orthonormal eigenbasis; `k₁ > 0` iff an
 eigenfunction exists
@@ -85,25 +84,13 @@ theorem eigenfunction_eq_zero_of_grad_zero {V : M → ℝ} {μ : Measure M} {ρ 
     {h : M → ℝ} (hh : IsMEigenfunction F μ V ρ h)
     (hpar : ∀ x, CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F h) x = 0)
     (x₀ : M) (h0 : mgrad F h x₀ = 0) : h = 0 := by
-  have hsm : MSmooth F h := hh.1
-  have hcar : ∀ x, carre F h h x = carre F h h x₀ := by
-    intro x
-    refine CutoffRigidity.eq_of_mvfderiv_eq_zero (I := 𝓘(ℝ, F))
-      (f := fun y => carre F h h y) ((WReg.msmooth_carre hsm hsm).mdifferentiable (by simp))
-      (fun y => ?_) x x₀
-    ext v
-    rw [mvfderiv_carre_self F hsm y v]
-    have : CutoffRigidity.manifoldHessian 𝓘(ℝ, F) h y v (mgrad F h y) = 0 := by
-      unfold CutoffRigidity.manifoldHessian
-      have := hpar y
-      change inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F h) y v) _ = 0
-      rw [this]; simp
-    simp [this]
+  have hgrad : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, F).tangent 1 (T% (mgrad F h)) :=
+    (WReg.contMDiff_mgrad hh.1).of_le (by simp)
   have hg : ∀ x, mgrad F h x = 0 := by
     intro x
-    have h1 := hcar x
-    rw [carre_self_eq, carre_self_eq, h0] at h1
-    simpa using h1
+    have hpair := CutoffRigidity.inner_parallel_eq_of_preconnected hgrad hgrad hpar hpar x x₀
+    rw [h0, inner_zero_left, real_inner_self_eq_norm_sq, sq_eq_zero_iff, norm_eq_zero] at hpair
+    exact hpair
   funext x
   have e := hh.2.2 x
   have : mgenerator F V h x = 0 := by
@@ -259,9 +246,8 @@ theorem mFirstEigenDim_pos_iff :
   · rintro ⟨f, hf, x, hx⟩
     have hcont : Continuous f := hf.1.continuous
     have hopen : IsOpen {y | f y ≠ 0} := isOpen_ne_fun hcont continuous_const
-    have hpos : 0 < μ {y | f y ≠ 0} :=
-      measure_pos_of_isWeightedVolume F hV hμ (continuousOn_chartVolumeDensity F)
-        (fun x₀ z hz => chartVolumeDensity_pos F x₀ hz) hopen ⟨x, hx⟩
+    have := isOpenPosMeasure_of_weighted F hV hμ
+    have hpos := hopen.measure_pos μ ⟨x, hx⟩
     refine ⟨⟨hf.2.1.toLp f, f, hf, (MemLp.coeFn_toLp hf.2.1).symm⟩, ?_⟩
     intro h0
     have h1 : hf.2.1.toLp f = 0 := congrArg Subtype.val h0

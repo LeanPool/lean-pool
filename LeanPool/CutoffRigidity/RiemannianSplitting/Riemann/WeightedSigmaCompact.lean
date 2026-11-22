@@ -8,7 +8,6 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPDensity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSupport
 import Mathlib.Topology.MetricSpace.Cover
 
@@ -91,9 +90,7 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 modelled extended metric space separable, and local compactness gives σ-compactness. -/
 theorem sigmaCompactSpace_of_finite_weightedVolume {V : M → ℝ} (hV : MSmooth F V)
     {μ : Measure M} (hμ : IsWeightedVolume F μ V) [IsFiniteMeasure μ] : SigmaCompactSpace M := by
-  let : μ.IsOpenPosMeasure := ⟨fun U hU hne =>
-    (measure_pos_of_isWeightedVolume F hV hμ (continuousOn_chartVolumeDensity F)
-      (fun x z hz ↦ chartVolumeDensity_pos F x hz) hU hne).ne'⟩
+  let : μ.IsOpenPosMeasure := isOpenPosMeasure_of_weighted F hV hμ
   let : SeparableSpace M := separableSpace_of_finite_openPosMeasure μ
   let : SecondCountableTopology M := UniformSpace.secondCountable_of_separable M
   let : LocallyCompactSpace M := ChartedSpace.locallyCompactSpace F M

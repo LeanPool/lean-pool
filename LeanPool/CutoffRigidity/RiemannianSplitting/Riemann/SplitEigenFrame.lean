@@ -10,7 +10,6 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitFrame
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.EigenFinite
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitEigen
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelPairing
 
 /-! # From the orthonormal eigenbasis to an orthonormal parallel frame
@@ -40,16 +39,6 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 variable {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M} [IsProbabilityMeasure μ]
   (hμ : IsWeightedVolume F μ V) {ρ : ℝ} (hρ : 0 < ρ) (hCD : CD F ρ V)
   (hgap : mSpectralGap F μ = ρ)
-
-include hV hμ in
-omit [IsRiemannianManifold 𝓘(ℝ, F) M]
-  [ConnectedSpace M]
-  [CompleteSpace M]
-  [IsProbabilityMeasure μ] in
-/-- `μ` charges nonempty open sets. -/
-theorem isOpenPosMeasure_of_weighted : μ.IsOpenPosMeasure :=
-  ⟨fun _U hU hne => (measure_pos_of_isWeightedVolume F hV hμ (continuousOn_chartVolumeDensity F)
-    (fun x₀ _z hz => chartVolumeDensity_pos F x₀ hz) hU hne).ne'⟩
 
 include hV hμ hρ hCD hgap in
 /-- **Frame from the eigenbasis**: a frame `s` of size `k₁ = mFirstEigenDim` of eigenfunctions

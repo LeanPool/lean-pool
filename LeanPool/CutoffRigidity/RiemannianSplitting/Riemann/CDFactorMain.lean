@@ -12,6 +12,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorGrad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGlobal
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
+import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSupport
 import Mathlib.Geometry.Manifold.BumpFunction
 
 /-! # `CDFactor`, part 2: the generator commutes with `π`, and `CD(ρ)` on the level
@@ -146,9 +147,7 @@ theorem mgenerator_comp_toLevel {V : M → ℝ} (hV : MSmooth F V) {μ : Measure
     {v' : fr.Level → ℝ} (hv' : MSmooth (LevelModel F (Rd k)) v') (x : M) :
     mgenerator F V (fun z => v' (fr.toLevel z)) x =
       mgenerator (LevelModel F (Rd k)) V' v' (fr.toLevel x) := by
-  have : μ.IsOpenPosMeasure :=
-    ⟨fun U hU hne => (measure_pos_of_isWeightedVolume F hV hμ (continuousOn_chartVolumeDensity F)
-      (fun x₀ z hz => chartVolumeDensity_pos F x₀ hz) hU hne).ne'⟩
+  have := isOpenPosMeasure_of_weighted F hV hμ
   have hu : MSmooth F (fun z => v' (fr.toLevel z)) := hv'.comp fr.contMDiff_toLevel
   have hA : Continuous (mgenerator F V (fun z => v' (fr.toLevel z))) :=
     (WReg.msmooth_mgenerator F hV hu).continuous

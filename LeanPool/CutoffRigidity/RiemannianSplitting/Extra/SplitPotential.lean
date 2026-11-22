@@ -12,6 +12,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureFinal
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorMain
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitDistance
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitEigenFrame
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitEigen
 
 /-! # Riemannian Gaussian splitting with the potential identity (Theorem 3.6, extra conjunct) -/
 

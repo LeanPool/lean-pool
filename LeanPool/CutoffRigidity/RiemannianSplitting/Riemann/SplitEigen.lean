@@ -8,7 +8,10 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Statements
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 
 /-! # Affine description of the first eigenfunctions through the splitting
 
@@ -20,12 +23,10 @@ Euclidean coordinate of the splitting is `p = ρ^{-1/2} (g₁,…,g_k)`, then ev
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Filter Topology Set
-open scoped ENNReal NNReal ContDiff Manifold
+open MeasureTheory Filter Topology Set
+open scoped ENNReal NNReal
 
 namespace CutoffRigidity.Riemann
-
-open CutCur
 
 section Algebra
 

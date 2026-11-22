@@ -106,7 +106,6 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedFlow
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedVectorField
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Extra.SplitPotential
 public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldScalarChartDerivative
-public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldZeroDifferential
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.AssembleMain
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorGrad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorMain
