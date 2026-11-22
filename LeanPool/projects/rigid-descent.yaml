@@ -1,0 +1,43 @@
+slug: rigid-descent
+title: Descent and effective descent in rigid categories
+summary: For a ring object in a rigidly compactly generated, braided closed
+  tensor-triangulated category, descent type, effective descent type, nil-purity of
+  the unit fiber and the existence of
+  a pure monomorphism from the unit into its thick tensor ideal are equivalent.
+  The development proves Brown representability and gives tools for compact generation,
+  homotopy limits of towers and pro-constancy.
+branch: category theory
+entry_module: LeanPool.RigidDescent
+authors:
+- Brendan Murphy
+source:
+  title: Descent and effective descent in rigid categories
+  url: https://github.com/Shamrock-Frost/rigid-descent-formal
+  github_repo: Shamrock-Frost/rigid-descent-formal
+license: MIT
+status: verified
+provenance: AI
+main_declarations:
+- RigidDescent.theoremA
+- RigidDescent.theoremA_of_splitMono
+- RigidDescent.brown_representability
+main_results:
+- declaration: RigidDescent.theoremA
+  informal: In a rigidly compactly generated, braided closed tensor-triangulated category,
+    the four descent and purity conditions are equivalent for a ring object and a
+    distinguished triangle for its unit.
+- declaration: RigidDescent.theoremA_of_splitMono
+  informal: In the same category, the equivalence holds for a map from the unit that becomes split monic
+    after tensoring on the left by its target.
+- declaration: RigidDescent.brown_representability
+  informal: A cohomological additive functor to abelian groups that sends coproducts
+    to products is representable in the compactly generated setting.
+tags:
+- tensor-triangulated categories
+- descent
+- Brown representability
+- purity
+msc:
+- 18G80
+- 18G25
+- 18D20
