@@ -220,6 +220,30 @@ theorem uniform_rest_negative_readout_has_negative_beta
       cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
     field_simp [hr] <;> ring_nf <;> rw [Complex.I_sq] <;> ring
 
+private def cubicalRepeatedCoordinates (position : UniformCell2) : CubicalCell4
+  | 0 => position 0
+  | 1 => position 1
+  | 2 => position 0
+  | _ => position 1
+
+private theorem cubical_repeated_coordinates_mul (scale : ℂ) (position : UniformCell2) :
+    cubicalRepeatedCoordinates (fun i => scale * position i) =
+      fun i => scale * cubicalRepeatedCoordinates position i := by
+  funext i
+  fin_cases i <;> rfl
+
+private theorem cubical_phase_readout_factor (mass px py pz : ℂ) (hmass : mass ≠ 0)
+    (phase : UniformTwoChannelPhase) :
+    cubicalPhaseReadout mass px py pz phase =
+      fun i => mass⁻¹ * (cubicalStandardHamiltonian mass px py pz
+        (cubicalRepeatedCoordinates phase.1) i + I * cubicalRepeatedCoordinates phase.2 i) := by
+  funext i
+  fin_cases i <;>
+    simp [cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower, cubicalUpperEmbedding,
+      cubicalRepeatedCoordinates, cubicalStandardHamiltonian, cubicalStandardSpatial,
+      cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
+      cubicalStandardAlphaZ] <;> field_simp [hmass] <;> ring
+
 theorem cubical_phase_readout_intertwines
     (mass px py pz : ℂ) (hmass : mass ≠ 0)
     (phase : UniformTwoChannelPhase) :
@@ -228,18 +252,13 @@ theorem cubical_phase_readout_intertwines
       fun component =>
         -I * cubicalStandardHamiltonian mass px py pz
           (cubicalPhaseReadout mass px py pz phase) component := by
-  have hI3 : I ^ 3 = -I := by
-    rw [pow_succ, Complex.I_sq]
-    ring
-  funext component
-  fin_cases component <;>
-    simp [cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, uniformTwoChannelKleinGordonVector,
-      cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
-    field_simp [hmass] <;>
-    ring_nf <;> simp only [Complex.I_sq, hI3] <;> ring
+  simp only [cubical_phase_readout_factor mass px py pz hmass, uniformTwoChannelKleinGordonVector,
+    cubical_repeated_coordinates_mul, cubical_standard_hamiltonian_scale,
+    cubical_standard_hamiltonian_add, cubical_standard_hamiltonian_square]
+  funext i
+  ring_nf
+  rw [Complex.I_sq]
+  ring
 
 /-- Recover the two position coordinates by combining upper and lower spinor components. -/
 def cubicalStandardPosition (z : CubicalCell4) : UniformCell2

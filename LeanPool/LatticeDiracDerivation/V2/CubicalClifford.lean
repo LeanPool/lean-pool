@@ -152,11 +152,23 @@ theorem cubical_incidence_linear_square
     cubicalIncidenceLinear k0 k1 k2
         (cubicalIncidenceLinear k0 k1 k2 amplitude) =
       fun corner => (k0 ^ 2 + k1 ^ 2 + k2 ^ 2) * amplitude corner := by
+  have hlinear (axis : Fin 3) :
+      cubicalGamma axis (cubicalIncidenceLinear k0 k1 k2 amplitude) =
+        fun corner => k0 * cubicalGamma axis (cubicalGamma 0 amplitude) corner +
+          k1 * cubicalGamma axis (cubicalGamma 1 amplitude) corner +
+          k2 * cubicalGamma axis (cubicalGamma 2 amplitude) corner := by
+    funext corner
+    simp only [cubicalIncidenceLinear, cubicalGamma]
+    ring
   funext corner
-  fin_cases corner <;>
-    simp [cubicalIncidenceLinear, cubicalGamma, cubicalIncidenceSign,
-      cubicalFlip, cubicalFlip0, cubicalFlip1, cubicalFlip2,
-      cubicalBit0, cubicalBit1] <;> ring
+  change k0 * cubicalGamma 0 (cubicalIncidenceLinear k0 k1 k2 amplitude) corner +
+    k1 * cubicalGamma 1 (cubicalIncidenceLinear k0 k1 k2 amplitude) corner +
+    k2 * cubicalGamma 2 (cubicalIncidenceLinear k0 k1 k2 amplitude) corner = _
+  simp only [hlinear, cubical_gamma_square,
+    cubical_gamma_anticommute 0 1 (by decide) amplitude,
+    cubical_gamma_anticommute 0 2 (by decide) amplitude,
+    cubical_gamma_anticommute 1 2 (by decide) amplitude]
+  ring
 
 /-! ## The two geometry-derived rank-four flavor sectors -/
 
