@@ -50,10 +50,10 @@ lemma extriangulatedFunctor_isTriangulatedRealization :
 
 end RealizationData
 
-/-- The algebraic-realization consequence of Proposition 2.3: compatible surjections
-`W → D_i`, `i ∈ J`, give an algebraic realization of `C_J` in the homotopy category of all
-cochain complexes. The cited proposition gives a realization in the bounded homotopy
-category. -/
+/-- Generalization of the algebraic-realization consequence of Proposition 2.3. A linear
+order `I` and compatible surjections `W → D_i` for `i ∈ J` give a realization of `C_J` in the
+homotopy category of all cochain complexes. The paper uses a nonempty ordinal, surjective
+transitions throughout the system, and the bounded homotopy category. -/
 theorem hasAlgebraicRealization_subcatJ {k : Type u} [Field k] {I : Type u} [LinearOrder I]
     (D : Iᵒᵖ ⥤ ModuleCat.{u} k) (J : Set I) (W : ModuleCat.{u} k)
     (q : ∀ i ∈ J, W ⟶ D.obj (op i)) (hsurj : ∀ i (hi : i ∈ J), Function.Surjective (q i hi).hom)

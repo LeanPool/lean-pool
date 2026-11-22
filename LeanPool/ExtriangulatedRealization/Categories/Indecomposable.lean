@@ -5,7 +5,11 @@ Authors: Haruhisa Enomoto
 -/
 module
 
-public import LeanPool.ExtriangulatedRealization.Statement
+public import Mathlib.Algebra.GroupWithZero.Idempotent
+public import Mathlib.Algebra.Module.Torsion.Field
+public import Mathlib.CategoryTheory.Linear.Basic
+public import Mathlib.CategoryTheory.Preadditive.Biproducts
+public import Mathlib.RingTheory.LocalRing.Basic
 
 /-!
 # Objects whose endomorphisms are scalars
@@ -18,7 +22,7 @@ multiples of the identity is indecomposable and has local endomorphism ring `k`.
 
 namespace ExtriangulatedRealization
 
-open CategoryTheory Limits Statement
+open CategoryTheory Limits
 
 variable {k : Type*} [Field k] {𝒞 : Type*} [Category 𝒞] [Preadditive 𝒞] [Linear k 𝒞]
 

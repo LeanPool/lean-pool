@@ -8,7 +8,7 @@ module
 public import LeanPool.ExtriangulatedRealization.CD.Indecomposables
 
 /-!
-# Heredity of `C(D)` (Proposition 4.4, `Eⁿ = 0` for `n ≥ 2`)
+# Heredity of `C(D)` over arbitrary linearly ordered indices
 
 Split an object `M` into the summand `M_A` formed by its entries `A i` and the summand `M_R` of
 its other entries, so that `1_M = ι_A π_A + ι_R π_R`. By (4.1), `E(M_A, -) = 0` and
@@ -124,7 +124,9 @@ lemma of_cons_word_mem {C' M A : CD D} {n : ℕ} (α : (cdData D).Ext M A)
   rw [sub_add_cancel, ← hα] at h
   exact h
 
-/-- **Proposition 4.4**, heredity: `Eⁿ = 0` for every `n ≥ 2`. -/
+/-- The heredity clause of Proposition 4.4, extended to arbitrary linearly ordered
+indices and arbitrary transition maps. The paper assumes a nonempty ordinal and
+surjective transitions. The higher extension groups vanish for every `n ≥ 2`. -/
 theorem cdData_isHereditary : (cdData D).IsHereditary := by
   intro n hn C' A w
   cases w with

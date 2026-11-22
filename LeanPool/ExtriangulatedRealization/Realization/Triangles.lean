@@ -10,7 +10,7 @@ public import LeanPool.ExtriangulatedRealization.Triangulated.Reflect
 public import LeanPool.ExtriangulatedRealization.Triangulated.Biproduct
 
 /-!
-# Realizations go to distinguished triangles (Proposition 2.3, Step 4)
+# Realizations go to distinguished triangles (Proposition 2.3, Step 3)
 
 The shadow functor `Γ` is fully faithful on the objects `e₀ X` of `K(Q)` with `X ∈ K(Q₀)` whose
 image in `K(Rep k I)` is K-injective; these objects are stable under `⟦1⟧` and cones. The

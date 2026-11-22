@@ -5,7 +5,7 @@ Authors: Haruhisa Enomoto
 -/
 module
 
-public import LeanPool.ExtriangulatedRealization.Criterion.TheoremB
+public import LeanPool.ExtriangulatedRealization.Criterion.Necessity
 public import LeanPool.ExtriangulatedRealization.InverseSystems.Linearization
 public import LeanPool.ExtriangulatedRealization.InverseSystems.Omega1
 

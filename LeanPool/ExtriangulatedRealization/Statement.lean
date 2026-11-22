@@ -34,7 +34,7 @@ public import Mathlib.SetTheory.Cardinal.Aleph
 /-!
 # Extriangulated categories, triangulated embeddings and algebraic realizations
 
-This file uses only Mathlib. It fixes the general vocabulary of the manuscript
+This file fixes the general vocabulary of the manuscript
 *An extriangulated category with no triangulated embedding*:
 
 * `ExtriangulatedData k C`: an extension bifunctor `E` on a `k`-linear category `C`, with values in
@@ -48,11 +48,9 @@ This file uses only Mathlib. It fixes the general vocabulary of the manuscript
 * `ExtriangulatedFunctor.IsTriangulatedEmbedding`, `HasAlgebraicRealization`.
 * `ExactStructure`, `ExactStructure.IsFrobenius`, `IsAlgebraicTriangulated`.
 
-The definition of an algebraic triangulated category ("triangle equivalent to the stable category
-of a Frobenius exact category") is stated through the quotient functor: a Frobenius exact category
-`B` and an additive functor `Φ : B ⥤ T` which is full, essentially surjective, kills exactly the
-morphisms factoring through a projective object, and carries connecting morphisms natural in
-morphisms of conflations which complete the images of conflations to distinguished triangles.
+The algebraic realization results use a Frobenius quotient-functor witness. The paper uses a
+triangle equivalence with Happel's stable category. The comparison is explained in the
+upstream proof notes.
 -/
 
 @[expose] public section
@@ -376,11 +374,11 @@ end ExactStructure
 
 end Exact
 
-/-- A triangulated category is algebraic if it is triangle equivalent to the stable category of a
-Frobenius exact category. We state this through the quotient functor `Φ : B ⥤ T`: it is additive,
-full and essentially surjective, a morphism goes to zero exactly when it factors through a
-projective object, and conflations go to distinguished triangles with connecting morphisms natural
-in morphisms of conflations. -/
+/-- Algebraicity in the quotient-functor formulation. A witness is a Frobenius exact category
+`B` and a full, essentially surjective additive functor `Φ : B ⥤ T` whose kernel consists of
+maps through projective objects. Natural connecting morphisms send conflations to distinguished
+triangles. The paper expresses algebraicity as triangle equivalence with Happel's stable
+category. The upstream proof notes explain this comparison at the level of mathematics. -/
 def IsAlgebraicTriangulated (T : Type u') [Category.{v'} T] [Preadditive T] [HasZeroObject T]
     [HasShift T ℤ] [∀ n : ℤ, (shiftFunctor T n).Additive] [Pretriangulated T] : Prop :=
   ∃ (B : Type u') (_ : Category.{v'} B) (_ : Preadditive B) (_ : HasZeroObject B)
@@ -858,7 +856,9 @@ instance rho_additive : (rho D).Additive := by unfold rho; infer_instance
 
 attribute [local instance] HasExt.standard
 
-/-- The extension bifunctor `E(C, A) = Ext¹(ρC, ρA)`, computed in `Rep k I`. -/
+/-- The extension bifunctor `E(C, A) = Ext¹(ρC, ρA)`, computed in the ambient category
+`Rep k I`. The paper first computes the restricted extension groups in `B_J` and
+identifies them with the ambient groups in the proof of Corollary 2.4. -/
 noncomputable def extE : (CD D)ᵒᵖ ⥤ CD D ⥤ ModuleCat.{u + 1} k :=
   (rho D).op ⋙ Abelian.linearExtFunctor.{u + 1} k (Rep k I) 1 ⋙
     (Functor.whiskeringLeft _ _ _).obj (rho D)

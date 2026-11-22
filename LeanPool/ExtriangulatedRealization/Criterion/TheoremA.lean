@@ -7,7 +7,7 @@ module
 
 public import LeanPool.ExtriangulatedRealization.CD.Counting
 public import LeanPool.ExtriangulatedRealization.CD.Structure
-public import LeanPool.ExtriangulatedRealization.Criterion.TheoremB
+public import LeanPool.ExtriangulatedRealization.Criterion.Necessity
 public import LeanPool.ExtriangulatedRealization.Realization.Subcategory
 public import LeanPool.ExtriangulatedRealization.InverseSystems.Aronszajn
 public import LeanPool.ExtriangulatedRealization.InverseSystems.Linearization

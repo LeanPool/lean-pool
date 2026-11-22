@@ -8,7 +8,7 @@ module
 public import LeanPool.ExtriangulatedRealization.Criterion.TheoremB
 
 /-!
-# Proposition 4.6: algebraic realizations for small index sets or small `D_i`
+# The two realization criteria of Proposition 4.6
 
 If the ordinal `I` has a countable cofinal subset, a recursive lift along a cofinal sequence
 extends every `u ∈ D_i` to a compatible family. If every `D_i` is finite-dimensional, extending
@@ -154,7 +154,7 @@ lemma projectionsSurjective_of_finiteDimensional (hD : HasSurjectiveTransitions 
 
 variable [WellFoundedLT I] [Nonempty I]
 
-/-- **Proposition 4.6.** -/
+/-- The two sufficient conditions of Proposition 4.6 for algebraic realizability. -/
 theorem proposition_4_6 : Proposition46.{u} := by
   intro k _ I _ _ _ D hD
   exact ⟨fun ⟨S, hS, hcof⟩ => hasAlgebraicRealization_of_projectionsSurjective D

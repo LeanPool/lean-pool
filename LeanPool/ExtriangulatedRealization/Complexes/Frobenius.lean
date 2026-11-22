@@ -12,10 +12,10 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexCohomology
 # The homotopy category of an additive category is algebraic
 
 With the degreewise split exact structure, `CochainComplex C ℤ` is a Frobenius exact category
-whose projective-injective objects are the contractible complexes (Keller, *Chain complexes and
-stable categories*, Section 1). The quotient functor to the homotopy category kills exactly the
-morphisms factoring through a contractible complex, which are the null-homotopic ones, and sends
-a degreewise split conflation to the distinguished triangle of
+(Keller, *Chain complexes and stable categories*, §1.2(b)). Its projective-injective objects
+are the contractible complexes. The quotient functor kills exactly the morphisms factoring
+through a contractible complex, which are the null-homotopic ones (Keller, §2.3(a)).
+It sends a degreewise split conflation to the distinguished triangle of
 `CochainComplex.trianglehOfDegreewiseSplit`, whose connecting morphism is natural. Hence
 `HomotopyCategory C (ComplexShape.up ℤ)` is an algebraic triangulated category.
 -/

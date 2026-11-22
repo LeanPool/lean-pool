@@ -11,7 +11,7 @@ public import LeanPool.ExtriangulatedRealization.Categories.Mat
 public import LeanPool.ExtriangulatedRealization.CD.Existence
 
 /-!
-# `C(D)` is idempotent complete (Proposition 4.4, Step 1)
+# Idempotent completeness of `C(D)` with arbitrary transition maps
 
 Write an object `M` as `bPart M ⊞ xPart M`. Since there are no nonzero morphisms from an object
 without copies of `X` to copies of `X`, an idempotent on `M` is triangular, so it splits once
@@ -116,7 +116,8 @@ lemma idempotentsSplit_of_xFree {N : CD D} (hN : XFree D N) : IdempotentsSplit N
   · rw [Functor.map_comp, hi', he']
     simp [hei]
 
-/-- **Proposition 4.4**: `C(D)` is idempotent complete. -/
+/-- The idempotent-completeness clause of Proposition 4.4, extended to arbitrary
+transition maps. The paper assumes surjective transition maps in Construction 2.2. -/
 theorem isIdempotentComplete_CD : IsIdempotentComplete (CD D) := by
   refine ⟨fun M p hp => ?_⟩
   let iso : M ≅ bPart D M ⊞ xPart D M :=

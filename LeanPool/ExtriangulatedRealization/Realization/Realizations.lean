@@ -420,7 +420,7 @@ private lemma splitIso_comm_mor₃ {A C : (labelsIn D J).FullSubcategory}
     rw [biprod.inr_desc_assoc, biprod.inr_desc, ← Category.assoc, hpull (M := xPartJ C), hz,
       zero_comp, zero_comp]
 
-/-- **Realizations go to distinguished triangles** (Proposition 2.3, Step 4). -/
+/-- **Realizations go to distinguished triangles** (Proposition 2.3, Step 3). -/
 theorem realTriangle_distinguished {A B C : (labelsIn D J).FullSubcategory} {x : A ⟶ B}
     {y : B ⟶ C} {δ : (dataJ (D := D) (J := J)).Ext C A}
     (h : (dataJ (D := D) (J := J)).Realizes δ x y) :
