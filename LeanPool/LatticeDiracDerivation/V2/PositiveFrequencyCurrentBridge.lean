@@ -33,7 +33,7 @@ theorem positive_pauli_spatial_density
     (px py pz : ℝ) (q : UniformCell2) :
     uniformCell2Density (positivePauliSpatial px py pz q) =
       (px ^ 2 + py ^ 2 + pz ^ 2) * uniformCell2Density q := by
-  simp [uniformCell2Density, positivePauliSpatial,
+  simp [uniformCell2Density, positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one,
     Complex.normSq, Complex.mul_re, Complex.mul_im,
     Fin.sum_univ_succ]
   ring
@@ -62,7 +62,8 @@ theorem normalized_positive_frequency_current_formula
     simp [cubicalDiracCurrent, cubicalVelocityOperator, cubicalAlpha,
       cubicalCell4RealPair, normalizedPositiveFrequencyEmbedding,
       cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      positivePauliSpatial, uniformCell2Density, Fin.sum_univ_succ,
+      positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one,
+      uniformCell2Density, Fin.sum_univ_succ,
       Complex.normSq, Complex.mul_re, Complex.mul_im] <;>
     ring
 

@@ -52,7 +52,8 @@ theorem canonical_spectral_readout_additive
   fin_cases component <;>
     simp [canonicalSpectralReadout, nativePositiveAmplitude,
       nativeNegativeAmplitude, normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial] <;>
+      normalizedNegativeFrequencyEmbedding, positive_pauli_spatial_apply_zero,
+      positive_pauli_spatial_apply_one] <;>
     ring
 
 theorem canonical_spectral_readout_scale
@@ -67,7 +68,8 @@ theorem canonical_spectral_readout_scale
     simp [canonicalSpectralReadout, nativePositiveAmplitude,
       nativeNegativeAmplitude, uniformTwoChannelScale,
       normalizedPositiveFrequencyEmbedding,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial] <;>
+      normalizedNegativeFrequencyEmbedding, positive_pauli_spatial_apply_zero,
+      positive_pauli_spatial_apply_one] <;>
     ring
 
 theorem canonical_spectral_momentum_readout_additive
@@ -226,10 +228,9 @@ def finiteSpectralDiracField [Fintype Mode]
     (momentum : Mode → LatticeMomentum)
     (phase : Mode → UniformTwoChannelPhase)
     (site : InfiniteCubicSite) : CubicalCell4 :=
-  fun component => ∑ mode,
-    cubicLatticeCharacter (momentum mode) site *
-      canonicalSpectralMomentumReadout mass (energy mode)
-        (momentum mode) (phase mode) component
+  finiteFourierSynthesis momentum
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
+      (phase mode)) site
 
 /-- Apply the free Dirac generator to each mode before synthesis. -/
 def finiteSpectralDiracTimeDerivative [Fintype Mode]
@@ -237,11 +238,9 @@ def finiteSpectralDiracTimeDerivative [Fintype Mode]
     (momentum : Mode → LatticeMomentum)
     (phase : Mode → UniformTwoChannelPhase)
     (site : InfiniteCubicSite) : CubicalCell4 :=
-  fun component => ∑ mode,
-    cubicLatticeCharacter (momentum mode) site *
-      canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
-        (uniformVacuumContinuumGenerator mass
-          (momentum mode) (phase mode)) component
+  finiteFourierSynthesis momentum
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
+      (uniformVacuumContinuumGenerator mass (momentum mode) (phase mode))) site
 
 /-- Synthesize the native lattice time generator in the same spinor coordinates. -/
 def finiteSpectralNativeTimeDerivative [Fintype Mode]
@@ -249,11 +248,9 @@ def finiteSpectralNativeTimeDerivative [Fintype Mode]
     (momentum : Mode → LatticeMomentum)
     (phase : Mode → UniformTwoChannelPhase)
     (site : InfiniteCubicSite) : CubicalCell4 :=
-  fun component => ∑ mode,
-    cubicLatticeCharacter (momentum mode) site *
-      canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
-        (uniformVacuumNativeGenerator mass
-          (momentum mode) (phase mode)) component
+  finiteFourierSynthesis momentum
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
+      (uniformVacuumNativeGenerator mass (momentum mode) (phase mode))) site
 
 /-- Synthesize the exact spatial defect after the canonical change of coordinates. -/
 def finiteSpectralMappedC19Remainder [Fintype Mode]
@@ -261,11 +258,9 @@ def finiteSpectralMappedC19Remainder [Fintype Mode]
     (momentum : Mode → LatticeMomentum)
     (phase : Mode → UniformTwoChannelPhase)
     (site : InfiniteCubicSite) : CubicalCell4 :=
-  fun component => ∑ mode,
-    cubicLatticeCharacter (momentum mode) site *
-      canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
-        (uniformNativeSpatialDefectPhase
-          (momentum mode) (phase mode)) component
+  finiteFourierSynthesis momentum
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
+      (uniformNativeSpatialDefectPhase (momentum mode) (phase mode))) site
 
 /-- Differentiate the finite spinor Fourier sum in the specified coordinate direction. -/
 def finiteSpectralDiracSpatialDerivative [Fintype Mode]
@@ -273,11 +268,9 @@ def finiteSpectralDiracSpatialDerivative [Fintype Mode]
     (momentum : Mode → LatticeMomentum)
     (phase : Mode → UniformTwoChannelPhase)
     (site : InfiniteCubicSite) : CubicalCell4 :=
-  fun component => ∑ mode,
-    I * ((momentum mode axis : ℝ) : ℂ) *
-      cubicLatticeCharacter (momentum mode) site *
-        canonicalSpectralMomentumReadout mass (energy mode)
-          (momentum mode) (phase mode) component
+  finiteFourierSpatialDerivative axis momentum
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode)
+      (phase mode)) site
 
 theorem finite_spectral_tangent_obeys_position_space_dirac [Fintype Mode]
     (mass : ℝ) (energy : Mode → ℝ)
@@ -315,16 +308,11 @@ theorem finite_spectral_native_time_derivative_splits [Fintype Mode]
         finiteSpectralDiracTimeDerivative mass energy momentum phase site
             component +
           finiteSpectralMappedC19Remainder mass energy momentum phase site
-            component := by
-  funext component
-  unfold finiteSpectralNativeTimeDerivative
-    finiteSpectralDiracTimeDerivative finiteSpectralMappedC19Remainder
-  rw [← Finset.sum_add_distrib]
-  apply Finset.sum_congr rfl
-  intro mode _
-  rw [uniform_native_generator_exact_defect]
-  rw [canonical_spectral_momentum_readout_additive]
-  ring
+            component :=
+  finite_fourier_native_time_derivative_splits mass momentum phase
+    (fun mode => canonicalSpectralMomentumReadout mass (energy mode) (momentum mode))
+    (fun mode => canonical_spectral_momentum_readout_additive mass (energy mode) (momentum mode))
+    site
 
 theorem finite_spectral_native_c19_obeys_position_dirac_with_remainder
     [Fintype Mode]

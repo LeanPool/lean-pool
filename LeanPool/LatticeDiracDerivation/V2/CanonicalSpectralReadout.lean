@@ -144,7 +144,7 @@ theorem canonical_spectral_readout_positive_phase
         (fun _ => 0) from h.2]
   fin_cases component <;>
     simp [normalizedNegativeFrequencyEmbedding,
-      positivePauliSpatial]
+      positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one]
 
 theorem canonical_spectral_readout_negative_phase
     (mass energy px py pz : ℝ) (henergy : energy ≠ 0)
@@ -162,7 +162,7 @@ theorem canonical_spectral_readout_negative_phase
       (nativePhaseOfFrequencyAmplitudes energy (fun _ => 0) q) = q from h.2]
   fin_cases component <;>
     simp [normalizedPositiveFrequencyEmbedding,
-      positivePauliSpatial]
+      positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one]
 
 theorem native_amplitudes_of_kg_generator
     (mass energy px py pz : ℝ) (henergy : energy ≠ 0)
@@ -200,7 +200,8 @@ theorem normalized_negative_frequency_embedding_scale
         normalizedNegativeFrequencyEmbedding mass energy px py pz q component := by
   funext component
   fin_cases component <;>
-    simp [normalizedNegativeFrequencyEmbedding, positivePauliSpatial] <;>
+    simp [normalizedNegativeFrequencyEmbedding, positive_pauli_spatial_apply_zero,
+      positive_pauli_spatial_apply_one] <;>
     ring
 
 /-- The one spectral map intertwines the complete positive+negative native
@@ -293,10 +294,12 @@ private def pauliSpatialLinear (px py pz : ℝ) : UniformCell2 →ₗ[ℂ] Unifo
   toFun := positivePauliSpatial px py pz
   map_add' first second := by
     funext component
-    fin_cases component <;> simp [positivePauliSpatial] <;> ring
+    fin_cases component <;>
+      simp [positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one] <;> ring
   map_smul' scale field := by
     funext component
-    fin_cases component <;> simp [positivePauliSpatial] <;> ring
+    fin_cases component <;>
+      simp [positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one] <;> ring
 
 private def spectralBlock (spatial : UniformCell2 →ₗ[ℂ] UniformCell2)
     (diagonal offDiagonal : ℂ) (first second : UniformCell2) : UniformCell2 :=

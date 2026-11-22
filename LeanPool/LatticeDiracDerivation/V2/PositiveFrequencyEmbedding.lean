@@ -25,23 +25,27 @@ noncomputable section
 
 /-- The two-coordinate spatial Pauli response obtained from the lower half of
 the same standard cubical spatial operator. -/
-def positivePauliSpatial (px py pz : ℝ)
-    (q : UniformCell2) : UniformCell2
-  | 0 => (pz : ℂ) * q 0 + ((px : ℂ) - I * (py : ℂ)) * q 1
-  | _ => ((px : ℂ) + I * (py : ℂ)) * q 0 - (pz : ℂ) * q 1
+def positivePauliSpatial (px py pz : ℝ) (q : UniformCell2) : UniformCell2 :=
+  cubicalSpatialLower (px : ℂ) (py : ℂ) (pz : ℂ) q
 
 theorem positive_pauli_spatial_is_cubical_lower
     (px py pz : ℝ) (q : UniformCell2) :
     positivePauliSpatial px py pz q =
-      cubicalSpatialLower (px : ℂ) (py : ℂ) (pz : ℂ) q := by
-  funext component
-  fin_cases component <;>
-    simp [positivePauliSpatial, cubicalSpatialLower,
-      oriented_cubical_spatial_coordinates_eq_standard,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;>
-    ring
+      cubicalSpatialLower (px : ℂ) (py : ℂ) (pz : ℂ) q := rfl
+
+theorem positive_pauli_spatial_apply_zero (px py pz : ℝ) (q : UniformCell2) :
+    positivePauliSpatial px py pz q 0 =
+      (pz : ℂ) * q 0 + ((px : ℂ) - I * (py : ℂ)) * q 1 := by
+  simp [positivePauliSpatial, cubicalSpatialLower, cubicalUpperEmbedding, cubicalStandardSpatial,
+    cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ]
+  ring
+
+theorem positive_pauli_spatial_apply_one (px py pz : ℝ) (q : UniformCell2) :
+    positivePauliSpatial px py pz q 1 =
+      ((px : ℂ) + I * (py : ℂ)) * q 0 - (pz : ℂ) * q 1 := by
+  simp [positivePauliSpatial, cubicalSpatialLower, cubicalUpperEmbedding, cubicalStandardSpatial,
+    cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ]
+  ring
 
 /-- Assemble a spinor from its upper and lower Pauli coordinates. -/
 def cubicalSpinorOfBlocks (upper lower : UniformCell2) : CubicalCell4 :=
@@ -57,12 +61,14 @@ theorem cubical_standard_hamiltonian_blocks (mass px py pz : ℝ) (upper lower :
   fin_cases component <;>
     simp [cubicalSpinorOfBlocks, cubicalStandardHamiltonian, cubicalStandardSpatial,
       cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, positivePauliSpatial] <;> ring
+      cubicalStandardAlphaZ, positive_pauli_spatial_apply_zero,
+      positive_pauli_spatial_apply_one] <;> ring
 
 theorem positive_pauli_spatial_zero (px py pz : ℝ) :
     positivePauliSpatial px py pz 0 = 0 := by
   funext component
-  fin_cases component <;> simp [positivePauliSpatial]
+  fin_cases component <;> simp [positive_pauli_spatial_apply_zero,
+      positive_pauli_spatial_apply_one]
 
 theorem positive_pauli_spatial_square
     (px py pz : ℝ) (q : UniformCell2) :
@@ -70,10 +76,18 @@ theorem positive_pauli_spatial_square
         (positivePauliSpatial px py pz q) =
       fun component =>
         ((px ^ 2 + py ^ 2 + pz ^ 2 : ℝ) : ℂ) * q component := by
+  have massless (upper lower : UniformCell2) :
+      cubicalStandardHamiltonian 0 px py pz (cubicalSpinorOfBlocks upper lower) =
+        cubicalSpinorOfBlocks (positivePauliSpatial px py pz lower)
+          (positivePauliSpatial px py pz upper) := by
+    simpa only [Complex.ofReal_zero, zero_mul, zero_add, sub_zero] using
+      cubical_standard_hamiltonian_blocks 0 px py pz upper lower
+  have square := cubical_standard_hamiltonian_square 0 px py pz (cubicalSpinorOfBlocks q 0)
+  rw [massless, massless, positive_pauli_spatial_zero] at square
   funext component
-  fin_cases component <;>
-    simp [positivePauliSpatial] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  fin_cases component
+  · simpa [cubicalSpinorOfBlocks, Complex.ofReal_add, Complex.ofReal_pow] using congrFun square 0
+  · simpa [cubicalSpinorOfBlocks, Complex.ofReal_add, Complex.ofReal_pow] using congrFun square 1
 
 /-- Positive real square-root normalization inherited from the native
 mass-shell energy. -/
@@ -124,7 +138,8 @@ theorem normalized_positive_frequency_embedding_scale
         normalizedPositiveFrequencyEmbedding mass energy px py pz q component := by
   funext component
   fin_cases component <;>
-    simp [normalizedPositiveFrequencyEmbedding, positivePauliSpatial] <;>
+    simp [normalizedPositiveFrequencyEmbedding, positive_pauli_spatial_apply_zero,
+      positive_pauli_spatial_apply_one] <;>
     ring
 
 theorem positive_frequency_ratio_mul_denominator (mass energy : ℝ)
