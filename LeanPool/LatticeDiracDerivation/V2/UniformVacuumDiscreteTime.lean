@@ -107,23 +107,31 @@ theorem uniform_centered_difference_quotient_splits
        fun component =>
         (uniformVacuumContinuumGenerator r momentum phase).2 component +
           (uniformCenteredDiracDefect r dt momentum phase).2 component) := by
-  apply Prod.ext <;> funext component
-  · simp [uniformCenteredDifferenceQuotient, uniformCenteredPhaseStep,
-      uniformCenteredNext, uniformCenteredPrevious,
-      uniformCenteredDiracDefect, uniformCenteredTemporalDefect,
-      uniformCenteredSpatialDefect, uniformNativeSpatialDefectPhase,
-      uniformVacuumContinuumGenerator]
-    field_simp [hdt]
-    ring
-  · simp only [uniformCenteredDifferenceQuotient, uniformCenteredPhaseStep,
-      uniformCenteredDiracDefect, uniformCenteredTemporalDefect, uniformCenteredSpatialDefect,
-      uniformNativeSpatialDefectPhase, Prod.snd_add, Pi.add_apply,
-      zero_add, uniformVacuumContinuumGenerator,
-      uniformVacuumContinuumAcceleration, uniformVacuumModalSquare]
-    rw [c19_symbol_exact_quadratic_plus_remainder]
-    field_simp [hdt]
-    push_cast
-    ring
+  have temporal :
+      uniformCenteredDifferenceQuotient r dt momentum phase =
+        uniformVacuumNativeGenerator r momentum phase +
+          uniformCenteredTemporalDefect r dt momentum phase := by
+    apply Prod.ext <;> funext component
+    · simp only [uniformCenteredDifferenceQuotient, uniformCenteredPhaseStep,
+        uniformCenteredNext, uniformCenteredPrevious, uniformVacuumNativeGenerator,
+        uniformCenteredTemporalDefect, Prod.fst_add, Pi.add_apply]
+      field_simp [hdt]
+      push_cast
+      ring
+    · simp only [uniformCenteredDifferenceQuotient, uniformCenteredPhaseStep,
+        uniformVacuumNativeGenerator, uniformVacuumModalAcceleration, uniformCenteredTemporalDefect,
+        Prod.snd_add, Pi.add_apply, add_zero, uniformVacuumModalSquare]
+      field_simp [hdt]
+      push_cast
+      ring
+  rw [temporal, uniform_native_generator_exact_defect]
+  change uniformVacuumContinuumGenerator r momentum phase +
+        uniformNativeSpatialDefectPhase momentum phase +
+        uniformCenteredTemporalDefect r dt momentum phase =
+    uniformVacuumContinuumGenerator r momentum phase +
+      (uniformCenteredTemporalDefect r dt momentum phase +
+        uniformNativeSpatialDefectPhase momentum phase)
+  ac_rfl
 
 /-- The actual two-layer native difference quotient, transported through the
 same cubical phase-space readout, equals the Dirac flow plus one displayed

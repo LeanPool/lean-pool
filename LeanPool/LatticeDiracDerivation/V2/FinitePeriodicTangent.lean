@@ -400,7 +400,7 @@ theorem periodicC19LinearizedAcceleration_apply {L : ℕ}
           (c19Weight direction : ℂ) *
             (field site - field (periodicC19Neighbor L site direction)) := by
   simp only [periodicC19LinearizedAcceleration, uniformScalarTangentAcceleration,
-    Complex.ofReal_pow, periodicC19Geometry]
+    c19ScalarLaplacian, Complex.ofReal_pow, periodicC19Geometry]
 
 /-- A variation of the first native transverse `Psi` component.  It is an
 ordinary native-field direction, not a modal or Dirac coordinate. -/
@@ -575,14 +575,12 @@ def periodicC19ScalarDifference
     (edge : C19Edge (PeriodicCubicSite L)) : ℂ :=
   field (periodicC19Neighbor L edge.1 edge.2) - field edge.1
 
-/-- The weighted sum of forward differences from a periodic lattice site. -/
+/-- The C19 graph Laplacian on a periodic scalar field. -/
 def periodicC19ScalarLaplacian
     {L : ℕ}
     (field : PeriodicCubicSite L → ℂ)
     (site : PeriodicCubicSite L) : ℂ :=
-  ∑ direction : C19Neighbor,
-    (c19Weight direction : ℂ) *
-      (field site - field (periodicC19Neighbor L site direction))
+  c19ScalarLaplacian (periodicC19Geometry L) field site
 
 /-- Reverse a periodic edge by exchanging its endpoints and reversing its offset. -/
 def periodicReverseC19EdgeEquiv
@@ -686,7 +684,8 @@ theorem periodic_c19_scalar_green_real_identity
         sourceSource - targetSource := by
     dsimp [sourceSource, targetSource]
     rw [Fintype.sum_prod_type]
-    simp only [periodicC19ScalarLaplacian, map_sum, map_mul, map_sub]
+    simp only [periodicC19ScalarLaplacian, c19ScalarLaplacian, periodicC19Geometry,
+      map_sum, map_mul, map_sub]
     rw [Fintype.sum_prod_type]
     rw [← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
@@ -737,22 +736,21 @@ theorem periodic_c19_transverse_quadratic_variation_is_force_pair
             (periodicC19ScalarLaplacian field site) (direction site) := by
     simpa [c19Bond, periodicC19Geometry,
       periodicC19ScalarDifference, uniformScalarRealPair] using hgreen
-  rw [hbond]
-  simp only [periodicC19LinearizedAcceleration_apply, periodicC19ScalarLaplacian,
-    uniformScalarRealPair]
-  rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-  rw [← Finset.sum_neg_distrib]
-  apply Finset.sum_congr rfl
-  intro site _
-  simp only [RCLike.star_def, mul_re, conj_re, conj_im, neg_mul, sub_neg_eq_add,
-    star_sum, star_mul', conj_ofReal, star_sub, re_sum, ofReal_re, sub_re, ofReal_im,
-    sub_im, zero_mul, sub_zero, im_sum, mul_im, add_zero, star_neg, star_pow, star_ofNat,
-    neg_re, mul_neg, neg_add_rev, re_ofNat, im_ofNat, neg_im, neg_neg, neg_sub]
-  rw [show ((r : ℂ) ^ 2).re = r ^ 2 by
-      simp [pow_two, Complex.mul_re],
-    show ((r : ℂ) ^ 2).im = 0 by
-      simp [pow_two, Complex.mul_im]]
-  ring
+  have acceleration (site : PeriodicCubicSite L) :
+      periodicC19LinearizedAcceleration r field site =
+        -(((r ^ 2 : ℝ) : ℂ) * field site + 2 * periodicC19ScalarLaplacian field site) := by
+    change -(((r ^ 2 : ℝ) : ℂ)) * field site - 2 * periodicC19ScalarLaplacian field site = _
+    ring
+  have pairing (site : PeriodicCubicSite L) :
+      -uniformScalarRealPair (periodicC19LinearizedAcceleration r field site) (direction site) =
+        r ^ 2 * uniformScalarRealPair (field site) (direction site) +
+          2 * uniformScalarRealPair (periodicC19ScalarLaplacian field site) (direction site) := by
+    rw [acceleration]
+    simp only [uniformScalarRealPair, map_neg, map_add, map_mul, Complex.star_def,
+      Complex.conj_ofReal, neg_mul, add_mul, mul_assoc, neg_re, neg_neg, add_re,
+      Complex.re_ofReal_mul, ← Complex.ofReal_ofNat (n := 2)]
+  rw [hbond, ← Finset.sum_neg_distrib]
+  simp_rw [pairing, Finset.sum_add_distrib, ← Finset.mul_sum]
 
 /-- The Hessian of the full native potential at the uniform axial vacuum,
 evaluated on an arbitrary transverse profile and arbitrary transverse test

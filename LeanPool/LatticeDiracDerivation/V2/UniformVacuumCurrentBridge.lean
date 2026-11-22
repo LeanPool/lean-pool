@@ -270,7 +270,7 @@ theorem uniform_native_tangent_local_continuity
         (uniformScalarTangentAcceleration massSq geometry position site) +
       uniformNativeOutwardCurrentDivergence geometry position site = 0 := by
   simp [uniformNativePhaseDensityDerivative,
-    uniformScalarTangentAcceleration,
+    uniformScalarTangentAcceleration, c19ScalarLaplacian,
     uniformNativeOutwardCurrentDivergence,
     uniformNativeOutwardBondCurrent, uniformScalarPhasePair,
     Complex.mul_im]

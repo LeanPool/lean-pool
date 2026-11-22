@@ -133,17 +133,6 @@ def periodicNativeTransverseTangentGenerator
        else 0
      chiDot := fun _ _ => 0 })
 
-/-- The affine finite-amplitude state used only to evaluate the full native
-action around its uniform vacuum.  This is deliberately distinct from the
-tangent embedding above. -/
-def periodicAffineModePhaseState
-    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
-    (r : ℝ) (mode : PeriodicC19FourierMode L momentum)
-    (phase : UniformTwoChannelPhase) :
-    State (PeriodicCubicSite L) × Velocity (PeriodicCubicSite L) :=
-  (periodicModeState r 1 mode phase.1,
-    periodicModeVelocity 1 mode phase.2)
-
 theorem periodic_mode_character_nonzero
     {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
     (mode : PeriodicC19FourierMode L momentum)
