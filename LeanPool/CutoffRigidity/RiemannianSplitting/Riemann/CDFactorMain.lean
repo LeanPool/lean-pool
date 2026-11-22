@@ -10,8 +10,9 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorGrad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGlobal
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegular
+import Mathlib.Geometry.Manifold.BumpFunction
 
 /-! # `CDFactor`, part 2: the generator commutes with `π`, and `CD(ρ)` on the level
 
@@ -148,12 +149,11 @@ theorem mgenerator_comp_toLevel {V : M → ℝ} (hV : MSmooth F V) {μ : Measure
   have : μ.IsOpenPosMeasure :=
     ⟨fun U hU hne => (measure_pos_of_isWeightedVolume F hV hμ (continuousOn_chartVolumeDensity F)
       (fun x₀ z hz => chartVolumeDensity_pos F x₀ hz) hU hne).ne'⟩
-  have hRM := weightedRegular (F := F) V hV
-  have hRN := weightedRegular (F := LevelModel F (Rd k)) V' hV'
   have hu : MSmooth F (fun z => v' (fr.toLevel z)) := hv'.comp fr.contMDiff_toLevel
-  have hA : Continuous (mgenerator F V (fun z => v' (fr.toLevel z))) := (hRM.2.1 _ hu).continuous
+  have hA : Continuous (mgenerator F V (fun z => v' (fr.toLevel z))) :=
+    (WReg.msmooth_mgenerator F hV hu).continuous
   have hB : Continuous (mgenerator (LevelModel F (Rd k)) V' v') :=
-    (hRN.2.1 _ hv').continuous
+    (WReg.msmooth_mgenerator _ hV' hv').continuous
   have hD : Continuous (fun x => mgenerator F V (fun z => v' (fr.toLevel z)) x -
       mgenerator (LevelModel F (Rd k)) V' v' (fr.toLevel x)) :=
     hA.sub (hB.comp fr.contMDiff_toLevel.continuous)
@@ -181,7 +181,7 @@ theorem mgenerator_comp_toLevel {V : M → ℝ} (hV : MSmooth F V) {μ : Measure
     have hgc' : Continuous g := hg.continuous
     have hχc' : Continuous χ := hχ.continuous
     have hCN : Continuous (carre (LevelModel F (Rd k)) g v') :=
-      (hRN.1 g v' hg hv').continuous
+      (WReg.msmooth_carre hg hv').continuous
     have e1 : ∫ x, carre F ((fun z => χ (fr.sv z)) * (fun z => g (fr.toLevel z))) u x ∂μ =
         (∫ t, χ t ∂ν) * ∫ y, carre (LevelModel F (Rd k)) g v' y ∂μ' := by
       simp_rw [hcar]
@@ -239,7 +239,6 @@ theorem cd_level {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M}
     (hfact : μ.map fr.splitEquiv = ν.prod μ') {ρ : ℝ} (hCD : CD F ρ V) :
     CD (LevelModel F (Rd k)) ρ V' := by
   intro f' hf' y
-  have hRN := weightedRegular (F := LevelModel F (Rd k)) V' hV'
   have hu : MSmooth F (fun z => f' (fr.toLevel z)) := hf'.comp fr.contMDiff_toLevel
   have h := hCD _ hu y.val
   have hπ : fr.toLevel y.val = y := fr.toLevel_val y
@@ -257,8 +256,8 @@ theorem cd_level {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M}
   have h2 : carre2 F V (fun z => f' (fr.toLevel z)) y.val =
       carre2 (LevelModel F (Rd k)) V' f' y := by
     unfold carre2
-    rw [hcfun, hLfun, fr.mgenerator_comp_toLevel hV hμ hV' hμ' hfact (hRN.1 f' f' hf' hf'),
-      fr.carre_comp_toLevel hf' (hRN.2.1 f' hf'), hπ]
+    rw [hcfun, hLfun, fr.mgenerator_comp_toLevel hV hμ hV' hμ' hfact (WReg.msmooth_carre hf' hf'),
+      fr.carre_comp_toLevel hf' (WReg.msmooth_mgenerator _ hV' hf'), hπ]
   rw [h2, hc, hπ] at h
   exact h
 

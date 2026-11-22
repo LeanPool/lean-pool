@@ -8,9 +8,10 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerMain
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegular
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedVolume
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import TauCeti.Geometry.Manifold.Riemannian.Basic
 import TauCeti.Geometry.Manifold.Riemannian.DivergenceTheorem
 
@@ -75,8 +76,8 @@ theorem weightedIBP_of_isWeightedVolume_of_sigmaCompact [SigmaCompactSpace M]
     rw [carre_mul_left F hu hw, hweight]
     ring
   simp_rw [hproduct] at hG
-  have hca := (weightedRegular V hV).1 u v hu hv
-  have hcv := (weightedRegular V hV).1 V v hV hv
+  have hca := WReg.msmooth_carre hu hv
+  have hcv := WReg.msmooth_carre hV hv
   have ha : Integrable (fun x ↦ w x * carre F u v x) ν :=
     (hw.continuous.mul hca.continuous).integrable_of_hasCompactSupport
       (HasCompactSupport.intro hK fun x hx ↦ by

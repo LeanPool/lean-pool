@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerQuad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerTest
-public import TauCeti.Geometry.Manifold.Riemannian.Laplacian
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 import TauCeti.Geometry.Manifold.Riemannian.Bochner.Basic
 /-!
 # Weighted Bochner inequality
@@ -32,26 +32,6 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   {M : Type} [EMetricSpace M] [ChartedSpace F M] [IsManifold 𝓘(ℝ, F) ∞ M]
   [RiemannianBundle (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mgrad_eq_mgradient (f : M → ℝ) :
-    mgrad F f = mgradient 𝓘(ℝ, F) f :=
-  CutoffRigidity.manifoldGradient_eq_mgradient 𝓘(ℝ, F) f
-
-theorem mlaplacian_eq_laplaceBeltrami (f : M → ℝ) :
-    mlaplacian F f = laplaceBeltrami 𝓘(ℝ, F) f := by
-  funext x
-  rw [laplaceBeltrami_eq_sum_hessian 𝓘(ℝ, F) f x (stdOrthonormalBasis ℝ _)]
-  simp only [mlaplacian, hessian_def, mgrad_eq_mgradient]
-
-namespace WReg
-
-/-- The Laplacian of a smooth function is smooth. -/
-theorem msmooth_mlaplacian {f : M → ℝ} (hf : MSmooth F f) : MSmooth F (mlaplacian F f) := by
-  rw [mlaplacian_eq_laplaceBeltrami]
-  exact contMDiff_laplaceBeltrami (n := ∞) (m := ∞) (k := ∞) (by simp) (by simp) hf
-
-end WReg
 
 /-- The squared Hessian norm is the sum of squared pairings in any orthonormal basis. -/
 theorem mHessNormSq_eq_sum_hessian {ι : Type*} [Fintype ι] (f : M → ℝ) (x : M)

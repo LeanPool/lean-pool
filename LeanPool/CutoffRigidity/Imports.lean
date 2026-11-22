@@ -146,6 +146,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPDen
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGlobal
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGreen
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLocalSmooth
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedMain
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedMollify

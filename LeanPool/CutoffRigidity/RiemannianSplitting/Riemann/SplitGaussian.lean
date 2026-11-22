@@ -14,6 +14,7 @@ import Mathlib.MeasureTheory.Constructions.Pi
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import TauCeti.MeasureTheory.Measure.PiWithDensity
 
 /-! # Lebesgue density of the isotropic Gaussian on Euclidean space -/
 
@@ -57,33 +58,6 @@ namespace CutCur
 
 open CutoffRigidity
 
-theorem pi_eq_withDensity_sigmaFinite (n : ℕ) (μ ν : Fin n → Measure ℝ)
-    [∀ i, SigmaFinite (μ i)] [∀ i, SigmaFinite (ν i)]
-    (f : Fin n → ℝ → ℝ≥0∞) (hf : ∀ i, Measurable (f i))
-    (hμ : ∀ i, μ i = (ν i).withDensity (f i)) :
-    Measure.pi μ = (Measure.pi ν).withDensity (fun x => ∏ i, f i (x i)) := by
-  induction n with
-  | zero =>
-    simp only [Finset.univ_eq_empty, Finset.prod_empty]
-    rw [← Pi.one_def, withDensity_one]
-    congr 1
-    funext i
-    exact Fin.elim0 i
-  | succ n ih =>
-    let e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => ℝ) 0
-    apply e.measurableEmbedding.map_injective
-    rw [(measurePreserving_piFinSuccAbove μ 0).map_eq]
-    rw [map_withDensity_measurableEquiv e _ _ (by fun_prop)]
-    rw [(measurePreserving_piFinSuccAbove ν 0).map_eq]
-    simp only [Fin.succAbove_zero]
-    rw [hμ 0, ih (fun i => μ i.succ) (fun i => ν i.succ)
-      (fun i => f i.succ) (fun i => hf i.succ) (fun i => hμ i.succ)]
-    rw [prod_withDensity (hf 0) (by fun_prop)]
-    congr 1
-    ext z
-    simp [e, MeasurableEquiv.piFinSuccAbove_symm_apply,
-      Fin.insertNthEquiv, Fin.prod_univ_succ]
-
 theorem multivariateGaussian_eq_withDensity (k : ℕ) {ρ : ℝ} (hρ : 0 < ρ) :
     multivariateGaussian (0 : EuclideanSpace ℝ (Fin k)) (ρ⁻¹ • (1 : Matrix (Fin k) (Fin k) ℝ)) =
       (volume : Measure (EuclideanSpace ℝ (Fin k))).withDensity
@@ -96,9 +70,15 @@ theorem multivariateGaussian_eq_withDensity (k : ℕ) {ρ : ℝ} (hρ : 0 < ρ) 
       Matrix.diagonal (fun _ => (v : ℝ)) := by
     ext i j
     by_cases h : i = j <;> simp [h, hvc]
-  have hpi := pi_eq_withDensity_sigmaFinite k (fun _ => gaussianReal 0 v)
-    (fun _ => volume) (fun _ => gaussianPDF 0 v) (fun _ => measurable_gaussianPDF 0 v)
-    (fun _ => gaussianReal_of_var_ne_zero 0 hv0)
+  have gaussian_density : gaussianReal 0 v = (volume : Measure ℝ).withDensity (gaussianPDF 0 v) :=
+    gaussianReal_of_var_ne_zero 0 hv0
+  let : SigmaFinite ((volume : Measure ℝ).withDensity (gaussianPDF 0 v)) :=
+    gaussian_density ▸ inferInstanceAs (SigmaFinite (gaussianReal 0 v))
+  have hpi : Measure.pi (fun _ : Fin k => gaussianReal 0 v) =
+      (Measure.pi (fun _ : Fin k => (volume : Measure ℝ))).withDensity
+        (fun x => ∏ i, gaussianPDF 0 v (x i)) := by
+    simp_rw [gaussian_density]
+    exact TauCeti.pi_withDensity (fun _ : Fin k => volume) (fun _ => measurable_gaussianPDF 0 v)
   have hmap := congrArg (fun μ : Measure (Fin k → ℝ) => μ.map (WithLp.toLp 2)) hpi
   have h1 := gaussian_pi_eq_multivariate (0 : EuclideanSpace ℝ (Fin k)) (fun _ :
       Fin k => v)

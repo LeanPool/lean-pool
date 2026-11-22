@@ -60,7 +60,7 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 /-- **(G0)** Regularity of the Challenge operators on smooth functions. -/
 theorem weightedRegular (V : M → ℝ) (hV : MSmooth F V) : WeightedRegular F V :=
   ⟨fun _ _ hf hg => WReg.msmooth_carre hf hg,
-   fun _ hf => (WReg.msmooth_mlaplacian F hf).sub (WReg.msmooth_carre hV hf),
+   fun _ hf => WReg.msmooth_mgenerator F hV hf,
    fun _ hf => (WReg.msmooth_mHessNormSq hf).continuous⟩
 
 end CutCur
