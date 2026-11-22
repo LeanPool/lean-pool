@@ -52,8 +52,6 @@ include F
 /-- **(G3)** Smooth compactly supported cutoffs on a complete connected Riemannian manifold. -/
 theorem weightedCutoffs_of_complete : WeightedCutoffs F M := by
   classical
-  let : MeasurableSpace F := borel F
-  have : BorelSpace F := ⟨rfl⟩
   have := sigmaCompactSpace_of_complete_riemannian (F := F) (M := M)
   have hfin := edist_ne_top_of_connected (F := F) (M := M)
   obtain ⟨x₀⟩ := (inferInstance : Nonempty M)

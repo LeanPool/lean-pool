@@ -105,7 +105,6 @@ public import LeanPool.CutoffRigidity.RealL2Identities
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedFlow
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedVectorField
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Extra.SplitPotential
-public import LeanPool.CutoffRigidity.RiemannianSplitting.IntegralCurveRegularity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldScalarChartDerivative
 public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldZeroDifferential
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.AssembleMain
@@ -149,7 +148,6 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterf
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLocalSmooth
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedMain
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedMollify
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedProper
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRegular

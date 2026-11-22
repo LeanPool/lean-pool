@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedRigidity
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 
 /-! # Linearity of `mgrad`, `mlaplacian`, `mgenerator` on smooth functions
 
@@ -17,7 +18,7 @@ Hence smooth `L²` eigenfunctions of `-𝓛` form a vector space.
 
 @[expose] public section
 
-open Bundle MeasureTheory
+open Bundle MeasureTheory TauCeti.Manifold
 open scoped Manifold ContDiff ENNReal
 
 namespace CutCur
@@ -42,31 +43,18 @@ theorem mgrad_zero' (x : M) : mgrad F (fun _ : M => (0 : ℝ)) x = 0 := mgrad_co
 
 theorem mlaplacian_add {f g : M → ℝ} (hf : MSmooth F f) (hg : MSmooth F g) (x : M) :
     mlaplacian F (fun y => f y + g y) x = mlaplacian F f x + mlaplacian F g x := by
-  have e : mgrad F (fun y => f y + g y) = mgrad F f + mgrad F g := funext (mgrad_add' F hf hg)
-  unfold mlaplacian
-  rw [e, ← Finset.sum_add_distrib]
-  have := (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).isCovariantDerivativeOn (s :=
-      Set.univ) |>.add
-    (mgrad_mdiffAt F hf x) (mgrad_mdiffAt F hg x) (hx := Set.mem_univ x)
-  rw [this]
-  simp [inner_add_left]
+  simp only [mlaplacian_eq_laplaceBeltrami]
+  exact laplaceBeltrami_add _ (hf.of_le (by simp)) (hg.of_le (by simp)) x
 
 theorem mlaplacian_const_mul {f : M → ℝ} (c : ℝ) (hf : MSmooth F f) (x : M) :
     mlaplacian F (fun y => c * f y) x = c * mlaplacian F f x := by
-  have e : mgrad F (fun y => c * f y) = c • mgrad F f := funext (mgrad_const_mul F c hf)
-  unfold mlaplacian
-  rw [e, Finset.mul_sum]
-  have := (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).isCovariantDerivativeOn (s :=
-      Set.univ) |>.smul_const
-    (σ := mgrad F f) (x := x) c (mgrad_mdiffAt F hf x) (hx := Set.mem_univ x)
-  rw [this]
-  simp [inner_smul_left]
+  change mlaplacian F (c • f) x = _
+  simp only [mlaplacian_eq_laplaceBeltrami]
+  exact laplaceBeltrami_smul _ c (hf.of_le (by simp)) x
 
 theorem mlaplacian_zero (x : M) : mlaplacian F (fun _ : M => (0 : ℝ)) x = 0 := by
-  have e : mgrad F (fun _ : M => (0 : ℝ)) = 0 := funext (mgrad_const F 0)
-  unfold mlaplacian
-  rw [e, CovariantDerivative.zero]
-  simp
+  rw [mlaplacian_eq_laplaceBeltrami]
+  exact laplaceBeltrami_const _ 0 x
 
 theorem mgenerator_add {V f g : M → ℝ} (hf : MSmooth F f) (hg : MSmooth F g) (x : M) :
     mgenerator F V (fun y => f y + g y) x = mgenerator F V f x + mgenerator F V g x := by

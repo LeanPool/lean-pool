@@ -9,22 +9,49 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedChartLip
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedMollify
+import TauCeti.Analysis.Calculus.BumpFunction.SmoothApprox
 
 /-! # Local smoothing of a 1-Lipschitz function on a Riemannian manifold -/
 
 @[expose] public section
 
-open Bundle MeasureTheory Filter Set Manifold
-open scoped Manifold ContDiff ENNReal Topology
+open Bundle Filter Set Manifold
+open scoped Manifold ContDiff ENNReal NNReal Topology
 
 
 namespace CutCur
 
+private theorem exists_smooth_approx_linear_coordinates
+    {E G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup G]
+    [NormedSpace ℝ G] [FiniteDimensional ℝ G] (coordinates : E ≃L[ℝ] G) (s : Set E)
+    (u : E → ℝ) {C : ℝ≥0}
+    (hLip : ∀ a ∈ s, ∀ b ∈ s, |u a - u b| ≤ C * ‖coordinates (a - b)‖)
+    {δ : ℝ} (hδ : 0 < δ) :
+    ∃ g : E → ℝ, ContDiff ℝ ∞ g ∧ ∀ a ∈ s,
+      |g a - u a| ≤ δ ∧ ∀ w, |fderiv ℝ g a w| ≤ C * ‖coordinates w‖ := by
+  let transported := u ∘ coordinates.symm
+  have htransported : LipschitzOnWith C transported (coordinates.symm ⁻¹' s) := by
+    refine LipschitzOnWith.of_dist_le_mul fun a ha b hb ↦ ?_
+    simpa only [transported, Function.comp_apply, Real.dist_eq, map_sub,
+      coordinates.apply_symm_apply, dist_eq_norm, Real.norm_eq_abs] using
+      hLip (coordinates.symm a) ha (coordinates.symm b) hb
+  obtain ⟨extension, hextension, heq⟩ := htransported.extend_real
+  obtain ⟨g, hgs, hgl, hga⟩ := hextension.exists_contDiff_lipschitzWith_dist_lt hδ
+  refine ⟨g ∘ coordinates, hgs.comp coordinates.contDiff, fun a ha ↦ ⟨?_, ?_⟩⟩
+  · have hmem : coordinates a ∈ coordinates.symm ⁻¹' s := by
+      simpa only [mem_preimage, coordinates.symm_apply_apply] using ha
+    have hvalue := (hga (coordinates a)).le
+    rw [Real.dist_eq, ← heq hmem] at hvalue
+    simpa only [transported, Function.comp_apply, coordinates.symm_apply_apply] using hvalue
+  · intro w
+    rw [fderiv_comp a (hgs.differentiable (by simp)).differentiableAt coordinates.differentiableAt,
+      coordinates.fderiv, ContinuousLinearMap.comp_apply, ← Real.norm_eq_abs]
+    exact ((fderiv ℝ g (coordinates a)).le_opNorm (coordinates w)).trans
+      (mul_le_mul_of_nonneg_right (norm_fderiv_le_of_lipschitz ℝ hgl) (norm_nonneg _))
+
 section LocalSmooth
 
 variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
-  [MeasurableSpace F] [BorelSpace F]
   {M : Type} [EMetricSpace M] [ChartedSpace F M] [IsManifold 𝓘(ℝ, F) ∞ M]
   [RiemannianBundle (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
@@ -53,62 +80,45 @@ theorem exists_local_smooth (hfin : ∀ x y : M, edist x y ≠ ⊤) {f : M → �
       (∀ w, ‖symmAt F p y w‖ ≤ 2 * ‖symmAt F p p w‖) ∧
       (∀ w, ‖symmAt F p p w‖ ≤ 2 * ‖symmAt F p y w‖)} ∈ 𝓝 (e p) :=
     hc.preimage_mem_nhds (by rw [hsy]; exact hgoodev)
-  obtain ⟨R₁, hR₁, hball⟩ := Metric.mem_nhds_iff.1 (inter_mem (extChartAt_target_mem_nhds p) hpre)
-  have hRt : Metric.ball (e p) R₁ ⊆ e.target := fun z hz => (hball hz).1
-  have hgoodb : ∀ ζ ∈ Metric.ball (e p) R₁, e.symm ζ ∈ (chartAt F p).source ∧
+  obtain ⟨R, hR, hball⟩ := Metric.mem_nhds_iff.1 (inter_mem (extChartAt_target_mem_nhds p) hpre)
+  have hRt : Metric.ball (e p) R ⊆ e.target := fun z hz => (hball hz).1
+  have hgoodb : ∀ ζ ∈ Metric.ball (e p) R, e.symm ζ ∈ (chartAt F p).source ∧
       (∀ w, ‖symmAt F p (e.symm ζ) w‖ ≤ 2 * ‖symmAt F p p w‖) ∧
       (∀ w, ‖symmAt F p p w‖ ≤ 2 * ‖symmAt F p (e.symm ζ) w‖) := fun ζ hζ => (hball hζ).2
-  set R := R₁ / 2 with hRdef
-  have hR : 0 < R := by positivity
-  have hRR : Metric.ball (e p) R ⊆ Metric.ball (e p) R₁ := Metric.ball_subset_ball (by linarith)
-  have hcb : Metric.closedBall (e p) R ⊆ Metric.ball (e p) R₁ :=
-    Metric.closedBall_subset_ball (by linarith)
+  have hhalf : Metric.ball (e p) (R / 2) ⊆ Metric.ball (e p) R :=
+    Metric.ball_subset_ball (by linarith)
   set u : F → ℝ := fun ζ => f (e.symm ζ) with hu
-  have hucont : ContinuousOn u e.target :=
-    hf.continuous.comp_continuousOn (continuousOn_extChartAt_symm p)
-  have huint : IntegrableOn u (Metric.ball (e p) R) :=
-    (ContinuousOn.integrableOn_compact (isCompact_closedBall (e p) R)
-      ((hucont.mono (hcb.trans hRt)))).mono_set Metric.ball_subset_closedBall
-  set N : F → ℝ := fun w => 2 * ‖symmAt F p p w‖ with hN
-  have hLip : ∀ b ∈ Metric.ball (e p) R, ∀ (w : F) (h : ℝ), b + h • w ∈ Metric.ball (e p) R →
-      |u (b + h • w) - u b| ≤ |h| * N w := by
-    intro b hb w h hbh
-    have hed := edist_extChartAt_symm_le F p (r := 2) (R := R₁) (by norm_num) hRt
-      (fun ζ hζ => (hgoodb ζ hζ).2.1) (hRR hb) (hRR hbh)
-    have h1 : |f (e.symm (b + h • w)) - f (e.symm b)| ≤ (edist (e.symm (b + h • w)) (e.symm
-        b)).toReal := hfd _ _
-    rw [edist_comm] at h1
-    have h2 := (ENNReal.toReal_mono ENNReal.ofReal_ne_top hed)
-    rw [ENNReal.toReal_ofReal (by positivity)] at h2
-    have h3 : b + h • w - b = h • w := by abel
-    rw [h3, map_smul, norm_smul, Real.norm_eq_abs] at h2
-    calc |u (b + h • w) - u b| ≤ _ := h1
-      _ ≤ _ := h2
-      _ = |h| * N w := by simp only [hN]; ring
-  have hN0 : ∀ w, 0 ≤ N w := fun w => by positivity
-  have hNC : ∀ w, N w ≤ (2 * ‖symmAt F p p‖) * ‖w‖ := fun w => by
-    simp only [hN]
-    rw [mul_assoc]
-    exact mul_le_mul_of_nonneg_left ((symmAt F p p).le_opNorm w) (by norm_num)
+  let T := trivializationAt F (fun x : M => TangentSpace 𝓘(ℝ, F) x) p
+  have hp : p ∈ T.baseSet := by simp [T]
+  let coordinates := (T.continuousLinearEquivAt ℝ p hp).symm
+  have hcoordinates (w : F) : coordinates w = symmAt F p p w := (T.symmL_apply hp w).symm
+  have hLip : ∀ a ∈ Metric.ball (e p) R, ∀ b ∈ Metric.ball (e p) R,
+      |u a - u b| ≤ (2 : ℝ≥0) * ‖coordinates (a - b)‖ := by
+    intro a ha b hb
+    have hed := edist_extChartAt_symm_le F p (r := 2) (by norm_num) hRt
+      (fun ζ hζ => (hgoodb ζ hζ).2.1) hb ha
+    rw [edist_comm] at hed
+    have hbound := ENNReal.toReal_mono ENNReal.ofReal_ne_top hed
+    rw [ENNReal.toReal_ofReal (by positivity)] at hbound
+    simpa only [NNReal.coe_ofNat, hcoordinates] using (hfd (e.symm a) (e.symm b)).trans hbound
   refine ⟨((chartAt F p).source ∩ e ⁻¹' Metric.ball (e p) (R / 2)), isOpen_extChartAt_preimage p
       Metric.isOpen_ball,
     ⟨mem_chart_source F p, by simpa using half_pos hR⟩,
     ⟨e.symm '' Metric.closedBall (e p) (R / 2),
       (isCompact_closedBall (e p) (R / 2)).image_of_continuousOn
         ((continuousOn_extChartAt_symm p).mono ?_), ?_⟩, ?_⟩
-  · exact (Metric.closedBall_subset_closedBall (by linarith)).trans (hcb.trans hRt)
+  · exact (Metric.closedBall_subset_ball (by linarith)).trans hRt
   · intro x hx
     have hxs : x ∈ e.source := by rw [he, extChartAt_source]; exact hx.1
     exact ⟨e x, Metric.ball_subset_closedBall hx.2, e.left_inv hxs⟩
   · intro δ hδ
-    obtain ⟨G, hG, hGp⟩ := exists_contDiff_approx_lip u (e p) hR huint N
-      (2 * ‖symmAt F p p‖) (by positivity) hN0 hNC hLip hδ
+    obtain ⟨G, hG, hGp⟩ := exists_smooth_approx_linear_coordinates coordinates _ u hLip hδ
     refine ⟨G ∘ e, ?_, ?_, ?_⟩
     · intro x hx
       exact (hG.contMDiff.contMDiffAt).comp x (contMDiffAt_extChartAt' (by simpa using hx.1))
     · intro x hx
       have hxs : x ∈ e.source := by rw [he, extChartAt_source]; exact hx.1
-      have := (hGp (e x) hx.2).1
+      have := (hGp (e x) (hhalf hx.2)).1
       simpa [hu, e.left_inv hxs] using this
     · intro x hx
       have hxs : x ∈ e.source := by rw [he, extChartAt_source]; exact hx.1
@@ -116,10 +126,9 @@ theorem exists_local_smooth (hfin : ∀ x y : M, edist x y ≠ ⊤) {f : M → �
       have hGd : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) G (e x) :=
         (hG.contMDiff.mdifferentiable (by simp)) _
       have hed : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F) e x := mdifferentiableAt_extChartAt hxsrc
-      set T := trivializationAt F (fun x : M => TangentSpace 𝓘(ℝ, F) x) p with hT
       have hcl : mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) e x = T.continuousLinearMapAt ℝ x :=
         (TangentBundle.continuousLinearMapAt_trivializationAt hxsrc).symm
-      have hxb : x ∈ T.baseSet := by simpa [hT] using hxsrc
+      have hxb : x ∈ T.baseSet := by simpa [T] using hxsrc
       intro v
       have hv0 : mvfderiv 𝓘(ℝ, F) (G ∘ e) x v =
           fderiv ℝ G (e x) (T.continuousLinearMapAt ℝ x v) := by
@@ -127,13 +136,14 @@ theorem exists_local_smooth (hfin : ∀ x y : M, edist x y ≠ ⊤) {f : M → �
         rfl
       rw [hv0]
       set w := T.continuousLinearMapAt ℝ x v with hw
-      have h1 := (hGp (e x) hx.2).2 w
-      have hgood := (hgoodb (e x) (hRR (Metric.ball_subset_ball (by linarith) hx.2))).2.2 w
+      have h1 := (hGp (e x) (hhalf hx.2)).2 w
+      have hgood := (hgoodb (e x) (hhalf hx.2)).2.2 w
       rw [e.left_inv hxs] at hgood
       have hv : symmAt F p x w = v := Trivialization.symmL_continuousLinearMapAt T hxb v
       rw [hv] at hgood
-      calc |fderiv ℝ G (e x) w| ≤ N w := h1
-        _ = 2 * ‖symmAt F p p w‖ := rfl
+      -- Convert the chart-center norm back to the tangent norm at x.
+      calc |fderiv ℝ G (e x) w| ≤ 2 * ‖symmAt F p p w‖ := by
+            simpa only [NNReal.coe_ofNat, hcoordinates] using h1
         _ ≤ 2 * (2 * ‖v‖) := by gcongr
         _ = 4 * ‖v‖ := by ring
 
