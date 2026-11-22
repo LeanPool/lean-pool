@@ -563,9 +563,6 @@ theorem contourIntegral_eq_of_homotopic
     (hH1 : ∀ t ∈ Icc a b, H (t, 1) = γ₁ t)
     (_hH_ends : ∀ s ∈ Icc (0 : ℝ) 1,
       H (a, s) = γ₀ a ∧ H (b, s) = γ₀ b)
-    (hf_holo : ∀ t ∈ Icc a b,
-      ∀ s ∈ Icc (0 : ℝ) 1,
-        DifferentiableAt ℂ f (H (t, s)))
     (hfH_cont : Continuous (f ∘ H))
     (hH_smooth : ContDiff ℝ 2 H)
     (hH_deriv_s_zero_at_ends :
@@ -608,7 +605,7 @@ theorem contourIntegral_eq_of_homotopic
     have hs : s ∈ Icc (0 : ℝ) 1 := ⟨hs_ge, le_of_lt hs_lt⟩
     obtain ⟨hda, hdb⟩ := hH_deriv_s_zero_at_ends s hs
     exact (hasDerivAt_homotopy_integral_zero
-      f H a b s hab hH_smooth hf_holo hfH_cont
+      f H a b s hab hH_smooth (fun _ _ _ _ => hf_differentiable _) hfH_cont
       hs hda hdb hf_differentiable).hasDerivWithinAt
   exact (constant_of_has_deriv_right_zero
     hI_cont hI_deriv_zero 1
