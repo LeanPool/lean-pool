@@ -16,8 +16,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnTopClassAlphaP
 
 Defines explicit interfaces for maps from the actual mod-two cohomology of `RP n` to the model
 `F₂[α]/(αⁿ⁺¹)` and derives nonvanishing and truncation consequences for cup powers. This module is
-an intermediate model-comparison API; the final unconditional odd-degree proof uses the direct
-cohomology-dimension-vanishing route.
+a model-comparison API. The odd-degree result `oddMap_degree_odd_final` remains conditional on
+two inputs that this project does not prove.
 -/
 
 @[expose] public section
