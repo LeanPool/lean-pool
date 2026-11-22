@@ -2627,7 +2627,7 @@ private theorem leaf_estimate_stage_8 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage8Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro fp dB Nl Hm Lf ks S0 gs gset mbs Ms L hA6 qG Vl0 U MV hMV ε hεdef Ts hNl4 c Cut hCutl cf
       D₀
       hcat hmbb hmbT mb' D hrankH hroleD S1 hS1c Nb hNb hRl0 hVl00 Os hOs Cjg hCjg Γa hΓadef Γb
@@ -2785,7 +2785,7 @@ private theorem leaf_estimate_stage_7 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage7Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro hsub hne hk1 fp dB Nl Hm hHm1 hlogH hK Lf ks S0 gs gset mbs Ms L hDS hsch' hA6 qG Vl0 U
       hUdef hD0 hD1 hU16 MV hMV ε hεdef hε0 Ts hNl4 hstar c hcB Cut hCutl cf D₀ hcat hmbb hmbT mb' D
       hrankH hroleD S1 hS1S0 hS1c hIB Nb hNb hRl0 hVl00 Os hOs Cjg hCjg Γa hΓadef Γb hΓbdef ΓU
@@ -2941,7 +2941,7 @@ private theorem leaf_estimate_stage_6 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage6Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd Nl hn_mono Hm hHm1 hC hdD hlogH hK Lf ks S0
       hS0T
       gs gset hcu mbs Ms L hDS hsch' hA6 qG hqG1 Vl0 U hUdef hD0 hD1 hU16 hU0 MV hMV hMV0 ε hεdef
@@ -3120,7 +3120,7 @@ private theorem leaf_estimate_stage_5 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage5Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hdD hbox
       hlogH hK
       Lf ks S0 hS0T gs gset hcu mbs Ms L hexp hnotg hDS hsch' hA6 qG hqG1 Vl0 hVl0 U hUdef hU4 hD0
@@ -3264,7 +3264,7 @@ private theorem leaf_estimate_stage_4 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage4Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hdD hbox
       hlogH hK
       Lf ks S0 hS0T gs gset hcu U_1 mbs Ms L hexp hnotg herrW hDS hsch' hA6 qG hqG1 Vl0 hVl0 U hUdef
@@ -3436,7 +3436,7 @@ private theorem leaf_estimate_stage_3 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage3Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hdD hbox
       hlogH hK
       Lf ks S0 hS0T hS0c gs gset hcu U_1 mbs Ms L hexp hnotg herrW hDS hsch' hA6 qG hqG1 Vl0 hVl0 U
@@ -3609,7 +3609,7 @@ private theorem leaf_estimate_stage_2 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage2Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hn_mono Hm hHm1 hdim hC hSQ hSW hdD
       hbox
       hlogH hK Lf hLf ks S0 hS0T hS0c gs gset hcu U_1 mbs hNlab Ms L hexp hnotg herrW hDS hsch'
@@ -3764,7 +3764,7 @@ private theorem leaf_estimate_stage_1 (context : LeafEstimateContext) :
     dsimp (config := { zeta := false, zetaUnused := false }) only [LeafEstimateStage1Statement,
       LeafEstimateConclusion, leafEstimateParameters, leafEstimateDimensionBound,
       leafEstimatePopulation, leafEstimateModeHeight, leafEstimateLeaf, leafEstimateGroupLevel,
-      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups] at *
+      leafEstimateSurvivingCells, leafEstimateCellGroups, leafEstimateGroups]
     intro hmodes hCg hanc hpairs hsub hne hNd hk1 fp dB hstd hdδ Nl hδN hn_mono Hm hHm1 hdim hC hSD
       hSQ hSW hdD hclr hbox hlogH hK Lf hLf ks S0 hS0T hS0c gs gset hcu hgsetU U hUuse hpathU
     let mbs : (l : Fin (4 : ℕ)) → bf.MainBudget (AD.cat l) :=
@@ -3976,7 +3976,7 @@ theorem leaf_estimate (κ : LocalKernelClass) (c₀ cc : ℕ) (hcc : 1 ≤ cc) :
       And.intro hK0k <| And.intro hkD <| And.intro hk2 hlb
   clear hLck hHmk hdBk hHedk hHsk hHWk hδk hEk hρk hK0k hkD hk2 hlb
   set! fp := AD.fp with hfp
-  rewrite [← hfp] at hδN hkB hstd ⊢
+  rewrite [← hfp] at hδN hkB hstd
   set! dB := A.dBnd with hdB
   rewrite [← hdB] at hdδ hstd
   set! Nl : ℝ := AD.n (fp.Lc + 5) with hNl
@@ -4007,9 +4007,9 @@ theorem leaf_estimate (κ : LocalKernelClass) (c₀ cc : ℕ) (hcc : 1 ≤ cc) :
     exact Nat.one_le_two_pow
   -- the leaf, its groups and their uses on the test cells below no failure root
   set! Lf := leafAt A.famFuel fp.Lc (A.basicSlot p) s with hLf
-  rewrite [← hLf] at ⊢
   set! ks := Lf.k with hks
-  rewrite [← hks] at ⊢
+  -- Keep the conclusion folded while preparing the inputs to the staged estimate.
+  change LeafEstimateConclusion κ c₀ cc Cl A bf k η₀ q hq2 hq3 Nd p AD δ ρ kD fp Lf ks
   set! S0 := AD.Tc.filter fun I => ¬ ∃ c ∈ fp.failRoots,
     dyadicGridCell A.G I.1 I.2 ⊆ dyadicGridCell A.G c.1 c.2 with hS0
   have! hS0T : S0 ⊆ AD.Tc := Finset.filter_subset _ _
