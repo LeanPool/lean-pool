@@ -8,7 +8,8 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RegularScalarChart
+public import Mathlib.Geometry.Manifold.IsManifold.InteriorBoundary
+public import Mathlib.Tactic.NormNum
 
 /-! # Actual extended charts on a boundaryless manifold
 The model may have boundary: actual interiority of every manifold point is

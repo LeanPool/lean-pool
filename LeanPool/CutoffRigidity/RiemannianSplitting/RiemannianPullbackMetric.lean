@@ -8,8 +8,10 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.ParallelGradientLevelManifold
 public import Mathlib.Analysis.LocallyConvex.Bounded
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Geometry.Manifold.VectorBundle.Riemannian
+public import Mathlib.Tactic.Linarith
 
 /-! # Actual Riemannian metric induced by an immersion
 The positive-definite pullback metric is constructed from the actual injective

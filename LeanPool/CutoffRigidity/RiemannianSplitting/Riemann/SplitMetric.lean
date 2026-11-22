@@ -11,7 +11,6 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianPullbackMetric
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartMetric
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianMetricChartCriterion
-public import LeanPool.CutoffRigidity.RiemannianSplitting.SmoothRiemannianPullbackMetric
 
 /-! # `C^∞` regularity of the induced metric on an immersed submanifold -/
 
@@ -92,8 +91,7 @@ variable {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimension
   [IsContMDiffRiemannianBundle I ∞ E (fun x : M ↦ TangentSpace I x)]
 
 omit [FiniteDimensional ℝ E] [BoundarylessManifold I M] in
-/-- An actual `C²` immersion into an actual `C¹` Riemannian metric induces an
-actual `C¹` Riemannian metric. All smoothness follows from the true tangent map. -/
+/-- Pulling back a smooth metric along a smooth immersion gives a smooth metric. -/
 theorem isContMDiffRiemannianBundle_immersionPullback_top (f : N → M)
     (hf : ContMDiff J I ∞ f) (hinj : ∀ x, Function.Injective (mfderiv J I f x)) :
     letI := immersionPullbackRiemannianBundle f hinj

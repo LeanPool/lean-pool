@@ -13,6 +13,8 @@ public import Mathlib.Analysis.Calculus.FDeriv.CompCLM
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.Tactic.Ring
+import TauCeti.Analysis.Calculus.FDeriv.Det.Basic
+import TauCeti.Analysis.Matrix.Normed
 
 /-! # Jacobi's formula for Gram determinants
 
@@ -23,7 +25,7 @@ determinant along any family `e = Q f`, and of its square root (the Riemannian v
 
 @[expose] public section
 
-open Finset Equiv
+open scoped Matrix.Norms.Operator
 
 namespace CutoffRigidity
 
@@ -34,38 +36,27 @@ theorem hasFDerivAt_det_of_eq_one {n : Type*} [Fintype n] [DecidableEq n]
     {N : E → Matrix n n ℝ} {N' : n → n → E →L[ℝ] ℝ} {z : E}
     (hN : ∀ i j, HasFDerivAt (fun x => N x i j) (N' i j) z) (h1 : N z = 1) :
     HasFDerivAt (fun x => (N x).det) (∑ i, N' i i) z := by
-  have hfun : (fun x => (N x).det) =
-      fun x => ∑ σ : Perm n, ((Perm.sign σ : ℤ) : ℝ) * ∏ i, N x (σ i) i := by
-    funext x
-    exact Matrix.det_apply' (N x)
-  rw [hfun]
-  have hd := HasFDerivAt.fun_sum (u := (univ : Finset (Perm n)))
-    (fun σ _ => ((HasFDerivAt.finsetProd (u := univ)
-      (fun i _ => hN (σ i) i)).const_mul ((Perm.sign σ : ℤ) : ℝ)))
-  convert hd using 1
-  rw [Finset.sum_eq_single (1 : Perm n)]
-  · simp [h1]
-  · intro σ _ hσ
-    rw [Finset.sum_eq_zero]
-    · simp
-    intro k _
-    by_cases hfix : ∀ j, j ≠ k → σ j = j
-    · exfalso
-      apply hσ
-      ext j
-      by_cases hjk : j = k
-      · subst hjk
-        by_contra hne
-        have h2 := hfix (σ j) hne
-        exact hne (σ.injective h2)
-      · simpa using hfix j hjk
-    · push Not at hfix
-      obtain ⟨j, hjk, hj⟩ := hfix
-      rw [Finset.prod_eq_zero (i := j) (Finset.mem_erase.mpr ⟨hjk, mem_univ j⟩)]
-      · simp
-      · simp [h1, hj]
-  · intro h
-    exact absurd (mem_univ _) h
+  let derivative : E →L[ℝ] n → n → ℝ :=
+    ContinuousLinearMap.pi (fun i ↦ ContinuousLinearMap.pi (N' i))
+  have hEntries : HasFDerivAt (fun x i j ↦ N x i j) derivative z :=
+    hasFDerivAt_pi.mpr fun i ↦ hasFDerivAt_pi.mpr (hN i)
+  let toMatrix : (n → n → ℝ) ≃L[ℝ] Matrix n n ℝ := Matrix.ofContinuousLinearEquiv ℝ
+  have hToMatrix : (toMatrix : (n → n → ℝ) → Matrix n n ℝ) = Matrix.of :=
+    Matrix.coe_ofContinuousLinearEquiv ℝ
+  have hValue (x : E) : toMatrix (fun i j ↦ N x i j) = N x := by
+    refine (congrFun hToMatrix _).trans ?_
+    ext i j
+    rfl
+  have hMatrix : HasFDerivAt N (toMatrix.toContinuousLinearMap.comp derivative) z :=
+    (toMatrix.hasFDerivAt.comp z hEntries).congr_of_eventuallyEq
+      (Filter.Eventually.of_forall fun x ↦ (hValue x).symm)
+  have hDet := Matrix.hasFDerivAt_det_one (n := n) (𝕜 := ℝ)
+  rw [← h1] at hDet
+  exact (hDet.comp z hMatrix).congr_fderiv (by
+    ext v
+    change Matrix.trace (toMatrix (derivative v)) = _
+    rw [hToMatrix, sum_apply]
+    rfl)
 
 /-- Derivative of a bilinear-form-valued map evaluated at fixed vectors. -/
 theorem hasFDerivAt_bilin_apply_const {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]

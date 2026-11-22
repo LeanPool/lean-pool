@@ -57,6 +57,8 @@ theorem hasFDerivAt_chartRiemannianVolumeDensity (x₀ : M) {z : F}
     (hz : z ∈ (extChartAt 𝓘(ℝ, F) x₀).target) {y : M}
     (hydef : (extChartAt 𝓘(ℝ, F) x₀).symm z = y)
     (b : OrthonormalBasis (Fin (Module.finrank ℝ F)) ℝ (TangentSpace 𝓘(ℝ, F) y)) :
+    let _ : AddCommGroup (F →L[ℝ] ℝ) := ContinuousLinearMap.addCommGroup
+    let _ : AddCommGroup (F →L[ℝ] F →L[ℝ] ℝ) := ContinuousLinearMap.addCommGroup
     HasFDerivAt (chartRiemannianVolumeDensity (I := 𝓘(ℝ, F)) x₀)
       ((chartRiemannianVolumeDensity (I := 𝓘(ℝ, F)) x₀ z / 2) •
         ∑ l, (ContinuousLinearMap.apply ℝ ℝ
@@ -64,6 +66,7 @@ theorem hasFDerivAt_chartRiemannianVolumeDensity (x₀ : M) {z : F}
           ((ContinuousLinearMap.apply ℝ (F →L[ℝ] ℝ)
             (chartFrameInv x₀ y (b l))).comp
             (fderiv ℝ (chartMetric (I := 𝓘(ℝ, F)) x₀) z))) z := by
+  dsimp only
   have hy : y ∈ (chartAt F x₀).source := hydef ▸ extChartAt_symm_mem_source hz
   set e : Fin (Module.finrank ℝ F) → F := ⇑(stdOrthonormalBasis ℝ F) with he_def
   set f : Fin (Module.finrank ℝ F) → F := fun l => chartFrameInv x₀ y (b l) with hf_def

@@ -8,6 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
+public import LeanPool.CutoffRigidity.RiemannianSplitting.BoundarylessChart
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianPullbackMetric
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartFrames
 public import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
