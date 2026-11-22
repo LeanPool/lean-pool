@@ -19,7 +19,6 @@ public import Mathlib.Tactic.Ring
 # Parallel fields in the Riemannian splitting argument
 
 A constant directional derivative gives linear growth along integral curves.
-Metric compatibility and parallelism make the differential of the pointwise Gram function vanish.
 -/
 
 @[expose] public section
@@ -62,27 +61,5 @@ theorem scalar_integralCurve_eq_add
   have he := is_const_of_deriv_eq_zero
     (fun s ↦ (hd s).differentiableAt) (fun s ↦ (hd s).deriv) t 0
   simpa using (sub_eq_iff_eq_add.mp he)
-
-variable [IsManifold I 2 M]
-
-variable [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
-  [IsContMDiffRiemannianBundle I 1 E (fun x : M ↦ TangentSpace I x)]
-  [ContMDiffVectorBundle 1 E (TangentSpace I : M → Type _) I]
-  [FiniteDimensional ℝ E]
-
-/-- Metric compatibility and actual parallelism force the differential of the
-pointwise Gram function to vanish in every tangent direction. -/
-theorem mvfderiv_inner_parallel_eq_zero
-    (cov : CovariantDerivative I E (TangentSpace I : M → Type _))
-    (hcov : cov.IsMetricCompatible (M := M) (V := TangentSpace I))
-    {X Y : (x : M) → TangentSpace I x}
-    (hX : MDifferentiable I I.tangent (T% X))
-    (hY : MDifferentiable I I.tangent (T% Y))
-    (hpX : ∀ x, cov X x = 0) (hpY : ∀ x, cov Y x = 0)
-    (x : M) (v : TangentSpace I x) :
-    mvfderiv I (fun y ↦ inner ℝ (X y) (Y y)) x v = 0 := by
-  let Z : (y : M) → TangentSpace I y := FiberBundle.extend E v
-  have h := hcov.mvfderiv_inner_eq Z (hX x) (hY x)
-  simpa [Z, hpX, hpY] using h
 
 end CutoffRigidity

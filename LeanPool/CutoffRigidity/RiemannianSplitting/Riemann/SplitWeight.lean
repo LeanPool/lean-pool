@@ -9,7 +9,6 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitAction
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedFinal
 
 /-! # The potential along the action of the frame: `V(t · y) = V(y) + ρ|t|²/2` -/
 

@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureDensity
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPGreen
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedVolume
 import TauCeti.MeasureTheory.Constructions.BorelSpace.Basic
 
 /-! # The weighted volume in an arbitrary smooth chart

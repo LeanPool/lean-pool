@@ -137,7 +137,8 @@ theorem exists_frame_of_eigen :
   classical
   have : Nonempty M := inferInstance
   have := isOpenPosMeasure_of_weighted F hV hμ
-  obtain ⟨T, hT, hTo⟩ := exists_orthonormal_eigenbasis F hV hμ hρ hCD hgap
+  obtain ⟨b, T, hT, hTb, hTo⟩ :=
+    exists_orthonormal_eigenbasis_with_representatives F hV hμ hρ hCD hgap
   have hpar : ∀ f, IsMEigenfunction F μ V ρ f → ∀ x,
       CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F f) x = 0 :=
     fun f hf x => manifold_eigenfunction_parallel_gradient F hV hμ hρ hCD hgap hf x
@@ -154,7 +155,7 @@ theorem exists_frame_of_eigen :
       simp
     exact this
   have hmem : ∀ i, MemLp (T i) 2 μ := fun i => (hT i).2.1
-  generalize hK : mFirstEigenDim F μ V = K at T hT hTo hTs hcomb hmem ⊢
+  generalize hK : mFirstEigenDim F μ V = K at b T hT hTb hTo hTs hcomb hmem ⊢
   obtain ⟨x₀⟩ := (inferInstance : Nonempty M)
   set G : Matrix (Fin K) (Fin K) ℝ := fun i j => carre F (T i) (T j) x₀ with hG
   have hX1 : ∀ i, ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, F).tangent 1 (T% (mgrad F (T i))) := fun i =>
@@ -217,75 +218,28 @@ theorem exists_frame_of_eigen :
       parallel := fun i x => hpar _ (hs i) x
       gram := hgram }
   refine ⟨fr, hs, fun f hf => ?_⟩
-  have hfmem : MemLp f 2 μ := hf.2.1
-  set c : Fin K → ℝ := fun j => ∫ y, f y * T j y ∂μ with hc
-  set h : M → ℝ := fun y => f y - ∑ j, c j * T j y with hh
-  have hheig : IsMEigenfunction F μ V ρ h := by
-    have := (eigenSub F μ V ρ).sub_mem hf (hcomb c)
-    exact this
-  have hhmem : MemLp h 2 μ := hheig.2.1
-  have horth : ∀ j, ∫ y, h y * T j y ∂μ = 0 := by
-    intro j
-    have i1 : Integrable (fun y => f y * T j y) μ := hfmem.integrable_mul (hmem j)
-    have i2 : Integrable (fun y => (∑ i, c i * T i y) * T j y) μ :=
-      (hcomb c).2.1.integrable_mul (hmem j)
-    have e : (fun y => h y * T j y) = fun y => f y * T j y - (∑ i, c i * T i y) * T j y := by
-      funext y; simp only [hh]; ring
-    rw [e, integral_sub i1 i2, CutoffRigidity.Riemann.integral_sum_mul_orthonormal T hmem hTo c j]
-    simp [hc]
-  -- `h` vanishes: its class is orthogonal to the classes of the basis, which span the eigenspace
-  have hfin := finiteDimensional_eigenClasses F hV hμ hρ hCD hgap
-  have hfr : Module.finrank ℝ (eigenClasses F μ V ρ) = K := by
-    rw [← mFirstEigenDim_eq_finrank F (V := V) hgap, hK]
-  let u : Fin K → eigenClasses F μ V ρ := fun i =>
-    ⟨(hmem i).toLp (T i), T i, hT i, (MemLp.coeFn_toLp (hmem i)).symm⟩
-  have hinner : ∀ (g₁ g₂ : M → ℝ) (h₁ : MemLp g₁ 2 μ) (h₂ : MemLp g₂ 2 μ),
-      inner ℝ (h₁.toLp g₁) (h₂.toLp g₂) = ∫ y, g₁ y * g₂ y ∂μ := by
-    intro g₁ g₂ h₁ h₂
-    rw [MeasureTheory.L2.inner_def]
-    refine integral_congr_ae ?_
-    filter_upwards [MemLp.coeFn_toLp h₁, MemLp.coeFn_toLp h₂] with x e1 e2
-    rw [e1, e2]
-    simp [mul_comm]
-  have hun : Orthonormal ℝ u := by
-    rw [orthonormal_iff_ite]
-    intro i j
-    rw [Submodule.coe_inner]
-    change inner ℝ ((hmem i).toLp (T i)) ((hmem j).toLp (T j)) = _
-    rw [hinner _ _ (hmem i) (hmem j)]
-    exact hTo i j
-  have hspan : Submodule.span ℝ (Set.range u) = ⊤ :=
-    hun.linearIndependent.span_eq_top_of_card_eq_finrank' (by simpa using hfr.symm)
-  have hw : (hhmem).toLp h ∈ eigenClasses F μ V ρ :=
-    ⟨h, hheig, (MemLp.coeFn_toLp hhmem).symm⟩
-  have hwmem : (⟨(hhmem).toLp h, hw⟩ : eigenClasses F μ V ρ) ∈ Submodule.span ℝ (Set.range u) :=
-    hspan ▸ Submodule.mem_top
-  obtain ⟨d, hd⟩ := (Submodule.mem_span_range_iff_exists_fun ℝ).mp hwmem
-  have hww : inner ℝ ((hhmem).toLp h) ((hhmem).toLp h) = 0 := by
-    have h1 : inner ℝ (∑ i, d i • u i)
-        (⟨(hhmem).toLp h, hw⟩ : eigenClasses F μ V ρ) = 0 := by
-      rw [sum_inner]
-      refine Finset.sum_eq_zero fun i _ => ?_
-      rw [Submodule.coe_inner, Submodule.coe_smul, real_inner_smul_left]
-      change d i * inner ℝ ((hmem i).toLp (T i)) ((hhmem).toLp h) = 0
-      rw [hinner _ _ (hmem i) hhmem]
-      have : ∫ y, T i y * h y ∂μ = ∫ y, h y * T i y ∂μ := by
-        congr 1; funext y; ring
-      rw [this, horth i]; simp
-    rw [hd] at h1
-    simpa [Submodule.coe_inner] using h1
-  have hw0 : (hhmem).toLp h = 0 := inner_self_eq_zero.mp hww
-  have hae : h =ᵐ[μ] 0 := by
-    have := (MemLp.coeFn_toLp hhmem).symm.trans
-      ((Lp.ext_iff.mp hw0 |> fun h => h))
-    exact this.trans (Lp.coeFn_zero _ _ _)
-  have hh0 : h = 0 :=
-    (Continuous.ae_eq_iff_eq μ hheig.1.continuous continuous_const).mp hae
+  let u : eigenClasses F μ V ρ :=
+    ⟨hf.2.1.toLp f, f, hf, (MemLp.coeFn_toLp hf.2.1).symm⟩
+  let c : Fin K → ℝ := fun i => b.repr u i
+  have hfu : f =ᵐ[μ] (u : M →₂[μ] ℝ) := (MemLp.coeFn_toLp hf.2.1).symm
+  have e1 : ∀ x, f x = ∑ i, c i * T i x := by
+    have hsum : ∑ i, c i • (b i : M →₂[μ] ℝ) = (u : M →₂[μ] ℝ) := by
+      change ∑ i, b.repr u i • (eigenClasses F μ V ρ).subtype (b i) =
+        (eigenClasses F μ V ρ).subtype u
+      simpa only [map_sum, map_smul] using congrArg (eigenClasses F μ V ρ).subtype (b.sum_repr u)
+    refine congrFun ((hf.1.continuous.ae_eq_iff_eq μ (continuous_finsetSum _ fun i _ =>
+      continuous_const.mul (hTs i).continuous)).mp ?_)
+    refine hfu.trans ?_
+    rw [← hsum]
+    refine (Lp.coeFn_fun_finsetSum _ _).trans ?_
+    have hterm (i : Fin K) : ⇑(c i • (b i : M →₂[μ] ℝ)) =ᵐ[μ]
+        fun x => c i * T i x := by
+      refine (Lp.coeFn_smul _ _).trans ?_
+      filter_upwards [hTb i] with x hx
+      simp only [Pi.smul_apply, smul_eq_mul, hx]
+    filter_upwards [ae_all_iff.2 hterm] with x hx
+    exact Finset.sum_congr rfl fun i _ => hx i
   refine ⟨fun i => ∑ j, c j * B j i, fun x => ?_⟩
-  have e1 : f x = ∑ j, c j * T j x := by
-    have := congrFun hh0 x
-    simp only [hh, Pi.zero_apply] at this
-    linarith
   have e2 : ∀ j, ∑ i, B j i * s i x = T j x := by
     intro j
     have h1 : ∑ i, B j i * s i x = ∑ a, (B * A) j a * T a x := by

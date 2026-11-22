@@ -202,11 +202,13 @@ theorem mFirstEigenDim_eq_finrank :
 
 
 include hV hμ hρ hCD hgap in
-/-- **Orthonormal eigenbasis** (the field `EigenSplitting.basis`): there are `k₁` smooth `L²`
-eigenfunctions `T i` for `ρ` with `∫ T i T j = δᵢⱼ`. -/
-theorem exists_orthonormal_eigenbasis :
-    ∃ T : Fin (mFirstEigenDim F μ V) → M → ℝ, (∀ i, IsMEigenfunction F μ V ρ (T i)) ∧
-      ∀ i j, ∫ y, T i y * T j y ∂μ = if i = j then 1 else 0 := by
+/-- An orthonormal basis of the `L²` eigenspace, with smooth representatives. -/
+theorem exists_orthonormal_eigenbasis_with_representatives :
+    ∃ b : OrthonormalBasis (Fin (mFirstEigenDim F μ V)) ℝ (eigenClasses F μ V ρ),
+      ∃ T : Fin (mFirstEigenDim F μ V) → M → ℝ,
+        (∀ i, IsMEigenfunction F μ V ρ (T i)) ∧
+        (∀ i, T i =ᵐ[μ] (b i : M →₂[μ] ℝ)) ∧
+        ∀ i j, ∫ y, T i y * T j y ∂μ = if i = j then 1 else 0 := by
   have hfin := finiteDimensional_eigenClasses F hV hμ hρ hCD hgap
   have hk := mFirstEigenDim_eq_finrank F (V := V) hgap
   let b : OrthonormalBasis (Fin (mFirstEigenDim F μ V)) ℝ (eigenClasses F μ V ρ) :=
@@ -214,7 +216,7 @@ theorem exists_orthonormal_eigenbasis :
   have hmem : ∀ i, ∃ f, IsMEigenfunction F μ V ρ f ∧ f =ᵐ[μ] ((b i : eigenClasses F μ V ρ) :
       M →₂[μ] ℝ) := fun i => (b i).2
   choose T hT hTb using hmem
-  refine ⟨T, hT, fun i j => ?_⟩
+  refine ⟨b, T, hT, hTb, fun i j => ?_⟩
   have h1 : ∫ y, T i y * T j y ∂μ = inner ℝ (b i : M →₂[μ] ℝ) (b j : M →₂[μ] ℝ) := by
     rw [MeasureTheory.L2.inner_def]
     refine integral_congr_ae ?_
@@ -225,6 +227,15 @@ theorem exists_orthonormal_eigenbasis :
   have := orthonormal_iff_ite.mp b.orthonormal i j
   rw [Submodule.coe_inner] at this
   exact this
+
+include hV hμ hρ hCD hgap in
+/-- An integral-orthonormal family of smooth eigenfunctions indexed by the eigenspace dimension. -/
+theorem exists_orthonormal_eigenbasis :
+    ∃ T : Fin (mFirstEigenDim F μ V) → M → ℝ, (∀ i, IsMEigenfunction F μ V ρ (T i)) ∧
+      ∀ i j, ∫ y, T i y * T j y ∂μ = if i = j then 1 else 0 := by
+  obtain ⟨_, T, hT, _, hTo⟩ :=
+    exists_orthonormal_eigenbasis_with_representatives F hV hμ hρ hCD hgap
+  exact ⟨T, hT, hTo⟩
 
 include hV hμ hρ hCD hgap in
 /-- `0 < k₁` iff there is a (smooth, `L²`) eigenfunction for `ρ` which is not identically zero.
