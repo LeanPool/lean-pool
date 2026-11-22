@@ -316,10 +316,11 @@ theorem perturbationHalfGapBridge_of_circleContinuationData
     lt_of_le_of_lt (selectedBranchProjectionLipschitzConstant_of_circle D)
       hquant
 
-/-- Construct the residual half-gap bridge.  The same amendment applies; in
-the source the quantitative circle input for the residual alternative is
-produced by the Krein replacement argument, which remains the open analytic
-step. -/
+/-- Construct the residual half-gap bridge from a circle datum, the residual
+bound on `R`, and the endpoint-size estimate `hquant` for the perturbation `E`.
+Nothing here relates `R` to `E`, and the contour bound comes from `hquant` alone.
+The printed residual alternative, through Krein's self-adjoint completion, is
+`theorem8_2_residualHalfGap_complex`. -/
 theorem residualHalfGapBridge_of_circleContinuationData
     (D : CircleContinuationData A E s) (R : F →L[ℂ] H) {delta : ℝ}
     (hdelta : 0 < delta) (hsmall : ‖R‖ < delta / 2)

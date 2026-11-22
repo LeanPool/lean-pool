@@ -19,15 +19,16 @@ open TauCeti.DavisKahan.Angle
 # Davis--Kahan 1970, Theorem 8.2: explicit smallness bridges
 
 The source theorem has two alternatives: small perturbation norm or small
-residual norm.  The current continuation library proves the branch conclusion
-once a common contour has an explicit projection-Lipschitz coefficient below
-`sqrt 2 / 2`.  This file records the exact bridge obligations needed to turn
-each printed half-gap hypothesis into that quantitative continuation input.
+residual norm.  The continuation library proves the branch conclusion once a
+common contour has an explicit projection-Lipschitz coefficient below
+`sqrt 2 / 2`.  The bridge records in this file package a printed half-gap
+hypothesis together with that contour bound, which the caller supplies.
 
-The bridge records are not axioms and contain no proof admissions.  They are
-local proof data that future analytic modules must construct.  In particular,
-the residual alternative still needs the Krein replacement step used in the
-paper.
+The bridges are a conditional route: they do not derive the contour bound from
+the half-gap hypothesis.  The printed alternatives, in directed-gap form, are
+proved without them by `theorem8_2_perturbationHalfGap_complex` and
+`theorem8_2_residualHalfGap_complex` in `Section8/Theorem82Branch.lean`; the
+residual one uses Krein's self-adjoint completion.
 -/
 
 namespace TauCeti
@@ -59,10 +60,11 @@ structure PerturbationHalfGapBridge
     selectedBranchProjectionLipschitzConstant C.contour V C.margin <
       Real.sqrt 2 / 2
 
-/-- Proof data for the residual-norm alternative in Theorem 8.2.  Besides the
-printed residual smallness, it records the nontrivial analytic output of the
-Krein replacement argument: a continuation witness for an equivalent
-perturbation problem whose selected endpoint is the intended spectral branch. -/
+/-- Caller-supplied data for the residual-norm alternative in Theorem 8.2: the
+printed residual smallness of `R`, and a bound below `sqrt 2 / 2` on the
+selected-branch Lipschitz constant of the witness contour for `V`.  No field
+relates `R` to `V`.  The printed residual alternative is
+`theorem8_2_residualHalfGap_complex`. -/
 structure ResidualHalfGapBridge
     (C : SpectralContinuationWitness A V s)
     (R : F →L[ℂ] H) (delta : ℝ) : Prop where
@@ -92,7 +94,7 @@ theorem theorem82_branch_of_residualHalfGapBridge
   selectedBranchConclusion_of_contour_bound C
     B.contour_selects_quarter_branch
 
-/-! The current Section 8 package stops here: the Section 7 theorem family
+/-! This conditional layer stops here: the Section 7 theorem family
 supplies the corresponding `sin(2 Theta)` inequalities, while these bridge
 theorems add the strict selected-branch conclusion.  Keeping the two layers
 separate prevents a generic proposition parameter from masquerading as the
