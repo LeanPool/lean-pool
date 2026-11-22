@@ -461,6 +461,29 @@ theorem cubical_hamiltonian_intertwines_plus
     cubical_native_spatial_intertwines_plus]
   rfl
 
+theorem cubical_standard_hamiltonian_add
+    (mass px py pz : ℂ) (first second : CubicalCell4) :
+    cubicalStandardHamiltonian mass px py pz
+        (fun component => first component + second component) =
+      fun component =>
+        cubicalStandardHamiltonian mass px py pz first component +
+          cubicalStandardHamiltonian mass px py pz second component := by
+  funext component
+  fin_cases component <;>
+    simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
+      cubicalStandardBeta, cubicalStandardAlphaX,
+      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
+    ring
+
+theorem cubical_standard_hamiltonian_scale
+    (mass px py pz scalar : ℂ) (z : CubicalCell4) :
+    cubicalStandardHamiltonian mass px py pz (fun component => scalar * z component) =
+      fun component => scalar * cubicalStandardHamiltonian mass px py pz z component := by
+  funext component
+  fin_cases component <;>
+    simp [cubicalStandardHamiltonian, cubicalStandardSpatial, cubicalStandardBeta,
+      cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
+
 theorem cubical_standard_hamiltonian_square
     (mass px py pz : ℂ) (z : CubicalCell4) :
     cubicalStandardHamiltonian mass px py pz
@@ -472,6 +495,20 @@ theorem cubical_standard_hamiltonian_square
       cubicalStandardSpatial, cubicalStandardAlphaX,
       cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
     ring_nf <;> rw [Complex.I_sq] <;> ring
+
+/-- The Hamiltonian shifted by an energy maps into its corresponding eigenspace on shell. -/
+theorem cubical_standard_hamiltonian_shift
+    (mass px py pz energy scalar : ℂ)
+    (hshell : mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2 = energy ^ 2) (z : CubicalCell4) :
+    let shift : CubicalCell4 := fun component =>
+      scalar * (cubicalStandardHamiltonian mass px py pz z component + energy * z component)
+    cubicalStandardHamiltonian mass px py pz shift =
+      fun component => energy * shift component := by
+  dsimp only
+  rw [cubical_standard_hamiltonian_scale, cubical_standard_hamiltonian_add,
+    cubical_standard_hamiltonian_scale, cubical_standard_hamiltonian_square, hshell]
+  funext component
+  ring
 
 end
 end LeanDirac.V2

@@ -98,76 +98,25 @@ theorem normalized_negative_frequency_is_energy_eigenstate
       fun component =>
         -(energy : ℂ) *
           normalizedNegativeFrequencyEmbedding mass energy px py pz q component := by
-  have hratio : positiveFrequencyRatio mass energy * (energy + mass) =
-      positiveFrequencyScale mass energy := by
-    simp [positiveFrequencyRatio, hdenom]
-  have hmassShell : mass * (energy + mass) +
-        (px ^ 2 + py ^ 2 + pz ^ 2) = energy * (energy + mass) := by
-    nlinarith
-  have htop : mass * positiveFrequencyRatio mass energy -
-        positiveFrequencyScale mass energy =
-      -energy * positiveFrequencyRatio mass energy := by
-    nlinarith [hratio]
-  have hbottom :
-      -(px ^ 2 + py ^ 2 + pz ^ 2) * positiveFrequencyRatio mass energy -
-        mass * positiveFrequencyScale mass energy =
-      -energy * positiveFrequencyScale mass energy := by
-    calc
-      -(px ^ 2 + py ^ 2 + pz ^ 2) * positiveFrequencyRatio mass energy -
-          mass * positiveFrequencyScale mass energy =
-        -positiveFrequencyRatio mass energy *
-          ((px ^ 2 + py ^ 2 + pz ^ 2) + mass * (energy + mass)) := by
-            rw [← hratio]
-            ring
-      _ = -positiveFrequencyRatio mass energy *
-          (energy * (energy + mass)) := by
-        rw [show (px ^ 2 + py ^ 2 + pz ^ 2) + mass * (energy + mass) =
-          energy * (energy + mass) by nlinarith [hmassShell]]
-      _ = -energy * positiveFrequencyScale mass energy := by
-        rw [← hratio]
-        ring
-  have htopC : (mass : ℂ) * (positiveFrequencyRatio mass energy : ℂ) -
-        (positiveFrequencyScale mass energy : ℂ) =
-      -(energy : ℂ) * (positiveFrequencyRatio mass energy : ℂ) := by
-    exact_mod_cast htop
-  have hbottomC :
-      -((px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2) *
-          (positiveFrequencyRatio mass energy : ℂ) -
-        (mass : ℂ) * (positiveFrequencyScale mass energy : ℂ) =
-      -(energy : ℂ) * (positiveFrequencyScale mass energy : ℂ) := by
-    exact_mod_cast hbottom
-  funext component
-  fin_cases component
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    linear_combination
-      -((pz : ℂ) * q 0 + ((px : ℂ) - I * (py : ℂ)) * q 1) * htopC
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    linear_combination
-      -(((px : ℂ) + I * (py : ℂ)) * q 0 - (pz : ℂ) * q 1) * htopC
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    rw [Complex.I_sq]
-    ring_nf
-    linear_combination (q 0) * hbottomC
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedNegativeFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    rw [Complex.I_sq]
-    ring_nf
-    linear_combination (q 1) * hbottomC
+  let lower : CubicalCell4 := ![0, 0, q 0, q 1]
+  have hr := positive_frequency_ratio_mul_denominator mass energy hdenom
+  have hshift : normalizedNegativeFrequencyEmbedding mass energy px py pz q =
+      fun component => -(positiveFrequencyRatio mass energy : ℂ) *
+        (cubicalStandardHamiltonian mass px py pz lower component -
+          (energy : ℂ) * lower component) := by
+    funext component
+    fin_cases component <;>
+      simp [normalizedNegativeFrequencyEmbedding, lower, cubicalStandardHamiltonian,
+        cubicalStandardSpatial, cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
+        cubicalStandardAlphaZ, positivePauliSpatial, ← hr] <;> ring_nf <;> simp
+  simp only [sub_eq_add_neg, neg_mul] at hshift
+  rw [hshift]
+  have hshellC : (mass : ℂ) ^ 2 + (px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2 =
+      (energy : ℂ) ^ 2 := by exact_mod_cast hshell.symm
+  have hsquare : (mass : ℂ) ^ 2 + (px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2 =
+      (-(energy : ℂ)) ^ 2 := by simpa only [neg_sq] using hshellC
+  simpa only [neg_mul] using cubical_standard_hamiltonian_shift mass px py pz
+    (-(energy : ℂ)) (-(positiveFrequencyRatio mass energy : ℂ)) hsquare lower
 
 /-- Combine the positive and negative branch embeddings in one spinor. -/
 def canonicalSpectralReadout
@@ -263,20 +212,6 @@ theorem normalized_negative_frequency_embedding_scale
   funext component
   fin_cases component <;>
     simp [normalizedNegativeFrequencyEmbedding, positivePauliSpatial] <;>
-    ring
-
-theorem cubical_standard_hamiltonian_add
-    (mass px py pz : ℂ) (first second : CubicalCell4) :
-    cubicalStandardHamiltonian mass px py pz
-        (fun component => first component + second component) =
-      fun component =>
-        cubicalStandardHamiltonian mass px py pz first component +
-          cubicalStandardHamiltonian mass px py pz second component := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
     ring
 
 /-- The one spectral map intertwines the complete positive+negative native

@@ -177,14 +177,17 @@ theorem uniform_centered_temporal_defect_readout_scale
         (dt : ℂ) *
           uniformActionToStandardDirac r momentum
             (uniformCenteredTemporalDefect r 1 momentum phase) component := by
-  funext component
-  fin_cases component <;>
-    simp [uniformActionToStandardDirac, uniformCenteredTemporalDefect,
-      cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;>
-    ring
+  have hscale : uniformCenteredTemporalDefect r dt momentum phase =
+      uniformTwoChannelScale (dt : ℂ) (uniformCenteredTemporalDefect r 1 momentum phase) := by
+    apply Prod.ext
+    · funext component
+      simp [uniformCenteredTemporalDefect, uniformTwoChannelScale]
+      ring
+    · funext component
+      simp [uniformCenteredTemporalDefect, uniformTwoChannelScale]
+  rw [hscale]
+  unfold uniformActionToStandardDirac
+  exact cubical_phase_readout_scale _ _ _ _ _ _
 
 /-- The actual centered-update temporal defect vanishes at first order in
 the timestep through the same fixed native-to-Dirac readout. The C19 spatial

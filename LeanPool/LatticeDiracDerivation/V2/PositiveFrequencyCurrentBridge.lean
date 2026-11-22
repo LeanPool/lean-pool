@@ -123,6 +123,13 @@ theorem normalized_positive_frequency_current_formula
       Complex.normSq, Complex.mul_re, Complex.mul_im] <;>
     ring
 
+theorem positive_frequency_ratio_mul_denominator (mass energy : ℝ)
+    (hdenom : energy + mass ≠ 0) :
+    (positiveFrequencyRatio mass energy : ℂ) * ((energy : ℂ) + (mass : ℂ)) =
+      (positiveFrequencyScale mass energy : ℂ) := by
+  exact_mod_cast (show positiveFrequencyRatio mass energy * (energy + mass) =
+    positiveFrequencyScale mass energy from div_mul_cancel₀ _ hdenom)
+
 theorem normalized_positive_frequency_is_energy_eigenstate
     (mass energy px py pz : ℝ)
     (hdenom : energy + mass ≠ 0)
@@ -133,75 +140,19 @@ theorem normalized_positive_frequency_is_energy_eigenstate
       fun component =>
         (energy : ℂ) *
           normalizedPositiveFrequencyEmbedding mass energy px py pz q component := by
-  have hratio : positiveFrequencyRatio mass energy * (energy + mass) =
-      positiveFrequencyScale mass energy := by
-    simp [positiveFrequencyRatio, hdenom]
-  have hmassShell : mass * (energy + mass) +
-        (px ^ 2 + py ^ 2 + pz ^ 2) = energy * (energy + mass) := by
-    nlinarith
-  have htop : mass * positiveFrequencyScale mass energy +
-        (px ^ 2 + py ^ 2 + pz ^ 2) * positiveFrequencyRatio mass energy =
-      energy * positiveFrequencyScale mass energy := by
-    calc
-      mass * positiveFrequencyScale mass energy +
-          (px ^ 2 + py ^ 2 + pz ^ 2) * positiveFrequencyRatio mass energy =
-        positiveFrequencyRatio mass energy *
-          (mass * (energy + mass) + (px ^ 2 + py ^ 2 + pz ^ 2)) := by
-            rw [← hratio]
-            ring
-      _ = positiveFrequencyRatio mass energy *
-          (energy * (energy + mass)) := by rw [hmassShell]
-      _ = energy * positiveFrequencyScale mass energy := by
-        calc
-          positiveFrequencyRatio mass energy * (energy * (energy + mass)) =
-              energy * (positiveFrequencyRatio mass energy *
-                (energy + mass)) := by ring
-          _ = energy * positiveFrequencyScale mass energy := by rw [hratio]
-  have hbottom : positiveFrequencyScale mass energy -
-        mass * positiveFrequencyRatio mass energy =
-      energy * positiveFrequencyRatio mass energy := by
-    nlinarith [hratio]
-  have htopC : (mass : ℂ) * (positiveFrequencyScale mass energy : ℂ) +
-        ((px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2) *
-          (positiveFrequencyRatio mass energy : ℂ) =
-      (energy : ℂ) * (positiveFrequencyScale mass energy : ℂ) := by
-    exact_mod_cast htop
-  have hbottomC : (positiveFrequencyScale mass energy : ℂ) -
-        (mass : ℂ) * (positiveFrequencyRatio mass energy : ℂ) =
-      (energy : ℂ) * (positiveFrequencyRatio mass energy : ℂ) := by
-    exact_mod_cast hbottom
-  funext component
-  fin_cases component
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedPositiveFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    rw [Complex.I_sq]
-    ring_nf
-    linear_combination (q 0) * htopC
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedPositiveFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    rw [Complex.I_sq]
-    ring_nf
-    linear_combination (q 1) * htopC
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedPositiveFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    linear_combination
-      ((pz : ℂ) * q 0 + ((px : ℂ) - I * (py : ℂ)) * q 1) * hbottomC
-  · simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      normalizedPositiveFrequencyEmbedding, positivePauliSpatial]
-    ring_nf
-    linear_combination
-      (((px : ℂ) + I * (py : ℂ)) * q 0 - (pz : ℂ) * q 1) * hbottomC
+  have hr := positive_frequency_ratio_mul_denominator mass energy hdenom
+  have hshift : normalizedPositiveFrequencyEmbedding mass energy px py pz q =
+      fun component => (positiveFrequencyRatio mass energy : ℂ) *
+        (cubicalStandardHamiltonian mass px py pz (cubicalUpperEmbedding q) component +
+          (energy : ℂ) * cubicalUpperEmbedding q component) := by
+    funext component
+    fin_cases component <;>
+      simp [normalizedPositiveFrequencyEmbedding, cubicalUpperEmbedding, cubicalStandardHamiltonian,
+        cubicalStandardSpatial, cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
+        cubicalStandardAlphaZ, positivePauliSpatial, ← hr] <;> ring_nf <;> simp
+  rw [hshift]
+  apply cubical_standard_hamiltonian_shift
+  exact_mod_cast hshell.symm
 
 /-- Restricted native-flow intertwiner.  The source amplitude is the position
 of the positive-frequency native phase `(q,-iE q)`; applying one infinitesimal
@@ -225,29 +176,6 @@ theorem normalized_positive_frequency_intertwines_native_phase
   fin_cases component <;>
     simp [normalizedPositiveFrequencyEmbedding,
       positivePauliSpatial] <;>
-    ring
-
-/-- Scalar multiplication on the native two-layer phase space. -/
-def uniformTwoChannelScale
-    (scalar : ℂ) (phase : UniformTwoChannelPhase) :
-    UniformTwoChannelPhase :=
-  (fun component => scalar * phase.1 component,
-    fun component => scalar * phase.2 component)
-
-theorem cubical_phase_readout_scale
-    (mass px py pz scalar : ℂ) (phase : UniformTwoChannelPhase) :
-    cubicalPhaseReadout mass px py pz
-        (uniformTwoChannelScale scalar phase) =
-      fun component =>
-        scalar * cubicalPhaseReadout mass px py pz phase component := by
-  funext component
-  fin_cases component <;>
-    simp [uniformTwoChannelScale, cubicalPhaseReadout,
-      cubicalPhaseLower, cubicalSpatialLower,
-      oriented_cubical_spatial_coordinates_eq_standard,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;>
     ring
 
 /-- The concrete native phase whose full lossless action readout is the

@@ -122,6 +122,29 @@ def cubicalPhaseReadout
   | 2 => -phase.1 0 + cubicalPhaseLower mass px py pz phase 0
   | _ => -phase.1 1 + cubicalPhaseLower mass px py pz phase 1
 
+/-- Scalar multiplication on the native two-layer phase space. -/
+def uniformTwoChannelScale
+    (scalar : ℂ) (phase : UniformTwoChannelPhase) :
+    UniformTwoChannelPhase :=
+  (fun component => scalar * phase.1 component,
+    fun component => scalar * phase.2 component)
+
+theorem cubical_phase_readout_scale
+    (mass px py pz scalar : ℂ) (phase : UniformTwoChannelPhase) :
+    cubicalPhaseReadout mass px py pz
+        (uniformTwoChannelScale scalar phase) =
+      fun component =>
+        scalar * cubicalPhaseReadout mass px py pz phase component := by
+  funext component
+  fin_cases component <;>
+    simp [uniformTwoChannelScale, cubicalPhaseReadout,
+      cubicalPhaseLower, cubicalSpatialLower,
+      oriented_cubical_spatial_coordinates_eq_standard,
+      cubicalUpperEmbedding, cubicalStandardSpatial,
+      cubicalStandardAlphaX, cubicalStandardAlphaY,
+      cubicalStandardAlphaZ] <;>
+    ring
+
 /-- The four-component readout with the continuum momentum determined by the action. -/
 def uniformActionToStandardDirac
     (r : ℝ) (momentum : LatticeMomentum)

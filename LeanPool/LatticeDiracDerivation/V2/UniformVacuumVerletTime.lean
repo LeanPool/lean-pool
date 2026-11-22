@@ -141,14 +141,17 @@ theorem uniform_verlet_local_defect_readout_scale
         ((dt ^ 3 : ℝ) : ℂ) *
           uniformActionToStandardDirac r momentum
             (uniformVerletLocalDefect r 1 momentum phase) component := by
-  funext component
-  fin_cases component <;>
-    simp [uniformActionToStandardDirac, uniformVerletLocalDefect,
-      cubicalPhaseReadout, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;>
-    ring
+  have hscale : uniformVerletLocalDefect r dt momentum phase =
+      uniformTwoChannelScale ((dt ^ 3 : ℝ) : ℂ) (uniformVerletLocalDefect r 1 momentum phase) := by
+    apply Prod.ext
+    · funext component
+      simp [uniformVerletLocalDefect, uniformTwoChannelScale]
+    · funext component
+      simp [uniformVerletLocalDefect, uniformTwoChannelScale]
+      ring
+  rw [hscale]
+  unfold uniformActionToStandardDirac
+  exact cubical_phase_readout_scale _ _ _ _ _ _
 
 /-- Dividing the one-step error by `dt ^ 2` still tends to zero.  This is the
 local consistency ingredient for a globally second-order convergence proof;
