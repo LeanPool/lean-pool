@@ -20,7 +20,7 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 -/
 
 -- Use the faster exact decision procedure only within this certificate module.
-attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejected
+attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejectedSparse
 
 @[expose] public section
 
