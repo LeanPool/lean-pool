@@ -64,6 +64,35 @@ theorem integral_sum_mul_sum_orthonormal (g : Fin k → Ω → ℝ) (hg : ∀ i,
     simp only [Finset.sum_mul, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => by ring
 
+omit [MeasurableSpace Ω] in
+private theorem inner_eq_scaled_sum (g : Fin k → Ω → ℝ) (p : Ω → EuclideanSpace ℝ (Fin k))
+    (hp : ∀ x i, p x i = g i x / Real.sqrt ρ)
+    (a : EuclideanSpace ℝ (Fin k)) (x : Ω) :
+    inner ℝ a (p x) = ∑ i, (a i / Real.sqrt ρ) * g i x := by
+  rw [EuclideanSpace.inner_eq_star_dotProduct]
+  simp only [hp, dotProduct, star_trivial]
+  exact Finset.sum_congr rfl fun i _ => by ring
+
+/-- The pairing of two coefficient vectors is the curvature times the corresponding L² pairing. -/
+theorem coefficient_inner_eq_integral_mul (hρ : 0 < ρ) (g : Fin k → Ω → ℝ)
+    (hg : ∀ i, MemLp (g i) 2 μ)
+    (horth : ∀ i j, ∫ x, g i x * g j x ∂μ = if i = j then 1 else 0)
+    (p : Ω → EuclideanSpace ℝ (Fin k)) (hp : ∀ x i, p x i = g i x / Real.sqrt ρ)
+    (a b : EuclideanSpace ℝ (Fin k)) (f h : Ω → ℝ)
+    (haf : ∀ x, f x = inner ℝ a (p x)) (hbh : ∀ x, h x = inner ℝ b (p x)) :
+    inner ℝ a b = ρ * ∫ x, f x * h x ∂μ := by
+  have hpair : (∫ x, f x * h x ∂μ) =
+      ∑ i, (a i / Real.sqrt ρ) * (b i / Real.sqrt ρ) := by
+    simpa only [haf, hbh, inner_eq_scaled_sum g p hp] using
+      (integral_sum_mul_sum_orthonormal g hg horth
+        (fun i => a i / Real.sqrt ρ) (fun i => b i / Real.sqrt ρ))
+  rw [hpair, EuclideanSpace.inner_eq_star_dotProduct]
+  simp only [dotProduct, star_trivial, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  calc b i * a i = (Real.sqrt ρ) ^ 2 * ((a i / Real.sqrt ρ) * (b i / Real.sqrt ρ)) := by
+        field_simp [(Real.sqrt_pos.mpr hρ).ne']
+    _ = _ := by rw [Real.sq_sqrt hρ.le]
+
 /-- The affine description: if every eigenfunction is a combination of the orthonormal `gᵢ`, then
 it is `⟨a, p⟩` with `‖a‖² = ρ ‖f‖²`, where `p = ρ^{-1/2} g`. -/
 theorem exists_vector_of_combination (hρ : 0 < ρ) (g : Fin k → Ω → ℝ) (hg : ∀ i, MemLp (g i) 2 μ)
@@ -72,20 +101,15 @@ theorem exists_vector_of_combination (hρ : 0 < ρ) (g : Fin k → Ω → ℝ) (
     (f : Ω → ℝ) (c : Fin k → ℝ) (hc : ∀ x, f x = ∑ i, c i * g i x) :
     ∃ a : EuclideanSpace ℝ (Fin k), (∀ x, f x = inner ℝ a (p x)) ∧
       ‖a‖ ^ 2 = ρ * ∫ x, f x ^ 2 ∂μ ∧ ∀ i, a i = Real.sqrt ρ * c i := by
-  have hs : 0 < Real.sqrt ρ := Real.sqrt_pos.mpr hρ
-  refine ⟨WithLp.toLp 2 fun i => Real.sqrt ρ * c i, fun x => ?_, ?_, fun i => rfl⟩
-  · rw [hc x, EuclideanSpace.inner_eq_star_dotProduct]
-    simp only [hp, dotProduct]
+  let a : EuclideanSpace ℝ (Fin k) := WithLp.toLp 2 fun i => Real.sqrt ρ * c i
+  have hrepr (x : Ω) : f x = inner ℝ a (p x) := by
+    rw [hc x, inner_eq_scaled_sum g p hp]
     refine Finset.sum_congr rfl fun i _ => ?_
-    simp only [star_trivial]
-    field_simp
-  · have h2 := integral_sum_mul_sum_orthonormal g hg horth c c
-    have : ∫ x, f x ^ 2 ∂μ = ∑ i, c i * c i := by
-      rw [← h2]; congr 1; ext x; rw [hc x]; ring
-    rw [this, EuclideanSpace.norm_sq_eq]
-    simp only [Real.norm_eq_abs, sq_abs, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    rw [mul_pow, Real.sq_sqrt hρ.le]; ring
+    change c i * g i x = ((Real.sqrt ρ * c i) / Real.sqrt ρ) * g i x
+    rw [mul_comm (Real.sqrt ρ), mul_div_cancel_right₀ _ ((Real.sqrt_pos.mpr hρ).ne')]
+  refine ⟨a, hrepr, ?_, fun i => rfl⟩
+  simpa only [real_inner_self_eq_norm_sq, pow_two] using
+    (coefficient_inner_eq_integral_mul hρ g hg horth p hp a a f f hrepr hrepr)
 
 /-- The vector `a` is unique: `⟨a, p⟩ = ⟨a', p⟩` forces `a = a'`. -/
 theorem vector_unique (hρ : 0 < ρ) (g : Fin k → Ω → ℝ) (hg : ∀ i, MemLp (g i) 2 μ)
@@ -93,22 +117,18 @@ theorem vector_unique (hρ : 0 < ρ) (g : Fin k → Ω → ℝ) (hg : ∀ i, Mem
     (p : Ω → EuclideanSpace ℝ (Fin k)) (hp : ∀ x i, p x i = g i x / Real.sqrt ρ)
     (a b : EuclideanSpace ℝ (Fin k)) (h : ∀ x, inner ℝ a (p x) = inner ℝ b (p x)) : a = b := by
   have hs : 0 < Real.sqrt ρ := Real.sqrt_pos.mpr hρ
-  have hform : ∀ (a : EuclideanSpace ℝ (Fin k)) x,
-      inner ℝ a (p x) = ∑ i, (a i / Real.sqrt ρ) * g i x := by
-    intro a x
-    rw [EuclideanSpace.inner_eq_star_dotProduct]
-    simp only [hp, dotProduct, star_trivial]
-    refine Finset.sum_congr rfl fun i _ => by ring
   ext j
   have h1 := integral_sum_mul_orthonormal g hg horth (fun i => a i / Real.sqrt ρ) j
   have h2 := integral_sum_mul_orthonormal g hg horth (fun i => b i / Real.sqrt ρ) j
   have : ∫ x, (∑ i, (a i / Real.sqrt ρ) * g i x) * g j x ∂μ =
       ∫ x, (∑ i, (b i / Real.sqrt ρ) * g i x) * g j x ∂μ := by
-    congr 1; ext x; rw [← hform, ← hform, h x]
+    congr 1
+    ext x
+    rw [← inner_eq_scaled_sum g p hp a, ← inner_eq_scaled_sum g p hp b, h x]
   rw [h1, h2] at this
   exact (div_left_inj₀ hs.ne').mp this
 
-/-- Items 4 and 5 of the Challenge conclusion, abstractly. -/
+/-- The norm and orthogonality conclusions for the split eigenfunctions. -/
 theorem affine_items (hρ : 0 < ρ) (g : Fin k → Ω → ℝ) (hg : ∀ i, MemLp (g i) 2 μ)
     (horth : ∀ i j, ∫ x, g i x * g j x ∂μ = if i = j then 1 else 0)
     (p : Ω → EuclideanSpace ℝ (Fin k)) (hp : ∀ x i, p x i = g i x / Real.sqrt ρ)
@@ -118,30 +138,11 @@ theorem affine_items (hρ : 0 < ρ) (g : Fin k → Ω → ℝ) (hg : ∀ i, MemL
       ∀ f h (a b : EuclideanSpace ℝ (Fin k)), E f → E h →
         (∀ x, f x = inner ℝ a (p x)) → (∀ x, h x = inner ℝ b (p x)) →
         ∫ x, f x * h x ∂μ = 0 → inner ℝ a b = 0 := by
-  refine ⟨fun f hf => ?_, fun f h a b hf hh haf hbh hint => ?_⟩
+  refine ⟨fun f hf => ?_, fun f h a b _ _ haf hbh hint => ?_⟩
   · obtain ⟨c, hc⟩ := hE f hf
     obtain ⟨a, h1, h2, -⟩ := exists_vector_of_combination hρ g hg horth p hp f c hc
     exact ⟨a, h1, h2⟩
-  · obtain ⟨c, hc⟩ := hE f hf
-    obtain ⟨d, hd⟩ := hE h hh
-    obtain ⟨a₀, h1, -, h3⟩ := exists_vector_of_combination hρ g hg horth p hp f c hc
-    obtain ⟨b₀, h1', -, h3'⟩ := exists_vector_of_combination hρ g hg horth p hp h d hd
-    have ea : a = a₀ := vector_unique hρ g hg horth p hp a a₀ fun x => by rw [← haf, ← h1]
-    have eb : b = b₀ := vector_unique hρ g hg horth p hp b b₀ fun x => by rw [← hbh, ← h1']
-    have hcd : ∑ i, c i * d i = 0 := by
-      rw [← integral_sum_mul_sum_orthonormal g hg horth c d, ← hint]
-      congr 1; ext x; rw [hc x, hd x]
-    subst ea; subst eb
-    rw [EuclideanSpace.inner_eq_star_dotProduct]
-    simp only [dotProduct, star_trivial, h3, h3']
-    calc ∑ i, Real.sqrt ρ * d i * (Real.sqrt ρ * c i) = ρ * ∑ i, c i * d i := by
-          rw [Finset.mul_sum]
-          refine Finset.sum_congr rfl fun i _ => ?_
-          have := Real.mul_self_sqrt hρ.le
-          calc Real.sqrt ρ * d i * (Real.sqrt ρ * c i)
-              = (Real.sqrt ρ * Real.sqrt ρ) * (c i * d i) := by ring
-            _ = _ := by rw [this]
-      _ = 0 := by rw [hcd, mul_zero]
+  · rw [coefficient_inner_eq_integral_mul hρ g hg horth p hp a b f h haf hbh, hint, mul_zero]
 
 end Algebra
 

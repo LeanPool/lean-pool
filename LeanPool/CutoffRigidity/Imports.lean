@@ -110,6 +110,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorGrad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorMain
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.EigenFinite
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.EigenLinear
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.EigenSubspace
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureChart
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureDensity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureFactor
