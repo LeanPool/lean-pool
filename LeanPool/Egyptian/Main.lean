@@ -29,15 +29,11 @@ namespace Egyptian.Control
 Bellman optimum, in either order convention. -/
 theorem global_winner (σ : Convention) (s : State) (hv : Valid s) (hi : Interior s) :
     ∃ xs T, Wins σ s xs T := by
-  have proper : ProperWinners σ := by
-    intro t ht hin hsmall
-    obtain ⟨xs,T,hterm,hopt,hupper⟩ := proper_winner σ t ht hin hsmall
-    exact ⟨xs,T,⟨hterm,hopt⟩,hupper⟩
   by_cases hsmall : s.p ≤ s.q
-  · obtain ⟨xs,T,hwin,_⟩ := proper s hv hi hsmall
+  · obtain ⟨xs,T,hwin,_⟩ := proper_winner σ s hv hi hsmall
     exact ⟨xs,T,hwin⟩
   · exact (improper_winners σ s hv (Nat.lt_of_not_ge hsmall)
-      (terminal_exists σ s hv hi) proper).1
+      (terminal_exists σ s hv hi) (proper_winner σ)).1
 
 end Egyptian.Control
 

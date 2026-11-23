@@ -63,7 +63,7 @@ theorem improper_winners (σ : Convention) (s : State) (hv : Valid s) (hbig : s.
     rw [score_append]
     exact (div_le_div_of_nonneg_right (spec b hb).2 (by positivity)).trans env
   obtain ⟨xs0,T0,ht0⟩ := hex
-  obtain ⟨a,_,_,ha,_⟩ := split_first_entrance ht0 hv (improper_nonempty ht0 hbig)
+  obtain ⟨a,_,_,ha,_⟩ := split_first_entrance ht0 (improper_nonempty ht0 hbig)
   have alegal := leg a ha
   have hTa := alegal.2.1
   have hp : 1 < ((p a).2 : ℝ) := by exact_mod_cast hTa
@@ -82,7 +82,7 @@ theorem improper_winners (σ : Convention) (s : State) (hv : Valid s) (hbig : s.
   have win : Wins σ s (b ++ (p b).1) (p b).2 := by
     refine ⟨leg b hb, ?_⟩
     intro xs T ht
-    obtain ⟨b',ys,rfl,he,ht'⟩ := split_first_entrance ht hv (improper_nonempty ht hbig)
+    obtain ⟨b',ys,rfl,he,ht'⟩ := split_first_entrance ht (improper_nonempty ht hbig)
     exact (dominate _ _ _ he ht').trans (hmaximum b' he)
   refine ⟨⟨_,_,win⟩, hfinite.subset ?_⟩
   rintro b' ⟨he,ys,T,hw⟩

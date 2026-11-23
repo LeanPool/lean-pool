@@ -30,7 +30,6 @@ structure State where
   q : ℕ
   /-- The preceding denominator, or zero at the initial state. -/
   last : ℕ
-  deriving DecidableEq, Repr
 
 /-- The state represents a positive rational remainder. -/
 def Valid (s : State) : Prop := 0 < s.p ∧ 0 < s.q

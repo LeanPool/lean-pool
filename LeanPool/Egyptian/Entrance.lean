@@ -45,14 +45,13 @@ theorem Entrance.end_small {σ s xs} (h : Entrance σ s xs) :
   exact (Nat.le_mul_of_pos_left _ (by omega : 0 < (finish s xs).last)).trans_lt hi
 
 theorem split_first_entrance {σ s xs T} (ht : Terminal σ s xs T)
-    (hv : Valid s) (hne : xs ≠ []) :
+    (hne : xs ≠ []) :
     ∃ pre suf, xs = pre ++ suf ∧ Entrance σ s pre ∧ Terminal σ (finish s pre) suf T := by
   induction xs generalizing s with
   | nil => contradiction
   | cons x xs ih =>
     have hx := ht.1.1
     have ht' : Terminal σ (step s x) xs T := ⟨ht.1.2, ht.2⟩
-    have hv' := step_valid hv hx
     by_cases hi : Interior (step s x)
     · exact ⟨[x],xs,rfl,.last hx hi,ht'⟩
     · have hne' : xs ≠ [] := by
@@ -62,8 +61,8 @@ theorem split_first_entrance {σ s xs T} (ht : Terminal σ s xs T)
         apply hi
         unfold Interior
         rw [hstop.2.2, Nat.mul_comm]
-        exact Nat.mul_lt_mul_of_pos_left hstop.2.1 hv'.1
-      obtain ⟨pre,suf,he,hpre,hsuf⟩ := ih ht' hv' hne'
+        exact Nat.mul_lt_mul_of_pos_left hstop.2.1 (Nat.sub_pos_of_lt hx.1)
+      obtain ⟨pre,suf,he,hpre,hsuf⟩ := ih ht' hne'
       exact ⟨x :: pre,suf,by simp [he],.more hx hi hpre,hsuf⟩
 
 /-- Every denominator in an entrance block of length r is strictly below 2^r/λ. -/
@@ -110,14 +109,16 @@ theorem Entrance.den_bound {σ s xs} (h : Entrance σ s xs) (d : ℕ) (hd : d �
         exact (Nat.mul_le_mul_left _ hrel).trans_lt (lift_bound y (by simp))
     · exact lift_bound d hd'
 
+theorem Entrance.denominator_lt_pow_length {σ s xs} (he : Entrance σ s xs)
+    (hbig : s.q < s.p) {d : ℕ} (hd : d ∈ xs) : d < 2 ^ xs.length := by
+  have h := (Nat.mul_le_mul_right d hbig.le).trans_lt (he.den_bound d hd)
+  rw [Nat.mul_comm s.q d] at h
+  exact Nat.lt_of_mul_lt_mul_right h
+
 theorem Entrance.denominator_product_bound {σ s xs} (he : Entrance σ s xs) (hbig : s.q < s.p) :
     (finish s xs).q ≤ s.q * 2^(xs.length^2) := by
-  have point (x : ℕ) (hx : x ∈ xs) : x ≤ 2 ^ xs.length := by
-    have bound := he.den_bound x hx
-    have h := (Nat.mul_le_mul_right x hbig.le).trans_lt bound
-    rw [Nat.mul_comm s.q x] at h
-    exact (Nat.lt_of_mul_lt_mul_right h).le
-  have hp := xs.prod_le_pow_length (2 ^ xs.length) point
+  have hp := xs.prod_le_pow_length (2 ^ xs.length)
+    (fun _ hd => (he.denominator_lt_pow_length hbig hd).le)
   rw [← pow_mul, ← sq] at hp
   rw [finish_denominator]
   exact Nat.mul_le_mul_left _ hp
@@ -147,11 +148,7 @@ theorem finite_short_entrances (σ : Convention) (s : State) (hbig : s.q < s.p) 
   apply Set.mem_iUnion.mpr
   refine ⟨xs.length, Set.mem_iUnion.mpr ⟨h.2, rfl, ?_⟩⟩
   intro x hx
-  have hb := h.1.den_bound x hx
-  have hh : s.q*x ≤ s.p*x := Nat.mul_le_mul_right _ hbig.le
-  have hs := hh.trans_lt hb
-  rw [Nat.mul_comm s.q] at hs
-  exact (Nat.lt_of_mul_lt_mul_right hs).le.trans
+  exact (h.1.denominator_lt_pow_length hbig hx).le.trans
     (Nat.pow_le_pow_right (by decide) h.2.le)
 
 theorem improper_nonempty {σ s xs T} (ht : Terminal σ s xs T)

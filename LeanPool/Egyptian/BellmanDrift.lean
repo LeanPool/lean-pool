@@ -55,7 +55,7 @@ theorem first_step_drift {σ s x} (hv : Valid s) (hsmall : s.p ≤ s.q)
   rw [← Payoff.value_phi ht]
   exact Payoff.value_strictMonoOn (Payoff.one_le_phi ht) ((Payoff.one_le_phi ht).trans hr.le) hr
 
-private theorem inverse_of_stop {s : State} {T : ℕ} (hv : Valid s)
+theorem inverse_of_stop {s : State} {T : ℕ} (hv : Valid s)
     (h : s.q = s.p * T) : inverseRemainder s = T := by
   have hp : (s.p : ℝ) ≠ 0 := by exact_mod_cast hv.1.ne'
   simp [inverseRemainder, h, Nat.cast_mul, hp]

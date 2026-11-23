@@ -46,7 +46,7 @@ theorem head_bound {σ : Convention} {s : State} {x : ℕ} {xs : List ℕ}
 
 /-- An explicit finite tree: when the length and final cleared numerator
 are fixed, the set of legal ordered control lists is finite. -/
-theorem finite_blocks (σ : Convention) (n d : ℕ) (s : State) (hv : Valid s) :
+theorem finite_blocks (σ : Convention) (n d : ℕ) (s : State) :
     Set.Finite {xs : List ℕ | xs.length = n ∧ Controls σ s xs ∧ (finish s xs).p = d} := by
   induction n generalizing s with
   | zero =>
@@ -58,8 +58,7 @@ theorem finite_blocks (σ : Convention) (n d : ℕ) (s : State) (hv : Valid s) :
     have hX : X.Finite := (Set.finite_le_nat _).subset (fun _ hx => hx.1)
     have hf := hX.biUnion' (t := fun x _ =>
       List.cons x '' {ys : List ℕ | ys.length = n ∧ Controls σ (step s x) ys ∧
-        (finish (step s x) ys).p = d}) (fun x hx =>
-        (ih (step s x) (step_valid hv hx.2)).image _)
+        (finish (step s x) ys).p = d}) (fun x _ => (ih (step s x)).image _)
     apply hf.subset
     intro xs h
     obtain ⟨hlen, hc, hd⟩ := h
@@ -68,8 +67,9 @@ theorem finite_blocks (σ : Convention) (n d : ℕ) (s : State) (hv : Valid s) :
     | cons x xs =>
       have hh := head_bound hc
       rw [hlen, hd] at hh
-      have hfirst : x ≤ (n+1) * s.q + d :=
-        (Nat.le_mul_of_pos_left x hv.1).trans hh
+      have hp : 0 < s.p := Nat.pos_of_ne_zero fun h => by
+        simpa [h] using hc.1.1
+      have hfirst : x ≤ (n+1) * s.q + d := (Nat.le_mul_of_pos_left x hp).trans hh
       exact Set.mem_iUnion.mpr ⟨x, Set.mem_iUnion.mpr
         ⟨⟨hfirst, hc.1⟩, xs, ⟨by simpa using hlen, hc.2, hd⟩, rfl⟩⟩
 

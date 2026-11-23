@@ -89,9 +89,7 @@ theorem finite_rays_unit {s : State} (hv : Valid s) (hd : s.p ∣ s.q)
     have hzero : U = 0 := by omega
     rw [hzero, Nat.mul_zero] at hU
     exact hv.2.ne' hU
-  have hratio : inverseRemainder s = U := by
-    have hp : (s.p : ℝ) ≠ 0 := by exact_mod_cast hv.1.ne'
-    simp [inverseRemainder, hU, Nat.cast_mul, hp]
+  have hratio := inverse_of_stop hv hU
   apply (Set.finite_singleton (unitRay [] U)).subset
   rintro a ⟨xs,T,hw,rfl⟩
   exact greedy_ray_of_unit_score hv hUpos hU hw.1 (hratio ▸ heq xs T hw)

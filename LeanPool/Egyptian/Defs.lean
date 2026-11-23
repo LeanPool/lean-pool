@@ -23,7 +23,7 @@ namespace Egyptian
 inductive Convention where
   | weak
   | strict
-  deriving DecidableEq, Repr
+  deriving DecidableEq
 
 /-- The order relation on denominators in the chosen convention. -/
 def Convention.rel : Convention → ℕ → ℕ → Prop

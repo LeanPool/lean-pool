@@ -26,11 +26,7 @@ theorem noFall_score {σ s xs T} (hv : Valid s) (hs : s.p ≤ s.q)
     (ht : Terminal σ s xs T) (hn : NoFall s xs) :
     score xs T ≤ Payoff.value (inverseRemainder s) := by
   have hn' := noFall_bound hv hs ht.1 hn
-  have hve := finish_valid hv ht.1
-  have hp : ((finish s xs).p : ℝ) ≠ 0 := by exact_mod_cast hve.1.ne'
-  have hInv : inverseRemainder (finish s xs) = T := by
-    simp [inverseRemainder, ht.2.2.2, Nat.cast_mul, hp]
-  rw [hInv] at hn'
+  rw [inverse_of_stop (finish_valid hv ht.1) ht.2.2.2] at hn'
   have h1 : (1 : ℝ) ≤ T := by exact_mod_cast (show 1 ≤ T by have := ht.2.1; omega)
   have h2 := one_le_inverse hv hs
   have h := Payoff.value_strictMonoOn.monotoneOn h1 (Payoff.one_le_orbit h2 _) hn'
@@ -108,7 +104,7 @@ private theorem proper_aux (σ : Convention) (s : State) (hv : Valid s)
     · exact (not_le_of_gt hgain small).elim
     have gap : H < f a := hgain.trans_le ha
     have finiteShort (M : ℕ) : Set.Finite {b : B | b ∈ Set.univ ∧ b.val.length < M} := by
-      apply ((finite_short_falls σ s hv M).preimage (f := Subtype.val)
+      apply ((finite_short_falls σ s M).preimage (f := Subtype.val)
         Subtype.val_injective.injOn).subset
       intro b hb
       exact ⟨b.prop,hb.2.le⟩
@@ -145,10 +141,10 @@ decreasing_by exact b.prop.2.1
 
 theorem proper_winner (σ : Convention) (s : State) (hv : Valid s)
     (hi : Interior s) (hs : s.p ≤ s.q) :
-    ∃ xs T, Terminal σ s xs T ∧ (∀ ys U, Terminal σ s ys U → score ys U ≤ score xs T) ∧
-      score xs T ≤ Payoff.value (inverseRemainder s) + Real.log (2*(s.p : ℝ)) := by
-  obtain ⟨xs,T,hw,hb,_⟩ := proper_aux σ s hv hi hs
-  exact ⟨xs,T,hw.1,hw.2,hb⟩
+    ∃ xs T, Wins σ s xs T ∧
+      score xs T ≤ Payoff.value (inverseRemainder s) + Real.log (2 * (s.p : ℝ)) := by
+  obtain ⟨xs, T, hw, hb, _⟩ := proper_aux σ s hv hi hs
+  exact ⟨xs, T, hw, hb⟩
 
 theorem proper_max_falls (σ : Convention) (s : State) (hv : Valid s) (hi : Interior s)
     (hs : s.p ≤ s.q) (hd : ¬s.p ∣ s.q) : FiniteWinningFalls σ s := by

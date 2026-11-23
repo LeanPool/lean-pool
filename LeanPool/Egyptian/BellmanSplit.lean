@@ -71,12 +71,12 @@ theorem split_at_fall {σ s xs} (hc : Controls σ s xs) :
       exact le_of_not_gt (fun bad => hmin ⟨hle,bad⟩)
     simpa [List.take_take, Nat.min_eq_left hj.le, Nat.min_eq_right hj.le] using hstay
 
-theorem finite_short_falls (σ : Convention) (s : State) (hv : Valid s) (M : ℕ) :
+theorem finite_short_falls (σ : Convention) (s : State) (M : ℕ) :
     Set.Finite {b | FallBlock σ s b ∧ b.length ≤ M} := by
   let pieces (n d : ℕ) := {b : List ℕ | b.length = n ∧ Controls σ s b ∧ (finish s b).p = d}
   have hfin := (Set.finite_le_nat M).biUnion (t := fun n =>
     ⋃ d ∈ {d : ℕ | d ≤ s.p}, pieces n d) (fun n _ =>
-      (Set.finite_le_nat s.p).biUnion (fun d _ => finite_blocks σ n d s hv))
+      (Set.finite_le_nat s.p).biUnion (fun d _ => finite_blocks σ n d s))
   apply hfin.subset
   intro b hb
   exact Set.mem_iUnion.mpr ⟨b.length, Set.mem_iUnion.mpr ⟨hb.2, Set.mem_iUnion.mpr

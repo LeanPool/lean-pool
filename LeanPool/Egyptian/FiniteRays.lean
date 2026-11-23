@@ -9,6 +9,7 @@ module
 public import LeanPool.Egyptian.WinningRays
 public import LeanPool.Egyptian.BellmanProper
 public import LeanPool.Egyptian.GlobalAttainment
+import LeanPool.Egyptian.HarmonicEntrance
 
 /-! Finiteness of maximizing rays, by strong induction on the cleared
 numerator for proper states and then by finite entrance blocks for all
@@ -36,22 +37,15 @@ theorem finite_winningRays (s : State) (hv : Valid s) (hi : Interior s) :
   by_cases hs : s.p ≤ s.q
   · exact finite_winningRays_proper s hv hi hs
   have hbig := Nat.lt_of_not_ge hs
-  have proper : ProperWinners .weak := by
-    intro t ht hti hts
-    obtain ⟨xs,T,hterm,hbest,hupper⟩ := proper_winner .weak t ht hti hts
-    exact ⟨xs,T,⟨hterm,hbest⟩,hupper⟩
-  by_cases hex : ∃ xs T, Terminal .weak s xs T
-  · have hF := (improper_winners .weak s hv hbig hex proper).2
-    apply finite_rays_of_branches hF
-    · intro b hb
-      have h : Entrance .weak s b := hb.1
-      exact finite_winningRays_proper _ (finish_valid hv h.controls)
-        h.end_inside.1 h.end_small.le
-    · intro xs T hw
-      obtain ⟨b,ys,rfl,he,_⟩ := split_first_entrance hw.1 hv (improper_nonempty hw.1 hbig)
-      exact ⟨b,⟨he,ys,T,hw⟩,ys,rfl,wins_suffix hw⟩
-  · apply Set.finite_empty.subset
-    rintro a ⟨xs,T,hw,_⟩
-    exact (hex ⟨xs,T,hw.1⟩).elim
+  have hex := terminal_exists .weak s hv hi
+  have hF := (improper_winners .weak s hv hbig hex (proper_winner .weak)).2
+  apply finite_rays_of_branches hF
+  · intro b hb
+    have h : Entrance .weak s b := hb.1
+    exact finite_winningRays_proper _ (finish_valid hv h.controls)
+      h.end_inside.1 h.end_small.le
+  · intro xs T hw
+    obtain ⟨b, ys, rfl, he, _⟩ := split_first_entrance hw.1 (improper_nonempty hw.1 hbig)
+    exact ⟨b, ⟨he, ys, T, hw⟩, ys, rfl, wins_suffix hw⟩
 
 end Egyptian.Control
