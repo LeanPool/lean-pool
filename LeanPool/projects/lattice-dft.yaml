@@ -32,10 +32,10 @@ main_declarations:
 main_results:
 - declaration: DFT.generic_hk_lattice_fermions_w
   informal: >-
-    For interacting spinless fermions on a connected finite graph with symmetric
-    hopping amplitudes of a common sign, potentials whose ground state is
-    shared by a potential differing by more than a constant lie in a closed,
-    nowhere dense Lebesgue null set.
+    For N interacting spinless fermions on a connected M-site graph with
+    0 < N < M and symmetric hopping amplitudes of a common sign, potentials
+    whose ground state is shared by a potential differing by more than a
+    constant lie in a closed, nowhere dense Lebesgue null set.
 - declaration: DFT.dimH_nonUVDens_lattice_fermions_w
   informal: >-
     On an M-site graph under the same hypotheses, densities from nondegenerate
@@ -43,13 +43,15 @@ main_results:
     at most M minus three, truncated at zero.
 - declaration: DFT.ks_potential_exists_interior
   informal: >-
-    A density in the relative interior of the lattice density domain is
-    representable by a noninteracting Kohn–Sham potential.
+    A lattice density with all occupations strictly between zero and one
+    and total occupation N is a ground-state ensemble density for a
+    noninteracting Kohn–Sham potential.
 - declaration: DFT.lattice_myksoda
   informal: >-
     The regularized lattice Kohn–Sham iteration decreases the regularized
-    energy and has an accumulation point. The energy converges to its minimum,
-    and the potential sequence along each convergent density subsequence gives
+    energy and has a quasi-density accumulation point. The energy of the
+    full sequence converges to its minimum. Along each convergent quasi-density
+    subsequence, the Kohn–Sham potentials converge to a potential yielding
     a minimizing reference density.
 tags:
 - density-functional-theory

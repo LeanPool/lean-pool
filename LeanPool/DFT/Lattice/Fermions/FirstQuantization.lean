@@ -33,62 +33,6 @@ variable {M N : ℕ}
 def H1 (h : Matrix (Fin M) (Fin M) ℝ) (f : (Fin N → Fin M) → ℝ) : (Fin N → Fin M) → ℝ :=
   fun τ => ∑ i, ∑ b, h (τ i) b * f (Function.update τ i b)
 
-/-- A wavefunction transforms by the sign of each permutation of particle labels. -/
-def Antisym (f : (Fin N → Fin M) → ℝ) : Prop :=
-  ∀ (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)), f (fun k => τ (σ k)) =
-      (Equiv.Perm.sign σ : ℝ) * f τ
-
-lemma antisym_zero_of_not_injective {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) {τ : Fin N → Fin M}
-    (h : ¬ Function.Injective τ) : f τ = 0 := by
-  simp only [Function.Injective, not_forall] at h
-  obtain ⟨a, b, hab, hne⟩ := h
-  have hsw := hf τ (Equiv.swap a b)
-  have : (fun k => τ (Equiv.swap a b k)) = τ := by
-    funext k
-    by_cases hka : k = a
-    · subst hka; simp [Equiv.swap_apply_left, hab]
-    · by_cases hkb : k = b
-      · subst hkb; simp [Equiv.swap_apply_right, hab]
-      · simp [Equiv.swap_apply_of_ne_of_ne hka hkb]
-  rw [this, Equiv.Perm.sign_swap hne] at hsw
-  simp at hsw
-  linarith
-
-lemma antisym_expand {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) (τ : Fin N → Fin M) :
-    f τ = ∑ s : Conf M N, amp s τ * f (τs s) := by
-  by_cases hinj : Function.Injective τ
-  · set S := Finset.univ.image τ
-    have hS : S.card = N := by rw [Finset.card_image_of_injective _ hinj]; simp
-    set s0 : Conf M N := ⟨S, hS⟩
-    have hmem : ∀ k, τ k ∈ s0.1 := fun k => Finset.mem_image_of_mem τ (Finset.mem_univ k)
-    obtain ⟨σ, hσ⟩ := exists_perm_of_injective s0 hinj hmem
-    have hτ : τ = fun k => τs s0 (σ k) := funext hσ
-    rw [Finset.sum_eq_single s0]
-    · rw [hτ, hf, amp, slater_perm]
-      have := amp_self s0
-      unfold amp at this
-      rw [this]; ring
-    · intro s _ hs
-      have : ∃ k, τ k ∉ s.1 := by
-        by_contra hall
-        push Not at hall
-        apply hs
-        apply Subtype.ext
-        symm
-        apply Finset.eq_of_subset_of_card_le
-        · intro x hx
-          obtain ⟨k, -, rfl⟩ := Finset.mem_image.mp hx
-          exact hall k
-        · rw [s.2, hS]
-      obtain ⟨k, hk⟩ := this
-      rw [amp_of_not_mem s hk, zero_mul]
-    · intro h; exact absurd (Finset.mem_univ s0) h
-  · rw [antisym_zero_of_not_injective hf hinj]
-    symm
-    apply Finset.sum_eq_zero
-    intro s _
-    rw [amp, slater_of_not_injective _ hinj, zero_mul]
-
 lemma amp_antisym (c : Conf M N) : Antisym (fun τ => amp c τ) := fun τ σ => by
   simp only [amp]; exact slater_perm _ τ σ
 

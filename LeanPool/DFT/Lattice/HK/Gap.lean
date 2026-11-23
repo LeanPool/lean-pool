@@ -80,13 +80,19 @@ theorem unique_of_gap {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ} (hψ
   have : χ = 0 := dotProduct_self_eq_zero.mp hχ
   rw [sub_eq_zero] at this; exact this
 
-/-- Invisible direction around a gapped ground state (both signs of ε). -/
-theorem persist_of_gap {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} {v w : V → ℝ}
+/-- Variational spectral gap `g` above the normalised state `ψ`. -/
+def HasGap (H : Matrix C C ℝ) (ψ : C → ℝ) (g : ℝ) : Prop :=
+  ∀ χ, ψ ⬝ᵥ χ = 0 → (qf H ψ + g) * (χ ⬝ᵥ χ) ≤ qf H χ
+
+/-- The ground state persists under an invisible perturbation, with gap reduced by at most
+`|ε| * m`. -/
+theorem persist_gap {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} {v w : V → ℝ}
     {ψ : C → ℝ} (hψ : IsGroundState (hamN H0 n v) ψ) (hN : ψ ⬝ᵥ ψ = 1) {g κ m ε : ℝ}
-    (hgap : ∀ χ, ψ ⬝ᵥ χ = 0 → (qf (hamN H0 n v) ψ + g) * (χ ⬝ᵥ χ) ≤ qf (hamN H0 n v) χ)
+    (hgap : HasGap (hamN H0 n v) ψ g)
     (hsupp : ∀ c, ψ c ≠ 0 → ∑ i, w i * n i c = κ)
     (hm : ∀ c, |∑ i, w i * n i c - κ| ≤ m) (hε : |ε| * m ≤ g) :
-    IsGroundState (hamN H0 n (v + ε • w)) ψ := by
+    IsGroundState (hamN H0 n (v + ε • w)) ψ ∧
+      HasGap (hamN H0 n (v + ε • w)) ψ (g - |ε| * m) := by
   set H := hamN H0 n v
   have hS : H.IsSymm := hamN_isSymm hH0 n v
   have hE : H *ᵥ ψ = (qf H ψ) • ψ := by
@@ -108,32 +114,46 @@ theorem persist_of_gap {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → 
     intro c; by_cases h : ψ c = 0
     · simp [h]
     · simp [W, hsupp c h]
-  refine ⟨hψ.1, fun φ => ?_⟩
-  obtain ⟨h0, hn, hq⟩ := decomp hS hN hE φ
-  set a := ψ ⬝ᵥ φ
-  set χ := φ - a • ψ with hχ
-  -- the W-term only sees χ
-  have hWφ : ∑ c, (W c - κ) * φ c ^ 2 = ∑ c, (W c - κ) * χ c ^ 2 := by
-    apply Finset.sum_congr rfl; intro c _
-    have : φ c = a * ψ c + χ c := by simp [hχ]
-    rw [this]; have := hz c; linear_combination (a ^ 2 * ψ c + 2 * a * χ c) * this
   have hWψ : ∑ c, (W c - κ) * ψ c ^ 2 = 0 :=
     Finset.sum_eq_zero (fun c _ => by have := hz c; linear_combination ψ c * this)
-  have hbound : |∑ c, (W c - κ) * χ c ^ 2| ≤ m * (χ ⬝ᵥ χ) := by
+  have hbound (χ : C → ℝ) : |∑ c, (W c - κ) * χ c ^ 2| ≤ m * (χ ⬝ᵥ χ) := by
     calc |∑ c, (W c - κ) * χ c ^ 2| ≤ ∑ c, |(W c - κ) * χ c ^ 2| := Finset.abs_sum_le_sum_abs _ _
       _ ≤ ∑ c, m * (χ c * χ c) := by
           apply Finset.sum_le_sum; intro c _
           rw [abs_mul, abs_of_nonneg (sq_nonneg (χ c)), sq]
           exact mul_le_mul_of_nonneg_right (hm c) (mul_self_nonneg _)
       _ = m * (χ ⬝ᵥ χ) := by simp [dotProduct, Finset.mul_sum]
-  have hεW : -(|ε| * m * (χ ⬝ᵥ χ)) ≤ ε * ∑ c, (W c - κ) * χ c ^ 2 := by
-    have h := abs_le.mp hbound
+  have hεW (χ : C → ℝ) :
+      -(|ε| * m * (χ ⬝ᵥ χ)) ≤ ε * ∑ c, (W c - κ) * χ c ^ 2 := by
+    have h := abs_le.mp (hbound χ)
     rcases le_total 0 ε with he | he
     · rw [abs_of_nonneg he]; nlinarith [h.1, dot_self_nonneg χ]
     · rw [abs_of_nonpos he]; nlinarith [h.2, dot_self_nonneg χ]
-  have hg := hgap χ h0
-  rw [hsplit, hsplit, hWψ, hWφ, hN, mul_one, hn, hq]
-  nlinarith [dot_self_nonneg χ, mul_le_mul_of_nonneg_right hε (dot_self_nonneg χ)]
+  refine ⟨⟨hψ.1, fun φ => ?_⟩, fun χ hχ => ?_⟩
+  · obtain ⟨h0, hn, hq⟩ := decomp hS hN hE φ
+    set a := ψ ⬝ᵥ φ
+    set χ := φ - a • ψ with hχ
+    -- the W-term only sees χ
+    have hWφ : ∑ c, (W c - κ) * φ c ^ 2 = ∑ c, (W c - κ) * χ c ^ 2 := by
+      apply Finset.sum_congr rfl; intro c _
+      have : φ c = a * ψ c + χ c := by simp [hχ]
+      rw [this]; have := hz c; linear_combination (a ^ 2 * ψ c + 2 * a * χ c) * this
+    have hg := hgap χ h0
+    have hperturbation := mul_le_mul_of_nonneg_right hε (dot_self_nonneg χ)
+    rw [hsplit, hsplit, hWψ, hWφ, hN, mul_one, hn, hq]
+    nlinarith only [hg, hεW χ, hperturbation]
+  · have hg := hgap χ hχ
+    rw [hsplit, hsplit, hWψ, hN]
+    nlinarith only [hg, hεW χ]
+
+/-- Invisible direction around a gapped ground state (both signs of ε). -/
+theorem persist_of_gap {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} {v w : V → ℝ}
+    {ψ : C → ℝ} (hψ : IsGroundState (hamN H0 n v) ψ) (hN : ψ ⬝ᵥ ψ = 1) {g κ m ε : ℝ}
+    (hgap : ∀ χ, ψ ⬝ᵥ χ = 0 → (qf (hamN H0 n v) ψ + g) * (χ ⬝ᵥ χ) ≤ qf (hamN H0 n v) χ)
+    (hsupp : ∀ c, ψ c ≠ 0 → ∑ i, w i * n i c = κ)
+    (hm : ∀ c, |∑ i, w i * n i c - κ| ≤ m) (hε : |ε| * m ≤ g) :
+    IsGroundState (hamN H0 n (v + ε • w)) ψ :=
+  (persist_gap hH0 hψ hN hgap hsupp hm hε).1
 
 end
 

@@ -93,9 +93,29 @@ lemma amp_of_not_mem (s : Conf M N) {τ : Fin N → Fin M} {k : Fin N} (hk : τ 
   have : τ k ≠ τs s j := fun h => hk (h ▸ τs_mem s j)
   simp [this]
 
-/-- Special Cauchy–Binet: `Ψ(τ) = Σ_s ⟨s|τ⟩ Ψ(s)`. -/
-theorem slater_expand (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) :
-    slater φ τ = ∑ s : Conf M N, amp s τ * slaterC φ s := by
+/-- A wavefunction transforms by the sign of each permutation of particle labels. -/
+def Antisym (f : (Fin N → Fin M) → ℝ) : Prop :=
+  ∀ (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)), f (fun k => τ (σ k)) =
+      (Equiv.Perm.sign σ : ℝ) * f τ
+
+lemma antisym_zero_of_not_injective {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) {τ : Fin N → Fin M}
+    (h : ¬ Function.Injective τ) : f τ = 0 := by
+  simp only [Function.Injective, not_forall] at h
+  obtain ⟨a, b, hab, hne⟩ := h
+  have hsw := hf τ (Equiv.swap a b)
+  have : (fun k => τ (Equiv.swap a b k)) = τ := by
+    funext k
+    by_cases hka : k = a
+    · subst hka; simp [Equiv.swap_apply_left, hab]
+    · by_cases hkb : k = b
+      · subst hkb; simp [Equiv.swap_apply_right, hab]
+      · simp [Equiv.swap_apply_of_ne_of_ne hka hkb]
+  rw [this, Equiv.Perm.sign_swap hne] at hsw
+  simp at hsw
+  linarith
+
+lemma antisym_expand {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) (τ : Fin N → Fin M) :
+    f τ = ∑ s : Conf M N, amp s τ * f (τs s) := by
   by_cases hinj : Function.Injective τ
   · set S := Finset.univ.image τ
     have hS : S.card = N := by rw [Finset.card_image_of_injective _ hinj]; simp
@@ -104,10 +124,10 @@ theorem slater_expand (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) :
     obtain ⟨σ, hσ⟩ := exists_perm_of_injective s0 hinj hmem
     have hτ : τ = fun k => τs s0 (σ k) := funext hσ
     rw [Finset.sum_eq_single s0]
-    · rw [amp, hτ, slater_perm, slater_perm]
+    · rw [hτ, hf, amp, slater_perm]
       have := amp_self s0
       unfold amp at this
-      rw [this, slaterC]; ring
+      rw [this]; ring
     · intro s _ hs
       have : ∃ k, τ k ∉ s.1 := by
         by_contra hall
@@ -123,11 +143,16 @@ theorem slater_expand (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) :
       obtain ⟨k, hk⟩ := this
       rw [amp_of_not_mem s hk, zero_mul]
     · intro h; exact absurd (Finset.mem_univ s0) h
-  · rw [slater_of_not_injective φ hinj]
+  · rw [antisym_zero_of_not_injective hf hinj]
     symm
     apply Finset.sum_eq_zero
     intro s _
     rw [amp, slater_of_not_injective _ hinj, zero_mul]
+
+/-- Special Cauchy–Binet: `Ψ(τ) = Σ_s ⟨s|τ⟩ Ψ(s)`. -/
+theorem slater_expand (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) :
+    slater φ τ = ∑ s : Conf M N, amp s τ * slaterC φ s :=
+  antisym_expand (slater_perm φ) τ
 
 /-- Second quantisation of a single-particle matrix. -/
 def Γ (h : Matrix (Fin M) (Fin M) ℝ) : Matrix (Conf M N) (Conf M N) ℝ :=

@@ -16,8 +16,6 @@ public import LeanPool.DFT.Lattice.Basic.Spectral
 
 * `HasGap H ψ g`: the variational gap condition `⟨χ, H χ⟩ ≥ (⟨ψ, H ψ⟩ + g) ‖χ‖²` for `χ ⊥ ψ`.
 * `exists_gap_of_unique`: a non-degenerate normalised ground state has a positive gap.
-* `persist_gap`: `persist_of_gap` keeping track of the gap: along an invisible direction the
-  ground state survives, with gap at least `g - |ε| m`.
 * `dens_eq_of_gap`: all normalised ground states of a gapped Hamiltonian share their density.
 * `dens_lipschitz_of_gap`: near a potential with a gapped ground state, the density of any
   normalised ground state is a Lipschitz function of the potential (first-order perturbation
@@ -33,10 +31,6 @@ section
 open Matrix
 
 variable {C V : Type*} [Fintype C] [Fintype V]
-
-/-- Variational spectral gap `g` above the normalised state `ψ`. -/
-def HasGap (H : Matrix C C ℝ) (ψ : C → ℝ) (g : ℝ) : Prop :=
-  ∀ χ, ψ ⬝ᵥ χ = 0 → (qf H ψ + g) * (χ ⬝ᵥ χ) ≤ qf H χ
 
 lemma HasGap.mono {H : Matrix C C ℝ} {ψ : C → ℝ} {g g' : ℝ} (h : HasGap H ψ g) (hg : g' ≤ g) :
     HasGap H ψ g' := fun χ hχ => by
@@ -110,52 +104,6 @@ theorem exists_gap_of_unique {H : Matrix C C ℝ} {ψ : C → ℝ} (hψ : IsGrou
   have h2 := hu0.2
   rw [ha, h1, zero_smul] at h2
   simp at h2
-
-/-- `persist_of_gap` with the gap: along an invisible direction `w` the gapped ground state `ψ`
-survives, with gap at least `g - |ε| m`. -/
-theorem persist_gap [DecidableEq C] {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ}
-    {v w : V → ℝ}
-    {ψ : C → ℝ} (hψ : IsGroundState (hamN H0 n v) ψ) (hN : ψ ⬝ᵥ ψ = 1) {g κ m ε : ℝ}
-    (hgap : HasGap (hamN H0 n v) ψ g)
-    (hsupp : ∀ c, ψ c ≠ 0 → ∑ i, w i * n i c = κ)
-    (hm : ∀ c, |∑ i, w i * n i c - κ| ≤ m) (hε : |ε| * m ≤ g) :
-    IsGroundState (hamN H0 n (v + ε • w)) ψ ∧ HasGap (hamN H0 n (v + ε • w)) ψ (g - |ε| * m) := by
-  classical
-  refine ⟨persist_of_gap hH0 hψ hN hgap hsupp hm hε, fun χ hχ => ?_⟩
-  set H := hamN H0 n v
-  set W : C → ℝ := fun c => ∑ i, w i * n i c
-  have hsplit : ∀ φ : C → ℝ,
-      qf (hamN H0 n (v + ε • w)) φ = qf H φ + ε * (κ * (φ ⬝ᵥ φ) + ∑ c, (W c - κ) * φ c ^ 2) := by
-    intro φ
-    have e1 : ∑ i, w i * dens n φ i = ∑ c, W c * φ c ^ 2 := dens_weighted n w φ
-    have e2 : ∑ c, W c * φ c ^ 2 = κ * (φ ⬝ᵥ φ) + ∑ c, (W c - κ) * φ c ^ 2 := by
-      simp only [dotProduct, Finset.mul_sum, ← Finset.sum_add_distrib]
-      apply Finset.sum_congr rfl; intro c _; ring
-    rw [qf_hamN, qf_hamN, ← e2, ← e1]
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib,
-        Finset.mul_sum]
-    ring_nf
-  have hz : ∀ c, (W c - κ) * ψ c = 0 := by
-    intro c; by_cases h : ψ c = 0
-    · simp [h]
-    · simp [W, hsupp c h]
-  have hWψ : ∑ c, (W c - κ) * ψ c ^ 2 = 0 :=
-    Finset.sum_eq_zero (fun c _ => by have := hz c; linear_combination ψ c * this)
-  have hbound : |∑ c, (W c - κ) * χ c ^ 2| ≤ m * (χ ⬝ᵥ χ) := by
-    calc |∑ c, (W c - κ) * χ c ^ 2| ≤ ∑ c, |(W c - κ) * χ c ^ 2| := Finset.abs_sum_le_sum_abs _ _
-      _ ≤ ∑ c, m * (χ c * χ c) := by
-          apply Finset.sum_le_sum; intro c _
-          rw [abs_mul, abs_of_nonneg (sq_nonneg (χ c)), sq]
-          exact mul_le_mul_of_nonneg_right (hm c) (mul_self_nonneg _)
-      _ = m * (χ ⬝ᵥ χ) := by simp [dotProduct, Finset.mul_sum]
-  have hεW : -(|ε| * m * (χ ⬝ᵥ χ)) ≤ ε * ∑ c, (W c - κ) * χ c ^ 2 := by
-    have h := abs_le.mp hbound
-    rcases le_total 0 ε with he | he
-    · rw [abs_of_nonneg he]; nlinarith [h.1, dot_self_nonneg χ]
-    · rw [abs_of_nonpos he]; nlinarith [h.2, dot_self_nonneg χ]
-  have hg := hgap χ hχ
-  rw [hsplit, hsplit, hWψ, hN]
-  nlinarith [dot_self_nonneg χ]
 
 omit [Fintype V] in
 /-- All normalised ground states of a Hamiltonian with a gapped ground state have the same density.
