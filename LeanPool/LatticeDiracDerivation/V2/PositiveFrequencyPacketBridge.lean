@@ -8,6 +8,7 @@ Authors: G. D. Partin
 
 module
 
+public import LeanPool.LatticeDiracDerivation.V2.FiniteFramePairing
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
 public import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyCurrentBridge
@@ -26,7 +27,7 @@ readout used by the mode theorem.
 
 namespace LeanDirac.V2
 
-variable {Site : Type} {Mode : Type*}
+variable {Site : Type}
 
 open Complex BigOperators
 open scoped InnerProductSpace
@@ -34,60 +35,34 @@ noncomputable section
 
 /-- The finite inverse Fourier sum taking scalar mode amplitudes to lattice values. -/
 def periodicScalarSynthesis (L : ℕ) [NeZero L]
-    (amplitude : PeriodicCubicMomentum L → ℂ) :
-    PeriodicCubicSite L → ℂ :=
-  fun site => ∑ mode,
-    periodicQuantizedAddChar L mode site * amplitude mode
+    (amplitude : PeriodicCubicMomentum L → ℂ) : PeriodicCubicSite L → ℂ :=
+  finiteFrameSynthesis (fun mode site => periodicQuantizedAddChar L mode site) amplitude
 
-private theorem wInner_cWeight_fintype_sum_left
-    [Fintype Mode] [Fintype Site]
-    (field : Mode → Site → ℂ) (target : Site → ℂ) :
-    ⟪(fun site => ∑ mode, field mode site), target⟫ₙ_[ℂ] =
-      ∑ mode, ⟪field mode, target⟫ₙ_[ℂ] := by
-  simp_rw [RCLike.wInner_cWeight_eq_expect, RCLike.inner_apply, map_sum, Finset.mul_sum]
-  rw [Finset.expect_sum_comm]
-
-private theorem wInner_cWeight_fintype_sum_right
-    [Fintype Mode] [Fintype Site]
-    (source : Site → ℂ) (field : Mode → Site → ℂ) :
-    ⟪source, (fun site => ∑ mode, field mode site)⟫ₙ_[ℂ] =
-      ∑ mode, ⟪source, field mode⟫ₙ_[ℂ] := by
-  simp_rw [RCLike.wInner_cWeight_eq_expect, RCLike.inner_apply, Finset.sum_mul]
-  rw [Finset.expect_sum_comm]
+private theorem periodic_quantized_character_pairing (L : ℕ) [NeZero L]
+    (first second : PeriodicCubicMomentum L) :
+    ⟪(periodicQuantizedAddChar L first : PeriodicCubicSite L → ℂ),
+      (periodicQuantizedAddChar L second : PeriodicCubicSite L → ℂ)⟫ₙ_[ℂ] =
+        if first = second then 1 else 0 := by
+  rw [AddChar.wInner_cWeight_eq_boole]
+  simp only [(periodic_quantized_add_char_injective L).eq_iff]
 
 theorem periodic_quantized_scaled_character_orthogonal
     (L : ℕ) [NeZero L]
     (first second : PeriodicCubicMomentum L) (a b : ℂ) :
     ⟪(fun site => periodicQuantizedAddChar L first site * a),
       (fun site => periodicQuantizedAddChar L second site * b)⟫ₙ_[ℂ] =
-        if first = second then star a * b else 0 := by
-  have hinj := periodic_quantized_add_char_injective L
-  have hchar : periodicQuantizedAddChar L first =
-      periodicQuantizedAddChar L second ↔ first = second := hinj.eq_iff
-  rw [show (fun site => periodicQuantizedAddChar L first site * a) =
-      a • (periodicQuantizedAddChar L first : PeriodicCubicSite L → ℂ) by
-    funext site
-    simp [mul_comm]]
-  rw [show (fun site => periodicQuantizedAddChar L second site * b) =
-      b • (periodicQuantizedAddChar L second : PeriodicCubicSite L → ℂ) by
-    funext site
-    simp [mul_comm]]
-  rw [RCLike.wInner_smul_left, RCLike.wInner_smul_right,
-    AddChar.wInner_cWeight_eq_boole]
-  simp [hchar, smul_eq_mul]
+        if first = second then star a * b else 0 :=
+  finite_frame_scaled_pairing (fun mode site => periodicQuantizedAddChar L mode site)
+    (periodic_quantized_character_pairing L) first second a b
 
 theorem periodic_scalar_synthesis_parseval
     (L : ℕ) [NeZero L]
     (first second : PeriodicCubicMomentum L → ℂ) :
     ⟪periodicScalarSynthesis L first,
       periodicScalarSynthesis L second⟫ₙ_[ℂ] =
-      ∑ mode, star (first mode) * second mode := by
-  unfold periodicScalarSynthesis
-  rw [wInner_cWeight_fintype_sum_left]
-  apply Finset.sum_congr rfl
-  intro firstMode _
-  rw [wInner_cWeight_fintype_sum_right]
-  simp [periodic_quantized_scaled_character_orthogonal]
+      ∑ mode, star (first mode) * second mode :=
+  finite_frame_synthesis_pairing (fun mode site => periodicQuantizedAddChar L mode site)
+    (periodic_quantized_character_pairing L) first second
 
 /-- The native position obtained by synthesizing the positive-frequency amplitudes. -/
 def periodicPositiveNativePosition (L : ℕ) [NeZero L]
