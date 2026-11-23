@@ -73,12 +73,8 @@ theorem map_canonical_weighted_volume_chart [LindelofSpace M] (V : M → ℝ)
     Measure.restrict_apply' Ξ.open_source.measurableSet,
     withDensity_apply _ hpre, withDensity_apply _ hB, Measure.restrict_restrict hB]
   have himage : Ξ.symm '' (B ∩ Ξ.target) = Ξ ⁻¹' B ∩ Ξ.source := by
-    ext x
-    constructor
-    · rintro ⟨z, ⟨hzB, hzt⟩, rfl⟩
-      exact ⟨by rwa [mem_preimage, Ξ.right_inv hzt], Ξ.map_target hzt⟩
-    · rintro ⟨hxB, hxs⟩
-      exact ⟨Ξ x, ⟨hxB, Ξ.map_source hxs⟩, Ξ.left_inv hxs⟩
+    simpa only [OpenPartialHomeomorph.symm_source, OpenPartialHomeomorph.symm_target,
+      OpenPartialHomeomorph.symm_symm, inter_comm] using Ξ.symm.image_source_inter_eq' B
   let b := stdOrthonormalBasis ℝ F
   have hBt := hB.inter Ξ.open_target.measurableSet
   have hcov := b.toBasis.setLIntegral_riemannianVolume_image_of_injOn (I := 𝓘(ℝ, F)) rfl

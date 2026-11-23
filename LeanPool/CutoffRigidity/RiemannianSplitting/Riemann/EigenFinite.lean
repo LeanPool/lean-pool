@@ -23,11 +23,11 @@ Under the hypotheses of `riemannian_gaussian_splitting`:
   (parallel gradient + connectedness);
 * `finiteDimensional_eigenClasses`: the span of the `L²` classes is finite dimensional,
   so `mFirstEigenDim` is the true dimension;
-* `exists_orthonormal_eigenbasis`: the orthonormal eigenbasis (`EigenSplitting.basis`);
+* `exists_orthonormal_eigenbasis_with_representatives`: an orthonormal basis with
+  smooth eigenfunction representatives;
 * `mFirstEigenDim_pos_iff`: `0 < k₁` iff there is a nonzero eigenfunction.
 
-Attainment of the spectral gap (existence of a nonzero eigenfunction) is NOT proved here, see
-`riemann-status/gap.md`.
+The final equivalence characterizes nontriviality of the smooth eigenspace.
 -/
 
 @[expose] public section
@@ -215,8 +215,8 @@ theorem exists_orthonormal_eigenbasis :
   exact ⟨T, hT, hTo⟩
 
 include hV hμ hρ hCD hgap in
-/-- `0 < k₁` iff there is a (smooth, `L²`) eigenfunction for `ρ` which is not identically zero.
-This is the only missing piece (attainment of the spectral gap); see `riemann-status/gap.md`. -/
+/-- The first eigenspace has positive dimension exactly when it contains a nonzero smooth
+`L²` eigenfunction. -/
 theorem mFirstEigenDim_pos_iff :
     0 < mFirstEigenDim F μ V ↔
       ∃ f, IsMEigenfunction F μ V ρ f ∧ ∃ x, f x ≠ 0 := by
