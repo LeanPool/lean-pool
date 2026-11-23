@@ -9,8 +9,7 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.KohnSham.Representability
-public import LeanPool.DFT.Lattice.KohnSham.Aufbau
-public import LeanPool.DFT.Lattice.GenericHK
+public import LeanPool.DFT.Lattice.Fermions.SecondQuantization
 
 /-!
 # Existence of Kohn–Sham potentials for lattice fermions
@@ -27,9 +26,6 @@ potential `v`. With `Vint = 0` this is the existence of a Kohn–Sham potential
 namespace DFT
 
 variable {M N : ℕ}
-
-lemma sum_occF (s : Conf M N) : ∑ i, occF i s = (N : ℝ) := by
-  simp [occF, Finset.sum_ite_mem, s.2]
 
 /-- **Ensemble v-representability for lattice fermions.** -/
 theorem v_representable_lattice_fermions [Nonempty (Conf M N)] (G : SimpleGraph (Fin M))

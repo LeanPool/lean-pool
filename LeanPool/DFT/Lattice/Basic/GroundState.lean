@@ -8,8 +8,6 @@ Authors: Miguel A. L. Marques
 
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.AdjMatrix
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Tactic
 
 /-!

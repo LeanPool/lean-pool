@@ -31,39 +31,6 @@ open Matrix MvPolynomial
 
 variable {M N : ℕ}
 
-/-- Occupations of `N`-particle configurations are rigid when `0 < N < M`. -/
-theorem rigid_occF (hN0 : 0 < N) (hNM : N < M) : Rigid (occF : Fin M → Conf M N → ℝ) := by
-  classical
-  intro w κ h
-  refine ⟨w ⟨0, by omega⟩, fun i => ?_⟩
-  -- show w i = w j for all i, j
-  have key : ∀ i j : Fin M, i ≠ j → w i = w j := by
-    intro i j hij
-    obtain ⟨s, hsi, hsj, hcard⟩ := Finset.exists_subsuperset_card_eq
-      (s := {i}) (t := Finset.univ.erase j) (n := N)
-      (by simpa using hij) (by simp; omega) (by simp; omega)
-    have hi : i ∈ s := hsi (Finset.mem_singleton_self i)
-    have hj : j ∉ s := fun h => (Finset.mem_erase.mp (hsj h)).1 rfl
-    set s1 : Conf M N := ⟨s, hcard⟩
-    have hcard2 : (insert j (s.erase i)).card = N := by
-      rw [Finset.card_insert_of_notMem (fun h => hj (Finset.mem_of_mem_erase h)),
-        Finset.card_erase_of_mem hi]; omega
-    set s2 : Conf M N := ⟨insert j (s.erase i), hcard2⟩
-    have e1 := h s1
-    have e2 := h s2
-    have hsum : ∀ (S : Finset (Fin M)), ∑ k, w k * (if k ∈ S then (1 : ℝ) else 0) =
-        ∑ k ∈ S, w k := by
-      intro S; simp [Finset.sum_ite_mem]
-    simp only [occF] at e1 e2
-    rw [hsum] at e1 e2
-    simp only [s1, s2] at e1 e2
-    rw [Finset.sum_insert (fun h => hj (Finset.mem_of_mem_erase h))] at e2
-    rw [← Finset.add_sum_erase _ _ hi] at e1
-    linarith
-  by_cases hi : i = ⟨0, by omega⟩
-  · rw [hi]
-  · exact key i ⟨0, by omega⟩ hi
-
 /-- Linear form `Σ_l X_{z l} − Σ_{i ∈ y} X_i`. -/
 noncomputable def formZ (y : Conf M N) (z : Fin N → Fin M) : MvPolynomial (Fin M) ℝ :=
   ∑ l, X (z l) - ∑ i, C (occF i y) * X i
@@ -136,11 +103,12 @@ lemma formZ_ne_zero {y : Conf M N} {z : Fin N → Fin M}
       linarith
   exact exists_perm_of_injective y hinj hmem
 
-/-- **Generic single-species potentials.** For hopping of a common sign there is a potential `u`
-with injective configuration energies, all diagonal strong-potential coefficients nonzero, and any
-given finite family of nonzero polynomials nonzero at `u`. -/
-theorem exists_good_u {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
-    {t : Fin M → Fin M → ℝ} {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c : Conf M N)
+/-- Nonzero partner route sums give a potential meeting the energy, coefficient, and polynomial
+conditions for the Krylov certificate. -/
+theorem exists_good_u_of_Lval {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ}
+    (hL : ∀ (us : Fin M → ℝ) (π a : Fin M), π ≠ a → (∀ q, q ≠ a → q ≠ π → us q < us a) →
+      Lval G t us π a π ≠ 0) (c : Conf M N)
     {κ : Type*} [Finite κ] (R : κ → MvPolynomial (Fin M) ℝ) (hR0 : ∀ k, R k ≠ 0) :
     ∃ u : Fin M → ℝ, ∃ hw : Function.Injective (wC u : Conf M N → ℝ),
       (∀ y, alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
@@ -153,7 +121,7 @@ theorem exists_good_u {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Con
       τs p.1 (ρ l)}
   obtain ⟨u, hu, hD, hR⟩ := exists_common_ne (κ := (κ1 ⊕ κ2) ⊕ κ)
     (fun y : Conf M N => fun u => DExp G t u c y) (fun y => ratOn_DExp G t c y)
-    (fun y => exists_DExp_ne hG hts c y)
+    (fun y => exists_DExp_ne_of_Lval hG hL c y)
     (Sum.elim (Sum.elim (fun p : κ1 => formW p.1.1 p.1.2) (fun p : κ2 => formZ p.1.1 p.1.2)) R)
     (fun k => by
       rcases k with (p | p) | k
@@ -176,6 +144,17 @@ theorem exists_good_u {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Con
   refine ⟨u, hw, fun y => ?_, fun k => by simpa using hR (Sum.inr k)⟩
   rw [alpha_eq_D hG t u hu hw c y (hgen y), D_eq_DExp hG t hu c y]
   exact hD y
+
+/-- **Generic single-species potentials.** For hopping of a common sign there is a potential `u`
+with injective configuration energies, all diagonal strong-potential coefficients nonzero, and any
+given finite family of nonzero polynomials nonzero at `u`. -/
+theorem exists_good_u {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ} {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c : Conf M N)
+    {κ : Type*} [Finite κ] (R : κ → MvPolynomial (Fin M) ℝ) (hR0 : ∀ k, R k ≠ 0) :
+    ∃ u : Fin M → ℝ, ∃ hw : Function.Injective (wC u : Conf M N → ℝ),
+      (∀ y, alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c
+        (mopt_self G c) y y ≠ 0) ∧ ∀ k, eval u (R k) ≠ 0 :=
+  exists_good_u_of_Lval hG (Lval_ne_zero hG hts) c R hR0
 
 /-- **(H*) for spinless lattice fermions** with edge-dependent hopping amplitudes of a common sign.
 -/

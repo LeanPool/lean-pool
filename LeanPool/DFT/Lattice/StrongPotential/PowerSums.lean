@@ -189,20 +189,6 @@ lemma det_triangular_d (Mx : Matrix C C ℝ) (d : C → ℕ) (h : ∀ y z, Mx y 
     rw [this, smul_zero]
   · intro h0; exact absurd (Finset.mem_univ _) h0
 
-/-- Top coefficient of a product of polynomials with degree bounds. -/
-lemma prod_coeff_top {ι : Type*} (s : Finset ι) (f : ι → ℝ[X]) (e : ι → ℕ)
-    (hf : ∀ i ∈ s, (f i).natDegree ≤ e i) :
-    (∏ i ∈ s, f i).coeff (∑ i ∈ s, e i) = ∏ i ∈ s, (f i).coeff (e i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    have hs : ∀ i ∈ s, (f i).natDegree ≤ e i := fun i hi => hf i (Finset.mem_insert_of_mem hi)
-    have hdeg : (∏ i ∈ s, f i).natDegree ≤ ∑ i ∈ s, e i := by
-      refine (Polynomial.natDegree_prod_le _ _).trans (Finset.sum_le_sum hs)
-    rw [Finset.prod_insert ha, Finset.prod_insert ha, Finset.sum_insert ha,
-      coeff_mul_add_eq_of_natDegree_le (hf a (Finset.mem_insert_self a s)) hdeg, ih hs]
-
 /-- **Leading coefficient = (triangular) × (Vandermonde).** With `ord` an enumeration of `C`,
 the top coefficient of the free Krylov determinant equals `(Π_y α_y(y)) · det[w_z ^ ord j]`. -/
 theorem top_coeff_factor {A : Matrix C C ℝ} {w : C → ℝ} (hw : Function.Injective w) {d : C → ℕ}
@@ -212,25 +198,7 @@ theorem top_coeff_factor {A : Matrix C C ℝ} {w : C → ℝ} (hw : Function.Inj
   set α := fun y z => alphaRep A w hw d hL c hc y z
   have hN : (kry (Hl A 0 w) c ord).det.coeff (∑ j, ord j - ∑ y, d y) =
       (Matrix.of fun y j => T A w d c (ord j) y).det := by
-    simp only [Matrix.det_apply, finsetSum_coeff, kry]
-    apply Finset.sum_congr rfl
-    intro σ _
-    rw [Units.smul_def, Units.smul_def, zsmul_eq_mul, zsmul_eq_mul, ← Polynomial.C_eq_intCast,
-      coeff_C_mul]
-    congr 1
-    by_cases hall : ∀ i, d (σ i) ≤ ord i
-    · have hsum : ∑ j, ord j - ∑ y, d y = ∑ i, (ord i - d (σ i)) := by
-        rw [Finset.sum_tsub_distrib _ (fun i _ => hall i), Equiv.sum_comp σ d]
-      rw [hsum, prod_coeff_top _ _ _ (fun i _ => entry_natDegree hL hc 0 w _ _)]
-      apply Finset.prod_congr rfl
-      intro i _
-      simp [T, hall i]
-    · push Not at hall
-      obtain ⟨i, hi⟩ := hall
-      rw [Finset.prod_eq_zero (Finset.mem_univ i) (entry_zero hL hc 0 w hi)]
-      symm
-      apply Finset.prod_eq_zero (Finset.mem_univ i)
-      simp [T, Nat.not_le.mpr hi]
+    simpa only [T] using det_coeff_eq hL hc 0 w ord
   have hfac : (Matrix.of fun y j => T A w d c (ord j) y) =
       (Matrix.of fun y z => α y z) * (Matrix.of fun z j => w z ^ ord j) := by
     ext y j

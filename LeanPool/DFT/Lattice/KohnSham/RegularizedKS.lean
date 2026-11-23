@@ -127,7 +127,7 @@ lemma liebE_lsc {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) :
 
 lemma isMYSmooth_Freg {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) {ε : ℝ} (hε : 0 < ε) :
     IsMYSmooth ε (Freg H0 n ε) (gFreg H0 n ε) :=
-  isMYSmooth_myEnv (isCompact_densDomE n) (densDomE_nonempty n) (convex_densDomE hH0 n)
+  isMYSmooth_myEnv (isCompact_densDomE n) (densDomE_nonempty n)
     (convexOn_liebE hH0 n) (liebE_lsc hH0 n) hε
 
 /-- **From quasi-densities back to densities.** If `∇F_ε(z) = -v`, then `ρ = z + ε v` is in the
@@ -150,7 +150,7 @@ theorem density_of_quasi {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C �
   obtain ⟨ψ, hψ, hn⟩ := exists_groundState (hamN_isSymm hH0 n (WithLp.ofLp v))
   rw [(lieb_duality hH0 n _).2 ψ hψ hn]
   have hq : WithLp.toLp 2 (dens n ψ) ∈ densDomE n := dens_mem_domain n hn
-  have hvi := prox_vi (isCompact_densDomE n) (densDomE_nonempty n) (convex_densDomE hH0 n)
+  have hvi := prox_vi (isCompact_densDomE n) (densDomE_nonempty n)
     (convexOn_liebE hH0 n) (liebE_lsc hH0 n) hε z hq
   rw [hp] at hvi
   have e : ε⁻¹ * ⟪z - (z + ε • v), WithLp.toLp 2 (dens n ψ) - (z + ε • v)⟫ =

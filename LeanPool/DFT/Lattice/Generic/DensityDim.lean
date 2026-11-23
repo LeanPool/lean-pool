@@ -159,18 +159,7 @@ lemma sub_mem_invisible {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C →
     v - v' ∈ invisible n S := by
   have e1 := isGroundState_eigen (hamN_isSymm hH0 n v) hψ
   have e2 := isGroundState_eigen (hamN_isSymm hH0 n v') hψ'
-  set E := qf (hamN H0 n v) ψ / (ψ ⬝ᵥ ψ)
-  set E' := qf (hamN H0 n v') ψ / (ψ ⬝ᵥ ψ)
-  refine ⟨E - E', fun c hc => ?_⟩
-  have h1 := congrFun e1 c
-  have h2 := congrFun e2 c
-  rw [hamN_mulVec_apply, Pi.smul_apply, smul_eq_mul] at h1 h2
-  have hkey : (∑ i, (v - v') i * n i c) * ψ c = (E - E') * ψ c := by
-    have : ∑ i, (v - v') i * n i c = ∑ i, v i * n i c - ∑ i, v' i * n i c := by
-      rw [← Finset.sum_sub_distrib]; apply Finset.sum_congr rfl; intro i _
-      simp only [Pi.sub_apply]; ring
-    rw [this]; linear_combination h1 - h2
-  exact mul_right_cancel₀ ((hS c).mp hc) hkey
+  exact ⟨_, fun c hc => potential_sub_eq_on_support e1 e2 ((hS c).mp hc)⟩
 
 omit [Fintype C] [DecidableEq C] in
 /-- With a fixed particle number, `invisible n S` contains the constants; with one non-constant

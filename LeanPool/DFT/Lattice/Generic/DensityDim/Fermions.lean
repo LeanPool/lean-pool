@@ -37,19 +37,14 @@ theorem exists_poly_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G
     (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (hN0 : 0 < N) (hNM : N < M)
     (Vint : Conf M N → ℝ) :
     ∃ P : MvPolynomial (Fin M) ℝ, P ≠ 0 ∧
-      ∀ v, NonUV (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ) v → eval v P = 0 := by
-  classical
-  set ord : Conf M N → ℕ := fun j => (Fintype.equivFin (Conf M N) j : ℕ)
-  refine ⟨∏ c, krylovPoly (H0Fw G t Vint) occF c ord,
-    Finset.prod_ne_zero_iff.mpr (fun c _ => hstar_lattice_fermions_w hG hts c Vint),
-    fun v hv => ?_⟩
-  obtain ⟨c, hc⟩ :=
-    nonUV_imp_krylov_zero (H0Fw_isSymm G htsym Vint) (rigid_occF hN0 hNM) hv ord
-  rw [map_prod]
-  exact Finset.prod_eq_zero (Finset.mem_univ c) hc
+      ∀ v, NonUV (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ) v → eval v P = 0 :=
+  exists_krylov_certificate (Tr := constPot) (H0Fw_isSymm G htsym Vint) (rigid_occF hN0 hNM)
+    (fun j => (Fintype.equivFin (Conf M N) j : ℕ))
+    (fun c => hstar_lattice_fermions_w hG hts c Vint)
+
 
 lemma sum_occF_eq (c : Conf M N) : ∑ i, occF i c = (N : ℝ) := by
-  simp [occF, Finset.sum_ite_mem, c.2]
+  exact sum_occF c
 
 /-- **Non-uv densities of lattice fermions, edge-dependent hopping.** For `N` spinless fermions
 (`0 < N < M`) on a connected graph with symmetric hopping amplitudes of a common sign and any

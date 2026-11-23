@@ -149,7 +149,7 @@ lemma pure_mem_Ens {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ)
   · rw [mul_vecMulVec, heig]; ext a b; simp [vecMulVec, mul_assoc]
 
 omit [Nonempty C] in
-lemma quad_single (Γ : Matrix C C ℝ) (a b : C) (_hab : a ≠ b) (s : ℝ) :
+lemma quad_single (Γ : Matrix C C ℝ) (a b : C) (s : ℝ) :
     (Pi.single a 1 + s • Pi.single b 1 : C → ℝ) ⬝ᵥ (Γ *ᵥ (Pi.single a 1 + s • Pi.single b 1)) =
       Γ a a + s * (Γ a b + Γ b a) + s ^ 2 * Γ b b := by
   simp only [mulVec_add, mulVec_smul, add_dotProduct, dotProduct_add,
@@ -180,7 +180,7 @@ lemma Ens_bound {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v : V → ℝ} {Γ 
     exact ⟨by linarith [hdiag a], h1⟩
   · have hp := hP (Pi.single a 1 + (1 : ℝ) • Pi.single b 1)
     have hm := hP (Pi.single a 1 + (-1 : ℝ) • Pi.single b 1)
-    rw [quad_single Γ a b hab] at hp hm
+    rw [quad_single Γ a b] at hp hm
     rw [hsym] at hp hm
     have := hdle a b hab
     constructor <;> nlinarith [hdiag a, hdiag b]

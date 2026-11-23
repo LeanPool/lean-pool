@@ -134,26 +134,54 @@ lemma entry_zero {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc
     (V w : C → ℝ) {k : ℕ} {y : C} (hk : k < d y) : (Hl A V w ^ k) y c = 0 := by
   ext m; rw [entry_bound hL hc V w k y m (by omega)]; simp
 
+/-- Top coefficient of a product of polynomials with degree bounds. -/
+lemma prod_coeff_top {ι : Type*} (s : Finset ι) (f : ι → ℝ[X]) (e : ι → ℕ)
+    (hf : ∀ i ∈ s, (f i).natDegree ≤ e i) :
+    (∏ i ∈ s, f i).coeff (∑ i ∈ s, e i) = ∏ i ∈ s, (f i).coeff (e i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert a s ha ih =>
+    have hs : ∀ i ∈ s, (f i).natDegree ≤ e i := fun i hi => hf i (Finset.mem_insert_of_mem hi)
+    have hdeg : (∏ i ∈ s, f i).natDegree ≤ ∑ i ∈ s, e i := by
+      refine (Polynomial.natDegree_prod_le _ _).trans (Finset.sum_le_sum hs)
+    rw [Finset.prod_insert ha, Finset.prod_insert ha, Finset.sum_insert ha,
+      coeff_mul_add_eq_of_natDegree_le (hf a (Finset.mem_insert_self a s)) hdeg, ih hs]
+
 /-- Products: the top coefficient depends only on the top coefficients of the factors. -/
 lemma prod_top {ι : Type*} (s : Finset ι) (f g : ι → ℝ[X]) (e : ι → ℕ)
     (hf : ∀ i ∈ s, (f i).natDegree ≤ e i) (hg : ∀ i ∈ s, (g i).natDegree ≤ e i)
     (he : ∀ i ∈ s, (f i).coeff (e i) = (g i).coeff (e i)) :
     (∏ i ∈ s, f i).natDegree ≤ ∑ i ∈ s, e i ∧ (∏ i ∈ s, g i).natDegree ≤ ∑ i ∈ s, e i ∧
     (∏ i ∈ s, f i).coeff (∑ i ∈ s, e i) = (∏ i ∈ s, g i).coeff (∑ i ∈ s, e i) := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert a s ha ih =>
-    obtain ⟨h1, h2, h3⟩ := ih (fun i hi => hf i (Finset.mem_insert_of_mem hi))
-      (fun i hi => hg i (Finset.mem_insert_of_mem hi))
-          (fun i hi => he i (Finset.mem_insert_of_mem hi))
-    rw [Finset.prod_insert ha, Finset.prod_insert ha, Finset.sum_insert ha]
-    have hfa := hf a (Finset.mem_insert_self a s)
-    have hga := hg a (Finset.mem_insert_self a s)
-    refine ⟨natDegree_mul_le.trans (add_le_add hfa h1), natDegree_mul_le.trans (add_le_add hga h2),
-        ?_⟩
-    rw [coeff_mul_add_eq_of_natDegree_le hfa h1, coeff_mul_add_eq_of_natDegree_le hga h2,
-      he a (Finset.mem_insert_self a s), h3]
+  refine ⟨(Polynomial.natDegree_prod_le _ _).trans (Finset.sum_le_sum hf),
+    (Polynomial.natDegree_prod_le _ _).trans (Finset.sum_le_sum hg), ?_⟩
+  rw [prod_coeff_top s f e hf, prod_coeff_top s g e hg]
+  exact Finset.prod_congr rfl he
+
+/-- The leading Krylov determinant coefficient is the determinant of the entrywise leading
+coefficients, using zero for configurations out of reach. -/
+theorem det_coeff_eq {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
+    (V w : C → ℝ) (ord : C → ℕ) :
+    (kry (Hl A V w) c ord).det.coeff (∑ j, ord j - ∑ y, d y) =
+      (Matrix.of fun y j => if d y ≤ ord j then
+        ((Hl A V w ^ ord j) y c).coeff (ord j - d y) else 0).det := by
+  simp only [Matrix.det_apply, finsetSum_coeff, kry]
+  apply Finset.sum_congr rfl
+  intro σ _
+  rw [Units.smul_def, Units.smul_def, zsmul_eq_mul, zsmul_eq_mul, ← Polynomial.C_eq_intCast,
+    coeff_C_mul]
+  congr 1
+  by_cases hall : ∀ i, d (σ i) ≤ ord i
+  · have hsum : ∑ j, ord j - ∑ y, d y = ∑ i, (ord i - d (σ i)) := by
+      rw [Finset.sum_tsub_distrib _ (fun i _ => hall i), Equiv.sum_comp σ d]
+    rw [hsum, prod_coeff_top _ _ _ (fun i _ => entry_natDegree hL hc V w _ _)]
+    exact Finset.prod_congr rfl (fun i _ => by simp [hall i])
+  · push Not at hall
+    obtain ⟨i, hi⟩ := hall
+    rw [Finset.prod_eq_zero (Finset.mem_univ i) (entry_zero hL hc V w hi)]
+    symm
+    exact Finset.prod_eq_zero (Finset.mem_univ i) (by simp [Nat.not_le.mpr hi])
 
 /-- **Interaction independence.** The coefficient of degree `Σ ord − Σ d` of the Krylov determinant
 does not depend on the configuration-diagonal interaction. -/
@@ -161,23 +189,13 @@ theorem det_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc 
     (V V' w : C → ℝ) (ord : C → ℕ) :
     (kry (Hl A V w) c ord).det.coeff (∑ j, ord j - ∑ y, d y) =
       (kry (Hl A V' w) c ord).det.coeff (∑ j, ord j - ∑ y, d y) := by
-  simp only [Matrix.det_apply, finsetSum_coeff, kry]
-  apply Finset.sum_congr rfl
-  intro σ _
-  rw [Units.smul_def, Units.smul_def, zsmul_eq_mul, zsmul_eq_mul, ← Polynomial.C_eq_intCast,
-    coeff_C_mul, coeff_C_mul]
+  rw [det_coeff_eq hL hc V w ord, det_coeff_eq hL hc V' w ord]
   congr 1
-  by_cases hall : ∀ i, d (σ i) ≤ ord i
-  · have hsum : ∑ j, ord j - ∑ y, d y = ∑ i, (ord i - d (σ i)) := by
-      rw [Finset.sum_tsub_distrib _ (fun i _ => hall i), Equiv.sum_comp σ d]
-    rw [hsum]
-    exact (prod_top Finset.univ _ _ (fun i => ord i - d (σ i))
-      (fun i _ => entry_natDegree hL hc V w _ _) (fun i _ => entry_natDegree hL hc V' w _ _)
-      (fun i _ => entry_top hL hc V V' w _ _ (hall i))).2.2
-  · push Not at hall
-    obtain ⟨i, hi⟩ := hall
-    rw [Finset.prod_eq_zero (Finset.mem_univ i) (entry_zero hL hc V w hi),
-      Finset.prod_eq_zero (Finset.mem_univ i) (entry_zero hL hc V' w hi)]
+  ext y j
+  simp only [of_apply]
+  split_ifs with hy
+  · exact entry_top hL hc V V' w _ _ hy
+  · rfl
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 

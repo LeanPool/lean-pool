@@ -15,7 +15,7 @@ public import LeanPool.DFT.Lattice.Basic.GroundState
 
 Many-body Hamiltonian `hamN H0 n v = H0 + diag(Σ_i v_i n_i)` on configurations `C`, density
 `dens n ψ`.
-* `weak_hk`: equal ground-state densities ⇒ each ground state is a ground state of both
+* `weak_hk` (real pure states): equal ground-state densities make each state a ground state of both
   Hamiltonians.
 * `strong_hk`: if no non-constant `w` makes `Σ_i w_i n_i` constant on the support of the ground
   state, the potential is determined up to a constant.
@@ -48,8 +48,8 @@ lemma qf_hamN (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) (φ : 
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl; intro c _; apply Finset.sum_congr rfl; intro i _; ring
 
-/-- PvL Theorem 7 (weak HK): a shared ground-state density makes each ground state a ground state of
-the other Hamiltonian. -/
+/-- Real pure-state version of Penz and van Leeuwen, Theorem 7 (weak HK). A shared ground-state
+density makes each state a ground state of the other Hamiltonian. -/
 theorem weak_hk {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v v' : V → ℝ} {ψ ψ' : C → ℝ}
     (hψ : IsGroundState (hamN H0 n v) ψ) (hψ' : IsGroundState (hamN H0 n v') ψ')
     (hN : ψ ⬝ᵥ ψ = 1) (hN' : ψ' ⬝ᵥ ψ' = 1) (hd : dens n ψ = dens n ψ') :
@@ -75,6 +75,45 @@ lemma hamN_isSymm {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) 
     (hamN H0 n v).IsSymm :=
   hH0.add (Matrix.isSymm_diagonal _)
 
+/-- Rigidity modulo a set `Tr` of trivial potential shifts: a density-coupled potential that is
+constant on every configuration lies in `Tr`. `Rigid` is the case of the constant potentials. -/
+def RigidMod (Tr : Set (V → ℝ)) (n : V → C → ℝ) : Prop :=
+  ∀ (w : V → ℝ) (κ : ℝ), (∀ c, ∑ i, w i * n i c = κ) → w ∈ Tr
+
+/-- Non-unique v-representability modulo trivial shifts `Tr`: some ground state of `H(v)` is also
+a ground state of `H(v')` with `v - v' ∉ Tr`. `NonUV` is the case of the constant potentials. -/
+def NonUVMod (Tr : Set (V → ℝ)) (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) : Prop :=
+  ∃ (ψ : C → ℝ) (v' : V → ℝ), IsGroundState (hamN H0 n v) ψ ∧ IsGroundState (hamN H0 n v') ψ ∧
+    (fun i => v i - v' i) ∉ Tr
+
+/-- The constant potentials. -/
+def constPot : Set (V → ℝ) := {w | ∃ k, ∀ i, w i = k}
+
+/-- Rigidity modulo constant potential shifts. -/
+def Rigid (n : V → C → ℝ) : Prop := RigidMod constPot n
+
+/-- Non-unique v-representability modulo constant potential shifts. -/
+def NonUV (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) : Prop :=
+  NonUVMod constPot H0 n v
+
+omit [Fintype C] [DecidableEq C] in
+lemma rigid_iff_rigidMod (n : V → C → ℝ) : Rigid n ↔ RigidMod constPot n := Iff.rfl
+
+lemma nonUV_iff_nonUVMod (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) :
+    NonUV H0 n v ↔ NonUVMod constPot H0 n v := Iff.rfl
+
+/-- The difference of two potentials is constant on the support of a common eigenvector. -/
+lemma potential_sub_eq_on_support {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v v' : V → ℝ}
+    {ψ : C → ℝ} {E E' : ℝ} (h : hamN H0 n v *ᵥ ψ = E • ψ)
+    (h' : hamN H0 n v' *ᵥ ψ = E' • ψ) {c : C} (hc : ψ c ≠ 0) :
+    ∑ i, (v - v') i * n i c = E - E' := by
+  have left := congrFun h c
+  have right := congrFun h' c
+  rw [hamN_mulVec_apply, Pi.smul_apply, smul_eq_mul] at left right
+  apply mul_right_cancel₀ hc
+  simp only [Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
+  linear_combination left - right
+
 /-- Strong HK under a lattice unique-continuation hypothesis on the support of ψ. -/
 theorem strong_hk {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} {v v' : V → ℝ}
     {ψ ψ' : C → ℝ}
@@ -85,17 +124,7 @@ theorem strong_hk {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} 
   have hψv' := (weak_hk hψ hψ' hN hN' hd).1
   have e1 := isGroundState_eigen (hamN_isSymm hH0 n v) hψ
   have e2 := isGroundState_eigen (hamN_isSymm hH0 n v') hψv'
-  set E := qf (hamN H0 n v) ψ / (ψ ⬝ᵥ ψ)
-  set E' := qf (hamN H0 n v') ψ / (ψ ⬝ᵥ ψ)
-  apply hsupp (fun i => v i - v' i) (E - E')
-  intro c hc
-  have h1 := congrFun e1 c; have h2 := congrFun e2 c
-  rw [hamN_mulVec_apply, Pi.smul_apply, smul_eq_mul] at h1 h2
-  have hkey : (∑ i, (v i - v' i) * n i c) * ψ c = (E - E') * ψ c := by
-    have : ∑ i, (v i - v' i) * n i c = ∑ i, v i * n i c - ∑ i, v' i * n i c := by
-      rw [← Finset.sum_sub_distrib]; apply Finset.sum_congr rfl; intro i _; ring
-    rw [this]; linear_combination h1 - h2
-  exact mul_right_cancel₀ hc hkey
+  refine hsupp (v - v') _ fun c hc => potential_sub_eq_on_support e1 e2 hc
 
 
 /-! ### Global (symmetry) mechanism of non-uniqueness — spin-DFT corollary

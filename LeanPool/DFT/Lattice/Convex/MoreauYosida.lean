@@ -9,6 +9,7 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.KohnSham.Iteration
+import TauCeti.Analysis.GradientFlow.MoreauYosida.Convex
 
 /-!
 # Moreau–Yosida envelopes of functionals on a compact convex domain
@@ -28,6 +29,7 @@ outside `D`) and `ε > 0`:
 @[expose] public section
 
 open RealInnerProductSpace
+open scoped NNReal
 
 namespace DFT
 
@@ -63,58 +65,72 @@ lemma prox_spec (hD : IsCompact D) (hne : D.Nonempty) (hf : LowerSemicontinuousO
   rw [dite_eq_left hex]
   exact hex.choose_spec
 
-/-- `A + t C ≥ 0` for all small `t > 0` forces `A ≥ 0`. -/
-lemma nonneg_of_forall_small {A C : ℝ} (hC : 0 ≤ C) (h : ∀ t : ℝ, 0 < t → t ≤ 1 → 0 ≤ A + t * C) :
-    0 ≤ A := by
-  by_contra hA
-  push Not at hA
-  set t := min 1 (-A / (2 * (C + 1)))
-  have ht0 : 0 < t := lt_min one_pos (div_pos (by linarith) (by linarith))
-  have ht1 : t ≤ -A / (2 * (C + 1)) := min_le_right _ _
-  have h1 := h t ht0 (min_le_left _ _)
-  have h2 : t * C ≤ -A / (2 * (C + 1)) * C := mul_le_mul_of_nonneg_right ht1 hC
-  have h3 : -A / (2 * (C + 1)) * C ≤ -A / 2 := by
-    rw [div_mul_eq_mul_div, div_le_div_iff₀ (by positivity) (by norm_num)]
-    nlinarith
-  linarith
-
-/-- Variational inequality of the proximal point. -/
-lemma prox_vi (hD : IsCompact D) (hne : D.Nonempty) (hDc : Convex ℝ D) (hfc : ConvexOn ℝ D f)
+/-- Variational inequality of the proximal point, obtained from Tau Ceti’s resolvent inequality
+by extending the energy to `⊤` off its domain. -/
+lemma prox_vi (hD : IsCompact D) (hne : D.Nonempty) (hfc : ConvexOn ℝ D f)
     (hf : LowerSemicontinuousOn f D) (hε : 0 < ε) (x : E) {q : E} (hq : q ∈ D) :
     f (prox D f ε x) + ε⁻¹ * ⟪x - prox D f ε x, q - prox D f ε x⟫ ≤ f q := by
-  obtain ⟨hp, hmin⟩ := prox_spec (ε := ε) hD hne hf x
+  classical
   set p := prox D f ε x
-  set b := x - p
-  have key : ∀ t : ℝ, 0 < t → t ≤ 1 →
-      0 ≤ (f q - f p - ε⁻¹ * ⟪b, q - p⟫) + t * (‖q - p‖ ^ 2 / (2 * ε)) := by
-    intro t ht0 ht1
-    have hpt : (1 - t) • p + t • q ∈ D := hDc hp hq (by linarith) ht0.le (by ring)
-    have hconv := hfc.2 hp hq (by linarith : 0 ≤ 1 - t) ht0.le (by ring)
-    simp only [smul_eq_mul] at hconv
-    have h1 := hmin _ hpt
-    rw [show myEnv D f ε x = f p + ‖b‖ ^ 2 / (2 * ε) from rfl] at h1
-    have e : x - ((1 - t) • p + t • q) = b - t • (q - p) := by
-      simp only [b, sub_smul, one_smul, smul_sub]; abel
-    rw [e, norm_sub_sq_real b (t • (q - p)), norm_smul, Real.norm_eq_abs, abs_of_pos ht0,
-        inner_smul_right] at h1
-    have h2 : 0 ≤ t * ((f q - f p - ε⁻¹ * ⟪b, q - p⟫) + t * (‖q - p‖ ^ 2 / (2 * ε))) := by
-      have e2 : t * ((f q - f p - ε⁻¹ * ⟪b, q - p⟫) + t * (‖q - p‖ ^ 2 / (2 * ε))) =
-          (1 - t) * f p + t * f q + (‖b‖ ^ 2 - 2 * (t * ⟪b, q - p⟫) + (t * ‖q - p‖) ^ 2) / (2 * ε)
-            - (f p + ‖b‖ ^ 2 / (2 * ε)) := by
-        field_simp; ring
-      rw [e2]; linarith
-    exact (mul_nonneg_iff_of_pos_left ht0).mp h2
-  have := nonneg_of_forall_small (by positivity) key
-  linarith
+  obtain ⟨hp, hmin⟩ := prox_spec (ε := ε) hD hne hf x
+  let energy (z : E) : EReal := if z ∈ D then f z else ⊤
+  have on_domain {z : E} (hz : z ∈ D) : energy z = (f z : EReal) := by simp [energy, hz]
+  have mem_domain {z : E} (hz : energy z ≠ ⊤) : z ∈ D := by
+    by_contra outside
+    exact hz (by simp [energy, outside])
+  let τ : ℝ≥0 := ⟨ε, hε.le⟩
+  have hτ : 0 < τ := hε
+  have convex_energy : TauCeti.GeodesicallyConvex 0 energy := by
+    rw [TauCeti.geodesicallyConvex_def]
+    intro u v hu hv
+    have huD := mem_domain hu
+    have hvD := mem_domain hv
+    have line : TauCeti.IsGeodesicSegment (AffineMap.lineMap u v) u v := by
+      refine TauCeti.isGeodesicSegment_of_dist_le (by simp) (by simp) fun s _ t _ hst => ?_
+      rw [dist_lineMap_lineMap, Real.dist_eq, abs_of_nonpos (sub_nonpos.mpr hst), neg_sub]
+    refine ⟨_, line, (line.convexAlong_iff).mpr fun t ht => ?_⟩
+    have ht0 := ht.1
+    have h1t := sub_nonneg.mpr ht.2
+    have hadd : 1 - t + t = 1 := sub_add_cancel 1 t
+    rw [AffineMap.lineMap_apply_module, on_domain (hfc.1 huD hvD h1t ht0 hadd),
+      on_domain huD, on_domain hvD]
+    simp only [zero_div, zero_mul, EReal.coe_zero, sub_zero, ← EReal.coe_mul, ← EReal.coe_add,
+      EReal.coe_le_coe_iff]
+    exact hfc.2 huD hvD h1t ht0 hadd
+  have resolvent : p ∈ TauCeti.moreauYosidaResolvent energy τ x := by
+    refine TauCeti.mem_moreauYosidaResolvent_iff.mpr ⟨edist_ne_top _ _, fun z _ => ?_⟩
+    rw [TauCeti.coe_edist_sq_div_eq_coe_dist_sq_div hτ,
+      TauCeti.coe_edist_sq_div_eq_coe_dist_sq_div hτ, on_domain hp]
+    by_cases hz : z ∈ D
+    · rw [on_domain hz, ← EReal.coe_add, ← EReal.coe_add, EReal.coe_le_coe_iff]
+      rw [dist_eq_norm, dist_eq_norm, show (τ : ℝ) = ε from rfl]
+      exact hmin z hz
+    · simp [energy, hz, EReal.top_add_of_ne_bot (EReal.coe_ne_bot _)]
+  have bound := convex_energy.penalizedConvex.apply_add_le_of_mem_moreauYosidaResolvent
+    hτ resolvent (on_domain hq ▸ EReal.coe_ne_top _)
+  rw [on_domain hp, on_domain hq, ← EReal.coe_add, ← EReal.coe_add, EReal.coe_le_coe_iff] at bound
+  have distance_expansion : dist x q ^ 2 =
+      ‖x - p‖ ^ 2 - 2 * ⟪x - p, q - p⟫ + ‖q - p‖ ^ 2 := by
+    rw [dist_eq_norm, show x - q = (x - p) - (q - p) by abel, norm_sub_sq_real]
+  rw [zero_div, zero_mul, add_zero, distance_expansion, dist_comm p q, dist_eq_norm x p,
+    dist_eq_norm q p] at bound
+  change f p + (‖x - p‖ ^ 2 / (2 * ε) + ‖q - p‖ ^ 2 / (2 * ε)) ≤ _ at bound
+  have step : f p + ε⁻¹ * ⟪x - p, q - p⟫ =
+      f p + (‖x - p‖ ^ 2 / (2 * ε) + ‖q - p‖ ^ 2 / (2 * ε)) -
+        (‖x - p‖ ^ 2 - 2 * ⟪x - p, q - p⟫ + ‖q - p‖ ^ 2) / (2 * ε) := by
+    field_simp
+    ring
+  rw [step]
+  exact sub_le_iff_le_add.mpr bound
 
 /-- **The Moreau envelope is `IsMYSmooth`.** -/
-theorem isMYSmooth_myEnv (hD : IsCompact D) (hne : D.Nonempty) (hDc : Convex ℝ D)
+theorem isMYSmooth_myEnv (hD : IsCompact D) (hne : D.Nonempty)
     (hfc : ConvexOn ℝ D f)
     (hf : LowerSemicontinuousOn f D) (hε : 0 < ε) : IsMYSmooth ε (myEnv D f ε) (myGrad D f ε) where
   lower x y := by
     set p := prox D f ε x
     set q := prox D f ε y
-    have hvi := prox_vi hD hne hDc hfc hf hε x (prox_spec (ε := ε) hD hne hf y).1
+    have hvi := prox_vi hD hne hfc hf hε x (prox_spec (ε := ε) hD hne hf y).1
     set b := x - p
     set u := y - q
     have hqp : q - p = (y - x) - u + b := by simp only [u, b]; abel

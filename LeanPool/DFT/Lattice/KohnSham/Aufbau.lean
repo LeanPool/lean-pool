@@ -9,7 +9,7 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.Fermions.CauchyBinet
-public import Mathlib.Analysis.Matrix.Spectrum
+public import LeanPool.DFT.Lattice.Basic.Spectral
 
 /-!
 # The aufbau principle for non-interacting lattice fermions
@@ -67,8 +67,6 @@ theorem qf_gamma_ge (h : Matrix (Fin M) (Fin M) ℝ) {φ : Fin M → Fin M → �
     {E : ℝ} (hE : ∀ S : Conf M N, E ≤ orbEnergy ε S) (v : Conf M N → ℝ) :
     E * (v ⬝ᵥ v) ≤ qf (Γ h) v := by
   set P := slaterMat (N := N) φ
-  have hPP : P * Pᵀ = 1 := mul_eq_one_comm.mp (slaterMat_orth hON)
-  obtain ⟨c, rfl⟩ : ∃ c, v = P *ᵥ c := ⟨Pᵀ *ᵥ v, by rw [mulVec_mulVec, hPP, one_mulVec]⟩
   have hGP : (Γ h : Matrix (Conf M N) (Conf M N) ℝ) * P = P * diagonal (orbEnergy ε) := by
     ext s S
     have := congrFun (slaterSub_eigen h hφ S) s
@@ -77,29 +75,22 @@ theorem qf_gamma_ge (h : Matrix (Fin M) (Fin M) ℝ) {φ : Fin M → Fin M → �
     simp only [P, slaterMat, diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
       ite_true]
     rw [this, mul_comm]
-  have hq : qf (Γ h) (P *ᵥ c) = c ⬝ᵥ (diagonal (orbEnergy ε) *ᵥ c) := by
-    unfold qf
-    rw [mulVec_mulVec, hGP, ← mulVec_mulVec, dot_slaterMat hON]
-  rw [hq, dot_slaterMat hON]
-  simp only [dotProduct, mulVec, diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq,
-      Finset.mem_univ,
-    ite_true, Finset.mul_sum]
-  apply Finset.sum_le_sum; intro S _
-  nlinarith [hE S, mul_self_nonneg (c S)]
+  exact qf_ge_of_diagonalisation (slaterMat_orth hON) hGP hE v
 
 /-- Orthonormal eigenvectors of a symmetric real matrix (spectral theorem). -/
 theorem exists_eigenbasis (h : Matrix (Fin M) (Fin M) ℝ) (hS : h.IsSymm) :
     ∃ (ε : Fin M → ℝ) (φ : Fin M → Fin M → ℝ), (∀ a, h *ᵥ φ a = ε a • φ a) ∧
       ∀ a b, ∑ x, φ a x * φ b x = if a = b then 1 else 0 := by
-  have hH : h.IsHermitian := by
-    unfold Matrix.IsHermitian
-    rw [conjTranspose_eq_transpose_of_trivial]; exact hS
-  refine ⟨hH.eigenvalues, fun a => ⇑(hH.eigenvectorBasis a), fun a => hH.mulVec_eigenvectorBasis a,
-      ?_⟩
-  intro a b
-  have h1 := (orthonormal_iff_ite.mp hH.eigenvectorBasis.orthonormal) a b
-  rw [← h1, EuclideanSpace.inner_eq_star_dotProduct]
-  simp [dotProduct, mul_comm]
+  obtain ⟨P, ε, hP, hHP⟩ := exists_diagonalisation hS
+  refine ⟨ε, fun a x => P x a, fun a => ?_, fun a b => ?_⟩
+  · ext x
+    have h := congrFun (congrFun hHP x) a
+    rw [Matrix.mul_apply, Matrix.mul_apply] at h
+    simp only [diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
+      ite_true] at h
+    simpa [mulVec, dotProduct, Pi.smul_apply, mul_comm] using h
+  · have h := congrFun (congrFun hP a) b
+    simpa only [Matrix.mul_apply, transpose_apply, Matrix.one_apply] using h
 
 lemma conf_nonempty (hN : N ≤ M) : Nonempty (Conf M N) := by
   obtain ⟨t, -, ht⟩ := Finset.exists_subset_card_eq (s := (Finset.univ : Finset (Fin M))) (n := N)

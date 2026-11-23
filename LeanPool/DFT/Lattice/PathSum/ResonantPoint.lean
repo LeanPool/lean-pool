@@ -94,45 +94,66 @@ lemma exists_pred {G : SimpleGraph (Fin M)} (hG : G.Connected) {b q : Fin M} {n 
     rw [SimpleGraph.dist_comm] at h1
     omega
 
-/-- Positivity of the partner route sums when the target is the highest site. The hopping is assumed
-unfrustrated in the simplest sense: all amplitudes on edges have the sign of a fixed `s`. -/
-theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
-    {t : Fin M → Fin M → ℝ}
-    {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
+/-- **All shortest paths between two sites have hopping products of one sign.** For every site `b`
+there are signs `ε q = ±1` with `ε q * t q r * ε r > 0` whenever `q` and `r` are adjacent and `r` is
+one step closer to `b` than `q`. (This forces `t q r ≠ 0` on every edge,
+`ShortestPathSigned.ne_zero`.) -/
+def ShortestPathSigned (G : SimpleGraph (Fin M)) (t : Fin M → Fin M → ℝ) : Prop :=
+  ∀ b : Fin M, ∃ ε : Fin M → ℝ, (∀ q, ε q * ε q = 1) ∧
+    ∀ q r, G.Adj q r → G.dist b r + 1 = G.dist b q → 0 < ε q * t q r * ε r
+
+/-- `ShortestPathSigned` forces nonzero hopping on every edge (take `b = r`). -/
+theorem ShortestPathSigned.ne_zero {G : SimpleGraph (Fin M)} {t : Fin M → Fin M → ℝ}
+    (h : ShortestPathSigned G t) {q r : Fin M} (hqr : G.Adj q r) : t q r ≠ 0 := by
+  obtain ⟨ε, -, hl⟩ := h r
+  have hd : G.dist r r + 1 = G.dist r q := by
+    rw [SimpleGraph.dist_self, SimpleGraph.dist_eq_one_iff_adj.mpr hqr.symm]
+  intro h0
+  have := hl q r hqr hd
+  rw [h0] at this
+  simp at this
+
+/-- **The partner route sums do not vanish under `ShortestPathSigned`** when the target is
+the highest site away from the partner. -/
+theorem Lval_ne_zero_of_shortestPathSigned {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
+    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (hsp : ShortestPathSigned G t)
     (us : Fin M → ℝ) (π a : Fin M) (hπa : π ≠ a) (hhigh : ∀ q, q ≠ a → q ≠ π → us q < us a) :
     Lval G t us π a π ≠ 0 := by
-  have hpos : ∀ n q, G.dist π q = n → n < G.dist π a → 0 < Λ G t us π a π n q * (-s) ^ n := by
+  obtain ⟨ε, hε, hlay⟩ := hsp π
+  have hpos : ∀ n q, G.dist π q = n → n < G.dist π a →
+      0 < (-1) ^ n * (ε π * ε q) * Λ G t us π a π n q := by
     intro n
     induction n with
     | zero =>
       intro q hq _
       have : q = π := (dist_eq_zero_iff hG).mp hq
-      subst this; simp [Λ]
+      subst this; simp [Λ, hε]
     | succ n ih =>
       intro q hq hlt
       have hqπ : q ≠ π := by intro h; subst h; simp at hq
       have hqa : q ≠ a := by intro h; subst h; omega
       have hden : 0 < us a - us q := sub_pos.mpr (hhigh q hqa hqπ)
-      have hrw : Λ G t us π a π (n + 1) q * (-s) ^ (n + 1) =
+      have hrw : (-1) ^ (n + 1) * (ε π * ε q) * Λ G t us π a π (n + 1) q =
           (∑ r, (if G.Adj q r ∧ G.dist π r = n then
-              (s * t q r) * (Λ G t us π a π n r * (-s) ^ n) else 0)) /
+              (ε q * t q r * ε r) * ((-1) ^ n * (ε π * ε r) * Λ G t us π a π n r) else 0)) /
             (us a - us q) := by
         simp only [Λ, ite_eq_left hq, ite_eq_right hqπ]
-        rw [div_mul_eq_mul_div, Finset.sum_mul]
+        rw [mul_div_assoc', Finset.mul_sum]
         congr 1
         apply Finset.sum_congr rfl; intro r _
         split_ifs
-        · rw [pow_succ]; ring
+        · linear_combination (-(-1 : ℝ) ^ n * ε π * ε q * t q r * Λ G t us π a π n r) * hε r
         · simp
       rw [hrw]
       apply div_pos _ hden
       obtain ⟨r0, hr0, hdr0⟩ := exists_pred hG hq
       apply Finset.sum_pos' (fun r _ => by
         split_ifs with hr
-        · exact (mul_pos (hts q r hr.1) (ih r hr.2 (by omega))).le
+        · exact (mul_pos (hlay q r hr.1 (by omega)) (ih r hr.2 (by omega))).le
         · exact le_refl 0)
       exact ⟨r0, Finset.mem_univ _, by
-        rw [ite_eq_left ⟨hr0, hdr0⟩]; exact mul_pos (hts q r0 hr0) (ih r0 hdr0 (by omega))⟩
+        rw [ite_eq_left ⟨hr0, hdr0⟩]
+        exact mul_pos (hlay q r0 hr0 (by omega)) (ih r0 hdr0 (by omega))⟩
   have hda : 0 < G.dist π a := by
     by_contra h0; push Not at h0
     exact hπa ((dist_eq_zero_iff hG).mp (by omega)).symm
@@ -140,24 +161,58 @@ theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Conn
       exists_pred hG (n := G.dist π a - 1) (by omega : G.dist π a = G.dist π a - 1 + 1)
   intro h0
   have hsum : 0 < ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
-      (s * t a p) * (Λ G t us π a π (G.dist π p) p * (-s) ^ (G.dist π p)) else 0) := by
+      (ε a * t a p * ε p) * ((-1) ^ (G.dist π p) * (ε π * ε p) *
+        Λ G t us π a π (G.dist π p) p) else 0) := by
     apply Finset.sum_pos' (fun p _ => by
       split_ifs with hp
-      · exact (mul_pos (hts a p hp.1) (hpos _ p rfl (by omega))).le
+      · exact (mul_pos (hlay a p hp.1 hp.2) (hpos _ p rfl (by omega))).le
       · exact le_refl 0)
     exact ⟨p0, Finset.mem_univ _, by
-      rw [ite_eq_left ⟨hp0, by omega⟩]; exact mul_pos (hts a p0 hp0) (hpos _ p0 rfl (by omega))⟩
-  have : Lval G t us π a π * (-s) ^ (G.dist π a) =
+      rw [ite_eq_left ⟨hp0, by omega⟩]
+      exact mul_pos (hlay a p0 hp0 (by omega)) (hpos _ p0 rfl (by omega))⟩
+  have : (-1) ^ (G.dist π a) * (ε π * ε a) * Lval G t us π a π =
       ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
-      (s * t a p) * (Λ G t us π a π (G.dist π p) p * (-s) ^ (G.dist π p)) else 0) := by
+        (ε a * t a p * ε p) * ((-1) ^ (G.dist π p) * (ε π * ε p) *
+          Λ G t us π a π (G.dist π p) p) else 0) := by
     unfold Lval
-    rw [Finset.sum_mul]
+    rw [Finset.mul_sum]
     apply Finset.sum_congr rfl; intro p _
     split_ifs with hp
-    · rw [← hp.2, pow_succ]; ring
+    · rw [← hp.2]
+      linear_combination (-(-1 : ℝ) ^ (G.dist π p) * ε π * ε a * t a p *
+        Λ G t us π a π (G.dist π p) p) * hε p
     · simp
-  rw [h0, zero_mul] at this
+  rw [h0, mul_zero] at this
   exact hsum.ne' this.symm
+
+/-- Hopping of a common sign is `ShortestPathSigned` (`ε q = 1` for `s > 0`,
+`ε q = (-1)^dist(b, q)` otherwise). -/
+theorem shortestPathSigned_of_common_sign {G : SimpleGraph (Fin M)} {t : Fin M → Fin M → ℝ}
+    {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) : ShortestPathSigned G t := by
+  intro b
+  by_cases hs : 0 < s
+  · refine ⟨fun _ => 1, fun _ => by norm_num, fun q r hqr _ => ?_⟩
+    have := (pos_iff_pos_of_mul_pos (hts q r hqr)).mp hs
+    simpa using this
+  · refine ⟨fun q => (-1) ^ G.dist b q, fun q => by rw [← mul_pow]; norm_num,
+      fun q r hqr hd => ?_⟩
+    have h := hts q r hqr
+    have ht : t q r < 0 := by
+      by_contra hc; push Not at hc; push Not at hs; nlinarith
+    have h1 : ((-1 : ℝ) ^ G.dist b r) * (-1) ^ G.dist b r = 1 := by rw [← mul_pow]; norm_num
+    simp only
+    rw [← hd, pow_succ]
+    have e : (-1 : ℝ) ^ G.dist b r * -1 * t q r * (-1) ^ G.dist b r =
+        -t q r * ((-1 : ℝ) ^ G.dist b r * (-1) ^ G.dist b r) := by ring
+    rw [e, h1]; linarith
+
+/-- Nonvanishing of the partner route sums for hopping amplitudes with a common sign. -/
+theorem Lval_ne_zero {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ}
+    {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
+    (us : Fin M → ℝ) (π a : Fin M) (hπa : π ≠ a) (hhigh : ∀ q, q ≠ a → q ≠ π → us q < us a) :
+    Lval G t us π a π ≠ 0 :=
+  Lval_ne_zero_of_shortestPathSigned hG (shortestPathSigned_of_common_sign hts) us π a hπa hhigh
 
 end
 
@@ -206,9 +261,11 @@ lemma rep_eq_target {l : Fin N} {z : Fin M} (h : rep c y σ0 z = τs y l) :
 
 end
 
-theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+/-- Nonvanishing of a resonant determinant from nonzero partner route sums. -/
+theorem exists_DExp_ne_of_Lval {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     {t : Fin M → Fin M → ℝ}
-    {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c y : Conf M N) :
+    (hL : ∀ (us : Fin M → ℝ) (π a : Fin M), π ≠ a → (∀ q, q ≠ a → q ≠ π → us q < us a) →
+      Lval G t us π a π ≠ 0) (c y : Conf M N) :
     ∃ u : Fin M → ℝ, Function.Injective u ∧ DExp G t u c y ≠ 0 := by
   classical
   obtain ⟨σ0, h0, hfix⟩ := exists_opt_fixing hG c y
@@ -230,7 +287,7 @@ theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Co
     · have hπa : partner c σ0 l.1 ≠ a := fun h => l.2 (by
         have hm : partner c σ0 l.1 ∈ c.1 := τs_mem c _
         rw [h] at hm; exact hm)
-      apply Lval_ne_zero hG hts _ _ _ hπa
+      apply hL _ _ _ hπa
       intro q hqa hqπ
       have hRa : R a = a := rep_target c y σ0 hfix l.1
       have hRq : R q ≠ a := by
@@ -295,6 +352,13 @@ theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Co
     exact hε (i, j) hne hij
   obtain ⟨ε, hε1, hε2⟩ := (hev.and hinj).exists
   exact ⟨uline us δ ε, hε2, hε1⟩
+
+/-- Nonvanishing of a resonant determinant for common-sign hopping. -/
+theorem exists_DExp_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
+    {t : Fin M → Fin M → ℝ}
+    {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c y : Conf M N) :
+    ∃ u : Fin M → ℝ, Function.Injective u ∧ DExp G t u c y ≠ 0 :=
+  exists_DExp_ne_of_Lval hG (Lval_ne_zero hG hts) c y
 
 end
 

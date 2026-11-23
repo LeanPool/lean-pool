@@ -10,6 +10,7 @@ module
 
 public import LeanPool.DFT.Lattice.Fermions.Slater
 public import LeanPool.DFT.Lattice.HK.Basic
+public import Mathlib.Combinatorics.SimpleGraph.AdjMatrix
 
 /-!
 # Second quantisation via determinants
@@ -332,27 +333,13 @@ lemma H0Fw_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] {t : Fin M → 
 configuration-diagonal interaction `Vint`, external potential coupled to the occupations. -/
 noncomputable def H0F (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ) :
     Matrix (Conf M N) (Conf M N) ℝ :=
-  Γ (-t • G.adjMatrix ℝ) + Matrix.diagonal Vint
+  H0Fw G (fun _ _ => t) Vint
 
 lemma H0F_eq_H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ) :
-    H0F G t Vint = H0Fw G (fun _ _ => t) Vint := by
-  unfold H0F H0Fw; rw [hopM_const, neg_smul]
+    H0F G t Vint = H0Fw G (fun _ _ => t) Vint := rfl
 
 lemma H0F_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ) :
-    (H0F G t Vint).IsSymm := by
-  unfold H0F
-  refine Matrix.IsSymm.add (gamma_isSymm ?_) (Matrix.isSymm_diagonal Vint)
-  exact (G.isSymm_adjMatrix).smul _
-
-/-- With the potential included, the many-body Hamiltonian is the second quantisation of the
-single-particle Hamiltonian `-t A + diag v`, plus the interaction. -/
-theorem hamN_H0F (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ)
-    (v : Fin M → ℝ) :
-    hamN (H0F G t Vint) occF v =
-        Γ (-t • G.adjMatrix ℝ + Matrix.diagonal v) + Matrix.diagonal Vint := by
-  unfold hamN H0F
-  rw [gamma_add, gamma_diagonal]
-  abel
+    (H0F G t Vint).IsSymm := H0Fw_isSymm G (fun _ _ => rfl) Vint
 
 theorem hamN_H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
     (Vint : Conf M N → ℝ) (v : Fin M → ℝ) :
@@ -360,6 +347,14 @@ theorem hamN_H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → 
   unfold hamN H0Fw
   rw [gamma_add, gamma_diagonal]
   abel
+
+/-- With the potential included, the many-body Hamiltonian is the second quantisation of the
+single-particle Hamiltonian `-t A + diag v`, plus the interaction. -/
+theorem hamN_H0F (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ)
+    (v : Fin M → ℝ) :
+    hamN (H0F G t Vint) occF v =
+        Γ (-t • G.adjMatrix ℝ + Matrix.diagonal v) + Matrix.diagonal Vint := by
+  simpa only [H0F, hopM_const, neg_smul] using hamN_H0Fw G (fun _ _ => t) Vint v
 
 end
 

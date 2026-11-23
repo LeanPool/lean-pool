@@ -9,7 +9,6 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.KohnSham.Duality
-public import LeanPool.DFT.Lattice.Generic.Krylov
 
 /-!
 # A maximiser of `E(v) − v·ρ`

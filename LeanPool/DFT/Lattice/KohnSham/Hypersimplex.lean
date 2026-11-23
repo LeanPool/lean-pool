@@ -9,13 +9,13 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.KohnSham.Existence
+import TauCeti.Analysis.Convex.PermutationOrbit
 
 /-!
 # Interior densities are strictly positive mixtures of configurations
 
 * `hypersimplex_mixture`: every `ρ ∈ [0,1]^M` with `Σ_i ρ_i = N` is a mixture of `N`-particle
-  configuration densities (vertex description of the hypersimplex; induction on the number of
-  fractional sites).
+  configuration densities, by applying Rado’s theorem to a vector of zeros and ones.
 * `interior_positive_mixture`: if moreover `0 < ρ_i < 1`, the mixture can be chosen with all weights
   positive.
 * `ks_potential_exists_interior`: every density with `0 < ρ_i < 1`, `Σ_i ρ_i = N` is the density of
@@ -46,138 +46,66 @@ lemma mixture_combo {ρ1 ρ2 : Fin M → ℝ} {μ1 μ2 : Conf M N → ℝ} (h1 :
   · subst e1 e2; funext i
     simp only [add_mul, Finset.sum_add_distrib, mul_assoc, Finset.mul_sum]
 
-theorem hypersimplex_mixture : ∀ (k : ℕ) (ρ : Fin M → ℝ), nfrac ρ = k → (∀ i, 0 ≤ ρ i ∧ ρ i ≤ 1) →
-    ∑ i, ρ i = N → ∃ μ : Conf M N → ℝ, IsMixture ρ μ := by
-  intro k
-  induction k using Nat.strong_induction_on with
-  | _ k ih =>
-  intro ρ hk hbox hsum
-  by_cases hfr : ∃ i, 0 < ρ i ∧ ρ i < 1
-  · obtain ⟨i, hi⟩ := hfr
-    -- a second fractional site exists (the sum is an integer)
-    obtain ⟨j, hji, hj⟩ : ∃ j, j ≠ i ∧ 0 < ρ j ∧ ρ j < 1 := by
-      by_contra hno
-      push Not at hno
-      have hint : ∀ l, l ≠ i → ρ l = 0 ∨ ρ l = 1 := by
-        intro l hl
-        rcases (hbox l).1.lt_or_eq with h | h
-        · right; by_contra h1; exact absurd (hno l hl h) (not_le.mpr (lt_of_le_of_ne (hbox l).2 h1))
-        · left; exact h.symm
-      set T := (Finset.univ.erase i).filter fun l => ρ l = 1
-      have hs : ∑ l, ρ l = ρ i + T.card := by
-        rw [← Finset.add_sum_erase _ _ (Finset.mem_univ i)]
-        congr 1
-        rw [Finset.card_eq_sum_ones, Nat.cast_sum, Finset.sum_filter]
-        apply Finset.sum_congr rfl; intro l hl
-        rcases hint l (Finset.mem_erase.mp hl).1 with h | h <;> simp [h]
-      rw [hsum] at hs
-      have : ρ i = (N : ℝ) - T.card := by linarith
-      have hz : ((N : ℤ) - T.card : ℤ) = 0 ∨ ((N : ℤ) - T.card : ℤ) ≥ 1 ∨
-          ((N : ℤ) - T.card : ℤ) ≤ -1 := by
-        omega
-      rcases hz with h | h | h
-      · have : ρ i = 0 := by rw [this]; exact_mod_cast
-          (by exact_mod_cast h : ((N : ℤ) - T.card : ℝ) = 0)
-        linarith [hi.1]
-      · have : (1 : ℝ) ≤ ρ i := by rw [this]; exact_mod_cast h
-        linarith [hi.2]
-      · have : ρ i ≤ -1 := by rw [this]; exact_mod_cast h
-        linarith [hi.1]
-    set e : Fin M → ℝ := fun l => (if l = i then 1 else 0) - (if l = j then 1 else 0)
-    set a := min (1 - ρ i) (ρ j)
-    set b := min (ρ i) (1 - ρ j)
-    have ha : 0 < a := lt_min (by linarith [hi.2]) hj.1
-    have hb : 0 < b := lt_min hi.1 (by linarith [hj.2])
-    set ρp : Fin M → ℝ := fun l => ρ l + a * e l
-    set ρm : Fin M → ℝ := fun l => ρ l - b * e l
-    have hepos : ∀ l, l ≠ i → l ≠ j → e l = 0 := fun l h1 h2 => by simp [e, h1, h2]
-    have hei : e i = 1 := by simp [e, hji.symm]
-    have hej : e j = -1 := by simp [e, hji]
-    have hsume : ∑ l, e l = 0 := by simp [e, Finset.sum_sub_distrib]
-    -- the two endpoints are in the box, have the right sum and fewer fractional sites
-    have hboxp : ∀ l, 0 ≤ ρp l ∧ ρp l ≤ 1 := by
-      intro l
-      by_cases hli : l = i
-      · subst hli; simp only [ρp, hei, mul_one]
-        exact ⟨by linarith [(hbox l).1], by linarith [min_le_left (1 - ρ l) (ρ j)]⟩
-      · by_cases hlj : l = j
-        · subst hlj; simp only [ρp, hej]
-          exact ⟨by linarith [min_le_right (1 - ρ i) (ρ l)], by linarith [(hbox l).2]⟩
-        · simp only [ρp, hepos l hli hlj, mul_zero, add_zero]; exact hbox l
-    have hboxm : ∀ l, 0 ≤ ρm l ∧ ρm l ≤ 1 := by
-      intro l
-      by_cases hli : l = i
-      · subst hli; simp only [ρm, hei, mul_one]
-        exact ⟨by linarith [min_le_left (ρ l) (1 - ρ j)], by linarith [(hbox l).2]⟩
-      · by_cases hlj : l = j
-        · subst hlj; simp only [ρm, hej]
-          exact ⟨by linarith [(hbox l).1], by linarith [min_le_right (ρ i) (1 - ρ l)]⟩
-        · simp only [ρm, hepos l hli hlj, mul_zero, sub_zero]; exact hbox l
-    have hsump : ∑ l, ρp l = N := by
-      simp only [ρp, Finset.sum_add_distrib, ← Finset.mul_sum, hsume, mul_zero, add_zero, hsum]
-    have hsumm : ∑ l, ρm l = N := by
-      simp only [ρm, Finset.sum_sub_distrib, ← Finset.mul_sum, hsume, mul_zero, sub_zero, hsum]
-    have hfewer : ∀ σ : Fin M → ℝ, (∀ l, l ≠ i → l ≠ j → σ l = ρ l) →
-        (¬ (0 < σ i ∧ σ i < 1) ∨ ¬ (0 < σ j ∧ σ j < 1)) → nfrac σ < k := by
-      intro σ hsame hone
-      rw [← hk]
-      apply Finset.card_lt_card
-      rw [Finset.ssubset_iff_of_subset]
-      · rcases hone with h | h
-        · exact ⟨i, by simp [hi], by simp [h]⟩
-        · exact ⟨j, by simp [hj], by simp [h]⟩
-      · intro l hl
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hl ⊢
-        by_cases hli : l = i
-        · subst hli; exact hi
-        · by_cases hlj : l = j
-          · subst hlj; exact hj
-          · rw [← hsame l hli hlj]; exact hl
-    have hkp : nfrac ρp < k := by
-      apply hfewer ρp (fun l h1 h2 => by simp [ρp, hepos l h1 h2])
-      rcases min_choice (1 - ρ i) (ρ j) with h | h
-      · left; simp only [ρp, hei, mul_one]; rw [show a = 1 - ρ i from h]; intro hc; linarith [hc.2]
-      · right; simp only [ρp, hej]; rw [show a = ρ j from h]; intro hc; linarith [hc.1]
-    have hkm : nfrac ρm < k := by
-      apply hfewer ρm (fun l h1 h2 => by simp [ρm, hepos l h1 h2])
-      rcases min_choice (ρ i) (1 - ρ j) with h | h
-      · left; simp only [ρm, hei, mul_one]; rw [show b = ρ i from h]; intro hc; linarith [hc.1]
-      · right; simp only [ρm, hej]; rw [show b = 1 - ρ j from h]; intro hc; linarith [hc.2]
-    obtain ⟨μp, hμp⟩ := ih _ hkp ρp rfl hboxp hsump
-    obtain ⟨μm, hμm⟩ := ih _ hkm ρm rfl hboxm hsumm
-    set θ := b / (a + b)
-    have hθ0 : 0 ≤ θ := by positivity
-    have hθ1 : θ ≤ 1 := by rw [div_le_one (by linarith)]; linarith
-    have hcomb := mixture_combo hμp hμm hθ0 hθ1
-    refine ⟨fun s => θ * μp s + (1 - θ) * μm s, ?_⟩
-    have hρ : ρ = fun l => θ * ρp l + (1 - θ) * ρm l := by
-      funext l
-      simp only [ρp, ρm, θ]
-      field_simp
-      ring
-    rw [hρ]; exact hcomb
-  · -- no fractional site: ρ is a configuration
-    push Not at hfr
-    have h01 : ∀ l, ρ l = 0 ∨ ρ l = 1 := by
-      intro l
-      rcases (hbox l).1.lt_or_eq with h | h
-      · right; by_contra h1; exact absurd (hfr l h) (not_le.mpr (lt_of_le_of_ne (hbox l).2 h1))
-      · left; exact h.symm
-    set S := Finset.univ.filter fun l => ρ l = 1
-    have hcard : S.card = N := by
-      have : (S.card : ℝ) = ∑ l, ρ l := by
-        rw [Finset.card_eq_sum_ones, Nat.cast_sum, Finset.sum_filter]
-        apply Finset.sum_congr rfl; intro l _
-        rcases h01 l with h | h <;> simp [h]
-      rw [hsum] at this; exact_mod_cast this
-    set s0 : Conf M N := ⟨S, hcard⟩
-    refine ⟨fun s => if s = s0 then
-        1 else 0, fun s => by dsimp only; split_ifs <;> norm_num, by simp, ?_⟩
-    funext l
-    simp only [ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true, occF, s0,
-        S,
-      Finset.mem_filter, true_and]
-    rcases h01 l with h | h <;> simp [h]
+/-- The hypersimplex is the convex hull of the fixed-particle occupation vectors. -/
+theorem exists_mixture_of_box {ρ : Fin M → ℝ} (hbox : ∀ i, 0 ≤ ρ i ∧ ρ i ≤ 1)
+    (hsum : ∑ i, ρ i = N) : ∃ μ : Conf M N → ℝ, IsMixture ρ μ := by
+  classical
+  have hfill : N ≤ M := by
+    have h : (N : ℝ) ≤ ∑ _ : Fin M, (1 : ℝ) := hsum ▸ Finset.sum_le_sum fun i _ => (hbox i).2
+    exact_mod_cast (show (N : ℝ) ≤ M by simpa using h)
+  let base : Conf M N := ⟨Finset.univ.map (Fin.castLEEmb hfill), by simp⟩
+  let w : Fin M → ℝ := fun i => occF i base
+  have w_eq (i : Fin M) : w i = if (i : ℕ) < N then 1 else 0 := by
+    have hm : i ∈ base.1 ↔ (i : ℕ) < N := by
+      simp only [base, Finset.mem_map, Finset.mem_univ, true_and, Fin.castLEEmb_apply]
+      exact ⟨fun ⟨j, hj⟩ => hj ▸ j.isLt, fun hi => ⟨⟨i, hi⟩, rfl⟩⟩
+    simp only [w, occF, hm]
+  have hw : Antitone w := by
+    intro i j hij
+    change (i : ℕ) ≤ (j : ℕ) at hij
+    rw [w_eq, w_eq]
+    split_ifs <;> norm_num
+    omega
+  let sorted := ρ ∘ Tuple.sortDesc ρ
+  have htotal : ∑ i, sorted i = ∑ i, w i := by
+    simpa only [sorted, Function.comp_apply, Equiv.sum_comp, w, sum_occF] using hsum
+  have horbit := (TauCeti.mem_convexHull_range_comp_perm_iff hw).2
+    ⟨fun k => ?_, by simpa only [sorted, Function.comp_apply, Equiv.sum_comp] using htotal⟩
+  · have himage : Set.range (fun σ : Equiv.Perm (Fin M) => w ∘ σ) ⊆
+        (↑(Finset.univ.image (fun s : Conf M N => fun i => occF i s)) : Set (Fin M → ℝ)) := by
+      rintro _ ⟨σ, rfl⟩
+      let s : Conf M N := ⟨base.1.map σ.symm.toEmbedding, by rw [Finset.card_map, base.2]⟩
+      refine Finset.mem_image.mpr ⟨s, Finset.mem_univ _, ?_⟩
+      funext i
+      simp only [Function.comp_apply, w, occF, s, Finset.mem_map, Equiv.toEmbedding_apply,
+        Equiv.symm_apply_eq]
+      simp
+    have hinjective : Function.Injective fun s : Conf M N => fun i => occF i s := by
+      intro a b hab
+      apply Subtype.ext
+      ext i
+      have h := congrFun hab i
+      by_cases ha : i ∈ a.1 <;> by_cases hb : i ∈ b.1 <;> simp_all [occF]
+    obtain ⟨μ, hn, ht, he⟩ := Finset.mem_convexHull'.mp (convexHull_mono himage horbit)
+    have hinjOn : Set.InjOn (fun s : Conf M N => fun i => occF i s)
+        (↑(Finset.univ : Finset (Conf M N)) : Set (Conf M N)) := hinjective.injOn
+    rw [Finset.sum_image hinjOn] at ht he
+    refine ⟨fun s => μ (fun i => occF i s),
+      fun s => hn _ (Finset.mem_image_of_mem _ (Finset.mem_univ _)), ht, funext fun i => ?_⟩
+    simpa only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using (congrFun he i).symm
+  · by_cases hk : k ≤ N
+    · rw [TauCeti.prefixSum_def, TauCeti.prefixSum_def]
+      exact Finset.sum_le_sum fun i hi => by
+        rw [w_eq, ite_eq_left ((Finset.mem_filter.mp hi).2.trans_le hk)]
+        exact (hbox (Tuple.sortDesc ρ i)).2
+    · exact TauCeti.prefixSum_le_of_sum_le htotal.le fun i hi => by
+        rw [w_eq, ite_eq_right (by omega)]
+        exact (hbox (Tuple.sortDesc ρ i)).1
+
+theorem hypersimplex_mixture (k : ℕ) (ρ : Fin M → ℝ) (_ : nfrac ρ = k)
+    (hbox : ∀ i, 0 ≤ ρ i ∧ ρ i ≤ 1) (hsum : ∑ i, ρ i = N) :
+    ∃ μ : Conf M N → ℝ, IsMixture ρ μ :=
+  exists_mixture_of_box hbox hsum
 
 /-- **Interior densities are strictly positive mixtures.** -/
 theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ}
@@ -226,7 +154,7 @@ theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ}
       simp only [ρ', ← Finset.sum_div, Finset.sum_sub_distrib, ← Finset.mul_sum, hsum, hbarsum]
       have : (1 - ε) ≠ 0 := by linarith
       field_simp
-    obtain ⟨μ, hμ0, hμ1, hμρ⟩ := hypersimplex_mixture _ ρ' rfl hbox' hsum'
+    obtain ⟨μ, hμ0, hμ1, hμρ⟩ := exists_mixture_of_box hbox' hsum'
     refine ⟨fun s => (1 - ε) * μ s + ε / L, fun s => by nlinarith [hμ0 s, div_pos hε hL], ?_, ?_⟩
     · rw [Finset.sum_add_distrib, ← Finset.mul_sum, hμ1, Finset.sum_const, nsmul_eq_mul, hLdef];
         field_simp; ring
