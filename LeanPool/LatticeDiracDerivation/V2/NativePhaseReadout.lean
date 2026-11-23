@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.ContinuumDiracOperators
+public import LeanPool.LatticeDiracDerivation.V2.CubicalSpinorBlocks
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
 
 /-!
@@ -70,21 +71,11 @@ theorem uniform_continuum_generator_is_kg
       uniformTwoChannelKleinGordonVector]
     rw [hcoefficient]
 
-/-- Embed the two native transverse positions into the positive beta half of
-the four-coordinate cubical representation. -/
-def cubicalUpperEmbedding (position : UniformCell2) : CubicalCell4
-  | 0 => position 0
-  | 1 => position 1
-  | _ => 0
-
 /-- Off-diagonal spatial response derived from the pure cubical incidence
 Hamiltonian, restricted from the positive beta half to the negative half. -/
-def cubicalSpatialLower
-    (px py pz : ℂ) (position : UniformCell2) : UniformCell2
-  | 0 => orientedCubicalSpatialCoordinates px py pz
-      (cubicalUpperEmbedding position) 2
-  | _ => orientedCubicalSpatialCoordinates px py pz
-      (cubicalUpperEmbedding position) 3
+def cubicalSpatialLower (px py pz : ℂ) (position : UniformCell2) : UniformCell2 :=
+  cubicalCell4LowerHalf
+    (orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding position))
 
 private theorem cubical_upper_embedding_add (first second : UniformCell2) :
     cubicalUpperEmbedding (first + second) =
@@ -167,48 +158,44 @@ theorem cubical_phase_lower_unique
   simpa [mul_comm] using hbalance component
 
 /-- Recover the two position coordinates by combining upper and lower spinor components. -/
-def cubicalStandardPosition (z : CubicalCell4) : UniformCell2
-  | 0 => (z 0 - z 2) / 2
-  | _ => (z 1 - z 3) / 2
+def cubicalStandardPosition (z : CubicalCell4) : UniformCell2 := fun component =>
+  (cubicalCell4Upper z component - cubicalCell4LowerHalf z component) / 2
 
 /-- Recover the two auxiliary coordinates from sums of spinor components. -/
-def cubicalStandardLower (z : CubicalCell4) : UniformCell2
-  | 0 => (z 0 + z 2) / 2
-  | _ => (z 1 + z 3) / 2
+def cubicalStandardLower (z : CubicalCell4) : UniformCell2 := fun component =>
+  (cubicalCell4Upper z component + cubicalCell4LowerHalf z component) / 2
 
-/-- Reconstruct a four-coordinate vector from its native position half and
-its complementary cubical half. -/
-def cubicalFromPositionLower
-    (position lower : UniformCell2) : CubicalCell4
-  | 0 => position 0 + lower 0
-  | 1 => position 1 + lower 1
-  | 2 => -position 0 + lower 0
-  | _ => -position 1 + lower 1
+/-- Reconstruct a spinor from its native position and complementary coordinates. -/
+def cubicalFromPositionLower (position lower : UniformCell2) : CubicalCell4 :=
+  cubicalSpinorOfBlocks (position + lower) (-position + lower)
 
 @[simp] theorem cubical_standard_position_from_position_lower
     (position lower : UniformCell2) :
-    cubicalStandardPosition (cubicalFromPositionLower position lower) =
-      position := by
+    cubicalStandardPosition (cubicalFromPositionLower position lower) = position := by
   funext component
-  fin_cases component <;>
-    simp [cubicalStandardPosition, cubicalFromPositionLower]
+  simp [cubicalStandardPosition, cubicalFromPositionLower]
 
 @[simp] theorem cubical_standard_lower_from_position_lower
     (position lower : UniformCell2) :
     cubicalStandardLower (cubicalFromPositionLower position lower) = lower := by
   funext component
-  fin_cases component <;>
-    simp [cubicalStandardLower, cubicalFromPositionLower] <;> ring
+  simp [cubicalStandardLower, cubicalFromPositionLower]
+  ring
 
-/-- Position and complementary coordinates determine the four-component
-vector. -/
+/-- Position and complementary coordinates determine the four-component vector. -/
 theorem cubical_eq_from_position_and_lower (z : CubicalCell4) :
-    cubicalFromPositionLower (cubicalStandardPosition z)
-      (cubicalStandardLower z) = z := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalFromPositionLower, cubicalStandardPosition,
-      cubicalStandardLower] <;> ring
+    cubicalFromPositionLower (cubicalStandardPosition z) (cubicalStandardLower z) = z := by
+  calc
+    _ = cubicalSpinorOfBlocks (cubicalCell4Upper z) (cubicalCell4LowerHalf z) := by
+      unfold cubicalFromPositionLower
+      apply congrArg₂ cubicalSpinorOfBlocks
+      · funext component
+        simp only [Pi.add_apply, cubicalStandardPosition, cubicalStandardLower]
+        ring
+      · funext component
+        simp only [Pi.add_apply, Pi.neg_apply, cubicalStandardPosition, cubicalStandardLower]
+        ring
+    _ = z := cubical_spinor_of_its_blocks z
 
 /-- Four-component readout from the native position and the incidence balance. -/
 def cubicalPhaseReadout
@@ -316,11 +303,8 @@ theorem uniform_rest_negative_readout_has_negative_beta
       cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
     field_simp [hr] <;> ring_nf <;> rw [Complex.I_sq] <;> ring
 
-private def cubicalRepeatedCoordinates (position : UniformCell2) : CubicalCell4
-  | 0 => position 0
-  | 1 => position 1
-  | 2 => position 0
-  | _ => position 1
+private def cubicalRepeatedCoordinates (position : UniformCell2) : CubicalCell4 :=
+  cubicalSpinorOfBlocks position position
 
 private theorem cubical_repeated_coordinates_mul (scale : ℂ) (position : UniformCell2) :
     cubicalRepeatedCoordinates (fun i => scale * position i) =

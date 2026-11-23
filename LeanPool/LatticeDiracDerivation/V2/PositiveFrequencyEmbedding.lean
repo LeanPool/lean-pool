@@ -47,20 +47,6 @@ theorem positive_pauli_spatial_apply_one (px py pz : ℝ) (q : UniformCell2) :
     cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ]
   ring
 
-/-- Assemble a spinor from its upper and lower Pauli coordinates. -/
-def cubicalSpinorOfBlocks (upper lower : UniformCell2) : CubicalCell4 :=
-  ![upper 0, upper 1, lower 0, lower 1]
-
-/-- Assemble a spinor from its two blocks by a complex-linear map. -/
-def cubicalSpinorOfBlocksLinear : (UniformCell2 × UniformCell2) →ₗ[ℂ] CubicalCell4 where
-  toFun blocks := cubicalSpinorOfBlocks blocks.1 blocks.2
-  map_add' first second := by
-    funext component
-    fin_cases component <;> rfl
-  map_smul' scalar blocks := by
-    funext component
-    fin_cases component <;> rfl
-
 theorem cubical_standard_hamiltonian_blocks (mass px py pz : ℝ) (upper lower : UniformCell2) :
     cubicalStandardHamiltonian (mass : ℂ) (px : ℂ) (py : ℂ) (pz : ℂ)
         (cubicalSpinorOfBlocks upper lower) =
@@ -69,7 +55,7 @@ theorem cubical_standard_hamiltonian_blocks (mass px py pz : ℝ) (upper lower :
         (fun i => positivePauliSpatial px py pz upper i - (mass : ℂ) * lower i) := by
   funext component
   fin_cases component <;>
-    simp [cubicalSpinorOfBlocks, cubicalStandardHamiltonian, cubicalStandardSpatial,
+    simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
       cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
       cubicalStandardAlphaZ, positive_pauli_spatial_apply_zero,
       positive_pauli_spatial_apply_one] <;> ring
@@ -96,8 +82,8 @@ theorem positive_pauli_spatial_square
   rw [massless, massless, positive_pauli_spatial_zero] at square
   funext component
   fin_cases component
-  · simpa [cubicalSpinorOfBlocks, Complex.ofReal_add, Complex.ofReal_pow] using congrFun square 0
-  · simpa [cubicalSpinorOfBlocks, Complex.ofReal_add, Complex.ofReal_pow] using congrFun square 1
+  · simpa [Complex.ofReal_add, Complex.ofReal_pow] using congrFun square 0
+  · simpa [Complex.ofReal_add, Complex.ofReal_pow] using congrFun square 1
 
 /-- Positive real square-root normalization inherited from the native
 mass-shell energy. -/
@@ -193,13 +179,10 @@ theorem normalized_positive_frequency_is_energy_eigenstate
       fun component => (positiveFrequencyRatio mass energy : ℂ) *
         (cubicalStandardHamiltonian mass px py pz (cubicalUpperEmbedding q) component +
           (energy : ℂ) * cubicalUpperEmbedding q component) := by
-    have hupper : cubicalUpperEmbedding q = cubicalSpinorOfBlocks q 0 := by
-      funext component
-      fin_cases component <;> rfl
-    rw [hupper, cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
+    rw [cubicalUpperEmbedding, cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
     funext component
     fin_cases component <;>
-      simp [cubicalSpinorOfBlocks, normalized_positive_frequency_embedding_apply, ← hr] <;> ring
+      simp [normalized_positive_frequency_embedding_apply, ← hr] <;> ring
   rw [hshift]
   apply cubical_standard_hamiltonian_shift
   exact_mod_cast hshell.symm

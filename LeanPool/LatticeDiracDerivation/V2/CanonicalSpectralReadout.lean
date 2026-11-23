@@ -166,7 +166,7 @@ theorem normalized_negative_frequency_is_energy_eigenstate
     rw [cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
     funext component
     fin_cases component <;>
-      simp [cubicalSpinorOfBlocks, normalized_negative_frequency_embedding_apply, ← hr] <;> ring
+      simp [normalized_negative_frequency_embedding_apply, ← hr] <;> ring
   simp only [sub_eq_add_neg, neg_mul] at hshift
   rw [hshift]
   have hshellC : (mass : ℂ) ^ 2 + (px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2 =
@@ -382,16 +382,6 @@ theorem canonical_spectral_readout_intertwines
   funext component
   ring
 
-/-- Restrict a four-component spinor to its upper two components. -/
-def cubicalCell4Upper (z : CubicalCell4) : UniformCell2
-  | 0 => z 0
-  | _ => z 1
-
-/-- Restrict a four-component spinor to its lower two components. -/
-def cubicalCell4LowerHalf (z : CubicalCell4) : UniformCell2
-  | 0 => z 2
-  | _ => z 3
-
 /-- Recover the positive-frequency coefficient from the spinor spectral coordinates. -/
 def spectralPositiveCoordinate
     (mass energy px py pz : ℝ) (z : CubicalCell4) : UniformCell2 :=
@@ -461,7 +451,7 @@ private theorem spectralEmbedding_halves (mass energy px py pz : ℝ)
     cubicalCell4Upper z = spectralBlock spatial a (-b) positive negative ∧
       cubicalCell4LowerHalf z = spectralBlock spatial a b negative positive := by
   constructor <;> funext component <;> fin_cases component <;>
-    simp [cubicalCell4Upper, cubicalCell4LowerHalf, normalized_positive_frequency_embedding_apply,
+    simp [normalized_positive_frequency_embedding_apply,
       normalized_negative_frequency_embedding_apply, spectralBlock,
       pauli_spatial_linear_apply, add_comm]
 

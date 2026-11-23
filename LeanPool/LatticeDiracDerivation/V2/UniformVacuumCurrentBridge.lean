@@ -102,14 +102,44 @@ private theorem cubical_cell4_real_pair_scale_right (scale : ℝ) (z w : Cubical
   rw [mul_left_comm]
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
 
+private theorem cubical_beta_real_pair_symmetric (z w : CubicalCell4) :
+    cubicalCell4RealPair (cubicalStandardBeta z) w =
+      cubicalCell4RealPair z (cubicalStandardBeta w) := by
+  apply Finset.sum_congr rfl
+  intro component _
+  fin_cases component <;> simp [cubicalStandardBeta]
+
+private theorem cubical_alpha_real_pair_symmetric (axis : Fin 3) (z w : CubicalCell4) :
+    cubicalCell4RealPair (cubicalAlpha axis z) w =
+      cubicalCell4RealPair z (cubicalAlpha axis w) := by
+  fin_cases axis <;>
+    simp [cubicalCell4RealPair, cubicalAlpha,
+      cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
+      Complex.mul_re, Complex.mul_im, Fin.sum_univ_succ] <;> ring
+
 private theorem cubical_hamiltonian_real_pair_symmetric
     (mass px py pz : ℝ) (z w : CubicalCell4) :
     cubicalCell4RealPair (cubicalStandardHamiltonian mass px py pz z) w =
       cubicalCell4RealPair z (cubicalStandardHamiltonian mass px py pz w) := by
-  simp [cubicalCell4RealPair, cubicalStandardHamiltonian, cubicalStandardSpatial,
-    cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
-    Complex.mul_re, Complex.mul_im, Fin.sum_univ_succ]
-  ring
+  have linear (u v : CubicalCell4) :
+      cubicalCell4RealPair u (cubicalStandardHamiltonian mass px py pz v) =
+        mass * cubicalCell4RealPair u (cubicalStandardBeta v) +
+          (px * cubicalCell4RealPair u (cubicalAlpha 0 v) +
+           py * cubicalCell4RealPair u (cubicalAlpha 1 v) +
+           pz * cubicalCell4RealPair u (cubicalAlpha 2 v)) := by
+    change cubicalCell4RealPair u (fun i => (mass : ℂ) * cubicalStandardBeta v i +
+      ((px : ℂ) * cubicalAlpha 0 v i + (py : ℂ) * cubicalAlpha 1 v i +
+        (pz : ℂ) * cubicalAlpha 2 v i)) = _
+    simp only [cubical_cell4_real_pair_add_right, cubical_cell4_real_pair_scale_right]
+  rw [cubical_cell4_real_pair_comm _ w, linear, linear]
+  have beta : cubicalCell4RealPair w (cubicalStandardBeta z) =
+      cubicalCell4RealPair z (cubicalStandardBeta w) :=
+    (cubical_cell4_real_pair_comm _ _).trans (cubical_beta_real_pair_symmetric _ _)
+  have alpha (axis : Fin 3) :
+      cubicalCell4RealPair w (cubicalAlpha axis z) =
+        cubicalCell4RealPair z (cubicalAlpha axis w) :=
+    (cubical_cell4_real_pair_comm _ _).trans (cubical_alpha_real_pair_symmetric _ _ _)
+  rw [beta, alpha, alpha, alpha]
 
 private theorem cubical_velocity_add (axis : Fin 3) (u v : CubicalCell4) :
     cubicalVelocityOperator axis (fun component => u component + v component) =
