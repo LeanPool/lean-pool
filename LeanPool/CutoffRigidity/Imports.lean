@@ -105,7 +105,6 @@ public import LeanPool.CutoffRigidity.RealL2Identities
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedFlow
 public import LeanPool.CutoffRigidity.RiemannianSplitting.CompleteBoundedVectorField
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Extra.SplitPotential
-public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldScalarChartDerivative
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.AssembleMain
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorGrad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.CDFactorMain
@@ -155,9 +154,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSigmaC
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSmoothing
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSupport
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedVolume
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartBrackets
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartDensity
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartFrames
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferentialOperators
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianGradientCalculus
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianIntegralCurveBounds

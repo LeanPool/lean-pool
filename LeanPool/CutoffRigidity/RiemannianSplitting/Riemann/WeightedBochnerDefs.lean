@@ -9,7 +9,6 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartFrames
 
 /-! # Smoothness at a point of a tangent vector field -/
 

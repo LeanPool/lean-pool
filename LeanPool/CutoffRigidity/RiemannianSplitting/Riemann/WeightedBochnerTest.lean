@@ -9,13 +9,12 @@ Authors: Djalil Chafaï
 module
 
 public import Mathlib.Geometry.Manifold.BumpFunction
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerDefs
-public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldScalarChartDerivative
-public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartBrackets
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
+public import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.LocalFrame
 import TauCeti.Geometry.Manifold.MFDeriv.Chart.Basic
 import TauCeti.Geometry.Manifold.MFDeriv.NormedSpace
 import TauCeti.Geometry.Manifold.Riemannian.Laplacian
+import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Coordinate.Frame
 
 /-! # G2: test functions with prescribed gradient and vanishing Hessian at a point
 
@@ -47,63 +46,20 @@ theorem fderiv_comp_symm_center {f : M → ℝ} (x : M)
   rw [← TauCeti.mvfderiv_eq_fderiv_comp_extChartAt_symm]
   rfl
 
-/-- Christoffel map at the centre. -/
-noncomputable def gam (x : M) (a b : F) : F :=
-  CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (chartFrame (I := 𝓘(ℝ, F)) x b) x a
-
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
-  [FiniteDimensional ℝ F]
-  [RiemannianBundle fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mdiffAt_chartFrame (x : M) (b : F) :
-    MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F).tangent (T% (chartFrame (I := 𝓘(ℝ, F)) x b)) x :=
-  (contMDiffAt_chartFrame (I := 𝓘(ℝ, F)) x b).mdifferentiableAt one_ne_zero
-
-theorem gam_add_right (x : M) (a b b' : F) : gam x a (b + b') = gam x a b + gam x a b' := by
-  have h : chartFrame (I := 𝓘(ℝ, F)) x (b + b') =
-      chartFrame (I := 𝓘(ℝ, F)) x b + chartFrame (I := 𝓘(ℝ, F)) x b' := by
-    funext y
-    simp [chartFrame]
-  unfold gam
-  rw [h, (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).isCovariantDerivativeOn.add (s :=
-      Set.univ)
-    (mdiffAt_chartFrame x b) (mdiffAt_chartFrame x b')]
-  rfl
-
-theorem gam_smul_right (x : M) (a b : F) (c : ℝ) : gam x a (c • b) = c • gam x a b := by
-  have h : chartFrame (I := 𝓘(ℝ, F)) x (c • b) = c • chartFrame (I := 𝓘(ℝ, F)) x b := by
-    funext y
-    simp [chartFrame]
-  unfold gam
-  rw [h, (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).isCovariantDerivativeOn.smul_const
-      (s := Set.univ) c
-    (mdiffAt_chartFrame x b)]
-  rfl
-
-theorem gam_symm (x : M) (a b : F) : gam x a b = gam x b a := by
-  have h := (CovariantDerivative.torsion_eq_zero_iff (CovariantDerivative.leviCivitaConnection
-      𝓘(ℝ, F) M)).mp
-    (CovariantDerivative.torsion_leviCivitaConnection_eq_zero 𝓘(ℝ, F)) (X := chartFrame (I := 𝓘(ℝ,
-        F)) x a)
-    (Y := chartFrame (I := 𝓘(ℝ, F)) x b) (x := x) (mdiffAt_chartFrame x a) (mdiffAt_chartFrame x b)
-  rw [mlieBracket_chartFrames, chartFrame_self, chartFrame_self] at h
-  exact sub_eq_zero.mp h
-
-
-/-- the Christoffel map as a continuous bilinear map -/
+/-- The Christoffel map in the canonical frame at the chart centre. -/
 noncomputable def gamCLM (x : M) : F →L[ℝ] F →L[ℝ] F :=
-  LinearMap.toContinuousLinearMap
-    ((LinearMap.toContinuousLinearMap (E := F) (F' := F)).toLinearMap ∘ₗ
-      (LinearMap.mk₂ ℝ (gam x)
-        (fun a a' b => by
-          unfold gam
-          exact map_add _ a a')
-        (fun c a b => by
-          unfold gam
-          exact map_smul _ c a)
-        (gam_add_right x) (fun c m n => gam_smul_right x m n c)))
+  TauCeti.Manifold.christoffelMap (Module.finBasis ℝ F)
+    ((CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).isCovariantDerivativeOn
+      (s := (trivializationAt F (TangentSpace 𝓘(ℝ, F)) x).baseSet)) x
 
-theorem gamCLM_apply (x : M) (a b : F) : gamCLM x a b = gam x a b := rfl
+private theorem gamCLM_symm (x : M) (a b : F) : gamCLM x a b = gamCLM x b a := by
+  let : IsManifold 𝓘(ℝ, F) (minSmoothness ℝ 2) M := by
+    simpa using (inferInstance : IsManifold 𝓘(ℝ, F) 2 M)
+  have torsionFree : (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).IsTorsionFree :=
+    (CovariantDerivative.isTorsionFree_iff_torsion_eq_zero _).2
+      (CovariantDerivative.torsion_leviCivitaConnection_eq_zero 𝓘(ℝ, F))
+  exact TauCeti.Manifold.christoffelMap_comm (I := 𝓘(ℝ, F))
+    torsionFree (Module.finBasis ℝ F) x (mem_extChartAt_source x) a b
 
 /-- the quadratic test polynomial in chart coordinates -/
 noncomputable def gt (x : M) (ξ : F →L[ℝ] ℝ) (z : F) : ℝ :=
@@ -145,8 +101,8 @@ noncomputable def Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w : F) (z : F) : ℝ :=
 theorem fderiv_gt_apply (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
     fderiv ℝ (gt x ξ) z w = Kfun x ξ w z := by
   rw [(hasFDerivAt_gt x ξ z).fderiv]
-  simp [Kfun, add_comm]
-  ring
+  simp only [Kfun, add_apply, smul_apply, ContinuousLinearMap.comp_apply,
+    ContinuousLinearMap.flip_apply, smul_eq_mul]
 
 theorem hasFDerivAt_Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
     HasFDerivAt (Kfun x ξ w)
@@ -160,9 +116,9 @@ theorem hasFDerivAt_Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
   simp
 
 theorem fderiv_Kfun_center (x : M) (ξ : F →L[ℝ] ℝ) (w a : F) :
-    fderiv ℝ (Kfun x ξ w) (extChartAt 𝓘(ℝ, F) x x) a = ξ (gam x a w) := by
+    fderiv ℝ (Kfun x ξ w) (extChartAt 𝓘(ℝ, F) x x) a = ξ (gamCLM x a w) := by
   rw [(hasFDerivAt_Kfun x ξ w _).fderiv]
-  simp [gamCLM_apply, gam_symm x w a]
+  simp [gamCLM_symm x w a]
   ring
 
 
@@ -171,39 +127,40 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     (hG : (G ∘ (extChartAt 𝓘(ℝ, F) x).symm) =ᶠ[𝓝 (extChartAt 𝓘(ℝ, F) x x)] gt x ξ)
     (a w : F) : CutoffRigidity.manifoldHessian 𝓘(ℝ, F) G x a w = 0 := by
   set e := extChartAt 𝓘(ℝ, F) x with he
-  have hev1 : ∀ᶠ z in 𝓝 (e x), G ∘ e.symm =ᶠ[𝓝 z] gt x ξ := hG.eventuallyEq_nhds
-  have hev2 : ∀ᶠ y in 𝓝 x, (G ∘ e.symm =ᶠ[𝓝 (e y)] gt x ξ) ∧ y ∈ (chartAt F x).source :=
-    ((continuousAt_extChartAt (I := 𝓘(ℝ, F)) x).eventually hev1).and (chart_source_mem_nhds F x)
-  have hEq : (fun y => mvfderiv 𝓘(ℝ, F) G y (chartFrame (I := 𝓘(ℝ, F)) x w y)) =ᶠ[𝓝 x]
+  let : IsManifold 𝓘(ℝ, F) (minSmoothness ℝ 2) M := by
+    simpa using (inferInstance : IsManifold 𝓘(ℝ, F) 2 M)
+  let aT : TangentSpace 𝓘(ℝ, F) x := a
+  let wT : TangentSpace 𝓘(ℝ, F) x := w
+  let W (v : TangentSpace 𝓘(ℝ, F) x) := FiberBundle.extend F v
+  have hEq : (fun y => mvfderiv 𝓘(ℝ, F) G y (W wT y)) =ᶠ[𝓝 x]
       (Kfun x ξ w ∘ e) := by
-    filter_upwards [hev2] with y ⟨hy1, hy2⟩
-    have hys : y ∈ e.source := by simpa only [e, extChartAt_source] using hy2
-    have hz : e y ∈ e.target := e.map_source hys
-    have h0 := fderiv_chartScalar_frame (I := 𝓘(ℝ, F)) (f := G) x hz w
-    have key : ∀ y' : M, y' = y →
-        mvfderiv 𝓘(ℝ, F) G y' (chartFrame (I := 𝓘(ℝ, F)) x w y') =
-        mvfderiv 𝓘(ℝ, F) G y (chartFrame (I := 𝓘(ℝ, F)) x w y) := by
-      intro y' h; subst h; rfl
-    rw [key _ (e.left_inv hys)] at h0
-    rw [← h0, hy1.fderiv_eq]
-    exact fderiv_gt_apply x ξ w (e y)
-  have hcongr : mvfderiv 𝓘(ℝ, F) (fun y => mvfderiv 𝓘(ℝ, F) G y
-      (chartFrame (I := 𝓘(ℝ, F)) x w y)) x = mvfderiv 𝓘(ℝ, F) (Kfun x ξ w ∘ e) x := by
-    exact hEq.mvfderiv_eq
+    refine (TauCeti.Manifold.mvfderiv_extend_eventuallyEq ((hGs x).of_le (by simp)) w).trans ?_
+    filter_upwards [(continuousAt_extChartAt (I := 𝓘(ℝ, F)) x).eventually hG.eventuallyEq_nhds]
+      with y hy
+    change fderiv ℝ (G ∘ e.symm) (e y) w = Kfun x ξ w (e y)
+    have derivative : fderiv ℝ (G ∘ e.symm) (e y) = fderiv ℝ (gt x ξ) (e y) := hy.fderiv_eq
+    rw [derivative, fderiv_gt_apply]
   have hKe2 : (Kfun x ξ w ∘ e) ∘ e.symm =ᶠ[𝓝 (e x)] Kfun x ξ w := by
     filter_upwards [extChartAt_target_mem_nhds (I := 𝓘(ℝ, F)) x] with z hz
     simp [e.right_inv hz]
-  have hB : mvfderiv 𝓘(ℝ, F) (fun y => mvfderiv 𝓘(ℝ, F) G y
-      (chartFrame (I := 𝓘(ℝ, F)) x w y)) x a = ξ (gam x a w) := by
-    rw [hcongr, ← fderiv_comp_symm_center x a, hKe2.fderiv_eq]
+  have hB : mvfderiv 𝓘(ℝ, F) (fun y => mvfderiv 𝓘(ℝ, F) G y (W wT y)) x a =
+      ξ (gamCLM x a w) := by
+    rw [hEq.mvfderiv_eq, ← fderiv_comp_symm_center x a, hKe2.fderiv_eq]
     exact fderiv_Kfun_center x ξ w a
+  have hW : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F).tangent (T% (W wT)) x :=
+    FiberBundle.mdifferentiableAt_extend 𝓘(ℝ, F) F wT
   have h := TauCeti.Manifold.hessian_apply_eq_mvfderiv_sub (I := 𝓘(ℝ, F))
-    x ((hGs.of_le (by simp)) x) (chartFrame (I := 𝓘(ℝ, F)) x a)
-    (chartFrame (I := 𝓘(ℝ, F)) x w) (mdiffAt_chartFrame x w)
-  rw [TauCeti.Manifold.hessian_def] at h
-  rw [chartFrame_self, chartFrame_self, hB] at h
-  change manifoldHessian 𝓘(ℝ, F) G x a w =
-    ξ (gam x a w) - mvfderiv 𝓘(ℝ, F) G x (gam (F := F) x a w) at h
+    x ((hGs.of_le (by simp)) x) (W aT) (W wT) hW
+  have hWa : W aT x = aT := FiberBundle.extend_apply_self F aT
+  have hWw : W wT x = wT := FiberBundle.extend_apply_self F wT
+  have hΓ : (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M) (W wT) x (W aT x) =
+      gamCLM x a w := by
+    rw [hWa]
+    exact (TauCeti.Manifold.covariantDerivative_extend_eq_christoffelMap (I := 𝓘(ℝ, F))
+      (cov := CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M)
+      (Module.finBasis ℝ F) aT wT).trans (gamCLM_symm x w a)
+  rw [TauCeti.Manifold.hessian_def, hΓ] at h
+  rw [hWa, hWw, hB] at h
   rw [mvfderiv_eq_xi x ξ hG, sub_self] at h
   exact h
 

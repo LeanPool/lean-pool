@@ -128,46 +128,36 @@ theorem finiteDimensional_eigenSub [Nonempty M] :
       (fun x => manifold_eigenfunction_parallel_gradient F hV hμ hρ hCD hgap f.2 x) x₀ hf
   exact Module.Finite.of_injective Φ hinj
 
-/-- The `L²`-classes of eigenfunctions, as a subspace of `L²(μ)`. -/
-def eigenClasses (μ : Measure M) (V : M → ℝ) (lam : ℝ) : Submodule ℝ (M →₂[μ] ℝ) where
-  carrier := {u | ∃ f, IsMEigenfunction F μ V lam f ∧ f =ᵐ[μ] u}
-  zero_mem' := ⟨0, (eigenSub F μ V lam).zero_mem, (Lp.coeFn_zero _ _ _).symm⟩
-  add_mem' := by
-    rintro u v ⟨f, hf, hfu⟩ ⟨g, hg, hgv⟩
-    refine ⟨f + g, (eigenSub F μ V lam).add_mem hf hg, ?_⟩
-    filter_upwards [hfu, hgv, Lp.coeFn_add u v] with x h1 h2 h3
-    simp only [Pi.add_apply]
-    rw [h1, h2]; exact h3.symm
-  smul_mem' := by
-    rintro c u ⟨f, hf, hfu⟩
-    refine ⟨c • f, (eigenSub F μ V lam).smul_mem c hf, ?_⟩
-    filter_upwards [hfu, Lp.coeFn_smul c u] with x h1 h3
-    simp only [Pi.smul_apply, smul_eq_mul]
-    rw [h1]; exact h3.symm
+/-- The map taking smooth eigenfunctions to their almost-everywhere classes. -/
+def eigenSubToLp (μ : Measure M) (V : M → ℝ) (lam : ℝ) :
+    eigenSub F μ V lam →ₗ[ℝ] (M →₂[μ] ℝ) where
+  toFun f := f.2.2.1.toLp f.1
+  map_add' f g := MemLp.toLp_add f.2.2.1 g.2.2.1
+  map_smul' c f := MemLp.toLp_const_smul c f.2.2.1
+
+omit [MeasurableSpace F] [BorelSpace F] [IsRiemannianManifold 𝓘(ℝ, F) M]
+  [ConnectedSpace M] [CompleteSpace M] [BorelSpace M] in
+theorem eigenClasses_carrier_eq (μ : Measure M) (V : M → ℝ) (lam : ℝ) :
+    {u : M →₂[μ] ℝ | ∃ f, IsMEigenfunction F μ V lam f ∧ f =ᵐ[μ] u} =
+      ((eigenSubToLp F μ V lam).range : Set (M →₂[μ] ℝ)) := by
+  ext u
+  constructor
+  · rintro ⟨f, hf, hfu⟩
+    refine ⟨⟨f, hf⟩, ?_⟩
+    change hf.2.1.toLp f = u
+    exact Lp.ext ((MemLp.coeFn_toLp hf.2.1).trans hfu)
+  · rintro ⟨f, rfl⟩
+    exact ⟨f.1, f.2, (MemLp.coeFn_toLp f.2.2.1).symm⟩
+
+/-- The `L²` classes of eigenfunctions, as a subspace of `L²(μ)`. -/
+def eigenClasses (μ : Measure M) (V : M → ℝ) (lam : ℝ) : Submodule ℝ (M →₂[μ] ℝ) :=
+  (eigenSubToLp F μ V lam).range.copy _ (eigenClasses_carrier_eq F μ V lam)
 
 include hV hμ hρ hCD hgap in
 theorem finiteDimensional_eigenClasses [Nonempty M] :
     FiniteDimensional ℝ (eigenClasses F μ V ρ) := by
   have := finiteDimensional_eigenSub F hV hμ hρ hCD hgap
-  have hE : ∀ f : eigenSub F μ V ρ, IsMEigenfunction F μ V ρ f.1 := fun f => f.2
-  let ψ : eigenSub F μ V ρ →ₗ[ℝ] (M →₂[μ] ℝ) :=
-    { toFun := fun f => (hE f).2.1.toLp f.1
-      map_add' := fun f g => by
-        exact (MemLp.toLp_add (hE f).2.1 (hE g).2.1)
-      map_smul' := fun c f => by
-        exact (MemLp.toLp_const_smul c (hE f).2.1) }
-  have : eigenClasses F μ V ρ = LinearMap.range ψ := by
-    ext u
-    constructor
-    · rintro ⟨f, hf, hfu⟩
-      refine ⟨⟨f, hf⟩, ?_⟩
-      change (hf.2.1).toLp f = u
-      refine Lp.ext ?_
-      filter_upwards [MemLp.coeFn_toLp hf.2.1, hfu] with x h1 h2
-      rw [h1, h2]
-    · rintro ⟨f, rfl⟩
-      exact ⟨f.1, hE f, (MemLp.coeFn_toLp (hE f).2.1).symm⟩
-  rw [this]
+  rw [eigenClasses, Submodule.copy_eq]
   infer_instance
 
 include hgap in
