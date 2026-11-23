@@ -1,0 +1,61 @@
+slug: lattice-dft
+title: Density-functional theory for lattice fermions
+summary: >-
+  Develops density-functional theory for spinless fermions on finite graphs.
+  It proves generic uniqueness of the potential up to a constant, bounds the
+  Hausdorff dimension of exceptional densities, and develops lattice Kohn–Sham
+  representability and the convergence of a regularized iteration.
+branch: mathematical physics
+entry_module: LeanPool.DFT
+authors:
+- Miguel A. L. Marques
+- Stefano Pittalis
+source:
+  title: Lattice density-functional theory in Lean
+  url: https://github.com/hyllios/lean_dft/tree/144b0dca3e597f2ae021f1c1b263ceab857f8f26
+  github_repo: hyllios/lean_dft
+  commit: 144b0dca3e597f2ae021f1c1b263ceab857f8f26
+  announcement_url: https://github.com/hyllios/lean_dft/commit/51e763ed2bd3107702e8c03411c7207b569b7c6d
+  announcement_date: '2026-11-06'
+license: Apache-2.0
+status: verified
+provenance: mix
+provenance_evidence: >-
+  The upstream README attributes the formalization to Miguel A. L. Marques and
+  Stefano Pittalis and reports Claude assistance. The initial formalization
+  commit credits Claude as a co-author.
+main_declarations:
+- DFT.generic_hk_lattice_fermions_w
+- DFT.dimH_nonUVDens_lattice_fermions_w
+- DFT.ks_potential_exists_interior
+- DFT.lattice_myksoda
+main_results:
+- declaration: DFT.generic_hk_lattice_fermions_w
+  informal: >-
+    For interacting spinless fermions on a connected finite graph with symmetric
+    hopping amplitudes of a common sign, potentials whose ground state is
+    shared by a potential differing by more than a constant lie in a closed,
+    nowhere dense Lebesgue null set.
+- declaration: DFT.dimH_nonUVDens_lattice_fermions_w
+  informal: >-
+    On an M-site graph under the same hypotheses, densities from nondegenerate
+    ground states shared with an inequivalent potential have Hausdorff dimension
+    at most M minus three, truncated at zero.
+- declaration: DFT.ks_potential_exists_interior
+  informal: >-
+    A density in the relative interior of the lattice density domain is
+    representable by a noninteracting Kohn–Sham potential.
+- declaration: DFT.lattice_myksoda
+  informal: >-
+    The regularized lattice Kohn–Sham iteration decreases the regularized
+    energy and has an accumulation point. The energy converges to its minimum,
+    and the potential sequence along each convergent density subsequence gives
+    a minimizing reference density.
+tags:
+- density-functional-theory
+- spinless-fermions
+- convex-optimization
+msc:
+- 81V55
+- 81Q10
+- 90C25
