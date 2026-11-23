@@ -1,0 +1,100 @@
+/-
+Copyright (c) 2026 Vjekoslav Kovač, Quanyu Tang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Vjekoslav Kovač, Quanyu Tang
+-/
+
+module
+
+public import LeanPool.Egyptian.Comparison
+public import LeanPool.Egyptian.Payoff
+
+/-!
+# The comparison at the first decrease of a cleared numerator
+
+The inputs are the reciprocal terms `v i`. Multiplying the reciprocal
+remainder by the common denominator supplies precisely the prefix inequalities
+used here. The final index is written as `m+1`, so that the last denominator
+has index `m`.
+-/
+
+@[expose] public section
+
+namespace Egyptian.Payoff
+
+open Finset
+
+theorem reference_comparison {t : ℝ} (ht : 1 ≤ t) (v : ℕ → ℝ) (m : ℕ)
+    (hv : ∀ i < m, 0 < v i) (hm : ∀ i, i + 1 < m → v (i + 1) ≤ v i)
+    (hc : ∀ k, 0 < k → k ≤ m →
+      (∑ i ∈ range k, v i) + (1 / t) * ∏ i ∈ range k, v i ≤ 1 / t) :
+    (∑ i ∈ range m, v i) ≤ ∑ i ∈ range m, reference t i ∧
+      ((∑ i ∈ range m, reference t i) ≤ ∑ i ∈ range m, v i →
+        ∀ i < m, reference t i = v i) :=
+  variableComparison (reference t) v (fun _ => 1 / t) (1 / t) m
+    (fun i _ => reference_pos ht i) hv hm (fun _ _ _ => by positivity)
+    (fun k _ _ => reference_identity ht k) hc m le_rfl
+
+/-- The no-decrease bound, in the positive-remainder form. -/
+theorem no_decrease {t : ℝ} (ht : 1 ≤ t) (v : ℕ → ℝ) (m : ℕ)
+    (hv : ∀ i < m, 0 < v i) (hm : ∀ i, i + 1 < m → v (i + 1) ≤ v i)
+    (hc : ∀ k, 0 < k → k ≤ m →
+      (∑ i ∈ range k, v i) + (1 / t) * ∏ i ∈ range k, v i ≤ 1 / t) :
+    1 / orbit t m ≤ 1/t - ∑ i ∈ range m, v i := by
+  have he := (reference_comparison ht v m hv hm hc).1
+  rw [reference_sum ht] at he
+  linarith
+
+/-- At the first fall to the fraction δ of the initial numerator, the
+remainder is strictly larger than δ times the continuous reference error. -/
+theorem first_decrease {t δ : ℝ} (ht : 1 ≤ t) (hd : 0 < δ) (hd' : δ < 1)
+    (v : ℕ → ℝ) (m : ℕ) (hv : ∀ i < m + 1, 0 < v i)
+    (hm : ∀ i, i + 1 < m + 1 → v (i + 1) ≤ v i)
+    (hc : ∀ k, 0 < k → k ≤ m →
+      (∑ i ∈ range k, v i) + (1 / t) * ∏ i ∈ range k, v i ≤ 1 / t)
+    (hc' : (∑ i ∈ range (m + 1), v i) + (δ / t) * ∏ i ∈ range (m + 1), v i ≤ 1 / t) :
+    δ / orbit t (m+1) < 1/t - ∑ i ∈ range (m+1), v i := by
+  let a i := if i = m then 1/(orbit t m + δ) else reference t i
+  let c k := if k = m+1 then δ/t else 1/t
+  have ht' : 0 < t := by linarith
+  have hq : 0 < orbit t m := by have := one_le_orbit ht m; linarith
+  have hqd : 0 < orbit t m + δ := by positivity
+  have sa (k : ℕ) (hk : k ≤ m) : (∑ i ∈ range k, a i) = 1/t - 1/orbit t k :=
+    (sum_congr rfl (fun i hi => ite_eq_right (by have := mem_range.mp hi; omega))).trans
+      (reference_sum ht k)
+  have pa (k : ℕ) (hk : k ≤ m) : (∏ i ∈ range k, a i) = t / orbit t k :=
+    (prod_congr rfl (fun i hi => ite_eq_right (by have := mem_range.mp hi; omega))).trans
+      (reference_prod ht k)
+  have h := variableComparison a v c (1/t) (m+1) (by
+      intro i _
+      dsimp [a]
+      split
+      · positivity
+      · exact reference_pos ht i) hv hm (by
+      intro k _ _
+      dsimp [c]
+      split <;> positivity) (by
+      intro k _ hk
+      by_cases he : k = m+1
+      · subst k
+        rw [sum_range_succ, prod_range_succ, sa m le_rfl, pa m le_rfl]
+        simp only [a, c, ite_true]
+        field_simp
+        ring
+      · have hkm : k ≤ m := by omega
+        rw [sa _ hkm, pa _ hkm, ← reference_sum ht, ← reference_prod ht]
+        simpa only [c, ite_eq_right he] using reference_identity ht k) (by
+      intro k hk hkm
+      by_cases he : k = m+1
+      · simpa [c, he] using hc'
+      · simpa [c, he] using hc k hk (by omega))
+  have hs := (h (m+1) le_rfl).1
+  rw [sum_range_succ (f := a), sa m le_rfl] at hs
+  simp only [a, ite_true] at hs
+  have hlast : δ / orbit t (m+1) < 1/orbit t m - 1/(orbit t m + δ) := by
+    rw [orbit, phi]
+    field_simp
+    nlinarith [mul_pos (mul_pos hq hd) (sub_pos.mpr hd')]
+  linarith
+
+end Egyptian.Payoff

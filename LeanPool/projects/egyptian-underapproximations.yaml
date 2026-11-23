@@ -1,0 +1,37 @@
+slug: egyptian-underapproximations
+title: Eventually greedy best Egyptian underapproximations
+summary: For every positive rational target, best strict Egyptian underapproximations with denominators at least two can be constructed from a common optimal prefix followed by a uniquely optimal greedy tail. Among nondecreasing reciprocal expansions with denominators at least two, matching the extremal asymptotic growth forces eventual agreement with an optimizing sequence.
+branch: Egyptian fractions and discrete optimal control
+entry_module: LeanPool.Egyptian
+authors:
+- Vjekoslav Kovač
+- Quanyu Tang
+source:
+  title: Eventually greedy best Egyptian underapproximations of rational numbers via optimal control
+  authors:
+  - Vjekoslav Kovač
+  - Quanyu Tang
+  arxiv: 2607.28387v2
+  url: https://arxiv.org/abs/2607.28387v2
+  github_repo: VjekoKovac/lean-egyptian-underapproximations
+  commit: 8c7fbe0847a828e29d7dde64e80fc8b70414478a
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Egyptian.eventuallyGreedy
+- Egyptian.asymptoticRigidity
+main_results:
+- declaration: Egyptian.eventuallyGreedy
+  informal: For each positive rational target and either the nondecreasing or strictly increasing convention, among strict reciprocal underapproximations with denominators at least two, a single maximizing prefix extends optimally at every later length with the uniquely maximizing greedy tail of its remainder.
+  source_ref: Theorem 1
+- declaration: Egyptian.asymptoticRigidity
+  informal: For every positive rational target a benchmark nondecreasing reciprocal expansion with denominators at least two exists. Each benchmark has a finite positive limit of the normalized denominator growth. Every nondecreasing reciprocal expansion of the same target with denominators at least two has a strictly smaller growth liminf or eventually agrees with that benchmark term by term.
+  source_ref: Theorem 4
+tags:
+- egyptian-fractions
+- greedy-algorithms
+- optimal-control
+msc:
+- 11D68
+- 49N90
