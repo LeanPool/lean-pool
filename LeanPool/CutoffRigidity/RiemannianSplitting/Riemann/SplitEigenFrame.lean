@@ -42,14 +42,14 @@ variable {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M} [IsProbabilityMeasu
 
 include hV hμ hρ hCD hgap in
 /-- **Frame from the eigenbasis**: a frame `s` of size `k₁ = mFirstEigenDim` of eigenfunctions
-such that every eigenfunction is a linear combination of the `sᵢ`. -/
+such that every eigenfunction is a linear combination of the normalized functions `√ρ sᵢ`. -/
 theorem exists_frame_of_eigen :
     ∃ fr : Frame F M (mFirstEigenDim F μ V),
       (∀ i, IsMEigenfunction F μ V ρ (fr.s i)) ∧
       (∀ i j, ∫ x, (Real.sqrt ρ * fr.s i x) * (Real.sqrt ρ * fr.s j x) ∂μ =
         if i = j then 1 else 0) ∧
       ∀ f, IsMEigenfunction F μ V ρ f →
-        ∃ c : Fin (mFirstEigenDim F μ V) → ℝ, ∀ x, f x = ∑ i, c i * fr.s i x := by
+        ∃ c : Fin (mFirstEigenDim F μ V) → ℝ, ∀ x, f x = ∑ i, c i * (Real.sqrt ρ * fr.s i x) := by
   classical
   have : Nonempty M := inferInstance
   have := isOpenPosMeasure_of_weighted F hV hμ
@@ -120,9 +120,7 @@ theorem exists_frame_of_eigen :
       simp only [Pi.smul_apply, smul_eq_mul, hx]
     filter_upwards [ae_all_iff.2 hterm] with x hx
     exact Finset.sum_congr rfl fun i _ => hx i
-  refine ⟨fun i => c i * Real.sqrt ρ, fun x => ?_⟩
-  rw [e1 x]
-  exact Finset.sum_congr rfl fun i _ => by rw [mul_assoc, hn]
+  exact ⟨c, fun x ↦ by simpa only [hn] using e1 x⟩
 
 end EigenFrame
 

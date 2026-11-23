@@ -88,7 +88,7 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 
 /-- Finite weighted volume is positive on every nonempty open set. This makes the
 modelled extended metric space separable, and local compactness gives σ-compactness. -/
-theorem sigmaCompactSpace_of_finite_weightedVolume {V : M → ℝ} (hV : MSmooth F V)
+theorem sigmaCompactSpace_of_finite_weightedVolume {V : M → ℝ} (hV : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ V)
     {μ : Measure M} (hμ : IsWeightedVolume F μ V) [IsFiniteMeasure μ] : SigmaCompactSpace M := by
   let : μ.IsOpenPosMeasure := isOpenPosMeasure_of_weighted F hV hμ
   let : SeparableSpace M := separableSpace_of_finite_openPosMeasure μ

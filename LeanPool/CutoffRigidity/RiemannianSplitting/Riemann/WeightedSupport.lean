@@ -31,7 +31,8 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [RiemannianBundle (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [MeasurableSpace M] [BorelSpace M]
 
-theorem measure_pos_of_isWeightedVolume {μ : Measure M} {V : M → ℝ} (hV : MSmooth F V)
+theorem measure_pos_of_isWeightedVolume {μ : Measure M} {V : M → ℝ}
+    (hV : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ V)
     (hμ : IsWeightedVolume F μ V)
     (hcont : ∀ x₀ : M, ContinuousOn (chartVolumeDensity F x₀) (chartAt F x₀).target)
     (hpd : ∀ (x₀ : M) (z : F), z ∈ (chartAt F x₀).target → 0 < chartVolumeDensity F x₀ z)
@@ -85,7 +86,8 @@ variable [IsManifold 𝓘(ℝ, F) ∞ M]
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
 
 /-- The canonical weighted measure charges every nonempty open set. -/
-theorem isOpenPosMeasure_of_weighted {μ : Measure M} {V : M → ℝ} (hV : MSmooth F V)
+theorem isOpenPosMeasure_of_weighted {μ : Measure M} {V : M → ℝ}
+    (hV : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ V)
     (hμ : IsWeightedVolume F μ V) : μ.IsOpenPosMeasure :=
   ⟨fun U hU hne => (measure_pos_of_isWeightedVolume F hV hμ (continuousOn_chartVolumeDensity F)
     (fun x z hz => chartVolumeDensity_pos F x (z := z) hz) (U := U) hU hne).ne'⟩

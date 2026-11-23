@@ -8,7 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Statements
 public import TauCeti.Geometry.Manifold.Riemannian.VolumeDensity.ChangeOfVariables
 import TauCeti.Geometry.Manifold.Riemannian.Basic
 

@@ -73,17 +73,9 @@ theorem riemannian_gaussian_splitting_potential {V : M → ℝ} (hV : ContMDiff 
     intro x i
     field_simp
     rfl
-  have hE : ∀ f, CutCur.IsMEigenfunction F μ V ρ f →
-      ∃ c : Fin k → ℝ, ∀ x, f x = ∑ i, c i * (Real.sqrt ρ * fr.s i x) := by
-    intro f hf
-    obtain ⟨c, hc⟩ := hexp f hf
-    refine ⟨fun i => c i / Real.sqrt ρ, fun x => ?_⟩
-    rw [hc x]
-    refine Finset.sum_congr rfl fun i _ => ?_
-    field_simp
   obtain ⟨hA, hB⟩ := CutoffRigidity.Riemann.affine_items hρ
     (fun i x => Real.sqrt ρ * fr.s i x) hg horth (fun x => fr.sv x) hp
-    (CutCur.IsMEigenfunction F μ V ρ) hE
+    (CutCur.IsMEigenfunction F μ V ρ) hexp
   have hconn : ConnectedSpace fr.Level :=
     Function.Surjective.connectedSpace (f := fr.toLevel)
       (fun y => ⟨y.val, fr.toLevel_val y⟩) fr.contMDiff_toLevel.continuous
