@@ -64,8 +64,8 @@ main_results:
     If a probability law has the Ornstein–Uhlenbeck first and second moments
     in the Gaussian coordinate of an isometric splitting, its quadratic
     transport cost to equilibrium is bounded below by the squared projected
-    mean plus the squared difference of the projected standard deviations,
-    summed over Gaussian dimensions.
+    mean plus the squared difference of the square roots of the two total
+    projected variances.
 - declaration: CutoffRigidity.Paper.riemannian_transport_lower_of_moments
   informal: >-
     At Riemannian curvature equality, the splitting supplies a one-Lipschitz

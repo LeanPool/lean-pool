@@ -28,7 +28,6 @@ structure SplitData (M N : Type*) [PseudoEMetricSpace M] [MeasurableSpace M]
   μ' : Measure N
   prob' : IsProbabilityMeasure μ'
   aemeasurable : AEMeasurable Φ μ
-  surj : Function.Surjective Φ
   dist_sq : ∀ x y, edist x y ^ 2 = edist (Φ x).1 (Φ y).1 ^ 2 + edist (Φ x).2 (Φ y).2 ^ 2
   map_eq : μ.map Φ = (multivariateGaussian (0 : EuclideanSpace ℝ (Fin k))
     (ρ⁻¹ • (1 : Matrix (Fin k) (Fin k) ℝ))).prod μ'

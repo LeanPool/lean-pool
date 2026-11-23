@@ -52,7 +52,6 @@ theorem riemannian_transport_lower_of_moments {V : M → ℝ}
       prob' := hproperties.2.1
       aemeasurable := (Φ.contMDiff.continuous.fst.measurable.prodMk
         Φ.contMDiff.continuous.snd.measurable).aemeasurable
-      surj := Φ.surjective
       dist_sq := hdist
       map_eq := hmap }
   exact ⟨data.proj, data.lipschitz_proj, data.map_proj_eq,
