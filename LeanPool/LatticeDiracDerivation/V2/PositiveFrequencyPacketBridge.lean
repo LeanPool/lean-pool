@@ -44,32 +44,16 @@ private theorem wInner_cWeight_fintype_sum_left
     (field : Mode → Site → ℂ) (target : Site → ℂ) :
     ⟪(fun site => ∑ mode, field mode site), target⟫ₙ_[ℂ] =
       ∑ mode, ⟪field mode, target⟫ₙ_[ℂ] := by
-  classical
-  rw [show (fun site => ∑ mode, field mode site) =
-      ∑ mode, field mode by
-    funext site
-    simp]
-  induction (Finset.univ : Finset Mode) using Finset.induction_on with
-  | empty => simp
-  | @insert mode modes hmode ih =>
-      rw [Finset.sum_insert hmode, RCLike.wInner_add_left,
-        ih, Finset.sum_insert hmode]
+  simp_rw [RCLike.wInner_cWeight_eq_expect, RCLike.inner_apply, map_sum, Finset.mul_sum]
+  rw [Finset.expect_sum_comm]
 
 private theorem wInner_cWeight_fintype_sum_right
     [Fintype Mode] [Fintype Site]
     (source : Site → ℂ) (field : Mode → Site → ℂ) :
     ⟪source, (fun site => ∑ mode, field mode site)⟫ₙ_[ℂ] =
       ∑ mode, ⟪source, field mode⟫ₙ_[ℂ] := by
-  classical
-  rw [show (fun site => ∑ mode, field mode site) =
-      ∑ mode, field mode by
-    funext site
-    simp]
-  induction (Finset.univ : Finset Mode) using Finset.induction_on with
-  | empty => simp
-  | @insert mode modes hmode ih =>
-      rw [Finset.sum_insert hmode, RCLike.wInner_add_right,
-        ih, Finset.sum_insert hmode]
+  simp_rw [RCLike.wInner_cWeight_eq_expect, RCLike.inner_apply, Finset.sum_mul]
+  rw [Finset.expect_sum_comm]
 
 theorem periodic_quantized_scaled_character_orthogonal
     (L : ℕ) [NeZero L]

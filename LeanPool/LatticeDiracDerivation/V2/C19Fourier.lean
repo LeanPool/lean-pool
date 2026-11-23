@@ -32,7 +32,8 @@ theorem c19_weight_is_integer_weight (direction : C19Neighbor) :
   unfold c19Weight c19IntegerWeight
   split <;> norm_num
 
-/-- The weighted first stencil moment in one coordinate direction. -/
+/-- The weighted first stencil moment measures its response to the coordinate-linear
+part of an affine lattice field. -/
 def c19FirstMoment (axis : Fin 3) : ℤ :=
   ∑ direction, c19IntegerWeight direction * c19Coord axis direction
 
@@ -41,6 +42,7 @@ def c19SecondMoment (axis other : Fin 3) : ℤ :=
   ∑ direction, c19IntegerWeight direction *
     c19Coord axis direction * c19Coord other direction
 
+/-- The C19 weighted first-difference stencil annihilates coordinate-linear fields. -/
 theorem c19_first_moment_zero (axis : Fin 3) :
     c19FirstMoment axis = 0 := by
   fin_cases axis <;> decide
@@ -99,41 +101,68 @@ theorem c19_quadratic_symbol_eq_scaled_momentum (momentum : LatticeMomentum) :
   simp only [c19QuadraticSymbol, c19ScaledMomentum, mul_pow, c19_continuum_speed_square]
   ring
 
+/-- Contract the C19 phase with one stencil coordinate using the isotropic moment. -/
+theorem c19_linear_axis_moment
+    (momentum : LatticeMomentum) (axis : Fin 3) :
+    ∑ direction : C19Neighbor,
+        c19Weight direction * (c19Coord axis direction : ℝ) *
+          c19PhaseAngle momentum direction =
+      12 * momentum axis := by
+  have hmoment (first second : Fin 3) :
+      (∑ direction : C19Neighbor,
+        c19Weight direction * (c19Coord first direction : ℝ) *
+          (c19Coord second direction : ℝ)) =
+        (c19SecondMoment first second : ℝ) := by
+    simp_rw [c19_weight_is_integer_weight]
+    exact_mod_cast rfl
+  unfold c19PhaseAngle
+  simp_rw [Finset.mul_sum]
+  rw [Finset.sum_comm]
+  calc
+    (∑ x : Fin 3, ∑ direction : C19Neighbor,
+      c19Weight direction * (c19Coord axis direction : ℝ) *
+        (momentum x * (c19Coord x direction : ℝ))) =
+        ∑ x : Fin 3, momentum x *
+          (∑ direction : C19Neighbor,
+            c19Weight direction * (c19Coord axis direction : ℝ) *
+              (c19Coord x direction : ℝ)) := by
+      apply Finset.sum_congr rfl
+      intro x _
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro direction _
+      ring
+    _ = ∑ x : Fin 3, momentum x * c19SecondMoment axis x := by
+      apply Finset.sum_congr rfl
+      intro x _
+      rw [hmoment]
+    _ = 12 * momentum axis := by
+      simp [c19_second_moment_isotropic]
+      ring
+
 theorem c19_quadratic_symbol_is_phase_square_sum
     (momentum : LatticeMomentum) :
     c19QuadraticSymbol momentum =
       ∑ direction,
         c19Weight direction * c19PhaseAngle momentum direction ^ 2 := by
-  classical
-  have secondMoment (i j : Fin 3) :
-      (∑ d : C19Neighbor, c19Weight d * (c19Coord i d : ℝ) * (c19Coord j d : ℝ)) =
-        if i = j then 12 else 0 := by
-    rw [show (∑ d : C19Neighbor, c19Weight d * (c19Coord i d : ℝ) * (c19Coord j d : ℝ)) =
-        (c19SecondMoment i j : ℝ) by
-      simp only [c19SecondMoment, Int.cast_sum, Int.cast_mul, c19_weight_is_integer_weight]]
-    rw [c19_second_moment_isotropic]
-    split <;> norm_num
   symm
+  simp only [pow_two]
   calc
-    (∑ d : C19Neighbor, c19Weight d * c19PhaseAngle momentum d ^ 2) =
-        ∑ d : C19Neighbor, ∑ i : Fin 3, ∑ j : Fin 3,
-          (momentum i * momentum j) *
-            (c19Weight d * (c19Coord i d : ℝ) * (c19Coord j d : ℝ)) := by
-      refine Finset.sum_congr rfl fun d _ ↦ ?_
-      rw [c19PhaseAngle, pow_two, Finset.sum_mul, Finset.mul_sum]
-      refine Finset.sum_congr rfl fun i _ ↦ ?_
-      rw [Finset.mul_sum, Finset.mul_sum]
-      exact Finset.sum_congr rfl fun j _ ↦ by ring
-    _ = ∑ i : Fin 3, ∑ j : Fin 3,
-          (momentum i * momentum j) *
-            (∑ d : C19Neighbor, c19Weight d * (c19Coord i d : ℝ) * (c19Coord j d : ℝ)) := by
+    (∑ d : C19Neighbor, c19Weight d * (c19PhaseAngle momentum d * c19PhaseAngle momentum d)) =
+        ∑ d : C19Neighbor, ∑ axis : Fin 3, momentum axis *
+          (c19Weight d * (c19Coord axis d : ℝ) * c19PhaseAngle momentum d) := by
+      apply Finset.sum_congr rfl
+      intro d _
+      rw [show c19Weight d * (c19PhaseAngle momentum d * c19PhaseAngle momentum d) =
+        c19PhaseAngle momentum d * (c19Weight d * c19PhaseAngle momentum d) by ring]
+      nth_rw 1 [c19PhaseAngle]
+      rw [Finset.sum_mul]
+      exact Finset.sum_congr rfl fun axis _ ↦ by ring
+    _ = ∑ axis : Fin 3, momentum axis * (12 * momentum axis) := by
       rw [Finset.sum_comm]
-      refine Finset.sum_congr rfl fun i _ ↦ ?_
-      rw [Finset.sum_comm]
-      simp only [Finset.mul_sum]
+      simp only [← Finset.mul_sum, c19_linear_axis_moment]
     _ = c19QuadraticSymbol momentum := by
-      simp only [secondMoment, mul_ite, mul_zero, c19QuadraticSymbol, Fin.sum_univ_three]
-      norm_num
+      simp only [Fin.sum_univ_three, c19QuadraticSymbol]
       ring
 
 /-- The exact difference between the lattice symbol and its quadratic approximation. -/

@@ -332,44 +332,6 @@ theorem finite_c19_current_remainder_tends_to_zero
     hcontinuous.continuousAt
   simpa [finiteC19CurrentRemainder, c19PhaseAngle] using htend
 
-theorem c19_linear_axis_moment
-    (momentum : LatticeMomentum) (axis : Fin 3) :
-    ∑ direction : C19Neighbor,
-        c19Weight direction * (c19Coord axis direction : ℝ) *
-          c19PhaseAngle momentum direction =
-      12 * momentum axis := by
-  have hmoment (first second : Fin 3) :
-      (∑ direction : C19Neighbor,
-        c19Weight direction * (c19Coord first direction : ℝ) *
-          (c19Coord second direction : ℝ)) =
-        (c19SecondMoment first second : ℝ) := by
-    simp_rw [c19_weight_is_integer_weight]
-    exact_mod_cast rfl
-  unfold c19PhaseAngle
-  simp_rw [Finset.mul_sum]
-  rw [Finset.sum_comm]
-  calc
-    (∑ x : Fin 3, ∑ direction : C19Neighbor,
-      c19Weight direction * (c19Coord axis direction : ℝ) *
-        (momentum x * (c19Coord x direction : ℝ))) =
-        ∑ x : Fin 3, momentum x *
-          (∑ direction : C19Neighbor,
-            c19Weight direction * (c19Coord axis direction : ℝ) *
-              (c19Coord x direction : ℝ)) := by
-      apply Finset.sum_congr rfl
-      intro x _
-      rw [Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro direction _
-      ring
-    _ = ∑ x : Fin 3, momentum x * c19SecondMoment axis x := by
-      apply Finset.sum_congr rfl
-      intro x _
-      rw [hmoment]
-    _ = 12 * momentum axis := by
-      simp [c19_second_moment_isotropic]
-      ring
-
 theorem finite_c19_flux_is_continuum_plus_remainder
     (momentum : LatticeMomentum) (axis : Fin 3)
     (q : UniformCell2) :
