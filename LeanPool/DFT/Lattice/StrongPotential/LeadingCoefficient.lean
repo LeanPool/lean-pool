@@ -221,13 +221,8 @@ lemma det_kry_eval (A : Matrix C C ℝ) (Vint : C → ℝ) (n : V → C → ℝ)
     (lam : ℝ) :
     (kry (Hl A Vint (fun y => ∑ i, u i * n i y)) c ord).det.eval lam =
       (kry (hamN (A + Matrix.diagonal Vint) n (lam • u)) c ord).det := by
-  rw [← Polynomial.coe_evalRingHom, RingHom.map_det, ← Hl_eval]
-  congr 1
-  ext i j
-  have hp : ((Hl A Vint (fun y => ∑ i, u i * n i y)).map (Polynomial.eval lam)) ^ ord j =
-      ((Hl A Vint (fun y => ∑ i, u i * n i y)) ^ ord j).map (Polynomial.eval lam) := by
-    rw [← Polynomial.coe_evalRingHom, ← RingHom.mapMatrix_apply, ← map_pow, RingHom.mapMatrix_apply]
-  simp only [kry, RingHom.mapMatrix_apply, Matrix.map_apply, hp, Polynomial.coe_evalRingHom]
+  rw [← Polynomial.coe_evalRingHom, RingHom.map_det, RingHom.mapMatrix_apply, kry_map,
+    Polynomial.coe_evalRingHom, Hl_eval]
 
 omit [DecidableEq V] in
 /-- **Reduction to free fermions.** If the leading strong-potential coefficient of the

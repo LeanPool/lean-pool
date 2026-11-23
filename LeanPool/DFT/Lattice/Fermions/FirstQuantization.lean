@@ -30,10 +30,6 @@ open Matrix
 
 variable {M N : ℕ}
 
-/-- First-quantised one-body operator. -/
-def H1 (h : Matrix (Fin M) (Fin M) ℝ) (f : (Fin N → Fin M) → ℝ) : (Fin N → Fin M) → ℝ :=
-  fun τ => ∑ i, ∑ b, h (τ i) b * f (Function.update τ i b)
-
 lemma amp_antisym (c : Conf M N) : Antisym (fun τ => amp c τ) := fun τ σ => by
   simp only [amp]; exact slater_perm _ τ σ
 
@@ -54,19 +50,6 @@ lemma H1_antisym (h : Matrix (Fin M) (Fin M) ℝ) {f : (Fin N → Fin M) → ℝ
       simp [Function.update_of_ne hk, Function.update_of_ne this]
   simp only [Equiv.apply_symm_apply]
   rw [hupd, hf]; ring
-
-lemma H1_conf (h : Matrix (Fin M) (Fin M) ℝ) {f : (Fin N → Fin M) → ℝ} (hf : Antisym f)
-    (s : Conf M N) :
-    H1 h f (τs s) = ((Γ h : Matrix (Conf M N) (Conf M N) ℝ) *ᵥ (fun s' => f (τs s'))) s := by
-  simp only [H1, Matrix.mulVec, dotProduct, Γ]
-  have e : ∀ k b, h (τs s k) b * f (Function.update (τs s) k b) =
-      ∑ s', h (τs s k) b * amp s' (Function.update (τs s) k b) * f (τs s') := by
-    intro k b
-    rw [antisym_expand hf (Function.update (τs s) k b), Finset.mul_sum]
-    apply Finset.sum_congr rfl; intro s' _; ring
-  simp_rw [e, Finset.sum_mul]
-  conv_lhs => rw [Finset.sum_congr rfl (fun k _ => Finset.sum_comm)]
-  rw [Finset.sum_comm]
 
 theorem gamma_pow_apply (h : Matrix (Fin M) (Fin M) ℝ) (c : Conf M N) (k : ℕ) (s : Conf M N) :
     ((Γ h : Matrix (Conf M N) (Conf M N) ℝ) ^ k) s c = (H1 h)^[k] (fun τ => amp c τ) (τs s) := by

@@ -101,7 +101,7 @@ theorem dimH_nonUVDens_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [Deci
     (hsp : ShortestPathSigned G t) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
     dimH (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)) ≤ (M : ENNReal) - 3 := by
   obtain ⟨P, hP, hPZ⟩ := exists_poly_lattice_fermions_shortest hG htsym hsp hN0 hNM Vint
-  simpa using dimH_nonUVDens_le (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF_eq⟩ hP hPZ
+  simpa using dimH_nonUVDens_le (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF⟩ hP hPZ
 
 /-- `dimH_nonUVDens_lattice_fermions_shortest` in the form `dimH + 3 ≤ M` (when there are non-uv
 densities at all). -/
@@ -111,7 +111,7 @@ theorem dimH_nonUVDens_lattice_fermions_shortest' {G : SimpleGraph (Fin M)} [Dec
     (hne : (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)).Nonempty) :
     dimH (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)) + 3 ≤ M := by
   obtain ⟨P, hP, hPZ⟩ := exists_poly_lattice_fermions_shortest hG htsym hsp hN0 hNM Vint
-  simpa using dimH_nonUVDens (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF_eq⟩ hP hPZ hne
+  simpa using dimH_nonUVDens (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF⟩ hP hPZ hne
 
 /-! ### The class -/
 

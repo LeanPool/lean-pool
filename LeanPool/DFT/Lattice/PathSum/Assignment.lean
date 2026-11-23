@@ -9,7 +9,7 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.Fermions.SecondQuantization
-public import LeanPool.DFT.Lattice.StrongPotential.PowerSums
+public import LeanPool.DFT.Lattice.StrongPotential.LeadingCoefficient
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 meta import Mathlib.Tactic.Push
 

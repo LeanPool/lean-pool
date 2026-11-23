@@ -131,12 +131,8 @@ namespace DFT
 
 variable {M N : ℕ}
 
-lemma orbEnergy_eq_sum (ε : Fin M → ℝ) (S : Conf M N) : orbEnergy ε S = ∑ a ∈ S.1, ε a := by
-  unfold orbEnergy τs
-  have hmap : Finset.univ.map (S.1.orderEmbOfFin S.2).toEmbedding = S.1 := by
-    ext a; simp
-  conv_rhs => rw [← hmap]
-  rw [Finset.sum_map]; rfl
+lemma orbEnergy_eq_sum (ε : Fin M → ℝ) (S : Conf M N) : orbEnergy ε S = ∑ a ∈ S.1, ε a :=
+  sum_tau_eq_sum S ε
 
 /-- Exchange inequality: if every element of `A` is below every element of `B` and `|A| = |B|`, then
 `Σ_A ε ≤ Σ_B ε`. -/

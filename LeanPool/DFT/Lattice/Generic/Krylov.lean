@@ -9,11 +9,11 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.HK.Basic
-public import Mathlib.Analysis.Analytic.Polynomial
-public import Mathlib.Analysis.Analytic.Uniqueness
 public import Mathlib.Algebra.MvPolynomial.Funext
+import Mathlib.Algebra.CharZero.Infinite
 public import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
 public import Mathlib.Topology.Algebra.MvPolynomial
+public import Mathlib.Topology.Instances.Real.Lemmas
 meta import Mathlib.Tactic.Push
 
 /-!
@@ -40,6 +40,14 @@ variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V]
 /-- Krylov matrix of `e_c` under `H`; column `j` is `H ^ (ord j) e_c`. -/
 def kry {R : Type*} [CommRing R] (H : Matrix C C R) (c : C) (ord : C → ℕ) : Matrix C C R :=
   fun i j => (H ^ ord j) i c
+
+/-- A ring homomorphism commutes with formation of the Krylov matrix. -/
+lemma kry_map {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) (H : Matrix C C R)
+    (c : C) (ord : C → ℕ) : (kry H c ord).map f = kry (H.map f) c ord := by
+  ext i j
+  have hpow : (H.map f) ^ ord j = (H ^ ord j).map f := by
+    rw [← RingHom.mapMatrix_apply, ← map_pow, RingHom.mapMatrix_apply]
+  simp only [kry, Matrix.map_apply, hpow]
 
 lemma det_kry_eq_zero {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ} {E : ℝ}
     (hψ : ψ ≠ 0) (hE : H *ᵥ ψ = E • ψ) {c : C} (hc : ψ c = 0) (ord : C → ℕ) :
@@ -79,13 +87,7 @@ noncomputable def krylovPoly (H0 : Matrix C C ℝ) (n : V → C → ℝ) (c : C)
 omit [DecidableEq V] in
 lemma eval_krylovPoly (H0 : Matrix C C ℝ) (n : V → C → ℝ) (c : C) (ord : C → ℕ) (v : V → ℝ) :
     MvPolynomial.eval v (krylovPoly H0 n c ord) = (kry (hamN H0 n v) c ord).det := by
-  rw [krylovPoly, RingHom.map_det, ← hamP_eval]
-  congr 1
-  ext i j
-  have hp : ((hamP H0 n).map (MvPolynomial.eval v)) ^ ord j =
-      ((hamP H0 n) ^ ord j).map (MvPolynomial.eval v) := by
-    rw [← RingHom.mapMatrix_apply, ← map_pow, RingHom.mapMatrix_apply]
-  simp only [kry, RingHom.mapMatrix_apply, Matrix.map_apply, hp]
+  rw [krylovPoly, RingHom.map_det, RingHom.mapMatrix_apply, kry_map, hamP_eval]
 
 omit [DecidableEq V] in
 theorem nonUVMod_imp_krylov_zero {Tr : Set (V → ℝ)} {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm)
@@ -113,26 +115,22 @@ theorem nonUV_imp_krylov_zero {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V →
 
 omit [Fintype V] [DecidableEq V] in
 /-- A real polynomial vanishing on a nonempty open set is the zero polynomial. -/
-theorem eq_zero_of_vanish_on_open [Finite V] {P : MvPolynomial V ℝ} {U : Set (V → ℝ)}
+theorem eq_zero_of_vanish_on_open {P : MvPolynomial V ℝ} {U : Set (V → ℝ)}
     (hU : IsOpen U)
     {z : V → ℝ} (hz : z ∈ U) (h : ∀ v ∈ U, MvPolynomial.eval v P = 0) : P = 0 := by
-  let := Fintype.ofFinite V
-  have han : AnalyticOnNhd ℝ (fun x : V → ℝ => MvPolynomial.eval x P) Set.univ := by
-    simpa using AnalyticOnNhd.eval_continuousLinearMap (ContinuousLinearMap.id ℝ (V → ℝ)) P
-  have hev : (fun x : V → ℝ => MvPolynomial.eval x P) =ᶠ[nhds z] 0 :=
-    Filter.eventually_of_mem (hU.mem_nhds hz) (fun x hx => h x hx)
-  have := han.eqOn_zero_of_preconnected_of_eventuallyEq_zero isPreconnected_univ
-      (Set.mem_univ z) hev
-  apply MvPolynomial.funext
-  intro x
-  simpa using this (Set.mem_univ x)
+  have hmem := hU.mem_nhds hz
+  rw [nhds_pi] at hmem
+  obtain ⟨I, -, sides, hsides, hsub⟩ := Filter.mem_pi.mp hmem
+  refine MvPolynomial.funext_set sides (fun i => infinite_of_mem_nhds (z i) (hsides i)) ?_
+  intro x hx
+  have hbox : x ∈ I.pi sides := fun i _ => hx i (Set.mem_univ i)
+  simpa only [map_zero] using h x (hsub hbox)
 
 omit [Fintype V] [DecidableEq V] in
 /-- Zero set of a nonzero polynomial: closed with empty interior. -/
-theorem zeroSet_closed_nowhere [Finite V] {P : MvPolynomial V ℝ} (hP : P ≠ 0) :
+theorem zeroSet_closed_nowhere {P : MvPolynomial V ℝ} (hP : P ≠ 0) :
     IsClosed {v : V → ℝ | MvPolynomial.eval v P = 0} ∧
       interior {v : V → ℝ | MvPolynomial.eval v P = 0} = ∅ := by
-  let := Fintype.ofFinite V
   refine ⟨isClosed_eq (MvPolynomial.continuous_eval P) continuous_const, ?_⟩
   by_contra hne
   obtain ⟨z, hz⟩ := Set.nonempty_iff_ne_empty.mpr hne

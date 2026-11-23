@@ -10,6 +10,7 @@ module
 
 public import LeanPool.DFT.Lattice.KohnSham.Maximizer
 public import Mathlib.Analysis.LocallyConvex.Separation
+public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Topology.Instances.Matrix
 meta import Mathlib.Tactic.FunProp
 meta import Mathlib.Tactic.Linarith
@@ -37,26 +38,9 @@ open Matrix Filter Topology
 
 variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V] [Nonempty C]
 
-omit [DecidableEq C] [Nonempty C] in
-lemma continuous_qf (H : Matrix C C ℝ) : Continuous fun ψ : C → ℝ => qf H ψ := by
-  unfold qf dotProduct mulVec dotProduct; fun_prop
-
 omit [DecidableEq C] [DecidableEq V] [Nonempty C] in
 lemma continuous_dens (n : V → C → ℝ) (w : V → ℝ) : Continuous fun ψ : C → ℝ => w ⬝ᵥ dens n ψ := by
   unfold dotProduct dens; fun_prop
-
-omit [DecidableEq C] [Nonempty C] in
-lemma isCompact_sphere1 : IsCompact {ψ : C → ℝ | ψ ⬝ᵥ ψ = 1} := by
-  apply Metric.isCompact_of_isClosed_isBounded
-  · exact isClosed_eq (by unfold dotProduct; fun_prop) continuous_const
-  · refine (Metric.isBounded_closedBall (x := (0 : C → ℝ)) (r := 1)).subset fun ψ hψ => ?_
-    simp only [Set.mem_ofPred_eq] at hψ
-    rw [Metric.mem_closedBall, dist_zero_right, pi_norm_le_iff_of_nonneg zero_le_one]
-    intro c
-    rw [Real.norm_eq_abs, abs_le_one_iff_mul_self_le_one]
-    rw [← hψ]
-    exact Finset.single_le_sum (f := fun d => ψ d * ψ d) (fun d _ => mul_self_nonneg _)
-        (Finset.mem_univ c)
 
 section
 variable {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ} (hn0 : ∀ i c, 0 ≤ n i c) {Nr : ℝ}
@@ -119,7 +103,7 @@ end
 
 /-- Ground-state ensembles of `H(v)`: density matrices supported on the ground-state space. -/
 def Ens (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) : Set (Matrix C C ℝ) :=
-  {Γ | Γᵀ = Γ ∧ (∀ x : C → ℝ, 0 ≤ x ⬝ᵥ (Γ *ᵥ x)) ∧ Γ.trace = 1 ∧ hamN H0 n v * Γ = Egs H0 n v • Γ}
+  {Γ | Γ.PosSemidef ∧ Γ.trace = 1 ∧ hamN H0 n v * Γ = Egs H0 n v • Γ}
 
 /-- Density of an ensemble. -/
 def ensDens (n : V → C → ℝ) (Γ : Matrix C C ℝ) : V → ℝ := fun i => ∑ c, n i c * Γ c c
@@ -135,13 +119,8 @@ lemma pure_mem_Ens {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ)
     have := isGroundState_eigen (hamN_isSymm hH0 n v) hψ
     rw [hn, div_one, qf_groundState_eq (hamN_isSymm hH0 n v) hψ hn] at this
     exact this
-  refine ⟨?_, fun x => ?_, ?_, ?_⟩
-  · ext a b; simp [vecMulVec, mul_comm]
-  · have : x ⬝ᵥ (vecMulVec ψ ψ *ᵥ x) = (ψ ⬝ᵥ x) * (ψ ⬝ᵥ x) := by
-      simp only [vecMulVec, mulVec, dotProduct, of_apply, Finset.mul_sum, Finset.sum_mul]
-      rw [Finset.sum_comm]
-      apply Finset.sum_congr rfl; intro a _; apply Finset.sum_congr rfl; intro b _; ring
-    rw [this]; exact mul_self_nonneg _
+  refine ⟨?_, ?_, ?_⟩
+  · simpa only [star_trivial] using Matrix.posSemidef_vecMulVec_self_star ψ
   · simpa [Matrix.trace, vecMulVec, dotProduct] using hn
   · rw [mul_vecMulVec, heig]; ext a b; simp [vecMulVec, mul_assoc]
 
@@ -157,9 +136,10 @@ lemma quad_single (Γ : Matrix C C ℝ) (a b : C) (s : ℝ) :
 omit [DecidableEq V] in
 lemma Ens_bound {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v : V → ℝ} {Γ : Matrix C C ℝ}
     (hΓ : Γ ∈ Ens H0 n v) (a b : C) : Γ a b ∈ Set.Icc (-1 : ℝ) 1 := by
-  obtain ⟨hT, hP, htr, -⟩ := hΓ
-  have hdiag : ∀ c, 0 ≤ Γ c c := fun c => by
-    have := hP (Pi.single c 1); simpa [mulVec_single_one, single_one_dotProduct] using this
+  obtain ⟨hP, htr, -⟩ := hΓ
+  have hdiag (c : C) : 0 ≤ Γ c c := hP.diag_nonneg
+  have hquad (x : C → ℝ) : 0 ≤ x ⬝ᵥ (Γ *ᵥ x) := by
+    simpa only [star_trivial] using hP.dotProduct_mulVec_nonneg x
   have hdle : ∀ c d, c ≠ d → Γ c c + Γ d d ≤ 1 := by
     intro c d hcd
     rw [← htr, Matrix.trace, ← Finset.add_sum_erase _ _ (Finset.mem_univ c),
@@ -167,7 +147,7 @@ lemma Ens_bound {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v : V → ℝ} {Γ 
     simp only [diag_apply]
     have : 0 ≤ ∑ x ∈ (Finset.univ.erase c).erase d, Γ x x := Finset.sum_nonneg fun x _ => hdiag x
     linarith
-  have hsym : Γ b a = Γ a b := by rw [← transpose_apply Γ a b, hT]
+  have hsym : Γ b a = Γ a b := by rw [← transpose_apply Γ a b, hP.isHermitian.isSymm.eq]
   by_cases hab : a = b
   · subst hab
     obtain ⟨c⟩ := (inferInstance : Nonempty C)
@@ -175,8 +155,8 @@ lemma Ens_bound {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v : V → ℝ} {Γ 
       rw [← htr, Matrix.trace]
       exact Finset.single_le_sum (f := fun x => Γ x x) (fun x _ => hdiag x) (Finset.mem_univ a)
     exact ⟨by linarith [hdiag a], h1⟩
-  · have hp := hP (Pi.single a 1 + (1 : ℝ) • Pi.single b 1)
-    have hm := hP (Pi.single a 1 + (-1 : ℝ) • Pi.single b 1)
+  · have hp := hquad (Pi.single a 1 + (1 : ℝ) • Pi.single b 1)
+    have hm := hquad (Pi.single a 1 + (-1 : ℝ) • Pi.single b 1)
     rw [quad_single Γ a b] at hp hm
     rw [hsym] at hp hm
     have := hdle a b hab
@@ -184,12 +164,8 @@ lemma Ens_bound {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v : V → ℝ} {Γ 
 
 omit [DecidableEq V] in
 lemma convex_Ens (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) : Convex ℝ (Ens H0 n v) := by
-  rintro Γ1 ⟨h1T, h1P, h1t, h1H⟩ Γ2 ⟨h2T, h2P, h2t, h2H⟩ a b ha hb hab
-  refine ⟨?_, fun x => ?_, ?_, ?_⟩
-  · rw [transpose_add, transpose_smul, transpose_smul, h1T, h2T]
-  · rw [add_mulVec, smul_mulVec, smul_mulVec, dotProduct_add, dotProduct_smul, dotProduct_smul,
-      smul_eq_mul, smul_eq_mul]
-    nlinarith [h1P x, h2P x]
+  rintro Γ1 ⟨h1P, h1t, h1H⟩ Γ2 ⟨h2P, h2t, h2H⟩ a b ha hb hab
+  refine ⟨(h1P.smul ha).add (h2P.smul hb), ?_, ?_⟩
   · rw [trace_add, trace_smul, trace_smul, h1t, h2t, smul_eq_mul, smul_eq_mul]; linarith
   · rw [Matrix.mul_add, Matrix.mul_smul, Matrix.mul_smul, h1H, h2H, smul_comm a, smul_comm b,
       ← smul_add]
@@ -202,18 +178,12 @@ lemma isCompact_Ens (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) 
     continuous_matrix fun i j => (continuous_apply j).comp (continuous_apply i)
   have hbox := hpi.image hof
   refine IsCompact.of_isClosed_subset hbox ?_ ?_
-  · change IsClosed {Γ : Matrix C C ℝ | Γᵀ = Γ ∧ (∀ x : C → ℝ, 0 ≤ x ⬝ᵥ (Γ *ᵥ x)) ∧ Γ.trace = 1 ∧
+  · change IsClosed {Γ : Matrix C C ℝ | Γ.PosSemidef ∧ Γ.trace = 1 ∧
       hamN H0 n v * Γ = Egs H0 n v • Γ}
-    simp only [Set.ofPred_and, Set.ofPred_forall]
-    refine IsClosed.inter (isClosed_eq continuous_id.matrix_transpose continuous_id) ?_
-    refine IsClosed.inter ?_ ?_
-    · exact isClosed_iInter fun x => isClosed_le continuous_const
-        (by
-          unfold dotProduct
-          exact continuous_finsetSum _ fun i _ => continuous_const.mul
-            ((continuous_apply i).comp (continuous_id.matrix_mulVec continuous_const)))
-    · exact IsClosed.inter (isClosed_eq continuous_id.matrix_trace continuous_const)
-        (isClosed_eq (continuous_const.matrix_mul continuous_id) (continuous_const_smul _))
+    simp only [Set.ofPred_and]
+    exact IsClosed.inter isClosed_setOfPred_posSemidef
+      ((isClosed_eq continuous_id.matrix_trace continuous_const).inter
+        (isClosed_eq (continuous_const.matrix_mul continuous_id) (continuous_const_smul _)))
   · intro Γ hΓ
     refine ⟨fun i j => Γ i j, ?_, rfl⟩
     simp only [Set.mem_pi, Set.mem_univ, true_implies]

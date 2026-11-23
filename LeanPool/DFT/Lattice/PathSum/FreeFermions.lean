@@ -10,6 +10,7 @@ module
 
 public import LeanPool.DFT.Lattice.PathSum.Assignment
 public import LeanPool.DFT.Lattice.Fermions.FirstQuantization
+public import LeanPool.DFT.Lattice.StrongPotential.PowerSums
 meta import Mathlib.Tactic.Push
 meta import Mathlib.Tactic.Ring
 

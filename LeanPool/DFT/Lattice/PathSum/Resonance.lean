@@ -46,6 +46,17 @@ lemma uline_tendsto (us δ : Fin M → ℝ) (i : Fin M) :
 section
 variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
 
+/-- Convergence of the coefficients on the selected layer gives convergence of the route sum. -/
+private theorem tendsto_predecessorSum {ι : Type*} {F : Filter ι} (b q : Fin M)
+    (layer : ℕ → Prop) [DecidablePred layer] {f : Fin M → ι → ℝ} {limit : Fin M → ℝ}
+    (h : ∀ r, G.Adj q r ∧ layer (G.dist b r) → Tendsto (f r) F (𝓝 (limit r))) :
+    Tendsto (fun x => predecessorSum G t b q layer (fun r => f r x)) F
+      (𝓝 (predecessorSum G t b q layer limit)) := by
+  refine tendsto_finsetSum _ fun r _ => ?_
+  by_cases hr : G.Adj q r ∧ layer (G.dist b r)
+  · simpa only [ite_eq_left hr] using tendsto_const_nhds.mul (h r hr)
+  · simp only [ite_eq_right hr]; exact tendsto_const_nhds
+
 theorem gr_tendsto_plain (us δ : Fin M → ℝ) (b a : Fin M) (n0 : ℕ)
     (hA : ∀ r, G.dist b r ≤ n0 → us r ≠ us a) :
     ∀ n ≤ n0, ∀ q, Tendsto (fun ε => Gr G t (uline us δ ε) b a n q) (𝓝[≠] 0)
@@ -65,21 +76,16 @@ theorem gr_tendsto_plain (us δ : Fin M → ℝ) (b a : Fin M) (n0 : ℕ)
     simp only [Gr]
     split_ifs with hq
     · have hne : us a - us q ≠ 0 := sub_ne_zero.mpr (fun h => hA q (by omega) h.symm)
-      refine Tendsto.div (tendsto_finsetSum (f := fun r ε => if G.Adj q r ∧ G.dist b r = n then
-          -t q r * Gr G t (uline us δ ε) b a n r else 0) _ fun r _ => ?_)
+      exact (tendsto_predecessorSum G t b q (· = n) (fun r _ => ih (by omega) r)).div
         ((uline_tendsto us δ a).sub (uline_tendsto us δ q)) hne
-      by_cases h : G.Adj q r ∧ G.dist b r = n
-      · simp only [ite_eq_left h]; exact tendsto_const_nhds.mul (ih (by omega) r)
-      · simp only [ite_eq_right h]; exact tendsto_const_nhds
     · exact tendsto_const_nhds
 
 /-- Limits of the hatted route sums. -/
 noncomputable def Λ (us : Fin M → ℝ) (b a π : Fin M) : ℕ → Fin M → ℝ
   | 0, q => if q = b ∧ q = π then 1 else 0
   | n + 1, q => if G.dist b q = n + 1 then
-      (if q = π then ∑ r, (if G.Adj q r ∧ G.dist b r = n then -t q r * Gr G t us b a n r else 0)
-       else (∑ r, (if G.Adj q r ∧ G.dist b r = n then -t q r * Λ us b a π n r else 0)) /
-           (us a - us q))
+      (if q = π then predecessorSum G t b q (· = n) (Gr G t us b a n)
+       else predecessorSum G t b q (· = n) (Λ us b a π n) / (us a - us q))
       else 0
 
 theorem gr_tendsto_hat (us δ : Fin M → ℝ) (b a π : Fin M) (hπ : us a = us π)
@@ -132,39 +138,29 @@ theorem gr_tendsto_hat (us δ : Fin M → ℝ) (b a π : Fin M) (hπ : us a = us
           rcases hgen r h with h1 | h1
           · subst h1; omega
           · subst h1; omega)
-        have hL : Λ G t us b a q (n + 1) q = ∑ r, (if G.Adj q r ∧ G.dist b r = n then
-            -t q r * Gr G t us b a n r else 0) := by simp [Λ, hq]
+        have hL : Λ G t us b a q (n + 1) q =
+            predecessorSum G t b q (· = n) (Gr G t us b a n) := by simp [Λ, hq]
         rw [hL]
-        refine Tendsto.congr' ?_
-            (tendsto_finsetSum (f := fun r ε => if G.Adj q r ∧ G.dist b r = n then
-          -t q r * Gr G t (uline us δ ε) b a n r else 0) _ fun r _ => ?_)
-        · filter_upwards [hev] with ε hε
-          simp only [Gr, ite_eq_left hq]
-          field_simp
-        · by_cases h : G.Adj q r ∧ G.dist b r = n
-          · simp only [ite_eq_left h]; exact tendsto_const_nhds.mul (hplain n le_rfl r)
-          · simp only [ite_eq_right h]; exact tendsto_const_nhds
+        refine (tendsto_predecessorSum G t b q (· = n) (fun r _ => hplain n le_rfl r)).congr' ?_
+        filter_upwards [hev] with ε hε
+        simp only [Gr, ite_eq_left hq]
+        field_simp
       · have hne : us a - us q ≠ 0 := by
           intro h; rcases hgen q (by linarith) with h1 | h1
           · subst h1; omega
           · exact hqπ h1
-        have hL : Λ G t us b a π (n + 1) q = (∑ r, (if G.Adj q r ∧ G.dist b r = n then
-            -t q r * Λ G t us b a π n r else 0)) / (us a - us q) := by simp [Λ, hq, hqπ]
+        have hL : Λ G t us b a π (n + 1) q =
+            predecessorSum G t b q (· = n) (Λ G t us b a π n) / (us a - us q) := by
+          simp [Λ, hq, hqπ]
         rw [hL]
-        refine Tendsto.congr' ?_ (Tendsto.div (tendsto_finsetSum (f := fun r ε => if G.Adj q r ∧
-          G.dist b r = n then
-              -t q r * ((uline us δ ε a - uline us δ ε π) * Gr G t (uline us δ ε) b a n r)
-          else 0) _ fun r _ => ?_)
-          ((uline_tendsto us δ a).sub (uline_tendsto us δ q)) hne)
-        · refine Eventually.of_forall fun ε => ?_
-          simp only [Gr, ite_eq_left hq, Pi.div_apply]
-          rw [mul_div_assoc', Finset.mul_sum]
-          congr 1
-          apply Finset.sum_congr rfl; intro r _
-          split_ifs <;> ring
-        · by_cases h : G.Adj q r ∧ G.dist b r = n
-          · simp only [ite_eq_left h]; exact tendsto_const_nhds.mul (ih (by omega) r)
-          · simp only [ite_eq_right h]; exact tendsto_const_nhds
+        refine ((tendsto_predecessorSum G t b q (· = n) (fun r _ => ih (by omega) r)).div
+          ((uline_tendsto us δ a).sub (uline_tendsto us δ q)) hne).congr' ?_
+        refine Eventually.of_forall fun ε => ?_
+        simp only [Gr, ite_eq_left hq, Pi.div_apply, predecessorSum]
+        rw [mul_div_assoc', Finset.mul_sum]
+        congr 1
+        apply Finset.sum_congr rfl; intro r _
+        split_ifs <;> ring
     · have hL : Λ G t us b a π (n + 1) q = 0 := by simp [Λ, hq]
       rw [hL]
       refine tendsto_const_nhds.congr' (Eventually.of_forall fun ε => ?_)
@@ -188,7 +184,7 @@ theorem Λ_supp (hG : G.Connected) (us : Fin M → ℝ) (b a π : Fin M) :
     · subst hqπ; simp [hd]
     · have hnum : ∑ r, (if G.Adj q r ∧ G.dist b r = n then -t q r * Λ G t us b a π n r else 0) ≠
         0 := by
-        intro h0; apply hq; rw [h0, zero_div]
+        intro h0; apply hq; simp only [predecessorSum, h0, zero_div]
       obtain ⟨r, -, hr⟩ := Finset.exists_ne_zero_of_sum_ne_zero hnum
       split_ifs at hr with hrq
       · have hΛ : Λ G t us b a π n r ≠ 0 := by intro h0; apply hr; rw [h0, mul_zero]
@@ -216,33 +212,31 @@ variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M →
 
 /-- Limit value of a resonant factor. -/
 noncomputable def Lval (us : Fin M → ℝ) (b a π : Fin M) : ℝ :=
-  ∑ p, (if G.Adj a p ∧ G.dist b p + 1 = G.dist b a then
-      -t a p * Λ G t us b a π (G.dist b p) p else 0)
+  predecessorSum G t b a (fun depth => depth + 1 = G.dist b a)
+    (fun p => Λ G t us b a π (G.dist b p) p)
 
 lemma alphaExp_self (u : Fin M → ℝ) (b : Fin M) : alphaExp G t u b b = 1 := by
-  simp [alphaExp, SimpleGraph.dist_self]
+  simp [alphaExp, predecessorSum, SimpleGraph.dist_self]
 
 lemma factor_moved_tendsto (us δ : Fin M → ℝ) (b a π : Fin M) (hab : a ≠ b) (hπ : us a = us π)
     (hgen : ∀ z, us z = us a → z = a ∨ z = π) (hδ : δ a ≠ δ π) :
     Tendsto (fun ε => (uline us δ ε a - uline us δ ε π) * alphaExp G t (uline us δ ε) b a) (𝓝[≠] 0)
       (𝓝 (Lval G t us b a π)) := by
   have hfun : (fun ε => (uline us δ ε a - uline us δ ε π) * alphaExp G t (uline us δ ε) b a) =
-      fun ε => ∑ p, (if G.Adj a p ∧ G.dist b p + 1 = G.dist b a then
-        -t a p * ((uline us δ ε a - uline us δ ε π) * Gr G t (uline us δ ε) b a (G.dist b p) p) else
-            0) := by
+      fun ε => predecessorSum G t b a (fun depth => depth + 1 = G.dist b a)
+        (fun p => (uline us δ ε a - uline us δ ε π) *
+          Gr G t (uline us δ ε) b a (G.dist b p) p) := by
     funext ε
-    simp only [alphaExp, ite_eq_right hab, zero_add, Finset.mul_sum]
+    simp only [alphaExp, predecessorSum, ite_eq_right hab, zero_add, Finset.mul_sum]
     apply Finset.sum_congr rfl; intro p _
     split_ifs <;> ring
   rw [hfun]
-  apply tendsto_finsetSum; intro p _
-  by_cases h : G.Adj a p ∧ G.dist b p + 1 = G.dist b a
-  · simp only [ite_eq_left h]
-    exact tendsto_const_nhds.mul (gr_tendsto_hat G t us δ b a π hπ hgen hδ _ (by omega) p)
-  · simp only [ite_eq_right h]; exact tendsto_const_nhds
+  refine tendsto_predecessorSum G t b a (fun depth => depth + 1 = G.dist b a) (fun p hp => ?_)
+  exact gr_tendsto_hat G t us δ b a π hπ hgen hδ _ (by have := hp.2; omega) p
 
 lemma Lval_through (hG : G.Connected) (us : Fin M → ℝ) (b a π : Fin M)
     (h : Lval G t us b a π ≠ 0) : G.dist b π + G.dist π a = G.dist b a := by
+  simp only [Lval, predecessorSum] at h
   obtain ⟨p, -, hp⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   split_ifs at hp with hc
   · have hΛ : Λ G t us b a π (G.dist b p) p ≠ 0 := by intro h0; apply hp; rw [h0, mul_zero]
@@ -254,33 +248,19 @@ lemma Lval_through (hG : G.Connected) (us : Fin M → ℝ) (b a π : Fin M)
     omega
   · exact absurd rfl hp
 
-lemma factor_common_tendsto (hG : G.Connected) (us δ : Fin M → ℝ) (b a : Fin M)
+lemma factor_common_tendsto (us δ : Fin M → ℝ) (b a : Fin M)
     (hA : ∀ z, us z = us a → z = a) :
     Tendsto (fun ε => alphaExp G t (uline us δ ε) b a) (𝓝[≠] 0) (𝓝 (alphaExp G t us b a)) := by
   by_cases hab : a = b
   · subst hab; simp only [alphaExp_self]; exact tendsto_const_nhds
-  · have hpos : 0 < G.dist b a := by
-      by_contra h0; push Not at h0
-      have : G.dist b a = 0 := by omega
-      exact hab ((dist_eq_zero_iff hG).mp this)
-    have hfun : (fun ε => alphaExp G t (uline us δ ε) b a) = fun ε => ∑ p,
-        (if G.Adj a p ∧ G.dist b p + 1 = G.dist b a then
-            -t a p * Gr G t (uline us δ ε) b a (G.dist b p) p
-        else 0) := by
-      funext ε; simp [alphaExp, hab]
-    have hlim : alphaExp G t us b a = ∑ p,
-        (if G.Adj a p ∧ G.dist b p + 1 = G.dist b a then
-            -t a p * Gr G t us b a (G.dist b p) p else 0) := by
-      simp [alphaExp, hab]
-    rw [hfun, hlim]
-    apply tendsto_finsetSum; intro p _
-    by_cases h : G.Adj a p ∧ G.dist b p + 1 = G.dist b a
-    · simp only [ite_eq_left h]
-      refine tendsto_const_nhds.mul
-          (gr_tendsto_plain G t us δ b a (G.dist b a - 1) ?_ _ (by omega) p)
-      intro r hr hra
-      have := hA r hra; subst this; omega
-    · simp only [ite_eq_right h]; exact tendsto_const_nhds
+  · simp only [alphaExp, ite_eq_right hab, zero_add]
+    refine tendsto_predecessorSum G t b a (fun depth => depth + 1 = G.dist b a) (fun p hp => ?_)
+    have layer := hp.2
+    refine gr_tendsto_plain G t us δ b a (G.dist b a - 1) ?_ _ (by omega) p
+    intro r hr hra
+    have := hA r hra
+    subst this
+    omega
 
 end
 
@@ -314,7 +294,7 @@ theorem DExp_eventually_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : 
       exact factor_moved_tendsto G t us δ _ _ _ hab (hV l hm) (hgenM l hm) (hδ l hm)
     · simp only [fac, dfac, lim, ite_eq_right hm, one_mul]
       push Not at hm
-      exact factor_common_tendsto G t hG us δ _ _ (hgenC l hm)
+      exact factor_common_tendsto G t us δ _ _ (hgenC l hm)
   have hH : Tendsto H (𝓝[≠] 0) (𝓝 (∑ σ ∈ opt, (Equiv.Perm.sign σ : ℝ) * ∏ l, lim σ l)) := by
     apply tendsto_finsetSum; intro σ _
     exact tendsto_const_nhds.mul (tendsto_finsetProd _ (fun l _ => hfac σ l))

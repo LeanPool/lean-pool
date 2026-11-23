@@ -4,7 +4,8 @@ summary: >-
   Develops density-functional theory for spinless fermions on finite graphs.
   It proves generic uniqueness of the potential up to a constant, bounds the
   Hausdorff dimension of exceptional densities, and develops lattice Kohn–Sham
-  representability and the convergence of a regularized iteration.
+  representability. It proves full regularized energy convergence and
+  potential convergence along convergent quasi-density subsequences.
 branch: mathematical physics
 entry_module: LeanPool.DFT
 authors:
@@ -43,16 +44,21 @@ main_results:
     at most M minus three, truncated at zero.
 - declaration: DFT.ks_potential_exists_interior
   informal: >-
-    A lattice density with all occupations strictly between zero and one
-    and total occupation N is a ground-state ensemble density for a
-    noninteracting Kohn–Sham potential.
+    For N spinless fermions on an M-site graph with 0 < N < M, fix any
+    uniform real hopping amplitude on that graph. A density with each
+    occupation strictly between zero and one and total occupation N is
+    realized by a ground-state ensemble for a site potential of the
+    noninteracting Hamiltonian with that hopping.
 - declaration: DFT.lattice_myksoda
   informal: >-
-    The regularized lattice Kohn–Sham iteration decreases the regularized
-    energy and has a quasi-density accumulation point. The energy of the
-    full sequence converges to its minimum. Along each convergent quasi-density
-    subsequence, the Kohn–Sham potentials converge to a potential yielding
-    a minimizing reference density.
+    Take a positive regularization parameter and real symmetric interacting
+    and reference Hamiltonians on the same nonempty finite configuration
+    space with a common occupation map. For sequences satisfying the
+    MYKSODA update equations, the regularized energy is nonincreasing and
+    the full energy sequence converges to its minimum. The quasi-density
+    sequence has an accumulation point. Along each convergent quasi-density
+    subsequence, the corresponding Kohn–Sham potentials converge to a
+    potential yielding a minimizing reference density.
 tags:
 - density-functional-theory
 - spinless-fermions

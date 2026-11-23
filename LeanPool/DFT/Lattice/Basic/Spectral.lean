@@ -11,6 +11,7 @@ module
 public import LeanPool.DFT.Lattice.Basic.GroundState
 public import Mathlib.Analysis.Matrix.Spectrum
 meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.FunProp
 meta import Mathlib.Tactic.Linarith
 
 /-!
@@ -31,6 +32,23 @@ namespace DFT
 open Matrix
 
 variable {C : Type*} [Fintype C] [DecidableEq C]
+
+omit [DecidableEq C] in
+lemma continuous_qf (H : Matrix C C ℝ) : Continuous fun ψ : C → ℝ => qf H ψ := by
+  unfold qf dotProduct mulVec dotProduct; fun_prop
+
+omit [DecidableEq C] in
+lemma isCompact_sphere1 : IsCompact {ψ : C → ℝ | ψ ⬝ᵥ ψ = 1} := by
+  apply Metric.isCompact_of_isClosed_isBounded
+  · exact isClosed_eq (by unfold dotProduct; fun_prop) continuous_const
+  · refine (Metric.isBounded_closedBall (x := (0 : C → ℝ)) (r := 1)).subset fun ψ hψ => ?_
+    simp only [Set.mem_ofPred_eq] at hψ
+    rw [Metric.mem_closedBall, dist_zero_right, pi_norm_le_iff_of_nonneg zero_le_one]
+    intro c
+    rw [Real.norm_eq_abs, abs_le_one_iff_mul_self_le_one]
+    rw [← hψ]
+    exact Finset.single_le_sum (f := fun d => ψ d * ψ d) (fun d _ => mul_self_nonneg _)
+        (Finset.mem_univ c)
 
 theorem qf_ge_of_diagonalisation {H P : Matrix C C ℝ} {lam : C → ℝ} (hP : Pᵀ * P = 1)
     (hHP : H * P = P * diagonal lam) {E : ℝ} (hE : ∀ a, E ≤ lam a) (v : C → ℝ) :

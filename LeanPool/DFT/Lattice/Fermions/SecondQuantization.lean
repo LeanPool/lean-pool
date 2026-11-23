@@ -39,18 +39,6 @@ open Matrix
 
 variable {M N : ℕ}
 
-/-- Sorted position tuple of a configuration. -/
-def τs (s : Conf M N) : Fin N → Fin M := fun k => s.1.orderEmbOfFin s.2 k
-
-lemma τs_mem (s : Conf M N) (k : Fin N) : τs s k ∈ s.1 := Finset.orderEmbOfFin_mem _ _ _
-
-lemma τs_injective (s : Conf M N) : Function.Injective (τs s) :=
-  (s.1.orderEmbOfFin s.2).injective
-
-lemma τs_surj (s : Conf M N) {x : Fin M} (hx : x ∈ s.1) : ∃ k, τs s k = x := by
-  have : x ∈ Set.range (s.1.orderEmbOfFin s.2) := by rw [Finset.range_orderEmbOfFin]; exact hx
-  obtain ⟨k, hk⟩ := this; exact ⟨k, hk⟩
-
 /-- Slater amplitude on a configuration. -/
 def slaterC (φ : Fin N → Fin M → ℝ) (s : Conf M N) : ℝ := slater φ (τs s)
 
@@ -163,21 +151,34 @@ theorem slater_expand (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) :
 def Γ (h : Matrix (Fin M) (Fin M) ℝ) : Matrix (Conf M N) (Conf M N) ℝ :=
   fun s s' => ∑ k, ∑ b, h (τs s k) b * amp s' (Function.update (τs s) k b)
 
+/-- First-quantised one-body operator. -/
+def H1 (h : Matrix (Fin M) (Fin M) ℝ) (f : (Fin N → Fin M) → ℝ) : (Fin N → Fin M) → ℝ :=
+  fun τ => ∑ i, ∑ b, h (τ i) b * f (Function.update τ i b)
+
+/-- Evaluation on sorted configurations intertwines the two quantizations. -/
+lemma H1_conf (h : Matrix (Fin M) (Fin M) ℝ) {f : (Fin N → Fin M) → ℝ} (hf : Antisym f)
+    (s : Conf M N) :
+    H1 h f (τs s) = ((Γ h : Matrix (Conf M N) (Conf M N) ℝ) *ᵥ (fun s' => f (τs s'))) s := by
+  simp only [H1, Matrix.mulVec, dotProduct, Γ]
+  have e : ∀ k b, h (τs s k) b * f (Function.update (τs s) k b) =
+      ∑ s', h (τs s k) b * amp s' (Function.update (τs s) k b) * f (τs s') := by
+    intro k b
+    rw [antisym_expand hf (Function.update (τs s) k b), Finset.mul_sum]
+    apply Finset.sum_congr rfl; intro s' _; ring
+  simp_rw [e, Finset.sum_mul]
+  conv_lhs => rw [Finset.sum_congr rfl (fun k _ => Finset.sum_comm)]
+  rw [Finset.sum_comm]
+
 /-- **Slater determinants are many-body eigenvectors.** -/
 theorem gamma_slater (h : Matrix (Fin M) (Fin M) ℝ) (φ : Fin N → Fin M → ℝ) (ε : Fin N → ℝ)
     (hφ : ∀ j, h *ᵥ φ j = ε j • φ j) :
     (Γ h : Matrix (Conf M N) (Conf M N) ℝ) *ᵥ slaterC φ = (∑ j, ε j) • slaterC φ := by
   funext s
-  simp only [Matrix.mulVec, dotProduct, Γ, Pi.smul_apply, smul_eq_mul]
-  rw [slaterC, ← slater_eigen h φ ε hφ (τs s)]
-  simp_rw [Finset.sum_mul]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl; intro k _
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl; intro b _
-  rw [slater_expand φ (Function.update (τs s) k b), Finset.mul_sum]
-  apply Finset.sum_congr rfl; intro s' _
-  ring
+  have evaluation := H1_conf h (slater_perm φ) s
+  change H1 h (slater φ) (τs s) = ((Γ h : Matrix (Conf M N) (Conf M N) ℝ) *ᵥ slaterC φ) s
+    at evaluation
+  rw [← evaluation]
+  simpa only [H1, slaterC, Pi.smul_apply, smul_eq_mul] using slater_eigen h φ ε hφ (τs s)
 
 end
 
@@ -212,14 +213,7 @@ lemma amp_tau_eq (s s' : Conf M N) : amp s' (τs s) = if s = s' then 1 else 0 :=
     exact amp_of_not_mem s' hk
 
 lemma sum_tau (s : Conf M N) (v : Fin M → ℝ) : ∑ k, v (τs s k) = ∑ i, v i * occF i s := by
-  have h1 : ∑ i, v i * occF i s = ∑ i ∈ s.1, v i := by
-    simp [occF, Finset.sum_ite_mem]
-  rw [h1]
-  have h2 : Finset.univ.image (τs s) = s.1 := by
-    ext x; constructor
-    · intro hx; obtain ⟨k, -, rfl⟩ := Finset.mem_image.mp hx; exact τs_mem s k
-    · intro hx; obtain ⟨k, rfl⟩ := τs_surj s hx; exact Finset.mem_image_of_mem _ (Finset.mem_univ k)
-  rw [← h2, Finset.sum_image (fun a _ b _ hab => τs_injective s hab)]
+  rw [sum_tau_eq_sum, sum_mul_occF]
 
 lemma gamma_diagonal (v : Fin M → ℝ) :
     (Γ (Matrix.diagonal v) : Matrix (Conf M N) (Conf M N) ℝ) =

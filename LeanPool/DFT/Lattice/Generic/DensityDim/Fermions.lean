@@ -43,9 +43,6 @@ theorem exists_poly_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G
     (fun c => hstar_lattice_fermions_w hG hts c Vint)
 
 
-lemma sum_occF_eq (c : Conf M N) : ∑ i, occF i c = (N : ℝ) := by
-  exact sum_occF c
-
 /-- **Non-uv densities of lattice fermions, edge-dependent hopping.** For `N` spinless fermions
 (`0 < N < M`) on a connected graph with symmetric hopping amplitudes of a common sign and any
 density–density interaction, the densities of non-degenerate ground states shared with a
@@ -56,7 +53,7 @@ theorem dimH_nonUVDens_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRe
     (Vint : Conf M N → ℝ) :
     dimH (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)) ≤ (M : ENNReal) - 3 := by
   obtain ⟨P, hP, hPZ⟩ := exists_poly_lattice_fermions_w hG htsym hts hN0 hNM Vint
-  simpa using dimH_nonUVDens_le (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF_eq⟩ hP hPZ
+  simpa using dimH_nonUVDens_le (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF⟩ hP hPZ
 
 /-- `dimH_nonUVDens_lattice_fermions_w` in the form `dimH + 3 ≤ M` (when there are non-uv
 densities at all; in particular they exist only for `M ≥ 3`). -/
@@ -67,7 +64,7 @@ theorem dimH_nonUVDens_lattice_fermions_w' {G : SimpleGraph (Fin M)} [DecidableR
     (hne : (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)).Nonempty) :
     dimH (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)) + 3 ≤ M := by
   obtain ⟨P, hP, hPZ⟩ := exists_poly_lattice_fermions_w hG htsym hts hN0 hNM Vint
-  simpa using dimH_nonUVDens (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF_eq⟩ hP hPZ hne
+  simpa using dimH_nonUVDens (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF⟩ hP hPZ hne
 
 /-- **Non-uv densities of lattice fermions.** For `N` spinless fermions (`0 < N < M`) on a
 connected graph with hopping `t ≠ 0` and any density–density interaction, the densities of

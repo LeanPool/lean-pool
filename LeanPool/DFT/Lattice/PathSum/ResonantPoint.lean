@@ -38,6 +38,11 @@ section
 variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
     (rep : Fin M → Fin M)
 
+private theorem ratOn_predecessorSum (b q : Fin M) (layer : ℕ → Prop)
+    [DecidablePred layer] {f : Fin M → (Fin M → ℝ) → ℝ} (hf : ∀ r, RatOn (f r)) :
+    RatOn (fun x => predecessorSum G t b q layer (fun r => f r x)) := by
+  exact RatOn.sum _ fun r _ => RatOn.ite _ ((RatOn.const _).mul (hf r)) (RatOn.const 0)
+
 lemma ratOn_Gr (b a : Fin M) : ∀ n p, RatOn
     (fun θ : Fin M → ℝ => Gr G t (fun i => θ (rep i)) b a n p) := by
   intro n
@@ -49,8 +54,8 @@ lemma ratOn_Gr (b a : Fin M) : ∀ n p, RatOn
   | succ n ih =>
     intro p
     simp only [Gr]
-    refine RatOn.ite _ (RatOn.div_sub (RatOn.sum _ fun r _ => ?_) _ _) (RatOn.const 0)
-    exact RatOn.ite _ ((RatOn.const _).mul (ih r)) (RatOn.const 0)
+    exact RatOn.ite _ ((ratOn_predecessorSum G t b p (· = n) ih).div_sub _ _)
+      (RatOn.const 0)
 
 lemma ratOn_Λ (b a π : Fin M) : ∀ n q, RatOn
     (fun θ : Fin M → ℝ => Λ G t (fun i => θ (rep i)) b a π n q) := by
@@ -60,22 +65,21 @@ lemma ratOn_Λ (b a π : Fin M) : ∀ n q, RatOn
   | succ n ih =>
     intro q
     simp only [Λ]
-    refine RatOn.ite _
-        (RatOn.ite _ (RatOn.sum _ fun r _ => ?_) (RatOn.div_sub (RatOn.sum _ fun r _ => ?_) _ _))
+    exact RatOn.ite _
+      (RatOn.ite _ (ratOn_predecessorSum G t b q (· = n) (ratOn_Gr G t rep b a n))
+        ((ratOn_predecessorSum G t b q (· = n) ih).div_sub _ _))
       (RatOn.const 0)
-    · exact RatOn.ite _ ((RatOn.const _).mul (ratOn_Gr G t rep b a n r)) (RatOn.const 0)
-    · exact RatOn.ite _ ((RatOn.const _).mul (ih r)) (RatOn.const 0)
 
 lemma ratOn_Lval (b a π : Fin M) : RatOn
     (fun θ : Fin M → ℝ => Lval G t (fun i => θ (rep i)) b a π) := by
   unfold Lval
-  exact RatOn.sum _ fun p _ => RatOn.ite _ ((RatOn.const _).mul (ratOn_Λ G t rep b a π _ p))
-      (RatOn.const 0)
+  exact ratOn_predecessorSum G t b a (fun depth => depth + 1 = G.dist b a)
+    (fun p => ratOn_Λ G t rep b a π (G.dist b p) p)
 
 lemma ratOn_alphaExp (b a : Fin M) : RatOn (fun u : Fin M → ℝ => alphaExp G t u b a) := by
   unfold alphaExp
-  refine (RatOn.const _).add
-      (RatOn.sum _ fun p _ => RatOn.ite _ ((RatOn.const _).mul ?_) (RatOn.const 0))
+  refine (RatOn.const _).add (ratOn_predecessorSum G t b a
+    (fun depth => depth + 1 = G.dist b a) fun p => ?_)
   simpa using ratOn_Gr G t id b a (G.dist b p) p
 
 lemma ratOn_DExp (c y : Conf M N) : RatOn (fun u : Fin M → ℝ => DExp G t u c y) := by
@@ -179,7 +183,7 @@ theorem Lval_ne_zero_of_shortestPathSigned {G : SimpleGraph (Fin M)} [DecidableR
       ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
         (ε a * t a p * ε p) * ((-1) ^ (G.dist π p) * (ε π * ε p) *
           Λ G t us π a π (G.dist π p) p) else 0) := by
-    unfold Lval
+    unfold Lval predecessorSum
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl; intro p _
     split_ifs with hp

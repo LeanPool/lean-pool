@@ -32,17 +32,22 @@ variable {M N : ℕ}
 section
 variable (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ) (u : Fin M → ℝ)
 
+/-- A hopping-weighted sum over adjacent sites whose distance from the base passes a layer test. -/
+noncomputable abbrev predecessorSum (b p : Fin M) (layer : ℕ → Prop) [DecidablePred layer]
+    (f : Fin M → ℝ) : ℝ :=
+  ∑ q, if G.Adj p q ∧ layer (G.dist b q) then -t p q * f q else 0
+
 /-- Layered resolvent route sums. -/
 noncomputable def Gr (b a : Fin M) : ℕ → Fin M → ℝ
   | 0, p => if p = b then 1 / (u a - u b) else 0
   | n + 1, p => if G.dist b p = n + 1 then
-      (∑ q, (if G.Adj p q ∧ G.dist b q = n then -t p q * Gr b a n q else 0)) / (u a - u p) else 0
+      predecessorSum G t b p (· = n) (Gr b a n) / (u a - u p) else 0
 
 /-- The leading one-body coefficient assembled from shortest-route sums. -/
 noncomputable def alphaExp (b a : Fin M) : ℝ :=
   (if a = b then 1 else 0) +
-    ∑ p, (if G.Adj a p ∧ G.dist b p + 1 = G.dist b a then
-        -t a p * Gr G t u b a (G.dist b p) p else 0)
+    predecessorSum G t b a (fun depth => depth + 1 = G.dist b a)
+      (fun p => Gr G t u b a (G.dist b p) p)
 
 end
 
@@ -103,7 +108,7 @@ theorem alphaRep_eq_alphaExp {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG 
     {u : Fin M → ℝ} (hu : Function.Injective u) (b a : Fin M) :
     alphaRep (-hopM G t) u hu (fun z => G.dist b z) (lip_dist hG t b) b
       (SimpleGraph.dist_self (v := b)) a a = alphaExp G t u b a := by
-  rw [alpha_diag, alphaExp]
+  rw [alpha_diag, alphaExp, predecessorSum]
   congr 1
   rw [← Finset.sum_erase Finset.univ (a := a)
     (f := fun p => if G.Adj a p ∧ G.dist b p + 1 = G.dist b a then

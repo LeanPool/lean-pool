@@ -83,18 +83,10 @@ theorem exists_gap_of_unique {H : Matrix C C ℝ} {ψ : C → ℝ} (hψ : IsGrou
   rcases S.eq_empty_or_nonempty with hSe | hSne
   · exact ⟨1, one_pos, hred 1 (by simp [hSe])⟩
   have hcomp : IsCompact S := by
-    apply Metric.isCompact_of_isClosed_isBounded
-    · exact (isClosed_eq (by fun_prop) continuous_const).inter
-        (isClosed_eq (by fun_prop) continuous_const)
-    · rw [Metric.isBounded_iff_subset_closedBall 0]
-      refine ⟨1, fun χ hχ => ?_⟩
-      rw [Metric.mem_closedBall, dist_zero_right, pi_norm_le_iff_of_nonneg zero_le_one]
-      intro c
-      rw [Real.norm_eq_abs, abs_le_one_iff_mul_self_le_one, ← sq, ← hχ.2]
-      exact sq_le_dot_self χ c
-  have hcont : Continuous fun χ : C → ℝ => qf H χ := by
-    unfold qf; exact continuous_id.dotProduct (continuous_const.matrix_mulVec continuous_id)
-  obtain ⟨u0, hu0, hmin⟩ := hcomp.exists_isMinOn hSne hcont.continuousOn
+    exact isCompact_sphere1.of_isClosed_subset
+      ((isClosed_eq (by fun_prop) continuous_const).inter
+        (isClosed_eq (by fun_prop) continuous_const)) (fun _ h => h.2)
+  obtain ⟨u0, hu0, hmin⟩ := hcomp.exists_isMinOn hSne (continuous_qf H).continuousOn
   refine ⟨qf H u0 - qf H ψ, ?_, hred _ (fun u hu => by
     have := hmin hu; change qf H u0 ≤ qf H u at this; linarith)⟩
   by_contra hle

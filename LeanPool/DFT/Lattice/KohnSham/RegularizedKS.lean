@@ -29,7 +29,7 @@ al., PRL 123, 037401 (2019). For a symmetric Hamiltonian `H0` and occupations `n
 
 Main results:
 * `lattice_myksoda`: for an interacting `H0` and a reference `H0'` (e.g. `H0F G t Vint` and
-  `H0F G t 0`), the MYKSODA iteration has decreasing energies; every accumulation point `z` is a
+  `H0F G t 0`), the MYKSODA energies are nonincreasing. Every accumulation point `z` is a
   regularised ground-state quasi-density; `ρ = z + ε v` lies in the density domain and minimises
   the Lieb energy, `F(ρ) + v·ρ = E(v)` (that it is the density of a ground-state ensemble is not
   stated); and the Kohn–Sham potentials converge along the subsequence to `v_KS`, for which
@@ -167,7 +167,7 @@ version).
 `H0` is the interacting Hamiltonian, `H0'` the non-interacting reference, `v` the external potential
 and `ε > 0` the regularisation parameter. The iteration (steps (b), (c)) runs with the Moreau–Yosida
 regularised Lieb functionals of both systems. Then:
-1. the regularised energies decrease;
+1. the regularised energies are nonincreasing;
 2. there is an accumulation point;
 3. for every accumulation point `z` (along `φ`):
    * `ρ = z + ε v` lies in the density domain and minimises the interacting Lieb energy:

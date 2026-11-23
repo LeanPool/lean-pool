@@ -22,10 +22,10 @@ meta import Mathlib.Tactic.Ring
 /-!
 # Convergence of the regularised Kohn–Sham iteration (MYKSODA), abstract form
 
-Penz, Laestadius, Tellgren, Ruggenthaler, PRL 123, 037401 (2019), with the erratum (and P. E.
-Lammert) correcting the convergence claim: the iterates need not converge, but they are bounded and
-every accumulation point is a ground-state quasi-density, with the Kohn–Sham potentials converging
-along the same subsequence.
+Penz, Laestadius, Tellgren and Ruggenthaler, PRL 123, 037401 (2019), with the erratum
+co-authored by P. E. Lammert, PRL 125, 249902 (2020). The corrected guarantee gives bounded
+quasi-density iterates. Each convergent subsequence limits to a ground-state quasi-density,
+and its associated Kohn–Sham potentials converge to the reference potential for that limit.
 
 The setting is a finite-dimensional real inner-product space `E` and two functionals `F`
 (interacting, regularised) and `T` (non-interacting reference, regularised) with "gradients" `gF`,
@@ -233,7 +233,8 @@ Hypotheses: `F`, `T` are Moreau–Yosida-smooth with parameter `ε` (`hF`, `hT`)
 proximal points `y - ε gT y` are bounded (`hB`, a bounded density domain); sublevel sets of
 `F + ⟪v,·⟫` are bounded (`hsub`); and `x`, `x'` follow the iteration (b), (c).
 
-Conclusions: (1) the energies `F (x i) + ⟪v, x i⟫` decrease; (2) the gradient `gF (x i) + v` tends
+Conclusions: (1) the energies `F (x i) + ⟪v, x i⟫` are nonincreasing;
+(2) the gradient `gF (x i) + v` tends
 to `0`; (3) there is an accumulation point; (4) every accumulation point `z` (along `φ`) is a
 ground-state quasi-density, `gF z + v = 0`, it minimises `F + ⟪v,·⟫`, the energies converge to its
 energy, and the Kohn–Sham potentials `w (φ i)` converge to `-gT z`, the potential that reproduces
