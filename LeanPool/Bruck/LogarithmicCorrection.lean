@@ -53,16 +53,16 @@ structure LogarithmicCorrection (F J : ℂ → ℂ) (z : ℂ) : Prop where
 /-- The logarithm of the relative error in the exponential model. -/
 theorem exists_logarithmic_correction {F : ℂ → ℂ}
     (hF : DifferentiableOn ℂ F (ball 0 10))
-    (h : ∀ z : ℂ, ‖z‖ ≤ 10 → ‖F z - 1‖ ≤ 1 / 100) :
+    (h : ∀ z : ℂ, ‖z‖ < 10 → ‖F z - 1‖ ≤ 1 / 100) :
     ∃ J : ℂ → ℂ, ∀ z ∈ ball 0 9, LogarithmicCorrection F J z := by
   let J := fun z => Complex.log (F z)
-  have hslit : ∀ z : ℂ, ‖z‖ ≤ 10 → F z ∈ Complex.slitPlane := by
+  have hslit : ∀ z : ℂ, ‖z‖ < 10 → F z ∈ Complex.slitPlane := by
     intro z hz
     exact slitPlane_of_close_one ((h z hz).trans_lt (by norm_num))
   have hJ (z : ℂ) (hz : z ∈ ball (0 : ℂ) 10) : DifferentiableAt ℂ J z :=
-    (Complex.hasDerivAt_log (hslit z (mem_ball_zero_iff.mp hz).le)).differentiableAt.comp z
+    (Complex.hasDerivAt_log (hslit z (mem_ball_zero_iff.mp hz))).differentiableAt.comp z
       (hF.differentiableAt (isOpen_ball.mem_nhds hz))
-  have hbound (z : ℂ) (hz : ‖z‖ ≤ 10) : ‖J z‖ ≤ 1 / 10 := by
+  have hbound (z : ℂ) (hz : ‖z‖ < 10) : ‖J z‖ ≤ 1 / 10 := by
     apply (norm_log_le_of_norm_sub_one_le_half ((h z hz).trans (by norm_num))).trans
     linarith [h z hz]
   refine ⟨J, ?_⟩
@@ -80,14 +80,14 @@ theorem exists_logarithmic_correction {F : ℂ → ℂ}
     rw [closure_ball z one_ne_zero]
     exact fun w hw => (hJ w (hcl w hw)).differentiableWithinAt
   have hC : ∀ w ∈ sphere z 1, ‖J w‖ ≤ 1 / 10 :=
-    fun w hw => hbound w (mem_ball_zero_iff.mp (hcl w (sphere_subset_closedBall hw))).le
+    fun w hw => hbound w (mem_ball_zero_iff.mp (hcl w (sphere_subset_closedBall hw)))
   have hd1 := Complex.norm_deriv_le_of_forall_mem_sphere_norm_le one_pos hD hC
   have hd2 := Complex.norm_iteratedDeriv_le_of_forall_mem_sphere_norm_le 2 one_pos hD hC
   have ha : AnalyticAt ℂ J z := by
     apply DifferentiableOn.analyticAt (s := ball 0 10)
     · exact fun w hw => (hJ w hw).differentiableWithinAt
     · exact isOpen_ball.mem_nhds (mem_ball_zero_iff.mpr (by linarith))
-  have hzbound := (mem_ball_zero_iff.mp hz10).le
+  have hzbound := mem_ball_zero_iff.mp hz10
   have hFne := Complex.slitPlane_ne_zero (hslit z hzbound)
   exact ⟨hJ z hz10, ha.deriv.differentiableAt, hbound z hzbound, by simpa using hd1,
     by norm_num [iteratedDeriv_succ] at hd2 ⊢; exact hd2, Complex.exp_log hFne⟩

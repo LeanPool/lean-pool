@@ -92,10 +92,7 @@ private theorem exists_transcendental_maximum_data {h : ℂ → ℂ}
   have hmono := wv_local_monomial_of_affine_bound hh hz hzmax hhz hρ
     (show 0 < 7 * η by positivity) (fun t ht => (le_abs_self _).trans (hflat t ht)) τ hτ
   rw [hνζ] at hmono
-  have hden : h z * Complex.exp ζ ≠ 0 := mul_ne_zero hhz (Complex.exp_ne_zero _)
-  rw [div_sub_one hden, norm_div]
-  exact ((div_le_iff₀ (norm_pos_iff.mpr hden)).mpr hmono).trans
-    ((le_abs_self _).trans hsmall.le)
+  exact hmono.trans ((le_abs_self _).trans hsmall.le)
 
 /-- The reverse polynomial records the leading-term normalization at infinity. -/
 private theorem eval_eq_reverse_mul_pow (p : Polynomial ℂ) {z : ℂ} (hz : z ≠ 0) :
@@ -136,13 +133,13 @@ private theorem exists_polynomial_maximum_data {h : ℂ → ℂ}
     dsimp [d, Q]
     field_simp
   obtain ⟨r, hr⟩ := exists_gt
-    (max bound (max 1 (max (Real.exp 10 / δ) (2 * Real.exp ((d : ℝ) + 1) / ‖a‖))))
+    (max bound (max 1 (max (Real.exp 10 / δ) (Real.exp ((d : ℝ) + 1) / ‖a‖))))
   have hbr : bound ≤ r := (le_max_left _ _).trans hr.le
   have hr1 : 1 ≤ r := ((le_max_left _ _).trans (le_max_right _ _)).trans hr.le
   have hr0 : 0 < r := lt_of_lt_of_le zero_lt_one hr1
   have hrδ : Real.exp 10 / δ < r :=
     ((le_max_left _ _).trans (le_max_right _ _)).trans_lt ((le_max_right _ _).trans_lt hr)
-  have hra : 2 * Real.exp ((d : ℝ) + 1) / ‖a‖ < r :=
+  have hra : Real.exp ((d : ℝ) + 1) / ‖a‖ < r :=
     ((le_max_right _ _).trans (le_max_right _ _)).trans_lt ((le_max_right _ _).trans_lt hr)
   have hrad : δ⁻¹ < r * Real.exp (-10) := by
     rw [Real.exp_neg]
@@ -162,14 +159,13 @@ private theorem exists_polynomial_maximum_data {h : ℂ → ℂ}
   have halower : Real.exp ((d : ℝ) + 1) < wvMaximumModulus h r := by
     have hpow : r ≤ r ^ d := by
       simpa using pow_le_pow_right₀ hr1 (show 1 ≤ d from hd)
-    have hra' : 2 * Real.exp ((d : ℝ) + 1) < r * ‖a‖ :=
+    have hra' : Real.exp ((d : ℝ) + 1) < r * ‖a‖ :=
       (div_lt_iff₀ (norm_pos_iff.mpr ha)).mp hra
-    rw [← hzmax, hpQ hz0, norm_mul, norm_mul, norm_pow, hz]
+    rw [show h = pn.eval from funext hp]
     calc
-      Real.exp ((d : ℝ) + 1) < ‖a‖ * r * (1 / 2) := by linarith
-      _ ≤ ‖a‖ * r ^ d * ‖Q z⁻¹‖ := by
-        gcongr
-        linarith [hlower hzinv]
+      _ < r * ‖a‖ := hra'
+      _ ≤ ‖a‖ * r ^ d := by rw [mul_comm r]; gcongr
+      _ ≤ _ := polynomial_leadingCoeff_mul_pow_le_maximumModulus pn hr0
   have hd1 : (1 : ℝ) ≤ d := by exact_mod_cast (show 1 ≤ d from hd)
   have hMe := (Real.exp_lt_exp.mpr (show (1 : ℝ) < (d : ℝ) + 1 by linarith)).trans halower
   refine ⟨r, z, d, hbr, hr1, hMe, hz, hzmax, by linarith, ?_, ?_⟩

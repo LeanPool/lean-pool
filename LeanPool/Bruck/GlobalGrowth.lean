@@ -83,7 +83,8 @@ theorem exists_uniform_maximumModulus_lower_bound {h : ℂ → ℂ}
     rw [hz, norm_zero] at modulus
     linarith [maximum.modulus_lower, Real.exp_pos 1]
   obtain ⟨χ, q, hχ, hqlo, hqup⟩ := exists_quantitative_inverse
-    hz hhZ maximum.scale_lower hh.differentiableOn maximum.approximation
+    hz hhZ maximum.scale_lower hh.differentiableOn
+      (fun ζ hζ => maximum.approximation ζ hζ.le)
   rw [maximum.point_maximal, maximum.point_on_circle] at hχ hqlo hqup
   have hq (w : ℂ) (hw : w ∈ D) : q w ≠ 0 ∧ DifferentiableAt ℂ q w ∧ ‖deriv q w / q w‖ ≤ 10 / R :=
     let data := hχ w hw

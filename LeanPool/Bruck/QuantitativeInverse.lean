@@ -74,7 +74,7 @@ is the modulus of the image of the center of the chart. -/
 theorem exists_quantitative_inverse {h : ℂ → ℂ}
     {z₀ : ℂ} (hz₀ : z₀ ≠ 0) (hh₀ : h z₀ ≠ 0) {ν : ℝ} (hν : 1 / 2 ≤ ν)
     (hh : DifferentiableOn ℂ h ((fun ζ => z₀ * Complex.exp (ζ / (ν : ℂ))) '' ball 0 10))
-    (happrox : ∀ ζ : ℂ, ‖ζ‖ ≤ 10 →
+    (happrox : ∀ ζ : ℂ, ‖ζ‖ < 10 →
       ‖h (z₀ * Complex.exp (ζ / (ν : ℂ))) / (h z₀ * Complex.exp ζ) - 1‖ ≤ 1 / 100) :
     let R := ‖h z₀‖
     let c := -(R : ℂ) * Complex.I

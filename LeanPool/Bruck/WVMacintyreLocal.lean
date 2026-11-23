@@ -26,8 +26,8 @@ theorem wv_local_monomial_of_affine_bound {H : ℂ → ℂ} (hH : Differentiable
     (hflat : ∀ t : ℝ, |t| ≤ ρ →
       wvLogMaximum H (x + t) - wvLogMaximum H x - ν * t ≤ ε) :
     ∀ τ : ℂ, ‖τ‖ ≤ ρ / 2 →
-      ‖H (zr * Complex.exp τ) - H zr * Complex.exp ((ν : ℂ) * τ)‖ ≤
-        4 * (Real.exp ε - 1) * ‖H zr * Complex.exp ((ν : ℂ) * τ)‖ := by
+      ‖H (zr * Complex.exp τ) / (H zr * Complex.exp ((ν : ℂ) * τ)) - 1‖ ≤
+        4 * (Real.exp ε - 1) := by
   let Q : ℂ → ℂ := fun τ =>
     H (zr * Complex.exp τ) / (H zr * Complex.exp ((ν : ℂ) * τ))
   have hden (τ : ℂ) : H zr * Complex.exp ((ν : ℂ) * τ) ≠ 0 :=
@@ -78,15 +78,8 @@ theorem wv_local_monomial_of_affine_bound {H : ℂ → ℂ} (hH : Differentiable
   have hτball : τ ∈ ball 0 ρ := mem_ball_zero_iff.mpr (by linarith)
   have hb := Complex.borelCaratheodory_zero (by linarith : 0 < 2 * (Real.exp ε - 1))
     (hQ.sub_const 1).differentiableOn hRe_le hρ hτball (by rw [hQ0]; simp)
-  have hsmall : ‖Q τ - 1‖ ≤ 4 * (Real.exp ε - 1) := by
-    apply hb.trans
-    apply (div_le_iff₀ (by linarith : 0 < ρ - ‖τ‖)).mpr
-    nlinarith
-  have hid : H (zr * Complex.exp τ) - H zr * Complex.exp ((ν : ℂ) * τ) =
-      (Q τ - 1) * (H zr * Complex.exp ((ν : ℂ) * τ)) := by
-    dsimp only [Q]
-    field_simp
-  rw [hid, norm_mul]
-  exact mul_le_mul_of_nonneg_right hsmall (norm_nonneg _)
+  apply hb.trans
+  apply (div_le_iff₀ (by linarith : 0 < ρ - ‖τ‖)).mpr
+  nlinarith
 
 end Bruck
