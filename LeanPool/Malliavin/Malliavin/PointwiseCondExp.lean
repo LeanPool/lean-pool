@@ -36,6 +36,9 @@ This file records the consequences for the Clark--Ocone development:
 
 @[expose] public section
 
+-- Prefer the domain's second countability when proving strong measurability.
+attribute [local instance 101] secondCountableTopologyEither_of_left
+
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal InnerProductSpace
 
@@ -44,7 +47,7 @@ namespace Malliavin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
 
 /-- The fixed-time conditional expectation operator of the Clark--Ocone development is,
 almost everywhere, the integral against the disintegration kernel `condExpKernel P (𝓕 t)`. -/
@@ -68,7 +71,7 @@ theorem condExp_timeSection_ae_eq_integral_condExpKernel
   exact condExp_ae_eq_integral_condExpKernel (𝓕.le t) (ht.integrable one_le_two)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The predictable projection preserves integrals over every predictable set of finite
 measure.  This extends `integral_predictableProjection_Ioc` from predictable rectangles to the
 whole predictable σ-algebra. -/
@@ -374,6 +377,25 @@ theorem ae_eq_zero_on_Ioi_of_forall_setIntegral_Ioc_eq_zero {h : ℝ≥0 → ℝ
   calc t = a + (t - a) := by rw [add_tsub_cancel_of_le hat.le]
     _ ≤ a + (n + 1 : ℕ) := by gcongr
 
+omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
+private theorem coeFn_tensor_iocIndicator [SFinite P] (c d : ℝ≥0) (g : RandomL2 P) :
+    (tensor (iocIndicator c d) g : ℝ≥0 × W → ℝ) =ᵐ[nonnegativeLebesgueMeasure.prod P]
+      fun p ↦ (Set.Ioc c d).indicator (1 : ℝ≥0 → ℝ) p.1 * g p.2 := by
+  have hg : ∀ᵐ p : ℝ≥0 × W ∂nonnegativeLebesgueMeasure.prod P,
+      (iocIndicator c d : ℝ≥0 → ℝ) p.1 = (Set.Ioc c d).indicator (1 : ℝ≥0 → ℝ) p.1 :=
+    Measure.quasiMeasurePreserving_fst.ae_eq_comp
+      (indicatorConstLp_coeFn (p := 2) (hs := measurableSet_Ioc)
+        (hμs := nonnegativeLebesgueMeasure_Ioc_ne_top c d) (c := (1 : ℝ)))
+  filter_upwards [coeFn_tensor (iocIndicator c d) g, hg] with p hp hi
+  rw [hp, hi]
+
+omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
+private theorem integrable_mul_timeProcess (D T : TimeProcessL2 P) :
+    Integrable (fun p : ℝ≥0 × W ↦ D p * T p) (nonnegativeLebesgueMeasure.prod P) := by
+  simpa only [RCLike.inner_apply, conj_trivial] using L2.integrable_inner (𝕜 := ℝ) T D
+
 omit [CompleteSpace W] [BorelSpace W] in
 /-- Pairing a product-`L²` process with the elementary tensor `1_{(c,d]} ⊗ g` computes the
 window integral of the sectionwise pairings. -/
@@ -381,22 +403,11 @@ theorem inner_tensor_iocIndicator (D : TimeProcessL2 P) (c d : ℝ≥0) (g : Lp 
     ⟪D, tensor (iocIndicator c d) g⟫_ℝ =
       ∫ t in Set.Ioc c d, (∫ ω, D (t, ω) * g ω ∂P) ∂nonnegativeLebesgueMeasure := by
   set T : TimeProcessL2 P := tensor (iocIndicator c d) g with hT
-  have hint : Integrable (fun p : ℝ≥0 × W ↦ D p * T p) (nonnegativeLebesgueMeasure.prod P) := by
-    have := L2.integrable_inner (𝕜 := ℝ) D T
-    simpa [RCLike.inner_apply, conj_trivial, mul_comm] using this
-  have hTfn : (T : ℝ≥0 × W → ℝ) =ᵐ[nonnegativeLebesgueMeasure.prod P]
-      fun p ↦ (Set.Ioc c d).indicator (1 : ℝ≥0 → ℝ) p.1 * g p.2 := by
-    have hg : ∀ᵐ p : ℝ≥0 × W ∂nonnegativeLebesgueMeasure.prod P,
-        (iocIndicator c d : ℝ≥0 → ℝ) p.1 = (Set.Ioc c d).indicator (1 : ℝ≥0 → ℝ) p.1 :=
-      Measure.quasiMeasurePreserving_fst.ae_eq_comp
-        (indicatorConstLp_coeFn (p := 2) (hs := measurableSet_Ioc)
-          (hμs := nonnegativeLebesgueMeasure_Ioc_ne_top c d) (c := (1 : ℝ)))
-    filter_upwards [coeFn_tensor (iocIndicator c d) g, hg] with p hp hg'
-    rw [hp, hg']
+  have hTfn := coeFn_tensor_iocIndicator c d g
   have hint' : Integrable (fun p : ℝ≥0 × W ↦
       D p * ((Set.Ioc c d).indicator (1 : ℝ≥0 → ℝ) p.1 * g p.2))
       (nonnegativeLebesgueMeasure.prod P) :=
-    hint.congr (hTfn.mono fun p hp ↦ by dsimp only; rw [hp])
+    (integrable_mul_timeProcess D T).congr (hTfn.mono fun p hp ↦ by dsimp only; rw [hp])
   calc ⟪D, T⟫_ℝ
       = ∫ p, D p * T p ∂(nonnegativeLebesgueMeasure.prod P) := by
         rw [L2.inner_def]
@@ -425,7 +436,7 @@ theorem inner_tensor_iocIndicator (D : TimeProcessL2 P) (c d : ℝ≥0) (g : Lp 
         integral_indicator measurableSet_Ioc
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The predictable projection is orthogonal: the correction `Π U - U` is orthogonal to every
 predictable process. -/
 theorem inner_predictableProjection_sub (U : TimeProcessL2 P) (V : PredictableProcessL2 𝓕 P) :
@@ -466,22 +477,9 @@ theorem pairing_timeSection_predictableProjection_ae (U : TimeProcessL2 P) (a : 
         (Set.Ioc a b) nonnegativeLebesgueMeasure := by
     intro b
     set T : TimeProcessL2 P := tensor (iocIndicator a b) (Z : Lp ℝ 2 P) with hT
-    have hint : Integrable (fun p : ℝ≥0 × W ↦ (D : ℝ≥0 × W → ℝ) p * (T : ℝ≥0 × W → ℝ) p)
-        (nonnegativeLebesgueMeasure.prod P) := by
-      have := L2.integrable_inner (𝕜 := ℝ) D T
-      simpa [RCLike.inner_apply, conj_trivial, mul_comm] using this
     have hH : Integrable (fun t ↦ ∫ ω, (D : ℝ≥0 × W → ℝ) (t, ω) * (T : ℝ≥0 × W → ℝ) (t, ω) ∂P)
-        nonnegativeLebesgueMeasure := hint.integral_prod_left
-    have hTfn : (T : ℝ≥0 × W → ℝ) =ᵐ[nonnegativeLebesgueMeasure.prod P]
-        fun p ↦ (Set.Ioc a b).indicator (1 : ℝ≥0 → ℝ) p.1 * (Z : Lp ℝ 2 P) p.2 := by
-      have hg : ∀ᵐ p : ℝ≥0 × W ∂nonnegativeLebesgueMeasure.prod P,
-          (iocIndicator a b : ℝ≥0 → ℝ) p.1 = (Set.Ioc a b).indicator (1 : ℝ≥0 → ℝ) p.1 :=
-        Measure.quasiMeasurePreserving_fst.ae_eq_comp
-          (indicatorConstLp_coeFn (p := 2) (hs := measurableSet_Ioc)
-            (hμs := nonnegativeLebesgueMeasure_Ioc_ne_top a b) (c := (1 : ℝ)))
-      filter_upwards [coeFn_tensor (iocIndicator a b) (Z : Lp ℝ 2 P), hg] with p hp hg'
-      rw [hp, hg']
-    have hsec := Measure.ae_ae_of_ae_prod hTfn
+        nonnegativeLebesgueMeasure := (integrable_mul_timeProcess D T).integral_prod_left
+    have hsec := Measure.ae_ae_of_ae_prod (coeFn_tensor_iocIndicator a b (Z : Lp ℝ 2 P))
     refine (hH.restrict (s := Set.Ioc a b)).congr ?_
     have hsec' : ∀ᵐ t ∂nonnegativeLebesgueMeasure.restrict (Set.Ioc a b),
         (fun ω ↦ (T : ℝ≥0 × W → ℝ) (t, ω)) =ᵐ[P]
@@ -534,9 +532,8 @@ theorem condExp_timeSection_predictableProjection_ae
       intro g hg
       rw [inner_condExpL2_left_eq_right]
       have hqu : ((q - u : Lp ℝ 2 P) : W → ℝ) =ᵐ[P]
-          fun ω ↦ (predictableProjection 𝓕 U : ℝ≥0 × W → ℝ) (t, ω) - U (t, ω) := by
-        filter_upwards [Lp.coeFn_sub q u, hQt.coeFn_toLp, hUt.coeFn_toLp] with ω h1 h2 h3
-        rw [h1, Pi.sub_apply, h2, h3]
+          fun ω ↦ (predictableProjection 𝓕 U : ℝ≥0 × W → ℝ) (t, ω) - U (t, ω) :=
+        (Lp.coeFn_sub q u).trans (hQt.coeFn_toLp.sub hUt.coeFn_toLp)
       rw [L2.inner_def]
       have := hallt g hg hat
       rw [← this]
@@ -550,12 +547,8 @@ theorem condExp_timeSection_predictableProjection_ae
   -- translate into function-valued conditional expectations
   have hQ := MemLp.condExpL2_ae_eq_condExp (𝕜 := ℝ) (𝓕.le a) hQt
   have hU := MemLp.condExpL2_ae_eq_condExp (𝕜 := ℝ) (𝓕.le a) hUt
-  have hsub : condExpL2 ℝ ℝ (𝓕.le a) q = condExpL2 ℝ ℝ (𝓕.le a) u := by
-    have := map_sub (condExpL2 ℝ ℝ (𝓕.le a) :
-      Lp ℝ 2 P →L[ℝ] lpMeas ℝ ℝ (𝓕 a) 2 P) q u
-    rw [hker] at this
-    have := sub_eq_zero.mp this.symm
-    exact this
+  have hsub : condExpL2 ℝ ℝ (𝓕.le a) q = condExpL2 ℝ ℝ (𝓕.le a) u :=
+    sub_eq_zero.mp ((map_sub (condExpL2 ℝ ℝ (𝓕.le a)) q u).symm.trans hker)
   calc P[(fun ω ↦ (predictableProjection 𝓕 U : ℝ≥0 × W → ℝ) (t, ω)) | 𝓕 a]
       =ᵐ[P] ((condExpL2 ℝ ℝ (𝓕.le a) q : lpMeas ℝ ℝ (𝓕 a) 2 P) : W → ℝ) := hQ.symm
     _ = ((condExpL2 ℝ ℝ (𝓕.le a) u : lpMeas ℝ ℝ (𝓕 a) 2 P) : W → ℝ) := by rw [hsub]
@@ -567,17 +560,17 @@ def filtrationPred (t : ℝ≥0) : MeasurableSpace W :=
   ⨆ (s : ℝ≥0) (_ : s < t), 𝓕 s
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem filtrationPred_le (t : ℝ≥0) : filtrationPred 𝓕 t ≤ ‹MeasurableSpace W› :=
   iSup₂_le fun s _ ↦ 𝓕.le s
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem le_filtrationPred {s t : ℝ≥0} (hst : s < t) : 𝓕 s ≤ filtrationPred 𝓕 t :=
   le_iSup₂ (f := fun (s : ℝ≥0) (_ : s < t) ↦ 𝓕 s) s hst
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 private theorem iSup_exhaustion_eq_filtrationPred
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) {t : ℝ≥0} (hat : 0 < t) :
     (⨆ n : ℕ, 𝓕 (t - t / (n + 2))) = filtrationPred 𝓕 t := by
@@ -656,10 +649,11 @@ theorem condExp_timeSection_predictableProjection_pred_ae
   have hlevels : ∀ n : ℕ, P[P[X | filtrationPred 𝓕 t] | ℱ n]
       =ᵐ[P] P[P[Y | filtrationPred 𝓕 t] | ℱ n] := by
     intro n
+    have hle : ℱ n ≤ filtrationPred 𝓕 t := le_filtrationPred 𝓕 (hu_lt n)
     have h1 : P[P[X | filtrationPred 𝓕 t] | ℱ n] =ᵐ[P] P[X | ℱ n] :=
-      condExp_condExp_of_le (hsup ▸ le_iSup (fun n ↦ ℱ n) n) (filtrationPred_le 𝓕 t)
+      condExp_condExp_of_le hle (filtrationPred_le 𝓕 t)
     have h2 : P[P[Y | filtrationPred 𝓕 t] | ℱ n] =ᵐ[P] P[Y | ℱ n] :=
-      condExp_condExp_of_le (hsup ▸ le_iSup (fun n ↦ ℱ n) n) (filtrationPred_le 𝓕 t)
+      condExp_condExp_of_le hle (filtrationPred_le 𝓕 t)
     exact h1.trans ((hA (u n) (hu_lt n)).trans h2.symm)
   have hlevels' := ae_all_iff.mpr hlevels
   filter_upwards [hXlim, hYlim, hlevels'] with ω hXω hYω hlω
@@ -668,7 +662,7 @@ theorem condExp_timeSection_predictableProjection_pred_ae
   exact hlω n
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- For `t > 0`, the map `ω ↦ (t, ω)` is measurable from the strict past `𝓕_{t⁻}` to the
 predictable σ-algebra. -/
 theorem measurable_section_filtrationPred {t : ℝ≥0} (ht : 0 < t) :
@@ -844,7 +838,7 @@ section NaturalFiltration
 variable {B : ℝ≥0 → W → ℝ}
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- For the natural filtration, the strict past is the supremum of the coordinate σ-algebras at
 strictly earlier times. -/
 theorem filtrationPred_natural (hm : ∀ s, StronglyMeasurable (B s)) (t : ℝ≥0) :
@@ -860,7 +854,7 @@ theorem filtrationPred_natural (hm : ∀ s, StronglyMeasurable (B s)) (t : ℝ�
       MeasurableSpace.comap (B j) inferInstance) s le_rfl
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The natural filtration at `t` splits as the strict past joined with the time-`t`
 coordinate. -/
 theorem natural_eq_filtrationPred_sup (hm : ∀ s, StronglyMeasurable (B s)) (t : ℝ≥0) :
@@ -881,7 +875,7 @@ theorem natural_eq_filtrationPred_sup (hm : ∀ s, StronglyMeasurable (B s)) (t 
       MeasurableSpace.comap (B j) inferInstance) t le_rfl
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The Brownian classes converge in `L²` along the strict-past exhaustion `t - t/(n+2)`:
 `‖B_t - B_{u n}‖² = t/(n+2) → 0`.  First brick of the left-continuity capstone. -/
 theorem tendsto_brownianLp_exhaustion (hB : IsPreBrownianReal B P) (t : ℝ≥0) :

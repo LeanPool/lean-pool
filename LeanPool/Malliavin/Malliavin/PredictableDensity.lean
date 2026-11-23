@@ -141,7 +141,7 @@ namespace Malliavin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
 
 /-- The probability structure supplied directly by the Gaussian measure. -/
 local instance gaussianSFinite : SFinite P :=
@@ -149,7 +149,7 @@ local instance gaussianSFinite : SFinite P :=
 
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The predictable-process subspace as the trimmed-measure `L²` model used by completion
 constructions of the Itô integral. -/
 noncomputable def predictableTrimEquiv
@@ -160,7 +160,7 @@ noncomputable def predictableTrimEquiv
   lpMeasToLpTrimLie ℝ ℝ 2 (nonnegativeLebesgueMeasure.prod P) (predictable_le_prod 𝓕)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The trimmed representative agrees almost everywhere with the ambient representative. -/
 theorem predictableTrimEquiv_ae_eq
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) (u : PredictableProcessL2 𝓕 P) :
@@ -176,7 +176,7 @@ def predictableRectangle (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) :
     a < b ∧ MeasurableSet[𝓕 a] F ∧ S = (Set.Ioc a b ×ˢ F)}
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 lemma isPiSystem_predictableRectangle
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) :
     IsPiSystem (predictableRectangle 𝓕) := by
@@ -211,7 +211,7 @@ lemma isPiSystem_predictableRectangle
     · rw [Set.prod_inter_prod, Set.Ioc_inter_Ioc]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem generateFrom_predictableRectangle
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) :
     MeasurableSpace.generateFrom (predictableRectangle 𝓕) = 𝓕.predictable := by
@@ -335,7 +335,7 @@ def elementaryPredictableSpan
       U = elementaryPredictable 𝓕 a b Z}
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 lemma elementaryPredictable_mem_span
     (𝓕 : Filtration ℝ≥0 (inferInstance : MeasurableSpace W)) (a b : ℝ≥0)
     (hab : a ≤ b)
@@ -355,7 +355,7 @@ def elementaryPredictableSpan [SFinite P]
       U = elementaryPredictable 𝓕 a b Z}
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 lemma elementaryPredictable_mem_span [SFinite P]
     (𝓕 : Filtration ℝ≥0 (inferInstance : MeasurableSpace W)) (a b : ℝ≥0)
     (hab : a ≤ b)

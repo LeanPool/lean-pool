@@ -40,6 +40,9 @@ concludes.
 
 @[expose] public section
 
+-- Prefer the domain's second countability when proving strong measurability.
+attribute [local instance 101] secondCountableTopologyEither_of_left
+
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace
 
@@ -129,7 +132,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
 
 /-- The Gaussian weight `1 + ∑ᵢ |Lᵢ x|`, which dominates `1 + ‖(Lᵢ x)ᵢ‖`. -/
 noncomputable def gaussWeight {n : ℕ} (L : Fin n → StrongDual ℝ W) (x : W) : ℝ :=
@@ -161,7 +164,7 @@ theorem integrable_gaussWeight_pow {n : ℕ} (L : Fin n → StrongDual ℝ W) (k
   simp only [Real.norm_eq_abs, abs_of_nonneg (zero_le_one.trans (one_le_gaussWeight L x))]
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 /-- The derivative of the truncated coordinate map, applied to a vector. -/
 theorem fderiv_truncCoord_apply (m : ℕ) {n : ℕ} (L : Fin n → StrongDual ℝ W) (x w : W) :
     fderiv ℝ (truncCoord m L) x w =
@@ -267,7 +270,7 @@ The general statement: `f ∘ L ∈ 𝔻₁,₂` as soon as `|f|` and `‖f'‖`
 square-integrable `ψ : W → ℝ`. -/
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian μ] in
+  [SecondCountableTopology W] [IsGaussian (E := W) μ] in
 /-- A measurable function dominated by a square-integrable function is in `L²`. -/
 theorem memLp_of_le_of_integrable_sq {E : Type*} [NormedAddCommGroup E] {g : W → E}
     (hg : AEStronglyMeasurable g μ) {ψ : W → ℝ} (hint : Integrable (fun x ↦ ψ x ^ 2) μ)
@@ -277,7 +280,7 @@ theorem memLp_of_le_of_integrable_sq {E : Type*} [NormedAddCommGroup E] {g : W �
   rw [Real.norm_eq_abs, abs_pow, abs_norm]
   exact pow_le_pow_left₀ (norm_nonneg _) (h x) 2
 
-omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian μ] in
+omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian (E := W) μ] in
 /-- A dominated `C¹` cylindrical functional is square integrable. -/
 theorem memLp_cylinder_of_dominated {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDiff ℝ 1 f)
     (L : Fin n → StrongDual ℝ W) {φ : (Fin n → ℝ) → ℝ} {ψ : W → ℝ} (hφf : ∀ y, |f y| ≤ φ y)
@@ -296,7 +299,7 @@ theorem memLp_mderiv_cylinder_of_dominated {n : ℕ} {f : (Fin n → ℝ) → �
     MemLp (mderiv μ (fun y ↦ f (fun i ↦ L i y))) 2 μ :=
   memLp_of_le_of_integrable_sq μ (continuous_mderiv_cylinder μ hf L).aestronglyMeasurable
     (ψ := fun x ↦ ψ x * ∑ i, ‖ofDual μ (L i)‖)
-    (by simpa [mul_pow] using hint.mul_const ((∑ i, ‖ofDual μ (L i)‖) ^ 2)) fun x ↦
+    (by simpa only [mul_pow] using hint.mul_const ((∑ i, ‖ofDual μ (L i)‖) ^ 2)) fun x ↦
     (norm_mderiv_cylinder_le μ hf hφf' L x).trans
       (mul_le_mul_of_nonneg_right (hψ' x) (Finset.sum_nonneg fun _ _ ↦ norm_nonneg _))
 
@@ -326,14 +329,13 @@ theorem cylinder_mem_domD12_of_dominated {n : ℕ} {f : (Fin n → ℝ) → ℝ}
     · have h1 : |f (truncCoord m L x)| ≤ ψ x := (hφf _).trans (hψ m x)
       have h2 : |f (fun i ↦ L i x)| ≤ ψ x := (hφf _).trans (hψ' x)
       rw [Real.norm_eq_abs, ← mul_pow]
-      gcongr
+      refine pow_le_pow_left₀ (abs_nonneg _) ?_ 2
       calc |f (truncCoord m L x) - f (fun i ↦ L i x)|
           ≤ |f (truncCoord m L x)| + |f (fun i ↦ L i x)| := abs_sub _ _
         _ ≤ ψ x + ψ x := add_le_add h1 h2
-        _ = 2 * ψ x := by ring
+        _ = 2 * ψ x := (two_mul _).symm
     · exact (hf.continuous.tendsto _).comp (hlim x)
-  · simp_rw [mderivClosure_toLp]
-    unfold IsSmoothBounded.mderivLp
+  · refine Tendsto.congr (fun m ↦ (mderivClosure_toLp μ (Fm m)).symm) ?_
     refine tendsto_toLp_of_dominated (fun m ↦ (Fm m).memLp_mderiv μ 2)
       (memLp_mderiv_cylinder_of_dominated μ hf L hφf' hψ' hint)
       (bound := fun x ↦ (2 * ∑ i, ‖ofDual μ (L i)‖) ^ 2 * ψ x ^ 2) (hint.const_mul _)
@@ -344,12 +346,13 @@ theorem cylinder_mem_domD12_of_dominated {n : ℕ} {f : (Fin n → ℝ) → ℝ}
       have h2 := (norm_mderiv_cylinder_le μ hf hφf' L x).trans
         (mul_le_mul_of_nonneg_right (hψ' x) hK)
       rw [← mul_pow]
-      gcongr
+      refine pow_le_pow_left₀ (norm_nonneg _) ?_ 2
       calc ‖mderiv μ (fun y ↦ f (truncCoord m L y)) x - mderiv μ (fun y ↦ f (fun i ↦ L i y)) x‖
           ≤ ‖mderiv μ (fun y ↦ f (truncCoord m L y)) x‖ +
               ‖mderiv μ (fun y ↦ f (fun i ↦ L i y)) x‖ := norm_sub_le _ _
         _ ≤ ψ x * ∑ i, ‖ofDual μ (L i)‖ + ψ x * ∑ i, ‖ofDual μ (L i)‖ := add_le_add h1 h2
-        _ = 2 * (∑ i, ‖ofDual μ (L i)‖) * ψ x := by ring
+        _ = 2 * (∑ i, ‖ofDual μ (L i)‖) * ψ x := by
+          rw [two_mul, add_mul, mul_comm (ψ x)]
     · rw [mderiv_cylindrical μ f L x (hf.differentiable one_ne_zero _)]
       simp_rw [mderiv_comp_truncCoord μ f hf _ L x]
       refine tendsto_finsetSum _ fun i _ ↦ ?_
@@ -426,7 +429,8 @@ coordinates. -/
 theorem integrable_exp_mul_norm (a : ℝ) : Integrable (fun x ↦ Real.exp (a * ‖x‖)) μ := by
   obtain ⟨C, hC, hint⟩ := IsGaussian.exists_integrable_exp_sq μ
   refine (hint.const_mul (Real.exp (a ^ 2 / (4 * C)))).mono'
-    (by fun_prop) (Filter.Eventually.of_forall fun x ↦ ?_)
+    (Real.continuous_exp.comp (continuous_const.mul continuous_norm)).aestronglyMeasurable
+    (Filter.Eventually.of_forall fun x ↦ ?_)
   rw [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _), ← Real.exp_add, Real.exp_le_exp]
   have h : 0 ≤ (2 * C * ‖x‖ - a) ^ 2 := sq_nonneg _
   have hC' : 0 < 4 * C := by positivity
@@ -440,7 +444,7 @@ theorem integrable_exp_mul_norm (a : ℝ) : Integrable (fun x ↦ Real.exp (a * 
         ring
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 /-- The coordinates are bounded by `(∑ᵢ ‖Lᵢ‖) ‖x‖`. -/
 theorem norm_coord_le {n : ℕ} (L : Fin n → StrongDual ℝ W) (x : W) :
     ‖fun i ↦ L i x‖ ≤ (∑ i, ‖L i‖) * ‖x‖ := by
@@ -662,12 +666,12 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+  {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
   (hB : IsPreBrownianReal B P) (L : ℝ≥0 → StrongDual ℝ W) (hL : ∀ t w, B t w = L t w)
 
 include L hL
 
-omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian P] in
+omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A dominated `C¹` function of finitely many Brownian coordinates is square integrable. -/
 theorem memLp_cylinder_brownian_of_dominated {n : ℕ} {f : (Fin n → ℝ) → ℝ}
     (hf : ContDiff ℝ 1 f) {φ : (Fin n → ℝ) → ℝ} {ψ : W → ℝ} (hφf : ∀ y, |f y| ≤ φ y)
@@ -680,7 +684,7 @@ theorem memLp_cylinder_brownian_of_dominated {n : ℕ} {f : (Fin n → ℝ) → 
   rw [h]
   exact memLp_cylinder_of_dominated P hf _ hφf hψ' hint
 
-omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian P] in
+omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The partial derivative `∂ᵢ f (B t₁, …, B tₙ)` is square integrable when `f'` is
 dominated. -/
 theorem memLp_cylinderPartial_of_dominated {n : ℕ} {f : (Fin n → ℝ) → ℝ}
@@ -1089,7 +1093,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+  {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
   (hB : IsPreBrownianReal B P) (L : ℝ≥0 → StrongDual ℝ W) (hL : ∀ t w, B t w = L t w)
 
 include L hL

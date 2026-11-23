@@ -70,7 +70,7 @@ noncomputable def expectationL2
 noncomputable def CameronMartin.Space
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [MeasurableSpace W] [BorelSpace W]
-    (P : Measure W) [IsGaussian P] : Submodule ℝ (Lp ℝ 2 P) :=
+    (P : Measure W) [IsGaussian (E := W) P] : Submodule ℝ (Lp ℝ 2 P) :=
   (StrongDual.toLp P 2 -
     (Lp.constL 2 P ℝ).comp
       (ContinuousLinearMap.apply ℝ ℝ (∫ x, x ∂P))).range.topologicalClosure
@@ -89,7 +89,7 @@ theorem memLp_centeredId
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    (P : Measure W) [IsGaussian P] : MemLp (centeredId P) 2 P := by
+    (P : Measure W) [IsGaussian (E := W) P] : MemLp (centeredId P) 2 P := by
   exact (IsGaussian.memLp_id P 2 (by norm_num)).sub (memLp_const (∫ x, x ∂P))
 
 /-- The centered identity in `L²(P; W)`. -/
@@ -97,7 +97,7 @@ noncomputable def centeredIdLp
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    (P : Measure W) [IsGaussian P] : Lp W 2 P :=
+    (P : Measure W) [IsGaussian (E := W) P] : Lp W 2 P :=
   (memLp_centeredId P).toLp (centeredId P)
 
 /-- The Gaussian covariance map. -/
@@ -105,7 +105,7 @@ noncomputable def covarianceMap
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    (P : Measure W) [IsGaussian P] : Lp ℝ 2 P →L[ℝ] W :=
+    (P : Measure W) [IsGaussian (E := W) P] : Lp ℝ 2 P →L[ℝ] W :=
   ((ContinuousLinearMap.lsmul ℝ ℝ (E := W)).lpPairing P 2 2).flip (centeredIdLp P)
 
 /-- The covariance embedding of Cameron--Martin directions into `W`. -/
@@ -113,14 +113,14 @@ noncomputable def inclusion
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    (P : Measure W) [IsGaussian P] : Space P →L[ℝ] W :=
+    (P : Measure W) [IsGaussian (E := W) P] : Space P →L[ℝ] W :=
   (covarianceMap P).domRestrict (Space P)
 
 /-- A continuous linear functional as its centered Cameron--Martin class. -/
 noncomputable def ofDual
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [MeasurableSpace W] [BorelSpace W]
-    (P : Measure W) [IsGaussian P] : StrongDual ℝ W →L[ℝ] Space P :=
+    (P : Measure W) [IsGaussian (E := W) P] : StrongDual ℝ W →L[ℝ] Space P :=
   (StrongDual.toLp P 2 - (Lp.constL 2 P ℝ).comp
     (ContinuousLinearMap.apply ℝ ℝ (∫ x, x ∂P))).codRestrict (Space P)
       fun L ↦ Submodule.le_topologicalClosure _ ⟨L, rfl⟩
@@ -128,7 +128,7 @@ noncomputable def ofDual
 instance instCompleteSpaceSpace
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [MeasurableSpace W] [BorelSpace W]
-    (P : Measure W) [IsGaussian P] : CompleteSpace (Space P) :=
+    (P : Measure W) [IsGaussian (E := W) P] : CompleteSpace (Space P) :=
   inferInstanceAs (CompleteSpace
     ((StrongDual.toLp P 2 -
       (Lp.constL 2 P ℝ).comp
@@ -141,7 +141,7 @@ noncomputable def mderiv
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    (P : Measure W) [IsGaussian P] (F : W → ℝ) (x : W) : CameronMartin.Space P :=
+    (P : Measure W) [IsGaussian (E := W) P] (F : W → ℝ) (x : W) : CameronMartin.Space P :=
   (InnerProductSpace.toDual ℝ (CameronMartin.Space P)).symm
     ((fderiv ℝ F x).comp (CameronMartin.inclusion P))
 
@@ -175,7 +175,7 @@ theorem continuous_fderiv
 theorem memLp
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [MeasurableSpace W] [BorelSpace W]
-    {F : W → ℝ} (P : Measure W) [IsGaussian P]
+    {F : W → ℝ} (P : Measure W) [IsGaussian (E := W) P]
     (hF : IsSmoothBounded F) (p : ℝ≥0∞) : MemLp F p P :=
   Malliavin.IsSmoothBounded.memLp P hF.toMalliavin p
 
@@ -183,7 +183,7 @@ theorem continuous_mderiv
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    {F : W → ℝ} (P : Measure W) [IsGaussian P]
+    {F : W → ℝ} (P : Measure W) [IsGaussian (E := W) P]
     (hF : IsSmoothBounded F) : Continuous (mderiv P F) :=
   Malliavin.IsSmoothBounded.continuous_mderiv (μ := P) hF.toMalliavin
 
@@ -191,7 +191,7 @@ theorem exists_norm_mderiv_le
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    {F : W → ℝ} (P : Measure W) [IsGaussian P]
+    {F : W → ℝ} (P : Measure W) [IsGaussian (E := W) P]
     (hF : IsSmoothBounded F) : ∃ C, ∀ x, ‖mderiv P F x‖ ≤ C :=
   Malliavin.IsSmoothBounded.exists_norm_mderiv_le (μ := P) hF.toMalliavin
 
@@ -199,7 +199,7 @@ theorem memLp_mderiv
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    {F : W → ℝ} (P : Measure W) [IsGaussian P]
+    {F : W → ℝ} (P : Measure W) [IsGaussian (E := W) P]
     (hF : IsSmoothBounded F) (p : ℝ≥0∞) : MemLp (mderiv P F) p P :=
   Malliavin.IsSmoothBounded.memLp_mderiv P hF.toMalliavin p
 
@@ -207,7 +207,7 @@ theorem memLp_mderiv
 noncomputable def toLp
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [MeasurableSpace W] [BorelSpace W]
-    {F : W → ℝ} (P : Measure W) [IsGaussian P]
+    {F : W → ℝ} (P : Measure W) [IsGaussian (E := W) P]
     (hF : IsSmoothBounded F) : Lp ℝ 2 P :=
   (hF.memLp P 2).toLp F
 
@@ -216,7 +216,7 @@ noncomputable def mderivLp
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    {F : W → ℝ} (P : Measure W) [IsGaussian P]
+    {F : W → ℝ} (P : Measure W) [IsGaussian (E := W) P]
     (hF : IsSmoothBounded F) : Lp (CameronMartin.Space P) 2 P :=
   (hF.memLp_mderiv P 2).toLp (mderiv P F)
 
@@ -227,7 +227,7 @@ def InGraphClosure
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    (P : Measure W) [IsGaussian P]
+    (P : Measure W) [IsGaussian (E := W) P]
     (F : Lp ℝ 2 P) (η : Lp (CameronMartin.Space P) 2 P) : Prop :=
   ∃ Fk : ℕ → {f : W → ℝ // IsSmoothBounded f},
     Tendsto (fun k ↦ (Fk k).2.toLp P) atTop (𝓝 F) ∧
@@ -238,7 +238,7 @@ theorem InGraphClosure.toMalliavin
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    {P : Measure W} [IsGaussian P]
+    {P : Measure W} [IsGaussian (E := W) P]
     {F : Lp ℝ 2 P} {η : Lp (CameronMartin.Space P) 2 P}
     (h : InGraphClosure P F η) : Malliavin.InGraphClosure P F η := by
   obtain ⟨Fk, hFk, hDk⟩ := h
@@ -267,7 +267,7 @@ private theorem clarkOcone_of_graphClosure
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+    {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
     (hB : IsPreBrownianReal B P)
     (coordinate : ℝ≥0 → StrongDual ℝ W)
     (coordinate_apply : ∀ t w, B t w = coordinate t w)
@@ -276,7 +276,8 @@ private theorem clarkOcone_of_graphClosure
     {filtration : Filtration ℝ≥0 ‹MeasurableSpace W›}
     (hnat : filtration = Filtration.natural B hsm) :
     let T : Lp (CameronMartin.Space P) 2 P →ₗᵢ[ℝ] TimeProcessL2 P :=
-      Malliavin.timeDerivative hB coordinate coordinate_apply hgenerated
+      Malliavin.timeDerivative (W := W) (P := P) (B := B)
+        hB coordinate coordinate_apply hgenerated
     let I : PredictableProcessL2 filtration P →L[ℝ] RandomL2 P := by
       change Malliavin.PredictableProcessL2 filtration P →L[ℝ] Malliavin.RandomL2 P
       exact Malliavin.naturalItoIntegral hB hsm hnat
@@ -294,7 +295,7 @@ private theorem clarkOcone_of_graphClosure
               I (predictableProjection (P := P) filtration (T η)) := by
   dsimp only
   intro F η hgraph
-  have hgraph' : Malliavin.InGraphClosure P F η := hgraph.toMalliavin
+  have hgraph' := hgraph.toMalliavin (P := P)
   let F' : Malliavin.D12 P := ⟨F, ⟨η, hgraph'⟩⟩
   have hderiv : Malliavin.mderivD12 P F' = η :=
     Malliavin.mderivClosure_eq P hgraph'
@@ -318,7 +319,7 @@ theorem generated_clark_ocone
     {W : Type u} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
     [SecondCountableTopology W]
-    {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+    {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
     (hB : IsPreBrownianReal B P)
     (coordinate : ℝ≥0 → StrongDual ℝ W)
     (coordinate_apply : ∀ t w, B t w = coordinate t w)
@@ -362,7 +363,8 @@ theorem generated_clark_ocone
     simpa [IsWienerGenerated, processMeasurableSpace,
       Malliavin.IsWienerGenerated, Malliavin.processMeasurableSpace] using generated
   let T : Lp (CameronMartin.Space P) 2 P →ₗᵢ[ℝ] TimeProcessL2 P :=
-    Malliavin.timeDerivative hB coordinate coordinate_apply hgenerated
+    Malliavin.timeDerivative (W := W) (P := P) (B := B)
+      hB coordinate coordinate_apply hgenerated
   let I : PredictableProcessL2 filtration P →L[ℝ] RandomL2 P :=
     Malliavin.naturalItoIntegral (P := P) hB hsm (𝓕 := filtration) hnat
   refine ⟨T, I, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -373,7 +375,8 @@ theorem generated_clark_ocone
         rw [Malliavin.brownianLp_eq_ofDual hB coordinate coordinate_apply]
         exact horth t
   · intro t G
-    change (Malliavin.timeDerivative hB coordinate coordinate_apply hgenerated
+    change (Malliavin.timeDerivative (W := W) (P := P) (B := B)
+        hB coordinate coordinate_apply hgenerated
         (Malliavin.smulLp (Malliavin.CameronMartin.ofDual P (coordinate t)) G) :
           ℝ≥0 × W → ℝ) =ᵐ[Malliavin.nonnegativeLebesgueMeasure.prod P] _
     rw [Malliavin.timeDerivative_smulLp hB coordinate coordinate_apply hgenerated,
@@ -396,8 +399,8 @@ theorem generated_clark_ocone
     let U : PredictableProcessL2 filtration P :=
       Malliavin.elementaryPredictable filtration a b Z
     refine ⟨U, ?_, ?_⟩
-    · simpa [U, nonnegativeLebesgueMeasure,
-        Malliavin.nonnegativeLebesgueMeasure, Set.indicator] using
+    · simpa only [U, nonnegativeLebesgueMeasure, Malliavin.nonnegativeLebesgueMeasure,
+        Set.indicator_apply, ite_mul, Pi.one_apply, one_mul, zero_mul] using
         (Malliavin.elementaryPredictable_coeFn filtration a b Z)
     · change (Malliavin.naturalItoIntegral (P := P) hB hsm (𝓕 := filtration) hnat
           (Malliavin.elementaryPredictable filtration a b Z) : W → ℝ) =ᵐ[P] _

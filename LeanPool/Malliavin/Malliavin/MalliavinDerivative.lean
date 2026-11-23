@@ -90,6 +90,9 @@ and agreeing with `D` on smooth bounded functionals.
 
 @[expose] public section
 
+-- Prefer the domain's second countability when proving strong measurability.
+attribute [local instance 101] secondCountableTopologyEither_of_left
+
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace
 
@@ -268,7 +271,7 @@ namespace CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
 
 /-- The Cameron--Martin space is complete: it is a closed subspace of `L²(μ)`. -/
 instance instCompleteSpaceSpace : CompleteSpace (Space μ) :=
@@ -390,7 +393,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
 
 /-! ### The Malliavin derivative -/
 
@@ -436,20 +439,19 @@ theorem deriv_eq_inner_mderiv {F : W → ℝ} {x : W} (hF : DifferentiableAt ℝ
 theorem mderiv_add {F G : W → ℝ} {x : W} (hF : DifferentiableAt ℝ F x)
     (hG : DifferentiableAt ℝ G x) :
     mderiv μ (fun y ↦ F y + G y) x = mderiv μ F x + mderiv μ G x := by
-  unfold mderiv
-  rw [fderiv_fun_add hF hG, ContinuousLinearMap.add_comp, map_add]
+  refine ext_inner_right ℝ fun h ↦ ?_
+  simp only [inner_add_left, inner_mderiv, fderiv_fun_add hF hG, add_apply]
 
 theorem mderiv_smul {F : W → ℝ} {x : W} (hF : DifferentiableAt ℝ F x) (c : ℝ) :
     mderiv μ (fun y ↦ c * F y) x = c • mderiv μ F x := by
-  unfold mderiv
-  rw [fderiv_const_mul hF c, ContinuousLinearMap.smul_comp, map_smulₛₗ]
-  simp only [conj_trivial]
+  refine ext_inner_right ℝ fun h ↦ ?_
+  simp only [real_inner_smul_left, inner_mderiv, fderiv_const_mul hF c, smul_apply, smul_eq_mul]
 
 theorem mderiv_sub {F G : W → ℝ} {x : W} (hF : DifferentiableAt ℝ F x)
     (hG : DifferentiableAt ℝ G x) :
     mderiv μ (fun y ↦ F y - G y) x = mderiv μ F x - mderiv μ G x := by
-  unfold mderiv
-  rw [fderiv_fun_sub hF hG, ContinuousLinearMap.sub_comp, LinearIsometryEquiv.map_sub]
+  refine ext_inner_right ℝ fun h ↦ ?_
+  simp only [inner_sub_left, inner_mderiv, fderiv_fun_sub hF hG, sub_apply]
 
 theorem mderiv_const (c : ℝ) (x : W) : mderiv μ (fun _ ↦ c) x = 0 := by
   unfold mderiv
@@ -462,9 +464,8 @@ theorem mderiv_mul {F G : W → ℝ} {x : W} (hF : DifferentiableAt ℝ F x)
     (hG : DifferentiableAt ℝ G x) :
     mderiv μ (fun y ↦ F y * G y) x = F x • mderiv μ G x + G x • mderiv μ F x := by
   unfold mderiv
-  rw [fderiv_fun_mul hF hG, ContinuousLinearMap.add_comp, ContinuousLinearMap.smul_comp,
-    ContinuousLinearMap.smul_comp, map_add, map_smulₛₗ, map_smulₛₗ]
-  simp only [conj_trivial]
+  simp only [fderiv_fun_mul hF hG, ContinuousLinearMap.add_comp,
+    ContinuousLinearMap.smul_comp, map_add, map_smulₛₗ, conj_trivial]
 
 /-- **Chain rule** for a post-composition with a differentiable `φ : ℝ → ℝ`. -/
 theorem mderiv_comp {F : W → ℝ} {x : W} {φ : ℝ → ℝ} (hφ : DifferentiableAt ℝ φ (F x))
@@ -565,8 +566,11 @@ theorem integrable (hF : IsSmoothBounded F) : Integrable F μ :=
 
 theorem memLp_mderiv (hF : IsSmoothBounded F) (p : ℝ≥0∞) : MemLp (mderiv μ F) p μ := by
   obtain ⟨C, hC⟩ := hF.exists_norm_mderiv_le (μ := μ)
-  exact MemLp.of_bound hF.continuous_mderiv.aestronglyMeasurable C
-    (Filter.Eventually.of_forall hC)
+  let : SecondCountableTopologyEither W (Space μ) :=
+    secondCountableTopologyEither_of_left W (Space μ)
+  have hmeas : AEStronglyMeasurable (mderiv μ F) μ :=
+    hF.continuous_mderiv.aestronglyMeasurable
+  exact MemLp.of_bound hmeas C (Filter.Eventually.of_forall hC)
 
 theorem memLp_inner_mderiv (hF : IsSmoothBounded F) (h : Space μ) (p : ℝ≥0∞) :
     MemLp (fun x ↦ ⟪mderiv μ F x, h⟫_ℝ) p μ := by
@@ -596,7 +600,7 @@ theorem memLp_smul (hF : IsSmoothBounded F) (h : Space μ) (p : ℝ≥0∞) :
   rw [norm_smul, Real.norm_eq_abs]
   exact mul_le_mul_of_nonneg_right (hC x) (norm_nonneg _)
 
-omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian μ] in
+omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian (E := W) μ] in
 /-- A smooth bounded functional times an integrable function is integrable. -/
 theorem integrable_mul (hF : IsSmoothBounded F) {g : W → ℝ} (hg : Integrable g μ) :
     Integrable (fun x ↦ F x * g x) μ := by
@@ -703,6 +707,7 @@ being integrable), and comparing the derivatives at `ε = 0` gives the claim. -/
 theorem integral_fderiv_inclusion_ofDual {F : W → ℝ} (hF : IsSmoothBounded F)
     (L : StrongDual ℝ W) :
     ∫ x, fderiv ℝ F x (inclusion μ (ofDual μ L)) ∂μ = ∫ x, F x * (L x - L (mean μ)) ∂μ := by
+  let _ : SeminormedAddCommGroup W := NormedAddCommGroup.toSeminormedAddCommGroup
   set h : Space μ := ofDual μ L with hh
   set k : W := inclusion μ h with hk
   set v : ℝ := ‖h‖ ^ 2 with hv
@@ -718,8 +723,7 @@ theorem integral_fderiv_inclusion_ofDual {F : W → ℝ} (hF : IsSmoothBounded F
     apply integral_congr_ae
     filter_upwards [Lp.coeFn_smul ε (h : Lp ℝ 2 μ)] with x hx
     rw [Submodule.coe_smul, hx, Pi.smul_apply, smul_eq_mul, norm_smul, mul_pow,
-      Real.norm_eq_abs, sq_abs, hv]
-    ring_nf
+      Real.norm_eq_abs, sq_abs, hv, mul_div_assoc]
   -- derivative of the left side at `0`
   obtain ⟨C, hC⟩ := hF.bounded_fderiv
   have hL : HasDerivAt (fun ε : ℝ ↦ ∫ x, F (x + ε • k) ∂μ) (∫ x, fderiv ℝ F x k ∂μ) 0 := by
@@ -745,6 +749,9 @@ theorem integral_fderiv_inclusion_ofDual {F : W → ℝ} (hF : IsSmoothBounded F
   -- derivative of the right side at `0`
   obtain ⟨C₀, hC₀⟩ := hF.bounded
   have hv0 : 0 ≤ v := sq_nonneg _
+  have hExponent (ε : ℝ) :
+      Measurable (fun x ↦ ε * (h : Lp ℝ 2 μ) x - ε ^ 2 * (v / 2)) :=
+    (measurable_const.mul hhm).sub_const _
   have hR : HasDerivAt
       (fun ε : ℝ ↦ ∫ x, F x * Real.exp (ε * (h : Lp ℝ 2 μ) x - ε ^ 2 * (v / 2)) ∂μ)
       (∫ x, F x * (((h : Lp ℝ 2 μ) x - 0 * v) *
@@ -761,10 +768,12 @@ theorem integral_fderiv_inclusion_ofDual {F : W → ℝ} (hF : IsSmoothBounded F
         (Real.exp (2 * (h : Lp ℝ 2 μ) x) + Real.exp (-2 * (h : Lp ℝ 2 μ) x)))
       (Metric.ball_mem_nhds 0 one_pos) ?_ ?_ ?_ ?_ hbound ?_
     · exact this.2
-    · exact Filter.Eventually.of_forall fun ε ↦ (by fun_prop : Measurable _).aestronglyMeasurable
+    · exact Filter.Eventually.of_forall fun ε ↦
+        (hFm.mul (hExponent ε).exp).aestronglyMeasurable
     · simpa only [zero_mul, pow_two, mul_zero, sub_zero, Real.exp_zero, mul_one] using
         hF.integrable μ
-    · exact (by fun_prop : Measurable _).aestronglyMeasurable
+    · simpa only [zero_mul, pow_two, mul_zero, sub_zero, Real.exp_zero, mul_one] using
+        (hFm.fun_mul hhm).aestronglyMeasurable
     · refine Filter.Eventually.of_forall fun x ε hε ↦ ?_
       rw [Metric.mem_ball, dist_zero_right, Real.norm_eq_abs] at hε
       set a := (h : Lp ℝ 2 μ) x with ha
@@ -775,22 +784,21 @@ theorem integral_fderiv_inclusion_ofDual {F : W → ℝ} (hF : IsSmoothBounded F
             _ = |ε| * |a| := abs_mul _ _
             _ ≤ 1 * |a| := mul_le_mul_of_nonneg_right hε.le (abs_nonneg _)
             _ = |a| := one_mul _
-        nlinarith [sq_nonneg ε]
+        exact (sub_le_self _ (mul_nonneg (sq_nonneg ε) (div_nonneg hv0 zero_le_two))).trans this
       have hlin : |a - ε * v| ≤ |a| + v := by
         calc |a - ε * v| ≤ |a| + |ε * v| := abs_sub _ _
           _ = |a| + |ε| * v := by rw [abs_mul, abs_of_nonneg hv0]
           _ ≤ |a| + 1 * v := by gcongr
-          _ = |a| + v := by ring
+          _ = |a| + v := by rw [one_mul]
       have hexp2 : Real.exp (2 * |a|) ≤ Real.exp (2 * a) + Real.exp (-2 * a) := by
         rcases le_total 0 a with h0 | h0
         · rw [abs_of_nonneg h0]
           exact le_add_of_nonneg_right (Real.exp_pos _).le
         · rw [abs_of_nonpos h0]
-          rw [show 2 * -a = -2 * a by ring]
+          rw [mul_neg, ← neg_mul]
           exact le_add_of_nonneg_left (Real.exp_pos _).le
-      have habs : |a| ≤ Real.exp |a| := by
-        have := Real.add_one_le_exp |a|
-        linarith
+      have habs : |a| ≤ Real.exp |a| :=
+        (le_add_of_nonneg_right zero_le_one).trans (Real.add_one_le_exp |a|)
       have hone : 1 ≤ Real.exp |a| := Real.one_le_exp (abs_nonneg _)
       have hpos : 0 < Real.exp |a| := Real.exp_pos _
       have hC₀' : 0 ≤ C₀ := (abs_nonneg _).trans (hC₀ x)
@@ -802,7 +810,7 @@ theorem integral_fderiv_inclusion_ofDual {F : W → ℝ} (hF : IsSmoothBounded F
             · exact hC₀ x
         _ ≤ C₀ * ((1 + v) * Real.exp (2 * |a|)) := by
             refine mul_le_mul_of_nonneg_left ?_ hC₀'
-            rw [show 2 * |a| = |a| + |a| by ring, Real.exp_add]
+            rw [two_mul, Real.exp_add]
             calc (|a| + v) * Real.exp |a| ≤ (Real.exp |a| + v * Real.exp |a|) * Real.exp |a| := by
                   gcongr
                   exact le_mul_of_one_le_right hv0 hone
@@ -876,14 +884,13 @@ theorem integral_inner_mderiv_mul {F G : W → ℝ} (hF : IsSmoothBounded F)
   have hmul : ∀ x, ⟪mderiv μ (fun y ↦ F y * G y) x, h⟫_ℝ =
       F x * ⟪mderiv μ G x, h⟫_ℝ + ⟪mderiv μ F x, h⟫_ℝ * G x := by
     intro x
-    rw [mderiv_mul μ (hF.differentiable x) (hG.differentiable x), Submodule.coe_inner,
-      Submodule.coe_add, Submodule.coe_smul, Submodule.coe_smul, inner_add_left,
-      real_inner_smul_left, real_inner_smul_left, ← Submodule.coe_inner, ← Submodule.coe_inner]
-    ring
+    rw [mderiv_mul μ (hF.differentiable x) (hG.differentiable x), inner_add_left,
+      real_inner_smul_left, real_inner_smul_left, mul_comm (G x)]
   have h1 : Integrable (fun x ↦ F x * ⟪mderiv μ G x, h⟫_ℝ) μ :=
     hF.integrable_mul μ (hG.integrable_inner_mderiv μ h)
   have h2 : Integrable (fun x ↦ ⟪mderiv μ F x, h⟫_ℝ * G x) μ := by
-    simpa [mul_comm] using hG.integrable_mul μ (hF.integrable_inner_mderiv μ h)
+    exact (hG.integrable_mul μ (hF.integrable_inner_mderiv μ h)).congr
+      (Filter.Eventually.of_forall fun x ↦ mul_comm (G x) _)
   have h4 : Integrable (fun x ↦ F x * G x * (h : Lp ℝ 2 μ) x) μ :=
     (hF.mul hG).integrable_mul_coe μ (h : Lp ℝ 2 μ)
   simp only [hmul] at hFG
@@ -891,11 +898,9 @@ theorem integral_inner_mderiv_mul {F G : W → ℝ} (hF : IsSmoothBounded F)
   have h5 : ∫ x, F x * (G x * (h : Lp ℝ 2 μ) x - ⟪mderiv μ G x, h⟫_ℝ) ∂μ =
       ∫ x, F x * G x * (h : Lp ℝ 2 μ) x ∂μ - ∫ x, F x * ⟪mderiv μ G x, h⟫_ℝ ∂μ := by
     rw [← integral_sub h4 h1]
-    congr 1
-    funext x
-    ring
+    exact integral_congr_ae (Filter.Eventually.of_forall fun x ↦ by simp only [mul_sub, mul_assoc])
   rw [h5]
-  linarith
+  exact eq_sub_of_add_eq' hFG
 
 /-- The adjoint relation in `L²`: `⟪DF, G • h⟫_{L²(μ;H)} = ⟪F, δ(G • h)⟫_{L²(μ)}`. -/
 theorem inner_mderivLp_smulLp {F G : W → ℝ} (hF : IsSmoothBounded F)
@@ -957,6 +962,7 @@ theorem ae_eq_zero_of_forall_integral_cos_sin {g : W → ℝ} (hg : Integrable g
     (hcos : ∀ L : StrongDual ℝ W, ∫ x, Real.cos (L x) * g x ∂μ = 0)
     (hsin : ∀ L : StrongDual ℝ W, ∫ x, Real.sin (L x) * g x ∂μ = 0) :
     g =ᵐ[μ] 0 := by
+  let _ : SeminormedAddCommGroup W := NormedAddCommGroup.toSeminormedAddCommGroup
   set gp : W → ℝ := fun x ↦ max (g x) 0 with hgp
   set gm : W → ℝ := fun x ↦ max (-g x) 0 with hgm
   have hgp_int : Integrable gp μ := hg.pos_part
@@ -1005,8 +1011,10 @@ theorem ae_eq_zero_of_forall_integral_cos_sin {g : W → ℝ} (hg : Integrable g
       integral_withDensity_eq_integral_toReal_smul₀ hm_meas
         (Filter.Eventually.of_forall fun x ↦ ENNReal.ofReal_lt_top)]
     simp_rw [ENNReal.toReal_ofReal (hgp_nn _), ENNReal.toReal_ofReal (hgm_nn _)]
+    have hphase : Continuous fun x : W ↦ (L x : ℂ) * Complex.I :=
+      (Complex.continuous_ofReal.comp L.continuous).mul continuous_const
     have hexp : MemLp (fun x ↦ Complex.exp (L x * Complex.I)) ∞ μ :=
-      memLp_top_of_bound (Continuous.aestronglyMeasurable (by fun_prop)) 1
+      memLp_top_of_bound hphase.cexp.aestronglyMeasurable 1
         (Filter.Eventually.of_forall fun x ↦ (Complex.norm_exp_ofReal_mul_I (L x)).le)
     have hpi : Integrable (fun x ↦ gp x • Complex.exp (L x * Complex.I)) μ :=
       hgp_int.smul_of_top_left hexp
@@ -1413,7 +1421,7 @@ theorem mderivD12_toD12 (F : D12Graph μ) :
   calc
     mderivD12 μ (toD12 μ F) = mderivClosure μ (toD12 μ F) :=
       mderivD12_apply μ (toD12 μ F)
-    _ = mderivClosure μ (toLp μ F) := by rw [coe_toD12]
+    _ = mderivClosure μ (toLp μ F) := congrArg (mderivClosure μ) (coe_toD12 μ F)
     _ = mderiv μ F := (mderiv_eq μ F).symm
 
 /-- Equip a Sobolev functional with its derivative coordinate.  This map is algebraically

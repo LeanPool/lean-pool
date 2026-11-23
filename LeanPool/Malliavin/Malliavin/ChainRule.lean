@@ -48,6 +48,12 @@ open scoped ENNReal NNReal InnerProductSpace
 
 namespace Malliavin
 
+private theorem coeFn_sub_of_ae_eq {Ω E : Type*} [MeasurableSpace Ω] [NormedAddCommGroup E]
+    {ν : Measure Ω} {f g : Lp E 2 ν} {f' g' : Ω → E}
+    (hf : (f : Ω → E) =ᵐ[ν] f') (hg : (g : Ω → E) =ᵐ[ν] g') :
+    ((f - g : Lp E 2 ν) : Ω → E) =ᵐ[ν] fun x ↦ f' x - g' x :=
+  (Lp.coeFn_sub f g).trans (hf.sub hg)
+
 section Chain
 
 open CameronMartin
@@ -55,12 +61,16 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
+
+private theorem coeFn_mderivLp {F : W → ℝ} (hF : IsSmoothBounded F) :
+    (hF.mderivLp μ : W → Space μ) =ᵐ[μ] mderiv μ F :=
+  (hF.memLp_mderiv μ 2).coeFn_toLp
 
 variable {φ : ℝ → ℝ} {K : ℝ≥0}
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 /-- The derivative of `φ ∘ F` is `φ' (F x) • F'(x)`. -/
 theorem fderiv_comp_real {F : W → ℝ} {x : W} (hφ : DifferentiableAt ℝ φ (F x))
     (hF : DifferentiableAt ℝ F x) :
@@ -72,7 +82,7 @@ theorem fderiv_comp_real {F : W → ℝ} {x : W} (hφ : DifferentiableAt ℝ φ 
     smul_apply]
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 /-- Post-composition with a `C¹` function of bounded derivative preserves smooth boundedness. -/
 theorem IsSmoothBounded.comp_of_deriv_le (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖₊ ≤ K)
     {F : W → ℝ} (hF : IsSmoothBounded F) : IsSmoothBounded (fun x ↦ φ (F x)) where
@@ -100,7 +110,7 @@ theorem IsSmoothBounded.comp_of_deriv_le (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, 
       mul_le_mul h1 (hC x) (norm_nonneg _) K.coe_nonneg
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 theorem abs_le_of_deriv_le (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖₊ ≤ K) (x : ℝ) :
     |φ x| ≤ |φ 0| + K * |x| := by
   have hlip := lipschitzWith_of_nnNorm_deriv_le (hφ.differentiable one_ne_zero) hK
@@ -153,6 +163,8 @@ theorem comp_mem_domD12 (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖�
     (memLp_comp_of_deriv_le μ hφ hK F).toLp _ ∈ domD12 μ ∧
       mderivClosure μ ((memLp_comp_of_deriv_le μ hφ hK F).toLp _) =
         (memLp_deriv_smul_of_deriv_le μ hφ hK F (mderivClosure μ F)).toLp _ := by
+  let _ : SeminormedAddCommGroup W := NormedAddCommGroup.toSeminormedAddCommGroup
+  let _ : HSMul ℝ (Space μ) (Space μ) := inferInstance
   obtain ⟨η, hcl⟩ := hF
   have hη : mderivClosure μ F = η := mderivClosure_eq μ hcl
   obtain ⟨Fk, hFk, hDk⟩ := hcl
@@ -176,13 +188,12 @@ theorem comp_mem_domD12 (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖�
     refine squeeze_zero (fun _ ↦ norm_nonneg _) (fun i ↦ ?_)
       (by simpa using hFk'.const_mul (K : ℝ))
     refine Lp.norm_le_mul_norm_of_ae_le_mul ?_
-    filter_upwards [Lp.coeFn_sub ((((Fk (ns i)).2.comp_of_deriv_le hφ hK).memLp μ 2).toLp _)
-        ((memLp_comp_of_deriv_le μ hφ hK F).toLp _),
-      Lp.coeFn_sub (((Fk (ns i)).2.memLp μ 2).toLp _) F,
-      MemLp.coeFn_toLp (((Fk (ns i)).2.comp_of_deriv_le hφ hK).memLp μ 2),
-      MemLp.coeFn_toLp (memLp_comp_of_deriv_le μ hφ hK F),
-      MemLp.coeFn_toLp ((Fk (ns i)).2.memLp μ 2)] with x h1 h2 h3 h4 h5
-    rw [h1, h2, Pi.sub_apply, Pi.sub_apply, h3, h4, h5]
+    filter_upwards [coeFn_sub_of_ae_eq
+        (((Fk (ns i)).2.comp_of_deriv_le hφ hK).memLp μ 2).coeFn_toLp
+        (memLp_comp_of_deriv_le μ hφ hK F).coeFn_toLp,
+      coeFn_sub_of_ae_eq ((Fk (ns i)).2.memLp μ 2).coeFn_toLp
+        (Filter.EventuallyEq.rfl : (F : W → ℝ) =ᵐ[μ] F)] with x hleft hright
+    rw [hleft, hright]
     simpa [Real.dist_eq] using hlip.dist_le_mul ((Fk (ns i)).1 x) (F x)
   · -- convergence of the derivatives
     simp_rw [mderivClosure_toLp]
@@ -205,7 +216,7 @@ theorem comp_mem_domD12 (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖�
         calc |deriv φ ((Fk (ns i)).1 x) - deriv φ (F x)|
             ≤ |deriv φ ((Fk (ns i)).1 x)| + |deriv φ (F x)| := abs_sub _ _
           _ ≤ K + K := add_le_add h1 h2
-          _ = 2 * K := by ring
+          _ = 2 * K := (two_mul _).symm
       · filter_upwards [hae'] with x hx
         exact ((hφ.continuous_deriv_one.tendsto _).comp hx).smul_const _
     -- `‖D(φ ∘ Fᵢ) - φ' (Fᵢ) • η‖ ≤ K ‖DFᵢ - η‖`
@@ -213,14 +224,11 @@ theorem comp_mem_domD12 (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖�
         K * ‖(Fk (ns i)).2.mderivLp μ - η‖ := by
       intro i
       refine Lp.norm_le_mul_norm_of_ae_le_mul ?_
-      filter_upwards [Lp.coeFn_sub (((Fk (ns i)).2.comp_of_deriv_le hφ hK).mderivLp μ)
-          ((hM i).toLp _),
-        Lp.coeFn_sub ((Fk (ns i)).2.mderivLp μ) η,
-        MemLp.coeFn_toLp (((Fk (ns i)).2.comp_of_deriv_le hφ hK).memLp_mderiv μ 2),
-        MemLp.coeFn_toLp (hM i),
-        MemLp.coeFn_toLp ((Fk (ns i)).2.memLp_mderiv μ 2)] with x h1 h2 h3 h4 h5
-      rw [h1, h2, Pi.sub_apply, Pi.sub_apply, IsSmoothBounded.mderivLp, h3, h4,
-        IsSmoothBounded.mderivLp, h5,
+      filter_upwards [coeFn_sub_of_ae_eq
+          (coeFn_mderivLp μ ((Fk (ns i)).2.comp_of_deriv_le hφ hK)) (hM i).coeFn_toLp,
+        coeFn_sub_of_ae_eq (coeFn_mderivLp μ (Fk (ns i)).2)
+          (Filter.EventuallyEq.rfl : (η : W → Space μ) =ᵐ[μ] η)] with x hleft hright
+      rw [hleft, hright,
         mderiv_comp μ (hφ.differentiable one_ne_zero _) ((Fk (ns i)).2.differentiable x),
         ← smul_sub, norm_smul, Real.norm_eq_abs]
       have h1' : |deriv φ ((Fk (ns i)).1 x)| ≤ K := by
@@ -233,10 +241,8 @@ theorem comp_mem_domD12 (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv φ x‖�
       (fun i ↦ ?_) (by simpa using (hDk'.const_mul (K : ℝ)).add hMt)
     have htri : ‖((Fk (ns i)).2.comp_of_deriv_le hφ hK).mderivLp μ - target‖ ≤
         ‖((Fk (ns i)).2.comp_of_deriv_le hφ hK).mderivLp μ - (hM i).toLp _‖ +
-          ‖(hM i).toLp _ - target‖ := by
-      have := norm_add_le (((Fk (ns i)).2.comp_of_deriv_le hφ hK).mderivLp μ - (hM i).toLp _)
-        ((hM i).toLp _ - target)
-      rwa [sub_add_sub_cancel] at this
+          ‖(hM i).toLp _ - target‖ :=
+      norm_sub_le_norm_sub_add_norm_sub _ _ _
     exact htri.trans (add_le_add_left (hA i) _)
 
 /-- The closed derivative of `φ ∘ F` is controlled by that of `F`: `‖D_cl (φ ∘ F)‖ ≤ K ‖D_cl F‖`. -/
@@ -297,11 +303,11 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
 
 variable {G : W → ℝ}
 
-omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian μ] in
+omit [CompleteSpace W] [SecondCountableTopology W] [IsGaussian (E := W) μ] in
 /-- `F · G` is square integrable for `F ∈ L²` and bounded continuous `G`. -/
 theorem memLp_mul_smoothBounded (hG : IsSmoothBounded G) (F : Lp ℝ 2 μ) :
     MemLp (fun x ↦ F x * G x) 2 μ := by
@@ -330,7 +336,7 @@ theorem memLp_mul_deriv (hG : IsSmoothBounded G) (F : Lp ℝ 2 μ) (η : Lp (Spa
   have h2 : MemLp (fun x ↦ F x • mderiv μ G x) 2 μ := by
     have hg : MemLp (fun x ↦ D' * ‖F x‖) 2 μ := (Lp.memLp F).norm.const_mul _
     refine MemLp.of_le hg
-      ((Lp.aestronglyMeasurable F).smul hG.continuous_mderiv.aestronglyMeasurable)
+      ((Lp.aestronglyMeasurable F).smul (hG.memLp_mderiv μ 2).aestronglyMeasurable)
       (Filter.Eventually.of_forall fun x ↦ ?_)
     have hD0 : 0 ≤ D' := (norm_nonneg _).trans (hD' x)
     have h0 : 0 ≤ D' * ‖F x‖ := mul_nonneg hD0 (norm_nonneg _)
@@ -344,6 +350,7 @@ theorem mul_mem_domD12 (hG : IsSmoothBounded G) {F : Lp ℝ 2 μ} (hF : F ∈ do
     (memLp_mul_smoothBounded μ hG F).toLp _ ∈ domD12 μ ∧
       mderivClosure μ ((memLp_mul_smoothBounded μ hG F).toLp _) =
         (memLp_mul_deriv μ hG F (mderivClosure μ F)).toLp _ := by
+  let _ : SeminormedAddCommGroup W := NormedAddCommGroup.toSeminormedAddCommGroup
   obtain ⟨η, hcl⟩ := hF
   have hη : mderivClosure μ F = η := mderivClosure_eq μ hcl
   obtain ⟨Fk, hFk, hDk⟩ := hcl
@@ -360,13 +367,11 @@ theorem mul_mem_domD12 (hG : IsSmoothBounded G) {F : Lp ℝ 2 μ} (hF : F ∈ do
     rw [tendsto_iff_norm_sub_tendsto_zero] at hFk
     refine squeeze_zero (fun _ ↦ norm_nonneg _) (fun k ↦ ?_) (by simpa using hFk.const_mul D)
     refine Lp.norm_le_mul_norm_of_ae_le_mul ?_
-    filter_upwards [Lp.coeFn_sub ((((Fk k).2.mul hG).memLp μ 2).toLp _)
-        ((memLp_mul_smoothBounded μ hG F).toLp _),
-      Lp.coeFn_sub (((Fk k).2.memLp μ 2).toLp _) F,
-      MemLp.coeFn_toLp (((Fk k).2.mul hG).memLp μ 2),
-      MemLp.coeFn_toLp (memLp_mul_smoothBounded μ hG F),
-      MemLp.coeFn_toLp ((Fk k).2.memLp μ 2)] with x h1 h2 h3 h4 h5
-    rw [h1, h2, Pi.sub_apply, Pi.sub_apply, h3, h4, h5, ← sub_mul, norm_mul, mul_comm]
+    filter_upwards [coeFn_sub_of_ae_eq (((Fk k).2.mul hG).memLp μ 2).coeFn_toLp
+        (memLp_mul_smoothBounded μ hG F).coeFn_toLp,
+      coeFn_sub_of_ae_eq ((Fk k).2.memLp μ 2).coeFn_toLp
+        (Filter.EventuallyEq.rfl : (F : W → ℝ) =ᵐ[μ] F)] with x hleft hright
+    rw [hleft, hright, ← sub_mul, norm_mul, mul_comm]
     exact mul_le_mul_of_nonneg_right (by rw [Real.norm_eq_abs]; exact hD x) (norm_nonneg _)
   · -- derivatives
     simp_rw [mderivClosure_toLp]
@@ -380,13 +385,11 @@ theorem mul_mem_domD12 (hG : IsSmoothBounded G) {F : Lp ℝ 2 μ} (hF : F ∈ do
         D * ‖(Fk k).2.mderivLp μ - η‖ := by
       intro k
       refine Lp.norm_le_mul_norm_of_ae_le_mul ?_
-      filter_upwards [Lp.coeFn_sub (((Fk k).2.mul hG).mderivLp μ) ((hM k).toLp _),
-        Lp.coeFn_sub ((Fk k).2.mderivLp μ) η,
-        MemLp.coeFn_toLp (((Fk k).2.mul hG).memLp_mderiv μ 2),
-        MemLp.coeFn_toLp (hM k),
-        MemLp.coeFn_toLp ((Fk k).2.memLp_mderiv μ 2)] with x h1 h2 h3 h4 h5
-      rw [h1, h2, Pi.sub_apply, Pi.sub_apply, IsSmoothBounded.mderivLp, h3, h4,
-        IsSmoothBounded.mderivLp, h5,
+      filter_upwards [coeFn_sub_of_ae_eq
+          (coeFn_mderivLp μ ((Fk k).2.mul hG)) (hM k).coeFn_toLp,
+        coeFn_sub_of_ae_eq (coeFn_mderivLp μ (Fk k).2)
+          (Filter.EventuallyEq.rfl : (η : W → Space μ) =ᵐ[μ] η)] with x hleft hright
+      rw [hleft, hright,
         mderiv_mul μ ((Fk k).2.differentiable x) (hG.differentiable x)]
       have : (Fk k).1 x • mderiv μ G x + G x • mderiv μ (Fk k).1 x -
           (G x • η x + (Fk k).1 x • mderiv μ G x) = G x • (mderiv μ (Fk k).1 x - η x) := by
@@ -397,12 +400,11 @@ theorem mul_mem_domD12 (hG : IsSmoothBounded G) {F : Lp ℝ 2 μ} (hF : F ∈ do
     have hB : ∀ k, ‖(hM k).toLp _ - target‖ ≤ D' * ‖(Fk k).2.toLp μ - F‖ := by
       intro k
       refine Lp.norm_le_mul_norm_of_ae_le_mul ?_
-      filter_upwards [Lp.coeFn_sub ((hM k).toLp _) target,
-        Lp.coeFn_sub ((Fk k).2.toLp μ) F,
-        MemLp.coeFn_toLp (hM k),
-        MemLp.coeFn_toLp (memLp_mul_deriv μ hG F η),
-        MemLp.coeFn_toLp ((Fk k).2.memLp μ 2)] with x h1 h2 h3 h4 h5
-      rw [h1, h2, Pi.sub_apply, Pi.sub_apply, h3, htarget, h4, IsSmoothBounded.toLp, h5]
+      filter_upwards [coeFn_sub_of_ae_eq (hM k).coeFn_toLp
+          (memLp_mul_deriv μ hG F η).coeFn_toLp,
+        coeFn_sub_of_ae_eq ((Fk k).2.memLp μ 2).coeFn_toLp
+          (Filter.EventuallyEq.rfl : (F : W → ℝ) =ᵐ[μ] F)] with x hleft hright
+      rw [htarget, IsSmoothBounded.toLp, hleft, hright]
       have : G x • η x + (Fk k).1 x • mderiv μ G x - (G x • η x + F x • mderiv μ G x) =
           ((Fk k).1 x - F x) • mderiv μ G x := by
         rw [sub_smul]; abel
@@ -413,9 +415,8 @@ theorem mul_mem_domD12 (hG : IsSmoothBounded G) {F : Lp ℝ 2 μ} (hF : F ∈ do
     refine squeeze_zero (fun k ↦ norm_nonneg (((Fk k).2.mul hG).mderivLp μ - target))
       (fun k ↦ ?_) (by simpa using (hDk.const_mul D).add (hFk.const_mul D'))
     have htri : ‖((Fk k).2.mul hG).mderivLp μ - target‖ ≤
-        ‖((Fk k).2.mul hG).mderivLp μ - (hM k).toLp _‖ + ‖(hM k).toLp _ - target‖ := by
-      have := norm_add_le (((Fk k).2.mul hG).mderivLp μ - (hM k).toLp _) ((hM k).toLp _ - target)
-      rwa [sub_add_sub_cancel] at this
+        ‖((Fk k).2.mul hG).mderivLp μ - (hM k).toLp _‖ + ‖(hM k).toLp _ - target‖ :=
+      norm_sub_le_norm_sub_add_norm_sub _ _ _
     exact htri.trans (add_le_add (hA k) (hB k))
 
 /-- Norm bound for the product rule: `‖D_cl (F G)‖ ≤ D' ‖F‖ + D ‖D_cl F‖` where `|G| ≤ D` and
@@ -438,7 +439,7 @@ theorem norm_mderivClosure_mul_le (hG : IsSmoothBounded G) {F : Lp ℝ 2 μ} (hF
   have h2 : MemLp (fun x ↦ F x • mderiv μ G x) 2 μ := by
     have hg : MemLp (fun x ↦ D' * ‖F x‖) 2 μ := (Lp.memLp F).norm.const_mul _
     refine MemLp.of_le hg ((Lp.aestronglyMeasurable F).smul
-      hG.continuous_mderiv.aestronglyMeasurable) (Filter.Eventually.of_forall fun x ↦ ?_)
+      (hG.memLp_mderiv μ 2).aestronglyMeasurable) (Filter.Eventually.of_forall fun x ↦ ?_)
     have h0 : 0 ≤ D' * ‖F x‖ := mul_nonneg hD'0 (norm_nonneg _)
     rw [Real.norm_eq_abs (D' * _), abs_of_nonneg h0, norm_smul, mul_comm]
     exact mul_le_mul_of_nonneg_right (hD' x) (norm_nonneg _)
@@ -487,10 +488,10 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 /-- The derivative of a tuple of functions, applied to a vector. -/
 theorem fderiv_pi_apply_eq_sum {n : ℕ} {G : Fin n → W → ℝ} {x : W}
     (hG : ∀ i, DifferentiableAt ℝ (G i) x) (w : W) :
@@ -520,7 +521,7 @@ theorem mderiv_comp_pi {n : ℕ} {f : (Fin n → ℝ) → ℝ} {G : Fin n → W 
   refine Finset.sum_congr rfl fun i _ ↦ mul_comm _ _
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 /-- A `C¹` function with bounded derivative of finitely many smooth bounded functionals is smooth
 bounded. -/
 theorem IsSmoothBounded.comp_pi {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDiff ℝ 1 f)
@@ -567,7 +568,7 @@ theorem IsSmoothBounded.comp_pi {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : Co
       (Finset.single_le_sum (fun j _ ↦ (norm_nonneg _).trans (hC j x)) (Finset.mem_univ i))
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 theorem norm_pi_le_sum_abs {n : ℕ} (y : Fin n → ℝ) : ‖y‖ ≤ ∑ i, |y i| := by
   rw [pi_norm_le_iff_of_nonneg (Finset.sum_nonneg fun _ _ ↦ abs_nonneg _)]
   intro i
@@ -575,7 +576,7 @@ theorem norm_pi_le_sum_abs {n : ℕ} (y : Fin n → ℝ) : ‖y‖ ≤ ∑ i, |y
   exact Finset.single_le_sum (fun j _ ↦ abs_nonneg (y j)) (Finset.mem_univ i)
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 /-- A `C¹` function with `‖f'‖ ≤ K` is `K`-Lipschitz. -/
 theorem abs_sub_le_of_fderiv_le {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDiff ℝ 1 f) {K : ℝ}
     (hK : ∀ y, ‖fderiv ℝ f y‖ ≤ K) (y z : Fin n → ℝ) : |f y - f z| ≤ K * ‖y - z‖ := by
@@ -614,7 +615,7 @@ theorem memLp_comp_pi {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDiff ℝ
   exact hb
 
 omit [CompleteSpace W] [MeasurableSpace W] [BorelSpace W] [SecondCountableTopology W]
-  [IsGaussian μ] in
+  [IsGaussian (E := W) μ] in
 theorem abs_fderiv_pi_single_le {n : ℕ} {f : (Fin n → ℝ) → ℝ} {K : ℝ}
     (hK : ∀ y, ‖fderiv ℝ f y‖ ≤ K) (y : Fin n → ℝ) (i : Fin n) :
     |fderiv ℝ f y (Pi.single i 1)| ≤ K := by
@@ -729,6 +730,8 @@ theorem comp_pi_mem_domD12 {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDif
       mderivClosure μ ((memLp_comp_pi μ hf hK F).toLp _) =
         (memLp_grad_smul μ hf hK (fun i ↦ Lp.aestronglyMeasurable (F i))
           (fun i ↦ mderivClosure μ (F i))).toLp _ := by
+  let _ : SeminormedAddCommGroup W := NormedAddCommGroup.toSeminormedAddCommGroup
+  let _ : HSMul ℝ (Space μ) (Space μ) := inferInstance
   have hK0 : 0 ≤ K := (norm_nonneg _).trans (hK 0)
   choose η hcl using hF
   have hη : ∀ i, mderivClosure μ (F i) = η i := fun i ↦ mderivClosure_eq μ (hcl i)
@@ -784,7 +787,7 @@ theorem comp_pi_mem_domD12 {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDif
             ≤ |fderiv ℝ f (fun i ↦ (Fk i (ns j)).1 x) (Pi.single i 1)| +
                 |fderiv ℝ f (fun i ↦ F i x) (Pi.single i 1)| := abs_sub _ _
           _ ≤ K + K := add_le_add (abs_fderiv_pi_single_le hK _ i) (abs_fderiv_pi_single_le hK _ i)
-          _ = 2 * K := by ring
+          _ = 2 * K := (two_mul _).symm
       · filter_upwards [hae] with x hx
         refine tendsto_finsetSum _ fun i _ ↦ Tendsto.smul_const ?_ _
         have hc : Continuous fun y ↦ fderiv ℝ f y (Pi.single i (1 : ℝ)) :=
@@ -804,19 +807,17 @@ theorem comp_pi_mem_domD12 {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf : ContDif
             = eLpNorm (∑ i, fun x ↦ fderiv ℝ f (fun i ↦ (Fk i (ns j)).1 x) (Pi.single i 1) •
                 (⇑((Fk i (ns j)).2.mderivLp μ) - ⇑(η i)) x) 2 μ := by
               refine eLpNorm_congr_ae ?_
-              have hae := ae_all_iff.2 fun i ↦ MemLp.coeFn_toLp ((Fk i (ns j)).2.memLp_mderiv μ 2)
-              filter_upwards [Lp.coeFn_sub
-                  ((IsSmoothBounded.comp_pi hf hK fun i ↦ (Fk i (ns j)).2).mderivLp μ)
-                  ((hM j).toLp _), Lp.coeFn_zero (E := Space μ) 2 μ,
-                MemLp.coeFn_toLp
-                  ((IsSmoothBounded.comp_pi hf hK fun i ↦ (Fk i (ns j)).2).memLp_mderiv μ 2),
-                MemLp.coeFn_toLp (hM j), hae] with x h1 h2 h3 h4 h5
-              rw [Pi.sub_apply, h1, h2, Pi.sub_apply, IsSmoothBounded.mderivLp, h3, h4,
+              have hae := ae_all_iff.2 fun i ↦ coeFn_mderivLp μ (Fk i (ns j)).2
+              filter_upwards [coeFn_sub_of_ae_eq
+                  (coeFn_mderivLp μ (IsSmoothBounded.comp_pi hf hK fun i ↦ (Fk i (ns j)).2))
+                  (hM j).coeFn_toLp,
+                Lp.coeFn_zero (E := Space μ) 2 μ, hae] with x hleft hzero hterms
+              rw [Pi.sub_apply, hleft, hzero,
                 mderiv_comp_pi μ (hf.differentiable one_ne_zero _)
                   (fun i ↦ (Fk i (ns j)).2.differentiable x),
                 Finset.sum_apply, Pi.zero_apply, sub_zero, ← Finset.sum_sub_distrib]
               refine Finset.sum_congr rfl fun i _ ↦ ?_
-              rw [IsSmoothBounded.mderivLp, Pi.sub_apply, h5 i, smul_sub]
+              rw [Pi.sub_apply, hterms i, smul_sub]
           _ ≤ ∑ i, eLpNorm (fun x ↦ fderiv ℝ f (fun i ↦ (Fk i (ns j)).1 x) (Pi.single i 1) •
                 (⇑((Fk i (ns j)).2.mderivLp μ) - ⇑(η i)) x) 2 μ := by
               exact eLpNorm_sum_le one_le_two
@@ -916,7 +917,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+  {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
   {φ : ℝ → ℝ} {K : ℝ≥0}
 
 omit [CompleteSpace W] [BorelSpace W] [SecondCountableTopology W] in
@@ -932,7 +933,7 @@ theorem mderivClosure_comp_space (hφ : ContDiff ℝ 1 φ) (hK : ∀ x, ‖deriv
     (h : Space P) :
     mderivClosure P ((memLp_comp_of_deriv_le P hφ hK (h : Lp ℝ 2 P)).toLp _) =
       smulLp h ((memLp_deriv_comp hφ hK (h : Lp ℝ 2 P)).toLp _) := by
-  rw [(comp_mem_domD12 P hφ hK (coe_space_mem_domD12 P h).1).2]
+  refine (comp_mem_domD12 P hφ hK (coe_space_mem_domD12 P h).1).2.trans ?_
   have hc : (mderivClosure P (h : Lp ℝ 2 P) : W → Space P) =ᵐ[P] fun _ ↦ h := by
     rw [(coe_space_mem_domD12 P h).2, constLp_apply]
     exact Lp.coeFn_const 2 P h
@@ -967,7 +968,7 @@ theorem mderivClosure_comp_eq_boundedSMul (hφ : ContDiff ℝ 1 φ) (hK : ∀ x,
       boundedSMul (hφ.continuous_deriv_one.comp_aestronglyMeasurable (Lp.aestronglyMeasurable F))
         (C := K) (fun x ↦ by rw [← Real.norm_eq_abs]; exact_mod_cast hK (F x))
         (mderivClosure P F) := by
-  rw [(comp_mem_domD12 P hφ hK hF).2]
+  refine (comp_mem_domD12 P hφ hK hF).2.trans ?_
   apply Lp.ext
   filter_upwards [MemLp.coeFn_toLp (memLp_deriv_smul_of_deriv_le P hφ hK F (mderivClosure P F)),
     coeFn_boundedSMul (hφ.continuous_deriv_one.comp_aestronglyMeasurable
@@ -985,7 +986,9 @@ theorem timeDerivative_mderivClosure_comp (hB : IsPreBrownianReal B P)
           (hφ.continuous_deriv_one.comp_aestronglyMeasurable (Lp.aestronglyMeasurable F)))
         (C := K) (fun p ↦ by rw [← Real.norm_eq_abs]; exact_mod_cast hK (F p.2))
         (timeDerivative hB L hL hgen (mderivClosure P F)) := by
-  rw [mderivClosure_comp_eq_boundedSMul hφ hK hF, timeDerivative_boundedSMul hB L hL hgen]
+  exact (congrArg (timeDerivative hB L hL hgen)
+    (mderivClosure_comp_eq_boundedSMul hφ hK hF)).trans
+      (timeDerivative_boundedSMul hB L hL hgen _ _ _)
 
 /-! #### The time-form product rule with a cylindrical factor -/
 
@@ -1095,7 +1098,7 @@ theorem mderivClosure_comp_pi_eq_sum_boundedSMul {n : ℕ} {f : (Fin n → ℝ) 
       ∑ i, boundedSMul (G := fun x ↦ fderiv ℝ f (fun i ↦ F i x) (Pi.single i 1))
         (memLp_fderiv_pi_comp hf hK F i).aestronglyMeasurable (C := K)
         (fun _ ↦ abs_fderiv_pi_single_le hK _ i) (mderivClosure P (F i)) := by
-  rw [(comp_pi_mem_domD12 P hf hK hF).2]
+  refine (comp_pi_mem_domD12 P hf hK hF).2.trans ?_
   apply Lp.ext
   have h2 := ae_all_iff.2 fun i ↦ coeFn_boundedSMul
     (G := fun x ↦ fderiv ℝ f (fun i ↦ F i x) (Pi.single i 1))
@@ -1137,7 +1140,7 @@ theorem mderivClosure_comp_pi_space {n : ℕ} {f : (Fin n → ℝ) → ℝ} (hf 
     (hK : ∀ y, ‖fderiv ℝ f y‖ ≤ K) (h : Fin n → Space P) :
     mderivClosure P ((memLp_comp_pi P hf hK fun i ↦ (h i : Lp ℝ 2 P)).toLp _) =
       ∑ i, smulLp (h i) ((memLp_fderiv_pi_comp hf hK (fun i ↦ (h i : Lp ℝ 2 P)) i).toLp _) := by
-  rw [(comp_pi_mem_domD12 P hf hK fun i ↦ (coe_space_mem_domD12 P (h i)).1).2]
+  refine (comp_pi_mem_domD12 P hf hK fun i ↦ (coe_space_mem_domD12 P (h i)).1).2.trans ?_
   have hc : ∀ i, (mderivClosure P (h i : Lp ℝ 2 P) : W → Space P) =ᵐ[P] fun _ ↦ h i := fun i ↦ by
     rw [(coe_space_mem_domD12 P (h i)).2, constLp_apply]
     exact Lp.coeFn_const 2 P (h i)

@@ -99,8 +99,7 @@ theorem memLp_tensor (A : FiniteMeasurableSet μ) (g : Lp ℝ 2 ν) :
         legacyProduct_quasiMeasurePreserving_snd))).mpr ?_
   refine (integrable_mul_legacyProduct hg.integrable_sq hA.integrable_sq).congr ?_
   filter_upwards with p
-  simp only [Pi.mul_apply, Function.comp_apply]
-  ring
+  exact (mul_pow (g p.1) (A.1.indicator (1 : Ω → ℝ) p.2) 2).symm
 
 /-- The simple tensor `(t, ω) ↦ g t · 1_A ω` as an element of `L²(ν × μ)`. -/
 noncomputable def tensorLp (A : FiniteMeasurableSet μ) (g : Lp ℝ 2 ν) :
@@ -238,24 +237,20 @@ theorem fubiniLiftL_indicatorLp (A : FiniteMeasurableSet μ) (g : Lp ℝ 2 ν) :
   have := fubiniLiftL_tensorStepToLp (Finsupp.single (A, g) (1 : ℝ))
   rwa [tensorStepToLp_single, tensorStepToProd_single, one_smul, one_smul] at this
 
-/-- The Fubini lift preserves inner products. -/
-theorem inner_fubiniLiftL (f g : Lp (Lp ℝ 2 ν) 2 μ) :
-    ⟪fubiniLiftL f, fubiniLiftL g⟫_ℝ = ⟪f, g⟫_ℝ := by
-  refine denseRange_tensorStepToLp.induction_on₂
-    (p := fun f g ↦ ⟪fubiniLiftL f, fubiniLiftL g⟫_ℝ = ⟪f, g⟫_ℝ) ?_ ?_ f g
-  · exact isClosed_eq ((fubiniLiftL.continuous.comp continuous_fst).inner
-      (fubiniLiftL.continuous.comp continuous_snd)) (continuous_fst.inner continuous_snd)
-  · intro v w
-    simp only [fubiniLiftL_tensorStepToLp, inner_tensorStepToProd]
-
 theorem norm_fubiniLiftL (f : Lp (Lp ℝ 2 ν) 2 μ) : ‖fubiniLiftL f‖ = ‖f‖ := by
-  have h := inner_fubiniLiftL f f
-  rw [real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq] at h
-  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp h
+  refine denseRange_tensorStepToLp.induction_on (p := fun g ↦ ‖fubiniLiftL g‖ = ‖g‖)
+    f (isClosed_eq (continuous_norm.comp fubiniLiftL.continuous) continuous_norm) ?_
+  intro v
+  simp only [fubiniLiftL_tensorStepToLp, norm_tensorStepToProd]
 
 /-- **The Fubini lift** `L²(μ; L²(ν)) → L²(ν × μ)` as a linear isometry. -/
 noncomputable def fubiniLift : Lp (Lp ℝ 2 ν) 2 μ →ₗᵢ[ℝ] Lp ℝ 2 (ν.prod μ) :=
   ⟨fubiniLiftL.toLinearMap, norm_fubiniLiftL⟩
+
+/-- The Fubini lift preserves inner products. -/
+theorem inner_fubiniLiftL (f g : Lp (Lp ℝ 2 ν) 2 μ) :
+    ⟪fubiniLiftL f, fubiniLiftL g⟫_ℝ = ⟪f, g⟫_ℝ :=
+  fubiniLift.inner_map_map f g
 
 theorem fubiniLift_apply (f : Lp (Lp ℝ 2 ν) 2 μ) : fubiniLift f = fubiniLiftL f := rfl
 
@@ -323,8 +318,7 @@ theorem memLp_tensor' (g : Lp ℝ 2 ν) (G : Lp ℝ 2 μ) :
   refine (integrable_mul_legacyProduct (Lp.memLp g).integrable_sq
     (Lp.memLp G).integrable_sq).congr ?_
   filter_upwards with p
-  simp only [Pi.mul_apply, Function.comp_apply]
-  ring
+  exact (mul_pow (g p.1) (G p.2) 2).symm
 
 /-- The tensor `(t, ω) ↦ g t * G ω` in `L²(ν × μ)`. -/
 noncomputable def tensor (g : Lp ℝ 2 ν) (G : Lp ℝ 2 μ) : Lp ℝ 2 (legacyProduct ν μ) :=
@@ -342,8 +336,7 @@ theorem tensor_add (g : Lp ℝ 2 ν) (G G' : Lp ℝ 2 μ) :
     legacyProduct_quasiMeasurePreserving_snd.ae_eq_comp (Lp.coeFn_add G G')
   filter_upwards [coeFn_tensor g (G + G'), coeFn_tensor g G, coeFn_tensor g G',
     Lp.coeFn_add (tensor g G) (tensor g G'), h5] with p h1 h2 h3 h4 h5
-  rw [h1, h4, Pi.add_apply, h2, h3, h5]
-  ring
+  rw [h1, h4, Pi.add_apply, h2, h3, h5, mul_add]
 
 theorem tensor_smul (g : Lp ℝ 2 ν) (c : ℝ) (G : Lp ℝ 2 μ) :
     tensor g (c • G) = c • tensor g G := by
@@ -354,8 +347,7 @@ theorem tensor_smul (g : Lp ℝ 2 ν) (c : ℝ) (G : Lp ℝ 2 μ) :
     exact legacyProduct_quasiMeasurePreserving_snd.ae_eq_comp ((Lp.coeFn_smul c G).trans h)
   filter_upwards [coeFn_tensor g (c • G), coeFn_tensor g G, Lp.coeFn_smul c (tensor g G), h5]
     with p h1 h2 h3 h5
-  rw [h1, h3, Pi.smul_apply, h2, h5, smul_eq_mul]
-  ring
+  rw [h1, h3, Pi.smul_apply, h2, h5, smul_eq_mul, mul_left_comm]
 
 end LegacyTensor
 
@@ -380,8 +372,7 @@ theorem tensor_add [SFinite μ] (g : Lp ℝ 2 ν) (G G' : Lp ℝ 2 μ) :
     Measure.quasiMeasurePreserving_snd.ae_eq_comp (Lp.coeFn_add G G')
   filter_upwards [coeFn_tensor g (G + G'), coeFn_tensor g G, coeFn_tensor g G',
     Lp.coeFn_add (tensor g G) (tensor g G'), h5] with p h1 h2 h3 h4 h5
-  rw [h1, h4, Pi.add_apply, h2, h3, h5]
-  ring
+  rw [h1, h4, Pi.add_apply, h2, h3, h5, mul_add]
 
 theorem tensor_smul [SFinite μ] (g : Lp ℝ 2 ν) (c : ℝ) (G : Lp ℝ 2 μ) :
     tensor g (c • G) = c • tensor g G := by
@@ -392,8 +383,7 @@ theorem tensor_smul [SFinite μ] (g : Lp ℝ 2 ν) (c : ℝ) (G : Lp ℝ 2 μ) :
     exact Measure.quasiMeasurePreserving_snd.ae_eq_comp ((Lp.coeFn_smul c G).trans h)
   filter_upwards [coeFn_tensor g (c • G), coeFn_tensor g G, Lp.coeFn_smul c (tensor g G), h5]
     with p h1 h2 h3 h5
-  rw [h1, h3, Pi.smul_apply, h2, h5, smul_eq_mul]
-  ring
+  rw [h1, h3, Pi.smul_apply, h2, h5, smul_eq_mul, mul_left_comm]
 
 /-- Inner products of simple tensors factor into the two component inner products. -/
 theorem inner_tensor [SFinite μ] [SFinite ν]
@@ -407,7 +397,7 @@ theorem inner_tensor [SFinite μ] [SFinite ν]
       apply integral_congr_ae
       filter_upwards [coeFn_tensor g G, coeFn_tensor g' G'] with p hfirst hsecond
       rw [hfirst, hsecond]
-      ring
+      exact mul_mul_mul_comm _ _ _ _
     _ = (∫ t, g' t * g t ∂ν) * ∫ w, G' w * G w ∂μ :=
       integral_prod_mul (fun t ↦ g' t * g t) (fun w ↦ G' w * G w)
 

@@ -394,29 +394,24 @@ theorem wienerIntegral_indicatorConstLp_Ioc (hB : IsPreBrownianReal B P) {a b : 
   rw [eq_sub_iff_add_eq, add_comm, intervalIndicator, intervalIndicator, ← hunion]
   congr 1
 
-/-- **The Itô isometry**: `⟪J₁ f, J₁ g⟫ = ⟪f, g⟫`. -/
-theorem inner_wienerIntegral (hB : IsPreBrownianReal B P)
-    (f g : Lp ℝ 2 nonnegativeLebesgueMeasure) :
-    ⟪wienerIntegral hB f, wienerIntegral hB g⟫_ℝ = ⟪f, g⟫_ℝ := by
-  refine denseRange_stepToLp.induction_on₂
-    (p := fun f g ↦ ⟪wienerIntegral hB f, wienerIntegral hB g⟫_ℝ = ⟪f, g⟫_ℝ) ?_ ?_ f g
-  · exact isClosed_eq (((wienerIntegral hB).continuous.comp continuous_fst).inner
-      ((wienerIntegral hB).continuous.comp continuous_snd))
-      (continuous_fst.inner continuous_snd)
-  · intro v w
-    simp only [wienerIntegral_stepToLp, inner_stepToRandom]
-
 theorem norm_wienerIntegral (hB : IsPreBrownianReal B P)
     (f : Lp ℝ 2 nonnegativeLebesgueMeasure) :
     ‖wienerIntegral hB f‖ = ‖f‖ := by
-  have h := inner_wienerIntegral hB f f
-  rw [real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq] at h
-  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp h
+  refine denseRange_stepToLp.induction_on (p := fun g ↦ ‖wienerIntegral hB g‖ = ‖g‖)
+    f (isClosed_eq (continuous_norm.comp (wienerIntegral hB).continuous) continuous_norm) ?_
+  intro v
+  simp only [wienerIntegral_stepToLp, norm_stepToRandom]
 
 /-- The Wiener integral as a linear isometry. -/
 noncomputable def wienerIntegralₗᵢ (hB : IsPreBrownianReal B P) :
     Lp ℝ 2 nonnegativeLebesgueMeasure →ₗᵢ[ℝ] Lp ℝ 2 P :=
   ⟨(wienerIntegral hB).toLinearMap, norm_wienerIntegral hB⟩
+
+/-- **The Itô isometry**: `⟪J₁ f, J₁ g⟫ = ⟪f, g⟫`. -/
+theorem inner_wienerIntegral (hB : IsPreBrownianReal B P)
+    (f g : Lp ℝ 2 nonnegativeLebesgueMeasure) :
+    ⟪wienerIntegral hB f, wienerIntegral hB g⟫_ℝ = ⟪f, g⟫_ℝ :=
+  (wienerIntegralₗᵢ hB).inner_map_map f g
 
 omit [MeasurableSpace Ω] in
 /-- Expectation on `L²(P)` is the pairing with the constant `1`. -/

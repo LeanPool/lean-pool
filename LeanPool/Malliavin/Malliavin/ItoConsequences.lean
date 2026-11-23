@@ -37,7 +37,7 @@ namespace Malliavin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
   {B : ℝ≥0 → W → ℝ}
 
 /-! ## Deterministic restriction -/
@@ -458,15 +458,8 @@ theorem ClarkOconeFamily.ofNaturalIto_isBrownianOnElementary
             (mderivD12 P F))) U) :
     (ClarkOconeFamily.ofNaturalIto (W := W) (P := P) (B := B)
       hB coordinate coordinate_apply generated hsm hnat
-      hMRT hDuality).IsBrownianOnElementary := by
-  intro a b hab Z
-  change naturalItoIntegral hB hsm hnat
-      (elementaryPredictable 𝓅 a b Z) = _
-  rw [naturalItoIntegral_elementaryPredictable]
-  exact
-    ((ClarkOconeFamily.ofNaturalIto (W := W) (P := P) (B := B)
-      hB coordinate coordinate_apply generated hsm hnat hMRT hDuality
-      ).elementaryIntegralValue_eq_elementaryBrownianValue hab Z).symm
+      hMRT hDuality).IsBrownianOnElementary :=
+  ClarkOconeFamily.isBrownianOnElementary_of_itoIntegral_eq_naturalItoIntegral _ rfl
 
 end Malliavin
 

@@ -28,13 +28,13 @@ namespace Malliavin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
   {B : ℝ≥0 → W → ℝ}
 
 attribute [local instance] gaussianSFinite
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A finite product of Brownian increments has finite second moment. -/
 theorem memLp_chainIntegral (hB : IsPreBrownianReal B P) {n : ℕ}
     (u v : Fin n → ℝ≥0) :
@@ -68,14 +68,14 @@ theorem memLp_chainIntegral (hB : IsPreBrownianReal B P) {n : ℕ}
     exact hprod
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The product of a finite chain of Brownian increments, as a random variable in `L²(P)`. -/
 noncomputable def chainIntegralLp (hB : IsPreBrownianReal B P) {n : ℕ}
     (u v : Fin n → ℝ≥0) : RandomL2 P :=
   (memLp_chainIntegral hB u v).toLp (chainIntegral B u v)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A representative of the `L²` Brownian chain product is the pointwise product of increments. -/
 theorem coeFn_chainIntegralLp (hB : IsPreBrownianReal B P) {n : ℕ}
     (u v : Fin n → ℝ≥0) :
@@ -83,7 +83,7 @@ theorem coeFn_chainIntegralLp (hB : IsPreBrownianReal B P) {n : ℕ}
   MemLp.coeFn_toLp _
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Splitting off the last increment in a nonempty Brownian chain. -/
 theorem chainIntegral_succ {n : ℕ} (u v : Fin (n + 1) → ℝ≥0) (w : W) :
     chainIntegral B u v w =
@@ -93,7 +93,7 @@ theorem chainIntegral_succ {n : ℕ} (u v : Fin (n + 1) → ℝ≥0) (w : W) :
   rw [Fin.prod_univ_castSucc]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- If all endpoints precede `t`, a Brownian chain product is strongly measurable for the
 natural filtration at `t`. -/
 theorem stronglyMeasurable_chainIntegral_natural
@@ -120,7 +120,7 @@ theorem stronglyMeasurable_chainIntegral_natural
       simp only [Pi.mul_apply, Finset.prod_insert hi]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A Brownian chain whose endpoints precede `t`, bundled as an `𝓕_t`-measurable `L²` random
 variable. -/
 noncomputable def adaptedChainIntegralLp
@@ -133,7 +133,7 @@ noncomputable def adaptedChainIntegralLp
       (coeFn_chainIntegralLp hB u v).symm⟩
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Forgetting adapted measurability recovers the Brownian chain product in ambient `L²(P)`. -/
 @[simp]
 theorem adaptedChainIntegralLp_coe
@@ -155,7 +155,7 @@ theorem chainIntegralLp_zero (hB : IsPreBrownianReal B P)
   simp [chainIntegral]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The prefix of an ordered Brownian increment chain, bundled at the starting time of its last
 increment. -/
 noncomputable def orderedChainPrefixAdapted
@@ -171,7 +171,7 @@ noncomputable def orderedChainPrefixAdapted
     (fun i ↦ hord i.castSucc (Fin.last n) i.castSucc_lt_last)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The ambient value of the adapted prefix is the `L²` product of the preceding increments. -/
 @[simp]
 theorem orderedChainPrefixAdapted_coe
@@ -185,7 +185,7 @@ theorem orderedChainPrefixAdapted_coe
   rfl
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A nonempty ordered Brownian chain is the elementary Brownian terminal value obtained by
 integrating its adapted prefix over the final interval. -/
 theorem chainIntegralLp_succ_eq_elementaryBrownianValue
@@ -379,7 +379,7 @@ structure OrderedBoxIndex (n : ℕ) where
   ordered : ∀ i j, i < j → v i ≤ u j
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- An ordered box is contained in the strict time simplex. -/
 theorem orderedBox_subset_simplex {n : ℕ} (a : OrderedBoxIndex n) :
     orderedBox a.u a.v ⊆ simplex ℝ≥0 n := by
@@ -391,7 +391,7 @@ theorem orderedBox_subset_simplex {n : ℕ} (a : OrderedBoxIndex n) :
   exact lt_of_le_of_lt (hit.2.trans (a.ordered i j hij)) hjt.1
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- An ordered box has finite measure after restriction to the simplex. -/
 theorem restrictedSimplexMeasure_orderedBox_ne_top {n : ℕ} (a : OrderedBoxIndex n) :
     ((iteratedKernelMeasure n).restrict (simplex ℝ≥0 n)) (orderedBox a.u a.v) ≠ ∞ := by
@@ -399,7 +399,7 @@ theorem restrictedSimplexMeasure_orderedBox_ne_top {n : ℕ} (a : OrderedBoxInde
     (Measure.restrict_apply_le _ _)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The indicator of an ordered box in the restricted-simplex kernel space. -/
 noncomputable def orderedBoxSimplexKernel {n : ℕ} (a : OrderedBoxIndex n) :
     IteratedIntegralConstruction.SimplexKernel n :=
@@ -407,7 +407,7 @@ noncomputable def orderedBoxSimplexKernel {n : ℕ} (a : OrderedBoxIndex n) :
     (restrictedSimplexMeasure_orderedBox_ne_top a) (1 : ℝ)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The restricted-simplex Gram matrix of ordered-box indicators. -/
 theorem inner_orderedBoxSimplexKernel {n : ℕ} (a b : OrderedBoxIndex n) :
     inner ℝ (orderedBoxSimplexKernel a) (orderedBoxSimplexKernel b) =
@@ -442,27 +442,27 @@ theorem inner_orderedBoxSimplexKernel_eq_chainIntegralLp
     inner_chainIntegralLp hB hsm a.u a.v b.u b.v a.valid b.valid a.ordered b.ordered]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Formal finite combinations of ordered-box indicators in simplex `L²`. -/
 noncomputable def orderedBoxToSimplexKernel (n : ℕ) :
     (OrderedBoxIndex n →₀ ℝ) →ₗ[ℝ] IteratedIntegralConstruction.SimplexKernel n :=
   Finsupp.linearCombination ℝ orderedBoxSimplexKernel
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The corresponding formal finite combinations of Brownian chain products. -/
 noncomputable def orderedBoxToRandom (hB : IsPreBrownianReal B P) (n : ℕ) :
     (OrderedBoxIndex n →₀ ℝ) →ₗ[ℝ] RandomL2 P :=
   Finsupp.linearCombination ℝ fun a ↦ chainIntegralLp hB a.u a.v
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem orderedBoxToSimplexKernel_single {n : ℕ} (a : OrderedBoxIndex n) (c : ℝ) :
     orderedBoxToSimplexKernel n (Finsupp.single a c) = c • orderedBoxSimplexKernel a :=
   Finsupp.linearCombination_single _ _ _
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem orderedBoxToRandom_single (hB : IsPreBrownianReal B P)
     {n : ℕ} (a : OrderedBoxIndex n) (c : ℝ) :
     orderedBoxToRandom hB n (Finsupp.single a c) = c • chainIntegralLp hB a.u a.v :=
@@ -491,7 +491,7 @@ theorem norm_orderedBoxToRandom
   exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp h
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The deterministic density input needed to complete ordered-box values to the whole simplex. -/
 def OrderedBoxDense (n : ℕ) : Prop :=
   DenseRange (orderedBoxToSimplexKernel n)
@@ -614,27 +614,27 @@ theorem inner_simplexIntegral_of_ne
     inner_orderedBoxToRandom_of_ne hB hsm hmn]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem restrictedSimplexMeasure_le (n : ℕ) :
     (iteratedKernelMeasure n).restrict (simplex ℝ≥0 n) ≤
       (1 : ℝ≥0∞) • iteratedKernelMeasure n :=
   IteratedIntegralConstruction.restrictedSimplexMeasure_le n
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Restriction of a full product kernel to the strict simplex. -/
 noncomputable def restrictToSimplex (n : ℕ) :
     IteratedKernel n →L[ℝ] IteratedIntegralConstruction.SimplexKernel n :=
   IteratedIntegralConstruction.restrictToSimplex n
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem restrictToSimplex_ae (n : ℕ) (f : IteratedKernel n) :
     restrictToSimplex n f =ᵐ[(iteratedKernelMeasure n).restrict (simplex ℝ≥0 n)] f :=
   IteratedIntegralConstruction.restrictToSimplex_ae n f
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Restricting an ordered-box kernel gives its simplex-space indicator. -/
 theorem restrictToSimplex_boxKernel {n : ℕ} (a : OrderedBoxIndex n) :
     restrictToSimplex n (boxKernel a.u a.v) = orderedBoxSimplexKernel a := by
@@ -650,7 +650,7 @@ theorem restrictToSimplex_boxKernel {n : ℕ} (a : OrderedBoxIndex n) :
   exact hrestrict.trans (hfull.trans hsimp.symm)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Inner products after restriction are exactly the simplex integrals. -/
 theorem inner_restrictToSimplex (n : ℕ) (f g : IteratedKernel n) :
     inner ℝ (restrictToSimplex n f) (restrictToSimplex n g) =
@@ -658,7 +658,7 @@ theorem inner_restrictToSimplex (n : ℕ) (f g : IteratedKernel n) :
   IteratedIntegralConstruction.inner_restrictToSimplex n f g
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Restriction to the simplex is contractive. -/
 theorem norm_restrictToSimplex_le (n : ℕ) (f : IteratedKernel n) :
     ‖restrictToSimplex n f‖ ≤ ‖f‖ :=
@@ -728,7 +728,7 @@ theorem norm_positiveIntegralCLM_le
   exact norm_restrictToSimplex_le (n + 1) f
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [MeasurableSpace W]
-    [BorelSpace W] [SecondCountableTopology W] [IsGaussian P] in
+    [BorelSpace W] [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Density of ordered boxes at every positive order.  This is the sole deterministic analytic
 input to the completed Brownian family below. -/
 def PositiveOrderedBoxDense : Prop :=
@@ -762,7 +762,7 @@ theorem integralCLM_centered
   | succ n => exact integral_positiveIntegralCLM hB hsm (hdense n) f
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem integralCLM_zeroOrder (hB : IsPreBrownianReal B P) (f : IteratedKernel 0) :
     (fun w ↦ integralCLM hB 0 f w) =ᵐ[P]
       fun _ ↦ ∫ t, f t ∂iteratedKernelMeasure 0 :=
