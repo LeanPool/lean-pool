@@ -24,25 +24,46 @@ noncomputable section
 def cubicalVelocityOperator (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
   fun component => (c19ContinuumSpeed : ℂ) * cubicalAlpha axis z component
 
+/-- The transport operator as a scaled massless Hamiltonian in a coordinate direction. -/
+def cubicalVelocityLinear (axis : Fin 3) : CubicalCell4 →ₗ[ℂ] CubicalCell4 :=
+  let px : ℂ := if axis = 0 then 1 else 0
+  let py : ℂ := if axis = 1 then 1 else 0
+  let pz : ℂ := if axis = 2 then 1 else 0
+  (c19ContinuumSpeed : ℂ) •
+    { toFun := cubicalStandardHamiltonian 0 px py pz
+      map_add' := cubical_standard_hamiltonian_add 0 px py pz
+      map_smul' := cubical_standard_hamiltonian_scale 0 px py pz }
+
+theorem cubical_velocity_linear_apply (axis : Fin 3) (z : CubicalCell4) :
+    cubicalVelocityLinear axis z = cubicalVelocityOperator axis z := by
+  funext component
+  fin_cases axis <;>
+    simp only [Fin.isValue, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
+      cubicalVelocityLinear, cubicalVelocityOperator, cubicalStandardHamiltonian,
+      cubicalStandardSpatial, cubicalAlpha, LinearMap.smul_apply, LinearMap.coe_mk,
+      AddHom.coe_mk, Pi.smul_apply, smul_eq_mul, Fin.reduceEq, ↓reduceIte,
+      zero_mul, one_mul, zero_add, add_zero]
+
 theorem cubical_velocity_sum {Mode : Type*} [Fintype Mode]
     (axis : Fin 3) (field : Mode → CubicalCell4) :
     cubicalVelocityOperator axis
         (fun component => ∑ mode, field mode component) =
       fun component => ∑ mode,
         cubicalVelocityOperator axis (field mode) component := by
+  have pointwise : (fun component => ∑ mode, field mode component) = ∑ mode, field mode := by
+    funext component
+    rw [Finset.sum_apply]
+  rw [pointwise]
   funext component
-  fin_cases axis <;> fin_cases component <;>
-    simp [cubicalVelocityOperator, cubicalAlpha, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Finset.mul_sum]
+  simpa only [cubical_velocity_linear_apply, Finset.sum_apply] using
+    congrFun (map_sum (cubicalVelocityLinear axis) field Finset.univ) component
 
 theorem cubical_velocity_mul (axis : Fin 3) (scale : ℂ) (spinor : CubicalCell4) :
     cubicalVelocityOperator axis (fun component => scale * spinor component) =
       fun component => scale * cubicalVelocityOperator axis spinor component := by
-  funext component
-  fin_cases axis <;> fin_cases component <;>
-    simp [cubicalVelocityOperator, cubicalAlpha, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
+  change cubicalVelocityOperator axis (scale • spinor) = scale • cubicalVelocityOperator axis spinor
+  simpa only [cubical_velocity_linear_apply] using
+    (cubicalVelocityLinear axis).map_smul scale spinor
 
 /-- The mode time evolution given by minus the imaginary unit times the Hamiltonian. -/
 def cubicalDiracTimeDerivative

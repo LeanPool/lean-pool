@@ -145,10 +145,9 @@ private theorem cubical_velocity_add (axis : Fin 3) (u v : CubicalCell4) :
     cubicalVelocityOperator axis (fun component => u component + v component) =
       fun component => cubicalVelocityOperator axis u component +
         cubicalVelocityOperator axis v component := by
-  let field : Fin 2 → CubicalCell4 := Fin.cases u (fun _ => v)
-  have first : field 0 = u := rfl
-  have second : field 1 = v := rfl
-  simpa only [Fin.sum_univ_two, first, second] using cubical_velocity_sum axis field
+  change cubicalVelocityOperator axis (u + v) =
+    cubicalVelocityOperator axis u + cubicalVelocityOperator axis v
+  simpa only [cubical_velocity_linear_apply] using (cubicalVelocityLinear axis).map_add u v
 
 private theorem cubical_shifted_square_coefficient (axis : Fin 3) (mass δ px py pz : ℂ) :
     mass ^ 2 + cubicalShiftMomentum axis δ px py pz 0 ^ 2 +

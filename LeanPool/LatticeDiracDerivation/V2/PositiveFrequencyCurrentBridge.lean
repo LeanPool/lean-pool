@@ -58,14 +58,22 @@ theorem normalized_positive_frequency_current_formula
         positiveFrequencyScale mass energy * positiveFrequencyRatio mass energy *
         (fun axis : Fin 3 => if axis = 0 then px else if axis = 1 then py else pz) axis *
         uniformCell2Density q := by
+  change cubicalDiracCurrent axis
+    (cubicalSpinorOfBlocks
+      (fun i => (positiveFrequencyScale mass energy : ℂ) * q i)
+      (fun i => (positiveFrequencyRatio mass energy : ℂ) * positivePauliSpatial px py pz q i)) = _
   fin_cases axis <;>
-    simp [cubicalDiracCurrent, cubicalVelocityOperator, cubicalAlpha,
-      cubicalCell4RealPair, normalized_positive_frequency_embedding_apply,
-      cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one,
-      uniformCell2Density, Fin.sum_univ_succ,
-      Complex.normSq, Complex.mul_re, Complex.mul_im] <;>
-    ring
+    simp only [cubicalDiracCurrent, cubicalVelocityOperator, cubicalAlpha, cubicalCell4RealPair,
+      cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ, Fin.sum_univ_four,
+      cubical_spinor_of_blocks_zero, cubical_spinor_of_blocks_one, cubical_spinor_of_blocks_two,
+      cubical_spinor_of_blocks_three, positive_pauli_spatial_apply_zero,
+      positive_pauli_spatial_apply_one, uniformCell2Density, Fin.sum_univ_two,
+      Complex.star_def, Complex.mul_re, Complex.mul_im, Complex.sub_re, Complex.sub_im,
+      Complex.add_re, Complex.add_im, Complex.neg_re, Complex.neg_im, Complex.conj_re,
+      Complex.conj_im, Complex.ofReal_re, Complex.ofReal_im, Complex.I_re, Complex.I_im,
+      Fin.isValue, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, Fin.reduceEq, ↓reduceIte,
+      Complex.normSq_apply, zero_mul, mul_zero, one_mul, zero_add, add_zero,
+      zero_sub, sub_zero] <;> ring
 
 theorem normalized_positive_frequency_density
     (mass energy px py pz : ℝ)
