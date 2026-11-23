@@ -9,8 +9,9 @@ summary: 'Proves, in core Lean, a classification conjectured by Terence Tao in t
   1518 and 3862 already imply the other three, so the hypotheses here are equivalent to his. The
   project also checks by kernel evaluation two finite magmas that satisfy 1518 and violate all four
   targets (15 and 39 elements), members of an explicit family of extensions of the shift; the
-  15-element one is isomorphic to the ETP''s countermodel Refutation939, and the general family is
-  not formalized.'
+  15-element example uses the square root 2 of −1 in F_5. The ETP countermodel Refutation939
+  corresponds to the conjugate member using the square root 3. The general family is not
+  formalized.'
 branch: universal algebra
 entry_module: LeanPool.Magma1518
 authors:
