@@ -1,0 +1,419 @@
+/-
+Copyright (c) 2026 G. D. Partin. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: G. D. Partin
+-/
+
+-- Upstream source is used under the MIT option in G. D. Partin’s dual license.
+
+module
+
+public import LeanPool.LatticeDiracDerivation.V2.C19SpectralReadout
+public import LeanPool.LatticeDiracDerivation.V2.FiniteFramePairing
+public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
+public import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
+public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyCurrentBridge
+
+/-!
+# Integrated positive-frequency packet bridge
+
+Pointwise native U(1) density is not the same as Dirac density for a
+multi-momentum packet.  On a finite periodic torus, however, the integrated
+cross terms vanish by character orthogonality.  This module proves that
+global statement with the same native amplitudes and canonical spectral
+readout used by the mode theorem.
+-/
+
+@[expose] public section
+
+namespace LeanDirac.V2
+
+variable {Site : Type}
+
+open Complex BigOperators
+open scoped InnerProductSpace
+noncomputable section
+
+/-- The finite inverse Fourier sum taking scalar mode amplitudes to lattice values. -/
+def periodicScalarSynthesis (L : ℕ) [NeZero L]
+    (amplitude : PeriodicCubicMomentum L → ℂ) : PeriodicCubicSite L → ℂ :=
+  finiteFrameSynthesis (fun mode site => periodicQuantizedAddChar L mode site) amplitude
+
+private theorem periodic_quantized_character_pairing (L : ℕ) [NeZero L]
+    (first second : PeriodicCubicMomentum L) :
+    ⟪(periodicQuantizedAddChar L first : PeriodicCubicSite L → ℂ),
+      (periodicQuantizedAddChar L second : PeriodicCubicSite L → ℂ)⟫ₙ_[ℂ] =
+        if first = second then 1 else 0 := by
+  rw [AddChar.wInner_cWeight_eq_boole]
+  simp only [(periodic_quantized_add_char_injective L).eq_iff]
+
+theorem periodic_quantized_scaled_character_orthogonal
+    (L : ℕ) [NeZero L]
+    (first second : PeriodicCubicMomentum L) (a b : ℂ) :
+    ⟪(fun site => periodicQuantizedAddChar L first site * a),
+      (fun site => periodicQuantizedAddChar L second site * b)⟫ₙ_[ℂ] =
+        if first = second then star a * b else 0 :=
+  finite_frame_scaled_pairing (fun mode site => periodicQuantizedAddChar L mode site)
+    (periodic_quantized_character_pairing L) first second a b
+
+theorem periodic_scalar_synthesis_parseval
+    (L : ℕ) [NeZero L]
+    (first second : PeriodicCubicMomentum L → ℂ) :
+    ⟪periodicScalarSynthesis L first,
+      periodicScalarSynthesis L second⟫ₙ_[ℂ] =
+      ∑ mode, star (first mode) * second mode :=
+  finite_frame_synthesis_pairing (fun mode site => periodicQuantizedAddChar L mode site)
+    (periodic_quantized_character_pairing L) first second
+
+/-- The native position obtained by synthesizing the positive-frequency amplitudes. -/
+def periodicPositiveNativePosition (L : ℕ) [NeZero L]
+    (amplitude : PeriodicCubicMomentum L → UniformCell2) :
+    PeriodicCubicSite L → UniformCell2 :=
+  fun site component => periodicScalarSynthesis L
+    (fun mode => amplitude mode component) site
+
+/-- The native velocity obtained by multiplying each positive mode by its time generator. -/
+def periodicPositiveNativeVelocity (L : ℕ) [NeZero L]
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2) :
+    PeriodicCubicSite L → UniformCell2 :=
+  fun site component => periodicScalarSynthesis L
+    (fun mode => (uniformPositiveFrequencyPhase (energy mode) (amplitude mode)).2 component) site
+
+private theorem expected_scalar_phase_pair
+    {Index : Type*} [Fintype Index] (source target : Index → ℂ) :
+    (𝔼 site, uniformScalarPhasePair (source site) (target site)) =
+      (⟪source, target⟫ₙ_[ℂ]).im := by
+  rw [RCLike.wInner_cWeight_eq_expect]
+  simp only [RCLike.inner_apply', Finset.expect_univ, uniformScalarPhasePair,
+    ← NNRat.cast_smul_eq_nnqsmul ℝ, NNRat.cast_inv, NNRat.cast_natCast]
+  change _ = (((Fintype.card Index : ℝ)⁻¹) • ∑ site, star (source site) * target site).im
+  simp only [show ∀ (a : ℝ) (b : ℂ), (a • b).im = a * b.im from
+    fun a b => RCLike.smul_im a b, Complex.im_sum, smul_eq_mul]
+
+/-- The native phase charge averaged over the periodic lattice. -/
+def periodicAveragedNativePositiveCharge (L : ℕ) [NeZero L]
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2) : ℝ :=
+  -(𝔼 site, uniformNativePhaseDensity
+    (periodicPositiveNativePosition L amplitude site)
+    (periodicPositiveNativeVelocity L energy amplitude site))
+
+theorem periodic_positive_native_packet_charge
+    (L : ℕ) [NeZero L]
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2) :
+    periodicAveragedNativePositiveCharge L energy amplitude =
+      ∑ mode, energy mode * uniformCell2Density (amplitude mode) := by
+  unfold periodicAveragedNativePositiveCharge
+    periodicPositiveNativePosition periodicPositiveNativeVelocity
+  simp_rw [uniformNativePhaseDensity, Finset.expect_sum_comm, expected_scalar_phase_pair,
+    periodic_scalar_synthesis_parseval, Complex.im_sum]
+  rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
+  apply Fintype.sum_congr
+  intro mode
+  change -uniformNativePhaseDensity
+    (uniformPositiveFrequencyPhase (energy mode) (amplitude mode)).1
+    (uniformPositiveFrequencyPhase (energy mode) (amplitude mode)).2 = _
+  simp only [uniform_native_u1_positive_frequency, neg_mul, neg_neg]
+
+/-- Synthesize a four-component lattice field by applying the scalar Fourier sum componentwise. -/
+def periodicCell4Synthesis (L : ℕ) [NeZero L]
+    (amplitude : PeriodicCubicMomentum L → CubicalCell4) :
+    PeriodicCubicSite L → CubicalCell4 :=
+  finiteFrameComponentSynthesis (fun mode site => periodicQuantizedAddChar L mode site) amplitude
+
+theorem periodic_cell4_synthesis_real_pair
+    (L : ℕ) [NeZero L]
+    (first second : PeriodicCubicMomentum L → CubicalCell4) :
+    (∑ component : Fin 4,
+      ⟪(fun site => periodicCell4Synthesis L first site component),
+        (fun site => periodicCell4Synthesis L second site component)
+        ⟫ₙ_[ℂ]).re =
+      ∑ mode, cubicalCell4RealPair (first mode) (second mode) := by
+  exact finite_frame_component_synthesis_real_pair
+    (fun mode site => periodicQuantizedAddChar L mode site)
+    (periodic_quantized_character_pairing L) first second
+
+/-- The canonical positive-frequency spinor at a single quantized momentum. -/
+def periodicPositiveSpectralMode
+    (L : ℕ) (mass : ℝ)
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2)
+    (mode : PeriodicCubicMomentum L) : CubicalCell4 :=
+  canonicalSpectralMomentumReadout mass (energy mode) (periodicQuantizedMomentum L mode)
+    (uniformPositiveFrequencyPhase (energy mode) (amplitude mode))
+
+/-- The spinor Fourier packet obtained by applying canonical spectral coordinates to each mode. -/
+def periodicPositiveSpectralPacket
+    (L : ℕ) [NeZero L] (mass : ℝ)
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2) :
+    PeriodicCubicSite L → CubicalCell4 :=
+  periodicCell4Synthesis L (periodicPositiveSpectralMode L mass energy amplitude)
+
+/-- The four-component density averaged over all sites of a periodic packet. -/
+def periodicAveragedDiracDensity
+    {L : ℕ} [NeZero L]
+    (field : PeriodicCubicSite L → CubicalCell4) : ℝ :=
+  (∑ component : Fin 4,
+    ⟪(fun site => field site component),
+      (fun site => field site component)⟫ₙ_[ℂ]).re
+
+theorem periodic_positive_spectral_packet_density
+    (L : ℕ) [NeZero L] (mass : ℝ)
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2)
+    (henergy : ∀ mode, energy mode ≠ 0)
+    (hpositive : ∀ mode, 0 < energy mode + mass)
+    (hshell : ∀ mode,
+      (energy mode) ^ 2 = mass ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2) :
+    periodicAveragedDiracDensity
+        (periodicPositiveSpectralPacket L mass energy amplitude) =
+      ∑ mode, energy mode * uniformCell2Density (amplitude mode) := by
+  unfold periodicAveragedDiracDensity periodicPositiveSpectralPacket
+  rw [periodic_cell4_synthesis_real_pair]
+  refine Fintype.sum_congr _ _ fun mode => ?_
+  unfold periodicPositiveSpectralMode
+  rw [cubical_cell4_real_pair_self, ← native_phase_of_frequency_amplitudes_positive,
+    canonical_spectral_momentum_readout_positive_phase _ _ _ (henergy mode)]
+  exact normalized_positive_frequency_density _ _ _ _ _ (hpositive mode) (hshell mode) _
+
+theorem periodic_integrated_positive_packet_charge_bridge
+    (L : ℕ) [NeZero L] (mass : ℝ)
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2)
+    (henergy : ∀ mode, energy mode ≠ 0)
+    (hpositive : ∀ mode, 0 < energy mode + mass)
+    (hshell : ∀ mode,
+      (energy mode) ^ 2 = mass ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2) :
+    periodicAveragedDiracDensity
+        (periodicPositiveSpectralPacket L mass energy amplitude) =
+      periodicAveragedNativePositiveCharge L energy amplitude := by
+  rw [periodic_positive_spectral_packet_density
+      L mass energy amplitude henergy hpositive hshell,
+    periodic_positive_native_packet_charge]
+
+/-! ## Integrated bond current -/
+
+/-- Moving a periodic Fourier synthesis through one literal C19 bond is the
+same as multiplying each mode amplitude by that bond's C19 character. -/
+theorem periodic_scalar_synthesis_neighbor
+    (L : ℕ) [NeZero L]
+    (amplitude : PeriodicCubicMomentum L → ℂ)
+    (site : PeriodicCubicSite L) (direction : C19Neighbor) :
+    periodicScalarSynthesis L amplitude
+        (periodicC19Neighbor L site direction) =
+      periodicScalarSynthesis L
+        (fun mode =>
+          c19Character (periodicQuantizedMomentum L mode) direction *
+            amplitude mode) site := by
+  unfold periodicScalarSynthesis periodicQuantizedAddChar
+  apply Finset.sum_congr rfl
+  intro mode _
+  change periodicQuantizedCharacter L mode
+        (periodicC19Neighbor L site direction) * amplitude mode =
+    periodicQuantizedCharacter L mode site *
+      (c19Character (periodicQuantizedMomentum L mode) direction *
+        amplitude mode)
+  rw [periodic_quantized_character_neighbor]
+  ring
+
+/-- Bilinear periodic Parseval identity for a source field and its value at
+the far endpoint of a directed C19 bond.  This is the precise identity that
+removes packet cross terms only after the spatial average is taken. -/
+theorem periodic_scalar_packet_bond_pair
+    (L : ℕ) [NeZero L]
+    (amplitude : PeriodicCubicMomentum L → ℂ)
+    (direction : C19Neighbor) :
+    (⟪periodicScalarSynthesis L amplitude,
+      (fun site => periodicScalarSynthesis L amplitude
+        (periodicC19Neighbor L site direction))⟫ₙ_[ℂ]).im =
+      ∑ mode,
+        (star (amplitude mode) *
+          (c19Character (periodicQuantizedMomentum L mode) direction *
+            amplitude mode)).im := by
+  rw [show (fun site => periodicScalarSynthesis L amplitude
+        (periodicC19Neighbor L site direction)) =
+      periodicScalarSynthesis L
+        (fun mode =>
+          c19Character (periodicQuantizedMomentum L mode) direction *
+            amplitude mode) by
+    funext site
+    exact periodic_scalar_synthesis_neighbor L amplitude site direction]
+  rw [periodic_scalar_synthesis_parseval, Complex.im_sum]
+
+private theorem averaged_bond_current_eq_weighted_inner
+    {Site : Type*} [Fintype Site] (weight : ℝ) (source target : Site → ℂ) :
+    (𝔼 site, uniformNativeOutwardBondCurrent weight (source site) (target site)) =
+      -2 * weight * ⟪source, target⟫ₙ_[ℂ].im := by
+  simp_rw [uniformNativeOutwardBondCurrent, ← Finset.mul_expect, expected_scalar_phase_pair]
+
+/-- Spatial average of the native outward bond currents along the chosen axis. -/
+def periodicAveragedNativePositiveAxisFlux
+    (L : ℕ) [NeZero L] (axis : Fin 3)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2) : ℝ :=
+  -1 / 2 * ∑ direction : C19Neighbor,
+    (c19Coord axis direction : ℝ) *
+      (∑ component : Fin 2,
+        𝔼 site, uniformNativeOutwardBondCurrent (c19Weight direction)
+            (periodicPositiveNativePosition L amplitude site component)
+            (periodicPositiveNativePosition L amplitude
+              (periodicC19Neighbor L site direction) component))
+
+/-- Character orthogonality removes every mixed-momentum bond-current term
+from the global finite-torus average. -/
+theorem periodic_positive_native_packet_axis_flux
+    (L : ℕ) [NeZero L] (axis : Fin 3)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2) :
+    periodicAveragedNativePositiveAxisFlux L axis amplitude =
+      ∑ mode, uniformNativePositiveAxisFlux
+        (periodicQuantizedMomentum L mode) axis (amplitude mode) := by
+  unfold periodicAveragedNativePositiveAxisFlux periodicPositiveNativePosition
+  simp_rw [averaged_bond_current_eq_weighted_inner, periodic_scalar_packet_bond_pair]
+  unfold uniformNativePositiveAxisFlux uniformNativeOutwardBondCurrent
+    uniformScalarPhasePair uniformCell2PlaneWaveNeighbor
+  let F : C19Neighbor → Fin 2 → PeriodicCubicMomentum L → ℝ :=
+    fun direction component mode =>
+      (-1 / 2) * (c19Coord axis direction : ℝ) *
+        (-2 * c19Weight direction) *
+          (star (amplitude mode component) *
+            (c19Character (periodicQuantizedMomentum L mode) direction *
+              amplitude mode component)).im
+  calc
+    -1 / 2 * ∑ direction : C19Neighbor,
+        (c19Coord axis direction : ℝ) *
+          (∑ component : Fin 2,
+            -2 * c19Weight direction *
+              ∑ mode,
+                (star (amplitude mode component) *
+                  (c19Character (periodicQuantizedMomentum L mode) direction *
+                    amplitude mode component)).im) =
+      ∑ direction : C19Neighbor, ∑ component : Fin 2, ∑ mode, F direction component mode := by
+        simp only [F, Finset.mul_sum]
+        ring_nf
+    _ = ∑ direction : C19Neighbor, ∑ mode, ∑ component : Fin 2,
+          F direction component mode := by
+        apply Finset.sum_congr rfl
+        intro direction _
+        rw [Finset.sum_comm]
+    _ = ∑ mode, ∑ direction : C19Neighbor, ∑ component : Fin 2,
+          F direction component mode := by
+        rw [Finset.sum_comm]
+    _ = ∑ mode,
+        -1 / 2 * ∑ direction : C19Neighbor,
+          (c19Coord axis direction : ℝ) *
+            ∑ component : Fin 2,
+              -2 * c19Weight direction *
+                (star (amplitude mode component) *
+                  (c19Character (periodicQuantizedMomentum L mode) direction *
+                    amplitude mode component)).im := by
+        apply Finset.sum_congr rfl
+        intro mode _
+        simp only [F, Finset.mul_sum]
+        ring_nf
+
+/-! ## Integrated four-component current -/
+
+/-- Normalized finite-torus integral of the four-component Dirac current. -/
+def periodicAveragedDiracCurrent
+    {L : ℕ} [NeZero L] (axis : Fin 3)
+    (field : PeriodicCubicSite L → CubicalCell4) : ℝ :=
+  (∑ component : Fin 4,
+    ⟪(fun site => field site component),
+      (fun site => cubicalVelocityOperator axis (field site) component)
+      ⟫ₙ_[ℂ]).re
+
+theorem periodic_cell4_synthesis_velocity
+    (L : ℕ) [NeZero L] (axis : Fin 3)
+    (amplitude : PeriodicCubicMomentum L → CubicalCell4) :
+    (fun site => cubicalVelocityOperator axis
+      (periodicCell4Synthesis L amplitude site)) =
+      periodicCell4Synthesis L
+        (fun mode => cubicalVelocityOperator axis (amplitude mode)) := by
+  funext site
+  simpa only [periodicCell4Synthesis, cubical_velocity_linear_apply] using
+    finite_frame_component_synthesis_map (fun mode site => periodicQuantizedAddChar L mode site)
+      (cubicalVelocityLinear axis) amplitude site
+
+theorem periodic_cell4_synthesis_velocity_component
+    (L : ℕ) [NeZero L] (axis : Fin 3)
+    (amplitude : PeriodicCubicMomentum L → CubicalCell4)
+    (component : Fin 4) :
+    (fun site => cubicalVelocityOperator axis
+      (periodicCell4Synthesis L amplitude site) component) =
+      fun site => periodicCell4Synthesis L
+        (fun mode => cubicalVelocityOperator axis (amplitude mode))
+        site component := by
+  exact congrArg (fun field => fun site => field site component)
+    (periodic_cell4_synthesis_velocity L axis amplitude)
+
+/-- The spatially integrated Dirac packet current is diagonal in the same
+periodic character basis. -/
+theorem periodic_averaged_dirac_current_diagonalizes
+    (L : ℕ) [NeZero L] (axis : Fin 3)
+    (amplitude : PeriodicCubicMomentum L → CubicalCell4) :
+    periodicAveragedDiracCurrent axis
+        (periodicCell4Synthesis L amplitude) =
+      ∑ mode, cubicalDiracCurrent axis (amplitude mode) := by
+  unfold periodicAveragedDiracCurrent
+  simp_rw [periodic_cell4_synthesis_velocity_component]
+  simpa [cubicalDiracCurrent] using
+    (periodic_cell4_synthesis_real_pair L amplitude
+      (fun mode => cubicalVelocityOperator axis (amplitude mode)))
+
+theorem periodic_positive_spectral_packet_current
+    (L : ℕ) [NeZero L] (mass : ℝ)
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2)
+    (axis : Fin 3) :
+    periodicAveragedDiracCurrent axis
+        (periodicPositiveSpectralPacket L mass energy amplitude) =
+      ∑ mode, cubicalDiracCurrent axis
+        (canonicalSpectralMomentumReadout mass (energy mode) (periodicQuantizedMomentum L mode)
+          (nativePhaseOfFrequencyAmplitudes (energy mode)
+            (amplitude mode) (fun _ => 0))) := by
+  unfold periodicPositiveSpectralPacket
+  simpa only [periodicPositiveSpectralMode, native_phase_of_frequency_amplitudes_positive] using
+    periodic_averaged_dirac_current_diagonalizes L axis
+      (periodicPositiveSpectralMode L mass energy amplitude)
+
+/-- Global finite-torus packet current bridge.  The exact native bond flux is
+the integrated Dirac current of the same canonical positive-frequency packet
+plus the sum of the explicit finite-C19 remainders. -/
+theorem periodic_integrated_positive_packet_current_bridge
+    (L : ℕ) [NeZero L] (mass : ℝ)
+    (energy : PeriodicCubicMomentum L → ℝ)
+    (amplitude : PeriodicCubicMomentum L → UniformCell2)
+    (henergy : ∀ mode, energy mode ≠ 0)
+    (hpositive : ∀ mode, 0 < energy mode + mass)
+    (hshell : ∀ mode,
+      (energy mode) ^ 2 = mass ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 0 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 1 ^ 2 +
+        c19ScaledMomentum (periodicQuantizedMomentum L mode) 2 ^ 2)
+    (axis : Fin 3) :
+    periodicAveragedNativePositiveAxisFlux L axis amplitude =
+      periodicAveragedDiracCurrent axis
+          (periodicPositiveSpectralPacket L mass energy amplitude) +
+        ∑ mode, finiteC19CurrentRemainder
+          (periodicQuantizedMomentum L mode) axis (amplitude mode) := by
+  rw [periodic_positive_native_packet_axis_flux,
+    periodic_positive_spectral_packet_current]
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro mode _
+  rw [canonical_spectral_momentum_readout_positive_phase mass (energy mode)
+    (periodicQuantizedMomentum L mode) (henergy mode) (amplitude mode)]
+  exact native_plane_wave_flux_is_dirac_current_plus_remainder
+    mass (energy mode) (periodicQuantizedMomentum L mode)
+    (hpositive mode) (hshell mode) axis (amplitude mode)
+
+end
+end LeanDirac.V2

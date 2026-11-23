@@ -14,8 +14,6 @@ option under the MIT License or CC0 1.0 (see the upstream `LICENSE`,
 
 module
 
-public import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
-public import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.Complex.Exponential
 public import Mathlib.Analysis.Complex.Trigonometric
