@@ -7,6 +7,7 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 module
 
 public import LeanPool.Egyptian.Bellman
+import LeanPool.Egyptian.Assembly
 import Mathlib.Analysis.PSeries
 
 /-!
@@ -22,71 +23,38 @@ public section
 
 namespace Egyptian.Control
 
-private theorem nonneg_recip (xs : List ℕ) : 0 ≤ recipSum xs := by
-  induction xs with
-  | nil => simp [recipSum]
-  | cons d ds ih =>
-    change 0 ≤ 1 / (d : ℚ) + recipSum ds
-    positivity
-
-private theorem transrel {σ : Convention} {a b c : ℕ} (hab : σ.rel a b)
-    (hbc : σ.rel b c) : σ.rel a c := by
-  cases σ with
-  | weak => exact Nat.le_trans hab hbc
-  | strict => exact Nat.lt_trans hab hbc
-
 /-- Denominator order, the lower bound two, and a strictly positive residual
 are together equivalent to legality of the entire control path. -/
 theorem controls_iff {σ : Convention} {s : State} (hv : Valid s) (xs : List ℕ) :
     Controls σ s xs ↔ (∀ d ∈ xs, 2 ≤ d) ∧ (s.last :: xs).Pairwise σ.rel ∧
       recipSum xs < (s.p : ℚ) / s.q := by
-  induction xs generalizing s with
-  | nil =>
-    have hp : (0 : ℚ) < s.p := by exact_mod_cast hv.1
-    have hq : (0 : ℚ) < s.q := by exact_mod_cast hv.2
-    simp [Controls, recipSum, div_pos hp hq]
-  | cons d ds ih =>
-    have hq : (0 : ℚ) < s.q := by exact_mod_cast hv.2
-    constructor
-    · rintro ⟨hd, hds⟩
-      obtain ⟨hsz, hpair, hsum⟩ := (ih (step_valid hv hd)).mp hds
-      rw [step_fraction hv hd] at hsum
-      change (d :: ds).Pairwise σ.rel at hpair
-      refine ⟨?_, List.pairwise_cons.mpr ⟨?_, hpair⟩, ?_⟩
-      · simpa only [List.mem_cons, forall_eq_or_imp] using And.intro hd.2.1 hsz
-      · intro e he
-        rcases List.mem_cons.mp he with rfl | he
-        · exact hd.2.2
-        · exact transrel hd.2.2 ((List.pairwise_cons.mp hpair).1 e he)
-      · change unit d + recipSum ds < _
-        linarith
-    · rintro ⟨hall, horder, hsum⟩
+  refine ⟨fun hc => ?_, ?_⟩
+  · obtain ⟨bounds, order, _⟩ := controls_ordered hc
+    have ⟨hp, hq⟩ := finish_valid hv hc
+    have positive : 0 < ((finish s xs).p : ℚ) / (finish s xs).q :=
+      div_pos (by exact_mod_cast hp) (by exact_mod_cast hq)
+    rw [finish_fraction hv hc] at positive
+    exact ⟨fun d hd => (bounds d hd).1,
+      List.pairwise_cons.mpr ⟨fun d hd => (bounds d hd).2.1, order⟩, sub_pos.mp positive⟩
+  · induction xs generalizing s with
+    | nil => exact fun _ => trivial
+    | cons d ds ih =>
+      have hq : (0 : ℚ) < s.q := by exact_mod_cast hv.2
+      rintro ⟨hall, horder, hsum⟩
       obtain ⟨hfirst, hrest⟩ := List.pairwise_cons.mp horder
       have hd := hall d (by simp)
       have hdpos : (0 : ℚ) < d := by exact_mod_cast (show 0 < d by omega)
       change unit d + recipSum ds < _ at hsum
       have hu : (1 : ℚ) / d < (s.p : ℚ) / s.q := by
         change unit d < _
-        linarith [nonneg_recip ds]
+        linarith [recipSum_nonneg ds]
       have hcomp := (div_lt_div_iff₀ hdpos hq).mp hu
       simp only [one_mul] at hcomp
       have hlegal : Legal σ s d := ⟨by exact_mod_cast hcomp, hd, hfirst d (by simp)⟩
-      refine ⟨hlegal, (ih (step_valid hv hlegal)).mpr
+      refine ⟨hlegal, ih (step_valid hv hlegal)
         ⟨fun e he => hall e (by simp [he]), hrest, ?_⟩⟩
       rw [step_fraction hv hlegal]
       linarith
-
-private theorem cons_paths {σ s xs ys} (hx : Controls σ s xs)
-    (hy : Controls σ (finish s xs) ys) : Controls σ s (xs ++ ys) := by
-  induction xs generalizing s with
-  | nil => exact hy
-  | cons d ds ih => exact ⟨hx.1, ih hx.2 hy⟩
-
-private theorem cons_finish (s : State) (xs ys : List ℕ) :
-    finish s (xs ++ ys) = finish (finish s xs) ys := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons d ds ih => exact ih (step s d)
 
 private theorem last_le {s : State} {xs : List ℕ} {K : ℕ}
     (hs : s.last ≤ K) (hx : ∀ e ∈ xs, e ≤ K) : (finish s xs).last ≤ K := by
@@ -102,9 +70,7 @@ private theorem initial_succ (n : ℕ) :
 
 private theorem initial_sum (n : ℕ) :
     (recipSum (initial n) : ℝ) = ∑ i ∈ Finset.range n, 1 / ((i : ℝ) + 2) := by
-  induction n with
-  | zero => simp [initial, prefixTuple, recipSum]
-  | succ n ih => simp [initial_succ, Finset.sum_range_succ, ih, unit]
+  simpa [initial] using real_prefix_sum (fun i => i + 2) n
 
 private theorem crosses (q : ℚ) : ∃ n, q ≤ recipSum (initial n) := by
   by_contra! hn
@@ -176,7 +142,7 @@ theorem terminal_exists (σ : Convention) (s : State) (hv : Valid s)
     rw [Nat.mul_comm]
     exact lt_of_lt_of_le (Nat.mul_lt_mul_of_pos_left (by omega) vv.1) hmul
   have vs : v.p ≤ v.q := (Nat.le_mul_of_pos_right _ (by omega)).trans hmul
-  obtain ⟨ds, T, hc, ht⟩ := terminal_exists_small σ v vv vi vs
-  exact ⟨initial n ++ ds, T, cons_paths hcontrols hc, by rw [cons_finish]; exact ht⟩
+  obtain ⟨ds, T, ht⟩ := terminal_exists_small σ v vv vi vs
+  exact ⟨initial n ++ ds, T, (terminal_append s (initial n) ds T).mpr ⟨hcontrols, ht⟩⟩
 
 end Egyptian.Control

@@ -41,6 +41,24 @@ theorem one_le_orbit {t : ℝ} (ht : 1 ≤ t) (n : ℕ) : 1 ≤ orbit t n := by
   | zero => exact ht
   | succ n ih => exact one_le_phi ih
 
+/-- The continuous comparison terms from the paper. -/
+noncomputable def reference (t : ℝ) (i : ℕ) : ℝ := 1 / (orbit t i + 1)
+
+theorem reference_pos {t : ℝ} (ht : 1 ≤ t) (i : ℕ) : 0 < reference t i := by
+  have := one_le_orbit ht i
+  unfold reference
+  positivity
+
+theorem reference_sum {t : ℝ} (ht : 1 ≤ t) (k : ℕ) :
+    (∑ i ∈ Finset.range k, reference t i) = 1 / t - 1 / orbit t k := by
+  induction k with
+  | zero => simp [orbit]
+  | succ k ih =>
+    rw [Finset.sum_range_succ, ih, orbit, phi, reference]
+    have h := one_le_orbit ht k
+    field_simp [show orbit t k ≠ 0 by linarith, show orbit t k + 1 ≠ 0 by linarith]
+    ring
+
 theorem orbit_shift (t : ℝ) (n : ℕ) : orbit (phi t) n = orbit t (n+1) := by
   induction n with
   | zero => rfl

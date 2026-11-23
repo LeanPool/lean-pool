@@ -64,6 +64,43 @@ def CanStop (s : State) (T : ℕ) : Prop :=
 def Terminal (σ : Convention) (s : State) (xs : List ℕ) (T : ℕ) : Prop :=
   Controls σ s xs ∧ CanStop (finish s xs) T
 
+theorem finish_append (s : State) (xs ys : List ℕ) :
+    finish s (xs ++ ys) = finish (finish s xs) ys := by
+  induction xs generalizing s with
+  | nil => rfl
+  | cons x xs ih => exact ih (step s x)
+
+theorem controls_append {σ : Convention} (s : State) (xs ys : List ℕ) :
+    Controls σ s (xs ++ ys) ↔ Controls σ s xs ∧ Controls σ (finish s xs) ys := by
+  induction xs generalizing s with
+  | nil => simp [Controls, finish]
+  | cons x xs ih => simp [Controls, finish, ih, and_assoc]
+
+theorem terminal_append {σ : Convention} (s : State) (xs ys : List ℕ) (T : ℕ) :
+    Terminal σ s (xs ++ ys) T ↔ Controls σ s xs ∧ Terminal σ (finish s xs) ys T := by
+  simp only [Terminal, controls_append, finish_append, and_assoc]
+
+theorem controls_take {σ s xs} (hc : Controls σ s xs) (k : ℕ) :
+    Controls σ s (xs.take k) :=
+  ((controls_append s (xs.take k) (xs.drop k)).mp (by simpa using hc)).1
+
+theorem controls_ordered {σ s ds} (hc : Controls σ s ds) :
+    (∀ d ∈ ds, 2 ≤ d ∧ σ.rel s.last d ∧ d ≤ (finish s ds).last) ∧
+      ds.Pairwise σ.rel ∧ s.last ≤ (finish s ds).last := by
+  induction ds generalizing s with
+  | nil => simp [finish]
+  | cons x ds ih =>
+    obtain ⟨hxs, ho, he⟩ := ih hc.2
+    have hl := hc.1
+    change x ≤ (finish (step s x) ds).last at he
+    refine ⟨?_, List.pairwise_cons.mpr ⟨fun d hd => (hxs d hd).2.1, ho⟩,
+      (Convention.rel_le hl.2.2).trans he⟩
+    intro d hd
+    rcases List.mem_cons.mp hd with rfl | hd
+    · exact ⟨hl.2.1, hl.2.2, he⟩
+    · obtain ⟨hd1, hd2, hd3⟩ := hxs d hd
+      exact ⟨hd1, Convention.rel_trans hl.2.2 hd2, hd3⟩
+
 theorem step_valid {σ s x} (hv : Valid s) (h : Legal σ s x) : Valid (step s x) :=
   ⟨Nat.sub_pos_of_lt h.1, Nat.mul_pos hv.2 (by have := h.2.1; omega : 0 < x)⟩
 
@@ -135,35 +172,57 @@ theorem greedy_step {s : State} (hv : Valid s) (hi : Interior s)
   change s.p * x - s.q ≤ s.q * x
   exact hdrop.le.trans (hsmall.trans (Nat.le_mul_of_pos_right _ (by omega)))
 
-/-- Every admitted state with p ≤ q has a terminal decomposition under either
-denominator convention. At reciprocal 1 the legal continuation is [2,3] to 6. -/
+/-- At a unit remainder, either stop immediately or use the two denominators
+2 and 3 to leave a remainder of one sixth. -/
+theorem unit_terminal_with (σ : Convention) {s : State} (hv : Valid s) (hi : Interior s)
+    (hd : s.p ∣ s.q) (P : List ℕ → ℕ → Prop)
+    (stop : ∀ T, CanStop s T → P [] T) (one : s.q = s.p → P [2, 3] 6) :
+    ∃ xs T, Terminal σ s xs T ∧ P xs T := by
+  obtain ⟨T, hT⟩ := hd
+  have hlast : s.last < T := by
+    unfold Interior at hi
+    rw [hT, Nat.mul_comm s.p T] at hi
+    exact Nat.lt_of_mul_lt_mul_right hi
+  by_cases htwo : 2 ≤ T
+  · have hs : CanStop s T := ⟨htwo, hlast, hT⟩
+    exact ⟨[], T, ⟨trivial, hs⟩, stop T hs⟩
+  have hone : T = 1 := by omega
+  have hlast0 : s.last = 0 := by omega
+  have hpq : s.q = s.p := by simpa [hone] using hT
+  have ha : σ.rel 0 2 := by cases σ <;> norm_num [Convention.rel]
+  have hb : σ.rel 2 3 := by cases σ <;> norm_num [Convention.rel]
+  refine ⟨[2, 3], 6, ?_, one hpq⟩
+  simp only [Terminal, Controls, Legal, finish, step, CanStop, hpq, hlast0]
+  have hp := hv.1
+  exact ⟨⟨⟨by omega, by decide, ha⟩, ⟨by omega, by decide, hb⟩, trivial⟩,
+    by decide, by decide, by omega⟩
+
+/-- Build a greedy terminal decomposition together with an invariant that
+holds at a unit remainder and propagates back through every greedy step. -/
+theorem greedy_terminal_with (σ : Convention) (P : State → List ℕ → ℕ → Prop)
+    (unitCase : ∀ s, Valid s → Interior s → s.p ∣ s.q →
+      ∃ xs T, Terminal σ s xs T ∧ P s xs T)
+    (stepCase : ∀ s x xs T, Valid s → s.p ≤ s.q → Legal σ s x →
+      (step s x).p < s.p → P (step s x) xs T → P s (x :: xs) T)
+    (s : State) (hv : Valid s) (hi : Interior s) (hsmall : s.p ≤ s.q) :
+    ∃ xs T, Terminal σ s xs T ∧ P s xs T := by
+  by_cases hd : s.p ∣ s.q
+  · exact unitCase s hv hi hd
+  · let x := s.q / s.p + 1
+    obtain ⟨hl, hdrop, hi', hs'⟩ := greedy_step hv hi hsmall hd σ
+    obtain ⟨xs, T, ht, hp⟩ := greedy_terminal_with σ P unitCase stepCase (step s x)
+      (step_valid hv hl) hi' hs'
+    exact ⟨x :: xs, T, ⟨⟨hl, ht.1⟩, ht.2⟩, stepCase s x xs T hv hsmall hl hdrop hp⟩
+termination_by s.p
+
+/-- Every admitted state with numerator at most its denominator has a terminal
+decomposition under either denominator convention. -/
 theorem terminal_exists_small (σ : Convention) (s : State) (hv : Valid s)
     (hi : Interior s) (hsmall : s.p ≤ s.q) : ∃ xs T, Terminal σ s xs T := by
-  by_cases hd : s.p ∣ s.q
-  · obtain ⟨T, hT⟩ := hd
-    have hlast : s.last < T := by
-      have h := hi
-      unfold Interior at h
-      rw [hT, Nat.mul_comm s.p T] at h
-      exact Nat.lt_of_mul_lt_mul_right h
-    by_cases htwo : 2 ≤ T
-    · exact ⟨[], T, trivial, htwo, hlast, hT⟩
-    · have hone : T = 1 := by omega
-      have hlast0 : s.last = 0 := by omega
-      have hpq : s.q = s.p := by simpa [hone] using hT
-      have ha : σ.rel 0 2 := by cases σ <;> norm_num [Convention.rel]
-      have hb : σ.rel 2 3 := by cases σ <;> norm_num [Convention.rel]
-      refine ⟨[2, 3], 6, ?_⟩
-      simp only [Terminal, Controls, Legal, finish, step, CanStop, hpq, hlast0]
-      have hp := hv.1
-      exact ⟨⟨⟨by omega, by decide, ha⟩, ⟨by omega, by decide, hb⟩, trivial⟩,
-        by decide, by decide, by omega⟩
-  · let x := s.q / s.p + 1
-    obtain ⟨hlegal, hdrop, hi', hsmall'⟩ := greedy_step hv hi hsmall hd σ
-    obtain ⟨xs, T, hcs, hterm⟩ :=
-      terminal_exists_small σ (step s x) (step_valid hv hlegal) hi' hsmall'
-    exact ⟨x :: xs, T, ⟨hlegal, hcs⟩, hterm⟩
-termination_by s.p
+  obtain ⟨xs, T, ht, _⟩ := greedy_terminal_with σ (fun _ _ _ => True)
+    (fun _ hv hi hd => unit_terminal_with σ hv hi hd _ (fun _ _ => trivial) (fun _ => trivial))
+    (fun _ _ _ _ _ _ _ _ _ => trivial) s hv hi hsmall
+  exact ⟨xs, T, ht⟩
 
 /-- The discounted value of a fixed control string with terminal denominator T. -/
 noncomputable def reward (H : ℕ → ℝ) (xs : List ℕ) (T : ℕ) : EReal :=

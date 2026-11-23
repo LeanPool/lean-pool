@@ -110,8 +110,8 @@ theorem asymptoticRigidity_of_finite_rays
       exact le_antisymm hcb ((le_of_not_gt hlt).trans hcmp)
     rw [heq] at hlc
     exact ⟨c, ⟨hc, terminal_tails_equal ⟨M,U,hU,hu⟩ (benchmark_hasUnitTail hb) hlc hL⟩, hle⟩
-  obtain ⟨c, hc, hocc⟩ := (hfinite q b hq hb).frequently_exists.1
-    (Frequently.of_forall (f := atTop) hcover)
-  exact (eq_of_cofinal_prefix_comparison ha hc.1 hocc).symm ▸ hc.2
+  have haS : a ∈ S := mem_of_finite_prefix_comparisons ha (hfinite q b hq hb)
+    (fun _ hc => hc.1) hcover
+  exact haS.2
 
 end Egyptian

@@ -15,22 +15,6 @@ public import LeanPool.Egyptian.BellmanArithmetic
 
 namespace Egyptian.Control
 
-theorem finish_append (s : State) (xs ys : List ℕ) :
-    finish s (xs ++ ys) = finish (finish s xs) ys := by
-  induction xs generalizing s with
-  | nil => rfl
-  | cons x xs ih => exact ih (step s x)
-
-theorem controls_append {σ : Convention} (s : State) (xs ys : List ℕ) :
-    Controls σ s (xs ++ ys) ↔ Controls σ s xs ∧ Controls σ (finish s xs) ys := by
-  induction xs generalizing s with
-  | nil => simp [Controls, finish]
-  | cons x xs ih => simp [Controls, finish, ih, and_assoc]
-
-theorem terminal_append {σ : Convention} (s : State) (xs ys : List ℕ) (T : ℕ) :
-    Terminal σ s (xs ++ ys) T ↔ Controls σ s xs ∧ Terminal σ (finish s xs) ys T := by
-  simp only [Terminal, controls_append, finish_append, and_assoc]
-
 theorem finish_small (s : State) (xs : List ℕ) (hs : s.p ≤ s.q) :
     (finish s xs).p ≤ (finish s xs).q := by
   induction xs generalizing s with
@@ -77,7 +61,7 @@ theorem split_at_fall {σ s xs} (hc : Controls σ s xs) :
     have hk : (xs.take k).length = k := by
       rw [List.length_take]
       exact Nat.min_eq_left hkle
-    have hc' := ((controls_append s (xs.take k) (xs.drop k)).mp (by simpa using hc)).1
+    have hc' := controls_take hc k
     refine ⟨xs.take k, xs.drop k, (List.take_append_drop ..).symm, hc', hfall, ?_⟩
     intro j hj
     rw [hk] at hj
@@ -110,7 +94,7 @@ theorem noFall_unit {σ s xs} (hv : Valid s) (hd : s.p ∣ s.q) (hc : Controls �
       exact ih (step s' x) (Nat.dvd_sub (dvd_mul_of_dvd_left hp x) hq)
         (dvd_mul_of_dvd_left hq x)
   intro j _
-  have hj := ((controls_append s (xs.take j) (xs.drop j)).mp (by simpa using hc)).1
+  have hj := controls_take hc j
   exact Nat.le_of_dvd (finish_valid hv hj).1 (keep s _ (dvd_refl _) hd)
 
 end Egyptian.Control

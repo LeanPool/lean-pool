@@ -10,7 +10,6 @@ public import LeanPool.Egyptian.AsymRay
 public import LeanPool.Egyptian.BellmanScore
 public import LeanPool.Egyptian.TerminalTuples
 public import LeanPool.Egyptian.UnitBest
-import LeanPool.Egyptian.AsymGrowth
 import Mathlib.Tactic.Positivity.Finset
 
 /-! The finite-ray induction in §4, including uniqueness at unit states. -/
@@ -44,7 +43,7 @@ theorem greedy_ray_of_unit_score {s : State} {xs : List ℕ} {T U : ℕ}
     (ht : Terminal .weak s xs T) (hscore : score xs T = Payoff.value (U : ℝ)) :
     unitRay xs T = unitRay [] U := by
   have hreal (j : ℕ) : (1 : ℝ) ≤ unitIter U j := by
-    rw [real_unitIter]; exact Payoff.one_le_orbit (by exact_mod_cast hU) j
+    exact_mod_cast unitIter_pos hU j
   have hg := (div_eq_iff (by positivity : (2 : ℝ)^xs.length ≠ 0)).1 hscore
   have hval : Payoff.value (T : ℝ) = Payoff.value (unitIter U xs.length : ℝ) := by
     rw [real_unitIter, Payoff.value_orbit (by exact_mod_cast hU : (1:ℝ) ≤ U), hg, mul_comm]
@@ -74,12 +73,8 @@ theorem greedy_ray_of_unit_score {s : State} {xs : List ℕ} {T U : ℕ}
       apply huniq xs
       refine ⟨had, fun es he => ?_⟩
       exact (hg.2 es he).trans hsum.le
-  have htail (j : ℕ) : unitIter T j + 1 = d (xs.length+j) := by
-    apply congrArg (·+1)
-    rw [hT]
-    induction j with
-    | zero => rfl
-    | succ j h => exact congrArg (fun n => n*(n+1)) h
+  have htail (j : ℕ) : unitIter T j + 1 = d (xs.length + j) := by
+    simp only [d, hT, unitIter_add]
   have hprepend := prepend_prefix_cancel d xs.length
   change prepend xs (fun j => unitIter T j + 1) = d
   calc

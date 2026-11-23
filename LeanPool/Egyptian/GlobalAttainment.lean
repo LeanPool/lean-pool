@@ -58,12 +58,12 @@ theorem improper_winners (σ : Convention) (s : State) (hv : Valid s) (hbig : s.
     change Entrance σ s b at hb
     have v := finish_valid hv hb.controls
     have env := Payoff.entrance_envelope (r := b.length)
-      v.1 hb.end_small.le hv.2 (by exact_mod_cast hb.denominator_product_bound hbig hv)
+      v.1 hb.end_small.le hv.2 (by exact_mod_cast hb.denominator_product_bound hbig)
     change score (b ++ (p b).1) (p b).2 ≤ _
     rw [score_append]
     exact (div_le_div_of_nonneg_right (spec b hb).2 (by positivity)).trans env
   obtain ⟨xs0,T0,ht0⟩ := hex
-  obtain ⟨a,_,_,ha,_⟩ := split_first_entrance ht0 hv (improper_nonempty ht0 hv hbig)
+  obtain ⟨a,_,_,ha,_⟩ := split_first_entrance ht0 hv (improper_nonempty ht0 hbig)
   have alegal := leg a ha
   have hTa := alegal.2.1
   have hp : 1 < ((p a).2 : ℝ) := by exact_mod_cast hTa
@@ -82,7 +82,7 @@ theorem improper_winners (σ : Convention) (s : State) (hv : Valid s) (hbig : s.
   have win : Wins σ s (b ++ (p b).1) (p b).2 := by
     refine ⟨leg b hb, ?_⟩
     intro xs T ht
-    obtain ⟨b',ys,rfl,he,ht'⟩ := split_first_entrance ht hv (improper_nonempty ht hv hbig)
+    obtain ⟨b',ys,rfl,he,ht'⟩ := split_first_entrance ht hv (improper_nonempty ht hbig)
     exact (dominate _ _ _ he ht').trans (hmaximum b' he)
   refine ⟨⟨_,_,win⟩, hfinite.subset ?_⟩
   rintro b' ⟨he,ys,T,hw⟩

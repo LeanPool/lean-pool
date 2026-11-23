@@ -15,14 +15,6 @@ public import LeanPool.Egyptian.UnitComparison
 
 namespace Egyptian
 
-theorem digits_eq_prefix (T m : ℕ) :
-    unitDigits T m = prefixTuple (fun i => unitIter T i + 1) m := by
-  induction m generalizing T with
-  | zero => rfl
-  | succ m ih =>
-    simp only [unitDigits, ih, prefixTuple, List.range_succ_eq_map, List.map_cons,
-      List.map_map, Function.comp_def, unitIter_step_start, unitIter]
-
 private def entry (ds : List ℕ) (i : ℕ) := ds[i]?.getD 2
 
 private theorem entry_of_lt {ds : List ℕ} {i : ℕ} (h : i < ds.length) :
@@ -40,15 +32,8 @@ private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
   let t := unitIter T
   let g := prefixTuple (fun i => t i + 1) m
   change IsBest σ (unit T) m g ∧ _
-  have hpos (i : ℕ) : 0 < t i := by
-    induction i with
-    | zero => exact hT
-    | succ i ih => exact Nat.mul_pos ih (Nat.succ_pos _)
-  have inc : StrictMono t := by
-    apply strictMono_nat_of_lt_succ
-    intro i
-    change t i < t i * (t i + 1)
-    nlinarith only [hpos i, Nat.mul_pos (hpos i) (hpos i)]
+  have hpos (i : ℕ) : 0 < t i := unitIter_pos hT i
+  have inc : StrictMono t := unitIter_strictMono hT
   have hsum : (recipSum g : ℝ) = 1 / (T : ℝ) - 1 / (t m : ℝ) := by
     rw [show g = prefixTuple (fun i => t i + 1) m from rfl, real_prefix_sum]
     simpa [t] using unitPrefixSum T m hT

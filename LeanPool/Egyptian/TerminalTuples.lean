@@ -21,34 +21,6 @@ public section
 
 namespace Egyptian.Control
 
-private theorem rel_trans {σ : Convention} {a b c : ℕ} (hab : σ.rel a b)
-    (hbc : σ.rel b c) : σ.rel a c := by
-  cases σ with
-  | weak => exact Nat.le_trans hab hbc
-  | strict => exact Nat.lt_trans hab hbc
-
-private theorem rel_weak {σ : Convention} {a b : ℕ} (hab : σ.rel a b) : a ≤ b := by
-  cases σ with
-  | weak => exact hab
-  | strict => exact hab.le
-
-theorem controls_ordered {σ s ds} (hc : Controls σ s ds) :
-    (∀ d ∈ ds, 2 ≤ d ∧ σ.rel s.last d ∧ d ≤ (finish s ds).last) ∧
-      ds.Pairwise σ.rel ∧ s.last ≤ (finish s ds).last := by
-  induction ds generalizing s with
-  | nil => simp [finish]
-  | cons x ds ih =>
-    obtain ⟨hxs, ho, he⟩ := ih hc.2
-    have hl := hc.1
-    change x ≤ (finish (step s x) ds).last at he
-    refine ⟨?_, List.pairwise_cons.mpr ⟨fun d hd => (hxs d hd).2.1, ho⟩,
-      (rel_weak hl.2.2).trans he⟩
-    intro d hd
-    rcases List.mem_cons.mp hd with rfl | hd
-    · exact ⟨hl.2.1, hl.2.2, he⟩
-    · obtain ⟨hd1, hd2, hd3⟩ := hxs d hd
-      exact ⟨hd1, rel_trans hl.2.2 hd2, hd3⟩
-
 theorem terminal_to_tuple {σ s ds T} (hv : Valid s) (ht : Terminal σ s ds T) :
     Admissible σ ((s.p : ℚ) / s.q) ds.length ds ∧
       (∀ d ∈ ds, d < T) ∧ (s.p : ℚ) / s.q = recipSum ds + unit T := by
@@ -58,14 +30,6 @@ theorem terminal_to_tuple {σ s ds T} (hv : Valid s) (ht : Terminal σ s ds T) :
     have := ht.2.1; omega))
   exact ⟨⟨rfl, fun d hd => (hds d hd).1, ho, by linarith⟩,
     fun d hd => (hds d hd).2.2.trans_lt ht.2.2.1, hsplit⟩
-
-private theorem recipSum_nonneg (ds : List ℕ) : 0 ≤ recipSum ds := by
-  induction ds with
-  | nil => simp [recipSum]
-  | cons d ds ih =>
-    have hu : 0 ≤ unit d := by unfold unit; positivity
-    change 0 ≤ unit d + recipSum ds
-    exact add_nonneg hu ih
 
 /-- A sorted tuple with all entries below the final unit denominator supplies
 a legal terminal decomposition from its starting state. -/

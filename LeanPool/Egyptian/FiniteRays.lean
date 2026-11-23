@@ -48,7 +48,7 @@ theorem finite_winningRays (s : State) (hv : Valid s) (hi : Interior s) :
       exact finite_winningRays_proper _ (finish_valid hv h.controls)
         h.end_inside.1 h.end_small.le
     · intro xs T hw
-      obtain ⟨b,ys,rfl,he,_⟩ := split_first_entrance hw.1 hv (improper_nonempty hw.1 hv hbig)
+      obtain ⟨b,ys,rfl,he,_⟩ := split_first_entrance hw.1 hv (improper_nonempty hw.1 hbig)
       exact ⟨b,⟨he,ys,T,hw⟩,ys,rfl,wins_suffix hw⟩
   · apply Set.finite_empty.subset
     rintro a ⟨xs,T,hw,_⟩

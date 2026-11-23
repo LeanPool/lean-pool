@@ -21,11 +21,6 @@ coordinates, without computing a rational floor.
 
 namespace Egyptian.Control
 
-theorem rel_le {σ : Convention} {x y : ℕ} (h : σ.rel x y) : x ≤ y := by
-  cases σ with
-  | weak => exact h
-  | strict => exact Nat.le_of_lt h
-
 /-- Bound the first denominator of a nonempty block. Reapplying the same
 inequality at its successor bounds each subsequent choice. -/
 theorem head_bound {σ : Convention} {s : State} {x : ℕ} {xs : List ℕ}
@@ -39,7 +34,7 @@ theorem head_bound {σ : Convention} {s : State} {x : ℕ} {xs : List ℕ}
   | cons y ys ih =>
     let d := (finish (step s x) (y :: ys)).p
     have hx : 0 < x := by have := hc.1.2.1; omega
-    have hxy : x ≤ y := rel_le hc.2.1.2.2
+    have hxy : x ≤ y := Convention.rel_le hc.2.1.2.2
     have htail := ih hc.2
     change (s.p * x - s.q) * y ≤ (y :: ys).length * (s.q * x) + d at htail
     have hsmall := (Nat.mul_le_mul_left (s.p * x - s.q) hxy).trans htail

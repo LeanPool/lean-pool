@@ -83,15 +83,10 @@ private theorem long_terminal {s : State} (hv : Valid s) (hi : Interior s)
       Nat.cast_add, Nat.cast_one, hval]
     linarith
 
-private theorem recip_nonnegative (ds : List ℕ) : 0 ≤ recipSum ds := by
-  induction ds with
-  | nil => simp [recipSum]
-  | cons d ds ih => exact add_nonneg (by unfold unit; positivity : 0 ≤ unit d) ih
-
 private theorem entry_le_sum {d : ℕ} {ds : List ℕ} (hd : d ∈ ds) : unit d ≤ recipSum ds := by
   have hs := ((List.perm_cons_erase hd).map unit).sum_eq
   change recipSum ds = unit d + recipSum (ds.erase d) at hs
-  linarith [recip_nonnegative (ds.erase d)]
+  linarith [recipSum_nonneg (ds.erase d)]
 
 private theorem entry_le_nat_sum {d : ℕ} {ds : List ℕ} (hd : d ∈ ds) : d ≤ ds.sum := by
   have hs := (List.perm_cons_erase hd).sum_eq

@@ -30,11 +30,30 @@ def Convention.rel : Convention → ℕ → ℕ → Prop
   | .weak => (· ≤ ·)
   | .strict => (· < ·)
 
+theorem Convention.rel_le {σ : Convention} {a b : ℕ} (hab : σ.rel a b) : a ≤ b := by
+  cases σ with
+  | weak => exact hab
+  | strict => exact hab.le
+
+theorem Convention.rel_trans {σ : Convention} {a b c : ℕ} (hab : σ.rel a b)
+    (hbc : σ.rel b c) : σ.rel a c := by
+  cases σ with
+  | weak => exact Nat.le_trans hab hbc
+  | strict => exact Nat.lt_trans hab hbc
+
 /-- A rational unit fraction. Admissibility excludes zero denominators. -/
 def unit (d : ℕ) : ℚ := 1 / (d : ℚ)
 
 /-- The rational sum of the unit fractions in a finite denominator list. -/
 def recipSum (ds : List ℕ) : ℚ := (ds.map unit).sum
+
+theorem recipSum_nonneg (ds : List ℕ) : 0 ≤ recipSum ds := by
+  induction ds with
+  | nil => simp [recipSum]
+  | cons d ds ih =>
+    have hu : 0 ≤ unit d := by unfold unit; positivity
+    change 0 ≤ unit d + recipSum ds
+    exact add_nonneg hu ih
 
 /-- Ordered n-tuples with all denominators at least two and sum strictly below q. -/
 def Admissible (σ : Convention) (q : ℚ) (n : ℕ) (ds : List ℕ) : Prop :=
@@ -93,6 +112,12 @@ theorem unitIter_pos {T : ℕ} (hT : 0 < T) (i : ℕ) : 0 < unitIter T i := by
   induction i with
   | zero => exact hT
   | succ i ih => exact Nat.mul_pos ih (Nat.succ_pos _)
+
+theorem unitIter_strictMono {T : ℕ} (hT : 0 < T) : StrictMono (unitIter T) := by
+  apply strictMono_nat_of_lt_succ
+  intro i
+  change unitIter T i < unitIter T i * (unitIter T i + 1)
+  exact lt_mul_of_one_lt_right (unitIter_pos hT i) (by have := unitIter_pos hT i; omega)
 
 /-- Theorem 1, including the single prefix that works at all later lengths. -/
 def EventuallyGreedy : Prop :=

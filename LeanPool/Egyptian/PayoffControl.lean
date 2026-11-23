@@ -20,38 +20,6 @@ namespace Egyptian.Control
 
 open Finset
 
-theorem controls_take {σ s xs} (hc : Controls σ s xs) (k : ℕ) :
-    Controls σ s (xs.take k) := by
-  induction k generalizing s xs with
-  | zero => simp [Controls]
-  | succ k ih =>
-    cases xs with
-    | nil => trivial
-    | cons x xs => exact ⟨hc.1, ih hc.2⟩
-
-private theorem legal_order {σ s x} (h : Legal σ s x) : s.last ≤ x := by
-  have hh := h.2.2
-  cases σ with
-  | weak => exact hh
-  | strict => exact Nat.le_of_lt hh
-
-theorem controls_bounds {σ s xs} (hc : Controls σ s xs) :
-    ∀ d ∈ xs, s.last ≤ d ∧ 2 ≤ d := by
-  induction xs generalizing s with
-  | nil => simp
-  | cons x xs ih =>
-    intro d hd
-    rcases List.mem_cons.mp hd with rfl | hd
-    · exact ⟨legal_order hc.1, hc.1.2.1⟩
-    · have h := ih hc.2 d hd
-      exact ⟨(legal_order hc.1).trans h.1, h.2⟩
-
-theorem controls_sorted {σ s xs} (hc : Controls σ s xs) : xs.Pairwise (· ≤ ·) := by
-  induction xs generalizing s with
-  | nil => simp
-  | cons x xs ih =>
-    exact List.pairwise_cons.mpr ⟨fun d hd => (controls_bounds hc.2 d hd).1, ih hc.2⟩
-
 private noncomputable def terms (xs : List ℕ) (i : ℕ) : ℝ :=
   1 / (xs.getD i 1 : ℝ)
 
@@ -79,8 +47,9 @@ private theorem terms_prod (xs : List ℕ) {k : ℕ} (hk : k ≤ xs.length) :
 private theorem terms_order {σ s xs} (hc : Controls σ s xs) :
     (∀ i < xs.length, 0 < terms xs i) ∧
       ∀ i, i+1 < xs.length → terms xs (i+1) ≤ terms xs i := by
+  obtain ⟨bounds, order, _⟩ := controls_ordered hc
   have hden (i : ℕ) (hi : i < xs.length) : 0 < (xs[i] : ℝ) := by
-    exact_mod_cast (by have := (controls_bounds hc _ (List.getElem_mem hi)).2; omega : 0 < xs[i])
+    exact_mod_cast (by have := (bounds _ (List.getElem_mem hi)).1; omega : 0 < xs[i])
   constructor
   · intro i hi
     simp only [terms, List.getD_eq_getElem _ _ hi]
@@ -89,7 +58,7 @@ private theorem terms_order {σ s xs} (hc : Controls σ s xs) :
     have hi' : i < xs.length := by omega
     simp only [terms, List.getD_eq_getElem _ _ hi, List.getD_eq_getElem _ _ hi']
     apply one_div_le_one_div_of_le (hden _ hi')
-    exact_mod_cast (List.pairwise_iff_getElem.mp (controls_sorted hc) i (i+1) hi' hi (by omega))
+    exact_mod_cast Convention.rel_le (List.pairwise_iff_getElem.mp order i (i+1) hi' hi (by omega))
 
 private theorem prefix_identity {σ s xs} (hv : Valid s) (hc : Controls σ s xs)
     {k : ℕ} (hk : k ≤ xs.length) :

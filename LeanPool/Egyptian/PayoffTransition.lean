@@ -25,24 +25,6 @@ namespace Egyptian.Payoff
 
 open Finset
 
-/-- The continuous comparison terms from the paper. -/
-noncomputable def reference (t : ℝ) (i : ℕ) : ℝ := 1 / (orbit t i + 1)
-
-theorem reference_pos {t : ℝ} (ht : 1 ≤ t) (i : ℕ) : 0 < reference t i := by
-  have := one_le_orbit ht i
-  unfold reference
-  positivity
-
-theorem reference_sum {t : ℝ} (ht : 1 ≤ t) (k : ℕ) :
-    (∑ i ∈ range k, reference t i) = 1 / t - 1 / orbit t k := by
-  induction k with
-  | zero => simp [orbit]
-  | succ k ih =>
-    rw [sum_range_succ, ih, orbit, phi, reference]
-    have h := one_le_orbit ht k
-    field_simp [show orbit t k ≠ 0 by linarith, show orbit t k + 1 ≠ 0 by linarith]
-    ring
-
 theorem reference_prod {t : ℝ} (ht : 1 ≤ t) (k : ℕ) :
     (∏ i ∈ range k, reference t i) = t / orbit t k := by
   induction k with

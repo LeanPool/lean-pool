@@ -61,13 +61,7 @@ theorem prepend_prefix_cancel (d : ℕ → ℕ) (n : ℕ) :
       have h := congrFun (ih (fun i => d (i+1))) j
       simpa only [prepend, Nat.succ_add] using h
 
-theorem prefix_unitRay (T n : ℕ) : prefixTuple (unitRay [] T) n = unitDigits T n := by
-  induction n generalizing T with
-  | zero => rfl
-  | succ n ih =>
-    rw [prefix_succ, unitDigits, ← ih]
-    unfold unitRay
-    simp only [prepend, ← unitIter_step_start]
-    rfl
+theorem prefix_unitRay (T n : ℕ) : prefixTuple (unitRay [] T) n = unitDigits T n :=
+  (digits_eq_prefix T n).symm
 
 end Egyptian

@@ -32,22 +32,18 @@ theorem unitTarget
   have oneStep : greedyTuple σ (unit T) 1 = [T + 1] := greedyTuple_unit σ hT 1
   have hp := (uniqueUnitTails σ T 1 hT le_rfl).1
   rw [oneStep] at hp
-  refine ⟨hp, ?_⟩
-  intro m hm
-  dsimp only
   have hT' : 1 ≤ T * (T + 1) := Nat.mul_pos (by omega) (by omega)
-  have hu : unit T - bestValue σ (unit T) 1 = unit (T * (T + 1)) := by
-    rw [← hp.eq_bestValue]
-    simpa [recipSum] using unit_sub_unit_succ hT
-  rw [hu]
-  obtain ⟨hg, hunique⟩ := uniqueUnitTails σ (T * (T + 1)) m hT' hm
+  have hsplit : unit T = recipSum [T + 1] + unit (T * (T + 1)) := by
+    have h := unit_sub_unit_succ hT
+    simp only [recipSum, List.map_singleton, List.sum_singleton]
+    linarith
+  refine ⟨hp, optimal_unit_extensions uniqueUnitTails hT' hsplit hp ?_⟩
+  intro m hm
   have hext := (uniqueUnitTails σ T (1 + m) hT (by omega)).1
   have htuple : greedyTuple σ (unit T) (1 + m) =
       [T + 1] ++ greedyTuple σ (unit (T * (T + 1))) m := by
     rw [show 1 + m = m + 1 by omega, greedyTuple_unit σ hT, greedyTuple_unit σ hT']
     rfl
-  rw [htuple] at hext
-  exact ⟨by rw [← hext.eq_bestValue, ← hp.eq_bestValue, ← hg.eq_bestValue, recipSum_append],
-    hg, hunique, hext⟩
+  rwa [htuple] at hext
 
 end Egyptian

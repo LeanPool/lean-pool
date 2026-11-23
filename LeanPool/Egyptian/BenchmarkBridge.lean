@@ -24,14 +24,9 @@ open scoped Topology
 /-- The reciprocal series of the unshifted unit-fraction ray sums to `1/T`. -/
 theorem unitRay_hasSum (T : ℕ) (hT : 1 ≤ T) :
     HasSum (fun i : ℕ => 1 / ((unitIter T i + 1 : ℕ) : ℝ)) (1 / (T:ℝ)) := by
-  have hp := unitIter_pos hT
-  have hmono : StrictMono (unitIter T) := by
-    apply strictMono_nat_of_lt_succ
-    intro i
-    change unitIter T i < unitIter T i * (unitIter T i + 1)
-    nlinarith only [Nat.mul_pos (hp i) (hp i)]
   have h0 : Tendsto (fun i : ℕ => 1 / (unitIter T i : ℝ)) atTop (𝓝 0) :=
-    tendsto_const_nhds.div_atTop (tendsto_natCast_atTop_atTop.comp hmono.tendsto_atTop)
+    tendsto_const_nhds.div_atTop
+      (tendsto_natCast_atTop_atTop.comp (unitIter_strictMono hT).tendsto_atTop)
   apply (hasSum_iff_tendsto_nat_of_nonneg (fun _ => by positivity) _).2
   have h := (tendsto_const_nhds (x := 1/(T:ℝ)) (f := atTop)).sub h0
   rw [sub_zero] at h
@@ -64,11 +59,8 @@ theorem expansion_unitRay {q : ℚ} {ds : List ℕ} {T : ℕ} (hT : 1 ≤ T)
     (hds : Admissible .weak q ds.length ds) (hordered : ∀ d ∈ ds, d ≤ T + 1)
     (hsplit : q = recipSum ds + unit T) : Expansion q (unitRay ds T) := by
   have hp := unitIter_pos hT
-  have hm : Monotone (fun j => unitIter T j + 1) := by
-    apply monotone_nat_of_le_succ
-    intro j
-    change _ ≤ unitIter T j * (unitIter T j + 1) + 1
-    nlinarith only [hp j, Nat.mul_pos (hp j) (hp j)]
+  have hm : Monotone (fun j => unitIter T j + 1) :=
+    fun _ _ h => Nat.add_le_add_right ((unitIter_strictMono hT).monotone h) 1
   refine ⟨prepend_lower _ _ hds.2.1 (fun j => by have := hp j; omega),
     prepend_mono _ _ hds.2.2.1 hm hordered, ?_⟩
   apply (hasSum_nat_add_iff' (f := fun i => 1/(unitRay ds T i : ℝ)) ds.length).mp
@@ -104,33 +96,12 @@ theorem exists_benchmark_of_compatible (h : CompatibleUnitTails) (q : ℚ) (hq :
     cases j with
     | zero => simpa [greedyTuple, greedyFrom] using hp
     | succ j => exact htail _ (by omega)
-  have hz : prefixTuple b N = p := by simpa [prefixTuple] using hpre 0
-  have has : HasSum (fun i : ℕ => 1/(b i:ℝ)) (q:ℝ) := by
-    apply (hasSum_nat_add_iff' (f := fun i => 1/(b i : ℝ)) N).mp
-    have hsum : (q:ℝ) - (∑ i ∈ Finset.range N, 1/(b i:ℝ)) = 1/(T:ℝ) := by
-      rw [← real_prefix_sum, hz, hs, Rat.cast_add, unit, Rat.cast_div, Rat.cast_one,
-        Rat.cast_natCast]
-      ring
-    rw [hsum]
-    convert unitRay_hasSum T hT using 1
-    funext i
-    simp only [Nat.add_comm i N, ht]
-  have bound (i : ℕ) : 2 ≤ b i := by
-    let m := max N (i+1)
-    have hh := (hbest m (le_max_left _ _)).1.2.1
-    apply hh
-    exact List.mem_map.mpr ⟨i, List.mem_range.mpr (by dsimp [m]; omega), rfl⟩
-  have mono : Monotone b := by
-    intro i j hij
-    rcases hij.eq_or_lt with rfl | hij
-    · rfl
-    let m := max N (j+1)
-    have hh := (hbest m (le_max_left _ _)).1.2.2.1
-    have hlen : (prefixTuple b m).length = m := by simp [prefixTuple]
-    have hget := List.pairwise_iff_getElem.mp hh i j (by rw [hlen]; dsimp [m]; omega)
-      (by rw [hlen]; dsimp [m]; omega) hij
-    simpa [prefixTuple, Convention.rel] using hget
-  refine ⟨b, ⟨bound, mono, has⟩, N+1, T*(T+1), by omega, ?_, ?_, ?_, ?_⟩
+  have hordered : ∀ d ∈ p, d ≤ T + 1 := by
+    have hpair := (htail 1 le_rfl).1.2.2.1
+    rw [greedyTuple_unit .weak hT 1] at hpair
+    exact fun d hd => (List.pairwise_append.mp hpair).2.2 d hd (T + 1) (by simp [unitDigits])
+  have expansion : Expansion q b := expansion_unitRay hT (hn ▸ hp.1) hordered hs
+  refine ⟨b, expansion, N+1, T*(T+1), by omega, ?_, ?_, ?_, ?_⟩
   · nlinarith only [hT, Nat.mul_pos hT hT]
   · rw [hpre, recipSum_append]
     have hunit := unit_sub_unit_succ hT

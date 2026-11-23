@@ -178,6 +178,16 @@ theorem eq_of_cofinal_prefix_comparison {q : ℚ} {a c : ℕ → ℕ}
   rw [ha.2.2.tsum_eq, hc.2.2.tsum_eq] at htotal
   exact (lt_irrefl _ htotal)
 
+/-- If a finite family of expansions supplies a termwise lower comparison
+for every prefix, the given expansion belongs to that family. -/
+theorem mem_of_finite_prefix_comparisons {q : ℚ} {a : ℕ → ℕ}
+    (ha : Expansion q a) {S : Set (ℕ → ℕ)} (hS : S.Finite)
+    (hexpansion : ∀ c ∈ S, Expansion q c)
+    (hcover : ∀ k : ℕ, ∃ c ∈ S, ∀ i < k, c i ≤ a i) : a ∈ S := by
+  obtain ⟨c, hc, hcofinal⟩ := hS.frequently_exists.1
+    (Frequently.of_forall (f := atTop) hcover)
+  exact (eq_of_cofinal_prefix_comparison ha (hexpansion c hc) hcofinal).symm ▸ hc
+
 /-- The last pigeonhole step of §4. The family S is provided by the
 finite-maximizing-rays part of the Bellman argument. -/
 theorem eq_benchmark_of_finite_completions {q : ℚ} {a b : ℕ → ℕ}
@@ -186,10 +196,7 @@ theorem eq_benchmark_of_finite_completions {q : ℚ} {a b : ℕ → ℕ}
     (hgood : ∀ c ∈ S, Benchmark q c)
     (hcover : ∀ k : ℕ, ∃ c ∈ S, ∀ i < k, c i ≤ a i) :
     ∃ K, ∀ n, K ≤ n → a n = b n := by
-  obtain ⟨c, hc, hcofinal⟩ := hS.frequently_exists.1
-    (Frequently.of_forall (f := atTop) hcover)
-  have hbench := hgood c hc
-  have heq := eq_of_cofinal_prefix_comparison ha hbench.1 hcofinal
-  exact heq.symm ▸ benchmarks_eventually_equal hbench hb
+  have haS := mem_of_finite_prefix_comparisons ha hS (fun c hc => (hgood c hc).1) hcover
+  exact benchmarks_eventually_equal (hgood a haS) hb
 
 end Egyptian

@@ -67,29 +67,15 @@ theorem unit_reward (σ : Convention) {s : State} (hv : Valid s) (hi : Interior 
     (hd : s.p ∣ s.q) :
     ∃ xs T, Terminal σ s xs T ∧
       (1/2 : ℝ)^xs.length * Payoff.value T = Payoff.value (inverseRemainder s) := by
-  obtain ⟨T,hT⟩ := hd
-  have hi' : s.last < T := by
-    unfold Interior at hi
-    rw [hT, Nat.mul_comm s.p] at hi
-    exact Nat.lt_of_mul_lt_mul_right hi
-  rw [inverse_of_stop hv hT]
-  by_cases htwo : 2 ≤ T
-  · exact ⟨[], T, ⟨trivial, htwo, hi', hT⟩, by simp⟩
-  · have hone : T = 1 := by omega
-    subst T
-    have hz : s.last = 0 := by omega
-    have he : s.q = s.p := by simpa using hT
-    have ha : σ.rel 0 2 := by cases σ <;> norm_num [Convention.rel]
-    have hb : σ.rel 2 3 := by cases σ <;> norm_num [Convention.rel]
-    refine ⟨[2,3],6, ?_, ?_⟩
-    · simp only [Terminal, Controls, Legal, finish, step, CanStop, he, hz]
-      have hp := hv.1
-      exact ⟨⟨⟨by omega, by decide, ha⟩, ⟨by omega, by decide, hb⟩, trivial⟩,
-        by decide, by decide, by omega⟩
-    · have h1 := Payoff.value_phi (t := 1) (by norm_num)
-      have h2 := Payoff.value_phi (t := 2) (by norm_num)
-      norm_num [Payoff.phi] at h1 h2 ⊢
-      linarith
+  apply unit_terminal_with σ hv hi hd
+  · intro T hstop
+    simp [inverse_of_stop hv hstop.2.2]
+  · intro he
+    rw [inverse_of_stop hv (T := 1) (by simpa using he)]
+    have h1 := Payoff.value_phi (t := 1) (by norm_num)
+    have h2 := Payoff.value_phi (t := 2) (by norm_num)
+    norm_num [Payoff.phi] at h1 h2 ⊢
+    linarith
 
 /-- The finite greedy continuation reaches a legal terminal state with at
 least the initial payoff. A nonunit initial remainder gives strict growth. -/
@@ -99,20 +85,20 @@ theorem greedy_reward (σ : Convention) (s : State) (hv : Valid s)
       Payoff.value (inverseRemainder s) ≤ (1/2 : ℝ)^xs.length * Payoff.value T ∧
       (¬s.p ∣ s.q → Payoff.value (inverseRemainder s) <
         (1/2 : ℝ)^xs.length * Payoff.value T) := by
-  by_cases hd : s.p ∣ s.q
-  · obtain ⟨xs,T,ht,he⟩ := unit_reward σ hv hi hd
-    exact ⟨xs,T,ht,he.ge,fun hn => (hn hd).elim⟩
-  · let x := s.q / s.p + 1
-    obtain ⟨hl, hdrop, hi', hs'⟩ := greedy_step hv hi hsmall hd σ
-    obtain ⟨xs,T,ht,hb,_⟩ :=
-      greedy_reward σ (step s x) (step_valid hv hl) hi' hs'
+  apply greedy_terminal_with σ (fun s xs T =>
+    Payoff.value (inverseRemainder s) ≤ (1 / 2 : ℝ) ^ xs.length * Payoff.value T ∧
+      (¬s.p ∣ s.q → Payoff.value (inverseRemainder s) <
+        (1 / 2 : ℝ) ^ xs.length * Payoff.value T)) _ _ s hv hi hsmall
+  · intro s hv hi hd
+    obtain ⟨xs, T, ht, he⟩ := unit_reward σ hv hi hd
+    exact ⟨xs, T, ht, he.ge, fun hn => (hn hd).elim⟩
+  · intro s x xs T hv hsmall hl hdrop hnext
     have hgain := first_step_drift hv hsmall hl hdrop
     have hstrict : Payoff.value (inverseRemainder s) <
-        (1/2 : ℝ)^(x :: xs).length * Payoff.value T := by
+        (1 / 2 : ℝ) ^ (x :: xs).length * Payoff.value T := by
       simp only [List.length_cons, pow_succ]
-      linarith
-    exact ⟨x::xs,T,⟨⟨hl,ht.1⟩,ht.2⟩,hstrict.le,fun _ => hstrict⟩
-termination_by s.p
+      linarith [hnext.1]
+    exact ⟨hstrict.le, fun _ => hstrict⟩
 
 theorem strict_obstacle (σ : Convention) (s : State) (hv : Valid s)
     (hi : Interior s) (hsmall : s.p ≤ s.q) (hd : ¬s.p ∣ s.q) :

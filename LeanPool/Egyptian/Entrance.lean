@@ -105,12 +105,11 @@ theorem Entrance.den_bound {σ s xs} (h : Entrance σ s xs) (d : ℕ) (hd : d �
     · cases xs with
       | nil => cases hxs
       | cons y ys =>
-        have hrel : d ≤ y := rel_le hxs.controls.1.2.2
+        have hrel : d ≤ y := Convention.rel_le hxs.controls.1.2.2
         exact (Nat.mul_le_mul_left _ hrel).trans_lt (lift_bound y (by simp))
     · exact lift_bound d hd'
 
-theorem Entrance.denominator_product_bound {σ s xs} (he : Entrance σ s xs) (hbig : s.q < s.p)
-    (_hv : Valid s) :
+theorem Entrance.denominator_product_bound {σ s xs} (he : Entrance σ s xs) (hbig : s.q < s.p) :
     (finish s xs).q ≤ s.q * 2^(xs.length^2) := by
   have point (x : ℕ) (hx : x ∈ xs) : x ≤ 2 ^ xs.length := by
     have bound := he.den_bound x hx
@@ -165,7 +164,7 @@ theorem finite_short_entrances (σ : Convention) (s : State) (hbig : s.q < s.p) 
     (Nat.pow_le_pow_right (by decide) h.2.le)
 
 theorem improper_nonempty {σ s xs T} (ht : Terminal σ s xs T)
-    (_hv : Valid s) (hbig : s.q < s.p) : xs ≠ [] := by
+    (hbig : s.q < s.p) : xs ≠ [] := by
   rintro rfl
   have hs : CanStop s T := ht.2
   have he := hs.2.2

@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Egyptian.Comparison
 public import LeanPool.Egyptian.Defs
+import LeanPool.Egyptian.Payoff
 
 /-!
 # Finite extremality of a unit-fraction tail
@@ -65,14 +66,8 @@ private theorem refProduct (T k : ℕ) :
 theorem unitPrefixSum (T k : ℕ) (hT : 0 < T) :
     (∑ i ∈ range k, (1 / ((unitIter T i : ℝ) + 1))) =
       1 / (T : ℝ) - 1 / (unitIter T k : ℝ) := by
-  induction k with
-  | zero => simp [unitIter]
-  | succ k ih =>
-    rw [sum_range_succ, ih]
-    simp only [unitIter, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
-    have h := (Nat.cast_pos.mpr (unitIter_pos hT k) : (0 : ℝ) < unitIter T k)
-    field_simp [h.ne', (by positivity : (0 : ℝ) < unitIter T k + 1).ne']
-    ring
+  simpa only [real_unitIter, Payoff.reference] using
+    Payoff.reference_sum (show (1 : ℝ) ≤ T by exact_mod_cast hT) k
 
 /-- Competing with the greedy approximation to 1/T at any length. Equality of
 the two reciprocal sums forces term-by-term equality, also with repetitions. -/
