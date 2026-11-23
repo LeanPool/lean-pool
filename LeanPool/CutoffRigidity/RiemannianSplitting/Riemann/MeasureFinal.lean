@@ -89,15 +89,6 @@ omit [MeasurableSpace F] [BorelSpace F] [SecondCountableTopology M] in
 theorem measurable_toLevel : Measurable fr.toLevel :=
   fr.contMDiff_toLevel.continuous.measurable
 
-/-- The density measure of the level chart at `y₀`. -/
-noncomputable def levelMeasure (V : M → ℝ) (ρ : ℝ) (y₀ : fr.Level) :
-    Measure (LevelModel F (Rd k)) :=
-  ((volume : Measure (LevelModel F (Rd k))).restrict
-    (chartAt (LevelModel F (Rd k)) y₀).target).withDensity
-  (fun z => ENNReal.ofReal (Real.exp (-fr.Vlev V ρ
-    ((chartAt (LevelModel F (Rd k)) y₀).symm z)) *
-    chartVolumeDensity (LevelModel F (Rd k)) y₀ z))
-
 variable (J : WithLp 2 (Rd k ×
     LevelModel F (Rd k)) ≃ₗᵢ[ℝ] F) {V : M → ℝ}
   (hV : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ V) {μ : Measure M} [IsProbabilityMeasure μ] (hμ :
@@ -130,11 +121,13 @@ theorem map_level_chart :
     (fr.Θ y₀).continuousOn.aemeasurable (fr.Θ y₀).open_source.measurableSet
   change (((μ.map fr.toLevel).restrict ψ.source).map ψ) = _
   rw [marginal_restrict] at chart_measurable ⊢
+  let : SFinite (fr.levelMeasure V ρ y₀) := by
+    unfold levelMeasure
+    infer_instance
   rw [chart_measurable.map_map_of_aemeasurable fr.measurable_toLevel.aemeasurable,
     show ψ ∘ fr.toLevel = Prod.snd ∘ fr.Θ y₀ from rfl,
     ← measurable_snd.aemeasurable.map_map_of_aemeasurable product_chart_measurable,
     fr.map_Θ_prod J y₀ hV hμ hρ hVX, Measure.map_snd_prod, measure_univ, one_smul]
-  rfl
 
 include J hV hμ hρ hVX in
 /-- Local form of the factorization: over the chart domain of `y₀`. -/

@@ -13,6 +13,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochne
 public import LeanPool.CutoffRigidity.RiemannianSplitting.ManifoldScalarChartDerivative
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartBrackets
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
+import TauCeti.Geometry.Manifold.MFDeriv.Chart.Basic
 import TauCeti.Geometry.Manifold.MFDeriv.NormedSpace
 
 /-! # G2: test functions with prescribed gradient and vanishing Hessian at a point
@@ -35,21 +36,15 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
   [FiniteDimensional ℝ F]
+  [IsManifold 𝓘(ℝ, F) ∞ M]
   [RiemannianBundle fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 /-- chart derivative at the centre equals the intrinsic differential. -/
 theorem fderiv_comp_symm_center {f : M → ℝ} (x : M)
-    (hf : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) f x) (v : F) :
+    (v : F) :
     fderiv ℝ (f ∘ (extChartAt 𝓘(ℝ, F) x).symm) (extChartAt 𝓘(ℝ, F) x x) v =
       mvfderiv 𝓘(ℝ, F) f x v := by
-  have h := fderiv_chartScalar_frame (I := 𝓘(ℝ, F)) x (z := extChartAt 𝓘(ℝ, F) x x)
-    (mem_extChartAt_target x) (f := f) (by simpa [extChartAt_to_inv] using hf) v
-  rw [h]
-  have key : ∀ y : M, y = x → mvfderiv 𝓘(ℝ, F) f y (chartFrame (I := 𝓘(ℝ, F)) x v y) =
-      mvfderiv 𝓘(ℝ, F) f x v := by
-    intro y hy
-    subst hy
-    rw [chartFrame_self]
-  exact key _ (extChartAt_to_inv x)
+  rw [← TauCeti.mvfderiv_eq_fderiv_comp_extChartAt_symm]
+  rfl
 
 /-- Christoffel map at the centre. -/
 noncomputable def gam (x : M) (a b : F) : F :=
@@ -136,10 +131,9 @@ theorem fderiv_gt_center (x : M) (ξ : F →L[ℝ] ℝ) :
   simp
 
 theorem mvfderiv_eq_xi {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
-    (hGd : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) G x)
     (hG : (G ∘ (extChartAt 𝓘(ℝ, F) x).symm) =ᶠ[𝓝 (extChartAt 𝓘(ℝ, F) x x)] gt x ξ) (w : F) :
     mvfderiv 𝓘(ℝ, F) G x w = ξ w := by
-  rw [← fderiv_comp_symm_center x hGd w, hG.fderiv_eq, fderiv_gt_center]
+  rw [← fderiv_comp_symm_center x w, hG.fderiv_eq, fderiv_gt_center]
 
 
 /-- first derivative of `gt` in the direction `w`, as an explicit affine function -/
@@ -200,10 +194,6 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     rw [key _ (e.left_inv hys)] at h0
     rw [← h0, hy1.fderiv_eq]
     exact fderiv_gt_apply x ξ w (e y)
-  have hK : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (Kfun x ξ w) (e x) :=
-    (hasFDerivAt_Kfun x ξ w _).differentiableAt.mdifferentiableAt
-  have hKe : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (Kfun x ξ w ∘ e) x :=
-    hK.comp x (mdifferentiableAt_extChartAt (I := 𝓘(ℝ, F)) (mem_chart_source F x))
   have hcongr : mvfderiv 𝓘(ℝ, F) (fun y => mvfderiv 𝓘(ℝ, F) G y
       (chartFrame (I := 𝓘(ℝ, F)) x w y)) x = mvfderiv 𝓘(ℝ, F) (Kfun x ξ w ∘ e) x := by
     exact hEq.mvfderiv_eq
@@ -212,7 +202,7 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     simp [e.right_inv hz]
   have hB : mvfderiv 𝓘(ℝ, F) (fun y => mvfderiv 𝓘(ℝ, F) G y
       (chartFrame (I := 𝓘(ℝ, F)) x w y)) x a = ξ (gam x a w) := by
-    rw [hcongr, ← fderiv_comp_symm_center x hKe a, hKe2.fderiv_eq]
+    rw [hcongr, ← fderiv_comp_symm_center x a, hKe2.fderiv_eq]
     exact fderiv_Kfun_center x ξ w a
   have hA : (fun y => inner ℝ (manifoldGradient 𝓘(ℝ, F) G y) (chartFrame (I := 𝓘(ℝ, F)) x w y)) =
       fun y => mvfderiv 𝓘(ℝ, F) G y (chartFrame (I := 𝓘(ℝ, F)) x w y) := by
@@ -222,7 +212,7 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
       (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (chartFrame (I := 𝓘(ℝ, F)) x w) x a)
       = ξ (gam x a w) := by
     rw [inner_manifoldGradient]
-    exact mvfderiv_eq_xi x ξ (hGd x) hG _
+    exact mvfderiv_eq_xi x ξ hG _
   have hXa : chartFrame (I := 𝓘(ℝ, F)) x a x = a := chartFrame_self x a
   have hWw : chartFrame (I := 𝓘(ℝ, F)) x w x = w := chartFrame_self x w
   beta_reduce at hm
@@ -255,12 +245,11 @@ theorem exists_test_function (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     filter_upwards [h2, extChartAt_target_mem_nhds (I := 𝓘(ℝ, F)) x] with z hz1 hz2
     change f (e.symm z) * gt x ξ (e (e.symm z)) = gt x ξ z
     rw [e.right_inv hz2, hz1, one_mul]
-  have hGd : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) g x := (hgs x).mdifferentiableAt (by simp)
   refine ⟨g, hgs, ?_, ?_⟩
   · apply ext_inner_right ℝ
     intro w
     rw [mgrad_inner F]
-    exact mvfderiv_eq_xi x ξ hGd hG w
+    exact mvfderiv_eq_xi x ξ hG w
   · have h0 : ∀ a w : TangentSpace 𝓘(ℝ, F) x, CutoffRigidity.manifoldHessian 𝓘(ℝ, F) g x a w = 0 :=
       fun a w => hessian_zero_of_chart x ξ hgs hG a w
     exact (CutoffRigidity.manifoldHessianNormSq_eq_zero_iff 𝓘(ℝ, F) g x).mpr

@@ -59,15 +59,6 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [RiemannianBundle (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
 
-theorem contMDiff_mgrad_one {f : M → ℝ} (hf : MSmooth F f) :
-    ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, F).tangent 1 (T% (mgrad F f)) :=
-  CutoffRigidity.contMDiff_manifoldGradient (hf.of_le (by norm_num))
-
-theorem mgrad_mdiffAt {f : M → ℝ} (hf : MSmooth F f) (x : M) :
-    MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F).tangent
-      (fun y => (⟨y, mgrad F f y⟩ : TangentBundle 𝓘(ℝ, F) M)) x :=
-  ((contMDiff_mgrad_one F hf) x).mdifferentiableAt one_ne_zero
-
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
   [FiniteDimensional ℝ F]
   [IsManifold 𝓘(ℝ, F) ∞ M]
@@ -80,10 +71,9 @@ theorem mvfderiv_carre_self {f : M → ℝ} (hf : MSmooth F f) (x : M)
     (v : TangentSpace 𝓘(ℝ, F) x) :
     mvfderiv 𝓘(ℝ, F) (fun y => carre F f f y) x v =
       2 * CutoffRigidity.manifoldHessian 𝓘(ℝ, F) f x v (mgrad F f x) := by
-  have := CutoffRigidity.mvfderiv_manifoldGradient_norm_sq (I := 𝓘(ℝ, F)) (f := f) (x := x)
-    (mgrad_mdiffAt F hf x) v
   simp only [carre, real_inner_self_eq_norm_sq]
-  exact this
+  exact CutoffRigidity.mvfderiv_manifoldGradient_norm_sq_of_C2 (I := 𝓘(ℝ, F))
+    (hf.of_le (by norm_num)) x v
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 /-- `Γ(χ, f) = df(∇χ)`. -/

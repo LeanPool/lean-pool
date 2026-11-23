@@ -120,6 +120,15 @@ theorem Θ_symm_apply (p : Rd k × LevelModel F (Rd k)) :
 noncomputable def Vlev (V : M → ℝ) (ρ : ℝ) (y : fr.Level) : ℝ :=
   V y.val + (k / 2 : ℝ) * Real.log (ρ / (2 * Real.pi))
 
+/-- The density measure of the level chart at `y₀`. -/
+noncomputable def levelMeasure (V : M → ℝ) (ρ : ℝ) (y₀ : fr.Level) :
+    Measure (LevelModel F (Rd k)) :=
+  ((volume : Measure (LevelModel F (Rd k))).restrict
+    (chartAt (LevelModel F (Rd k)) y₀).target).withDensity
+  (fun z => ENNReal.ofReal (Real.exp (-fr.Vlev V ρ
+    ((chartAt (LevelModel F (Rd k)) y₀).symm z)) *
+    chartVolumeDensity (LevelModel F (Rd k)) y₀ z))
+
 include J in
 /-- The weighted volume in the product chart splits as Gaussian times the level density. -/
 theorem map_Θ_prod [SecondCountableTopology M] {V : M → ℝ}
@@ -128,11 +137,7 @@ theorem map_Θ_prod [SecondCountableTopology M] {V : M → ℝ}
     (μ.restrict (fr.Θ y₀).source).map (fr.Θ y₀) =
       (ProbabilityTheory.multivariateGaussian (0 : Rd k)
         (ρ⁻¹ • (1 : Matrix (Fin k) (Fin k) ℝ))).prod
-      (((volume : Measure (LevelModel F (Rd k))).restrict
-          (chartAt (LevelModel F (Rd k)) y₀).target).withDensity
-        (fun z => ENNReal.ofReal (Real.exp (-fr.Vlev V ρ
-          ((chartAt (LevelModel F (Rd k)) y₀).symm z)) *
-          chartVolumeDensity (LevelModel F (Rd k)) y₀ z))) := by
+      (fr.levelMeasure V ρ y₀) := by
   set ψ := chartAt (LevelModel F (Rd k)) y₀ with hψ
   have hg : AEMeasurable (fun z : LevelModel F (Rd k) =>
       ENNReal.ofReal (Real.exp (-fr.Vlev V ρ (ψ.symm z)) *
@@ -146,7 +151,7 @@ theorem map_Θ_prod [SecondCountableTopology M] {V : M → ℝ}
       unfold Vlev
       exact (hV.continuous.comp fr.contMDiff_level_val'.continuous).add continuous_const
     exact hVl.comp_continuousOn ψ.continuousOn_symm
-  rw [fr.map_Θ_eq J y₀ hμ, multivariateGaussian_eq_withDensity k hρ,
+  rw [levelMeasure, fr.map_Θ_eq J y₀ hμ, multivariateGaussian_eq_withDensity k hρ,
     prod_withDensity₀ (by fun_prop) hg]
   have hprod : (volume : Measure (Rd k ×
       LevelModel F (Rd k))).restrict (fr.prodChart y₀).target =
