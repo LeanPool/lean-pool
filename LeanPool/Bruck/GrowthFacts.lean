@@ -9,12 +9,13 @@ module
 public import LeanPool.Bruck.WVEntireGrowth
 public import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.Complex.BorelCaratheodory
+import Mathlib.Analysis.Complex.Liouville
 
 /-! # Bounds on maximum moduli -/
 
 public section
 
-open Filter Metric Set Topology
+open Asymptotics Bornology Filter Metric Set Topology
 
 namespace Bruck
 
@@ -58,24 +59,12 @@ theorem exists_pow_le_maximumModulus_of_nonPolynomial {f : ℂ → ℂ}
 theorem exists_polynomial_of_maximumModulus_le_pow {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     {C : ℝ} {d : ℕ} (hbound : ∀ᶠ r in atTop, wvMaximumModulus f r ≤ C * r ^ d) :
     ∃ p : Polynomial ℂ, ∀ z : ℂ, f z = p.eval z := by
-  by_cases hn : WVNonPolynomial f
-  · obtain ⟨c, hc, hlow⟩ := exists_pow_le_maximumModulus_of_nonPolynomial hf hn (d + 1)
-    obtain ⟨R, hR⟩ := eventually_atTop.mp hbound
-    let r := max R (max 1 (C / c + 1))
-    have hRr : R ≤ r := le_max_left _ _
-    have hr1 : 1 ≤ r := (le_max_left _ _).trans (le_max_right _ _)
-    have hrc : C / c + 1 ≤ r := (le_max_right _ _).trans (le_max_right _ _)
-    have hclt : C < c * r := by
-      rw [mul_comm, ← div_lt_iff₀ hc]
-      linarith
-    have hpow : (c * r) * r ^ d ≤ C * r ^ d := by
-      calc
-        (c * r) * r ^ d = c * r ^ (d + 1) := by rw [pow_succ]; ring
-        _ ≤ wvMaximumModulus f r := hlow _ hr1
-        _ ≤ C * r ^ d := hR _ hRr
-    exact False.elim ((not_le_of_gt hclt)
-      (le_of_mul_le_mul_right hpow (pow_pos (zero_lt_one.trans_le hr1) d)))
-  · simpa only [WVNonPolynomial, not_forall, not_exists, not_ne_iff] using hn
+  have hg : f =O[cobounded ℂ] (· ^ d) := by
+    refine isBigO_iff.mpr ⟨C, ?_⟩
+    filter_upwards [tendsto_norm_cobounded_atTop.eventually hbound] with z hz
+    simpa only [norm_pow] using (wv_norm_le_maximumModulus hf.continuous rfl).trans hz
+  obtain ⟨p, _, hp⟩ := hf.exists_eq_polynomial_eval_of_isBigO_pow hg
+  exact ⟨p, congrFun hp⟩
 
 private theorem iteratedDeriv_polynomial_eval (p : Polynomial ℂ) (n : ℕ) :
     iteratedDeriv n p.eval = ((Polynomial.derivative^[n]) p).eval := by
@@ -118,13 +107,6 @@ theorem wvMaximumModulus_polynomial_le (p : Polynomial ℂ) {r : ℝ} (hr : 1 �
     wvMaximumModulus_attained p.differentiable.continuous (zero_le_one.trans hr)
   rw [← hmax]
   exact norm_eval_polynomial_le p hr hz
-
-theorem polynomial_maximumModulus_le (p : Polynomial ℂ) :
-    ∃ C : ℝ, 0 < C ∧ ∀ r ≥ 1, wvMaximumModulus p.eval r ≤ C * r ^ p.natDegree := by
-  let C := ∑ i ∈ Finset.range (p.natDegree + 1), ‖p.coeff i‖
-  refine ⟨1 + C, by positivity, fun r hr => (wvMaximumModulus_polynomial_le p hr).trans ?_⟩
-  exact mul_le_mul_of_nonneg_right (le_add_of_nonneg_left zero_le_one)
-    (pow_nonneg (zero_le_one.trans hr) _)
 
 theorem nonconstant_exp_comp {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (hnon : ¬ ∀ z, f z = f 0) : ¬ ∀ z, Complex.exp (f z) = Complex.exp (f 0) := by

@@ -36,15 +36,19 @@ open Real MeasureTheory Set Filter
 
 namespace Bruck
 
+private theorem characteristic_eq_proximity_top {f : ℂ → ℂ} (hf : Differentiable ℂ f) :
+    ValueDistribution.characteristic f ⊤ = ValueDistribution.proximity f ⊤ := by
+  have ha : AnalyticOnNhd ℂ f univ := fun z _ => hf.analyticAt z
+  have hdiv := MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha
+  simp [ValueDistribution.characteristic, ValueDistribution.logCounting_top,
+    negPart_eq_zero.mpr hdiv]
+
 /-- For an entire function, the pole-counting term is zero, so the Nevanlinna
 characteristic is the circular average of the positive logarithm of the norm. -/
 theorem characteristic_eq_circleAverage_posLog {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (r : ℝ) : ValueDistribution.characteristic f ⊤ r =
       circleAverage (fun z => log⁺ ‖f z‖) 0 r := by
-  have ha : AnalyticOnNhd ℂ f univ := fun z _ => hf.analyticAt z
-  have hdiv := MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha
-  simp [ValueDistribution.characteristic, ValueDistribution.proximity_top,
-    ValueDistribution.logCounting_top, negPart_eq_zero.mpr hdiv]
+  rw [characteristic_eq_proximity_top hf, ValueDistribution.proximity_top]
 
 /-- Jensen's inequality: for `g` holomorphic near the closed unit disk with `g(0) ≠ 0`,
 `log |g(0)| ≤ (1/2π) ∫ log |g(e^{iθ})| dθ`. -/
@@ -279,24 +283,17 @@ theorem characteristic_affine_le {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (a b : ℂ) (r : ℝ) :
     ValueDistribution.characteristic (fun z => a * f z + b) ⊤ r ≤
       ValueDistribution.characteristic f ⊤ r + (log⁺ ‖a‖ + log⁺ ‖b‖ + log 2) := by
-  let C : ℝ := log⁺ ‖a‖ + log⁺ ‖b‖ + log 2
   have hg : Differentiable ℂ (fun z => a * f z + b) := (hf.const_mul a).add_const b
-  rw [characteristic_eq_circleAverage_posLog hg, characteristic_eq_circleAverage_posLog hf]
-  have hi : CircleIntegrable (fun z => log⁺ ‖f z‖) 0 r :=
-    (continuous_posLog.comp hf.continuous.norm).continuousOn.circleIntegrable'
-  have hconst : CircleIntegrable (fun _ => C) 0 r := circleIntegrable_const C 0 r
-  change _ ≤ _ + C
-  rw [← show circleAverage (fun _ => C) 0 r = C from circleAverage_const C 0 r,
-    ← circleAverage_fun_add hi hconst]
-  apply circleAverage_mono
-  · exact (continuous_posLog.comp hg.continuous.norm).continuousOn.circleIntegrable'
-  · exact hi.add hconst
-  · intro z _
-    calc
-      log⁺ ‖a * f z + b‖ ≤ log⁺ ‖a * f z‖ + log⁺ ‖b‖ + log 2 :=
-        posLog_norm_add_le _ _
-      _ ≤ log⁺ ‖f z‖ + C := by
-        rw [norm_mul]
-        linarith [posLog_mul (x := ‖a‖) (y := ‖f z‖)]
+  rw [characteristic_eq_proximity_top hg, characteristic_eq_proximity_top hf]
+  have ha : Meromorphic (fun _ : ℂ => a) := fun _ => analyticAt_const.meromorphicAt
+  have hb : Meromorphic (fun _ : ℂ => b) := fun _ => analyticAt_const.meromorphicAt
+  have hm : Meromorphic f := fun z => (hf.analyticAt z).meromorphicAt
+  have hmul := (ValueDistribution.proximity_mul_top_le ha hm) r
+  have hadd := (ValueDistribution.proximity_add_top_le (ha.mul hm) hb) r
+  simp only [ValueDistribution.proximity_const, Pi.add_apply] at hmul hadd
+  change ValueDistribution.proximity (fun z => a * f z) ⊤ r ≤ _ at hmul
+  change ValueDistribution.proximity (fun z => a * f z + b) ⊤ r ≤
+    ValueDistribution.proximity (fun z => a * f z) ⊤ r + _ + _ at hadd
+  linarith only [hmul, hadd]
 
 end Bruck

@@ -17,6 +17,11 @@ The zero shared value is handled via zero-free entire functions and
 ordinary order. For a nonzero value, the normalization yields the
 inhomogeneous equation whose possible hyper-orders are constrained
 by the polynomial and transcendental growth estimates.
+
+Theorem 1.1 of the preprint states the conjecture. The pinned Lean proof formalizes the
+unpublished manuscript *Value Sharing and a First-Order Complex Differential Equation* by
+Yixin He, Tao Hu, and Quanyu Tang, as recorded in the
+[upstream proof provenance](https://github.com/QuanyuTang/bruck-conjecture-formalization/blob/00f71637fc70ed8d12f51d79f6ff2f211592d6b4/formalization.yaml#L19-L25).
 -/
 
 public section

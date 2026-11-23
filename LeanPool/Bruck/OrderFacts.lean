@@ -95,32 +95,15 @@ into ordinary order. -/
 theorem ordinaryOrder_exp_comp_eq_logOrder {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (hnon : ¬ ∀ z, f z = f 0) :
     ordinaryOrder (fun z => Complex.exp (f z)) = logOrder (wvMaximumModulus f) := by
-  let Q := fun z => Complex.exp (f z)
-  have hd : Differentiable ℂ Q := hf.cexp
-  have hqnon := nonconstant_exp_comp hf hnon
   have hM := maximumModulus_tendsto_atTop hf hnon
-  have hL := logMaximumModulus_tendsto_atTop hd hqnon
-  have hMpos := hM.eventually_gt_atTop 0
-  have hLpos := hL.eventually_gt_atTop 0
-  change logOrder (fun r => Real.log (wvMaximumModulus Q r)) = logOrder (wvMaximumModulus f)
+  have hL := logMaximumModulus_tendsto_atTop hf.cexp (nonconstant_exp_comp hf hnon)
   apply le_antisymm
-  · apply logOrder_le_of_eventually_le_scaled (a := 1) (k := 1)
-      (by norm_num) (by norm_num) hLpos hMpos
-    simpa only [one_mul] using eventually_log_maximumModulus_exp_le hf
-  · let A := 2 + 3 * ‖f 0‖
-    have hA : 0 < A := by dsimp [A]; positivity
-    apply logOrder_le_of_eventually_le_scaled (a := A) (k := 2) hA (by norm_num) hMpos hLpos
-    have hscale : Tendsto (fun r : ℝ => 2 * r) atTop atTop :=
-      (tendsto_const_mul_atTop_of_pos (by norm_num : (0 : ℝ) < 2)).2 tendsto_id
-    filter_upwards [maximumModulus_le_log_maximumModulus_exp hf hnon,
-      (hL.comp hscale).eventually_ge_atTop 1] with r hBC hlarge
-    let m := Real.log (wvMaximumModulus Q (2 * r))
-    change 1 ≤ m at hlarge
-    calc
-      wvMaximumModulus f r ≤ 2 * m + 3 * ‖f 0‖ := hBC
-      _ ≤ 2 * m + 3 * ‖f 0‖ * m :=
-        add_le_add le_rfl (le_mul_of_one_le_right (by positivity) hlarge)
-      _ = A * m := by dsimp only [A]; ring
+  · apply logOrder_le_of_eventually_le_affine (a := 1) (k := 1) (c := 0)
+      (by norm_num) le_rfl (hL.eventually_gt_atTop 0) hM
+    simpa only [one_mul, add_zero] using eventually_log_maximumModulus_exp_le hf
+  · exact logOrder_le_of_eventually_le_affine (a := 2) (k := 2) (c := 3 * ‖f 0‖)
+      (by norm_num) (by positivity) (hM.eventually_gt_atTop 0) hL
+      (maximumModulus_le_log_maximumModulus_exp hf hnon)
 
 private theorem logOrder_doubleLog_maximumModulus_exp_eq_ordinaryOrder {f : ℂ → ℂ}
     (hf : Differentiable ℂ f) (hnon : ¬ ∀ z, f z = f 0) :
@@ -237,47 +220,11 @@ theorem ordinaryOrder_exp_polynomial_eq_natDegree (p : Polynomial ℂ) (hp : 0 <
   apply le_antisymm hu'
   simpa only [ENNReal.ofReal_natCast, ENNReal.ofReal_toReal htop] using ENNReal.ofReal_mono hl
 
-private theorem logOrder_log_eq_zero : logOrder Real.log = 0 := by
-  apply le_antisymm _ zero_le
-  by_contra! hpos
-  obtain ⟨a, ha, hasmall⟩ := exists_between hpos
-  have hatop : a ≠ ⊤ := (hasmall.trans_le le_top).ne
-  have har : 0 < a.toReal := ENNReal.toReal_pos ha.ne' hatop
-  have hlo := (eventually_gt_atTop (1 : ℝ)).mono fun _ hr => Real.log_pos hr
-  have hevt : ∀ᶠ r : ℝ in atTop, Real.log r ≤ r ^ a.toReal := by
-    filter_upwards [(isLittleO_log_rpow_atTop har).bound (show (0 : ℝ) < 1 by norm_num),
-      eventually_gt_atTop (0 : ℝ)] with r hr hrpos
-    rw [one_mul, Real.norm_of_nonneg (Real.rpow_nonneg hrpos.le _)] at hr
-    exact (le_abs_self _).trans (by simpa only [Real.norm_eq_abs] using hr)
-  have hle := logOrder_le_of_eventually_rpow hlo hevt
-  rw [ENNReal.ofReal_toReal hatop] at hle
-  exact not_lt_of_ge hle hasmall
-
 theorem ordinaryOrder_polynomial_eq_zero (p : Polynomial ℂ) (hp : 0 < p.natDegree) :
     ordinaryOrder p.eval = 0 := by
   apply le_antisymm _ zero_le
-  rw [← logOrder_log_eq_zero]
-  obtain ⟨C, hc, hu⟩ := polynomial_maximumModulus_le p
-  let A := (p.natDegree : ℝ) + |Real.log C|
-  have hA : 0 < A := add_pos_of_pos_of_nonneg (by exact_mod_cast hp) (abs_nonneg _)
-  have hn := (polynomial_eval_nonconstant_iff p).mpr hp
-  have hM := maximumModulus_tendsto_atTop p.differentiable hn
-  have hF := (logMaximumModulus_tendsto_atTop p.differentiable hn).eventually_gt_atTop 0
-  have hG := Real.tendsto_log_atTop.eventually_gt_atTop 0
-  apply logOrder_le_of_eventually_le_scaled (a := A) (k := 1) hA (by norm_num) hF hG
-  filter_upwards [eventually_ge_atTop (1 : ℝ), hM.eventually_gt_atTop 0,
-    Real.tendsto_log_atTop.eventually_ge_atTop 1] with r hr hMr hL
-  have hrpos := zero_lt_one.trans_le hr
-  rw [one_mul]
-  calc
-    Real.log (wvMaximumModulus p.eval r) ≤ Real.log (C * r ^ p.natDegree) :=
-      Real.log_le_log hMr (hu r hr)
-    _ = Real.log C + (p.natDegree : ℝ) * Real.log r := by
-      rw [Real.log_mul hc.ne' (pow_ne_zero _ hrpos.ne'), Real.log_pow]
-    _ ≤ A * Real.log r := by
-      have h := le_mul_of_one_le_right (abs_nonneg (Real.log C)) hL
-      dsimp only [A]
-      linarith [le_abs_self (Real.log C)]
+  simpa only [ENNReal.ofReal_zero] using ordinaryOrder_le_of_orderLE
+    le_rfl p.differentiable ((polynomial_eval_nonconstant_iff p).mpr hp) p.orderLE_eval
 
 /-- Finite-order nowhere-zero entire functions are exponentials of polynomials. -/
 theorem exists_exp_polynomial_of_finite_ordinaryOrder {f : ℂ → ℂ}

@@ -92,6 +92,30 @@ theorem logOrder_le_of_eventually_le_scaled {F G : ℝ → ℝ} {a k : ℝ}
   rw [ENNReal.ofReal_toReal hdtop] at hle
   exact (not_lt_of_ge hle) hdF
 
+private theorem eventually_le_scaled_of_eventually_le_affine {F G : ℝ → ℝ} {a k c : ℝ}
+    (hk : 0 < k) (hc : 0 ≤ c) (hG : Tendsto G atTop atTop)
+    (h : ∀ᶠ r in atTop, F r ≤ a * G (k * r) + c) :
+    ∀ᶠ r in atTop, F r ≤ max 1 (a + c) * G (k * r) := by
+  have hkTop : Tendsto (fun r : ℝ => k * r) atTop atTop :=
+    (tendsto_const_mul_atTop_of_pos hk).2 tendsto_id
+  filter_upwards [h, (hG.comp hkTop).eventually_ge_atTop 1] with r hr hGr
+  change 1 ≤ G (k * r) at hGr
+  exact hr.trans (calc
+    a * G (k * r) + c ≤ a * G (k * r) + c * G (k * r) :=
+      add_le_add_right (le_mul_of_one_le_right hc hGr) _
+    _ = (a + c) * G (k * r) := (add_mul _ _ _).symm
+    _ ≤ max 1 (a + c) * G (k * r) :=
+      mul_le_mul_of_nonneg_right (le_max_right _ _) (zero_le_one.trans hGr))
+
+/-- A fixed additive error does not increase logarithmic order when the comparison
+function tends to infinity. -/
+theorem logOrder_le_of_eventually_le_affine {F G : ℝ → ℝ} {a k c : ℝ}
+    (hk : 0 < k) (hc : 0 ≤ c) (hF : ∀ᶠ r in atTop, 0 < F r)
+    (hG : Tendsto G atTop atTop) (h : ∀ᶠ r in atTop, F r ≤ a * G (k * r) + c) :
+    logOrder F ≤ logOrder G :=
+  logOrder_le_of_eventually_le_scaled (zero_lt_one.trans_le (le_max_left _ _)) hk hF
+    (hG.eventually_gt_atTop 0) (eventually_le_scaled_of_eventually_le_affine hk hc hG h)
+
 /-- Additive errors before a logarithm are harmless in logarithmic order when
 both arguments tend to infinity. -/
 theorem logOrder_log_le_of_eventually_le_affine {F G : ℝ → ℝ} {a k c : ℝ}
@@ -108,16 +132,10 @@ theorem logOrder_log_le_of_eventually_le_affine {F G : ℝ → ℝ} {a k c : ℝ
   refine logOrder_le_of_eventually_le_scaled (a := 2) (k := k) (by norm_num) hk hFpos hGpos ?_
   have hkTop : Tendsto (fun r : ℝ => k * r) atTop atTop :=
     (tendsto_const_mul_atTop_of_pos hk).2 tendsto_id
-  filter_upwards [h, hF.eventually_gt_atTop 1,
-    (hG.comp hkTop).eventually_ge_atTop A] with r hr hFr hGr
+  filter_upwards [eventually_le_scaled_of_eventually_le_affine hk hc hG h,
+    hF.eventually_gt_atTop 1, (hG.comp hkTop).eventually_ge_atTop A] with r hFle hFr hGr
   change A ≤ G (k * r) at hGr
   have hGone : 1 ≤ G (k * r) := (le_max_left _ _).trans hGr
-  have hFle : F r ≤ A * G (k * r) :=
-    hr.trans (calc
-      a * G (k * r) + c ≤ a * G (k * r) + c * G (k * r) := by
-        exact add_le_add_right (le_mul_of_one_le_right hc hGone) _
-      _ = (a + c) * G (k * r) := (add_mul _ _ _).symm
-      _ ≤ A * G (k * r) := mul_le_mul_of_nonneg_right (le_max_right _ _) (zero_le_one.trans hGone))
   calc
     Real.log (F r) ≤ Real.log (A * G (k * r)) := Real.log_le_log (zero_lt_one.trans hFr) hFle
     _ = Real.log A + Real.log (G (k * r)) :=

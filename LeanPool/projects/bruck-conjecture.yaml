@@ -30,7 +30,10 @@ main_declarations:
 main_results:
 - declaration: Bruck.bruck_conjecture
   informal: If a nonconstant entire function of finite hyper-order outside the positive integers shares a complex value with its derivative counting multiplicities, then the derivative minus that value is a nonzero constant multiple of the function minus that value.
-  source_ref: Theorem 1.1
+  source_ref: >-
+    Theorem 1.1 of the cited preprint. The pinned Lean proof formalizes the earlier unpublished
+    manuscript Value Sharing and a First-Order Complex Differential Equation by Yixin He,
+    Tao Hu, and Quanyu Tang.
 - declaration: Bruck.exists_uniform_maximumModulus_lower_bound
   informal: For every nonconstant entire h there are arbitrarily large radii r, chosen independently of the solution, such that every entire solution y of y′ = exp(h)y + 1 has maximum modulus at 2r at least exp(exp(M(r, h) / 2200)), with the numerical constant supplied by the pinned Lean formalization.
   source_ref: "Theorem 1.3, explicit quantitative variant from the pinned Lean formalization"
