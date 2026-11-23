@@ -105,24 +105,29 @@ theorem lieb_duality {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → �
   have hge := le_lieb hH0 n hdom v
   linarith
 
+omit [DecidableEq C] [Fintype V] [Nonempty C] in
+/-- The density domain is convex for any occupation map. -/
+theorem convex_densDomain (n : V → C → ℝ) : Convex ℝ (DensDomain n) := by
+  rintro ρ ⟨l1, ⟨h10, h11⟩, rfl⟩ ρ' ⟨l2, ⟨h20, h21⟩, rfl⟩ a b ha hb hab
+  refine ⟨fun c => a * l1 c + b * l2 c,
+    ⟨fun c => add_nonneg (mul_nonneg ha (h10 c)) (mul_nonneg hb (h20 c)), ?_⟩, ?_⟩
+  · simp [Finset.sum_add_distrib, ← Finset.mul_sum, h11, h21, hab]
+  · funext i; simp [Finset.sum_add_distrib, Finset.mul_sum, add_mul, mul_assoc]
+
 /-- **Convexity of Lieb's functional.** -/
 theorem lieb_convexOn {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) :
     ConvexOn ℝ (DensDomain n) (lieb H0 n) := by
-  refine ⟨?_, ?_⟩
-  · rintro ρ ⟨l1, ⟨h10, h11⟩, rfl⟩ ρ' ⟨l2, ⟨h20, h21⟩, rfl⟩ a b ha hb hab
-    refine ⟨fun c => a * l1 c + b * l2 c, ⟨fun c => by nlinarith [h10 c, h20 c], ?_⟩, ?_⟩
-    · simp [Finset.sum_add_distrib, ← Finset.mul_sum, h11, h21, hab]
-    · funext i; simp [Finset.sum_add_distrib, Finset.mul_sum, add_mul, mul_assoc]
-  · intro ρ hρ ρ' hρ' a b ha hb hab
-    apply csSup_le (Set.range_nonempty _)
-    rintro _ ⟨v, rfl⟩
-    have h1 := le_lieb hH0 n hρ v
-    have h2 := le_lieb hH0 n hρ' v
-    simp only [smul_eq_mul]
-    have hd : v ⬝ᵥ (a • ρ + b • ρ') = a * (v ⬝ᵥ ρ) + b * (v ⬝ᵥ ρ') := by
-      rw [dotProduct_add, dotProduct_smul, dotProduct_smul, smul_eq_mul, smul_eq_mul]
-    rw [hd]
-    have : Egs H0 n v = a * Egs H0 n v + b * Egs H0 n v := by rw [← add_mul, hab, one_mul]
-    nlinarith
+  refine ⟨convex_densDomain n, ?_⟩
+  intro ρ hρ ρ' hρ' a b ha hb hab
+  apply csSup_le (Set.range_nonempty _)
+  rintro _ ⟨v, rfl⟩
+  have h1 := le_lieb hH0 n hρ v
+  have h2 := le_lieb hH0 n hρ' v
+  simp only [smul_eq_mul]
+  have hd : v ⬝ᵥ (a • ρ + b • ρ') = a * (v ⬝ᵥ ρ) + b * (v ⬝ᵥ ρ') := by
+    rw [dotProduct_add, dotProduct_smul, dotProduct_smul, smul_eq_mul, smul_eq_mul]
+  rw [hd]
+  have : Egs H0 n v = a * Egs H0 n v + b * Egs H0 n v := by rw [← add_mul, hab, one_mul]
+  nlinarith
 
 end DFT

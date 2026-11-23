@@ -9,7 +9,6 @@ Authors: Miguel A. L. Marques, Stefano Pittalis
 module
 
 public import LeanPool.DFT.Lattice.Generic.SignGauge
-public import LeanPool.DFT.Lattice.Generic.DensityDim.Fermions
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Constructions
 meta import Mathlib.Tactic.Linarith
@@ -21,8 +20,8 @@ meta import Mathlib.Tactic.Ring
 /-!
 # Generic HK when all shortest paths between two sites have hopping products of one sign
 
-The sign hypothesis `0 < s * t a b` of `generic_hk_lattice_fermions_w` enters its proof only in
-`Lval_ne_zero`: at a large potential on the target site, every shortest path from the partner
+The route-sum nonvanishing argument uses the signs of shortest-path hopping products. At a
+large potential on the target site, every shortest path from the partner
 site to the target contributes to the partner route sum with the sign of `(-1)^d` times its
 hopping product (`d` the distance), the same for every shortest path, so the sum is nonzero. The
 same argument works under the weaker hypothesis `ShortestPathSigned G t`:
@@ -55,63 +54,7 @@ is informal.
 
 namespace DFT
 
-open Matrix Filter Topology MvPolynomial
-
-variable {M N : ℕ}
-
-/-- **(H*) for spinless lattice fermions** when the shortest paths between any two sites carry
-hopping products of one sign (`ShortestPathSigned`). -/
-theorem hstar_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
-    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (hsp : ShortestPathSigned G t) (c : Conf M N)
-    (Vint : Conf M N → ℝ) :
-    krylovPoly (H0Fw G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
-  obtain ⟨u, hw, hα, -⟩ := exists_good_u_of_Lval hG
-    (Lval_ne_zero_of_shortestPathSigned hG hsp) c
-    (κ := Empty) (fun k => k.elim) (fun k => k.elim)
-  exact hstar_of_alpha (lip_mopt hG t c) (mopt_self G c) occF u hw hα Vint
-
-/-- **Generic Hohenberg–Kohn theorem when the shortest paths between any two sites carry hopping
-products of one sign.**
-On a connected graph with symmetric hopping, `0 < N < M` and any configuration-diagonal
-interaction, under `ShortestPathSigned G t` the potentials with a non-uniquely v-representable
-ground state lie in a closed, nowhere dense, null set. -/
-theorem generic_hk_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
-    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
-    (hsp : ShortestPathSigned G t) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
-    ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
-      {v | NonUV (H0Fw G t Vint) occF v} ⊆ Z :=
-  generic_hk_ae (H0Fw_isSymm G htsym Vint) (rigid_occF hN0 hNM) _
-    (fun c => hstar_lattice_fermions_shortest hG hsp c Vint)
-
-/-- A nonzero polynomial vanishing on the exceptional potentials, under `ShortestPathSigned`. -/
-theorem exists_poly_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
-    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
-    (hsp : ShortestPathSigned G t) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
-    ∃ P : MvPolynomial (Fin M) ℝ, P ≠ 0 ∧
-      ∀ v, NonUV (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ) v → eval v P = 0 :=
-  exists_krylov_certificate (Tr := constPot) (H0Fw_isSymm G htsym Vint) (rigid_occF hN0 hNM)
-    (fun j => (Fintype.equivFin (Conf M N) j : ℕ))
-    (fun c => hstar_lattice_fermions_shortest hG hsp c Vint)
-
-
-/-- **Non-uv densities when the shortest paths between any two sites carry hopping products of one
-sign**: Hausdorff dimension at most `M - 3`. -/
-theorem dimH_nonUVDens_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
-    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
-    (hsp : ShortestPathSigned G t) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
-    dimH (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)) ≤ (M : ENNReal) - 3 := by
-  obtain ⟨P, hP, hPZ⟩ := exists_poly_lattice_fermions_shortest hG htsym hsp hN0 hNM Vint
-  simpa using dimH_nonUVDens_le (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF⟩ hP hPZ
-
-/-- `dimH_nonUVDens_lattice_fermions_shortest` in the form `dimH + 3 ≤ M` (when there are non-uv
-densities at all). -/
-theorem dimH_nonUVDens_lattice_fermions_shortest' {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
-    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
-    (hsp : ShortestPathSigned G t) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ)
-    (hne : (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)).Nonempty) :
-    dimH (NonUVDens (H0Fw G t Vint) (occF : Fin M → Conf M N → ℝ)) + 3 ≤ M := by
-  obtain ⟨P, hP, hPZ⟩ := exists_poly_lattice_fermions_shortest hG htsym hsp hN0 hNM Vint
-  simpa using dimH_nonUVDens (H0Fw_isSymm G htsym Vint) ⟨N, sum_occF⟩ hP hPZ hne
+variable {M : ℕ}
 
 /-! ### The class -/
 

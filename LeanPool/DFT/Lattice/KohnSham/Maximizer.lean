@@ -202,20 +202,19 @@ theorem coercive (hR : Rigid n) : ∃ δ > 0, ∀ v : V → ℝ, ∑ i, v i = 0 
         · exact absurd (by exact_mod_cast h) hV
         · exact h
       funext i; simp [hk i, hk0]
+  have mval_zero : mval (n := n) ρ 0 = 0 := by
+    have h := mval_smul (n := n) (ρ := ρ) (t := 0) le_rfl 0
+    simpa using h
+  have normalize_mem {v : V → ℝ} (hs : ∑ i, v i = 0) (hv : v ≠ 0) :
+      ‖v‖⁻¹ • v ∈ S1 := by
+    refine ⟨?_, ?_⟩
+    · simp [Pi.smul_apply, ← Finset.mul_sum, hs]
+    · rw [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ (norm_ne_zero_iff.mpr hv)]
   rcases S1.eq_empty_or_nonempty with hS | hS
   · refine ⟨1, one_pos, fun v hv => ?_⟩
     by_cases hv0 : v = 0
-    · subst hv0
-      have : mval (n := n) ρ 0 = 0 := by
-        have := mval_smul (n := n) (ρ := ρ) (t := 0) le_rfl 0; simpa using this
-      simp [this]
-    · exfalso
-      have hpos : 0 < ‖v‖ := norm_pos_iff.mpr hv0
-      have : ‖v‖⁻¹ • v ∈ S1 := by
-        refine ⟨?_, ?_⟩
-        · simp [Pi.smul_apply, ← Finset.mul_sum, hv]
-        · rw [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ hpos.ne']
-      rw [hS] at this; exact this
+    · subst hv0; simp [mval_zero]
+    · exact (hS ▸ normalize_mem hv hv0).elim
   · have hcomp : IsCompact S1 := by
       apply Metric.isCompact_of_isClosed_isBounded
       · exact (isClosed_eq (by fun_prop) continuous_const).inter
@@ -232,22 +231,17 @@ theorem coercive (hR : Rigid n) : ∃ δ > 0, ∀ v : V → ℝ, ∑ i, v i = 0 
         have h1 := hv1.2; rw [this, norm_zero] at h1; exact zero_ne_one h1
     refine ⟨-mval (n := n) ρ v1, by linarith, fun v hv => ?_⟩
     by_cases hv0 : v = 0
-    · subst hv0
-      have : mval (n := n) ρ 0 = 0 := by
-        have := mval_smul (n := n) (ρ := ρ) (t := 0) le_rfl 0; simpa using this
-      simp [this]
-    · have hpos : 0 < ‖v‖ := norm_pos_iff.mpr hv0
-      have hu : ‖v‖⁻¹ • v ∈ S1 := by
-        refine ⟨?_, ?_⟩
-        · simp [Pi.smul_apply, ← Finset.mul_sum, hv]
-        · rw [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ hpos.ne']
-      have h1 := hmax hu
-      have h2 : v = ‖v‖ • (‖v‖⁻¹ • v) := by rw [smul_smul, mul_inv_cancel₀ hpos.ne', one_smul]
-      rw [h2, mval_smul (norm_nonneg _)]
-      have : ‖(‖v‖ • (‖v‖⁻¹ • v))‖ = ‖v‖ := by rw [← h2]
-      rw [this]
-      simp only [Set.mem_ofPred_eq] at h1
-      nlinarith
+    · subst hv0; simp [mval_zero]
+    · have h1 : mval (n := n) ρ (‖v‖⁻¹ • v) ≤ mval (n := n) ρ v1 :=
+        hmax (normalize_mem hv hv0)
+      have hv_eq : v = ‖v‖ • (‖v‖⁻¹ • v) := by
+        rw [smul_smul, mul_inv_cancel₀ (norm_ne_zero_iff.mpr hv0), one_smul]
+      calc
+        mval (n := n) ρ v = ‖v‖ * mval (n := n) ρ (‖v‖⁻¹ • v) := by
+          conv_lhs => rw [hv_eq]
+          exact mval_smul (norm_nonneg _) _
+        _ ≤ -(-mval (n := n) ρ v1) * ‖v‖ := by
+          simpa [mul_comm] using mul_le_mul_of_nonneg_left h1 (norm_nonneg v)
 
 end
 

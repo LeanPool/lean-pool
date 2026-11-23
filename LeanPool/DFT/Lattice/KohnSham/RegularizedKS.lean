@@ -99,12 +99,9 @@ lemma convexOn_liebE {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → �
     ConvexOn ℝ (densDomE n) (liebE H0 n) :=
   (lieb_convexOn hH0 n).comp_linearMap (EuclideanSpace.equiv V ℝ).toLinearEquiv.toLinearMap
 
-omit [DecidableEq C] [Fintype V] in
-lemma convex_densDomE [Finite V] {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) :
-    Convex ℝ (densDomE n) := by
-  classical
-  let := Fintype.ofFinite V
-  exact (convexOn_liebE hH0 n).1
+omit [DecidableEq C] [Fintype V] [Nonempty C] in
+lemma convex_densDomE (n : V → C → ℝ) : Convex ℝ (densDomE n) :=
+  (convex_densDomain n).linear_preimage (EuclideanSpace.equiv V ℝ).toLinearEquiv.toLinearMap
 
 /-- Lieb's functional is lower semicontinuous on the density domain (a supremum of continuous
 functions). -/

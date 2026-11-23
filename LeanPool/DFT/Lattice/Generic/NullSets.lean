@@ -16,8 +16,6 @@ import TauCeti.MeasureTheory.Measure.MvPolynomialZeroLocus
 /-!
 # Zero sets of polynomials are null; generic Hohenberg–Kohn (measure version)
 
-* `volume_zeroSet`: the zero set of a nonzero real polynomial in finitely many variables is
-  Lebesgue-null by Tau Ceti’s polynomial zero-locus theorem.
 * `generic_hk_ae`: under (H*), non-uniquely-v-representable potentials lie in a closed, nowhere
   dense, Lebesgue-null set.
 -/
@@ -30,11 +28,6 @@ section
 
 open MeasureTheory MvPolynomial
 
-/-- Lebesgue nullity of the zero locus of a nonzero polynomial. -/
-theorem volume_zeroSet {V : Type*} [Fintype V] {P : MvPolynomial V ℝ} (hP : P ≠ 0) :
-    volume {x : V → ℝ | eval x P = 0} = 0 :=
-  MvPolynomial.volume_setOfPred_eval_eq_zero P hP
-
 variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V]
 
 omit [DecidableEq V] in
@@ -45,7 +38,7 @@ theorem generic_hk_ae_mod {Tr : Set (V → ℝ)} {H0 : Matrix C C ℝ} (hH0 : H0
       {v | NonUVMod Tr H0 n v} ⊆ Z := by
   obtain ⟨Q, hQ, hvanish⟩ := exists_krylov_certificate hH0 hR ord hstar
   obtain ⟨hcl, hint⟩ := zeroSet_closed_nowhere hQ
-  exact ⟨_, hcl, hint, volume_zeroSet hQ, hvanish⟩
+  exact ⟨_, hcl, hint, MvPolynomial.volume_setOfPred_eval_eq_zero Q hQ, hvanish⟩
 
 omit [DecidableEq V] in
 /-- **Generic Hohenberg–Kohn, measure version (conditional on (H*)).** Non-uniquely-v-representable

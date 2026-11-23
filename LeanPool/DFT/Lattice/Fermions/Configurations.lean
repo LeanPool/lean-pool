@@ -31,6 +31,10 @@ variable {M N : ℕ}
 /-- Configurations of `N` spinless fermions on `M` sites. -/
 abbrev Conf (M N : ℕ) := {s : Finset (Fin M) // s.card = N}
 
+/-- A configuration exists whenever its filling fits in the lattice. -/
+lemma conf_nonempty (hN : N ≤ M) : Nonempty (Conf M N) :=
+  ⟨⟨Finset.univ.map (Fin.castLEEmb hN), by simp⟩⟩
+
 /-- Sorted position tuple of a configuration. -/
 def τs (s : Conf M N) : Fin N → Fin M := fun k => s.1.orderEmbOfFin s.2 k
 

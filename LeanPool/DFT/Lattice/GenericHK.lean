@@ -1,7 +1,7 @@
 /-
-Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
+Copyright (c) 2026 Miguel A. L. Marques, Stefano Pittalis. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Miguel A. L. Marques
+Authors: Miguel A. L. Marques, Stefano Pittalis
 -/
 
 -- Modified for Lean Pool.
@@ -17,10 +17,10 @@ meta import Mathlib.Tactic.Ring
 # Generic Hohenberg–Kohn theorem for spinless lattice fermions
 
 `generic_hk_lattice_fermions`: for `N` spinless fermions (`0 < N < M`) on any connected graph with
-hopping `t ≠ 0` and any density–density interaction, the potentials at which a ground state is
-shared with a potential differing by more than a constant form a closed, nowhere dense,
-Lebesgue-null set. `generic_hk_lattice_fermions_w`: the same for edge-dependent hopping amplitudes
-of a common sign.
+hopping `t ≠ 0` and any configuration-diagonal interaction, the potentials for which a ground
+state is shared by a second potential differing by more than a constant lie in a closed, nowhere
+dense, Lebesgue-null set. `generic_hk_lattice_fermions_w` gives the corresponding containment for
+symmetric edge-dependent hopping amplitudes of a common sign.
 -/
 
 @[expose] public section
@@ -158,14 +158,37 @@ theorem exists_good_u {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Con
         (mopt_self G c) y y ≠ 0) ∧ ∀ k, eval u (R k) ≠ 0 :=
   exists_good_u_of_Lval hG (Lval_ne_zero hG hts) c R hR0
 
+/-- **(H*) for spinless lattice fermions** when the shortest paths between any two sites carry
+hopping products of one sign (`ShortestPathSigned`). -/
+theorem hstar_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
+    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (hsp : ShortestPathSigned G t) (c : Conf M N)
+    (Vint : Conf M N → ℝ) :
+    krylovPoly (H0Fw G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
+  obtain ⟨u, hw, hα, -⟩ := exists_good_u_of_Lval hG
+    (Lval_ne_zero_of_shortestPathSigned hG hsp) c
+    (κ := Empty) (fun k => k.elim) (fun k => k.elim)
+  exact hstar_of_alpha (lip_mopt hG t c) (mopt_self G c) occF u hw hα Vint
+
+/-- **Generic Hohenberg–Kohn theorem when the shortest paths between any two sites carry hopping
+products of one sign.**
+On a connected graph with symmetric hopping, `0 < N < M` and any configuration-diagonal
+interaction, under `ShortestPathSigned G t` the potentials with a non-uniquely v-representable
+ground state lie in a closed, nowhere dense, null set. -/
+theorem generic_hk_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
+    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
+    (hsp : ShortestPathSigned G t) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
+    ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
+      {v | NonUV (H0Fw G t Vint) occF v} ⊆ Z :=
+  generic_hk_ae (H0Fw_isSymm G htsym Vint) (rigid_occF hN0 hNM) _
+    (fun c => hstar_lattice_fermions_shortest hG hsp c Vint)
+
 /-- **(H*) for spinless lattice fermions** with edge-dependent hopping amplitudes of a common sign.
 -/
 theorem hstar_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     {t : Fin M → Fin M → ℝ} {s : ℝ} (hts : ∀ a b, G.Adj a b → 0 < s * t a b) (c : Conf M N)
     (Vint : Conf M N → ℝ) :
-    krylovPoly (H0Fw G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 := by
-  obtain ⟨u, hw, hα, -⟩ := exists_good_u hG hts c (κ := Empty) (fun k => k.elim) (fun k => k.elim)
-  exact hstar_of_alpha (lip_mopt hG t c) (mopt_self G c) occF u hw hα Vint
+    krylovPoly (H0Fw G t Vint) occF c (fun j => (Fintype.equivFin (Conf M N) j : ℕ)) ≠ 0 :=
+  hstar_lattice_fermions_shortest hG (shortestPathSigned_of_common_sign hts) c Vint
 
 /-- **(H*) for spinless lattice fermions** with uniform hopping `t ≠ 0`. -/
 theorem hstar_lattice_fermions {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
@@ -186,8 +209,7 @@ theorem generic_hk_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G.
     (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
     ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
       {v | NonUV (H0Fw G t Vint) occF v} ⊆ Z :=
-  generic_hk_ae (H0Fw_isSymm G htsym Vint) (rigid_occF hN0 hNM) _
-    (fun c => hstar_lattice_fermions_w hG hts c Vint)
+  generic_hk_lattice_fermions_shortest hG htsym (shortestPathSigned_of_common_sign hts) hN0 hNM Vint
 
 /-- **Generic Hohenberg–Kohn theorem for spinless lattice fermions.** For `N` fermions (`0 < N < M`)
 on any connected graph with hopping `t ≠ 0` and any density–density interaction, the set of

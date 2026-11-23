@@ -94,11 +94,6 @@ theorem exists_eigenbasis (h : Matrix (Fin M) (Fin M) ℝ) (hS : h.IsSymm) :
   · have h := congrFun (congrFun hP a) b
     simpa only [Matrix.mul_apply, transpose_apply, Matrix.one_apply] using h
 
-lemma conf_nonempty (hN : N ≤ M) : Nonempty (Conf M N) := by
-  obtain ⟨t, -, ht⟩ := Finset.exists_subset_card_eq (s := (Finset.univ : Finset (Fin M))) (n := N)
-    (by simpa using hN)
-  exact ⟨⟨t, ht⟩⟩
-
 /-- **Aufbau theorem.** The ground-state energy of `N` non-interacting fermions with single-particle
 Hamiltonian `h` is the smallest sum of `N` orbital energies, attained by the Slater determinant of
 the corresponding orbitals, which is a many-body ground state. -/
