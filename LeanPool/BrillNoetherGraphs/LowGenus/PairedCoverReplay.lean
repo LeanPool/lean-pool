@@ -101,6 +101,56 @@ theorem checkWithLast_sound {dimension : ℕ} (data : FarkasData)
   apply data.checkIntegralLookup_sound (rows ++ [last]) _ (lookupWithLast_eq rows last)
   simpa only [List.length_append, List.length_singleton, checkWithLast] using checked
 
+/-- Recognize the unit-weight contradiction between an active row and its closed violation. -/
+def checkOpposite {dimension : ℕ} (data : FarkasData)
+    (active : List (AffineForm dimension)) (form : AffineForm dimension) : Bool :=
+  match data.terms with
+  | [first, second] =>
+    let activeRow := rowAt active first.row
+    decide (first.row < active.length) && decide (second.row = active.length) &&
+      decide (first.weight = 1) && decide (second.weight = 1) &&
+      decide (activeRow.fixedValue ≤ form.fixedValue) &&
+      allFin fun coordinate =>
+        decide (activeRow.coefficient coordinate = form.coefficient coordinate)
+  | _ => false
+
+private theorem checkWithLast_of_checkOpposite {dimension : ℕ} (data : FarkasData)
+    (active : List (AffineForm dimension)) (form : AffineForm dimension)
+    (checked : data.checkOpposite active form = true) :
+    data.checkWithLast active form.violation = true := by
+  unfold checkOpposite at checked
+  split at checked
+  next first second terms =>
+    simp only [Bool.and_eq_true, decide_eq_true_eq, allFin_eq_true_iff] at checked
+    obtain ⟨⟨⟨⟨⟨firstBound, secondIndex⟩, firstWeight⟩, secondWeight⟩, constantBound⟩,
+      coefficients⟩ := checked
+    have notLast := Nat.ne_of_lt firstBound
+    have nonnegative : (0 : ℤ) ≤ 1 := by decide
+    rw [checkWithLast, checkIntegralLookup]
+    simp only [terms, List.all_cons, List.all_nil, firstWeight, secondWeight, secondIndex,
+      Rat.num_one, Rat.den_one, Nat.lt_succ_of_lt firstBound, Nat.lt_succ_self, nonnegative,
+      decide_true, Bool.and_true, Bool.true_and]
+    simp only [integralSumBy, terms, List.foldr_cons, List.foldr_nil, firstWeight, secondWeight,
+      Rat.num_one, one_mul, add_zero, lookupWithLast, notLast, secondIndex, ite_false, ite_true,
+      AffineForm.violation, Bool.and_eq_true, allFin_eq_true_iff, decide_eq_true_eq]
+    refine ⟨fun coordinate => ?_, by omega⟩
+    rw [coefficients coordinate, add_neg_cancel]
+  next => cases checked
+
+/-- Use the unit-weight identity for matching rows and the integral check for other receipts. -/
+def checkViolation {dimension : ℕ} (data : FarkasData)
+    (active : List (AffineForm dimension)) (form : AffineForm dimension) : Bool :=
+  data.checkOpposite active form || data.checkWithLast active form.violation
+
+/-- The shortcut establishes the same integral receipt check. -/
+theorem checkWithLast_of_checkViolation {dimension : ℕ} (data : FarkasData)
+    (active : List (AffineForm dimension)) (form : AffineForm dimension)
+    (checked : data.checkViolation active form = true) :
+    data.checkWithLast active form.violation = true := by
+  obtain opposite | integral := Bool.or_eq_true_iff.mp checked
+  · exact data.checkWithLast_of_checkOpposite active form opposite
+  · exact integral
+
 end Utilities.Certificate.AffineCover.FarkasData
 
 namespace AtanasovRanganathan.GenusFiveClosedCover.CompactCellTree
@@ -154,5 +204,75 @@ theorem checkLookup_of_checkPaired {vertices edges : ℕ} {core : Core vertices 
     obtain ⟨nonnegativeChecked, negativeChecked⟩ := Bool.and_eq_true_iff.mp checked
     exact Bool.and_eq_true_iff.mpr
       ⟨ihNonnegative nonnegativeChecked, ihNegative negativeChecked⟩
+
+/-- Pair receipts and cone rows in a single traversal that also checks their lengths. -/
+def checkReceipts {edges : ℕ} (lookup : ℕ → FarkasData) (active : List (AffineForm edges)) :
+    List ℕ → List (AffineForm edges) → Bool
+  | [], [] => true
+  | index :: indices, form :: forms =>
+      (lookup index).checkViolation active form && checkReceipts lookup active indices forms
+  | _, _ => false
+
+private theorem checkReceipts_sound {edges : ℕ} (lookup : ℕ → FarkasData)
+    (active : List (AffineForm edges)) (indices : List ℕ) (forms : List (AffineForm edges))
+    (checked : checkReceipts lookup active indices forms = true) :
+    indices.length = forms.length ∧
+      (indices.zipWith (fun index form => (lookup index).checkWithLast active form.violation)
+        forms).all id = true := by
+  induction indices generalizing forms with
+  | nil =>
+    cases forms with
+    | nil => exact ⟨rfl, rfl⟩
+    | cons form forms => cases checked
+  | cons index indices inductionHypothesis =>
+    cases forms with
+    | nil => cases checked
+    | cons form forms =>
+      obtain ⟨first, rest⟩ := Bool.and_eq_true_iff.mp checked
+      obtain ⟨lengthEquality, accepted⟩ := inductionHypothesis forms rest
+      refine ⟨congrArg Nat.succ lengthEquality, ?_⟩
+      exact Bool.and_eq_true_iff.mpr
+        ⟨(lookup index).checkWithLast_of_checkViolation active form first, accepted⟩
+
+/-- Replay leaves with the unit-weight shortcut for an active row and its violation. -/
+def checkWithOpposites {vertices edges : ℕ} {core : Core vertices edges}
+    (tree : CompactCellTree) (forms : List (AffineForm edges)) (lookup : ℕ → FarkasData)
+    (cells : List (CoordinateCell core)) (active : List (AffineForm edges)) : Bool :=
+  match tree with
+  | .cell index indices =>
+      decide (index < cells.length) &&
+        checkReceipts lookup active indices (CellTree.coneAt cells index)
+  | .absurd index => (lookup index).check active
+  | .split index nonnegative negative =>
+      let form := forms.getD index 0
+      checkWithOpposites nonnegative forms lookup cells (active ++ [form]) &&
+        checkWithOpposites negative forms lookup cells (active ++ [form.violation])
+
+/-- A replay using opposite rows still proves the paired check for each leaf. -/
+theorem checkPaired_of_checkWithOpposites {vertices edges : ℕ} {core : Core vertices edges}
+    {tree : CompactCellTree} {forms : List (AffineForm edges)} {lookup : ℕ → FarkasData}
+    {cells : List (CoordinateCell core)} {active : List (AffineForm edges)}
+    (checked : tree.checkWithOpposites forms lookup cells active = true) :
+    tree.checkPaired forms lookup cells active = true := by
+  induction tree generalizing active with
+  | cell index indices =>
+    simp only [checkWithOpposites, checkPaired, Bool.and_eq_true] at checked ⊢
+    obtain ⟨lengthEquality, receipts⟩ := checkReceipts_sound lookup active indices _ checked.2
+    exact ⟨⟨checked.1, decide_eq_true lengthEquality⟩, receipts⟩
+  | absurd index => exact checked
+  | split index nonnegative negative ihNonnegative ihNegative =>
+    obtain ⟨nonnegativeChecked, negativeChecked⟩ := Bool.and_eq_true_iff.mp checked
+    exact Bool.and_eq_true_iff.mpr
+      ⟨ihNonnegative nonnegativeChecked, ihNegative negativeChecked⟩
+
+/-- Decide the paired checker through the unit-weight shortcut when it succeeds. -/
+@[instance_reducible]
+def decidableCheckPaired {vertices edges : ℕ} {core : Core vertices edges}
+    (tree : CompactCellTree) (forms : List (AffineForm edges)) (lookup : ℕ → FarkasData)
+    (cells : List (CoordinateCell core)) (active : List (AffineForm edges)) :
+    Decidable (tree.checkPaired forms lookup cells active = true) :=
+  if checked : tree.checkWithOpposites forms lookup cells active = true then
+    isTrue (checkPaired_of_checkWithOpposites checked)
+  else inferInstance
 
 end AtanasovRanganathan.GenusFiveClosedCover.CompactCellTree

@@ -27,6 +27,8 @@ open GenusFiveRow04Symmetry (Chamber chamber_covers)
 
 namespace ReplayChecks3
 
+attribute [local instance 2000] CompactCellTree.decidableCheckPaired
+
 theorem treePart72_check_paired :
     treePart72.checkPaired splitForms farkasReceiptLookup cells
       ((((((((((((base ++ [AffineForm.violation (aff [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, -1, 0, -1])]) ++

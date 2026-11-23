@@ -8,6 +8,7 @@ module
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow03FixedCoverData
 public import LeanPool.BrillNoetherGraphs.LowGenus.CompactCellTreeLookup
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
+import LeanPool.BrillNoetherGraphs.LowGenus.IndexedCellReplay
 
 /-! # Kernel replay batch 0 for the independent row-03 cover
 
@@ -25,6 +26,8 @@ open Certificate.AffineCover
 open GenusFiveCoreAtlas GenusFiveClosedCover Configurations
 
 namespace ReplayChecks0
+
+attribute [local instance 2000] CertificateData.decidableCheckClosedRows
 
 theorem cell0_check_indexed : cell0.certificate.checkClosedRows 4
     [[], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 13, 14, 15], [0, 0, 0, 0, 0, 0, 0, 0,

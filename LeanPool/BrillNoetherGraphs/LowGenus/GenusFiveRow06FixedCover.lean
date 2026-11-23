@@ -187,6 +187,8 @@ def treePart0 : CompactCellTree :=
                           109, 110, 111, 112, 113, 114])
                         (.absurd 115))))))
 
+attribute [local instance 2000] CompactCellTree.decidableCheckPaired
+
 private theorem treePart0_check_paired :
     treePart0.checkPaired splitForms farkasReceiptLookup cells
       ((((base ++ [aff [0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0]]) ++ [aff [0, 0, 0, 0, 0, 0, 0, 0,
