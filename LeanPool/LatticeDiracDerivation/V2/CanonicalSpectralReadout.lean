@@ -450,10 +450,19 @@ private theorem spectralEmbedding_halves (mass energy px py pz : ℝ)
         normalizedNegativeFrequencyEmbedding mass energy px py pz negative component
     cubicalCell4Upper z = spectralBlock spatial a (-b) positive negative ∧
       cubicalCell4LowerHalf z = spectralBlock spatial a b negative positive := by
-  constructor <;> funext component <;> fin_cases component <;>
-    simp [normalized_positive_frequency_embedding_apply,
-      normalized_negative_frequency_embedding_apply, spectralBlock,
-      pauli_spatial_linear_apply, add_comm]
+  let a : ℂ := positiveFrequencyScale mass energy
+  let b : ℂ := positiveFrequencyRatio mass energy
+  let spatial := pauliSpatialLinear px py pz
+  let spinor := normalizedPositiveFrequencyEmbedding mass energy px py pz positive +
+    normalizedNegativeFrequencyEmbedding mass energy px py pz negative
+  change cubicalCell4Upper spinor = spectralBlock spatial a (-b) positive negative ∧
+    cubicalCell4LowerHalf spinor = spectralBlock spatial a b negative positive
+  have blocks : spinor = cubicalSpinorOfBlocks
+      (a • positive + (-b) • spatial negative) (b • spatial positive + a • negative) :=
+    (cubicalSpinorOfBlocksLinear.map_add
+      (a • positive, b • spatial positive) ((-b) • spatial negative, a • negative)).symm
+  rw [blocks, cubical_cell4_upper_of_blocks, cubical_cell4_lower_of_blocks]
+  exact ⟨rfl, add_comm _ _⟩
 
 private theorem spectralCoordinates_blocks (mass energy px py pz : ℝ) (z : CubicalCell4) :
     let a : ℂ := positiveFrequencyScale mass energy

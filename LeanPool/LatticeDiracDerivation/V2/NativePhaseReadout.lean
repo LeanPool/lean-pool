@@ -77,16 +77,17 @@ def cubicalSpatialLower (px py pz : ℂ) (position : UniformCell2) : UniformCell
   cubicalCell4LowerHalf
     (orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding position))
 
+private def cubicalUpperLinear : UniformCell2 →ₗ[ℂ] CubicalCell4 :=
+  cubicalSpinorOfBlocksLinear.comp (LinearMap.inl ℂ UniformCell2 UniformCell2)
+
 private theorem cubical_upper_embedding_add (first second : UniformCell2) :
     cubicalUpperEmbedding (first + second) =
-      cubicalUpperEmbedding first + cubicalUpperEmbedding second := by
-  funext component
-  fin_cases component <;> simp [cubicalUpperEmbedding]
+      cubicalUpperEmbedding first + cubicalUpperEmbedding second :=
+  cubicalUpperLinear.map_add first second
 
 private theorem cubical_upper_embedding_scale (scalar : ℂ) (position : UniformCell2) :
-    cubicalUpperEmbedding (scalar • position) = scalar • cubicalUpperEmbedding position := by
-  funext component
-  fin_cases component <;> simp [cubicalUpperEmbedding]
+    cubicalUpperEmbedding (scalar • position) = scalar • cubicalUpperEmbedding position :=
+  cubicalUpperLinear.map_smul scalar position
 
 private theorem cubical_standard_spatial_add (px py pz : ℂ) (first second : CubicalCell4) :
     cubicalStandardSpatial px py pz (first + second) =
@@ -111,28 +112,13 @@ private theorem cubical_standard_spatial_scale (px py pz scalar : ℂ) (position
 def cubicalSpatialLowerLinear (px py pz : ℂ) : UniformCell2 →ₗ[ℂ] UniformCell2 where
   toFun := cubicalSpatialLower px py pz
   map_add' first second := by
-    have add (index : Fin 4) :
-        orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding (first + second))
-          index =
-          orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding first) index +
-            orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding second) index := by
-      simp only [oriented_cubical_spatial_coordinates_eq_standard, cubical_upper_embedding_add,
-        cubical_standard_spatial_add, Pi.add_apply]
-    funext component
-    fin_cases component
-    · exact add 2
-    · exact add 3
+    simp only [cubicalSpatialLower, oriented_cubical_spatial_coordinates_eq_standard,
+      cubical_upper_embedding_add, cubical_standard_spatial_add]
+    rfl
   map_smul' scalar position := by
-    have scale (index : Fin 4) :
-        orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding (scalar • position))
-          index = scalar •
-          orientedCubicalSpatialCoordinates px py pz (cubicalUpperEmbedding position) index := by
-      simp only [oriented_cubical_spatial_coordinates_eq_standard, cubical_upper_embedding_scale,
-        cubical_standard_spatial_scale, Pi.smul_apply]
-    funext component
-    fin_cases component
-    · exact scale 2
-    · exact scale 3
+    simp only [cubicalSpatialLower, oriented_cubical_spatial_coordinates_eq_standard,
+      cubical_upper_embedding_scale, cubical_standard_spatial_scale]
+    rfl
 
 /-- The velocity-dependent two-component coordinate in the native-to-spinor map. -/
 def cubicalPhaseLower
