@@ -30,14 +30,33 @@ private theorem tendsto_doubleLog_maximumModulus {f : ℂ → ℂ}
   Real.tendsto_log_atTop.comp
     (Real.tendsto_log_atTop.comp (maximumModulus_tendsto_atTop hf hnon))
 
+/-- A nonconstant entire exponent excludes constant solutions of the
+inhomogeneous equation. -/
+theorem nonconstant_of_ode {h y : ℂ → ℂ} (hh : Differentiable ℂ h)
+    (hhnon : ¬ ∀ z, h z = h 0)
+    (hODE : ∀ z, deriv y z = Complex.exp (h z) * y z + 1) :
+    ¬ ∀ z, y z = y 0 := by
+  intro hconst
+  have hd (z : ℂ) : deriv y z = 0 := by
+    rw [show y = fun _ => y 0 from funext hconst, deriv_const]
+  have heq (z : ℂ) : 0 = Complex.exp (h z) * y 0 + 1 := by
+    simpa only [hd z, hconst z] using hODE z
+  have hy₀ : y 0 ≠ 0 := by
+    intro hz
+    simpa [hz] using heq 0
+  apply nonconstant_exp_comp hh hhnon
+  intro z
+  exact mul_right_cancel₀ hy₀ (add_right_cancel ((heq z).symm.trans (heq 0)))
+
 /-- An ordinary power lower bound for the exponent yields a hyper-order
 lower bound of that degree for every nonconstant solution. -/
 theorem le_hyperOrder_of_ode_lower {y h : ℂ → ℂ} (hh : Differentiable ℂ h)
     (hhnon : ¬ ∀ z, h z = h 0) (hy : Differentiable ℂ y)
-    (hynon : ¬ ∀ z, y z = y 0) (hODE : ∀ z, deriv y z = Complex.exp (h z) * y z + 1)
+    (hODE : ∀ z, deriv y z = Complex.exp (h z) * y z + 1)
     {m : ℕ} {c : ℝ} (hc : 0 < c)
     (hbound : ∀ r ≥ 1, c * r ^ m ≤ wvMaximumModulus h r) :
     (m : ℝ≥0∞) ≤ hyperOrder y := by
+  have hynon := nonconstant_of_ode hh hhnon hODE
   rw [hyperOrder_eq_logOrder_maximumModulus hy hynon]
   by_contra! hlt
   obtain ⟨s, hs, hsm⟩ := exists_between hlt
@@ -80,14 +99,15 @@ theorem le_hyperOrder_of_ode_lower {y h : ℂ → ℂ} (hh : Differentiable ℂ 
 
 /-- A nonconstant polynomial exponent forces exactly its degree as hyper-order. -/
 theorem hyperOrder_eq_natDegree_of_polynomial_ode (P : Polynomial ℂ) (hP : 0 < P.natDegree)
-    {y : ℂ → ℂ} (hy : Differentiable ℂ y) (hynon : ¬ ∀ z, y z = y 0)
+    {y : ℂ → ℂ} (hy : Differentiable ℂ y)
     (hODE : ∀ z, deriv y z = Complex.exp (P.eval z) * y z + 1) :
     hyperOrder y = (P.natDegree : ℝ≥0∞) := by
-  have hnonP := polynomial_eval_nonconstant P hP
+  have hnonP := (polynomial_eval_nonconstant_iff P).mpr hP
+  have hynon := nonconstant_of_ode P.differentiable hnonP hODE
   have hpne : P ≠ 0 := by intro h; simp [h] at hP
   have hc : 0 < ‖P.leadingCoeff‖ := norm_pos_iff.2 (Polynomial.leadingCoeff_ne_zero.mpr hpne)
   apply le_antisymm ?_
-    (le_hyperOrder_of_ode_lower P.differentiable hnonP hy hynon hODE hc
+    (le_hyperOrder_of_ode_lower P.differentiable hnonP hy hODE hc
       fun r hr => polynomial_leadingCoeff_mul_pow_le_maximumModulus P (zero_lt_one.trans_le hr))
   rw [hyperOrder_eq_logOrder_maximumModulus hy hynon]
   obtain ⟨C, hC, hbound⟩ := doubleLog_maximumModulus_le_of_polynomial_ode P hP hy hODE
@@ -107,7 +127,7 @@ theorem hyperOrder_eq_natDegree_of_polynomial_ode (P : Polynomial ℂ) (hP : 0 <
 /-- A transcendental entire exponent forces infinite hyper-order. -/
 theorem hyperOrder_eq_top_of_transcendental_ode {h y : ℂ → ℂ}
     (hh : Differentiable ℂ h) (htrans : WVNonPolynomial h)
-    (hy : Differentiable ℂ y) (hynon : ¬ ∀ z, y z = y 0)
+    (hy : Differentiable ℂ y)
     (hODE : ∀ z, deriv y z = Complex.exp (h z) * y z + 1) :
     hyperOrder y = ⊤ := by
   have hhnon : ¬ ∀ z, h z = h 0 := by
@@ -116,7 +136,7 @@ theorem hyperOrder_eq_top_of_transcendental_ode {h y : ℂ → ℂ}
     exact hz (by simpa using hconstant z)
   have hall (m : ℕ) : (m : ℝ≥0∞) ≤ hyperOrder y := by
     obtain ⟨c, hc, hlow⟩ := exists_pow_le_maximumModulus_of_nonPolynomial hh htrans m
-    exact le_hyperOrder_of_ode_lower hh hhnon hy hynon hODE hc hlow
+    exact le_hyperOrder_of_ode_lower hh hhnon hy hODE hc hlow
   by_contra htop
   obtain ⟨m, hm⟩ := ENNReal.exists_nat_gt htop
   exact (not_lt_of_ge (hall m)) hm

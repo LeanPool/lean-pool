@@ -7,6 +7,7 @@ Authors: Pengcheng Fang, Tao Hu, Yanyang Li, Quanyu Tang, Haiqi Zhang
 module
 
 public import LeanPool.Bruck.WVMaximumModulus
+import LeanPool.Bruck.GrowthFacts
 import LeanPool.Bruck.WVMacintyreLocal
 import LeanPool.Bruck.WVNormalRadii
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
@@ -110,10 +111,8 @@ private theorem exists_polynomial_maximum_data {h : ℂ → ℂ}
       bound ≤ r ∧ MaximumData h r z ν := by
   let d := pn.natDegree
   let a := pn.leadingCoeff
-  have hd : 0 < d := by
-    refine Nat.pos_of_ne_zero fun hd0 => hnon fun z => ?_
-    rw [hp z, hp 0, Polynomial.eq_C_of_natDegree_eq_zero hd0]
-    simp
+  have hd : 0 < d := (polynomial_eval_nonconstant_iff pn).mp
+    fun hconstant => hnon fun z => by rw [hp z, hp 0, hconstant z]
   have ha : a ≠ 0 := by
     apply Polynomial.leadingCoeff_ne_zero.mpr
     intro he

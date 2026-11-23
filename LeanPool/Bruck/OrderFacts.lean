@@ -30,8 +30,14 @@ private theorem logMaximumModulus_tendsto_atTop {f : ℂ → ℂ}
   Real.tendsto_log_atTop.comp (maximumModulus_tendsto_atTop hf hnon)
 
 theorem ordinaryOrder_deriv_eq {f : ℂ → ℂ} (hf : Differentiable ℂ f)
-    (hnon : ¬ ∀ z, f z = f 0) (hdnon : ¬ ∀ z, deriv f z = deriv f 0) :
+    (hdnon : ¬ ∀ z, deriv f z = deriv f 0) :
     ordinaryOrder (deriv f) = ordinaryOrder f := by
+  have hnon : ¬ ∀ z, f z = f 0 := by
+    intro hconst
+    apply hdnon
+    intro z
+    rw [show f = fun _ => f 0 from funext hconst]
+    simp only [deriv_const]
   have hd : Differentiable ℂ (deriv f) := hf.deriv
   have hMf := maximumModulus_tendsto_atTop hf hnon
   have hMd := maximumModulus_tendsto_atTop hd hdnon
@@ -153,7 +159,7 @@ private theorem logOrder_pow (d : ℕ) : logOrder (fun r : ℝ => r ^ d) = d := 
 
 theorem ordinaryOrder_exp_polynomial_eq_natDegree (p : Polynomial ℂ) (hp : 0 < p.natDegree) :
     ordinaryOrder (fun z => Complex.exp (p.eval z)) = p.natDegree := by
-  have hnon := polynomial_eval_nonconstant p hp
+  have hnon := (polynomial_eval_nonconstant_iff p).mpr hp
   rw [ordinaryOrder_exp_comp_eq_logOrder p.differentiable hnon, ← logOrder_pow p.natDegree]
   have hMpos := (maximumModulus_tendsto_atTop p.differentiable hnon).eventually_gt_atTop 0
   have hpowpos : ∀ᶠ r : ℝ in atTop, 0 < r ^ p.natDegree :=
@@ -196,7 +202,7 @@ theorem ordinaryOrder_polynomial_eq_zero (p : Polynomial ℂ) (hp : 0 < p.natDeg
   obtain ⟨C, hc, hu⟩ := polynomial_maximumModulus_le p
   let A := (p.natDegree : ℝ) + |Real.log C|
   have hA : 0 < A := add_pos_of_pos_of_nonneg (by exact_mod_cast hp) (abs_nonneg _)
-  have hn := polynomial_eval_nonconstant p hp
+  have hn := (polynomial_eval_nonconstant_iff p).mpr hp
   have hM := maximumModulus_tendsto_atTop p.differentiable hn
   have hF := (logMaximumModulus_tendsto_atTop p.differentiable hn).eventually_gt_atTop 0
   have hG := Real.tendsto_log_atTop.eventually_gt_atTop 0

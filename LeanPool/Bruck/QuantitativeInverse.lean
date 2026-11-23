@@ -62,6 +62,21 @@ private theorem distortion_bound {ν R : ℝ} {w D second : ℂ}
       rw [div_le_div_iff₀ hnormW hR]
       linarith only [hw]
 
+/-- Pointwise bounds and derivative information for a quantitative inverse branch. -/
+structure InverseBranchData (h χ q : ℂ → ℂ) (pointBound radius : ℝ) (w : ℂ) : Prop where
+  /-- Bound on the norm of the inverse image. -/
+  image_bound : ‖χ w‖ ≤ 2 * pointBound
+  /-- The inverse branch maps to the specified point under the original function. -/
+  right_inverse : h (χ w) = w
+  /-- The function `q` is the derivative of the inverse branch. -/
+  hasDerivAt : HasDerivAt χ (q w) w
+  /-- The derivative of the branch is nonzero. -/
+  derivative_ne_zero : q w ≠ 0
+  /-- The derivative of the branch is complex differentiable. -/
+  differentiable_derivative : DifferentiableAt ℂ q w
+  /-- Bound on the logarithmic derivative of the branch derivative. -/
+  log_deriv_bound : ‖deriv q w / q w‖ ≤ 10 / radius
+
 /-- The inverse branch from an exponential approximation. The radius
 is the modulus of the image of the center of the chart. -/
 theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h)
@@ -71,9 +86,7 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
     let R := ‖h z₀‖
     let c := -(R : ℂ) * Complex.I
     ∃ χ q : ℂ → ℂ,
-      (∀ w ∈ ball c (R / 10),
-        ‖χ w‖ ≤ 2 * ‖z₀‖ ∧ h (χ w) = w ∧ HasDerivAt χ (q w) w ∧
-        q w ≠ 0 ∧ DifferentiableAt ℂ q w ∧ ‖deriv q w / q w‖ ≤ 10 / R) ∧
+      (∀ w ∈ ball c (R / 10), InverseBranchData h χ q ‖z₀‖ R w) ∧
       ‖z₀‖ / (2 * ν * R) ≤ ‖q c‖ ∧ ‖q c‖ ≤ 2 * ‖z₀‖ / (ν * R) := by
   dsimp only
   set R := ‖h z₀‖
@@ -90,7 +103,7 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
       (differentiable_id.div_const (ν : ℂ))).const_mul z₀)).div
       (Complex.differentiable_exp.const_mul (h z₀))
       (fun ζ => mul_ne_zero hh₀ (Complex.exp_ne_zero ζ))
-  obtain ⟨J, hJ⟩ := exists_logarithmic_correction hF happrox
+  obtain ⟨J, hJ⟩ := exists_logarithmic_correction hF.differentiableOn happrox
   obtain ⟨B, hB⟩ := exists_inverse_add (fun z hz => (hJ z hz).differentiable)
     (fun z hz => (hJ z hz).norm_bound) (fun z hz => (hJ z hz).deriv_bound)
   let δ : ℂ := (Complex.arg (c / h z₀) : ℂ) * Complex.I

@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Bruck.Definitions
 public import Mathlib.Analysis.Complex.HasPrimitives
+import LeanPool.Bruck.LogarithmicPrimitive
 
 /-! # Entire quotients and the reduction from value sharing to an ODE -/
 
@@ -25,21 +26,14 @@ theorem exists_entire_log {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     hf.deriv.div hf hf₀
   obtain ⟨P, hP⟩ := hlogDeriv.isExactOn_univ
   have hPd (z : ℂ) : HasDerivAt P (deriv f z / f z) z := hP z (mem_univ z)
-  let U : ℂ → ℂ := fun z => f z * Complex.exp (-P z)
-  have hUd (z : ℂ) : HasDerivAt U 0 z := by
-    convert (hf z).hasDerivAt.mul (hPd z).neg.cexp using 1
-    field_simp [hf₀ z]
-    ring
-  have hU (z : ℂ) : U z = U 0 :=
-    is_const_of_deriv_eq_zero (fun w => (hUd w).differentiableAt)
-      (fun w => (hUd w).deriv) z 0
-  have hU₀ : U 0 ≠ 0 := mul_ne_zero (hf₀ 0) (Complex.exp_ne_zero _)
-  refine ⟨fun z => P z + Complex.log (U 0),
+  obtain ⟨c, hc, hq⟩ :=
+    exists_mul_exp_of_logarithmic_primitive isOpen_univ isPreconnected_univ
+      hf.differentiableOn (fun z _ => hf₀ z) hP
+  refine ⟨fun z => P z + Complex.log c,
     (show Differentiable ℂ P from fun z => (hPd z).differentiableAt).add_const _, ?_⟩
   intro z
-  rw [Complex.exp_add, Complex.exp_log hU₀, ← hU z]
-  change Complex.exp (P z) * (f z * Complex.exp (-P z)) = f z
-  rw [mul_left_comm, ← Complex.exp_add, add_neg_cancel, Complex.exp_zero, mul_one]
+  rw [Complex.exp_add, Complex.exp_log hc, mul_comm]
+  exact (hq z (mem_univ z)).symm
 
 /-- Equal zero orders make the apparent singularities of the quotient removable
 and ensure the extended quotient is nowhere zero. -/

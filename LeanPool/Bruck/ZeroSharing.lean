@@ -21,7 +21,7 @@ namespace Bruck
 /-- Sharing zero with the derivative gives a constant quotient at finite
 hyper-order outside the positive integers. -/
 theorem exists_constant_mul_of_sharesCM_zero {f : ℂ → ℂ} (hf : Differentiable ℂ f)
-    (hnon : ¬ ∀ z, f z = f 0) (hshare : SharesCM f (deriv f) 0)
+    (hshare : SharesCM f (deriv f) 0)
     (hfinite : hyperOrder f < ⊤)
     (hnotint : ∀ n : ℕ, 0 < n → hyperOrder f ≠ (n : ℝ≥0∞)) :
     ∃ c : ℂ, c ≠ 0 ∧ ∀ z, deriv f z = c * f z := by
@@ -29,7 +29,9 @@ theorem exists_constant_mul_of_sharesCM_zero {f : ℂ → ℂ} (hf : Differentia
   obtain ⟨g, hg, hfg⟩ := exists_entire_log hf (fun z => (hfree z).1)
   have hgnon : ¬ ∀ z, g z = g 0 := by
     intro hconst
-    exact hnon fun z => by rw [← hfg z, ← hfg 0, hconst z]
+    have heq : f = fun _ => Complex.exp (g 0) :=
+      funext fun z => by rw [← hfg z, hconst z]
+    exact (hfree 0).2 (by rw [heq, deriv_const])
   have hdf (z : ℂ) : deriv f z = Complex.exp (g z) * deriv g z := by
     have heq : (fun w => Complex.exp (g w)) = f := funext hfg
     exact heq ▸ (hg z).hasDerivAt.cexp.deriv
@@ -43,17 +45,12 @@ theorem exists_constant_mul_of_sharesCM_zero {f : ℂ → ℂ} (hf : Differentia
     rw [hdf, hconst z, hfg, mul_comm]
   · exfalso
     have hgord : ordinaryOrder (deriv g) = hyperOrder f :=
-      (ordinaryOrder_deriv_eq hg hgnon hconst).trans hord.symm
+      (ordinaryOrder_deriv_eq hg hconst).trans hord.symm
     have hgfinite : ordinaryOrder (deriv g) < ⊤ := by rwa [hgord]
     obtain ⟨p, hp⟩ := exists_exp_polynomial_of_finite_ordinaryOrder hg.deriv hdgnz
       hgfinite
-    have hpdeg : 0 < p.natDegree := by
-      apply Nat.pos_of_ne_zero
-      intro hdeg
-      apply hconst
-      intro z
-      rw [hp z, hp 0, Polynomial.eq_C_of_natDegree_eq_zero hdeg, Polynomial.eval_C,
-        Polynomial.eval_C]
+    have hpdeg : 0 < p.natDegree := (polynomial_eval_nonconstant_iff p).mp
+      fun hconstant => hconst fun z => by rw [hp z, hp 0, hconstant z]
     have heq : deriv g = fun z => Complex.exp (p.eval z) := funext hp
     rw [heq, ordinaryOrder_exp_polynomial_eq_natDegree p hpdeg] at hgord
     exact hnotint p.natDegree hpdeg hgord.symm

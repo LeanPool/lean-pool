@@ -86,7 +86,8 @@ theorem exists_uniform_maximumModulus_lower_bound {h : ℂ → ℂ}
     hh hz hhZ maximum.scale_lower maximum.approximation
   rw [maximum.point_maximal, maximum.point_on_circle] at hχ hqlo hqup
   have hq (w : ℂ) (hw : w ∈ D) : q w ≠ 0 ∧ DifferentiableAt ℂ q w ∧ ‖deriv q w / q w‖ ≤ 10 / R :=
-    (hχ w hw).2.2.2
+    let data := hχ w hw
+    ⟨data.derivative_ne_zero, data.differentiable_derivative, data.log_deriv_bound⟩
   have hνR : 2 * ν ≤ R := by
     have scale : ν ≤ 2 * (Real.log R) ^ 2 := maximum.scale_upper
     change 4 * (Real.log R) ^ 2 ≤ R at hRlog
@@ -99,11 +100,11 @@ theorem exists_uniform_maximumModulus_lower_bound {h : ℂ → ℂ}
   intro y hy hode
   let Y : ℂ → ℂ := y ∘ χ
   have hY (w : ℂ) (hw : w ∈ D) : HasDerivAt Y (q w * (Complex.exp w * Y w + 1)) w := by
-    have had := (hy (χ w)).hasDerivAt.comp w (hχ w hw).2.2.1
-    rw [hode, (hχ w hw).2.1] at had
+    have had := (hy (χ w)).hasDerivAt.comp w (hχ w hw).hasDerivAt
+    rw [hode, (hχ w hw).right_inverse] at had
     simpa only [Y, Function.comp_apply, mul_comm (q w)] using had
   have hbound (w : ℂ) (hw : w ∈ D) : ‖Y w‖ ≤ wvMaximumModulus y (2 * r) :=
-    wv_norm_le_maximumModulus_of_le hy (by linarith [maximum.radius_lower]) (hχ w hw).1
+    wv_norm_le_maximumModulus_of_le hy (by linarith [maximum.radius_lower]) (hχ w hw).image_bound
   exact (hW Y hY).trans (max_le (hbound w₀ hw₀) (hbound w₁ hw₁))
 
 end Bruck

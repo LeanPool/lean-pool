@@ -7,6 +7,7 @@ Authors: Pengcheng Fang, Tao Hu, Yanyang Li, Quanyu Tang, Haiqi Zhang
 module
 
 public import LeanPool.Bruck.Contour
+import LeanPool.Bruck.LogarithmicPrimitive
 
 /-! # A local double-exponential bound for solutions of the differential equation -/
 
@@ -32,24 +33,13 @@ private theorem logarithmic_derivative_distortion {q : ℂ → ℂ} {z w : ℂ} 
       (fun u hu => by rw [(hP u hu).deriv]; exact (hq u hu).2.2)
       (convex_ball z r) hz hw
     simpa only [hP₀, sub_zero] using hp
-  let A : ℂ → ℂ := fun u => q u * exp (-P u)
-  have hA (u : ℂ) (hu : u ∈ ball z r) : HasDerivAt A 0 u := by
-    convert ((hq u hu).2.1.hasDerivAt).mul ((hP u hu).neg.cexp) using 1
-    field_simp [(hq u hu).1]
-    ring
-  have hAeq : A w = q z := by
-    have h := Convex.norm_image_sub_le_of_norm_deriv_le
-      (fun u hu => (hA u hu).differentiableAt)
-      (C := 0) (fun u hu => by simp [(hA u hu).deriv]) (convex_ball z r) hz hw
-    have ha : A w = A z := sub_eq_zero.mp (by simpa using h)
-    simpa [A, hP₀] using ha
-  have hqeq : q w = q z * exp (P w) := calc
-    _ = A w * exp (P w) := by
-      dsimp [A]
-      rw [mul_assoc, ← exp_add, neg_add_cancel, exp_zero, mul_one]
-    _ = _ := by rw [hAeq]
+  obtain ⟨c, _, hqeq⟩ :=
+    exists_mul_exp_of_logarithmic_primitive isOpen_ball (convex_ball z r).isPreconnected
+      hd (fun u hu => (hq u hu).1) hP
+  have hc : c = q z := by simpa only [hP₀, exp_zero, mul_one] using (hqeq z hz).symm
+  have hwq : q w = q z * exp (P w) := hc ▸ hqeq w hw
   calc
-    ‖q w - q z‖ = ‖q z‖ * ‖exp (P w) - 1‖ := by rw [hqeq, ← mul_sub_one, norm_mul]
+    ‖q w - q z‖ = ‖q z‖ * ‖exp (P w) - 1‖ := by rw [hwq, ← mul_sub_one, norm_mul]
     _ ≤ ‖q z‖ * (2 * ‖P w‖) :=
       mul_le_mul_of_nonneg_left (Complex.norm_exp_sub_one_le (hPbound.trans hs)) (norm_nonneg _)
     _ ≤ _ := by rw [mul_comm _ ‖q z‖]; gcongr

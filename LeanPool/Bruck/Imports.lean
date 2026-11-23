@@ -16,6 +16,7 @@ public import LeanPool.Bruck.GrowthFacts
 public import LeanPool.Bruck.HyperOrder
 public import LeanPool.Bruck.HyperOrderComparison
 public import LeanPool.Bruck.LogarithmicCorrection
+public import LeanPool.Bruck.LogarithmicPrimitive
 public import LeanPool.Bruck.Main
 public import LeanPool.Bruck.MaximumData
 public import LeanPool.Bruck.NearIdentity
