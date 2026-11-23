@@ -15,6 +15,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartBracket
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 import TauCeti.Geometry.Manifold.MFDeriv.Chart.Basic
 import TauCeti.Geometry.Manifold.MFDeriv.NormedSpace
+import TauCeti.Geometry.Manifold.Riemannian.Laplacian
 
 /-! # G2: test functions with prescribed gradient and vanishing Hessian at a point
 
@@ -169,12 +170,6 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     (hGs : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ G)
     (hG : (G ∘ (extChartAt 𝓘(ℝ, F) x).symm) =ᶠ[𝓝 (extChartAt 𝓘(ℝ, F) x x)] gt x ξ)
     (a w : F) : CutoffRigidity.manifoldHessian 𝓘(ℝ, F) G x a w = 0 := by
-  have hgrad : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F).tangent
-      (T% (manifoldGradient 𝓘(ℝ, F) G)) x :=
-    ((WReg.contMDiff_manifoldGradient_top hGs) x).mdifferentiableAt (by simp)
-  have hm := (CovariantDerivative.isMetricCompatible_leviCivitaConnection 𝓘(ℝ, F) (M :=
-      M)).mvfderiv_inner_eq
-    (chartFrame (I := 𝓘(ℝ, F)) x a) hgrad (mdiffAt_chartFrame x w)
   set e := extChartAt 𝓘(ℝ, F) x with he
   have hev1 : ∀ᶠ z in 𝓝 (e x), G ∘ e.symm =ᶠ[𝓝 z] gt x ξ := hG.eventuallyEq_nhds
   have hev2 : ∀ᶠ y in 𝓝 x, (G ∘ e.symm =ᶠ[𝓝 (e y)] gt x ξ) ∧ y ∈ (chartAt F x).source :=
@@ -202,23 +197,15 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
       (chartFrame (I := 𝓘(ℝ, F)) x w y)) x a = ξ (gam x a w) := by
     rw [hcongr, ← fderiv_comp_symm_center x a, hKe2.fderiv_eq]
     exact fderiv_Kfun_center x ξ w a
-  have hA : (fun y => inner ℝ (manifoldGradient 𝓘(ℝ, F) G y) (chartFrame (I := 𝓘(ℝ, F)) x w y)) =
-      fun y => mvfderiv 𝓘(ℝ, F) G y (chartFrame (I := 𝓘(ℝ, F)) x w y) := by
-    funext y
-    exact inner_manifoldGradient 𝓘(ℝ, F) G y _
-  have hC : inner ℝ (manifoldGradient 𝓘(ℝ, F) G x)
-      (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (chartFrame (I := 𝓘(ℝ, F)) x w) x a)
-      = ξ (gam x a w) := by
-    rw [inner_manifoldGradient]
-    exact mvfderiv_eq_xi x ξ hG _
-  have hXa : chartFrame (I := 𝓘(ℝ, F)) x a x = a := chartFrame_self x a
-  have hWw : chartFrame (I := 𝓘(ℝ, F)) x w x = w := chartFrame_self x w
-  beta_reduce at hm
-  rw [hA, hXa, hWw, hB] at hm
-  have hm2 := hm
-  rw [hC] at hm2
-  unfold CutoffRigidity.manifoldHessian
-  linarith
+  have h := TauCeti.Manifold.hessian_apply_eq_mvfderiv_sub (I := 𝓘(ℝ, F))
+    x ((hGs.of_le (by simp)) x) (chartFrame (I := 𝓘(ℝ, F)) x a)
+    (chartFrame (I := 𝓘(ℝ, F)) x w) (mdiffAt_chartFrame x w)
+  rw [TauCeti.Manifold.hessian_def] at h
+  rw [chartFrame_self, chartFrame_self, hB] at h
+  change manifoldHessian 𝓘(ℝ, F) G x a w =
+    ξ (gam x a w) - mvfderiv 𝓘(ℝ, F) G x (gam (F := F) x a w) at h
+  rw [mvfderiv_eq_xi x ξ hG, sub_self] at h
+  exact h
 
 
 variable (F) in

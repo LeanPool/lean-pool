@@ -80,16 +80,6 @@ theorem norm_mfderiv_level_val (y : fr.Level)
     rfl
   simpa only [norm_eq_sqrt_real_inner] using congrArg Real.sqrt h
 
-/-- The projection onto the level, as a map into the level manifold. -/
-noncomputable def toLevel (x : M) : fr.Level := ⟨fr.retr x, fr.sv_retr x⟩
-
-theorem contMDiff_toLevel :
-    ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞ fr.toLevel :=
-  contMDiff_into_level fr.contMDiff_sv fr.zero_isRegularValue fr.contMDiff_retr fr.sv_retr
-
-theorem toLevel_val (y : fr.Level) : fr.toLevel y.val = y :=
-  Subtype.ext (fr.retr_of_level y.property)
-
 /-- The differential of the projection onto the level. -/
 noncomputable abbrev dpi (x : M) :
     TangentSpace 𝓘(ℝ, F) x →L[ℝ]

@@ -10,6 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedInterface
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianGradientCalculus
+import TauCeti.Geometry.Manifold.MFDeriv.NormedSpace
 
 /-! # Pointwise calculus for the Challenge operators `mgrad`, `carre`
 
@@ -140,14 +141,9 @@ theorem abs_carre_carre_le {f : M → ℝ} (hf : MSmooth F f) (χ : M → ℝ) (
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem mgrad_eq_zero_of_notMem_tsupport {u : M → ℝ} {x : M} (hx : x ∉ tsupport u) :
     mgrad F u x = 0 := by
-  have h : u =ᶠ[𝓝 x] (fun _ => (0:ℝ)) := by
-    have := notMem_tsupport_iff_eventuallyEq.mp hx
-    exact this
-  have h2 : mvfderiv 𝓘(ℝ, F) u x = 0 := by
-    unfold mvfderiv
-    rw [h.mfderiv_eq, mfderiv_const]
-    simp
-  rw [mgrad, TauCeti.Manifold.mgradient_def, h2, map_zero]
+  exact TauCeti.Manifold.mgradient_eq_zero_iff.2 <|
+    (notMem_tsupport_iff_eventuallyEq.1 hx).mvfderiv_eq.trans mvfderiv_zero
+
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem carre_eq_zero_off_tsupport {u : M → ℝ} (g : M → ℝ) {x : M} (hx : x ∉ tsupport u) :
@@ -157,10 +153,7 @@ theorem carre_eq_zero_off_tsupport {u : M → ℝ} (g : M → ℝ) {x : M} (hx :
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem hasCompactSupport_carre {u : M → ℝ} (g : M → ℝ) (hu : HasCompactSupport u) :
     HasCompactSupport (fun x => carre F u g x) := by
-  refine hu.mono' ?_
-  intro x hx
-  by_contra h
-  exact hx (carre_eq_zero_off_tsupport F g h)
+  exact hu.inner_mgradient (I := 𝓘(ℝ, F)) (mgrad F g)
 
 end Pointwise
 

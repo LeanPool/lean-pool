@@ -53,21 +53,28 @@ theorem contMDiff_level_val' :
       (Subtype.val : fr.Level → M) :=
   contMDiff_level_val fr.contMDiff_sv fr.zero_isRegularValue
 
+/-- The projection onto the level, as a map into the level manifold. -/
+noncomputable def toLevel (x : M) : fr.Level := ⟨fr.retr x, fr.sv_retr x⟩
+
+theorem contMDiff_toLevel :
+    ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞ fr.toLevel :=
+  contMDiff_into_level fr.contMDiff_sv fr.zero_isRegularValue fr.contMDiff_retr fr.sv_retr
+
+theorem toLevel_val (y : fr.Level) : fr.toLevel y.val = y :=
+  Subtype.ext (fr.retr_of_level y.property)
+
 /-- The smooth product decomposition. -/
 noncomputable def splitEquiv :
     M ≃ₘ^∞⟮𝓘(ℝ, F), 𝓘(ℝ, EuclideanSpace ℝ (Fin k)).prod
       𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k)))⟯ EuclideanSpace ℝ (Fin k) × fr.Level where
-  toFun x := (fr.sv x, ⟨fr.retr x, fr.sv_retr x⟩)
+  toFun x := (fr.sv x, fr.toLevel x)
   invFun p := fr.comp (List.finRange k) p.1 p.2.val
   left_inv x := fr.comp_retr x
   right_inv p := by
     obtain ⟨t, y, hy⟩ := p
     refine Prod.ext (fr.sv_comp t y hy) (Subtype.ext ?_)
     exact fr.retr_comp t y hy
-  contMDiff_toFun :=
-    fr.contMDiff_sv.prodMk (contMDiff_into_level fr.contMDiff_sv fr.zero_isRegularValue
-      fr.contMDiff_retr
-      fr.sv_retr)
+  contMDiff_toFun := fr.contMDiff_sv.prodMk fr.contMDiff_toLevel
   contMDiff_invFun :=
     (fr.contMDiff_comp (List.finRange k)).comp
       (contMDiff_fst.prodMk (fr.contMDiff_level_val'.comp contMDiff_snd))
