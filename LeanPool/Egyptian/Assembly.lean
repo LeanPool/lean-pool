@@ -9,7 +9,6 @@ module
 public import LeanPool.Egyptian.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Passing from compatible unit tails to Theorem 1
@@ -45,6 +44,24 @@ theorem unit_sub_unit_succ {T : ℕ} (hT : 1 ≤ T) :
   simp only [unit, Nat.cast_add, Nat.cast_one, Nat.cast_mul]
   field_simp
   ring
+
+theorem digits_data (σ : Convention) {T : ℕ} (hT : 1 ≤ T) (k : ℕ) :
+    (unitDigits T k).length = k ∧
+    (∀ d ∈ unitDigits T k, T < d) ∧ (unitDigits T k).Pairwise σ.rel ∧
+    unit T = recipSum (unitDigits T k) + unit (unitIter T k) := by
+  induction k generalizing T with
+  | zero => simp [unitDigits, unitIter, recipSum]
+  | succ k ih =>
+    have hmul : T+1 ≤ T*(T+1) := Nat.le_mul_of_pos_left _ hT
+    obtain ⟨hl, hmin, hord, hsum⟩ := ih (show 1 ≤ T*(T+1) by omega)
+    simp only [unitDigits, List.length_cons, hl, List.mem_cons, List.pairwise_cons,
+      forall_eq_or_imp, Nat.lt_add_one, true_and, ← unitIter_step_start]
+    refine ⟨fun d hd => by have := hmin d hd; omega, ⟨?_, hord⟩, ?_⟩
+    · intro d hd
+      have := hmin d hd
+      cases σ <;> simp only [Convention.rel] <;> omega
+    · simp only [recipSum, List.map_cons, List.sum_cons] at hsum ⊢
+      linarith [unit_sub_unit_succ hT]
 
 theorem greedyDen_unit {T : ℕ} (hT : 1 ≤ T) : greedyDen (unit T) = T + 1 := by
   simp [greedyDen, unit, max_eq_right (show 2 ≤ T + 1 by omega)]
@@ -88,7 +105,7 @@ def CompatibleUnitTails : Prop :=
 
 /-- Unit-fraction extremality and uniqueness, in the paper's two conventions. -/
 def UniqueUnitTails : Prop :=
-  ∀ (σ : Convention) (T m : ℕ), 1 ≤ T → 1 ≤ m →
+  ∀ (σ : Convention) (T m : ℕ), 1 ≤ T →
     IsBest σ (unit T) m (greedyTuple σ (unit T) m) ∧
       ∀ ds, IsBest σ (unit T) m ds → ds = greedyTuple σ (unit T) m
 
@@ -111,7 +128,7 @@ theorem optimal_unit_extensions (hUnique : UniqueUnitTails)
     rw [← hp.eq_bestValue, hsplit]
     abel
   rw [hu]
-  obtain ⟨hg, honly⟩ := hUnique σ T m hT hm
+  obtain ⟨hg, honly⟩ := hUnique σ T m hT
   have hpg := hext m hm
   refine ⟨?_, hg, honly, hpg⟩
   rw [← hpg.eq_bestValue, ← hp.eq_bestValue, ← hg.eq_bestValue, recipSum_append]

@@ -10,7 +10,6 @@ public import LeanPool.Egyptian.BellmanArithmetic
 public import LeanPool.Egyptian.BellmanDrift
 public import LeanPool.Egyptian.PayoffTransition
 import Mathlib.Data.List.GetD
-import Mathlib.Tactic.Positivity.Finset
 
 /-! Both transition inequalities on actual legal control strings. -/
 

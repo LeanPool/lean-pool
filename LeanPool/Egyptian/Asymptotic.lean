@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.AsymptoticDefs
 public import LeanPool.Egyptian.Assembly
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Comparison of infinite expansions

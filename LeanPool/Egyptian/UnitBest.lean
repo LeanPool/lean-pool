@@ -32,30 +32,12 @@ private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
   let t := unitIter T
   let g := prefixTuple (fun i => t i + 1) m
   change IsBest σ (unit T) m g ∧ _
-  have hpos (i : ℕ) : 0 < t i := unitIter_pos hT i
-  have inc : StrictMono t := unitIter_strictMono hT
-  have hsum : (recipSum g : ℝ) = 1 / (T : ℝ) - 1 / (t m : ℝ) := by
-    rw [show g = prefixTuple (fun i => t i + 1) m from rfl, real_prefix_sum]
-    simpa [t] using unitPrefixSum T m hT
   have had : Admissible σ (unit T) m g := by
-    refine ⟨by simp [g, prefixTuple], ?_, ?_, ?_⟩
-    · intro d hd
-      obtain ⟨i, _, rfl⟩ := List.mem_map.mp hd
-      have := hpos i
-      omega
-    · apply List.pairwise_iff_getElem.mpr
-      intro i j hi hj hij
-      have h := inc hij
-      simp only [g, prefixTuple, List.getElem_map, List.getElem_range]
-      cases σ with
-      | weak => exact (Nat.succ_lt_succ h).le
-      | strict => exact Nat.succ_lt_succ h
-    · have less : (recipSum g : ℝ) < 1 / (T : ℝ) := by
-        rw [hsum]
-        exact sub_lt_self _ (one_div_pos.mpr (Nat.cast_pos.mpr (hpos m)))
-      change recipSum g < 1 / (T : ℚ)
-      apply (Rat.cast_lt (K := ℝ)).mp
-      simpa using less
+    rw [show g = unitDigits T m from (digits_eq_prefix T m).symm]
+    obtain ⟨hl, hlower, horder, hsum⟩ := digits_data σ hT m
+    have hresidual : 0 < unit (unitIter T m) :=
+      one_div_pos.mpr (by exact_mod_cast unitIter_pos hT m)
+    exact ⟨hl, fun d hd => by have := hlower d hd; omega, horder, by linarith⟩
   have compare (ds : List ℕ) (h : Admissible σ (unit T) m ds) :
       recipSum ds ≤ recipSum g ∧ (recipSum g ≤ recipSum ds → ds = g) := by
     obtain ⟨hl, hd, horder, hsmall⟩ := h
@@ -70,9 +52,7 @@ private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
       have hj' : i+1 < ds.length := by omega
       have hh := List.pairwise_iff_getElem.mp horder i (i+1) hi' hj' (by omega)
       rw [show d i = ds[i] from entry_of_lt hi', show d (i+1) = ds[i+1] from entry_of_lt hj']
-      cases σ with
-      | weak => exact hh
-      | strict => exact Nat.le_of_lt hh
+      exact Convention.rel_le hh
     have hs := real_prefix_sum d m
     rw [repr] at hs
     have hs' := real_prefix_sum (fun i => t i + 1) m
@@ -98,9 +78,9 @@ private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
   intro ds h
   exact (compare ds h.1).2 (h.2 _ had)
 
-/-- The paper's unit-fraction extremality lemma, at every positive length. -/
+/-- The paper's unit-fraction extremality lemma, at every length. -/
 theorem uniqueUnitTails : UniqueUnitTails := by
-  intro σ T m hT _
+  intro σ T m hT
   rw [greedyTuple_unit σ hT, digits_eq_prefix]
   exact unit_best_aux σ T m hT
 

@@ -48,17 +48,9 @@ private theorem unit_compatible (σ : Convention) {T : ℕ} (hT : 1 ≤ T) :
     ∃ (N U : ℕ) (p : List ℕ), 1 ≤ N ∧ 1 ≤ U ∧
       unit T = recipSum p + unit U ∧ IsBest σ (unit T) N p ∧
       ∀ m, 1 ≤ m → IsBest σ (unit T) (N+m) (p ++ greedyTuple σ (unit U) m) := by
-  obtain ⟨hbest, hall⟩ := unitTarget σ T hT
-  have hsum : recipSum [T+1] = unit (T+1) := by simp [recipSum]
-  have hrem : unit T - bestValue σ (unit T) 1 = unit (T*(T+1)) := by
-    rw [← hbest.eq_bestValue, hsum]
-    exact unit_sub_unit_succ hT
-  refine ⟨1,T*(T+1),[T+1],le_rfl,Nat.mul_pos hT (Nat.succ_pos _),?_,hbest,?_⟩
-  · rw [hsum]
-    linarith [unit_sub_unit_succ hT]
-  · intro m hm
-    have h := (hall m hm).2.2.2
-    rwa [hrem] at h
+  obtain ⟨hsplit, hbest, hext⟩ := unit_first_prefix σ T hT
+  exact ⟨1, T * (T + 1), [T + 1], le_rfl, Nat.mul_pos hT (Nat.succ_pos _), hsplit, hbest,
+    fun m _ => hext m⟩
 
 /-- The common maximizing prefix, with unit remainder, needed in both
 Theorem 1 and the infinite benchmark of Theorem 4. -/

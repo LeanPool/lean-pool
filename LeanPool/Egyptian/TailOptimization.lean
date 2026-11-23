@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.Assembly
 public import LeanPool.Egyptian.PayoffCompletion
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Optimizing all sufficiently long extensions
@@ -39,24 +38,6 @@ private theorem digits_append (T k m : ℕ) :
   induction k generalizing T with
   | zero => simp [unitDigits, unitIter]
   | succ k ih => simp only [Nat.succ_add, unitDigits, ih, List.cons_append, unitIter_step_start]
-
-theorem digits_data (σ : Convention) {T : ℕ} (hT : 1 ≤ T) (k : ℕ) :
-    (unitDigits T k).length = k ∧
-    (∀ d ∈ unitDigits T k, T < d) ∧ (unitDigits T k).Pairwise σ.rel ∧
-    unit T = recipSum (unitDigits T k) + unit (unitIter T k) := by
-  induction k generalizing T with
-  | zero => simp [unitDigits, unitIter, recipSum]
-  | succ k ih =>
-    have hmul : T+1 ≤ T*(T+1) := Nat.le_mul_of_pos_left _ hT
-    obtain ⟨hl, hmin, hord, hsum⟩ := ih (show 1 ≤ T*(T+1) by omega)
-    simp only [unitDigits, List.length_cons, hl, List.mem_cons, List.pairwise_cons,
-      forall_eq_or_imp, Nat.lt_add_one, true_and, ← unitIter_step_start]
-    refine ⟨fun d hd => by have := hmin d hd; omega, ⟨?_, hord⟩, ?_⟩
-    · intro d hd
-      have := hmin d hd
-      cases σ <;> simp only [Convention.rel] <;> omega
-    · simp only [recipSum, List.map_cons, List.sum_cons] at hsum ⊢
-      linarith [unit_sub_unit_succ hT]
 
 theorem extension_data {σ q N p T} (hT : 1 ≤ T)
     (hp : Admissible σ q N p) (hstop : ∀ d ∈ p, d < T)

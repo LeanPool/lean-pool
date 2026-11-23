@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.Defs
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The payoff function
@@ -58,6 +57,21 @@ theorem reference_sum {t : ℝ} (ht : 1 ≤ t) (k : ℕ) :
     have h := one_le_orbit ht k
     field_simp [show orbit t k ≠ 0 by linarith, show orbit t k + 1 ≠ 0 by linarith]
     ring
+
+theorem reference_prod {t : ℝ} (ht : 1 ≤ t) (k : ℕ) :
+    (∏ i ∈ Finset.range k, reference t i) = t / orbit t k := by
+  induction k with
+  | zero => simp [orbit, show t ≠ 0 by linarith]
+  | succ k ih =>
+    rw [Finset.prod_range_succ, ih, orbit, phi, reference, div_mul_eq_div_div, mul_one_div]
+
+/-- The greedy reference terms saturate the prefix comparison bound. -/
+theorem reference_identity {t : ℝ} (ht : 1 ≤ t) (k : ℕ) :
+    (∑ i ∈ Finset.range k, reference t i) + (1 / t) *
+      (∏ i ∈ Finset.range k, reference t i) = 1 / t := by
+  rw [reference_sum ht, reference_prod ht]
+  field_simp
+  ring
 
 theorem orbit_shift (t : ℝ) (n : ℕ) : orbit (phi t) n = orbit t (n+1) := by
   induction n with

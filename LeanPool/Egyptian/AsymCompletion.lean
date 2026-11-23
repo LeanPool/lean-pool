@@ -7,7 +7,6 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 module
 
 public import LeanPool.Egyptian.Asymptotic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Sorting a finite prefix into a replacement expansion

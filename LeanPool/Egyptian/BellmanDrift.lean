@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.Bellman
 public import LeanPool.Egyptian.Payoff
-import Mathlib.Tactic.Positivity.Finset
 
 /-! The greedy Bellman drift and the strict lower bound above the stopping
 obstacle at nonunit states, as in §3.2 of Kovač and Tang. -/

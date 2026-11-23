@@ -57,12 +57,6 @@ private theorem competitorBound (T : ℕ) (hT : 0 < T) (d : ℕ → ℕ) (k : �
   simp only [one_div, prod_inv_distrib, mul_inv_rev, mul_comm] at hh ⊢
   linarith only [hh]
 
-private theorem refProduct (T k : ℕ) :
-    T * ∏ i ∈ range k, (unitIter T i + 1) = unitIter T k := by
-  induction k with
-  | zero => simp [unitIter]
-  | succ k ih => rw [prod_range_succ, ← mul_assoc, ih]; rfl
-
 theorem unitPrefixSum (T k : ℕ) (hT : 0 < T) :
     (∑ i ∈ range k, (1 / ((unitIter T i : ℝ) + 1))) =
       1 / (T : ℝ) - 1 / (unitIter T k : ℝ) := by
@@ -82,12 +76,8 @@ theorem unitFiniteComparison (T m : ℕ) (hT : 0 < T) (d : ℕ → ℕ)
   let b (i : ℕ) : ℝ := 1 / (d i : ℝ)
   have ref (k : ℕ) :
       (∑ i ∈ range k, a i) + (1 / (T : ℝ)) * ∏ i ∈ range k, a i = 1 / (T : ℝ) := by
-    dsimp [a]
-    rw [unitPrefixSum T k hT]
-    have ht : (T : ℝ) * ∏ i ∈ range k, ((unitIter T i : ℝ) + 1) = unitIter T k := by
-      exact_mod_cast refProduct T k
-    simp only [one_div, prod_inv_distrib]
-    rw [← mul_inv, ht, sub_add_cancel]
+    simpa only [a, real_unitIter, Payoff.reference] using
+      Payoff.reference_identity (show (1 : ℝ) ≤ T by exact_mod_cast hT) k
   have comp (k : ℕ) (hk : k ≤ m) :
       (∑ i ∈ range k, b i) + (1 / (T : ℝ)) * ∏ i ∈ range k, b i ≤ 1 / (T : ℝ) := by
     apply competitorBound T hT d k (fun i hi => hd i (by omega))

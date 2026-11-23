@@ -9,7 +9,6 @@ module
 public import LeanPool.Egyptian.TailOptimization
 public import LeanPool.Egyptian.TerminalTuples
 public import LeanPool.Egyptian.BellmanDrift
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Completion of a competing underapproximation
@@ -34,34 +33,23 @@ theorem exists_initial_state {q : ℚ} (hq : 0 < q) :
     hcast ▸ q.num_div_den⟩
 
 private theorem terminal_extend {s xs T} (hv : Valid s) (ht : Terminal .strict s xs T) :
-    Terminal .strict s (xs ++ [T+1]) (T*(T+1)) := by
-  obtain ⟨had, hb, hs⟩ := terminal_to_tuple hv ht
-  obtain ⟨hh, _, hlast⟩ := controls_ordered ht.1
-  have hT := ht.2.1
-  have hp := hlast.trans_lt ht.2.2.1
-  have hlarge : T+1 < T*(T+1) := by nlinarith [Nat.mul_le_mul_right (T+1) hT]
-  apply terminal_of_tuple hv (by omega) (by omega)
-  · intro x hx
-    rcases List.mem_append.mp hx with hx | hx
-    · exact had.2.1 _ hx
-    · simp only [List.mem_singleton] at hx; omega
-  · intro x hx
-    rcases List.mem_append.mp hx with hx | hx
-    · exact (hh _ hx).2.1
-    · simp only [List.mem_singleton] at hx
-      change s.last < x
-      omega
-  · apply List.pairwise_append.mpr
-    exact ⟨had.2.2.1, by simp, fun x hx y hy => by
-      simp only [List.mem_singleton] at hy; have := hb x hx
-      change x < y; omega⟩
-  · intro x hx
-    rcases List.mem_append.mp hx with hx | hx
-    · exact (hb _ hx).trans (by omega)
-    · simpa using (List.mem_singleton.mp hx) ▸ hlarge
-  · rw [recipSum_append]
-    simp only [recipSum, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero] at hs ⊢
-    linarith [unit_sub_unit_succ (by omega : 1 ≤ T)]
+    Terminal .strict s (xs ++ [T + 1]) (T * (T + 1)) := by
+  let u := finish s xs
+  have hstop : CanStop u T := ht.2
+  obtain ⟨hT, hlast, hq⟩ := hstop
+  have hp : 0 < u.p := (finish_valid hv ht.1).1
+  have hlegal : Legal .strict u (T + 1) := by
+    change u.q < u.p * (T + 1) ∧ 2 ≤ T + 1 ∧ u.last < T + 1
+    rw [hq, Nat.mul_succ]
+    exact ⟨by omega, by omega, by omega⟩
+  have hlarge : T + 1 < T * (T + 1) := by
+    simpa only [one_mul] using
+      Nat.mul_lt_mul_of_pos_right (show 1 < T by omega) (Nat.succ_pos T)
+  have hnew : CanStop (step u (T + 1)) (T * (T + 1)) := by
+    refine ⟨by omega, hlarge, ?_⟩
+    simp [step, hq, Nat.mul_succ, Nat.mul_assoc, Nat.mul_add]
+  exact (terminal_append s xs [T + 1] (T * (T + 1))).mpr
+    ⟨ht.1, ⟨hlegal, trivial⟩, hnew⟩
 
 private theorem long_terminal {s : State} (hv : Valid s) (hi : Interior s)
     (hs : s.p ≤ s.q) (M : ℕ) :
@@ -75,7 +63,9 @@ private theorem long_terminal {s : State} (hv : Valid s) (hi : Interior s)
     obtain ⟨xs,T,ht,hm,hb⟩ := ih
     have ht' := terminal_extend hv ht
     have hT := ht.2.1
-    have hlarge : T+1 < T*(T+1) := by nlinarith [Nat.mul_le_mul_right (T+1) hT]
+    have hlarge := ht'.2.2.1
+    rw [finish_append] at hlarge
+    change T + 1 < T * (T + 1) at hlarge
     refine ⟨_,_,ht',by omega,?_⟩
     have hval := Payoff.value_phi (t := T) (by exact_mod_cast (show 1 ≤ T by omega))
     unfold Payoff.phi at hval
@@ -84,14 +74,9 @@ private theorem long_terminal {s : State} (hv : Valid s) (hi : Interior s)
     linarith
 
 private theorem entry_le_sum {d : ℕ} {ds : List ℕ} (hd : d ∈ ds) : unit d ≤ recipSum ds := by
-  have hs := ((List.perm_cons_erase hd).map unit).sum_eq
-  change recipSum ds = unit d + recipSum (ds.erase d) at hs
-  linarith [recipSum_nonneg (ds.erase d)]
-
-private theorem entry_le_nat_sum {d : ℕ} {ds : List ℕ} (hd : d ∈ ds) : d ≤ ds.sum := by
-  have hs := (List.perm_cons_erase hd).sum_eq
-  change ds.sum = d + (ds.erase d).sum at hs
-  omega
+  exact List.single_le_sum (fun x hx => by
+    obtain ⟨e, _, rfl⟩ := List.mem_map.mp hx
+    exact one_div_nonneg.mpr (Nat.cast_nonneg e)) _ (List.mem_map_of_mem hd)
 
 /-- A successful sorted merge. The disjointness hypothesis only applies in the
 strict convention. Both score contributions use the exact list lengths. -/
@@ -164,7 +149,7 @@ theorem completion_bound_of_value_le {σ s q} {C : ℝ} (hv : Valid s) (hz : s.l
         exact hc.2 (fun {d} hb hd => hh d hb hd)
       exact ⟨d,hd1,(entry_le_sum hd2).trans_lt (by change recipSum cs < h; linarith)⟩
     · left
-      have hm := merge_score hv hz hval (fun d hd => (entry_le_nat_sum hd).trans_lt hU)
+      have hm := merge_score hv hz hval (fun d hd => (List.le_sum_of_mem hd).trans_lt hU)
         (fun d hd => had.2.1 d (hbs.subset hd)) (had.2.2.1.sublist hbs)
         ht.2.1 (fun d hd => ⟨ha.2.1 d hd, hup d hd⟩) ha.2.2.1
         (by dsimp [h] at hrep; linarith : q = recipSum bs + recipSum cs + unit U)

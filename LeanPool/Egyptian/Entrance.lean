@@ -8,6 +8,7 @@ module
 
 public import LeanPool.Egyptian.BellmanArithmetic
 public import LeanPool.Egyptian.BellmanFiniteness
+import Mathlib.Algebra.Order.BigOperators.Group.List
 
 /-!
 # The first entrance block for an improper rational target
@@ -113,20 +114,10 @@ theorem Entrance.denominator_product_bound {σ s xs} (he : Entrance σ s xs) (hb
     (finish s xs).q ≤ s.q * 2^(xs.length^2) := by
   have point (x : ℕ) (hx : x ∈ xs) : x ≤ 2 ^ xs.length := by
     have bound := he.den_bound x hx
-    have h := (Nat.mul_le_mul_left x hbig.le)
-    rw [Nat.mul_comm x, Nat.mul_comm x] at h
-    have hh : x * s.q < 2^xs.length * s.q := by
-      rw [Nat.mul_comm x]; exact h.trans_lt bound
-    exact (Nat.lt_of_mul_lt_mul_right hh).le
-  have prod_bound (l : List ℕ) (h : ∀ x ∈ l, x ≤ 2^xs.length) :
-      l.prod ≤ (2^xs.length)^l.length := by
-    induction l with
-    | nil => simp
-    | cons x l ih =>
-      simp only [List.prod_cons, List.length_cons, pow_succ]
-      rw [Nat.mul_comm x]
-      exact Nat.mul_le_mul (ih (fun i hi => h i (by simp [hi]))) (h x (by simp))
-  have hp := prod_bound xs point
+    have h := (Nat.mul_le_mul_right x hbig.le).trans_lt bound
+    rw [Nat.mul_comm s.q x] at h
+    exact (Nat.lt_of_mul_lt_mul_right h).le
+  have hp := xs.prod_le_pow_length (2 ^ xs.length) point
   rw [← pow_mul, ← sq] at hp
   rw [finish_denominator]
   exact Nat.mul_le_mul_left _ hp

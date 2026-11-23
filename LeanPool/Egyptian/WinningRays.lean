@@ -10,7 +10,6 @@ public import LeanPool.Egyptian.AsymRay
 public import LeanPool.Egyptian.BellmanScore
 public import LeanPool.Egyptian.TerminalTuples
 public import LeanPool.Egyptian.UnitBest
-import Mathlib.Tactic.Positivity.Finset
 
 /-! The finite-ray induction in §4, including uniqueness at unit states. -/
 
@@ -59,20 +58,16 @@ theorem greedy_ray_of_unit_score {s : State} {xs : List ℕ} {T U : ℕ}
   rw [hratio] at had hfrac
   let d := fun i => unitIter U i + 1
   have hsum : recipSum (prefixTuple d xs.length) = recipSum xs := by
-    apply (Rat.cast_injective (α := ℝ))
-    rw [real_prefix_sum]
-    have hh := unitPrefixSum U xs.length (by omega)
-    have hr := congrArg (fun z : ℚ => (z : ℝ)) hfrac
-    simp only [unit, Rat.cast_one, Rat.cast_add, Rat.cast_div, Rat.cast_natCast, hT] at hr
-    simpa only [d, Nat.cast_add, Nat.cast_one] using (hh.trans (by linarith))
+    have hdigits := (digits_data .weak hU xs.length).2.2.2
+    rw [digits_eq_prefix] at hdigits
+    rw [hT] at hfrac
+    change unit U = recipSum (prefixTuple d xs.length) + unit (unitIter U xs.length) at hdigits
+    linarith
   have hxs : xs = prefixTuple d xs.length := by
-    by_cases hz : xs.length = 0
-    · simp_all [prefixTuple]
-    · obtain ⟨hg, huniq⟩ := uniqueUnitTails .weak U xs.length hU (by omega)
-      rw [greedyTuple_unit .weak hU, digits_eq_prefix] at hg huniq
-      apply huniq xs
-      refine ⟨had, fun es he => ?_⟩
-      exact (hg.2 es he).trans hsum.le
+    obtain ⟨hg, huniq⟩ := uniqueUnitTails .weak U xs.length hU
+    rw [greedyTuple_unit .weak hU, digits_eq_prefix] at hg huniq
+    apply huniq xs
+    exact ⟨had, fun es he => (hg.2 es he).trans hsum.le⟩
   have htail (j : ℕ) : unitIter T j + 1 = d (xs.length + j) := by
     simp only [d, hT, unitIter_add]
   have hprepend := prepend_prefix_cancel d xs.length

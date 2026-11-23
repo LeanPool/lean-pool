@@ -7,7 +7,6 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # A finite product–sum comparison with equality

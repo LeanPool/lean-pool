@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.AsymGrowth
 public import LeanPool.Egyptian.AsymCompletion
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The reduction of Theorem 4 to finiteness of maximizing rays

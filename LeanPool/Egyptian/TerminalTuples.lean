@@ -7,7 +7,6 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 module
 
 public import LeanPool.Egyptian.Bellman
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Terminal decompositions and ordered denominator tuples
@@ -38,29 +37,20 @@ theorem terminal_of_tuple {σ s ds T} (hv : Valid s) (hT : 2 ≤ T)
     (hstart : ∀ d ∈ ds, σ.rel s.last d) (horder : ds.Pairwise σ.rel)
     (hbound : ∀ d ∈ ds, d < T)
     (hsum : (s.p : ℚ) / s.q = recipSum ds + unit T) : Terminal σ s ds T := by
-  induction ds generalizing s with
-  | nil =>
-    have hq : (s.q : ℚ) ≠ 0 := by exact_mod_cast hv.2.ne'
-    have hT' : (T : ℚ) ≠ 0 := by exact_mod_cast (show T ≠ 0 by omega)
-    simp only [recipSum, List.map_nil, List.sum_nil, zero_add, unit] at hsum
-    field_simp at hsum
-    exact ⟨trivial, hT, hprev, by exact_mod_cast hsum.symm⟩
-  | cons d ds ih =>
-    have hd := hmin d (by simp)
-    have hord := List.pairwise_cons.mp horder
-    have hTpos : (0:ℚ) < unit T := one_div_pos.mpr (by
-      exact_mod_cast (show 0 < T by omega))
-    have hdpos : (0:ℚ) < d := by exact_mod_cast (show 0 < d by omega)
-    have hqpos : (0:ℚ) < s.q := by exact_mod_cast hv.2
-    change (s.p : ℚ) / s.q = (unit d + recipSum ds) + unit T at hsum
-    have hfrac : unit d < (s.p : ℚ) / s.q := by linarith [recipSum_nonneg ds]
-    have hineq := (div_lt_div_iff₀ hdpos hqpos).1 hfrac
-    have hlegal : Legal σ s d := ⟨by simpa only [one_mul, Nat.cast_lt, ← Nat.cast_mul] using hineq,
-      hd, hstart d (by simp)⟩
-    obtain ⟨hr, hterm⟩ := ih (step_valid hv hlegal) (hbound d (by simp))
-      (fun x hx => hmin x (by simp [hx])) hord.1 hord.2
-      (fun x hx => hbound x (by simp [hx]))
-      (by rw [step_fraction hv hlegal]; linarith)
-    exact ⟨⟨hlegal, hr⟩, hterm⟩
+  have hpositive : 0 < unit T := one_div_pos.mpr (by exact_mod_cast (show 0 < T by omega))
+  have hc : Controls σ s ds := (controls_iff hv ds).mpr
+    ⟨hmin, List.pairwise_cons.mpr ⟨hstart, horder⟩, by linarith⟩
+  have hlast : (finish s ds).last < T := by
+    have hb : (finish s ds).last ≤ T - 1 :=
+      finish_last_le (by omega) (fun d hd => Nat.le_pred_of_lt (hbound d hd))
+    omega
+  have hf := finish_fraction hv hc
+  rw [hsum, add_sub_cancel_left] at hf
+  have hvf := finish_valid hv hc
+  have hq : ((finish s ds).q : ℚ) ≠ 0 := by exact_mod_cast hvf.2.ne'
+  have hT' : (T : ℚ) ≠ 0 := by exact_mod_cast (show T ≠ 0 by omega)
+  unfold unit at hf
+  field_simp at hf
+  exact ⟨hc, hT, hlast, by exact_mod_cast hf.symm⟩
 
 end Egyptian.Control

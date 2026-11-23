@@ -9,7 +9,6 @@ module
 public import LeanPool.Egyptian.AsymptoticDefs
 public import LeanPool.Egyptian.AsymRay
 public import LeanPool.Egyptian.UnitBest
-import Mathlib.Tactic.Positivity.Finset
 
 /-! Constructing the infinite benchmark in the introduction from the compatible
 optimal finite prefixes. Advancing by one greedy term also handles T = 1. -/

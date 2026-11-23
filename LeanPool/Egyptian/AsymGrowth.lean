@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.AsymptoticDefs
 public import LeanPool.Egyptian.Payoff
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Growth of a terminal ray

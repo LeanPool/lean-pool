@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.Comparison
 public import LeanPool.Egyptian.Payoff
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # The comparison at the first decrease of a cleared numerator
@@ -25,13 +24,6 @@ namespace Egyptian.Payoff
 
 open Finset
 
-theorem reference_prod {t : ℝ} (ht : 1 ≤ t) (k : ℕ) :
-    (∏ i ∈ range k, reference t i) = t / orbit t k := by
-  induction k with
-  | zero => simp [orbit, show t ≠ 0 by linarith]
-  | succ k ih =>
-    rw [prod_range_succ, ih, orbit, phi, reference, div_mul_eq_div_div, mul_one_div]
-
 /-- The no-decrease bound, in the positive-remainder form. -/
 theorem no_decrease {t : ℝ} (ht : 1 ≤ t) (v : ℕ → ℝ) (m : ℕ)
     (hv : ∀ i < m, 0 < v i) (hm : ∀ i, i + 1 < m → v (i + 1) ≤ v i)
@@ -40,7 +32,7 @@ theorem no_decrease {t : ℝ} (ht : 1 ≤ t) (v : ℕ → ℝ) (m : ℕ)
     1 / orbit t m ≤ 1/t - ∑ i ∈ range m, v i := by
   have h := variableComparison (reference t) v (fun _ => 1/t) (1/t) m
     (fun i _ => reference_pos ht i) hv hm (fun _ _ _ => by positivity)
-    (fun k _ _ => by rw [reference_sum ht, reference_prod ht]; field_simp; ring) hc
+    (fun k _ _ => reference_identity ht k) hc
   have he := (h m le_rfl).1
   rw [reference_sum ht] at he
   linarith
@@ -83,10 +75,8 @@ theorem first_decrease {t δ : ℝ} (ht : 1 ≤ t) (hd : 0 < δ) (hd' : δ < 1)
         field_simp
         ring
       · have hkm : k ≤ m := by omega
-        rw [sa _ hkm, pa _ hkm]
-        simp only [c, ite_eq_right he]
-        field_simp
-        ring) (by
+        rw [sa _ hkm, pa _ hkm, ← reference_sum ht, ← reference_prod ht]
+        simpa only [c, ite_eq_right he] using reference_identity ht k) (by
       intro k hk hkm
       by_cases he : k = m+1
       · simpa [c, he] using hc'

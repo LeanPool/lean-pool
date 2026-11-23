@@ -7,7 +7,6 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 module
 
 public import LeanPool.Egyptian.Payoff
-import Mathlib.Tactic.Positivity.Finset
 
 /-!
 # Excluding an improvement after completion
