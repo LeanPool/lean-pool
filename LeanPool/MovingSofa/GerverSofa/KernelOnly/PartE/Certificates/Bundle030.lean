@@ -5,7 +5,8 @@ Authors: Dawid Trela
 -/
 module
 
-import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.CachedIntervals
+import LeanPool.MovingSofa.KernelCertificate
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle001
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle002
@@ -58,6 +59,9 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle007
 
 * `GerverSofa.KernelOnly.PartE.Certificates.Reconstruction`.
 -/
+
+-- Check closed rejections using the sparse Taylor evaluator.
+attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejectedSparse
 
 @[expose] public section
 
@@ -10687,38 +10691,38 @@ theorem e24KC2ThetaAboveLeaf0000220020 :
         thetaAboveCell00002200)))
         (by
           have h : (thetaAboveCell000022002020).rejected = true := by
-            gerver_cached_rejected 129
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002020 h)
         (by
           have h : (thetaAboveCell000022002021).rejected = true := by
-            gerver_cached_rejected 129
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002021 h)
         (by
           have h : (thetaAboveCell000022002022).rejected = true := by
-            gerver_cached_rejected 88
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002022 h)
         (by
           have h : (thetaAboveCell000022002023).rejected = true := by
-            gerver_cached_rejected 88
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002023 h))
     (by
       exact adaptiveCoverCheck_succ_of_children 7 (childHH (childLL (childHL
         thetaAboveCell00002200)))
         (by
           have h : (thetaAboveCell000022002030).rejected = true := by
-            gerver_cached_rejected 129
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002030 h)
         (by
           have h : (thetaAboveCell000022002031).rejected = true := by
-            gerver_cached_rejected 129
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002031 h)
         (by
           have h : (thetaAboveCell000022002032).rejected = true := by
-            gerver_cached_rejected 88
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002032 h)
         (by
           have h : (thetaAboveCell000022002033).rejected = true := by
-            gerver_cached_rejected 88
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 7 thetaAboveCell000022002033 h))
 
 end PartE

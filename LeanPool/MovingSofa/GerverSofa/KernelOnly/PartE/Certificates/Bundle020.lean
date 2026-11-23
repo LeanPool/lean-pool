@@ -8,7 +8,6 @@ module
 import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
 
 import LeanPool.MovingSofa.KernelCertificate
-import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.CachedIntervals
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.Certificates.Bundle019
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
@@ -5072,54 +5071,54 @@ theorem cover_subtree_7aa3d52e724a :
   exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111222
     (by
       have h : ((childLL thetaBelowCell1111331131111222)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111222) h)
     (by
       have h : ((childLH thetaBelowCell1111331131111222)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111222) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHL thetaBelowCell1111331131111222)
         (by
           have h : ((childLL (childHL thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHL
             thetaBelowCell1111331131111222)) h)
         (by
           have h : ((childLH (childHL thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHL
             thetaBelowCell1111331131111222)) h)
         (by
           have h : ((childHL (childHL thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHL
             thetaBelowCell1111331131111222)) h)
         (by
           have h : ((childHH (childHL thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHL
             thetaBelowCell1111331131111222)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHH thetaBelowCell1111331131111222)
         (by
           have h : ((childLL (childHH thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHH
             thetaBelowCell1111331131111222)) h)
         (by
           have h : ((childLH (childHH thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHH
             thetaBelowCell1111331131111222)) h)
         (by
           have h : ((childHL (childHH thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHH
             thetaBelowCell1111331131111222)) h)
         (by
           have h : ((childHH (childHH thetaBelowCell1111331131111222))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHH
             thetaBelowCell1111331131111222)) h))
 
@@ -5128,54 +5127,54 @@ theorem cover_subtree_818c6b64504a :
   exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111223
     (by
       have h : ((childLL thetaBelowCell1111331131111223)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111223) h)
     (by
       have h : ((childLH thetaBelowCell1111331131111223)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111223) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHL thetaBelowCell1111331131111223)
         (by
           have h : ((childLL (childHL thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHL
             thetaBelowCell1111331131111223)) h)
         (by
           have h : ((childLH (childHL thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHL
             thetaBelowCell1111331131111223)) h)
         (by
           have h : ((childHL (childHL thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHL
             thetaBelowCell1111331131111223)) h)
         (by
           have h : ((childHH (childHL thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHL
             thetaBelowCell1111331131111223)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHH thetaBelowCell1111331131111223)
         (by
           have h : ((childLL (childHH thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHH
             thetaBelowCell1111331131111223)) h)
         (by
           have h : ((childLH (childHH thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHH
             thetaBelowCell1111331131111223)) h)
         (by
           have h : ((childHL (childHH thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHH
             thetaBelowCell1111331131111223)) h)
         (by
           have h : ((childHH (childHH thetaBelowCell1111331131111223))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHH
             thetaBelowCell1111331131111223)) h))
 
@@ -5185,11 +5184,11 @@ theorem cover_subtree_75546d36bae0 :
     thetaBelowCell111133113111)))
     (by
       have h : (thetaBelowCell1111331131111220).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111220 h)
     (by
       have h : (thetaBelowCell1111331131111221).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111221 h)
     cover_subtree_7aa3d52e724a
     cover_subtree_818c6b64504a
@@ -5199,54 +5198,54 @@ theorem cover_subtree_38aeeec8d754 :
   exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111232
     (by
       have h : ((childLL thetaBelowCell1111331131111232)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111232) h)
     (by
       have h : ((childLH thetaBelowCell1111331131111232)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111232) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHL thetaBelowCell1111331131111232)
         (by
           have h : ((childLL (childHL thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHL
             thetaBelowCell1111331131111232)) h)
         (by
           have h : ((childLH (childHL thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHL
             thetaBelowCell1111331131111232)) h)
         (by
           have h : ((childHL (childHL thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHL
             thetaBelowCell1111331131111232)) h)
         (by
           have h : ((childHH (childHL thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHL
             thetaBelowCell1111331131111232)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHH thetaBelowCell1111331131111232)
         (by
           have h : ((childLL (childHH thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHH
             thetaBelowCell1111331131111232)) h)
         (by
           have h : ((childLH (childHH thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHH
             thetaBelowCell1111331131111232)) h)
         (by
           have h : ((childHL (childHH thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHH
             thetaBelowCell1111331131111232)) h)
         (by
           have h : ((childHH (childHH thetaBelowCell1111331131111232))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHH
             thetaBelowCell1111331131111232)) h))
 
@@ -5255,54 +5254,54 @@ theorem cover_subtree_7653e3da7d41 :
   exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111233
     (by
       have h : ((childLL thetaBelowCell1111331131111233)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111233) h)
     (by
       have h : ((childLH thetaBelowCell1111331131111233)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111233) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHL thetaBelowCell1111331131111233)
         (by
           have h : ((childLL (childHL thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHL
             thetaBelowCell1111331131111233)) h)
         (by
           have h : ((childLH (childHL thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHL
             thetaBelowCell1111331131111233)) h)
         (by
           have h : ((childHL (childHL thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHL
             thetaBelowCell1111331131111233)) h)
         (by
           have h : ((childHH (childHL thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHL
             thetaBelowCell1111331131111233)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHH thetaBelowCell1111331131111233)
         (by
           have h : ((childLL (childHH thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHH
             thetaBelowCell1111331131111233)) h)
         (by
           have h : ((childLH (childHH thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHH
             thetaBelowCell1111331131111233)) h)
         (by
           have h : ((childHL (childHH thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHH
             thetaBelowCell1111331131111233)) h)
         (by
           have h : ((childHH (childHH thetaBelowCell1111331131111233))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHH
             thetaBelowCell1111331131111233)) h))
 
@@ -5312,11 +5311,11 @@ theorem cover_subtree_c48c3d0e1082 :
     thetaBelowCell111133113111)))
     (by
       have h : (thetaBelowCell1111331131111230).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111230 h)
     (by
       have h : (thetaBelowCell1111331131111231).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111231 h)
     cover_subtree_38aeeec8d754
     cover_subtree_7653e3da7d41
@@ -5326,12 +5325,12 @@ theorem cover_subtree_850575b22b27 :
   exact adaptiveCoverCheck_succ_of_children 3 (childHL (childLH thetaBelowCell111133113111))
     (by
       have h : ((childLL (childHL (childLH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 136
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childHL (childLH
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childLH (childHL (childLH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 136
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childHL (childLH
         thetaBelowCell111133113111))) h)
     cover_subtree_75546d36bae0
@@ -5342,54 +5341,54 @@ theorem cover_subtree_8b97f2fa7857 :
   exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111322
     (by
       have h : ((childLL thetaBelowCell1111331131111322)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111322) h)
     (by
       have h : ((childLH thetaBelowCell1111331131111322)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111322) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHL thetaBelowCell1111331131111322)
         (by
           have h : ((childLL (childHL thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHL
             thetaBelowCell1111331131111322)) h)
         (by
           have h : ((childLH (childHL thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHL
             thetaBelowCell1111331131111322)) h)
         (by
           have h : ((childHL (childHL thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHL
             thetaBelowCell1111331131111322)) h)
         (by
           have h : ((childHH (childHL thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHL
             thetaBelowCell1111331131111322)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHH thetaBelowCell1111331131111322)
         (by
           have h : ((childLL (childHH thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHH
             thetaBelowCell1111331131111322)) h)
         (by
           have h : ((childLH (childHH thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHH
             thetaBelowCell1111331131111322)) h)
         (by
           have h : ((childHL (childHH thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHH
             thetaBelowCell1111331131111322)) h)
         (by
           have h : ((childHH (childHH thetaBelowCell1111331131111322))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHH
             thetaBelowCell1111331131111322)) h))
 
@@ -5398,54 +5397,54 @@ theorem cover_subtree_4e37d42ba06c :
   exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111323
     (by
       have h : ((childLL thetaBelowCell1111331131111323)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111323) h)
     (by
       have h : ((childLH thetaBelowCell1111331131111323)).rejected = true := by
-        gerver_cached_rejected 222
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111323) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHL thetaBelowCell1111331131111323)
         (by
           have h : ((childLL (childHL thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHL
             thetaBelowCell1111331131111323)) h)
         (by
           have h : ((childLH (childHL thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHL
             thetaBelowCell1111331131111323)) h)
         (by
           have h : ((childHL (childHL thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHL
             thetaBelowCell1111331131111323)) h)
         (by
           have h : ((childHH (childHL thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHL
             thetaBelowCell1111331131111323)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 0 (childHH thetaBelowCell1111331131111323)
         (by
           have h : ((childLL (childHH thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLL (childHH
             thetaBelowCell1111331131111323)) h)
         (by
           have h : ((childLH (childHH thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 224
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childLH (childHH
             thetaBelowCell1111331131111323)) h)
         (by
           have h : ((childHL (childHH thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHL (childHH
             thetaBelowCell1111331131111323)) h)
         (by
           have h : ((childHH (childHH thetaBelowCell1111331131111323))).rejected = true := by
-            gerver_cached_rejected 225
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 0 (childHH (childHH
             thetaBelowCell1111331131111323)) h))
 
@@ -5455,11 +5454,11 @@ theorem cover_subtree_27a9e6ae3bf9 :
     thetaBelowCell111133113111)))
     (by
       have h : (thetaBelowCell1111331131111320).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111320 h)
     (by
       have h : (thetaBelowCell1111331131111321).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111321 h)
     cover_subtree_8b97f2fa7857
     cover_subtree_4e37d42ba06c
@@ -5470,47 +5469,47 @@ theorem cover_subtree_73b432883d7f :
     thetaBelowCell111133113111)))
     (by
       have h : (thetaBelowCell1111331131111330).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111330 h)
     (by
       have h : (thetaBelowCell1111331131111331).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131111331 h)
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111332
         (by
           have h : ((childLL thetaBelowCell1111331131111332)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111332) h)
         (by
           have h : ((childLH thetaBelowCell1111331131111332)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111332) h)
         (by
           have h : ((childHL thetaBelowCell1111331131111332)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131111332) h)
         (by
           have h : ((childHH thetaBelowCell1111331131111332)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131111332) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131111333
         (by
           have h : ((childLL thetaBelowCell1111331131111333)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131111333) h)
         (by
           have h : ((childLH thetaBelowCell1111331131111333)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131111333) h)
         (by
           have h : ((childHL thetaBelowCell1111331131111333)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131111333) h)
         (by
           have h : ((childHH thetaBelowCell1111331131111333)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131111333) h))
 
 theorem cover_subtree_cff1fffcbf04 :
@@ -5518,12 +5517,12 @@ theorem cover_subtree_cff1fffcbf04 :
   exact adaptiveCoverCheck_succ_of_children 3 (childHH (childLH thetaBelowCell111133113111))
     (by
       have h : ((childLL (childHH (childLH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 136
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childHH (childLH
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childLH (childHH (childLH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 136
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childHH (childLH
         thetaBelowCell111133113111))) h)
     cover_subtree_27a9e6ae3bf9
@@ -5536,27 +5535,27 @@ theorem e24KC2ThetaBelowLeaf111133113_c1_c1_c1_c1 :
       exact adaptiveCoverCheck_succ_of_children 3 (childLL (childLH thetaBelowCell111133113111))
         (by
           have h : ((childLL (childLL (childLH thetaBelowCell111133113111)))).rejected = true := by
-            gerver_cached_rejected 134
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childLL (childLH
             thetaBelowCell111133113111))) h)
         (by
           have h : ((childLH (childLL (childLH thetaBelowCell111133113111)))).rejected = true := by
-            gerver_cached_rejected 134
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childLL (childLH
             thetaBelowCell111133113111))) h)
         (by
           have h : ((childHL (childLL (childLH thetaBelowCell111133113111)))).rejected = true := by
-            gerver_cached_rejected 135
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childLL (childLH
             thetaBelowCell111133113111))) h)
         (by
           have h : ((childHH (childLL (childLH thetaBelowCell111133113111)))).rejected = true := by
-            gerver_cached_rejected 135
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childLL (childLH
             thetaBelowCell111133113111))) h))
     (by
       have h : ((childLH (childLH thetaBelowCell111133113111))).rejected = true := by
-        gerver_cached_rejected 123
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 4 (childLH (childLH thetaBelowCell111133113111)) h)
     cover_subtree_850575b22b27
     cover_subtree_cff1fffcbf04
@@ -5596,45 +5595,45 @@ theorem cover_subtree_36a7bfb19453 :
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103000
         (by
           have h : ((childLL thetaBelowCell1111331131103000)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103000) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103000)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103000) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103000)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103000) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103000)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103000) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103001
         (by
           have h : ((childLL thetaBelowCell1111331131103001)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103001) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103001)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103001) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103001)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103001) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103001)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103001) h))
     (by
       have h : (thetaBelowCell1111331131103002).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103002 h)
     (by
       have h : (thetaBelowCell1111331131103003).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103003 h)
 
 theorem cover_subtree_05a08e0bea5f :
@@ -5645,45 +5644,45 @@ theorem cover_subtree_05a08e0bea5f :
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103010
         (by
           have h : ((childLL thetaBelowCell1111331131103010)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103010) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103010)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103010) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103010)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103010) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103010)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103010) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103011
         (by
           have h : ((childLL thetaBelowCell1111331131103011)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103011) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103011)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103011) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103011)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103011) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103011)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103011) h))
     (by
       have h : (thetaBelowCell1111331131103012).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103012 h)
     (by
       have h : (thetaBelowCell1111331131103013).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103013 h)
 
 theorem cover_subtree_e2abbc5cba3c :
@@ -5693,12 +5692,12 @@ theorem cover_subtree_e2abbc5cba3c :
     cover_subtree_05a08e0bea5f
     (by
       have h : ((childHL (childLL (childHH thetaBelowCell111133113110)))).rejected = true := by
-        gerver_cached_rejected 177
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childLL (childHH
         thetaBelowCell111133113110))) h)
     (by
       have h : ((childHH (childLL (childHH thetaBelowCell111133113110)))).rejected = true := by
-        gerver_cached_rejected 177
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childLL (childHH
         thetaBelowCell111133113110))) h)
 
@@ -5710,45 +5709,45 @@ theorem cover_subtree_09ec3c616243 :
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103100
         (by
           have h : ((childLL thetaBelowCell1111331131103100)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103100) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103100)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103100) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103100)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103100) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103100)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103100) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103101
         (by
           have h : ((childLL thetaBelowCell1111331131103101)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103101) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103101)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103101) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103101)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103101) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103101)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103101) h))
     (by
       have h : (thetaBelowCell1111331131103102).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103102 h)
     (by
       have h : (thetaBelowCell1111331131103103).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103103 h)
 
 theorem cover_subtree_6c69a3f38b7c :
@@ -5759,45 +5758,45 @@ theorem cover_subtree_6c69a3f38b7c :
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103110
         (by
           have h : ((childLL thetaBelowCell1111331131103110)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103110) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103110)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103110) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103110)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103110) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103110)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103110) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131103111
         (by
           have h : ((childLL thetaBelowCell1111331131103111)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131103111) h)
         (by
           have h : ((childLH thetaBelowCell1111331131103111)).rejected = true := by
-            gerver_cached_rejected 218
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131103111) h)
         (by
           have h : ((childHL thetaBelowCell1111331131103111)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131103111) h)
         (by
           have h : ((childHH thetaBelowCell1111331131103111)).rejected = true := by
-            gerver_cached_rejected 219
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131103111) h))
     (by
       have h : (thetaBelowCell1111331131103112).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103112 h)
     (by
       have h : (thetaBelowCell1111331131103113).rejected = true := by
-        gerver_cached_rejected 191
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103113 h)
 
 theorem cover_subtree_5b1de072a154 :
@@ -5807,7 +5806,7 @@ theorem cover_subtree_5b1de072a154 :
     cover_subtree_6c69a3f38b7c
     (by
       have h : ((childHL (childLH (childHH thetaBelowCell111133113110)))).rejected = true := by
-        gerver_cached_rejected 177
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childLH (childHH
         thetaBelowCell111133113110))) h)
     (by
@@ -5815,19 +5814,19 @@ theorem cover_subtree_5b1de072a154 :
         thetaBelowCell111133113110)))
         (by
           have h : (thetaBelowCell1111331131103130).rejected = true := by
-            gerver_cached_rejected 197
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103130 h)
         (by
           have h : (thetaBelowCell1111331131103131).rejected = true := by
-            gerver_cached_rejected 197
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103131 h)
         (by
           have h : (thetaBelowCell1111331131103132).rejected = true := by
-            gerver_cached_rejected 196
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103132 h)
         (by
           have h : (thetaBelowCell1111331131103133).rejected = true := by
-            gerver_cached_rejected 196
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131103133 h))
 
 theorem e24KC2ThetaBelowLeaf111133113_c1_c1_c0_c3 :
@@ -5839,44 +5838,44 @@ theorem e24KC2ThetaBelowLeaf111133113_c1_c1_c0_c3 :
       exact adaptiveCoverCheck_succ_of_children 3 (childHL (childHH thetaBelowCell111133113110))
         (by
           have h : ((childLL (childHL (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 127
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childHL (childHH
             thetaBelowCell111133113110))) h)
         (by
           have h : ((childLH (childHL (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 127
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childHL (childHH
             thetaBelowCell111133113110))) h)
         (by
           have h : ((childHL (childHL (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 128
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childHL (childHH
             thetaBelowCell111133113110))) h)
         (by
           have h : ((childHH (childHL (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 128
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childHL (childHH
             thetaBelowCell111133113110))) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 3 (childHH (childHH thetaBelowCell111133113110))
         (by
           have h : ((childLL (childHH (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 127
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childHH (childHH
             thetaBelowCell111133113110))) h)
         (by
           have h : ((childLH (childHH (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 127
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childHH (childHH
             thetaBelowCell111133113110))) h)
         (by
           have h : ((childHL (childHH (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 128
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childHH (childHH
             thetaBelowCell111133113110))) h)
         (by
           have h : ((childHH (childHH (childHH thetaBelowCell111133113110)))).rejected = true := by
-            gerver_cached_rejected 128
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childHH (childHH
             thetaBelowCell111133113110))) h))
 
@@ -5947,47 +5946,47 @@ theorem cover_subtree_9615f1192754 :
     thetaBelowCell111133113101)))
     (by
       have h : (thetaBelowCell1111331131011220).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011220 h)
     (by
       have h : (thetaBelowCell1111331131011221).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011221 h)
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011222
         (by
           have h : ((childLL thetaBelowCell1111331131011222)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011222) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011222)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011222) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011222)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011222) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011222)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011222) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011223
         (by
           have h : ((childLL thetaBelowCell1111331131011223)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011223) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011223)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011223) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011223)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011223) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011223)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011223) h))
 
 theorem cover_subtree_1f726b3116b0 :
@@ -5996,61 +5995,61 @@ theorem cover_subtree_1f726b3116b0 :
     thetaBelowCell111133113101)))
     (by
       have h : (thetaBelowCell1111331131011230).rejected = true := by
-        gerver_cached_rejected 206
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011230 h)
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011231
         (by
           have h : ((childLL thetaBelowCell1111331131011231)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011231) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011231)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011231) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011231)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011231) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011231)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011231) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011232
         (by
           have h : ((childLL thetaBelowCell1111331131011232)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011232) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011232)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011232) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011232)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011232) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011232)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011232) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011233
         (by
           have h : ((childLL thetaBelowCell1111331131011233)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011233) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011233)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011233) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011233)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011233) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011233)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011233) h))
 
 theorem cover_subtree_cac2e3b1401d :
@@ -6061,38 +6060,38 @@ theorem cover_subtree_cac2e3b1401d :
         thetaBelowCell111133113101)))
         (by
           have h : (thetaBelowCell1111331131011200).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011200 h)
         (by
           have h : (thetaBelowCell1111331131011201).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011201 h)
         (by
           have h : (thetaBelowCell1111331131011202).rejected = true := by
-            gerver_cached_rejected 205
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011202 h)
         (by
           have h : (thetaBelowCell1111331131011203).rejected = true := by
-            gerver_cached_rejected 205
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011203 h))
     (by
       exact adaptiveCoverCheck_succ_of_children 2 (childLH (childHL (childLH
         thetaBelowCell111133113101)))
         (by
           have h : (thetaBelowCell1111331131011210).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011210 h)
         (by
           have h : (thetaBelowCell1111331131011211).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011211 h)
         (by
           have h : (thetaBelowCell1111331131011212).rejected = true := by
-            gerver_cached_rejected 205
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011212 h)
         (by
           have h : (thetaBelowCell1111331131011213).rejected = true := by
-            gerver_cached_rejected 205
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011213 h))
     cover_subtree_9615f1192754
     cover_subtree_1f726b3116b0
@@ -6105,73 +6104,73 @@ theorem cover_subtree_4f3cdd0c257d :
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011320
         (by
           have h : ((childLL thetaBelowCell1111331131011320)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011320) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011320)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011320) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011320)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011320) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011320)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011320) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011321
         (by
           have h : ((childLL thetaBelowCell1111331131011321)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011321) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011321)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011321) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011321)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011321) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011321)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011321) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011322
         (by
           have h : ((childLL thetaBelowCell1111331131011322)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011322) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011322)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011322) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011322)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011322) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011322)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011322) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011323
         (by
           have h : ((childLL thetaBelowCell1111331131011323)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011323) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011323)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011323) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011323)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011323) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011323)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011323) h))
 
 theorem cover_subtree_8b305093aef1 :
@@ -6182,73 +6181,73 @@ theorem cover_subtree_8b305093aef1 :
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011330
         (by
           have h : ((childLL thetaBelowCell1111331131011330)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011330) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011330)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011330) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011330)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011330) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011330)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011330) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011331
         (by
           have h : ((childLL thetaBelowCell1111331131011331)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011331) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011331)).rejected = true := by
-            gerver_cached_rejected 220
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011331) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011331)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011331) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011331)).rejected = true := by
-            gerver_cached_rejected 221
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011331) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011332
         (by
           have h : ((childLL thetaBelowCell1111331131011332)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011332) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011332)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011332) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011332)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011332) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011332)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011332) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011333
         (by
           have h : ((childLL thetaBelowCell1111331131011333)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011333) h)
         (by
           have h : ((childLH thetaBelowCell1111331131011333)).rejected = true := by
-            gerver_cached_rejected 222
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011333) h)
         (by
           have h : ((childHL thetaBelowCell1111331131011333)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011333) h)
         (by
           have h : ((childHH thetaBelowCell1111331131011333)).rejected = true := by
-            gerver_cached_rejected 223
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011333) h))
 
 theorem cover_subtree_38619e7e6aac :
@@ -6259,56 +6258,56 @@ theorem cover_subtree_38619e7e6aac :
         thetaBelowCell111133113101)))
         (by
           have h : (thetaBelowCell1111331131011300).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011300 h)
         (by
           have h : (thetaBelowCell1111331131011301).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011301 h)
         (by
           have h : (thetaBelowCell1111331131011302).rejected = true := by
-            gerver_cached_rejected 205
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011302 h)
         (by
           have h : (thetaBelowCell1111331131011303).rejected = true := by
-            gerver_cached_rejected 205
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011303 h))
     (by
       exact adaptiveCoverCheck_succ_of_children 2 (childLH (childHH (childLH
         thetaBelowCell111133113101)))
         (by
           have h : (thetaBelowCell1111331131011310).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011310 h)
         (by
           have h : (thetaBelowCell1111331131011311).rejected = true := by
-            gerver_cached_rejected 204
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011311 h)
         (by
           exact adaptiveCoverCheck_succ_of_children 1 thetaBelowCell1111331131011312
             (by
               have h : ((childLL thetaBelowCell1111331131011312)).rejected = true := by
-                gerver_cached_rejected 226
+                gerver_kernel_decide
               exact adaptiveCoverCheck_true_of_rejected 1 (childLL thetaBelowCell1111331131011312)
                 h)
             (by
               have h : ((childLH thetaBelowCell1111331131011312)).rejected = true := by
-                gerver_cached_rejected 226
+                gerver_kernel_decide
               exact adaptiveCoverCheck_true_of_rejected 1 (childLH thetaBelowCell1111331131011312)
                 h)
             (by
               have h : ((childHL thetaBelowCell1111331131011312)).rejected = true := by
-                gerver_cached_rejected 227
+                gerver_kernel_decide
               exact adaptiveCoverCheck_true_of_rejected 1 (childHL thetaBelowCell1111331131011312)
                 h)
             (by
               have h : ((childHH thetaBelowCell1111331131011312)).rejected = true := by
-                gerver_cached_rejected 227
+                gerver_kernel_decide
               exact adaptiveCoverCheck_true_of_rejected 1 (childHH thetaBelowCell1111331131011312)
                 h))
         (by
           have h : (thetaBelowCell1111331131011313).rejected = true := by
-            gerver_cached_rejected 205
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 thetaBelowCell1111331131011313 h))
     cover_subtree_4f3cdd0c257d
     cover_subtree_8b305093aef1
@@ -6320,44 +6319,44 @@ theorem e24KC2ThetaBelowLeaf111133113_c1_c0_c1_c1 :
       exact adaptiveCoverCheck_succ_of_children 3 (childLL (childLH thetaBelowCell111133113101))
         (by
           have h : ((childLL (childLL (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 134
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childLL (childLH
             thetaBelowCell111133113101))) h)
         (by
           have h : ((childLH (childLL (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 134
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childLL (childLH
             thetaBelowCell111133113101))) h)
         (by
           have h : ((childHL (childLL (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 135
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childLL (childLH
             thetaBelowCell111133113101))) h)
         (by
           have h : ((childHH (childLL (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 135
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childLL (childLH
             thetaBelowCell111133113101))) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 3 (childLH (childLH thetaBelowCell111133113101))
         (by
           have h : ((childLL (childLH (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 134
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childLH (childLH
             thetaBelowCell111133113101))) h)
         (by
           have h : ((childLH (childLH (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 134
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childLH (childLH
             thetaBelowCell111133113101))) h)
         (by
           have h : ((childHL (childLH (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 135
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childLH (childLH
             thetaBelowCell111133113101))) h)
         (by
           have h : ((childHH (childLH (childLH thetaBelowCell111133113101)))).rejected = true := by
-            gerver_cached_rejected 135
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childLH (childLH
             thetaBelowCell111133113101))) h))
     cover_subtree_cac2e3b1401d
@@ -6395,54 +6394,54 @@ theorem cover_subtree_c9cdbb673d76 :
   exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003002
     (by
       have h : ((childLL thetaAboveCell0000220021003002)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003002) h)
     (by
       have h : ((childLH thetaAboveCell0000220021003002)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003002) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003002)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003002)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003002)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003002)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003002)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003002)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003002)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003002)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003002)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003002))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003002)) h))
 
@@ -6451,54 +6450,54 @@ theorem cover_subtree_0d25773c4d7a :
   exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003003
     (by
       have h : ((childLL thetaAboveCell0000220021003003)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003003) h)
     (by
       have h : ((childLH thetaAboveCell0000220021003003)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003003) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003003)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003003)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003003)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003003)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003003)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003003)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003003)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003003)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003003)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003003))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003003)) h))
 
@@ -6508,11 +6507,11 @@ theorem cover_subtree_d91230c1595a :
     thetaAboveCell000022002100)))
     (by
       have h : (thetaAboveCell0000220021003000).rejected = true := by
-        gerver_cached_rejected 190
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003000 h)
     (by
       have h : (thetaAboveCell0000220021003001).rejected = true := by
-        gerver_cached_rejected 190
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003001 h)
     cover_subtree_c9cdbb673d76
     cover_subtree_0d25773c4d7a
@@ -6522,54 +6521,54 @@ theorem cover_subtree_3b00f6acc230 :
   exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003012
     (by
       have h : ((childLL thetaAboveCell0000220021003012)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003012) h)
     (by
       have h : ((childLH thetaAboveCell0000220021003012)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003012) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003012)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003012)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003012)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003012)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003012)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003012)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003012)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003012)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003012)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003012))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003012)) h))
 
@@ -6578,54 +6577,54 @@ theorem cover_subtree_7ad163274380 :
   exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003013
     (by
       have h : ((childLL thetaAboveCell0000220021003013)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003013) h)
     (by
       have h : ((childLH thetaAboveCell0000220021003013)).rejected = true := by
-        gerver_cached_rejected 200
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003013) h)
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003013)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003013)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003013)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003013)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003013)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003013)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003013)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 228
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003013)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003013)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003013))).rejected = true := by
-            gerver_cached_rejected 229
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003013)) h))
 
@@ -6635,11 +6634,11 @@ theorem cover_subtree_5685dda3095f :
     thetaAboveCell000022002100)))
     (by
       have h : (thetaAboveCell0000220021003010).rejected = true := by
-        gerver_cached_rejected 190
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003010 h)
     (by
       have h : (thetaAboveCell0000220021003011).rejected = true := by
-        gerver_cached_rejected 190
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003011 h)
     cover_subtree_3b00f6acc230
     cover_subtree_7ad163274380
@@ -6651,88 +6650,88 @@ theorem cover_subtree_f7f8133fac9a :
       exact adaptiveCoverCheck_succ_of_children 1 (childLL thetaAboveCell0000220021003020)
         (by
           have h : ((childLL (childLL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLL
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childLH (childLL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLL
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHL (childLL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLL
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHH (childLL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLL
             thetaAboveCell0000220021003020)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childLH thetaAboveCell0000220021003020)
         (by
           have h : ((childLL (childLH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLH
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childLH (childLH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLH
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHL (childLH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLH
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHH (childLH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLH
             thetaAboveCell0000220021003020)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003020)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003020)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003020)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003020)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003020))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003020)) h))
 
@@ -6743,88 +6742,88 @@ theorem cover_subtree_34eb89665f6e :
       exact adaptiveCoverCheck_succ_of_children 1 (childLL thetaAboveCell0000220021003021)
         (by
           have h : ((childLL (childLL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLL
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childLH (childLL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLL
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHL (childLL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLL
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHH (childLL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLL
             thetaAboveCell0000220021003021)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childLH thetaAboveCell0000220021003021)
         (by
           have h : ((childLL (childLH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLH
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childLH (childLH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLH
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHL (childLH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLH
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHH (childLH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLH
             thetaAboveCell0000220021003021)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003021)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003021)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003021)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003021)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003021))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003021)) h))
 
@@ -6838,37 +6837,37 @@ theorem cover_subtree_854759339591 :
       exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003022
         (by
           have h : ((childLL thetaAboveCell0000220021003022)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003022) h)
         (by
           have h : ((childLH thetaAboveCell0000220021003022)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003022) h)
         (by
           have h : ((childHL thetaAboveCell0000220021003022)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHL thetaAboveCell0000220021003022) h)
         (by
           have h : ((childHH thetaAboveCell0000220021003022)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHH thetaAboveCell0000220021003022) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003023
         (by
           have h : ((childLL thetaAboveCell0000220021003023)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003023) h)
         (by
           have h : ((childLH thetaAboveCell0000220021003023)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003023) h)
         (by
           have h : ((childHL thetaAboveCell0000220021003023)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHL thetaAboveCell0000220021003023) h)
         (by
           have h : ((childHH thetaAboveCell0000220021003023)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHH thetaAboveCell0000220021003023) h))
 
 theorem cover_subtree_a49deaaa8f12 :
@@ -6878,88 +6877,88 @@ theorem cover_subtree_a49deaaa8f12 :
       exact adaptiveCoverCheck_succ_of_children 1 (childLL thetaAboveCell0000220021003030)
         (by
           have h : ((childLL (childLL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLL
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childLH (childLL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLL
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHL (childLL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLL
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHH (childLL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLL
             thetaAboveCell0000220021003030)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childLH thetaAboveCell0000220021003030)
         (by
           have h : ((childLL (childLH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLH
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childLH (childLH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLH
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHL (childLH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLH
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHH (childLH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLH
             thetaAboveCell0000220021003030)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003030)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003030)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003030)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003030)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003030))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003030)) h))
 
@@ -6970,88 +6969,88 @@ theorem cover_subtree_2236023309b5 :
       exact adaptiveCoverCheck_succ_of_children 1 (childLL thetaAboveCell0000220021003031)
         (by
           have h : ((childLL (childLL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLL
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childLH (childLL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLL
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHL (childLL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLL
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHH (childLL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLL
             thetaAboveCell0000220021003031)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childLH thetaAboveCell0000220021003031)
         (by
           have h : ((childLL (childLH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childLH
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childLH (childLH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 210
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childLH
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHL (childLH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childLH
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHH (childLH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 211
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childLH
             thetaAboveCell0000220021003031)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHL thetaAboveCell0000220021003031)
         (by
           have h : ((childLL (childHL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHL
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childLH (childHL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHL
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHL (childHL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHL
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHH (childHL thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHL
             thetaAboveCell0000220021003031)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 1 (childHH thetaAboveCell0000220021003031)
         (by
           have h : ((childLL (childHH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLL (childHH
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childLH (childHH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 230
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childLH (childHH
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHL (childHH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHL (childHH
             thetaAboveCell0000220021003031)) h)
         (by
           have h : ((childHH (childHH thetaAboveCell0000220021003031))).rejected = true := by
-            gerver_cached_rejected 231
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 1 (childHH (childHH
             thetaAboveCell0000220021003031)) h))
 
@@ -7065,37 +7064,37 @@ theorem cover_subtree_2c168101607b :
       exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003032
         (by
           have h : ((childLL thetaAboveCell0000220021003032)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003032) h)
         (by
           have h : ((childLH thetaAboveCell0000220021003032)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003032) h)
         (by
           have h : ((childHL thetaAboveCell0000220021003032)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHL thetaAboveCell0000220021003032) h)
         (by
           have h : ((childHH thetaAboveCell0000220021003032)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHH thetaAboveCell0000220021003032) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 2 thetaAboveCell0000220021003033
         (by
           have h : ((childLL thetaAboveCell0000220021003033)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLL thetaAboveCell0000220021003033) h)
         (by
           have h : ((childLH thetaAboveCell0000220021003033)).rejected = true := by
-            gerver_cached_rejected 188
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childLH thetaAboveCell0000220021003033) h)
         (by
           have h : ((childHL thetaAboveCell0000220021003033)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHL thetaAboveCell0000220021003033) h)
         (by
           have h : ((childHH thetaAboveCell0000220021003033)).rejected = true := by
-            gerver_cached_rejected 189
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 2 (childHH thetaAboveCell0000220021003033) h))
 
 theorem e24KC2ThetaAboveLeaf0000220021_c0_c0_c3_c0 :
@@ -7140,53 +7139,53 @@ theorem e24KC2ThetaAboveLeaf0000220021_c1_c2 :
       exact adaptiveCoverCheck_succ_of_children 5 (childLL thetaAboveCell000022002112)
         (by
           have h : ((childLL (childLL thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childLL (childLL
             thetaAboveCell000022002112)) h)
         (by
           have h : ((childLH (childLL thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childLH (childLL
             thetaAboveCell000022002112)) h)
         (by
           have h : ((childHL (childLL thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childHL (childLL
             thetaAboveCell000022002112)) h)
         (by
           have h : ((childHH (childLL thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childHH (childLL
             thetaAboveCell000022002112)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 5 (childLH thetaAboveCell000022002112)
         (by
           have h : ((childLL (childLH thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childLL (childLH
             thetaAboveCell000022002112)) h)
         (by
           have h : ((childLH (childLH thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childLH (childLH
             thetaAboveCell000022002112)) h)
         (by
           have h : ((childHL (childLH thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childHL (childLH
             thetaAboveCell000022002112)) h)
         (by
           have h : ((childHH (childLH thetaAboveCell000022002112))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 5 (childHH (childLH
             thetaAboveCell000022002112)) h))
     (by
       have h : ((childHL thetaAboveCell000022002112)).rejected = true := by
-        gerver_cached_rejected 95
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 6 (childHL thetaAboveCell000022002112) h)
     (by
       have h : ((childHH thetaAboveCell000022002112)).rejected = true := by
-        gerver_cached_rejected 95
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 6 (childHH thetaAboveCell000022002112) h)
 
 end PartE
@@ -7224,47 +7223,47 @@ theorem e24KC2ThetaAboveLeaf0000220021_c0_c0_c3_c2 :
         thetaAboveCell000022002100)))
         (by
           have h : (thetaAboveCell0000220021003200).rejected = true := by
-            gerver_cached_rejected 195
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003200 h)
         (by
           have h : (thetaAboveCell0000220021003201).rejected = true := by
-            gerver_cached_rejected 195
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003201 h)
         (by
           have h : (thetaAboveCell0000220021003202).rejected = true := by
-            gerver_cached_rejected 194
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003202 h)
         (by
           have h : (thetaAboveCell0000220021003203).rejected = true := by
-            gerver_cached_rejected 194
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003203 h))
     (by
       exact adaptiveCoverCheck_succ_of_children 3 (childLH (childHL (childHH
         thetaAboveCell000022002100)))
         (by
           have h : (thetaAboveCell0000220021003210).rejected = true := by
-            gerver_cached_rejected 195
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003210 h)
         (by
           have h : (thetaAboveCell0000220021003211).rejected = true := by
-            gerver_cached_rejected 195
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003211 h)
         (by
           have h : (thetaAboveCell0000220021003212).rejected = true := by
-            gerver_cached_rejected 194
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003212 h)
         (by
           have h : (thetaAboveCell0000220021003213).rejected = true := by
-            gerver_cached_rejected 194
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 3 thetaAboveCell0000220021003213 h))
     (by
       have h : ((childHL (childHL (childHH thetaAboveCell000022002100)))).rejected = true := by
-        gerver_cached_rejected 128
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 4 (childHL (childHL (childHH
         thetaAboveCell000022002100))) h)
     (by
       have h : ((childHH (childHL (childHH thetaAboveCell000022002100)))).rejected = true := by
-        gerver_cached_rejected 128
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 4 (childHH (childHL (childHH
         thetaAboveCell000022002100))) h)
 
@@ -7302,53 +7301,53 @@ theorem e24KC2ThetaBelowLeaf111133113_c1_c1_c3 :
       exact adaptiveCoverCheck_succ_of_children 4 (childLL thetaBelowCell111133113113)
         (by
           have h : ((childLL (childLL thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childLL (childLL
             thetaBelowCell111133113113)) h)
         (by
           have h : ((childLH (childLL thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childLH (childLL
             thetaBelowCell111133113113)) h)
         (by
           have h : ((childHL (childLL thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childHL (childLL
             thetaBelowCell111133113113)) h)
         (by
           have h : ((childHH (childLL thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childHH (childLL
             thetaBelowCell111133113113)) h))
     (by
       exact adaptiveCoverCheck_succ_of_children 4 (childLH thetaBelowCell111133113113)
         (by
           have h : ((childLL (childLH thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childLL (childLH
             thetaBelowCell111133113113)) h)
         (by
           have h : ((childLH (childLH thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 82
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childLH (childLH
             thetaBelowCell111133113113)) h)
         (by
           have h : ((childHL (childLH thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childHL (childLH
             thetaBelowCell111133113113)) h)
         (by
           have h : ((childHH (childLH thetaBelowCell111133113113))).rejected = true := by
-            gerver_cached_rejected 83
+            gerver_kernel_decide
           exact adaptiveCoverCheck_true_of_rejected 4 (childHH (childLH
             thetaBelowCell111133113113)) h))
     (by
       have h : ((childHL thetaBelowCell111133113113)).rejected = true := by
-        gerver_cached_rejected 95
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 5 (childHL thetaBelowCell111133113113) h)
     (by
       have h : ((childHH thetaBelowCell111133113113)).rejected = true := by
-        gerver_cached_rejected 95
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 5 (childHH thetaBelowCell111133113113) h)
 
 end PartE
@@ -7383,22 +7382,22 @@ theorem e24KC2ThetaBelowLeaf111133113_c1_c1_c1_c3_c2 :
   exact adaptiveCoverCheck_succ_of_children 3 (childHL (childHH thetaBelowCell111133113111))
     (by
       have h : ((childLL (childHL (childHH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 127
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childHL (childHH
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childLH (childHL (childHH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 127
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childHL (childHH
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childHL (childHL (childHH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 128
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childHL (childHH
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childHH (childHL (childHH thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 128
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childHL (childHH
         thetaBelowCell111133113111))) h)
 
@@ -7434,22 +7433,22 @@ theorem e24KC2ThetaBelowLeaf111133113_c1_c1_c1_c2_c3 :
   exact adaptiveCoverCheck_succ_of_children 3 (childHH (childHL thetaBelowCell111133113111))
     (by
       have h : ((childLL (childHH (childHL thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 127
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLL (childHH (childHL
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childLH (childHH (childHL thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 127
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childLH (childHH (childHL
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childHL (childHH (childHL thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 128
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childHL (childHH (childHL
         thetaBelowCell111133113111))) h)
     (by
       have h : ((childHH (childHH (childHL thetaBelowCell111133113111)))).rejected = true := by
-        gerver_cached_rejected 128
+        gerver_kernel_decide
       exact adaptiveCoverCheck_true_of_rejected 3 (childHH (childHH (childHL
         thetaBelowCell111133113111))) h)
 
