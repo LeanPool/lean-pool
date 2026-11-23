@@ -7,6 +7,7 @@ module
 
 
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow04CoverBase
+import LeanPool.BrillNoetherGraphs.LowGenus.IndexedCellReplay
 
 /-! **Independent generated check.** This module provides an additional generated proof of row 04
 and is not imported by the main `LowGenus` root.
@@ -46,6 +47,8 @@ def cell0 : CoordinateCell row04Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0],
       aff [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1], aff [0, -1, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, -1],
       aff [0, 0, 0, 0, 0, 0, 1, 0, 0, -1, -1, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1]] }
+
+attribute [local instance 2000] CertificateData.decidableCheckClosedRows
 
 private theorem cell0_check_indexed : cell0.certificate.checkClosedRows 4
     [[], [0, 0, 13, 1, 0, 0, 0, 0, 0, 0, 14, 15], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 17, 0, 0,

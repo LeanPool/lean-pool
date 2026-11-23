@@ -8,6 +8,7 @@ module
 public import LeanPool.BrillNoetherGraphs.LowGenus.GenusFiveRow03FixedCoverData
 public import LeanPool.BrillNoetherGraphs.LowGenus.PairedCoverReplay
 public import LeanPool.BrillNoetherGraphs.Utilities.Subdivision.IndexedClosedCheck
+import LeanPool.BrillNoetherGraphs.LowGenus.IndexedCellReplay
 
 /-! # Kernel replay batch 4 for the independent row-03 cover
 
@@ -25,6 +26,8 @@ open Certificate.AffineCover
 open GenusFiveCoreAtlas GenusFiveClosedCover Configurations
 
 namespace ReplayChecks4
+
+attribute [local instance 2000] CertificateData.decidableCheckClosedRows
 
 theorem cell96_check_indexed : cell96.certificate.checkClosedRows 4
     [[], [], [13, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 14, 0, 0, 0, 0, 7, 15], [0, 0, 0, 0, 16, 4, 0, 0,
@@ -109,6 +112,8 @@ theorem cell107_check_indexed : cell107.certificate.checkClosedRows 4
      0, 0, 0, 0, 0, 7, 15], [0, 0, 0, 0, 0, 0, 3, 16, 0, 0, 0, 0, 0, 0, 0, 0, 17, 18, 0, 0, 0, 0,
      19, 20]] = true := by
   decide +kernel
+
+attribute [local instance 2000] CompactCellTree.decidableCheckPaired
 
 theorem treePart0_check_paired :
     treePart0.checkPaired splitForms farkasReceiptLookup cells

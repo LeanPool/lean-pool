@@ -126,4 +126,97 @@ theorem checkClosedRows_of_checkClosedRowsAtHints {dimension vertices edges : �
     exact ⟨checkMembershipAt_of_checkMembershipAtHint _ _ _ lower,
       checkMembershipAt_of_checkMembershipAtHint _ _ _ upper⟩
 
+/-- When both slopes vanish, one zero-rise check certifies both zero endpoint rows. -/
+def checkEndpointRowsAtHints {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (anchor : Fin vertices)
+    (edge : Fin edges) (lowerHint upperHint : ℕ) : Bool :=
+  if lowerHint = 0 ∧ upperHint = 0 ∧
+      (certificate.witness anchor).alpha edge = 0 ∧
+      (certificate.witness anchor).beta edge = 0 then
+    let potential := (certificate.witness anchor).potential
+    equal (potential (certificate.core.head edge)) (potential (certificate.core.tail edge))
+  else
+    checkMembershipAtHint (certificate.lowerForm anchor edge) certificate.cone lowerHint &&
+      checkMembershipAtHint (certificate.upperForm anchor edge) certificate.cone upperHint
+
+private theorem checkEndpointRowsAtHints_sound {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (anchor : Fin vertices)
+    (edge : Fin edges) (lowerHint upperHint : ℕ)
+    (checked : checkEndpointRowsAtHints certificate anchor edge lowerHint upperHint = true) :
+    (checkMembershipAtHint (certificate.lowerForm anchor edge) certificate.cone lowerHint &&
+      checkMembershipAtHint (certificate.upperForm anchor edge) certificate.cone upperHint) =
+      true := by
+  unfold checkEndpointRowsAtHints at checked
+  split at checked
+  next zero =>
+    obtain ⟨rfl, rfl, lowerSlope, upperSlope⟩ := zero
+    have samePotential := (equal_eq_true_iff _ _).mp checked
+    have riseZero : certificate.rise anchor edge = 0 := by
+      unfold rise
+      rw [samePotential]
+      cases (certificate.witness anchor).potential (certificate.core.tail edge)
+      simp [AffineForm.sub]
+      rfl
+    have lowerZero : certificate.lowerForm anchor edge = 0 := by
+      simp only [lowerForm, riseZero, lowerSlope]
+      cases certificate.segment edge
+      simp [AffineForm.sub, AffineForm.scale]
+    have upperZero : certificate.upperForm anchor edge = 0 := by
+      simp only [upperForm, riseZero, upperSlope, neg_zero]
+      cases certificate.segment edge
+      simp [AffineForm.sub, AffineForm.scale]
+      rfl
+    simp only [lowerZero, upperZero, checkMembershipAtHint, equal_eq_true_iff, Bool.and_self]
+  next => exact checked
+
+/-- Replay the two zero endpoint rows of a zero-slope edge together. -/
+def checkClosedRowsAtPairedHints {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (degree : ℤ)
+    (indices : List (List ℕ)) : Bool :=
+  (allFin fun edge : Fin edges =>
+    decide (certificate.core.tail edge ≠ certificate.core.head edge)) &&
+  decide ((∑ vertex : Fin vertices, certificate.divisor vertex) = degree) &&
+  (allFin fun edge : Fin edges =>
+    checkMembershipAtHint (certificate.segment edge) certificate.cone (edge.val + 1)) &&
+  (allFin fun anchor : Fin vertices =>
+    let hints := indices.getD anchor.val []
+    isZeroWitness (certificate.witness anchor) ||
+      (allFin fun edge : Fin edges =>
+        checkEndpointRowsAtHints certificate anchor edge
+          (hints.getD (2 * edge.val) 0) (hints.getD (2 * edge.val + 1) 0)))
+
+/-- The paired check certifies the original direct hint check. -/
+theorem checkClosedRowsAtHints_of_checkClosedRowsAtPairedHints {dimension vertices edges : ℕ}
+    {certificate : CertificateData dimension vertices edges} {degree : ℤ}
+    {indices : List (List ℕ)}
+    (checked : certificate.checkClosedRowsAtPairedHints degree indices = true) :
+    certificate.checkClosedRowsAtHints degree indices = true := by
+  simp only [checkClosedRowsAtPairedHints, checkClosedRowsAtHints, Bool.and_eq_true,
+    allFin_eq_true_iff, Bool.or_eq_true] at checked ⊢
+  refine ⟨checked.1, fun anchor => ?_⟩
+  obtain zero | paired := checked.2 anchor
+  · exact Or.inl zero
+  · exact Or.inr fun edge =>
+      Bool.and_eq_true_iff.mp (checkEndpointRowsAtHints_sound _ _ _ _ _ (paired edge))
+
+/-- Decide direct cell hints using one shared check for pairs of zero forms. -/
+@[instance_reducible]
+def decidableCheckClosedRowsAtHints {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (degree : ℤ)
+    (indices : List (List ℕ)) :
+    Decidable (certificate.checkClosedRowsAtHints degree indices = true) :=
+  if checked : certificate.checkClosedRowsAtPairedHints degree indices = true then
+    isTrue (checkClosedRowsAtHints_of_checkClosedRowsAtPairedHints checked)
+  else inferInstance
+
+/-- Decide the indexed row checker through direct hints when they suffice. -/
+@[instance_reducible]
+def decidableCheckClosedRows {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (degree : ℤ)
+    (indices : List (List ℕ)) : Decidable (certificate.checkClosedRows degree indices = true) :=
+  if checked : certificate.checkClosedRowsAtPairedHints degree indices = true then
+    isTrue (checkClosedRows_of_checkClosedRowsAtHints
+      (checkClosedRowsAtHints_of_checkClosedRowsAtPairedHints checked))
+  else inferInstance
+
 end Utilities.Certificate.ExplicitPotential.CertificateData
