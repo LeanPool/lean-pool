@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.ContinuumDiracOperators
+public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
 public import LeanPool.LatticeDiracDerivation.V2.NativePhaseCharge
 
 /-!

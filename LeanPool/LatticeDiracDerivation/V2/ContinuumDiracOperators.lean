@@ -8,7 +8,8 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
+public import LeanPool.LatticeDiracDerivation.V2.CubicalClifford
+public import LeanPool.LatticeDiracDerivation.V2.C19Fourier
 
 /-! # Continuum Dirac operators and plane waves -/
 
@@ -65,9 +66,9 @@ theorem cubical_standard_hamiltonian_is_position_dirac
     (mass : ℝ) (momentum : LatticeMomentum) (z : CubicalCell4) :
     (fun component =>
       -I * cubicalStandardHamiltonian (mass : ℂ)
-        (uniformContinuumPx momentum)
-        (uniformContinuumPy momentum)
-        (uniformContinuumPz momentum) z component) =
+        (c19ScaledMomentum momentum 0 : ℂ)
+        (c19ScaledMomentum momentum 1 : ℂ)
+        (c19ScaledMomentum momentum 2 : ℂ) z component) =
       cubicalDiracTimeDerivative mass z
         (uniformPlaneWaveSpatialDerivative momentum z) := by
   funext component
@@ -77,21 +78,9 @@ theorem cubical_standard_hamiltonian_is_position_dirac
     congrFun (cubical_velocity_mul axis (I * (momentum axis : ℂ)) z) component
   simp only [cubicalDiracTimeDerivative, velocity]
   simp only [Fin.sum_univ_three, cubicalVelocityOperator, cubicalAlpha,
-    uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
+    c19ScaledMomentum,
     Complex.ofReal_mul, cubicalStandardHamiltonian, cubicalStandardSpatial]
   ring
-
-theorem uniform_readout_tangent_is_position_dirac
-    (r : ℝ) (hr : r ≠ 0) (momentum : LatticeMomentum)
-    (phase : UniformTwoChannelPhase) :
-    uniformActionToStandardDirac r momentum
-        (uniformVacuumContinuumGenerator r momentum phase) =
-      cubicalDiracTimeDerivative r
-        (uniformActionToStandardDirac r momentum phase)
-        (uniformPlaneWaveSpatialDerivative momentum
-          (uniformActionToStandardDirac r momentum phase)) := by
-  rw [uniform_action_tangent_intertwines_cubical_dirac r hr]
-  exact cubical_standard_hamiltonian_is_position_dirac r momentum _
 
 end
 end LeanDirac.V2

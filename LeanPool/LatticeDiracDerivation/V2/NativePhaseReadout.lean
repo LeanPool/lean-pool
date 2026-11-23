@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.CubicalClifford
+public import LeanPool.LatticeDiracDerivation.V2.ContinuumDiracOperators
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
 
 /-!
@@ -545,6 +545,18 @@ theorem uniform_native_generator_exact_defect
   · funext component
     simp [uniformNativeSpatialDefectPhase]
     ring
+
+theorem uniform_readout_tangent_is_position_dirac
+    (r : ℝ) (hr : r ≠ 0) (momentum : LatticeMomentum)
+    (phase : UniformTwoChannelPhase) :
+    uniformActionToStandardDirac r momentum
+        (uniformVacuumContinuumGenerator r momentum phase) =
+      cubicalDiracTimeDerivative r
+        (uniformActionToStandardDirac r momentum phase)
+        (uniformPlaneWaveSpatialDerivative momentum
+          (uniformActionToStandardDirac r momentum phase)) := by
+  rw [uniform_action_tangent_intertwines_cubical_dirac r hr]
+  exact cubical_standard_hamiltonian_is_position_dirac r momentum _
 
 end
 end LeanDirac.V2
