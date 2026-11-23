@@ -8,7 +8,9 @@ summary: >-
   independent Gaussian factor. On a connected complete smooth weighted
   Riemannian manifold attaining the positive Bakry–Émery curvature bound,
   it constructs a Gaussian product isometry and identifies the smooth
-  first eigenfunctions in the Gaussian coordinates.
+  first eigenfunctions in the Gaussian coordinates. The first two moments
+  of the Gaussian projection give a lower bound on the quadratic transport
+  cost to equilibrium.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -31,6 +33,8 @@ main_declarations:
 - CutoffRigidity.normalized_convexInteraction_theorem
 - CutoffRigidity.euclidean_gaussian_splitting
 - CutoffRigidity.Paper.riemannian_gaussian_splitting
+- CutoffRigidity.Riemann.SplitData.lower_of_moments
+- CutoffRigidity.Paper.riemannian_transport_lower_of_moments
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
@@ -55,6 +59,18 @@ main_results:
     connected weighted manifold with the same curvature lower bound, gives
     the potential identity, and proves the eigenfunction representation and
     norm and orthogonality identities.
+- declaration: CutoffRigidity.Riemann.SplitData.lower_of_moments
+  informal: >-
+    If a probability law has the Ornstein–Uhlenbeck first and second moments
+    in the Gaussian coordinate of an isometric splitting, its quadratic
+    transport cost to equilibrium is bounded below by the squared projected
+    mean plus the squared difference of the projected standard deviations,
+    summed over Gaussian dimensions.
+- declaration: CutoffRigidity.Paper.riemannian_transport_lower_of_moments
+  informal: >-
+    At Riemannian curvature equality, the splitting supplies a one-Lipschitz
+    Gaussian projection. The quadratic transport lower bound applies to any
+    probability law with the Ornstein–Uhlenbeck moments in this projection.
 tags:
 - curvature
 - spectral-gap
