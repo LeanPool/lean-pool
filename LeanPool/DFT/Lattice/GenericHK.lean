@@ -175,7 +175,7 @@ On a connected graph with symmetric hopping, `0 < N < M` and any configuration-d
 interaction, under `ShortestPathSigned G t` the potentials with a non-uniquely v-representable
 ground state lie in a closed, nowhere dense, null set. -/
 theorem generic_hk_lattice_fermions_shortest {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
-    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
+    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, G.Adj a b → t a b = t b a)
     (hsp : ShortestPathSigned G t) (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
     ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
       {v | NonUV (H0Fw G t Vint) occF v} ⊆ Z :=
@@ -204,7 +204,7 @@ sign (no frustration). Then the non-unique potentials are contained in a closed,
 Lebesgue-null set. -/
 theorem generic_hk_lattice_fermions_w {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
     (hG : G.Connected)
-    {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a) {s : ℝ}
+    {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, G.Adj a b → t a b = t b a) {s : ℝ}
         (hts : ∀ a b, G.Adj a b → 0 < s * t a b)
     (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
     ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
@@ -222,7 +222,7 @@ theorem generic_hk_lattice_fermions {G : SimpleGraph (Fin M)} [DecidableRel G.Ad
     ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
       {v | NonUV (H0F G t Vint) occF v} ⊆ Z := by
   rw [H0F_eq_H0Fw]
-  exact generic_hk_lattice_fermions_w hG (fun _ _ => rfl) (s := t)
+  exact generic_hk_lattice_fermions_w hG (fun _ _ _ => rfl) (s := t)
     (fun _ _ _ => mul_self_pos.mpr ht) hN0 hNM Vint
 
 end

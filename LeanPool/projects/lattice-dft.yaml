@@ -34,8 +34,8 @@ main_results:
 - declaration: DFT.generic_hk_lattice_fermions_w
   informal: >-
     For N interacting spinless fermions on a connected M-site graph with
-    0 < N < M and symmetric hopping amplitudes of a common sign, potentials
-    whose ground state is shared by a potential differing by more than a
+    0 < N < M and symmetric hopping amplitudes of a common sign on the edges,
+    potentials whose ground state is shared by a potential differing by more than a
     constant lie in a closed, nowhere dense Lebesgue null set.
 - declaration: DFT.dimH_nonUVDens_lattice_fermions_w
   informal: >-

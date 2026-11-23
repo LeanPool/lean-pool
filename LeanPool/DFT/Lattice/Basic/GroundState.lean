@@ -43,6 +43,14 @@ def qf (M : Matrix V V ℝ) (ψ : V → ℝ) : ℝ := ψ ⬝ᵥ (M *ᵥ ψ)
 def IsGroundState (M : Matrix V V ℝ) (ψ : V → ℝ) : Prop :=
   ψ ≠ 0 ∧ ∀ φ : V → ℝ, qf M ψ * (φ ⬝ᵥ φ) ≤ qf M φ * (ψ ⬝ᵥ ψ)
 
+omit [DecidableEq V] in
+/-- A vector with the same quadratic value and unit norm as a ground state is a ground state. -/
+theorem IsGroundState.of_qf_eq {H : Matrix V V ℝ} {ψ φ : V → ℝ}
+    (h : IsGroundState H ψ) (hψ : ψ ⬝ᵥ ψ = 1) (hφ : φ ⬝ᵥ φ = 1)
+    (hq : qf H φ = qf H ψ) : IsGroundState H φ := by
+  refine ⟨fun h0 => by simp [h0] at hφ, fun v => ?_⟩
+  simpa only [hq, hφ, hψ, mul_one] using h.2 v
+
 /-- elementary: a·s + b·s² ≥ 0 for all s forces a = 0 -/
 lemma lin_coeff_zero {a b : ℝ} (h : ∀ s : ℝ, 0 ≤ a * s + b * s ^ 2) : a = 0 := by
   by_contra ha

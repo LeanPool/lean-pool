@@ -237,14 +237,14 @@ symmetric hopping, `0 < N < M` and any configuration-diagonal interaction: if si
 `s` exist with `s σ_a σ_b t_ab > 0` on every bond, the potentials with a non-uniquely
 v-representable ground state lie in a closed, nowhere dense, null set. -/
 theorem generic_hk_lattice_fermions_gauge {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
-    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
+    (hG : G.Connected) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, G.Adj a b → t a b = t b a)
     {σ : Fin M → ℝ} (hσ : ∀ i, σ i * σ i = 1) {s : ℝ}
     (hts : ∀ a b, G.Adj a b → 0 < s * (σ a * σ b * t a b))
     (hN0 : 0 < N) (hNM : N < M) (Vint : Conf M N → ℝ) :
     ∃ Z : Set (Fin M → ℝ), IsClosed Z ∧ interior Z = ∅ ∧ MeasureTheory.volume Z = 0 ∧
       {v | NonUV (H0Fw G t Vint) occF v} ⊆ Z := by
-  have hsym : ∀ a b, gaugeHop σ t a b = gaugeHop σ t b a := by
-    intro a b; simp only [gaugeHop]; rw [htsym a b]; ring
+  have hsym : ∀ a b, G.Adj a b → gaugeHop σ t a b = gaugeHop σ t b a := by
+    intro a b hab; simp only [gaugeHop]; rw [htsym a b hab]; ring
   obtain ⟨Z, h1, h2, h3, h4⟩ :=
     generic_hk_lattice_fermions_w (t := gaugeHop σ t) hG hsym (s := s) hts hN0 hNM Vint
   refine ⟨Z, h1, h2, h3, fun v hv => h4 ?_⟩
@@ -278,13 +278,14 @@ local macro "triangle_gauge_tac" : tactic =>
 hopping on the triangle there are orbital signs `σ` (`σ_i = ±1`) and an overall sign `s` with
 `s σ_a σ_b t_ab > 0` on every bond (`σ_a σ_b t_ab` all positive, `s = 1`, if `t₀₁ t₀₂ t₁₂ > 0`;
 all negative, `s = −1`, otherwise). -/
-theorem triangle_common_sign {t : Fin 3 → Fin 3 → ℝ} (htsym : ∀ a b, t a b = t b a)
+theorem triangle_common_sign {t : Fin 3 → Fin 3 → ℝ}
+    (htsym : ∀ a b, a ≠ b → t a b = t b a)
     (h01 : t 0 1 ≠ 0) (h02 : t 0 2 ≠ 0) (h12 : t 1 2 ≠ 0) :
     ∃ σ : Fin 3 → ℝ, ∃ s : ℝ, (∀ i, σ i * σ i = 1) ∧
       ∀ a b, (⊤ : SimpleGraph (Fin 3)).Adj a b → 0 < s * (σ a * σ b * t a b) := by
-  have e10 := htsym 1 0
-  have e20 := htsym 2 0
-  have e21 := htsym 2 1
+  have e10 := htsym 1 0 (by decide)
+  have e20 := htsym 2 0 (by decide)
+  have e21 := htsym 2 1 (by decide)
   rcases lt_or_gt_of_ne h01 with x | x <;> rcases lt_or_gt_of_ne h02 with y | y <;>
     rcases lt_or_gt_of_ne h12 with z | z
   · refine ⟨![1, 1, 1], -1, ?_, ?_⟩ <;> triangle_gauge_tac

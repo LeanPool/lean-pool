@@ -123,7 +123,8 @@ sites whose distances to a site `b` differ (by one, necessarily), symmetric hopp
 hypothesis of `generic_hk_lattice_fermions_gauge` with `s = 1`). Every connected bipartite graph is
 layered around each of its sites (`dist_ne_of_adj_of_isBipartite`). -/
 theorem common_sign_of_shortestPathSigned_layered {G : SimpleGraph (Fin M)} (hG : G.Connected)
-    {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a) (hsp : ShortestPathSigned G t)
+    {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, G.Adj a b → t a b = t b a)
+    (hsp : ShortestPathSigned G t)
     (b : Fin M) (hlay : ∀ q r, G.Adj q r → G.dist b q ≠ G.dist b r) :
     ∃ σ : Fin M → ℝ, (∀ i, σ i * σ i = 1) ∧ ∀ q r, G.Adj q r → 0 < 1 * (σ q * σ r * t q r) := by
   obtain ⟨ε, hε, hl⟩ := hsp b
@@ -137,7 +138,7 @@ theorem common_sign_of_shortestPathSigned_layered {G : SimpleGraph (Fin M)} (hG 
   have hne := hlay q r hqr
   rcases Nat.lt_or_gt_of_ne hne with h | h
   · have := hl r q hqr.symm (by omega)
-    rw [htsym r q] at this
+    rw [htsym r q hqr.symm] at this
     linarith [show ε r * t q r * ε q = 1 * (ε q * ε r * t q r) by ring]
   · have := hl q r hqr (by omega)
     linarith [show ε q * t q r * ε r = 1 * (ε q * ε r * t q r) by ring]
@@ -161,7 +162,8 @@ theorem dist_ne_of_adj_of_isBipartite {V : Type*} {G : SimpleGraph V} (hG : G.Co
 symmetric hopping with `ShortestPathSigned` is brought to positive hopping by orbital sign changes
 (cf. Theorem 5.1 of Shahul Hameed et al., Linear Algebra Appl. 608, 236 (2021)). -/
 theorem common_sign_of_shortestPathSigned_bipartite {G : SimpleGraph (Fin M)} (hG : G.Connected)
-    (hbip : G.IsBipartite) {t : Fin M → Fin M → ℝ} (htsym : ∀ a b, t a b = t b a)
+    (hbip : G.IsBipartite) {t : Fin M → Fin M → ℝ}
+    (htsym : ∀ a b, G.Adj a b → t a b = t b a)
     (hsp : ShortestPathSigned G t) :
     ∃ σ : Fin M → ℝ, (∀ i, σ i * σ i = 1) ∧ ∀ q r, G.Adj q r → 0 < 1 * (σ q * σ r * t q r) := by
   obtain ⟨b⟩ := hG.nonempty
@@ -205,12 +207,13 @@ theorem not_shortestPathSigned_of_two_paths {G : SimpleGraph (Fin M)} {t : Fin M
 `0 1`, `1 2`, `2 3`, `3 0` and without the bond `0 2`, symmetric hopping with
 `t₀₁ t₁₂ t₂₃ t₃₀ < 0` violates `ShortestPathSigned` (the paths `2 → 1 → 0` and `2 → 3 → 0`). -/
 theorem square_not_shortestPathSigned {G : SimpleGraph (Fin 4)} {t : Fin 4 → Fin 4 → ℝ}
-    (htsym : ∀ a b, t a b = t b a) (h01 : G.Adj 0 1) (h12 : G.Adj 1 2) (h23 : G.Adj 2 3)
-    (h30 : G.Adj 3 0) (h02 : ¬ G.Adj 0 2) (hneg : t 0 1 * t 1 2 * t 2 3 * t 3 0 < 0) :
+    (htsym : ∀ a b, G.Adj a b → t a b = t b a)
+    (h01 : G.Adj 0 1) (h12 : G.Adj 1 2) (h23 : G.Adj 2 3) (h30 : G.Adj 3 0)
+    (h02 : ¬ G.Adj 0 2) (hneg : t 0 1 * t 1 2 * t 2 3 * t 3 0 < 0) :
     ¬ ShortestPathSigned G t := by
   apply not_shortestPathSigned_of_two_paths (b := 0) (q := 2) (r₁ := 1) (r₂ := 3) h12.symm
     h01.symm h23 h30 (by decide) h02
-  rw [htsym 2 1, htsym 1 0]
+  rw [htsym 2 1 h12.symm, htsym 1 0 h01.symm]
   linarith [hneg, show t 0 1 * t 1 2 * t 2 3 * t 3 0 = t 1 2 * t 0 1 * (t 2 3 * t 3 0) by ring]
 
 end DFT

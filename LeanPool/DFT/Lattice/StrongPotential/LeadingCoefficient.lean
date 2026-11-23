@@ -44,6 +44,16 @@ lemma Hl_apply (A : Matrix C C ℝ) (V w : C → ℝ) (y z : C) :
         Polynomial.C (V y) + Polynomial.C (w y) * X else 0 := by
   simp [Hl, Matrix.diagonal_apply]
 
+omit [Fintype C] in
+/-- Evaluate a polynomial Hamiltonian at a scalar potential along its defining line. -/
+lemma Hl_eval_eq (A : Matrix C C ℝ) (V w : C → ℝ) (lam : ℝ) :
+    (Hl A V w).map (Polynomial.eval lam) =
+      A + Matrix.diagonal V + Matrix.diagonal (lam • w) := by
+  ext a b
+  by_cases h : a = b
+  · subst h; simp [Hl]; ring
+  · simp [Hl, h]
+
 /-- Coefficient of `(Hl ^ (k+1)) y c` as a sum over the middle index. -/
 lemma pow_succ_coeff (A : Matrix C C ℝ) (V w : C → ℝ) (k : ℕ) (y c : C) (m : ℕ) :
     ((Hl A V w ^ (k + 1)) y c).coeff m =
@@ -97,36 +107,53 @@ theorem entry_bound {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} 
         rw [ih z m (by omega), mul_zero]
     rw [h1, h2, h3]; ring
 
-/-- The top coefficient (degree `k - d y`) does not depend on the interaction. -/
-theorem entry_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
-    (V V' w : C → ℝ) : ∀ k y, d y ≤ k →
-      ((Hl A V w ^ k) y c).coeff (k - d y) = ((Hl A V' w ^ k) y c).coeff (k - d y) := by
-  intro k
-  induction k with
-  | zero =>
-    intro y hy
-    simp [pow_zero]
-  | succ k ih =>
-    intro y hy
-    rw [pow_succ_coeff, pow_succ_coeff]
+/-- The coefficient of degree `k - d y`, zero beyond reach. -/
+noncomputable def topEntry (A : Matrix C C ℝ) (V w : C → ℝ) (d : C → ℕ)
+    (c : C) (k : ℕ) (y : C) : ℝ :=
+  if d y ≤ k then ((Hl A V w ^ k) y c).coeff (k - d y) else 0
+
+lemma topEntry_succ {A : Matrix C C ℝ} (V w : C → ℝ) {d : C → ℕ} (hL : Lip A d)
+    {c : C} (hc : d c = 0) (k : ℕ) (y : C) :
+    topEntry A V w d c (k + 1) y = w y * topEntry A V w d c k y +
+      ∑ z ∈ Finset.univ.erase y, (if d z + 1 = d y then A y z * topEntry A V w d c k z else 0) := by
+  unfold topEntry
+  by_cases hy : d y ≤ k + 1
+  · rw [ite_eq_left hy, pow_succ_coeff]
     have e1 : ((Hl A V w ^ k) y c).coeff (k + 1 - d y) = 0 := entry_bound hL hc V w k y _ (by omega)
-    have e1' : ((Hl A V' w ^ k) y c).coeff (k + 1 - d y) = 0 :=
-        entry_bound hL hc V' w k y _ (by omega)
-    rw [e1, e1', mul_zero, mul_zero, zero_add, zero_add]
+    rw [e1, mul_zero, zero_add]
     congr 1
-    · split_ifs with h0
-      · rfl
-      · have : k + 1 - d y - 1 = k - d y := by omega
-        rw [this, ih y (by omega)]
+    · by_cases h1 : d y ≤ k
+      · rw [ite_eq_right (by omega), ite_eq_left h1, show k + 1 - d y - 1 = k - d y by omega]
+      · rw [ite_eq_left (by omega), ite_eq_right h1, mul_zero]
     · apply Finset.sum_congr rfl
       intro z hz
       by_cases hA : A y z = 0
-      · rw [hA, zero_mul, zero_mul]
+      · simp [hA]
       · have hlip := hL y z (Finset.mem_erase.mp hz).1.symm hA
         by_cases hdz : d z + 1 = d y
         · have : k + 1 - d y = k - d z := by omega
-          rw [this, ih z (by omega)]
-        · rw [entry_bound hL hc V w k z _ (by omega), entry_bound hL hc V' w k z _ (by omega)]
+          rw [ite_eq_left hdz, ite_eq_left (by omega), this]
+        · rw [ite_eq_right hdz, entry_bound hL hc V w k z _ (by omega), mul_zero]
+  · rw [ite_eq_right hy]
+    have h1 : ¬ d y ≤ k := by omega
+    rw [ite_eq_right h1, mul_zero, zero_add]
+    symm
+    apply Finset.sum_eq_zero
+    intro z hz
+    by_cases hdz : d z + 1 = d y
+    · rw [ite_eq_left hdz, ite_eq_right (show ¬ d z ≤ k by omega), mul_zero]
+    · rw [ite_eq_right hdz]
+
+/-- The top coefficient (degree `k - d y`) does not depend on the interaction. -/
+theorem entry_top {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
+    (V V' w : C → ℝ) (k : ℕ) (y : C) (hy : d y ≤ k) :
+    ((Hl A V w ^ k) y c).coeff (k - d y) = ((Hl A V' w ^ k) y c).coeff (k - d y) := by
+  have h : ∀ k y, topEntry A V w d c k y = topEntry A V' w d c k y := by
+    intro k
+    induction k with
+    | zero => intro y; simp [topEntry, pow_zero]
+    | succ k ih => intro y; simp only [topEntry_succ V w hL hc, topEntry_succ V' w hL hc, ih]
+  simpa only [topEntry, ite_eq_left hy] using h k y
 
 lemma entry_natDegree {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
     (V w : C → ℝ) (k : ℕ) (y : C) : ((Hl A V w ^ k) y c).natDegree ≤ k - d y :=
@@ -205,15 +232,11 @@ omit [Fintype C] [DecidableEq V] in
 lemma Hl_eval (A : Matrix C C ℝ) (Vint : C → ℝ) (n : V → C → ℝ) (u : V → ℝ) (lam : ℝ) :
     (Hl A Vint (fun y => ∑ i, u i * n i y)).map (Polynomial.eval lam) =
       hamN (A + Matrix.diagonal Vint) n (lam • u) := by
-  ext a b
-  by_cases h : a = b
-  · subst h
-    simp only [Hl, map_sum, map_mul, Finset.sum_mul, map_apply, Matrix.add_apply,
-      diagonal_apply_eq, eval_add, eval_C, hamN, Pi.smul_apply, smul_eq_mul]
-    rw [add_assoc]; congr 1; congr 1
-    rw [← Polynomial.coe_evalRingHom, map_sum]
-    apply Finset.sum_congr rfl; intro i _; simp; ring
-  · simp [Hl, hamN, h]
+  rw [Hl_eval_eq]
+  have hscale : (lam • fun y => ∑ i, u i * n i y) = fun y => ∑ i, (lam • u) i * n i y := by
+    funext y
+    simp only [Pi.smul_apply, smul_eq_mul, Finset.mul_sum, mul_assoc]
+  rw [hscale, hamN]
 
 omit [DecidableEq V] in
 lemma det_kry_eval (A : Matrix C C ℝ) (Vint : C → ℝ) (n : V → C → ℝ) (u : V → ℝ) (c : C)

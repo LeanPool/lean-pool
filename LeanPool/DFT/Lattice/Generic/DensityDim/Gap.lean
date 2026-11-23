@@ -93,13 +93,7 @@ theorem exists_gap_of_unique {H : Matrix C C ℝ} {ψ : C → ℝ} (hψ : IsGrou
   push Not at hle
   have hge := hψ.2 u0
   rw [hn, hu0.2, mul_one, mul_one] at hge
-  have hgs : IsGroundState H u0 := by
-    refine ⟨fun h => by have := hu0.2; rw [h] at this; simp at this, fun φ => ?_⟩
-    have := hψ.2 φ
-    rw [hn, mul_one] at this
-    rw [hu0.2, mul_one]
-    have heq : qf H u0 = qf H ψ := by linarith
-    rw [heq]; exact this
+  have hgs : IsGroundState H u0 := hψ.of_qf_eq hn hu0.2 (by linarith)
   obtain ⟨a, ha⟩ := hu u0 hgs
   have h1 := hu0.1
   rw [ha, dotProduct_smul, hn, smul_eq_mul, mul_one] at h1

@@ -8,7 +8,7 @@ Authors: Miguel A. L. Marques
 
 module
 
-public import LeanPool.DFT.Lattice.KohnSham.Iteration
+public import LeanPool.DFT.Lattice.Convex.Smooth
 import TauCeti.Analysis.GradientFlow.MoreauYosida.Convex
 meta import Mathlib.Tactic.Abel
 meta import Mathlib.Tactic.FieldSimp

@@ -35,10 +35,7 @@ variable {M N : ℕ}
 
 lemma Hl_map_eval {C : Type*} [DecidableEq C] (B : Matrix C C ℝ) (x : C → ℝ) (lam : ℝ) :
     (Hl B 0 x).map (Polynomial.eval lam) = B + Matrix.diagonal (lam • x) := by
-  ext a b
-  by_cases h : a = b
-  · subst h; simp [Hl]; ring
-  · simp [Hl, h]
+  simpa using Hl_eval_eq B 0 x lam
 
 lemma eval_pow_entry {C : Type*} [Fintype C] [DecidableEq C] (P : Matrix C C ℝ[X]) (n : ℕ) (a b : C)
     (lam : ℝ) : ((P ^ n) a b).eval lam = ((P.map (Polynomial.eval lam)) ^ n) a b := by

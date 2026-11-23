@@ -10,6 +10,7 @@ public import LeanPool.DFT
 public import LeanPool.DFT.Lattice.Basic.GroundState
 public import LeanPool.DFT.Lattice.Basic.Spectral
 public import LeanPool.DFT.Lattice.Convex.MoreauYosida
+public import LeanPool.DFT.Lattice.Convex.Smooth
 public import LeanPool.DFT.Lattice.Fermions.CauchyBinet
 public import LeanPool.DFT.Lattice.Fermions.Configurations
 public import LeanPool.DFT.Lattice.Fermions.FirstQuantization

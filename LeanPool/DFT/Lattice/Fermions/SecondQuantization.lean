@@ -302,12 +302,11 @@ lemma hopM_const (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) :
   ext a b; simp [hopM, SimpleGraph.adjMatrix_apply]
 
 lemma hopM_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] {t : Fin M → Fin M → ℝ}
-    (ht : ∀ a b, t a b = t b a) : (hopM G t).IsSymm := by
+    (ht : ∀ a b, G.Adj a b → t a b = t b a) : (hopM G t).IsSymm := by
   ext a b
   simp only [hopM, Matrix.transpose_apply]
-  rw [ht b a]
   by_cases h : G.Adj a b
-  · rw [ite_eq_left h.symm, ite_eq_left h]
+  · rw [ite_eq_left h.symm, ite_eq_left h, ht b a h.symm]
   · rw [ite_eq_right (fun h' => h h'.symm), ite_eq_right h]
 
 /-- The lattice-DFT Hamiltonian of spinless fermions with edge-dependent hopping `t a b`. -/
@@ -316,7 +315,8 @@ noncomputable def H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M
   Γ (-hopM G t) + Matrix.diagonal Vint
 
 lemma H0Fw_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] {t : Fin M → Fin M → ℝ}
-    (ht : ∀ a b, t a b = t b a) (Vint : Conf M N → ℝ) : (H0Fw G t Vint).IsSymm := by
+    (ht : ∀ a b, G.Adj a b → t a b = t b a) (Vint : Conf M N → ℝ) :
+    (H0Fw G t Vint).IsSymm := by
   unfold H0Fw
   refine Matrix.IsSymm.add (gamma_isSymm ?_) (Matrix.isSymm_diagonal Vint)
   exact (hopM_isSymm G ht).neg
@@ -331,7 +331,7 @@ lemma H0F_eq_H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint
     H0F G t Vint = H0Fw G (fun _ _ => t) Vint := rfl
 
 lemma H0F_isSymm (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : ℝ) (Vint : Conf M N → ℝ) :
-    (H0F G t Vint).IsSymm := H0Fw_isSymm G (fun _ _ => rfl) Vint
+    (H0F G t Vint).IsSymm := H0Fw_isSymm G (fun _ _ _ => rfl) Vint
 
 theorem hamN_H0Fw (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
     (Vint : Conf M N → ℝ) (v : Fin M → ℝ) :

@@ -10,7 +10,6 @@ module
 
 public import LeanPool.DFT.Lattice.Basic.GroundState
 public import Mathlib.Analysis.Matrix.Spectrum
-meta import Mathlib.Tactic.FieldSimp
 meta import Mathlib.Tactic.FunProp
 meta import Mathlib.Tactic.Linarith
 
@@ -140,25 +139,7 @@ theorem qf_groundState_eq [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ 
 omit [DecidableEq C] in
 theorem isGroundState_of_qf_eq [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ}
     (hn : ψ ⬝ᵥ ψ = 1) (hq : qf H ψ = gsEnergy H) : IsGroundState H ψ := by
-  refine ⟨fun h0 => by rw [h0] at hn; simp at hn, fun φ => ?_⟩
-  rw [hq, hn, mul_one]
-  by_cases hφ : φ ⬝ᵥ φ = 0
-  · have : φ = 0 := dotProduct_self_eq_zero.mp hφ
-    subst this; simp [hφ, qf]
-  · have hpos : 0 < φ ⬝ᵥ φ := lt_of_le_of_ne
-      (Finset.sum_nonneg fun i _ => mul_self_nonneg _) (Ne.symm hφ)
-    set r := Real.sqrt (φ ⬝ᵥ φ)
-    have hr : 0 < r := Real.sqrt_pos.mpr hpos
-    have hrr : r * r = φ ⬝ᵥ φ := Real.mul_self_sqrt hpos.le
-    have hn' : (r⁻¹ • φ) ⬝ᵥ (r⁻¹ • φ) = 1 := by
-      rw [smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul, ← hrr]; field_simp
-    have := gsEnergy_le hS hn'
-    unfold qf at this ⊢
-    rw [mulVec_smul, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul] at this
-    have h2 : gsEnergy H * (r * r) ≤ φ ⬝ᵥ (H *ᵥ φ) := by
-      have := mul_le_mul_of_nonneg_right this (mul_self_nonneg r)
-      calc gsEnergy H * (r * r) ≤ r⁻¹ * (r⁻¹ * (φ ⬝ᵥ (H *ᵥ φ))) * (r * r) := this
-        _ = φ ⬝ᵥ (H *ᵥ φ) := by field_simp
-    rw [← hrr]; linarith
+  obtain ⟨hg, hn0⟩ := Classical.choose_spec (exists_groundState hS)
+  exact hg.of_qf_eq hn0 hn (by simpa [gsEnergy, hS] using hq)
 
 end DFT

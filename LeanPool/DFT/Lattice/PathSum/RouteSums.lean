@@ -55,6 +55,23 @@ lemma dist_eq_zero_iff {G : SimpleGraph (Fin M)} (hG : G.Connected) {b p : Fin M
     G.dist b p = 0 ↔ p = b := by
   rw [(hG.preconnected b p).dist_eq_zero_iff]; exact eq_comm
 
+private lemma sum_erase_hopM_eq_predecessorSum {G : SimpleGraph (Fin M)}
+    [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ) (b p : Fin M)
+    (layer : ℕ → Prop) [DecidablePred layer] (f g : Fin M → ℝ)
+    (h : ∀ q, G.Adj p q → layer (G.dist b q) → f q = g q) :
+    (∑ q ∈ Finset.univ.erase p, if layer (G.dist b q) then (-hopM G t) p q * f q else 0) =
+      predecessorSum G t b p layer g := by
+  unfold predecessorSum
+  rw [← Finset.sum_erase Finset.univ (a := p)
+    (f := fun q => if G.Adj p q ∧ layer (G.dist b q) then -t p q * g q else 0) (by simp)]
+  apply Finset.sum_congr rfl
+  intro q _
+  by_cases ha : G.Adj p q
+  · by_cases hl : layer (G.dist b q)
+    · simp [hopM, ha, hl, h q ha hl]
+    · simp [hl]
+  · simp [hopM, ha]
+
 theorem Fres_eq_Gr {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     (t : Fin M → Fin M → ℝ)
     {u : Fin M → ℝ} (hu : Function.Injective u) (b a : Fin M) :
@@ -88,39 +105,28 @@ theorem Fres_eq_Gr {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connec
     rw [ite_eq_right hpb, zero_add] at hrec
     have hne : u a - u p ≠ 0 := sub_ne_zero.mpr (hx p le_rfl)
     have hGs : Gr G t u b a (n + 1) p =
-        (∑ q, (if G.Adj p q ∧ G.dist b q = n then -t p q * Gr G t u b a n q else 0)) /
-            (u a - u p) := by
-      simp only [Gr, ite_eq_left hp]
+        predecessorSum G t b p (fun depth => depth + 1 = G.dist b p) (Gr G t u b a n) /
+          (u a - u p) := by
+      simp [Gr, hp]
     rw [hGs, eq_div_iff hne, hrec]
-    rw [← Finset.sum_erase Finset.univ (a := p)
-      (f := fun q => if G.Adj p q ∧ G.dist b q = n then -t p q * Gr G t u b a n q else 0) (by simp)]
-    apply Finset.sum_congr rfl; intro q hq
-    have hqp : q ≠ p := (Finset.mem_erase.mp hq).1
-    by_cases hadj : G.Adj p q
-    · by_cases hdq : G.dist b q = n
-      · rw [ite_eq_left (by omega), ite_eq_left ⟨hadj, hdq⟩, ih q hdq (by omega)]
-        simp [hopM, hadj]
-      · rw [ite_eq_right (by omega), ite_eq_right (by tauto)]
-    · simp [hadj, hopM]
+    refine sum_erase_hopM_eq_predecessorSum t b p (fun depth => depth + 1 = G.dist b p)
+      (fun q => Fres hu (lip_dist hG t b) (SimpleGraph.dist_self (v := b)) q (u a))
+      (Gr G t u b a n) ?_
+    intro q _ hdq
+    exact ih q (by omega) (by omega)
 
 theorem alphaRep_eq_alphaExp {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     (t : Fin M → Fin M → ℝ)
     {u : Fin M → ℝ} (hu : Function.Injective u) (b a : Fin M) :
     alphaRep (-hopM G t) u hu (fun z => G.dist b z) (lip_dist hG t b) b
       (SimpleGraph.dist_self (v := b)) a a = alphaExp G t u b a := by
-  rw [alpha_diag, alphaExp, predecessorSum]
+  rw [alpha_diag, alphaExp]
   congr 1
-  rw [← Finset.sum_erase Finset.univ (a := a)
-    (f := fun p => if G.Adj a p ∧ G.dist b p + 1 = G.dist b a then
-        -t a p * Gr G t u b a (G.dist b p) p else 0)
-    (by simp)]
-  apply Finset.sum_congr rfl; intro p hp
-  by_cases hadj : G.Adj a p
-  · by_cases hd : G.dist b p + 1 = G.dist b a
-    · rw [ite_eq_left hd, ite_eq_left ⟨hadj, hd⟩, Fres_eq_Gr hG t hu b a _ p rfl (by omega)]
-      simp [hopM, hadj]
-    · rw [ite_eq_right hd, ite_eq_right (by tauto)]
-  · simp [hadj, hopM]
+  refine sum_erase_hopM_eq_predecessorSum t b a (fun depth => depth + 1 = G.dist b a)
+    (fun p => Fres hu (lip_dist hG t b) (SimpleGraph.dist_self (v := b)) p (u a))
+    (fun p => Gr G t u b a (G.dist b p) p) ?_
+  intro p _ hd
+  exact Fres_eq_Gr hG t hu b a _ p rfl (by omega)
 
 /-- Explicit Slater-type sum. -/
 noncomputable def DExp (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)

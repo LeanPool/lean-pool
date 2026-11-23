@@ -36,11 +36,11 @@ variable {C : Type*} [Fintype C] [DecidableEq C]
 
 /-- Top coefficient of `(Hᵏ)_{y c}` (zero when `y` is out of reach). -/
 noncomputable def T (A : Matrix C C ℝ) (w : C → ℝ) (d : C → ℕ) (c : C) (k : ℕ) (y : C) : ℝ :=
-  if d y ≤ k then ((Hl A 0 w ^ k) y c).coeff (k - d y) else 0
+  topEntry A 0 w d c k y
 
 lemma T_zero {A : Matrix C C ℝ} (w : C → ℝ) {d : C → ℕ} {c : C} (hc : d c = 0) (y : C) :
     T A w d c 0 y = if y = c then 1 else 0 := by
-  unfold T
+  unfold T topEntry
   by_cases hy : y = c
   · subst hy; simp [hc]
   · by_cases hd : d y ≤ 0
@@ -50,34 +50,8 @@ lemma T_zero {A : Matrix C C ℝ} (w : C → ℝ) {d : C → ℕ} {c : C} (hc : 
 lemma T_succ {A : Matrix C C ℝ} (w : C → ℝ) {d : C → ℕ} (hL : Lip A d) {c : C} (hc : d c = 0)
     (k : ℕ) (y : C) :
     T A w d c (k + 1) y = w y * T A w d c k y +
-      ∑ z ∈ Finset.univ.erase y, (if d z + 1 = d y then A y z * T A w d c k z else 0) := by
-  unfold T
-  by_cases hy : d y ≤ k + 1
-  · rw [ite_eq_left hy, pow_succ_coeff]
-    have e1 : ((Hl A 0 w ^ k) y c).coeff (k + 1 - d y) = 0 := entry_bound hL hc 0 w k y _ (by omega)
-    rw [e1, mul_zero, zero_add]
-    congr 1
-    · by_cases h1 : d y ≤ k
-      · rw [ite_eq_right (by omega), ite_eq_left h1, show k + 1 - d y - 1 = k - d y by omega]
-      · rw [ite_eq_left (by omega), ite_eq_right h1, mul_zero]
-    · apply Finset.sum_congr rfl
-      intro z hz
-      by_cases hA : A y z = 0
-      · simp [hA]
-      · have hlip := hL y z (Finset.mem_erase.mp hz).1.symm hA
-        by_cases hdz : d z + 1 = d y
-        · have : k + 1 - d y = k - d z := by omega
-          rw [ite_eq_left hdz, ite_eq_left (by omega), this]
-        · rw [ite_eq_right hdz, entry_bound hL hc 0 w k z _ (by omega), mul_zero]
-  · rw [ite_eq_right hy]
-    have h1 : ¬ d y ≤ k := by omega
-    rw [ite_eq_right h1, mul_zero, zero_add]
-    symm
-    apply Finset.sum_eq_zero
-    intro z hz
-    by_cases hdz : d z + 1 = d y
-    · rw [ite_eq_left hdz, ite_eq_right (show ¬ d z ≤ k by omega), mul_zero]
-    · rw [ite_eq_right hdz]
+      ∑ z ∈ Finset.univ.erase y, (if d z + 1 = d y then A y z * T A w d c k z else 0) :=
+  topEntry_succ 0 w hL hc k y
 
 /-- **Power-sum (divided-difference) representation of the top coefficients.** -/
 theorem power_sum {A : Matrix C C ℝ} (w : C → ℝ) (hw : Function.Injective w) {d : C → ℕ}
@@ -202,7 +176,7 @@ theorem top_coeff_factor {A : Matrix C C ℝ} {w : C → ℝ} (hw : Function.Inj
   set α := fun y z => alphaRep A w hw d hL c hc y z
   have hN : (kry (Hl A 0 w) c ord).det.coeff (∑ j, ord j - ∑ y, d y) =
       (Matrix.of fun y j => T A w d c (ord j) y).det := by
-    simpa only [T] using det_coeff_eq hL hc 0 w ord
+    simpa only [T, topEntry] using det_coeff_eq hL hc 0 w ord
   have hfac : (Matrix.of fun y j => T A w d c (ord j) y) =
       (Matrix.of fun y z => α y z) * (Matrix.of fun z j => w z ^ ord j) := by
     ext y j

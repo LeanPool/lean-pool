@@ -10,6 +10,7 @@ module
 
 public import LeanPool.DFT.Lattice.Convex.MoreauYosida
 public import LeanPool.DFT.Lattice.KohnSham.Duality
+public import LeanPool.DFT.Lattice.KohnSham.Iteration
 import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
 meta import Mathlib.Tactic.FieldSimp
 meta import Mathlib.Tactic.FunProp
