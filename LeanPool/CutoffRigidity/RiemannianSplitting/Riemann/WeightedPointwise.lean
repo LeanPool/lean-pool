@@ -139,18 +139,6 @@ theorem abs_carre_carre_le {f : M → ℝ} (hf : MSmooth F f) (χ : M → ℝ) (
     _ = _ := by rw [h4]; ring
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mgrad_eq_zero_of_notMem_tsupport {u : M → ℝ} {x : M} (hx : x ∉ tsupport u) :
-    mgrad F u x = 0 := by
-  exact TauCeti.Manifold.mgradient_eq_zero_iff.2 <|
-    (notMem_tsupport_iff_eventuallyEq.1 hx).mvfderiv_eq.trans mvfderiv_zero
-
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem carre_eq_zero_off_tsupport {u : M → ℝ} (g : M → ℝ) {x : M} (hx : x ∉ tsupport u) :
-    carre F u g x = 0 := by
-  simp [carre, mgrad_eq_zero_of_notMem_tsupport F hx]
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem hasCompactSupport_carre {u : M → ℝ} (g : M → ℝ) (hu : HasCompactSupport u) :
     HasCompactSupport (fun x => carre F u g x) := by
   exact hu.inner_mgradient (I := 𝓘(ℝ, F)) (mgrad F g)

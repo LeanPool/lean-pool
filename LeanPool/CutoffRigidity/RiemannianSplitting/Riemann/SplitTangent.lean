@@ -36,6 +36,15 @@ theorem contMDiff_comp_orbit (L : List (Fin k)) (x : M) :
         fr.comp L t x) :=
   (fr.contMDiff_comp L).comp (contMDiff_id.prodMk contMDiff_const)
 
+private theorem mfderiv_comp_cons_apply (a : Fin k) (L : List (Fin k))
+    (t : EuclideanSpace ℝ (Fin k)) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
+    mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.comp (a :: L) t y) x v =
+      mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.flow a y (t a)) (fr.comp L t x)
+        (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.comp L t y) x v) := by
+  have hflow := ((fr.contMDiff_flow_slice a (t a)).mdifferentiable (by simp)) (fr.comp L t x)
+  have hcomp := ((fr.contMDiff_comp_slice L t).mdifferentiable (by simp)) x
+  exact congrArg (fun derivative => derivative v) (mfderiv_comp x hflow hcomp)
+
 /-- The tangent map of the composed flow (at fixed times) preserves inner products. -/
 theorem inner_mfderiv_comp (L : List (Fin k)) (t : EuclideanSpace ℝ (Fin k)) :
     ∀ (x : M) (u v : TangentSpace 𝓘(ℝ, F) x),
@@ -49,17 +58,7 @@ theorem inner_mfderiv_comp (L : List (Fin k)) (t : EuclideanSpace ℝ (Fin k)) :
     rfl
   | cons a L ih =>
     intro x u v
-    have hs : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F) (fun z => fr.flow a z (t a)) (fr.comp L t x) :=
-      ((fr.contMDiff_flow_slice a (t a)).mdifferentiable (by simp)) _
-    have hc : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.comp L t y) x :=
-      ((fr.contMDiff_comp_slice L t).mdifferentiable (by simp)) x
-    have hfun : (fun y : M => fr.comp (a :: L) t y) =
-        (fun z => fr.flow a z (t a)) ∘ (fun y => fr.comp L t y) := rfl
-    change inner ℝ (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F)
-        ((fun z => fr.flow a z (t a)) ∘ (fun y => fr.comp L t y)) x u)
-      (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F)
-        ((fun z => fr.flow a z (t a)) ∘ (fun y => fr.comp L t y)) x v) = _
-    rw [mfderiv_comp x hs hc]
+    rw [fr.mfderiv_comp_cons_apply a L t x u, fr.mfderiv_comp_cons_apply a L t x v]
     change inner ℝ (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun z => fr.flow a z (t a)) (fr.comp L t x)
         (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.comp L t y) x u))
       (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun z => fr.flow a z (t a)) (fr.comp L t x)
@@ -78,18 +77,7 @@ theorem mfderiv_comp_X (L : List (Fin k)) (t : EuclideanSpace ℝ (Fin k)) (i : 
     rfl
   | cons a L ih =>
     intro x
-    have hs : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F) (fun z => fr.flow a z (t a)) (fr.comp L t x) :=
-      ((fr.contMDiff_flow_slice a (t a)).mdifferentiable (by simp)) _
-    have hc : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.comp L t y) x :=
-      ((fr.contMDiff_comp_slice L t).mdifferentiable (by simp)) x
-    have hfun : (fun y : M => fr.comp (a :: L) t y) =
-        (fun z => fr.flow a z (t a)) ∘ (fun y => fr.comp L t y) := rfl
-    change mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F)
-        ((fun z => fr.flow a z (t a)) ∘ (fun y => fr.comp L t y)) x (fr.X i x) = _
-    rw [mfderiv_comp x hs hc]
-    change mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun z => fr.flow a z (t a)) (fr.comp L t x)
-        (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (fun y => fr.comp L t y) x (fr.X i x)) = _
-    rw [ih x]
+    rw [fr.mfderiv_comp_cons_apply a L t x, ih x]
     exact fr.mfderiv_flow_X a i _ (t a)
 
 /-- Derivative of the orbit of a flow. -/

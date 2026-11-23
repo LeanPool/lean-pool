@@ -39,10 +39,7 @@ private theorem weighted_bochner_identity {V f : M → ℝ} (hV : MSmooth F V)
       (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).ricciTensor x
         (mgrad F f x) (mgrad F f x) +
       hessian 𝓘(ℝ, F) V x (mgrad F f x) (mgrad F f x) := by
-  have hweighted := WBoch.carre2_eq F hV hf (fun φ hφ y v w => by
-    simpa only [hessian_def, mgrad_eq_mgradient] using
-      (hessian_symm (I := 𝓘(ℝ, F)) y
-        ((hφ.of_le (show (2 : ℕ∞ω) ≤ ∞ by simp)) y) v w)) (WReg.msmooth_mlaplacian F hf) x
+  have hweighted := WBoch.carre2_eq F hV hf x
   rw [mlaplacian_eq_laplaceBeltrami, mlaplacian_eq_laplaceBeltrami] at hweighted
   have hcarre : carre F f f = fun y => ‖mgradient 𝓘(ℝ, F) f y‖ ^ 2 := by
     funext y

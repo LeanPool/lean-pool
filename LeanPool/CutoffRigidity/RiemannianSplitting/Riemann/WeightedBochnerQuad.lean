@@ -8,9 +8,9 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerDefs
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
+import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedLaplacian
 
 /-! # The drift term in the iterated carré du champ -/
 
@@ -43,41 +43,18 @@ theorem mvfderiv_inner_lc {σ τ : (y : M) → TangentSpace 𝓘(ℝ, F) y} {x :
   simp only [hv] at hh
   exact hh
 
-theorem smAt_mgrad {f : M → ℝ} (hf : MSmooth F f) (x : M) : SmAt F (mgrad F f) x :=
-  (CutCur.WReg.contMDiff_mgrad hf) x
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
-  [FiniteDimensional ℝ F]
-  [RiemannianBundle fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mdiffAt_of_smAt {X : (y : M) → TangentSpace 𝓘(ℝ, F) y} {x : M} (h : SmAt F X x) :
-    MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F).tangent
-      (fun y => (⟨y, X y⟩ : TangentBundle 𝓘(ℝ, F) M)) x :=
-  h.mdifferentiableAt (by simp)
-
-/-- `dΓ(f)(w) = 2 ⟨∇_w u, u⟩`. -/
-theorem mvfderiv_carre_apply {f : M → ℝ} (hf : MSmooth F f) (y : M)
-    (w : TangentSpace 𝓘(ℝ, F) y) :
-    mvfderiv 𝓘(ℝ, F) (carre F f f) y w =
-      2 * inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F f) y w)
-        (mgrad F f y) :=
-  mvfderiv_carre_self F hf y w
-
-theorem carre2_eq {V f : M → ℝ} (hV : MSmooth F V) (hf : MSmooth F f)
-    (hsymm : ∀ φ : M → ℝ, MSmooth F φ → ∀ (y : M) (v w : TangentSpace 𝓘(ℝ, F) y),
-      inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F φ) y v) w =
-        inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F φ) y w) v)
-    (hΔ : MSmooth F (mlaplacian F f)) (x : M) :
+theorem carre2_eq {V f : M → ℝ} (hV : MSmooth F V) (hf : MSmooth F f) (x : M) :
     carre2 F V f x = mlaplacian F (carre F f f) x / 2
       - mvfderiv 𝓘(ℝ, F) (mlaplacian F f) x (mgrad F f x)
       + inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F V) x (mgrad F f x))
           (mgrad F f x) := by
-  have hu := mdiffAt_of_smAt F (smAt_mgrad F hf x)
-  have hv := mdiffAt_of_smAt F (smAt_mgrad F hV x)
+  have hu := (WReg.contMDiff_mgrad hf x).mdifferentiableAt (by simp)
+  have hv := (WReg.contMDiff_mgrad hV x).mdifferentiableAt (by simp)
   have hin : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ)
       (fun y => inner ℝ (mgrad F V y) (mgrad F f y)) x :=
     MDifferentiableAt.inner_bundle (E := TangentSpace 𝓘(ℝ, F)) hv hu
   have hΔd : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) (mlaplacian F f) x :=
-    (hΔ x).mdifferentiableAt (by simp)
+    (WReg.msmooth_mlaplacian F hf x).mdifferentiableAt (by simp)
   have hg : mgenerator F V f = fun y => mlaplacian F f y - inner ℝ (mgrad F V y) (mgrad F f y) :=
     rfl
   have h1 : carre F f (mgenerator F V f) x =
@@ -91,8 +68,11 @@ theorem carre2_eq {V f : M → ℝ} (hV : MSmooth F V) (hf : MSmooth F f)
   have h2 : inner ℝ (mgrad F V x) (mgrad F (carre F f f) x) =
       2 * inner ℝ (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M (mgrad F f) x
         (mgrad F V x)) (mgrad F f x) := by
-    rw [real_inner_comm, mgrad_inner, mvfderiv_carre_apply F hf]
-  have h3 := hsymm f hf x (mgrad F V x) (mgrad F f x)
+    rw [real_inner_comm, mgrad_inner, mvfderiv_carre_self F hf]
+    rfl
+  have h3 := TauCeti.Manifold.hessian_symm (I := 𝓘(ℝ, F)) x
+    ((hf.of_le (show (2 : ℕ∞ω) ≤ ∞ by simp)) x) (mgrad F V x) (mgrad F f x)
+  simp only [TauCeti.Manifold.hessian_def, ← mgrad_eq_mgradient] at h3
   have h4 := real_inner_comm (CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M
     (mgrad F f) x (mgrad F f x)) (mgrad F V x)
   unfold carre2

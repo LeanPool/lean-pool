@@ -80,9 +80,7 @@ theorem weightedIBP_of_isWeightedVolume_of_sigmaCompact [SigmaCompactSpace M]
   have hcv := WReg.msmooth_carre hV hv
   have ha : Integrable (fun x ↦ w x * carre F u v x) ν :=
     (hw.continuous.mul hca.continuous).integrable_of_hasCompactSupport
-      (HasCompactSupport.intro hK fun x hx ↦ by
-        change w x * carre F u v x = 0
-        rw [carre, mgrad_eq_zero_of_notMem_tsupport F hx, inner_zero_left, mul_zero])
+      (hasCompactSupport_carre F v hK).mul_left
   have hb : Integrable (fun x ↦ w x * (u x * carre F V v x)) ν :=
     (hw.continuous.mul (hu.continuous.mul hcv.continuous)).integrable_of_hasCompactSupport
       hK.mul_right.mul_left

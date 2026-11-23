@@ -130,7 +130,6 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitProduct
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitRiemannLevel
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitTangent
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitWeight
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerDefs
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerMain
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerQuad
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedBochnerTest
