@@ -8,7 +8,8 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.NativePhaseReadout
+public import LeanPool.LatticeDiracDerivation.V2.CubicalPhaseAlgebra
+public import Mathlib.Analysis.Real.Sqrt
 
 /-! # The normalized positive-frequency embedding
 
@@ -47,24 +48,9 @@ theorem positive_pauli_spatial_apply_one (px py pz : ℝ) (q : UniformCell2) :
     cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ]
   ring
 
-theorem cubical_standard_hamiltonian_blocks (mass px py pz : ℝ) (upper lower : UniformCell2) :
-    cubicalStandardHamiltonian (mass : ℂ) (px : ℂ) (py : ℂ) (pz : ℂ)
-        (cubicalSpinorOfBlocks upper lower) =
-      cubicalSpinorOfBlocks
-        (fun i => (mass : ℂ) * upper i + positivePauliSpatial px py pz lower i)
-        (fun i => positivePauliSpatial px py pz upper i - (mass : ℂ) * lower i) := by
-  funext component
-  fin_cases component <;>
-    simp [cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ, positive_pauli_spatial_apply_zero,
-      positive_pauli_spatial_apply_one] <;> ring
-
 theorem positive_pauli_spatial_zero (px py pz : ℝ) :
-    positivePauliSpatial px py pz 0 = 0 := by
-  funext component
-  fin_cases component <;> simp [positive_pauli_spatial_apply_zero,
-      positive_pauli_spatial_apply_one]
+    positivePauliSpatial px py pz 0 = 0 :=
+  cubical_spatial_lower_zero_amplitude px py pz
 
 theorem positive_pauli_spatial_square
     (px py pz : ℝ) (q : UniformCell2) :
@@ -76,7 +62,7 @@ theorem positive_pauli_spatial_square
       cubicalStandardHamiltonian 0 px py pz (cubicalSpinorOfBlocks upper lower) =
         cubicalSpinorOfBlocks (positivePauliSpatial px py pz lower)
           (positivePauliSpatial px py pz upper) := by
-    simpa only [Complex.ofReal_zero, zero_mul, zero_add, sub_zero] using
+    simpa only [zero_mul, zero_add, sub_zero, positivePauliSpatial] using
       cubical_standard_hamiltonian_blocks 0 px py pz upper lower
   have square := cubical_standard_hamiltonian_square 0 px py pz (cubicalSpinorOfBlocks q 0)
   rw [massless, massless, positive_pauli_spatial_zero] at square
@@ -179,10 +165,11 @@ theorem normalized_positive_frequency_is_energy_eigenstate
       fun component => (positiveFrequencyRatio mass energy : ℂ) *
         (cubicalStandardHamiltonian mass px py pz (cubicalUpperEmbedding q) component +
           (energy : ℂ) * cubicalUpperEmbedding q component) := by
-    rw [cubicalUpperEmbedding, cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
+    rw [cubicalUpperEmbedding, cubical_standard_hamiltonian_blocks,
+      cubical_spatial_lower_zero_amplitude]
     funext component
     fin_cases component <;>
-      simp [normalized_positive_frequency_embedding_apply, ← hr] <;> ring
+      simp [normalized_positive_frequency_embedding_apply, positivePauliSpatial, ← hr] <;> ring
   rw [hshift]
   apply cubical_standard_hamiltonian_shift
   exact_mod_cast hshell.symm

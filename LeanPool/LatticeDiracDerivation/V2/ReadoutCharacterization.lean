@@ -38,11 +38,34 @@ private theorem cubical_position_of_hamiltonian_step
         (cubicalFromPositionLower position lower) component) =
       fun component => -I *
         (mass * lower component - cubicalSpatialLower px py pz position component) := by
+  rw [cubicalFromPositionLower, cubical_standard_hamiltonian_blocks]
+  let upper := fun i => mass * (position + lower) i +
+    cubicalSpatialLower px py pz (-position + lower) i
+  let complementary := fun i => cubicalSpatialLower px py pz (position + lower) i -
+    mass * (-position + lower) i
+  change cubicalStandardPosition ((-I) • cubicalSpinorOfBlocks upper complementary) = _
+  have scaled : (-I) • cubicalSpinorOfBlocks upper complementary =
+      cubicalSpinorOfBlocks ((-I) • upper) ((-I) • complementary) :=
+    (cubicalSpinorOfBlocksLinear.map_smul (-I) (upper, complementary)).symm
+  rw [scaled]
   funext component
-  fin_cases component <;>
-    simp [cubicalStandardPosition, cubicalStandardHamiltonian, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      cubicalSpatialLower, cubicalUpperEmbedding, cubicalFromPositionLower] <;> ring
+  simp only [cubicalStandardPosition, cubical_cell4_upper_of_blocks, cubical_cell4_lower_of_blocks,
+    Pi.smul_apply, smul_eq_mul, upper, complementary, Pi.neg_apply, Pi.add_apply]
+  have negative_add := congrFun ((cubicalSpatialLowerLinear px py pz).map_add (-position) lower)
+    component
+  have positive_add := congrFun ((cubicalSpatialLowerLinear px py pz).map_add position lower)
+    component
+  have negative := congrFun ((cubicalSpatialLowerLinear px py pz).map_neg position) component
+  change cubicalSpatialLower px py pz (-position + lower) component =
+    cubicalSpatialLower px py pz (-position) component +
+      cubicalSpatialLower px py pz lower component at negative_add
+  change cubicalSpatialLower px py pz (position + lower) component =
+    cubicalSpatialLower px py pz position component +
+      cubicalSpatialLower px py pz lower component at positive_add
+  change cubicalSpatialLower px py pz (-position) component =
+    -cubicalSpatialLower px py pz position component at negative
+  rw [negative_add, positive_add, negative]
+  ring
 
 /-- The position half of the first-order cubical equation forces the
 complementary half.  This is the spectral/Kähler--Dirac origin of

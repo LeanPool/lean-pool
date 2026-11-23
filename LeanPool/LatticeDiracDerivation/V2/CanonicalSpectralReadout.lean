@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyEmbedding
+public import LeanPool.LatticeDiracDerivation.V2.C19Fourier
 
 /-!
 # Canonical spectral readout of the native Klein--Gordon phase space
@@ -163,10 +164,10 @@ theorem normalized_negative_frequency_is_energy_eigenstate
         (cubicalStandardHamiltonian mass px py pz lower component -
           (energy : ℂ) * lower component) := by
     dsimp only [lower]
-    rw [cubical_standard_hamiltonian_blocks, positive_pauli_spatial_zero]
+    rw [cubical_standard_hamiltonian_blocks, cubical_spatial_lower_zero_amplitude]
     funext component
     fin_cases component <;>
-      simp [normalized_negative_frequency_embedding_apply, ← hr] <;> ring
+      simp [normalized_negative_frequency_embedding_apply, positivePauliSpatial, ← hr] <;> ring
   simp only [sub_eq_add_neg, neg_mul] at hshift
   rw [hshift]
   have hshellC : (mass : ℂ) ^ 2 + (px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2 =
