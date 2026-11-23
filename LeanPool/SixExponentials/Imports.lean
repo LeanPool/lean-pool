@@ -14,7 +14,6 @@ public import LeanPool.SixExponentials.Defs
 public import LeanPool.SixExponentials.DescentStep
 public import LeanPool.SixExponentials.GridEstimate
 public import LeanPool.SixExponentials.HouseBounds
-public import LeanPool.SixExponentials.Liouville
 public import LeanPool.SixExponentials.Main
 public import LeanPool.SixExponentials.NumberField
 public import LeanPool.SixExponentials.SiegelLemma
