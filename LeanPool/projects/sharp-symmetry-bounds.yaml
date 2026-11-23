@@ -1,0 +1,80 @@
+slug: sharp-symmetry-bounds
+title: Sharp symmetry bounds for real plane algebraic curves
+summary: 'Let C be an infinite real plane algebraic curve defined by a polynomial of degree d ≥ 2
+  that is irreducible over the complex numbers, and suppose C is not a circle. The project proves
+  that the group of Euclidean symmetries of C (Mathlib isometries of ℂ mapping C onto itself) is
+  finite, that its orientation-preserving part is cyclic of order at most max(d, 2d − 4), and that
+  the full group has order at most 2d. Both bounds are attained in every degree d ≥ 2. For d ≥ 5
+  the curves attaining the rotation bound are classified: up to an orientation-preserving
+  similarity they are the curves Re(z^(d−2)(|z|² + α)) = 0 with |α| = 1 and α not real, and
+  conversely every such curve with d − 2 ≥ 3 attains the bound. The rotation bound uses the
+  coefficient-weight criterion of Lebmeir and Richter-Gebert; the bound 2d sharpens the auxiliary
+  bound 4d of Pach and de Zeeuw, and the quintic Re(z³(|z|² + i)) = 0, with six rotations, is a
+  counterexample to the degree restriction in Lemma 9 of Alcázar, Lávička and Vršek
+  (arXiv:1801.09962v1). This is Theorem 1 of the author''s note; the note''s second theorem is not
+  included.'
+branch: real algebraic geometry
+entry_module: LeanPool.SharpSymmetryBounds
+authors:
+- Carlo Perassi
+source:
+  title: Sharp symmetry bounds for real algebraic curves (working note, 2026), Theorem 1
+  authors:
+  - Carlo Perassi
+  url: https://github.com/carlok/curve-symmetry-lean/blob/18d3984fd32e7482b98bc0ac42753e8508d236dd/sharp_symmetry_bounds.pdf
+  github_repo: carlok/sharp-symmetry-bounds-lean
+  commit: ced9fe2d4d2aa42aa03bbc19b1b56cdcd18c9413
+  announcement: https://palomar-registry.org/entry?id=PALOMAR-2026-09-18-000007&version=1
+  announcement_date: '2026-09-18'
+  citation: 'Background: P. Lebmeir and J. Richter-Gebert, Rotations, translations and symmetry
+    detection for complexified curves, Computer Aided Geometric Design 25 (2008), 707–719,
+    Section 4 (doi:10.1016/j.cagd.2008.09.004); J. Pach and F. de Zeeuw, Distinct distances on
+    algebraic curves in the plane, arXiv:1308.0177v3, Lemma 2.6; J. G. Alcázar, M. Lávička and
+    J. Vršek, Symmetries and similarities of planar algebraic curves using harmonic polynomials,
+    arXiv:1801.09962v1, Lemma 9.'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: The upstream formalization.yaml states that AI coding agents (Claude Opus 5 in
+  Claude Code, and Codex) wrote and repaired the Lean proofs, statements and documentation under
+  the author's direction, from the author's own note.
+main_declarations:
+- SharpSymmetryBounds.sharp_bounds
+- SharpSymmetryBounds.rotation_bound_sharp
+- SharpSymmetryBounds.full_bound_sharp
+- SharpSymmetryBounds.equality_classification
+- SharpSymmetryBounds.family_attains_bound
+main_results:
+- declaration: SharpSymmetryBounds.sharp_bounds
+  informal: For a real plane polynomial f of degree d ≥ 2, irreducible over ℂ, whose real zero set
+    C is infinite and not a circle, the Euclidean symmetries of C form a finite set, the
+    orientation-preserving ones are the powers of a single isometry and number at most
+    max(d, 2d − 4), and all of them number at most 2d.
+  source_ref: Note, Theorem 1 (bounds)
+- declaration: SharpSymmetryBounds.rotation_bound_sharp
+  informal: In every degree d ≥ 2 there is such a curve with exactly max(d, 2d − 4)
+    orientation-preserving symmetries.
+  source_ref: Note, Theorem 1 (sharpness of the rotation bound)
+- declaration: SharpSymmetryBounds.full_bound_sharp
+  informal: In every degree d ≥ 2 there is such a curve with exactly 2d Euclidean symmetries.
+  source_ref: Note, Theorem 1 (sharpness of the full bound)
+- declaration: SharpSymmetryBounds.equality_classification
+  informal: If d ≥ 5 and the curve has exactly 2d − 4 orientation-preserving symmetries, then an
+    orientation-preserving similarity z ↦ a z + b maps it onto Re(z^(d−2)(|z|² + α)) = 0 for some
+    α with |α| = 1 and nonzero imaginary part.
+  source_ref: Note, Theorem 1 (equality case, d ≥ 5)
+- declaration: SharpSymmetryBounds.family_attains_bound
+  informal: For m ≥ 3 and α with nonzero imaginary part, the curve Re(z^m(|z|² + α)) = 0 is the
+    real zero set of a polynomial of degree m + 2, irreducible over ℂ, with infinite real locus,
+    not a circle, and with exactly 2m orientation-preserving symmetries.
+  source_ref: Note, Theorem 1 (converse)
+tags:
+- algebraic-curves
+- symmetry
+- real-algebraic-geometry
+- euclidean-geometry
+msc:
+- 14H50
+- 14P05
+- 51N20
+- 68V20
