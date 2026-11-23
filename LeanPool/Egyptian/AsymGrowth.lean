@@ -24,11 +24,6 @@ namespace Egyptian
 open Filter
 open scoped Topology
 
-theorem real_unitIter (T j : ℕ) : (unitIter T j : ℝ) = Payoff.orbit (T : ℝ) j := by
-  induction j with
-  | zero => rfl
-  | succ j ih => simp [unitIter, Payoff.orbit, Payoff.phi, ih]
-
 /-- Adding 1 to the orbit does not change the normalized logarithmic limit. -/
 theorem log_succ_orbit_tendsto {t : ℝ} (ht : 1 ≤ t) :
     Tendsto (fun j : ℕ => Real.log (Payoff.orbit t j + 1) / 2^j)

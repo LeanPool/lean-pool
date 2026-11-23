@@ -7,6 +7,7 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 module
 
 public import LeanPool.Egyptian.AsymptoticDefs
+public import LeanPool.Egyptian.Assembly
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -28,15 +29,6 @@ namespace Egyptian
 
 open Filter
 open scoped Topology BigOperators
-
-/-- The sum of reciprocals over the first n places, coerced into the reals. -/
-theorem real_prefix_sum (a : ℕ → ℕ) (n : ℕ) :
-    (recipSum (prefixTuple a n) : ℝ) = ∑ i ∈ Finset.range n, 1 / (a i : ℝ) := by
-  induction n with
-  | zero => simp [recipSum, prefixTuple]
-  | succ n ih =>
-    simpa [prefixTuple, recipSum, List.range_succ, unit, Finset.sum_range_succ]
-      using congrArg (fun x : ℝ => x + 1 / (a n : ℝ)) ih
 
 /-- A finite prefix of an expansion is a strict underapproximation, even
 when denominators repeat. -/

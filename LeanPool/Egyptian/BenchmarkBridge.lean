@@ -24,10 +24,7 @@ open scoped Topology
 /-- The reciprocal series of the unshifted unit-fraction ray sums to `1/T`. -/
 theorem unitRay_hasSum (T : ℕ) (hT : 1 ≤ T) :
     HasSum (fun i : ℕ => 1 / ((unitIter T i + 1 : ℕ) : ℝ)) (1 / (T:ℝ)) := by
-  have hp (i : ℕ) : 0 < unitIter T i := by
-    induction i with
-    | zero => exact hT
-    | succ i ih => exact Nat.mul_pos ih (Nat.succ_pos _)
+  have hp := unitIter_pos hT
   have hmono : StrictMono (unitIter T) := by
     apply strictMono_nat_of_lt_succ
     intro i
@@ -66,10 +63,7 @@ private theorem prepend_mono (p : List ℕ) (f : ℕ → ℕ) (hp : p.Pairwise (
 theorem expansion_unitRay {q : ℚ} {ds : List ℕ} {T : ℕ} (hT : 1 ≤ T)
     (hds : Admissible .weak q ds.length ds) (hordered : ∀ d ∈ ds, d ≤ T + 1)
     (hsplit : q = recipSum ds + unit T) : Expansion q (unitRay ds T) := by
-  have hp (i : ℕ) : 0 < unitIter T i := by
-    induction i with
-    | zero => exact hT
-    | succ i ih => exact Nat.mul_pos ih (Nat.succ_pos _)
+  have hp := unitIter_pos hT
   have hm : Monotone (fun j => unitIter T j + 1) := by
     apply monotone_nat_of_le_succ
     intro j
@@ -81,7 +75,7 @@ theorem expansion_unitRay {q : ℚ} {ds : List ℕ} {T : ℕ} (hT : 1 ≤ T)
   have hz : prefixTuple (unitRay ds T) ds.length = ds := by
     simpa [prefixTuple, unitRay] using prefix_prepend ds (fun j => unitIter T j + 1) 0
   have hsum : (q:ℝ) - (∑ i ∈ Finset.range ds.length, 1/(unitRay ds T i : ℝ)) = 1/(T:ℝ) := by
-    rw [← prefixSum_real, hz, hsplit, Rat.cast_add, unit, Rat.cast_div, Rat.cast_one,
+    rw [← real_prefix_sum, hz, hsplit, Rat.cast_add, unit, Rat.cast_div, Rat.cast_one,
       Rat.cast_natCast]
     ring
   rw [hsum]
@@ -114,7 +108,7 @@ theorem exists_benchmark_of_compatible (h : CompatibleUnitTails) (q : ℚ) (hq :
   have has : HasSum (fun i : ℕ => 1/(b i:ℝ)) (q:ℝ) := by
     apply (hasSum_nat_add_iff' (f := fun i => 1/(b i : ℝ)) N).mp
     have hsum : (q:ℝ) - (∑ i ∈ Finset.range N, 1/(b i:ℝ)) = 1/(T:ℝ) := by
-      rw [← prefixSum_real, hz, hs, Rat.cast_add, unit, Rat.cast_div, Rat.cast_one,
+      rw [← real_prefix_sum, hz, hs, Rat.cast_add, unit, Rat.cast_div, Rat.cast_one,
         Rat.cast_natCast]
       ring
     rw [hsum]
@@ -145,7 +139,7 @@ theorem exists_benchmark_of_compatible (h : CompatibleUnitTails) (q : ℚ) (hq :
     rw [hz]
     linarith
   · intro j
-    rw [show N+1+j=N+(j+1) by omega, ht, iter_next_start]
+    rw [show N+1+j=N+(j+1) by omega, ht, unitIter_step_start]
   · exact fun n h => hbest n (by omega)
 
 end Egyptian

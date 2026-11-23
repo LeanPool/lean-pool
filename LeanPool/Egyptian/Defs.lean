@@ -76,6 +76,24 @@ def unitIter (T : ℕ) : ℕ → ℕ
   | 0 => T
   | j + 1 => let s := unitIter T j; s * (s + 1)
 
+/-- Running the recurrence for `i + j` steps is the same as restarting after `i` steps. -/
+theorem unitIter_add (T i j : ℕ) : unitIter T (i + j) = unitIter (unitIter T i) j := by
+  induction j with
+  | zero => rfl
+  | succ j ih => exact congrArg (fun n => n * (n + 1)) ih
+
+/-- Start the recurrence at the next denominator parameter. -/
+theorem unitIter_step_start (T i : ℕ) :
+    unitIter (T * (T + 1)) i = unitIter T (i + 1) := by
+  change unitIter (unitIter T 1) i = unitIter T (i + 1)
+  rw [Nat.add_comm i 1, unitIter_add]
+
+/-- Every iterate of a positive initial denominator parameter is positive. -/
+theorem unitIter_pos {T : ℕ} (hT : 0 < T) (i : ℕ) : 0 < unitIter T i := by
+  induction i with
+  | zero => exact hT
+  | succ i ih => exact Nat.mul_pos ih (Nat.succ_pos _)
+
 /-- Theorem 1, including the single prefix that works at all later lengths. -/
 def EventuallyGreedy : Prop :=
   ∀ (σ : Convention) (q : ℚ), 0 < q →

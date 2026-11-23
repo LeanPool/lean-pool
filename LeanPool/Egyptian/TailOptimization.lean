@@ -34,27 +34,11 @@ def CompletionBound (σ : Convention) (q : ℚ) (C : ℝ) : Prop :=
         (σ = .weak → r = 0 ∧ h' = h) ∧
         Payoff.value (1/h') / 2^(n-r) ≤ C
 
-theorem iter_shift (T j : ℕ) :
-    unitIter (T*(T+1)) j = unitIter T (j+1) := by
-  induction j with
-  | zero => rfl
-  | succ j ih => simp only [unitIter, ih]
-
-private theorem iter_pos {T : ℕ} (hT : 1 ≤ T) (j : ℕ) : 1 ≤ unitIter T j := by
-  induction j with
-  | zero => exact hT
-  | succ j ih => exact Nat.mul_pos ih (Nat.succ_pos _)
-
-theorem iter_orbit (T j : ℕ) : (unitIter T j : ℝ) = Payoff.orbit T j := by
-  induction j with
-  | zero => rfl
-  | succ j ih => simp [unitIter, Payoff.orbit, Payoff.phi, ih]
-
 private theorem digits_append (T k m : ℕ) :
     unitDigits T (k+m) = unitDigits T k ++ unitDigits (unitIter T k) m := by
   induction k generalizing T with
   | zero => simp [unitDigits, unitIter]
-  | succ k ih => simp only [Nat.succ_add, unitDigits, ih, List.cons_append, iter_shift]
+  | succ k ih => simp only [Nat.succ_add, unitDigits, ih, List.cons_append, unitIter_step_start]
 
 theorem digits_data (σ : Convention) {T : ℕ} (hT : 1 ≤ T) (k : ℕ) :
     (unitDigits T k).length = k ∧
@@ -66,7 +50,7 @@ theorem digits_data (σ : Convention) {T : ℕ} (hT : 1 ≤ T) (k : ℕ) :
     have hmul : T+1 ≤ T*(T+1) := Nat.le_mul_of_pos_left _ hT
     obtain ⟨hl, hmin, hord, hsum⟩ := ih (show 1 ≤ T*(T+1) by omega)
     simp only [unitDigits, List.length_cons, hl, List.mem_cons, List.pairwise_cons,
-      forall_eq_or_imp, Nat.lt_add_one, true_and, ← iter_shift]
+      forall_eq_or_imp, Nat.lt_add_one, true_and, ← unitIter_step_start]
     refine ⟨fun d hd => by have := hmin d hd; omega, ⟨?_, hord⟩, ?_⟩
     · intro d hd
       have := hmin d hd
@@ -92,7 +76,7 @@ theorem extension_data {σ q N p T} (hT : 1 ≤ T)
     have := hmin _ hy
     cases σ <;> simp only [Convention.rel] <;> omega
   · have hpos : (0:ℚ) < unit (unitIter T k) :=
-      one_div_pos.mpr (by exact_mod_cast (iter_pos hT k))
+      one_div_pos.mpr (by exact_mod_cast (unitIter_pos hT k))
     linarith
 
 /-- At a terminal optimum, the completion estimate rules out every strict
@@ -105,11 +89,11 @@ theorem best_extension_of_completion {σ q N p T} (hT : 2 ≤ T)
     (k : ℕ) (hk : σ = .strict → max 4 (N + 1) ≤ k) :
     IsBest σ q (N+k) (p ++ unitDigits T k) := by
   let t : ℝ := unitIter T k
-  have ht : 1 ≤ t := by dsimp only [t]; exact_mod_cast iter_pos (by omega : 1 ≤ T) k
+  have ht : 1 ≤ t := by dsimp only [t]; exact_mod_cast unitIter_pos (by omega : 1 ≤ T) k
   have hext := extension_data (by omega : 1 ≤ T) hp hstop hsplit k
   have hinv : Payoff.value T / 2 ^ N = Payoff.value t / 2^(N+k) := by
     dsimp only [t]
-    rw [iter_orbit, Payoff.value_orbit (by exact_mod_cast (show 1 ≤ T by omega)), pow_add]
+    rw [real_unitIter, Payoff.value_orbit (by exact_mod_cast (show 1 ≤ T by omega)), pow_add]
     field_simp
   refine ⟨hext.1, ?_⟩
   intro ds had
@@ -139,7 +123,7 @@ theorem best_extension_of_completion {σ q N p T} (hT : 2 ≤ T)
     exact he.not_ge (Payoff.no_better_weak ht hpos hh)
   | strict =>
     have hg := Payoff.tail_growth (t := (T:ℝ)) (by exact_mod_cast hT) N k (hk rfl)
-    rw [← iter_orbit] at hg
+    rw [← real_unitIter] at hg
     change 8 < t ∧ 2*((N+k:ℕ):ℝ)*Real.log 2 < Real.log t at hg
     have hscale := (Payoff.deletion_scaling hg.1 (le_refl (N+k)) hg.2).1
     have hpow : (0:ℝ) < 2^(N+k) := by positivity
@@ -162,11 +146,11 @@ theorem compatible_of_terminal_completion {σ q N p T} (hN : 1 ≤ N) (hT : 2 �
   let k := match σ with | .weak => 0 | .strict => max 4 (N + 1)
   have hk : σ = .strict → max 4 (N + 1) ≤ k := by rintro rfl; exact le_rfl
   have h₁ : 1 ≤ T := by omega
-  refine ⟨N+k, unitIter T k, p ++ unitDigits T k, by omega, iter_pos h₁ k,
+  refine ⟨N+k, unitIter T k, p ++ unitDigits T k, by omega, unitIter_pos h₁ k,
     (extension_data h₁ hp hstop hsplit k).2,
     best_extension_of_completion hT hp hstop hsplit hcomplete k hk, ?_⟩
   intro m _
-  rw [greedyTuple_unit σ (iter_pos h₁ k), List.append_assoc, ← digits_append,
+  rw [greedyTuple_unit σ (unitIter_pos h₁ k), List.append_assoc, ← digits_append,
     Nat.add_assoc]
   exact best_extension_of_completion hT hp hstop hsplit hcomplete (k+m)
     (fun hs => (hk hs).trans (Nat.le_add_right _ _))

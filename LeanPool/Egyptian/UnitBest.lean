@@ -15,29 +15,13 @@ public import LeanPool.Egyptian.UnitComparison
 
 namespace Egyptian
 
-theorem iter_next_start (T i : ℕ) :
-    unitIter (T * (T+1)) i = unitIter T (i+1) := by
-  induction i with
-  | zero => rfl
-  | succ i ih => simp only [unitIter, ih]
-
 theorem digits_eq_prefix (T m : ℕ) :
     unitDigits T m = prefixTuple (fun i => unitIter T i + 1) m := by
   induction m generalizing T with
   | zero => rfl
   | succ m ih =>
     simp only [unitDigits, ih, prefixTuple, List.range_succ_eq_map, List.map_cons,
-      List.map_map, Function.comp_def, iter_next_start, unitIter]
-
-theorem prefixSum_real (d : ℕ → ℕ) (m : ℕ) :
-    (recipSum (prefixTuple d m) : ℝ) = ∑ i ∈ Finset.range m, 1 / (d i : ℝ) := by
-  induction m with
-  | zero => simp [prefixTuple, recipSum]
-  | succ m ih =>
-    simp only [prefixTuple, List.range_succ, List.map_append, List.map_singleton,
-      recipSum, List.sum_append, List.sum_singleton, unit, Rat.cast_add,
-      Rat.cast_div, Rat.cast_one, Rat.cast_natCast, Finset.sum_range_succ] at ih ⊢
-    rw [ih]
+      List.map_map, Function.comp_def, unitIter_step_start, unitIter]
 
 private def entry (ds : List ℕ) (i : ℕ) := ds[i]?.getD 2
 
@@ -66,7 +50,7 @@ private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
     change t i < t i * (t i + 1)
     nlinarith only [hpos i, Nat.mul_pos (hpos i) (hpos i)]
   have hsum : (recipSum g : ℝ) = 1 / (T : ℝ) - 1 / (t m : ℝ) := by
-    rw [show g = prefixTuple (fun i => t i + 1) m from rfl, prefixSum_real]
+    rw [show g = prefixTuple (fun i => t i + 1) m from rfl, real_prefix_sum]
     simpa [t] using unitPrefixSum T m hT
   have had : Admissible σ (unit T) m g := by
     refine ⟨by simp [g, prefixTuple], ?_, ?_, ?_⟩
@@ -104,9 +88,9 @@ private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
       cases σ with
       | weak => exact hh
       | strict => exact Nat.le_of_lt hh
-    have hs := prefixSum_real d m
+    have hs := real_prefix_sum d m
     rw [repr] at hs
-    have hs' := prefixSum_real (fun i => t i + 1) m
+    have hs' := real_prefix_sum (fun i => t i + 1) m
     change (recipSum g : ℝ) = _ at hs'
     simp only [Nat.cast_add, Nat.cast_one] at hs'
     change recipSum ds < 1 / (T : ℚ) at hsmall

@@ -7,6 +7,8 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 module
 
 public import LeanPool.Egyptian.Defs
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.Positivity.Finset
 
 /-!
@@ -98,5 +100,14 @@ theorem eventuallyGreedy_of_unitTails
   have hpg := hext m hm
   refine ⟨?_, hg, honly, hpg⟩
   rw [← hpg.eq_bestValue, ← hp.eq_bestValue, ← hg.eq_bestValue, recipSum_append]
+
+/-- The sum of reciprocals over the first n places, coerced into the reals. -/
+theorem real_prefix_sum (a : ℕ → ℕ) (n : ℕ) :
+    (recipSum (prefixTuple a n) : ℝ) = ∑ i ∈ Finset.range n, 1 / (a i : ℝ) := by
+  induction n with
+  | zero => simp [recipSum, prefixTuple]
+  | succ n ih =>
+    simpa [prefixTuple, recipSum, List.range_succ, unit, Finset.sum_range_succ]
+      using congrArg (fun x : ℝ => x + 1 / (a n : ℝ)) ih
 
 end Egyptian

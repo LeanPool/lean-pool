@@ -34,21 +34,11 @@ theorem benchmark_hasUnitTail {q : ℚ} {b : ℕ → ℕ} (h : Benchmark q b) : 
   obtain ⟨_, N, T, _, hT, _, ht, _⟩ := h
   exact ⟨N, T, by omega, ht⟩
 
-private theorem iterate_add (T i j : ℕ) : unitIter T (i+j) = unitIter (unitIter T i) j := by
-  induction j with
-  | zero => rfl
-  | succ j h => exact congrArg (fun n => n * (n+1)) h
-
-private theorem unitIter_one_le {T : ℕ} (hT : 1 ≤ T) (j : ℕ) : 1 ≤ unitIter T j := by
-  induction j with
-  | zero => exact hT
-  | succ j ih => exact Nat.mul_pos ih (Nat.succ_pos _)
-
 private theorem align_unit_tail {b : ℕ → ℕ} {N T K : ℕ} (hT : 1 ≤ T)
     (h : ∀ j, b (N + j) = unitIter T j + 1) (hk : N ≤ K) :
     ∃ U : ℕ, 1 ≤ U ∧ ∀ j, b (K+j) = unitIter U j + 1 := by
-  refine ⟨unitIter T (K-N), unitIter_one_le hT _, fun j => ?_⟩
-  rw [← iterate_add, ← h, show N+(K-N+j) = K+j by omega]
+  refine ⟨unitIter T (K-N), unitIter_pos hT _, fun j => ?_⟩
+  rw [← unitIter_add, ← h, show N+(K-N+j) = K+j by omega]
 
 /-- A finite shift of an eventually equal terminal ray has a unit tail. -/
 private theorem unitTail_of_shift {c d : ℕ → ℕ} {k : ℕ} (h : HasUnitTail d)

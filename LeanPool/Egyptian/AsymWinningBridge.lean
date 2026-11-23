@@ -27,12 +27,6 @@ namespace Egyptian.Control
 open Filter
 open scoped Topology
 
-private theorem rebase_iter (T i j : ℕ) :
-    unitIter T (i+j) = unitIter (unitIter T i) j := by
-  induction j with
-  | zero => rfl
-  | succ j ih => exact congrArg (fun z => z*(z+1)) ih
-
 private theorem iter_ge_two {T : ℕ} (hT : 2 ≤ T) (j : ℕ) : 2 ≤ unitIter T j := by
   induction j with
   | zero => exact hT
@@ -69,7 +63,7 @@ theorem equal_tail_subset_winningRays (s : State) (hv : Valid s) (hzero : s.last
     exact (hc.2.1 (show i ≤ N+K by dsimp [P] at hi'; omega)).trans_lt hlast
   have ht (j : ℕ) : c (P+j) = unitIter U j+1 := by
     rw [heq _ (by dsimp [P]; omega), show P+j = N+((K+1)+j) by dsimp [P]; omega,
-      htail, rebase_iter]
+      htail, unitIter_add]
   have hrepr : c = unitRay xs U := by
     have hh := funext ht
     rw [← prepend_prefix_cancel c P, hh]

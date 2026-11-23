@@ -61,7 +61,7 @@ theorem greedy_ray_of_unit_score {s : State} {xs : List ℕ} {T U : ℕ}
   let d := fun i => unitIter U i + 1
   have hsum : recipSum (prefixTuple d xs.length) = recipSum xs := by
     apply (Rat.cast_injective (α := ℝ))
-    rw [prefixSum_real]
+    rw [real_prefix_sum]
     have hh := unitPrefixSum U xs.length (by omega)
     have hr := congrArg (fun z : ℚ => (z : ℝ)) hfrac
     simp only [unit, Rat.cast_one, Rat.cast_add, Rat.cast_div, Rat.cast_natCast, hT] at hr

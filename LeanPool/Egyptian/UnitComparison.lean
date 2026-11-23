@@ -56,11 +56,6 @@ private theorem competitorBound (T : ℕ) (hT : 0 < T) (d : ℕ → ℕ) (k : �
   simp only [one_div, prod_inv_distrib, mul_inv_rev, mul_comm] at hh ⊢
   linarith only [hh]
 
-private theorem iter_pos (T : ℕ) (hT : 0 < T) (i : ℕ) : 0 < unitIter T i := by
-  induction i with
-  | zero => exact hT
-  | succ i ih => exact Nat.mul_pos ih (Nat.succ_pos _)
-
 private theorem refProduct (T k : ℕ) :
     T * ∏ i ∈ range k, (unitIter T i + 1) = unitIter T k := by
   induction k with
@@ -75,7 +70,7 @@ theorem unitPrefixSum (T k : ℕ) (hT : 0 < T) :
   | succ k ih =>
     rw [sum_range_succ, ih]
     simp only [unitIter, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
-    have h := (Nat.cast_pos.mpr (iter_pos T hT k) : (0 : ℝ) < unitIter T k)
+    have h := (Nat.cast_pos.mpr (unitIter_pos hT k) : (0 : ℝ) < unitIter T k)
     field_simp [h.ne', (by positivity : (0 : ℝ) < unitIter T k + 1).ne']
     ring
 

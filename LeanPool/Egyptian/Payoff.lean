@@ -6,6 +6,7 @@ Authors: Vjekoslav Kovač, Quanyu Tang
 
 module
 
+public import LeanPool.Egyptian.Defs
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic.Positivity.Finset
 
@@ -265,3 +266,13 @@ theorem deletion_scaling {t : ℝ} {r n : ℕ} (ht : 8 < t) (hr : r ≤ n)
     nlinarith [mul_le_mul_of_nonneg_right hp hnn]
 
 end Egyptian.Payoff
+
+namespace Egyptian
+
+/-- Casting the integer unit-denominator recurrence gives the real payoff orbit. -/
+theorem real_unitIter (T j : ℕ) : (unitIter T j : ℝ) = Payoff.orbit (T : ℝ) j := by
+  induction j with
+  | zero => rfl
+  | succ j ih => simp [unitIter, Payoff.orbit, Payoff.phi, ih]
+
+end Egyptian
