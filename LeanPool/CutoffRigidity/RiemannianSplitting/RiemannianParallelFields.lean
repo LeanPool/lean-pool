@@ -8,12 +8,8 @@ Authors: Djalil Chafaï
 
 module
 
-public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCivita
 public import Mathlib.Geometry.Manifold.IntegralCurve.Basic
 public import Mathlib.Analysis.Calculus.MeanValue
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
 
 /-!
 # Parallel fields in the Riemannian splitting argument

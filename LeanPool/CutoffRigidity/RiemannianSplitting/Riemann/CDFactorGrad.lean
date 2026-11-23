@@ -72,30 +72,12 @@ theorem dpi_X (i : Fin k) (x : M) : fr.dpi x (fr.X i x) = 0 := by
 
 /-- `dπ` is surjective. -/
 theorem surjective_dpi (x : M) : Function.Surjective (fr.dpi x) := by
-  let c : fr.Level → M := fun z => fr.comp (List.finRange k) (fr.sv x) z.val
-  have hc : ContMDiff 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F) ∞ c :=
-    (fr.contMDiff_comp (List.finRange k)).comp
-      (contMDiff_const.prodMk fr.contMDiff_level_val')
-  have hπc : fr.toLevel ∘ c = id := by
-    funext z
-    exact Subtype.ext (fr.retr_comp _ z.val z.property)
-  have hx : c (fr.toLevel x) = x := fr.comp_retr x
-  have hcd : MDifferentiableAt 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F) c
-      (fr.toLevel x) := (hc.mdifferentiable (by simp)) _
-  have hmd : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k)))
-      fr.toLevel (c (fr.toLevel x)) := fr.mdiff_toLevel _
-  have h1 : Function.Surjective (mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k)))
-      𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) (fr.toLevel ∘ c) (fr.toLevel x)) := by
-    rw [hπc, mfderiv_id]; exact Function.surjective_id
-  rw [mfderiv_comp (fr.toLevel x) hmd hcd] at h1
-  have h2 : Function.Surjective (mfderiv 𝓘(ℝ, F)
-      𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) fr.toLevel (c (fr.toLevel x))) := by
-    intro w
-    obtain ⟨v, hv⟩ := h1 w
-    exact ⟨_, hv⟩
-  rw [hx] at h2
-  exact h2
-
+  have hsurj := (fr.splitEquiv.isInvertible_mfderiv (x := x) (by simp)).surjective
+  rw [show (fr.splitEquiv : M → Rd k × fr.Level) = (fun y ↦ (fr.sv y, fr.toLevel y)) from rfl,
+    mfderiv_prodMk (fr.mdiff_sv x) (fr.mdiff_toLevel x)] at hsurj
+  intro w
+  obtain ⟨v, hv⟩ := hsurj (0, w)
+  exact ⟨v, congrArg Prod.snd hv⟩
 
 /-- Chain rule for functions pulled back by `π`. -/
 theorem mvfderiv_comp_toLevel {u' : fr.Level → ℝ}
