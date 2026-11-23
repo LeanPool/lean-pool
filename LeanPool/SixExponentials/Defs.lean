@@ -62,12 +62,6 @@ of partial degree `< L`. -/
 noncomputable def expSum (x : Fin d → ℂ) (L : ℕ) (p : (Fin d → ℕ) → ℤ) : ℂ → ℂ :=
   fun z => ∑ lam ∈ box d L, (p lam : ℂ) * Complex.exp (expExponent x lam * z)
 
-/-- `f` has order of growth at most `ρ`. Mathlib has no order-of-growth theory at this
-revision; the auxiliary function of Schneider's method has order `1`, and this predicate is
-what an abstract form of the criterion would quantify over. -/
-def OrderAtMost (f : ℂ → ℂ) (ρ : ℝ) : Prop :=
-  ∃ C c : ℝ, 0 < C ∧ 0 < c ∧ ∀ z : ℂ, ‖f z‖ ≤ C * Real.exp (c * ‖z‖ ^ ρ)
-
 theorem differentiable_expSum (x : Fin d → ℂ) (L : ℕ) (p : (Fin d → ℕ) → ℤ) :
     Differentiable ℂ (expSum x L p) := by
   unfold expSum
