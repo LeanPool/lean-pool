@@ -1,0 +1,72 @@
+slug: lattice-dft
+title: Density-functional theory for lattice fermions
+summary: >-
+  Develops density-functional theory for spinless fermions on finite graphs.
+  It proves generic uniqueness of the potential up to a constant, bounds the
+  Hausdorff dimension of exceptional densities, and develops lattice Kohn–Sham
+  representability. It proves full regularized energy convergence and
+  potential convergence along convergent quasi-density subsequences.
+branch: mathematical physics
+entry_module: LeanPool.DFT
+authors:
+- Miguel A. L. Marques
+- Stefano Pittalis
+source:
+  title: Lattice density-functional theory in Lean
+  url: https://github.com/hyllios/lean_dft/tree/144b0dca3e597f2ae021f1c1b263ceab857f8f26
+  github_repo: hyllios/lean_dft
+  commit: 144b0dca3e597f2ae021f1c1b263ceab857f8f26
+  announcement_url: https://github.com/hyllios/lean_dft/commit/51e763ed2bd3107702e8c03411c7207b569b7c6d
+  announcement_date: '2026-11-06'
+license: Apache-2.0
+status: verified
+provenance: mix
+provenance_evidence: >-
+  The upstream README attributes the formalization to Miguel A. L. Marques and
+  Stefano Pittalis and reports Claude assistance. The initial formalization
+  commit credits Claude as a co-author.
+main_declarations:
+- DFT.generic_hk_lattice_fermions_w
+- DFT.dimH_nonUVDens_lattice_fermions_w
+- DFT.ks_potential_exists_interior
+- DFT.lattice_myksoda
+main_results:
+- declaration: DFT.generic_hk_lattice_fermions_w
+  informal: >-
+    For N spinless fermions on a connected M-site graph, assume 0 < N < M,
+    symmetric hopping of a common sign on the edges, and interactions diagonal
+    in the occupation basis. The potentials whose ground state is shared by a
+    potential differing by more than a constant lie in a closed, nowhere dense,
+    Lebesgue-null set.
+- declaration: DFT.dimH_nonUVDens_lattice_fermions_w
+  informal: >-
+    For N spinless fermions with 0 < N < M on a connected M-site graph,
+    assume symmetric common-sign edge hopping and an interaction diagonal in
+    the occupation basis. Densities of normalized, nondegenerate ground states
+    shared with a second potential differing by more than a constant have
+    Hausdorff dimension at most M minus three, truncated at zero.
+- declaration: DFT.ks_potential_exists_interior
+  informal: >-
+    For N spinless fermions on an M-site graph with 0 < N < M, fix any
+    uniform real hopping amplitude on that graph. A density with each
+    occupation strictly between zero and one and total occupation N is
+    realized by a ground-state ensemble for a site potential of the
+    noninteracting Hamiltonian with that hopping.
+- declaration: DFT.lattice_myksoda
+  informal: >-
+    Take a positive regularization parameter and real symmetric interacting
+    and reference Hamiltonians on the same nonempty finite configuration
+    space with a common occupation map. For sequences satisfying the
+    MYKSODA update equations, the regularized energy is nonincreasing and
+    the full energy sequence converges to its minimum. The quasi-density
+    sequence has an accumulation point. Along each convergent quasi-density
+    subsequence, the corresponding Kohn–Sham potentials converge to a
+    potential yielding a minimizing reference density.
+tags:
+- density-functional-theory
+- spinless-fermions
+- convex-optimization
+msc:
+- 81V55
+- 81Q10
+- 90C25

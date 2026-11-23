@@ -1,0 +1,149 @@
+/-
+Copyright (c) 2026 Miguel A. L. Marques. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Miguel A. L. Marques
+-/
+
+-- Modified for Lean Pool.
+
+module
+
+public import LeanPool.DFT.Lattice.Basic.GroundState
+public import Mathlib.Analysis.Matrix.Spectrum
+meta import Mathlib.Tactic.FunProp
+meta import Mathlib.Tactic.Linarith
+
+/-!
+# Existence of ground states and the ground-state energy
+
+* `qf_ge_of_diagonalisation`: if an orthogonal matrix `P` diagonalises `H` (`H P = P diag λ`), then
+  `⟨ψ, H ψ⟩ ≥ (min λ) ‖ψ‖²`.
+* `exists_groundState`: every symmetric matrix on a nonempty finite index type has a normalised
+  ground state (spectral theorem).
+* `gsEnergy H`: the ground-state energy; `gsEnergy_le`: it is a lower bound on normalised
+  expectation values; `qf_groundState_eq`: it is attained by every normalised ground state.
+-/
+
+@[expose] public section
+
+namespace DFT
+
+open Matrix
+
+variable {C : Type*} [Fintype C] [DecidableEq C]
+
+omit [DecidableEq C] in
+lemma continuous_qf (H : Matrix C C ℝ) : Continuous fun ψ : C → ℝ => qf H ψ := by
+  unfold qf dotProduct mulVec dotProduct; fun_prop
+
+omit [DecidableEq C] in
+lemma isCompact_sphere1 : IsCompact {ψ : C → ℝ | ψ ⬝ᵥ ψ = 1} := by
+  apply Metric.isCompact_of_isClosed_isBounded
+  · exact isClosed_eq (by unfold dotProduct; fun_prop) continuous_const
+  · refine (Metric.isBounded_closedBall (x := (0 : C → ℝ)) (r := 1)).subset fun ψ hψ => ?_
+    simp only [Set.mem_ofPred_eq] at hψ
+    rw [Metric.mem_closedBall, dist_zero_right, pi_norm_le_iff_of_nonneg zero_le_one]
+    intro c
+    rw [Real.norm_eq_abs, abs_le_one_iff_mul_self_le_one]
+    rw [← hψ]
+    exact Finset.single_le_sum (f := fun d => ψ d * ψ d) (fun d _ => mul_self_nonneg _)
+        (Finset.mem_univ c)
+
+theorem qf_ge_of_diagonalisation {H P : Matrix C C ℝ} {lam : C → ℝ} (hP : Pᵀ * P = 1)
+    (hHP : H * P = P * diagonal lam) {E : ℝ} (hE : ∀ a, E ≤ lam a) (v : C → ℝ) :
+    E * (v ⬝ᵥ v) ≤ qf H v := by
+  have hPP : P * Pᵀ = 1 := mul_eq_one_comm.mp hP
+  have hdot : ∀ x y : C → ℝ, (P *ᵥ x) ⬝ᵥ (P *ᵥ y) = x ⬝ᵥ y := by
+    intro x y
+    rw [dotProduct_mulVec, ← vecMul_transpose, vecMul_vecMul, hP, vecMul_one]
+  obtain ⟨c, rfl⟩ : ∃ c, v = P *ᵥ c := ⟨Pᵀ *ᵥ v, by rw [mulVec_mulVec, hPP, one_mulVec]⟩
+  have hq : qf H (P *ᵥ c) = c ⬝ᵥ (diagonal lam *ᵥ c) := by
+    unfold qf
+    rw [mulVec_mulVec, hHP, ← mulVec_mulVec, hdot]
+  rw [hq, hdot]
+  simp only [dotProduct, mulVec, diagonal_apply, ite_mul, zero_mul, Finset.sum_ite_eq,
+      Finset.mem_univ,
+    ite_true, Finset.mul_sum]
+  apply Finset.sum_le_sum; intro a _
+  nlinarith [hE a, mul_self_nonneg (c a)]
+
+/-- Diagonalization by columns is equivalent to the corresponding column eigenvector equations. -/
+lemma mul_eq_mul_diagonal_iff {R : Type*} [CommSemiring R] (H P : Matrix C C R) (e : C → R) :
+    H * P = P * diagonal e ↔ ∀ a, H *ᵥ P.col a = e a • P.col a := by
+  have hcol (a : C) : (P * diagonal e).col a = e a • P.col a := by
+    funext x
+    simp [Matrix.col, Matrix.mul_diagonal, mul_comm]
+  constructor
+  · intro h a
+    rw [← col_mul_eq_mulVec_col, h, hcol]
+  · intro h
+    ext x a
+    have he : (H * P).col a = (P * diagonal e).col a := by
+      rw [col_mul_eq_mulVec_col, hcol, h]
+    exact congrFun he x
+
+/-- Orthonormal eigenvectors of a symmetric real matrix, as an orthogonal matrix diagonalising it.
+-/
+theorem exists_diagonalisation {H : Matrix C C ℝ} (hS : H.IsSymm) :
+    ∃ (P : Matrix C C ℝ) (lam : C → ℝ), Pᵀ * P = 1 ∧ H * P = P * diagonal lam := by
+  have hH : H.IsHermitian := by
+    unfold Matrix.IsHermitian
+    rw [conjTranspose_eq_transpose_of_trivial]; exact hS
+  refine ⟨Matrix.of fun x a => (hH.eigenvectorBasis a) x, hH.eigenvalues, ?_, ?_⟩
+  · ext a b
+    rw [Matrix.mul_apply, Matrix.one_apply]
+    have h1 := (orthonormal_iff_ite.mp hH.eigenvectorBasis.orthonormal) a b
+    rw [EuclideanSpace.inner_eq_star_dotProduct] at h1
+    simp only [transpose_apply, of_apply]
+    rw [← h1]
+    simp [dotProduct, mul_comm]
+  · refine (mul_eq_mul_diagonal_iff _ _ _).mpr fun a => ?_
+    exact hH.mulVec_eigenvectorBasis a
+
+omit [DecidableEq C] in
+/-- **Existence of a normalised ground state.** -/
+theorem exists_groundState [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) :
+    ∃ ψ, IsGroundState H ψ ∧ ψ ⬝ᵥ ψ = 1 := by
+  classical
+  obtain ⟨P, lam, hP, hHP⟩ := exists_diagonalisation hS
+  obtain ⟨a0, -, hmin⟩ := Finset.exists_min_image Finset.univ lam Finset.univ_nonempty
+  have hlow := qf_ge_of_diagonalisation hP hHP (fun a => hmin a (Finset.mem_univ a))
+  set ψ : C → ℝ := fun x => P x a0
+  have hnorm : ψ ⬝ᵥ ψ = 1 := by
+    have := congrFun (congrFun hP a0) a0
+    simpa [Matrix.mul_apply, dotProduct, ψ] using this
+  have heig : H *ᵥ ψ = lam a0 • ψ := (mul_eq_mul_diagonal_iff H P lam).mp hHP a0
+  have hq : qf H ψ = lam a0 := by
+    unfold qf; rw [heig, dotProduct_smul, hnorm, smul_eq_mul, mul_one]
+  refine ⟨ψ, ⟨fun h0 => by rw [h0] at hnorm; simp at hnorm, fun φ => ?_⟩, hnorm⟩
+  rw [hq, hnorm, mul_one]; exact hlow φ
+
+/-- The ground-state energy. -/
+noncomputable def gsEnergy [Nonempty C] (H : Matrix C C ℝ) : ℝ :=
+  if hS : H.IsSymm then qf H (Classical.choose (exists_groundState hS)) else 0
+
+omit [DecidableEq C] in
+theorem gsEnergy_le [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {φ : C → ℝ} (hφ : φ ⬝ᵥ φ = 1) :
+    gsEnergy H ≤ qf H φ := by
+  obtain ⟨hg, hn⟩ := Classical.choose_spec (exists_groundState hS)
+  have := hg.2 φ
+  rw [hn, mul_one, hφ, mul_one] at this
+  simpa [gsEnergy, hS] using this
+
+omit [DecidableEq C] in
+theorem qf_groundState_eq [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ}
+    (hψ : IsGroundState H ψ) (hn : ψ ⬝ᵥ ψ = 1) : qf H ψ = gsEnergy H := by
+  apply le_antisymm
+  · obtain ⟨hg, hn0⟩ := Classical.choose_spec (exists_groundState hS)
+    have := hψ.2 (Classical.choose (exists_groundState hS))
+    rw [hn, hn0, mul_one, mul_one] at this
+    simpa [gsEnergy, hS] using this
+  · exact gsEnergy_le hS hn
+
+omit [DecidableEq C] in
+theorem isGroundState_of_qf_eq [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ}
+    (hn : ψ ⬝ᵥ ψ = 1) (hq : qf H ψ = gsEnergy H) : IsGroundState H ψ := by
+  obtain ⟨hg, hn0⟩ := Classical.choose_spec (exists_groundState hS)
+  exact hg.of_qf_eq hn0 hn (by simpa [gsEnergy, hS] using hq)
+
+end DFT
