@@ -9,6 +9,7 @@ module
 public import LeanPool.Bruck.WVMaximumModulus
 public import Mathlib.Analysis.Complex.ValueDistribution.CharacteristicFunction
 import Mathlib.Tactic.Lemma
+import TauCeti.Analysis.Complex.JensenFormula
 
 -- Adapted from QuanyuTang/three-im-one-cm-formalization (Apache-2.0),
 -- commit 2874a773c15da244347c6a6ccdc1a30e9bdd2a26, RequestProject/ThreeIM/PoissonBound.lean.
@@ -16,7 +17,7 @@ import Mathlib.Tactic.Lemma
 /-!
 # The maximum-modulus bound `log⁺ M(r, h) ≤ (R + r)/(R - r) T(R, h)`
 
-For an entire function `h`, `1 ≤ r < R` and `|z| = r`, we prove
+For an entire function `h`, `0 ≤ r < R` and `|z| = r`, we prove
 `log⁺ |h(z)| ≤ (R + r)/(R - r) · T(R, h)`.
 
 The proof replaces the Poisson–Jensen formula by Jensen's formula composed with a disk
@@ -50,25 +51,10 @@ theorem characteristic_eq_circleAverage_posLog {f : ℂ → ℂ} (hf : Different
 private lemma log_norm_le_circleAverage {g : ℂ → ℂ}
     (hg : AnalyticOnNhd ℂ g (Metric.closedBall 0 1))
     (hg0 : g 0 ≠ 0) : log ‖g 0‖ ≤ circleAverage (fun z => log ‖g z‖) 0 1 := by
-  have hg' : AnalyticOnNhd ℂ g (Metric.closedBall 0 |1|) := by rw [abs_one]; exact hg
-  have hm : MeromorphicOn g (Metric.closedBall 0 |1|) := hg'.meromorphicOn
-  rw [MeromorphicOn.circleAverage_log_norm one_ne_zero hm,
-    (hg 0 (by simp)).meromorphicTrailingCoeffAt_of_ne_zero hg0, log_one, mul_zero, add_zero]
-  have hnn : 0 ≤ ∑ᶠ u, (MeromorphicOn.divisor g (Metric.closedBall 0 |1|) u : ℝ) *
-      log (1 * ‖0 - u‖⁻¹) := by
-    apply finsum_nonneg
-    intro u
-    rcases eq_or_ne u 0 with rfl | h0
-    · simp
-    by_cases hu : u ∈ Metric.closedBall (0 : ℂ) |1|
-    · apply mul_nonneg
-      · exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hg' u
-      · apply Real.log_nonneg
-        rw [one_mul, zero_sub, norm_neg]
-        rw [Metric.mem_closedBall, dist_zero_right, abs_one] at hu
-        exact one_le_inv₀ (norm_pos_iff.2 h0) |>.2 hu
-    · simp [Function.locallyFinsuppWithin.apply_eq_zero_of_notMem _ hu]
-  linarith
+  have hg' : AnalyticOnNhd ℂ g (Metric.closedBall 0 |(1 : ℝ)|) := by simpa using hg
+  simpa only [Real.log_one, mul_zero, zero_add,
+    (hg 0 (by simp)).meromorphicTrailingCoeffAt_of_ne_zero hg0] using
+    hg'.le_circleAverage_log_norm (show (1 : ℝ) ≠ 0 from one_ne_zero)
 
 /-- The explicit lift of the boundary map of the disk automorphism `ζ ↦ (ζ + ρ)/(1 + ρ ζ)`. -/
 private noncomputable def mobLift (ρ θ : ℝ) : ℝ := θ - 2 * arctan (ρ * sin θ / (1 + ρ * cos θ))
@@ -180,15 +166,15 @@ private lemma integral_comp_mobLift_le {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ1 : ρ <
     simpa only [Function.comp_apply, one_mul, mul_assoc, mul_comm (d θ)] using
       mul_le_mul_of_nonneg_right h1 (hF0 (mobLift ρ θ))
 
-/-- Pointwise characteristic bound: for an entire `h` and `1 ≤ r < R`,
+/-- Pointwise characteristic bound: for an entire `h` and `0 ≤ r < R`,
 `log⁺ |h(z)| ≤ (R + r)/(R - r) · T(R, h)` on `|z| = r`. -/
-theorem entire_posLog_le {h : ℂ → ℂ} (hh : Differentiable ℂ h) {r R : ℝ} (hr : 1 ≤ r)
+theorem entire_posLog_le {h : ℂ → ℂ} (hh : Differentiable ℂ h) {r R : ℝ} (hr : 0 ≤ r)
     (hrR : r < R) {z : ℂ} (hz : ‖z‖ = r) :
     Real.posLog ‖h z‖ ≤ (R + r) / (R - r) * ValueDistribution.characteristic h ⊤ R := by
-  have hR1 : 1 ≤ R := hr.trans hrR.le
-  have hR0 : 0 < R := by linarith
-  have hT0 : 0 ≤ ValueDistribution.characteristic h ⊤ R :=
-    ValueDistribution.characteristic_nonneg hR1
+  have hR0 : 0 < R := hr.trans_lt hrR
+  have hT0 : 0 ≤ ValueDistribution.characteristic h ⊤ R := by
+    rw [characteristic_eq_circleAverage_posLog hh]
+    exact circleAverage_nonneg_of_nonneg fun _ _ => posLog_nonneg
   rcases le_or_gt ‖h z‖ 1 with hle | hgt
   · have : Real.posLog ‖h z‖ = 0 := by
       rw [posLog_apply, max_eq_left (Real.log_nonpos (norm_nonneg _) hle)]
@@ -280,11 +266,11 @@ theorem characteristic_le_posLog_maximumModulus {f : ℂ → ℂ} (hf : Differen
 
 /-- The pointwise characteristic bound applied at a maximizing point. -/
 theorem posLog_maximumModulus_le_characteristic {f : ℂ → ℂ} (hf : Differentiable ℂ f)
-    {r R : ℝ} (hr : 1 ≤ r) (hrR : r < R) :
+    {r R : ℝ} (hr : 0 ≤ r) (hrR : r < R) :
     Real.posLog (wvMaximumModulus f r) ≤
       (R + r) / (R - r) * ValueDistribution.characteristic f ⊤ R := by
   obtain ⟨z, hz, hmax⟩ :=
-    wvMaximumModulus_attained hf.continuous ((zero_le_one : (0 : ℝ) ≤ 1).trans hr)
+    wvMaximumModulus_attained hf.continuous hr
   simpa only [hmax] using entire_posLog_le hf hr hrR hz
 
 /-- Affine changes of an entire function increase the characteristic by at most

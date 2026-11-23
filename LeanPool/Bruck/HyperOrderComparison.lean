@@ -28,7 +28,7 @@ private theorem log_maximumModulus_le_three_characteristic {f : ℂ → ℂ}
     rw [posLog_apply]
     exact le_max_right _ _
   apply hlog.trans
-  simpa only [hscale] using posLog_maximumModulus_le_characteristic hf hr
+  simpa only [hscale] using posLog_maximumModulus_le_characteristic hf (zero_le_one.trans hr)
     (show r < 2 * r by linarith)
 
 /-- The characteristic of a nonconstant entire function tends to infinity. -/

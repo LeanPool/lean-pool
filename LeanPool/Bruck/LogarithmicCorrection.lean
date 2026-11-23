@@ -23,13 +23,6 @@ open Metric
 
 namespace Bruck
 
-theorem slitPlane_of_close_one {z : ℂ} (hz : ‖z - 1‖ < 1) : z ∈ Complex.slitPlane := by
-  apply Complex.mem_slitPlane_iff.2
-  left
-  have h := (abs_le.mp (Complex.abs_re_le_norm (z - 1))).1
-  rw [Complex.sub_re, Complex.one_re] at h
-  linarith
-
 theorem norm_log_le_of_norm_sub_one_le_half {z : ℂ} (hz : ‖z - 1‖ ≤ 1 / 2) :
     ‖Complex.log z‖ ≤ (3 / 2 : ℝ) * ‖z - 1‖ := by
   simpa only [add_sub_cancel] using Complex.norm_log_one_add_half_le_self hz
@@ -57,7 +50,8 @@ theorem exists_logarithmic_correction {F : ℂ → ℂ}
   let J := fun z => Complex.log (F z)
   have hslit : ∀ z : ℂ, ‖z‖ < 10 → F z ∈ Complex.slitPlane := by
     intro z hz
-    exact slitPlane_of_close_one ((h z hz).trans_lt (by norm_num))
+    exact Complex.ball_one_subset_slitPlane
+      (mem_ball_iff_norm.mpr ((h z hz).trans_lt (by norm_num)))
   have hJ (z : ℂ) (hz : z ∈ ball (0 : ℂ) 10) : DifferentiableAt ℂ J z :=
     (Complex.hasDerivAt_log (hslit z (mem_ball_zero_iff.mp hz))).differentiableAt.comp z
       (hF.differentiableAt (isOpen_ball.mem_nhds hz))

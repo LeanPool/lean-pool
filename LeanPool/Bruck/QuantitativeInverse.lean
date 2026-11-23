@@ -131,7 +131,8 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ}
     rw [Complex.exp_add, hδexp, Complex.exp_log (div_ne_zero (hwne w hw) hcne)]
     field_simp
   have hLderiv (w : ℂ) (hw : w ∈ ball c (R / 10)) : HasDerivAt L w⁻¹ w := by
-    have hslit := slitPlane_of_close_one ((hwCL w hw).trans (by norm_num))
+    have hslit := Complex.ball_one_subset_slitPlane
+      (mem_ball_iff_norm.mpr ((hwCL w hw).trans (by norm_num)))
     have hdiv := (hasDerivAt_id w).div_const c
     have hderiv := ((Complex.hasDerivAt_log hslit).comp w hdiv).const_add δ
     have heq : (w / c)⁻¹ * (1 / c) = w⁻¹ := by
