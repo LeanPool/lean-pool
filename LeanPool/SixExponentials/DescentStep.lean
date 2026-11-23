@@ -18,7 +18,7 @@ import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Monotonicity.Lemmas
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
-import TauCeti.NumberTheory.Height.House
+import TauCeti.NumberTheory.NumberField.RingOfIntegers.Norm
 
 /-!
 # Extending the zeros
@@ -144,7 +144,11 @@ theorem descent_step
     · rw [house_intCast, Int.cast_abs]
       exact mul_le_mul_of_nonneg_left ((hbH _ E (heE lam hlam)).2.trans (by gcongr)) (abs_nonneg _)
     · rw [← Finset.sum_mul]; exact mul_le_mul_of_nonneg_right hpB (by positivity)
-  have hliou := NumberField.one_le_norm_mul_house_pow hint (mul_ne_zero (pow_ne_zero E hb0) hβ0) σ
+  -- Liouville: the norm of the nonzero algebraic integer `b ^ E β` is a nonzero integer
+  have hliou := NumberField.RingOfIntegers.one_le_abs_norm (α := ⟨b ^ E * β, hint⟩)
+    fun h => mul_ne_zero (pow_ne_zero E hb0) hβ0 (congr_arg Subtype.val h)
+  rw [← Real.norm_eq_abs, Rat.norm_cast_real] at hliou
+  replace hliou := hliou.trans (norm_norm_le_norm_mul_house_pow (b ^ E * β) σ)
   rw [map_mul, map_pow, norm_mul, norm_pow, hσβ] at hliou
   -- combining the two bounds: `2 ^ (N ^ l) ≤ exp (C L N)`
   obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le hrk1
