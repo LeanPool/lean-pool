@@ -1,0 +1,53 @@
+/-
+Copyright (c) 2026 Vjekoslav Kovač, Quanyu Tang. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Vjekoslav Kovač, Quanyu Tang
+-/
+
+module
+
+public import LeanPool.Egyptian.UnitBest
+
+/-!
+# Theorem 1 at a unit-fraction target
+
+The first paragraph of the proof of Theorem 1 takes the prefix (T+1).
+The split comes from the identity 1/T − 1/(T+1) = 1/(T(T+1)).
+-/
+
+public section
+
+namespace Egyptian
+
+theorem unitTarget
+    (σ : Convention) (T : ℕ) (hT : 1 ≤ T) :
+    IsBest σ (unit T) 1 [T + 1] ∧
+      ∀ m : ℕ, 1 ≤ m →
+        let u := unit T - bestValue σ (unit T) 1
+        let g := greedyTuple σ u m
+        bestValue σ (unit T) (1 + m) = bestValue σ (unit T) 1 + bestValue σ u m ∧
+        IsBest σ u m g ∧
+        (∀ ds, IsBest σ u m ds → ds = g) ∧
+        IsBest σ (unit T) (1 + m) ([T + 1] ++ g) := by
+  have oneStep : greedyTuple σ (unit T) 1 = [T + 1] := greedyTuple_unit σ hT 1
+  have hp := (uniqueUnitTails σ T 1 hT le_rfl).1
+  rw [oneStep] at hp
+  refine ⟨hp, ?_⟩
+  intro m hm
+  dsimp only
+  have hT' : 1 ≤ T * (T + 1) := Nat.mul_pos (by omega) (by omega)
+  have hu : unit T - bestValue σ (unit T) 1 = unit (T * (T + 1)) := by
+    rw [← hp.eq_bestValue]
+    simpa [recipSum] using unit_sub_unit_succ hT
+  rw [hu]
+  obtain ⟨hg, hunique⟩ := uniqueUnitTails σ (T * (T + 1)) m hT' hm
+  have hext := (uniqueUnitTails σ T (1 + m) hT (by omega)).1
+  have htuple : greedyTuple σ (unit T) (1 + m) =
+      [T + 1] ++ greedyTuple σ (unit (T * (T + 1))) m := by
+    rw [show 1 + m = m + 1 by omega, greedyTuple_unit σ hT, greedyTuple_unit σ hT']
+    rfl
+  rw [htuple] at hext
+  exact ⟨by rw [← hext.eq_bestValue, ← hp.eq_bestValue, ← hg.eq_bestValue, recipSum_append],
+    hg, hunique, hext⟩
+
+end Egyptian

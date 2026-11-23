@@ -1,0 +1,37 @@
+slug: egyptian-underapproximations
+title: Eventually greedy best Egyptian underapproximations
+summary: For every positive rational target, best strict Egyptian underapproximations can be constructed from a common optimal prefix followed by a uniquely optimal greedy tail. Among nondecreasing reciprocal expansions, matching the extremal asymptotic growth forces eventual agreement with an optimizing sequence.
+branch: Egyptian fractions and discrete optimal control
+entry_module: LeanPool.Egyptian
+authors:
+- Vjekoslav Kovač
+- Quanyu Tang
+source:
+  title: Eventually greedy best Egyptian underapproximations of rational numbers via optimal control
+  authors:
+  - Vjekoslav Kovač
+  - Quanyu Tang
+  arxiv: 2607.28387v2
+  url: https://arxiv.org/abs/2607.28387v2
+  github_repo: VjekoKovac/lean-egyptian-underapproximations
+  commit: 8c7fbe0847a828e29d7dde64e80fc8b70414478a
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Egyptian.eventuallyGreedy
+- Egyptian.asymptoticRigidity
+main_results:
+- declaration: Egyptian.eventuallyGreedy
+  informal: For either denominator ordering convention, one maximizing prefix works at every later length when followed by the uniquely maximizing greedy tail for its remainder.
+  source_ref: Theorem 1
+- declaration: Egyptian.asymptoticRigidity
+  informal: An optimizing nondecreasing reciprocal expansion has finite positive normalized denominator growth. Every competing expansion of the same rational target has strictly smaller lower growth limit or eventually agrees term by term.
+  source_ref: Theorem 4
+tags:
+- egyptian-fractions
+- greedy-algorithms
+- optimal-control
+msc:
+- 11D68
+- 49N90
