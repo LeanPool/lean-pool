@@ -33,50 +33,62 @@ def packetScopeAmplitude : UniformCell2
   | 0 => 1
   | _ => 0
 
+/-- The common mass of the two counterexample modes. -/
+def packetScopeMass : ℝ := 3
+
+/-- The common energy of the two counterexample modes. -/
+def packetScopeEnergy : ℝ := 5
+
+/-- The counterexample modes have opposite momenta along the third coordinate. -/
+def packetScopeMomentum (mode : Fin 2) : LatticeMomentum := fun axis =>
+  if axis = 2 then if mode = 0 then 4 else -4 else 0
+
+/-- Positivity and the mass-shell condition for a mode used by the counterexample. -/
+def packetScopeModePositiveOnShell (mode : Fin 2) : Prop :=
+  0 < packetScopeEnergy ∧ 0 < packetScopeEnergy + packetScopeMass ∧
+    packetScopeEnergy ^ 2 = packetScopeMass ^ 2 + (packetScopeMomentum mode 0) ^ 2 +
+      (packetScopeMomentum mode 1) ^ 2 + (packetScopeMomentum mode 2) ^ 2
+
+/-- Each mode in the pointwise counterexample is on the positive mass shell. -/
+theorem packet_scope_modes_are_positive_on_shell (mode : Fin 2) :
+    packetScopeModePositiveOnShell mode := by
+  fin_cases mode <;> norm_num [packetScopeModePositiveOnShell, packetScopeMass,
+    packetScopeEnergy, packetScopeMomentum]
+
 /-- The positive-frequency native phase used in the two-mode counterexample. -/
 def packetScopePositivePhase : UniformTwoChannelPhase :=
-  uniformPositiveFrequencyPhase 5 packetScopeAmplitude
+  uniformPositiveFrequencyPhase packetScopeEnergy packetScopeAmplitude
 
 /-- The Dirac modes obtained by reading out the common native input. -/
 def packetScopeDiracAtOrigin : CubicalCell4 :=
-  canonicalSpectralReadout 3 5 0 0 4 packetScopePositivePhase +
-    canonicalSpectralReadout 3 5 0 0 (-4) packetScopePositivePhase
+  ∑ mode : Fin 2, canonicalSpectralReadout packetScopeMass packetScopeEnergy
+    (packetScopeMomentum mode 0) (packetScopeMomentum mode 1) (packetScopeMomentum mode 2)
+    packetScopePositivePhase
 
-/-- The sum of the native mode phases at the origin of the counterexample. -/
+/-- The sum of the native phases over the same modes at the origin. -/
 def packetScopeNativeAtOrigin : UniformTwoChannelPhase :=
-  packetScopePositivePhase + packetScopePositivePhase
+  ∑ _mode : Fin 2, packetScopePositivePhase
 
-/-- Two positive-energy modes with mass `3`, energy `5`, and opposite
-momenta `±4` are each on shell. -/
-theorem packet_scope_modes_are_positive_on_shell :
-    (0 : ℝ) < 5 + 3 ∧
-      (5 : ℝ) ^ 2 = 3 ^ 2 + 4 ^ 2 + 0 ^ 2 + 0 ^ 2 ∧
-      (5 : ℝ) ^ 2 = 3 ^ 2 + (-4) ^ 2 + 0 ^ 2 + 0 ^ 2 := by
-  norm_num
-
-/-- Both summands are obtained from the same native positive-frequency phase
-by the canonical spectral readout; no spinor datum is inserted independently. -/
+/-- Each summand reads out the native phase at its own momentum. -/
 theorem packet_scope_dirac_field_uses_canonical_native_modes :
     packetScopeDiracAtOrigin = fun component =>
-      canonicalSpectralReadout 3 5 0 0 4 packetScopePositivePhase component +
-        canonicalSpectralReadout 3 5 0 0 (-4)
-          packetScopePositivePhase component := rfl
+      ∑ mode : Fin 2, canonicalSpectralReadout packetScopeMass packetScopeEnergy
+        (packetScopeMomentum mode 0) (packetScopeMomentum mode 1) (packetScopeMomentum mode 2)
+        packetScopePositivePhase component := by
+  funext component
+  simp only [packetScopeDiracAtOrigin, Finset.sum_apply]
 
 private theorem packet_scope_dirac_field_is_normalized_sum :
-    packetScopeDiracAtOrigin = fun component =>
-      normalizedPositiveFrequencyEmbedding 3 5 0 0 4 packetScopeAmplitude component +
-        normalizedPositiveFrequencyEmbedding 3 5 0 0 (-4) packetScopeAmplitude component := by
-  rw [packet_scope_dirac_field_uses_canonical_native_modes]
-  rw [show canonicalSpectralReadout 3 5 0 0 4 packetScopePositivePhase =
-      normalizedPositiveFrequencyEmbedding 3 5 0 0 4
-        packetScopeAmplitude by
-    exact canonical_spectral_readout_uniform_positive
-      3 5 0 0 4 (by norm_num) packetScopeAmplitude]
-  rw [show canonicalSpectralReadout 3 5 0 0 (-4) packetScopePositivePhase =
-      normalizedPositiveFrequencyEmbedding 3 5 0 0 (-4)
-        packetScopeAmplitude by
-    exact canonical_spectral_readout_uniform_positive
-      3 5 0 0 (-4) (by norm_num) packetScopeAmplitude]
+    packetScopeDiracAtOrigin =
+      ∑ mode : Fin 2, normalizedPositiveFrequencyEmbedding packetScopeMass packetScopeEnergy
+        (packetScopeMomentum mode 0) (packetScopeMomentum mode 1) (packetScopeMomentum mode 2)
+        packetScopeAmplitude := by
+  unfold packetScopeDiracAtOrigin
+  apply Finset.sum_congr rfl
+  intro mode _
+  exact canonical_spectral_readout_uniform_positive packetScopeMass packetScopeEnergy
+    (packetScopeMomentum mode 0) (packetScopeMomentum mode 1) (packetScopeMomentum mode 2)
+    (ne_of_gt (packet_scope_modes_are_positive_on_shell mode).1) packetScopeAmplitude
 
 /-- At the origin the two positive-energy modes have native U(1) density
 `20`, while the density of the sum of their canonically normalized Dirac
@@ -88,11 +100,13 @@ theorem positive_packet_pointwise_native_density_is_not_dirac_density :
       -uniformNativePhaseDensity packetScopeNativeAtOrigin.1
           packetScopeNativeAtOrigin.2 = 20 := by
   constructor
-  · norm_num [packet_scope_dirac_field_is_normalized_sum, packetScopeAmplitude,
+  · norm_num [packet_scope_dirac_field_is_normalized_sum, packetScopeMass, packetScopeEnergy,
+      packetScopeMomentum, Finset.sum_apply, Fin.sum_univ_two, packetScopeAmplitude,
       normalized_positive_frequency_embedding_apply, positiveFrequencyScale,
       positiveFrequencyRatio, positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one,
       cubicalCell4Density, Complex.normSq, Fin.sum_univ_four]
-  · norm_num [packetScopeNativeAtOrigin, packetScopePositivePhase, packetScopeAmplitude,
+  · norm_num [packetScopeNativeAtOrigin, packetScopePositivePhase, packetScopeEnergy,
+      Fin.sum_univ_two, packetScopeAmplitude,
       uniformPositiveFrequencyPhase, uniformNativePhaseDensity,
       uniformScalarPhasePair, uniformCell2Density,
       Complex.mul_im, Fin.sum_univ_succ]

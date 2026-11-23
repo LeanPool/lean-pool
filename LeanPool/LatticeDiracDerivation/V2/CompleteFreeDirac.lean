@@ -947,6 +947,7 @@ structure CompleteFreeDiracCertificate : Prop where
       uniformPhaseSpaceDensity 1 (fun _ => 0)
         uniformNoetherMismatchPhase = 2
   positivePacketPointwiseOverclaimRejected :
+    (∀ mode : Fin 2, packetScopeModePositiveOnShell mode) ∧
     cubicalCell4Density packetScopeDiracAtOrigin ≠
       -uniformNativePhaseDensity packetScopeNativeAtOrigin.1
         packetScopeNativeAtOrigin.2
@@ -1125,7 +1126,7 @@ theorem complete_first_principles_free_dirac :
   arbitraryNoetherIdentificationRejected :=
     uniform_native_noether_is_not_arbitrary_dirac_density
   positivePacketPointwiseOverclaimRejected :=
-    positive_packet_pointwise_bridge_is_false
+    ⟨packet_scope_modes_are_positive_on_shell, positive_packet_pointwise_bridge_is_false⟩
   positivePacketIntegratedChargeBridge :=
     periodic_integrated_positive_packet_charge_bridge
   positivePacketIntegratedCurrentBridge :=
