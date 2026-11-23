@@ -29,6 +29,18 @@ namespace Bruck
 noncomputable def wvMaximumModulus (H : ℂ → ℂ) (r : ℝ) : ℝ :=
   sSup ((fun z => ‖H z‖) '' sphere (0 : ℂ) r)
 
+/-- The circle-image and existential-set formulations of the maximum modulus agree. -/
+theorem wvMaximumModulus_eq_sSup (H : ℂ → ℂ) (r : ℝ) :
+    wvMaximumModulus H r = sSup {y : ℝ | ∃ z : ℂ, ‖z‖ = r ∧ y = ‖H z‖} := by
+  unfold wvMaximumModulus
+  congr 1
+  ext y
+  constructor
+  · rintro ⟨z, hz, rfl⟩
+    exact ⟨z, by simpa only [mem_sphere_iff_norm, sub_zero] using hz, rfl⟩
+  · rintro ⟨z, hz, rfl⟩
+    exact ⟨z, by simpa only [mem_sphere_iff_norm, sub_zero] using hz, rfl⟩
+
 /-- The log maximum modulus of `H` as a function of the log radius. -/
 noncomputable def wvLogMaximum (H : ℂ → ℂ) (x : ℝ) : ℝ :=
   Real.log (wvMaximumModulus H (Real.exp x))
