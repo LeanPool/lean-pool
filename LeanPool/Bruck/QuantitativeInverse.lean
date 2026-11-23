@@ -25,14 +25,6 @@ open scoped Topology
 
 namespace Bruck
 
-private theorem exp_le_inv_one_sub {t : ℝ} (ht : t < 1) :
-    Real.exp t ≤ (1 - t)⁻¹ := by
-  have h : Real.log (1 - t) ≤ -t := by
-    linarith [Real.log_le_sub_one_of_pos (sub_pos.2 ht)]
-  apply (Real.le_log_iff_exp_le (inv_pos.2 (sub_pos.2 ht))).1
-  rw [Real.log_inv]
-  linarith
-
 private theorem distortion_bound {ν R : ℝ} {w D second : ℂ}
     (hν : 1 / 2 ≤ ν) (hR : 0 < R) (hw : 9 / 10 * R < ‖w‖)
     (hD : 1 / 2 ≤ ‖D‖) (hsecond : ‖second‖ ≤ 1 / 5) :
@@ -79,8 +71,9 @@ structure InverseBranchData (h χ q : ℂ → ℂ) (pointBound radius : ℝ) (w 
 
 /-- The inverse branch from an exponential approximation. The radius
 is the modulus of the image of the center of the chart. -/
-theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h)
+theorem exists_quantitative_inverse {h : ℂ → ℂ}
     {z₀ : ℂ} (hz₀ : z₀ ≠ 0) (hh₀ : h z₀ ≠ 0) {ν : ℝ} (hν : 1 / 2 ≤ ν)
+    (hh : DifferentiableOn ℂ h ((fun ζ => z₀ * Complex.exp (ζ / (ν : ℂ))) '' ball 0 10))
     (happrox : ∀ ζ : ℂ, ‖ζ‖ ≤ 10 →
       ‖h (z₀ * Complex.exp (ζ / (ν : ℂ))) / (h z₀ * Complex.exp ζ) - 1‖ ≤ 1 / 100) :
     let R := ‖h z₀‖
@@ -98,12 +91,13 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
   have hcne : c ≠ 0 := by intro he; rw [he, norm_zero] at hc; linarith
   let F : ℂ → ℂ := fun ζ =>
     h (z₀ * Complex.exp (ζ / (ν : ℂ))) / (h z₀ * Complex.exp ζ)
-  have hF : Differentiable ℂ F := by
-    exact (hh.comp ((Complex.differentiable_exp.comp
-      (differentiable_id.div_const (ν : ℂ))).const_mul z₀)).div
-      (Complex.differentiable_exp.const_mul (h z₀))
-      (fun ζ => mul_ne_zero hh₀ (Complex.exp_ne_zero ζ))
-  obtain ⟨J, hJ⟩ := exists_logarithmic_correction hF.differentiableOn happrox
+  have hchart : Differentiable ℂ (fun ζ => z₀ * Complex.exp (ζ / (ν : ℂ))) :=
+    (Complex.differentiable_exp.comp (differentiable_id.div_const (ν : ℂ))).const_mul z₀
+  have hF : DifferentiableOn ℂ F (ball 0 10) :=
+    (hh.comp hchart.differentiableOn (fun _ hz => mem_image_of_mem _ hz)).div
+      (Complex.differentiable_exp.const_mul (h z₀)).differentiableOn
+      (fun ζ _ => mul_ne_zero hh₀ (Complex.exp_ne_zero ζ))
+  obtain ⟨J, hJ⟩ := exists_logarithmic_correction hF happrox
   obtain ⟨B, hB⟩ := exists_inverse_add (fun z hz => (hJ z hz).differentiable)
     (fun z hz => (hJ z hz).norm_bound) (fun z hz => (hJ z hz).deriv_bound)
   let δ : ℂ := (Complex.arg (c / h z₀) : ℂ) * Complex.I
@@ -197,7 +191,7 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
     calc
       _ ≤ ‖z₀‖ * Real.exp (2 / 5) := by gcongr
       _ ≤ 2 * ‖z₀‖ := by
-        have h := exp_le_inv_one_sub (t := 2 / 5) (by norm_num)
+        have h := Real.exp_bound_div_one_sub_of_interval (x := 2 / 5) (by norm_num) (by norm_num)
         norm_num at h
         nlinarith [norm_nonneg z₀, mul_nonneg (norm_nonneg z₀) (sub_nonneg.2 h)]
   have hqne (w : ℂ) (hw : w ∈ ball c (R / 10)) : q w ≠ 0 :=
@@ -258,7 +252,8 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
     exact mul_le_mul_of_nonneg_left (he.trans (Real.exp_le_exp.mpr hrelo)) (norm_nonneg z₀)
   have hχhi : ‖χ c‖ ≤ (5 / 4 : ℝ) * ‖z₀‖ := by
     have he : Real.exp (1 / 5) ≤ (5 / 4 : ℝ) := by
-      convert exp_le_inv_one_sub (t := 1 / 5) (by norm_num) using 1
+      convert Real.exp_bound_div_one_sub_of_interval (x := 1 / 5)
+        (by norm_num) (by norm_num) using 1
       norm_num
     rw [hnormχ, mul_comm (5 / 4 : ℝ)]
     exact mul_le_mul_of_nonneg_left ((Real.exp_le_exp.mpr hrehi).trans he) (norm_nonneg z₀)

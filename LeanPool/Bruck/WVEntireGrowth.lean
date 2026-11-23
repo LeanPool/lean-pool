@@ -6,6 +6,7 @@ Authors: Pengcheng Fang, Tao Hu, Yanyang Li, Quanyu Tang, Haiqi Zhang
 
 module
 
+public import LeanPool.Bruck.WVConvexGrowth
 public import LeanPool.Bruck.WVMaximumModulus
 public import Mathlib.Analysis.Complex.Liouville
 public import Mathlib.Analysis.Complex.TaylorSeries
@@ -99,7 +100,7 @@ theorem wvLogMaximum_superlinear {H : ℂ → ℂ} (hH : Differentiable ℂ H)
 
 /-- The right derivative of the log maximum modulus on logarithmic radii. -/
 noncomputable def wvLogSlope (H : ℂ → ℂ) (x : ℝ) : ℝ :=
-  derivWithin (wvLogMaximum H) (Ioi x) x
+  wvRightSlope (wvLogMaximum H) x
 
 theorem wvLogSlope_monotone {H : ℂ → ℂ} (hH : Differentiable ℂ H)
     (hne : ∃ z, H z ≠ 0) : Monotone (wvLogSlope H) := by
@@ -107,7 +108,7 @@ theorem wvLogSlope_monotone {H : ℂ → ℂ} (hH : Differentiable ℂ H)
   have hmono : Monotone (fun x => derivWithin (wvLogMaximum H) (Ioi x) x) := by
     simpa only [interior_univ, monotoneOn_univ] using hh
   intro x y hxy
-  simpa only [wvLogSlope] using hmono hxy
+  simpa only [wvLogSlope, wvRightSlope] using hmono hxy
 
 theorem wvLogSlope_tendsto_atTop {H : ℂ → ℂ} (hH : Differentiable ℂ H)
     (h : WVNonPolynomial H) : Tendsto (wvLogSlope H) atTop atTop := by
@@ -128,6 +129,6 @@ theorem wvLogSlope_tendsto_atTop {H : ℂ → ℂ} (hH : Differentiable ℂ H)
     apply (le_div_iff₀ (by linarith : 0 < x)).mpr
     nlinarith
   apply hquot.trans
-  simpa only [slope_def_field, sub_zero, wvLogSlope] using hl.trans hr
+  simpa only [slope_def_field, sub_zero, wvLogSlope, wvRightSlope] using hl.trans hr
 
 end Bruck

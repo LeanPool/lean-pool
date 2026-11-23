@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Bruck.WVEntireGrowth
 public import Mathlib.Analysis.Calculus.Deriv.Polynomial
-import LeanPool.Bruck.RadialBound
 import Mathlib.Analysis.Complex.BorelCaratheodory
 
 /-! # Bounds on maximum moduli -/
@@ -101,18 +100,32 @@ theorem polynomial_leadingCoeff_mul_pow_le_maximumModulus
     exact mul_div_cancel_left₀ _ (by positivity)
   simpa only [hcoeff, n] using wvTaylorNorm_mul_pow_le_maximum p.differentiable n hr
 
+/-- A product of a polynomial's coefficient norm sum and a radius power
+bounds its norm on the corresponding circle. -/
+theorem norm_eval_polynomial_le (P : Polynomial ℂ) {r : ℝ} {z : ℂ}
+    (hr : 1 ≤ r) (hz : ‖z‖ = r) :
+    ‖P.eval z‖ ≤ (∑ k ∈ Finset.range (P.natDegree + 1), ‖P.coeff k‖) * r ^ P.natDegree := by
+  rw [Polynomial.eval_eq_sum_range, Finset.sum_mul]
+  refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k hk => ?_)
+  rw [norm_mul, norm_pow, hz]
+  exact mul_le_mul_of_nonneg_left
+    (pow_le_pow_right₀ hr (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))) (norm_nonneg _)
+
+theorem wvMaximumModulus_polynomial_le (p : Polynomial ℂ) {r : ℝ} (hr : 1 ≤ r) :
+    wvMaximumModulus p.eval r ≤
+      (∑ k ∈ Finset.range (p.natDegree + 1), ‖p.coeff k‖) * r ^ p.natDegree := by
+  obtain ⟨z, hz, hmax⟩ :=
+    wvMaximumModulus_attained p.differentiable.continuous (zero_le_one.trans hr)
+  rw [← hmax]
+  exact norm_eval_polynomial_le p hr hz
+
 theorem polynomial_maximumModulus_le (p : Polynomial ℂ) :
     ∃ C : ℝ, 0 < C ∧ ∀ r ≥ 1, wvMaximumModulus p.eval r ≤ C * r ^ p.natDegree := by
-  let s := Finset.range (p.natDegree + 1)
-  let C := ∑ i ∈ s, ‖p.coeff i‖
+  let C := ∑ i ∈ Finset.range (p.natDegree + 1), ‖p.coeff i‖
   have hC : 0 ≤ C := Finset.sum_nonneg fun i _ => norm_nonneg (p.coeff i)
-  refine ⟨1 + C, by positivity, fun r hr => ?_⟩
-  obtain ⟨z, hz, hzmax⟩ := wvMaximumModulus_attained p.differentiable.continuous
-    (zero_le_one.trans hr)
-  rw [← hzmax]
-  calc
-    ‖p.eval z‖ ≤ C * r ^ p.natDegree := norm_eval_polynomial_le p hr hz
-    _ ≤ (1 + C) * r ^ p.natDegree := by gcongr; linarith
+  refine ⟨1 + C, by positivity, fun r hr => (wvMaximumModulus_polynomial_le p hr).trans ?_⟩
+  exact mul_le_mul_of_nonneg_right (le_add_of_nonneg_left zero_le_one)
+    (pow_nonneg (zero_le_one.trans hr) _)
 
 theorem nonconstant_exp_comp {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (hnon : ¬ ∀ z, f z = f 0) : ¬ ∀ z, Complex.exp (f z) = Complex.exp (f 0) := by

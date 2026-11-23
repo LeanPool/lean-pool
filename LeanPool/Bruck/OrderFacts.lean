@@ -81,6 +81,14 @@ theorem ordinaryOrder_deriv_eq {f : ℂ → ℂ} (hf : Differentiable ℂ f)
         norm_num
       _ ≤ 3 * Real.log m := by linarith [Real.log_le_log hA0 hAr]
 
+private theorem eventually_log_maximumModulus_exp_le {f : ℂ → ℂ}
+    (hf : Differentiable ℂ f) :
+    ∀ᶠ r in atTop, Real.log (wvMaximumModulus (fun z => Complex.exp (f z)) r) ≤
+      wvMaximumModulus f r := by
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with r hr
+  have hpos := wvMaximumModulus_pos hf.cexp ⟨0, Complex.exp_ne_zero (f 0)⟩ hr
+  exact (Real.log_le_iff_le_exp hpos).2 (maximumModulus_exp_le hf.continuous hr.le)
+
 /-- Exponentiation converts the logarithmic order of the maximum modulus
 into ordinary order. -/
 theorem ordinaryOrder_exp_comp_eq_logOrder {f : ℂ → ℂ} (hf : Differentiable ℂ f)
@@ -90,7 +98,6 @@ theorem ordinaryOrder_exp_comp_eq_logOrder {f : ℂ → ℂ} (hf : Differentiabl
   have hd : Differentiable ℂ Q := hf.cexp
   have hqnon := nonconstant_exp_comp hf hnon
   have hM := maximumModulus_tendsto_atTop hf hnon
-  have hQ := maximumModulus_tendsto_atTop hd hqnon
   have hL := logMaximumModulus_tendsto_atTop hd hqnon
   have hMpos := hM.eventually_gt_atTop 0
   have hLpos := hL.eventually_gt_atTop 0
@@ -98,9 +105,7 @@ theorem ordinaryOrder_exp_comp_eq_logOrder {f : ℂ → ℂ} (hf : Differentiabl
   apply le_antisymm
   · apply logOrder_le_of_eventually_le_scaled (a := 1) (k := 1)
       (by norm_num) (by norm_num) hLpos hMpos
-    filter_upwards [eventually_ge_atTop (0 : ℝ), hQ.eventually_gt_atTop 0] with r hr hqpos
-    simpa only [one_mul] using
-      (Real.log_le_iff_le_exp hqpos).2 (maximumModulus_exp_le hf.continuous hr)
+    simpa only [one_mul] using eventually_log_maximumModulus_exp_le hf
   · let A := 2 + 3 * ‖f 0‖
     have hA : 0 < A := by dsimp [A]; positivity
     apply logOrder_le_of_eventually_le_scaled (a := A) (k := 2) hA (by norm_num) hMpos hLpos
@@ -124,16 +129,13 @@ private theorem logOrder_doubleLog_maximumModulus_exp_eq_ordinaryOrder {f : ℂ 
   have hd : Differentiable ℂ Q := hf.cexp
   have hqnon := nonconstant_exp_comp hf hnon
   have hM := maximumModulus_tendsto_atTop hf hnon
-  have hQ := maximumModulus_tendsto_atTop hd hqnon
   have hL := logMaximumModulus_tendsto_atTop hd hqnon
   change logOrder (fun r => Real.log (Real.log (wvMaximumModulus Q r))) =
     logOrder (fun r => Real.log (wvMaximumModulus f r))
   apply le_antisymm
   · apply logOrder_log_le_of_eventually_le_affine (a := 1) (k := 1) (c := 0)
       (by norm_num) le_rfl hL hM
-    filter_upwards [eventually_ge_atTop (0 : ℝ), hQ.eventually_gt_atTop 0] with r hr hqpos
-    simpa only [one_mul, add_zero] using
-      (Real.log_le_iff_le_exp hqpos).2 (maximumModulus_exp_le hf.continuous hr)
+    simpa only [one_mul, add_zero] using eventually_log_maximumModulus_exp_le hf
   · exact logOrder_log_le_of_eventually_le_affine (a := 2) (k := 2) (c := 3 * ‖f 0‖)
       (by norm_num) (by positivity) hM hL
       (maximumModulus_le_log_maximumModulus_exp hf hnon)

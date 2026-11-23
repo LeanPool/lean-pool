@@ -7,6 +7,7 @@ Authors: Pengcheng Fang, Tao Hu, Yanyang Li, Quanyu Tang, Haiqi Zhang
 module
 
 public import LeanPool.Bruck.WVMaximumModulus
+import LeanPool.Bruck.GrowthFacts
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.ODE.Gronwall
 
@@ -73,26 +74,13 @@ theorem wvMaximumModulus_le_of_first_order_ode {A y : ℂ → ℂ}
     hG.trans (gronwallBound_one_le
       (mul_nonneg hr.le (wvMaximumModulus_nonneg A r)) hr.le)
 
-/-- A product of a polynomial's coefficient norm sum and a radius power
-bounds its norm on the corresponding circle. -/
-theorem norm_eval_polynomial_le (P : Polynomial ℂ) {r : ℝ} {z : ℂ}
-    (hr : 1 ≤ r) (hz : ‖z‖ = r) :
-    ‖P.eval z‖ ≤ (∑ k ∈ Finset.range (P.natDegree + 1), ‖P.coeff k‖) * r ^ P.natDegree := by
-  rw [Polynomial.eval_eq_sum_range, Finset.sum_mul]
-  refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun k hk => ?_)
-  rw [norm_mul, norm_pow, hz]
-  exact mul_le_mul_of_nonneg_left
-    (pow_le_pow_right₀ hr (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))) (norm_nonneg _)
-
 /-- An exponential of a polynomial grows at most as the exponential of
 a constant times the radius to that polynomial's degree. -/
 theorem wvMaximumModulus_exp_polynomial_le (P : Polynomial ℂ) {r : ℝ} (hr : 1 ≤ r) :
     wvMaximumModulus (fun z => Complex.exp (P.eval z)) r ≤
-      exp ((∑ k ∈ Finset.range (P.natDegree + 1), ‖P.coeff k‖) * r ^ P.natDegree) := by
-  obtain ⟨z, hz, hmax⟩ := wvMaximumModulus_attained P.differentiable.cexp.continuous
-    ((zero_le_one : (0 : ℝ) ≤ 1).trans hr)
-  rw [← hmax, Complex.norm_exp, exp_le_exp]
-  exact (Complex.re_le_norm _).trans (norm_eval_polynomial_le P hr hz)
+      exp ((∑ k ∈ Finset.range (P.natDegree + 1), ‖P.coeff k‖) * r ^ P.natDegree) :=
+  (maximumModulus_exp_le P.differentiable.continuous (zero_le_one.trans hr)).trans
+    (Real.exp_le_exp.mpr (wvMaximumModulus_polynomial_le P hr))
 
 /-- A solution with a polynomial exponent has double-log maximum modulus bounded
 by a constant times the radius to that polynomial's degree. -/
