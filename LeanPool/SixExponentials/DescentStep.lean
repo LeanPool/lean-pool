@@ -10,7 +10,6 @@ public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import LeanPool.SixExponentials.GridEstimate
 import LeanPool.SixExponentials.HouseBounds
-import LeanPool.SixExponentials.Liouville
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.RingTheory.PiTensorProduct
@@ -19,6 +18,7 @@ import Mathlib.RingTheory.WittVector.IsPoly
 import Mathlib.Tactic.Monotonicity.Lemmas
 import Mathlib.Tactic.Polynomial.Basic
 import Mathlib.Tactic.ReduceModChar
+import TauCeti.NumberTheory.NumberField.RingOfIntegers.Norm
 
 /-!
 # Extending the zeros
@@ -132,8 +132,8 @@ theorem descent_step
   have hδ : b ^ E * β =
       ∑ lam ∈ SX.box d L, (p lam : K) * (b ^ E * ∏ ij, θ ij ^ (lam ij.1 * m ij.2)) := by
     rw [hβ, Finset.mul_sum]; exact Finset.sum_congr rfl fun _ _ => by ring
-  have hint : IsIntegral ℤ (((1 : ℤ) : K) * (b ^ E * β)) := by
-    rw [Int.cast_one, one_mul, hδ]
+  have hint : IsIntegral ℤ (b ^ E * β) := by
+    rw [hδ]
     exact IsIntegral.sum _ fun lam hlam =>
       (isIntegral_algebraMap (x := p lam)).mul (hbH _ E (heE lam hlam)).1
   have hhouse : house (b ^ E * β) ≤ B * G ^ E := by
@@ -144,9 +144,12 @@ theorem descent_step
     · rw [house_intCast, Int.cast_abs]
       exact mul_le_mul_of_nonneg_left ((hbH _ E (heE lam hlam)).2.trans (by gcongr)) (abs_nonneg _)
     · rw [← Finset.sum_mul]; exact mul_le_mul_of_nonneg_right hpB (by positivity)
-  have hliou :=
-    Transcendence.liouville_house (mul_ne_zero (pow_ne_zero E hb0) hβ0) one_ne_zero hint σ
-  rw [Int.cast_one, abs_one, one_pow, one_mul, map_mul, map_pow, norm_mul, norm_pow, hσβ] at hliou
+  -- Liouville: the norm of the nonzero algebraic integer `b ^ E β` is a nonzero integer
+  have hliou := NumberField.RingOfIntegers.one_le_abs_norm (α := ⟨b ^ E * β, hint⟩)
+    fun h => mul_ne_zero (pow_ne_zero E hb0) hβ0 (congr_arg Subtype.val h)
+  rw [← Real.norm_eq_abs, Rat.norm_cast_real] at hliou
+  replace hliou := hliou.trans (norm_norm_le_norm_mul_house_pow (b ^ E * β) σ)
+  rw [map_mul, map_pow, norm_mul, norm_pow, hσβ] at hliou
   -- combining the two bounds: `2 ^ (N ^ l) ≤ exp (C L N)`
   obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le hrk1
   have hLN : (1 : ℝ) ≤ L * N := one_le_mul_of_one_le_of_one_le hL1 hN1
