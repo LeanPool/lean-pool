@@ -83,12 +83,7 @@ theorem hyperOrder_eq_natDegree_of_polynomial_ode (P : Polynomial ℂ) (hP : 0 <
     {y : ℂ → ℂ} (hy : Differentiable ℂ y) (hynon : ¬ ∀ z, y z = y 0)
     (hODE : ∀ z, deriv y z = Complex.exp (P.eval z) * y z + 1) :
     hyperOrder y = (P.natDegree : ℝ≥0∞) := by
-  have hnonP : ¬ ∀ z, P.eval z = P.eval 0 := by
-    intro h
-    have heqP : P = Polynomial.C (P.eval 0) :=
-      Polynomial.funext fun z => by simpa using h z
-    rw [heqP, Polynomial.natDegree_C] at hP
-    exact (Nat.lt_irrefl 0) hP
+  have hnonP := polynomial_eval_nonconstant P hP
   have hpne : P ≠ 0 := by intro h; simp [h] at hP
   have hc : 0 < ‖P.leadingCoeff‖ := norm_pos_iff.2 (Polynomial.leadingCoeff_ne_zero.mpr hpne)
   apply le_antisymm ?_
@@ -111,10 +106,14 @@ theorem hyperOrder_eq_natDegree_of_polynomial_ode (P : Polynomial ℂ) (hP : 0 <
 
 /-- A transcendental entire exponent forces infinite hyper-order. -/
 theorem hyperOrder_eq_top_of_transcendental_ode {h y : ℂ → ℂ}
-    (hh : Differentiable ℂ h) (hhnon : ¬ ∀ z, h z = h 0) (htrans : WVNonPolynomial h)
+    (hh : Differentiable ℂ h) (htrans : WVNonPolynomial h)
     (hy : Differentiable ℂ y) (hynon : ¬ ∀ z, y z = y 0)
     (hODE : ∀ z, deriv y z = Complex.exp (h z) * y z + 1) :
     hyperOrder y = ⊤ := by
+  have hhnon : ¬ ∀ z, h z = h 0 := by
+    intro hconstant
+    obtain ⟨z, hz⟩ := htrans (Polynomial.C (h 0))
+    exact hz (by simpa using hconstant z)
   have hall (m : ℕ) : (m : ℝ≥0∞) ≤ hyperOrder y := by
     obtain ⟨c, hc, hlow⟩ := exists_pow_le_maximumModulus_of_nonPolynomial hh htrans m
     exact le_hyperOrder_of_ode_lower hh hhnon hy hynon hODE hc hlow

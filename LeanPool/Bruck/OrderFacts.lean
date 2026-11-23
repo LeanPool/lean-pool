@@ -37,7 +37,7 @@ theorem ordinaryOrder_deriv_eq {f : ℂ → ℂ} (hf : Differentiable ℂ f)
   have hMd := maximumModulus_tendsto_atTop hd hdnon
   apply le_antisymm
   · apply logOrder_log_le_of_eventually_le_affine (a := 1) (k := 2) (c := 0)
-      (by norm_num) (by norm_num) le_rfl hMd hMf
+      (by norm_num) le_rfl hMd hMf
     filter_upwards [eventually_ge_atTop (1 : ℝ)] with r hr
     have h := maximumModulus_deriv_le hf (zero_lt_one.trans_le hr)
     simpa only [one_mul, add_zero] using h.trans
@@ -94,7 +94,7 @@ theorem ordinaryOrder_exp_comp_eq_logOrder {f : ℂ → ℂ} (hf : Differentiabl
       (by norm_num) (by norm_num) hLpos hMpos
     filter_upwards [eventually_ge_atTop (0 : ℝ), hQ.eventually_gt_atTop 0] with r hr hqpos
     simpa only [one_mul] using
-      (Real.log_le_iff_le_exp hqpos).2 (maximumModulus_exp_le hf hr)
+      (Real.log_le_iff_le_exp hqpos).2 (maximumModulus_exp_le hf.continuous hr)
   · let A := 2 + 3 * ‖f 0‖
     have hA : 0 < A := by dsimp [A]; positivity
     apply logOrder_le_of_eventually_le_scaled (a := A) (k := 2) hA (by norm_num) hMpos hLpos
@@ -124,12 +124,12 @@ private theorem logOrder_doubleLog_maximumModulus_exp_eq_ordinaryOrder {f : ℂ 
     logOrder (fun r => Real.log (wvMaximumModulus f r))
   apply le_antisymm
   · apply logOrder_log_le_of_eventually_le_affine (a := 1) (k := 1) (c := 0)
-      (by norm_num) (by norm_num) le_rfl hL hM
+      (by norm_num) le_rfl hL hM
     filter_upwards [eventually_ge_atTop (0 : ℝ), hQ.eventually_gt_atTop 0] with r hr hqpos
     simpa only [one_mul, add_zero] using
-      (Real.log_le_iff_le_exp hqpos).2 (maximumModulus_exp_le hf hr)
+      (Real.log_le_iff_le_exp hqpos).2 (maximumModulus_exp_le hf.continuous hr)
   · exact logOrder_log_le_of_eventually_le_affine (a := 2) (k := 2) (c := 3 * ‖f 0‖)
-      (by norm_num) (by norm_num) (by positivity) hM hL
+      (by norm_num) (by positivity) hM hL
       (maximumModulus_le_log_maximumModulus_exp hf hnon)
 
 /-- The hyper-order of the exponential of a nonconstant entire function
@@ -139,14 +139,6 @@ theorem hyperOrder_exp_comp_eq_ordinaryOrder {f : ℂ → ℂ}
     hyperOrder (fun z => Complex.exp (f z)) = ordinaryOrder f :=
   (hyperOrder_eq_logOrder_maximumModulus hf.cexp (nonconstant_exp_comp hf hnon)).trans
     (logOrder_doubleLog_maximumModulus_exp_eq_ordinaryOrder hf hnon)
-
-theorem polynomial_eval_nonconstant (p : Polynomial ℂ) (hp : 0 < p.natDegree) :
-    ¬ ∀ z, p.eval z = p.eval 0 := by
-  intro hconst
-  have heq : p = Polynomial.C (p.eval 0) :=
-    Polynomial.funext (fun z => by simpa only [Polynomial.eval_C] using hconst z)
-  rw [heq, Polynomial.natDegree_C] at hp
-  exact lt_irrefl _ hp
 
 private theorem logOrder_pow (d : ℕ) : logOrder (fun r : ℝ => r ^ d) = d := by
   have hpow : ∀ᶠ r : ℝ in atTop, r ^ (d : ℝ) ≤ r ^ d :=

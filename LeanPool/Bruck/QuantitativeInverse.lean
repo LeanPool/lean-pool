@@ -9,6 +9,7 @@ module
 public import LeanPool.Bruck.LogarithmicCorrection
 public import LeanPool.Bruck.NearIdentity
 public import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.Calculus.LogDeriv
 
 /-!
 # Quantitative inverse at a maximum-modulus point
@@ -30,18 +31,6 @@ private theorem exp_le_inv_one_sub {t : ℝ} (ht : t < 1) :
     linarith [Real.log_le_sub_one_of_pos (sub_pos.2 ht)]
   apply (Real.le_log_iff_exp_le (inv_pos.2 (sub_pos.2 ht))).1
   rw [Real.log_inv]
-  linarith
-
-private theorem norm_log_near_one {u : ℂ} (hu : ‖u - 1‖ ≤ 1 / 2) :
-    ‖Complex.log u‖ ≤ (3 / 2 : ℝ) * ‖u - 1‖ := by
-  simpa only [add_sub_cancel] using Complex.norm_log_one_add_half_le_self hu
-
-private theorem slitPlane_of_close_one {u : ℂ} (hu : ‖u - 1‖ < 1) :
-    u ∈ Complex.slitPlane := by
-  apply Complex.mem_slitPlane_iff.2
-  left
-  have hre := (abs_le.mp (Complex.abs_re_le_norm (u - 1))).1
-  rw [Complex.sub_re, Complex.one_re] at hre
   linarith
 
 private theorem distortion_bound {ν R : ℝ} {w D second : ℂ}
@@ -102,8 +91,8 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
       (Complex.differentiable_exp.const_mul (h z₀))
       (fun ζ => mul_ne_zero hh₀ (Complex.exp_ne_zero ζ))
   obtain ⟨J, hJ⟩ := exists_logarithmic_correction hF happrox
-  obtain ⟨B, hB⟩ := exists_inverse_add (fun z hz => (hJ z hz).1)
-    (fun z hz => (hJ z hz).2.2.1) (fun z hz => (hJ z hz).2.2.2.1)
+  obtain ⟨B, hB⟩ := exists_inverse_add (fun z hz => (hJ z hz).differentiable)
+    (fun z hz => (hJ z hz).norm_bound) (fun z hz => (hJ z hz).deriv_bound)
   let δ : ℂ := (Complex.arg (c / h z₀) : ℂ) * Complex.I
   have hratio : ‖c / h z₀‖ = 1 := by rw [norm_div, hc, ← show R = ‖h z₀‖ from rfl, div_self hR.ne']
   have hδexp : Complex.exp δ = c / h z₀ := by
@@ -126,7 +115,7 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
     norm_pos_iff.1 ((by positivity : 0 < 9 / 10 * R).trans (hwnorm w hw))
   have hL (w : ℂ) (hw : w ∈ ball c (R / 10)) : L w ∈ ball 0 8 := by
     apply mem_ball_zero_iff.2
-    have hlog := norm_log_near_one ((hwCL w hw).le.trans (by norm_num))
+    have hlog := norm_log_le_of_norm_sub_one_le_half ((hwCL w hw).le.trans (by norm_num))
     have htri := norm_add_le δ (Complex.log (w / c))
     change ‖L w‖ < 8
     linarith [hδnorm, hwCL w hw, Real.pi_lt_four]
@@ -146,21 +135,21 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
   let D : ℂ → ℂ := fun w => 1 + deriv J (ζ w)
   let χ : ℂ → ℂ := fun w => z₀ * Complex.exp (ζ w / (ν : ℂ))
   let q : ℂ → ℂ := fun w => χ w / ((ν : ℂ) * w * D w)
-  have hζ (w : ℂ) (hw : w ∈ ball c (R / 10)) : ζ w ∈ ball 0 9 := (hB _ (hL w hw)).1
+  have hζ (w : ℂ) (hw : w ∈ ball c (R / 10)) : ζ w ∈ ball 0 9 := (hB _ (hL w hw)).mem_disk
   have hDlo (w : ℂ) (hw : w ∈ ball c (R / 10)) : 9 / 10 ≤ ‖D w‖ := by
     have htri := norm_sub_le (D w) (deriv J (ζ w))
     rw [show D w - deriv J (ζ w) = 1 by simp [D], norm_one] at htri
-    linarith [(hJ _ (hζ w hw)).2.2.2.1]
+    linarith [(hJ _ (hζ w hw)).deriv_bound]
   have hDhi (w : ℂ) (hw : w ∈ ball c (R / 10)) : ‖D w‖ ≤ 11 / 10 := by
     exact (norm_add_le (1 : ℂ) (deriv J (ζ w))).trans
-      (by rw [norm_one]; linarith [(hJ _ (hζ w hw)).2.2.2.1])
+      (by rw [norm_one]; linarith [(hJ _ (hζ w hw)).deriv_bound])
   have hDne (w : ℂ) (hw : w ∈ ball c (R / 10)) : D w ≠ 0 :=
     norm_pos_iff.1 ((by norm_num : (0 : ℝ) < 9 / 10).trans_le (hDlo w hw))
   have hχne (w : ℂ) : χ w ≠ 0 := mul_ne_zero hz₀ (Complex.exp_ne_zero _)
   have hχD (w : ℂ) (hw : w ∈ ball c (R / 10)) : HasDerivAt χ (q w) w := by
     have hBderiv : HasDerivAt (fun u => ζ u / (ν : ℂ))
         ((D w)⁻¹ * w⁻¹ / (ν : ℂ)) w :=
-      ((hB _ (hL w hw)).2.2.2.comp w (hLderiv w hw)).div_const (ν : ℂ)
+      ((hB _ (hL w hw)).hasDerivAt.comp w (hLderiv w hw)).div_const (ν : ℂ)
     have hderiv : HasDerivAt χ (χ w * ((D w)⁻¹ * w⁻¹ / (ν : ℂ))) w := by
       simpa only [χ, mul_assoc] using (hBderiv.cexp.const_mul z₀)
     have hqeq : q w = χ w * ((D w)⁻¹ * w⁻¹ / (ν : ℂ)) := by
@@ -168,8 +157,8 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
       field_simp [hνc, hwne w hw, hDne w hw]
     rwa [hqeq]
   have hχright (w : ℂ) (hw : w ∈ ball c (R / 10)) : h (χ w) = w := by
-    have hac : ζ w + J (ζ w) = L w := (hB _ (hL w hw)).2.2.1
-    have hFrel : Complex.exp (J (ζ w)) = F (ζ w) := (hJ _ (hζ w hw)).2.2.2.2.2
+    have hac : ζ w + J (ζ w) = L w := (hB _ (hL w hw)).right_inverse
+    have hFrel : Complex.exp (J (ζ w)) = F (ζ w) := (hJ _ (hζ w hw)).exp_eq
     calc
       h (χ w) = F (ζ w) * (h z₀ * Complex.exp (ζ w)) := by
         simp only [F, χ, div_mul_cancel₀ _ (mul_ne_zero hh₀ (Complex.exp_ne_zero _))]
@@ -178,7 +167,7 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
   have hnormχ (w : ℂ) : ‖χ w‖ = ‖z₀‖ * Real.exp ((ζ w).re / ν) := by
     simp [χ, Complex.norm_exp, Complex.div_ofReal_re]
   have hζre (w : ℂ) (hw : w ∈ ball c (R / 10)) : (ζ w).re ≤ 1 / 5 := by
-    have hdist := (hB _ (hL w hw)).2.1
+    have hdist := (hB _ (hL w hw)).displacement_bound
     have hre := (abs_le.mp (Complex.abs_re_le_norm (ζ w - L w))).2
     rw [Complex.sub_re] at hre
     have hn : ‖w / c‖ ≤ 11 / 10 := by
@@ -205,30 +194,35 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
         deriv q w / q w =
           1 / ((ν : ℂ) * w * D w) - 1 / w - deriv (deriv J) (ζ w) / (w * (D w)^2) := by
     have hζd : HasDerivAt ζ ((D w)⁻¹ * w⁻¹) w :=
-      (hB _ (hL w hw)).2.2.2.comp w (hLderiv w hw)
+      (hB _ (hL w hw)).hasDerivAt.comp w (hLderiv w hw)
     have hDd : HasDerivAt D (deriv (deriv J) (ζ w) * ((D w)⁻¹ * w⁻¹)) w :=
-      (((hJ _ (hζ w hw)).2.1).hasDerivAt.comp w hζd).const_add 1
-    have hWD := ((hasDerivAt_id w).const_mul (ν : ℂ)).mul hDd
-    have hqd := (hχD w hw).div hWD (mul_ne_zero (mul_ne_zero hνc (hwne w hw)) (hDne w hw))
-    refine ⟨hqd.differentiableAt, ?_⟩
-    have hqderiv :
-        deriv q w = (q w * ((ν : ℂ) * w * D w) - χ w * ((ν : ℂ) * 1 * D w +
-          (ν : ℂ) * w * (deriv (deriv J) (ζ w) * ((D w)⁻¹ * w⁻¹)))) /
-            ((ν : ℂ) * w * D w)^2 := hqd.deriv
-    rw [hqderiv]
-    let v := deriv (deriv J) (ζ w)
-    change (q w * ((ν : ℂ) * w * D w) -
-      χ w * ((ν : ℂ) * 1 * D w + (ν : ℂ) * w * (v * ((D w)⁻¹ * w⁻¹)))) /
-      ((ν : ℂ) * w * D w)^2 / q w =
-        1 / ((ν : ℂ) * w * D w) - 1 / w - v / (w * (D w)^2)
-    rw [show q w = χ w / ((ν : ℂ) * w * D w) from rfl]
-    field_simp [hνc, hwne w hw, hDne w hw, hχne w]
+      (((hJ _ (hζ w hw)).differentiable_deriv).hasDerivAt.comp w hζd).const_add 1
+    let νw : ℂ → ℂ := fun u => (ν : ℂ) * u
+    have hνw : HasDerivAt νw ((ν : ℂ) * 1) w := (hasDerivAt_id w).const_mul (ν : ℂ)
+    have hνwne : νw w ≠ 0 := mul_ne_zero hνc (hwne w hw)
+    have hden := mul_ne_zero hνwne (hDne w hw)
+    have hχd := hχD w hw
+    have hχdifferentiable := hχd.differentiableAt
+    have hdenDifferentiable := (hνw.mul hDd).differentiableAt
+    refine ⟨hχdifferentiable.div hdenDifferentiable hden, ?_⟩
+    change logDeriv (χ / (νw * D)) w = _
+    rw [logDeriv_div w (hχne w) hden hχdifferentiable hdenDifferentiable,
+      logDeriv_mul w hνwne (hDne w hw) hνw.differentiableAt hDd.differentiableAt]
+    have first : logDeriv χ w = 1 / ((ν : ℂ) * w * D w) := by
+      rw [logDeriv_apply, hχd.deriv]
+      change (χ w / ((ν : ℂ) * w * D w)) / χ w = _
+      field_simp [hχne w]
+    have last : logDeriv D w = deriv (deriv J) (ζ w) / (w * (D w) ^ 2) := by
+      rw [logDeriv_apply, hDd.deriv]
+      field_simp [hwne w hw, hDne w hw]
+    rw [first, last, show logDeriv νw w = 1 / w from
+      (logDeriv_const_mul (f := id) w _ hνc).trans (logDeriv_id w)]
     ring
   have hdistortion (w : ℂ) (hw : w ∈ ball c (R / 10)) :
       ‖deriv q w / q w‖ ≤ 10 / R := by
     rw [(hderivQ w hw).2]
     exact distortion_bound hν hR (hwnorm w hw)
-      ((by norm_num : (1 / 2 : ℝ) ≤ 9 / 10).trans (hDlo w hw)) (hJ _ (hζ w hw)).2.2.2.2.1
+      ((by norm_num : (1 / 2 : ℝ) ≤ 9 / 10).trans (hDlo w hw)) (hJ _ (hζ w hw)).second_deriv_bound
   refine ⟨χ, q, fun w hw => ⟨hχnorm w hw, hχright w hw, hχD w hw, hqne w hw,
     (hderivQ w hw).1, hdistortion w hw⟩, ?_⟩
   have hcc : c ∈ ball c (R / 10) := mem_ball_self (by positivity)
@@ -237,7 +231,7 @@ theorem exists_quantitative_inverse {h : ℂ → ℂ} (hh : Differentiable ℂ h
     have habs := Complex.abs_re_le_norm (ζ c - L c)
     have hcap : (L c).re = 0 := hLc ▸ hδre
     rw [Complex.sub_re, hcap, sub_zero] at habs
-    exact habs.trans (hB _ (hL c hcc)).2.1
+    exact habs.trans (hB _ (hL c hcc)).displacement_bound
   have hrelo : -(1 / 5 : ℝ) ≤ (ζ c).re / ν := by
     apply (le_div_iff₀ hνp).2
     linarith [(abs_le.mp hζcre).1]

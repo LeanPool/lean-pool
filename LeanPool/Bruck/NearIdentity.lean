@@ -25,14 +25,23 @@ open scoped NNReal Topology
 
 namespace Bruck
 
+/-- Pointwise estimates and identities for the inverse of a small perturbation. -/
+structure NearIdentityInverse (J B : ℂ → ℂ) (w : ℂ) : Prop where
+  /-- The inverse takes values in the larger disk. -/
+  mem_disk : B w ∈ ball 0 9
+  /-- The inverse is close to the identity. -/
+  displacement_bound : ‖B w - w‖ ≤ 1 / 10
+  /-- The inverse solves the perturbed identity equation. -/
+  right_inverse : B w + J (B w) = w
+  /-- The derivative is the reciprocal of the derivative of the forward map. -/
+  hasDerivAt : HasDerivAt B (1 + deriv J (B w))⁻¹ w
+
 /-- The inverse of a small perturbation of the identity on the smaller disk. -/
 theorem exists_inverse_add {J : ℂ → ℂ}
     (hJ : ∀ z ∈ ball 0 9, DifferentiableAt ℂ J z)
     (hsmall : ∀ z ∈ ball 0 9, ‖J z‖ ≤ 1 / 10)
     (hderiv : ∀ z ∈ ball 0 9, ‖deriv J z‖ ≤ 1 / 10) :
-    ∃ B : ℂ → ℂ, ∀ w ∈ ball 0 8,
-      B w ∈ ball 0 9 ∧ ‖B w - w‖ ≤ 1 / 10 ∧ B w + J (B w) = w ∧
-        HasDerivAt B (1 + deriv J (B w))⁻¹ w := by
+    ∃ B : ℂ → ℂ, ∀ w ∈ ball 0 8, NearIdentityInverse J B w := by
   classical
   have hLip : ∀ u ∈ ball (0 : ℂ) 9, ∀ v ∈ ball (0 : ℂ) 9,
       ‖J u - J v‖ ≤ (1 / 10 : ℝ) * ‖u - v‖ := by

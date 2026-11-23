@@ -135,8 +135,8 @@ theorem wv_good_log_radius {H : ℂ → ℂ} (hH : Differentiable ℂ H)
   obtain ⟨R₀, hR₀⟩ := eventually_atTop.mp hevent
   let E := wvCubicException L η ∪ wvCubicException A 1
   have hE : volume E < ⊤ := (measure_union_le _ _).trans_lt
-    (ENNReal.add_lt_top.mpr ⟨(wvCubicException_finite_volume L hη).2,
-      (wvCubicException_finite_volume A (by norm_num)).2⟩)
+    (ENNReal.add_lt_top.mpr ⟨(wvCubicException_finite_volume L η).2,
+      (wvCubicException_finite_volume A 1).2⟩)
   obtain ⟨x, hx, hxE⟩ := wv_exists_ge_outside_finite_volume hE (max R (max R₀ 2))
   have hxR : R ≤ x := (le_max_left _ _).trans hx
   have hxR₀ : R₀ ≤ x := (le_max_left R₀ 2).trans ((le_max_right _ _).trans hx)

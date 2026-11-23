@@ -129,14 +129,22 @@ theorem nonconstant_exp_comp {f : ℂ → ℂ} (hf : Differentiable ℂ f)
   intro z
   exact is_const_of_deriv_eq_zero hf hderiv z 0
 
-theorem maximumModulus_exp_le {f : ℂ → ℂ} (hf : Differentiable ℂ f)
+theorem polynomial_eval_nonconstant (p : Polynomial ℂ) (hp : 0 < p.natDegree) :
+    ¬ ∀ z, p.eval z = p.eval 0 := by
+  intro hconst
+  have heq : p = Polynomial.C (p.eval 0) :=
+    Polynomial.funext (fun z => by simpa only [Polynomial.eval_C] using hconst z)
+  rw [heq, Polynomial.natDegree_C] at hp
+  exact lt_irrefl _ hp
+
+theorem maximumModulus_exp_le {f : ℂ → ℂ} (hf : Continuous f)
     {r : ℝ} (hr : 0 ≤ r) :
     wvMaximumModulus (fun z => Complex.exp (f z)) r ≤ Real.exp (wvMaximumModulus f r) := by
   obtain ⟨z, hz, hmax⟩ := wvMaximumModulus_attained (H := fun z => Complex.exp (f z))
-    (Complex.continuous_exp.comp hf.continuous) hr
+    (Complex.continuous_exp.comp hf) hr
   rw [← hmax, Complex.norm_exp]
   exact Real.exp_le_exp.mpr
-    ((Complex.re_le_norm _).trans (wv_norm_le_maximumModulus hf.continuous hz))
+    ((Complex.re_le_norm _).trans (wv_norm_le_maximumModulus hf hz))
 
 theorem maximumModulus_le_log_maximumModulus_exp {f : ℂ → ℂ}
     (hf : Differentiable ℂ f) (hnon : ¬ ∀ z, f z = f 0) :

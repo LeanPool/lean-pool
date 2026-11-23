@@ -19,14 +19,28 @@ open Filter Metric Set Topology
 
 namespace Bruck
 
+/-- The radius, maximum point and rescaling for an exponential approximation. -/
+structure MaximumData (h : ℂ → ℂ) (r : ℝ) (z : ℂ) (ν : ℝ) : Prop where
+  /-- The radius is at least one. -/
+  radius_lower : 1 ≤ r
+  /-- The maximum modulus is large enough to take a positive logarithm. -/
+  modulus_lower : Real.exp 1 < wvMaximumModulus h r
+  /-- The candidate maximum point belongs to the circle of radius `r`. -/
+  point_on_circle : ‖z‖ = r
+  /-- The point attains the maximum modulus on this circle. -/
+  point_maximal : ‖h z‖ = wvMaximumModulus h r
+  /-- Lower bound on the coordinate rescaling factor. -/
+  scale_lower : (1 / 2 : ℝ) ≤ ν
+  /-- Upper bound on the coordinate rescaling factor. -/
+  scale_upper : ν ≤ 2 * (Real.log (wvMaximumModulus h r)) ^ 2
+  /-- Uniform relative error of the exponential approximation on the rescaled disk. -/
+  approximation : ∀ ζ : ℂ, ‖ζ‖ ≤ 10 →
+    ‖h (z * Complex.exp (ζ / (ν : ℂ))) / (h z * Complex.exp ζ) - 1‖ ≤ 1 / 100
+
 private theorem exists_transcendental_maximum_data {h : ℂ → ℂ}
     (hh : Differentiable ℂ h) (hn : WVNonPolynomial h) (bound : ℝ) :
     ∃ (r : ℝ) (z : ℂ) (ν : ℝ),
-      bound ≤ r ∧ 1 ≤ r ∧ Real.exp 1 < wvMaximumModulus h r ∧
-      ‖z‖ = r ∧ ‖h z‖ = wvMaximumModulus h r ∧
-      (1 / 2 : ℝ) ≤ ν ∧ ν ≤ 2 * (Real.log (wvMaximumModulus h r)) ^ 2 ∧
-      ∀ ζ : ℂ, ‖ζ‖ ≤ 10 →
-        ‖h (z * Complex.exp (ζ / (ν : ℂ))) / (h z * Complex.exp ζ) - 1‖ ≤ 1 / 100 := by
+      bound ≤ r ∧ MaximumData h r z ν := by
   have hc : ContinuousAt (fun η : ℝ => 4 * (Real.exp (7 * η) - 1)) 0 := by
     fun_prop
   obtain ⟨δ, hδ, hδbound⟩ := Metric.continuousAt_iff.mp hc (1 / 100) (by norm_num)
@@ -93,11 +107,7 @@ private theorem exists_polynomial_maximum_data {h : ℂ → ℂ}
     (hh : Differentiable ℂ h) (pn : Polynomial ℂ) (hp : ∀ z, h z = pn.eval z)
     (hnon : ¬ ∀ z, h z = h 0) (bound : ℝ) :
     ∃ (r : ℝ) (z : ℂ) (ν : ℝ),
-      bound ≤ r ∧ 1 ≤ r ∧ Real.exp 1 < wvMaximumModulus h r ∧
-      ‖z‖ = r ∧ ‖h z‖ = wvMaximumModulus h r ∧
-      (1 / 2 : ℝ) ≤ ν ∧ ν ≤ 2 * (Real.log (wvMaximumModulus h r)) ^ 2 ∧
-      ∀ ζ : ℂ, ‖ζ‖ ≤ 10 →
-        ‖h (z * Complex.exp (ζ / (ν : ℂ))) / (h z * Complex.exp ζ) - 1‖ ≤ 1 / 100 := by
+      bound ≤ r ∧ MaximumData h r z ν := by
   let d := pn.natDegree
   let a := pn.leadingCoeff
   have hd : 0 < d := by
@@ -209,11 +219,7 @@ approximated by an exponential in a rescaled coordinate at a maximum point. -/
 theorem exists_maximum_data {h : ℂ → ℂ} (hh : Differentiable ℂ h)
     (hnon : ¬ ∀ z, h z = h 0) (bound : ℝ) :
     ∃ (r : ℝ) (z : ℂ) (ν : ℝ),
-      bound ≤ r ∧ 1 ≤ r ∧ Real.exp 1 < wvMaximumModulus h r ∧
-      ‖z‖ = r ∧ ‖h z‖ = wvMaximumModulus h r ∧
-      (1 / 2 : ℝ) ≤ ν ∧ ν ≤ 2 * (Real.log (wvMaximumModulus h r)) ^ 2 ∧
-      ∀ ζ : ℂ, ‖ζ‖ ≤ 10 →
-        ‖h (z * Complex.exp (ζ / (ν : ℂ))) / (h z * Complex.exp ζ) - 1‖ ≤ 1 / 100 := by
+      bound ≤ r ∧ MaximumData h r z ν := by
   by_cases hn : WVNonPolynomial h
   · exact exists_transcendental_maximum_data hh hn bound
   · simp only [WVNonPolynomial, not_forall, not_exists, not_ne_iff] at hn

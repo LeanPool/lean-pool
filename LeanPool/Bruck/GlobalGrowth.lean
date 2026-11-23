@@ -66,7 +66,7 @@ theorem exists_uniform_maximumModulus_lower_bound {h : ℂ → ℂ}
   have hE := hM.eventually (local_quantitative_growth.and (eventually_four_log_sq_le.and
     ((eventually_ge_atTop (1 : ℝ)).and (eventually_ge_atTop (4 / k)))))
   obtain ⟨r₀, hr₀⟩ := eventually_atTop.mp hE
-  obtain ⟨r, z, ν, hr, hr1, hRe, hzr, hzmax, hν, hνmax, happrox⟩ :=
+  obtain ⟨r, z, ν, hr, maximum⟩ :=
     exists_maximum_data hh hnon (max r₀ bound)
   let R := wvMaximumModulus h r
   let c : ℂ := -(R : ℂ) * Complex.I
@@ -74,24 +74,28 @@ theorem exists_uniform_maximumModulus_lower_bound {h : ℂ → ℂ}
   obtain ⟨hLocal, hRlog, hR1, hRk⟩ := hr₀ r ((le_max_left _ _).trans hr)
   have hz : z ≠ 0 := by
     intro hz
-    rw [hz, norm_zero] at hzr
-    linarith
+    have circle := maximum.point_on_circle
+    rw [hz, norm_zero] at circle
+    linarith [maximum.radius_lower]
   have hhZ : h z ≠ 0 := by
     intro hz
-    rw [hz, norm_zero] at hzmax
-    linarith [Real.exp_pos 1]
-  obtain ⟨χ, q, hχ, hqlo, hqup⟩ := exists_quantitative_inverse hh hz hhZ hν happrox
-  rw [hzmax, hzr] at hχ hqlo hqup
+    have modulus := maximum.point_maximal
+    rw [hz, norm_zero] at modulus
+    linarith [maximum.modulus_lower, Real.exp_pos 1]
+  obtain ⟨χ, q, hχ, hqlo, hqup⟩ := exists_quantitative_inverse
+    hh hz hhZ maximum.scale_lower maximum.approximation
+  rw [maximum.point_maximal, maximum.point_on_circle] at hχ hqlo hqup
   have hq (w : ℂ) (hw : w ∈ D) : q w ≠ 0 ∧ DifferentiableAt ℂ q w ∧ ‖deriv q w / q w‖ ≤ 10 / R :=
     (hχ w hw).2.2.2
   have hνR : 2 * ν ≤ R := by
-    change ν ≤ 2 * (Real.log R) ^ 2 at hνmax
+    have scale : ν ≤ 2 * (Real.log R) ^ 2 := maximum.scale_upper
     change 4 * (Real.log R) ^ 2 ≤ R at hRlog
     linarith
   obtain ⟨hlo, hup⟩ :=
-    inverse_derivative_polynomial_bounds hr1 hν hR1 hk (hkGrowth r hr1) hRk hνR hqlo hqup
+    inverse_derivative_polynomial_bounds maximum.radius_lower maximum.scale_lower hR1 hk
+      (hkGrowth r maximum.radius_lower) hRk hνR hqlo hqup
   obtain ⟨w₀, hw₀, w₁, hw₁, hW⟩ := hLocal q hq hlo hup
-  refine ⟨r, (le_max_right _ _).trans hr, hr1, ?_⟩
+  refine ⟨r, (le_max_right _ _).trans hr, maximum.radius_lower, ?_⟩
   intro y hy hode
   let Y : ℂ → ℂ := y ∘ χ
   have hY (w : ℂ) (hw : w ∈ D) : HasDerivAt Y (q w * (Complex.exp w * Y w + 1)) w := by
@@ -99,7 +103,7 @@ theorem exists_uniform_maximumModulus_lower_bound {h : ℂ → ℂ}
     rw [hode, (hχ w hw).2.1] at had
     simpa only [Y, Function.comp_apply, mul_comm (q w)] using had
   have hbound (w : ℂ) (hw : w ∈ D) : ‖Y w‖ ≤ wvMaximumModulus y (2 * r) :=
-    wv_norm_le_maximumModulus_of_le hy (by linarith) (hχ w hw).1
+    wv_norm_le_maximumModulus_of_le hy (by linarith [maximum.radius_lower]) (hχ w hw).1
   exact (hW Y hY).trans (max_le (hbound w₀ hw₀) (hbound w₁ hw₁))
 
 end Bruck

@@ -95,7 +95,7 @@ theorem logOrder_le_of_eventually_le_scaled {F G : ℝ → ℝ} {a k : ℝ}
 /-- Additive errors before a logarithm are harmless in logarithmic order when
 both arguments tend to infinity. -/
 theorem logOrder_log_le_of_eventually_le_affine {F G : ℝ → ℝ} {a k c : ℝ}
-    (_ha : 0 < a) (hk : 0 < k) (hc : 0 ≤ c)
+    (hk : 0 < k) (hc : 0 ≤ c)
     (hF : Tendsto F atTop atTop) (hG : Tendsto G atTop atTop)
     (h : ∀ᶠ r in atTop, F r ≤ a * G (k * r) + c) :
     logOrder (fun r => Real.log (F r)) ≤ logOrder (fun r => Real.log (G r)) := by

@@ -50,10 +50,9 @@ theorem wvGridWidth_summable (η : ℝ) : Summable (wvGridWidth η) := by
   rw [heq]
   exact hh.mul_left _
 
-theorem wvCubicException_finite_volume (L : ℝ → ℝ) {η : ℝ} (hη : 0 < η) :
+theorem wvCubicException_finite_volume (L : ℝ → ℝ) (η : ℝ) :
     MeasurableSet (wvCubicException L η) ∧ volume (wvCubicException L η) < ⊤ := by
-  exact wv_threshold_intervals_finite_volume (fun n => (wvGridWidth_pos hη n).le)
-    (wvGridWidth_summable η)
+  exact wv_threshold_intervals_finite_volume (wvGridWidth_summable η)
 
 theorem wvGridWidth_antitone {η : ℝ} (hη : 0 < η) : Antitone (wvGridWidth η) := by
   intro m n hmn

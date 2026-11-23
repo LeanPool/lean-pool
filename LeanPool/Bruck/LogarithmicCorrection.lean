@@ -24,28 +24,40 @@ open scoped ComplexConjugate
 
 namespace Bruck
 
-private theorem re_pos_of_norm_sub_one_lt_one {z : ℂ} (hz : ‖z - 1‖ < 1) :
-    0 < z.re := by
+theorem slitPlane_of_close_one {z : ℂ} (hz : ‖z - 1‖ < 1) : z ∈ Complex.slitPlane := by
+  apply Complex.mem_slitPlane_iff.2
+  left
   have h := (abs_le.mp (Complex.abs_re_le_norm (z - 1))).1
   rw [Complex.sub_re, Complex.one_re] at h
   linarith
 
-private theorem norm_log_le_of_norm_sub_one_le_half {z : ℂ} (hz : ‖z - 1‖ ≤ 1 / 2) :
+theorem norm_log_le_of_norm_sub_one_le_half {z : ℂ} (hz : ‖z - 1‖ ≤ 1 / 2) :
     ‖Complex.log z‖ ≤ (3 / 2 : ℝ) * ‖z - 1‖ := by
   simpa only [add_sub_cancel] using Complex.norm_log_one_add_half_le_self hz
+
+/-- Regularity and bounds for the logarithm of the relative error. -/
+structure LogarithmicCorrection (F J : ℂ → ℂ) (z : ℂ) : Prop where
+  /-- The logarithm is complex differentiable. -/
+  differentiable : DifferentiableAt ℂ J z
+  /-- Its first derivative is complex differentiable. -/
+  differentiable_deriv : DifferentiableAt ℂ (deriv J) z
+  /-- Bound on the logarithm. -/
+  norm_bound : ‖J z‖ ≤ 1 / 10
+  /-- Bound on the first derivative. -/
+  deriv_bound : ‖deriv J z‖ ≤ 1 / 10
+  /-- Bound on the second derivative. -/
+  second_deriv_bound : ‖deriv (deriv J) z‖ ≤ 1 / 5
+  /-- Exponentiating recovers the relative error factor. -/
+  exp_eq : Complex.exp (J z) = F z
 
 /-- The logarithm of the relative error in the exponential model. -/
 theorem exists_logarithmic_correction {F : ℂ → ℂ} (hF : Differentiable ℂ F)
     (h : ∀ z : ℂ, ‖z‖ ≤ 10 → ‖F z - 1‖ ≤ 1 / 100) :
-    ∃ J : ℂ → ℂ, ∀ z ∈ ball 0 9,
-      DifferentiableAt ℂ J z ∧ DifferentiableAt ℂ (deriv J) z ∧
-      ‖J z‖ ≤ 1 / 10 ∧ ‖deriv J z‖ ≤ 1 / 10 ∧ ‖deriv (deriv J) z‖ ≤ 1 / 5 ∧
-      Complex.exp (J z) = F z := by
+    ∃ J : ℂ → ℂ, ∀ z ∈ ball 0 9, LogarithmicCorrection F J z := by
   let J := fun z => Complex.log (F z)
   have hslit : ∀ z : ℂ, ‖z‖ ≤ 10 → F z ∈ Complex.slitPlane := by
     intro z hz
-    have hpos := re_pos_of_norm_sub_one_lt_one ((h z hz).trans_lt (by norm_num))
-    exact Complex.mem_slitPlane_iff.2 (Or.inl hpos)
+    exact slitPlane_of_close_one ((h z hz).trans_lt (by norm_num))
   have hJ (z : ℂ) (hz : ‖z‖ ≤ 10) : DifferentiableAt ℂ J z :=
     (Complex.hasDerivAt_log (hslit z hz)).differentiableAt.comp z (hF z)
   have hbound (z : ℂ) (hz : ‖z‖ ≤ 10) : ‖J z‖ ≤ 1 / 10 := by

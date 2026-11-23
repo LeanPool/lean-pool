@@ -90,7 +90,7 @@ theorem wv_threshold_no_crossing {L : ℝ → ℝ} (hL : MonotoneOn L (Ici 1))
     constructor <;> linarith [ht.1, ht.2]
 
 theorem wv_threshold_intervals_finite_volume {t w : ℕ → ℝ}
-    (_hw : ∀ n, 0 ≤ w n) (hs : Summable w) :
+    (hs : Summable w) :
     MeasurableSet (⋃ n, Icc (t n - w n) (t n + w n)) ∧
       volume (⋃ n, Icc (t n - w n) (t n + w n)) < ⊤ := by
   constructor

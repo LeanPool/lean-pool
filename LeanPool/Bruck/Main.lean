@@ -28,7 +28,7 @@ namespace Bruck
 /-- A nonconstant entire function of finite hyper-order different from every
 positive integer, sharing a finite value with its derivative counting
 multiplicities, has a nonzero constant sharing quotient. -/
-theorem bruck {f : ℂ → ℂ} (hf : Differentiable ℂ f)
+theorem bruck_conjecture {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (hnon : ¬ ∀ z, f z = f 0) (a : ℂ) (hshare : SharesCM f (deriv f) a)
     (hfinite : hyperOrder f < ⊤)
     (hnotint : ∀ n : ℕ, 0 < n → hyperOrder f ≠ (n : ℝ≥0∞)) :
@@ -61,7 +61,7 @@ theorem bruck {f : ℂ → ℂ} (hf : Differentiable ℂ f)
   have hconst : ∀ z, h z = h 0 := by
     by_contra hhnon
     by_cases htrans : WVNonPolynomial h
-    · have htop := hyperOrder_eq_top_of_transcendental_ode hh hhnon htrans hy hynon hODE
+    · have htop := hyperOrder_eq_top_of_transcendental_ode hh htrans hy hynon hODE
       rw [hrho] at htop
       exact (ne_of_lt hfinite) htop
     · simp only [WVNonPolynomial, not_forall, not_exists, not_not] at htrans

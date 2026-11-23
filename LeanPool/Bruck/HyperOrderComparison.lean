@@ -57,13 +57,13 @@ theorem hyperOrder_eq_logOrder_maximumModulus {f : ℂ → ℂ} (hf : Differenti
   unfold hyperOrder
   refine le_antisymm ?_ ?_
   · refine logOrder_log_le_of_eventually_le_affine
-      (a := 1) (k := 1) (c := 0) (by norm_num) (by norm_num) le_rfl hchar hlogM ?_
+      (a := 1) (k := 1) (c := 0) (by norm_num) le_rfl hchar hlogM ?_
     filter_upwards [eventually_ge_atTop (0 : ℝ), hm.eventually_ge_atTop 1] with r hr hMr
     have hposLog : log⁺ (wvMaximumModulus f r) = log (wvMaximumModulus f r) :=
       posLog_eq_log (by rwa [abs_of_nonneg (wvMaximumModulus_nonneg f r)])
     simpa only [one_mul, add_zero, ← hposLog] using characteristic_le_posLog_maximumModulus hf hr
   · refine logOrder_log_le_of_eventually_le_affine
-      (a := 3) (k := 2) (c := 0) (by norm_num) (by norm_num) le_rfl hlogM hchar ?_
+      (a := 3) (k := 2) (c := 0) (by norm_num) le_rfl hlogM hchar ?_
     filter_upwards [eventually_ge_atTop (1 : ℝ)] with r hr
     simpa only [add_zero] using log_maximumModulus_le_three_characteristic hf hr
 
@@ -92,12 +92,12 @@ theorem hyperOrder_affine {f : ℂ → ℂ} (hf : Differentiable ℂ f)
   refine le_antisymm ?_ ?_
   · refine logOrder_log_le_of_eventually_le_affine
       (a := 1) (k := 1) (c := log⁺ ‖a‖ + log⁺ ‖b‖ + log 2)
-      (by norm_num) (by norm_num) (affine_error_nonneg a b) hcharG hcharF
+      (by norm_num) (affine_error_nonneg a b) hcharG hcharF
       (Eventually.of_forall fun r => ?_)
     simpa only [one_mul] using characteristic_affine_le hf a b r
   · refine logOrder_log_le_of_eventually_le_affine
       (a := 1) (k := 1) (c := log⁺ ‖a⁻¹‖ + log⁺ ‖-(a⁻¹ * b)‖ + log 2)
-      (by norm_num) (by norm_num) (affine_error_nonneg a⁻¹ (-(a⁻¹ * b))) hcharF hcharG
+      (by norm_num) (affine_error_nonneg a⁻¹ (-(a⁻¹ * b))) hcharF hcharG
       (Eventually.of_forall fun r => ?_)
     simpa only [one_mul, hinv] using characteristic_affine_le hg a⁻¹ (-(a⁻¹ * b)) r
 
