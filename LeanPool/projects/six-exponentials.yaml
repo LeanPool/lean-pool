@@ -1,0 +1,65 @@
+slug: six-exponentials
+title: The six exponentials theorem of Lang and Ramachandra
+summary: 'Proves the six exponentials theorem in the general form of Lang and Ramachandra: for
+  d complex numbers x₁, …, x_d linearly independent over ℚ and l complex numbers y₁, …, y_l
+  linearly independent over ℚ, with d + l < d l, at least one of the numbers exp(xᵢ yⱼ) is
+  transcendental; more precisely, for every subfield K of ℂ of finite degree over ℚ some
+  exp(xᵢ yⱼ) lies outside K. The classical six exponentials theorem is the case d = 2, l = 3.
+  The proof is Schneider''s method relative to a number field: Siegel''s lemma gives an
+  exponential polynomial with integer coefficients, not all zero, vanishing on a box of lattice
+  points ∑ mⱼ yⱼ; a Cauchy estimate with zeros, played against Liouville''s inequality, extends
+  the vanishing from each box to the next; and an exponential polynomial vanishing on the whole
+  lattice has zero coefficients by Dedekind''s independence of characters. The pool''s
+  roy-strong-six project proves Roy''s strong six exponentials theorem, whose hypotheses are
+  linear independence over the algebraic numbers rather than over ℚ and whose proof goes through
+  Philippon''s multiplicity estimate; this project assumes only ℚ-independence, covers every
+  (d, l) with d + l < d l, and gives the elementary auxiliary-function proof.'
+branch: transcendental number theory
+entry_module: LeanPool.SixExponentials
+authors:
+- Carlo Perassi
+source:
+  title: Introduction to Transcendental Numbers, chapter II
+  authors:
+  - Serge Lang
+  url: https://github.com/carlok/six-exponentials-lean
+  github_repo: carlok/six-exponentials-lean
+  commit: b42d65be65fc4e4a7cea3ba965aabea8f1df8028
+  announcement: https://palomar-registry.org/entry?id=PALOMAR-2026-11-22-000020&version=1
+  announcement_date: '2026-11-22'
+  citation: 'S. Lang, Introduction to Transcendental Numbers, Addison-Wesley, 1966, chapter II;
+    K. Ramachandra, Contributions to the theory of transcendental numbers I, Acta Arithmetica 14
+    (1968), 65–72.'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: The upstream formalization.yaml states that Claude agents (Claude Code) wrote
+  the Lean proofs under the author's direction, one statement at a time, checked on the Prove2Me
+  platform and then mirrored into carlok/diaz-modulus-lean.
+main_declarations:
+- SixExponentials.SX.six_exponentials_of_numberField
+- SixExponentials.exists_transcendental_exp
+- SixExponentials.six_exponentials_theorem
+main_results:
+- declaration: SixExponentials.SX.six_exponentials_of_numberField
+  informal: If d + l < d l, x₁, …, x_d are complex numbers linearly independent over ℚ, y₁, …, y_l
+    are complex numbers linearly independent over ℚ, and K is a subfield of ℂ of finite degree
+    over ℚ, then some exp(xᵢ yⱼ) does not lie in K.
+  source_ref: Lang 1966, chapter II; Ramachandra 1968 (number-field form)
+- declaration: SixExponentials.exists_transcendental_exp
+  informal: If d + l < d l and the families x₁, …, x_d and y₁, …, y_l of complex numbers are each
+    linearly independent over ℚ, then some exp(xᵢ yⱼ) is transcendental over ℚ.
+  source_ref: Lang 1966, chapter II; Ramachandra 1968
+- declaration: SixExponentials.six_exponentials_theorem
+  informal: If x₁, x₂ are complex numbers linearly independent over ℚ and y₁, y₂, y₃ are complex
+    numbers linearly independent over ℚ, then at least one of the six numbers exp(xᵢ yⱼ) is
+    transcendental over ℚ.
+  source_ref: Lang 1966, chapter II; Ramachandra 1968 (six exponentials theorem)
+tags:
+- transcendence
+- six-exponentials
+- schneider-method
+- number-fields
+msc:
+- 11J81
+- 68V20
