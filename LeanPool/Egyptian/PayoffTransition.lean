@@ -24,16 +24,24 @@ namespace Egyptian.Payoff
 
 open Finset
 
+theorem reference_comparison {t : ℝ} (ht : 1 ≤ t) (v : ℕ → ℝ) (m : ℕ)
+    (hv : ∀ i < m, 0 < v i) (hm : ∀ i, i + 1 < m → v (i + 1) ≤ v i)
+    (hc : ∀ k, 0 < k → k ≤ m →
+      (∑ i ∈ range k, v i) + (1 / t) * ∏ i ∈ range k, v i ≤ 1 / t) :
+    (∑ i ∈ range m, v i) ≤ ∑ i ∈ range m, reference t i ∧
+      ((∑ i ∈ range m, reference t i) ≤ ∑ i ∈ range m, v i →
+        ∀ i < m, reference t i = v i) :=
+  variableComparison (reference t) v (fun _ => 1 / t) (1 / t) m
+    (fun i _ => reference_pos ht i) hv hm (fun _ _ _ => by positivity)
+    (fun k _ _ => reference_identity ht k) hc m le_rfl
+
 /-- The no-decrease bound, in the positive-remainder form. -/
 theorem no_decrease {t : ℝ} (ht : 1 ≤ t) (v : ℕ → ℝ) (m : ℕ)
     (hv : ∀ i < m, 0 < v i) (hm : ∀ i, i + 1 < m → v (i + 1) ≤ v i)
     (hc : ∀ k, 0 < k → k ≤ m →
       (∑ i ∈ range k, v i) + (1 / t) * ∏ i ∈ range k, v i ≤ 1 / t) :
     1 / orbit t m ≤ 1/t - ∑ i ∈ range m, v i := by
-  have h := variableComparison (reference t) v (fun _ => 1/t) (1/t) m
-    (fun i _ => reference_pos ht i) hv hm (fun _ _ _ => by positivity)
-    (fun k _ _ => reference_identity ht k) hc
-  have he := (h m le_rfl).1
+  have he := (reference_comparison ht v m hv hm hc).1
   rw [reference_sum ht] at he
   linarith
 
@@ -51,7 +59,6 @@ theorem first_decrease {t δ : ℝ} (ht : 1 ≤ t) (hd : 0 < δ) (hd' : δ < 1)
   have ht' : 0 < t := by linarith
   have hq : 0 < orbit t m := by have := one_le_orbit ht m; linarith
   have hqd : 0 < orbit t m + δ := by positivity
-  have hq1 : 0 < orbit t m + 1 := by positivity
   have sa (k : ℕ) (hk : k ≤ m) : (∑ i ∈ range k, a i) = 1/t - 1/orbit t k :=
     (sum_congr rfl (fun i hi => ite_eq_right (by have := mem_range.mp hi; omega))).trans
       (reference_sum ht k)

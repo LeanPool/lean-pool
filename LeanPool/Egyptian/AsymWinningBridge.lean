@@ -49,7 +49,6 @@ theorem equal_tail_subset_winningRays (s : State) (hv : Valid s) (hzero : s.last
   let P := N+K+1
   let U := unitIter T (K+1)
   let xs := prefixTuple c P
-  have hp : xs.length = P := by simp [xs, prefixTuple]
   have hU : 2 ≤ U := iter_ge_two hT _
   have hlast : c (N+K) < U := by
     have htwo := iter_ge_two hT K

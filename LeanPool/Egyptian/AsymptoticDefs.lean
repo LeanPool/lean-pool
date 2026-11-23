@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Topology.Instances.EReal.Lemmas
 
 /-!
 # Infinite denominator expansions and the rigidity statement

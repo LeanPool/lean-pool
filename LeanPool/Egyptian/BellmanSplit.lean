@@ -39,7 +39,7 @@ theorem fall_interior {σ s xs} (hs : s.p ≤ s.q) (h : FallBlock σ s xs) :
   induction xs using List.reverseRecOn with
   | nil => exact (fall_ne_nil h rfl).elim
   | append_singleton ys x _ =>
-    obtain ⟨hc, hx⟩ := (controls_append s ys [x]).mp h.1
+    obtain ⟨_, hx⟩ := (controls_append s ys [x]).mp h.1
     have hprev := h.2.2 ys.length (by simp)
     rw [List.take_append_of_le_length le_rfl, List.take_length] at hprev
     have hh := h.2.1

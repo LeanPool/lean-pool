@@ -35,6 +35,11 @@ theorem Convention.rel_le {σ : Convention} {a b : ℕ} (hab : σ.rel a b) : a �
   | weak => exact hab
   | strict => exact hab.le
 
+theorem Convention.rel_of_lt {σ : Convention} {a b : ℕ} (hab : a < b) : σ.rel a b := by
+  cases σ with
+  | weak => exact hab.le
+  | strict => exact hab
+
 theorem Convention.rel_trans {σ : Convention} {a b c : ℕ} (hab : σ.rel a b)
     (hbc : σ.rel b c) : σ.rel a c := by
   cases σ with

@@ -77,14 +77,12 @@ theorem terminal_exists (σ : Convention) (s : State) (hv : Valid s)
     apply List.pairwise_map.mpr
     apply List.pairwise_lt_range.imp
     intro a b hab
-    cases σ <;> dsimp [Convention.rel] <;> omega
+    exact Convention.rel_of_lt (Nat.add_lt_add_right hab 2)
   have hcontrols := (controls_iff (σ := σ) hv (initial n)).mpr
     ⟨fun d hd => (hmem d hd).1, List.pairwise_cons.mpr ⟨fun d hd => by
       have hd2 := (hmem d hd).1
       rw [hlast]
-      cases σ with
-      | weak => exact Nat.zero_le d
-      | strict => exact Nat.lt_of_lt_of_le (by decide : 0 < 2) hd2, hord⟩, hbefore⟩
+      exact Convention.rel_of_lt (by omega), hord⟩, hbefore⟩
   let v := finish s (initial n)
   have vv : Valid v := finish_valid hv hcontrols
   have vl : v.last ≤ n+1 := finish_last_le (by simp [hlast]) (fun d hd => (hmem d hd).2)

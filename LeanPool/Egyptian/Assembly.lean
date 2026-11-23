@@ -60,7 +60,7 @@ theorem digits_data (σ : Convention) {T : ℕ} (hT : 1 ≤ T) (k : ℕ) :
     refine ⟨fun d hd => by have := hmin d hd; omega, ⟨?_, hord⟩, ?_⟩
     · intro d hd
       have := hmin d hd
-      cases σ <;> simp only [Convention.rel] <;> omega
+      exact Convention.rel_of_lt (by omega)
     · simp only [recipSum, List.map_cons, List.sum_cons] at hsum ⊢
       linarith [unit_sub_unit_succ hT]
 

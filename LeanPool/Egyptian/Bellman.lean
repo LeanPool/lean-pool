@@ -8,7 +8,6 @@ module
 
 public import LeanPool.Egyptian.Defs
 public import Mathlib.Data.EReal.Basic
-import Mathlib.Order.Hom.WithTopBot
 
 /-!
 # Integer control trajectories and the Bellman principle
@@ -207,7 +206,7 @@ theorem greedy_step {s : State} (hv : Valid s) (hi : Interior s)
     by_contra! hh
     exact (not_le_of_gt hlarge) ((Nat.mul_le_mul_left s.p hh).trans
       ((Nat.mul_comm s.p s.last) ▸ hi.le))
-  have hord : σ.rel s.last x := by cases σ <;> first | exact hlast.le | exact hlast
+  have hord : σ.rel s.last x := Convention.rel_of_lt hlast
   have hlast' : Interior (step s x) :=
     (step_interior_iff (by omega)).mpr (hdrop.trans_le hsmall)
   refine ⟨⟨hlarge, hx, hord⟩, hdrop, hlast', ?_⟩
@@ -231,8 +230,8 @@ theorem unit_terminal_with (σ : Convention) {s : State} (hv : Valid s) (hi : In
   have hone : T = 1 := by omega
   have hlast0 : s.last = 0 := by omega
   have hpq : s.q = s.p := by simpa [hone] using hT
-  have ha : σ.rel 0 2 := by cases σ <;> norm_num [Convention.rel]
-  have hb : σ.rel 2 3 := by cases σ <;> norm_num [Convention.rel]
+  have ha : σ.rel 0 2 := Convention.rel_of_lt (by decide)
+  have hb : σ.rel 2 3 := Convention.rel_of_lt (by decide)
   refine ⟨[2, 3], 6, ?_, one hpq⟩
   simp only [Terminal, Controls, Legal, finish, step, CanStop, hpq, hlast0]
   have hp := hv.1

@@ -62,7 +62,6 @@ private theorem long_terminal {s : State} (hv : Valid s) (hi : Interior s)
   | succ M ih =>
     obtain ⟨xs,T,ht,hm,hb⟩ := ih
     have ht' := terminal_extend hv ht
-    have hT := ht.2.1
     have hlarge := ht'.2.2.1
     rw [finish_append] at hlarge
     change T + 1 < T * (T + 1) at hlarge
@@ -110,7 +109,7 @@ private theorem merge_score {σ s q bs cs U} (hv : Valid s) (hstart : s.last = 0
   have ht := terminal_of_tuple hv hU (by omega : s.last < U)
     (fun d hd => (hmix d hd).1)
     (σ := σ) (ds := sorted)
-    (fun d hd => by have := (hmix d hd).1; cases σ <;> simp only [Convention.rel] <;> omega)
+    (fun d hd => Convention.rel_of_lt (by have := (hmix d hd).1; omega))
     hsorted (fun d hd => (hmix d hd).2) (by linarith)
   have hlen : sorted.length = bs.length+cs.length := hp.length_eq.trans (List.length_append)
   simpa only [reward, hlen] using (reward_le_value (H := fun t => Payoff.value t) ht)

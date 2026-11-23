@@ -40,22 +40,23 @@ private theorem digits_append (T k m : ℕ) :
   | succ k ih => simp only [Nat.succ_add, unitDigits, ih, List.cons_append, unitIter_step_start]
 
 theorem extension_data {σ q N p T} (hT : 1 ≤ T)
-    (hp : Admissible σ q N p) (hstop : ∀ d ∈ p, d < T)
+    (hLen : p.length = N) (hMin : ∀ d ∈ p, 2 ≤ d) (hOrder : p.Pairwise σ.rel)
+    (hstop : ∀ d ∈ p, d < T)
     (hsplit : q = recipSum p + unit T) (k : ℕ) :
     Admissible σ q (N+k) (p ++ unitDigits T k) ∧
       q = recipSum (p ++ unitDigits T k) + unit (unitIter T k) := by
   obtain ⟨hl, hmin, hord, hsum⟩ := digits_data σ hT k
   have hv : q = recipSum (p ++ unitDigits T k) + unit (unitIter T k) := by
     rw [recipSum_append]; linarith
-  refine ⟨⟨by simp [hp.1, hl], ?_, List.pairwise_append.mpr ⟨hp.2.2.1, hord, ?_⟩, ?_⟩, hv⟩
+  refine ⟨⟨by simp [hLen, hl], ?_, List.pairwise_append.mpr ⟨hOrder, hord, ?_⟩, ?_⟩, hv⟩
   · intro x hx
     rcases List.mem_append.mp hx with h | h
-    · exact hp.2.1 _ h
+    · exact hMin _ h
     · have := hmin _ h; omega
   · intro x hx y hy
     have := hstop _ hx
     have := hmin _ hy
-    cases σ <;> simp only [Convention.rel] <;> omega
+    exact Convention.rel_of_lt (by omega)
   · have hpos : (0:ℚ) < unit (unitIter T k) :=
       one_div_pos.mpr (by exact_mod_cast (unitIter_pos hT k))
     linarith
@@ -71,7 +72,7 @@ theorem best_extension_of_completion {σ q N p T} (hT : 2 ≤ T)
     IsBest σ q (N+k) (p ++ unitDigits T k) := by
   let t : ℝ := unitIter T k
   have ht : 1 ≤ t := by dsimp only [t]; exact_mod_cast unitIter_pos (by omega : 1 ≤ T) k
-  have hext := extension_data (by omega : 1 ≤ T) hp hstop hsplit k
+  have hext := extension_data (by omega : 1 ≤ T) hp.1 hp.2.1 hp.2.2.1 hstop hsplit k
   have hinv : Payoff.value T / 2 ^ N = Payoff.value t / 2^(N+k) := by
     dsimp only [t]
     rw [real_unitIter, Payoff.value_orbit (by exact_mod_cast (show 1 ≤ T by omega)), pow_add]
@@ -128,7 +129,7 @@ theorem compatible_of_terminal_completion {σ q N p T} (hN : 1 ≤ N) (hT : 2 �
   have hk : σ = .strict → max 4 (N + 1) ≤ k := by rintro rfl; exact le_rfl
   have h₁ : 1 ≤ T := by omega
   refine ⟨N+k, unitIter T k, p ++ unitDigits T k, by omega, unitIter_pos h₁ k,
-    (extension_data h₁ hp hstop hsplit k).2,
+    (extension_data h₁ hp.1 hp.2.1 hp.2.2.1 hstop hsplit k).2,
     best_extension_of_completion hT hp hstop hsplit hcomplete k hk, ?_⟩
   intro m _
   rw [greedyTuple_unit σ (unitIter_pos h₁ k), List.append_assoc, ← digits_append,
