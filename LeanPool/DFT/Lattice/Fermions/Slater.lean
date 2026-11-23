@@ -9,6 +9,8 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.Fermions.Configurations
+public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Slater determinants in first quantisation
@@ -36,6 +38,21 @@ lemma slater_eq_sum (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) :
     slater φ τ = ∑ σ : Equiv.Perm (Fin N), (Equiv.Perm.sign σ : ℝ) * ∏ j, φ j (τ (σ j)) := by
   simp [slater, Matrix.det_apply, Units.smul_def]
 
+/-- Split a product along the orbital whose position is replaced. -/
+lemma prod_update_erase (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N))
+    (i : Fin N) (b : Fin M) :
+    ∏ j, φ j (Function.update τ i b (σ j)) =
+      φ (σ.symm i) b * ∏ j ∈ Finset.univ.erase (σ.symm i), φ j (τ (σ j)) := by
+  set j0 := σ.symm i
+  rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ j0)]
+  congr 1
+  · simp [j0]
+  · apply Finset.prod_congr rfl
+    intro j hj
+    have hne : σ j ≠ i := by
+      intro h'; apply (Finset.mem_erase.mp hj).1; simp [j0, ← h']
+    simp [Function.update_of_ne hne]
+
 /-- One term of the Leibniz expansion, summed against `h` in the slot occupied by orbital `σ⁻¹ i`.
 -/
 lemma sum_update_prod (h : Matrix (Fin M) (Fin M) ℝ) (φ : Fin N → Fin M → ℝ) (ε : Fin N → ℝ)
@@ -43,21 +60,10 @@ lemma sum_update_prod (h : Matrix (Fin M) (Fin M) ℝ) (φ : Fin N → Fin M →
     ∑ b, h (τ i) b * ∏ j, φ j (Function.update τ i b (σ j)) =
       ε (σ.symm i) * ∏ j, φ j (τ (σ j)) := by
   set j0 := σ.symm i
-  have hsplit : ∀ b, ∏ j, φ j (Function.update τ i b (σ j)) =
-      φ j0 b * ∏ j ∈ Finset.univ.erase j0, φ j (τ (σ j)) := by
-    intro b
-    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ j0)]
-    congr 1
-    · simp [j0]
-    · apply Finset.prod_congr rfl
-      intro j hj
-      have hne : σ j ≠ i := by
-        intro h'; apply (Finset.mem_erase.mp hj).1; simp [j0, ← h']
-      simp [Function.update_of_ne hne]
   have hall : ∏ j, φ j (τ (σ j)) = φ j0 (τ i) * ∏ j ∈ Finset.univ.erase j0, φ j (τ (σ j)) := by
     rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ j0)]
     simp [j0]
-  simp_rw [hsplit]
+  simp_rw [prod_update_erase]
   have hev : ∑ b, h (τ i) b * φ j0 b = ε j0 * φ j0 (τ i) := by
     have := congrFun (hφ j0) (τ i)
     simpa [Matrix.mulVec, dotProduct] using this

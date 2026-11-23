@@ -12,6 +12,12 @@ public import Mathlib.Topology.MetricSpace.HausdorffDimension
 public import Mathlib.Algebra.MvPolynomial.PDeriv
 public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Calculus.FDeriv.Pi
+meta import Mathlib.Tactic.Abel
+meta import Mathlib.Tactic.GCongr
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Hausdorff dimension of zero sets of polynomials

@@ -10,6 +10,11 @@ module
 
 public import LeanPool.DFT.Lattice.Convex.MoreauYosida
 public import LeanPool.DFT.Lattice.KohnSham.Duality
+import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.FunProp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.NormNum
 
 /-!
 # The regularised Kohn–Sham iteration on a lattice
@@ -59,28 +64,19 @@ noncomputable def gFreg (H0 : Matrix C C ℝ) (n : V → C → ℝ) (ε : ℝ) :
 lemma inner_eq_dot (x y : EuclideanSpace ℝ V) : ⟪x, y⟫ = WithLp.ofLp x ⬝ᵥ WithLp.ofLp y := by
   rw [EuclideanSpace.inner_eq_star_dotProduct, star_trivial, dotProduct_comm]
 
-/-- The probability vectors on `C`. -/
-def probVec (C : Type*) [Fintype C] : Set (C → ℝ) := {lam | (∀ c, 0 ≤ lam c) ∧ ∑ c, lam c = 1}
-
 omit [DecidableEq C] [Nonempty C] in
 lemma isCompact_probVec : IsCompact (probVec C) := by
-  have hbox : probVec C ⊆ Set.pi Set.univ (fun _ => Set.Icc (0 : ℝ) 1) := by
-    rintro lam ⟨h0, h1⟩ c _
-    exact ⟨h0 c, h1 ▸ Finset.single_le_sum (fun i _ => h0 i) (Finset.mem_univ c)⟩
-  refine (isCompact_univ_pi (fun _ => isCompact_Icc)).of_isClosed_subset ?_ hbox
-  have : probVec C = (⋂ c, {lam : C → ℝ | 0 ≤ lam c}) ∩ {lam | ∑ c, lam c = 1} := by
-    ext lam; simp [probVec]
-  rw [this]
-  exact (isClosed_iInter fun c => isClosed_le continuous_const (continuous_apply c)).inter
-    (isClosed_eq (f := fun lam : C → ℝ => ∑ c, lam c) (by fun_prop) continuous_const)
+  have weights_range : Set.range (fun p : Convexity.StdSimplex ℝ C => (p.weights : C → ℝ)) =
+      probVec C := by
+    rw [Convexity.StdSimplex.range_toFun_comp_weights]
+    ext lam
+    simp [probVec]
+  rw [← weights_range]
+  exact isCompact_range (Convexity.StdSimplex.isEmbedding_toFun_comp_weights ℝ C).continuous
 
 omit [DecidableEq C] [Fintype V] [Nonempty C] in
 lemma densDomain_eq (n : V → C → ℝ) :
-    DensDomain n = (fun lam : C → ℝ => fun i => ∑ c, lam c * n i c) '' probVec C := by
-  ext ρ
-  constructor
-  · rintro ⟨lam, h0, h1, rfl⟩; exact ⟨lam, ⟨h0, h1⟩, rfl⟩
-  · rintro ⟨lam, ⟨h0, h1⟩, rfl⟩; exact ⟨lam, h0, h1, rfl⟩
+    DensDomain n = (fun lam : C → ℝ => fun i => ∑ c, lam c * n i c) '' probVec C := rfl
 
 omit [DecidableEq C] [Fintype V] [Nonempty C] in
 lemma isCompact_densDomain (n : V → C → ℝ) : IsCompact (DensDomain n) := by
@@ -96,7 +92,7 @@ lemma densDomE_nonempty (n : V → C → ℝ) : (densDomE n).Nonempty := by
   classical
   obtain ⟨c0⟩ := (inferInstance : Nonempty C)
   refine ⟨WithLp.toLp 2 (fun i => n i c0), fun c => if c = c0 then 1 else 0,
-    fun c => by dsimp only; split_ifs <;> norm_num, by simp, ?_⟩
+    ⟨fun c => by dsimp only; split_ifs <;> norm_num, by simp⟩, ?_⟩
   funext i; simp
 
 lemma convexOn_liebE {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) :

@@ -8,9 +8,10 @@ Authors: Miguel A. L. Marques
 
 module
 
-public import LeanPool.DFT.Lattice.Fermions.FirstQuantization
+public import LeanPool.DFT.Lattice.Fermions.SecondQuantization
 public import LeanPool.DFT.Lattice.StrongPotential.PowerSums
 public import Mathlib.Combinatorics.SimpleGraph.Metric
+meta import Mathlib.Tactic.Push
 
 /-!
 # Optimal particle assignments
@@ -130,7 +131,7 @@ open Matrix
 variable {M N : ℕ}
 
 /-- The matching specified by the permutation attains the minimum assignment cost. -/
-def isOpt (G : SimpleGraph (Fin M)) (c y : Conf M N) (σ : Equiv.Perm (Fin N)) : Prop :=
+abbrev isOpt (G : SimpleGraph (Fin M)) (c y : Conf M N) (σ : Equiv.Perm (Fin N)) : Prop :=
   acost G c (τs y) σ.symm = mopt G c y
 
 /-- Number of common targets served by themselves. -/

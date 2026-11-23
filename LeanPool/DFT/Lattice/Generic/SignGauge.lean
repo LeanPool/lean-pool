@@ -9,6 +9,11 @@ Authors: Miguel A. L. Marques, Stefano Pittalis
 module
 
 public import LeanPool.DFT.Lattice.GenericHK
+meta import Mathlib.Tactic.FinCases
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.LinearCombination
+meta import Mathlib.Tactic.NormNum
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Orbital sign changes: hopping signs up to gauge

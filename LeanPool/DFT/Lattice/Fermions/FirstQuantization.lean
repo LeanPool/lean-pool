@@ -9,6 +9,7 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.Fermions.SecondQuantization
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Powers of the many-body Hamiltonian via first quantisation
@@ -107,13 +108,8 @@ lemma H1_prodFun (h : Matrix (Fin M) (Fin M) ℝ) (g : Fin N → Fin M → ℝ) 
   apply Finset.sum_congr rfl; intro i _
   rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i)]
   have hrest : ∀ b, ∏ l, g l (Function.update τ i b l) =
-      g i b * ∏ l ∈ Finset.univ.erase i, g l (τ l) := by
-    intro b
-    rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ i)]
-    congr 1
-    · simp
-    · apply Finset.prod_congr rfl; intro l hl
-      simp [Function.update_of_ne (Finset.mem_erase.mp hl).1]
+      g i b * ∏ l ∈ Finset.univ.erase i, g l (τ l) := fun b => by
+    simpa using prod_update_erase g τ (Equiv.refl _) i b
   simp_rw [hrest]
   have : ∏ l ∈ Finset.univ.erase i, Function.update g i (h *ᵥ g i) l (τ l) =
       ∏ l ∈ Finset.univ.erase i, g l (τ l) := by

@@ -11,6 +11,15 @@ module
 public import LeanPool.DFT.Lattice.Generic.DensityDim.Gap
 public import LeanPool.DFT.Lattice.Generic.Krylov
 public import LeanPool.DFT.Lattice.Generic.ZeroSetDim
+public import Mathlib.Algebra.MvPolynomial.Monad
+meta import Mathlib.Tactic.Abel
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.FinCases
+meta import Mathlib.Tactic.GCongr
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.NormNum
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Push
 
 /-!
 # Non-uniquely v-representable densities have codimension at least two

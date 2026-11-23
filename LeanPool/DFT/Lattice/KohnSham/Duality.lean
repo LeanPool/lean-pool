@@ -11,6 +11,8 @@ module
 public import LeanPool.DFT.Lattice.Basic.Spectral
 public import LeanPool.DFT.Lattice.HK.Basic
 public import Mathlib.Analysis.Convex.Function
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Lieb's functional and convex duality
@@ -36,9 +38,13 @@ variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [Nonempty C]
 /-- Ground-state energy as a function of the potential. -/
 noncomputable def Egs (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) : ℝ := gsEnergy (hamN H0 n v)
 
+/-- Nonnegative finite weights of total mass one. -/
+def probVec (C : Type*) [Fintype C] : Set (C → ℝ) :=
+  {lam | (∀ c, 0 ≤ lam c) ∧ ∑ c, lam c = 1}
+
 /-- Ensemble densities of configurations. -/
 def DensDomain (n : V → C → ℝ) : Set (V → ℝ) :=
-  {ρ | ∃ lam : C → ℝ, (∀ c, 0 ≤ lam c) ∧ ∑ c, lam c = 1 ∧ ρ = fun i => ∑ c, lam c * n i c}
+  (fun lam : C → ℝ => fun i => ∑ c, lam c * n i c) '' probVec C
 
 /-- **Lieb's universal functional.** -/
 noncomputable def lieb (H0 : Matrix C C ℝ) (n : V → C → ℝ) (ρ : V → ℝ) : ℝ :=
@@ -54,7 +60,7 @@ lemma Egs_le_config {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ
 
 lemma lieb_bdd {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) {ρ : V → ℝ}
     (hρ : ρ ∈ DensDomain n) : BddAbove (Set.range fun v : V → ℝ => Egs H0 n v - v ⬝ᵥ ρ) := by
-  obtain ⟨lam, hl0, hl1, rfl⟩ := hρ
+  obtain ⟨lam, ⟨hl0, hl1⟩, rfl⟩ := hρ
   refine ⟨∑ c, lam c * H0 c c, ?_⟩
   rintro _ ⟨v, rfl⟩
   have : Egs H0 n v = ∑ c, lam c * Egs H0 n v := by rw [← Finset.sum_mul, hl1, one_mul]
@@ -73,7 +79,7 @@ lemma le_lieb {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) {ρ 
 
 omit [DecidableEq C] [Fintype V] [Nonempty C] in
 lemma dens_mem_domain (n : V → C → ℝ) {ψ : C → ℝ} (hn : ψ ⬝ᵥ ψ = 1) : dens n ψ ∈ DensDomain n := by
-  refine ⟨fun c => ψ c ^ 2, fun c => sq_nonneg _, by simpa [dotProduct, sq] using hn, ?_⟩
+  refine ⟨fun c => ψ c ^ 2, ⟨fun c => sq_nonneg _, by simpa [dotProduct, sq] using hn⟩, ?_⟩
   funext i; simp [dens, mul_comm]
 
 /-- **Lieb duality.** `E(v) ≤ F(ρ) + v·ρ` on the density domain, with equality at ground-state
@@ -103,8 +109,8 @@ theorem lieb_duality {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → �
 theorem lieb_convexOn {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) :
     ConvexOn ℝ (DensDomain n) (lieb H0 n) := by
   refine ⟨?_, ?_⟩
-  · rintro ρ ⟨l1, h10, h11, rfl⟩ ρ' ⟨l2, h20, h21, rfl⟩ a b ha hb hab
-    refine ⟨fun c => a * l1 c + b * l2 c, fun c => by nlinarith [h10 c, h20 c], ?_, ?_⟩
+  · rintro ρ ⟨l1, ⟨h10, h11⟩, rfl⟩ ρ' ⟨l2, ⟨h20, h21⟩, rfl⟩ a b ha hb hab
+    refine ⟨fun c => a * l1 c + b * l2 c, ⟨fun c => by nlinarith [h10 c, h20 c], ?_⟩, ?_⟩
     · simp [Finset.sum_add_distrib, ← Finset.mul_sum, h11, h21, hab]
     · funext i; simp [Finset.sum_add_distrib, Finset.mul_sum, add_mul, mul_assoc]
   · intro ρ hρ ρ' hρ' a b ha hb hab

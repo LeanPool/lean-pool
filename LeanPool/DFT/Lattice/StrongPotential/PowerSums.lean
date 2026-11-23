@@ -9,6 +9,10 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.StrongPotential.LeadingCoefficient
+import Mathlib.LinearAlgebra.Vandermonde
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Leading coefficients as power sums

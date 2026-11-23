@@ -11,6 +11,10 @@ module
 public import LeanPool.DFT.Lattice.Fermions.Slater
 public import LeanPool.DFT.Lattice.HK.Basic
 public import Mathlib.Combinatorics.SimpleGraph.AdjMatrix
+meta import Mathlib.Tactic.Abel
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Second quantisation via determinants
@@ -242,14 +246,8 @@ lemma prod_update_split (φ : Fin N → Fin M → ℝ) (τ : Fin N → Fin M) (�
       φ j (τ (σ j)) := by
     rw [← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ j0), ite_eq_left rfl, one_mul]
     apply Finset.prod_congr rfl; intro j hj; simp [(Finset.mem_erase.mp hj).1]
-  rw [hR, ← Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ j0)]
-  congr 1
-  · simp [j0]
-  · apply Finset.prod_congr rfl
-    intro j hj
-    have hj0 : j ≠ j0 := (Finset.mem_erase.mp hj).1
-    have hne : σ j ≠ i := by intro h'; apply hj0; simp [j0, ← h']
-    simp [Function.update_of_ne hne]
+  rw [hR]
+  exact prod_update_erase φ τ σ i b
 
 /-- Leibniz form of the second-quantised matrix element. -/
 lemma gamma_leibniz (h : Matrix (Fin M) (Fin M) ℝ) (s s' : Conf M N) :

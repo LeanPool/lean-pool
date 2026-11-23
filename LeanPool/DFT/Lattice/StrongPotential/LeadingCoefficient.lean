@@ -9,6 +9,8 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.Generic.Krylov
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Strong-potential limit: the interaction drops out of the leading coefficient

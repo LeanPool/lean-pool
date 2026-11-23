@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Analytic.Uniqueness
 public import Mathlib.Algebra.MvPolynomial.Funext
 public import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
 public import Mathlib.Topology.Algebra.MvPolynomial
+meta import Mathlib.Tactic.Push
 
 /-!
 # The Krylov criterion and generic Hohenberg–Kohn (topological version)

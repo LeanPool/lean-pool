@@ -9,6 +9,12 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.KohnSham.Duality
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.FunProp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # A maximiser of `E(v) − v·ρ`

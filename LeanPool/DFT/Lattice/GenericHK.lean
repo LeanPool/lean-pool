@@ -10,6 +10,8 @@ module
 
 public import LeanPool.DFT.Lattice.PathSum.ResonantPoint
 public import LeanPool.DFT.Lattice.Generic.NullSets
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Generic Hohenberg–Kohn theorem for spinless lattice fermions

@@ -9,6 +9,10 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.StrongPotential.PowerSums
+import Mathlib.Algebra.BigOperators.Field
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Explicit divided-difference coefficients
@@ -78,6 +82,18 @@ lemma Ssrc_self (y : C) : Ssrc hw hL hc y y = 0 := by
     rw [this, mul_zero]
   · rfl
 
+/-- Interchange the source and configuration sums in the resolvent. -/
+theorem source_sum (y : C) (x : ℝ) :
+    ∑ z, Ssrc hw hL hc y z / (x - w z) =
+      ∑ p ∈ Finset.univ.erase y, (if d p + 1 = d y then A y p * Fres hw hL hc p x else 0) := by
+  simp only [Ssrc, Finset.sum_div]
+  rw [Finset.sum_comm]
+  apply Finset.sum_congr rfl; intro p _
+  split_ifs
+  · simp only [Fres, Finset.mul_sum]
+    apply Finset.sum_congr rfl; intro z _; ring
+  · simp
+
 /-- **Explicit diagonal coefficient.** -/
 theorem alpha_diag (y : C) :
     alphaRep A w hw d hL c hc y y = (if y = c then 1 else 0) +
@@ -97,16 +113,7 @@ theorem alpha_diag (y : C) :
     apply Finset.sum_congr rfl; intro z _
     rw [← neg_sub, div_neg]
   rw [hS] at hs
-  have hF : ∑ z, Ssrc hw hL hc y z / (w y - w z) =
-      ∑ p ∈ Finset.univ.erase y, (if d p + 1 = d y then A y p * Fres hw hL hc p (w y) else 0) := by
-    simp only [Ssrc, Finset.sum_div]
-    rw [Finset.sum_comm]
-    apply Finset.sum_congr rfl; intro p _
-    split_ifs
-    · simp only [Fres, Finset.mul_sum]
-      apply Finset.sum_congr rfl; intro z _; ring
-    · simp
-  rw [hF] at hs
+  rw [source_sum hw hL hc y (w y)] at hs
   linarith
 
 /-- **Resolvent recursion** (away from the poles of the relevant layers). -/
@@ -129,14 +136,7 @@ theorem Fres_rec (y : C) (x : ℝ) (hx : ∀ z, d z ≤ d y → x ≠ w z) :
     · have hne := hsupp z hz
       rw [← alpha_rec hw hL hc y z]; field_simp; ring
   rw [e1, alpha_sum]
-  congr 1
-  simp only [Ssrc, Finset.sum_div]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl; intro p _
-  split_ifs
-  · simp only [Fres, Finset.mul_sum]
-    apply Finset.sum_congr rfl; intro z _; ring
-  · simp
+  rw [source_sum hw hL hc y x]
 
 end
 

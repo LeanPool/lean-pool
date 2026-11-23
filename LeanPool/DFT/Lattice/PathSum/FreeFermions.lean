@@ -9,6 +9,9 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.PathSum.Assignment
+public import LeanPool.DFT.Lattice.Fermions.FirstQuantization
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Leading coefficients of free fermions
@@ -92,16 +95,15 @@ lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
     (if mopt G c y ≤ k then
       (∏ l, (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))).coeff (k - mopt G c y)
       else 0) =
-    if acost G c (τs y) σ.symm = mopt G c y then
+    if isOpt G c y σ then
       ∏ l, T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l)
           (τs y l)
     else 0 := by
-  set m := mopt G c y
   set P : Fin N → ℝ[X] := fun l => (Hl (-hopM G t) 0 u ^ cnt ι l) (τs y l) (τs c (σ.symm l))
   set dd : Fin N → ℕ := fun l => G.dist (τs c (σ.symm l)) (τs y l)
   have hsumn : ∑ l, cnt ι l = k := sum_cnt ι
   have hsumd : ∑ l, dd l = acost G c (τs y) σ.symm := rfl
-  have hmle : m ≤ acost G c (τs y) σ.symm := Mopt_le G c (τs y) σ.symm
+  have hmle : mopt G c y ≤ acost G c (τs y) σ.symm := Mopt_le G c (τs y) σ.symm
   have hdeg : ∀ l, (P l).natDegree ≤ cnt ι l - dd l := fun l =>
     entry_natDegree (lip_dist hG t _) (SimpleGraph.dist_self) 0 u (cnt ι l) (τs y l)
   have hT : ∀ l, T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l))
@@ -112,7 +114,7 @@ lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
       rw [← hsumd, ← hsumn]; exact Finset.sum_le_sum (fun l _ => hall l)
     have hsub : ∑ l, (cnt ι l - dd l) = k - acost G c (τs y) σ.symm := by
       rw [Finset.sum_tsub_distrib _ (fun l _ => hall l), hsumn, hsumd]
-    by_cases hopt : acost G c (τs y) σ.symm = m
+    by_cases hopt : isOpt G c y σ
     · rw [ite_eq_left (by omega), ite_eq_left hopt, ← hopt, ← hsub,
         prod_coeff_top _ _ _ (fun l _ => hdeg l)]
       apply Finset.prod_congr rfl; intro l _
@@ -121,7 +123,10 @@ lemma term_coeff {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connecte
       apply Polynomial.coeff_eq_zero_of_natDegree_lt
       calc (∏ l, P l).natDegree ≤ ∑ l, (P l).natDegree := Polynomial.natDegree_prod_le _ _
         _ ≤ ∑ l, (cnt ι l - dd l) := Finset.sum_le_sum (fun l _ => hdeg l)
-        _ < k - m := by rw [hsub]; omega
+        _ < k - mopt G c y := by
+          change acost G c (τs y) σ.symm ≠ mopt G c y at hopt
+          rw [hsub]
+          omega
   · push Not at hall
     obtain ⟨l0, hl0⟩ := hall
     have hP0 : P l0 = 0 := entry_zero (lip_dist hG t _) (SimpleGraph.dist_self) 0 u hl0
@@ -139,7 +144,7 @@ theorem T_MB_formula {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Conn
     (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (c y : Conf M N) (k : ℕ) :
     T (Γ (-hopM G t)) (wC u) (mopt G c) c k y =
-      ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
+      ∑ σ ∈ Finset.univ.filter (isOpt G c y),
         (Equiv.Perm.sign σ : ℝ) * ∑ ι : Fin k → Fin N, ∏ l,
           T (-hopM G t) u (fun a => G.dist (τs c (σ.symm l)) a) (τs c (σ.symm l)) (cnt ι l)
             (τs y l) := by
@@ -207,7 +212,7 @@ theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Con
     (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (k : ℕ) :
     T (Γ (-hopM G t)) (wC u) (mopt G c) c k y =
-      ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
+      ∑ σ ∈ Finset.univ.filter (isOpt G c y),
         (Equiv.Perm.sign σ : ℝ) * ∑ z : Fin N → Fin M,
           (∏ l, βsp G hG t u hu c y σ l (z l)) * (∑ l, u (z l)) ^ k := by
   rw [T_MB_formula hG t u c y k]
@@ -227,7 +232,7 @@ theorem T_MB_powersum {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Con
 lemma assign_rigid {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ) (hu : Function.Injective u) (c y : Conf M N) (σ : Equiv.Perm (Fin N))
-    (hopt : acost G c (τs y) σ.symm = mopt G c y) (ρ : Equiv.Perm (Fin N))
+    (hopt : isOpt G c y σ) (ρ : Equiv.Perm (Fin N))
     (hβ : ∏ l, βsp G hG t u hu c y σ l (τs y (ρ l)) ≠ 0) : ρ = 1 := by
   have hfac : ∀ l, τs y (ρ l) = τs y l ∨
       G.dist (τs c (σ.symm l)) (τs y (ρ l)) < G.dist (τs c (σ.symm l)) (τs y l) := by
@@ -259,10 +264,10 @@ theorem alpha_eq_D {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connec
     (hgen : ∀ z : Fin N → Fin M, ∑ l, u (z l) = wC u y →
         ∃ ρ : Equiv.Perm (Fin N), ∀ l, z l = τs y (ρ l)) :
     alphaRep (Γ (-hopM G t)) (wC u) hw (mopt G c) (lip_mopt hG t c) c (mopt_self G c) y y =
-      ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
+      ∑ σ ∈ Finset.univ.filter (isOpt G c y),
         (Equiv.Perm.sign σ : ℝ) * ∏ l, βsp G hG t u hu c y σ l (τs y l) := by
   classical
-  set opt := fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y
+  set opt := isOpt G c y
   set b : Equiv.Perm (Fin N) × (Fin N → Fin M) → ℝ := fun p =>
     if opt p.1 then (Equiv.Perm.sign p.1 : ℝ) * ∏ l, βsp G hG t u hu c y p.1 l (p.2 l) else 0
   set yv : Equiv.Perm (Fin N) × (Fin N → Fin M) → ℝ := fun p => ∑ l, u (p.2 l)

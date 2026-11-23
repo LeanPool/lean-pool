@@ -10,6 +10,7 @@ module
 
 public import LeanPool.DFT.Lattice.PathSum.FreeFermions
 public import LeanPool.DFT.Lattice.StrongPotential.Resolvent
+meta import Mathlib.Tactic.Linarith
 
 /-!
 # Explicit single-particle route sums
@@ -120,13 +121,13 @@ theorem alphaRep_eq_alphaExp {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG 
 noncomputable def DExp (G : SimpleGraph (Fin M)) [DecidableRel G.Adj] (t : Fin M → Fin M → ℝ)
     (u : Fin M → ℝ)
     (c y : Conf M N) : ℝ :=
-  ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
+  ∑ σ ∈ Finset.univ.filter (isOpt G c y),
     (Equiv.Perm.sign σ : ℝ) * ∏ l, alphaExp G t u (τs c (σ.symm l)) (τs y l)
 
 theorem D_eq_DExp {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : G.Connected)
     (t : Fin M → Fin M → ℝ)
     {u : Fin M → ℝ} (hu : Function.Injective u) (c y : Conf M N) :
-    ∑ σ ∈ Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y),
+    ∑ σ ∈ Finset.univ.filter (isOpt G c y),
       (Equiv.Perm.sign σ : ℝ) * ∏ l, βsp G hG t u hu c y σ l (τs y l) = DExp G t u c y := by
   apply Finset.sum_congr rfl; intro σ _
   congr 1

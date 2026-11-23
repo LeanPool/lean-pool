@@ -8,7 +8,14 @@ Authors: Miguel A. L. Marques
 
 module
 
-public import Mathlib.Tactic
+public import Mathlib.Data.Matrix.Mul
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.LinearAlgebra.Matrix.Symmetric
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Ground states on finite-dimensional real Hilbert spaces

@@ -10,6 +10,13 @@ module
 
 public import LeanPool.DFT.Lattice.KohnSham.Iteration
 import TauCeti.Analysis.GradientFlow.MoreauYosida.Convex
+meta import Mathlib.Tactic.Abel
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.FunProp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Moreau–Yosida envelopes of functionals on a compact convex domain

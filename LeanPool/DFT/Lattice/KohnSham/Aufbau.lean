@@ -10,6 +10,8 @@ module
 
 public import LeanPool.DFT.Lattice.Fermions.CauchyBinet
 public import LeanPool.DFT.Lattice.Basic.Spectral
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Push
 
 /-!
 # The aufbau principle for non-interacting lattice fermions

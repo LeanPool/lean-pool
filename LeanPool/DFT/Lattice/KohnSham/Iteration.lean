@@ -12,6 +12,7 @@ public import Mathlib.Analysis.InnerProductSpace.Continuous
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import Mathlib.Topology.MetricSpace.Sequences
+import Mathlib.Topology.Order.MonotoneConvergence
 meta import Mathlib.Tactic.Abel
 meta import Mathlib.Tactic.FieldSimp
 meta import Mathlib.Tactic.Linarith
@@ -361,26 +362,8 @@ theorem myksoda_converges [ProperSpace E] (hε : 0 < ε) (hF : IsMYSmooth ε F g
     have hmin : ∀ y, G z ≤ G y := by
       intro y; have := hG.lower z y; rw [hgz, inner_zero_left] at this; linarith
     refine ⟨hgz, hmin, ?_, ?_⟩
-    · -- energies converge to the minimum
-      have hzR : ‖z‖ ≤ R := by
-        have : ∀ i, (x ∘ φ) i ∈ Metric.closedBall (0 : E) R :=
-          fun i => mem_closedBall_zero_iff.mpr (hxR _)
-        exact mem_closedBall_zero_iff.mp
-          (Metric.isClosed_closedBall.mem_of_tendsto hlim (Eventually.of_forall this))
-      have hup : Tendsto (fun i => G z + ‖gG (x i)‖ * (2 * R)) atTop (𝓝 (G z)) := by
-        have := ((tendsto_zero_iff_norm_tendsto_zero.mp hg).mul_const (2 * R)).const_add (G z)
-        simpa using this
-      refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hup (fun i => hmin _)
-        fun i => ?_
-      have h1 := hG.lower (x i) z
-      have h2 := abs_real_inner_le_norm (gG (x i)) (z - x i)
-      have h3 : ‖z - x i‖ ≤ 2 * R := by
-        calc _ ≤ ‖z‖ + ‖x i‖ := norm_sub_le _ _
-          _ ≤ _ := by linarith [hxR i]
-      have h4 : ‖gG (x i)‖ * ‖z - x i‖ ≤ ‖gG (x i)‖ * (2 * R) :=
-        mul_le_mul_of_nonneg_left h3 (norm_nonneg _)
-      change G (x i) ≤ G z + ‖gG (x i)‖ * (2 * R)
-      linarith [neg_abs_le ⟪gG (x i), z - x i⟫]
+    · exact (tendsto_iff_tendsto_subseq_of_antitone hanti hφ.tendsto_atTop).2
+        (hG.continuous_fun.continuousAt.tendsto.comp hlim)
     · -- Kohn–Sham potentials converge
       have h1 : Tendsto (fun i => gG (x (φ i)) - gT (x (φ i))) atTop (𝓝 (gG z - gT z)) :=
         (((hF.continuous hε).add continuous_const).sub (hT.continuous hε)).continuousAt.tendsto.comp

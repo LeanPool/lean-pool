@@ -10,6 +10,8 @@ module
 
 public import LeanPool.DFT.Lattice.Basic.GroundState
 public import Mathlib.Analysis.Matrix.Spectrum
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.Linarith
 
 /-!
 # Existence of ground states and the ground-state energy

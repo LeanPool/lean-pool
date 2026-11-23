@@ -9,6 +9,11 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.HK.Basic
+import Mathlib.LinearAlgebra.Matrix.DotProduct
+meta import Mathlib.Tactic.Abel
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.LinearCombination
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Gapped ground states and invisible potential directions
@@ -105,10 +110,7 @@ theorem persist_gap {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) {n : V → C → ℝ
     have e2 : ∑ c, W c * φ c ^ 2 = κ * (φ ⬝ᵥ φ) + ∑ c, (W c - κ) * φ c ^ 2 := by
       simp only [dotProduct, Finset.mul_sum, ← Finset.sum_add_distrib]
       apply Finset.sum_congr rfl; intro c _; ring
-    rw [qf_hamN, qf_hamN, ← e2, ← e1]
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib,
-        Finset.mul_sum]
-    ring_nf
+    rw [qf_hamN_add, dotProduct, e1, e2]
   -- pointwise: (W c - κ) ψ c = 0
   have hz : ∀ c, (W c - κ) * ψ c = 0 := by
     intro c; by_cases h : ψ c = 0

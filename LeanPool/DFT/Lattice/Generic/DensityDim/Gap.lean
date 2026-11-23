@@ -10,6 +10,16 @@ module
 
 public import LeanPool.DFT.Lattice.HK.Gap
 public import LeanPool.DFT.Lattice.Basic.Spectral
+meta import Mathlib.Tactic.Abel
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.FunProp
+meta import Mathlib.Tactic.GCongr
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.LinearCombination
+meta import Mathlib.Tactic.NormNum
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Spectral gaps of non-degenerate ground states and Lipschitz densities
@@ -179,12 +189,12 @@ theorem dens_lipschitz_of_gap [DecidableEq C] {H0 : Matrix C C ℝ} (hH0 : H0.Is
     have h1 := hφ.2 ψ
     rw [hn, hφn, mul_one, mul_one] at h1
     have h2 : qf Hz ψ = E + ∑ c, d c * ψ c ^ 2 := by
-      simp only [Hz, E, Hx, qf_hamN]
-      have : ∑ i, z i * dens n ψ i = ∑ i, x i * dens n ψ i + ∑ i, (z - x) i * dens n ψ i := by
-        rw [← Finset.sum_add_distrib]; apply Finset.sum_congr rfl; intro i _
-        simp only [Pi.sub_apply]; ring
-      rw [this, dens_weighted n (z - x) ψ]
-      simp only [Pi.sub_apply, d]; ring
+      have shift : x + (1 : ℝ) • (z - x) = z := by
+        simp only [one_smul]
+        abel
+      have increment := qf_hamN_add H0 n x (z - x) 1 ψ
+      rw [shift, one_mul, dotProduct, dens_weighted] at increment
+      exact increment
     have h3 : ∑ c, d c * ψ c ^ 2 ≤ η := by
       calc ∑ c, d c * ψ c ^ 2 ≤ ∑ c, η * (ψ c * ψ c) := by
             apply Finset.sum_le_sum; intro c _

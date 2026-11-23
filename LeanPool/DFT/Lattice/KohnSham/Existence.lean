@@ -10,6 +10,7 @@ module
 
 public import LeanPool.DFT.Lattice.KohnSham.Representability
 public import LeanPool.DFT.Lattice.Fermions.SecondQuantization
+meta import Mathlib.Tactic.NormNum
 
 /-!
 # Existence of Kohn–Sham potentials for lattice fermions

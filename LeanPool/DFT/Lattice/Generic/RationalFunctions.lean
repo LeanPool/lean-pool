@@ -8,7 +8,12 @@ Authors: Miguel A. L. Marques
 
 module
 
-public import LeanPool.DFT.Lattice.Generic.Krylov
+public import Mathlib.Algebra.MvPolynomial.Funext
+public import Mathlib.Basic.Real.Basic
+import Mathlib.Algebra.CharZero.Infinite
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
+meta import Mathlib.Tactic.Push
 
 /-!
 # Rational functions on generic points and simultaneous non-vanishing

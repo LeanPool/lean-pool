@@ -9,6 +9,7 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.Fermions.SecondQuantization
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Cauchy–Binet for Slater determinants

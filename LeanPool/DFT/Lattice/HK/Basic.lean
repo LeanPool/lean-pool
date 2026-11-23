@@ -9,6 +9,9 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.Basic.GroundState
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.LinearCombination
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Hohenberg–Kohn theorems on a finite configuration space
@@ -47,6 +50,14 @@ lemma qf_hamN (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) (φ : 
   simp only [dotProduct, Matrix.mulVec_diagonal, Finset.mul_sum, Finset.sum_mul]
   rw [Finset.sum_comm]
   apply Finset.sum_congr rfl; intro c _; apply Finset.sum_congr rfl; intro i _; ring
+
+/-- The Rayleigh numerator is affine in the external potential. -/
+lemma qf_hamN_add (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v w : V → ℝ) (t : ℝ) (ψ : C → ℝ) :
+    qf (hamN H0 n (v + t • w)) ψ = qf (hamN H0 n v) ψ + t * (w ⬝ᵥ dens n ψ) := by
+  rw [qf_hamN, qf_hamN]
+  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib, dotProduct,
+    Finset.mul_sum]
+  ring_nf
 
 /-- Real pure-state version of Penz and van Leeuwen, Theorem 7 (weak HK). A shared ground-state
 density makes each state a ground state of the other Hamiltonian. -/
@@ -148,14 +159,9 @@ theorem nonunique_of_minimiser {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v w 
     (hsupp : ∀ c, ψ c ≠ 0 → ∑ i, w i * n i c = κ)
     {ε : ℝ} (hε : 0 ≤ ε) :
     IsGroundState (hamN H0 n (v + ε • w)) ψ := by
-  -- the potential term of v + ε w splits
-  have hsplit : ∀ φ : C → ℝ, qf (hamN H0 n (v + ε • w)) φ =
-      qf (hamN H0 n v) φ + ε * ∑ i, w i * dens n φ i := by
-    intro φ
-    rw [qf_hamN, qf_hamN]
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib,
-        Finset.mul_sum]
-    ring_nf
+  have hsplit (φ : C → ℝ) : qf (hamN H0 n (v + ε • w)) φ =
+      qf (hamN H0 n v) φ + ε * ∑ i, w i * dens n φ i :=
+    qf_hamN_add H0 n v w ε φ
   -- ⟨W⟩ ≥ κ |φ|², with equality for ψ
   have hW : ∀ φ : C → ℝ, κ * (φ ⬝ᵥ φ) ≤ ∑ i, w i * dens n φ i := by
     intro φ

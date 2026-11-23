@@ -9,6 +9,11 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.PathSum.RouteSums
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.FunProp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # The resonance argument
@@ -77,7 +82,7 @@ noncomputable def Λ (us : Fin M → ℝ) (b a π : Fin M) : ℕ → Fin M → �
            (us a - us q))
       else 0
 
-theorem gr_tendsto_hat (us δ : Fin M → ℝ) (b a π : Fin M) (hπ : us a = us π) (haπ : a ≠ π)
+theorem gr_tendsto_hat (us δ : Fin M → ℝ) (b a π : Fin M) (hπ : us a = us π)
     (hgen : ∀ z, us z = us a → z = a ∨ z = π) (hδ : δ a ≠ δ π) :
     ∀ n, n < G.dist b a → ∀ q, Tendsto
       (fun ε => (uline us δ ε a - uline us δ ε π) * Gr G t (uline us δ ε) b a n q) (𝓝[≠] 0)
@@ -218,7 +223,7 @@ lemma alphaExp_self (u : Fin M → ℝ) (b : Fin M) : alphaExp G t u b b = 1 := 
   simp [alphaExp, SimpleGraph.dist_self]
 
 lemma factor_moved_tendsto (us δ : Fin M → ℝ) (b a π : Fin M) (hab : a ≠ b) (hπ : us a = us π)
-    (haπ : a ≠ π) (hgen : ∀ z, us z = us a → z = a ∨ z = π) (hδ : δ a ≠ δ π) :
+    (hgen : ∀ z, us z = us a → z = a ∨ z = π) (hδ : δ a ≠ δ π) :
     Tendsto (fun ε => (uline us δ ε a - uline us δ ε π) * alphaExp G t (uline us δ ε) b a) (𝓝[≠] 0)
       (𝓝 (Lval G t us b a π)) := by
   have hfun : (fun ε => (uline us δ ε a - uline us δ ε π) * alphaExp G t (uline us δ ε) b a) =
@@ -233,7 +238,7 @@ lemma factor_moved_tendsto (us δ : Fin M → ℝ) (b a π : Fin M) (hab : a ≠
   apply tendsto_finsetSum; intro p _
   by_cases h : G.Adj a p ∧ G.dist b p + 1 = G.dist b a
   · simp only [ite_eq_left h]
-    exact tendsto_const_nhds.mul (gr_tendsto_hat G t us δ b a π hπ haπ hgen hδ _ (by omega) p)
+    exact tendsto_const_nhds.mul (gr_tendsto_hat G t us δ b a π hπ hgen hδ _ (by omega) p)
   · simp only [ite_eq_right h]; exact tendsto_const_nhds
 
 lemma Lval_through (hG : G.Connected) (us : Fin M → ℝ) (b a π : Fin M)
@@ -291,7 +296,7 @@ theorem DExp_eventually_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : 
     (hS : ∀ l, τs y l ∉ c.1 → Lval G t us (τs c (σ0.symm l)) (τs y l) (τs c (σ0.symm l)) ≠ 0) :
     ∀ᶠ ε in 𝓝[≠] (0 : ℝ), DExp G t (uline us δ ε) c y ≠ 0 := by
   classical
-  set opt := Finset.univ.filter (fun σ : Equiv.Perm (Fin N) => acost G c (τs y) σ.symm = mopt G c y)
+  set opt := Finset.univ.filter (isOpt G c y)
   set dfac : ℝ → Fin N → ℝ := fun ε l => if τs y l ∉ c.1 then
     uline us δ ε (τs y l) - uline us δ ε (τs c (σ0.symm l)) else 1
   set fac : Equiv.Perm (Fin N) → Fin N → ℝ → ℝ := fun σ l ε =>
@@ -306,8 +311,7 @@ theorem DExp_eventually_ne {G : SimpleGraph (Fin M)} [DecidableRel G.Adj] (hG : 
     by_cases hm : τs y l ∉ c.1
     · simp only [fac, dfac, lim, ite_eq_left hm]
       have hab : τs y l ≠ τs c (σ.symm l) := fun h => hm (h ▸ τs_mem c _)
-      have haπ : τs y l ≠ τs c (σ0.symm l) := fun h => hm (h ▸ τs_mem c _)
-      exact factor_moved_tendsto G t us δ _ _ _ hab (hV l hm) haπ (hgenM l hm) (hδ l hm)
+      exact factor_moved_tendsto G t us δ _ _ _ hab (hV l hm) (hgenM l hm) (hδ l hm)
     · simp only [fac, dfac, lim, ite_eq_right hm, one_mul]
       push Not at hm
       exact factor_common_tendsto G t hG us δ _ _ (hgenC l hm)

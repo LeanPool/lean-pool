@@ -12,6 +12,11 @@ public import LeanPool.DFT.Lattice.Generic.SignGauge
 public import LeanPool.DFT.Lattice.Generic.DensityDim.Fermions
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Constructions
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.LinearCombination
+meta import Mathlib.Tactic.NormNum
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Generic HK when all shortest paths between two sites have hopping products of one sign

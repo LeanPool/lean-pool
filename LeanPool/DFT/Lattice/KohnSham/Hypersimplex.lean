@@ -10,6 +10,11 @@ module
 
 public import LeanPool.DFT.Lattice.KohnSham.Existence
 import TauCeti.Analysis.Convex.PermutationOrbit
+meta import Mathlib.Tactic.FieldSimp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.NormNum
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Interior densities are strictly positive mixtures of configurations
@@ -31,23 +36,20 @@ variable {M N : ℕ}
 
 /-- `ρ` is a mixture of configuration densities. -/
 def IsMixture (ρ : Fin M → ℝ) (μ : Conf M N → ℝ) : Prop :=
-  (∀ s, 0 ≤ μ s) ∧ ∑ s, μ s = 1 ∧ ρ = fun i => ∑ s, μ s * occF i s
-
-/-- Number of fractional sites. -/
-noncomputable def nfrac (ρ : Fin M → ℝ) : ℕ := (Finset.univ.filter fun i => 0 < ρ i ∧ ρ i < 1).card
+  μ ∈ probVec (Conf M N) ∧ ρ = fun i => ∑ s, μ s * occF i s
 
 lemma mixture_combo {ρ1 ρ2 : Fin M → ℝ} {μ1 μ2 : Conf M N → ℝ} (h1 : IsMixture ρ1 μ1)
     (h2 : IsMixture ρ2 μ2)
     {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) :
     IsMixture (fun i => θ * ρ1 i + (1 - θ) * ρ2 i) (fun s => θ * μ1 s + (1 - θ) * μ2 s) := by
-  obtain ⟨p1, s1, e1⟩ := h1; obtain ⟨p2, s2, e2⟩ := h2
-  refine ⟨fun s => by nlinarith [p1 s, p2 s], ?_, ?_⟩
+  obtain ⟨⟨p1, s1⟩, e1⟩ := h1; obtain ⟨⟨p2, s2⟩, e2⟩ := h2
+  refine ⟨⟨fun s => by nlinarith [p1 s, p2 s], ?_⟩, ?_⟩
   · rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, s1, s2]; ring
   · subst e1 e2; funext i
     simp only [add_mul, Finset.sum_add_distrib, mul_assoc, Finset.mul_sum]
 
 /-- The hypersimplex is the convex hull of the fixed-particle occupation vectors. -/
-theorem exists_mixture_of_box {ρ : Fin M → ℝ} (hbox : ∀ i, 0 ≤ ρ i ∧ ρ i ≤ 1)
+theorem hypersimplex_mixture {ρ : Fin M → ℝ} (hbox : ∀ i, 0 ≤ ρ i ∧ ρ i ≤ 1)
     (hsum : ∑ i, ρ i = N) : ∃ μ : Conf M N → ℝ, IsMixture ρ μ := by
   classical
   have hfill : N ≤ M := by
@@ -91,7 +93,7 @@ theorem exists_mixture_of_box {ρ : Fin M → ℝ} (hbox : ∀ i, 0 ≤ ρ i ∧
         (↑(Finset.univ : Finset (Conf M N)) : Set (Conf M N)) := hinjective.injOn
     rw [Finset.sum_image hinjOn] at ht he
     refine ⟨fun s => μ (fun i => occF i s),
-      fun s => hn _ (Finset.mem_image_of_mem _ (Finset.mem_univ _)), ht, funext fun i => ?_⟩
+      ⟨fun s => hn _ (Finset.mem_image_of_mem _ (Finset.mem_univ _)), ht⟩, funext fun i => ?_⟩
     simpa only [Finset.sum_apply, Pi.smul_apply, smul_eq_mul] using (congrFun he i).symm
   · by_cases hk : k ≤ N
     · rw [TauCeti.prefixSum_def, TauCeti.prefixSum_def]
@@ -101,11 +103,6 @@ theorem exists_mixture_of_box {ρ : Fin M → ℝ} (hbox : ∀ i, 0 ≤ ρ i ∧
     · exact TauCeti.prefixSum_le_of_sum_le htotal.le fun i hi => by
         rw [w_eq, ite_eq_right (by omega)]
         exact (hbox (Tuple.sortDesc ρ i)).1
-
-theorem hypersimplex_mixture (k : ℕ) (ρ : Fin M → ℝ) (_ : nfrac ρ = k)
-    (hbox : ∀ i, 0 ≤ ρ i ∧ ρ i ≤ 1) (hsum : ∑ i, ρ i = N) :
-    ∃ μ : Conf M N → ℝ, IsMixture ρ μ :=
-  exists_mixture_of_box hbox hsum
 
 /-- **Interior densities are strictly positive mixtures.** -/
 theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ}
@@ -154,7 +151,7 @@ theorem interior_positive_mixture [Nonempty (Conf M N)] {ρ : Fin M → ℝ}
       simp only [ρ', ← Finset.sum_div, Finset.sum_sub_distrib, ← Finset.mul_sum, hsum, hbarsum]
       have : (1 - ε) ≠ 0 := by linarith
       field_simp
-    obtain ⟨μ, hμ0, hμ1, hμρ⟩ := exists_mixture_of_box hbox' hsum'
+    obtain ⟨μ, ⟨hμ0, hμ1⟩, hμρ⟩ := hypersimplex_mixture hbox' hsum'
     refine ⟨fun s => (1 - ε) * μ s + ε / L, fun s => by nlinarith [hμ0 s, div_pos hε hL], ?_, ?_⟩
     · rw [Finset.sum_add_distrib, ← Finset.mul_sum, hμ1, Finset.sum_const, nsmul_eq_mul, hLdef];
         field_simp; ring

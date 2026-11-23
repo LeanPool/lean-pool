@@ -11,6 +11,11 @@ module
 public import LeanPool.DFT.Lattice.KohnSham.Maximizer
 public import Mathlib.Analysis.LocallyConvex.Separation
 public import Mathlib.Topology.Instances.Matrix
+meta import Mathlib.Tactic.FunProp
+meta import Mathlib.Tactic.Linarith
+meta import Mathlib.Tactic.Positivity
+meta import Mathlib.Tactic.Push
+meta import Mathlib.Tactic.Ring
 
 /-!
 # Ensemble v-representability
@@ -31,14 +36,6 @@ namespace DFT
 open Matrix Filter Topology
 
 variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V] [Nonempty C]
-
-omit [DecidableEq V] [Nonempty C] in
-lemma qf_hamN_add (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v w : V → ℝ) (t : ℝ) (ψ : C → ℝ) :
-    qf (hamN H0 n (v + t • w)) ψ = qf (hamN H0 n v) ψ + t * (w ⬝ᵥ dens n ψ) := by
-  rw [qf_hamN, qf_hamN]
-  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, add_mul, Finset.sum_add_distrib, dotProduct,
-    Finset.mul_sum]
-  ring_nf
 
 omit [DecidableEq C] [Nonempty C] in
 lemma continuous_qf (H : Matrix C C ℝ) : Continuous fun ψ : C → ℝ => qf H ψ := by

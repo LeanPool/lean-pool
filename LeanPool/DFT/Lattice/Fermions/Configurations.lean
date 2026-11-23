@@ -9,6 +9,7 @@ Authors: Miguel A. L. Marques
 module
 
 public import LeanPool.DFT.Lattice.HK.Basic
+meta import Mathlib.Tactic.Linarith
 
 /-!
 # Spinless lattice fermions: configurations and occupations
