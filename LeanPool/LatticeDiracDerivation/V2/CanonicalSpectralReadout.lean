@@ -235,17 +235,13 @@ theorem canonical_spectral_readout_positive_phase
     canonicalSpectralReadout mass energy px py pz
         (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)) =
       normalizedPositiveFrequencyEmbedding mass energy px py pz q := by
-  have h := native_frequency_amplitudes_extract energy henergy q (fun _ => 0)
-  funext component
-  simp only [canonical_spectral_readout_apply]
-  rw [show nativePositiveAmplitude energy
-      (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)) = q from h.1,
-    show nativeNegativeAmplitude energy
-      (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)) =
-        (fun _ => 0) from h.2]
-  fin_cases component <;>
-    simp [normalized_negative_frequency_embedding_apply,
-      positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one]
+  have amplitudes := native_frequency_amplitudes_extract energy henergy q (fun _ => 0)
+  rw [canonical_spectral_readout_apply, amplitudes.1, amplitudes.2]
+  change normalizedPositiveFrequencyEmbedding mass energy px py pz q +
+    normalizedNegativeFrequencyEmbedding mass energy px py pz 0 = _
+  have absent : normalizedNegativeFrequencyEmbedding mass energy px py pz 0 = 0 :=
+    (normalizedNegativeFrequencyEmbeddingLinear mass energy px py pz).map_zero
+  rw [absent, add_zero]
 
 theorem canonical_spectral_readout_uniform_positive (mass energy px py pz : ℝ)
     (henergy : energy ≠ 0) (amplitude : UniformCell2) :
@@ -260,17 +256,43 @@ theorem canonical_spectral_readout_negative_phase
     canonicalSpectralReadout mass energy px py pz
         (nativePhaseOfFrequencyAmplitudes energy (fun _ => 0) q) =
       normalizedNegativeFrequencyEmbedding mass energy px py pz q := by
-  have h := native_frequency_amplitudes_extract energy henergy (fun _ => 0) q
-  funext component
-  simp only [canonical_spectral_readout_apply]
-  rw [show nativePositiveAmplitude energy
-      (nativePhaseOfFrequencyAmplitudes energy (fun _ => 0) q) =
-        (fun _ => 0) from h.1,
-    show nativeNegativeAmplitude energy
-      (nativePhaseOfFrequencyAmplitudes energy (fun _ => 0) q) = q from h.2]
-  fin_cases component <;>
-    simp [normalized_positive_frequency_embedding_apply,
-      positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one]
+  have amplitudes := native_frequency_amplitudes_extract energy henergy (fun _ => 0) q
+  rw [canonical_spectral_readout_apply, amplitudes.1, amplitudes.2]
+  change normalizedPositiveFrequencyEmbedding mass energy px py pz 0 +
+    normalizedNegativeFrequencyEmbedding mass energy px py pz q = _
+  have absent : normalizedPositiveFrequencyEmbedding mass energy px py pz 0 = 0 :=
+    (normalizedPositiveFrequencyEmbeddingLinear mass energy px py pz).map_zero
+  rw [absent, zero_add]
+
+/-- Spectral spinor coordinates with the momentum scaled by the C19 continuum speed. -/
+def canonicalSpectralMomentumReadout
+    (mass energy : ℝ) (momentum : LatticeMomentum)
+    (phase : UniformTwoChannelPhase) : CubicalCell4 :=
+  canonicalSpectralReadout mass energy
+    (c19ScaledMomentum momentum 0)
+    (c19ScaledMomentum momentum 1)
+    (c19ScaledMomentum momentum 2) phase
+
+theorem canonical_spectral_momentum_readout_additive
+    (mass energy : ℝ) (momentum : LatticeMomentum)
+    (first second : UniformTwoChannelPhase) :
+    canonicalSpectralMomentumReadout mass energy momentum
+        (fun component => first.1 component + second.1 component,
+         fun component => first.2 component + second.2 component) =
+      fun component =>
+        canonicalSpectralMomentumReadout mass energy momentum first component +
+          canonicalSpectralMomentumReadout mass energy momentum second component := by
+  unfold canonicalSpectralMomentumReadout
+  exact canonical_spectral_readout_additive _ _ _ _ _ first second
+
+theorem canonical_spectral_momentum_readout_positive_phase
+    (mass energy : ℝ) (momentum : LatticeMomentum) (henergy : energy ≠ 0) (q : UniformCell2) :
+    canonicalSpectralMomentumReadout mass energy momentum
+        (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)) =
+      normalizedPositiveFrequencyEmbedding mass energy
+        (c19ScaledMomentum momentum 0) (c19ScaledMomentum momentum 1)
+        (c19ScaledMomentum momentum 2) q :=
+  canonical_spectral_readout_positive_phase _ _ _ _ _ henergy q
 
 theorem native_amplitudes_of_kg_generator
     (mass energy px py pz : ℝ) (henergy : energy ≠ 0)

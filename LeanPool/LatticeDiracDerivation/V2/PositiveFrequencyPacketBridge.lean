@@ -184,10 +184,7 @@ def periodicPositiveSpectralMode
     (energy : PeriodicCubicMomentum L → ℝ)
     (amplitude : PeriodicCubicMomentum L → UniformCell2)
     (mode : PeriodicCubicMomentum L) : CubicalCell4 :=
-  canonicalSpectralReadout mass (energy mode)
-    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
-    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
-    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
+  canonicalSpectralMomentumReadout mass (energy mode) (periodicQuantizedMomentum L mode)
     (uniformPositiveFrequencyPhase (energy mode) (amplitude mode))
 
 /-- The spinor Fourier packet obtained by applying canonical spectral coordinates to each mode. -/
@@ -224,8 +221,8 @@ theorem periodic_positive_spectral_packet_density
   rw [periodic_cell4_synthesis_real_pair]
   refine Fintype.sum_congr _ _ fun mode => ?_
   unfold periodicPositiveSpectralMode
-  rw [cubical_cell4_real_pair_self, canonical_spectral_readout_uniform_positive _ _ _ _ _
-    (henergy mode)]
+  rw [cubical_cell4_real_pair_self, ← native_phase_of_frequency_amplitudes_positive,
+    canonical_spectral_momentum_readout_positive_phase _ _ _ (henergy mode)]
   exact normalized_positive_frequency_density _ _ _ _ _ (hpositive mode) (hshell mode) _
 
 theorem periodic_integrated_positive_packet_charge_bridge
@@ -425,10 +422,7 @@ theorem periodic_positive_spectral_packet_current
     periodicAveragedDiracCurrent axis
         (periodicPositiveSpectralPacket L mass energy amplitude) =
       ∑ mode, cubicalDiracCurrent axis
-        (canonicalSpectralReadout mass (energy mode)
-          (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
-          (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
-          (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
+        (canonicalSpectralMomentumReadout mass (energy mode) (periodicQuantizedMomentum L mode)
           (nativePhaseOfFrequencyAmplitudes (energy mode)
             (amplitude mode) (fun _ => 0))) := by
   unfold periodicPositiveSpectralPacket
@@ -461,11 +455,8 @@ theorem periodic_integrated_positive_packet_current_bridge
   rw [← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro mode _
-  rw [canonical_spectral_readout_positive_phase mass (energy mode)
-    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
-    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
-    (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
-    (henergy mode) (amplitude mode)]
+  rw [canonical_spectral_momentum_readout_positive_phase mass (energy mode)
+    (periodicQuantizedMomentum L mode) (henergy mode) (amplitude mode)]
   exact native_plane_wave_flux_is_dirac_current_plus_remainder
     mass (energy mode) (periodicQuantizedMomentum L mode)
     (hpositive mode) (hshell mode) axis (amplitude mode)

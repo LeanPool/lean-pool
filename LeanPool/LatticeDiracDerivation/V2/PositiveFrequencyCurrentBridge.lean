@@ -103,31 +103,24 @@ theorem normalized_density_is_positive_native_u1
 theorem normalized_positive_frequency_current
     (mass energy px py pz : ℝ)
     (hpositive : 0 < energy + mass)
-    (_hshell : energy ^ 2 = mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2)
+    (hshell : energy ^ 2 = mass ^ 2 + px ^ 2 + py ^ 2 + pz ^ 2)
     (q : UniformCell2) (axis : Fin 3) :
     cubicalDiracCurrent axis
         (normalizedPositiveFrequencyEmbedding mass energy px py pz q) =
       c19ContinuumSpeed *
         (fun axis : Fin 3 => if axis = 0 then px else if axis = 1 then py else pz) axis *
         uniformCell2Density q := by
-  have hdenom : energy + mass ≠ 0 := ne_of_gt hpositive
-  have hscale := positive_frequency_scale_square mass energy (le_of_lt hpositive)
-  rw [normalized_positive_frequency_current_formula]
-  rw [positiveFrequencyRatio]
-  have hfactor : 2 * positiveFrequencyScale mass energy *
-      (positiveFrequencyScale mass energy / (energy + mass)) = 1 := by
-    field_simp [hdenom]
-    nlinarith
-  rw [show 2 * c19ContinuumSpeed * positiveFrequencyScale mass energy *
-      (positiveFrequencyScale mass energy / (energy + mass)) =
-      c19ContinuumSpeed by
-    calc
-      2 * c19ContinuumSpeed * positiveFrequencyScale mass energy *
-          (positiveFrequencyScale mass energy / (energy + mass)) =
-        c19ContinuumSpeed *
-          (2 * positiveFrequencyScale mass energy *
-            (positiveFrequencyScale mass energy / (energy + mass))) := by ring
-      _ = c19ContinuumSpeed := by rw [hfactor]; ring]
+  have henergy : energy ≠ 0 := by
+    intro hzero
+    rw [hzero, zero_add] at hpositive
+    rw [hzero] at hshell
+    nlinarith [sq_pos_of_pos hpositive, sq_nonneg px, sq_nonneg py, sq_nonneg pz]
+  have current := cubical_current_of_real_eigenstate mass energy px py pz axis _
+    (normalized_positive_frequency_is_energy_eigenstate mass energy px py pz
+      (ne_of_gt hpositive) hshell q)
+  rw [normalized_positive_frequency_density mass energy px py pz hpositive hshell q] at current
+  apply mul_left_cancel₀ henergy
+  linear_combination current
 
 /-! ## Exact finite-C19 native flux and its continuum remainder -/
 
@@ -439,26 +432,17 @@ theorem canonical_spectral_positive_phase_has_native_density_current
       c19ScaledMomentum momentum 2 ^ 2)
     (axis : Fin 3) (q : UniformCell2) :
     cubicalCell4Density
-        (canonicalSpectralReadout mass energy
-          (c19ScaledMomentum momentum 0)
-          (c19ScaledMomentum momentum 1)
-          (c19ScaledMomentum momentum 2)
+        (canonicalSpectralMomentumReadout mass energy momentum
           (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0))) =
       -uniformNativePhaseDensity
         (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)).1
         (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)).2 ∧
     uniformNativePositiveAxisFlux momentum axis q =
       cubicalDiracCurrent axis
-        (canonicalSpectralReadout mass energy
-          (c19ScaledMomentum momentum 0)
-          (c19ScaledMomentum momentum 1)
-          (c19ScaledMomentum momentum 2)
+        (canonicalSpectralMomentumReadout mass energy momentum
           (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0))) +
         finiteC19CurrentRemainder momentum axis q := by
-  have hread := canonical_spectral_readout_positive_phase mass energy
-    (c19ScaledMomentum momentum 0)
-    (c19ScaledMomentum momentum 1)
-    (c19ScaledMomentum momentum 2) henergy q
+  have hread := canonical_spectral_momentum_readout_positive_phase mass energy momentum henergy q
   constructor
   · rw [hread]
     simpa [native_phase_of_frequency_amplitudes_positive, uniformPositiveFrequencyPhase] using

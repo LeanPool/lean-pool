@@ -30,27 +30,6 @@ variable {Mode : Type*}
 open Complex BigOperators Filter Topology
 noncomputable section
 
-/-- Spectral spinor coordinates with the momentum scaled by the C19 continuum speed. -/
-def canonicalSpectralMomentumReadout
-    (mass energy : ℝ) (momentum : LatticeMomentum)
-    (phase : UniformTwoChannelPhase) : CubicalCell4 :=
-  canonicalSpectralReadout mass energy
-    (c19ScaledMomentum momentum 0)
-    (c19ScaledMomentum momentum 1)
-    (c19ScaledMomentum momentum 2) phase
-
-theorem canonical_spectral_momentum_readout_additive
-    (mass energy : ℝ) (momentum : LatticeMomentum)
-    (first second : UniformTwoChannelPhase) :
-    canonicalSpectralMomentumReadout mass energy momentum
-        (fun component => first.1 component + second.1 component,
-         fun component => first.2 component + second.2 component) =
-      fun component =>
-        canonicalSpectralMomentumReadout mass energy momentum first component +
-          canonicalSpectralMomentumReadout mass energy momentum second component := by
-  unfold canonicalSpectralMomentumReadout
-  exact canonical_spectral_readout_additive _ _ _ _ _ first second
-
 theorem canonical_spectral_continuum_generator_exact
     (mass energy : ℝ) (momentum : LatticeMomentum)
     (henergy : energy ≠ 0) (hdenom : energy + mass ≠ 0)

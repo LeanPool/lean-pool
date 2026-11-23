@@ -80,6 +80,129 @@ theorem cubical_velocity_is_hamiltonian_momentum_response
 def cubicalDiracCurrent (axis : Fin 3) (z : CubicalCell4) : ℝ :=
   cubicalCell4RealPair z (cubicalVelocityOperator axis z)
 
+private theorem cubical_cell4_real_pair_comm (z w : CubicalCell4) :
+    cubicalCell4RealPair z w = cubicalCell4RealPair w z := by
+  apply Finset.sum_congr rfl
+  intro component _
+  simp only [Complex.mul_re, Complex.star_def, Complex.conj_re, Complex.conj_im]
+  ring
+
+private theorem cubical_cell4_real_pair_add_right (z u v : CubicalCell4) :
+    cubicalCell4RealPair z (fun component => u component + v component) =
+      cubicalCell4RealPair z u + cubicalCell4RealPair z v := by
+  simp only [cubicalCell4RealPair, mul_add, Complex.add_re, Finset.sum_add_distrib]
+
+private theorem cubical_cell4_real_pair_scale_right (scale : ℝ) (z w : CubicalCell4) :
+    cubicalCell4RealPair z (fun component => (scale : ℂ) * w component) =
+      scale * cubicalCell4RealPair z w := by
+  unfold cubicalCell4RealPair
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro component _
+  rw [mul_left_comm]
+  simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
+
+private theorem cubical_hamiltonian_real_pair_symmetric
+    (mass px py pz : ℝ) (z w : CubicalCell4) :
+    cubicalCell4RealPair (cubicalStandardHamiltonian mass px py pz z) w =
+      cubicalCell4RealPair z (cubicalStandardHamiltonian mass px py pz w) := by
+  simp [cubicalCell4RealPair, cubicalStandardHamiltonian, cubicalStandardSpatial,
+    cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY, cubicalStandardAlphaZ,
+    Complex.mul_re, Complex.mul_im, Fin.sum_univ_succ]
+  ring
+
+private theorem cubical_velocity_add (axis : Fin 3) (u v : CubicalCell4) :
+    cubicalVelocityOperator axis (fun component => u component + v component) =
+      fun component => cubicalVelocityOperator axis u component +
+        cubicalVelocityOperator axis v component := by
+  let field : Fin 2 → CubicalCell4 := Fin.cases u (fun _ => v)
+  have first : field 0 = u := rfl
+  have second : field 1 = v := rfl
+  simpa only [Fin.sum_univ_two, first, second] using cubical_velocity_sum axis field
+
+private theorem cubical_shifted_square_coefficient (axis : Fin 3) (mass δ px py pz : ℂ) :
+    mass ^ 2 + cubicalShiftMomentum axis δ px py pz 0 ^ 2 +
+      cubicalShiftMomentum axis δ px py pz 1 ^ 2 +
+      cubicalShiftMomentum axis δ px py pz 2 ^ 2 =
+    mass ^ 2 + (px ^ 2 + py ^ 2 + pz ^ 2 + δ ^ 2 +
+      2 * δ * (if axis = 0 then px else if axis = 1 then py else pz)) := by
+  fin_cases axis <;> simp [cubicalShiftMomentum] <;> ring
+
+private theorem cubical_hamiltonian_velocity_anticommutator
+    (mass px py pz : ℝ) (axis : Fin 3) (z : CubicalCell4) :
+    (fun component =>
+      cubicalStandardHamiltonian mass px py pz (cubicalVelocityOperator axis z) component +
+        cubicalVelocityOperator axis
+          (cubicalStandardHamiltonian mass px py pz z) component) =
+      fun component =>
+        ((2 * c19ContinuumSpeed * (if axis = 0 then px else if axis = 1 then py else pz) : ℝ) : ℂ) *
+          z component := by
+  let H := cubicalStandardHamiltonian (mass : ℂ) (px : ℂ) (py : ℂ) (pz : ℂ)
+  let V := cubicalVelocityOperator axis
+  let shifted (δ : ℂ) := cubicalStandardHamiltonian (mass : ℂ)
+    (cubicalShiftMomentum axis δ px py pz 0)
+    (cubicalShiftMomentum axis δ px py pz 1)
+    (cubicalShiftMomentum axis δ px py pz 2)
+  have speed_nonzero : (c19ContinuumSpeed : ℂ) ≠ 0 := by
+    exact_mod_cast (show c19ContinuumSpeed ≠ 0 by simp [c19ContinuumSpeed])
+  have response (t : ℂ) (w : CubicalCell4) :
+      shifted (t * c19ContinuumSpeed) w = fun c => H w c + t * V w c := by
+    unfold shifted H V
+    rw [cubical_velocity_is_hamiltonian_momentum_response, mul_div_cancel_right₀ _ speed_nonzero]
+  have expansion (t : ℂ) :
+      shifted (t * c19ContinuumSpeed) (shifted (t * c19ContinuumSpeed) z) =
+        fun c => H (H z) c + t * H (V z) c + t * V (H z) c + t ^ 2 * V (V z) c := by
+    rw [response, response t z]
+    simp only [H, V, cubical_standard_hamiltonian_add, cubical_standard_hamiltonian_scale,
+      cubical_velocity_add, cubical_velocity_mul]
+    funext c
+    ring
+  have square (t : ℂ) (c : Fin 4) :
+      H (H z) c + t * H (V z) c + t * V (H z) c + t ^ 2 * V (V z) c =
+        ((mass : ℂ) ^ 2 + ((px : ℂ) ^ 2 + (py : ℂ) ^ 2 + (pz : ℂ) ^ 2 +
+          (t * c19ContinuumSpeed) ^ 2 + 2 * (t * c19ContinuumSpeed) *
+            (if axis = 0 then (px : ℂ) else if axis = 1 then (py : ℂ) else (pz : ℂ)))) * z c := by
+    rw [← congrFun (expansion t) c]
+    unfold shifted
+    rw [congrFun (cubical_standard_hamiltonian_square _ _ _ _ z) c]
+    rw [cubical_shifted_square_coefficient]
+  funext c
+  have pos := square 1 c
+  have neg := square (-1) c
+  change H (V z) c + V (H z) c = _
+  have coordinate_cast : (↑(if axis = 0 then px else if axis = 1 then py else pz) : ℂ) =
+      if axis = 0 then (px : ℂ) else if axis = 1 then (py : ℂ) else (pz : ℂ) := by
+    split_ifs <;> rfl
+  push_cast
+  rw [coordinate_cast]
+  linear_combination (pos - neg) / 2
+
+/-- Every real-energy eigenspinor obeys the current and density relation. -/
+theorem cubical_current_of_real_eigenstate (mass energy px py pz : ℝ)
+    (axis : Fin 3) (z : CubicalCell4)
+    (heigen : cubicalStandardHamiltonian mass px py pz z =
+      fun component => (energy : ℂ) * z component) :
+    energy * cubicalDiracCurrent axis z =
+      c19ContinuumSpeed * (if axis = 0 then px else if axis = 1 then py else pz) *
+        cubicalCell4Density z := by
+  have left : cubicalCell4RealPair z
+      (cubicalStandardHamiltonian mass px py pz (cubicalVelocityOperator axis z)) =
+      energy * cubicalDiracCurrent axis z := by
+    rw [← cubical_hamiltonian_real_pair_symmetric, heigen,
+      cubical_cell4_real_pair_comm, cubical_cell4_real_pair_scale_right,
+      cubical_cell4_real_pair_comm (cubicalVelocityOperator axis z) z]
+    rfl
+  have right : cubicalCell4RealPair z
+      (cubicalVelocityOperator axis (cubicalStandardHamiltonian mass px py pz z)) =
+      energy * cubicalDiracCurrent axis z := by
+    rw [heigen, cubical_velocity_mul, cubical_cell4_real_pair_scale_right]
+    rfl
+  have paired := congrArg (cubicalCell4RealPair z)
+    (cubical_hamiltonian_velocity_anticommutator mass px py pz axis z)
+  rw [cubical_cell4_real_pair_add_right, left, right, cubical_cell4_real_pair_scale_right,
+    cubical_cell4_real_pair_self] at paired
+  linarith
+
 /-- The differential of the spinor density in a given time direction. -/
 def cubicalCell4DensityDerivative
     (z zdot : CubicalCell4) : ℝ :=
