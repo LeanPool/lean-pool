@@ -8,23 +8,13 @@ module
 
 public import LeanPool.Egyptian.Assembly
 public import LeanPool.Egyptian.UnitComparison
+import Mathlib.Data.List.GetD
 
 /-! # The unit-fraction boundary, in both denominator conventions -/
 
 @[expose] public section
 
 namespace Egyptian
-
-private def entry (ds : List ℕ) (i : ℕ) := ds[i]?.getD 2
-
-private theorem entry_of_lt {ds : List ℕ} {i : ℕ} (h : i < ds.length) :
-    entry ds i = ds[i] := by simp [entry, h]
-
-private theorem prefix_entry (ds : List ℕ) : prefixTuple (entry ds) ds.length = ds := by
-  apply List.ext_getElem
-  · simp [prefixTuple]
-  · intro i hi hj
-    simp [prefixTuple, entry_of_lt hj]
 
 private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
     let g := prefixTuple (fun i => unitIter T i + 1) m
@@ -41,17 +31,22 @@ private theorem unit_best_aux (σ : Convention) (T m : ℕ) (hT : 0 < T) :
   have compare (ds : List ℕ) (h : Admissible σ (unit T) m ds) :
       recipSum ds ≤ recipSum g ∧ (recipSum g ≤ recipSum ds → ds = g) := by
     obtain ⟨hl, hd, horder, hsmall⟩ := h
-    let d := entry ds
-    have repr : prefixTuple d m = ds := hl ▸ prefix_entry ds
+    let d (i : ℕ) := ds.getD i 2
+    have repr : prefixTuple d m = ds := by
+      rw [← hl]
+      simpa only [d, List.take_length] using prefixTuple_getD ds 2 le_rfl
     have hdpos (i : ℕ) (hi : i < m) : 0 < d i := by
       have hj : i < ds.length := by omega
       have := hd ds[i] (List.getElem_mem hj)
-      simpa [d, entry_of_lt hj] using (show 0 < ds[i] by omega)
+      change 0 < ds.getD i 2
+      rw [List.getD_eq_getElem _ _ hj]
+      omega
     have hmono (i : ℕ) (hi : i+1 < m) : d i ≤ d (i+1) := by
       have hi' : i < ds.length := by omega
       have hj' : i+1 < ds.length := by omega
       have hh := List.pairwise_iff_getElem.mp horder i (i+1) hi' hj' (by omega)
-      rw [show d i = ds[i] from entry_of_lt hi', show d (i+1) = ds[i+1] from entry_of_lt hj']
+      rw [show d i = ds[i] from List.getD_eq_getElem _ _ hi',
+        show d (i+1) = ds[i+1] from List.getD_eq_getElem _ _ hj']
       exact Convention.rel_le hh
     have hs := real_prefix_sum d m
     rw [repr] at hs

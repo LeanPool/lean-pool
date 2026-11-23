@@ -64,9 +64,7 @@ theorem cleared_product {σ s xs} (hv : Valid s) (hc : Controls σ s xs) :
 
 theorem first_fall_interior {s : State} {x P : ℕ} (hx : 0 < x)
     (hsmall : s.p ≤ s.q) (hprev : P ≤ s.p) (hfall : (step s x).p < P) :
-    Interior (step s x) := by
-  change x * (step s x).p < s.q * x
-  rw [Nat.mul_comm]
-  exact Nat.mul_lt_mul_of_pos_right (hfall.trans_le (hprev.trans hsmall)) hx
+    Interior (step s x) :=
+  (step_interior_iff hx).mpr (hfall.trans_le (hprev.trans hsmall))
 
 end Egyptian.Control

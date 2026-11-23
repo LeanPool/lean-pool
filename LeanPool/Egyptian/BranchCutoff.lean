@@ -68,8 +68,7 @@ theorem cutoff_of_tendsto {α : Type*} (S : Set α) (length : α → ℕ)
 /-- The first-descent branch bound H(t) + 2 Γ_P / 2^r tends to H(t). -/
 theorem first_descent_limit (h Γ : ℝ) :
     Tendsto (fun r : ℕ => h + (2 * Γ) / 2^r) atTop (𝓝 h) := by
-  have hzero : Tendsto (fun r : ℕ => (1 : ℝ) / 2^r) atTop (𝓝 0) := by
-    simpa using (tendsto_pow_const_div_const_pow_of_one_lt 0 (r := 2) (by norm_num))
+  have hzero := Payoff.const_div_two_pow_tendsto_zero 1
   simpa [div_eq_mul_inv] using (hzero.const_mul (2*Γ)).const_add h
 
 /-- The entrance branch bound for an initial remainder P/Q > 1. -/
@@ -80,8 +79,7 @@ noncomputable def entranceUpper (Q : ℕ) (r : ℕ) : ℝ :=
 discount. We use mathlib's polynomial-over-exponential limit for k=0,2. -/
 theorem entrance_limit (Q : ℕ) :
     Tendsto (entranceUpper Q) atTop (𝓝 0) := by
-  have hzero : Tendsto (fun r : ℕ => (1 : ℝ) / 2^r) atTop (𝓝 0) := by
-    simpa using (tendsto_pow_const_div_const_pow_of_one_lt 0 (r := 2) (by norm_num))
+  have hzero := Payoff.const_div_two_pow_tendsto_zero 1
   have hquad := tendsto_pow_const_div_const_pow_of_one_lt 2 (r := 2) (by norm_num)
   have h := (hzero.const_mul (Real.log Q + 2 * Real.log 2)).add
     (hquad.const_mul (Real.log 2))

@@ -55,13 +55,14 @@ private theorem prepend_mono (p : List ℕ) (f : ℕ → ℕ) (hp : p.Pairwise (
 
 /-- A legal prefix and its ordered greedy unit tail sum to exactly q. -/
 theorem expansion_unitRay {q : ℚ} {ds : List ℕ} {T : ℕ} (hT : 1 ≤ T)
-    (hds : Admissible .weak q ds.length ds) (hordered : ∀ d ∈ ds, d ≤ T + 1)
+    (hmin : ∀ d ∈ ds, 2 ≤ d) (hmono : ds.Pairwise (· ≤ ·))
+    (hordered : ∀ d ∈ ds, d ≤ T + 1)
     (hsplit : q = recipSum ds + unit T) : Expansion q (unitRay ds T) := by
   have hp := unitIter_pos hT
   have hm : Monotone (fun j => unitIter T j + 1) :=
     fun _ _ h => Nat.add_le_add_right ((unitIter_strictMono hT).monotone h) 1
-  refine ⟨prepend_lower _ _ hds.2.1 (fun j => by have := hp j; omega),
-    prepend_mono _ _ hds.2.2.1 hm hordered, ?_⟩
+  refine ⟨prepend_lower _ _ hmin (fun j => by have := hp j; omega),
+    prepend_mono _ _ hmono hm hordered, ?_⟩
   apply (hasSum_nat_add_iff' (f := fun i => 1/(unitRay ds T i : ℝ)) ds.length).mp
   have hz : prefixTuple (unitRay ds T) ds.length = ds := by
     simpa [prefixTuple, unitRay] using prefix_prepend ds (fun j => unitIter T j + 1) 0
@@ -99,7 +100,7 @@ theorem exists_benchmark_of_compatible (h : CompatibleUnitTails) (q : ℚ) (hq :
     have hpair := (htail 1 le_rfl).1.2.2.1
     rw [greedyTuple_unit .weak hT 1] at hpair
     exact fun d hd => (List.pairwise_append.mp hpair).2.2 d hd (T + 1) (by simp [unitDigits])
-  have expansion : Expansion q b := expansion_unitRay hT (hn ▸ hp.1) hordered hs
+  have expansion : Expansion q b := expansion_unitRay hT hp.1.2.1 hp.1.2.2.1 hordered hs
   refine ⟨b, expansion, N+1, T*(T+1), by omega, ?_, ?_, ?_, ?_⟩
   · nlinarith only [hT, Nat.mul_pos hT hT]
   · rw [hpre, recipSum_append]

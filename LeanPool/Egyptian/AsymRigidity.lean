@@ -94,7 +94,7 @@ theorem asymptoticRigidity_of_finite_rays
     let μ := q - recipSum (prefixTuple a k)
     obtain ⟨hμ, hμa⟩ := expansion_tail ha k
     obtain ⟨d, hd⟩ := hex μ hμ
-    obtain ⟨c, hcexp, hle, hshift⟩ := sorted_completion ha hd.1 k
+    obtain ⟨c, hcexp, hle, hshift⟩ := sorted_completion ha.1 ha.2.1 hd.1 k
     have hc : Expansion q c := by simpa [μ] using hcexp
     have htail := unitTail_of_shift (benchmark_hasUnitTail hd) hshift
     obtain ⟨M,U,hU,hu⟩ := htail

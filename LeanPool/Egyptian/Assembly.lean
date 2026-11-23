@@ -9,6 +9,7 @@ module
 public import LeanPool.Egyptian.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Data.List.GetD
 
 /-!
 # Passing from compatible unit tails to Theorem 1
@@ -139,6 +140,15 @@ theorem eventuallyGreedy_of_unitTails
   intro σ q hq
   obtain ⟨N, T, p, hN, hT, hsplit, hp, hext⟩ := hCompatible σ q hq
   exact ⟨N, p, hN, hp, optimal_unit_extensions hUnique hT hsplit hp hext⟩
+
+theorem prefixTuple_getD (xs : List ℕ) (default : ℕ) {k : ℕ} (hk : k ≤ xs.length) :
+    prefixTuple (fun i => xs.getD i default) k = xs.take k := by
+  apply List.ext_getElem
+  · simp [prefixTuple, List.length_take, Nat.min_eq_left hk]
+  · intro i hi hj
+    have hi' : i < k := by simpa [prefixTuple] using hi
+    simp only [prefixTuple, List.getElem_map, List.getElem_range, List.getElem_take]
+    exact List.getD_eq_getElem _ _ (hi'.trans_le hk)
 
 /-- The sum of reciprocals over the first n places, coerced into the reals. -/
 theorem real_prefix_sum (a : ℕ → ℕ) (n : ℕ) :

@@ -73,19 +73,14 @@ theorem Entrance.den_bound {σ s xs} (h : Entrance σ s xs) (d : ℕ) (hd : d �
     have de : d = x := by simpa using hd
     subst d
     have hxpos : 0 < x := by have := hx.2.1; omega
-    change x * (s.p*x-s.q) < s.q*x at hi
-    rw [Nat.mul_comm x] at hi
-    have drop : s.p*x-s.q < s.q := Nat.lt_of_mul_lt_mul_right hi
+    have drop : s.p * x - s.q < s.q := (step_interior_iff hxpos).mp hi
     have hlegal := hx.1
     simp only [List.length_singleton, pow_one]
     omega
   | @more s x xs hx hout hxs ih =>
     have hpos : 0 < x := by have := hx.2.1; omega
-    have hu : s.q ≤ (step s x).p := by
-      unfold Interior at hout
-      change ¬x * (step s x).p < s.q*x at hout
-      rw [Nat.mul_comm x] at hout
-      exact Nat.le_of_mul_le_mul_right (Nat.le_of_not_gt hout) hpos
+    have hu : s.q ≤ (step s x).p :=
+      Nat.le_of_not_gt fun h => hout ((step_interior_iff hpos).mpr h)
     have hv : s.p * x ≤ 2 * (step s x).p := by
       have hid := Nat.sub_add_cancel hx.1.le
       change s.q ≤ s.p*x-s.q at hu

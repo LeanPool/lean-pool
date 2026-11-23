@@ -41,6 +41,12 @@ def Interior (s : State) : Prop := s.last * s.p < s.q
 def step (s : State) (x : ℕ) : State :=
   ⟨s.p * x - s.q, s.q * x, x⟩
 
+theorem step_interior_iff {s : State} {x : ℕ} (hx : 0 < x) :
+    Interior (step s x) ↔ (step s x).p < s.q := by
+  change x * (step s x).p < s.q * x ↔ (step s x).p < s.q
+  rw [Nat.mul_comm s.q x]
+  exact ⟨Nat.lt_of_mul_lt_mul_left, fun h => Nat.mul_lt_mul_of_pos_left h hx⟩
+
 /-- The next denominator satisfies the order convention and leaves a positive remainder. -/
 def Legal (σ : Convention) (s : State) (x : ℕ) : Prop :=
   s.q < s.p * x ∧ 2 ≤ x ∧ σ.rel s.last x
@@ -202,10 +208,8 @@ theorem greedy_step {s : State} (hv : Valid s) (hi : Interior s)
     exact (not_le_of_gt hlarge) ((Nat.mul_le_mul_left s.p hh).trans
       ((Nat.mul_comm s.p s.last) ▸ hi.le))
   have hord : σ.rel s.last x := by cases σ <;> first | exact hlast.le | exact hlast
-  have hlast' : Interior (step s x) := by
-    change x * (s.p * x - s.q) < s.q * x
-    rw [Nat.mul_comm]
-    exact Nat.mul_lt_mul_of_pos_right (hdrop.trans_le hsmall) (by omega)
+  have hlast' : Interior (step s x) :=
+    (step_interior_iff (by omega)).mpr (hdrop.trans_le hsmall)
   refine ⟨⟨hlarge, hx, hord⟩, hdrop, hlast', ?_⟩
   change s.p * x - s.q ≤ s.q * x
   exact hdrop.le.trans (hsmall.trans (Nat.le_mul_of_pos_right _ (by omega)))

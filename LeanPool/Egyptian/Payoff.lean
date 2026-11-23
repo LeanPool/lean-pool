@@ -78,6 +78,10 @@ theorem orbit_shift (t : ℝ) (n : ℕ) : orbit (phi t) n = orbit t (n+1) := by
   | zero => rfl
   | succ n ih => exact congrArg phi ih
 
+theorem const_div_two_pow_tendsto_zero (c : ℝ) :
+    Tendsto (fun n : ℕ => c / (2 : ℝ) ^ n) atTop (𝓝 0) :=
+  tendsto_const_nhds.div_atTop (tendsto_pow_atTop_atTop_of_one_lt (by norm_num))
+
 /-- The normalized logarithm in equation (Hformula). -/
 noncomputable def normalized (t : ℝ) (j : ℕ) : ℝ := Real.log (orbit t j) / 2^j
 
@@ -203,8 +207,7 @@ theorem unique_on_Ici (F : ℝ → ℝ)
     | succ j ih =>
       rw [orbit, hF _ (one_le_orbit ht j), ih, pow_succ]
       ring
-  have hz : Tendsto (fun j : ℕ => Real.log 2 / (2:ℝ)^j) atTop (𝓝 0) :=
-    tendsto_const_nhds.div_atTop (tendsto_pow_atTop_atTop_of_one_lt (by norm_num))
+  have hz := const_div_two_pow_tendsto_zero (Real.log 2)
   have hlim := (normalized_tendsto ht).add hz
   rw [add_zero] at hlim
   have hconst : Tendsto (fun _ : ℕ => F t) atTop (𝓝 (value t)) := by

@@ -28,9 +28,7 @@ theorem log_succ_orbit_tendsto {t : ℝ} (ht : 1 ≤ t) :
     Tendsto (fun j : ℕ => Real.log (Payoff.orbit t j + 1) / 2^j)
       atTop (𝓝 (Payoff.value t)) := by
   have hlo := Payoff.normalized_tendsto ht
-  have hzero : Tendsto (fun j : ℕ => Real.log 2 / 2^j) atTop (𝓝 0) := by
-    simpa [div_eq_mul_inv] using (tendsto_inv_atTop_zero.comp
-      (tendsto_pow_atTop_atTop_of_one_lt (by norm_num : (1 : ℝ) < 2))).const_mul (Real.log 2)
+  have hzero := Payoff.const_div_two_pow_tendsto_zero (Real.log 2)
   apply tendsto_of_tendsto_of_tendsto_of_le_of_le hlo (by simpa using hlo.add hzero)
   · intro j
     have h := Payoff.one_le_orbit ht j

@@ -84,7 +84,8 @@ theorem equal_tail_subset_winningRays (s : State) (hv : Valid s) (hzero : s.last
   intro ys V hV
   obtain ⟨hy, hbound, hsplit⟩ := terminal_to_tuple hv hV
   have hVpos : 1 ≤ V := by have := hV.2.1; omega
-  have hExp := expansion_unitRay hVpos hy (fun d hd => by have := hbound d hd; omega) hsplit
+  have hExp := expansion_unitRay hVpos hy.2.1 hy.2.2.1
+    (fun d hd => (hbound d hd).le.trans (Nat.le_succ V)) hsplit
   have hlc : Tendsto (growth c) atTop (𝓝 (Real.exp (score xs U / 2))) := by
     exact hrepr ▸ ray_limit xs (by omega)
   have hlb : Tendsto (growth b) atTop (𝓝 (Real.exp (score xs U / 2))) := by

@@ -82,7 +82,8 @@ private theorem expansion_insertAt {q : ℚ} {d : ℕ → ℕ} {x J : ℕ}
 into an arbitrary expansion d of the residual. The result is itself an
 expansion, its first k order statistics dominate the original ones in
 reciprocal value, and it agrees with d after the k-position shift. -/
-theorem sorted_completion {q μ : ℚ} {a d : ℕ → ℕ} (ha : Expansion q a)
+theorem sorted_completion {μ : ℚ} {a d : ℕ → ℕ} (hmin : ∀ i, 2 ≤ a i)
+    (hmono : Monotone a)
     (hd : Expansion μ d) (k : ℕ) :
     ∃ c, Expansion (μ + recipSum (prefixTuple a k)) c ∧
       (∀ i < k, c i ≤ a i) ∧ (∀ᶠ j in atTop, c (k+j) = d j) := by
@@ -101,7 +102,7 @@ theorem sorted_completion {q μ : ℚ} {a d : ℕ → ℕ} (ha : Expansion q a)
     let c := insertAt x J e
     refine ⟨c, ?_, ?_, ?_⟩
     · simpa [prefixTuple, recipSum, List.range_succ, add_assoc, x]
-        using expansion_insertAt he (ha.1 k) hJ hlow
+        using expansion_insertAt he (hmin k) hJ hlow
     · intro i hi
       rcases lt_or_eq_of_le (Nat.le_of_lt_succ hi) with hik | hik
       · by_cases hlt : i < J
@@ -117,7 +118,7 @@ theorem sorted_completion {q μ : ℚ} {a d : ℕ → ℕ} (ha : Expansion q a)
           · simp [c, insertAt, heq, x]
           · have hk : k-1 < k := by omega
             exact (by simp [c, insertAt, hlt, heq] : c k = e (k-1)) ▸
-              (hle (k-1) hk).trans (ha.2.1 (Nat.sub_le k 1))
+              (hle (k-1) hk).trans (hmono (Nat.sub_le k 1))
     · filter_upwards [eventually_ge_atTop J, hshift] with j hj h
       change insertAt x J e (k+1+j) = d j
       rw [show k+1+j = (k+j)+1 by omega, insertAt_tail _ _ _ _ (by omega), h]

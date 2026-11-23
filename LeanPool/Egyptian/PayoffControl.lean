@@ -9,6 +9,7 @@ module
 public import LeanPool.Egyptian.BellmanArithmetic
 public import LeanPool.Egyptian.BellmanDrift
 public import LeanPool.Egyptian.PayoffTransition
+import LeanPool.Egyptian.Assembly
 import Mathlib.Data.List.GetD
 
 /-! Both transition inequalities on actual legal control strings. -/
@@ -24,24 +25,16 @@ private noncomputable def terms (xs : List ℕ) (i : ℕ) : ℝ :=
 
 private theorem terms_sum (xs : List ℕ) {k : ℕ} (hk : k ≤ xs.length) :
     (∑ i ∈ range k, terms xs i) = (recipSum (xs.take k) : ℝ) := by
-  induction k with
-  | zero => simp [recipSum]
-  | succ k ih =>
-    have h : k < xs.length := by omega
-    rw [sum_range_succ, ih (by omega), List.take_succ_eq_append_getElem h]
-    simp only [terms, List.getD_eq_getElem _ _ h, recipSum, List.map_append,
-      List.map_singleton, List.sum_append, List.sum_singleton, Rat.cast_add]
-    simp [unit]
+  simpa only [terms, prefixTuple_getD xs 1 hk] using
+    (real_prefix_sum (fun i => xs.getD i 1) k).symm
 
 private theorem terms_prod (xs : List ℕ) {k : ℕ} (hk : k ≤ xs.length) :
     (∏ i ∈ range k, terms xs i) = 1 / ((xs.take k).prod : ℝ) := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have h : k < xs.length := by omega
-    rw [prod_range_succ, ih (by omega), List.take_succ_eq_append_getElem h]
-    simp only [terms, List.getD_eq_getElem _ _ h, List.prod_append, List.prod_singleton,
-      Nat.cast_mul, one_div, mul_inv]
+  have hrange : (List.range k).toFinset = range k := by ext i; simp
+  have hprod : ∏ i ∈ range k, xs.getD i 1 = (xs.take k).prod := by
+    rw [← prefixTuple_getD xs 1 hk, prefixTuple,
+      ← List.prod_toFinset _ (show (List.range k).Nodup from List.nodup_range), hrange]
+  simp only [terms, one_div, Finset.prod_inv_distrib, ← Nat.cast_prod, hprod]
 
 private theorem terms_order {σ s xs} (hc : Controls σ s xs) :
     (∀ i < xs.length, 0 < terms xs i) ∧
