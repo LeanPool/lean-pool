@@ -168,12 +168,6 @@ theorem periodic_cell4_synthesis_real_pair
   simp_rw [Complex.re_sum]
   rw [Finset.sum_comm]
 
-private theorem positive_phase_eq_frequency_amplitudes (energy : ℝ) (amplitude : UniformCell2) :
-    uniformPositiveFrequencyPhase energy amplitude =
-      nativePhaseOfFrequencyAmplitudes energy amplitude (fun _ => 0) := by
-  apply Prod.ext <;> funext component <;>
-    simp only [nativePhaseOfFrequencyAmplitudes, uniformPositiveFrequencyPhase, mul_zero, add_zero]
-
 /-- The canonical positive-frequency spinor at a single quantized momentum. -/
 def periodicPositiveSpectralMode
     (L : ℕ) (mass : ℝ)
@@ -220,8 +214,7 @@ theorem periodic_positive_spectral_packet_density
   rw [periodic_cell4_synthesis_real_pair]
   refine Fintype.sum_congr _ _ fun mode => ?_
   unfold periodicPositiveSpectralMode
-  rw [cubical_cell4_real_pair_self, positive_phase_eq_frequency_amplitudes,
-    canonical_spectral_readout_positive_phase _ _ _ _ _
+  rw [cubical_cell4_real_pair_self, canonical_spectral_readout_uniform_positive _ _ _ _ _
     (henergy mode)]
   exact normalized_positive_frequency_density _ _ _ _ _ (hpositive mode) (hshell mode) _
 
@@ -292,21 +285,35 @@ theorem periodic_scalar_packet_bond_pair
     exact periodic_scalar_synthesis_neighbor L amplitude site direction]
   rw [periodic_scalar_synthesis_parseval, Complex.im_sum]
 
-/-- Spatially averaged positive native flux of a periodic packet.  The inner
-product is the normalized finite-torus sum of the actual source-to-neighbor
-bond pair, so this is not a separately supplied momentum-space current. -/
+private theorem averaged_bond_current_eq_weighted_inner
+    {Site : Type*} [Fintype Site] (weight : ℝ) (source target : Site → ℂ) :
+    (Fintype.card Site : ℝ)⁻¹ *
+        ∑ site, uniformNativeOutwardBondCurrent weight (source site) (target site) =
+      -2 * weight * ⟪source, target⟫ₙ_[ℂ].im := by
+  symm
+  rw [RCLike.wInner_cWeight_eq_expect]
+  simp only [Finset.expect, Finset.card_univ, RCLike.inner_apply', uniformNativeOutwardBondCurrent,
+    uniformScalarPhasePair, ← NNRat.cast_smul_eq_nnqsmul ℝ, NNRat.cast_inv, NNRat.cast_natCast]
+  change -2 * weight * ((Fintype.card Site : ℝ)⁻¹ •
+    ∑ site, star (source site) * target site).im = _
+  simp only [show ∀ (a : ℝ) (b : ℂ), (a • b).im = a * b.im from
+    fun a b => RCLike.smul_im a b, Complex.im_sum, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro site _
+  ring
+
+/-- Spatial average of the native outward bond currents along the chosen axis. -/
 def periodicAveragedNativePositiveAxisFlux
     (L : ℕ) [NeZero L] (axis : Fin 3)
     (amplitude : PeriodicCubicMomentum L → UniformCell2) : ℝ :=
   -1 / 2 * ∑ direction : C19Neighbor,
     (c19Coord axis direction : ℝ) *
       (∑ component : Fin 2,
-        -2 * c19Weight direction *
-          (⟪periodicScalarSynthesis L
-              (fun mode => amplitude mode component),
-            (fun site => periodicScalarSynthesis L
-              (fun mode => amplitude mode component)
-              (periodicC19Neighbor L site direction))⟫ₙ_[ℂ]).im)
+        (Fintype.card (PeriodicCubicSite L) : ℝ)⁻¹ *
+          ∑ site, uniformNativeOutwardBondCurrent (c19Weight direction)
+            (periodicPositiveNativePosition L amplitude site component)
+            (periodicPositiveNativePosition L amplitude
+              (periodicC19Neighbor L site direction) component))
 
 /-- Character orthogonality removes every mixed-momentum bond-current term
 from the global finite-torus average. -/
@@ -316,10 +323,10 @@ theorem periodic_positive_native_packet_axis_flux
     periodicAveragedNativePositiveAxisFlux L axis amplitude =
       ∑ mode, uniformNativePositiveAxisFlux
         (periodicQuantizedMomentum L mode) axis (amplitude mode) := by
-  unfold periodicAveragedNativePositiveAxisFlux
-    uniformNativePositiveAxisFlux uniformNativeOutwardBondCurrent
+  unfold periodicAveragedNativePositiveAxisFlux periodicPositiveNativePosition
+  simp_rw [averaged_bond_current_eq_weighted_inner, periodic_scalar_packet_bond_pair]
+  unfold uniformNativePositiveAxisFlux uniformNativeOutwardBondCurrent
     uniformScalarPhasePair uniformCell2PlaneWaveNeighbor
-  simp_rw [periodic_scalar_packet_bond_pair]
   let F : C19Neighbor → Fin 2 → PeriodicCubicMomentum L → ℝ :=
     fun direction component mode =>
       (-1 / 2) * (c19Coord axis direction : ℝ) *
@@ -427,7 +434,7 @@ theorem periodic_positive_spectral_packet_current
           (nativePhaseOfFrequencyAmplitudes (energy mode)
             (amplitude mode) (fun _ => 0))) := by
   unfold periodicPositiveSpectralPacket
-  simpa only [periodicPositiveSpectralMode, positive_phase_eq_frequency_amplitudes] using
+  simpa only [periodicPositiveSpectralMode, native_phase_of_frequency_amplitudes_positive] using
     periodic_averaged_dirac_current_diagonalizes L axis
       (periodicPositiveSpectralMode L mass energy amplitude)
 

@@ -405,7 +405,7 @@ theorem lfm_canonical_spectral_positive_mode_has_density_current
     mass energy px py pz henergy q
   refine ⟨hread, ?_, ?_⟩
   · rw [hread]
-    simpa [nativePhaseOfFrequencyAmplitudes] using
+    simpa [native_phase_of_frequency_amplitudes_positive, uniformPositiveFrequencyPhase] using
       (normalized_density_is_positive_native_u1
         mass energy px py pz hpositive hshell q)
   · intro axis

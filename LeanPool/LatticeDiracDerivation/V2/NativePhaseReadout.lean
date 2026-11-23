@@ -249,7 +249,7 @@ def uniformActionToStandardDirac
 `q(t) = exp (-i r t) q(0)`. -/
 def uniformRestPositivePhase
     (r : ℝ) (position : UniformCell2) : UniformTwoChannelPhase :=
-  (position, fun component => -I * (r : ℂ) * position component)
+  uniformPositiveFrequencyPhase r position
 
 /-- Native negative-rest-frequency data. -/
 def uniformRestNegativePhase
@@ -269,7 +269,8 @@ theorem uniform_rest_positive_readout_eq_double (r : ℝ) (hr : r ≠ 0) (positi
   have hlower :
       cubicalPhaseLower (r : ℂ) 0 0 0 (uniformRestPositivePhase r position) = position := by
     funext component
-    simp only [cubicalPhaseLower, uniformRestPositivePhase, cubical_spatial_lower_zero,
+    simp only [cubicalPhaseLower, uniformRestPositivePhase, uniformPositiveFrequencyPhase,
+      cubical_spatial_lower_zero,
       Pi.zero_apply, add_zero]
     apply (div_eq_iff hrC).2
     rw [← mul_assoc, ← mul_assoc, mul_neg, Complex.I_mul_I, neg_neg, one_mul, mul_comm]

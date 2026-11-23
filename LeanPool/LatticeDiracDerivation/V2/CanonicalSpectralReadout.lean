@@ -65,10 +65,25 @@ theorem native_negative_amplitude_apply (energy : ℝ) (phase : UniformTwoChanne
 def nativePhaseOfFrequencyAmplitudes
     (energy : ℝ) (positive negative : UniformCell2) :
     UniformTwoChannelPhase :=
-  (fun component => positive component + negative component,
-    fun component =>
-      -I * (energy : ℂ) * positive component +
-        I * (energy : ℂ) * negative component)
+  uniformPositiveFrequencyPhase energy positive + uniformPositiveFrequencyPhase (-energy) negative
+
+theorem native_phase_of_frequency_amplitudes_apply (energy : ℝ)
+    (positive negative : UniformCell2) :
+    nativePhaseOfFrequencyAmplitudes energy positive negative =
+      (fun component => positive component + negative component,
+       fun component =>
+         -I * (energy : ℂ) * positive component + I * (energy : ℂ) * negative component) := by
+  apply Prod.ext <;> funext component
+  · rfl
+  · simp only [nativePhaseOfFrequencyAmplitudes, uniformPositiveFrequencyPhase, Prod.snd_add,
+      Pi.add_apply, Complex.ofReal_neg, neg_mul_neg]
+
+theorem native_phase_of_frequency_amplitudes_positive (energy : ℝ) (amplitude : UniformCell2) :
+    nativePhaseOfFrequencyAmplitudes energy amplitude (fun _ => 0) =
+      uniformPositiveFrequencyPhase energy amplitude := by
+  apply Prod.ext <;> funext component <;>
+    simp only [native_phase_of_frequency_amplitudes_apply, uniformPositiveFrequencyPhase,
+      mul_zero, add_zero]
 
 theorem native_frequency_amplitudes_reconstruct
     (energy : ℝ) (henergy : energy ≠ 0)
@@ -77,11 +92,11 @@ theorem native_frequency_amplitudes_reconstruct
         (nativePositiveAmplitude energy phase)
         (nativeNegativeAmplitude energy phase) = phase := by
   apply Prod.ext <;> funext component
-  · simp [nativePhaseOfFrequencyAmplitudes, native_positive_amplitude_apply,
+  · simp [native_phase_of_frequency_amplitudes_apply, native_positive_amplitude_apply,
       native_negative_amplitude_apply]
     field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy]
     ring
-  · simp [nativePhaseOfFrequencyAmplitudes, native_positive_amplitude_apply,
+  · simp [native_phase_of_frequency_amplitudes_apply, native_positive_amplitude_apply,
       native_negative_amplitude_apply]
     field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy]
     ring_nf
@@ -97,7 +112,7 @@ theorem native_frequency_amplitudes_extract
         (nativePhaseOfFrequencyAmplitudes energy positive negative) = negative := by
   constructor <;> funext component <;>
     simp [native_positive_amplitude_apply, native_negative_amplitude_apply,
-      nativePhaseOfFrequencyAmplitudes] <;>
+      native_phase_of_frequency_amplitudes_apply] <;>
     field_simp [show (energy : ℂ) ≠ 0 by exact_mod_cast henergy] <;>
     ring_nf <;> rw [Complex.I_sq] <;> ring
 
@@ -231,6 +246,13 @@ theorem canonical_spectral_readout_positive_phase
   fin_cases component <;>
     simp [normalized_negative_frequency_embedding_apply,
       positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one]
+
+theorem canonical_spectral_readout_uniform_positive (mass energy px py pz : ℝ)
+    (henergy : energy ≠ 0) (amplitude : UniformCell2) :
+    canonicalSpectralReadout mass energy px py pz (uniformPositiveFrequencyPhase energy amplitude) =
+      normalizedPositiveFrequencyEmbedding mass energy px py pz amplitude := by
+  rw [← native_phase_of_frequency_amplitudes_positive]
+  exact canonical_spectral_readout_positive_phase mass energy px py pz henergy amplitude
 
 theorem canonical_spectral_readout_negative_phase
     (mass energy px py pz : ℝ) (henergy : energy ≠ 0)

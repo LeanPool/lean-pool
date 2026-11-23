@@ -461,7 +461,7 @@ theorem canonical_spectral_positive_phase_has_native_density_current
     (c19ScaledMomentum momentum 2) henergy q
   constructor
   · rw [hread]
-    simpa [nativePhaseOfFrequencyAmplitudes] using
+    simpa [native_phase_of_frequency_amplitudes_positive, uniformPositiveFrequencyPhase] using
       normalized_density_is_positive_native_u1 mass energy
         (c19ScaledMomentum momentum 0)
         (c19ScaledMomentum momentum 1)

@@ -427,6 +427,15 @@ private def cubicalFlavorSwapSign (corner : CubicalCorner) : ℤ :=
 private def cubicalFlavorSwap (amplitude : CubicalCell8) : CubicalCell8 :=
   fun corner => (cubicalFlavorSwapSign corner : ℂ) * amplitude (cubicalFlavorSwapCorner corner)
 
+private def cubicalFlavorSwapLinear : CubicalCell8 →ₗ[ℂ] CubicalCell8 where
+  toFun := cubicalFlavorSwap
+  map_add' first second := by
+    funext corner
+    simp only [cubicalFlavorSwap, Pi.add_apply, mul_add]
+  map_smul' scalar amplitude := by
+    funext corner
+    simp only [cubicalFlavorSwap, Pi.smul_apply, RingHom.id_apply, smul_eq_mul, mul_left_comm]
+
 private theorem cubical_flavor_swap_embed (z : CubicalCell4) :
     cubicalFlavorSwap (cubicalDiracEmbedMinus z) = cubicalDiracEmbedPlus z := by
   funext corner
@@ -488,13 +497,16 @@ theorem cubical_gamma_intertwines_minus (axis : Fin 3) (z : CubicalCell4) :
 def cubicalDiracLinearEmbedPlus : CubicalCell4 →ₗ[ℂ] CubicalCell8 where
   toFun := cubicalDiracEmbedPlus
   map_add' first second := by
-    funext corner
-    fin_cases corner <;>
-      simp [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus, mul_add] <;> ring
+    have h := (cubicalFlavorSwapLinear.comp cubicalDiracLinearEmbedMinus).map_add first second
+    change cubicalFlavorSwap (cubicalDiracEmbedMinus (first + second)) =
+      cubicalFlavorSwap (cubicalDiracEmbedMinus first) +
+        cubicalFlavorSwap (cubicalDiracEmbedMinus second) at h
+    simpa only [cubical_flavor_swap_embed] using h
   map_smul' scalar amplitude := by
-    funext corner
-    fin_cases corner <;>
-      simp [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus] <;> ring
+    have h := (cubicalFlavorSwapLinear.comp cubicalDiracLinearEmbedMinus).map_smul scalar amplitude
+    change cubicalFlavorSwap (cubicalDiracEmbedMinus (scalar • amplitude)) =
+      scalar • cubicalFlavorSwap (cubicalDiracEmbedMinus amplitude) at h
+    simpa only [cubical_flavor_swap_embed, RingHom.id_apply] using h
 
 private theorem cubical_flavor_swap_flips_commute (axis : Fin 3) (corner : CubicalCorner) :
     cubicalFlip axis (cubicalFlavorSwapCorner corner) =
@@ -547,20 +559,23 @@ theorem cubical_native_spatial_intertwines_minus
     ← cubical_gamma_intertwines_minus]
   rfl
 
+private theorem cubical_native_spatial_flavor_swap (px py pz : ℂ) (amplitude : CubicalCell8) :
+    cubicalNativeSpatial px py pz (cubicalFlavorSwap amplitude) =
+      cubicalFlavorSwap (cubicalNativeSpatial px py pz amplitude) := by
+  change pz • cubicalGamma 0 (cubicalFlavorSwap amplitude) +
+      (-py) • cubicalGamma 1 (cubicalFlavorSwap amplitude) +
+      (-px) • cubicalGamma 2 (cubicalFlavorSwap amplitude) =
+    cubicalFlavorSwapLinear (pz • cubicalGamma 0 amplitude +
+      (-py) • cubicalGamma 1 amplitude + (-px) • cubicalGamma 2 amplitude)
+  simp only [map_add, map_smul, cubical_gamma_flavor_swap]
+  rfl
+
 theorem cubical_native_spatial_intertwines_plus
     (px py pz : ℂ) (z : CubicalCell4) :
     cubicalNativeSpatial px py pz (cubicalDiracEmbedPlus z) =
       cubicalDiracEmbedPlus (cubicalStandardSpatial px py pz z) := by
-  change _ = cubicalDiracLinearEmbedPlus (cubicalStandardSpatial px py pz z)
-  rw [cubical_standard_spatial_eq_axis_sum,
-    map_add, map_add, map_smul, map_smul, map_smul]
-  change _ =
-    pz • cubicalDiracEmbedPlus (cubicalStandardAxis 0 z) +
-      (-py) • cubicalDiracEmbedPlus (cubicalStandardAxis 1 z) +
-      (-px) • cubicalDiracEmbedPlus (cubicalStandardAxis 2 z)
-  rw [← cubical_gamma_intertwines_plus, ← cubical_gamma_intertwines_plus,
-    ← cubical_gamma_intertwines_plus]
-  rfl
+  rw [← cubical_flavor_swap_embed, cubical_native_spatial_flavor_swap,
+    cubical_native_spatial_intertwines_minus, cubical_flavor_swap_embed]
 
 theorem cubical_hamiltonian_intertwines_minus
     (mass px py pz : ℂ) (z : CubicalCell4) :
@@ -574,17 +589,23 @@ theorem cubical_hamiltonian_intertwines_minus
     cubical_native_spatial_intertwines_minus]
   rfl
 
+private theorem cubical_native_hamiltonian_flavor_swap
+    (mass px py pz : ℂ) (amplitude : CubicalCell8) :
+    cubicalNativeHamiltonian mass px py pz (cubicalFlavorSwap amplitude) =
+      cubicalFlavorSwap (cubicalNativeHamiltonian mass px py pz amplitude) := by
+  change mass • cubicalBeta (cubicalFlavorSwap amplitude) +
+      cubicalNativeSpatial px py pz (cubicalFlavorSwap amplitude) =
+    cubicalFlavorSwapLinear (mass • cubicalBeta amplitude + cubicalNativeSpatial px py pz amplitude)
+  simp only [map_add, map_smul, cubical_beta_flavor_swap, cubical_native_spatial_flavor_swap]
+  rfl
+
 theorem cubical_hamiltonian_intertwines_plus
     (mass px py pz : ℂ) (z : CubicalCell4) :
     cubicalNativeHamiltonian mass px py pz (cubicalDiracEmbedPlus z) =
       cubicalDiracEmbedPlus
         (cubicalStandardHamiltonian mass px py pz z) := by
-  change mass • cubicalBeta (cubicalDiracEmbedPlus z) +
-      cubicalNativeSpatial px py pz (cubicalDiracEmbedPlus z) =
-    cubicalDiracLinearEmbedPlus (mass • cubicalStandardBeta z + cubicalStandardSpatial px py pz z)
-  rw [map_add, map_smul, cubical_beta_intertwines_plus,
-    cubical_native_spatial_intertwines_plus]
-  rfl
+  rw [← cubical_flavor_swap_embed, cubical_native_hamiltonian_flavor_swap,
+    cubical_hamiltonian_intertwines_minus, cubical_flavor_swap_embed]
 
 theorem cubical_standard_hamiltonian_add
     (mass px py pz : ℂ) (first second : CubicalCell4) :

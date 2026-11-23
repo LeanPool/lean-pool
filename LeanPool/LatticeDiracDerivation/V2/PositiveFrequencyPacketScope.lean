@@ -35,7 +35,7 @@ def packetScopeAmplitude : UniformCell2
 
 /-- The positive-frequency native phase used in the two-mode counterexample. -/
 def packetScopePositivePhase : UniformTwoChannelPhase :=
-  nativePhaseOfFrequencyAmplitudes 5 packetScopeAmplitude (fun _ => 0)
+  uniformPositiveFrequencyPhase 5 packetScopeAmplitude
 
 /-- The Dirac modes obtained by reading out the common native input. -/
 def packetScopeDiracAtOrigin : CubicalCell4 :=
@@ -70,12 +70,12 @@ private theorem packet_scope_dirac_field_is_normalized_sum :
   rw [show canonicalSpectralReadout 3 5 0 0 4 packetScopePositivePhase =
       normalizedPositiveFrequencyEmbedding 3 5 0 0 4
         packetScopeAmplitude by
-    exact canonical_spectral_readout_positive_phase
+    exact canonical_spectral_readout_uniform_positive
       3 5 0 0 4 (by norm_num) packetScopeAmplitude]
   rw [show canonicalSpectralReadout 3 5 0 0 (-4) packetScopePositivePhase =
       normalizedPositiveFrequencyEmbedding 3 5 0 0 (-4)
         packetScopeAmplitude by
-    exact canonical_spectral_readout_positive_phase
+    exact canonical_spectral_readout_uniform_positive
       3 5 0 0 (-4) (by norm_num) packetScopeAmplitude]
 
 /-- At the origin the two positive-energy modes have native U(1) density
@@ -93,7 +93,7 @@ theorem positive_packet_pointwise_native_density_is_not_dirac_density :
       positiveFrequencyRatio, positive_pauli_spatial_apply_zero, positive_pauli_spatial_apply_one,
       cubicalCell4Density, Complex.normSq, Fin.sum_univ_four]
   · norm_num [packetScopeNativeAtOrigin, packetScopePositivePhase, packetScopeAmplitude,
-      nativePhaseOfFrequencyAmplitudes, uniformNativePhaseDensity,
+      uniformPositiveFrequencyPhase, uniformNativePhaseDensity,
       uniformScalarPhasePair, uniformCell2Density,
       Complex.mul_im, Fin.sum_univ_succ]
 

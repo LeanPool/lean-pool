@@ -40,6 +40,7 @@ public import LeanPool.LatticeDiracDerivation.V2.ReadoutCharacterization
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumCurrentBridge
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumPhase
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumTangent
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletDispersion
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletStability

@@ -71,11 +71,6 @@ theorem uniform_native_tangent_local_continuity
   intro direction _
   ring
 
-/-- The native phase paired with velocity on the positive-frequency branch. -/
-def uniformPositiveFrequencyPhase
-    (energy : ℝ) (position : UniformCell2) : UniformTwoChannelPhase :=
-  (position, fun component => -I * (energy : ℂ) * position component)
-
 theorem uniform_native_u1_positive_frequency
     (energy : ℝ) (position : UniformCell2) :
     uniformNativePhaseDensity

@@ -9,6 +9,7 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumTangent
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumPhase
 
 /-!
 # Euler--Lagrange tangent at the native uniform vacuum
@@ -27,12 +28,6 @@ variable {Site : Type} {Edge : Type*}
 
 open Complex Filter Topology
 noncomputable section
-
-/-- The two complex components transverse to the chosen uniform axial vacuum. -/
-abbrev UniformCell2 := Fin 2 → ℂ
-
-/-- The position and velocity of the two transverse components of one native mode. -/
-abbrev UniformTwoChannelPhase := UniformCell2 × UniformCell2
 
 /-- The real part of the complex Hermitian pairing of two scalar amplitudes. -/
 def uniformScalarRealPair (source target : ℂ) : ℝ :=
