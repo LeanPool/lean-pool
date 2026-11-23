@@ -1905,29 +1905,121 @@ private theorem checkPacked_all {mask : Nat}
   simpa only [Nat.zero_add, checkWitness_eq, quotient, remainder,
     Nat.shiftRight_eq_div_pow, Nat.pow_mul] using checkedWitness checked index bound
 
-private theorem packedCheck0 : checkPacked 0 4096 0 (table 0) = true := by
+private theorem checkPacked_split (mask lower upper start packed : Nat) :
+    checkPacked mask (lower + upper) start packed =
+      (checkPacked mask lower start (packed % 262144 ^ lower) &&
+        checkPacked mask upper (start + lower) (packed / 262144 ^ lower)) := by
+  induction lower generalizing start packed with
+  | zero =>
+    simp only [Nat.zero_add, checkPacked, Nat.add_zero, Nat.pow_zero, Nat.div_one, Bool.true_and]
+  | succ lower ih =>
+    rw [Nat.succ_add, checkPacked, checkPacked, ih]
+    simp only [Nat.pow_succ', Nat.mod_mul_right_mod, Nat.mod_mul_right_div_self,
+      Nat.div_div_eq_div_mul, Bool.and_assoc, Nat.add_assoc, Nat.add_comm 1 lower]
+
+/-- Truncate the packed integer before checking each block of 64 witnesses. -/
+private def checkPackedBlocks (mask : Nat) : Nat → Nat → Nat → Bool
+  | 0, _, _ => true
+  | blocks + 1, start, packed =>
+    checkPacked mask 64 start (packed % 262144 ^ 64) &&
+      checkPackedBlocks mask blocks (start + 64) (packed / 262144 ^ 64)
+
+private theorem checkPackedBlocks_eq (mask blocks start packed : Nat) :
+    checkPackedBlocks mask blocks start packed = checkPacked mask (blocks * 64) start packed := by
+  induction blocks generalizing start packed with
+  | zero => simp only [checkPackedBlocks, checkPacked]
+  | succ blocks ih =>
+    rw [checkPackedBlocks, ih, Nat.succ_mul, Nat.add_comm (blocks * 64) 64, checkPacked_split]
+
+private theorem packedBlocksCheck0 :
+    checkPackedBlocks 0 64 0 (table 0) = true := by
   decide +kernel
+
+private theorem packedBlocksCheck1 :
+    checkPackedBlocks 1 64 0 (table 1) = true := by
+  decide +kernel
+
+private theorem packedBlocksCheck2 :
+    checkPackedBlocks 2 64 0 (table 2) = true := by
+  decide +kernel
+
+private theorem packedBlocksCheck3 :
+    checkPackedBlocks 3 64 0 (table 3) = true := by
+  decide +kernel
+
+private theorem packedBlocksCheck4 :
+    checkPackedBlocks 4 64 0 (table 4) = true := by
+  decide +kernel
+
+private theorem packedBlocksCheck5 :
+    checkPackedBlocks 5 64 0 (table 5) = true := by
+  decide +kernel
+
+private theorem packedBlocksCheck6 :
+    checkPackedBlocks 6 64 0 (table 6) = true := by
+  decide +kernel
+
+/-- Pack the same witness at every index. -/
+private def repeatWitness (witness : Nat) : Nat → Nat
+  | 0 => 0
+  | count + 1 => witness + 262144 * repeatWitness witness count
+
+private theorem checkPacked_repeat {mask witness : Nat} (bound : witness < 262144)
+    (valid : ∀ index, checkWitness mask index witness = true) (count start : Nat) :
+    checkPacked mask count start (repeatWitness witness count) = true := by
+  induction count generalizing start with
+  | zero => rfl
+  | succ count ih =>
+    simp only [checkPacked, repeatWitness, Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt bound,
+      Nat.add_mul_div_left _ _ (by decide : 0 < 262144), Nat.div_eq_of_lt bound, Nat.zero_add,
+      valid, Bool.true_and, ih]
+
+-- With all three diagonals present, the witness check never reads the pendant colours.
+private theorem checkWitness_seven (index witness : Nat) :
+    checkWitness 7 index witness = checkWitness 7 0 witness := by
+  rfl
+
+private theorem table_seven :
+    table 7 = repeatWitness (table 7 % 262144) 4096 := by
+  decide +kernel
+
+private theorem witness_seven :
+    checkWitness 7 0 (table 7 % 262144) = true := by
+  decide +kernel
+
+private theorem packedCheck0 : checkPacked 0 4096 0 (table 0) = true := by
+  as_aux_lemma =>
+    exact (checkPackedBlocks_eq 0 64 0 (table 0)).symm.trans packedBlocksCheck0
 
 private theorem packedCheck1 : checkPacked 1 4096 0 (table 1) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (checkPackedBlocks_eq 1 64 0 (table 1)).symm.trans packedBlocksCheck1
 
 private theorem packedCheck2 : checkPacked 2 4096 0 (table 2) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (checkPackedBlocks_eq 2 64 0 (table 2)).symm.trans packedBlocksCheck2
 
 private theorem packedCheck3 : checkPacked 3 4096 0 (table 3) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (checkPackedBlocks_eq 3 64 0 (table 3)).symm.trans packedBlocksCheck3
 
 private theorem packedCheck4 : checkPacked 4 4096 0 (table 4) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (checkPackedBlocks_eq 4 64 0 (table 4)).symm.trans packedBlocksCheck4
 
 private theorem packedCheck5 : checkPacked 5 4096 0 (table 5) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (checkPackedBlocks_eq 5 64 0 (table 5)).symm.trans packedBlocksCheck5
 
 private theorem packedCheck6 : checkPacked 6 4096 0 (table 6) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact (checkPackedBlocks_eq 6 64 0 (table 6)).symm.trans packedBlocksCheck6
 
 private theorem packedCheck7 : checkPacked 7 4096 0 (table 7) = true := by
-  decide +kernel
+  as_aux_lemma =>
+    refine (congrArg (checkPacked 7 4096 0) table_seven).trans
+      (checkPacked_repeat (Nat.mod_lt _ (by decide)) (fun index => ?_) 4096 0)
+    exact (checkWitness_seven index _).trans witness_seven
 
 -- Keep the existing kernel auxiliary proofs at the original statements.
 private theorem check0 : (List.range 4096).all (okEntry 0) = true := by
