@@ -21,6 +21,7 @@ public import LeanPool.LatticeDiracDerivation.V2.ContinuumDiracOperators
 public import LeanPool.LatticeDiracDerivation.V2.CovariantFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.CubicalClifford
 public import LeanPool.LatticeDiracDerivation.V2.CubicalPhaseAlgebra
+public import LeanPool.LatticeDiracDerivation.V2.CubicalPhaseCharacterization
 public import LeanPool.LatticeDiracDerivation.V2.CubicalSpinorBlocks
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicFourierBasis

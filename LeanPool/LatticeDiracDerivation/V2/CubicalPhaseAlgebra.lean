@@ -195,13 +195,29 @@ private theorem cubical_phase_readout_factor (mass px py pz : ℂ) (hmass : mass
     cubicalPhaseReadout mass px py pz phase =
       fun i => mass⁻¹ * (cubicalStandardHamiltonian mass px py pz
         (cubicalRepeatedCoordinates phase.1) i + I * cubicalRepeatedCoordinates phase.2 i) := by
-  funext i
-  fin_cases i <;>
-    simp [cubicalPhaseReadout, cubicalFromPositionLower, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, cubicalRepeatedCoordinates, cubicalStandardHamiltonian,
-      cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
-      cubicalStandardAlphaZ] <;> field_simp [hmass] <;> ring
+  unfold cubicalPhaseReadout cubicalFromPositionLower cubicalRepeatedCoordinates
+  rw [cubical_standard_hamiltonian_blocks]
+  let upper : UniformCell2 := fun i => mass * phase.1 i + cubicalSpatialLower px py pz phase.1 i
+  let lower : UniformCell2 := fun i => cubicalSpatialLower px py pz phase.1 i - mass * phase.1 i
+  change cubicalSpinorOfBlocks _ _ =
+    mass⁻¹ • (cubicalSpinorOfBlocks upper lower + I • cubicalSpinorOfBlocks phase.2 phase.2)
+  have scale (a : ℂ) (x y : UniformCell2) :
+      a • cubicalSpinorOfBlocks x y = cubicalSpinorOfBlocks (a • x) (a • y) :=
+    (cubicalSpinorOfBlocksLinear.map_smul a (x, y)).symm
+  have add (x y x' y' : UniformCell2) :
+      cubicalSpinorOfBlocks x y + cubicalSpinorOfBlocks x' y' =
+        cubicalSpinorOfBlocks (x + x') (y + y') :=
+    (cubicalSpinorOfBlocksLinear.map_add (x, y) (x', y')).symm
+  rw [scale I, add, scale]
+  apply congrArg₂ cubicalSpinorOfBlocks
+  · funext i
+    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, cubicalPhaseLower, upper]
+    field_simp [hmass]
+    ring
+  · funext i
+    simp only [Pi.neg_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul, cubicalPhaseLower, lower]
+    field_simp [hmass]
+    ring
 
 theorem cubical_phase_readout_intertwines
     (mass px py pz : ℂ) (hmass : mass ≠ 0)
