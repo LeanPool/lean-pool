@@ -32,19 +32,8 @@ variable {k : ℕ} {G W F : Type*} [NormedAddCommGroup G] [InnerProductSpace ℝ
   [FiniteDimensional ℝ G] [NormedAddCommGroup W] [InnerProductSpace ℝ W]
   [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
 
-/-- The map `(a, c) ↦ ∑ aᵢ Xᵢ + u c`. -/
-noncomputable def sumMap (X : Fin k → W) (u : G →ₗ[ℝ] W) :
-    WithLp 2 (EuclideanSpace ℝ (Fin k) × G) →ₗ[ℝ] W where
-  toFun p := ∑ i, (WithLp.ofLp p).1 i • X i + u (WithLp.ofLp p).2
-  map_add' p q := by
-    simp only [WithLp.ofLp_add, Prod.fst_add, Prod.snd_add, PiLp.add_apply, add_smul,
-      Finset.sum_add_distrib, map_add]
-    abel
-  map_smul' c p := by
-    simp only [WithLp.ofLp_smul, Prod.smul_fst, Prod.smul_snd, PiLp.smul_apply, smul_eq_mul,
-      RingHom.id_apply, map_smul, Finset.smul_sum, smul_add, mul_smul]
-
-private noncomputable def frameLinearMap (X : Fin k → W) : EuclideanSpace ℝ (Fin k) →ₗ[ℝ] W :=
+/-- Extend a finite Euclidean frame linearly. -/
+noncomputable def frameLinearMap (X : Fin k → W) : EuclideanSpace ℝ (Fin k) →ₗ[ℝ] W :=
   (EuclideanSpace.basisFun (Fin k) ℝ).toBasis.constr ℝ X
 
 private theorem frameLinearMap_apply (X : Fin k → W) (v : EuclideanSpace ℝ (Fin k)) :
@@ -52,6 +41,19 @@ private theorem frameLinearMap_apply (X : Fin k → W) (v : EuclideanSpace ℝ (
   unfold frameLinearMap
   rw [Basis.constr_apply_fintype]
   rfl
+
+/-- The map `(a, c) ↦ ∑ aᵢ Xᵢ + u c`. -/
+noncomputable def sumMap (X : Fin k → W) (u : G →ₗ[ℝ] W) :
+    WithLp 2 (EuclideanSpace ℝ (Fin k) × G) →ₗ[ℝ] W :=
+  (frameLinearMap X).coprod u ∘ₗ
+    (WithLp.linearEquiv 2 ℝ (EuclideanSpace ℝ (Fin k) × G)).toLinearMap
+
+omit [FiniteDimensional ℝ G] in
+theorem sumMap_apply (X : Fin k → W) (u : G →ₗ[ℝ] W)
+    (p : WithLp 2 (EuclideanSpace ℝ (Fin k) × G)) :
+    sumMap X u p = (∑ i, (WithLp.ofLp p).1 i • X i) + u (WithLp.ofLp p).2 := by
+  change frameLinearMap X (WithLp.ofLp p).1 + u (WithLp.ofLp p).2 = _
+  rw [frameLinearMap_apply]
 
 private theorem frameLinearMap_normDet (X : Fin k → W)
     (hX : ∀ i j, inner ℝ (X i) (X j) = if i = j then (1 : ℝ) else 0) :
@@ -70,16 +72,6 @@ private theorem frameLinearMap_normDet (X : Fin k → W)
   rw [← hmap]
   exact isometry.normDet_eq_one
 
-omit [FiniteDimensional ℝ G] in
-private theorem sumMap_eq_coprod (X : Fin k → W) (u : G →ₗ[ℝ] W) :
-    sumMap X u = (frameLinearMap X).coprod u ∘ₗ
-      (WithLp.linearEquiv 2 ℝ (EuclideanSpace ℝ (Fin k) × G)).toLinearMap := by
-  apply LinearMap.ext
-  intro p
-  change (∑ i, (WithLp.ofLp p).1 i • X i) + u (WithLp.ofLp p).2 =
-    frameLinearMap X (WithLp.ofLp p).1 + u (WithLp.ofLp p).2
-  rw [frameLinearMap_apply]
-
 private theorem normDet_sumMap (X : Fin k → W)
     (hX : ∀ i j, inner ℝ (X i) (X j) = if i = j then (1 : ℝ) else 0)
     (u : G →ₗ[ℝ] W) (hu : ∀ i c, inner ℝ (X i) (u c) = 0) :
@@ -88,7 +80,7 @@ private theorem normDet_sumMap (X : Fin k → W)
       inner ℝ (frameLinearMap X v) (u w) = 0 := by
     simp only [frameLinearMap_apply, sum_inner, real_inner_smul_left, hu, mul_zero,
       Finset.sum_const_zero]
-  rw [sumMap_eq_coprod, LinearMap.normDet_coprod_of_orthogonal _ _ horthogonal,
+  rw [sumMap, LinearMap.normDet_coprod_of_orthogonal _ _ horthogonal,
     frameLinearMap_normDet X hX, one_mul]
 
 theorem gramDens_sumMap (X : Fin k → W) (hX : ∀ i j, inner ℝ (X i) (X j) = if i = j then (1 : ℝ)

@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Geometry.Manifold.Algebra.Structures
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedPointwise
+import LeanPool.CutoffRigidity.L2FatouBounds
 
 /-! # Hessian rigidity of eigenfunctions with eigenvalue `ρ` under `CD(ρ,∞)`
 
@@ -220,17 +221,9 @@ theorem lintegral_ofReal_le_of_approx {μ : Measure M} {g : M → ℝ} {h : ℕ 
     (hmeas : ∀ n, Measurable (h n)) (hg : ∀ x, ∀ᶠ n in atTop, h n x = g x)
     {b : ℕ → ℝ≥0∞} {c : ℝ≥0∞} (hb : ∀ n, ∫⁻ x, ENNReal.ofReal (h n x) ∂μ ≤ b n)
     (hbc : Tendsto b atTop (𝓝 c)) : ∫⁻ x, ENNReal.ofReal (g x) ∂μ ≤ c := by
-  have h1 : ∀ x, liminf (fun n => ENNReal.ofReal (h n x)) atTop = ENNReal.ofReal (g x) := by
-    intro x
-    have : Tendsto (fun n => ENNReal.ofReal (h n x)) atTop (𝓝 (ENNReal.ofReal (g x))) :=
-      tendsto_const_nhds.congr' ((hg x).mono fun n hn => by simp [hn])
-    exact this.liminf_eq
-  calc ∫⁻ x, ENNReal.ofReal (g x) ∂μ
-      = ∫⁻ x, liminf (fun n => ENNReal.ofReal (h n x)) atTop ∂μ := by simp only [h1]
-    _ ≤ liminf (fun n => ∫⁻ x, ENNReal.ofReal (h n x) ∂μ) atTop :=
-        lintegral_liminf_le (fun n => (hmeas n).ennreal_ofReal)
-    _ ≤ liminf b atTop := liminf_le_liminf (Eventually.of_forall hb)
-    _ = c := hbc.liminf_eq
+  refine CutoffRigidity.lintegral_le_of_ae_tendsto_bounds
+    (fun n ↦ (hmeas n).ennreal_ofReal.aemeasurable) (Eventually.of_forall fun x ↦ ?_) hb hbc
+  exact tendsto_const_nhds.congr' ((hg x).mono fun n hn ↦ (congrArg ENNReal.ofReal hn).symm)
 
 /-- **Hessian rigidity of eigenfunctions** (analytic core of `lem_rig`): if `f` is a smooth
 `L²` eigenfunction with eigenvalue `ρ ≥ 0`, under the integration by parts formula, the

@@ -240,6 +240,7 @@ theorem chartDensity_Ξ (w : F) (hw : w ∈ (fr.Ξ J y₀).target) :
     intro b b'
     rw [fr.mfderiv_Ξ_symm_apply J y₀ w hw b, fr.mfderiv_Ξ_symm_apply J y₀ w hw b']
     exact fr.inner_mfderiv_comp (List.finRange k) (tc J w) m _ _
+  simp only [LinearMap.comp_apply, sumMap_apply]
   exact key _ _
 
 end Frame
