@@ -43,13 +43,26 @@ noncomputable def hamN (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → �
 /-- (unnormalised) density ρ_ψ(i) = Σ_c n_i(c) ψ(c)² -/
 def dens (n : V → C → ℝ) (ψ : C → ℝ) : V → ℝ := fun i => ∑ c, n i c * ψ c ^ 2
 
+omit [DecidableEq C] in
+/-- Pairing a potential with the occupation average transfers the sum to configuration weights. -/
+lemma occupation_pairing (n : V → C → ℝ) (v : V → ℝ) (weights : C → ℝ) :
+    v ⬝ᵥ (fun i => ∑ c, weights c * n i c) = ∑ c, weights c * ∑ i, v i * n i c := by
+  simp only [dotProduct, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  exact Finset.sum_congr rfl (fun c _ => Finset.sum_congr rfl (fun i _ => by ring))
+
+omit [DecidableEq C] in
+lemma dens_weighted (n : V → C → ℝ) (w : V → ℝ) (φ : C → ℝ) :
+    ∑ i, w i * dens n φ i = ∑ c, (∑ i, w i * n i c) * φ c ^ 2 := by
+  simpa only [dens, dotProduct, mul_comm] using occupation_pairing n w (fun c => φ c ^ 2)
+
 lemma qf_hamN (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) (φ : C → ℝ) :
     qf (hamN H0 n v) φ = qf H0 φ + ∑ i, v i * dens n φ i := by
-  simp only [qf, hamN, Matrix.add_mulVec, dotProduct_add, dens]
+  rw [dens_weighted]
+  simp only [qf, hamN, Matrix.add_mulVec, dotProduct_add]
   congr 1
-  simp only [dotProduct, Matrix.mulVec_diagonal, Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl; intro c _; apply Finset.sum_congr rfl; intro i _; ring
+  simp only [dotProduct, Matrix.mulVec_diagonal, sq]
+  exact Finset.sum_congr rfl (fun c _ => by ring)
 
 /-- The Rayleigh numerator is affine in the external potential. -/
 lemma qf_hamN_add (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v w : V → ℝ) (t : ℝ) (ψ : C → ℝ) :
@@ -73,9 +86,7 @@ theorem weak_hk {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v v' : V → ℝ} {
   have hE : qf H0 ψ = qf H0 ψ' := by linarith
   have e1 : qf (hamN H0 n v') ψ = qf (hamN H0 n v') ψ' := by rw [qf_hamN, qf_hamN, hd, hE]
   have e2 : qf (hamN H0 n v) ψ' = qf (hamN H0 n v) ψ := by rw [qf_hamN, qf_hamN, hd, hE]
-  refine ⟨⟨hψ.1, fun φ => ?_⟩, ⟨hψ'.1, fun φ => ?_⟩⟩
-  · rw [e1, hN]; have := hψ'.2 φ; rwa [hN'] at this
-  · rw [e2, hN']; have := hψ.2 φ; rwa [hN] at this
+  exact ⟨hψ'.of_qf_eq hN' hN e1, hψ.of_qf_eq hN hN' e2⟩
 
 lemma hamN_mulVec_apply (H0 : Matrix C C ℝ) (n : V → C → ℝ) (v : V → ℝ) (ψ : C → ℝ) (c : C) :
     (hamN H0 n v *ᵥ ψ) c = (H0 *ᵥ ψ) c + (∑ i, v i * n i c) * ψ c := by
@@ -145,13 +156,6 @@ every ε ≥ 0: a whole half-line of potentials shares ψ (and its density). No 
 spectral gap are needed. Spin-DFT reading (Capelle–Vignale / Eschrig–Pickett): sites = (site, spin),
 w = Zeeman coupling (+1 on ↓, −1 on ↑); a fully polarised ground state minimises W, so increasing
 the field B never changes it — B is not unique. -/
-
-omit [DecidableEq C] in
-lemma dens_weighted (n : V → C → ℝ) (w : V → ℝ) (φ : C → ℝ) :
-    ∑ i, w i * dens n φ i = ∑ c, (∑ i, w i * n i c) * φ c ^ 2 := by
-  simp only [dens, Finset.mul_sum, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl; intro c _; apply Finset.sum_congr rfl; intro i _; ring
 
 theorem nonunique_of_minimiser {H0 : Matrix C C ℝ} {n : V → C → ℝ} {v w : V → ℝ} {ψ : C → ℝ} {κ : ℝ}
     (hψ : IsGroundState (hamN H0 n v) ψ)

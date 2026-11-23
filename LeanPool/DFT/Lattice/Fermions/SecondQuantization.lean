@@ -91,6 +91,25 @@ def Antisym (f : (Fin N → Fin M) → ℝ) : Prop :=
   ∀ (τ : Fin N → Fin M) (σ : Equiv.Perm (Fin N)), f (fun k => τ (σ k)) =
       (Equiv.Perm.sign σ : ℝ) * f τ
 
+lemma amp_antisym (c : Conf M N) : Antisym (fun τ => amp c τ) := fun τ σ => by
+  simp only [amp]; exact slater_perm _ τ σ
+
+lemma amp_tau_eq (s s' : Conf M N) : amp s' (τs s) = if s = s' then 1 else 0 := by
+  split_ifs with h
+  · subst h; exact amp_self s
+  · have : ∃ k, τs s k ∉ s'.1 := by
+      by_contra hall
+      push Not at hall
+      apply h
+      apply Subtype.ext
+      apply Finset.eq_of_subset_of_card_le
+      · intro x hx
+        obtain ⟨k, rfl⟩ := τs_surj s hx
+        exact hall k
+      · rw [s.2, s'.2]
+    obtain ⟨k, hk⟩ := this
+    exact amp_of_not_mem s' hk
+
 lemma antisym_zero_of_not_injective {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) {τ : Fin N → Fin M}
     (h : ¬ Function.Injective τ) : f τ = 0 := by
   simp only [Function.Injective, not_forall] at h
@@ -122,19 +141,9 @@ lemma antisym_expand {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) (τ : Fin 
       unfold amp at this
       rw [this]; ring
     · intro s _ hs
-      have : ∃ k, τ k ∉ s.1 := by
-        by_contra hall
-        push Not at hall
-        apply hs
-        apply Subtype.ext
-        symm
-        apply Finset.eq_of_subset_of_card_le
-        · intro x hx
-          obtain ⟨k, -, rfl⟩ := Finset.mem_image.mp hx
-          exact hall k
-        · rw [s.2, hS]
-      obtain ⟨k, hk⟩ := this
-      rw [amp_of_not_mem s hk, zero_mul]
+      have hperm := amp_antisym s (τs s0) σ
+      simp only at hperm
+      rw [hτ, hperm, amp_tau_eq, ite_eq_right (Ne.symm hs), mul_zero, zero_mul]
     · intro h; exact absurd (Finset.mem_univ s0) h
   · rw [antisym_zero_of_not_injective hf hinj]
     symm
@@ -195,22 +204,6 @@ lemma gamma_add (h₁ h₂ : Matrix (Fin M) (Fin M) ℝ) :
 lemma gamma_smul (c : ℝ) (h : Matrix (Fin M) (Fin M) ℝ) :
     (Γ (c • h) : Matrix (Conf M N) (Conf M N) ℝ) = c • Γ h := by
   ext s s'; simp [Γ, Finset.mul_sum, mul_assoc]
-
-lemma amp_tau_eq (s s' : Conf M N) : amp s' (τs s) = if s = s' then 1 else 0 := by
-  split_ifs with h
-  · subst h; exact amp_self s
-  · have : ∃ k, τs s k ∉ s'.1 := by
-      by_contra hall
-      push Not at hall
-      apply h
-      apply Subtype.ext
-      apply Finset.eq_of_subset_of_card_le
-      · intro x hx
-        obtain ⟨k, rfl⟩ := τs_surj s hx
-        exact hall k
-      · rw [s.2, s'.2]
-    obtain ⟨k, hk⟩ := this
-    exact amp_of_not_mem s' hk
 
 lemma sum_tau (s : Conf M N) (v : Fin M → ℝ) : ∑ k, v (τs s k) = ∑ i, v i * occF i s := by
   rw [sum_tau_eq_sum, sum_mul_occF]

@@ -64,11 +64,8 @@ lemma lieb_bdd {H0 : Matrix C C ℝ} (hH0 : H0.IsSymm) (n : V → C → ℝ) {ρ
   refine ⟨∑ c, lam c * H0 c c, ?_⟩
   rintro _ ⟨v, rfl⟩
   have : Egs H0 n v = ∑ c, lam c * Egs H0 n v := by rw [← Finset.sum_mul, hl1, one_mul]
-  have hdot : v ⬝ᵥ (fun i => ∑ c, lam c * n i c) = ∑ c, lam c * ∑ i, v i * n i c := by
-    simp only [dotProduct, Finset.mul_sum]; rw [Finset.sum_comm]
-    apply Finset.sum_congr rfl; intro c _; apply Finset.sum_congr rfl; intro i _; ring
   simp only
-  rw [this, hdot, ← Finset.sum_sub_distrib]
+  rw [this, occupation_pairing, ← Finset.sum_sub_distrib]
   apply Finset.sum_le_sum; intro c _
   have := Egs_le_config hH0 n v c
   nlinarith [hl0 c]

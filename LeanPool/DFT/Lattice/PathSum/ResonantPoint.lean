@@ -122,6 +122,34 @@ theorem ShortestPathSigned.ne_zero {G : SimpleGraph (Fin M)} {t : Fin M → Fin 
   rw [h0] at this
   simp at this
 
+private theorem signed_predecessorSum_pos {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
+    (hG : G.Connected) {t : Fin M → Fin M → ℝ} {b q : Fin M} (hq : 0 < G.dist b q)
+    {ε : Fin M → ℝ} (hε : ∀ r, ε r * ε r = 1)
+    (hlay : ∀ q r, G.Adj q r → G.dist b r + 1 = G.dist b q → 0 < ε q * t q r * ε r)
+    (f : Fin M → ℝ)
+    (hf : ∀ r, G.dist b r + 1 = G.dist b q → 0 < (-1) ^ G.dist b r * (ε b * ε r) * f r) :
+    0 < (-1) ^ G.dist b q * (ε b * ε q) *
+      predecessorSum G t b q (fun depth => depth + 1 = G.dist b q) f := by
+  have hrewrite : (-1) ^ G.dist b q * (ε b * ε q) *
+      predecessorSum G t b q (fun depth => depth + 1 = G.dist b q) f =
+      ∑ r, if G.Adj q r ∧ G.dist b r + 1 = G.dist b q then
+        (ε q * t q r * ε r) * ((-1) ^ G.dist b r * (ε b * ε r) * f r) else 0 := by
+    unfold predecessorSum
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro r _
+    split_ifs with hr
+    · rw [← hr.2]
+      linear_combination (-(-1 : ℝ) ^ G.dist b r * ε b * ε q * t q r * f r) * hε r
+    · rw [mul_zero]
+  rw [hrewrite]
+  obtain ⟨r, hr, hdr⟩ := exists_pred hG
+    (by omega : G.dist b q = G.dist b q - 1 + 1)
+  have hpos r (ha : G.Adj q r ∧ G.dist b r + 1 = G.dist b q) :=
+    mul_pos (hlay q r ha.1 ha.2) (hf r ha.2)
+  apply Finset.sum_pos' (fun p _ => by split_ifs with h; exacts [(hpos p h).le, le_rfl])
+  exact ⟨r, Finset.mem_univ _, by rw [ite_eq_left ⟨hr, by omega⟩]; exact hpos r ⟨hr, by omega⟩⟩
+
 /-- **The partner route sums do not vanish under `ShortestPathSigned`** when the target is
 the highest site away from the partner. -/
 theorem Lval_ne_zero_of_shortestPathSigned {G : SimpleGraph (Fin M)} [DecidableRel G.Adj]
@@ -142,57 +170,22 @@ theorem Lval_ne_zero_of_shortestPathSigned {G : SimpleGraph (Fin M)} [DecidableR
       have hqπ : q ≠ π := by intro h; subst h; simp at hq
       have hqa : q ≠ a := by intro h; subst h; omega
       have hden : 0 < us a - us q := sub_pos.mpr (hhigh q hqa hqπ)
-      have hrw : (-1) ^ (n + 1) * (ε π * ε q) * Λ G t us π a π (n + 1) q =
-          (∑ r, (if G.Adj q r ∧ G.dist π r = n then
-              (ε q * t q r * ε r) * ((-1) ^ n * (ε π * ε r) * Λ G t us π a π n r) else 0)) /
-            (us a - us q) := by
-        simp only [Λ, ite_eq_left hq, ite_eq_right hqπ]
-        rw [mul_div_assoc', Finset.mul_sum]
-        congr 1
-        apply Finset.sum_congr rfl; intro r _
-        split_ifs
-        · linear_combination (-(-1 : ℝ) ^ n * ε π * ε q * t q r * Λ G t us π a π n r) * hε r
-        · simp
-      rw [hrw]
+      have hsum := signed_predecessorSum_pos hG (b := π) (q := q) (by omega) hε hlay
+        (Λ G t us π a π n) (fun r hr => by
+          have hd : G.dist π r = n := by omega
+          rw [hd]
+          exact ih r hd (by omega))
+      simp only [Λ, ite_eq_left hq, ite_eq_right hqπ, mul_div_assoc']
       apply div_pos _ hden
-      obtain ⟨r0, hr0, hdr0⟩ := exists_pred hG hq
-      apply Finset.sum_pos' (fun r _ => by
-        split_ifs with hr
-        · exact (mul_pos (hlay q r hr.1 (by omega)) (ih r hr.2 (by omega))).le
-        · exact le_refl 0)
-      exact ⟨r0, Finset.mem_univ _, by
-        rw [ite_eq_left ⟨hr0, hdr0⟩]
-        exact mul_pos (hlay q r0 hr0 (by omega)) (ih r0 hdr0 (by omega))⟩
-  have hda : 0 < G.dist π a := by
-    by_contra h0; push Not at h0
-    exact hπa ((dist_eq_zero_iff hG).mp (by omega)).symm
-  obtain ⟨p0, hp0, hdp0⟩ :=
-      exists_pred hG (n := G.dist π a - 1) (by omega : G.dist π a = G.dist π a - 1 + 1)
+      simpa only [hq, predecessorSum, Nat.add_right_cancel_iff] using hsum
+  have hda : 0 < G.dist π a := Nat.pos_of_ne_zero
+    (fun h => hπa ((dist_eq_zero_iff hG).mp h).symm)
+  have hsum := signed_predecessorSum_pos hG hda hε hlay
+    (fun p => Λ G t us π a π (G.dist π p) p) (fun p hp => hpos _ p rfl (by omega))
+  change 0 < (-1) ^ G.dist π a * (ε π * ε a) * Lval G t us π a π at hsum
   intro h0
-  have hsum : 0 < ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
-      (ε a * t a p * ε p) * ((-1) ^ (G.dist π p) * (ε π * ε p) *
-        Λ G t us π a π (G.dist π p) p) else 0) := by
-    apply Finset.sum_pos' (fun p _ => by
-      split_ifs with hp
-      · exact (mul_pos (hlay a p hp.1 hp.2) (hpos _ p rfl (by omega))).le
-      · exact le_refl 0)
-    exact ⟨p0, Finset.mem_univ _, by
-      rw [ite_eq_left ⟨hp0, by omega⟩]
-      exact mul_pos (hlay a p0 hp0 (by omega)) (hpos _ p0 rfl (by omega))⟩
-  have : (-1) ^ (G.dist π a) * (ε π * ε a) * Lval G t us π a π =
-      ∑ p, (if G.Adj a p ∧ G.dist π p + 1 = G.dist π a then
-        (ε a * t a p * ε p) * ((-1) ^ (G.dist π p) * (ε π * ε p) *
-          Λ G t us π a π (G.dist π p) p) else 0) := by
-    unfold Lval predecessorSum
-    rw [Finset.mul_sum]
-    apply Finset.sum_congr rfl; intro p _
-    split_ifs with hp
-    · rw [← hp.2]
-      linear_combination (-(-1 : ℝ) ^ (G.dist π p) * ε π * ε a * t a p *
-        Λ G t us π a π (G.dist π p) p) * hε p
-    · simp
-  rw [h0, mul_zero] at this
-  exact hsum.ne' this.symm
+  rw [h0, mul_zero] at hsum
+  exact (lt_irrefl 0) hsum
 
 /-- Hopping of a common sign is `ShortestPathSigned` (`ε q = 1` for `s > 0`,
 `ε q = (-1)^dist(b, q)` otherwise). -/

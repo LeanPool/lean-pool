@@ -43,10 +43,10 @@ include hH0 hn0 hN
 
 omit [DecidableEq C] [DecidableEq V] [Nonempty C] hH0 hn0 in
 lemma sum_dens (φ : C → ℝ) : ∑ i, dens n φ i = Nr * (φ ⬝ᵥ φ) := by
-  simp only [dens, dotProduct]
-  rw [Finset.sum_comm, Finset.mul_sum]
-  apply Finset.sum_congr rfl; intro c _
-  rw [← Finset.sum_mul, hN c]; ring
+  have hpair := dens_weighted n (fun _ => 1) φ
+  simp only [one_mul, hN] at hpair
+  rw [hpair, ← Finset.mul_sum]
+  simp only [dotProduct, sq]
 
 omit [DecidableEq V] [Nonempty C] hH0 hn0 in
 lemma qf_hamN_shift (v : V → ℝ) (k : ℝ) (φ : C → ℝ) :
@@ -160,10 +160,7 @@ include hlam hsum hρ
 omit [DecidableEq C] [DecidableEq V] [Nonempty C] hlam in
 lemma weighted_aval (v : V → ℝ) : ∑ c, lam c * aval (n := n) ρ v c = 0 := by
   simp only [aval, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul, hsum, one_mul]
-  rw [sub_eq_zero, hρ]
-  simp only [dotProduct, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl; intro i _; apply Finset.sum_congr rfl; intro c _; ring
+  rw [sub_eq_zero, hρ, occupation_pairing]
 
 omit [DecidableEq C] [DecidableEq V] in
 lemma mval_nonpos (v : V → ℝ) : mval (n := n) ρ v ≤ 0 := by
@@ -253,9 +250,9 @@ include hH0 hn0 hN hlam hsum hρ hR
 
 omit [DecidableEq C] [DecidableEq V] [Nonempty C] hH0 hn0 hlam hR in
 lemma sum_rho : ∑ i, ρ i = Nr := by
-  rw [hρ]; simp only
-  rw [Finset.sum_comm]
-  simp_rw [← Finset.mul_sum, hN, ← Finset.sum_mul, hsum, one_mul]
+  have hpair := occupation_pairing n (fun _ => 1) lam
+  simp only [dotProduct, one_mul, hN] at hpair
+  rw [hρ, hpair, ← Finset.sum_mul, hsum, one_mul]
 
 omit [DecidableEq V] in
 /-- **Existence of a maximiser of `E(v) − v·ρ`.** -/

@@ -166,6 +166,22 @@ theorem gr_tendsto_hat (us δ : Fin M → ℝ) (b a π : Fin M) (hπ : us a = us
       refine tendsto_const_nhds.congr' (Eventually.of_forall fun ε => ?_)
       simp [Gr, hq]
 
+private theorem dist_via_partner_of_predecessorSum_ne_zero
+    (hG : G.Connected) (b q π : Fin M) (layer : ℕ → Prop) [DecidablePred layer]
+    (f : Fin M → ℝ)
+    (hl : ∀ r, layer (G.dist b r) → G.dist b r + 1 = G.dist b q)
+    (hf : ∀ r, layer (G.dist b r) → f r ≠ 0 → G.dist b π + G.dist π r = G.dist b r)
+    (h : predecessorSum G t b q layer f ≠ 0) : G.dist b π + G.dist π q = G.dist b q := by
+  obtain ⟨r, -, hr⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
+  split_ifs at hr with hqr
+  · have hpath := hf r hqr.2 (right_ne_zero_of_mul hr)
+    have hdist := hl r hqr.2
+    have hlast := hG.dist_triangle (u := π) (v := r) (w := q)
+    rw [SimpleGraph.dist_eq_one_iff_adj.mpr hqr.1.symm] at hlast
+    have htriangle := hG.dist_triangle (u := b) (v := π) (w := q)
+    omega
+  · exact absurd rfl hr
+
 /-- `Λ n q ≠ 0` only if the partner lies on a shortest route from `b` to `q`. -/
 theorem Λ_supp (hG : G.Connected) (us : Fin M → ℝ) (b a π : Fin M) :
     ∀ n q, Λ G t us b a π n q ≠ 0 → G.dist b π + G.dist π q = n ∧ G.dist b q = n := by
@@ -182,19 +198,14 @@ theorem Λ_supp (hG : G.Connected) (us : Fin M → ℝ) (b a π : Fin M) :
     simp only [Λ] at hq
     split_ifs at hq with hd hqπ
     · subst hqπ; simp [hd]
-    · have hnum : ∑ r, (if G.Adj q r ∧ G.dist b r = n then -t q r * Λ G t us b a π n r else 0) ≠
-        0 := by
-        intro h0; apply hq; simp only [predecessorSum, h0, zero_div]
-      obtain ⟨r, -, hr⟩ := Finset.exists_ne_zero_of_sum_ne_zero hnum
-      split_ifs at hr with hrq
-      · have hΛ : Λ G t us b a π n r ≠ 0 := by intro h0; apply hr; rw [h0, mul_zero]
-        obtain ⟨h1, -⟩ := ih r hΛ
-        have h2 : G.dist π q ≤ G.dist π r + 1 := by
-          have := hG.dist_triangle (u := π) (v := r) (w := q)
-          rw [SimpleGraph.dist_eq_one_iff_adj.mpr hrq.1.symm] at this; exact this
-        have h3 := hG.dist_triangle (u := b) (v := π) (w := q)
-        exact ⟨by omega, hd⟩
-      · exact absurd rfl hr
+    · have hnum : predecessorSum G t b q (· = n) (Λ G t us b a π n) ≠ 0 := by
+        intro h0
+        apply hq
+        rw [h0, zero_div]
+      have hpath := dist_via_partner_of_predecessorSum_ne_zero G t hG b q π (· = n)
+        (Λ G t us b a π n) (fun r hr => by omega)
+        (fun r hr hΛ => by simpa only [hr] using (ih r hΛ).1) hnum
+      exact ⟨hpath.trans hd, hd⟩
     · exact absurd rfl hq
 
 end
@@ -235,18 +246,10 @@ lemma factor_moved_tendsto (us δ : Fin M → ℝ) (b a π : Fin M) (hab : a ≠
   exact gr_tendsto_hat G t us δ b a π hπ hgen hδ _ (by have := hp.2; omega) p
 
 lemma Lval_through (hG : G.Connected) (us : Fin M → ℝ) (b a π : Fin M)
-    (h : Lval G t us b a π ≠ 0) : G.dist b π + G.dist π a = G.dist b a := by
-  simp only [Lval, predecessorSum] at h
-  obtain ⟨p, -, hp⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
-  split_ifs at hp with hc
-  · have hΛ : Λ G t us b a π (G.dist b p) p ≠ 0 := by intro h0; apply hp; rw [h0, mul_zero]
-    obtain ⟨h1, -⟩ := Λ_supp G t hG us b a π _ p hΛ
-    have h2 : G.dist π a ≤ G.dist π p + 1 := by
-      have := hG.dist_triangle (u := π) (v := p) (w := a)
-      rw [SimpleGraph.dist_eq_one_iff_adj.mpr hc.1.symm] at this; exact this
-    have h3 := hG.dist_triangle (u := b) (v := π) (w := a)
-    omega
-  · exact absurd rfl hp
+    (h : Lval G t us b a π ≠ 0) : G.dist b π + G.dist π a = G.dist b a :=
+  dist_via_partner_of_predecessorSum_ne_zero G t hG b a π
+    (fun depth => depth + 1 = G.dist b a) (fun p => Λ G t us b a π (G.dist b p) p)
+    (fun _ hp => hp) (fun p _ hp => (Λ_supp G t hG us b a π _ p hp).1) h
 
 lemma factor_common_tendsto (us δ : Fin M → ℝ) (b a : Fin M)
     (hA : ∀ z, us z = us a → z = a) :

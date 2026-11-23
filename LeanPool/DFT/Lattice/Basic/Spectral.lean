@@ -67,6 +67,21 @@ theorem qf_ge_of_diagonalisation {H P : Matrix C C ℝ} {lam : C → ℝ} (hP : 
   apply Finset.sum_le_sum; intro a _
   nlinarith [hE a, mul_self_nonneg (c a)]
 
+/-- Diagonalization by columns is equivalent to the corresponding column eigenvector equations. -/
+lemma mul_eq_mul_diagonal_iff {R : Type*} [CommSemiring R] (H P : Matrix C C R) (e : C → R) :
+    H * P = P * diagonal e ↔ ∀ a, H *ᵥ P.col a = e a • P.col a := by
+  have hcol (a : C) : (P * diagonal e).col a = e a • P.col a := by
+    funext x
+    simp [Matrix.col, Matrix.mul_diagonal, mul_comm]
+  constructor
+  · intro h a
+    rw [← col_mul_eq_mulVec_col, h, hcol]
+  · intro h
+    ext x a
+    have he : (H * P).col a = (P * diagonal e).col a := by
+      rw [col_mul_eq_mulVec_col, hcol, h]
+    exact congrFun he x
+
 /-- Orthonormal eigenvectors of a symmetric real matrix, as an orthogonal matrix diagonalising it.
 -/
 theorem exists_diagonalisation {H : Matrix C C ℝ} (hS : H.IsSymm) :
@@ -82,13 +97,8 @@ theorem exists_diagonalisation {H : Matrix C C ℝ} (hS : H.IsSymm) :
     simp only [transpose_apply, of_apply]
     rw [← h1]
     simp [dotProduct, mul_comm]
-  · ext x a
-    have := congrFun (hH.mulVec_eigenvectorBasis a) x
-    simp only [mulVec, dotProduct, Pi.smul_apply, smul_eq_mul] at this
-    rw [Matrix.mul_apply, Matrix.mul_apply]
-    simp only [of_apply, diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-        ite_true]
-    rw [this, mul_comm]
+  · refine (mul_eq_mul_diagonal_iff _ _ _).mpr fun a => ?_
+    exact hH.mulVec_eigenvectorBasis a
 
 omit [DecidableEq C] in
 /-- **Existence of a normalised ground state.** -/
@@ -102,13 +112,7 @@ theorem exists_groundState [Nonempty C] {H : Matrix C C ℝ} (hS : H.IsSymm) :
   have hnorm : ψ ⬝ᵥ ψ = 1 := by
     have := congrFun (congrFun hP a0) a0
     simpa [Matrix.mul_apply, dotProduct, ψ] using this
-  have heig : H *ᵥ ψ = lam a0 • ψ := by
-    funext x
-    have := congrFun (congrFun hHP x) a0
-    simp only [Matrix.mul_apply, diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq',
-        Finset.mem_univ,
-      ite_true] at this
-    simpa [mulVec, dotProduct, ψ, mul_comm] using this
+  have heig : H *ᵥ ψ = lam a0 • ψ := (mul_eq_mul_diagonal_iff H P lam).mp hHP a0
   have hq : qf H ψ = lam a0 := by
     unfold qf; rw [heig, dotProduct_smul, hnorm, smul_eq_mul, mul_one]
   refine ⟨ψ, ⟨fun h0 => by rw [h0] at hnorm; simp at hnorm, fun φ => ?_⟩, hnorm⟩

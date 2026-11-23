@@ -33,15 +33,18 @@ main_declarations:
 main_results:
 - declaration: DFT.generic_hk_lattice_fermions_w
   informal: >-
-    For N interacting spinless fermions on a connected M-site graph with
-    0 < N < M and symmetric hopping amplitudes of a common sign on the edges,
-    potentials whose ground state is shared by a potential differing by more than a
-    constant lie in a closed, nowhere dense Lebesgue null set.
+    For N spinless fermions on a connected M-site graph, assume 0 < N < M,
+    symmetric hopping of a common sign on the edges, and interactions diagonal
+    in the occupation basis. The potentials whose ground state is shared by a
+    potential differing by more than a constant lie in a closed, nowhere dense,
+    Lebesgue-null set.
 - declaration: DFT.dimH_nonUVDens_lattice_fermions_w
   informal: >-
-    On an M-site graph under the same hypotheses, densities from nondegenerate
-    ground states shared with an inequivalent potential have Hausdorff dimension
-    at most M minus three, truncated at zero.
+    For N spinless fermions with 0 < N < M on a connected M-site graph,
+    assume symmetric common-sign edge hopping and an interaction diagonal in
+    the occupation basis. Densities of normalized, nondegenerate ground states
+    shared with a second potential differing by more than a constant have
+    Hausdorff dimension at most M minus three, truncated at zero.
 - declaration: DFT.ks_potential_exists_interior
   informal: >-
     For N spinless fermions on an M-site graph with 0 < N < M, fix any

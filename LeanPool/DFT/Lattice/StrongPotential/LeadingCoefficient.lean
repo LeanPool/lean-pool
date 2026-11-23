@@ -164,7 +164,7 @@ lemma entry_zero {A : Matrix C C ℝ} {d : C → ℕ} (hL : Lip A d) {c : C} (hc
   ext m; rw [entry_bound hL hc V w k y m (by omega)]; simp
 
 /-- Top coefficient of a product of polynomials with degree bounds. -/
-lemma prod_coeff_top {ι : Type*} (s : Finset ι) (f : ι → ℝ[X]) (e : ι → ℕ)
+lemma prod_coeff_top {ι R : Type*} [CommSemiring R] (s : Finset ι) (f : ι → R[X]) (e : ι → ℕ)
     (hf : ∀ i ∈ s, (f i).natDegree ≤ e i) :
     (∏ i ∈ s, f i).coeff (∑ i ∈ s, e i) = ∏ i ∈ s, (f i).coeff (e i) := by
   classical
@@ -178,7 +178,7 @@ lemma prod_coeff_top {ι : Type*} (s : Finset ι) (f : ι → ℝ[X]) (e : ι �
       coeff_mul_add_eq_of_natDegree_le (hf a (Finset.mem_insert_self a s)) hdeg, ih hs]
 
 /-- Products: the top coefficient depends only on the top coefficients of the factors. -/
-lemma prod_top {ι : Type*} (s : Finset ι) (f g : ι → ℝ[X]) (e : ι → ℕ)
+lemma prod_top {ι R : Type*} [CommSemiring R] (s : Finset ι) (f g : ι → R[X]) (e : ι → ℕ)
     (hf : ∀ i ∈ s, (f i).natDegree ≤ e i) (hg : ∀ i ∈ s, (g i).natDegree ≤ e i)
     (he : ∀ i ∈ s, (f i).coeff (e i) = (g i).coeff (e i)) :
     (∏ i ∈ s, f i).natDegree ≤ ∑ i ∈ s, e i ∧ (∏ i ∈ s, g i).natDegree ≤ ∑ i ∈ s, e i ∧

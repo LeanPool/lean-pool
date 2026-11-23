@@ -72,15 +72,7 @@ lemma alpha_sum (y : C) : ∑ z, alphaRep A w hw d hL c hc y z = if y = c then 1
 noncomputable def Fres (y : C) (x : ℝ) : ℝ := ∑ z, alphaRep A w hw d hL c hc y z / (x - w z)
 
 lemma Ssrc_self (y : C) : Ssrc hw hL hc y y = 0 := by
-  apply Finset.sum_eq_zero; intro p hp
-  split_ifs with hdp
-  · have : alphaRep A w hw d hL c hc p y = 0 := by
-      by_contra hne
-      rcases alphaRep_supp hw hL hc p y hne with h | h
-      · exact (Finset.mem_erase.mp hp).1 h.symm
-      · omega
-    rw [this, mul_zero]
-  · rfl
+  simpa only [sub_self, mul_zero] using (alpha_rec hw hL hc y y).symm
 
 /-- Interchange the source and configuration sums in the resolvent. -/
 theorem source_sum (y : C) (x : ℝ) :

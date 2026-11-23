@@ -30,9 +30,6 @@ open Matrix
 
 variable {M N : ℕ}
 
-lemma amp_antisym (c : Conf M N) : Antisym (fun τ => amp c τ) := fun τ σ => by
-  simp only [amp]; exact slater_perm _ τ σ
-
 lemma H1_antisym (h : Matrix (Fin M) (Fin M) ℝ) {f : (Fin N → Fin M) → ℝ} (hf : Antisym f) :
     Antisym (H1 h f) := by
   intro τ σ

@@ -38,16 +38,14 @@ open Matrix MvPolynomial
 variable {C V : Type*} [Fintype C] [DecidableEq C] [Fintype V] [DecidableEq V]
 
 /-- Krylov matrix of `e_c` under `H`; column `j` is `H ^ (ord j) e_c`. -/
-def kry {R : Type*} [CommRing R] (H : Matrix C C R) (c : C) (ord : C → ℕ) : Matrix C C R :=
+def kry {R : Type*} [Semiring R] (H : Matrix C C R) (c : C) (ord : C → ℕ) : Matrix C C R :=
   fun i j => (H ^ ord j) i c
 
 /-- A ring homomorphism commutes with formation of the Krylov matrix. -/
-lemma kry_map {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) (H : Matrix C C R)
+lemma kry_map {R S : Type*} [Semiring R] [Semiring S] (f : R →+* S) (H : Matrix C C R)
     (c : C) (ord : C → ℕ) : (kry H c ord).map f = kry (H.map f) c ord := by
   ext i j
-  have hpow : (H.map f) ^ ord j = (H ^ ord j).map f := by
-    rw [← RingHom.mapMatrix_apply, ← map_pow, RingHom.mapMatrix_apply]
-  simp only [kry, Matrix.map_apply, hpow]
+  simp only [kry, Matrix.map_apply, ← Matrix.map_pow H f]
 
 lemma det_kry_eq_zero {H : Matrix C C ℝ} (hS : H.IsSymm) {ψ : C → ℝ} {E : ℝ}
     (hψ : ψ ≠ 0) (hE : H *ᵥ ψ = E • ψ) {c : C} (hc : ψ c = 0) (ord : C → ℕ) :

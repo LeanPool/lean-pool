@@ -70,13 +70,7 @@ theorem qf_gamma_ge (h : Matrix (Fin M) (Fin M) ℝ) {φ : Fin M → Fin M → �
     E * (v ⬝ᵥ v) ≤ qf (Γ h) v := by
   set P := slaterMat (N := N) φ
   have hGP : (Γ h : Matrix (Conf M N) (Conf M N) ℝ) * P = P * diagonal (orbEnergy ε) := by
-    ext s S
-    have := congrFun (slaterSub_eigen h hφ S) s
-    simp only [mulVec, dotProduct, Pi.smul_apply, smul_eq_mul] at this
-    rw [Matrix.mul_apply, Matrix.mul_apply]
-    simp only [P, slaterMat, diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      ite_true]
-    rw [this, mul_comm]
+    exact (mul_eq_mul_diagonal_iff _ _ _).mpr fun S => slaterSub_eigen h hφ S
   exact qf_ge_of_diagonalisation (slaterMat_orth hON) hGP hE v
 
 /-- Orthonormal eigenvectors of a symmetric real matrix (spectral theorem). -/
@@ -84,15 +78,9 @@ theorem exists_eigenbasis (h : Matrix (Fin M) (Fin M) ℝ) (hS : h.IsSymm) :
     ∃ (ε : Fin M → ℝ) (φ : Fin M → Fin M → ℝ), (∀ a, h *ᵥ φ a = ε a • φ a) ∧
       ∀ a b, ∑ x, φ a x * φ b x = if a = b then 1 else 0 := by
   obtain ⟨P, ε, hP, hHP⟩ := exists_diagonalisation hS
-  refine ⟨ε, fun a x => P x a, fun a => ?_, fun a b => ?_⟩
-  · ext x
-    have h := congrFun (congrFun hHP x) a
-    rw [Matrix.mul_apply, Matrix.mul_apply] at h
-    simp only [diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ,
-      ite_true] at h
-    simpa [mulVec, dotProduct, Pi.smul_apply, mul_comm] using h
-  · have h := congrFun (congrFun hP a) b
-    simpa only [Matrix.mul_apply, transpose_apply, Matrix.one_apply] using h
+  refine ⟨ε, P.col, (mul_eq_mul_diagonal_iff h P ε).mp hHP, fun a b => ?_⟩
+  have h := congrFun (congrFun hP a) b
+  simpa only [Matrix.mul_apply, transpose_apply, Matrix.one_apply, Matrix.col] using h
 
 /-- **Aufbau theorem.** The ground-state energy of `N` non-interacting fermions with single-particle
 Hamiltonian `h` is the smallest sum of `N` orbital energies, attained by the Slater determinant of
