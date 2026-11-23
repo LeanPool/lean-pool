@@ -7,6 +7,7 @@ Authors: Jason Davies
 module
 
 public import LeanPool.MacMahon.Definitions
+import LeanPool.MacMahon.Geometry.FaceMatching
 
 /-!
 # Face and corner matching for targets in tableau row 5
@@ -18,22 +19,22 @@ namespace MacMahon
 
 theorem face_corner_50 : ∀ p : Pair, ∀ k : Slot,
     HasCorner p (cornerAt 5 0 k) ↔ ∃ r : Fin 24, FaceFits (5, 0) p k r := by
-  decide +kernel
+  as_aux_lemma => exact face_corner_of_ne 5 0 (by decide)
 
 theorem face_corner_51 : ∀ p : Pair, ∀ k : Slot,
     HasCorner p (cornerAt 5 1 k) ↔ ∃ r : Fin 24, FaceFits (5, 1) p k r := by
-  decide +kernel
+  as_aux_lemma => exact face_corner_of_ne 5 1 (by decide)
 
 theorem face_corner_52 : ∀ p : Pair, ∀ k : Slot,
     HasCorner p (cornerAt 5 2 k) ↔ ∃ r : Fin 24, FaceFits (5, 2) p k r := by
-  decide +kernel
+  as_aux_lemma => exact face_corner_of_ne 5 2 (by decide)
 
 theorem face_corner_53 : ∀ p : Pair, ∀ k : Slot,
     HasCorner p (cornerAt 5 3 k) ↔ ∃ r : Fin 24, FaceFits (5, 3) p k r := by
-  decide +kernel
+  as_aux_lemma => exact face_corner_of_ne 5 3 (by decide)
 
 theorem face_corner_54 : ∀ p : Pair, ∀ k : Slot,
     HasCorner p (cornerAt 5 4 k) ↔ ∃ r : Fin 24, FaceFits (5, 4) p k r := by
-  decide +kernel
+  as_aux_lemma => exact face_corner_of_ne 5 4 (by decide)
 
 end MacMahon

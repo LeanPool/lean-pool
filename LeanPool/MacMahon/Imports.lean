@@ -14,6 +14,7 @@ public import LeanPool.MacMahon.Counting
 public import LeanPool.MacMahon.Data
 public import LeanPool.MacMahon.Definitions
 public import LeanPool.MacMahon.Geometry
+public import LeanPool.MacMahon.Geometry.FaceMatching
 public import LeanPool.MacMahon.Geometry.TargetFive
 public import LeanPool.MacMahon.Geometry.TargetFour
 public import LeanPool.MacMahon.Geometry.TargetOne
