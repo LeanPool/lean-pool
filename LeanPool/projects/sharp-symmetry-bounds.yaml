@@ -23,7 +23,7 @@ source:
   - Carlo Perassi
   url: https://github.com/carlok/curve-symmetry-lean/blob/18d3984fd32e7482b98bc0ac42753e8508d236dd/sharp_symmetry_bounds.pdf
   github_repo: carlok/sharp-symmetry-bounds-lean
-  commit: ced9fe2d4d2aa42aa03bbc19b1b56cdcd18c9413
+  commit: 26deee2e033ee17037c051e2ce7c9c739e4b0d59
   announcement: https://palomar-registry.org/entry?id=PALOMAR-2026-09-18-000007&version=1
   announcement_date: '2026-09-18'
   citation: 'Background: P. Lebmeir and J. Richter-Gebert, Rotations, translations and symmetry

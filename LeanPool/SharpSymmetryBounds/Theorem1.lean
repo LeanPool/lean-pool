@@ -19,8 +19,9 @@ are exactly, up to an orientation-preserving similarity, the curves `Re(z^(d-2) 
 with `|α| = 1` and `α` not real (`equality_classification`); conversely every such curve with
 `d - 2 ≥ 3` attains the bound (`family_attains_bound`).
 
-The four definitions and five theorem statements are the ones registered with Palomar as
-`PALOMAR-2026-09-18-000007`, unchanged. Each theorem is derived from the corresponding endpoint of
+The five theorem statements are the comparison targets registered with Palomar as
+`PALOMAR-2026-09-18-000007`, unchanged; the four definitions they use are those of the registered
+Challenge. Each theorem is derived from the corresponding endpoint of
 the library (`CurveSymmetry.paper_sharp_bounds` and the following ones); the library notions agree
 with these definitions by `rfl`, except that "not a circle" and "nonreal" are restated.
 -/

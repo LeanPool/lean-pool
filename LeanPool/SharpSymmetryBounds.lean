@@ -21,13 +21,18 @@ MSC: 14H50, 14P05, 51N20, 68V20
 -/
 
 /-!
-Ported from `carlok/sharp-symmetry-bounds-lean` at `ced9fe2d4d2aa42aa03bbc19b1b56cdcd18c9413`
-(Apache-2.0), the commit registered with Palomar as `PALOMAR-2026-09-18-000007`. AI coding agents
-wrote the Lean proofs under the author's direction, from the author's note. The port adds the
-module system, file headers, module docstrings and docstrings for 41 definitions, wraps lines to
-100 characters, removes `set_option autoImplicit false` and `#print axioms` lines, and replaces the
-upstream `Challenge`/`Solution` pair by `Theorem1`, which keeps the registered statements
-unchanged. No proof was changed.
+Ported from `carlok/sharp-symmetry-bounds-lean` at `26deee2e033ee17037c051e2ce7c9c739e4b0d59`
+(Apache-2.0). AI coding agents wrote the Lean proofs under the author's direction, from the
+author's note. That commit is the one registered with Palomar as `PALOMAR-2026-09-18-000007`
+(`ced9fe2`) plus the upstream bump to Lean and Mathlib v4.34, which edited proof scripts in 18
+files for compatibility: renamed lemmas (for instance `Polynomial.finite_setOfPred_isRoot`),
+`let` in place of `letI`, explicit `Complex.star_def` rewrites and updated `simp` sets. The
+registered statements did not change.
+
+This port adds the module system, file headers, module docstrings and docstrings for 41
+definitions, wraps lines to 100 characters, removes `set_option autoImplicit false` and
+`#print axioms` lines, and replaces the upstream `Challenge`/`Solution` pair by `Theorem1`. It
+changes no proof script.
 -/
 
 @[expose] public section
