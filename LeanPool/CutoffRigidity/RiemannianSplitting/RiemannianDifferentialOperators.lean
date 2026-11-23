@@ -1,0 +1,155 @@
+/-
+Copyright (c) 2026 Djalil Chafaï. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Djalil Chafaï
+-/
+
+-- Modified for Lean Pool.
+
+module
+public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCivita
+public import Mathlib.Analysis.InnerProductSpace.Trace
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import TauCeti.Geometry.Manifold.Riemannian.Gradient.Basic
+import Mathlib.Tactic.Ring
+
+/-! # Riemannian gradient and Hessian
+
+The gradient is the Riesz representative of the genuine manifold derivative.
+The Hessian is its actual Levi-Civita covariant derivative paired with the
+metric. These definitions introduce no Bochner, integration-by-parts or
+parallelism hypothesis. This module develops pointwise analytic ingredients;
+it does not yet assert the integrated weighted Bochner identity.
+-/
+@[expose] public section
+open Bundle
+open scoped Manifold ContDiff
+namespace CutoffRigidity
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
+  {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
+  [IsManifold I 2 M]
+  [RiemannianBundle (fun x : M => TangentSpace I x)]
+  [IsContMDiffRiemannianBundle I 1 E (fun x : M => TangentSpace I x)]
+  [FiniteDimensional ℝ E]
+
+/-- The Riesz gradient of a scalar function for the given Riemannian metric. -/
+noncomputable def manifoldGradient (f : M → ℝ) (x : M) : TangentSpace I x :=
+  TauCeti.Manifold.mgradient I f x
+
+omit [IsContMDiffRiemannianBundle I 1 E (fun x : M => TangentSpace I x)] in
+theorem inner_manifoldGradient (f : M → ℝ) (x : M) (v : TangentSpace I x) :
+    inner ℝ (manifoldGradient I f x) v = mvfderiv I f x v :=
+  TauCeti.Manifold.inner_mgradient v
+
+omit [IsContMDiffRiemannianBundle I 1 E (fun x : M ↦ TangentSpace I x)] in
+/-- The Riesz representative agrees with Tau Ceti's Riemannian gradient. -/
+theorem manifoldGradient_eq_mgradient (f : M → ℝ) :
+    manifoldGradient I f = TauCeti.Manifold.mgradient I f := rfl
+
+variable {I} in
+/-- A `C²` function has a `C¹` gradient for a `C¹` Riemannian metric. -/
+theorem contMDiff_manifoldGradient {f : M → ℝ}
+    (hf : ContMDiff I 𝓘(ℝ, ℝ) 2 f) :
+    ContMDiff I I.tangent 1 (T% (manifoldGradient I f)) := by
+  rw [manifoldGradient_eq_mgradient]
+  have : IsManifold I ((1 : ℕ∞ω) + 1) M := by
+    simpa only [one_add_one_eq_two] using (inferInstance : IsManifold I 2 M)
+  exact TauCeti.Manifold.contMDiff_mgradient (by simpa only [one_add_one_eq_two] using hf)
+
+/-- The bilinear form given by the covariant derivative of the gradient. -/
+noncomputable def manifoldHessian (f : M → ℝ) (x : M)
+    (v w : TangentSpace I x) : ℝ :=
+  inner ℝ (CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x v) w
+
+/-- The squared Hilbert–Schmidt norm of the Hessian in an orthonormal basis. -/
+noncomputable def manifoldHessianNormSq (f : M → ℝ) (x : M) : ℝ :=
+  ∑ i : Fin (Module.finrank ℝ (TangentSpace I x)),
+    ‖CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x
+      ((stdOrthonormalBasis ℝ (TangentSpace I x)) i)‖^2
+
+/-- Actual zero Hessian is exactly actual parallelism of the Riesz gradient. -/
+theorem manifoldHessian_eq_zero_iff (f : M → ℝ) (x : M) :
+    (∀ v w : TangentSpace I x, manifoldHessian I f x v w=0) ↔
+      CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x=0 := by
+  constructor
+  · intro hh
+    ext v
+    apply (inner_self_eq_zero (𝕜 := ℝ)).mp
+    exact hh v _
+  · intro hh v w
+    simp [manifoldHessian,hh]
+
+theorem manifoldHessianNormSq_nonneg (f : M → ℝ) (x : M) :
+    0 ≤ manifoldHessianNormSq I f x := by
+  apply Finset.sum_nonneg
+  intro i hi
+  exact sq_nonneg _
+
+/-- Vanishing of the genuine squared Hessian tensor norm forces the actual
+Levi-Civita derivative to vanish, without a parallelism premise. -/
+theorem manifoldHessianNormSq_eq_zero_iff (f : M → ℝ) (x : M) :
+    manifoldHessianNormSq I f x=0 ↔
+      CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x=0 := by
+  let A := CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x
+  let b := stdOrthonormalBasis ℝ (TangentSpace I x)
+  constructor
+  · intro hh
+    have hsum : (∑ i, ‖A (b i)‖^2)=0 := hh
+    have hbas : ∀ i, A (b i)=0 := by
+      intro i
+      have hi := (Finset.sum_eq_zero_iff_of_nonneg (fun j _ => sq_nonneg ‖A (b j)‖)).mp hsum i
+        (Finset.mem_univ i)
+      exact norm_eq_zero.mp (sq_eq_zero_iff.mp hi)
+    apply ContinuousLinearMap.ext
+    intro v
+    rw [← b.sum_repr v,map_sum]
+    change (∑ i, A (b.repr v i • b i)) = 0
+    simp only [map_smul,hbas,smul_zero,Finset.sum_const_zero]
+  · intro hh
+    simp [manifoldHessianNormSq,hh]
+
+/-- The squared tensor norm is the intrinsic trace of A* A, hence independent
+of the standard orthonormal basis used to define its finite sum. -/
+theorem manifoldHessianNormSq_eq_trace_adjoint (f : M → ℝ) (x : M) :
+    manifoldHessianNormSq I f x =
+      LinearMap.trace ℝ (TangentSpace I x)
+        (((CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x).adjoint.comp
+          (CovariantDerivative.leviCivitaConnection I M (manifoldGradient I f) x)).toLinearMap) :=
+            by
+  rw [LinearMap.trace_eq_sum_inner _ (stdOrthonormalBasis ℝ (TangentSpace I x))]
+  apply Finset.sum_congr rfl
+  intro i hi
+  rw [ContinuousLinearMap.coe_coe,ContinuousLinearMap.comp_apply,
+    ContinuousLinearMap.adjoint_inner_right,real_inner_self_eq_norm_sq]
+
+omit [IsContMDiffRiemannianBundle I 1 E (fun x : M => TangentSpace I x)] in
+theorem manifoldGradient_mul {f g : M → ℝ} {x : M}
+    (hf : MDifferentiableAt I 𝓘(ℝ, ℝ) f x) (hg : MDifferentiableAt I 𝓘(ℝ, ℝ) g x) :
+    manifoldGradient I (f*g) x = f x • manifoldGradient I g x + g x • manifoldGradient I f x := by
+  apply ext_inner_right ℝ
+  intro v
+  rw [inner_manifoldGradient,mvfderiv_mul hf hg]
+  simp only [add_apply,smul_apply,smul_eq_mul,
+    inner_add_left,inner_smul_left,inner_manifoldGradient,starRingEnd_apply,star_trivial]
+
+/-- The genuine first Bochner calculation: the derivative of the gradient's
+squared norm is twice Hessian applied to that gradient. The explicit domain
+is differentiability of the actual Riesz-gradient section. -/
+theorem mvfderiv_manifoldGradient_norm_sq
+    {f : M → ℝ} {x : M}
+    (hgrad : MDifferentiableAt I I.tangent (T% (manifoldGradient I f)) x)
+    (v : TangentSpace I x) :
+    mvfderiv I (fun y => ‖manifoldGradient I f y‖^2) x v =
+      2*manifoldHessian I f x v (manifoldGradient I f x) := by
+  let X : (y : M) → TangentSpace I y := FiberBundle.extend E v
+  have hh := (CovariantDerivative.isMetricCompatible_leviCivitaConnection I
+    (M := M)).mvfderiv_inner_eq X hgrad hgrad
+  have hv : X x=v := by simp [X]
+  simp only [hv] at hh
+  simp only [real_inner_self_eq_norm_sq] at hh
+  rw [hh,manifoldHessian]
+  rw [real_inner_comm (manifoldGradient I f x)]
+  ring
+
+end CutoffRigidity

@@ -1,0 +1,84 @@
+/-
+Copyright (c) 2026 Djalil Chafaï. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Djalil Chafaï
+-/
+
+-- Modified for Lean Pool.
+
+module
+
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitAction
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.SplitLevelAtlas
+public import Mathlib.Geometry.Manifold.Diffeomorph
+
+/-! # The smooth product decomposition `M ≃ₘ^∞ ℝ^k × N` of a frame -/
+
+@[expose] public section
+
+open Bundle MeasureTheory Set
+open scoped Manifold ContDiff ENNReal NNReal Topology
+
+namespace CutCur
+
+namespace Frame
+
+open CutoffRigidity.Riemann
+
+variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
+  {M : Type} [EMetricSpace M] [ChartedSpace F M] [IsManifold 𝓘(ℝ, F) ∞ M]
+  [RiemannianBundle (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
+  [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
+  [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] {k : ℕ} (fr : Frame F M k)
+
+omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
+/-- The origin is a regular value of the parallel-frame coordinates. -/
+theorem zero_isRegularValue : TauCeti.IsRegularValue 𝓘(ℝ, F)
+    𝓘(ℝ, EuclideanSpace ℝ (Fin k)) fr.sv 0 :=
+  TauCeti.isRegularValue_iff.2 fun y _ ↦
+    TauCeti.isRegularPoint_iff.2 (fr.surjective_mfderiv_sv y)
+
+/-- Charts on the zero level. -/
+noncomputable instance levelCharted :
+    ChartedSpace (LevelModel F (EuclideanSpace ℝ (Fin k))) fr.Level :=
+  levelChartedSpace fr.contMDiff_sv fr.zero_isRegularValue
+
+instance levelIsManifold :
+    IsManifold 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞ fr.Level :=
+  isManifold_level fr.contMDiff_sv fr.zero_isRegularValue
+
+omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
+theorem contMDiff_level_val' :
+    ContMDiff 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F) ∞
+      (Subtype.val : fr.Level → M) :=
+  contMDiff_level_val fr.contMDiff_sv fr.zero_isRegularValue
+
+/-- The projection onto the level, as a map into the level manifold. -/
+noncomputable def toLevel (x : M) : fr.Level := ⟨fr.retr x, fr.sv_retr x⟩
+
+theorem contMDiff_toLevel :
+    ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) ∞ fr.toLevel :=
+  contMDiff_into_level fr.contMDiff_sv fr.zero_isRegularValue fr.contMDiff_retr fr.sv_retr
+
+theorem toLevel_val (y : fr.Level) : fr.toLevel y.val = y :=
+  Subtype.ext (fr.retr_of_level y.property)
+
+/-- The smooth product decomposition. -/
+noncomputable def splitEquiv :
+    M ≃ₘ^∞⟮𝓘(ℝ, F), 𝓘(ℝ, EuclideanSpace ℝ (Fin k)).prod
+      𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k)))⟯ EuclideanSpace ℝ (Fin k) × fr.Level where
+  toFun x := (fr.sv x, fr.toLevel x)
+  invFun p := fr.comp (List.finRange k) p.1 p.2.val
+  left_inv x := fr.comp_retr x
+  right_inv p := by
+    obtain ⟨t, y, hy⟩ := p
+    refine Prod.ext (fr.sv_comp t y hy) (Subtype.ext ?_)
+    exact fr.retr_comp t y hy
+  contMDiff_toFun := fr.contMDiff_sv.prodMk fr.contMDiff_toLevel
+  contMDiff_invFun :=
+    (fr.contMDiff_comp (List.finRange k)).comp
+      (contMDiff_fst.prodMk (fr.contMDiff_level_val'.comp contMDiff_snd))
+
+end Frame
+
+end CutCur
