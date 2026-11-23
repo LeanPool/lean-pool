@@ -32,25 +32,14 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [RiemannianBundle (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
 
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mgrad_const (c : ℝ) (x : M) : mgrad F (fun _ : M => c) x = 0 :=
-  congrFun (TauCeti.Manifold.mgradient_const (I := 𝓘(ℝ, F)) (M := M) c) x
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mgrad_const_mul {f : M → ℝ} (c : ℝ) (hf : MSmooth F f) (x : M) :
-    mgrad F (fun y => c * f y) x = c • mgrad F f x := by
-  have := mgrad_mul F (f := fun _ : M => c) (g := f) contMDiff_const hf x
-  have e : (fun y => c * f y) = (fun _ : M => c) * f := by funext y; simp
-  rw [e, this, mgrad_const]; simp
-
 /-- For an eigenfunction, `Γ₂(f) = ½ 𝓛Γ(f) + λ Γ(f)`. -/
-theorem carre2_eigen {V f : M → ℝ} {lam : ℝ} (hf : MSmooth F f)
+theorem carre2_eigen {V f : M → ℝ} {lam : ℝ}
     (hL : ∀ x, mgenerator F V f x = -lam * f x) (x : M) :
     carre2 F V f x = mgenerator F V (carre F f f) x / 2 + lam * carre F f f x := by
   have h : mgenerator F V f = fun y => -lam * f y := funext hL
   have h2 : carre F f (mgenerator F V f) x = -lam * carre F f f x := by
     rw [h]
-    simp only [carre, mgrad_const_mul F _ hf, real_inner_smul_right]
+    simp only [carre, mgrad_const_mul F _, real_inner_smul_right]
   rw [carre2, h2]; ring
 
 /-- For an eigenfunction with eigenvalue `ρ` under the Bochner inequality,
@@ -59,7 +48,7 @@ theorem hess_le_half_generator {V f : M → ℝ} {ρ : ℝ} (hB : WeightedBochne
     (hf : MSmooth F f) (hL : ∀ x, mgenerator F V f x = -ρ * f x) (x : M) :
     mHessNormSq F f x ≤ mgenerator F V (carre F f f) x / 2 := by
   have h1 := hB f hf x
-  rw [carre2_eigen F hf hL x] at h1
+  rw [carre2_eigen F hL x] at h1
   linarith
 
 variable [MeasurableSpace M] [BorelSpace M]

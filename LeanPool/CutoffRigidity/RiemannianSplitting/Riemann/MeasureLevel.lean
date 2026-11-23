@@ -31,21 +31,6 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] {k : ℕ} (fr : Frame F M k)
 
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
-/-- The differential of the inclusion of the level preserves inner products. -/
-theorem inner_mfderiv_level_val (y : fr.Level)
-    (v w : TangentSpace 𝓘(ℝ, LevelModel F (Rd k)) y) :
-    inner ℝ (mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)
-      (Subtype.val : fr.Level → M) y v)
-      (mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)
-      (Subtype.val : fr.Level → M) y w) = inner ℝ v w := by
-  let T : TangentSpace 𝓘(ℝ, LevelModel F (Rd k)) y →ₗᵢ[ℝ]
-      TangentSpace 𝓘(ℝ, F) y.val :=
-    { toLinearMap := (mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)
-        (Subtype.val : fr.Level → M) y).toLinearMap
-      norm_map' := fun v => fr.norm_mfderiv_level_val y v }
-  exact T.inner_map_map v w
-
-omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
 theorem inner_X_mfderiv_level_val (i : Fin k) (y : fr.Level)
     (v : TangentSpace 𝓘(ℝ, LevelModel F (Rd k)) y) :
     inner ℝ (fr.X i y.val) (mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)

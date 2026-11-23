@@ -11,13 +11,13 @@ module
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Statements
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferentialOperators
 
-/-! # Workstream A interface: the three geometric inputs of the rigidity argument
+/-! # Geometric inputs to weighted eigenfunction rigidity
 
 `WeightedIBP`, `WeightedBochnerIneq` and `WeightedCutoffs` are the three geometric statements
 (integration by parts for `μ = e^{-V} vol`, the curvature-dimension consequence
 `Γ₂ ≥ ‖Hess‖² + ρ Γ`, and existence of smooth cutoffs on a complete manifold) from which the
-rigidity of first eigenfunctions is deduced in `CutoffRigidity.Riemann.WeightedRigidity`.
-They are stated for the Challenge objects `mgrad`, `carre`, `carre2`, `mgenerator`.
+rigidity of first eigenfunctions is proved in `WeightedRigidity.lean`.
+The interfaces use `mgrad`, `carre`, `carre2`, `mgenerator`.
 -/
 
 @[expose] public section
@@ -47,6 +47,18 @@ omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 
 theorem mgrad_inner (f : M → ℝ) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     inner ℝ (mgrad F f x) v = mvfderiv 𝓘(ℝ, F) f x v :=
   TauCeti.Manifold.inner_mgradient v
+
+omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
+/-- The gradient of a constant function vanishes. -/
+theorem mgrad_const (c : ℝ) (x : M) : mgrad F (fun _ : M => c) x = 0 :=
+  congrFun (TauCeti.Manifold.mgradient_const (I := 𝓘(ℝ, F)) (M := M) c) x
+
+omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
+/-- The gradient scales by the same constant as the function. -/
+theorem mgrad_const_mul {f : M → ℝ} (c : ℝ) (x : M) :
+    mgrad F (fun y => c * f y) x = c • mgrad F f x := by
+  change mgrad F (c • f) x = _
+  exact congrFun (TauCeti.Manifold.mgradient_smul (I := 𝓘(ℝ, F)) (f := f) c) x
 
 /-- **(G1) Integration by parts** for the weighted measure: `∫ Γ(u,v) dμ = -∫ u 𝓛v dμ` whenever
 `u, v` are smooth and `u` has compact support. -/

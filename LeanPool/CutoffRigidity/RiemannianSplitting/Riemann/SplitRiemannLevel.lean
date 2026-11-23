@@ -67,18 +67,25 @@ instance levelIsContMDiffRiemannianBundle :
   infer_instance
 
 omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
+/-- The differential of the inclusion of the level preserves inner products. -/
+theorem inner_mfderiv_level_val (y : fr.Level)
+    (v w : TangentSpace 𝓘(ℝ, LevelModel F (Rd k)) y) :
+    inner ℝ (mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)
+      (Subtype.val : fr.Level → M) y v)
+      (mfderiv 𝓘(ℝ, LevelModel F (Rd k)) 𝓘(ℝ, F)
+      (Subtype.val : fr.Level → M) y w) = inner ℝ v w := by
+  change _ = fr.levelRiemannianMetric.inner y v w
+  rw [levelRiemannianMetric, ContMDiffRiemannianMetric.pullback_inner,
+    ContMDiffRiemannianMetric.ofIsContMDiffRiemannianBundle_inner]
+  rfl
+
+omit [IsRiemannianManifold 𝓘(ℝ, F) M] [CompleteSpace M] in
 theorem norm_mfderiv_level_val (y : fr.Level)
     (v : TangentSpace 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) y) :
     ‖mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
       (Subtype.val : fr.Level → M) y v‖ = ‖v‖ := by
-  let w := mfderiv 𝓘(ℝ, LevelModel F (EuclideanSpace ℝ (Fin k))) 𝓘(ℝ, F)
-    (Subtype.val : fr.Level → M) y v
-  have h : inner ℝ w w = inner ℝ v v := by
-    change inner ℝ w w = fr.levelRiemannianMetric.inner y v v
-    rw [levelRiemannianMetric, ContMDiffRiemannianMetric.pullback_inner,
-      ContMDiffRiemannianMetric.ofIsContMDiffRiemannianBundle_inner]
-    rfl
-  simpa only [norm_eq_sqrt_real_inner] using congrArg Real.sqrt h
+  simpa only [norm_eq_sqrt_real_inner] using congrArg Real.sqrt
+    (fr.inner_mfderiv_level_val y v v)
 
 /-- The differential of the projection onto the level. -/
 noncomputable abbrev dpi (x : M) :

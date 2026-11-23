@@ -117,9 +117,7 @@ theorem finiteDimensional_eigenSub [Nonempty M] :
       map_add' := fun f g => by
         have := mgrad_add' F (hE f).1 (hE g).1 x₀
         exact this
-      map_smul' := fun c f => by
-        have := mgrad_const_mul F c (hE f).1 x₀
-        exact this }
+      map_smul' := fun c f => mgrad_const_mul F (f := f.1) c x₀ }
   have hinj : Function.Injective Φ := by
     rw [← LinearMap.ker_eq_bot, LinearMap.ker_eq_bot']
     intro f hf

@@ -8,9 +8,9 @@ Authors: Djalil Chafaï
 
 module
 
-public import Mathlib.Geometry.Manifold.BumpFunction
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
-public import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.LocalFrame
+import Mathlib.Geometry.Manifold.BumpFunction
+import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.LocalFrame
 import TauCeti.Geometry.Manifold.MFDeriv.Chart.Basic
 import TauCeti.Geometry.Manifold.MFDeriv.NormedSpace
 import TauCeti.Geometry.Manifold.Riemannian.Laplacian
@@ -39,7 +39,7 @@ omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 
   [IsManifold 𝓘(ℝ, F) ∞ M]
   [RiemannianBundle fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 /-- chart derivative at the centre equals the intrinsic differential. -/
-theorem fderiv_comp_symm_center {f : M → ℝ} (x : M)
+private theorem fderiv_comp_symm_center {f : M → ℝ} (x : M)
     (v : F) :
     fderiv ℝ (f ∘ (extChartAt 𝓘(ℝ, F) x).symm) (extChartAt 𝓘(ℝ, F) x x) v =
       mvfderiv 𝓘(ℝ, F) f x v := by
@@ -47,7 +47,7 @@ theorem fderiv_comp_symm_center {f : M → ℝ} (x : M)
   rfl
 
 /-- The Christoffel map in the canonical frame at the chart centre. -/
-noncomputable def gamCLM (x : M) : F →L[ℝ] F →L[ℝ] F :=
+private noncomputable def gamCLM (x : M) : F →L[ℝ] F →L[ℝ] F :=
   TauCeti.Manifold.christoffelMap (Module.finBasis ℝ F)
     ((CovariantDerivative.leviCivitaConnection 𝓘(ℝ, F) M).isCovariantDerivativeOn
       (s := (trivializationAt F (TangentSpace 𝓘(ℝ, F)) x).baseSet)) x
@@ -62,15 +62,15 @@ private theorem gamCLM_symm (x : M) (a b : F) : gamCLM x a b = gamCLM x b a := b
     torsionFree (Module.finBasis ℝ F) x (mem_extChartAt_source x) a b
 
 /-- the quadratic test polynomial in chart coordinates -/
-noncomputable def gt (x : M) (ξ : F →L[ℝ] ℝ) (z : F) : ℝ :=
+private noncomputable def gt (x : M) (ξ : F →L[ℝ] ℝ) (z : F) : ℝ :=
   ξ (z - extChartAt 𝓘(ℝ, F) x x) +
     (1 / 2) * ξ (gamCLM x (z - extChartAt 𝓘(ℝ, F) x x) (z - extChartAt 𝓘(ℝ, F) x x))
 
-theorem contDiff_gt (x : M) (ξ : F →L[ℝ] ℝ) : ContDiff ℝ ∞ (gt x ξ) := by
+private theorem contDiff_gt (x : M) (ξ : F →L[ℝ] ℝ) : ContDiff ℝ ∞ (gt x ξ) := by
   unfold gt
   fun_prop
 
-theorem hasFDerivAt_gt (x : M) (ξ : F →L[ℝ] ℝ) (z : F) :
+private theorem hasFDerivAt_gt (x : M) (ξ : F →L[ℝ] ℝ) (z : F) :
     HasFDerivAt (gt x ξ) (ξ + (1 / 2 : ℝ) • (ξ.comp (gamCLM x (z - extChartAt 𝓘(ℝ, F) x x) +
       (gamCLM x).flip (z - extChartAt 𝓘(ℝ, F) x x)))) z := by
   have h1 : HasFDerivAt (fun z : F => z - extChartAt 𝓘(ℝ, F) x x) (ContinuousLinearMap.id ℝ F) z :=
@@ -82,29 +82,29 @@ theorem hasFDerivAt_gt (x : M) (ξ : F →L[ℝ] ℝ) (z : F) :
   simp
 
 
-theorem fderiv_gt_center (x : M) (ξ : F →L[ℝ] ℝ) :
+private theorem fderiv_gt_center (x : M) (ξ : F →L[ℝ] ℝ) :
     fderiv ℝ (gt x ξ) (extChartAt 𝓘(ℝ, F) x x) = ξ := by
   rw [(hasFDerivAt_gt x ξ _).fderiv]
   simp
 
-theorem mvfderiv_eq_xi {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
+private theorem mvfderiv_eq_xi {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     (hG : (G ∘ (extChartAt 𝓘(ℝ, F) x).symm) =ᶠ[𝓝 (extChartAt 𝓘(ℝ, F) x x)] gt x ξ) (w : F) :
     mvfderiv 𝓘(ℝ, F) G x w = ξ w := by
   rw [← fderiv_comp_symm_center x w, hG.fderiv_eq, fderiv_gt_center]
 
 
 /-- first derivative of `gt` in the direction `w`, as an explicit affine function -/
-noncomputable def Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w : F) (z : F) : ℝ :=
+private noncomputable def Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w : F) (z : F) : ℝ :=
   ξ w + (1 / 2) * ξ ((gamCLM x).flip w (z - extChartAt 𝓘(ℝ, F) x x) +
     gamCLM x w (z - extChartAt 𝓘(ℝ, F) x x))
 
-theorem fderiv_gt_apply (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
+private theorem fderiv_gt_apply (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
     fderiv ℝ (gt x ξ) z w = Kfun x ξ w z := by
   rw [(hasFDerivAt_gt x ξ z).fderiv]
   simp only [Kfun, add_apply, smul_apply, ContinuousLinearMap.comp_apply,
     ContinuousLinearMap.flip_apply, smul_eq_mul]
 
-theorem hasFDerivAt_Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
+private theorem hasFDerivAt_Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
     HasFDerivAt (Kfun x ξ w)
       ((1 / 2 : ℝ) • ξ.comp ((gamCLM x).flip w + gamCLM x w)) z := by
   have h1 : HasFDerivAt (fun z : F => z - extChartAt 𝓘(ℝ, F) x x) (ContinuousLinearMap.id ℝ F) z :=
@@ -115,14 +115,14 @@ theorem hasFDerivAt_Kfun (x : M) (ξ : F →L[ℝ] ℝ) (w z : F) :
   ext u
   simp
 
-theorem fderiv_Kfun_center (x : M) (ξ : F →L[ℝ] ℝ) (w a : F) :
+private theorem fderiv_Kfun_center (x : M) (ξ : F →L[ℝ] ℝ) (w a : F) :
     fderiv ℝ (Kfun x ξ w) (extChartAt 𝓘(ℝ, F) x x) a = ξ (gamCLM x a w) := by
   rw [(hasFDerivAt_Kfun x ξ w _).fderiv]
   simp [gamCLM_symm x w a]
   ring
 
 
-theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
+private theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     (hGs : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ G)
     (hG : (G ∘ (extChartAt 𝓘(ℝ, F) x).symm) =ᶠ[𝓝 (extChartAt 𝓘(ℝ, F) x x)] gt x ξ)
     (a w : F) : CutoffRigidity.manifoldHessian 𝓘(ℝ, F) G x a w = 0 := by

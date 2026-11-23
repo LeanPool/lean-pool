@@ -82,7 +82,7 @@ theorem exists_frame_of_eigen :
   have hgram : ∀ i j x, carre F (s i) (s j) x = if i = j then 1 else 0 := by
     intro i j x
     change inner ℝ (mgrad F (s i) x) (mgrad F (s j) x) = _
-    simp only [s, mgrad_const_mul F _ (hTs i), mgrad_const_mul F _ (hTs j),
+    simp only [s, mgrad_const_mul F,
       real_inner_smul_left, real_inner_smul_right]
     change (Real.sqrt ρ)⁻¹ * ((Real.sqrt ρ)⁻¹ * carre F (T i) (T j) x) = _
     rw [hpairing]
