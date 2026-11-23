@@ -7,8 +7,8 @@ Authors: Pengcheng Fang, Tao Hu, Yanyang Li, Quanyu Tang, Haiqi Zhang
 module
 
 public import LeanPool.Bruck.Definitions
-public import Mathlib.Analysis.Complex.HasPrimitives
-import LeanPool.Bruck.LogarithmicPrimitive
+import TauCeti.Analysis.Complex.BranchLogRoot
+import TauCeti.Analysis.Convex.SimplyConnected
 
 /-! # Entire quotients and the reduction from value sharing to an ODE -/
 
@@ -22,18 +22,10 @@ namespace Bruck
 theorem exists_entire_log {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (hf₀ : ∀ z, f z ≠ 0) :
     ∃ g : ℂ → ℂ, Differentiable ℂ g ∧ ∀ z, Complex.exp (g z) = f z := by
-  have hlogDeriv : Differentiable ℂ (fun z => deriv f z / f z) :=
-    hf.deriv.div hf hf₀
-  obtain ⟨P, hP⟩ := hlogDeriv.isExactOn_univ
-  have hPd (z : ℂ) : HasDerivAt P (deriv f z / f z) z := hP z (mem_univ z)
-  obtain ⟨c, hc, hq⟩ :=
-    exists_mul_exp_of_logarithmic_primitive isOpen_univ isPreconnected_univ
-      hf.differentiableOn (fun z _ => hf₀ z) hP
-  refine ⟨fun z => P z + Complex.log c,
-    (show Differentiable ℂ P from fun z => (hPd z).differentiableAt).add_const _, ?_⟩
-  intro z
-  rw [Complex.exp_add, Complex.exp_log hc, mul_comm]
-  exact (hq z (mem_univ z)).symm
+  obtain ⟨g, hg, heq⟩ := TauCeti.exists_differentiableOn_eqOn_exp_comp
+    (convex_univ.isSimplyConnected Set.univ_nonempty) isOpen_univ hf.differentiableOn
+    (by simpa only [Set.mem_image, Set.mem_univ, true_and, not_exists] using hf₀)
+  exact ⟨g, differentiableOn_univ.mp hg, fun z => heq (mem_univ z)⟩
 
 /-- Equal zero orders make the apparent singularities of the quotient removable
 and ensure the extended quotient is nowhere zero. -/

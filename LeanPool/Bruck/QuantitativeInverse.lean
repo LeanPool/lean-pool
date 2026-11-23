@@ -21,7 +21,6 @@ negative imaginary axis. Its logarithmic derivative is uniformly small.
 @[expose] public section
 
 open Metric Set
-open scoped Topology
 
 namespace Bruck
 

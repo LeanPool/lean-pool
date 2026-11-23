@@ -16,7 +16,7 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 @[expose] public section
 
-open Set Filter MeasureTheory Topology
+open Set MeasureTheory
 
 namespace Bruck
 

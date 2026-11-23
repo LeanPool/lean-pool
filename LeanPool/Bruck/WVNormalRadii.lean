@@ -67,7 +67,6 @@ theorem wv_convex_slope_le_square_off_exception {A : ℝ → ℝ}
   let s : ℝ := (k : ℝ) + 1
   have hk : 5 ≤ k := by
     by_contra hh
-    have hk4 : k ≤ 4 := by omega
     have hp : ((k : ℝ) + 2) ^ 3 ≤ (6 : ℝ) ^ 3 := by
       gcongr
       exact_mod_cast (show k + 2 ≤ 6 by omega)
@@ -145,7 +144,6 @@ theorem wv_good_log_radius {H : ℂ → ℂ} (hH : Differentiable ℂ H)
   have hηcube : η ^ 3 ≤ L x := by
     apply le_trans _ hLx
     gcongr
-    have hKn : 0 ≤ (K : ℝ) := Nat.cast_nonneg _
     nlinarith
   obtain ⟨k, hlo, hhi⟩ := wv_cubic_grid_exists hη hηcube
   have hKk : K < k := by

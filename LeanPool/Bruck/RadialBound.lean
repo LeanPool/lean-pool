@@ -90,7 +90,6 @@ theorem doubleLog_maximumModulus_le_of_polynomial_ode (P : Polynomial ℂ)
     ∃ C : ℝ, 0 < C ∧ ∀ r : ℝ, 1 ≤ r → ‖y 0‖ ≤ r → 1 < wvMaximumModulus y r →
       log (log (wvMaximumModulus y r)) ≤ C * r ^ P.natDegree := by
   let C : ℝ := ∑ k ∈ Finset.range (P.natDegree + 1), ‖P.coeff k‖
-  have hC : 0 ≤ C := Finset.sum_nonneg fun _ _ => norm_nonneg _
   refine ⟨C + 4, by positivity, fun r hr hy₀ hyM => ?_⟩
   have hrpos : 0 < r := zero_lt_one.trans_le hr
   let E : ℝ := exp (C * r ^ P.natDegree)
@@ -111,7 +110,6 @@ theorem doubleLog_maximumModulus_le_of_polynomial_ode (P : Polynomial ℂ)
     log_mul (by norm_num) hrpos.ne'] at hlog₂
   have hrpow : r ≤ r ^ P.natDegree := by
     simpa only [pow_one] using pow_le_pow_right₀ hr (Nat.succ_le_of_lt hP)
-  have hpow : 1 ≤ r ^ P.natDegree := one_le_pow₀ hr
   have hlog3 := log_le_self (show 0 ≤ (3 : ℝ) by norm_num)
   have hlogr := log_le_self hrpos.le
   change log (log (wvMaximumModulus y r)) ≤ (C + 4) * r ^ P.natDegree

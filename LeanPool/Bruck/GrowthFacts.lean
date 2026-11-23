@@ -122,7 +122,6 @@ theorem wvMaximumModulus_polynomial_le (p : Polynomial ℂ) {r : ℝ} (hr : 1 �
 theorem polynomial_maximumModulus_le (p : Polynomial ℂ) :
     ∃ C : ℝ, 0 < C ∧ ∀ r ≥ 1, wvMaximumModulus p.eval r ≤ C * r ^ p.natDegree := by
   let C := ∑ i ∈ Finset.range (p.natDegree + 1), ‖p.coeff i‖
-  have hC : 0 ≤ C := Finset.sum_nonneg fun i _ => norm_nonneg (p.coeff i)
   refine ⟨1 + C, by positivity, fun r hr => (wvMaximumModulus_polynomial_le p hr).trans ?_⟩
   exact mul_le_mul_of_nonneg_right (le_add_of_nonneg_left zero_le_one)
     (pow_nonneg (zero_le_one.trans hr) _)

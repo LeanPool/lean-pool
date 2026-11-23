@@ -122,7 +122,6 @@ theorem local_quantitative_growth :
   have hηT : η ≤ contourTolerance := min_le_left _ _
   have hη₀ : η ≤ 1 / 1100 := min_le_right _ _
   have hlog₄ : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num)
-  have hA : 0 < A := by dsimp [A]; linarith [Real.pi_pos]
   have hlog := Real.isLittleO_log_id_atTop.def (show 0 < η / 80 by positivity)
   filter_upwards [hlog, eventually_ge_atTop (8800 : ℝ), eventually_ge_atTop (40 * A / η)]
     with R hl hR hRA

@@ -15,7 +15,7 @@ public import Mathlib.Analysis.Complex.BorelCaratheodory
 
 @[expose] public section
 
-open Set Metric Filter Topology
+open Set Metric
 
 namespace Bruck
 
@@ -61,23 +61,15 @@ theorem wv_local_monomial_of_affine_bound {H : ℂ → ℂ} (hH : Differentiable
       _ ≤ Real.exp ε := Real.exp_le_exp.mpr (hflat τ.re ht)
   have he : 0 < Real.exp ε - 1 := by linarith [Real.one_lt_exp_iff.mpr hε]
   have hRe : MapsTo (fun τ => Q τ - 1) (ball 0 ρ)
-      {w : ℂ | w.re < 2 * (Real.exp ε - 1)} := by
+      {w : ℂ | w.re ≤ Real.exp ε - 1} := by
     intro τ hτ
     have hn : ‖τ‖ ≤ ρ := (mem_ball_zero_iff.mp hτ).le
-    have hh := hQnorm τ hn
-    have hr := Complex.re_le_norm (Q τ)
-    simp only [mem_ofPred_eq, Complex.sub_re, Complex.one_re]
-    linarith
-  have hRe_le : MapsTo (fun τ => Q τ - 1) (ball 0 ρ)
-      {w : ℂ | w.re ≤ 2 * (Real.exp ε - 1)} := by
-    intro w hw
-    have hw' : (Q w - 1).re < 2 * (Real.exp ε - 1) := by
-      simpa only [Set.mem_ofPred_eq] using hRe hw
-    simpa only [Set.mem_ofPred_eq] using hw'.le
+    simpa only [mem_ofPred_eq, Complex.sub_re, Complex.one_re, sub_le_sub_iff_right] using
+      (Complex.re_le_norm (Q τ)).trans (hQnorm τ hn)
   intro τ hτ
   have hτball : τ ∈ ball 0 ρ := mem_ball_zero_iff.mpr (by linarith)
-  have hb := Complex.borelCaratheodory_zero (by linarith : 0 < 2 * (Real.exp ε - 1))
-    (hQ.sub_const 1).differentiableOn hRe_le hρ hτball (by rw [hQ0]; simp)
+  have hb := Complex.borelCaratheodory_zero he
+    (hQ.sub_const 1).differentiableOn hRe hρ hτball (by rw [hQ0]; simp)
   apply hb.trans
   apply (div_le_iff₀ (by linarith : 0 < ρ - ‖τ‖)).mpr
   nlinarith

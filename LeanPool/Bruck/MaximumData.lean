@@ -198,7 +198,6 @@ private theorem exists_polynomial_maximum_data {h : ℂ → ℂ}
     have hcontr := hlower hzinv
     rw [he, norm_zero] at hcontr
     linarith
-  have hzPow : z ^ d ≠ 0 := pow_ne_zero _ hz0
   have hratio : h w / (h z * Complex.exp ζ) = Q w⁻¹ / Q z⁻¹ := by
     rw [hpQ hw0, hpQ hz0, hwPow]
     field_simp [Complex.exp_ne_zero]

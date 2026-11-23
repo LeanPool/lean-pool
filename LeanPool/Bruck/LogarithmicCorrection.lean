@@ -19,8 +19,7 @@ quantitative bounds on its first two derivatives.
 
 @[expose] public section
 
-open Filter Metric Set
-open scoped ComplexConjugate
+open Metric
 
 namespace Bruck
 

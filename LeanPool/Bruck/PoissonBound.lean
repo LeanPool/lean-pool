@@ -76,7 +76,6 @@ private noncomputable def mobLift (ρ θ : ℝ) : ℝ := θ - 2 * arctan (ρ * s
 private lemma polar_of_re_pos {x y : ℝ} (hx : 0 < x) :
     (x : ℂ) + y * Complex.I =
       ((x * √(1 + (y / x) ^ 2) : ℝ) : ℂ) * Complex.exp (arctan (y / x) * Complex.I) := by
-  have hs : 0 < √(1 + (y / x) ^ 2) := Real.sqrt_pos.2 (by positivity)
   rw [Complex.exp_mul_I, ← Complex.ofReal_cos, ← Complex.ofReal_sin,
     Real.cos_arctan, Real.sin_arctan]
   apply Complex.ext <;> simp <;> field_simp
@@ -188,7 +187,6 @@ theorem entire_posLog_le {h : ℂ → ℂ} (hh : Differentiable ℂ h) {r R : �
     Real.posLog ‖h z‖ ≤ (R + r) / (R - r) * ValueDistribution.characteristic h ⊤ R := by
   have hR1 : 1 ≤ R := hr.trans hrR.le
   have hR0 : 0 < R := by linarith
-  have hK : 0 < (R + r) / (R - r) := div_pos (by linarith) (by linarith)
   have hT0 : 0 ≤ ValueDistribution.characteristic h ⊤ R :=
     ValueDistribution.characteristic_nonneg hR1
   rcases le_or_gt ‖h z‖ 1 with hle | hgt
@@ -262,7 +260,6 @@ theorem entire_posLog_le {h : ℂ → ℂ} (hh : Differentiable ℂ h) {r R : �
     (characteristic_eq_circleAverage_posLog hh R).ge
   rw [circleAverage_def, smul_eq_mul] at hjen hprox
   rw [hKρ, h3] at h2
-  have hpi : 0 < (2 * π)⁻¹ := by positivity
   calc log ‖h z‖ ≤ (2 * π)⁻¹ * ∫ θ in (0)..(2 * π), log ‖g (circleMap 0 1 θ)‖ := hjen
     _ ≤ (2 * π)⁻¹ * ((R + r) / (R - r) * ∫ t in (0)..(2 * π), G t) := by
       gcongr; exact h1.trans h2

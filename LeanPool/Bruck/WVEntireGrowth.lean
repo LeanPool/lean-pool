@@ -17,7 +17,7 @@ public import Mathlib.Analysis.Complex.TaylorSeries
 
 @[expose] public section
 
-open Set Metric Filter Topology
+open Set Metric Filter
 
 namespace Bruck
 

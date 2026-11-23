@@ -21,7 +21,7 @@ error tolerances is assumed.
 
 @[expose] public section
 
-open Set Filter MeasureTheory Topology
+open Set MeasureTheory
 
 namespace Bruck
 
@@ -142,7 +142,6 @@ theorem wv_cubic_grid_affine_error {A : ℝ → ℝ} (hA : ConvexOn ℝ univ A)
   apply he.trans
   rw [wvGridWidth, Nat.cast_add, Nat.cast_one, add_assoc, one_add_one_eq_two,
     mul_one_div, div_le_iff₀ (by positivity : 0 < η ^ 2 * ((k : ℝ) + 2) ^ 2)]
-  have hk : 0 ≤ (k : ℝ) := Nat.cast_nonneg _
   have hp : 0 ≤ 4 * (k : ℝ) ^ 2 + 19 * (k : ℝ) + 21 := by positivity
   have hh := mul_nonneg (pow_nonneg hη.le 3) hp
   nlinarith
