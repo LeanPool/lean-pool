@@ -418,14 +418,41 @@ theorem cubical_beta_intertwines_minus (z : CubicalCell4) :
       standardToCubicalMinus, cubicalStandardBeta,
       cubicalBit0, cubicalBit1, cubicalBit2]
 
+private def cubicalFlavorSwapCorner (corner : CubicalCorner) : CubicalCorner :=
+  cubicalFlip0 (cubicalFlip2 corner)
+
+private def cubicalFlavorSwapSign (corner : CubicalCorner) : ℤ :=
+  if (cubicalBit1 corner + cubicalBit2 corner) % 2 = 0 then -1 else 1
+
+private def cubicalFlavorSwap (amplitude : CubicalCell8) : CubicalCell8 :=
+  fun corner => (cubicalFlavorSwapSign corner : ℂ) * amplitude (cubicalFlavorSwapCorner corner)
+
+private theorem cubical_flavor_swap_embed (z : CubicalCell4) :
+    cubicalFlavorSwap (cubicalDiracEmbedMinus z) = cubicalDiracEmbedPlus z := by
+  funext corner
+  fin_cases corner <;>
+    simp [cubicalFlavorSwap, cubicalFlavorSwapSign, cubicalFlavorSwapCorner, cubicalFlip0,
+      cubicalFlip2, cubicalBit1, cubicalBit2, cubicalDiracEmbedMinus, cubicalEmbedMinus,
+      standardToCubicalMinus, cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus]
+
+private theorem cubical_flavor_swap_parity :
+    ∀ corner : CubicalCorner,
+      (cubicalBit0 (cubicalFlavorSwapCorner corner) + cubicalBit1 (cubicalFlavorSwapCorner corner) +
+        cubicalBit2 (cubicalFlavorSwapCorner corner)) % 2 =
+      (cubicalBit0 corner + cubicalBit1 corner + cubicalBit2 corner) % 2 := by
+  decide
+
+private theorem cubical_beta_flavor_swap (amplitude : CubicalCell8) :
+    cubicalBeta (cubicalFlavorSwap amplitude) = cubicalFlavorSwap (cubicalBeta amplitude) := by
+  funext corner
+  simp only [cubicalBeta, cubicalFlavorSwap, cubical_flavor_swap_parity]
+  split <;> simp only [mul_neg]
+
 theorem cubical_beta_intertwines_plus (z : CubicalCell4) :
     cubicalBeta (cubicalDiracEmbedPlus z) =
       cubicalDiracEmbedPlus (cubicalStandardBeta z) := by
-  funext corner
-  fin_cases corner <;>
-    simp [cubicalBeta, cubicalDiracEmbedPlus, cubicalEmbedPlus,
-      standardToCubicalPlus, cubicalStandardBeta,
-      cubicalBit0, cubicalBit1, cubicalBit2]
+  rw [← cubical_flavor_swap_embed, cubical_beta_flavor_swap, cubical_beta_intertwines_minus,
+    cubical_flavor_swap_embed]
 
 /-- The standard four-component matrix of an oriented cube axis. -/
 def cubicalStandardAxis : Fin 3 → CubicalCell4 → CubicalCell4
@@ -469,17 +496,32 @@ def cubicalDiracLinearEmbedPlus : CubicalCell4 →ₗ[ℂ] CubicalCell8 where
     fin_cases corner <;>
       simp [cubicalDiracEmbedPlus, cubicalEmbedPlus, standardToCubicalPlus] <;> ring
 
+private theorem cubical_flavor_swap_flips_commute (axis : Fin 3) (corner : CubicalCorner) :
+    cubicalFlip axis (cubicalFlavorSwapCorner corner) =
+      cubicalFlavorSwapCorner (cubicalFlip axis corner) := by
+  change cubicalFlip axis (cubicalFlip 0 (cubicalFlip 2 corner)) =
+    cubicalFlip 0 (cubicalFlip 2 (cubicalFlip axis corner))
+  rw [cubical_flips_commute 0 axis, cubical_flips_commute 2 axis]
+
+private theorem cubical_flavor_swap_signs_commute :
+    ∀ (axis : Fin 3) (corner : CubicalCorner),
+      cubicalIncidenceSignInteger axis corner * cubicalFlavorSwapSign (cubicalFlip axis corner) =
+        cubicalFlavorSwapSign corner * cubicalIncidenceSignInteger axis
+          (cubicalFlavorSwapCorner corner) := by
+  decide
+
+private theorem cubical_gamma_flavor_swap (axis : Fin 3) (amplitude : CubicalCell8) :
+    cubicalGamma axis (cubicalFlavorSwap amplitude) =
+      cubicalFlavorSwap (cubicalGamma axis amplitude) := by
+  funext corner
+  simp only [cubicalGamma, cubicalIncidenceSign, cubicalFlavorSwap, ← mul_assoc, ← Int.cast_mul,
+    cubical_flavor_swap_flips_commute, cubical_flavor_swap_signs_commute]
+
 theorem cubical_gamma_intertwines_plus (axis : Fin 3) (z : CubicalCell4) :
     cubicalGamma axis (cubicalDiracEmbedPlus z) =
       cubicalDiracEmbedPlus (cubicalStandardAxis axis z) := by
-  funext corner
-  fin_cases axis <;> fin_cases corner <;>
-    simp [cubicalGamma, cubicalIncidenceSign,
-      cubicalIncidenceSignInteger, cubicalFlip, cubicalFlip0,
-      cubicalFlip1, cubicalFlip2, cubicalDiracEmbedPlus, cubicalEmbedPlus,
-      standardToCubicalPlus, cubicalStandardAxis, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ, cubicalBit0, cubicalBit1] <;>
-    ring_nf <;> rw [Complex.I_sq] <;> ring
+  rw [← cubical_flavor_swap_embed, cubical_gamma_flavor_swap, cubical_gamma_intertwines_minus,
+    cubical_flavor_swap_embed]
 
 private theorem cubical_standard_spatial_eq_axis_sum
     (px py pz : ℂ) (z : CubicalCell4) :

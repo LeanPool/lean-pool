@@ -118,7 +118,7 @@ def periodicPositiveNativeVelocity (L : ℕ) [NeZero L]
     (amplitude : PeriodicCubicMomentum L → UniformCell2) :
     PeriodicCubicSite L → UniformCell2 :=
   fun site component => periodicScalarSynthesis L
-    (fun mode => -I * (energy mode : ℂ) * amplitude mode component) site
+    (fun mode => (uniformPositiveFrequencyPhase (energy mode) (amplitude mode)).2 component) site
 
 /-- The native phase charge averaged over the periodic lattice. -/
 def periodicAveragedNativePositiveCharge (L : ℕ) [NeZero L]
@@ -139,13 +139,13 @@ theorem periodic_positive_native_packet_charge
     periodicPositiveNativePosition periodicPositiveNativeVelocity
   simp_rw [periodic_scalar_synthesis_parseval]
   simp_rw [Complex.im_sum]
-  rw [Finset.sum_comm]
-  rw [← Finset.sum_neg_distrib]
+  rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
   apply Fintype.sum_congr
   intro mode
-  simp [uniformCell2Density, Complex.normSq, Complex.mul_re,
-    Complex.mul_im, Fin.sum_univ_succ]
-  ring
+  change -uniformNativePhaseDensity
+    (uniformPositiveFrequencyPhase (energy mode) (amplitude mode)).1
+    (uniformPositiveFrequencyPhase (energy mode) (amplitude mode)).2 = _
+  simp only [uniform_native_u1_positive_frequency, neg_mul, neg_neg]
 
 /-- Synthesize a four-component lattice field by applying the scalar Fourier sum componentwise. -/
 def periodicCell4Synthesis (L : ℕ) [NeZero L]
@@ -168,6 +168,12 @@ theorem periodic_cell4_synthesis_real_pair
   simp_rw [Complex.re_sum]
   rw [Finset.sum_comm]
 
+private theorem positive_phase_eq_frequency_amplitudes (energy : ℝ) (amplitude : UniformCell2) :
+    uniformPositiveFrequencyPhase energy amplitude =
+      nativePhaseOfFrequencyAmplitudes energy amplitude (fun _ => 0) := by
+  apply Prod.ext <;> funext component <;>
+    simp only [nativePhaseOfFrequencyAmplitudes, uniformPositiveFrequencyPhase, mul_zero, add_zero]
+
 /-- The canonical positive-frequency spinor at a single quantized momentum. -/
 def periodicPositiveSpectralMode
     (L : ℕ) (mass : ℝ)
@@ -178,7 +184,7 @@ def periodicPositiveSpectralMode
     (c19ScaledMomentum (periodicQuantizedMomentum L mode) 0)
     (c19ScaledMomentum (periodicQuantizedMomentum L mode) 1)
     (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
-    (nativePhaseOfFrequencyAmplitudes (energy mode) (amplitude mode) (fun _ => 0))
+    (uniformPositiveFrequencyPhase (energy mode) (amplitude mode))
 
 /-- The spinor Fourier packet obtained by applying canonical spectral coordinates to each mode. -/
 def periodicPositiveSpectralPacket
@@ -214,7 +220,8 @@ theorem periodic_positive_spectral_packet_density
   rw [periodic_cell4_synthesis_real_pair]
   refine Fintype.sum_congr _ _ fun mode => ?_
   unfold periodicPositiveSpectralMode
-  rw [cubical_cell4_real_pair_self, canonical_spectral_readout_positive_phase _ _ _ _ _
+  rw [cubical_cell4_real_pair_self, positive_phase_eq_frequency_amplitudes,
+    canonical_spectral_readout_positive_phase _ _ _ _ _
     (henergy mode)]
   exact normalized_positive_frequency_density _ _ _ _ _ (hpositive mode) (hshell mode) _
 
@@ -419,8 +426,10 @@ theorem periodic_positive_spectral_packet_current
           (c19ScaledMomentum (periodicQuantizedMomentum L mode) 2)
           (nativePhaseOfFrequencyAmplitudes (energy mode)
             (amplitude mode) (fun _ => 0))) := by
-  exact periodic_averaged_dirac_current_diagonalizes L axis
-    (periodicPositiveSpectralMode L mass energy amplitude)
+  unfold periodicPositiveSpectralPacket
+  simpa only [periodicPositiveSpectralMode, positive_phase_eq_frequency_amplitudes] using
+    periodic_averaged_dirac_current_diagonalizes L axis
+      (periodicPositiveSpectralMode L mass energy amplitude)
 
 /-- Global finite-torus packet current bridge.  The exact native bond flux is
 the integrated Dirac current of the same canonical positive-frequency packet
