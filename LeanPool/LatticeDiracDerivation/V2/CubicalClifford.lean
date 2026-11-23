@@ -319,6 +319,19 @@ theorem cubical_embed_plus_has_positive_flavor (z : CubicalCell4) :
 def cubicalStandardBeta (z : CubicalCell4) : CubicalCell4
   | 0 => z 0 | 1 => z 1 | 2 => -z 2 | _ => -z 3
 
+/-- The mass matrix as a complex-linear operator. -/
+def cubicalStandardBetaLinear : CubicalCell4 →ₗ[ℂ] CubicalCell4 where
+  toFun := cubicalStandardBeta
+  map_add' first second := by
+    funext component
+    fin_cases component <;> simp [cubicalStandardBeta, add_comm]
+  map_smul' scalar spinor := by
+    funext component
+    fin_cases component <;> simp [cubicalStandardBeta]
+
+theorem cubical_standard_beta_linear_apply (spinor : CubicalCell4) :
+    cubicalStandardBetaLinear spinor = cubicalStandardBeta spinor := rfl
+
 /-- The transport matrix for the first physical momentum component. -/
 def cubicalStandardAlphaX (z : CubicalCell4) : CubicalCell4
   | 0 => z 3 | 1 => z 2 | 2 => z 1 | _ => z 0

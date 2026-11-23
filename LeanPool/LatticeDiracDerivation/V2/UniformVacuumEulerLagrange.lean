@@ -146,10 +146,6 @@ theorem uniform_transverse_chi_source_is_quadratic
   rw [← Finset.mul_sum, ← Finset.mul_sum]
   ring
 
-/-- The sum of squared moduli of the two transverse components. -/
-def uniformCell2Density (z : UniformCell2) : ℝ :=
-  ∑ component, Complex.normSq (z component)
-
 /-- The real pairing on two transverse complex components. -/
 def uniformCell2RealPair (z w : UniformCell2) : ℝ :=
   ∑ component, uniformScalarRealPair (z component) (w component)

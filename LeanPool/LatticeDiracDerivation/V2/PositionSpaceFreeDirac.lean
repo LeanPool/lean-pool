@@ -94,8 +94,13 @@ theorem cubical_standard_beta_sum [Fintype Mode]
     (field : Mode → CubicalCell4) :
     cubicalStandardBeta (fun component => ∑ mode, field mode component) =
       fun component => ∑ mode, cubicalStandardBeta (field mode) component := by
+  have pointwise : (fun component => ∑ mode, field mode component) = ∑ mode, field mode := by
+    funext component
+    rw [Finset.sum_apply]
+  rw [pointwise]
   funext component
-  fin_cases component <;> simp [cubicalStandardBeta]
+  simpa only [cubical_standard_beta_linear_apply, Finset.sum_apply] using
+    congrFun (map_sum cubicalStandardBetaLinear field Finset.univ) component
 
 theorem cubical_dirac_time_derivative_sum [Fintype Mode]
     (mass : ℝ) (field : Mode → CubicalCell4)
@@ -122,8 +127,8 @@ theorem cubical_dirac_time_derivative_mul (scale : ℂ) (mass : ℝ)
   have beta_scale :
       cubicalStandardBeta (fun component => scale * field component) =
         fun component => scale * cubicalStandardBeta field component := by
-    funext component
-    fin_cases component <;> simp [cubicalStandardBeta]
+    change cubicalStandardBeta (scale • field) = scale • cubicalStandardBeta field
+    exact cubicalStandardBetaLinear.map_smul scale field
   funext component
   simp only [cubicalDiracTimeDerivative, beta_scale, cubical_velocity_mul, ← Finset.mul_sum]
   ring

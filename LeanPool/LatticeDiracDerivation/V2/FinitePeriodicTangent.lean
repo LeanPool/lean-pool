@@ -330,6 +330,32 @@ def periodicC19LagrangianTangentQuotient
         (periodicModeVelocity 0 mode velocity)
         (periodicC19Geometry L)) / eps ^ 2
 
+private theorem periodic_mode_action_eq_site_count_mul
+    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
+    (r B eps : ℝ) (hr : r ≠ 0) (mode : PeriodicC19FourierMode L momentum)
+    (position velocity : UniformCell2) (site : InfiniteCubicSite) :
+    c19Lagrangian r B (periodicModeState r eps mode position)
+      (periodicModeVelocity eps mode velocity) (periodicC19Geometry L) =
+      periodicSiteCount L *
+        uniformCharacterActionDensity r eps position velocity momentum site := by
+  rw [periodic_c19_lagrangian_mode_expansion r B eps hr,
+    uniform_character_action_density_expansion r eps hr]
+  ring
+
+/-- The periodic quotient is the number of sites times the character's local quotient. -/
+theorem periodic_tangent_quotient_eq_site_count_mul
+    {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
+    (r B eps : ℝ) (hr : r ≠ 0) (mode : PeriodicC19FourierMode L momentum)
+    (position velocity : UniformCell2) (site : InfiniteCubicSite) :
+    periodicC19LagrangianTangentQuotient r B eps mode position velocity =
+      periodicSiteCount L *
+        uniformCharacterTangentQuotient r eps position velocity momentum site := by
+  unfold periodicC19LagrangianTangentQuotient uniformCharacterTangentQuotient
+  split
+  · ring
+  · simp only [periodic_mode_action_eq_site_count_mul r B _ hr mode position velocity site]
+    ring
+
 theorem periodic_c19_lagrangian_tangent_exact
     {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
     (r B eps : ℝ) (hr : r ≠ 0)
@@ -340,16 +366,9 @@ theorem periodic_c19_lagrangian_tangent_exact
           uniformVacuumModalLagrangian r momentum position velocity -
         eps ^ 2 / 2 * periodicSiteCount L *
           uniformCell2Density position ^ 2 := by
-  by_cases heps : eps = 0
-  · subst eps
-    simp [periodicC19LagrangianTangentQuotient]
-  · unfold periodicC19LagrangianTangentQuotient
-    rw [ite_eq_right heps,
-      periodic_c19_lagrangian_mode_expansion r B eps hr,
-      periodic_c19_lagrangian_mode_expansion r B (-eps) hr,
-      periodic_c19_lagrangian_mode_expansion r B 0 hr]
-    field_simp [heps]
-    ring
+  rw [periodic_tangent_quotient_eq_site_count_mul r B eps hr mode position velocity 0,
+    uniform_character_tangent_quotient_exact r eps hr]
+  ring
 
 theorem periodic_c19_lagrangian_tangent_tends_to_modal
     {L : ℕ} [NeZero L] {momentum : LatticeMomentum}
@@ -363,27 +382,10 @@ theorem periodic_c19_lagrangian_tangent_tends_to_modal
       (nhds 0)
       (nhds (2 * periodicSiteCount L *
         uniformVacuumModalLagrangian r momentum position velocity)) := by
-  have hfun :
-      (fun eps : ℝ =>
-        periodicC19LagrangianTangentQuotient
-          r B eps mode position velocity) =
-      (fun eps : ℝ =>
-        2 * periodicSiteCount L *
-            uniformVacuumModalLagrangian r momentum position velocity -
-          eps ^ 2 / 2 * periodicSiteCount L *
-            uniformCell2Density position ^ 2) := by
-    funext eps
-    exact periodic_c19_lagrangian_tangent_exact
-      r B eps hr mode position velocity
-  rw [hfun]
-  have hcontinuous : ContinuousAt
-      (fun eps : ℝ =>
-        2 * periodicSiteCount L *
-            uniformVacuumModalLagrangian r momentum position velocity -
-          eps ^ 2 / 2 * periodicSiteCount L *
-            uniformCell2Density position ^ 2) 0 := by
-    fun_prop
-  simpa [ContinuousAt] using hcontinuous
+  simp_rw [periodic_tangent_quotient_eq_site_count_mul r B _ hr mode position velocity 0]
+  simpa only [mul_assoc, mul_left_comm (periodicSiteCount L) (2 : ℝ)] using
+    (uniform_character_tangent_quotient_tends_to_hessian r hr
+      position velocity momentum 0).const_mul (periodicSiteCount L)
 
 /-- The massive linearized force for a scalar profile on the periodic C19 lattice. -/
 def periodicC19LinearizedAcceleration

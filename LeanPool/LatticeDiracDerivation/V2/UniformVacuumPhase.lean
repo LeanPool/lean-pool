@@ -8,7 +8,9 @@ Authors: G. D. Partin
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Data.Fintype.Fin
 
 /-! # Transverse native phases at signed frequency -/
 
@@ -16,11 +18,15 @@ public import Mathlib.Basic.Complex.Basic
 
 namespace LeanDirac.V2
 
-open Complex
+open Complex BigOperators
 noncomputable section
 
 /-- The two complex components transverse to the chosen uniform axial vacuum. -/
 abbrev UniformCell2 := Fin 2 → ℂ
+
+/-- The sum of squared moduli of the two transverse components. -/
+def uniformCell2Density (z : UniformCell2) : ℝ :=
+  ∑ component, Complex.normSq (z component)
 
 /-- The position and velocity of the two transverse components of one native mode. -/
 abbrev UniformTwoChannelPhase := UniformCell2 × UniformCell2

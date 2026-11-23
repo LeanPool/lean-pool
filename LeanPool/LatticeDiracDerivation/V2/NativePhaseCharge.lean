@@ -8,7 +8,8 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumEulerLagrange
+public import LeanPool.LatticeDiracDerivation.C19Geometry
+public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumPhase
 
 /-! # Native phase charge and its local bond law -/
 

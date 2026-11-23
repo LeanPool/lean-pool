@@ -377,17 +377,5 @@ theorem uniform_axial_vacuum_first_variation_zero
       uniformAxialVacuum, wedge, difference, c3RealPair]
   simp [hsite, hbond]
 
-/-- The weighted graph Laplacian on a complex scalar field for a C19 neighbor map. -/
-def c19ScalarLaplacian {Site : Type} (geometry : C19Lattice Site)
-    (field : Site → ℂ) (site : Site) : ℂ :=
-  ∑ direction : C19Neighbor,
-    (c19Weight direction : ℂ) * (field site - field (geometry.neighbor site direction))
-
-/-- The scalar massive tangent force for a general C19 neighbor map. -/
-def uniformScalarTangentAcceleration {Site : Type}
-    (massSq : ℝ) (geometry : C19Lattice Site)
-    (position : Site → ℂ) (site : Site) : ℂ :=
-  -(massSq : ℂ) * position site - 2 * c19ScalarLaplacian geometry position site
-
 end
 end LeanDirac.V2

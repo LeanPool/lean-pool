@@ -31,6 +31,9 @@ noncomputable section
 def cubicalGammaTime (z : CubicalCell4) : CubicalCell4 :=
   cubicalStandardBeta z
 
+private theorem cubical_gamma_time_zero : cubicalGammaTime (fun _ => 0) = fun _ => 0 :=
+  cubicalStandardBetaLinear.map_zero
+
 /-- `gamma^j = beta alpha^j`, derived from the same cubical operators. -/
 def cubicalGammaSpace (axis : Fin 3) (z : CubicalCell4) : CubicalCell4 :=
   cubicalGammaTime (cubicalAlpha axis z)
@@ -208,21 +211,13 @@ theorem cubical_hamiltonian_iff_covariant_dirac
       simpa using hgamma
     have hinvert := congrArg cubicalGammaTime hzero
     rw [cubical_gamma_time_square] at hinvert
-    have hgammaZero : cubicalGammaTime (fun _ => 0) = fun _ => 0 := by
-      funext component
-      fin_cases component <;>
-        simp [cubicalGammaTime, cubicalStandardBeta]
-    rw [hgammaZero] at hinvert
+    rw [cubical_gamma_time_zero] at hinvert
     exact hinvert
   · intro hresidual
     funext component
     have hgamma := congrArg cubicalGammaTime hresidual
     rw [cubical_gamma_time_covariant_residual] at hgamma
-    have hgammaZero : cubicalGammaTime (fun _ => 0) = fun _ => 0 := by
-      funext output
-      fin_cases output <;>
-        simp [cubicalGammaTime, cubicalStandardBeta]
-    rw [hgammaZero] at hgamma
+    rw [cubical_gamma_time_zero] at hgamma
     have hcomponent := congrFun hgamma component
     have hcomponent0 :
         I * (timeDerivative component -
