@@ -166,7 +166,8 @@ theorem nonzero_place_vector_classifies_outside_support :
       quarticSupportVector theta a b =
         ∑ k : Fin 4, coeff k • outsideSelectedColumn i k →
       ∃ eps : F₂, i = outsideTangentIndex theta eps := by
-  decide
+  intro theta
+  fin_cases theta <;> decide +kernel
 
 
 /-- A vector supported on the first two coefficients of each input polynomial. -/
@@ -210,15 +211,79 @@ macro (name := solveTangentSupportCertificate) "solve_tangent_support_certificat
        unfold InNormalizedFirstJet tangentSupportCombination
        decide))
 
-/- Splitting this fixed six-point calculation keeps each kernel reduction
-small.  Each certificate ranges over only the sixteen vectors in `F₂⁴`. -/
+theorem rationalTwo_singleton (theta : Fin 3) :
+    rationalTwo (rationalSingleton theta) = rationalPlaceTwo theta := by
+  fin_cases theta <;> decide
+
+/- Only the pivot vectors need a finite check. Linearity then gives the
+vanishing coordinates of every vector in their span. -/
+private theorem normalizedTangentColumn_zero :
+    ∀ (theta : Fin 3) (eps : F₂) (column slot : Fin 4),
+      normalizePlaceLinear theta (outsideSelectedColumn (outsideTangentIndex theta eps) column)
+        (![2, 3, 6, 7] slot) = 0 := by
+  intro theta eps
+  fin_cases theta <;> rcases f2_eq_zero_or_one eps with rfl | rfl <;> decide +kernel
+
+private theorem tangentSupportCombination_firstJet (theta : Fin 3) (eps : F₂)
+    (coeff : Fin 4 → F₂)
+    (nonzero : vectorWedgeTwo (tangentSupportCombination theta eps coeff)
+      (rationalTwo (rationalSingleton theta)) ≠ 0) :
+    InNormalizedFirstJet theta (tangentSupportCombination theta eps coeff) := by
+  let normalized := normalizePlaceLinear theta (tangentSupportCombination theta eps coeff)
+  have coordinates_zero (slot : Fin 4) : normalized (![2, 3, 6, 7] slot) = 0 := by
+    simp only [normalized, tangentSupportCombination, Fin.sum_univ_four, normalizePlaceLinear_add,
+      normalizePlaceLinear_smul, Pi.add_apply, Pi.smul_apply, normalizedTangentColumn_zero,
+      smul_zero, add_zero]
+  have inFirstJet : normalized =
+      normalizedFirstJetVector (normalized 0) (normalized 4) (normalized 1) (normalized 5) := by
+    funext index
+    fin_cases index
+    · rfl
+    · rfl
+    · exact coordinates_zero 0
+    · exact coordinates_zero 1
+    · rfl
+    · rfl
+    · exact coordinates_zero 2
+    · exact coordinates_zero 3
+  refine ⟨normalized 0, normalized 4, normalized 1, normalized 5, inFirstJet, ?_⟩
+  by_contra! noJet
+  have inPlace : normalized = normalized 0 • placeA 0 + normalized 4 • placeB 0 := by
+    calc
+      normalized = normalizedFirstJetVector (normalized 0) (normalized 4) 0 0 := by
+        simpa only [noJet.1, noJet.2] using inFirstJet
+      _ = normalized 0 • placeA 0 + normalized 4 • placeB 0 := by
+        rw [normalizedFirstJetVector_eq, zero_smul, zero_smul, add_zero, add_zero]
+        have placeA_eq : aLinear 0 = placeA 0 := by
+          rw [aLinear_eq_coordinateLinear]
+          funext index
+          fin_cases index <;> rfl
+        have placeB_eq : bLinear 0 = placeB 0 := by
+          rw [bLinear_eq_coordinateLinear]
+          funext index
+          fin_cases index <;> rfl
+        rw [placeA_eq, placeB_eq]
+  have placeIndex : normalizePlaceIndex theta 0 = theta := by
+    fin_cases theta <;> rfl
+  have originalInPlace := congrArg (normalizePlaceLinear theta) inPlace
+  change normalizePlaceLinear theta (normalizePlaceLinear theta
+    (tangentSupportCombination theta eps coeff)) = _ at originalInPlace
+  rw [normalizePlaceLinear_involutive, normalizePlaceLinear_add, normalizePlaceLinear_smul,
+    normalizePlaceLinear_smul, normalizePlaceLinear_placeA, normalizePlaceLinear_placeB,
+    placeIndex] at originalInPlace
+  apply nonzero
+  rw [originalInPlace, rationalTwo_singleton, rationalPlaceTwo, vectorWedgeTwo_add_left,
+    vectorWedgeTwo_smul_left, vectorWedgeTwo_smul_left, vectorWedgeTwo_repeated_left,
+    vectorWedgeTwo_repeated_right, smul_zero, smul_zero, add_zero]
+
 private theorem tangent_support_zero_zero :
     ∀ coeff : Fin 4 → F₂,
       vectorWedgeTwo (tangentSupportCombination 0 0 coeff)
           (rationalTwo (rationalSingleton 0)) ≠ 0 →
       InNormalizedFirstJet 0 (tangentSupportCombination 0 0 coeff) := by
   unfold InNormalizedFirstJet tangentSupportCombination
-  decide +kernel
+  as_aux_lemma =>
+    exact tangentSupportCombination_firstJet 0 0
 
 private theorem tangent_support_zero_one :
     ∀ coeff : Fin 4 → F₂,
@@ -226,7 +291,8 @@ private theorem tangent_support_zero_one :
           (rationalTwo (rationalSingleton 0)) ≠ 0 →
       InNormalizedFirstJet 0 (tangentSupportCombination 0 1 coeff) := by
   unfold InNormalizedFirstJet tangentSupportCombination
-  decide +kernel
+  as_aux_lemma =>
+    exact tangentSupportCombination_firstJet 0 1
 
 private theorem tangent_support_one_zero :
     ∀ coeff : Fin 4 → F₂,
@@ -234,7 +300,8 @@ private theorem tangent_support_one_zero :
           (rationalTwo (rationalSingleton 1)) ≠ 0 →
       InNormalizedFirstJet 1 (tangentSupportCombination 1 0 coeff) := by
   unfold InNormalizedFirstJet tangentSupportCombination
-  decide +kernel
+  as_aux_lemma =>
+    exact tangentSupportCombination_firstJet 1 0
 
 private theorem tangent_support_one_one :
     ∀ coeff : Fin 4 → F₂,
@@ -242,7 +309,8 @@ private theorem tangent_support_one_one :
           (rationalTwo (rationalSingleton 1)) ≠ 0 →
       InNormalizedFirstJet 1 (tangentSupportCombination 1 1 coeff) := by
   unfold InNormalizedFirstJet tangentSupportCombination
-  decide +kernel
+  as_aux_lemma =>
+    exact tangentSupportCombination_firstJet 1 1
 
 private theorem tangent_support_two_zero :
     ∀ coeff : Fin 4 → F₂,
@@ -250,7 +318,8 @@ private theorem tangent_support_two_zero :
           (rationalTwo (rationalSingleton 2)) ≠ 0 →
       InNormalizedFirstJet 2 (tangentSupportCombination 2 0 coeff) := by
   unfold InNormalizedFirstJet tangentSupportCombination
-  decide +kernel
+  as_aux_lemma =>
+    exact tangentSupportCombination_firstJet 2 0
 
 private theorem tangent_support_two_one :
     ∀ coeff : Fin 4 → F₂,
@@ -258,7 +327,8 @@ private theorem tangent_support_two_one :
           (rationalTwo (rationalSingleton 2)) ≠ 0 →
       InNormalizedFirstJet 2 (tangentSupportCombination 2 1 coeff) := by
   unfold InNormalizedFirstJet tangentSupportCombination
-  decide +kernel
+  as_aux_lemma =>
+    exact tangentSupportCombination_firstJet 2 1
 
 /-- The support calculation also recovers the nonzero first-jet component of
 the seed linear form after normalizing its rational place to zero. -/
@@ -284,10 +354,6 @@ theorem tangent_support_normalizes_firstJet :
   · exact tangent_support_two_zero coeff
   · exact tangent_support_two_one coeff
 
-
-theorem rationalTwo_singleton (theta : Fin 3) :
-    rationalTwo (rationalSingleton theta) = rationalPlaceTwo theta := by
-  fin_cases theta <;> decide
 
 /-- The equal-singleton branch of the low--low collision is exactly a first
 Hasse jet.  This is the algebraic content of Proposition `firstjet` after the
