@@ -8,7 +8,7 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedIBPDensity
+public import LeanPool.CutoffRigidity.RiemannianSplitting.Statements
 public import Mathlib.Analysis.InnerProductSpace.NormDet
 
 /-! # Gram density and the Jacobian of an inverse chart -/
@@ -58,16 +58,6 @@ omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 
 theorem chartVolumeDensity_eq_chartDensity (x₀ : M) (z : F) :
     chartVolumeDensity F x₀ z = chartDensity (chartAt F x₀) z := by
   unfold chartVolumeDensity chartDensity gramDens
-  rfl
-
-
-omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x]
-  [IsManifold 𝓘(ℝ, F) ∞ M] in
-/-- The density is the Jacobian of the inverse chart in a standard orthonormal basis. -/
-theorem chartDensity_eq_jacobian (Ξ : OpenPartialHomeomorph M F) (z : F) :
-    chartDensity Ξ z = TauCeti.riemannianJacobian (I := 𝓘(ℝ, F))
-      (stdOrthonormalBasis ℝ F).toBasis Ξ.symm z := by
-  rw [TauCeti.riemannianJacobian_eq_sqrt_det_gram]
   rfl
 
 end CutCur

@@ -28,6 +28,23 @@ namespace CutCur
 
 open TauCeti TauCeti.Manifold
 
+/-- Equality of chart pushforwards determines the measures restricted to the chart source. -/
+theorem chart_map_restrict_injective {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [MeasurableSpace X] [BorelSpace X] [MeasurableSpace Y] [BorelSpace Y]
+    (e : OpenPartialHomeomorph X Y) {μ ν : Measure X}
+    (h : (μ.restrict e.source).map e = (ν.restrict e.source).map e) :
+    μ.restrict e.source = ν.restrict e.source := by
+  have embedding := e.isOpenEmbedding_restrict.measurableEmbedding
+  have map_source (m : Measure X) : (m.restrict e.source).map e =
+      (m.comap (Subtype.val : e.source → X)).map (e.source.domRestrict e) := by
+    have meas : AEMeasurable e (m.restrict e.source) :=
+      e.continuousOn.aemeasurable e.open_source.measurableSet
+    rw [← map_comap_subtype_coe e.open_source.measurableSet] at meas ⊢
+    exact meas.map_map_of_aemeasurable measurable_subtype_coe.aemeasurable
+  rw [map_source, map_source] at h
+  rw [← map_comap_subtype_coe e.open_source.measurableSet,
+    ← map_comap_subtype_coe e.open_source.measurableSet, embedding.map_injective h]
+
 variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
   [MeasurableSpace F] [BorelSpace F]
   {M : Type} [EMetricSpace M] [ChartedSpace F M] [IsManifold 𝓘(ℝ, F) ∞ M]
@@ -89,26 +106,7 @@ private theorem weightedVolume_restrict_chart [LindelofSpace M] {μ : Measure M}
     change (μ.restrict (chartAt F α).source).map (chartAt F α) = _
     rw [hμ α]
     simp only [chartVolumeDensity_eq_jacobian, e]
-  ext s hs
-  let A : Set F := e.symm ⁻¹' s ∩ e.target
-  have hA : MeasurableSet A := e.continuousOn_symm.measurableSet_preimage_inter
-    e.open_target.measurableSet hs
-  have hpreimage : e ⁻¹' A ∩ e.source = s ∩ e.source := by
-    ext x
-    simp only [A, mem_preimage, mem_inter_iff]
-    constructor
-    · rintro ⟨⟨hx, _⟩, hxs⟩
-      exact ⟨by simpa only [e.left_inv hxs] using hx, hxs⟩
-    · rintro ⟨hx, hxs⟩
-      exact ⟨⟨by simpa only [e.left_inv hxs] using hx, e.map_source hxs⟩, hxs⟩
-  have h := congrArg (fun m : Measure F ↦ m A) hmap
-  rw [Measure.map_apply_of_aemeasurable
-    (e.continuousOn.aemeasurable e.open_source.measurableSet) hA,
-    Measure.map_apply_of_aemeasurable
-    (e.continuousOn.aemeasurable e.open_source.measurableSet) hA,
-    Measure.restrict_apply' e.open_source.measurableSet,
-    Measure.restrict_apply' e.open_source.measurableSet, hpreimage] at h
-  simpa only [e, ν, Measure.restrict_apply hs] using h
+  exact chart_map_restrict_injective e hmap
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)] in
 /-- The chart definition is the exponential density against canonical Riemannian volume. -/

@@ -20,6 +20,26 @@ open scoped Manifold ContDiff ENNReal NNReal Topology
 
 namespace CutCur
 
+private theorem chart_prod_transport {A B C : Type*} [TopologicalSpace A] [TopologicalSpace B]
+    [TopologicalSpace C] [MeasurableSpace A] [BorelSpace A] [SecondCountableTopology A]
+    [MeasurableSpace B] [BorelSpace B] [MeasurableSpace C] [BorelSpace C]
+    (e : OpenPartialHomeomorph B C) {μ : Measure (A × B)}
+    {γ : Measure A} [SFinite γ] {ν : Measure B} [SFinite ν]
+    (h : (μ.restrict (univ ×ˢ e.source)).map (Prod.map id e) =
+      γ.prod ((ν.restrict e.source).map e)) :
+    μ.restrict (univ ×ˢ e.source) = γ.prod (ν.restrict e.source) := by
+  let p := (OpenPartialHomeomorph.refl A).prod e
+  have source_eq : p.source = univ ×ˢ e.source := rfl
+  have map_eq : ⇑p = Prod.map id e := rfl
+  have product_restrict : (γ.prod ν).restrict (univ ×ˢ e.source) =
+      γ.prod (ν.restrict e.source) := by
+    rw [← Measure.prod_restrict, Measure.restrict_univ]
+  rw [← product_restrict]
+  apply chart_map_restrict_injective p
+  rw [source_eq, map_eq, h, product_restrict, ← Measure.map_prod_map_of_aemeasurable γ _
+    measurable_id.aemeasurable (e.continuousOn.aemeasurable e.open_source.measurableSet),
+    Measure.map_id]
+
 namespace Frame
 
 open CutoffRigidity CutoffRigidity.Riemann
@@ -99,30 +119,22 @@ omit [IsProbabilityMeasure μ] in
 theorem map_level_chart :
     ((μ.map fr.toLevel).restrict (chartAt (LevelModel F (Rd k)) y₀).source).map
       (chartAt (LevelModel F (Rd k)) y₀) = fr.levelMeasure V ρ y₀ := by
-  set ψ := chartAt (LevelModel F (Rd k)) y₀ with hψ
-  have hΘ := fr.map_Θ_prod J y₀ hV hμ hρ hVX
-  have hW : MeasurableSet ψ.source := ψ.open_source.measurableSet
-  have hS : MeasurableSet (fr.Θ y₀).source := (fr.Θ y₀).open_source.measurableSet
-  have hψm : AEMeasurable ψ ((μ.map fr.toLevel).restrict ψ.source) :=
-    ψ.continuousOn.aemeasurable hW
-  have hΘm : AEMeasurable (fr.Θ y₀) (μ.restrict (fr.Θ y₀).source) :=
-    (fr.Θ y₀).continuousOn.aemeasurable hS
-  ext B hB
-  rw [Measure.map_apply_of_aemeasurable hψm hB, Measure.restrict_apply' hW,
-    Measure.map_apply fr.measurable_toLevel
-      (by simpa [inter_comm] using
-        measurableSet_inter_preimage_of_continuousOn hW ψ.continuousOn hB)]
-  have h1 : (fr.levelMeasure V ρ y₀) B =
-      ((μ.restrict (fr.Θ y₀).source).map (fr.Θ y₀)) (univ ×ˢ B) := by
-    rw [hΘ, Measure.prod_prod, measure_univ, one_mul]
+  let ψ := chartAt (LevelModel F (Rd k)) y₀
+  have marginal_restrict : ((μ.map fr.toLevel).restrict ψ.source) =
+      (μ.restrict (fr.Θ y₀).source).map fr.toLevel := by
+    rw [Measure.restrict_map fr.measurable_toLevel ψ.open_source.measurableSet, fr.Θ_source]
     rfl
-  rw [h1, Measure.map_apply_of_aemeasurable hΘm (MeasurableSet.univ.prod hB),
-    Measure.restrict_apply' hS]
-  congr 1
-  ext x
-  simp only [preimage_inter, mem_inter_iff, mem_preimage, mem_prod, mem_univ, true_and,
-    Θ_source, Θ_apply]
-  exact Iff.rfl
+  have chart_measurable : AEMeasurable ψ ((μ.map fr.toLevel).restrict ψ.source) :=
+    ψ.continuousOn.aemeasurable ψ.open_source.measurableSet
+  have product_chart_measurable : AEMeasurable (fr.Θ y₀) (μ.restrict (fr.Θ y₀).source) :=
+    (fr.Θ y₀).continuousOn.aemeasurable (fr.Θ y₀).open_source.measurableSet
+  change (((μ.map fr.toLevel).restrict ψ.source).map ψ) = _
+  rw [marginal_restrict] at chart_measurable ⊢
+  rw [chart_measurable.map_map_of_aemeasurable fr.measurable_toLevel.aemeasurable,
+    show ψ ∘ fr.toLevel = Prod.snd ∘ fr.Θ y₀ from rfl,
+    ← measurable_snd.aemeasurable.map_map_of_aemeasurable product_chart_measurable,
+    fr.map_Θ_prod J y₀ hV hμ hρ hVX, Measure.map_snd_prod, measure_univ, one_smul]
+  rfl
 
 include J hV hμ hρ hVX in
 /-- Local form of the factorization: over the chart domain of `y₀`. -/
@@ -133,45 +145,23 @@ theorem restrict_splitEquiv :
         (ρ⁻¹ • (1 : Matrix (Fin k) (Fin k) ℝ))).prod
         ((μ.map fr.toLevel).restrict
           (chartAt (LevelModel F (Rd k)) y₀).source) := by
-  set ψ := chartAt (LevelModel F (Rd k)) y₀ with hψ
-  have hΘ := fr.map_Θ_prod J y₀ hV hμ hρ hVX
-  have hC1 := fr.map_level_chart J hV hμ hρ hVX y₀
-  unfold levelMeasure at hC1
-  have hW : MeasurableSet ψ.source := ψ.open_source.measurableSet
-  have hS : MeasurableSet (fr.Θ y₀).source := (fr.Θ y₀).open_source.measurableSet
-  have hΘm : AEMeasurable (fr.Θ y₀) (μ.restrict (fr.Θ y₀).source) :=
-    (fr.Θ y₀).continuousOn.aemeasurable hS
-  have hΦm : Measurable fr.splitEquiv := fr.splitEquiv.continuous.measurable
-  have hrect : ∀ (s : Set (Rd k)) (t : Set fr.Level),
-      MeasurableSet s → MeasurableSet t → t ⊆ ψ.source →
-      μ (fr.splitEquiv ⁻¹' (s ×ˢ t)) = multivariateGaussian (0 : Rd k)
-        (ρ⁻¹ • (1 : Matrix (Fin k) (Fin k) ℝ)) s * ((μ.map fr.toLevel).restrict ψ.source) t := by
-    intro s t hs ht hts
-    have hψt : MeasurableSet (⇑ψ '' t) := by
-      rw [ψ.image_eq_target_inter_inv_preimage hts]
-      exact measurableSet_inter_preimage_of_continuousOn ψ.open_target.measurableSet
-        ψ.continuousOn_symm ht
-    have hset : fr.splitEquiv ⁻¹' (s ×ˢ t) =
-        (fr.Θ y₀) ⁻¹' (s ×ˢ (⇑ψ '' t)) ∩ (fr.Θ y₀).source := by
-      ext x
-      simp only [mem_preimage, mem_prod, mem_inter_iff, Θ_source, mem_ofPred_eq, Θ_apply, mem_image]
-      constructor
-      · rintro ⟨h1, h2⟩
-        exact ⟨⟨h1, _, h2, rfl⟩, hts h2⟩
-      · rintro ⟨⟨h1, y, hy, hyx⟩, h3⟩
-        have : y = fr.toLevel x := ψ.injOn (hts hy) h3 hyx
-        subst this
-        exact ⟨h1, hy⟩
-    rw [hset, ← Measure.restrict_apply' hS, ← Measure.map_apply_of_aemeasurable hΘm (hs.prod hψt),
-      hΘ, Measure.prod_prod, ← hC1, Measure.map_apply_of_aemeasurable
-        (ψ.continuousOn.aemeasurable hW) hψt, Measure.restrict_apply' hW]
-    rw [Measure.restrict_apply' hW, ψ.injOn.preimage_image_inter hts, inter_eq_left.2 hts]
-  refine (Measure.prod_eq fun s t hs ht => ?_).symm
-  rw [Measure.restrict_apply (hs.prod ht), Measure.restrict_apply' hW]
-  have h1 : (s ×ˢ t) ∩ (univ ×ˢ ψ.source) = s ×ˢ (t ∩ ψ.source) := by
-    ext x; simp [and_assoc]
-  rw [h1, Measure.map_apply hΦm (hs.prod (ht.inter hW)), hrect s (t ∩ ψ.source) hs (ht.inter hW)
-    inter_subset_right, Measure.restrict_apply' hW, inter_assoc, inter_self]
+  let ψ := chartAt (LevelModel F (Rd k)) y₀
+  have source_measurable : MeasurableSet (univ ×ˢ ψ.source : Set (Rd k × fr.Level)) :=
+    MeasurableSet.univ.prod ψ.open_source.measurableSet
+  have split_measurable : Measurable fr.splitEquiv := fr.splitEquiv.continuous.measurable
+  have preimage_eq : fr.splitEquiv ⁻¹' (univ ×ˢ ψ.source) = (fr.Θ y₀).source := by
+    rw [fr.Θ_source]
+    ext x
+    simp only [mem_preimage, mem_prod, mem_univ, true_and, mem_ofPred_eq]
+    rfl
+  apply chart_prod_transport ψ
+  have chart_measurable : AEMeasurable (Prod.map id ψ)
+      ((μ.map fr.splitEquiv).restrict (univ ×ˢ ψ.source)) :=
+    (continuous_id.continuousOn.prodMap ψ.continuousOn).aemeasurable source_measurable
+  rw [Measure.restrict_map split_measurable source_measurable, preimage_eq] at chart_measurable ⊢
+  rw [chart_measurable.map_map_of_aemeasurable split_measurable.aemeasurable]
+  rw [fr.map_level_chart J hV hμ hρ hVX y₀]
+  exact fr.map_Θ_prod J y₀ hV hμ hρ hVX
 
 end Measure
 
