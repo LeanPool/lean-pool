@@ -190,7 +190,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
 
 /-- The `L²` class of a continuous linear functional. -/
 noncomputable def dualLp (L : StrongDual ℝ W) : Lp ℝ 2 μ :=
@@ -274,7 +274,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+  {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
 
 omit [CompleteSpace W] [SecondCountableTopology W] in
 /-- The Brownian coordinate `B t` is the class of the functional `L t`. -/
@@ -315,7 +315,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  (μ : Measure W) [IsGaussian μ]
+  (μ : Measure W) [IsGaussian (E := W) μ]
 
 /-- The constant `H`-valued random variable `h`, as a linear isometry `H → L²(μ; H)`. -/
 noncomputable def constLp : Space μ →ₗᵢ[ℝ] Lp (Space μ) 2 μ :=
@@ -412,7 +412,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+  {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
 
 /-- Wiener integrals lie in the Cameron--Martin space. -/
 theorem wienerIntegral_mem_space (hB : IsPreBrownianReal B P) (L : ℝ≥0 → StrongDual ℝ W)

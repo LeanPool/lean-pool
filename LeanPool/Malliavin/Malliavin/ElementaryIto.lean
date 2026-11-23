@@ -25,6 +25,9 @@ comparison theorems derive the family-level identities from these genuine Browni
 
 @[expose] public section
 
+-- Prefer the domain's second countability when proving strong measurability.
+attribute [local instance 101] secondCountableTopologyEither_of_left
+
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace
 
@@ -36,13 +39,13 @@ namespace Malliavin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
   {B : ℝ≥0 → W → ℝ}
 
 namespace LegacyTensor
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Chronologically disjoint elementary predictable terms are orthogonal in product `L²`. -/
 theorem inner_elementaryPredictable_eq_zero_of_le
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) {a b c d : ℝ≥0} (hbc : b ≤ c)
@@ -82,7 +85,7 @@ theorem inner_elementaryPredictable_eq_zero_of_le
 end LegacyTensor
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Chronologically disjoint elementary predictable terms are orthogonal in product `L²`. -/
 theorem inner_elementaryPredictable_eq_zero_of_le [SFinite P]
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) {a b c d : ℝ≥0} (hbc : b ≤ c)
@@ -162,7 +165,7 @@ noncomputable def elementaryBrownianValue
     (fun w ↦ (Z : W → ℝ) w * (B b w - B a w))
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A representative of the constructed elementary Brownian terminal value. -/
 theorem coeFn_elementaryBrownianValue
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
@@ -174,7 +177,7 @@ theorem coeFn_elementaryBrownianValue
   MemLp.coeFn_toLp _
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The elementary Brownian terminal value is additive in its adapted coefficient. -/
 theorem elementaryBrownianValue_add
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
@@ -200,7 +203,7 @@ theorem elementaryBrownianValue_add
   ring
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The elementary Brownian terminal value commutes with real scalar multiplication. -/
 theorem elementaryBrownianValue_smul
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
@@ -234,7 +237,7 @@ noncomputable def elementaryBrownianValueLinear
   map_smul' := elementaryBrownianValue_smul hB hsm hnat hab
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The fixed-interval linear map evaluates to the elementary Brownian value. -/
 @[simp]
 theorem elementaryBrownianValueLinear_apply
@@ -259,7 +262,7 @@ theorem ClarkOconeFamily.elementaryIntegralValue_eq_elementaryBrownianValue
       C.naturalFiltration hab Z).symm
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Constructed elementary Brownian values on chronologically disjoint intervals are
 orthogonal. -/
 theorem inner_elementaryBrownianValue_eq_zero_of_le
@@ -311,7 +314,7 @@ theorem inner_elementaryBrownianValue_eq_zero_of_le
         hB.integral_eval, hB.integral_eval, sub_zero, zero_mul]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The cross-inner-product identity for chronologically disjoint constructed elementary
 Brownian values. -/
 theorem inner_elementaryBrownianValue_eq_inner_elementaryPredictable_of_le

@@ -217,7 +217,7 @@ open CameronMartin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P] {B : ℝ≥0 → W → ℝ}
+  {P : Measure W} [IsGaussian (E := W) P] {B : ℝ≥0 → W → ℝ}
 
 /-- If the Brownian coordinates are continuous linear functionals, each is the centered class of
 that functional, i.e. a generator of the Cameron--Martin space. -/
@@ -277,14 +277,14 @@ noncomputable def spaceVector (B : ℝ≥0 → W → ℝ) (Z : RandomL2 P) (I : 
   (Z w, fun i ↦ B i w)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 theorem aemeasurable_spaceVector (hB : IsPreBrownianReal B P) (Z : RandomL2 P)
     (I : Finset ℝ≥0) : AEMeasurable (spaceVector B Z I) P := by
   refine AEMeasurable.prodMk (Lp.aestronglyMeasurable Z).aemeasurable ?_
   exact aemeasurable_pi_iff.mpr fun i ↦ hB.aemeasurable i
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-  [SecondCountableTopology W] [IsGaussian P] in
+  [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A linear functional of `spaceVector` is a.e. a linear combination of `Z` and the `B i`. -/
 theorem coeFn_combination_spaceVector (hB : IsPreBrownianReal B P) (Z : RandomL2 P)
     (I : Finset ℝ≥0) (ℓ : (ℝ × (I → ℝ)) →L[ℝ] ℝ) :

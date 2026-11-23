@@ -242,27 +242,18 @@ theorem naturalItoDuality_iff_bestNaturalItoIntegrand_eq_predictableProjection
     have h := centeredNaturalItoIntegral_bestNaturalItoIntegrand
       hB hsm hnat hMRT (centeredPartL2 F.1)
     exact congrArg Subtype.val h
+  have hpair (U : PredictableProcessL2 𝓅 P) :
+      inner ℝ (F.1 - expectationL2 F.1) (naturalItoIntegral hB hsm hnat U) =
+        inner ℝ Uₑ U := calc
+    _ = inner ℝ (naturalItoIntegral hB hsm hnat Uₑ) (naturalItoIntegral hB hsm hnat U) :=
+      congrArg (fun G : RandomL2 P ↦ inner ℝ G (naturalItoIntegral hB hsm hnat U)) hcenter.symm
+    _ = inner ℝ Uₑ U := inner_naturalItoIntegral hB hsm hnat Uₑ U
   constructor
   · intro hDuality
-    apply ext_inner_right ℝ
-    intro U
-    calc
-      inner ℝ Uₑ U =
-          inner ℝ (naturalItoIntegral hB hsm hnat Uₑ)
-            (naturalItoIntegral hB hsm hnat U) :=
-        (inner_naturalItoIntegral hB hsm hnat Uₑ U).symm
-      _ = inner ℝ (F.1 - expectationL2 F.1)
-          (naturalItoIntegral hB hsm hnat U) := by rw [hcenter]
-      _ = inner ℝ V U := hDuality U
+    exact ext_inner_right ℝ fun U ↦ (hpair U).symm.trans (hDuality U)
   · intro hbest U
     change Uₑ = V at hbest
-    calc
-      inner ℝ (F.1 - expectationL2 F.1)
-          (naturalItoIntegral hB hsm hnat U) =
-          inner ℝ (naturalItoIntegral hB hsm hnat Uₑ)
-            (naturalItoIntegral hB hsm hnat U) := by rw [hcenter]
-      _ = inner ℝ Uₑ U := inner_naturalItoIntegral hB hsm hnat Uₑ U
-      _ = inner ℝ V U := by rw [hbest]
+    exact (hpair U).trans (congrArg (fun G ↦ inner ℝ G U) hbest)
 
 /-- **Concrete conditional Clark--Ocone formula.** This statement uses the constructed natural
 Itô integral directly, with no abstract family: MRT supplies the canonical inverse integrand, and

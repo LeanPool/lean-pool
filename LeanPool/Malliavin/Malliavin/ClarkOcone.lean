@@ -37,6 +37,9 @@ contract operator rather than asserting that it is the constructed Brownian Itô
 
 @[expose] public section
 
+-- Prefer the domain's second countability when proving strong measurability.
+attribute [local instance 101] secondCountableTopologyEither_of_left
+
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace
 
@@ -185,7 +188,7 @@ namespace Malliavin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
   {B : ℝ≥0 → W → ℝ}
 
 /-- Square-integrable real processes on nonnegative time × sample space. -/
@@ -219,7 +222,7 @@ theorem predictable_le_prod (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) 
     exact measurableSet_Ioi.prod (𝓕.le t A hA)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The time coordinate is measurable from the predictable sigma-algebra. -/
 theorem measurable_fst_predictable (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) :
     @Measurable (ℝ≥0 × W) ℝ≥0 𝓕.predictable inferInstance Prod.fst := by
@@ -373,7 +376,7 @@ noncomputable def elementaryPredictable
       |>.aestronglyMeasurable.congr hV.symm⟩
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Forgetting predictability, an elementary process is the product-space tensor
 `1_(a,b] ⊗ Z`. -/
 theorem elementaryPredictable_coeLp
@@ -383,7 +386,7 @@ theorem elementaryPredictable_coeLp
       tensor (iocIndicator a b) (Z : RandomL2 P) := rfl
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A pointwise representative of an elementary predictable process. -/
 theorem elementaryPredictable_coeFn
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) (a b : ℝ≥0)
@@ -406,7 +409,7 @@ theorem elementaryPredictable_coeFn
 end LegacyTensor
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The predictable `L²` class represented by `(t, ω) ↦ 1_(a,b](t) Z(ω)` for an
 `𝓕_a`-measurable square-integrable coefficient `Z`. -/
 noncomputable def elementaryPredictable [SFinite P]
@@ -438,7 +441,7 @@ noncomputable def elementaryPredictable [SFinite P]
       |>.aestronglyMeasurable.congr hV.symm⟩
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Forgetting predictability, an elementary process is the product-space tensor
 `1_(a,b] ⊗ Z`. -/
 theorem elementaryPredictable_coeLp [SFinite P]
@@ -448,7 +451,7 @@ theorem elementaryPredictable_coeLp [SFinite P]
       tensor (iocIndicator a b) (Z : RandomL2 P) := rfl
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A pointwise representative of an elementary predictable process. -/
 theorem elementaryPredictable_coeFn [SFinite P]
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) (a b : ℝ≥0)
@@ -543,7 +546,7 @@ theorem filtrationCondExpL2_ae_eq_condExp
     (Lp.memLp F).condExpL2_ae_eq_condExp (𝕜 := ℝ) (𝓕.le t)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Timewise `L²` conditional expectation is contractive. -/
 theorem norm_filtrationCondExpL2_le
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) (t : ℝ≥0) (F : RandomL2 P) :
@@ -559,7 +562,7 @@ integration, martingale-representation, and duality contract on predictable proc
 
 The structure does not yet identify `itoIntegral` with integration against `B` on elementary
 predictable intervals. -/
-structure ClarkOconeFamily (B : ℝ≥0 → W → ℝ) (P : Measure W) [IsGaussian P]
+structure ClarkOconeFamily (B : ℝ≥0 → W → ℝ) (P : Measure W) [IsGaussian (E := W) P]
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) where
   /-- The designated process has Brownian finite-dimensional laws. -/
   isPreBrownian : IsPreBrownianReal B P
@@ -684,7 +687,7 @@ theorem ClarkOconeFamily.timeDerivative_apply {𝓕 : Filtration ℝ≥0 ‹Meas
   rfl
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Future Brownian increments are independent of every random variable measurable for a
 filtration identified with the natural Brownian filtration. -/
 theorem indep_increment_of_natural_adapted
@@ -718,7 +721,7 @@ theorem indep_increment_of_natural_adapted
   exact hfunZm.congr Filter.EventuallyEq.rfl hZ.ae_eq_mk.symm
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- An adapted `L²` coefficient times a future Brownian increment is again in `L²`. -/
 theorem memLp_natural_adapted_mul_increment
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))

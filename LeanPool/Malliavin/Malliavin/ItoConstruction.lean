@@ -28,6 +28,9 @@ contract concerns martingale representation and Malliavin--Itô duality.
 
 @[expose] public section
 
+-- Prefer the domain's second countability when proving strong measurability.
+attribute [local instance 101] secondCountableTopologyEither_of_left
+
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal InnerProductSpace
 
@@ -39,7 +42,7 @@ namespace Malliavin
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
   {B : ℝ≥0 → W → ℝ}
 
 /-- Promote an adapted coefficient to a later sigma-algebra of the filtration. -/
@@ -49,7 +52,7 @@ noncomputable def adaptedMono
   ⟨Z.1, AEStronglyMeasurable.mono (𝓕.mono hac) (lpMeas.aestronglyMeasurable Z)⟩
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The promoted coefficient has the same ambient `L²` value. -/
 theorem adaptedMono_coe
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›) {a c : ℝ≥0} (hac : a ≤ c)
@@ -58,7 +61,7 @@ theorem adaptedMono_coe
   rfl
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- An elementary Brownian value splits at an intermediate time. -/
 theorem elementaryBrownianValue_split
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
@@ -85,7 +88,7 @@ theorem elementaryBrownianValue_split
 namespace LegacyTensor
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- An elementary predictable process splits at an intermediate time. -/
 theorem elementaryPredictable_split
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›)
@@ -126,7 +129,7 @@ theorem elementaryPredictable_split
 end LegacyTensor
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- An elementary predictable process splits at an intermediate time. -/
 theorem elementaryPredictable_split [SFinite P]
     (𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›)
@@ -163,6 +166,13 @@ theorem elementaryPredictable_split [SFinite P]
         · exact hpcb ⟨hcp, hp.2⟩
         · exact hpac ⟨hp.1, hpc⟩
       simp only [hpab, ↓reduceIte, hpac, hpcb, add_zero]
+
+private theorem inner_eq_inner_of_swapped {E F : Type*}
+    [SeminormedAddCommGroup E] [InnerProductSpace ℝ E]
+    [SeminormedAddCommGroup F] [InnerProductSpace ℝ F]
+    {x y : E} {u v : F} (h : inner ℝ y x = inner ℝ v u) :
+    inner ℝ x y = inner ℝ u v :=
+  (real_inner_comm y x).trans (h.trans (real_inner_comm u v))
 
 omit [CompleteSpace W] [BorelSpace W] in
 /-- Arbitrary elementary Brownian values have the same cross inner product as their predictable
@@ -206,22 +216,9 @@ theorem inner_elementaryBrownianValue_eq_inner_elementaryPredictable
               hB hsm hnat hcb le_rfl hbd Zc Yb]
       · have hdb : d ≤ b := le_of_lt (lt_of_not_ge hbd)
         let Zd : lpMeas ℝ ℝ (𝓕 d) 2 P := adaptedMono 𝓕 hcd Zc
-        have hreverse :
-            inner ℝ (elementaryBrownianValue hB hsm hnat hdb Zd)
-                (elementaryBrownianValue hB hsm hnat hcd Y) =
-              inner ℝ (elementaryPredictable 𝓕 d b Zd)
-                (elementaryPredictable 𝓕 c d Y) := by
-          calc
-            inner ℝ (elementaryBrownianValue hB hsm hnat hdb Zd)
-                (elementaryBrownianValue hB hsm hnat hcd Y) =
-                inner ℝ (elementaryBrownianValue hB hsm hnat hcd Y)
-                  (elementaryBrownianValue hB hsm hnat hdb Zd) := real_inner_comm _ _
-            _ = inner ℝ (elementaryPredictable 𝓕 c d Y)
-                  (elementaryPredictable 𝓕 d b Zd) :=
-              inner_elementaryBrownianValue_eq_inner_elementaryPredictable_of_le
-                hB hsm hnat hcd le_rfl hdb Y Zd
-            _ = inner ℝ (elementaryPredictable 𝓕 d b Zd)
-                  (elementaryPredictable 𝓕 c d Y) := real_inner_comm _ _
+        have hreverse := inner_eq_inner_of_swapped
+          (inner_elementaryBrownianValue_eq_inner_elementaryPredictable_of_le
+            hB hsm hnat hcd le_rfl hdb Y Zd)
         rw [elementaryBrownianValue_split hB hsm hnat hcd hdb Zc,
           elementaryPredictable_split 𝓕 hcd hdb Zc]
         simp only [inner_add_left]
@@ -232,15 +229,7 @@ theorem inner_elementaryBrownianValue_eq_inner_elementaryPredictable
           hreverse]
   rcases le_total a c with hac | hca
   · exact hordered hab hcd Z Y hac
-  · calc
-      inner ℝ (elementaryBrownianValue hB hsm hnat hab Z)
-          (elementaryBrownianValue hB hsm hnat hcd Y) =
-          inner ℝ (elementaryBrownianValue hB hsm hnat hcd Y)
-            (elementaryBrownianValue hB hsm hnat hab Z) := real_inner_comm _ _
-      _ = inner ℝ (elementaryPredictable 𝓕 c d Y)
-            (elementaryPredictable 𝓕 a b Z) := hordered hcd hab Y Z hca
-      _ = inner ℝ (elementaryPredictable 𝓕 a b Z)
-            (elementaryPredictable 𝓕 c d Y) := real_inner_comm _ _
+  · exact inner_eq_inner_of_swapped (hordered hcd hab Y Z hca)
 
 /-- A family's elementary Brownian values satisfy the arbitrary-interval cross Itô identity. -/
 theorem ClarkOconeFamily.inner_elementaryIntegralValue_eq_inner_elementaryPredictable
@@ -327,7 +316,7 @@ theorem elementaryFinsuppToPredictable_single
   Finsupp.linearCombination_single _ _ _
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The Brownian realization of a single formal generator. -/
 theorem elementaryFinsuppToBrownian_single
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
@@ -448,27 +437,6 @@ theorem naturalItoIntegral_elementaryPredictable
     elementaryBrownianGenerator] using h
 
 omit [CompleteSpace W] [BorelSpace W] in
-/-- The constructed natural-filtration Itô integral preserves inner products. -/
-theorem inner_naturalItoIntegral
-    (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
-    {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
-    (hnat : 𝓕 = Filtration.natural B hsm)
-    (U V : PredictableProcessL2 𝓕 P) :
-    inner ℝ (naturalItoIntegral hB hsm hnat U)
-        (naturalItoIntegral hB hsm hnat V) = inner ℝ U V := by
-  refine (denseRange_elementaryFinsuppToPredictable (P := P) 𝓕).induction_on₂
-    (p := fun U V ↦ inner ℝ (naturalItoIntegral hB hsm hnat U)
-      (naturalItoIntegral hB hsm hnat V) = inner ℝ U V) ?_ ?_ U V
-  · exact isClosed_eq
-      (((naturalItoIntegral hB hsm hnat).continuous.comp continuous_fst).inner
-        ((naturalItoIntegral hB hsm hnat).continuous.comp continuous_snd))
-      (continuous_fst.inner continuous_snd)
-  · intro v w
-    rw [naturalItoIntegral_elementaryFinsuppToPredictable hB hsm hnat,
-      naturalItoIntegral_elementaryFinsuppToPredictable hB hsm hnat,
-      inner_elementaryFinsuppToBrownian hB hsm hnat]
-
-omit [CompleteSpace W] [BorelSpace W] in
 /-- The constructed natural-filtration Itô integral is norm preserving. -/
 theorem norm_naturalItoIntegral
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
@@ -476,9 +444,13 @@ theorem norm_naturalItoIntegral
     (hnat : 𝓕 = Filtration.natural B hsm)
     (U : PredictableProcessL2 𝓕 P) :
     ‖naturalItoIntegral hB hsm hnat U‖ = ‖U‖ := by
-  have h := inner_naturalItoIntegral hB hsm hnat U U
-  rw [real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq] at h
-  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp h
+  refine (denseRange_elementaryFinsuppToPredictable (P := P) 𝓕).induction_on
+    (p := fun V ↦ ‖naturalItoIntegral hB hsm hnat V‖ = ‖V‖)
+    U (isClosed_eq (continuous_norm.comp (naturalItoIntegral hB hsm hnat).continuous)
+      continuous_norm) ?_
+  intro v
+  rw [naturalItoIntegral_elementaryFinsuppToPredictable hB hsm hnat,
+    norm_elementaryFinsuppToBrownian hB hsm hnat]
 
 /-- The constructed natural-filtration Itô integral as a linear isometry. -/
 noncomputable def naturalItoIntegralIsometry
@@ -489,8 +461,19 @@ noncomputable def naturalItoIntegralIsometry
   ⟨(naturalItoIntegral hB hsm hnat).toLinearMap,
     norm_naturalItoIntegral hB hsm hnat⟩
 
+omit [CompleteSpace W] [BorelSpace W] in
+/-- The constructed natural-filtration Itô integral preserves inner products. -/
+theorem inner_naturalItoIntegral
+    (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))
+    {𝓕 : Filtration ℝ≥0 ‹MeasurableSpace W›}
+    (hnat : 𝓕 = Filtration.natural B hsm)
+    (U V : PredictableProcessL2 𝓕 P) :
+    inner ℝ (naturalItoIntegral hB hsm hnat U)
+        (naturalItoIntegral hB hsm hnat V) = inner ℝ U V :=
+  (naturalItoIntegralIsometry hB hsm hnat).inner_map_map U V
+
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Every elementary Brownian terminal value is centered. -/
 theorem integral_elementaryBrownianValue
     (hB : IsPreBrownianReal B P) (hsm : ∀ t, StronglyMeasurable (B t))

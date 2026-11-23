@@ -28,11 +28,11 @@ namespace Malliavin.BrownianIteratedConstruction
 variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
   [CompleteSpace W] [MeasurableSpace W] [BorelSpace W]
   [SecondCountableTopology W]
-  {P : Measure W} [IsGaussian P]
+  {P : Measure W} [IsGaussian (E := W) P]
   {B : ℝ≥0 → W → ℝ}
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- A finite Brownian step sum has the centered Gaussian law with variance equal to the squared
 norm of its deterministic step kernel. -/
 theorem map_stepSum_eq_gaussianReal (hB : IsPreBrownianReal B P)
@@ -47,7 +47,7 @@ theorem map_stepSum_eq_gaussianReal (hB : IsPreBrownianReal B P)
       map_wienerIntegral_eq_gaussianReal hB (stepToLp v)
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The second moment of a finite Brownian step sum is the squared norm of its deterministic
 step kernel. -/
 theorem integral_stepSum_sq (hB : IsPreBrownianReal B P) (v : ℝ≥0 →₀ ℝ) :
@@ -64,7 +64,7 @@ theorem integral_stepSum_sq (hB : IsPreBrownianReal B P) (v : ℝ≥0 →₀ ℝ
       simp
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The fourth moment of a finite Brownian step sum is three times the squared variance. -/
 theorem integral_stepSum_pow_four (hB : IsPreBrownianReal B P) (v : ℝ≥0 →₀ ℝ) :
     (∫ w, stepSum B v w ^ 4 ∂P) = 3 * (‖stepToLp v‖ ^ 2) ^ 2 := by
@@ -80,7 +80,7 @@ theorem integral_stepSum_pow_four (hB : IsPreBrownianReal B P) (v : ℝ≥0 →�
       simp
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- The centered square of a finite Brownian step sum has second moment twice the squared
 variance. -/
 theorem integral_stepSum_sq_sub_variance_sq
@@ -102,7 +102,7 @@ theorem integral_stepSum_sq_sub_variance_sq
       simpa using h
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Wick powers of one finite Brownian step sum are orthogonal, with the usual factorial norm. -/
 theorem inner_brownianWickPowerLp (hB : IsPreBrownianReal B P)
     (v : ℝ≥0 →₀ ℝ) (m n : ℕ) :
@@ -137,7 +137,7 @@ theorem inner_brownianWickPowerLp (hB : IsPreBrownianReal B P)
       exact horth
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Wick powers of different orders of the same step sum are orthogonal. -/
 theorem inner_brownianWickPowerLp_of_ne (hB : IsPreBrownianReal B P)
     (v : ℝ≥0 →₀ ℝ) {m n : ℕ} (hmn : m ≠ n) :
@@ -145,7 +145,7 @@ theorem inner_brownianWickPowerLp_of_ne (hB : IsPreBrownianReal B P)
   rw [inner_brownianWickPowerLp, ite_eq_right hmn]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Squared norm of a Brownian Wick power. -/
 theorem norm_sq_brownianWickPowerLp (hB : IsPreBrownianReal B P)
     (v : ℝ≥0 →₀ ℝ) (n : ℕ) :
@@ -154,7 +154,7 @@ theorem norm_sq_brownianWickPowerLp (hB : IsPreBrownianReal B P)
   rw [← real_inner_self_eq_norm_sq, inner_brownianWickPowerLp, ite_eq_left rfl]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Every positive-order Brownian Wick power is centered. -/
 theorem integral_brownianWickPowerLp (hB : IsPreBrownianReal B P)
     (v : ℝ≥0 →₀ ℝ) {n : ℕ} (hn : 0 < n) :
@@ -180,7 +180,7 @@ theorem integral_brownianWickPowerLp (hB : IsPreBrownianReal B P)
       rw [hcenter, ite_eq_right (Nat.ne_of_gt hn)]
 
 omit [NormedAddCommGroup W] [NormedSpace ℝ W] [CompleteSpace W] [BorelSpace W]
-    [SecondCountableTopology W] [IsGaussian P] in
+    [SecondCountableTopology W] [IsGaussian (E := W) P] in
 /-- Exact norm of a Brownian Wick power. -/
 theorem norm_brownianWickPowerLp (hB : IsPreBrownianReal B P)
     (v : ℝ≥0 →₀ ℝ) (n : ℕ) :

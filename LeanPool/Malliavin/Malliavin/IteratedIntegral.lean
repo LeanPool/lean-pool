@@ -1171,12 +1171,12 @@ private noncomputable def l2CongrLeft {ι κ : Type*} (e : ι ≃ κ) :
   toFun f := ⟨fun j ↦ f (e.symm j), by
     change Memℓp (fun j : κ ↦ f (e.symm j)) (2 : ℝ≥0∞)
     rw [memℓp_gen_iff (p := (2 : ℝ≥0∞)) (by norm_num)]
-    exact e.symm.summable_iff.mpr
+    exact (e.symm.summable_iff (f := fun i ↦ ‖f i‖ ^ (2 : ℝ≥0∞).toReal)).mpr
       ((memℓp_gen_iff (p := (2 : ℝ≥0∞)) (by norm_num)).mp (lp.memℓp f))⟩
   invFun g := ⟨fun i ↦ g (e i), by
     change Memℓp (fun i : ι ↦ g (e i)) (2 : ℝ≥0∞)
     rw [memℓp_gen_iff (p := (2 : ℝ≥0∞)) (by norm_num)]
-    exact e.summable_iff.mpr
+    exact (e.summable_iff (f := fun j ↦ ‖g j‖ ^ (2 : ℝ≥0∞).toReal)).mpr
       ((memℓp_gen_iff (p := (2 : ℝ≥0∞)) (by norm_num)).mp (lp.memℓp g))⟩
   left_inv f := by ext i; simp only [Equiv.symm_apply_apply]
   right_inv g := by ext j; simp only [Equiv.apply_symm_apply]
@@ -1338,17 +1338,19 @@ noncomputable def positiveIntegralCLM (hB : IsPreBrownianReal B P) (n : ℕ) :
     IteratedKernel (n + 1) →L[ℝ] RandomL2 P :=
   (simplexIntegralLI hB n).toContinuousLinearMap.comp (restrictToSimplex (n + 1))
 
+private theorem positiveIntegralCLM_apply (hB : IsPreBrownianReal B P) (n : ℕ)
+    (f : IteratedKernel (n + 1)) :
+    positiveIntegralCLM hB n f = simplexIntegralLI hB n (restrictToSimplex (n + 1) f) := by
+  rw [positiveIntegralCLM]
+  rfl
+
 private theorem inner_positiveIntegralCLM (hB : IsPreBrownianReal B P) (n : ℕ)
     (f g : IteratedKernel (n + 1)) :
     inner ℝ (positiveIntegralCLM hB n f) (positiveIntegralCLM hB n g) =
       ∫ t in simplex ℝ≥0 (n + 1), inner ℝ (f t) (g t)
         ∂iteratedKernelMeasure (n + 1) := by
-  rw [positiveIntegralCLM, ContinuousLinearMap.comp_apply,
-    ContinuousLinearMap.comp_apply]
-  change inner ℝ (simplexIntegralLI hB n (restrictToSimplex (n + 1) f))
-    (simplexIntegralLI hB n (restrictToSimplex (n + 1) g)) = _
-  rw [LinearIsometry.inner_map_map]
-  exact inner_restrictToSimplex (n + 1) f g
+  rw [positiveIntegralCLM_apply, positiveIntegralCLM_apply, LinearIsometry.inner_map_map,
+    inner_restrictToSimplex]
 
 private theorem integral_positiveIntegralCLM (hB : IsPreBrownianReal B P) (n : ℕ)
     (f : IteratedKernel (n + 1)) :
@@ -1386,9 +1388,7 @@ private theorem inner_positiveIntegralCLM_ne (hB : IsPreBrownianReal B P) {m n :
 
 private theorem norm_positiveIntegralCLM_le (hB : IsPreBrownianReal B P) (n : ℕ)
     (f : IteratedKernel (n + 1)) : ‖positiveIntegralCLM hB n f‖ ≤ ‖f‖ := by
-  rw [positiveIntegralCLM, ContinuousLinearMap.comp_apply]
-  change ‖simplexIntegralLI hB n (restrictToSimplex (n + 1) f)‖ ≤ ‖f‖
-  rw [LinearIsometry.norm_map]
+  rw [positiveIntegralCLM_apply, LinearIsometry.norm_map]
   exact norm_restrictToSimplex_le (n + 1) f
 
 /-- The iterated-integral operator, using the constant kernel at order zero

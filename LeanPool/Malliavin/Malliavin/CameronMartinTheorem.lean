@@ -33,6 +33,9 @@ and the almost-everywhere logarithmic density formula used by the closability ru
 
 @[expose] public section
 
+-- Prefer the domain's second countability when proving strong measurability.
+attribute [local instance 101] secondCountableTopologyEither_of_left
+
 open MeasureTheory ProbabilityTheory Filter
 open scoped ENNReal NNReal Real Topology
 
