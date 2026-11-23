@@ -282,9 +282,10 @@ theorem canonical_centered_temporal_defect_tends_to_zero
   uniform_centered_temporal_defect_readout_tends_to_zero
     chi0 momentum phase component
 
-/-- Using the acceleration-corrected velocity reconstructed from the same two
-committed layers, the unchanged centered recurrence has a cubic one-step
-defect.  Hence its phase-space evolution is second-order in time. -/
+/-- With the acceleration-corrected velocity reconstructed from two committed
+layers, one centered step differs from the native Taylor step by a cubic defect.
+After the Dirac readout, the defect divided by the squared step size tends to
+zero. This is a local consistency result. -/
 theorem canonical_verlet_local_defect_is_little_o_dt_sq
     (momentum : LatticeMomentum) (phase : UniformTwoChannelPhase)
     (component : Fin 4) :
