@@ -52,6 +52,10 @@ public import LeanPool.CutoffRigidity.EuclideanMollificationStrongLimit
 public import LeanPool.CutoffRigidity.EuclideanMollifiedCompactness
 public import LeanPool.CutoffRigidity.EuclideanWeakHessianEstimates
 public import LeanPool.CutoffRigidity.FirstEigenspaceAffineCoordinates
+public import LeanPool.CutoffRigidity.GaussianTransport.LowerBound
+public import LeanPool.CutoffRigidity.GaussianTransport.MomentComparison
+public import LeanPool.CutoffRigidity.GaussianTransport.Projection
+public import LeanPool.CutoffRigidity.GaussianTransport.RiemannianLowerBound
 public import LeanPool.CutoffRigidity.GeneratorIntertwining
 public import LeanPool.CutoffRigidity.Gibbs
 public import LeanPool.CutoffRigidity.GibbsCompactApproximation

@@ -19,7 +19,7 @@ import TauCeti.Geometry.Manifold.VectorBundle.CovariantDerivative.Coordinate.Fra
 /-! # G2: test functions with prescribed gradient and vanishing Hessian at a point
 
 `exists_test_function`: for `v ∈ T_xM` there is a globally smooth `g` with `∇g(x) = v` and
-`Hess g(x) = 0`: in the chart at `x`, `g̃(z) = ξ(z-z₀) + ½ ξ(Γ(z-z₀,z-z₀))` (`Γ` the Christoffel map
+`Hess g(x) = 0`: in the chart at `x`, `g₀(z) = ξ(z-z₀) + ½ ξ(Γ(z-z₀,z-z₀))` (`Γ` the Christoffel map
 at the centre, `ξ = ⟪v,·⟫`), cut off by a smooth bump function.
 -/
 
