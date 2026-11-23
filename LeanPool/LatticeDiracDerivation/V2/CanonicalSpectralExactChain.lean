@@ -8,7 +8,7 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralReadout
+public import LeanPool.LatticeDiracDerivation.V2.C19SpectralReadout
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletTime
 public import LeanPool.LatticeDiracDerivation.V2.PositionSpaceFreeDirac

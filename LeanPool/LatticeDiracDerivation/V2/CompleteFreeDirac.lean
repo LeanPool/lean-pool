@@ -8,6 +8,7 @@ Authors: G. D. Partin
 
 module
 
+public import LeanPool.LatticeDiracDerivation.V2.C19SpectralReadout
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumVerletDispersion
 public import LeanPool.LatticeDiracDerivation.V2.UniformVacuumDiscreteTime
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain

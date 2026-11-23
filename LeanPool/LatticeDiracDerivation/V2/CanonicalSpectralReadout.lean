@@ -9,7 +9,6 @@ Authors: G. D. Partin
 module
 
 public import LeanPool.LatticeDiracDerivation.V2.PositiveFrequencyEmbedding
-public import LeanPool.LatticeDiracDerivation.V2.C19Fourier
 
 /-!
 # Canonical spectral readout of the native Klein--Gordon phase space
@@ -264,36 +263,6 @@ theorem canonical_spectral_readout_negative_phase
   have absent : normalizedPositiveFrequencyEmbedding mass energy px py pz 0 = 0 :=
     (normalizedPositiveFrequencyEmbeddingLinear mass energy px py pz).map_zero
   rw [absent, zero_add]
-
-/-- Spectral spinor coordinates with the momentum scaled by the C19 continuum speed. -/
-def canonicalSpectralMomentumReadout
-    (mass energy : ℝ) (momentum : LatticeMomentum)
-    (phase : UniformTwoChannelPhase) : CubicalCell4 :=
-  canonicalSpectralReadout mass energy
-    (c19ScaledMomentum momentum 0)
-    (c19ScaledMomentum momentum 1)
-    (c19ScaledMomentum momentum 2) phase
-
-theorem canonical_spectral_momentum_readout_additive
-    (mass energy : ℝ) (momentum : LatticeMomentum)
-    (first second : UniformTwoChannelPhase) :
-    canonicalSpectralMomentumReadout mass energy momentum
-        (fun component => first.1 component + second.1 component,
-         fun component => first.2 component + second.2 component) =
-      fun component =>
-        canonicalSpectralMomentumReadout mass energy momentum first component +
-          canonicalSpectralMomentumReadout mass energy momentum second component := by
-  unfold canonicalSpectralMomentumReadout
-  exact canonical_spectral_readout_additive _ _ _ _ _ first second
-
-theorem canonical_spectral_momentum_readout_positive_phase
-    (mass energy : ℝ) (momentum : LatticeMomentum) (henergy : energy ≠ 0) (q : UniformCell2) :
-    canonicalSpectralMomentumReadout mass energy momentum
-        (nativePhaseOfFrequencyAmplitudes energy q (fun _ => 0)) =
-      normalizedPositiveFrequencyEmbedding mass energy
-        (c19ScaledMomentum momentum 0) (c19ScaledMomentum momentum 1)
-        (c19ScaledMomentum momentum 2) q :=
-  canonical_spectral_readout_positive_phase _ _ _ _ _ henergy q
 
 theorem native_amplitudes_of_kg_generator
     (mass energy px py pz : ℝ) (henergy : energy ≠ 0)

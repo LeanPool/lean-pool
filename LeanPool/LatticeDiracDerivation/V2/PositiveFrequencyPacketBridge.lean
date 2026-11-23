@@ -8,6 +8,7 @@ Authors: G. D. Partin
 
 module
 
+public import LeanPool.LatticeDiracDerivation.V2.C19SpectralReadout
 public import LeanPool.LatticeDiracDerivation.V2.FiniteFramePairing
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicCharacters
 public import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
@@ -120,8 +121,7 @@ theorem periodic_positive_native_packet_charge
 def periodicCell4Synthesis (L : ℕ) [NeZero L]
     (amplitude : PeriodicCubicMomentum L → CubicalCell4) :
     PeriodicCubicSite L → CubicalCell4 :=
-  fun site component => periodicScalarSynthesis L
-    (fun mode => amplitude mode component) site
+  finiteFrameComponentSynthesis (fun mode site => periodicQuantizedAddChar L mode site) amplitude
 
 theorem periodic_cell4_synthesis_real_pair
     (L : ℕ) [NeZero L]
@@ -131,11 +131,9 @@ theorem periodic_cell4_synthesis_real_pair
         (fun site => periodicCell4Synthesis L second site component)
         ⟫ₙ_[ℂ]).re =
       ∑ mode, cubicalCell4RealPair (first mode) (second mode) := by
-  unfold periodicCell4Synthesis cubicalCell4RealPair
-  simp_rw [periodic_scalar_synthesis_parseval]
-  rw [Complex.re_sum]
-  simp_rw [Complex.re_sum]
-  rw [Finset.sum_comm]
+  exact finite_frame_component_synthesis_real_pair
+    (fun mode site => periodicQuantizedAddChar L mode site)
+    (periodic_quantized_character_pairing L) first second
 
 /-- The canonical positive-frequency spinor at a single quantized momentum. -/
 def periodicPositiveSpectralMode
@@ -340,12 +338,9 @@ theorem periodic_cell4_synthesis_velocity
       periodicCell4Synthesis L
         (fun mode => cubicalVelocityOperator axis (amplitude mode)) := by
   funext site
-  change cubicalVelocityOperator axis (fun component => ∑ mode,
-      periodicQuantizedAddChar L mode site * amplitude mode component) =
-    fun component => ∑ mode, periodicQuantizedAddChar L mode site *
-      cubicalVelocityOperator axis (amplitude mode) component
-  rw [cubical_velocity_sum]
-  simp_rw [cubical_velocity_mul]
+  simpa only [periodicCell4Synthesis, cubical_velocity_linear_apply] using
+    finite_frame_component_synthesis_map (fun mode site => periodicQuantizedAddChar L mode site)
+      (cubicalVelocityLinear axis) amplitude site
 
 theorem periodic_cell4_synthesis_velocity_component
     (L : ℕ) [NeZero L] (axis : Fin 3)

@@ -74,5 +74,44 @@ theorem finite_frame_synthesis_pairing [Fintype Mode] [Fintype Site] [DecidableE
   rw [wInner_cWeight_fintype_sum_right]
   simp [finite_frame_scaled_pairing frame orthonormal]
 
+
+/-- Apply the same finite frame synthesis to every component. -/
+def finiteFrameComponentSynthesis {Component : Type*} [Fintype Mode]
+    (frame : Mode → Site → 𝕜) (coefficient : Mode → Component → 𝕜) (site : Site) :
+    Component → 𝕜 :=
+  fun component => finiteFrameSynthesis frame (fun mode => coefficient mode component) site
+
+/-- Finite orthonormal synthesis preserves the summed real pairing of complex components. -/
+theorem finite_frame_component_synthesis_real_pair {Component : Type*}
+    [Fintype Mode] [Fintype Site] [Fintype Component] [DecidableEq Mode]
+    (frame : Mode → Site → ℂ)
+    (orthonormal : ∀ first second, ⟪frame first, frame second⟫ₙ_[ℂ] =
+      if first = second then 1 else 0)
+    (first second : Mode → Component → ℂ) :
+    (∑ component, ⟪(fun site => finiteFrameComponentSynthesis frame first site component),
+      (fun site => finiteFrameComponentSynthesis frame second site component)⟫ₙ_[ℂ]).re =
+        ∑ mode, ∑ component, (star (first mode component) * second mode component).re := by
+  unfold finiteFrameComponentSynthesis
+  simp_rw [finite_frame_synthesis_pairing frame orthonormal]
+  rw [Complex.re_sum]
+  simp_rw [Complex.re_sum]
+  rw [Finset.sum_comm]
+
+private theorem finite_frame_component_synthesis_eq_sum {Component : Type*} [Fintype Mode]
+    (frame : Mode → Site → 𝕜) (coefficient : Mode → Component → 𝕜) (site : Site) :
+    finiteFrameComponentSynthesis frame coefficient site =
+      ∑ mode, frame mode site • coefficient mode := by
+  funext component
+  simp only [finiteFrameComponentSynthesis, finiteFrameSynthesis, Finset.sum_apply,
+    Pi.smul_apply, smul_eq_mul]
+
+/-- A linear map on the values commutes with componentwise synthesis. -/
+theorem finite_frame_component_synthesis_map {Component Target : Type*} [Fintype Mode]
+    (frame : Mode → Site → 𝕜) (transform : (Component → 𝕜) →ₗ[𝕜] (Target → 𝕜))
+    (coefficient : Mode → Component → 𝕜) (site : Site) :
+    transform (finiteFrameComponentSynthesis frame coefficient site) =
+      finiteFrameComponentSynthesis frame (fun mode => transform (coefficient mode)) site := by
+  simp only [finite_frame_component_synthesis_eq_sum, map_sum, map_smul]
+
 end
 end LeanDirac.V2

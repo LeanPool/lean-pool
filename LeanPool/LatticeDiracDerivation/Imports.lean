@@ -14,6 +14,7 @@ public import LeanPool.LatticeDiracDerivation.NativeAction
 public import LeanPool.LatticeDiracDerivation.V2
 public import LeanPool.LatticeDiracDerivation.V2.C19Fourier
 public import LeanPool.LatticeDiracDerivation.V2.C19PlaneWave
+public import LeanPool.LatticeDiracDerivation.V2.C19SpectralReadout
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralExactChain
 public import LeanPool.LatticeDiracDerivation.V2.CanonicalSpectralReadout
 public import LeanPool.LatticeDiracDerivation.V2.CompleteFreeDirac
