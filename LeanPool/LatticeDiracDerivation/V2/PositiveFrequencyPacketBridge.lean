@@ -120,14 +120,24 @@ def periodicPositiveNativeVelocity (L : ℕ) [NeZero L]
   fun site component => periodicScalarSynthesis L
     (fun mode => (uniformPositiveFrequencyPhase (energy mode) (amplitude mode)).2 component) site
 
+private theorem expected_scalar_phase_pair
+    {Index : Type*} [Fintype Index] (source target : Index → ℂ) :
+    (𝔼 site, uniformScalarPhasePair (source site) (target site)) =
+      (⟪source, target⟫ₙ_[ℂ]).im := by
+  rw [RCLike.wInner_cWeight_eq_expect]
+  simp only [RCLike.inner_apply', Finset.expect_univ, uniformScalarPhasePair,
+    ← NNRat.cast_smul_eq_nnqsmul ℝ, NNRat.cast_inv, NNRat.cast_natCast]
+  change _ = (((Fintype.card Index : ℝ)⁻¹) • ∑ site, star (source site) * target site).im
+  simp only [show ∀ (a : ℝ) (b : ℂ), (a • b).im = a * b.im from
+    fun a b => RCLike.smul_im a b, Complex.im_sum, smul_eq_mul]
+
 /-- The native phase charge averaged over the periodic lattice. -/
 def periodicAveragedNativePositiveCharge (L : ℕ) [NeZero L]
     (energy : PeriodicCubicMomentum L → ℝ)
     (amplitude : PeriodicCubicMomentum L → UniformCell2) : ℝ :=
-  -∑ component : Fin 2,
-    (⟪(fun site => periodicPositiveNativePosition L amplitude site component),
-      (fun site => periodicPositiveNativeVelocity L energy amplitude site component)
-      ⟫ₙ_[ℂ]).im
+  -(𝔼 site, uniformNativePhaseDensity
+    (periodicPositiveNativePosition L amplitude site)
+    (periodicPositiveNativeVelocity L energy amplitude site))
 
 theorem periodic_positive_native_packet_charge
     (L : ℕ) [NeZero L]
@@ -137,8 +147,8 @@ theorem periodic_positive_native_packet_charge
       ∑ mode, energy mode * uniformCell2Density (amplitude mode) := by
   unfold periodicAveragedNativePositiveCharge
     periodicPositiveNativePosition periodicPositiveNativeVelocity
-  simp_rw [periodic_scalar_synthesis_parseval]
-  simp_rw [Complex.im_sum]
+  simp_rw [uniformNativePhaseDensity, Finset.expect_sum_comm, expected_scalar_phase_pair,
+    periodic_scalar_synthesis_parseval, Complex.im_sum]
   rw [Finset.sum_comm, ← Finset.sum_neg_distrib]
   apply Fintype.sum_congr
   intro mode
@@ -287,20 +297,9 @@ theorem periodic_scalar_packet_bond_pair
 
 private theorem averaged_bond_current_eq_weighted_inner
     {Site : Type*} [Fintype Site] (weight : ℝ) (source target : Site → ℂ) :
-    (Fintype.card Site : ℝ)⁻¹ *
-        ∑ site, uniformNativeOutwardBondCurrent weight (source site) (target site) =
+    (𝔼 site, uniformNativeOutwardBondCurrent weight (source site) (target site)) =
       -2 * weight * ⟪source, target⟫ₙ_[ℂ].im := by
-  symm
-  rw [RCLike.wInner_cWeight_eq_expect]
-  simp only [Finset.expect, Finset.card_univ, RCLike.inner_apply', uniformNativeOutwardBondCurrent,
-    uniformScalarPhasePair, ← NNRat.cast_smul_eq_nnqsmul ℝ, NNRat.cast_inv, NNRat.cast_natCast]
-  change -2 * weight * ((Fintype.card Site : ℝ)⁻¹ •
-    ∑ site, star (source site) * target site).im = _
-  simp only [show ∀ (a : ℝ) (b : ℂ), (a • b).im = a * b.im from
-    fun a b => RCLike.smul_im a b, Complex.im_sum, Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro site _
-  ring
+  simp_rw [uniformNativeOutwardBondCurrent, ← Finset.mul_expect, expected_scalar_phase_pair]
 
 /-- Spatial average of the native outward bond currents along the chosen axis. -/
 def periodicAveragedNativePositiveAxisFlux
@@ -309,8 +308,7 @@ def periodicAveragedNativePositiveAxisFlux
   -1 / 2 * ∑ direction : C19Neighbor,
     (c19Coord axis direction : ℝ) *
       (∑ component : Fin 2,
-        (Fintype.card (PeriodicCubicSite L) : ℝ)⁻¹ *
-          ∑ site, uniformNativeOutwardBondCurrent (c19Weight direction)
+        𝔼 site, uniformNativeOutwardBondCurrent (c19Weight direction)
             (periodicPositiveNativePosition L amplitude site component)
             (periodicPositiveNativePosition L amplitude
               (periodicC19Neighbor L site direction) component))

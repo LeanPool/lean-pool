@@ -60,14 +60,16 @@ structure RecursiveKoszulSignLaw
 theorem cubical_incidence_sign_obeys_recursive_koszul
     (axis : Fin 3) :
     RecursiveKoszulSignLaw axis (cubicalIncidenceSign axis) := by
+  have normalized : ∀ axis : Fin 3, cubicalIncidenceSignInteger axis 0 = 1 := by decide
+  have flip : ∀ (axis other : Fin 3) (corner : CubicalCorner),
+      cubicalIncidenceSignInteger axis (cubicalFlip other corner) =
+        (if other.val < axis.val then (-1 : ℤ) else 1) *
+          cubicalIncidenceSignInteger axis corner := by decide
   constructor
-  · fin_cases axis <;>
-      simp [cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalBit0, cubicalBit1]
+  · simp only [cubicalIncidenceSign, normalized, Int.cast_one]
   · intro other corner
-    fin_cases axis <;> fin_cases other <;> fin_cases corner <;>
-      simp [koszulFlipFactor, cubicalIncidenceSign, cubicalIncidenceSignInteger, cubicalFlip,
-        cubicalFlip0, cubicalFlip1, cubicalFlip2,
-        cubicalBit0, cubicalBit1]
+    simp only [cubicalIncidenceSign, flip, Int.cast_mul, koszulFlipFactor]
+    split <;> simp only [Int.cast_neg, Int.cast_one]
 
 /-- Two sign functions satisfying the same recursive oriented-cube law are
 equal.  This graph argument does not inspect either sign's closed formula. -/
