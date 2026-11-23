@@ -33,7 +33,7 @@ main_declarations:
 - CutoffRigidity.normalized_convexInteraction_theorem
 - CutoffRigidity.euclidean_gaussian_splitting
 - CutoffRigidity.Paper.riemannian_gaussian_splitting
-- CutoffRigidity.Riemann.SplitData.lower_of_moments
+- CutoffRigidity.Riemann.lower_of_gaussian_projection_moments
 - CutoffRigidity.Paper.riemannian_transport_lower_of_moments
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
@@ -59,10 +59,10 @@ main_results:
     connected weighted manifold with the same curvature lower bound, gives
     the potential identity, and proves the eigenfunction representation and
     norm and orthogonality identities.
-- declaration: CutoffRigidity.Riemann.SplitData.lower_of_moments
+- declaration: CutoffRigidity.Riemann.lower_of_gaussian_projection_moments
   informal: >-
     If a probability law has the Ornstein–Uhlenbeck first and second moments
-    in the Gaussian coordinate of an isometric splitting, its quadratic
+    in a one-Lipschitz coordinate with Gaussian equilibrium law, its quadratic
     transport cost to equilibrium is bounded below by the squared projected
     mean plus the squared difference of the square roots of the two total
     projected variances.
