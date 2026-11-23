@@ -100,8 +100,8 @@ theorem chartVolumeDensity_level (y₀ : fr.Level) {z : LevelModel F (Rd k)}
           (fun z => ((chartAt (LevelModel F (Rd k)) y₀).symm z).val)
               z).toLinearMap) := by
   set ψ := chartAt (LevelModel F (Rd k)) y₀ with hψ
-  rw [chartVolumeDensity_eq_chartDensity]
-  unfold chartDensity gramDens
+  unfold chartVolumeDensity chartDensity gramDens
+  rw [Matrix.gram]
   congr 2
   funext i j
   have key := fr.mfderiv_val_chart_symm y₀ hz

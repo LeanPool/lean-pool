@@ -8,7 +8,6 @@ Authors: Djalil Chafaï
 
 module
 
-public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.MeasureDensity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedVolume
 import TauCeti.MeasureTheory.Constructions.BorelSpace.Basic
 
@@ -31,16 +30,6 @@ variable {F : Type} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [RiemannianBundle (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [IsContinuousRiemannianBundle F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
   [MeasurableSpace M] [BorelSpace M]
-
-omit [IsManifold 𝓘(ℝ, F) ∞ M]
-  [IsContinuousRiemannianBundle F (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
-  [MeasurableSpace F] [BorelSpace F] [MeasurableSpace M] [BorelSpace M] in
-/-- The density is the Jacobian of the inverse chart in a standard orthonormal basis. -/
-theorem chartDensity_eq_jacobian (Ξ : OpenPartialHomeomorph M F) (z : F) :
-    chartDensity Ξ z = TauCeti.riemannianJacobian (I := 𝓘(ℝ, F))
-      (stdOrthonormalBasis ℝ F).toBasis Ξ.symm z := by
-  rw [TauCeti.riemannianJacobian_eq_sqrt_det_gram]
-  rfl
 
 /-- Density of the weighted measure in a chart with a `C¹` inverse. -/
 theorem map_chart_density [LindelofSpace M] {V : M → ℝ} {μ : Measure M}

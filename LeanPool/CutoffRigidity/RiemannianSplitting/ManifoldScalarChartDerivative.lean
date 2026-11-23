@@ -10,6 +10,8 @@ module
 
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartFrames
 public import Mathlib.Geometry.Manifold.Riemannian.Basic
+import TauCeti.Geometry.Manifold.IsManifold.InteriorChart
+import TauCeti.Geometry.Manifold.MFDeriv.Chart.Basic
 
 /-! # Actual scalar derivatives in actual manifold charts -/
 
@@ -29,32 +31,25 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 intrinsic differential applied to the actual chart frame. -/
 theorem fderiv_chartScalar_frame (x₀ : M) {z : E}
     (hz : z ∈ (extChartAt I x₀).target) {f : M → ℝ}
-    (hf : MDifferentiableAt I 𝓘(ℝ, ℝ) f ((extChartAt I x₀).symm z)) (v : E) :
+    (v : E) :
     fderiv ℝ (f ∘ (extChartAt I x₀).symm) z v =
       mvfderiv I f ((extChartAt I x₀).symm z)
         (chartFrame (I := I) x₀ v ((extChartAt I x₀).symm z)) := by
   let e := extChartAt I x₀
-  let y := e.symm z
-  have hy : y ∈ (chartAt H x₀).source := by
-    simpa only [y, e, extChartAt_source] using e.map_target hz
-  have hround : e y = z := e.right_inv hz
-  have hRange : range I ∈ 𝓝 z := by
-    rw [← hround]
-    have ht := (I.isInteriorPoint_iff_of_mem_atlas (by norm_num : (2 : ℕ∞ω) ≠ 0)
-      (chart_mem_atlas H x₀) hy).mp
-        (BoundarylessManifold.isInteriorPoint (I := I) (x := y))
-    have hi : e y ∈ interior (range I) :=
-      OpenPartialHomeomorph.interior_extend_target_subset_interior_range _ ht
-    exact mem_of_superset (isOpen_interior.mem_nhds hi) interior_subset
-  have hsymm : MDifferentiableAt 𝓘(ℝ, E) I e.symm z :=
-    (mdifferentiableWithinAt_extChartAt_symm hz).mdifferentiableAt hRange
-  have hframe : chartFrame (I := I) x₀ v y = mfderiv 𝓘(ℝ, E) I e.symm z v := by
+  have hy := e.map_target hz
+  have hy' : e.symm z ∈ (chartAt H x₀).source := by
+    simpa only [e, extChartAt_source] using hy
+  have hopen : IsOpen e.target :=
+    (chartAt H x₀).isOpen_extend_target_of_mem_atlas (chart_mem_atlas H x₀)
+  have hRange := Filter.mem_of_superset (hopen.mem_nhds hz) (extChartAt_target_subset_range x₀)
+  have h := TauCeti.fderivWithin_comp_extChartAt_symm (f := f) x₀ hy
+  rw [e.right_inv hz, fderivWithin_of_mem_nhds hRange] at h
+  have hFrame : chartFrame (I := I) x₀ v (e.symm z) =
+      tangentCoordChange I x₀ (e.symm z) (e.symm z) v := by
     unfold chartFrame chartFrameCLM
-    rw [TangentBundle.symmL_trivializationAt hy, hround, mfderivWithin_of_mem_nhds hRange]
+    rw [TangentBundle.symmL_trivializationAt_eq_core hy']
     rfl
-  rw [hframe]
-  have derivative := mvfderiv_comp_apply z hf hsymm v
-  rw [mvfderiv_eq_fderiv] at derivative
-  exact derivative
+  rw [hFrame]
+  exact DFunLike.congr_fun h v
 
 end CutoffRigidity

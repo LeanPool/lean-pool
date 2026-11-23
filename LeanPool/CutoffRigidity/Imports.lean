@@ -156,6 +156,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSmooth
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedSupport
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedVolume
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartBrackets
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartDensity
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartFrames
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianDifferentialOperators
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianGradientCalculus

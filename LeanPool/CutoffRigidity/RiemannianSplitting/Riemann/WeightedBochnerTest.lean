@@ -169,8 +169,6 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     (hGs : ContMDiff 𝓘(ℝ, F) 𝓘(ℝ, ℝ) ∞ G)
     (hG : (G ∘ (extChartAt 𝓘(ℝ, F) x).symm) =ᶠ[𝓝 (extChartAt 𝓘(ℝ, F) x x)] gt x ξ)
     (a w : F) : CutoffRigidity.manifoldHessian 𝓘(ℝ, F) G x a w = 0 := by
-  have hGd : ∀ y, MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, ℝ) G y :=
-    fun y => (hGs y).mdifferentiableAt (by simp)
   have hgrad : MDifferentiableAt 𝓘(ℝ, F) 𝓘(ℝ, F).tangent
       (T% (manifoldGradient 𝓘(ℝ, F) G)) x :=
     ((WReg.contMDiff_manifoldGradient_top hGs) x).mdifferentiableAt (by simp)
@@ -186,7 +184,7 @@ theorem hessian_zero_of_chart {G : M → ℝ} (x : M) (ξ : F →L[ℝ] ℝ)
     filter_upwards [hev2] with y ⟨hy1, hy2⟩
     have hys : y ∈ e.source := by simpa only [e, extChartAt_source] using hy2
     have hz : e y ∈ e.target := e.map_source hys
-    have h0 := fderiv_chartScalar_frame (I := 𝓘(ℝ, F)) x hz (hGd (e.symm (e y))) w
+    have h0 := fderiv_chartScalar_frame (I := 𝓘(ℝ, F)) (f := G) x hz w
     have key : ∀ y' : M, y' = y →
         mvfderiv 𝓘(ℝ, F) G y' (chartFrame (I := 𝓘(ℝ, F)) x w y') =
         mvfderiv 𝓘(ℝ, F) G y (chartFrame (I := 𝓘(ℝ, F)) x w y) := by

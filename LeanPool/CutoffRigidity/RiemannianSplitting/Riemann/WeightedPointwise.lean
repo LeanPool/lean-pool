@@ -147,7 +147,7 @@ theorem mgrad_eq_zero_of_notMem_tsupport {u : M → ℝ} {x : M} (hx : x ∉ tsu
     unfold mvfderiv
     rw [h.mfderiv_eq, mfderiv_const]
     simp
-  simp [mgrad, h2]
+  rw [mgrad, TauCeti.Manifold.mgradient_def, h2, map_zero]
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem carre_eq_zero_off_tsupport {u : M → ℝ} (g : M → ℝ) {x : M} (hx : x ∉ tsupport u) :

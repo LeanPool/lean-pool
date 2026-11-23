@@ -35,20 +35,17 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-- The Riesz gradient of a scalar function for the given Riemannian metric. -/
 noncomputable def manifoldGradient (f : M → ℝ) (x : M) : TangentSpace I x :=
-  (InnerProductSpace.toDual ℝ (TangentSpace I x)).symm (mvfderiv I f x)
+  TauCeti.Manifold.mgradient I f x
 
 omit [IsContMDiffRiemannianBundle I 1 E (fun x : M => TangentSpace I x)] in
 theorem inner_manifoldGradient (f : M → ℝ) (x : M) (v : TangentSpace I x) :
-    inner ℝ (manifoldGradient I f x) v = mvfderiv I f x v := by
-  exact congrArg (fun L : StrongDual ℝ (TangentSpace I x) => L v)
-    ((InnerProductSpace.toDual ℝ (TangentSpace I x)).apply_symm_apply (mvfderiv I f x))
+    inner ℝ (manifoldGradient I f x) v = mvfderiv I f x v :=
+  TauCeti.Manifold.inner_mgradient v
 
 omit [IsContMDiffRiemannianBundle I 1 E (fun x : M ↦ TangentSpace I x)] in
 /-- The Riesz representative agrees with Tau Ceti's Riemannian gradient. -/
 theorem manifoldGradient_eq_mgradient (f : M → ℝ) :
-    manifoldGradient I f = TauCeti.Manifold.mgradient I f := by
-  funext x
-  exact (TauCeti.Manifold.eq_mgradient_iff (I := I)).2 (inner_manifoldGradient I f x)
+    manifoldGradient I f = TauCeti.Manifold.mgradient I f := rfl
 
 variable {I} in
 /-- A `C²` function has a `C¹` gradient for a `C¹` Riemannian metric. -/

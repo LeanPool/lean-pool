@@ -32,8 +32,8 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
-theorem mgrad_const (c : ℝ) (x : M) : mgrad F (fun _ : M => c) x = 0 := by
-  simp [mgrad, mvfderiv_const]
+theorem mgrad_const (c : ℝ) (x : M) : mgrad F (fun _ : M => c) x = 0 :=
+  congrFun (TauCeti.Manifold.mgradient_const (I := 𝓘(ℝ, F)) (M := M) c) x
 
 omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in
 theorem mgrad_const_mul {f : M → ℝ} (c : ℝ) (hf : MSmooth F f) (x : M) :

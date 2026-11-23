@@ -8,7 +8,8 @@ Authors: Djalil Chafaï
 
 module
 
-public import Mathlib.Analysis.InnerProductSpace.Dual
+public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianChartDensity
+public import TauCeti.Geometry.Manifold.Riemannian.Gradient.Basic
 public import Mathlib.Geometry.Manifold.Riemannian.Basic
 public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.LeviCivita
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
@@ -38,8 +39,8 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
 
 /-- The Riemannian gradient: the Riesz representative of the differential. -/
-def mgrad (f : M → ℝ) (x : M) : TangentSpace 𝓘(ℝ, F) x := (InnerProductSpace.toDual ℝ
-  (TangentSpace 𝓘(ℝ, F) x)).symm (mvfderiv 𝓘(ℝ, F) f x)
+def mgrad (f : M → ℝ) (x : M) : TangentSpace 𝓘(ℝ, F) x :=
+  TauCeti.Manifold.mgradient 𝓘(ℝ, F) f x
 
 /-- The Laplace–Beltrami operator: the trace of the Levi-Civita Hessian `∇(grad f)`. -/
 def mlaplacian (f : M → ℝ) (x : M) : ℝ := ∑ i, inner ℝ (CovariantDerivative.leviCivitaConnection
@@ -64,10 +65,8 @@ def CD (ρ : ℝ) (V : M → ℝ) : Prop := ∀ f : M → ℝ, ContMDiff 𝓘(�
 
 /-- The Riemannian volume density `√det(gᵢⱼ)` of the inverse of the chart at `x₀`, at the chart
   point `z`, computed in an orthonormal basis of the model space. -/
-def chartVolumeDensity (x₀ : M) (z : F) : ℝ := Real.sqrt (Matrix.det (Matrix.of fun i j =>
-  inner ℝ (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (chartAt F x₀).symm z (stdOrthonormalBasis ℝ F i) :
-    TangentSpace 𝓘(ℝ, F) ((chartAt F x₀).symm z))
-  (mfderiv 𝓘(ℝ, F) 𝓘(ℝ, F) (chartAt F x₀).symm z (stdOrthonormalBasis ℝ F j))))
+def chartVolumeDensity (x₀ : M) (z : F) : ℝ :=
+  chartDensity (chartAt F x₀) z
 
 /-- `μ = e^{-V} vol_g`: in every chart, `μ` has density `e^{-V} √det(gᵢⱼ)` with respect to
   Lebesgue measure. -/

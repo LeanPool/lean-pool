@@ -21,6 +21,17 @@ open scoped Manifold ContDiff Topology
 
 namespace CutCur
 
+/-- The chart density is the inverse chart's Riemannian Jacobian in an orthonormal basis. -/
+theorem chartDensity_eq_jacobian {F M : Type*}
+    [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
+    [TopologicalSpace M] [ChartedSpace F M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
+    (Ξ : OpenPartialHomeomorph M F) (z : F) :
+    chartDensity Ξ z = TauCeti.riemannianJacobian (I := 𝓘(ℝ, F))
+      (stdOrthonormalBasis ℝ F).toBasis Ξ.symm z := by
+  rw [TauCeti.riemannianJacobian_eq_sqrt_det_gram]
+  rfl
+
 variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
   {M : Type} [EMetricSpace M] [ChartedSpace F M] [IsManifold 𝓘(ℝ, F) ∞ M]
   [RiemannianBundle (fun x : M ↦ TangentSpace 𝓘(ℝ, F) x)]
@@ -30,9 +41,8 @@ omit [IsManifold 𝓘(ℝ, F) ∞ M] in
 theorem chartVolumeDensity_eq_jacobian (x₀ : M) (z : F) :
     chartVolumeDensity F x₀ z =
       TauCeti.riemannianJacobian (I := 𝓘(ℝ, F)) (stdOrthonormalBasis ℝ F).toBasis
-        (chartAt F x₀).symm z := by
-  rw [TauCeti.riemannianJacobian_eq_sqrt_det_gram]
-  rfl
+        (chartAt F x₀).symm z :=
+  chartDensity_eq_jacobian (chartAt F x₀) z
 
 omit [FiniteDimensional ℝ F] [IsManifold 𝓘(ℝ, F) ∞ M]
   [RiemannianBundle fun x : M ↦ TangentSpace 𝓘(ℝ, F) x] in

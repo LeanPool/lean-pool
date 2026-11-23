@@ -46,7 +46,7 @@ omit [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F fun x : M ↦ TangentSpace 
 /-- The gradient pairs with a tangent vector by applying the manifold derivative. -/
 theorem mgrad_inner (f : M → ℝ) (x : M) (v : TangentSpace 𝓘(ℝ, F) x) :
     inner ℝ (mgrad F f x) v = mvfderiv 𝓘(ℝ, F) f x v :=
-  CutoffRigidity.inner_manifoldGradient 𝓘(ℝ, F) f x v
+  TauCeti.Manifold.inner_mgradient v
 
 /-- **(G1) Integration by parts** for the weighted measure: `∫ Γ(u,v) dμ = -∫ u 𝓛v dμ` whenever
 `u, v` are smooth and `u` has compact support. -/
