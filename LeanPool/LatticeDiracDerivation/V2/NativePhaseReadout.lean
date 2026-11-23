@@ -72,6 +72,14 @@ def uniformActionToStandardDirac
     (uniformContinuumPy momentum)
     (uniformContinuumPz momentum) phase
 
+private theorem uniform_action_readout_at_rest (r : ℝ) (phase : UniformTwoChannelPhase) :
+    uniformActionToStandardDirac r (fun _ => 0) phase =
+      cubicalPhaseReadout (r : ℂ) 0 0 0 phase := by
+  have hcoordinate (axis : Fin 3) : (c19ScaledMomentum (fun _ => 0) axis : ℂ) = 0 := by
+    simp [c19ScaledMomentum]
+  simp only [uniformActionToStandardDirac, uniformContinuumPx, uniformContinuumPy,
+    uniformContinuumPz, hcoordinate]
+
 /-- Native positive-rest-frequency data.  The sign convention is
 `q(t) = exp (-i r t) q(0)`. -/
 def uniformRestPositivePhase
@@ -101,11 +109,8 @@ theorem uniform_rest_positive_readout_eq_double (r : ℝ) (hr : r ≠ 0) (positi
       Pi.zero_apply, add_zero]
     apply (div_eq_iff hrC).2
     rw [← mul_assoc, ← mul_assoc, mul_neg, Complex.I_mul_I, neg_neg, one_mul, mul_comm]
-  have hcoordinate (axis : Fin 3) : (c19ScaledMomentum (fun _ => 0) axis : ℂ) = 0 := by
-    simp [c19ScaledMomentum]
   have hposition : (uniformRestPositivePhase r position).1 = position := rfl
-  unfold uniformActionToStandardDirac
-  simp only [uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, hcoordinate]
+  rw [uniform_action_readout_at_rest]
   funext component
   fin_cases component <;>
     simp [cubicalPhaseReadout, cubicalFromPositionLower, cubicalUpperEmbedding,
@@ -133,15 +138,27 @@ theorem uniform_rest_negative_readout_has_negative_beta
       fun component =>
         -uniformActionToStandardDirac r (fun _ => 0)
           (uniformRestNegativePhase r position) component := by
+  have hrC : (r : ℂ) ≠ 0 := by exact_mod_cast hr
+  have hlower :
+      cubicalPhaseLower (r : ℂ) 0 0 0 (uniformRestNegativePhase r position) = -position := by
+    funext component
+    simp only [cubicalPhaseLower, uniformRestNegativePhase, cubical_spatial_lower_zero,
+      Pi.zero_apply, add_zero, Pi.neg_apply]
+    apply (div_eq_iff hrC).2
+    rw [← mul_assoc, ← mul_assoc, Complex.I_mul_I, neg_one_mul, mul_comm, mul_neg, neg_mul]
+  have hreadout :
+      uniformActionToStandardDirac r (fun _ => 0) (uniformRestNegativePhase r position) =
+        cubicalSpinorOfBlocks 0 (-(2 : ℂ) • position) := by
+    rw [uniform_action_readout_at_rest, cubicalPhaseReadout, hlower]
+    change cubicalSpinorOfBlocks (position + -position) (-position + -position) = _
+    rw [add_neg_cancel]
+    apply congrArg (cubicalSpinorOfBlocks 0)
+    funext component
+    simp only [Pi.add_apply, Pi.neg_apply, Pi.smul_apply, smul_eq_mul]
+    ring
+  rw [hreadout]
   funext component
-  fin_cases component <;>
-    simp [uniformActionToStandardDirac, uniformRestNegativePhase,
-      uniformContinuumPx, uniformContinuumPy, uniformContinuumPz, c19ScaledMomentum,
-      cubicalPhaseReadout, cubicalFromPositionLower, cubicalPhaseLower, cubicalSpatialLower,
-      cubicalUpperEmbedding, cubicalStandardSpatial,
-      cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;>
-    field_simp [hr] <;> ring_nf <;> rw [Complex.I_sq] <;> ring
+  fin_cases component <;> simp [cubicalStandardBeta]
 
 theorem uniform_action_readout_add
     (r : ℝ) (momentum : LatticeMomentum) (first second : UniformTwoChannelPhase) :

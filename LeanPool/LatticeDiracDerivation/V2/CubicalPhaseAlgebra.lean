@@ -160,6 +160,32 @@ def cubicalPhaseReadout
     (mass px py pz : ℂ) (phase : UniformTwoChannelPhase) : CubicalCell4 :=
   cubicalFromPositionLower phase.1 (cubicalPhaseLower mass px py pz phase)
 
+/-- Linear map computing the velocity-dependent block from the native phase. -/
+def cubicalPhaseLowerLinear (mass px py pz : ℂ) : UniformTwoChannelPhase →ₗ[ℂ] UniformCell2 :=
+  mass⁻¹ • (I • LinearMap.snd ℂ UniformCell2 UniformCell2 +
+    (cubicalSpatialLowerLinear px py pz).comp (LinearMap.fst ℂ UniformCell2 UniformCell2))
+
+/-- Complex-linear native-to-spinor readout in the cubical basis. -/
+def cubicalPhaseReadoutLinear (mass px py pz : ℂ) :
+    UniformTwoChannelPhase →ₗ[ℂ] CubicalCell4 :=
+  let position := LinearMap.fst ℂ UniformCell2 UniformCell2
+  let lower := cubicalPhaseLowerLinear mass px py pz
+  cubicalSpinorOfBlocksLinear.comp ((position + lower).prod (-position + lower))
+
+private theorem cubical_phase_lower_linear_apply (mass px py pz : ℂ)
+    (phase : UniformTwoChannelPhase) :
+    cubicalPhaseLowerLinear mass px py pz phase = cubicalPhaseLower mass px py pz phase := by
+  funext component
+  change mass⁻¹ * (I * phase.2 component + cubicalSpatialLower px py pz phase.1 component) = _
+  rw [cubicalPhaseLower, div_eq_mul_inv, mul_comm]
+
+theorem cubical_phase_readout_linear_apply (mass px py pz : ℂ) (phase : UniformTwoChannelPhase) :
+    cubicalPhaseReadoutLinear mass px py pz phase = cubicalPhaseReadout mass px py pz phase := by
+  change cubicalSpinorOfBlocks (phase.1 + cubicalPhaseLowerLinear mass px py pz phase)
+    (-phase.1 + cubicalPhaseLowerLinear mass px py pz phase) = _
+  rw [cubical_phase_lower_linear_apply]
+  rfl
+
 /-- Scalar multiplication on the native two-layer phase space. -/
 def uniformTwoChannelScale
     (scalar : ℂ) (phase : UniformTwoChannelPhase) :
@@ -173,13 +199,10 @@ theorem cubical_phase_readout_scale
         (uniformTwoChannelScale scalar phase) =
       fun component =>
         scalar * cubicalPhaseReadout mass px py pz phase component := by
-  have spatial := (cubicalSpatialLowerLinear px py pz).map_smul scalar phase.1
-  change cubicalSpatialLower px py pz (fun component => scalar * phase.1 component) =
-    (fun component => scalar * cubicalSpatialLower px py pz phase.1 component) at spatial
-  funext component
-  fin_cases component <;>
-    simp [uniformTwoChannelScale, cubicalPhaseReadout, cubicalFromPositionLower,
-      cubicalPhaseLower, spatial] <;> ring
+  change cubicalPhaseReadout mass px py pz (scalar • phase) =
+    scalar • cubicalPhaseReadout mass px py pz phase
+  simpa only [cubical_phase_readout_linear_apply] using
+    (cubicalPhaseReadoutLinear mass px py pz).map_smul scalar phase
 
 private def cubicalRepeatedCoordinates (position : UniformCell2) : CubicalCell4 :=
   cubicalSpinorOfBlocks position position
@@ -279,15 +302,11 @@ theorem cubical_phase_readout_add
       fun component =>
         cubicalPhaseReadout mass px py pz first component +
           cubicalPhaseReadout mass px py pz second component := by
-  have spatial := (cubicalSpatialLowerLinear px py pz).map_add first.1 second.1
-  change cubicalSpatialLower px py pz (fun component => first.1 component + second.1 component) =
-    (fun component => cubicalSpatialLower px py pz first.1 component +
-      cubicalSpatialLower px py pz second.1 component) at spatial
-  funext component
-  fin_cases component <;>
-    simp [cubicalPhaseReadout, cubicalFromPositionLower, cubicalPhaseLower, spatial] <;> ring
+  change cubicalPhaseReadout mass px py pz (first + second) =
+    cubicalPhaseReadout mass px py pz first + cubicalPhaseReadout mass px py pz second
+  simpa only [cubical_phase_readout_linear_apply] using
+    (cubicalPhaseReadoutLinear mass px py pz).map_add first second
 
-/-- The action-derived spinor readout preserves addition of native phases. -/
 private theorem cubical_phase_lower_of_decoded_velocity (mass px py pz : ℂ) (hmass : mass ≠ 0)
     (position lower : UniformCell2) :
     cubicalPhaseLower mass px py pz
