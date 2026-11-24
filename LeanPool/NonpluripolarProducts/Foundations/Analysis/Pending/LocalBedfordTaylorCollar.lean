@@ -17,9 +17,11 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Bott
 /-!
 # The common collar comparison for recursive Bedford--Taylor products
 
-On an open `U ⊆ ℂⁿ`, for the currents of `Pending.LocalProductCurrents` and the recursive product
-`B(u₀, …, u_{q-1}; T)` of `Pending.LocalBedfordTaylorProducts` (`bt:collar-comparison`,
-`demailly-cadg:III.3.7`):
+On an open `U ⊆ ℂⁿ`, for the currents of `Pending.LocalProductCurrents` and the recursive
+product `B(u₀, …, u_{q-1}; T)` of `Pending.LocalBedfordTaylorProducts`, the stand-alone
+comparison treats two ordered tuples with a common collar. The collar argument comes from
+the proof of [Demailly, III.3.7](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=148),
+where it is used for weak convergence of decreasing approximations.
 
 * `btProduct_succ_eq_ddcMul` — **peeling the outermost potential**:
   `B(u₀, u₁, …, u_q; T) = dd^c(u₀ B(u₁, …, u_q; T))` (the recursion peels the innermost one).
@@ -153,25 +155,10 @@ theorem extDeriv_ddcForm {g : E → ℝ} (hg : ContDiffOn ℝ ∞ g U) {x : E} (
   extDeriv_extDeriv_apply ((smoothDc_contDiffOn U.isOpen hg).contDiffAt (U.isOpen.mem_nhds hx))
     (by simp)
 
-/-- `dd^c g` is semipositive where the Levi form of `g` is. -/
-theorem isSemipositiveOneOne_smoothDDC_of_leviForm {g : E → ℝ} {x : E}
-    (h2 : ContDiffAt ℝ 2 g x) (hl : ∀ v, 0 ≤ leviForm g x v) :
-    IsSemipositiveOneOne (smoothDDC g x) := by
-  refine ⟨fun u v => smoothDDC_isOneOne h2 u v, fun v => ?_⟩
-  rw [smoothDDC_apply_eq_realHessian h2]
-  have hI : Complex.I • (Complex.I • v) = (-1 : ℝ) • v := by
-    rw [smul_smul, Complex.I_mul_I, neg_one_smul, neg_one_smul]
-  rw [hI, realHessian_smul_right]
-  have hv := hl v
-  rw [leviForm] at hv
-  have hπ : 0 < 4 * Real.pi := by positivity
-  rw [le_div_iff₀ hπ]
-  linarith
-
 /-- `dd^c g` is strongly positive on `U` when the Levi form of `g` is semipositive on `U`. -/
 theorem ddcForm_mem_spCone {g : E → ℝ} (hg : ContDiffOn ℝ ∞ g U)
     (hl : ∀ x ∈ U, ∀ v, 0 ≤ leviForm g x v) : ∀ x ∈ U, ddcForm g x ∈ spCone 1 := fun x hx =>
-  mem_spCone_one (isSemipositiveOneOne_smoothDDC_of_leviForm
+  mem_spCone_one (SmoothDDCHessianPositivity.isSemipositiveOneOne_smoothDDC_of_leviForm
     ((hg.contDiffAt (U.isOpen.mem_nhds hx)).of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) (hl x hx))
 
@@ -584,8 +571,9 @@ structure IsCollarApprox (U : Opens (ComplexModel n)) (B : Set E) (h w : E → �
   bounded : ∃ M, ∀ j, ∀ x ∈ B, |F j x| ≤ M
   tendsto : ∀ x ∈ B, Tendsto (fun j => F j x) atTop (𝓝 (w x))
 
-/-- **The common collar comparison** (`bt:collar-comparison`, `demailly-cadg:III.3.7`).  Let `T`
-be positive closed of bidimension `(m + q, m + q)` on `U`, `B` relatively compact in `U`, and
+/-- **Common collar comparison for two ordered tuples.** This generalizes the comparison
+used in the proof of Demailly III.3.7. Let `T` be positive closed of bidimension
+`(m + q, m + q)` on `U`, with `B` relatively compact in `U` and
 `v_j ≤ w_j` (`0 ≤ j ≤ q`) locally bounded PSH on `U` with `v_j ≤ w_j` on `B`, all equal to one
 function `h` on `B` off a compact subset of `B`, each `w_j` with smooth approximants from above
     with
@@ -963,8 +951,9 @@ theorem traceIntegral_restrict {V : Opens (ComplexModel n)} (hVU : V ≤ U) {m :
     traceIntegral_of_isPositive _ _ hS, traceMeasure_restrict hS hVU,
     Measure.restrict_restrict hB, Set.inter_eq_left.mpr hBV]
 
-/-- **The common collar comparison on a ball** (`bt:collar-comparison`,
-`demailly-cadg:III.3.7`).  Let `B = B(z₀, R)` with `BBar ⊆ U`, `T` positive closed of bidimension
+/-- **Common collar comparison on a ball.** Both tuples are modified using the same
+quadratic collar, following the construction in the proof of Demailly III.3.7.
+Let `B = B(z₀, R)` with `BBar ⊆ U`, and `T` be positive closed of bidimension
 `(m + q, m + q)` on `U`, and `a_j ≤ b_j ≤ -1` on `BBar` (`0 ≤ j ≤ q`) locally bounded PSH on `U`.
 With `h = A(|z - z₀|² - R²)`, `A > 0`, `v_j = max(h, a_j)` and `w_j = max(h, b_j)`,
 `∫_B v₀ B(v₁, …, v_q; T) ∧ ω₀^m ≤ ∫_B w₀ B(w₁, …, w_q; T) ∧ ω₀^m`. -/

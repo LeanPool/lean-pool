@@ -20,8 +20,10 @@ A *current of bidimension `(q,q)`* on a complex manifold `M` of dimension `n` (b
 `β_j` smooth real `(1,1)`-forms.  On a compact manifold every smooth form is a test form,
 so no support condition appears.  It is *positive* (`demailly-cadg:III.1.13`, "weakly
 positive") when it is nonnegative on the test forms that are strongly positive at every
-point.  For a Kähler form `ω` the *mass* is the value on `ω^q`
-(`demailly-cadg:III.1.14`, up to the normalisation `q!`).
+point. For a Kähler form `ω`, the Lean mass is the value on `ω^q`.
+[Demailly, III.1.21](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=135)
+defines the trace measure as `T ∧ ω^q / (2^q q!)`. For the same reference form `ω`,
+the Lean mass equals `2^q q!` times the total Demailly trace mass.
 
 The four operations of step B2 of the TN.4 plan (`scratch/tn4-plan-0133.md`), used by
 Demailly--Păun's proof of `dp04-kahler-cone:2.6`/`2.12` and Boucksom's `bou02-volume:4.12`:

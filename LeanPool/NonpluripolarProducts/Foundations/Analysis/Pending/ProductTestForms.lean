@@ -352,20 +352,6 @@ section OrderUnit
 variable {n : ℕ} {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
   [IsComplexManifold n M]
 
-omit [IsComplexManifold n M] in
-/-- A chart-smooth function is continuous. -/
-theorem ChartSmooth.continuous {h : M → ℝ} (hh : ChartSmooth (n := n) h) : Continuous h := by
-  rw [continuous_iff_continuousAt]
-  intro x
-  set e := complexChartAt (n := n) x
-  have hx : x ∈ e.val.source := mem_complexChartAt_source x
-  have h1 : ContinuousAt (fun z => h (e.val.symm z)) (e.val x) :=
-    ((hh e).continuousOn).continuousAt (e.val.open_target.mem_nhds (e.val.map_source hx))
-  have h2 := h1.comp (e.val.continuousAt hx)
-  refine h2.congr ?_
-  filter_upwards [e.val.open_source.mem_nhds hx] with y hy
-  simp only [Function.comp_apply, e.val.left_inv hy]
-
 /-- The pointwise form of the order-unit bound, at every point of every chart. -/
 def PointwiseOrderBound (w : SmoothRealForm n M 2) {q : ℕ} (φ : SmoothRealForm n M (2 * q))
     (c : ℝ) : Prop :=

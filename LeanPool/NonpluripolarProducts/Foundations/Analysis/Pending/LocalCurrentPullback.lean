@@ -428,6 +428,12 @@ def pullback (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T) : LocalProd
     rw [pbDensity_smul]
     ring
 
+theorem pullback_congr {degree : ℕ} (h : IsBiholomorphicPair A B τ σ)
+    {S S' : LocalProductCurrent n B degree}
+    (hS : IsPositive S) (hS' : IsPositive S') (e : S = S') : pullback h hS = pullback h hS' := by
+  subst e
+  rfl
+
 theorem pullback_apply_eq (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T) (γ : formSpan n q)
     (φ : 𝓓(A, ℝ)) : pullback h hT γ φ = ∫ x, φ x * pbDensity A τ σ hT γ x ∂pbMeasure σ hT :=
   regularDistribution_apply _ _ (locallyIntegrableOn_pbDensity h hT γ) φ

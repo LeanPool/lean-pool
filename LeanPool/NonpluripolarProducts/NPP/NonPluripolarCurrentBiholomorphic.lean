@@ -61,9 +61,8 @@ section Pullback
 variable {A B : Opens (ComplexModel n)} {τ σ : (ComplexModel n) → (ComplexModel n)} {q : ℕ}
 
 theorem pullback_congr_current (h : IsBiholomorphicPair A B τ σ) {T T' : LocalProductCurrent n B q}
-    (hT : IsPositive T) (hT' : IsPositive T') (e : T = T') : pullback h hT = pullback h hT' := by
-  subst e
-  rfl
+    (hT : IsPositive T) (hT' : IsPositive T') (e : T = T') : pullback h hT = pullback h hT' :=
+  pullback_congr h hT hT' e
 
 theorem measurable_indicator_comp (h : IsBiholomorphicPair A B τ σ) {u : (ComplexModel n) → ℝ}
     (hu : Measurable u) : Measurable ((A : Set (ComplexModel n)).indicator fun x => u (τ x)) := by

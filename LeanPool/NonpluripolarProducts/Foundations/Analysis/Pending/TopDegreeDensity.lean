@@ -205,6 +205,18 @@ theorem wedgeProd_apply : ∀ (q : ℕ) (β : Fin q → RealForm n 2) (v : Fin (
         (fun v => wedgeProd_apply (q + 1) (fun i => β i.castSucc) v)]
     rfl
 
+/-- **The product of two-forms is symmetric in its factors.** -/
+theorem wedgeProd_comp_perm (q : ℕ) (β : Fin q → RealForm n 2) (σ : Equiv.Perm (Fin q)) :
+    wedgeProd q (fun i => β (σ i)) = wedgeProd q β := by
+  ext v
+  rw [wedgeProd_apply, wedgeProd_apply, coordinateWedgeFamily_apply_eq_pairingSum,
+    coordinateWedgeFamily_apply_eq_pairingSum, coordinatePairingSumFamily_comp_perm]
+
+theorem wedgeProd_snoc_eq_cons (q : ℕ) (β : Fin q → RealForm n 2) (B : RealForm n 2) :
+    wedgeProd (q + 1) (Fin.snoc β B) = wedgeProd (q + 1) (Fin.cons B β) := by
+  rw [Fin.snoc_eq_cons_rotate]
+  exact wedgeProd_comp_perm (q + 1) (Fin.cons B β) (finRotate (q + 1))
+
 /-- In top degree the density of a product is the mixed density of the factors. -/
 theorem topDensity_wedgeProd (β : Fin n → RealForm n 2) :
     topDensity (wedgeProd n β) = actualMixedTopDensity β := by

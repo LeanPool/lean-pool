@@ -249,7 +249,7 @@ theorem canonicalMixed_restrict_eq_on_normalized_psh_superlevel
   have hGO : G ⊆ O := fun _ hz ↦ hz.1
   have hGm : MeasurableSet G := by
     simpa only [G, ← EReal.coe_zero, EReal.coe_lt_coe_iff] using
-      PlurifineStrictSuperlevelCover.measurableSet_psh_superlevel hg (0 : ℝ)
+      FirstPass.MongeAmpere.measurableSet_psh_superlevel hg (0 : ℝ)
   let f := fun z ↦ max (g z) 0
   have hgb : IsLocallyBoundedPshOn O g :=
     isLocallyBoundedPshOn_of_abs_le hg (C := 1) fun z hz ↦ abs_le.mpr (hgn z hz)

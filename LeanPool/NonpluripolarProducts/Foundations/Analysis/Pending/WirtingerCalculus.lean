@@ -78,31 +78,45 @@ theorem dbarDir_ofReal_mul {v : E} {χ : E → ℝ} {a : E → ℂ} {x : E}
   simp only [dbarDir, fderiv_fun_mul hχc ha, add_apply, smul_apply, smul_eq_mul]
   ring
 
-/-- Two directional Wirtinger derivatives of a `C²` function commute. -/
-theorem dbarDir_dbarDir_comm {u v : E} {g : E → ℂ} {x : E}
+/-- A directional first-order operator `(Df(v) + c·Df(Iv))/2`; `c = -i` gives
+`∂/∂w` and `c = i` gives `∂/∂wBar` along the complex line spanned by `v`. -/
+def wirt (c : ℂ) (v : E) (f : E → ℂ) (x : E) : ℂ :=
+  (fderiv ℝ f x v + c * fderiv ℝ f x (I • v)) / 2
+
+/-- The Wirtinger derivative `∂/∂w` along the complex line spanned by `v`. -/
+abbrev dDir (v : E) (f : E → ℂ) (x : E) : ℂ := wirt (-I) v f x
+
+theorem dbarDir_eq_wirt (v : E) (f : E → ℂ) (x : E) : dbarDir v f x = wirt I v f x := rfl
+
+/-- Two directional operators commute on a `C²` function. -/
+theorem wirt_wirt_comm {c d : ℂ} {u v : E} {g : E → ℂ} {x : E}
     (hg : ContDiffAt ℝ 2 g x) :
-    dbarDir u (dbarDir v g) x = dbarDir v (dbarDir u g) x := by
+    wirt c u (wirt d v g) x = wirt d v (wirt c u g) x := by
   have hsymm := ContDiffAt.isSymmSndFDerivAt hg (by simp)
-  have hD : ∀ᶠ y in 𝓝 x, DifferentiableAt ℝ g y :=
-    (hg.eventually (by simp)).mono fun y hy ↦ hy.differentiableAt (by simp)
   have hDD : DifferentiableAt ℝ (fderiv ℝ g) x :=
     (hg.fderiv_right (m := 1) (by norm_num)).differentiableAt one_ne_zero
   have happ (w : E) : HasFDerivAt (fun y ↦ fderiv ℝ g y w)
       ((fderiv ℝ (fderiv ℝ g) x).flip w) x := by
     have := (hDD.hasFDerivAt).clm_apply (hasFDerivAt_const w x)
     simpa using this
-  have hdir (w : E) : HasFDerivAt (dbarDir w g)
+  have hdir (e : ℂ) (w : E) : HasFDerivAt (wirt e w g)
       ((2 : ℂ)⁻¹ • ((fderiv ℝ (fderiv ℝ g) x).flip w +
-        I • (fderiv ℝ (fderiv ℝ g) x).flip (I • w))) x := by
-    have h := ((happ w).add ((happ (I • w)).const_smul I)).const_smul (2 : ℂ)⁻¹
+        e • (fderiv ℝ (fderiv ℝ g) x).flip (I • w))) x := by
+    have h := ((happ w).add ((happ (I • w)).const_smul e)).const_smul (2 : ℂ)⁻¹
     refine h.congr_of_eventuallyEq (Eventually.of_forall fun y ↦ ?_)
-    simp only [dbarDir, Pi.smul_apply, Pi.add_apply, smul_eq_mul]
+    simp only [wirt, Pi.smul_apply, Pi.add_apply, smul_eq_mul]
     ring
-  simp only [dbarDir, (hdir v).fderiv, (hdir u).fderiv]
+  simp only [wirt, (hdir d v).fderiv, (hdir c u).fderiv]
   simp only [smul_apply, add_apply,
-    ContinuousLinearMap.flip_apply, smul_eq_mul, smul_add]
+    ContinuousLinearMap.flip_apply, smul_eq_mul]
   rw [hsymm u v, hsymm u (I • v), hsymm (I • u) v, hsymm (I • u) (I • v)]
   ring
+
+/-- Two directional Wirtinger derivatives of a `C²` function commute. -/
+theorem dbarDir_dbarDir_comm {u v : E} {g : E → ℂ} {x : E}
+    (hg : ContDiffAt ℝ 2 g x) :
+    dbarDir u (dbarDir v g) x = dbarDir v (dbarDir u g) x :=
+  wirt_wirt_comm (c := I) (d := I) hg
 
 /-- A function invariant under real translations in direction `u` has zero
 derivative in that direction. -/

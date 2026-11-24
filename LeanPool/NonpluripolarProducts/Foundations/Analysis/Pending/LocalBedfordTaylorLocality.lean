@@ -240,4 +240,20 @@ theorem btProduct_restrict (hVU : V ≤ U) : ∀ (q r : ℕ) (u : Fin q → E �
     obtain ⟨h1, h2⟩ := isPositive_ddcMul (m := r + q) hT hTc (hu (Fin.last q))
     exact btProduct_restrict hVU q r (Fin.init u) _ h1 h2 fun i => hu _
 
+/-- `[1]|_V = [1]`. -/
+theorem restrict_oneCurrent {n : ℕ} {U V : Opens (ComplexModel n)} (hVU : V ≤ U) :
+    LocalBedfordTaylorLocality.restrict hVU (oneCurrent U) = oneCurrent V := by
+  ext γ φ
+  rw [LocalBedfordTaylorLocality.restrict_apply, oneCurrent_apply, oneCurrent_apply]
+  have hf : (extTest hVU φ : ComplexModel n → ℝ) = (φ : ComplexModel n → ℝ) := funext
+    (extTest_apply hVU φ)
+  rw [hf]
+
+/-- The degree-indexed unit current restricts to the unit on the smaller open set. -/
+theorem restrict_oneCurrentOf {n degree : ℕ} {U V : Opens (ComplexModel n)} (hVU : V ≤ U)
+    (hdegree : degree = n) :
+    restrict hVU (oneCurrentOf (U := U) hdegree) = oneCurrentOf (U := V) hdegree := by
+  subst hdegree
+  exact restrict_oneCurrent hVU
+
 end SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorLocality

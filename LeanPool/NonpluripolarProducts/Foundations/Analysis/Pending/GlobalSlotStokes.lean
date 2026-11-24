@@ -66,42 +66,8 @@ theorem measure_eq_of_restrict_eq_of_openCover {X : Type*} [TopologicalSpace X]
   have := Measure.restrict_iUnion_congr.mpr fun i : T => h i
   rwa [huniv, Measure.restrict_univ, Measure.restrict_univ] at this
 
-/-- A Bedford–Taylor limit restricts to a Bedford–Taylor limit on a smaller open
-set. -/
-theorem _root_.SGPT.Foundations.Analysis.Pending.BedfordTaylor.IsBTLimit.restrict_open {n : ℕ} {Ω
-    U : Opens (ComplexModel n)}
-    {u : Fin n → ComplexModel n → ℝ} {μ : Measure (ComplexModel n)} (hμ : IsBTLimit Ω u μ)
-    (hU : U ≤ Ω) : IsBTLimit U u (μ.restrict (U : Set (ComplexModel n))) := by
-  refine ⟨?_, fun K hK hKU => ?_, fun V hV => ?_⟩
-  · rw [Measure.restrict_apply' U.isOpen.measurableSet]; simp
-  · exact lt_of_le_of_lt (Measure.restrict_le_self K) (hμ.2.1 K hK (hKU.trans hU))
-  · have hVΩ : RelativelyCompactIn V Ω := ⟨hV.1, hV.2.trans hU⟩
-    obtain ⟨F, hF, hT⟩ := hμ.2.2 V hVΩ
-    refine ⟨F, hF, fun φ hφ hφc hφV => ?_⟩
-    have hφU : tsupport φ ⊆ (U : Set (ComplexModel n)) := hφV.trans (subset_closure.trans hV.2)
-    have hint : (∫ z, φ z ∂(μ.restrict (U : Set (ComplexModel n)))) = ∫ z, φ z ∂μ :=
-      setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz =>
-        image_eq_zero_of_notMem_tsupport fun h => hz (hφU h)
-    rw [hint]
-    exact hT φ hφ hφc hφV
-
 variable {n : ℕ} {M : Type*} [TopologicalSpace M]
   [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M]
-
-omit [IsComplexManifold n M] in
-/-- Chart-smooth functions are continuous. -/
-theorem ChartSmooth.continuous {f : M → ℝ} (hf : ChartSmooth (n := n) f) : Continuous f := by
-  refine continuous_iff_continuousAt.mpr fun x => ?_
-  let e := complexChartAt (n := n) x
-  have hx : x ∈ e.val.source := mem_complexChartAt_source x
-  have hz : e.val x ∈ e.val.target := e.val.map_source hx
-  have hc : ContinuousAt (fun z => f (e.val.symm z)) (e.val x) :=
-    ((hf e).continuousOn).continuousAt (e.val.open_target.mem_nhds hz)
-  have hcomp : ContinuousAt ((fun z => f (e.val.symm z)) ∘ e.val) x :=
-    hc.comp (e.val.continuousAt hx)
-  refine hcomp.congr ?_
-  filter_upwards [e.val.open_source.mem_nhds hx] with y hy
-  simp only [Function.comp_apply, e.val.left_inv hy]
 
 section Transport
 
@@ -406,7 +372,7 @@ theorem defectMeasure_restrict_eq {f : M → ℝ}
   have hD'le : D' ≤ J.domain := fun _ hz => hz.1
   have hloc : μf.restrict (D' : Set (ComplexModel n)) = μ0.restrict (D' : Set (ComplexModel n))
     := by
-    refine ((hμf.restrict_open hD'le).congr fun i z hz => ?_).unique (hμ0.restrict_open hD'le)
+    refine ((hμf.restrict_opens hD'le).congr fun i z hz => ?_).unique (hμ0.restrict_opens hD'le)
     classical
     by_cases h : i = i₀
     · subst h

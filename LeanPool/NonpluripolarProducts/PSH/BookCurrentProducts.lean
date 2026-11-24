@@ -9,7 +9,9 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DirectionalLeviDensity
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.FullPositiveScalarCurrentLeviConverse
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CompactDdcCoordinateExpansion
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CompactVariableCurrentTests
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ScalarFullTestTranspose
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ClosedProductCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoefficientCongruence
 
@@ -339,7 +341,7 @@ theorem exists_directional_betaProduct_test {U : TopologicalSpace.Opens (Complex
     intro z
     change topDensity (coordinateWedge (wedgeProd m fun j => oneOneSquare (β j))
       (smoothDDC φ z)) = _
-    rw [← wedgeProd_snoc, NormalDirectionVanishing.wedgeProd_snoc_eq_cons,
+    rw [← wedgeProd_snoc, wedgeProd_snoc_eq_cons,
       topDensity_cons_unitaryBetaProduct
         (φ.contDiff.contDiffAt.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) a W
         hWW' (fun i => hW0 i)]
@@ -363,7 +365,7 @@ theorem hasNonnegativeDistributionalLevi_of_betaProduct_pairings
     rw [heq] at h
     exact (mul_nonneg_iff_of_pos_left
       (div_pos (pow_pos (by positivity) m) (pow_pos Real.pi_pos (m + 1)))).mp h
-  exact FullPositiveScalarCurrentLeviConverse.hasNonnegativeDistributionalLevi_of_unit T hunit
+  exact hasNonnegativeDistributionalLevi_of_unit T hunit
 
 end Direction
 

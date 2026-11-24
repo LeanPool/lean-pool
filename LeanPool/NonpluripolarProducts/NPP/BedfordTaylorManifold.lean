@@ -219,18 +219,6 @@ section Product
 
 variable [IsManifold (𝓘(ℂ, ComplexModel n)) ∞ M]
 
-private theorem restrict_oneCurrentOf {U V : Opens (ComplexModel n)} (hVU : V ≤ U) {k : ℕ}
-    (hk : k = n) : restrict hVU (oneCurrentOf (U := U) hk) = oneCurrentOf (U := V) hk := by
-  subst hk
-  exact LocalCurrentPullbackDdc.restrict_oneCurrent hVU
-
-private theorem pullback_eq_of_eq {A B : Opens (ComplexModel n)}
-    {τ σ : ComplexModel n → ComplexModel n} (h : IsBiholomorphicPair A B τ σ) {s : ℕ}
-    {T T' : LocalProductCurrent n B s} (hT : IsPositive T) (hT' : IsPositive T') (e : T = T') :
-    pullback h hT = pullback h hT' := by
-  subst e
-  rfl
-
 variable {q p : ℕ}
 
 /-- The coordinate expression in the chart `e` of `dd^c u₁ ∧ ⋯ ∧ dd^c u_p`: the recursive local
@@ -293,7 +281,7 @@ theorem bedfordTaylorInChart_compatible (hqp : q + p = n) {u : Fin p → M → �
       btProduct p q (fun i z => u i (f.val.symm z)) (oneCurrentOf (U := B) hqp) := by
     rw [bedfordTaylorInChart, ← btProduct_restrict hBf p q _ _ (isPositive_oneCurrentOf hqp)
       (isClosedAny_oneCurrentOf hqp) huf, restrict_oneCurrentOf]
-  rw [eA, pullback_eq_of_eq (chartTransition_isBiholomorphicPair e f) _
+  rw [eA, pullback_congr (chartTransition_isBiholomorphicPair e f) _
       (isPositive_btProduct p q _ _ (isPositive_oneCurrentOf hqp)
         (isClosedAny_oneCurrentOf hqp) huB).1 eB,
     LocalBedfordTaylorBiholomorphicProducts.pullback_btProduct hqp

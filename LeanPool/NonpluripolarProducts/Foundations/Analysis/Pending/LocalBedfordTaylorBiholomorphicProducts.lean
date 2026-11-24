@@ -33,29 +33,6 @@ open FirstPass FirstPass.MongeAmpere StronglyPositiveForms LocalProductCurrents
 variable {n q r : ℕ} {A B : Opens (ComplexModel n)}
   {τ σ : ComplexModel n → ComplexModel n}
 
-private theorem locallyBounded_comp (h : IsBiholomorphicPair A B τ σ)
-    {w : ComplexModel n → ℝ} (hw : IsLocallyBoundedPshOn B w) :
-    IsLocallyBoundedPshOn A (fun x => w (τ x)) := by
-  refine ⟨HolomorphicPullback.plurisubharmonicOn_comp_holomorphic
-    (u := fun z => (w z : EReal)) A.isOpen
-    (h.holo.differentiableOn (by simp)) h.mapsTo hw.1, fun z hz => ?_⟩
-  obtain ⟨V, hzV, hVB, C, hC⟩ := hw.2 (τ z) (h.mapsTo hz)
-  exact ⟨preOpen h V, ⟨hz, hzV⟩, preOpen_le h V, C, fun x hx => hC (τ x) hx.2⟩
-
-private theorem restrict_unit {U V : Opens (ComplexModel n)} (hVU : V ≤ U)
-    (hdegree : r + q = n) :
-    restrict hVU (oneCurrentOf (U := U) hdegree) =
-      oneCurrentOf (U := V) hdegree := by
-  cases hdegree
-  exact restrict_oneCurrent hVU
-
-private theorem pullback_eq_of_eq (h : IsBiholomorphicPair A B τ σ)
-    {s : ℕ} {T T' : LocalProductCurrent n B s}
-    (hT : IsPositive T) (hT' : IsPositive T') (e : T = T') :
-    pullback h hT = pullback h hT' := by
-  subst e
-  rfl
-
 /-- The genuine locally bounded recursive product commutes with an actual
 biholomorphism in every degree, with no approximation or limit input. -/
 theorem pullback_btProduct (hdegree : r + q = n)
@@ -94,13 +71,13 @@ theorem pullback_btProduct (hdegree : r + q = n)
   have eB : restrict hVB (btProduct q r u (oneCurrentOf (U := B) hdegree)) =
       btProduct q r u (oneCurrentOf (U := V) hdegree) := by
     rw [← btProduct_restrict hVB q r u (oneCurrentOf hdegree)
-      (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _) hu, restrict_unit hVB]
+      (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _) hu, restrict_oneCurrentOf hVB]
   have e1 : pullback h (isPositive_btProduct q r u (oneCurrentOf hdegree)
       (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _) hu).1 γ φ =
       pullback h' (isPositive_btProduct q r u (oneCurrentOf hdegree)
         (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _) huV).1 γ φ' := by
     rw [← hext, ← LocalBedfordTaylorLocality.restrict_apply, ← pullback_restrict h _ hVB]
-    rw [pullback_eq_of_eq h' _ _ eB]
+    rw [pullback_congr h' _ _ eB]
   have hconvB := weakTendsto_btProduct_of_antitone q r (oneCurrentOf (U := V) hdegree)
     (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _) (fun j i => f i j) u hS huV
     (fun i => (hf i).2.1) (fun i => (hf i).2.2)
@@ -119,8 +96,8 @@ theorem pullback_btProduct (hdegree : r + q = n)
     (oneCurrentOf (U := preOpen h V) hdegree)
     (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _)
     (fun j i x => f i j (τ x)) (fun i x => u i (τ x))
-    (fun j i => locallyBounded_comp h' (hS j i))
-    (fun i => locallyBounded_comp h' (huV i))
+    (fun j i => isLocallyBoundedPshOn_comp h' (hS j i))
+    (fun i => isLocallyBoundedPshOn_comp h' (huV i))
     (fun i x hx => (hf i).2.1 (τ x) hx.2)
     (fun i x hx => (hf i).2.2 (τ x) hx.2) γ φ'
   have e2 : pullback h' (isPositive_btProduct q r u (oneCurrentOf hdegree)
@@ -129,10 +106,10 @@ theorem pullback_btProduct (hdegree : r + q = n)
     refine tendsto_nhds_unique hpb ?_
     simp only [hsm]
     exact hconvA
-  rw [e1, e2, ← restrict_unit (preOpen_le h V) hdegree,
+  rw [e1, e2, ← restrict_oneCurrentOf (preOpen_le h V) hdegree,
     btProduct_restrict (preOpen_le h V) q r (fun i x => u i (τ x))
       (oneCurrentOf hdegree) (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _)
-      (fun i => locallyBounded_comp h (hu i)),
+      (fun i => isLocallyBoundedPshOn_comp h (hu i)),
     LocalBedfordTaylorLocality.restrict_apply, hext]
 
 end SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorBiholomorphicProducts

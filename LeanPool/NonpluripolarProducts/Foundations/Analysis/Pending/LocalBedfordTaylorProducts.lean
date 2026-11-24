@@ -17,6 +17,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Loca
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateDensityGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SmoothPshHessian
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothDDCHessianPositivity
 
 /-!
 # `dd^c`, closedness and the Bedford--Taylor products of local currents
@@ -445,16 +446,8 @@ theorem isSemipositiveOneOne_smoothDDC {A : Opens (ComplexModel n)} {f : E → �
     (hx : x ∈ A) : IsSemipositiveOneOne (smoothDDC f x) := by
   have h2 : ContDiffAt ℝ 2 f x :=
     (hs.contDiffAt (A.isOpen.mem_nhds hx)).of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-  refine ⟨fun u v => smoothDDC_isOneOne h2 u v, fun v => ?_⟩
-  rw [smoothDDC_apply_eq_realHessian h2]
-  have hI : Complex.I • (Complex.I • v) = (-1 : ℝ) • v := by
-    rw [smul_smul, Complex.I_mul_I, neg_one_smul, neg_one_smul]
-  rw [hI, realHessian_smul_right]
-  have hl := leviForm_nonneg_of_contDiffOn_plurisubharmonicOn hs hp hx v
-  rw [leviForm] at hl
-  have hπ : 0 < 4 * Real.pi := by positivity
-  rw [le_div_iff₀ hπ]
-  linarith
+  exact SmoothDDCHessianPositivity.isSemipositiveOneOne_smoothDDC_of_leviForm
+    h2 (leviForm_nonneg_of_contDiffOn_plurisubharmonicOn hs hp hx)
 
 /-- **Positivity in the smooth case.**  For a positive current `T`, a smooth `g` whose `dd^c` is
 semipositive wherever one of the `φ_k` is nonzero, and a strongly positive variable test form
@@ -519,15 +512,22 @@ theorem IsPositive.sum_hess_nonneg {T : LocalProductCurrent n U (q + 1)} (hT : I
       rw [← wedgeBilin_apply, map_zero, LinearMap.zero_apply]
       exact (spCone (n := n) (q + 1)).zero_mem
 
-/-- A smooth cutoff equal to one near a compact set, supported in an open neighbourhood. -/
-theorem exists_cutoff {K W : Set E} (hK : IsCompact K) (hW : IsOpen W) (hKW : K ⊆ W) :
-    ∃ χ : E → ℝ, ContDiff ℝ ∞ χ ∧ (∀ x ∈ K, χ =ᶠ[𝓝 x] 1) ∧ tsupport χ ⊆ W := by
-  obtain ⟨f, h0, h1, -⟩ := exists_contMDiffMap_zero_one_nhds_of_isClosed (I := 𝓘(ℝ, E))
+/-- A smooth cutoff taking values in `[0, 1]` and equal to one near a compact set. -/
+theorem exists_cutoff_with_bounds {K W : Set E} (hK : IsCompact K) (hW : IsOpen W) (hKW : K ⊆ W) :
+    ∃ χ : E → ℝ, ContDiff ℝ ∞ χ ∧ (∀ x ∈ K, χ =ᶠ[𝓝 x] 1) ∧ tsupport χ ⊆ W ∧
+      ∀ x, 0 ≤ χ x ∧ χ x ≤ 1 := by
+  obtain ⟨f, h0, h1, h01⟩ := exists_contMDiffMap_zero_one_nhds_of_isClosed (I := 𝓘(ℝ, E))
     (n := (⊤ : ℕ∞)) hW.isClosed_compl hK.isClosed (disjoint_compl_left_iff_subset.mpr hKW)
-  refine ⟨f, contMDiff_iff_contDiff.mp f.contMDiff, fun x hx => ?_, fun x hx => ?_⟩
+  refine ⟨f, contMDiff_iff_contDiff.mp f.contMDiff, fun x hx => ?_, fun x hx => ?_, h01⟩
   · exact (eventually_nhdsSet_iff_forall.mp h1) x hx
   · by_contra hxW
     exact (notMem_tsupport_iff_eventuallyEq.mpr ((eventually_nhdsSet_iff_forall.mp h0) x hxW)) hx
+
+/-- A smooth cutoff equal to one near a compact set, supported in an open neighbourhood. -/
+theorem exists_cutoff {K W : Set E} (hK : IsCompact K) (hW : IsOpen W) (hKW : K ⊆ W) :
+    ∃ χ : E → ℝ, ContDiff ℝ ∞ χ ∧ (∀ x ∈ K, χ =ᶠ[𝓝 x] 1) ∧ tsupport χ ⊆ W := by
+  obtain ⟨χ, hχ, hone, hsupp, -⟩ := exists_cutoff_with_bounds hK hW hKW
+  exact ⟨χ, hχ, hone, hsupp⟩
 
 /-- The extension by zero of a locally bounded PSH function on `U` is measurable. -/
 theorem measurable_indicator_of_isLocallyBoundedPshOn {u : E → ℝ}

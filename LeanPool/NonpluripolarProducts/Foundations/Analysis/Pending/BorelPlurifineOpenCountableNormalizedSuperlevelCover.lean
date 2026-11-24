@@ -180,7 +180,7 @@ theorem exists_countable_normalized_cover
       IsOpen[PlurifinePshTopology.topology Ω] (Subtype.val ⁻¹' G j k) := by
     refine ⟨(hgmem j k).2.2, ?_, ?_⟩
     · simpa only [G, ← EReal.coe_zero, EReal.coe_lt_coe_iff] using
-        PlurifineStrictSuperlevelCover.measurableSet_psh_superlevel
+        FirstPass.MongeAmpere.measurableSet_psh_superlevel
           ((hgmem j k).1.mono (hBΩ j)) 0
     · let : TopologicalSpace Ω := PlurifinePshTopology.topology Ω
       change IsOpen[PlurifinePshTopology.topology Ω]

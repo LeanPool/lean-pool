@@ -45,9 +45,9 @@ unweighted and weighted (`weakTendsto_btProduct_of_monotone`,
 * `btProduct_apply_wedgeProd` — the reduction to top degree.
 * `weakTendsto_of_wedgeProd` — weak convergence is tested on the products `β₁ ∧ ⋯ ∧ β_q`.
 * `weakTendsto_btProduct_of_monotone`, `weakTendsto_mulBorel_btProduct_of_monotone`.
-* `mulBorel_btProduct_max_const` — locality on `{v > c}` in every degree (FPT
-  `prop:bt-maximum-locality`), and `mulBorel_btProduct_truncation_consistent`, the consistency of
-  the truncations used to define the non-pluripolar product of every degree (`def:npp:L69`).
+* `mulBorel_btProduct_max_const` — mixed plurifine locality on the common strict locus,
+  and `mulBorel_btProduct_truncation_consistent`, the consistency of the truncations used to
+  define the non-pluripolar product of every degree (`def:npp:L69`).
 -/
 
 @[expose] public section
@@ -540,8 +540,10 @@ theorem weakTendsto_mulBorel_btProduct_of_monotone {p q : ℕ} (hqp : q + p = n)
 /-! ### Locality on the plurifine open sets `{v > c}` -/
 
 open TopDegreeDensity in
-/-- **Locality of the products of every degree on `{v₁ > c, …, v_p > c}`** (FPT
-`prop:bt-maximum-locality`, for all degrees): if `wᵢ = max(vᵢ, c)` on `U`, then
+/-- **Mixed locality on the common strict locus.** This is a consequence of
+[Xia's mixed plurifine locality theorem](
+https://github.com/MingchenXia/foundations-of-pluripotential-theory/blob/5d7f16338ae82d4933193a0cb331365e737824db/chapters/q03-pluripolar-sets-and-the-plurifine-topology.tex#L350-L355).
+Apply the theorem to the separately truncated factors. If `wᵢ = max(vᵢ, c)` on `U`, then
 `1_L dd^c w₁ ∧ ⋯ ∧ dd^c w_p = 1_L dd^c v₁ ∧ ⋯ ∧ dd^c v_p` with
 `L = {z ∈ U | vᵢ(z) > c for all i}`. -/
 theorem mulBorel_btProduct_max_const {p q : ℕ} (hqp : q + p = n) {U : Opens (ComplexModel n)}

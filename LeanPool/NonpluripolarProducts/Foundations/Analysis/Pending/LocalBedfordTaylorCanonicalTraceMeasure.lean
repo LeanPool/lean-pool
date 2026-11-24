@@ -27,18 +27,6 @@ open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere
   LocalBedfordTaylorDecreasing LocalBedfordTaylorSmoothTraceMeasure
 variable {n : ℕ} {U V : Opens (ComplexModel n)}
 
-private theorem restrict_oneCurrent (hVU : V ≤ U) :
-    restrict hVU (oneCurrent U) = oneCurrent V := by
-  ext γ φ
-  simp only [LocalBedfordTaylorLocality.restrict_apply, oneCurrent_apply]
-  have hφ : (extTest hVU φ : ComplexModel n → ℝ) = φ := funext (extTest_apply hVU φ)
-  rw [hφ]
-
-private theorem restrict_oneCurrentOf {k : ℕ} (hk : k = n) (hVU : V ≤ U) :
-    restrict hVU (oneCurrentOf (U := U) hk) = oneCurrentOf (U := V) hk := by
-  subst hk
-  exact restrict_oneCurrent hVU
-
 private theorem traceMeasure_congr {k : ℕ} {A B : LocalProductCurrent n U k}
     (hA : IsPositive A) (hB : IsPositive B) (e : A = B) :
     hA.traceMeasure = hB.traceMeasure := by

@@ -145,17 +145,18 @@ theorem strictLocus_eq_truncationReal_superlevel (hu : PlurisubharmonicOn u Ω)
     simp only [truncation, lt_max_iff, not_lt.mpr h, or_false]
   · simp [strictTruncationLocus, hz]
 
-/-- Borel measurability comes from upper semicontinuity on the open subtype,
-not from a claim that a strict superlevel set is ordinary open. -/
-theorem measurableSet_strictTruncationLocus (hu : PlurisubharmonicOn u Ω) (k : ℕ) :
-    MeasurableSet (strictTruncationLocus Ω u k) := by
-  have hsc : UpperSemicontinuousOn (fun z : Ω => u z) univ :=
+/-- Actual ordinary upper semicontinuity supplies Borel measurability of a genuine relative strict
+    superlevel. -/
+theorem measurableSet_psh_superlevel {Ω : Opens (ComplexModel n)}
+    {u : ComplexModel n → EReal} (hu : PlurisubharmonicOn u Ω) (c : ℝ) :
+    MeasurableSet {z | z ∈ Ω ∧ (c : EReal) < u z} := by
+  have hsc : UpperSemicontinuousOn (fun z : Ω => u z.val) univ :=
     hu.upperSemicontinuousOn.comp continuous_subtype_val.continuousOn
       (fun z _ => z.property)
-  have hm : Measurable (fun z : Ω => u z) :=
+  have hm : Measurable (fun z : Ω => u z.val) :=
     (upperSemicontinuousOn_univ_iff.mp hsc).measurable
   have hs := Ω.isOpen.measurableSet.subtype_image
-    (hm measurableSet_Ioi : MeasurableSet {z : Ω | ((-(k : ℝ) : ℝ) : EReal) < u z})
+    (hm measurableSet_Ioi : MeasurableSet {z : Ω | (c : EReal) < u z.val})
   convert hs using 1
   ext z
   constructor
@@ -163,6 +164,11 @@ theorem measurableSet_strictTruncationLocus (hu : PlurisubharmonicOn u Ω) (k : 
     exact ⟨⟨z, hz.1⟩, hz.2, rfl⟩
   · rintro ⟨w, hw, rfl⟩
     exact ⟨w.property, hw⟩
+
+/-- The strict truncation locus is Borel. -/
+theorem measurableSet_strictTruncationLocus (hu : PlurisubharmonicOn u Ω) (k : ℕ) :
+    MeasurableSet (strictTruncationLocus Ω u k) :=
+  measurableSet_psh_superlevel hu (-(k : ℝ))
 
 /-- Compact upper bounds and the truncation floor give local absolute bounds. -/
 theorem truncationReal_isLocallyBoundedPshOn (hu : PlurisubharmonicOn u Ω) (k : ℕ) :

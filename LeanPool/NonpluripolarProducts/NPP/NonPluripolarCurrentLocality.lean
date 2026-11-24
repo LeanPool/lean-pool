@@ -275,11 +275,6 @@ theorem nonPluripolarProduct_comp_perm (hφ : ∀ i, PlurisubharmonicOn (φ i) U
 
 /-! #### Restriction to open subsets -/
 
-theorem restrict_oneCurrentOf' {V : Opens (ComplexModel n)} (hVU : V ≤ U) :
-    restrict hVU (oneCurrentOf (U := U) hqp) = oneCurrentOf (U := V) hqp := by
-  subst hqp
-  exact LocalCurrentPullbackDdc.restrict_oneCurrent hVU
-
 theorem restrict_restrict {V W : Opens (ComplexModel n)} (hWV : W ≤ V) (hVU : V ≤ U)
     (T : LocalProductCurrent n U q) :
     restrict hWV (restrict hVU T) = restrict (hWV.trans hVU) T := by
@@ -294,7 +289,7 @@ theorem truncatedBT_restrict (hφ : ∀ i, PlurisubharmonicOn (φ i) U) {V : Ope
     (k : ℕ) : truncatedBT hqp V φ k = restrict hVU (truncatedBT hqp U φ k) := by
   rw [truncatedBT, truncatedBT, ← btProduct_restrict hVU p q _ _ (isPositive_oneCurrentOf hqp)
     (isClosedAny_oneCurrentOf hqp) (fun i => truncationReal_isLocallyBoundedPshOn (hφ i) k),
-    restrict_oneCurrentOf' hqp hVU]
+    restrict_oneCurrentOf hVU hqp]
 
 theorem strictLocus_restrict {V : Opens (ComplexModel n)} (hVU : V ≤ U) (k : ℕ) :
     BedfordTaylorTopDegree.strictLocus V φ k =

@@ -58,8 +58,10 @@ For positive `(1,1)`-currents `T₁, …, T_p` on `M` (bidimension `(m,m)`):
   potentials, `dd^c φ₁ ∧ ⋯ ∧ dd^c φ_p` (`def:npp:L146`) is well defined iff the product of the
   `φᵢ` (`def:npp:L69`) is, and the two products agree.
 
-Closedness of `T₁ ∧ ⋯ ∧ T_p` (asserted in the definition, `prop:npp1` (5)) is proved only for
-`p = m + 1` (bidimension `(0,0)`, `isClosed_currentProduct_top`); for `p < m + 1` it is open.
+The Lean closedness declaration `isClosed_currentProduct_top` covers `p = m + 1`,
+of bidimension `(0,0)`. In the literature, [BEGZ, Theorem 1.8](
+https://arxiv.org/pdf/0812.3674#page=8) and Xia's `prop:npp1` (5) establish closedness of
+well-defined nonpluripolar products in all degrees.
 -/
 
 @[expose] public section

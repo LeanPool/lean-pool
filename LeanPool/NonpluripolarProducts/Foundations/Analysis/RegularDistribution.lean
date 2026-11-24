@@ -106,6 +106,33 @@ The equivalence with a canonical PSH representative remains a separate theorem. 
 def HasNonnegativeDistributionalLevi (T : 𝓓'(Ω, ℝ)) : Prop :=
   ∀ v, PositiveDistribution (distributionalLeviCLM v T)
 
+/-- The Levi operator is quadratic in the direction. -/
+theorem distributionalLeviCLM_smul_apply (T : 𝓓'(Ω, ℝ)) (c : ℝ) (v : E) (φ : 𝓓(Ω, ℝ)) :
+    distributionalLeviCLM (c • v) T φ = c ^ 2 * distributionalLeviCLM v T φ := by
+  have hI : Complex.I • (c • v) = c • (Complex.I • v) := smul_comm _ _ _
+  rw [distributionalLeviCLM_apply, distributionalLeviCLM_apply, hI,
+    TestFunction.lineDerivCLM_smul, TestFunction.lineDerivCLM_smul]
+  simp only [smul_apply, map_smul, smul_eq_mul]
+  ring
+
+/-- Unit-direction tests suffice by the quadratic homogeneity of the Levi operator. -/
+theorem hasNonnegativeDistributionalLevi_of_unit (T : 𝓓'(Ω, ℝ))
+    (hunit : ∀ a : E, ‖a‖ = 1 → ∀ φ : 𝓓(Ω, ℝ),
+      (∀ z, 0 ≤ φ z) → 0 ≤ distributionalLeviCLM a T φ) :
+    HasNonnegativeDistributionalLevi T := by
+  intro v φ hφ
+  by_cases hv : v = 0
+  · have h0 : v = (0 : ℝ) • v := by rw [hv, smul_zero]
+    rw [h0, distributionalLeviCLM_smul_apply]
+    simp
+  · have hvn : 0 < ‖v‖ := norm_pos_iff.mpr hv
+    have hva : v = ‖v‖ • ((‖v‖⁻¹ : ℝ) • v) := by
+      rw [smul_smul, mul_inv_cancel₀ hvn.ne', one_smul]
+    have ha : ‖(‖v‖⁻¹ : ℝ) • v‖ = 1 := by
+      rw [norm_smul, Real.norm_eq_abs, abs_inv, abs_norm, inv_mul_cancel₀ hvn.ne']
+    rw [hva, distributionalLeviCLM_smul_apply]
+    exact mul_nonneg (sq_nonneg _) (hunit _ ha φ hφ)
+
 theorem HasNonnegativeDistributionalLevi.add {S T : 𝓓'(Ω, ℝ)}
     (hS : HasNonnegativeDistributionalLevi S)
     (hT : HasNonnegativeDistributionalLevi T) :

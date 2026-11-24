@@ -12,7 +12,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Coordi
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateDensityHermitian
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SymmetricMultilinearDiagonal
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.MixedMongeAmpere
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.KahlerCurrentPerturbation
 
 /-!
 # The geometric meaning of the mixed Monge--Ampère density

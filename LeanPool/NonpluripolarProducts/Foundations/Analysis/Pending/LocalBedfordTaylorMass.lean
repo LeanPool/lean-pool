@@ -116,13 +116,8 @@ neighbourhood of it. -/
 theorem exists_cutoff_unit {K W : Set E} (hK : IsCompact K) (hW : IsOpen W) (hKW : K ⊆ W) :
     ∃ χ : E → ℝ, ContDiff ℝ ∞ χ ∧ (∀ x ∈ K, χ x = 1) ∧ tsupport χ ⊆ W ∧
       ∀ x, 0 ≤ χ x ∧ χ x ≤ 1 := by
-  obtain ⟨f, h0, h1, h01⟩ := exists_contMDiffMap_zero_one_nhds_of_isClosed (I := 𝓘(ℝ, E))
-    (n := (⊤ : ℕ∞)) hW.isClosed_compl hK.isClosed (disjoint_compl_left_iff_subset.mpr hKW)
-  refine ⟨f, contMDiff_iff_contDiff.mp f.contMDiff, fun x hx => ?_, fun x hx => ?_,
-    fun x => h01 x⟩
-  · exact ((eventually_nhdsSet_iff_forall.mp h1) x hx).self_of_nhds
-  · by_contra hxW
-    exact (notMem_tsupport_iff_eventuallyEq.mpr ((eventually_nhdsSet_iff_forall.mp h0) x hxW)) hx
+  obtain ⟨χ, hχ, hone, hsupp, h01⟩ := exists_cutoff_with_bounds hK hW hKW
+  exact ⟨χ, hχ, fun x hx ↦ (hone x hx).self_of_nhds, hsupp, h01⟩
 
 /-- **One factor of the Chern--Levine--Nirenberg estimate**: for compact `L ⊆ K° ⊆ K ⊆ U` there is
 `C ≥ 0` with `M_L(dd^c(u R)) ≤ C M M_K(R)` for every positive closed `R` of bidimension

@@ -10,6 +10,7 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SmoothPshHessian
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PositiveClasses
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.StronglyPositiveForms
 
 /-!
 # Semipositivity of `ddᶜ` gives a semidefinite complex Hessian
@@ -35,11 +36,19 @@ open scoped Topology ContDiff ComplexOrder
 
 namespace SGPT.Foundations.Analysis.Pending.SmoothDDCHessianPositivity
 
-open FirstPass FirstPass.MongeAmpere FirstPass.PositiveClasses
+open FirstPass FirstPass.MongeAmpere FirstPass.PositiveClasses StronglyPositiveForms
 
 noncomputable section
 
 variable {n : ℕ}
+
+/-- The normalized `ddᶜ` is semipositive where the Levi form is nonnegative. -/
+theorem isSemipositiveOneOne_smoothDDC_of_leviForm {g : ComplexModel n → ℝ} {x : ComplexModel n}
+    (h2 : ContDiffAt ℝ 2 g x) (hl : ∀ v, 0 ≤ leviForm g x v) :
+    IsSemipositiveOneOne (smoothDDC g x) := by
+  refine ⟨fun u v => smoothDDC_isOneOne h2 u v, fun v => ?_⟩
+  rw [smoothDDC_complexDiagonal_eq_leviForm h2 v]
+  exact div_nonneg (hl v) Real.pi_pos.le
 
 /-- A `C²` function with nonnegative Levi form in every direction has a
 positive semidefinite coordinate complex Hessian. -/

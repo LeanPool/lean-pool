@@ -187,4 +187,19 @@ theorem IsBTLimit.restrict_max_pluriharmonic {Ω : Opens (ComplexModel n)}
     ext z; simp [← sub_eq_add_neg, sub_pos]
   rwa [hset] at h
 
+/-- Restriction of a Bedford–Taylor limit to an open subset. -/
+theorem IsBTLimit.restrict_opens {Ω V : Opens (ComplexModel n)} {u : Fin n → ComplexModel n → ℝ}
+    {μ : Measure (ComplexModel n)} (hμ : IsBTLimit Ω u μ) (hVΩ : V ≤ Ω) :
+    IsBTLimit V u (μ.restrict V) := by
+  refine ⟨by rw [Measure.restrict_apply' V.isOpen.measurableSet]; simp,
+    fun K hK hKV ↦ (Measure.restrict_apply_le _ _).trans_lt (hμ.2.1 K hK (hKV.trans hVΩ)),
+    fun U hU ↦ ?_⟩
+  have hUΩ : RelativelyCompactIn U Ω := ⟨hU.1, hU.2.trans hVΩ⟩
+  obtain ⟨F, hF, hFT⟩ := hμ.2.2 U hUΩ
+  refine ⟨F, hF, fun φ hφ hφc hφU ↦ ?_⟩
+  have hUV : (U : Set (ComplexModel n)) ⊆ V := subset_closure.trans hU.2
+  rw [setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz ↦
+    image_eq_zero_of_notMem_tsupport fun h ↦ hz (hUV (hφU h))]
+  exact hFT φ hφ hφc hφU
+
 end SGPT.Foundations.Analysis.Pending.BedfordTaylor

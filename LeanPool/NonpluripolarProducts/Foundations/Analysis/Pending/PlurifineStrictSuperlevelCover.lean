@@ -26,26 +26,6 @@ noncomputable section
 
 variable {n : ℕ}
 
-/-- Actual ordinary upper semicontinuity supplies Borel measurability of a genuine relative strict
-    superlevel. -/
-theorem measurableSet_psh_superlevel {Ω : Opens (ComplexModel n)}
-    {u : ComplexModel n → EReal} (hu : PlurisubharmonicOn u Ω) (c : ℝ) :
-    MeasurableSet {z | z ∈ Ω ∧ (c : EReal) < u z} := by
-  have hsc : UpperSemicontinuousOn (fun z : Ω => u z.val) univ :=
-    hu.upperSemicontinuousOn.comp continuous_subtype_val.continuousOn
-      (fun z _ => z.property)
-  have hm : Measurable (fun z : Ω => u z.val) :=
-    (upperSemicontinuousOn_univ_iff.mp hsc).measurable
-  have hs := Ω.isOpen.measurableSet.subtype_image
-    (hm measurableSet_Ioi : MeasurableSet {z : Ω | (c : EReal) < u z.val})
-  convert hs using 1
-  ext z
-  constructor
-  · intro hz
-    exact ⟨⟨z, hz.1⟩, hz.2, rfl⟩
-  · rintro ⟨w, hw, rfl⟩
-    exact ⟨w.property, hw⟩
-
 /-- An actual ordinary compact exhaustion and genuine PSH positive margins produce a countable
     plurifine-open cover whose Euclidean closures stay in the same strict superlevel. -/
 theorem exists_countable_superlevel_cover {Ω : Opens (ComplexModel n)}

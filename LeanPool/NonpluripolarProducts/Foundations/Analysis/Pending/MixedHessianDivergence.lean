@@ -31,7 +31,7 @@ open scoped Topology ContDiff
 
 namespace SGPT.Foundations.Analysis.Pending.MixedHessian
 
-open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere
+open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere CauchyGreen
 
 noncomputable section
 
@@ -155,19 +155,7 @@ end Cofactor
 
 section Wirtinger
 
-open CauchyGreen
-
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-
-/-- A directional first-order operator `(Df(v) + c·Df(Iv))/2`; `c = -i` gives
-`∂/∂w` and `c = i` gives `∂/∂wBar` along the complex line spanned by `v`. -/
-def wirt (c : ℂ) (v : E) (f : E → ℂ) (x : E) : ℂ :=
-  (fderiv ℝ f x v + c * fderiv ℝ f x (I • v)) / 2
-
-/-- The Wirtinger derivative `∂/∂w` along the complex line spanned by `v`. -/
-abbrev dDir (v : E) (f : E → ℂ) (x : E) : ℂ := wirt (-I) v f x
-
-theorem dbarDir_eq_wirt (v : E) (f : E → ℂ) (x : E) : dbarDir v f x = wirt I v f x := rfl
 
 theorem contDiff_wirt {c : ℂ} {v : E} {f : E → ℂ} (hf : ContDiff ℝ ∞ f) :
     ContDiff ℝ ∞ (wirt c v f) := by
@@ -208,30 +196,6 @@ theorem wirt_prod {ι : Type*} [DecidableEq ι] (s : Finset ι) {c : ℂ} {v : E
   simp only [wirt, h, sum_apply, smul_apply,
     smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib, Finset.sum_div]
   refine Finset.sum_congr rfl fun l _ ↦ ?_
-  ring
-
-/-- Two directional operators commute on a `C²` function. -/
-theorem wirt_wirt_comm {c d : ℂ} {u v : E} {g : E → ℂ} {x : E}
-    (hg : ContDiffAt ℝ 2 g x) :
-    wirt c u (wirt d v g) x = wirt d v (wirt c u g) x := by
-  have hsymm := ContDiffAt.isSymmSndFDerivAt hg (by simp)
-  have hDD : DifferentiableAt ℝ (fderiv ℝ g) x :=
-    (hg.fderiv_right (m := 1) (by norm_num)).differentiableAt one_ne_zero
-  have happ (w : E) : HasFDerivAt (fun y ↦ fderiv ℝ g y w)
-      ((fderiv ℝ (fderiv ℝ g) x).flip w) x := by
-    have := (hDD.hasFDerivAt).clm_apply (hasFDerivAt_const w x)
-    simpa using this
-  have hdir (e : ℂ) (w : E) : HasFDerivAt (wirt e w g)
-      ((2 : ℂ)⁻¹ • ((fderiv ℝ (fderiv ℝ g) x).flip w +
-        e • (fderiv ℝ (fderiv ℝ g) x).flip (I • w))) x := by
-    have h := ((happ w).add ((happ (I • w)).const_smul e)).const_smul (2 : ℂ)⁻¹
-    refine h.congr_of_eventuallyEq (Eventually.of_forall fun y ↦ ?_)
-    simp only [wirt, Pi.smul_apply, Pi.add_apply, smul_eq_mul]
-    ring
-  simp only [wirt, (hdir d v).fderiv, (hdir c u).fderiv]
-  simp only [smul_apply, add_apply,
-    ContinuousLinearMap.flip_apply, smul_eq_mul]
-  rw [hsymm u v, hsymm u (I • v), hsymm (I • u) v, hsymm (I • u) (I • v)]
   ring
 
 theorem integral_mul_fderiv_eq_neg_of_hasCompactSupport [MeasurableSpace E] [BorelSpace E]
@@ -326,7 +290,7 @@ theorem HasCompactSupport.wirt {F : E → ℂ} (hc : HasCompactSupport F) (c : �
   have h0 : fderiv ℝ F x = 0 := by
     by_contra h'
     exact h (support_fderiv_subset ℝ (Function.mem_support.mpr h'))
-  exact hx (by simp [SGPT.Foundations.Analysis.Pending.MixedHessian.wirt, h0])
+  exact hx (by simp [SGPT.Foundations.Analysis.Pending.CauchyGreen.wirt, h0])
 
 end Wirtinger
 

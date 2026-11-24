@@ -41,6 +41,16 @@ variable {n : ℕ}
 def IsOneOne (a : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ) : Prop :=
   ∀ u v, a ![Complex.I • u, Complex.I • v] = a ![u, v]
 
+theorem isOneOne_add {a b : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ}
+    (ha : IsOneOne a) (hb : IsOneOne b) : IsOneOne (a + b) := by
+  intro u v
+  simp only [ContinuousAlternatingMap.add_apply, ha u v, hb u v]
+
+theorem isOneOne_smul {a : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ} (c : ℝ)
+    (ha : IsOneOne a) : IsOneOne (c • a) := by
+  intro u v
+  simp only [ContinuousAlternatingMap.smul_apply, ha u v]
+
 /-- Strict positivity of a real two-form in complex directions. -/
 def IsStrictlyPositive (a : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ) : Prop :=
   ∀ u : ComplexModel n, u ≠ 0 → 0 < a ![u, Complex.I • u]

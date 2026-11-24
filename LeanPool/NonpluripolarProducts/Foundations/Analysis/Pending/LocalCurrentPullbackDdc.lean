@@ -612,20 +612,22 @@ theorem weakTendsto_pullback (h : IsBiholomorphicPair A B τ σ) {T : ℕ → Lo
 
 end Weak
 
+/-- A locally bounded psh function composed with `τ` is locally bounded psh on `A`. -/
+theorem isLocallyBoundedPshOn_comp {n : ℕ} {A B : Opens (ComplexModel n)}
+    {τ σ : ComplexModel n → ComplexModel n} (h : IsBiholomorphicPair A B τ σ)
+    {w : ComplexModel n → ℝ}
+    (hw : IsLocallyBoundedPshOn B w) : IsLocallyBoundedPshOn A (fun x => w (τ x)) := by
+  refine ⟨HolomorphicPullback.plurisubharmonicOn_comp_holomorphic (u := fun z => (w z : EReal))
+    A.isOpen
+    (h.holo.differentiableOn (by simp)) h.mapsTo hw.1, fun z hz => ?_⟩
+  obtain ⟨V, hzV, hVB, C, hC⟩ := hw.2 (τ z) (h.mapsTo hz)
+  exact ⟨preOpen h V, ⟨hz, hzV⟩, preOpen_le h V, C, fun x hx => hC (τ x) hx.2⟩
+
 /-! ### Decreasing approximation and the main theorem -/
 
 section Naturality
 
 variable {m : ℕ}
-
-/-- `[1]|_V = [1]`. -/
-theorem restrict_oneCurrent {n : ℕ} {U V : Opens (ComplexModel n)} (hVU : V ≤ U) :
-    LocalBedfordTaylorLocality.restrict hVU (oneCurrent U) = oneCurrent V := by
-  ext γ φ
-  rw [LocalBedfordTaylorLocality.restrict_apply, oneCurrent_apply, oneCurrent_apply]
-  have hf : (extTest hVU φ : ComplexModel n → ℝ) = (φ : ComplexModel n → ℝ) := funext
-    (extTest_apply hVU φ)
-  rw [hf]
 
 /-- **`dd^c` along decreasing sequences**: if locally bounded psh `f_j` decrease pointwise to a
     locally bounded psh `w` on
@@ -685,20 +687,6 @@ theorem weakTendsto_ddcMul_oneCurrent {U : Opens (ComplexModel (m + 1))} {f : �
       exact tendsto_const_nhds
 
 variable {A B : Opens (ComplexModel (m + 1))} {τ σ : ComplexModel (m + 1) → ComplexModel (m + 1)}
-
-/-- A locally bounded psh function composed with `τ` is locally bounded psh on `A`. -/
-theorem isLocallyBoundedPshOn_comp (h : IsBiholomorphicPair A B τ σ) {w : ComplexModel (m + 1) → ℝ}
-    (hw : IsLocallyBoundedPshOn B w) : IsLocallyBoundedPshOn A (fun x => w (τ x)) := by
-  refine ⟨HolomorphicPullback.plurisubharmonicOn_comp_holomorphic (u := fun z => (w z : EReal))
-    A.isOpen
-    (h.holo.differentiableOn (by simp)) h.mapsTo hw.1, fun z hz => ?_⟩
-  obtain ⟨V, hzV, hVB, C, hC⟩ := hw.2 (τ z) (h.mapsTo hz)
-  exact ⟨preOpen h V, ⟨hz, hzV⟩, preOpen_le h V, C, fun x hx => hC (τ x) hx.2⟩
-
-theorem pullback_congr (h : IsBiholomorphicPair A B τ σ) {T T' : LocalProductCurrent (m + 1) B m}
-    (hT : IsPositive T) (hT' : IsPositive T') (e : T = T') : pullback h hT = pullback h hT' := by
-  subst e
-  rfl
 
 /-- **Naturality of `dd^c` under biholomorphisms**: for a locally bounded psh `w` on `B`,
 `τ^*(dd^c w) = dd^c(w ∘ τ)` on `A`. -/
