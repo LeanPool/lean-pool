@@ -1,0 +1,76 @@
+slug: rado-numbers-last-exception
+title: The Last Exception for Two-Colour Rado Numbers
+summary: >-
+  Determines the exact last exception c*(k) for the 2-colour Rado number R(c, k)
+  of x + y + c = kz for every integer k ≥ 3, where c*(k) = k(k² + k − 4)/2 for odd k
+  and k(k² − 2)/2 for even k. Proves both halves unconditionally in pure core Lean 4
+  (zero Mathlib imports): (1) an original reflection proof (x ↦ N + 1 − x) combined with
+  Martinelli and Schaal's lower bound showing R(c, k) = LB(c, k) for every valid c > c*(k)
+  (k odd or c even), and (2) an explicit boundary colouring avoiding monochromatic
+  solutions on [1, LB(c*(k), k)]. Finite existence of R(c*(k), k) is left outside
+  the formalization. As a corollary, the project characterizes the
+  cutoff ν(k) and settles the Kim–Song–Hwang (2023) conjecture ν(5) = 66.
+branch: extremal combinatorics and Ramsey theory
+entry_module: LeanPool.RadoNumbersLastException
+authors:
+- Tyler B. Hughes
+source:
+  title: Two-color Rado number of x + y + c = kz for large c
+  authors:
+  - Byeong Moon Kim
+  - Byung Chul Song
+  - Woonjae Hwang
+  doi: 10.1016/j.disc.2023.113597
+  url: https://mathdiscoveries.org/results/rado-numbers-last-exception/
+  github_repo: mathdiscoveries/rado-numbers-last-exception
+  commit: 8c0c3e402d081b1315530ff3e0e509c5589a9de3
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- RadoNu.rado_last_exception
+- RadoNu.rado_eq_LB
+- RadoNu.not_forced_cstar
+- RadoNu.nu_iff
+- RadoNu.nu_5_eq_66
+main_results:
+- declaration: RadoNu.rado_last_exception
+  informal: >-
+    For every k ≥ 3, (1) for every valid c > c*(k) (meaning k is odd or c is even),
+    every 2-colouring of [1, LB(c, k)] has a monochromatic solution of x + y + c = kz while
+    some 2-colouring of [1, LB(c, k) − 1] has none, and (2) some 2-colouring of
+    [1, LB(c*(k), k)] has no monochromatic solution of x + y + c*(k) = kz.
+    Finite existence of R(c*(k), k) is left outside the formalization.
+- declaration: RadoNu.rado_eq_LB
+  informal: >-
+    For every k ≥ 3 and every valid c > c*(k), the 2-colour Rado number R(c, k)
+    of x + y + c = kz equals the Martinelli–Schaal lower bound LB(c, k).
+- declaration: RadoNu.not_forced_cstar
+  informal: >-
+    For every k ≥ 3, [1, LB(c*(k), k)] is not forced for x + y + c*(k) = kz, i.e.,
+    there exists a 2-colouring of [1, LB(c*(k), k)] avoiding monochromatic solutions.
+- declaration: RadoNu.nu_iff
+  informal: >-
+    For every k ≥ 3 and natural number v, R(c, k) = LB(c, k) holds for all valid
+    c ≥ v if and only if c*(k) < v; hence the least integer cutoff is c*(k) + 1 and the
+    least valid cutoff ν(k) is c*(k) + 1 for odd k and c*(k) + 2 for even k.
+- declaration: RadoNu.nu_5_eq_66
+  informal: >-
+    Settles the Kim–Song–Hwang (2023) conjecture ν(5) = 66: R(c, 5) = LB(c, 5) for
+    all c ≥ 66, and fails for c = 65.
+- declaration: RadoNu.rado_last_exception_rado
+  informal: >-
+    Restates the both-halves characterization using IsRado and Forced, including
+    that any Rado number R satisfying IsRado (c*(k)) k R must strictly exceed LB(c*(k), k).
+- declaration: RadoNu.nu_small_values
+  informal: >-
+    Verifies by kernel decide that the least valid cutoffs ν(k) for k = 3..10 equal
+    13, 30, 66, 104, 183, 250, 388, and 492.
+tags:
+- combinatorics
+- ramsey-theory
+- rado-numbers
+- additive-combinatorics
+msc:
+- 05D10
+- 11B75
