@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.GibbsSobolev
+public import LeanPool.CutoffRigidity.SymmetricOperatorDenseRange
 
 /-!
 # The self-adjoint operator of the actual closed Gibbs energy
@@ -87,21 +88,6 @@ theorem positiveResolventOperator_apply (R : H →L[ℝ] H) (hR : Function.Injec
   apply ((positiveResolventOperator R).image_iff hx).mpr ?_ |>.symm
   rw [positiveResolventOperator_graph R hR]
   exact (mem_positiveResolventGraph R _ _).mpr ⟨f, rfl, rfl⟩
-
-/-- Symmetry of an injective resolvent forces its range to be dense. -/
-theorem denseRange_of_injective_symmetric (R : H →L[ℝ] H) (hR : Function.Injective R)
-    (hsym : ∀ x y, inner ℝ (R x) y = inner ℝ x (R y)) : DenseRange R := by
-  change Dense (R.range : Set H)
-  rw [Submodule.dense_iff_topologicalClosure_eq_top, Submodule.topologicalClosure_eq_top_iff]
-  apply (Submodule.eq_bot_iff _).mpr
-  intro x hx
-  have hzero : R x = 0 := by
-    apply ext_inner_right ℝ
-    intro y
-    rw [hsym]
-    have hxy := ((R.range.mem_orthogonal x).mp hx) (R y) ⟨y, rfl⟩
-    simpa only [inner_zero_left, real_inner_comm] using hxy
-  exact hR (by simpa only [map_zero] using hzero)
 
 /-- The constructed operator has actual dense domain. -/
 theorem positiveResolventOperator_dense_domain (R : H →L[ℝ] H) (hR : Function.Injective R)

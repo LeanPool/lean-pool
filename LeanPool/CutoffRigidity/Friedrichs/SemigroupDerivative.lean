@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.Friedrichs.FunctionalCalculusSemigroup
+import LeanPool.CutoffRigidity.SymmetricOperatorDenseRange
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 
 /-! # Continuity and differentiability of the `cfc` semigroup
@@ -175,34 +176,12 @@ lemma norm_cfcSemigroup_mul_sub_le (s : ℝ≥0) : ‖cfcSemigroup R s * R - R�
   rw [h1]
   exact hR.norm_rcfc_le s.2 (fun r hr => abs_hfun_mul_sub_le s hr)
 
-/-- `ran R` is dense when `R` is injective. -/
-lemma denseRange_of_injective (hinj : Function.Injective R) : Dense (Set.range R) := by
-  have hsa := hR.selfAdjoint
-  have h : (LinearMap.range R.toLinearMap)ᗮ = ⊥ := by
-    rw [Submodule.eq_bot_iff]
-    intro u hu
-    have h1 : ∀ x, inner ℝ (R x) u = 0 := fun x =>
-      (Submodule.mem_orthogonal _ _).mp hu _ ⟨x, rfl⟩
-    have h2 : R u = 0 := by
-      apply ext_inner_right ℝ
-      intro x
-      have hsym := ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hsa
-      have := hsym u x
-      simp only [ContinuousLinearMap.coe_coe] at this
-      rw [this, real_inner_comm, h1]; simp
-    exact hinj (by rw [h2, map_zero])
-  have h' : (LinearMap.range R.toLinearMap).topologicalClosure = ⊤ :=
-    Submodule.topologicalClosure_eq_top_iff.mpr h
-  have := (Submodule.dense_iff_topologicalClosure_eq_top
-    (s := LinearMap.range R.toLinearMap)).mpr h'
-  rwa [show ((LinearMap.range R.toLinearMap : Submodule ℝ H) : Set H) = Set.range R from
-    LinearMap.coe_range _] at this
-
 /-- Strong continuity at `0`. -/
 lemma tendsto_cfcSemigroup_zero (hinj : Function.Injective R) (u : H) :
     ∀ ε > 0, ∃ δ : ℝ≥0, 0 < δ ∧ ∀ s : ℝ≥0, s < δ → ‖cfcSemigroup R s u - u‖ < ε := by
   intro ε hε
-  have hd := denseRange_of_injective hR hinj
+  have hd := CutoffRigidity.denseRange_of_injective_symmetric R hinj
+    (ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hR.selfAdjoint)
   obtain ⟨_, ⟨g, rfl⟩, hg⟩ := Metric.mem_closure_iff.mp (hd u) (ε / 3) (by positivity)
   rw [dist_eq_norm] at hg
   -- hg : ‖u - R g‖ < ε / 3

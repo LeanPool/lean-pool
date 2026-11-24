@@ -173,6 +173,7 @@ public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianParallelPair
 public import LeanPool.CutoffRigidity.RiemannianSplitting.RiemannianTangentMetricMap
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Statements
 public import LeanPool.CutoffRigidity.SmoothPoincare
+public import LeanPool.CutoffRigidity.SymmetricOperatorDenseRange
 public import LeanPool.CutoffRigidity.WeakDerivativeMollification
 public import LeanPool.CutoffRigidity.WeakGradientEnergyTest
 public import LeanPool.CutoffRigidity.WeakH1Mollification
