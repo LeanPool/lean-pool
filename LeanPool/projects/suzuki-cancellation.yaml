@@ -1,6 +1,6 @@
 slug: suzuki-cancellation
 title: Cancellation-aware error bounds for the fourth-order Suzuki formula
-summary: In complete normed algebras with contractive exponentials, the binary
+summary: In complete normed algebras with two-sided contractive exponentials, the binary
   fourth-order Suzuki splitting has a global error expansion through the centered
   septic term and an eighth-order remainder at fixed nonnegative time. For skew-adjoint
   generators in a complete C*-algebra, the integral of the transported quintic
@@ -32,14 +32,15 @@ main_results:
     quintic and centered septic terms by at most an explicit remainder.
 - declaration: FQFP.BCH.isBigO_fiveStageStrangProduct_pow_sub_septic_midpoint
   informal: In a complete normed algebra, with the Suzuki cubic relation and
-    contractive exponentials for both generators and their sum, the refined
-    operator remainder at fixed nonnegative time is big O of the inverse eighth
-    power of the number of steps.
+    contractive exponentials for both generators and their sum at every real time,
+    the refined operator remainder at fixed nonnegative final time is big O of the
+    inverse eighth power of the number of steps.
 - declaration: FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
   informal: For skew-adjoint generators in a complete C*-algebra with compatible
-    real scalars and at fixed nonnegative final time, multiplying the global Suzuki
-    error norm by the fourth power of the step count yields the fourth power of
-    the final time times the norm of the integrated conjugated quintic coefficient.
+    real scalars and fixed nonnegative final time, the global Suzuki error norm
+    scaled by the fourth power of the step count converges to the fourth power
+    of the final time times the norm of the integrated conjugated quintic coefficient
+    as the natural-number step count tends to infinity.
 tags:
 - functional-analysis
 - product-formulas

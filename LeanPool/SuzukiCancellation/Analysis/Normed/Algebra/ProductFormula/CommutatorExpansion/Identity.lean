@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -522,7 +522,7 @@ theorem commutatorExpansion_conj {𝔸 : Type*} [NormedRing 𝔸]
         rw [conjCoeff]
         rw [Finset.sum_eq_single_of_mem (s := finAntidiagonal 0 0) (a := 0)
           (f := fun q => ((∏ i : Fin 0, (Nat.factorial (q i) : ℝ))⁻¹ : ℝ) • adSequence A q B)]
-        · simp [adSequence]
+        · simp
         · rw [mem_finAntidiagonal]
           simp
         · intro b _ hb

@@ -61,6 +61,7 @@ public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SepticGlobalRemainder
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SepticLocalError
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SepticRemainder
+public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiArguments
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiCenteredLocalError
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiDefectJet
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiGlobalError

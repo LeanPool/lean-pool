@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -21,7 +21,7 @@ public import Mathlib.Data.Fintype.Fin
 Powers and sequences of adjoint maps, nested brackets, and their list and tuple
 representations. The first layer is innermost. These constructions and identities
 require no norm or topology. The existing `TrotterError` names are retained.
-`adSequenceLinear` supplies a linear-map view of the unchanged sequence definition.
+`adSequence` applies the linear endomorphism `adSequenceLinear`.
 
 ## Main definitions and results
 
@@ -46,17 +46,6 @@ attribute [local instance] LieRing.ofAssociativeRing
 abbrev adPow {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] (A : 𝔸) (q : ℕ) : Module.End ℝ 𝔸 :=
   (ad ℝ 𝔸 A) ^ q
 
-/-- The iterated `ad` over a sequence of operators with multiplicities,
-`ad_{A ⟨s-1⟩}^{q ⟨s-1⟩} ⋯ ad_{A ⟨0⟩}^{q ⟨0⟩}(B)`, where `A ⟨0⟩` is applied first
-(innermost) and `A ⟨s-1⟩` is applied last (outermost). -/
-def adSequence {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {s : ℕ} (A : Fin s → 𝔸)
-    (q : Fin s → ℕ) (B : 𝔸) : 𝔸 :=
-  match s with
-  | 0 => B
-  | s + 1 =>
-      adPow (A (Fin.last s)) (q (Fin.last s))
-        (adSequence (fun i : Fin s => A i.castSucc) (fun i : Fin s => q i.castSucc) B)
-
 /-- The composed adjoint sequence as a linear endomorphism, with the last layer outermost. -/
 def adSequenceLinear {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {s : ℕ} (A : Fin s → 𝔸)
     (q : Fin s → ℕ) : Module.End ℝ 𝔸 :=
@@ -66,13 +55,24 @@ def adSequenceLinear {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {s : ℕ} (A 
       adPow (A (Fin.last s)) (q (Fin.last s)) *
         adSequenceLinear (fun i : Fin s => A i.castSucc) (fun i : Fin s => q i.castSucc)
 
+/-- The iterated `ad` over a sequence of operators with multiplicities,
+`ad_{A ⟨s-1⟩}^{q ⟨s-1⟩} ⋯ ad_{A ⟨0⟩}^{q ⟨0⟩}(B)`, where `A ⟨0⟩` is applied first
+(innermost) and `A ⟨s-1⟩` is applied last (outermost). -/
+def adSequence {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {s : ℕ} (A : Fin s → 𝔸)
+    (q : Fin s → ℕ) (B : 𝔸) : 𝔸 :=
+  adSequenceLinear A q B
+
+@[simp] lemma adSequence_zero {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸]
+    (A : Fin 0 → 𝔸) (q : Fin 0 → ℕ) (B : 𝔸) : adSequence A q B = B := rfl
+
+lemma adSequence_succ {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {s : ℕ} (A : Fin (s + 1) → 𝔸)
+    (q : Fin (s + 1) → ℕ) (B : 𝔸) :
+    adSequence A q B = adPow (A (Fin.last s)) (q (Fin.last s))
+      (adSequence (fun i : Fin s => A i.castSucc) (fun i : Fin s => q i.castSucc) B) := rfl
+
 /-- The linear-map view evaluates to the original iterated adjoint sequence. -/
 lemma adSequenceLinear_apply {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {s : ℕ} (A : Fin s → 𝔸)
-    (q : Fin s → ℕ) (B : 𝔸) : adSequenceLinear A q B = adSequence A q B := by
-  induction s with
-  | zero => rfl
-  | succ s ih =>
-      simp only [adSequenceLinear, mul_apply_eq_comp, adSequence, ih]
+    (q : Fin s → ℕ) (B : 𝔸) : adSequenceLinear A q B = adSequence A q B := rfl
 
 /-- The nested commutator `[H ⟨p⟩, [H ⟨p-1⟩, ⋯ [H ⟨1⟩, H ⟨0⟩] ⋯]]` with exactly `p`
 brackets: `H ⟨0⟩` is innermost and `H ⟨p⟩` is outermost. -/
@@ -85,7 +85,7 @@ def nestedComm {𝔸 : Type*} [Ring 𝔸] {p : ℕ} (H : Fin (p + 1) → 𝔸) :
 lemma adSequence_snoc_zero {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {m : ℕ} (A : Fin (m + 1) → 𝔸)
     (q : Fin m → ℕ) (B : 𝔸) :
     adSequence A (Fin.snoc q 0) B = adSequence (fun i : Fin m => A i.castSucc) q B := by
-  rw [adSequence]
+  rw [adSequence_succ]
   simp [Fin.snoc_last]
 
 /-- Appending a multiplicity on the outermost layer of `adSequence`: the `k`-fold commutator of
@@ -94,7 +94,7 @@ lemma adSequence_snoc {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {m : ℕ} (A
     (q : Fin m → ℕ) (k : ℕ) (B : 𝔸) :
     adSequence A (Fin.snoc q k) B =
       adPow (A (Fin.last m)) k (adSequence (fun i : Fin m => A i.castSucc) q B) := by
-  rw [adSequence]
+  rw [adSequence_succ]
   simp [Fin.snoc_last, Fin.snoc_castSucc]
 
 /-- `adSequence A q` commutes with ℝ-scalar multiplication in its last argument `B`. -/
@@ -273,9 +273,9 @@ lemma adSequence_eq_nestedCommOfList {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ �
     (q : Fin s → ℕ) (B : 𝔸) :
     adSequence A q B = nestedCommOfList B (layersOf A q) := by
   induction s with
-  | zero => simp [adSequence, layersOf]
+  | zero => simp [layersOf]
   | succ s ih =>
-      rw [adSequence, ih (fun i : Fin s => A i.castSucc) (fun i : Fin s => q i.castSucc)]
+      rw [adSequence_succ, ih (fun i : Fin s => A i.castSucc) (fun i : Fin s => q i.castSucc)]
       have hlayers : layersOf A q = layersOf (fun i : Fin s => A i.castSucc)
           (fun i : Fin s => q i.castSucc) ++
           List.replicate (q (Fin.last s)) (A (Fin.last s)) := by
@@ -317,9 +317,9 @@ lemma adSequence_smul_fun {𝔸 : Type*} [Ring 𝔸] [Algebra ℝ 𝔸] {s : ℕ
     (A : Fin s → 𝔸) (q : Fin s → ℕ) (B : 𝔸) :
     adSequence (fun i => c i • A i) q B = (∏ i : Fin s, (c i) ^ q i) • adSequence A q B := by
   induction s with
-  | zero => simp [adSequence]
+  | zero => simp
   | succ s ih =>
-      rw [adSequence, adSequence, ih (fun i => c i.castSucc) (fun i => A i.castSucc)
+      rw [adSequence_succ, adSequence_succ, ih (fun i => c i.castSucc) (fun i => A i.castSucc)
           (fun i => q i.castSucc), adPow_smul_left, (adPow (A (Fin.last s))
           (q (Fin.last s))).map_smul, smul_smul, Fin.prod_univ_castSucc, mul_comm]
 

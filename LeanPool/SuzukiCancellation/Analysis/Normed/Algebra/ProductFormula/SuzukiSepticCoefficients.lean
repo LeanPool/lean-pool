@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -78,16 +78,9 @@ variable {A : Type*} [Ring A] [Algebra ℝ A]
 theorem conjCoeff_suzukiCentered_one (a b B : A) (p : ℝ) :
     conjCoeff (centeredConjugationList
       (List.ofFn (fiveStageStrangHalfGenerator a b p)) (a + b)).get B 1 = 0 := by
-  rw [conjCoeff_one]
-  have hs : ∑ i, (centeredConjugationList
-      (List.ofFn (fiveStageStrangHalfGenerator a b p)) (a + b)).get i = 0 := by
-    change (∑ i : Fin 7, ![((1 - 4 * p) / 2) • b, ((1 - 3 * p) / 2) • a,
-      p • b, p • a, p • b, (p / 2) • a, -(1 / 2 : ℝ) • (a + b)] i) = 0
-    simp only [Fin.sum_univ_succ, Fin.sum_univ_zero]
-    norm_num
-    module
-  rw [hs]
-  simp [Ring.lie_def]
+  apply conjCoeff_centeredConjugationList_one
+  rw [fiveStageStrangHalfGenerator_ofFn]
+  exact fiveStageStrangHalfArguments_sum a b p
 
 /-- The quadratic centered transport is the bracket with the complete `Ω₂`. -/
 theorem conjCoeff_suzukiCentered_two (a b B : A) (p : ℝ) :

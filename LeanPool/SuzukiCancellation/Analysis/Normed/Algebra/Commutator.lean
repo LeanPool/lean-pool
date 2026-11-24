@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -65,14 +65,14 @@ theorem norm_adSequence_le {𝔸 : Type*} [NormedRing 𝔸] [Algebra ℝ 𝔸] {
     (q : Fin s → ℕ) (B : 𝔸) :
     ‖adSequence A q B‖ ≤ (∏ i : Fin s, (2 * ‖A i‖) ^ (q i)) * ‖B‖ := by
   induction s with
-  | zero => simp [adSequence]
+  | zero => simp
   | succ s ih =>
       calc
         ‖adSequence A q B‖
             = ‖adPow (A (Fin.last s)) (q (Fin.last s))
                 (adSequence (fun i : Fin s => A i.castSucc)
                   (fun i : Fin s => q i.castSucc) B)‖ := by
-                rw [adSequence]
+                rw [adSequence_succ]
         _ ≤ (2 * ‖A (Fin.last s)‖) ^ (q (Fin.last s)) *
               ‖adSequence (fun i : Fin s => A i.castSucc)
                 (fun i : Fin s => q i.castSucc) B‖ :=

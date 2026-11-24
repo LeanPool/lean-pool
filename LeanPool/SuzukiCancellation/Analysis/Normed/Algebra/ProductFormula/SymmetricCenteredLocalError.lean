@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -46,14 +46,14 @@ variable {A : Type*} [Ring A] [Algebra ℝ A]
 @[simp] lemma conjCoeff_zero {s : ℕ} (Z : Fin s → A) (B : A) :
     conjCoeff Z B 0 = B := by
   induction s with
-  | zero => simp [conjCoeff, adSequence, finAntidiagonal_zero]
+  | zero => simp [conjCoeff, finAntidiagonal_zero]
   | succ s ih => simp [conjCoeff_succ, ih]
 
 /-- The linear coefficient is the bracket with the sum of all generators. -/
 lemma conjCoeff_one {s : ℕ} (Z : Fin s → A) (B : A) :
     conjCoeff Z B 1 = ⁅∑ i, Z i, B⁆ := by
   induction s with
-  | zero => simp [conjCoeff, adSequence, finAntidiagonal_zero, Ring.lie_def]
+  | zero => simp [conjCoeff, finAntidiagonal_zero, Ring.lie_def]
   | succ s ih =>
       rw [conjCoeff_succ]
       simp only [Nat.reduceAdd, sum_range_succ, range_one, sum_singleton,
@@ -71,6 +71,18 @@ namespace FQFP
 /-- The innermost-to-outermost generators of the centered half-product. -/
 def centeredConjugationList {A : Type*} [SMul ℝ A] (l : List A) (G : A) : List A :=
   l.reverse ++ [-(1 / 2 : ℝ) • G]
+
+/-- Consistency cancels the linear centered-conjugation coefficient. -/
+lemma conjCoeff_centeredConjugationList_one {A : Type*} [Ring A] [Algebra ℝ A]
+    (l : List A) (G B : A)
+    (hsum : l.sum = (1 / 2 : ℝ) • G) :
+    conjCoeff (centeredConjugationList l G).get B 1 = 0 := by
+  rw [conjCoeff_one]
+  have hs : ∑ i, (centeredConjugationList l G).get i = 0 := by
+    rw [← List.sum_ofFn, List.ofFn_get]
+    simp [centeredConjugationList, hsum]
+  rw [hs]
+  simp [Ring.lie_def]
 
 section Definitions
 
@@ -114,17 +126,6 @@ lemma multiConj_centeredConjugationList (l : List A) (G B : A) (x : ℝ) :
   rw [show x * -(1 / 2 : ℝ) = -x / 2 by ring,
     show -x * -(1 / 2 : ℝ) = x / 2 by ring]
   noncomm_ring
-
-/-- Consistency cancels the linear centered-conjugation coefficient. -/
-lemma conjCoeff_centeredConjugationList_one (l : List A) (G B : A)
-    (hsum : l.sum = (1 / 2 : ℝ) • G) :
-    conjCoeff (centeredConjugationList l G).get B 1 = 0 := by
-  rw [conjCoeff_one]
-  have hs : ∑ i, (centeredConjugationList l G).get i = 0 := by
-    rw [← List.sum_ofFn, List.ofFn_get]
-    simp [centeredConjugationList, hsum]
-  rw [hs]
-  simp [Ring.lie_def]
 
 /-- Centered half-generators inherit the two-sided exponential bounds. -/
 lemma norm_exp_smul_centeredConjugationList_le_one (l : List A) (G : A)

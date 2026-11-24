@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -273,7 +273,7 @@ lemma groupedConjCoeff_zero_kicks_eq_conjCoeff {𝔸 : Type*} [Ring 𝔸]
   induction s generalizing n with
   | zero =>
       by_cases hn : n = 0
-      · simp [groupedConjCoeff, conjCoeff, hn, adSequence, finAntidiagonal_zero]
+      · simp [groupedConjCoeff, conjCoeff, hn, finAntidiagonal_zero]
       · simp [groupedConjCoeff, conjCoeff, hn, finAntidiagonal_zero]
   | succ s ih => simp only [groupedConjCoeff, conjCoeff_succ, ih, ite_self, add_zero]
 

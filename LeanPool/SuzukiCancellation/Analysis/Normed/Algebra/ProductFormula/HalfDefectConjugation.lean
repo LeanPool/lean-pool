@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -95,8 +95,8 @@ lemma conjCoeff_get_nil (B : A) (n : ℕ) :
     conjCoeff (fun i : Fin ([] : List A).length ↦ -([] : List A).get i) B n =
       if n = 0 then B else 0 := by
   by_cases hn : n = 0
-  · simp [conjCoeff, adSequence, finAntidiagonal_zero, hn]
-  · simp [conjCoeff, adSequence, finAntidiagonal_zero, hn]
+  · simp [conjCoeff, finAntidiagonal_zero, hn]
+  · simp [conjCoeff, finAntidiagonal_zero, hn]
 
 /-- The kick coefficients are the sum of the ordinary conjugation coefficients of their suffixes. -/
 lemma groupedConjCoeff_eq_conjCoeff_sum (l : List A) (G : A) (n : ℕ) :

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -79,7 +79,8 @@ attribute [scoped instance 100] normedAlgebraReal
 end RealScalar
 
 /-- A complete normed `ℚ`-algebra carries a unique `NormedAlgebra ℝ` structure. -/
-noncomputable instance realNormedAlgebraUnique [CompleteSpace 𝔸] :
+@[instance_reducible]
+noncomputable def realNormedAlgebraUnique [CompleteSpace 𝔸] :
     Unique (NormedAlgebra ℝ 𝔸) where
   default := normedAlgebraReal 𝔸
   uniq h := by
@@ -96,3 +97,9 @@ noncomputable instance realNormedAlgebraUnique [CompleteSpace 𝔸] :
     · exact isClosed_eq (by fun_prop) (by simp only [algebraMap]; fun_prop)
     · rw [← eq_ratCast (algebraMap ℚ ℝ), ← IsScalarTower.rat.algebraMap_apply,
         ← @(@IsScalarTower.rat _ _ _ _ (normedAlgebraReal 𝔸).toModule ..).algebraMap_apply]
+
+namespace RealScalar
+
+attribute [scoped instance] realNormedAlgebraUnique
+
+end RealScalar

@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -750,24 +750,9 @@ theorem exp_eq_one_of_norm_lt (z : 𝔸) (hz : exp z = 1) (hn : ‖z‖ < Real.l
     calc Real.exp ‖z‖ < Real.exp (Real.log 2) := Real.exp_strictMono hn
       _ = 2 := Real.exp_log (by norm_num)
   have h_half : ‖z‖ < 1 / 2 := by linarith
-  have h_exp_bound : Real.exp ‖z‖ * (1 - ‖z‖) ≤ 1 := by
-    have h_exp := hasSum_real_exp ‖z‖
-    have h_geom := hasSum_geometric_of_lt_one (norm_nonneg z) (by linarith)
-    have hle : Real.exp ‖z‖ ≤ (1 - ‖z‖)⁻¹ := by
-      calc Real.exp ‖z‖ = ∑' n : ℕ, (Nat.factorial n : ℝ)⁻¹ * ‖z‖ ^ n := h_exp.tsum_eq.symm
-        _ ≤ ∑' n : ℕ, ‖z‖ ^ n := by
-            refine h_exp.summable.tsum_le_tsum (fun n => ?_) h_geom.summable
-            have hfac : (Nat.factorial n : ℝ)⁻¹ ≤ 1 := by
-              rw [inv_le_one₀ (by positivity)]
-              exact_mod_cast Nat.one_le_iff_ne_zero.mpr (Nat.factorial_ne_zero n)
-            calc (Nat.factorial n : ℝ)⁻¹ * ‖z‖ ^ n ≤ 1 * ‖z‖ ^ n :=
-                  mul_le_mul_of_nonneg_right hfac (pow_nonneg (norm_nonneg z) n)
-              _ = ‖z‖ ^ n := one_mul _
-        _ = (1 - ‖z‖)⁻¹ := h_geom.tsum_eq
-    calc Real.exp ‖z‖ * (1 - ‖z‖) ≤ (1 - ‖z‖)⁻¹ * (1 - ‖z‖) :=
-          mul_le_mul_of_nonneg_right hle (by linarith)
-      _ = 1 := inv_mul_cancel₀ (by linarith)
-  nlinarith [norm_nonneg z, pow_nonneg (norm_nonneg z) 2]
+  have hs : ‖z‖ < 1 := by linarith
+  have hquad := real_exp_sub_one_sub_id_le_sq (norm_nonneg z) hs.le
+  nlinarith only [hbound, hquad, mul_pos hzpos (sub_pos.mpr hs)]
 
 /-! ### Continuity of `log (1 + ·)` on a closed ball
 

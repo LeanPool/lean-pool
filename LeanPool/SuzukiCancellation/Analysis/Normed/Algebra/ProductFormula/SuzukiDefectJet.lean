@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -35,31 +35,6 @@ open scoped RealScalar
 namespace FQFP.BCH
 
 variable {A : Type*} [Ring A] [Algebra ℝ A]
-
-/-- The six ordered half-generators of the five-stage Strang composition. -/
-def fiveStageStrangHalfGenerator (a b : A) (p : ℝ) : Fin 6 → A :=
-  ![(p / 2) • a, p • b, p • a, p • b, ((1 - 3 * p) / 2) • a,
-    ((1 - 4 * p) / 2) • b]
-
-section
-
-variable {A : Type*} [NormedRing A] [NormedAlgebra ℝ A]
-
-/-- Finite indexing lists exactly the existing half-arguments at unit time. -/
-theorem fiveStageStrangHalfGenerator_ofFn (a b : A) (p : ℝ) :
-    List.ofFn (fiveStageStrangHalfGenerator a b p) =
-      fiveStageStrangHalfArguments a b p 1 := by
-  simp [fiveStageStrangHalfGenerator, fiveStageStrangHalfArguments, List.ofFn_succ]
-
-/-- The half-arguments scale homogeneously with time. -/
-lemma fiveStageStrangHalfArguments_smul (a b : A) (p t : ℝ) :
-    fiveStageStrangHalfArguments a b p t =
-      (fiveStageStrangHalfArguments a b p 1).map (fun Z ↦ t • Z) := by
-  simp only [fiveStageStrangHalfArguments, List.map_cons, List.map_nil, smul_smul, mul_one]
-  simp only [List.cons.injEq, and_true]
-  exact ⟨by module, by module, by module, by module, by module, by module⟩
-
-end
 
 section
 

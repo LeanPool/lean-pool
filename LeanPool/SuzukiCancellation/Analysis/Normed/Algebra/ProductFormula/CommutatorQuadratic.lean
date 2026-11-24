@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
@@ -50,7 +50,7 @@ lemma αCommConj_cons {s : ℕ} (Z : Fin (s + 1) → A) (B : A) (p : ℕ) :
 @[simp] lemma αCommConj_zero {s : ℕ} (Z : Fin s → A) (B : A) :
     αCommConj Z B 0 = ‖B‖ := by
   induction s with
-  | zero => simp [αCommConj, finAntidiagonal_zero, adSequence]
+  | zero => simp [αCommConj, finAntidiagonal_zero]
   | succ s ih =>
       rw [αCommConj_cons]
       simpa only [sum_range_succ, sum_range_zero, zero_add, Nat.choose_zero_right,

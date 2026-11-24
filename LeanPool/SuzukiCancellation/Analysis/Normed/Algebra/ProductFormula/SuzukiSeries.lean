@@ -4,13 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: verified intermediate tables and updated module paths. -/
+/- Modified for Lean Pool: staged the coefficient certificates and narrowed imports. -/
 
 module
 
 public import LeanPool.SuzukiCancellation.RingTheory.PowerSeries.Noncommutative.ExponentialListCoefficients
 public import LeanPool.SuzukiCancellation.Algebra.Word.CentralBinaryTable
-public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.Palindromic
+public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiArguments
 public import LeanPool.SuzukiCancellation.Algebra.Lie.BCH.SuzukiTerms
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiParameter
 

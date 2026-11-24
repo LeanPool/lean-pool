@@ -4,11 +4,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: updated module paths. -/
+/- Modified for Lean Pool: updated module paths and consolidated proofs. -/
 
 module
 
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.RealScalar
+public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.Palindromic
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiJet
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ExponentialListTaylor
 
