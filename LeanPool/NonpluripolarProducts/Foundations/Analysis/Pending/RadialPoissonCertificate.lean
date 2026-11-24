@@ -67,7 +67,7 @@ theorem explicitRadialKernel_eq_sqProfile_norm_sq
     (R : ℝ) (hR : 0 < R) (j : ℕ) (x : ComplexModel n) :
     explicitRadialKernel R hR j x =
       explicitRadialKernelSqProfile (n := n) R hR j (‖x‖ ^ 2) := by
-  rw [explicitRadialKernel, explicitRadialKernelSqProfile,
+  rw [explicitRadialKernel, coordinateRadialKernel, explicitRadialKernelSqProfile,
     explicitRadialRaw_eq_sqProfile_norm_sq]
 
 /-- The squared-radius profile is already constant on a full neighborhood of

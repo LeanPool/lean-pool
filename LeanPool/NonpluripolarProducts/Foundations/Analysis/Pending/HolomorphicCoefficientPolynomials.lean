@@ -17,8 +17,8 @@ public import Mathlib.Analysis.Calculus.FDeriv.Mul
 /-!
 # Polynomials with holomorphic coefficients
 
-Tools for the local proper projection theorem for analytic sets (Gunning--Rossi, III.B;
-Chirka, §3.7), where a Weierstrass polynomial `t^d + ∑_{k<d} a_k(z) t^k` and the
+Tools for the local elimination argument in `AnalyticProjectionWeierstrass`,
+where a Weierstrass polynomial `t^d + ∑_{k<d} a_k(z) t^k` and the
 remainders of Weierstrass division are treated as polynomials in `t` whose coefficients
 depend holomorphically on `z`.
 

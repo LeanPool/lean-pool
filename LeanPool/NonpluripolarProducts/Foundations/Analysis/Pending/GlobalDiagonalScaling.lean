@@ -106,6 +106,103 @@ theorem globalMixedMeasure_pole_null_of_nondegenerate {θ : Fin n → ClosedReal
     globalMixedMeasure θ u hu {p | v p = ⊥} = 0 :=
   globalMixedMeasure_pole_null_of_quasiPsh hu ⟨hv.1.quasiPlurisubharmonic, hv.2⟩
 
+/-- A convex combination of two nondegenerate potentials dominates the scaled diagonal
+measure of its first potential. Update one slot at a time using positive slot linearity. -/
+theorem globalMixedMeasure_diagonal_add_smul_le {θ : ClosedRealOneOneForm n M}
+    {a b : M → EReal} (ha : IsThetaPshPotential θ.val a)
+    (hb : IsThetaPshPotential θ.val b) {t : ℝ} (ht0 : 0 < t) (ht1 : t < 1)
+    (hwθ : ThetaPlurisubharmonic θ.val
+      (fun p => (t : EReal) * a p + ((1 - t : ℝ) : EReal) * b p)) (S : Set M) :
+    ENNReal.ofReal (t ^ n) *
+        globalMixedMeasure (fun _ => θ) (fun _ => a) (fun _ => ha.1) S ≤
+      globalMixedMeasure (fun _ => θ)
+        (fun _ p => (t : EReal) * a p + ((1 - t : ℝ) : EReal) * b p)
+        (fun _ => hwθ) S := by
+  have hr : 0 < 1 - t := sub_pos.mpr ht1
+  have hθeq : t • θ + (1 - t) • θ = θ := by rw [← add_smul, add_sub_cancel, one_smul]
+  set w : M → EReal := fun p => (t : EReal) * a p + ((1 - t : ℝ) : EReal) * b p
+  -- The tuples whose first `m` slots carry `w` and the others `a`.
+  let x : ℕ → Fin n → M → EReal := fun m i => if (i : ℕ) < m then w else a
+  have hx : ∀ m i, ThetaPlurisubharmonic ((fun _ : Fin n => θ) i).val (x m i) := by
+    intro m i
+    by_cases h : (i : ℕ) < m
+    · simpa only [x, h, ite_true] using hwθ
+    · simpa only [x, h, ite_false] using ha.1
+  have step : ∀ m, m ≤ n → ∀ S : Set M, ENNReal.ofReal (t ^ m) *
+      globalMixedMeasure (fun _ => θ) (fun _ => a) (fun _ => ha.1) S ≤
+      globalMixedMeasure (fun _ => θ) (x m) (hx m) S := by
+    intro m
+    induction m with
+    | zero =>
+      intro _ S
+      have e : x 0 = fun _ => a := by funext i; simp [x]
+      rw [pow_zero, ENNReal.ofReal_one, one_mul,
+        globalMixedMeasure_congr rfl e (hx 0) (fun _ => ha.1)]
+    | succ m ih =>
+      intro hm S
+      have hmn : m < n := hm
+      set i₀ : Fin n := ⟨m, hmn⟩ with hi₀
+      have e1 : x (m + 1) = Function.update (x m) i₀ w := by
+        funext i
+        by_cases h : i = i₀
+        · rw [h, Function.update_self]; simp [x, i₀]
+        · rw [Function.update_of_ne h]
+          have him : (i : ℕ) ≠ m := fun h' => h (Fin.ext h')
+          simp only [x]
+          split_ifs <;> first | rfl | omega
+      have e2 : Function.update (x m) i₀ a = x m := by
+        funext i
+        by_cases h : i = i₀
+        · rw [h, Function.update_self]; simp [x, i₀]
+        · rw [Function.update_of_ne h]
+      have eθ : Function.update (fun _ : Fin n => θ) i₀ θ = fun _ => θ :=
+        Function.update_eq_self i₀ _
+      have hc' : ∀ i, ThetaPlurisubharmonic ((fun _ : Fin n => θ) i).val
+          (Function.update (x m) i₀ w i) := by
+        rw [← e1]; exact hx (m + 1)
+      have ha' : ∀ i, ThetaPlurisubharmonic
+          (Function.update (fun _ : Fin n => θ) i₀ θ i).val
+          (Function.update (x m) i₀ a i) := by
+        rw [eθ, e2]; exact hx m
+      have hb' : ∀ i, ThetaPlurisubharmonic
+          (Function.update (fun _ : Fin n => θ) i₀ θ i).val
+          (Function.update (x m) i₀ b i) := by
+        intro i
+        rw [eθ]
+        by_cases h : i = i₀
+        · rw [h, Function.update_self]; exact hb.1
+        · rw [Function.update_of_ne h]; exact hx m i
+      have hpa : globalMixedMeasure _ _ hb' {p | a p = ⊥} = 0 :=
+        globalMixedMeasure_pole_null_of_nondegenerate hb' ha
+      have hpb : globalMixedMeasure _ _ ha' {p | b p = ⊥} = 0 :=
+        globalMixedMeasure_pole_null_of_nondegenerate ha' hb
+      have hlin := GlobalSlotLinear.globalMixedMeasure_update_add_smul
+        (θ := fun _ => θ) i₀ ht0 hr hθeq.symm hc' ha' hb' hpa hpb
+      have hA : globalMixedMeasure (Function.update (fun _ => θ) i₀ θ)
+          (Function.update (x m) i₀ a) ha' =
+            globalMixedMeasure (fun _ => θ) (x m) (hx m) :=
+        globalMixedMeasure_congr eθ e2 _ _
+      have hC : globalMixedMeasure (fun _ => θ) (x (m + 1)) (hx (m + 1)) =
+          globalMixedMeasure (fun _ => θ)
+            (Function.update (x m) i₀ (fun p => (t : EReal) * a p +
+              ((1 - t : ℝ) : EReal) * b p)) hc' :=
+        globalMixedMeasure_congr rfl e1 _ _
+      rw [hC, hlin, hA, add_apply, smul_apply, smul_eq_mul]
+      calc ENNReal.ofReal (t ^ (m + 1)) *
+            globalMixedMeasure (fun _ => θ) (fun _ => a) (fun _ => ha.1) S
+          = ENNReal.ofReal t * (ENNReal.ofReal (t ^ m) *
+            globalMixedMeasure (fun _ => θ) (fun _ => a) (fun _ => ha.1) S) := by
+            rw [pow_succ', ENNReal.ofReal_mul ht0.le, mul_assoc]
+        _ ≤ ENNReal.ofReal t * globalMixedMeasure (fun _ => θ) (x m) (hx m) S := by
+            gcongr
+            exact ih (Nat.le_of_succ_le hm) S
+        _ ≤ _ := le_self_add
+  have hfull : x n = fun _ => w := by funext i; simp [x, i.isLt]
+  calc ENNReal.ofReal (t ^ n) *
+        globalMixedMeasure (fun _ => θ) (fun _ => a) (fun _ => ha.1) S
+      ≤ globalMixedMeasure (fun _ => θ) (x n) (hx n) S := step n le_rfl S
+    _ = _ := by rw [globalMixedMeasure_congr rfl hfull (hx n) _]
+
 /-- **Diagonal scaling in a semipositive background.** For a bounded `θ`-PSH
 potential `c` and `0 < ε < 1`, the diagonal measure of `(1 - ε) c - K` dominates
 `(1 - ε)ⁿ` times the diagonal measure of `c`. -/
@@ -126,81 +223,10 @@ theorem globalMixedMeasure_diagonal_scale {θ : ClosedRealOneOneForm n M}
   have hdθ : ThetaPlurisubharmonic θ.val d := by
     have h := thetaPlurisubharmonic_add_smul hs hε0 hc h0
     rwa [hθeq] at h
-  -- The tuples whose first `m` slots carry `d` and the others `c`.
-  let x : ℕ → Fin n → M → EReal := fun m i => if (i : ℕ) < m then d else c
-  have hx : ∀ m i, ThetaPlurisubharmonic ((fun _ : Fin n => θ) i).val (x m i) := by
-    intro m i
-    by_cases h : (i : ℕ) < m
-    · simpa only [x, h, ite_true] using hdθ
-    · simpa only [x, h, ite_false] using hc
-  have step : ∀ m, m ≤ n → ∀ S : Set M, ENNReal.ofReal ((1 - ε) ^ m) *
-      globalMixedMeasure (fun _ => θ) (fun _ => c) (fun _ => hc) S ≤
-      globalMixedMeasure (fun _ => θ) (x m) (hx m) S := by
-    intro m
-    induction m with
-    | zero =>
-      intro _ S
-      have e : x 0 = fun _ => c := by funext i; simp [x]
-      rw [pow_zero, ENNReal.ofReal_one, one_mul,
-        globalMixedMeasure_congr rfl e (hx 0) (fun _ => hc)]
-    | succ m ih =>
-      intro hm S
-      have hmn : m < n := hm
-      set i₀ : Fin n := ⟨m, hmn⟩ with hi₀
-      have e1 : x (m + 1) = Function.update (x m) i₀ d := by
-        funext i
-        by_cases h : i = i₀
-        · rw [h, Function.update_self]; simp [x, i₀]
-        · rw [Function.update_of_ne h]
-          have him : (i : ℕ) ≠ m := fun h' => h (Fin.ext h')
-          simp only [x]
-          split_ifs <;> first | rfl | omega
-      have e2 : Function.update (x m) i₀ c = x m := by
-        funext i
-        by_cases h : i = i₀
-        · rw [h, Function.update_self]; simp [x, i₀]
-        · rw [Function.update_of_ne h]
-      have eθ : Function.update (fun _ : Fin n => θ) i₀ θ = fun _ => θ :=
-        Function.update_eq_self i₀ _
-      have hc' : ∀ i, ThetaPlurisubharmonic ((fun _ : Fin n => θ) i).val
-          (Function.update (x m) i₀ d i) := by
-        rw [← e1]; exact hx (m + 1)
-      have ha' : ∀ i, ThetaPlurisubharmonic (Function.update (fun _ : Fin n => θ) i₀ θ i).val
-          (Function.update (x m) i₀ c i) := by
-        rw [eθ, e2]; exact hx m
-      have hb' : ∀ i, ThetaPlurisubharmonic (Function.update (fun _ : Fin n => θ) i₀ θ i).val
-          (Function.update (x m) i₀ (fun _ : M => (0 : EReal)) i) := by
-        intro i
-        rw [eθ]
-        by_cases h : i = i₀
-        · rw [h, Function.update_self]; exact h0
-        · rw [Function.update_of_ne h]; exact hx m i
-      have hpa : globalMixedMeasure _ _ hb' {p | c p = ⊥} = 0 := by
-        have : {p | c p = ⊥} = ∅ := eq_empty_of_forall_notMem fun p hp => hcb.ne_bot p hp
-        rw [this, measure_empty]
-      have hpb : globalMixedMeasure _ _ ha' {p | (fun _ : M => (0 : EReal)) p = ⊥} = 0 := by
-        have : {p | (fun _ : M => (0 : EReal)) p = ⊥} = ∅ :=
-          eq_empty_of_forall_notMem fun p hp => EReal.zero_ne_bot hp
-        rw [this, measure_empty]
-      have hlin := GlobalSlotLinear.globalMixedMeasure_update_add_smul (θ := fun _ => θ) i₀
-        hs hε0 hθeq.symm hc' ha' hb' hpa hpb
-      have hA : globalMixedMeasure (Function.update (fun _ => θ) i₀ θ)
-          (Function.update (x m) i₀ c) ha' = globalMixedMeasure (fun _ => θ) (x m) (hx m) :=
-        globalMixedMeasure_congr eθ e2 _ _
-      have hC : globalMixedMeasure (fun _ => θ) (x (m + 1)) (hx (m + 1)) =
-          globalMixedMeasure (fun _ => θ) (Function.update (x m) i₀ d) hc' :=
-        globalMixedMeasure_congr rfl e1 _ _
-      rw [hC, hlin, hA, add_apply, smul_apply, smul_eq_mul]
-      calc ENNReal.ofReal ((1 - ε) ^ (m + 1)) *
-            globalMixedMeasure (fun _ => θ) (fun _ => c) (fun _ => hc) S
-          = ENNReal.ofReal (1 - ε) * (ENNReal.ofReal ((1 - ε) ^ m) *
-            globalMixedMeasure (fun _ => θ) (fun _ => c) (fun _ => hc) S) := by
-            rw [pow_succ', ENNReal.ofReal_mul hs.le, mul_assoc]
-        _ ≤ ENNReal.ofReal (1 - ε) * globalMixedMeasure (fun _ => θ) (x m) (hx m) S := by
-            gcongr
-            exact ih (Nat.le_of_succ_le hm) S
-        _ ≤ _ := le_self_add
-  have hfull : x n = fun _ => d := by funext i; simp [x, i.isLt]
+  have hcn : IsThetaPshPotential θ.val c :=
+    ⟨hc, fun p U _ hp => ⟨p, hp, hcb.ne_bot p⟩⟩
+  have h0n : IsThetaPshPotential θ.val (fun _ : M => (0 : EReal)) :=
+    ⟨h0, fun p U _ hp => ⟨p, hp, EReal.zero_ne_bot⟩⟩
   have hdK : ThetaPlurisubharmonic θ.val (fun p => d p - (K : EReal)) :=
     thetaPlurisubharmonic_sub_const hdθ K
   have efin : (fun p => (((1 - ε) * (c p).toReal - K : ℝ) : EReal)) =
@@ -216,9 +242,13 @@ theorem globalMixedMeasure_diagonal_scale {θ : ClosedRealOneOneForm n M}
     (u := fun _ => d) (fun _ => hdθ) (fun _ => K)
   calc ENNReal.ofReal ((1 - ε) ^ n) *
         globalMixedMeasure (fun _ => θ) (fun _ => c) (fun _ => hc) S
-      ≤ globalMixedMeasure (fun _ => θ) (x n) (hx n) S := step n le_rfl S
-    _ = globalMixedMeasure (fun _ => θ) (fun _ => d) (fun _ => hdθ) S := by
-        rw [globalMixedMeasure_congr rfl hfull (hx n) (fun _ => hdθ)]
+      ≤ globalMixedMeasure (fun _ => θ) (fun _ => d) (fun _ => hdθ) S := by
+        have hw : ThetaPlurisubharmonic θ.val
+            (fun p => ((1 - ε : ℝ) : EReal) * c p +
+              ((1 - (1 - ε) : ℝ) : EReal) * (fun _ : M => (0 : EReal)) p) := by
+          simpa only [d, sub_sub_cancel] using hdθ
+        simpa only [d, sub_sub_cancel] using
+          globalMixedMeasure_diagonal_add_smul_le hcn h0n hs (by linarith) hw S
     _ = _ := by
         rw [← hsub]
         exact congrArg (fun μ : Measure M => μ S)

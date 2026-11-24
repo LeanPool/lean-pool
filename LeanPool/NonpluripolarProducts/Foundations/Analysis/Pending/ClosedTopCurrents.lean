@@ -11,7 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopBidimensionCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ZeroDerivativeMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothCurrentClosedness
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ManifoldTubePositivity
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothDDCForm
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SlotTestForms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CurrentRestriction
 
@@ -54,7 +54,7 @@ namespace SGPT.Foundations.Analysis.Pending.ClosedTopCurrents
 open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere FirstPass.PositiveClasses
   StronglyPositiveForms ProductTestForms PositiveProductCurrents ClosedProductCurrents
   CurrentTraceMeasure IntegrationCurrent TopDegreeDensity TopBidimensionCurrents
-  SmoothCurrentClosedness ManifoldTubePositivity ChartPartition
+  SmoothCurrentClosedness SmoothDDCForm ChartPartition
 
 /-! ### The flat identity -/
 

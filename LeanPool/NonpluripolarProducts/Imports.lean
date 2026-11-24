@@ -251,7 +251,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Global
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalSlotLinear
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalSlotPerm
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalSlotStokes
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalTubeFunction
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GramDeterminant
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicCoefficientPolynomials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicGermNoetherian
@@ -272,10 +271,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.JointD
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.JointDecreasingSmoothMax
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerBoundedTruncation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerDomination
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerPerturbation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerPotentialNormalization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LastVariableTaylorDivision
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LeviFormHolomorphicComp
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorBiholomorphicProducts
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCalculus
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCanonicalTraceMeasure
@@ -310,9 +307,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalS
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalStatementAssembly
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalStatementConnected
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalTwoFormPoincare
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LogWeightFactorization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ManifoldPluripolar
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ManifoldTubePositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MassFromBoundedDifference
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MaximalPsh
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MaximalPshPeanoObstacle
@@ -340,7 +335,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.OneSlo
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.OrderUnitWeakCompactness
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PatchLocalBoundedMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PatchOverlap
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlaneTubePositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineEuclideanComparison
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineFiniteIntervalNeighborhoods
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifinePshTopology
@@ -358,7 +352,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Positi
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositiveProductCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositiveTestFunctional
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositivityLeviLink
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositivityPerturbation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ProductTestForms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PshConvexCone
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PshRegularizationLimit
@@ -409,10 +402,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaP
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaPshConvexCombination
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopBidimensionCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopDegreeDensity
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TubeSecondOrderVanishing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TwoFormPoincare
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.UniformBoundedGlobalMass
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.UniformTubePositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.UscWeightEventually
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.VaguePortmanteau
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WeierstrassDivisionAbstract

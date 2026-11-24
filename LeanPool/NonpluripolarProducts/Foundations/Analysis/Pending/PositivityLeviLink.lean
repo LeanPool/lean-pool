@@ -63,7 +63,7 @@ namespace SGPT.Foundations.Analysis.Pending.PositivityLeviLink
 open FirstPass FirstPass.MongeAmpere FirstPass.PositiveClasses StronglyPositiveForms
   ProductTestForms PositiveProductCurrents IntegrationCurrent TopDegreeDensity
   SmoothCurrentTraceMeasure CurrentTraceMeasure SmoothDDCForm ChartPartition SlotTestForms
-  ManifoldTubePositivity DirectionalLeviDensity ThetaPshChartLimitGluing IntegrationCurrentChart
+  DirectionalLeviDensity ThetaPshChartLimitGluing IntegrationCurrentChart
   SmoothCurrentClosedness
 
 /-! ### Distribution helpers -/

@@ -66,28 +66,6 @@ section Bounded
 
 variable {U : Opens (ComplexModel n)}
 
-/-- **A Bedford–Taylor product with a smooth pluriharmonic factor vanishes**:
-`B(u₁, …, h, …, u_p; T) = 0` when `h` is smooth on `U` with `dd^c h = 0` and `T` is closed
-    positive.
--/
-theorem btProduct_update_eq_zero_of_pluriharmonic (p q : ℕ) (T : LocalProductCurrent n U (q + p))
-    (hT : IsPositive T) (hTc : IsClosedAny (q + p) T) (u : Fin p → (ComplexModel n) → ℝ)
-    (hu : ∀ i, IsLocallyBoundedPshOn U (u i)) (j : Fin p) {h : (ComplexModel n) → ℝ}
-    (hh : ContDiffOn ℝ ∞ h U) (h0 : ∀ z ∈ (U : Set (ComplexModel n)), smoothDDC h z = 0) :
-    btProduct p q (Function.update u j h) T = 0 := by
-  have hhp : IsLocallyBoundedPshOn U h := isLocallyBoundedPshOn_of_continuousOn
-    (plurisubharmonicOn_coe_of_smoothDDC_eq_zero U.isOpen hh h0) hh.continuousOn
-  cases p with
-  | zero => exact j.elim0
-  | succ p =>
-    have h1 : q + (p + 1) = q + 1 + p := by omega
-    have hX := isPositive_btProduct p (q + 1) (Fin.tail (u ∘ Equiv.swap 0 j)) (castLPC h1 T)
-      (isPositive_castLPC h1 hT) (isClosedAny_castLPC h1 hTc) fun i => hu _
-    rw [btProduct_update_eq p q T hT hTc u hu j hhp,
-      btProduct_succ_eq_ddcMul p q (Function.update (u ∘ Equiv.swap 0 j) 0 h) T (castLPC h1 T)
-        (heq_castLPC h1 T), Fin.tail_update_zero, Function.update_self,
-      ddcMul_eq_zero_of_smoothDDC_eq_zero hX.1 hX.2 hh h0]
-
 variable {q : ℕ}
 
 /-- The trace measure of the zero current is zero. -/

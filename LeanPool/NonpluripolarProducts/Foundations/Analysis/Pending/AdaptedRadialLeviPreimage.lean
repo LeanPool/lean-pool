@@ -83,7 +83,7 @@ theorem coordinateRadialKernel_eq_inv_haarScalar_mul
     coordinateRadialKernel ν R hR j x =
       (Measure.addHaarScalarFactor ν volume : ℝ)⁻¹ *
         explicitRadialKernel R hR j x := by
-  rw [coordinateRadialKernel, explicitRadialKernel,
+  simp only [explicitRadialKernel, coordinateRadialKernel,
     integral_explicitRadialRaw_eq_haarScalar_mul ν R hR j]
   have hc : (Measure.addHaarScalarFactor ν volume : ℝ) ≠ 0 := by
     exact_mod_cast

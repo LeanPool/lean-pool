@@ -36,7 +36,7 @@ germs (`exists_irreducible_decomposition`).
 ## References
 
 * R. C. Gunning, H. Rossi, *Analytic functions of several complex variables*, §II.E.
-* E. M. Chirka, *Complex analytic sets*, §1.5.
+* E. M. Chirka, [*Complex analytic sets*](https://doi.org/10.1007/978-94-009-2366-9), §§5.3–5.4.
 * T. de Jong, G. Pfister, *Local analytic geometry*, §3.4.
 -/
 

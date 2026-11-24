@@ -25,7 +25,9 @@ Everything here follows from `oneSlotMassInvariance`, a statement about bounded
 potentials only, proved in `Pending.GlobalSlotStokes` with bounded BT products
 and a partition-of-unity Stokes argument, without assuming the unbounded global
 product's finite mass or mass calculus.
-Sources: BEGZ `pro:finite`, `equ:welldef`.
+The finiteness proof and its bounded Stokes and truncation-mass arguments are adapted from
+[Mingchen Xia's earlier envelope-property formalization](https://github.com/MingchenXia/envelope-property-lean/blob/bb7130411c5594e951c5923f8b82c021ce3d6c8d/EnvelopeProperty/ComplexGeometry/AnalyticGeometry/GlobalNonPluripolarKahler.lean)
+(2026-10-30, Apache-2.0). The mathematical reference is BEGZ, Proposition 1.6.
 -/
 
 @[expose] public section

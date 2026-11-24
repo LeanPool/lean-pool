@@ -22,8 +22,9 @@ bounded plurisubharmonic `f` on `Ω` and every continuous compactly supported `�
 
   `∫ χ f dμₖ → ∫ χ f dμ`
 
-(Błocki, *The complex Monge–Ampère operator in pluripotential theory*, lecture notes,
-formula (2.2.2) in the proof of Theorem 2.2.5).
+This local version extends the fixed-weight argument in
+[Błocki, equation (2.2.2)](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=45),
+which treats monotone bounded data agreeing on a common boundary collar of a ball.
 
 Proof. Choose an open `U` with `supp χ ⊆ U ⋐ Ω`; on `U` all slots are bounded by one
 constant `M`, so after shifting the slots by `-M` (gauge invariance) the domination by the
@@ -178,7 +179,7 @@ theorem IsBTLimit.le_relCapacity_of_abs_le {Ω U : Opens (ComplexModel n)}
     (fun i z hz ↦ by have := abs_le.1 (hwM i z hz); constructor <;> linarith) E
   rwa [Measure.restrict_eq_self _ hEU] at h2
 
-/-- **Convergence against a fixed plurisubharmonic weight** (Błocki, (2.2.2)). -/
+/-- Local convergence against a fixed plurisubharmonic weight under vague convergence. -/
 theorem tendsto_integral_mul_of_isBTLimit
     {Ω : Opens (ComplexModel n)} {v : ℕ → Fin n → ComplexModel n → ℝ}
     {μs : ℕ → Measure (ComplexModel n)} {u : Fin n → ComplexModel n → ℝ}

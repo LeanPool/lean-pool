@@ -118,12 +118,6 @@ theorem explicitRadialRaw_support (R : ℝ) (hR : 0 < R) (j : ℕ) :
   rw [mul_comm φ.rIn 2, ← hratio]
   rfl
 
-/-- The explicit radial profile normalized to have integral one. -/
-noncomputable def explicitRadialKernel (R : ℝ) (hR : 0 < R) (j : ℕ)
-    (x : ComplexModel n) : ℝ :=
-  explicitRadialRaw R hR j x /
-    ∫ y : ComplexModel n, explicitRadialRaw R hR j y
-
 theorem explicitRadialRaw_tsupport (R : ℝ) (hR : 0 < R) (j : ℕ) :
     tsupport (explicitRadialRaw (n := n) R hR j) =
       closedBall 0 (R / ((j : ℝ) + 1)) := by
@@ -135,32 +129,142 @@ theorem explicitRadialRaw_hasCompactSupport (R : ℝ) (hR : 0 < R) (j : ℕ) :
   rw [HasCompactSupport, explicitRadialRaw_tsupport R hR j]
   exact isCompact_closedBall _ _
 
-theorem explicitRadialRaw_integrable (R : ℝ) (hR : 0 < R) (j : ℕ) :
-    Integrable (explicitRadialRaw (n := n) R hR j) volume :=
+section RadialNormalization
+
+/-- The explicit radial profile normalized against an arbitrary additive Haar
+measure on the standard complex model. -/
+noncomputable def coordinateRadialKernel
+    (ν : Measure (ComplexModel n)) (R : ℝ) (hR : 0 < R) (j : ℕ)
+    (x : ComplexModel n) : ℝ :=
+  explicitRadialRaw R hR j x /
+    ∫ y : ComplexModel n, explicitRadialRaw R hR j y ∂ν
+
+variable (ν : Measure (ComplexModel n)) [ν.IsAddHaarMeasure]
+
+theorem explicitRadialRaw_integrable_haar (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    Integrable (explicitRadialRaw (n := n) R hR j) ν :=
   (explicitRadialRaw_contDiff R hR j).continuous.integrable_of_hasCompactSupport
     (explicitRadialRaw_hasCompactSupport R hR j)
 
-theorem explicitRadialRaw_integral_pos (R : ℝ) (hR : 0 < R) (j : ℕ) :
-    0 < ∫ x : ComplexModel n, explicitRadialRaw R hR j x := by
+theorem explicitRadialRaw_integral_pos_haar (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    0 < ∫ x : ComplexModel n, explicitRadialRaw R hR j x ∂ν := by
   refine (integral_pos_iff_support_of_nonneg
-    (explicitRadialRaw_nonneg R hR j) (explicitRadialRaw_integrable R hR j)).mpr ?_
+    (explicitRadialRaw_nonneg R hR j)
+    (explicitRadialRaw_integrable_haar ν R hR j)).mpr ?_
   rw [explicitRadialRaw_support R hR j]
-  exact measure_ball_pos volume 0 (by positivity)
+  exact measure_ball_pos ν 0 (by positivity)
+
+omit [ν.IsAddHaarMeasure] in
+theorem coordinateRadialKernel_contDiff (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    ContDiff ℝ (⊤ : ℕ∞) (coordinateRadialKernel ν R hR j) :=
+  (explicitRadialRaw_contDiff R hR j).div_const _
+
+theorem coordinateRadialKernel_nonneg (R : ℝ) (hR : 0 < R) (j : ℕ)
+    (x : ComplexModel n) : 0 ≤ coordinateRadialKernel ν R hR j x :=
+  div_nonneg (explicitRadialRaw_nonneg R hR j x)
+    (explicitRadialRaw_integral_pos_haar ν R hR j).le
+
+theorem coordinateRadialKernel_integral_one (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    ∫ x : ComplexModel n, coordinateRadialKernel ν R hR j x ∂ν = 1 := by
+  simp_rw [coordinateRadialKernel, div_eq_mul_inv,
+    mul_comm (explicitRadialRaw R hR j _), ← smul_eq_mul, integral_smul]
+  exact inv_mul_cancel₀ (explicitRadialRaw_integral_pos_haar ν R hR j).ne'
+
+theorem coordinateRadialKernel_support (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    Function.support (coordinateRadialKernel ν R hR j) =
+      ball 0 (R / ((j : ℝ) + 1)) := by
+  have hpos := explicitRadialRaw_integral_pos_haar (n := n) ν R hR j
+  change Function.support (fun x : ComplexModel n ↦
+    explicitRadialRaw R hR j x /
+      ∫ y : ComplexModel n, explicitRadialRaw R hR j y ∂ν) = _
+  rw [Function.support_div, Function.support_const hpos.ne', inter_univ,
+    explicitRadialRaw_support R hR j]
+
+theorem coordinateRadialKernel_tsupport (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    tsupport (coordinateRadialKernel ν R hR j) =
+      closedBall 0 (R / ((j : ℝ) + 1)) := by
+  rw [tsupport, coordinateRadialKernel_support ν R hR j,
+    closure_ball _ (by positivity : R / ((j : ℝ) + 1) ≠ 0)]
+
+theorem coordinateRadialKernel_hasCompactSupport
+    (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    HasCompactSupport (coordinateRadialKernel ν R hR j) := by
+  rw [HasCompactSupport, coordinateRadialKernel_tsupport ν R hR j]
+  exact isCompact_closedBall _ _
+
+theorem coordinateRadialKernel_integrable (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    Integrable (coordinateRadialKernel ν R hR j) ν :=
+  (coordinateRadialKernel_contDiff ν R hR j).continuous.integrable_of_hasCompactSupport
+    (coordinateRadialKernel_hasCompactSupport ν R hR j)
+
+theorem explicitRadialRaw_unitary (R : ℝ) (hR : 0 < R) (j : ℕ)
+    (a : ℂ) (ha : ‖a‖ = 1) (x : ComplexModel n) :
+    explicitRadialRaw R hR j (a • x) = explicitRadialRaw R hR j x := by
+  simp [explicitRadialRaw, ContDiffBumpBase.ofInnerProductSpace, norm_smul, ha]
+
+omit [ν.IsAddHaarMeasure] in
+theorem coordinateRadialKernel_unitary (R : ℝ) (hR : 0 < R) (j : ℕ)
+    (a : ℂ) (ha : ‖a‖ = 1) (x : ComplexModel n) :
+    coordinateRadialKernel ν R hR j (a • x) =
+      coordinateRadialKernel ν R hR j x := by
+  rw [coordinateRadialKernel, coordinateRadialKernel,
+    explicitRadialRaw_unitary R hR j a ha x]
+
+theorem coordinateRadialKernel_scale (R : ℝ) (hR : 0 < R) (a b : ℕ)
+    (x : ComplexModel n) :
+    coordinateRadialKernel ν R hR b x =
+      (((b : ℝ) + 1) / ((a : ℝ) + 1)) ^
+          Module.finrank ℝ (ComplexModel n) *
+        coordinateRadialKernel ν R hR a
+          ((((b : ℝ) + 1) / ((a : ℝ) + 1)) • x) := by
+  let q : ℝ := ((b : ℝ) + 1) / ((a : ℝ) + 1)
+  have hq : 0 < q := by
+    dsimp [q]
+    positivity
+  have hqpow : q ^ Module.finrank ℝ (ComplexModel n) ≠ 0 :=
+    pow_ne_zero _ hq.ne'
+  have hint :
+      (∫ y : ComplexModel n, explicitRadialRaw R hR b y ∂ν) =
+        (q ^ Module.finrank ℝ (ComplexModel n))⁻¹ *
+          ∫ y : ComplexModel n, explicitRadialRaw R hR a y ∂ν := by
+    rw [show (fun y : ComplexModel n ↦ explicitRadialRaw R hR b y) =
+        fun y ↦ explicitRadialRaw R hR a (q • y) by
+      funext y
+      exact explicitRadialRaw_scale R hR a b y]
+    simpa only [smul_eq_mul] using
+      (Measure.integral_comp_smul_of_nonneg ν
+        (explicitRadialRaw (n := n) R hR a) q (hR := hq.le))
+  rw [coordinateRadialKernel, coordinateRadialKernel,
+    explicitRadialRaw_scale R hR a b, hint]
+  dsimp [q]
+  field_simp [hqpow, (explicitRadialRaw_integral_pos_haar (n := n) ν R hR a).ne']
+
+end RadialNormalization
+
+/-- The explicit radial profile normalized against standard volume. -/
+noncomputable def explicitRadialKernel (R : ℝ) (hR : 0 < R) (j : ℕ)
+    (x : ComplexModel n) : ℝ :=
+  coordinateRadialKernel volume R hR j x
+
+theorem explicitRadialRaw_integrable (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    Integrable (explicitRadialRaw (n := n) R hR j) volume :=
+  explicitRadialRaw_integrable_haar volume R hR j
+
+theorem explicitRadialRaw_integral_pos (R : ℝ) (hR : 0 < R) (j : ℕ) :
+    0 < ∫ x : ComplexModel n, explicitRadialRaw R hR j x :=
+  explicitRadialRaw_integral_pos_haar volume R hR j
 
 theorem explicitRadialKernel_contDiff (R : ℝ) (hR : 0 < R) (j : ℕ) :
     ContDiff ℝ (⊤ : ℕ∞) (explicitRadialKernel (n := n) R hR j) :=
-  (explicitRadialRaw_contDiff R hR j).div_const _
+  coordinateRadialKernel_contDiff volume R hR j
 
 theorem explicitRadialKernel_nonneg (R : ℝ) (hR : 0 < R) (j : ℕ)
     (x : ComplexModel n) : 0 ≤ explicitRadialKernel R hR j x :=
-  div_nonneg (explicitRadialRaw_nonneg R hR j x)
-    (explicitRadialRaw_integral_pos R hR j).le
+  coordinateRadialKernel_nonneg volume R hR j x
 
 theorem explicitRadialKernel_integral_one (R : ℝ) (hR : 0 < R) (j : ℕ) :
-    ∫ x : ComplexModel n, explicitRadialKernel R hR j x = 1 := by
-  simp_rw [explicitRadialKernel, div_eq_mul_inv,
-    mul_comm (explicitRadialRaw R hR j _), ← smul_eq_mul, integral_smul]
-  exact inv_mul_cancel₀ (explicitRadialRaw_integral_pos R hR j).ne'
+    ∫ x : ComplexModel n, explicitRadialKernel R hR j x = 1 :=
+  coordinateRadialKernel_integral_one volume R hR j
 
 /-- Successive normalized kernels are exact dilates, including in complex
 dimension zero. -/
@@ -170,54 +274,25 @@ theorem explicitRadialKernel_scale (R : ℝ) (hR : 0 < R) (a b : ℕ)
       (((b : ℝ) + 1) / ((a : ℝ) + 1)) ^
           Module.finrank ℝ (ComplexModel n) *
         explicitRadialKernel R hR a
-          ((((b : ℝ) + 1) / ((a : ℝ) + 1)) • x) := by
-  let q : ℝ := ((b : ℝ) + 1) / ((a : ℝ) + 1)
-  have hq : 0 < q := by
-    dsimp [q]
-    positivity
-  have hqpow : q ^ Module.finrank ℝ (ComplexModel n) ≠ 0 :=
-    pow_ne_zero _ hq.ne'
-  have hint :
-      (∫ y : ComplexModel n, explicitRadialRaw R hR b y) =
-        (q ^ Module.finrank ℝ (ComplexModel n))⁻¹ *
-          ∫ y : ComplexModel n, explicitRadialRaw R hR a y := by
-    rw [show (fun y : ComplexModel n ↦ explicitRadialRaw R hR b y) =
-        fun y ↦ explicitRadialRaw R hR a (q • y) by
-      funext y
-      exact explicitRadialRaw_scale R hR a b y]
-    simpa only [smul_eq_mul] using
-      (Measure.integral_comp_smul_of_nonneg volume
-        (explicitRadialRaw (n := n) R hR a) q (hR := hq.le))
-  rw [explicitRadialKernel, explicitRadialKernel,
-    explicitRadialRaw_scale R hR a b, hint]
-  dsimp [q]
-  field_simp [hqpow, (explicitRadialRaw_integral_pos (n := n) R hR a).ne']
+          ((((b : ℝ) + 1) / ((a : ℝ) + 1)) • x) :=
+  coordinateRadialKernel_scale volume R hR a b x
 
 theorem explicitRadialKernel_tsupport (R : ℝ) (hR : 0 < R) (j : ℕ) :
     tsupport (explicitRadialKernel (n := n) R hR j) =
-      closedBall 0 (R / ((j : ℝ) + 1)) := by
-  have hpos := explicitRadialRaw_integral_pos (n := n) R hR j
-  rw [tsupport]
-  change closure (Function.support (fun x : ComplexModel n ↦
-    explicitRadialRaw R hR j x / ∫ y, explicitRadialRaw R hR j y)) = _
-  rw [Function.support_div, Function.support_const hpos.ne', inter_univ,
-    explicitRadialRaw_support R hR j,
-    closure_ball _ (by positivity : R / ((j : ℝ) + 1) ≠ 0)]
+      closedBall 0 (R / ((j : ℝ) + 1)) :=
+  coordinateRadialKernel_tsupport volume R hR j
 
 theorem explicitRadialKernel_hasCompactSupport (R : ℝ) (hR : 0 < R) (j : ℕ) :
-    HasCompactSupport (explicitRadialKernel (n := n) R hR j) := by
-  rw [HasCompactSupport, explicitRadialKernel_tsupport R hR j]
-  exact isCompact_closedBall _ _
+    HasCompactSupport (explicitRadialKernel (n := n) R hR j) :=
+  coordinateRadialKernel_hasCompactSupport volume R hR j
 
 /-- The explicit kernel is invariant under scalar unitary rotations.  This is
 the radial identity that the abstract `ContDiffBump` API does not expose. -/
 theorem explicitRadialKernel_unitary (R : ℝ) (hR : 0 < R) (j : ℕ)
     (a : ℂ) (ha : ‖a‖ = 1) (x : ComplexModel n) :
     explicitRadialKernel R hR j (a • x) =
-      explicitRadialKernel R hR j x := by
-  rw [explicitRadialKernel, explicitRadialKernel]
-  congr 1
-  simp [explicitRadialRaw, ContDiffBumpBase.ofInnerProductSpace, norm_smul, ha]
+      explicitRadialKernel R hR j x :=
+  coordinateRadialKernel_unitary volume R hR j a ha x
 
 /-- The explicit raw profile is one on its inner closed ball. -/
 theorem explicitRadialRaw_eq_one_of_mem_closedBall

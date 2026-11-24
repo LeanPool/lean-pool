@@ -20,12 +20,15 @@ manifold, `V = sup_j v_j` and `V^*` its upper semicontinuous regularization (ass
 Then for every bounded `θ`-PSH potential `w`, the non-pluripolar measure `(θ + ddᶜw)ⁿ` does not
 charge the *negligible set* `{V < V^*}` (`diagonalPotentialMeasure_negligible_eq_zero`).
 
-This is the measure half of Bedford--Taylor's theorem "negligible sets are pluripolar"
-(Bedford--Taylor 1982, Thm 7.1; Błocki's lecture notes, §2.2).  In a chart the measure is the
-Bedford--Taylor measure `μ` of the corrected potential of `w`, and the corrected potentials of
-the `v_j` form an increasing approximation of that of `V^*` (they converge to it Lebesgue-almost
-everywhere: `ae_uscRegularization_iSup_eq_on_ball`).  The Bedford--Taylor convergence theorem
-for increasing sequences with a fixed measure and increasing weights
+The mathematical inputs are the pluripolarity of negligible sets
+([Błocki, Theorem 3.1.2](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=54))
+and the capacity bound behind noncharging of pluripolar sets
+([Błocki, Proposition 2.2.3](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=43)).
+The Lean proof obtains the measure consequence by increasing approximation. In a chart the
+measure is the Bedford–Taylor measure `μ` of the corrected potential of `w`. The corrected
+potentials of the `v_j` form an increasing approximation of that of `V^*` (they converge to it
+Lebesgue-almost everywhere by `ae_uscRegularization_iSup_eq_on_ball`). The
+Bedford–Taylor convergence theorem for increasing sequences with a fixed measure and weights
 (`BedfordTaylor.incWClaim_all`, Cegrell's proof) gives `∫ χ (VTilde^* - vTilde_k) dμ → 0`.
 Markov's inequality gives `μ{vTilde_k + δ ≤ VTilde^* ∀ k} = 0` (`measure_inter_gap_eq_zero`).
 A finite chart cover finishes the proof.

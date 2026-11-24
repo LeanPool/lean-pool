@@ -8,6 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateDensityGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ExteriorDerivative
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HolomorphicDDC
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalPotentials
@@ -88,6 +89,21 @@ def ddcForm (ψ : M → ℝ) (hψ : ChartSmooth (n := n) ψ) : SmoothRealForm n 
 @[simp] theorem ddcForm_coeff (ψ : M → ℝ) (hψ : ChartSmooth (n := n) ψ)
     (e : ComplexChart n M) :
     (ddcForm ψ hψ).coeff e = smoothDDC fun z => ψ (e.val.symm z) := rfl
+
+/-- **`ddᶜψ` of a chart-smooth function as a closed real `(1,1)`-form.**
+`ddcForm` gives the overlap law, and `d² = 0` and `J`-invariance give the remaining fields. -/
+def ddcClosedForm (ψ : M → ℝ) (hψ : ChartSmooth (n := n) ψ) :
+    ClosedRealOneOneForm n M :=
+  ⟨ddcForm ψ hψ, SmoothRealForm.exteriorDerivative_isClosed _, by
+    intro e z hz u v
+    rw [ddcForm_coeff]
+    exact MongeAmpere.smoothDDC_isOneOne
+      (((hψ e).contDiffAt (e.val.open_target.mem_nhds hz)).of_le
+        (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) u v⟩
+
+@[simp] theorem ddcClosedForm_coeff (ψ : M → ℝ) (hψ : ChartSmooth (n := n) ψ)
+    (e : ComplexChart n M) :
+    (ddcClosedForm ψ hψ).val.coeff e = smoothDDC fun z => ψ (e.val.symm z) := rfl
 
 variable [CompactSpace M]
 

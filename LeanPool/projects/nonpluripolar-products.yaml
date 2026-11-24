@@ -3,7 +3,9 @@ title: Nonpluripolar products of positive currents
 summary: Constructs nonpluripolar products from compatible local potentials on
   complex manifolds and proves independence of the local presentation. The
   development also establishes compatibility with locally bounded
-  Bedford–Taylor factors and finiteness of the mixed measure on compact Kähler manifolds.
+  Bedford–Taylor factors. It reuses results from Mingchen Xia's earlier
+  envelope-property formalization, including finiteness of the mixed measure
+  on compact Kähler manifolds.
 branch: complex analysis
 entry_module: LeanPool.NonpluripolarProducts
 authors:

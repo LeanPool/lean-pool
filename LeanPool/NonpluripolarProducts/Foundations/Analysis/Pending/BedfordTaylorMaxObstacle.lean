@@ -101,38 +101,11 @@ theorem IsSmoothPsdOn.mono {U V : Opens (ComplexModel n)} {g : ComplexModel n �
     (hg : IsSmoothPsdOn U g) (hVU : V ≤ U) : IsSmoothPsdOn V g :=
   ⟨hg.1.mono hVU, fun z hz ↦ hg.2 z (hVU hz)⟩
 
-theorem maxTupleObstacle_zero (u g : Fin n → ComplexModel n → ℝ) :
-    maxTupleObstacle u g 0 = u := by
-  funext i; simp [maxTupleObstacle]
-
-theorem maxTupleObstacle_succ (u g : Fin n → ComplexModel n → ℝ) {k : ℕ} (hk : k < n) :
-    maxTupleObstacle u g (k + 1) =
-      Function.update (maxTupleObstacle u g k) ⟨k, hk⟩
-        (fun z ↦ max (maxTupleObstacle u g k ⟨k, hk⟩ z) (g ⟨k, hk⟩ z)) := by
-  funext i
-  by_cases h : i = ⟨k, hk⟩
-  · subst h; simp [maxTupleObstacle]
-  · have hik : i.val ≠ k := fun h' ↦ h (Fin.ext h')
-    simp only [maxTupleObstacle, Function.update_of_ne h]
-    by_cases hlt : i.val < k
-    · simp [hlt, show i.val < k + 1 by omega]
-    · simp [hlt, show ¬ i.val < k + 1 by omega]
-
-theorem maxTupleObstacle_apply_self (u g : Fin n → ComplexModel n → ℝ) {k : ℕ} (hk : k < n) :
-    maxTupleObstacle u g k ⟨k, hk⟩ = u ⟨k, hk⟩ := by
-  simp [maxTupleObstacle]
-
 theorem exists_isAdmissible_maxTupleObstacle {U : Opens (ComplexModel n)}
     {u g : Fin n → ComplexModel n → ℝ} {F : Fin n → ℕ → ComplexModel n → ℝ}
     (hF : IsAdmissible n U u F) (hg : ∀ i, IsSmoothPsdOn U (g i)) (k : ℕ) :
-    ∃ F', IsAdmissible n U (maxTupleObstacle u g k) F' := by
-  classical
-  refine ⟨fun i ↦ if i.val < k then
-    (fun j ↦ scaledSmoothMax (maxScale j) (F i j) (g i)) else F i,
-    fun i ↦ ?_, fun i hi ↦ absurd i.isLt (not_lt.mpr hi)⟩
-  by_cases h : i.val < k
-  · simpa [maxTupleObstacle, h] using (hF.1 i).scaledSmoothMax (hg i)
-  · simpa [maxTupleObstacle, h] using hF.1 i
+    ∃ F', IsAdmissible n U (maxTupleObstacle u g k) F' :=
+  exists_isAdmissible_joint_maxTuple hF (fun i ↦ isDecApprox_const (hg i)) k
 
 /-- **Locality in all slots over smooth obstacles, on a relatively compact set.** -/
 theorem restrict_eq_maxTupleObstacle {U : Opens (ComplexModel n)}
@@ -144,18 +117,8 @@ theorem restrict_eq_maxTupleObstacle {U : Opens (ComplexModel n)}
       (∀ K, IsCompact K → K ⊆ U → μ' K < ⊤) →
       (∀ F, IsAdmissible n U (maxTupleObstacle u g k) F → TendstoMixed U F μ') →
       μ'.restrict {z | z ∈ U ∧ ∀ i, g i z < u i z} =
-        μ.restrict {z | z ∈ U ∧ ∀ i, g i z < u i z} := by
-  obtain ⟨F, hF⟩ := hex
-  refine restrict_eq_of_tuple_steps (U := U) (P := {z | z ∈ U ∧ ∀ i, g i z < u i z})
-    (S := fun i => {z | z ∈ U ∧ g i z < maxTupleObstacle u g i i z})
-    (fun _ hz => hz.1) (maxTupleObstacle u g) (maxTupleObstacle_zero u g) ?_ hμf hμ ⟨F, hF⟩ ?_
-  · intro i z hz
-    exact ⟨hz.1, by rw [maxTupleObstacle_apply_self]; exact hz.2 i⟩
-  · intro k hk μk μ' hμkc hμkf hμkT hμ'c hμ'f hμ'
-    rw [maxTupleObstacle_succ u g hk] at hμ'
-    exact restrict_eq_of_max_slot_obstacle (u := maxTupleObstacle u g k) ⟨k, hk⟩
-      (hg ⟨k, hk⟩) hμkc hμkf hμkT hμ'c hμ'f hμ'
-      (exists_isAdmissible_maxTupleObstacle hF hg k)
+        μ.restrict {z | z ∈ U ∧ ∀ i, g i z < u i z} :=
+  restrict_eq_joint_maxTuple (fun i ↦ isDecApprox_const (hg i)) hμf hμ hex
 
 /-- **Max-obstacle locality on an open set.** Replacing every slot `v i` by
 `max(v i, g i)`, with each `g i` smooth and positive semidefinite, does not

@@ -13,9 +13,10 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Analyt
 /-!
 # Uniqueness of Weierstrass division
 
-Source: Gunning--Rossi, *Analytic functions of several complex variables*, II.B,
-Theorem 1 (uniqueness part); Chirka, *Complex analytic sets*, §1.1.  Needed for the
-factorial property of the rings of holomorphic germs and for local parametrization.
+The uniqueness part of the Weierstrass division theorem appears in Gunning–Rossi,
+[*Analytic functions of several complex variables*, II.B.3, p. 70](
+https://www.math.ens.psl.eu/~benoist/refs/GunningRossi.pdf#page=83). The Lean result is stated for
+germs over a complex normed space. It is used for local parametrization.
 
 * `eq_zero_of_eval_eq_mul_eval`: if a polynomial `R` of degree `< deg W`, `W` monic, agrees
   with `h · W` on an open set containing every root of `W`, with `h` continuous there, then

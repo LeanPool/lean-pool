@@ -15,9 +15,11 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Polyno
 /-!
 # Local proper projection along a Weierstrass direction
 
-Source: Gunning--Rossi, *Analytic functions of several complex variables*, III.B
-(Theorem 1, the elimination step); Chirka, *Complex analytic sets*, §3.7.  A step of the
-local parametrization of analytic sets, the missing input behind
+The finite-dimensional proper mapping theorem is Gunning–Rossi,
+[*Analytic functions of several complex variables*, V.C.5, p. 162](
+https://www.math.ens.psl.eu/~benoist/refs/GunningRossi.pdf#page=175).
+The Lean result constructs local defining equations by elimination along one Weierstrass
+direction. It is used for local parametrization in
 `AnalyticIrreducibleComponents.eq_dim_of_regularAtDim`.
 
 Let `A = {g_1 = … = g_s = 0}` near `0 ∈ E × ℂ` and let `G` vanish on `A` near `0`, with

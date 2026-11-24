@@ -13,10 +13,10 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Holomo
 /-!
 # Weierstrass preparation for holomorphic germs
 
-Source: Gunning--Rossi, *Analytic functions of several complex variables*, II.B,
-Theorem 2; Chirka, *Complex analytic sets*, §1.1.  First step of the local
-parametrization of analytic sets, which is the missing input behind
-`AnalyticIrreducibleComponents.eq_dim_of_regularAtDim`.
+The finite-dimensional source is Gunning–Rossi,
+[*Analytic functions of several complex variables*, II.B.2](
+https://www.math.ens.psl.eu/~benoist/refs/GunningRossi.pdf#page=81). The Lean statement
+uses a complex normed parameter space and supplies a step of local analytic parametrization.
 
 Let `G` be holomorphic near `0 ∈ E × ℂ` with `G (0, t) = t^d u(t)`, `u(0) ≠ 0`.  Then
 there are a holomorphic `q` with `q 0 ≠ 0` and holomorphic `a_k` on `E` with

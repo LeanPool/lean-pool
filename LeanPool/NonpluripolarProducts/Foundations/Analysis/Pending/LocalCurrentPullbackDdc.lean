@@ -12,6 +12,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalC
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorContinuity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCollar
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicPullback
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ConstantFormProducts
 
 /-!
 # Naturality of `dd^c` under biholomorphisms: `τ^*(dd^c w) = dd^c(w ∘ τ)`
@@ -74,6 +75,7 @@ open FirstPass FirstPass.MongeAmpere StronglyPositiveForms TopDegreeDensity Loca
   LocalBedfordTaylorLocality LocalBedfordTaylorProducts LocalBedfordTaylorSmooth
     LocalBedfordTaylorCollar
   LocalCurrentDeterminant LocalCurrentDensityMatrix LocalCurrentPullback BedfordTaylor
+  ConstantFormProducts
     LocalBedfordTaylorContinuity
 
 attribute [local instance] addCommGroupFormSpan
@@ -173,69 +175,198 @@ end FormCurrents
 
 section PullbackForm
 
-variable {m : ℕ} {A B : Opens (ComplexModel (m + 1))} {τ σ : ComplexModel (m + 1)
-    → ComplexModel (m + 1)}
+variable {n r k : ℕ} {A B : Opens (ComplexModel n)}
+  {τ σ : ComplexModel n → ComplexModel n}
+variable (hdeg : r + k = n)
 
-theorem continuousOn_formDensity {α : ComplexModel (m + 1) → RealForm (m + 1) 2} (hαc :
-    ContinuousOn α B)
-    (γ : formSpan (m + 1) m) : ContinuousOn (fun y => formDensity (α y) γ) B := by
-  have := ProductTestForms.realForm_finiteDimensional (n := m + 1) 2
-  exact (LocalCurrentDensityMatrix.wedgeDensity (γ : RealForm (m + 1) (2 *
-    m))).continuous_of_finiteDimensional.comp_continuousOn
-    hαc
+/-- The top-degree density pairing of complementary forms. -/
+def pairDensity (α : RealForm n (2 * k)) : formSpan n r →ₗ[ℝ] ℝ where
+  toFun γ := topDensity (wedgeTo (by omega : 2 * r + 2 * k = 2 * n) γ α)
+  map_add' γ γ' := by
+    rw [Submodule.coe_add, wedgeTo_add_left]
+    exact topDensity_add _ _
+  map_smul' c γ := by
+    rw [Submodule.coe_smul, wedgeTo_smul_left]
+    exact topDensity_smul _ _
+
+private theorem pairDensity_apply (α : RealForm n (2 * k)) (γ : formSpan n r) :
+    pairDensity hdeg α γ =
+      topDensity (wedgeTo (by omega : 2 * r + 2 * k = 2 * n) γ α) := rfl
+
+private theorem pairDensity_nonneg {α : RealForm n (2 * k)} (hα : α ∈ spCone k)
+    {γ : formSpan n r} (hγ : γ ∈ posCone n r) : 0 ≤ pairDensity hdeg α γ :=
+  topDensity_nonneg_of_mem_spCone
+    (wedgeTo_mem_spCone k r n hγ hα (by omega))
+
+private theorem topDensity_wedgeTo_comp
+    (L M : ComplexModel n →L[ℝ] ComplexModel n)
+    (hML : M.comp L = ContinuousLinearMap.id ℝ _)
+    (γ : RealForm n (2 * r)) (α : RealForm n (2 * k)) :
+    topDensity (wedgeTo (by omega : 2 * r + 2 * k = 2 * n)
+      γ (α.compContinuousLinearMap L)) =
+      L.det * topDensity (wedgeTo (by omega : 2 * r + 2 * k = 2 * n)
+        (γ.compContinuousLinearMap M) α) := by
+  have hγ : γ = (γ.compContinuousLinearMap M).compContinuousLinearMap L := by
+    ext v
+    simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply]
+    congr 1
+    funext i
+    simp only [Function.comp_apply]
+    rw [← ContinuousLinearMap.comp_apply, hML, ContinuousLinearMap.id_apply]
+  conv_lhs => rw [hγ]
+  rw [← wedgeTo_compContinuousLinearMap]
+  exact topDensity_compContinuousLinearMap _ L
+
+private theorem continuousOn_pairDensity {α : ComplexModel n → RealForm n (2 * k)}
+    (hαc : ContinuousOn α B) (γ : formSpan n r) :
+    ContinuousOn (fun y => pairDensity hdeg (α y) γ) B := by
+  have := ProductTestForms.realForm_finiteDimensional (n := n) (2 * k)
+  exact ((topDensityLM n).comp
+    (wedgeToBilin n (by omega : 2 * r + 2 * k = 2 * n)
+      γ)).continuous_of_finiteDimensional.comp_continuousOn hαc
 
 /-- The density `⟨γ ∧ α⟩⁺` on `B`, extended by `0`. -/
-def formWeight (B : Opens (ComplexModel (m + 1))) (α : ComplexModel (m + 1) → RealForm (m + 1) 2)
-    (γ : formSpan (m + 1) m) : ComplexModel (m + 1) → ℝ≥0∞ :=
-  (B : Set (ComplexModel (m + 1))).indicator fun y => ENNReal.ofReal (formDensity (α y) γ)
+private def pairWeight (B : Opens (ComplexModel n)) (α : ComplexModel n → RealForm n (2 * k))
+    (γ : formSpan n r) : ComplexModel n → ℝ≥0∞ :=
+  (B : Set (ComplexModel n)).indicator fun y => ENNReal.ofReal (pairDensity hdeg (α y) γ)
 
-theorem measurable_formWeight {α : ComplexModel (m + 1) → RealForm (m + 1) 2} (hαc : ContinuousOn
-    α B)
-    (γ : formSpan (m + 1) m) : Measurable (formWeight B α γ) := by
+private theorem measurable_pairWeight {α : ComplexModel n → RealForm n (2 * k)} (hαc :
+    ContinuousOn α B)
+    (γ : formSpan n r) : Measurable (pairWeight hdeg B α γ) := by
   have h := ENNReal.measurable_ofReal.comp
-    (measurable_indicator_of_continuousOn (U := B) (continuousOn_formDensity hαc γ))
+    (measurable_indicator_of_continuousOn (U := B) (continuousOn_pairDensity hdeg hαc γ))
   convert h using 1
   funext y
-  by_cases hy : y ∈ (B : Set (ComplexModel (m + 1))) <;> simp [formWeight, hy]
+  by_cases hy : y ∈ (B : Set (ComplexModel n)) <;> simp [pairWeight, hy]
 
-theorem formWeight_compl (α : ComplexModel (m + 1) → RealForm (m + 1) 2) (γ : formSpan (m + 1) m) :
-    volume.withDensity (formWeight B α γ) ((B : Set (ComplexModel (m + 1)))ᶜ) = 0 := by
+private theorem pairWeight_compl (α : ComplexModel n → RealForm n (2 * k)) (γ : formSpan n r) :
+    volume.withDensity (pairWeight hdeg B α γ) ((B : Set (ComplexModel n))ᶜ) = 0 := by
   rw [withDensity_apply _ B.isOpen.measurableSet.compl]
   refine (setLIntegral_congr_fun B.isOpen.measurableSet.compl fun y hy => ?_).trans
     (lintegral_zero)
   exact indicator_of_notMem hy _
 
-theorem formWeight_lt_top {α : ComplexModel (m + 1) → RealForm (m + 1) 2} (hαc : ContinuousOn α B)
-    (γ : formSpan (m + 1) m) (K : Set (ComplexModel (m + 1))) (hK : IsCompact K) (hKB : K ⊆ B) :
-    volume.withDensity (formWeight B α γ) K < ⊤ := by
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn ((continuousOn_formDensity hαc γ).mono hKB)
+private theorem pairWeight_lt_top {α : ComplexModel n → RealForm n (2 * k)} (hαc : ContinuousOn α
+    B)
+    (γ : formSpan n r) (K : Set (ComplexModel n)) (hK : IsCompact K) (hKB : K ⊆ B) :
+    volume.withDensity (pairWeight hdeg B α γ) K < ⊤ := by
+  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn ((continuousOn_pairDensity hdeg hαc γ).mono
+    hKB)
   rw [withDensity_apply _ hK.measurableSet]
-  calc ∫⁻ y in K, formWeight B α γ y ≤ ∫⁻ _ in K, ENNReal.ofReal C :=
+  calc ∫⁻ y in K, pairWeight hdeg B α γ y ≤ ∫⁻ _ in K, ENNReal.ofReal C :=
         setLIntegral_mono' hK.measurableSet fun y hy => by
-          rw [formWeight, indicator_of_mem (hKB hy)]
-          have hyC : |formDensity (α y) γ| ≤ C := by
+          rw [pairWeight, indicator_of_mem (hKB hy)]
+          have hyC : |pairDensity hdeg (α y) γ| ≤ C := by
             simpa only [Real.norm_eq_abs] using hC y hy
           exact ENNReal.ofReal_le_ofReal ((le_abs_self _).trans hyC)
     _ = ENNReal.ofReal C * volume K := by rw [setLIntegral_const]
     _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top hK.measure_lt_top
 
-theorem integral_formWeight {α : ComplexModel (m + 1) → RealForm (m + 1) 2} (hαc : ContinuousOn α
-    B)
-    (hα : ∀ y ∈ B, IsSemipositiveOneOne (α y)) {γ : formSpan (m + 1) m} (hγ : γ ∈ posCone (m + 1)
-      m)
-    (φ : 𝓓(B, ℝ)) : ∫ y, φ y ∂volume.withDensity (formWeight B α γ) = ∫ y, φ y * formDensity (α y)
-      γ := by
-  rw [integral_withDensity_eq_integral_toReal_smul (measurable_formWeight hαc γ)
+private theorem integral_pairWeight {α : ComplexModel n → RealForm n (2 * k)} (hαc : ContinuousOn
+    α B)
+    (hα : ∀ y ∈ B, α y ∈ spCone k) {γ : formSpan n r} (hγ : γ ∈ posCone n r)
+    (φ : 𝓓(B, ℝ)) : ∫ y, φ y ∂volume.withDensity (pairWeight hdeg B α γ) = ∫ y,
+      φ y * pairDensity hdeg (α y) γ := by
+  rw [integral_withDensity_eq_integral_toReal_smul (measurable_pairWeight hdeg hαc γ)
     (Eventually.of_forall fun y => by
-      by_cases hy : y ∈ (B : Set (ComplexModel (m + 1)))
-      · rw [formWeight, indicator_of_mem hy]; exact ENNReal.ofReal_lt_top
-      · rw [formWeight, indicator_of_notMem hy]; exact ENNReal.zero_lt_top)]
+      by_cases hy : y ∈ (B : Set (ComplexModel n))
+      · rw [pairWeight, indicator_of_mem hy]; exact ENNReal.ofReal_lt_top
+      · rw [pairWeight, indicator_of_notMem hy]; exact ENNReal.zero_lt_top)]
   refine integral_congr_ae (Eventually.of_forall fun y => ?_)
-  by_cases hy : y ∈ (B : Set (ComplexModel (m + 1)))
-  · simp only [formWeight, indicator_of_mem hy, ENNReal.toReal_ofReal (formDensity_nonneg (hα y
-    hy) hγ), smul_eq_mul]
+  by_cases hy : y ∈ (B : Set (ComplexModel n))
+  · simp only [pairWeight, indicator_of_mem hy, ENNReal.toReal_ofReal (pairDensity_nonneg hdeg (hα
+    y hy) hγ), smul_eq_mul]
     ring
-  · simp [formWeight, indicator_of_notMem hy, testFunction_eq_zero_of_notMem φ hy]
+  · simp [pairWeight, indicator_of_notMem hy, testFunction_eq_zero_of_notMem φ hy]
+
+/-- **The pull-back of the current of a continuous strongly positive form `α` is the current of
+    `τ^* α`**:
+if `T(γ)(φ) = ∫ φ ⟨γ ∧ α⟩ dλ` on `B`, then `(τ^* T)(γ)(φ) = ∫ φ(x) ⟨γ ∧ Dτ(x)^* α(τ x)⟩ dx`. -/
+theorem pullback_apply_of_positive_form (h : IsBiholomorphicPair A B τ σ)
+    {T : LocalProductCurrent n B r}
+    (hT : IsPositive T) {α : ComplexModel n → RealForm n (2 * k)} (hαc : ContinuousOn α B)
+    (hα : ∀ y ∈ B, α y ∈ spCone k)
+    (hTα : ∀ (γ : formSpan n r) (φ : 𝓓(B, ℝ)), T γ φ = ∫ y, φ y * pairDensity hdeg (α y) γ)
+    (γ : formSpan n r) (φ : 𝓓(A, ℝ)) :
+    pullback h hT γ φ =
+      ∫ x, φ x * pairDensity hdeg ((α (τ x)).compContinuousLinearMap ((fderiv ℂ τ
+        x).restrictScalars ℝ)) γ := by
+  have hω : kahlerPower n r ∈ posCone n r :=
+    formPower_mem_spCone isSemipositiveOneOne_kahlerForm r
+  -- the trace measure is `⟨ω₀^r ∧ α⟩ λ|_B`
+  have htr : hT.traceMeasure = volume.withDensity (pairWeight hdeg B α (kahlerPower n r)) :=
+    eq_of_forall_testFunction_integral_eq hT.traceMeasure_compl (pairWeight_compl hdeg α _)
+      (fun K hK hKB => hT.traceMeasure_lt_top hK hKB) (pairWeight_lt_top hdeg hαc _)
+      fun φ => by rw [hT.integral_traceMeasure, hTα, integral_pairWeight hdeg hαc hα hω]
+  -- the absolutely continuous density is `⟨· ∧ α⟩`
+  have hac : ∀ᵐ y ∂(volume : Measure (ComplexModel n)), y ∈ B →
+      ∀ γ, (acWeight hT y • densityForm hT y) γ = pairDensity hdeg (α y) γ := by
+    refine ae_forall_eq_of_posCone (fun y => acWeight hT y • densityForm hT y) (fun y =>
+      pairDensity hdeg (α y))
+      fun γ hγ => ?_
+    have hU := ae_eq_ofReal_acDensity hT hγ (measurable_pairWeight hdeg hαc γ) (pairWeight_compl
+      hdeg α γ)
+      (pairWeight_lt_top hdeg hαc γ) (fun φ => (integral_pairWeight hdeg hαc hα hγ φ).trans (hTα γ
+        φ).symm)
+      (Measure.MutuallySingular.zero_left) (zero_add _).symm
+    filter_upwards [hU, ae_volume_acDensity_nonneg hT] with y h1 h2 hyB
+    rw [pairWeight, indicator_of_mem hyB] at h1
+    simp only [LinearMap.smul_apply, smul_eq_mul]
+    exact ((ENNReal.ofReal_eq_ofReal_iff (pairDensity_nonneg hdeg (hα y hyB) hγ)
+      (h2 γ hγ)).mp h1).symm
+  have hrn : hT.traceMeasure.rnDeriv volume =ᵐ[volume] pairWeight hdeg B α (kahlerPower n r) := by
+    rw [htr]
+    exact Measure.rnDeriv_withDensity _ (measurable_pairWeight hdeg hαc _)
+  -- the integral on `B`
+  have step : ∫ y in B, φ (σ y) * densityForm hT y (pullSpan r (fderiv ℂ σ y) γ) ∂hT.traceMeasure =
+      ∫ y in B, φ (σ y) * pairDensity hdeg (α y) (pullSpan r (fderiv ℂ σ y) γ) := by
+    rw [htr, restrict_withDensity B.isOpen.measurableSet,
+      integral_withDensity_eq_integral_toReal_smul (measurable_pairWeight hdeg hαc _)
+        (Eventually.of_forall fun y => by
+          by_cases hy : y ∈ (B : Set (ComplexModel n))
+          · rw [pairWeight, indicator_of_mem hy]; exact ENNReal.ofReal_lt_top
+          · rw [pairWeight, indicator_of_notMem hy]; exact ENNReal.zero_lt_top)]
+    refine setIntegral_congr_ae B.isOpen.measurableSet ?_
+    filter_upwards [hac, hrn] with y h1 h2 hyB
+    have e := h1 hyB (pullSpan r (fderiv ℂ σ y) γ)
+    simp only [LinearMap.smul_apply, smul_eq_mul] at e
+    rw [← e, acWeight, h2, smul_eq_mul]
+    ring
+  -- the change of variables `y = τ x`
+  have himg : τ '' (A : Set (ComplexModel n)) = B := by
+    ext y
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      exact h.mapsTo hx
+    · intro hy
+      exact ⟨σ y, h.mapsTo_inv hy, h.right_inv y hy⟩
+  have hderiv : ∀ x ∈ (A : Set (ComplexModel n)),
+      HasFDerivWithinAt τ (fderiv ℝ τ x) (A : Set (ComplexModel n)) x := fun x hx =>
+    (((differentiableAt_of_mem h hx).restrictScalars ℝ).hasFDerivAt).hasFDerivWithinAt
+  have hinj : InjOn τ (A : Set (ComplexModel n)) := fun x hx x' hx' hxx' => by
+    rw [← h.left_inv x hx, ← h.left_inv x' hx', hxx']
+  rw [pullback_apply h hT, step, ← himg,
+    integral_image_eq_integral_abs_det_fderiv_smul volume A.isOpen.measurableSet hderiv hinj]
+  conv_rhs => rw [← setIntegral_eq_integral_of_forall_compl_eq_zero (s := (A : Set (ComplexModel
+    n)))
+    (fun x hx => by rw [testFunction_eq_zero_of_notMem φ hx, zero_mul])]
+  refine setIntegral_congr_fun A.isOpen.measurableSet fun x hx => ?_
+  have hML : ((fderiv ℂ σ (τ x)).restrictScalars ℝ).comp ((fderiv ℂ τ x).restrictScalars ℝ) =
+      ContinuousLinearMap.id ℝ _ := by
+    refine ContinuousLinearMap.ext fun v => ?_
+    exact DFunLike.congr_fun (fderiv_inv_comp h hx) v
+  simp only
+  rw [h.left_inv x hx, pairDensity_apply hdeg, pairDensity_apply hdeg, coe_pullSpan,
+    topDensity_wedgeTo_comp hdeg _ _ hML, fderiv_real_eq h hx, det_restrictScalars_eq_normSq,
+    abs_of_nonneg (Complex.normSq_nonneg _), smul_eq_mul]
+  ring
+
+end PullbackForm
+
+section TwoForm
+
+variable {m : ℕ} {A B : Opens (ComplexModel (m + 1))} {τ σ : ComplexModel (m + 1)
+    → ComplexModel (m + 1)}
 
 /-- **The pull-back of the current of a continuous semipositive `(1,1)`-form `α` is the current of
     `τ^* α`**:
@@ -249,74 +380,10 @@ theorem pullback_apply_of_form (h : IsBiholomorphicPair A B τ σ) {T : LocalPro
     pullback h hT γ φ =
       ∫ x, φ x * formDensity ((α (τ x)).compContinuousLinearMap ((fderiv ℂ τ x).restrictScalars
         ℝ)) γ := by
-  have hω : kahlerPower (m + 1) m ∈ posCone (m + 1) m :=
-    formPower_mem_spCone isSemipositiveOneOne_kahlerForm m
-  -- the trace measure is `⟨ω₀^m ∧ α⟩ λ|_B`
-  have htr : hT.traceMeasure = volume.withDensity (formWeight B α (kahlerPower (m + 1) m)) :=
-    eq_of_forall_testFunction_integral_eq hT.traceMeasure_compl (formWeight_compl α _)
-      (fun K hK hKB => hT.traceMeasure_lt_top hK hKB) (formWeight_lt_top hαc _)
-      fun φ => by rw [hT.integral_traceMeasure, hTα, integral_formWeight hαc hα hω]
-  -- the absolutely continuous density is `⟨· ∧ α⟩`
-  have hac : ∀ᵐ y ∂(volume : Measure (ComplexModel (m + 1))), y ∈ B →
-      ∀ γ, (acWeight hT y • densityForm hT y) γ = formDensity (α y) γ := by
-    refine ae_forall_eq_of_posCone (fun y => acWeight hT y • densityForm hT y) (fun y =>
-      formDensity (α y))
-      fun γ hγ => ?_
-    have hU := ae_eq_ofReal_acDensity hT hγ (measurable_formWeight hαc γ) (formWeight_compl α γ)
-      (formWeight_lt_top hαc γ) (fun φ => (integral_formWeight hαc hα hγ φ).trans (hTα γ φ).symm)
-      (Measure.MutuallySingular.zero_left) (zero_add _).symm
-    filter_upwards [hU, ae_volume_acDensity_nonneg hT] with y h1 h2 hyB
-    rw [formWeight, indicator_of_mem hyB] at h1
-    simp only [LinearMap.smul_apply, smul_eq_mul]
-    exact ((ENNReal.ofReal_eq_ofReal_iff (formDensity_nonneg (hα y hyB) hγ) (h2 γ hγ)).mp h1).symm
-  have hrn : hT.traceMeasure.rnDeriv volume =ᵐ[volume] formWeight B α (kahlerPower (m + 1) m) := by
-    rw [htr]
-    exact Measure.rnDeriv_withDensity _ (measurable_formWeight hαc _)
-  -- the integral on `B`
-  have step : ∫ y in B, φ (σ y) * densityForm hT y (pullSpan m (fderiv ℂ σ y) γ) ∂hT.traceMeasure =
-      ∫ y in B, φ (σ y) * formDensity (α y) (pullSpan m (fderiv ℂ σ y) γ) := by
-    rw [htr, restrict_withDensity B.isOpen.measurableSet,
-      integral_withDensity_eq_integral_toReal_smul (measurable_formWeight hαc _)
-        (Eventually.of_forall fun y => by
-          by_cases hy : y ∈ (B : Set (ComplexModel (m + 1)))
-          · rw [formWeight, indicator_of_mem hy]; exact ENNReal.ofReal_lt_top
-          · rw [formWeight, indicator_of_notMem hy]; exact ENNReal.zero_lt_top)]
-    refine setIntegral_congr_ae B.isOpen.measurableSet ?_
-    filter_upwards [hac, hrn] with y h1 h2 hyB
-    have e := h1 hyB (pullSpan m (fderiv ℂ σ y) γ)
-    simp only [LinearMap.smul_apply, smul_eq_mul] at e
-    rw [← e, acWeight, h2, smul_eq_mul]
-    ring
-  -- the change of variables `y = τ x`
-  have himg : τ '' (A : Set (ComplexModel (m + 1))) = B := by
-    ext y
-    constructor
-    · rintro ⟨x, hx, rfl⟩
-      exact h.mapsTo hx
-    · intro hy
-      exact ⟨σ y, h.mapsTo_inv hy, h.right_inv y hy⟩
-  have hderiv : ∀ x ∈ (A : Set (ComplexModel (m + 1))),
-      HasFDerivWithinAt τ (fderiv ℝ τ x) (A : Set (ComplexModel (m + 1))) x := fun x hx =>
-    (((differentiableAt_of_mem h hx).restrictScalars ℝ).hasFDerivAt).hasFDerivWithinAt
-  have hinj : InjOn τ (A : Set (ComplexModel (m + 1))) := fun x hx x' hx' hxx' => by
-    rw [← h.left_inv x hx, ← h.left_inv x' hx', hxx']
-  rw [pullback_apply h hT, step, ← himg,
-    integral_image_eq_integral_abs_det_fderiv_smul volume A.isOpen.measurableSet hderiv hinj]
-  conv_rhs => rw [← setIntegral_eq_integral_of_forall_compl_eq_zero (s := (A : Set (ComplexModel
-    (m + 1))))
-    (fun x hx => by rw [testFunction_eq_zero_of_notMem φ hx, zero_mul])]
-  refine setIntegral_congr_fun A.isOpen.measurableSet fun x hx => ?_
-  have hML : ((fderiv ℂ σ (τ x)).restrictScalars ℝ).comp ((fderiv ℂ τ x).restrictScalars ℝ) =
-      ContinuousLinearMap.id ℝ _ := by
-    refine ContinuousLinearMap.ext fun v => ?_
-    exact DFunLike.congr_fun (fderiv_inv_comp h hx) v
-  simp only
-  rw [h.left_inv x hx, formDensity_apply, formDensity_apply, coe_pullSpan,
-    topDensity_coordinateWedge_comp _ _ hML, fderiv_real_eq h hx, det_restrictScalars_eq_normSq,
-    abs_of_nonneg (Complex.normSq_nonneg _), smul_eq_mul]
-  ring
+  exact pullback_apply_of_positive_form (k := 1) rfl h hT hαc
+    (fun y hy ↦ mem_spCone_one (hα y hy)) hTα γ φ
 
-end PullbackForm
+end TwoForm
 
 /-! ### Smooth psh functions -/
 

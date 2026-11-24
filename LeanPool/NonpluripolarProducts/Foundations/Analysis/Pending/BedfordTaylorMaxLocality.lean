@@ -226,17 +226,14 @@ def maxTupleObstacle (u g : Fin n → ComplexModel n → ℝ) (k : ℕ) :
     Fin n → ComplexModel n → ℝ :=
   fun i ↦ if i.val < k then fun z ↦ max (u i z) (g i z) else u i
 
-/-- The tuple with `max(·, c)` applied in the slots of index below `k`. -/
-abbrev maxTuple (u : Fin n → ComplexModel n → ℝ) (c : ℝ) (k : ℕ) :
-    Fin n → ComplexModel n → ℝ :=
-  maxTupleObstacle u (fun _ _ => c) k
-
-theorem maxTuple_zero (u : Fin n → ComplexModel n → ℝ) (c : ℝ) : maxTuple u c 0 = u := by
+theorem maxTupleObstacle_zero (u g : Fin n → ComplexModel n → ℝ) :
+    maxTupleObstacle u g 0 = u := by
   funext i; simp [maxTupleObstacle]
 
-theorem maxTuple_succ (u : Fin n → ComplexModel n → ℝ) (c : ℝ) {k : ℕ} (hk : k < n) :
-    maxTuple u c (k + 1) =
-      Function.update (maxTuple u c k) ⟨k, hk⟩ fun z ↦ max (maxTuple u c k ⟨k, hk⟩ z) c := by
+theorem maxTupleObstacle_succ (u g : Fin n → ComplexModel n → ℝ) {k : ℕ} (hk : k < n) :
+    maxTupleObstacle u g (k + 1) =
+      Function.update (maxTupleObstacle u g k) ⟨k, hk⟩
+        (fun z ↦ max (maxTupleObstacle u g k ⟨k, hk⟩ z) (g ⟨k, hk⟩ z)) := by
   funext i
   by_cases h : i = ⟨k, hk⟩
   · subst h; simp [maxTupleObstacle]
@@ -246,20 +243,48 @@ theorem maxTuple_succ (u : Fin n → ComplexModel n → ℝ) (c : ℝ) {k : ℕ}
     · simp [hlt, show i.val < k + 1 by omega]
     · simp [hlt, show ¬ i.val < k + 1 by omega]
 
-theorem maxTuple_apply_self (u : Fin n → ComplexModel n → ℝ) (c : ℝ) {k : ℕ} (hk : k < n) :
-    maxTuple u c k ⟨k, hk⟩ = u ⟨k, hk⟩ := by
+theorem maxTupleObstacle_apply_self (u g : Fin n → ComplexModel n → ℝ) {k : ℕ} (hk : k < n) :
+    maxTupleObstacle u g k ⟨k, hk⟩ = u ⟨k, hk⟩ := by
   simp [maxTupleObstacle]
+
+/-- The tuple with `max(·, c)` applied in the slots of index below `k`. -/
+abbrev maxTuple (u : Fin n → ComplexModel n → ℝ) (c : ℝ) (k : ℕ) :
+    Fin n → ComplexModel n → ℝ :=
+  maxTupleObstacle u (fun _ _ => c) k
+
+theorem maxTuple_zero (u : Fin n → ComplexModel n → ℝ) (c : ℝ) : maxTuple u c 0 = u :=
+  maxTupleObstacle_zero u (fun _ _ ↦ c)
+
+theorem maxTuple_succ (u : Fin n → ComplexModel n → ℝ) (c : ℝ) {k : ℕ} (hk : k < n) :
+    maxTuple u c (k + 1) =
+      Function.update (maxTuple u c k) ⟨k, hk⟩ fun z ↦ max (maxTuple u c k ⟨k, hk⟩ z) c :=
+  maxTupleObstacle_succ u (fun _ _ ↦ c) hk
+
+theorem maxTuple_apply_self (u : Fin n → ComplexModel n → ℝ) (c : ℝ) {k : ℕ} (hk : k < n) :
+    maxTuple u c k ⟨k, hk⟩ = u ⟨k, hk⟩ :=
+  maxTupleObstacle_apply_self u (fun _ _ ↦ c) hk
+
+/-- Actual joint stages supply every intermediate maximum tuple. -/
+theorem exists_isAdmissible_joint_maxTuple {U : Opens (ComplexModel n)}
+    {u g : Fin n → ComplexModel n → ℝ} {F : Fin n → ℕ → ComplexModel n → ℝ}
+    {J : Fin n → ℕ → ComplexModel n → ℝ}
+    (hF : IsAdmissible n U u F) (hJ : ∀ i, IsDecApprox U (g i) (J i)) (k : ℕ) :
+    ∃ F', IsAdmissible n U (maxTupleObstacle u g k) F' := by
+  classical
+  refine ⟨fun i ↦ if i.val < k then
+    (fun j ↦ scaledSmoothMax (maxScale j) (F i j) (J i j)) else F i,
+    fun i ↦ ?_, fun i hi ↦ absurd i.isLt (not_lt.mpr hi)⟩
+  by_cases h : i.val < k
+  · simpa [maxTupleObstacle, h] using
+      JointDecreasingSmoothMax.isDecApprox_joint_scaledSmoothMax (hF.1 i) (hJ i)
+  · simpa [maxTupleObstacle, h] using hF.1 i
 
 theorem exists_isAdmissible_maxTuple {U : Opens (ComplexModel n)}
     {u : Fin n → ComplexModel n → ℝ} {F : Fin n → ℕ → ComplexModel n → ℝ}
     (hF : IsAdmissible n U u F) (c : ℝ) (k : ℕ) : ∃ F', IsAdmissible n U (maxTuple u c k) F' := by
-  classical
-  refine ⟨fun i ↦ if i.val < k then
-    (fun j z ↦ scaledPosPart (maxScale j) (F i j z - c) + c) else F i,
-    fun i ↦ ?_, fun i hi ↦ absurd i.isLt (not_lt.mpr hi)⟩
-  by_cases h : i.val < k
-  · simpa [maxTupleObstacle, h] using ((hF.1 i).scaledMax c).add_const c
-  · simpa [maxTupleObstacle, h] using hF.1 i
+  have hconst : IsSmoothPsdOn U (fun _ => c) :=
+    ⟨contDiffOn_const, fun z _ => by rw [complexHessian_const]; exact Matrix.PosSemidef.zero⟩
+  exact exists_isAdmissible_joint_maxTuple hF (fun _ ↦ isDecApprox_const hconst) k
 
 /-- A tuple comparison follows from the one-slot comparisons on sets containing `P`. -/
 theorem restrict_eq_of_tuple_steps {U : Opens (ComplexModel n)}
@@ -299,6 +324,30 @@ theorem restrict_eq_of_tuple_steps {U : Opens (ComplexModel n)}
     rw [← hIH, ← Measure.restrict_restrict_of_subset hsub, ← hslot,
       Measure.restrict_restrict_of_subset hsub]
 
+/-- Finite-slot comparison on the original common strict-superlevel set. -/
+theorem restrict_eq_joint_maxTuple {U : Opens (ComplexModel n)}
+    {u g : Fin n → ComplexModel n → ℝ} {J : Fin n → ℕ → ComplexModel n → ℝ}
+    (hJ : ∀ i, IsDecApprox U (g i) (J i))
+    {μ : Measure (ComplexModel n)} (hμf : ∀ K, IsCompact K → K ⊆ U → μ K < ⊤)
+    (hμ : ∀ F, IsAdmissible n U u F → TendstoMixed U F μ)
+    (hex : ∃ F, IsAdmissible n U u F) :
+    ∀ k, k ≤ n → ∀ μ' : Measure (ComplexModel n), μ' (U : Set (ComplexModel n))ᶜ = 0 →
+      (∀ K, IsCompact K → K ⊆ U → μ' K < ⊤) →
+      (∀ F, IsAdmissible n U (maxTupleObstacle u g k) F → TendstoMixed U F μ') →
+      μ'.restrict {z | z ∈ U ∧ ∀ i, g i z < u i z} =
+        μ.restrict {z | z ∈ U ∧ ∀ i, g i z < u i z} := by
+  obtain ⟨F, hF⟩ := hex
+  refine restrict_eq_of_tuple_steps (U := U) (P := {z | z ∈ U ∧ ∀ i, g i z < u i z})
+    (S := fun i => {z | z ∈ U ∧ g i z < maxTupleObstacle u g i i z})
+    (fun _ hz => hz.1) (maxTupleObstacle u g) (maxTupleObstacle_zero u g) ?_ hμf hμ ⟨F, hF⟩ ?_
+  · intro i z hz
+    exact ⟨hz.1, by rw [maxTupleObstacle_apply_self]; exact hz.2 i⟩
+  · intro k hk μk μ' hμkc hμkf hμkT hμ'c hμ'f hμ'
+    rw [maxTupleObstacle_succ u g hk] at hμ'
+    exact restrict_eq_of_joint_max_slot
+      (u := maxTupleObstacle u g k) ⟨k, hk⟩ (hJ ⟨k, hk⟩) hμkc hμkf hμkT hμ'c hμ'f hμ'
+      (exists_isAdmissible_joint_maxTuple hF hJ k)
+
 /-- **Locality in all slots on a relatively compact set.** -/
 theorem restrict_eq_maxTuple {U : Opens (ComplexModel n)} {u : Fin n → ComplexModel n → ℝ}
     (c : ℝ) {μ : Measure (ComplexModel n)}
@@ -309,16 +358,9 @@ theorem restrict_eq_maxTuple {U : Opens (ComplexModel n)} {u : Fin n → Complex
       (∀ K, IsCompact K → K ⊆ U → μ' K < ⊤) →
       (∀ F, IsAdmissible n U (maxTuple u c k) F → TendstoMixed U F μ') →
       μ'.restrict {z | z ∈ U ∧ ∀ i, c < u i z} = μ.restrict {z | z ∈ U ∧ ∀ i, c < u i z} := by
-  obtain ⟨F, hF⟩ := hex
-  refine restrict_eq_of_tuple_steps (U := U) (P := {z | z ∈ U ∧ ∀ i, c < u i z})
-    (S := fun i => {z | z ∈ U ∧ c < maxTuple u c i i z})
-    (fun _ hz => hz.1) (maxTuple u c) (maxTuple_zero u c) ?_ hμf hμ ⟨F, hF⟩ ?_
-  · intro i z hz
-    exact ⟨hz.1, by rw [maxTuple_apply_self]; exact hz.2 i⟩
-  · intro k hk μk μ' hμkc hμkf hμkT hμ'c hμ'f hμ'
-    rw [maxTuple_succ u c hk] at hμ'
-    exact restrict_eq_of_max_slot (u := maxTuple u c k) ⟨k, hk⟩ c hμkc hμkf hμkT
-      hμ'c hμ'f hμ' (exists_isAdmissible_maxTuple hF c k)
+  have hconst : IsSmoothPsdOn U (fun _ => c) :=
+    ⟨contDiffOn_const, fun z _ => by rw [complexHessian_const]; exact Matrix.PosSemidef.zero⟩
+  exact restrict_eq_joint_maxTuple (fun _ ↦ isDecApprox_const hconst) hμf hμ hex
 
 theorem IsDecApprox.congr {U : Opens (ComplexModel n)} {w w' : ComplexModel n → ℝ}
     {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox U w G) (h : EqOn w w' U) :
