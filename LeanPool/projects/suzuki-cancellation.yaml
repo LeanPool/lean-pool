@@ -1,0 +1,46 @@
+slug: suzuki-cancellation
+title: Cancellation-aware error bounds for the fourth-order Suzuki formula
+summary: The fourth-order binary Suzuki splitting admits a global error
+  expansion through the centered septic term, with an eighth-order remainder
+  at fixed time. The integral of the transported quintic coefficient gives
+  the leading error constant.
+branch: functional analysis
+entry_module: LeanPool.SuzukiCancellation
+authors:
+- Bingyu Xia
+- Jue Xu
+- Yue Wang
+source:
+  title: Trotter Error Bounds in Lean 4 with a Cancellation-Aware Analysis of the Fourth-Order Suzuki Formula
+  arxiv: '2611.27359'
+  url: https://github.com/BryceT233/Foresight-Quantum-Formalization-Projects/tree/40b042ff69f569bbc8d94273620ee0b59d272455
+  github_repo: BryceT233/Foresight-Quantum-Formalization-Projects
+  commit: 40b042ff69f569bbc8d94273620ee0b59d272455
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- FQFP.BCH.norm_suzukiProduct_pow_sub_septic_midpoint_le_of_skewAdjoint
+- FQFP.BCH.isBigO_fiveStageStrangProduct_pow_sub_septic_midpoint
+- FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
+main_results:
+- declaration: FQFP.BCH.norm_suzukiProduct_pow_sub_septic_midpoint_le_of_skewAdjoint
+  informal: For two skew-adjoint generators and any positive number of steps,
+    the Suzuki product's normalized global error differs from the sum of the
+    transported quintic and centered septic terms by at most an explicit remainder.
+- declaration: FQFP.BCH.isBigO_fiveStageStrangProduct_pow_sub_septic_midpoint
+  informal: With the generators and nonnegative final time fixed and contractive
+    exponentials, the refined operator remainder is big O of the inverse eighth
+    power of the number of steps.
+- declaration: FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
+  informal: For skew-adjoint generators, multiplying the global Suzuki error norm
+    by the fourth power of the step count yields a limit determined by the integral
+    of the conjugated quintic coefficient.
+tags:
+- functional-analysis
+- product-formulas
+- normed-algebras
+msc:
+- 47D06
+- 65J10
+- 46H30
