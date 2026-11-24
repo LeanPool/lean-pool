@@ -1,0 +1,54 @@
+slug: rowland-primes
+title: Rowland's prime-generating recurrence
+summary: Proves Rowland's 2008 theorem that the sequence a(1) = 7, a(n) = a(n - 1) +
+  gcd(n, a(n - 1)) has every increment a(n) - a(n - 1), n >= 2, equal to 1 or a prime, in the
+  form stated without proof in Formal Conjectures. The core is the r = 3 case of Rowland's Lemma 1,
+  proved for any sequence obeying the recurrence from some index on - from a point N >= 2 with
+  a(N) = 3N the increments are 1 until the step into N + (p - 1)/2, which adds the least prime
+  factor p of 2N - 1 and lands again on a = 3n. Consequences - no increment is 2, infinitely
+  many increments are prime, a closed form between checkpoints, and a kernel-checked example
+  showing that the first term matters (a(1) = 532 gives the composite increment 9 at n = 18).
+branch: Elementary number theory
+entry_module: LeanPool.RowlandPrimes
+authors:
+- Yujie Sun
+- Claude Opus 5.5 (AI)
+source:
+  title: A natural prime-generating recurrence
+  authors:
+  - Eric S. Rowland
+  arxiv: '0710.3217'
+  github_repo: Feynman724/rowland-primes-lean
+  commit: 93e323e048d49ecd3d52c6ab86815c0118a143e5
+  url: https://cs.uwaterloo.ca/journals/JIS/VOL11/Rowland/rowland21.html
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- RowlandPrimes.rowland_diff_eq_one_or_prime
+- RowlandPrimes.increment_eq_one_or_minFac
+main_results:
+- declaration: RowlandPrimes.rowland_diff_eq_one_or_prime
+  informal: For Rowland's sequence a(1) = 7, a(n) = a(n - 1) + gcd(n, a(n - 1)), every
+    increment a(n) - a(n - 1) with n >= 2 is 1 or a prime (Rowland 2008, Theorem 1; the
+    statement of Formal Conjectures' RowlandSequence.rowland_diff_eq_one_or_prime).
+- declaration: RowlandPrimes.increment_eq_one_or_minFac
+  informal: For any sequence obeying a(n + 1) = a(n) + gcd(n + 1, a(n)) for n >= n0, if
+    N >= n0, N >= 2 and a(N) = 3N, then for every n >= N the increment a(n + 1) - a(n) is
+    either 1 or equal to the least prime factor of 2M - 1 for a checkpoint M with
+    n + 1 = M + (minFac(2M - 1) - 1)/2 (the r = 3 case of Rowland's Lemma 1, iterated).
+- declaration: RowlandPrimes.isCheckpoint_next
+  informal: If a(N) = 3N with N >= 2 (and the recurrence holds from N on), then
+    a(N + (p - 1)/2) = 3(N + (p - 1)/2), where p is the least prime factor of 2N - 1.
+- declaration: RowlandPrimes.infinite_setOf_prime_rowlandDiff
+  informal: Infinitely many increments of Rowland's sequence are prime.
+- declaration: RowlandPrimes.rowlandSeqFrom_532_composite
+  informal: With first term a(1) = 532 instead of 7, the increment a(18) - a(17) equals 9,
+    which is not prime.
+tags:
+- prime-generating-sequences
+- gcd-recurrence
+- formal-conjectures
+msc:
+- 11A41
+- 11B37
