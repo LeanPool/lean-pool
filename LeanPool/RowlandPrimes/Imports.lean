@@ -1,10 +1,11 @@
 /-
-Copyright (c) 2026 Yujie Sun. All rights reserved.
+Copyright (c) 2026 Lean Pool contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Yujie Sun, Claude Opus 5.5 (AI)
+Authors: Lean Pool contributors
 -/
-module
+module  -- shake: keep-all --deprecated_module: ignore
 
+-- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.RowlandPrimes
 public import LeanPool.RowlandPrimes.Basic
 public import LeanPool.RowlandPrimes.Sequence
