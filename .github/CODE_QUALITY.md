@@ -223,7 +223,7 @@ Scheduled update checks are future work.
 preflight checks for PRs and merge groups. It does not generate documentation.
 
 [`docs-publish.yml`](workflows/docs-publish.yml) publishes documentation daily
-at 06:23 UTC or on manual dispatch, independently of merges. It documents only
+(scheduled for 20:23 UTC) or on manual dispatch, independently of merges. It documents only
 LeanPool modules and links dependencies to their hosted documentation. Bounded
 analysis jobs save consistent incremental checkpoints; a separate rendering job
 and exposition build must both finish and validate before Pages is replaced.

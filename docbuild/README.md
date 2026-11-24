@@ -1,7 +1,9 @@
 # Daily documentation
 
 API documentation and exposition publish through
-[Daily documentation](../.github/workflows/docs-publish.yml) at **06:23 UTC daily**.
+[Daily documentation](../.github/workflows/docs-publish.yml) scheduled for **20:23 UTC daily**.
+GitHub has been starting this repository's schedules 6 to 12 hours late, so the run
+usually begins between 02:45 and 08:30 UTC.
 Maintainers can also dispatch that workflow manually. Publication never runs on a
 PR, merge group or ordinary push. The independent `Documentation preflight`
 check still validates workspace compatibility and generated indexes.
