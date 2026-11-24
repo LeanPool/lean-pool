@@ -131,20 +131,11 @@ theorem exists_directional_full_test (T : 𝓓'(U, ℝ)) (φ : 𝓓(U, ℝ))
   · rw [ddc_scalarTopCurrent_full_test_transpose, hαadj, map_smul,
       smul_eq_mul, apply_leviScalarTest]
 
-/-- Genuine full positive pairings recover every actual constant-direction Levi inequality. -/
-theorem hasNonnegativeDistributionalLevi_of_full_positive_pairings (T : 𝓓'(U, ℝ))
-    (hT : ∀ α : 𝓓(U, RealForm (m + 1) (2 * m)),
-      (∀ z, α z ∈ spCone m) →
-        0 ≤ ∑ i, ddc (scalarTopCurrent T) (formBasis (m + 1) m i) (coeffTest α i)) :
+/-- Unit-direction tests suffice by the quadratic homogeneity of the Levi form. -/
+theorem hasNonnegativeDistributionalLevi_of_unit (T : 𝓓'(U, ℝ))
+    (hunit : ∀ a : ComplexModel (m + 1), ‖a‖ = 1 → ∀ φ : 𝓓(U, ℝ),
+      (∀ z, 0 ≤ φ z) → 0 ≤ distributionalLeviCLM a T φ) :
     HasNonnegativeDistributionalLevi T := by
-  have hunit (a : ComplexModel (m + 1)) (ha : ‖a‖ = 1)
-      (φ : 𝓓(U, ℝ)) (hφ : ∀ z, 0 ≤ φ z) : 0 ≤ distributionalLeviCLM a T φ := by
-    obtain ⟨α, _, _, hp, heq⟩ := exists_directional_full_test T φ a ha
-    have h := hT α (hp hφ)
-    rw [heq] at h
-    exact (mul_nonneg_iff_of_pos_left
-      (div_pos (by exact_mod_cast Nat.factorial_pos m)
-        (pow_pos Real.pi_pos (m + 1)))).mp h
   intro v φ hφ
   by_cases hv : v = 0
   · subst v
@@ -166,6 +157,22 @@ theorem hasNonnegativeDistributionalLevi_of_full_positive_pairings (T : 𝓓'(U,
       conv_lhs => rw [hva, KahlerPotentialNormalization.leviForm_smul_right]
     rw [← apply_leviScalarTest, htest, map_smul, smul_eq_mul, apply_leviScalarTest]
     exact mul_nonneg (sq_nonneg _) (hunit a ha φ hφ)
+
+/-- Genuine full positive pairings recover every actual constant-direction Levi inequality. -/
+theorem hasNonnegativeDistributionalLevi_of_full_positive_pairings (T : 𝓓'(U, ℝ))
+    (hT : ∀ α : 𝓓(U, RealForm (m + 1) (2 * m)),
+      (∀ z, α z ∈ spCone m) →
+        0 ≤ ∑ i, ddc (scalarTopCurrent T) (formBasis (m + 1) m i) (coeffTest α i)) :
+    HasNonnegativeDistributionalLevi T := by
+  have hunit (a : ComplexModel (m + 1)) (ha : ‖a‖ = 1)
+      (φ : 𝓓(U, ℝ)) (hφ : ∀ z, 0 ≤ φ z) : 0 ≤ distributionalLeviCLM a T φ := by
+    obtain ⟨α, _, _, hp, heq⟩ := exists_directional_full_test T φ a ha
+    have h := hT α (hp hφ)
+    rw [heq] at h
+    exact (mul_nonneg_iff_of_pos_left
+      (div_pos (by exact_mod_cast Nat.factorial_pos m)
+        (pow_pos Real.pi_pos (m + 1)))).mp h
+  exact hasNonnegativeDistributionalLevi_of_unit T hunit
 
 /-- Full positivity of the actual scalar differential supplies the genuine Levi inequalities. -/
 theorem hasNonnegativeDistributionalLevi_of_isPositive_ddc (T : 𝓓'(U, ℝ))

@@ -73,12 +73,10 @@ theorem restrict_eq_of_joint_max_slot {U : Opens (ComplexModel n)}
   classical
   obtain ⟨F, hF⟩ := id hex
   have hGw := hF.1 i₀
-  set P := {z | z ∈ U ∧ g z < u i₀ z} with hP_def
+  set P := {z | z ∈ U ∧ g z < u i₀ z}
   have hPm : MeasurableSet P := measurableSet_lt_of_joint_decApprox hGw hg
-  have hPU : P ⊆ U := fun z hz ↦ hz.1
   have hUm := U.isOpen.measurableSet
   set f : ComplexModel n → ENNReal := fun z ↦ ENNReal.ofReal (max (u i₀ z) (g z) - g z)
-    with hf_def
   have hfm (ν : Measure (ComplexModel n)) : AEMeasurable f (ν.restrict U) := by
     refine (aemeasurable_of_tendsto_metrizable_ae atTop
       (f := fun j z ↦ max (F i₀ j z) (J j z) - J j z) (fun j ↦ ?_) ?_).ennreal_ofReal
@@ -86,60 +84,15 @@ theorem restrict_eq_of_joint_max_slot {U : Opens (ComplexModel n)}
         (hg.1 j).1.continuousOn).aemeasurable hUm
     · filter_upwards [ae_restrict_mem hUm] with z hz
       exact ((hGw.2.2.1 z hz).max (hg.2.2.1 z hz)).sub (hg.2.2.1 z hz)
-  set ρ := (μ.restrict U).withDensity f
-  set ρ' := (μ'.restrict U).withDensity f
-  have hfin (ν : Measure (ComplexModel n)) (hνf : ∀ K, IsCompact K → K ⊆ U → ν K < ⊤) :
-      ∀ K, IsCompact K → K ⊆ U → (ν.restrict U).withDensity f K < ⊤ := by
-    intro K hK hKU
+  refine BedfordTaylor.restrict_eq_of_max_weight_test_integral_eq hPm hfm ?_ ?_ hμf hμ'f ?_
+  · intro K hK hKU
     obtain ⟨C, hC⟩ := hGw.exists_abs_le hK hKU
+    exact ⟨C, fun _ hz => hGw.abs_le_of_mem hKU hC hz⟩
+  · intro K hK hKU
     obtain ⟨D, hD⟩ := hg.exists_abs_le hK hKU
-    rw [withDensity_apply _ hK.measurableSet]
-    calc ∫⁻ z in K, f z ∂ν.restrict U ≤ ∫⁻ z in K, ENNReal.ofReal (C + D) ∂ν.restrict U := by
-          refine setLIntegral_mono_ae measurable_const.aemeasurable ?_
-          refine Eventually.of_forall fun z hz ↦ ENNReal.ofReal_le_ofReal ?_
-          have h1 := hGw.abs_le_of_mem hKU hC hz
-          have h2 := hg.abs_le_of_mem hKU hD hz
-          have h1' := le_abs_self (u i₀ z)
-          have h2' := neg_abs_le (g z)
-          have h1n := abs_nonneg (u i₀ z)
-          have h2n := abs_nonneg (g z)
-          rcases le_total (u i₀ z) (g z) with h | h
-          · rw [max_eq_right h, sub_self]
-            linarith
-          · rw [max_eq_left h]
-            linarith
-      _ = ENNReal.ofReal (C + D) * ν.restrict U K := by rw [setLIntegral_const]
-      _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top
-          ((Measure.restrict_apply_le _ _).trans_lt (hνf K hK hKU))
-  have hint (ν : Measure (ComplexModel n)) (φ : ComplexModel n → ℝ)
-      (hφU : tsupport φ ⊆ U) :
-      ∫ z, φ z ∂(ν.restrict U).withDensity f = ∫ z, φ z * (max (u i₀ z) (g z) - g z) ∂ν := by
-    rw [integral_withDensity_eq_integral_toReal_smul₀ (hfm ν)
-      (Eventually.of_forall fun _ ↦ ENNReal.ofReal_lt_top)]
-    rw [setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz ↦ by
-      simp [image_eq_zero_of_notMem_tsupport fun h ↦ hz (hφU h)]]
-    congr 1; funext z
-    rw [ENNReal.toReal_ofReal (sub_nonneg.2 (le_max_right _ _)), smul_eq_mul, mul_comm]
-  have hρ : ρ.restrict U = ρ'.restrict U :=
-    restrict_eq_of_testFunction_integral_eq (hfin μ hμf) (hfin μ' hμ'f) fun φ ↦ by
-      rw [hint μ φ φ.tsupport_subset, hint μ' φ φ.tsupport_subset]
-      exact JointDecreasingMaxWeight.integral_mul_jointMaxWeight_eq i₀ hg hμc hμf hμ hμ'c hμ'f hμ'
-        hex φ.continuous
-        φ.hasCompactSupport φ.tsupport_subset
-  have hself (ν : Measure (ComplexModel n)) :
-      ((ν.restrict U).withDensity f).restrict U = (ν.restrict U).withDensity f := by
-    rw [restrict_withDensity hUm, Measure.restrict_restrict hUm, inter_self]
-  rw [hself, hself] at hρ
-  have hinv (ν : Measure (ComplexModel n)) :
-      ν.restrict P = (((ν.restrict U).withDensity f).restrict P).withDensity
-        fun z ↦ (f z)⁻¹ := by
-    rw [restrict_withDensity hPm, withDensity_inv_same₀ ((hfm ν).mono_measure
-      Measure.restrict_le_self)]
-    · rw [Measure.restrict_restrict_of_subset hPU]
-    · filter_upwards [ae_restrict_mem hPm] with z hz
-      simp only [hf_def, ne_eq, ENNReal.ofReal_eq_zero, not_le, sub_pos]
-      exact lt_max_of_lt_left hz.2
-    · exact Eventually.of_forall fun _ ↦ ENNReal.ofReal_ne_top
-  rw [hinv μ, hinv μ', hρ]
+    exact ⟨D, fun _ hz => hg.abs_le_of_mem hKU hD hz⟩
+  · intro φ
+    exact JointDecreasingMaxWeight.integral_mul_jointMaxWeight_eq i₀ hg hμc hμf hμ hμ'c hμ'f hμ' hex
+      φ.continuous φ.hasCompactSupport φ.tsupport_subset
 
 end SGPT.Foundations.Analysis.Pending.JointDecreasingMaxLocality

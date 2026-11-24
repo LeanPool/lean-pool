@@ -42,22 +42,21 @@ Existence of a potential replaces any undefined pseudoeffectivity assumption. -/
 theorem thetaPshSupremum_isThetaPshPotential
     {n : ℕ} {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
     [IsComplexManifold n M] [CompactSpace M] [Nonempty M]
-    (θ : SmoothRealForm n M 2) (hclosed : θ.IsClosed) (h11 : θ.IsTypeOneOne)
+    (θ : SmoothRealForm n M 2)
     (hlocal : HasSmoothLocalPotentials θ) (hne : ∃ u, IsThetaPshPotential θ u) :
     IsThetaPshPotential θ (thetaPshSupremum θ) := by
-  exact FirstPass.thetaPshSupremum_isThetaPshPotential θ hclosed h11 hlocal hne
+  exact FirstPass.thetaPshSupremum_isThetaPshPotential θ hlocal hne
 
 /-- Canonical minimal singularities: every theta-PSH potential
 is more singular than the actual pointwise supremum V_theta. -/
 theorem thetaPshSupremum_minimalSingularities
     {n : ℕ} {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
     [IsComplexManifold n M] [CompactSpace M] [Nonempty M]
-    (θ : SmoothRealForm n M 2) (hclosed : θ.IsClosed) (h11 : θ.IsTypeOneOne)
-    (hlocal : HasSmoothLocalPotentials θ) (hne : ∃ u, IsThetaPshPotential θ u)
+    (θ : SmoothRealForm n M 2)
     (u : M → EReal) (hu : IsThetaPshPotential θ u) :
     MoreSingularOn u (thetaPshSupremum θ) univ := by
   exact FirstPass.thetaPshSupremum_minimalSingularities
-    θ hclosed h11 hlocal hne u hu
+    θ u hu
 
 /-- The singularity-type envelope of an actual theta-PSH
 potential is again a theta-PSH potential. It need not have the same additive
@@ -65,10 +64,10 @@ singularity type as its reference potential. -/
 theorem singularityEnvelope_isThetaPshPotential
     {n : ℕ} {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
     [IsComplexManifold n M] [CompactSpace M] [Nonempty M]
-    (θ : SmoothRealForm n M 2) (hclosed : θ.IsClosed) (h11 : θ.IsTypeOneOne)
+    (θ : SmoothRealForm n M 2)
     (hlocal : HasSmoothLocalPotentials θ) (φ : M → EReal) (hφ : IsThetaPshPotential θ φ) :
     IsThetaPshPotential θ (singularityEnvelope θ φ) := by
   exact FirstPass.singularityEnvelope_isThetaPshPotential
-    θ hclosed h11 hlocal φ hφ
+    θ hlocal φ hφ
 
 end SGPT.Foundations.Analysis.Pending

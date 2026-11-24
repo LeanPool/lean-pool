@@ -393,27 +393,7 @@ theorem hasNonnegativeDistributionalLevi_of_betaProduct_pairings
     rw [heq] at h
     exact (mul_nonneg_iff_of_pos_left
       (div_pos (pow_pos (by positivity) m) (pow_pos Real.pi_pos (m + 1)))).mp h
-  intro v φ hφ
-  by_cases hv : v = 0
-  · subst v
-    have hz : leviScalarTest (0 : ComplexModel (m + 1)) φ = 0 := by
-      ext z
-      simp only [leviScalarTest_apply, leviForm_zero, _root_.zero_apply]
-    rw [← apply_leviScalarTest, hz, map_zero]
-  · let a : ComplexModel (m + 1) := ‖v‖⁻¹ • v
-    have hn : 0 < ‖v‖ := norm_pos_iff.mpr hv
-    have ha : ‖a‖ = 1 := by
-      change ‖‖v‖⁻¹ • v‖ = 1
-      rw [norm_smul, Real.norm_of_nonneg (inv_nonneg.mpr hn.le), inv_mul_cancel₀ hn.ne']
-    have hva : v = ‖v‖ • a := by
-      change v = ‖v‖ • (‖v‖⁻¹ • v)
-      rw [smul_smul, mul_inv_cancel₀ hn.ne', one_smul]
-    have htest : leviScalarTest v φ = ‖v‖ ^ 2 • leviScalarTest a φ := by
-      ext z
-      simp only [_root_.smul_apply, smul_eq_mul, leviScalarTest_apply]
-      conv_lhs => rw [hva, KahlerPotentialNormalization.leviForm_smul_right]
-    rw [← apply_leviScalarTest, htest, map_smul, smul_eq_mul, apply_leviScalarTest]
-    exact mul_nonneg (sq_nonneg _) (hunit a ha φ hφ)
+  exact FullPositiveScalarCurrentLeviConverse.hasNonnegativeDistributionalLevi_of_unit T hunit
 
 end Direction
 

@@ -157,7 +157,7 @@ theorem thetaPlurisubharmonic_uscRegularization_sSup
 potential. -/
 theorem thetaPshSupremum_isThetaPshPotential
     [CompactSpace M] [Nonempty M]
-    (θ : SmoothRealForm n M 2) (_hclosed : θ.IsClosed) (_h11 : θ.IsTypeOneOne)
+    (θ : SmoothRealForm n M 2)
     (hlocal : HasSmoothLocalPotentials θ) (hne : ∃ u, IsThetaPshPotential θ u) :
     IsThetaPshPotential θ (thetaPshSupremum θ) := by
   have hcomp : (thetaPshCompetitors θ).Nonempty := thetaPshCompetitors_nonempty θ hne
@@ -180,8 +180,7 @@ theorem thetaPshSupremum_isThetaPshPotential
 /-- Every theta-PSH potential is more singular than the normalized supremum. -/
 theorem thetaPshSupremum_minimalSingularities
     [CompactSpace M] [Nonempty M]
-    (θ : SmoothRealForm n M 2) (_hclosed : θ.IsClosed) (_h11 : θ.IsTypeOneOne)
-    (_hlocal : HasSmoothLocalPotentials θ) (_hne : ∃ u, IsThetaPshPotential θ u)
+    (θ : SmoothRealForm n M 2)
     (u : M → EReal) (hu : IsThetaPshPotential θ u) :
     MoreSingularOn u (thetaPshSupremum θ) univ := by
   obtain ⟨C, hC⟩ := hu.exists_normalized_sub_const
@@ -194,7 +193,7 @@ theorem thetaPshSupremum_minimalSingularities
 potential is again an actual theta-PSH potential. -/
 theorem singularityEnvelope_isThetaPshPotential
     [CompactSpace M] [Nonempty M]
-    (θ : SmoothRealForm n M 2) (_hclosed : θ.IsClosed) (_h11 : θ.IsTypeOneOne)
+    (θ : SmoothRealForm n M 2)
     (hlocal : HasSmoothLocalPotentials θ) (φ : M → EReal)
     (hφ : IsThetaPshPotential θ φ) :
     IsThetaPshPotential θ (singularityEnvelope θ φ) := by

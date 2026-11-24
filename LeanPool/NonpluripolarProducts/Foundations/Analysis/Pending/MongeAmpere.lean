@@ -98,12 +98,15 @@ theorem exists_localBedfordTaylorMeasure {Ω : Opens (ComplexModel n)}
   BedfordTaylor.exists_isLocalBedfordTaylorMeasure hu
 
 open scoped Distributions in
-/-- Uniqueness must use measure separation inside Ω (or on smaller subdomains),
-not an unjustified ambient Radon hypothesis for the zero extensions. -/
-theorem localBedfordTaylorMeasure_unique {Ω : Opens (ComplexModel n)}
-    {u : ComplexModel n → ℝ} {μ ν : Measure (ComplexModel n)}
-    (hμ : IsLocalBedfordTaylorMeasure Ω u μ)
-    (hν : IsLocalBedfordTaylorMeasure Ω u ν) : μ = ν := by
+/-- Agreeing against tests supported in relatively compact subdomains determines a measure
+carried by the open domain and finite on its compact subsets. -/
+theorem eq_of_testFunction_integral_eq_on_relativelyCompact {Ω : Opens (ComplexModel n)}
+    {μ ν : Measure (ComplexModel n)}
+    (hμc : μ (Ω : Set (ComplexModel n))ᶜ = 0) (hνc : ν (Ω : Set (ComplexModel n))ᶜ = 0)
+    (hμf : ∀ K, IsCompact K → K ⊆ Ω → μ K < ⊤)
+    (hνf : ∀ K, IsCompact K → K ⊆ Ω → ν K < ⊤)
+    (heq : ∀ U, RelativelyCompactIn U Ω → ∀ φ : 𝓓(Ω, ℝ), tsupport φ ⊆ U →
+      (∫ z, φ z ∂μ) = ∫ z, φ z ∂ν) : μ = ν := by
   have hint : ∀ φ : 𝓓(Ω, ℝ), (∫ z, φ z ∂μ) = ∫ z, φ z ∂ν := by
     intro φ
     obtain ⟨δ, hδ, hδΩ⟩ :=
@@ -118,16 +121,27 @@ theorem localBedfordTaylorMeasure_unique {Ω : Opens (ComplexModel n)}
         hclosure.trans hδΩ⟩
     have hφU : tsupport φ ⊆ (U : Set (ComplexModel n)) :=
       Metric.self_subset_thickening hδ (tsupport φ)
-    obtain ⟨f, hf⟩ := (hμ.2.2.2 U hU).1
-    exact tendsto_nhds_unique ((hμ.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
-      ((hν.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
+    exact heq U hU φ hφU
   have hμrestrict : μ.restrict (Ω : Set (ComplexModel n)) = μ :=
-    Measure.restrict_eq_self_of_ae_mem (by rw [ae_iff]; exact hμ.2.1)
+    Measure.restrict_eq_self_of_ae_mem (by rw [ae_iff]; exact hμc)
   have hνrestrict : ν.restrict (Ω : Set (ComplexModel n)) = ν :=
-    Measure.restrict_eq_self_of_ae_mem (by rw [ae_iff]; exact hν.2.1)
+    Measure.restrict_eq_self_of_ae_mem (by rw [ae_iff]; exact hνc)
   exact hμrestrict.symm.trans
-    ((BedfordTaylor.restrict_eq_of_testFunction_integral_eq hμ.2.2.1 hν.2.2.1 hint).trans
+    ((BedfordTaylor.restrict_eq_of_testFunction_integral_eq hμf hνf hint).trans
       hνrestrict)
+
+open scoped Distributions in
+/-- Uniqueness must use measure separation inside Ω (or on smaller subdomains),
+not an unjustified ambient Radon hypothesis for the zero extensions. -/
+theorem localBedfordTaylorMeasure_unique {Ω : Opens (ComplexModel n)}
+    {u : ComplexModel n → ℝ} {μ ν : Measure (ComplexModel n)}
+    (hμ : IsLocalBedfordTaylorMeasure Ω u μ)
+    (hν : IsLocalBedfordTaylorMeasure Ω u ν) : μ = ν := by
+  apply eq_of_testFunction_integral_eq_on_relativelyCompact hμ.2.1 hν.2.1 hμ.2.2.1 hν.2.2.1
+  intro U hU φ hφU
+  obtain ⟨f, hf⟩ := (hμ.2.2.2 U hU).1
+  exact tendsto_nhds_unique ((hμ.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
+    ((hν.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
 
 /-- Actual sequence independence follows from the existence theorem;
 the only input about the limit potential is that it is locally bounded PSH. -/

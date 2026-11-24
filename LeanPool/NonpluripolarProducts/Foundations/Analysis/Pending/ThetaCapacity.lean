@@ -245,7 +245,7 @@ theorem diagonalPotentialMeasure_le_thetaCapacityV [Nonempty M]
       ENNReal.ofReal (C ^ n) * thetaCapacityV theta E := by
   have hV : IsThetaPshPotential theta.val (thetaPshSupremum theta.val) :=
     SGPT.Foundations.Analysis.Pending.thetaPshSupremum_isThetaPshPotential theta.val
-      theta.2.1 theta.2.2 hu.1.hasSmoothLocalPotentials ⟨u, hu⟩
+      hu.1.hasSmoothLocalPotentials ⟨u, hu⟩
   exact diagonalPotentialMeasure_le_thetaCapacity_of_bounds hV hu hC
     (le_thetaPshSupremum hu hu0) hlb E
 

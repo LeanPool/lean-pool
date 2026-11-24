@@ -204,6 +204,28 @@ theorem hasFDerivAt_radialTwoFormIntegrand
       t • (a (z + t • (y - z))).curryLeft (y - z)) _ x
   exact happ.const_smul t
 
+private theorem continuous_radialTwoFormIntegrandFDeriv
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    (a : E → E [⋀^Fin 2]→L[ℝ] ℝ) (z : E) (ha : ContDiff ℝ ∞ a) :
+    Continuous (Function.uncurry fun y t ↦ radialTwoFormIntegrandFDeriv a z t y) := by
+  have hswap : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦ (p.2, p.1.1)) := by
+    fun_prop
+  have hfull : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦
+      radialTwoFormIntegrand a z p.1.1 p.2) :=
+    (contDiff_radialTwoFormIntegrand a z ha).comp hswap
+  have hpartial : ContDiff ℝ ∞ (fun p : ℝ × E ↦
+      fderiv ℝ (radialTwoFormIntegrand a z p.1) p.2) :=
+    hfull.fderiv (by fun_prop) (by simp)
+  have hswap2 : Continuous (fun p : E × ℝ ↦ (p.2, p.1)) := by
+    fun_prop
+  have hc : Continuous (Function.uncurry fun y t ↦
+      fderiv ℝ (radialTwoFormIntegrand a z t) y) :=
+    hpartial.continuous.comp hswap2
+  convert hc using 1
+  funext p
+  exact (hasFDerivAt_radialTwoFormIntegrand a z p.2 p.1
+    ((ha.differentiable (by simp)).differentiableAt)).fderiv.symm
+
 /-- A globally smooth two-form may be differentiated through the radial
 homotopy integral. -/
 theorem hasFDerivAt_radialTwoFormPrimitive
@@ -221,24 +243,7 @@ theorem hasFDerivAt_radialTwoFormPrimitive
     (G := fun y t ↦ radialTwoFormIntegrand a z t y)
     (G' := fun y t ↦ radialTwoFormIntegrandFDeriv a z t y)
     (contDiff_radialTwoFormIntegrand a z ha).continuous
-    (by
-      have hswap : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦ (p.2, p.1.1)) := by
-        fun_prop
-      have hfull : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦
-          radialTwoFormIntegrand a z p.1.1 p.2) :=
-        (contDiff_radialTwoFormIntegrand a z ha).comp hswap
-      have hpartial : ContDiff ℝ ∞ (fun p : ℝ × E ↦
-          fderiv ℝ (radialTwoFormIntegrand a z p.1) p.2) :=
-        hfull.fderiv (by fun_prop) (by simp)
-      have hswap2 : Continuous (fun p : E × ℝ ↦ (p.2, p.1)) := by
-        fun_prop
-      have hc : Continuous (Function.uncurry fun y t ↦
-          fderiv ℝ (radialTwoFormIntegrand a z t) y) :=
-        hpartial.continuous.comp hswap2
-      convert hc using 1
-      funext p
-      exact (hasFDerivAt_radialTwoFormIntegrand a z p.2 p.1
-        ((ha.differentiable (by simp)).differentiableAt)).fderiv.symm)
+    (continuous_radialTwoFormIntegrandFDeriv a z ha)
     (fun y t ↦ hasFDerivAt_radialTwoFormIntegrand a z t y
       ((ha.differentiable (by simp)).differentiableAt)) x 0 1
 
@@ -260,25 +265,7 @@ theorem radialTwoFormPrimitive_fderiv_apply
   have hIjoint : Continuous (Function.uncurry fun y t ↦
       radialTwoFormIntegrand a z t y) :=
     (contDiff_radialTwoFormIntegrand a z ha).continuous
-  have hDjoint : Continuous (Function.uncurry fun y t ↦
-      radialTwoFormIntegrandFDeriv a z t y) := by
-    have hswap : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦ (p.2, p.1.1)) := by
-      fun_prop
-    have hfull : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦
-        radialTwoFormIntegrand a z p.1.1 p.2) :=
-      (contDiff_radialTwoFormIntegrand a z ha).comp hswap
-    have hpartial : ContDiff ℝ ∞ (fun p : ℝ × E ↦
-        fderiv ℝ (radialTwoFormIntegrand a z p.1) p.2) :=
-      hfull.fderiv (by fun_prop) (by simp)
-    have hswap2 : Continuous (fun p : E × ℝ ↦ (p.2, p.1)) := by
-      fun_prop
-    have hc : Continuous (Function.uncurry fun y t ↦
-        fderiv ℝ (radialTwoFormIntegrand a z t) y) :=
-      hpartial.continuous.comp hswap2
-    convert hc using 1
-    funext p
-    exact (hasFDerivAt_radialTwoFormIntegrand a z p.2 p.1
-      ((ha.differentiable (by simp)).differentiableAt)).fderiv.symm
+  have hDjoint := continuous_radialTwoFormIntegrandFDeriv a z ha
   have hKjoint : Continuous K.uncurry := by
     exact ((ContinuousLinearMap.compL ℝ E (E [⋀^Fin 1]→L[ℝ] ℝ) ℝ) ev).continuous.comp
       hDjoint
@@ -461,25 +448,7 @@ theorem extDeriv_radialTwoFormPrimitive_of_closed_segment
   let g : ℝ → ℝ := fun t ↦
     radialTwoFormIntegrandFDeriv a z t x (v 1) (Fin.removeNth 1 v)
   change (∫ t in (0 : ℝ)..1, f t) - (∫ t in (0 : ℝ)..1, g t) = a x v
-  have hDjoint : Continuous (Function.uncurry fun y t ↦
-      radialTwoFormIntegrandFDeriv a z t y) := by
-    have hswap : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦ (p.2, p.1.1)) := by
-      fun_prop
-    have hfull : ContDiff ℝ ∞ (fun p : (ℝ × E) × E ↦
-        radialTwoFormIntegrand a z p.1.1 p.2) :=
-      (contDiff_radialTwoFormIntegrand a z ha).comp hswap
-    have hpartial : ContDiff ℝ ∞ (fun p : ℝ × E ↦
-        fderiv ℝ (radialTwoFormIntegrand a z p.1) p.2) :=
-      hfull.fderiv (by fun_prop) (by simp)
-    have hswap2 : Continuous (fun p : E × ℝ ↦ (p.2, p.1)) := by
-      fun_prop
-    have hc : Continuous (Function.uncurry fun y t ↦
-        fderiv ℝ (radialTwoFormIntegrand a z t) y) :=
-      hpartial.continuous.comp hswap2
-    convert hc using 1
-    funext p
-    exact (hasFDerivAt_radialTwoFormIntegrand a z p.2 p.1
-      ((ha.differentiable (by simp)).differentiableAt)).fderiv.symm
+  have hDjoint := continuous_radialTwoFormIntegrandFDeriv a z ha
   have hDx : Continuous (fun t ↦ radialTwoFormIntegrandFDeriv a z t x) :=
     hDjoint.comp ((continuous_const (y := x)).prodMk continuous_id)
   let evf : (E →L[ℝ] E [⋀^Fin 1]→L[ℝ] ℝ) →L[ℝ] ℝ :=

@@ -101,30 +101,6 @@ theorem exists_nhds_decomposition_rel {S T : Set (ComplexModel n)} (hS : IsAnaly
 variable {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
   [IsComplexManifold n M]
 
-/-- The chart image of an analytic set at `x`, translated so that `x` sits at `0`, is an
-analytic germ. -/
-theorem isAnalyticGerm_chart_translate {A : Set M} {x : M}
-    (P : ComplexAnalyticPresentationAt (n := n) A x) :
-    IsAnalyticGerm {w : ComplexModel n | w + (complexChartAt (n := n) x).val x ∈
-      (complexChartAt (n := n) x).val.target ∩ (complexChartAt (n := n) x).val.symm ⁻¹' A} := by
-  let e := (complexChartAt (n := n) x).val
-  let q := e x
-  have hN : ∀ᶠ w in 𝓝 (0 : ComplexModel n), w + q ∈ P.coordinateNeighborhood := by
-    have ht : Tendsto (fun w : ComplexModel n => w + q) (𝓝 0) (𝓝 q) :=
-      (continuous_add_const q).tendsto' 0 q (zero_add q)
-    exact ht (P.isOpen_coordinateNeighborhood.mem_nhds P.center_mem_coordinateNeighborhood)
-  refine ⟨P.generatorCount, fun j w => P.generator j (w + q), fun j => ?_, ?_⟩
-  · filter_upwards [hN] with w hw
-    exact ((P.generator_holomorphic j).differentiableAt
-      (P.isOpen_coordinateNeighborhood.mem_nhds hw)).comp w (differentiableAt_id.add_const q)
-  · filter_upwards [hN] with w hw
-    have ht : w + q ∈ e.target := P.coordinateNeighborhood_subset_target hw
-    have hy : e.symm (w + q) ∈ e.source := e.map_target ht
-    have hz := P.zeroLocus hy (by rwa [e.right_inv ht])
-    rw [e.right_inv ht] at hz
-    change (w + q ∈ e.target ∧ e.symm (w + q) ∈ A) ↔ _
-    exact ⟨fun h => hz.mp h.2, fun h => ⟨ht, hz.mpr h⟩⟩
-
 /-- A presentation at `x` of a set which, on an open neighbourhood `W` of `x` in the chart
 source, is a finite union of common zero sets of functions holomorphic on the chart image of
 `W`. -/
@@ -189,8 +165,8 @@ theorem isComplexAnalyticSubset_closure_diff {X Y : Set M}
       (continuous_add_const q).tendsto' 0 q (zero_add q)
     exact ht (e.open_target.mem_nhds (e.map_source (mem_complexChartAt_source x)))
   obtain ⟨U, hUo, hU0, hUN, r, s, g, Q, hg, hgS, hgT, hthin⟩ :=
-    exists_nhds_decomposition_rel (isAnalyticGerm_chart_translate PX)
-      (isAnalyticGerm_chart_translate PY) hNt
+    exists_nhds_decomposition_rel (AnalyticLocalStatement.isAnalyticGerm_chart_translate PX)
+      (AnalyticLocalStatement.isAnalyticGerm_chart_translate PY) hNt
   let W : Set M := e.source ∩ e ⁻¹' ((fun v => v - q) ⁻¹' U)
   have hWo : IsOpen W := e.isOpen_inter_preimage (hUo.preimage (continuous_sub_right q))
   have hxW : x ∈ W := ⟨mem_complexChartAt_source x, by simpa [q] using hU0⟩

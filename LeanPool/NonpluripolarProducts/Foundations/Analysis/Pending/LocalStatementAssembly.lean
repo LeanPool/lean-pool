@@ -278,6 +278,30 @@ theorem exists_localDecomposition_zero {S : Set (ComplexModel n)} (hS : IsAnalyt
 variable {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
   [IsComplexManifold n M]
 
+/-- The chart image of an analytic set at `x`, translated so that `x` sits at `0`, is an
+analytic germ. -/
+theorem isAnalyticGerm_chart_translate {A : Set M} {x : M}
+    (P : ComplexAnalyticPresentationAt (n := n) A x) :
+    IsAnalyticGerm {w : ComplexModel n | w + (complexChartAt (n := n) x).val x ∈
+      (complexChartAt (n := n) x).val.target ∩ (complexChartAt (n := n) x).val.symm ⁻¹' A} := by
+  let e := (complexChartAt (n := n) x).val
+  let q := e x
+  have hN : ∀ᶠ w in 𝓝 (0 : ComplexModel n), w + q ∈ P.coordinateNeighborhood := by
+    have ht : Tendsto (fun w : ComplexModel n => w + q) (𝓝 0) (𝓝 q) :=
+      (continuous_add_const q).tendsto' 0 q (zero_add q)
+    exact ht (P.isOpen_coordinateNeighborhood.mem_nhds P.center_mem_coordinateNeighborhood)
+  refine ⟨P.generatorCount, fun j w => P.generator j (w + q), fun j => ?_, ?_⟩
+  · filter_upwards [hN] with w hw
+    exact ((P.generator_holomorphic j).differentiableAt
+      (P.isOpen_coordinateNeighborhood.mem_nhds hw)).comp w (differentiableAt_id.add_const q)
+  · filter_upwards [hN] with w hw
+    have ht : w + q ∈ e.target := P.coordinateNeighborhood_subset_target hw
+    have hy : e.symm (w + q) ∈ e.source := e.map_target ht
+    have hz := P.zeroLocus hy (by rwa [e.right_inv ht])
+    rw [e.right_inv ht] at hz
+    change (w + q ∈ e.target ∧ e.symm (w + q) ∈ A) ↔ _
+    exact ⟨fun h => hz.mp h.2, fun h => ⟨ht, hz.mpr h⟩⟩
+
 /-- **The local statement (LS).**  Every point of an analytic subset of a complex manifold has
 local decomposition data.  Blueprint `lag:local-statement`; the remaining inputs are
 `IrreducibleGermLocal.exists_pure_nhds` and `IrreducibleGermLocal.exists_thin_nhds`. -/
@@ -287,22 +311,7 @@ theorem exists_localDecomposition {A : Set M} (hA : IsComplexAnalyticSubset (n :
   let e := (complexChartAt (n := n) p).val
   let q := e p
   let S : Set (ComplexModel n) := {w | w + q ∈ e.target ∩ e.symm ⁻¹' A}
-  have hN : ∀ᶠ w in 𝓝 (0 : ComplexModel n), w + q ∈ P.coordinateNeighborhood := by
-    have ht : Tendsto (fun w : ComplexModel n => w + q) (𝓝 0) (𝓝 q) := by
-      exact (continuous_add_const q).tendsto' 0 q (zero_add q)
-    exact ht (P.isOpen_coordinateNeighborhood.mem_nhds P.center_mem_coordinateNeighborhood)
-  have hS : IsAnalyticGerm S := by
-    refine ⟨P.generatorCount, fun j w => P.generator j (w + q), fun j => ?_, ?_⟩
-    · filter_upwards [hN] with w hw
-      exact ((P.generator_holomorphic j).differentiableAt
-        (P.isOpen_coordinateNeighborhood.mem_nhds hw)).comp w (differentiableAt_id.add_const q)
-    · filter_upwards [hN] with w hw
-      have ht : w + q ∈ e.target := P.coordinateNeighborhood_subset_target hw
-      have hy : e.symm (w + q) ∈ e.source := e.map_target ht
-      have hz := P.zeroLocus hy (by rwa [e.right_inv ht])
-      rw [e.right_inv ht] at hz
-      change (w + q ∈ e.target ∧ e.symm (w + q) ∈ A) ↔ _
-      exact ⟨fun h => hz.mp h.2, fun h => ⟨ht, hz.mpr h⟩⟩
+  have hS : IsAnalyticGerm S := isAnalyticGerm_chart_translate P
   obtain ⟨D₀⟩ := exists_localDecomposition_zero hS
   have hset : {z | z - q ∈ S} = e.target ∩ e.symm ⁻¹' A := by
     ext z

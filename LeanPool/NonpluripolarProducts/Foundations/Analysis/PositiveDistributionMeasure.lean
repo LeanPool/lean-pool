@@ -123,16 +123,15 @@ theorem exists_nonneg_testFunction_abs_le (f : C_c(Ω, ℝ)) :
   · rw [image_eq_zero_of_notMem_tsupport hx, abs_zero]
     exact mul_nonneg hMn (hχn x)
 
-/-- A positive distribution extends to a positive linear functional on the
-compactly supported continuous functions of the open domain. -/
-theorem PositiveDistribution.exists_positiveLinearMap {T : 𝓓'(Ω, ℝ)}
-    (hT : PositiveDistribution T) :
+/-- A nonnegative linear functional on smooth tests extends to compactly supported
+continuous functions by the Riesz extension theorem. -/
+theorem exists_positiveLinearMap_of_nonneg_testFunctional (T : 𝓓(Ω, ℝ) →ₗ[ℝ] ℝ)
+    (hT : ∀ φ : 𝓓(Ω, ℝ), (∀ x, 0 ≤ φ x) → 0 ≤ T φ) :
     ∃ Λ : C_c(Ω, ℝ) →ₚ[ℝ] ℝ,
       ∀ φ : 𝓓(Ω, ℝ), Λ (testFunctionToCompactlySupportedLM Ω φ) = T φ := by
   let i := testFunctionToCompactlySupportedLM Ω
   let e := LinearEquiv.ofInjective i testFunctionToCompactlySupportedLM_injective
-  let p : C_c(Ω, ℝ) →ₗ.[ℝ] ℝ :=
-    ⟨i.range, T.toLinearMap.comp e.symm.toLinearMap⟩
+  let p : C_c(Ω, ℝ) →ₗ.[ℝ] ℝ := ⟨i.range, T.comp e.symm.toLinearMap⟩
   let s : PointedCone ℝ C_c(Ω, ℝ) :=
     { carrier := {f | ∀ x, 0 ≤ f x}
       zero_mem' := fun _ => le_rfl
@@ -144,13 +143,11 @@ theorem PositiveDistribution.exists_positiveLinearMap {T : 𝓓'(Ω, ℝ)}
     apply hT
     intro z
     by_cases hz : z ∈ Ω
-    · have hi : i (e.symm x) = (x : C_c(Ω, ℝ)) :=
-        LinearEquiv.ofInjective_symm_apply i x
+    · have hi : i (e.symm x) = (x : C_c(Ω, ℝ)) := LinearEquiv.ofInjective_symm_apply i x
       have hxz : 0 ≤ (x : C_c(Ω, ℝ)) ⟨z, hz⟩ := hx ⟨z, hz⟩
       rw [← hi] at hxz
       exact hxz
-    · rw [image_eq_zero_of_notMem_tsupport
-        (fun h => hz ((e.symm x).tsupport_subset h))]
+    · rw [image_eq_zero_of_notMem_tsupport (fun h => hz ((e.symm x).tsupport_subset h))]
   have hcofinal : ∀ y : C_c(Ω, ℝ), ∃ x : p.domain, (x : C_c(Ω, ℝ)) + y ∈ s := by
     intro y
     obtain ⟨φ, _, hφ⟩ := exists_nonneg_testFunction_abs_le y
@@ -174,17 +171,32 @@ theorem PositiveDistribution.exists_positiveLinearMap {T : 𝓓'(Ω, ℝ)}
     Λ (i φ) = T (e.symm (e φ)) := hgp (e φ)
     _ = T φ := by rw [e.symm_apply_apply]
 
+/-- A positive distribution extends to a positive functional on continuous tests. -/
+theorem PositiveDistribution.exists_positiveLinearMap {T : 𝓓'(Ω, ℝ)}
+    (hT : PositiveDistribution T) :
+    ∃ Λ : C_c(Ω, ℝ) →ₚ[ℝ] ℝ,
+      ∀ φ : 𝓓(Ω, ℝ), Λ (testFunctionToCompactlySupportedLM Ω φ) = T φ :=
+  exists_positiveLinearMap_of_nonneg_testFunctional T.toLinearMap hT
+
 variable [MeasurableSpace E] [BorelSpace E]
+
+/-- A positive linear functional on test functions is integration against a
+regular locally finite measure on the open set. -/
+theorem exists_regular_measure_of_nonneg_testFunctional (T : 𝓓(Ω, ℝ) →ₗ[ℝ] ℝ)
+    (hT : ∀ φ : 𝓓(Ω, ℝ), (∀ x, 0 ≤ φ x) → 0 ≤ T φ) :
+    ∃ ν : Measure Ω, ν.Regular ∧ IsLocallyFiniteMeasure ν ∧
+      ∀ φ : 𝓓(Ω, ℝ), (∫ x : Ω, φ x ∂ν) = T φ := by
+  let : LocallyCompactSpace Ω := Ω.isOpen.locallyCompactSpace
+  obtain ⟨Λ, hΛ⟩ := exists_positiveLinearMap_of_nonneg_testFunctional T hT
+  refine ⟨RealRMK.rieszMeasure Λ, inferInstance, inferInstance, fun φ => ?_⟩
+  exact (RealRMK.integral_rieszMeasure Λ (testFunctionToCompactlySupportedLM Ω φ)).trans (hΛ φ)
 
 /-- A positive distribution is integration against a regular, locally finite
 Borel measure on its open domain. This is an existence statement only. -/
 theorem PositiveDistribution.exists_regular_measure {T : 𝓓'(Ω, ℝ)}
     (hT : PositiveDistribution T) :
     ∃ ν : Measure Ω, ν.Regular ∧ IsLocallyFiniteMeasure ν ∧
-      ∀ φ : 𝓓(Ω, ℝ), (∫ x : Ω, φ x ∂ν) = T φ := by
-  let : LocallyCompactSpace Ω := Ω.isOpen.locallyCompactSpace
-  obtain ⟨Λ, hΛ⟩ := hT.exists_positiveLinearMap
-  refine ⟨RealRMK.rieszMeasure Λ, inferInstance, inferInstance, fun φ => ?_⟩
-  exact (RealRMK.integral_rieszMeasure Λ (testFunctionToCompactlySupportedLM Ω φ)).trans (hΛ φ)
+      ∀ φ : 𝓓(Ω, ℝ), (∫ x : Ω, φ x ∂ν) = T φ :=
+  exists_regular_measure_of_nonneg_testFunctional T.toLinearMap hT
 
 end SGPT.Foundations.Analysis

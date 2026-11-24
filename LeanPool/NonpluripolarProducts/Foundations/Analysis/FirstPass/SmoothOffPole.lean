@@ -51,46 +51,6 @@ def SmoothOffPoleSet (u : M → EReal) : Prop :=
       ∃ g : ComplexModel n → ℝ, (∀ᶠ y in 𝓝 z, ContDiffAt ℝ ∞ g y) ∧
         chartFunction u e =ᶠ[𝓝 z] fun y => (g y : EReal)
 
-/-- Off its poles, a function with smooth analytic singularities is locally a
-smooth real function. -/
-theorem exists_smooth_eventuallyEq_of_hasSmoothAnalyticSingularitiesAt
-    {u : ComplexModel n → EReal} {z : ComplexModel n}
-    (hu : HasSmoothAnalyticSingularitiesAt u z) (hz : u z ≠ ⊥) :
-    ∃ g : ComplexModel n → ℝ, (∀ᶠ y in 𝓝 z, ContDiffAt ℝ ∞ g y) ∧
-      u =ᶠ[𝓝 z] fun y => (g y : EReal) := by
-  obtain ⟨c, m, f, hc, ⟨U, hU, hzU, hf⟩, b, hb, heq⟩ := hu
-  have hsmoothSq : ContDiffOn ℝ ∞ (generatorNormSq f) U := by
-    unfold generatorNormSq
-    refine ContDiffOn.sum fun j _ => ?_
-    have hj : ContDiffOn ℝ ∞ (f j) U := contDiffOn_real_of_differentiableOn_complex (hf j) hU
-    exact (contDiff_norm_sq ℝ).comp_contDiffOn hj
-  have hcont : ContinuousOn (generatorNormSq f) U := hsmoothSq.continuousOn
-  have hlog (y : ComplexModel n) (hy : 0 < generatorNormSq f y) :
-      generatorLog f y = (Real.log (generatorNormSq f y) : EReal) := by
-    rw [generatorLog, logNormSq, generatorVector_norm_sq,
-      ENNReal.log_ofReal_of_pos hy]
-  have hpos : 0 < generatorNormSq f z := by
-    rcases (generatorNormSq_nonneg f z).lt_or_eq with h | h
-    · exact h
-    · exfalso
-      apply hz
-      rw [heq.eq_of_nhds]
-      have hbot : generatorLog f z = ⊥ := by
-        rw [generatorLog, logNormSq, generatorVector_norm_sq, ← h]
-        simp
-      rw [hbot, EReal.mul_bot_of_pos (by exact_mod_cast hc)]
-      simp
-  have hposNear : ∀ᶠ y in 𝓝 z, 0 < generatorNormSq f y :=
-    (hcont.continuousAt (hU.mem_nhds hzU)).eventually (lt_mem_nhds hpos)
-  refine ⟨fun y => c * Real.log (generatorNormSq f y) + b y, ?_, ?_⟩
-  · filter_upwards [hb, hposNear, hU.mem_nhds hzU] with y hby hyp hyU
-    have hsq : ContDiffAt ℝ ∞ (generatorNormSq f) y :=
-      hsmoothSq.contDiffAt (hU.mem_nhds hyU)
-    exact (contDiffAt_const.mul (hsq.log hyp.ne')).add hby
-  · filter_upwards [heq, hposNear] with y hy hyp
-    rw [hy, hlog y hyp]
-    simp only [EReal.coe_add, EReal.coe_mul]
-
 /-- **Off its poles, a potential with analytic singularities in the bounded-remainder convention is
 still locally a smooth real function.**  This is the gateway the whole restricted-volume
 pipeline goes through, and it needs nothing of the remainder at the pole itself: from
@@ -136,6 +96,15 @@ theorem exists_smooth_eventuallyEq_of_hasAnalyticSingularitiesSmoothOffPoleAt
   · filter_upwards [heq, hposNear] with y hy hyp
     rw [hy, hlog y hyp]
     simp only [EReal.coe_add, EReal.coe_mul]
+
+/-- Off its poles, a function with smooth analytic singularities is locally a
+smooth real function. -/
+theorem exists_smooth_eventuallyEq_of_hasSmoothAnalyticSingularitiesAt
+    {u : ComplexModel n → EReal} {z : ComplexModel n}
+    (hu : HasSmoothAnalyticSingularitiesAt u z) (hz : u z ≠ ⊥) :
+    ∃ g : ComplexModel n → ℝ, (∀ᶠ y in 𝓝 z, ContDiffAt ℝ ∞ g y) ∧
+      u =ᶠ[𝓝 z] fun y => (g y : EReal) :=
+  exists_smooth_eventuallyEq_of_hasAnalyticSingularitiesSmoothOffPoleAt hu.smoothOffPole hz
 
 omit [IsComplexManifold n M] in
 /-- Analytic singularities in the bounded-remainder convention imply local smoothness away from the

@@ -49,11 +49,7 @@ variable {n : ℕ} {M : Type*} [TopologicalSpace M]
   {omega : KahlerBackground n M} {alpha : RealBottChern n M}
   {V : ClosedIrreducibleAnalyticSubvariety n M} {epsilon : PositiveError}
 
-/-- On a full-space regular patch of complex dimension one, the actual
-parameter density is the smooth density of the pulled-back corrected local
-potential.  The proof uses the verified dimension-one exterior-power identity
-and the holomorphic `ddᶜ` chain rule; it makes no ambient-mass assertion. -/
-theorem patchDensity_eq_smoothDensity_corrected_of_dim_eq_one
+private theorem patchDensity_eq_smoothDensity_of_topPower
     {hcarrier : V.carrier = univ} {hdim : V.dim = n}
     (p : AdmissibleRestrictedCurrentPresentation omega alpha
       (fullSpaceSubvariety V hcarrier hdim) epsilon)
@@ -64,13 +60,15 @@ theorem patchDensity_eq_smoothDensity_corrected_of_dim_eq_one
     {g : ComplexModel n → ℝ} (hg : ContDiffOn ℝ ∞ g U)
     (hpot : EqOn (chartFunction p.potential (complexChartAt (n := n) P.center))
       (fun y => (g y : EReal)) U)
-    {w : ComplexModel n} (hw : w ∈ regularParameterDomain P U) (hn : n = 1) :
+    {w : ComplexModel n} (hw : w ∈ regularParameterDomain P U)
+    (hTop : patchDensity p P w = normalizedTopPowerDensity
+      ((coordinateCurrentForm p (complexChartAt (n := n) P.center)
+        (fullSpaceCoordinateParametrization P w)).compContinuousLinearMap
+        (fderiv ℝ (fullSpaceCoordinateParametrization P) w))) :
     patchDensity p P w =
       smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
         rho (fullSpaceCoordinateParametrization P x)) w := by
   let hbio := fullSpaceCoordinateParametrization_isBiholomorphic P
-  have hwA : w ∈ fullParameterDomain P :=
-    (mem_regularParameterDomain_iff P U w).mp hw |>.1
   have hwU : P.coordinateParametrization w ∈ U :=
     (mem_regularParameterDomain_iff P U w).mp hw |>.2
   have hsub : (regularParameterDomain P U : Set (ComplexModel n)) ⊆
@@ -84,7 +82,6 @@ theorem patchDensity_eq_smoothDensity_corrected_of_dim_eq_one
     exact ⟨hxU, hbio.mapsTo hxA⟩
   have hF : ContDiffOn ℂ ∞ (fullSpaceCoordinateParametrization P)
       (regularParameterDomain P U : Set (ComplexModel n)) := hbio.holo.mono hsub
-  have hF_eq : fullSpaceCoordinateParametrization P = P.coordinateParametrization := rfl
   have hcorrected : ContDiffOn ℝ ∞ (fun y => g y + rho y)
       (regularPotentialDomain P U : Set (ComplexModel n)) :=
     (hg.add hrho.2.2.1).mono fun _ hy => hy.1
@@ -116,16 +113,12 @@ theorem patchDensity_eq_smoothDensity_corrected_of_dim_eq_one
     FirstPass.HolomorphicDDC.smoothDDC_comp
       (regularParameterDomain P U).isOpen (regularPotentialDomain P U).isOpen hF
       hcorrected hmap hw
-  have hVone : (fullSpaceSubvariety V hcarrier hdim).dim = 1 := by
-    simpa only [fullSpaceSubvariety] using hn
   calc
     patchDensity p P w =
         normalizedTopPowerDensity
           ((coordinateCurrentForm p (complexChartAt (n := n) P.center)
             (fullSpaceCoordinateParametrization P w)).compContinuousLinearMap
-            (fderiv ℝ (fullSpaceCoordinateParametrization P) w)) := by
-          rw [hF_eq]
-          exact patchDensity_eq_normalizedTopPowerDensity_of_dim_eq_one p P w hVone
+            (fderiv ℝ (fullSpaceCoordinateParametrization P) w)) := hTop
     _ = normalizedTopPowerDensity
           ((smoothDDC (fun y => g y + rho y)
             (fullSpaceCoordinateParametrization P w)).compContinuousLinearMap
@@ -137,6 +130,30 @@ theorem patchDensity_eq_smoothDensity_corrected_of_dim_eq_one
     _ = smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
       rho (fullSpaceCoordinateParametrization P x)) w :=
       normalizedTopPowerDensity_smoothDDC hpull2
+
+/-- On a full-space regular patch of complex dimension one, the actual
+parameter density is the smooth density of the pulled-back corrected local
+potential.  The proof uses the verified dimension-one exterior-power identity
+and the holomorphic `ddᶜ` chain rule; it makes no ambient-mass assertion. -/
+theorem patchDensity_eq_smoothDensity_corrected_of_dim_eq_one
+    {hcarrier : V.carrier = univ} {hdim : V.dim = n}
+    (p : AdmissibleRestrictedCurrentPresentation omega alpha
+      (fullSpaceSubvariety V hcarrier hdim) epsilon)
+    (P : RegularPatch (fullSpaceSubvariety V hcarrier hdim))
+    (U : Opens (ComplexModel n)) {rho : ComplexModel n → ℝ}
+    (hrho : IsSmoothLocalPotential (perturbedRepresentative p).val
+      (complexChartAt (n := n) P.center) U rho)
+    {g : ComplexModel n → ℝ} (hg : ContDiffOn ℝ ∞ g U)
+    (hpot : EqOn (chartFunction p.potential (complexChartAt (n := n) P.center))
+      (fun y => (g y : EReal)) U)
+    {w : ComplexModel n} (hw : w ∈ regularParameterDomain P U) (hn : n = 1) :
+    patchDensity p P w =
+      smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
+        rho (fullSpaceCoordinateParametrization P x)) w := by
+  apply patchDensity_eq_smoothDensity_of_topPower p P U hrho hg hpot hw
+  have hVone : (fullSpaceSubvariety V hcarrier hdim).dim = 1 := by
+    simpa only [fullSpaceSubvariety] using hn
+  exact patchDensity_eq_normalizedTopPowerDensity_of_dim_eq_one p P w hVone
 
 /-- In complex dimension two, the same local density identification holds on
 a pole-free coordinate neighbourhood.  The pole-free premise is a literal
@@ -159,76 +176,37 @@ theorem patchDensity_eq_smoothDensity_corrected_of_dim_eq_two
     patchDensity p P w =
       smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
         rho (fullSpaceCoordinateParametrization P x)) w := by
-  let hbio := fullSpaceCoordinateParametrization_isBiholomorphic P
-  have hwA : w ∈ fullParameterDomain P :=
-    (mem_regularParameterDomain_iff P U w).mp hw |>.1
-  have hwU : P.coordinateParametrization w ∈ U :=
-    (mem_regularParameterDomain_iff P U w).mp hw |>.2
-  have hsub : (regularParameterDomain P U : Set (ComplexModel n)) ⊆
-      (fullParameterDomain P : Set (ComplexModel n)) := fun x hx =>
-    (mem_regularParameterDomain_iff P U x).mp hx |>.1
-  have hmap : MapsTo (fullSpaceCoordinateParametrization P)
-      (regularParameterDomain P U : Set (ComplexModel n))
-      (regularPotentialDomain P U : Set (ComplexModel n)) := by
-    intro x hx
-    obtain ⟨hxA, hxU⟩ := (mem_regularParameterDomain_iff P U x).mp hx
-    exact ⟨hxU, hbio.mapsTo hxA⟩
-  have hF : ContDiffOn ℂ ∞ (fullSpaceCoordinateParametrization P)
-      (regularParameterDomain P U : Set (ComplexModel n)) := hbio.holo.mono hsub
-  have hF_eq : fullSpaceCoordinateParametrization P = P.coordinateParametrization := rfl
-  have hcorrected : ContDiffOn ℝ ∞ (fun y => g y + rho y)
-      (regularPotentialDomain P U : Set (ComplexModel n)) :=
-    (hg.add hrho.2.2.1).mono fun _ hy => hy.1
-  have hpull : ContDiffOn ℝ ∞
-      (fun x => g (fullSpaceCoordinateParametrization P x) +
-        rho (fullSpaceCoordinateParametrization P x))
-      (regularParameterDomain P U : Set (ComplexModel n)) :=
-    hcorrected.comp (hF.restrict_scalars ℝ) hmap
-  have htwo : (2 : WithTop ℕ∞) ≤ (∞ : WithTop ℕ∞) :=
-    ENat.natCast_le_of_coe_top_le_withTop le_rfl 2
-  have hw_nhds : (regularParameterDomain P U : Set (ComplexModel n)) ∈ nhds w :=
-    (regularParameterDomain P U).isOpen.mem_nhds hw
-  have hpull2 : ContDiffAt ℝ 2
-      (fun x => g (fullSpaceCoordinateParametrization P x) +
-        rho (fullSpaceCoordinateParametrization P x)) w :=
-    ((hpull w hw).contDiffAt hw_nhds).of_le htwo
-  have hcurrent : coordinateCurrentForm p (complexChartAt (n := n) P.center)
-      (fullSpaceCoordinateParametrization P w) =
-      smoothDDC (fun y => g y + rho y) (fullSpaceCoordinateParametrization P w) := by
-    simpa only [fullSpaceCoordinateParametrization_apply] using
-      (coordinateCurrentForm_eq_smoothDDC_corrected p
-        (complexChartAt (n := n) P.center) hrho hg hpot hwU)
-  have hddc : smoothDDC
-      (fun x => g (fullSpaceCoordinateParametrization P x) +
-        rho (fullSpaceCoordinateParametrization P x)) w =
-      (smoothDDC (fun y => g y + rho y) (fullSpaceCoordinateParametrization P
-        w)).compContinuousLinearMap
-        (fderiv ℝ (fullSpaceCoordinateParametrization P) w) :=
-    FirstPass.HolomorphicDDC.smoothDDC_comp
-      (regularParameterDomain P U).isOpen (regularPotentialDomain P U).isOpen hF
-      hcorrected hmap hw
+  apply patchDensity_eq_smoothDensity_of_topPower p P U hrho hg hpot hw
   have hVtwo : (fullSpaceSubvariety V hcarrier hdim).dim = 2 := by
     simpa only [fullSpaceSubvariety] using hn
+  obtain ⟨hwA, hwU⟩ := (mem_regularParameterDomain_iff P U w).mp hw
+  exact patchDensity_eq_normalizedTopPowerDensity_of_dim_eq_two p P w hVtwo hwA (hnoPole _ hwU)
+
+private theorem lintegral_patchDensity_eq_smoothMeasure_of_eq
+    {hcarrier : V.carrier = univ} {hdim : V.dim = n}
+    (p : AdmissibleRestrictedCurrentPresentation omega alpha
+      (fullSpaceSubvariety V hcarrier hdim) epsilon)
+    (P : RegularPatch (fullSpaceSubvariety V hcarrier hdim))
+    (U : Opens (ComplexModel n)) {g rho : ComplexModel n → ℝ}
+    {K : Set (ComplexModel n)} (hK : IsCompact K)
+    (hKU : K ⊆ (regularParameterDomain P U : Set (ComplexModel n)))
+    (hsmooth : IsSmoothPshOn (regularPotentialDomain P U) (fun y => g y + rho y))
+    (hPoint : ∀ w ∈ K, patchDensity p P w =
+      smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
+        rho (fullSpaceCoordinateParametrization P x)) w) :
+    ∫⁻ w in K, ENNReal.ofReal (patchDensity p P w) ∂volume =
+      smoothMeasure (regularPotentialDomain P U) (fun y => g y + rho y) hsmooth
+        (fullSpaceCoordinateParametrization P '' K) := by
   calc
-    patchDensity p P w =
-        normalizedTopPowerDensity
-          ((coordinateCurrentForm p (complexChartAt (n := n) P.center)
-            (fullSpaceCoordinateParametrization P w)).compContinuousLinearMap
-            (fderiv ℝ (fullSpaceCoordinateParametrization P) w)) := by
-          rw [hF_eq]
-          exact patchDensity_eq_normalizedTopPowerDensity_of_dim_eq_two p P w hVtwo hwA
-            (hnoPole _ hwU)
-    _ = normalizedTopPowerDensity
-          ((smoothDDC (fun y => g y + rho y)
-            (fullSpaceCoordinateParametrization P w)).compContinuousLinearMap
-            (fderiv ℝ (fullSpaceCoordinateParametrization P) w)) := by rw [hcurrent]
-    _ = normalizedTopPowerDensity
-          (smoothDDC (fun x => g (fullSpaceCoordinateParametrization P x) +
-            rho (fullSpaceCoordinateParametrization P x)) w) :=
-      congrArg normalizedTopPowerDensity hddc.symm
-    _ = smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
-      rho (fullSpaceCoordinateParametrization P x)) w :=
-      normalizedTopPowerDensity_smoothDDC hpull2
+    ∫⁻ w in K, ENNReal.ofReal (patchDensity p P w) ∂volume =
+        ∫⁻ w in K, ENNReal.ofReal
+          (smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
+            rho (fullSpaceCoordinateParametrization P x)) w) ∂volume := by
+      refine setLIntegral_congr_fun hK.measurableSet fun w hw => ?_
+      rw [hPoint w hw]
+    _ = smoothMeasure (regularPotentialDomain P U) (fun y => g y + rho y) hsmooth
+          (fullSpaceCoordinateParametrization P '' K) :=
+      (smoothMeasure_coordinateImage_eq_lintegral_smoothDensity_comp P U hK hKU hsmooth).symm
 
 /-- A compact parameter piece in complex dimension one has exactly the smooth
 mass of its coordinate image.  This is the requested single-piece bridge from
@@ -250,18 +228,9 @@ theorem lintegral_patchDensity_eq_smoothMeasure_coordinateImage_of_dim_eq_one
     (hn : n = 1) :
     ∫⁻ w in K, ENNReal.ofReal (patchDensity p P w) ∂volume =
       smoothMeasure (regularPotentialDomain P U) (fun y => g y + rho y) hsmooth
-        (fullSpaceCoordinateParametrization P '' K) := by
-  calc
-    ∫⁻ w in K, ENNReal.ofReal (patchDensity p P w) ∂volume =
-        ∫⁻ w in K, ENNReal.ofReal
-          (smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
-            rho (fullSpaceCoordinateParametrization P x)) w) ∂volume := by
-      refine setLIntegral_congr_fun hK.measurableSet fun w hw => ?_
-      rw [patchDensity_eq_smoothDensity_corrected_of_dim_eq_one p P U hrho hg hpot
-        (hKU hw) hn]
-    _ = smoothMeasure (regularPotentialDomain P U) (fun y => g y + rho y) hsmooth
-          (fullSpaceCoordinateParametrization P '' K) :=
-      (smoothMeasure_coordinateImage_eq_lintegral_smoothDensity_comp P U hK hKU hsmooth).symm
+        (fullSpaceCoordinateParametrization P '' K) :=
+  lintegral_patchDensity_eq_smoothMeasure_of_eq p P U hK hKU hsmooth fun w hw =>
+    patchDensity_eq_smoothDensity_corrected_of_dim_eq_one p P U hrho hg hpot (w := w) (hKU hw) hn
 
 /-- The dimension-two version of the single compact-piece bridge.  Its only
 extra input is the explicit pole-free certificate for the local chart domain. -/
@@ -284,18 +253,10 @@ theorem lintegral_patchDensity_eq_smoothMeasure_coordinateImage_of_dim_eq_two
     (hn : n = 2) :
     ∫⁻ w in K, ENNReal.ofReal (patchDensity p P w) ∂volume =
       smoothMeasure (regularPotentialDomain P U) (fun y => g y + rho y) hsmooth
-        (fullSpaceCoordinateParametrization P '' K) := by
-  calc
-    ∫⁻ w in K, ENNReal.ofReal (patchDensity p P w) ∂volume =
-        ∫⁻ w in K, ENNReal.ofReal
-          (smoothDensity (fun x => g (fullSpaceCoordinateParametrization P x) +
-            rho (fullSpaceCoordinateParametrization P x)) w) ∂volume := by
-      refine setLIntegral_congr_fun hK.measurableSet fun w hw => ?_
-      rw [patchDensity_eq_smoothDensity_corrected_of_dim_eq_two p P U hrho hg hpot hnoPole
-        (hKU hw) hn]
-    _ = smoothMeasure (regularPotentialDomain P U) (fun y => g y + rho y) hsmooth
-          (fullSpaceCoordinateParametrization P '' K) :=
-      (smoothMeasure_coordinateImage_eq_lintegral_smoothDensity_comp P U hK hKU hsmooth).symm
+        (fullSpaceCoordinateParametrization P '' K) :=
+  lintegral_patchDensity_eq_smoothMeasure_of_eq p P U hK hKU hsmooth fun w hw =>
+    patchDensity_eq_smoothDensity_corrected_of_dim_eq_two p P U hrho hg hpot hnoPole
+      (w := w) (hKU hw) hn
 
 /-- A closed parameter ball contained in the regular-potential intersection
 is the promised concrete compact piece in complex dimension one. -/

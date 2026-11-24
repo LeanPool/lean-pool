@@ -82,30 +82,12 @@ theorem localMixedBedfordTaylorMeasure_unique {Ω : Opens (ComplexModel n)}
     {u : Fin n → ComplexModel n → ℝ} {μ ν : Measure (ComplexModel n)}
     (hμ : IsLocalMixedBedfordTaylorMeasure Ω u μ)
     (hν : IsLocalMixedBedfordTaylorMeasure Ω u ν) : μ = ν := by
-  have hint : ∀ φ : 𝓓(Ω, ℝ), (∫ z, φ z ∂μ) = ∫ z, φ z ∂ν := by
-    intro φ
-    obtain ⟨δ, hδ, hδΩ⟩ :=
-      φ.hasCompactSupport.exists_cthickening_subset_open Ω.isOpen φ.tsupport_subset
-    let U : Opens (ComplexModel n) :=
-      ⟨Metric.thickening δ (tsupport φ), Metric.isOpen_thickening⟩
-    have hclosure :
-        closure (U : Set (ComplexModel n)) ⊆ Metric.cthickening δ (tsupport φ) :=
-      Metric.closure_thickening_subset_cthickening δ (tsupport φ)
-    have hU : RelativelyCompactIn U Ω :=
-      ⟨(φ.hasCompactSupport.cthickening).of_isClosed_subset isClosed_closure hclosure,
-        hclosure.trans hδΩ⟩
-    have hφU : tsupport φ ⊆ (U : Set (ComplexModel n)) :=
-      Metric.self_subset_thickening hδ (tsupport φ)
-    obtain ⟨f, hf⟩ := (hμ.2.2.2 U hU).1
-    exact tendsto_nhds_unique ((hμ.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
-      ((hν.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
-  have hμrestrict : μ.restrict (Ω : Set (ComplexModel n)) = μ :=
-    Measure.restrict_eq_self_of_ae_mem (by rw [ae_iff]; exact hμ.2.1)
-  have hνrestrict : ν.restrict (Ω : Set (ComplexModel n)) = ν :=
-    Measure.restrict_eq_self_of_ae_mem (by rw [ae_iff]; exact hν.2.1)
-  exact hμrestrict.symm.trans
-    ((BedfordTaylor.restrict_eq_of_testFunction_integral_eq hμ.2.2.1 hν.2.2.1 hint).trans
-      hνrestrict)
+  apply MongeAmpere.eq_of_testFunction_integral_eq_on_relativelyCompact
+    hμ.2.1 hν.2.1 hμ.2.2.1 hν.2.2.1
+  intro U hU φ hφU
+  obtain ⟨f, hf⟩ := (hμ.2.2.2 U hU).1
+  exact tendsto_nhds_unique ((hμ.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
+    ((hν.2.2.2 U hU).2 f hf φ φ.continuous φ.hasCompactSupport hφU)
 
 /-- The mixed measure obtained from the diagonal Bedford–Taylor construction. -/
 def canonicalMixedBedfordTaylorMeasure (Ω : Opens (ComplexModel n))
