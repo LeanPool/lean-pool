@@ -365,12 +365,12 @@ Vendor the source repo's Lean content into LeanPool/${SLUG}/, bump it to lean-po
 2. Decide which .lean files to vendor. Skip examples/tests/scratch unless the formalization depends on them.
 3. Copy the chosen .lean files into LeanPool/${SLUG}/, preserving subdirectory structure. The Lean module path for vendored files becomes \`LeanPool.${SLUG_CAMEL}.…\`; suggested top-level Lean namespace is \`LeanPool.${SLUG_CAMEL}\` (existing inner namespaces from the source repo can be kept underneath).
 4. Update each vendored .lean file:
-   - Prepend the lean-pool file header (see existing LeanPool/Basic.lean and .github/CODE_QUALITY.md §7). Year 2026, the source authors, Apache-2.0.
+   - Prepend the lean-pool file header (the four-line header required by .github/CODE_QUALITY.md, Repository Quality Checker; any existing LeanPool file shows it). Year 2026, the source authors, Apache-2.0.
    - Replace any broad \`import Mathlib\` with the specific modules actually used.
    - Strip every \`set_option\` directive.
    - Strip diagnostic commands: \`#check\`, \`#print\`, \`#eval\`, \`#reduce\`, \`#guard_msgs\`, \`#lint\`.
    - Reject any file that depends on \`sorry\`, \`admit\`, a new \`axiom\`/\`constant\`, or uses \`unsafe\`/\`partial\`/\`opaque\`/\`@[extern]\`. First try to fix it (complete the proof; replace the unsafe construct). Only if you genuinely cannot, after real effort, may that one file be excluded as a last resort — and record in \`IMPORT_NOTES.md\` exactly what blocked you and what you tried.
-5. For every directory you create under LeanPool/, add an import-only index .lean file with a module docstring (style matches LeanPool/Basic.lean's header).
+5. For every directory you create under LeanPool/, add an import-only index .lean file with a module docstring (with the same four-line file header).
 6. ${INDEX_INSTRUCTION}
 7. ${REGISTRY_INSTRUCTION} Required keys: slug, title, entry_module, authors (list), source ({url|arxiv|doi}), license, provenance (human, AI, or mix), status: verified, main_declarations (list of fully-qualified names), tags (list). Optional: msc.
 8. Iterate — persistently, as many rounds as it takes — until ALL of these pass cleanly inside ${WORKTREE}:
@@ -398,7 +398,6 @@ A partial import is a failure, not an acceptable stopping point. Bumping pain is
 
 # Helpful pointers
 - ${WORKTREE}/AGENTS.md and ${WORKTREE}/CLAUDE.md — project conventions.
-- ${WORKTREE}/LeanPool/Basic.lean — example file with a correct header.
 - ${WORKTREE}/.github/CODE_QUALITY.md — full quality contract.
 - ${WORKTREE}/.github/workflows/lean_action_ci.yml — exact CI commands.
 

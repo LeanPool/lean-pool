@@ -45,9 +45,10 @@ exposition/
 ```
 
 `<Project>` is the second component of the module name
-(`LeanPool.ABCExceptions.Section2` → `ABCExceptions`). Modules sitting directly
-under `LeanPool/` (e.g. `LeanPool.Basic`) form a pseudo-project named after the
-module ("Basic") with no registry card.
+(`LeanPool.ABCExceptions.Section2` → `ABCExceptions`). A module sitting directly
+under `LeanPool/` (`LeanPool.ABCExceptions`) belongs to the project named after
+it. The quality checker requires every such module to belong to a registered
+project, so every project has a registry card and at least one declaration.
 
 Relative bases from `p/<Project>/index.html`: exposition root `../..`,
 doc-gen4 root `../../..`. doc-gen4 page for a non-private declaration

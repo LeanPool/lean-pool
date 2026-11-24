@@ -45,6 +45,12 @@ def _write_minimal_repo(root: Path, basic_body: str = 'def hello := "world"\n') 
     )
 
 
+def _remove_unregistered_module(root: Path) -> None:
+    """Drop the fixture's `LeanPool.Basic`, which belongs to no registered project."""
+    (root / "LeanPool" / "Basic.lean").unlink()
+    (root / "LeanPool.lean").write_text("")
+
+
 def _write_project_yaml(root: Path, projects: list[dict[str, str | None]]) -> None:
     """Write a `projects.yml` containing the given project entries.
 
@@ -122,21 +128,32 @@ def test_strip_comments_preserves_offsets_with_nested_and_escaped_tokens(
 def test_minimal_repo_passes_static_quality_checks(tmp_path: Path) -> None:
     """A compliant minimal repo passes without invoking Lean."""
     _write_minimal_repo(tmp_path)
+    _remove_unregistered_module(tmp_path)
 
     assert run_checks(tmp_path, skip_lean_axioms=True) == []
 
 
+def test_every_top_level_module_must_be_registered(tmp_path: Path) -> None:
+    """No module name is exempt: an unregistered one has no card to describe it."""
+    _write_minimal_repo(tmp_path)
+
+    [error] = run_checks(tmp_path, skip_lean_axioms=True)
+
+    assert error.message == (
+        "top-level project module LeanPool.Basic missing from projects.yml"
+    )
+
+
 def test_nested_project_requires_top_level_entry(tmp_path: Path) -> None:
     """A nested entry fails without its wrapper and passes once it is supplied."""
-    _write_minimal_repo(tmp_path, basic_body="")
+    _write_minimal_repo(tmp_path)
+    _remove_unregistered_module(tmp_path)
     project = tmp_path / "LeanPool" / "MyProj"
     project.mkdir()
     (project / "Internal.lean").write_text(
         f"{HEADER}\n{_project_card(_PROJECT_FIXTURE)}\ndef hello := 1\n"
     )
-    (tmp_path / "LeanPool.lean").write_text(
-        "import LeanPool.Basic\nimport LeanPool.MyProj.Internal\n"
-    )
+    (tmp_path / "LeanPool.lean").write_text("import LeanPool.MyProj.Internal\n")
     _write_project_yaml(
         tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj.Internal"}]
     )
@@ -150,8 +167,7 @@ def test_nested_project_requires_top_level_entry(tmp_path: Path) -> None:
 
     entry.write_text(HEADER)
     (tmp_path / "LeanPool.lean").write_text(
-        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
-        "import LeanPool.MyProj.Internal\n"
+        "import LeanPool.MyProj\nimport LeanPool.MyProj.Internal\n"
     )
     errors = run_checks(tmp_path, skip_lean_axioms=True, skip_project_declarations=True)
 
@@ -167,7 +183,8 @@ def test_nested_project_requires_top_level_entry(tmp_path: Path) -> None:
 
 def test_nested_project_wrapper_allows_transitive_imports(tmp_path: Path) -> None:
     """A wrapper can export its registered entry through an intermediate module."""
-    _write_minimal_repo(tmp_path, basic_body="")
+    _write_minimal_repo(tmp_path)
+    _remove_unregistered_module(tmp_path)
     project = tmp_path / "LeanPool" / "MyProj"
     project.mkdir()
     (project / "Internal.lean").write_text(
@@ -178,8 +195,7 @@ def test_nested_project_wrapper_allows_transitive_imports(tmp_path: Path) -> Non
         f"{HEADER}\nimport LeanPool.MyProj.Bridge\n"
     )
     (tmp_path / "LeanPool.lean").write_text(
-        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
-        "import LeanPool.MyProj.Internal\n"
+        "import LeanPool.MyProj\nimport LeanPool.MyProj.Internal\n"
     )
     _write_project_yaml(
         tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj.Internal"}]
@@ -934,12 +950,11 @@ def test_project_declarations_are_queued_once_with_and_without_cache(
 ) -> None:
     """Queued declaration checks still run per project and only passes are reused."""
     _write_minimal_repo(tmp_path)
-    (tmp_path / "LeanPool.lean").write_text(
-        "import LeanPool.Basic\nimport LeanPool.MyProj\n"
-    )
+    _remove_unregistered_module(tmp_path)
+    (tmp_path / "LeanPool.lean").write_text("import LeanPool.MyProj\n")
     card = _project_card(_PROJECT_FIXTURE)
     (tmp_path / "LeanPool" / "MyProj.lean").write_text(
-        f"{HEADER}\nimport LeanPool.Basic\n\n{card}\ndef hello : Nat := 1\n"
+        f"{HEADER}\n{card}\ndef hello : Nat := 1\n"
     )
     _write_project_yaml(tmp_path, [{"slug": "p", "entry_module": "LeanPool.MyProj"}])
     failure = _QualityError(tmp_path / "card.yaml", 1, "declarations do not check")
