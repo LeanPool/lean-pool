@@ -8,7 +8,7 @@ Authors: Miaozhen Yu
 
 module
 
-public import Mathlib.Analysis.Fourier.ZMod
+public import LeanPool.ShellsortMean.FiniteFourier
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
@@ -18,21 +18,10 @@ public import Mathlib.Tactic.Ring
 @[expose] public noncomputable section
 namespace Shellsort.RoughGapFiniteFourier
 
-open Finset ZMod
+open Finset ZMod Shellsort.FiniteFourier
 open scoped ComplexConjugate
 
 variable {h : ℕ} [NeZero h]
-
-private theorem dft_transpose (f g : ZMod h → ℂ) :
-    (∑ k, dft f k * g k) = ∑ j, f j * dft g j := by
-  simp only [dft_apply, smul_eq_mul, sum_mul, mul_sum]
-  rw [sum_comm]
-  apply sum_congr rfl
-  intro j _
-  apply sum_congr rfl
-  intro k _
-  rw [mul_comm k j]
-  ring
 
 private theorem dft_bilinear (f : ZMod h → ℂ) :
     (∑ k, dft f k * dft f (-k)) = (h : ℂ) * ∑ j, f j ^ 2 := by
@@ -57,11 +46,7 @@ private theorem centered_squares (f : ZMod h → ℂ) :
 
 private theorem dft_real_neg (f : ZMod h → ℝ) (k : ZMod h) :
     dft (fun j => (f j : ℂ)) (-k) = conj (dft (fun j => (f j : ℂ)) k) := by
-  have charConj (j : ZMod h) : conj (stdAddChar (-j)) = stdAddChar j := by
-    rw [stdAddChar_apply, stdAddChar_apply, AddChar.map_neg_eq_inv, Circle.coe_inv_eq_conj]
-    simp
-  simp only [dft_apply, smul_eq_mul, map_sum, map_mul, Complex.conj_ofReal, mul_neg, neg_neg,
-    charConj]
+  simpa only [Complex.conj_ofReal] using dft_conj_neg (fun j => (f j : ℂ)) k
 
 /-- Energy after dropping the zero Fourier coefficient, with an unnormalized
 transform and the actual arithmetic mean of all residue masses. -/

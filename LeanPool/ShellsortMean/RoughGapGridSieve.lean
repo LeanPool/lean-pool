@@ -8,7 +8,7 @@ Authors: Miaozhen Yu
 
 module
 
-public import Mathlib.Analysis.Fourier.ZMod
+public import LeanPool.ShellsortMean.FiniteFourier
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.GCongr
@@ -20,35 +20,17 @@ public import Mathlib.Tactic.Ring
 /-! An elementary sampling inequality on a common finite Fourier grid. -/
 @[expose] public noncomputable section
 namespace Shellsort.RoughGapGridSieve
-open Finset ZMod
+open Finset ZMod Shellsort.FiniteFourier
 open scoped ComplexConjugate
 variable {N : ℕ} [NeZero N]
-
-private theorem transposeDFT (f g : ZMod N → ℂ) :
-    (∑ k, dft f k * g k) = ∑ j, f j * dft g j := by
-  simp only [dft_apply, smul_eq_mul, sum_mul, mul_sum]
-  rw [sum_comm]
-  apply sum_congr rfl
-  intro j _
-  apply sum_congr rfl
-  intro k _
-  rw [mul_comm k j]
-  ring
-
-private theorem conjugateDFT (f : ZMod N → ℂ) (k : ZMod N) :
-    dft (fun j ↦ conj (f j)) (-k) = conj (dft f k) := by
-  have ch (j : ZMod N) : conj (stdAddChar (-j)) = stdAddChar j := by
-    rw [stdAddChar_apply, stdAddChar_apply, AddChar.map_neg_eq_inv, Circle.coe_inv_eq_conj]
-    simp
-  simp only [dft_apply, smul_eq_mul, map_sum, map_mul, mul_neg, neg_neg, ch]
 
 theorem grid_parseval (f : ZMod N → ℂ) :
     ∑ k, ‖dft f k‖ ^ 2 = (N : ℝ) * ∑ j, ‖f j‖ ^ 2 := by
   let g := fun j => conj (f j)
-  have h := transposeDFT f (fun k ↦ dft g (-k))
+  have h := dft_transpose f (fun k ↦ dft g (-k))
   rw [dft_comp_neg, dft_dft] at h
   have a (k : ZMod N) : dft f k * dft g (-k) = ((‖dft f k‖ ^ 2 : ℝ) : ℂ) := by
-    rw [show dft g (-k) = conj (dft f k) from conjugateDFT f k, Complex.mul_conj, Complex.sq_norm]
+    rw [show dft g (-k) = conj (dft f k) from dft_conj_neg f k, Complex.mul_conj, Complex.sq_norm]
   have b (j : ZMod N) : f j * ((N : ℂ) • g (- -j)) = N * ((‖f j‖ ^ 2 : ℝ) : ℂ) := by
     simp [g, Complex.sq_norm, ← Complex.mul_conj, mul_left_comm]
   apply Complex.ofReal_injective

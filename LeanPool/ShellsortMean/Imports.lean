@@ -29,6 +29,7 @@ public import LeanPool.ShellsortMean.CompletePrefix
 public import LeanPool.ShellsortMean.ConditionalSource
 public import LeanPool.ShellsortMean.CoprimePhase
 public import LeanPool.ShellsortMean.FiberEquivalences
+public import LeanPool.ShellsortMean.FiniteFourier
 public import LeanPool.ShellsortMean.FiniteMoments
 public import LeanPool.ShellsortMean.FirstPassCostBounds
 public import LeanPool.ShellsortMean.FirstPassGeometry
