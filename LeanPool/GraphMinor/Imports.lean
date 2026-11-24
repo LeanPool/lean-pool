@@ -1210,6 +1210,7 @@ public import LeanPool.GraphMinor.GM12.SurfaceDualStar
 public import LeanPool.GraphMinor.GM14.Adapted
 public import LeanPool.GraphMinor.GM14.AnnulusRural
 public import LeanPool.GraphMinor.GM14.Bridge
+public import LeanPool.GraphMinor.GM14.BridgeFacts
 public import LeanPool.GraphMinor.GM14.Cited
 public import LeanPool.GraphMinor.GM14.ClaimOneReduction
 public import LeanPool.GraphMinor.GM14.CylinderCut

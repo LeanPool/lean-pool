@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM14.Section9a
 public import LeanPool.GraphMinor.GM14.Section9b
 public import LeanPool.GraphMinor.GM14.Form84
+import LeanPool.GraphMinor.GM14.BridgeFacts
 import LeanPool.GraphMinor.GM14.Section5
 import LeanPool.GraphMinor.GM14.Section6b
 import LeanPool.GraphMinor.GM14.Section8
@@ -1089,98 +1090,6 @@ private theorem exists_small_collar_disc (hS : IsClosedSurface S)
   · rintro x ⟨z, hz, rfl⟩
     rw [hleft (hB_sub hz)]
     exact lt_of_lt_of_le (hB_dist z hz) (min_le_right _ _)
-
-/-- Every bridge `B` of `H_sub` in `G` is edge-disjoint from `H_sub`. -/
-private theorem isBridge_disjoint_edgeSet {α : Type u} {β : Type v}
-    {G H_sub B : Graph α β} (hB : IsBridge G H_sub B) :
-    Disjoint E(B) E(H_sub) := by
-  refine Set.disjoint_left.mpr fun e heB heH => ?_
-  obtain ⟨x, y, hxy_H⟩ := H_sub.exists_isLink_of_mem_edgeSet heH
-  have hxy_G : G.IsLink e x y := hxy_H.mono hB.1
-  rcases hB.2.2 with ⟨e₀, he₀, u, _, v, _, _, _, hEB⟩ | ⟨C, hC, _, hEB⟩
-  · rw [hEB, mem_singleton_iff] at heB
-    subst heB
-    exact he₀.2 heH
-  · have hC_del : C ≤ deleteVertices G V(H_sub) := hC.1
-    rw [hEB] at heB
-    rcases heB with heC | ⟨_, u, huC, v, _, huv⟩
-    · obtain ⟨u, v, huv_C⟩ := C.exists_isLink_of_mem_edgeSet heC
-      have huv_G : G.IsLink e u v := huv_C.mono (hC_del.trans (deleteVertices_le G V(H_sub)))
-      have hu_not_H : u ∉ V(H_sub) := (hC_del.vertexSet_mono huv_C.left_mem).2
-      rcases huv_G.eq_and_eq_or_eq_and_eq hxy_G with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact hu_not_H hxy_H.left_mem
-      · exact hu_not_H hxy_H.right_mem
-    · have hu_not_H : u ∉ V(H_sub) := (hC_del.vertexSet_mono huC).2
-      rcases huv.eq_and_eq_or_eq_and_eq hxy_G with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact hu_not_H hxy_H.left_mem
-      · exact hu_not_H hxy_H.right_mem
-
-/-- Two bridges `B₁, B₂` of `H_sub` in `G` that share a vertex outside `V(H_sub)` or share an edge
-are equal (`B₁ = B₂`). -/
-private theorem isBridge_eq_of_inter {α : Type u} {β : Type v}
-    {G H_sub B₁ B₂ : Graph α β} (hB₁ : IsBridge G H_sub B₁) (hB₂ : IsBridge G H_sub B₂) :
-    (∀ v ∈ V(B₁) ∩ V(B₂), v ∉ V(H_sub) → B₁ = B₂) ∧
-    (∀ e ∈ E(B₁) ∩ E(B₂), B₁ = B₂) := by
-  have hcomp_of_vertex : ∀ {B : Graph α β} {v : α},
-      IsBridge G H_sub B → v ∈ V(B) → v ∉ V(H_sub) →
-      ∃ C ∈ graphComponents (deleteVertices G V(H_sub)),
-        v ∈ V(C) ∧
-        V(B) = V(C) ∪ {w ∈ V(H_sub) | ∃ e ∈ E(G), ∃ x ∈ V(C), G.IsLink e x w} ∧
-        E(B) = E(C) ∪ {e ∈ E(G) | ∃ x ∈ V(C), ∃ w ∈ V(H_sub), G.IsLink e x w} := by
-    intro B v hB hvB hv_not_H
-    rcases hB.2.2 with ⟨e, _, w₁, hw₁, w₂, hw₂, _, hVB, _⟩ | ⟨C, hC, hVB, hEB⟩
-    · rw [hVB] at hvB
-      rcases hvB with rfl | rfl
-      · exact (hv_not_H hw₁).elim
-      · exact (hv_not_H hw₂).elim
-    · rw [hVB] at hvB
-      rcases hvB with hvC | ⟨hvH, _⟩
-      · exact ⟨C, hC, hvC, hVB, hEB⟩
-      · exact (hv_not_H hvH).elim
-  have h_eq_of_vertex : ∀ v ∈ V(B₁) ∩ V(B₂), v ∉ V(H_sub) → B₁ = B₂ := by
-    rintro v ⟨hv₁, hv₂⟩ hv_not_H
-    obtain ⟨C₁, hC₁, hvC₁, hVB₁, hEB₁⟩ := hcomp_of_vertex hB₁ hv₁ hv_not_H
-    obtain ⟨C₂, hC₂, hvC₂, hVB₂, hEB₂⟩ := hcomp_of_vertex hB₂ hv₂ hv_not_H
-    have hC_eq : C₁ = C₂ := isGraphComponent_eq_of_mem_inter hC₁ hC₂ ⟨v, hvC₁, hvC₂⟩
-    refine (Compatible.of_le_le hB₁.2.1 hB₂.2.1).ext ?_ ?_
-    · rw [hVB₁, hVB₂, hC_eq]
-    · rw [hEB₁, hEB₂, hC_eq]
-  refine ⟨h_eq_of_vertex, ?_⟩
-  rintro e ⟨he₁, he₂⟩
-  obtain ⟨x, y, hxy₁⟩ := B₁.exists_isLink_of_mem_edgeSet he₁
-  have hxy_G : G.IsLink e x y := hxy₁.mono hB₁.2.1
-  have hxy₂ : B₂.IsLink e x y := (hB₂.2.1.isLink_iff he₂).mpr hxy_G
-  by_cases hxH : x ∈ V(H_sub)
-  · by_cases hyH : y ∈ V(H_sub)
-    · have h_ends : ∀ {B : Graph α β}, IsBridge G H_sub B → e ∈ E(B) →
-          V(B) = {x, y} ∧ E(B) = {e} := by
-        intro B hB heB
-        rcases hB.2.2 with ⟨e₀, _, u, _, v, _, huv, hVB, hEB⟩ | ⟨C, hC, _, hEB⟩
-        · rw [hEB, mem_singleton_iff] at heB
-          subst heB
-          refine ⟨?_, hEB⟩
-          rw [hVB]
-          rcases huv.eq_and_eq_or_eq_and_eq hxy_G with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-          · rfl
-          · exact Set.pair_comm u v
-        · have hC_del : C ≤ deleteVertices G V(H_sub) := hC.1
-          rw [hEB] at heB
-          rcases heB with heC | ⟨_, u, huC, v, _, huv⟩
-          · obtain ⟨u, v, huv_C⟩ := C.exists_isLink_of_mem_edgeSet heC
-            have huv_G : G.IsLink e u v := huv_C.mono (hC_del.trans (deleteVertices_le G V(H_sub)))
-            have hu_not_H : u ∉ V(H_sub) := (hC_del.vertexSet_mono huv_C.left_mem).2
-            rcases huv_G.eq_and_eq_or_eq_and_eq hxy_G with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-            · exact (hu_not_H hxH).elim
-            · exact (hu_not_H hyH).elim
-          · have hu_not_H : u ∉ V(H_sub) := (hC_del.vertexSet_mono huC).2
-            rcases huv.eq_and_eq_or_eq_and_eq hxy_G with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-            · exact (hu_not_H hxH).elim
-            · exact (hu_not_H hyH).elim
-      obtain ⟨hVB₁, hEB₁⟩ := h_ends hB₁ he₁
-      obtain ⟨hVB₂, hEB₂⟩ := h_ends hB₂ he₂
-      exact (Compatible.of_le_le hB₁.2.1 hB₂.2.1).ext (hVB₁.trans hVB₂.symm) (hEB₁.trans hEB₂.symm)
-    · exact h_eq_of_vertex y ⟨hxy₁.right_mem, hxy₂.right_mem⟩ hyH
-  · exact h_eq_of_vertex x ⟨hxy₁.left_mem, hxy₂.left_mem⟩ hxH
 
 /-- Disjointness of edges and vertex intersection for disjoint families of bridges `B_J` and
 `B_rem`. -/
