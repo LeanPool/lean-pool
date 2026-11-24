@@ -11,6 +11,7 @@ module
 public import LeanPool.TetrahedronPacking.PeriodicSeparation
 public import LeanPool.TetrahedronPacking.IntegerProjections
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Data.Matrix.Mul
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 public import Mathlib.Tactic.NormNum
 
@@ -41,29 +42,20 @@ theorem integer_separator_plane
   let f : (Fin 3 → ℝ) →L[ℝ] ℝ := LinearMap.toContinuousLinearMap
     ((n 0 : ℝ) • LinearMap.proj 0 + (n 1 : ℝ) • LinearMap.proj 1 +
       (n 2 : ℝ) • LinearMap.proj 2)
-  have hf_apply (u : Fin 3 → ℝ) : f u = n 0 * u 0 + n 1 * u 1 + n 2 * u 2 := rfl
+  have hf_apply (u : Fin 3 → ℝ) : f u = dotProduct (fun j => (n j : ℝ)) u := by
+    simp only [dotProduct, Fin.sum_univ_three]
+    rfl
   have hf_ne : f ≠ 0 := by
     intro hzero
     have hz := congrArg (fun g : (Fin 3 → ℝ) →L[ℝ] ℝ => g (Pi.single r 1)) hzero
     change f (Pi.single r 1) = 0 at hz
-    have hs : f (Pi.single r 1) = n r := by
-      fin_cases r
-      · norm_num [hf_apply, Pi.single_apply, Fin.ext_iff]
-      · norm_num [hf_apply, Pi.single_apply, Fin.ext_iff]
-      · norm_num [hf_apply, Pi.single_apply, Fin.ext_iff]
+    have hs : f (Pi.single r 1) = n r := by rw [hf_apply, dotProduct_single_one]
     rw [hs] at hz
     exact hr (by exact_mod_cast hz)
   have hf_int (u : Fin 3 → ℤ) : f (fun j => (u j : ℝ)) = (integerDot n u : ℝ) := by
-    simp [hf_apply, integerDot]
+    simp [hf_apply, dotProduct, Fin.sum_univ_three, integerDot]
   apply separator_of_vertex_comparisons f hf_ne
-  obtain h | h := hp
-  · left
-    intro i j
-    rw [map_add, hf_int, hf_int, hf_int]
-    exact_mod_cast h i j
-  · right
-    intro i j
-    rw [map_add, hf_int, hf_int, hf_int]
+  refine hp.imp ?_ ?_ <;> intro h i j <;> rw [map_add, hf_int, hf_int, hf_int] <;>
     exact_mod_cast h i j
 
 /-- Integer certificates on a bounded set of shifts give disjoint real

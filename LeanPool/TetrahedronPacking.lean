@@ -43,8 +43,7 @@ def motifVertex : Fin 4 → Fin 4 → Fin 3 → ℤ := TetrahedronPacking.record
 def periodVector : Fin 3 → Fin 3 → ℤ := TetrahedronPacking.recordPeriod
 
 /-- Cartesian shift indexed by the three integer lattice coordinates. -/
-def periodShift (k : Fin 3 → ℤ) (r : Fin 3) : ℝ :=
-  ∑ j : Fin 3, (k j : ℝ) * (periodVector j r : ℝ)
+abbrev periodShift : (Fin 3 → ℤ) → Fin 3 → ℝ := recordRealShift
 
 /-- One translated tetrahedron in the periodic packing. -/
 def piece (p : Fin 4 × (Fin 3 → ℤ)) : Set (Fin 3 → ℝ) :=
@@ -62,20 +61,16 @@ theorem packing_density :
         volume.real (Metric.closedBall (0 : Fin 3 → ℝ) R))
       atTop (𝓝 (4000 / 4671 : ℝ)) := by
   classical
-  have hs (k : Fin 3 → ℤ) :
-      periodShift k = recordRealShift k := by
-    ext r
-    simp [periodShift, periodVector, recordRealShift, recordCoordinates_symm_apply, mul_comm]
   have hp (p : Fin 4 × (Fin 3 → ℤ)) : piece p = periodShift p.2 +ᵥ recordHull p.1 := by
     rw [recordHull_translate]
     rfl
   refine ⟨?_, ?_, ?_⟩
   · exact record_squared_edge_lengths
-  · simpa only [hp, hs] using record_pairwise_disjoint_interiors
+  · simpa only [hp] using record_pairwise_disjoint_interiors
   · let e := (Equiv.refl (Fin 4)).prodCongr recordLatticeEquiv
     have hu : (⋃ p, piece p) =
         (⋃ p : Fin 4 × recordLattice, (p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1) := by
-      simpa [e, hp, hs, recordLatticeEquiv_apply] using e.surjective.iUnion_comp
+      simpa [e, hp, recordLatticeEquiv_apply] using e.surjective.iUnion_comp
         (fun p => (p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1)
     rw [hu]
     exact record_spatial_density

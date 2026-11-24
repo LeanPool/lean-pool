@@ -90,9 +90,19 @@ noncomputable abbrev recordBasis : Module.Basis (Fin 3) ℝ (Fin 3 → ℝ) :=
 noncomputable abbrev recordLattice : Submodule ℤ (Fin 3 → ℝ) :=
   Submodule.span ℤ (range recordBasis)
 
+/-- The Cartesian translation at the integer period coordinates `k`. -/
+def recordRealShift (k : Fin 3 → ℤ) (r : Fin 3) : ℝ :=
+  ∑ j : Fin 3, (k j : ℝ) * (recordPeriod j r : ℝ)
+
+theorem recordRealShift_eq_coordinates (k : Fin 3 → ℤ) :
+    recordRealShift k = recordCoordinates.symm (fun r => (k r : ℝ)) := by
+  ext r
+  simp [recordRealShift, recordCoordinates_symm_apply, mul_comm]
+
 /-- Express a lattice point as an integer triple in the published period basis. -/
 theorem mem_recordLattice_iff (x : Fin 3 → ℝ) :
-    x ∈ recordLattice ↔ ∃ k : Fin 3 → ℤ, recordCoordinates.symm (fun r => (k r : ℝ)) = x := by
+    x ∈ recordLattice ↔ ∃ k : Fin 3 → ℤ, recordRealShift k = x := by
+  simp only [recordRealShift_eq_coordinates]
   rw [recordBasis.mem_span_iff_repr_mem ℤ]
   constructor
   · intro hx
@@ -103,16 +113,14 @@ theorem mem_recordLattice_iff (x : Fin 3 → ℝ) :
   · rintro ⟨k, rfl⟩ r
     exact ⟨k r, by simp [recordBasis]⟩
 
-/-- The Cartesian translation at the integer period coordinates `k`. -/
-noncomputable def recordRealShift (k : Fin 3 → ℤ) : Fin 3 → ℝ :=
-  recordCoordinates.symm (fun r => (k r : ℝ))
-
 /-- The integer period coordinates parametrize the lattice without repetitions. -/
 noncomputable def recordLatticeEquiv : (Fin 3 → ℤ) ≃ recordLattice := by
   refine Equiv.ofBijective (fun k => ⟨recordRealShift k, (mem_recordLattice_iff _).mpr ⟨k, rfl⟩⟩)
     ⟨?_, ?_⟩
   · intro k l h
-    have he := recordCoordinates.symm.injective (congrArg Subtype.val h)
+    have hv : recordRealShift k = recordRealShift l := congrArg Subtype.val h
+    simp only [recordRealShift_eq_coordinates] at hv
+    have he := recordCoordinates.symm.injective hv
     ext r
     exact_mod_cast congrFun he r
   · intro x
@@ -209,14 +217,14 @@ private theorem record_integer_shift_cast (k : Fin 3 → ℤ) :
 theorem record_disjoint_interiors (i j : Fin 4) (k : Fin 3 → ℤ) (h : i ≠ j ∨ k ≠ 0) :
     Disjoint (interior (recordHull i)) (interior (recordRealShift k +ᵥ recordHull j)) := by
   rw [recordHull_translate]
-  unfold recordHull recordRealShift
-  rw [record_integer_shift_cast k]
+  unfold recordHull
+  rw [recordRealShift_eq_coordinates, record_integer_shift_cast k]
   apply integer_shift_certificates_of_box recordCoordinates recordIntegerShift
     record_integer_shift_cast
     (recordVertex i) (recordVertex j) (fun k => i ≠ j ∨ k ≠ 0)
     (fun _ => -3 / 2) (fun _ => 7 / 5) (fun _ => -3 / 2) (fun _ => 7 / 5)
-    (fun _ => -2) (fun _ => 2) (record_coordinate_bounds i) (record_coordinate_bounds j)
-    (fun _ => by norm_num) (fun _ => by norm_num) _ k h
+    recordShiftLower recordShiftUpper (record_coordinate_bounds i) (record_coordinate_bounds j)
+    (fun _ => by norm_num [recordShiftLower]) (fun _ => by norm_num [recordShiftUpper]) _ k h
   intro shift hb hs
   exact record_integer_separator i j shift hb hs
 
@@ -226,7 +234,7 @@ private theorem recordRealShift_sub (l k : Fin 3 → ℤ) :
       (fun r => (l r : ℝ)) - (fun r => (k r : ℝ)) := by
     ext r
     exact Int.cast_sub _ _
-  simp only [recordRealShift, h, map_sub]
+  simp only [recordRealShift_eq_coordinates, h, map_sub]
 
 theorem record_pairwise_disjoint_interiors :
     Pairwise fun p q : Fin 4 × (Fin 3 → ℤ) =>

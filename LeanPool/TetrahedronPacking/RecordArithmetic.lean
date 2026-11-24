@@ -61,14 +61,20 @@ example : separates ![1, 1, 1] 0 0 0 = false := by decide
 example : axes.any (fun n => separates n 0 1 0) = true := by decide
 example : axes.any (fun n => separates n 0 0 0) = false := by decide
 
+/-- The lower coordinate bound for the shifts requiring a separation check. -/
+def recordShiftLower : Fin 3 → ℤ := fun _ => -2
+
+/-- The upper coordinate bound for the shifts requiring a separation check. -/
+def recordShiftUpper : Fin 3 → ℤ := fun _ => 2
+
 private theorem record_bounded_separations (i j : Fin 4)
-    (k : integerShiftBox (fun _ => -2) (fun _ => 2)) :
+    (k : integerShiftBox recordShiftLower recordShiftUpper) :
     (i = j ∧ (k : Fin 3 → ℤ) = 0) ∨ axes.any (fun n => separates n i j k) = true := by
   revert i j k
   decide +kernel
 
 theorem record_integer_separator (i j : Fin 4) (k : Fin 3 → ℤ)
-    (hk : k ∈ integerShiftBox (fun _ => -2) (fun _ => 2)) (h : i ≠ j ∨ k ≠ 0) :
+    (hk : k ∈ integerShiftBox recordShiftLower recordShiftUpper) (h : i ≠ j ∨ k ≠ 0) :
     ∃ n, integerSeparates n (recordVertex i) (recordVertex j)
       (integerDot n (recordIntegerShift k)) = true := by
   have hneq : ¬ (i = j ∧ k = 0) := fun he => h.elim (fun hi => hi he.1) (fun hk => hk he.2)

@@ -10,8 +10,8 @@ module
 
 public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Analysis.Convex.Hull
-public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Basic
+public import Mathlib.Topology.Algebra.Ring.Real
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -48,7 +48,8 @@ private theorem hull_ge {E : Type*} [AddCommGroup E] [Module ℝ E]
   exact h i
 
 theorem disjoint_interiors_of_separating_plane
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
+    [ContinuousAdd E] [ContinuousSMul ℝ E]
     {ι κ : Type*} {v : ι → E} {w : κ → E}
     (f : E →L[ℝ] ℝ) (hf : f ≠ 0) (a : ℝ)
     (hv : ∀ i, f (v i) ≤ a) (hw : ∀ j, a ≤ f (w j)) :
@@ -112,7 +113,8 @@ theorem shift_bounds_of_hulls_intersect
 motif, apply this to each ordered pair and omit the zero shift for self-pairs.
 For finite coordinate index types the integer bounds give finite test sets. -/
 theorem disjoint_interiors_of_bounded_shift_certificates
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
+    [ContinuousAdd E] [ContinuousSMul ℝ E]
     {ι κ α : Type*} (C : E ≃ₗ[ℝ] (α → ℝ))
     (v : ι → E) (w : κ → E) (required : (α → ℤ) → Prop)
     (loV hiV loW hiW : α → ℝ)

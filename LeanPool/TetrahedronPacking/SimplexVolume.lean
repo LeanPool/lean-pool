@@ -118,12 +118,11 @@ private theorem orderedCube_volume (n : ℕ) :
 
 attribute [local simp] Matrix.cons_val_two Matrix.cons_val_three Matrix.vecHead Matrix.vecTail
 
+private def referenceVertex : Fin 4 → Fin 3 → ℝ :=
+  ![![0, 0, 0], ![0, 0, 1], ![0, 1, 1], ![1, 1, 1]]
+
 private theorem orderedCube_eq_hull :
-    orderedCube (Equiv.refl (Fin 3)) =
-      convexHull ℝ (range (![![0, 0, 0], ![0, 0, 1], ![0, 1, 1], ![1, 1, 1]] :
-        Fin 4 → Fin 3 → ℝ)) := by
-  let v : Fin 4 → Fin 3 → ℝ := ![![0, 0, 0], ![0, 0, 1], ![0, 1, 1], ![1, 1, 1]]
-  change orderedCube _ = convexHull ℝ (range v)
+    orderedCube (Equiv.refl (Fin 3)) = convexHull ℝ (range referenceVertex) := by
   apply Subset.antisymm
   · intro x hx
     have hx0 := hx.1.1 0
@@ -135,21 +134,23 @@ private theorem orderedCube_eq_hull :
     change x 0 ≤ x 1 at h01
     change x 1 ≤ x 2 at h12
     let w : Fin 4 → ℝ := ![1 - x 2, x 2 - x 1, x 1 - x 0, x 0]
-    refine mem_convexHull_of_exists_fintype (s := range v) w v ?_ ?_ (fun i => ⟨i, rfl⟩) ?_
+    refine mem_convexHull_of_exists_fintype (s := range referenceVertex) w referenceVertex ?_ ?_
+      (fun i => ⟨i, rfl⟩) ?_
     · intro i
       fin_cases i <;> simp [w] <;> linarith
     · simp [Fin.sum_univ_four, w]
     · ext j
-      fin_cases j <;> simp [Fin.sum_univ_four, v, w]
+      fin_cases j <;> simp [Fin.sum_univ_four, referenceVertex, w]
   · apply convexHull_min
     · rintro _ ⟨i, rfl⟩
       constructor
-      · constructor <;> intro j <;> fin_cases i <;> fin_cases j <;> norm_num [v, Pi.one_apply]
+      · constructor <;> intro j <;> fin_cases i <;> fin_cases j <;>
+          norm_num [referenceVertex, Pi.one_apply]
       · intro j k hjk
         change j ≤ k at hjk
-        change v i j ≤ v i k
+        change referenceVertex i j ≤ referenceVertex i k
         fin_cases i <;> fin_cases j <;> fin_cases k <;>
-          norm_num [v, Fin.le_def] at *
+          norm_num [referenceVertex, Fin.le_def] at *
     · intro x hx y hy a b ha hb hab
       refine ⟨convex_Icc (𝕜 := ℝ) 0 1 hx.1 hy.1 ha hb hab, ?_⟩
       intro i j hij
@@ -161,22 +162,17 @@ three-dimensional volume both vanish. -/
 theorem tetrahedron_volume (v : Fin 4 → Fin 3 → ℝ) :
     volume.real (convexHull ℝ (range v)) =
       |(Matrix.of (fun r (j : Fin 3) => v j.succ r - v 0 r)).det| / 6 := by
-  let t : Fin 4 → Fin 3 → ℝ := ![![0, 0, 0], ![0, 0, 1], ![0, 1, 1], ![1, 1, 1]]
   let M : Matrix (Fin 3) (Fin 3) ℝ :=
     Matrix.of fun r => ![v 3 r - v 2 r, v 2 r - v 1 r, v 1 r - v 0 r]
   let f := Matrix.toLin' M
-  have hv (i : Fin 4) : v 0 + f (t i) = v i := by
+  have hv (i : Fin 4) : v 0 + f (referenceVertex i) = v i := by
     ext r
-    fin_cases i <;> simp [f, M, Matrix.toLin'_apply, t]
-  have hvset : v 0 +ᵥ (f '' range t) = range v := by
-    ext x
-    simp only [mem_vadd_set, mem_image, mem_range, vadd_eq_add]
-    constructor
-    · rintro ⟨_, ⟨_, ⟨i, rfl⟩, rfl⟩, rfl⟩
-      exact ⟨i, (hv i).symm⟩
-    · rintro ⟨i, rfl⟩
-      exact ⟨f (t i), ⟨t i, ⟨i, rfl⟩, rfl⟩, hv i⟩
-  have hvol : volume (convexHull ℝ (range t)) = (6 : ℝ≥0∞)⁻¹ := by
+    fin_cases i <;> simp [f, M, Matrix.toLin'_apply, referenceVertex]
+  have hvset : v 0 +ᵥ (f '' range referenceVertex) = range v := by
+    change (fun x => v 0 + x) '' (f '' range referenceVertex) = _
+    rw [image_image, ← range_comp']
+    exact congrArg range (funext hv)
+  have hvol : volume (convexHull ℝ (range referenceVertex)) = (6 : ℝ≥0∞)⁻¹ := by
     rw [← orderedCube_eq_hull, orderedCube_volume]
     norm_num [Nat.factorial]
   have hdet : M.det = -(Matrix.of (fun r (j : Fin 3) => v j.succ r - v 0 r)).det := by
